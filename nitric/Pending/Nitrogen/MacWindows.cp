@@ -11,7 +11,7 @@ namespace Nitrogen
       OnlyOnce< RegisterWindowManagerErrors >();
       ::WindowAttributes result;
       ThrowOSStatus( ::GetWindowAttributes( window, &result ) );
-      return result;
+      return WindowAttributes( result );
      }
 
    void ChangeWindowAttributes ( WindowRef        window,
