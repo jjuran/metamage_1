@@ -21,6 +21,9 @@
 #ifndef NITROGEN_ONLYONCE_H
 #include "Nitrogen/OnlyOnce.h"
 #endif
+#ifndef NITROGEN_OWNED_H
+#include "Nitrogen/Owned.h"
+#endif
 
 namespace Nitrogen
 {
