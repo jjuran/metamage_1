@@ -56,16 +56,22 @@ namespace Nitrogen
 	{
 		OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
+		CFragConnectionID tempConnID;  // Can't be NULL in OS 8.1 and earlier
 		::Ptr tempMainAddr;
 		Str255 errMessage;
 		
 		ThrowOSStatusErrMessage( ::GetSharedLibrary( libName,
 		                                             archType,
 		                                             options,
-		                                             connID,
+		                                             &tempConnID,
 		                                             &tempMainAddr,
 		                                             errMessage ),
 		                          errMessage );
+		
+		if ( connID != NULL )
+		{
+			*connID = tempConnID;
+		}
 		
 		if ( mainAddr != NULL )
 		{
