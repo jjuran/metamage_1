@@ -94,6 +94,17 @@ namespace Nitrogen
       return reinterpret_cast<T**>( h.Get() );
      }
    
+   template < class T >
+   Owned< T**, Disposer<Handle> > Handle_Cast( Owned< Handle > h )
+     {
+      // It seems silly to Release and Seize when we merely want to convert,
+      // But Handle doesn't convert directly to T**.
+      // A workaround would be to define a class AnyHandle that constructs from Handle
+      // and converts to T**, and convert h to Owned< AnyHandle, Disposer< Handle > > 
+      // and that to Owned< T**, Disposer< Handle > >.
+      return Owned< T**, Disposer<Handle> >::Seize( reinterpret_cast< T** >( h.Release().Get() ) );
+     }
+   
    void MemError();
    
    Owned<Handle> NewHandle( std::size_t size );
