@@ -113,6 +113,8 @@ namespace Nitrogen {
 	{
 		public:
 			typedef ProcessSerialNumber value_type;
+			typedef UInt32 size_type;
+			typedef SInt32 difference_type;
 			
 			typedef ErrorCode< OSStatus, procNotFound > EndOfEnumeration;
 			
