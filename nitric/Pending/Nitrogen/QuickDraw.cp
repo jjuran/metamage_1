@@ -317,7 +317,13 @@ namespace Nitrogen
 #if OPAQUE_TOOLBOX_STRUCTS
 	
 	template < class Type >
-	Type& QDGlobalsVar( pascal Type* (getter)(Type*) )
+	Type& QDGlobalsVar
+	(
+	#if !TARGET_RT_MAC_MACHO
+		pascal
+	#endif
+		Type* (getter)(Type*)
+	)
 	{
 		static Type var;
 		return *getter( &var );
