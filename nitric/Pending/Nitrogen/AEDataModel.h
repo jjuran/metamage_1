@@ -40,6 +40,9 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
+#ifndef NITROGEN_MACMEMORY_H
+#include "Nitrogen/MacMemory.h"
+#endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
