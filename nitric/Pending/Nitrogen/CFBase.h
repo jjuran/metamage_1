@@ -32,7 +32,7 @@ namespace Nitrogen
    template < class CF, ::CFTypeID (*getTypeID)() >
    struct Basic_CFType_Traits
      {
-      static CFTypeID ID()                                    { return getTypeID(); }
+      static CFTypeID ID()                                    { return CFTypeID( getTypeID() ); }
       static ::CFTypeRef ConvertToCFTypeRef( CF value )       { return value; }
      };
    

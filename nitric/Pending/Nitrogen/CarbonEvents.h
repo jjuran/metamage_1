@@ -463,9 +463,9 @@ namespace Nitrogen
             template < class T > const EventParameter& operator>>=( const T& rhs ) const  { Set( Get() >> rhs ); return *this; }
         };
 
-   inline EventClass GetEventClass( EventRef inEvent )     { return ::GetEventClass( inEvent ); }
-   inline EventKind  GetEventKind ( EventRef inEvent )     { return ::GetEventKind ( inEvent ); }
-   inline EventTime  GetEventTime ( EventRef inEvent )     { return ::GetEventTime ( inEvent ); }
+   inline EventClass GetEventClass( EventRef inEvent )     { return EventClass( ::GetEventClass( inEvent ) ); }
+   inline EventKind  GetEventKind ( EventRef inEvent )     { return EventKind ( ::GetEventKind ( inEvent ) ); }
+   inline EventTime  GetEventTime ( EventRef inEvent )     { return EventTime ( ::GetEventTime ( inEvent ) ); }
  
    void SetEventTime( EventRef inEvent, EventTime inTime );
 

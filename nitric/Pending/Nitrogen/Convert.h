@@ -66,7 +66,7 @@ namespace Nitrogen
    template < class Output, class Input >
    struct Converter: public std::unary_function< Input, Output >
      {
-      Output operator()( const Input& in ) const      { return in; }
+      Output operator()( const Input& in ) const      { return Output( in ); }
      };
 
    template < class Input >
