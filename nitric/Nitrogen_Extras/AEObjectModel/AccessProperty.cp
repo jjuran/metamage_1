@@ -7,6 +7,12 @@
 #include "AEObjectModel/AccessProperty.h"
 #endif
 
+// Mac OS
+#ifndef __ASREGISTRY__
+#include <ASRegistry.h>
+#endif
+
+// Nitrogen
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
@@ -94,11 +100,23 @@ namespace Nitrogen
 		      ++itProp )
 		{
 			AEPropertyID propertyID = itProp->first;
+			
+			Owned< AEToken, AETokenDisposer > propertyToken;
+			
+			try
+			{
+				propertyToken = itProp->second( propertyID,
+				                                containerToken,
+				                                containerClass );
+			}
+			catch ( ErrAENoSuchObject )
+			{
+				propertyToken = AECreateToken< typeType >( cMissingValue );
+			}
+			
 			AEPutKeyDesc( result,
 			              AEKeyword( propertyID ),
-			              itProp->second( propertyID,
-			                              containerToken,
-			                              containerClass ) );
+			              propertyToken );
 		}
 		
 		return result;
