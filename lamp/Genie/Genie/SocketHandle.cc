@@ -10,7 +10,6 @@
 
 // Io
 #include "Io/Exceptions.hh"
-#include "Io/Handle.hh"
 
 // Genie
 #include "Genie/ResourceTable.hh"

@@ -9,9 +9,6 @@
 #include "Nitrogen/AEDataModel.h"
 #include "Nitrogen/OSStatus.h"
 
-// Genesis
-#include "Block.hh"
-
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
 #include "Pedestal/Application.hh"
@@ -26,7 +23,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace G = Genesis;
 	
 	
 	void GenieExecHandler::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, GenieExecHandler* handler )
