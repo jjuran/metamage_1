@@ -25,7 +25,7 @@
 #endif
 
 namespace Nitrogen
-  {
+{
 	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
@@ -619,6 +619,52 @@ namespace Nitrogen
 	
 	typedef Pseudoreference< PortPenSize_Details > PortPenSize;
 	
-  }
+	#pragma mark -
+	#pragma mark ¥ Operators ¥
+	
+	inline Point operator-( Point pt )
+	{
+		return SetPt( -pt.h,
+		              -pt.v );
+	}
+	
+	inline Point operator+( Point a, Point b )
+	{
+		return AddPt( a, b );
+	}
+	
+	inline Point operator-( Point a, Point b )
+	{
+		return SubPt( a, b );
+	}
+	
+	template < class Factor >
+	Point operator*( Point pt, Factor f )
+	{
+		return SetPt( pt.h * f,
+		              pt.v * f );
+	}
+	
+	template < class Divisor >
+	Point operator/( Point pt, Divisor d )
+	{
+		return SetPt( pt.h / d, 
+		              pt.v / d );
+	}
+	
+	
+	inline Rect operator+( Rect r, Point pt )
+	{
+		return MacOffsetRect( r, pt );
+	}
+	
+	inline Rect operator-( Rect r, Point pt )
+	{
+		return MacOffsetRect( r, -pt );
+	}
+	
+}
+
+#include "Nitrogen/Operators.h"
 
 #endif
