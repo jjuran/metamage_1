@@ -10,8 +10,32 @@
 #include FRAMEWORK_HEADER(CarbonSound,Sound.h)
 #endif
 
+// Nitrogen Core
+#ifndef NITROGEN_FLAGTYPE_H
+#include "Nitrogen/FlagType.h"
+#endif
+#ifndef NITROGEN_IDTYPE_H
+#include "Nitrogen/IDType.h"
+#endif
+#ifndef NITROGEN_INDEXUNTILFAILURECONTAINER_H
+#include "Nitrogen/IndexUntilFailureContainer.h"
+#endif
+#ifndef NITROGEN_SELECTORTYPE_H
+#include "Nitrogen/SelectorType.h"
+#endif
+#ifndef NITROGEN_OWNED_H
+#include "Nitrogen/Owned.h"
+#endif
+#ifndef NITROGEN_TRANSFERTRAITS_H
+#include "Nitrogen/TransferTraits.h"
+#endif
+
+// Nitrogen Carbon support
 #ifndef NITROGEN_COMPONENTS_H
 #include "Nitrogen/Components.h"
+#endif
+#ifndef NITROGEN_DIALOGS_H
+//#include "Nitrogen/Dialogs.h"
 #endif
 #ifndef NITROGEN_ICONS_H
 #include "Nitrogen/Icons.h"
@@ -25,28 +49,10 @@
 #ifndef NITROGEN_MIXEDMODE_H
 #include "Nitrogen/MixedMode.h"
 #endif
-#ifndef NITROGEN_DIALOGS_H
-//#include "Nitrogen/Dialogs.h"
-#endif
-
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
-#endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
-#endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
-#endif
-#ifndef NITROGEN_SHARED_H
-#include "Nitrogen/Shared.h"
-#endif
 #ifndef NITROGEN_STR_H
 #include "Nitrogen/Str.h"
 #endif
-#ifndef NITROGEN_INDEXUNTILFAILURECONTAINER_H
-#include "Nitrogen/IndexUntilFailureContainer.h"
-#endif
+
 
 namespace Nitrogen
 {
@@ -70,7 +76,7 @@ namespace Nitrogen
 	
 	
 	template <>
-	struct Disposer< SoundInputRefNum > : public std::unary_function< SoundInputRefNum, void >, 
+	struct Disposer< SoundInputRefNum > : public std::unary_function< SoundInputRefNum, void >,
 	                                      private DefaultDestructionOSStatusPolicy
 	{
 		void operator()( SoundInputRefNum refNum ) const
@@ -115,7 +121,7 @@ namespace Nitrogen
 		typedef UInt16 SetBuffer;
 		
 		static Result    ProcessGetBuffer( const GetBuffer& buffer )  { return buffer; }
-		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return param; }
+		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return param;  }
 	};
 	
 	template <>  struct InfoData_Traits< bool >
@@ -127,7 +133,7 @@ namespace Nitrogen
 		typedef UInt16 SetBuffer;
 		
 		static Result    ProcessGetBuffer( const GetBuffer& buffer )  { return buffer != 0; }
-		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return param; }
+		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return param;       }
 	};
 	
 	template <>  struct InfoData_Traits< double >
@@ -139,7 +145,7 @@ namespace Nitrogen
 		typedef ::UnsignedFixed SetBuffer;
 		
 		static Result    ProcessGetBuffer( const GetBuffer& buffer )  { return UnsignedFixedToDouble( buffer ); }
-		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return DoubleToUnsignedFixed( param ); }
+		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return DoubleToUnsignedFixed( param  ); }
 	};
 	
 	template < class T >  struct InfoData_Traits< T** >
@@ -147,7 +153,36 @@ namespace Nitrogen
 		struct Result
 		{
 			UInt16 count;
-			Shared< T**, Disposer< Handle > > data;
+			Owned< T**, Disposer< Handle > > data;
+			
+			struct Transfer
+			{
+				UInt16 count;
+				OwnershipTransfer< T**, Disposer< Handle > > data;
+				
+				explicit Transfer( InfoData_Traits< T** > s )
+				:
+					count( count ), data( data )
+				{}
+			};
+			
+			Result() : count( 0 )  {}
+			
+			Result( Transfer s )
+			:
+				count( s.count ),
+				data ( s.data  )
+			{}
+			
+			Result& operator=( Transfer s )
+			{
+				count = s.count;
+				data  = s.data;
+				
+				return *this;
+			}
+			
+			operator Transfer()  { return Transfer( *this ); }
 		};
 		
 		typedef SPBGetDeviceInfo_SampleInfoAvailable_Result GetBuffer;
@@ -195,10 +230,10 @@ namespace Nitrogen
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siDeviceIcon >
 	{
-		typedef Owned< IconAndMaskHandle > Result;
+		typedef Owned< MaskedIconHandle > Result;
 		typedef ::Handle GetBuffer;
 		
-		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Result::Seize( Handle_Cast< IconAndMask >( buffer ) ); }
+		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Result::Seize( Handle_Cast< MaskedIcon >( buffer ) ); }
 	};
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siSampleSizeAvailable > : InfoData_Traits< UInt16** >  {};
@@ -207,24 +242,151 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
 	
+	inline void SysBeep( short duration = 30 )  { ::SysBeep( duration ); }
+	
+	// SndDoCommand
+	// SndDoImmediate
+	// SndNewChannel
+	// SndDisposeChannel
+	// SndPlay
+	// old SndAddModifier
+	// old SndControl
+	// SndSoundManagerVersion
+	// old SndStartFilePlay
+	// old SndPauseFilePlay
+	// old SndStopFilePlay
+	// SndChannelStatus
+	// SndManagerStatus
+	// SndGetSysBeepState
+	// SndSetSysBeepState
+	// old SndPlayDoubleBuffer
+	// old MACEVersion
+	// old Comp3to1
+	// old Exp1to3
+	// old Comp6to1
+	// old Exp1to6
+	// GetSysBeepVolume
+	// SetSysBeepVolume
+	// GetDefaultOutputVolume
+	// SetDefaultOutputVolume
+	// GetSoundHeaderOffset
+	// UnsignedFixedMulDiv
+	// GetCompressionInfo
+	// SetSoundPreference
+	// GetSoundPreference
+	// OpenMixerSoundComponent
+	// CloseMixerSoundComponent
+	// SndGetInfo
+	// SndSetInfo
+	// GetSoundOutputInfo
+	// SetSoundOutputInfo
+	// GetCompressionName
+	// SoundConverterOpen
+	// SoundConverterClose
+	// SoundConverterGetBufferSizes
+	// SoundConverterBeginConversion
+	// SoundConverterConvertBuffer
+	// SoundConverterEndConversion
+	// SoundConverterGetInfo
+	// SoundConverterSetInfo
+	// SoundConverterFillBuffer
+	// SoundManagerGetInfo
+	// SoundManagerSetInfo
+	// SoundComponentInitOutputDevice
+	// SoundComponentSetSource
+	// SoundComponentGetSource
+	// SoundComponentGetSourceData
+	// SoundComponentSetOutput
+	// SoundComponentAddSource
+	// SoundComponentRemoveSource
+	// SoundComponentGetInfo
+	// SoundComponentSetInfo
+	// SoundComponentStartSource
+	// SoundComponentStopSource
+	// SoundComponentPauseSource
+	// SoundComponentPlaySourceBuffer
+	// old AudioGetVolume
+	// old AudioGetVolume
+	// old AudioGetMute
+	// old AudioSetMute
+	// old AudioSetToDefaults
+	// old AudioGetInfo
+	// old AudioGetBass
+	// old AudioSetBass
+	// old AudioGetTreble
+	// old AudioSetTreble
+	// old AudioGetOutputDevice
+	// old AudioMuteOnEvent
+	// SPBVersion
+	// SndRecord
+	// old SndRecordToFile
+	// SPBSignInDevice
+	// SPBSignOutDevice
+	
 	struct SPBGetIndexedDevice_Result
 	{
-		Str255 deviceName;
-		Shared< Handle > deviceIconHandle;
+		struct Transfer
+		{
+			Str255                                           deviceName;
+			OwnershipTransfer< Handle, Disposer< Handle > >  deviceIconHandle;
+			
+			explicit Transfer( SPBGetIndexedDevice_Result value )
+			:
+				deviceName      ( value.deviceName       ),
+				deviceIconHandle( value.deviceIconHandle )
+			{}
+		};
 		
-		operator const unsigned char*() const  { return deviceName; }
+		Str255 deviceName;
+		Owned< Handle > deviceIconHandle;
+		
+		SPBGetIndexedDevice_Result()  {}
+		
+		SPBGetIndexedDevice_Result( Transfer s )
+		:
+			deviceName      ( s.deviceName       ),
+			deviceIconHandle( s.deviceIconHandle )
+		{}
+		
+		SPBGetIndexedDevice_Result& operator=( Transfer s )
+		{
+			deviceName       = s.deviceName;
+			deviceIconHandle = s.deviceIconHandle;
+			
+			return *this;
+		}
+		
+		operator Transfer()
+		{
+			return Transfer( *this );
+		}
+		
+		operator ConstStr255Param() const  { return deviceName; }
 	};
 	
-	// 2729
+	template <> struct Transfer_Traits< SPBGetIndexedDevice_Result >
+	{
+		static const bool mayCopyConstSource = false;
+		
+		typedef SPBGetIndexedDevice_Result Type;
+		
+		typedef SPBGetIndexedDevice_Result::Transfer Transfer;
+	};
+	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count );
 	
-	// 2744
-	Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param deviceName, SoundInputPermissions permission );
+	Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
+	                                         SoundInputPermissions  permission );
 	
-	// 2759
 	void SPBCloseDevice( Owned< SoundInputRefNum > );
 	
-	// 2858
+	// SPBRecord
+	// old SPBRecordToFile
+	// SPBPauseRecording
+	// SPBResumeRecording
+	// SPBStopRecording
+	// SPBGetRecordingStatus
+	
 	void SPBGetDeviceInfo( SoundInputRefNum refNum, SoundInputDeviceInfoType infoType, void* infoData );
 	
 	// 2873
@@ -233,21 +395,34 @@ namespace Nitrogen
 	template < ::OSType infoType >
 	typename SoundInputDeviceInfoType_Traits< infoType >::Result SPBGetDeviceInfo( SoundInputRefNum refNum )
 	{
-		typename SoundInputDeviceInfoType_Traits< infoType >::GetBuffer infoData;
+		typedef SoundInputDeviceInfoType_Traits< infoType > Traits;
+		
+		typename Traits::GetBuffer infoData;
 		
 		SPBGetDeviceInfo( refNum, infoType, &infoData );
 		
-		return SoundInputDeviceInfoType_Traits< infoType >::ProcessGetBuffer( infoData );
+		return Traits::ProcessGetBuffer( infoData );
 	}
 	
 	template < ::OSType infoType >
-	void SPBSetDeviceInfo( SoundInputRefNum refNum, typename SoundInputDeviceInfoType_Traits< infoType >::Parameter param )
+	void SPBSetDeviceInfo( SoundInputRefNum                                                 refNum,
+	                       typename SoundInputDeviceInfoType_Traits< infoType >::Parameter  param )
 	{
-		typename SoundInputDeviceInfoType_Traits< infoType >::SetBuffer infoData 
-			= SoundInputDeviceInfoType_Traits< infoType >::PrepareSetBuffer( param );
+		typedef SoundInputDeviceInfoType_Traits< infoType > Traits;
 		
-		SPBGetDeviceInfo( refNum, infoType, &infoData );
+		typename Traits::SetBuffer infoData = Traits::PrepareSetBuffer( param );
+		
+		SPBSetDeviceInfo( refNum, infoType, &infoData );
 	}
+	
+	// SPBMillisecondsToBytes
+	// SPBBytesToMilliseconds
+	// SetupSndHeader
+	// SetupAIFFHeader
+	// ParseAIFFHeader
+	// ParseSndHeader
+	
+	// Mac OS X only bits for sound input components
 	
 	class SoundInputDevice_ContainerSpecifics
 	{
@@ -280,6 +455,37 @@ namespace Nitrogen
 	inline SoundInputDevice_Container SoundInputDevices()
 	{
 		return SoundInputDevice_Container();
+	}
+	
+	namespace Tests
+	{
+		
+		SoundInputDevice_Container::const_iterator Bar();
+		
+		static void Foo()
+		{
+			typedef SoundInputDevice_Container::const_iterator const_iterator;
+			
+			SPBGetIndexedDevice_Result result = SPBGetIndexedDevice( 1 );
+			
+			result = SPBGetIndexedDevice( 2 );
+			
+			const_iterator one;
+			
+			const_iterator two = one;
+			
+			const_iterator three( const_iterator() );
+			
+			SoundInputDevices().begin();
+			
+			const_iterator::Transfer( Bar() );
+			
+			one = const_iterator::Transfer( SoundInputDevices().begin() );
+			one = SoundInputDevices().begin();
+			
+			const_iterator four = SoundInputDevices().begin();
+		}
+		
 	}
 	
 }
