@@ -55,6 +55,17 @@
 #include "Nitrogen/CFString.h"
 #endif
 
+
+#ifdef kFirstWindowOfClass
+#undef kFirstWindowOfClass
+static const WindowRef kFirstWindowOfClass = reinterpret_cast< WindowRef >( -1 );
+#endif
+
+#ifdef kLastWindowOfClass
+#undef kLastWindowOfClass
+static const WindowRef kLastWindowOfClass  = reinterpret_cast< WindowRef >( 0 );
+#endif
+
 namespace Nitrogen
   {
    void RegisterWindowManagerErrors();
@@ -82,8 +93,6 @@ namespace Nitrogen
    using ::GetWindowRegionRecPtr;
    
    /* ... */
-   
-   using ::WindowRef;
    
    template <> struct Disposer< WindowRef >: public std::unary_function< WindowRef, void >
      {
