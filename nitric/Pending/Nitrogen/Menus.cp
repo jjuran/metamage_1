@@ -67,6 +67,19 @@ namespace Nitrogen
       ThrowOSStatus ( ::InsertMenuItemTextWithCFString( inMenu, inString, inAfterItem, inAttributes, inCommandID ) );
      }
 
+	Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID )
+	{
+		::MacInsertMenu( menu, beforeID );
+		return Owned< MenuID >::Seize( GetMenuID( menu ) );
+	}
+	
+	Str255 GetMenuItemText( MenuRef menu, SInt16 item )
+	{
+		Str255 itemText;
+		::GetMenuItemText( menu, item, itemText );
+		return itemText;
+	}
+	
    void ChangeMenuItemAttributes( MenuRef            menu,
                                   MenuItemIndex      item,
                                   MenuItemAttributes setTheseAttributes,
