@@ -18,12 +18,6 @@
 
 namespace Nitrogen {
 	
-	struct AESendModeTag  {};
-	typedef FlagType< AESendModeTag, ::AESendMode, 0 > AESendMode;
-	
-	struct AESendPriorityTag  {};
-	typedef FlagType< AESendPriorityTag, ::AESendPriority, 0 > AESendPriority;
-	
 	struct AEIdleUPP_Details : Basic_UPP_Details< ::AEIdleUPP,
 	                                              ::AEIdleProcPtr,
 	                                              ::NewAEIdleUPP,
@@ -47,7 +41,7 @@ namespace Nitrogen {
 	Owned<AppleEvent> AESend(
 		const AppleEvent& appleEvent, 
 		AESendMode sendMode, 
-		AESendPriority sendPriority = kAENormalPriority, 
+		AESendPriority sendPriority = AENormalPriority(), 
 		long timeOutInTicks = kAEDefaultTimeout, 
 		AEIdleUPP idleProc = NULL, 
 		AEFilterUPP filterProc = NULL
