@@ -1031,18 +1031,41 @@ namespace Nitrogen
                        &result.rootDirectory );
       return result;
      }
-
-   FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
-     {
-      FSVolumeRefNum result;
-      FSGetVolumeInfo( volumeIndex,
-                       &result,
-                       kFSVolInfoNone,
-                       0,
-                       0,
-                       0 );
-      return result;
-     }
+	
+	
+	static void PBHGetVInfoSync( HParamBlockRec& pb )
+	{
+		ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
+	}
+	
+	FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
+	{
+		if ( TARGET_API_MAC_CARBON  ||  ::FSGetVolumeInfo != NULL )
+		{
+			FSVolumeRefNum result;
+			FSGetVolumeInfo( volumeIndex,
+			                 &result,
+			                 kFSVolInfoNone,
+			                 0,
+			                 0,
+			                 0 );
+			return result;
+		}
+		else
+		{
+			OnlyOnce< RegisterFileManagerErrors >();
+			
+			HParamBlockRec pb;
+			
+			pb.volumeParam.ioNamePtr = NULL;
+			pb.volumeParam.ioVRefNum = 0;
+			pb.volumeParam.ioVolIndex = volumeIndex;
+			
+			PBHGetVInfoSync( pb );
+			
+			return FSVolumeRefNum( pb.volumeParam.ioVRefNum );
+		}
+	}
 
    HFSUniStr255 FSGetVolumeName( FSVolumeRefNum volume )
      {
