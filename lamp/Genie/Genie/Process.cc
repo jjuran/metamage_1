@@ -8,24 +8,24 @@
 // Standard C/C++
 #include <csignal>
 
-// Nitrogen
+// Nitrogen core
+#include "Nitrogen/Assert.h"
+
+// Nitrogen / Carbon support
 #include "Nitrogen/Aliases.h"
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
+#include "Nitrogen/Sound.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 #include "Utilities/Threads.h"
 
 // Io
-#include "Io/MakeHandle.hh"
 #include "Io/Stream.hh"
 
 // Kerosene/Common
 #include "KEnvironment.hh"
-
-// Zion
-#include "Zion/FileHandle.hh"
 
 // Genie
 #include "Genie/pathnames.hh"
@@ -81,7 +81,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NX = NitrogenExtras;
 	namespace K = Kerosene;
-	namespace Z = Zion;
 	
 	
 	FileDescriptor::FileDescriptor( const FileDescriptor& other )
@@ -215,7 +214,7 @@ namespace Genie
 	
 	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const FSSpec& file )
 	{
-		N::Owned< N::FSFileRefNum > filehandle = Z::OpenFileReadOnly( file );
+		N::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
 		
 		std::size_t size = N::GetEOF( filehandle );
 		
@@ -223,7 +222,7 @@ namespace Genie
 		
 		result.reset( static_cast< FragmentImage* >( ::operator new( size ) ) );
 		
-		int bytes = Z::Read( filehandle, reinterpret_cast< char* >( result.get() ), size );
+		int bytes = N::FSRead( filehandle, size, reinterpret_cast< char* >( result.get() ) );
 		
 		return NX::DataPtr< FragmentImage >( result, size );
 	}
@@ -245,8 +244,8 @@ namespace Genie
 		myFileDescriptors   ( ( ppid > 0 ) ? gProcessTable[ ppid ].FileDescriptors()
 		                                   : FileDescriptorMap() ),
 		myStatus            ( kStarting ),
-		fErrno              ( NULL ),
-		fEnviron            ( NULL )
+		fErrnoData          ( NULL ),
+		fEnvironData        ( NULL )
 	{
 	}
 	
@@ -374,15 +373,15 @@ namespace Genie
 		
 		try
 		{
-			N::FindSymbol( fFragmentConnection, "\p" "environ", &fEnviron );
+			N::FindSymbol( fFragmentConnection, "\p" "environ", &fEnvironData );
 			
-			*fEnviron = environStorage->GetPointer();
+			*fEnvironData = environStorage->GetPointer();
 		}
 		catch ( ... ) {}
 		
 		try
 		{
-			N::FindSymbol( fFragmentConnection, "\p" "errno", &fErrno );
+			N::FindSymbol( fFragmentConnection, "\p" "errno", &fErrnoData );
 		}
 		catch ( ... ) {}
 		
@@ -391,7 +390,7 @@ namespace Genie
 		ThreadContext threadContext( this,
 		                             mainEntryPoint,
 		                             argvStorage->GetPointer(),
-		                             *fEnviron );
+		                             environStorage->GetPointer() );
 		
 		// Warning -- if a program calls exec() without forking,
 		// then the current thread might be the one we're about to replace.
@@ -464,9 +463,9 @@ namespace Genie
 	
 	int Process::SetErrno( int errorNumber )
 	{
-		if ( fErrno != NULL )
+		if ( fErrnoData != NULL )
 		{
-			*fErrno = errorNumber;
+			*fErrnoData = errorNumber;
 		}
 		
 		return -1;
@@ -539,7 +538,7 @@ namespace Genie
 	
 	void Process::Orphan()
 	{
-		//Assert_( myPID != 1 );
+		ASSERT( myPID != 1 );
 		myPPID = 1;
 		myFileDescriptors.clear();
 	}
@@ -679,7 +678,7 @@ namespace Genie
 		
 		if ( found == myProcesses.end() )
 		{
-			::SysBeep( 3 );
+			N::SysBeep();
 			return -1;
 		}
 		

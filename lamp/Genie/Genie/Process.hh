@@ -26,7 +26,7 @@
 #include "Utilities/Threads.h"
 
 // Silver
-#include "ProcTypes.hh"
+#include "Silver/ProcTypes.hh"
 
 // Io
 #include "Io/Handle.hh"
@@ -162,8 +162,8 @@ namespace Genie
 			NX::DataPtr< FragmentImage > fOldFragmentImage;
 			N::Owned< CFragConnectionID > fFragmentConnection;
 			N::Owned< CFragConnectionID > fOldFragmentConnection;
-			ErrnoDataPtr fErrno;
-			EnvironDataPtr fEnviron;
+			ErrnoDataPtr fErrnoData;
+			EnvironDataPtr fEnvironData;
 			
 			std::auto_ptr< Sh::StringArray > argvStorage;
 			std::auto_ptr< Sh::StringArray > environStorage;
@@ -241,7 +241,7 @@ namespace Genie
 			GenieProcessTable();
 			~GenieProcessTable()
 			{
-				//Assert_( myProcesses.size() == 1 );
+				//ASSERT( myProcesses.size() == 1 );
 			}
 			
 			bool Exists( int pid ) const  { return myProcesses.count( pid ) > 0; }
