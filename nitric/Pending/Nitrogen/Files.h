@@ -959,7 +959,6 @@ namespace Nitrogen
 	void PBDTGetAPPLSync( DTPBRec& pb );
 	
 	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum );
-	FSSpec DTGetAPPL( OSType signature );
 	
 	// 4617
 	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name );
