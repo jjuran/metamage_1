@@ -696,17 +696,10 @@ namespace Nitrogen
    class FSIOPermssnTag {};
    typedef FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
    typedef FSIOPermssn FSIOPermissions;
-   
-   inline FSIOPermssn FSCurPerm()  { return FSIOPermssn::Make( fsCurPerm ); }
-   inline FSIOPermssn FSRdPerm ()  { return FSIOPermssn::Make( fsRdPerm  ); }
-   inline FSIOPermssn FSWrPerm ()  { return FSIOPermssn::Make( fsWrPerm  ); }
-   
-   class FSIOPosModeTag {};
-   typedef SelectorType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
-   typedef FSIOPosMode FSIOPositioningMode;
 	
-	inline FSIOPosMode FSAtMark  ()  { return FSIOPosMode::Make( fsAtMark   ); }
-	inline FSIOPosMode FSFromLEOF()  { return FSIOPosMode::Make( fsFromLEOF ); }
+   class FSIOPosModeTag {};
+   typedef FlagType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
+   typedef FSIOPosMode FSIOPositioningMode;
 	
    class FSAllocationFlagsTag {};
    typedef FlagType< FSAllocationFlagsTag, ::FSAllocationFlags, 0 > FSAllocationFlags;
@@ -738,7 +731,30 @@ namespace Nitrogen
 
    class HFSCatalogNodeIDTag {};
    typedef IDType< HFSCatalogNodeIDTag, UInt32, 0 > HFSCatalogNodeID;
-
+	
+	inline FSIOPermssn FSCurPerm   ()  { return FSIOPermssn::Make( fsCurPerm    ); }
+	inline FSIOPermssn FSRdPerm    ()  { return FSIOPermssn::Make( fsRdPerm     ); }
+	inline FSIOPermssn FSWrPerm    ()  { return FSIOPermssn::Make( fsWrPerm     ); }
+	inline FSIOPermssn FSRdWrPerm  ()  { return FSIOPermssn::Make( fsRdWrPerm   ); }
+	inline FSIOPermssn FSRdWrShPerm()  { return FSIOPermssn::Make( fsRdWrShPerm ); }
+	inline FSIOPermssn FSRdDenyPerm()  { return FSIOPermssn::Make( fsRdDenyPerm ); }
+	inline FSIOPermssn FSWrDenyPerm()  { return FSIOPermssn::Make( fsWrDenyPerm ); }
+	
+	inline FSDirID FSRtParID()  { return FSDirID( long( fsRtParID ) ); }
+	inline FSDirID FSRtDirID()  { return FSDirID( long( fsRtDirID ) ); }
+	
+	inline FSIOPosMode FSAtMark   ()  { return FSIOPosMode::Make( fsAtMark    ); }
+	inline FSIOPosMode FSFromStart()  { return FSIOPosMode::Make( fsFromStart ); }
+	inline FSIOPosMode FSFromLEOF ()  { return FSIOPosMode::Make( fsFromLEOF  ); }
+	inline FSIOPosMode FSFromMark ()  { return FSIOPosMode::Make( fsFromMark  ); }
+	
+	inline FSIOPosMode PleaseCacheMask()  { return FSIOPosMode::Make( pleaseCacheMask ); }
+	inline FSIOPosMode NoCacheMask    ()  { return FSIOPosMode::Make( noCacheMask     ); }
+	inline FSIOPosMode RdVerifyMask   ()  { return FSIOPosMode::Make( rdVerifyMask    ); }
+	inline FSIOPosMode RdVerify       ()  { return FSIOPosMode::Make( rdVerify        ); }
+	inline FSIOPosMode ForceReadMask  ()  { return FSIOPosMode::Make( forceReadMask   ); }
+	inline FSIOPosMode NewLineMask    ()  { return FSIOPosMode::Make( newLineMask     ); }
+	inline FSIOPosMode NewLineCharMask()  { return FSIOPosMode::Make( newLineCharMask ); }
 
    template <> struct Converter< Owned<CFStringRef>, HFSUniStr255 >: public std::unary_function< HFSUniStr255, Owned<CFStringRef> >
      {
