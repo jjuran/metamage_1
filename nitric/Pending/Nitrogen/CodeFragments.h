@@ -52,18 +52,11 @@ namespace Nitrogen
 	class CFragArchitecture_Tag {};
 	typedef SelectorType< CFragArchitecture_Tag, ::CFragArchitecture, kAnyCFragArch > CFragArchitecture;
 	
-	inline ResType CFragResourceType()     { return ResType::Make( kCFragResourceType    ); }
-	inline ResID   CFragResourceID()       { return ResID  ::Make( kCFragResourceID      ); }
-	inline OSType  CFragLibraryFileType()  { return OSType ::Make( kCFragLibraryFileType ); }
-	// kCFragAllFileTypes
+	class CFragLoadOptions_Tag {};
+	typedef FlagType< CFragLoadOptions_Tag, ::CFragLoadOptions, 0 > CFragLoadOptions;
 	
-	inline CFragArchitecture PowerPCCFragArch()      { return CFragArchitecture::Make( kPowerPCCFragArch     ); }
-	inline CFragArchitecture Motorola68KCFragArch()  { return CFragArchitecture::Make( kMotorola68KCFragArch ); }
-	inline CFragArchitecture AnyCFragArch()          { return CFragArchitecture::Make( kAnyCFragArch         ); }
-	
-	inline CFragArchitecture CompiledCFragArch()     { return CFragArchitecture::Make( kCompiledCFragArch    ); }
-	
-	inline std::size_t CFragGoesToEOF()  { return kCFragGoesToEOF; }
+	class CFragSymbolClass_Tag {};
+	typedef SelectorType< CFragSymbolClass_Tag, ::CFragSymbolClass, 0 > CFragSymbolClass;
 	
 	using ::CFragConnectionID;
 	
@@ -74,52 +67,53 @@ namespace Nitrogen
 		void operator()( CFragConnectionID connID ) const
 		{
 			OnlyOnce< RegisterCodeFragmentManagerErrors >();
+			
 			HandleDestructionOSStatus( ::CloseConnection( &connID ) );
 		}
 	};
 	
-	class CFragLoadOptions_Tag {};
-	typedef FlagType< CFragLoadOptions_Tag, ::CFragLoadOptions, 0 > CFragLoadOptions;
-	
-	class CFragSymbolClass_Tag {};
-	typedef SelectorType< CFragSymbolClass_Tag, ::CFragSymbolClass, 0 > CFragSymbolClass;
-	
-	inline CFragLoadOptions ReferenceCFrag()    { return CFragLoadOptions::Make( kReferenceCFrag   ); }
-	inline CFragLoadOptions FindCFrag()         { return CFragLoadOptions::Make( kFindCFrag        ); }
-	inline CFragLoadOptions PrivateCFragCopy()  { return CFragLoadOptions::Make( kPrivateCFragCopy ); }
-	
-	inline CFragSymbolClass CodeCFragSymbol()     { return CFragSymbolClass::Make( kCodeCFragSymbol    ); }
-	inline CFragSymbolClass DataCFragSymbol()     { return CFragSymbolClass::Make( kDataCFragSymbol    ); }
-	inline CFragSymbolClass TVectorCFragSymbol()  { return CFragSymbolClass::Make( kTVectorCFragSymbol ); }
-	inline CFragSymbolClass TOCCFragSymbol()      { return CFragSymbolClass::Make( kTOCCFragSymbol     ); }
-	inline CFragSymbolClass GlueCFragSymbol()     { return CFragSymbolClass::Make( kGlueCFragSymbol    ); }
 	
 	// Opaque pointer type
 	typedef struct SymbolAddress* SymbolAddressPtr;
 	
+	// errName wrapper
+	struct ErrName
+	{
+		Str255 errName;
+		
+		ErrName( ConstStr255Param errName ) : errName( errName )  {}
+	};
+	
+	// OSStatus wrapper that carries errName
+	template < class ErrorCode >
+	struct OSStatusErrName : ErrorCode,
+	                         ErrName
+	{
+		OSStatusErrName( ConstStr255Param errName )
+		:
+			ErrName( errName )
+		{}
+	};
+	
 	// 333
-	void GetDiskFragment( const FSSpec& file, 
-	                      std::size_t offset, 
-	                      std::size_t length, 
-	                      ConstStr63Param fragName, 
-	                      CFragLoadOptions findFlags, 
-	                      CFragConnectionID* connID = NULL, 
-	                      SymbolAddressPtr* mainAddr = NULL, 
-	                      ::Str255 errName = NULL );
+	void GetDiskFragment( const FSSpec&       file,
+	                      std::size_t         offset,
+	                      std::size_t         length,
+	                      ConstStr63Param     fragName,
+	                      CFragLoadOptions    findFlags,
+	                      CFragConnectionID*  connID   = NULL,
+	                      SymbolAddressPtr*   mainAddr = NULL );
 	
 	template < ::CFragLoadOptions findFlags >  struct GetDiskFragment_Traits;
 	
-	struct Shared_Connection_Traits
+	struct Shared_CFragConnection_Traits
 	{
 		typedef CFragConnectionID Result;
 		
 		static Result MakeResult( CFragConnectionID connID )  { return connID; }
 	};
 	
-	template <>  struct GetDiskFragment_Traits< kReferenceCFrag > : Shared_Connection_Traits {};
-	template <>  struct GetDiskFragment_Traits< kFindCFrag      > : Shared_Connection_Traits {};
-	
-	template <>  struct GetDiskFragment_Traits< kPrivateCFragCopy >
+	struct Private_CFragConnection_Traits
 	{
 		typedef Owned< CFragConnectionID > Result;
 		
@@ -128,6 +122,11 @@ namespace Nitrogen
 			return Owned< CFragConnectionID >::Seize( connID );
 		}
 	};
+	
+	template <>  struct GetDiskFragment_Traits< kReferenceCFrag   > : Shared_CFragConnection_Traits  {};
+	template <>  struct GetDiskFragment_Traits< kFindCFrag        > : Shared_CFragConnection_Traits  {};
+	
+	template <>  struct GetDiskFragment_Traits< kPrivateCFragCopy > : Private_CFragConnection_Traits {};
 	
 	template < class SymbolAddressType >
 	SymbolAddressType SymAddr_Cast( SymbolAddressPtr symAddr )
@@ -140,25 +139,25 @@ namespace Nitrogen
 	}
 	
 	template < ::CFragLoadOptions findFlags, class MainAddrType >
-	typename GetDiskFragment_Traits< findFlags >::Result GetDiskFragment
-	(
-		const FSSpec&    file, 
-		std::size_t      offset, 
-		std::size_t      length, 
-		ConstStr63Param  fragName, 
-	    MainAddrType*    mainAddr, 
-	    ::Str255         errName  = NULL )
+	typename GetDiskFragment_Traits< findFlags >::Result
+	GetDiskFragment( const FSSpec&    file,
+	                 std::size_t      offset,
+	                 std::size_t      length,
+	                 ConstStr63Param  fragName,
+	                 MainAddrType*    mainAddr )
 	{
 		typedef GetDiskFragment_Traits< findFlags > Traits;
 		
 		CFragConnectionID connID;
 		SymbolAddressPtr tempMainAddr;
 		
-		GetDiskFragment
-		(
-			file, offset, length, fragName, CFragLoadOptions( findFlags ), 
-			&connID, &tempMainAddr, errName
-		);
+		GetDiskFragment( file,
+		                 offset,
+		                 length,
+		                 fragName,
+		                 CFragLoadOptions( findFlags ),
+		                 &connID,
+		                 &tempMainAddr );
 		
 		if ( mainAddr != NULL )
 		{
@@ -169,18 +168,17 @@ namespace Nitrogen
 	}
 	
 	template < ::CFragLoadOptions findFlags >
-	typename GetDiskFragment_Traits< findFlags >::Result GetDiskFragment
-	(
-		const FSSpec&    file, 
-		std::size_t      offset   = 0, 
-		std::size_t      length   = kCFragGoesToEOF, 
-		ConstStr63Param  fragName = NULL, 
-	    ::Str255         errName  = NULL )
+	typename GetDiskFragment_Traits< findFlags >::Result
+	GetDiskFragment( const FSSpec&    file,
+	                 std::size_t      offset   = 0,
+	                 std::size_t      length   = kCFragGoesToEOF,
+	                 ConstStr63Param  fragName = NULL )
 	{
-		return GetDiskFragment< findFlags, SymbolAddressPtr >
-		(
-			file, offset, length, fragName, NULL, errName
-		);
+		return GetDiskFragment< findFlags, SymbolAddressPtr >( file,
+		                                                       offset,
+		                                                       length,
+		                                                       fragName,
+		                                                       NULL );
 	}
 	
 	// 384
@@ -201,7 +199,6 @@ namespace Nitrogen
 		
 		if ( symAddr != NULL )
 		{
-			
 			*symAddr = SymAddr_Cast< SymAddrType >( tempSymAddr );
 		}
 	}

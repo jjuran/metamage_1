@@ -14,26 +14,66 @@
 namespace Nitrogen
 {
 	
-	void GetDiskFragment( const FSSpec& file, 
-	                      std::size_t offset, 
-	                      std::size_t length, 
-	                      ConstStr63Param fragName, 
-	                      CFragLoadOptions findFlags, 
-	                      CFragConnectionID* connID, 
-	                      SymbolAddressPtr* mainAddr, 
-	                      ::Str255 errName )
+	template < class ErrorCode >
+	void ThrowOSStatusErrName( ConstStr255Param errName )
+	{
+		throw OSStatusErrName< ErrorCode >( errName );
+	}
+	
+	static void ThrowOSStatusErrName( OSStatus status, ConstStr255Param errName )
+	{
+		switch ( status )
+		{
+			case noErr:
+				return;
+				break;
+			
+			case paramErr:
+				throw ParamErr();
+				break;
+			
+			case cfragNoLibraryErr:     ThrowOSStatusErrName< CFragNoLibraryErr    >( errName );
+			case cfragUnresolvedErr:    ThrowOSStatusErrName< CFragUnresolvedErr   >( errName );
+			case cfragNoPrivateMemErr:  ThrowOSStatusErrName< CFragNoPrivateMemErr >( errName );
+			case cfragNoClientMemErr:   ThrowOSStatusErrName< CFragNoClientMemErr  >( errName );
+			case cfragInitOrderErr:     ThrowOSStatusErrName< CFragInitOrderErr    >( errName );
+			case cfragImportTooOldErr:  ThrowOSStatusErrName< CFragImportTooOldErr >( errName );
+			case cfragImportTooNewErr:  ThrowOSStatusErrName< CFragImportTooNewErr >( errName );
+			case cfragInitLoopErr:      ThrowOSStatusErrName< CFragInitLoopErr     >( errName );
+			case cfragLibConnErr:       ThrowOSStatusErrName< CFragLibConnErr      >( errName );
+			case cfragInitFunctionErr:  ThrowOSStatusErrName< CFragInitFunctionErr >( errName );
+			
+			default:
+				ThrowOSStatus( status );
+		}
+	}
+	
+	void GetDiskFragment( const FSSpec&       file,
+	                      std::size_t         offset,
+	                      std::size_t         length,
+	                      ConstStr63Param     fragName,
+	                      CFragLoadOptions    findFlags,
+	                      CFragConnectionID*  connID,
+	                      SymbolAddressPtr*   mainAddr )
 	{
 		OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		::Ptr tempMainAddr;
+		Str255 errName;
 		
-		ThrowOSStatus
-		(
-			::GetDiskFragment
-			(
-				&file, offset, length, fragName, findFlags, connID, &tempMainAddr, errName
-			)
-		);
+		// This works for all result codes that GetDiskFragment() might throw.
+		// Ideally, it should work for any registered OSStatus, but that would take some work.
+		// It may require substantial modification and extension of the ErrorCode mechanism.
+		
+		ThrowOSStatusErrName( ::GetDiskFragment( &file,
+		                                         offset,
+		                                         length,
+		                                         fragName,
+		                                         findFlags,
+		                                         connID,
+		                                         &tempMainAddr,
+		                                         errName ),
+		                       errName );
 		
 		if ( mainAddr != NULL )
 		{
