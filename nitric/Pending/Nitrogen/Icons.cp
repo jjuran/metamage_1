@@ -11,7 +11,7 @@
 #endif
 
 namespace Nitrogen
-  {
+{
 	
 	Owned< CIconHandle > GetCIcon( ResID iconID )
 	{
@@ -23,13 +23,13 @@ namespace Nitrogen
 		::PlotCIcon( &rect, icon );
 	}
 	
-	IconHandle GetIcon( ResID iconID )
+	PlainIconHandle GetIcon( ResID iconID )
 	{
 		// Returns a resource handle
-		return Handle_Cast< Icon >( Handle( ::GetIcon( iconID ) ) );
+		return Handle_Cast< PlainIcon >( Handle( ::GetIcon( iconID ) ) );
 	}
 	
-	void PlotIcon( const Rect& rect, IconHandle icon )
+	void PlotIcon( const Rect& rect, PlainIconHandle icon )
 	{
 		::PlotIcon( &rect, Handle( icon ) );
 	}
@@ -65,6 +65,40 @@ namespace Nitrogen
 	                    IconSuiteRef       iconSuite )
 	{
 		ThrowOSStatus( ::PlotIconSuite( &rect, align, transform, iconSuite ) );
+	}
+	
+	static void PlotIconHandle_Internal( const Rect&        area,
+	                                     IconAlignmentType  align,
+	                                     IconTransformType  transform,
+	                                     Handle             icon )
+	{
+		ThrowOSStatus( ::PlotIconHandle( &area, align, transform, icon ) );
+	}
+	
+	void PlotIconHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     PlainIconHandle    icon )
+	{
+		PlotIconHandle_Internal( area, align, transform, icon );
+	}
+	
+	void PlotIconHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     MaskedIconHandle   icon )
+	{
+		PlotIconHandle_Internal( area, align, transform, icon );
+	}
+	
+	// The plot sickens...
+	
+	void PlotSICNHandle( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform,
+	                     SmallIconHandle    theSICN )
+	{
+		ThrowOSStatus( ::PlotSICNHandle( &area, align, transform, Handle( theSICN ) ) );
 	}
 	
 	void PlotCIconHandle( const Rect&        rect,
@@ -192,4 +226,5 @@ namespace Nitrogen
       RegisterOSStatus< noIconDataAvailableErr >();
       RegisterOSStatus< afpIconTypeError       >();
      }
-  }
+}
+
