@@ -369,7 +369,8 @@ namespace Nitrogen
    template < class NitrogenUPP, typename NitrogenUPP::ProcPtr procPtr >
    NitrogenUPP StaticUPP()
      {
-      static const Owned<NitrogenUPP> upp = NewUPP<NitrogenUPP>( procPtr );
+      static const Owned<NitrogenUPP> upp = procPtr != NULL ? NewUPP<NitrogenUPP>( procPtr )
+                                                            : Owned<NitrogenUPP>();
       return upp;
      }
      
