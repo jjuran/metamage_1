@@ -73,16 +73,16 @@ namespace Nitrogen
       return result;
      }
 
-	Owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
-	                                         CFStringRef resourceName,
-								                    CFStringRef resourceType,
-								                    CFStringRef subDirName )
+   Owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
+                                            CFStringRef resourceName,
+                                            CFStringRef resourceType,
+                                            CFStringRef subDirName )
      {
-		CFURLRef result = ::CFBundleCopyResourceURL( bundle, resourceName, resourceType, subDirName );
+      CFURLRef result = ::CFBundleCopyResourceURL( bundle, resourceName, resourceType, subDirName );
       if ( result == 0 )
          throw CFBundleCopyResourceURL_Failed();
       return Owned<CFURLRef>::Seize( result );
-	  }
+     }
 
    void *CFBundleGetFunctionPointerForName( CFBundleRef bundle, CFStringRef functionName )
      {

@@ -20,11 +20,6 @@ namespace Nitrogen
    // All of them are intentionally left undefined
    
    class NitrogenOperatorDummyType;
-   
-   void *operator new( std::size_t, NitrogenOperatorDummyType );
-   void operator delete( void *, NitrogenOperatorDummyType );
-   void *operator new[]( std::size_t, NitrogenOperatorDummyType );
-   void operator delete[]( void *, NitrogenOperatorDummyType );
 
    void operator+( NitrogenOperatorDummyType );
    void operator-( NitrogenOperatorDummyType );
@@ -78,11 +73,6 @@ namespace Nitrogen
   {
    namespace Operators
      {
-      using Nitrogen::operator new;
-      using Nitrogen::operator delete;
-      using Nitrogen::operator new[];
-      using Nitrogen::operator delete[];
-
       using Nitrogen::operator+;
       using Nitrogen::operator-;
       using Nitrogen::operator*;

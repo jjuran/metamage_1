@@ -46,8 +46,110 @@ namespace Nitrogen
   {
    void RegisterFileManagerErrors();
 
-   class FSDirIDTag {};
-   typedef IDType< FSDirIDTag, UInt32, 0 > FSDirID;
+   class FSDirID     // A one-off: like IDType< FSDirIDTag, long, 0 >, but sometimes it's signed, sometimes unsigned
+     {
+      private:
+         unsigned long value;
+         
+         // Forbidden constructors, unimplemented:
+            FSDirID(          bool       );
+            FSDirID(          char       );
+            FSDirID(   signed char       );
+            FSDirID(   signed short      );
+            FSDirID(   signed int        );
+            FSDirID(   signed long long  );
+            FSDirID( unsigned char       );
+            FSDirID( unsigned short      );
+            FSDirID( unsigned int        );
+            FSDirID( unsigned long long  );
+            
+         // Forbidden conversions, unimplemented:
+            // CodeWarrior 7 has a bug which allows conversion operators to be called even
+            // when they're private.  So it will give link errors, not compile errors, for these.
+            operator          bool     () const;
+            operator          char     () const;
+            operator   signed char     () const;
+            operator   signed short    () const;
+            operator   signed int      () const;
+            operator   signed long long() const;
+            operator unsigned char     () const;
+            operator unsigned short    () const;
+            operator unsigned int      () const;
+            operator unsigned long long() const;
+
+         // Forbidden comparisons, unimplemented:
+            friend void operator==( FSDirID,          bool      );
+            friend void operator==( FSDirID,          char      );
+            friend void operator==( FSDirID,   signed char      );
+            friend void operator==( FSDirID,   signed short     );
+            friend void operator==( FSDirID,   signed int       );
+            friend void operator==( FSDirID,   signed long long );
+            friend void operator==( FSDirID, unsigned char      );
+            friend void operator==( FSDirID, unsigned short     );
+            friend void operator==( FSDirID, unsigned int       );
+            friend void operator==( FSDirID, unsigned long long );
+
+            friend void operator==(          bool     , FSDirID );
+            friend void operator==(          char     , FSDirID );
+            friend void operator==(   signed char     , FSDirID );
+            friend void operator==(   signed short    , FSDirID );
+            friend void operator==(   signed int      , FSDirID );
+            friend void operator==(   signed long long, FSDirID );
+            friend void operator==( unsigned char     , FSDirID );
+            friend void operator==( unsigned short    , FSDirID );
+            friend void operator==( unsigned int      , FSDirID );
+            friend void operator==( unsigned long long, FSDirID );
+
+            friend void operator!=( FSDirID,          bool      );
+            friend void operator!=( FSDirID,          char      );
+            friend void operator!=( FSDirID,   signed char      );
+            friend void operator!=( FSDirID,   signed short     );
+            friend void operator!=( FSDirID,   signed int       );
+            friend void operator!=( FSDirID,   signed long long );
+            friend void operator!=( FSDirID, unsigned char      );
+            friend void operator!=( FSDirID, unsigned short     );
+            friend void operator!=( FSDirID, unsigned int       );
+            friend void operator!=( FSDirID, unsigned long long );
+
+            friend void operator!=(          bool     , FSDirID );
+            friend void operator!=(          char     , FSDirID );
+            friend void operator!=(   signed char     , FSDirID );
+            friend void operator!=(   signed short    , FSDirID );
+            friend void operator!=(   signed int      , FSDirID );
+            friend void operator!=(   signed long long, FSDirID );
+            friend void operator!=( unsigned char     , FSDirID );
+            friend void operator!=( unsigned short    , FSDirID );
+            friend void operator!=( unsigned int      , FSDirID );
+            friend void operator!=( unsigned long long, FSDirID );
+
+      public:
+         FSDirID()                                             : value( 0 )               {}
+         FSDirID( unsigned long theValue )                     : value( theValue )        {}
+         FSDirID(   signed long theValue )                     : value( static_cast<unsigned long>( theValue ) )        {}
+         
+         operator unsigned long() const                        { return value; }
+         operator   signed long() const                        { return static_cast<signed long>( value ); }
+
+         static FSDirID Make( unsigned long v )                { return FSDirID( v ); }
+         static FSDirID Make(   signed long v )                { return FSDirID( v ); }
+         
+         template < class T > T Get() const;
+         
+         friend bool operator==( FSDirID a, FSDirID b )        { return a.Get<unsigned long>() == b.Get<unsigned long>(); }
+         friend bool operator==( FSDirID a, unsigned long b )  { return a.Get<unsigned long>() == b; }
+         friend bool operator==( unsigned long a, FSDirID b )  { return a == b.Get<unsigned long>(); }
+         friend bool operator==( FSDirID a,   signed long b )  { return a.Get<signed long>() == b; }
+         friend bool operator==(   signed long a, FSDirID b )  { return a == b.Get<signed long>(); }
+
+         friend bool operator!=( FSDirID a, FSDirID b )        { return a.Get<unsigned long>() != b.Get<unsigned long>(); }
+         friend bool operator!=( FSDirID a, unsigned long b )  { return a.Get<unsigned long>() != b; }
+         friend bool operator!=( unsigned long a, FSDirID b )  { return a != b.Get<unsigned long>(); }
+         friend bool operator!=( FSDirID a,   signed long b )  { return a.Get<signed long>() != b; }
+         friend bool operator!=(   signed long a, FSDirID b )  { return a != b.Get<signed long>(); }
+     };
+
+   template <> unsigned long FSDirID::Get<unsigned long>() const  { return value; }
+   template <>   signed long FSDirID::Get<  signed long>() const  { return static_cast<signed long>( value ); }
    
    class FSNodeFlagsTag {};
    typedef FlagType< FSNodeFlagsTag, UInt16, 0 > FSNodeFlags;
@@ -57,12 +159,520 @@ namespace Nitrogen
    
    class FSVolumeRefNumTag {};
    typedef IDType< FSVolumeRefNumTag, ::FSVolumeRefNum, 0 > FSVolumeRefNum;
+
+   class FSSharingFlags  // Another one-off: like FlagType< FSSharingFlagsTag, UInt8, 0 > but with both signs
+     {
+      private:
+         unsigned char value;
+         
+         // Forbidden constructors, unimplemented:
+            FSSharingFlags(          bool      );
+            FSSharingFlags(          char      );
+            FSSharingFlags(   signed short     );
+            FSSharingFlags(   signed long      );
+            FSSharingFlags(   signed long long );
+            FSSharingFlags( unsigned short     );
+            FSSharingFlags( unsigned int       );
+            FSSharingFlags( unsigned long      );
+            FSSharingFlags( unsigned long long );
+            
+         // Forbidden conversions, unimplemented:
+            // CodeWarrior 7 has a bug which allows conversion operators to be called even
+            // when they're private.  So it will give link errors, not compile errors, for these.
+            operator          char     () const;
+            operator   signed short    () const;
+            operator   signed int      () const;
+            operator   signed long     () const;
+            operator   signed long long() const;
+            operator unsigned short    () const;
+            operator unsigned int      () const;
+            operator unsigned long     () const;
+            operator unsigned long long() const;
+
+         // Forbidden comparisons, unimplemented:
+            friend void operator==( FSSharingFlags,          bool      );
+            friend void operator==( FSSharingFlags,          char      );
+            friend void operator==( FSSharingFlags,   signed short     );
+            friend void operator==( FSSharingFlags,   signed long      );
+            friend void operator==( FSSharingFlags,   signed long long );
+            friend void operator==( FSSharingFlags, unsigned short     );
+            friend void operator==( FSSharingFlags, unsigned int       );
+            friend void operator==( FSSharingFlags, unsigned long      );
+            friend void operator==( FSSharingFlags, unsigned long long );
+
+            friend void operator==(          bool     , FSSharingFlags );
+            friend void operator==(          char     , FSSharingFlags );
+            friend void operator==(   signed short    , FSSharingFlags );
+            friend void operator==(   signed long     , FSSharingFlags );
+            friend void operator==(   signed long long, FSSharingFlags );
+            friend void operator==( unsigned short    , FSSharingFlags );
+            friend void operator==( unsigned int      , FSSharingFlags );
+            friend void operator==( unsigned long     , FSSharingFlags );
+            friend void operator==( unsigned long long, FSSharingFlags );
+
+            friend void operator!=( FSSharingFlags,          bool      );
+            friend void operator!=( FSSharingFlags,          char      );
+            friend void operator!=( FSSharingFlags,   signed short     );
+            friend void operator!=( FSSharingFlags,   signed long      );
+            friend void operator!=( FSSharingFlags,   signed long long );
+            friend void operator!=( FSSharingFlags, unsigned short     );
+            friend void operator!=( FSSharingFlags, unsigned int       );
+            friend void operator!=( FSSharingFlags, unsigned long      );
+            friend void operator!=( FSSharingFlags, unsigned long long );
+
+            friend void operator!=(          bool     , FSSharingFlags );
+            friend void operator!=(          char     , FSSharingFlags );
+            friend void operator!=(   signed short    , FSSharingFlags );
+            friend void operator!=(   signed long     , FSSharingFlags );
+            friend void operator!=(   signed long long, FSSharingFlags );
+            friend void operator!=( unsigned short    , FSSharingFlags );
+            friend void operator!=( unsigned int      , FSSharingFlags );
+            friend void operator!=( unsigned long     , FSSharingFlags );
+            friend void operator!=( unsigned long long, FSSharingFlags );
+
+         // Forbidden bitwise operations, unimplemented:
+            friend void operator|( FSSharingFlags,          bool      );
+            friend void operator|( FSSharingFlags,          char      );
+            friend void operator|( FSSharingFlags,   signed short     );
+            friend void operator|( FSSharingFlags,   signed long      );
+            friend void operator|( FSSharingFlags,   signed long long );
+            friend void operator|( FSSharingFlags, unsigned short     );
+            friend void operator|( FSSharingFlags, unsigned int       );
+            friend void operator|( FSSharingFlags, unsigned long      );
+            friend void operator|( FSSharingFlags, unsigned long long );
+
+            friend void operator|(          bool     , FSSharingFlags );
+            friend void operator|(          char     , FSSharingFlags );
+            friend void operator|(   signed short    , FSSharingFlags );
+            friend void operator|(   signed long     , FSSharingFlags );
+            friend void operator|(   signed long long, FSSharingFlags );
+            friend void operator|( unsigned short    , FSSharingFlags );
+            friend void operator|( unsigned int      , FSSharingFlags );
+            friend void operator|( unsigned long     , FSSharingFlags );
+            friend void operator|( unsigned long long, FSSharingFlags );
+
+            friend void operator&( FSSharingFlags,          bool      );
+            friend void operator&( FSSharingFlags,          char      );
+            friend void operator&( FSSharingFlags,   signed short     );
+            friend void operator&( FSSharingFlags,   signed long      );
+            friend void operator&( FSSharingFlags,   signed long long );
+            friend void operator&( FSSharingFlags, unsigned short     );
+            friend void operator&( FSSharingFlags, unsigned int       );
+            friend void operator&( FSSharingFlags, unsigned long      );
+            friend void operator&( FSSharingFlags, unsigned long long );
+
+            friend void operator&(          bool     , FSSharingFlags );
+            friend void operator&(          char     , FSSharingFlags );
+            friend void operator&(   signed short    , FSSharingFlags );
+            friend void operator&(   signed long     , FSSharingFlags );
+            friend void operator&(   signed long long, FSSharingFlags );
+            friend void operator&( unsigned short    , FSSharingFlags );
+            friend void operator&( unsigned int      , FSSharingFlags );
+            friend void operator&( unsigned long     , FSSharingFlags );
+            friend void operator&( unsigned long long, FSSharingFlags );
+
+            friend void operator^( FSSharingFlags,          bool      );
+            friend void operator^( FSSharingFlags,          char      );
+            friend void operator^( FSSharingFlags,   signed short     );
+            friend void operator^( FSSharingFlags,   signed long      );
+            friend void operator^( FSSharingFlags,   signed long long );
+            friend void operator^( FSSharingFlags, unsigned short     );
+            friend void operator^( FSSharingFlags, unsigned int       );
+            friend void operator^( FSSharingFlags, unsigned long      );
+            friend void operator^( FSSharingFlags, unsigned long long );
+
+            friend void operator^(          bool     , FSSharingFlags );
+            friend void operator^(          char     , FSSharingFlags );
+            friend void operator^(   signed short    , FSSharingFlags );
+            friend void operator^(   signed long     , FSSharingFlags );
+            friend void operator^(   signed long long, FSSharingFlags );
+            friend void operator^( unsigned short    , FSSharingFlags );
+            friend void operator^( unsigned int      , FSSharingFlags );
+            friend void operator^( unsigned long     , FSSharingFlags );
+            friend void operator^( unsigned long long, FSSharingFlags );
+
+         // Forbidden bitwise assignments, unimplemented:
+            void operator|=(          bool      );
+            void operator|=(          char      );
+            void operator|=(   signed short     );
+            void operator|=(   signed long      );
+            void operator|=(   signed long long );
+            void operator|=( unsigned short     );
+            void operator|=( unsigned int       );
+            void operator|=( unsigned long      );
+            void operator|=( unsigned long long );
+
+            void operator&=(          bool      );
+            void operator&=(          char      );
+            void operator&=(   signed short     );
+            void operator&=(   signed long      );
+            void operator&=(   signed long long );
+            void operator&=( unsigned short     );
+            void operator&=( unsigned int       );
+            void operator&=( unsigned long      );
+            void operator&=( unsigned long long );
+
+            void operator^=(          bool      );
+            void operator^=(          char      );
+            void operator^=(   signed short     );
+            void operator^=(   signed long      );
+            void operator^=(   signed long long );
+            void operator^=( unsigned short     );
+            void operator^=( unsigned int       );
+            void operator^=( unsigned long      );
+            void operator^=( unsigned long long );
+
+      public:
+         FSSharingFlags()                                                        : value( 0 )    {}
+
+         static FSSharingFlags Make( UInt8 v )                                   { return FSSharingFlags( v ); }
+         static FSSharingFlags Make( SInt8 v )                                   { return FSSharingFlags( static_cast<UInt8>( v ) ); }
+         
+         template < class T > T Get() const;
+         
+         bool operator!() const                                                  { return !value; }
+         FSSharingFlags operator~() const                                        { return static_cast<UInt8>( ~value ); }
+         
+         friend bool operator==( FSSharingFlags a, FSSharingFlags b )            { return a.Get<UInt8>() == b.Get<UInt8>(); }
+         friend bool operator!=( FSSharingFlags a, FSSharingFlags b )            { return a.Get<UInt8>() != b.Get<UInt8>(); }
+
+         friend FSSharingFlags operator|( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.Get<UInt8>() | b.Get<UInt8>() ); }
+         friend FSSharingFlags operator&( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.Get<UInt8>() & b.Get<UInt8>() ); }
+         friend FSSharingFlags operator^( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.Get<UInt8>() ^ b.Get<UInt8>() ); }
+
+         FSSharingFlags& operator|=( FSSharingFlags b )                          { value |= b.Get<UInt8>(); return *this; }
+         FSSharingFlags& operator&=( FSSharingFlags b )                          { value &= b.Get<UInt8>(); return *this; }
+         FSSharingFlags& operator^=( FSSharingFlags b )                          { value ^= b.Get<UInt8>(); return *this; }
+      
+         // Allowed converting constructors:
+            FSSharingFlags(   signed char v )                               : value( static_cast<UInt8>( v ) )  {}
+            FSSharingFlags(   signed int  v )                               : value( static_cast<UInt8>( v ) )  {}
+            FSSharingFlags( unsigned char v )                               : value( static_cast<UInt8>( v ) )  {}
+         
+         // Allowed conversions:
+            operator          bool() const                                  { return value; }
+            operator   signed char() const                                  { return static_cast<SInt8>( value ); }
+            operator unsigned char() const                                  { return value; }
+
+         // Allowed comparisons:
+            friend bool operator==( FSSharingFlags a,   signed char  b )    { return a.Get<SInt8>() == b; }
+            friend bool operator==( FSSharingFlags a,   signed int   b )    { return a.Get<UInt8>() == b; }
+            friend bool operator==( FSSharingFlags a, unsigned char  b )    { return a.Get<UInt8>() == b; }
+
+            friend bool operator==(   signed char  a, FSSharingFlags b )    { return a == b.Get<SInt8>(); }
+            friend bool operator==(   signed int   a, FSSharingFlags b )    { return a == b.Get<UInt8>(); }
+            friend bool operator==( unsigned char  a, FSSharingFlags b )    { return a == b.Get<UInt8>(); }
+
+            friend bool operator!=( FSSharingFlags a,   signed char  b )    { return a.Get<SInt8>() != b; }
+            friend bool operator!=( FSSharingFlags a,   signed int   b )    { return a.Get<UInt8>() != b; }
+            friend bool operator!=( FSSharingFlags a, unsigned char  b )    { return a.Get<UInt8>() != b; }
+
+            friend bool operator!=(   signed char  a, FSSharingFlags b )    { return a != b.Get<SInt8>(); }
+            friend bool operator!=(   signed int   a, FSSharingFlags b )    { return a != b.Get<UInt8>(); }
+            friend bool operator!=( unsigned char  a, FSSharingFlags b )    { return a != b.Get<UInt8>(); }
+
+         // Allowed bitwise operators:
+            friend FSSharingFlags operator|( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.Get<SInt8>() | b ); }
+            friend FSSharingFlags operator|( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.Get<UInt8>() | b ); }
+            friend FSSharingFlags operator|( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.Get<UInt8>() | b ); }
+
+            friend FSSharingFlags operator|(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a | b.Get<SInt8>() ); }
+            friend FSSharingFlags operator|(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a | b.Get<UInt8>() ); }
+            friend FSSharingFlags operator|( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a | b.Get<UInt8>() ); }
+
+            friend FSSharingFlags operator&( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.Get<SInt8>() & b ); }
+            friend FSSharingFlags operator&( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.Get<UInt8>() & b ); }
+            friend FSSharingFlags operator&( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.Get<UInt8>() & b ); }
+
+            friend FSSharingFlags operator&(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a & b.Get<SInt8>() ); }
+            friend FSSharingFlags operator&(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a & b.Get<UInt8>() ); }
+            friend FSSharingFlags operator&( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a & b.Get<UInt8>() ); }
+
+            friend FSSharingFlags operator^( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.Get<SInt8>() ^ b ); }
+            friend FSSharingFlags operator^( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.Get<UInt8>() ^ b ); }
+            friend FSSharingFlags operator^( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.Get<UInt8>() ^ b ); }
+
+            friend FSSharingFlags operator^(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.Get<SInt8>() ); }
+            friend FSSharingFlags operator^(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.Get<UInt8>() ); }
+            friend FSSharingFlags operator^( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.Get<UInt8>() ); }
+
+         // Allowed bitwise assignments:
+            FSSharingFlags& operator|=(   signed char b )     { value |= b; return *this; }
+            FSSharingFlags& operator|=(   signed int  b )     { value |= b; return *this; }
+            FSSharingFlags& operator|=( unsigned char b )     { value |= b; return *this; }
+
+            FSSharingFlags& operator&=(   signed char b )     { value &= b; return *this; }
+            FSSharingFlags& operator&=(   signed int  b )     { value &= b; return *this; }
+            FSSharingFlags& operator&=( unsigned char b )     { value &= b; return *this; }
+
+            FSSharingFlags& operator^=(   signed char b )     { value ^= b; return *this; }
+            FSSharingFlags& operator^=(   signed int  b )     { value ^= b; return *this; }
+            FSSharingFlags& operator^=( unsigned char b )     { value ^= b; return *this; }
+     };
+
+   template <> UInt8 FSSharingFlags::Get<UInt8>() const  { return value; }
+   template <> SInt8 FSSharingFlags::Get<SInt8>() const  { return static_cast<SInt8>( value ); }
+
+   //class FSSharingFlagsTag {};
+   //typedef FlagType< FSSharingFlagsTag, UInt8, 0 > FSSharingFlags;
+   typedef FSSharingFlags FSIOFileAttributes;
+   typedef FSSharingFlags FSIOFlAttrib;
    
-   class FSSharingFlagsTag {};
-   typedef FlagType< FSSharingFlagsTag, UInt8, 0 > FSSharingFlags;
+   class FSUserPrivileges  // Another one-off: like FlagType< FSUserPrivilegesTag, UInt8, 0 > but with both signs
+     {
+      private:
+         unsigned char value;
+         
+         // Forbidden constructors, unimplemented:
+            FSUserPrivileges(          bool      );
+            FSUserPrivileges(          char      );
+            FSUserPrivileges(   signed short     );
+            FSUserPrivileges(   signed long      );
+            FSUserPrivileges(   signed long long );
+            FSUserPrivileges( unsigned short     );
+            FSUserPrivileges( unsigned int       );
+            FSUserPrivileges( unsigned long      );
+            FSUserPrivileges( unsigned long long );
+            
+         // Forbidden conversions, unimplemented:
+            // CodeWarrior 7 has a bug which allows conversion operators to be called even
+            // when they're private.  So it will give link errors, not compile errors, for these.
+            operator          char     () const;
+            operator   signed short    () const;
+            operator   signed int      () const;
+            operator   signed long     () const;
+            operator   signed long long() const;
+            operator unsigned short    () const;
+            operator unsigned int      () const;
+            operator unsigned long     () const;
+            operator unsigned long long() const;
+
+         // Forbidden comparisons, unimplemented:
+            friend void operator==( FSUserPrivileges,          bool      );
+            friend void operator==( FSUserPrivileges,          char      );
+            friend void operator==( FSUserPrivileges,   signed short     );
+            friend void operator==( FSUserPrivileges,   signed long      );
+            friend void operator==( FSUserPrivileges,   signed long long );
+            friend void operator==( FSUserPrivileges, unsigned short     );
+            friend void operator==( FSUserPrivileges, unsigned int       );
+            friend void operator==( FSUserPrivileges, unsigned long      );
+            friend void operator==( FSUserPrivileges, unsigned long long );
+
+            friend void operator==(          bool     , FSUserPrivileges );
+            friend void operator==(          char     , FSUserPrivileges );
+            friend void operator==(   signed short    , FSUserPrivileges );
+            friend void operator==(   signed long     , FSUserPrivileges );
+            friend void operator==(   signed long long, FSUserPrivileges );
+            friend void operator==( unsigned short    , FSUserPrivileges );
+            friend void operator==( unsigned int      , FSUserPrivileges );
+            friend void operator==( unsigned long     , FSUserPrivileges );
+            friend void operator==( unsigned long long, FSUserPrivileges );
+
+            friend void operator!=( FSUserPrivileges,          bool      );
+            friend void operator!=( FSUserPrivileges,          char      );
+            friend void operator!=( FSUserPrivileges,   signed short     );
+            friend void operator!=( FSUserPrivileges,   signed long      );
+            friend void operator!=( FSUserPrivileges,   signed long long );
+            friend void operator!=( FSUserPrivileges, unsigned short     );
+            friend void operator!=( FSUserPrivileges, unsigned int       );
+            friend void operator!=( FSUserPrivileges, unsigned long      );
+            friend void operator!=( FSUserPrivileges, unsigned long long );
+
+            friend void operator!=(          bool     , FSUserPrivileges );
+            friend void operator!=(          char     , FSUserPrivileges );
+            friend void operator!=(   signed short    , FSUserPrivileges );
+            friend void operator!=(   signed long     , FSUserPrivileges );
+            friend void operator!=(   signed long long, FSUserPrivileges );
+            friend void operator!=( unsigned short    , FSUserPrivileges );
+            friend void operator!=( unsigned int      , FSUserPrivileges );
+            friend void operator!=( unsigned long     , FSUserPrivileges );
+            friend void operator!=( unsigned long long, FSUserPrivileges );
+
+         // Forbidden bitwise operations, unimplemented:
+            friend void operator|( FSUserPrivileges,          bool      );
+            friend void operator|( FSUserPrivileges,          char      );
+            friend void operator|( FSUserPrivileges,   signed short     );
+            friend void operator|( FSUserPrivileges,   signed long      );
+            friend void operator|( FSUserPrivileges,   signed long long );
+            friend void operator|( FSUserPrivileges, unsigned short     );
+            friend void operator|( FSUserPrivileges, unsigned int       );
+            friend void operator|( FSUserPrivileges, unsigned long      );
+            friend void operator|( FSUserPrivileges, unsigned long long );
+
+            friend void operator|(          bool     , FSUserPrivileges );
+            friend void operator|(          char     , FSUserPrivileges );
+            friend void operator|(   signed short    , FSUserPrivileges );
+            friend void operator|(   signed long     , FSUserPrivileges );
+            friend void operator|(   signed long long, FSUserPrivileges );
+            friend void operator|( unsigned short    , FSUserPrivileges );
+            friend void operator|( unsigned int      , FSUserPrivileges );
+            friend void operator|( unsigned long     , FSUserPrivileges );
+            friend void operator|( unsigned long long, FSUserPrivileges );
+
+            friend void operator&( FSUserPrivileges,          bool      );
+            friend void operator&( FSUserPrivileges,          char      );
+            friend void operator&( FSUserPrivileges,   signed short     );
+            friend void operator&( FSUserPrivileges,   signed long      );
+            friend void operator&( FSUserPrivileges,   signed long long );
+            friend void operator&( FSUserPrivileges, unsigned short     );
+            friend void operator&( FSUserPrivileges, unsigned int       );
+            friend void operator&( FSUserPrivileges, unsigned long      );
+            friend void operator&( FSUserPrivileges, unsigned long long );
+
+            friend void operator&(          bool     , FSUserPrivileges );
+            friend void operator&(          char     , FSUserPrivileges );
+            friend void operator&(   signed short    , FSUserPrivileges );
+            friend void operator&(   signed long     , FSUserPrivileges );
+            friend void operator&(   signed long long, FSUserPrivileges );
+            friend void operator&( unsigned short    , FSUserPrivileges );
+            friend void operator&( unsigned int      , FSUserPrivileges );
+            friend void operator&( unsigned long     , FSUserPrivileges );
+            friend void operator&( unsigned long long, FSUserPrivileges );
+
+            friend void operator^( FSUserPrivileges,          bool      );
+            friend void operator^( FSUserPrivileges,          char      );
+            friend void operator^( FSUserPrivileges,   signed short     );
+            friend void operator^( FSUserPrivileges,   signed long      );
+            friend void operator^( FSUserPrivileges,   signed long long );
+            friend void operator^( FSUserPrivileges, unsigned short     );
+            friend void operator^( FSUserPrivileges, unsigned int       );
+            friend void operator^( FSUserPrivileges, unsigned long      );
+            friend void operator^( FSUserPrivileges, unsigned long long );
+
+            friend void operator^(          bool     , FSUserPrivileges );
+            friend void operator^(          char     , FSUserPrivileges );
+            friend void operator^(   signed short    , FSUserPrivileges );
+            friend void operator^(   signed long     , FSUserPrivileges );
+            friend void operator^(   signed long long, FSUserPrivileges );
+            friend void operator^( unsigned short    , FSUserPrivileges );
+            friend void operator^( unsigned int      , FSUserPrivileges );
+            friend void operator^( unsigned long     , FSUserPrivileges );
+            friend void operator^( unsigned long long, FSUserPrivileges );
+
+         // Forbidden bitwise assignments, unimplemented:
+            void operator|=(          bool      );
+            void operator|=(          char      );
+            void operator|=(   signed short     );
+            void operator|=(   signed long      );
+            void operator|=(   signed long long );
+            void operator|=( unsigned short     );
+            void operator|=( unsigned int       );
+            void operator|=( unsigned long      );
+            void operator|=( unsigned long long );
+
+            void operator&=(          bool      );
+            void operator&=(          char      );
+            void operator&=(   signed short     );
+            void operator&=(   signed long      );
+            void operator&=(   signed long long );
+            void operator&=( unsigned short     );
+            void operator&=( unsigned int       );
+            void operator&=( unsigned long      );
+            void operator&=( unsigned long long );
+
+            void operator^=(          bool      );
+            void operator^=(          char      );
+            void operator^=(   signed short     );
+            void operator^=(   signed long      );
+            void operator^=(   signed long long );
+            void operator^=( unsigned short     );
+            void operator^=( unsigned int       );
+            void operator^=( unsigned long      );
+            void operator^=( unsigned long long );
+
+      public:
+         FSUserPrivileges()                                                            : value( 0 )    {}
+
+         static FSUserPrivileges Make( UInt8 v )                                       { return FSUserPrivileges( v ); }
+         static FSUserPrivileges Make( SInt8 v )                                       { return FSUserPrivileges( static_cast<UInt8>( v ) ); }
+         
+         template < class T > T Get() const;
+         
+         bool operator!() const                                                        { return !value; }
+         FSUserPrivileges operator~() const                                            { return static_cast<UInt8>( ~value ); }
+         
+         friend bool operator==( FSUserPrivileges a, FSUserPrivileges b )              { return a.Get<UInt8>() == b.Get<UInt8>(); }
+         friend bool operator!=( FSUserPrivileges a, FSUserPrivileges b )              { return a.Get<UInt8>() != b.Get<UInt8>(); }
+
+         friend FSUserPrivileges operator|( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.Get<UInt8>() | b.Get<UInt8>() ); }
+         friend FSUserPrivileges operator&( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.Get<UInt8>() & b.Get<UInt8>() ); }
+         friend FSUserPrivileges operator^( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.Get<UInt8>() ^ b.Get<UInt8>() ); }
+
+         FSUserPrivileges& operator|=( FSUserPrivileges b )                            { value |= b.Get<UInt8>(); return *this; }
+         FSUserPrivileges& operator&=( FSUserPrivileges b )                            { value &= b.Get<UInt8>(); return *this; }
+         FSUserPrivileges& operator^=( FSUserPrivileges b )                            { value ^= b.Get<UInt8>(); return *this; }
+      
+         // Allowed converting constructors:
+            FSUserPrivileges(   signed char v )                               : value( static_cast<UInt8>( v ) )  {}
+            FSUserPrivileges(   signed int  v )                               : value( static_cast<UInt8>( v ) )  {}
+            FSUserPrivileges( unsigned char v )                               : value( static_cast<UInt8>( v ) )  {}
+         
+         // Allowed conversions:
+            operator          bool() const                                    { return value; }
+            operator   signed char() const                                    { return static_cast<SInt8>( value ); }
+            operator unsigned char() const                                    { return value; }
+
+         // Allowed comparisons:
+            friend bool operator==( FSUserPrivileges a,   signed char  b )    { return a.Get<SInt8>() == b; }
+            friend bool operator==( FSUserPrivileges a,   signed int   b )    { return a.Get<UInt8>() == b; }
+            friend bool operator==( FSUserPrivileges a, unsigned char  b )    { return a.Get<UInt8>() == b; }
+
+            friend bool operator==(   signed char  a, FSUserPrivileges b )    { return a == b.Get<SInt8>(); }
+            friend bool operator==(   signed int   a, FSUserPrivileges b )    { return a == b.Get<UInt8>(); }
+            friend bool operator==( unsigned char  a, FSUserPrivileges b )    { return a == b.Get<UInt8>(); }
+
+            friend bool operator!=( FSUserPrivileges a,   signed char  b )    { return a.Get<SInt8>() != b; }
+            friend bool operator!=( FSUserPrivileges a,   signed int   b )    { return a.Get<UInt8>() != b; }
+            friend bool operator!=( FSUserPrivileges a, unsigned char  b )    { return a.Get<UInt8>() != b; }
+
+            friend bool operator!=(   signed char  a, FSUserPrivileges b )    { return a != b.Get<SInt8>(); }
+            friend bool operator!=(   signed int   a, FSUserPrivileges b )    { return a != b.Get<UInt8>(); }
+            friend bool operator!=( unsigned char  a, FSUserPrivileges b )    { return a != b.Get<UInt8>(); }
+
+         // Allowed bitwise operators:
+            friend FSUserPrivileges operator|( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.Get<SInt8>() | b ); }
+            friend FSUserPrivileges operator|( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.Get<UInt8>() | b ); }
+            friend FSUserPrivileges operator|( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.Get<UInt8>() | b ); }
+
+            friend FSUserPrivileges operator|(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.Get<SInt8>() ); }
+            friend FSUserPrivileges operator|(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.Get<UInt8>() ); }
+            friend FSUserPrivileges operator|( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.Get<UInt8>() ); }
+
+            friend FSUserPrivileges operator&( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.Get<SInt8>() & b ); }
+            friend FSUserPrivileges operator&( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.Get<UInt8>() & b ); }
+            friend FSUserPrivileges operator&( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.Get<UInt8>() & b ); }
+
+            friend FSUserPrivileges operator&(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.Get<SInt8>() ); }
+            friend FSUserPrivileges operator&(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.Get<UInt8>() ); }
+            friend FSUserPrivileges operator&( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.Get<UInt8>() ); }
+
+            friend FSUserPrivileges operator^( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.Get<SInt8>() ^ b ); }
+            friend FSUserPrivileges operator^( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.Get<UInt8>() ^ b ); }
+            friend FSUserPrivileges operator^( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.Get<UInt8>() ^ b ); }
+
+            friend FSUserPrivileges operator^(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.Get<SInt8>() ); }
+            friend FSUserPrivileges operator^(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.Get<UInt8>() ); }
+            friend FSUserPrivileges operator^( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.Get<UInt8>() ); }
+
+         // Allowed bitwise assignments:
+            FSUserPrivileges& operator|=(   signed char b )     { value |= b; return *this; }
+            FSUserPrivileges& operator|=(   signed int  b )     { value |= b; return *this; }
+            FSUserPrivileges& operator|=( unsigned char b )     { value |= b; return *this; }
+
+            FSUserPrivileges& operator&=(   signed char b )     { value &= b; return *this; }
+            FSUserPrivileges& operator&=(   signed int  b )     { value &= b; return *this; }
+            FSUserPrivileges& operator&=( unsigned char b )     { value &= b; return *this; }
+
+            FSUserPrivileges& operator^=(   signed char b )     { value ^= b; return *this; }
+            FSUserPrivileges& operator^=(   signed int  b )     { value ^= b; return *this; }
+            FSUserPrivileges& operator^=( unsigned char b )     { value ^= b; return *this; }
+     };
+
+   template <> UInt8 FSUserPrivileges::Get<UInt8>() const  { return value; }
+   template <> SInt8 FSUserPrivileges::Get<SInt8>() const  { return static_cast<SInt8>( value ); }
    
-   class FSUserPrivilegesTag {};
-   typedef FlagType< FSUserPrivilegesTag, UInt8, 0 > FSUserPrivileges;
+   //class FSUserPrivilegesTag {};
+   //typedef FlagType< FSUserPrivilegesTag, UInt8, 0 > FSUserPrivileges;
    typedef FSUserPrivileges FSIOACUser;
 
    class FSIteratorFlagsTag {};
@@ -74,7 +684,7 @@ namespace Nitrogen
    class FSIOPermssnTag {};
    typedef FlagType< FSIOPermssnTag, SInt8, fsCurPerm > FSIOPermssn;
    typedef FSIOPermssn FSIOPermissions;
-    
+   
    class FSIOPosModeTag {};
    typedef SelectorType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
    typedef FSIOPosMode FSIOPositioningMode;

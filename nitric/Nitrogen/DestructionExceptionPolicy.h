@@ -6,6 +6,9 @@
 #ifndef NITROGEN_UNCAUGHTEXCEPTIONCOUNTER_H
 #include "Nitrogen/UncaughtExceptionCounter.h"
 #endif
+#ifndef NITROGEN_THEEXCEPTIONBEINGHANDLED_H
+#include "Nitrogen/TheExceptionBeingHandled.h"
+#endif
 
 
 #ifndef NITROGEN_DESTRUCTION_EXCEPTION_POLICY
@@ -19,14 +22,11 @@
 
 namespace Nitrogen
   {
-   class TheExceptionBeingHandled;
-
-
-   typedef void (*DestructionExceptionHandler)( const TheExceptionBeingHandled& );
+   typedef void (*DestructionExceptionHandler)( TheExceptionBeingHandled );
    
    DestructionExceptionHandler SetDestructionExceptionHandler( DestructionExceptionHandler );
    
-   void HandleDestructionException( const TheExceptionBeingHandled& );
+   void HandleDestructionException( TheExceptionBeingHandled );
    
    
    
@@ -47,7 +47,7 @@ namespace Nitrogen
    class DestructorAlwaysThrows
      {
       public:
-         void HandleDestructionException( const TheExceptionBeingHandled& ) const
+         void HandleDestructionException( TheExceptionBeingHandled ) const
            {
             throw;
            }
@@ -61,7 +61,7 @@ namespace Nitrogen
    class DestructorNeverThrows
      {
       public:
-         void HandleDestructionException( const TheExceptionBeingHandled& exception ) const
+         void HandleDestructionException( TheExceptionBeingHandled exception ) const
            {
             Nitrogen::HandleDestructionException( exception );
            }
@@ -76,7 +76,7 @@ namespace Nitrogen
       class DestructorThrowsWhenNoUncaughtExceptions
         {
          public:
-            void HandleDestructionException( const TheExceptionBeingHandled& ) const;
+            void HandleDestructionException( TheExceptionBeingHandled ) const;
          
             void WarnOfDestructionExceptionRisk() const;
         };
@@ -89,7 +89,7 @@ namespace Nitrogen
             UncaughtExceptionCounter exceptionCounter;
          
          public:
-            void HandleDestructionException( const TheExceptionBeingHandled& ) const;
+            void HandleDestructionException( TheExceptionBeingHandled ) const;
 
             void WarnOfDestructionExceptionRisk() const;
         };

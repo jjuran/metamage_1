@@ -11,17 +11,7 @@
 
 namespace Nitrogen
   {
-   class TheExceptionBeingHandled
-     {
-      private:
-         // not implemented:
-         TheExceptionBeingHandled( const TheExceptionBeingHandled& );
-         TheExceptionBeingHandled& operator=( const TheExceptionBeingHandled& );
-         void operator&() const;
-         
-      public:
-         TheExceptionBeingHandled()  {}
-     };
+   class TheExceptionBeingHandled {};
 
 
    template < class Output >
@@ -34,7 +24,7 @@ namespace Nitrogen
       friend class ExceptionConversionRegistrationLink< Output >;
       
       public:
-         typedef Output (*ConversionFunction)( const TheExceptionBeingHandled& );
+         typedef Output (*ConversionFunction)( TheExceptionBeingHandled );
          
       private:
          typedef std::list< ConversionFunction > List;
@@ -49,7 +39,7 @@ namespace Nitrogen
          ExceptionConverter()
            {}
 
-         Output Convert( const TheExceptionBeingHandled& exception ) const
+         Output Convert( TheExceptionBeingHandled exception ) const
            {
             try
               {
@@ -73,7 +63,7 @@ namespace Nitrogen
             throw;
            }
          
-         Output Convert( const TheExceptionBeingHandled& exception, Output defaultValue ) const
+         Output Convert( TheExceptionBeingHandled exception, Output defaultValue ) const
            {
             try
               {
@@ -135,7 +125,7 @@ namespace Nitrogen
    template < class Output,
               class Exception,
               Output (*convert)( const Exception& ) >
-   Output ConvertTheExceptionBeingHandled( const TheExceptionBeingHandled& )
+   Output ConvertTheExceptionBeingHandled( TheExceptionBeingHandled )
      {
       try
         {
@@ -171,7 +161,7 @@ namespace Nitrogen
      };
 
    template < class Output,
-              Output (*convert)( const TheExceptionBeingHandled& ) >
+              Output (*convert)( TheExceptionBeingHandled ) >
    class ExceptionConversionRegistration< Output, TheExceptionBeingHandled, convert >
      {
       private:
@@ -222,11 +212,11 @@ namespace Nitrogen
              defaultValue( theDefaultValue )
            {}
          
-      Output operator()( const TheExceptionBeingHandled& ) const
+      Output operator()( TheExceptionBeingHandled e ) const
         {
          return hasDefaultValue
-                  ? TheGlobalExceptionConverter< Output >().Convert( TheExceptionBeingHandled(), defaultValue ) 
-                  : TheGlobalExceptionConverter< Output >().Convert( TheExceptionBeingHandled() ); 
+                  ? TheGlobalExceptionConverter< Output >().Convert( e, defaultValue ) 
+                  : TheGlobalExceptionConverter< Output >().Convert( e ); 
         }
      };
   }

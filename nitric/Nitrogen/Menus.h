@@ -22,7 +22,7 @@
 #include "Nitrogen/MacTypes.h"
 #endif
 #ifndef NITROGEN_EVENTS_H
-//#include "Nitrogen/Events.h"
+#include "Nitrogen/Events.h"
 #endif
 #ifndef NITROGEN_QUICKDRAW_H
 #include "Nitrogen/Quickdraw.h"
@@ -34,13 +34,13 @@
 #include "Nitrogen/TextCommon.h"
 #endif
 #ifndef NITROGEN_PROCESSES_H
-//#include "Nitrogen/Processes.h"
+#include "Nitrogen/Processes.h"
 #endif
 #ifndef NITROGEN_APPLEEVENTS_H
 #include "Nitrogen/AppleEvents.h"
 #endif
 #ifndef NITROGEN_COLLECTIONS_H
-//#include "Nitrogen/Collections.h"
+#include "Nitrogen/Collections.h"
 #endif
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
@@ -49,7 +49,7 @@
 #include "Nitrogen/CFString.h"
 #endif
 #ifndef NITROGEN_CFUUID_H
-//#include "Nitrogen/CFUUID.h"
+#include "Nitrogen/CFUUID.h"
 #endif
 
 namespace Nitrogen
@@ -133,16 +133,16 @@ namespace Nitrogen
    
    /* ... */
    
-	MenuItemIndex AppendMenuItemTextWithCFString( MenuRef            inMenu,
-	                                              CFStringRef        inString,
-	                                              MenuItemAttributes inAttributes,
-	                                              MenuCommand        inCommandID );
+   MenuItemIndex AppendMenuItemTextWithCFString( MenuRef            inMenu,
+                                                 CFStringRef        inString,
+                                                 MenuItemAttributes inAttributes,
+                                                 MenuCommand        inCommandID );
 
-	void InsertMenuItemTextWithCFString( MenuRef            inMenu,
-	                                     CFStringRef        inString,
-	                                     MenuItemIndex      inAfterItem,
-	                                     MenuItemAttributes inAttributes,
-	                                     MenuCommand        inCommandID );
+   void InsertMenuItemTextWithCFString( MenuRef            inMenu,
+                                        CFStringRef        inString,
+                                        MenuItemIndex      inAfterItem,
+                                        MenuItemAttributes inAttributes,
+                                        MenuCommand        inCommandID );
 
    /* ... */
    
@@ -155,10 +155,10 @@ namespace Nitrogen
 
    /* ... */
 
-	void ChangeMenuItemAttributes( MenuRef            menu,
-	                               MenuItemIndex      item,
-	                               MenuItemAttributes setTheseAttributes,
-	                               MenuItemAttributes clearTheseAttributes );
+   void ChangeMenuItemAttributes( MenuRef            menu,
+                                  MenuItemIndex      item,
+                                  MenuItemAttributes setTheseAttributes,
+                                  MenuItemAttributes clearTheseAttributes );
 
    /* ... */
    

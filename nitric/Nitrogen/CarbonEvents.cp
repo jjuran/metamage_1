@@ -20,6 +20,28 @@ namespace Nitrogen
       OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::QuitEventLoop( inEventLoop ) );
      }
+   
+   template <>
+   EventRef ReceiveNextEvent< false >( UInt32                inNumTypes,
+                                       const EventTypeSpec * inList,
+                                       EventTimeout          inTimeout )
+     {
+      OnlyOnce< RegisterCarbonEventErrors >();
+      EventRef result;
+      ThrowOSStatus( ::ReceiveNextEvent( inNumTypes, inList, inTimeout, false, &result ) );
+      return result;
+     }
+
+   template <>
+   Owned<EventRef>ReceiveNextEvent< true >( UInt32                inNumTypes,
+                                            const EventTypeSpec * inList,
+                                            EventTimeout          inTimeout )
+     {
+      OnlyOnce< RegisterCarbonEventErrors >();
+      EventRef result;
+      ThrowOSStatus( ::ReceiveNextEvent( inNumTypes, inList, inTimeout, true, &result ) );
+      return Owned<EventRef>::Seize( result );
+     }
 
    Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
@@ -174,6 +196,12 @@ namespace Nitrogen
      {
       OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::SendEventToEventTarget( inEvent, inTarget ) );
+     }
+
+   void ProcessHICommand( const HICommand& inCommand )
+     {
+      OnlyOnce< RegisterCarbonEventErrors >();
+      ThrowOSStatus( ::ProcessHICommand( &inCommand ) );
      }
 
    Owned< EventHotKeyRef > RegisterEventHotKey( UInt32            inHotKeyCode,

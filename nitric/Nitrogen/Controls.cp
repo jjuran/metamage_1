@@ -66,6 +66,53 @@ namespace Nitrogen
       return GetControlData( inControl, inPart, inTagName, 0, 0 );
      }
    
+   bool HandleControlDragTracking( ControlRef          inControl,
+                                   DragTrackingMessage inMessage,
+                                   DragReference       inDrag )
+     {
+      OnlyOnce< RegisterControlManagerErrors >();
+      ::Boolean outLikesDrag;
+      ThrowOSStatus( ::HandleControlDragTracking( inControl, inMessage, inDrag, &outLikesDrag ) );
+      return outLikesDrag;
+     }
+
+   void HandleControlDragReceive( ControlRef    inControl,
+                                  DragReference inDrag )
+     {
+      OnlyOnce< RegisterControlManagerErrors >();
+      ThrowOSStatus( ::HandleControlDragReceive( inControl, inDrag ) );
+     }
+
+   void SetControlDragTrackingEnabled( ControlRef theControl,
+                                       bool       tracks )
+     {
+      OnlyOnce< RegisterControlManagerErrors >();
+      ThrowOSStatus( ::SetControlDragTrackingEnabled( theControl, tracks ) );
+     }
+
+   bool IsControlDragTrackingEnabled( ControlRef theControl )
+     {
+      OnlyOnce< RegisterControlManagerErrors >();
+      ::Boolean tracks;
+      ThrowOSStatus( ::IsControlDragTrackingEnabled( theControl, &tracks ) );
+      return tracks;
+     }
+   
+   void SetAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow,
+                                                         bool      tracks )
+     {
+      OnlyOnce< RegisterControlManagerErrors >();
+      ThrowOSStatus( ::SetAutomaticControlDragTrackingEnabledForWindow( theWindow, tracks ) );
+     }
+  
+   bool IsAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow )
+     {
+      OnlyOnce< RegisterControlManagerErrors >();
+      ::Boolean tracks;
+      ThrowOSStatus( ::IsAutomaticControlDragTrackingEnabledForWindow( theWindow, &tracks ) );
+      return tracks;
+     }
+
    void RegisterControlManagerErrors()
      {
       RegisterOSStatus< memFullErr                   >();

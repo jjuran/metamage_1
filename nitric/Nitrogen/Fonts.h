@@ -19,7 +19,7 @@
 #include "Nitrogen/MacErrors.h"
 #endif
 #ifndef NITROGEN_QUICKDRAW_H
-#include "Nitrogen/Quickdraw.h"
+#include "Nitrogen/QuickDraw.h"
 #endif
 #ifndef NITROGEN_TEXTCOMMON_H
 #include "Nitrogen/TextCommon.h"

@@ -83,10 +83,10 @@ namespace Nitrogen
       typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( inData );
       
       Nitrogen::SetControlData( inControl,
-		                        inPart,
-		                        inTagName,
-		                        Traits::OutputBufferLength( buffer ),
-		                        Traits::OutputBufferStart( buffer ) );
+                              inPart,
+                              inTagName,
+                              Traits::OutputBufferLength( buffer ),
+                              Traits::OutputBufferStart( buffer ) );
       
       Traits::ReleaseOutputBuffer( buffer );
      }
@@ -128,6 +128,27 @@ namespace Nitrogen
       
       return Traits::ProcessInputBuffer( buffer );
      }
+   
+   /* ... */
+   
+   bool HandleControlDragTracking( ControlRef          inControl,
+                                   DragTrackingMessage inMessage,
+                                   DragReference       inDrag );
+
+   void HandleControlDragReceive( ControlRef    inControl,
+                                  DragReference inDrag );
+
+   void SetControlDragTrackingEnabled( ControlRef theControl,
+                                       bool       tracks );
+
+   bool IsControlDragTrackingEnabled( ControlRef theControl );
+
+   void SetAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow,
+                                                         bool      tracks );
+
+   bool IsAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow );
+
+   /* ... */
    
    void RegisterControlManagerErrors();
   }

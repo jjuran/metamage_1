@@ -15,12 +15,13 @@ namespace Nitrogen
    using ::InitCursor;
 
    Point GetPortPenSize( CGrafPtr );
-   using ::SetPortPenSize;
+   inline void SetPortPenSize( CGrafPtr port, Point penSize )     { ::SetPortPenSize( port, penSize ); }
+      // Just a pass-through, but making sure it's not a pascal function, for Pseudoreference.
    
    typedef Pseudoreference< CGrafPtr,
                             Point,
-                            Point (*)( CGrafPtr ),               GetPortPenSize,
-                            pascal void  (*)( CGrafPtr, Point ), SetPortPenSize > PortPenSize;
+                            Point (*)( CGrafPtr ),        GetPortPenSize,
+                            void  (*)( CGrafPtr, Point ), SetPortPenSize > PortPenSize;
   }
 
 #endif

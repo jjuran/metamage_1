@@ -20,7 +20,7 @@ namespace Nitrogen
    
    inline Str255 LongDateString( const LongDateTime& dateTime,
                                  DateForm            longFlag,
-                                 Handle              intlHandle = 0 )
+                                 Handle              intlHandle = Handle() )
      {
       Str255 result;
       ::LongDateString( &dateTime, longFlag, result, intlHandle );
@@ -29,7 +29,7 @@ namespace Nitrogen
 
    inline Str255 LongTimeString( const LongDateTime& dateTime,
                                  bool                wantSeconds,
-                                 Handle              intlHandle  = 0 )
+                                 Handle              intlHandle  = Handle() )
      {
       Str255 result;
       ::LongTimeString( &dateTime, wantSeconds, result, intlHandle );

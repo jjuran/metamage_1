@@ -72,7 +72,7 @@ namespace Nitrogen
          operator ::CFPropertyListRef() const                                                   { return value; }
       
          operator CFTypeRef() const                                                             { return value; }
-         CFTypeRef GetCFTypeRef() const															            { return value; }
+         CFTypeRef GetCFTypeRef() const                                                         { return value; }
          
          friend bool operator==( const CFPropertyListRef& a, const CFPropertyListRef& b )       { return a.Get() == b.Get(); }
          friend bool operator!=( const CFPropertyListRef& a, const CFPropertyListRef& b )       { return a.Get() != b.Get(); }

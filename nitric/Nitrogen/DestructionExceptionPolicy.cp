@@ -6,7 +6,7 @@
 
 namespace Nitrogen
   {
-   static void DefaultDestructionExceptionHandler( const TheExceptionBeingHandled& )
+   static void DefaultDestructionExceptionHandler( TheExceptionBeingHandled )
      {
      }
    
@@ -23,7 +23,7 @@ namespace Nitrogen
       return oldHandler;
      }
    
-   void HandleDestructionException( const TheExceptionBeingHandled& exception )
+   void HandleDestructionException( TheExceptionBeingHandled exception )
      {
       CurrentDestructionExceptionHandler()( exception );
      }
@@ -57,7 +57,7 @@ namespace Nitrogen
    
 
    #ifdef UNCAUGHT_EXCEPTION_EXISTS
-      void DestructorThrowsWhenNoUncaughtExceptions::HandleDestructionException( const TheExceptionBeingHandled& exception ) const
+      void DestructorThrowsWhenNoUncaughtExceptions::HandleDestructionException( TheExceptionBeingHandled exception ) const
         {
          if ( !std::uncaught_exception() )
             throw;
@@ -72,7 +72,7 @@ namespace Nitrogen
    #endif
    
    #ifdef UNCAUGHT_EXCEPTION_COUNT_EXISTS
-      void DestructorThrowsWhenNoNewUncaughtExceptions::HandleDestructionException( const TheExceptionBeingHandled& exception ) const
+      void DestructorThrowsWhenNoNewUncaughtExceptions::HandleDestructionException( TheExceptionBeingHandled exception ) const
         {
          if ( !exceptionCounter.ExceptionHasBeenThrown() )
             throw;

@@ -28,6 +28,19 @@ namespace Nitrogen
 
       typedef T BitwiseForbidden;
       class BitwiseAllowed {};
+      
+      // not implemented:
+         friend bool operator==( UnderlyingType, ComparisonAllowed );
+         friend bool operator==( ComparisonAllowed, UnderlyingType );
+         friend bool operator!=( UnderlyingType, ComparisonAllowed );
+         friend bool operator!=( ComparisonAllowed, UnderlyingType );
+
+         friend UnderlyingType operator&( UnderlyingType, BitwiseAllowed );
+         friend UnderlyingType operator&( BitwiseAllowed, UnderlyingType );
+         friend UnderlyingType operator|( UnderlyingType, BitwiseAllowed );
+         friend UnderlyingType operator|( BitwiseAllowed, UnderlyingType );
+         friend UnderlyingType operator^( UnderlyingType, BitwiseAllowed );
+         friend UnderlyingType operator^( BitwiseAllowed, UnderlyingType );
      };
    
    template < class UnderlyingType, class T >
@@ -92,6 +105,19 @@ namespace Nitrogen
 
       typedef bool BitwiseForbidden;
       class BitwiseAllowed {};
+
+      // not implemented:
+         friend bool operator==( UnderlyingType, ComparisonAllowed );
+         friend bool operator==( ComparisonAllowed, UnderlyingType );
+         friend bool operator!=( UnderlyingType, ComparisonAllowed );
+         friend bool operator!=( ComparisonAllowed, UnderlyingType );
+
+         friend UnderlyingType operator&( UnderlyingType, BitwiseAllowed );
+         friend UnderlyingType operator&( BitwiseAllowed, UnderlyingType );
+         friend UnderlyingType operator|( UnderlyingType, BitwiseAllowed );
+         friend UnderlyingType operator|( BitwiseAllowed, UnderlyingType );
+         friend UnderlyingType operator^( UnderlyingType, BitwiseAllowed );
+         friend UnderlyingType operator^( BitwiseAllowed, UnderlyingType );
      };
    
    template <>

@@ -36,42 +36,42 @@ namespace Nitrogen
       OnlyOnce< RegisterMenuManagerErrors >();
       ThrowOSStatus( ::SetMenuExcludesMarkColumn( menu, excludesMark ) );
      }
-	
-	MenuItemIndex AppendMenuItemTextWithCFString( MenuRef            inMenu,
-	                                              CFStringRef        inString,
-	                                              MenuItemAttributes inAttributes,
-	                                              MenuCommand        inCommandID )
-	  {
+   
+   MenuItemIndex AppendMenuItemTextWithCFString( MenuRef            inMenu,
+                                                 CFStringRef        inString,
+                                                 MenuItemAttributes inAttributes,
+                                                 MenuCommand        inCommandID )
+     {
       OnlyOnce< RegisterMenuManagerErrors >();
-		MenuItemIndex result;
-		ThrowOSStatus ( ::AppendMenuItemTextWithCFString( inMenu, inString, inAttributes, inCommandID, &result ) );
-		return result;
-	  }
+      MenuItemIndex result;
+      ThrowOSStatus ( ::AppendMenuItemTextWithCFString( inMenu, inString, inAttributes, inCommandID, &result ) );
+      return result;
+     }
 
-	void InsertMenuItemTextWithCFString( MenuRef            inMenu,
-	                                     CFStringRef        inString,
-	                                     MenuItemIndex      inAfterItem,
-	                                     MenuItemAttributes inAttributes,
-	                                     MenuCommand        inCommandID )
-	  {
+   void InsertMenuItemTextWithCFString( MenuRef            inMenu,
+                                        CFStringRef        inString,
+                                        MenuItemIndex      inAfterItem,
+                                        MenuItemAttributes inAttributes,
+                                        MenuCommand        inCommandID )
+     {
       OnlyOnce< RegisterMenuManagerErrors >();
-		ThrowOSStatus ( ::InsertMenuItemTextWithCFString( inMenu, inString, inAfterItem, inAttributes, inCommandID ) );
-	  }
+      ThrowOSStatus ( ::InsertMenuItemTextWithCFString( inMenu, inString, inAfterItem, inAttributes, inCommandID ) );
+     }
 
-	void ChangeMenuItemAttributes( MenuRef            menu,
-	                               MenuItemIndex      item,
-	                               MenuItemAttributes setTheseAttributes,
-	                               MenuItemAttributes clearTheseAttributes )
-	  {
+   void ChangeMenuItemAttributes( MenuRef            menu,
+                                  MenuItemIndex      item,
+                                  MenuItemAttributes setTheseAttributes,
+                                  MenuItemAttributes clearTheseAttributes )
+     {
       OnlyOnce< RegisterMenuManagerErrors >();
-		ThrowOSStatus( ::ChangeMenuItemAttributes( menu, item, setTheseAttributes, clearTheseAttributes ) );
-	  }
-	
-	void RegisterMenuManagerErrors()
-	  {
+      ThrowOSStatus( ::ChangeMenuItemAttributes( menu, item, setTheseAttributes, clearTheseAttributes ) );
+     }
+   
+   void RegisterMenuManagerErrors()
+     {
       RegisterOSStatus< paramErr               >();
       RegisterOSStatus< memFullErr             >();
       RegisterOSStatus< resNotFound            >();
-      RegisterOSStatus< hmHelpManagerNotInited >();	   
-	  }
+      RegisterOSStatus< hmHelpManagerNotInited >();
+     }
   }

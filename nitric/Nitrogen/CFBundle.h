@@ -74,10 +74,10 @@ namespace Nitrogen
    /* ... */
    
    class CFBundleCopyResourceURL_Failed {};
-	Owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
-	                                         CFStringRef resourceName,
-								                    CFStringRef resourceType,
-								                    CFStringRef subDirName );
+   Owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
+                                            CFStringRef resourceName,
+                                            CFStringRef resourceType,
+                                            CFStringRef subDirName );
    
    /* ... */
    

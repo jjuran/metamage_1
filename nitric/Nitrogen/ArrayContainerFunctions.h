@@ -22,7 +22,7 @@ namespace Nitrogen
      }
    
    template < class Element, std::size_t size >
-   std::size_t ArraySize( const Element (&array)[size] )
+   std::size_t ArraySize( const Element (&/*array*/)[size] )
      {
       return size;
      }

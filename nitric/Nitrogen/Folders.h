@@ -18,23 +18,15 @@ namespace Nitrogen
    class FolderTypeTag {};
    typedef SelectorType< FolderTypeTag, ::OSType > FolderType;
 
-   class VolumeTypeTag {};
-   typedef SelectorType< VolumeTypeTag, short > VolumeType;
-
-   inline VolumeType OnSystemDisk()        { return VolumeType::Make( kOnSystemDisk      ); }    
-   inline VolumeType OnAppropriateDisk()   { return VolumeType::Make( kOnAppropriateDisk ); }    
-   inline VolumeType SystemDomain()        { return VolumeType::Make( kSystemDomain      ); }    
-   inline VolumeType LocalDomain()         { return VolumeType::Make( kLocalDomain       ); }    
-   inline VolumeType NetworkDomain()       { return VolumeType::Make( kNetworkDomain     ); }    
-   inline VolumeType UserDomain()          { return VolumeType::Make( kUserDomain        ); }    
-   inline VolumeType ClassicDomain()       { return VolumeType::Make( kClassicDomain     ); }    
+   inline FSVolumeRefNum OnSystemDisk()        { return FSVolumeRefNum::Make( kOnSystemDisk      ); }    
+   inline FSVolumeRefNum OnAppropriateDisk()   { return FSVolumeRefNum::Make( kOnAppropriateDisk ); }    
+   inline FSVolumeRefNum SystemDomain()        { return FSVolumeRefNum::Make( kSystemDomain      ); }    
+   inline FSVolumeRefNum LocalDomain()         { return FSVolumeRefNum::Make( kLocalDomain       ); }    
+   inline FSVolumeRefNum NetworkDomain()       { return FSVolumeRefNum::Make( kNetworkDomain     ); }    
+   inline FSVolumeRefNum UserDomain()          { return FSVolumeRefNum::Make( kUserDomain        ); }    
+   inline FSVolumeRefNum ClassicDomain()       { return FSVolumeRefNum::Make( kClassicDomain     ); }    
 
    FSRef FSFindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
-
-   inline FSRef FSFindFolder( VolumeType volume, FolderType folderType, bool createFolder )
-     {
-      return FSFindFolder( FSVolumeRefNum::Make( volume ), folderType, createFolder );
-     }
 
    inline FSRef FSFindFolder( FolderType folderType, bool createFolder )
      {

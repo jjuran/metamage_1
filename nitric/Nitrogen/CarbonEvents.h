@@ -223,7 +223,6 @@ namespace Nitrogen
       function is documented to return one. */
    using ::GetCFRunLoopFromEventLoop;
    
-   /* ... */
    template <>
    struct Disposer< EventRef >: public std::unary_function< EventRef, void >
      {
@@ -233,6 +232,43 @@ namespace Nitrogen
         }
      };
    
+   template < bool inPullEvent > struct ReceiveNextEvent_Traits;
+   
+   template <> struct ReceiveNextEvent_Traits< false >   { typedef EventRef        Result; };
+   template <> struct ReceiveNextEvent_Traits< true  >   { typedef Owned<EventRef> Result; };
+   
+   template < bool inPullEvent >
+   typename ReceiveNextEvent_Traits< inPullEvent >::Result
+   ReceiveNextEvent( UInt32                inNumTypes  = 0,
+                     const EventTypeSpec * inList      = 0,
+                     EventTimeout          inTimeout   = kEventDurationForever );
+   
+   template <>
+   EventRef ReceiveNextEvent< false >( UInt32                inNumTypes,
+                                       const EventTypeSpec * inList,
+                                       EventTimeout          inTimeout );
+
+   template <>
+   Owned<EventRef>ReceiveNextEvent< true >( UInt32                inNumTypes,
+                                            const EventTypeSpec * inList,
+                                            EventTimeout          inTimeout );
+     
+   template < bool inPullEvent, UInt32 inNumTypes >
+   typename ReceiveNextEvent_Traits< inPullEvent >::Result
+   ReceiveNextEvent( const EventTypeSpec (&inList)[ inNumTypes ],
+                     EventTimeout        inTimeout = kEventDurationForever )
+     {
+      return ReceiveNextEvent<inPullEvent>( inNumTypes, inList, inTimeout );
+     }
+
+   template < bool inPullEvent >
+   typename ReceiveNextEvent_Traits< inPullEvent >::Result
+   ReceiveNextEvent( const std::vector<EventTypeSpec>& inList,
+                     EventTimeout                      inTimeout = kEventDurationForever )
+     {
+      return ReceiveNextEvent<inPullEvent>( inList.size(), inList.empty() ? 0 : &inList.front(), inTimeout );
+     }
+
    Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
                                 EventKind         kind,
@@ -328,6 +364,9 @@ namespace Nitrogen
  
    void SetEventTime( EventRef inEvent, EventTime inTime );
 
+   using ::GetCurrentEventQueue;
+   using ::GetMainEventQueue;
+   
    /* ... */
    
    template < UInt32 eventClass, UInt32 eventKind, ::EventParamName paramater >
@@ -2005,9 +2044,17 @@ namespace Nitrogen
 
    void RemoveEventHandler( Owned<EventHandlerRef> inHandlerRef );
 
+   /* ... */
+   
    void SendEventToEventTarget( EventRef inEvent, EventTargetRef inTarget );
    
+   /* ... */
+   
+   void ProcessHICommand( const HICommand& inCommand );
+   
    using ::RunApplicationEventLoop;
+   
+   /* ... */
 
    using ::EventHotKeyRef;
    using ::EventHotKeyID;
