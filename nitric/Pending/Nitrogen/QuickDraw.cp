@@ -33,6 +33,7 @@ namespace Nitrogen
 	{
 		::GrafPtr port;
 		::GetPort( &port );
+		
 		return port;
 	}
 	
@@ -46,6 +47,7 @@ namespace Nitrogen
 		
 		oldPort = GetPort();
 		SetPort( newPort );
+		
 		return oldPort != newPort;
 		
 	#endif
@@ -55,6 +57,7 @@ namespace Nitrogen
 	{
 		CGrafPtr oldPort;
 		bool portChanged = QDSwapPort( newPort, oldPort );
+		
 		return oldPort;
 	}
 	
@@ -62,6 +65,7 @@ namespace Nitrogen
 	{
 		Owned< RgnHandle > result = NewRgn();
 		::GetClip( result.Get() );
+		
 		return result;
 	}
 	
@@ -73,36 +77,32 @@ namespace Nitrogen
 	PenState GetPenState()
 	{
 		PenState penState;
-		GetPenState( &penState );
+		::GetPenState( &penState );
+		
 		return penState;
 	}
 	
 	Rect MacOffsetRect( const Rect& r, short dh, short dv )
 	{
-		return MacSetRect
-		(
-			r.left   + dh, 
-			r.top    + dv, 
-			r.right  + dh, 
-			r.bottom + dv
-		);
+		return MacSetRect( r.left   + dh,
+		                   r.top    + dv,
+		                   r.right  + dh,
+		                   r.bottom + dv );
 	}
 	
 	Rect MacInsetRect( const Rect& r, short dh, short dv )
 	{
-		return MacSetRect
-		(
-			r.left   + dh, 
-			r.top    + dv, 
-			r.right  - dh, 
-			r.bottom - dv
-		);
+		return MacSetRect( r.left   + dh,
+		                   r.top    + dv,
+		                   r.right  - dh,
+		                   r.bottom - dv );
 	}
 	
 	SectRect_Result SectRect( const Rect& a, const Rect& b )
 	{
 		SectRect_Result result;
 		result.intersected = ::SectRect( &a, &b, &result.intersection );
+		
 		return result;
 	}
 	
@@ -110,6 +110,7 @@ namespace Nitrogen
 	{
 		Rect result;
 		::MacUnionRect( &a, &b, &result );
+		
 		return result;
 	}
 	
@@ -388,12 +389,12 @@ namespace Nitrogen
 	// The Pattern-returning functions are not thread-safe.
 	
 	const BitMap&  GetQDGlobalsScreenBits()  { return QDGlobalsVar( ::GetQDGlobalsScreenBits ); }
-	const Cursor&  GetQDGlobalsArrow()       { return QDGlobalsVar( ::GetQDGlobalsArrow ); }
-	const Pattern& GetQDGlobalsDarkGray()    { return QDGlobalsVar( ::GetQDGlobalsDarkGray ); }
-	const Pattern& GetQDGlobalsLightGray()   { return QDGlobalsVar( ::GetQDGlobalsLightGray ); }
-	const Pattern& GetQDGlobalsGray()        { return QDGlobalsVar( ::GetQDGlobalsGray ); }
-	const Pattern& GetQDGlobalsBlack()       { return QDGlobalsVar( ::GetQDGlobalsBlack ); }
-	const Pattern& GetQDGlobalsWhite()       { return QDGlobalsVar( ::GetQDGlobalsWhite ); }
+	const Cursor&  GetQDGlobalsArrow()       { return QDGlobalsVar( ::GetQDGlobalsArrow      ); }
+	const Pattern& GetQDGlobalsDarkGray()    { return QDGlobalsVar( ::GetQDGlobalsDarkGray   ); }
+	const Pattern& GetQDGlobalsLightGray()   { return QDGlobalsVar( ::GetQDGlobalsLightGray  ); }
+	const Pattern& GetQDGlobalsGray()        { return QDGlobalsVar( ::GetQDGlobalsGray       ); }
+	const Pattern& GetQDGlobalsBlack()       { return QDGlobalsVar( ::GetQDGlobalsBlack      ); }
+	const Pattern& GetQDGlobalsWhite()       { return QDGlobalsVar( ::GetQDGlobalsWhite      ); }
 	
 #endif
 	
@@ -438,7 +439,7 @@ namespace Nitrogen
 	
 #if TARGET_API_MAC_OSX
 	
-	// Defined in Nitrogen/CGDirectDisplay.h
+	// Declared in Nitrogen/CGDirectDisplay.h, since it depends on CGDirectDisplayID
 	
 	Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display )
 	{
