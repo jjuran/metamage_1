@@ -597,13 +597,13 @@ namespace Nitrogen
 
 	
 	template < ::DescType type >
-	N::Owned<AEDesc> AECoercePtr(typename N::DescType_Traits< type >::Parameter data, DescType toType)
+	Owned<AEDesc> AECoercePtr(typename DescType_Traits< type >::Parameter data, DescType toType)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		N::Owned<AEDesc> result = AECoercePtr(
+		Owned<AEDesc> result = AECoercePtr(
 			type, 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer ), 
@@ -616,13 +616,13 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	N::Owned<AEDesc> AECreateDesc(typename N::DescType_Traits< type >::Parameter data)
+	Owned<AEDesc> AECreateDesc(typename DescType_Traits< type >::Parameter data)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		N::Owned<AEDesc> desc = AECreateDesc(
+		Owned<AEDesc> desc = AECreateDesc(
 			type, 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
@@ -634,12 +634,12 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	typename N::DescType_Traits< type >::Result AEGetNthPtr(
+	typename DescType_Traits< type >::Result AEGetNthPtr(
 		const AEDescList& listDesc, 
 		long index
 	)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
@@ -659,11 +659,11 @@ namespace Nitrogen
 	
 	template < ::DescType type >
 	void AEPutKeyPtr(
-		N::Owned<AERecord>& record, 
+		Owned<AERecord>& record, 
 		AEKeyword keyword, 
-		typename N::DescType_Traits< type >::Parameter data)
+		typename DescType_Traits< type >::Parameter data)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
@@ -679,12 +679,12 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	typename N::DescType_Traits< type >::Result AEGetKeyPtr(
+	typename DescType_Traits< type >::Result AEGetKeyPtr(
 		const AERecord& record, 
 		AEKeyword keyword
 	)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
@@ -704,11 +704,11 @@ namespace Nitrogen
 	
 	template < ::DescType type >
 	void AEPutParamPtr(
-		N::Owned<AppleEvent>& appleEvent, 
+		Owned<AppleEvent>& appleEvent, 
 		AEKeyword keyword, 
-		typename N::DescType_Traits< type >::Parameter data)
+		typename DescType_Traits< type >::Parameter data)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
@@ -724,12 +724,12 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	typename N::DescType_Traits< type >::Result AEGetParamPtr(
+	typename DescType_Traits< type >::Result AEGetParamPtr(
 		const AppleEvent& appleEvent, 
 		AEKeyword keyword
 	)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
@@ -749,11 +749,11 @@ namespace Nitrogen
 	
 	template < ::DescType type >
 	void AEPutAttributePtr(
-		N::Owned<AppleEvent>& appleEvent, 
+		Owned<AppleEvent>& appleEvent, 
 		AEKeyword keyword, 
-		typename N::DescType_Traits< type >::Parameter data)
+		typename DescType_Traits< type >::Parameter data)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
@@ -769,12 +769,12 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	typename N::DescType_Traits< type >::Result AEGetAttributePtr(
+	typename DescType_Traits< type >::Result AEGetAttributePtr(
 		const AppleEvent& appleEvent, 
 		AEKeyword keyword
 	)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
@@ -793,9 +793,9 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	typename N::DescType_Traits< type >::Result AEGetDescData( const AEDesc& desc )
+	typename DescType_Traits< type >::Result AEGetDescData( const AEDesc& desc )
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
@@ -812,9 +812,9 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	void AEReplaceDescData(typename N::DescType_Traits< type >::Parameter data, AEDesc& result)
+	void AEReplaceDescData(typename DescType_Traits< type >::Parameter data, AEDesc& result)
 	{
-		typedef N::DescType_Traits< type > Traits;
+		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
