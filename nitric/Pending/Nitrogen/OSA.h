@@ -45,7 +45,7 @@ namespace Nitrogen {
 	
 	inline OSType OSAFileType()  { return OSType::Make( kOSAFileType ); }
 	
-	inline AEEventClass OSASuite()  { return OSType::Make( kOSASuite ); }
+	inline AEEventClass OSASuite()  { return AEEventClass::Make( kOSASuite ); }
 	
 	inline OSAID OSANullScript()  { return OSAID::Make( kOSANullScript ); }
 	
