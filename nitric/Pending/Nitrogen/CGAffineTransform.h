@@ -6,7 +6,7 @@
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
 #endif
-#ifndef __CGAFFINETRANSFORM__
+#ifndef CGAFFINETRANSFORM_H_
 #include FRAMEWORK_HEADER(CoreGraphics,CGAffineTransform.h)
 #endif
 #ifndef NITROGEN_CGBASE_H
