@@ -3,6 +3,9 @@
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
 #endif
+#ifndef NITROGEN_ONLYONCE_H
+#include "Nitrogen/OnlyOnce.h"
+#endif
 
 namespace Nitrogen {
 	
