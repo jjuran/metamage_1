@@ -94,18 +94,14 @@ namespace Nitrogen
    typedef SelectorType< RegionCodeTag, ::RegionCode, ::verUS > RegionCode;
    
    class FourCharCodeTag {};
-   typedef SelectorType< FourCharCodeTag, ::FourCharCode, '\?\?\?\?' > FourCharCode;
+   typedef SelectorType< FourCharCodeTag, ::FourCharCode, ::kUnknownType > FourCharCode;
    
    class OSTypeTag {};
-   typedef SelectorType< OSTypeTag, ::OSType, '\?\?\?\?' > OSType;
+   typedef SelectorType< OSTypeTag, ::OSType, ::kUnknownType > OSType;
    
    class ResTypeTag {};
-   typedef SelectorType< ResTypeTag, ::ResType, '\?\?\?\?' > ResType;
+   typedef SelectorType< ResTypeTag, ::ResType, ::kUnknownType > ResType;
 
-   class ResourceIDTag {};
-   typedef IDType< ResourceIDTag, SInt16, 0 > ResourceID;
-   typedef ResourceID ResID;
-   
    typedef bool Boolean;
 
    class StyleTag {};
