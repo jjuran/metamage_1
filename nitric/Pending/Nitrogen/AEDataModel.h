@@ -43,9 +43,6 @@
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
-#ifndef NITROGEN_AEREGISTRY_H
-#include "Nitrogen/AERegistry.h"
-#endif
 
 #include <string>
 
