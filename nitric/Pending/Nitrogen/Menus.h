@@ -140,8 +140,17 @@ namespace Nitrogen
    inline void DisposeMenu( Owned<MenuRef> /* theMenu */ )          {}
    
    using ::CalcMenuSize;
-   using ::CountMenuItems;
-   
+	
+#if TARGET_CPU_68K && TARGET_RT_MAC_CFM
+	
+	inline UInt16 CountMenuItems( MenuRef menu )  { return ::CountMItems( menu ); }
+	
+#else
+	
+	using ::CountMenuItems;
+	
+#endif
+	
    struct MenuFont
      {
       FontID fontID;
@@ -240,7 +249,18 @@ namespace Nitrogen
    /* ... */
 	
 	// 5826
-	inline MenuID GetMenuID( MenuRef menu )  { return MenuID( ::GetMenuID( menu ) ); }
+	inline MenuID GetMenuID( MenuRef menu )
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		return MenuID( ::GetMenuID( menu ) );
+		
+	#else
+		
+		return MenuID( (**menu).menuID );
+		
+	#endif
+	}
 	
    void RegisterMenuManagerErrors();
   }
