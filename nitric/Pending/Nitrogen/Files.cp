@@ -1189,7 +1189,7 @@ namespace Nitrogen
    
    FSPathMakeRef_Result FSPathMakeRef( const std::string& path )
      {
-      return FSPathMakeRef( path.c_str() );
+      return FSPathMakeRef( reinterpret_cast< const UInt8* >( path.c_str() ) );
      }
    
    void RegisterFileManagerErrors()
