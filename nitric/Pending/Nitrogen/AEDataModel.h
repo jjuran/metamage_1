@@ -330,15 +330,22 @@ namespace Nitrogen
 
 	using ::AEDesc;
 	using ::AEDescList;
+	using ::AEAddressDesc;
 	using ::AERecord;
 	using ::AppleEvent;
 	
 	template <>
-	struct Disposer< AEDesc > : public std::unary_function< AEDesc, void > {
+	struct Disposer< AEDesc > : public std::unary_function< AEDesc, void >
+	                            private DefaultDestructionOSStatusPolicy
+	{
 		// parameter can't be const
 		void operator()( AEDesc desc ) const
 		{
-			::AEDisposeDesc( &desc );
+			// AEDisposeDesc() is documented as only ever returning noErr, 
+			// but we check anyway to be future-proof.
+			
+			OnlyOnce< RegisterAppleEventManagerErrors >();
+			DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
 		}
 	};
 	
