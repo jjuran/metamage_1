@@ -77,11 +77,27 @@ namespace Nitrogen
 		}
 	};
 	
+	namespace Private
+	{
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		
+		inline void InvokeVBLUPP( VBLTaskPtr vblTaskPtr, ::TimerUPP userUPP )
+		{
+			::InvokeVBLUPP( vblTaskPtr, userUPP );
+		}
+		
+	#else
+		
+		using ::InvokeVBLUPP;
+		
+	#endif
+	}
+	
 	struct VBLUPP_Details : Basic_UPP_Details< ::VBLUPP,
 	                                           ::VBLProcPtr,
 	                                           ::NewVBLUPP,
 	                                           ::DisposeVBLUPP,
-	                                           ::InvokeVBLUPP >
+	                                           Private::InvokeVBLUPP >
 	{};
 	
 	typedef UPP< VBLUPP_Details > VBLUPP;
@@ -93,11 +109,15 @@ namespace Nitrogen
 	
 	inline void DisposeVBLUPP( Owned< VBLUPP > )  {}
 	
+#if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
+	
 	inline void InvokeVBLUPP( VBLTaskPtr  vblTaskPtr,
 	                          VBLUPP      userUPP )
 	{
 		userUPP( vblTaskPtr );
 	}
+	
+#endif
 	
 	Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot );
 	
