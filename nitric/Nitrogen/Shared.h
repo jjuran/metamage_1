@@ -112,12 +112,27 @@ namespace Nitrogen
          operator const Resource&() const                   { return body; }
 
          bool Sole() const                                  { return share.Sole(); }
+
          Owned<Resource,Disposer> Unshare();
          
          // For people who are used to the lowercase std::auto_ptr members:
             void swap( Shared& s )                          { Swap( s ); }
             const Resource& get() const                     { return Get(); }
      };
+
+   class Unshare_Failed {};
+
+   template < class Resource, class Disposer >
+   Owned<Resource, Disposer> Shared<Resource, Disposer>::Unshare()
+     {
+      if ( !Sole() )
+         throw Unshare_Failed();
+
+      Body released;
+      released.Swap( body );
+
+      return Owned<Resource, Disposer>::Seize( released );
+     }
   }
 
 #endif
