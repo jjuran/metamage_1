@@ -16,7 +16,7 @@
 #include FRAMEWORK_HEADER(HIServices,Processes.h)
 #endif
 
-#if !TARGET_API_MAC_CARBON
+#if CALL_NOT_IN_CARBON
 #ifndef __EPPC__
 #include <EPPC.h>
 #endif
@@ -47,12 +47,8 @@
 #include <string>
 
 
+#ifdef AEPutKeyPtr
 #undef AEPutKeyPtr
-#undef AEPutKeyDesc
-#undef AEGetKeyPtr
-#undef AEGetKeyDesc
-#undef AESizeOfKeyDesc
-#undef AEDeleteKeyDesc
 
 inline OSErr AEPutKeyPtr(
 	AppleEvent *  theAppleEvent,
@@ -64,6 +60,11 @@ inline OSErr AEPutKeyPtr(
 	return AEPutParamPtr(theAppleEvent, theAEKeyword, typeCode, dataPtr, dataSize);
 }
 
+#endif
+
+#ifdef AEPutKeyDesc
+#undef AEPutKeyDesc
+
 inline OSErr AEPutKeyDesc(
 	AppleEvent *    theAppleEvent,
 	AEKeyword       theAEKeyword,
@@ -71,6 +72,11 @@ inline OSErr AEPutKeyDesc(
 {
 	return AEPutParamDesc(theAppleEvent, theAEKeyword, theAEDesc);
 }
+
+#endif
+
+#ifdef AEGetKeyPtr
+#undef AEGetKeyPtr
 
 inline OSErr AEGetKeyPtr(
 	const AppleEvent *  theAppleEvent,
@@ -84,6 +90,11 @@ inline OSErr AEGetKeyPtr(
 	return AEGetParamPtr(theAppleEvent, theAEKeyword, desiredType, typeCode, dataPtr, maximumSize, actualSize);
 }
 
+#endif
+
+#ifdef AEGetKeyDesc
+#undef AEGetKeyDesc
+
 inline OSErr AEGetKeyDesc(
 	const AppleEvent *  theAppleEvent,
 	AEKeyword           theAEKeyword,
@@ -92,6 +103,11 @@ inline OSErr AEGetKeyDesc(
 {
 	return AEGetParamDesc(theAppleEvent, theAEKeyword, desiredType, result);
 }
+
+#endif
+
+#ifdef AESizeOfKeyDesc
+#undef AESizeOfKeyDesc
 
 inline OSErr AESizeOfKeyDesc(
 	const AppleEvent *  theAppleEvent,
@@ -102,12 +118,19 @@ inline OSErr AESizeOfKeyDesc(
 	return AESizeOfParam(theAppleEvent, theAEKeyword, typeCode, dataSize);
 }
 
+#endif
+
+#ifdef AEDeleteKeyDesc
+#undef AEDeleteKeyDesc
+
 inline OSErr AEDeleteKeyDesc(
 	AppleEvent *  theAppleEvent,
 	AEKeyword     theAEKeyword)
 {
 	return AEDeleteParam(theAppleEvent, theAEKeyword);
 }
+
+#endif
 
 
 namespace Nitrogen
@@ -327,7 +350,8 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
    template<> struct DescType_Traits< typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
    template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
-#if !TARGET_API_MAC_CARBON
+   // TargetID is defined for Carbon, but typeTargetID is not.
+#if CALL_NOT_IN_CARBON
    template<> struct DescType_Traits< typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
 #endif
 
