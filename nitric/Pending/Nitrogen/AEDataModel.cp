@@ -9,19 +9,6 @@
 
 namespace Nitrogen {
 	
-	class AEDescEditor
-	{
-		private:
-			Owned<AEDesc>& desc;
-			AEDesc workingCopy;
-		public:
-			AEDescEditor( Owned<AEDesc>& desc ) : desc( desc ), workingCopy( desc.Release() )  {}
-			~AEDescEditor()  { desc = Owned<AEDesc>::Seize( workingCopy ); }
-			
-			AEDesc& Get()  { return workingCopy; }
-			operator AEDesc&()  { return Get(); }
-	};
-	
 	void RegisterAppleEventManagerErrors()
 	{
 		RegisterOSStatus< paramErr                  >();
@@ -67,6 +54,82 @@ namespace Nitrogen {
 		RegisterOSStatus< errAEEmptyListContainer   >();
 		RegisterOSStatus< errAEUnknownObjectType    >();
 		RegisterOSStatus< errAERecordingIsAlreadyOn >();
+	}
+	
+	class AEDescEditor
+	{
+		private:
+			Owned< AEDesc >& desc;
+			AEDesc workingCopy;
+		public:
+			AEDescEditor( Owned< AEDesc >& desc ) : desc( desc ), workingCopy( desc.Release() )  {}
+			~AEDescEditor()  { desc = Owned< AEDesc >::Seize( workingCopy ); }
+			
+			AEDesc& Get()  { return workingCopy; }
+			operator AEDesc&()  { return Get(); }
+	};
+	
+	AECoercionHandler::AECoercionHandler()
+	:
+		fromType(),
+		toType(),
+		handler(),
+		handlerRefCon(),
+		fromTypeIsDesc(),
+		isSysHandler()
+	{}
+	
+	bool operator==( const AECoercionHandler& a, const AECoercionHandler& b )
+	{
+		return a.handler        == b.handler
+		    && a.handlerRefCon  == b.handlerRefCon
+		    && a.fromType       == b.fromType
+		    && a.toType         == b.toType
+		    && a.fromTypeIsDesc == b.fromTypeIsDesc
+		    && a.isSysHandler   == b.isSysHandler;
+	}
+	
+	Owned< AECoercionHandler > AEInstallCoercionHandler( const AECoercionHandler& toInstall )
+	{
+		ThrowOSStatus
+		(
+			::AEInstallCoercionHandler
+			(
+				toInstall.fromType, 
+				toInstall.toType, 
+				toInstall.handler, 
+				toInstall.handlerRefCon, 
+				toInstall.fromTypeIsDesc,
+				toInstall.isSysHandler
+			)
+		);
+	}
+	
+	AECoercionHandler AEGetCoercionHandler
+	(
+		DescType fromType,
+		DescType toType,
+		bool isSysHandler
+	)
+	{
+		::AECoercionHandlerUPP handler;
+		long handlerRefCon;
+		::Boolean fromTypeIsDesc;
+		
+		ThrowOSStatus
+		(
+			::AEGetCoercionHandler
+			(
+				fromType,
+				toType,
+				&handler,
+				&handlerRefCon,
+				&fromTypeIsDesc,
+				isSysHandler
+			)
+		);
+		
+		return AECoercionHandler( fromType, toType, handler, handlerRefCon, fromTypeIsDesc, isSysHandler );
 	}
 	
 	Owned< AEDesc > AECoercePtr( DescType typeCode, const void* dataPtr, Size dataSize, DescType toType )

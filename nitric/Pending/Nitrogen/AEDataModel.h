@@ -138,6 +138,9 @@ namespace Nitrogen
 	
 	void RegisterAppleEventManagerErrors();
 	
+	#pragma mark -
+	#pragma mark ¥ DescType ¥
+	
    template < ::DescType > struct DescType_Traits;
       /*
          The DescType_Traits are used according to these formulas:
@@ -351,11 +354,15 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
    template<> struct DescType_Traits< typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
    template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
+   
    // TargetID is defined for Carbon, but typeTargetID is not.
 #if CALL_NOT_IN_CARBON
    template<> struct DescType_Traits< typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
 #endif
-
+	
+	#pragma mark -
+	#pragma mark ¥ AEDesc ¥
+	
 	using ::AEDesc;
 	using ::AEDescList;
 	using ::AEAddressDesc;
@@ -389,27 +396,326 @@ namespace Nitrogen
 			return result;
 		}
 	};
-  	
-	struct GetNthPtr_Result {
-		::AEKeyword keyword;
-		::DescType typeCode;
-		::Size actualSize;
-		
-		GetNthPtr_Result() : keyword(), typeCode(), actualSize() {}
-		GetNthPtr_Result(AEKeyword keyword, DescType typeCode, ::Size actualSize) 
-		  : keyword(keyword), typeCode(typeCode), actualSize(actualSize)  {}
+	
+	#pragma mark -
+	#pragma mark ¥ Coercions ¥
+	
+	struct AECoerceDescUPP_Details: Basic_UPP_Details< ::AECoerceDescUPP,
+	                                                   ::AECoerceDescProcPtr,
+	                                                   ::NewAECoerceDescUPP,
+	                                                   ::DisposeAECoerceDescUPP,
+	                                                   ::InvokeAECoerceDescUPP >
+	{};
+	
+	struct AECoercePtrUPP_Details: Basic_UPP_Details< ::AECoercePtrUPP,
+	                                                  ::AECoercePtrProcPtr,
+	                                                  ::NewAECoercePtrUPP,
+	                                                  ::DisposeAECoercePtrUPP,
+	                                                  ::InvokeAECoercePtrUPP >
+	{};
+	
+	typedef UPP< AECoerceDescUPP_Details > AECoerceDescUPP;
+	typedef UPP< AECoercePtrUPP_Details  > AECoercePtrUPP;
+	
+	inline Owned< AECoerceDescUPP > NewAECoerceDescUPP( ::AECoerceDescProcPtr p )
+	{
+		return NewUPP< AECoerceDescUPP >( p );
+	}
+	
+	inline Owned< AECoercePtrUPP > NewAECoercePtrUPP( ::AECoercePtrProcPtr p )
+	{
+		return NewUPP< AECoercePtrUPP >( p );
+	}
+	
+	inline void DisposeAECoerceDescUPP( Owned< AECoerceDescUPP > )  {}
+	inline void DisposeAECoercePtrUPP ( Owned< AECoercePtrUPP  > )  {}
+	
+	inline void InvokeAECoerceDescUPP( const AEDesc& fromDesc,
+	                                   DescType toType,
+	                                   RefCon handlerRefCon,
+	                                   AEDesc& toDesc, 
+	                                   AECoerceDescUPP userUPP )
+	{
+		ThrowOSStatus( userUPP( &fromDesc, toType, handlerRefCon, &toDesc ) );
+	}
+	
+	inline void InvokeAECoercePtrUPP( DescType typeCode,
+	                                  const void* dataPtr,
+	                                  std::size_t dataSize,
+	                                  DescType toType,
+	                                  RefCon handlerRefCon,
+	                                  AEDesc& toDesc, 
+	                                  AECoercePtrUPP userUPP )
+	{
+		ThrowOSStatus( userUPP( typeCode, dataPtr, dataSize, toType, handlerRefCon, &toDesc ) );
+	}
+	
+	struct AECoercionHandlerUPP : AECoerceDescUPP
+	{
+		AECoercionHandlerUPP()  {}
+		AECoercionHandlerUPP( ::AECoerceDescUPP p ) : AECoerceDescUPP( p )  {}
+		AECoercionHandlerUPP( ::AECoercePtrUPP p )  : AECoerceDescUPP( reinterpret_cast< ::AECoerceDescUPP >( p ) )  {}
 	};
 	
-	struct AEDescInfo {
+	struct AECoercionHandler
+	{
+		DescType               fromType;
+		DescType               toType;
+		AECoercionHandlerUPP   handler;
+		RefCon                 handlerRefCon;
+		bool                   fromTypeIsDesc;
+		bool                   isSysHandler;
+		
+		AECoercionHandler();
+		
+		AECoercionHandler( DescType             fromType,
+		                   DescType             toType,
+		                   AECoercionHandlerUPP handler,
+		                   RefCon               handlerRefCon,
+		                   bool                 fromTypeIsDesc,
+		                   bool                 isSysHandler )
+		: 
+			fromType( fromType ),
+			toType( toType ),
+			handler( handler ),
+			handlerRefCon( handlerRefCon ),
+			fromTypeIsDesc( fromTypeIsDesc ),
+			isSysHandler( isSysHandler )
+		{}
+		
+		AECoercionHandler( DescType        fromType,
+		                   DescType        toType,
+		                   AECoerceDescUPP handler,
+		                   RefCon          handlerRefCon,
+		                   bool            isSysHandler )
+		: 
+			fromType( fromType ),
+			toType( toType ),
+			handler( handler ),
+			handlerRefCon( handlerRefCon ),
+			fromTypeIsDesc( true ),
+			isSysHandler( isSysHandler )
+		{}
+		
+		AECoercionHandler( DescType       fromType,
+		                   DescType       toType,
+		                   AECoercePtrUPP handler,
+		                   RefCon         handlerRefCon,
+		                   bool           isSysHandler )
+		: 
+			fromType( fromType ),
+			toType( toType ),
+			handler( handler ),
+			handlerRefCon( handlerRefCon ),
+			fromTypeIsDesc( false ),
+			isSysHandler( isSysHandler )
+		{}
+	};
+	
+	bool operator==( const AECoercionHandler& a, const AECoercionHandler& b );
+	
+	inline bool operator!=( const AECoercionHandler& a, const AECoercionHandler& b )
+	{
+		return !( a == b );
+	}
+	
+	template <>
+	struct Disposer< AECoercionHandler > : public std::unary_function< AECoercionHandler, void >,
+	                                       private DefaultDestructionOSStatusPolicy
+	{
+		void operator()( const AECoercionHandler& installation ) const
+		{
+			DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus
+			(
+				::AERemoveCoercionHandler( installation.fromType,
+				                           installation.toType,
+				                           installation.handler,
+				                           installation.isSysHandler )
+			);
+		}
+	};
+	
+	typedef Owned< AEDesc > ( *AECoerceDescProcPtr )( const AEDesc& fromDesc, DescType toType, RefCon refCon );
+	typedef Owned< AEDesc > ( *AECoercePtrProcPtr )( DescType typeCode, const void* dataPtr, std::size_t datasize, DescType toType, RefCon refCon );
+	
+	template < AECoerceDescProcPtr handler >
+	struct Adapt_AECoerceDesc
+	{
+		static pascal OSErr ToCallback( const AEDesc* fromDesc, ::DescType toType, long refCon, AEDesc* result )
+		{
+			try
+			{
+				*result = handler( *fromDesc, toType, refCon ).Release();
+			}
+			catch ( OSStatus err )
+			{
+				return err.Get();
+			}
+			return noErr;
+		}
+	};
+	
+	template < AECoercePtrProcPtr handler >
+	struct Adapt_AECoercePtr
+	{
+		static pascal OSErr ToCallback( ::DescType typeCode, const void* dataPtr, ::Size datasize, ::DescType toType, long refCon, AEDesc* result )
+		{
+			try
+			{
+				*result = handler( typeCode, dataPtr, dataSize, toType, refCon ).Release();
+			}
+			catch ( OSStatus err )
+			{
+				return err.Get();
+			}
+			return noErr;
+		}
+	};
+	
+	// 388
+	Owned< AECoercionHandler > AEInstallCoercionHandler( const AECoercionHandler& toInstall );
+	
+	inline Owned< AECoercionHandler > AEInstallCoercionHandler
+	(
+		DescType fromType, 
+		DescType toType, 
+		AECoerceDescUPP handler, 
+		RefCon handlerRefCon = RefCon(), 
+		Boolean isSysHandler = false
+	)
+	{
+		return AEInstallCoercionHandler
+		(
+			AECoercionHandler( fromType, toType, handler, handlerRefCon, isSysHandler )
+		);
+	}
+	
+	inline Owned< AECoercionHandler > AEInstallCoercionHandler
+	(
+		DescType fromType, 
+		DescType toType, 
+		AECoercePtrUPP handler, 
+		RefCon handlerRefCon = RefCon(), 
+		Boolean isSysHandler = false
+	)
+	{
+		return AEInstallCoercionHandler
+		(
+			AECoercionHandler( fromType, toType, handler, handlerRefCon, isSysHandler )
+		);
+	}
+	
+	template < typename AECoerceDescUPP::ProcPtr handler >
+	Owned< AECoercionHandler > AEInstallCoercionHandler
+	(
+		DescType fromType, 
+		DescType toType, 
+		RefCon handlerRefCon = RefCon(), 
+		Boolean isSysHandler = false
+	)
+	{
+		return AEInstallCoercionHandler
+		(
+			AECoercionHandler
+			(
+				fromType, 
+				toType, 
+				StaticUPP< AECoerceDescUPP, handler >(), 
+				handlerRefCon, 
+				isSysHandler
+			)
+		);
+	}
+	
+	template < typename AECoercePtrUPP::ProcPtr handler >
+	Owned< AECoercionHandler > AEInstallCoercionHandler
+	(
+		DescType fromType, 
+		DescType toType, 
+		RefCon handlerRefCon = RefCon(), 
+		Boolean isSysHandler = false
+	)
+	{
+		return AEInstallCoercionHandler
+		(
+			AECoercionHandler
+			(
+				fromType, 
+				toType, 
+				StaticUPP< AECoercePtrUPP, handler >(), 
+				handlerRefCon, 
+				isSysHandler
+			)
+		);
+	}
+	
+	template < AECoerceDescProcPtr handler >
+	Owned< AECoercionHandler > AEInstallCoercionHandler
+	(
+		DescType fromType, 
+		DescType toType, 
+		RefCon handlerRefCon = RefCon(), 
+		Boolean isSysHandler = false
+	)
+	{
+		return AEInstallCoercionHandler< Adapt_AECoerceDesc< handler >::ToCallback >
+		(
+			fromType, 
+			toType, 
+			handlerRefCon, 
+			isSysHandler
+		);
+	}
+	
+	template < AECoercePtrProcPtr handler >
+	Owned< AECoercionHandler > AEInstallCoercionHandler
+	(
+		DescType fromType, 
+		DescType toType, 
+		RefCon handlerRefCon = RefCon(), 
+		Boolean isSysHandler = false
+	)
+	{
+		return AEInstallCoercionHandler< Adapt_AECoercePtr< handler >::ToCallback >
+		(
+			fromType, 
+			toType, 
+			handlerRefCon, 
+			isSysHandler
+		);
+	}
+	
+	// 406
+	inline void AERemoveCoercionHandler( Owned< AECoercionHandler > )  {}
+	
+	typedef AECoercionHandler AEGetCoercionHandler_Result;
+	AECoercionHandler AEGetCoercionHandler
+	(
+		DescType fromType,
+		DescType toType,
+		bool isSysHandler
+	);
+	
+	// 444
+	Owned< AEDesc > AECoercePtr(DescType typeCode, const void* dataPtr, Size dataSize, DescType toType);
+	
+	// 461
+	Owned< AEDesc > AECoerceDesc(const AEDesc& desc, DescType toType);
+	
+	#pragma mark -
+	#pragma mark ¥ AEDescs ¥
+	
+	struct AEDesc_Info
+	{
 		::DescType typeCode;
 		::Size dataSize;
 		
-		AEDescInfo() : typeCode(), dataSize() {}
-		AEDescInfo(DescType typeCode, ::Size dataSize) : typeCode(typeCode), dataSize(dataSize)  {}
+		AEDesc_Info() : typeCode(), dataSize() {}
+		AEDesc_Info(DescType typeCode, ::Size dataSize) : typeCode(typeCode), dataSize(dataSize)  {}
 		
 		operator ::Size() const  { return dataSize; }
 	};
-	typedef AEDescInfo 
+	typedef AEDesc_Info 
 		AESizeOfNthItem_Result, 
 		AESizeOfKeyDesc_Result, 
 		AEGetKeyPtr_Result, 
@@ -418,13 +724,7 @@ namespace Nitrogen
 		AEGetParamPtr_Result, 
 		AEGetAttributePtr_Result;
 
-	
-	void RegisterAppleEventManagerErrors();
-	
-	Owned< AEDesc > AECoercePtr(DescType typeCode, const void* dataPtr, Size dataSize, DescType toType);
-	
-	Owned< AEDesc > AECoerceDesc(const AEDesc& desc, DescType toType);
-	
+	// 484
 	inline Owned< AEDesc > AEInitializeDesc()
 	{
 		return Owned< AEDesc >::Seize( Make< AEDesc >() );
@@ -447,6 +747,9 @@ namespace Nitrogen
 	
 	Owned< AEDesc > AEDuplicateDesc( const AEDesc& desc );
 	
+	#pragma mark -
+	#pragma mark ¥ AEDescLists ¥
+	
 	Owned< AEDesc > AECreateList(bool isRecord);
 	Owned< AEDesc > AECreateList(const void* factoringPtr, std::size_t factoredSize, bool isRecord);
 	
@@ -466,6 +769,17 @@ namespace Nitrogen
 	
 	void AEPutDesc(        AEDescList  & list, long index, const AEDesc& desc );
 	void AEPutDesc( Owned< AEDescList >& list, long index, const AEDesc& desc );
+	
+	struct GetNthPtr_Result
+	{
+		::AEKeyword keyword;
+		::DescType typeCode;
+		::Size actualSize;
+		
+		GetNthPtr_Result() : keyword(), typeCode(), actualSize() {}
+		GetNthPtr_Result(AEKeyword keyword, DescType typeCode, ::Size actualSize) 
+		  : keyword(keyword), typeCode(typeCode), actualSize(actualSize)  {}
+	};
 	
 	GetNthPtr_Result AEGetNthPtr(
 		const AEDesc& listDesc, 
@@ -492,6 +806,9 @@ namespace Nitrogen
 	
 	void AEDeleteItem(        AEDescList  & listDesc, long index );
 	void AEDeleteItem( Owned< AEDescList >& listDesc, long index );
+	
+	#pragma mark -
+	#pragma mark ¥ AERecords ¥
 	
 	inline bool AECheckIsRecord( const AEDesc& theDesc )
 	{
@@ -547,6 +864,9 @@ namespace Nitrogen
 	
 	void AEDeleteKeyDesc(        AERecord  & record, AEKeyword keyword );
 	void AEDeleteKeyDesc( Owned< AERecord >& record, AEKeyword keyword );
+	
+	#pragma mark -
+	#pragma mark ¥ AppleEvents ¥
 	
 	Owned< AppleEvent > AECreateAppleEvent(
 		AEEventClass eventClass, 
@@ -644,6 +964,9 @@ namespace Nitrogen
 		AEKeyword keyword
 	);
 	
+	#pragma mark -
+	#pragma mark ¥ Opaque data ¥
+	
 	void AEGetDescData( const AEDesc& desc, void* dataPtr, std::size_t maximumSize );
 	
 	inline std::size_t AEGetDescDataSize( const AEDesc& desc )
@@ -665,6 +988,40 @@ namespace Nitrogen
 		Owned< AEDesc >& result
 	);
 	
+	
+	#pragma mark -
+	#pragma mark ¥ AEEventHandlerUPP ¥
+	
+   struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
+                                                        ::AEEventHandlerProcPtr,
+                                                        ::NewAEEventHandlerUPP,
+                                                        ::DisposeAEEventHandlerUPP,
+                                                        ::InvokeAEEventHandlerUPP >
+     {};
+   
+   typedef UPP< AEEventHandlerUPP_Details > AEEventHandlerUPP;
+   
+   //using ::AEEventHandlerProcPtr;
+   
+   inline Owned< AEEventHandlerUPP > NewAEEventHandlerUPP( ::AEEventHandlerProcPtr p )
+     {
+      return NewUPP< AEEventHandlerUPP >( p );
+     }
+
+   inline void DisposeAEEventHandlerUPP( Owned< AEEventHandlerUPP > )
+     {
+     }
+   
+   inline void InvokeAEEventHandlerUPP( const AppleEvent& theAppleEvent,
+                                        AppleEvent& reply,
+                                        RefCon handlerRefCon,
+                                        AEEventHandlerUPP userUPP )
+     {
+      ThrowOSStatus( userUPP( &theAppleEvent, &reply, handlerRefCon ) );
+     }
+	
+	#pragma mark -
+	#pragma mark ¥ Powered by DescType_Traits ¥
 	
 	template < ::DescType type >
 	Owned< AEDesc > AECoercePtr(typename DescType_Traits< type >::Parameter data, DescType toType)
@@ -1019,35 +1376,8 @@ namespace Nitrogen
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
-
- 
-   struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
-                                                        ::AEEventHandlerProcPtr,
-                                                        ::NewAEEventHandlerUPP,
-                                                        ::DisposeAEEventHandlerUPP,
-                                                        ::InvokeAEEventHandlerUPP >
-     {};
-   
-   typedef UPP< AEEventHandlerUPP_Details > AEEventHandlerUPP;
-   
-   using ::AEEventHandlerProcPtr;
-   
-   inline Owned< AEEventHandlerUPP > NewAEEventHandlerUPP( AEEventHandlerProcPtr p )
-     {
-      return NewUPP< AEEventHandlerUPP >( p );
-     }
-
-   inline void DisposeAEEventHandlerUPP( Owned< AEEventHandlerUPP > )
-     {
-     }
-   
-   inline void InvokeAEEventHandlerUPP( const AppleEvent& theAppleEvent,
-                                        AppleEvent& reply,
-                                        RefCon handlerRefCon,
-                                        AEEventHandlerUPP userUPP )
-     {
-      ThrowOSStatus( userUPP( &theAppleEvent, &reply, handlerRefCon ) );
-     }
-  }
+	
+	
+}
 
 #endif
