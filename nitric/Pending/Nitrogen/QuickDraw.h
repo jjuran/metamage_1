@@ -28,64 +28,13 @@ namespace Nitrogen
   {
 	
 	#pragma mark -
-	#pragma mark ¥ Transfer modes ¥
+	#pragma mark ¥ Types ¥
 	
 	class TransferMode_Tag {};
 	typedef FlagType< TransferMode_Tag, ::SInt16 > TransferMode;
 	
-	inline TransferMode SrcCopy()             { return TransferMode::Make( srcCopy );       }
-	inline TransferMode SrcOr()               { return TransferMode::Make( srcOr );         }
-	inline TransferMode SrcXor()              { return TransferMode::Make( srcXor );        }
-	inline TransferMode SrcBic()              { return TransferMode::Make( srcBic );        }
-	inline TransferMode NotSrcCopy()          { return TransferMode::Make( notSrcCopy );    }
-	inline TransferMode NotSrcOr()            { return TransferMode::Make( notSrcOr );      }
-	inline TransferMode NotSrcXor()           { return TransferMode::Make( notSrcXor );     }
-	inline TransferMode NotSrcBic()           { return TransferMode::Make( notSrcBic );     }
-	
-	inline TransferMode PatCopy()             { return TransferMode::Make( patCopy );       }
-	inline TransferMode PatOr()               { return TransferMode::Make( patOr );         }
-	inline TransferMode PatXor()              { return TransferMode::Make( patXor );        }
-	inline TransferMode PatBic()              { return TransferMode::Make( patBic );        }
-	inline TransferMode NotPatCopy()          { return TransferMode::Make( notPatCopy );    }
-	inline TransferMode NotPatOr()            { return TransferMode::Make( notPatOr );      }
-	inline TransferMode NotPatXor()           { return TransferMode::Make( notPatXor );     }
-	inline TransferMode NotPatBic()           { return TransferMode::Make( notPatBic );     }
-	
-	inline TransferMode GrayishTextOr()       { return TransferMode::Make( grayishTextOr ); }
-	inline TransferMode Hilite()              { return TransferMode::Make( hilite );        }
-	inline TransferMode Hilitetransfermode()  { return TransferMode::Make( hilite );        }  // dup
-	
-	inline TransferMode Blend()               { return TransferMode::Make( blend );         }
-	inline TransferMode AddPin()              { return TransferMode::Make( addPin );        }
-	inline TransferMode AddOver()             { return TransferMode::Make( addOver );       }
-	inline TransferMode SubPin()              { return TransferMode::Make( subPin );        }
-	inline TransferMode AddMax()              { return TransferMode::Make( addMax );        }
-	inline TransferMode AdMax()               { return TransferMode::Make( addMax );        }  // dup
-	inline TransferMode SubOver()             { return TransferMode::Make( subOver );       }
-	inline TransferMode AdMin()               { return TransferMode::Make( adMin );         }
-	inline TransferMode DitherCopy()          { return TransferMode::Make( ditherCopy );    }
-	inline TransferMode Transparent()         { return TransferMode::Make( transparent );   }
-	
-	#pragma mark -
-	#pragma mark ¥ Cursors ¥
-	
-	inline ResID IBeamCursor()  { return ResID::Make( iBeamCursor ); }
-	inline ResID CrossCursor()  { return ResID::Make( crossCursor ); }
-	inline ResID PlusCursor()   { return ResID::Make( plusCursor );  }
-	inline ResID WatchCursor()  { return ResID::Make( watchCursor ); }
-	
-	#pragma mark -
-	#pragma mark ¥ Pixel types ¥
-	
 	class PixelType_Tag {};
 	typedef SelectorType< PixelType_Tag, ::PixelType > PixelType;
-	
-	inline PixelType Chunky()        { return PixelType::Make( chunky       ); }
-	inline PixelType ChunkyPlanar()  { return PixelType::Make( chunkyPlanar ); }
-	inline PixelType Planar()        { return PixelType::Make( planar       ); }
-	
-	#pragma mark -
-	#pragma mark ¥ Types ¥
 	
 	using ::BitMap;
 	using ::BitMapPtr;
@@ -255,8 +204,17 @@ namespace Nitrogen
 	
 	void RegisterQuickDrawErrors ();
 	
+#if OPAQUE_TOOLBOX_STRUCTS
+	
 	// 2466
 	using ::MacSetPort;
+	
+#else
+	
+	// 2466
+	inline void MacSetPort( GrafPtr port )  { ::MacSetPort( port ); }
+	
+#endif
 	
 	// 2481
 	GrafPtr GetPort();
@@ -453,6 +411,14 @@ namespace Nitrogen
 	// 5858
 	Rect GetPortBounds( CGrafPtr port );
 	
+#else
+	
+	// 5835
+	inline const BitMap* GetPortBitMapForCopyBits( CGrafPtr port )  { return &::GrafPtr( port )->portBits; }
+	
+	// 5858
+	inline const Rect& GetPortBounds( CGrafPtr port )  { return ::GrafPtr( port )->portRect; }
+	
 #endif
 	
 	// 5872
@@ -519,6 +485,20 @@ namespace Nitrogen
 	// 6661
 	using ::GetQDGlobalsThePort;
 	
+#else
+	
+	// 6577, 6589, 6601, 6613, 6625, 6637, 6649
+	inline const BitMap&  GetQDGlobalsScreenBits()  { return qd.screenBits; }
+	inline const Cursor&  GetQDGlobalsArrow()       { return qd.arrow; }
+	inline const Pattern& GetQDGlobalsDarkGray()    { return qd.dkGray; }
+	inline const Pattern& GetQDGlobalsLightGray()   { return qd.ltGray; }
+	inline const Pattern& GetQDGlobalsGray()        { return qd.gray; }
+	inline const Pattern& GetQDGlobalsBlack()       { return qd.black; }
+	inline const Pattern& GetQDGlobalsWhite()       { return qd.white; }
+	
+	// 6661
+	inline GrafPtr        GetQDGlobalsThePort()     { return qd.thePort; }
+	
 #endif
 	
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
@@ -552,6 +532,76 @@ namespace Nitrogen
 	
 	typedef Pseudoreference< Port_Details > Port;
 	
+	class Clip_Details
+	{
+		public:
+			typedef Owned< RgnHandle > Value;
+			typedef Owned< RgnHandle > GetResult;
+			typedef        RgnHandle   SetParameter;
+			
+			GetResult Get() const                          { return GetClip(); }
+			void Set( SetParameter region ) const          { SetClip( region ); }
+	};
+	
+	typedef Pseudoreference< Clip_Details > Clip;
+   	
+	class PenState_Details
+	{
+		public:
+			typedef PenState Value;
+			typedef Value GetResult;
+			typedef Value SetParameter;
+			
+			GetResult Get() const                         { return GetPenState(); }
+			void Set( SetParameter state ) const          { SetPenState( state ); }
+	};
+	
+	typedef Pseudoreference< PenState_Details > The_PenState;
+	
+	class RGBForeColor_Details
+	{
+		public:
+			typedef RGBColor Value;
+			typedef Value GetResult;
+			typedef Value SetParameter;
+			
+			GetResult Get() const                         { return GetPortForeColor( GetQDGlobalsThePort() ); }
+			void Set( RGBColor color ) const              { RGBForeColor( color ); }
+	};
+	
+	typedef Pseudoreference< RGBForeColor_Details > The_RGBForeColor;
+	
+	class RGBBackColor_Details
+	{
+		public:
+			typedef RGBColor Value;
+			typedef Value GetResult;
+			typedef Value SetParameter;
+			
+			GetResult Get() const                         { return GetPortBackColor( GetQDGlobalsThePort() ); }
+			void Set( RGBColor color ) const              { RGBBackColor( color ); }
+	};
+	
+	typedef Pseudoreference< RGBBackColor_Details > The_RGBBackColor;
+	
+	class PortClipRegion_Details
+	{
+		private:
+			CGrafPtr port;
+			
+		public:
+			typedef Owned< RgnHandle > Value;
+			typedef Owned< RgnHandle > GetResult;
+			typedef        RgnHandle   SetParameter;
+			
+			PortClipRegion_Details( CGrafPtr thePort )     : port( thePort ) {}
+			
+			GetResult Get() const                          { return GetPortClipRegion( port ); }
+			void Set( SetParameter region ) const          { SetPortClipRegion( port, region ); }
+	};
+	
+	typedef Pseudoreference< PortClipRegion_Details > PortClipRegion;
+   	
 	class PortPenSize_Details
 	{
 		private:
@@ -567,7 +617,7 @@ namespace Nitrogen
 			void Set( SetParameter size ) const         { SetPortPenSize( port, size ); }
 	};
 	
-	typedef Pseudoreference< Port_Details > PortPenSize;
+	typedef Pseudoreference< PortPenSize_Details > PortPenSize;
 	
   }
 
