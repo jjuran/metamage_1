@@ -13,12 +13,6 @@
 #include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
 
-#if CALL_NOT_IN_CARBON
-#ifndef __EPPC__
-#include <EPPC.h>
-#endif
-#endif
-
 #ifndef NITROGEN_SELECTORTYPE_H
 #include "Nitrogen/SelectorType.h"
 #endif
@@ -188,15 +182,6 @@ namespace Nitrogen
 	inline DescType TypeProcessSerialNumber   ()  { return DescType::Make( typeProcessSerialNumber    ); }
 	inline DescType TypeApplicationURL        ()  { return DescType::Make( typeApplicationURL         ); }
 	inline DescType TypeNull                  ()  { return DescType::Make( typeNull                   ); }
-	
-#if CALL_NOT_IN_CARBON
-	
-	// Deprecated addressing modes under Carbon
-	inline DescType TypeSessionID             ()  { return DescType::Make( typeSessionID              ); }
-	inline DescType TypeTargetID              ()  { return DescType::Make( typeTargetID               ); }
-	inline DescType TypeDispatcherID          ()  { return DescType::Make( typeDispatcherID           ); }
-	
-#endif
 	
 	class AEKeyword_Tag {};
 	typedef SelectorType< AEKeyword_Tag, ::AEKeyword > AEKeyword;
@@ -505,12 +490,6 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
    template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                          {};
    
-	
-
-   // TargetID is defined for Carbon, but typeTargetID is not.
-#if CALL_NOT_IN_CARBON
-   template<> struct DescType_Traits< typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
-#endif
 	
 	#pragma mark -
 	#pragma mark ¥ AEDesc ¥
