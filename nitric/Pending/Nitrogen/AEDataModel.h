@@ -325,6 +325,9 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
    template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
    template<> struct DescType_Traits< typeRGBColor >               : POD_DescType_Traits< RGBColor >                      {};
+#if !TARGET_API_MAC_CARBON
+   template<> struct DescType_Traits< typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
+#endif
 
    
    struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
