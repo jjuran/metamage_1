@@ -160,9 +160,9 @@ namespace Nitrogen
 				UInt16 count;
 				OwnershipTransfer< T**, Disposer< Handle > > data;
 				
-				explicit Transfer( InfoData_Traits< T** > s )
+				explicit Transfer( Result* s )
 				:
-					count( count ), data( data )
+					count( s->count ), data( s->data )
 				{}
 			};
 			
@@ -182,7 +182,7 @@ namespace Nitrogen
 				return *this;
 			}
 			
-			operator Transfer()  { return Transfer( *this ); }
+			operator Transfer()  { return Transfer( this ); }
 		};
 		
 		typedef SPBGetDeviceInfo_SampleInfoAvailable_Result GetBuffer;
@@ -330,10 +330,10 @@ namespace Nitrogen
 			Str255                                           deviceName;
 			OwnershipTransfer< Handle, Disposer< Handle > >  deviceIconHandle;
 			
-			explicit Transfer( SPBGetIndexedDevice_Result value )
+			explicit Transfer( SPBGetIndexedDevice_Result* value )
 			:
-				deviceName      ( value.deviceName       ),
-				deviceIconHandle( value.deviceIconHandle )
+				deviceName      ( value->deviceName       ),
+				deviceIconHandle( value->deviceIconHandle )
 			{}
 		};
 		
@@ -358,7 +358,7 @@ namespace Nitrogen
 		
 		operator Transfer()
 		{
-			return Transfer( *this );
+			return Transfer( this );
 		}
 		
 		operator ConstStr255Param() const  { return deviceName; }

@@ -55,11 +55,11 @@ namespace Nitrogen
 					size_type                                         position;
 					typename Transfer_Traits< value_type >::Transfer  value;
 					
-					explicit Transfer( const_iterator v )
+					explicit Transfer( const_iterator* v )
 					:
-						Specifics( v          ),
-						position ( v.position ),
-						value    ( v.value    )
+						Specifics( *v          ),
+						position ( v->position ),
+						value    ( v->value    )
 					{}
 				};
 				
@@ -80,7 +80,7 @@ namespace Nitrogen
 					return *this;
 				}
 				
-				operator Transfer()  { return Transfer( *this ); }
+				operator Transfer()  { return Transfer( this ); }
            
            #if defined(__MWERKS__) && __MWERKS__ == 0x2401
             public:
