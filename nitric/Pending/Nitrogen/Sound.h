@@ -62,8 +62,11 @@ namespace Nitrogen
 	
 	struct SPBGetIndexedDevice_Result
 	{
-		::Str255 deviceName;
+		Str255 deviceName;
 		Shared< Handle > deviceIconHandle;
+		
+		operator const unsigned char*() const  { return deviceName; }
+		operator Shared< Handle >()  { return deviceIconHandle; }
 	};
 	
 	template <>
@@ -89,11 +92,8 @@ namespace Nitrogen
 	
 	class SoundInputDevice_ContainerSpecifics
 	{
-		private:
-			Shared< Handle > deviceIconHandle;
-		
 		public:
-			typedef Str255 value_type;
+			typedef SPBGetIndexedDevice_Result value_type;
 			typedef UInt16 size_type;
 			typedef SInt16 difference_type;
 			
@@ -105,9 +105,7 @@ namespace Nitrogen
 			
 			value_type GetValue( size_type position )
 			{
-				SPBGetIndexedDevice_Result result = SPBGetIndexedDevice( position );
-				deviceIconHandle = result.deviceIconHandle;
-				return result.deviceName;
+				return SPBGetIndexedDevice( position );
 			}
 	};
 	
