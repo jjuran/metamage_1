@@ -10,12 +10,16 @@
 #include FRAMEWORK_HEADER(OpenScripting,OSA.h)
 #endif
 
-#ifndef NITROGEN_AEDATAMODEL_H
-#include "Nitrogen/AEDataModel.h"
+#ifndef NITROGEN_APPLEEVENTS_H
+#include "Nitrogen/AppleEvents.h"
 #endif
 #ifndef NITROGEN_COMPONENTS_H
 #include "Nitrogen/Components.h"
 #endif
+#ifndef NITROGEN_MACERRORS_H
+#include "Nitrogen/MacErrors.h"
+#endif
+
 #ifndef NITROGEN_FLAGTYPE_H
 #include "Nitrogen/FlagType.h"
 #endif
@@ -30,8 +34,8 @@ namespace Nitrogen {
 	
 	void RegisterOSAErrors();
 	
-	struct OSAIDTag  {};
-	typedef IDType< OSAIDTag, ::OSAID, ::kOSANullScript > OSAID;
+	struct OSAID_Tag  {};
+	typedef IDType< OSAID_Tag, ::OSAID, ::kOSANullScript > OSAID;
 	
 	struct OSAModeFlagsTag;
 	typedef FlagType< OSAModeFlagsTag, long, ::kOSAModeNull > OSAModeFlags;
@@ -39,8 +43,9 @@ namespace Nitrogen {
 	inline ComponentType    OSAComponentType                   ()  { return ComponentType   ::Make( kOSAComponentType                    ); }
 	inline ComponentSubType OSAGenericScriptingComponentSubtype()  { return ComponentSubType::Make( kOSAGenericScriptingComponentSubtype ); }
 	
-	using ::kOSAFileType;
-	using ::kOSASuite;
+	inline OSType OSAFileType()  { return OSType::Make( kOSAFileType ); }
+	
+	inline AEEventClass OSASuite()  { return OSType::Make( kOSASuite ); }
 	
 	inline OSAID OSANullScript()  { return OSAID::Make( kOSANullScript ); }
 	
@@ -50,10 +55,10 @@ namespace Nitrogen {
 	
 	inline DescType TypeOSAGenericStorage()  { return DescType::Make( typeOSAGenericStorage ); }
 	
-	struct ManagedOSAID 
+	struct OSASpec 
 	{
-		ManagedOSAID() : component(), id()  {}
-		ManagedOSAID( Shared< ComponentInstance > component, OSAID id ) 
+		OSASpec() : component(), id()  {}
+		OSASpec( Shared< ComponentInstance > component, OSAID id ) 
 		:
 			component( component ), 
 			id       ( id        )
@@ -61,28 +66,28 @@ namespace Nitrogen {
 		
 		operator OSAID() const  { return id; }
 		
-		friend bool operator==( const ManagedOSAID& a, const ManagedOSAID& b )
+		friend bool operator==( const OSASpec& a, const OSASpec& b )
 		{
 			return a.component.Get() == b.component.Get()
 				&& a.id              == b.id;
 		}
-		friend bool operator!=( const ManagedOSAID& a, const ManagedOSAID& b )  { return !( a == b ); }
+		friend bool operator!=( const OSASpec& a, const OSASpec& b )  { return !( a == b ); }
 		
 		Shared< ComponentInstance > component;
 		OSAID id;
 	};
-	typedef ManagedOSAID OSASpec;
+	typedef OSASpec ManagedOSAID;
 	
 	template <>
-	struct Disposer< ManagedOSAID > : public std::unary_function< ManagedOSAID, void >
+	struct Disposer< OSASpec > : public std::unary_function< OSASpec, void >
 	{
-		void operator()( const ManagedOSAID& id ) const
+		void operator()( const OSASpec& osaSpec ) const
 		{
-			::OSADispose( id.component, id.id );
+			::OSADispose( osaSpec.component, osaSpec.id );
 		}
 	};
 	
-	Owned< ManagedOSAID >
+	Owned< OSASpec >
 	OSALoad(
 		Shared< ComponentInstance > scriptingComponent, 
 		const AEDesc& scriptData, 
@@ -100,14 +105,14 @@ namespace Nitrogen {
 	inline
 	Owned< AEDesc >
 	OSAStore(
-		const ManagedOSAID& script, 
+		const OSASpec& script, 
 		DescType desiredType = TypeOSAGenericStorage(), 
 		OSAModeFlags modeFlags = OSAModeNull() )
 	{
 		return OSAStore( script.component, script.id, desiredType, modeFlags );
 	}
 	
-	Owned< ManagedOSAID >
+	Owned< OSASpec >
 	OSAExecute(
 		Shared< ComponentInstance > scriptingComponent, 
 		OSAID compiledScriptID, 
@@ -116,9 +121,9 @@ namespace Nitrogen {
 	);
 	
 	inline
-	Owned< ManagedOSAID >
+	Owned< OSASpec >
 	OSAExecute(
-		const ManagedOSAID& script, 
+		const OSASpec& script, 
 		OSAID contextID = OSANullScript(), 
 		OSAModeFlags modeFlags = OSAModeNull() )
 	{
@@ -136,21 +141,21 @@ namespace Nitrogen {
 	inline
 	Owned< AEDesc >
 	OSADisplay(
-		const ManagedOSAID& scriptValue, 
+		const OSASpec& scriptValue, 
 		DescType desiredType = TypeChar(), 
 		OSAModeFlags modeFlags = OSAModeNull() )
 	{
 		return OSADisplay( scriptValue.component, scriptValue.id, desiredType, modeFlags );
 	}
 	
-	inline void OSADispose( Owned< ManagedOSAID > )  {}
+	inline void OSADispose( Owned< OSASpec > )  {}
 	
-	Owned< ManagedOSAID >
+	Owned< OSASpec >
 	OSACompile(
 		Shared< ComponentInstance > scriptingComponent, 
 		const AEDesc& sourceData, 
 		OSAModeFlags modeFlags = OSAModeNull(), 
-		Owned< ManagedOSAID > previousScriptID = Owned< ManagedOSAID >()
+		Owned< OSASpec > previousScriptID = Owned< OSASpec >()
 	);
 	
 	

@@ -28,7 +28,7 @@ namespace Nitrogen {
 		RegisterOSStatus< errOSACantOpenComponent    >();
 	}
 	
-	Owned< ManagedOSAID >
+	Owned< OSASpec >
 	OSALoad(
 		Shared< ComponentInstance > scriptingComponent, 
 		const AEDesc& scriptData, 
@@ -41,8 +41,8 @@ namespace Nitrogen {
 			::OSALoad( scriptingComponent, &scriptData, modeFlags, &resultingScriptID )
 		);
 		
-		return Owned< ManagedOSAID >::Seize(
-			ManagedOSAID( scriptingComponent, OSAID::Make( resultingScriptID ) )
+		return Owned< OSASpec >::Seize(
+			OSASpec( scriptingComponent, OSAID::Make( resultingScriptID ) )
 		);
 	}
 	
@@ -63,7 +63,7 @@ namespace Nitrogen {
 		return Owned< AEDesc >::Seize( resultingScriptData );
 	}
 	
-	Owned< ManagedOSAID >
+	Owned< OSASpec >
 	OSAExecute(
 		Shared< ComponentInstance > scriptingComponent, 
 		OSAID compiledScriptID, 
@@ -77,8 +77,8 @@ namespace Nitrogen {
 			::OSAExecute( scriptingComponent, compiledScriptID, contextID, modeFlags, &resultingScriptValueID )
 		);
 		
-		return Owned< ManagedOSAID >::Seize(
-			ManagedOSAID( scriptingComponent, OSAID::Make( resultingScriptValueID ) )
+		return Owned< OSASpec >::Seize(
+			OSASpec( scriptingComponent, OSAID::Make( resultingScriptValueID ) )
 		);
 	}
 	
@@ -105,12 +105,12 @@ namespace Nitrogen {
 		return Owned< AEDesc >::Seize( resultingText );
 	}
 	
-	Owned< ManagedOSAID >
+	Owned< OSASpec >
 	OSACompile(
 		Shared< ComponentInstance > scriptingComponent, 
 		const AEDesc& sourceData, 
 		OSAModeFlags modeFlags, 
-		Owned< ManagedOSAID > previousScriptID)
+		Owned< OSASpec > previousScriptID)
 	{
 		OnlyOnce< RegisterOSAErrors >();
 		
@@ -120,8 +120,8 @@ namespace Nitrogen {
 			scriptingComponent, &sourceData, modeFlags, &previousAndResultingScriptID
 		);
 		
-		Owned< ManagedOSAID > resultingScriptID = Owned< ManagedOSAID >::Seize(
-			ManagedOSAID( scriptingComponent, OSAID::Make( previousAndResultingScriptID ) )
+		Owned< OSASpec > resultingScriptID = Owned< OSASpec >::Seize(
+			OSASpec( scriptingComponent, OSAID( previousAndResultingScriptID ) )
 		);
 		if ( err != noErr )
 		{
