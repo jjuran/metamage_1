@@ -112,6 +112,9 @@ inline OSErr AEDeleteKeyDesc(
 
 namespace Nitrogen
   {
+	
+	void RegisterAppleEventManagerErrors();
+	
    template < ::DescType > struct DescType_Traits;
       /*
          The DescType_Traits are used according to these formulas:
@@ -335,7 +338,7 @@ namespace Nitrogen
 	using ::AppleEvent;
 	
 	template <>
-	struct Disposer< AEDesc > : public std::unary_function< AEDesc, void >
+	struct Disposer< AEDesc > : public std::unary_function< AEDesc, void >, 
 	                            private DefaultDestructionOSStatusPolicy
 	{
 		// parameter can't be const
