@@ -42,6 +42,9 @@ namespace Nitrogen {
 	struct LaunchFlags_Tag {};
 	typedef FlagType< LaunchFlags_Tag, ::LaunchFlags, 0 > LaunchFlags;
 	
+	static const LaunchFlags launchContinue    = LaunchFlags::Make( ::launchContinue    );
+	static const LaunchFlags launchNoFileFlags = LaunchFlags::Make( ::launchNoFileFlags );
+	
 	using ::ProcessSerialNumber;
 	using ::ProcessInfoRec;
 	
@@ -100,12 +103,15 @@ namespace Nitrogen {
 	
 	void SetFrontProcess( const ProcessSerialNumber& psn );
 	
-	ProcessSerialNumber LaunchApplication( const FSSpec& file, LaunchFlags launchFlags = 0, AppParameters* appParameters = NULL );
+	ProcessSerialNumber LaunchApplication( const FSSpec& file, LaunchFlags launchFlags = LaunchFlags(), AppParameters* appParameters = NULL );
 	
 	ProcessSerialNumber GetNextProcess( ProcessSerialNumber process );
 	
 	void GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& info);
 	ProcessInfoRec GetProcessInformation( const ProcessSerialNumber& process );
+	
+	// 425
+	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn );
 	
 	std::size_t SizeOf_AppParameters( const AppParameters& appParameters );
 	

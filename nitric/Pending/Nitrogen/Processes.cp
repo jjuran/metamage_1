@@ -1,13 +1,17 @@
 // Processes.cp
 
+#ifndef NITROGEN_PROCESSES_H
+#include "Nitrogen/Processes.h"
+#endif
+
 #ifndef NITROGEN_ONLYONCE_H
 #include "Nitrogen/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NITROGEN_PROCESSES_H
-#include "Nitrogen/Processes.h"
+#ifndef NITROGEN_FILES_H
+#include "Nitrogen/Files.h"
 #endif
 
 namespace Nitrogen {
@@ -106,6 +110,31 @@ namespace Nitrogen {
 		GetProcessInformation( process, processInfo );
 		
 		return processInfo;
+	}
+	
+	static FSSpec GetProcessAppSpec( const ProcessSerialNumber& process )
+	{
+		ProcessInfoRec processInfo;
+		FSSpec appSpec;
+		
+		processInfo.processInfoLength = sizeof processInfo;
+		processInfo.processName = NULL;
+		processInfo.processAppSpec = &appSpec;
+		
+		GetProcessInformation( process, processInfo );
+		
+		return appSpec;
+	}
+	
+	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn )
+	{
+	#if TARGET_API_MAC_CARBON
+		FSRef location;
+		ThrowOSStatus( ::GetProcessBundleLocation( &psn, &location ) );
+		return location;
+	#else
+		return Convert< FSRef >( GetProcessAppSpec( psn ) );
+	#endif
 	}
 	
 	std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
