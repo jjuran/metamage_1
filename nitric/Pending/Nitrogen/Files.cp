@@ -464,7 +464,7 @@ namespace Nitrogen
       OnlyOnce<RegisterFileManagerErrors>();
       SInt16 result;
       ThrowOSStatus( ::FSOpenFork( &ref, forkNameLength, forkName, permissions, &result ) );
-      return Owned<FSForkRefNum>::Seize( result );
+      return Owned<FSForkRefNum>::Seize( FSForkRefNum( result ) );
      }
 
    Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
@@ -587,7 +587,7 @@ namespace Nitrogen
                                         &result.forkInfo,
                                         &result.ref,
                                         &result.outForkName ) );
-      result.actualRefNum = actualRefNum;
+      result.actualRefNum = FSForkRefNum( actualRefNum );
       return result;
      }
 
@@ -605,8 +605,8 @@ namespace Nitrogen
                                         &result.forkInfo,
                                         &result.ref,
                                         &result.outForkName ) );
-      result.actualRefNum = actualRefNum;
-      iterator = realIterator;
+      result.actualRefNum = FSForkRefNum( actualRefNum );
+      iterator = FSForkIterator( realIterator );
       return result;
      }
 
@@ -633,7 +633,7 @@ namespace Nitrogen
                                         volumeName,
                                         rootDirectory ) );
       if ( resultVolume != 0 )
-         *resultVolume = actualVolume;
+         *resultVolume = FSVolumeRefNum( actualVolume );
      }
 
    void FSGetVolumeInfo( FSVolumeRefNum     volume,
