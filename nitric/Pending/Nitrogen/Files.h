@@ -694,13 +694,18 @@ namespace Nitrogen
    typedef IDType< FSForkRefNumTag, SInt16, 0 > FSForkRefNum;
     
    class FSIOPermssnTag {};
-   typedef FlagType< FSIOPermssnTag, SInt8, fsCurPerm > FSIOPermssn;
+   typedef FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
    typedef FSIOPermssn FSIOPermissions;
+   
+   static const FSIOPermssn fsCurPerm  = FSIOPermssn::Make( ::fsCurPerm  );
+   static const FSIOPermssn fsRdPerm   = FSIOPermssn::Make( ::fsRdPerm   );
    
    class FSIOPosModeTag {};
    typedef SelectorType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
    typedef FSIOPosMode FSIOPositioningMode;
-
+	
+	static const FSIOPosMode fsAtMark = FSIOPosMode::Make( ::fsAtMark );
+	
    class FSAllocationFlagsTag {};
    typedef FlagType< FSAllocationFlagsTag, ::FSAllocationFlags, 0 > FSAllocationFlags;
   
@@ -1550,7 +1555,7 @@ namespace Nitrogen
       static Type Get( const FSVolumeInfo& info )
         {
          FSVolumeInfoFSInfo result;
-         result.filesystemID = info.filesystemID;
+         result.filesystemID = FSFileSystemID( info.filesystemID );
          result.signature = info.signature;
          return result;
         }
@@ -1570,7 +1575,7 @@ namespace Nitrogen
         {
          FSVolumeInfoDriveInfo result;
          result.driveNumber = info.driveNumber;
-         result.driverRefNum = info.driverRefNum;
+         result.driverRefNum = DriverReferenceNumber( info.driverRefNum );
          return result;
         }
      };
