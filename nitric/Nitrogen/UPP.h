@@ -6,8 +6,11 @@
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CONDITIONALMACROS__
-#include <ConditionalMacros.h>
+#include FRAMEWORK_HEADER(CarbonCore,ConditionalMacros.h)
 #endif
 
 namespace Nitrogen
@@ -302,53 +305,87 @@ namespace Nitrogen
         }
      };
 
+   /*
+      We bundle the parameter list for a UPP into a structure, so that we can have
+      shorter mangled names for UPPs.  (Such enourmous mangled names make error
+      messages difficult to read.)  To make a UPP with a short name, define a class
+      (not a typedef name) inheriting from Basic_UPP_Details, and use that class as
+      the parameter to UPP, like this:
+      
+      struct EventHandlerUPP_Details: Basic_UPP_Details< ::EventHandlerUPP,
+                                                         ::EventHandlerProcPtr,
+                                                         ::NewEventHandlerUPP,
+                                                         ::DisposeEventHandlerUPP,
+                                                         ::InvokeEventHandlerUPP >
+        {};
+
+      typedef UPP< EventHandlerUPP_Details > EventHandlerUPP;
+   */
 
    template < class UnderlyingUPPType,
               class ProcPtrType,
               typename UPP_Traits< UnderlyingUPPType, ProcPtrType >::Creator create,
               typename UPP_Traits< UnderlyingUPPType, ProcPtrType >::Disposer dispose,
               typename UPP_Traits< UnderlyingUPPType, ProcPtrType >::Invoker invoke >
-   struct UPP : public InvokableUPP< UnderlyingUPPType, ProcPtrType, invoke >
+   struct Basic_UPP_Details
      {
       typedef UnderlyingUPPType UPPType;
       typedef ProcPtrType ProcPtr;
-      
+      static UPPType Create( ProcPtr function )      { return create( function );  }
+      static void Dispose( UPPType upp )             { dispose( upp ); }
+      typedef InvokableUPP< UnderlyingUPPType, ProcPtrType, invoke > InvokableUPPType;
+     };
+   
+   template < class UPP_Details >
+   struct UPP : public UPP_Details::InvokableUPPType
+     {
+      typedef typename UPP_Details::UPPType UPPType;
+      typedef typename UPP_Details::ProcPtr ProcPtr;
+      typedef UPP_Details Details;
+     
       UPP()                                          {}
-      UPP( UPPType p )                               : InvokableUPP< UPPType, ProcPtr, invoke >( p )  {}
+      UPP( UPPType p )                               : UPP_Details::InvokableUPPType( p )  {}
       
       static UPP Make( UPPType p )                   { return UPP( p ); }
-      static Owned<UPP> New( ProcPtr function )      { return Owned<UPP>::Seize( create( function ) ); }
      };
 
    
    template < class NitrogenUPP >
    Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
      {
-      return NitrogenUPP::New( function );
+      return Owned<NitrogenUPP>::Seize( NitrogenUPP::Details::Create( function ) );
      }
    
-   template < class UPPType,
-              class ProcPtr,
-              typename UPP_Traits< UPPType, ProcPtr >::Creator create,
-              typename UPP_Traits< UPPType, ProcPtr >::Disposer dispose,
-              typename UPP_Traits< UPPType, ProcPtr >::Invoker invoke >
-   struct Disposer< UPP< UPPType, ProcPtr, create, dispose, invoke > >
-            : public std::unary_function< UPP< UPPType, ProcPtr, create, dispose, invoke >, void >
-     {
-      typedef UPP< UPPType, ProcPtr, create, dispose, invoke > NitrogenUPP;
-      
-      void operator()( NitrogenUPP upp ) const
+   template < class UPP_Details >
+   struct Disposer< UPP< UPP_Details > >
+            : public std::unary_function< UPP< UPP_Details >, void >
+     {      
+      void operator()( UPP< UPP_Details > upp ) const
         {
-         dispose( upp );
+         UPP_Details::Dispose( upp );
         }
      };
    
    template < class NitrogenUPP, typename NitrogenUPP::ProcPtr procPtr >
    NitrogenUPP StaticUPP()
      {
-      static const Owned<NitrogenUPP> upp( NitrogenUPP::New( procPtr ) );
+      static const Owned<NitrogenUPP> upp = NewUPP<NitrogenUPP>( procPtr );
       return upp;
      }
+     
+   // This is a workaround for a CodeWarrior Pro 9 bug: it runs into an internal
+   // compiler error when a class template member is used as a template argument
+   // matching a template parameter of dependent type for a function template.
+   // But not for a class template.  So calling indirectly through a class template
+   // member gets us around it.
+   template < class NitrogenUPP, typename NitrogenUPP::ProcPtr procPtr >
+   struct StaticUPPWorkaround
+     {
+      static NitrogenUPP StaticUPP()
+        {
+         return ::Nitrogen::StaticUPP< NitrogenUPP, procPtr >();
+        }
+     };
   }
 
 #endif
