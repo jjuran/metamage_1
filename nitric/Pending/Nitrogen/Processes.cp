@@ -46,14 +46,13 @@ namespace Nitrogen {
 		return psn;
 	}
 	
-	bool SameProcess(
-		const ProcessSerialNumber& one, 
-		const ProcessSerialNumber& other)
+	bool SameProcess( const ProcessSerialNumber& a, 
+	                  const ProcessSerialNumber& b )
 	{
 		OnlyOnce< RegisterProcessManagerErrors >();
 		
 		::Boolean same;
-		ThrowOSStatus( ::SameProcess( &one, &other, &same ) );
+		ThrowOSStatus( ::SameProcess( &a, &b, &same ) );
 		return same;
 	}
 	
@@ -75,7 +74,7 @@ namespace Nitrogen {
 		pb.launchBlockID 		= extendedBlock;
 		pb.launchEPBLength 		= extendedBlockLen;
 		pb.launchFileFlags 		= 0;
-		pb.launchControlFlags	= launchFlags | LaunchContinue() | LaunchNoFileFlags();
+		pb.launchControlFlags	= launchFlags | launchContinue | launchNoFileFlags;
 		pb.launchAppSpec 		= const_cast< FSSpec* >( &file );
 		pb.launchAppParameters	= appParameters;
 		
@@ -92,38 +91,20 @@ namespace Nitrogen {
 		return process;
 	}
 	
-	void GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& info)
+	ProcessInfoRec& GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& processInfo )
 	{
 		OnlyOnce< RegisterProcessManagerErrors >();
 		
-		ThrowOSStatus( ::GetProcessInformation( &process, &info ) );
+		ThrowOSStatus( ::GetProcessInformation( &process, &processInfo ) );
+		
+		return processInfo;
 	}
 	
 	ProcessInfoRec GetProcessInformation( const ProcessSerialNumber& process )
 	{
 		ProcessInfoRec processInfo;
 		
-		processInfo.processInfoLength = sizeof processInfo;
-		processInfo.processName = NULL;
-		processInfo.processAppSpec = NULL;
-		
-		GetProcessInformation( process, processInfo );
-		
-		return processInfo;
-	}
-	
-	static FSSpec GetProcessAppSpec( const ProcessSerialNumber& process )
-	{
-		ProcessInfoRec processInfo;
-		FSSpec appSpec;
-		
-		processInfo.processInfoLength = sizeof processInfo;
-		processInfo.processName = NULL;
-		processInfo.processAppSpec = &appSpec;
-		
-		GetProcessInformation( process, processInfo );
-		
-		return appSpec;
+		return GetProcessInformation( process, Initialize< ProcessInfoRec >( processInfo ) );
 	}
 	
 	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn )
@@ -137,9 +118,18 @@ namespace Nitrogen {
 	#endif
 	}
 	
-	std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
+	FSSpec GetProcessAppSpec( const ProcessSerialNumber& process )
 	{
-		return sizeof (AppParameters) + appParameters.messageLength;
+		ProcessInfoRec processInfo;
+		FSSpec appSpec;
+		
+		// This may not be a good example of accessor use since we have the FSSpec sitting right there.
+		return GetProcessInfoAppSpec
+		(
+			GetProcessInformation( process, 
+		                           Initialize< ProcessInfoRec >( processInfo, 
+		                                                         &appSpec ) )
+		);
 	}
 	
 }

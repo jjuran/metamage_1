@@ -31,6 +31,9 @@
 #ifndef NITROGEN_MAKE_H
 #include "Nitrogen/Make.h"
 #endif
+#ifndef NITROGEN_INITIALIZE_H
+#include "Nitrogen/Initialize.h"
+#endif
 #ifndef NITROGEN_TEXTCOMMON_H
 //#include "Nitrogen/TextCommon.h"
 #endif
@@ -48,11 +51,7 @@ namespace Nitrogen {
 	using ::ProcessSerialNumber;
 	using ::ProcessInfoRec;
 	
-	template < unsigned long > struct PSN_Constant  {};
-	
-	static const PSN_Constant< kNoProcess >      kNoProcess      = PSN_Constant< ::kNoProcess >();
-	static const PSN_Constant< kSystemProcess >  kSystemProcess  = PSN_Constant< ::kSystemProcess >();
-	static const PSN_Constant< kCurrentProcess > kCurrentProcess = PSN_Constant< ::kCurrentProcess >();
+	template < unsigned long > struct LowLongOfPSN  {};
 	
 	template <>
 	struct Maker< ProcessSerialNumber >
@@ -66,40 +65,63 @@ namespace Nitrogen {
 		}
 		
 		template < unsigned long k >
-		ProcessSerialNumber operator()( PSN_Constant< k > ) const
+		ProcessSerialNumber operator()( LowLongOfPSN< k > ) const
 		{
 			ProcessSerialNumber result = { 0, k };
 			return result;
 		}
 	};
 	
-	inline
-	bool
-	operator==( const ProcessSerialNumber& a, const ProcessSerialNumber& b )
+	inline ProcessSerialNumber NoProcess()       { return Make< ProcessSerialNumber >( LowLongOfPSN< kNoProcess      >() ); }
+	inline ProcessSerialNumber SystemProcess()   { return Make< ProcessSerialNumber >( LowLongOfPSN< kSystemProcess  >() ); }
+	inline ProcessSerialNumber CurrentProcess()  { return Make< ProcessSerialNumber >( LowLongOfPSN< kCurrentProcess >() ); }
+	
+	// Since ProcessSerialNumber is declared at global scope, namespace Nitrogen isn't checked.
+	// We include "Nitrogen/Operators.h" below to make the operators available in Nitrogen::Operators.
+	inline bool operator==( const ProcessSerialNumber& a, const ProcessSerialNumber& b )
 	{
 		return a.highLongOfPSN == b.highLongOfPSN
 			&& a.lowLongOfPSN  == b.lowLongOfPSN;
 	}
 	
-	inline
-	bool
-	operator!=( const ProcessSerialNumber& one, const ProcessSerialNumber& other )
+	inline bool operator!=( const ProcessSerialNumber& a, const ProcessSerialNumber& b )
 	{
-		return !( one == other );
+		return !( a == b );
 	}
 	
-	inline ProcessSerialNumber NoProcess()       { return Make< ProcessSerialNumber >( kNoProcess ); }
-	inline ProcessSerialNumber SystemProcess()   { return Make< ProcessSerialNumber >( kSystemProcess ); }
-	inline ProcessSerialNumber CurrentProcess()  { return Make< ProcessSerialNumber >( kCurrentProcess ); }
+	template <>
+	struct Initializer< ProcessInfoRec >
+	{
+		ProcessInfoRec& operator()( ProcessInfoRec& processInfo, FSSpec* appSpec = NULL ) const
+		{
+			processInfo.processInfoLength = sizeof processInfo;
+			processInfo.processName       = NULL;
+			processInfo.processAppSpec    = appSpec;
+			
+			return processInfo;
+		}
+	};
+	
+	template <>
+	struct Maker< ProcessInfoRec >
+	{
+		ProcessInfoRec operator()( FSSpec* appSpec = NULL ) const
+		{
+			ProcessInfoRec result;
+			
+			return Initialize( result, appSpec );
+		}
+	};
+	
+	// Nitrogen accessors, since no Carbon accessors exist
+	inline FSSpec GetProcessInfoAppSpec( const ProcessInfoRec& processInfo )  { return *processInfo.processAppSpec; }
 	
 	ProcessSerialNumber GetCurrentProcess();
 	
 	ProcessSerialNumber GetFrontProcess();
 	
-	bool SameProcess(
-		const ProcessSerialNumber& one, 
-		const ProcessSerialNumber& other
-	);
+	bool SameProcess( const ProcessSerialNumber& a, 
+		              const ProcessSerialNumber& b );
 	
 	void SetFrontProcess( const ProcessSerialNumber& psn );
 	
@@ -107,13 +129,13 @@ namespace Nitrogen {
 	
 	ProcessSerialNumber GetNextProcess( ProcessSerialNumber process );
 	
-	void GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& info);
-	ProcessInfoRec GetProcessInformation( const ProcessSerialNumber& process );
+	ProcessInfoRec& GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& info);
+	ProcessInfoRec  GetProcessInformation( const ProcessSerialNumber& process );
 	
 	// 425
 	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn );
 	
-	std::size_t SizeOf_AppParameters( const AppParameters& appParameters );
+	FSSpec GetProcessAppSpec( const ProcessSerialNumber& psn );
 	
 	class Process_ContainerSpecifics
 	{
@@ -150,6 +172,7 @@ namespace Nitrogen {
 	
 }
 
+// Necessary for operators of types declared at global scope, such as ProcessSerialNumber.
 #include "Nitrogen/Operators.h"
 
 #endif
