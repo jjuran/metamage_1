@@ -333,6 +333,8 @@ namespace Nitrogen
 	                           OSLAdjustMarksUPP    myAdjustMarksProc,
 	                           OSLGetErrDescUPP     myGetErrDescProcPtr );
 	
+#ifndef __APPLE_CC__
+	
 	void AESetObjectCallbacks( ::OSLCompareProcPtr       compareProc,
 	                           ::OSLCountProcPtr         countProc,
 	                           ::OSLDisposeTokenProcPtr  disposeTokenProc,
@@ -340,6 +342,8 @@ namespace Nitrogen
 	                           ::OSLMarkProcPtr          markProc,
 	                           ::OSLAdjustMarksProcPtr   adjustMarksProc,
 	                           ::OSLGetErrDescProcPtr    getErrDescProc );
+	
+#endif
 	
 	Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier,
 	                                             AEResolveCallbackFlags    callbackFlags );

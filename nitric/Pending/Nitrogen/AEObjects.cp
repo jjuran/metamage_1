@@ -50,6 +50,8 @@ namespace Nitrogen {
 		                                       myGetErrDescProcPtr ) );
 	}
 	
+#ifndef __APPLE_CC__
+	
 	void AESetObjectCallbacks( ::OSLCompareProcPtr       compareProc,
 	                           ::OSLCountProcPtr         countProc,
 	                           ::OSLDisposeTokenProcPtr  disposeTokenProc,
@@ -83,6 +85,8 @@ namespace Nitrogen {
 		                                adjustMarksUPP,
 		                                getErrDescUPP );
 	}
+	
+#endif
 	
 	Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier, 
 	                                             AEResolveCallbackFlags    callbackFlags )
