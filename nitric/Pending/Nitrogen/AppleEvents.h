@@ -83,8 +83,8 @@ namespace Nitrogen
       AEEventHandler( AEEventClass      theAEEventClass,
                       AEEventID         theAEEventID,
                       AEEventHandlerUPP handler,
-                      RefCon            handlerRefCon,
-                      bool              isSysHandler )
+                      RefCon            handlerRefCon = RefCon(),
+                      bool              isSysHandler = false )
         : theAEEventClass( theAEEventClass ),
           theAEEventID( theAEEventID ),
           handler( handler ),
@@ -116,8 +116,8 @@ namespace Nitrogen
    AEInstallEventHandler( AEEventClass       theAEEventClass,
                           AEEventID          theAEEventID,
                           AEEventHandlerUPP  handler,
-                          RefCon             handlerRefCon,
-                          Boolean            isSysHandler )
+                          RefCon             handlerRefCon = RefCon(),
+                          Boolean            isSysHandler = false )
      {
       return AEInstallEventHandler( AEEventHandler( theAEEventClass,
                                                     theAEEventID,
@@ -130,8 +130,8 @@ namespace Nitrogen
    inline  Owned<AEEventHandler>
    AEInstallEventHandler( AEEventClass       theAEEventClass,
                           AEEventID          theAEEventID,
-                          RefCon             handlerRefCon,
-                          Boolean            isSysHandler )
+                          RefCon             handlerRefCon = RefCon(),
+                          Boolean            isSysHandler = false )
      {
       return AEInstallEventHandler( AEEventHandler( theAEEventClass,
                                                     theAEEventID,
@@ -145,7 +145,7 @@ namespace Nitrogen
    typedef AEEventHandler AEGetEventHandler_Result;
    AEEventHandler AEGetEventHandler( AEEventClass theAEEventClass,
                                      AEEventID    theAEEventID,
-                                     bool         isSysHandler );
+                                     bool         isSysHandler = false );
   }
 
 #endif
