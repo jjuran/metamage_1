@@ -10,7 +10,7 @@ namespace Nitrogen {
 	{
 		short fontNum;
 		::GetFNum( name, &fontNum );
-		return fontNum;
+		return FontNumber( fontNum );
 	}
 	
 	FontNumber GetFNum( const std::string& name )

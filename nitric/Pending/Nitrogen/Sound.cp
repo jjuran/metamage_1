@@ -35,7 +35,7 @@ namespace Nitrogen {
 		
 		long refNum;
 		ThrowOSStatus( ::SPBOpenDevice( deviceName, permission, &refNum ) );
-		return Owned< SoundInputRefNum >::Seize( refNum );
+		return Owned< SoundInputRefNum >::Seize( SoundInputRefNum( refNum ) );
 	}
 	
 	void SPBCloseDevice( Owned< SoundInputRefNum > refNum )
