@@ -17,6 +17,10 @@
 #include "Nitrogen/CFBase.h"
 #endif
 
+#ifndef NITROGEN_CARBONEVENTS_H
+#include "Nitrogen/CarbonEvents.h"
+#endif
+
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
@@ -62,6 +66,7 @@ namespace Nitrogen {
 		};
 
 
+/*	As Lisa says, Level 0 */
 	inline Owned<HIObjectClassRef> HIObjectRegisterSubclass (
 			  CFStringRef            inClassID,
 			  CFStringRef            inBaseClassID,
@@ -69,7 +74,7 @@ namespace Nitrogen {
 			  EventHandlerUPP        inConstructProc,       /* can be NULL */
 			  UInt32                 inNumEvents,
 			  const EventTypeSpec *  inEventList,
-			  void *                 inConstructData ) {
+			  void *                 inConstructData = 0 ) {
 		OnlyOnce<RegisterHIObjectErrors>();
 		HIObjectClassRef retVal;
 		ThrowOSStatus ( ::HIObjectRegisterSubclass ( inClassID, inBaseClassID, inOptions,
@@ -77,10 +82,43 @@ namespace Nitrogen {
 		return Owned<HIObjectClassRef>::Seize( retVal );
 		}
  
-	inline void HIObjectUnregisterClass ( HIObjectClassRef inClassRef ) {
-		OnlyOnce<RegisterHIObjectErrors>();
-		ThrowOSStatus ( ::HIObjectUnregisterClass ( inClassRef ));
+
+/*	Level 1 (UPP-creating) HIObjectRegisterSubclass */
+	template < EventHandlerProcPtr handler >
+	Owned<HIObjectClassRef> HIObjectRegisterSubclass(
+			CFStringRef            inClassID,
+			CFStringRef            inBaseClassID,
+			OptionBits             inOptions,
+			UInt32                 inNumEvents,
+			const EventTypeSpec *  inEventList,
+			void *                 inConstructData = 0 ) {
+         return HIObjectRegisterSubclass( inClassID, inBaseClassID, inOptions, 
+                                     StaticUPP< EventHandlerUPP, handler >(),
+                                     inNumEvents,
+                                     inEventList,
+                                     inConstructData );
 		}
+
+/*	Level 2 (basic Nitrogen signature) HIObjectRegisterSubclass */
+	template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
+	Owned<HIObjectClassRef> HIObjectRegisterSubclass (
+			CFStringRef            inClassID,
+			CFStringRef            inBaseClassID,
+			OptionBits             inOptions,
+			UInt32                 inNumEvents,
+			const EventTypeSpec *  inEventList,
+			typename ObjectParameterTraits<Object>::Type inUserData = typename ObjectParameterTraits<Object>::Type() ) {
+
+		return HIObjectRegisterSubclass ( inClassID, inBaseClassID, inOptions,
+							EventHandler_Bound_ObjectGlue< Object, handler >::UPP(),
+							inNumEvents, inEventList, ObjectParameterTraits<Object>::ConvertToPointer( inUserData ));
+		}
+
+
+//	inline void HIObjectUnregisterClass ( HIObjectClassRef inClassRef ) {
+//		OnlyOnce<RegisterHIObjectErrors>();
+//		ThrowOSStatus ( ::HIObjectUnregisterClass ( inClassRef ));
+//		}
 
 
 	inline Owned<HIObjectRef> HIObjectCreate ( CFStringRef inClassID, EventRef inConstructData ) {
