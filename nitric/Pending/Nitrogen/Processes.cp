@@ -60,7 +60,7 @@ namespace Nitrogen {
 		ThrowOSStatus( ::SetFrontProcess( &psn ) );
 	}
 	
-	ProcessSerialNumber LaunchApplication( const FSSpec& file )
+	ProcessSerialNumber LaunchApplication( const FSSpec& file, LaunchFlags launchFlags, AppParameters* appParameters )
 	{
 		OnlyOnce< RegisterProcessManagerErrors >();
 		
@@ -71,9 +71,9 @@ namespace Nitrogen {
 		pb.launchBlockID 		= extendedBlock;
 		pb.launchEPBLength 		= extendedBlockLen;
 		pb.launchFileFlags 		= 0;
-		pb.launchControlFlags	= launchContinue | launchNoFileFlags | launchDontSwitch;
+		pb.launchControlFlags	= launchContinue | launchNoFileFlags | launchFlags;
 		pb.launchAppSpec 		= const_cast< FSSpec* >( &file );
-		pb.launchAppParameters	= NULL;
+		pb.launchAppParameters	= appParameters;
 		
 		ThrowOSStatus( ::LaunchApplication( &pb ) );
 		
@@ -93,6 +93,24 @@ namespace Nitrogen {
 		OnlyOnce< RegisterProcessManagerErrors >();
 		
 		ThrowOSStatus( ::GetProcessInformation( &process, &info ) );
+	}
+	
+	ProcessInfoRec GetProcessInformation( const ProcessSerialNumber& process )
+	{
+		ProcessInfoRec processInfo;
+		
+		processInfo.processInfoLength = sizeof processInfo;
+		processInfo.processName = NULL;
+		processInfo.processAppSpec = NULL;
+		
+		GetProcessInformation( process, processInfo );
+		
+		return processInfo;
+	}
+	
+	std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
+	{
+		return sizeof (AppParameters) + appParameters.messageLength;
 	}
 	
 }

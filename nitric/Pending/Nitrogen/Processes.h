@@ -13,6 +13,9 @@
 #ifndef NITROGEN_ADVANCEUNTILFAILURECONTAINER_H
 #include "Nitrogen/AdvanceUntilFailureContainer.h"
 #endif
+#ifndef NITROGEN_FLAGTYPE_H
+#include "Nitrogen/FlagType.h"
+#endif
 #ifndef NITROGEN_CFSTRING_H
 //#include "Nitrogen/CFString.h"
 #endif
@@ -35,6 +38,9 @@
 namespace Nitrogen {
 	
 	void RegisterProcessManagerErrors();
+	
+	struct LaunchFlags_Tag {};
+	typedef FlagType< LaunchFlags_Tag, ::LaunchFlags, 0 > LaunchFlags;
 	
 	using ::ProcessSerialNumber;
 	using ::ProcessInfoRec;
@@ -94,11 +100,14 @@ namespace Nitrogen {
 	
 	void SetFrontProcess( const ProcessSerialNumber& psn );
 	
-	ProcessSerialNumber LaunchApplication( const FSSpec& file );
+	ProcessSerialNumber LaunchApplication( const FSSpec& file, LaunchFlags launchFlags = 0, AppParameters* appParameters = NULL );
 	
 	ProcessSerialNumber GetNextProcess( ProcessSerialNumber process );
 	
 	void GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& info);
+	ProcessInfoRec GetProcessInformation( const ProcessSerialNumber& process );
+	
+	std::size_t SizeOf_AppParameters( const AppParameters& appParameters );
 	
 	class Process_ContainerSpecifics
 	{
