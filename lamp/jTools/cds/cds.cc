@@ -13,9 +13,6 @@
 #include "DecimalStrings.hh"
 #include "HexStrings.hh"
 
-// Misc
-#include "CDDBDiscID.hh"
-
 // Orion
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
