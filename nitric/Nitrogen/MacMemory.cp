@@ -18,26 +18,26 @@ namespace Nitrogen
       if ( result == 0 )
          MemError();
       return Owned<Handle>::Seize( result );
-     };
+     }
    
    void RegisterMemoryManagerErrors()
      {
-      OnlyOnce< RegisterOSStatus< menuPrgErr              > >();
-      OnlyOnce< RegisterOSStatus< negZcbFreeErr           > >();
-      OnlyOnce< RegisterOSStatus< paramErr                > >();
-      OnlyOnce< RegisterOSStatus< memROZErr               > >();
-      OnlyOnce< RegisterOSStatus< memFullErr              > >();
-      OnlyOnce< RegisterOSStatus< nilHandleErr            > >();
-      OnlyOnce< RegisterOSStatus< memAdrErr               > >();
-      OnlyOnce< RegisterOSStatus< memWZErr                > >();
-      OnlyOnce< RegisterOSStatus< memPurErr               > >();
-      OnlyOnce< RegisterOSStatus< memBCErr                > >();
-      OnlyOnce< RegisterOSStatus< memLockedErr            > >();
-      OnlyOnce< RegisterOSStatus< notEnoughMemoryErr      > >();
-      OnlyOnce< RegisterOSStatus< notHeldErr              > >();
-      OnlyOnce< RegisterOSStatus< cannotMakeContiguousErr > >();
-      OnlyOnce< RegisterOSStatus< notLockedErr            > >();
-      OnlyOnce< RegisterOSStatus< interruptsMaskedErr     > >();
-      OnlyOnce< RegisterOSStatus< cannotDeferErr          > >();
+      RegisterOSStatus< menuPrgErr              >();
+      RegisterOSStatus< negZcbFreeErr           >();
+      RegisterOSStatus< paramErr                >();
+      RegisterOSStatus< memROZErr               >();
+      RegisterOSStatus< memFullErr              >();
+      RegisterOSStatus< nilHandleErr            >();
+      RegisterOSStatus< memAdrErr               >();
+      RegisterOSStatus< memWZErr                >();
+      RegisterOSStatus< memPurErr               >();
+      RegisterOSStatus< memBCErr                >();
+      RegisterOSStatus< memLockedErr            >();
+      RegisterOSStatus< notEnoughMemoryErr      >();
+      RegisterOSStatus< notHeldErr              >();
+      RegisterOSStatus< cannotMakeContiguousErr >();
+      RegisterOSStatus< notLockedErr            >();
+      RegisterOSStatus< interruptsMaskedErr     >();
+      RegisterOSStatus< cannotDeferErr          >();
      }
   }

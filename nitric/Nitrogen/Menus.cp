@@ -78,9 +78,15 @@ namespace Nitrogen
    
    void RegisterMenuManagerErrors()
      {
-      RegisterOSStatus< paramErr               >();
-      RegisterOSStatus< memFullErr             >();
-      RegisterOSStatus< resNotFound            >();
-      RegisterOSStatus< hmHelpManagerNotInited >();
+      RegisterOSStatus< paramErr                >();
+      RegisterOSStatus< memFullErr              >();
+      RegisterOSStatus< resNotFound             >();
+      RegisterOSStatus< hmHelpManagerNotInited  >();
+      RegisterOSStatus< menuPropertyInvalidErr  >();
+      RegisterOSStatus< menuPropertyNotFoundErr >();
+      RegisterOSStatus< menuNotFoundErr         >();
+      RegisterOSStatus< menuUsesSystemDefErr    >();
+      RegisterOSStatus< menuItemNotFoundErr     >();
+      RegisterOSStatus< menuInvalidErr          >();
      }
   }
