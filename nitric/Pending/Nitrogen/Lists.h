@@ -142,6 +142,15 @@ namespace Nitrogen
 	// 808
 	LGetCellDataLocation_Result LGetCellDataLocation( Cell cell, ListHandle lHandle );
 	
+	// 1089
+	Rect GetListViewBounds( ListHandle list );
+	
+	// 1143
+	ListBounds GetListVisibleCells( ListHandle list );
+	
+	// 1281
+	ListBounds GetListDataBounds( ListHandle list );
+	
 }
 
 #endif

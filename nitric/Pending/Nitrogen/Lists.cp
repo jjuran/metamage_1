@@ -108,6 +108,27 @@ namespace Nitrogen
 		return result;
 	}
 	
+	Rect GetListViewBounds( ListHandle list )
+	{
+		Rect result;
+		::GetListViewBounds( list, &result );
+		return result;
+	}
+	
+	ListBounds GetListVisibleCells( ListHandle list )
+	{
+		ListBounds result;
+		::GetListVisibleCells( list, &result );
+		return result;
+	}
+	
+	ListBounds GetListDataBounds( ListHandle list )
+	{
+		ListBounds result;
+		::GetListDataBounds( list, &result );
+		return result;
+	}
+	
 	void RegisterListManagerErrors()
 	{
 		
