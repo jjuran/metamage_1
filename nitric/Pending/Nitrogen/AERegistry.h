@@ -27,6 +27,9 @@
 
 namespace Nitrogen
   {
+	
+	inline DescType TypeVersion()  { return DescType::Make( typeVersion ); }
+	
    template<> struct DescType_Traits< typeFixedPoint                >: POD_DescType_Traits< FixedPoint                > {};
    template<> struct DescType_Traits< typeFixedRectangle            >: POD_DescType_Traits< FixedRect                 > {};
    template<> struct DescType_Traits< typeIntlWritingCode           >: POD_DescType_Traits< ScriptCode                > {};
