@@ -7,8 +7,9 @@
 #include "AEObjectModel/AEObjectModel.h"
 #endif
 
-#ifndef NITROGEN_AEDESCLISTITEMS_H
-#include "Nitrogen/AEDescListItems.h"
+// Mac OS
+#ifndef __ASREGISTRY__
+#include <ASRegistry.h>
 #endif
 
 #ifndef NITROGEN_POINTERTOFUNCTION_H
@@ -26,6 +27,11 @@
 #endif
 #ifndef AEOBJECTMODEL_DISPOSETOKEN_H
 #include "AEObjectModel/DisposeToken.h"
+#endif
+
+// Nitrogen Extras / Iteration
+#ifndef ITERATION_AEDESCLISTITEMS_H
+#include "Iteration/AEDescListItems.h"
 #endif
 
 
@@ -225,12 +231,66 @@ namespace Nitrogen
 		                             context.keyData );
 	}
 	
-	static Owned< AEToken, AETokenDisposer > CallObjectAccessor_( Const_AEDescList_Item containerToken,
-	                                                              const ObjectAccessContext& context )
+	static Owned< AEToken, AETokenDisposer > CallObjectAccessorWithContext( const AEToken& containerToken,
+	                                                                        const ObjectAccessContext& context )
 	{
-		return CallObjectAccessor( containerToken.Get(),
+		return CallObjectAccessor( containerToken,
 		                           context );
 	}
+	
+	template < class F, class Trap >
+	class TrappedUnaryFunction : public std::unary_function< typename F::argument_type, typename F::result_type >
+	{
+		private:
+			F f;
+			Trap trap;
+		
+		public:
+			TrappedUnaryFunction( F f, Trap trap ) : f( f ), trap( trap )  {}
+			
+			typename F::result_type operator()( const typename F::argument_type& arg ) const
+			{
+				try
+				{
+					return f( arg );
+				}
+				catch ( ... )
+				{
+					return trap();
+				}
+			}
+	};
+	
+	template < class F, class Trap >
+	TrappedUnaryFunction< F, Trap > Trap1( const F& f, const Trap& trap )
+	{
+		return TrappedUnaryFunction< F, Trap >( f, trap );
+	}
+	
+	static Owned< AEDescList, AETokenDisposer > TrapMissingValue()
+	{
+		try
+		{
+			throw;
+		}
+		catch ( ErrAENoSuchObject )  {}
+		
+		return AECreateToken< typeType >( cMissingValue );
+	}
+	
+	struct MissingValueTrap
+	{
+		Owned< AEDescList, AETokenDisposer > operator()() const
+		{
+			try
+			{
+				throw;
+			}
+			catch ( ErrAENoSuchObject )  {}
+			
+			return AECreateToken< typeType >( cMissingValue );
+		}
+	};
 	
 	Owned< AEToken, AETokenDisposer > DispatchAccessToList( AEObjectClass   desiredClass,
 	                                                        const AEToken&  containerToken,
@@ -239,38 +299,20 @@ namespace Nitrogen
 	                                                        const AEDesc&   keyData,
 	                                                        RefCon )
 	{
-		/*
-		Owned< AEDescList > result = AECreateList< false >();
+		Owned< AEDescList, AETokenDisposer > result = AECreateTokenList();
 		
-		std::transform( AEDescList_Items( containerToken ).begin(),
-		                AEDescList_Items( containerToken ).end(),
-		                AEDescList_Items( result ).begin(),
-		                std::bind2nd( PtrFun( CallObjectAccessor_ ),
-		                              ObjectAccessContext( desiredClass,
-		                                                   containerClass,
-		                                                   keyForm,
-		                                                   keyData ) ) );
+		AEDescList_ItemValue_Container values = AEDescList_ItemValues( containerToken );
 		
-		return Owned< AEToken, AETokenDisposer >::Seize( result.Release() );
-		*/
+		std::transform( values.begin(),
+		                values.end(),
+		                AEDescList_Item_BackInserter( result ),
+		                Trap1( std::bind2nd( PtrFun( CallObjectAccessorWithContext ),
+		                                     ObjectAccessContext( desiredClass,
+		                                                          containerClass,
+		                                                          keyForm,
+		                                                          keyData ) ),
+		                       MissingValueTrap() ) );
 		
-		typedef Const_AEDescList_Item_Container::const_iterator const_iterator;
-		
-		Owned< AEDescList, AETokenDisposer > result;
-		result = Owned< AEToken, AETokenDisposer >::Seize( AECreateList< false >().Release() );
-		
-		for ( const_iterator it = AEDescList_Items( containerToken ).begin();
-		      it != AEDescList_Items( containerToken ).end();
-		      ++it )
-		{
-			AEPutDesc( AETokenEditor( result ),
-			           0,
-			           AECallObjectAccessor( desiredClass,
-			                                 (*it).Get(),
-			                                 containerClass,
-			                                 keyForm,
-			                                 keyData ) );
-		}
 		return result;
 	}
 	
