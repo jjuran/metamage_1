@@ -54,6 +54,9 @@
 #ifndef NITROGEN_CFUUID_H
 #include "Nitrogen/CFUUID.h"
 #endif
+#ifndef NITROGEN_RESOURCES_H
+#include "Nitrogen/Resources.h"
+#endif
 
 namespace Nitrogen
   {
@@ -105,7 +108,7 @@ namespace Nitrogen
    Owned<MenuRef> NewMenu( MenuID           menuID,
                            ConstStr255Param menuTitle );
    
-   inline MenuRef MacGetMenu( ResourceID resourceID )             { return ::MacGetMenu( resourceID ); }
+   inline MenuRef MacGetMenu( ResID resourceID )             { return ::MacGetMenu( resourceID ); }
    
    inline void DisposeMenu( Owned<MenuRef> /* theMenu */ )          {}
    
