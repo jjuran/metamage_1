@@ -47,14 +47,17 @@
 #ifdef AEPutKeyPtr
 #undef AEPutKeyPtr
 
-inline OSErr AEPutKeyPtr(
-	AppleEvent *  theAppleEvent,
-	AEKeyword     theAEKeyword,
-	DescType      typeCode,
-	const void *  dataPtr,
-	Size          dataSize)
+inline OSErr AEPutKeyPtr( AppleEvent*  theAppleEvent,
+                          AEKeyword    theAEKeyword,
+                          DescType     typeCode,
+                          const void*  dataPtr,
+                          Size         dataSize )
 {
-	return AEPutParamPtr(theAppleEvent, theAEKeyword, typeCode, dataPtr, dataSize);
+	return AEPutParamPtr( theAppleEvent,
+	                      theAEKeyword,
+	                      typeCode,
+	                      dataPtr,
+	                      dataSize );
 }
 
 #endif
@@ -62,12 +65,11 @@ inline OSErr AEPutKeyPtr(
 #ifdef AEPutKeyDesc
 #undef AEPutKeyDesc
 
-inline OSErr AEPutKeyDesc(
-	AppleEvent *    theAppleEvent,
-	AEKeyword       theAEKeyword,
-	const AEDesc *  theAEDesc)
+inline OSErr AEPutKeyDesc( AppleEvent*    theAppleEvent,
+                           AEKeyword      theAEKeyword,
+                           const AEDesc*  theAEDesc )
 {
-	return AEPutParamDesc(theAppleEvent, theAEKeyword, theAEDesc);
+	return AEPutParamDesc( theAppleEvent, theAEKeyword, theAEDesc );
 }
 
 #endif
@@ -75,16 +77,21 @@ inline OSErr AEPutKeyDesc(
 #ifdef AEGetKeyPtr
 #undef AEGetKeyPtr
 
-inline OSErr AEGetKeyPtr(
-	const AppleEvent *  theAppleEvent,
-	AEKeyword           theAEKeyword,
-	DescType            desiredType,
-	DescType *          typeCode,
-	void *              dataPtr,
-	Size                maximumSize,
-	Size *              actualSize)
+inline OSErr AEGetKeyPtr( const AppleEvent*  theAppleEvent,
+                          AEKeyword          theAEKeyword,
+                          DescType           desiredType,
+                          DescType*          typeCode,
+                          void*              dataPtr,
+                          Size               maximumSize,
+                          Size*              actualSize )
 {
-	return AEGetParamPtr(theAppleEvent, theAEKeyword, desiredType, typeCode, dataPtr, maximumSize, actualSize);
+	return AEGetParamPtr( theAppleEvent,
+	                      theAEKeyword,
+	                      desiredType,
+	                      typeCode,
+	                      dataPtr,
+	                      maximumSize,
+	                      actualSize );
 }
 
 #endif
@@ -92,13 +99,15 @@ inline OSErr AEGetKeyPtr(
 #ifdef AEGetKeyDesc
 #undef AEGetKeyDesc
 
-inline OSErr AEGetKeyDesc(
-	const AppleEvent *  theAppleEvent,
-	AEKeyword           theAEKeyword,
-	DescType            desiredType,
-	AEDesc *            result)
+inline OSErr AEGetKeyDesc( const AppleEvent*  theAppleEvent,
+                           AEKeyword          theAEKeyword,
+                           DescType           desiredType,
+                           AEDesc*            result )
 {
-	return AEGetParamDesc(theAppleEvent, theAEKeyword, desiredType, result);
+	return AEGetParamDesc( theAppleEvent,
+	                       theAEKeyword,
+	                       desiredType,
+	                       result );
 }
 
 #endif
@@ -106,13 +115,15 @@ inline OSErr AEGetKeyDesc(
 #ifdef AESizeOfKeyDesc
 #undef AESizeOfKeyDesc
 
-inline OSErr AESizeOfKeyDesc(
-	const AppleEvent *  theAppleEvent,
-	AEKeyword           theAEKeyword,
-	DescType *          typeCode,
-	Size *              dataSize)
+inline OSErr AESizeOfKeyDesc( const AppleEvent*  theAppleEvent,
+                              AEKeyword          theAEKeyword,
+                              DescType*          typeCode,
+                              Size*              dataSize )
 {
-	return AESizeOfParam(theAppleEvent, theAEKeyword, typeCode, dataSize);
+	return AESizeOfParam( theAppleEvent,
+	                      theAEKeyword,
+	                      typeCode,
+	                      dataSize );
 }
 
 #endif
@@ -120,18 +131,17 @@ inline OSErr AESizeOfKeyDesc(
 #ifdef AEDeleteKeyDesc
 #undef AEDeleteKeyDesc
 
-inline OSErr AEDeleteKeyDesc(
-	AppleEvent *  theAppleEvent,
-	AEKeyword     theAEKeyword)
+inline OSErr AEDeleteKeyDesc( AppleEvent*  theAppleEvent,
+                              AEKeyword    theAEKeyword )
 {
-	return AEDeleteParam(theAppleEvent, theAEKeyword);
+	return AEDeleteParam( theAppleEvent, theAEKeyword );
 }
 
 #endif
 
 
 namespace Nitrogen
-  {
+{
 	
 	void RegisterAppleEventManagerErrors();
 	
@@ -143,62 +153,8 @@ namespace Nitrogen
 	
 	typedef DescType AEObjectClass, AEPropertyID;
 	
-	// Apple event descriptor types
-	inline DescType TypeBoolean               ()  { return DescType::Make( typeBoolean                ); }
-	inline DescType TypeChar                  ()  { return DescType::Make( typeChar                   ); }
-	
-	// Preferred numeric Apple event descriptor types
-	inline DescType TypeSInt16                ()  { return DescType::Make( typeSInt16                 ); }
-	inline DescType TypeSInt32                ()  { return DescType::Make( typeSInt32                 ); }
-	inline DescType TypeUInt32                ()  { return DescType::Make( typeUInt32                 ); }
-	inline DescType TypeSInt64                ()  { return DescType::Make( typeSInt64                 ); }
-	inline DescType TypeIEEE32BitFloatingPoint()  { return DescType::Make( typeIEEE32BitFloatingPoint ); }
-	inline DescType TypeIEEE64BitFloatingPoint()  { return DescType::Make( typeIEEE64BitFloatingPoint ); }
-	inline DescType Type128BitFloatingPoint   ()  { return DescType::Make( type128BitFloatingPoint    ); }
-	inline DescType TypeDecimalStruct         ()  { return DescType::Make( typeDecimalStruct          ); }
-	
-	// Non-preferred Apple event descriptor types
-	inline DescType TypeExtended              ()  { return DescType::Make( typeExtended               ); }
-	
-	// More Apple event descriptor types
-	inline DescType TypeAEList                ()  { return DescType::Make( typeAEList                 ); }
-	inline DescType TypeAERecord              ()  { return DescType::Make( typeAERecord               ); }
-	inline DescType TypeAppleEvent            ()  { return DescType::Make( typeAppleEvent             ); }
-	inline DescType TypeEventRecord           ()  { return DescType::Make( typeEventRecord            ); }
-	inline DescType TypeTrue                  ()  { return DescType::Make( typeTrue                   ); }
-	inline DescType TypeFalse                 ()  { return DescType::Make( typeFalse                  ); }
-	inline DescType TypeAlias                 ()  { return DescType::Make( typeAlias                  ); }
-	inline DescType TypeEnumerated            ()  { return DescType::Make( typeEnumerated             ); }
-	inline DescType TypeType                  ()  { return DescType::Make( typeType                   ); }
-	inline DescType TypeAppParameters         ()  { return DescType::Make( typeAppParameters          ); }
-	inline DescType TypeProperty              ()  { return DescType::Make( typeProperty               ); }
-	inline DescType TypeFSS                   ()  { return DescType::Make( typeFSS                    ); }
-	inline DescType TypeFSRef                 ()  { return DescType::Make( typeFSRef                  ); }
-	inline DescType TypeFileURL               ()  { return DescType::Make( typeFileURL                ); }
-	inline DescType TypeKeyword               ()  { return DescType::Make( typeKeyword                ); }
-	inline DescType TypeSectionH              ()  { return DescType::Make( typeSectionH               ); }
-	inline DescType TypeWildCard              ()  { return DescType::Make( typeWildCard               ); }
-	inline DescType TypeFixed                 ()  { return DescType::Make( typeFixed                  ); }
-	inline DescType TypeProcessSerialNumber   ()  { return DescType::Make( typeProcessSerialNumber    ); }
-	inline DescType TypeApplicationURL        ()  { return DescType::Make( typeApplicationURL         ); }
-	inline DescType TypeNull                  ()  { return DescType::Make( typeNull                   ); }
-	
 	class AEKeyword_Tag {};
 	typedef SelectorType< AEKeyword_Tag, ::AEKeyword > AEKeyword;
-	
-	// Keywords for Apple event attributes
-	inline AEKeyword KeyTransactionIDAttr  ()  { return AEKeyword::Make( keyTransactionIDAttr   ); }
-	inline AEKeyword KeyReturnIDAttr       ()  { return AEKeyword::Make( keyReturnIDAttr        ); }
-	inline AEKeyword KeyEventClassAttr     ()  { return AEKeyword::Make( keyEventClassAttr      ); }
-	inline AEKeyword KeyEventIDAttr        ()  { return AEKeyword::Make( keyEventIDAttr         ); }
-	inline AEKeyword KeyAddressAttr        ()  { return AEKeyword::Make( keyAddressAttr         ); }
-	inline AEKeyword KeyOptionalKeywordAttr()  { return AEKeyword::Make( keyOptionalKeywordAttr ); }
-	inline AEKeyword KeyTimeoutAttr        ()  { return AEKeyword::Make( keyTimeoutAttr         ); }
-	inline AEKeyword KeyInteractLevelAttr  ()  { return AEKeyword::Make( keyInteractLevelAttr   ); }
-	inline AEKeyword KeyEventSourceAttr    ()  { return AEKeyword::Make( keyEventSourceAttr     ); }
-	inline AEKeyword KeyMissedKeywordAttr  ()  { return AEKeyword::Make( keyMissedKeywordAttr   ); }
-	inline AEKeyword KeyOriginalAddressAttr()  { return AEKeyword::Make( keyOriginalAddressAttr ); }
-	inline AEKeyword KeyAcceptTimeoutAttr  ()  { return AEKeyword::Make( keyAcceptTimeoutAttr   ); }
 	
 	// Constants used creating an AppleEvent
 	
@@ -215,24 +171,8 @@ namespace Nitrogen
 	struct AESendPriority_Tag  {};
 	typedef FlagType< AESendPriority_Tag, ::AESendPriority, kAENormalPriority > AESendPriority;
 	
-	inline AESendPriority AENormalPriority()  { return AESendPriority::Make( kAENormalPriority ); }
-	inline AESendPriority AEHighPriority  ()  { return AESendPriority::Make( kAEHighPriority   ); }
-	
 	struct AESendMode_Tag  {};
 	typedef FlagType< AESendMode_Tag, ::AESendMode > AESendMode;
-	
-	inline AESendMode AENoReply              ()  { return AESendMode::Make( kAENoReply               ); }
-	inline AESendMode AEQueueReply           ()  { return AESendMode::Make( kAEQueueReply            ); }
-	inline AESendMode AEWaitReply            ()  { return AESendMode::Make( kAEWaitReply             ); }
-	inline AESendMode AEDontReconnect        ()  { return AESendMode::Make( kAEDontReconnect         ); }
-	inline AESendMode AEWantReceipt          ()  { return AESendMode::Make( kAEWantReceipt           ); }
-	inline AESendMode AENeverInteract        ()  { return AESendMode::Make( kAENeverInteract         ); }
-	inline AESendMode AECanInteract          ()  { return AESendMode::Make( kAECanInteract           ); }
-	inline AESendMode AEAlwaysInteract       ()  { return AESendMode::Make( kAEAlwaysInteract        ); }
-	inline AESendMode AECanSwitchLayer       ()  { return AESendMode::Make( kAECanSwitchLayer        ); }
-	inline AESendMode AEDontRecord           ()  { return AESendMode::Make( kAEDontRecord            ); }
-	inline AESendMode AEDontExecute          ()  { return AESendMode::Make( kAEDontExecute           ); }
-	inline AESendMode AEProcessNonReplyEvents()  { return AESendMode::Make( kAEProcessNonReplyEvents ); }
 	
 	#pragma mark -
 	#pragma mark ¥ DescType_Traits ¥
@@ -355,7 +295,7 @@ namespace Nitrogen
 
       static const bool inputHasVariableLength = true;
       
-      static void SetInputBufferLength( InputBuffer& b, std::size_t s )    
+      static void SetInputBufferLength( InputBuffer& b, std::size_t s )
         {
          b.length = s;
          b.result = std::auto_ptr< POD >( static_cast<POD*>( ::operator new( s ) ) );
@@ -386,7 +326,7 @@ namespace Nitrogen
 
 		static const bool inputHasVariableLength = true;
 		
-		static void SetInputBufferLength( InputBuffer& b, std::size_t s )    
+		static void SetInputBufferLength( InputBuffer& b, std::size_t s )
 		{
 			b = NewHandle( s );
 			HLock( b );
@@ -505,13 +445,13 @@ namespace Nitrogen
 	typedef AERecord   AEObjectSpecifier;
 	
 	template <>
-	struct Disposer< AEDesc > : public std::unary_function< AEDesc, void >, 
+	struct Disposer< AEDesc > : public std::unary_function< AEDesc, void >,
 	                            private DefaultDestructionOSStatusPolicy
 	{
 		// parameter can't be const
 		void operator()( AEDesc desc ) const
 		{
-			// AEDisposeDesc() is documented as only ever returning noErr, 
+			// AEDisposeDesc() is documented as only ever returning noErr,
 			// but we check anyway to be future-proof.
 			
 			OnlyOnce< RegisterAppleEventManagerErrors >();
@@ -533,7 +473,7 @@ namespace Nitrogen
 	};
 	
 	template <>
-	struct Disposer< AEKeyDesc > : public std::unary_function< AEKeyDesc, void >, 
+	struct Disposer< AEKeyDesc > : public std::unary_function< AEKeyDesc, void >,
 	                               private DefaultDestructionOSStatusPolicy
 	{
 		// parameter can't be const
@@ -544,7 +484,10 @@ namespace Nitrogen
 	};
 	
 	template <>
-	struct LivelinessTraits< AEKeyDesc, Disposer< AEKeyDesc > >   { typedef SeizedValuesAreLive LivelinessTest; };
+	struct LivelinessTraits< AEKeyDesc, Disposer< AEKeyDesc > >
+	{
+		typedef SeizedValuesAreLive LivelinessTest;
+	};
 	
 	template <>
 	struct Maker< AEKeyDesc >
@@ -589,24 +532,32 @@ namespace Nitrogen
 	inline void DisposeAECoerceDescUPP( Owned< AECoerceDescUPP > )  {}
 	inline void DisposeAECoercePtrUPP ( Owned< AECoercePtrUPP  > )  {}
 	
-	inline void InvokeAECoerceDescUPP( const AEDesc& fromDesc,
-	                                   DescType toType,
-	                                   RefCon handlerRefCon,
-	                                   AEDesc& toDesc, 
-	                                   AECoerceDescUPP userUPP )
+	inline void InvokeAECoerceDescUPP( const AEDesc&    fromDesc,
+	                                   DescType         toType,
+	                                   RefCon           handlerRefCon,
+	                                   AEDesc&          toDesc,
+	                                   AECoerceDescUPP  userUPP )
 	{
-		ThrowOSStatus( userUPP( &fromDesc, toType, handlerRefCon, &toDesc ) );
+		ThrowOSStatus( userUPP( &fromDesc,
+		                        toType,
+		                        handlerRefCon,
+		                        &toDesc ) );
 	}
 	
-	inline void InvokeAECoercePtrUPP( DescType typeCode,
-	                                  const void* dataPtr,
-	                                  std::size_t dataSize,
-	                                  DescType toType,
-	                                  RefCon handlerRefCon,
-	                                  AEDesc& toDesc, 
-	                                  AECoercePtrUPP userUPP )
+	inline void InvokeAECoercePtrUPP( DescType        typeCode,
+	                                  const void*     dataPtr,
+	                                  std::size_t     dataSize,
+	                                  DescType        toType,
+	                                  RefCon          handlerRefCon,
+	                                  AEDesc&         toDesc,
+	                                  AECoercePtrUPP  userUPP )
 	{
-		ThrowOSStatus( userUPP( typeCode, dataPtr, dataSize, toType, handlerRefCon, &toDesc ) );
+		ThrowOSStatus( userUPP( typeCode,
+		                        dataPtr,
+		                        dataSize,
+		                        toType,
+		                        handlerRefCon,
+		                        &toDesc ) );
 	}
 	
 	struct AECoercionHandlerUPP : AECoerceDescUPP
@@ -616,63 +567,66 @@ namespace Nitrogen
 	
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM  ||  OPAQUE_UPP_TYPES
 		
-		AECoercionHandlerUPP( ::AECoercePtrUPP p )  : AECoerceDescUPP( reinterpret_cast< ::AECoerceDescUPP >( p ) )  {}
+		AECoercionHandlerUPP( ::AECoercePtrUPP p )
+		:
+			AECoerceDescUPP( reinterpret_cast< ::AECoerceDescUPP >( p ) )
+		{}
 		
 	#endif
 	};
 	
 	struct AECoercionHandler
 	{
-		DescType               fromType;
-		DescType               toType;
-		AECoercionHandlerUPP   handler;
-		RefCon                 handlerRefCon;
-		bool                   fromTypeIsDesc;
-		bool                   isSysHandler;
+		DescType              fromType;
+		DescType              toType;
+		AECoercionHandlerUPP  handler;
+		RefCon                handlerRefCon;
+		bool                  fromTypeIsDesc;
+		bool                  isSysHandler;
 		
 		AECoercionHandler();
 		
-		AECoercionHandler( DescType             fromType,
-		                   DescType             toType,
-		                   AECoercionHandlerUPP handler,
-		                   RefCon               handlerRefCon,
-		                   bool                 fromTypeIsDesc,
-		                   bool                 isSysHandler )
-		: 
-			fromType( fromType ),
-			toType( toType ),
-			handler( handler ),
-			handlerRefCon( handlerRefCon ),
+		AECoercionHandler( DescType              fromType,
+		                   DescType              toType,
+		                   AECoercionHandlerUPP  handler,
+		                   RefCon                handlerRefCon,
+		                   bool                  fromTypeIsDesc,
+		                   bool                  isSysHandler )
+		:
+			fromType      ( fromType       ),
+			toType        ( toType         ),
+			handler       ( handler        ),
+			handlerRefCon ( handlerRefCon  ),
 			fromTypeIsDesc( fromTypeIsDesc ),
-			isSysHandler( isSysHandler )
+			isSysHandler  ( isSysHandler   )
+		{}
+		
+		AECoercionHandler( DescType         fromType,
+		                   DescType         toType,
+		                   AECoerceDescUPP  handler,
+		                   RefCon           handlerRefCon,
+		                   bool             isSysHandler )
+		:
+			fromType      ( fromType      ),
+			toType        ( toType        ),
+			handler       ( handler       ),
+			handlerRefCon ( handlerRefCon ),
+			fromTypeIsDesc( true          ),
+			isSysHandler  ( isSysHandler  )
 		{}
 		
 		AECoercionHandler( DescType        fromType,
 		                   DescType        toType,
-		                   AECoerceDescUPP handler,
+		                   AECoercePtrUPP  handler,
 		                   RefCon          handlerRefCon,
 		                   bool            isSysHandler )
-		: 
-			fromType( fromType ),
-			toType( toType ),
-			handler( handler ),
-			handlerRefCon( handlerRefCon ),
-			fromTypeIsDesc( true ),
-			isSysHandler( isSysHandler )
-		{}
-		
-		AECoercionHandler( DescType       fromType,
-		                   DescType       toType,
-		                   AECoercePtrUPP handler,
-		                   RefCon         handlerRefCon,
-		                   bool           isSysHandler )
-		: 
-			fromType( fromType ),
-			toType( toType ),
-			handler( handler ),
-			handlerRefCon( handlerRefCon ),
-			fromTypeIsDesc( false ),
-			isSysHandler( isSysHandler )
+		:
+			fromType      ( fromType      ),
+			toType        ( toType        ),
+			handler       ( handler       ),
+			handlerRefCon ( handlerRefCon ),
+			fromTypeIsDesc( false         ),
+			isSysHandler  ( isSysHandler  )
 		{}
 	};
 	
@@ -689,23 +643,30 @@ namespace Nitrogen
 	{
 		void operator()( const AECoercionHandler& installation ) const
 		{
-			DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus
-			(
-				::AERemoveCoercionHandler( installation.fromType,
-				                           installation.toType,
-				                           installation.handler,
-				                           installation.isSysHandler )
-			);
+			HandleDestructionOSStatus( ::AERemoveCoercionHandler( installation.fromType,
+			                                                      installation.toType,
+			                                                      installation.handler,
+			                                                      installation.isSysHandler ) );
 		}
 	};
 	
-	typedef Owned< AEDesc > ( *AECoerceDescProcPtr )( const AEDesc& fromDesc, DescType toType, RefCon refCon );
-	typedef Owned< AEDesc > ( *AECoercePtrProcPtr )( DescType typeCode, const void* dataPtr, std::size_t datasize, DescType toType, RefCon refCon );
+	typedef Owned< AEDesc > ( *AECoerceDescProcPtr )( const AEDesc&  fromDesc,
+	                                                  DescType       toType,
+	                                                  RefCon         refCon );
+	
+	typedef Owned< AEDesc > ( *AECoercePtrProcPtr )( DescType     typeCode,
+	                                                 const void*  dataPtr,
+	                                                 std::size_t  datasize,
+	                                                 DescType     toType,
+	                                                 RefCon       refCon );
 	
 	template < AECoerceDescProcPtr handler >
 	struct Adapt_AECoerceDesc
 	{
-		static pascal OSErr ToCallback( const AEDesc* fromDesc, ::DescType toType, long refCon, AEDesc* result )
+		static pascal OSErr ToCallback( const AEDesc*  fromDesc,
+		                                ::DescType     toType,
+		                                long           refCon,
+		                                AEDesc*        result )
 		{
 			try
 			{
@@ -715,6 +676,7 @@ namespace Nitrogen
 			{
 				return err.Get();
 			}
+			
 			return noErr;
 		}
 	};
@@ -722,16 +684,26 @@ namespace Nitrogen
 	template < AECoercePtrProcPtr handler >
 	struct Adapt_AECoercePtr
 	{
-		static pascal OSErr ToCallback( ::DescType typeCode, const void* dataPtr, ::Size datasize, ::DescType toType, long refCon, AEDesc* result )
+		static pascal OSErr ToCallback( ::DescType   typeCode,
+		                                const void*  dataPtr,
+		                                ::Size       datasize,
+		                                ::DescType   toType,
+		                                long         refCon,
+		                                AEDesc*      result )
 		{
 			try
 			{
-				*result = handler( typeCode, dataPtr, dataSize, toType, refCon ).Release();
+				*result = handler( typeCode,
+				                   dataPtr,
+				                   dataSize,
+				                   toType,
+				                   refCon ).Release();
 			}
 			catch ( OSStatus err )
 			{
 				return err.Get();
 			}
+			
 			return noErr;
 		}
 	};
@@ -739,132 +711,96 @@ namespace Nitrogen
 	// 388
 	Owned< AECoercionHandler > AEInstallCoercionHandler( const AECoercionHandler& toInstall );
 	
-	inline Owned< AECoercionHandler > AEInstallCoercionHandler
-	(
-		DescType fromType, 
-		DescType toType, 
-		AECoerceDescUPP handler, 
-		RefCon handlerRefCon = RefCon(), 
-		Boolean isSysHandler = false
-	)
+	inline Owned< AECoercionHandler > AEInstallCoercionHandler( DescType fromType,
+	                                                            DescType toType,
+	                                                            AECoerceDescUPP handler,
+	                                                            RefCon handlerRefCon = RefCon(),
+	                                                            Boolean isSysHandler = false )
 	{
-		return AEInstallCoercionHandler
-		(
-			AECoercionHandler( fromType, toType, handler, handlerRefCon, isSysHandler )
-		);
+		return AEInstallCoercionHandler( AECoercionHandler( fromType,
+		                                                    toType,
+		                                                    handler,
+		                                                    handlerRefCon,
+		                                                    isSysHandler ) );
 	}
 	
-	inline Owned< AECoercionHandler > AEInstallCoercionHandler
-	(
-		DescType fromType, 
-		DescType toType, 
-		AECoercePtrUPP handler, 
-		RefCon handlerRefCon = RefCon(), 
-		Boolean isSysHandler = false
-	)
+	inline Owned< AECoercionHandler > AEInstallCoercionHandler( DescType        fromType,
+	                                                            DescType        toType,
+	                                                            AECoercePtrUPP  handler,
+	                                                            RefCon          handlerRefCon = RefCon(),
+	                                                            Boolean         isSysHandler  = false )
 	{
-		return AEInstallCoercionHandler
-		(
-			AECoercionHandler( fromType, toType, handler, handlerRefCon, isSysHandler )
-		);
+		return AEInstallCoercionHandler( AECoercionHandler( fromType,
+		                                                    toType,
+		                                                    handler,
+		                                                    handlerRefCon,
+		                                                    isSysHandler ) );
 	}
 	
 	template < typename AECoerceDescUPP::ProcPtr handler >
-	Owned< AECoercionHandler > AEInstallCoercionHandler
-	(
-		DescType fromType, 
-		DescType toType, 
-		RefCon handlerRefCon = RefCon(), 
-		Boolean isSysHandler = false
-	)
+	Owned< AECoercionHandler > AEInstallCoercionHandler( DescType  fromType,
+	                                                     DescType  toType,
+	                                                     RefCon    handlerRefCon = RefCon(),
+	                                                     Boolean   isSysHandler  = false )
 	{
-		return AEInstallCoercionHandler
-		(
-			AECoercionHandler
-			(
-				fromType, 
-				toType, 
-				StaticUPP< AECoerceDescUPP, handler >(), 
-				handlerRefCon, 
-				isSysHandler
-			)
-		);
+		return AEInstallCoercionHandler( AECoercionHandler( fromType,
+		                                                    toType,
+		                                                    StaticUPP< AECoerceDescUPP, handler >(),
+		                                                    handlerRefCon,
+		                                                    isSysHandler ) );
 	}
 	
 	template < typename AECoercePtrUPP::ProcPtr handler >
-	Owned< AECoercionHandler > AEInstallCoercionHandler
-	(
-		DescType fromType, 
-		DescType toType, 
-		RefCon handlerRefCon = RefCon(), 
-		Boolean isSysHandler = false
-	)
+	Owned< AECoercionHandler > AEInstallCoercionHandler( DescType  fromType,
+	                                                     DescType  toType,
+	                                                     RefCon    handlerRefCon = RefCon(),
+	                                                     Boolean   isSysHandler  = false )
 	{
-		return AEInstallCoercionHandler
-		(
-			AECoercionHandler
-			(
-				fromType, 
-				toType, 
-				StaticUPP< AECoercePtrUPP, handler >(), 
-				handlerRefCon, 
-				isSysHandler
-			)
-		);
+		return AEInstallCoercionHandler( AECoercionHandler( fromType,
+		                                                    toType,
+		                                                    StaticUPP< AECoercePtrUPP, handler >(),
+		                                                    handlerRefCon,
+		                                                    isSysHandler ) );
 	}
 	
 	template < AECoerceDescProcPtr handler >
-	Owned< AECoercionHandler > AEInstallCoercionHandler
-	(
-		DescType fromType, 
-		DescType toType, 
-		RefCon handlerRefCon = RefCon(), 
-		Boolean isSysHandler = false
-	)
+	Owned< AECoercionHandler > AEInstallCoercionHandler( DescType  fromType,
+	                                                     DescType  toType,
+	                                                     RefCon    handlerRefCon = RefCon(),
+	                                                     Boolean   isSysHandler  = false )
 	{
-		return AEInstallCoercionHandler< Adapt_AECoerceDesc< handler >::ToCallback >
-		(
-			fromType, 
-			toType, 
-			handlerRefCon, 
-			isSysHandler
-		);
+		return AEInstallCoercionHandler< Adapt_AECoerceDesc< handler >::ToCallback >( fromType,
+		                                                                              toType,
+		                                                                              handlerRefCon,
+		                                                                              isSysHandler );
 	}
 	
 	template < AECoercePtrProcPtr handler >
-	Owned< AECoercionHandler > AEInstallCoercionHandler
-	(
-		DescType fromType, 
-		DescType toType, 
-		RefCon handlerRefCon = RefCon(), 
-		Boolean isSysHandler = false
-	)
+	Owned< AECoercionHandler > AEInstallCoercionHandler( DescType  fromType,
+	                                                     DescType  toType,
+	                                                     RefCon    handlerRefCon = RefCon(),
+	                                                     Boolean   isSysHandler  = false )
 	{
-		return AEInstallCoercionHandler< Adapt_AECoercePtr< handler >::ToCallback >
-		(
-			fromType, 
-			toType, 
-			handlerRefCon, 
-			isSysHandler
-		);
+		return AEInstallCoercionHandler< Adapt_AECoercePtr< handler >::ToCallback >( fromType,
+		                                                                             toType,
+		                                                                             handlerRefCon,
+		                                                                             isSysHandler );
 	}
 	
 	// 406
 	inline void AERemoveCoercionHandler( Owned< AECoercionHandler > )  {}
 	
 	typedef AECoercionHandler AEGetCoercionHandler_Result;
-	AECoercionHandler AEGetCoercionHandler
-	(
-		DescType fromType,
-		DescType toType,
-		bool isSysHandler
-	);
+	
+	AECoercionHandler AEGetCoercionHandler( DescType  fromType,
+	                                        DescType  toType,
+	                                        bool      isSysHandler );
 	
 	// 444
-	Owned< AEDesc > AECoercePtr( DescType         typeCode, 
-	                             const void*      dataPtr, 
-	                             Size             dataSize, 
-	                             DescType         toType );
+	Owned< AEDesc > AECoercePtr( DescType     typeCode,
+	                             const void*  dataPtr,
+	                             Size         dataSize,
+	                             DescType     toType );
 	
 	// 461
 	Owned< AEDesc > AECoerceDesc( const AEDesc& desc, DescType toType );
@@ -880,14 +816,13 @@ namespace Nitrogen
 		operator Size() const  { return dataSize; }
 	};
 	
-	typedef AEDesc_Info 
-		AESizeOfNthItem_Result, 
-		AESizeOfKeyDesc_Result, 
-		AEGetKeyPtr_Result, 
-		AESizeOfParam_Result, 
-		AESizeOfAttribute_Result, 
-		AEGetParamPtr_Result, 
-		AEGetAttributePtr_Result;
+	typedef AEDesc_Info AESizeOfNthItem_Result,
+	                    AESizeOfKeyDesc_Result,
+	                    AEGetKeyPtr_Result,
+	                    AESizeOfParam_Result,
+	                    AESizeOfAttribute_Result,
+	                    AEGetParamPtr_Result,
+	                    AEGetAttributePtr_Result;
 
 	// 484
 	inline Owned< AEDesc > AEInitializeDesc()
@@ -895,9 +830,15 @@ namespace Nitrogen
 		return Owned< AEDesc >::Seize( Make< AEDesc >() );
 	}
 	
-	Owned< AEDesc > AECreateDesc( DescType typeCode, const void* dataPtr, Size dataSize );
-	Owned< AEDesc > AECreateDesc( DescType typeCode, Handle handle );
-	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< Handle > handle );
+	Owned< AEDesc > AECreateDesc( DescType     typeCode,
+	                              const void*  dataPtr,
+	                              Size         dataSize );
+	
+	Owned< AEDesc > AECreateDesc( DescType  typeCode,
+	                              Handle    handle );
+	
+	Owned< AEDesc > AECreateDesc( DescType         typeCode,
+	                              Owned< Handle >  handle );
 	
 	template < class T >
 	Owned< AEDesc > AECreateDesc( DescType typeCode, T** handle )
@@ -906,7 +847,8 @@ namespace Nitrogen
 	}
 	
 	template < class T >
-	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< T**, Disposer< Handle > > handle )
+	Owned< AEDesc > AECreateDesc( DescType                          typeCode,
+	                              Owned< T**, Disposer< Handle > >  handle )
 	{
 		return AECreateDesc( typeCode, Owned< Handle >( handle ) );
 	}
@@ -1040,106 +982,87 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AppleEvents ¥
 	
-	Owned< AppleEvent > AECreateAppleEvent(
-		AEEventClass eventClass, 
-		AEEventID eventID, 
-		const AEAddressDesc& target, 
-		AEReturnID returnID = AEReturnID(), 
-		AETransactionID transactionID = AETransactionID()
-	);
+	Owned< AppleEvent > AECreateAppleEvent( AEEventClass          eventClass,
+	                                        AEEventID             eventID,
+	                                        const AEAddressDesc&  target,
+	                                        AEReturnID            returnID      = AEReturnID(),
+	                                        AETransactionID       transactionID = AETransactionID() );
 	
-	void AEPutParamPtr(
-		AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize
-	);
+	void AEPutParamPtr( AppleEvent&  appleEvent,
+	                    AEKeyword    keyword,
+	                    DescType     typeCode,
+	                    const void*  dataPtr,
+	                    std::size_t  dataSize );
 	
-	void AEPutParamPtr(
-		Owned< AppleEvent >& appleEvent, 
-		AEKeyword keyword, 
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize
-	);
+	void AEPutParamPtr( Owned< AppleEvent >&  appleEvent,
+	                    AEKeyword             keyword,
+	                    DescType              typeCode,
+	                    const void*           dataPtr,
+	                    std::size_t           dataSize );
 	
-	void AEPutParamDesc(        AppleEvent  & appleEvent, AEKeyword keyword, const AEDesc& desc );
-	void AEPutParamDesc( Owned< AppleEvent >& appleEvent, AEKeyword keyword, const AEDesc& desc );
+	void AEPutParamDesc( AppleEvent&    appleEvent,
+	                     AEKeyword      keyword,
+	                     const AEDesc&  desc );
 	
-	AEGetParamPtr_Result AEGetParamPtr(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		DescType desiredType, 
-		void* dataPtr, 
-		std::size_t maximumSize
-	);
+	void AEPutParamDesc( Owned< AppleEvent >&  appleEvent,
+	                     AEKeyword             keyword,
+	                     const AEDesc&         desc );
 	
-	Owned< AEDesc > AEGetParamDesc(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		DescType desiredType
-	);
+	AEGetParamPtr_Result AEGetParamPtr( const AppleEvent&  appleEvent,
+	                                    AEKeyword          keyword,
+	                                    DescType           desiredType,
+	                                    void*              dataPtr,
+	                                    std::size_t        maximumSize );
 	
-	AESizeOfParam_Result AESizeOfParam(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword
-	);
+	Owned< AEDesc > AEGetParamDesc( const AppleEvent&  appleEvent,
+	                                AEKeyword          keyword,
+	                                DescType           desiredType );
+	
+	AESizeOfParam_Result AESizeOfParam( const AppleEvent&  appleEvent,
+	                                    AEKeyword          keyword );
 	
 	void AEDeleteParam(        AppleEvent  & appleEvent, AEKeyword keyword );
 	void AEDeleteParam( Owned< AppleEvent >& appleEvent, AEKeyword keyword );
 	
-	void AEPutAttributePtr(
-		AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize
-	);
+	void AEPutAttributePtr( AppleEvent&  appleEvent,
+	                        AEKeyword    keyword,
+	                        DescType     typeCode,
+	                        const void*  dataPtr,
+	                        std::size_t  dataSize );
 	
-	void AEPutAttributePtr(
-		Owned< AppleEvent >& appleEvent, 
-		AEKeyword keyword, 
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize
-	);
+	void AEPutAttributePtr( Owned< AppleEvent >&  appleEvent,
+	                        AEKeyword             keyword,
+	                        DescType              typeCode,
+	                        const void*           dataPtr,
+	                        std::size_t           dataSize );
 	
-	void AEPutAttributeDesc(
-		AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		const AEDesc& desc
-	);
+	void AEPutAttributeDesc( AppleEvent&    appleEvent,
+	                         AEKeyword      keyword,
+	                         const AEDesc&  desc );
 	
-	void AEPutAttributeDesc(
-		Owned< AppleEvent >& appleEvent, 
-		AEKeyword keyword, 
-		const AEDesc& desc
-	);
+	void AEPutAttributeDesc( Owned< AppleEvent >&  appleEvent,
+	                         AEKeyword             keyword,
+	                         const AEDesc&         desc );
 	
-	AEGetAttributePtr_Result AEGetAttributePtr(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		DescType desiredType, 
-		void* dataPtr, 
-		std::size_t maximumSize
-	);
+	AEGetAttributePtr_Result AEGetAttributePtr( const AppleEvent&  appleEvent,
+	                                            AEKeyword          keyword,
+	                                            DescType           desiredType,
+	                                            void*              dataPtr,
+	                                            std::size_t        maximumSize );
 	
-	Owned< AEDesc > AEGetAttributeDesc(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		DescType desiredType
-	);
+	Owned< AEDesc > AEGetAttributeDesc( const AppleEvent&  appleEvent,
+	                                    AEKeyword          keyword,
+	                                    DescType           desiredType );
 	
-	AESizeOfAttribute_Result AESizeOfAttribute(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword
-	);
+	AESizeOfAttribute_Result AESizeOfAttribute( const AppleEvent&  appleEvent,
+	                                            AEKeyword          keyword );
 	
 	#pragma mark -
 	#pragma mark ¥ Opaque data ¥
 	
-	void AEGetDescData( const AEDesc& desc, void* dataPtr, std::size_t maximumSize );
+	void AEGetDescData( const AEDesc&  desc,
+	                    void*          dataPtr,
+	                    std::size_t    maximumSize );
 	
 	inline std::size_t AEGetDescDataSize( const AEDesc& desc )
 	{
@@ -1154,19 +1077,15 @@ namespace Nitrogen
 	#endif
 	}
 	
-	void AEReplaceDescData(
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize, 
-		AEDesc& result
-	);
+	void AEReplaceDescData( DescType     typeCode,
+	                        const void*  dataPtr,
+	                        std::size_t  dataSize,
+	                        AEDesc&      result );
 	
-	void AEReplaceDescData(
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize, 
-		Owned< AEDesc >& result
-	);
+	void AEReplaceDescData( DescType          typeCode,
+	                        const void*       dataPtr,
+	                        std::size_t       dataSize,
+	                        Owned< AEDesc >&  result );
 	
 	
 	#pragma mark -
@@ -1204,18 +1123,17 @@ namespace Nitrogen
 	#pragma mark ¥ Powered by DescType_Traits ¥
 	
 	template < ::DescType type >
-	Owned< AEDesc > AECoercePtr(typename DescType_Traits< type >::Parameter data, DescType toType)
+	Owned< AEDesc > AECoercePtr( typename DescType_Traits< type >::Parameter  data,
+	                             DescType                                     toType )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		Owned< AEDesc > result = AECoercePtr(
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer ), 
-			toType
-		);
+		Owned< AEDesc > result = AECoercePtr( DescType( type ),
+		                                      Traits::OutputBufferStart ( buffer ),
+		                                      Traits::OutputBufferLength( buffer ),
+		                                      toType );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 		
@@ -1223,17 +1141,15 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	Owned< AEDesc > AECreateDesc(typename DescType_Traits< type >::Parameter data)
+	Owned< AEDesc > AECreateDesc( typename DescType_Traits< type >::Parameter data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		Owned< AEDesc > desc = AECreateDesc(
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		Owned< AEDesc > desc = AECreateDesc( DescType( type ),
+		                                     Traits::OutputBufferStart ( buffer ),
+		                                     Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 		
@@ -1241,265 +1157,241 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	void AEPutPtr(
-		AEDescList& list, 
-		long index, 
-		typename DescType_Traits< type >::Parameter data)
+	void AEPutPtr( AEDescList&                                  list,
+	               long                                         index,
+	               typename DescType_Traits< type >::Parameter  data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEPutPtr(
-			list, 
-			index, 
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		AEPutPtr( list,
+		          index,
+		          DescType( type ),
+		          Traits::OutputBufferStart ( buffer ),
+		          Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type, class Disposer >
-	void AEPutPtr(
-		Owned< AEDescList, Disposer >& list, 
-		long index, 
-		typename DescType_Traits< type >::Parameter data)
+	void AEPutPtr( Owned< AEDescList, Disposer >&               list,
+	               long                                         index,
+	               typename DescType_Traits< type >::Parameter  data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEPutPtr(
-			list, 
-			index, 
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		AEPutPtr( list,
+		          index,
+		          DescType( type ),
+		          Traits::OutputBufferStart ( buffer ),
+		          Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
-	typename DescType_Traits< type >::Result AEGetNthPtr(
-		const AEDescList& listDesc, 
-		long index
-	)
+	typename DescType_Traits< type >::Result
+	AEGetNthPtr( const AEDescList&  listDesc,
+	             long               index )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
 		if ( Traits::inputHasVariableLength )
-			Traits::SetInputBufferLength( buffer, AESizeOfNthItem( listDesc, index ) );
+		{
+			Traits::SetInputBufferLength( buffer,
+			                              AESizeOfNthItem( listDesc, index ) );
+		}
 		
-		AEGetNthPtr(
-			listDesc, 
-			index, 
-			DescType( type ), 
-			Traits::InputBufferStart( buffer ),
-			Traits::InputBufferLength( buffer )
-		);
+		AEGetNthPtr( listDesc,
+		             index,
+		             DescType( type ),
+		             Traits::InputBufferStart ( buffer ),
+		             Traits::InputBufferLength( buffer ) );
 		
 		return Traits::ProcessInputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
-	void AEPutKeyPtr(
-		AERecord& record, 
-		AEKeyword keyword, 
-		typename DescType_Traits< type >::Parameter data)
+	void AEPutKeyPtr( AERecord&                                    record,
+	                  AEKeyword                                    keyword,
+	                  typename DescType_Traits< type >::Parameter  data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEPutKeyPtr(
-			record, 
-			keyword, 
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		AEPutKeyPtr( record,
+		             keyword,
+		             DescType( type ),
+		             Traits::OutputBufferStart ( buffer ),
+		             Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type, class Disposer >
-	void AEPutKeyPtr(
-		Owned< AERecord, Disposer >& record, 
-		AEKeyword keyword, 
-		typename DescType_Traits< type >::Parameter data)
+	void AEPutKeyPtr( Owned< AERecord, Disposer >&                 record,
+	                  AEKeyword                                    keyword,
+	                  typename DescType_Traits< type >::Parameter  data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEPutKeyPtr(
-			record, 
-			keyword, 
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		AEPutKeyPtr( record,
+		             keyword,
+		             DescType( type ),
+		             Traits::OutputBufferStart ( buffer ),
+		             Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
-	typename DescType_Traits< type >::Result AEGetKeyPtr(
-		const AERecord& record, 
-		AEKeyword keyword
-	)
+	typename DescType_Traits< type >::Result
+	AEGetKeyPtr( const AERecord&  record,
+	             AEKeyword        keyword )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
 		if ( Traits::inputHasVariableLength )
-			Traits::SetInputBufferLength( buffer, AESizeOfKeyDesc( record, keyword ) );
+		{
+			Traits::SetInputBufferLength( buffer,
+			                              AESizeOfKeyDesc( record, keyword ) );
+		}
 		
-		AEGetKeyPtr(
-			record, 
-			keyword, 
-			DescType( type ), 
-			Traits::InputBufferStart( buffer ),
-			Traits::InputBufferLength( buffer )
-		);
+		AEGetKeyPtr( record,
+		             keyword,
+		             DescType( type ),
+		             Traits::InputBufferStart ( buffer ),
+		             Traits::InputBufferLength( buffer ) );
 		
 		return Traits::ProcessInputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
-	void AEPutParamPtr(
-		AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		typename DescType_Traits< type >::Parameter data)
+	void AEPutParamPtr( AppleEvent&                                  appleEvent,
+	                    AEKeyword                                    keyword,
+	                    typename DescType_Traits< type >::Parameter  data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEPutParamPtr(
-			appleEvent, 
-			keyword, 
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		AEPutParamPtr( appleEvent,
+		               keyword,
+		               DescType( type ),
+		               Traits::OutputBufferStart ( buffer ),
+		               Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type, class Disposer >
-	void AEPutParamPtr(
-		Owned< AppleEvent, Disposer >& appleEvent, 
-		AEKeyword keyword, 
-		typename DescType_Traits< type >::Parameter data)
+	void AEPutParamPtr( Owned< AppleEvent, Disposer >&               appleEvent,
+	                    AEKeyword                                    keyword,
+	                    typename DescType_Traits< type >::Parameter  data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEPutParamPtr(
-			appleEvent, 
-			keyword, 
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		AEPutParamPtr( appleEvent,
+		               keyword,
+		               DescType( type ),
+		               Traits::OutputBufferStart ( buffer ),
+		               Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
-	typename DescType_Traits< type >::Result AEGetParamPtr(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword
-	)
+	typename DescType_Traits< type >::Result
+	AEGetParamPtr( const AppleEvent&  appleEvent,
+	               AEKeyword          keyword )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
 		if ( Traits::inputHasVariableLength )
-			Traits::SetInputBufferLength( buffer, AESizeOfParam( appleEvent, keyword ) );
+		{
+			Traits::SetInputBufferLength( buffer,
+			                              AESizeOfParam( appleEvent, keyword ) );
+		}
 		
-		AEGetParamPtr(
-			appleEvent, 
-			keyword, 
-			DescType( type ), 
-			Traits::InputBufferStart( buffer ),
-			Traits::InputBufferLength( buffer )
-		);
+		AEGetParamPtr( appleEvent,
+		               keyword,
+		               DescType( type ),
+		               Traits::InputBufferStart ( buffer ),
+		               Traits::InputBufferLength( buffer ) );
 		
 		return Traits::ProcessInputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
-	void AEPutAttributePtr(
-		AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		typename DescType_Traits< type >::Parameter data)
+	void AEPutAttributePtr( AppleEvent&                                  appleEvent,
+	                        AEKeyword                                    keyword,
+	                        typename DescType_Traits< type >::Parameter  data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEPutAttributePtr(
-			appleEvent, 
-			keyword, 
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		AEPutAttributePtr( appleEvent,
+		                   keyword,
+		                   DescType( type ),
+		                   Traits::OutputBufferStart ( buffer ),
+		                   Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type, class Disposer >
-	void AEPutAttributePtr(
-		Owned< AppleEvent, Disposer >& appleEvent, 
-		AEKeyword keyword, 
-		typename DescType_Traits< type >::Parameter data)
+	void AEPutAttributePtr( Owned< AppleEvent, Disposer >&               appleEvent,
+	                        AEKeyword                                    keyword,
+	                        typename DescType_Traits< type >::Parameter  data )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEPutAttributePtr(
-			appleEvent, 
-			keyword, 
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer )
-		);
+		AEPutAttributePtr( appleEvent,
+		                   keyword,
+		                   DescType( type ),
+		                   Traits::OutputBufferStart ( buffer ),
+		                   Traits::OutputBufferLength( buffer ) );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
-	typename DescType_Traits< type >::Result AEGetAttributePtr(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword
-	)
+	typename DescType_Traits< type >::Result
+	AEGetAttributePtr( const AppleEvent&  appleEvent,
+	                   AEKeyword          keyword )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::InputBuffer buffer;
 		
 		if ( Traits::inputHasVariableLength )
-			Traits::SetInputBufferLength( buffer, AESizeOfAttribute( appleEvent, keyword ) );
+		{
+			Traits::SetInputBufferLength( buffer,
+			                              AESizeOfAttribute( appleEvent, keyword ) );
+		}
 		
-		AEGetAttributePtr(
-			appleEvent, 
-			keyword, 
-			DescType( type ), 
-			Traits::InputBufferStart( buffer ),
-			Traits::InputBufferLength( buffer )
-		);
+		AEGetAttributePtr( appleEvent,
+		                   keyword,
+		                   DescType( type ),
+		                   Traits::InputBufferStart ( buffer ),
+		                   Traits::InputBufferLength( buffer ) );
 		
 		return Traits::ProcessInputBuffer( buffer );
 	}
@@ -1512,13 +1404,13 @@ namespace Nitrogen
 		typename Traits::InputBuffer buffer;
 		
 		if ( Traits::inputHasVariableLength )
+		{
 			Traits::SetInputBufferLength( buffer, AEGetDescDataSize( desc ) );
+		}
 		
-		AEGetDescData(
-			desc, 
-			Traits::InputBufferStart( buffer ),
-			Traits::InputBufferLength( buffer )
-		);
+		AEGetDescData( desc,
+		               Traits::InputBufferStart ( buffer ),
+		               Traits::InputBufferLength( buffer ) );
 		
 		return Traits::ProcessInputBuffer( buffer );
 	}
@@ -1530,36 +1422,33 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	void AEReplaceDescData( typename DescType_Traits< type >::Parameter data, AEDesc& result )
+	void AEReplaceDescData( typename DescType_Traits< type >::Parameter  data,
+	                        AEDesc&                                      result )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEReplaceDescData(
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer ), 
-			result
-		);
+		AEReplaceDescData( DescType( type ),
+		                   Traits::OutputBufferStart( buffer ),
+		                   Traits::OutputBufferLength( buffer ),
+		                   result );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 
 	template < ::DescType type, class Disposer >
-	void AEReplaceDescData( typename DescType_Traits< type >::Parameter data,
-	                        Owned< AEDesc, Disposer >& result )
+	void AEReplaceDescData( typename DescType_Traits< type >::Parameter  data,
+	                        Owned< AEDesc, Disposer >&                   result )
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		AEReplaceDescData(
-			DescType( type ), 
-			Traits::OutputBufferStart( buffer ), 
-			Traits::OutputBufferLength( buffer ), 
-			result
-		);
+		AEReplaceDescData( DescType( type ),
+		                   Traits::OutputBufferStart( buffer ),
+		                   Traits::OutputBufferLength( buffer ),
+		                   result );
 		
 		Traits::ReleaseOutputBuffer( buffer );
 	}
@@ -1595,7 +1484,6 @@ namespace Nitrogen
 	{
 		return Owned< AEKeyDesc >::Seize( key + desc.Release() );
 	}
-	
 	
 }
 
