@@ -11,7 +11,32 @@ namespace Nitrogen {
 	
 	void RegisterSoundManagerErrors()
 	{
-		RegisterOSStatus< siBadSoundInDevice >();
+		RegisterOSStatus< noHardware                   >();
+		RegisterOSStatus< notEnoughHardware            >();
+		RegisterOSStatus< queueFull                    >();
+		RegisterOSStatus< resProblem                   >();
+		RegisterOSStatus< badChannel                   >();
+		RegisterOSStatus< badFormat                    >();
+		RegisterOSStatus< notEnoughBufferSpace         >();
+		RegisterOSStatus< badFileFormat                >();
+		RegisterOSStatus< channelBusy                  >();
+		RegisterOSStatus< buffersTooSmall              >();
+		RegisterOSStatus< channelNotBusy               >();
+		RegisterOSStatus< noMoreRealTime               >();
+		RegisterOSStatus< siVBRCompressionNotSupported >();
+		RegisterOSStatus< siNoSoundInHardware          >();
+		RegisterOSStatus< siBadSoundInDevice           >();
+		RegisterOSStatus< siNoBufferSpecified          >();
+		RegisterOSStatus< siInvalidCompression         >();
+		RegisterOSStatus< siHardDriveTooSlow           >();
+		RegisterOSStatus< siInvalidSampleRate          >();
+		RegisterOSStatus< siInvalidSampleSize          >();
+		RegisterOSStatus< siDeviceBusyErr              >();
+		RegisterOSStatus< siBadDeviceName              >();
+		RegisterOSStatus< siBadRefNum                  >();
+		RegisterOSStatus< siInputDeviceErr             >();
+		RegisterOSStatus< siUnknownInfoType            >();
+		RegisterOSStatus< siUnknownQuality             >();
 	}
 	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count )
