@@ -425,9 +425,9 @@ namespace Nitrogen
 	
 	Owned< AEDesc > AECoerceDesc(const AEDesc& desc, DescType toType);
 	
-	inline AEDesc AEInitializeDesc()
+	inline Owned< AEDesc > AEInitializeDesc()
 	{
-		return Make< AEDesc >();
+		return Owned< AEDesc >::Seize( Make< AEDesc >() );
 	}
 	
 	Owned< AEDesc > AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize);
