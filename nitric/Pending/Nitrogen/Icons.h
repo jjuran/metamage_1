@@ -34,11 +34,15 @@ namespace Nitrogen
    
    using ::IconRef;
 
+   static const OSType kSystemIconsCreator = OSType::Make( ::kSystemIconsCreator );
+   
    class IconLabelTag {};
    typedef IDType< IconLabelTag, SInt16, 0 > IconLabel;
    
    class IconServicesUsageFlagsTag {};
    typedef FlagType< IconServicesUsageFlagsTag, ::IconServicesUsageFlags, 0 > IconServicesUsageFlags;
+   
+   static const IconServicesUsageFlags kIconServicesNormalUsageFlag = IconServicesUsageFlags::Make( ::kIconServicesNormalUsageFlag );
    
    template <> struct Disposer< IconRef >: public std::unary_function< IconRef, void >,
                                            private DefaultDestructionOSStatusPolicy
@@ -172,7 +176,7 @@ namespace Nitrogen
 
    inline Owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
      {
-      return RegisterIconRefFromIconFile( kSystemIconsCreator, 0, iconFile );
+      return RegisterIconRefFromIconFile( kSystemIconsCreator, OSType::Make( 0 ), iconFile );
      }
   }
 
