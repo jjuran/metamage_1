@@ -89,6 +89,8 @@ namespace Nitrogen
 	// 1220
 	void KillIO( DriverRefNum driverRefNum );
 	
+	void PBControlSync( ParamBlockRec& paramBlock );
+	
 	int Read ( DriverRefNum driverRefNum,       char* data, std::size_t byteCount );
 	int Write( DriverRefNum driverRefNum, const char* data, std::size_t byteCount );
 	

@@ -58,6 +58,11 @@ namespace Nitrogen
 		ThrowOSStatus( ::Status( driverRefNum, csCode, csParamPtr ) );
 	}
 	
+	void PBControlSync( ParamBlockRec& paramBlock )
+	{
+		ThrowOSStatus( ::PBControlSync( &paramBlock ) );
+	}
+	
 	int Read( DriverRefNum driverRefNum, char* data, std::size_t byteCount )
 	{
 		OnlyOnce< RegisterDeviceManagerErrors >();
