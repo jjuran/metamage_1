@@ -10,11 +10,17 @@
 #include FRAMEWORK_HEADER(CarbonSound,Sound.h)
 #endif
 
-#ifndef NITROGEN_MACTYPES_H
-#include "Nitrogen/MacTypes.h"
-#endif
 #ifndef NITROGEN_COMPONENTS_H
 #include "Nitrogen/Components.h"
+#endif
+#ifndef NITROGEN_ICONS_H
+#include "Nitrogen/Icons.h"
+#endif
+#ifndef NITROGEN_MACMEMORY_H
+#include "Nitrogen/MacMemory.h"
+#endif
+#ifndef NITROGEN_MACTYPES_H
+#include "Nitrogen/MacTypes.h"
 #endif
 #ifndef NITROGEN_MIXEDMODE_H
 #include "Nitrogen/MixedMode.h"
@@ -34,9 +40,6 @@
 #endif
 #ifndef NITROGEN_SHARED_H
 #include "Nitrogen/Shared.h"
-#endif
-#ifndef NITROGEN_MACMEMORY_H
-#include "Nitrogen/MacMemory.h"
 #endif
 #ifndef NITROGEN_STR_H
 #include "Nitrogen/Str.h"
@@ -65,16 +68,6 @@ namespace Nitrogen
 	struct SoundInputPermissions_Tag {};
 	typedef FlagType< SoundInputPermissions_Tag, short, 0 > SoundInputPermissions;
 	
-	inline SoundInputPermissions SIReadPermission()   { return SoundInputPermissions::Make( siReadPermission  ); }
-	inline SoundInputPermissions SIWritePermission()  { return SoundInputPermissions::Make( siWritePermission ); }
-	
-	struct SPBGetIndexedDevice_Result
-	{
-		Str255 deviceName;
-		Shared< Handle > deviceIconHandle;
-		
-		operator const unsigned char*() const  { return deviceName; }
-	};
 	
 	template <>
 	struct Disposer< SoundInputRefNum > : public std::unary_function< SoundInputRefNum, void >, 
@@ -84,9 +77,32 @@ namespace Nitrogen
 		{
 			OnlyOnce< RegisterSoundManagerErrors >();
 			
-			DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::SPBCloseDevice( refNum ) );
+			HandleDestructionOSStatus( ::SPBCloseDevice( refNum ) );
 		}
 	};
+	
+	
+#if PRAGMA_STRUCT_ALIGN
+	#pragma options align=mac68k
+#elif PRAGMA_STRUCT_PACKPUSH
+	#pragma pack(push, 2)
+#elif PRAGMA_STRUCT_PACK
+	#pragma pack(2)
+#endif
+	
+	struct SPBGetDeviceInfo_SampleInfoAvailable_Result
+	{
+		UInt16 count;
+		::Handle data;
+	};
+	
+#if PRAGMA_STRUCT_ALIGN
+	#pragma options align=reset
+#elif PRAGMA_STRUCT_PACKPUSH
+	#pragma pack(pop)
+#elif PRAGMA_STRUCT_PACK
+	#pragma pack()
+#endif
 	
 	template < class Type >  struct InfoData_Traits;
 	
@@ -126,9 +142,31 @@ namespace Nitrogen
 		static SetBuffer PrepareSetBuffer( const Parameter& param  )  { return DoubleToUnsignedFixed( param ); }
 	};
 	
+	template < class T >  struct InfoData_Traits< T** >
+	{
+		struct Result
+		{
+			UInt16 count;
+			Shared< T**, Disposer< Handle > > data;
+		};
+		
+		typedef SPBGetDeviceInfo_SampleInfoAvailable_Result GetBuffer;
+	
+		static Result ProcessGetBuffer( const GetBuffer& buffer )
+		{
+			T** handle = Handle_Cast< T >( Handle( buffer.data ) );
+			
+			Result result;
+			result.count = buffer.count;
+			result.data = Owned< T**, Disposer< Handle > >::Seize( handle );
+			return result;
+		}
+	};
+	
 	template < ::OSType infoType >  struct SoundInputDeviceInfoType_Traits;
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siAGCOnOff            > : InfoData_Traits< bool >  {};
+	template <>  struct SoundInputDeviceInfoType_Traits< siOptionsDialog       > : InfoData_Traits< bool >  {};
 	template <>  struct SoundInputDeviceInfoType_Traits< siPlayThruOnOff       > : InfoData_Traits< bool >  {};
 	template <>  struct SoundInputDeviceInfoType_Traits< siTwosComplementOnOff > : InfoData_Traits< bool >  {};
 	
@@ -139,6 +177,14 @@ namespace Nitrogen
 	template <>  struct SoundInputDeviceInfoType_Traits< siInputGain  > : InfoData_Traits< double >  {};
 	template <>  struct SoundInputDeviceInfoType_Traits< siSampleRate > : InfoData_Traits< double >  {};
 	
+	template <>  struct SoundInputDeviceInfoType_Traits< siDeviceName >
+	{
+		typedef Str255 Result;
+		typedef Str255 GetBuffer;
+		
+		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return buffer; }
+	};
+	
 	template <>  struct SoundInputDeviceInfoType_Traits< siInputSourceNames >
 	{
 		typedef Owned< Handle > Result;
@@ -147,47 +193,27 @@ namespace Nitrogen
 		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Owned< Handle >::Seize( buffer ); }
 	};
 	
-	template <>  struct SoundInputDeviceInfoType_Traits< siSampleRateAvailable >
+	template <>  struct SoundInputDeviceInfoType_Traits< siDeviceIcon >
 	{
-		struct Result
-		{
-			UInt16 count;
-			Shared< ::UnsignedFixed**, Disposer< Handle > > rates;
-		};
+		typedef Owned< IconAndMaskHandle > Result;
+		typedef ::Handle GetBuffer;
 		
-	#if PRAGMA_STRUCT_ALIGN
-		#pragma options align=mac68k
-	#elif PRAGMA_STRUCT_PACKPUSH
-		#pragma pack(push, 2)
-	#elif PRAGMA_STRUCT_PACK
-		#pragma pack(2)
-	#endif
-		
-		struct GetBuffer
-		{
-			UInt16 count;
-			UnsignedFixed** rates;
-		};
-		
-	#if PRAGMA_STRUCT_ALIGN
-		#pragma options align=reset
-	#elif PRAGMA_STRUCT_PACKPUSH
-		#pragma pack(pop)
-	#elif PRAGMA_STRUCT_PACK
-		#pragma pack()
-	#endif
-	
-		static Result ProcessGetBuffer( const GetBuffer& buffer )
-		{
-			Result result;
-			result.count = buffer.count;
-			result.rates = Owned< ::UnsignedFixed**, Disposer< Handle > >::Seize( buffer.rates );
-			return result;
-		}
+		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Result::Seize( Handle_Cast< IconAndMask >( buffer ) ); }
 	};
+	
+	template <>  struct SoundInputDeviceInfoType_Traits< siSampleSizeAvailable > : InfoData_Traits< UInt16** >  {};
+	template <>  struct SoundInputDeviceInfoType_Traits< siSampleRateAvailable > : InfoData_Traits< ::UnsignedFixed** >  {};
 	
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
+	
+	struct SPBGetIndexedDevice_Result
+	{
+		Str255 deviceName;
+		Shared< Handle > deviceIconHandle;
+		
+		operator const unsigned char*() const  { return deviceName; }
+	};
 	
 	// 2729
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count );
@@ -208,7 +234,9 @@ namespace Nitrogen
 	typename SoundInputDeviceInfoType_Traits< infoType >::Result SPBGetDeviceInfo( SoundInputRefNum refNum )
 	{
 		typename SoundInputDeviceInfoType_Traits< infoType >::GetBuffer infoData;
+		
 		SPBGetDeviceInfo( refNum, infoType, &infoData );
+		
 		return SoundInputDeviceInfoType_Traits< infoType >::ProcessGetBuffer( infoData );
 	}
 	
@@ -217,6 +245,7 @@ namespace Nitrogen
 	{
 		typename SoundInputDeviceInfoType_Traits< infoType >::SetBuffer infoData 
 			= SoundInputDeviceInfoType_Traits< infoType >::PrepareSetBuffer( param );
+		
 		SPBGetDeviceInfo( refNum, infoType, &infoData );
 	}
 	
