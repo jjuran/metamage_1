@@ -45,5 +45,19 @@ namespace Nitrogen {
 		ThrowOSStatus( ::SPBCloseDevice( refNum.Release() ) );
 	}
 	
+	void SPBGetDeviceInfo( SoundInputRefNum refNum, SoundInputDeviceInfoType infoType, void* infoData )
+	{
+		OnlyOnce< RegisterSoundManagerErrors >();
+		
+		ThrowOSStatus( ::SPBGetDeviceInfo( refNum, infoType, infoData ) );
+	}
+	
+	void SPBSetDeviceInfo( SoundInputRefNum refNum, SoundInputDeviceInfoType infoType, void* infoData )
+	{
+		OnlyOnce< RegisterSoundManagerErrors >();
+		
+		ThrowOSStatus( ::SPBGetDeviceInfo( refNum, infoType, infoData ) );
+	}
+	
 }
 
