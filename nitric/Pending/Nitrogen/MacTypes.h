@@ -30,6 +30,9 @@
 #ifndef NITROGEN_MAKE_H
 #include "Nitrogen/Make.h"
 #endif
+#ifndef NITROGEN_CONVERT_H
+#include "Nitrogen/Convert.h"
+#endif
 
 #include <cstddef>
 #include <string>
@@ -157,7 +160,40 @@ namespace Nitrogen
         {
          return operator()( 0, 0, 0, 0 );
         }
-     };   
+     };
+	
+	// Convert string to FourCharCode
+	template < class Tag, ::FourCharCode defaultValue >
+	struct Converter< SelectorType< Tag, ::FourCharCode, defaultValue >, std::string >: public std::unary_function< std::string, SelectorType< Tag, ::FourCharCode, defaultValue > >
+	{
+		typedef SelectorType< Tag, ::FourCharCode, defaultValue > Code;
+		
+		Code operator()( const std::string& input ) const
+		{
+			if ( input.size() != sizeof (::FourCharCode) )
+			{
+				throw ConversionFromStringFailed();
+			}
+			
+			::FourCharCode result;
+			std::copy( input.begin(), input.end(), reinterpret_cast< char* >( &result ) );
+			return Code( result );
+		}
+	};
+	
+	// Convert FourCharCode to string
+	template < class Tag, ::FourCharCode defaultValue >
+	struct Converter< std::string, SelectorType< Tag, ::FourCharCode, defaultValue > >: public std::unary_function< SelectorType< Tag, ::FourCharCode, defaultValue >, std::string >
+	{
+		typedef SelectorType< Tag, ::FourCharCode, defaultValue > Code;
+		
+		std::string operator()( Code input ) const
+		{
+			::FourCharCode code = input;
+			return std::string( reinterpret_cast< const char* >( &code ), sizeof (::FourCharCode) );
+		}
+	};
+	
   }
 
 #endif
