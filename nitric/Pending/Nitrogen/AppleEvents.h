@@ -63,16 +63,6 @@ namespace Nitrogen
 	inline AEEventSource AELocalProcess ()  { return AEEventSource::Make( kAELocalProcess  ); }
 	inline AEEventSource AERemoteProcess()  { return AEEventSource::Make( kAERemoteProcess ); }
 	
-	/*
-	class AEObjectClass_Tag {};
-	typedef SelectorType< AEObjectClass_Tag, ::DescType > AEObjectClass;
-	
-	class AEPropertyID_Tag {};
-	typedef SelectorType< AEPropertyID_Tag, ::DescType > AEPropertyID;
-	*/
-	
-	typedef DescType AEObjectClass, AEPropertyID;
-	
    struct AEEventHandler
      {
       AEEventClass        theAEEventClass;
