@@ -17,15 +17,15 @@
 // MoreFiles
 #include "MoreFilesExtras.h"
 
+// Nitrogen core
+#include "Nitrogen/Assert.h"
+
 // Nitrogen / Carbon support
 #include "Nitrogen/Aliases.h"
 #include "Nitrogen/OSStatus.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
-
-// Genesis
-#include "GenAssert.h"
 
 
 namespace Genie
@@ -65,7 +65,7 @@ namespace Genie
 		string scratch;
 		const char *p, *q;
 		
-		Assert_( pathname != NULL );
+		ASSERT( pathname != NULL );
 		
 		if ( pathname[0] == '\0' )
 		{
