@@ -10,4 +10,14 @@
 #include FRAMEWORK_HEADER(CarbonCore,Script.h)
 #endif
 
+namespace Nitrogen
+{
+	
+	static const ScriptCode smSystemScript  = ScriptCode::Make( ::smSystemScript  );
+	static const ScriptCode smCurrentScript = ScriptCode::Make( ::smCurrentScript );
+	static const ScriptCode smAllScripts    = ScriptCode::Make( ::smAllScripts    );
+	
+}
+
 #endif
+
