@@ -32,13 +32,35 @@ namespace Nitrogen
   {
    void RegisterIconManagerErrors();
    
+	// 254
+	struct IconAlignmentType_Tag  {};
+	typedef FlagType< IconAlignmentType_Tag, ::IconAlignmentType, kAlignNone > IconAlignmentType;
+	
+	inline IconAlignmentType AlignNone()            { return IconAlignmentType::Make( kAlignNone           ); }
+	// ...
+	inline IconAlignmentType AlignAbsoluteCenter()  { return IconAlignmentType::Make( kAlignAbsoluteCenter ); }
+	// ...
+	
+	// 293
+	struct IconTransformType_Tag  {};
+	typedef FlagType< IconTransformType_Tag, ::IconTransformType, kTransformNone > IconTransformType;
+	
+	inline IconTransformType TransformNone()  { return IconTransformType::Make( kTransformNone ); }
+	// ...
+	
+   // 564
    using ::IconRef;
 
+	// 566
+	void PlotIconID( const Rect& rect, IconAlignmentType align, IconTransformType transform, ResID resID );
+	
+   // 1054
    inline OSType SystemIconsCreator()  { return OSType::Make( kSystemIconsCreator ); }
    
    class IconLabelTag {};
    typedef IDType< IconLabelTag, SInt16, 0 > IconLabel;
    
+   // 1275
    class IconServicesUsageFlagsTag {};
    typedef FlagType< IconServicesUsageFlagsTag, ::IconServicesUsageFlags, 0 > IconServicesUsageFlags;
    
@@ -78,6 +100,7 @@ namespace Nitrogen
       operator IconRef() const             { return theIconRef; }
      };
 
+   // 1614
    GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile );
 
    Owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType );

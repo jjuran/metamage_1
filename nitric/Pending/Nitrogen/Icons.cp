@@ -12,6 +12,12 @@
 
 namespace Nitrogen
   {
+	
+	void PlotIconID( const Rect& rect, IconAlignmentType align, IconTransformType transform, ResID resID )
+	{
+		ThrowOSStatus( ::PlotIconID( &rect, align, transform, resID ) );
+	}
+	
    Owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType )
      {
       OnlyOnce<RegisterIconManagerErrors>();
