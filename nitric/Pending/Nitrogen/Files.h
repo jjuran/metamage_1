@@ -844,6 +844,7 @@ namespace Nitrogen
    template <> struct OwnedDefaults< FSRefSpecDirID >  { typedef FileSystemDisposer Disposer; };
    
    template <> struct LivelinessTraits< FSRef,          FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+   template <> struct LivelinessTraits< FSSpec,         FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
    template <> struct LivelinessTraits< FSRefSpec,      FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
    template <> struct LivelinessTraits< FSRefSpecDirID, FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
 
