@@ -16,6 +16,26 @@
 #include "Nitrogen/Str.h"
 #endif
 
+#if CALL_NOT_IN_CARBON
+
+#ifdef DateString
+#undef DateString
+#endif
+
+#ifdef TimeString
+#undef TimeString
+#endif
+
+#ifdef LongDateString
+#undef LongDateString
+#endif
+
+#ifdef LongTimeString
+#undef LongTimeString
+#endif
+
+#endif  // #if CALL_NOT_IN_CARBON
+
 namespace Nitrogen
   {
    class DateFormTag {};
