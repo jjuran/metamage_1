@@ -23,7 +23,7 @@ namespace Nitrogen
    template < ::OSType selector >
    long Gestalt()
      {
-      return Gestalt( selector, GestaltDefault<selector>::defaultValue );
+      return Gestalt( OSType( selector ), GestaltDefault<selector>::defaultValue );
      }
    
    struct GestaltAttrDefaults
