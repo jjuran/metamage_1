@@ -15,12 +15,12 @@ namespace Nitrogen
 {
 	
 	template < class ErrorCode >
-	void ThrowOSStatusErrName( ConstStr255Param errName )
+	void ThrowOSStatusErrName( ConstStr255Param errMessage )
 	{
-		throw OSStatusErrName< ErrorCode >( errName );
+		throw OSStatusErrMessage< ErrorCode >( errMessage );
 	}
 	
-	static void ThrowOSStatusErrName( OSStatus status, ConstStr255Param errName )
+	static void ThrowOSStatusErrName( OSStatus status, ConstStr255Param errMessage )
 	{
 		switch ( status )
 		{
@@ -32,16 +32,16 @@ namespace Nitrogen
 				throw ParamErr();
 				break;
 			
-			case cfragNoLibraryErr:     ThrowOSStatusErrName< CFragNoLibraryErr    >( errName );
-			case cfragUnresolvedErr:    ThrowOSStatusErrName< CFragUnresolvedErr   >( errName );
-			case cfragNoPrivateMemErr:  ThrowOSStatusErrName< CFragNoPrivateMemErr >( errName );
-			case cfragNoClientMemErr:   ThrowOSStatusErrName< CFragNoClientMemErr  >( errName );
-			case cfragInitOrderErr:     ThrowOSStatusErrName< CFragInitOrderErr    >( errName );
-			case cfragImportTooOldErr:  ThrowOSStatusErrName< CFragImportTooOldErr >( errName );
-			case cfragImportTooNewErr:  ThrowOSStatusErrName< CFragImportTooNewErr >( errName );
-			case cfragInitLoopErr:      ThrowOSStatusErrName< CFragInitLoopErr     >( errName );
-			case cfragLibConnErr:       ThrowOSStatusErrName< CFragLibConnErr      >( errName );
-			case cfragInitFunctionErr:  ThrowOSStatusErrName< CFragInitFunctionErr >( errName );
+			case cfragNoLibraryErr:     ThrowOSStatusErrName< CFragNoLibraryErr    >( errMessage );
+			case cfragUnresolvedErr:    ThrowOSStatusErrName< CFragUnresolvedErr   >( errMessage );
+			case cfragNoPrivateMemErr:  ThrowOSStatusErrName< CFragNoPrivateMemErr >( errMessage );
+			case cfragNoClientMemErr:   ThrowOSStatusErrName< CFragNoClientMemErr  >( errMessage );
+			case cfragInitOrderErr:     ThrowOSStatusErrName< CFragInitOrderErr    >( errMessage );
+			case cfragImportTooOldErr:  ThrowOSStatusErrName< CFragImportTooOldErr >( errMessage );
+			case cfragImportTooNewErr:  ThrowOSStatusErrName< CFragImportTooNewErr >( errMessage );
+			case cfragInitLoopErr:      ThrowOSStatusErrName< CFragInitLoopErr     >( errMessage );
+			case cfragLibConnErr:       ThrowOSStatusErrName< CFragLibConnErr      >( errMessage );
+			case cfragInitFunctionErr:  ThrowOSStatusErrName< CFragInitFunctionErr >( errMessage );
 			
 			default:
 				ThrowOSStatus( status );
@@ -59,7 +59,7 @@ namespace Nitrogen
 		OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		::Ptr tempMainAddr;
-		Str255 errName;
+		Str255 errMessage;
 		
 		// This works for all result codes that GetDiskFragment() might throw.
 		// Ideally, it should work for any registered OSStatus, but that would take some work.
@@ -72,8 +72,8 @@ namespace Nitrogen
 		                                         findFlags,
 		                                         connID,
 		                                         &tempMainAddr,
-		                                         errName ),
-		                       errName );
+		                                         errMessage ),
+		                       errMessage );
 		
 		if ( mainAddr != NULL )
 		{

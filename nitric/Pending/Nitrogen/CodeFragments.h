@@ -76,35 +76,26 @@ namespace Nitrogen
 	// Opaque pointer type
 	typedef struct SymbolAddress* SymbolAddressPtr;
 	
-	// errName wrapper
-	struct ErrName
+	// errMessage wrapper
+	struct ErrMessage
 	{
-		Str255 errName;
+		Str255 errMessage;
 		
-		ErrName( ConstStr255Param errName ) : errName( errName )  {}
+		ErrMessage( ConstStr255Param errMessage ) : errMessage( errMessage )  {}
 	};
 	
-	// OSStatus wrapper that carries errName
+	// OSStatus wrapper that carries errMessage
 	template < class ErrorCode >
-	struct OSStatusErrName : ErrorCode,
-	                         ErrName
+	struct OSStatusErrMessage : ErrorCode,
+	                            ErrMessage
 	{
-		OSStatusErrName( ConstStr255Param errName )
+		OSStatusErrMessage( ConstStr255Param errMessage )
 		:
-			ErrName( errName )
+			ErrMessage( errMessage )
 		{}
 	};
 	
-	// 333
-	void GetDiskFragment( const FSSpec&       file,
-	                      std::size_t         offset,
-	                      std::size_t         length,
-	                      ConstStr63Param     fragName,
-	                      CFragLoadOptions    findFlags,
-	                      CFragConnectionID*  connID   = NULL,
-	                      SymbolAddressPtr*   mainAddr = NULL );
-	
-	template < ::CFragLoadOptions findFlags >  struct GetDiskFragment_Traits;
+	template < ::CFragLoadOptions findFlags >  struct CFragLoadOptions_Traits;
 	
 	struct Shared_CFragConnection_Traits
 	{
@@ -123,10 +114,10 @@ namespace Nitrogen
 		}
 	};
 	
-	template <>  struct GetDiskFragment_Traits< kReferenceCFrag   > : Shared_CFragConnection_Traits  {};
-	template <>  struct GetDiskFragment_Traits< kFindCFrag        > : Shared_CFragConnection_Traits  {};
+	template <>  struct CFragLoadOptions_Traits< kReferenceCFrag   > : Shared_CFragConnection_Traits  {};
+	template <>  struct CFragLoadOptions_Traits< kFindCFrag        > : Shared_CFragConnection_Traits  {};
 	
-	template <>  struct GetDiskFragment_Traits< kPrivateCFragCopy > : Private_CFragConnection_Traits {};
+	template <>  struct CFragLoadOptions_Traits< kPrivateCFragCopy > : Private_CFragConnection_Traits {};
 	
 	template < class SymbolAddressType >
 	SymbolAddressType SymAddr_Cast( SymbolAddressPtr symAddr )
@@ -138,15 +129,26 @@ namespace Nitrogen
 		return reinterpret_cast< SymbolAddressType >( reinterpret_cast< long >( symAddr ) );
 	}
 	
+	// 333
+	void GetDiskFragment( const FSSpec&       file,
+	                      std::size_t         offset,
+	                      std::size_t         length,
+	                      ConstStr63Param     fragName,
+	                      CFragLoadOptions    findFlags,
+	                      CFragConnectionID*  connID   = NULL,
+	                      SymbolAddressPtr*   mainAddr = NULL );
+	
+	// GetSharedLibrary
+	
 	template < ::CFragLoadOptions findFlags, class MainAddrType >
-	typename GetDiskFragment_Traits< findFlags >::Result
+	typename CFragLoadOptions_Traits< findFlags >::Result
 	GetDiskFragment( const FSSpec&    file,
 	                 std::size_t      offset,
 	                 std::size_t      length,
 	                 ConstStr63Param  fragName,
 	                 MainAddrType*    mainAddr )
 	{
-		typedef GetDiskFragment_Traits< findFlags > Traits;
+		typedef CFragLoadOptions_Traits< findFlags > Traits;
 		
 		CFragConnectionID connID;
 		SymbolAddressPtr tempMainAddr;
@@ -168,7 +170,7 @@ namespace Nitrogen
 	}
 	
 	template < ::CFragLoadOptions findFlags >
-	typename GetDiskFragment_Traits< findFlags >::Result
+	typename CFragLoadOptions_Traits< findFlags >::Result
 	GetDiskFragment( const FSSpec&    file,
 	                 std::size_t      offset   = 0,
 	                 std::size_t      length   = kCFragGoesToEOF,
@@ -180,6 +182,10 @@ namespace Nitrogen
 		                                                       fragName,
 		                                                       NULL );
 	}
+	
+	// GetMemFragment
+	
+	void CloseConnection( Owned< CFragConnectionID > connID );
 	
 	// 384
 	void FindSymbol( CFragConnectionID  connID, 
@@ -202,6 +208,10 @@ namespace Nitrogen
 			*symAddr = SymAddr_Cast< SymAddrType >( tempSymAddr );
 		}
 	}
+	
+	// CountSymbols
+	
+	// GetIndSymbol
 	
 }
 
