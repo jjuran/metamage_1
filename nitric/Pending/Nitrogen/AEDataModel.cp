@@ -85,54 +85,44 @@ namespace Nitrogen {
 	
 	Owned< AECoercionHandler > AEInstallCoercionHandler( const AECoercionHandler& toInstall )
 	{
-		ThrowOSStatus
-		(
-			::AEInstallCoercionHandler
-			(
-				toInstall.fromType, 
-				toInstall.toType, 
-				toInstall.handler, 
-				toInstall.handlerRefCon, 
-				toInstall.fromTypeIsDesc,
-				toInstall.isSysHandler
-			)
-		);
+		ThrowOSStatus( ::AEInstallCoercionHandler( toInstall.fromType, 
+		                                           toInstall.toType, 
+		                                           toInstall.handler, 
+		                                           toInstall.handlerRefCon, 
+		                                           toInstall.fromTypeIsDesc,
+		                                           toInstall.isSysHandler ) );
+		
 		return Owned< AECoercionHandler >::Seize( toInstall );
 	}
 	
-	AECoercionHandler AEGetCoercionHandler
-	(
-		DescType fromType,
-		DescType toType,
-		bool isSysHandler
-	)
+	AECoercionHandler AEGetCoercionHandler( DescType  fromType,
+	                                        DescType  toType,
+	                                        bool      isSysHandler )
 	{
 		::AECoercionHandlerUPP handler;
 		long handlerRefCon;
 		::Boolean fromTypeIsDesc;
 		
-		ThrowOSStatus
-		(
-			::AEGetCoercionHandler
-			(
-				fromType,
-				toType,
-				&handler,
-				&handlerRefCon,
-				&fromTypeIsDesc,
-				isSysHandler
-			)
-		);
+		ThrowOSStatus( ::AEGetCoercionHandler(
+		               fromType,
+		               toType,
+		               &handler,
+		               &handlerRefCon,
+		               &fromTypeIsDesc,
+		               isSysHandler ) );
 		
 		return AECoercionHandler( fromType, toType, handler, handlerRefCon, fromTypeIsDesc, isSysHandler );
 	}
 	
-	Owned< AEDesc > AECoercePtr( DescType typeCode, const void* dataPtr, Size dataSize, DescType toType )
+	Owned< AEDesc > AECoercePtr( DescType     typeCode, 
+	                             const void*  dataPtr, 
+	                             Size         dataSize, 
+	                             DescType     toType )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		// Necessary for OS 9; OS X does this automatically
-		if ( toType == TypeWildCard() )
+		if ( toType == typeWildCard )
 		{
 			toType = typeCode;
 		}
@@ -147,9 +137,9 @@ namespace Nitrogen {
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		// Necessary for OS 9; OS X does this automatically
-		if ( toType == TypeWildCard() )
+		if ( toType == typeWildCard )
 		{
-			toType = DescType( desc.descriptorType );
+			toType = desc.descriptorType;
 		}
 		
 		AEDesc result;
@@ -162,12 +152,17 @@ namespace Nitrogen {
 		private:
 			Owned< AEDesc >& desc;
 			AEDesc workingCopy;
+		
 		public:
-			AEDescEditor( Owned< AEDesc >& desc ) : desc( desc ), workingCopy( desc.Release() )  {}
+			AEDescEditor( Owned< AEDesc >& desc )
+			:
+				desc       ( desc           ), 
+				workingCopy( desc.Release() )
+			{}
 			~AEDescEditor()  { desc = Owned< AEDesc >::Seize( workingCopy ); }
 			
-			AEDesc& Get()  { return workingCopy; }
-			operator AEDesc&()  { return Get(); }
+			AEDesc& Get()       { return workingCopy; }
+			operator AEDesc&()  { return Get();       }
 	};
 	
 	// Mac OS X allows AERecord arguments to have any descriptorType.
@@ -185,21 +180,21 @@ namespace Nitrogen {
 		return record;
 	}
 	
-	Owned< AEDesc > AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize)
+	Owned< AEDesc > AECreateDesc( DescType typeCode, const void* dataPtr, Size dataSize )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		if ( dataPtr == NULL )
 		{
-			throw ParamErr();
+			throw ParamErr();  // should assert?
 		}
 		
 		AEDesc desc;
-		ThrowOSStatus( ::AECreateDesc(typeCode, dataPtr, dataSize, &desc) );
-		return Owned< AEDesc >::Seize(desc);
+		ThrowOSStatus( ::AECreateDesc( typeCode, dataPtr, dataSize, &desc ) );
+		return Owned< AEDesc >::Seize( desc );
 	}
 	
-	Owned< AEDesc > AECreateDesc(DescType typeCode, ::Handle handle)
+	Owned< AEDesc > AECreateDesc( DescType typeCode, ::Handle handle )
 	{
 		if ( handle == NULL )
 		{
@@ -214,7 +209,7 @@ namespace Nitrogen {
 		try
 		{
 			::HLock( handle );
-			result = AECreateDesc(typeCode, *handle, ::GetHandleSize( handle ) );
+			result = AECreateDesc( typeCode, *handle, ::GetHandleSize( handle ) );
 			::HSetState( handle, state );
 		}
 		catch ( ... )
@@ -228,16 +223,20 @@ namespace Nitrogen {
 	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< Handle > handle )
 	{
 	#if TARGET_API_MAC_CARBON
+		
 		return AECreateDesc( typeCode, handle.Get() );
+		
 	#else
+		
 		AEDesc desc;
 		desc.descriptorType = typeCode;
 		desc.dataHandle = handle.Release();
 		return Owned< AEDesc >::Seize( desc );
+		
 	#endif
 	}
 	
-	Owned< AEDesc > AECreateDesc(DescType typeCode, Owned< AEDesc > desc)
+	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< AEDesc > desc )
 	{
 		AEDescEditor( desc ).Get().descriptorType = typeCode;
 		return desc;
@@ -254,37 +253,45 @@ namespace Nitrogen {
 	
 	Owned< AEDesc > AECreateList( bool isRecord )
 	{
-		return AECreateList(NULL, 0, isRecord);
+		return AECreateList( NULL, 0, isRecord );
 	}
 	
-	Owned< AEDesc > AECreateList(const void* factoringPtr, std::size_t factoredSize, bool isRecord)
+	Owned< AEDesc > AECreateList( const void*  factoringPtr, 
+	                              std::size_t  factoredSize, 
+	                              bool         isRecord )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		AEDesc desc;
-		ThrowOSStatus( ::AECreateList(factoringPtr, factoredSize, isRecord, &desc) );
-		return Owned< AEDesc >::Seize(desc);
+		ThrowOSStatus( ::AECreateList( factoringPtr, factoredSize, isRecord, &desc ) );
+		return Owned< AEDesc >::Seize( desc );
 	}
 	
-	long AECountItems(const AEDesc& desc)
+	long AECountItems( const AEDesc& desc )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		long count;
-		ThrowOSStatus( ::AECountItems(&desc, &count) );
+		ThrowOSStatus( ::AECountItems( &desc, &count ) );
 		return count;
 	}
 	
-	void AEPutPtr( AEDescList& list, long index, DescType type, const void* dataPtr, Size dataSize )
+	void AEPutPtr( AEDescList&  list, 
+	               long         index, 
+	               DescType     type, 
+	               const void*  dataPtr, 
+	               Size         dataSize )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-		ThrowOSStatus(
-			::AEPutPtr( &list, index, type, dataPtr, dataSize )
-		);
+		ThrowOSStatus( ::AEPutPtr( &list, index, type, dataPtr, dataSize ) );
 	}
 	
-	void AEPutPtr( Owned< AEDescList >& list, long index, DescType type, const void* dataPtr, Size dataSize )
+	void AEPutPtr( Owned< AEDescList >&  list, 
+	               long                  index, 
+	               DescType              type, 
+	               const void*           dataPtr, 
+	               Size                  dataSize )
 	{
 		AEPutPtr( AEDescEditor( list ), index, type, dataPtr, dataSize );
 	}
@@ -303,12 +310,11 @@ namespace Nitrogen {
 		AEPutDesc( AEDescEditor( list ), index, desc );
 	}
 	
-	GetNthPtr_Result AEGetNthPtr(
-		const AEDesc& listDesc, 
-		long index, 
-		DescType desiredType, 
-		void* dataPtr, 
-		Size maximumSize) 
+	GetNthPtr_Result AEGetNthPtr( const AEDesc& listDesc, 
+	                              long index, 
+	                              DescType desiredType, 
+	                              void* dataPtr, 
+	                              Size maximumSize )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
@@ -316,88 +322,65 @@ namespace Nitrogen {
 		::DescType typeCode;
 		::Size actualSize;
 		
-		ThrowOSStatus
-		(
-			::AEGetNthPtr
-			(
-				&listDesc, 
-				index, 
-				desiredType, 
-				&keyword, 
-				&typeCode, 
-				dataPtr, 
-				maximumSize, 
-				&actualSize
-			)
-		);
+		ThrowOSStatus( ::AEGetNthPtr( &listDesc, 
+		                              index, 
+		                              desiredType, 
+		                              &keyword, 
+		                              &typeCode, 
+		                              dataPtr, 
+		                              maximumSize, 
+		                              &actualSize ) );
 		
 		GetNthPtr_Result result;
-		result.keyword    = AEKeyword( keyword );
-		result.typeCode   = DescType( typeCode );
+		result.keyword    = keyword;
+		result.typeCode   = typeCode;
 		result.actualSize = actualSize;
 		
 		return result;
 	}
 	
-	Owned< AEDesc > AEGetNthDesc(
-		const AEDesc& listDesc, 
-		long index, 
-		DescType desiredType, 
-		::AEKeyword* keywordResult
-	)
+	Owned< AEDesc > AEGetNthDesc( const AEDesc&  listDesc, 
+	                              long           index, 
+	                              DescType       desiredType, 
+	                              ::AEKeyword*   keywordResult )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		::AEKeyword keyword;
 		AEDesc result;
 		
-		ThrowOSStatus(
-			::AEGetNthDesc(
-				&listDesc, 
-				index, 
-				desiredType, 
-				keywordResult ? keywordResult : &keyword, 
-				&result
-			)
-		);
-		return Owned< AEDesc >::Seize(result);
+		ThrowOSStatus( ::AEGetNthDesc( &listDesc, 
+		                               index, 
+		                               desiredType, 
+		                               keywordResult ? keywordResult : &keyword, 
+		                               &result ) );
+		
+		return Owned< AEDesc >::Seize( result );
 	}
 	
-	Owned< AEDesc > AEGetNthDesc(
-		const AEDesc& listDesc, 
-		long index, 
-		::AEKeyword* keywordResult
+	Owned< AEDesc > AEGetNthDesc( const AEDesc&  listDesc, 
+	                              long           index, 
+	                              ::AEKeyword*   keywordResult
 	)
 	{
-		return AEGetNthDesc(
-			listDesc, 
-			index, 
-			TypeWildCard(), 
-			keywordResult
-		);
+		return AEGetNthDesc( listDesc, index, typeWildCard, keywordResult );
 	}
 	
-	Size AESizeOfNthItem(const AEDescList& list, long index)
+	Size AESizeOfNthItem( const AEDescList& list, long index )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		::DescType typeCode;
 		::Size dataSize;
 		
-		ThrowOSStatus
-		(
-			::AESizeOfNthItem
-			(
-				&list, 
-				index, 
-				&typeCode, 
-				&dataSize
-			)
-		);
+		ThrowOSStatus( ::AESizeOfNthItem( &list, 
+		                                  index, 
+		                                  &typeCode, 
+		                                  &dataSize ) );
 		
 		AEGetParamPtr_Result result;
 		
-		result.typeCode = DescType( typeCode );
+		result.typeCode = typeCode;
 		result.dataSize = dataSize;
 		
 		return result;
