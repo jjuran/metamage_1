@@ -95,7 +95,7 @@ namespace Nitrogen
 		{}
 	};
 	
-	template < ::CFragLoadOptions findFlags >  struct CFragLoadOptions_Traits;
+	template < ::CFragLoadOptions options >  struct CFragLoadOptions_Traits;
 	
 	struct Shared_CFragConnection_Traits
 	{
@@ -133,24 +133,24 @@ namespace Nitrogen
 	
 	void GetSharedLibrary( ConstStr63Param     libName,
 	                       CFragArchitecture   archType,
-	                       CFragLoadOptions    findFlags,
+	                       CFragLoadOptions    options,
 	                       CFragConnectionID*  connID   = NULL,
 	                       SymbolAddressPtr*   mainAddr = NULL );
 	
-	template < ::CFragLoadOptions findFlags, class MainAddrType >
-	typename CFragLoadOptions_Traits< findFlags >::Result
+	template < ::CFragLoadOptions options, class MainAddrType >
+	typename CFragLoadOptions_Traits< options >::Result
 	GetSharedLibrary( ConstStr63Param     libName,
 	                  CFragArchitecture   archType,
 	                  MainAddrType*       mainAddr )
 	{
-		typedef CFragLoadOptions_Traits< findFlags > Traits;
+		typedef CFragLoadOptions_Traits< options > Traits;
 		
 		CFragConnectionID connID;
 		SymbolAddressPtr tempMainAddr;
 		
 		GetSharedLibrary( libName,
 		                  archType,
-		                  CFragLoadOptions( findFlags ),
+		                  CFragLoadOptions( options ),
 		                  &connID,
 		                  &tempMainAddr );
 		
@@ -162,33 +162,33 @@ namespace Nitrogen
 		return Traits::MakeResult( connID );
 	}
 	
-	template < ::CFragLoadOptions findFlags >
-	typename CFragLoadOptions_Traits< findFlags >::Result
+	template < ::CFragLoadOptions options >
+	typename CFragLoadOptions_Traits< options >::Result
 	GetSharedLibrary( ConstStr63Param     libName,
 	                  CFragArchitecture   archType )
 	{
-		return GetSharedLibrary< findFlags, SymbolAddressPtr >( libName,
-		                                                        archType,
-		                                                        NULL );
+		return GetSharedLibrary< options, SymbolAddressPtr >( libName,
+		                                                      archType,
+		                                                      NULL );
 	}
 	
 	void GetDiskFragment( const FSSpec&       file,
 	                      std::size_t         offset,
 	                      std::size_t         length,
 	                      ConstStr63Param     fragName,
-	                      CFragLoadOptions    findFlags,
+	                      CFragLoadOptions    options,
 	                      CFragConnectionID*  connID   = NULL,
 	                      SymbolAddressPtr*   mainAddr = NULL );
 	
-	template < ::CFragLoadOptions findFlags, class MainAddrType >
-	typename CFragLoadOptions_Traits< findFlags >::Result
+	template < ::CFragLoadOptions options, class MainAddrType >
+	typename CFragLoadOptions_Traits< options >::Result
 	GetDiskFragment( const FSSpec&    file,
 	                 std::size_t      offset,
 	                 std::size_t      length,
 	                 ConstStr63Param  fragName,
 	                 MainAddrType*    mainAddr )
 	{
-		typedef CFragLoadOptions_Traits< findFlags > Traits;
+		typedef CFragLoadOptions_Traits< options > Traits;
 		
 		CFragConnectionID connID;
 		SymbolAddressPtr tempMainAddr;
@@ -197,7 +197,7 @@ namespace Nitrogen
 		                 offset,
 		                 length,
 		                 fragName,
-		                 CFragLoadOptions( findFlags ),
+		                 CFragLoadOptions( options ),
 		                 &connID,
 		                 &tempMainAddr );
 		
@@ -209,18 +209,18 @@ namespace Nitrogen
 		return Traits::MakeResult( connID );
 	}
 	
-	template < ::CFragLoadOptions findFlags >
-	typename CFragLoadOptions_Traits< findFlags >::Result
+	template < ::CFragLoadOptions options >
+	typename CFragLoadOptions_Traits< options >::Result
 	GetDiskFragment( const FSSpec&    file,
 	                 std::size_t      offset   = 0,
 	                 std::size_t      length   = kCFragGoesToEOF,
 	                 ConstStr63Param  fragName = NULL )
 	{
-		return GetDiskFragment< findFlags, SymbolAddressPtr >( file,
-		                                                       offset,
-		                                                       length,
-		                                                       fragName,
-		                                                       NULL );
+		return GetDiskFragment< options, SymbolAddressPtr >( file,
+		                                                     offset,
+		                                                     length,
+		                                                     fragName,
+		                                                     NULL );
 	}
 	
 	// GetMemFragment
@@ -228,18 +228,18 @@ namespace Nitrogen
 	void GetMemFragment( const void*         memAddr,
 	                     std::size_t         length,
 	                     ConstStr63Param     fragName,
-	                     CFragLoadOptions    findFlags,
+	                     CFragLoadOptions    options,
 	                     CFragConnectionID*  connID   = NULL,
 	                     SymbolAddressPtr*   mainAddr = NULL );
 	
-	template < ::CFragLoadOptions findFlags, class MainAddrType >
-	typename CFragLoadOptions_Traits< findFlags >::Result
+	template < ::CFragLoadOptions options, class MainAddrType >
+	typename CFragLoadOptions_Traits< options >::Result
 	GetMemFragment( const void*      memAddr,
 	                std::size_t      length,
 	                ConstStr63Param  fragName,
 	                MainAddrType*    mainAddr )
 	{
-		typedef CFragLoadOptions_Traits< findFlags > Traits;
+		typedef CFragLoadOptions_Traits< options > Traits;
 		
 		CFragConnectionID connID;
 		SymbolAddressPtr tempMainAddr;
@@ -247,7 +247,7 @@ namespace Nitrogen
 		GetMemFragment( memAddr,
 		                length,
 		                fragName,
-		                CFragLoadOptions( findFlags ),
+		                CFragLoadOptions( options ),
 		                &connID,
 		                &tempMainAddr );
 		
@@ -259,16 +259,16 @@ namespace Nitrogen
 		return Traits::MakeResult( connID );
 	}
 	
-	template < ::CFragLoadOptions findFlags >
-	typename CFragLoadOptions_Traits< findFlags >::Result
+	template < ::CFragLoadOptions options >
+	typename CFragLoadOptions_Traits< options >::Result
 	GetMemFragment( const void*      memAddr,
 	                std::size_t      length,
 	                ConstStr63Param  fragName = NULL )
 	{
-		return GetMemFragment< findFlags, SymbolAddressPtr >( memAddr,
-		                                                      length,
-		                                                      fragName,
-		                                                      NULL );
+		return GetMemFragment< options, SymbolAddressPtr >( memAddr,
+		                                                    length,
+		                                                    fragName,
+		                                                    NULL );
 	}
 	
 	void CloseConnection( Owned< CFragConnectionID > connID );

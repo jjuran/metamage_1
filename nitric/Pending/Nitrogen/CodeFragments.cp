@@ -52,7 +52,7 @@ namespace Nitrogen
 	                      std::size_t         offset,
 	                      std::size_t         length,
 	                      ConstStr63Param     fragName,
-	                      CFragLoadOptions    findFlags,
+	                      CFragLoadOptions    options,
 	                      CFragConnectionID*  connID,
 	                      SymbolAddressPtr*   mainAddr )
 	{
@@ -69,7 +69,7 @@ namespace Nitrogen
 		                                         offset,
 		                                         length,
 		                                         fragName,
-		                                         findFlags,
+		                                         options,
 		                                         connID,
 		                                         &tempMainAddr,
 		                                         errMessage ),
