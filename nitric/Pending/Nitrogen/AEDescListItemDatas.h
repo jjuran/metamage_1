@@ -223,6 +223,35 @@ namespace Nitrogen
 		return AEDescList_ItemData_Container< type >::New( list );
 	}
 	
+	template < ::DescType type, class Disposer >
+	class AEDescList_ItemData_BackInsertionIterator
+	{
+		private:
+			typedef AEDescList_ItemData_BackInsertionIterator< type, Disposer > This;
+			typedef This Proxy;
+			typedef Owned< AEDescList, Disposer > List;
+			typedef typename DescType_Traits< type >::Parameter Parameter;
+			
+			List& list;
+		
+		public:
+			AEDescList_ItemData_BackInsertionIterator( List& list ) : list( list )  {}
+			
+			Proxy& operator*()  { return *this; }
+			
+			Proxy& operator=( Parameter param )  { AEPutPtr< type >( list, 0, param );  return *this; }
+			
+			This& operator++()     { return *this; }
+			This& operator++(int)  { return *this; }
+	};
+	
+	template < ::DescType type, class Disposer >
+	AEDescList_ItemData_BackInsertionIterator< type, Disposer >
+	AEDescList_ItemData_BackInserter( Owned< AEDescList, Disposer >& list )
+	{
+		return AEDescList_ItemData_BackInsertionIterator< type, Disposer >( list );
+	}
+	
 }
 
 #endif
