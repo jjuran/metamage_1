@@ -3,8 +3,11 @@
 #ifndef NITROGEN_DATETIMEUTILS_H
 #define NITROGEN_DATETIMEUTILS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __DATETIMEUTILS__
-#include <DateTimeUtils.h>
+#include FRAMEWORK_HEADER(CarbonCore,DateTimeUtils.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

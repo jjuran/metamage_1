@@ -3,8 +3,11 @@
 #ifndef NITROGEN_ICONS_H
 #define NITROGEN_ICONS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __ICONS__
-#include <Icons.h>
+#include FRAMEWORK_HEADER(HIServices,Icons.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

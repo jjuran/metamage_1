@@ -3,8 +3,11 @@
 #ifndef NITROGEN_OSUTILS_H
 #define NITROGEN_OSUTILS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __OSUTILS__
-#include <OSUtils.h>
+#include FRAMEWORK_HEADER(CarbonCore,OSUtils.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

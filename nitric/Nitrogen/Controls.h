@@ -3,8 +3,11 @@
 #ifndef NITROGEN_CONTROLS_H
 #define NITROGEN_CONTROLS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CONTROLS__
-#include <Controls.h>
+#include FRAMEWORK_HEADER(HIToolbox,Controls.h)
 #endif
 #ifndef NITROGEN_MACWINDOWS_H
 #include "Nitrogen/MacWindows.h"
@@ -60,11 +63,14 @@ namespace Nitrogen
 
    template < ::ResType inTagName > struct ControlData_Traits;
 
-   typedef UPP< ::ControlKeyFilterUPP,
-                ::ControlKeyFilterProcPtr,
-                ::NewControlKeyFilterUPP,
-                ::DisposeControlKeyFilterUPP,
-                ::InvokeControlKeyFilterUPP > ControlKeyFilterUPP;
+   struct ControlKeyFilterUPP_Details: Basic_UPP_Details< ::ControlKeyFilterUPP,
+                                                          ::ControlKeyFilterProcPtr,
+                                                          ::NewControlKeyFilterUPP,
+                                                          ::DisposeControlKeyFilterUPP,
+                                                          ::InvokeControlKeyFilterUPP >
+     {};
+   
+   typedef UPP< ControlKeyFilterUPP_Details > ControlKeyFilterUPP;
    
    template<> struct ControlData_Traits< kControlFontStyleTag >: POD_DescType_Traits< ControlFontStyleRec > {};
    template<> struct ControlData_Traits< kControlKeyFilterTag >: POD_DescType_Traits< ControlKeyFilterUPP > {};

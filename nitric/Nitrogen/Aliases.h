@@ -3,8 +3,11 @@
 #ifndef NITROGEN_ALIASES_H
 #define NITROGEN_ALIASES_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __ALIASES__
-#include <Aliases.h>
+#include FRAMEWORK_HEADER(CarbonCore,Aliases.h)
 #endif
 #ifndef NITROGEN_FLAGTYPE_H
 #include "Nitrogen/FlagType.h"

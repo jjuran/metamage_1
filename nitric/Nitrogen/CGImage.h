@@ -3,8 +3,11 @@
 #ifndef NITROGEN_CGIMAGE_H
 #define NITROGEN_CGIMAGE_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CGIMAGE__
-#include <CGImage.h>
+#include FRAMEWORK_HEADER(CoreGraphics,CGImage.h)
 #endif
 #ifndef NITROGEN_CGBASE_H
 #include "Nitrogen/CGBase.h"

@@ -3,14 +3,17 @@
 #ifndef NITROGEN_AEDATAMODEL_H
 #define NITROGEN_AEDATAMODEL_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __AEDATAMODEL__
-#include <AEDataModel.h>
+#include FRAMEWORK_HEADER(AE,AEDataModel.h)
 #endif
 #ifndef __EVENTS__
-#include <Events.h>
+#include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
 #ifndef __PROCESSES__
-#include <Processes.h>
+#include FRAMEWORK_HEADER(HIServices,Processes.h)
 #endif
 #ifndef NITROGEN_SELECTORTYPE_H
 #include "Nitrogen/SelectorType.h"
@@ -246,12 +249,14 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
 
    
+   struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
+                                                        ::AEEventHandlerProcPtr,
+                                                        ::NewAEEventHandlerUPP,
+                                                        ::DisposeAEEventHandlerUPP,
+                                                        ::InvokeAEEventHandlerUPP >
+     {};
    
-   typedef UPP< ::AEEventHandlerUPP,
-                ::AEEventHandlerProcPtr,
-                ::NewAEEventHandlerUPP,
-                ::DisposeAEEventHandlerUPP,
-                ::InvokeAEEventHandlerUPP > AEEventHandlerUPP;
+   typedef UPP< AEEventHandlerUPP_Details > AEEventHandlerUPP;
    
    using ::AEEventHandlerProcPtr;
    

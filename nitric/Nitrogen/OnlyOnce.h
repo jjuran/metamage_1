@@ -9,6 +9,7 @@ namespace Nitrogen
    void OnlyOnce()
      {
       static bool dummy = ( function(), false );
+      (void)dummy;
      }
   }
 

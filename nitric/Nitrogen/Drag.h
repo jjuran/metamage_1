@@ -3,8 +3,11 @@
 #ifndef NITROGEN_DRAG_H
 #define NITROGEN_DRAG_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __DRAG__
-#include <Drag.h>
+#include FRAMEWORK_HEADER(HIToolbox,Drag.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

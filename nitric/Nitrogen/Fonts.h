@@ -3,8 +3,11 @@
 #ifndef NITROGEN_FONTS_H
 #define NITROGEN_FONTS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __FONTS__
-#include <Fonts.h>
+#include FRAMEWORK_HEADER(QD,Fonts.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

@@ -3,8 +3,11 @@
 #ifndef NITROGEN_CODEFRAGMENTS_H
 #define NITROGEN_CODEFRAGMENTS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CODEFRAGMENTS__
-#include <CodeFragments.h>
+#include FRAMEWORK_HEADER(CarbonCore,CodeFragments.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

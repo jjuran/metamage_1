@@ -3,6 +3,9 @@
 #ifndef NITROGEN_CFURL_H
 #include "Nitrogen/CFURL.h"
 #endif
+#ifndef __FILES__
+#include FRAMEWORK_HEADER(CarbonCore,Files.h)
+#endif
 
 namespace Nitrogen
   {
@@ -144,5 +147,10 @@ namespace Nitrogen
       if ( !CFURLGetFSRef( url, &result ) )
          throw CFURLGetFSRef_Failed();
       return result;
+     }
+
+   FSRef Converter< FSRef, CFURLRef >::operator()( CFURLRef url ) const
+     {
+      return CFURLGetFSRef( url );
      }
   }

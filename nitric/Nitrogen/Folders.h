@@ -3,8 +3,11 @@
 #ifndef NITROGEN_FOLDERS_H
 #define NITROGEN_FOLDERS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __FOLDERS__
-#include <Folders.h>
+#include FRAMEWORK_HEADER(CarbonCore,Folders.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

@@ -3,8 +3,11 @@
 #ifndef NITROGEN_CFDATE_H
 #define NITROGEN_CFDATE_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CFDATE__
-#include <CFDate.h>
+#include FRAMEWORK_HEADER(CoreFoundation,CFDate.h)
 #endif
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"

@@ -3,8 +3,11 @@
 #ifndef NITROGEN_EVENTS_H
 #define NITROGEN_EVENTS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __EVENTS__
-#include <Events.h>
+#include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
 #ifndef NITROGEN_OSUTILS_H
 #include "Nitrogen/OSUtils.h"

@@ -3,8 +3,11 @@
 #ifndef NITROGEN_IBCARBONRUNTIME_H
 #define NITROGEN_IBCARBONRUNTIME_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __IBCARBONRUNTIME__
-#include <IBCarbonRuntime.h>
+#include FRAMEWORK_HEADER(HIToolbox,IBCarbonRuntime.h)
 #endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"

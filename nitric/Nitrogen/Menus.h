@@ -3,8 +3,11 @@
 #ifndef NITROGEN_MENUS_H
 #define NITROGEN_MENUS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __MENUS__
-#include <Menus.h>
+#include FRAMEWORK_HEADER(HIToolbox,Menus.h)
 #endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
@@ -18,7 +21,7 @@
 #ifndef NITROGEN_IDTYPE_H
 #include "Nitrogen/IDType.h"
 #endif
-#ifndef __MACTYPES__
+#ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
 #ifndef NITROGEN_EVENTS_H

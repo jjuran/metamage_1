@@ -1,11 +1,45 @@
 // Pseudoreference.h
 
+/*
+   A Pseudoreference binds a getter/setter pair of functions and
+   their parameters together into an entity that acts like a
+   reference to an object:
+   
+      The Pseudoreference has a conversion to the value type that
+      calls the getter; this is also available through the Get member.
+      
+      Assigning a value to the Pseudoreference calls the setter;
+      this can also be done through the Set member.
+      
+      Assigning one Pseudoreference to another calls the getter of
+      the former and the setter of the latter -- that is, as with
+      references, it assigns the referred-to values.
+      
+      Copy-constructing a Pseudoreference produces a Pseudoreference
+      with the same referrent.
+      
+      Taking the address of a Pseudoreference produces a Pseudopointer,
+      which can be dereferenced to get the Pseudoreference back.
+   
+   Rather than have a long list of template parameters, the details for
+   building a Pseudoreference are bundled into a class:
+   
+   class Details
+     {
+      public:
+         typedef implementation-defined Value;        // type of a variable that could store the value
+         typedef implementation-defined GetResult;    // type of the result from Get; often the same as Value
+         typedef implementation-defined SetParameter; // type of the parameter to Set; often the same as Value
+
+         GetResult Get() const;
+         void Set( SetParameter ) const;
+     };
+   
+   The Set member may be omitted for ConstPseudoreferences.
+*/
 #ifndef NITROGEN_PSEUDOREFERENCE_H
 #define NITROGEN_PSEUDOREFERENCE_H
 
-#ifndef NITROGEN_FUNCTIONTRAITS_H
-#include "Nitrogen/FunctionTraits.h"
-#endif
 #ifndef NITROGEN_REFERENCETRAITS_H
 #include "Nitrogen/ReferenceTraits.h"
 #endif
@@ -21,82 +55,82 @@
 
 namespace Nitrogen
   {
-   template < class Context, class Value, class Getter, Getter get > class ConstPseudoreference;
+   template < class Details > class ConstPseudoreference;
+   template < class Details > class Pseudoreference;
 
-   template < class Context, class Value, class Getter, Getter get, class Setter, Setter set > class Pseudoreference;
-
-   template < class ContextType,
-              class ValueType,
-              class GetterType,
-              GetterType get >
+   template < class DetailsType >
    class ConstPseudoreference
      {
       public:
-         typedef ContextType     Context;
-         typedef ValueType       Value;
-         typedef GetterType      Getter;
+         typedef DetailsType                     Details;
+         typedef typename Details::Value         Value;
+         typedef typename Details::GetResult     GetResult;
          
-         typedef typename FunctionTraits< Getter >::Result           ValueResult;
-         
-         typedef ConstPseudoreference< Context, Value, Getter, get > Reference;
-         typedef ConstPseudoreference< Context, Value, Getter, get > ConstReference;
+         typedef ConstPseudoreference< Details > Reference;
+         typedef ConstPseudoreference< Details > ConstReference;
 
-         typedef Pseudopointer< Reference >                          Pointer;
-         typedef Pseudopointer< ConstReference >                     ConstPointer;
+         typedef Pseudopointer< Reference >      Pointer;
+         typedef Pseudopointer< ConstReference > ConstPointer;
          
       private:
-         const Context context;
-      
-      public:         
-         ConstPseudoreference()                                                         : context()              {}
-         explicit ConstPseudoreference( Context theContext )                            : context( theContext )  {}
-          
-         Pointer operator&() const                                                      { return Pointer( context ); }
-
-         ValueResult Get() const                                                        { return get(context);   }
+         const Details details;
          
-         operator ValueResult() const                                                   { return Get(); }
+         // not implemented:
+            ConstPseudoreference& operator=( const ConstPseudoreference& );
+         
+      public:         
+         ConstPseudoreference()                                                         : details()              {}
+         explicit ConstPseudoreference( Details theDetails )                            : details( theDetails )  {}
+
+         template < class P0, class P1 >
+         ConstPseudoreference( P0 p0, P1 p1 )                                           : details( p0, p1 )      {}
+
+         template < class P0, class P1, class P2 >
+         ConstPseudoreference( P0 p0, P1 p1, P2 p2 )                                    : details( p0, p1, p2 )  {}
+          
+         Pointer operator&() const                                                      { return Pointer( details ); }
+
+         GetResult Get() const                                                          { return details.Get();   }
+         operator GetResult() const                                                     { return Get(); }
      };
 
-   template < class ContextType,
-              class ValueType,
-              class GetterType,
-              GetterType get,
-              class SetterType,
-              SetterType set >
+   template < class DetailsType >
    class Pseudoreference
      {
       public:
-         typedef ContextType     Context;
-         typedef ValueType       Value;
-         typedef GetterType      Getter;
-         typedef SetterType      Setter;
+         typedef DetailsType                     Details;
+         typedef typename Details::Value         Value;
+         typedef typename Details::GetResult     GetResult;
+         typedef typename Details::SetParameter  SetParameter;
          
-         typedef typename FunctionTraits< Getter >::Result      ValueResult;
-         typedef typename FunctionTraits< Setter >::Parameter1  ValueParameter;
-         
-         typedef Pseudoreference     < Context, Value, Getter, get, Setter, set > Reference;
-         typedef ConstPseudoreference< Context, Value, Getter, get >              ConstReference;
+         typedef Pseudoreference     < Details > Reference;
+         typedef ConstPseudoreference< Details > ConstReference;
 
-         typedef Pseudopointer< Reference >                                       Pointer;
-         typedef Pseudopointer< ConstReference >                                  ConstPointer;
+         typedef Pseudopointer< Reference >      Pointer;
+         typedef Pseudopointer< ConstReference > ConstPointer;
          
       private:
-         const Context context;
+         const Details details;
       
       public:         
-         Pseudoreference()                                                              : context()              {}
-         explicit Pseudoreference( Context theContext )                                 : context( theContext )  {}
-          
-         Pointer operator&() const                                                      { return Pointer( context ); }
- 
-         operator ConstReference() const                                                { return ConstReference( context ); }
-
-         ValueResult Get() const                                                        { return get(context);   }
-         void Set( ValueParameter value ) const                                         { set( context, value ); }
+         Pseudoreference()                                                              : details()              {}
+         explicit Pseudoreference( Details theDetails )                                 : details( theDetails )  {}
          
-         operator ValueResult() const                                                   { return Get(); }
-         const Pseudoreference& operator=( ValueParameter value ) const                 { Set( value ); return *this; }
+         template < class P0, class P1 >
+         Pseudoreference( P0 p0, P1 p1 )                                                : details( p0, p1 )      {}
+
+         template < class P0, class P1, class P2 >
+         Pseudoreference( P0 p0, P1 p1, P2 p2 )                                         : details( p0, p1, p2 )  {}
+         
+         Pointer operator&() const                                                      { return Pointer( details ); }
+ 
+         operator ConstReference() const                                                { return ConstReference( details ); }
+
+         GetResult Get() const                                                          { return details.Get();   }
+         void Set( SetParameter value ) const                                           { details.Set( value ); }
+         
+         operator GetResult() const                                                     { return Get(); }
+         const Pseudoreference& operator=( SetParameter value ) const                   { Set( value ); return *this; }
          
          const Pseudoreference& operator=( const Pseudoreference& rhs ) const           { Set( rhs.Get() ); return *this; }
          
@@ -116,10 +150,10 @@ namespace Nitrogen
 
 
 
-   template < class ContextType, class ValueType, class GetterType, GetterType get >
-   struct ReferenceTraits< ConstPseudoreference< ContextType, ValueType, GetterType, get > >
+   template < class Details >
+   struct ReferenceTraits< ConstPseudoreference< Details > >
      {
-      typedef ConstPseudoreference< ContextType, ValueType, GetterType, get > Reference;
+      typedef ConstPseudoreference< Details > Reference;
       
       typedef typename Reference::Value           Value;
       typedef typename Reference::Pointer         Pointer;
@@ -127,16 +161,16 @@ namespace Nitrogen
       typedef typename Reference::ConstPointer    ConstPointer;
      };
 
-   template < class ContextType, class ValueType, class GetterType, GetterType get >
-   struct ConvertInputTraits< ConstPseudoreference< ContextType, ValueType, GetterType, get > >
+   template < class Details >
+   struct ConvertInputTraits< ConstPseudoreference< Details > >
      {
-      typedef ValueType ConverterInputType;
+      typedef typename Details::Value ConverterInputType;
      };
    
-   template < class ContextType, class ValueType, class GetterType, GetterType get, class SetterType, SetterType set >
-   struct ReferenceTraits< Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > >
+   template < class Details >
+   struct ReferenceTraits< Pseudoreference< Details > >
      {
-      typedef Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > Reference;
+      typedef Pseudoreference< Details > Reference;
       
       typedef typename Reference::Value           Value;
       typedef typename Reference::Pointer         Pointer;
@@ -144,16 +178,16 @@ namespace Nitrogen
       typedef typename Reference::ConstPointer    ConstPointer;
      };
 
-   template < class ContextType, class ValueType, class GetterType, GetterType get, class SetterType, SetterType set >
-   struct ConvertInputTraits< Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > >
+   template < class Details >
+   struct ConvertInputTraits< Pseudoreference< Details > >
      {
-      typedef ValueType ConverterInputType;
+      typedef typename Details::Value ConverterInputType;
      };
 
-   template < class ContextType, class ValueType, class GetterType, GetterType get >
-   struct ValueTraits< ConstPseudoreference< ContextType, ValueType, GetterType, get > >
+   template < class Details >
+   struct ValueTraits< ConstPseudoreference< Details > >
      {
-      typedef ConstPseudoreference< ContextType, ValueType, GetterType, get > Reference;
+      typedef ConstPseudoreference< Details > Reference;
       
       typedef typename Reference::Value           Value;
       typedef typename Reference::Pointer         Pointer;
@@ -161,10 +195,10 @@ namespace Nitrogen
       typedef typename Reference::ConstPointer    ConstPointer;
      };
 
-   template < class ContextType, class ValueType, class GetterType, GetterType get, class SetterType, SetterType set >
-   struct ValueTraits< Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > >
+   template < class Details >
+   struct ValueTraits< Pseudoreference< Details > >
      {
-      typedef Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > Reference;
+      typedef Pseudoreference< Details > Reference;
       
       typedef typename Reference::Value           Value;
       typedef typename Reference::Pointer         Pointer;

@@ -20,7 +20,7 @@ namespace Nitrogen
       public:
          typedef ReferenceType                            Reference;
          
-         typedef typename Reference::Context              Context;
+         typedef typename Reference::Details              Details;
          typedef typename Reference::Value                Value;
          typedef typename Reference::ConstReference       ConstReference;
 
@@ -28,29 +28,29 @@ namespace Nitrogen
          typedef Pseudopointer< ConstReference >          ConstPointer;
                
       private:
-         Context context;
+         Details details;
       
       public:
-         Pseudopointer()                                                            : context()   {}
-         Pseudopointer( Context theContext )                                        : context( theContext )   {}
+         Pseudopointer()                                                            : details()   {}
+         Pseudopointer( Details theDetails )                                        : details( theDetails )   {}
          
          template < class R >
-         Pseudopointer( const Pseudopointer<R>& p )                                 : context( (&Reference( *p )).Get() ) {}
+         Pseudopointer( const Pseudopointer<R>& p )                                 : details( (&Reference( *p )).Get() ) {}
 
-         Reference operator*() const                                                { return Reference( context ); }
-         ArrowProxy<Reference> operator->() const                                   { return Reference( context ); }
+         Reference operator*() const                                                { return Reference( details ); }
+         ArrowProxy<Reference> operator->() const                                   { return Reference( details ); }
          
-         operator Context() const                                                   { return context; }
-         Context Get() const                                                        { return context; }
+         operator Details() const                                                   { return details; }
+         Details Get() const                                                        { return details; }
 
          friend bool operator==( const Pseudopointer& a, const Pseudopointer& b )   { return a.Get() == b.Get(); }
          friend bool operator!=( const Pseudopointer& a, const Pseudopointer& b )   { return a.Get() != b.Get(); }
 
-         friend bool operator==( const Pseudopointer& a, const Context& b )         { return a.Get() == b; }
-         friend bool operator!=( const Pseudopointer& a, const Context& b )         { return a.Get() != b; }
+         friend bool operator==( const Pseudopointer& a, const Details& b )         { return a.Get() == b; }
+         friend bool operator!=( const Pseudopointer& a, const Details& b )         { return a.Get() != b; }
 
-         friend bool operator==( const Context& a, const Pseudopointer& b )         { return a == b.Get(); }
-         friend bool operator!=( const Context& a, const Pseudopointer& b )         { return a != b.Get(); }
+         friend bool operator==( const Details& a, const Pseudopointer& b )         { return a == b.Get(); }
+         friend bool operator!=( const Details& a, const Pseudopointer& b )         { return a != b.Get(); }
      };
 
    template < class ReferenceType >

@@ -3,8 +3,11 @@
 #ifndef NITROGEN_PROCESSES_H
 #define NITROGEN_PROCESSES_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __PROCESSES__
-#include <Processes.h>
+#include FRAMEWORK_HEADER(HIServices,Processes.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

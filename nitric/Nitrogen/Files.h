@@ -3,8 +3,11 @@
 #ifndef NITROGEN_FILES_H
 #define NITROGEN_FILES_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __FILES__
-#include <Files.h>
+#include FRAMEWORK_HEADER(CarbonCore,Files.h)
 #endif
 #ifndef NITROGEN_IDTYPE_H
 #include "Nitrogen/IDType.h"
@@ -122,34 +125,37 @@ namespace Nitrogen
             friend void operator!=( unsigned int      , FSDirID );
             friend void operator!=( unsigned long long, FSDirID );
 
+            unsigned long GetUnsigned() const                  { return value; }
+            signed long GetSigned() const                      { return static_cast<signed long>( value ); }
+            
       public:
          FSDirID()                                             : value( 0 )               {}
          FSDirID( unsigned long theValue )                     : value( theValue )        {}
          FSDirID(   signed long theValue )                     : value( static_cast<unsigned long>( theValue ) )        {}
          
          operator unsigned long() const                        { return value; }
-         operator   signed long() const                        { return static_cast<signed long>( value ); }
+         operator   signed long() const                        { return GetSigned(); }
 
          static FSDirID Make( unsigned long v )                { return FSDirID( v ); }
          static FSDirID Make(   signed long v )                { return FSDirID( v ); }
          
          template < class T > T Get() const;
          
-         friend bool operator==( FSDirID a, FSDirID b )        { return a.Get<unsigned long>() == b.Get<unsigned long>(); }
-         friend bool operator==( FSDirID a, unsigned long b )  { return a.Get<unsigned long>() == b; }
-         friend bool operator==( unsigned long a, FSDirID b )  { return a == b.Get<unsigned long>(); }
-         friend bool operator==( FSDirID a,   signed long b )  { return a.Get<signed long>() == b; }
-         friend bool operator==(   signed long a, FSDirID b )  { return a == b.Get<signed long>(); }
+         friend bool operator==( FSDirID a, FSDirID b )        { return a.GetUnsigned() == b.GetUnsigned(); }
+         friend bool operator==( FSDirID a, unsigned long b )  { return a.GetUnsigned() == b; }
+         friend bool operator==( unsigned long a, FSDirID b )  { return a == b.GetUnsigned(); }
+         friend bool operator==( FSDirID a,   signed long b )  { return a.GetSigned() == b; }
+         friend bool operator==(   signed long a, FSDirID b )  { return a == b.GetSigned(); }
 
-         friend bool operator!=( FSDirID a, FSDirID b )        { return a.Get<unsigned long>() != b.Get<unsigned long>(); }
-         friend bool operator!=( FSDirID a, unsigned long b )  { return a.Get<unsigned long>() != b; }
-         friend bool operator!=( unsigned long a, FSDirID b )  { return a != b.Get<unsigned long>(); }
-         friend bool operator!=( FSDirID a,   signed long b )  { return a.Get<signed long>() != b; }
-         friend bool operator!=(   signed long a, FSDirID b )  { return a != b.Get<signed long>(); }
+         friend bool operator!=( FSDirID a, FSDirID b )        { return a.GetUnsigned() != b.GetUnsigned(); }
+         friend bool operator!=( FSDirID a, unsigned long b )  { return a.GetUnsigned() != b; }
+         friend bool operator!=( unsigned long a, FSDirID b )  { return a != b.GetUnsigned(); }
+         friend bool operator!=( FSDirID a,   signed long b )  { return a.GetSigned() != b; }
+         friend bool operator!=(   signed long a, FSDirID b )  { return a != b.GetSigned(); }
      };
 
-   template <> unsigned long FSDirID::Get<unsigned long>() const  { return value; }
-   template <>   signed long FSDirID::Get<  signed long>() const  { return static_cast<signed long>( value ); }
+   template <> inline unsigned long FSDirID::Get<unsigned long>() const  { return GetUnsigned(); }
+   template <> inline   signed long FSDirID::Get<  signed long>() const  { return GetSigned(); }
    
    class FSNodeFlagsTag {};
    typedef FlagType< FSNodeFlagsTag, UInt16, 0 > FSNodeFlags;
@@ -322,6 +328,9 @@ namespace Nitrogen
             void operator^=( unsigned long      );
             void operator^=( unsigned long long );
 
+            UInt8 GetUInt8() const                                               { return UInt8( value ); }
+            SInt8 GetSInt8() const                                               { return static_cast<SInt8>( value ); }
+
       public:
          FSSharingFlags()                                                        : value( 0 )    {}
 
@@ -333,16 +342,16 @@ namespace Nitrogen
          bool operator!() const                                                  { return !value; }
          FSSharingFlags operator~() const                                        { return static_cast<UInt8>( ~value ); }
          
-         friend bool operator==( FSSharingFlags a, FSSharingFlags b )            { return a.Get<UInt8>() == b.Get<UInt8>(); }
-         friend bool operator!=( FSSharingFlags a, FSSharingFlags b )            { return a.Get<UInt8>() != b.Get<UInt8>(); }
+         friend bool operator==( FSSharingFlags a, FSSharingFlags b )            { return a.GetUInt8() == b.GetUInt8(); }
+         friend bool operator!=( FSSharingFlags a, FSSharingFlags b )            { return a.GetUInt8() != b.GetUInt8(); }
 
-         friend FSSharingFlags operator|( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.Get<UInt8>() | b.Get<UInt8>() ); }
-         friend FSSharingFlags operator&( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.Get<UInt8>() & b.Get<UInt8>() ); }
-         friend FSSharingFlags operator^( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.Get<UInt8>() ^ b.Get<UInt8>() ); }
+         friend FSSharingFlags operator|( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.GetUInt8() | b.GetUInt8() ); }
+         friend FSSharingFlags operator&( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.GetUInt8() & b.GetUInt8() ); }
+         friend FSSharingFlags operator^( FSSharingFlags a, FSSharingFlags b )   { return static_cast<UInt8>( a.GetUInt8() ^ b.GetUInt8() ); }
 
-         FSSharingFlags& operator|=( FSSharingFlags b )                          { value |= b.Get<UInt8>(); return *this; }
-         FSSharingFlags& operator&=( FSSharingFlags b )                          { value &= b.Get<UInt8>(); return *this; }
-         FSSharingFlags& operator^=( FSSharingFlags b )                          { value ^= b.Get<UInt8>(); return *this; }
+         FSSharingFlags& operator|=( FSSharingFlags b )                          { value |= b.GetUInt8(); return *this; }
+         FSSharingFlags& operator&=( FSSharingFlags b )                          { value &= b.GetUInt8(); return *this; }
+         FSSharingFlags& operator^=( FSSharingFlags b )                          { value ^= b.GetUInt8(); return *this; }
       
          // Allowed converting constructors:
             FSSharingFlags(   signed char v )                               : value( static_cast<UInt8>( v ) )  {}
@@ -355,46 +364,46 @@ namespace Nitrogen
             operator unsigned char() const                                  { return value; }
 
          // Allowed comparisons:
-            friend bool operator==( FSSharingFlags a,   signed char  b )    { return a.Get<SInt8>() == b; }
-            friend bool operator==( FSSharingFlags a,   signed int   b )    { return a.Get<UInt8>() == b; }
-            friend bool operator==( FSSharingFlags a, unsigned char  b )    { return a.Get<UInt8>() == b; }
+            friend bool operator==( FSSharingFlags a,   signed char  b )    { return a.GetSInt8() == b; }
+            friend bool operator==( FSSharingFlags a,   signed int   b )    { return a.GetUInt8() == b; }
+            friend bool operator==( FSSharingFlags a, unsigned char  b )    { return a.GetUInt8() == b; }
 
-            friend bool operator==(   signed char  a, FSSharingFlags b )    { return a == b.Get<SInt8>(); }
-            friend bool operator==(   signed int   a, FSSharingFlags b )    { return a == b.Get<UInt8>(); }
-            friend bool operator==( unsigned char  a, FSSharingFlags b )    { return a == b.Get<UInt8>(); }
+            friend bool operator==(   signed char  a, FSSharingFlags b )    { return a == b.GetSInt8(); }
+            friend bool operator==(   signed int   a, FSSharingFlags b )    { return a == b.GetUInt8(); }
+            friend bool operator==( unsigned char  a, FSSharingFlags b )    { return a == b.GetUInt8(); }
 
-            friend bool operator!=( FSSharingFlags a,   signed char  b )    { return a.Get<SInt8>() != b; }
-            friend bool operator!=( FSSharingFlags a,   signed int   b )    { return a.Get<UInt8>() != b; }
-            friend bool operator!=( FSSharingFlags a, unsigned char  b )    { return a.Get<UInt8>() != b; }
+            friend bool operator!=( FSSharingFlags a,   signed char  b )    { return a.GetSInt8() != b; }
+            friend bool operator!=( FSSharingFlags a,   signed int   b )    { return a.GetUInt8() != b; }
+            friend bool operator!=( FSSharingFlags a, unsigned char  b )    { return a.GetUInt8() != b; }
 
-            friend bool operator!=(   signed char  a, FSSharingFlags b )    { return a != b.Get<SInt8>(); }
-            friend bool operator!=(   signed int   a, FSSharingFlags b )    { return a != b.Get<UInt8>(); }
-            friend bool operator!=( unsigned char  a, FSSharingFlags b )    { return a != b.Get<UInt8>(); }
+            friend bool operator!=(   signed char  a, FSSharingFlags b )    { return a != b.GetSInt8(); }
+            friend bool operator!=(   signed int   a, FSSharingFlags b )    { return a != b.GetUInt8(); }
+            friend bool operator!=( unsigned char  a, FSSharingFlags b )    { return a != b.GetUInt8(); }
 
          // Allowed bitwise operators:
-            friend FSSharingFlags operator|( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.Get<SInt8>() | b ); }
-            friend FSSharingFlags operator|( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.Get<UInt8>() | b ); }
-            friend FSSharingFlags operator|( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.Get<UInt8>() | b ); }
+            friend FSSharingFlags operator|( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.GetSInt8() | b ); }
+            friend FSSharingFlags operator|( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.GetUInt8() | b ); }
+            friend FSSharingFlags operator|( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.GetUInt8() | b ); }
 
-            friend FSSharingFlags operator|(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a | b.Get<SInt8>() ); }
-            friend FSSharingFlags operator|(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a | b.Get<UInt8>() ); }
-            friend FSSharingFlags operator|( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a | b.Get<UInt8>() ); }
+            friend FSSharingFlags operator|(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a | b.GetSInt8() ); }
+            friend FSSharingFlags operator|(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a | b.GetUInt8() ); }
+            friend FSSharingFlags operator|( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a | b.GetUInt8() ); }
 
-            friend FSSharingFlags operator&( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.Get<SInt8>() & b ); }
-            friend FSSharingFlags operator&( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.Get<UInt8>() & b ); }
-            friend FSSharingFlags operator&( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.Get<UInt8>() & b ); }
+            friend FSSharingFlags operator&( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.GetSInt8() & b ); }
+            friend FSSharingFlags operator&( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.GetUInt8() & b ); }
+            friend FSSharingFlags operator&( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.GetUInt8() & b ); }
 
-            friend FSSharingFlags operator&(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a & b.Get<SInt8>() ); }
-            friend FSSharingFlags operator&(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a & b.Get<UInt8>() ); }
-            friend FSSharingFlags operator&( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a & b.Get<UInt8>() ); }
+            friend FSSharingFlags operator&(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a & b.GetSInt8() ); }
+            friend FSSharingFlags operator&(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a & b.GetUInt8() ); }
+            friend FSSharingFlags operator&( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a & b.GetUInt8() ); }
 
-            friend FSSharingFlags operator^( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.Get<SInt8>() ^ b ); }
-            friend FSSharingFlags operator^( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.Get<UInt8>() ^ b ); }
-            friend FSSharingFlags operator^( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.Get<UInt8>() ^ b ); }
+            friend FSSharingFlags operator^( FSSharingFlags a,   signed char  b )    { return FSSharingFlags( a.GetSInt8() ^ b ); }
+            friend FSSharingFlags operator^( FSSharingFlags a,   signed int   b )    { return FSSharingFlags( a.GetUInt8() ^ b ); }
+            friend FSSharingFlags operator^( FSSharingFlags a, unsigned char  b )    { return FSSharingFlags( a.GetUInt8() ^ b ); }
 
-            friend FSSharingFlags operator^(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.Get<SInt8>() ); }
-            friend FSSharingFlags operator^(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.Get<UInt8>() ); }
-            friend FSSharingFlags operator^( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.Get<UInt8>() ); }
+            friend FSSharingFlags operator^(   signed char  a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.GetSInt8() ); }
+            friend FSSharingFlags operator^(   signed int   a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.GetUInt8() ); }
+            friend FSSharingFlags operator^( unsigned char  a, FSSharingFlags b )    { return FSSharingFlags( a ^ b.GetUInt8() ); }
 
          // Allowed bitwise assignments:
             FSSharingFlags& operator|=(   signed char b )     { value |= b; return *this; }
@@ -410,8 +419,8 @@ namespace Nitrogen
             FSSharingFlags& operator^=( unsigned char b )     { value ^= b; return *this; }
      };
 
-   template <> UInt8 FSSharingFlags::Get<UInt8>() const  { return value; }
-   template <> SInt8 FSSharingFlags::Get<SInt8>() const  { return static_cast<SInt8>( value ); }
+   template <> inline UInt8 FSSharingFlags::Get<UInt8>() const  { return GetUInt8(); }
+   template <> inline SInt8 FSSharingFlags::Get<SInt8>() const  { return GetSInt8(); }
 
    //class FSSharingFlagsTag {};
    //typedef FlagType< FSSharingFlagsTag, UInt8, 0 > FSSharingFlags;
@@ -580,6 +589,9 @@ namespace Nitrogen
             void operator^=( unsigned long      );
             void operator^=( unsigned long long );
 
+            UInt8 GetUInt8() const                                               { return value; }
+            SInt8 GetSInt8() const                                               { return static_cast<SInt8>( value ); }
+
       public:
          FSUserPrivileges()                                                            : value( 0 )    {}
 
@@ -591,16 +603,16 @@ namespace Nitrogen
          bool operator!() const                                                        { return !value; }
          FSUserPrivileges operator~() const                                            { return static_cast<UInt8>( ~value ); }
          
-         friend bool operator==( FSUserPrivileges a, FSUserPrivileges b )              { return a.Get<UInt8>() == b.Get<UInt8>(); }
-         friend bool operator!=( FSUserPrivileges a, FSUserPrivileges b )              { return a.Get<UInt8>() != b.Get<UInt8>(); }
+         friend bool operator==( FSUserPrivileges a, FSUserPrivileges b )              { return a.GetUInt8() == b.GetUInt8(); }
+         friend bool operator!=( FSUserPrivileges a, FSUserPrivileges b )              { return a.GetUInt8() != b.GetUInt8(); }
 
-         friend FSUserPrivileges operator|( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.Get<UInt8>() | b.Get<UInt8>() ); }
-         friend FSUserPrivileges operator&( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.Get<UInt8>() & b.Get<UInt8>() ); }
-         friend FSUserPrivileges operator^( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.Get<UInt8>() ^ b.Get<UInt8>() ); }
+         friend FSUserPrivileges operator|( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.GetUInt8() | b.GetUInt8() ); }
+         friend FSUserPrivileges operator&( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.GetUInt8() & b.GetUInt8() ); }
+         friend FSUserPrivileges operator^( FSUserPrivileges a, FSUserPrivileges b )   { return static_cast<UInt8>( a.GetUInt8() ^ b.GetUInt8() ); }
 
-         FSUserPrivileges& operator|=( FSUserPrivileges b )                            { value |= b.Get<UInt8>(); return *this; }
-         FSUserPrivileges& operator&=( FSUserPrivileges b )                            { value &= b.Get<UInt8>(); return *this; }
-         FSUserPrivileges& operator^=( FSUserPrivileges b )                            { value ^= b.Get<UInt8>(); return *this; }
+         FSUserPrivileges& operator|=( FSUserPrivileges b )                            { value |= b.GetUInt8(); return *this; }
+         FSUserPrivileges& operator&=( FSUserPrivileges b )                            { value &= b.GetUInt8(); return *this; }
+         FSUserPrivileges& operator^=( FSUserPrivileges b )                            { value ^= b.GetUInt8(); return *this; }
       
          // Allowed converting constructors:
             FSUserPrivileges(   signed char v )                               : value( static_cast<UInt8>( v ) )  {}
@@ -609,50 +621,50 @@ namespace Nitrogen
          
          // Allowed conversions:
             operator          bool() const                                    { return value; }
-            operator   signed char() const                                    { return static_cast<SInt8>( value ); }
-            operator unsigned char() const                                    { return value; }
+            operator   signed char() const                                    { return GetSInt8(); }
+            operator unsigned char() const                                    { return GetUInt8(); }
 
          // Allowed comparisons:
-            friend bool operator==( FSUserPrivileges a,   signed char  b )    { return a.Get<SInt8>() == b; }
-            friend bool operator==( FSUserPrivileges a,   signed int   b )    { return a.Get<UInt8>() == b; }
-            friend bool operator==( FSUserPrivileges a, unsigned char  b )    { return a.Get<UInt8>() == b; }
+            friend bool operator==( FSUserPrivileges a,   signed char  b )    { return a.GetSInt8() == b; }
+            friend bool operator==( FSUserPrivileges a,   signed int   b )    { return a.GetUInt8() == b; }
+            friend bool operator==( FSUserPrivileges a, unsigned char  b )    { return a.GetUInt8() == b; }
 
-            friend bool operator==(   signed char  a, FSUserPrivileges b )    { return a == b.Get<SInt8>(); }
-            friend bool operator==(   signed int   a, FSUserPrivileges b )    { return a == b.Get<UInt8>(); }
-            friend bool operator==( unsigned char  a, FSUserPrivileges b )    { return a == b.Get<UInt8>(); }
+            friend bool operator==(   signed char  a, FSUserPrivileges b )    { return a == b.GetSInt8(); }
+            friend bool operator==(   signed int   a, FSUserPrivileges b )    { return a == b.GetUInt8(); }
+            friend bool operator==( unsigned char  a, FSUserPrivileges b )    { return a == b.GetUInt8(); }
 
-            friend bool operator!=( FSUserPrivileges a,   signed char  b )    { return a.Get<SInt8>() != b; }
-            friend bool operator!=( FSUserPrivileges a,   signed int   b )    { return a.Get<UInt8>() != b; }
-            friend bool operator!=( FSUserPrivileges a, unsigned char  b )    { return a.Get<UInt8>() != b; }
+            friend bool operator!=( FSUserPrivileges a,   signed char  b )    { return a.GetSInt8() != b; }
+            friend bool operator!=( FSUserPrivileges a,   signed int   b )    { return a.GetUInt8() != b; }
+            friend bool operator!=( FSUserPrivileges a, unsigned char  b )    { return a.GetUInt8() != b; }
 
-            friend bool operator!=(   signed char  a, FSUserPrivileges b )    { return a != b.Get<SInt8>(); }
-            friend bool operator!=(   signed int   a, FSUserPrivileges b )    { return a != b.Get<UInt8>(); }
-            friend bool operator!=( unsigned char  a, FSUserPrivileges b )    { return a != b.Get<UInt8>(); }
+            friend bool operator!=(   signed char  a, FSUserPrivileges b )    { return a != b.GetSInt8(); }
+            friend bool operator!=(   signed int   a, FSUserPrivileges b )    { return a != b.GetUInt8(); }
+            friend bool operator!=( unsigned char  a, FSUserPrivileges b )    { return a != b.GetUInt8(); }
 
          // Allowed bitwise operators:
-            friend FSUserPrivileges operator|( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.Get<SInt8>() | b ); }
-            friend FSUserPrivileges operator|( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.Get<UInt8>() | b ); }
-            friend FSUserPrivileges operator|( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.Get<UInt8>() | b ); }
+            friend FSUserPrivileges operator|( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.GetSInt8() | b ); }
+            friend FSUserPrivileges operator|( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.GetUInt8() | b ); }
+            friend FSUserPrivileges operator|( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.GetUInt8() | b ); }
 
-            friend FSUserPrivileges operator|(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.Get<SInt8>() ); }
-            friend FSUserPrivileges operator|(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.Get<UInt8>() ); }
-            friend FSUserPrivileges operator|( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.Get<UInt8>() ); }
+            friend FSUserPrivileges operator|(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.GetSInt8() ); }
+            friend FSUserPrivileges operator|(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.GetUInt8() ); }
+            friend FSUserPrivileges operator|( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a | b.GetUInt8() ); }
 
-            friend FSUserPrivileges operator&( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.Get<SInt8>() & b ); }
-            friend FSUserPrivileges operator&( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.Get<UInt8>() & b ); }
-            friend FSUserPrivileges operator&( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.Get<UInt8>() & b ); }
+            friend FSUserPrivileges operator&( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.GetSInt8() & b ); }
+            friend FSUserPrivileges operator&( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.GetUInt8() & b ); }
+            friend FSUserPrivileges operator&( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.GetUInt8() & b ); }
 
-            friend FSUserPrivileges operator&(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.Get<SInt8>() ); }
-            friend FSUserPrivileges operator&(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.Get<UInt8>() ); }
-            friend FSUserPrivileges operator&( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.Get<UInt8>() ); }
+            friend FSUserPrivileges operator&(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.GetSInt8() ); }
+            friend FSUserPrivileges operator&(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.GetUInt8() ); }
+            friend FSUserPrivileges operator&( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a & b.GetUInt8() ); }
 
-            friend FSUserPrivileges operator^( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.Get<SInt8>() ^ b ); }
-            friend FSUserPrivileges operator^( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.Get<UInt8>() ^ b ); }
-            friend FSUserPrivileges operator^( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.Get<UInt8>() ^ b ); }
+            friend FSUserPrivileges operator^( FSUserPrivileges a,   signed char  b )    { return FSUserPrivileges( a.GetSInt8() ^ b ); }
+            friend FSUserPrivileges operator^( FSUserPrivileges a,   signed int   b )    { return FSUserPrivileges( a.GetUInt8() ^ b ); }
+            friend FSUserPrivileges operator^( FSUserPrivileges a, unsigned char  b )    { return FSUserPrivileges( a.GetUInt8() ^ b ); }
 
-            friend FSUserPrivileges operator^(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.Get<SInt8>() ); }
-            friend FSUserPrivileges operator^(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.Get<UInt8>() ); }
-            friend FSUserPrivileges operator^( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.Get<UInt8>() ); }
+            friend FSUserPrivileges operator^(   signed char  a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.GetSInt8() ); }
+            friend FSUserPrivileges operator^(   signed int   a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.GetUInt8() ); }
+            friend FSUserPrivileges operator^( unsigned char  a, FSUserPrivileges b )    { return FSUserPrivileges( a ^ b.GetUInt8() ); }
 
          // Allowed bitwise assignments:
             FSUserPrivileges& operator|=(   signed char b )     { value |= b; return *this; }
@@ -668,8 +680,8 @@ namespace Nitrogen
             FSUserPrivileges& operator^=( unsigned char b )     { value ^= b; return *this; }
      };
 
-   template <> UInt8 FSUserPrivileges::Get<UInt8>() const  { return value; }
-   template <> SInt8 FSUserPrivileges::Get<SInt8>() const  { return static_cast<SInt8>( value ); }
+   template <> inline UInt8 FSUserPrivileges::Get<UInt8>() const  { return GetUInt8(); }
+   template <> inline SInt8 FSUserPrivileges::Get<SInt8>() const  { return GetSInt8(); }
    
    //class FSUserPrivilegesTag {};
    //typedef FlagType< FSUserPrivilegesTag, UInt8, 0 > FSUserPrivileges;

@@ -3,8 +3,14 @@
 #ifndef NITROGEN_AEREGISTRY_H
 #define NITROGEN_AEREGISTRY_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __AEREGISTRY__
-#include <AERegistry.h>
+#include FRAMEWORK_HEADER(AE,AERegistry.h)
+#endif
+#ifndef __CARBONEVENTS__
+#include FRAMEWORK_HEADER(HIToolbox,CarbonEvents.h)
 #endif
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"

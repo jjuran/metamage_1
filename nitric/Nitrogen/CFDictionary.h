@@ -3,8 +3,11 @@
 #ifndef NITROGEN_CFDICTIONARY_H
 #define NITROGEN_CFDICTIONARY_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CFDICTIONARY__
-#include <CFDictionary.h>
+#include FRAMEWORK_HEADER(CoreFoundation,CFDictionary.h)
 #endif
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"

@@ -3,8 +3,11 @@
 #ifndef NITROGEN_CFURL_H
 #define NITROGEN_CFURL_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CFURL__
-#include <CFURL.h>
+#include FRAMEWORK_HEADER(CoreFoundation,CFURL.h)
 #endif
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"
@@ -172,10 +175,7 @@ namespace Nitrogen
    
    template <> struct Converter< FSRef, CFURLRef >: public std::unary_function< CFURLRef, FSRef >
      {
-      FSRef operator()( CFURLRef url ) const
-        {
-         return CFURLGetFSRef( url );
-        }
+      FSRef operator()( CFURLRef url ) const;
      };
 
    template <> struct Converter< Owned<CFURLRef>, FSRef >: public std::unary_function< FSRef, Owned<CFURLRef> >

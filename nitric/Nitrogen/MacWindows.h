@@ -3,8 +3,11 @@
 #ifndef NITROGEN_MACWINDOWS_H
 #define NITROGEN_MACWINDOWS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __MACWINDOWS__
-#include <MacWindows.h>
+#include FRAMEWORK_HEADER(HIToolbox,MacWindows.h)
 #endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"

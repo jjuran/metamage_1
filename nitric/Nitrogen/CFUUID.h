@@ -3,8 +3,11 @@
 #ifndef NITROGEN_CFUUID_H
 #define NITROGEN_CFUUID_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CFUUID__
-#include <CFUUID.h>
+#include FRAMEWORK_HEADER(CoreFoundation,CFUUID.h)
 #endif
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"

@@ -3,8 +3,11 @@
 #ifndef NITROGEN_CGPDFDOCUMENT_H
 #define NITROGEN_CGPDFDOCUMENT_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __CGPDFDOCUMENT__
-#include <CGPDFDocument.h>
+#include FRAMEWORK_HEADER(CoreGraphics,CGPDFDocument.h)
 #endif
 #ifndef NITROGEN_CGBASE_H
 #include "Nitrogen/CGBase.h"

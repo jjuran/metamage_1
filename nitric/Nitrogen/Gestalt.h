@@ -3,8 +3,11 @@
 #ifndef NITROGEN_GESTALT_H
 #define NITROGEN_GESTALT_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __GESTALT__
-#include <Gestalt.h>
+#include FRAMEWORK_HEADER(CarbonCore,Gestalt.h)
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"

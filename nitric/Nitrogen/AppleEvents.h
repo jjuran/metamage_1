@@ -3,8 +3,11 @@
 #ifndef NITROGEN_APPLEEVENTS_H
 #define NITROGEN_APPLEEVENTS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __APPLEEVENTS__
-#include <AppleEvents.h>
+#include FRAMEWORK_HEADER(AE,AppleEvents.h)
 #endif
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"

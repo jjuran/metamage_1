@@ -3,8 +3,11 @@
 #ifndef NITROGEN_MACERRORS_H
 #define NITROGEN_MACERRORS_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __MACERRORS__
-#include <MacErrors.h>
+#include FRAMEWORK_HEADER(CarbonCore,MacErrors.h)
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
