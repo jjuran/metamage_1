@@ -129,7 +129,49 @@ namespace Nitrogen
 		return reinterpret_cast< SymbolAddressType >( reinterpret_cast< long >( symAddr ) );
 	}
 	
-	// 333
+	// GetSharedLibrary
+	
+	void GetSharedLibrary( ConstStr63Param     libName,
+	                       CFragArchitecture   archType,
+	                       CFragLoadOptions    findFlags,
+	                       CFragConnectionID*  connID   = NULL,
+	                       SymbolAddressPtr*   mainAddr = NULL );
+	
+	template < ::CFragLoadOptions findFlags, class MainAddrType >
+	typename CFragLoadOptions_Traits< findFlags >::Result
+	GetSharedLibrary( ConstStr63Param     libName,
+	                  CFragArchitecture   archType,
+	                  MainAddrType*       mainAddr )
+	{
+		typedef CFragLoadOptions_Traits< findFlags > Traits;
+		
+		CFragConnectionID connID;
+		SymbolAddressPtr tempMainAddr;
+		
+		GetSharedLibrary( libName,
+		                  archType,
+		                  CFragLoadOptions( findFlags ),
+		                  &connID,
+		                  &tempMainAddr );
+		
+		if ( mainAddr != NULL )
+		{
+			*mainAddr = SymAddr_Cast< MainAddrType >( tempMainAddr );
+		}
+		
+		return Traits::MakeResult( connID );
+	}
+	
+	template < ::CFragLoadOptions findFlags >
+	typename CFragLoadOptions_Traits< findFlags >::Result
+	GetSharedLibrary( ConstStr63Param     libName,
+	                  CFragArchitecture   archType )
+	{
+		return GetSharedLibrary< findFlags, SymbolAddressPtr >( libName,
+		                                                        archType,
+		                                                        NULL );
+	}
+	
 	void GetDiskFragment( const FSSpec&       file,
 	                      std::size_t         offset,
 	                      std::size_t         length,
@@ -137,8 +179,6 @@ namespace Nitrogen
 	                      CFragLoadOptions    findFlags,
 	                      CFragConnectionID*  connID   = NULL,
 	                      SymbolAddressPtr*   mainAddr = NULL );
-	
-	// GetSharedLibrary
 	
 	template < ::CFragLoadOptions findFlags, class MainAddrType >
 	typename CFragLoadOptions_Traits< findFlags >::Result
@@ -185,18 +225,64 @@ namespace Nitrogen
 	
 	// GetMemFragment
 	
+	void GetMemFragment( const void*         memAddr,
+	                     std::size_t         length,
+	                     ConstStr63Param     fragName,
+	                     CFragLoadOptions    findFlags,
+	                     CFragConnectionID*  connID   = NULL,
+	                     SymbolAddressPtr*   mainAddr = NULL );
+	
+	template < ::CFragLoadOptions findFlags, class MainAddrType >
+	typename CFragLoadOptions_Traits< findFlags >::Result
+	GetMemFragment( const void*      memAddr,
+	                std::size_t      length,
+	                ConstStr63Param  fragName,
+	                MainAddrType*    mainAddr )
+	{
+		typedef CFragLoadOptions_Traits< findFlags > Traits;
+		
+		CFragConnectionID connID;
+		SymbolAddressPtr tempMainAddr;
+		
+		GetMemFragment( memAddr,
+		                length,
+		                fragName,
+		                CFragLoadOptions( findFlags ),
+		                &connID,
+		                &tempMainAddr );
+		
+		if ( mainAddr != NULL )
+		{
+			*mainAddr = SymAddr_Cast< MainAddrType >( tempMainAddr );
+		}
+		
+		return Traits::MakeResult( connID );
+	}
+	
+	template < ::CFragLoadOptions findFlags >
+	typename CFragLoadOptions_Traits< findFlags >::Result
+	GetMemFragment( const void*      memAddr,
+	                std::size_t      length,
+	                ConstStr63Param  fragName = NULL )
+	{
+		return GetMemFragment< findFlags, SymbolAddressPtr >( memAddr,
+		                                                      length,
+		                                                      fragName,
+		                                                      NULL );
+	}
+	
 	void CloseConnection( Owned< CFragConnectionID > connID );
 	
 	// 384
-	void FindSymbol( CFragConnectionID  connID, 
-	                 ConstStr255Param   symName, 
-	                 SymbolAddressPtr*  symAddr, 
+	void FindSymbol( CFragConnectionID  connID,
+	                 ConstStr255Param   symName,
+	                 SymbolAddressPtr*  symAddr,
 	                 CFragSymbolClass*  symClass );
 	
 	template < class SymAddrType >
-	void FindSymbol( CFragConnectionID  connID, 
-	                 ConstStr255Param   symName, 
-	                 SymAddrType*       symAddr, 
+	void FindSymbol( CFragConnectionID  connID,
+	                 ConstStr255Param   symName,
+	                 SymAddrType*       symAddr,
 	                 CFragSymbolClass*  symClass = NULL )
 	{
 		SymbolAddressPtr tempSymAddr;
@@ -209,9 +295,44 @@ namespace Nitrogen
 		}
 	}
 	
-	// CountSymbols
+	template < class SymAddrType >
+	SymAddrType FindSymbol( CFragConnectionID  connID, 
+	                        ConstStr255Param   symName, 
+	                        CFragSymbolClass*  symClass = NULL )
+	{
+		SymAddrType result;
+		
+		FindSymbol< SymAddrType >( connID, symName, &result, symClass );
+		
+		return result;
+	}
 	
-	// GetIndSymbol
+	std::size_t CountSymbols( CFragConnectionID connID );
+	
+	void GetIndSymbol( CFragConnectionID  connID,
+	                   std::size_t        symIndex,
+	                   Str255             symName,
+	                   SymbolAddressPtr*  symAddr,
+	                   CFragSymbolClass*  symClass );
+	
+	template < class SymAddrType >
+	void GetIndSymbol( CFragConnectionID  connID,
+	                   std::size_t        symIndex,
+	                   Str255             symName,
+	                   SymAddrType*       symAddr,
+	                   CFragSymbolClass*  symClass = NULL )
+	{
+		SymbolAddressPtr tempSymAddr;
+		
+		GetIndSymbol( connID, symName, &tempSymAddr, symClass );
+		
+		if ( symAddr != NULL )
+		{
+			*symAddr = SymAddr_Cast< SymAddrType >( tempSymAddr );
+		}
+	}
+	
+	// ...
 	
 }
 
