@@ -16,7 +16,7 @@
 namespace Nitrogen
 {
 	
-	#if CALL_NOT_IN_CARBON
+#if CALL_NOT_IN_CARBON
 	
 	Owned< CRMSerialPtr > New_CRMSerialRecord( Owned< StringHandle > inputDriverName,
 	                                           Owned< StringHandle > outputDriverName,
@@ -42,7 +42,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-}
-
 #endif  // #if CALL_NOT_IN_CARBON
+	
+}
 
