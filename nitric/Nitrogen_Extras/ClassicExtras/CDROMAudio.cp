@@ -256,7 +256,7 @@ namespace NitrogenExtras
 		ReadTheQSubcode_Result q;
 		
 		q.control = pb.ReadTheQSubcode.control;
-		q.track = pb.ReadTheQSubcode.track;
+		q.track = DecodeBCD( pb.ReadTheQSubcode.track );
 		q.index = pb.ReadTheQSubcode.index;
 		
 		q.trackTime = CDTime( pb.ReadTheQSubcode.min,
@@ -268,6 +268,41 @@ namespace NitrogenExtras
 		                     pb.ReadTheQSubcode.absFrame );
 		
 		return q;
+	}
+	
+	void AudioTrackSearch( const CDROMDrive&       drive,
+	                       OpticalPositioningType  positioningType,
+	                       unsigned long           address,
+	                       bool                    startPlaying,
+	                       AudioPlayMode           playMode )
+	{
+		AudioCDControlParameterBlock pb;
+		
+		Initialize( pb );
+		
+		pb.ioCompletion = 0;
+		pb.ioVRefNum = drive.vRefNum;
+		pb.ioCRefNum = drive.dRefNum;
+		pb.csCode = kAppleCDAudioTrackSearch;
+		
+		pb.AudioTrackSearch.opticalPositioningType = positioningType;
+		pb.AudioTrackSearch.address                = address;
+		pb.AudioTrackSearch.startPlaying           = startPlaying;
+		pb.AudioTrackSearch.playMode               = playMode;
+		
+		N::PBControlSync( (ParamBlockRec&)pb );
+	}
+	
+	void AudioTrackSearch( const CDROMDrive&  drive,
+	                       TrackNumber        track,
+	                       bool               startPlaying,
+	                       AudioPlayMode      playMode )
+	{
+		AudioTrackSearch( drive,
+		                  kOpticalPositioningTrackNumberBCD,
+		                  EncodeBCD( track ),
+		                  startPlaying,
+		                  playMode );
 	}
 	
 	void AudioPlay( const CDROMDrive&       drive,

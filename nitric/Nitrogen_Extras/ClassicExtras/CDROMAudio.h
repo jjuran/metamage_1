@@ -175,10 +175,19 @@ namespace NitrogenExtras
 	// csCode 102
 	// ReadHeader
 	
-	// csCode 103
-	// AudioTrackSearch
-	
 	typedef unsigned char AudioPlayMode;
+	
+	// csCode 103
+	void AudioTrackSearch( const CDROMDrive&       drive,
+	                       OpticalPositioningType  positioningType,
+	                       unsigned long           address,
+	                       bool                    startPlaying,
+	                       AudioPlayMode           playMode );
+	
+	void AudioTrackSearch( const CDROMDrive&       drive,
+	                       TrackNumber             track,
+	                       bool                    startPlaying,
+	                       AudioPlayMode           playMode );
 	
 	// csCode 104
 	void AudioPlay( const CDROMDrive&       drive,

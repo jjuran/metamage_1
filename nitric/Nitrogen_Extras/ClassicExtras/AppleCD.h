@@ -11,12 +11,13 @@ namespace NitrogenExtras
 {
 	enum
 	{
-		kAppleCDReadTOC         = 100,
-		kAppleCDReadTheQSubcode = 101,
-		kAppleCDAudioPlay       = 104,
-		kAppleCDAudioPause      = 105,
-		kAppleCDAudioStop       = 106,
-		kAppleCDAudioStatus     = 107
+		kAppleCDReadTOC          = 100,
+		kAppleCDReadTheQSubcode  = 101,
+		kAppleCDAudioTrackSearch = 103,
+		kAppleCDAudioPlay        = 104,
+		kAppleCDAudioPause       = 105,
+		kAppleCDAudioStop        = 106,
+		kAppleCDAudioStatus      = 107
 	};
 	
 #if CALL_NOT_IN_CARBON
@@ -92,6 +93,14 @@ namespace NitrogenExtras
 		unsigned char absFrame;
 	};
 	
+	struct AudioTrackSearchControlParameters
+	{
+		unsigned short opticalPositioningType;
+		unsigned long address;
+		unsigned short startPlaying;
+		unsigned short playMode;
+	};
+	
 	struct AudioPlayControlParameters
 	{
 		unsigned short opticalPositioningType;
@@ -123,13 +132,14 @@ namespace NitrogenExtras
 	
 	union AudioCDControlParameters
 	{
-		short                             csParam[ 11 ];
-		ReadTOCControlParameters          ReadTOC;
-		ReadTheQSubcodeControlParameters  ReadTheQSubcode;
-		AudioPlayControlParameters        AudioPlay;
-		AudioPauseControlParameters       AudioPause;
-		AudioStopControlParameters        AudioStop;
-		AudioStatusControlParameters      AudioStatus;
+		short                              csParam[ 11 ];
+		ReadTOCControlParameters           ReadTOC;
+		ReadTheQSubcodeControlParameters   ReadTheQSubcode;
+		AudioTrackSearchControlParameters  AudioTrackSearch;
+		AudioPlayControlParameters         AudioPlay;
+		AudioPauseControlParameters        AudioPause;
+		AudioStopControlParameters         AudioStop;
+		AudioStatusControlParameters       AudioStatus;
 	};
 	
 	struct AudioCDControlParameterBlock : CDROMControlParameterBlockBase,
