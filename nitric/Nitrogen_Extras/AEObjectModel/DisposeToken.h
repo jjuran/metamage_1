@@ -20,29 +20,6 @@ namespace Nitrogen
 	
 	template < ::DescType tokenType > struct DisposeToken_Traits;
 	
-	template <> struct DisposeToken_Traits< typeAEList >
-	{
-		static void DisposeToken( Owned< AETokenList > tokenList )
-		{
-			std::size_t count = AECountItems( tokenList );
-			for ( std::size_t i = 1;  i <= count;  ++i )
-			{
-				// Get the token from the list (which allocates a new AEDesc),
-				// and call AEDisposeToken on it, which disposes both
-				// any token-related resources and the newly allocated AEDesc itself.
-				// The copy of the token AEDesc remaining in the list descriptor will go 
-				// when the list goes.
-				// We have to call AEGetNthToken() because AEGetNthDesc() returns 
-				// Owned< AEDesc > but AEDisposeToken accepts Owned< AEDesc, AETokenDisposer >.
-				// Alternately, we could write AETokenList_Items() or somesuch.
-				AEDisposeToken( AEGetNthToken( tokenList, i ) );
-			}
-			
-			// Optional
-			AEDisposeDesc( tokenList );
-		}
-	};
-	
 	class TokenDisposer
 	{
 		public:
@@ -86,6 +63,8 @@ namespace Nitrogen
 	{
 		TheGlobalTokenDisposer().template Register< tokenType >();
 	}
+	
+	void DisposeTokenList( Owned< AETokenList > tokenList );
 	
 }
 

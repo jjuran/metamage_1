@@ -7,6 +7,16 @@
 #include "AEObjectModel/DisposeToken.h"
 #endif
 
+// Nitrogen
+#ifndef NITROGEN_POINTERTOFUNCTION_H
+#include "Nitrogen/PointerToFunction.h"
+#endif
+
+// Nitrogen Extras / Iteration
+#ifndef ITERATION_AEDESCLISTITEMS_H
+#include "Iteration/AEDescListItems.h"
+#endif
+
 
 namespace Nitrogen
 {
@@ -18,7 +28,7 @@ namespace Nitrogen
 	
 	TokenDisposer::TokenDisposer()
 	{
-		Register< typeAEList >();
+		Register( typeAEList, DisposeTokenList );
 	}
 	
 	void TokenDisposer::DisposeToken( Owned< AEToken > token )
@@ -42,6 +52,32 @@ namespace Nitrogen
 		static TokenDisposer theGlobalTokenDisposer;
 		return theGlobalTokenDisposer;
 	}
+	
+	static void AEDisposeTokenFromList( Owned< AEToken > token )
+	{
+		AEDisposeToken( Owned< AEToken, AETokenDisposer >::Seize( token.Release() ) );
+	}
+	
+	void DisposeTokenList( Owned< AETokenList > tokenList )
+	{
+		AEDescList_ItemValue_Container tokens = AEDescList_ItemValues( tokenList );
+		
+		// Get each token from the list (which allocates a new AEDesc),
+		// and call AEDisposeToken on it, which disposes both
+		// any token-related resources and the newly allocated AEDesc itself.
+		// The copy of the token AEDesc remaining in the list descriptor will go 
+		// when the list goes.
+		// We use AEDisposeTokenFromList() which accepts an Owned< AEDesc >
+		// and passes an Owned< AEToken, AETokenDisposer > to AEDisposeToken().
+		// This is necessary because AEGetNthDesc() always returns Owned< AEDesc >.
+		
+		std::for_each( tokens.begin(),
+		               tokens.end(),
+		               PtrFun( AEDisposeTokenFromList ) );
+		
+		// Optional
+		AEDisposeDesc( tokenList );
+	};
 	
 }
 
