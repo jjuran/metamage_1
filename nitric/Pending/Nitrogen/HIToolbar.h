@@ -3,7 +3,7 @@
 #ifndef NITROGEN_HITOOLBAR_H
 #define NITROGEN_HITOOLBAR_H
 
-#ifndef	__MACH__
+#if !TARGET_RT_MAC_MACHO
 #error "These routines are only directly callable from MachO"
 #endif
 

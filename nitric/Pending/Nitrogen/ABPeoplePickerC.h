@@ -3,7 +3,7 @@
 #ifndef NITROGEN_ABPEOPLEPICKER_H
 #define	NITROGEN_ABPEOPLEPICKER_H
 
-#ifndef	__MACH__
+#if	!TARGET_RT_MAC_MACHO
 #error "These routines are only directly callable from MachO"
 #endif
 
