@@ -31,32 +31,18 @@
 namespace Nitrogen
   {
    void RegisterIconManagerErrors();
-   
+	
 	// 254
 	struct IconAlignmentType_Tag  {};
 	typedef FlagType< IconAlignmentType_Tag, ::IconAlignmentType, kAlignNone > IconAlignmentType;
-	
-	inline IconAlignmentType AlignNone()            { return IconAlignmentType::Make( kAlignNone           ); }
-	// ...
-	inline IconAlignmentType AlignAbsoluteCenter()  { return IconAlignmentType::Make( kAlignAbsoluteCenter ); }
-	// ...
 	
 	// 293
 	struct IconTransformType_Tag  {};
 	typedef FlagType< IconTransformType_Tag, ::IconTransformType, kTransformNone > IconTransformType;
 	
-	inline IconTransformType TransformNone()  { return IconTransformType::Make( kTransformNone ); }
-	// ...
+	struct IconSelectorValue_Tag  {};
+	typedef FlagType< IconSelectorValue_Tag, ::IconSelectorValue, kSelectorAllAvailableData > IconSelectorValue;
 	
-   // 564
-   using ::IconRef;
-
-	// 566
-	void PlotIconID( const Rect& rect, IconAlignmentType align, IconTransformType transform, ResID resID );
-	
-   // 1054
-   inline OSType SystemIconsCreator()  { return OSType::Make( kSystemIconsCreator ); }
-   
    class IconLabelTag {};
    typedef IDType< IconLabelTag, SInt16, 0 > IconLabel;
    
@@ -64,17 +50,173 @@ namespace Nitrogen
    class IconServicesUsageFlagsTag {};
    typedef FlagType< IconServicesUsageFlagsTag, ::IconServicesUsageFlags, 0 > IconServicesUsageFlags;
    
-   inline IconServicesUsageFlags IconServicesNormalUsageFlag()  { return IconServicesUsageFlags::Make( kIconServicesNormalUsageFlag ); }
-   
+	
+	struct Icon
+	{
+		long data[32];
+	};
+	typedef Icon** IconHandle;
+	
+	struct IconAndMask
+	{
+		Icon icon;
+		Icon mask;
+	};
+	typedef IconAndMask** IconAndMaskHandle;
+	
+	template <> struct OwnedDefaults< IconHandle        > : OwnedDefaults< Handle > {};
+	template <> struct OwnedDefaults< IconAndMaskHandle > : OwnedDefaults< Handle > {};
+	
+	using ::CIconHandle;
+	
+	class IconSuiteRef
+	{
+		private:
+			typedef ::IconSuiteRef UnderlyingType;
+			UnderlyingType value;
+		
+		public:
+			IconSuiteRef()                   : value( NULL )  {}
+			IconSuiteRef( UnderlyingType v ) : value( v    )  {}
+			
+			UnderlyingType Get() const       { return value; }
+			operator UnderlyingType() const  { return Get(); }
+	};
+	
+	typedef IconSuiteRef IconCacheRef;
+	
+   // 564
+   using ::IconRef;
+	
+   template <> struct Disposer< CIconHandle >: public std::unary_function< CIconHandle, void >
+     {
+      void operator()( CIconHandle h ) const
+        {
+         //OnlyOnce<RegisterIconManagerErrors>();
+         ::DisposeCIcon( h );
+        }
+     };
+	
+	template <> struct Disposer< IconSuiteRef >: public std::unary_function< IconSuiteRef, void >,
+	                                             private DefaultDestructionOSStatusPolicy
+	{
+		// DisposeIconSuite() takes a Boolean argument that tells it whether to
+		// dispose the individual icon data associated with the icon suite.
+		// It will not dispose resource handles, regardless of the value passed.
+		// I'm hard-coding this argument to true, as that seems the most useful to me.
+		// If you need to pass false, use DisposeIconSuiteButNotData instead.
+		
+		enum { disposeData = true };
+		
+		void operator()( IconSuiteRef i ) const
+		{
+			OnlyOnce< RegisterIconManagerErrors >();
+			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
+		}
+	};
+	
+	struct DisposeIconSuiteButNotData: public std::unary_function< IconSuiteRef, void >,
+	                                   private DefaultDestructionOSStatusPolicy
+	{
+		enum { disposeData = false };
+		
+		void operator()( IconSuiteRef i ) const
+		{
+			OnlyOnce< RegisterIconManagerErrors >();
+			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
+		}
+	};
+	
    template <> struct Disposer< IconRef >: public std::unary_function< IconRef, void >,
                                            private DefaultDestructionOSStatusPolicy
      {
       void operator()( IconRef i ) const
         {
          OnlyOnce<RegisterIconManagerErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
+         HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
         }
      };
+	
+	// 490
+	Owned< CIconHandle > GetCIcon( ResID iconID );
+	
+	// 502
+	void PlotCIcon( const Rect& rect, CIconHandle icon );
+	
+	// 516
+	inline void DisposeCIcon( Owned< CIconHandle > )  {}
+	
+	// 530
+	IconHandle GetIcon( ResID iconID );  // Returns a resource handle
+	
+	// 542
+	void PlotIcon( const Rect& rect, IconHandle icon );
+	
+	// 566
+	void PlotIconID( const Rect&        rect,
+	                 IconAlignmentType  align,
+	                 IconTransformType  transform,
+	                 ResID              resID );
+	
+	// 582
+	Owned< IconSuiteRef > NewIconSuite();
+	
+	template < bool disposeData >  struct DisposeData_Traits;
+	
+	template <>  struct DisposeData_Traits< true >
+	{
+		typedef Disposer<IconSuiteRef > Disposer;
+	};
+	
+	template <>  struct DisposeData_Traits< false >
+	{
+		typedef DisposeIconSuiteButNotData Disposer;
+	};
+	
+	template < bool disposeData >
+	Owned< IconSuiteRef, typename DisposeData_Traits< disposeData >::Disposer > NewIconSuite()
+	{
+		typedef typename DisposeData_Traits< disposeData >::Disposer Disposer;
+		
+		return Owned< IconSuiteRef, Disposer >::Seize( NewIconSuite().Release() );
+	}
+	
+	// 594
+	void AddIconToSuite( Handle iconData, IconSuiteRef suite, ResType type );
+	
+	// 609
+	Handle GetIconFromSuite( IconSuiteRef suite, ResType type );
+	
+	// ...
+	
+	// 640
+	Owned< IconSuiteRef > GetIconSuite( ResID resID, IconSelectorValue selector );
+	
+	// 655
+	void DisposeIconSuite( Owned< IconSuiteRef                             > iconSuite );  // true
+	void DisposeIconSuite( Owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite );  // false
+	
+	template < bool disposeData >
+	void DisposeIconSuite( Owned< IconSuiteRef > iconSuite )
+	{
+		DisposeIconSuite( iconSuite, disposeData );
+	}
+	
+	// 669
+	void PlotIconSuite( const Rect&        rect,
+	                    IconAlignmentType  align,
+	                    IconTransformType  transform,
+	                    IconSuiteRef       iconSuite );
+	
+	// ...
+	
+	// 1009
+	void PlotCIconHandle( const Rect&        rect,
+	                      IconAlignmentType  align,
+	                      IconTransformType  transform,
+	                      CIconHandle        theCIcon );
+	
+	// ...
 	
    struct GetIconRefFromFile_Result
      {
@@ -122,23 +264,23 @@ namespace Nitrogen
                                                          const UniChar         *inFileName,
                                                          FSCatalogInfoBitmap    inWhichInfo,
                                                          const FSCatalogInfo&   inCatalogInfo,
-                                                         IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() );
+                                                         IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag );
 
    GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                          UniCharCount           inFileNameLength,
                                                          const UniChar         *inFileName,
-                                                         IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() );
+                                                         IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag );
 
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                                 FSCatalogInfoBitmap    inWhichInfo,
                                                                 const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
+                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
       return GetIconRefFromFileInfo( inRef, 0, 0, inWhichInfo, inCatalogInfo, inUsageFlags );
      }
 
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
+                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
       return GetIconRefFromFileInfo( inRef, 0, 0, inUsageFlags );
      }
@@ -147,7 +289,7 @@ namespace Nitrogen
                                                                 const UniString&       inFileName,
                                                                 FSCatalogInfoBitmap    inWhichInfo,
                                                                 const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
+                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
       return GetIconRefFromFileInfo( inRef,
                                      inFileName.size(),
@@ -159,7 +301,7 @@ namespace Nitrogen
 
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                                 const UniString&       inFileName,
-                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
+                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
       return GetIconRefFromFileInfo( inRef,
                                      inFileName.size(),
@@ -171,7 +313,7 @@ namespace Nitrogen
                                                                 const HFSUniStr255&    inFileName,
                                                                 FSCatalogInfoBitmap    inWhichInfo,
                                                                 const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
+                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
       return GetIconRefFromFileInfo( inRef,
                                      inFileName.length,
@@ -183,7 +325,7 @@ namespace Nitrogen
 
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                                 const HFSUniStr255&    inFileName,
-                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
+                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
      {
       return GetIconRefFromFileInfo( inRef,
                                      inFileName.length,
@@ -199,7 +341,7 @@ namespace Nitrogen
 
    inline Owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
      {
-      return RegisterIconRefFromIconFile( SystemIconsCreator(), OSType::Make( 0 ), iconFile );
+      return RegisterIconRefFromIconFile( kSystemIconsCreator, OSType( 0 ), iconFile );
      }
   }
 

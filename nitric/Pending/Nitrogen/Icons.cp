@@ -13,9 +13,66 @@
 namespace Nitrogen
   {
 	
-	void PlotIconID( const Rect& rect, IconAlignmentType align, IconTransformType transform, ResID resID )
+	Owned< CIconHandle > GetCIcon( ResID iconID )
+	{
+		return Owned< CIconHandle >::Seize( ::GetCIcon( iconID ) );
+	}
+	
+	void PlotCIcon( const Rect& rect, CIconHandle icon )
+	{
+		::PlotCIcon( &rect, icon );
+	}
+	
+	IconHandle GetIcon( ResID iconID )
+	{
+		// Returns a resource handle
+		return Handle_Cast< Icon >( Handle( ::GetIcon( iconID ) ) );
+	}
+	
+	void PlotIcon( const Rect& rect, IconHandle icon )
+	{
+		::PlotIcon( &rect, Handle( icon ) );
+	}
+	
+	void PlotIconID( const Rect& rect,
+	                 IconAlignmentType align,
+	                 IconTransformType transform,
+	                 ResID resID )
 	{
 		ThrowOSStatus( ::PlotIconID( &rect, align, transform, resID ) );
+	}
+	
+	Owned< IconSuiteRef > NewIconSuite()
+	{
+		::IconSuiteRef result;
+		ThrowOSStatus( ::NewIconSuite( &result ) );
+		return Owned< IconSuiteRef >::Seize( IconSuiteRef( result ) );
+	}
+	
+	void DisposeIconSuite( Owned< IconSuiteRef > iconSuite )
+	{
+		ThrowOSStatus( ::DisposeIconSuite( iconSuite.Release(), true ) );
+	}
+	
+	void DisposeIconSuite( Owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite )
+	{
+		ThrowOSStatus( ::DisposeIconSuite( iconSuite.Release(), false ) );
+	}
+	
+	void PlotIconSuite( const Rect&        rect,
+	                    IconAlignmentType  align,
+	                    IconTransformType  transform,
+	                    IconSuiteRef       iconSuite )
+	{
+		ThrowOSStatus( ::PlotIconSuite( &rect, align, transform, iconSuite ) );
+	}
+	
+	void PlotCIconHandle( const Rect&        rect,
+	                      IconAlignmentType  align,
+	                      IconTransformType  transform,
+	                      CIconHandle        theCIcon )
+	{
+		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
 	}
 	
    Owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType )
@@ -43,7 +100,7 @@ namespace Nitrogen
 
    Owned<IconRef> GetIconRef( OSType iconType )
      {
-      return GetIconRef( OnSystemDisk(), SystemIconsCreator(), iconType );
+      return GetIconRef( kOnSystemDisk, kSystemIconsCreator, iconType );
      }
 
 	Owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
