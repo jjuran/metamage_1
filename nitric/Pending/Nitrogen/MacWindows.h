@@ -80,7 +80,7 @@ namespace Nitrogen
    typedef SelectorType< WindowClass_Tag, ::WindowClass, 0 > WindowClass;
 
    class WindowAttributes_Tag {};
-   typedef SelectorType< WindowAttributes_Tag, ::WindowAttributes, kWindowNoAttributes > WindowAttributes;
+   typedef FlagType< WindowAttributes_Tag, ::WindowAttributes, kWindowNoAttributes > WindowAttributes;
 
    class WindowPositionMethod_Tag {};
    typedef SelectorType< WindowPositionMethod_Tag, ::WindowPositionMethod, 0 > WindowPositionMethod;

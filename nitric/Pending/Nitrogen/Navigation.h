@@ -76,6 +76,18 @@ namespace Nitrogen {
 			}
 		};
 	
+	using ::NavDialogRef;
+
+
+/*
+	template <> struct Disposer< NavReplyRecord >: public std::unary_function< NavReplyRecord, void >
+		{
+		void operator()( NavReplyRecord &nav ) const
+			{
+				::NavDisposeReply ( &nav );
+			}
+		};
+*/
 
 #if 0
 typedef UInt32 NavUserAction;
@@ -236,7 +248,7 @@ or the unsupported functions:
 */
 
 
-
+	
 
 #if 0
 /*
@@ -254,6 +266,7 @@ NavTranslateFile(
 #endif
 
 
+//	Semantics?? What should happen to the NavReplyRecord here?
 	inline void NavCompleteSave ( NavReplyRecord &reply, NavTranslationOptions howToTranslate ) {
 		OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavCompleteSave ( &reply, howToTranslate ));
@@ -276,7 +289,7 @@ NavTranslateFile(
 	inline void NavDisposeReply ( NavReplyRecord * reply ) {
 		OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavDisposeReply ( reply ));
-		}
+		}		
 	
 	using ::NavServicesAvailable;
 
@@ -425,6 +438,14 @@ NavTranslateFile(
 //	extern NavUserAction NavDialogGetUserAction(NavDialogRef inDialog);
 	using ::NavDialogGetUserAction;
 
+#if 0
+	inline Owned<NavReplyRecord> NavDialogGetReply ( NavDialogRef inDialog ) {
+		OnlyOnce<RegisterNavServicesErrors> ();
+		NavReplyRecord result;
+		ThrowOSStatus ( ::NavDialogGetReply ( inDialog, &result ));
+		return Owned<NavReplyRecord>::Seize ( result );
+		}
+#endif
 	inline NavReplyRecord NavDialogGetReply ( NavDialogRef inDialog ) {
 		OnlyOnce<RegisterNavServicesErrors> ();
 		NavReplyRecord result;
