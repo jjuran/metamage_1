@@ -74,7 +74,7 @@ namespace Nitrogen
 			::CGrafPtr GetCGrafPtr() const                         { return reinterpret_cast< ::CGrafPtr >( value ); }
 			
 		public:
-			GrafPtr() : value(0)  {}
+			GrafPtr() : value( NULL )  {}
 			GrafPtr( ::GrafPtr  value ) : value( value )  {}
 			GrafPtr( ::CGrafPtr value ) : value( reinterpret_cast< ::GrafPtr >( value ) )  {}
 			
@@ -180,12 +180,16 @@ namespace Nitrogen
 	template <>
 	struct Maker< RGBColor >
 	{
-		RGBColor operator()( unsigned short red, unsigned short green, unsigned short blue ) const
+		RGBColor operator()( unsigned short  red,
+		                     unsigned short  green,
+		                     unsigned short  blue ) const
 		{
 			RGBColor result;
+			
 			result.red   = red;
 			result.green = green;
 			result.blue  = blue;
+			
 			return result;
 		}
 		
@@ -411,10 +415,16 @@ namespace Nitrogen
 #else
 	
 	// 5835
-	inline const BitMap* GetPortBitMapForCopyBits( CGrafPtr port )  { return &::GrafPtr( port )->portBits; }
+	inline const BitMap* GetPortBitMapForCopyBits( CGrafPtr port )
+	{
+		return &::GrafPtr( port )->portBits;
+	}
 	
 	// 5858
-	inline const Rect& GetPortBounds( CGrafPtr port )  { return ::GrafPtr( port )->portRect; }
+	inline const Rect& GetPortBounds( CGrafPtr port )
+	{
+		return ::GrafPtr( port )->portRect;
+	}
 	
 #endif
 	
@@ -489,72 +499,74 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Pseudoreferences ¥
 	
-	class Port_Details
+	class Port_Value
 	{
 		public:
 			typedef GrafPtr Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef GrafPtr GetResult;
+			typedef GrafPtr SetParameter;
 			
-			GetResult Get() const                        { return GetPort(); }
-			void Set( SetParameter port ) const          { SetPort( port ); }
+			static const bool hasSwap = true;
+			
+			GetResult Get() const                      { return GetPort();          }
+			void Set( SetParameter port ) const        { SetPort( port );           }
+			
+			GetResult Swap( SetParameter port ) const  { return QDSwapPort( port ); }
 	};
 	
-	typedef Pseudoreference< Port_Details > Port;
-	
-	class Clip_Details
+	class Clip_Value
 	{
 		public:
 			typedef Owned< RgnHandle > Value;
 			typedef Owned< RgnHandle > GetResult;
 			typedef        RgnHandle   SetParameter;
 			
-			GetResult Get() const                          { return GetClip(); }
-			void Set( SetParameter region ) const          { SetClip( region ); }
+			static const bool hasSwap = false;
+			
+			GetResult Get() const                  { return GetClip();  }
+			void Set( SetParameter region ) const  { SetClip( region ); }
 	};
 	
-	typedef Pseudoreference< Clip_Details > Clip;
-   	
-	class PenState_Details
+	class PenState_Value
 	{
 		public:
-			typedef PenState Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef PenState         Value;
+			typedef PenState         GetResult;
+			typedef PenState const&  SetParameter;
 			
-			GetResult Get() const                         { return GetPenState(); }
-			void Set( SetParameter state ) const          { SetPenState( state ); }
+			static const bool hasSwap = false;
+			
+			GetResult Get() const                 { return GetPenState(); }
+			void Set( SetParameter state ) const  { SetPenState( state ); }
 	};
 	
-	typedef Pseudoreference< PenState_Details > The_PenState;
-	
-	class RGBForeColor_Details
+	class RGBForeColor_Value
 	{
 		public:
-			typedef RGBColor Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef RGBColor         Value;
+			typedef RGBColor         GetResult;
+			typedef RGBColor const&  SetParameter;
 			
-			GetResult Get() const                         { return GetPortForeColor( GetQDGlobalsThePort() ); }
-			void Set( RGBColor color ) const              { RGBForeColor( color ); }
+			static const bool hasSwap = false;
+			
+			GetResult Get() const                 { return GetPortForeColor( GetQDGlobalsThePort() ); }
+			void Set( SetParameter color ) const  { RGBForeColor( color );                            }
 	};
 	
-	typedef Pseudoreference< RGBForeColor_Details > The_RGBForeColor;
-	
-	class RGBBackColor_Details
+	class RGBBackColor_Value
 	{
 		public:
-			typedef RGBColor Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef RGBColor         Value;
+			typedef RGBColor         GetResult;
+			typedef RGBColor const&  SetParameter;
 			
-			GetResult Get() const                         { return GetPortBackColor( GetQDGlobalsThePort() ); }
-			void Set( RGBColor color ) const              { RGBBackColor( color ); }
+			static const bool hasSwap = false;
+			
+			GetResult Get() const                 { return GetPortBackColor( GetQDGlobalsThePort() ); }
+			void Set( SetParameter color ) const  { RGBBackColor( color );                            }
 	};
 	
-	typedef Pseudoreference< RGBBackColor_Details > The_RGBBackColor;
-	
-	class PortClipRegion_Details
+	class PortClipRegion_Value
 	{
 		private:
 			CGrafPtr port;
@@ -564,30 +576,47 @@ namespace Nitrogen
 			typedef Owned< RgnHandle > GetResult;
 			typedef        RgnHandle   SetParameter;
 			
-			PortClipRegion_Details( CGrafPtr thePort )     : port( thePort ) {}
+			static const bool hasSwap = false;
 			
-			GetResult Get() const                          { return GetPortClipRegion( port ); }
-			void Set( SetParameter region ) const          { Nitrogen::SetPortClipRegion( port, region ); }
+			PortClipRegion_Value( CGrafPtr port )    : port( port ) {}
+			
+			GetResult Get() const                    { return GetPortClipRegion( port );            }
+			void Set( SetParameter region ) const    { Nitrogen::SetPortClipRegion( port, region ); }
 	};
 	
-	typedef Pseudoreference< PortClipRegion_Details > PortClipRegion;
-   	
-	class PortPenSize_Details
+	class PortPenSize_Value
 	{
 		private:
 			CGrafPtr port;
       
 		public:
 			typedef Point Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef Point GetResult;
+			typedef Point SetParameter;
 			
-			PortPenSize_Details( CGrafPtr thePort )     : port( thePort ) {}
-			GetResult Get() const                       { return GetPortPenSize( port ); }
-			void Set( SetParameter size ) const         { Nitrogen::SetPortPenSize( port, size ); }
+			static const bool hasSwap = false;
+			
+			PortPenSize_Value( CGrafPtr port )    : port( port ) {}
+			
+			GetResult Get() const                 { return GetPortPenSize( port );          }
+			void Set( SetParameter size ) const   { Nitrogen::SetPortPenSize( port, size ); }
 	};
 	
-	typedef Pseudoreference< PortPenSize_Details > PortPenSize;
+	typedef Port_Value            Port_Details;
+	typedef Clip_Value            Clip_Details;
+	typedef PenState_Value        PenState_Details;
+	typedef RGBForeColor_Value    RGBForeColor_Details;
+	typedef RGBBackColor_Value    RGBBackColor_Details;
+	typedef PortClipRegion_Value  PortClipRegion_Details;
+	typedef PortPenSize_Value     PortPenSize_Details;
+	
+	typedef Pseudoreference< Port_Details           > Port;
+	typedef Pseudoreference< Clip_Details           > Clip;
+	typedef Pseudoreference< PenState_Details       > The_PenState;
+	typedef Pseudoreference< RGBForeColor_Details   > The_RGBForeColor;
+	typedef Pseudoreference< RGBBackColor_Details   > The_RGBBackColor;
+	typedef Pseudoreference< PortClipRegion_Details > PortClipRegion;
+	typedef Pseudoreference< PortPenSize_Details    > PortPenSize;
 	
 	#pragma mark -
 	#pragma mark ¥ Operators ¥
