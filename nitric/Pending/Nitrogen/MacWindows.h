@@ -111,11 +111,11 @@ namespace Nitrogen
                                  WindowAttributes clearTheseAttributes );
    
 	inline void SetWindowAttributes ( WindowRef window, WindowAttributes setTheseAttributes ) {
-		Nitrogen::ChangeWindowAttributes ( window, setTheseAttributes, 0 );
+		Nitrogen::ChangeWindowAttributes ( window, setTheseAttributes, WindowAttributes::Make( 0 ) );
 		}
 
 	inline void ClearWindowAttributes ( WindowRef window, WindowAttributes clearTheseAttributes ) {
-		Nitrogen::ChangeWindowAttributes ( window, 0, clearTheseAttributes );
+		Nitrogen::ChangeWindowAttributes ( window, WindowAttributes::Make( 0 ), clearTheseAttributes );
 		}
    
    /* ... */
