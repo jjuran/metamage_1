@@ -145,51 +145,51 @@ namespace Nitrogen
 	typedef SelectorType< DescType_Tag, ::DescType > DescType;
 	
 	// Apple event descriptor types
-	static const DescType typeBoolean                = DescType::Make( ::typeBoolean                );
-	static const DescType typeChar                   = DescType::Make( ::typeChar                   );
+	inline DescType TypeBoolean               ()  { return DescType::Make( typeBoolean                ); }
+	inline DescType TypeChar                  ()  { return DescType::Make( typeChar                   ); }
 	
 	// Preferred numeric Apple event descriptor types
-	static const DescType typeSInt16                 = DescType::Make( ::typeSInt16                 );
-	static const DescType typeSInt32                 = DescType::Make( ::typeSInt32                 );
-	static const DescType typeUInt32                 = DescType::Make( ::typeUInt32                 );
-	static const DescType typeSInt64                 = DescType::Make( ::typeSInt64                 );
-	static const DescType typeIEEE32BitFloatingPoint = DescType::Make( ::typeIEEE32BitFloatingPoint );
-	static const DescType typeIEEE64BitFloatingPoint = DescType::Make( ::typeIEEE64BitFloatingPoint );
-	static const DescType type128BitFloatingPoint    = DescType::Make( ::type128BitFloatingPoint    );
-	static const DescType typeDecimalStruct          = DescType::Make( ::typeDecimalStruct          );
+	inline DescType TypeSInt16                ()  { return DescType::Make( typeSInt16                 ); }
+	inline DescType TypeSInt32                ()  { return DescType::Make( typeSInt32                 ); }
+	inline DescType TypeUInt32                ()  { return DescType::Make( typeUInt32                 ); }
+	inline DescType TypeSInt64                ()  { return DescType::Make( typeSInt64                 ); }
+	inline DescType TypeIEEE32BitFloatingPoint()  { return DescType::Make( typeIEEE32BitFloatingPoint ); }
+	inline DescType TypeIEEE64BitFloatingPoint()  { return DescType::Make( typeIEEE64BitFloatingPoint ); }
+	inline DescType Type128BitFloatingPoint   ()  { return DescType::Make( type128BitFloatingPoint    ); }
+	inline DescType TypeDecimalStruct         ()  { return DescType::Make( typeDecimalStruct          ); }
 	
 	// Non-preferred Apple event descriptor types
-	static const DescType typeExtended               = DescType::Make( ::typeExtended               );
+	inline DescType TypeExtended              ()  { return DescType::Make( typeExtended               ); }
 	
 	// More Apple event descriptor types
-	static const DescType typeAEList                 = DescType::Make( ::typeAEList                 );
-	static const DescType typeAERecord               = DescType::Make( ::typeAERecord               );
-	static const DescType typeAppleEvent             = DescType::Make( ::typeAppleEvent             );
-	static const DescType typeEventRecord            = DescType::Make( ::typeEventRecord            );
-	static const DescType typeTrue                   = DescType::Make( ::typeTrue                   );
-	static const DescType typeFalse                  = DescType::Make( ::typeFalse                  );
-	static const DescType typeAlias                  = DescType::Make( ::typeAlias                  );
-	static const DescType typeEnumerated             = DescType::Make( ::typeEnumerated             );
-	static const DescType typeType                   = DescType::Make( ::typeType                   );
-	static const DescType typeAppParameters          = DescType::Make( ::typeAppParameters          );
-	static const DescType typeProperty               = DescType::Make( ::typeProperty               );
-	static const DescType typeFSS                    = DescType::Make( ::typeFSS                    );
-	static const DescType typeFSRef                  = DescType::Make( ::typeFSRef                  );
-	static const DescType typeFileURL                = DescType::Make( ::typeFileURL                );
-	static const DescType typeKeyword                = DescType::Make( ::typeKeyword                );
-	static const DescType typeSectionH               = DescType::Make( ::typeSectionH               );
-	static const DescType typeWildCard               = DescType::Make( ::typeWildCard               );
-	static const DescType typeFixed                  = DescType::Make( ::typeFixed                  );
-	static const DescType typeProcessSerialNumber    = DescType::Make( ::typeProcessSerialNumber    );
-	static const DescType typeApplicationURL         = DescType::Make( ::typeApplicationURL         );
-	static const DescType typeNull                   = DescType::Make( ::typeNull                   );
+	inline DescType TypeAEList                ()  { return DescType::Make( typeAEList                 ); }
+	inline DescType TypeAERecord              ()  { return DescType::Make( typeAERecord               ); }
+	inline DescType TypeAppleEvent            ()  { return DescType::Make( typeAppleEvent             ); }
+	inline DescType TypeEventRecord           ()  { return DescType::Make( typeEventRecord            ); }
+	inline DescType TypeTrue                  ()  { return DescType::Make( typeTrue                   ); }
+	inline DescType TypeFalse                 ()  { return DescType::Make( typeFalse                  ); }
+	inline DescType TypeAlias                 ()  { return DescType::Make( typeAlias                  ); }
+	inline DescType TypeEnumerated            ()  { return DescType::Make( typeEnumerated             ); }
+	inline DescType TypeType                  ()  { return DescType::Make( typeType                   ); }
+	inline DescType TypeAppParameters         ()  { return DescType::Make( typeAppParameters          ); }
+	inline DescType TypeProperty              ()  { return DescType::Make( typeProperty               ); }
+	inline DescType TypeFSS                   ()  { return DescType::Make( typeFSS                    ); }
+	inline DescType TypeFSRef                 ()  { return DescType::Make( typeFSRef                  ); }
+	inline DescType TypeFileURL               ()  { return DescType::Make( typeFileURL                ); }
+	inline DescType TypeKeyword               ()  { return DescType::Make( typeKeyword                ); }
+	inline DescType TypeSectionH              ()  { return DescType::Make( typeSectionH               ); }
+	inline DescType TypeWildCard              ()  { return DescType::Make( typeWildCard               ); }
+	inline DescType TypeFixed                 ()  { return DescType::Make( typeFixed                  ); }
+	inline DescType TypeProcessSerialNumber   ()  { return DescType::Make( typeProcessSerialNumber    ); }
+	inline DescType TypeApplicationURL        ()  { return DescType::Make( typeApplicationURL         ); }
+	inline DescType TypeNull                  ()  { return DescType::Make( typeNull                   ); }
 	
 #if CALL_NOT_IN_CARBON
 	
 	// Deprecated addressing modes under Carbon
-	static const DescType typeSessionID              = DescType::Make( ::typeSessionID              );
-	static const DescType typeTargetID               = DescType::Make( ::typeTargetID               );
-	static const DescType typeDispatcherID           = DescType::Make( ::typeDispatcherID           );
+	inline DescType TypeSessionID             ()  { return DescType::Make( typeSessionID              ); }
+	inline DescType TypeTargetID              ()  { return DescType::Make( typeTargetID               ); }
+	inline DescType TypeDispatcherID          ()  { return DescType::Make( typeDispatcherID           ); }
 	
 #endif
 	
@@ -197,30 +197,52 @@ namespace Nitrogen
 	typedef SelectorType< AEKeyword_Tag, ::AEKeyword > AEKeyword;
 	
 	// Keywords for Apple event attributes
-	static const AEKeyword keyTransactionIDAttr   = AEKeyword::Make( ::keyTransactionIDAttr   );
-	static const AEKeyword keyReturnIDAttr        = AEKeyword::Make( ::keyReturnIDAttr        );
-	static const AEKeyword keyEventClassAttr      = AEKeyword::Make( ::keyEventClassAttr      );
-	static const AEKeyword keyEventIDAttr         = AEKeyword::Make( ::keyEventIDAttr         );
-	static const AEKeyword keyAddressAttr         = AEKeyword::Make( ::keyAddressAttr         );
-	static const AEKeyword keyOptionalKeywordAttr = AEKeyword::Make( ::keyOptionalKeywordAttr );
-	static const AEKeyword keyTimeoutAttr         = AEKeyword::Make( ::keyTimeoutAttr         );
-	static const AEKeyword keyInteractLevelAttr   = AEKeyword::Make( ::keyInteractLevelAttr   );
-	static const AEKeyword keyEventSourceAttr     = AEKeyword::Make( ::keyEventSourceAttr     );
-	static const AEKeyword keyMissedKeywordAttr   = AEKeyword::Make( ::keyMissedKeywordAttr   );
-	static const AEKeyword keyOriginalAddressAttr = AEKeyword::Make( ::keyOriginalAddressAttr );
-	static const AEKeyword keyAcceptTimeoutAttr   = AEKeyword::Make( ::keyAcceptTimeoutAttr   );
+	inline AEKeyword KeyTransactionIDAttr  ()  { return AEKeyword::Make( keyTransactionIDAttr   ); }
+	inline AEKeyword KeyReturnIDAttr       ()  { return AEKeyword::Make( keyReturnIDAttr        ); }
+	inline AEKeyword KeyEventClassAttr     ()  { return AEKeyword::Make( keyEventClassAttr      ); }
+	inline AEKeyword KeyEventIDAttr        ()  { return AEKeyword::Make( keyEventIDAttr         ); }
+	inline AEKeyword KeyAddressAttr        ()  { return AEKeyword::Make( keyAddressAttr         ); }
+	inline AEKeyword KeyOptionalKeywordAttr()  { return AEKeyword::Make( keyOptionalKeywordAttr ); }
+	inline AEKeyword KeyTimeoutAttr        ()  { return AEKeyword::Make( keyTimeoutAttr         ); }
+	inline AEKeyword KeyInteractLevelAttr  ()  { return AEKeyword::Make( keyInteractLevelAttr   ); }
+	inline AEKeyword KeyEventSourceAttr    ()  { return AEKeyword::Make( keyEventSourceAttr     ); }
+	inline AEKeyword KeyMissedKeywordAttr  ()  { return AEKeyword::Make( keyMissedKeywordAttr   ); }
+	inline AEKeyword KeyOriginalAddressAttr()  { return AEKeyword::Make( keyOriginalAddressAttr ); }
+	inline AEKeyword KeyAcceptTimeoutAttr  ()  { return AEKeyword::Make( keyAcceptTimeoutAttr   ); }
 	
 	// Constants used creating an AppleEvent
 	
 	class AEReturnID_Tag {};
 	typedef IDType< AEReturnID_Tag, ::AEReturnID > AEReturnID;
 	
-	static const AEReturnID kAutoGenerateReturnID = AEReturnID::Make( ::kAutoGenerateReturnID );
+	inline AEReturnID AutoGenerateReturnID()  { return AEReturnID::Make( kAutoGenerateReturnID ); }
 	
 	class AETransactionID_Tag {};
 	typedef IDType< AETransactionID_Tag, ::AETransactionID > AETransactionID;
 	
-	static const AETransactionID kAnyTransactionID = AETransactionID::Make( ::kAnyTransactionID );
+	inline AETransactionID AnyTransactionID()  { return AETransactionID::Make( kAnyTransactionID ); }
+	
+	struct AESendPriority_Tag  {};
+	typedef FlagType< AESendPriority_Tag, ::AESendPriority, kAENormalPriority > AESendPriority;
+	
+	inline AESendPriority AENormalPriority()  { return AESendPriority::Make( kAENormalPriority ); }
+	inline AESendPriority AEHighPriority  ()  { return AESendPriority::Make( kAEHighPriority   ); }
+	
+	struct AESendMode_Tag  {};
+	typedef FlagType< AESendMode_Tag, ::AESendMode > AESendMode;
+	
+	inline AESendMode AENoReply              ()  { return AESendMode::Make( kAENoReply               ); }
+	inline AESendMode AEQueueReply           ()  { return AESendMode::Make( kAEQueueReply            ); }
+	inline AESendMode AEWaitReply            ()  { return AESendMode::Make( kAEWaitReply             ); }
+	inline AESendMode AEDontReconnect        ()  { return AESendMode::Make( kAEDontReconnect         ); }
+	inline AESendMode AEWantReceipt          ()  { return AESendMode::Make( kAEWantReceipt           ); }
+	inline AESendMode AENeverInteract        ()  { return AESendMode::Make( kAENeverInteract         ); }
+	inline AESendMode AECanInteract          ()  { return AESendMode::Make( kAECanInteract           ); }
+	inline AESendMode AEAlwaysInteract       ()  { return AESendMode::Make( kAEAlwaysInteract        ); }
+	inline AESendMode AECanSwitchLayer       ()  { return AESendMode::Make( kAECanSwitchLayer        ); }
+	inline AESendMode AEDontRecord           ()  { return AESendMode::Make( kAEDontRecord            ); }
+	inline AESendMode AEDontExecute          ()  { return AESendMode::Make( kAEDontExecute           ); }
+	inline AESendMode AEProcessNonReplyEvents()  { return AESendMode::Make( kAEProcessNonReplyEvents ); }
 	
 	#pragma mark -
 	#pragma mark ¥ DescType_Traits ¥
@@ -786,14 +808,12 @@ namespace Nitrogen
 	
 	struct AEDesc_Info
 	{
-		::DescType typeCode;
-		::Size dataSize;
+		DescType typeCode;
+		Size dataSize;
 		
-		AEDesc_Info() : typeCode(), dataSize() {}
-		AEDesc_Info(DescType typeCode, ::Size dataSize) : typeCode(typeCode), dataSize(dataSize)  {}
-		
-		operator ::Size() const  { return dataSize; }
+		operator Size() const  { return dataSize; }
 	};
+	
 	typedef AEDesc_Info 
 		AESizeOfNthItem_Result, 
 		AESizeOfKeyDesc_Result, 
@@ -851,9 +871,9 @@ namespace Nitrogen
 	
 	struct GetNthPtr_Result
 	{
-		::AEKeyword keyword;
-		::DescType typeCode;
-		::Size actualSize;
+		AEKeyword keyword;
+		DescType typeCode;
+		Size actualSize;
 		
 		GetNthPtr_Result() : keyword(), typeCode(), actualSize() {}
 		GetNthPtr_Result(AEKeyword keyword, DescType typeCode, ::Size actualSize) 
@@ -871,7 +891,7 @@ namespace Nitrogen
 	Owned< AEDesc > AEGetNthDesc(
 		const AEDesc& listDesc, 
 		long index, 
-		DescType desiredType = typeWildCard, 
+		DescType desiredType = TypeWildCard(), 
 		::AEKeyword* keyword = NULL
 	);
 	

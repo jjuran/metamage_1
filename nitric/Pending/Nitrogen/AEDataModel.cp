@@ -132,7 +132,7 @@ namespace Nitrogen {
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		// Necessary for OS 9; OS X does this automatically
-		if ( toType == typeWildCard )
+		if ( toType == TypeWildCard() )
 		{
 			toType = typeCode;
 		}
@@ -147,7 +147,7 @@ namespace Nitrogen {
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		// Necessary for OS 9; OS X does this automatically
-		if ( toType == typeWildCard )
+		if ( toType == TypeWildCard() )
 		{
 			toType = DescType( desc.descriptorType );
 		}
@@ -312,20 +312,30 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-		GetNthPtr_Result result;
+		::AEKeyword keyword;
+		::DescType typeCode;
+		::Size actualSize;
 		
-		ThrowOSStatus(
-			::AEGetNthPtr(
+		ThrowOSStatus
+		(
+			::AEGetNthPtr
+			(
 				&listDesc, 
 				index, 
 				desiredType, 
-				&result.keyword, 
-				&result.typeCode, 
+				&keyword, 
+				&typeCode, 
 				dataPtr, 
 				maximumSize, 
-				&result.actualSize
+				&actualSize
 			)
 		);
+		
+		GetNthPtr_Result result;
+		result.keyword    = AEKeyword( keyword );
+		result.typeCode   = DescType( typeCode );
+		result.actualSize = actualSize;
+		
 		return result;
 	}
 	
@@ -362,7 +372,7 @@ namespace Nitrogen {
 		return AEGetNthDesc(
 			listDesc, 
 			index, 
-			typeWildCard, 
+			TypeWildCard(), 
 			keywordResult
 		);
 	}
@@ -371,16 +381,24 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-		AEGetParamPtr_Result result;
+		::DescType typeCode;
+		::Size dataSize;
 		
-		ThrowOSStatus(
-			::AESizeOfNthItem(
+		ThrowOSStatus
+		(
+			::AESizeOfNthItem
+			(
 				&list, 
 				index, 
-				&result.typeCode, 
-				&result.dataSize
+				&typeCode, 
+				&dataSize
 			)
 		);
+		
+		AEGetParamPtr_Result result;
+		
+		result.typeCode = DescType( typeCode );
+		result.dataSize = dataSize;
 		
 		return result;
 	}
@@ -454,19 +472,26 @@ namespace Nitrogen {
 		
 		AERecord fixedAERecord = Fix_AERecordDescriptorType( record );
 		
-		AEGetKeyPtr_Result result;
+		::DescType typeCode;
+		::Size dataSize;
 		
 		ThrowOSStatus(
 			::AEGetKeyPtr(
 				&fixedAERecord, 
 				keyword, 
 				desiredType, 
-				&result.typeCode, 
+				&typeCode, 
 				dataPtr, 
 				maximumSize, 
-				&result.dataSize
+				&dataSize
 			)
 		);
+		
+		AEGetKeyPtr_Result result;
+		
+		result.typeCode = DescType( typeCode );
+		result.dataSize = dataSize;
+		
 		return result;
 	}
 	
@@ -499,15 +524,25 @@ namespace Nitrogen {
 		
 		AERecord fixedAERecord = Fix_AERecordDescriptorType( record );
 		
-		AESizeOfKeyDesc_Result result;
-		ThrowOSStatus(
-			::AESizeOfKeyDesc(
+		::DescType typeCode;
+		::Size dataSize;
+		
+		ThrowOSStatus
+		(
+			::AESizeOfKeyDesc
+			(
 				&fixedAERecord, 
 				keyword, 
-				&result.typeCode, 
-				&result.dataSize
+				&typeCode, 
+				&dataSize
 			)
 		);
+		
+		AESizeOfKeyDesc_Result result;
+		
+		result.typeCode = DescType( typeCode );
+		result.dataSize = dataSize;
+		
 		return result;
 	}
 	
@@ -617,19 +652,28 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-		AEGetParamPtr_Result result;
+		::DescType typeCode;
+		::Size dataSize;
 		
-		ThrowOSStatus(
-			::AEGetParamPtr(
+		ThrowOSStatus
+		(
+			::AEGetParamPtr
+			(
 				&appleEvent, 
 				keyword, 
 				desiredType, 
-				&result.typeCode, 
+				&typeCode, 
 				dataPtr, 
 				maximumSize, 
-				&result.dataSize
+				&dataSize
 			)
 		);
+		
+		AEGetParamPtr_Result result;
+		
+		result.typeCode = DescType( typeCode );
+		result.dataSize = dataSize;
+		
 		return result;
 	}
 	
@@ -658,15 +702,25 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-		AESizeOfParam_Result result;
-		ThrowOSStatus(
-			::AESizeOfParam(
+		::DescType typeCode;
+		::Size dataSize;
+		
+		ThrowOSStatus
+		(
+			::AESizeOfParam
+			(
 				&appleEvent, 
 				keyword, 
-				&result.typeCode, 
-				&result.dataSize
+				&typeCode, 
+				&dataSize
 			)
 		);
+		
+		AESizeOfParam_Result result;
+		
+		result.typeCode = DescType( typeCode );
+		result.dataSize = dataSize;
+		
 		return result;
 	}
 	
@@ -751,19 +805,28 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-		AEGetAttributePtr_Result result;
+		::DescType typeCode;
+		::Size dataSize;
 		
-		ThrowOSStatus(
-			::AEGetAttributePtr(
+		ThrowOSStatus
+		(
+			::AEGetAttributePtr
+			(
 				&appleEvent, 
 				keyword, 
 				desiredType, 
-				&result.typeCode, 
+				&typeCode, 
 				dataPtr, 
 				maximumSize, 
-				&result.dataSize
+				&dataSize
 			)
 		);
+		
+		AEGetAttributePtr_Result result;
+		
+		result.typeCode = DescType( typeCode );
+		result.dataSize = dataSize;
+		
 		return result;
 	}
 	
@@ -792,15 +855,25 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-		AESizeOfAttribute_Result result;
-		ThrowOSStatus(
-			::AESizeOfAttribute(
+		::DescType typeCode;
+		::Size dataSize;
+		
+		ThrowOSStatus
+		(
+			::AESizeOfAttribute
+			(
 				&appleEvent, 
 				keyword, 
-				&result.typeCode, 
-				&result.dataSize
+				&typeCode, 
+				&dataSize
 			)
 		);
+		
+		AESizeOfAttribute_Result result;
+		
+		result.typeCode = DescType( typeCode );
+		result.dataSize = dataSize;
+		
 		return result;
 	}
 	
