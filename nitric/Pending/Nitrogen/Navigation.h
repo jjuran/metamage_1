@@ -3,7 +3,11 @@
 #define NITROGEN_NAVIGATION_H
 
 #ifndef __NAVIGATION__
+#ifdef JOSHUA_JURAN_EXPERIMENTAL
+#include <Navigation.h>
+#else
 #include <NavigationServices/Navigation.h>
+#endif
 #endif
 
 #ifndef NITROGEN_OWNED_H
@@ -228,7 +232,7 @@ typedef UInt32 NavTranslationOptions;
 //	extern UInt32 NavLibraryVersion(void)
 	using ::NavLibraryVersion;
 
-/*	We don't provide Nitrogen versions of the depreciated functions:
+/*	We don't provide Nitrogen versions of the deprecated functions:
 		NavChooseFile
 		NavChooseFolder
 		NavChooseObject
