@@ -13,7 +13,23 @@
 
 namespace Nitrogen
 {
-
+	
+	FindSymbol_Result<> FindSymbol( CFragConnectionID id, const unsigned char* name )
+	{
+		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		
+		::Ptr symAddr;
+		::CFragSymbolClass symClass;
+		
+		ThrowOSStatus( ::FindSymbol( id, name, &symAddr, &symClass ) );
+		
+		FindSymbol_Result<> result;
+		result.symAddr  = symAddr;
+		result.symClass = symClass;
+		
+		return result;
+	}
+	
 	void RegisterCodeFragmentManagerErrors()
 	{
 		RegisterOSStatus< paramErr                >();
