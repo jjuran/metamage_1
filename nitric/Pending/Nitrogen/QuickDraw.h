@@ -23,8 +23,21 @@
 
 namespace Nitrogen
   {
-	void RegisterQuickDrawErrors ();
-
+	#pragma mark -
+	#pragma mark ¥ Types ¥
+	
+	using ::BitMap;
+	using ::BitMapPtr;
+	using ::BitMapHandle;
+	
+	using ::Cursor;
+	using ::CursPtr;
+	using ::CursHandle;
+	
+	using ::PenState;
+	
+	using ::RgnHandle;
+	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
 	using ::GrafPtr;
@@ -71,8 +84,19 @@ namespace Nitrogen
 	
 #endif
 	
+	using ::RGBColor;
+	
+	using ::PixMap;
+	using ::PixMapPtr;
+	using ::PixMapHandle;
+	
 	typedef GrafPtr CGrafPtr;
 	
+	#pragma mark -
+	#pragma mark ¥ Routines ¥
+	
+	void RegisterQuickDrawErrors ();
+
    using ::InitCursor;
 
    Point GetPortPenSize( CGrafPtr );
