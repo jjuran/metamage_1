@@ -3,8 +3,15 @@
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
 #endif
+
 #ifndef NITROGEN_ONLYONCE_H
 #include "Nitrogen/OnlyOnce.h"
+#endif
+#ifndef NITROGEN_SCOPED_H
+#include "Nitrogen/Scoped.h"
+#endif
+#ifndef NITROGEN_MACERRORS_H
+#include "Nitrogen/MacErrors.h"
 #endif
 
 namespace Nitrogen {
@@ -55,19 +62,6 @@ namespace Nitrogen {
 		RegisterOSStatus< errAEUnknownObjectType    >();
 		RegisterOSStatus< errAERecordingIsAlreadyOn >();
 	}
-	
-	class AEDescEditor
-	{
-		private:
-			Owned< AEDesc >& desc;
-			AEDesc workingCopy;
-		public:
-			AEDescEditor( Owned< AEDesc >& desc ) : desc( desc ), workingCopy( desc.Release() )  {}
-			~AEDescEditor()  { desc = Owned< AEDesc >::Seize( workingCopy ); }
-			
-			AEDesc& Get()  { return workingCopy; }
-			operator AEDesc&()  { return Get(); }
-	};
 	
 	AECoercionHandler::AECoercionHandler()
 	:
@@ -163,31 +157,59 @@ namespace Nitrogen {
 		return Owned< AEDesc >::Seize( result );
 	}
 	
-	Owned<AEDesc> AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize)
+	class AEDescEditor
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		private:
+			Owned< AEDesc >& desc;
+			AEDesc workingCopy;
+		public:
+			AEDescEditor( Owned< AEDesc >& desc ) : desc( desc ), workingCopy( desc.Release() )  {}
+			~AEDescEditor()  { desc = Owned< AEDesc >::Seize( workingCopy ); }
+			
+			AEDesc& Get()  { return workingCopy; }
+			operator AEDesc&()  { return Get(); }
+	};
+	
+	// Mac OS X allows AERecord arguments to have any descriptorType.
+	// Mac OS 9 does not, so we fake this behavior by adjusting the descriptorType
+	// prior to calling the function.
+	// We need two ways of doing this -- one for const AEDesc& and one for non-const.
+	// For const (AEGetKey{Ptr,Desc}, AESizeOfKeyDesc), we call Fix_AERecordDescriptorType
+	// to return an adjusted AERecord, a pointer to which is passed to the function.
+	// For non-const (AEPutKey{Ptr,Desc}, AEDeleteKeyDesc), we use Scoped< ::DescType& >,
+	// which adjusts the actual AEDesc argument that was passed, and afterward adjusts it back.
+	
+	static AERecord Fix_AERecordDescriptorType( AERecord record )
+	{
+		record.descriptorType = typeAERecord;
+		return record;
+	}
+	
+	Owned< AEDesc > AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize)
+	{
+		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		if ( dataPtr == NULL )
 		{
-			throw ErrorCode< OSStatus, paramErr >();
+			throw ParamErr();
 		}
 		
 		AEDesc desc;
 		ThrowOSStatus( ::AECreateDesc(typeCode, dataPtr, dataSize, &desc) );
-		return Owned<AEDesc>::Seize(desc);
+		return Owned< AEDesc >::Seize(desc);
 	}
 	
-	Owned<AEDesc> AECreateDesc(DescType typeCode, ::Handle handle)
+	Owned< AEDesc > AECreateDesc(DescType typeCode, ::Handle handle)
 	{
 		if ( handle == NULL )
 		{
-			throw ErrorCode< OSStatus, paramErr >();
+			throw ParamErr();
 		}
 		
 		// FIXME:  Replace with Scoped<> when verified as working
 		//SavedHandleState savedHandleState( handle );
 		
-		Owned<AEDesc> result;
+		Owned< AEDesc > result;
 		SInt8 state = ::HGetState( handle );
 		try
 		{
@@ -203,7 +225,7 @@ namespace Nitrogen {
 		return result;
 	}
 	
-	Owned<AEDesc> AECreateDesc(DescType typeCode, Owned< Handle > handle)
+	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< Handle > handle )
 	{
 	#if TARGET_API_MAC_CARBON
 		return AECreateDesc( typeCode, handle.Get() );
@@ -215,36 +237,39 @@ namespace Nitrogen {
 	#endif
 	}
 	
-	Owned<AEDesc> AECreateDesc(DescType typeCode, Owned< AEDesc > desc)
+	Owned< AEDesc > AECreateDesc(DescType typeCode, Owned< AEDesc > desc)
 	{
-		AEDescEditor(desc).Get().descriptorType = typeCode;
+		AEDescEditor( desc ).Get().descriptorType = typeCode;
 		return desc;
 	}
 	
-	Owned<AEDesc> AEDuplicateDesc( const AEDesc& desc )
+	Owned< AEDesc > AEDuplicateDesc( const AEDesc& desc )
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEDesc result;
-		ThrowOSStatus( ::AEDuplicateDesc(&desc, &result) );
-		return Owned<AEDesc>::Seize( result );
+		ThrowOSStatus( ::AEDuplicateDesc( &desc, &result ) );
+		return Owned< AEDesc >::Seize( result );
 	}
 	
-	Owned<AEDesc> AECreateList(bool isRecord)
+	Owned< AEDesc > AECreateList( bool isRecord )
 	{
 		return AECreateList(NULL, 0, isRecord);
 	}
 	
-	Owned<AEDesc> AECreateList(const void* factoringPtr, std::size_t factoredSize, bool isRecord)
+	Owned< AEDesc > AECreateList(const void* factoringPtr, std::size_t factoredSize, bool isRecord)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEDesc desc;
 		ThrowOSStatus( ::AECreateList(factoringPtr, factoredSize, isRecord, &desc) );
-		return Owned<AEDesc>::Seize(desc);
+		return Owned< AEDesc >::Seize(desc);
 	}
 	
 	long AECountItems(const AEDesc& desc)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		long count;
 		ThrowOSStatus( ::AECountItems(&desc, &count) );
 		return count;
@@ -285,7 +310,8 @@ namespace Nitrogen {
 		void* dataPtr, 
 		Size maximumSize) 
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		GetNthPtr_Result result;
 		
 		ThrowOSStatus(
@@ -303,14 +329,15 @@ namespace Nitrogen {
 		return result;
 	}
 	
-	Owned<AEDesc> AEGetNthDesc(
+	Owned< AEDesc > AEGetNthDesc(
 		const AEDesc& listDesc, 
 		long index, 
 		DescType desiredType, 
 		::AEKeyword* keywordResult
 	)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		::AEKeyword keyword;
 		AEDesc result;
 		
@@ -323,10 +350,10 @@ namespace Nitrogen {
 				&result
 			)
 		);
-		return Owned<AEDesc>::Seize(result);
+		return Owned< AEDesc >::Seize(result);
 	}
 	
-	Owned<AEDesc> AEGetNthDesc(
+	Owned< AEDesc > AEGetNthDesc(
 		const AEDesc& listDesc, 
 		long index, 
 		::AEKeyword* keywordResult
@@ -342,7 +369,8 @@ namespace Nitrogen {
 	
 	Size AESizeOfNthItem(const AEDescList& list, long index)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEGetParamPtr_Result result;
 		
 		ThrowOSStatus(
@@ -378,6 +406,8 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
+		Scoped< ::DescType& > scopedDescType( record.descriptorType, typeAERecord );
+		
 		ThrowOSStatus(
 			::AEPutKeyPtr( &record, keyword, typeCode, dataPtr, dataSize )
 		);
@@ -400,6 +430,8 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
+		Scoped< ::DescType& > scopedDescType( record.descriptorType, typeAERecord );
+		
 		ThrowOSStatus( ::AEPutKeyDesc( &record, keyword, &desc ) );
 	}
 	
@@ -418,12 +450,13 @@ namespace Nitrogen {
 		void* dataPtr, 
 		std::size_t maximumSize)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEGetKeyPtr_Result result;
 		
 		ThrowOSStatus(
 			::AEGetKeyPtr(
-				&record, 
+				&Fix_AERecordDescriptorType( record ), 
 				keyword, 
 				desiredType, 
 				&result.typeCode, 
@@ -435,33 +468,35 @@ namespace Nitrogen {
 		return result;
 	}
 	
-	Owned<AEDesc> AEGetKeyDesc(
+	Owned< AEDesc > AEGetKeyDesc(
 		const AERecord& record, 
 		AEKeyword keyword, 
 		DescType desiredType)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEDesc result;
 		ThrowOSStatus(
 			::AEGetKeyDesc(
-				&record, 
+				&Fix_AERecordDescriptorType( record ), 
 				keyword, 
 				desiredType, 
 				&result
 			)
 		);
-		return Owned<AEDesc>::Seize( result );
+		return Owned< AEDesc >::Seize( result );
 	}
 	
 	AESizeOfKeyDesc_Result AESizeOfKeyDesc(
 		const AERecord& record, 
 		AEKeyword keyword)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AESizeOfKeyDesc_Result result;
 		ThrowOSStatus(
 			::AESizeOfKeyDesc(
-				&record, 
+				&Fix_AERecordDescriptorType( record ), 
 				keyword, 
 				&result.typeCode, 
 				&result.dataSize
@@ -476,6 +511,8 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
+		Scoped< ::DescType& > scopedDescType( record.descriptorType, typeAERecord );
+		
 		ThrowOSStatus( ::AEDeleteKeyDesc( &record, keyword ) );
 	}
 	
@@ -486,14 +523,15 @@ namespace Nitrogen {
 		AEDeleteKeyDesc( AEDescEditor( record ), keyword );
 	}
 	
-	Owned<AppleEvent> AECreateAppleEvent(
+	Owned< AppleEvent > AECreateAppleEvent(
 		AEEventClass eventClass, 
 		AEEventID eventID, 
 		const AEAddressDesc& target, 
 		AEReturnID returnID, 
 		AETransactionID transactionID)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AppleEvent result;
 		ThrowOSStatus(
 			::AECreateAppleEvent(
@@ -505,7 +543,7 @@ namespace Nitrogen {
 				&result
 			)
 		);
-		return Owned<AppleEvent>::Seize( result );
+		return Owned< AppleEvent >::Seize( result );
 	}
 	
 	void AEPutParamPtr(
@@ -571,7 +609,8 @@ namespace Nitrogen {
 		void* dataPtr, 
 		std::size_t maximumSize)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEGetParamPtr_Result result;
 		
 		ThrowOSStatus(
@@ -588,12 +627,13 @@ namespace Nitrogen {
 		return result;
 	}
 	
-	Owned<AEDesc> AEGetParamDesc(
+	Owned< AEDesc > AEGetParamDesc(
 		const AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		DescType desiredType)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEDesc result;
 		ThrowOSStatus(
 			::AEGetParamDesc(
@@ -603,14 +643,15 @@ namespace Nitrogen {
 				&result
 			)
 		);
-		return Owned<AEDesc>::Seize( result );
+		return Owned< AEDesc >::Seize( result );
 	}
 	
 	AESizeOfParam_Result AESizeOfParam(
 		const AppleEvent& appleEvent, 
 		AEKeyword keyword)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AESizeOfParam_Result result;
 		ThrowOSStatus(
 			::AESizeOfParam(
@@ -702,7 +743,8 @@ namespace Nitrogen {
 		void* dataPtr, 
 		std::size_t maximumSize)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEGetAttributePtr_Result result;
 		
 		ThrowOSStatus(
@@ -719,12 +761,13 @@ namespace Nitrogen {
 		return result;
 	}
 	
-	Owned<AEDesc> AEGetAttributeDesc(
+	Owned< AEDesc > AEGetAttributeDesc(
 		const AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		DescType desiredType)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEDesc result;
 		ThrowOSStatus(
 			::AEGetAttributeDesc(
@@ -734,14 +777,15 @@ namespace Nitrogen {
 				&result
 			)
 		);
-		return Owned<AEDesc>::Seize( result );
+		return Owned< AEDesc >::Seize( result );
 	}
 	
 	AESizeOfAttribute_Result AESizeOfAttribute(
 		const AppleEvent& appleEvent, 
 		AEKeyword keyword)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AESizeOfAttribute_Result result;
 		ThrowOSStatus(
 			::AESizeOfAttribute(
@@ -756,7 +800,8 @@ namespace Nitrogen {
 	
 	void AEGetDescData( const AEDesc& desc, void* dataPtr, std::size_t maximumSize )
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus( ::AEGetDescData( &desc, dataPtr, maximumSize ) );
 	}
 	
