@@ -15,6 +15,20 @@
 #include "Nitrogen/PointerToFunction.h"
 #endif
 
+#ifndef AEOBJECTMODEL_ACCESSPROPERTY_H
+#include "AEObjectModel/AccessProperty.h"
+#endif
+#ifndef AEOBJECTMODEL_COMPARE_H
+#include "AEObjectModel/Compare.h"
+#endif
+#ifndef AEOBJECTMODEL_COUNT_H
+#include "AEObjectModel/Count.h"
+#endif
+#ifndef AEOBJECTMODEL_DISPOSETOKEN_H
+#include "AEObjectModel/DisposeToken.h"
+#endif
+
+
 namespace Nitrogen
 {
 	
@@ -33,205 +47,6 @@ namespace Nitrogen
 				
 			typeObjectSpecifier
 		);
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ GetObjectClass ¥
-	
-	ObjectClassGetter::ObjectClassGetter()
-	{
-		Register< typeNull >();
-	}
-	
-	AEObjectClass ObjectClassGetter::GetObjectClass( const AEToken& obj )
-	{
-		Map::const_iterator found = map.find( obj.descriptorType );
-		if ( found == map.end() )
-		{
-			//throw ErrAEEventNotHandled();
-			return obj.descriptorType;
-		}
-		
-		return found->second( obj );
-	}
-	
-	ObjectClassGetter& TheGlobalObjectClassGetter()
-	{
-		static ObjectClassGetter theGlobalObjectClassGetter;
-		return theGlobalObjectClassGetter;
-	}
-	
-	AEObjectClass GetObjectClass( const AEToken& obj )
-	{
-		return TheGlobalObjectClassGetter().GetObjectClass( obj );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ GetData ¥
-	
-	DataGetter::DataGetter()
-	{
-		Register< typeNull >();
-	}
-	
-	Owned< AEDesc > DataGetter::GetData( const AEToken& obj, DescType desiredType )
-	{
-		Map::const_iterator found = map.find( obj.descriptorType );
-		if ( found == map.end() )
-		{
-			throw ErrAEEventNotHandled();
-		}
-		
-		return found->second( obj, desiredType );
-	}
-	
-	DataGetter& TheGlobalDataGetter()
-	{
-		static DataGetter theGlobalDataGetter;
-		return theGlobalDataGetter;
-	}
-	
-	Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType )
-	{
-		return TheGlobalDataGetter().GetData( obj, desiredType );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ SetData ¥
-	
-	DataSetter::DataSetter()
-	{
-	}
-	
-	void DataSetter::SetData( const AEToken& obj, const AEDesc& data )
-	{
-		Map::const_iterator found = map.find( obj.descriptorType );
-		if ( found == map.end() )
-		{
-			throw ErrAEEventNotHandled();
-		}
-		
-		return found->second( obj, data );
-	}
-	
-	DataSetter& TheGlobalDataSetter()
-	{
-		static DataSetter theGlobalDataSetter;
-		return theGlobalDataSetter;
-	}
-	
-	void SetData( const AEToken& obj, const AEDesc& data )
-	{
-		return TheGlobalDataSetter().SetData( obj, data );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ Compare ¥
-	
-	bool Comparer::Compare( AECompOperator  op,
-	                        const AEToken&  obj1,
-	                        const AEToken&  obj2 )
-	{
-		Map::const_iterator found = map.find( obj1.descriptorType );
-		if ( found == map.end() )
-		{
-			found = map.find( obj2.descriptorType );
-			if ( found == map.end() )
-			{
-				throw ErrAEEventNotHandled();
-			}
-		}
-		
-		return found->second( op, obj1, obj2 );
-	}
-	
-	Comparer& TheGlobalComparer()
-	{
-		static Comparer theGlobalComparer;
-		return theGlobalComparer;
-	}
-	
-	bool Compare( AECompOperator  op,
-	              const AEToken&  obj1,
-	              const AEToken&  obj2 )
-	{
-		return TheGlobalComparer().Compare( op, obj1, obj2 );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ Count ¥
-	
-	std::size_t Counter::Count( AECompOperator  desiredClass,
-	                            AEObjectClass   containerClass,
-	                            const AEToken&  containerToken )
-	{
-		Map::const_iterator found = map.find( Key( desiredClass, containerToken.descriptorType ) );
-		if ( found == map.end() )
-		{
-			found = map.find( Key( typeWildCard, containerToken.descriptorType ) );
-			if ( found == map.end() )
-			{
-				found = map.find( Key( desiredClass, typeWildCard ) );
-				if ( found == map.end() )
-				{
-					found = map.find( Key( typeWildCard, typeWildCard ) );
-					if ( found == map.end() )
-					{
-						throw ErrAEEventNotHandled();
-					}
-				}
-			}
-		}
-		
-		return found->second( desiredClass, containerClass, containerToken );
-	}
-	
-	Counter& TheGlobalCounter()
-	{
-		static Counter theGlobalCounter;
-		return theGlobalCounter;
-	}
-	
-	std::size_t Count( AEObjectClass   desiredClass,
-	                   AEObjectClass   containerClass,
-	                   const AEToken&  containerToken )
-	{
-		return TheGlobalCounter().Count( desiredClass, containerClass, containerToken );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ DisposeToken ¥
-	
-	TokenDisposer::TokenDisposer()
-	{
-		Register< typeAEList >();
-	}
-	
-	void TokenDisposer::DisposeToken( Owned< AEToken > token )
-	{
-		Map::const_iterator found = map.find( token.Get().descriptorType );
-		if ( found == map.end() )
-		{
-			// If we omitted this, the descriptor would still be disposed
-			// at function exit.
-			
-			AEDisposeDesc( token );
-			
-			return;  // FIXME:  Check for typeWildCard
-		}
-		
-		return found->second( token );
-	}
-	
-	TokenDisposer& TheGlobalTokenDisposer()
-	{
-		static TokenDisposer theGlobalTokenDisposer;
-		return theGlobalTokenDisposer;
-	}
-	
-	void DisposeToken( Owned< AEToken > token )
-	{
-		return TheGlobalTokenDisposer().DisposeToken( token );
 	}
 	
 	#pragma mark -
@@ -302,6 +117,19 @@ namespace Nitrogen
 		                                ( ::OSLMarkProcPtr         )NULL,
 		                                ( ::OSLAdjustMarksProcPtr  )NULL,
 		                                ( ::OSLGetErrDescProcPtr   )NULL );
+	}
+	
+	Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   desiredClass,
+	                                                          const AEToken&  containerToken,
+	                                                          AEObjectClass   containerClass,
+	                                                          AEEnumerated    keyForm,
+	                                                          const AEDesc&   keyData,
+	                                                          RefCon )
+	{
+		
+		AEPropertyID propertyID = AEGetDescData< typeType >( keyData );
+		
+		return AccessProperty( propertyID, containerToken, containerClass );
 	}
 	
 	struct ObjectAccessContext
@@ -381,5 +209,6 @@ namespace Nitrogen
 		}
 		return result;
 	}
+	
 }
 
