@@ -27,7 +27,7 @@ namespace Nitrogen
       SInt16 label;
       ThrowOSStatus( ::GetIconRefFromFile( &theFile, &icon, &label ) );
       return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
-                                        label );
+                                        IconLabel( label ) );
      }
 
    Owned<IconRef> GetIconRef( OSType creator, OSType iconType )
@@ -76,7 +76,7 @@ namespace Nitrogen
                                                &icon,
                                                &label ) );
       return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
-                                        label );
+                                        IconLabel( label ) );
      }
 
    GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
@@ -96,7 +96,7 @@ namespace Nitrogen
                                                &icon,
                                                &label ) );
       return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
-                                        label );
+                                        IconLabel( label ) );
      }
 
    Owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile )
