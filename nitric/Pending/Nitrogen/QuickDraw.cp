@@ -260,12 +260,16 @@ namespace Nitrogen
 	#endif
 	}
 	
+#if TARGET_CPU_PPC
+	
 	Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port )
 	{
 		Owned< RgnHandle > region = NewRgn();
 		::GetPortVisibleRegion( port, region );
 		return region;
 	}
+	
+#endif
 	
 #if !OPAQUE_TOOLBOX_STRUCTS
 	
@@ -285,12 +289,16 @@ namespace Nitrogen
 		return region;
 	}
 	
+#if TARGET_CPU_PPC
+	
 	Point GetPortPenSize( CGrafPtr port )
 	{
 		Point result;
 		::GetPortPenSize( port, &result );
 		return result;
 	}
+	
+#endif
 	
 	bool IsPortColor( CGrafPtr port )
 	{

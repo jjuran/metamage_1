@@ -219,7 +219,11 @@ namespace Nitrogen
 	{
 		void operator()( CGrafPtr port ) const
 		{
+		#if ACCESSOR_CALLS_ARE_FUNCTIONS
+			
 			::DisposePort( port );
+			
+		#endif
 		}
 	};
 	
@@ -484,10 +488,22 @@ namespace Nitrogen
 	// 6438
 	using ::SetPortClipRegion;
 	
+#else
+	
+	inline SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )  { CopyRgn( clipRgn, port.clipRgn ); }
+	
 #endif
+	
+#if OPAQUE_TOOLBOX_STRUCTS
 	
 	// 6494
 	using ::SetPortPenSize;
+	
+#else
+	
+	inline SetPortPenSize( CGrafPtr port, Point penSize )  { port.pnSize = penSize; }
+	
+#endif
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
@@ -505,8 +521,12 @@ namespace Nitrogen
 	
 #endif
 	
+#if ACCESSOR_CALLS_ARE_FUNCTIONS
+	
 	// 6729
 	inline Owned< CGrafPtr > CreateNewPort()  { return Owned< CGrafPtr >::Seize( ::CreateNewPort() ); }
+	
+#endif
 	
 	// 6741
 	inline void DisposePort( Owned< CGrafPtr > )  {}
@@ -531,22 +551,22 @@ namespace Nitrogen
 	};
 	
 	typedef Pseudoreference< Port_Details > Port;
-   	
-   class PortPenSize_Details
-     {
-      private:
-         CGrafPtr port;
+	
+	class PortPenSize_Details
+	{
+		private:
+			CGrafPtr port;
       
-      public:
-         typedef Point Value;
-         typedef Value GetResult;
-         typedef Value SetParameter;
-         
-         PortPenSize_Details( CGrafPtr thePort )     : port( thePort ) {}
-         GetResult Get() const                       { return GetPortPenSize( port ); }
-         void Set( SetParameter size ) const         { SetPortPenSize( port, size ); }
-     };
-   
+		public:
+			typedef Point Value;
+			typedef Value GetResult;
+			typedef Value SetParameter;
+			
+			PortPenSize_Details( CGrafPtr thePort )     : port( thePort ) {}
+			GetResult Get() const                       { return GetPortPenSize( port ); }
+			void Set( SetParameter size ) const         { SetPortPenSize( port, size ); }
+	};
+	
   }
 
 #endif
