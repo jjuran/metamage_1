@@ -25,6 +25,9 @@
 #endif
 
 // Nitrogen
+#ifndef NITROGEN_ICONS_H
+#include "Nitrogen/Icons.h"
+#endif
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
 #endif
@@ -67,8 +70,9 @@ namespace Nitrogen
 	{
 		void operator()( CRMIconHandle deviceIcon ) const
 		{
-			Disposer< Handle >()( (*deviceIcon)->theSuite );
-			Disposer< Handle >()(   deviceIcon            );
+			IconSuiteRef iconSuite = (*deviceIcon)->theSuite;
+			Disposer< IconSuiteRef >()( iconSuite  );
+			Disposer< Handle       >()( deviceIcon );
 		}
 	};
 	
@@ -76,10 +80,11 @@ namespace Nitrogen
 	{
 		void operator()( CRMSerialPtr crmSerial ) const
 		{
-			Disposer< Handle >()( crmSerial->inputDriverName  );
-			Disposer< Handle >()( crmSerial->outputDriverName );
-			Disposer< Handle >()( crmSerial->name             );
-			Disposer< Ptr    >()( crmSerial                   );
+			Disposer< Handle        >()( crmSerial->inputDriverName  );
+			Disposer< Handle        >()( crmSerial->outputDriverName );
+			Disposer< Handle        >()( crmSerial->name             );
+			Disposer< CRMIconHandle >()( crmSerial->deviceIcon       );
+			Disposer< Ptr           >()( crmSerial                   );
 		}
 	};
 	
@@ -114,9 +119,9 @@ namespace Nitrogen
 		}
 	};
 	
-	Owned< CRMSerialPtr > New_CRMSerialRecord( Owned< StringHandle > inputDriverName,
-	                                           Owned< StringHandle > outputDriverName,
-	                                           Owned< StringHandle > portName );
+	Owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
+	                                           ConstStr255Param outputDriverName,
+	                                           ConstStr255Param portName );
 	
 	class CRMSerialDevice_Container : public CRMResource_Container
 	{

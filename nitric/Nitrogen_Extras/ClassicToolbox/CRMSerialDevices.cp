@@ -18,23 +18,28 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	Owned< CRMSerialPtr > New_CRMSerialRecord( Owned< StringHandle > inputDriverName,
-	                                           Owned< StringHandle > outputDriverName,
-	                                           Owned< StringHandle > portName )
+	static Owned< StringHandle > NewHandleSys( ConstStr255Param str )
+	{
+		std::size_t size = 1 + str[0];
+		Owned< StringHandle > block = Handle_Cast< unsigned char >( NewHandleSys( size ) );
+		::BlockMoveData( str, *block.Get(), size );
+		return block;
+	}
+	
+	Owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
+	                                           ConstStr255Param outputDriverName,
+	                                           ConstStr255Param portName )
 	{
 		Owned< CRMSerialPtr > result = Owned< CRMSerialPtr >::Seize
 		(
-			reinterpret_cast< CRMSerialPtr >
-			(
-				NewPtrSysClear( sizeof (CRMSerialRecord) ).Release().Get()
-			)
+			Ptr_Cast< CRMSerialRecord >( NewPtrSysClear( sizeof (CRMSerialRecord) ).Release() )
 		);
 		
 		CRMSerialPtr crmSerial = result;
 		
-		crmSerial->inputDriverName  = inputDriverName.Release();
-		crmSerial->outputDriverName = outputDriverName.Release();
-		crmSerial->name             = portName.Release();
+		crmSerial->inputDriverName  = NewHandleSys( inputDriverName  ).Release();
+		crmSerial->outputDriverName = NewHandleSys( outputDriverName ).Release();
+		crmSerial->name             = NewHandleSys( portName         ).Release();
 		crmSerial->deviceIcon = NULL;
 		crmSerial->ratedSpeed = 230400;
 		crmSerial->maxSpeed = 230400;
