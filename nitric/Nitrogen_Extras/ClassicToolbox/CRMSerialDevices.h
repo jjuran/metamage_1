@@ -7,14 +7,24 @@
 #define CLASSICTOOLBOX_CRMSERIALDEVICES_HH
 
 // Universal Interfaces
+#ifndef __MACH__
 #ifndef __CRMSERIALDEVICES__
 #include <CRMSerialDevices.h>
 #endif
+#endif
+
+// Standard C++
+#include <algorithm>
+#include <functional>
+
+// STL extensions
+#ifdef __MWERKS__
+#include <functional_ext>
+#else
+#include <ext/functional>
+#endif
 
 // Nitrogen
-#ifndef NITROGEN_ADVANCEUNTILFAILURECONTAINER_H
-#include "Nitrogen/AdvanceUntilFailureContainer.h"
-#endif
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
 #endif
@@ -28,8 +38,19 @@
 #endif
 
 
+enum
+{
+	typeCRMSerialPtr = 'CRMs'
+};
+
 namespace Nitrogen
 {
+	
+#ifdef __MWERKS__
+	namespace ext = std;
+#else
+	namespace ext = __gnu_cxx;
+#endif
 	
 #if CALL_NOT_IN_CARBON
 	
@@ -62,36 +83,47 @@ namespace Nitrogen
 		}
 	};
 	
+	template <> struct Converter< CRMSerialPtr, CRMRecPtr > : public std::unary_function< CRMRecPtr, CRMSerialPtr >
+	{
+		CRMSerialPtr operator()( CRMRecPtr crmRec )
+		{
+			// FIXME:  Throw if device type is wrong
+			return GetCRMAttributes< crmSerialDevice >( crmRec );
+		}
+	};
+	
+	template <> struct Converter< CRMRecPtr, CRMSerialPtr > : public std::unary_function< CRMSerialPtr, CRMRecPtr >
+	{
+		CRMRecPtr operator()( CRMSerialPtr crmSerialPtr )
+		{
+			typedef CRMResource_Container::const_iterator const_iterator;
+			
+			CRMResource_Container crmResources = CRMResources( crmSerialDevice );
+			
+			const_iterator it = std::find_if( crmResources.begin(),
+			                                  crmResources.end(),
+			                                  ext::compose1( std::bind2nd( std::equal_to< CRMSerialPtr >(),
+			                                                               crmSerialPtr ),
+			                                                 CRMAttributes_Getter< crmSerialDevice >() ) );
+			if ( it == crmResources.end() )
+			{
+				throw CRMSearch_Failed();
+			}
+			
+			return *it;
+		}
+	};
+	
 	Owned< CRMSerialPtr > New_CRMSerialRecord( Owned< StringHandle > inputDriverName,
 	                                           Owned< StringHandle > outputDriverName,
 	                                           Owned< StringHandle > portName );
 	
-	class CRMSerialDevice_ContainerSpecifics
-	{
-		public:
-			typedef CRMRecPtr value_type;
-			typedef UInt32 size_type;
-			typedef SInt32 difference_type;
-			
-			typedef CRMSearch_Failed EndOfEnumeration;
-			
-			value_type GetNextValue( const value_type& value )
-			{
-				return CRMSearch< crmSerialDevice >( CRMDeviceID( value != NULL ? value->crmDeviceID : 0 ) );
-			}
-			
-			static value_type begin_value()  { return NULL; }
-			static value_type end_value()    { return NULL; }
-	};
-	
-	class CRMSerialDevice_Container: public AdvanceUntilFailureContainer< CRMSerialDevice_ContainerSpecifics >
+	class CRMSerialDevice_Container : public CRMResource_Container
 	{
 		friend CRMSerialDevice_Container CRMSerialDevices();
 		
 		private:
-			CRMSerialDevice_Container()
-			: AdvanceUntilFailureContainer< CRMSerialDevice_ContainerSpecifics >( CRMSerialDevice_ContainerSpecifics() )
-			{}
+			CRMSerialDevice_Container() : CRMResource_Container( crmSerialDevice )  {}
 	};
 	
 	inline CRMSerialDevice_Container CRMSerialDevices()

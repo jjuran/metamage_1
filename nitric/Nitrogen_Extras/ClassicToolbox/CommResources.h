@@ -7,11 +7,16 @@
 #define CLASSICTOOLBOX_COMMRESOURCES_H
 
 // Universal Interfaces
+#ifndef __MACH__
 #ifndef __COMMRESOURCES__
 #include <CommResources.h>
 #endif
+#endif
 
 // Nitrogen
+#ifndef NITROGEN_ADVANCEUNTILFAILURECONTAINER_H
+#include "Nitrogen/AdvanceUntilFailureContainer.h"
+#endif
 #ifndef NITROGEN_IDTYPE_H
 #include "Nitrogen/IDType.h"
 #endif
@@ -29,7 +34,13 @@
 #endif
 
 
-namespace Nitrogen {
+enum
+{
+	typeCRMRecPtr = 'CRM '
+};
+
+namespace Nitrogen
+{
 	
 	void RegisterCommunicationResourceManagerErrors();
 	
@@ -52,9 +63,28 @@ namespace Nitrogen {
 	
 	
 	#pragma mark -
-	#pragma mark ¥ CRM attributes disposal ¥
+	#pragma mark ¥ CRM attributes ¥
 	
 	template < long crmDeviceType >  struct CRMAttributes_Traits;
+	
+	template < long crmDeviceType >
+	typename CRMAttributes_Traits< crmDeviceType >::Type
+	GetCRMAttributes( CRMRecPtr crmRec )
+	{
+		typedef typename CRMAttributes_Traits< crmDeviceType >::Type Type;
+		return reinterpret_cast< Type >( crmRec->crmAttributes );
+	}
+	
+	template < long crmDeviceType >
+	struct CRMAttributes_Getter : public std::unary_function< CRMRecPtr, typename CRMAttributes_Traits< crmDeviceType >::Type >
+	{
+		typedef typename CRMAttributes_Traits< crmDeviceType >::Type Type;
+		
+		Type operator()( CRMRecPtr crmRec ) const
+		{
+			return GetCRMAttributes< crmDeviceType >( crmRec );
+		}
+	};
 	
 	class CRMAttributesDisposer
 	{
@@ -182,6 +212,55 @@ namespace Nitrogen {
 		crmRec->crmAttributes = reinterpret_cast< long >( crmAttributes.Release() );
 		
 		return result;
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ Paraphernalia ¥
+	
+	class CRMResource_Container_Specifics
+	{
+		private:
+			CRMDeviceType crmDeviceType;
+		
+		public:
+			typedef CRMRecPtr value_type;
+			typedef UInt32 size_type;
+			typedef SInt32 difference_type;
+			
+			typedef CRMSearch_Failed EndOfEnumeration;
+			
+			CRMResource_Container_Specifics( CRMDeviceType crmDeviceType )
+			:
+				crmDeviceType( crmDeviceType )
+			{}
+			
+			value_type GetNextValue( const value_type& value )
+			{
+				return CRMSearch( crmDeviceType,
+				                  value != NULL ? value->crmDeviceID : 0 );
+			}
+			
+			static value_type begin_value()  { return NULL; }
+			static value_type end_value()    { return NULL; }
+	};
+	
+	class CRMResource_Container: public AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
+	{
+		friend CRMResource_Container CRMResources( CRMDeviceType crmDeviceType );
+		
+		private:
+			CRMResource_Container( CRMDeviceType crmDeviceType )
+			:
+				AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
+				(
+					CRMResource_Container_Specifics( crmDeviceType )
+				)
+			{}
+	};
+	
+	inline CRMResource_Container CRMResources( CRMDeviceType crmDeviceType )
+	{
+		return CRMResource_Container( crmDeviceType );
 	}
 	
 
