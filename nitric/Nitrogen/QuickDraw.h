@@ -3,8 +3,11 @@
 #ifndef NITROGEN_QUICKDRAW_H
 #define NITROGEN_QUICKDRAW_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
 #ifndef __QUICKDRAW__
-#include <QuickDraw.h>
+#include FRAMEWORK_HEADER(QD,QuickDraw.h)
 #endif
 #ifndef NITROGEN_PSEUDOREFERENCE_H
 #include "Nitrogen/Pseudoreference.h"
@@ -15,13 +18,24 @@ namespace Nitrogen
    using ::InitCursor;
 
    Point GetPortPenSize( CGrafPtr );
-   inline void SetPortPenSize( CGrafPtr port, Point penSize )     { ::SetPortPenSize( port, penSize ); }
-      // Just a pass-through, but making sure it's not a pascal function, for Pseudoreference.
+   using ::SetPortPenSize;
    
-   typedef Pseudoreference< CGrafPtr,
-                            Point,
-                            Point (*)( CGrafPtr ),        GetPortPenSize,
-                            void  (*)( CGrafPtr, Point ), SetPortPenSize > PortPenSize;
+   class PortPenSize_Details
+     {
+      private:
+         CGrafPtr port;
+      
+      public:
+         typedef Point Value;
+         typedef Value GetResult;
+         typedef Value SetParameter;
+         
+         PortPenSize_Details( CGrafPtr thePort )     : port( thePort ) {}
+         GetResult Get() const                       { return GetPortPenSize( port ); }
+         void Set( SetParameter size ) const         { SetPortPenSize( port, size ); }
+     };
+   
+   typedef Pseudoreference< PortPenSize_Details > PortPenSize;
   }
 
 #endif
