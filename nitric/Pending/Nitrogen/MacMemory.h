@@ -18,8 +18,25 @@
 #ifndef NITROGEN_ONLYONCE_H
 #include "Nitrogen/OnlyOnce.h"
 #endif
+#ifndef NITROGEN_FLAGTYPE_H
+#include "Nitrogen/FlagType.h"
+#endif
+#ifndef NITROGEN_PSEUDOREFERENCE_H
+#include "Nitrogen/Pseudoreference.h"
+#endif
 
 #include <cstddef>
+
+
+#if !CALL_NOT_IN_CARBON
+
+inline Handle NewHandleSys     ( long bytes )  { return NewHandle     ( bytes ); }
+inline Handle NewHandleSysClear( long bytes )  { return NewHandleClear( bytes ); }
+
+inline Ptr    NewPtrSys        ( long bytes )  { return NewPtr        ( bytes ); }
+inline Ptr    NewPtrSysClear   ( long bytes )  { return NewPtrClear   ( bytes ); }
+
+#endif
 
 namespace Nitrogen
   {
@@ -94,6 +111,12 @@ namespace Nitrogen
         }
      };
    
+	template < class T >
+	T* Ptr_Cast( Ptr p )
+	{
+		return reinterpret_cast< T* >( p.Get() );
+	}
+	
    template < class T >
    T** Handle_Cast( Handle h )
      {
@@ -111,16 +134,157 @@ namespace Nitrogen
       return Owned< T**, Disposer<Handle> >::Seize( reinterpret_cast< T** >( h.Release().Get() ) );
      }
    
+   // 394
    void MemError();
    
-   Owned<Handle> NewHandle( std::size_t size );
-   
-   template < class T >
-   Owned< T**, Disposer<Handle> > NewHandle( std::size_t elementCount = 1 )
-     {
-      return Handle_Cast<T>( Nitrogen::NewHandle( elementCount * sizeof(T) ) );
-     }
-   
+	template < class Type >
+	Type* CheckMemory( Type* ptr )
+	{
+		if ( static_cast< const void* >( ptr ) == NULL )
+		{
+			MemError();
+			//throw ParamErr();
+		}
+		return ptr;
+	}
+	
+	// 425, 441, 458, 474
+	Owned< Handle > NewHandle        ( std::size_t size );
+	Owned< Handle > NewHandleSys     ( std::size_t size );
+	Owned< Handle > NewHandleClear   ( std::size_t size );
+	Owned< Handle > NewHandleSysClear( std::size_t size );
+	
+	template < class T >
+	Owned< T**, Disposer< Handle > > NewHandle( std::size_t elementCount = 1 )
+	{
+		return Handle_Cast< T >( Nitrogen::NewHandle( elementCount * sizeof (T) ) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Handle > > NewHandleSys( std::size_t elementCount = 1 )
+	{
+		return Handle_Cast< T >( Nitrogen::NewHandleSys( elementCount * sizeof (T) ) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Handle > > NewHandleClear( std::size_t elementCount = 1 )
+	{
+		return Handle_Cast< T >( Nitrogen::NewHandleClear( elementCount * sizeof (T) ) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Handle > > NewHandleSysClear( std::size_t elementCount = 1 )
+	{
+		return Handle_Cast< T >( Nitrogen::NewHandleSysClear( elementCount * sizeof (T) ) );
+	}
+	
+	// 539, 555, 572, 588
+	Owned< Ptr > NewPtr        ( std::size_t size );
+	Owned< Ptr > NewPtrClear   ( std::size_t size );
+	Owned< Ptr > NewPtrSys     ( std::size_t size );
+	Owned< Ptr > NewPtrSysClear( std::size_t size );
+	
+	template < class T >
+	Owned< T**, Disposer< Ptr > > NewPtr( std::size_t elementCount = 1 )
+	{
+		return Ptr_Cast< T >( Nitrogen::NewPtr( elementCount * sizeof (T) ) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Ptr > > NewPtrSys( std::size_t elementCount = 1 )
+	{
+		return Ptr_Cast< T >( Nitrogen::NewPtrSys( elementCount * sizeof (T) ) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Ptr > > NewPtrClear( std::size_t elementCount = 1 )
+	{
+		return Ptr_Cast< T >( Nitrogen::NewPtrClear( elementCount * sizeof (T) ) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Ptr > > NewPtrSysClear( std::size_t elementCount = 1 )
+	{
+		return Ptr_Cast< T >( Nitrogen::NewPtrSysClear( elementCount * sizeof (T) ) );
+	}
+	
+	
+	// 701
+	inline void HLock( Handle h )
+	{
+		::HLock( h );
+		MemError();
+	}
+	
+	// 1058
+	inline void DisposePtr( Owned< Ptr > )  {}
+	
+	// 1102
+	inline void DisposeHandle( Owned< Handle > )  {}
+	
+	// 1117
+	inline void SetHandleSize( Handle h, std::size_t size )
+	{
+		::SetHandleSize( h, size );
+		MemError();
+	}
+	
+	template < class T >
+	inline void SetHandleSize( T** h, std::size_t elementCount )
+	{
+		Nitrogen::SetHandleSize( Handle( h ), elementCount * sizeof (T) );
+	}
+	
+	// 1141
+	inline std::size_t GetHandleSize( Handle h )
+	{
+		std::size_t size = ::GetHandleSize( h );
+		MemError();
+		return size;
+	}
+	
+	template < class T >
+	inline std::size_t GetHandleSize( T** h )
+	{
+		return Nitrogen::GetHandleSize( Handle( h ) ) / sizeof (T);
+	}
+	
+	class HandleFlags_Tag {};
+	typedef FlagType< HandleFlags_Tag, SInt8 > Handle_Flags;
+	
+	// 1253
+	inline Handle_Flags HGetState( Handle h )
+	{
+		Handle_Flags flags( ::HGetState( h ) );
+		MemError();
+		return flags;
+	}
+	
+	// 1268
+	inline void HSetState( Handle h, Handle_Flags state )
+	{
+		::HSetState( h, state );
+		MemError();
+	}
+	
+	
+	class HandleState_Details
+	{
+		private:
+			Handle h;
+			
+		public:
+			typedef Handle_Flags Value;
+			typedef Value GetResult;
+			typedef Value SetParameter;
+			
+			HandleState_Details( Handle h )     : h( h ) {}
+			GetResult Get() const                          { return HGetState( h ); }
+			void Set( SetParameter state ) const          { HSetState( h, state ); }
+	};
+	
+	typedef Pseudoreference< HandleState_Details > HandleState;
+   	
   }
 
 #endif
