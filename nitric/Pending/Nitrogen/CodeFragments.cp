@@ -48,6 +48,31 @@ namespace Nitrogen
 		}
 	}
 	
+	void GetSharedLibrary( ConstStr63Param     libName,
+	                       CFragArchitecture   archType,
+	                       CFragLoadOptions    options,
+	                       CFragConnectionID*  connID,
+	                       SymbolAddressPtr*   mainAddr )
+	{
+		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		
+		::Ptr tempMainAddr;
+		Str255 errMessage;
+		
+		ThrowOSStatusErrName( ::GetSharedLibrary( libName,
+		                                          archType,
+		                                          options,
+		                                          connID,
+		                                          &tempMainAddr,
+		                                          errMessage ),
+		                       errMessage );
+		
+		if ( mainAddr != NULL )
+		{
+			*mainAddr = reinterpret_cast< SymbolAddressPtr >( tempMainAddr );
+		}
+	}
+	
 	void GetDiskFragment( const FSSpec&       file,
 	                      std::size_t         offset,
 	                      std::size_t         length,
@@ -81,6 +106,42 @@ namespace Nitrogen
 		}
 	}
 	
+	void GetMemFragment( const void*         memAddr,
+	                     std::size_t         length,
+	                     ConstStr63Param     fragName,
+	                     CFragLoadOptions    options,
+	                     CFragConnectionID*  connID,
+	                     SymbolAddressPtr*   mainAddr )
+	{
+		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		
+		::Ptr tempMainAddr;
+		Str255 errMessage;
+		
+		ThrowOSStatusErrName( ::GetMemFragment( const_cast< void* >( memAddr ),
+		                                        length,
+		                                        fragName,
+		                                        options,
+		                                        connID,
+		                                        &tempMainAddr,
+		                                        errMessage ),
+		                       errMessage );
+		
+		if ( mainAddr != NULL )
+		{
+			*mainAddr = reinterpret_cast< SymbolAddressPtr >( tempMainAddr );
+		}
+	}
+	
+	void CloseConnection( Owned< CFragConnectionID > connID )
+	{
+		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		
+		CFragConnectionID connIDcopy = connID.Release();
+		
+		ThrowOSStatus( ::CloseConnection( &connIDcopy ) );
+	}
+	
 	void FindSymbol( CFragConnectionID  connID, 
 	                 ConstStr255Param   symName, 
 	                 SymbolAddressPtr*  symAddr, 
@@ -92,6 +153,45 @@ namespace Nitrogen
 		::CFragSymbolClass tempSymClass;
 		
 		ThrowOSStatus( ::FindSymbol( connID, symName, &tempSymAddr, &tempSymClass ) );
+		
+		if ( symAddr != NULL )
+		{
+			*symAddr = reinterpret_cast< SymbolAddressPtr >( tempSymAddr );
+		}
+		
+		if ( symClass != NULL )
+		{
+			*symClass = CFragSymbolClass( tempSymClass );
+		}
+	}
+	
+	std::size_t CountSymbols( CFragConnectionID connID )
+	{
+		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		
+		long result;
+		
+		ThrowOSStatus( ::CountSymbols( connID, &result ) );
+		
+		return result;
+	}
+	
+	void GetIndSymbol( CFragConnectionID  connID,
+	                   std::size_t        symIndex,
+	                   Str255             symName,
+	                   SymbolAddressPtr*  symAddr,
+	                   CFragSymbolClass*  symClass )
+	{
+		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		
+		::Ptr tempSymAddr;
+		::CFragSymbolClass tempSymClass;
+		
+		ThrowOSStatus( ::GetIndSymbol( connID,
+		                               symIndex,
+		                               symName,
+		                               &tempSymAddr,
+		                               &tempSymClass ) );
 		
 		if ( symAddr != NULL )
 		{
