@@ -22,6 +22,12 @@
 #include "Nitrogen/TheExceptionBeingHandled.h"
 #endif
 
+#ifdef NITROGEN_DEBUG
+#define	ThrowOSStatus(err)	ThrowOSStatusInternal(err, __FILE__, __LINE__)
+#else
+#define	ThrowOSStatus(err)	ThrowOSStatusInternal(err)
+#endif
+
 namespace Nitrogen
   {
    class OSStatus
@@ -148,7 +154,16 @@ namespace Nitrogen
       RegisterErrorCode<OSStatus, error>();
      }
    
-   void ThrowOSStatus( OSStatus );
+#ifdef NITROGEN_DEBUG
+// Log non-noErr calls to OSStatus
+// SetOSStatusLoggingProc returns the old proc to you.
+   typedef void (*OSStatusLoggingProc) ( OSStatus, const char *, int );
+   OSStatusLoggingProc SetOSStatusLoggingProc ( OSStatusLoggingProc newProc );
+   
+   void ThrowOSStatusInternal( OSStatus, const char *, int );
+#else
+   void ThrowOSStatusInternal( OSStatus );
+#endif
    
    template < class DestructionExceptionPolicy >
    struct DestructionOSStatusPolicy: public DestructionExceptionPolicy
