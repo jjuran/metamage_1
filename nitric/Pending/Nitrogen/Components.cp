@@ -19,6 +19,8 @@ namespace Nitrogen {
 	Owned< ComponentInstance >
 	OpenDefaultComponent( ComponentType componentType, ComponentSubType componentSubType )
 	{
+		OnlyOnce< RegisterComponentManagerErrors >();
+		
 		ComponentInstance component = ::OpenDefaultComponent( componentType, componentSubType );
 		if ( component == NULL )
 		{
