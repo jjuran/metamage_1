@@ -7,15 +7,15 @@
 #include "AEObjectModel/AEObjectModel.h"
 #endif
 
-// Mac OS
-#ifndef __ASREGISTRY__
-#include <ASRegistry.h>
+// Nitrogen
+#ifndef NITROGEN_ASREGISTRY_H
+#include "Nitrogen/ASRegistry.h"
+#endif
+#ifndef NITROGEN_TRAPPEDFUNCTION_H
+#include "Nitrogen/TrappedFunction.h"
 #endif
 
-#ifndef NITROGEN_POINTERTOFUNCTION_H
-#include "Nitrogen/PointerToFunction.h"
-#endif
-
+// Nitrogen Extras / AEObjectModel
 #ifndef AEOBJECTMODEL_ACCESSPROPERTY_H
 #include "AEObjectModel/AccessProperty.h"
 #endif
@@ -238,60 +238,6 @@ namespace Nitrogen
 		                           context );
 	}
 	
-	template < class F, class Trap >
-	class TrappedUnaryFunction : public std::unary_function< typename F::argument_type, typename F::result_type >
-	{
-		private:
-			F f;
-			Trap trap;
-		
-		public:
-			TrappedUnaryFunction( F f, Trap trap ) : f( f ), trap( trap )  {}
-			
-			typename F::result_type operator()( const typename F::argument_type& arg ) const
-			{
-				try
-				{
-					return f( arg );
-				}
-				catch ( ... )
-				{
-					return trap();
-				}
-			}
-	};
-	
-	template < class F, class Trap >
-	TrappedUnaryFunction< F, Trap > Trap1( const F& f, const Trap& trap )
-	{
-		return TrappedUnaryFunction< F, Trap >( f, trap );
-	}
-	
-	static Owned< AEDescList, AETokenDisposer > TrapMissingValue()
-	{
-		try
-		{
-			throw;
-		}
-		catch ( ErrAENoSuchObject )  {}
-		
-		return AECreateToken< typeType >( cMissingValue );
-	}
-	
-	struct MissingValueTrap
-	{
-		Owned< AEDescList, AETokenDisposer > operator()() const
-		{
-			try
-			{
-				throw;
-			}
-			catch ( ErrAENoSuchObject )  {}
-			
-			return AECreateToken< typeType >( cMissingValue );
-		}
-	};
-	
 	Owned< AEToken, AETokenDisposer > DispatchAccessToList( AEObjectClass   desiredClass,
 	                                                        const AEToken&  containerToken,
 	                                                        AEObjectClass   containerClass,
@@ -311,7 +257,8 @@ namespace Nitrogen
 		                                                          containerClass,
 		                                                          keyForm,
 		                                                          keyData ) ),
-		                       MissingValueTrap() ) );
+		                       TrapException( ErrAENoSuchObject(),
+		                                      PtrFun( MissingValue ) ) ) );
 		
 		return result;
 	}
