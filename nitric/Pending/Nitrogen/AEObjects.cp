@@ -1,6 +1,6 @@
 // AEObjects.cp
 
-#ifndef NITROGEN_OBJECTS_H
+#ifndef NITROGEN_AEOBJECTS_H
 #include "Nitrogen/AEObjects.h"
 #endif
 

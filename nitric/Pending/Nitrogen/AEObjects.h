@@ -1,7 +1,7 @@
 // AEObjects.h
 
-#ifndef NITROGEN_AEINTERACTION_H
-#define NITROGEN_AEINTERACTION_H
+#ifndef NITROGEN_AEOBJECTS_H
+#define NITROGEN_AEOBJECTS_H
 
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
