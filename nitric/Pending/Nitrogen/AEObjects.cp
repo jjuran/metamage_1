@@ -50,7 +50,7 @@ namespace Nitrogen {
 		                                       myGetErrDescProcPtr ) );
 	}
 	
-#ifndef __APPLE_CC__
+#if TARGET_RT_MAC_CFM
 	
 	void AESetObjectCallbacks( ::OSLCompareProcPtr       compareProc,
 	                           ::OSLCountProcPtr         countProc,
