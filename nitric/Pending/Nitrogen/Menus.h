@@ -217,7 +217,7 @@ namespace Nitrogen
    inline MenuRef GetMenuRef   ( MenuID menuID )  { return ::GetMenuRef   ( menuID ); }
    
    Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID = MenuID() );
-   inline void MacDeleteMenu( Owned< MenuID > menuID )  {}
+   inline void MacDeleteMenu( Owned< MenuID > /* menuID */ )  {}
    
    /* ... */
 
