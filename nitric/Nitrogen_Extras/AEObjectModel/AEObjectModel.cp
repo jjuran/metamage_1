@@ -18,6 +18,23 @@
 namespace Nitrogen
 {
 	
+	Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
+	                                                    const AEObjectSpecifier&  container,
+	                                                    AEEnumeration             keyForm,
+	                                                    const AEDesc&             keyData )
+	{
+		return AECoerceDesc
+		(
+			AECreateList< true >()
+				<< keyAEDesiredClass + AECreateDesc< typeType       >( DescType( objectClass ) )
+				<< keyAEKeyForm      + AECreateDesc< typeEnumerated >(              keyForm    )
+				<< keyAEKeyData      + keyData
+				<< keyAEContainer    + container,
+				
+			typeObjectSpecifier
+		);
+	}
+	
 	#pragma mark -
 	#pragma mark ¥ GetObjectClass ¥
 	
@@ -26,12 +43,13 @@ namespace Nitrogen
 		Register< typeNull >();
 	}
 	
-	AEObjectClass ObjectClassGetter::GetObjectClass( const AEToken&  obj )
+	AEObjectClass ObjectClassGetter::GetObjectClass( const AEToken& obj )
 	{
 		Map::const_iterator found = map.find( obj.descriptorType );
 		if ( found == map.end() )
 		{
-			throw ErrAEEventNotHandled();
+			//throw ErrAEEventNotHandled();
+			return obj.descriptorType;
 		}
 		
 		return found->second( obj );
@@ -43,20 +61,20 @@ namespace Nitrogen
 		return theGlobalObjectClassGetter;
 	}
 	
-	AEObjectClass GetObjectClass( const AEToken&  obj )
+	AEObjectClass GetObjectClass( const AEToken& obj )
 	{
 		return TheGlobalObjectClassGetter().GetObjectClass( obj );
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ MakeDataDescriptor ¥
+	#pragma mark ¥ GetData ¥
 	
-	DataDescriptorMaker::DataDescriptorMaker()
+	DataGetter::DataGetter()
 	{
 		Register< typeNull >();
 	}
 	
-	Owned< AEDesc > DataDescriptorMaker::MakeDataDescriptor( const AEToken& obj )
+	Owned< AEDesc > DataGetter::GetData( const AEToken& obj, DescType desiredType )
 	{
 		Map::const_iterator found = map.find( obj.descriptorType );
 		if ( found == map.end() )
@@ -64,18 +82,47 @@ namespace Nitrogen
 			throw ErrAEEventNotHandled();
 		}
 		
-		return found->second( obj );
+		return found->second( obj, desiredType );
 	}
 	
-	DataDescriptorMaker& TheGlobalDataDescriptorMaker()
+	DataGetter& TheGlobalDataGetter()
 	{
-		static DataDescriptorMaker theGlobalDataDescriptorMaker;
-		return theGlobalDataDescriptorMaker;
+		static DataGetter theGlobalDataGetter;
+		return theGlobalDataGetter;
 	}
 	
-	Owned< AEDesc > MakeDataDescriptor( const AEToken& obj )
+	Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType )
 	{
-		return TheGlobalDataDescriptorMaker().MakeDataDescriptor( obj );
+		return TheGlobalDataGetter().GetData( obj, desiredType );
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ SetData ¥
+	
+	DataSetter::DataSetter()
+	{
+	}
+	
+	void DataSetter::SetData( const AEToken& obj, const AEDesc& data )
+	{
+		Map::const_iterator found = map.find( obj.descriptorType );
+		if ( found == map.end() )
+		{
+			throw ErrAEEventNotHandled();
+		}
+		
+		return found->second( obj, data );
+	}
+	
+	DataSetter& TheGlobalDataSetter()
+	{
+		static DataSetter theGlobalDataSetter;
+		return theGlobalDataSetter;
+	}
+	
+	void SetData( const AEToken& obj, const AEDesc& data )
+	{
+		return TheGlobalDataSetter().SetData( obj, data );
 	}
 	
 	#pragma mark -

@@ -36,8 +36,15 @@ namespace Nitrogen
 		return AEInitializeDesc();
 	}
 	
+	Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
+	                                                    const AEObjectSpecifier&  container,
+	                                                    AEEnumeration             keyForm,
+	                                                    const AEDesc&             keyData );
+	
 	#pragma mark -
 	#pragma mark ¥ GetObjectClass ¥
+	
+	AEObjectClass GetObjectClass( const AEToken&  obj );
 	
 	template < ::DescType tokenType > struct GetObjectClass_Traits;
 	
@@ -54,10 +61,10 @@ namespace Nitrogen
 	class ObjectClassGetter
 	{
 		public:
-			typedef AEObjectClass (*ObjectClassGetterType)( const AEToken& );
+			typedef AEObjectClass (*Callback)( const AEToken& );
 		
 		private:
-			typedef std::map< DescType, ObjectClassGetterType >  Map;
+			typedef std::map< DescType, Callback >  Map;
 			
 			Map map;
 			
@@ -68,10 +75,15 @@ namespace Nitrogen
 		public:
 			ObjectClassGetter();
 			
+			void Register( DescType tokenType, ObjectClassGetter::Callback callback )
+			{
+				map[ tokenType ] = callback;
+			}
+			
 			template < ::DescType tokenType >
 			void Register()
 			{
-				map[ tokenType ] = GetObjectClass_Traits< tokenType >::GetObjectClass;
+				Register( tokenType, GetObjectClass_Traits< tokenType >::GetObjectClass );
 			}
 			
 			AEObjectClass GetObjectClass( const AEToken&  obj );
@@ -79,72 +91,140 @@ namespace Nitrogen
 	
 	ObjectClassGetter& TheGlobalObjectClassGetter();
 	
+	inline void RegisterObjectClassGetter( DescType tokenType, ObjectClassGetter::Callback callback )
+	{
+		TheGlobalObjectClassGetter().Register( tokenType, callback );
+	}
+	
 	template < ::DescType tokenType >
 	void RegisterObjectClassGetter()
 	{
 		TheGlobalObjectClassGetter().template Register< tokenType >();
 	}
 	
-	AEObjectClass GetObjectClass( const AEToken&  obj );
-	
 	#pragma mark -
-	#pragma mark ¥ MakeDataDescriptor ¥
+	#pragma mark ¥ GetData ¥
 	
-	template < ::DescType tokenType > struct MakeDataDescriptor_Traits;
+	Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType = typeWildCard );
 	
-	template <> struct MakeDataDescriptor_Traits< typeNull >
+	template < ::DescType tokenType > struct GetData_Traits;
+	
+	template <> struct GetData_Traits< typeNull >
 	{
-		static Owned< AEDesc > MakeDataDescriptor( const AEToken& )  { return GetRootObjectSpecifier(); }
+		static Owned< AEDesc > GetData( const AEToken&, DescType )  { return GetRootObjectSpecifier(); }
 	};
 	
-	class DataDescriptorMaker
+	class DataGetter
 	{
 		public:
-			typedef Owned< AEDesc > (*DataDescriptorMakerType)( const AEToken& );
+			typedef Owned< AEDesc > (*Callback)( const AEToken&, DescType );
 		
 		private:
-			typedef std::map< DescType, DataDescriptorMakerType >  Map;
+			typedef std::map< DescType, Callback >  Map;
 			
 			Map map;
 			
 			// not implemented:
-			DataDescriptorMaker( const DataDescriptorMaker& );
-			DataDescriptorMaker& operator=( const DataDescriptorMaker& );
+			DataGetter( const DataGetter& );
+			DataGetter& operator=( const DataGetter& );
 		
 		public:
-			DataDescriptorMaker();
+			DataGetter();
+			
+			void Register( DescType tokenType, DataGetter::Callback callback )
+			{
+				map[ tokenType ] = callback;
+			}
 			
 			template < ::DescType tokenType >
 			void Register()
 			{
-				map[ tokenType ] = MakeDataDescriptor_Traits< tokenType >::MakeDataDescriptor;
+				Register( tokenType, GetData_Traits< tokenType >::GetData );
 			}
 			
-			Owned< AEDesc > MakeDataDescriptor( const AEToken& obj );
+			Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType );
 	};
 	
-	DataDescriptorMaker& TheGlobalDataDescriptorMaker();
+	DataGetter& TheGlobalDataGetter();
 	
-	template < ::DescType tokenType >
-	void RegisterDataDescriptorMaker()
+	inline void RegisterDataGetter( DescType tokenType, DataGetter::Callback callback )
 	{
-		TheGlobalDataDescriptorMaker().template Register< tokenType >();
+		TheGlobalDataGetter().Register( tokenType, callback );
 	}
 	
-	Owned< AEDesc > MakeDataDescriptor( const AEToken& obj );
+	template < ::DescType tokenType >
+	void RegisterDataGetter()
+	{
+		TheGlobalDataGetter().template Register< tokenType >();
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ SetData ¥
+	
+	void SetData( const AEToken& obj, const AEDesc& data );
+	
+	template < ::DescType tokenType > struct SetData_Traits;
+	
+	class DataSetter
+	{
+		public:
+			typedef void (*Callback)( const AEToken&, const AEDesc& );
+		
+		private:
+			typedef std::map< DescType, Callback >  Map;
+			
+			Map map;
+			
+			// not implemented:
+			DataSetter( const DataSetter& );
+			DataSetter& operator=( const DataSetter& );
+		
+		public:
+			DataSetter();
+			
+			void Register( DescType tokenType, DataSetter::Callback callback )
+			{
+				map[ tokenType ] = callback;
+			}
+			
+			template < ::DescType tokenType >
+			void Register()
+			{
+				Register( tokenType, SetData_Traits< tokenType >::SetData );
+			}
+			
+			void SetData( const AEToken& obj, const AEDesc& data );
+	};
+	
+	DataSetter& TheGlobalDataSetter();
+	
+	inline void RegisterDataSetter( DescType tokenType, DataSetter::Callback callback )
+	{
+		TheGlobalDataSetter().Register( tokenType, callback );
+	}
+	
+	template < ::DescType tokenType >
+	void RegisterDataSetter()
+	{
+		TheGlobalDataSetter().template Register< tokenType >();
+	}
 	
 	#pragma mark -
 	#pragma mark ¥ Compare ¥
+	
+	bool Compare( AECompOperator  op,
+			      const AEToken&  obj1,
+			      const AEToken&  obj2 );
 	
 	template < ::DescType tokenType > struct Compare_Traits;
 	
 	class Comparer
 	{
 		public:
-			typedef bool (*ComparerType)( AECompOperator, const AEToken&, const AEToken& );
+			typedef bool (*Callback)( AECompOperator, const AEToken&, const AEToken& );
 		
 		private:
-			typedef std::map< DescType, ComparerType >  Map;
+			typedef std::map< DescType, Callback >  Map;
 			
 			Map map;
 			
@@ -155,10 +235,15 @@ namespace Nitrogen
 		public:
 			Comparer()  {}
 			
+			void Register( DescType tokenType, Comparer::Callback callback )
+			{
+				map[ tokenType ] = callback;
+			}
+			
 			template < ::DescType tokenType >
 			void Register()
 			{
-				map[ tokenType ] = Compare_Traits< tokenType >::Compare;
+				Register( tokenType, Compare_Traits< tokenType >::Compare );
 			}
 			
 			bool Compare( AECompOperator  op,
@@ -168,25 +253,30 @@ namespace Nitrogen
 	
 	Comparer& TheGlobalComparer();
 	
+	inline void RegisterComparer( DescType tokenType, Comparer::Callback callback )
+	{
+		TheGlobalComparer().Register( tokenType, callback );
+	}
+	
 	template < ::DescType tokenType >
 	void RegisterComparer()
 	{
 		TheGlobalComparer().template Register< tokenType >();
 	}
 	
-	bool Compare( AECompOperator  op,
-			      const AEToken&  obj1,
-			      const AEToken&  obj2 );
-	
 	#pragma mark -
 	#pragma mark ¥ Count ¥
+	
+	std::size_t Count( AEObjectClass   desiredClass,
+			           AEObjectClass   containerClass,
+			           const AEToken&  containerToken );
 	
 	template < ::DescType desiredClass, ::DescType containerType > struct Count_Traits;
 	
 	class Counter
 	{
 		public:
-			typedef std::size_t (*CounterType)( AEObjectClass, AEObjectClass, const AEToken& );
+			typedef std::size_t (*Callback)( AEObjectClass, AEObjectClass, const AEToken& );
 		
 		private:
 			class Key
@@ -210,7 +300,7 @@ namespace Nitrogen
 					}
 			};
 			
-			typedef std::map< Key, CounterType >  Map;
+			typedef std::map< Key, Callback >  Map;
 			
 			Map map;
 			
@@ -221,10 +311,15 @@ namespace Nitrogen
 		public:
 			Counter()  {}
 			
+			void Register( AEObjectClass desiredClass, DescType containerType, Counter::Callback callback )
+			{
+				map[ Key( desiredClass, containerType ) ] = callback;
+			}
+			
 			template < ::DescType desiredClass, ::DescType containerType >
 			void Register()
 			{
-				map[ Key( desiredClass, containerType ) ] = Count_Traits< desiredClass, containerType >::Count;
+				Register( desiredClass, containerType, Count_Traits< desiredClass, containerType >::Count );
 			}
 			
 			std::size_t Count( AEObjectClass   desiredClass,
@@ -234,18 +329,21 @@ namespace Nitrogen
 	
 	Counter& TheGlobalCounter();
 	
+	inline void RegisterCounter( AEObjectClass desiredClass, DescType containerType, Counter::Callback callback )
+	{
+		TheGlobalCounter().Register( desiredClass, containerType, callback );
+	}
+	
 	template < ::DescType desiredClass, ::DescType containerType >
 	void RegisterCounter()
 	{
 		TheGlobalCounter().template Register< desiredClass, containerType >();
 	}
 	
-	std::size_t Count( AEObjectClass   desiredClass,
-			           AEObjectClass   containerClass,
-			           const AEToken&  containerToken );
-	
 	#pragma mark -
 	#pragma mark ¥ DisposeToken ¥
+	
+	void DisposeToken( Owned< AEToken > token );
 	
 	template < ::DescType tokenType > struct DisposeToken_Traits;
 	
@@ -275,10 +373,10 @@ namespace Nitrogen
 	class TokenDisposer
 	{
 		public:
-			typedef void (*TokenDisposerType)( Owned< AEToken > );
+			typedef void (*Callback)( Owned< AEToken > );
 		
 		private:
-			typedef std::map< DescType, TokenDisposerType >  Map;
+			typedef std::map< DescType, Callback >  Map;
 			
 			Map map;
 			
@@ -289,10 +387,15 @@ namespace Nitrogen
 		public:
 			TokenDisposer();
 			
+			void Register( DescType tokenType, TokenDisposer::Callback callback )
+			{
+				map[ tokenType ] = callback;
+			}
+			
 			template < ::DescType tokenType >
 			void Register()
 			{
-				map[ tokenType ] = DisposeToken_Traits< tokenType >::DisposeToken;
+				Register( tokenType, DisposeToken_Traits< tokenType >::DisposeToken );
 			}
 			
 			void DisposeToken( Owned< AEToken > token );
@@ -300,13 +403,16 @@ namespace Nitrogen
 	
 	TokenDisposer& TheGlobalTokenDisposer();
 	
+	inline void RegisterTokenDisposer( DescType tokenType, TokenDisposer::Callback callback )
+	{
+		TheGlobalTokenDisposer().Register( tokenType, callback );
+	}
+	
 	template < ::DescType tokenType >
 	void RegisterTokenDisposer()
 	{
 		TheGlobalTokenDisposer().template Register< tokenType >();
 	}
-	
-	void DisposeToken( Owned< AEToken > token );
 	
 	#pragma mark -
 	#pragma mark ¥ OSL Object Callbacks ¥
