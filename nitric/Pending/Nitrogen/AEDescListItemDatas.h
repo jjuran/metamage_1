@@ -1,10 +1,18 @@
-// AEDescListItemDataC.h
+// AEDescListItemDatas.h
 
+#ifndef NITROGEN_AEDESCLISTITEMDATAS_H
+#define NITROGEN_AEDESCLISTITEMDATAS_H
+
+#ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
+#endif
+#ifndef NITROGEN_PSEUDOREFERENCE_H
 #include "Nitrogen/Pseudoreference.h"
+#endif
 
 
-namespace Nitrogen {
+namespace Nitrogen
+{
 	
 	template < ::DescType type >
 	class ConstAEDescListItemData_Details
@@ -288,5 +296,7 @@ namespace Nitrogen {
 		return AEDescListItemData_Container< type >( list );
 	}
 	
-};
+}
+
+#endif
 
