@@ -211,12 +211,12 @@ namespace Nitrogen
    using ::MacDrawMenuBar;
    using ::InvalMenuBar;
    
-   inline void HiliteMenu( MenuID menuID = MenuID( 0 ) )  { ::HiliteMenu( menuID ); }
+   inline void HiliteMenu( MenuID menuID = MenuID() )  { ::HiliteMenu( menuID ); }
    
    inline MenuRef GetMenuHandle( MenuID menuID )  { return ::GetMenuHandle( menuID ); }
    inline MenuRef GetMenuRef   ( MenuID menuID )  { return ::GetMenuRef   ( menuID ); }
    
-   Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID = MenuID( 0 ) );
+   Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID = MenuID() );
    inline void MacDeleteMenu( Owned< MenuID > menuID )  {}
    
    /* ... */
