@@ -23,7 +23,10 @@
 #endif
 
 namespace Nitrogen
-  {
-  }
+{
+	
+	void RegisterCodeFragmentManagerErrors();
+	
+}
 
 #endif
