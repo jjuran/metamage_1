@@ -305,9 +305,10 @@ namespace Nitrogen {
 /*  LAYOUT                                                                      */
 /*==============================================================================*/
 
-	inline HILayoutInfo HIViewGetLayoutInfo ( HIViewRef inView ) {
+	inline HILayoutInfo HIViewGetLayoutInfo ( HIViewRef inView, UInt32 version = kHILayoutInfoVersionZero ) {
      	OnlyOnce<RegisterHIViewErrors>();
 		HILayoutInfo retVal;
+		retVal.version = version;
 		ThrowOSStatus ( ::HIViewGetLayoutInfo ( inView, &retVal ));
 		return retVal;
 		}
