@@ -38,11 +38,27 @@ namespace Nitrogen
 		}
 	};
 	
+	namespace Private
+	{
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		
+		inline void InvokeTimerUPP( TMTaskPtr tmTaskPtr, ::TimerUPP userUPP )
+		{
+			::InvokeTimerUPP( tmTaskPtr, userUPP );
+		}
+		
+	#else
+		
+		using ::InvokeTimerUPP;
+		
+	#endif
+	}
+	
 	struct TimerUPP_Details : Basic_UPP_Details< ::TimerUPP,
 	                                             ::TimerProcPtr,
 	                                             ::NewTimerUPP,
 	                                             ::DisposeTimerUPP,
-	                                             ::InvokeTimerUPP >
+	                                             Private::InvokeTimerUPP >
 	{};
 	
 	typedef UPP< TimerUPP_Details > TimerUPP;
@@ -65,11 +81,15 @@ namespace Nitrogen
 	
 	inline void DisposeTimerUPP( Owned< TimerUPP > )  {}
 	
+#if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
+	
 	inline void InvokeTimerUPP( TMTaskPtr tmTaskPtr,
 	                            TimerUPP  userUPP )
 	{
 		userUPP( tmTaskPtr );
 	}
+	
+#endif
 	
 }
 

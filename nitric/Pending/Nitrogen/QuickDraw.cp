@@ -271,32 +271,47 @@ namespace Nitrogen
 	#endif
 	}
 	
-#if TARGET_CPU_PPC
+	RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region )
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		return ::GetPortVisibleRegion( port, region );
+		
+	#else
+		
+		::MacCopyRgn( ::GrafPtr( port )->visRgn, region );
+		return region;
+		
+	#endif
+	}
 	
 	Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port )
 	{
 		Owned< RgnHandle > region = NewRgn();
-		::GetPortVisibleRegion( port, region );
+		(void)Nitrogen::GetPortVisibleRegion( port, region );
 		return region;
 	}
-	
-#endif
-	
-#if !OPAQUE_TOOLBOX_STRUCTS
 	
 	RgnHandle GetPortClipRegion( CGrafPtr port, RgnHandle region )
 	{
-		Scoped< ::GrafPtr& > thePort( qd.thePort, port );
-		GetClip( region );
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		return ::GetPortClipRegion( port, region );
+		
+	#else
+		
+		//Scoped< ::GrafPtr& > thePort( qd.thePort, port );
+		//GetClip( region );
+		::MacCopyRgn( ::GrafPtr( port )->clipRgn, region );
 		return region;
+		
+	#endif
 	}
-	
-#endif
 	
 	Owned< RgnHandle > GetPortClipRegion( CGrafPtr port )
 	{
 		Owned< RgnHandle > region = NewRgn();
-		GetPortClipRegion( port, region );
+		Nitrogen::GetPortClipRegion( port, region );
 		return region;
 	}
 	
@@ -321,6 +336,32 @@ namespace Nitrogen
 		
 		// Taken from QISA/MoreIsBetter/MoreQuickDraw.cp
 		return ::CGrafPtr( port )->portVersion < 0;
+		
+	#endif
+	}
+	
+	void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		::SetPortClipRegion( port, clipRgn );
+		
+	#else
+		
+		MacCopyRgn( clipRgn, ::GrafPtr( port )->clipRgn );
+		
+	#endif
+	}
+	
+	void SetPortPenSize( CGrafPtr port, Point penSize )
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		::SetPortPenSize( port, penSize );
+		
+	#else
+		
+		::GrafPtr( port )->pnSize = penSize;
 		
 	#endif
 	}
@@ -356,6 +397,45 @@ namespace Nitrogen
 	
 #endif
 	
+	Owned< CGrafPtr > CreateNewPort()
+	{
+	#if ACCESSOR_CALLS_ARE_FUNCTIONS
+		
+		CGrafPtr result = ::CreateNewPort();
+		
+	#else
+		
+		Owned< Ptr > portMem = NewPtr( sizeof (::CGrafPort) );
+		
+		::OpenCPort( Ptr_Cast< ::CGrafPort >( portMem.Get() ) );
+		
+		CGrafPtr result( Ptr_Cast< ::CGrafPort >( portMem.Release() ) );
+		
+	#endif
+		
+		return Owned< CGrafPtr >::Seize( result );
+	}
+	
+	namespace Private
+	{
+		
+		void DisposePort( CGrafPtr port )
+		{
+		#if ACCESSOR_CALLS_ARE_FUNCTIONS
+			
+			::DisposePort( port );
+			
+		#else
+			
+			::CloseCPort( port );
+			
+			DisposePtr( Owned< Ptr >::Seize( ::CGrafPtr( port ) ) );
+			
+		#endif
+		}
+		
+	}
+	
 #if TARGET_API_MAC_OSX
 	
 	// Defined in Nitrogen/CGDirectDisplay.h
@@ -375,3 +455,4 @@ namespace Nitrogen
 		}
   
   }
+

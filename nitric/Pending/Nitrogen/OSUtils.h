@@ -39,11 +39,27 @@ namespace Nitrogen
 	
 	// ...
 	
+	namespace Private
+	{
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		
+		inline void InvokeDeferredTaskUPP( long dtParam, ::DeferredTaskUPP userUPP )
+		{
+			::InvokeDeferredTaskUPP( dtParam, userUPP );
+		}
+		
+	#else
+		
+		using ::InvokeDeferredTaskUPP;
+		
+	#endif
+	}
+	
 	struct DeferredTaskUPP_Details : Basic_UPP_Details< ::DeferredTaskUPP,
 	                                                    ::DeferredTaskProcPtr,
 	                                                    ::NewDeferredTaskUPP,
 	                                                    ::DisposeDeferredTaskUPP,
-	                                                    ::InvokeDeferredTaskUPP >
+	                                                    Private::InvokeDeferredTaskUPP >
 	{};
 	
 	typedef UPP< DeferredTaskUPP_Details > DeferredTaskUPP;
@@ -55,11 +71,15 @@ namespace Nitrogen
 	
 	inline void DisposeDeferredTaskUPP( Owned< DeferredTaskUPP > )  {}
 	
+#if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
+	
 	inline void InvokeDeferredTaskUPP( long             dtParam,
 	                                   DeferredTaskUPP  userUPP )
 	{
 		userUPP( dtParam );
 	}
+	
+#endif
 	
 	using ::DeferredTask;
 	using ::DeferredTaskPtr;

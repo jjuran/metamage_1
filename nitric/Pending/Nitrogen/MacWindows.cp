@@ -122,7 +122,7 @@ namespace Nitrogen
 	
 	void InvalWindowRect( WindowRef window, const Rect& bounds )
 	{
-		if ( TARGET_API_MAC_CARBON || ::InvalWindowRect != NULL )
+		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC && ::InvalWindowRect != NULL )
 		{
 			::InvalWindowRect( window, &bounds );
 		}

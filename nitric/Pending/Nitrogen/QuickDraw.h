@@ -164,15 +164,16 @@ namespace Nitrogen
 	
 	typedef GrafPtr CGrafPtr;
 	
+	namespace Private
+	{
+		void DisposePort( CGrafPtr port );
+	}
+	
 	template <> struct Disposer< CGrafPtr > : public std::unary_function< CGrafPtr, void >
 	{
 		void operator()( CGrafPtr port ) const
 		{
-		#if ACCESSOR_CALLS_ARE_FUNCTIONS
-			
-			::DisposePort( port );
-			
-		#endif
+			Private::DisposePort( port );
 		}
 	};
 	
@@ -349,24 +350,20 @@ namespace Nitrogen
 	Owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv );
 	
 	// 3680
-	void CopyBits(
-		const BitMap* srcBits, 
-		const BitMap* dstBits, 
-		const Rect& srcRect, 
-		const Rect& dstRect, 
-		TransferMode mode, 
-		RgnHandle maskRgn = NULL
-	);
+	void CopyBits( const BitMap*  srcBits,
+	               const BitMap*  dstBits,
+	               const Rect&    srcRect,
+	               const Rect&    dstRect,
+	               TransferMode   mode,
+	               RgnHandle      maskRgn = NULL );
 	
 	// 3736
-	void CopyMask(
-		const BitMap* srcBits, 
-		const BitMap* maskBits, 
-		const BitMap* dstBits, 
-		const Rect& srcRect, 
-		const Rect& maskRect, 
-		const Rect& dstRect
-	);
+	void CopyMask( const BitMap*  srcBits,
+	               const BitMap*  maskBits,
+	               const BitMap*  dstBits,
+	               const Rect&    srcRect,
+	               const Rect&    maskRect,
+	               const Rect&    dstRect );
 	
 	// 3932
 	inline Point SetPt( short h, short v )  { return Make< Point >( v, h ); }
@@ -398,7 +395,7 @@ namespace Nitrogen
 	CursHandle MacGetCursor( ResID id );
 	
 	// 4657
-	inline void SetCPixel( int x, int y, const RGBColor& color )
+	inline void SetCPixel( short x, short y, const RGBColor& color )
 	{
 		::SetCPixel( x, y, &color );
 	}
@@ -428,18 +425,11 @@ namespace Nitrogen
 	RGBColor GetPortBackColor( CGrafPtr port );
 	
 	// 6036
+	RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region );
+	
 	Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port );
 	
-#if OPAQUE_TOOLBOX_STRUCTS
-	
-	// 6050
-	using ::GetPortClipRegion;
-	
-#else
-	
 	RgnHandle GetPortClipRegion( CGrafPtr port, RgnHandle region );
-	
-#endif
 	
 	Owned< RgnHandle > GetPortClipRegion( CGrafPtr port );
 	
@@ -449,27 +439,11 @@ namespace Nitrogen
 	// 6194
 	bool IsPortColor( CGrafPtr port );
 	
-#if OPAQUE_TOOLBOX_STRUCTS
-	
 	// 6438
-	using ::SetPortClipRegion;
-	
-#else
-	
-	inline void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )  { CopyRgn( clipRgn, ::GrafPtr( port )->clipRgn ); }
-	
-#endif
-	
-#if OPAQUE_TOOLBOX_STRUCTS
+	void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn );
 	
 	// 6494
-	using ::SetPortPenSize;
-	
-#else
-	
-	inline void SetPortPenSize( CGrafPtr port, Point penSize )  { ::GrafPtr( port )->pnSize = penSize; }
-	
-#endif
+	void SetPortPenSize( CGrafPtr port, Point penSize );
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
@@ -501,12 +475,8 @@ namespace Nitrogen
 	
 #endif
 	
-#if ACCESSOR_CALLS_ARE_FUNCTIONS
-	
 	// 6729
-	inline Owned< CGrafPtr > CreateNewPort()  { return Owned< CGrafPtr >::Seize( ::CreateNewPort() ); }
-	
-#endif
+	Owned< CGrafPtr > CreateNewPort();
 	
 	// 6741
 	inline void DisposePort( Owned< CGrafPtr > )  {}
@@ -597,7 +567,7 @@ namespace Nitrogen
 			PortClipRegion_Details( CGrafPtr thePort )     : port( thePort ) {}
 			
 			GetResult Get() const                          { return GetPortClipRegion( port ); }
-			void Set( SetParameter region ) const          { SetPortClipRegion( port, region ); }
+			void Set( SetParameter region ) const          { Nitrogen::SetPortClipRegion( port, region ); }
 	};
 	
 	typedef Pseudoreference< PortClipRegion_Details > PortClipRegion;
@@ -614,7 +584,7 @@ namespace Nitrogen
 			
 			PortPenSize_Details( CGrafPtr thePort )     : port( thePort ) {}
 			GetResult Get() const                       { return GetPortPenSize( port ); }
-			void Set( SetParameter size ) const         { SetPortPenSize( port, size ); }
+			void Set( SetParameter size ) const         { Nitrogen::SetPortPenSize( port, size ); }
 	};
 	
 	typedef Pseudoreference< PortPenSize_Details > PortPenSize;
