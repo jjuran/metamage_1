@@ -220,6 +220,11 @@ namespace Nitrogen
 		);
 	}
 	
+	CursHandle MacGetCursor( ResID id )
+	{
+		return CheckResource( ::MacGetCursor( id ) );
+	}
+	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
 	Rect GetPortBounds( CGrafPtr port )
