@@ -238,6 +238,14 @@ namespace Nitrogen
 		              a.v - b.v );
 	}
 	
+	RGBColor GetCPixel( short h, short v )
+	{
+		RGBColor result;
+		::GetCPixel( h, v, &result );
+		
+		return result;
+	}
+	
 	RGBColor GetForeColor()
 	{
 		RGBColor result;
