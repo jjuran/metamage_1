@@ -18,6 +18,9 @@
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
+#ifndef NITROGEN_OBJECTPARAMETERTRAITS_H
+#include "Nitrogen/ObjectParameterTraits.h"
+#endif
 
 namespace Nitrogen
   {
@@ -108,17 +111,31 @@ namespace Nitrogen
                                                             installation.isSysHandler ) );
         }
      };
-
-	typedef void ( *AEEventHandlerProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefCon refCon );
 	
-	template < AEEventHandlerProcPtr handler >
+	//typedef void ( *AEEventHandlerProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefCon refCon );
+	
+	template < class RefConType >
+	struct AEEventHandler_RefCon_Traits
+	{
+		typedef RefConType RefCon;
+		typedef void ( *ProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefConType refCon );
+	};
+	
+	template <>
+	struct AEEventHandler_RefCon_Traits< void >
+	{
+		typedef void RefCon;
+		typedef void ( *ProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply );
+	};
+	
+	template < class RefConType, typename AEEventHandler_RefCon_Traits< RefConType >::ProcPtr handler >
 	struct Adapt_AEEventHandler
 	{
 		static pascal OSErr ToCallback( const AppleEvent* appleEvent, AppleEvent* reply, long refCon )
 		{
 			try
 			{
-				handler( *appleEvent, *reply, refCon );
+				handler( *appleEvent, *reply, reinterpret_cast< RefConType >( refCon ) );
 			}
 			catch ( OSStatus err )
 			{
@@ -127,6 +144,25 @@ namespace Nitrogen
 			return noErr;
 		}
 	};
+	
+	template < AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
+	struct Adapt_AEEventHandler< void, handler >
+	{
+		static pascal OSErr ToCallback( const AppleEvent* appleEvent, AppleEvent* reply, long )
+		{
+			try
+			{
+				handler( *appleEvent, *reply );
+			}
+			catch ( OSStatus err )
+			{
+				return err.Get();
+			}
+			return noErr;
+		}
+	};
+	
+	// Level 0
 	
    Owned<AEEventHandler>
    AEInstallEventHandler( const AEEventHandler& );
@@ -144,7 +180,9 @@ namespace Nitrogen
                                                     handlerRefCon,
                                                     isSysHandler ) );
      }
-
+	
+	// Level 1
+	
    template < typename AEEventHandlerUPP::ProcPtr handler >
    inline  Owned<AEEventHandler>
    AEInstallEventHandler( AEEventClass       theAEEventClass,
@@ -158,21 +196,54 @@ namespace Nitrogen
                                                     handlerRefCon,
                                                     isSysHandler ) );
      }
-   
-	template < AEEventHandlerProcPtr handler >
-	Owned< AEEventHandler > AEInstallEventHandler
-	(
-		AEEventClass  theAEEventClass, 
-		AEEventID     theAEEventID, 
-		RefCon        handlerRefCon = RefCon(), 
-		Boolean       isSysHandler  = false
-	)
+	
+	// Level 2, refcon type specified
+	
+	template < class Object, typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
+	inline Owned< AEEventHandler >
+	AEInstallEventHandler( AEEventClass                                  theAEEventClass, 
+	                       AEEventID                                     theAEEventID, 
+	                       typename ObjectParameterTraits<Object>::Type  handlerRefCon   = typename ObjectParameterTraits<Object>::Type(), 
+	                       Boolean                                       isSysHandler    = false )
 	{
-		return AEInstallEventHandler< Adapt_AEEventHandler< handler >::ToCallback >
+		return AEInstallEventHandler< Adapt_AEEventHandler< Object, handler >::ToCallback >
 		(
 			theAEEventClass, 
 			theAEEventID, 
-			handlerRefCon, 
+			ObjectParameterTraits<Object>::ConvertToPointer( handlerRefCon ), 
+			isSysHandler
+		);
+	}
+	
+	// With default handlerRefCon but supplied isSysHandler
+	template < class Object, typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
+	inline Owned< AEEventHandler >
+	AEInstallEventHandler( AEEventClass  theAEEventClass, 
+	                       AEEventID     theAEEventID, 
+	                       Boolean       isSysHandler )
+	{
+		typedef typename ObjectParameterTraits<Object>::Type ObjectType;
+		
+		return AEInstallEventHandler< Adapt_AEEventHandler< void, handler >::ToCallback >
+		(
+			theAEEventClass, 
+			theAEEventID, 
+			ObjectParameterTraits<Object>::ConvertToPointer( ObjectType() ), 
+			isSysHandler
+		);
+	}
+	
+	// Same as above, but void parameter is omitted.
+	template < typename AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
+	inline Owned< AEEventHandler >
+	AEInstallEventHandler( AEEventClass  theAEEventClass, 
+	                       AEEventID     theAEEventID, 
+	                       Boolean       isSysHandler    = false )
+	{
+		return AEInstallEventHandler< void, handler >
+		(
+			theAEEventClass, 
+			theAEEventID, 
 			isSysHandler
 		);
 	}
