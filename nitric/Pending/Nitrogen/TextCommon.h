@@ -32,6 +32,10 @@ namespace Nitrogen
   {
    void RegisterTextEncodingConversionManagerErrors();
    
+   static const LangCode kTextLanguageDontCare = LangCode::Make( ::kTextLanguageDontCare );
+   static const RegionCode kTextRegionDontCare = RegionCode::Make( ::kTextRegionDontCare );
+   static const ScriptCode kTextScriptDontCare = ScriptCode::Make( ::kTextScriptDontCare );
+   
    class TextEncodingBaseTag {};
    typedef SelectorType< TextEncodingBaseTag, ::TextEncodingBase, kTextEncodingUnknown > TextEncodingBase;
 
@@ -99,27 +103,27 @@ namespace Nitrogen
                                            TextEncodingVariant encodingVariant,
                                            TextEncodingFormat encodingFormat )
      {
-      return ::CreateTextEncoding( encodingBase, encodingVariant, encodingFormat );
+      return TextEncoding( ::CreateTextEncoding( encodingBase, encodingVariant, encodingFormat ) );
      }
    
    inline TextEncodingBase GetTextEncodingBase( TextEncoding encoding )
      {
-      return ::GetTextEncodingBase( encoding );
+      return TextEncodingBase( ::GetTextEncodingBase( encoding ) );
      }
    
    inline TextEncodingVariant GetTextEncodingVariant( TextEncoding encoding )
      {
-      return ::GetTextEncodingVariant( encoding );
+      return TextEncodingVariant( ::GetTextEncodingVariant( encoding ) );
      }
    
    inline TextEncodingFormat GetTextEncodingFormat( TextEncoding encoding )
      {
-      return ::GetTextEncodingFormat( encoding );
+      return TextEncodingFormat( ::GetTextEncodingFormat( encoding ) );
      }
    
    inline TextEncoding ResolveDefaultTextEncoding( TextEncoding encoding )
      {
-      return ::ResolveDefaultTextEncoding( encoding );
+      return TextEncoding( ::ResolveDefaultTextEncoding( encoding ) );
      }
    
    struct GetTextEncodingName_Result
