@@ -29,6 +29,8 @@ namespace Nitrogen
       private:
          ::OSStatus status;
          
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
+         
          // Not implemented:
             OSStatus(          bool      );
             OSStatus(          char      );
@@ -91,19 +93,24 @@ namespace Nitrogen
             friend void operator!=( unsigned int,       OSStatus );
             friend void operator!=( unsigned long,      OSStatus );
             friend void operator!=( unsigned long long, OSStatus );
+         #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
             
       public:
          typedef ::OSStatus ErrorNumber;
          
          OSStatus()                                            : status( noErr )    {}
          OSStatus( ::OSStatus s )                              : status( s )        {}
+      
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          OSStatus( ::OSErr s )                                 : status( s )        {}
          OSStatus( signed int s )                              : status( s )        {}
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
          
          static OSStatus Make( ::OSStatus s )                  { return OSStatus( s ); }
          ::OSStatus Get() const                                { return status; }
          operator ::OSStatus() const                           { return status; }
 
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          friend bool operator==( OSStatus a, OSStatus b )      { return a.Get() == b.Get(); }
          friend bool operator!=( OSStatus a, OSStatus b )      { return a.Get() != b.Get(); }
          
@@ -122,6 +129,7 @@ namespace Nitrogen
          friend bool operator!=( signed short a, OSStatus b )  { return a != b.Get(); }
          friend bool operator!=( signed int   a, OSStatus b )  { return a != b.Get(); }
          friend bool operator!=( signed long  a, OSStatus b )  { return a != b.Get(); }
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
      };
    
    template <>
