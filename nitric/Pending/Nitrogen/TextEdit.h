@@ -15,11 +15,11 @@
 #include <string>
 
 // Nitrogen
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NITROGEN_MACMEMORY_H
+#include "Nitrogen/MacMemory.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NITROGEN_QUICKDRAW_H
+#include "Nitrogen/QuickDraw.h"
 #endif
 
 
@@ -90,6 +90,20 @@ namespace Nitrogen
 	
 	// 1925
 	void TEToScrap();
+	
+	inline GrafPtr GetTEPort       ( TEHandle hTE )  { return (**hTE).inPort;     }
+	inline short   GetTELength     ( TEHandle hTE )  { return (**hTE).teLength;   }
+	inline short   GetTESelectStart( TEHandle hTE )  { return (**hTE).selStart;   }
+	inline short   GetTESelectEnd  ( TEHandle hTE )  { return (**hTE).selEnd;     }
+	inline short   GetTELineHeight ( TEHandle hTE )  { return (**hTE).lineHeight; }
+	inline short   GetTELineCount  ( TEHandle hTE )  { return (**hTE).nLines;     }
+	inline Rect    GetTEViewRect   ( TEHandle hTE )  { return (**hTE).viewRect;   }
+	inline Rect    GetTEDestRect   ( TEHandle hTE )  { return (**hTE).destRect;   }
+	inline Handle  GetTETextHandle ( TEHandle hTE )  { return (**hTE).hText;      }
+	
+	inline void SetTELength  ( TEHandle hTE, short len )      { (**hTE).teLength = len; }
+	inline void SetTEViewRect( TEHandle hTE, const Rect& r )  { (**hTE).viewRect = r;   }
+	inline void SetTEDestRect( TEHandle hTE, const Rect& r )  { (**hTE).destRect = r;   }
 	
 }
 
