@@ -20,6 +20,12 @@
 #include "Nitrogen/Scoped.h"
 #endif
 
+#if TARGET_RT_MAC_MACHO || TARGET_API_MAC_OSX
+#ifndef NITROGEN_CGDIRECTDISPLAY_H
+#include "Nitrogen/CGDirectDisplay.h"
+#endif
+#endif
+
 namespace Nitrogen
   {
 	
@@ -347,6 +353,20 @@ namespace Nitrogen
 	const Pattern& GetQDGlobalsGray()        { return QDGlobalsVar( ::GetQDGlobalsGray ); }
 	const Pattern& GetQDGlobalsBlack()       { return QDGlobalsVar( ::GetQDGlobalsBlack ); }
 	const Pattern& GetQDGlobalsWhite()       { return QDGlobalsVar( ::GetQDGlobalsWhite ); }
+	
+#endif
+	
+#if TARGET_API_MAC_OSX
+	
+	// Defined in Nitrogen/CGDirectDisplay.h
+	
+	Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display )
+	{
+		return Owned< CGrafPtr >::Seize
+		(
+			::CreateNewPortForCGDisplayID( reinterpret_cast< unsigned long >( display ) )
+		);
+	}
 	
 #endif
 	
