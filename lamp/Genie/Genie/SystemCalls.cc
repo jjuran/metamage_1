@@ -24,6 +24,9 @@
 // Nitrogen Extras / AEFramework
 #include "AEFramework/AEFramework.h"
 
+// POSeven
+#include "POSeven/Errno.h"
+
 // Nitrogen Extras / Templates
 #include "Templates/FunctionalExtensions.h"
 #include "Templates/PointerToFunction.h"
@@ -36,21 +39,16 @@
 #include "Io/MakeHandle.hh"
 #include "Io/Stream.hh"
 
-// Genesis
-#include "POSIXError.hh"
-
-// Zion
-#include "Zion/FileHandle.hh"
-
 // Kerosene/Common
 #include "KEnvironment.hh"
 #include "SystemCalls.hh"
 
 // Genie
 #include "Genie/Devices.hh"
-#include "Genie/Process.hh"
+#include "Genie/FileHandle.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Pipes.hh"
+#include "Genie/Process.hh"
 #include "Genie/ReplyHandler.hh"
 #include "Genie/ResourceTable.hh"
 #include "Genie/SocketHandle.hh"
@@ -62,8 +60,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace G = Genesis;
-	namespace Z = Zion;
 	
 	namespace ext = N::STLExtensions;
 	
@@ -254,10 +250,40 @@ namespace Genie
 		                      FSSpec*      outFSS );
 	}
 	
+	namespace P7 = POSeven;
+	
+	using Genie::CurrentProcess;
+	using Genie::FileDescriptorMap;
+	using Genie::IORef;
+	using Genie::gProcessTable;
+	using Genie::LowestUnusedFrom;
+	using Genie::ResolveUnixPathname;
+	using Genie::DuplicateFD;
+	using Genie::Check_InitOpenTransport;
+	using Genie::NewSocket;
+	using Genie::kSocketDescriptor;
+	using Genie::SocketHandle;
+	using Genie::IORef_Cast;
+	using Genie::SocketAddress;
+	using Genie::NewGenericIO;
+	using Genie::FileDescriptor;
+	using Genie::GenieProcessTable;
+	using Genie::LookupExecPath;
+	using Genie::Process;
+	using Genie::CheckAnyPID;
+	using Genie::CheckPID;
+	using Genie::Yield;
+	using Genie::Pipe;
+	using Genie::PipeOut_IODetails;
+	using Genie::PipeIn_IODetails;
+	using Genie::kCharacterDeviceDescriptor;
+	using Genie::CharacterDevice;
+	using Genie::NewPseudoTerminal_Result;
+	using Genie::NewPseudoTerminal;
+	using Genie::OpenFile;
+	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
-		using namespace Genie;
-		
 		try
 		{
 			(void)N::AESend( *appleEvent,
@@ -283,8 +309,6 @@ namespace Genie
 	
 	InetSvcRef InternetServices()
 	{
-		using namespace Genie;
-		
 		Check_InitOpenTransport();
 		
 		static N::Owned< InetSvcRef >
@@ -295,7 +319,7 @@ namespace Genie
 	
 	void PrintPS()
 	{
-		using namespace Genie;
+		using Genie::DoPS;
 		
 		DoPS( Io::Stream< IORef >( CurrentProcess().FileDescriptors()[ 1 ].handle ) );
 	}
@@ -303,7 +327,7 @@ namespace Genie
 	OSStatus Path2FSSpec( const char*  pathname,
 	                      FSSpec*      outFSS )
 	{
-		using namespace Genie;
+		using Genie::ResolveUnixPathname;
 		
 		try
 		{
@@ -322,8 +346,6 @@ namespace Genie
 	
 	int kill( pid_t pid, int sig )
 	{
-		using namespace Genie;
-		
 		if ( !gProcessTable.Exists( pid ) )
 		{
 			return -1;  // FIXME:  set errno
@@ -339,7 +361,7 @@ namespace Genie
 	
 	sig_t signal( int sig, sig_t func )
 	{
-		return Genie::CurrentProcess().SetSignalAction( sig, func );
+		return CurrentProcess().SetSignalAction( sig, func );
 	}
 	
 	#pragma mark -
@@ -347,8 +369,6 @@ namespace Genie
 	
 	int open( const char* path, int oflag )
 	{
-		using namespace Genie;
-		
 		try
 		{
 			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -374,7 +394,7 @@ namespace Genie
 			
 			if ( pathname.substr( 0, 5 ) == "/dev/" )
 			{
-				io = GetSimpleDeviceHandle( path );
+				io = Genie::GetSimpleDeviceHandle( path );
 			}
 			else
 			{
@@ -407,7 +427,7 @@ namespace Genie
 					N::SetFPos( fileH, fsFromLEOF, 0 );
 				}
 				
-				io = NewGenericIO( Io::MakeHandleFromCopy< Z::FileRefNum_Details >( fileH ) );
+				io = OpenFile( fileH );
 			}
 			
 			files[ fd ] = io;
@@ -423,8 +443,6 @@ namespace Genie
 	
 	int fcntl( int filedes, int cmd, int param )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		switch ( cmd )
@@ -483,8 +501,6 @@ namespace Genie
 	
 	int socket( int domain, int type, int protocol )
 	{
-		using namespace Genie;
-		
 		Check_InitOpenTransport();
 		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -508,8 +524,6 @@ namespace Genie
 	
 	int bind( int sockfd, const struct sockaddr* name, socklen_t namelen )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		const InetAddress* inetAddress = reinterpret_cast< const InetAddress* >( name );
@@ -538,8 +552,6 @@ namespace Genie
 	
 	int listen( int sockfd, int backlog )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		try
@@ -566,8 +578,6 @@ namespace Genie
 	
 	int accept( int sockfd, struct sockaddr *addr, socklen_t *addrlen )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		try
@@ -603,8 +613,6 @@ namespace Genie
 	
 	int connect( int sockfd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	{
-		using namespace Genie;
-		
 		// Assume sin_family is AF_INET
 		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -635,8 +643,6 @@ namespace Genie
 	
 	int getsockname( int sockfd, struct sockaddr* name, int* namelen )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		try
@@ -667,8 +673,6 @@ namespace Genie
 	
 	int getpeername( int sockfd, struct sockaddr* name, int* namelen )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		try
@@ -702,8 +706,6 @@ namespace Genie
 	
 	pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		using namespace Genie;
-		
 		int ppid = CurrentProcess().ProcessID();
 		
 		while ( true )
@@ -762,15 +764,11 @@ namespace Genie
 	
 	int dup( int oldfd )
 	{
-		using namespace Genie;
-		
 		return DuplicateFD( CurrentProcess().FileDescriptors(), oldfd );
 	}
 	
 	int dup2( int oldfd, int newfd )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		files[ newfd ] = files[ oldfd ].handle;  // Clears the closeOnExec flag
@@ -780,8 +778,6 @@ namespace Genie
 	
 	int execve( const char* path, char* const argv[], char* const envp[] )
 	{
-		using namespace Genie;
-		
 		try
 		{
 			FSSpec progFile = LookupExecPath( path );
@@ -826,8 +822,6 @@ namespace Genie
 	
 	void _exit( int status )
 	{
-		using namespace Genie;
-		
 		Process& current( CurrentProcess() );
 		
 		current.Terminate( status );  // doesn't reap, won't terminate thread
@@ -840,8 +834,6 @@ namespace Genie
 	
 	int fork()
 	{
-		using namespace Genie;
-		
 		Process* child = new Process( CurrentProcess().ProcessID() );
 		
 		RegisterProcessContext( child );
@@ -851,8 +843,6 @@ namespace Genie
 	
 	char* getcwd( char* buf, std::size_t size )
 	{
-		using namespace Genie;
-		
 		std::string result = N::FSpGetPOSIXPathname( N::Convert< FSSpec >( CurrentProcess().CurrentDirectory() ) );
 		
 		if ( result.size() + 1 > size )
@@ -896,8 +886,6 @@ namespace Genie
 	
 	int pipe( int filedes[ 2 ] )
 	{
-		using namespace Genie;
-		
 		Pipe::Handles handles = Pipe::New();
 		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -916,8 +904,6 @@ namespace Genie
 	
 	ssize_t read( int fd, void* buf, size_t count )
 	{
-		using namespace Genie;
-		
 		try
 		{
 			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -941,9 +927,9 @@ namespace Genie
 		{
 			CurrentProcess().SetErrno( EWOULDBLOCK );
 		}
-		catch ( G::POSIXError& error )
+		catch ( P7::Errno& error )
 		{
-			CurrentProcess().SetErrno( error.Errno() );
+			CurrentProcess().SetErrno( error );
 		}
 		catch ( ... )
 		{
@@ -958,8 +944,6 @@ namespace Genie
 	// I made this up.
 	int setctty( int fd )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		IORef ref = files[ fd ].handle;
@@ -981,8 +965,6 @@ namespace Genie
 	
 	int setpgid( pid_t pid, pid_t pgid )
 	{
-		using namespace Genie;
-		
 		Process& target( pid != 0 ? gProcessTable[ pid ]
 		                          : CurrentProcess() );
 		
@@ -995,8 +977,6 @@ namespace Genie
 	
 	pid_t setsid()
 	{
-		using namespace Genie;
-		
 		Process& current( CurrentProcess() );
 		
 		current.SetControllingTerminal( NULL );
@@ -1027,8 +1007,6 @@ namespace Genie
 	
 	const char* ttyname( int fd )
 	{
-		using namespace Genie;
-		
 		try
 		{
 			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -1056,8 +1034,6 @@ namespace Genie
 	// I made this up too.
 	int ttypair( int filedes[ 2 ] )
 	{
-		using namespace Genie;
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		NewPseudoTerminal_Result fds = NewPseudoTerminal();
