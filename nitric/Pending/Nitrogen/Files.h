@@ -813,6 +813,24 @@ namespace Nitrogen
    inline bool operator!=( const FSRef& ref1, const FSRef& ref2 )   { return !( ref1 == ref2 ); }
 
 
+	struct FSDirSpec
+	{
+		FSVolumeRefNum vRefNum;
+		FSDirID dirID;
+	};
+	
+	template <>
+	struct Maker< FSDirSpec >
+	{
+		FSDirSpec operator()( FSVolumeRefNum vRefNum, FSDirID dirID ) const
+		{
+			FSDirSpec result;
+			result.vRefNum = vRefNum;
+			result.dirID = dirID;
+			return result;
+		}
+	};
+	
    struct FSRefSpec
      {
       FSRef fsRef;
@@ -849,8 +867,20 @@ namespace Nitrogen
    template <> struct LivelinessTraits< FSRefSpecDirID, FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
 
 
+	// 4617
+	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name );
+	
+	template <> struct Converter< FSSpec, FSDirSpec >: public std::unary_function< FSDirSpec, FSSpec >
+	{
+		FSSpec operator()( const FSDirSpec& dir ) const
+		{
+			return FSMakeFSSpec( dir.vRefNum, dir.dirID, NULL );
+		}
+	};
+
    typedef Owned<FSRefSpec> FSCreateFileUnicode_Result;
    
+   // 5588
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
                                                    UniCharCount         nameLength,
                                                    const UniChar *      name,
