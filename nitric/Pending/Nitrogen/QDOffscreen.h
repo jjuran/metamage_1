@@ -22,17 +22,6 @@ namespace Nitrogen
 	class GWorldFlags_Tag {};
 	typedef FlagType< GWorldFlags_Tag, ::GWorldFlags > GWorldFlags;
 	
-	inline GWorldFlags NoNewDevice           ()  { return GWorldFlags::Make( noNewDevice             ); }
-	inline GWorldFlags UseTempMem            ()  { return GWorldFlags::Make( useTempMem              ); }
-	inline GWorldFlags KeepLocal             ()  { return GWorldFlags::Make( keepLocal               ); }
-	inline GWorldFlags UseDistantHdwrMem     ()  { return GWorldFlags::Make( useDistantHdwrMem       ); }
-	inline GWorldFlags UseLocalHdwrMem       ()  { return GWorldFlags::Make( useLocalHdwrMem         ); }
-	inline GWorldFlags PixelsPurgeable       ()  { return GWorldFlags::Make( pixelsPurgeable         ); }
-	inline GWorldFlags PixelsLocked          ()  { return GWorldFlags::Make( pixelsLocked            ); }
-	inline GWorldFlags AllocDirectDrawSurface()  { return GWorldFlags::Make( kAllocDirectDrawSurface ); }
-	// ...
-	inline GWorldFlags GWFlagErr             ()  { return GWorldFlags::Make( gwFlagErr               ); }
-	
 	typedef CGrafPtr GWorldPtr;
 	
 	struct GWorld_State
@@ -40,6 +29,7 @@ namespace Nitrogen
 		GWorldPtr port;
 		GDHandle gdh;
 	};
+	
 	typedef GWorld_State GetGWorld_Result;
 	
 	template <>
@@ -48,8 +38,10 @@ namespace Nitrogen
 		GWorld_State operator()( GWorldPtr port, GDHandle gdh = NULL ) const
 		{
 			GWorld_State result;
+			
 			result.port = port;
 			result.gdh  = gdh;
+			
 			return result;
 		}
 	};
@@ -63,74 +55,77 @@ namespace Nitrogen
 		}
 	};
 	
-	Owned< GWorldPtr, GWorldDisposer > NewGWorld(
-		short pixelDepth, 
-		const Rect& boundsRect, 
-		CTabHandle cTable = NULL, 
-		GDHandle aGDevice = NULL, 
-		GWorldFlags flags = GWorldFlags()
-	);
+	Owned< GWorldPtr, GWorldDisposer > NewGWorld( short        pixelDepth,
+	                                              const Rect&  boundsRect,
+	                                              CTabHandle   cTable   = NULL,
+	                                              GDHandle     aGDevice = NULL,
+	                                              GWorldFlags  flags    = GWorldFlags() );
 	
-	Owned< GWorldPtr, GWorldDisposer > NewGWorld(
-		short pixelDepth, 
-		const Rect& boundsRect, 
-		GWorldFlags flags
-	);
+	Owned< GWorldPtr, GWorldDisposer > NewGWorld( short        pixelDepth,
+	                                              const Rect&  boundsRect,
+	                                              GWorldFlags  flags );
 	
 	struct LockPixels_Failed {};
 	
-	void LockPixels(PixMapHandle pm);
+	void LockPixels( PixMapHandle pm );
+	
 	using ::UnlockPixels;
 	
-	GWorldFlags UpdateGWorld(
-		Owned< GWorldPtr, GWorldDisposer >& offscreenGWorld, 
-		short pixelDepth, 
-		const Rect& boundsRect, 
-		CTabHandle cTable = NULL, 
-		GDHandle aGDevice = NULL, 
-		GWorldFlags flags = GWorldFlags()
-	);
+	GWorldFlags UpdateGWorld( Owned< GWorldPtr, GWorldDisposer >&  offscreenGWorld,
+	                          short                                pixelDepth,
+	                          const Rect&                          boundsRect,
+	                          CTabHandle                           cTable   = NULL,
+	                          GDHandle                             aGDevice = NULL,
+	                          GWorldFlags                          flags    = GWorldFlags() );
 	
 	inline void DisposeGWorld( Owned< GWorldPtr, GWorldDisposer > )  {}
 	
 	GWorld_State GetGWorld();
+	
 	void SetGWorld( const GWorld_State& state );
 	void SetGWorld( GWorldPtr gWorld );
 	
 	GWorldFlags GetPixelsState( PixMapHandle pm );
+	
 	void SetPixelsState( PixMapHandle pm, GWorldFlags state );
 	
 	PixMapHandle GetGWorldPixMap( GWorldPtr offscreenGWorld );
 	
-	class GWorld_Details
+	class GWorld_Value
 	{
 		public:
-			typedef GWorld_State Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef GWorld_State         Value;
+			typedef GWorld_State         GetResult;
+			typedef GWorld_State const&  SetParameter;
 			
-			GetResult Get() const                        { return GetGWorld(); }
-			void Set( SetParameter state ) const         { SetGWorld( state ); }
+			static const bool hasSwap = false;
+			
+			GetResult Get() const                 { return GetGWorld(); }
+			void Set( SetParameter state ) const  { SetGWorld( state ); }
 	};
 	
-	typedef Pseudoreference< GWorld_Details > GWorld;
-	
-	class PixelsState_Details
+	class PixelsState_Value
 	{
 		private:
 			PixMapHandle pm;
 		
 		public:
 			typedef GWorldFlags Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef GWorldFlags GetResult;
+			typedef GWorldFlags SetParameter;
 			
-			PixelsState_Details( PixMapHandle pm ) : pm( pm )  {}
+			static const bool hasSwap = false;
 			
-			GetResult Get() const                        { return Nitrogen::GetPixelsState( pm ); }
-			void Set( SetParameter state ) const         { SetPixelsState( pm, state ); }
+			PixelsState_Value( PixMapHandle pm ) : pm( pm )  {}
+			
+			GetResult Get() const                  { return Nitrogen::GetPixelsState( pm ); }
+			void Set( SetParameter state ) const   { SetPixelsState( pm, state );           }
 	};
 	
+	typedef GWorld_Value       GWorld_Details;
+	typedef PixelsState_Value  PixelsState_Details;
+	
+	typedef Pseudoreference< GWorld_Details      > GWorld;
 	typedef Pseudoreference< PixelsState_Details > PixelsState;
 	
 }

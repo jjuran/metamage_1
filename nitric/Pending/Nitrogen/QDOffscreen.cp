@@ -7,27 +7,27 @@
 namespace Nitrogen
 {
 	
-	Owned< GWorldPtr, GWorldDisposer > NewGWorld
-	(
-		short pixelDepth, 
-		const Rect& boundsRect, 
-		CTabHandle cTable, 
-		GDHandle aGDevice, 
-		GWorldFlags flags )
+	Owned< GWorldPtr, GWorldDisposer > NewGWorld( short pixelDepth,
+	                                              const Rect& boundsRect,
+	                                              CTabHandle cTable,
+	                                              GDHandle aGDevice,
+	                                              GWorldFlags flags )
 	{
 		::GWorldPtr newWorld = NULL;
-		ThrowOSStatus
-		(
-			::NewGWorld( &newWorld, pixelDepth, &boundsRect, cTable, aGDevice, flags )
-		);
+		
+		ThrowOSStatus( ::NewGWorld( &newWorld,
+		                            pixelDepth,
+		                            &boundsRect,
+		                            cTable,
+		                            aGDevice,
+		                            flags ) );
+		
 		return Owned< GWorldPtr, GWorldDisposer >::Seize( newWorld );
 	}
 	
-	Owned< GWorldPtr, GWorldDisposer > NewGWorld
-	(
-		short pixelDepth, 
-		const Rect& boundsRect, 
-		GWorldFlags flags )
+	Owned< GWorldPtr, GWorldDisposer > NewGWorld( short pixelDepth,
+	                                              const Rect& boundsRect,
+	                                              GWorldFlags flags )
 	{
 		return NewGWorld( pixelDepth, boundsRect, NULL, NULL, flags );
 	}
@@ -35,32 +35,40 @@ namespace Nitrogen
 	void LockPixels( PixMapHandle pm )
 	{
 		bool locked = ::LockPixels( pm );
+		
 		if ( !locked )
 		{
 			throw LockPixels_Failed();
 		}
 	}
 	
-	GWorldFlags UpdateGWorld
-	(
-		Owned< GWorldPtr, GWorldDisposer >& offscreenGWorld, 
-		short pixelDepth, 
-		const Rect& boundsRect, 
-		CTabHandle cTable, 
-		GDHandle aGDevice, 
-		GWorldFlags flags)
+	GWorldFlags UpdateGWorld( Owned< GWorldPtr, GWorldDisposer >&  offscreenGWorld,
+	                          short                                pixelDepth,
+	                          const Rect&                          boundsRect,
+	                          CTabHandle                           cTable,
+	                          GDHandle                             aGDevice,
+	                          GWorldFlags                          flags )
 	{
 		::GWorldPtr gWorldPtr = offscreenGWorld.Get();
-		GWorldFlags result( ::UpdateGWorld( &gWorldPtr, pixelDepth, &boundsRect, cTable, aGDevice, flags ) );
-		if ( result & GWFlagErr() )
+		
+		GWorldFlags result( ::UpdateGWorld( &gWorldPtr,
+		                                    pixelDepth,
+		                                    &boundsRect,
+		                                    cTable,
+		                                    aGDevice,
+		                                    flags ) );
+		
+		if ( result.Get() & gwFlagErr )
 		{
 			ThrowOSStatus( ::QDError() );
 		}
+		
 		if ( gWorldPtr != offscreenGWorld.Get() )
 		{
 			offscreenGWorld.Release();
 			offscreenGWorld = Owned< GWorldPtr, GWorldDisposer >::Seize( gWorldPtr );
 		}
+		
 		return result;
 	}
 	
@@ -72,6 +80,7 @@ namespace Nitrogen
 		::GetGWorld( &port, &gdh );
 		
 		GWorld_State state;
+		
 		state.port = GWorldPtr( port );
 		state.gdh  = GDHandle( gdh );
 		
