@@ -19,6 +19,12 @@
 #include FRAMEWORK_HEADER(HIServices,Processes.h)
 #endif
 
+#if !TARGET_API_MAC_CARBON
+#ifndef __EPPC__
+#include <EPPC.h>
+#endif
+#endif
+
 #ifndef NITROGEN_SELECTORTYPE_H
 #include "Nitrogen/SelectorType.h"
 #endif
@@ -33,6 +39,9 @@
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
+#endif
+#ifndef NITROGEN_OWNED_H
+#include "Nitrogen/Owned.h"
 #endif
 
 #include <string>
