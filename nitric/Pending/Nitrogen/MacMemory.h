@@ -96,11 +96,7 @@ namespace Nitrogen
    
    void MemError();
    
-   Owned< Ptr > NewPtrSysClear( std::size_t size );
-   
    Owned<Handle> NewHandle( std::size_t size );
-   Owned< Handle > NewHandleSys( std::size_t size );
-   Owned< Handle > NewHandleSys( const unsigned char* str );
    
    template < class T >
    Owned< T**, Disposer<Handle> > NewHandle( std::size_t elementCount = 1 )
