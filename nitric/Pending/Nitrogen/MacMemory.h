@@ -111,6 +111,8 @@ namespace Nitrogen
         }
      };
    
+	template <>  struct OwnedDefaults< StringHandle > : OwnedDefaults< Handle >  {};
+	
 	template < class T >
 	T* Ptr_Cast( Ptr p )
 	{
@@ -155,27 +157,51 @@ namespace Nitrogen
 	Owned< Handle > NewHandleSysClear( std::size_t size );
 	
 	template < class T >
-	Owned< T**, Disposer< Handle > > NewHandle( std::size_t elementCount = 1 )
+	Owned< T**, Disposer< Handle > > NewHandle( std::size_t size )
 	{
-		return Handle_Cast< T >( Nitrogen::NewHandle( elementCount * sizeof (T) ) );
+		return Handle_Cast< T >( Nitrogen::NewHandle( size ) );
 	}
 	
 	template < class T >
-	Owned< T**, Disposer< Handle > > NewHandleSys( std::size_t elementCount = 1 )
+	Owned< T**, Disposer< Handle > > NewHandleSys( std::size_t size )
 	{
-		return Handle_Cast< T >( Nitrogen::NewHandleSys( elementCount * sizeof (T) ) );
+		return Handle_Cast< T >( Nitrogen::NewHandleSys( size ) );
 	}
 	
 	template < class T >
-	Owned< T**, Disposer< Handle > > NewHandleClear( std::size_t elementCount = 1 )
+	Owned< T**, Disposer< Handle > > NewHandleClear( std::size_t size )
 	{
-		return Handle_Cast< T >( Nitrogen::NewHandleClear( elementCount * sizeof (T) ) );
+		return Handle_Cast< T >( Nitrogen::NewHandleClear( size ) );
 	}
 	
 	template < class T >
-	Owned< T**, Disposer< Handle > > NewHandleSysClear( std::size_t elementCount = 1 )
+	Owned< T**, Disposer< Handle > > NewHandleSysClear( std::size_t size )
 	{
-		return Handle_Cast< T >( Nitrogen::NewHandleSysClear( elementCount * sizeof (T) ) );
+		return Handle_Cast< T >( Nitrogen::NewHandleSysClear( size ) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Handle > > NewHandleArray( std::size_t elementCount = 1 )
+	{
+		return NewHandle< T >( elementCount * sizeof (T) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Handle > > NewHandleArraySys( std::size_t elementCount = 1 )
+	{
+		return NewHandleSys< T >( elementCount * sizeof (T) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Handle > > NewHandleArrayClear( std::size_t elementCount = 1 )
+	{
+		return NewHandleClear< T >( elementCount * sizeof (T) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Handle > > NewHandleArraySysClear( std::size_t elementCount = 1 )
+	{
+		return NewHandleSysClear< T >( elementCount * sizeof (T) );
 	}
 	
 	// 539, 555, 572, 588
@@ -185,27 +211,51 @@ namespace Nitrogen
 	Owned< Ptr > NewPtrSysClear( std::size_t size );
 	
 	template < class T >
-	Owned< T**, Disposer< Ptr > > NewPtr( std::size_t elementCount = 1 )
+	Owned< T**, Disposer< Ptr > > NewPtr( std::size_t size )
 	{
-		return Ptr_Cast< T >( Nitrogen::NewPtr( elementCount * sizeof (T) ) );
+		return Ptr_Cast< T >( Nitrogen::NewPtr( size ) );
 	}
 	
 	template < class T >
-	Owned< T**, Disposer< Ptr > > NewPtrSys( std::size_t elementCount = 1 )
+	Owned< T**, Disposer< Ptr > > NewPtrSys( std::size_t size )
 	{
-		return Ptr_Cast< T >( Nitrogen::NewPtrSys( elementCount * sizeof (T) ) );
+		return Ptr_Cast< T >( Nitrogen::NewPtrSys( size ) );
 	}
 	
 	template < class T >
-	Owned< T**, Disposer< Ptr > > NewPtrClear( std::size_t elementCount = 1 )
+	Owned< T**, Disposer< Ptr > > NewPtrClear( std::size_t size )
 	{
-		return Ptr_Cast< T >( Nitrogen::NewPtrClear( elementCount * sizeof (T) ) );
+		return Ptr_Cast< T >( Nitrogen::NewPtrClear( size ) );
 	}
 	
 	template < class T >
-	Owned< T**, Disposer< Ptr > > NewPtrSysClear( std::size_t elementCount = 1 )
+	Owned< T**, Disposer< Ptr > > NewPtrSysClear( std::size_t size )
 	{
-		return Ptr_Cast< T >( Nitrogen::NewPtrSysClear( elementCount * sizeof (T) ) );
+		return Ptr_Cast< T >( Nitrogen::NewPtrSysClear( size ) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Ptr > > NewPtrArray( std::size_t elementCount = 1 )
+	{
+		return NewPtr< T >( elementCount * sizeof (T) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Ptr > > NewPtrArraySys( std::size_t elementCount = 1 )
+	{
+		return NewPtrSys< T >( elementCount * sizeof (T) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Ptr > > NewPtrArrayClear( std::size_t elementCount = 1 )
+	{
+		return NewPtrClear< T >( elementCount * sizeof (T) );
+	}
+	
+	template < class T >
+	Owned< T**, Disposer< Ptr > > NewPtrArraySysClear( std::size_t elementCount = 1 )
+	{
+		return NewPtrSysClear< T >( elementCount * sizeof (T) );
 	}
 	
 	
@@ -230,7 +280,7 @@ namespace Nitrogen
 	}
 	
 	template < class T >
-	inline void SetHandleSize( T** h, std::size_t elementCount )
+	inline void SetHandleArraySize( T** h, std::size_t elementCount )
 	{
 		Nitrogen::SetHandleSize( Handle( h ), elementCount * sizeof (T) );
 	}
@@ -244,7 +294,7 @@ namespace Nitrogen
 	}
 	
 	template < class T >
-	inline std::size_t GetHandleSize( T** h )
+	inline std::size_t GetHandleArraySize( T** h )
 	{
 		return Nitrogen::GetHandleSize( Handle( h ) ) / sizeof (T);
 	}
