@@ -115,6 +115,24 @@ namespace Nitrogen
 	
 	typedef Pseudoreference< GWorld_Details > GWorld;
 	
+	class PixelsState_Details
+	{
+		private:
+			PixMapHandle pm;
+		
+		public:
+			typedef GWorldFlags Value;
+			typedef Value GetResult;
+			typedef Value SetParameter;
+			
+			PixelsState_Details( PixMapHandle pm ) : pm( pm )  {}
+			
+			GetResult Get() const                        { return Nitrogen::GetPixelsState( pm ); }
+			void Set( SetParameter state ) const         { SetPixelsState( pm, state ); }
+	};
+	
+	typedef Pseudoreference< PixelsState_Details > PixelsState;
+	
 }
 
 #endif
