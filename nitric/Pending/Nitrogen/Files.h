@@ -762,30 +762,6 @@ namespace Nitrogen
    class HFSCatalogNodeIDTag {};
    typedef IDType< HFSCatalogNodeIDTag, UInt32, 0 > HFSCatalogNodeID;
 	
-	inline FSIOPermssn FSCurPerm   ()  { return FSIOPermssn::Make( fsCurPerm    ); }
-	inline FSIOPermssn FSRdPerm    ()  { return FSIOPermssn::Make( fsRdPerm     ); }
-	inline FSIOPermssn FSWrPerm    ()  { return FSIOPermssn::Make( fsWrPerm     ); }
-	inline FSIOPermssn FSRdWrPerm  ()  { return FSIOPermssn::Make( fsRdWrPerm   ); }
-	inline FSIOPermssn FSRdWrShPerm()  { return FSIOPermssn::Make( fsRdWrShPerm ); }
-	inline FSIOPermssn FSRdDenyPerm()  { return FSIOPermssn::Make( fsRdDenyPerm ); }
-	inline FSIOPermssn FSWrDenyPerm()  { return FSIOPermssn::Make( fsWrDenyPerm ); }
-	
-	inline FSDirID FSRtParID()  { return FSDirID( long( fsRtParID ) ); }
-	inline FSDirID FSRtDirID()  { return FSDirID( long( fsRtDirID ) ); }
-	
-	inline FSIOPosMode FSAtMark   ()  { return FSIOPosMode::Make( fsAtMark    ); }
-	inline FSIOPosMode FSFromStart()  { return FSIOPosMode::Make( fsFromStart ); }
-	inline FSIOPosMode FSFromLEOF ()  { return FSIOPosMode::Make( fsFromLEOF  ); }
-	inline FSIOPosMode FSFromMark ()  { return FSIOPosMode::Make( fsFromMark  ); }
-	
-	inline FSIOPosMode PleaseCacheMask()  { return FSIOPosMode::Make( pleaseCacheMask ); }
-	inline FSIOPosMode NoCacheMask    ()  { return FSIOPosMode::Make( noCacheMask     ); }
-	inline FSIOPosMode RdVerifyMask   ()  { return FSIOPosMode::Make( rdVerifyMask    ); }
-	inline FSIOPosMode RdVerify       ()  { return FSIOPosMode::Make( rdVerify        ); }
-	inline FSIOPosMode ForceReadMask  ()  { return FSIOPosMode::Make( forceReadMask   ); }
-	inline FSIOPosMode NewLineMask    ()  { return FSIOPosMode::Make( newLineMask     ); }
-	inline FSIOPosMode NewLineCharMask()  { return FSIOPosMode::Make( newLineCharMask ); }
-
    template <> struct Converter< Owned<CFStringRef>, HFSUniStr255 >: public std::unary_function< HFSUniStr255, Owned<CFStringRef> >
      {
       Owned<CFStringRef> operator()( const HFSUniStr255& in ) const
@@ -903,11 +879,6 @@ namespace Nitrogen
 		}
 	};
 	
-	inline FSDirSpec GetFileParent( const FSSpec& file )
-	{
-		return Make< FSDirSpec >( file.vRefNum, file.parID );
-	}
-	
 	// 2872
 	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock );
 	
@@ -921,32 +892,6 @@ namespace Nitrogen
 	                           UInt16            index,
 	                           CInfoPBRec&       paramBlock,
 	                           StringPtr         name        = NULL );
-	
-	inline bool TestIsDirectory( const CInfoPBRec& paramBlock )
-	{
-		return paramBlock.hFileInfo.ioFlAttrib & char( kioFlAttribDirMask );
-	}
-	
-	inline bool TestIsFile( const CInfoPBRec& paramBlock )
-	{
-		return !TestIsDirectory( paramBlock );
-	}
-	
-	bool TestFSItemExists( const FSSpec& item, CInfoPBRec& paramBlock );
-	
-	inline bool TestDirectoryExists( const FSSpec& file, CInfoPBRec& paramBlock )
-	{
-		return TestFSItemExists( file, paramBlock ) && TestIsDirectory( paramBlock );
-	}
-	
-	inline bool TestFileExists( const FSSpec& file, CInfoPBRec& paramBlock )
-	{
-		return TestFSItemExists( file, paramBlock ) && TestIsFile( paramBlock );
-	}
-	
-	inline bool TestFSItemExists   ( const FSSpec& item )  { CInfoPBRec pb;  return TestFSItemExists   ( item, pb ); }
-	inline bool TestDirectoryExists( const FSSpec& dir  )  { CInfoPBRec pb;  return TestDirectoryExists( dir,  pb ); }
-	inline bool TestFileExists     ( const FSSpec& file )  { CInfoPBRec pb;  return TestFileExists     ( file, pb ); }
 	
 	// 3690
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock );
@@ -980,32 +925,6 @@ namespace Nitrogen
 	{
 		FSDirSpec operator()( const FSSpec& dir ) const;
 	};
-	
-	inline FSDirSpec operator<<( const FSDirSpec& dir, ConstStr255Param name )
-	{
-		return Convert< FSDirSpec >( FSMakeFSSpec( dir, name ) );
-	}
-	
-	inline FSDirSpec operator<<( const FSDirSpec& dir, std::string name )
-	{
-		return dir << Str255( name );
-	}
-	
-	inline FSSpec operator&( const FSDirSpec& dir, const unsigned char* name )
-	{
-		FSSpec result;
-		OSErr err = ::FSMakeFSSpec( dir.vRefNum, dir.dirID, name, &result );
-		if ( err != OSErr( fnfErr ) )
-		{
-			ThrowOSStatus( err );
-		}
-		return result;
-	}
-	
-	inline FSSpec operator&( const FSDirSpec& dir, const std::string& name )
-	{
-		return dir & Str255( name );
-	}
 	
 	FSSpec FSMakeFSSpec( ConstStr255Param pathname );
 	
@@ -1380,7 +1299,7 @@ namespace Nitrogen
       void operator()( FSIterator iterator ) const
         {
          OnlyOnce<RegisterFileManagerErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
+         HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
         }
      };
 
@@ -1583,9 +1502,9 @@ namespace Nitrogen
       void operator()( const FSForkRef& fork ) const
         {
          OnlyOnce<RegisterFileManagerErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
-                                                                                      fork.Name().size(),
-                                                                                      fork.Name().data() ) );
+         HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
+                                                    fork.Name().size(),
+                                                    fork.Name().data() ) );
         }
      };
 
@@ -1640,7 +1559,7 @@ namespace Nitrogen
                                 ByteCount    requestCount,
                                 void *       buffer )
      {
-      return FSReadFork( fork, FSAtMark(), 0, requestCount, buffer );
+      return FSReadFork( fork, FSIOPosMode::Make( fsAtMark ), 0, requestCount, buffer );
      }
 
    template < class Element, std::size_t count >
@@ -1669,7 +1588,7 @@ namespace Nitrogen
                                  ByteCount    requestCount,
                                  const void * buffer )
      {
-      return FSWriteFork( fork, FSAtMark(), 0, requestCount, buffer );
+      return FSWriteFork( fork, FSIOPosMode::Make( fsAtMark ), 0, requestCount, buffer );
      }
 
    template < class Element, std::size_t count >

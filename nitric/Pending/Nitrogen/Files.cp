@@ -186,21 +186,9 @@ namespace Nitrogen
 		
 	}
 	
-	// You aren't gonna need it.  (Unless you are.)
-	//static bool TestIsDirectory( const FSSpec& item );
-	
-	bool TestFSItemExists( const FSSpec& item, CInfoPBRec& paramBlock )
+	inline bool TestIsDirectory( const CInfoPBRec& paramBlock )
 	{
-		try
-		{
-			FSpGetCatInfo( item, paramBlock );
-		}
-		catch ( FNFErr )
-		{
-			return false;
-		}
-		
-		return true;
+		return paramBlock.hFileInfo.ioFlAttrib & char( kioFlAttribDirMask );
 	}
 	
 	FSDirSpec Converter< FSDirSpec, FSSpec >::operator()( const FSSpec& dir ) const
@@ -304,7 +292,7 @@ namespace Nitrogen
 	}
 	
 	Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
-	                               FSIOPermssn     permissions )
+	                                 FSIOPermssn     permissions )
 	{
 		OnlyOnce< RegisterFileManagerErrors >();
 		
@@ -314,7 +302,7 @@ namespace Nitrogen
 	}
 	
 	Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
-	                               FSIOPermssn     permissions )
+	                                 FSIOPermssn     permissions )
 	{
 		OnlyOnce< RegisterFileManagerErrors >();
 		
