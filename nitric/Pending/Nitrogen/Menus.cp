@@ -21,7 +21,7 @@ namespace Nitrogen
       MenuFont result;
       SInt16 fontID;
       ThrowOSStatus( ::GetMenuFont( menu, &fontID, &result.fontSize ) );
-      result.fontID = fontID;
+      result.fontID = FontID( fontID );
       return result;
      }
 
