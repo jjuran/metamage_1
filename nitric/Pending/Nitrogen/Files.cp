@@ -15,6 +15,211 @@
 namespace Nitrogen
   {
 	
+	void FSClose( Owned< FSFileRefNum > fileRefNum )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSClose( fileRefNum.Release() ) );
+	}
+	
+	SInt32 FSRead( FSFileRefNum file,
+	               SInt32       requestCount,
+	               void *       buffer )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 actualCount = requestCount;
+		ThrowOSStatus( ::FSRead( file,
+	                             &actualCount,
+	                             buffer ) );
+		return actualCount;
+	}
+	
+	SInt32 FSWrite( FSFileRefNum file,
+	                SInt32       requestCount,
+	                const void * buffer )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 actualCount = requestCount;
+		ThrowOSStatus( ::FSWrite( file,
+	                             &actualCount,
+	                             buffer ) );
+		return actualCount;
+	}
+	
+	SInt32 Allocate( FSFileRefNum      fileRefNum,
+	                 SInt32            requestCount )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 actualCount = requestCount;
+		ThrowOSStatus( ::Allocate( fileRefNum,
+	                              &actualCount ) );
+		return actualCount;
+	}
+	
+	SInt32 GetEOF( FSFileRefNum fileRefNum )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 position;
+		ThrowOSStatus( ::GetEOF( fileRefNum, &position ) );
+		return position;
+	}
+	
+	void SetEOF( FSFileRefNum fileRefNum,
+	             SInt32       positionOffset )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::SetEOF( fileRefNum, positionOffset ) );
+	}
+	
+	SInt32 GetFPos( FSFileRefNum fileRefNum )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 position;
+		ThrowOSStatus( ::GetFPos( fileRefNum, &position ) );
+		return position;
+	}
+	
+	void SetFPos( FSFileRefNum  fileRefNum,
+	              FSIOPosMode   positionMode,
+	              SInt32        positionOffset )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::SetFPos( fileRefNum, positionMode.Get(), positionOffset ) );
+	}
+	
+	void PBGetCatInfoSync( CInfoPBRec& paramBlock )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBGetCatInfoSync( &paramBlock ) );
+	}
+	
+	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock )
+	{
+		DirInfo& dirInfo = paramBlock.dirInfo;
+		
+		// There is/was a file sharing problem with null or empty names,
+		// but an FSSpec's name is never empty (and can't be null).
+		dirInfo.ioNamePtr = const_cast< StringPtr >( item.name );
+		dirInfo.ioVRefNum = item.vRefNum;
+		dirInfo.ioDrDirID = item.parID;
+		// use ioNamePtr and ioDirID
+		dirInfo.ioFDirIndex = 0;
+		
+		PBGetCatInfoSync( paramBlock );
+		
+		// Don't break the const contract on item.name
+		dirInfo.ioNamePtr = NULL;
+		
+		return paramBlock;
+	}
+	
+	// You aren't gonna need it.  (Unless you are.)
+	//static bool TestIsDirectory( const FSSpec& item );
+	
+	bool TestFSItemExists( const FSSpec& item, CInfoPBRec& paramBlock )
+	{
+		try
+		{
+			FSpGetCatInfo( item, paramBlock );
+		}
+		catch ( FNFErr )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	FSDirSpec Converter< FSDirSpec, FSSpec >::operator()( const FSSpec& dir ) const
+	{
+		CInfoPBRec pb;
+		FSpGetCatInfo( dir, pb );
+		
+		if ( !TestIsDirectory( pb ) )
+		{
+			// I wanted a dir but you gave me a file.  You creep.
+			throw ErrFSNotAFolder();
+		}
+		
+		FSDirID dirID = FSDirID( pb.dirInfo.ioDrDirID );
+		
+		return Make< FSDirSpec >( dir.vRefNum, dirID );
+	}
+	
+	void PBHGetVolParmsSync( HParamBlockRec& paramBlock )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBHGetVolParmsSync( &paramBlock ) );
+	}
+	
+	GetVolParmsInfoBuffer PBHGetVolParmsSync( FSVolumeRefNum vRefNum )
+	{
+		HParamBlockRec pb;
+		GetVolParmsInfoBuffer info;
+		
+		pb.ioParam.ioNamePtr  = NULL;
+		pb.ioParam.ioVRefNum  = vRefNum;
+		pb.ioParam.ioBuffer   = reinterpret_cast< ::Ptr >( &info );
+		pb.ioParam.ioReqCount = sizeof info;
+		
+		PBHGetVolParmsSync( pb );
+		
+		return info;
+	}
+	
+	void PBDTGetPath( DTPBRec& pb )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBDTGetPath( &pb ) );
+	}
+	
+	void PBDTGetAPPLSync( DTPBRec& pb )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		try
+		{
+			ThrowOSStatus( ::PBDTGetAPPLSync( &pb ) );
+		}
+		catch ( FNFErr )
+		{
+			// PBDTGetAPPLSync() is documented as returning afpItemNotFound, but not fnfErr.
+			// We compensate for the bug here.
+			// If this is actually a documentation bug, then this block should be removed
+			// (although the comments should be left for posterity).
+			throw AFPItemNotFound();
+		}
+	}
+	
+	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum )
+	{
+		DTPBRec pb;
+		
+		pb.ioVRefNum = vRefNum;
+		pb.ioNamePtr = NULL;
+		
+		PBDTGetPath( pb );
+		
+		Str255 name;  // Stack space is free
+		pb.ioIndex       = 0;
+		pb.ioFileCreator = signature;
+		pb.ioNamePtr     = name;
+		
+		PBDTGetAPPLSync( pb );
+		
+		return FSMakeFSSpec( vRefNum, FSDirID( pb.ioAPPLParID ), name );
+	}
+	
 	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name)
 	{
 		OnlyOnce< RegisterFileManagerErrors >();
@@ -24,6 +229,74 @@ namespace Nitrogen
 		ThrowOSStatus( ::FSMakeFSSpec( vRefNum, dirID, name, &result ) );
 		
 		return result;
+	}
+	
+	// The cheap and easy way to do it.  This will throw if the pathname exceeds 255 characters.
+	// It might be nice to have a backup method for when this one fails.
+	FSSpec FSMakeFSSpec( ConstStr255Param pathname )
+	{
+		return FSMakeFSSpec( FSVolumeRefNum(), FSDirID(), pathname );
+	}
+	
+	Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
+	                               FSIOPermssn     permissions )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt16 result;
+		ThrowOSStatus( ::FSpOpenDF( &spec, permissions, &result ) );
+		return Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
+	}
+	
+	Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
+	                               FSIOPermssn     permissions )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt16 result;
+		ThrowOSStatus( ::FSpOpenRF( &spec, permissions, &result ) );
+		return Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
+	}
+	
+	FSSpec FSpCreate( const FSSpec& file, OSType creator, OSType type, ScriptCode scriptTag )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpCreate( &file, creator, type, scriptTag ) );
+		return file;
+	}
+	
+	FSDirSpec FSpDirCreate( const FSSpec& dir, ScriptCode scriptTag )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 newDirID;
+		ThrowOSStatus( ::FSpDirCreate( &dir, scriptTag, &newDirID ) );
+		
+		return Make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), FSDirID( newDirID ) );
+	}
+	
+	void FSpDelete( const FSSpec& item )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpDelete( &item ) );
+	}
+	
+	FInfo FSpGetFInfo( const FSSpec& file )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		FInfo info;
+		ThrowOSStatus( ::FSpGetFInfo( &file, &info ) );
+		return info;
+	}
+	
+	void FSpCatMove( const FSSpec& source, const FSSpec& dest )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpCatMove( &source, &dest ) );
 	}
 	
    FSRef FSpMakeFSRef( const FSSpec& spec )
@@ -146,7 +419,7 @@ namespace Nitrogen
                                                  &result.fsRef,
                                                  &result.fsSpec,
                                                  &dirID ) );
-      result.dirID = dirID;
+      result.dirID = FSDirID( dirID );
       return Owned<FSRefSpecDirID>::Seize( result );
      }
 
@@ -165,7 +438,7 @@ namespace Nitrogen
                                                  &result.fsRef,
                                                  &result.fsSpec,
                                                  &dirID ) );
-      result.dirID = dirID;
+      result.dirID = FSDirID( dirID );
       return Owned<FSRefSpecDirID>::Seize( result );
      }
 
