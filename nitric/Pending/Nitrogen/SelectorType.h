@@ -194,10 +194,10 @@ namespace Nitrogen
          static SelectorType Make( UnderlyingType v )                { return SelectorType( v ); }
          UnderlyingType Get() const                                  { return value; }
          
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
+         
          friend bool operator==( SelectorType a, SelectorType b )    { return a.Get() == b.Get(); }
          friend bool operator!=( SelectorType a, SelectorType b )    { return a.Get() != b.Get(); }
-      
-      #ifndef JOSHUA_JURAN_EXPERIMENTAL
       
          SelectorType( typename Blacklist<          bool      >::ConstructionAllowed v ) : value( static_cast<UnderlyingType>( v ) )  {}
          SelectorType( typename Blacklist<          char      >::ConstructionAllowed v ) : value( static_cast<UnderlyingType>( v ) )  {}
