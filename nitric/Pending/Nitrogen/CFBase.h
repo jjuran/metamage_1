@@ -106,7 +106,7 @@ namespace Nitrogen
 
    inline CFTypeID CFGetTypeID( CFTypeRef cf )
      {
-      return ::CFGetTypeID( cf );
+      return CFTypeID( ::CFGetTypeID( cf ) );
      }
 
    inline Owned<CFStringRef> CFCopyTypeIDDescription( CFTypeID cf )
@@ -137,7 +137,7 @@ namespace Nitrogen
 
    inline CFHashCode CFHash( CFTypeRef cf )
      {
-      return ::CFHash( cf );
+      return CFHashCode( ::CFHash( cf ) );
      }
 
    inline Owned<CFStringRef> CFCopyDescription( CFTypeRef cf )
