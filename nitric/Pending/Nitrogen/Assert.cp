@@ -15,7 +15,7 @@ namespace Nitrogen
 	{
 		if ( !condition )
 		{
-			std::fprintf( std::stderr,
+			std::fprintf( stderr,
 			              "Assertion '%s' failed in %s, line %d\n",
 			              text,
 			              file,
