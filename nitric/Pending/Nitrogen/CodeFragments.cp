@@ -4,36 +4,44 @@
 #include "Nitrogen/CodeFragments.h"
 #endif
 
-namespace
+#ifndef NITROGEN_MACERRORS_H
+#include "Nitrogen/MacErrors.h"
+#endif
+#ifndef NITROGEN_OSSTATUS_H
+#include "Nitrogen/OSStatus.h"
+#endif
+
+namespace Nitrogen
 {
 
 	void RegisterCodeFragmentManagerErrors()
 	{
-		RegisterOSStatus< paramErr                 >();
-		RegisterOSStatus< fragContextNotFound      >();
-		RegisterOSStatus< fragConnectionIDNotFound >();
-		RegisterOSStatus< fragSymbolNotFound       >();
-		RegisterOSStatus< fragSectionNotFound      >();
-		RegisterOSStatus< fragLibNotFound          >();
-		RegisterOSStatus< fragDupRegLibName        >();
-		RegisterOSStatus< fragFormatUnknown        >();
-		RegisterOSStatus< fragHadUnresolveds       >();
-		RegisterOSStatus< fragNoMem                >();
-		RegisterOSStatus< fragNoAddrSpace          >();
-		RegisterOSStatus< fragNoContextIDs         >();
-		RegisterOSStatus< fragObjectInitSeqErr     >();
-		RegisterOSStatus< fragImportTooOld         >();
-		RegisterOSStatus< fragImportTooNew         >();
-		RegisterOSStatus< fragInitLoop             >();
-		RegisterOSStatus< fragInitRtnUsageErr      >();
-		RegisterOSStatus< fragLibConnErr           >();
-		RegisterOSStatus< fragMgrInitErr           >();
-		RegisterOSStatus< fragConstErr             >();
-		RegisterOSStatus< fragCorruptErr           >();
-		RegisterOSStatus< fragUserInitProcErr      >();
-		RegisterOSStatus< fragAppNotFound          >();
-		RegisterOSStatus< fragArchErr              >();
-		RegisterOSStatus< fragInvalidFragmentUsage >();
+		RegisterOSStatus< paramErr                >();
+		RegisterOSStatus< cfragContextIDErr       >();
+		RegisterOSStatus< cfragConnectionIDErr    >();
+		RegisterOSStatus< cfragNoSymbolErr        >();
+		RegisterOSStatus< cfragNoSectionErr       >();
+		RegisterOSStatus< cfragNoLibraryErr       >();
+		RegisterOSStatus< cfragDupRegistrationErr >();
+		RegisterOSStatus< cfragFragmentFormatErr  >();
+		RegisterOSStatus< cfragUnresolvedErr      >();
+		RegisterOSStatus< cfragNoPrivateMemErr    >();
+		RegisterOSStatus< cfragNoClientMemErr     >();
+		RegisterOSStatus< cfragNoIDsErr           >();
+		RegisterOSStatus< cfragInitOrderErr       >();
+		RegisterOSStatus< cfragImportTooOldErr    >();
+		RegisterOSStatus< cfragImportTooNewErr    >();
+		RegisterOSStatus< cfragInitLoopErr        >();
+		RegisterOSStatus< cfragInitAtBootErr      >();
+		RegisterOSStatus< cfragLibConnErr         >();
+		RegisterOSStatus< cfragCFMStartupErr      >();
+		RegisterOSStatus< cfragCFMInternalErr     >();
+		RegisterOSStatus< cfragFragmentCorruptErr >();
+		RegisterOSStatus< cfragInitFunctionErr    >();
+		RegisterOSStatus< cfragNoApplicationErr   >();
+		RegisterOSStatus< cfragArchitectureErr    >();
+		RegisterOSStatus< cfragFragmentUsageErr   >();
+		RegisterOSStatus< cfragLastErrCode        >();
 	}
 	
 }
