@@ -990,6 +990,22 @@ namespace Nitrogen
 		return dir << Str255( name );
 	}
 	
+	inline FSSpec operator&( const FSDirSpec& dir, const unsigned char* name )
+	{
+		FSSpec result;
+		OSErr err = ::FSMakeFSSpec( dir.vRefNum, dir.dirID, name, &result );
+		if ( err != fnfErr )
+		{
+			ThrowOSStatus( err );
+		}
+		return result;
+	}
+	
+	inline FSSpec operator&( const FSDirSpec& dir, const std::string& name )
+	{
+		return dir & Str255( name );
+	}
+	
 	FSSpec FSMakeFSSpec( ConstStr255Param pathname );
 	
 	// 4633
