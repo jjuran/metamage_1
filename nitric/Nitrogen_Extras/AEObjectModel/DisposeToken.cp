@@ -7,14 +7,14 @@
 #include "AEObjectModel/DisposeToken.h"
 #endif
 
-// Nitrogen
-#ifndef NITROGEN_POINTERTOFUNCTION_H
-#include "Nitrogen/PointerToFunction.h"
-#endif
-
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_H
 #include "Iteration/AEDescListItems.h"
+#endif
+
+// Nitrogen Extras / Templates
+#ifndef TEMPLATES_POINTERTOFUNCTION_H
+#include "Templates/PointerToFunction.h"
 #endif
 
 

@@ -11,9 +11,6 @@
 #ifndef NITROGEN_ASREGISTRY_H
 #include "Nitrogen/ASRegistry.h"
 #endif
-#ifndef NITROGEN_TRAPPEDFUNCTION_H
-#include "Nitrogen/TrappedFunction.h"
-#endif
 
 // Nitrogen Extras / AEObjectModel
 #ifndef AEOBJECTMODEL_ACCESSPROPERTY_H
@@ -32,6 +29,11 @@
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_H
 #include "Iteration/AEDescListItems.h"
+#endif
+
+// Nitrogen Extras / Templates
+#ifndef TEMPLATES_POINTERTOFUNCTION_H
+#include "Templates/TrappingFunction.h"
 #endif
 
 
