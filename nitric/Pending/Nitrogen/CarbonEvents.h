@@ -209,8 +209,9 @@ namespace Nitrogen
    class EventClassTag {};
    typedef SelectorType< EventClassTag, ::UInt32 > EventClass;    // Doesn't exist in Carbon
 
-   class EventKindTag {};
-   typedef SelectorType< EventClassTag, ::UInt32 > EventKind;    // Doesn't exist in Carbon
+   // FIXME:  Move to Events.h
+   class EventKind_Tag {};
+   typedef SelectorType< EventKind_Tag, ::EventKind, nullEvent > EventKind;
    
    using ::EventTypeSpec;
 
