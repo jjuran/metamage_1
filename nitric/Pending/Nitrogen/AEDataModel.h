@@ -421,49 +421,51 @@ namespace Nitrogen
 	
 	void RegisterAppleEventManagerErrors();
 	
-	Owned<AEDesc> AECoercePtr(DescType typeCode, const void* dataPtr, Size dataSize, DescType toType);
+	Owned< AEDesc > AECoercePtr(DescType typeCode, const void* dataPtr, Size dataSize, DescType toType);
 	
-	Owned<AEDesc> AECoerceDesc(const AEDesc& desc, DescType toType);
+	Owned< AEDesc > AECoerceDesc(const AEDesc& desc, DescType toType);
 	
 	inline AEDesc AEInitializeDesc()
 	{
 		return Make< AEDesc >();
 	}
 	
-	Owned<AEDesc> AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize);
-	Owned<AEDesc> AECreateDesc(DescType typeCode, ::Handle handle);
-	Owned<AEDesc> AECreateDesc(DescType typeCode, Owned< Handle > handle);
+	Owned< AEDesc > AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize);
+	Owned< AEDesc > AECreateDesc(DescType typeCode, ::Handle handle);
+	Owned< AEDesc > AECreateDesc(DescType typeCode, Owned< Handle > handle);
 	
-	Owned<AEDesc> AECreateDesc(DescType typeCode, Owned< AEDesc > desc);
+	Owned< AEDesc > AECreateDesc(DescType typeCode, Owned< AEDesc > desc);
 	
-	template <class Data>
-	Owned<AEDesc> AECreateDesc(DescType typeCode, Data** handle)
+	template < class Data >
+	Owned< AEDesc > AECreateDesc(DescType typeCode, Data** handle)
 	{
 		return AECreateDesc( typeCode, reinterpret_cast< ::Handle >( handle ) );
 	}
 	
 	
-	inline void AEDisposeDesc( Owned<AEDesc> )  {}
+	inline void AEDisposeDesc( Owned< AEDesc > )  {}
 	
-	Owned<AEDesc> AEDuplicateDesc( const AEDesc& desc );
+	Owned< AEDesc > AEDuplicateDesc( const AEDesc& desc );
 	
-	Owned<AEDesc> AECreateList(bool isRecord);
-	Owned<AEDesc> AECreateList(const void* factoringPtr, std::size_t factoredSize, bool isRecord);
+	Owned< AEDesc > AECreateList(bool isRecord);
+	Owned< AEDesc > AECreateList(const void* factoringPtr, std::size_t factoredSize, bool isRecord);
 	
-	template <bool isRecord>
-	Owned<AEDesc> AECreateList()  { return AECreateList( isRecord ); }
+	template < bool isRecord >
+	Owned< AEDesc > AECreateList()  { return AECreateList( isRecord ); }
 	
-	template <bool isRecord>
-	Owned<AEDesc> AECreateList(DescType typeCode)
+	template < bool isRecord >
+	Owned< AEDesc > AECreateList(DescType typeCode)
 	{
-		return AECreateDesc( typeCode, AECreateList<isRecord>() );
+		return AECreateDesc( typeCode, AECreateList< isRecord >() );
 	}
 	
 	long AECountItems(const AEDesc& desc);
 	
-	void AEPutPtr(Owned<AEDescList>& list, long index, DescType type, const void* dataPtr, Size dataSize);
+	void AEPutPtr(        AEDescList  & list, long index, DescType type, const void* dataPtr, Size dataSize);
+	void AEPutPtr( Owned< AEDescList >& list, long index, DescType type, const void* dataPtr, Size dataSize);
 	
-	void AEPutDesc(Owned<AEDescList>& list, long index, const AEDesc& desc);
+	void AEPutDesc(        AEDescList  & list, long index, const AEDesc& desc );
+	void AEPutDesc( Owned< AEDescList >& list, long index, const AEDesc& desc );
 	
 	GetNthPtr_Result AEGetNthPtr(
 		const AEDesc& listDesc, 
@@ -473,14 +475,14 @@ namespace Nitrogen
 		Size maximumSize
 	);
 	
-	Owned<AEDesc> AEGetNthDesc(
+	Owned< AEDesc > AEGetNthDesc(
 		const AEDesc& listDesc, 
 		long index, 
 		DescType desiredType = typeWildCard, 
 		::AEKeyword* keyword = NULL
 	);
 	
-	Owned<AEDesc> AEGetNthDesc(
+	Owned< AEDesc > AEGetNthDesc(
 		const AEDesc& listDesc, 
 		long index, 
 		::AEKeyword* keyword
@@ -488,7 +490,8 @@ namespace Nitrogen
 	
 	Size AESizeOfNthItem(const AEDescList& list, long index);
 	
-	void AEDeleteItem( AEDesc& listDesc, long index );
+	void AEDeleteItem(        AEDescList  & listDesc, long index );
+	void AEDeleteItem( Owned< AEDescList >& listDesc, long index );
 	
 	inline bool AECheckIsRecord( const AEDesc& theDesc )
 	{
@@ -496,7 +499,15 @@ namespace Nitrogen
 	}
 	
 	void AEPutKeyPtr(
-		Owned<AERecord>& record, 
+		AERecord& record, 
+		AEKeyword keyword, 
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize
+	);
+	
+	void AEPutKeyPtr(
+		Owned< AERecord >& record, 
 		AEKeyword keyword, 
 		DescType typeCode, 
 		const void* dataPtr, 
@@ -504,7 +515,13 @@ namespace Nitrogen
 	);
 	
 	void AEPutKeyDesc(
-		Owned<AERecord>& record, 
+		AERecord& record, 
+		AEKeyword keyword, 
+		const AEDesc& desc
+	);
+	
+	void AEPutKeyDesc(
+		Owned< AERecord >& record, 
 		AEKeyword keyword, 
 		const AEDesc& desc
 	);
@@ -517,7 +534,7 @@ namespace Nitrogen
 		std::size_t maximumSize
 	);
 	
-	Owned<AEDesc> AEGetKeyDesc(
+	Owned< AEDesc > AEGetKeyDesc(
 		const AERecord& record, 
 		AEKeyword keyword, 
 		DescType desiredType
@@ -528,12 +545,10 @@ namespace Nitrogen
 		AEKeyword keyword
 	);
 	
-	void AEDeleteKeyDesc(
-		Owned<AERecord>& record, 
-		AEKeyword keyword
-	);
+	void AEDeleteKeyDesc(        AERecord  & record, AEKeyword keyword );
+	void AEDeleteKeyDesc( Owned< AERecord >& record, AEKeyword keyword );
 	
-	Owned<AppleEvent> AECreateAppleEvent(
+	Owned< AppleEvent > AECreateAppleEvent(
 		AEEventClass eventClass, 
 		AEEventID eventID, 
 		const AEAddressDesc& target, 
@@ -542,18 +557,23 @@ namespace Nitrogen
 	);
 	
 	void AEPutParamPtr(
-		Owned<AppleEvent>& appleEvent, 
+		AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		DescType typeCode, 
 		const void* dataPtr, 
 		std::size_t dataSize
 	);
 	
-	void AEPutParamDesc(
-		Owned<AppleEvent>& appleEvent, 
+	void AEPutParamPtr(
+		Owned< AppleEvent >& appleEvent, 
 		AEKeyword keyword, 
-		const AEDesc& desc
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize
 	);
+	
+	void AEPutParamDesc(        AppleEvent  & appleEvent, AEKeyword keyword, const AEDesc& desc );
+	void AEPutParamDesc( Owned< AppleEvent >& appleEvent, AEKeyword keyword, const AEDesc& desc );
 	
 	AEGetParamPtr_Result AEGetParamPtr(
 		const AppleEvent& appleEvent, 
@@ -563,7 +583,7 @@ namespace Nitrogen
 		std::size_t maximumSize
 	);
 	
-	Owned<AEDesc> AEGetParamDesc(
+	Owned< AEDesc > AEGetParamDesc(
 		const AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		DescType desiredType
@@ -574,13 +594,19 @@ namespace Nitrogen
 		AEKeyword keyword
 	);
 	
-	void AEDeleteParam(
-		Owned<AppleEvent>& appleEvent, 
-		AEKeyword keyword
+	void AEDeleteParam(        AppleEvent  & appleEvent, AEKeyword keyword );
+	void AEDeleteParam( Owned< AppleEvent >& appleEvent, AEKeyword keyword );
+	
+	void AEPutAttributePtr(
+		AppleEvent& appleEvent, 
+		AEKeyword keyword, 
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize
 	);
 	
 	void AEPutAttributePtr(
-		Owned<AppleEvent>& appleEvent, 
+		Owned< AppleEvent >& appleEvent, 
 		AEKeyword keyword, 
 		DescType typeCode, 
 		const void* dataPtr, 
@@ -588,7 +614,13 @@ namespace Nitrogen
 	);
 	
 	void AEPutAttributeDesc(
-		Owned<AppleEvent>& appleEvent, 
+		AppleEvent& appleEvent, 
+		AEKeyword keyword, 
+		const AEDesc& desc
+	);
+	
+	void AEPutAttributeDesc(
+		Owned< AppleEvent >& appleEvent, 
 		AEKeyword keyword, 
 		const AEDesc& desc
 	);
@@ -601,7 +633,7 @@ namespace Nitrogen
 		std::size_t maximumSize
 	);
 	
-	Owned<AEDesc> AEGetAttributeDesc(
+	Owned< AEDesc > AEGetAttributeDesc(
 		const AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		DescType desiredType
@@ -625,16 +657,23 @@ namespace Nitrogen
 		std::size_t dataSize, 
 		AEDesc& result
 	);
-
+	
+	void AEReplaceDescData(
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize, 
+		Owned< AEDesc >& result
+	);
+	
 	
 	template < ::DescType type >
-	Owned<AEDesc> AECoercePtr(typename DescType_Traits< type >::Parameter data, DescType toType)
+	Owned< AEDesc > AECoercePtr(typename DescType_Traits< type >::Parameter data, DescType toType)
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		Owned<AEDesc> result = AECoercePtr(
+		Owned< AEDesc > result = AECoercePtr(
 			type, 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer ), 
@@ -647,13 +686,13 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	Owned<AEDesc> AECreateDesc(typename DescType_Traits< type >::Parameter data)
+	Owned< AEDesc > AECreateDesc(typename DescType_Traits< type >::Parameter data)
 	{
 		typedef DescType_Traits< type > Traits;
 		
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
-		Owned<AEDesc> desc = AECreateDesc(
+		Owned< AEDesc > desc = AECreateDesc(
 			type, 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
@@ -711,7 +750,7 @@ namespace Nitrogen
 	
 	template < ::DescType type >
 	void AEPutKeyPtr(
-		Owned<AERecord>& record, 
+		Owned< AERecord >& record, 
 		AEKeyword keyword, 
 		typename DescType_Traits< type >::Parameter data)
 	{
@@ -756,7 +795,7 @@ namespace Nitrogen
 	
 	template < ::DescType type >
 	void AEPutParamPtr(
-		Owned<AppleEvent>& appleEvent, 
+		Owned< AppleEvent >& appleEvent, 
 		AEKeyword keyword, 
 		typename DescType_Traits< type >::Parameter data)
 	{
@@ -801,7 +840,7 @@ namespace Nitrogen
 	
 	template < ::DescType type >
 	void AEPutAttributePtr(
-		Owned<AppleEvent>& appleEvent, 
+		Owned< AppleEvent >& appleEvent, 
 		AEKeyword keyword, 
 		typename DescType_Traits< type >::Parameter data)
 	{
@@ -864,7 +903,7 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
-	void AEReplaceDescData(typename DescType_Traits< type >::Parameter data, AEDesc& result)
+	void AEReplaceDescData(typename DescType_Traits< type >::Parameter data, Owned< AEDesc >& result)
 	{
 		typedef DescType_Traits< type > Traits;
 		
@@ -892,12 +931,12 @@ namespace Nitrogen
    
    using ::AEEventHandlerProcPtr;
    
-   inline Owned<AEEventHandlerUPP> NewAEEventHandlerUPP( AEEventHandlerProcPtr p )
+   inline Owned< AEEventHandlerUPP > NewAEEventHandlerUPP( AEEventHandlerProcPtr p )
      {
-      return NewUPP<AEEventHandlerUPP>( p );
+      return NewUPP< AEEventHandlerUPP >( p );
      }
 
-   inline void DisposeAEEventHandlerUPP( Owned<AEEventHandlerUPP> )
+   inline void DisposeAEEventHandlerUPP( Owned< AEEventHandlerUPP > )
      {
      }
    
