@@ -42,6 +42,19 @@ namespace Nitrogen
 	};
 	typedef GWorld_State GetGWorld_Result;
 	
+	template <>
+	struct Maker< GWorld_State >
+	{
+		GWorld_State operator()( GWorldPtr port, GDHandle gdh = NULL ) const
+		{
+			GWorld_State result;
+			result.port = port;
+			result.gdh  = gdh;
+			return result;
+		}
+	};
+	
+	
 	struct GWorldDisposer : public std::unary_function< GWorldPtr, void >
 	{
 		void operator()( GWorldPtr gWorld ) const
