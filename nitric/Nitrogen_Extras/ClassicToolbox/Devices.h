@@ -7,8 +7,10 @@
 #define CLASSICTOOLBOX_DEVICES_H
 
 // Universal Interfaces
+#ifndef __MACH__
 #ifndef __DEVICES__
 #include <Devices.h>
+#endif
 #endif
 
 // Nitrogen
@@ -24,6 +26,8 @@ namespace Nitrogen
 {
 	
 	void RegisterDeviceManagerErrors();
+	
+#if CALL_NOT_IN_CARBON
 	
 	struct ControlStatusCode_Tag  {};
 	typedef SelectorType< ControlStatusCode_Tag, short, 0 > ControlStatusCode;
@@ -88,13 +92,19 @@ namespace Nitrogen
 	int Read ( DriverRefNum driverRefNum,       char* data, std::size_t byteCount );
 	int Write( DriverRefNum driverRefNum, const char* data, std::size_t byteCount );
 	
+#endif
+	
 }
 
 namespace Io
 {
 	
+#if CALL_NOT_IN_CARBON
+	
 	using Nitrogen::Read;
 	using Nitrogen::Write;
+	
+#endif
 	
 }
 

@@ -7,8 +7,10 @@
 #define CLASSICTOOLBOX_SERIAL_H
 
 // Universal Interfaces
+#ifndef __MACH__
 #ifndef __SERIAL__
 #include <Serial.h>
+#endif
 #endif
 
 // Nitrogen Extras / ClassicToolbox
@@ -21,6 +23,8 @@ namespace Nitrogen
 {
 	
 	void RegisterSerialDriverErrors();
+	
+#if CALL_NOT_IN_CARBON
 	
 	struct SerConfig_Tag  {};
 	typedef FlagType< SerConfig_Tag, short > SerConfig;
@@ -114,13 +118,19 @@ namespace Nitrogen
 	
 	void Close_SerialDevice( Owned< SerialDeviceRef > serialDevice );
 	
+#endif
+	
 }
 
 namespace Io
 {
 	
+#if CALL_NOT_IN_CARBON
+	
 	using Nitrogen::Read;
 	using Nitrogen::Write;
+	
+#endif
 	
 }
 
