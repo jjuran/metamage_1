@@ -3,7 +3,14 @@
 #ifndef NITROGEN_INDEXUNTILFAILURECONTAINER_H
 #define NITROGEN_INDEXUNTILFAILURECONTAINER_H
 
+// Standard C++
 #include <iterator>
+
+// Nitrogen Core
+#ifndef NITROGEN_TRANSFERTRAITS_H
+#include "Nitrogen/TransferTraits.h"
+#endif
+
 
 namespace Nitrogen
   {
@@ -22,7 +29,13 @@ namespace Nitrogen
          typedef value_type& reference;
          typedef const value_type& const_reference;
          
-         class const_iterator: private Specifics
+         class const_iterator:
+         #if defined(__MWERKS__) && __MWERKS__ == 0x2401
+            // CW Pro 6 apparently doesn't trust friends
+            public Specifics
+         #else
+            private Specifics
+         #endif
            {
             friend class IndexUntilFailureContainer;
  
@@ -32,11 +45,52 @@ namespace Nitrogen
                typedef const value_type *pointer;
                typedef const value_type& reference;
                typedef std::forward_iterator_tag iterator_category;
+				
+				friend struct Transfer;  // CW Pro 6 ignores this
+				
+				struct Transfer : private Specifics
+				{
+					friend class const_iterator;
+					
+					size_type                                         position;
+					typename Transfer_Traits< value_type >::Transfer  value;
+					
+					explicit Transfer( const_iterator v )
+					:
+						Specifics( v          ),
+						position ( v.position ),
+						value    ( v.value    )
+					{}
+				};
+				
+				const_iterator( Transfer s )
+				:
+					Specifics( s          ),
+					position ( s.position ),
+					value    ( s.value    )
+				{}
+				
+				const_iterator& operator=( Transfer s )
+				{
+					static_cast< Specifics& >( *this ) = static_cast< Specifics& >( s );
+					
+					position = s.position;
+					value    = s.value;
+					
+					return *this;
+				}
+				
+				operator Transfer()  { return Transfer( *this ); }
            
+           #if defined(__MWERKS__) && __MWERKS__ == 0x2401
+            public:
+           #else
             private:
+           #endif
                size_type position;
                value_type value;
                
+            private:
                void GetValue()
                  {
                   try
@@ -76,5 +130,7 @@ namespace Nitrogen
          const_iterator begin() const                    { return const_iterator( *this, Specifics::begin_position() ); }
          const_iterator end() const                      { return const_iterator( *this, Specifics::end_position() ); }
      };
-  }
+	
+}
 #endif
+
