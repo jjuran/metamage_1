@@ -705,6 +705,27 @@ namespace Nitrogen
 	
 	template < ::DescType type >
 	void AEPutPtr(
+		AEDescList& list, 
+		long index, 
+		typename DescType_Traits< type >::Parameter data)
+	{
+		typedef DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEPutPtr(
+			list, 
+			index, 
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	void AEPutPtr(
 		Owned< AEDescList >& list, 
 		long index, 
 		typename DescType_Traits< type >::Parameter data)
@@ -746,6 +767,27 @@ namespace Nitrogen
 		);
 		
 		return Traits::ProcessInputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	void AEPutKeyPtr(
+		AERecord& record, 
+		AEKeyword keyword, 
+		typename DescType_Traits< type >::Parameter data)
+	{
+		typedef DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEPutKeyPtr(
+			record, 
+			keyword, 
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
@@ -795,6 +837,27 @@ namespace Nitrogen
 	
 	template < ::DescType type >
 	void AEPutParamPtr(
+		AppleEvent& appleEvent, 
+		AEKeyword keyword, 
+		typename DescType_Traits< type >::Parameter data)
+	{
+		typedef DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEPutParamPtr(
+			appleEvent, 
+			keyword, 
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	void AEPutParamPtr(
 		Owned< AppleEvent >& appleEvent, 
 		AEKeyword keyword, 
 		typename DescType_Traits< type >::Parameter data)
@@ -836,6 +899,27 @@ namespace Nitrogen
 		);
 		
 		return Traits::ProcessInputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	void AEPutAttributePtr(
+		AppleEvent& appleEvent, 
+		AEKeyword keyword, 
+		typename DescType_Traits< type >::Parameter data)
+	{
+		typedef DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEPutAttributePtr(
+			appleEvent, 
+			keyword, 
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
@@ -902,6 +986,23 @@ namespace Nitrogen
 		return Traits::ProcessInputBuffer( buffer );
 	}
 	
+	template < ::DescType type >
+	void AEReplaceDescData( typename DescType_Traits< type >::Parameter data, AEDesc& result )
+	{
+		typedef DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEReplaceDescData(
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer ), 
+			result
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+	}
+
 	template < ::DescType type >
 	void AEReplaceDescData(typename DescType_Traits< type >::Parameter data, Owned< AEDesc >& result)
 	{
