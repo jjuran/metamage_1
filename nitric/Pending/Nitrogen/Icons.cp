@@ -100,7 +100,7 @@ namespace Nitrogen
 
    Owned<IconRef> GetIconRef( OSType iconType )
      {
-      return GetIconRef( kOnSystemDisk, kSystemIconsCreator, iconType );
+      return GetIconRef( OnSystemDisk(), kSystemIconsCreator, iconType );
      }
 
 	Owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
