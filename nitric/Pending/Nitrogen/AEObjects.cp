@@ -148,9 +148,16 @@ namespace Nitrogen {
 		return Owned< AEToken, AETokenDisposer >::Seize( result );
 	}
 	
+	Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
+	                                                 Owned< AEToken, AETokenDisposer > token )
+	{
+		AETokenEditor( token ).Get().descriptorType = typeCode;
+		return token;
+	}
+	
 	void RegisterObjectSupportLibraryErrors()
 	{
-		
+		OnlyOnce< RegisterAppleEventManagerErrors >();
 	}
 	
 }

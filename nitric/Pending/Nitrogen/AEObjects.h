@@ -314,6 +314,46 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AEToken routines ¥
 	
+	inline Owned< AEToken, AETokenDisposer > AEInitializeToken()
+	{
+		return Owned< AEToken, AETokenDisposer >::Seize( Make< AEToken >() );
+	}
+	
+	inline Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, const void* dataPtr, Size dataSize )
+	{
+		return Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
+		                                                               dataPtr,
+		                                                               dataSize ).Release() );
+	}
+	
+	inline Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Handle handle )
+	{
+		return Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
+		                                                               handle ).Release() );
+	}
+	
+	inline Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Owned< Handle > handle )
+	{
+		return Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
+		                                                               handle ).Release() );
+	}
+	
+	template < class Data >
+	Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Data** handle )
+	{
+		return AECreateToken( typeCode, Handle( handle ) );
+	}
+	
+	template < class T >
+	Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
+	                                                 Owned< T**, Disposer< Handle > > handle )
+	{
+		return AECreateToken( typeCode, Owned< Handle >( handle ) );
+	}
+	
+	Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
+	                                                 Owned< AEToken, AETokenDisposer > token );
+	
 	template < ::DescType type >
 	Owned< AEToken, AETokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
 	{
@@ -323,6 +363,17 @@ namespace Nitrogen
 	inline Owned< AEToken, AETokenDisposer > AEDuplicateToken( const AEToken& token )
 	{
 		return Owned< AEToken, AETokenDisposer >::Seize( AEDuplicateDesc( token ).Release() );
+	}
+	
+	inline Owned< AEToken, AETokenDisposer > AECreateTokenList( bool isRecord = false )
+	{
+		return Owned< AEToken, AETokenDisposer >::Seize( AECreateList( isRecord ).Release() );
+	}
+	
+	template < bool isRecord >
+	Owned< AEToken, AETokenDisposer > AECreateTokenList()
+	{
+		return AECreateTokenList( isRecord );
 	}
 	
 	inline void AEPutPtr( Owned< AETokenList, AETokenDisposer >&  tokenList,
