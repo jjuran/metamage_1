@@ -23,6 +23,12 @@ namespace Nitrogen
          Value oldValue;
          
       public:
+         explicit Scoped()
+         :
+         	reference(),
+         	oldValue( reference )
+         {}
+         
          explicit Scoped( Reference theProperty )
            : reference( theProperty ),
              oldValue( reference )
