@@ -194,7 +194,7 @@ namespace Nitrogen {
 		return Owned< AEDesc >::Seize( desc );
 	}
 	
-	Owned< AEDesc > AECreateDesc( DescType typeCode, ::Handle handle )
+	Owned< AEDesc > AECreateDesc( DescType typeCode, Handle handle )
 	{
 		if ( handle == NULL )
 		{

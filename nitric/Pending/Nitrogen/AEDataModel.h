@@ -891,8 +891,14 @@ namespace Nitrogen
 	}
 	
 	Owned< AEDesc > AECreateDesc( DescType typeCode, const void* dataPtr, Size dataSize );
-	Owned< AEDesc > AECreateDesc( DescType typeCode, ::Handle handle );
+	Owned< AEDesc > AECreateDesc( DescType typeCode, Handle handle );
 	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< Handle > handle );
+	
+	template < class T >
+	Owned< AEDesc > AECreateDesc( DescType typeCode, T** handle )
+	{
+		return AECreateDesc( typeCode, Handle( handle ) );
+	}
 	
 	template < class T >
 	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< T**, Disposer< Handle > > handle )
@@ -902,12 +908,6 @@ namespace Nitrogen
 	
 	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< AEDesc > desc );
 	
-	template < class Data >
-	Owned< AEDesc > AECreateDesc(DescType typeCode, Data** handle)
-	{
-		return AECreateDesc( typeCode, reinterpret_cast< ::Handle >( handle ) );
-	}
-	
 	
 	inline void AEDisposeDesc( Owned< AEDesc > )  {}
 	
@@ -916,8 +916,13 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AEDescLists ¥
 	
-	Owned< AEDesc > AECreateList( bool isRecord );
-	Owned< AEDesc > AECreateList( const void* factoringPtr, std::size_t factoredSize, bool isRecord );
+	Owned< AEDesc > AECreateList( bool isRecord = false );
+	
+	Owned< AEDesc > AECreateList( const void*  factoringPtr,
+	                              std::size_t  factoredSize,
+	                              bool         isRecord );
+	
+	inline Owned< AEDesc > AECreateRecord()  { return AECreateList( true ); }
 	
 	template < bool isRecord >
 	Owned< AEDesc > AECreateList()  { return AECreateList( isRecord ); }
