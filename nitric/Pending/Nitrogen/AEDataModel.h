@@ -9,9 +9,6 @@
 #ifndef __AEDATAMODEL__
 #include FRAMEWORK_HEADER(AE,AEDataModel.h)
 #endif
-#ifndef __AEREGISTRY__
-#include FRAMEWORK_HEADER(Carbon,AERegistry.h)
-#endif
 #ifndef __EVENTS__
 #include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
@@ -45,6 +42,9 @@
 #endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
+#endif
+#ifndef NITROGEN_AEREGISTRY_H
+#include "Nitrogen/AERegistry.h"
 #endif
 
 #include <string>
@@ -327,7 +327,6 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
    template<> struct DescType_Traits< typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
    template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
-   template<> struct DescType_Traits< typeRGBColor >               : POD_DescType_Traits< RGBColor >                      {};
 #if !TARGET_API_MAC_CARBON
    template<> struct DescType_Traits< typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
 #endif
