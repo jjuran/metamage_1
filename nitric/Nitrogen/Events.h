@@ -15,9 +15,14 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
+#ifndef NITROGEN_FLAGTYPE_H
+#include "Nitrogen/FlagType.h"
+#endif
 
 namespace Nitrogen
   {
+   class EventModifiersTag {};
+   typedef FlagType< EventModifiersTag, ::EventModifiers, 0 > EventModifiers;
   }
 
 #endif

@@ -18,6 +18,23 @@
 
 namespace Nitrogen
   {
+   using ::CGImageRef;
+   
+   template <> struct Disposer< CGImageRef >: public std::unary_function< CGImageRef, void >
+     {
+      void operator()( CGImageRef image ) const
+        {
+         ::CGImageRelease( image );
+        }
+     };
+   
+   inline Owned<CGImageRef> CGImageRetain( CGImageRef image )
+     {
+      return Owned<CGImageRef>::Seize( ::CGImageRetain( image ) );
+     }
+   
+   inline void CGImageRelease( Owned<CGImageRef> )
+     {}
   }
 
 #endif
