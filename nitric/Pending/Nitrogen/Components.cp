@@ -6,6 +6,16 @@
 
 namespace Nitrogen {
 	
+	void RegisterComponentManagerErrors()
+	{
+		RegisterOSStatus< resFNotFound         >();
+		RegisterOSStatus< invalidComponentID   >();
+		RegisterOSStatus< validInstancesExist  >();
+		RegisterOSStatus< componentNotCaptured >();
+		RegisterOSStatus< badComponentInstance >();
+		RegisterOSStatus< badComponentSelector >();
+	}
+	
 	Owned< ComponentInstance >
 	OpenDefaultComponent( ComponentType componentType, ComponentSubType componentSubType )
 	{
