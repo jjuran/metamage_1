@@ -386,6 +386,215 @@ namespace Nitrogen
 		AESizeOfAttribute_Result, 
 		AEGetParamPtr_Result, 
 		AEGetAttributePtr_Result;
+
+	
+	void RegisterAppleEventManagerErrors();
+	
+	Owned<AEDesc> AECoercePtr(DescType typeCode, const void* dataPtr, Size dataSize, DescType toType);
+	
+	Owned<AEDesc> AECoerceDesc(const AEDesc& desc, DescType toType);
+	
+	inline AEDesc AEInitializeDesc()
+	{
+		return Make< AEDesc >();
+	}
+	
+	Owned<AEDesc> AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize);
+	Owned<AEDesc> AECreateDesc(DescType typeCode, ::Handle handle);
+	Owned<AEDesc> AECreateDesc(DescType typeCode, Owned< Handle > handle);
+	
+	Owned<AEDesc> AECreateDesc(DescType typeCode, Owned< AEDesc > desc);
+	
+	template <class Data>
+	Owned<AEDesc> AECreateDesc(DescType typeCode, Data** handle)
+	{
+		return AECreateDesc( typeCode, reinterpret_cast< ::Handle >( handle ) );
+	}
+	
+	
+	inline void AEDisposeDesc( Owned<AEDesc> )  {}
+	
+	Owned<AEDesc> AEDuplicateDesc( const AEDesc& desc );
+	
+	Owned<AEDesc> AECreateList(bool isRecord);
+	Owned<AEDesc> AECreateList(const void* factoringPtr, std::size_t factoredSize, bool isRecord);
+	
+	template <bool isRecord>
+	Owned<AEDesc> AECreateList()  { return AECreateList( isRecord ); }
+	
+	template <bool isRecord>
+	Owned<AEDesc> AECreateList(DescType typeCode)
+	{
+		return AECreateDesc( typeCode, AECreateList<isRecord>() );
+	}
+	
+	long AECountItems(const AEDesc& desc);
+	
+	void AEPutPtr(Owned<AEDescList>& list, long index, DescType type, const void* dataPtr, Size dataSize);
+	
+	void AEPutDesc(Owned<AEDescList>& list, long index, const AEDesc& desc);
+	
+	GetNthPtr_Result AEGetNthPtr(
+		const AEDesc& listDesc, 
+		long index, 
+		DescType desiredType, 
+		void* dataPtr, 
+		Size maximumSize
+	);
+	
+	Owned<AEDesc> AEGetNthDesc(
+		const AEDesc& listDesc, 
+		long index, 
+		DescType desiredType = typeWildCard, 
+		::AEKeyword* keyword = NULL
+	);
+	
+	Owned<AEDesc> AEGetNthDesc(
+		const AEDesc& listDesc, 
+		long index, 
+		::AEKeyword* keyword
+	);
+	
+	Size AESizeOfNthItem(const AEDescList& list, long index);
+	
+	void AEDeleteItem( AEDesc& listDesc, long index );
+	
+	inline bool AECheckIsRecord( const AEDesc& theDesc )
+	{
+		return ::AECheckIsRecord( &theDesc );
+	}
+	
+	void AEPutKeyPtr(
+		Owned<AERecord>& record, 
+		AEKeyword keyword, 
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize
+	);
+	
+	void AEPutKeyDesc(
+		Owned<AERecord>& record, 
+		AEKeyword keyword, 
+		const AEDesc& desc
+	);
+	
+	AEGetKeyPtr_Result AEGetKeyPtr(
+		const AERecord& record, 
+		AEKeyword keyword, 
+		DescType desiredType, 
+		void* dataPtr, 
+		std::size_t maximumSize
+	);
+	
+	Owned<AEDesc> AEGetKeyDesc(
+		const AERecord& record, 
+		AEKeyword keyword, 
+		DescType desiredType
+	);
+	
+	AESizeOfKeyDesc_Result AESizeOfKeyDesc(
+		const AERecord& record, 
+		AEKeyword keyword
+	);
+	
+	void AEDeleteKeyDesc(
+		Owned<AERecord>& record, 
+		AEKeyword keyword
+	);
+	
+	Owned<AppleEvent> AECreateAppleEvent(
+		AEEventClass eventClass, 
+		AEEventID eventID, 
+		const AEAddressDesc& target, 
+		AEReturnID returnID = AEReturnID(), 
+		AETransactionID transactionID = AETransactionID()
+	);
+	
+	void AEPutParamPtr(
+		Owned<AppleEvent>& appleEvent, 
+		AEKeyword keyword, 
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize
+	);
+	
+	void AEPutParamDesc(
+		Owned<AppleEvent>& appleEvent, 
+		AEKeyword keyword, 
+		const AEDesc& desc
+	);
+	
+	AEGetParamPtr_Result AEGetParamPtr(
+		const AppleEvent& appleEvent, 
+		AEKeyword keyword, 
+		DescType desiredType, 
+		void* dataPtr, 
+		std::size_t maximumSize
+	);
+	
+	Owned<AEDesc> AEGetParamDesc(
+		const AppleEvent& appleEvent, 
+		AEKeyword keyword, 
+		DescType desiredType
+	);
+	
+	AESizeOfParam_Result AESizeOfParam(
+		const AppleEvent& appleEvent, 
+		AEKeyword keyword
+	);
+	
+	void AEDeleteParam(
+		Owned<AppleEvent>& appleEvent, 
+		AEKeyword keyword
+	);
+	
+	void AEPutAttributePtr(
+		Owned<AppleEvent>& appleEvent, 
+		AEKeyword keyword, 
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize
+	);
+	
+	void AEPutAttributeDesc(
+		Owned<AppleEvent>& appleEvent, 
+		AEKeyword keyword, 
+		const AEDesc& desc
+	);
+	
+	AEGetAttributePtr_Result AEGetAttributePtr(
+		const AppleEvent& appleEvent, 
+		AEKeyword keyword, 
+		DescType desiredType, 
+		void* dataPtr, 
+		std::size_t maximumSize
+	);
+	
+	Owned<AEDesc> AEGetAttributeDesc(
+		const AppleEvent& appleEvent, 
+		AEKeyword keyword, 
+		DescType desiredType
+	);
+	
+	AESizeOfAttribute_Result AESizeOfAttribute(
+		const AppleEvent& appleEvent, 
+		AEKeyword keyword
+	);
+	
+	void AEGetDescData( const AEDesc& desc, void* dataPtr, std::size_t maximumSize );
+	
+	inline std::size_t AEGetDescDataSize( const AEDesc& desc )
+	{
+		return ::AEGetDescDataSize( &desc );
+	}
+	
+	void AEReplaceDescData(
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize, 
+		AEDesc& result
+	);
+
  
    struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
                                                         ::AEEventHandlerProcPtr,
