@@ -105,12 +105,32 @@ namespace Nitrogen {
 		return Owned< AEDesc >::Seize( resultingText );
 	}
 	
-	Owned< OSASpec >
-	OSACompile(
-		Shared< ComponentInstance > scriptingComponent, 
-		const AEDesc& sourceData, 
-		OSAModeFlags modeFlags, 
-		Owned< OSASpec > previousScriptID)
+	Owned< OSASpec > OSACompile( Shared< ComponentInstance >  scriptingComponent, 
+	                             const AEDesc&                sourceData, 
+	                             OSAModeFlags                 modeFlags )
+	{
+		OnlyOnce< RegisterOSAErrors >();
+		
+		::OSAID previousAndResultingScriptID = kOSANullScript;
+		
+		ThrowOSStatus
+		(
+			::OSACompile
+			(
+				scriptingComponent, &sourceData, modeFlags, &previousAndResultingScriptID
+			)
+		);
+		
+		return Owned< OSASpec >::Seize
+		(
+			OSASpec( scriptingComponent, OSAID( previousAndResultingScriptID ) )
+		);
+	}
+	
+	Owned< OSASpec > OSACompile( Shared< ComponentInstance >  scriptingComponent, 
+	                             const AEDesc&                sourceData, 
+	                             OSAModeFlags                 modeFlags, 
+	                             Owned< OSASpec >             previousScriptID )
 	{
 		OnlyOnce< RegisterOSAErrors >();
 		

@@ -150,13 +150,14 @@ namespace Nitrogen {
 	
 	inline void OSADispose( Owned< OSASpec > )  {}
 	
-	Owned< OSASpec >
-	OSACompile(
-		Shared< ComponentInstance > scriptingComponent, 
-		const AEDesc& sourceData, 
-		OSAModeFlags modeFlags = OSAModeNull(), 
-		Owned< OSASpec > previousScriptID = Owned< OSASpec >()
-	);
+	Owned< OSASpec > OSACompile( Shared< ComponentInstance >  scriptingComponent, 
+	                             const AEDesc&                sourceData, 
+	                             OSAModeFlags                 modeFlags = OSAModeNull() );
+	
+	Owned< OSASpec > OSACompile( Shared< ComponentInstance >  scriptingComponent, 
+	                             const AEDesc&                sourceData, 
+	                             OSAModeFlags                 modeFlags, 
+	                             Owned< OSASpec >             previousScriptID );
 	
 	
 	inline
