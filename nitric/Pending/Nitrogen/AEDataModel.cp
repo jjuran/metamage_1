@@ -909,9 +909,10 @@ namespace Nitrogen {
 		
 	#else
 		
-		bool typeIsNull = typeCode == typeNull;
+		bool typeIsNull = typeCode == TypeNull();
 		bool ptrIsNull  = dataPtr  == NULL;
 		
+		// The parameters must be consistently null or non-null.
 		if ( typeIsNull != ptrIsNull )
 		{
 			throw ParamErr();
@@ -921,17 +922,24 @@ namespace Nitrogen {
 		
 		if ( !descWasNull && !ptrIsNull )
 		{
+			// Replace the data.  Resize the handle, copy the data, and set the type.
 			SetHandleSize( result.dataHandle, dataSize );
 			::BlockMoveData( dataPtr, *result.dataHandle, dataSize );
-			result.descType = typeCode;
+			result.descriptorType = typeCode;
 		}
 		else if ( descWasNull && !ptrIsNull )
 		{
+			// Create a new descriptor record.
 			result = AECreateDesc( typeCode, dataPtr, dataSize ).Release();
 		}
 		else if ( !descWasNull )
 		{
-			::AEDisposeDesc( result );
+			// Delete the existing descriptor record.
+			ThrowOSStatus( ::AEDisposeDesc( &result ) );
+		}
+		else
+		{
+			// Replace null with null == do nothing.
 		}
 		
 	#endif
