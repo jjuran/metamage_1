@@ -49,13 +49,13 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ General Types and Constants ¥
 	
+	class CFragArchitecture_Tag {};
+	typedef SelectorType< CFragArchitecture_Tag, ::CFragArchitecture, kAnyCFragArch > CFragArchitecture;
+	
 	inline ResType CFragResourceType()     { return ResType::Make( kCFragResourceType    ); }
 	inline ResID   CFragResourceID()       { return ResID  ::Make( kCFragResourceID      ); }
 	inline OSType  CFragLibraryFileType()  { return OSType ::Make( kCFragLibraryFileType ); }
 	// kCFragAllFileTypes
-	
-	class CFragArchitecture_Tag {};
-	typedef SelectorType< CFragArchitecture_Tag, ::CFragArchitecture, kAnyCFragArch > CFragArchitecture;
 	
 	inline CFragArchitecture PowerPCCFragArch()      { return CFragArchitecture::Make( kPowerPCCFragArch     ); }
 	inline CFragArchitecture Motorola68KCFragArch()  { return CFragArchitecture::Make( kMotorola68KCFragArch ); }
@@ -81,12 +81,12 @@ namespace Nitrogen
 	class CFragLoadOptions_Tag {};
 	typedef FlagType< CFragLoadOptions_Tag, ::CFragLoadOptions, 0 > CFragLoadOptions;
 	
+	class CFragSymbolClass_Tag {};
+	typedef SelectorType< CFragSymbolClass_Tag, ::CFragSymbolClass, 0 > CFragSymbolClass;
+	
 	inline CFragLoadOptions ReferenceCFrag()    { return CFragLoadOptions::Make( kReferenceCFrag   ); }
 	inline CFragLoadOptions FindCFrag()         { return CFragLoadOptions::Make( kFindCFrag        ); }
 	inline CFragLoadOptions PrivateCFragCopy()  { return CFragLoadOptions::Make( kPrivateCFragCopy ); }
-	
-	class CFragSymbolClass_Tag {};
-	typedef SelectorType< CFragSymbolClass_Tag, ::CFragSymbolClass, 0 > CFragSymbolClass;
 	
 	inline CFragSymbolClass CodeCFragSymbol()     { return CFragSymbolClass::Make( kCodeCFragSymbol    ); }
 	inline CFragSymbolClass DataCFragSymbol()     { return CFragSymbolClass::Make( kDataCFragSymbol    ); }
@@ -129,6 +129,16 @@ namespace Nitrogen
 		}
 	};
 	
+	template < class SymbolAddressType >
+	SymbolAddressType SymAddr_Cast( SymbolAddressPtr symAddr )
+	{
+		// The double reinterpret_cast is necessary if SymbolAddressType is a 
+		// pointer-to-function.  Gcc doesn't like casting a pointer-to-object
+		// to a pointer-to-function, so we use long as an intermediary.
+		
+		return reinterpret_cast< SymbolAddressType >( reinterpret_cast< long >( symAddr ) );
+	}
+	
 	template < ::CFragLoadOptions findFlags, class MainAddrType >
 	typename GetDiskFragment_Traits< findFlags >::Result GetDiskFragment
 	(
@@ -152,7 +162,7 @@ namespace Nitrogen
 		
 		if ( mainAddr != NULL )
 		{
-			*mainAddr = reinterpret_cast< MainAddrType >( tempMainAddr );
+			*mainAddr = SymAddr_Cast< MainAddrType >( tempMainAddr );
 		}
 		
 		return Traits::MakeResult( connID );
@@ -191,11 +201,8 @@ namespace Nitrogen
 		
 		if ( symAddr != NULL )
 		{
-			// The double reinterpret_cast is necessary if SymAddrType is a 
-			// pointer-to-function.  Gcc doesn't like casting a pointer-to-object
-			// to a pointer-to-function, so we use long as an intermediary.
 			
-			*symAddr = reinterpret_cast< SymAddrType >( reinterpret_cast< long >( tempSymAddr ) );
+			*symAddr = SymAddr_Cast< SymAddrType >( tempSymAddr );
 		}
 	}
 	
