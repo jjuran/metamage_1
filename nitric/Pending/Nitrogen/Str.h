@@ -65,6 +65,7 @@ namespace Nitrogen
         }
      };
    
+   /*
    template <>
    struct Converter< std::string, unsigned char * >: public std::unary_function< unsigned char *, std::string >
      {
@@ -73,7 +74,17 @@ namespace Nitrogen
          return Converter< std::string, const unsigned char * >()( input );
         }
      };
-   
+   */
+	
+	template <>
+	struct ConvertInputTraits< unsigned char* > : ConvertInputTraits< const unsigned char* > {};
+	
+	template < unsigned char length >
+	struct ConvertInputTraits< const unsigned char[length] > : ConvertInputTraits< const unsigned char* > {};
+	
+	template < unsigned char length >
+	struct ConvertInputTraits<       unsigned char[length] > : ConvertInputTraits< const unsigned char* > {};
+	
    template < unsigned char length >
    struct Converter< std::string, Str<length> >: public std::unary_function< Str<length>, std::string >
      {
