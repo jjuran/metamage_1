@@ -1,0 +1,57 @@
+/*	=======
+ *	echo.cc
+ *	=======
+ */
+
+// Standard C++
+#include <string>
+
+// Nitrogen / Templates
+#include "Templates/FunctionalExtensions.h"
+
+// Orion
+#include "Orion/Main.hh"
+#include "Orion/StandardIO.hh"
+
+
+namespace O = Orion;
+
+namespace ext = Nitrogen::STLExtensions;
+
+
+template < class F, class Iter >
+std::string join( Iter begin, Iter end, const std::string& glue = "", F f = F() )
+{
+	if ( begin == end )
+	{
+		return "";
+	}
+	
+	std::string result = f( *begin++ );
+	
+	while ( begin != end )
+	{
+		result += glue;
+		result += f( *begin++ );
+	}
+	
+	return result;
+}
+
+template < class Iter >
+std::string join( Iter begin, Iter end, const std::string& glue = "" )
+{
+	return join( begin, end, glue, ext::identity< std::string >() );
+}
+
+int O::Main( int argc, char const *const argv[] )
+{
+	Io::Out << join( argv + 1,
+	                 argv + argc,
+	                 " " )
+	        << "\n";
+	
+	
+	return 0;
+}
+
