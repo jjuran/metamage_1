@@ -97,14 +97,14 @@ namespace Nitrogen
 	
 	template < ::CFragLoadOptions options >  struct CFragLoadOptions_Traits;
 	
-	struct Shared_CFragConnection_Traits
+	struct Find_CFragConnection_Traits
 	{
 		typedef CFragConnectionID Result;
 		
 		static Result MakeResult( CFragConnectionID connID )  { return connID; }
 	};
 	
-	struct Private_CFragConnection_Traits
+	struct Reference_CFragConnection_Traits
 	{
 		typedef Owned< CFragConnectionID > Result;
 		
@@ -114,10 +114,10 @@ namespace Nitrogen
 		}
 	};
 	
-	template <>  struct CFragLoadOptions_Traits< kReferenceCFrag   > : Shared_CFragConnection_Traits  {};
-	template <>  struct CFragLoadOptions_Traits< kFindCFrag        > : Shared_CFragConnection_Traits  {};
+	template <>  struct CFragLoadOptions_Traits< kFindCFrag > : Find_CFragConnection_Traits {};
 	
-	template <>  struct CFragLoadOptions_Traits< kPrivateCFragCopy > : Private_CFragConnection_Traits {};
+	template <>  struct CFragLoadOptions_Traits< kReferenceCFrag   > : Reference_CFragConnection_Traits {};
+	template <>  struct CFragLoadOptions_Traits< kPrivateCFragCopy > : Reference_CFragConnection_Traits {};
 	
 	template < class SymbolAddressType >
 	SymbolAddressType SymAddr_Cast( SymbolAddressPtr symAddr )
