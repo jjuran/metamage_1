@@ -11,9 +11,9 @@ namespace Nitrogen
 	{
 		OnlyOnce< RegisterAliasManagerErrors >();
 		
-		AliasHandle alias;
-		ThrowOSStatus( ::NewAlias( fromFile, &target, &alias ) );
-		return Owned< AliasHandle >::Seize( alias );
+		AliasHandle result;
+		ThrowOSStatus( ::NewAlias( fromFile, &target, &result ) );
+		return Owned< AliasHandle >::Seize( result );
 	}
 	
 	Owned< AliasHandle > NewAlias( const FSSpec& fromFile, const FSSpec& target )
@@ -24,6 +24,38 @@ namespace Nitrogen
 	Owned< AliasHandle > NewAlias( const FSSpec& target )
 	{
 		return NewAlias( NULL, target );
+	}
+	
+	Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
+	                                                  ConstStr32Param     zoneName,
+	                                                  ConstStr31Param     serverName )
+	{
+		OnlyOnce< RegisterAliasManagerErrors >();
+		
+		::AliasHandle result;
+		ThrowOSStatus( ::NewAliasMinimalFromFullPath( fullPath.size(), fullPath.data(), zoneName, serverName, &result ) );
+		return Owned< AliasHandle >::Seize( result );
+	}
+	
+	ResolveAlias_Result ResolveAlias( const FSSpec&  fromFile,
+	                                  AliasHandle    alias )
+	{
+		OnlyOnce< RegisterAliasManagerErrors >();
+		
+		::Boolean wasChanged;
+		ResolveAlias_Result result;
+		ThrowOSStatus( ::ResolveAlias( &fromFile, alias, &result.target, &wasChanged ) );
+		return result;
+	}
+	
+	ResolveAlias_Result ResolveAlias( AliasHandle    alias )
+	{
+		OnlyOnce< RegisterAliasManagerErrors >();
+		
+		::Boolean wasChanged;
+		ResolveAlias_Result result;
+		ThrowOSStatus( ::ResolveAlias( NULL, alias, &result.target, &wasChanged ) );
+		return result;
 	}
 	
 	ResolveAliasFile_Result ResolveAliasFile( const FSSpec& target, bool resolveAliasChains )

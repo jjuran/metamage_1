@@ -19,6 +19,10 @@
 #include "Nitrogen/MacMemory.h"
 #endif
 
+
+#include <string>
+
+
 namespace Nitrogen
   {
    void RegisterAliasManagerErrors();
@@ -26,7 +30,37 @@ namespace Nitrogen
    class MountFlags_Tag {};
    typedef FlagType< MountFlags_Tag, unsigned long, 0 > MountFlags;
    
-   template <> struct OwnedDefaults< AliasHandle >           { typedef Disposer<Handle> Disposer; };
+   template <> struct OwnedDefaults< AliasHandle > : OwnedDefaults< Handle >  {};
+	
+	// 90
+	Owned< AliasHandle > NewAlias( const FSSpec& fromFile,
+	                               const FSSpec& target );
+	
+	Owned< AliasHandle > NewAlias( const FSSpec& target );
+	
+	// 127
+	Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
+	                                                  ConstStr32Param     zoneName,
+	                                                  ConstStr31Param     serverName );
+	
+	inline Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string& fullPath )
+	{
+		return NewAliasMinimalFromFullPath( fullPath, "\p", "\p" );
+	}
+	
+	struct ResolveAlias_Result
+	{
+		FSSpec target;
+		bool wasChanged;
+		
+		operator const FSSpec&() const    { return target; }
+	};
+	
+	// 148
+	ResolveAlias_Result ResolveAlias( const FSSpec&  fromFile,
+	                                  AliasHandle    alias );
+	
+	ResolveAlias_Result ResolveAlias( AliasHandle    alias );
 	
 	struct ResolveAliasFile_Result
 	{
@@ -36,10 +70,6 @@ namespace Nitrogen
 		
 		operator const FSSpec&() const    { return target; }
 	};
-	
-	// 90
-	Owned< AliasHandle > NewAlias( const FSSpec& fromFile, const FSSpec& target );
-	Owned< AliasHandle > NewAlias( const FSSpec& target );
 	
 	// 221
 	ResolveAliasFile_Result ResolveAliasFile( const FSSpec& target, bool resolveAliasChains );
