@@ -149,7 +149,7 @@ namespace Nitrogen {
 		// Necessary for OS 9; OS X does this automatically
 		if ( toType == typeWildCard )
 		{
-			toType = desc.descriptorType;
+			toType = DescType( desc.descriptorType );
 		}
 		
 		AEDesc result;

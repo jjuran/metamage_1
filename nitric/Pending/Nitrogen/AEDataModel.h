@@ -141,6 +141,90 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ DescType ¥
 	
+	class DescType_Tag {};
+	typedef SelectorType< DescType_Tag, ::DescType > DescType;
+	
+	// Apple event descriptor types
+	static const DescType typeBoolean                = DescType::Make( ::typeBoolean                );
+	static const DescType typeChar                   = DescType::Make( ::typeChar                   );
+	
+	// Preferred numeric Apple event descriptor types
+	static const DescType typeSInt16                 = DescType::Make( ::typeSInt16                 );
+	static const DescType typeSInt32                 = DescType::Make( ::typeSInt32                 );
+	static const DescType typeUInt32                 = DescType::Make( ::typeUInt32                 );
+	static const DescType typeSInt64                 = DescType::Make( ::typeSInt64                 );
+	static const DescType typeIEEE32BitFloatingPoint = DescType::Make( ::typeIEEE32BitFloatingPoint );
+	static const DescType typeIEEE64BitFloatingPoint = DescType::Make( ::typeIEEE64BitFloatingPoint );
+	static const DescType type128BitFloatingPoint    = DescType::Make( ::type128BitFloatingPoint    );
+	static const DescType typeDecimalStruct          = DescType::Make( ::typeDecimalStruct          );
+	
+	// Non-preferred Apple event descriptor types
+	static const DescType typeExtended               = DescType::Make( ::typeExtended               );
+	
+	// More Apple event descriptor types
+	static const DescType typeAEList                 = DescType::Make( ::typeAEList                 );
+	static const DescType typeAERecord               = DescType::Make( ::typeAERecord               );
+	static const DescType typeAppleEvent             = DescType::Make( ::typeAppleEvent             );
+	static const DescType typeEventRecord            = DescType::Make( ::typeEventRecord            );
+	static const DescType typeTrue                   = DescType::Make( ::typeTrue                   );
+	static const DescType typeFalse                  = DescType::Make( ::typeFalse                  );
+	static const DescType typeAlias                  = DescType::Make( ::typeAlias                  );
+	static const DescType typeEnumerated             = DescType::Make( ::typeEnumerated             );
+	static const DescType typeType                   = DescType::Make( ::typeType                   );
+	static const DescType typeAppParameters          = DescType::Make( ::typeAppParameters          );
+	static const DescType typeProperty               = DescType::Make( ::typeProperty               );
+	static const DescType typeFSS                    = DescType::Make( ::typeFSS                    );
+	static const DescType typeFSRef                  = DescType::Make( ::typeFSRef                  );
+	static const DescType typeFileURL                = DescType::Make( ::typeFileURL                );
+	static const DescType typeKeyword                = DescType::Make( ::typeKeyword                );
+	static const DescType typeSectionH               = DescType::Make( ::typeSectionH               );
+	static const DescType typeWildCard               = DescType::Make( ::typeWildCard               );
+	static const DescType typeFixed                  = DescType::Make( ::typeFixed                  );
+	static const DescType typeProcessSerialNumber    = DescType::Make( ::typeProcessSerialNumber    );
+	static const DescType typeApplicationURL         = DescType::Make( ::typeApplicationURL         );
+	static const DescType typeNull                   = DescType::Make( ::typeNull                   );
+	
+#if CALL_NOT_IN_CARBON
+	
+	// Deprecated addressing modes under Carbon
+	static const DescType typeSessionID              = DescType::Make( ::typeSessionID              );
+	static const DescType typeTargetID               = DescType::Make( ::typeTargetID               );
+	static const DescType typeDispatcherID           = DescType::Make( ::typeDispatcherID           );
+	
+#endif
+	
+	class AEKeyword_Tag {};
+	typedef SelectorType< AEKeyword_Tag, ::AEKeyword > AEKeyword;
+	
+	// Keywords for Apple event attributes
+	static const AEKeyword keyTransactionIDAttr   = AEKeyword::Make( ::keyTransactionIDAttr   );
+	static const AEKeyword keyReturnIDAttr        = AEKeyword::Make( ::keyReturnIDAttr        );
+	static const AEKeyword keyEventClassAttr      = AEKeyword::Make( ::keyEventClassAttr      );
+	static const AEKeyword keyEventIDAttr         = AEKeyword::Make( ::keyEventIDAttr         );
+	static const AEKeyword keyAddressAttr         = AEKeyword::Make( ::keyAddressAttr         );
+	static const AEKeyword keyOptionalKeywordAttr = AEKeyword::Make( ::keyOptionalKeywordAttr );
+	static const AEKeyword keyTimeoutAttr         = AEKeyword::Make( ::keyTimeoutAttr         );
+	static const AEKeyword keyInteractLevelAttr   = AEKeyword::Make( ::keyInteractLevelAttr   );
+	static const AEKeyword keyEventSourceAttr     = AEKeyword::Make( ::keyEventSourceAttr     );
+	static const AEKeyword keyMissedKeywordAttr   = AEKeyword::Make( ::keyMissedKeywordAttr   );
+	static const AEKeyword keyOriginalAddressAttr = AEKeyword::Make( ::keyOriginalAddressAttr );
+	static const AEKeyword keyAcceptTimeoutAttr   = AEKeyword::Make( ::keyAcceptTimeoutAttr   );
+	
+	// Constants used creating an AppleEvent
+	
+	class AEReturnID_Tag {};
+	typedef IDType< AEReturnID_Tag, ::AEReturnID > AEReturnID;
+	
+	static const AEReturnID kAutoGenerateReturnID = AEReturnID::Make( ::kAutoGenerateReturnID );
+	
+	class AETransactionID_Tag {};
+	typedef IDType< AETransactionID_Tag, ::AETransactionID > AETransactionID;
+	
+	static const AETransactionID kAnyTransactionID = AETransactionID::Make( ::kAnyTransactionID );
+	
+	#pragma mark -
+	#pragma mark ¥ DescType_Traits ¥
+	
    template < ::DescType > struct DescType_Traits;
       /*
          The DescType_Traits are used according to these formulas:
@@ -213,7 +297,7 @@ namespace Nitrogen
 
       static void *      InputBufferStart(  InputBuffer& buffer )           { return &buffer; }
       static std::size_t InputBufferLength( InputBuffer& buffer )           { return sizeof( buffer ); }
-      static Result  ProcessInputBuffer( InputBuffer& buffer )              { return buffer; }
+      static Result  ProcessInputBuffer( InputBuffer& buffer )              { return Result( buffer ); }
 
       static const void *OutputBufferStart(  const OutputBuffer& buffer )   { return &buffer; }
       static std::size_t OutputBufferLength( const OutputBuffer& buffer )   { return sizeof( buffer ); }
@@ -275,7 +359,7 @@ namespace Nitrogen
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
      };
 
-   template<> struct DescType_Traits< typeChar >
+   template<> struct DescType_Traits< ::typeChar >
      {
       typedef std::string Result;
       typedef const std::string& Parameter;
@@ -296,7 +380,7 @@ namespace Nitrogen
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
      };
 
-   template<> struct DescType_Traits< typeFixed >
+   template<> struct DescType_Traits< ::typeFixed >
      {
       typedef double Result;
       typedef double Parameter;
@@ -317,12 +401,6 @@ namespace Nitrogen
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
      };
 
-   class DescTypeTag {};
-   typedef SelectorType< DescTypeTag, ::DescType > DescType;
-   
-   class AEKeywordTag {};
-   typedef SelectorType< AEKeywordTag, ::AEKeyword > AEKeyword;
-
    class AEEnumeratedTag {};
    typedef SelectorType< AEEnumeratedTag, UInt32 > AEEnumerated;
    typedef AEEnumerated AEEnumeration;
@@ -333,32 +411,32 @@ namespace Nitrogen
    class AEEventIDTag {};
    typedef SelectorType< AEEventIDTag, ::AEEventID > AEEventID;
    
-   template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
+   template<> struct DescType_Traits< ::typeNull >                   { typedef void Result; };
    
-   template<> struct DescType_Traits< typeBoolean >                : Converting_DescType_Traits< bool, ::Boolean >        {};
-   template<> struct DescType_Traits< typeSInt16 >                 : POD_DescType_Traits< SInt16 >                        {};
-   template<> struct DescType_Traits< typeSInt32 >                 : POD_DescType_Traits< SInt32 >                        {};
-   template<> struct DescType_Traits< typeUInt32 >                 : POD_DescType_Traits< UInt32 >                        {};
-   template<> struct DescType_Traits< typeSInt64 >                 : POD_DescType_Traits< SInt64 >                        {};
-   template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : POD_DescType_Traits< float >                         {};
-   template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : POD_DescType_Traits< double >                        {};
-   template<> struct DescType_Traits< type128BitFloatingPoint >    : POD_DescType_Traits< long double >                   {};
+   template<> struct DescType_Traits< ::typeBoolean >                : Converting_DescType_Traits< bool, ::Boolean >        {};
+   template<> struct DescType_Traits< ::typeSInt16 >                 : POD_DescType_Traits< SInt16 >                        {};
+   template<> struct DescType_Traits< ::typeSInt32 >                 : POD_DescType_Traits< SInt32 >                        {};
+   template<> struct DescType_Traits< ::typeUInt32 >                 : POD_DescType_Traits< UInt32 >                        {};
+   template<> struct DescType_Traits< ::typeSInt64 >                 : POD_DescType_Traits< SInt64 >                        {};
+   template<> struct DescType_Traits< ::typeIEEE32BitFloatingPoint > : POD_DescType_Traits< float >                         {};
+   template<> struct DescType_Traits< ::typeIEEE64BitFloatingPoint > : POD_DescType_Traits< double >                        {};
+   template<> struct DescType_Traits< ::type128BitFloatingPoint >    : POD_DescType_Traits< long double >                   {};
 
-   template<> struct DescType_Traits< typeEventRecord >            : POD_DescType_Traits< EventRecord >                   {};
-   template<> struct DescType_Traits< typeEnumerated >             : Converting_DescType_Traits< AEEnumerated, UInt32 >   {};
-   template<> struct DescType_Traits< typeType >                   : Converting_DescType_Traits< DescType, ::DescType >   {};
-   template<> struct DescType_Traits< typeAppParameters >          : VariableLengthPOD_DescType_Traits< AppParameters, SizeOf_AppParameters > {};
-   template<> struct DescType_Traits< typeFSS >                    : POD_DescType_Traits< FSSpec >                        {};
-   template<> struct DescType_Traits< typeFSRef >                  : POD_DescType_Traits< FSRef >                         {};
-   template<> struct DescType_Traits< typeKeyword >                : Converting_DescType_Traits< AEKeyword, ::AEKeyword > {};
-   template<> struct DescType_Traits< typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
-   template<> struct DescType_Traits< typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
-   template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
-   template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                          {};
+   template<> struct DescType_Traits< ::typeEventRecord >            : POD_DescType_Traits< EventRecord >                   {};
+   template<> struct DescType_Traits< ::typeEnumerated >             : Converting_DescType_Traits< AEEnumerated, UInt32 >   {};
+   template<> struct DescType_Traits< ::typeType >                   : Converting_DescType_Traits< DescType, ::DescType >   {};
+   template<> struct DescType_Traits< ::typeAppParameters >          : VariableLengthPOD_DescType_Traits< AppParameters, SizeOf_AppParameters > {};
+   template<> struct DescType_Traits< ::typeFSS >                    : POD_DescType_Traits< FSSpec >                        {};
+   template<> struct DescType_Traits< ::typeFSRef >                  : POD_DescType_Traits< FSRef >                         {};
+   template<> struct DescType_Traits< ::typeKeyword >                : Converting_DescType_Traits< AEKeyword, ::AEKeyword > {};
+   template<> struct DescType_Traits< ::typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
+   template<> struct DescType_Traits< ::typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
+   template<> struct DescType_Traits< ::typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
+   template<> struct DescType_Traits< ::typeApplicationURL >         : DescType_Traits< ::typeChar >                          {};
    
    // TargetID is defined for Carbon, but typeTargetID is not.
 #if CALL_NOT_IN_CARBON
-   template<> struct DescType_Traits< typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
+   template<> struct DescType_Traits< ::typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
 #endif
 	
 	#pragma mark -
@@ -1040,7 +1118,7 @@ namespace Nitrogen
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
 		Owned< AEDesc > result = AECoercePtr(
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer ), 
 			toType
@@ -1059,7 +1137,7 @@ namespace Nitrogen
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
 		Owned< AEDesc > desc = AECreateDesc(
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1082,7 +1160,7 @@ namespace Nitrogen
 		AEPutPtr(
 			list, 
 			index, 
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1103,7 +1181,7 @@ namespace Nitrogen
 		AEPutPtr(
 			list, 
 			index, 
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1127,7 +1205,7 @@ namespace Nitrogen
 		AEGetNthPtr(
 			listDesc, 
 			index, 
-			type, 
+			DescType( type ), 
 			Traits::InputBufferStart( buffer ),
 			Traits::InputBufferLength( buffer )
 		);
@@ -1148,7 +1226,7 @@ namespace Nitrogen
 		AEPutKeyPtr(
 			record, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1169,7 +1247,7 @@ namespace Nitrogen
 		AEPutKeyPtr(
 			record, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1193,7 +1271,7 @@ namespace Nitrogen
 		AEGetKeyPtr(
 			record, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::InputBufferStart( buffer ),
 			Traits::InputBufferLength( buffer )
 		);
@@ -1214,7 +1292,7 @@ namespace Nitrogen
 		AEPutParamPtr(
 			appleEvent, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1235,7 +1313,7 @@ namespace Nitrogen
 		AEPutParamPtr(
 			appleEvent, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1259,7 +1337,7 @@ namespace Nitrogen
 		AEGetParamPtr(
 			appleEvent, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::InputBufferStart( buffer ),
 			Traits::InputBufferLength( buffer )
 		);
@@ -1280,7 +1358,7 @@ namespace Nitrogen
 		AEPutAttributePtr(
 			appleEvent, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1301,7 +1379,7 @@ namespace Nitrogen
 		AEPutAttributePtr(
 			appleEvent, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer )
 		);
@@ -1325,7 +1403,7 @@ namespace Nitrogen
 		AEGetAttributePtr(
 			appleEvent, 
 			keyword, 
-			type, 
+			DescType( type ), 
 			Traits::InputBufferStart( buffer ),
 			Traits::InputBufferLength( buffer )
 		);
@@ -1360,7 +1438,7 @@ namespace Nitrogen
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
 		AEReplaceDescData(
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer ), 
 			result
@@ -1377,7 +1455,7 @@ namespace Nitrogen
 		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
 		
 		AEReplaceDescData(
-			type, 
+			DescType( type ), 
 			Traits::OutputBufferStart( buffer ), 
 			Traits::OutputBufferLength( buffer ), 
 			result
