@@ -362,21 +362,21 @@ namespace Nitrogen
 	struct GetNthPtr_Result {
 		::AEKeyword keyword;
 		::DescType typeCode;
-		Size actualSize;
+		::Size actualSize;
 		
 		GetNthPtr_Result() : keyword(), typeCode(), actualSize() {}
-		GetNthPtr_Result(AEKeyword keyword, DescType typeCode, Size actualSize) 
+		GetNthPtr_Result(AEKeyword keyword, DescType typeCode, ::Size actualSize) 
 		  : keyword(keyword), typeCode(typeCode), actualSize(actualSize)  {}
 	};
 	
 	struct AEDescInfo {
 		::DescType typeCode;
-		Size dataSize;
+		::Size dataSize;
 		
 		AEDescInfo() : typeCode(), dataSize() {}
-		AEDescInfo(DescType typeCode, Size dataSize) : typeCode(typeCode), dataSize(dataSize)  {}
+		AEDescInfo(DescType typeCode, ::Size dataSize) : typeCode(typeCode), dataSize(dataSize)  {}
 		
-		operator Size() const  { return dataSize; }
+		operator ::Size() const  { return dataSize; }
 	};
 	typedef AEDescInfo 
 		AESizeOfNthItem_Result, 
