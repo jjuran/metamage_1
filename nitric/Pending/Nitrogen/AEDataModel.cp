@@ -198,31 +198,17 @@ namespace Nitrogen {
 	{
 		if ( handle == NULL )
 		{
-			throw ParamErr();
+			throw ParamErr();  // should assert?
 		}
 		
-		// FIXME:  Replace with Scoped<> when verified as working
-		//SavedHandleState savedHandleState( handle );
-		
-		Owned< AEDesc > result;
-		SInt8 state = ::HGetState( handle );
-		try
-		{
-			::HLock( handle );
-			result = AECreateDesc( typeCode, *handle, ::GetHandleSize( handle ) );
-			::HSetState( handle, state );
-		}
-		catch ( ... )
-		{
-			::HSetState( handle, state );
-			throw;
-		}
-		return result;
+		Scoped< HandleState > scopedHandleState( HandleState( handle ) );
+		HLock( handle );
+		return AECreateDesc( typeCode, *handle, GetHandleSize( handle ) );
 	}
 	
 	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< Handle > handle )
 	{
-	#if TARGET_API_MAC_CARBON
+	#if OPAQUE_TOOLBOX_STRUCTS
 		
 		return AECreateDesc( typeCode, handle.Get() );
 		
