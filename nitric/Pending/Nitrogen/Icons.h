@@ -61,6 +61,9 @@ namespace Nitrogen
 	};
 	typedef MaskedIcon** MaskedIconHandle;
 	
+	typedef MaskedIcon       IconAndMask;
+	typedef MaskedIconHandle IconAndMaskHandle;
+	
 	// ResType 'SICN'
 	struct SmallIcon
 	{
