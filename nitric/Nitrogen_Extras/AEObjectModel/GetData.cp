@@ -15,6 +15,23 @@
 namespace Nitrogen
 {
 	
+	Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
+	                                                    const AEObjectSpecifier&  container,
+	                                                    AEEnumeration             keyForm,
+	                                                    const AEDesc&             keyData )
+	{
+		return AECoerceDesc
+		(
+			AECreateList< true >()
+				<< keyAEDesiredClass + AECreateDesc< typeType       >( DescType( objectClass ) )
+				<< keyAEKeyForm      + AECreateDesc< typeEnumerated >(              keyForm    )
+				<< keyAEKeyData      + keyData
+				<< keyAEContainer    + container,
+				
+			typeObjectSpecifier
+		);
+	}
+	
 	Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType )
 	{
 		return TheGlobalDataGetter().GetData( obj, desiredType );

@@ -21,10 +21,13 @@
 namespace Nitrogen
 {
 	
-	Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
-	                                                    const AEObjectSpecifier&  container,
-	                                                    AEEnumeration             keyForm,
-	                                                    const AEDesc&             keyData );
+	inline Owned< AEToken, AETokenDisposer > GetRootToken()
+	{
+		return AEInitializeToken();
+	}
+	
+	UInt32 ComputeAbsoluteIndex( const AEDesc&  keyData,
+	                             std::size_t    count );
 	
 	#pragma mark -
 	#pragma mark ¥ OSL Object Callbacks ¥

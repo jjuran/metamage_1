@@ -16,6 +16,16 @@
 namespace Nitrogen
 {
 	
+	inline Owned< AEObjectSpecifier > GetRootObjectSpecifier()
+	{
+		return AEInitializeDesc();
+	}
+	
+	Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
+	                                                    const AEObjectSpecifier&  container,
+	                                                    AEEnumeration             keyForm,
+	                                                    const AEDesc&             keyData );
+	
 	Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType = typeWildCard );
 	
 	template < ::DescType tokenType > struct GetData_Traits;
