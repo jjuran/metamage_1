@@ -48,6 +48,9 @@
 #ifndef NITROGEN_PSEUDOREFERENCE_H
 #include "Nitrogen/Pseudoreference.h"
 #endif
+#ifndef NITROGEN_MACERRORS_H
+#include "Nitrogen/MacErrors.h"
+#endif
 
 #include <vector>
 
@@ -1207,10 +1210,10 @@ namespace Nitrogen
         {
          typedef void (*Handler)( EventHandlerCallRef, EventRef, void * );
                   
-         static OSStatus CatchExceptions( EventHandlerCallRef inHandlerCallRef,
-                                          EventRef inEvent,
-                                          void *inUserData,
-                                          Handler handler );
+         static ::OSStatus CatchExceptions( EventHandlerCallRef inHandlerCallRef,
+                                            EventRef inEvent,
+                                            void *inUserData,
+                                            Handler handler );
         };
          
       template < EventHandler_ExceptionGlue::Handler handler >

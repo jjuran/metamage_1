@@ -164,10 +164,10 @@ namespace Nitrogen
                                   inUserData );
      }
 
-   OSStatus EventHandler_ExceptionGlue::CatchExceptions( EventHandlerCallRef inHandlerCallRef,
-                                                         EventRef inEvent,
-                                                         void *inUserData,
-                                                         Handler handler )
+   ::OSStatus EventHandler_ExceptionGlue::CatchExceptions( EventHandlerCallRef inHandlerCallRef,
+                                                           EventRef inEvent,
+                                                           void *inUserData,
+                                                           Handler handler )
      {
       try
         {
@@ -176,7 +176,7 @@ namespace Nitrogen
         }
       catch ( ... )
         {
-         return Convert< OSStatus >( TheExceptionBeingHandled(), eventInternalErr );
+         return Convert< OSStatus >( TheExceptionBeingHandled(), EventInternalErr() );
         }
      }
 
