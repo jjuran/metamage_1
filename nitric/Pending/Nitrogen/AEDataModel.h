@@ -46,6 +46,70 @@
 
 #include <string>
 
+
+#undef AEPutKeyPtr
+#undef AEPutKeyDesc
+#undef AEGetKeyPtr
+#undef AEGetKeyDesc
+#undef AESizeOfKeyDesc
+#undef AEDeleteKeyDesc
+
+inline OSErr AEPutKeyPtr(
+	AppleEvent *  theAppleEvent,
+	AEKeyword     theAEKeyword,
+	DescType      typeCode,
+	const void *  dataPtr,
+	Size          dataSize)
+{
+	return AEPutParamPtr(theAppleEvent, theAEKeyword, typeCode, dataPtr, dataSize);
+}
+
+inline OSErr AEPutKeyDesc(
+	AppleEvent *    theAppleEvent,
+	AEKeyword       theAEKeyword,
+	const AEDesc *  theAEDesc)
+{
+	return AEPutParamDesc(theAppleEvent, theAEKeyword, theAEDesc);
+}
+
+inline OSErr AEGetKeyPtr(
+	const AppleEvent *  theAppleEvent,
+	AEKeyword           theAEKeyword,
+	DescType            desiredType,
+	DescType *          typeCode,
+	void *              dataPtr,
+	Size                maximumSize,
+	Size *              actualSize)
+{
+	return AEGetParamPtr(theAppleEvent, theAEKeyword, desiredType, typeCode, dataPtr, maximumSize, actualSize);
+}
+
+inline OSErr AEGetKeyDesc(
+	const AppleEvent *  theAppleEvent,
+	AEKeyword           theAEKeyword,
+	DescType            desiredType,
+	AEDesc *            result)
+{
+	return AEGetParamDesc(theAppleEvent, theAEKeyword, desiredType, result);
+}
+
+inline OSErr AESizeOfKeyDesc(
+	const AppleEvent *  theAppleEvent,
+	AEKeyword           theAEKeyword,
+	DescType *          typeCode,
+	Size *              dataSize)
+{
+	return AESizeOfParam(theAppleEvent, theAEKeyword, typeCode, dataSize);
+}
+
+inline OSErr AEDeleteKeyDesc(
+	AppleEvent *  theAppleEvent,
+	AEKeyword     theAEKeyword)
+{
+	return AEDeleteParam(theAppleEvent, theAEKeyword);
+}
+
+
 namespace Nitrogen
   {
    template < ::DescType > struct DescType_Traits;
