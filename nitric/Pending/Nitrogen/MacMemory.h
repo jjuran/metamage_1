@@ -318,20 +318,25 @@ namespace Nitrogen
 	}
 	
 	
-	class HandleState_Details
+	class HandleState_Value
 	{
 		private:
 			Handle h;
 			
 		public:
 			typedef Handle_Flags Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef Handle_Flags GetResult;
+			typedef Handle_Flags SetParameter;
 			
-			HandleState_Details( Handle h )     : h( h ) {}
-			GetResult Get() const                          { return HGetState( h ); }
-			void Set( SetParameter state ) const          { HSetState( h, state ); }
+			static const bool hasSwap = false;
+			
+			HandleState_Value( Handle h )         : h( h )  {}
+			
+			GetResult Get() const                 { return HGetState( h ); }
+			void Set( SetParameter state ) const  { HSetState( h, state ); }
 	};
+	
+	typedef HandleState_Value HandleState_Details;
 	
 	typedef Pseudoreference< HandleState_Details > HandleState;
    	
