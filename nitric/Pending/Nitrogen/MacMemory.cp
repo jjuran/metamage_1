@@ -19,7 +19,9 @@ namespace Nitrogen
          MemError();
       return Owned<Handle>::Seize( result );
      }
-   
+
+#if CALL_NOT_IN_CARBON
+
 	Owned< Ptr > NewPtrSysClear( std::size_t size )
 	{
 		Ptr ptr = ::NewPtrSysClear( size );
@@ -49,7 +51,9 @@ namespace Nitrogen
 		
 		return h;
 	}
-	
+
+#endif
+
    void RegisterMemoryManagerErrors()
      {
       RegisterOSStatus< menuPrgErr              >();
