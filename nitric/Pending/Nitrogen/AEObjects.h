@@ -134,7 +134,7 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AEToken ¥
 	
-	struct TokenDisposer : public std::unary_function< AEToken, void >
+	struct AETokenDisposer : public std::unary_function< AEToken, void >
 	{
 		// parameter can't be const
 		void operator()( AEToken token ) const
@@ -144,17 +144,17 @@ namespace Nitrogen
 	};
 	
 	template <>
-	struct LivelinessTraits< AEToken, TokenDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+	struct LivelinessTraits< AEToken, AETokenDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
 	
 	
 	class AETokenEditor
 	{
 		private:
-			Owned< AEToken, TokenDisposer >& token;
+			Owned< AEToken, AETokenDisposer >& token;
 			AEToken workingCopy;
 		
 		public:
-			AETokenEditor( Owned< AEToken, TokenDisposer >& token )
+			AETokenEditor( Owned< AEToken, AETokenDisposer >& token )
 			:
 				token      ( token           ),
 				workingCopy( token.Release() )
@@ -162,7 +162,7 @@ namespace Nitrogen
 			
 			~AETokenEditor()
 			{
-				token = Owned< AEToken, TokenDisposer >::Seize( workingCopy );
+				token = Owned< AEToken, AETokenDisposer >::Seize( workingCopy );
 			}
 			
 			AEToken& Get()       { return workingCopy; }
@@ -170,10 +170,11 @@ namespace Nitrogen
 	};
 	
 	typedef AEDescList AETokenList;
+	typedef DescType AECompOperator;
 	
 	
 	#pragma mark -
-	#pragma mark ¥ Object Accessors ¥
+	#pragma mark ¥ Callbacks ¥
 	
 	struct OSLAccessorUPP_Details: Basic_UPP_Details< ::OSLAccessorUPP,
 	                                                  ::OSLAccessorProcPtr,
@@ -202,6 +203,77 @@ namespace Nitrogen
 	{
 		ThrowOSStatus( userUPP( desiredClass, &containerToken, containerClass, keyForm, &keyData, &value, accessorRefcon ) );
 	}
+	
+	typedef Owned< AEToken, AETokenDisposer > ( *OSLAccessorProcPtr )( AEObjectClass   desiredClass,
+	                                                                   const AEToken&  containerToken,
+	                                                                   AEObjectClass   containerClass,
+	                                                                   AEEnumerated    keyForm,
+	                                                                   const AEDesc&   keyData,
+	                                                                   RefCon          accessorRefcon );
+	
+	template < OSLAccessorProcPtr handler >
+	struct Adapt_OSLAccessor
+	{
+		static pascal OSErr ToCallback( ::DescType      desiredClass,
+		                                const AEToken*  containerToken,
+		                                ::DescType      containerClass,
+		                                ::DescType      keyForm,
+		                                const AEDesc*   keyData,
+		                                AEToken*         value,
+		                                long            accessorRefcon )
+		{
+			try
+			{
+				*value = handler( desiredClass,
+				                  *containerToken,
+				                  containerClass,
+				                  keyForm,
+				                  *keyData,
+				                  accessorRefcon ).Release();
+			}
+			catch ( OSStatus err )
+			{
+				return err;
+			}
+			return noErr;
+		}
+	};
+	
+#if 0
+	
+	struct OSLCompareUPP_Details: Basic_UPP_Details< ::OSLCompareUPP,
+	                                                 ::OSLCompareProcPtr,
+	                                                 ::NewOSLCompareUPP,
+	                                                 ::DisposeOSLCompareUPP,
+	                                                 ::InvokeOSLCompareUPP >
+	{};
+	
+	typedef UPP< OSLCompareUPP_Details > OSLCompareUPP;
+	
+	inline Owned< OSLCompareUPP > NewOSLCompareUPP( ::OSLCompareProcPtr p )
+	{
+		return NewUPP< OSLCompareUPP >( p );
+	}
+	
+	inline void DisposeOSLCompareUPP( Owned< OSLCompareUPP > )  {}
+	
+	inline void InvokeOSLCompareUPP( AECompOperator  oper,
+	                                 const AEToken&  obj1,
+	                                 const AEToken&  obj2,
+	                                 ::Boolean&      result,
+	                                 OSLCompareUPP   userUPP )
+	{
+		ThrowOSStatus( userUPP( oper, &obj1, &obj2, &result ) );
+	}
+	
+	typedef bool ( *OSLCompareProcPtr )( AECompOperator  oper,
+	                                     const AEToken&  obj1,
+	                                     const AEToken&  obj2 );
+	
+#endif
+	
+	#pragma mark -
+	#pragma mark ¥ Object Accessors ¥
 	
 	struct OSLAccessor
 	{
@@ -251,45 +323,26 @@ namespace Nitrogen
 		}
 	};
 	
-	typedef Owned< AEToken, TokenDisposer > ( *OSLAccessorProcPtr )( AEObjectClass   desiredClass,
-	                                                                 const AEToken&  containerToken,
-	                                                                 AEObjectClass   containerClass,
-	                                                                 AEEnumerated    keyForm,
-	                                                                 const AEDesc&   keyData,
-	                                                                 RefCon          accessorRefcon );
-	
-	template < OSLAccessorProcPtr handler >
-	struct Adapt_OSLAccessor
-	{
-		static pascal OSErr ToCallback( ::DescType      desiredClass,
-		                                const AEToken*  containerToken,
-		                                ::DescType      containerClass,
-		                                ::DescType      keyForm,
-		                                const AEDesc*   keyData,
-		                                AEToken*         value,
-		                                long            accessorRefcon )
-		{
-			try
-			{
-				*value = handler( desiredClass,
-				                  *containerToken,
-				                  containerClass,
-				                  keyForm,
-				                  *keyData,
-				                  accessorRefcon ).Release();
-			}
-			catch ( OSStatus err )
-			{
-				return err;
-			}
-			return noErr;
-		}
-	};
-	
 	void AEObjectInit();
 	
-	Owned< AEToken, TokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier,
-	                                           AEResolveCallbackFlags    callbackFlags );
+	void AESetObjectCallbacks( OSLCompareUPP        myCompareProc,
+	                           OSLCountUPP          myCountProc,
+	                           OSLDisposeTokenUPP   myDisposeTokenProc,
+	                           OSLGetMarkTokenUPP   myGetMarkTokenProc,
+	                           OSLMarkUPP           myMarkProc,
+	                           OSLAdjustMarksUPP    myAdjustMarksProc,
+	                           OSLGetErrDescUPP     myGetErrDescProcPtr );
+	
+	void AESetObjectCallbacks( ::OSLCompareProcPtr       compareProc,
+	                           ::OSLCountProcPtr         countProc,
+	                           ::OSLDisposeTokenProcPtr  disposeTokenProc,
+	                           ::OSLGetMarkTokenProcPtr  getMarkTokenProc,
+	                           ::OSLMarkProcPtr          markProc,
+	                           ::OSLAdjustMarksProcPtr   adjustMarksProc,
+	                           ::OSLGetErrDescProcPtr    getErrDescProc );
+	
+	Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier,
+	                                             AEResolveCallbackFlags    callbackFlags );
 	
 	Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
@@ -341,65 +394,71 @@ namespace Nitrogen
 	                                 DescType         containerType,
 	                                 bool             isSysHandler );
 	
+	Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
+	                                                        const AEToken&  containerToken,
+	                                                        AEObjectClass   containerClass,
+	                                                        AEEnumerated    keyForm,
+	                                                        const AEDesc&   keyData );
+	
 	#pragma mark -
 	#pragma mark ¥ AEToken routines ¥
 	
 	template < ::DescType type >
-	Owned< AEToken, TokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
+	Owned< AEToken, AETokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
 	{
-		return Owned< AEToken, TokenDisposer >::Seize( AECreateDesc< type >( data ).Release() );
+		return Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc< type >( data ).Release() );
 	}
 	
-	inline Owned< AEToken, TokenDisposer > AEDuplicateToken( const AEToken& token )
+	inline Owned< AEToken, AETokenDisposer > AEDuplicateToken( const AEToken& token )
 	{
-		return Owned< AEToken, TokenDisposer >::Seize( AEDuplicateDesc( token ).Release() );
+		return Owned< AEToken, AETokenDisposer >::Seize( AEDuplicateDesc( token ).Release() );
 	}
 	
-	inline void AEPutPtr( Owned< AETokenList, TokenDisposer >&  tokenList,
-	                      long                                  index,
-	                      DescType                              typeCode,
-	                      const void*                           dataPtr,
-	                      Size                                  dataSize )
+	inline void AEPutPtr( Owned< AETokenList, AETokenDisposer >&  tokenList,
+	                      long                                    index,
+	                      DescType                                typeCode,
+	                      const void*                             dataPtr,
+	                      Size                                    dataSize )
 	{
 		AEPutPtr( AETokenEditor( tokenList ), index, typeCode, dataPtr, dataSize );
 	}
 	
-	inline void AEPutDesc( Owned< AETokenList, TokenDisposer >&  tokenList,
-	                       long                                  index,
-	                       const AEToken&                        token )
+	inline void AEPutDesc( Owned< AETokenList, AETokenDisposer >&  tokenList,
+	                       long                                    index,
+	                       const AEToken&                          token )
 	{
 		AEPutDesc( AETokenEditor( tokenList ), index, token );
 	}
 	
-	inline Owned< AETokenList, TokenDisposer > AEGetNthToken( const AETokenList&  tokenList,
-	                                                          long                index )
+	inline Owned< AETokenList, AETokenDisposer > AEGetNthToken( const AETokenList&  tokenList,
+	                                                            long                index )
 	{
-		return Owned< AEToken, TokenDisposer >::Seize( AEGetNthDesc( tokenList, index ).Release() );
+		return Owned< AEToken, AETokenDisposer >::Seize( AEGetNthDesc( tokenList, index ).Release() );
 	}
 	
-	inline void AEPutKeyPtr( Owned< AERecord, TokenDisposer >&  record,
-	                         AEKeyword                          keyword,
-	                         DescType                           typeCode,
-	                         const void*                        dataPtr,
-	                         std::size_t                        dataSize )
+	inline void AEPutKeyPtr( Owned< AERecord, AETokenDisposer >&  record,
+	                         AEKeyword                            keyword,
+	                         DescType                             typeCode,
+	                         const void*                          dataPtr,
+	                         std::size_t                          dataSize )
 	{
 		AEPutKeyPtr( AETokenEditor( record ), keyword, typeCode, dataPtr, dataSize );
 	}
 	
-	inline void AEPutKeyDesc( Owned< AERecord, TokenDisposer >&  record,
-	                          AEKeyword                          keyword,
-	                          const AEDesc&                      desc )
+	inline void AEPutKeyDesc( Owned< AERecord, AETokenDisposer >&  record,
+	                          AEKeyword                            keyword,
+	                          const AEDesc&                        desc )
 	{
 		AEPutKeyDesc( AETokenEditor( record ), keyword, desc );
 	}
 	
-	inline void AEPutKeyDesc( Owned< AERecord, TokenDisposer >&  record,
-	                          const AEKeyDesc&                   keyDesc )
+	inline void AEPutKeyDesc( Owned< AERecord, AETokenDisposer >&  record,
+	                          const AEKeyDesc&                     keyDesc )
 	{
 		AEPutKeyDesc( AETokenEditor( record ), keyDesc );
 	}
 	
-	inline void AEDisposeToken( Owned< AEToken, TokenDisposer > )  {}
+	inline void AEDisposeToken( Owned< AEToken, AETokenDisposer > )  {}
 	
 }
 

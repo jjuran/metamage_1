@@ -26,19 +26,78 @@ namespace Nitrogen {
 	
 	void AEObjectInit()
 	{
+		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		
 		ThrowOSStatus( ::AEObjectInit() );
 	}
 	
-	Owned< AEToken, TokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier, 
-	                                           AEResolveCallbackFlags    callbackFlags )
+	void AESetObjectCallbacks( OSLCompareUPP        myCompareProc,
+	                           OSLCountUPP          myCountProc,
+	                           OSLDisposeTokenUPP   myDisposeTokenProc,
+	                           OSLGetMarkTokenUPP   myGetMarkTokenProc,
+	                           OSLMarkUPP           myMarkProc,
+	                           OSLAdjustMarksUPP    myAdjustMarksProc,
+	                           OSLGetErrDescUPP     myGetErrDescProcPtr )
 	{
+		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		
+		ThrowOSStatus( ::AESetObjectCallbacks( myCompareProc,
+		                                       myCountProc,
+		                                       myDisposeTokenProc,
+		                                       myGetMarkTokenProc,
+		                                       myMarkProc,
+		                                       myAdjustMarksProc,
+		                                       myGetErrDescProcPtr ) );
+	}
+	
+	void AESetObjectCallbacks( ::OSLCompareProcPtr       compareProc,
+	                           ::OSLCountProcPtr         countProc,
+	                           ::OSLDisposeTokenProcPtr  disposeTokenProc,
+	                           ::OSLGetMarkTokenProcPtr  getMarkTokenProc,
+	                           ::OSLMarkProcPtr          markProc,
+	                           ::OSLAdjustMarksProcPtr   adjustMarksProc,
+	                           ::OSLGetErrDescProcPtr    getErrDescProc )
+	{
+		static ::OSLCompareUPP      compareUPP;
+		static OSLCountUPP        countUPP;
+		static OSLDisposeTokenUPP disposeTokenUPP;
+		static OSLGetMarkTokenUPP getMarkTokenUPP;
+		static OSLMarkUPP         markUPP;
+		static OSLAdjustMarksUPP  adjustMarksUPP;
+		static OSLGetErrDescUPP   getErrDescUPP;
+		
+		compareUPP      = compareProc      ? ::NewOSLCompareUPP     ( compareProc      ) : NULL;
+		countUPP        = countProc        ? NewOSLCountUPP       ( countProc        ) : NULL;
+		disposeTokenUPP = disposeTokenProc ? NewOSLDisposeTokenUPP( disposeTokenProc ) : NULL;
+		getMarkTokenUPP = getMarkTokenProc ? NewOSLGetMarkTokenUPP( getMarkTokenProc ) : NULL;
+		markUPP         = markProc         ? NewOSLMarkUPP        ( markProc         ) : NULL;
+		adjustMarksUPP  = adjustMarksProc  ? NewOSLAdjustMarksUPP ( adjustMarksProc  ) : NULL;
+		getErrDescUPP   = getErrDescProc   ? NewOSLGetErrDescUPP  ( getErrDescProc   ) : NULL;
+		
+		
+		Nitrogen::AESetObjectCallbacks( compareUPP,
+		                                countUPP,
+		                                disposeTokenUPP,
+		                                getMarkTokenUPP,
+		                                markUPP,
+		                                adjustMarksUPP,
+		                                getErrDescUPP );
+	}
+	
+	Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier, 
+	                                             AEResolveCallbackFlags    callbackFlags )
+	{
+		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		
 		AEToken token;
 		ThrowOSStatus( ::AEResolve( &objectSpecifier, callbackFlags, &token ) );
-		return Owned< AEToken, TokenDisposer >::Seize( token );
+		return Owned< AEToken, AETokenDisposer >::Seize( token );
 	}
 	
 	Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall )
 	{
+		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		
 		ThrowOSStatus( ::AEInstallObjectAccessor( toInstall.desiredClass,
 		                                          toInstall.containerType,
 		                                          toInstall.accessor,
@@ -52,6 +111,8 @@ namespace Nitrogen {
 	                                 DescType containerType,
 	                                 bool isSysHandler )
 	{
+		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		
 		::OSLAccessorUPP accessor;
 		long accessorRefCon;
 		
@@ -62,6 +123,30 @@ namespace Nitrogen {
 		                                      isSysHandler ) );
 		
 		return OSLAccessor( desiredClass, containerType, accessor, accessorRefCon, isSysHandler );
+	}
+	
+	Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
+	                                                        const AEToken&  containerToken,
+	                                                        AEObjectClass   containerClass,
+	                                                        AEEnumerated    keyForm,
+	                                                        const AEDesc&   keyData )
+	{
+		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		
+		AEToken result;
+		ThrowOSStatus( ::AECallObjectAccessor( desiredClass,
+		                                       &containerToken,
+		                                       containerClass,
+		                                       keyForm,
+		                                       &keyData,
+		                                       &result ) );
+		
+		return Owned< AEToken, AETokenDisposer >::Seize( result );
+	}
+	
+	void RegisterObjectSupportLibraryErrors()
+	{
+		
 	}
 	
 }
