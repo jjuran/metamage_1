@@ -195,6 +195,37 @@ namespace Nitrogen
 		ThrowOSStatus( ::ThreadEndCritical() );
 	}
 	
+	ThreadTaskRef GetThreadCurrentTaskRef()
+	{
+		OnlyOnce< RegisterThreadManagerErrors >();
+		
+		::ThreadTaskRef result;
+		ThrowOSStatus( ::GetThreadCurrentTaskRef( &result ) );
+		
+		return result;
+	}
+	
+	ThreadState GetThreadStateGivenTaskRef( ThreadTaskRef  threadTaskRef,
+	                                        ThreadID       threadToGet )
+	{
+		OnlyOnce< RegisterThreadManagerErrors >();
+		
+		::ThreadState result;
+		ThrowOSStatus( ::GetThreadStateGivenTaskRef( threadTaskRef,
+		                                             threadToGet,
+		                                             &result ) );
+		
+		return result;
+	}
+	
+	void SetThreadReadyGivenTaskRef( ThreadTaskRef  threadTaskRef,
+	                                 ThreadID       threadToSet )
+	{
+		OnlyOnce< RegisterThreadManagerErrors >();
+		
+		ThrowOSStatus( ::SetThreadReadyGivenTaskRef( threadTaskRef, threadToSet ) );
+	}
+	
 	void RegisterThreadManagerErrors()
 	{
 		RegisterOSStatus< paramErr             >();
