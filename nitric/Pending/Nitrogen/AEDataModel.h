@@ -147,6 +147,8 @@ namespace Nitrogen
 	class DescType_Tag {};
 	typedef SelectorType< DescType_Tag, ::DescType > DescType;
 	
+	typedef DescType AEObjectClass, AEPropertyID;
+	
 	// Apple event descriptor types
 	inline DescType TypeBoolean               ()  { return DescType::Make( typeBoolean                ); }
 	inline DescType TypeChar                  ()  { return DescType::Make( typeChar                   ); }
@@ -485,6 +487,11 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : POD_DescType_Traits< double >                        {};
    template<> struct DescType_Traits< type128BitFloatingPoint >    : POD_DescType_Traits< long double >                   {};
 
+	inline std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
+	{
+		return sizeof (AppParameters) + appParameters.messageLength;
+	}
+	
    template<> struct DescType_Traits< typeEventRecord >            : POD_DescType_Traits< EventRecord >                   {};
    template<> struct DescType_Traits< typeAlias >                  : Handle_DescType_Traits< AliasRecord >                {};
    template<> struct DescType_Traits< typeEnumerated >             : Converting_DescType_Traits< AEEnumerated, UInt32 >   {};
@@ -514,6 +521,10 @@ namespace Nitrogen
 	using ::AERecord;
 	using ::AppleEvent;
 	
+	typedef AEDesc     AEToken;
+	typedef AEDescList AETokenList;
+	typedef AERecord   AEObjectSpecifier;
+	
 	template <>
 	struct Disposer< AEDesc > : public std::unary_function< AEDesc, void >, 
 	                            private DefaultDestructionOSStatusPolicy
@@ -525,7 +536,7 @@ namespace Nitrogen
 			// but we check anyway to be future-proof.
 			
 			OnlyOnce< RegisterAppleEventManagerErrors >();
-			DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
+			HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
 		}
 	};
 	
@@ -538,6 +549,30 @@ namespace Nitrogen
 		AEDesc operator()() const
 		{
 			AEDesc result = { typeNull, NULL };
+			return result;
+		}
+	};
+	
+	template <>
+	struct Disposer< AEKeyDesc > : public std::unary_function< AEKeyDesc, void >, 
+	                               private DefaultDestructionOSStatusPolicy
+	{
+		// parameter can't be const
+		void operator()( AEKeyDesc keyDesc ) const
+		{
+			Disposer< AEDesc >()( keyDesc.descContent );
+		}
+	};
+	
+	template <>
+	struct LivelinessTraits< AEKeyDesc, Disposer< AEKeyDesc > >   { typedef SeizedValuesAreLive LivelinessTest; };
+	
+	template <>
+	struct Maker< AEKeyDesc >
+	{
+		AEKeyDesc operator()() const
+		{
+			AEKeyDesc result = { AEKeyword(), Make< AEDesc >() };
 			return result;
 		}
 	};
@@ -842,10 +877,13 @@ namespace Nitrogen
 	);
 	
 	// 444
-	Owned< AEDesc > AECoercePtr(DescType typeCode, const void* dataPtr, Size dataSize, DescType toType);
+	Owned< AEDesc > AECoercePtr( DescType         typeCode, 
+	                             const void*      dataPtr, 
+	                             Size             dataSize, 
+	                             DescType         toType );
 	
 	// 461
-	Owned< AEDesc > AECoerceDesc(const AEDesc& desc, DescType toType);
+	Owned< AEDesc > AECoerceDesc( const AEDesc& desc, DescType toType );
 	
 	#pragma mark -
 	#pragma mark ¥ AEDescs ¥
@@ -987,9 +1025,19 @@ namespace Nitrogen
 	);
 	
 	void AEPutKeyDesc(
+		AERecord& record, 
+		const AEKeyDesc& keyDesc
+	);
+	
+	void AEPutKeyDesc(
 		Owned< AERecord >& record, 
 		AEKeyword keyword, 
 		const AEDesc& desc
+	);
+	
+	void AEPutKeyDesc(
+		Owned< AERecord >& record, 
+		const AEKeyDesc& keyDesc
 	);
 	
 	AEGetKeyPtr_Result AEGetKeyPtr(
@@ -1534,7 +1582,37 @@ namespace Nitrogen
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
+	#pragma mark -
+	#pragma mark ¥ Overloaded operators ¥
+	
+	inline Owned< AEDescList > operator<<( Owned< AEDescList > list, const AEDesc& desc )
+	{
+		AEPutDesc( list, 0, desc );  // Append the item
+		return list;
+	}
+	
+	inline Owned< AERecord > operator<<( Owned< AERecord > record, const AEKeyDesc& keyDesc )
+	{
+		AEPutKeyDesc( record, keyDesc );  // Also works for Apple event parameters
+		return record;
+	}
+	
+	inline AEKeyDesc operator+( AEKeyword key, const AEDesc& desc )
+	{
+		AEKeyDesc result;
+		result.descKey = key;
+		result.descContent = desc;
+		return result;
+	}
+	
+	inline Owned< AEKeyDesc > operator+( AEKeyword key, Owned< AEDesc > desc )
+	{
+		return Owned< AEKeyDesc >::Seize( key + desc.Release() );
+	}
+	
 	
 }
+
+#include "Nitrogen/Operators.h"
 
 #endif
