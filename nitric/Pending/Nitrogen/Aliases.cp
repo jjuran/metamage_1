@@ -199,10 +199,10 @@ namespace Nitrogen
    
    void RegisterAliasManagerErrors()
      {
-      OnlyOnce< RegisterOSStatus< nsvErr          > >();
-      OnlyOnce< RegisterOSStatus< fnfErr          > >();
-      OnlyOnce< RegisterOSStatus< paramErr        > >();
-      OnlyOnce< RegisterOSStatus< dirNFErr        > >();
-      OnlyOnce< RegisterOSStatus< userCanceledErr > >();
+      RegisterOSStatus< nsvErr          >();
+      RegisterOSStatus< fnfErr          >();
+      RegisterOSStatus< paramErr        >();
+      RegisterOSStatus< dirNFErr        >();
+      RegisterOSStatus< userCanceledErr >();
      }
   }
