@@ -54,13 +54,24 @@ namespace Nitrogen {
 	{
 		ManagedOSAID() : component(), id()  {}
 		ManagedOSAID( Shared< ComponentInstance > component, OSAID id ) 
-		  : component( component ), id( id )  {}
+		:
+			component( component ), 
+			id       ( id        )
+		{}
 		
 		operator OSAID() const  { return id; }
+		
+		friend bool operator==( const ManagedOSAID& a, const ManagedOSAID& b )
+		{
+			return a.component.Get() == b.component.Get()
+				&& a.id              == b.id;
+		}
+		friend bool operator!=( const ManagedOSAID& a, const ManagedOSAID& b )  { return !( a == b ); }
 		
 		Shared< ComponentInstance > component;
 		OSAID id;
 	};
+	typedef ManagedOSAID OSASpec;
 	
 	template <>
 	struct Disposer< ManagedOSAID > : public std::unary_function< ManagedOSAID, void >
