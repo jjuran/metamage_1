@@ -17,7 +17,78 @@
 #endif
 
 namespace Nitrogen
-  {
-  }
+{
+	
+	class GWorldFlags_Tag {};
+	typedef FlagType< GWorldFlags_Tag, ::GWorldFlags > GWorldFlags;
+	
+	static const GWorldFlags noNewDevice             = GWorldFlags::Make( ::noNewDevice );
+	static const GWorldFlags useTempMem              = GWorldFlags::Make( ::useTempMem );
+	static const GWorldFlags keepLocal               = GWorldFlags::Make( ::keepLocal );
+	static const GWorldFlags useDistantHdwrMem       = GWorldFlags::Make( ::useDistantHdwrMem );
+	static const GWorldFlags useLocalHdwrMem         = GWorldFlags::Make( ::useLocalHdwrMem );
+	static const GWorldFlags pixelsPurgeable         = GWorldFlags::Make( ::pixelsPurgeable );
+	static const GWorldFlags pixelsLocked            = GWorldFlags::Make( ::pixelsLocked );
+	static const GWorldFlags kAllocDirectDrawSurface = GWorldFlags::Make( ::kAllocDirectDrawSurface );
+	// ...
+	static const GWorldFlags gwFlagErr               = GWorldFlags::Make( ::gwFlagErr               );
+	
+	typedef CGrafPtr GWorldPtr;
+	
+	struct GWorld_State
+	{
+		GWorldPtr port;
+		GDHandle gdh;
+	};
+	typedef GWorld_State GetGWorld_Result;
+	
+	struct GWorldDisposer : public std::unary_function< GWorldPtr, void >
+	{
+		void operator()( GWorldPtr gWorld ) const
+		{
+			::DisposeGWorld( gWorld );
+		}
+	};
+	
+	Owned< GWorldPtr, GWorldDisposer > NewGWorld(
+		short pixelDepth, 
+		const Rect& boundsRect, 
+		CTabHandle cTable = NULL, 
+		GDHandle aGDevice = NULL, 
+		GWorldFlags flags = GWorldFlags()
+	);
+	
+	Owned< GWorldPtr, GWorldDisposer > NewGWorld(
+		short pixelDepth, 
+		const Rect& boundsRect, 
+		GWorldFlags flags
+	);
+	
+	struct LockPixels_Failed {};
+	
+	void LockPixels(PixMapHandle pm);
+	using ::UnlockPixels;
+	
+	GWorldFlags UpdateGWorld(
+		Owned< GWorldPtr, GWorldDisposer >& offscreenGWorld, 
+		short pixelDepth, 
+		const Rect& boundsRect, 
+		CTabHandle cTable = NULL, 
+		GDHandle aGDevice = NULL, 
+		GWorldFlags flags = GWorldFlags()
+	);
+	
+	inline void DisposeGWorld( Owned< GWorldPtr, GWorldDisposer > )  {}
+	
+	GWorld_State GetGWorld();
+	void SetGWorld( const GWorld_State& state );
+	void SetGWorld( GWorldPtr gWorld );
+	
+	GWorldFlags GetPixelsState( PixMapHandle pm );
+	void SetPixelsState( PixMapHandle pm, GWorldFlags state );
+	
+	PixMapHandle GetGWorldPixMap( GWorldPtr offscreenGWorld );
+	
+}
 
 #endif
