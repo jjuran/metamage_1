@@ -29,13 +29,7 @@ namespace Nitrogen
          typedef value_type& reference;
          typedef const value_type& const_reference;
          
-         class const_iterator:
-         #if defined(__MWERKS__) && __MWERKS__ == 0x2401
-            // CW Pro 6 apparently doesn't trust friends
-            public Specifics
-         #else
-            private Specifics
-         #endif
+         class const_iterator: private Specifics
            {
             friend class IndexUntilFailureContainer;
  
@@ -46,7 +40,8 @@ namespace Nitrogen
                typedef const value_type& reference;
                typedef std::forward_iterator_tag iterator_category;
 				
-				friend struct Transfer;  // CW Pro 6 ignores this
+				struct Transfer;  // Forward declaration, needed by CW Pro 6
+				friend struct Transfer;
 				
 				struct Transfer : private Specifics
 				{
@@ -82,15 +77,10 @@ namespace Nitrogen
 				
 				operator Transfer()  { return Transfer( this ); }
            
-           #if defined(__MWERKS__) && __MWERKS__ == 0x2401
-            public:
-           #else
             private:
-           #endif
                size_type position;
                value_type value;
                
-            private:
                void GetValue()
                  {
                   try
