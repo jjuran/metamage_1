@@ -32,8 +32,8 @@ namespace Nitrogen
                                             &oActualEncoding,
                                             oEncodingName ) );
 
-      result.oActualRegion = oActualRegion;
-      result.oActualEncoding = oActualEncoding;
+      result.oActualRegion   = RegionCode  ( oActualRegion   );
+      result.oActualEncoding = TextEncoding( oActualEncoding );
 
       return result;
      }
@@ -92,7 +92,7 @@ namespace Nitrogen
                                                         iRegionID,
                                                         iTextFontname,
                                                         &result ) );
-      return result;
+      return TextEncoding( result );
      }
 
    RevertTextEncodingToScriptInfo_Result RevertTextEncodingToScriptInfo( TextEncoding iEncoding )
@@ -105,8 +105,8 @@ namespace Nitrogen
                                                        &oTextScriptID,
                                                        &oTextLanguageID,
                                                        result.oTextFontname ) );
-      result.oTextScriptID = oTextScriptID;
-      result.oTextLanguageID = oTextLanguageID;
+      result.oTextScriptID   = ScriptCode( oTextScriptID );
+      result.oTextLanguageID = LangCode( oTextLanguageID );
       return result;
      }
 
@@ -119,8 +119,8 @@ namespace Nitrogen
       ThrowOSStatus( ::NearestMacTextEncodings( generalEncoding, &bestMacEncoding, &alternateMacEncoding ) );
 
       NearestMacTextEncodings_Result result;
-      result.bestMacEncoding      = bestMacEncoding;
-      result.alternateMacEncoding = alternateMacEncoding;
+      result.bestMacEncoding      = TextEncoding( bestMacEncoding      );
+      result.alternateMacEncoding = TextEncoding( alternateMacEncoding );
 
       return result;
      }
@@ -132,7 +132,7 @@ namespace Nitrogen
       OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       ::UCCharPropertyValue result;
       ThrowOSStatus( ::UCGetCharProperty( charPtr, textLength, propType, &result ) );
-      return result;
+      return UCCharPropertyValue( result );
      }
 
    UCCharPropertyValue UCGetCharProperty( const UniString&   text,
