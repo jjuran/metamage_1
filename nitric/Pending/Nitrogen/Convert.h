@@ -57,6 +57,7 @@
 #endif
 
 #include <limits>
+#include <sstream>
 #include <string>
 #include <ios>
 
