@@ -18,6 +18,110 @@
 
 namespace Nitrogen {
 	
+	class AELogicalOperator_Tag {};
+	typedef SelectorType< AELogicalOperator_Tag, ::FourCharCode > AELogicalOperator;
+	typedef AELogicalOperator AELogicalDescriptor;
+	
+	class AEAbsoluteOrdinal_Tag {};
+	typedef SelectorType< AEAbsoluteOrdinal_Tag, ::FourCharCode > AEAbsoluteOrdinal;
+	
+	class AERelativeOrdinal_Tag {};
+	typedef SelectorType< AERelativeOrdinal_Tag, ::FourCharCode > AERelativeOrdinal;
+	typedef AERelativeOrdinal AERelativeDescriptor;
+	
+	struct AEResolveCallbackFlags_Tag  {};
+	typedef FlagType< AEResolveCallbackFlags_Tag, short, ::kAEIDoMinimum > AEResolveCallbackFlags;
+	
+	
+	// *** LOGICAL OPERATOR CONSTANTS  ***
+	inline AELogicalOperator AEAND     ()  { return AELogicalOperator::Make( kAEAND      ); }
+	inline AELogicalOperator AEOR      ()  { return AELogicalOperator::Make( kAEOR       ); }
+	inline AELogicalOperator AENOT     ()  { return AELogicalOperator::Make( kAENOT      ); }
+	
+	// *** ABSOLUTE ORDINAL CONSTANTS  ***
+	inline AEAbsoluteOrdinal AEFirst   ()  { return AEAbsoluteOrdinal::Make( kAEFirst    ); }
+	inline AEAbsoluteOrdinal AELast    ()  { return AEAbsoluteOrdinal::Make( kAELast     ); }
+	inline AEAbsoluteOrdinal AEMiddle  ()  { return AEAbsoluteOrdinal::Make( kAEMiddle   ); }
+	inline AEAbsoluteOrdinal AEAny     ()  { return AEAbsoluteOrdinal::Make( kAEAny      ); }
+	inline AEAbsoluteOrdinal AEAll     ()  { return AEAbsoluteOrdinal::Make( kAEAll      ); }
+	
+	// *** RELATIVE ORDINAL CONSTANTS  ***
+	inline AERelativeOrdinal AENext    ()  { return AERelativeOrdinal::Make( kAENext     ); }
+	inline AERelativeOrdinal AEPrevious()  { return AERelativeOrdinal::Make( kAEPrevious ); }
+	
+	
+	// *** KEYWORD CONSTANT    ***
+	inline AEKeyword KeyAECompOperator   ()  { return AEKeyword::Make( keyAECompOperator    ); }
+	inline AEKeyword KeyAELogicalTerms   ()  { return AEKeyword::Make( keyAELogicalTerms    ); }
+	inline AEKeyword KeyAELogicalOperator()  { return AEKeyword::Make( keyAELogicalOperator ); }
+	inline AEKeyword KeyAEObject1        ()  { return AEKeyword::Make( keyAEObject1         ); }
+	inline AEKeyword KeyAEObject2        ()  { return AEKeyword::Make( keyAEObject2         ); }
+	
+	//     ... for Keywords for getting fields out of object specifier records. 
+	inline AEKeyword KeyAEDesiredClass   ()  { return AEKeyword::Make( keyAEDesiredClass    ); }
+	inline AEKeyword KeyAEContainer      ()  { return AEKeyword::Make( keyAEContainer       ); }
+	inline AEKeyword KeyAEKeyForm        ()  { return AEKeyword::Make( keyAEKeyForm         ); }
+	inline AEKeyword KeyAEKeyData        ()  { return AEKeyword::Make( keyAEKeyData         ); }
+
+	//     ... for Keywords for getting fields out of Range specifier records. 
+	inline AEKeyword KeyAERangeStart     ()  { return AEKeyword::Make( keyAERangeStart      ); }
+	inline AEKeyword KeyAERangeStop      ()  { return AEKeyword::Make( keyAERangeStop       ); }
+	
+	//     ... special handler selectors for OSL Callbacks. 
+	inline AEKeyword KeyDisposeTokenProc ()  { return AEKeyword::Make( keyDisposeTokenProc  ); }
+	inline AEKeyword KeyAECompareProc    ()  { return AEKeyword::Make( keyAECompareProc     ); }
+	inline AEKeyword KeyAECountProc      ()  { return AEKeyword::Make( keyAECountProc       ); }
+	inline AEKeyword KeyAEMarkTokenProc  ()  { return AEKeyword::Make( keyAEMarkTokenProc   ); }
+	inline AEKeyword KeyAEMarkProc       ()  { return AEKeyword::Make( keyAEMarkProc        ); }
+	inline AEKeyword KeyAEAdjustMarksProc()  { return AEKeyword::Make( keyAEAdjustMarksProc ); }
+	inline AEKeyword KeyAEGetErrDescProc ()  { return AEKeyword::Make( keyAEGetErrDescProc  ); }
+
+// ***   VALUE and TYPE CONSTANTS    ***
+	
+	//     ... possible values for the keyAEKeyForm field of an object specifier.
+	inline AEEnumerated FormAbsolutePosition()  { return AEEnumerated::Make( formAbsolutePosition ); }
+	inline AEEnumerated FormRelativePosition()  { return AEEnumerated::Make( formRelativePosition ); }
+	inline AEEnumerated FormTest            ()  { return AEEnumerated::Make( formTest             ); }
+	inline AEEnumerated FormRange           ()  { return AEEnumerated::Make( formRange            ); }
+	inline AEEnumerated FormPropertyID      ()  { return AEEnumerated::Make( formPropertyID       ); }
+	inline AEEnumerated FormName            ()  { return AEEnumerated::Make( formName             ); }
+	
+	//     ... relevant types (some of these are often pared with forms above).
+	inline DescType TypeObjectSpecifier    ()  { return DescType::Make( typeObjectSpecifier     ); }
+	inline DescType TypeObjectBeingExamined()  { return DescType::Make( typeObjectBeingExamined ); }
+	inline DescType TypeCurrentContainer   ()  { return DescType::Make( typeCurrentContainer    ); }
+	inline DescType TypeToken              ()  { return DescType::Make( typeToken               ); }
+	inline DescType TypeRelativeDescriptor ()  { return DescType::Make( typeRelativeDescriptor  ); }
+	inline DescType TypeAbsoluteOrdinal    ()  { return DescType::Make( typeAbsoluteOrdinal     ); }
+	inline DescType TypeIndexDescriptor    ()  { return DescType::Make( typeIndexDescriptor     ); }
+	inline DescType TypeRangeDescriptor    ()  { return DescType::Make( typeRangeDescriptor     ); }
+	inline DescType TypeLogicalDescriptor  ()  { return DescType::Make( typeLogicalDescriptor   ); }
+	inline DescType TypeCompDescriptor     ()  { return DescType::Make( typeCompDescriptor      ); }
+	inline DescType TypeOSLTokenList       ()  { return DescType::Make( typeOSLTokenList        ); }
+
+//  Possible values for flags parameter to AEResolve.  They're additive
+	inline AEResolveCallbackFlags AEIDoMinimum          ()  { return AEResolveCallbackFlags::Make( kAEIDoMinimum           ); }
+	inline AEResolveCallbackFlags AEIDoWhose            ()  { return AEResolveCallbackFlags::Make( kAEIDoWhose             ); }
+	inline AEResolveCallbackFlags AEIDoMarking          ()  { return AEResolveCallbackFlags::Make( kAEIDoMarking           ); }
+	inline AEResolveCallbackFlags AEPassSubDescs        ()  { return AEResolveCallbackFlags::Make( kAEPassSubDescs         ); }
+	inline AEResolveCallbackFlags AEResolveNestedLists  ()  { return AEResolveCallbackFlags::Make( kAEResolveNestedLists   ); }
+	inline AEResolveCallbackFlags AEHandleSimpleRanges  ()  { return AEResolveCallbackFlags::Make( kAEHandleSimpleRanges   ); }
+	inline AEResolveCallbackFlags AEUseRelativeIterators()  { return AEResolveCallbackFlags::Make( kAEUseRelativeIterators ); }
+
+// *** SPECIAL CONSTANTS FOR CUSTOM WHOSE-CLAUSE RESOLUTION
+	
+	inline DescType TypeWhoseDescriptor    ()  { return DescType::Make( typeWhoseDescriptor     ); }
+	
+	inline AEEnumerated FormWhose           ()  { return AEEnumerated::Make( formWhose            ); }
+	
+	inline DescType TypeWhoseRange         ()  { return DescType::Make( typeWhoseRange          ); }
+	
+	inline AEKeyword KeyAEWhoseRangeStart()  { return AEKeyword::Make( keyAEWhoseRangeStart ); }
+	inline AEKeyword KeyAEWhoseRangeStop ()  { return AEKeyword::Make( keyAEWhoseRangeStop  ); }
+	inline AEKeyword KeyAEIndex          ()  { return AEKeyword::Make( keyAEIndex           ); }
+	inline AEKeyword KeyAETest           ()  { return AEKeyword::Make( keyAETest            ); }
+	
+	
 	struct TokenDisposer : public std::unary_function< AEDesc, void >
 	{
 		// parameter can't be const
@@ -29,9 +133,6 @@ namespace Nitrogen {
 	
 	template <>
 	struct LivelinessTraits< AEDesc, TokenDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
-	
-	struct AEResolveCallbackFlags_Tag  {};
-	typedef FlagType< AEResolveCallbackFlags_Tag, short, kAEIDoMinimum > AEResolveCallbackFlags;
 	
 	
 	struct OSLAccessorUPP_Details: Basic_UPP_Details< ::OSLAccessorUPP,
