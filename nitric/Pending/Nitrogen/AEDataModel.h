@@ -329,6 +329,32 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
 #endif
 
+	using ::AEDesc;
+	using ::AEDescList;
+	using ::AERecord;
+	using ::AppleEvent;
+	
+	template <>
+	struct Disposer< AEDesc > : public std::unary_function< AEDesc, void > {
+		// parameter can't be const
+		void operator()( AEDesc desc ) const
+		{
+			::AEDisposeDesc( &desc );
+		}
+	};
+	
+	template <>
+	struct LivelinessTraits< AEDesc, Disposer< AEDesc > >   { typedef SeizedValuesAreLive LivelinessTest; };
+	
+	template <>
+	struct Maker< AEDesc >
+	{
+		AEDesc operator()() const
+		{
+			AEDesc result = { typeNull, NULL };
+			return result;
+		}
+	};
    
    struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
                                                         ::AEEventHandlerProcPtr,
