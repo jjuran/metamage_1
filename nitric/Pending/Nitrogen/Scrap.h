@@ -17,6 +17,8 @@
 
 static const ScrapRef kScrapRefNone = ScrapRef( NULL );
 
+#endif
+
 namespace Nitrogen {
 	
 	void RegisterScrapManagerErrors();
@@ -30,8 +32,6 @@ namespace Nitrogen {
 	void ClearCurrentScrap();
 	
 }
-
-#endif
 
 #endif
 
