@@ -27,6 +27,8 @@
 namespace Nitrogen
 {
 	
+	void RegisterQuickDrawErrors ();
+	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
@@ -47,15 +49,33 @@ namespace Nitrogen
 	using ::PenState;
 	
 	using ::RgnHandle;
+	using ::PicHandle;
+	using ::PolyHandle;
 	
-  template <> struct Disposer< RgnHandle >: public std::unary_function< RgnHandle, void >
-     {
-      void operator()( RgnHandle h ) const
-        {
-         ::DisposeRgn( h );
-        }
-     };
-
+	template <> struct Disposer< RgnHandle > : public std::unary_function< RgnHandle, void >
+	{
+		void operator()( RgnHandle h ) const
+		{
+			::DisposeRgn( h );
+		}
+	};
+	
+	template <> struct Disposer< PicHandle > : public std::unary_function< PicHandle, void >
+	{
+		void operator()( PicHandle h ) const
+		{
+			::KillPicture( h );
+		}
+	};
+	
+	template <> struct Disposer< PolyHandle > : public std::unary_function< PolyHandle, void >
+	{
+		void operator()( PolyHandle h ) const
+		{
+			::KillPoly( h );
+		}
+	};
+	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
 	using ::GrafPtr;
@@ -158,9 +178,59 @@ namespace Nitrogen
 	
 	using ::RGBColor;
 	
+	using ::CTabHandle;
+	
+	template <> struct Disposer< CTabHandle > : public std::unary_function< CTabHandle, void >
+	{
+		void operator()( CTabHandle h ) const
+		{
+			::DisposeCTable( h );
+		}
+	};
+	
 	using ::PixMap;
 	using ::PixMapPtr;
 	using ::PixMapHandle;
+	
+	/*
+	template <> struct Disposer< PixMapHandle > : public std::unary_function< PixMapHandle, void >
+	{
+		void operator()( PixMapHandle h ) const
+		{
+			::DisposePixMap( h );
+		}
+	};
+	*/
+	
+	using ::PixPatHandle;
+	
+	template <> struct Disposer< PixPatHandle > : public std::unary_function< PixPatHandle, void >
+	{
+		void operator()( PixPatHandle h ) const
+		{
+			::DisposePixPat( h );
+		}
+	};
+	
+	using ::CCrsrHandle;
+	
+	template <> struct Disposer< CCrsrHandle > : public std::unary_function< CCrsrHandle, void >
+	{
+		void operator()( CCrsrHandle h ) const
+		{
+			::DisposeCCursor( h );
+		}
+	};
+	
+	using ::GDHandle;
+	
+	template <> struct Disposer< GDHandle > : public std::unary_function< GDHandle, void >
+	{
+		void operator()( GDHandle h ) const
+		{
+			::DisposeGDevice( h );
+		}
+	};
 	
 	typedef GrafPtr CGrafPtr;
 	
@@ -207,58 +277,82 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
 	
-	void RegisterQuickDrawErrors ();
+	// InitGraf
+	// OpenPort
+	// InitPort
+	// ClosePort
+	
+	void LockPortBits  ( GrafPtr port );
+	void UnlockPortBits( GrafPtr port );
+	
+	// QDRegionToRects
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
-	// 2466
 	using ::MacSetPort;
 	
 #else
 	
-	// 2466
 	inline void MacSetPort( GrafPtr port )  { ::MacSetPort( port ); }
 	
 #endif
 	
-	// 2481
 	GrafPtr GetPort();
 	
-	// 2493
 	bool QDSwapPort( CGrafPtr newPort, CGrafPtr& oldPort );
 	CGrafPtr QDSwapPort( CGrafPtr newPort );
 	
-	// 2531, 2545, 2559, 2573
+	// GrafDevice
+	// SetPortBits
+	
 	using ::PortSize;
 	using ::MovePortTo;
 	using ::SetOrigin;
 	using ::SetClip;
 	
-	// 2585
 	Owned< RgnHandle > GetClip();
 	
-	// 2597
 	inline void ClipRect( const Rect& rect )  { ::ClipRect( &rect ); }
 	
-	// 2621
+	inline void BackPat( const Pattern& pat )  { ::BackPat( &pat ); }
+	
 	using ::InitCursor;
 	
-	// 2633
 	inline void MacSetCursor( const Cursor& cursor )  { ::MacSetCursor( &cursor ); }
 	inline void MacSetCursor( CursHandle    cursor )  { ::MacSetCursor( *cursor ); }
 	void MacSetCursor( ResID id );  // calls GetCursor()
 	
-	// 2723
+	using ::HideCursor;
+	using ::MacShowCursor;
+	using ::ObscureCursor;
+	using ::HidePen;
+	using ::ShowPen;
+	
+	Point GetPen();
+	
 	PenState GetPenState();
 	
-	// 2735
 	inline void SetPenState( const PenState& penState )  { ::SetPenState( &penState ); }
 	
-	// 2892
+	using ::PenSize;
+	
+	void PenMode( TransferMode mode );
+	
+	inline void PenPat( const Pattern& pat )  { ::PenPat( &pat ); }
+	
+	using ::PenNormal;
+	using ::MoveTo;
+	using ::Move;
+	using ::MacLineTo;
+	using ::Line;
+	
+	// ForeColor
+	// BackColor
+	// ColorBit
+	
 	inline Rect MacSetRect( short left, short top, short right, short bottom )  { return Make< Rect >( top, left, bottom, right ); }
 	inline Rect MacSetRect( Point topLeft, Point bottomRight )  { return MacSetRect( topLeft.h, topLeft.v, bottomRight.h, bottomRight.v ); }
 	
-	// 2912
 	Rect MacOffsetRect( const Rect& r, short dh, short dv );
 	
 	inline Rect MacOffsetRect( const Rect& r, Point delta )
@@ -266,7 +360,6 @@ namespace Nitrogen
 		return MacOffsetRect( r, delta.h, delta.v );
 	}
 	
-	// 2930
 	Rect MacInsetRect( const Rect& r, short dh, short dv );
 	
 	struct SectRect_Result
@@ -275,85 +368,109 @@ namespace Nitrogen
 		bool intersected;
 		
 		operator const Rect&() const  { return intersection; }
-		operator bool() const  { return intersected; }
+		operator bool()        const  { return intersected;  }
 	};
 	
-	// 2948
 	SectRect_Result SectRect( const Rect& a, const Rect& b );
 	
-	// 2963
 	Rect MacUnionRect( const Rect& a, const Rect& b );
 	
-	// 2981
 	bool MacEqualRect( const Rect& a, const Rect& b );
 	
-	// 2998
 	bool EmptyRect( const Rect& r );
 	
-	// 3010, 3025, 3037, 3049
 	inline void MacFrameRect ( const Rect& r )  { ::MacFrameRect ( &r ); }
 	inline void PaintRect    ( const Rect& r )  { ::PaintRect    ( &r ); }
 	inline void EraseRect    ( const Rect& r )  { ::EraseRect    ( &r ); }
 	inline void MacInvertRect( const Rect& r )  { ::MacInvertRect( &r ); }
 	
-	// 3064
-	inline void MacFillRect( const Rect& r, const Pattern& pat )  { ::MacFillRect( &r, &pat ); }
+	inline void MacFillRect( const Rect&     r,
+	                         const Pattern&  pat )  { ::MacFillRect( &r, &pat ); }
 	
-	// 3081, 3093, 3105, 3117
 	inline void FrameOval ( const Rect& r )  { ::FrameOval ( &r ); }
 	inline void PaintOval ( const Rect& r )  { ::PaintOval ( &r ); }
 	inline void EraseOval ( const Rect& r )  { ::EraseOval ( &r ); }
 	inline void InvertOval( const Rect& r )  { ::InvertOval( &r ); }
 	
-	// 3129
-	inline void FillOval( const Rect& r, const Pattern& pat )  { ::FillOval( &r, &pat ); }
+	inline void FillOval( const Rect&     r,
+	                      const Pattern&  pat )  { ::FillOval( &r, &pat ); }
+	
+	// RoundRect
+	// Arc
 	
 //	Region handling
-	// 3295
-	Owned<RgnHandle> NewRgn (void);
+	Owned< RgnHandle > NewRgn();
 	
-	// 3307, 3319
 //	extern void OpenRgn(void)
 	using ::OpenRgn;
 
 //	extern void CloseRgn(RgnHandle dstRgn)
 	using ::CloseRgn;
 	
-	// 3373
+	RgnHandle BitMapToRegion( RgnHandle region, const BitMap& bitMap );
+	Owned< RgnHandle > BitMapToRegion( const BitMap& bitMap );
+	
+	RgnHandle HandleToRgn( RgnHandle region, Handle oldRegion );
+	Owned< RgnHandle > HandleToRgn( Handle oldRegion );
+	
+	Owned< Handle > RgnToHandle( RgnHandle region );
+	
 	inline void DisposeRgn( Owned< RgnHandle > )  {}
 	
-	// 3385
 //	extern void MacCopyRgn ( RgnHandle srcRgn, RgnHandle dstRgn );
 	using ::MacCopyRgn;
 	
-	Owned<RgnHandle> MacCopyRgn ( RgnHandle srcRgn );
+	Owned< RgnHandle > MacCopyRgn( RgnHandle srcRgn );
 	
-	// 3402
 //	extern void SetEmptyRgn(RgnHandle rgn);
 	using ::SetEmptyRgn;
 	
-	// 3434
+	RgnHandle MacSetRectRgn( RgnHandle  region,
+	                         short      left,
+	                         short      top,
+	                         short      right,
+	                         short      bottom );	
+	
+	Owned< RgnHandle > MacSetRectRgn( short  left,
+	                                  short  top,
+	                                  short  right,
+	                                  short  bottom );
+	
 	RgnHandle RectRgn( RgnHandle region, const Rect& rect );	
 	Owned< RgnHandle > RectRgn( const Rect& rect );
 	
-	// 3481
+	using ::MacOffsetRgn;
+	using ::InsetRgn;
+	
 	using ::SectRgn;
 	Owned< RgnHandle > SectRgn( RgnHandle a, RgnHandle b );
 	
-	// 3514
+	using ::MacUnionRgn;
+	Owned< RgnHandle > MacUnionRgn( RgnHandle a, RgnHandle b );
+	
 	using ::DiffRgn;
 	Owned< RgnHandle > DiffRgn( RgnHandle a, RgnHandle b );
 	
-	// 3620, 3632
+	using ::MacXorRgn;
+	Owned< RgnHandle > MacXorRgn( RgnHandle a, RgnHandle b );
+	
+	inline bool RectInRgn( const Rect& r, RgnHandle rgn )  { return ::RectInRgn( &r, rgn ); }
+	
+	inline bool MacEqualRgn( RgnHandle a, RgnHandle b )  { return ::MacEqualRgn( a, b ); }
+	
+	inline bool EmptyRgn( RgnHandle rgn )  { return ::EmptyRgn( rgn ); }
+	
+	using ::MacFrameRgn;
+	using ::MacPaintRgn;
 	using ::EraseRgn;
 	using ::MacInvertRgn;
 	
-	// 3664
+	inline void MacFillRgn( RgnHandle rgn, const Pattern& pat )  { ::MacFillRgn( rgn, &pat ); }
+	
 	void ScrollRect( const Rect& r, short dh, short dv, RgnHandle updateRgn );
 	
 	Owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv );
 	
-	// 3680
 	void CopyBits( const BitMap*  srcBits,
 	               const BitMap*  dstBits,
 	               const Rect&    srcRect,
@@ -361,7 +478,9 @@ namespace Nitrogen
 	               TransferMode   mode,
 	               RgnHandle      maskRgn = NULL );
 	
-	// 3736
+	// SeedFill
+	// CalcMask
+	
 	void CopyMask( const BitMap*  srcBits,
 	               const BitMap*  maskBits,
 	               const BitMap*  dstBits,
@@ -369,58 +488,211 @@ namespace Nitrogen
 	               const Rect&    maskRect,
 	               const Rect&    dstRect );
 	
-	// 3932
+	Owned< PicHandle > OpenPicture( const Rect& picFrame );
+	
+	// PicComment
+	
+	using ::ClosePicture;
+	
+	inline void DrawPicture( PicHandle pic, const Rect& r )  { ::DrawPicture( pic, &r ); }
+	
+	inline void KillPicture( Owned< PicHandle > )  {}
+	
+	Owned< PolyHandle > OpenPoly();
+	
+	using ::ClosePoly;
+	
+	inline void KillPoly( Owned< PolyHandle > )  {}
+	
+	using ::OffsetPoly;
+	using ::FramePoly;
+	using ::PaintPoly;
+	using ::ErasePoly;
+	using ::InvertPoly;
+	
+	inline void FillPoly( PolyHandle poly, const Pattern& pat )  { ::FillPoly( poly, &pat ); }
+	
 	inline Point SetPt( short h, short v )  { return Make< Point >( v, h ); }
 	
-	// 3947
 	Point LocalToGlobal( Point point );
 	Rect  LocalToGlobal( const Rect& rect );
 	
-	// 3959
 	Point GlobalToLocal( Point point );
 	Rect  GlobalToLocal( const Rect& rect );
 	
-	// 4265
+	using ::Random;
+	
+	// StuffHex
+	
+	inline bool MacGetPixel( short h, short v )  { return ::MacGetPixel( h, v ); }
+	
+	/*
+	Point ScalePt( Point pt, const Rect& srcRect, const Rect& dstRect );
+	Point MapPt  ( Point pt, const Rect& srcRect, const Rect& dstRect );
+	
+	Rect MapRect( const Rect& r, const Rect& srcRect, const Rect& dstRect );
+	*/
+	
+	// MapRgn
+	// MapPoly
+	// SetStdProcs
+	// StdRect
+	// StdRRect
+	// StdOval
+	// StdArc
+	// StdPoly
+	// StdRgn
+	// StdBits
+	// StdComment
+	// StdGetPic
+	// StdPutPic
+	// StdOpcode
+	
 	Point AddPt( Point a, Point b );
 	
-	// 4293
+	inline bool EqualPt( Point a, Point b )  { return ::EqualPt( a, b ); }
+	
 	inline bool MacPtInRect( Point pt, const Rect& rect )  { return ::MacPtInRect( pt, &rect ); }
 	
-	// 4340
+	// Pt2Rect
+	// PtToAngle
+	
 	Point SubPt( Point a, Point b );
 	
-	// 4633
-	inline void RGBForeColor( const RGBColor& color )  { ::RGBForeColor( &color ); }
+	// PtInRgn
+	// StdLine
+	// OpenCPort
+	// InitCPort
+	// CloseCPort
 	
-	// 4645
+//	Owned< PixMapHandle > NewPixMap();
+	
+//	inline void DisposePixMap( Owned< PixMapHandle > )  {}
+	
+	// CopyPixMap
+	
+	Owned< PixPatHandle > NewPixPat();
+	
+	inline void DisposePixPat( Owned< PixPatHandle > )  {}
+	
+	PixPatHandle CopyPixPat( PixPatHandle srcPP, PixPatHandle dstPP );
+	Owned< PixPatHandle > CopyPixPat( PixPatHandle pixPat );
+	
+	using ::PenPixPat;
+	using ::BackPixPat;
+	
+	PixPatHandle GetPixPat( ResID patID );
+	
+	// MakeRGBPat
+	// FillCRect
+	// FillCOval
+	// FillCRoundRect
+	// FillCArc
+	// FillCRgn
+	// FillCPoly
+	
+	inline void RGBForeColor( const RGBColor& color )  { ::RGBForeColor( &color ); }
 	inline void RGBBackColor( const RGBColor& color )  { ::RGBBackColor( &color ); }
 	
-	// 5329
-	CursHandle MacGetCursor( ResID id );
-	
-	// 4657
-	inline void SetCPixel( short x, short y, const RGBColor& color )
+	inline void SetCPixel( short h, short v, const RGBColor& color )
 	{
-		::SetCPixel( x, y, &color );
+		::SetCPixel( h, v, &color );
 	}
+	
+	using ::SetPortPix;
+	
+	RGBColor GetCPixel( short h, short v );
+	
+	RGBColor GetForeColor();
+	RGBColor GetBackColor();
+	
+	// SeedCFill
+	// CalcCMask
+	// OpenCPicture
+	// OpColor
+	// HiliteColor
+	
+	inline void DisposeCTable( Owned< CTabHandle > )  {}
+	
+	// GetCTable
+	// GetCCursor
+	// SetCCursor
+	
+	using ::AllocCursor;
+	
+	inline void DisposeCCursor( Owned< CCrsrHandle > )  {}
+	
+	// SetStdCProcs
+	// GetMaxDevice
+	// GetCTSeed
+	
+	using ::GetDeviceList;
+	using ::GetMainDevice;
+	using ::GetNextDevice;
+	
+	// TestDeviceAttribute
+	// SetDeviceAttribute
+	// InitGDevice
+	// NewGDevice
+	
+	inline void DisposeGDevice( Owned< GDHandle > )  {}
+	
+	using ::SetGDevice;
+	using ::GetGDevice;
+	
+	// ...
+	
+	// Only returns errors from Color QuickDraw and Color Manager functions
+	void QDError();
+	
+	// CopyDeepMask
+	// DeviceLoop
+	// GetMaskTable
+	
+	PatHandle GetPattern( ResID patternID );
+	
+	CursHandle MacGetCursor( ResID cursorID );
+	
+	PicHandle GetPicture( ResID pictureID );
+	
+	// DeltaPoint
+	// ShieldCursor
+	// ScreenRes
+	
+	Pattern GetIndPattern( ResID patternListID, short index );
+	
+	// PackBits
+	// UnpackBits
+	// SlopeFromAngle
+	// AngleFromSlope
+	
+	// GetPortCustomXFerProc
+	// SetPortCustomXFerProc
+	
+	// OpenCursorComponent
+	// CloseCursorComponent
+	// SetCursorComponent
+	// CursorComponentChanged
+	// CursorComponentSetData
+	
+	bool IsValidPort( CGrafPtr port );
+	
+	// GetPortPixMap
+	// ...
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
-	// 5835
 	using ::GetPortBitMapForCopyBits;
 	
-	// 5858
 	Rect GetPortBounds( CGrafPtr port );
 	
 #else
 	
-	// 5835
 	inline const BitMap* GetPortBitMapForCopyBits( CGrafPtr port )
 	{
 		return &::GrafPtr( port )->portBits;
 	}
 	
-	// 5858
 	inline const Rect& GetPortBounds( CGrafPtr port )
 	{
 		return ::GrafPtr( port )->portRect;
@@ -428,13 +700,11 @@ namespace Nitrogen
 	
 #endif
 	
-	// 5872
 	RGBColor GetPortForeColor( CGrafPtr port );
-	
-	// 5886
 	RGBColor GetPortBackColor( CGrafPtr port );
 	
-	// 6036
+	// ...
+	
 	RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region );
 	
 	Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port );
@@ -443,21 +713,28 @@ namespace Nitrogen
 	
 	Owned< RgnHandle > GetPortClipRegion( CGrafPtr port );
 	
-	// 6106
+	// ...
+	
 	Point GetPortPenSize( CGrafPtr );
 	
-	// 6194
+	// ...
+	
 	bool IsPortColor( CGrafPtr port );
 	
-	// 6438
+	// ...
+	
 	void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn );
 	
-	// 6494
+	// ...
+	
 	void SetPortPenSize( CGrafPtr port, Point penSize );
+	
+	// ...
+	
+	// GetQDGlobalsRandomSeed
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
-	// 6577, 6589, 6601, 6613, 6625, 6637, 6649
 	const BitMap&  GetQDGlobalsScreenBits();
 	const Cursor&  GetQDGlobalsArrow();
 	const Pattern& GetQDGlobalsDarkGray();
@@ -466,12 +743,10 @@ namespace Nitrogen
 	const Pattern& GetQDGlobalsBlack();
 	const Pattern& GetQDGlobalsWhite();
 	
-	// 6661
 	using ::GetQDGlobalsThePort;
 	
 #else
 	
-	// 6577, 6589, 6601, 6613, 6625, 6637, 6649
 	inline const BitMap&  GetQDGlobalsScreenBits()  { return qd.screenBits; }
 	inline const Cursor&  GetQDGlobalsArrow()       { return qd.arrow; }
 	inline const Pattern& GetQDGlobalsDarkGray()    { return qd.dkGray; }
@@ -480,21 +755,44 @@ namespace Nitrogen
 	inline const Pattern& GetQDGlobalsBlack()       { return qd.black; }
 	inline const Pattern& GetQDGlobalsWhite()       { return qd.white; }
 	
-	// 6661
 	inline GrafPtr        GetQDGlobalsThePort()     { return qd.thePort; }
 	
 #endif
 	
-	// 6729
+	// ...
+	
 	Owned< CGrafPtr > CreateNewPort();
 	
-	// 6741
 	inline void DisposePort( Owned< CGrafPtr > )  {}
 	
-	// Declared in Nitrogen/CGDirectDisplay.h since it requires CGDirectDisplayID.
+	// SetQDError
 	
-	// 7105
+	// ...
+	
+	// QDIsPortBuffered
+	// QDIsPortBufferDirty
+	// QDFlushPortBuffer
+	// QDGetDirtyRegion
+	// QDSetDirtyRegion
+	// QDAddRectToDirtyRegion
+	// QDAddRegionToDirtyRegion
+	// CreateCGContextForPort
+	// ClipCGContextToRegion
+	// SyncCGContextOriginWithPort
+	// QDBeginCGContext
+	// QDEndCGContext
+	// QDSaveRegionBits
+	// QDRestoreRegionBits
+	// QDDisposeRegionBits
+	
+	// Declared in Nitrogen/CGDirectDisplay.h since it requires CGDirectDisplayID.
 	//Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display );
+	
+	// QDDisplayWaitCursor
+	// QDSetPatternOrigin
+	// QDGetPatternOrigin
+	
+	// LowMem accessors
 	
 	#pragma mark -
 	#pragma mark ¥ Pseudoreferences ¥
@@ -549,8 +847,8 @@ namespace Nitrogen
 			
 			static const bool hasSwap = false;
 			
-			GetResult Get() const                 { return GetPortForeColor( GetQDGlobalsThePort() ); }
-			void Set( SetParameter color ) const  { RGBForeColor( color );                            }
+			GetResult Get() const                 { return GetForeColor(); }
+			void Set( SetParameter color ) const  { RGBForeColor( color ); }
 	};
 	
 	class RGBBackColor_Value
@@ -562,8 +860,8 @@ namespace Nitrogen
 			
 			static const bool hasSwap = false;
 			
-			GetResult Get() const                 { return GetPortBackColor( GetQDGlobalsThePort() ); }
-			void Set( SetParameter color ) const  { RGBBackColor( color );                            }
+			GetResult Get() const                 { return GetBackColor(); }
+			void Set( SetParameter color ) const  { RGBBackColor( color ); }
 	};
 	
 	class PortClipRegion_Value

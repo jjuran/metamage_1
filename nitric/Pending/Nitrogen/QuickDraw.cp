@@ -112,8 +112,6 @@ namespace Nitrogen
 	
 	Owned< RgnHandle > NewRgn(void)
 	{
-		OnlyOnce< RegisterQuickDrawErrors >();
-		
 		RgnHandle result = ::NewRgn();
 		
 		if ( result == NULL )
@@ -155,10 +153,26 @@ namespace Nitrogen
 		return result;
 	}
 	
+	Owned< RgnHandle > MacUnionRgn( RgnHandle a, RgnHandle b )
+	{
+		Owned< RgnHandle > result = NewRgn();
+		::MacUnionRgn( a, b, result );
+		
+		return result;
+	}
+	
 	Owned< RgnHandle > DiffRgn( RgnHandle a, RgnHandle b )
 	{
 		Owned< RgnHandle > result = NewRgn();
 		::DiffRgn( a, b, result );
+		
+		return result;
+	}
+	
+	Owned< RgnHandle > MacXorRgn( RgnHandle a, RgnHandle b )
+	{
+		Owned< RgnHandle > result = NewRgn();
+		::MacXorRgn( a, b, result );
 		
 		return result;
 	}
@@ -222,6 +236,29 @@ namespace Nitrogen
 	{
 		return SetPt( a.h - b.h,
 		              a.v - b.v );
+	}
+	
+	RGBColor GetForeColor()
+	{
+		RGBColor result;
+		::GetForeColor( &result );
+		
+		return result;
+	}
+	
+	RGBColor GetBackColor()
+	{
+		RGBColor result;
+		::GetBackColor( &result );
+		
+		return result;
+	}
+	
+	void QDError()
+	{
+		OnlyOnce< RegisterQuickDrawErrors >();
+		
+		ThrowOSStatus( ::QDError() );
 	}
 	
 	CursHandle MacGetCursor( ResID id )
@@ -459,8 +496,35 @@ namespace Nitrogen
 	
 	void RegisterQuickDrawErrors()
 	{
-		RegisterOSStatus< memFullErr >();
+		RegisterMemoryManagerErrors();
+		
+		// CopyBits couldn't allocate required temporary memory
+		RegisterOSStatus< -143                    >();
+		
+		// Ran out of stack space while drawing polygon
+		RegisterOSStatus< -144                    >();
+		
+		RegisterOSStatus< noMemForPictPlaybackErr >();
+		RegisterOSStatus< rgnOverflowErr          >();
+		RegisterOSStatus< pixMapTooDeepErr        >();
+		RegisterOSStatus< insufficientStackErr    >();
+		RegisterOSStatus< cMatchErr               >();
+		RegisterOSStatus< cTempMemErr             >();
+		RegisterOSStatus< cNoMemErr               >();
+		RegisterOSStatus< cRangeErr               >();
+		RegisterOSStatus< cProtectErr             >();
+		RegisterOSStatus< cDevErr                 >();
+		RegisterOSStatus< cResErr                 >();
+		RegisterOSStatus< cDepthErr               >();
+		RegisterOSStatus< rgnTooBigErr            >();
+		RegisterOSStatus< updPixMemErr            >();
+		RegisterOSStatus< pictInfoVersionErr      >();
+		RegisterOSStatus< pictInfoIDErr           >();
+		RegisterOSStatus< pictInfoVerbErr         >();
+		RegisterOSStatus< cantLoadPickMethodErr   >();
+		RegisterOSStatus< colorsRequestedErr      >();
+		RegisterOSStatus< pictureDataErr          >();
 	}
   
-  }
+}
 
