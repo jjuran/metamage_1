@@ -1040,7 +1040,9 @@ namespace Nitrogen
 	
 	FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
 	{
-		if ( TARGET_API_MAC_CARBON  ||  ::FSGetVolumeInfo != NULL )
+	#if TARGET_CPU_PPC
+		
+		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC  &&  ::FSGetVolumeInfo != NULL )
 		{
 			FSVolumeRefNum result;
 			FSGetVolumeInfo( volumeIndex,
@@ -1052,6 +1054,8 @@ namespace Nitrogen
 			return result;
 		}
 		else
+		
+	#endif
 		{
 			OnlyOnce< RegisterFileManagerErrors >();
 			
