@@ -69,20 +69,34 @@ namespace Nitrogen {
 		RegisterOSStatus< errAERecordingIsAlreadyOn >();
 	}
 	
-	Owned<AEDesc> AECoercePtr(DescType typeCode, const void* dataPtr, Size dataSize, DescType toType)
+	Owned< AEDesc > AECoercePtr( DescType typeCode, const void* dataPtr, Size dataSize, DescType toType )
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
+		// Necessary for OS 9; OS X does this automatically
+		if ( toType == typeWildCard )
+		{
+			toType = typeCode;
+		}
+		
 		AEDesc result;
-		ThrowOSStatus( ::AECoercePtr(typeCode, dataPtr, dataSize, toType, &result) );
-		return Owned<AEDesc>::Seize(result);
+		ThrowOSStatus( ::AECoercePtr( typeCode, dataPtr, dataSize, toType, &result ) );
+		return Owned< AEDesc >::Seize( result );
 	}
 	
-	Owned<AEDesc> AECoerceDesc(const AEDesc& desc, DescType toType)
+	Owned< AEDesc > AECoerceDesc( const AEDesc& desc, DescType toType )
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
+		// Necessary for OS 9; OS X does this automatically
+		if ( toType == typeWildCard )
+		{
+			toType = desc.descriptorType;
+		}
+		
 		AEDesc result;
-		ThrowOSStatus( ::AECoerceDesc(&desc, toType, &result) );
-		return Owned<AEDesc>::Seize(result);
+		ThrowOSStatus( ::AECoerceDesc( &desc, toType, &result ) );
+		return Owned< AEDesc >::Seize( result );
 	}
 	
 	Owned<AEDesc> AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize)
