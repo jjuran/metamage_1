@@ -25,6 +25,36 @@ namespace Nitrogen
   {
    void RegisterMemoryManagerErrors();
    
+	class Ptr
+	{
+		private:
+			typedef void *InternalType;
+			
+			InternalType ptr;
+		
+		public:
+			Ptr()                      : ptr( 0 )  {}
+			
+			template < class T >
+			Ptr( T *thePtr )           : ptr( reinterpret_cast< InternalType >( thePtr ) ) {}
+			
+			::Ptr Get() const          { return reinterpret_cast< ::Ptr >( ptr ); }
+			operator ::Ptr() const     { return Get(); }
+			
+			//void operator*() const       { return *ptr; }
+	};
+	
+	template <> struct Disposer< Ptr > : public std::unary_function< Ptr, void >,
+	                                     private DefaultDestructionOSStatusPolicy
+	{
+		void operator()( Ptr ptr ) const
+		{
+			OnlyOnce< RegisterMemoryManagerErrors >();
+			::DisposePtr( ptr );
+			HandleDestructionOSStatus( ::MemError() );
+		}
+	};
+	
    class Handle
      {
       private:
@@ -66,13 +96,18 @@ namespace Nitrogen
    
    void MemError();
    
+   Owned< Ptr > NewPtrSysClear( std::size_t size );
+   
    Owned<Handle> NewHandle( std::size_t size );
+   Owned< Handle > NewHandleSys( std::size_t size );
+   Owned< Handle > NewHandleSys( const unsigned char* str );
    
    template < class T >
    Owned< T**, Disposer<Handle> > NewHandle( std::size_t elementCount = 1 )
      {
       return Handle_Cast<T>( Nitrogen::NewHandle( elementCount * sizeof(T) ) );
      }
+   
   }
 
 #endif
