@@ -355,7 +355,35 @@ namespace Nitrogen
 			return result;
 		}
 	};
-   
+  	
+	struct GetNthPtr_Result {
+		::AEKeyword keyword;
+		::DescType typeCode;
+		Size actualSize;
+		
+		GetNthPtr_Result() : keyword(), typeCode(), actualSize() {}
+		GetNthPtr_Result(AEKeyword keyword, DescType typeCode, Size actualSize) 
+		  : keyword(keyword), typeCode(typeCode), actualSize(actualSize)  {}
+	};
+	
+	struct AEDescInfo {
+		::DescType typeCode;
+		Size dataSize;
+		
+		AEDescInfo() : typeCode(), dataSize() {}
+		AEDescInfo(DescType typeCode, Size dataSize) : typeCode(typeCode), dataSize(dataSize)  {}
+		
+		operator Size() const  { return dataSize; }
+	};
+	typedef AEDescInfo 
+		AESizeOfNthItem_Result, 
+		AESizeOfKeyDesc_Result, 
+		AEGetKeyPtr_Result, 
+		AESizeOfParam_Result, 
+		AESizeOfAttribute_Result, 
+		AEGetParamPtr_Result, 
+		AEGetAttributePtr_Result;
+ 
    struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
                                                         ::AEEventHandlerProcPtr,
                                                         ::NewAEEventHandlerUPP,
