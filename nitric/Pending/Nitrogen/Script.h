@@ -10,6 +10,10 @@
 #include FRAMEWORK_HEADER(CarbonCore,Script.h)
 #endif
 
+#ifndef NITROGEN_MACTYPES_H
+#include "Nitrogen/MacTypes.h"
+#endif
+
 namespace Nitrogen
 {
 	
