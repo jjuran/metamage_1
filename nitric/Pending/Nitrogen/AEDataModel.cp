@@ -24,8 +24,6 @@ namespace Nitrogen {
 	
 	void RegisterAppleEventManagerErrors()
 	{
-		using RegisterOSStatus;
-		
 		RegisterOSStatus< paramErr                  >();
 		RegisterOSStatus< eLenErr                   >();
 		RegisterOSStatus< memFullErr                >();
