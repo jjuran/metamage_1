@@ -102,13 +102,32 @@ namespace Nitrogen
      {
       void operator()( const AEEventHandler& installation ) const
         {
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
-                                                                                              installation.theAEEventID,
-                                                                                              installation.handler,
-                                                                                              installation.isSysHandler ) );
+         HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
+                                                            installation.theAEEventID,
+                                                            installation.handler,
+                                                            installation.isSysHandler ) );
         }
      };
 
+	typedef void ( *AEEventHandlerProcPtr )( const AppleEvent& appleEvent, AppleEvent& reply, RefCon refCon );
+	
+	template < AEEventHandlerProcPtr handler >
+	struct Adapt_AEEventHandler
+	{
+		static pascal OSErr ToCallback( const AppleEvent* appleEvent, AppleEvent* reply, long refCon )
+		{
+			try
+			{
+				handler( *appleEvent, *reply, refCon );
+			}
+			catch ( OSStatus err )
+			{
+				return err.Get();
+			}
+			return noErr;
+		}
+	};
+	
    Owned<AEEventHandler>
    AEInstallEventHandler( const AEEventHandler& );
    
@@ -140,6 +159,24 @@ namespace Nitrogen
                                                     isSysHandler ) );
      }
    
+	template < AEEventHandlerProcPtr handler >
+	Owned< AEEventHandler > AEInstallEventHandler
+	(
+		AEEventClass  theAEEventClass, 
+		AEEventID     theAEEventID, 
+		RefCon        handlerRefCon = RefCon(), 
+		Boolean       isSysHandler  = false
+	)
+	{
+		return AEInstallEventHandler< Adapt_AEEventHandler< handler >::ToCallback >
+		(
+			theAEEventClass, 
+			theAEEventID, 
+			handlerRefCon, 
+			isSysHandler
+		);
+	}
+	
    void AERemoveEventHandler( Owned<AEEventHandler> );
 
    typedef AEEventHandler AEGetEventHandler_Result;
