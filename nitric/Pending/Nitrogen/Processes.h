@@ -40,10 +40,10 @@ namespace Nitrogen {
 	void RegisterProcessManagerErrors();
 	
 	struct LaunchFlags_Tag {};
-	typedef FlagType< LaunchFlags_Tag, ::LaunchFlags, 0 > LaunchFlags;
+	typedef FlagType< LaunchFlags_Tag, ::LaunchFlags > LaunchFlags;
 	
-	static const LaunchFlags launchContinue    = LaunchFlags::Make( ::launchContinue    );
-	static const LaunchFlags launchNoFileFlags = LaunchFlags::Make( ::launchNoFileFlags );
+	inline LaunchFlags LaunchContinue   ()  { return LaunchFlags::Make( launchContinue    ); }
+	inline LaunchFlags LaunchNoFileFlags()  { return LaunchFlags::Make( launchNoFileFlags ); }
 	
 	using ::ProcessSerialNumber;
 	using ::ProcessInfoRec;

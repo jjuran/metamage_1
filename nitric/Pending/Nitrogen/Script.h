@@ -17,9 +17,9 @@
 namespace Nitrogen
 {
 	
-	static const ScriptCode smSystemScript  = ScriptCode::Make( ::smSystemScript  );
-	static const ScriptCode smCurrentScript = ScriptCode::Make( ::smCurrentScript );
-	static const ScriptCode smAllScripts    = ScriptCode::Make( ::smAllScripts    );
+	inline ScriptCode SMSystemScript ()  { return ScriptCode::Make( smSystemScript  ); }
+	inline ScriptCode SMCurrentScript()  { return ScriptCode::Make( smCurrentScript ); }
+	inline ScriptCode SMAllScripts   ()  { return ScriptCode::Make( smAllScripts    ); }
 	
 }
 

@@ -22,16 +22,16 @@ namespace Nitrogen
 	class GWorldFlags_Tag {};
 	typedef FlagType< GWorldFlags_Tag, ::GWorldFlags > GWorldFlags;
 	
-	static const GWorldFlags noNewDevice             = GWorldFlags::Make( ::noNewDevice );
-	static const GWorldFlags useTempMem              = GWorldFlags::Make( ::useTempMem );
-	static const GWorldFlags keepLocal               = GWorldFlags::Make( ::keepLocal );
-	static const GWorldFlags useDistantHdwrMem       = GWorldFlags::Make( ::useDistantHdwrMem );
-	static const GWorldFlags useLocalHdwrMem         = GWorldFlags::Make( ::useLocalHdwrMem );
-	static const GWorldFlags pixelsPurgeable         = GWorldFlags::Make( ::pixelsPurgeable );
-	static const GWorldFlags pixelsLocked            = GWorldFlags::Make( ::pixelsLocked );
-	static const GWorldFlags kAllocDirectDrawSurface = GWorldFlags::Make( ::kAllocDirectDrawSurface );
+	inline GWorldFlags NoNewDevice           ()  { return GWorldFlags::Make( noNewDevice             ); }
+	inline GWorldFlags UseTempMem            ()  { return GWorldFlags::Make( useTempMem              ); }
+	inline GWorldFlags KeepLocal             ()  { return GWorldFlags::Make( keepLocal               ); }
+	inline GWorldFlags UseDistantHdwrMem     ()  { return GWorldFlags::Make( useDistantHdwrMem       ); }
+	inline GWorldFlags UseLocalHdwrMem       ()  { return GWorldFlags::Make( useLocalHdwrMem         ); }
+	inline GWorldFlags PixelsPurgeable       ()  { return GWorldFlags::Make( pixelsPurgeable         ); }
+	inline GWorldFlags PixelsLocked          ()  { return GWorldFlags::Make( pixelsLocked            ); }
+	inline GWorldFlags AllocDirectDrawSurface()  { return GWorldFlags::Make( kAllocDirectDrawSurface ); }
 	// ...
-	static const GWorldFlags gwFlagErr               = GWorldFlags::Make( ::gwFlagErr               );
+	inline GWorldFlags GWFlagErr             ()  { return GWorldFlags::Make( gwFlagErr               ); }
 	
 	typedef CGrafPtr GWorldPtr;
 	

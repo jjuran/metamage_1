@@ -75,7 +75,7 @@ namespace Nitrogen {
 		pb.launchBlockID 		= extendedBlock;
 		pb.launchEPBLength 		= extendedBlockLen;
 		pb.launchFileFlags 		= 0;
-		pb.launchControlFlags	= launchFlags | launchContinue | launchNoFileFlags;
+		pb.launchControlFlags	= launchFlags | LaunchContinue() | LaunchNoFileFlags();
 		pb.launchAppSpec 		= const_cast< FSSpec* >( &file );
 		pb.launchAppParameters	= appParameters;
 		
