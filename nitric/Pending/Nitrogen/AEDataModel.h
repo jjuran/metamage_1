@@ -1251,9 +1251,9 @@ namespace Nitrogen
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
-	template < ::DescType type >
+	template < ::DescType type, class Disposer >
 	void AEPutPtr(
-		Owned< AEDescList >& list, 
+		Owned< AEDescList, Disposer >& list, 
 		long index, 
 		typename DescType_Traits< type >::Parameter data)
 	{
@@ -1317,9 +1317,9 @@ namespace Nitrogen
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
-	template < ::DescType type >
+	template < ::DescType type, class Disposer >
 	void AEPutKeyPtr(
-		Owned< AERecord >& record, 
+		Owned< AERecord, Disposer >& record, 
 		AEKeyword keyword, 
 		typename DescType_Traits< type >::Parameter data)
 	{
@@ -1383,9 +1383,9 @@ namespace Nitrogen
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
-	template < ::DescType type >
+	template < ::DescType type, class Disposer >
 	void AEPutParamPtr(
-		Owned< AppleEvent >& appleEvent, 
+		Owned< AppleEvent, Disposer >& appleEvent, 
 		AEKeyword keyword, 
 		typename DescType_Traits< type >::Parameter data)
 	{
@@ -1449,9 +1449,9 @@ namespace Nitrogen
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
-	template < ::DescType type >
+	template < ::DescType type, class Disposer >
 	void AEPutAttributePtr(
-		Owned< AppleEvent >& appleEvent, 
+		Owned< AppleEvent, Disposer >& appleEvent, 
 		AEKeyword keyword, 
 		typename DescType_Traits< type >::Parameter data)
 	{
@@ -1514,6 +1514,12 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType type >
+	typename DescType_Traits< type >::Result AECoerceDescData( const AEDesc& desc )
+	{
+		return AEGetDescData< type >( AECoerceDesc( desc, type ) );
+	}
+	
+	template < ::DescType type >
 	void AEReplaceDescData( typename DescType_Traits< type >::Parameter data, AEDesc& result )
 	{
 		typedef DescType_Traits< type > Traits;
@@ -1530,8 +1536,9 @@ namespace Nitrogen
 		Traits::ReleaseOutputBuffer( buffer );
 	}
 
-	template < ::DescType type >
-	void AEReplaceDescData(typename DescType_Traits< type >::Parameter data, Owned< AEDesc >& result)
+	template < ::DescType type, class Disposer >
+	void AEReplaceDescData( typename DescType_Traits< type >::Parameter data,
+	                        Owned< AEDesc, Disposer >& result )
 	{
 		typedef DescType_Traits< type > Traits;
 		
@@ -1550,13 +1557,17 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Overloaded operators ¥
 	
-	inline Owned< AEDescList > operator<<( Owned< AEDescList > list, const AEDesc& desc )
+	template < class Disposer >
+	inline Owned< AEDescList, Disposer > operator<<( Owned< AEDescList, Disposer >  list,
+	                                                 const AEDesc&                  desc )
 	{
 		AEPutDesc( list, 0, desc );  // Append the item
 		return list;
 	}
 	
-	inline Owned< AERecord > operator<<( Owned< AERecord > record, const AEKeyDesc& keyDesc )
+	template < class Disposer >
+	inline Owned< AERecord, Disposer > operator<<( Owned< AERecord, Disposer >  record,
+	                                               const AEKeyDesc&             keyDesc )
 	{
 		AEPutKeyDesc( record, keyDesc );  // Also works for Apple event parameters
 		return record;
