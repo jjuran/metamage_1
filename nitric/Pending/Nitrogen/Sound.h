@@ -65,8 +65,8 @@ namespace Nitrogen
 	struct SoundInputPermissions_Tag {};
 	typedef FlagType< SoundInputPermissions_Tag, short, 0 > SoundInputPermissions;
 	
-	inline SoundInputPermissions SIReadPermission()   { return siReadPermission;  }
-	inline SoundInputPermissions SIWritePermission()  { return siWritePermission; }
+	inline SoundInputPermissions SIReadPermission()   { return SoundInputPermissions::Make( siReadPermission  ); }
+	inline SoundInputPermissions SIWritePermission()  { return SoundInputPermissions::Make( siWritePermission ); }
 	
 	struct SPBGetIndexedDevice_Result
 	{

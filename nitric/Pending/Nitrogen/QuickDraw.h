@@ -33,38 +33,38 @@ namespace Nitrogen
 	class TransferMode_Tag {};
 	typedef FlagType< TransferMode_Tag, ::SInt16 > TransferMode;
 	
-	inline TransferMode SrcCopy()             { return srcCopy;       }
-	inline TransferMode SrcOr()               { return srcOr;         }
-	inline TransferMode SrcXor()              { return srcXor;        }
-	inline TransferMode SrcBic()              { return srcBic;        }
-	inline TransferMode NotSrcCopy()          { return notSrcCopy;    }
-	inline TransferMode NotSrcOr()            { return notSrcOr;      }
-	inline TransferMode NotSrcXor()           { return notSrcXor;     }
-	inline TransferMode NotSrcBic()           { return notSrcBic;     }
+	inline TransferMode SrcCopy()             { return TransferMode::Make( srcCopy );       }
+	inline TransferMode SrcOr()               { return TransferMode::Make( srcOr );         }
+	inline TransferMode SrcXor()              { return TransferMode::Make( srcXor );        }
+	inline TransferMode SrcBic()              { return TransferMode::Make( srcBic );        }
+	inline TransferMode NotSrcCopy()          { return TransferMode::Make( notSrcCopy );    }
+	inline TransferMode NotSrcOr()            { return TransferMode::Make( notSrcOr );      }
+	inline TransferMode NotSrcXor()           { return TransferMode::Make( notSrcXor );     }
+	inline TransferMode NotSrcBic()           { return TransferMode::Make( notSrcBic );     }
 	
-	inline TransferMode PatCopy()             { return patCopy;       }
-	inline TransferMode PatOr()               { return patOr;         }
-	inline TransferMode PatXor()              { return patXor;        }
-	inline TransferMode PatBic()              { return patBic;        }
-	inline TransferMode NotPatCopy()          { return notPatCopy;    }
-	inline TransferMode NotPatOr()            { return notPatOr;      }
-	inline TransferMode NotPatXor()           { return notPatXor;     }
-	inline TransferMode NotPatBic()           { return notPatBic;     }
+	inline TransferMode PatCopy()             { return TransferMode::Make( patCopy );       }
+	inline TransferMode PatOr()               { return TransferMode::Make( patOr );         }
+	inline TransferMode PatXor()              { return TransferMode::Make( patXor );        }
+	inline TransferMode PatBic()              { return TransferMode::Make( patBic );        }
+	inline TransferMode NotPatCopy()          { return TransferMode::Make( notPatCopy );    }
+	inline TransferMode NotPatOr()            { return TransferMode::Make( notPatOr );      }
+	inline TransferMode NotPatXor()           { return TransferMode::Make( notPatXor );     }
+	inline TransferMode NotPatBic()           { return TransferMode::Make( notPatBic );     }
 	
-	inline TransferMode GrayishTextOr()       { return grayishTextOr; }
-	inline TransferMode Hilite()              { return hilite;        }
-	inline TransferMode Hilitetransfermode()  { return hilite;        }  // dup
+	inline TransferMode GrayishTextOr()       { return TransferMode::Make( grayishTextOr ); }
+	inline TransferMode Hilite()              { return TransferMode::Make( hilite );        }
+	inline TransferMode Hilitetransfermode()  { return TransferMode::Make( hilite );        }  // dup
 	
-	inline TransferMode Blend()               { return blend;         }
-	inline TransferMode AddPin()              { return addPin;        }
-	inline TransferMode AddOver()             { return addOver;       }
-	inline TransferMode SubPin()              { return subPin;        }
-	inline TransferMode AddMax()              { return addMax;        }
-	inline TransferMode AdMax()               { return addMax;        }  // dup
-	inline TransferMode SubOver()             { return subOver;       }
-	inline TransferMode AdMin()               { return adMin;         }
-	inline TransferMode DitherCopy()          { return ditherCopy;    }
-	inline TransferMode Transparent()         { return transparent;   }
+	inline TransferMode Blend()               { return TransferMode::Make( blend );         }
+	inline TransferMode AddPin()              { return TransferMode::Make( addPin );        }
+	inline TransferMode AddOver()             { return TransferMode::Make( addOver );       }
+	inline TransferMode SubPin()              { return TransferMode::Make( subPin );        }
+	inline TransferMode AddMax()              { return TransferMode::Make( addMax );        }
+	inline TransferMode AdMax()               { return TransferMode::Make( addMax );        }  // dup
+	inline TransferMode SubOver()             { return TransferMode::Make( subOver );       }
+	inline TransferMode AdMin()               { return TransferMode::Make( adMin );         }
+	inline TransferMode DitherCopy()          { return TransferMode::Make( ditherCopy );    }
+	inline TransferMode Transparent()         { return TransferMode::Make( transparent );   }
 	
 	#pragma mark -
 	#pragma mark ¥ Cursors ¥
@@ -80,9 +80,9 @@ namespace Nitrogen
 	class PixelType_Tag {};
 	typedef SelectorType< PixelType_Tag, ::PixelType > PixelType;
 	
-	inline PixelType Chunky()        { return PixelType( chunky ); }
-	inline PixelType ChunkyPlanar()  { return PixelType( chunkyPlanar ); }
-	inline PixelType Planar()        { return PixelType( planar ); }
+	inline PixelType Chunky()        { return PixelType::Make( chunky       ); }
+	inline PixelType ChunkyPlanar()  { return PixelType::Make( chunkyPlanar ); }
+	inline PixelType Planar()        { return PixelType::Make( planar       ); }
 	
 	#pragma mark -
 	#pragma mark ¥ Types ¥

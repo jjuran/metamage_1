@@ -49,19 +49,19 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ General Types and Constants ¥
 	
-	inline ResType CFragResourceType()     { return ResType    ( kCFragResourceType    ); }
-	inline ResID   CFragResourceID()       { return ResID::Make( kCFragResourceID      ); }
-	inline OSType  CFragLibraryFileType()  { return OSType     ( kCFragLibraryFileType ); }
+	inline ResType CFragResourceType()     { return ResType::Make( kCFragResourceType    ); }
+	inline ResID   CFragResourceID()       { return ResID  ::Make( kCFragResourceID      ); }
+	inline OSType  CFragLibraryFileType()  { return OSType ::Make( kCFragLibraryFileType ); }
 	// kCFragAllFileTypes
 	
 	class CFragArchitecture_Tag {};
 	typedef SelectorType< CFragArchitecture_Tag, ::CFragArchitecture, kAnyCFragArch > CFragArchitecture;
 	
-	inline CFragArchitecture PowerPCCFragArch()      { return CFragArchitecture( kPowerPCCFragArch     ); }
-	inline CFragArchitecture Motorola68KCFragArch()  { return CFragArchitecture( kMotorola68KCFragArch ); }
-	inline CFragArchitecture AnyCFragArch()          { return CFragArchitecture( kAnyCFragArch         ); }
+	inline CFragArchitecture PowerPCCFragArch()      { return CFragArchitecture::Make( kPowerPCCFragArch     ); }
+	inline CFragArchitecture Motorola68KCFragArch()  { return CFragArchitecture::Make( kMotorola68KCFragArch ); }
+	inline CFragArchitecture AnyCFragArch()          { return CFragArchitecture::Make( kAnyCFragArch         ); }
 	
-	inline CFragArchitecture CompiledCFragArch()     { return CFragArchitecture( kCompiledCFragArch    ); }
+	inline CFragArchitecture CompiledCFragArch()     { return CFragArchitecture::Make( kCompiledCFragArch    ); }
 	
 	inline std::size_t CFragGoesToEOF()  { return kCFragGoesToEOF; }
 	
@@ -81,18 +81,18 @@ namespace Nitrogen
 	class CFragLoadOptions_Tag {};
 	typedef FlagType< CFragLoadOptions_Tag, ::CFragLoadOptions, 0 > CFragLoadOptions;
 	
-	inline CFragLoadOptions ReferenceCFrag()    { return CFragLoadOptions( kReferenceCFrag   ); }
-	inline CFragLoadOptions FindCFrag()         { return CFragLoadOptions( kFindCFrag        ); }
-	inline CFragLoadOptions PrivateCFragCopy()  { return CFragLoadOptions( kPrivateCFragCopy ); }
+	inline CFragLoadOptions ReferenceCFrag()    { return CFragLoadOptions::Make( kReferenceCFrag   ); }
+	inline CFragLoadOptions FindCFrag()         { return CFragLoadOptions::Make( kFindCFrag        ); }
+	inline CFragLoadOptions PrivateCFragCopy()  { return CFragLoadOptions::Make( kPrivateCFragCopy ); }
 	
 	class CFragSymbolClass_Tag {};
 	typedef SelectorType< CFragSymbolClass_Tag, ::CFragSymbolClass, 0 > CFragSymbolClass;
 	
-	inline CFragSymbolClass CodeCFragSymbol()     { return CFragSymbolClass( kCodeCFragSymbol    ); }
-	inline CFragSymbolClass DataCFragSymbol()     { return CFragSymbolClass( kDataCFragSymbol    ); }
-	inline CFragSymbolClass TVectorCFragSymbol()  { return CFragSymbolClass( kTVectorCFragSymbol ); }
-	inline CFragSymbolClass TOCCFragSymbol()      { return CFragSymbolClass( kTOCCFragSymbol     ); }
-	inline CFragSymbolClass GlueCFragSymbol()     { return CFragSymbolClass( kGlueCFragSymbol    ); }
+	inline CFragSymbolClass CodeCFragSymbol()     { return CFragSymbolClass::Make( kCodeCFragSymbol    ); }
+	inline CFragSymbolClass DataCFragSymbol()     { return CFragSymbolClass::Make( kDataCFragSymbol    ); }
+	inline CFragSymbolClass TVectorCFragSymbol()  { return CFragSymbolClass::Make( kTVectorCFragSymbol ); }
+	inline CFragSymbolClass TOCCFragSymbol()      { return CFragSymbolClass::Make( kTOCCFragSymbol     ); }
+	inline CFragSymbolClass GlueCFragSymbol()     { return CFragSymbolClass::Make( kGlueCFragSymbol    ); }
 	
 	template < class SymbolAddress = void* >
 	struct FindSymbol_Result
