@@ -14,6 +14,18 @@
 
 namespace Nitrogen
   {
+	
+	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name)
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		FSSpec result;
+		
+		ThrowOSStatus( ::FSMakeFSSpec( vRefNum, dirID, name, &result ) );
+		
+		return result;
+	}
+	
    FSRef FSpMakeFSRef( const FSSpec& spec )
      {
       OnlyOnce<RegisterFileManagerErrors>();
