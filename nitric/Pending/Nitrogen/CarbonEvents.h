@@ -209,9 +209,16 @@ namespace Nitrogen
    class EventClassTag {};
    typedef SelectorType< EventClassTag, ::UInt32 > EventClass;    // Doesn't exist in Carbon
 
-   // FIXME:  Move to Events.h
-   class EventKind_Tag {};
-   typedef SelectorType< EventKind_Tag, ::EventKind, nullEvent > EventKind;
+   class CarbonEventKind_Tag {};
+   typedef SelectorType< CarbonEventKind_Tag, ::UInt32 > CarbonEventKind;
+   
+#ifndef JOSHUA_JURAN_EXPERIMENTAL
+   
+   // This conflicts with Events.h
+   typedef CarbonEventKind_Tag EventKind_Tag;
+   typedef CarbonEventKind     EventKind;
+   
+#endif
    
    using ::EventTypeSpec;
 
@@ -283,12 +290,12 @@ namespace Nitrogen
 
    Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
-                                EventKind         kind,
+                                CarbonEventKind   kind,
                                 EventTime         when,
                                 EventAttributes   flags );
 
    inline Owned<EventRef> CreateEvent( EventClass        inClassID,
-                                       EventKind         kind,
+                                       CarbonEventKind   kind,
                                        EventTime         when,
                                        EventAttributes   flags )
      {
@@ -467,9 +474,9 @@ namespace Nitrogen
             template < class T > const EventParameter& operator>>=( const T& rhs ) const  { Set( Get() >> rhs ); return *this; }
         };
 
-   inline EventClass GetEventClass( EventRef inEvent )     { return EventClass( ::GetEventClass( inEvent ) ); }
-   inline EventKind  GetEventKind ( EventRef inEvent )     { return EventKind ( ::GetEventKind ( inEvent ) ); }
-   inline EventTime  GetEventTime ( EventRef inEvent )     { return EventTime ( ::GetEventTime ( inEvent ) ); }
+   inline EventClass       GetEventClass( EventRef inEvent )     { return EventClass     ( ::GetEventClass( inEvent ) ); }
+   inline CarbonEventKind  GetEventKind ( EventRef inEvent )     { return CarbonEventKind( ::GetEventKind ( inEvent ) ); }
+   inline EventTime        GetEventTime ( EventRef inEvent )     { return EventTime      ( ::GetEventTime ( inEvent ) ); }
  
    void SetEventTime( EventRef inEvent, EventTime inTime );
 
@@ -1173,7 +1180,7 @@ namespace Nitrogen
       Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                   EventHandlerUPP        inHandler,
                                                   EventClass             eventClass,
-                                                  EventKind              eventKind,
+                                                  CarbonEventKind        eventKind,
                                                   const void *           inUserData = 0 );
    
    /* Level 1 (UPP-creating) InstallEventHandler, for multiple or single events */
@@ -1195,7 +1202,7 @@ namespace Nitrogen
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                   EventClass             eventClass,
-                                                  EventKind              eventKind,
+                                                  CarbonEventKind        eventKind,
                                                   const void *           inUserData = 0 )
         {
          return InstallEventHandler( inTarget,
@@ -1295,7 +1302,7 @@ namespace Nitrogen
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallEventHandler( EventTargetRef                                 inTarget,
                                                   EventClass                                     eventClass,
-                                                  EventKind                                      eventKind,
+                                                  CarbonEventKind                                eventKind,
                                                   typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler( inTarget,
@@ -1976,7 +1983,7 @@ namespace Nitrogen
       
       inline Owned<EventHandlerRef> InstallApplicationEventHandler( EventHandlerUPP        inHandler,
                                                                     EventClass             eventClass,
-                                                                    EventKind              eventKind,
+                                                                    CarbonEventKind        eventKind,
                                                                     const void *           inUserData = 0 )
         {
          return InstallEventHandler( GetApplicationEventTarget(), inHandler, eventClass, eventKind, inUserData );
@@ -1992,7 +1999,7 @@ namespace Nitrogen
 
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallApplicationEventHandler( EventClass             eventClass,
-                                                             EventKind              eventKind,
+                                                             CarbonEventKind        eventKind,
                                                              const void *           inUserData = 0 )
         {
          return InstallEventHandler< handler >( GetApplicationEventTarget(), eventClass, eventKind, inUserData );
@@ -2008,7 +2015,7 @@ namespace Nitrogen
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallApplicationEventHandler( EventClass                                     eventClass,
-                                                             EventKind                                      eventKind,
+                                                             CarbonEventKind                                eventKind,
                                                              typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetApplicationEventTarget(), eventClass, eventKind, inUserData );
@@ -2043,7 +2050,7 @@ namespace Nitrogen
       inline Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
                                                                EventHandlerUPP        inHandler,
                                                                EventClass             eventClass,
-                                                               EventKind              eventKind,
+                                                               CarbonEventKind        eventKind,
                                                                const void *           inUserData = 0 )
         {
          return InstallEventHandler( GetWindowEventTarget( window ), inHandler, eventClass, eventKind, inUserData );
@@ -2061,7 +2068,7 @@ namespace Nitrogen
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
                                                         EventClass             eventClass,
-                                                        EventKind              eventKind,
+                                                        CarbonEventKind        eventKind,
                                                         const void *           inUserData = 0 )
         {
          return InstallEventHandler< handler >( GetWindowEventTarget( window ), eventClass, eventKind, inUserData );
@@ -2079,7 +2086,7 @@ namespace Nitrogen
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef                                      window,
                                                         EventClass                                     eventClass,
-                                                        EventKind                                      eventKind,
+                                                        CarbonEventKind                                eventKind,
                                                         typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetWindowEventTarget( window ), eventClass, eventKind, inUserData );
@@ -2115,7 +2122,7 @@ namespace Nitrogen
       inline Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
                                                                 EventHandlerUPP        inHandler,
                                                                 EventClass             eventClass,
-                                                                EventKind              eventKind,
+                                                                CarbonEventKind        eventKind,
                                                                 const void *           inUserData = 0 )
         {
          return InstallEventHandler( GetControlEventTarget( control ), inHandler, eventClass, eventKind, inUserData );
@@ -2133,7 +2140,7 @@ namespace Nitrogen
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
                                                          EventClass             eventClass,
-                                                         EventKind              eventKind,
+                                                         CarbonEventKind        eventKind,
                                                          const void *           inUserData = 0 )
         {
          return InstallEventHandler< handler >( GetControlEventTarget( control ), eventClass, eventKind, inUserData );
@@ -2151,7 +2158,7 @@ namespace Nitrogen
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallControlEventHandler( ControlRef                                     control,
                                                          EventClass                                     eventClass,
-                                                         EventKind                                      eventKind,
+                                                         CarbonEventKind                                eventKind,
                                                          typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetControlEventTarget( control ), eventClass, eventKind, inUserData );
@@ -2187,7 +2194,7 @@ namespace Nitrogen
       inline Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
                                                              EventHandlerUPP        inHandler,
                                                              EventClass             eventClass,
-                                                             EventKind              eventKind,
+                                                             CarbonEventKind        eventKind,
                                                              const void *           inUserData = 0 )
         {
          return InstallEventHandler( GetMenuEventTarget( menu ), inHandler, eventClass, eventKind, inUserData );
@@ -2205,7 +2212,7 @@ namespace Nitrogen
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
                                                       EventClass             eventClass,
-                                                      EventKind              eventKind,
+                                                      CarbonEventKind        eventKind,
                                                       const void *           inUserData = 0 )
         {
          return InstallEventHandler< handler >( GetMenuEventTarget( menu ), eventClass, eventKind, inUserData );
@@ -2223,7 +2230,7 @@ namespace Nitrogen
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                                        menu,
                                                       EventClass                                     eventClass,
-                                                      EventKind                                      eventKind,
+                                                      CarbonEventKind                                eventKind,
                                                       typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetMenuEventTarget( menu ), eventClass, eventKind, inUserData );

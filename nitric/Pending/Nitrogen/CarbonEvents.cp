@@ -45,7 +45,7 @@ namespace Nitrogen
 
    Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
-                                EventKind         kind,
+                                CarbonEventKind   kind,
                                 EventTime         when,
                                 EventAttributes   flags )
      {
@@ -150,7 +150,7 @@ namespace Nitrogen
    Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                EventHandlerUPP        inHandler,
                                                EventClass             eventClass,
-                                               EventKind              eventKind,
+                                               CarbonEventKind        eventKind,
                                                const void *           inUserData )
      {
       EventTypeSpec event;
