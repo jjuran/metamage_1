@@ -9,6 +9,15 @@
 #endif
 #endif
 
+#ifndef NITROGEN_QUICKDRAW_H
+#include "Nitrogen/QuickDraw.h"
+#endif
+
+// Nitrogen Extras / Utilities
+#ifndef UTILITIES_SAVED_H
+#include "Utilities/Saved.h"
+#endif
+
 
 namespace Nitrogen
 {
@@ -61,6 +70,13 @@ namespace Nitrogen
 	void PBControlSync( ParamBlockRec& paramBlock )
 	{
 		ThrowOSStatus( ::PBControlSync( &paramBlock ) );
+	}
+	
+	void OpenDeskAcc( ConstStr255Param deskAccName )
+	{
+		Saved< Port_Value > savedPort;
+
+		::OpenDeskAcc( deskAccName );
 	}
 	
 	int Read( DriverRefNum driverRefNum, char* data, std::size_t byteCount )
