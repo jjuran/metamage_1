@@ -30,6 +30,13 @@
 
 namespace Nitrogen
   {
+	
+	struct FontNumber_Tag {};
+	typedef IDType< FontNumber_Tag, short, systemFont > FontNumber;
+	
+	FontNumber GetFNum( ConstStr255Param name );
+	FontNumber GetFNum( const std::string& name );
+	
   }
 
 #endif
