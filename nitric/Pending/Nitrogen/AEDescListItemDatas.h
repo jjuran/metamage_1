@@ -9,13 +9,16 @@
 #ifndef NITROGEN_PSEUDOREFERENCE_H
 #include "Nitrogen/Pseudoreference.h"
 #endif
+#ifndef NITROGEN_INDEXEDCONTAINER_H
+#include "Nitrogen/IndexedContainer.h"
+#endif
 
 
 namespace Nitrogen
 {
 	
 	template < ::DescType type >
-	class ConstAEDescListItemData_Details
+	class Const_AEDescList_ItemData_Details
 	{
 		private:
 			const AEDescList& list;
@@ -25,7 +28,7 @@ namespace Nitrogen
 			typedef typename DescType_Traits< type >::Result    Value;
 			typedef typename DescType_Traits< type >::Result    GetResult;
 			
-			ConstAEDescListItemData_Details( const AEDescList& list, std::size_t index ) 
+			Const_AEDescList_ItemData_Details( const AEDescList& list, std::size_t index ) 
 			: 
 				list( list ), 
 				index( index )  {}
@@ -34,23 +37,23 @@ namespace Nitrogen
 	};
 	
 	template < ::DescType type >
-	class ConstAEDescListItemData : public ConstPseudoreference< ConstAEDescListItemData_Details< type > >
+	class Const_AEDescList_ItemData : public ConstPseudoreference< Const_AEDescList_ItemData_Details< type > >
 	{
 		private:
-			typedef ConstPseudoreference< ConstAEDescListItemData_Details< type > > Base;
+			typedef ConstPseudoreference< Const_AEDescList_ItemData_Details< type > > Base;
 			
 		public:
 			typedef typename Base::Details Details;
 			typedef typename Base::GetResult GetResult;
 			
-			typedef ConstAEDescListItemData< type > Reference;
-			typedef ConstAEDescListItemData< type > ConstReference;
+			typedef Const_AEDescList_ItemData< type > Reference;
+			typedef Const_AEDescList_ItemData< type > ConstReference;
 			
 			typedef Pseudopointer< Reference > Pointer;
 			typedef Pseudopointer< ConstReference > ConstPointer;
 			
-			explicit ConstAEDescListItemData( Details theDetails ) : Base( theDetails )  {}
-			ConstAEDescListItemData( const AEDescList& list, std::size_t index ) : Base( Details( list, index ) )  {}
+			explicit Const_AEDescList_ItemData( Details theDetails ) : Base( theDetails )  {}
+			Const_AEDescList_ItemData( const AEDescList& list, std::size_t index ) : Base( Details( list, index ) )  {}
 			
 			Pointer operator&() const  { return Pointer( Base::operator&().Get() ); }
 			
@@ -60,73 +63,7 @@ namespace Nitrogen
 	};
 	
 	template < ::DescType type >
-	class ConstAEDescListItemData_Container
-	{
-		public:
-			typedef UInt32 size_type;
-			typedef SInt32 difference_type;
-			
-			class const_iterator
-			{
-				friend class ConstAEDescListItemData_Container;
-				
-				public:
-					typedef ConstAEDescListItemData_Container::size_type size_type;
-					typedef ConstAEDescListItemData_Container::difference_type difference_type;
-					typedef ConstAEDescListItemData< type > value_type;
-					typedef typename value_type::ConstPointer pointer;
-					typedef value_type reference;
-					typedef std::random_access_iterator_tag iterator_category;
-					
-				private:
-					const AEDescList& list;
-					size_type position;
-					
-					value_type GetValue() const
-					{
-						return value_type( list, position );
-					}
-					
-					const_iterator( const AEDescList& list, size_type position )
-					: 
-						list( list ),
-						position( position )
-					{
-					}
-				
-				public:
-					const_iterator& operator++()              { ++position;  return *this; }
-					const_iterator operator++(int)            { const_iterator old = *this; operator++(); return old; }
-					
-					reference operator*() const               { return GetValue(); }
-					//pointer operator->() const                { return &value; }
-					
-					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.position == b.position; }
-					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
-			};
-			
-			ConstAEDescListItemData_Container( const AEDescList& list )
-			: 
-				list( list )
-			{}
-			
-			const_iterator begin() const                    { return const_iterator( list, 1 ); }
-			const_iterator end() const                      { return const_iterator( list, size() + 1 ); }
-			
-			size_type size() const  { return AECountItems( list ); }
-			
-		private:
-			const AEDescList& list;
-	};
-	
-	template < ::DescType type >
-	inline ConstAEDescListItemData_Container< type > AEDescList_ItemDatas( const AEDescList& list )
-	{
-		return ConstAEDescListItemData_Container< type >( list );
-	}
-	
-	template < ::DescType type >
-	class AEDescListItemData_Details
+	class AEDescList_ItemData_Details
 	{
 		private:
 			Owned< AEDescList >& list;
@@ -137,31 +74,31 @@ namespace Nitrogen
 			typedef typename DescType_Traits< type >::Result    GetResult;
 			typedef typename DescType_Traits< type >::Parameter SetParameter;
 			
-			AEDescListItemData_Details( Owned< AEDescList >& list, std::size_t index ) : list( list ), index( index )  {}
+			AEDescList_ItemData_Details( Owned< AEDescList >& list, std::size_t index ) : list( list ), index( index )  {}
 			
 			GetResult Get() const  { return AEGetNthPtr< type >( list, index ); }
 			void Set( SetParameter param ) const  { AEPutPtr< type >( list, index, param ); }
 	};
 	
 	template < ::DescType type >
-	class AEDescListItemData : public Pseudoreference< AEDescListItemData_Details< type > >
+	class AEDescList_ItemData : public Pseudoreference< AEDescList_ItemData_Details< type > >
 	{
 		private:
-			typedef Pseudoreference< AEDescListItemData_Details< type > > Base;
+			typedef Pseudoreference< AEDescList_ItemData_Details< type > > Base;
 			
 		public:
 			typedef typename Base::Details Details;
 			typedef typename Base::GetResult GetResult;
 			typedef typename Base::SetParameter SetParameter;
 			
-			typedef AEDescListItemData< type > Reference;
-			typedef ConstAEDescListItemData< type > ConstReference;
+			typedef AEDescList_ItemData< type > Reference;
+			typedef Const_AEDescList_ItemData< type > ConstReference;
 			
 			typedef Pseudopointer< Reference > Pointer;
 			typedef Pseudopointer< ConstReference > ConstPointer;
 			
-			explicit AEDescListItemData( Details theDetails ) : Base( theDetails )  {}
-			AEDescListItemData( Owned< AEDescList >& list, std::size_t index ) : Base( Details( list, index ) )  {}
+			explicit AEDescList_ItemData( Details theDetails ) : Base( theDetails )  {}
+			AEDescList_ItemData( Owned< AEDescList >& list, std::size_t index ) : Base( Details( list, index ) )  {}
 			
 			Pointer operator&() const  { return Pointer( Base::operator&().Get() ); }
 			
@@ -172,14 +109,14 @@ namespace Nitrogen
 			
 			operator GetResult() const  { return Get(); }
 			
-			const AEDescListItemData& operator=( SetParameter value ) const  { Set( value ); return *this; }
-			const AEDescListItemData& operator=( const AEDescListItemData& rhs ) const  { Set( rhs.Get() ); return *this; }
+			const AEDescList_ItemData& operator=( SetParameter value ) const  { Set( value ); return *this; }
+			const AEDescList_ItemData& operator=( const AEDescList_ItemData& rhs ) const  { Set( rhs.Get() ); return *this; }
 	};
 	
 	template < ::DescType type >
-	struct ReferenceTraits< AEDescListItemData< type > >
+	struct ReferenceTraits< AEDescList_ItemData< type > >
 	{
-		typedef AEDescListItemData< type > Reference;
+		typedef AEDescList_ItemData< type > Reference;
 		
 		typedef typename Reference::Value           Value;
 		typedef typename Reference::Pointer         Pointer;
@@ -188,112 +125,102 @@ namespace Nitrogen
 	};
 	
 	template < ::DescType type >
-	class AEDescListItemData_Container
+	struct AEDescList_ItemData_Specifics
 	{
-		public:
-			typedef UInt32 size_type;
-			typedef SInt32 difference_type;
-			
-			class const_iterator
-			{
-				friend class iterator;
-				
-				public:
-					typedef AEDescListItemData_Container::size_type size_type;
-					typedef AEDescListItemData_Container::difference_type difference_type;
-					typedef ConstAEDescListItemData< type > value_type;
-					typedef typename value_type::ConstPointer pointer;
-					typedef value_type reference;
-					typedef std::random_access_iterator_tag iterator_category;
-					
-				private:
-					const Owned< AEDescList >& list;
-					size_type position;
-					
-					value_type GetValue() const
-					{
-						return value_type( list, position );
-					}
-					
-					const_iterator( const Owned< AEDescList >& list, size_type position )
-					: 
-						list( list ),
-						position( position )
-					{
-					}
-				
-				public:
-					const_iterator& operator++()              { ++position;  return *this; }
-					const_iterator operator++(int)            { const_iterator old = *this; operator++(); return old; }
-					
-					reference operator*() const               { return GetValue(); }
-					//pointer operator->() const                { return &value; }
-					
-					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.position == b.position; }
-					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
-			};
-			
-			class iterator
-			{
-				friend class AEDescListItemData_Container;
-				
-				public:
-					typedef AEDescListItemData_Container::size_type size_type;
-					typedef AEDescListItemData_Container::difference_type difference_type;
-					typedef AEDescListItemData< type > value_type;
-					typedef typename value_type::Pointer pointer;
-					typedef value_type reference;
-					typedef std::random_access_iterator_tag iterator_category;
-					
-				private:
-					Owned< AEDescList >& list;
-					size_type position;
-					
-					value_type GetValue() const
-					{
-						return value_type( list, position );
-					}
-					
-					iterator( Owned< AEDescList >& list, size_type position )
-					: 
-						list( list ),
-						position( position )
-					{
-					}
-				
-				public:
-					iterator& operator++()              { ++position;  return *this; }
-					iterator operator++(int)            { iterator old = *this; operator++(); return old; }
-					
-					reference operator*() const               { return GetValue(); }
-					//pointer operator->() const                { return &value; }
-					
-					operator const_iterator() const  { return const_iterator( list, index ); }
-					
-					friend bool operator==( const iterator& a, const iterator& b )    { return a.position == b.position; }
-					friend bool operator!=( const iterator& a, const iterator& b )    { return !( a == b ); }
-			};
-			
-			AEDescListItemData_Container( Owned< AEDescList >& list )
-			: 
-				list( list )
-			{}
-			
-			iterator begin() const                    { return iterator( list, 1 ); }
-			iterator end() const                      { return iterator( list, size() + 1 ); }
-			
-			size_type size() const  { return AECountItems( list ); }
-			
-			operator ConstAEDescListItemData_Container< type >() const  { return ConstAEDescListItemData_Container< type >( list ); }
-			
-		private:
-			Owned< AEDescList >& list;
+		typedef UInt32                                    size_type;
+		typedef SInt32                                    difference_type;
+		typedef typename DescType_Traits< type >::Result  value_type;
+		typedef Const_AEDescList_ItemData< type >         const_reference;
+		typedef AEDescList_ItemData< type >               reference;
+		typedef typename reference::ConstPointer          const_pointer;
+		typedef typename reference::Pointer               pointer;
+		
+		static std::size_t Size( const AEDescList& list )
+		{
+			return AECountItems( list );
+		}
+		
+		static const_reference GetReference( const AEDescList& list, size_type position )
+		{
+			return const_reference( list, position + 1 );  // one-based
+		}
+		
+		static reference GetReference( Owned< AEDescList >& list, size_type position )
+		{
+			return reference( list, position + 1 );  // one-based
+		}
+		
+		typedef const AEDescList& ConstContainerState;
+		typedef ConstContainerState ConstIteratorState;
+		
+		typedef Owned< AEDescList >& ContainerState;
+		typedef ContainerState IteratorState;
 	};
 	
 	template < ::DescType type >
-	inline AEDescListItemData_Container< type > AEDescList_ItemDatas( Owned< AEDescList >& list )
+	class Const_AEDescList_ItemData_Container : public ConstIndexedContainer< AEDescList_ItemData_Specifics< type > >
 	{
-		return AEDescListItemData_Container< type >( list );
+		private:
+			typedef typename AEDescList_ItemData_Specifics< type >::ConstContainerState State;
+			
+			Const_AEDescList_ItemData_Container( State state )
+			:
+				ConstIndexedContainer< AEDescList_ItemData_Specifics< type > >( state )
+			{}
+		
+		public:
+			static Const_AEDescList_ItemData_Container< type > New( const AEDescList& list )
+			{
+				return Const_AEDescList_ItemData_Container< type >( State( list ) );
+			}
+			
+			// Construct from base class.  Needed for non-const -> const conversion.
+			// If we had typedef templates, then this class would be one.
+			// We'd just use the non-const -> const conversion defined in the base, 
+			// and this would amount to a copy constuctor.
+			Const_AEDescList_ItemData_Container( const ConstIndexedContainer< AEDescList_ItemData_Specifics< type > >& base )
+			:
+				ConstIndexedContainer< AEDescList_ItemData_Specifics< type > >( base )
+			{}
+	};
+	
+	template < ::DescType type >
+	class AEDescList_ItemData_Container : public IndexedContainer< AEDescList_ItemData_Specifics< type > >
+	{
+		private:
+			typedef typename AEDescList_ItemData_Specifics< type >::ContainerState State;
+			
+			AEDescList_ItemData_Container( State state )
+			:
+				IndexedContainer< AEDescList_ItemData_Specifics< type > >( state )
+			{}
+		
+		public:
+			static AEDescList_ItemData_Container< type > New( Owned< AEDescList >& list )
+			{
+				return AEDescList_ItemData_Container< type >( State( list ) );
+			}
+		
+		#ifndef __MWERKS__	
+			
+			operator Const_AEDescList_ItemData_Container< type >() const
+			{
+				return ConstIndexedContainer< AEDescList_ItemData_Specifics< type > >( *this );
+			}
+			
+		#endif
+	};
+	
+	template < ::DescType type >
+	inline Const_AEDescList_ItemData_Container< type > AEDescList_ItemDatas( const AEDescList& list )
+	{
+		return Const_AEDescList_ItemData_Container< type >::New( list );
+	}
+	
+	template < ::DescType type >
+	inline AEDescList_ItemData_Container< type > AEDescList_ItemDatas( Owned< AEDescList >& list )
+	{
+		return AEDescList_ItemData_Container< type >::New( list );
 	}
 	
 }
