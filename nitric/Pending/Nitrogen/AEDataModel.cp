@@ -4,3 +4,20 @@
 #include "Nitrogen/AEDataModel.h"
 #endif
 
+namespace Nitrogen {
+	
+	class AEDescEditor
+	{
+		private:
+			Owned<AEDesc>& desc;
+			AEDesc workingCopy;
+		public:
+			AEDescEditor( Owned<AEDesc>& desc ) : desc( desc ), workingCopy( desc.Release() )  {}
+			~AEDescEditor()  { desc = Owned<AEDesc>::Seize( workingCopy ); }
+			
+			AEDesc& Get()  { return workingCopy; }
+			operator AEDesc&()  { return Get(); }
+	};
+	
+}
+
