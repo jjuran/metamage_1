@@ -999,6 +999,7 @@ namespace Nitrogen
       UInt32 permissions[4];
      };
    
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template < class DesiredType, class MemberType, MemberType FSCatalogInfo::*member >
    struct Basic_FSCatalogInfoBit_Traits
      {
@@ -1076,6 +1077,7 @@ namespace Nitrogen
    template <> struct FSCatalogInfoBit_Traits< kFSCatInfoPermissions  > : Array_FSCatalogInfoBit_Traits< Permissions,   ::UInt32, 4, &FSCatalogInfo::permissions,   &Permissions::permissions     > {};
    template <> struct FSCatalogInfoBit_Traits< kFSCatInfoFinderInfo   > : Array_FSCatalogInfoBit_Traits< FinderInfo,    ::UInt8, 16, &FSCatalogInfo::finderInfo,    &FinderInfo::finderInfo       > {};
    template <> struct FSCatalogInfoBit_Traits< kFSCatInfoFinderXInfo  > : Array_FSCatalogInfoBit_Traits< ExtFinderInfo, ::UInt8, 16, &FSCatalogInfo::extFinderInfo, &ExtFinderInfo::extFinderInfo > {};
+#endif
 
    void FSGetCatalogInfo( const FSRef&        ref,
                           FSCatalogInfoBitmap whichInfo,
@@ -1086,6 +1088,7 @@ namespace Nitrogen
    
    FSGetCatalogInfo_Result FSGetCatalogInfo( const FSRef& ref, FSCatalogInfoBitmap whichInfo );
    
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSCatalogInfoBitmap bit >
    struct FSGetCatalogInfo_Traits
      {
@@ -1099,6 +1102,7 @@ namespace Nitrogen
       FSGetCatalogInfo( ref, bit, &info, 0, 0, 0 );
       return FSCatalogInfoBit_Traits<bit>::Get( info );
      }
+#endif
 
    void FSSetCatalogInfo( const FSRef&         ref,
                           FSCatalogInfoBitmap  whichInfo,
@@ -1116,6 +1120,7 @@ namespace Nitrogen
      };
 
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSCatalogInfoBitmap bit >
    struct FSSetCatalogInfo_Traits
      {
@@ -1129,6 +1134,7 @@ namespace Nitrogen
       FSCatalogInfoBit_Traits<bit>::Set( info, value );
       FSSetCatalogInfo( ref, bit, info );
      }
+#endif
 
    template <> struct Disposer<FSIterator>: public std::unary_function< FSIterator, void >,
                                             private DefaultDestructionOSStatusPolicy
@@ -1482,6 +1488,7 @@ namespace Nitrogen
    FSGetForkCBInfo_Result FSGetForkCBInfo( FSForkIterator& iterator );
 
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template < class DesiredType, class MemberType, MemberType FSVolumeInfo::*member >
    struct Basic_FSVolumeInfoBit_Traits
      {
@@ -1510,6 +1517,7 @@ namespace Nitrogen
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoDataClump   > : Const_FSVolumeInfoBit_Traits< UInt32,            ::UInt32,        &FSVolumeInfo::dataClumpSize  > {};
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoNextID      > : Const_FSVolumeInfoBit_Traits< HFSCatalogNodeID,  ::UInt32,        &FSVolumeInfo::nextCatalogID  > {};
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFlags       > : Basic_FSVolumeInfoBit_Traits< FSVolumeInfoFlags, ::UInt16,        &FSVolumeInfo::flags          > {};
+#endif
 
    struct FSVolumeInfoSizes
      {
@@ -1517,6 +1525,7 @@ namespace Nitrogen
       UInt64 freeBytes;
      };
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoSizes >
      {
       typedef FSVolumeInfoSizes Type;
@@ -1529,6 +1538,7 @@ namespace Nitrogen
          return result;
         }
      };
+#endif
 
    struct FSVolumeInfoBlocks
      {
@@ -1537,6 +1547,7 @@ namespace Nitrogen
       UInt32 freeBlocks;
      };
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoBlocks >
      {
       typedef FSVolumeInfoBlocks Type;
@@ -1550,12 +1561,14 @@ namespace Nitrogen
          return result;
         }
      };
+#endif
    
    struct FSVolumeInfoFinderInfo
      {
       UInt8 finderInfo[32];
      };
    
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFinderInfo >
      {
       typedef FSVolumeInfoFinderInfo Type;
@@ -1572,6 +1585,7 @@ namespace Nitrogen
          ArrayAssign( info.finderInfo, value.finderInfo );
         }      
      };
+#endif
    
    struct FSVolumeInfoFSInfo
      {
@@ -1579,6 +1593,7 @@ namespace Nitrogen
       UInt16 signature;
      };
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFSInfo >
      {
       typedef FSVolumeInfoFSInfo Type;
@@ -1591,6 +1606,7 @@ namespace Nitrogen
          return result;
         }
      };
+#endif
    
    struct FSVolumeInfoDriveInfo
      {
@@ -1598,6 +1614,7 @@ namespace Nitrogen
       DriverReferenceNumber driverRefNum;
      };
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoDriveInfo >
      {
       typedef FSVolumeInfoDriveInfo Type;
@@ -1610,6 +1627,7 @@ namespace Nitrogen
          return result;
         }
      };
+#endif
 
 
    struct FSGetVolumeInfo_Result
@@ -1648,6 +1666,7 @@ namespace Nitrogen
    FSGetVolumeInfo_Result FSGetVolumeInfo( FSVolumeIndex volumeIndex,
                                            FSVolumeInfoBitmap whichInfo);
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSVolumeInfoBitmap bit >
    struct FSGetVolumeInfo_Traits
      {
@@ -1669,6 +1688,7 @@ namespace Nitrogen
       FSGetVolumeInfo( volume, 0, bit, &info, 0, 0 );
       return FSVolumeInfoBit_Traits<bit>::Get( info );
      }
+#endif
      
    FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex );
    
@@ -1827,6 +1847,7 @@ namespace Nitrogen
                          FSVolumeInfoBitmap  whichInfo,
                          const FSVolumeInfo& volumeInfo );
    
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSVolumeInfoBitmap bit >
    struct FSSetVolumeInfo_Traits
      {
@@ -1840,6 +1861,7 @@ namespace Nitrogen
       FSVolumeInfoBit_Traits<bit>::Set( info, value );
       FSSetVolumeInfo( volume, bit, info );
      }
+#endif
    
    
    HFSUniStr255 FSGetDataForkName();
