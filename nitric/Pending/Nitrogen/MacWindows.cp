@@ -24,6 +24,6 @@ namespace Nitrogen
    
    void RegisterWindowManagerErrors()
      {
-      OnlyOnce< RegisterOSStatus< memFullErr > >();
+      RegisterOSStatus< memFullErr >();
      }
   }
