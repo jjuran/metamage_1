@@ -88,9 +88,11 @@ namespace Nitrogen
 		}
 	};
 	
+	inline Str255 GetCRMSerialName( CRMSerialPtr crmSerial )  { return *crmSerial->name; }
+	
 	template <> struct Converter< CRMSerialPtr, CRMRecPtr > : public std::unary_function< CRMRecPtr, CRMSerialPtr >
 	{
-		CRMSerialPtr operator()( CRMRecPtr crmRec )
+		CRMSerialPtr operator()( CRMRecPtr crmRec ) const
 		{
 			// FIXME:  Throw if device type is wrong
 			return GetCRMAttributes< crmSerialDevice >( crmRec );
@@ -99,7 +101,7 @@ namespace Nitrogen
 	
 	template <> struct Converter< CRMRecPtr, CRMSerialPtr > : public std::unary_function< CRMSerialPtr, CRMRecPtr >
 	{
-		CRMRecPtr operator()( CRMSerialPtr crmSerialPtr )
+		CRMRecPtr operator()( CRMSerialPtr crmSerialPtr ) const
 		{
 			typedef CRMResource_Container::const_iterator const_iterator;
 			
