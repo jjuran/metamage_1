@@ -42,6 +42,23 @@ namespace Nitrogen
                                        &*result.begin() );
       return result;
      }
+
+   Owned< CFStringRef > CFStringCreateWithBytes( CFAllocatorRef     alloc,
+                                                 const UInt8 *      bytes,
+                                                 CFIndex            numBytes,
+                                                 CFStringEncoding   encoding,
+                                                 bool               isExternalRepresentation )
+     {
+      CFStringRef result = ::CFStringCreateWithBytes( alloc,
+                                                      bytes,
+                                                      numBytes,
+                                                      encoding,
+                                                      isExternalRepresentation );
+      if ( result == 0 )
+         throw CFStringCreateWithBytes_Failed();
+      
+      return Owned<CFStringRef>::Seize( result );
+     }
    
    UniString CFStringGetCharacters( CFStringRef theString )
      {

@@ -55,7 +55,7 @@ namespace Nitrogen
          CFTypeRef( ::CFTypeRef v )                : value( v ) {}
 
          template < class T >
-         CFTypeRef( const T* v )                   : value( CFType_Traits< const T* >::ConvertToCFTypeRef( v ) )    {}
+         CFTypeRef( T* v )                         : value( CFType_Traits< T* >::ConvertToCFTypeRef( v ) )    {}
          
          static CFTypeRef Make( ::CFTypeRef v )                                    { return CFTypeRef( v ); }
          ::CFTypeRef Get() const                                                   { return value; }
@@ -75,8 +75,7 @@ namespace Nitrogen
      {
       void operator()( CFTypeRef cf ) const
         {
-         if ( cf != 0 )
-            ::CFRelease( cf );
+         ::CFRelease( cf );
         }
      };
    
@@ -159,7 +158,7 @@ namespace Nitrogen
       if ( CFGetTypeID( p ) != CFType_Traits<Desired>::ID() )
          throw CFCast_Failed();
       
-      return static_cast< Desired >( p );
+      return static_cast< Desired >( p.Get() );
      }
 
    template < class Desired > Owned<Desired> CFCast( Owned<CFTypeRef> p )

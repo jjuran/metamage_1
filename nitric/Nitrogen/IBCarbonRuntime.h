@@ -24,8 +24,7 @@ namespace Nitrogen
      {
       void operator()( IBNibRef n ) const
         {
-         if ( n != 0 )
-            ::DisposeNibReference( n );
+         ::DisposeNibReference( n );
         }
      };
    

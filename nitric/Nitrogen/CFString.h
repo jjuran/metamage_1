@@ -69,6 +69,36 @@ namespace Nitrogen
    UniString CFStringGetCharacters( CFStringRef theString, CFRange range );
    UniString CFStringGetCharacters( CFStringRef theString );
    
+   class CFStringCreateWithBytes_Failed {};
+   
+   Owned< CFStringRef > CFStringCreateWithBytes( CFAllocatorRef     alloc,
+                                                 const UInt8 *      bytes,
+                                                 CFIndex            numBytes,
+                                                 CFStringEncoding   encoding,
+                                                 bool               isExternalRepresentation );
+
+   inline Owned< CFStringRef > CFStringCreateWithBytes( const UInt8 *      bytes,
+                                                        CFIndex            numBytes,
+                                                        CFStringEncoding   encoding,
+                                                        bool               isExternalRepresentation )
+     {
+      return Nitrogen::CFStringCreateWithBytes( kCFAllocatorDefault,
+                                                bytes,
+                                                numBytes,
+                                                encoding,
+                                                isExternalRepresentation );
+     }
+
+   inline Owned< CFStringRef > CFStringCreateWithBytes( const std::string& string,
+                                                        CFStringEncoding   encoding,
+                                                        bool               isExternalRepresentation )
+     {
+      return Nitrogen::CFStringCreateWithBytes( reinterpret_cast< const UInt8 * >( string.data() ),
+                                                Convert<CFIndex>( string.size() ),
+                                                encoding,
+                                                isExternalRepresentation );
+     }
+
    class CFStringCreateWithFormat_Failed {};
    
    template <>

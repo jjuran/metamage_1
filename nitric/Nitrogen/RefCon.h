@@ -61,6 +61,9 @@ namespace Nitrogen
 
          template < class T >
          operator T*() const              { return static_cast<T*>( const_cast<void*>( value ) ); }
+         
+         bool operator==( const RefCon& b ) const  { return value == b.value; }
+         bool operator!=( const RefCon& b ) const  { return value != b.value; }
      };
   }
 

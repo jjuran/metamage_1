@@ -32,8 +32,7 @@ namespace Nitrogen
      {
       void operator()( ControlRef c ) const
         {
-         if ( c != 0 )
-            ::DisposeControl( c );
+         ::DisposeControl( c );
         }
      };
 

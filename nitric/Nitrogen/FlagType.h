@@ -369,136 +369,136 @@ namespace Nitrogen
             operator typename Blacklist< unsigned long long >::ConversionAllowed() const    { return value; }
 
          // Allowed comparisons:
-            friend bool operator==( FlagType a, typename Blacklist<          bool      >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist<          char      >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist<   signed char      >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist<   signed short     >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist<   signed int       >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist<   signed long      >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist<   signed long long >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist< unsigned char      >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist< unsigned short     >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist< unsigned int       >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist< unsigned long      >::ComparisonAllowed b )    { return a == FlagType(b); }
-            friend bool operator==( FlagType a, typename Blacklist< unsigned long long >::ComparisonAllowed b )    { return a == FlagType(b); }
+            friend bool operator==( FlagType a, typename Blacklist<          bool      >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist<          char      >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist<   signed char      >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist<   signed short     >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist<   signed int       >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist<   signed long      >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist<   signed long long >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist< unsigned char      >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist< unsigned short     >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist< unsigned int       >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist< unsigned long      >::ComparisonAllowed b )    { return a.Get() == b; }
+            friend bool operator==( FlagType a, typename Blacklist< unsigned long long >::ComparisonAllowed b )    { return a.Get() == b; }
 
-            friend bool operator==( typename Blacklist<          bool      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist<          char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist<   signed char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist<   signed short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist<   signed int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist<   signed long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist<   signed long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist< unsigned char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist< unsigned short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist< unsigned int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist< unsigned long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
-            friend bool operator==( typename Blacklist< unsigned long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) == b; }
+            friend bool operator==( typename Blacklist<          bool      >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist<          char      >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist<   signed char      >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist<   signed short     >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist<   signed int       >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist<   signed long      >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist<   signed long long >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist< unsigned char      >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist< unsigned short     >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist< unsigned int       >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist< unsigned long      >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
+            friend bool operator==( typename Blacklist< unsigned long long >::ComparisonAllowed a, FlagType b )    { return a == b.Get(); }
 
-            friend bool operator!=( FlagType a, typename Blacklist<          bool      >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist<          char      >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist<   signed char      >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist<   signed short     >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist<   signed int       >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist<   signed long      >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist<   signed long long >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist< unsigned char      >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist< unsigned short     >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist< unsigned int       >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist< unsigned long      >::ComparisonAllowed b )    { return a != FlagType(b); }
-            friend bool operator!=( FlagType a, typename Blacklist< unsigned long long >::ComparisonAllowed b )    { return a != FlagType(b); }
+            friend bool operator!=( FlagType a, typename Blacklist<          bool      >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist<          char      >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist<   signed char      >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist<   signed short     >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist<   signed int       >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist<   signed long      >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist<   signed long long >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist< unsigned char      >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist< unsigned short     >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist< unsigned int       >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist< unsigned long      >::ComparisonAllowed b )    { return a.Get() != b; }
+            friend bool operator!=( FlagType a, typename Blacklist< unsigned long long >::ComparisonAllowed b )    { return a.Get() != b; }
 
-            friend bool operator!=( typename Blacklist<          bool      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist<          char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist<   signed char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist<   signed short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist<   signed int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist<   signed long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist<   signed long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist< unsigned char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist< unsigned short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist< unsigned int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist< unsigned long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
-            friend bool operator!=( typename Blacklist< unsigned long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) != b; }
+            friend bool operator!=( typename Blacklist<          bool      >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist<          char      >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist<   signed char      >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist<   signed short     >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist<   signed int       >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist<   signed long      >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist<   signed long long >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist< unsigned char      >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist< unsigned short     >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist< unsigned int       >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist< unsigned long      >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
+            friend bool operator!=( typename Blacklist< unsigned long long >::ComparisonAllowed a, FlagType b )    { return a != b.Get(); }
 
          // Allowed bitwise operators:
-            friend FlagType operator|( FlagType a, typename Blacklist<          bool      >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist<          char      >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist<   signed char      >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist<   signed short     >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist<   signed int       >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist<   signed long      >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist<   signed long long >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist< unsigned char      >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist< unsigned short     >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist< unsigned int       >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist< unsigned long      >::ComparisonAllowed b )    { return a | FlagType(b); }
-            friend FlagType operator|( FlagType a, typename Blacklist< unsigned long long >::ComparisonAllowed b )    { return a | FlagType(b); }
+            friend FlagType operator|( FlagType a, typename Blacklist<          bool      >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist<          char      >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist<   signed char      >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist<   signed short     >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist<   signed int       >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist<   signed long      >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist<   signed long long >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist< unsigned char      >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist< unsigned short     >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist< unsigned int       >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist< unsigned long      >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
+            friend FlagType operator|( FlagType a, typename Blacklist< unsigned long long >::BitwiseAllowed b )    { return FlagType( a.Get() | b ); }
 
-            friend FlagType operator|( typename Blacklist<          bool      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist<          char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist<   signed char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist<   signed short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist<   signed int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist<   signed long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist<   signed long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist< unsigned char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist< unsigned short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist< unsigned int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist< unsigned long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
-            friend FlagType operator|( typename Blacklist< unsigned long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) | b; }
+            friend FlagType operator|( typename Blacklist<          bool      >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist<          char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist<   signed char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist<   signed short     >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist<   signed int       >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist<   signed long      >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist<   signed long long >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist< unsigned char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist< unsigned short     >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist< unsigned int       >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist< unsigned long      >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
+            friend FlagType operator|( typename Blacklist< unsigned long long >::BitwiseAllowed a, FlagType b )    { return FlagType( a | b.Get() ); }
 
-            friend FlagType operator&( FlagType a, typename Blacklist<          bool      >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist<          char      >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist<   signed char      >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist<   signed short     >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist<   signed int       >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist<   signed long      >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist<   signed long long >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist< unsigned char      >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist< unsigned short     >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist< unsigned int       >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist< unsigned long      >::ComparisonAllowed b )    { return a & FlagType(b); }
-            friend FlagType operator&( FlagType a, typename Blacklist< unsigned long long >::ComparisonAllowed b )    { return a & FlagType(b); }
+            friend FlagType operator&( FlagType a, typename Blacklist<          bool      >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist<          char      >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist<   signed char      >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist<   signed short     >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist<   signed int       >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist<   signed long      >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist<   signed long long >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist< unsigned char      >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist< unsigned short     >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist< unsigned int       >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist< unsigned long      >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
+            friend FlagType operator&( FlagType a, typename Blacklist< unsigned long long >::BitwiseAllowed b )    { return FlagType( a.Get() & b ); }
 
-            friend FlagType operator&( typename Blacklist<          bool      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist<          char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist<   signed char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist<   signed short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist<   signed int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist<   signed long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist<   signed long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist< unsigned char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist< unsigned short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist< unsigned int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist< unsigned long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
-            friend FlagType operator&( typename Blacklist< unsigned long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) & b; }
+            friend FlagType operator&( typename Blacklist<          bool      >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist<          char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist<   signed char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist<   signed short     >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist<   signed int       >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist<   signed long      >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist<   signed long long >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist< unsigned char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist< unsigned short     >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist< unsigned int       >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist< unsigned long      >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
+            friend FlagType operator&( typename Blacklist< unsigned long long >::BitwiseAllowed a, FlagType b )    { return FlagType( a & b.Get() ); }
 
-            friend FlagType operator^( FlagType a, typename Blacklist<          bool      >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist<          char      >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist<   signed char      >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist<   signed short     >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist<   signed int       >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist<   signed long      >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist<   signed long long >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist< unsigned char      >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist< unsigned short     >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist< unsigned int       >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist< unsigned long      >::ComparisonAllowed b )    { return a ^ FlagType(b); }
-            friend FlagType operator^( FlagType a, typename Blacklist< unsigned long long >::ComparisonAllowed b )    { return a ^ FlagType(b); }
+            friend FlagType operator^( FlagType a, typename Blacklist<          bool      >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist<          char      >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist<   signed char      >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist<   signed short     >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist<   signed int       >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist<   signed long      >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist<   signed long long >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist< unsigned char      >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist< unsigned short     >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist< unsigned int       >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist< unsigned long      >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
+            friend FlagType operator^( FlagType a, typename Blacklist< unsigned long long >::BitwiseAllowed b )    { return FlagType( a.Get() ^ b ); }
 
-            friend FlagType operator^( typename Blacklist<          bool      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist<          char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist<   signed char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist<   signed short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist<   signed int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist<   signed long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist<   signed long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist< unsigned char      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist< unsigned short     >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist< unsigned int       >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist< unsigned long      >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
-            friend FlagType operator^( typename Blacklist< unsigned long long >::ComparisonAllowed a, FlagType b )    { return FlagType(a) ^ b; }
+            friend FlagType operator^( typename Blacklist<          bool      >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist<          char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist<   signed char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist<   signed short     >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist<   signed int       >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist<   signed long      >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist<   signed long long >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist< unsigned char      >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist< unsigned short     >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist< unsigned int       >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist< unsigned long      >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
+            friend FlagType operator^( typename Blacklist< unsigned long long >::BitwiseAllowed a, FlagType b )    { return FlagType( a ^ b.Get() ); }
 
          // Allowed bitwise assignments:
             FlagType& operator|=( typename Blacklist<          bool      >::BitwiseAllowed b )     { value |= b; return *this; }

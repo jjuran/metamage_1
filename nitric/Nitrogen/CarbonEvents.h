@@ -39,6 +39,9 @@
 #ifndef NITROGEN_AEREGISTRY_H
 #include "Nitrogen/AERegistry.h"
 #endif
+#ifndef NITROGEN_ONLYONCE_H
+#include "Nitrogen/OnlyOnce.h"
+#endif
 
 /* CarbonEvents.h has some nasty macros which get in our way; replace them
    with the equivalent inline functions. */
@@ -156,6 +159,8 @@
 
 namespace Nitrogen
   {
+   void RegisterCarbonEventErrors();
+
    typedef ErrorCode< OSStatus, eventAlreadyPostedErr           > EventAlreadyPostedErr;
    typedef ErrorCode< OSStatus, eventTargetBusyErr              > EventTargetBusyErr;
    typedef ErrorCode< OSStatus, eventClassInvalidErr            > EventClassInvalidErr;
@@ -224,8 +229,7 @@ namespace Nitrogen
      {
       void operator()( EventRef toDispose ) const
         {
-         if ( toDispose != EventRef() )
-            ::ReleaseEvent( toDispose );
+         ::ReleaseEvent( toDispose );
         }
      };
    
@@ -909,8 +913,8 @@ namespace Nitrogen
      {
       void operator()( EventHandlerRef toDispose ) const
         {
-         if ( toDispose != EventHandlerRef() )
-            HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
+         OnlyOnce<RegisterCarbonEventErrors>();
+         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
         }
      };
 
@@ -1109,14 +1113,25 @@ namespace Nitrogen
       template < ::EventParamName name0 = 0, ::EventParamName name1 = 0, ::EventParamName name2 = 0, ::EventParamName name3 = 0,
                  ::EventParamName name4 = 0, ::EventParamName name5 = 0, ::EventParamName name6 = 0, ::EventParamName name7 = 0 >
       struct EventParamName_List
-         : ArraySingleton< ::EventParamName, name0, name1, name2, name3, name4, name5, name6, name7 >
+         : ArraySingleton< ::EventParamName >::ArrayType< name0, name1, name2, name3, name4, name5, name6, name7 >
          {};
-   
+
       template < ::EventParamType type0 = 0, ::EventParamType type1 = 0, ::EventParamType type2 = 0, ::EventParamType type3 = 0,
                  ::EventParamType type4 = 0, ::EventParamType type5 = 0, ::EventParamType type6 = 0, ::EventParamType type7 = 0 >
       struct EventParamType_List
-         : ArraySingleton< ::EventParamType, type0, type1, type2, type3, type4, type5, type6, type7 >
+         : ArraySingleton< ::EventParamType >::ArrayType< type0, type1, type2, type3, type4, type5, type6, type7 >
          {};
+
+      // These specializations take the load off a construct in ArraySingleton.h that CodeWarrior 8.3 can't handle.
+         template <>
+         struct EventParamName_List< 0, 0, 0, 0, 0, 0, 0, 0 >
+            : ArraySingleton0< ::EventParamName >
+            {};
+      
+         template <>
+         struct EventParamType_List< 0, 0, 0, 0, 0, 0, 0, 0 >
+            : ArraySingleton0< ::EventParamType >
+            {};
       
    /* Glue for extracting an EventHandler's parameters */
       
@@ -2002,8 +2017,7 @@ namespace Nitrogen
      {
       void operator()( EventHotKeyRef toDispose ) const
         {
-         if ( toDispose != EventHotKeyRef() )
-            ::UnregisterEventHotKey( toDispose );
+         ::UnregisterEventHotKey( toDispose );
         }
      };
 
@@ -2015,8 +2029,6 @@ namespace Nitrogen
 
 
    void UnregisterEventHotKey( Owned< EventHotKeyRef > );
-
-   void RegisterCarbonEventErrors();
   }
 
 #endif

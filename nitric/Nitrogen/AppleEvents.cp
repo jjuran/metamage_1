@@ -15,7 +15,15 @@ namespace Nitrogen
      {
      }
 
-   
+   bool operator==( const AEEventHandler& a, const AEEventHandler& b )
+     {
+      return a.handler         == b.handler
+          && a.handlerRefCon   == b.handlerRefCon
+          && a.theAEEventID    == b.theAEEventID
+          && a.theAEEventClass == b.theAEEventClass
+          && a.isSysHandler    == b.isSysHandler;
+     }
+
    Owned<AEEventHandler>
    AEInstallEventHandler( const AEEventHandler& toInstall )
      {

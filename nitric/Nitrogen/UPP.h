@@ -6,6 +6,9 @@
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
+#endif
 
 namespace Nitrogen
   {
@@ -129,9 +132,9 @@ namespace Nitrogen
          friend bool operator!=( const BasicUPP& a, const BasicUPP& b )    { return a.Get() != b.Get(); }
 
          friend bool operator==( const BasicUPP& a, const UPPType& b )     { return a.Get() == b; }
-         friend bool operator==( const BasicUPP& a, const UPPType& b )     { return a.Get() == b; }
+         friend bool operator!=( const BasicUPP& a, const UPPType& b )     { return a.Get() != b; }
          
-         friend bool operator!=( const UPPType& a, const BasicUPP& b )     { return a != b.Get(); }
+         friend bool operator==( const UPPType& a, const BasicUPP& b )     { return a == b.Get(); }
          friend bool operator!=( const UPPType& a, const BasicUPP& b )     { return a != b.Get(); }
      };
 
@@ -336,8 +339,7 @@ namespace Nitrogen
       
       void operator()( NitrogenUPP upp ) const
         {
-         if ( upp != NitrogenUPP() )
-            dispose( upp );
+         dispose( upp );
         }
      };
    

@@ -181,52 +181,60 @@ namespace Nitrogen
      };
 
 
-   template < class Element,
-              Element e0 = 0, Element e1 = 0, Element e2 = 0, Element e3 = 0,
-              Element e4 = 0, Element e5 = 0, Element e6 = 0, Element e7 = 0 >
-   struct ArraySingleton
-      : ArraySingleton8< Element, e0, e1, e2, e3, e4, e5, e6, e7 >
-      {};
-
-   template < class Element, Element e0, Element e1, Element e2, Element e3, Element e4, Element e5, Element e6 >
-   struct ArraySingleton< Element, e0, e1, e2, e3, e4, e5, e6, 0 >
-      : ArraySingleton7< Element, e0, e1, e2, e3, e4, e5, e6 >
-      {};
-
-   template < class Element, Element e0, Element e1, Element e2, Element e3, Element e4, Element e5 >
-   struct ArraySingleton< Element, e0, e1, e2, e3, e4, e5, 0, 0 >
-      : ArraySingleton6< Element, e0, e1, e2, e3, e4, e5 >
-      {};
-
-   template < class Element, Element e0, Element e1, Element e2, Element e3, Element e4 >
-   struct ArraySingleton< Element, e0, e1, e2, e3, e4, 0, 0, 0 >
-      : ArraySingleton5< Element, e0, e1, e2, e3, e4 >
-      {};
-
-   template < class Element, Element e0, Element e1, Element e2, Element e3 >
-   struct ArraySingleton< Element, e0, e1, e2, e3, 0, 0, 0, 0 >
-      : ArraySingleton4< Element, e0, e1, e2, e3 >
-      {};
-
-   template < class Element, Element e0, Element e1, Element e2 >
-   struct ArraySingleton< Element, e0, e1, e2, 0, 0, 0, 0, 0 >
-      : ArraySingleton3< Element, e0, e1, e2 >
-      {};
-
-   template < class Element, Element e0, Element e1 >
-   struct ArraySingleton< Element, e0, e1, 0, 0, 0, 0, 0, 0 >
-      : ArraySingleton2< Element, e0, e1 >
-      {};
-
-   template < class Element, Element e0 >
-   struct ArraySingleton< Element, e0, 0, 0, 0, 0, 0, 0, 0 >
-      : ArraySingleton1< Element, e0 >
-      {};
-   
    template < class Element >
-   struct ArraySingleton< Element, 0, 0, 0, 0, 0, 0, 0, 0 >
-      : ArraySingleton0< Element >
-      {};
+   struct ArraySingleton
+     {
+      template < Element e0 = 0, Element e1 = 0, Element e2 = 0, Element e3 = 0,
+                 Element e4 = 0, Element e5 = 0, Element e6 = 0, Element e7 = 0 >
+      struct ArrayType
+         : ArraySingleton8< Element, e0, e1, e2, e3, e4, e5, e6, e7 >
+         {};
+
+      template < Element e0, Element e1, Element e2, Element e3, Element e4, Element e5, Element e6 >
+      struct ArrayType< e0, e1, e2, e3, e4, e5, e6, 0 >
+         : ArraySingleton7< Element, e0, e1, e2, e3, e4, e5, e6 >
+         {};
+
+      template < Element e0, Element e1, Element e2, Element e3, Element e4, Element e5 >
+      struct ArrayType< e0, e1, e2, e3, e4, e5, 0, 0 >
+         : ArraySingleton6< Element, e0, e1, e2, e3, e4, e5 >
+         {};
+
+      template < Element e0, Element e1, Element e2, Element e3, Element e4 >
+      struct ArrayType< e0, e1, e2, e3, e4, 0, 0, 0 >
+         : ArraySingleton5< Element, e0, e1, e2, e3, e4 >
+         {};
+
+      template < Element e0, Element e1, Element e2, Element e3 >
+      struct ArrayType< e0, e1, e2, e3, 0, 0, 0, 0 >
+         : ArraySingleton4< Element, e0, e1, e2, e3 >
+         {};
+
+      template < Element e0, Element e1, Element e2 >
+      struct ArrayType< e0, e1, e2, 0, 0, 0, 0, 0 >
+         : ArraySingleton3< Element, e0, e1, e2 >
+         {};
+
+      template < Element e0, Element e1 >
+      struct ArrayType< e0, e1, 0, 0, 0, 0, 0, 0 >
+         : ArraySingleton2< Element, e0, e1 >
+         {};
+
+      template < Element e0 >
+      struct ArrayType< e0, 0, 0, 0, 0, 0, 0, 0 >
+         : ArraySingleton1< Element, e0 >
+         {};
+     };
+
+   #if 0
+      // This double-specialization freaks out CodeWarrior 8.3.
+      // There's a (single) specialization in CarbonEvents.h to avoid this case.
+      template < class Element >
+      template <>
+      struct ArraySingleton<Element>::ArrayType< 0, 0, 0, 0, 0, 0, 0, 0 >
+         : ArraySingleton0< Element >
+         {};
+   #endif
   }
 
 #endif

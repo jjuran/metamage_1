@@ -19,7 +19,7 @@ namespace Nitrogen
                             unsigned char destinationLength )
      {
       if ( source[0] > destinationLength )
-         throw PascalStringTooShort();
+         throw StringTooLong();
       
       PLstrcpy( destination, source ); 
      }
@@ -29,7 +29,7 @@ namespace Nitrogen
                             unsigned char destinationLength )
      {
       if ( std::strlen( source ) > destinationLength )
-         throw PascalStringTooShort();
+         throw StringTooLong();
       
       CopyCStringToPascal( source, destination );
      }
@@ -39,7 +39,7 @@ namespace Nitrogen
                             unsigned char destinationLength )
      {
       if ( source.size() > destinationLength )
-         throw PascalStringTooShort();
+         throw StringTooLong();
       
       destination[0] = static_cast< unsigned char >( source.length() );
       std::copy( source.begin(),

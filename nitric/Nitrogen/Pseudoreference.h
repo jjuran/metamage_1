@@ -116,10 +116,10 @@ namespace Nitrogen
 
 
 
-   template < class Context, class Value, class Getter, Getter get >
-   struct ReferenceTraits< ConstPseudoreference< Context, Value, Getter, get > >
+   template < class ContextType, class ValueType, class GetterType, GetterType get >
+   struct ReferenceTraits< ConstPseudoreference< ContextType, ValueType, GetterType, get > >
      {
-      typedef ConstPseudoreference< Context, Value, Getter, get > Reference;
+      typedef ConstPseudoreference< ContextType, ValueType, GetterType, get > Reference;
       
       typedef typename Reference::Value           Value;
       typedef typename Reference::Pointer         Pointer;
@@ -127,16 +127,16 @@ namespace Nitrogen
       typedef typename Reference::ConstPointer    ConstPointer;
      };
 
-   template < class Context, class Value, class Getter, Getter get >
-   struct ConvertInputTraits< ConstPseudoreference< Context, Value, Getter, get > >
+   template < class ContextType, class ValueType, class GetterType, GetterType get >
+   struct ConvertInputTraits< ConstPseudoreference< ContextType, ValueType, GetterType, get > >
      {
-      typedef Value ConverterInputType;
+      typedef ValueType ConverterInputType;
      };
    
-   template < class Context, class Value, class Getter, Getter get, class Setter, Setter set >
-   struct ReferenceTraits< Pseudoreference< Context, Value, Getter, get, Setter, set > >
+   template < class ContextType, class ValueType, class GetterType, GetterType get, class SetterType, SetterType set >
+   struct ReferenceTraits< Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > >
      {
-      typedef Pseudoreference< Context, Value, Getter, get, Setter, set > Reference;
+      typedef Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > Reference;
       
       typedef typename Reference::Value           Value;
       typedef typename Reference::Pointer         Pointer;
@@ -144,16 +144,16 @@ namespace Nitrogen
       typedef typename Reference::ConstPointer    ConstPointer;
      };
 
-   template < class Context, class Value, class Getter, Getter get, class Setter, Setter set >
-   struct ConvertInputTraits< Pseudoreference< Context, Value, Getter, get, Setter, set > >
+   template < class ContextType, class ValueType, class GetterType, GetterType get, class SetterType, SetterType set >
+   struct ConvertInputTraits< Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > >
      {
-      typedef Value ConverterInputType;
+      typedef ValueType ConverterInputType;
      };
 
-   template < class Context, class Value, class Getter, Getter get >
-   struct ValueTraits< ConstPseudoreference< Context, Value, Getter, get > >
+   template < class ContextType, class ValueType, class GetterType, GetterType get >
+   struct ValueTraits< ConstPseudoreference< ContextType, ValueType, GetterType, get > >
      {
-      typedef ConstPseudoreference< Context, Value, Getter, get > Reference;
+      typedef ConstPseudoreference< ContextType, ValueType, GetterType, get > Reference;
       
       typedef typename Reference::Value           Value;
       typedef typename Reference::Pointer         Pointer;
@@ -161,10 +161,10 @@ namespace Nitrogen
       typedef typename Reference::ConstPointer    ConstPointer;
      };
 
-   template < class Context, class Value, class Getter, Getter get, class Setter, Setter set >
-   struct ValueTraits< Pseudoreference< Context, Value, Getter, get, Setter, set > >
+   template < class ContextType, class ValueType, class GetterType, GetterType get, class SetterType, SetterType set >
+   struct ValueTraits< Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > >
      {
-      typedef Pseudoreference< Context, Value, Getter, get, Setter, set > Reference;
+      typedef Pseudoreference< ContextType, ValueType, GetterType, get, SetterType, set > Reference;
       
       typedef typename Reference::Value           Value;
       typedef typename Reference::Pointer         Pointer;

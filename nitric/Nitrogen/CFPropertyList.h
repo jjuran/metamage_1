@@ -27,6 +27,9 @@
 #ifndef NITROGEN_CFNUMBER_H
 #include "Nitrogen/CFNumber.h"
 #endif
+#ifndef NITROGEN_CFDATA_H
+#include "Nitrogen/CFData.h"
+#endif
 
 namespace Nitrogen
   {
@@ -40,11 +43,9 @@ namespace Nitrogen
    
 // These declarations should be scattered to the appropriate files:
    using ::CFDateRef;
-   using ::CFDataRef;
    using ::CFArrayRef;
    using ::CFDictionaryRef;
    template <> struct CFType_Traits< CFDateRef       >: Basic_CFType_Traits< CFDateRef,       ::CFDateGetTypeID       > {};
-   template <> struct CFType_Traits< CFDataRef       >: Basic_CFType_Traits< CFDataRef,       ::CFDataGetTypeID       > {};
    template <> struct CFType_Traits< CFArrayRef      >: Basic_CFType_Traits< CFArrayRef,      ::CFArrayGetTypeID      > {};
    template <> struct CFType_Traits< CFDictionaryRef >: Basic_CFType_Traits< CFDictionaryRef, ::CFDictionaryGetTypeID > {};
 
@@ -67,14 +68,14 @@ namespace Nitrogen
          CFPropertyListRef( ::CFPropertyListRef v )      : value( v )       {}
 
          template < class T >
-         CFPropertyListRef( const T* v )                 : value( CFProperty_Traits< const T* >::ConvertToCFPropertyRef( v ) )    {}
+         CFPropertyListRef( T* v )                       : value( CFProperty_Traits< T* >::ConvertToCFPropertyRef( v ) )    {}
          
          static CFPropertyListRef Make( ::CFPropertyListRef v )                                 { return CFPropertyListRef( v ); }
          ::CFPropertyListRef Get() const                                                        { return value; }
          operator ::CFPropertyListRef() const                                                   { return value; }
       
          operator CFTypeRef() const                                                             { return value; }
-         CFTypeRef GetCFTypeRef() const															{ return value; }
+         CFTypeRef GetCFTypeRef() const															            { return value; }
          
          friend bool operator==( const CFPropertyListRef& a, const CFPropertyListRef& b )       { return a.Get() == b.Get(); }
          friend bool operator!=( const CFPropertyListRef& a, const CFPropertyListRef& b )       { return a.Get() != b.Get(); }
@@ -111,7 +112,9 @@ namespace Nitrogen
      {
       Owned<CFPropertyListRef> operator()( const bool& in ) const
         {
-         return Convert< Owned<CFBooleanRef> >( in );
+         return Owned<CFPropertyListRef>( Convert< Owned<CFBooleanRef> >( in ) );
+         // The explicit conversion to Owned<CFPropertyListRef> is a workaround 
+         // for a bug in gcc 3.1 20020420; it rejects the implicit conversion.
         }
      };
   }

@@ -18,8 +18,7 @@ namespace Nitrogen
      {
       void operator()( WindowRef w ) const
         {
-         if ( w != 0 )
-            ::DisposeWindow( w );
+         ::DisposeWindow( w );
         }
      };
      

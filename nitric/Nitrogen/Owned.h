@@ -118,44 +118,91 @@ namespace Nitrogen
    template < class Resource >
    struct OwnedDefaults
      {
-      typedef typename Disposer<Resource> Disposer;
+      typedef Disposer<Resource> Disposer;
      };
 
-   template < class Resource, class DisposerType >
-   class DisposableResource: private DisposerType
+   class AllValuesAreLive
+     {
+      public:
+         AllValuesAreLive( bool )                  {}
+         
+         template < class Resource >
+         bool IsLive( const Resource& ) const      { return true; }
+     };
+
+   class NondefaultValuesAreLive
+     {
+      public:
+         NondefaultValuesAreLive( bool )           {}
+
+         template < class Resource >
+         bool IsLive( const Resource& r ) const    { return r != Resource(); }
+     };
+
+   class SeizedValuesAreLive
      {
       private:
+         bool isLive;
+      
+      public:
+         SeizedValuesAreLive( bool seized )        : isLive( seized )  {}
+
+         template < class Resource >
+         bool IsLive( const Resource& ) const      { return isLive; }
+     };
+   
+   template < class Resource, class DisposerType >
+   struct LivelinessTraits
+     {
+      typedef NondefaultValuesAreLive LivelinessTest;
+     };
+   
+   template < class Resource, class DisposerType >
+   class DisposableResource: private DisposerType,
+                             private LivelinessTraits< Resource, DisposerType >::LivelinessTest
+     {
+      private:
+         typedef typename LivelinessTraits< Resource, DisposerType >::LivelinessTest TesterType;
          Resource resource;
       
          static Resource ImplicitlyConvert( const Resource& r )      { return r; }
 
+         const TesterType& Tester() const      { return *this; }
+         TesterType& Tester()                  { return *this; }
+         
       public:
          DisposableResource()
            : DisposerType(),
+             TesterType( false ),
              resource()
            {}
          
-         DisposableResource( const Resource& r )
+         DisposableResource( const Resource& r, bool seized )
            : DisposerType(),
+             TesterType( seized ),
              resource( r )
            {}
 
          template< class R >
          DisposableResource( const DisposableResource<R,DisposerType>& r )
            : DisposerType( r.Disposer() ),
+             TesterType( r.IsLive() ),
              resource( ImplicitlyConvert( r.Get() ) )
            {}
             
          void Swap( DisposableResource& r )
            {
             std::swap( Disposer(), r.Disposer() );
+            std::swap( Tester(), r.Tester() );
             std::swap( resource,   r.resource   );
            }
 
          const DisposerType& Disposer() const      { return *this; }
          DisposerType& Disposer()                  { return *this; }
          
-         void Dispose() const                      { Disposer()( resource ); }
+         bool IsLive() const                       { return Tester().IsLive( Get() ); }
+         
+         void Dispose() const                      { if ( IsLive() ) Disposer()( resource ); }
 
          const Resource& Get() const               { return resource; }
          operator const Resource&() const          { return resource; }
@@ -187,8 +234,8 @@ namespace Nitrogen
          Body body;
          
          class Seizing {};
-         explicit Owned( Seizing, const Resource& r ) : body( r ) {}
-         explicit Owned( Seizing, const Body& r )     : body( r ) {}
+         explicit Owned( Seizing, const Resource& r ) : body( r, true ) {}
+         explicit Owned( Seizing, const Body& r )     : body( r )       {}
          
       public:                                       
          Owned()                                      : body()    {}
@@ -240,6 +287,28 @@ namespace Nitrogen
      {
       typedef Resource ConverterInputType;
      };
+   
+   // This disposer makes Owned<Foo *> similar to std::auto_ptr<Foo>.  I generally
+   // recommend std::auto_ptr<Foo> instead -- it helps you get along with the rest
+   // of the world.  But sometimes uniformity is more important.
+      struct DisposeWithDelete
+        {
+         template < class T >
+         void operator()( T *p ) const
+           {
+            delete p;
+           }
+        };
+
+   // This is for arrays.  The whole class is templated because array conversions are bad.
+      template < class T >
+      struct DisposeWithArrayDelete: public std::unary_function< T*, void >
+        {
+         void operator()( T *p ) const
+           {
+            delete[] p;
+           }
+        };
   }
 
 #endif

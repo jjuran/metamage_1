@@ -18,9 +18,13 @@
 #ifndef NITROGEN_FLAGTYPE_H
 #include "Nitrogen/FlagType.h"
 #endif
+#ifndef NITROGEN_OVERLOADED_MATH_H
+#include "Nitrogen/Overloaded_math.h"
+#endif
 
 #include <cstddef>
 #include <string>
+#include <cmath>
 
 namespace Nitrogen
   {
@@ -45,7 +49,7 @@ namespace Nitrogen
    template < class Integral, int fractionBits, class Floating >
    Integral FloatingToFixedPoint( Floating in )
      {
-      return static_cast< Integral >( std::nearbyint( std::ldexp( in, fractionBits ) ) );
+      return static_cast< Integral >( CStd::nearbyint( std::ldexp( in, fractionBits ) ) );
      }
    
    inline double FixedToDouble( ::Fixed in )                   { return FixedToFloatingPoint< double,  16 >( in ); }

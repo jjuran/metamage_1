@@ -18,8 +18,7 @@ namespace Nitrogen
      {
       void operator()( MenuRef m ) const
         {
-         if ( m != 0 )
-            ::DisposeMenu( m );
+         ::DisposeMenu( m );
         }
      };
 

@@ -188,11 +188,6 @@ namespace Nitrogen
            : link( convert, TheGlobalExceptionConverter<Output>() )
            {}
      };
-
-
-   template < class Output >
-   class ExceptionConversionRegistration< Output, TheExceptionBeingHandled, static_cast< Output(*)( const TheExceptionBeingHandled& ) >( Convert ) >;
-      // Not implemented; if this were registered, it would cause an unbounded recursion.
    
    template < class Output,
               class Exception,

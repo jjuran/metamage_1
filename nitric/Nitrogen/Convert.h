@@ -52,6 +52,10 @@
 #ifndef NITROGEN_CONVERT_H
 #define NITROGEN_CONVERT_H
 
+#ifndef NITROGEN_OVERLOADED_MATH_H
+#include "Nitrogen/Overloaded_math.h"
+#endif
+
 #include <limits>
 #include <string>
 #include <ios>
@@ -148,7 +152,7 @@ namespace Nitrogen
       Output operator()( const Input& input )
         {
          const Input in = ( !std::numeric_limits<Input>::is_integer && std::numeric_limits<Output>::is_integer )
-                          ? static_cast<Input>( std::nearbyint( input ) )
+                          ? static_cast<Input>( CStd::nearbyint( input ) )
                           : input;
          
          static const bool inputHasNaN =     std::numeric_limits<Input>::has_quiet_NaN
@@ -185,7 +189,7 @@ namespace Nitrogen
                  {
                   const Output outputMin = std::numeric_limits<Output>::is_exact
                                              ? std::numeric_limits<Output>::min()
-                                             : -std::numeric_limits<Output>::max();
+                                             : static_cast<Output>( -std::numeric_limits<Output>::max() );
 
                   if ( in < static_cast<Input>( outputMin ) )
                      throw NumericConversionOverflowError();

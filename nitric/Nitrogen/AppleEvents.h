@@ -38,17 +38,19 @@ namespace Nitrogen
         {}
      };
    
+   bool operator==( const AEEventHandler&, const AEEventHandler& );
+   inline bool operator!=( const AEEventHandler& a, const AEEventHandler& b )    { return !( a == b ); }
+   
    template <>
    struct Disposer< AEEventHandler >: public std::unary_function< AEEventHandler, void >,
                                       private DefaultDestructionOSStatusPolicy
      {
       void operator()( const AEEventHandler& installation ) const
         {
-         if ( installation.handler != AEEventHandlerUPP() )
-            HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
-                                                               installation.theAEEventID,
-                                                               installation.handler,
-                                                               installation.isSysHandler ) );
+         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::AERemoveEventHandler( installation.theAEEventClass,
+                                                                                              installation.theAEEventID,
+                                                                                              installation.handler,
+                                                                                              installation.isSysHandler ) );
         }
      };
 

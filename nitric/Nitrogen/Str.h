@@ -11,7 +11,7 @@
 
 namespace Nitrogen
   {
-   class PascalStringTooShort {};
+   class StringTooLong {};
    
    void CopyToPascalString( const unsigned char *source,
                             unsigned char *destination,
@@ -62,6 +62,24 @@ namespace Nitrogen
         {
          const char *begin = reinterpret_cast<const char *>( input + 1 );
          return std::string( begin, begin+input[0] ); 
+        }
+     };
+   
+   template <>
+   struct Converter< std::string, unsigned char * >: public std::unary_function< unsigned char *, std::string >
+     {
+      std::string operator()( unsigned char *input ) const
+        {
+         return Converter< std::string, const unsigned char * >()( input );
+        }
+     };
+   
+   template < unsigned char length >
+   struct Converter< std::string, Str<length> >: public std::unary_function< Str<length>, std::string >
+     {
+      std::string operator()( const Str<length>& input ) const
+        {
+         return Converter< std::string, const unsigned char * >()( input );
         }
      };
   }
