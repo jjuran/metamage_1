@@ -196,7 +196,7 @@ namespace Nitrogen {
 	
 	Owned< AEDesc > AECreateDesc( DescType typeCode, Handle handle )
 	{
-		if ( handle == NULL )
+		if ( handle.Get() == NULL )
 		{
 			throw ParamErr();  // should assert?
 		}
