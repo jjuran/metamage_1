@@ -37,6 +37,11 @@ namespace Nitrogen
 					typedef typename Specifics::difference_type difference_type;
 					typedef typename Specifics::value_type      value_type;
 					
+					typedef value_type      &  reference;
+					typedef value_type const&  const_reference;
+					typedef value_type      *  pointer;
+					typedef value_type const*  const_pointer;
+					
 					typedef std::random_access_iterator_tag iterator_category;
 				
 				private:
@@ -64,6 +69,8 @@ namespace Nitrogen
 					
 					const_iterator operator+( difference_type d ) const  { return const_iterator( state, position + d ); }
 					const_iterator operator-( difference_type d ) const  { return const_iterator( state, position - d ); }
+					
+					difference_type operator-( const_iterator it ) const  { return position - it.position; }
 					
 					value_type operator*()  const                        { return GetValue(); }
 					
