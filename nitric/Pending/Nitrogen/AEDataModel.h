@@ -43,6 +43,9 @@
 #ifndef NITROGEN_PROCESSES_H
 #include "Nitrogen/Processes.h"
 #endif
+#ifndef NITROGEN_ALIASES_H
+#include "Nitrogen/Aliases.h"
+#endif
 
 #include <string>
 
@@ -381,6 +384,44 @@ namespace Nitrogen
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
      };
 
+	template< class T >
+	struct Handle_DescType_Traits
+	{
+		typedef T   DataType;
+		typedef T** HandleType;
+		
+		typedef Owned< HandleType > Result;
+		typedef HandleType Parameter;
+		
+		typedef Owned< Handle > InputBuffer;
+		
+		typedef HandleType OutputBuffer;
+
+		static const bool inputHasVariableLength = true;
+		
+		static void SetInputBufferLength( InputBuffer& b, std::size_t s )    
+		{
+			b = NewHandle( s );
+			HLock( b );
+		}
+
+		static void *      InputBufferStart(  InputBuffer& buffer )           { return *buffer.Get(); }
+		static std::size_t InputBufferLength( InputBuffer& buffer )           { return GetHandleSize( buffer ); }
+		static Result  ProcessInputBuffer( InputBuffer& buffer )
+		{
+			::HUnlock( buffer.Get() );
+			return Handle_Cast< DataType >( buffer );
+		}
+		
+		// Yes, this loses the previous locked state, which could be bad.
+		// When DescType_Traits are made exception-safe, then I'll deal with it.
+		
+		static const void *OutputBufferStart(  OutputBuffer buffer )          { return *buffer; }
+		static std::size_t OutputBufferLength( OutputBuffer buffer )          { return GetHandleSize( buffer ); }
+		static OutputBuffer PrepareOutputBuffer( Parameter output )           { HLock( output );  return output; }
+		static void ReleaseOutputBuffer( OutputBuffer buffer )                { ::HUnlock( (Handle)buffer ); }
+	};
+	
    template<> struct DescType_Traits< ::typeChar >
      {
       typedef std::string Result;
@@ -433,32 +474,35 @@ namespace Nitrogen
    class AEEventIDTag {};
    typedef SelectorType< AEEventIDTag, ::AEEventID > AEEventID;
    
-   template<> struct DescType_Traits< ::typeNull >                   { typedef void Result; };
+   template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
    
-   template<> struct DescType_Traits< ::typeBoolean >                : Converting_DescType_Traits< bool, ::Boolean >        {};
-   template<> struct DescType_Traits< ::typeSInt16 >                 : POD_DescType_Traits< SInt16 >                        {};
-   template<> struct DescType_Traits< ::typeSInt32 >                 : POD_DescType_Traits< SInt32 >                        {};
-   template<> struct DescType_Traits< ::typeUInt32 >                 : POD_DescType_Traits< UInt32 >                        {};
-   template<> struct DescType_Traits< ::typeSInt64 >                 : POD_DescType_Traits< SInt64 >                        {};
-   template<> struct DescType_Traits< ::typeIEEE32BitFloatingPoint > : POD_DescType_Traits< float >                         {};
-   template<> struct DescType_Traits< ::typeIEEE64BitFloatingPoint > : POD_DescType_Traits< double >                        {};
-   template<> struct DescType_Traits< ::type128BitFloatingPoint >    : POD_DescType_Traits< long double >                   {};
+   template<> struct DescType_Traits< typeBoolean >                : Converting_DescType_Traits< bool, ::Boolean >        {};
+   template<> struct DescType_Traits< typeSInt16 >                 : POD_DescType_Traits< SInt16 >                        {};
+   template<> struct DescType_Traits< typeSInt32 >                 : POD_DescType_Traits< SInt32 >                        {};
+   template<> struct DescType_Traits< typeUInt32 >                 : POD_DescType_Traits< UInt32 >                        {};
+   template<> struct DescType_Traits< typeSInt64 >                 : POD_DescType_Traits< SInt64 >                        {};
+   template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : POD_DescType_Traits< float >                         {};
+   template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : POD_DescType_Traits< double >                        {};
+   template<> struct DescType_Traits< type128BitFloatingPoint >    : POD_DescType_Traits< long double >                   {};
 
-   template<> struct DescType_Traits< ::typeEventRecord >            : POD_DescType_Traits< EventRecord >                   {};
-   template<> struct DescType_Traits< ::typeEnumerated >             : Converting_DescType_Traits< AEEnumerated, UInt32 >   {};
-   template<> struct DescType_Traits< ::typeType >                   : Converting_DescType_Traits< DescType, ::DescType >   {};
-   template<> struct DescType_Traits< ::typeAppParameters >          : VariableLengthPOD_DescType_Traits< AppParameters, SizeOf_AppParameters > {};
-   template<> struct DescType_Traits< ::typeFSS >                    : POD_DescType_Traits< FSSpec >                        {};
-   template<> struct DescType_Traits< ::typeFSRef >                  : POD_DescType_Traits< FSRef >                         {};
-   template<> struct DescType_Traits< ::typeKeyword >                : Converting_DescType_Traits< AEKeyword, ::AEKeyword > {};
-   template<> struct DescType_Traits< ::typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
-   template<> struct DescType_Traits< ::typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
-   template<> struct DescType_Traits< ::typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
-   template<> struct DescType_Traits< ::typeApplicationURL >         : DescType_Traits< ::typeChar >                          {};
+   template<> struct DescType_Traits< typeEventRecord >            : POD_DescType_Traits< EventRecord >                   {};
+   template<> struct DescType_Traits< typeAlias >                  : Handle_DescType_Traits< AliasRecord >                {};
+   template<> struct DescType_Traits< typeEnumerated >             : Converting_DescType_Traits< AEEnumerated, UInt32 >   {};
+   template<> struct DescType_Traits< typeType >                   : Converting_DescType_Traits< DescType, ::DescType >   {};
+   template<> struct DescType_Traits< typeAppParameters >          : VariableLengthPOD_DescType_Traits< AppParameters, SizeOf_AppParameters > {};
+   template<> struct DescType_Traits< typeFSS >                    : POD_DescType_Traits< FSSpec >                        {};
+   template<> struct DescType_Traits< typeFSRef >                  : POD_DescType_Traits< FSRef >                         {};
+   template<> struct DescType_Traits< typeKeyword >                : Converting_DescType_Traits< AEKeyword, ::AEKeyword > {};
+   template<> struct DescType_Traits< typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
+   template<> struct DescType_Traits< typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
+   template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
+   template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                          {};
    
+	
+
    // TargetID is defined for Carbon, but typeTargetID is not.
 #if CALL_NOT_IN_CARBON
-   template<> struct DescType_Traits< ::typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
+   template<> struct DescType_Traits< typeTargetID >               : POD_DescType_Traits< TargetID >                      {};
 #endif
 	
 	#pragma mark -
@@ -832,6 +876,12 @@ namespace Nitrogen
 	Owned< AEDesc > AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize);
 	Owned< AEDesc > AECreateDesc(DescType typeCode, ::Handle handle);
 	Owned< AEDesc > AECreateDesc(DescType typeCode, Owned< Handle > handle);
+	
+	template < class T >
+	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< T**, Disposer< Handle > > handle )
+	{
+		return AECreateDesc( typeCode, Owned< Handle >( handle ) );
+	}
 	
 	Owned< AEDesc > AECreateDesc(DescType typeCode, Owned< AEDesc > desc);
 	
