@@ -892,7 +892,7 @@ namespace Nitrogen
 	
 	inline bool TestIsDirectory( const CInfoPBRec& paramBlock )
 	{
-		return paramBlock.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		return paramBlock.hFileInfo.ioFlAttrib & char( kioFlAttribDirMask );
 	}
 	
 	inline bool TestIsFile( const CInfoPBRec& paramBlock )
@@ -994,7 +994,7 @@ namespace Nitrogen
 	{
 		FSSpec result;
 		OSErr err = ::FSMakeFSSpec( dir.vRefNum, dir.dirID, name, &result );
-		if ( err != fnfErr )
+		if ( err != OSErr( fnfErr ) )
 		{
 			ThrowOSStatus( err );
 		}
