@@ -808,7 +808,15 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
+	#if ACCESSOR_CALLS_ARE_FUNCTIONS
+		
 		ThrowOSStatus( ::AEGetDescData( &desc, dataPtr, maximumSize ) );
+		
+	#else
+		
+		::BlockMoveData( *desc.dataHandle, dataPtr, maximumSize );
+		
+	#endif
 	}
 	
 	void AEReplaceDescData(
@@ -818,10 +826,42 @@ namespace Nitrogen {
 		AEDesc& result)
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
+	
+	#if ACCESSOR_CALLS_ARE_FUNCTIONS
 		
-		ThrowOSStatus(
+		ThrowOSStatus
+		(
 			::AEReplaceDescData( typeCode, dataPtr, dataSize, &result )
 		);
+		
+	#else
+		
+		bool typeIsNull = typeCode == typeNull;
+		bool ptrIsNull  = dataPtr  == NULL;
+		
+		if ( typeIsNull != ptrIsNull )
+		{
+			throw ParamErr();
+		}
+		
+		bool descWasNull = result.dataHandle == NULL;
+		
+		if ( !descWasNull && !ptrIsNull )
+		{
+			SetHandleSize( result.dataHandle, dataSize );
+			::BlockMoveData( dataPtr, *result.dataHandle, dataSize );
+			result.descType = typeCode;
+		}
+		else if ( descWasNull && !ptrIsNull )
+		{
+			result = AECreateDesc( typeCode, dataPtr, dataSize ).Release();
+		}
+		else if ( !descWasNull )
+		{
+			::AEDisposeDesc( result );
+		}
+		
+	#endif
 	}
 	
 	void AEReplaceDescData(

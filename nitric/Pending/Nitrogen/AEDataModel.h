@@ -354,6 +354,7 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
    template<> struct DescType_Traits< typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
    template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
+   template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                          {};
    
    // TargetID is defined for Carbon, but typeTargetID is not.
 #if CALL_NOT_IN_CARBON
@@ -971,7 +972,15 @@ namespace Nitrogen
 	
 	inline std::size_t AEGetDescDataSize( const AEDesc& desc )
 	{
+	#if ACCESSOR_CALLS_ARE_FUNCTIONS
+		
 		return ::AEGetDescDataSize( &desc );
+		
+	#else
+		
+		return GetHandleSize( desc.dataHandle );
+		
+	#endif
 	}
 	
 	void AEReplaceDescData(
