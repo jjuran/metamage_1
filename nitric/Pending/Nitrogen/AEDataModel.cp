@@ -172,30 +172,32 @@ namespace Nitrogen {
 		return count;
 	}
 	
-	void AEPutPtr(Owned<AEDescList>& list, long index, DescType type, const void* dataPtr, Size dataSize) 
+	void AEPutPtr( AEDescList& list, long index, DescType type, const void* dataPtr, Size dataSize )
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus(
-			::AEPutPtr(
-				&AEDescEditor(list).Get(), 
-				index, 
-				type, 
-				dataPtr, 
-				dataSize
-			)
+			::AEPutPtr( &list, index, type, dataPtr, dataSize )
 		);
 	}
 	
-	void AEPutDesc(Owned<AEDescList>& list, long index, const AEDesc& desc) 
+	void AEPutPtr( Owned< AEDescList >& list, long index, DescType type, const void* dataPtr, Size dataSize )
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		AEPutPtr( AEDescEditor( list ), index, type, dataPtr, dataSize );
+	}
+	
+	void AEPutDesc( AEDescList& list, long index, const AEDesc& desc )
+	{
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus(
-			::AEPutDesc(
-				&AEDescEditor(list).Get(), 
-				index, 
-				&desc
-			)
+			::AEPutDesc( &list, index, &desc )
 		);
+	}
+	
+	void AEPutDesc( Owned< AEDescList >& list, long index, const AEDesc& desc )
+	{
+		AEPutDesc( AEDescEditor( list ), index, desc );
 	}
 	
 	GetNthPtr_Result AEGetNthPtr(
@@ -277,44 +279,58 @@ namespace Nitrogen {
 		return result;
 	}
 	
-	void AEDeleteItem( AEDesc& listDesc, long index )
+	void AEDeleteItem( AEDescList& list, long index )
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
-		ThrowOSStatus( ::AEDeleteItem(&listDesc, index) );
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
+		ThrowOSStatus( ::AEDeleteItem( &list, index ) );
+	}
+	
+	void AEDeleteItem( Owned< AEDescList >& list, long index )
+	{
+		AEDeleteItem( AEDescEditor( list ), index );
 	}
 	
 	void AEPutKeyPtr(
-		Owned<AERecord>& record, 
+		AERecord& record, 
 		AEKeyword keyword, 
 		DescType typeCode, 
 		const void* dataPtr, 
 		std::size_t dataSize)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus(
-			::AEPutKeyPtr(
-				&AEDescEditor(record).Get(), 
-				keyword, 
-				typeCode, 
-				dataPtr, 
-				dataSize
-			)
+			::AEPutKeyPtr( &record, keyword, typeCode, dataPtr, dataSize )
 		);
 	}
 	
+	void AEPutKeyPtr(
+		Owned< AERecord >& record, 
+		AEKeyword keyword, 
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize)
+	{
+		AEPutKeyPtr( AEDescEditor( record ), keyword, typeCode, dataPtr, dataSize );
+	}
+	
 	void AEPutKeyDesc(
-		Owned<AERecord>& record, 
+		AERecord& record, 
 		AEKeyword keyword, 
 		const AEDesc& desc)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
-		ThrowOSStatus(
-			::AEPutKeyDesc(
-				&AEDescEditor(record).Get(), 
-				keyword, 
-				&desc
-			)
-		);
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
+		ThrowOSStatus( ::AEPutKeyDesc( &record, keyword, &desc ) );
+	}
+	
+	void AEPutKeyDesc(
+		Owned< AERecord >& record, 
+		AEKeyword keyword, 
+		const AEDesc& desc)
+	{
+		AEPutKeyDesc( AEDescEditor( record ), keyword, desc );
 	}
 	
 	AEGetKeyPtr_Result AEGetKeyPtr(
@@ -377,16 +393,19 @@ namespace Nitrogen {
 	}
 	
 	void AEDeleteKeyDesc(
-		Owned<AERecord>& record, 
+		AERecord& record, 
 		AEKeyword keyword)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
-		ThrowOSStatus(
-			::AEDeleteKeyDesc(
-				&AEDescEditor(record).Get(), 
-				keyword
-			)
-		);
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
+		ThrowOSStatus( ::AEDeleteKeyDesc( &record, keyword ) );
+	}
+	
+	void AEDeleteKeyDesc(
+		Owned< AERecord >& record, 
+		AEKeyword keyword)
+	{
+		AEDeleteKeyDesc( AEDescEditor( record ), keyword );
 	}
 	
 	Owned<AppleEvent> AECreateAppleEvent(
@@ -412,16 +431,17 @@ namespace Nitrogen {
 	}
 	
 	void AEPutParamPtr(
-		Owned<AppleEvent>& appleEvent, 
+		AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		DescType typeCode, 
 		const void* dataPtr, 
 		std::size_t dataSize)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus(
 			::AEPutParamPtr(
-				&AEDescEditor(appleEvent).Get(), 
+				&appleEvent, 
 				keyword, 
 				typeCode, 
 				dataPtr, 
@@ -430,19 +450,40 @@ namespace Nitrogen {
 		);
 	}
 	
+	void AEPutParamPtr(
+		Owned< AppleEvent >& appleEvent, 
+		AEKeyword keyword, 
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize)
+	{
+		AEPutParamPtr(
+			AEDescEditor( appleEvent ), 
+			keyword, 
+			typeCode, 
+			dataPtr, 
+			dataSize
+		);
+	}
+	
 	void AEPutParamDesc(
-		Owned<AppleEvent>& appleEvent, 
+		AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		const AEDesc& desc)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus(
-			::AEPutParamDesc(
-				&AEDescEditor(appleEvent).Get(), 
-				keyword, 
-				&desc
-			)
+			::AEPutParamDesc( &appleEvent, keyword, &desc )
 		);
+	}
+	
+	void AEPutParamDesc(
+		Owned< AppleEvent >& appleEvent, 
+		AEKeyword keyword, 
+		const AEDesc& desc)
+	{
+		AEPutParamDesc( AEDescEditor( appleEvent ), keyword, desc );
 	}
 	
 	AEGetParamPtr_Result AEGetParamPtr(
@@ -505,29 +546,33 @@ namespace Nitrogen {
 	}
 	
 	void AEDeleteParam(
-		Owned<AppleEvent>& appleEvent, 
+		AppleEvent& appleEvent, 
 		AEKeyword keyword)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
-		ThrowOSStatus(
-			::AEDeleteParam(
-				&AEDescEditor(appleEvent).Get(), 
-				keyword
-			)
-		);
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
+		ThrowOSStatus( ::AEDeleteParam( &appleEvent, keyword ) );
+	}
+	
+	void AEDeleteParam(
+		Owned< AppleEvent >& appleEvent, 
+		AEKeyword keyword)
+	{
+		AEDeleteParam( AEDescEditor( appleEvent ), keyword );
 	}
 	
 	void AEPutAttributePtr(
-		Owned<AppleEvent>& appleEvent, 
+		AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		DescType typeCode, 
 		const void* dataPtr, 
 		std::size_t dataSize)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus(
 			::AEPutAttributePtr(
-				&AEDescEditor(appleEvent).Get(), 
+				&appleEvent, 
 				keyword, 
 				typeCode, 
 				dataPtr, 
@@ -536,19 +581,40 @@ namespace Nitrogen {
 		);
 	}
 	
+	void AEPutAttributePtr(
+		Owned< AppleEvent >& appleEvent, 
+		AEKeyword keyword, 
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize)
+	{
+		AEPutAttributePtr(
+			AEDescEditor( appleEvent ), 
+			keyword, 
+			typeCode, 
+			dataPtr, 
+			dataSize
+		);
+	}
+	
 	void AEPutAttributeDesc(
-		Owned<AppleEvent>& appleEvent, 
+		AppleEvent& appleEvent, 
 		AEKeyword keyword, 
 		const AEDesc& desc)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus(
-			::AEPutAttributeDesc(
-				&AEDescEditor(appleEvent).Get(), 
-				keyword, 
-				&desc
-			)
+			::AEPutAttributeDesc( &appleEvent, keyword, &desc )
 		);
+	}
+	
+	void AEPutAttributeDesc(
+		Owned< AppleEvent >& appleEvent, 
+		AEKeyword keyword, 
+		const AEDesc& desc)
+	{
+		AEPutAttributeDesc( AEDescEditor( appleEvent ), keyword, desc );
 	}
 	
 	AEGetAttributePtr_Result AEGetAttributePtr(
@@ -622,15 +688,20 @@ namespace Nitrogen {
 		std::size_t dataSize, 
 		AEDesc& result)
 	{
-		OnlyOnce<RegisterAppleEventManagerErrors>();
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus(
-			::AEReplaceDescData(
-				typeCode, 
-				dataPtr, 
-				dataSize,  
-				&result
-			)
+			::AEReplaceDescData( typeCode, dataPtr, dataSize, &result )
 		);
+	}
+	
+	void AEReplaceDescData(
+		DescType typeCode, 
+		const void* dataPtr, 
+		std::size_t dataSize, 
+		Owned< AEDesc >& result)
+	{
+		AEReplaceDescData( typeCode, dataPtr, dataSize, AEDescEditor( result ) );
 	}
 	
 }
