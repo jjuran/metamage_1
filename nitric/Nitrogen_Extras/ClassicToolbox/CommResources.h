@@ -69,7 +69,7 @@ namespace Nitrogen {
 			// not implemented:
 			CRMAttributesDisposer( const CRMAttributesDisposer& );
 			CRMAttributesDisposer& operator=( const CRMAttributesDisposer& );
-		
+			
 			template < class T >
 			struct AdaptDisposer
 			{
@@ -160,6 +160,11 @@ namespace Nitrogen {
 	CRMRecPtr CRMSearch( CRMDeviceID crmDeviceID )
 	{
 		return CRMSearch( crmDeviceType, crmDeviceID );
+	}
+	
+	inline bool CRMIsDriverOpen( ConstStr255Param driverName )
+	{
+		return ::CRMIsDriverOpen( driverName );
 	}
 	
 	Owned< CRMRecPtr > New_CRMRecord();
