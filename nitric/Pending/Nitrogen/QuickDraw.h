@@ -25,6 +25,54 @@ namespace Nitrogen
   {
 	void RegisterQuickDrawErrors ();
 
+#if OPAQUE_TOOLBOX_STRUCTS
+	
+	using ::GrafPtr;
+	
+#else
+	
+	class GrafPtr
+	{
+		private:
+			typedef ::GrafPtr UnderlyingType;
+			UnderlyingType value;
+			
+			::GrafPtr  GetGrafPtr()  const                         { return value; }
+			::CGrafPtr GetCGrafPtr() const                         { return reinterpret_cast< ::CGrafPtr >( value ); }
+			
+		public:
+			GrafPtr() : value(0)  {}
+			GrafPtr( ::GrafPtr  value ) : value( value )  {}
+			GrafPtr( ::CGrafPtr value ) : value( reinterpret_cast< ::GrafPtr >( value ) )  {}
+			
+			operator ::GrafPtr()  const                            { return GetGrafPtr();  }
+			operator ::CGrafPtr() const                            { return GetCGrafPtr(); }
+			
+			static GrafPtr Make( ::GrafPtr  v )  { return GrafPtr( v ); }
+			static GrafPtr Make( ::CGrafPtr v )  { return GrafPtr( v ); }
+			
+			template < class T > T Get() const;
+			
+			friend bool operator==( GrafPtr a, GrafPtr b )     { return a.value == b.value; }
+			friend bool operator==( GrafPtr a, ::GrafPtr b )   { return a.Get< ::GrafPtr >() == b; }
+			friend bool operator==( ::GrafPtr a, GrafPtr b )   { return a == b.Get< ::GrafPtr >(); }
+			friend bool operator==( GrafPtr a, ::CGrafPtr b )  { return a.Get< ::CGrafPtr >() == b; }
+			friend bool operator==( ::CGrafPtr a, GrafPtr b )  { return a == b.Get< ::CGrafPtr >(); }
+			
+			friend bool operator!=( GrafPtr a, GrafPtr b )     { return a.value != b.value; }
+			friend bool operator!=( GrafPtr a, ::GrafPtr b )   { return a.Get< ::GrafPtr >() != b; }
+			friend bool operator!=( ::GrafPtr a, GrafPtr b )   { return a != b.Get< ::GrafPtr >(); }
+			friend bool operator!=( GrafPtr a, ::CGrafPtr b )  { return a.Get< ::CGrafPtr >() != b; }
+			friend bool operator!=( ::CGrafPtr a, GrafPtr b )  { return a != b.Get< ::CGrafPtr >(); }
+	};
+	
+	template <> inline ::GrafPtr  GrafPtr::Get< ::GrafPtr  >() const  { return GetGrafPtr();  }
+	template <> inline ::CGrafPtr GrafPtr::Get< ::CGrafPtr >() const  { return GetCGrafPtr(); }
+	
+#endif
+	
+	typedef GrafPtr CGrafPtr;
+	
    using ::InitCursor;
 
    Point GetPortPenSize( CGrafPtr );
