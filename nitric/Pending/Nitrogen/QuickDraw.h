@@ -490,7 +490,7 @@ namespace Nitrogen
 	
 #else
 	
-	inline SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )  { CopyRgn( clipRgn, port.clipRgn ); }
+	inline void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )  { CopyRgn( clipRgn, ::GrafPtr( port )->clipRgn ); }
 	
 #endif
 	
@@ -501,7 +501,7 @@ namespace Nitrogen
 	
 #else
 	
-	inline SetPortPenSize( CGrafPtr port, Point penSize )  { port.pnSize = penSize; }
+	inline void SetPortPenSize( CGrafPtr port, Point penSize )  { ::GrafPtr( port )->pnSize = penSize; }
 	
 #endif
 	
