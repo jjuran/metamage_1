@@ -13,6 +13,30 @@
 namespace Nitrogen
 {
 	
+	template < class Result >
+	struct ConstantFunction
+	{
+		typedef Result result_type;
+	};
+	
+	template < class Result >
+	class PointerToConstantFunction : public ConstantFunction< Result >
+	{
+		public:
+			typedef Result ( *function_type )();
+		
+		private:
+			function_type f;
+		
+		public:
+			PointerToConstantFunction( function_type f ) : f( f )  {}
+			
+			Result operator()() const
+			{
+				return f();
+			}
+	};
+	
 	template < class T1, class Result >
 	class PointerToUnaryFunction : public std::unary_function< T1, Result >
 	{
@@ -120,6 +144,13 @@ namespace Nitrogen
 				return f( a, b );
 			}
 	};
+	
+	template < class Result >
+	PointerToConstantFunction< Result >
+	PtrFun( Result (f)() )
+	{
+		return PointerToConstantFunction< Result >( f );
+	}
 	
 	template < class T1, class Result >
 	PointerToUnaryFunction< T1, Result >
