@@ -531,7 +531,7 @@ namespace Nitrogen
 	// 6741
 	inline void DisposePort( Owned< CGrafPtr > )  {}
 	
-	// Declared in Veneer/CGDirectDisplay.hh since it requires CGDirectDisplayID.
+	// Declared in Nitrogen/CGDirectDisplay.h since it requires CGDirectDisplayID.
 	
 	// 7105
 	//Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display );
@@ -566,6 +566,8 @@ namespace Nitrogen
 			GetResult Get() const                       { return GetPortPenSize( port ); }
 			void Set( SetParameter size ) const         { SetPortPenSize( port, size ); }
 	};
+	
+	typedef Pseudoreference< Port_Details > PortPenSize;
 	
   }
 
