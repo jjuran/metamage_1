@@ -6,6 +6,43 @@
 
 namespace Nitrogen
   {
+	
+	static Owned< AliasHandle > NewAlias( const FSSpec* fromFile, const FSSpec& target )
+	{
+		OnlyOnce< RegisterAliasManagerErrors >();
+		
+		AliasHandle alias;
+		ThrowOSStatus( ::NewAlias( fromFile, &target, &alias ) );
+		return Owned< AliasHandle >::Seize( alias );
+	}
+	
+	Owned< AliasHandle > NewAlias( const FSSpec& fromFile, const FSSpec& target )
+	{
+		return NewAlias( &fromFile, target );
+	}
+	
+	Owned< AliasHandle > NewAlias( const FSSpec& target )
+	{
+		return NewAlias( NULL, target );
+	}
+	
+	ResolveAliasFile_Result ResolveAliasFile( const FSSpec& target, bool resolveAliasChains )
+	{
+		OnlyOnce< RegisterAliasManagerErrors >();
+		
+		ResolveAliasFile_Result result;
+		result.target = target;
+		::Boolean targetIsFolder;
+		::Boolean wasAliased;
+		
+		ThrowOSStatus( ::ResolveAliasFile( &result.target, resolveAliasChains, &targetIsFolder, &wasAliased ) );
+		
+		result.targetIsFolder = targetIsFolder;
+		result.wasAliased = wasAliased;
+		
+		return result;
+	}
+	
    Owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
                                   const FSRef& target )
      {

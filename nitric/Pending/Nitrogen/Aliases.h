@@ -27,7 +27,23 @@ namespace Nitrogen
    typedef FlagType< MountFlags_Tag, unsigned long, 0 > MountFlags;
    
    template <> struct OwnedDefaults< AliasHandle >           { typedef Disposer<Handle> Disposer; };
-      
+	
+	struct ResolveAliasFile_Result
+	{
+		FSSpec target;
+		bool targetIsFolder;
+		bool wasAliased;
+		
+		operator const FSSpec&() const    { return target; }
+	};
+	
+	// 90
+	Owned< AliasHandle > NewAlias( const FSSpec& fromFile, const FSSpec& target );
+	Owned< AliasHandle > NewAlias( const FSSpec& target );
+	
+	// 221
+	ResolveAliasFile_Result ResolveAliasFile( const FSSpec& target, bool resolveAliasChains );
+	
    Owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
                                   const FSRef& target );
    
