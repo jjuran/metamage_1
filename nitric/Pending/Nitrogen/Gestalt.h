@@ -62,6 +62,7 @@ namespace Nitrogen
 	template <> struct GestaltDefault< gestaltStandardFileAttr >: GestaltAttrDefaults {};  // 1720
 	
 	template <> struct GestaltDefault< gestaltComponentMgr     >: GestaltVersionDefaults {};  // 427
+	template <> struct GestaltDefault< gestaltQuickTimeVersion >: GestaltVersionDefaults {};  // 1521
 	
    void RegisterGestaltManagerErrors();
   }
