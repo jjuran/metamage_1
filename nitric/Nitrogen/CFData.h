@@ -1,7 +1,7 @@
 // CFData.h
 
-#ifndef NITROGEN_CFBUNDLE_H
-#define NITROGEN_CFBUNDLE_H
+#ifndef NITROGEN_CFDATA_H
+#define NITROGEN_CFDATA_H
 
 #ifndef __CFDATA__
 #include <CFData.h>

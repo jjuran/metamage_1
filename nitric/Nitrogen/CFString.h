@@ -6,17 +6,17 @@
 #ifndef __CFSTRING__
 #include <CFString.h>
 #endif
-#ifndef __CFARRAY__
-#include <CFArray.h>
-#endif
-#ifndef __CFDATA__
-#include <CFData.h>
-#endif
-#ifndef __CFDICTIONARY__
-#include <CFDictionary.h>
-#endif
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"
+#endif
+#ifndef NITROGEN_CFARRAY_H
+#include "Nitrogen/CFArray.h"
+#endif
+#ifndef NITROGEN_CFDATA_H
+#include "Nitrogen/CFData.h"
+#endif
+#ifndef NITROGEN_CFDICTIONARY_H
+#include "Nitrogen/CFDictionary.h"
 #endif
 #ifndef NITROGEN_CONVERT_H
 #include "Nitrogen/Convert.h"
@@ -34,6 +34,33 @@ namespace Nitrogen
       template <> struct CFType_Traits< CFStringRef >: Basic_CFType_Traits< CFStringRef, ::CFStringGetTypeID > {};
       template <> struct OwnedDefaults< CFStringRef >: OwnedDefaults<CFTypeRef> {};
    */
+   using ::CFMutableStringRef;
+   template <> struct CFType_Traits< CFMutableStringRef >: Basic_CFType_Traits< CFMutableStringRef, ::CFStringGetTypeID > {};
+   template <> struct OwnedDefaults< CFMutableStringRef >: OwnedDefaults<CFTypeRef> {};
+
+   using ::CFStringGetTypeID;
+   
+   class CFStringCreateWithPascalString_Failed {};
+   Owned<CFStringRef> CFStringCreateWithPascalString( CFAllocatorRef     alloc,
+                                                      ConstStr255Param   pStr,
+                                                      CFStringEncoding   encoding );
+   
+   inline Owned<CFStringRef> CFStringCreateWithPascalString( ConstStr255Param   pStr,
+                                                             CFStringEncoding   encoding )
+     {
+      return Nitrogen::CFStringCreateWithPascalString( kCFAllocatorDefault, pStr, encoding );
+     }
+
+   class CFStringCreateWithCString_Failed {};
+   Owned<CFStringRef> CFStringCreateWithCString( CFAllocatorRef alloc,
+                                                 const char *cStr,
+                                                 CFStringEncoding encoding );
+
+   inline Owned<CFStringRef> CFStringCreateWithCString( const char *cStr,
+                                                        CFStringEncoding encoding )
+     {
+      return Nitrogen::CFStringCreateWithCString( kCFAllocatorDefault, cStr, encoding );
+     }
    
    class CFStringCreateWithCharacters_Failed {};
    Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
@@ -117,6 +144,40 @@ namespace Nitrogen
         {
          return CFStringCreateWithCharacters( in );
         }
+     };
+   
+   template <>
+   struct Converter< Owned<CFStringRef>, ConstStr255Param >: public std::unary_function< ConstStr255Param, Owned<CFStringRef> >
+     {
+      private:
+         CFStringEncoding encoding;
+      
+      public:
+         Converter( CFStringEncoding e )
+           : encoding( e )
+           {}
+         
+         Owned<CFStringRef> operator()( ConstStr255Param in ) const
+           {
+            return CFStringCreateWithPascalString( in, encoding );
+           }
+     };
+   
+   template <>
+   struct Converter< Owned<CFStringRef>, const char * >: public std::unary_function< const char *, Owned<CFStringRef> >
+     {
+      private:
+         CFStringEncoding encoding;
+      
+      public:
+         Converter( CFStringEncoding e )
+           : encoding( e )
+           {}
+         
+         Owned<CFStringRef> operator()( const char *in ) const
+           {
+            return CFStringCreateWithCString( in, encoding );
+           }
      };
    
    template <>

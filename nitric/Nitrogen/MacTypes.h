@@ -21,6 +21,9 @@
 #ifndef NITROGEN_OVERLOADED_MATH_H
 #include "Nitrogen/Overloaded_math.h"
 #endif
+#ifndef NITROGEN_IDTYPE_H
+#include "Nitrogen/IDType.h"
+#endif
 
 #include <cstddef>
 #include <string>
@@ -85,13 +88,17 @@ namespace Nitrogen
    typedef SelectorType< RegionCodeTag, ::RegionCode, ::verUS > RegionCode;
    
    class FourCharCodeTag {};
-   typedef SelectorType< FourCharCodeTag, ::FourCharCode, '????' > FourCharCode;
+   typedef SelectorType< FourCharCodeTag, ::FourCharCode, '\?\?\?\?' > FourCharCode;
    
    class OSTypeTag {};
-   typedef SelectorType< OSTypeTag, ::OSType, '????' > OSType;
+   typedef SelectorType< OSTypeTag, ::OSType, '\?\?\?\?' > OSType;
    
    class ResTypeTag {};
-   typedef SelectorType< ResTypeTag, ::ResType, '????' > ResType;
+   typedef SelectorType< ResTypeTag, ::ResType, '\?\?\?\?' > ResType;
+
+   class ResourceIDTag {};
+   typedef IDType< ResourceIDTag, SInt16, 0 > ResourceID;
+   typedef ResourceID ResID;
    
    typedef bool Boolean;
 

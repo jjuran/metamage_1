@@ -30,6 +30,60 @@ namespace Nitrogen
       return Owned<CFBundleRef>::Seize( result );
      }
 
+   Owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFAllocatorRef allocator,
+                                                         CFURLRef       directoryURL,
+                                                         CFStringRef    bundleType )
+     {
+      CFArrayRef result = ::CFBundleCreateBundlesFromDirectory( allocator, directoryURL, bundleType );
+      if ( result == 0 )
+         throw CFBundleCreateBundlesFromDirectory_Failed();
+      return Owned<CFArrayRef>::Seize( result );
+     }
+
+   Owned<CFURLRef> CFBundleCopyBundleURL( CFBundleRef bundle )
+     {
+      CFURLRef result = ::CFBundleCopyBundleURL( bundle );
+      if ( result == 0 )
+         throw CFBundleCopyBundleURL_Failed();
+      return Owned<CFURLRef>::Seize( result );
+     }
+
+   CFTypeRef CFBundleGetValueForInfoDictionaryKey( CFBundleRef bundle,
+                                                   CFStringRef key )
+     {
+      CFTypeRef result = ::CFBundleGetValueForInfoDictionaryKey( bundle, key );
+      if ( result == 0 )
+         throw CFBundleGetValueForInfoDictionaryKey_Failed();
+      return result;
+     }
+
+   CFDictionaryRef CFBundleGetInfoDictionary( CFBundleRef bundle )
+     {
+      CFDictionaryRef result = ::CFBundleGetInfoDictionary( bundle );
+      if ( result == 0 )
+         throw CFBundleGetInfoDictionary_Failed();
+      return result;
+     }
+
+   CFDictionaryRef CFBundleGetLocalInfoDictionary( CFBundleRef bundle )
+     {
+      CFDictionaryRef result = ::CFBundleGetLocalInfoDictionary( bundle );
+      if ( result == 0 )
+         throw CFBundleGetLocalInfoDictionary_Failed();
+      return result;
+     }
+
+	Owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
+	                                         CFStringRef resourceName,
+								                    CFStringRef resourceType,
+								                    CFStringRef subDirName )
+     {
+		CFURLRef result = ::CFBundleCopyResourceURL( bundle, resourceName, resourceType, subDirName );
+      if ( result == 0 )
+         throw CFBundleCopyResourceURL_Failed();
+      return Owned<CFURLRef>::Seize( result );
+	  }
+
    void *CFBundleGetFunctionPointerForName( CFBundleRef bundle, CFStringRef functionName )
      {
       void *result = ::CFBundleGetFunctionPointerForName( bundle, functionName );

@@ -6,9 +6,6 @@
 #ifndef __CFPROPERTYLIST__
 #include <CFPropertyList.h>
 #endif
-#ifndef __CFDATE__
-#include <CFDate.h>
-#endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
@@ -21,6 +18,9 @@
 #ifndef NITROGEN_CFBOOLEAN_H
 #include "Nitrogen/CFBoolean.h"
 #endif
+#ifndef NITROGEN_CFDATE_H
+#include "Nitrogen/CFDate.h"
+#endif
 #ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"
 #endif
@@ -29,6 +29,12 @@
 #endif
 #ifndef NITROGEN_CFDATA_H
 #include "Nitrogen/CFData.h"
+#endif
+#ifndef NITROGEN_CFDICTIONARY_H
+#include "Nitrogen/CFDictionary.h"
+#endif
+#ifndef NITROGEN_CFARRAY_H
+#include "Nitrogen/CFArray.h"
 #endif
 
 namespace Nitrogen
@@ -40,16 +46,7 @@ namespace Nitrogen
      {
       static ::CFPropertyListRef ConvertToCFPropertyRef( CF value )  { return CFType_Traits<CF>::ConvertToCFTypeRef( value ); }
      };
-   
-// These declarations should be scattered to the appropriate files:
-   using ::CFDateRef;
-   using ::CFArrayRef;
-   using ::CFDictionaryRef;
-   template <> struct CFType_Traits< CFDateRef       >: Basic_CFType_Traits< CFDateRef,       ::CFDateGetTypeID       > {};
-   template <> struct CFType_Traits< CFArrayRef      >: Basic_CFType_Traits< CFArrayRef,      ::CFArrayGetTypeID      > {};
-   template <> struct CFType_Traits< CFDictionaryRef >: Basic_CFType_Traits< CFDictionaryRef, ::CFDictionaryGetTypeID > {};
 
-// These can stay here:   
    template <> struct CFProperty_Traits< CFBooleanRef    >: Basic_CFProperty_Traits< CFBooleanRef    > {};
    template <> struct CFProperty_Traits< CFStringRef     >: Basic_CFProperty_Traits< CFStringRef     > {};
    template <> struct CFProperty_Traits< CFNumberRef     >: Basic_CFProperty_Traits< CFNumberRef     > {};

@@ -6,6 +6,30 @@
 
 namespace Nitrogen
   {
+   Owned<CFStringRef> CFStringCreateWithPascalString( CFAllocatorRef     alloc,
+                                                      ConstStr255Param   pStr,
+                                                      CFStringEncoding   encoding )
+     {
+      CFStringRef result = ::CFStringCreateWithPascalString( alloc, pStr, encoding );
+
+      if ( result == 0 )
+         throw CFStringCreateWithPascalString_Failed();
+      
+      return Owned<CFStringRef>::Seize( result );
+     }
+
+   Owned<CFStringRef> CFStringCreateWithCString( CFAllocatorRef alloc,
+                                                 const char *cStr,
+                                                 CFStringEncoding encoding )
+     {
+      CFStringRef result = ::CFStringCreateWithCString ( alloc, cStr, encoding );
+
+      if ( result == 0 )
+         throw CFStringCreateWithCString_Failed ();
+      
+      return Owned<CFStringRef>::Seize( result );
+     }
+    
    Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
                                                     const UniChar *  chars,
                                                     CFIndex          numChars )

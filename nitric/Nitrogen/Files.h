@@ -36,6 +36,11 @@
 #ifndef NITROGEN_ONLYONCE_H
 #include "Nitrogen/OnlyOnce.h"
 #endif
+#ifndef NITROGEN_ARRAYCONTAINERFUNCTIONS_H
+#include "Nitrogen/ArrayContainerFunctions.h"
+#endif
+
+#include <vector>
 
 namespace Nitrogen
   {
@@ -67,7 +72,7 @@ namespace Nitrogen
    typedef IDType< FSForkRefNumTag, SInt16, 0 > FSForkRefNum;
     
    class FSIOPermssnTag {};
-   typedef IDType< FSIOPermssnTag, SInt8, fsCurPerm > FSIOPermssn;
+   typedef FlagType< FSIOPermssnTag, SInt8, fsCurPerm > FSIOPermssn;
    typedef FSIOPermssn FSIOPermissions;
     
    class FSIOPosModeTag {};
@@ -670,7 +675,7 @@ namespace Nitrogen
       return !( a == b );
      }
    
-   template <> struct Disposer<FSForkRef>: public std::unary_function< FSIterator, void >,
+   template <> struct Disposer<FSForkRef>: public std::unary_function< FSForkRef, void >,
                                            private DefaultDestructionOSStatusPolicy
      {
       void operator()( const FSForkRef& fork ) const
@@ -701,7 +706,7 @@ namespace Nitrogen
    FSIterateForks_Result FSIterateForks( const FSRef&    ref,
                                          CatPositionRec& forkIterator );
    
-   template <> struct Disposer<FSForkRefNum>: public std::unary_function< FSIterator, void >,
+   template <> struct Disposer<FSForkRefNum>: public std::unary_function< FSForkRefNum, void >,
                                               private DefaultDestructionOSStatusPolicy
      {
       void operator()( FSForkRefNum fork ) const
@@ -900,15 +905,13 @@ namespace Nitrogen
       static Type Get( const FSVolumeInfo& info )
         {
          FSVolumeInfoFinderInfo result;
-         for ( int i = 0; i < sizeof( result.finderInfo ) / sizeof( result.finderInfo[0] ); ++i )
-            result.finderInfo[i] = info.finderInfo[i];
+         ArrayAssign( result.finderInfo, info.finderInfo );
          return result;
         }
 
       static void Set( FSVolumeInfo& info, const FSVolumeInfoFinderInfo& value )
         {
-         for ( int i = 0; i < sizeof( info.finderInfo ) / sizeof( info.finderInfo[0] ); ++i )
-            info.finderInfo[i] = value.finderInfo[i];
+         ArrayAssign( info.finderInfo, value.finderInfo );
         }      
      };
    
