@@ -130,16 +130,14 @@ namespace Nitrogen
          static IDType Make( UnderlyingType v )                { return IDType( v ); }
          UnderlyingType Get() const                            { return value; }
          
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          friend bool operator==( IDType a, IDType b )          { return a.Get() == b.Get(); }
       
-      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          friend bool operator==( IDType a, UnderlyingType b )  { return a.Get() == b; }
          friend bool operator==( UnderlyingType a, IDType b )  { return a == b.Get(); }
-      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
 
          friend bool operator!=( IDType a, IDType b )          { return a.Get() != b.Get(); }
       
-      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          friend bool operator!=( IDType a, UnderlyingType b )  { return a.Get() != b; }
          friend bool operator!=( UnderlyingType a, IDType b )  { return a != b.Get(); }
       #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
