@@ -103,6 +103,7 @@ namespace Nitrogen {
 				toInstall.isSysHandler
 			)
 		);
+		return Owned< AECoercionHandler >::Seize( toInstall );
 	}
 	
 	AECoercionHandler AEGetCoercionHandler
