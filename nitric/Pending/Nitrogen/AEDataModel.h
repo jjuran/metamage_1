@@ -595,6 +595,239 @@ namespace Nitrogen
 		AEDesc& result
 	);
 
+	
+	template < ::DescType type >
+	N::Owned<AEDesc> AECoercePtr(typename N::DescType_Traits< type >::Parameter data, DescType toType)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		N::Owned<AEDesc> result = AECoercePtr(
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer ), 
+			toType
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+		
+		return result;
+	}
+	
+	template < ::DescType type >
+	N::Owned<AEDesc> AECreateDesc(typename N::DescType_Traits< type >::Parameter data)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		N::Owned<AEDesc> desc = AECreateDesc(
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+		
+		return desc;
+	}
+	
+	template < ::DescType type >
+	typename N::DescType_Traits< type >::Result AEGetNthPtr(
+		const AEDescList& listDesc, 
+		long index
+	)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::InputBuffer buffer;
+		
+		if ( Traits::inputHasVariableLength )
+			Traits::SetInputBufferLength( buffer, AESizeOfNthItem( listDesc, index ) );
+		
+		AEGetNthPtr(
+			listDesc, 
+			index, 
+			type, 
+			Traits::InputBufferStart( buffer ),
+			Traits::InputBufferLength( buffer )
+		);
+		
+		return Traits::ProcessInputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	void AEPutKeyPtr(
+		N::Owned<AERecord>& record, 
+		AEKeyword keyword, 
+		typename N::DescType_Traits< type >::Parameter data)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEPutKeyPtr(
+			record, 
+			keyword, 
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	typename N::DescType_Traits< type >::Result AEGetKeyPtr(
+		const AERecord& record, 
+		AEKeyword keyword
+	)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::InputBuffer buffer;
+		
+		if ( Traits::inputHasVariableLength )
+			Traits::SetInputBufferLength( buffer, AESizeOfKeyDesc( record, keyword ) );
+		
+		AEGetKeyPtr(
+			record, 
+			keyword, 
+			type, 
+			Traits::InputBufferStart( buffer ),
+			Traits::InputBufferLength( buffer )
+		);
+		
+		return Traits::ProcessInputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	void AEPutParamPtr(
+		N::Owned<AppleEvent>& appleEvent, 
+		AEKeyword keyword, 
+		typename N::DescType_Traits< type >::Parameter data)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEPutParamPtr(
+			appleEvent, 
+			keyword, 
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	typename N::DescType_Traits< type >::Result AEGetParamPtr(
+		const AppleEvent& appleEvent, 
+		AEKeyword keyword
+	)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::InputBuffer buffer;
+		
+		if ( Traits::inputHasVariableLength )
+			Traits::SetInputBufferLength( buffer, AESizeOfParam( appleEvent, keyword ) );
+		
+		AEGetParamPtr(
+			appleEvent, 
+			keyword, 
+			type, 
+			Traits::InputBufferStart( buffer ),
+			Traits::InputBufferLength( buffer )
+		);
+		
+		return Traits::ProcessInputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	void AEPutAttributePtr(
+		N::Owned<AppleEvent>& appleEvent, 
+		AEKeyword keyword, 
+		typename N::DescType_Traits< type >::Parameter data)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEPutAttributePtr(
+			appleEvent, 
+			keyword, 
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	typename N::DescType_Traits< type >::Result AEGetAttributePtr(
+		const AppleEvent& appleEvent, 
+		AEKeyword keyword
+	)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::InputBuffer buffer;
+		
+		if ( Traits::inputHasVariableLength )
+			Traits::SetInputBufferLength( buffer, AESizeOfAttribute( appleEvent, keyword ) );
+		
+		AEGetAttributePtr(
+			appleEvent, 
+			keyword, 
+			type, 
+			Traits::InputBufferStart( buffer ),
+			Traits::InputBufferLength( buffer )
+		);
+		
+		return Traits::ProcessInputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	typename N::DescType_Traits< type >::Result AEGetDescData( const AEDesc& desc )
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::InputBuffer buffer;
+		
+		if ( Traits::inputHasVariableLength )
+			Traits::SetInputBufferLength( buffer, AEGetDescDataSize( desc ) );
+		
+		AEGetDescData(
+			desc, 
+			Traits::InputBufferStart( buffer ),
+			Traits::InputBufferLength( buffer )
+		);
+		
+		return Traits::ProcessInputBuffer( buffer );
+	}
+	
+	template < ::DescType type >
+	void AEReplaceDescData(typename N::DescType_Traits< type >::Parameter data, AEDesc& result)
+	{
+		typedef N::DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEReplaceDescData(
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer ), 
+			result
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
+	}
+
  
    struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
                                                         ::AEEventHandlerProcPtr,
