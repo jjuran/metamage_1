@@ -392,6 +392,100 @@ namespace Nitrogen
    
    using ::HICommand;
 
+   template <>
+   struct Maker< HICommand >
+     {
+      HICommand operator()( UInt32 attributes, UInt32 commandID, MenuRef menuRef, MenuItemIndex menuItemIndex ) const
+        {
+         HICommand result;
+         result.attributes = attributes;
+         result.commandID = commandID;
+         result.menu.menuRef = menuRef;
+         result.menu.menuItemIndex = menuItemIndex;
+         return result;
+        }
+
+      HICommand operator()( UInt32 commandID, MenuRef menuRef, MenuItemIndex menuItemIndex ) const
+        {
+         return operator()( kHICommandFromMenu, commandID, menuRef, menuItemIndex );
+        }
+      
+      HICommand operator()( UInt32 attributes, UInt32 commandID ) const
+        {
+         HICommand result;
+         result.attributes = attributes;
+         result.commandID = commandID;
+         return result;
+        }
+      
+      HICommand operator()( UInt32 commandID ) const
+        {
+         return operator()( 0, commandID );
+        }
+     };
+   
+   using ::HICommandExtended;
+
+   template <>
+   struct Maker< HICommandExtended >
+     {
+      HICommandExtended operator()( UInt32 attributes, UInt32 commandID, MenuRef menuRef, MenuItemIndex menuItemIndex ) const
+        {
+         HICommandExtended result;
+         result.attributes = attributes;
+         result.commandID = commandID;
+         result.source.menu.menuRef = menuRef;
+         result.source.menu.menuItemIndex = menuItemIndex;
+         return result;
+        }
+
+      HICommandExtended operator()( UInt32 commandID, MenuRef menuRef, MenuItemIndex menuItemIndex ) const
+        {
+         return operator()( kHICommandFromMenu, commandID, menuRef, menuItemIndex );
+        }
+ 
+      HICommandExtended operator()( UInt32 attributes, UInt32 commandID, ControlRef control ) const
+        {
+         HICommandExtended result;
+         result.attributes = attributes;
+         result.commandID = commandID;
+         result.source.control = control;
+         return result;
+        }
+
+      HICommandExtended operator()( UInt32 commandID, ControlRef control ) const
+        {
+         return operator()( kHICommandFromControl, commandID, control );
+        }
+ 
+      HICommandExtended operator()( UInt32 attributes, UInt32 commandID, WindowRef window ) const
+        {
+         HICommandExtended result;
+         result.attributes = attributes;
+         result.commandID = commandID;
+         result.source.window = window;
+         return result;
+        }
+
+      HICommandExtended operator()( UInt32 commandID, WindowRef window ) const
+        {
+         return operator()( kHICommandFromWindow, commandID, window );
+        }
+      
+      HICommand operator()( UInt32 attributes, UInt32 commandID ) const
+        {
+         HICommand result;
+         result.attributes = attributes;
+         result.commandID = commandID;
+         return result;
+        }
+      
+      HICommand operator()( UInt32 commandID ) const
+        {
+         return operator()( 0, commandID );
+        }
+     };   
+
 /* ... */
 
    template<> struct DescType_Traits< typeWindowRef               >: POD_DescType_Traits< WindowRef               > {};

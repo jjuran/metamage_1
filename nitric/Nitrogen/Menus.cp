@@ -36,6 +36,15 @@ namespace Nitrogen
       OnlyOnce< RegisterMenuManagerErrors >();
       ThrowOSStatus( ::SetMenuExcludesMarkColumn( menu, excludesMark ) );
      }
+
+   
+   Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes )
+      {
+       OnlyOnce< RegisterMenuManagerErrors >();
+       MenuRef result;
+       ThrowOSStatus( ::CreateNewMenu( inMenuID, inMenuAttributes, &result ) );
+       return Owned<MenuRef>::Seize ( result );
+      }
    
    MenuItemIndex AppendMenuItemTextWithCFString( MenuRef            inMenu,
                                                  CFStringRef        inString,

@@ -33,6 +33,9 @@
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
+#ifndef NITROGEN_FLATTENER_H
+#include "Nitrogen/Flattener.h"
+#endif
 
 namespace Nitrogen
   {
@@ -73,6 +76,16 @@ namespace Nitrogen
    using ::HFSFlavor;
    using ::PromiseHFSFlavor;
    
+   // FlavorType_Traits havce the same format as Flatteners.
+   template < ::FlavorType > struct FlavorType_Traits;
+   
+   template <> struct FlavorType_Traits< kDragFlavorTypeHFS                  >: public PodFlattener< HFSFlavor > {};
+   template <> struct FlavorType_Traits< kDragFlavorTypePromiseHFS           >: public PodFlattener< PromiseHFSFlavor > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public StringFlattener< std::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public StringFlattener< std::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeDragToTrashOnly          >: public NoDataFlattener {};
+   template <> struct FlavorType_Traits< kFlavorTypeFinderNoTrackingBehavior >: public NoDataFlattener {};
+   
    /* UPPs... */
    /* Handlers... */
 
@@ -105,7 +118,51 @@ namespace Nitrogen
       Nitrogen::AddDragItemFlavor( theDrag, theItemRef, theType, 0, 0, theFlags );
      }
 
-   /* AddDragItemFlavor type-safe interface goes here... */
+   class AddDragItemFlavor_Putter
+     {
+      private:
+         DragRef     drag;
+         DragItemRef item;
+         FlavorType  type;
+         FlavorFlags flags;
+      
+         static UInt32 Distance( const void *begin, const void *end )
+           {
+            return static_cast< UInt32 >(   static_cast< const char * >( end   )
+                                          - static_cast< const char * >( begin ) );
+           }
+         
+      public:
+         AddDragItemFlavor_Putter( DragRef     theDrag,
+                                   DragItemRef theItemRef,
+                                   FlavorType  theType,
+                                   FlavorFlags theFlags = FlavorFlags() )
+           : drag( theDrag ),
+             item( theItemRef ),
+             type( theType ),
+             flags( theFlags )
+           {}
+         
+         void operator()( const void *begin, const void *end ) const
+           {
+            Nitrogen::AddDragItemFlavor( drag, item, type, begin, Distance( begin, end ), flags );
+           }
+     };
+   
+   template < ::FlavorType theType >
+   struct AddDragItemFlavor_Traits
+     {
+      typedef typename FlavorType_Traits< theType >::Put_Parameter Data_Type;
+     };
+   
+   template < ::FlavorType theType >
+   void AddDragItemFlavor( DragRef                                               theDrag,
+                           DragItemRef                                           theItemRef,
+                           typename AddDragItemFlavor_Traits<theType>::Data_Type data,
+                           FlavorFlags                                           theFlags = FlavorFlags() )
+     {
+      FlavorType_Traits< theType >::Put( data, AddDragItemFlavor_Putter( theDrag, theItemRef, theType, theFlags ) );
+     }
 
    void SetDragItemFlavorData( DragRef      theDrag,
                                DragItemRef  theItemRef,
@@ -113,8 +170,52 @@ namespace Nitrogen
                                const void  *dataPtr,
                                Size         dataSize,
                                UInt32       dataOffset = 0 );
+
+
+   class SetDragItemFlavorData_Putter
+     {
+      private:
+         DragRef     drag;
+         DragItemRef item;
+         FlavorType  type;
+         UInt32      offset;
+         
+         static UInt32 Distance( const void *begin, const void *end )
+           {
+            return static_cast< UInt32 >(   static_cast< const char * >( end   )
+                                          - static_cast< const char * >( begin ) );
+           }
+         
+      public:
+         SetDragItemFlavorData_Putter( DragRef     theDrag,
+                                       DragItemRef theItemRef,
+                                       FlavorType  theType,
+                                       UInt32      dataOffset = 0 )
+           : drag( theDrag ),
+             item( theItemRef ),
+             type( theType ),
+             offset( dataOffset )
+           {}
+         
+         void operator()( const void *begin, const void *end ) const
+           {
+            Nitrogen::SetDragItemFlavorData( drag, item, type, begin, Distance( begin, end ), offset );
+           }
+     };
+
+   template < ::FlavorType theType >
+   struct SetDragItemFlavorData_Traits
+     {
+      typedef typename FlavorType_Traits< theType >::Put_Parameter Data_Type;
+     };
    
-   /* SetDragItemFlavorData type-safe interface goes here... */
+   template < ::FlavorType theType >
+   void SetDragItemFlavorData( DragRef                                                   theDrag,
+                               DragItemRef                                               theItemRef,
+                               typename SetDragItemFlavorData_Traits<theType>::Data_Type data )
+     {
+      FlavorType_Traits< theType >::Put( data, SetDragItemFlavorData_Putter( theDrag, theItemRef, theType ) );
+     }
    
    /*  SetDragSendProc... */
    /*  SetDragInputProc... */
@@ -153,7 +254,53 @@ namespace Nitrogen
                        Size         dataSize,
                        UInt32       dataOffset = 0 );
 
-   /* GetFlavorData type-safe interface goes here... */
+   class GetFlavorData_Getter
+     {
+      private:
+         DragRef     drag;
+         DragItemRef item;
+         FlavorType  type;
+         UInt32      offset;
+         
+         static UInt32 Distance( void *begin, void *end )
+           {
+            return static_cast< UInt32 >(   static_cast< const char * >( end   )
+                                          - static_cast< const char * >( begin ) );
+           }
+         
+      public:
+         GetFlavorData_Getter( DragRef     theDrag,
+                               DragItemRef theItemRef,
+                               FlavorType  theType,
+                               UInt32      dataOffset = 0 )
+           : drag( theDrag ),
+             item( theItemRef ),
+             type( theType ),
+             offset( dataOffset )
+           {}
+         
+         std::size_t size() const
+           {
+            return GetFlavorDataSize( drag, item, type ) - offset;
+           }
+         
+         void operator()( void *begin, void *end ) const
+           {
+            Nitrogen::GetFlavorData( drag, item, type, begin, Distance( begin, end ), offset );
+           }
+     };
+
+   template < ::FlavorType theType >
+   struct GetFlavorData_Traits
+     {
+      typedef typename FlavorType_Traits< theType >::Get_Result Result;
+     };
+   
+   template < ::FlavorType theType >
+   typename GetFlavorData_Traits<theType>::Result GetFlavorData( DragRef theDrag, DragItemRef theItemRef )
+     {
+      return FlavorType_Traits< theType >::Get( GetFlavorData_Getter( theDrag, theItemRef, theType ) );
+     }
    
    Rect GetDragItemBounds( DragRef theDrag, DragItemRef theItemRef );
 

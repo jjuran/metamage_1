@@ -24,6 +24,9 @@
 #ifndef NITROGEN_IDTYPE_H
 #include "Nitrogen/IDType.h"
 #endif
+#ifndef NITROGEN_MAKE_H
+#include "Nitrogen/Make.h"
+#endif
 
 #include <cstddef>
 #include <string>
@@ -116,6 +119,46 @@ namespace Nitrogen
    typedef std::basic_string< UTF16Char > UTF16String;
    typedef std::basic_string< UTF8Char > UTF8String;
    typedef std::basic_string< UniChar > UniString;
+   
+   using ::Point;
+
+   template <>
+   struct Maker< Point >
+     {
+      Point operator()( short v, short h ) const
+        {
+         Point result;
+         result.v = v;
+         result.h = h;
+         return result;
+        }
+      
+      Point operator()() const
+        {
+         return operator()( 0, 0 );
+        }
+     };
+   
+   using ::Rect;
+   
+   template <>
+   struct Maker< Rect >
+     {
+      Rect operator()( short top, short left, short bottom, short right ) const
+        {
+         Rect result;
+         result.top = top;
+         result.left = left;
+         result.bottom = bottom;
+         result.right = right;
+         return result;
+        }
+      
+      Rect operator()() const
+        {
+         return operator()( 0, 0, 0, 0 );
+        }
+     };   
   }
 
 #endif

@@ -15,6 +15,9 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
+#ifndef NITROGEN_MAKE_H
+#include "Nitrogen/Make.h"
+#endif
 
 #ifdef DrawOneControl
    #undef DrawOneControl
@@ -38,8 +41,22 @@ namespace Nitrogen
 
    using ::DrawOneControl;
 
+   using ::ControlID;
+   
+   template <>
+   struct Maker< ControlID >
+     {
+      ControlID operator()( OSType signature, SInt32 id ) const
+        {
+         ControlID result;
+         result.signature = signature;
+         result.id = id;
+         return result;
+        }
+     };   
+   
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id );
-   ControlRef GetControlByID( WindowRef inWindow, OSType signature, SInt32 id );
+   ControlRef GetControlByID( WindowRef inWindow, OSType signature, SInt32 id );  // To be removed; use Make.
 
    template < ::ResType inTagName > struct ControlData_Traits;
 

@@ -125,7 +125,7 @@ namespace Nitrogen
    
    /* ... RegisterMenuDefinition */
    
-   Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes );
+   Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes = MenuAttributes() );
 
    /* ... CreateCustomMenu */
    
