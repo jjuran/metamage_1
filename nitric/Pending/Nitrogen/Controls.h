@@ -33,7 +33,6 @@
 namespace Nitrogen
   {
    using ::ControlRef;
-   inline void CFShow( const ControlRef c )        { ::CFShow( c ); }
    
 	// Not actually used, since controls are owned by the parent window
 	

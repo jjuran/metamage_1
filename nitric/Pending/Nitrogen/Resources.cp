@@ -16,7 +16,7 @@ namespace Nitrogen
 	
 	Handle CheckResource( Handle h )
 	{
-		if ( h == NULL )
+		if ( NULL == h.Get ())
 		{
 			ResError();
 			throw ResNotFound();
