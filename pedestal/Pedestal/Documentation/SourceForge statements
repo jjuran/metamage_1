@@ -1,0 +1,10 @@
+Purpose
+-------
+
+
+
+Description
+-----------
+
+Pedestal is a C++ application framework for developing Mac OS applications which conform to Mac human interface standards and provide commonly expected and desired features. Design goals are fidelity/accuracy, modularity, and elegance.
+
