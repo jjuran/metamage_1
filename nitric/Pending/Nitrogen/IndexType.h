@@ -60,6 +60,9 @@ namespace Nitrogen
 
          friend IndexType operator+( UnderlyingType n, IndexType i )    { return i + n; }
          friend IndexType operator*( UnderlyingType n, IndexType i )    { return i * n; }
+         
+         friend bool operator==( IndexType a, IndexType b )             { return a.Get() == b.Get(); }
+         friend bool operator!=( IndexType a, IndexType b )             { return a.Get() != b.Get(); }
      };
   }
 
