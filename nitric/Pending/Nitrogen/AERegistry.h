@@ -28,8 +28,6 @@
 namespace Nitrogen
   {
 	
-	inline DescType TypeVersion()  { return DescType::Make( typeVersion ); }
-	
    template<> struct DescType_Traits< typeFixedPoint                >: POD_DescType_Traits< FixedPoint                > {};
    template<> struct DescType_Traits< typeFixedRectangle            >: POD_DescType_Traits< FixedRect                 > {};
    template<> struct DescType_Traits< typeIntlWritingCode           >: POD_DescType_Traits< ScriptCode                > {};
@@ -62,7 +60,23 @@ namespace Nitrogen
       static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
      };
-      
+	
+	using ::VersRec;
+	
+	inline std::size_t SizeOf_VersRec( const VersRec& version )
+	{
+		UInt8 shortVersionLength = version.shortVersion[ 0 ];
+		
+		// The long version string immediately follows the short version string.
+		const UInt8* longVersion = version.shortVersion + 1 + shortVersionLength;
+		UInt8 longVersionLength  = longVersion[ 0 ];
+		
+		return sizeof (::NumVersion)
+		     + sizeof (SInt16)
+		     + 1 + shortVersionLength
+		     + 1 + longVersionLength;
+	}
+	
    using ::OffsetArray;
 
    inline std::size_t SizeOf_OffsetArray( const OffsetArray& array )
@@ -77,6 +91,7 @@ namespace Nitrogen
       return sizeof( array ) - sizeof( array.fRange ) + array.fNumOfRanges * sizeof( TextRange );
      }
    
+   template<> struct DescType_Traits< typeVersion        >: VariableLengthPOD_DescType_Traits< VersRec,        SizeOf_VersRec        > {};
    template<> struct DescType_Traits< typeOffsetArray    >: VariableLengthPOD_DescType_Traits< OffsetArray,    SizeOf_OffsetArray    > {};
    template<> struct DescType_Traits< typeTextRangeArray >: VariableLengthPOD_DescType_Traits< TextRangeArray, SizeOf_TextRangeArray > {};
   }
