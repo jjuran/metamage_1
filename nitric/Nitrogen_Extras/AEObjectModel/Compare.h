@@ -68,6 +68,64 @@ namespace Nitrogen
 		TheGlobalComparer().template Register< tokenType >();
 	}
 	
+	template < ::DescType descType >
+	struct BasicComparer
+	{
+		typedef typename DescType_Traits< descType >::Result Result;
+		
+		static bool Compare( AECompOperator  op,
+		                     const AEToken&  obj1,
+		                     const AEToken&  obj2 )
+		{
+			if ( op != kAEEquals )
+			{
+				throw ErrAEEventNotHandled();
+			}
+			
+			Result a = AEGetDescData< descType >( obj1 );
+			Result b = AEGetDescData< descType >( obj2 );
+			
+			return a == b;
+		}
+	};
+	
+	template < ::DescType descType >
+	struct NumericComparer
+	{
+		typedef typename DescType_Traits< descType >::Result Result;
+		
+		static bool Compare( AECompOperator  op,
+		                     const AEToken&  obj1,
+		                     const AEToken&  obj2 )
+		{
+			Result a = AEGetDescData< descType >( obj1 );
+			Result b = AEGetDescData< descType >( obj2 );
+			
+			switch ( op )
+			{
+				case kAEEquals:
+					return a == b;
+				
+				case kAEGreaterThan:
+					return a > b;
+				
+				case kAEGreaterThanEquals:
+					return a >= b;
+				
+				case kAELessThan:
+					return a < b;
+				
+				case kAELessThanEquals:
+					return a <= b;
+				
+				default:
+					break;
+			}
+			
+			throw ErrAEEventNotHandled();
+		}
+	};
+	
 }
 
 #endif
