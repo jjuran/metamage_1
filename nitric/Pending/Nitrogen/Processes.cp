@@ -64,7 +64,6 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterProcessManagerErrors >();
 		
-		OSErr 					err;
 		LaunchParamBlockRec 	pb;
 		
 		pb.reserved1			= 0;
