@@ -885,10 +885,42 @@ namespace Nitrogen
 	              FSIOPosMode  positionMode,
 	              SInt32       positionOffset );
 	
-	// 2872
-	void PBGetCatInfoSync( CInfoPBRec& paramBlock );
+	struct FSDirSpec
+	{
+		FSVolumeRefNum vRefNum;
+		FSDirID dirID;
+	};
 	
-	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock );
+	template <>
+	struct Maker< FSDirSpec >
+	{
+		FSDirSpec operator()( FSVolumeRefNum vRefNum, FSDirID dirID ) const
+		{
+			FSDirSpec result;
+			result.vRefNum = vRefNum;
+			result.dirID = dirID;
+			return result;
+		}
+	};
+	
+	inline FSDirSpec GetFileParent( const FSSpec& file )
+	{
+		return Make< FSDirSpec >( file.vRefNum, file.parID );
+	}
+	
+	// 2872
+	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock );
+	
+	CInfoPBRec& FSpGetCatInfo( const FSSpec&   item, CInfoPBRec& paramBlock );
+	
+	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       paramBlock,
+	                           StringPtr         name        = NULL );
+	
+	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
+	                           UInt16            index,
+	                           CInfoPBRec&       paramBlock,
+	                           StringPtr         name        = NULL );
 	
 	inline bool TestIsDirectory( const CInfoPBRec& paramBlock )
 	{
@@ -928,36 +960,6 @@ namespace Nitrogen
 	
 	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum );
 	FSSpec DTGetAPPL( OSType signature );
-	
-	struct FSDirSpec
-	{
-		FSVolumeRefNum vRefNum;
-		FSDirID dirID;
-	};
-	
-	template <>
-	struct Maker< FSDirSpec >
-	{
-		FSDirSpec operator()( FSVolumeRefNum vRefNum, FSDirID dirID ) const
-		{
-			FSDirSpec result;
-			result.vRefNum = vRefNum;
-			result.dirID = dirID;
-			return result;
-		}
-		
-		/*
-		FSDirSpec operator()( ::FSVolumeRefNum vRefNum, SInt32 dirID ) const
-		{
-			return operator()( FSVolumeRefNum( vRefNum ), FSDirID( dirID ) );
-		}
-		*/
-	};
-	
-	inline FSDirSpec GetFileParent( const FSSpec& file )
-	{
-		return Make< FSDirSpec >( file.vRefNum, file.parID );
-	}
 	
 	// 4617
 	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name );

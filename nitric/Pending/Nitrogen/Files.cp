@@ -3,11 +3,15 @@
 #ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"
 #endif
+
 #ifndef NITROGEN_ONLYONCE_H
 #include "Nitrogen/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
+#endif
+#ifndef NITROGEN_INITIALIZE_H
+#include "Nitrogen/Initialize.h"
 #endif
 
 #include <limits>
@@ -94,31 +98,83 @@ namespace Nitrogen
 		ThrowOSStatus( ::SetFPos( fileRefNum, positionMode.Get(), positionOffset ) );
 	}
 	
-	void PBGetCatInfoSync( CInfoPBRec& paramBlock )
+	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock )
 	{
 		OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::PBGetCatInfoSync( &paramBlock ) );
+		
+		return paramBlock;
 	}
+	
+	template <>
+	struct Initializer< CInfoPBRec >
+	{
+		CInfoPBRec& operator()( CInfoPBRec&     paramBlock,
+		                        FSVolumeRefNum  vRefNum,
+		                        FSDirID         dirID,
+		                        StringPtr       name,
+		                        SInt16          index )
+		{
+			DirInfo& dirInfo = paramBlock.dirInfo;
+			
+			dirInfo.ioNamePtr = name;
+			dirInfo.ioVRefNum = vRefNum;
+			dirInfo.ioDrDirID = dirID;
+			dirInfo.ioFDirIndex = index;
+			
+			return paramBlock;
+		}
+	};
 	
 	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock )
 	{
-		DirInfo& dirInfo = paramBlock.dirInfo;
-		
 		// There is/was a file sharing problem with null or empty names,
 		// but an FSSpec's name is never empty (and can't be null).
-		dirInfo.ioNamePtr = const_cast< StringPtr >( item.name );
-		dirInfo.ioVRefNum = item.vRefNum;
-		dirInfo.ioDrDirID = item.parID;
-		// use ioNamePtr and ioDirID
-		dirInfo.ioFDirIndex = 0;
 		
-		PBGetCatInfoSync( paramBlock );
+		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
+		
+		PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		                                            item.vRefNum,
+		                                            item.parID,
+		                                            const_cast< StringPtr >( item.name ),
+		                                            0 ) );
 		
 		// Don't break the const contract on item.name
-		dirInfo.ioNamePtr = NULL;
+		paramBlock.dirInfo.ioNamePtr = NULL;
 		
 		return paramBlock;
+	}
+	
+	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       paramBlock,
+	                           StringPtr         name )
+	{
+		// ioFDirIndex < 0:  use ioDrDirID only
+		
+		return PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		                                                   dir.vRefNum,
+		                                                   dir.dirID,
+		                                                   name,  // Output only
+		                                                   -1 ) );
+		
+	}
+	
+	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
+	                           UInt16            index,
+	                           CInfoPBRec&       paramBlock,
+	                           StringPtr         name )
+	{
+		// ioFDirIndex > 0:  use ioDrDirID only
+		
+		// Assert index != 0
+		
+		return PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		                                                   dir.vRefNum,
+		                                                   dir.dirID,
+		                                                   name,  // Output only
+		                                                   index ) );
+		
 	}
 	
 	// You aren't gonna need it.  (Unless you are.)
