@@ -452,11 +452,13 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
+		AERecord fixedAERecord = Fix_AERecordDescriptorType( record );
+		
 		AEGetKeyPtr_Result result;
 		
 		ThrowOSStatus(
 			::AEGetKeyPtr(
-				&Fix_AERecordDescriptorType( record ), 
+				&fixedAERecord, 
 				keyword, 
 				desiredType, 
 				&result.typeCode, 
@@ -475,10 +477,12 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
+		AERecord fixedAERecord = Fix_AERecordDescriptorType( record );
+		
 		AEDesc result;
 		ThrowOSStatus(
 			::AEGetKeyDesc(
-				&Fix_AERecordDescriptorType( record ), 
+				&fixedAERecord, 
 				keyword, 
 				desiredType, 
 				&result
@@ -493,10 +497,12 @@ namespace Nitrogen {
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 		
+		AERecord fixedAERecord = Fix_AERecordDescriptorType( record );
+		
 		AESizeOfKeyDesc_Result result;
 		ThrowOSStatus(
 			::AESizeOfKeyDesc(
-				&Fix_AERecordDescriptorType( record ), 
+				&fixedAERecord, 
 				keyword, 
 				&result.typeCode, 
 				&result.dataSize
