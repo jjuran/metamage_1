@@ -371,6 +371,8 @@ namespace Nitrogen
          bool operator!() const                                { return !value; }
          FlagType operator~() const                            { return FlagType( ~value ); }
          
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
+      
          friend bool operator==( FlagType a, FlagType b )      { return a.Get() == b.Get(); }
          friend bool operator!=( FlagType a, FlagType b )      { return a.Get() != b.Get(); }
 
@@ -378,6 +380,8 @@ namespace Nitrogen
          friend FlagType operator&( FlagType a, FlagType b )   { return static_cast<UnderlyingType>( a.Get() & b.Get() ); }
          friend FlagType operator^( FlagType a, FlagType b )   { return static_cast<UnderlyingType>( a.Get() ^ b.Get() ); }
 
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+      
          FlagType& operator|=( FlagType b )                    { value |= b.Get(); return *this; }
          FlagType& operator&=( FlagType b )                    { value &= b.Get(); return *this; }
          FlagType& operator^=( FlagType b )                    { value ^= b.Get(); return *this; }
