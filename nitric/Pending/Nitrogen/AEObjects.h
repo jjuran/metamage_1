@@ -16,7 +16,13 @@
 #include "Nitrogen/FlagType.h"
 #endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
+	
+	void RegisterObjectSupportLibraryErrors();
+	
+	#pragma mark -
+	#pragma mark ¥ Constant types ¥
 	
 	class AELogicalOperator_Tag {};
 	typedef SelectorType< AELogicalOperator_Tag, ::FourCharCode > AELogicalOperator;
@@ -30,110 +36,144 @@ namespace Nitrogen {
 	typedef AERelativeOrdinal AERelativeDescriptor;
 	
 	struct AEResolveCallbackFlags_Tag  {};
-	typedef FlagType< AEResolveCallbackFlags_Tag, short, ::kAEIDoMinimum > AEResolveCallbackFlags;
+	typedef FlagType< AEResolveCallbackFlags_Tag, short, kAEIDoMinimum > AEResolveCallbackFlags;
 	
+	
+	#pragma mark -
+	#pragma mark ¥ Constants ¥
 	
 	// *** LOGICAL OPERATOR CONSTANTS  ***
-	inline AELogicalOperator AEAND     ()  { return AELogicalOperator::Make( kAEAND      ); }
-	inline AELogicalOperator AEOR      ()  { return AELogicalOperator::Make( kAEOR       ); }
-	inline AELogicalOperator AENOT     ()  { return AELogicalOperator::Make( kAENOT      ); }
+	static AELogicalOperator sAEAND      = kAEAND;
+	static AELogicalOperator sAEOR       = kAEOR;
+	static AELogicalOperator sAENOT      = kAENOT;
 	
 	// *** ABSOLUTE ORDINAL CONSTANTS  ***
-	inline AEAbsoluteOrdinal AEFirst   ()  { return AEAbsoluteOrdinal::Make( kAEFirst    ); }
-	inline AEAbsoluteOrdinal AELast    ()  { return AEAbsoluteOrdinal::Make( kAELast     ); }
-	inline AEAbsoluteOrdinal AEMiddle  ()  { return AEAbsoluteOrdinal::Make( kAEMiddle   ); }
-	inline AEAbsoluteOrdinal AEAny     ()  { return AEAbsoluteOrdinal::Make( kAEAny      ); }
-	inline AEAbsoluteOrdinal AEAll     ()  { return AEAbsoluteOrdinal::Make( kAEAll      ); }
+	static AEAbsoluteOrdinal sAEFirst    = kAEFirst;
+	static AEAbsoluteOrdinal sAELast     = kAELast;
+	static AEAbsoluteOrdinal sAEMiddle   = kAEMiddle;
+	static AEAbsoluteOrdinal sAEAny      = kAEAny;
+	static AEAbsoluteOrdinal sAEAll      = kAEAll;
 	
 	// *** RELATIVE ORDINAL CONSTANTS  ***
-	inline AERelativeOrdinal AENext    ()  { return AERelativeOrdinal::Make( kAENext     ); }
-	inline AERelativeOrdinal AEPrevious()  { return AERelativeOrdinal::Make( kAEPrevious ); }
+	static AERelativeOrdinal sAENext     = kAENext;
+	static AERelativeOrdinal sAEPrevious = kAEPrevious;
 	
 	
 	// *** KEYWORD CONSTANT    ***
-	inline AEKeyword KeyAECompOperator   ()  { return AEKeyword::Make( keyAECompOperator    ); }
-	inline AEKeyword KeyAELogicalTerms   ()  { return AEKeyword::Make( keyAELogicalTerms    ); }
-	inline AEKeyword KeyAELogicalOperator()  { return AEKeyword::Make( keyAELogicalOperator ); }
-	inline AEKeyword KeyAEObject1        ()  { return AEKeyword::Make( keyAEObject1         ); }
-	inline AEKeyword KeyAEObject2        ()  { return AEKeyword::Make( keyAEObject2         ); }
+	static AEKeyword sKeyAECompOperator    = keyAECompOperator;
+	static AEKeyword sKeyAELogicalTerms    = keyAELogicalTerms;
+	static AEKeyword sKeyAELogicalOperator = keyAELogicalOperator;
+	static AEKeyword sKeyAEObject1         = keyAEObject1;
+	static AEKeyword sKeyAEObject2         = keyAEObject2;
 	
 	//     ... for Keywords for getting fields out of object specifier records. 
-	inline AEKeyword KeyAEDesiredClass   ()  { return AEKeyword::Make( keyAEDesiredClass    ); }
-	inline AEKeyword KeyAEContainer      ()  { return AEKeyword::Make( keyAEContainer       ); }
-	inline AEKeyword KeyAEKeyForm        ()  { return AEKeyword::Make( keyAEKeyForm         ); }
-	inline AEKeyword KeyAEKeyData        ()  { return AEKeyword::Make( keyAEKeyData         ); }
+	static AEKeyword sKeyAEDesiredClass    = keyAEDesiredClass;
+	static AEKeyword sKeyAEContainer       = keyAEContainer;
+	static AEKeyword sKeyAEKeyForm         = keyAEKeyForm;
+	static AEKeyword sKeyAEKeyData         = keyAEKeyData;
 
 	//     ... for Keywords for getting fields out of Range specifier records. 
-	inline AEKeyword KeyAERangeStart     ()  { return AEKeyword::Make( keyAERangeStart      ); }
-	inline AEKeyword KeyAERangeStop      ()  { return AEKeyword::Make( keyAERangeStop       ); }
+	static AEKeyword sKeyAERangeStart      = keyAERangeStart;
+	static AEKeyword sKeyAERangeStop       = keyAERangeStop;
 	
 	//     ... special handler selectors for OSL Callbacks. 
-	inline AEKeyword KeyDisposeTokenProc ()  { return AEKeyword::Make( keyDisposeTokenProc  ); }
-	inline AEKeyword KeyAECompareProc    ()  { return AEKeyword::Make( keyAECompareProc     ); }
-	inline AEKeyword KeyAECountProc      ()  { return AEKeyword::Make( keyAECountProc       ); }
-	inline AEKeyword KeyAEMarkTokenProc  ()  { return AEKeyword::Make( keyAEMarkTokenProc   ); }
-	inline AEKeyword KeyAEMarkProc       ()  { return AEKeyword::Make( keyAEMarkProc        ); }
-	inline AEKeyword KeyAEAdjustMarksProc()  { return AEKeyword::Make( keyAEAdjustMarksProc ); }
-	inline AEKeyword KeyAEGetErrDescProc ()  { return AEKeyword::Make( keyAEGetErrDescProc  ); }
+	static AEKeyword sKeyDisposeTokenProc  = keyDisposeTokenProc;
+	static AEKeyword sKeyAECompareProc     = keyAECompareProc;
+	static AEKeyword sKeyAECountProc       = keyAECountProc;
+	static AEKeyword sKeyAEMarkTokenProc   = keyAEMarkTokenProc;
+	static AEKeyword sKeyAEMarkProc        = keyAEMarkProc;
+	static AEKeyword sKeyAEAdjustMarksProc = keyAEAdjustMarksProc;
+	static AEKeyword sKeyAEGetErrDescProc  = keyAEGetErrDescProc;
 
 // ***   VALUE and TYPE CONSTANTS    ***
 	
 	//     ... possible values for the keyAEKeyForm field of an object specifier.
-	inline AEEnumerated FormAbsolutePosition()  { return AEEnumerated::Make( formAbsolutePosition ); }
-	inline AEEnumerated FormRelativePosition()  { return AEEnumerated::Make( formRelativePosition ); }
-	inline AEEnumerated FormTest            ()  { return AEEnumerated::Make( formTest             ); }
-	inline AEEnumerated FormRange           ()  { return AEEnumerated::Make( formRange            ); }
-	inline AEEnumerated FormPropertyID      ()  { return AEEnumerated::Make( formPropertyID       ); }
-	inline AEEnumerated FormName            ()  { return AEEnumerated::Make( formName             ); }
+	static AEEnumerated sFormAbsolutePosition = formAbsolutePosition;
+	static AEEnumerated sFormRelativePosition = formRelativePosition;
+	static AEEnumerated sFormTest             = formTest;
+	static AEEnumerated sFormRange            = formRange;
+	static AEEnumerated sFormPropertyID       = formPropertyID;
+	static AEEnumerated sFormName             = formName;
 	
 	//     ... relevant types (some of these are often pared with forms above).
-	inline DescType TypeObjectSpecifier    ()  { return DescType::Make( typeObjectSpecifier     ); }
-	inline DescType TypeObjectBeingExamined()  { return DescType::Make( typeObjectBeingExamined ); }
-	inline DescType TypeCurrentContainer   ()  { return DescType::Make( typeCurrentContainer    ); }
-	inline DescType TypeToken              ()  { return DescType::Make( typeToken               ); }
-	inline DescType TypeRelativeDescriptor ()  { return DescType::Make( typeRelativeDescriptor  ); }
-	inline DescType TypeAbsoluteOrdinal    ()  { return DescType::Make( typeAbsoluteOrdinal     ); }
-	inline DescType TypeIndexDescriptor    ()  { return DescType::Make( typeIndexDescriptor     ); }
-	inline DescType TypeRangeDescriptor    ()  { return DescType::Make( typeRangeDescriptor     ); }
-	inline DescType TypeLogicalDescriptor  ()  { return DescType::Make( typeLogicalDescriptor   ); }
-	inline DescType TypeCompDescriptor     ()  { return DescType::Make( typeCompDescriptor      ); }
-	inline DescType TypeOSLTokenList       ()  { return DescType::Make( typeOSLTokenList        ); }
+	static DescType sTypeObjectSpecifier     = typeObjectSpecifier;
+	static DescType sTypeObjectBeingExamined = typeObjectBeingExamined;
+	static DescType sTypeCurrentContainer    = typeCurrentContainer;
+	static DescType sTypeToken               = typeToken;
+	static DescType sTypeRelativeDescriptor  = typeRelativeDescriptor;
+	static DescType sTypeAbsoluteOrdinal     = typeAbsoluteOrdinal;
+	static DescType sTypeIndexDescriptor     = typeIndexDescriptor;
+	static DescType sTypeRangeDescriptor     = typeRangeDescriptor;
+	static DescType sTypeLogicalDescriptor   = typeLogicalDescriptor;
+	static DescType sTypeCompDescriptor      = typeCompDescriptor;
+	static DescType sTypeOSLTokenList        = typeOSLTokenList;
 
 //  Possible values for flags parameter to AEResolve.  They're additive
-	inline AEResolveCallbackFlags AEIDoMinimum          ()  { return AEResolveCallbackFlags::Make( kAEIDoMinimum           ); }
-	inline AEResolveCallbackFlags AEIDoWhose            ()  { return AEResolveCallbackFlags::Make( kAEIDoWhose             ); }
-	inline AEResolveCallbackFlags AEIDoMarking          ()  { return AEResolveCallbackFlags::Make( kAEIDoMarking           ); }
-	inline AEResolveCallbackFlags AEPassSubDescs        ()  { return AEResolveCallbackFlags::Make( kAEPassSubDescs         ); }
-	inline AEResolveCallbackFlags AEResolveNestedLists  ()  { return AEResolveCallbackFlags::Make( kAEResolveNestedLists   ); }
-	inline AEResolveCallbackFlags AEHandleSimpleRanges  ()  { return AEResolveCallbackFlags::Make( kAEHandleSimpleRanges   ); }
-	inline AEResolveCallbackFlags AEUseRelativeIterators()  { return AEResolveCallbackFlags::Make( kAEUseRelativeIterators ); }
+	static AEResolveCallbackFlags sAEIDoMinimum           = kAEIDoMinimum;
+	static AEResolveCallbackFlags sAEIDoWhose             = kAEIDoWhose;
+	static AEResolveCallbackFlags sAEIDoMarking           = kAEIDoMarking;
+	static AEResolveCallbackFlags sAEPassSubDescs         = kAEPassSubDescs;
+	static AEResolveCallbackFlags sAEResolveNestedLists   = kAEResolveNestedLists;
+	static AEResolveCallbackFlags sAEHandleSimpleRanges   = kAEHandleSimpleRanges;
+	static AEResolveCallbackFlags sAEUseRelativeIterators = kAEUseRelativeIterators;
 
 // *** SPECIAL CONSTANTS FOR CUSTOM WHOSE-CLAUSE RESOLUTION
 	
-	inline DescType TypeWhoseDescriptor    ()  { return DescType::Make( typeWhoseDescriptor     ); }
+	static DescType sTypeWhoseDescriptor     = typeWhoseDescriptor;
 	
-	inline AEEnumerated FormWhose           ()  { return AEEnumerated::Make( formWhose            ); }
+	static AEEnumerated sFormWhose            = formWhose;
 	
-	inline DescType TypeWhoseRange         ()  { return DescType::Make( typeWhoseRange          ); }
+	static DescType sTypeWhoseRange          = typeWhoseRange;
 	
-	inline AEKeyword KeyAEWhoseRangeStart()  { return AEKeyword::Make( keyAEWhoseRangeStart ); }
-	inline AEKeyword KeyAEWhoseRangeStop ()  { return AEKeyword::Make( keyAEWhoseRangeStop  ); }
-	inline AEKeyword KeyAEIndex          ()  { return AEKeyword::Make( keyAEIndex           ); }
-	inline AEKeyword KeyAETest           ()  { return AEKeyword::Make( keyAETest            ); }
+	static AEKeyword sKeyAEWhoseRangeStart = keyAEWhoseRangeStart;
+	static AEKeyword sKeyAEWhoseRangeStop  = keyAEWhoseRangeStop;
+	static AEKeyword sKeyAEIndex           = keyAEIndex;
+	static AEKeyword sKeyAETest            = keyAETest;
 	
 	
-	struct TokenDisposer : public std::unary_function< AEDesc, void >
+	#pragma mark -
+	#pragma mark ¥ AEToken ¥
+	
+	struct TokenDisposer : public std::unary_function< AEToken, void >
 	{
 		// parameter can't be const
-		void operator()( AEDesc token ) const
+		void operator()( AEToken token ) const
 		{
 			::AEDisposeToken( &token );
 		}
 	};
 	
 	template <>
-	struct LivelinessTraits< AEDesc, TokenDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+	struct LivelinessTraits< AEToken, TokenDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
 	
+	
+	class AETokenEditor
+	{
+		private:
+			Owned< AEToken, TokenDisposer >& token;
+			AEToken workingCopy;
+		
+		public:
+			AETokenEditor( Owned< AEToken, TokenDisposer >& token )
+			:
+				token      ( token           ),
+				workingCopy( token.Release() )
+			{}
+			
+			~AETokenEditor()
+			{
+				token = Owned< AEToken, TokenDisposer >::Seize( workingCopy );
+			}
+			
+			AEToken& Get()       { return workingCopy; }
+			operator AEToken&()  { return Get();       }
+	};
+	
+	typedef AEDescList AETokenList;
+	
+	
+	#pragma mark -
+	#pragma mark ¥ Object Accessors ¥
 	
 	struct OSLAccessorUPP_Details: Basic_UPP_Details< ::OSLAccessorUPP,
 	                                                  ::OSLAccessorProcPtr,
@@ -151,21 +191,21 @@ namespace Nitrogen {
 	
 	inline void DisposeOSLAccessorUPP( Owned< OSLAccessorUPP > )  {}
 	
-	inline void InvokeOSLAccessorUPP( DescType desiredClass,
-	                                  const AEDesc& container,
-	                                  DescType containerClass,
-	                                  DescType form,
-	                                  const AEDesc& selectionData,
-	                                  AEDesc& value, 
-	                                  RefCon accessorRefcon,
-	                                  OSLAccessorUPP userUPP )
+	inline void InvokeOSLAccessorUPP( AEObjectClass   desiredClass,
+	                                  const AEToken&  containerToken,
+	                                  AEObjectClass   containerClass,
+	                                  AEEnumerated    keyForm,
+	                                  const AEDesc&   keyData,
+	                                  AEToken&        value,
+	                                  RefCon          accessorRefcon,
+	                                  OSLAccessorUPP  userUPP )
 	{
-		ThrowOSStatus( userUPP( desiredClass, &container, containerClass, form, &selectionData, &value, accessorRefcon ) );
+		ThrowOSStatus( userUPP( desiredClass, &containerToken, containerClass, keyForm, &keyData, &value, accessorRefcon ) );
 	}
 	
 	struct OSLAccessor
 	{
-		DescType         desiredClass;
+		AEObjectClass    desiredClass;
 		DescType         containerType;
 		OSLAccessorUPP   accessor;
 		RefCon           accessorRefCon;
@@ -173,17 +213,17 @@ namespace Nitrogen {
 		
 		OSLAccessor();
 		
-		OSLAccessor( DescType       desiredClass,
+		OSLAccessor( AEObjectClass  desiredClass,
 		             DescType       containerType,
 		             OSLAccessorUPP accessor,
 		             RefCon         accessorRefCon,
 		             bool           isSysHandler )
 		: 
-			desiredClass( desiredClass ),
-			containerType( containerType ),
-			accessor( accessor ),
+			desiredClass  ( desiredClass   ),
+			containerType ( containerType  ),
+			accessor      ( accessor       ),
 			accessorRefCon( accessorRefCon ),
-			isSysHandler( isSysHandler )
+			isSysHandler  ( isSysHandler   )
 		{}
 		
 	};
@@ -201,7 +241,7 @@ namespace Nitrogen {
 	{
 		void operator()( const OSLAccessor& installation ) const
 		{
-			DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus
+			HandleDestructionOSStatus
 			(
 				::AERemoveObjectAccessor( installation.desiredClass,
 				                          installation.containerType,
@@ -211,20 +251,36 @@ namespace Nitrogen {
 		}
 	};
 	
-	typedef Owned< AEDesc, TokenDisposer > ( *OSLAccessorProcPtr )( DescType desiredClass, const AEDesc& container, DescType containerClass, DescType form, const AEDesc& selectionData, RefCon accessorRefcon );
+	typedef Owned< AEToken, TokenDisposer > ( *OSLAccessorProcPtr )( AEObjectClass   desiredClass,
+	                                                                 const AEToken&  containerToken,
+	                                                                 AEObjectClass   containerClass,
+	                                                                 AEEnumerated    keyForm,
+	                                                                 const AEDesc&   keyData,
+	                                                                 RefCon          accessorRefcon );
 	
 	template < OSLAccessorProcPtr handler >
 	struct Adapt_OSLAccessor
 	{
-		static pascal OSErr ToCallback( ::DescType desiredClass, const AEDesc* container, ::DescType containerClass, ::DescType form, const AEDesc* selectionData, AEDesc* value, long accessorRefcon )
+		static pascal OSErr ToCallback( ::DescType      desiredClass,
+		                                const AEToken*  containerToken,
+		                                ::DescType      containerClass,
+		                                ::DescType      keyForm,
+		                                const AEDesc*   keyData,
+		                                AEToken*         value,
+		                                long            accessorRefcon )
 		{
 			try
 			{
-				*result = handler( desiredClass, *container, containerClass, form, *selectionData, accessorRefcon ).Release();
+				*value = handler( desiredClass,
+				                  *containerToken,
+				                  containerClass,
+				                  keyForm,
+				                  *keyData,
+				                  accessorRefcon ).Release();
 			}
 			catch ( OSStatus err )
 			{
-				return err.Get();
+				return err;
 			}
 			return noErr;
 		}
@@ -232,56 +288,42 @@ namespace Nitrogen {
 	
 	void AEObjectInit();
 	
-	Owned< AEDesc, TokenDisposer >
-	AEResolve( const AEDesc& objectSpecifier, AEResolveCallbackFlags callbackFlags );
+	Owned< AEToken, TokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier,
+	                                           AEResolveCallbackFlags    callbackFlags );
 	
 	Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
-	inline Owned< OSLAccessor > AEInstallObjectAccessor
-	(
-		DescType         desiredClass,
-		DescType         containerType,
-		OSLAccessorUPP   accessor,
-		RefCon           accessorRefCon = RefCon(),
-		bool             isSysHandler = false
-	)
+	inline Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
+	                                                     DescType         containerType,
+	                                                     OSLAccessorUPP   accessor,
+	                                                     RefCon           accessorRefCon = RefCon(),
+	                                                     bool             isSysHandler   = false )
 	{
-		return AEInstallObjectAccessor
-		(
-			OSLAccessor( desiredClass, containerType, accessor, accessorRefCon, isSysHandler )
-		);
+		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
+		                                             containerType,
+		                                             accessor,
+		                                             accessorRefCon,
+		                                             isSysHandler ) );
 	}
 	
 	template < typename OSLAccessorUPP::ProcPtr accessor >
-	Owned< OSLAccessor > AEInstallObjectAccessor
-	(
-		DescType         desiredClass,
-		DescType         containerType,
-		RefCon           accessorRefCon = RefCon(),
-		bool             isSysHandler = false
-	)
+	Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass  desiredClass,
+	                                              DescType       containerType,
+	                                              RefCon         accessorRefCon = RefCon(),
+	                                              bool           isSysHandler   = false )
 	{
-		return AEInstallObjectAccessor
-		(
-			OSLAccessor
-			(
-				desiredClass, 
-				containerType, 
-				StaticUPP< OSLAccessorUPP, accessor >(), 
-				accessorRefCon, 
-				isSysHandler
-			)
-		);
+		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
+		                                             containerType,
+		                                             StaticUPP< OSLAccessorUPP, accessor >(),
+		                                             accessorRefCon,
+		                                             isSysHandler ) );
 	}
 	
-	template < AECoerceDescProcPtr accessor >
-	Owned< OSLAccessor > AEInstallObjectAccessor
-	(
-		DescType         desiredClass,
-		DescType         containerType,
-		RefCon           accessorRefCon = RefCon(),
-		bool             isSysHandler = false
-	)
+	template < OSLAccessorProcPtr accessor >
+	Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
+	                                              DescType         containerType,
+	                                              RefCon           accessorRefCon = RefCon(),
+	                                              bool             isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor< Adapt_OSLAccessor< accessor >::ToCallback >
 		(
@@ -295,14 +337,69 @@ namespace Nitrogen {
 	inline void AERemoveObjectAccessor( Owned< OSLAccessor > )  {}
 	
 	typedef OSLAccessor AEGetObjectAccessor_Result;
-	OSLAccessor AEGetObjectAccessor
-	(
-		DescType         desiredClass,
-		DescType         containerType,
-		bool             isSysHandler
-	);
+	OSLAccessor AEGetObjectAccessor( AEObjectClass    desiredClass,
+	                                 DescType         containerType,
+	                                 bool             isSysHandler );
 	
-	inline void AEDisposeToken( Owned< AEDesc, TokenDisposer > )  {}
+	#pragma mark -
+	#pragma mark ¥ AEToken routines ¥
+	
+	template < ::DescType type >
+	Owned< AEToken, TokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
+	{
+		return Owned< AEToken, TokenDisposer >::Seize( AECreateDesc< type >( data ).Release() );
+	}
+	
+	inline Owned< AEToken, TokenDisposer > AEDuplicateToken( const AEToken& token )
+	{
+		return Owned< AEToken, TokenDisposer >::Seize( AEDuplicateDesc( token ).Release() );
+	}
+	
+	inline void AEPutPtr( Owned< AETokenList, TokenDisposer >&  tokenList,
+	                      long                                  index,
+	                      DescType                              typeCode,
+	                      const void*                           dataPtr,
+	                      Size                                  dataSize )
+	{
+		AEPutPtr( AETokenEditor( tokenList ), index, typeCode, dataPtr, dataSize );
+	}
+	
+	inline void AEPutDesc( Owned< AETokenList, TokenDisposer >&  tokenList,
+	                       long                                  index,
+	                       const AEToken&                        token )
+	{
+		AEPutDesc( AETokenEditor( tokenList ), index, token );
+	}
+	
+	inline Owned< AETokenList, TokenDisposer > AEGetNthToken( const AETokenList&  tokenList,
+	                                                          long                index )
+	{
+		return Owned< AEToken, TokenDisposer >::Seize( AEGetNthDesc( tokenList, index ).Release() );
+	}
+	
+	inline void AEPutKeyPtr( Owned< AERecord, TokenDisposer >&  record,
+	                         AEKeyword                          keyword,
+	                         DescType                           typeCode,
+	                         const void*                        dataPtr,
+	                         std::size_t                        dataSize )
+	{
+		AEPutKeyPtr( AETokenEditor( record ), keyword, typeCode, dataPtr, dataSize );
+	}
+	
+	inline void AEPutKeyDesc( Owned< AERecord, TokenDisposer >&  record,
+	                          AEKeyword                          keyword,
+	                          const AEDesc&                      desc )
+	{
+		AEPutKeyDesc( AETokenEditor( record ), keyword, desc );
+	}
+	
+	inline void AEPutKeyDesc( Owned< AERecord, TokenDisposer >&  record,
+	                          const AEKeyDesc&                   keyDesc )
+	{
+		AEPutKeyDesc( AETokenEditor( record ), keyDesc );
+	}
+	
+	inline void AEDisposeToken( Owned< AEToken, TokenDisposer > )  {}
 	
 }
 
