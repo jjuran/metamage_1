@@ -792,7 +792,7 @@ namespace Nitrogen
         {
          try
            {
-            std::string result( '\0', maxPathSize );
+            std::string result( maxPathSize, '\0' );
             FSRefMakePath( ref, reinterpret_cast<UInt8 *>( &result[0] ), result.size() );
             result.erase( std::strlen( result.c_str() ) );
             return result;
