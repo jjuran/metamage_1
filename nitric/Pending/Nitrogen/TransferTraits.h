@@ -14,7 +14,7 @@ namespace Nitrogen
 	
 	template < class T > struct Transfer_Traits
 	{
-		static const bool mayCopyConstSource = false;
+		static const bool mayCopyConstSource = true;
 		
 		typedef T Type;
 		
