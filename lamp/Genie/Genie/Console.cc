@@ -13,7 +13,9 @@
 #include <vector>
 
 // Nitrogen
+#include "Nitrogen/Assert.h"
 #include "Nitrogen/Processes.h"
+#include "Nitrogen/Sound.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
@@ -136,7 +138,7 @@ namespace Genie
 				}
 				else
 				{
-					::SysBeep( 3 );
+					N::SysBeep();
 				}
 			}
 			
@@ -183,7 +185,7 @@ namespace Genie
 				// No constructors directly in a switch block
 				{
 					short cmdLen = std::max( TextLength() - myStartOfInput, 0 );
-					//Assert_( cmdLen >= 0 );
+					//ASSERT( cmdLen >= 0 );
 					
 					std::string command = GetHandleSubString( TextHandle(), myStartOfInput, cmdLen );
 					
