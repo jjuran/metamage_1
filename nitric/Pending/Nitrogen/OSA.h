@@ -36,19 +36,19 @@ namespace Nitrogen {
 	struct OSAModeFlagsTag;
 	typedef FlagType< OSAModeFlagsTag, long, ::kOSAModeNull > OSAModeFlags;
 	
-	static const ComponentType    kOSAComponentType                    = ComponentType   ::Make( ::kOSAComponentType );
-	static const ComponentSubType kOSAGenericScriptingComponentSubtype = ComponentSubType::Make( ::kOSAGenericScriptingComponentSubtype );
+	inline ComponentType    OSAComponentType                   ()  { return ComponentType   ::Make( kOSAComponentType                    ); }
+	inline ComponentSubType OSAGenericScriptingComponentSubtype()  { return ComponentSubType::Make( kOSAGenericScriptingComponentSubtype ); }
 	
 	using ::kOSAFileType;
 	using ::kOSASuite;
 	
-	static const OSAID kOSANullScript = OSAID::Make( ::kOSANullScript );
+	inline OSAID OSANullScript()  { return OSAID::Make( kOSANullScript ); }
 	
-	static const OSAModeFlags kOSAModeNull = OSAModeFlags::Make( ::kOSAModeNull );
+	inline OSAModeFlags OSAModeNull()  { return OSAModeFlags::Make( kOSAModeNull ); }
 	
-	static const ResType kOSAScriptResourceType = ResType::Make( ::kOSAScriptResourceType );
+	inline ResType OSAScriptResourceType()  { return ResType::Make( kOSAScriptResourceType ); }
 	
-	static const DescType typeOSAGenericStorage = DescType::Make( ::typeOSAGenericStorage );
+	inline DescType TypeOSAGenericStorage()  { return DescType::Make( typeOSAGenericStorage ); }
 	
 	struct ManagedOSAID 
 	{
@@ -86,23 +86,23 @@ namespace Nitrogen {
 	OSALoad(
 		Shared< ComponentInstance > scriptingComponent, 
 		const AEDesc& scriptData, 
-		OSAModeFlags modeFlags = kOSAModeNull
+		OSAModeFlags modeFlags = OSAModeNull()
 	);
 	
 	Owned< AEDesc >
 	OSAStore(
 		ComponentInstance scriptingComponent, 
 		OSAID scriptID, 
-		DescType desiredType = typeOSAGenericStorage, 
-		OSAModeFlags modeFlags = kOSAModeNull
+		DescType desiredType = TypeOSAGenericStorage(), 
+		OSAModeFlags modeFlags = OSAModeNull()
 	);
 	
 	inline
 	Owned< AEDesc >
 	OSAStore(
 		const ManagedOSAID& script, 
-		DescType desiredType = typeOSAGenericStorage, 
-		OSAModeFlags modeFlags = kOSAModeNull)
+		DescType desiredType = TypeOSAGenericStorage(), 
+		OSAModeFlags modeFlags = OSAModeNull() )
 	{
 		return OSAStore( script.component, script.id, desiredType, modeFlags );
 	}
@@ -111,16 +111,16 @@ namespace Nitrogen {
 	OSAExecute(
 		Shared< ComponentInstance > scriptingComponent, 
 		OSAID compiledScriptID, 
-		OSAID contextID = kOSANullScript, 
-		OSAModeFlags modeFlags = kOSAModeNull
+		OSAID contextID = OSANullScript(), 
+		OSAModeFlags modeFlags = OSAModeNull()
 	);
 	
 	inline
 	Owned< ManagedOSAID >
 	OSAExecute(
 		const ManagedOSAID& script, 
-		OSAID contextID = kOSANullScript, 
-		OSAModeFlags modeFlags = kOSAModeNull)
+		OSAID contextID = OSANullScript(), 
+		OSAModeFlags modeFlags = OSAModeNull() )
 	{
 		return OSAExecute( script.component, script.id, contextID, modeFlags );
 	}
@@ -129,16 +129,16 @@ namespace Nitrogen {
 	OSADisplay(
 		ComponentInstance scriptingComponent, 
 		OSAID scriptValueID, 
-		DescType desiredType = typeChar, 
-		OSAModeFlags modeFlags = kOSAModeNull
+		DescType desiredType = TypeChar(), 
+		OSAModeFlags modeFlags = OSAModeNull()
 	);
 	
 	inline
 	Owned< AEDesc >
 	OSADisplay(
 		const ManagedOSAID& scriptValue, 
-		DescType desiredType = typeChar, 
-		OSAModeFlags modeFlags = kOSAModeNull)
+		DescType desiredType = TypeChar(), 
+		OSAModeFlags modeFlags = OSAModeNull() )
 	{
 		return OSADisplay( scriptValue.component, scriptValue.id, desiredType, modeFlags );
 	}
@@ -149,7 +149,7 @@ namespace Nitrogen {
 	OSACompile(
 		Shared< ComponentInstance > scriptingComponent, 
 		const AEDesc& sourceData, 
-		OSAModeFlags modeFlags = kOSAModeNull, 
+		OSAModeFlags modeFlags = OSAModeNull(), 
 		Owned< ManagedOSAID > previousScriptID = Owned< ManagedOSAID >()
 	);
 	
@@ -159,8 +159,8 @@ namespace Nitrogen {
 	OpenGenericScriptingComponent()
 	{
 		return OpenDefaultComponent(
-			kOSAComponentType, 
-			kOSAGenericScriptingComponentSubtype
+			OSAComponentType(), 
+			OSAGenericScriptingComponentSubtype()
 		);
 	}
 	

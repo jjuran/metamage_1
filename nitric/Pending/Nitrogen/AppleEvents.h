@@ -12,6 +12,9 @@
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
 #endif
+#ifndef NITROGEN_AEINTERACTION_H
+#include "Nitrogen/AEInteraction.h"
+#endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
 #endif
@@ -20,39 +23,52 @@ namespace Nitrogen
   {
 	
 	// Keywords for Apple event parameters
-	static const AEKeyword keyDirectObject        = AEKeyword::Make( ::keyDirectObject        );
-	static const AEKeyword keyErrorNumber         = AEKeyword::Make( ::keyErrorNumber         );
-	static const AEKeyword keyErrorString         = AEKeyword::Make( ::keyErrorString         );
-	static const AEKeyword keyProcessSerialNumber = AEKeyword::Make( ::keyProcessSerialNumber );
-	static const AEKeyword keyPreDispatch         = AEKeyword::Make( ::keyPreDispatch         );
-	static const AEKeyword keySelectProc          = AEKeyword::Make( ::keySelectProc          );
-	static const AEKeyword keyAERecorderCount     = AEKeyword::Make( ::keyAERecorderCount     );
-	static const AEKeyword keyAEVersion           = AEKeyword::Make( ::keyAEVersion           );
+	inline AEKeyword KeyDirectObject       ()  { return AEKeyword::Make( keyDirectObject        ); }
+	inline AEKeyword KeyErrorNumber        ()  { return AEKeyword::Make( keyErrorNumber         ); }
+	inline AEKeyword KeyErrorString        ()  { return AEKeyword::Make( keyErrorString         ); }
+	inline AEKeyword KeyProcessSerialNumber()  { return AEKeyword::Make( keyProcessSerialNumber ); }
+	inline AEKeyword KeyPreDispatch        ()  { return AEKeyword::Make( keyPreDispatch         ); }
+	inline AEKeyword KeySelectProc         ()  { return AEKeyword::Make( keySelectProc          ); }
+	inline AEKeyword KeyAERecorderCount    ()  { return AEKeyword::Make( keyAERecorderCount     ); }
+	inline AEKeyword KeyAEVersion          ()  { return AEKeyword::Make( keyAEVersion           ); }
 	
 	// Event Class
-	static const AEEventClass kCoreEventClass = AEEventClass::Make( ::kCoreEventClass );
+	inline AEEventClass CoreEventClass()  { return AEEventClass::Make( kCoreEventClass ); }
 	
 	// Event ID's
-	static const AEEventID kAEOpenApplication = AEEventID::Make( ::kAEOpenApplication );
-	static const AEEventID kAEOpenDocuments   = AEEventID::Make( ::kAEOpenDocuments   );
-	static const AEEventID kAEPrintDocuments  = AEEventID::Make( ::kAEPrintDocuments  );
-	static const AEEventID kAEQuitApplication = AEEventID::Make( ::kAEQuitApplication );
-	static const AEEventID kAEAnswer          = AEEventID::Make( ::kAEAnswer          );
-	static const AEEventID kAEApplicationDied = AEEventID::Make( ::kAEApplicationDied );
-	static const AEEventID kAEShowPreferences = AEEventID::Make( ::kAEShowPreferences );
+	inline AEEventID AEOpenApplication()  { return AEEventID::Make( kAEOpenApplication ); }
+	inline AEEventID AEOpenDocuments  ()  { return AEEventID::Make( kAEOpenDocuments   ); }
+	inline AEEventID AEPrintDocuments ()  { return AEEventID::Make( kAEPrintDocuments  ); }
+	inline AEEventID AEQuitApplication()  { return AEEventID::Make( kAEQuitApplication ); }
+	inline AEEventID AEAnswer         ()  { return AEEventID::Make( kAEAnswer          ); }
+	inline AEEventID AEApplicationDied()  { return AEEventID::Make( kAEApplicationDied ); }
+	inline AEEventID AEShowPreferences()  { return AEEventID::Make( kAEShowPreferences ); }
 	
 	// Constants for recording
-	// What type are these?
+	inline AEEventID AEStartRecording      ()  { return AEEventID::Make( kAEStartRecording       ); }
+	inline AEEventID AEStopRecording       ()  { return AEEventID::Make( kAEStopRecording        ); }
+	inline AEEventID AENotifyStartRecording()  { return AEEventID::Make( kAENotifyStartRecording ); }
+	inline AEEventID AENotifyStopRecording ()  { return AEEventID::Make( kAENotifyStopRecording  ); }
+	inline AEEventID AENotifyRecording     ()  { return AEEventID::Make( kAENotifyRecording      ); }
 	
 	class AEEventSource_Tag {};
 	typedef SelectorType< AEEventSource_Tag, ::AEEventSource > AEEventSource;
 	
-	static const AEEventSource kAEUnknownSource = AEEventSource::Make( ::kAEUnknownSource );
-	static const AEEventSource kAEDirectCall    = AEEventSource::Make( ::kAEDirectCall    );
-	static const AEEventSource kAESameProcess   = AEEventSource::Make( ::kAESameProcess   );
-	static const AEEventSource kAELocalProcess  = AEEventSource::Make( ::kAELocalProcess  );
-	static const AEEventSource kAERemoteProcess = AEEventSource::Make( ::kAERemoteProcess );
+	inline AEEventSource AEUnknownSource()  { return AEEventSource::Make( kAEUnknownSource ); }
+	inline AEEventSource AEDirectCall   ()  { return AEEventSource::Make( kAEDirectCall    ); }
+	inline AEEventSource AESameProcess  ()  { return AEEventSource::Make( kAESameProcess   ); }
+	inline AEEventSource AELocalProcess ()  { return AEEventSource::Make( kAELocalProcess  ); }
+	inline AEEventSource AERemoteProcess()  { return AEEventSource::Make( kAERemoteProcess ); }
 	
+	/*
+	class AEObjectClass_Tag {};
+	typedef SelectorType< AEObjectClass_Tag, ::DescType > AEObjectClass;
+	
+	class AEPropertyID_Tag {};
+	typedef SelectorType< AEPropertyID_Tag, ::DescType > AEPropertyID;
+	*/
+	
+	typedef DescType AEObjectClass, AEPropertyID;
 	
    struct AEEventHandler
      {

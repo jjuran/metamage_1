@@ -697,14 +697,16 @@ namespace Nitrogen
    typedef FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
    typedef FSIOPermssn FSIOPermissions;
    
-   static const FSIOPermssn fsCurPerm  = FSIOPermssn::Make( ::fsCurPerm  );
-   static const FSIOPermssn fsRdPerm   = FSIOPermssn::Make( ::fsRdPerm   );
+   inline FSIOPermssn FSCurPerm()  { return FSIOPermssn::Make( fsCurPerm ); }
+   inline FSIOPermssn FSRdPerm ()  { return FSIOPermssn::Make( fsRdPerm  ); }
+   inline FSIOPermssn FSWrPerm ()  { return FSIOPermssn::Make( fsWrPerm  ); }
    
    class FSIOPosModeTag {};
    typedef SelectorType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
    typedef FSIOPosMode FSIOPositioningMode;
 	
-	static const FSIOPosMode fsAtMark = FSIOPosMode::Make( ::fsAtMark );
+	inline FSIOPosMode FSAtMark  ()  { return FSIOPosMode::Make( fsAtMark   ); }
+	inline FSIOPosMode FSFromLEOF()  { return FSIOPosMode::Make( fsFromLEOF ); }
 	
    class FSAllocationFlagsTag {};
    typedef FlagType< FSAllocationFlagsTag, ::FSAllocationFlags, 0 > FSAllocationFlags;
@@ -1402,7 +1404,7 @@ namespace Nitrogen
                                 ByteCount    requestCount,
                                 void *       buffer )
      {
-      return FSReadFork( fork, fsAtMark, 0, requestCount, buffer );
+      return FSReadFork( fork, FSAtMark(), 0, requestCount, buffer );
      }
 
    template < class Element, std::size_t count >
@@ -1431,7 +1433,7 @@ namespace Nitrogen
                                  ByteCount    requestCount,
                                  const void * buffer )
      {
-      return FSWriteFork( fork, fsAtMark, 0, requestCount, buffer );
+      return FSWriteFork( fork, FSAtMark(), 0, requestCount, buffer );
      }
 
    template < class Element, std::size_t count >

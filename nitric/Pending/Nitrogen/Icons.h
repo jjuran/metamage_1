@@ -34,7 +34,7 @@ namespace Nitrogen
    
    using ::IconRef;
 
-   static const OSType kSystemIconsCreator = OSType::Make( ::kSystemIconsCreator );
+   inline OSType SystemIconsCreator()  { return OSType::Make( kSystemIconsCreator ); }
    
    class IconLabelTag {};
    typedef IDType< IconLabelTag, SInt16, 0 > IconLabel;
@@ -42,7 +42,7 @@ namespace Nitrogen
    class IconServicesUsageFlagsTag {};
    typedef FlagType< IconServicesUsageFlagsTag, ::IconServicesUsageFlags, 0 > IconServicesUsageFlags;
    
-   static const IconServicesUsageFlags kIconServicesNormalUsageFlag = IconServicesUsageFlags::Make( ::kIconServicesNormalUsageFlag );
+   inline IconServicesUsageFlags IconServicesNormalUsageFlag()  { return IconServicesUsageFlags::Make( kIconServicesNormalUsageFlag ); }
    
    template <> struct Disposer< IconRef >: public std::unary_function< IconRef, void >,
                                            private DefaultDestructionOSStatusPolicy
@@ -99,23 +99,23 @@ namespace Nitrogen
                                                          const UniChar         *inFileName,
                                                          FSCatalogInfoBitmap    inWhichInfo,
                                                          const FSCatalogInfo&   inCatalogInfo,
-                                                         IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag );
+                                                         IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() );
 
    GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                          UniCharCount           inFileNameLength,
                                                          const UniChar         *inFileName,
-                                                         IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag );
+                                                         IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() );
 
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                                 FSCatalogInfoBitmap    inWhichInfo,
                                                                 const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
      {
       return GetIconRefFromFileInfo( inRef, 0, 0, inWhichInfo, inCatalogInfo, inUsageFlags );
      }
 
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
      {
       return GetIconRefFromFileInfo( inRef, 0, 0, inUsageFlags );
      }
@@ -124,7 +124,7 @@ namespace Nitrogen
                                                                 const UniString&       inFileName,
                                                                 FSCatalogInfoBitmap    inWhichInfo,
                                                                 const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
      {
       return GetIconRefFromFileInfo( inRef,
                                      inFileName.size(),
@@ -136,7 +136,7 @@ namespace Nitrogen
 
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                                 const UniString&       inFileName,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
      {
       return GetIconRefFromFileInfo( inRef,
                                      inFileName.size(),
@@ -148,7 +148,7 @@ namespace Nitrogen
                                                                 const HFSUniStr255&    inFileName,
                                                                 FSCatalogInfoBitmap    inWhichInfo,
                                                                 const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
      {
       return GetIconRefFromFileInfo( inRef,
                                      inFileName.length,
@@ -160,7 +160,7 @@ namespace Nitrogen
 
    inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
                                                                 const HFSUniStr255&    inFileName,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+                                                                IconServicesUsageFlags inUsageFlags = IconServicesNormalUsageFlag() )
      {
       return GetIconRefFromFileInfo( inRef,
                                      inFileName.length,
@@ -176,7 +176,7 @@ namespace Nitrogen
 
    inline Owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
      {
-      return RegisterIconRefFromIconFile( kSystemIconsCreator, OSType::Make( 0 ), iconFile );
+      return RegisterIconRefFromIconFile( SystemIconsCreator(), OSType::Make( 0 ), iconFile );
      }
   }
 

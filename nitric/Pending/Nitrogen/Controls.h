@@ -89,12 +89,12 @@ namespace Nitrogen
 		userUPP( theControl, partCode );
 	}
 	
-	inline ControlPartCode ControlNoPart()         { return ControlPartCode::Make( ::kControlNoPart        ); }
-	inline ControlPartCode ControlIndicatorPart()  { return ControlPartCode::Make( ::kControlIndicatorPart ); }
-	inline ControlPartCode ControlDisabledPart()   { return ControlPartCode::Make( ::kControlDisabledPart  ); }
-	inline ControlPartCode ControlInactivePart()   { return ControlPartCode::Make( ::kControlInactivePart  ); }
+	inline ControlPartCode ControlNoPart()         { return ControlPartCode::Make( kControlNoPart        ); }
+	inline ControlPartCode ControlIndicatorPart()  { return ControlPartCode::Make( kControlIndicatorPart ); }
+	inline ControlPartCode ControlDisabledPart()   { return ControlPartCode::Make( kControlDisabledPart  ); }
+	inline ControlPartCode ControlInactivePart()   { return ControlPartCode::Make( kControlInactivePart  ); }
 	
-	static const ControlPartCode kControlEntireControl = ControlPartCode::Make( ::kControlEntireControl );
+	inline ControlPartCode ControlEntireControl()  { return ControlPartCode::Make( kControlEntireControl ); }
 	
 	class ControlProcID_Tag {};
 	typedef SelectorType< ControlProcID_Tag, ::SInt16, 0 > ControlProcID;
@@ -278,7 +278,7 @@ namespace Nitrogen
    void SetControlData( ControlRef                                               inControl,
                         typename SetControlData_Traits< inTagName >::InData_Type inData )
      {
-      return SetControlData< inTagName >( inControl, kControlEntireControl, inData );
+      return SetControlData< inTagName >( inControl, ControlEntireControl(), inData );
      }
 
 	// 2852
@@ -295,7 +295,7 @@ namespace Nitrogen
    template < ::ResType inTagName >
    typename GetControlData_Traits<inTagName>::Result
    GetControlData( ControlRef        inControl,
-                   ControlPartCode   inPart = kControlEntireControl )
+                   ControlPartCode   inPart = ControlEntireControl() )
      {
       typedef GetControlData_Traits< inTagName > Traits;
       
