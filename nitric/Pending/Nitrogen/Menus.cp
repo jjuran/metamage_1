@@ -70,7 +70,7 @@ namespace Nitrogen
 	Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID )
 	{
 		::MacInsertMenu( menu, beforeID );
-		return Owned< MenuID >::Seize( GetMenuID( menu ) );
+		return Owned< MenuID >::Seize( Nitrogen::GetMenuID( menu ) );
 	}
 	
 	Str255 GetMenuItemText( MenuRef menu, SInt16 item )

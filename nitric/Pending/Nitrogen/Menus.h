@@ -238,7 +238,10 @@ namespace Nitrogen
                                   MenuItemAttributes clearTheseAttributes );
 
    /* ... */
-   
+	
+	// 5826
+	inline MenuID GetMenuID( MenuRef menu )  { return MenuID( ::GetMenuID( menu ) ); }
+	
    void RegisterMenuManagerErrors();
   }
 
