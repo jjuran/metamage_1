@@ -911,9 +911,9 @@ namespace Nitrogen
 		return Owned< AEDesc >::Seize( Make< AEDesc >() );
 	}
 	
-	Owned< AEDesc > AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize);
-	Owned< AEDesc > AECreateDesc(DescType typeCode, ::Handle handle);
-	Owned< AEDesc > AECreateDesc(DescType typeCode, Owned< Handle > handle);
+	Owned< AEDesc > AECreateDesc( DescType typeCode, const void* dataPtr, Size dataSize );
+	Owned< AEDesc > AECreateDesc( DescType typeCode, ::Handle handle );
+	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< Handle > handle );
 	
 	template < class T >
 	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< T**, Disposer< Handle > > handle )
@@ -921,7 +921,7 @@ namespace Nitrogen
 		return AECreateDesc( typeCode, Owned< Handle >( handle ) );
 	}
 	
-	Owned< AEDesc > AECreateDesc(DescType typeCode, Owned< AEDesc > desc);
+	Owned< AEDesc > AECreateDesc( DescType typeCode, Owned< AEDesc > desc );
 	
 	template < class Data >
 	Owned< AEDesc > AECreateDesc(DescType typeCode, Data** handle)
@@ -937,59 +937,63 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AEDescLists ¥
 	
-	Owned< AEDesc > AECreateList(bool isRecord);
-	Owned< AEDesc > AECreateList(const void* factoringPtr, std::size_t factoredSize, bool isRecord);
+	Owned< AEDesc > AECreateList( bool isRecord );
+	Owned< AEDesc > AECreateList( const void* factoringPtr, std::size_t factoredSize, bool isRecord );
 	
 	template < bool isRecord >
 	Owned< AEDesc > AECreateList()  { return AECreateList( isRecord ); }
 	
 	template < bool isRecord >
-	Owned< AEDesc > AECreateList(DescType typeCode)
+	Owned< AEDesc > AECreateList( DescType typeCode )
 	{
 		return AECreateDesc( typeCode, AECreateList< isRecord >() );
 	}
 	
-	long AECountItems(const AEDesc& desc);
+	long AECountItems( const AEDesc& desc );
 	
-	void AEPutPtr(        AEDescList  & list, long index, DescType type, const void* dataPtr, Size dataSize);
-	void AEPutPtr( Owned< AEDescList >& list, long index, DescType type, const void* dataPtr, Size dataSize);
+	void AEPutPtr( AEDescList&  list,
+	               long         index,
+	               DescType     type,
+	               const void*  dataPtr,
+	               Size         dataSize );
 	
-	void AEPutDesc(        AEDescList  & list, long index, const AEDesc& desc );
-	void AEPutDesc( Owned< AEDescList >& list, long index, const AEDesc& desc );
+	void AEPutPtr( Owned< AEDescList >&  list,
+	               long                  index,
+	               DescType              type,
+	               const void*           dataPtr,
+	               Size                  dataSize );
+	
+	void AEPutDesc( AEDescList&    list,
+	                long           index,
+	                const AEDesc&  desc );
+	
+	void AEPutDesc( Owned< AEDescList >&  list,
+	                long                  index,
+	                const AEDesc&         desc );
 	
 	struct GetNthPtr_Result
 	{
 		AEKeyword keyword;
 		DescType typeCode;
 		Size actualSize;
-		
-		GetNthPtr_Result() : keyword(), typeCode(), actualSize() {}
-		GetNthPtr_Result(AEKeyword keyword, DescType typeCode, ::Size actualSize) 
-		  : keyword(keyword), typeCode(typeCode), actualSize(actualSize)  {}
 	};
 	
-	GetNthPtr_Result AEGetNthPtr(
-		const AEDesc& listDesc, 
-		long index, 
-		DescType desiredType, 
-		void* dataPtr, 
-		Size maximumSize
-	);
+	GetNthPtr_Result AEGetNthPtr( const AEDesc&  listDesc,
+	                              long           index,
+	                              DescType       desiredType,
+	                              void*          dataPtr,
+	                              Size           maximumSize );
 	
-	Owned< AEDesc > AEGetNthDesc(
-		const AEDesc& listDesc, 
-		long index, 
-		DescType desiredType = TypeWildCard(), 
-		::AEKeyword* keyword = NULL
-	);
+	Owned< AEDesc > AEGetNthDesc( const AEDesc&  listDesc,
+	                              long           index,
+	                              DescType       desiredType = typeWildCard,
+	                              ::AEKeyword*   keyword     = NULL );
 	
-	Owned< AEDesc > AEGetNthDesc(
-		const AEDesc& listDesc, 
-		long index, 
-		::AEKeyword* keyword
-	);
+	Owned< AEDesc > AEGetNthDesc( const AEDesc&  listDesc,
+	                              long           index,
+	                              ::AEKeyword*   keyword );
 	
-	Size AESizeOfNthItem(const AEDescList& list, long index);
+	Size AESizeOfNthItem( const AEDescList& list, long index );
 	
 	void AEDeleteItem(        AEDescList  & listDesc, long index );
 	void AEDeleteItem( Owned< AEDescList >& listDesc, long index );
@@ -1002,62 +1006,44 @@ namespace Nitrogen
 		return ::AECheckIsRecord( &theDesc );
 	}
 	
-	void AEPutKeyPtr(
-		AERecord& record, 
-		AEKeyword keyword, 
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize
-	);
+	void AEPutKeyPtr( AERecord&    record,
+	                  AEKeyword    keyword,
+	                  DescType     typeCode,
+	                  const void*  dataPtr,
+	                  std::size_t  dataSize );
 	
-	void AEPutKeyPtr(
-		Owned< AERecord >& record, 
-		AEKeyword keyword, 
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize
-	);
+	void AEPutKeyPtr( Owned< AERecord >&  record,
+	                  AEKeyword           keyword,
+	                  DescType            typeCode,
+	                  const void*         dataPtr,
+	                  std::size_t         dataSize );
 	
-	void AEPutKeyDesc(
-		AERecord& record, 
-		AEKeyword keyword, 
-		const AEDesc& desc
-	);
+	void AEPutKeyDesc( AERecord&      record,
+	                   AEKeyword      keyword,
+	                   const AEDesc&  desc );
 	
-	void AEPutKeyDesc(
-		AERecord& record, 
-		const AEKeyDesc& keyDesc
-	);
+	void AEPutKeyDesc( AERecord&         record,
+	                   const AEKeyDesc&  keyDesc );
 	
-	void AEPutKeyDesc(
-		Owned< AERecord >& record, 
-		AEKeyword keyword, 
-		const AEDesc& desc
-	);
+	void AEPutKeyDesc( Owned< AERecord >&  record,
+	                   AEKeyword           keyword,
+	                   const AEDesc&       desc );
 	
-	void AEPutKeyDesc(
-		Owned< AERecord >& record, 
-		const AEKeyDesc& keyDesc
-	);
+	void AEPutKeyDesc( Owned< AERecord >&  record,
+	                   const AEKeyDesc&    keyDesc );
 	
-	AEGetKeyPtr_Result AEGetKeyPtr(
-		const AERecord& record, 
-		AEKeyword keyword, 
-		DescType desiredType, 
-		void* dataPtr, 
-		std::size_t maximumSize
-	);
+	AEGetKeyPtr_Result AEGetKeyPtr( const AERecord&  record,
+	                                AEKeyword        keyword,
+	                                DescType         desiredType,
+	                                void*            dataPtr,
+	                                std::size_t      maximumSize );
 	
-	Owned< AEDesc > AEGetKeyDesc(
-		const AERecord& record, 
-		AEKeyword keyword, 
-		DescType desiredType
-	);
+	Owned< AEDesc > AEGetKeyDesc( const AERecord&  record,
+	                              AEKeyword        keyword,
+	                              DescType         desiredType );
 	
-	AESizeOfKeyDesc_Result AESizeOfKeyDesc(
-		const AERecord& record, 
-		AEKeyword keyword
-	);
+	AESizeOfKeyDesc_Result AESizeOfKeyDesc( const AERecord&  record,
+	                                        AEKeyword        keyword );
 	
 	void AEDeleteKeyDesc(        AERecord  & record, AEKeyword keyword );
 	void AEDeleteKeyDesc( Owned< AERecord >& record, AEKeyword keyword );
