@@ -27,6 +27,19 @@ namespace Nitrogen
 	
 	void RegisterCodeFragmentManagerErrors();
 	
+	using ::CFragConnectionID;
+	
+	template <>
+	struct Disposer< CFragConnectionID > : public std::unary_function< CFragConnectionID, void >,
+	                                       private DefaultDestructionOSStatusPolicy
+	{
+		void operator()( CFragConnectionID connID ) const
+		{
+			OnlyOnce< RegisterCodeFragmentManagerErrors >();
+			HandleDestructionOSStatus( ::CloseConnection( &connID ) );
+		}
+	};
+	
 }
 
 #endif
