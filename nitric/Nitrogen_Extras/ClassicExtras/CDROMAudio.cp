@@ -13,13 +13,17 @@
 #include "Nitrogen/Assert.h"
 
 // Nitrogen Extras / ClassicExtras
+#ifndef __MACH__
 #ifndef CLASSICEXTRAS_APPLECD_H
 #include "ClassicExtras/AppleCD.h"
+#endif
 #endif
 
 
 namespace NitrogenExtras
 {
+	
+#if CALL_NOT_IN_CARBON
 	
 	static int cddb_sum( int n )
 	{
@@ -115,11 +119,6 @@ namespace NitrogenExtras
 		                    DecodeBCD( frames  ) );
 	}
 	
-	static Frames CountFramesBCD( const TOCEntry& entry )
-	{
-		return CountFramesBCD( entry.min, entry.sec, entry.frame );
-	}
-	
 	Frames TrackStart( const CDROMTableOfContents& toc, TrackNumber track )
 	{
 		ASSERT( track > 0 );
@@ -147,7 +146,10 @@ namespace NitrogenExtras
 		}
 	}
 	
-#if CALL_NOT_IN_CARBON
+	static Frames CountFramesBCD( const TOCEntry& entry )
+	{
+		return CountFramesBCD( entry.min, entry.sec, entry.frame );
+	}
 	
 	static void Initialize( AudioCDControlParameterBlock& pb )
 	{
