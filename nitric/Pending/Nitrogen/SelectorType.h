@@ -9,6 +9,9 @@
 
 namespace Nitrogen
   {
+
+#ifndef JOSHUA_JURAN_EXPERIMENTAL
+
    template < class UnderlyingType, class T >
    class SelectorTypeBlacklistDummyType
      {
@@ -78,11 +81,15 @@ namespace Nitrogen
       typedef UnderlyingType ComparisonAllowed;
      };
 
+#endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+
    template < class Tag, class UnderlyingType, UnderlyingType defaultValue = 0 >
    class SelectorType
      {
       private:
          UnderlyingType value;
+         
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          
          template < class T > struct Blacklist :SelectorTypeBlacklist< UnderlyingType, T > {};
          
@@ -171,15 +178,26 @@ namespace Nitrogen
             friend void operator!=( typename Blacklist< unsigned int       >::ComparisonForbidden, SelectorType );
             friend void operator!=( typename Blacklist< unsigned long      >::ComparisonForbidden, SelectorType );
             friend void operator!=( typename Blacklist< unsigned long long >::ComparisonForbidden, SelectorType );
-
+      
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+      
       public:
          SelectorType()                                              : value( defaultValue )    {}
+      
+      #ifdef JOSHUA_JURAN_EXPERIMENTAL
+         
+         SelectorType( UnderlyingType theValue )                     : value( theValue )        {}
+         operator UnderlyingType() const                             { return value; }
+         
+      #endif  // #ifdef JOSHUA_JURAN_EXPERIMENTAL
 
          static SelectorType Make( UnderlyingType v )                { return SelectorType( v ); }
          UnderlyingType Get() const                                  { return value; }
          
          friend bool operator==( SelectorType a, SelectorType b )    { return a.Get() == b.Get(); }
          friend bool operator!=( SelectorType a, SelectorType b )    { return a.Get() != b.Get(); }
+      
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
       
          SelectorType( typename Blacklist<          bool      >::ConstructionAllowed v ) : value( static_cast<UnderlyingType>( v ) )  {}
          SelectorType( typename Blacklist<          char      >::ConstructionAllowed v ) : value( static_cast<UnderlyingType>( v ) )  {}
@@ -258,6 +276,9 @@ namespace Nitrogen
          friend bool operator!=( typename Blacklist< unsigned int       >::ComparisonAllowed a, SelectorType b )    { return SelectorType(a) != b; }
          friend bool operator!=( typename Blacklist< unsigned long      >::ComparisonAllowed a, SelectorType b )    { return SelectorType(a) != b; }
          friend bool operator!=( typename Blacklist< unsigned long long >::ComparisonAllowed a, SelectorType b )    { return SelectorType(a) != b; }
+         
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+         
      };
   }
 

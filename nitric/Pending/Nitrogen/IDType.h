@@ -5,6 +5,9 @@
 
 namespace Nitrogen
   {
+
+#ifndef JOSHUA_JURAN_EXPERIMENTAL
+
    template < class UnderlyingType, class T >
    struct IDTypeBlacklist
      {
@@ -21,11 +24,15 @@ namespace Nitrogen
       class ComparisonForbidden;
      };
 
+#endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+
    template < class Tag, class UnderlyingType, UnderlyingType defaultValue = 0 >
    class IDType
      {
       private:
          UnderlyingType value;
+         
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          
          template < class T > struct Blacklist :IDTypeBlacklist< UnderlyingType, T > {};
          
@@ -111,7 +118,9 @@ namespace Nitrogen
             friend void operator!=( typename Blacklist< unsigned int       >::ComparisonForbidden, IDType );
             friend void operator!=( typename Blacklist< unsigned long      >::ComparisonForbidden, IDType );
             friend void operator!=( typename Blacklist< unsigned long long >::ComparisonForbidden, IDType );
-
+      
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+      
       public:
          IDType()                                              : value( defaultValue )    {}
          IDType( UnderlyingType theValue )                     : value( theValue )        {}
@@ -122,12 +131,19 @@ namespace Nitrogen
          UnderlyingType Get() const                            { return value; }
          
          friend bool operator==( IDType a, IDType b )          { return a.Get() == b.Get(); }
+      
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          friend bool operator==( IDType a, UnderlyingType b )  { return a.Get() == b; }
          friend bool operator==( UnderlyingType a, IDType b )  { return a == b.Get(); }
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
 
          friend bool operator!=( IDType a, IDType b )          { return a.Get() != b.Get(); }
+      
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          friend bool operator!=( IDType a, UnderlyingType b )  { return a.Get() != b; }
          friend bool operator!=( UnderlyingType a, IDType b )  { return a != b.Get(); }
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+      
      };
   }
    
