@@ -33,9 +33,18 @@ namespace Nitrogen
 		OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt32 actualCount = requestCount;
-		ThrowOSStatus( ::FSRead( file,
+		
+		OSStatus err = ::FSRead( file,
 	                             &actualCount,
-	                             buffer ) );
+	                             buffer );
+		
+		if ( err == eofErr  &&  actualCount > 0 )
+		{
+			err = noErr;
+		}
+		
+		ThrowOSStatus( err );
+		
 		return actualCount;
 	}
 	
