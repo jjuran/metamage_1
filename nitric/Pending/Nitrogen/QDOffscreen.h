@@ -102,6 +102,19 @@ namespace Nitrogen
 	
 	PixMapHandle GetGWorldPixMap( GWorldPtr offscreenGWorld );
 	
+	class GWorld_Details
+	{
+		public:
+			typedef GWorld_State Value;
+			typedef Value GetResult;
+			typedef Value SetParameter;
+			
+			GetResult Get() const                        { return GetGWorld(); }
+			void Set( SetParameter state ) const         { SetGWorld( state ); }
+	};
+	
+	typedef Pseudoreference< GWorld_Details > GWorld;
+	
 }
 
 #endif
