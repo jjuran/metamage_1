@@ -454,11 +454,25 @@ namespace Nitrogen {
 	}
 	
 	void AEPutKeyDesc(
+		AERecord& record, 
+		const AEKeyDesc& keyDesc)
+	{
+		AEPutKeyDesc( record, keyDesc.descKey, keyDesc.descContent );;
+	}
+	
+	void AEPutKeyDesc(
 		Owned< AERecord >& record, 
 		AEKeyword keyword, 
 		const AEDesc& desc)
 	{
 		AEPutKeyDesc( AEDescEditor( record ), keyword, desc );
+	}
+	
+	void AEPutKeyDesc(
+		Owned< AERecord >& record, 
+		const AEKeyDesc& keyDesc)
+	{
+		AEPutKeyDesc( AEDescEditor( record ), keyDesc );
 	}
 	
 	AEGetKeyPtr_Result AEGetKeyPtr(
