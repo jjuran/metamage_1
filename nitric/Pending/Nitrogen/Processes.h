@@ -10,6 +10,9 @@
 #include FRAMEWORK_HEADER(HIServices,Processes.h)
 #endif
 
+#ifndef NITROGEN_ADVANCEUNTILFAILURECONTAINER_H
+#include "Nitrogen/AdvanceUntilFailureContainer.h"
+#endif
 #ifndef NITROGEN_CFSTRING_H
 //#include "Nitrogen/CFString.h"
 #endif
@@ -97,50 +100,30 @@ namespace Nitrogen {
 	
 	void GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& info);
 	
-	class Process_Container
+	class Process_ContainerSpecifics
 	{
 		public:
-			class const_iterator
-			{
-				public:
-					typedef ProcessSerialNumber value_type;
-					typedef void difference_type;
-					typedef const value_type *pointer;
-					typedef const value_type& reference;
-					typedef std::forward_iterator_tag iterator_category;
-				
-				private:
-					value_type value;
-					
-					void Increment()
-					{
-						try
-						{
-							value = GetNextProcess( value );
-						}
-						catch ( ErrorCode< OSStatus, procNotFound > )
-						{
-							value = NoProcess();
-						}
-					}
-				
-				public:
-					const_iterator() : value( NoProcess() )  {}
-					
-					const_iterator& operator++()    { Increment();  return *this; }
-					const_iterator operator++(int)  { const_iterator old = *this;  operator++();  return old; }
-					
-					reference operator*() const  { return value; }
-					pointer operator->() const   { return &value; }
-					
-					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.value == b.value; }
-					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
-			};
-		
-			Process_Container()  {}
+			typedef ProcessSerialNumber value_type;
 			
-			const_iterator begin() const  { const_iterator first;  return ++first; }
-			const_iterator end()   const  { return const_iterator(); }
+			typedef ErrorCode< OSStatus, procNotFound > EndOfEnumeration;
+			
+			value_type GetNextValue( const value_type& value )
+			{
+				return GetNextProcess( value );
+			}
+			
+			static value_type begin_value()  { return NoProcess(); }
+			static value_type end_value()    { return NoProcess(); }
+	};
+	
+	class Process_Container: public AdvanceUntilFailureContainer< Process_ContainerSpecifics >
+	{
+		friend Process_Container Processes();
+		
+		private:
+			Process_Container()
+			: AdvanceUntilFailureContainer< Process_ContainerSpecifics >( Process_ContainerSpecifics() )
+			{}
 	};
 	
 	inline Process_Container Processes()
