@@ -875,24 +875,20 @@ namespace Nitrogen {
 	#endif
 	}
 	
-	void AEReplaceDescData(
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize, 
-		AEDesc& result)
+	void AEReplaceDescData( DescType     typeCode,
+	                        const void*  dataPtr,
+	                        std::size_t  dataSize,
+	                        AEDesc&      result )
 	{
 		OnlyOnce< RegisterAppleEventManagerErrors >();
 	
 	#if ACCESSOR_CALLS_ARE_FUNCTIONS
 		
-		ThrowOSStatus
-		(
-			::AEReplaceDescData( typeCode, dataPtr, dataSize, &result )
-		);
+		ThrowOSStatus( ::AEReplaceDescData( typeCode, dataPtr, dataSize, &result ) );
 		
 	#else
 		
-		bool typeIsNull = typeCode == TypeNull();
+		bool typeIsNull = typeCode == typeNull;
 		bool ptrIsNull  = dataPtr  == NULL;
 		
 		// The parameters must be consistently null or non-null.
@@ -928,11 +924,10 @@ namespace Nitrogen {
 	#endif
 	}
 	
-	void AEReplaceDescData(
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize, 
-		Owned< AEDesc >& result)
+	void AEReplaceDescData( DescType          typeCode,
+	                        const void*       dataPtr,
+	                        std::size_t       dataSize,
+	                        Owned< AEDesc >&  result)
 	{
 		AEReplaceDescData( typeCode, dataPtr, dataSize, AEDescEditor( result ) );
 	}
