@@ -7,9 +7,6 @@
 #include <string>
 #include <vector>
 
-// MoreFiles
-//#include "MoreFilesExtras.h"
-
 // Nitrogen core
 #include "Nitrogen/Assert.h"
 
@@ -23,25 +20,20 @@
 #include "Orion/StandardIO.hh"
 #include "SystemCalls.hh"
 
-// Zion
-#include "Zion/FileHandle.hh"
-#include "Zion/Platform.hh"
-
 
 namespace N = Nitrogen;
 namespace O = Orion;
-namespace Z = Zion;
 
 
 static std::string ReadFileData( const FSSpec& file )
 {
-	N::Owned< N::FSFileRefNum > fileH( Z::OpenFileReadOnly( file ) );
+	N::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
 	
-	UInt32 fileSize = N::GetEOF( fileH );
+	std::size_t fileSize = N::GetEOF( fileH );
 	
 	std::vector< char > data( fileSize );
 	
-	int bytes = Io::Read( fileH, &data[ 0 ], fileSize );
+	std::size_t bytes = N::FSRead( fileH, fileSize, &data[ 0 ] );
 	
 	ASSERT( bytes == fileSize );
 	
