@@ -361,9 +361,17 @@ namespace Nitrogen {
 		return retVal;
 		}
 
-	inline Boolean HIThemeGetWindowRegionHit ( const HIRect &inContRect, const HIThemeWindowDrawInfo &inTrackInfo,
-												const HIPoint &inPoint, WindowRegionCode &outRegionHit ) {
-		return ::HIThemeGetWindowRegionHit ( &inContRect, &inTrackInfo, &inPoint, &outRegionHit );
+   struct HIThemeGetWindowRegionHit_Result
+     {
+      Boolean			 wasAnythingHit;
+      ::WindowRegionCode regionHit;
+     };
+   
+	inline HIThemeGetWindowRegionHit_Result HIThemeGetWindowRegionHit ( const HIRect &inContRect, 
+				const HIThemeWindowDrawInfo &inTrackInfo, const HIPoint &inPoint ) {
+		HIThemeGetWindowRegionHit_Result result;
+		result.wasAnythingHit = ::HIThemeGetWindowRegionHit ( &inContRect, &inTrackInfo, &inPoint, &result.regionHit );
+		return result;
 		}
 	
 

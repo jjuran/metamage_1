@@ -3,7 +3,7 @@
 #ifndef NITROGEN_ABPEOPLEPICKER_H
 #define	NITROGEN_ABPEOPLEPICKER_H
 
-#ifndef	__MACHO__
+#ifndef	__MACH__
 #error "These routines are only directly callable from MachO"
 #endif
 
@@ -25,10 +25,6 @@
 #include "Nitrogen/CFString.h"
 #endif
 
-#ifndef NITROGEN_CFTYPE_H
-#include "Nitrogen/CFType.h"
-#endif
-
 #ifndef NITROGEN_ADDRESSBOOKC_H
 #include "Nitrogen/ABAddressBookC.h"
 #endif
@@ -37,13 +33,12 @@ namespace Nitrogen {
 
 //	typedef struct OpaqueABPicker*  ABPickerRef;
 	using ::ABPickerRef;
-   template <> struct Disposer< ABPickerRef >: public std::unary_function< ABPickerRef, void >,
-                                           private DefaultDestructionOSStatusPolicy
+   template <> struct Disposer< ABPickerRef >: public std::unary_function< ABPickerRef, void >
      {
       void operator()( ABPickerRef pick ) const
         {
          OnlyOnce<RegisterAddressBookErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::CFRelease ( pick ));
+         ::CFRelease ( pick );
         }
      };
 
@@ -67,7 +62,7 @@ namespace Nitrogen {
 	 
     inline HIRect ABPickerGetFrame ( ABPickerRef inPicker ) {
 		OnlyOnce<RegisterAddressBookErrors>();
-		HIFrame result;
+		HIRect result;
 		::ABPickerGetFrame ( inPicker, &result );
 		return result;
 		}
@@ -133,7 +128,7 @@ namespace Nitrogen {
 //	extern void ABPickerSetDisplayedProperty ( ABPickerRef inPicker, CFStringRef inProperty );
 	using ::ABPickerSetDisplayedProperty;
 	
-	Owned<CFStringRef> ABPickerCopyDisplayedProperty ( ABPickerRef inPicker ) {
+	inline Owned<CFStringRef> ABPickerCopyDisplayedProperty ( ABPickerRef inPicker ) {
 		OnlyOnce<RegisterAddressBookErrors>();
 		CFStringRef result = ::ABPickerCopyDisplayedProperty ( inPicker );
 		return Owned<CFStringRef>::Seize( result );
