@@ -4,33 +4,35 @@
 #include "Nitrogen/AEInteraction.h"
 #endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
 	
-	Owned<AppleEvent> AESend(
-		const AppleEvent& appleEvent, 
-		AESendMode sendMode, 
-		AESendPriority sendPriority, 
-		long timeOutInTicks, 
-		AEIdleUPP idleProc, 
-		AEFilterUPP filterProc)
+	Owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
+	                            AESendMode         sendMode,
+	                            AESendPriority     sendPriority,
+	                            long               timeOutInTicks,
+	                            AEIdleUPP          idleProc,
+	                            AEFilterUPP        filterProc )
 	{
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		AEDesc reply;
-		ThrowOSStatus(
-			::AESend(
-				&appleEvent, 
-				&reply, 
-				sendMode, 
-				sendPriority, 
-				timeOutInTicks, 
-				idleProc, 
-				filterProc
-			)
-		);
-		return Owned<AppleEvent>::Seize( reply );
+		
+		ThrowOSStatus( ::AESend( &appleEvent,
+		                         &reply,
+		                         sendMode,
+		                         sendPriority,
+		                         timeOutInTicks,
+		                         idleProc,
+		                         filterProc ) );
+		
+		return Owned< AppleEvent >::Seize( reply );
 	}
 	
 	void AEProcessAppleEvent( const EventRecord& event )
 	{
+		OnlyOnce< RegisterAppleEventManagerErrors >();
+		
 		ThrowOSStatus( ::AEProcessAppleEvent( &event ) );
 	}
 	
