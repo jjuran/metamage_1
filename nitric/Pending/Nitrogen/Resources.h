@@ -40,7 +40,7 @@ namespace Nitrogen
 	void RegisterResourceManagerErrors();
 	
 	class ResFileRefNum_Tag {};
-	typedef IDType< ResFileRefNum_Tag, ::ResFileRefNum, -1 > ResFileRefNum;
+	typedef IDType< ResFileRefNum_Tag, ::ResFileRefNum, kResFileNotOpened > ResFileRefNum;
 	
 	class ResID_Tag {};
 	typedef IDType< ResID_Tag, ::ResID, 0 > ResID;
@@ -59,10 +59,10 @@ namespace Nitrogen
 	struct ResourceReleaser : public std::unary_function< Handle, void >, 
 	                          private DefaultDestructionOSStatusPolicy
 	{
-		void operator()( Handle h ) const
+		void operator()( Handle r ) const
 		{
 			OnlyOnce< RegisterResourceManagerErrors >();
-			::ReleaseResource( h );
+			::ReleaseResource( r );
 			HandleDestructionOSStatus( ::ResError() );
 		}
 	};
@@ -79,108 +79,169 @@ namespace Nitrogen
 		}
 	};
 	
-	Handle CheckResource( Handle h );
+	Handle CheckResource( Handle r );
 	
 	template < class T >
-	T** CheckResource( T** h )
+	T** CheckResource( T** r )
 	{
-		return Handle_Cast< T >( CheckResource( Handle( h ) ) );
+		return Handle_Cast< T >( CheckResource( Handle( r ) ) );
 	}
 	
-	// 185
+	// InitResources
+	// RsrcZoneInit
+	
 	void CloseResFile( Owned< ResFileRefNum > resFileRefNum );
 	
-	// 197
 	void ResError();
 	
-	// 209
 	ResFileRefNum CurResFile();
 	
-	// 260
+	ResFileRefNum HomeResFile( Handle r );
+	
+	// CreateResFile -- not implemented; use FSpCreateResFile
+	// OpenResFile   -- not implemented; use FSpOpenResFile
+	
 	void UseResFile( ResFileRefNum resFileRefNum );
 	
-	// 272
 	short CountTypes();
 	
-	// 284
 	short Count1Types();
 	
-	// 296
 	ResType GetIndType( short index );
 	
-	// 310
 	ResType Get1IndType( short index );
 	
-	// 336
-	short CountResources( ResType type );
+	// SetResLoad
 	
-	// 348
+	short CountResources ( ResType type );
 	short Count1Resources( ResType type );
 	
-	// 360
-	Handle GetIndResource( ResType type, short index );
-	
-	// 374
+	Handle GetIndResource ( ResType type, short index );
 	Handle Get1IndResource( ResType type, short index );
 	
-	// 388
-	Handle GetResource( ResType type, ResID resID );
-	
-	// 402
+	Handle GetResource ( ResType type, ResID resID );
 	Handle Get1Resource( ResType type, ResID resID );
 	
-	// 471
+	Handle GetNamedResource ( ResType type, ConstStr255Param name );
+	Handle Get1NamedResource( ResType type, ConstStr255Param name );
+	
+	inline Handle GetNamedResource( ResType type, const std::string& name )
+	{
+		return GetNamedResource( type, Str255( name ) );
+	}
+	
+	inline Handle Get1NamedResource( ResType type, const std::string& name )
+	{
+		return Get1NamedResource( type, Str255( name ) );
+	}
+	
+	void MacLoadResource( Handle r );
+	
+	void ReleaseResource( Handle r );
+	
 	void DetachResource( Owned< Handle > h );  // invalid, not defined
-	Owned< Handle >  DetachResource( Handle h );
+	Owned< Handle >  DetachResource( Handle r );
+	
+	ResID UniqueID ( ResType type );
+	ResID Unique1ID( ResType type );
+	
+	ResAttributes GetResAttrs( Handle r );
 	
 	struct GetResInfo_Result
 	{
 		ResID   id;
 		ResType type;
 		::Str255  name;
-		
-		/*
-		operator ResID           () const  { return id; }
-		operator ResType         () const  { return type; }
-		operator ConstStr255Param() const  { return name; }
-		*/
 	};
 	
-	// 519
-	GetResInfo_Result GetResInfo( Handle h );
+	GetResInfo_Result GetResInfo( Handle r );
 	
-	// 550
-	Handle AddResource( Owned< Handle > h, ResType type, ResID resID, ConstStr255Param name );
+	void SetResInfo( Handle r, ResID id, ConstStr255Param name );
+	
+	Handle AddResource( Owned< Handle >   h,
+	                    ResType           type,
+	                    ResID             resID,
+	                    ConstStr255Param  name );
+	
 	Handle AddResource( Owned< Handle > h, const GetResInfo_Result& resInfo );
 	
-	// 768
-	Owned< ResFileRefNum > FSpOpenResFile( const FSSpec&   spec,
-	                                       FSIOPermssn     permissions );
+	std::size_t GetResourceSizeOnDisk( Handle r );
 	
-	// 1256
-	Owned< ResFileRefNum > FSOpenResourceFile(
-		const FSRef& ref, 
-		UniCharCount forkNameLength, 
-		const UniChar* forkName, 
-		FSIOPermssn permissions
-	);
+	std::size_t GetMaxResourceSize( Handle r );
 	
-	Owned< ResFileRefNum > FSOpenResourceFile(
-		const FSRef& ref, 
-		const UniString& forkName, 
-		FSIOPermssn permissions
-	);
+	// RsrcMapEntry
 	
-	class ResFile_Details
+	void SetResAttrs( Handle r, ResAttributes attrs );
+	
+	void ChangedResource( Handle r );
+	
+	void RemoveResource( Owned< Handle > h );  // invalid, not defined
+	Owned< Handle > RemoveResource( Handle r );
+	
+	void UpdateResFile( ResFileRefNum refNum );
+	
+	void WriteResource( Handle r );
+	
+	void SetResPurge( bool install );
+	
+	ResFileAttributes GetResFileAttrs( ResFileRefNum refNum );
+	
+	void SetResFileAttrs( ResFileRefNum refNum, ResFileAttributes attrs );
+	
+	// OpenRFPerm     -- not implemented; use FSpOpenRF
+	// RGetResource
+	// HOpenResFile   -- not implemented; use FSpOpenResFile
+	// HCreateResFile -- not implemented; use FSpCreateResFile
+	
+	Owned< ResFileRefNum > FSpOpenResFile( const FSSpec&  spec,
+	                                       FSIOPermssn    permissions );
+	
+	void FSpCreateResFile( const FSSpec&  spec,
+	                       OSType         creator   = 'RSED',
+	                       OSType         type      = 'rsrc',
+	                       ScriptCode     scriptTag = ScriptCode( smSystemScript ) );
+	
+	// ReadPartialResource
+	// WritePartialResource
+	// SetResourceSize
+	// GetNextFOND
+	// RegisterResourceEndianFilter
+	// TempInsertROMMap
+	// InsertResourceFile
+	// DetachResourceFile
+	// FSpResourceFileAlreadyOpen
+	// FSpOpenOrphanResFile
+	// GetTopResourceFile
+	// GetNextResourceFile
+	
+	Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
+	                                           UniCharCount    forkNameLength,
+	                                           const UniChar*  forkName,
+	                                           FSIOPermssn     permissions );
+	
+	Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref,
+	                                           const UniString&  forkName,
+	                                           FSIOPermssn       permissions );
+	
+	// FSCreateResFile
+	// FSResourceFileAlreadyOpen
+	// FSCreateResourceFile
+	// FSOpenResourceFile
+	
+	class ResFile_Value
 	{
 		public:
 			typedef ResFileRefNum Value;
-			typedef Value GetResult;
-			typedef Value SetParameter;
+			typedef ResFileRefNum GetResult;
+			typedef ResFileRefNum SetParameter;
+			
+			static const bool hasSwap = false;
 			
 			GetResult Get() const                        { return CurResFile();   }
 			void Set( SetParameter resFile ) const       { UseResFile( resFile ); }
 	};
+	
+	typedef ResFile_Value ResFile_Details;
 	
 	typedef Pseudoreference< ResFile_Details > ResFile;
 	

@@ -14,14 +14,15 @@
 namespace Nitrogen
 {
 	
-	Handle CheckResource( Handle h )
+	Handle CheckResource( Handle r )
 	{
-		if ( NULL == h.Get ())
+		if ( NULL == r.Get ())
 		{
 			ResError();
 			throw ResNotFound();
 		}
-		return h;
+		
+		return r;
 	}
 	
 	void CloseResFile( Owned< ResFileRefNum > resFileRefNum )
@@ -34,6 +35,7 @@ namespace Nitrogen
 	void ResError()
 	{
 		OnlyOnce< RegisterResourceManagerErrors >();
+		
 		ThrowOSStatus( ::ResError() );
 	}
 	
@@ -41,12 +43,21 @@ namespace Nitrogen
 	{
 		ResFileRefNum refNum( ::CurResFile() );
 		ResError();
+		
+		return refNum;
+	}
+	
+	ResFileRefNum HomeResFile( Handle r )
+	{
+		ResFileRefNum refNum( ::HomeResFile( r ) );
+		ResError();
+		
 		return refNum;
 	}
 	
 	void UseResFile( ResFileRefNum resFileRefNum )
 	{
-		::UseResFile(resFileRefNum);
+		::UseResFile( resFileRefNum );
 		ResError();
 	}
 	
@@ -63,6 +74,7 @@ namespace Nitrogen
 	{
 		short count = ::Count1Types();
 		ResError();
+		
 		return count;
 	}
 	
@@ -120,29 +132,85 @@ namespace Nitrogen
 		return Handle( CheckResource( ::Get1Resource( type, resID ) ) );
 	}
 	
-	GetResInfo_Result GetResInfo( Handle h )
+	Handle GetNamedResource( ResType type, ConstStr255Param name )
+	{
+		return Handle( CheckResource( ::GetNamedResource( type, name ) ) );
+	}
+	
+	Handle Get1NamedResource( ResType type, ConstStr255Param name )
+	{
+		return Handle( CheckResource( ::Get1NamedResource( type, name ) ) );
+	}
+	
+	void MacLoadResource( Handle r )
+	{
+		::MacLoadResource( r );
+		ResError();
+	}
+	
+	void ReleaseResource( Handle r )
+	{
+		::ReleaseResource( r );
+		ResError();
+	}
+	
+	Owned< Handle > DetachResource( Handle r )
+	{
+		::DetachResource( r );
+		ResError();
+		
+		return Owned< Handle >::Seize( r );
+	}
+	
+	ResID UniqueID ( ResType type )
+	{
+		ResID resID( ::UniqueID( type ) );
+		ResError();
+		
+		return resID;
+	}
+	
+	ResID Unique1ID ( ResType type )
+	{
+		ResID resID( ::Unique1ID( type ) );
+		ResError();
+		
+		return resID;
+	}
+	
+	ResAttributes GetResAttrs( Handle r )
+	{
+		ResAttributes attrs( ::GetResAttrs( r ) );
+		ResError();
+		
+		return attrs;
+	}
+	
+	GetResInfo_Result GetResInfo( Handle r )
 	{
 		GetResInfo_Result result;
 		::ResID id;
 		::ResType type;
 		
-		::GetResInfo( h, &id, &type, result.name );
+		::GetResInfo( r, &id, &type, result.name );
 		ResError();
 		
 		result.id   = ResID  ( id   );
 		result.type = ResType( type );
+		
 		return result;
 	}
 	
-	Owned< Handle > DetachResource(Handle h)
+	void SetResInfo( Handle r, ResID id, ConstStr255Param name )
 	{
-		::DetachResource( h );
+		::SetResInfo( r, id, name );
 		ResError();
-		
-		return Owned< Handle >::Seize( h );
 	}
 	
-	Handle AddResource( Owned< Handle > h, ResType type, ResID resID, ConstStr255Param name )
+	Handle AddResource( Owned< Handle >   h,
+	                    ResType           type,
+	                    ResID             resID,
+	                    ConstStr255Param  name )
 	{
 		::AddResource( h.Get(), type, resID, name );
 		ResError();
@@ -153,6 +221,83 @@ namespace Nitrogen
 	Handle AddResource( Owned< Handle > h, const GetResInfo_Result& resInfo )
 	{
 		return AddResource( h, resInfo.type, resInfo.id, resInfo.name );
+	}
+	
+	std::size_t GetResourceSizeOnDisk( Handle r )
+	{
+		std::size_t size( ::GetResourceSizeOnDisk( r ) );
+		ResError();
+		
+		return size;
+	}
+	
+	std::size_t GetMaxResourceSize( Handle r )
+	{
+		std::size_t size( ::GetMaxResourceSize( r ) );
+		ResError();
+		
+		return size;
+	}
+	
+	void SetResAttrs( Handle r, ResAttributes attrs )
+	{
+		::SetResAttrs( r, attrs );
+		ResError();
+	}
+	
+	void ChangedResource( Handle r )
+	{
+		::ChangedResource( r );
+		ResError();
+	}
+	
+	Owned< Handle > RemoveResource( Handle r )
+	{
+		// New Inside Macintosh says that after calling RemoveResource() on a
+		// resource handle, the memory will be released either by calling DisposeHandle,
+		// or automatically when UpdateResFile (which is called by CloseResFile) is called.
+		// Marshall informs me as of 2005-01-19 that the latter does not happen.
+		// Therefore, the handle is a pure Memory Manager handle which must be disposed
+		// by the application, and consequently is Owned.
+		
+		// <http://developer.apple.com/documentation/mac/MoreToolbox/MoreToolbox-87.html>
+		
+		::RemoveResource( r );
+		ResError();
+		
+		return Owned< Handle >::Seize( r );
+	}
+	
+	void UpdateResFile( ResFileRefNum refNum )
+	{
+		::UpdateResFile( refNum );
+		ResError();
+	}
+	
+	void WriteResource( Handle r )
+	{
+		::WriteResource( r );
+		ResError();
+	}
+	
+	void SetResPurge( bool install )
+	{
+		::SetResPurge( install );
+		ResError();
+	}
+	
+	ResFileAttributes GetResFileAttrs( ResFileRefNum refNum )
+	{
+		ResFileAttributes attrs( ::GetResFileAttrs( refNum ) );
+		ResError();
+		
+		return attrs;
+	}
+	
+	void SetResFileAttrs( ResFileRefNum refNum, ResFileAttributes attrs )
+	{
+		::SetResFileAttrs( refNum, attrs );
+		ResError();
 	}
 	
 	Owned< ResFileRefNum > FSpOpenResFile( const FSSpec& spec, FSIOPermssn permissions )
@@ -170,7 +315,12 @@ namespace Nitrogen
 	                                           FSIOPermssn     permissions )
 	{
 		::ResFileRefNum refNum;
-		ThrowOSStatus( ::FSOpenResourceFile( &ref, forkNameLength, forkName, permissions, &refNum ) );
+		ThrowOSStatus( ::FSOpenResourceFile( &ref,
+		                                     forkNameLength,
+		                                     forkName,
+		                                     permissions,
+		                                     &refNum ) );
+		
 		return Owned< ResFileRefNum >::Seize( ResFileRefNum( refNum ) );
 	}
 	
@@ -178,7 +328,10 @@ namespace Nitrogen
 	                                           const UniString&  forkName, 
 	                                           FSIOPermssn       permissions )
 	{
-		return FSOpenResourceFile( ref, forkName.size(), forkName.data(), permissions );
+		return FSOpenResourceFile( ref,
+		                           forkName.size(),
+		                           forkName.data(),
+		                           permissions );
 	}
 	
 	void RegisterResourceManagerErrors()
