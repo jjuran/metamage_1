@@ -230,7 +230,9 @@ namespace Nitrogen {
 	inline HIThemeHitTestTrack_Result HIThemeHitTestTrack ( const HIThemeTrackDrawInfo &inDrawInfo, const HIPoint &inMousePoint ) {
      	OnlyOnce<RegisterHIThemeErrors>();
 		HIThemeHitTestTrack_Result retVal;
-		retVal.trackWasHit = ::HIThemeHitTestTrack ( &inDrawInfo, &inMousePoint, &retVal.trackPartHit );
+		::ControlPartCode trackPartHit;
+		retVal.trackWasHit	= ::HIThemeHitTestTrack ( &inDrawInfo, &inMousePoint, &trackPartHit );
+		retVal.trackPartHit = trackPartHit;
 		return retVal;
 		}
 
@@ -257,7 +259,7 @@ namespace Nitrogen {
 		}
 
 	inline UInt32 HIThemeGetTrackParts ( const HIThemeTrackDrawInfo &inDrawInfo, 
-								UInt32 ioMaxParts, ControlPartCode *ioPartsBuffer ) {
+								UInt32 ioMaxParts, ::ControlPartCode *ioPartsBuffer ) {
      	OnlyOnce<RegisterHIThemeErrors>();
 		UInt32 retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackParts ( &inDrawInfo, &retVal, ioMaxParts, ioPartsBuffer ));
@@ -310,8 +312,10 @@ namespace Nitrogen {
 					const HIScrollBarTrackInfo &inTrackInfo, Boolean inIsHoriz, const HIPoint &inPtHit ) {
      	OnlyOnce<RegisterHIThemeErrors>();
 		HIThemeHitTestScrollBarArrows_Result retVal;
+		::ControlPartCode	partCode;
 		retVal.controlWasHit = ::HIThemeHitTestScrollBarArrows ( &inBounds, &inTrackInfo, inIsHoriz, &inPtHit,
-											&retVal.trackBounds, &retVal.partCode );
+											&retVal.trackBounds, &partCode );
+		retVal.partCode = partCode;
 		return retVal;
 		}
 	

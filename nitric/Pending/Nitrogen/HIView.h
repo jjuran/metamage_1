@@ -158,7 +158,7 @@ namespace Nitrogen {
 	inline ControlPartCode HIViewSimulateClick ( HIViewRef inView, 
 				HIViewPartCode inPartToClick, UInt32 inModifiers ) {
      	OnlyOnce<RegisterHIViewErrors>();
-		ControlPartCode retVal;
+		::ControlPartCode retVal;
 		ThrowOSStatus ( ::HIViewSimulateClick ( inView, inPartToClick, inModifiers, &retVal ));
 		return retVal;
 		}
