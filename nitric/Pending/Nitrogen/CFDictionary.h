@@ -19,6 +19,7 @@ namespace Nitrogen
    using ::CFDictionaryGetTypeID;
    template <> struct OwnedDefaults< CFDictionaryRef >: OwnedDefaults< CFTypeRef >  {};
    template <> struct CFType_Traits< CFDictionaryRef >: Basic_CFType_Traits< CFDictionaryRef, ::CFDictionaryGetTypeID > {};
+   inline void CFShow( const CFDictionaryRef d )        { ::CFShow( d ); }
 
    class CFDictionaryCreate_Failed {};
    Owned<CFDictionaryRef> CFDictionaryCreate ( CFAllocatorRef allocator, const void **keys, const void **values, CFIndex numValues, 
@@ -27,6 +28,7 @@ namespace Nitrogen
    using ::CFMutableDictionaryRef;
    template <> struct OwnedDefaults< CFMutableDictionaryRef >: OwnedDefaults< CFTypeRef >  {};
    template <> struct CFType_Traits< CFMutableDictionaryRef >: Basic_CFType_Traits< CFMutableDictionaryRef, ::CFDictionaryGetTypeID > {};
+   inline void CFShow( const CFMutableDictionaryRef d ) { ::CFShow( d ); }
 
    class CFDictionaryCreateMutable_Failed {};
    Owned<CFMutableDictionaryRef> CFDictionaryCreateMutable ( CFAllocatorRef allocator, CFIndex capacity, 
