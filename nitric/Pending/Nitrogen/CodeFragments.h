@@ -94,33 +94,109 @@ namespace Nitrogen
 	inline CFragSymbolClass TOCCFragSymbol()      { return CFragSymbolClass::Make( kTOCCFragSymbol     ); }
 	inline CFragSymbolClass GlueCFragSymbol()     { return CFragSymbolClass::Make( kGlueCFragSymbol    ); }
 	
-	template < class SymbolAddress = void* >
-	struct FindSymbol_Result
+	// Opaque pointer type
+	typedef struct SymbolAddress* SymbolAddressPtr;
+	
+	// 333
+	void GetDiskFragment( const FSSpec& file, 
+	                      std::size_t offset, 
+	                      std::size_t length, 
+	                      ConstStr63Param fragName, 
+	                      CFragLoadOptions findFlags, 
+	                      CFragConnectionID* connID = NULL, 
+	                      SymbolAddressPtr* mainAddr = NULL, 
+	                      ::Str255 errName = NULL );
+	
+	template < ::CFragLoadOptions findFlags >  struct GetDiskFragment_Traits;
+	
+	struct Shared_Connection_Traits
 	{
-		SymbolAddress symAddr;
-		::CFragSymbolClass symClass;
+		typedef CFragConnectionID Result;
 		
-		operator SymbolAddress() const  { return symAddr; }
+		static Result MakeResult( CFragConnectionID connID )  { return connID; }
 	};
 	
-	FindSymbol_Result<> FindSymbol( CFragConnectionID id, const unsigned char* name );
+	template <>  struct GetDiskFragment_Traits< kReferenceCFrag > : Shared_Connection_Traits {};
+	template <>  struct GetDiskFragment_Traits< kFindCFrag      > : Shared_Connection_Traits {};
 	
-	template < class SymbolAddress >
-	FindSymbol_Result< SymbolAddress > FindSymbol( CFragConnectionID id, const unsigned char* name )
+	template <>  struct GetDiskFragment_Traits< kPrivateCFragCopy >
 	{
-		FindSymbol_Result< SymbolAddress > result;
-		FindSymbol_Result<> oldResult = FindSymbol( id, name );
+		typedef Owned< CFragConnectionID > Result;
 		
-		// The double reinterpret_cast is necessary if SymbolAddress is a 
-		// pointer-to-function.  Gcc doesn't like casting a pointer-to-object
-		// to a pointer-to-function, so we use long as an intermediary.
-		result.symAddr = reinterpret_cast< SymbolAddress >
+		static Result MakeResult( CFragConnectionID connID )
+		{
+			return Owned< CFragConnectionID >::Seize( connID );
+		}
+	};
+	
+	template < ::CFragLoadOptions findFlags, class MainAddrType >
+	typename GetDiskFragment_Traits< findFlags >::Result GetDiskFragment
+	(
+		const FSSpec&    file, 
+		std::size_t      offset, 
+		std::size_t      length, 
+		ConstStr63Param  fragName, 
+	    MainAddrType*    mainAddr, 
+	    ::Str255         errName  = NULL )
+	{
+		typedef GetDiskFragment_Traits< findFlags > Traits;
+		
+		CFragConnectionID connID;
+		SymbolAddressPtr tempMainAddr;
+		
+		GetDiskFragment
 		(
-			reinterpret_cast< long >( oldResult.symAddr )
+			file, offset, length, fragName, CFragLoadOptions( findFlags ), 
+			&connID, &tempMainAddr, errName
 		);
-		result.symClass = oldResult.symClass;
 		
-		return result;
+		if ( mainAddr != NULL )
+		{
+			*mainAddr = reinterpret_cast< MainAddrType >( tempMainAddr );
+		}
+		
+		return Traits::MakeResult( connID );
+	}
+	
+	template < ::CFragLoadOptions findFlags >
+	typename GetDiskFragment_Traits< findFlags >::Result GetDiskFragment
+	(
+		const FSSpec&    file, 
+		std::size_t      offset   = 0, 
+		std::size_t      length   = kCFragGoesToEOF, 
+		ConstStr63Param  fragName = NULL, 
+	    ::Str255         errName  = NULL )
+	{
+		return GetDiskFragment< findFlags, SymbolAddressPtr >
+		(
+			file, offset, length, fragName, NULL, errName
+		);
+	}
+	
+	// 384
+	void FindSymbol( CFragConnectionID  connID, 
+	                 ConstStr255Param   symName, 
+	                 SymbolAddressPtr*  symAddr, 
+	                 CFragSymbolClass*  symClass );
+	
+	template < class SymAddrType >
+	void FindSymbol( CFragConnectionID  connID, 
+	                 ConstStr255Param   symName, 
+	                 SymAddrType*       symAddr, 
+	                 CFragSymbolClass*  symClass = NULL )
+	{
+		SymbolAddressPtr tempSymAddr;
+		
+		FindSymbol( connID, symName, &tempSymAddr, symClass );
+		
+		if ( symAddr != NULL )
+		{
+			// The double reinterpret_cast is necessary if SymAddrType is a 
+			// pointer-to-function.  Gcc doesn't like casting a pointer-to-object
+			// to a pointer-to-function, so we use long as an intermediary.
+			
+			*symAddr = reinterpret_cast< SymAddrType >( reinterpret_cast< long >( tempSymAddr ) );
+		}
 	}
 	
 }

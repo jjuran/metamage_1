@@ -14,20 +14,54 @@
 namespace Nitrogen
 {
 	
-	FindSymbol_Result<> FindSymbol( CFragConnectionID id, const unsigned char* name )
+	void GetDiskFragment( const FSSpec& file, 
+	                      std::size_t offset, 
+	                      std::size_t length, 
+	                      ConstStr63Param fragName, 
+	                      CFragLoadOptions findFlags, 
+	                      CFragConnectionID* connID, 
+	                      SymbolAddressPtr* mainAddr, 
+	                      ::Str255 errName )
 	{
 		OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
-		::Ptr symAddr;
-		::CFragSymbolClass symClass;
+		::Ptr tempMainAddr;
 		
-		ThrowOSStatus( ::FindSymbol( id, name, &symAddr, &symClass ) );
+		ThrowOSStatus
+		(
+			::GetDiskFragment
+			(
+				&file, offset, length, fragName, findFlags, connID, &tempMainAddr, errName
+			)
+		);
 		
-		FindSymbol_Result<> result;
-		result.symAddr  = symAddr;
-		result.symClass = symClass;
+		if ( mainAddr != NULL )
+		{
+			*mainAddr = reinterpret_cast< SymbolAddressPtr >( tempMainAddr );
+		}
+	}
+	
+	void FindSymbol( CFragConnectionID  connID, 
+	                 ConstStr255Param   symName, 
+	                 SymbolAddressPtr*  symAddr, 
+	                 CFragSymbolClass*  symClass )
+	{
+		OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
-		return result;
+		::Ptr tempSymAddr;
+		::CFragSymbolClass tempSymClass;
+		
+		ThrowOSStatus( ::FindSymbol( connID, symName, &tempSymAddr, &tempSymClass ) );
+		
+		if ( symAddr != NULL )
+		{
+			*symAddr = reinterpret_cast< SymbolAddressPtr >( tempSymAddr );
+		}
+		
+		if ( symClass != NULL )
+		{
+			*symClass = CFragSymbolClass( tempSymClass );
+		}
 	}
 	
 	void RegisterCodeFragmentManagerErrors()
