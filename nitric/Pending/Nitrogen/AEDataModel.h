@@ -12,9 +12,6 @@
 #ifndef __EVENTS__
 #include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
-#ifndef __PROCESSES__
-#include FRAMEWORK_HEADER(HIServices,Processes.h)
-#endif
 
 #if CALL_NOT_IN_CARBON
 #ifndef __EPPC__
@@ -42,6 +39,9 @@
 #endif
 #ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
+#endif
+#ifndef NITROGEN_PROCESSES_H
+#include "Nitrogen/Processes.h"
 #endif
 
 #include <string>
@@ -344,6 +344,7 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeEventRecord >            : POD_DescType_Traits< EventRecord >                   {};
    template<> struct DescType_Traits< typeEnumerated >             : Converting_DescType_Traits< AEEnumerated, UInt32 >   {};
    template<> struct DescType_Traits< typeType >                   : Converting_DescType_Traits< DescType, ::DescType >   {};
+   template<> struct DescType_Traits< typeAppParameters >          : VariableLengthPOD_DescType_Traits< AppParameters, SizeOf_AppParameters > {};
    template<> struct DescType_Traits< typeFSS >                    : POD_DescType_Traits< FSSpec >                        {};
    template<> struct DescType_Traits< typeFSRef >                  : POD_DescType_Traits< FSRef >                         {};
    template<> struct DescType_Traits< typeKeyword >                : Converting_DescType_Traits< AEKeyword, ::AEKeyword > {};
@@ -661,6 +662,27 @@ namespace Nitrogen
 		Traits::ReleaseOutputBuffer( buffer );
 		
 		return desc;
+	}
+	
+	template < ::DescType type >
+	void AEPutPtr(
+		Owned< AEDescList >& list, 
+		long index, 
+		typename DescType_Traits< type >::Parameter data)
+	{
+		typedef DescType_Traits< type > Traits;
+		
+		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		
+		AEPutPtr(
+			list, 
+			index, 
+			type, 
+			Traits::OutputBufferStart( buffer ), 
+			Traits::OutputBufferLength( buffer )
+		);
+		
+		Traits::ReleaseOutputBuffer( buffer );
 	}
 	
 	template < ::DescType type >
