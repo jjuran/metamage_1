@@ -16,10 +16,6 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
-#ifndef NITROGEN_SCOPED_H
-#include "Nitrogen/Scoped.h"
-#endif
-
 #if TARGET_RT_MAC_MACHO || TARGET_API_MAC_OSX
 #ifndef NITROGEN_CGDIRECTDISPLAY_H
 #include "Nitrogen/CGDirectDisplay.h"
@@ -114,23 +110,32 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Owned<RgnHandle> NewRgn(void) {
-		OnlyOnce<RegisterQuickDrawErrors> ();
-		RgnHandle result = ::NewRgn ();
+	Owned< RgnHandle > NewRgn(void)
+	{
+		OnlyOnce< RegisterQuickDrawErrors >();
+		
+		RgnHandle result = ::NewRgn();
+		
 		if ( result == NULL )
-			throw MemFullErr ();
-		return Owned<RgnHandle>::Seize ( result );
+		{
+			throw MemFullErr();
 		}
+		
+		return Owned< RgnHandle >::Seize( result );
+	}
 	
-	Owned<RgnHandle> MacCopyRgn ( RgnHandle srcRgn ) {
-		Owned<RgnHandle> result = Owned<RgnHandle>::Seize ( ::NewRgn ());
-		::MacCopyRgn ( srcRgn, result );
+	Owned< RgnHandle > MacCopyRgn( RgnHandle srcRgn )
+	{
+		Owned< RgnHandle > result = NewRgn();
+		::MacCopyRgn( srcRgn, result );
+		
 		return result;
-		}
+	}
 	
 	RgnHandle RectRgn( RgnHandle region, const Rect& rect )
 	{
 		::RectRgn( region, &rect );
+		
 		return region;
 	}
 	
@@ -138,20 +143,23 @@ namespace Nitrogen
 	{
 		Owned< RgnHandle > result = NewRgn();
 		::RectRgn( result, &rect );
+		
 		return result;
 	}
 	
 	Owned< RgnHandle > SectRgn( RgnHandle a, RgnHandle b )
 	{
 		Owned< RgnHandle > result = NewRgn();
-		SectRgn( a, b, result );
+		::SectRgn( a, b, result );
+		
 		return result;
 	}
 	
 	Owned< RgnHandle > DiffRgn( RgnHandle a, RgnHandle b )
 	{
 		Owned< RgnHandle > result = NewRgn();
-		DiffRgn( a, b, result );
+		::DiffRgn( a, b, result );
+		
 		return result;
 	}
 	
@@ -164,17 +172,16 @@ namespace Nitrogen
 	{
 		Owned< RgnHandle > region = NewRgn();
 		ScrollRect( r, dh, dv, region );
+		
 		return region;
 	}
 	
-	void CopyBits
-	(
-		const BitMap* srcBits, 
-		const BitMap* dstBits, 
-		const Rect& srcRect, 
-		const Rect& dstRect, 
-		TransferMode mode, 
-		RgnHandle maskRgn )
+	void CopyBits( const BitMap* srcBits,
+	               const BitMap* dstBits,
+	               const Rect& srcRect,
+	               const Rect& dstRect,
+	               TransferMode mode,
+	               RgnHandle maskRgn )
 	{
 		::CopyBits( srcBits, dstBits, &srcRect, &dstRect, mode, maskRgn );
 	}
@@ -182,49 +189,39 @@ namespace Nitrogen
 	Point LocalToGlobal( Point point )
 	{
 		::LocalToGlobal( &point );
+		
 		return point;
 	}
 	
 	Rect LocalToGlobal( const Rect& rect )
 	{
-		return MacSetRect
-		(
-			LocalToGlobal( SetPt( rect.left,  rect.top    ) ), 
-			LocalToGlobal( SetPt( rect.right, rect.bottom ) )
-		);
+		return MacSetRect( LocalToGlobal( SetPt( rect.left,  rect.top    ) ),
+		                   LocalToGlobal( SetPt( rect.right, rect.bottom ) ) );
 	}
 	
 	Point GlobalToLocal( Point point )
 	{
 		::GlobalToLocal( &point );
+		
 		return point;
 	}
 	
 	Rect GlobalToLocal( const Rect& rect )
 	{
-		return MacSetRect
-		(
-			GlobalToLocal( SetPt( rect.left,  rect.top    ) ), 
-			GlobalToLocal( SetPt( rect.right, rect.bottom ) )
-		);
+		return MacSetRect( GlobalToLocal( SetPt( rect.left,  rect.top    ) ),
+		                   GlobalToLocal( SetPt( rect.right, rect.bottom ) ) );
 	}
 	
 	Point AddPt( Point a, Point b )
 	{
-		return SetPt
-		(
-			a.h + b.h, 
-			a.v + b.v
-		);
+		return SetPt( a.h + b.h,
+		              a.v + b.v );
 	}
 	
 	Point SubPt( Point a, Point b )
 	{
-		return SetPt
-		(
-			a.h - b.h, 
-			a.v - b.v
-		);
+		return SetPt( a.h - b.h,
+		              a.v - b.v );
 	}
 	
 	CursHandle MacGetCursor( ResID id )
@@ -248,6 +245,7 @@ namespace Nitrogen
 		
 		RGBColor result;
 		::GetPortForeColor( port, &result );
+		
 		return result;
 		
 	#else
@@ -263,6 +261,7 @@ namespace Nitrogen
 		
 		RGBColor result;
 		::GetPortBackColor( port, &result );
+		
 		return result;
 		
 	#else
@@ -281,6 +280,7 @@ namespace Nitrogen
 	#else
 		
 		::MacCopyRgn( ::GrafPtr( port )->visRgn, region );
+		
 		return region;
 		
 	#endif
@@ -290,6 +290,7 @@ namespace Nitrogen
 	{
 		Owned< RgnHandle > region = NewRgn();
 		(void)Nitrogen::GetPortVisibleRegion( port, region );
+		
 		return region;
 	}
 	
@@ -301,9 +302,8 @@ namespace Nitrogen
 		
 	#else
 		
-		//Scoped< ::GrafPtr& > thePort( qd.thePort, port );
-		//GetClip( region );
 		::MacCopyRgn( ::GrafPtr( port )->clipRgn, region );
+		
 		return region;
 		
 	#endif
@@ -313,19 +313,25 @@ namespace Nitrogen
 	{
 		Owned< RgnHandle > region = NewRgn();
 		Nitrogen::GetPortClipRegion( port, region );
+		
 		return region;
 	}
 	
-#if TARGET_CPU_PPC
-	
 	Point GetPortPenSize( CGrafPtr port )
 	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
 		Point result;
-		::GetPortPenSize( port, &result );
+		(void)::GetPortPenSize( port, &result );
+		
 		return result;
+		
+	#else
+		
+		return ::GrafPtr( port )->pnSize;
+		
+	#endif
 	}
-	
-#endif
 	
 	bool IsPortColor( CGrafPtr port )
 	{
@@ -451,9 +457,10 @@ namespace Nitrogen
 	
 #endif
 	
-	void RegisterQuickDrawErrors () {
+	void RegisterQuickDrawErrors()
+	{
 		RegisterOSStatus< memFullErr >();
-		}
+	}
   
   }
 
