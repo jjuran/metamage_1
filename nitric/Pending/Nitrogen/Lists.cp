@@ -1,8 +1,12 @@
 // Lists.cp
 
+#ifndef NITROGEN_LISTS_H
 #include "Nitrogen/Lists.h"
+#endif
 
+#ifndef NITROGEN_CONTROLS_H
 #include "Nitrogen/Controls.h"
+#endif
 
 
 namespace Nitrogen
@@ -42,20 +46,25 @@ namespace Nitrogen
 		}
 	}
 	
-	Owned< ListHandle > LNew
-	(
-		const Rect& rView, 
-		const ListBounds& dataBounds, 
-		Point cSize, 
-		ResID theProc, 
-		WindowRef theWindow, 
-		bool drawIt, 
-		bool hasGrow, 
-		bool scrollHoriz, 
-		bool scrollVert
-	)
+	Owned< ListHandle > LNew( const Rect&        rView,
+	                          const ListBounds&  dataBounds,
+	                          Point              cSize,
+	                          ResID              theProc,
+	                          WindowRef          theWindow,
+	                          bool               drawIt,
+	                          bool               hasGrow,
+	                          bool               scrollHoriz,
+	                          bool               scrollVert )
 	{
-		ListHandle list = ::LNew( &rView, &dataBounds, cSize, theProc, theWindow, drawIt, hasGrow, scrollHoriz, scrollVert );
+		ListHandle list = ::LNew( &rView,
+		                          &dataBounds,
+		                          cSize,
+		                          theProc,
+		                          theWindow,
+		                          drawIt,
+		                          hasGrow,
+		                          scrollHoriz,
+		                          scrollVert );
 		
 		// FIXME:  Check for null handle
 		
@@ -97,6 +106,11 @@ namespace Nitrogen
 		::LGetCellDataLocation( &result.offset, &result.len, cell, lHandle );
 		
 		return result;
+	}
+	
+	void RegisterListManagerErrors()
+	{
+		
 	}
 	
 }

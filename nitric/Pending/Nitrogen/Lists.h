@@ -11,13 +11,21 @@
 #endif
 
 // Nitrogen
+#ifndef NITROGEN_EVENTS_H
 #include "Nitrogen/Events.h"
+#endif
+#ifndef NITROGEN_OWNED_H
 #include "Nitrogen/Owned.h"
+#endif
+#ifndef NITROGEN_RESOURCES_H
 #include "Nitrogen/Resources.h"
+#endif
 
 
 namespace Nitrogen
 {
+	
+	void RegisterListManagerErrors();
 	
 	using ::Cell;
 	using ::ListBounds;
@@ -36,18 +44,15 @@ namespace Nitrogen
 	
 	
 	// 436
-	Owned< ListHandle > LNew
-	(
-		const Rect& rView, 
-		const ListBounds& dataBounds, 
-		Point cSize, 
-		ResID theProc, 
-		WindowRef theWindow, 
-		bool drawIt, 
-		bool hasGrow, 
-		bool scrollHoriz, 
-		bool scrollVert
-	);
+	Owned< ListHandle > LNew( const Rect&        rView,
+	                          const ListBounds&  dataBounds,
+	                          Point              cSize,
+	                          ResID              theProc,
+	                          WindowRef          theWindow,
+	                          bool               drawIt,
+	                          bool               hasGrow,
+	                          bool               scrollHoriz,
+	                          bool               scrollVert );
 	
 	// 457
 	inline void LDispose( Owned< ListHandle > )  {}
@@ -59,7 +64,10 @@ namespace Nitrogen
 	using ::LDelRow;
 	
 	// 529
-	inline bool LGetSelect( bool next, Cell& cell, ListHandle lHandle )  { return ::LGetSelect( next, &cell, lHandle ); }
+	inline bool LGetSelect( bool next, Cell& cell, ListHandle lHandle )
+	{
+		return ::LGetSelect( next, &cell, lHandle );
+	}
 	
 	// 544
 	using ::LLastClick;
@@ -71,7 +79,10 @@ namespace Nitrogen
 	void LSize( short width, short height, ListHandle list );
 	
 	// 604
-	inline void LSetDrawingMode( bool drawIt, ListHandle lHandle )  { ::LSetDrawingMode( drawIt, lHandle ); }
+	inline void LSetDrawingMode( bool drawIt, ListHandle lHandle )
+	{
+		::LSetDrawingMode( drawIt, lHandle );
+	}
 	
 	// 618, 633, 645
 	using ::LScroll;
@@ -85,11 +96,17 @@ namespace Nitrogen
 	using ::LCellSize;
 	
 	// 687
-	inline bool LClick( Point pt, EventModifiers modifiers, ListHandle lHandle )  { return ::LClick( pt, modifiers, lHandle ); }
+	inline bool LClick( Point pt, EventModifiers modifiers, ListHandle lHandle )
+	{
+		return ::LClick( pt, modifiers, lHandle );
+	}
 	
 	// 702
 	using ::LAddToCell;
-	inline void LAddToCell( const std::string& data, Cell cell, ListHandle lHandle )  { ::LAddToCell( data.data(), data.size(), cell, lHandle ); }
+	inline void LAddToCell( const std::string& data, Cell cell, ListHandle lHandle )
+	{
+		::LAddToCell( data.data(), data.size(), cell, lHandle );
+	}
 	
 	// 718
 	using ::LClrCell;
@@ -102,10 +119,16 @@ namespace Nitrogen
 	
 	// 763
 	using ::LSetCell;
-	inline void LSetCell( const std::string& data, Cell cell, ListHandle lHandle )  { ::LSetCell( data.data(), data.size(), cell, lHandle ); }
+	inline void LSetCell( const std::string& data, Cell cell, ListHandle lHandle )
+	{
+		::LSetCell( data.data(), data.size(), cell, lHandle );
+	}
 	
 	// 779
-	inline void LSetSelect( bool setIt, Cell cell, ListHandle lHandle )  { ::LSetSelect( setIt, cell, lHandle ); }
+	inline void LSetSelect( bool setIt, Cell cell, ListHandle lHandle )
+	{
+		::LSetSelect( setIt, cell, lHandle );
+	}
 	
 	// 794
 	using ::LDraw;
