@@ -16,8 +16,8 @@ namespace Nitrogen
 
       public:
          typedef typename Specifics::value_type value_type;
-         //typedef typename Specifics::size_type size_type;
-         //typedef typename Specifics::difference_type difference_type;
+         typedef typename Specifics::size_type size_type;
+         typedef typename Specifics::difference_type difference_type;
 
          typedef value_type& reference;
          typedef const value_type& const_reference;
@@ -27,8 +27,8 @@ namespace Nitrogen
             friend class AdvanceUntilFailureContainer;
  
              public:
-               //typedef AdvanceUntilFailureContainer::difference_type difference_type;
-               typedef void difference_type;
+               typedef AdvanceUntilFailureContainer::size_type size_type;
+               typedef AdvanceUntilFailureContainer::difference_type difference_type;
                typedef AdvanceUntilFailureContainer::value_type value_type;
                typedef const value_type *pointer;
                typedef const value_type& reference;
