@@ -49,6 +49,8 @@ namespace Nitrogen {
 		}
 	};
 	
+	struct OpenDefaultComponent_Failed  {};
+	
 	Owned< ComponentInstance >
 	OpenDefaultComponent( ComponentType componentType, ComponentSubType componentSubType );
 	

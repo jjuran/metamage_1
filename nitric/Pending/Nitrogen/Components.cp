@@ -22,7 +22,7 @@ namespace Nitrogen {
 		ComponentInstance component = ::OpenDefaultComponent( componentType, componentSubType );
 		if ( component == NULL )
 		{
-			throw ErrorCode< OSStatus, ::cantFindHandler >();
+			throw OpenDefaultComponent_Failed();
 		}
 		return Owned< ComponentInstance >::Seize( component );
 	}
