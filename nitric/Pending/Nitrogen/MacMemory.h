@@ -42,6 +42,9 @@ namespace Nitrogen
 			operator ::Ptr() const     { return Get(); }
 			
 			//void operator*() const       { return *ptr; }
+         
+			friend bool operator==( Ptr a, Ptr b )    { return a.Get() == b.Get(); }
+			friend bool operator!=( Ptr a, Ptr b )    { return a.Get() != b.Get(); }
 	};
 	
 	template <> struct Disposer< Ptr > : public std::unary_function< Ptr, void >,
@@ -75,6 +78,9 @@ namespace Nitrogen
          operator ::Handle() const     { return Get(); }
          
          void *operator*() const       { return *handle; }
+         
+         friend bool operator==( Handle a, Handle b )    { return a.Get() == b.Get(); }
+         friend bool operator!=( Handle a, Handle b )    { return a.Get() != b.Get(); }
      };
    
    template <> struct Disposer<Handle>: public std::unary_function< Handle, void >,
