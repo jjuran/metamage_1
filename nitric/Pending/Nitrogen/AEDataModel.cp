@@ -88,6 +88,12 @@ namespace Nitrogen {
 	Owned<AEDesc> AECreateDesc(DescType typeCode, const void* dataPtr, Size dataSize)
 	{
 		OnlyOnce<RegisterAppleEventManagerErrors>();
+		
+		if ( dataPtr == NULL )
+		{
+			throw ErrorCode< OSStatus, paramErr >();
+		}
+		
 		AEDesc desc;
 		ThrowOSStatus( ::AECreateDesc(typeCode, dataPtr, dataSize, &desc) );
 		return Owned<AEDesc>::Seize(desc);
@@ -95,6 +101,11 @@ namespace Nitrogen {
 	
 	Owned<AEDesc> AECreateDesc(DescType typeCode, ::Handle handle)
 	{
+		if ( handle == NULL )
+		{
+			throw ErrorCode< OSStatus, paramErr >();
+		}
+		
 		// FIXME:  Replace with Scoped<> when verified as working
 		//SavedHandleState savedHandleState( handle );
 		
