@@ -151,6 +151,30 @@ namespace Nitrogen
 	class OTXTIErr_Tag {};
 	typedef SelectorType< OTXTIErr_Tag, ::OTXTIErr, 0 > OTXTIErr;
 	
+	using ::ProviderRef;
+	using ::EndpointRef;
+	using ::MapperRef;
+	
+	template <>
+	struct Disposer< ProviderRef > : std::unary_function< ProviderRef, void >,
+	                                 private DefaultDestructionOSStatusPolicy
+	{
+		void operator()( ProviderRef provider ) const
+		{
+			HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
+		}
+	};
+	
+	template <> struct OwnedDefaults< EndpointRef > : OwnedDefaults< ProviderRef > {};
+	template <> struct OwnedDefaults< MapperRef   > : OwnedDefaults< ProviderRef > {};
+	
+	class OTEventCode_Tag {};
+	typedef SelectorType< OTEventCode_Tag, ::OTEventCode > OTEventCode;
+	
+	class OTXTIStates_Tag {};
+	typedef SelectorType< OTXTIStates_Tag, ::OTXTIStates, T_UNINIT > OTXTIStates;
+	typedef OTXTIStates OTXTIState;
+	
 	// ...
 	
 	using ::OTConfigurationRef;
@@ -174,21 +198,6 @@ namespace Nitrogen
 			::CloseOpenTransportInContext( context );
 		}
 	};
-	
-	template <>
-	struct Disposer< ProviderRef > : std::unary_function< OTClientContextPtr, void >,
-	                                 private DefaultDestructionOSStatusPolicy
-	{
-		void operator()( ProviderRef provider ) const
-		{
-			HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
-		}
-	};
-	
-	using ::EndpointRef;
-	
-	template <>
-	struct OwnedDefaults< EndpointRef > : OwnedDefaults< ProviderRef > {};
 	
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
@@ -255,9 +264,9 @@ namespace Nitrogen
 	
 	TEndpointInfo OTGetEndpointInfo( EndpointRef ref );
 	
-	OTResult OTGetEndpointState( EndpointRef ref );
+	OTXTIState OTGetEndpointState( EndpointRef ref );
 	
-	OTResult OTLook( EndpointRef ref );
+	OTEventCode OTLook( EndpointRef ref );
 	
 	// ...
 	
@@ -288,19 +297,19 @@ namespace Nitrogen
 	
 	void OTRcvOrderlyDisconnect( EndpointRef ref );
 	
-	OTResult OTRcv( EndpointRef  ref,
-	                void*        buf,
-	                OTByteCount  nbytes,
-	                OTFlags*     flags );
+	OTByteCount OTRcv( EndpointRef  ref,
+	                   void*        buf,
+	                   OTByteCount  nbytes,
+	                   OTFlags*     flags );
 	
-	OTResult OTRcv( EndpointRef  ref,
-	                void*        buf,
-	                OTByteCount  nbytes );
+	OTByteCount OTRcv( EndpointRef  ref,
+	                   void*        buf,
+	                   OTByteCount  nbytes );
 	
-	OTResult OTSnd( EndpointRef  ref,
-	                const void*  buf,
-	                OTByteCount  nbytes,
-	                OTFlags      flags = OTFlags( 0 ) );
+	OTByteCount OTSnd( EndpointRef  ref,
+	                   const void*  buf,
+	                   OTByteCount  nbytes,
+	                   OTFlags      flags = OTFlags( 0 ) );
 	
 	Owned< OTConfigurationRef > OTCreateConfiguration( const char* path );
 	

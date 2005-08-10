@@ -213,33 +213,36 @@ namespace Nitrogen
 		return result;
 	}
 	
-	OTResult OTRcv( EndpointRef  ref,
-	                void*        buf,
-	                OTByteCount  nbytes,
-	                OTFlags*     flags )
+	OTByteCount OTRcv( EndpointRef  ref,
+	                   void*        buf,
+	                   OTByteCount  nbytes,
+	                   OTFlags*     flags )
 	{
 		OnlyOnce< RegisterOpenTransportErrors >();
 		
-		return ThrowOTResult( ::OTRcv( ref, buf, nbytes, flags ) );
+		return OTByteCount( ThrowOTResult( ::OTRcv( ref, buf, nbytes, flags ) ) );
 	}
 	
-	OTResult OTRcv( EndpointRef  ref,
-	                void*        buf,
-	                OTByteCount  nbytes )
+	OTByteCount OTRcv( EndpointRef  ref,
+	                   void*        buf,
+	                   OTByteCount  nbytes )
 	{
 		OTFlags flags;
 		
 		return Nitrogen::OTRcv( ref, buf, nbytes, &flags );
 	}
 	
-	OTResult OTSnd( EndpointRef  ref,
-	                const void*  buf,
-	                OTByteCount  nbytes,
-	                OTFlags      flags )
+	OTByteCount OTSnd( EndpointRef  ref,
+	                   const void*  buf,
+	                   OTByteCount  nbytes,
+	                   OTFlags      flags )
 	{
 		OnlyOnce< RegisterOpenTransportErrors >();
 		
-		return ThrowOTResult( ::OTSnd( ref, (void*)buf, nbytes, flags ) );
+		return OTByteCount( ThrowOTResult( ::OTSnd( ref,
+		                                            const_cast< void* >( buf ),
+		                                            nbytes,
+		                                            flags ) ) );
 	}
 	
 	class OTCreateConfiguration_Failed {};
