@@ -34,8 +34,12 @@ using std::string;
 
 enum
 {
-	sigFinder = 'MACS', 
-	sigBBEdit = 'R*ch'
+	sigFinder       = 'MACS',
+	sigBBEdit       = 'R*ch',
+	sigTextWrangler = '!Rch',
+	
+	// FIXME
+	sigGoodTextEditor = TARGET_API_MAC_CARBON ? sigTextWrangler : sigBBEdit
 };
 
 static void OpenItemInRunningApp( const FSSpec& item, const ProcessSerialNumber& psn )
@@ -126,12 +130,12 @@ void Opener::operator()( const string& pathname ) const
 	
 	if ( options.GetFlag( optOpenInEditor ) )
 	{
-		signature = sigBBEdit;
+		signature = sigGoodTextEditor;
 	}
 	else
 	{
-		string sigParam = options.GetString( optOpenInAppWithSignature );
-		// FIXME
+		const std::string sigParam = options.GetString( optOpenInAppWithSignature );
+		signature = N::Convert< N::OSType >( sigParam );
 	}
 	
 	if ( signature != N::OSType() )
@@ -149,7 +153,7 @@ int O::Main( int argc, char const *const argv[] )
 	O::Options options = DefineOptions();
 	options.GetOptions( argc, argv );
 	
-	const vector< const char* >& params = options.GetFreeParams();
+	const std::vector< const char* >& params = options.GetFreeParams();
 	
 	std::for_each( params.begin(), params.end(), Opener( options ) );
 	
