@@ -51,7 +51,7 @@ namespace ShellShock
 	{
 		public:
 			VarArray()  {}
-			VarArray( char* const* arrayPointer ) : StringArray( arrayPointer )  {}
+			VarArray( char const* const* arrayPointer ) : StringArray( arrayPointer )  {}
 			
 			SVector::const_iterator Find( const char* name ) const;
 			SVector::iterator Find( const char* name );

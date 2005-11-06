@@ -154,6 +154,13 @@ namespace ShellShock
 		array.back() = NULL;
 	}
 	
+	void StringArray::Clear()
+	{
+		array.clear();  // Don't leave dangling pointers; clear array first
+		array.push_back( NULL );
+		strings.clear();
+	}
+	
 	void StringArray::Swap( StringArray& other )
 	{
 		std::swap( strings, other.strings );

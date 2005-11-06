@@ -11,11 +11,17 @@
 // Standard C++
 #include <functional>
 
+// POSIX
+//#include "unistd.h"
+
 // Nitrogen core
 #include "Nitrogen/Assert.h"
 
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
+
+// Kerosene
+#include "SystemCalls.hh"
 
 
 namespace ShellShock
@@ -364,15 +370,162 @@ namespace ShellShock
 		return vec;
 	}
 	
+	static bool NameMatchesPattern( const char* name, const char* pattern )
+	{
+		while ( *name && *pattern && *pattern != '*' )
+		{
+			// Breaks on ? or [
+			if ( *name != *pattern  )
+			{
+				return false;
+			}
+			
+			++name;
+			++pattern;
+		}
+		
+		if ( pattern[0] == '\0' || pattern[1] == '\0' )
+		{
+			return true;
+		}
+		
+		const char* name_end    = name    + std::strlen( name    ) - 1;
+		const char* pattern_end = pattern + std::strlen( pattern ) - 1;
+		
+		while ( name_end >= name && pattern_end >= pattern && *pattern_end != '*' )
+		{
+			// Breaks on ? or [
+			if ( *name_end != *pattern_end  )
+			{
+				return false;
+			}
+			
+			--name_end;
+			--pattern_end;
+		}
+		
+		if ( pattern == pattern_end )
+		{
+			// one char left, and must be *
+			return true;
+		}
+		
+		// Assume no match
+		return false;
+	}
+	
+	static void GetNthCatName( const N::FSDirSpec& dir, UInt32 index, StringPtr name = NULL )
+	{
+		CInfoPBRec pb;
+		
+		N::FSpGetCatInfo( dir, index, pb, name );
+	}
+	
+	static void MatchPathnames( const std::string& in_dir, const char* pattern, std::vector< std::string >& result )
+	{
+		FSSpec cwd = Path2FSS( in_dir.empty() ? "." : in_dir );
+		
+		N::FSDirSpec dir = N::Convert< N::FSDirSpec >( cwd );
+		
+		N::Str255 name;
+		
+		UInt32 index = 0;
+		
+		try
+		{
+			while ( true )
+			{
+				GetNthCatName( dir, ++index, name );  // throws fnfErr at end of dir
+				std::string cname = N::Convert< std::string >( name );
+				
+				bool matched = NameMatchesPattern( cname.c_str(), pattern );
+				
+				if ( matched )
+				{
+					result.push_back( in_dir + cname );
+				}
+			}
+		}
+		catch ( N::FNFErr& )
+		{
+			//
+		}
+		
+	}
+	
+	static void ExpandPathnames( const std::string& from_dir, const char* path, std::vector< std::string >& result )
+	{
+		//while ( *path == '/' ) continue;  // e.g. /foo//bar
+		
+		bool have_meta = false;
+		const char* slash = NULL;
+		
+		const char* p = path;
+		
+		for ( p = path;  slash == NULL && *p != '\0';  ++p )
+		{
+			switch ( *p )
+			{
+				case '/':
+					slash = p;
+					break;
+				case '*':  // fall through
+				case '?':  // fall through
+				case '[':
+					have_meta = true;
+					break;
+				default:
+					// do nothing
+					break;
+			}
+		}
+		
+		if ( !have_meta )
+		{
+			if ( slash != NULL )
+			{
+				const char* remainder = slash + 1;
+				std::string this_dir( path, remainder );
+				
+				ExpandPathnames( from_dir + this_dir, remainder, result );
+			}
+			else
+			{
+				result.push_back( from_dir + path );
+			}
+			
+			return;
+		}
+		
+		if ( slash == NULL )
+		{
+			MatchPathnames( from_dir, path, result );
+		}
+	}
+	
 	std::vector< std::string > PathnameExpansion( const std::string& word )
 	{
 		// Genie*.[ch]
 		
-		std::vector< std::string > vec;
+		std::vector< std::string > result;
 		
-		vec.push_back( word );
+		std::size_t meta = word.find_first_of( "*?[" );
 		
-		return vec;
+		if ( meta != word.npos )
+		{
+			//char path[ 1024 ];
+			
+			//if ( getcwd( path, 1024 ) == NULL throw N::ParamErr() );
+			
+			ExpandPathnames( "", word.c_str(), result );
+		}
+		
+		if ( result.empty() )
+		{
+			result.push_back( word );
+		}
+		
+		return result;
 	}
 	
 	std::string QuoteRemoval( const std::string& word )

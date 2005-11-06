@@ -45,6 +45,7 @@ namespace ShellShock
 			void Insert   ( SVector::iterator location, const std::string& s );
 			void Overwrite( SVector::iterator location, const std::string& s );
 			void Remove   ( SVector::iterator location );
+			void Clear();
 			
 			void Update();
 			
