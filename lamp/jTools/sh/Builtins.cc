@@ -4,6 +4,9 @@
 
 #include "Builtins.hh"
 
+// Standard C++
+#include <set>
+
 // Standard C/C++
 #include <cstring>
 
@@ -14,8 +17,8 @@
 #include "fcntl.h"
 #include "unistd.h"
 
-// Io
-#include "Io/MakeHandle.hh"
+// POSeven
+#include "POSeven/FileDescriptor.h"
 
 // Orion
 #include "Orion/Main.hh"
@@ -23,16 +26,21 @@
 #include "SystemCalls.hh"
 
 // sh
+#include "PositionalParameters.hh"
 #include "ReadExecuteLoop.hh"
 
 
+namespace P7 = POSeven;
 namespace O = Orion;
 
 
 static StringMap gLocalVariables;
 static StringMap gAliases;
 
+static std::set< std::string > gVariablesToExport;
+
 static Io::Stream< Io::FD > In, Out, Err;
+
 
 void SetInputFD( int fd )
 {
@@ -66,16 +74,29 @@ static void PrintAlias( const StringMap::value_type& var )
 }
 
 
+static bool Unmark( const char* name )
+{
+	std::set< std::string >::iterator found = gVariablesToExport.find( name );
+	bool wasMarked = found != gVariablesToExport.end();
+	
+	if ( wasMarked )
+	{
+		gVariablesToExport.erase( found );
+	}
+	
+	return wasMarked;
+}
+
 int Assign( const char* name, const char* value )
 {
-	resetenv( name, value );
-	
-	if ( getenv( name ) )
+	if ( getenv( name ) || Unmark( name ) )
 	{
-		gLocalVariables.erase( name );
+		// Variable already exists in environment, or was marked for export
+		setenv( name, value, 1 );
 	}
 	else
 	{
+		// Not set, or set locally
 		gLocalVariables[ name ] = value;
 	}
 	
@@ -211,7 +232,7 @@ static int Builtin_Export( int argc, char const* const argv[] )
 			
 			if ( getenv( var ) == NULL )
 			{
-				// Environment variable unset, or set with no value
+				// Environment variable unset
 				StringMap::const_iterator found = gLocalVariables.find( var );
 				
 				if ( found != gLocalVariables.end() )
@@ -222,8 +243,8 @@ static int Builtin_Export( int argc, char const* const argv[] )
 				}
 				else
 				{
-					// Shell variable unset, export with no value
-					setenv( var, NULL, 0 );
+					// Shell variable unset, mark exported
+					gVariablesToExport.insert( var );
 				}
 			}
 		}
@@ -291,6 +312,29 @@ static int Builtin_Unset( int argc, char const* const argv[] )
 	return 0;
 }
 
+class ReplacedParametersScope
+{
+	private:
+		std::size_t         fSavedParameterCount;
+		char const* const*  fSavedParameters;
+	
+	public:
+		ReplacedParametersScope( std::size_t count, char const* const* params )
+		:
+			fSavedParameterCount( gParameterCount ),
+			fSavedParameters    ( gParameters     )
+		{
+			gParameterCount = count;
+			gParameters     = params;
+		}
+		
+		~ReplacedParametersScope()
+		{
+			gParameterCount = fSavedParameterCount;
+			gParameters     = fSavedParameters;
+		}
+};
+
 static int BuiltinDot( int argc, char const* const argv[] )
 {
 	if ( argc < 2 )
@@ -299,17 +343,11 @@ static int BuiltinDot( int argc, char const* const argv[] )
 		return 2;
 	}
 	
-	std::vector< const char* > positionalParameters( argc - 1 );
+	P7::FileDescriptor fd = open( argv[ 1 ], 0 );
 	
-	std::copy( argv + 1,
-	           argv + argc,
-	           positionalParameters.begin() );
+	ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 	
-	int fd = open( argv[ 1 ], 0 );
-	
-	Io::Handle in = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::FD( fd ) );
-	
-	int result = ReadExecuteLoop( in, positionalParameters );
+	int result = ReadExecuteLoop( fd, false );
 	
 	(void)close( fd );
 	

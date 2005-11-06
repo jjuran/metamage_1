@@ -8,12 +8,16 @@
 #include <cstring>
 
 // Standard C
+#include "errno.h"
 #include "stdlib.h"
 
 // POSIX
 #include "fcntl.h"
 #include "sys/wait.h"
 #include "unistd.h"
+
+// BSD
+#include "vfork.h"
 
 // Io
 #include "Io/TextInput.hh"
@@ -28,6 +32,7 @@
 
 // sh
 #include "Builtins.hh"
+#include "PositionalParameters.hh"
 
 
 namespace N = Nitrogen;
@@ -39,6 +44,9 @@ using Sh::Command;
 using Sh::Pipeline;
 using Sh::Circuit;
 using Sh::List;
+
+
+int gLastResult = 0;
 
 
 struct Job
@@ -89,21 +97,24 @@ class AppendWithSpace
 
 class ShellParameterDictionary : public Sh::ParameterDictionary
 {
-	private:
-		const std::vector< const char* >& positionalParameters;
-	
 	public:
-		ShellParameterDictionary( const std::vector< const char* >&  positionalParameters )
-		:
-			positionalParameters( positionalParameters )
-		{}
+		ShellParameterDictionary()  {}
 		
 		std::string Lookup( const std::string& param ) const;
 };
 
 std::string ShellParameterDictionary::Lookup( const std::string& param ) const
 {
-	std::size_t paramCount = positionalParameters.size() - 1;
+	if ( param == "$" )
+	{
+		return N::Convert< std::string >( getpid() );
+	}
+	else if ( param == "?" )
+	{
+		return N::Convert< std::string >( gLastResult );
+	}
+	
+	std::size_t paramCount = gParameterCount;
 	
 	int i;
 	
@@ -118,20 +129,25 @@ std::string ShellParameterDictionary::Lookup( const std::string& param ) const
 			return "";
 		}
 		
-		std::string params = positionalParameters[ 1 ];
+		std::string params = gParameters[ 0 ];
 		
-		std::for_each( positionalParameters.begin() + 2,
-		               positionalParameters.end(),
+		std::for_each( gParameters + 1,
+		               gParameters + gParameterCount,
 		               AppendWithSpace( params ) );
 		
 		return params;
 	}
-	else if ( ( i = std::atoi( param.c_str() ) ) > 0  ||  param == "0" )
+	else if ( ( i = std::atoi( param.c_str() ) ) > 0 )
 	{
-		std::string value = ( i <= paramCount ) ? positionalParameters[ i ]
+		std::string value = ( i <= paramCount ) ? gParameters[ i - 1 ]
 		                                        : std::string( "" );
 		
 		return value;
+	}
+	else if ( param == "0" )
+	{
+		return gArgZero;
+		//return gParameters[ 0 ];
 	}
 	
 	StringMap::const_iterator found = gLocalVariables.find( param );
@@ -210,22 +226,20 @@ static int Exec( char const* const argv[] )
 {
 	const char* file = argv[ 0 ];
 	
-	std::string filename = file;
+	int exec_result = execvp( file, const_cast< char** >( argv ) );
 	
-	if ( std::strchr( file, '/' ) == NULL )
+	if ( exec_result != -1 )
 	{
-		filename = "/bin/" + filename;
+		return exec_result;
 	}
 	
-	int exec_result = execv( filename.c_str(), const_cast< char** >( argv ) );
+	int error = errno;
 	
-	if ( exec_result == -1 )
-	{
-		Io::Err << "execv( " << file << " ) failed\n";
-		_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
-	}
+	Io::Err << "execvp( " << file << " ) failed: " << error << "\n";
 	
-	return exec_result;
+	_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
+	
+	return -1;
 }
 
 static int Wait( pid_t pid )
@@ -276,9 +290,9 @@ static int ExecuteCommand( const Command& command )
 			return builtin( argc, argv );
 		}
 		
-		int pid = fork();
+		int pid = vfork();
 		
-		if ( is_child( pid ) )
+		if ( pid == 0 )
 		{
 			std::for_each( command.redirections.begin(),
 			               command.redirections.end(),
@@ -332,7 +346,7 @@ static int ExecuteCommandFromPipeline( const Command& command )
 			int argc = Sh::CountStringArray( argv );
 			
 			// Don't exec a new shell, just call the builtin inside the forked child
-			exit( builtin( argc, argv ) );
+			_exit( builtin( argc, argv ) );
 			
 			return 0;
 		}
@@ -384,14 +398,21 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	int reading = pipes[ 0 ];
 	int writing = pipes[ 1 ];
 	
-	int first = fork();
+	// The first command in the pipline
+	int first = vfork();
 	
-	if ( is_child( first ) )
+	if ( first == 0 )
 	{
+		// Redirect output to write-end of pipe
 		dup2( writing, 1 );
+		
+		// Close duped write-end and unused read-end
+		close( writing );
+		close( pipes[ 0 ] );
 		
 		setpgrp();
 		
+		// exec or exit
 		ExecuteCommandFromPipeline( commands.front() );
 	}
 	
@@ -399,33 +420,52 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	{
 		pipe( pipes );
 		
+		// Close previous write-end
+		close( writing );
+		
 		writing = pipes[ 1 ];
 		
-		int middle = fork();
+		// Middle command in the pipeline (not first or last)
+		int middle = vfork();
 		
-		if ( is_child( middle ) )
+		if ( middle == 0 )
 		{
+			// Redirect input from read-end of pipe
 			dup2( reading, 0 );
+			
+			// Redirect output to write-end of pipe
 			dup2( writing, 1 );
+			
+			// Close duped pipe-in, duped pipe-out, and unused read-end
+			close( reading );
+			close( writing );
+			close( pipes[ 0 ] );
 			
 			setpgid( 0, first );
 			
 			ExecuteCommandFromPipeline( *command );
 		}
 		
+		close( reading );
 		reading = pipes[ 0 ];
 	}
 	
-	int last = fork();
+	int last = vfork();
 	
-	if ( is_child( last ) )
+	if ( last == 0 )
 	{
 		dup2( reading, 0 );
+		
+		close( reading );
+		close( pipes[ 1 ] );
 		
 		setpgid( 0, first );
 		
 		ExecuteCommandFromPipeline( *command );
 	}
+	
+	close( pipes[ 0 ] );
+	close( pipes[ 1 ] );
 	
 	int processes = commands.size();
 	
@@ -472,7 +512,7 @@ static int ExecuteCircuit( const Circuit& circuit )
 			continue;
 		}
 		
-		result = ExecutePipeline( *it );
+		gLastResult = result = ExecutePipeline( *it );
 	}
 	
 	return result;
@@ -492,11 +532,9 @@ static int ExecuteList( const List& list )
 	return result;
 }
 
-int ExecuteCmdLine( const std::string&                 cmd,
-                    const std::vector< const char* >&  positionalParameters )
+int ExecuteCmdLine( const std::string& cmd )
 {
-	List list = Sh::ParseCommandLine( cmd,
-	                                  ShellParameterDictionary( positionalParameters ) );
+	List list = Sh::ParseCommandLine( cmd, ShellParameterDictionary() );
 	
 	int result = ExecuteList( list );
 	

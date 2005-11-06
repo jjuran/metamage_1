@@ -12,10 +12,16 @@
 
 // POSIX
 #include "fcntl.h"
+#include <unistd.h>
 
-// Io
-#include "Io/MakeHandle.hh"
-#include "Io/TextInput.hh"
+// Nitrogen Core
+#include "Nitrogen/Assert.h"
+
+// Nitrogen Carbon
+//#include "Nitrogen/QuickDraw.h"
+
+// POSeven
+#include "POSeven/FileDescriptor.h"
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -25,10 +31,12 @@
 // sh
 #include "Builtins.hh"
 #include "Execution.hh"
+#include "PositionalParameters.hh"
 #include "ReadExecuteLoop.hh"
 
 
 namespace N = Nitrogen;
+namespace P7 = POSeven;
 namespace O = Orion;
 
 
@@ -57,8 +65,13 @@ static O::Options DefineOptions()
 	return options;
 }
 
+bool gStandardIn  = false;
 bool gInteractive = false;
 bool gLoginShell  = false;
+
+const char* gArgZero = NULL;
+std::size_t gParameterCount = 0;
+char const* const* gParameters = NULL;
 
 
 struct OnExit
@@ -72,50 +85,92 @@ struct OnExit
 	}
 };
 
+static void WasteTime()
+{
+#if TARGET_API_MAC_CARBON
+	
+	::QDFlushPortBuffer( GetQDGlobalsThePort(), NULL );
+	
+#endif
+	
+	UInt32 then = TickCount();
+	
+	while ( TickCount() - then < 60 * 2 )
+	{
+		// do nothing
+	}
+}
+
 int O::Main( int argc, const char *const argv[] )
 {
+	setenv( "PS1", "$ ", 0 );
+	setenv( "PS2", "> ", 0 );
+	setenv( "PS4", "+ ", 0 );
+	
 	O::Options options = DefineOptions();
 	
-	options.GetOptions( argc, argv );
+	try
+	{
+		options.GetOptions( argc, argv );
+	}
+	catch ( O::UndefinedOption& )
+	{
+		Io::Err << "Undefined option\n";
+		WasteTime();
+		
+		return 1;
+	}
 	
-	const std::vector< const char* >& params = options.GetFreeParams();
+	gArgZero = argv[ 0 ];
+	
+	gParameters = options.Begin();
+	gParameterCount = options.GetFreeParams().size();
+	
+	P7::FileDescriptor fd = Io::in;
+	
+	if ( gParameterCount > 0 )
+	{
+		gArgZero = gParameters[ 0 ];
+		
+		++gParameters;
+		--gParameterCount;
+		
+		fd = open( gArgZero, O_RDONLY );
+		
+		gInteractive = options.GetFlag( optInteractive );
+	}
+	else
+	{
+		// Read from stdin
+		gStandardIn = true;
+		
+		// If first char of arg 0 is a hyphen (e.g. "-sh") it's a login shell
+		gLoginShell = argv[ 0 ][ 0 ] == '-';
+		
+		gInteractive = true;
+		
+		if ( gLoginShell )
+		{
+			P7::FileDescriptor profile = open( "/etc/profile", O_RDONLY );
+			
+			if ( profile != -1 )
+			{
+				(void)close( profile );
+				ExecuteCmdLine( ". /etc/profile" );
+			}
+		}
+	}
 	
 	std::string command = options.GetString( optCommand );
 	
 	if ( !command.empty() )
 	{
 		// Run a single command
-		return ExecuteCmdLine( command, params );
+		return ExecuteCmdLine( command );
 	}
-	
-	int fd = Io::in;
-	
-	if ( params.empty() || options.GetFlag( optStdin ) )
-	{
-		// Read from stdin
-		
-		// First char of arg 0 is a hyphen, as in "-sh"
-		gLoginShell = argv[ 0 ][ 0 ] == '-';
-		
-		gInteractive = params.empty() || options.GetFlag( optInteractive );
-		
-		//if ( gLoginShell )
-		{
-			setenv( "PS1", "$ ", 0 );
-			setenv( "PS2", "> ", 0 );
-			setenv( "PS4", "+ ", 0 );
-		}
-	}
-	else
-	{
-		// Otherwise, run a shell script
-		fd = open( params[ 0 ], 0 );
-	}
-	
-	Io::Handle in = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::FD( fd ) );
 	
 	OnExit onExit;
 	
-	return ReadExecuteLoop( in, params );
+	return ReadExecuteLoop( fd, gInteractive );
 }
 

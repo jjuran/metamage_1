@@ -9,8 +9,7 @@
 #include <string>
 #include <vector>
 
-int ExecuteCmdLine( const std::string&                 cmd,
-                    const std::vector< const char* >&  positionalParameters );
+int ExecuteCmdLine( const std::string& cmd );
 
 #endif
 

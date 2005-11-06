@@ -4,6 +4,9 @@
 
 #include "ReadExecuteLoop.hh"
 
+// Standard C
+#include "stdlib.h"
+
 // Standard C/C++
 #include <cstring>
 
@@ -11,6 +14,7 @@
 #include "unistd.h"
 
 // Io
+#include "Io/MakeHandle.hh"
 #include "Io/TextInput.hh"
 
 // Orion
@@ -23,24 +27,31 @@
 
 static void Prompt()
 {
-	if ( gInteractive )
+	const char* ps1 = getenv( "PS1" );
+	
+	if ( ps1 == NULL )
 	{
-		Io::Out << "$ ";
+		ps1 = "$ ";
 	}
+	
+	Io::Out << ps1;
 }
 
-int ReadExecuteLoop( const Io::Handle& in, const std::vector< const char* >& params )
+int ReadExecuteLoop( P7::FileDescriptor  fd,
+                     bool                prompts )
 {
+	Io::Handle in = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::FD( fd.Get() ) );
+	
 	Io::TextInputAdapter input( in );
 	
 	int result = 0;
 	
-	if ( gInteractive )
+	if ( prompts )
 	{
 		Io::Out << "Shell spawned with pid " << getpid() << "\n";
+		
+		Prompt();
 	}
-	
-	Prompt();
 	
 	while ( !input.Ended() )
 	{
@@ -53,9 +64,12 @@ int ReadExecuteLoop( const Io::Handle& in, const std::vector< const char* >& par
 				return 0;
 			}
 			
-			result = ExecuteCmdLine( command, params );
+			result = ExecuteCmdLine( command );
 			
-			Prompt();
+			if ( prompts )
+			{
+				Prompt();
+			}
 		}
 	}
 	
