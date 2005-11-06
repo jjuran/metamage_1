@@ -3,11 +3,9 @@
  *	=======
  */
 
-// Standard C++
-#include <string>
-
-// POSIX
+// Standard C
 #include "signal.h"
+#include "stdlib.h"
 
 // Orion
 #include "Orion/Main.hh"
@@ -19,7 +17,7 @@ namespace O = Orion;
 
 int O::Main( int argc, char const *const argv[] )
 {
-	int sig = 15;  // SIGTERM
+	int sig = SIGTERM;
 	
 	char const *const *argp = argv;
 	
