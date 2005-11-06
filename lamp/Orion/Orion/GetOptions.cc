@@ -17,8 +17,8 @@
 // --foo=bar		long format, inline param (always accepted)
 // --foo bar		long format, param is required (strings and lists)
 // --foo bar		long format, no param, arg follows (enums, flags, counters)
-// -bar				long format, X11 style (current behavior, but deprecated)
-// -bar				short format, same as -b -a -r (to be the default)
+// -bar				long format, X11 style (not supported)
+// -bar				short format, same as -b -a -r (current behavior)
 // -bar				short format, "ar" is inline param to -b (short-inlines)
 // +z				inverse of -z (not supported)
 
@@ -33,163 +33,201 @@
 namespace Orion
 {
 	
-	using std::make_pair;
-	
-	void
-	Options::DefineSetFlag(const string& opt, int code)
+	void Options::DefineSetFlag( const std::string& opt, int code )
 	{
-		myFlagDefs[opt] = code;
+		myFlagDefs[ opt ] = code;
 	}
 	
-	void
-	Options::DefineSetInteger(const string& opt, int code)
+	void Options::DefineSetInteger( const std::string& opt, int code )
 	{
-		myIntegerDefs[opt] = code;
+		myIntegerDefs[ opt ] = code;
 	}
 	
-	void
-	Options::DefineSetString(const string& opt, int code)
+	void Options::DefineSetString( const std::string& opt, int code )
 	{
-		myStringDefs[opt] = code;
+		myStringDefs[ opt ] = code;
 	}
 	
-	void
-	Options::DefineAppendToStringList(const string& opt, int code)
+	void Options::DefineAppendToStringList( const std::string& opt, int code )
 	{
-		myStringListDefs[opt] = code;
+		myStringListDefs[ opt ] = code;
 	}
 	
-	void
-	Options::DefineSelectEnum(const string& opt, int code, int enumParam)
+	void Options::DefineSelectEnum( const std::string& opt, int code, int enumParam )
 	{
-		myEnumDefs[opt] = make_pair(code, enumParam);
+		myEnumDefs[ opt ] = std::make_pair( code, enumParam );
 	}
 	
-	bool Options::ParamExpected(const string& opt) const
+	bool Options::ParamExpected( const std::string& opt ) const
 	{
-		if (myFlagDefs      .count(opt))  return false;
-		if (myIntegerDefs   .count(opt))  return true;
-		if (myStringDefs    .count(opt))  return true;
-		if (myStringListDefs.count(opt))  return true;
-		if (myEnumDefs      .count(opt))  return false;
+		if ( myFlagDefs      .count( opt ) )  return false;
+		if ( myIntegerDefs   .count( opt ) )  return true;
+		if ( myStringDefs    .count( opt ) )  return true;
+		if ( myStringListDefs.count( opt ) )  return true;
+		if ( myEnumDefs      .count( opt ) )  return false;
 		
-		return false;  // FIXME
+		throw UndefinedOption( opt );
 	}
 	
-	void
-	Options::SetOption(const string& opt)
+	void Options::SetOption( const std::string& opt )
 	{
-		if (myFlagDefs.count(opt)) {
-			myFlags.insert(myFlagDefs[opt]);
-		} else if (myEnumDefs.count(opt)) {
-			myEnums[myEnumDefs[opt].first] = myEnumDefs[opt].second;
+		if ( myFlagDefs.count( opt ) )
+		{
+			myFlags.insert( myFlagDefs[ opt ] );
+		}
+		else if ( myEnumDefs.count( opt ) )
+		{
+			myEnums[ myEnumDefs[ opt ].first ] = myEnumDefs[ opt ].second;
 		}
 	}
 	
-	void
-	Options::SetOption(const string& opt, const string& param)
+	void Options::SetOption( const std::string& opt, const std::string& param )
 	{
-		if (myIntegerDefs.count(opt)) {
+		if ( myIntegerDefs.count( opt ) )
+		{
 			// FIXME:  This should check for conversion error
-			myIntegers[myIntegerDefs[opt]] = std::atoi(param.c_str());
-		} else if (myStringDefs.count(opt)) {
-			myStrings[myStringDefs[opt]] = param;
-		} else if (myStringListDefs.count(opt)) {
-			myStringLists[myStringListDefs[opt]].push_back(param);
+			myIntegers[ myIntegerDefs[ opt ] ] = std::atoi( param.c_str() );
+		}
+		else if ( myStringDefs.count( opt ) )
+		{
+			myStrings[ myStringDefs[ opt ] ] = param;
+		}
+		else if ( myStringListDefs.count( opt ) )
+		{
+			myStringLists[ myStringListDefs[ opt ] ].push_back( param );
 		}
 	}
 	
-	void
-	Options::GetOptions(int argc, const char *const argv[])
+	void Options::GetOptions( int argc, const char *const argv[] )
 	{
 		char const* const* begin = argv + 1;  // Skip the command
 		char const* const* end = argv + argc;
 		
-		for (char const* const* it = begin;  it != end;  ++it) {
+		for ( char const* const* it = begin;  it != end;  ++it )
+		{
 			const char* token = *it;
-			if (token[0] == '-') {
-				if (token[1] == '-') {
-					if (token[2] == '\0') {
+			
+			if ( token[ 0 ] == '-' )
+			{
+				// Starts with "-"
+				
+				if ( token[ 1 ] == '-' )
+				{
+					// Starts with "--"
+					
+					if ( token[ 2 ] == '\0' )
+					{
 						// End of option processing
-						std::copy(++it, end, back_inserter(myFreeParams));
+						std::copy( ++it, end, back_inserter( myFreeParams ) );
 						break;
-					} else {
+					}
+					else
+					{
 						// Long format option
-						unsigned int len = std::strlen(token);
-						const char* eq = std::find(token + 2, token + len, '=');
-						if (eq == token + len) {
+						std::size_t len = std::strlen( token );
+						const char* eq = std::find( token + 2, token + len, '=' );
+						
+						if ( eq == token + len )
+						{
 							// No inline parameter to option
-							if (ParamExpected(token)) {
-								SetOption(token, *++it);
-							} else {
-								SetOption(token);
+							if ( ParamExpected( token ) )
+							{
+								SetOption( token, *++it );
 							}
-						} else {
+							else
+							{
+								SetOption( token );
+							}
+						}
+						else
+						{
 							// Option has parameter
-							string opt(token, eq - token);
+							std::string opt( token, eq - token );
 							const char* paramStart = eq + 1;
 							unsigned int paramLen = token + len - paramStart;
-							string param(paramStart, paramLen);
-							SetOption(opt, param);
+							std::string param( paramStart, paramLen );
+							
+							SetOption( opt, param );
 						}
 					}
-				} else {
+				}
+				else
+				{
 					// Short format option
-					if (ParamExpected(token)) {
-						SetOption(token, *++it);
-					} else {
-						SetOption(token);
+					
+					while ( *++token != '\0' )
+					{
+						std::string opt = "-";
+						opt += *token;
+						
+						if ( ParamExpected( opt ) )
+						{
+							SetOption( opt, *++it );
+						}
+						else
+						{
+							SetOption( opt );
+						}
 					}
 				}
-			} else {
+			}
+			else
+			{
 				// Not an option
-				myFreeParams.push_back(token);
+				myFreeParams.push_back( token );
 			}
 		}
 	}
 	
-	bool
-	Options::GetFlag(int code) const
+	bool Options::GetFlag( int code ) const
 	{
-		return myFlags.count(code);
+		return myFlags.count( code );
 	}
 	
-	int
-	Options::GetInteger(int code) const
+	int Options::GetInteger( int code ) const
 	{
-		if (myIntegers.count(code)) {
-			return myIntegers.find(code)->second;
-		} else {
+		if ( myIntegers.count( code ) )
+		{
+			return myIntegers.find( code )->second;
+		}
+		else
+		{
 			return 0;  // FIXME
 		}
 	}
 	
-	string
-	Options::GetString(int code) const
+	std::string Options::GetString( int code ) const
 	{
-		if (myStrings.count(code)) {
-			return myStrings.find(code)->second;
-		} else {
-			return string();  // FIXME
+		if ( myStrings.count( code ) )
+		{
+			return myStrings.find( code )->second;
+		}
+		else
+		{
+			return std::string();  // FIXME
 		}
 	}
 	
-	vector<string>
-	Options::GetStringList(int code) const
+	std::vector< std::string > Options::GetStringList( int code ) const
 	{
-		if (myStringLists.count(code)) {
-			return myStringLists.find(code)->second;
-		} else {
-			return vector<string>();  // FIXME
+		if ( myStringLists.count( code ) )
+		{
+			return myStringLists.find( code )->second;
+		}
+		else
+		{
+			return std::vector< std::string >();  // FIXME
 		}
 	}
 	
-	int
-	Options::GetEnum(int code) const
+	int Options::GetEnum( int code ) const
 	{
-		if (myEnums.count(code)) {
-			return myEnums.find(code)->second;
-		} else {
+		if ( myEnums.count( code ) )
+		{
+			return myEnums.find( code )->second;
+		}
+		else
+		{
 			return 0;  // FIXME
 		}
 	}

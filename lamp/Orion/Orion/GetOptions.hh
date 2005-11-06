@@ -7,6 +7,7 @@
 #define ORION_GETOPTIONS_HH
 
 // Standard C++
+#include <exception>
 #include <map>
 #include <set>
 #include <string>
@@ -16,51 +17,60 @@
 namespace Orion
 {
 	
-	using std::map;
-	using std::pair;
-	using std::set;
-	using std::string;
-	using std::vector;
+	class UndefinedOption : public std::exception
+	{
+		private:
+			std::string message;
+		
+		public:
+			UndefinedOption( const std::string& option )
+			: message( std::string() + "Undefined option " + option )  {}
+			
+			const char* what() const  { return message.c_str(); }
+	};
 	
 	class Options
 	{
 		private:
-			bool ParamExpected(const string& opt) const;
+			bool ParamExpected( const std::string& opt ) const;
 			
-			void SetOption(const string& opt);
-			void SetOption(const string& opt, const string& param);
+			void SetOption( const std::string& opt );
+			void SetOption( const std::string& opt, const std::string& param );
 			
-			map<string, int> myFlagDefs;
-			map<string, int> myIntegerDefs;
-			map<string, int> myStringDefs;
-			map<string, int> myStringListDefs;
-			map<string, pair<int, int> > myEnumDefs;
+			std::map< std::string, int > myFlagDefs;
+			std::map< std::string, int > myIntegerDefs;
+			std::map< std::string, int > myStringDefs;
+			std::map< std::string, int > myStringListDefs;
 			
-			set<int> myFlags;
-			map<int, int> myIntegers;
-			map<int, string> myStrings;
-			map<int, vector<string> > myStringLists;
-			map<int, int> myEnums;
+			std::map< std::string, std::pair< int, int > > myEnumDefs;
 			
-			vector<const char*> myFreeParams;
+			std::set< int> myFlags;
+			std::map< int, int > myIntegers;
+			std::map< int, std::string > myStrings;
+			std::map< int, std::vector< std::string > > myStringLists;
+			std::map< int, int > myEnums;
+			
+			std::vector< const char* > myFreeParams;
 		
 		public:
-			void DefineSetFlag(const string& opt, int code);
-			void DefineSetInteger(const string& opt, int code);
-			void DefineSetString(const string& opt, int code);
-			void DefineAppendToStringList(const string& opt, int code);
+			void DefineSetFlag( const std::string& opt, int code );
+			void DefineSetInteger( const std::string& opt, int code );
+			void DefineSetString( const std::string& opt, int code );
+			void DefineAppendToStringList( const std::string& opt, int code );
 			
-			void DefineSelectEnum(const string& opt, int code, int enumParam);
+			void DefineSelectEnum( const std::string& opt, int code, int enumParam );
 			
-			void GetOptions(int argc, const char *const argv[]);
+			void GetOptions( int argc, const char *const argv[] );
 			
-			bool GetFlag(int code) const;
-			int GetInteger(int code) const;
-			string GetString(int code) const;
-			vector<string> GetStringList(int code) const;
-			int GetEnum(int code) const;
+			bool GetFlag( int code ) const;
+			int GetInteger( int code ) const;
+			std::string GetString( int code ) const;
+			std::vector< std::string > GetStringList( int code ) const;
+			int GetEnum( int code ) const;
 			
-			const vector<const char*>& GetFreeParams() const  { return myFreeParams; }
+			const std::vector< const char* >& GetFreeParams() const  { return myFreeParams; }
+			const char* const* Begin() const  { return &*myFreeParams.begin(); }
+			const char* const* End()   const  { return &*myFreeParams.end();   }
 	};
 	
 }

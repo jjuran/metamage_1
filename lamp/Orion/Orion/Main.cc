@@ -27,13 +27,18 @@ namespace Orion
 		{
 			return Main( argc, argv );
 		}
-		catch ( ExitStatus exit )
+		catch ( ExitStatus& exit )
 		{
 			return exit.Get();
 		}
-		catch ( N::OSStatus err )
+		catch ( N::OSStatus& err )
 		{
 			Io::Err << "Orion: Main() threw OSStatus " << err.Get() << ".\n";
+			return 1;
+		}
+		catch ( std::exception& e )
+		{
+			Io::Err << e.what() << "\n";
 			return 1;
 		}
 		catch ( ... )
