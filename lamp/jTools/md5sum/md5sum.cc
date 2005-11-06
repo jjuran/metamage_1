@@ -26,8 +26,7 @@
 namespace N = Nitrogen;
 namespace P7 = POSeven;
 namespace O = Orion;
-
-using BitsAndBytes::EncodeAsHex;
+namespace Bits = BitsAndBytes;
 
 
 static std::string MD5Sum( P7::FileDescriptor input )
@@ -54,7 +53,7 @@ static std::string MD5Sum( P7::FileDescriptor input )
 	
 	engine.Finish( data, bytes * 8 );
 	
-	std::string digest = EncodeAsHex( engine.GetResult() );
+	std::string digest = Bits::EncodeAsHex( engine.GetResult() );
 	
 	return digest;
 }
