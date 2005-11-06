@@ -1,0 +1,36 @@
+A-line Design Overview
+======================
+
+by Joshua Juran, 2004-04-03
+
+Introduction
+------------
+
+A-line is a software build manager designed to provide conveniences generally lacking in existing systems.  It's typically invoked from a command shell and makes use of other command-line tools (e.g. compiler, linker, etc.) to get work done, and it's portable to any platform providing such facilities.  It could also be adapted to fit a graphical front-end or a non-stdio scripting interface.
+
+Scalability
+-----------
+
+One of the most important benefits of using A-line is the ease and simplicity with which it handles common subprojects, unlike recursive make.[1]  For example, if sfio is frequently used as a replacement for stdio in the C library, a dependency on sfio is specified in each project's configuration file.  When an application is built, sfio is built first, its headers are searched for includes, and the library is linked with the application.  Or, suppose all applications use a generic I/O subsystem (called genio).  If genio is modified to use sfio, no change is required to the project config files of the applications -- the dependencies are transitive.  Furthermore, the genio static library does not get linked against sfio, but the applications using it do.  As an added benefit, if the applications are all built simultaneously, the genio headers are scanned for dependencies only once, since A-line caches this information.  A catalog of projects is maintained so projects can be referenced by name, not filesystem location.  In other words, the location of each project is specified not once per use, but only once.
+
+Data Simplicity
+---------------
+
+A-line is designed so that information is represented only once -- and possibly not at all, if it can be expressed as a default.  For example, A-line will check for a directory named Source, Sources, or src in the project directory, and if none exist, selects the project directory itself as the source location.  If a list of source files is provided, A-line will only look for those files, but if the list is omitted, A-line simply inducts all files in the source directory for which it has compile recipes.  If a project consists only of headers and doesn't depend on other projects, it needn't have a configuration file at all.
+
+Intelligence
+------------
+
+Project configuration data in A-line have semantic value -- they're real information, not just data strings that are assumed to be correct and then passed on to a compiler (a case of premature optimization).  A-line combines this information about a project with its own knowledge of how to drive a particular tool and construct a particular kind of product, and generates the necessary command strings itself.  This also means that the responsibility for knowing how to use the tools and build the products lies with A-line, not distributed among various projects (and instructions are not mixed in with project data, unless a project requires exceptional treatment).  Adding a demo build mode to A-line (where demo is the same as release/final/deployment but with a certain preprocessor macro set) required no change to any project configuration files.
+
+Efficiency
+----------
+
+A-line avoids unnecessary work -- particularly, work that's already been done once.  When several projects using the same library are built at the same time, the library is built once.  Headers that are used in multiple projects are dependency-checked once per invocation of A-line.  Recursive include-scanning is terminated as soon as it's known a source file is out of date.  If the corresponding object file is missing, includes aren't checked at all.
+
+Notes
+-----
+
+[1] Recursive Make Considered Harmful
+    <http://www.pcug.org.au/~millerp/rmch/recu-make-cons-harm.html>
+

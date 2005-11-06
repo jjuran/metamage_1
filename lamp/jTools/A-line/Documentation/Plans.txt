@@ -1,0 +1,31 @@
+A-line Development Overview
+===========================
+
+by Joshua Juran, 2004-04-06
+
+Current State
+-------------
+
+A-line was originally conceived as an alternative to the CodeWarrior IDE on Mac OS 9.  At present, it supports various options for Mac OS development:  68K/PowerPC architecture, segments/CFM runtime, and classic/Carbon API.  CodeWarrior is the only toolkit supported currently, but A-line was always intended to be usable with different toolsets (and the native MPW compilers were supported in the past).
+
+Current Plans
+-------------
+
+A-line is undergoing a transition to Mac OS X.  The first step is to replace the catalog system, since the alias-based strategy that worked for OS 9 fails with OS X.
+
+Subsequent milestones:
+
+* self-hosting in native OS X
+* application bundle support
+* Mach-O runtime support
+
+Future Plans
+------------
+
+Other improvements under consideration for A-line:
+
+* gcc support
+* OS X dylibs
+* OS X frameworks
+* Linux port
+
