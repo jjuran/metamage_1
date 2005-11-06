@@ -1,5 +1,5 @@
-/*-
- * Copyright (c) 1991, 1993
+/*
+ * Copyright (c) 1983, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,47 +29,31 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)signal.h	8.3 (Berkeley) 3/30/94
+ *	@(#)inet.h	8.1 (Berkeley) 6/2/93
  */
+
+#ifndef _INET_H_
+#define	_INET_H_
 
 /* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
 
-#ifndef _USER_SIGNAL_H
-#define _USER_SIGNAL_H
+/* External definitions for functions in inet(3) */
 
-#include <sys/types.h>
 #include <sys/cdefs.h>
-#include <sys/signal.h>
-#include <pthread.h>
 
-#if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
-extern const char *const sys_signame[NSIG];
-#endif
+/* XNS mandates availability of xtonx() and uintx_t -- neeri */
+
+#include <netinet/in.h>
+#include <machine/endian.h>
 
 __BEGIN_DECLS
-int	raise __P((int));
-#ifndef	_ANSI_SOURCE
-int	kill __P((pid_t, int));
-int	sigaction __P((int, const struct sigaction *, struct sigaction *));
-int	sigaddset __P((sigset_t *, int));
-int	sigdelset __P((sigset_t *, int));
-int	sigemptyset __P((sigset_t *));
-int	sigfillset __P((sigset_t *));
-int	sigismember __P((const sigset_t *, int));
-int	sigpending __P((sigset_t *));
-int	sigprocmask __P((int, const sigset_t *, sigset_t *));
-int	sigsuspend __P((const sigset_t *));
-int pthread_kill __P((pthread_t, int));
-int pthread_sigmask __P((int, const sigset_t *, sigset_t *));
-int sigwait __P((const sigset_t *, int *));
-#endif	/* !_ANSI_SOURCE */
+in_addr_t	 	inet_addr __P((const char *));
+int		 		inet_aton __P((const char *, struct in_addr *));
+in_addr_t	 	inet_lnaof __P((struct in_addr));
+struct in_addr	inet_makeaddr __P((uint32_t , in_addr_t));
+in_addr_t	 	inet_netof __P((struct in_addr));
+in_addr_t		inet_network __P((const char *));
+char		     *inet_ntoa __P((struct in_addr));
 __END_DECLS
 
-/* List definitions after function declarations, or Reiser cpp gets upset. */
-#define	sigaddset(set, signo)	(*(set) |= 1 << ((signo) - 1), 0)
-#define	sigdelset(set, signo)	(*(set) &= ~(1 << ((signo) - 1)), 0)
-#define	sigemptyset(set)	(*(set) = 0, 0)
-#define	sigfillset(set)		(*(set) = ~(sigset_t)0, 0)
-#define	sigismember(set, signo)	((*(set) & (1 << ((signo) - 1))) != 0)
-
-#endif	/* !_USER_SIGNAL_H */
+#endif /* !_INET_H_ */

@@ -1,5 +1,5 @@
-/*-
- * Copyright (c) 1991, 1993
+/*
+ * Copyright (c) 1987, 1991, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,47 +29,56 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)signal.h	8.3 (Berkeley) 3/30/94
+ *	@(#)endian.h	8.1 (Berkeley) 6/10/93
  */
 
 /* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
 
-#ifndef _USER_SIGNAL_H
-#define _USER_SIGNAL_H
+#ifndef _ENDIAN_H_
+#define	_ENDIAN_H_
 
-#include <sys/types.h>
+/* xtonx() now defined in terms of inttypes -- neeri */
+
+#include <inttypes.h>
+
+/*
+ * Define the order of 32-bit words in 64-bit words.
+ */
+#define _QUAD_HIGHWORD 0
+#define _QUAD_LOWWORD 1
+
+#ifndef _POSIX_SOURCE
+/*
+ * Definitions for byte order, according to byte significance from low
+ * address to high.
+ */
+#define	LITTLE_ENDIAN	1234	/* LSB first: i386, vax */
+#define	BIG_ENDIAN	4321	/* MSB first: 68000, ibm, net */
+#define	PDP_ENDIAN	3412	/* LSB first in word, MSW first in long */
+
+#define	BYTE_ORDER	BIG_ENDIAN
+
 #include <sys/cdefs.h>
-#include <sys/signal.h>
-#include <pthread.h>
-
-#if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
-extern const char *const sys_signame[NSIG];
-#endif
 
 __BEGIN_DECLS
-int	raise __P((int));
-#ifndef	_ANSI_SOURCE
-int	kill __P((pid_t, int));
-int	sigaction __P((int, const struct sigaction *, struct sigaction *));
-int	sigaddset __P((sigset_t *, int));
-int	sigdelset __P((sigset_t *, int));
-int	sigemptyset __P((sigset_t *));
-int	sigfillset __P((sigset_t *));
-int	sigismember __P((const sigset_t *, int));
-int	sigpending __P((sigset_t *));
-int	sigprocmask __P((int, const sigset_t *, sigset_t *));
-int	sigsuspend __P((const sigset_t *));
-int pthread_kill __P((pthread_t, int));
-int pthread_sigmask __P((int, const sigset_t *, sigset_t *));
-int sigwait __P((const sigset_t *, int *));
-#endif	/* !_ANSI_SOURCE */
+uint32_t	htonl __P((uint32_t));
+uint16_t	htons __P((uint16_t));
+uint32_t	ntohl __P((uint32_t));
+uint16_t	ntohs __P((uint16_t));
 __END_DECLS
 
-/* List definitions after function declarations, or Reiser cpp gets upset. */
-#define	sigaddset(set, signo)	(*(set) |= 1 << ((signo) - 1), 0)
-#define	sigdelset(set, signo)	(*(set) &= ~(1 << ((signo) - 1)), 0)
-#define	sigemptyset(set)	(*(set) = 0, 0)
-#define	sigfillset(set)		(*(set) = ~(sigset_t)0, 0)
-#define	sigismember(set, signo)	((*(set) & (1 << ((signo) - 1))) != 0)
+/*
+ * Macros for network/external number representation conversion.
+ */
+#define	ntohl(x)	(x)
+#define	ntohs(x)	(x)
+#define	htonl(x)	(x)
+#define	htons(x)	(x)
 
-#endif	/* !_USER_SIGNAL_H */
+#define	NTOHL(x)	(x)
+#define	NTOHS(x)	(x)
+#define	HTONL(x)	(x)
+#define	HTONS(x)	(x)
+
+#endif /* !_POSIX_SOURCE */
+#endif /* !_ENDIAN_H_ */

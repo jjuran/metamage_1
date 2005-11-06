@@ -1,6 +1,11 @@
 /*-
- * Copyright (c) 1991, 1993
+ * Copyright (c) 1982, 1986, 1990, 1993, 1994
  *	The Regents of the University of California.  All rights reserved.
+ * (c) UNIX System Laboratories, Inc.
+ * All or some portions of this file are derived from material licensed
+ * to the University of California by American Telephone and Telegraph
+ * Co. or Unix System Laboratories, Inc. and are reproduced herein with
+ * the permission of UNIX System Laboratories, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,47 +34,23 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)signal.h	8.3 (Berkeley) 3/30/94
+ *	@(#)filio.h	8.1 (Berkeley) 3/28/94
  */
 
 /* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
 
-#ifndef _USER_SIGNAL_H
-#define _USER_SIGNAL_H
+#ifndef	_SYS_FILIO_H_
+#define	_SYS_FILIO_H_
 
-#include <sys/types.h>
-#include <sys/cdefs.h>
-#include <sys/signal.h>
-#include <pthread.h>
+#include <sys/ioccom.h>
 
-#if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
-extern const char *const sys_signame[NSIG];
-#endif
+/* Generic file-descriptor ioctl's. */
+#define	FIOCLEX		 _IO('f', 1)		/* set close on exec on fd */
+#define	FIONCLEX	 _IO('f', 2)		/* remove close on exec */
+#define	FIONREAD	_IOR('f', 127, int)	/* get # bytes to read */
+#define	FIONBIO		_IOW('f', 126, int)	/* set/clear non-blocking i/o */
+#define	FIOASYNC	_IOW('f', 125, int)	/* set/clear async i/o */
+#define	FIOSETOWN	_IOW('f', 124, int)	/* set owner */
+#define	FIOGETOWN	_IOR('f', 123, int)	/* get owner */
 
-__BEGIN_DECLS
-int	raise __P((int));
-#ifndef	_ANSI_SOURCE
-int	kill __P((pid_t, int));
-int	sigaction __P((int, const struct sigaction *, struct sigaction *));
-int	sigaddset __P((sigset_t *, int));
-int	sigdelset __P((sigset_t *, int));
-int	sigemptyset __P((sigset_t *));
-int	sigfillset __P((sigset_t *));
-int	sigismember __P((const sigset_t *, int));
-int	sigpending __P((sigset_t *));
-int	sigprocmask __P((int, const sigset_t *, sigset_t *));
-int	sigsuspend __P((const sigset_t *));
-int pthread_kill __P((pthread_t, int));
-int pthread_sigmask __P((int, const sigset_t *, sigset_t *));
-int sigwait __P((const sigset_t *, int *));
-#endif	/* !_ANSI_SOURCE */
-__END_DECLS
-
-/* List definitions after function declarations, or Reiser cpp gets upset. */
-#define	sigaddset(set, signo)	(*(set) |= 1 << ((signo) - 1), 0)
-#define	sigdelset(set, signo)	(*(set) &= ~(1 << ((signo) - 1)), 0)
-#define	sigemptyset(set)	(*(set) = 0, 0)
-#define	sigfillset(set)		(*(set) = ~(sigset_t)0, 0)
-#define	sigismember(set, signo)	((*(set) & (1 << ((signo) - 1))) != 0)
-
-#endif	/* !_USER_SIGNAL_H */
+#endif /* !_SYS_FILIO_H_ */

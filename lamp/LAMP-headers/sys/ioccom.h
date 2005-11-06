@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 1991, 1993
+ * Copyright (c) 1982, 1986, 1990, 1993, 1994
  *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,47 +29,37 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)signal.h	8.3 (Berkeley) 3/30/94
+ *	@(#)ioccom.h	8.2 (Berkeley) 3/28/94
  */
 
 /* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
 
-#ifndef _USER_SIGNAL_H
-#define _USER_SIGNAL_H
+#ifndef	_SYS_IOCCOM_H_
+#define	_SYS_IOCCOM_H_
 
-#include <sys/types.h>
-#include <sys/cdefs.h>
-#include <sys/signal.h>
-#include <pthread.h>
+/*
+ * Ioctl's have the command encoded in the lower word, and the size of
+ * any in or out parameters in the upper word.  The high 3 bits of the
+ * upper word are used to encode the in/out status of the parameter.
+ */
+#define	IOCPARM_MASK	0x1fff		/* parameter length, at most 13 bits */
+#define	IOCPARM_LEN(x)	(((x) >> 16) & IOCPARM_MASK)
+#define	IOCBASECMD(x)	((x) & ~(IOCPARM_MASK << 16))
+#define	IOCGROUP(x)	(((x) >> 8) & 0xff)
 
-#if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
-extern const char *const sys_signame[NSIG];
-#endif
+#define	IOCPARM_MAX	NBPG		/* max size of ioctl, mult. of NBPG */
+#define	IOC_VOID	0x20000000	/* no parameters */
+#define	IOC_OUT		0x40000000	/* copy out parameters */
+#define	IOC_IN		0x80000000	/* copy in parameters */
+#define	IOC_INOUT	(IOC_IN|IOC_OUT)
+#define	IOC_DIRMASK	0xe0000000	/* mask for IN/OUT/VOID */
 
-__BEGIN_DECLS
-int	raise __P((int));
-#ifndef	_ANSI_SOURCE
-int	kill __P((pid_t, int));
-int	sigaction __P((int, const struct sigaction *, struct sigaction *));
-int	sigaddset __P((sigset_t *, int));
-int	sigdelset __P((sigset_t *, int));
-int	sigemptyset __P((sigset_t *));
-int	sigfillset __P((sigset_t *));
-int	sigismember __P((const sigset_t *, int));
-int	sigpending __P((sigset_t *));
-int	sigprocmask __P((int, const sigset_t *, sigset_t *));
-int	sigsuspend __P((const sigset_t *));
-int pthread_kill __P((pthread_t, int));
-int pthread_sigmask __P((int, const sigset_t *, sigset_t *));
-int sigwait __P((const sigset_t *, int *));
-#endif	/* !_ANSI_SOURCE */
-__END_DECLS
+#define	_IOC(inout,group,num,len) \
+	(inout | ((len & IOCPARM_MASK) << 16) | ((group) << 8) | (num))
+#define	_IO(g,n)	_IOC(IOC_VOID,	(g), (n), 0)
+#define	_IOR(g,n,t)	_IOC(IOC_OUT,	(g), (n), sizeof(t))
+#define	_IOW(g,n,t)	_IOC(IOC_IN,	(g), (n), sizeof(t))
+/* this should be _IORW, but stdio got there first */
+#define	_IOWR(g,n,t)	_IOC(IOC_INOUT,	(g), (n), sizeof(t))
 
-/* List definitions after function declarations, or Reiser cpp gets upset. */
-#define	sigaddset(set, signo)	(*(set) |= 1 << ((signo) - 1), 0)
-#define	sigdelset(set, signo)	(*(set) &= ~(1 << ((signo) - 1)), 0)
-#define	sigemptyset(set)	(*(set) = 0, 0)
-#define	sigfillset(set)		(*(set) = ~(sigset_t)0, 0)
-#define	sigismember(set, signo)	((*(set) & (1 << ((signo) - 1))) != 0)
-
-#endif	/* !_USER_SIGNAL_H */
+#endif /* !_SYS_IOCCOM_H_ */
