@@ -23,7 +23,8 @@ namespace Genie
 		RegisterIOType( kFileDescriptor,
 		                FileTable::RefMod,
 		                FileTable::Read,
-		                FileTable::Write );
+		                FileTable::Write,
+		                FileTable::Poll );
 	}
 	
 	
@@ -31,22 +32,22 @@ namespace Genie
 	{
 		N::OnlyOnce< RegisterFileRefMod >();
 		
-		std::auto_ptr< FileHandle > handle( new FileHandle( refNum ) );
+		FileHandle* handle = new FileHandle( refNum );
 		
-		std::size_t offset = FileTable::Add( handle );
+		std::size_t offset = FileTable::Add( std::auto_ptr< FileHandle >( handle ) );
 		
-		return IORef( kFileDescriptor, offset );
+		return IORef( kFileDescriptor, offset, handle );
 	}
 	
 	IORef OpenFile( const FSSpec& file, N::FSIOPermissions perm )
 	{
 		N::OnlyOnce< RegisterFileRefMod >();
 		
-		std::auto_ptr< FileHandle > handle( new FileHandle( file, perm ) );
+		FileHandle* handle = new FileHandle( file, perm );
 		
-		std::size_t offset = FileTable::Add( handle );
+		std::size_t offset = FileTable::Add( std::auto_ptr< FileHandle >( handle ) );
 		
-		return IORef( kFileDescriptor, offset );
+		return IORef( kFileDescriptor, offset, handle );
 	}
 	
 	
@@ -56,12 +57,12 @@ namespace Genie
 	{
 	}
 	
-	int FileHandle::Read( char* data, std::size_t byteCount )
+	int FileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		return N::FSRead( fRefNum, byteCount, data );
 	}
 	
-	int FileHandle::Write( const char* data, std::size_t byteCount )
+	int FileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		return N::FSWrite( fRefNum, byteCount, data );
 	}

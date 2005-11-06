@@ -6,6 +6,10 @@
 #ifndef GENIE_SOCKETHANDLE_HH
 #define GENIE_SOCKETHANDLE_HH
 
+// POSIX
+#include <sys/types.h>
+#include <sys/socket.h>
+
 // Nitrogen
 #include "Nitrogen/OpenTransport.h"
 
@@ -23,8 +27,6 @@ namespace Genie
 	namespace NX = NitrogenExtras;
 	
 	IORef NewSocket( bool blockingMode = true );
-	
-	typedef int socklen_t;
 	
 	typedef const InetAddress* ConstSockAddrParam;
 	typedef       InetAddress*      SockAddrParam;
@@ -47,7 +49,7 @@ namespace Genie
 		{}
 	};
 	
-	class SocketHandle
+	class SocketHandle : public IOStream
 	{
 		private:
 			N::Owned< N::EndpointRef > endpoint;
@@ -68,9 +70,11 @@ namespace Genie
 			void SetBlocking   ()  { N::OTSetBlocking   ( endpoint ); }
 			void SetNonBlocking()  { N::OTSetNonBlocking( endpoint ); }
 			
-			int Read( char* data, std::size_t byteCount );
+			unsigned int SysPoll() const;
 			
-			int Write( const char* data, std::size_t byteCount );
+			int SysRead( char* data, std::size_t byteCount );
+			
+			int SysWrite( const char* data, std::size_t byteCount );
 			
 			void Bind( ConstSockAddrParam local, socklen_t len );
 			

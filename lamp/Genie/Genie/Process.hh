@@ -32,7 +32,7 @@
 #include "Io/Handle.hh"
 
 // ShellShock
-#include "ShellShock/StringArray.hh"
+#include "ShellShock/VarArray.hh"
 
 // Genie
 #include "Genie/FileDescriptor.hh"
@@ -119,8 +119,8 @@ namespace Genie
 	
 	typedef NX::Thread< Thread_Details > Thread;
 	
-	typedef int*           ErrnoDataPtr;
-	typedef char* const**  EnvironDataPtr;
+	typedef int*     ErrnoDataPtr;
+	typedef char***  EnvironDataPtr;
 	
 	
 	struct FragmentImage {};
@@ -149,6 +149,8 @@ namespace Genie
 			int myPID;
 			int fPGID;
 			int fSID;
+			UInt32 fPendingSignals;
+			UInt32 fPreviousSignals;
 			std::string myName;
 			N::FSDirSpec myCWD;
 			CharacterDevice* fControllingTerminal;
@@ -162,14 +164,19 @@ namespace Genie
 			NX::DataPtr< FragmentImage > fOldFragmentImage;
 			N::Owned< CFragConnectionID > fFragmentConnection;
 			N::Owned< CFragConnectionID > fOldFragmentConnection;
-			ErrnoDataPtr fErrnoData;
-			EnvironDataPtr fEnvironData;
 			
 			std::auto_ptr< Sh::StringArray > argvStorage;
-			std::auto_ptr< Sh::StringArray > environStorage;
+			std::auto_ptr< Sh::VarArray    > environStorage;
 			std::auto_ptr< Thread > thread;
+			
+			ErrnoDataPtr fErrnoData;
+			EnvironDataPtr fEnvironData;
+			std::string fLastEnv;
 		
 		public:
+			struct RootProcess {};
+			
+			Process( RootProcess );
 			Process( int ppid );
 			
 			~Process()  {}
@@ -187,6 +194,18 @@ namespace Genie
 			N::FSDirSpec CurrentDirectory() const  { return myCWD; }
 			
 			FileDescriptorMap& FileDescriptors()  { return myFileDescriptors; }
+			
+			int const* ErrnoData()  const { return fErrnoData; }
+			int      * ErrnoData()        { return fErrnoData; }
+			
+			char** const* EnvironData()  const { return fEnvironData; }
+			char**      * EnvironData()        { return fEnvironData; }
+			
+			char* GetEnv( const char* name );
+			void SetEnv( const char* name, const char* value, bool overwrite );
+			void PutEnv( const char* string );
+			void UnsetEnv( const char* name );
+			void ClearEnv();
 			
 			void SetPGID( int pgid )  { fPGID = pgid; }
 			void SetSID ( int sid  )  { fSID  = sid;  }
@@ -219,11 +238,14 @@ namespace Genie
 			             const char* const* envp );
 			
 			void InitThread();
+			void KillThread();
 			
 			int SetErrno( int errorNumber );
 			
 			void Stop();
 			void Continue();
+			
+			bool HandlePendingSignals();
 	};
 	
 	typedef Process GenieProcess;

@@ -6,7 +6,11 @@
 #include "Genie/Process.hh"
 
 // Standard C/C++
-#include <csignal>
+//#include <csignal>
+#include <signal.h>
+
+// POSIX
+#include "unistd.h"
 
 // Nitrogen core
 #include "Nitrogen/Assert.h"
@@ -41,6 +45,7 @@
 	#undef SIGTERM
 #endif
 
+#if 0
 #define	SIGHUP	1	/* hangup */
 #define	SIGINT	2	/* interrupt */
 #define	SIGQUIT	3	/* quit */
@@ -73,6 +78,7 @@
 #define SIGINFO	29	/* information request */
 #define SIGUSR1 30	/* user defined signal 1 */
 #define SIGUSR2 31	/* user defined signal 2 */
+#endif
 
 
 namespace Genie
@@ -80,6 +86,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NX = NitrogenExtras;
+	namespace Sh = ShellShock;
 	namespace K = Kerosene;
 	
 	
@@ -118,7 +125,9 @@ namespace Genie
 	{
 		FSSpec                      executable;
 		std::vector< const char* >  argVector;
-		std::string                 pathname;
+		std::string                 scriptPath;
+		std::string                 interpreterPath;
+		std::string                 interpreterArg;
 		
 		ExecContext()  {}
 		
@@ -139,16 +148,48 @@ namespace Genie
 			return context;  // Already normalized
 		}
 		
-		context.pathname = N::FSpGetPOSIXPathname( context.executable );
+		context.scriptPath = N::FSpGetPOSIXPathname( context.executable );
 		
 		if ( type == 'TEXT' )
 		{
-			// FIXME:  Actually read #! line and select interpreter
+			context.interpreterPath = "/bin/sh";  // default
+			bool hasArg = false;
 			
-			const int newTokenCount = 2;
+			N::Owned< N::FSFileRefNum > script = N::FSpOpenDF( context.executable, fsRdPerm );
+			
+			char data[ 1024 + 1 ];
+			data[1024] = '\0';
+			
+			size_t bytes = N::FSRead( script, 1024, data );
+			
+			N::FSClose( script );
+			
+			if ( bytes > 2 && data[0] == '#' && data[1] == '!' )
+			{
+				char* cr = std::strchr( data, '\r' );
+				char* lf = std::strchr( data, '\n' );
+				
+				char* nl = (cr && lf) ? std::min( cr, lf ) : (cr ? cr : lf);
+				
+				if ( nl == NULL )
+				{
+					throw NotExecutableError();  // #! line too long
+				}
+				
+				*nl = '\0';
+				
+				char* space = std::strchr( data, ' ' );
+				
+				hasArg = space;
+				
+				context.interpreterPath = std::string( &data[2], space ? space : nl );
+				context.interpreterArg  = std::string( space ? space + 1 : nl, nl );
+			}
+			
+			const int newTokenCount = 2 + hasArg;
 			const int skipCount = 1;  // skip the script's name because we're overwriting it anyway
 			
-			// E.g. "$ script foo bar"
+			// E.g. "$ script foo bar baz"
 			// argv == { "script", "foo", "bar", "baz", NULL }
 			
 			context.argVector.resize( context.argVector.size() + newTokenCount );
@@ -163,18 +204,18 @@ namespace Genie
 			
 			// argv == { "script", "foo", "bar", "foo", "bar", "baz", NULL }
 			
-			context.argVector[ 0 ] = "sh";
-			context.argVector[ 1 ] = "--";
-			context.argVector[ 2 ] = context.pathname.c_str();  // Overwrite with full pathname
+			context.argVector[ 0 ] = context.interpreterPath.c_str();
+			context.argVector[ 1 ] = context.interpreterArg.c_str();
+			context.argVector[ 1 + hasArg ] = "--";
+			context.argVector[ 2 + hasArg ] = context.scriptPath.c_str();  // Overwrite with full pathname
 			
 			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
 			
-			N::FSDirSpec parent = N::FSpGetParent( N::GetProcessAppSpec( N::CurrentProcess() ) );
-			context.executable = parent << "Wishes" & "sh";
+			context.executable = ResolveUnixPathname( context.interpreterPath );
 		}
 		else if ( type == 'MPST' )
 		{
-			context.pathname = N::FSpGetMacPathname( context.executable );
+			context.scriptPath = N::FSpGetMacPathname( context.executable );
 			
 			const int newTokenCount = 3;
 			const int skipCount = 1;  // skip the script's name because we're overwriting it anyway
@@ -197,12 +238,13 @@ namespace Genie
 			context.argVector[ 0 ] = "tlsrvr";
 			context.argVector[ 1 ] = "--escape";
 			context.argVector[ 2 ] = "--";
-			context.argVector[ 3 ] = context.pathname.c_str();  // Overwrite with full pathname
+			context.argVector[ 3 ] = context.scriptPath.c_str();  // Overwrite with full pathname
 			
 			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
 			
-			N::FSDirSpec parent = N::FSpGetParent( N::GetProcessAppSpec( N::CurrentProcess() ) );
-			context.executable = parent << "Wishes" & "tlsrvr";
+			context.executable = N::RootDirectory( N::BootVolume() ) << "j"
+			                                                         << "usr"
+			                                                         << "bin" & "tlsrvr";
 		}
 		else
 		{
@@ -227,26 +269,50 @@ namespace Genie
 		return NX::DataPtr< FragmentImage >( result, size );
 	}
 	
+	Process::Process( RootProcess ) 
+	:
+		myPPID              ( 0 ),
+		myPID               ( gProcessTable.NewProcess( this ) ),
+		fPGID               ( 0 ),
+		fSID                ( 0 ),
+		fPendingSignals     ( 0 ),
+		fPreviousSignals    ( 0 ),
+		myName              ( "init" ),
+		myCWD               ( N::FSDirSpec() ),
+		fControllingTerminal( NULL ),
+		myFileDescriptors   ( FileDescriptorMap() ),
+		myStatus            ( kStarting ),
+		environStorage      ( new Sh::VarArray() ),
+		fErrnoData          ( NULL ),
+		fEnvironData        ( NULL )
+	{
+	}
+	
 	Process::Process( int ppid ) 
 	:
 		myPPID              ( ppid ),
 		myPID               ( gProcessTable.NewProcess( this ) ),
-		fPGID               ( ( ppid > 0 ) ? gProcessTable[ ppid ].GetPGID()
-		                                   : 0 ),
-		fSID                ( ( ppid > 0 ) ? gProcessTable[ ppid ].GetSID()
-		                                   : 0 ),
-		myName              ( ppid > 0 ? gProcessTable[ ppid ].ProgramName()
-		                               : "init" ),
-		myCWD               ( ( ppid > 0 ) ? gProcessTable[ ppid ].CurrentDirectory()
-		                                   : N::FSDirSpec() ),
-		fControllingTerminal( ( ppid > 0 ) ? gProcessTable[ ppid ].fControllingTerminal
-		                                   : NULL ),
-		myFileDescriptors   ( ( ppid > 0 ) ? gProcessTable[ ppid ].FileDescriptors()
-		                                   : FileDescriptorMap() ),
+		fPGID               ( gProcessTable[ ppid ].GetPGID() ),
+		fSID                ( gProcessTable[ ppid ].GetSID() ),
+		fPendingSignals     ( 0 ),
+		fPreviousSignals    ( 0 ),
+		myName              ( gProcessTable[ ppid ].ProgramName() ),
+		myCWD               ( gProcessTable[ ppid ].CurrentDirectory() ),
+		fControllingTerminal( gProcessTable[ ppid ].fControllingTerminal ),
+		myFileDescriptors   ( gProcessTable[ ppid ].FileDescriptors() ),
 		myStatus            ( kStarting ),
-		fErrnoData          ( NULL ),
-		fEnvironData        ( NULL )
+		environStorage      ( new Sh::VarArray( gProcessTable[ ppid ].environStorage->GetPointer() ) ),
+		fErrnoData          ( gProcessTable[ ppid ].fErrnoData ),
+		fEnvironData        ( gProcessTable[ ppid ].fEnvironData )
 	{
+		// The environment data and the pointer to the fragment's environ
+		// variable have been copied from the parent.
+		// The calling fragment is now associated with the new process.
+		// Update its environ to point to our storage.
+		if ( fEnvironData != NULL )
+		{
+			*fEnvironData = environStorage->GetPointer();
+		}
 	}
 	
 	void Process::InitThread()
@@ -255,10 +321,56 @@ namespace Genie
 		fOldFragmentImage = NX::DataPtr< FragmentImage >();
 	}
 	
+	void Process::KillThread()
+	{
+		// Kill the thread.
+		thread.reset( NULL );
+	}
+	
+	template < class Type >
+	bool LoadSymbol( N::CFragConnectionID fragment, ConstStr255Param symName, const Type& init )
+	{
+		
+		try
+		{
+			Type* symbol = NULL;
+			
+			N::FindSymbol( fragment, symName, &symbol );
+			
+			*symbol = init;
+		}
+		catch ( ... )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
 	int Process::Exec( const FSSpec&        executable,
 	                   const char* const    argv[],
 	                   const char* const*   envp )
 	{
+		// Close file descriptors with close-on-exec flag.
+		typedef FileDescriptorMap::iterator FDIter;
+		
+		std::vector< int > toClose;
+		
+		for ( FDIter it = myFileDescriptors.begin();  it != myFileDescriptors.end();  ++it )
+		{
+			if ( it->second.closeOnExec )
+			{
+				toClose.push_back( it->first );
+			}
+		}
+		
+		typedef std::vector< int >::const_iterator ToCloseIter;
+		
+		for ( ToCloseIter it = toClose.begin();  it != toClose.end();  ++it )
+		{
+			myFileDescriptors.erase( *it );
+		}
+		
 		// Do we take the name before or after normalization?
 		ProgramName( N::Convert< std::string >( executable.name ) );
 		
@@ -362,17 +474,32 @@ namespace Genie
 		
 		argvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
 		
-		if ( envp != NULL )
+		// We need to set the calling fragment's environ back to the parent
+		// process' environment storage.
+		if ( fEnvironData != NULL )
 		{
-			environStorage.reset( new Sh::StringArray( envp ) );
+			*fEnvironData = myPPID > 0 ? gProcessTable[ myPPID ].environStorage->GetPointer()
+			                           : NULL;
 		}
-		else
+		
+		// Reset the environment storage as a copy of envp (or empty).
+		// As an optimization, if the pointers match, then envp must be the
+		// current environ, and the data are already there.
+		// In that case, we just update the new fragment's environ to point to us.
+		
+		if ( envp == NULL )
 		{
-			environStorage.reset( new Sh::StringArray );
+			environStorage.reset( new Sh::VarArray );
+		}
+		else if ( envp != environStorage->GetPointer() )
+		{
+			environStorage.reset( new Sh::VarArray( envp ) );
 		}
 		
 		try
 		{
+			fEnvironData = NULL;
+			
 			N::FindSymbol( fFragmentConnection, "\p" "environ", &fEnvironData );
 			
 			*fEnvironData = environStorage->GetPointer();
@@ -381,9 +508,13 @@ namespace Genie
 		
 		try
 		{
+			fErrnoData = NULL;
+			
 			N::FindSymbol( fFragmentConnection, "\p" "errno", &fErrnoData );
 		}
 		catch ( ... ) {}
+		
+		LoadSymbol( fFragmentConnection, "\p" "_exit_Ptr", &_exit );
 		
 		Result( 0 );
 		
@@ -402,6 +533,8 @@ namespace Genie
 		Status( Process::kRunning );
 		
 		savedThread.reset( NULL );  // If this is us, we're toast
+		
+		// If we're still here, then we must have been forked.
 		
 		return 0;
 	}
@@ -471,6 +604,112 @@ namespace Genie
 		return -1;
 	}
 	
+	char* Process::GetEnv( const char* name )
+	{
+		char* result = NULL;
+		
+		Sh::SVector::const_iterator it = environStorage->Find( name );
+		
+		const char* var = *it;
+		
+		const char* end = Sh::EndOfVarName( var );
+		
+		// Did we find the right environment variable?
+		if ( end != NULL  &&  *end == '='  &&  Sh::VarMatchesName( var, end, name ) )
+		{
+			fLastEnv = var;
+			fLastEnv += "\0";  // make sure we have a trailing null
+			
+			std::size_t offset = end + 1 - var;
+			
+			result = &fLastEnv[ offset ];
+		}
+		
+		return result;
+	}
+	
+	void Process::SetEnv( const char* name, const char* value, bool overwrite )
+	{
+		Sh::SVector::iterator it = environStorage->Find( name );
+		
+		const char* var = *it;
+		
+		// Did we find the right environment variable?
+		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
+		
+		// If it doesn't match, we insert (otherwise, we possibly overwrite)
+		bool inserting = !match;
+		
+		if ( inserting )
+		{
+			environStorage->Insert( it, Sh::MakeVar( name, value ) );
+			
+			if ( fEnvironData )
+			{
+				*fEnvironData = environStorage->GetPointer();
+			}
+		}
+		else if ( overwrite )
+		{
+			environStorage->Overwrite( it, Sh::MakeVar( name, value ) );
+		}
+	}
+	
+	void Process::PutEnv( const char* string )
+	{
+		std::string name = string;
+		name.resize( name.find( '=' ) );
+		
+		Sh::SVector::iterator it = environStorage->Find( name.c_str() );
+		
+		const char* var = *it;
+		
+		// Did we find the right environment variable?
+		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name.c_str() );
+		
+		// If it doesn't match, we insert (otherwise, we possibly overwrite)
+		bool inserting = !match;
+		
+		if ( inserting )
+		{
+			environStorage->Insert( it, string );
+			
+			if ( fEnvironData )
+			{
+				*fEnvironData = environStorage->GetPointer();
+			}
+		}
+		else
+		{
+			environStorage->Overwrite( it, string );
+		}
+	}
+	
+	void Process::UnsetEnv( const char* name )
+	{
+		Sh::SVector::iterator it = environStorage->Find( name );
+		
+		const char* var = *it;
+		
+		// Did we find the right environment variable?
+		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
+		
+		if ( match )
+		{
+			environStorage->Remove( it );
+		}
+	}
+	
+	void Process::ClearEnv()
+	{
+		environStorage->Clear();
+		
+		if ( fEnvironData )
+		{
+			*fEnvironData = NULL;
+		}
+	}
+	
 	/*
 	long Process::ChangeDirectory( const N::FSDirSpec& dir )
 	{
@@ -506,6 +745,8 @@ namespace Genie
 	void Process::Terminate()
 	{
 		Status( kTerminated );
+		
+		myFileDescriptors.clear();
 		
 		int ppid = ParentProcessID();
 		int pid = ProcessID();
@@ -576,6 +817,18 @@ namespace Genie
 			
 			switch ( signal )
 			{
+				case SIGQUIT:
+				case SIGILL:
+				case SIGTRAP:
+				case SIGABRT:
+				//case SIGEMT:
+				case SIGFPE:
+				case SIGBUS:
+				case SIGSEGV:
+				case SIGSYS:
+					// create core image
+					// for now, fall through
+					//break;
 				case SIGHUP:
 				case SIGINT:
 				case SIGKILL:
@@ -590,41 +843,23 @@ namespace Genie
 				case SIGUSR2:
 					// terminate process
 					Terminate( signal << 8 );
-					break;
-				case SIGQUIT:
-				case SIGILL:
-				case SIGTRAP:
-				case SIGABRT:
-				case SIGEMT:
-				case SIGFPE:
-				case SIGBUS:
-				case SIGSEGV:
-				case SIGSYS:
-					// create core image
-					Terminate( signal << 8 );
+					KillThread();
 					break;
 				case SIGCONT:
-					// continue process
-					/*
-					if ( N::GetThreadState( thread ) == kStoppedThreadState )
-					{
-						N::SetThreadState( thread, kReadyThreadState );
-					}
-					*/
-					// then (fall thru)
 				case SIGURG:
 				case SIGCHLD:
 				case SIGIO:
 				case SIGWINCH:
-				case SIGINFO:
-					// discard signal
+				//case SIGINFO:
+					// continue and discard signal
+					Continue();
 					break;
 				case SIGSTOP:
 				case SIGTSTP:
 				case SIGTTIN:
 				case SIGTTOU:
 					// stop process
-					//N::SetThreadState( thread, kStoppedThreadState );
+					Stop();
 					break;
 				default:
 					// bad signal
@@ -634,15 +869,45 @@ namespace Genie
 		else
 		{
 			// FIXME:  Block this signal during the function call
-			action( signal );
+			fPendingSignals |= 1 << signal - 1;
+			
+			Continue();
 		}
+	}
+	
+	bool Process::HandlePendingSignals()
+	{
+		fPreviousSignals = fPendingSignals;
+		
+		UInt32 bits = fPendingSignals;
+		int signal = 1;
+		
+		while ( bits )
+		{
+			if ( bits & 1 )
+			{
+				sig_t action = signalMap[ signal ];
+				
+				ASSERT( action != SIG_IGN );
+				ASSERT( action != SIG_DFL );
+				
+				action( signal );
+				
+				fPendingSignals &= ~( 1 << signal - 1 );
+			}
+			
+			bits >>= 1;
+			++signal;
+		}
+		
+		return fPreviousSignals;
 	}
 	
 	GenieProcessTable::GenieProcessTable()
 	: 
 		myNextPID( 1 )
 	{
-		new Process( Process::kNoProcessPID );
+		new Process( Process::RootProcess() );
 	}
 	
 	Process& GenieProcessTable::operator[]( int pid )

@@ -25,6 +25,7 @@
 #include "Io/Stream.hh"
 
 // Genie
+#include "Genie/pathnames.hh"
 #include "Genie/Terminal.hh"
 #include "Genie/Yield.hh"
 
@@ -288,6 +289,11 @@ namespace Genie
 	{
 	}
 	
+	bool Console::IsReadable() const
+	{
+		return !currentInput.empty()  ||  myInput != NULL && myInput->Ready();
+	}
+	
 	int Console::Read( char* data, std::size_t byteCount )
 	{
 		// Zero byteCount always begets zero result
@@ -403,25 +409,13 @@ namespace Genie
 		external->Exec( program, argv, NULL );
 	}
 	
-	static FSSpec ShellExecutable()
-	{
-		N::FSDirSpec parent = N::FSpGetParent( N::GetProcessAppSpec( N::CurrentProcess() ) );
-		FSSpec sh = parent << "Wishes" & "sh";
-		
-		return sh;
-	}
-	
 	static FSSpec LoginExecutable()
 	{
-		N::FSDirSpec parent = N::FSpGetParent( N::GetProcessAppSpec( N::CurrentProcess() ) );
-		FSSpec login = parent << "Wishes" & "login";
-		
-		return login;
+		return ResolveUnixPathname( "/bin/login" );
 	}
 	
 	void SpawnNewConsole()
 	{
-		//return SpawnNewConsole( ShellExecutable() );
 		return SpawnNewConsole( LoginExecutable() );
 	}
 	

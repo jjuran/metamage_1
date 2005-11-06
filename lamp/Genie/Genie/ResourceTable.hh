@@ -83,6 +83,11 @@ namespace Genie
 				return Table().at( offset ).resource->Write( data, byteCount );
 			}
 			
+			static unsigned int Poll( std::size_t offset )
+			{
+				return Table().at( offset ).resource->Poll();
+			}
+			
 			static std::size_t Add( std::auto_ptr< Resource > resource )
 			{
 				typedef typename Vector::iterator iterator;

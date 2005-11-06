@@ -16,16 +16,18 @@
 namespace Genie
 {
 	
-	class CharacterDevice
+	class CharacterDevice : public IOStream
 	{
 		public:
 			virtual ~CharacterDevice()  {}
 			virtual bool IsATTY() const  { return false; }
 			virtual const char* DeviceName() const = 0;
 			
-			virtual int Read (       char* data, std::size_t byteCount );
+			virtual unsigned int SysPoll() const  { return kPollRead | kPollWrite; }
 			
-			virtual int Write( const char* data, std::size_t byteCount )
+			virtual int SysRead (       char* data, std::size_t byteCount );
+			
+			virtual int SysWrite( const char* data, std::size_t byteCount )
 			{
 				return byteCount;
 			}

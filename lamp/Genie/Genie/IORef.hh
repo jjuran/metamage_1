@@ -25,34 +25,73 @@ namespace Genie
 		kSocketDescriptor          = 6
 	};
 	
+	enum
+	{
+		kPollRead   = 1,
+		kPollWrite  = 2,
+		kPollExcept = 4
+	};
+	
 	typedef std::size_t (*RefMod)( std::size_t offset, int delta );
+	typedef unsigned int (*IOPoller)( std::size_t offset );
 	typedef int (*IOReader)( std::size_t offset, char* data, std::size_t byteCount );
 	typedef int (*IOWriter)( std::size_t offset, const char* data, std::size_t byteCount );
 	
 	void RetainIO ( std::size_t type, std::size_t offset );
 	void ReleaseIO( std::size_t type, std::size_t offset );
 	
+	unsigned int PollIO( std::size_t type, std::size_t offset );
+	
 	int ReadIO ( std::size_t type, std::size_t offset,       char* data, std::size_t byteCount );
 	int WriteIO( std::size_t type, std::size_t offset, const char* data, std::size_t byteCount );
 	
-	void RegisterIOType( std::size_t type, RefMod refMod, IOReader reader, IOWriter writer );
+	void RegisterIOType( std::size_t type,
+	                     RefMod refMod,
+	                     IOReader reader,
+	                     IOWriter writer,
+	                     IOPoller poller );
 	
+	
+	class IOStream
+	{
+		private:
+			std::string fPeekBuffer;
+		
+		public:
+			
+			virtual unsigned int SysPoll() const = 0;
+			
+			virtual int SysRead( char* data, std::size_t byteCount ) = 0;
+			
+			virtual int SysWrite( const char* data, std::size_t byteCount ) = 0;
+			
+			const std::string& Peek( ByteCount minBytes );
+			
+			unsigned int Poll() const;
+			
+			int Read( char* data, std::size_t byteCount );
+			
+			int Write( const char* data, std::size_t byteCount );
+	};
 	
 	class IORef
 	{
 		private:
 			std::size_t fType;    // selector, range of values modifiable at runtime
 			std::size_t fOffset;  // offset into type-specific filetable
+			
+			IOStream* fStream;
 		
 		public:
 			// Default constructor
-			IORef() : fType( 0 ), fOffset( 0 )  {}
+			IORef() : fType( 0 ), fOffset( 0 ), fStream( NULL )  {}
 			
 			// Construct from components
-			IORef( std::size_t type, std::size_t offset )
+			IORef( std::size_t type, std::size_t offset, IOStream* stream )
 			:
 				fType  ( type   ),
-				fOffset( offset )
+				fOffset( offset ),
+				fStream( stream )
 			{
 				RetainIO( fType, fOffset );
 			}
@@ -61,7 +100,8 @@ namespace Genie
 			IORef( const IORef& ref )
 			:
 				fType  ( ref.fType   ),
-				fOffset( ref.fOffset )
+				fOffset( ref.fOffset ),
+				fStream( ref.fStream )
 			{
 				RetainIO( fType, fOffset );
 			}
@@ -84,6 +124,7 @@ namespace Genie
 				// And copy
 				fType   = ref.fType;
 				fOffset = ref.fOffset;
+				fStream = ref.fStream;
 				
 				return *this;
 			}
@@ -92,6 +133,7 @@ namespace Genie
 			{
 				std::swap( fType,   ref.fType   );
 				std::swap( fOffset, ref.fOffset );
+				std::swap( fStream, ref.fStream );
 			}
 			
 			std::size_t Offset() const  { return fOffset; }
@@ -101,15 +143,13 @@ namespace Genie
 				return fType == type;
 			}
 			
-			int Read( char* data, std::size_t byteCount ) const
-			{
-				return ReadIO( fType, fOffset, data, byteCount );
-			}
+			const std::string& Peek( ByteCount minBytes ) const;
 			
-			int Write( const char* data, std::size_t byteCount ) const
-			{
-				return WriteIO( fType, fOffset, data, byteCount );
-			}
+			unsigned int Poll() const;
+			
+			int Read( char* data, std::size_t byteCount ) const;
+			
+			int Write( const char* data, std::size_t byteCount ) const;
 	};
 	
 	template < class Resource >

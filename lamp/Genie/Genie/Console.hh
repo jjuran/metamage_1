@@ -126,6 +126,8 @@ namespace Genie
 			
 			void SetBlockingMode( bool mode )  { blockingMode = mode; }
 			
+			bool IsReadable() const;
+			
 			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );
 			

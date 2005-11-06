@@ -31,7 +31,7 @@ namespace Genie
 			:
 				inputClosed ( false ),
 				outputClosed( false ),
-				fBlocking   ( false )
+				fBlocking   ( true )
 			{}
 			
 			void InputClosed()   { inputClosed  = true; }

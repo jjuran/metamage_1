@@ -8,6 +8,9 @@
 // Nitrogen core
 #include "Nitrogen/OnlyOnce.h"
 
+// POSeven
+#include "POSeven/Errno.h"
+
 // Io
 #include "Io/Exceptions.hh"
 
@@ -19,6 +22,8 @@
 namespace Genie
 {
 	
+	namespace P7 = POSeven;
+	
 	typedef ResourceTable< SocketHandle > SocketTable;
 	
 	void RegisterSocketRefMod();
@@ -27,7 +32,8 @@ namespace Genie
 		RegisterIOType( kSocketDescriptor,
 		                SocketTable::RefMod,
 		                SocketTable::Read,
-		                SocketTable::Write );
+		                SocketTable::Write,
+		                SocketTable::Poll );
 	}
 	
 	
@@ -35,11 +41,11 @@ namespace Genie
 	{
 		N::OnlyOnce< RegisterSocketRefMod >();
 		
-		std::auto_ptr< SocketHandle > socket( new SocketHandle( blockingMode ) );
+		SocketHandle* socket = new SocketHandle( blockingMode );
 		
-		std::size_t offset = SocketTable::Add( socket );
+		std::size_t offset = SocketTable::Add( std::auto_ptr< SocketHandle >( socket ) );
 		
-		return IORef( kSocketDescriptor, offset );
+		return IORef( kSocketDescriptor, offset, socket );
 	}
 	
 	
@@ -59,6 +65,10 @@ namespace Genie
 				try
 				{
 					Yield();
+				}
+				catch ( P7::Errno& err )
+				{
+					// FIXME
 				}
 				catch ( ... ) {}
 				break;
@@ -96,7 +106,27 @@ namespace Genie
 		}
 	}
 	
-	int SocketHandle::Read( char* data, std::size_t byteCount )
+	unsigned int SocketHandle::SysPoll() const
+	{
+		::OTResult state = ::OTGetEndpointState( endpoint );
+		
+		bool canRead = true;
+		
+		if ( state == T_IDLE )
+		{
+			canRead = false;
+		}
+		else if ( state == T_DATAXFER )
+		{
+			std::size_t count;
+			
+			canRead = ::OTCountDataBytes( endpoint, &count ) == noErr;
+		}
+		
+		return (canRead ? kPollRead : 0) | kPollWrite;
+	}
+	
+	int SocketHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		try
 		{
@@ -129,7 +159,7 @@ namespace Genie
 		return -1;
 	}
 	
-	int SocketHandle::Write( const char* data, std::size_t byteCount )
+	int SocketHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		return N::OTSnd( endpoint, data, byteCount );
 	}
@@ -186,7 +216,9 @@ namespace Genie
 		
 		//N::Owned< SocketHandle* > newSocket = N::Owned< SocketHandle* >::Seize( new SocketHandle );
 		
-		std::auto_ptr< SocketHandle > newSocket( new SocketHandle );
+		SocketHandle* handle = new SocketHandle;
+		
+		std::auto_ptr< SocketHandle > newSocket( handle );
 		
 		newSocket->fPeerAddress.Assign( client, len );
 		
@@ -194,7 +226,7 @@ namespace Genie
 		
 		std::size_t offset = SocketTable::Add( newSocket );
 		
-		return IORef( kSocketDescriptor, offset );
+		return IORef( kSocketDescriptor, offset, handle );
 	}
 	
 	Accept_Result SocketHandle::Accept()

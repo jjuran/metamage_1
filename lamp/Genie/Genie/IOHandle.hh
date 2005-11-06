@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	class IOHandle
+	class IOHandle : public IOStream
 	{
 		private:
 			Io::Handle handle;
@@ -24,12 +24,14 @@ namespace Genie
 		public:
 			IOHandle( const Io::Handle& handle ) : handle( handle )  {}
 			
-			int Read( char* data, std::size_t byteCount )
+			unsigned int SysPoll() const  { return kPollRead | kPollWrite; }
+			
+			int SysRead( char* data, std::size_t byteCount )
 			{
 				return handle.Read( data, byteCount );
 			}
 			
-			int Write( const char* data, std::size_t byteCount )
+			int SysWrite( const char* data, std::size_t byteCount )
 			{
 				return handle.Write( data, byteCount );
 			}

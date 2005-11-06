@@ -46,7 +46,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	
-	int CharacterDevice::Read( char* data, std::size_t byteCount )
+	int CharacterDevice::SysRead( char* data, std::size_t byteCount )
 	{
 		throw Io::EndOfInput();
 	}
@@ -63,15 +63,20 @@ namespace Genie
 			
 			const char* DeviceName() const  { return "/dev/ptmx"; }  // Close enough for now
 			
-			// These are from the user's perspective:
+			// Input and output are from the user's perspective:
 			// We write input for the user to read, and read output the user has written.
 			
-			int Read (       char* data, std::size_t byteCount )
+			unsigned int SysPoll() const
+			{
+				return (fTube.Get()->output.Empty() ? 0 : kPollRead) | kPollWrite;
+			}
+			
+			int SysRead (       char* data, std::size_t byteCount )
 			{
 				return fTube.Get()->output.Read( data, byteCount );
 			}
 			
-			int Write( const char* data, std::size_t byteCount )
+			int SysWrite( const char* data, std::size_t byteCount )
 			{
 				return fTube.Get()->input.Write( data, byteCount );
 			}
@@ -96,12 +101,17 @@ namespace Genie
 			
 			const char* DeviceName() const  { return fName.c_str(); }
 			
-			int Read (       char* data, std::size_t byteCount )
+			unsigned int SysPoll() const
+			{
+				return (fTube.Get()->input.Empty() ? 0 : kPollRead) | kPollWrite;
+			}
+			
+			int SysRead (       char* data, std::size_t byteCount )
 			{
 				return fTube.Get()->input.Read( data, byteCount );
 			}
 			
-			int Write( const char* data, std::size_t byteCount )
+			int SysWrite( const char* data, std::size_t byteCount )
 			{
 				return fTube.Get()->output.Write( data, byteCount );
 			}
@@ -115,7 +125,8 @@ namespace Genie
 		RegisterIOType( kCharacterDeviceDescriptor,
 		                CharacterDeviceTable::RefMod,
 		                CharacterDeviceTable::Read,
-		                CharacterDeviceTable::Write );
+		                CharacterDeviceTable::Write,
+		                CharacterDeviceTable::Poll );
 	}
 	
 	NewPseudoTerminal_Result NewPseudoTerminal()
@@ -129,10 +140,15 @@ namespace Genie
 		std::auto_ptr< PseudoTerminalMaster > master( new PseudoTerminalMaster( tube ) );
 		std::auto_ptr< PseudoTerminalSlave  > slave ( new PseudoTerminalSlave ( tube, gNextID++ ) );
 		
+		PseudoTerminalMaster* m = master.get();
+		PseudoTerminalSlave*  s = slave.get();
+		
 		return std::make_pair( IORef( kCharacterDeviceDescriptor,
-		                              CharacterDeviceTable::Add( master ) ),
+		                              CharacterDeviceTable::Add( master ),
+		                              m ),
 		                       IORef( kCharacterDeviceDescriptor,
-		                              CharacterDeviceTable::Add( slave ) ) );
+		                              CharacterDeviceTable::Add( slave ),
+		                              s ) );
 	}
 	
 	
@@ -159,14 +175,19 @@ namespace Genie
 			
 			void CheckConsole();
 			
-			int Read (       char* data, std::size_t byteCount )
+			unsigned int SysPoll() const
+			{
+				return (fConsole && fConsole->IsReadable() ? kPollRead : 0) | kPollWrite;
+			}
+			
+			int SysRead (       char* data, std::size_t byteCount )
 			{
 				CheckConsole();
 				
 				return fConsole->Read( data, byteCount );
 			}
 			
-			int Write( const char* data, std::size_t byteCount )
+			int SysWrite( const char* data, std::size_t byteCount )
 			{
 				CheckConsole();
 				
@@ -193,11 +214,11 @@ namespace Genie
 		
 		static std::size_t gLastID = 0;
 		
-		std::auto_ptr< Terminal > terminal( new Terminal( ++gLastID ) );
+		Terminal* terminal = new Terminal( ++gLastID );
 		
-		std::size_t offset = CharacterDeviceTable::Add( terminal );
+		std::size_t offset = CharacterDeviceTable::Add( std::auto_ptr< Terminal >( terminal ) );
 		
-		return IORef( kCharacterDeviceDescriptor, offset );
+		return IORef( kCharacterDeviceDescriptor, offset, terminal );
 	}
 	
 }

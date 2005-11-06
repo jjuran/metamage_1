@@ -22,7 +22,7 @@ namespace Genie
 	
 	IORef OpenFile( const FSSpec& file, N::FSIOPermissions perm );
 	
-	class FileHandle
+	class FileHandle : public IOStream
 	{
 		private:
 			N::Owned< N::FSFileRefNum > fRefNum;
@@ -35,9 +35,13 @@ namespace Genie
 			
 			FileHandle( const FSSpec& file, N::FSIOPermissions perm );
 			
-			int Read( char* data, std::size_t byteCount );
+			N::FSFileRefNum GetRefNum() const  { return fRefNum; }
 			
-			int Write( const char* data, std::size_t byteCount );
+			unsigned int SysPoll() const  { return kPollRead | kPollWrite | kPollExcept; }
+			
+			int SysRead( char* data, std::size_t byteCount );
+			
+			int SysWrite( const char* data, std::size_t byteCount );
 	};
 	
 }

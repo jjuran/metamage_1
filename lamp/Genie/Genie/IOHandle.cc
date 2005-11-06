@@ -17,7 +17,14 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	
-	typedef ResourceTable< Io::Handle > IOTable;
+	typedef ResourceTable< IOHandle > IOTable;
+	
+	static unsigned int Poll( std::size_t offset )
+	{
+		//return IOTable::Table().at( offset ).resource->Poll();
+		
+		return kPollRead | kPollWrite;
+	}
 	
 	void RegisterGenericIORefMod();
 	void RegisterGenericIORefMod()
@@ -25,7 +32,8 @@ namespace Genie
 		RegisterIOType( kGenericIODescriptor,
 		                IOTable::RefMod,
 		                IOTable::Read,
-		                IOTable::Write );
+		                IOTable::Write,
+		                Poll );
 	}
 	
 	
@@ -33,11 +41,11 @@ namespace Genie
 	{
 		N::OnlyOnce< RegisterGenericIORefMod >();
 		
-		std::auto_ptr< Io::Handle > newIO( new Io::Handle( io ) );
+		IOHandle* newIO = new IOHandle( io );
 		
-		std::size_t offset = IOTable::Add( newIO );
+		std::size_t offset = IOTable::Add( std::auto_ptr< IOHandle >( newIO ) );
 		
-		return IORef( kGenericIODescriptor, offset );
+		return IORef( kGenericIODescriptor, offset, newIO );
 	}
 	
 }
