@@ -3,6 +3,15 @@
  *	=====
  */
 
+// Standard C
+#include "errno.h"
+
+// Standard C/C++
+#include <cstdio>
+
+// POSIX
+#include "unistd.h"
+
 // MoreFiles
 #include "MoreFilesExtras.h"
 
@@ -37,7 +46,10 @@ int O::Main( int argc, const char *const argv[] )
 	// Check for sufficient number of args
 	if (argc < 3)
 	{
-		Io::Err << "mv: missing " << ((argc == 1) ? "file arguments" : "destination file") << "\n";
+		const char* prerequisite = (argc == 1) ? "file arguments" : "destination file";
+		
+		Io::Err << "mv: missing " << prerequisite << "\n";
+		
 		return 1;
 	}
 	
@@ -55,7 +67,11 @@ int O::Main( int argc, const char *const argv[] )
 		}
 		catch ( ... )
 		{
-			Io::Err << "mv: moving multiple files, but last argument (" << argv[argc - 1] << ") is not a directory.\n";
+			//Io::Err << "mv: moving multiple files, but last argument (" << argv[argc - 1] << ") is not a directory.\n";
+			const char* format = "%s: moving multiple files, but last argument (%s) is not a directory.\n";
+			
+			std::fprintf( stderr, format, argv[ 0 ], argv[argc - 1] );
+			
 			return 1;
 		}
 		
@@ -75,12 +91,46 @@ int O::Main( int argc, const char *const argv[] )
 	else
 	{
 		// Move single file or directory.
+		
+		const char* srcPath  = argv[ 1 ];
+		const char* destPath = argv[ 2 ];
+		
+		int renamed = rename( srcPath, destPath );
+		
+		if ( renamed == -1 )
+		{
+			int err = errno;
+			
+			const char* msg = "unchecked error";
+			
+			switch ( errno )
+			{
+				case ENOENT:
+					msg = "No such file or directory";
+					break;
+				
+				case EXDEV:
+					msg = "can't move across partitions";
+					break;
+				
+				default:
+					std::fprintf( stderr, "Errno = %d\n", errno );
+					break;
+			}
+			
+			std::fprintf( stderr, "%s: rename %s to %s: %s\n", argv[ 0 ], srcPath, destPath, msg );
+			
+			return 1;
+		}
+		
+		return 0;
+		
 		FSSpec source;
 		try
 		{
 			source = Path2FSS( argv[ 1 ] );
 		}
-		catch ( N::OSStatus err )
+		catch ( N::OSStatus& err )
 		{
 			Io::Err << "mv: cannot stat `" << argv[ 1 ] << "': No such file or directory " << err << "\n";
 			return 1;
