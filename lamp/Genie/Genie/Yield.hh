@@ -25,6 +25,8 @@ namespace Genie
 	
 	void StopThread( N::ThreadID thread );
 	
+	void ReadyThread( N::ThreadID thread );
+	
 }
 
 #endif

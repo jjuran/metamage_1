@@ -85,5 +85,21 @@ namespace Genie
 		}
 	}
 	
+	void ReadyThread( N::ThreadID thread )
+	{
+		Process* me = gCurrentProcess;
+		
+		gCurrentProcess = NULL;
+		
+		N::SetThreadState( thread, kReadyThreadState );
+		
+		gCurrentProcess = me;
+		
+		if ( N::GetCurrentThread() == thread )
+		{
+			HandlePendingSignals();
+		}
+	}
+	
 }
 
