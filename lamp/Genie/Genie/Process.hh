@@ -19,9 +19,6 @@
 #include "Nitrogen/CodeFragments.h"
 #include "Nitrogen/Shared.h"
 
-// Nitrogen Extras / Templates
-#include "Templates/DataPointer.h"
-
 // Nitrogen Extras / Utilities
 #include "Utilities/Threads.h"
 
@@ -35,6 +32,7 @@
 #include "ShellShock/VarArray.hh"
 
 // Genie
+#include "Genie/BinaryImage.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/Terminal.hh"
 
@@ -123,8 +121,6 @@ namespace Genie
 	typedef char***  EnvironDataPtr;
 	
 	
-	struct FragmentImage {};
-	
 	class Process
 	{
 		public:
@@ -160,8 +156,8 @@ namespace Genie
 			std::map< int, sig_t > signalMap;
 		
 		private:
-			NX::DataPtr< FragmentImage > fFragmentImage;
-			NX::DataPtr< FragmentImage > fOldFragmentImage;
+			BinaryImage fFragmentImage;
+			BinaryImage fOldFragmentImage;
 			N::Owned< CFragConnectionID > fFragmentConnection;
 			N::Owned< CFragConnectionID > fOldFragmentConnection;
 			
