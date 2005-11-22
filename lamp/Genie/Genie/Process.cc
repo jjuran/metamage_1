@@ -118,6 +118,10 @@ namespace Genie
 		
 		context.processContext->Terminate( result );
 		
+		// This is a necessary hack for now to keep the thread from terminating naturally.
+		// If that happens, the ThreadID Disposer throws -618 (thread not found)
+		//context.processContext->KillThread();
+		
 		return result;
 	}
 	
@@ -254,6 +258,7 @@ namespace Genie
 		return context;
 	}
 	
+	/*
 	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const FSSpec& file )
 	{
 		N::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
@@ -268,6 +273,7 @@ namespace Genie
 		
 		return NX::DataPtr< FragmentImage >( result, size );
 	}
+	*/
 	
 	Process::Process( RootProcess ) 
 	:
@@ -318,12 +324,16 @@ namespace Genie
 	void Process::InitThread()
 	{
 		N::CloseConnection( fOldFragmentConnection );
-		fOldFragmentImage = NX::DataPtr< FragmentImage >();
+		//fOldFragmentImage = NX::DataPtr< FragmentImage >();
+		fOldFragmentImage = BinaryImage();
 	}
 	
 	void Process::KillThread()
 	{
 		// Kill the thread.
+		
+		// This is bad if we're killing ourselves, since the very thread we're killing
+		// is the one performing the operation, which therefore won't complete.
 		thread.reset( NULL );
 	}
 	
@@ -385,10 +395,15 @@ namespace Genie
 		fOldFragmentImage      = fFragmentImage;
 		fOldFragmentConnection = fFragmentConnection;
 		
-		fFragmentImage = ReadFragmentImageFromPluginFile( programFile );
+		{
+			BinaryImage binary = GetBinaryImage( programFile );
+		}
 		
-		fFragmentConnection = N::GetMemFragment< kPrivateCFragCopy >( fFragmentImage.Get(),
-		                                                              fFragmentImage.Len() );
+		//fFragmentImage = ReadFragmentImageFromPluginFile( programFile );
+		fFragmentImage = GetBinaryImage( programFile );
+		
+		fFragmentConnection = N::GetMemFragment< kPrivateCFragCopy >( fFragmentImage.GetPointer(),
+		                                                              fFragmentImage.GetSize() );
 		
 		K::Versions assumedVersions;
 		
@@ -1007,13 +1022,14 @@ namespace Genie
 	
 	void Process::Stop()
 	{
-		//N::SetThreadState( thread->Get(), kStoppedThreadState );
 		StopThread( thread->Get() );
 	}
 	
 	void Process::Continue()
 	{
-		N::SetThreadState( thread->Get(), kReadyThreadState );
+		// Warning:  This yields!
+		//N::SetThreadState( thread->Get(), kReadyThreadState );
+		ReadyThread( thread->Get() );
 	}
 	
 }
