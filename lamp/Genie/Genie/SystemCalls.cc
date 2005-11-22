@@ -68,6 +68,8 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	
+	namespace P7 = POSeven;
+	
 	namespace ext = N::STLExtensions;
 	
 	
@@ -103,6 +105,8 @@ namespace Genie
 	
 	static GenieProcessTable::iterator CheckAnyPID( pid_t ppid )
 	{
+		bool hasAnyChildren = false;
+		
 		typedef GenieProcessTable::iterator iterator;
 		
 		// FIXME:  Replace with find_if
@@ -110,10 +114,20 @@ namespace Genie
 		{
 			Process& proc = *it->second.Get();
 			
-			if ( proc.ParentProcessID() == ppid  &&  proc.Status() == Process::kTerminated )
+			if ( proc.ParentProcessID() == ppid )
 			{
-				return it;
+				if ( proc.Status() == Process::kTerminated )
+				{
+					return it;
+				}
+				
+				hasAnyChildren = true;
 			}
+		}
+		
+		if ( !hasAnyChildren )
+		{
+			P7::ThrowErrno( ECHILD );
 		}
 		
 		return gProcessTable.end();
@@ -125,17 +139,19 @@ namespace Genie
 		
 		iterator found = gProcessTable.Map().find( pid );
 		
-		if ( found != gProcessTable.end() )
+		if ( found == gProcessTable.end() )
 		{
-			if ( found->second.Get()->ParentProcessID() != ppid )
-			{
-				// complain
-			}
-			
-			if ( found->second.Get()->Status() != Process::kTerminated )
-			{
-				found = gProcessTable.end();
-			}
+			P7::ThrowErrno( ECHILD );
+		}
+		
+		if ( found->second.Get()->ParentProcessID() != ppid )
+		{
+			// complain
+		}
+		
+		if ( found->second.Get()->Status() != Process::kTerminated )
+		{
+			found = gProcessTable.end();
 		}
 		
 		return found;
