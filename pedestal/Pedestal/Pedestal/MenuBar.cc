@@ -5,36 +5,19 @@
 
 #include "Pedestal/MenuBar.hh"
 
-// Mac OS
-#ifdef __APPLE_CC__
-	#include <Carbon/Carbon.h>
-#else
-	#include <ToolUtils.h>
-	#include <Devices.h>
+// Universal Interfaces
+#ifndef __TOOLUTILS__
+#include <ToolUtils.h>
 #endif
 
-// Nitrogen
-#include "Nitrogen/Scoped.h"
+// Nitrogen Extras / ClassicToolbox
+#if CALL_NOT_IN_CARBON
+#include "ClassicToolbox/Devices.h"
+#endif
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
 
-
-namespace Nitrogen
-{
-	
-#if CALL_NOT_IN_CARBON
-	
-	static void OpenDeskAcc( ConstStr255Param name )
-	{
-		Scoped< GrafPtr& >( Port() );
-
-		::OpenDeskAcc( name );
-	}
-	
-#endif
-	
-}
 
 namespace Pedestal
 {
