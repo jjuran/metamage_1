@@ -25,7 +25,7 @@ namespace Pedestal
 			typedef std::pair< typename Front::Initializer,
 			                   typename Back ::Initializer > Initializer;
 			
-			FrontBackView( const Rect& bounds, const Initializer& init )
+			FrontBackView( const Rect& bounds, Initializer init )
 			:
 				front( bounds, init.first  ),
 				back ( bounds, init.second )

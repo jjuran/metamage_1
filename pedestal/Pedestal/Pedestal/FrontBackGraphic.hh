@@ -12,6 +12,8 @@
 namespace Pedestal
 {
 	
+	namespace N = Nitrogen;
+	
 	template < class Front, class Back >
 	class FrontBackGraphic : public Graphic
 	{
@@ -23,7 +25,7 @@ namespace Pedestal
 			typedef std::pair< typename Front::Initializer,
 			                   typename Back ::Initializer > Initializer;
 			
-			FrontBackGraphic( const Initializer& init = Initializer() )
+			FrontBackGraphic( Initializer init = Initializer() )
 			:
 				front( init.first  ),
 				back ( init.second )

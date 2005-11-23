@@ -172,7 +172,7 @@ namespace Pedestal
 		public:
 			typedef typename ScrollViewType::Initializer Initializer;
 			
-			Scroller( const Rect& bounds, const Initializer& init = Initializer() );
+			Scroller( const Rect& bounds, Initializer init = Initializer() );
 			
 			static bool ScrollsVertically()    { return VerticalTraits::present; }
 			static bool ScrollsHorizontally()  { return HorizontalTraits::present; }
@@ -372,7 +372,7 @@ namespace Pedestal
 	}
 	
 	template < class ScrollViewType, ScrollbarConfig config >
-	Scroller< ScrollViewType, config >::Scroller( const Rect& bounds, const Initializer& init )
+	Scroller< ScrollViewType, config >::Scroller( const Rect& bounds, Initializer init )
 	: 
 		BoundedView( bounds ), 
 		myScrollV( VerticalScrollbarBounds  ( bounds,

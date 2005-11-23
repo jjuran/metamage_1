@@ -148,9 +148,9 @@ namespace Pedestal
 			
 			WindowClosure& Closure()  { return ClosableWindow::Closure(); }
 			
-			Window( const NewWindowContext& context,
-			        WindowClosure& closure,
-			        const Initializer& init );
+			Window( const NewWindowContext&  context,
+			        WindowClosure&           closure,
+			        Initializer              init );
 			
 			Type& SubView()  { return mySubView; }
 			
@@ -194,7 +194,7 @@ namespace Pedestal
 	template < class Type, short defProcID >
 	Window< Type, defProcID >::Window( const NewWindowContext&  context,
 	                                   WindowClosure&           closure,
-	                                   const Initializer&       init = Initializer() )
+	                                   Initializer              init = Initializer() )
 	:
 		ClosableWindow( closure ),
 		WindowRefOwner( CreateWindow( context,

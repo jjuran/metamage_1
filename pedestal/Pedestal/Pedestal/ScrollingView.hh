@@ -27,6 +27,32 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	namespace NX = NitrogenExtras;
 	
+	
+	class ScopedOrigin
+	{
+		private:
+			N::Saved< N::Clip_Value > savedClip;
+		
+		public:
+			ScopedOrigin( short h, short v )
+			{
+				N::SetOrigin( h, v );
+				
+				N::Owned< RgnHandle > clip = N::GetClip();
+				::OffsetRgn( clip, h, v );
+				N::SetClip( clip );
+			}
+			ScopedOrigin( short h, short v, RgnHandle newClip )
+			{
+				N::SetOrigin( h, v );
+				
+				N::Owned< RgnHandle > clip = N::CopyRgn( newClip );
+				::OffsetRgn( clip, h, v );
+				N::SetClip( clip );
+			}
+			~ScopedOrigin()  { N::SetOrigin( 0, 0 ); }
+	};
+	
 	template < class SubViewType >
 	class ScrollingView : public View
 	{
@@ -38,7 +64,7 @@ namespace Pedestal
 		public:
 			typedef typename SubViewType::Initializer Initializer;
 			
-			ScrollingView( const Rect& bounds, const Initializer& init = Initializer() )
+			ScrollingView( const Rect& bounds, Initializer init = Initializer() )
 			: 
 				bounds( bounds ), 
 				scrollPosition( N::SetPt( 0, 0 ) ), 
@@ -169,32 +195,6 @@ namespace Pedestal
 	{
 		scroll.Scroll( dh, dv, updateNow );
 	}
-	
-	
-	class ScopedOrigin
-	{
-		private:
-			N::Saved< N::Clip_Value > savedClip;
-		
-		public:
-			ScopedOrigin( short h, short v )
-			{
-				N::SetOrigin( h, v );
-				
-				N::Owned< RgnHandle > clip = N::GetClip();
-				::OffsetRgn( clip, h, v );
-				N::SetClip( clip );
-			}
-			ScopedOrigin( short h, short v, RgnHandle newClip )
-			{
-				N::SetOrigin( h, v );
-				
-				N::Owned< RgnHandle > clip = N::CopyRgn( newClip );
-				::OffsetRgn( clip, h, v );
-				N::SetClip( clip );
-			}
-			~ScopedOrigin()  { N::SetOrigin( 0, 0 ); }
-	};
 	
 	
 	template < class SubViewType >
