@@ -14,19 +14,65 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	
-	class IconID : public Graphic
+	class PlainIcon : public Graphic
 	{
+		typedef N::PlainIconHandle Handle;
+		
+		typedef N::Owned< Handle >  Value;
+		typedef N::Owned< Handle >  Parameter;
+		typedef Handle              GetResult;
+		
 		private:
-			N::ResID resID;
+			Value value;
 		
 		public:
-			typedef N::ResID Initializer;
+			typedef Parameter Initializer;
 			
-			IconID( const N::ResID& resID ) : resID( resID )  {}
+			PlainIcon( Parameter v ) : value( v )  {}
 			
-			N::ResID Get() const  { return resID; }
+			GetResult Get() const  { return value; }
 			
-			void Plot( const Rect& area );
+			void Plot( const Rect& area ) const;
+	};
+	
+	class MaskedIcon : public Graphic
+	{
+		typedef N::MaskedIconHandle Handle;
+		
+		typedef N::Owned< Handle >  Value;
+		typedef N::Owned< Handle >  Parameter;
+		typedef Handle              GetResult;
+		
+		private:
+			Value value;
+		
+		public:
+			typedef Parameter Initializer;
+			
+			MaskedIcon( Parameter v ) : value( v )  {}
+			
+			GetResult Get() const  { return value; }
+			
+			void Plot( const Rect& area ) const;
+	};
+	
+	class IconID : public Graphic
+	{
+		typedef N::ResID Value;
+		typedef N::ResID Parameter;
+		typedef N::ResID GetResult;
+		
+		private:
+			Value value;
+		
+		public:
+			typedef Parameter Initializer;
+			
+			IconID( Parameter v ) : value( v )  {}
+			
+			GetResult Get() const  { return value; }
+			
+			void Plot( const Rect& area ) const;
 	};
 	
 }
