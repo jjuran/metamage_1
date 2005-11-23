@@ -6,7 +6,7 @@
 #include "Pedestal/GWorldView.hh"
 
 // Nitrogen
-#include "Nitrogen/Scoped.h"
+#include "Utilities/Saved.h"
 
 
 namespace Pedestal
@@ -22,10 +22,10 @@ namespace Pedestal
 	void GWorldView::Update()
 	{
 		// Lock pixels
-		N::PixelsState_Details details( N::GetGWorldPixMap( myGWorld ) );
-		N::Scoped< N::PixelsState > savedPixelsState( N::PixelsState( details ) );
+		PixMapHandle pix = N::GetGWorldPixMap( myGWorld );
+		N::Saved< N::PixelsState_Value > savedPixelsState( pix );
 		
-		N::LockPixels( N::GetGWorldPixMap( myGWorld ) );
+		N::LockPixels( pix );
 		
 		// Copy to dest
 		N::CopyBits( N::GetPortBitMapForCopyBits( myGWorld                 ),

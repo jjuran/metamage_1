@@ -7,7 +7,9 @@
 
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"
-#include "Nitrogen/Scoped.h"
+
+// Nitrogen Extras / Utilities
+#include "Utilities/Saved.h"
 
 
 namespace Pedestal
@@ -17,13 +19,13 @@ namespace Pedestal
 	
 	SolidColorGraphic::SolidColorGraphic( const RGBColor& color )
 	:
-	  	color ( color  )
+	  	color( color )
 	{
 	}
 	
 	void SolidColorGraphic::Plot( const Rect& area )
 	{
-		N::Scoped< N::The_RGBForeColor > colorScope;
+		N::Saved< N::RGBForeColor_Value > saved;
 		
 		N::RGBForeColor( color );
 		

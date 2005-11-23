@@ -6,9 +6,7 @@
 #include "Pedestal/Application.hh"
 
 // Mac OS
-#ifdef __MACH__
-	#include <Carbon/Carbon.h>
-#else
+#ifndef __MACH__
 	#include <Controls.h>
 	#include <DiskInit.h>
 	#include <ToolUtils.h>
@@ -22,12 +20,11 @@
 #include "Nitrogen/Events.h"
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/MacErrors.h"
-#include "Nitrogen/Scoped.h"
+#include "Nitrogen/Sound.h"
 #include "Nitrogen/Threads.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Clipboard.h"
-#include "Utilities/Quickdraw.h"
 #include "Utilities/Saved.h"
 
 // Pedestal
@@ -69,7 +66,7 @@ namespace Pedestal
 	
 	inline void DebugBeep()
 	{
-		::SysBeep( 3 );
+		N::SysBeep();
 	}
 	
 	enum
@@ -372,15 +369,11 @@ namespace Pedestal
 			}
 		}
 		
-		//N::Scoped< N::Clip > savedClipRegion( N::Clip() );
-		//N::Scoped< N::PortClipRegion > savedClipRegion( N::PortClipRegion( N::GetQDGlobalsThePort() ) );
+		N::Saved< N::Clip_Value > savedClip;
 		
-		N::Owned< RgnHandle > savedClipRegion = N::GetClip();
 		N::ClipRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
 		
 		N::UpdateControls( window );
-		
-		N::SetClip( savedClipRegion );
 	}
 	
 	static void DispatchDiskInsert( const EventRecord& event )
@@ -466,7 +459,7 @@ namespace Pedestal
 	
 	static void GiveIdleTimeToWindows( const EventRecord& event )
 	{
-		N::Scoped< N::Port > savePort;
+		N::Saved< N::Port_Value > savePort;
 		
 		// FIXME:  Use window iterator
 		for ( N::WindowRef window = N::FrontWindow();
