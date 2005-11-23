@@ -10,6 +10,7 @@
 
 // Pedestal
 #include "Pedestal/FrontBackGraphic.hh"
+#include "Pedestal/GeneratedGraphic.hh"
 #include "Pedestal/GraphicView.hh"
 #include "Pedestal/Icons.hh"
 #include "Pedestal/SolidColorGraphic.hh"
@@ -17,11 +18,25 @@
 #include "Pedestal/Window.hh"
 
 
+#define GEN_FUNCTION AboutFunction
+
+//#define ABOUT_GRAPHIC IconID
+//#define ABOUT_GRAPHIC MaskedIcon
+#define ABOUT_GRAPHIC GeneratedGraphic< GEN_FUNCTION >
+
+
 namespace Pedestal
 {
 	
-	//typedef Window< AboutView, noGrowDocProc > AboutBoxBase;
-	typedef Window< GraphicView< FrontBackGraphic< IconID,
+	class AboutFunction
+	{
+		public:
+			RGBColor operator()( double x,
+			                     double y,
+			                     double t ) const;
+	};
+	
+	typedef Window< GraphicView< FrontBackGraphic< ABOUT_GRAPHIC,
 	                                               SolidColorGraphic > >,
 	                noGrowDocProc >
 	        AboutBoxBase;
