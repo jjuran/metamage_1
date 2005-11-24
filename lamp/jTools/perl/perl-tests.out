@@ -31,10 +31,8 @@ FAILED at test 1
 io/inplace............ok
 io/iprefix............ok
 io/nargv..............ok
-io/open...............# Use of uninitialized value in string eq.
-File 'io/open.t'; Line 39
-# Use of uninitialized value in string eq.
-File 'io/open.t'; Line 163
+io/open...............Use of uninitialized value in string eq at io/open.t line 39.
+Use of uninitialized value in string eq at io/open.t line 163.
 FAILED at test 5
 io/openpid............ok
 io/pipe...............skipping test on this platform
@@ -59,10 +57,8 @@ op/cmp................ok
 op/concat.............ok
 op/cond...............ok
 op/context............ok
-op/defins.............# Can't locate File/Glob.pm in @INC (@INC contains: ../lib).
-File 'op/defins.t'; Line 96
-# BEGIN failed--compilation aborted.
-File 'op/defins.t'; Line 96
+op/defins.............Can't locate File/Glob.pm in @INC (@INC contains: ../lib) at op/defins.t line 96.
+BEGIN failed--compilation aborted at op/defins.t line 96.
 FAILED at test 1
 op/delete.............ok
 op/die................ok
@@ -77,10 +73,8 @@ op/fh.................ok
 op/filetest...........ok
 op/flip...............FAILED at test 8
 op/fork...............skipping test on this platform
-op/glob...............# Can't locate File/Glob.pm in @INC (@INC contains: ../lib).
-File 'op/glob.t'; Line 10
-# BEGIN failed--compilation aborted.
-File 'op/glob.t'; Line 10
+op/glob...............Can't locate File/Glob.pm in @INC (@INC contains: ../lib) at op/glob.t line 10.
+BEGIN failed--compilation aborted at op/glob.t line 10.
 FAILED at test 0
 op/goto...............ok
 op/goto_xs............skipping test on this platform
@@ -99,5 +93,21 @@ op/lfs................skipping test on this platform
 op/list...............ok
 op/local..............ok
 op/lop................ok
-op/magic..............# Dying on warning: Can't exec "./show-shebang": Invalid argument.
-File 'op/magic.t'; Line 176
+op/magic..............FAILED at test 22
+op/method.............ok
+op/misc...............ok
+op/mkdir..............FAILED at test 1
+op/my.................ok
+op/my_stash...........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at ../lib/Test/Harness.pm line 7.
+BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
+Compilation failed in require at ../lib/Test.pm line 3.
+BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
+Compilation failed in require at op/my_stash.t line 9.
+BEGIN failed--compilation aborted at op/my_stash.t line 9.
+FAILED at test 0
+op/nothr5005..........ok
+op/numconvert.........ok
+op/oct................ok
+op/ord................ok
+op/pack...............
