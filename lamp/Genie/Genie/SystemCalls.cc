@@ -1012,7 +1012,7 @@ namespace Genie
 	{
 		Process& current( CurrentProcess() );
 		
-		current.Terminate( status );  // doesn't reap, won't terminate thread
+		current.Terminate( (status & 0xFF) << 8 );  // doesn't reap, won't terminate thread
 		
 		if ( current.Forked() )
 		{
