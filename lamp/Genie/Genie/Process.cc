@@ -116,7 +116,7 @@ namespace Genie
 			                               context.envp );
 		}
 		
-		context.processContext->Terminate( result );
+		context.processContext->Terminate( (result & 0xFF) << 8 );
 		
 		// This is a necessary hack for now to keep the thread from terminating naturally.
 		// If that happens, the ThreadID Disposer throws -618 (thread not found)
@@ -857,7 +857,7 @@ namespace Genie
 				case SIGUSR1:
 				case SIGUSR2:
 					// terminate process
-					Terminate( signal << 8 );
+					Terminate( signal );
 					KillThread();
 					break;
 				case SIGCONT:
