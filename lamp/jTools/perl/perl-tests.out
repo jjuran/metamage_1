@@ -96,4 +96,8 @@ op/join...............ok
 op/length.............ok
 op/lex_assign.........ok
 op/lfs................skipping test on this platform
-op/list...............
+op/list...............ok
+op/local..............ok
+op/lop................ok
+op/magic..............# Dying on warning: Can't exec "./show-shebang": Invalid argument.
+File 'op/magic.t'; Line 176
