@@ -66,11 +66,11 @@ File 'op/defins.t'; Line 96
 FAILED at test 1
 op/delete.............ok
 op/die................ok
-op/die_exit...........FAILED at test 1
+op/die_exit...........ok
 op/do.................ok
 op/each...............ok
 op/eval...............ok
-op/exec...............FAILED at test 5
+op/exec...............ok
 op/exists_sub.........ok
 op/exp................ok
 op/fh.................ok
