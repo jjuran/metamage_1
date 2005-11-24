@@ -256,6 +256,15 @@ static int Wait( pid_t pid )
 	return stat;
 }
 
+static int exit_from_wait( int stat )
+{
+	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+	           :                       -1;
+	
+	return result;
+}
+
 
 static int ExecuteCommand( const Command& command )
 {
@@ -301,7 +310,7 @@ static int ExecuteCommand( const Command& command )
 			Exec( argv );
 		}
 		
-		return Wait( pid );
+		return exit_from_wait( Wait( pid ) );
 	}
 	catch ( O::ExitStatus )
 	{
@@ -480,7 +489,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		
 		if ( pid == last )
 		{
-			result = stat;
+			result = exit_from_wait( stat );
 		}
 	}
 	
