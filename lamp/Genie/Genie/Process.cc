@@ -1027,9 +1027,10 @@ namespace Genie
 	
 	void Process::Continue()
 	{
-		// Warning:  This yields!
-		//N::SetThreadState( thread->Get(), kReadyThreadState );
-		ReadyThread( thread->Get() );
+		if ( N::GetThreadState( thread->Get() ) == kStoppedThreadState )
+		{
+			N::SetThreadState( thread->Get(), kReadyThreadState );
+		}
 	}
 	
 }
