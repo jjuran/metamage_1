@@ -1,0 +1,99 @@
+base/cond.............ok
+base/if...............ok
+base/lex..............ok
+base/pat..............ok
+base/rs...............ok
+base/term.............ok
+comp/bproto...........ok
+comp/cmdopt...........ok
+comp/colon............ok
+comp/cpp..............skipping test on this platform
+comp/decl.............ok
+comp/multiline........ok
+comp/package..........ok
+comp/proto............ok
+comp/redef............ok
+comp/require..........ok
+comp/script...........ok
+comp/term.............ok
+comp/use..............ok
+cmd/elsif.............ok
+cmd/for...............ok
+cmd/mod...............ok
+cmd/subval............ok
+cmd/switch............ok
+cmd/while.............ok
+run/runenv............skipping test on this platform
+io/argv...............ok
+io/dup................ok
+io/fs.................Genie: cd: ./tmp: No such file or directory
+FAILED at test 1
+io/inplace............ok
+io/iprefix............ok
+io/nargv..............ok
+io/open...............# Use of uninitialized value in string eq.
+File 'io/open.t'; Line 39
+# Use of uninitialized value in string eq.
+File 'io/open.t'; Line 163
+FAILED at test 5
+io/openpid............ok
+io/pipe...............skipping test on this platform
+io/print..............ok
+io/read...............FAILED at test 1
+io/tell...............FAILED at test 2
+op/64bitint...........skipping test on this platform
+op/anonsub............ok
+op/append.............ok
+op/args...............ok
+op/arith..............ok
+op/array..............ok
+op/assignwarn.........ok
+op/attrs..............ok
+op/auto...............ok
+op/avhv...............ok
+op/bop................ok
+op/chars..............ok
+op/chop...............ok
+op/closure............ok
+op/cmp................ok
+op/concat.............ok
+op/cond...............ok
+op/context............ok
+op/defins.............# Can't locate File/Glob.pm in @INC (@INC contains: ../lib).
+File 'op/defins.t'; Line 96
+# BEGIN failed--compilation aborted.
+File 'op/defins.t'; Line 96
+FAILED at test 1
+op/delete.............ok
+op/die................ok
+op/die_exit...........FAILED at test 1
+op/do.................ok
+op/each...............ok
+op/eval...............ok
+op/exec...............FAILED at test 5
+op/exists_sub.........ok
+op/exp................ok
+op/fh.................ok
+op/filetest...........FAILED at test 10
+op/flip...............FAILED at test 8
+op/fork...............skipping test on this platform
+op/glob...............# Can't locate File/Glob.pm in @INC (@INC contains: ../lib).
+File 'op/glob.t'; Line 10
+# BEGIN failed--compilation aborted.
+File 'op/glob.t'; Line 10
+FAILED at test 0
+op/goto...............ok
+op/goto_xs............skipping test on this platform
+op/grent..............skipping test on this platform
+op/grep...............ok
+op/groups.............skipping test on this platform
+op/gv.................ok
+op/hashwarn...........ok
+op/inc................ok
+op/index..............ok
+op/int................ok
+op/join...............ok
+op/length.............ok
+op/lex_assign.........ok
+op/lfs................skipping test on this platform
+op/list...............
