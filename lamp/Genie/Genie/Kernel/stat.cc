@@ -154,7 +154,7 @@ static void StatCharacterDevice( struct stat* sb )
 
 #pragma export on
 	
-	int stat( const char* path, struct stat* sb )
+	int lstat( const char* path, struct stat* sb )
 	{
 		std::memset( (void*)sb, '\0', sizeof (struct stat) );
 		
@@ -193,9 +193,9 @@ static void StatCharacterDevice( struct stat* sb )
 		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
-	int lstat( const char* path, struct stat* sb )
+	int stat( const char* path, struct stat* sb )
 	{
-		return CurrentProcess().SetErrno( EINVAL );
+		return lstat( path, sb );  // FIXME:  Resolve symlinks
 	}
 	
 	static FSSpec FSSpecFromFRefNum( N::FSFileRefNum refNum )
