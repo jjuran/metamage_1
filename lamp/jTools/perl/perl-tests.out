@@ -74,7 +74,7 @@ op/exec...............ok
 op/exists_sub.........ok
 op/exp................ok
 op/fh.................ok
-op/filetest...........FAILED at test 10
+op/filetest...........ok
 op/flip...............FAILED at test 8
 op/fork...............skipping test on this platform
 op/glob...............# Can't locate File/Glob.pm in @INC (@INC contains: ../lib).
