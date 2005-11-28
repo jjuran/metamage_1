@@ -737,17 +737,9 @@ namespace Genie
 	{
 		if ( pathname != NULL )
 		{
-			try
-			{
-				FSSpec spec = ResolveUnixPathname( pathname, myCWD );
-				//return ChangeDirectory( N::Convert< N::FSDirSpec >( spec ) );
-				myCWD = N::Convert< N::FSDirSpec >( spec );
-			}
-			catch ( ... )
-			{
-				Io::S( FileDescriptors()[ 2 ].handle ) << "Genie: cd: " << pathname << ": No such file or directory\n";
-				return 1;
-			}
+			// Either of these may throw
+			FSSpec spec = ResolveUnixPathname( pathname, myCWD );
+			myCWD = N::Convert< N::FSDirSpec >( spec );
 		}
 		else
 		{
