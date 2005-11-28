@@ -26,8 +26,7 @@ cmd/while.............ok
 run/runenv............skipping test on this platform
 io/argv...............ok
 io/dup................ok
-io/fs.................Genie: cd: ./tmp: No such file or directory
-FAILED at test 1
+io/fs.................FAILED at test 2
 io/inplace............ok
 io/iprefix............ok
 io/nargv..............ok
