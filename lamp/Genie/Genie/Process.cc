@@ -143,7 +143,7 @@ namespace Genie
 		{}
 	};
 	
-	static ExecContext& Normalize( ExecContext& context )
+	static ExecContext& Normalize( ExecContext& context, const N::FSDirSpec& cwd )
 	{
 		const OSType type = N::FSpGetFInfo( context.executable ).fdType;
 		
@@ -215,7 +215,7 @@ namespace Genie
 			
 			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
 			
-			context.executable = ResolveUnixPathname( context.interpreterPath );
+			context.executable = ResolveUnixPathname( context.interpreterPath, cwd );
 		}
 		else if ( type == 'MPST' )
 		{
@@ -386,7 +386,7 @@ namespace Genie
 		
 		ExecContext context( executable, argv );
 		
-		Normalize( context );
+		Normalize( context, CurrentDirectory() );
 		
 		FSSpec programFile = context.executable;
 		
