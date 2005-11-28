@@ -30,13 +30,11 @@ io/fs.................FAILED at test 2
 io/inplace............ok
 io/iprefix............ok
 io/nargv..............ok
-io/open...............Use of uninitialized value in string eq at io/open.t line 39.
-Use of uninitialized value in string eq at io/open.t line 163.
-FAILED at test 5
+io/open...............FAILED at test 25
 io/openpid............ok
 io/pipe...............skipping test on this platform
 io/print..............ok
-io/read...............FAILED at test 1
+io/read...............ok
 io/tell...............FAILED at test 2
 op/64bitint...........skipping test on this platform
 op/anonsub............ok
@@ -56,9 +54,8 @@ op/cmp................ok
 op/concat.............ok
 op/cond...............ok
 op/context............ok
-op/defins.............Can't locate File/Glob.pm in @INC (@INC contains: ../lib) at op/defins.t line 96.
-BEGIN failed--compilation aborted at op/defins.t line 96.
-FAILED at test 1
+op/defins.............Unsupported directory function "opendir" called at op/defins.t line 67.
+FAILED at test 6
 op/delete.............ok
 op/die................ok
 op/die_exit...........ok
@@ -72,9 +69,7 @@ op/fh.................ok
 op/filetest...........ok
 op/flip...............FAILED at test 8
 op/fork...............skipping test on this platform
-op/glob...............Can't locate File/Glob.pm in @INC (@INC contains: ../lib) at op/glob.t line 10.
-BEGIN failed--compilation aborted at op/glob.t line 10.
-FAILED at test 0
+op/glob...............ok
 op/goto...............ok
 op/goto_xs............skipping test on this platform
 op/grent..............skipping test on this platform
