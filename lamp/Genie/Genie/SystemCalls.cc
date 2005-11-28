@@ -249,6 +249,8 @@ namespace Genie
 	using Genie::CheckPID;
 	using Genie::PipeOut_IODetails;
 	using Genie::PipeIn_IODetails;
+	using Genie::kFileDescriptor;
+	using Genie::FileHandle;
 	using Genie::kCharacterDeviceDescriptor;
 	using Genie::CharacterDevice;
 	using Genie::NewPseudoTerminal_Result;
@@ -596,9 +598,12 @@ namespace Genie
 			}
 			while ( result == 0  &&  N::Microseconds() < timeToBail );
 			
-			*readfds   = rd;
-			*writefds  = wr;
-			*exceptfds = ex;
+			if ( n > 0 )
+			{
+				*readfds   = rd;
+				*writefds  = wr;
+				*exceptfds = ex;
+			}
 			
 			return result;
 		}
@@ -1050,6 +1055,11 @@ namespace Genie
 	
 	pid_t getpgid( pid_t pid )
 	{
+		if ( pid == 0 )
+		{
+			return getpgrp();
+		}
+		
 		return Genie::gProcessTable[ pid ].GetPGID();
 	}
 	
@@ -1070,7 +1080,50 @@ namespace Genie
 	
 	off_t lseek( int fd, off_t offset, int whence )
 	{
-		return CurrentProcess().SetErrno( ESPIPE );
+		
+		
+		try
+		{
+			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+			
+			IORef ref = files[ fd ].handle;
+			
+			if ( !ref.IsType( kFileDescriptor ) )
+			{
+				return CurrentProcess().SetErrno( ESPIPE );
+			}
+			
+			FileHandle& fh = IORef_Cast< FileHandle >( ref );
+			
+			N::FSFileRefNum refNum = fh.GetRefNum();
+			
+			N::FSIOPosMode mode;
+			
+			switch ( whence )
+			{
+				case SEEK_SET:
+					mode = fsFromStart;
+					break;
+				
+				case SEEK_CUR:
+					mode = fsFromMark;
+					break;
+				
+				case SEEK_END:
+					mode = fsFromLEOF;
+					break;
+				
+				default:
+					return CurrentProcess().SetErrno( EINVAL );
+			}
+			
+			N::SetFPos( refNum, mode, offset );
+			
+			return 0;
+		}
+		catch ( ... ) {}
+		
+		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
 	int pause()
