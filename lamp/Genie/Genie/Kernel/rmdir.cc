@@ -49,6 +49,12 @@ using Genie::ResolveUnixPathname;
 			}
 			
 			N::FSpDelete( dir );
+			
+			return 0;
+		}
+		catch ( N::FNFErr& )
+		{
+			return CurrentProcess().SetErrno( ENOENT );
 		}
 		catch ( ... )
 		{

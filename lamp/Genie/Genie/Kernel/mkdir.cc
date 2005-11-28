@@ -36,6 +36,12 @@ using Genie::ResolveUnixPathname;
 			FSSpec spec = ResolveUnixPathname( pathname, current );
 			
 			N::FSpDirCreate( spec );
+			
+			return 0;
+		}
+		catch ( N::DupFNErr& )
+		{
+			return CurrentProcess().SetErrno( EEXIST );
 		}
 		catch ( ... )
 		{
