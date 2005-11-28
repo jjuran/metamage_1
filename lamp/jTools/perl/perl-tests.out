@@ -90,7 +90,7 @@ op/lop................ok
 op/magic..............FAILED at test 22
 op/method.............ok
 op/misc...............ok
-op/mkdir..............FAILED at test 1
+op/mkdir..............ok
 op/my.................ok
 op/my_stash...........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
 Compilation failed in require at ../lib/Test/Harness.pm line 7.
