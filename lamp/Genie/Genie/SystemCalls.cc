@@ -882,9 +882,13 @@ namespace Genie
 			
 			return result == 0 ? 0 : -1;
 		}
+		catch ( N::FNFErr& )
+		{
+			return CurrentProcess().SetErrno( ENOENT );
+		}
 		catch ( ... ) {}
 		
-		return -1;
+		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
 	int close( int fd )
