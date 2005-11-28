@@ -1119,7 +1119,7 @@ namespace Genie
 			
 			N::SetFPos( refNum, mode, offset );
 			
-			return 0;
+			return N::GetFPos( refNum );
 		}
 		catch ( ... ) {}
 		
