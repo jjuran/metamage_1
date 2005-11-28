@@ -993,6 +993,10 @@ namespace Genie
 				errMsg = ", errMessage: " + N::Convert< std::string >( msg.errMessage ) + "\n";
 				//std::printf( "errMessage: '%s'\n", str.c_str() );
 			}
+			catch ( N::FNFErr& )
+			{
+				return CurrentProcess().SetErrno( ENOENT );
+			}
 			catch ( ... )  {}
 			
 			std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
