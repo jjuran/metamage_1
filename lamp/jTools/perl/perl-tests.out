@@ -35,7 +35,7 @@ io/openpid............ok
 io/pipe...............skipping test on this platform
 io/print..............ok
 io/read...............ok
-io/tell...............FAILED at test 2
+io/tell...............ok
 op/64bitint...........skipping test on this platform
 op/anonsub............ok
 op/append.............ok
@@ -67,7 +67,7 @@ op/exists_sub.........ok
 op/exp................ok
 op/fh.................ok
 op/filetest...........ok
-op/flip...............FAILED at test 8
+op/flip...............ok
 op/fork...............skipping test on this platform
 op/glob...............ok
 op/goto...............ok
