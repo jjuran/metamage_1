@@ -30,7 +30,7 @@ io/fs.................FAILED at test 2
 io/inplace............ok
 io/iprefix............ok
 io/nargv..............ok
-io/open...............FAILED at test 25
+io/open...............ok
 io/openpid............ok
 io/pipe...............skipping test on this platform
 io/print..............ok
