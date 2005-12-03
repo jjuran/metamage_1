@@ -87,7 +87,7 @@ op/lfs................skipping test on this platform
 op/list...............ok
 op/local..............ok
 op/lop................ok
-op/magic..............FAILED at test 22
+op/magic..............ok
 op/method.............ok
 op/misc...............ok
 op/mkdir..............ok
