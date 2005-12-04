@@ -54,8 +54,7 @@ op/cmp................ok
 op/concat.............ok
 op/cond...............ok
 op/context............ok
-op/defins.............Unsupported directory function "opendir" called at op/defins.t line 67.
-FAILED at test 6
+op/defins.............FAILED at test 6
 op/delete.............ok
 op/die................ok
 op/die_exit...........ok
@@ -92,22 +91,13 @@ op/method.............ok
 op/misc...............ok
 op/mkdir..............ok
 op/my.................ok
-op/my_stash...........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
-Compilation failed in require at ../lib/Test/Harness.pm line 7.
-BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
-Compilation failed in require at ../lib/Test.pm line 3.
-BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
-Compilation failed in require at op/my_stash.t line 9.
-BEGIN failed--compilation aborted at op/my_stash.t line 9.
-FAILED at test 0
+op/my_stash...........FAILED at test 0
 op/nothr5005..........ok
 op/numconvert.........ok
 op/oct................ok
 op/ord................ok
 op/pack...............ok
-op/pat................Can't locate re.pm in @INC (@INC contains: ../lib) at op/pat.t line 539.
-BEGIN failed--compilation aborted at op/pat.t line 539.
-FAILED at test 0
+op/pat................FAILED at test 0
 op/pos................ok
 op/push...............ok
 op/pwent..............skipping test on this platform
@@ -116,8 +106,7 @@ op/rand...............FAILED at test 7
 op/range..............ok
 op/read...............ok
 op/readdir............skipping test on this platform
-op/recurse............Out of memory!
-FAILED at test 23
+op/recurse............FAILED at test 23
 op/ref................ok
 op/regexp.............FAILED at test 1
 op/regexp_noamp.......ok
@@ -130,11 +119,7 @@ op/sort...............ok
 op/splice.............ok
 op/split..............ok
 op/sprintf............FAILED at test 129
-op/stat...............execvp( rm ) failed: 2
-execvp( ln ) failed: 2
-execvp( chmod ) failed: 2
-Can't run op/stat.t test 35 without pwd working at op/stat.t line 183.
-FAILED at test 4
+op/stat...............FAILED at test 4
 op/study..............ok
 op/subst..............ok
 op/subst_amp..........ok
@@ -142,9 +127,7 @@ op/subst_wamp.........ok
 op/substr.............ok
 op/sysio.ok
 op/system.skipping test on this platform
-op/taint.Can't locate re.pm in @INC (@INC contains: ../lib) at op/taint.t line 214.
-BEGIN failed--compilation aborted at op/taint.t line 214.
-FAILED at test 0
+op/taint.FAILED at test 0
 op/tie.ok
 op/tiearray.ok
 op/tiehandle.ok
@@ -159,28 +142,20 @@ op/ver.ok
 op/wantarray.ok
 op/write.ok
 pragma/constant.ok
-pragma/diagnostics.Out of memory!
-Callback called exit at pragma/diagnostics.t line 29, <POD_DIAG> line 1.
-BEGIN failed--compilation aborted at pragma/diagnostics.t line 29, <POD_DIAG> line 1.
-FAILED at test 0
+pragma/diagnostics.FAILED at test 0
 pragma/locale.ok
 pragma/overload.ok
 pragma/strict.skipping test on this platform
 pragma/sub_lval.ok
 pragma/subs.ok
 pragma/utf8.ok
-pragma/warnings.Cannot open pragma/warn/CVS: Invalid argument
-FAILED at test 0
+pragma/warnings.FAILED at test 0
 lib/abbrev.ok
 lib/ansicolor.ok
-lib/anydbm.Can't locate Fcntl.pm in @INC (@INC contains: ../lib) at lib/anydbm.t line 15.
-BEGIN failed--compilation aborted at lib/anydbm.t line 15.
-FAILED at test 0
+lib/anydbm.FAILED at test 0
 lib/attrs.skipping test on this platform
 lib/autoloader.ok
-lib/b.Can't locate B/Deparse.pm in @INC (@INC contains: . ../lib) at lib/b.t line 24.
-BEGIN failed--compilation aborted at lib/b.t line 24.
-FAILED at test 0
+lib/b.FAILED at test 0
 lib/basename.ok
 lib/bigfloat.ok
 lib/bigfltpm.FAILED at test 351
