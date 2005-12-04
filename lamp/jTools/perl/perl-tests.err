@@ -1,0 +1,198 @@
+base/cond.............ok
+base/if...............ok
+base/lex..............ok
+base/pat..............ok
+base/rs...............ok
+base/term.............ok
+comp/bproto...........ok
+comp/cmdopt...........ok
+comp/colon............ok
+comp/cpp..............skipping test on this platform
+comp/decl.............ok
+comp/multiline........ok
+comp/package..........ok
+comp/proto............ok
+comp/redef............ok
+comp/require..........ok
+comp/script...........ok
+comp/term.............ok
+comp/use..............ok
+cmd/elsif.............ok
+cmd/for...............ok
+cmd/mod...............ok
+cmd/subval............ok
+cmd/switch............ok
+cmd/while.............ok
+run/runenv............skipping test on this platform
+io/argv...............ok
+io/dup................ok
+io/fs.................ok
+io/inplace............ok
+io/iprefix............ok
+io/nargv..............ok
+io/open...............ok
+io/openpid............ok
+io/pipe...............skipping test on this platform
+io/print..............ok
+io/read...............ok
+io/tell...............ok
+op/64bitint...........skipping test on this platform
+op/anonsub............ok
+op/append.............ok
+op/args...............ok
+op/arith..............ok
+op/array..............ok
+op/assignwarn.........ok
+op/attrs..............ok
+op/auto...............ok
+op/avhv...............ok
+op/bop................ok
+op/chars..............ok
+op/chop...............ok
+op/closure............ok
+op/cmp................ok
+op/concat.............ok
+op/cond...............ok
+op/context............ok
+op/defins.............Unsupported directory function "opendir" called at op/defins.t line 67.
+FAILED at test 6
+op/delete.............ok
+op/die................ok
+op/die_exit...........ok
+op/do.................ok
+op/each...............ok
+op/eval...............ok
+op/exec...............ok
+op/exists_sub.........ok
+op/exp................ok
+op/fh.................ok
+op/filetest...........ok
+op/flip...............ok
+op/fork...............skipping test on this platform
+op/glob...............ok
+op/goto...............ok
+op/goto_xs............skipping test on this platform
+op/grent..............skipping test on this platform
+op/grep...............ok
+op/groups.............skipping test on this platform
+op/gv.................ok
+op/hashwarn...........ok
+op/inc................ok
+op/index..............ok
+op/int................ok
+op/join...............ok
+op/length.............ok
+op/lex_assign.........ok
+op/lfs................skipping test on this platform
+op/list...............ok
+op/local..............ok
+op/lop................ok
+op/magic..............ok
+op/method.............ok
+op/misc...............ok
+op/mkdir..............ok
+op/my.................ok
+op/my_stash...........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at ../lib/Test/Harness.pm line 7.
+BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
+Compilation failed in require at ../lib/Test.pm line 3.
+BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
+Compilation failed in require at op/my_stash.t line 9.
+BEGIN failed--compilation aborted at op/my_stash.t line 9.
+FAILED at test 0
+op/nothr5005..........ok
+op/numconvert.........ok
+op/oct................ok
+op/ord................ok
+op/pack...............ok
+op/pat................Can't locate re.pm in @INC (@INC contains: ../lib) at op/pat.t line 539.
+BEGIN failed--compilation aborted at op/pat.t line 539.
+FAILED at test 0
+op/pos................ok
+op/push...............ok
+op/pwent..............skipping test on this platform
+op/quotemeta..........ok
+op/rand...............FAILED at test 7
+op/range..............ok
+op/read...............ok
+op/readdir............skipping test on this platform
+op/recurse............Out of memory!
+FAILED at test 23
+op/ref................ok
+op/regexp.............FAILED at test 1
+op/regexp_noamp.......ok
+op/regmesg............ok
+op/repeat.............ok
+op/reverse............ok
+op/runlevel...........ok
+op/sleep..............ok
+op/sort...............ok
+op/splice.............ok
+op/split..............ok
+op/sprintf............FAILED at test 129
+op/stat...............execvp( rm ) failed: 2
+execvp( ln ) failed: 2
+execvp( chmod ) failed: 2
+Can't run op/stat.t test 35 without pwd working at op/stat.t line 183.
+FAILED at test 4
+op/study..............ok
+op/subst..............ok
+op/subst_amp..........ok
+op/subst_wamp.........ok
+op/substr.............ok
+op/sysio.ok
+op/system.skipping test on this platform
+op/taint.Can't locate re.pm in @INC (@INC contains: ../lib) at op/taint.t line 214.
+BEGIN failed--compilation aborted at op/taint.t line 214.
+FAILED at test 0
+op/tie.ok
+op/tiearray.ok
+op/tiehandle.ok
+op/time.ok
+op/tr.ok
+op/undef.ok
+op/universal.ok
+op/unshift.ok
+op/utf8decode.ok
+op/vec.ok
+op/ver.ok
+op/wantarray.ok
+op/write.ok
+pragma/constant.ok
+pragma/diagnostics.Out of memory!
+Callback called exit at pragma/diagnostics.t line 29, <POD_DIAG> line 1.
+BEGIN failed--compilation aborted at pragma/diagnostics.t line 29, <POD_DIAG> line 1.
+FAILED at test 0
+pragma/locale.ok
+pragma/overload.ok
+pragma/strict.skipping test on this platform
+pragma/sub_lval.ok
+pragma/subs.ok
+pragma/utf8.ok
+pragma/warnings.Cannot open pragma/warn/CVS: Invalid argument
+FAILED at test 0
+lib/abbrev.ok
+lib/ansicolor.ok
+lib/anydbm.Can't locate Fcntl.pm in @INC (@INC contains: ../lib) at lib/anydbm.t line 15.
+BEGIN failed--compilation aborted at lib/anydbm.t line 15.
+FAILED at test 0
+lib/attrs.skipping test on this platform
+lib/autoloader.ok
+lib/b.Can't locate B/Deparse.pm in @INC (@INC contains: . ../lib) at lib/b.t line 24.
+BEGIN failed--compilation aborted at lib/b.t line 24.
+FAILED at test 0
+lib/basename.ok
+lib/bigfloat.ok
+lib/bigfltpm.FAILED at test 351
+lib/bigint.ok
+lib/bigintpm.ok
+lib/cgi-esc.ok
+lib/cgi-form.ok
+lib/cgi-function.ok
+lib/cgi-html.ok
+lib/cgi-pretty.ok
+lib/cgi-request.ok
+lib/charnames.ok
+lib/checktree.ok
+lib/class-struct.ok
+lib/complex.
