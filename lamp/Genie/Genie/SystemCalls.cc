@@ -728,6 +728,10 @@ namespace Genie
 				return CurrentProcess().SetErrno( ENOTSOCK );
 			}
 		}
+		catch ( Io::NoDataPending& )
+		{
+			return CurrentProcess().SetErrno( EAGAIN );
+		}
 		catch ( ... )
 		{
 			// Convert the exception
