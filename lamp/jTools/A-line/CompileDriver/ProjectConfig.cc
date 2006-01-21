@@ -34,6 +34,51 @@ namespace CompileDriver
 	namespace ext = N::STLExtensions;
 	
 	
+	static bool c_string_less( const char* a, const char* b )
+	{
+		return std::strcmp( a, b ) < 0;
+	}
+	
+	static bool DirectiveIsRecognized( const std::string& directive )
+	{
+		char const* const recognized[] =
+		{
+			"arch",
+			"creator",
+			"desc",
+			"developer",
+			"distributor",
+			"frameworks",
+			"imports",
+			"name",
+			"options",
+			"platform",
+			"precompile",
+			"product",
+			"program",
+			"rez",
+			"rsrc",
+			"runtime",
+			"search",
+			"sources",
+			"subprojects",
+			"uses",
+			"version",
+			"website",
+			"~"
+		};
+		
+		std::size_t length = sizeof recognized / sizeof (const char*);
+		
+		char const* const* end = recognized + length;
+		
+		char const* const* edge = std::lower_bound( recognized + 0, end, directive.c_str(), std::ptr_fun( c_string_less ) );
+		
+		bool found = edge != end && directive == *edge;
+		
+		return found;
+	}
+	
 	static void SetPlatformInfo( N::ResourceTransfer< Platform > platform, const std::string& info )
 	{
 		if ( info == "68k" )
@@ -307,6 +352,13 @@ namespace CompileDriver
 			
 			void operator()( const DotConfLine& line ) const
 			{
+				if ( !DirectiveIsRecognized( line.key ) )
+				{
+					std::fprintf( stderr,
+					              "Unrecognized directive '%s' in project config\n",
+					                                       line.key.c_str() );
+				}
+				
 				std::copy( line.values.begin(),
 				           line.values.end(),
 				           std::back_inserter( conf[ line.key ] ) );
