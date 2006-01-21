@@ -10,6 +10,7 @@
 #include <cstring>
 
 // POSIX
+#include "netinet/in.h"
 #include "sys/socket.h"
 #include "sys/wait.h"
 #include "unistd.h"
@@ -122,7 +123,7 @@ int O::Main( int argc, char const *const argv[] )
 	
 	inetAddress.sin_family = AF_INET;
 	inetAddress.sin_port = port;
-	inetAddress.sin_addr = ip;
+	inetAddress.sin_addr.s_addr = ip;
 	
 	int result = bind( listener, (const sockaddr*)&inetAddress, sizeof (sockaddr_in) );
 	
