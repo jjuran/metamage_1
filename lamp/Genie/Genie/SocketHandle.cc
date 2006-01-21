@@ -130,7 +130,7 @@ namespace Genie
 	{
 		try
 		{
-			bool blocking = true;  // Assume we're blocking
+			bool blocking = N::OTIsBlocking( endpoint );
 			
 			if ( blocking )
 			{
@@ -142,12 +142,13 @@ namespace Genie
 				{
 					bytes += N::OTRcv( endpoint, data + 1, byteCount - 1 );
 				}
-				catch ( N::OTNoDataErr ) {}  // There was only one byte
+				catch ( N::OTNoDataErr& ) {}  // There was only one byte
 				
 				N::OTSetBlocking( endpoint );
 				
 				return bytes;
 			}
+			
 			return N::OTRcv( endpoint, data, byteCount );
 		}
 		catch ( N::OTNoDataErr )
