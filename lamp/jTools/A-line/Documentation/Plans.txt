@@ -2,20 +2,42 @@ A-line Development Overview
 ===========================
 
 by Joshua Juran, 2004-04-06
+Updated 2006-01-17
 
 Current State
 -------------
 
-A-line was originally conceived as an alternative to the CodeWarrior IDE on Mac OS 9.  At present, it supports various options for Mac OS development:  68K/PowerPC architecture, segments/CFM runtime, and classic/Carbon API.  CodeWarrior is the only toolkit supported currently, but A-line was always intended to be usable with different toolsets (and the native MPW compilers were supported in the past).
+A-line was originally conceived as an alternative to the CodeWarrior IDE on Mac OS 9.  At present, it supports various options for Mac OS development:  68K and PowerPC architectures, segments, CFM/PEF, and Mach-O runtimes, and classic and Carbon API's.  CodeWarrior and gcc are the currently supported toolkits, and the native MPW compilers (SC and MrC) are also possible candidates.  A-line does not support CodeWarrior's native OS X tools (CW Pro 8 and later) and consequently can't target Mach-O with CodeWarrior.  A-line has been extensively used with CW Pro 6.
+
+Current Targets
+---------------
+
+* 68K code resources (including segments)
+* CFM-68K
+* PowerPC, classic Toolbox (opaque UPP's required for Nitrogen)
+* PPC Carbon CFM
+* PPC Carbon/POSIX Mach-O (gcc only)
+
+Completed Tasks
+---------------
+
+Catalog transition:  The alias-based project catalog that broke under OS X has been replaced.  The new scheme recursively walks the filesystem starting from a Projects folder, pruning the search at any folder containing the file A-line.conf or directory A-line.confd.  Config files can specify further subdirectories to be searched (which were otherwise pruned).
+
+Mach-O and gcc:  A-line is self-hosting in Mach-O.  It also cross-compiles with CodeWarrior using a Mach-O tlsrvr.
+
+Application bundles are created for Mach-O apps.
 
 Current Plans
 -------------
 
-A-line is undergoing a transition to Mac OS X.  The first step is to replace the catalog system, since the alias-based strategy that worked for OS 9 fails with OS X.
+The project config file format is overdue for documentation and revision.  Current issues include deduction of defaults and project-specific customization (e.g. defining macros).  The dependency system needs to be expanded; in addition to the dependent operations including and linking, we also need to set CFM init and term procs based on our prerequisites -- we can't just use the multiplexor unconditionally, because this creates dependencies that may be superfluous, e.g. for /bin/true.
+
+The search for specified source files should not be recursive; this creates too much trouble with code trees like perl's where the source files are at top level (ruling out the 'search' directive) and a large number of files and directories are also present.
+
+A-line sorely needs debug logging, so you can tell what it's thinking.
 
 Subsequent milestones:
 
-* self-hosting in native OS X
 * application bundle support
 * Mach-O runtime support
 
@@ -24,7 +46,7 @@ Future Plans
 
 Other improvements under consideration for A-line:
 
-* gcc support
+* MPW compilers (SC and MrC)
 * OS X dylibs
 * OS X frameworks
 * Linux port
