@@ -152,8 +152,6 @@ namespace Genie
 			return context;  // Already normalized
 		}
 		
-		context.scriptPath = N::FSpGetPOSIXPathname( context.executable );
-		
 		if ( type == 'TEXT' )
 		{
 			context.interpreterPath = "/bin/sh";  // default
@@ -191,7 +189,6 @@ namespace Genie
 			}
 			
 			const int newTokenCount = 2 + hasArg;
-			const int skipCount = 1;  // skip the script's name because we're overwriting it anyway
 			
 			// E.g. "$ script foo bar baz"
 			// argv == { "script", "foo", "bar", "baz", NULL }
@@ -202,18 +199,29 @@ namespace Genie
 			
 			// argv == { "script", "foo", "bar", "baz", NULL, ??, ?? }
 			
+			bool pathSearched = std::strchr( argv[0], '/' ) == NULL;
+			
+			const int skipCount = pathSearched;  // skip the script's name if we're overwriting it anyway
+						
 			std::copy_backward( context.argVector.begin() + skipCount,
 			                    context.argVector.end() - newTokenCount,
 			                    context.argVector.end() );
 			
-			// argv == { "script", "foo", "bar", "foo", "bar", "baz", NULL }
+			// argv == { "script", "foo", "script", "foo", "bar", "baz", NULL }
 			
 			context.argVector[ 0 ] = context.interpreterPath.c_str();
 			context.argVector[ 1 ] = context.interpreterArg.c_str();
 			context.argVector[ 1 + hasArg ] = "--";
-			context.argVector[ 2 + hasArg ] = context.scriptPath.c_str();  // Overwrite with full pathname
 			
-			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
+			if ( pathSearched )
+			{
+				// Overwrite with full pathname
+				context.scriptPath = N::FSpGetPOSIXPathname( context.executable );
+				
+				context.argVector[ 2 + hasArg ] = context.scriptPath.c_str();
+			}
+			
+			// argv == { "sh", "--", "script", "foo", "bar", "baz", NULL }
 			
 			context.executable = ResolveUnixPathname( context.interpreterPath, cwd );
 		}
