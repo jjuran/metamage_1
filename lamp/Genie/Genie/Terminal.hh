@@ -18,7 +18,11 @@ namespace Genie
 	
 	class CharacterDevice : public IOStream
 	{
+		private:
+			bool isBlocking;
+		
 		public:
+			CharacterDevice() : isBlocking( true )  {}
 			virtual ~CharacterDevice()  {}
 			virtual bool IsATTY() const  { return false; }
 			virtual const char* DeviceName() const = 0;
@@ -31,6 +35,11 @@ namespace Genie
 			{
 				return byteCount;
 			}
+			
+			bool IsBlocking() const  { return isBlocking; }
+			
+			void SetBlocking   ()  { isBlocking = true;  }
+			void SetNonBlocking()  { isBlocking = false; }
 	};
 	
 	typedef std::pair< IORef, IORef > NewPseudoTerminal_Result;
