@@ -143,6 +143,8 @@ static void Poll( SSL* client_session, int server_socket )
 	char data[dataSize];
 	int bytes;
 	
+	sleep( 0 );
+	
 	try
 	{
 		while ( true )
@@ -216,6 +218,11 @@ static void Poll( SSL* client_session, int server_socket )
 		isComplete = true;
 	}
 	*/
+	
+	if ( isComplete )
+	{
+		exit( 1 );
+	}
 }
 
 static void WaitForClients()
