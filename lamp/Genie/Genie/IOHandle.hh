@@ -20,9 +20,10 @@ namespace Genie
 	{
 		private:
 			Io::Handle handle;
+			bool isBlocking;
 		
 		public:
-			IOHandle( const Io::Handle& handle ) : handle( handle )  {}
+			IOHandle( const Io::Handle& handle ) : handle( handle ), isBlocking( true )  {}
 			
 			unsigned int SysPoll() const  { return kPollRead | kPollWrite; }
 			
@@ -35,6 +36,11 @@ namespace Genie
 			{
 				return handle.Write( data, byteCount );
 			}
+			
+			bool IsBlocking() const  { return isBlocking; }
+			
+			void SetBlocking   ();
+			void SetNonBlocking();
 	};
 	
 	IORef NewGenericIO( const Io::Handle& io );

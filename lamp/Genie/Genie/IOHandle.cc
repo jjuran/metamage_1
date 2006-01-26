@@ -19,6 +19,20 @@ namespace Genie
 	
 	typedef ResourceTable< IOHandle > IOTable;
 	
+	void IOHandle::SetBlocking()
+	{
+		handle.SetBlocking( true );
+		
+		isBlocking = true;
+	}
+	
+	void IOHandle::SetNonBlocking()
+	{
+		handle.SetBlocking( false );
+		
+		isBlocking = false;
+	}
+	
 	static unsigned int Poll( std::size_t offset )
 	{
 		//return IOTable::Table().at( offset ).resource->Poll();

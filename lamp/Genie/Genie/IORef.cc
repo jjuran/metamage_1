@@ -121,6 +121,27 @@ namespace Genie
 		return fStream->Write( data, byteCount );
 	}
 	
+	bool IORef::IsBlocking() const
+	{
+		if ( fStream == NULL )  return true;
+		
+		return fStream->IsBlocking();
+	}
+	
+	void IORef::SetBlocking()
+	{
+		if ( fStream == NULL )  return;
+		
+		fStream->SetBlocking();
+	}
+	
+	void IORef::SetNonBlocking()
+	{
+		if ( fStream == NULL )  return;
+		
+		fStream->SetNonBlocking();
+	}
+	
 	typedef IOReader Reader;
 	typedef IOWriter Writer;
 	typedef IOPoller Poller;

@@ -65,6 +65,11 @@ namespace Genie
 			
 			virtual int SysWrite( const char* data, std::size_t byteCount ) = 0;
 			
+			virtual bool IsBlocking() const = 0;
+			
+			virtual void SetBlocking   () = 0;
+			virtual void SetNonBlocking() = 0;
+			
 			const std::string& Peek( ByteCount minBytes );
 			
 			unsigned int Poll() const;
@@ -150,6 +155,10 @@ namespace Genie
 			int Read( char* data, std::size_t byteCount ) const;
 			
 			int Write( const char* data, std::size_t byteCount ) const;
+			
+			bool IsBlocking() const;
+			void SetBlocking();
+			void SetNonBlocking();
 	};
 	
 	template < class Resource >
