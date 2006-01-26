@@ -42,6 +42,13 @@ namespace Genie
 			int SysRead( char* data, std::size_t byteCount );
 			
 			int SysWrite( const char* data, std::size_t byteCount );
+			
+			// Synchronous filesystem I/O is always blocking
+			bool IsBlocking() const  { return true; }
+			
+			void SetBlocking()  {}
+			
+			void SetNonBlocking()  { throw N::ParamErr(); }
 	};
 	
 }
