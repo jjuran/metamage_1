@@ -130,22 +130,32 @@ namespace Genie
 	{
 		try
 		{
-			bool blocking = N::OTIsBlocking( endpoint );
-			
-			if ( blocking )
+			if ( IsBlocking() )
 			{
-				std::size_t bytes = N::OTRcv( endpoint, data, 1 );  // Always 1
+				// OTRcv() will block until ALL bytes requested are received
+				// (unlike read()), so we block only while reading the first byte.
 				
-				N::OTSetNonBlocking( endpoint );
+				// Always 1 byte (unless there's an error); may block
+				std::size_t bytes = N::OTRcv( endpoint, data, 1 );
+				
+				SetNonBlocking();
 				
 				try
 				{
+					// Read whatever's left, nonblocking
 					bytes += N::OTRcv( endpoint, data + 1, byteCount - 1 );
 				}
 				catch ( N::OTNoDataErr& ) {}  // There was only one byte
+				catch ( ... )
+				{
+					// FIXME:  This smells
+					SetBlocking();
+					throw;
+				}
 				
-				N::OTSetBlocking( endpoint );
+				SetBlocking();
 				
+				// And return one or more bytes.  Yay, POSIX semantics!
 				return bytes;
 			}
 			
