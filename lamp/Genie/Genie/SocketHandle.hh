@@ -67,6 +67,8 @@ namespace Genie
 			const SocketAddress& GetSockName() const  { return fSocketAddress; }
 			const SocketAddress& GetPeerName() const  { return fPeerAddress;   }
 			
+			bool IsBlocking() const  { return N::OTIsBlocking( endpoint ); }
+			
 			void SetBlocking   ()  { N::OTSetBlocking   ( endpoint ); }
 			void SetNonBlocking()  { N::OTSetNonBlocking( endpoint ); }
 			
