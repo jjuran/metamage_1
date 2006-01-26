@@ -489,19 +489,18 @@ namespace Genie
 				break;
 			*/
 			
-			// Disabled until we figure out how to model nonblocking mode
-			/*
 			case F_GetFlag:
 				if ( param == O_NONBLOCK )
 				{
-					//return IsNonBlocking();
+					bool blocking = files[ filedes ].handle.IsBlocking();
+					return !blocking;
 				}
 				break;
 			
 			case F_SetFlag:
 				if ( param == O_NONBLOCK )
 				{
-					files[ filedes ].handle.Get()->SetNonBlocking();
+					files[ filedes ].handle.SetNonBlocking();
 					return 0;
 				}
 				break;
@@ -509,11 +508,10 @@ namespace Genie
 			case F_ClearFlag:
 				if ( param == O_NONBLOCK )
 				{
-					files[ filedes ].handle.Get()->SetBlocking();
+					files[ filedes ].handle.SetBlocking();
 					return 0;
 				}
 				break;
-			*/
 			
 			default:
 				break;
