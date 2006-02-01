@@ -7,16 +7,11 @@
 #include <errno.h>
 #include <string.h>
 
-// Standard C++
-#include <map>
-
 // POSIX
-#include "fcntl.h"
-#include "signal.h"
+//#include "signal.h"
 #include "stdlib.h"
-#include "sys/select.h"
 #include "sys/socket.h"
-#include "sys/wait.h"
+//#include "sys/wait.h"
 #include "unistd.h"
 
 // MoreFiles
@@ -26,7 +21,6 @@
 // Nitrogen / Carbon
 #include "Nitrogen/OpenTransportProviders.h"
 #include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Timer.h"
 
 // Nitrogen Extras / AEFramework
 #include "AEFramework/AEFramework.h"
@@ -70,8 +64,6 @@ namespace Genie
 	
 	namespace P7 = POSeven;
 	
-	namespace ext = N::STLExtensions;
-	
 	
 	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
 	{
@@ -79,15 +71,6 @@ namespace Genie
 		{
 			++fd;
 		}
-		
-		return fd;
-	}
-	
-	static int DuplicateFD( FileDescriptorMap& files, int filedes )
-	{
-		int fd = LowestUnusedFrom( files, 0 );
-		
-		files[ fd ] = files[ filedes ].handle;  // Clears the closeOnExec flag
 		
 		return fd;
 	}
@@ -101,60 +84,6 @@ namespace Genie
 	static void Check_InitOpenTransport()
 	{
 		static OTInitialization init;
-	}
-	
-	static GenieProcessTable::iterator CheckAnyPID( pid_t ppid )
-	{
-		bool hasAnyChildren = false;
-		
-		typedef GenieProcessTable::iterator iterator;
-		
-		// FIXME:  Replace with find_if
-		for ( iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
-		{
-			Process& proc = *it->second.Get();
-			
-			if ( proc.ParentProcessID() == ppid )
-			{
-				if ( proc.Status() == Process::kTerminated )
-				{
-					return it;
-				}
-				
-				hasAnyChildren = true;
-			}
-		}
-		
-		if ( !hasAnyChildren )
-		{
-			P7::ThrowErrno( ECHILD );
-		}
-		
-		return gProcessTable.end();
-	}
-	
-	static GenieProcessTable::iterator CheckPID( pid_t ppid, pid_t pid )
-	{
-		typedef GenieProcessTable::iterator iterator;
-		
-		iterator found = gProcessTable.Map().find( pid );
-		
-		if ( found == gProcessTable.end() )
-		{
-			P7::ThrowErrno( ECHILD );
-		}
-		
-		if ( found->second.Get()->ParentProcessID() != ppid )
-		{
-			// complain
-		}
-		
-		if ( found->second.Get()->Status() != Process::kTerminated )
-		{
-			found = gProcessTable.end();
-		}
-		
-		return found;
 	}
 	
 	
@@ -197,6 +126,8 @@ namespace Genie
 		    << name << "\n";
 	}
 	
+	namespace ext = N::STLExtensions;
+	
 	static void DoPS( const Io::Stream< IORef >& Out )
 	{
 		std::for_each
@@ -235,7 +166,6 @@ namespace Genie
 	using Genie::gProcessTable;
 	using Genie::LowestUnusedFrom;
 	using Genie::ResolveUnixPathname;
-	using Genie::DuplicateFD;
 	using Genie::Check_InitOpenTransport;
 	using Genie::NewSocket;
 	using Genie::kSocketDescriptor;
@@ -243,10 +173,7 @@ namespace Genie
 	using Genie::IORef_Cast;
 	using Genie::SocketAddress;
 	using Genie::FileDescriptor;
-	using Genie::GenieProcessTable;
 	using Genie::Process;
-	using Genie::CheckAnyPID;
-	using Genie::CheckPID;
 	using Genie::PipeOut_IODetails;
 	using Genie::PipeIn_IODetails;
 	using Genie::kFileDescriptor;
@@ -255,10 +182,6 @@ namespace Genie
 	using Genie::CharacterDevice;
 	using Genie::NewPseudoTerminal_Result;
 	using Genie::NewPseudoTerminal;
-	using Genie::OpenFile;
-	using Genie::kPollRead;
-	using Genie::kPollWrite;
-	using Genie::kPollExcept;
 	
 	
 	int* ErrnoPtr()
@@ -328,294 +251,6 @@ namespace Genie
 		}
 		
 		return 0;
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ signal ¥
-	
-	int kill( pid_t pid, int sig )
-	{
-		if ( !gProcessTable.Exists( pid ) )
-		{
-			return -1;  // FIXME:  set errno
-		}
-		
-		if ( sig != 0 )
-		{
-			gProcessTable[ pid ].Raise( sig );
-		}
-		
-		return 0;
-	}
-	
-	__sig_handler signal( int sig, __sig_handler func )
-	{
-		return CurrentProcess().SetSignalAction( sig, func );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ stdlib ¥
-	
-	char* getenv( const char* name )
-	{
-		return CurrentProcess().GetEnv( name );
-	}
-	
-
-	int setenv( const char* name, const char* value, int overwrite )
-	{
-		CurrentProcess().SetEnv( name, value, overwrite );
-		
-		return 0;
-	}
-	
-	int putenv( const char* string )
-	{
-		CurrentProcess().PutEnv( string );
-		
-		return 0;
-	}
-	
-	void unsetenv( const char* name )
-	{
-		CurrentProcess().UnsetEnv( name );
-	}
-	
-	int clearenv()
-	{
-		CurrentProcess().ClearEnv();
-		
-		return 0;
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ fcntl ¥
-	
-	int open( const char* path, int oflag, mode_t mode )
-	{
-		try
-		{
-			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-			
-			int fd = LowestUnusedFrom( files, 0 );
-			
-			unsigned char rdPerm = oflag + 1  &  FREAD;
-			unsigned char wrPerm = oflag + 1  &  FWRITE;
-			
-			bool nonblocking = oflag & O_NONBLOCK;
-			bool appending   = oflag & O_APPEND;
-			// ...
-			bool creating    = oflag & O_CREAT;
-			bool truncating  = oflag & O_TRUNC;
-			bool excluding   = oflag & O_EXCL;
-			// ...
-			bool resFork     = oflag & O_ResFork;
-			bool resMap      = oflag & O_ResMap;
-			
-			std::string pathname = path;
-			
-			IORef io;
-			
-			if ( pathname.substr( 0, 5 ) == "/dev/" )
-			{
-				io = Genie::GetSimpleDeviceHandle( path );
-			}
-			else
-			{
-				// assume it's a file
-				FSSpec file = ResolveUnixPathname( path,
-				                                   N::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() ) );
-				
-				if ( creating )
-				{
-					if ( !N::FSpTestFileExists( file ) )
-					{
-						// FIXME:  Need a way to guess or otherwise choose creator and type
-						// Cheap hack:
-						N::OSType creator = TARGET_API_MAC_CARBON ? '!Rch' : 'R*ch';
-						N::FSpCreate( file, creator, 'TEXT' );
-					}
-					else if ( excluding )
-					{
-						// error creating
-						throw N::DupFNErr();
-					}
-				}
-				
-				N::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( file, rdPerm | wrPerm );
-				
-				if ( truncating )
-				{
-					N::SetEOF( fileH, 0 );
-				}
-				else if ( appending )
-				{
-					N::SetFPos( fileH, fsFromLEOF, 0 );
-				}
-				
-				io = OpenFile( fileH );
-			}
-			
-			files[ fd ] = io;
-			
-			return fd;
-		}
-		catch ( N::OSStatus& err )
-		{
-			// FIXME
-			return CurrentProcess().SetErrno( EINVAL );
-		}
-	}
-	
-	int fcntl( int filedes, int cmd, int param )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		switch ( cmd )
-		{
-			case F_DUPFD:
-				return DuplicateFD( files, filedes );
-			
-			case F_GETFD:
-				return files[ filedes ].closeOnExec;
-			
-			case F_SETFD:
-				files[ filedes ].closeOnExec = param;
-				return 0;
-			
-			/*
-			case F_GETFL:
-			case F_SETFL:
-				break;
-			*/
-			
-			case F_GetFlag:
-				if ( param == O_NONBLOCK )
-				{
-					bool blocking = files[ filedes ].handle.IsBlocking();
-					return !blocking;
-				}
-				break;
-			
-			case F_SetFlag:
-				if ( param == O_NONBLOCK )
-				{
-					files[ filedes ].handle.SetNonBlocking();
-					return 0;
-				}
-				break;
-			
-			case F_ClearFlag:
-				if ( param == O_NONBLOCK )
-				{
-					files[ filedes ].handle.SetBlocking();
-					return 0;
-				}
-				break;
-			
-			default:
-				break;
-		}
-		
-		return CurrentProcess().SetErrno( EINVAL );
-	}
-	
-	#pragma mark -
-	#pragma mark ¥ sys/select ¥
-	
-	int select( int n, fd_set*  readfds,
-	                   fd_set*  writefds,
-	                   fd_set*  exceptfds, struct timeval* timeout )
-	{
-		UInt64 timeToBail = timeout == NULL ? UInt64( -1 )
-		                                    : N::Microseconds() + timeout->tv_sec * 1000000
-		                                                        + timeout->tv_usec;
-		
-		try
-		{
-			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-			
-			// Output fd sets
-			fd_set rd, wr, ex;
-			
-			FD_ZERO( &rd );
-			FD_ZERO( &wr );
-			FD_ZERO( &ex );
-			
-			// For any omitted sets, we'll pretend they were zeroed.
-			
-			if ( readfds   == NULL )  { readfds   = &rd; }
-			if ( writefds  == NULL )  { writefds  = &wr; }
-			if ( exceptfds == NULL )  { exceptfds = &ex; }
-			
-			int result = 0;
-			
-			do
-			{
-				Genie::Yield();
-				
-				for ( int i = 0;  i != n;  ++i )
-				{
-					if (    FD_ISSET( i, readfds   )
-					     || FD_ISSET( i, writefds  )
-					     || FD_ISSET( i, exceptfds ) )
-					{
-						if ( !files.count( i ) )
-						{
-							return CurrentProcess().SetErrno( EBADF );
-						}
-						
-						IORef ref = files[ i ].handle;
-						
-						unsigned int poll = ref.Poll();
-						
-						//if ( poll == 0 )  continue;  // Optimization
-						
-						if ( FD_ISSET( i, readfds )  &&  poll & kPollRead )
-						{
-							FD_SET( i, &rd );
-							
-							++result;
-						}
-						
-						if ( FD_ISSET( i, writefds )  &&  poll & kPollWrite )
-						{
-							FD_SET( i, &wr );
-							
-							++result;
-						}
-						
-						if ( FD_ISSET( i, exceptfds )  &&  poll & kPollExcept )
-						{
-							FD_SET( i, &ex );
-							
-							++result;
-						}
-					}
-				}
-			}
-			while ( result == 0  &&  N::Microseconds() < timeToBail );
-			
-			if ( n > 0 )
-			{
-				*readfds   = rd;
-				*writefds  = wr;
-				*exceptfds = ex;
-			}
-			
-			return result;
-		}
-		catch ( P7::Errno& error )
-		{
-			CurrentProcess().SetErrno( error );
-		}
-		catch ( ... )
-		{
-			// FIXME:  Is there a better course of action, or at least a better default?
-			CurrentProcess().SetErrno( EIO );
-		}
-		
-		return -1;
 	}
 	
 	#pragma mark -
@@ -832,53 +467,6 @@ namespace Genie
 	#endif
 	
 	#pragma mark -
-	#pragma mark ¥ sys/wait ¥
-	
-	pid_t waitpid( pid_t pid, int* stat_loc, int options )
-	{
-		int ppid = CurrentProcess().ProcessID();
-		
-		try
-		{
-			while ( true )
-			{
-				typedef GenieProcessTable::iterator iterator;
-				
-				iterator found = pid == -1 ? CheckAnyPID( ppid )
-				                           : CheckPID( ppid, pid );
-				
-				if ( found != gProcessTable.end() )
-				{
-					if ( stat_loc != NULL )
-					{
-						*stat_loc = found->second.Get()->Result();
-					}
-					
-					int foundPID = found->first;
-					
-					(void)gProcessTable.RemoveProcess( found );
-					
-					return foundPID;
-				}
-				
-				if ( options & 1 )
-				{
-					// no hang
-					return 0;
-				}
-				
-				Genie::Yield();
-			}
-		}
-		catch ( P7::Errno& err )
-		{
-			CurrentProcess().SetErrno( err );
-		}
-		
-		return -1;
-	}
-	
-	#pragma mark -
 	#pragma mark ¥ unistd ¥
 	
 	int chdir( const char* path )
@@ -941,18 +529,23 @@ namespace Genie
 		return 0;
 	}
 	
-	int dup( int oldfd )
-	{
-		return DuplicateFD( CurrentProcess().FileDescriptors(), oldfd );
-	}
-	
-	int dup2( int oldfd, int newfd )
+	static int DupFD( int oldfd, int newfd )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		files[ newfd ] = files[ oldfd ].handle;  // Clears the closeOnExec flag
 		
 		return newfd;
+	}
+	
+	int dup( int oldfd )
+	{
+		return DupFD( oldfd, LowestUnusedFrom( CurrentProcess().FileDescriptors(), 0 ) );
+	}
+	
+	int dup2( int oldfd, int newfd )
+	{
+		return DupFD( oldfd, newfd );
 	}
 	
 	int execve( const char* path, const char* const argv[], const char* const envp[] )
