@@ -15,8 +15,6 @@
 #include <string>
 
 // POSIX
-#include "stdlib.h"
-#include "sys/stat.h"
 #include "unistd.h"
 
 // MoreFiles
@@ -34,12 +32,11 @@
 #include "Genie/Yield.hh"
 
 
-namespace N = Nitrogen;
-
-using Genie::CurrentProcess;
-using Genie::ResolveUnixPathname;
-
-
+namespace Genie
+{
+	
+	namespace N = Nitrogen;
+	
 	static const char* Basename( const char* path )
 	{
 		const char* slash = std::strrchr( path, '/' );
@@ -59,9 +56,7 @@ using Genie::ResolveUnixPathname;
 		return name;
 	}
 	
-#pragma export on
-	
-	int rename( const char* src, const char* dest )
+	static int rename( const char* src, const char* dest )
 	{
 		try
 		{
@@ -187,6 +182,15 @@ using Genie::ResolveUnixPathname;
 		}
 		
 		return 0;
+	}
+	
+}
+	
+#pragma export on
+	
+	int rename( const char* src, const char* dest )
+	{
+		return Genie::rename( src, dest );
 	}
 	
 #pragma export reset

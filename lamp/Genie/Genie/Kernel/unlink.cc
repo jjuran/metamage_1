@@ -18,15 +18,12 @@
 #include "Genie/Yield.hh"
 
 
-namespace N = Nitrogen;
-
-using Genie::CurrentProcess;
-using Genie::ResolveUnixPathname;
-
-
-#pragma export on
+namespace Genie
+{
 	
-	int unlink( const char* pathname )
+	namespace N = Nitrogen;
+	
+	static int unlink( const char* pathname )
 	{
 		try
 		{
@@ -57,6 +54,15 @@ using Genie::ResolveUnixPathname;
 		}
 		
 		return 0;
+	}
+	
+}
+
+#pragma export on
+	
+	int unlink( const char* pathname )
+	{
+		return Genie::unlink( pathname );
 	}
 	
 #pragma export reset

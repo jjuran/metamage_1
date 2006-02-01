@@ -21,15 +21,12 @@
 #include "Genie/Yield.hh"
 
 
-namespace N = Nitrogen;
-
-using Genie::CurrentProcess;
-using Genie::ResolveUnixPathname;
-
-
-#pragma export on
+namespace Genie
+{
 	
-	int	rmdir( const char* pathname )
+	namespace N = Nitrogen;
+	
+	static int rmdir( const char* pathname )
 	{
 		try
 		{
@@ -61,6 +58,15 @@ using Genie::ResolveUnixPathname;
 		}
 		
 		return CurrentProcess().SetErrno( EINVAL );
+	}
+	
+}
+
+#pragma export on
+	
+	int	rmdir( const char* pathname )
+	{
+		return Genie::rmdir( pathname );
 	}
 	
 #pragma export reset
