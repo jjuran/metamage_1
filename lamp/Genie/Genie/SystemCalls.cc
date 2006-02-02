@@ -8,18 +8,9 @@
 #include <string.h>
 
 // POSIX
-//#include "signal.h"
-#include "stdlib.h"
-#include "sys/socket.h"
-//#include "sys/wait.h"
 #include "unistd.h"
 
-// MoreFiles
-#include "FileCopy.h"
-#include "MoreFilesExtras.h"
-
 // Nitrogen / Carbon
-#include "Nitrogen/OpenTransportProviders.h"
 #include "Nitrogen/OSStatus.h"
 
 // Nitrogen Extras / AEFramework
@@ -45,14 +36,11 @@
 #include "SystemCalls.hh"
 
 // Genie
-#include "Genie/Devices.hh"
 #include "Genie/FileHandle.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Pipes.hh"
 #include "Genie/Process.hh"
-#include "Genie/ReplyHandler.hh"
 #include "Genie/ResourceTable.hh"
-#include "Genie/SocketHandle.hh"
 #include "Genie/Terminal.hh"
 #include "Genie/Yield.hh"
 
@@ -73,17 +61,6 @@ namespace Genie
 		}
 		
 		return fd;
-	}
-	
-	struct OTInitialization
-	{
-		OTInitialization()   { N::InitOpenTransport();  }
-		~OTInitialization()  { N::CloseOpenTransport(); }
-	};
-	
-	static void Check_InitOpenTransport()
-	{
-		static OTInitialization init;
 	}
 	
 	
@@ -166,13 +143,7 @@ namespace Genie
 	using Genie::gProcessTable;
 	using Genie::LowestUnusedFrom;
 	using Genie::ResolveUnixPathname;
-	using Genie::Check_InitOpenTransport;
-	using Genie::NewSocket;
-	using Genie::kSocketDescriptor;
-	using Genie::SocketHandle;
 	using Genie::IORef_Cast;
-	using Genie::SocketAddress;
-	using Genie::FileDescriptor;
 	using Genie::Process;
 	using Genie::PipeOut_IODetails;
 	using Genie::PipeIn_IODetails;
@@ -219,16 +190,6 @@ namespace Genie
 		return noErr;
 	}
 	
-	InetSvcRef InternetServices()
-	{
-		Check_InitOpenTransport();
-		
-		static N::Owned< InetSvcRef >
-		       gInetSvcRef = N::OTOpenInternetServices( kDefaultInternetServicesPath );
-		
-		return gInetSvcRef;
-	}
-	
 	void PrintPS()
 	{
 		using Genie::DoPS;
@@ -254,219 +215,6 @@ namespace Genie
 	}
 	
 	#pragma mark -
-	#pragma mark ¥ sys/socket ¥
-	
-	#if !TARGET_CPU_68K
-	
-	int socket( int domain, int type, int protocol )
-	{
-		Check_InitOpenTransport();
-		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		int fd = LowestUnusedFrom( files, 0 );
-		
-		// Assume domain is PF_INET, type is SOCK_STREAM, and protocol is INET_TCP
-		
-		try
-		{
-			files[ fd ] = NewSocket();
-		}
-		catch ( ... )
-		{
-			// convert exception
-			return -1;
-		}
-		
-		return fd;
-	}
-	
-	int bind( int sockfd, const struct sockaddr* name, socklen_t namelen )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		const InetAddress* inetAddress = reinterpret_cast< const InetAddress* >( name );
-		
-		try
-		{
-			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				sock.Bind( inetAddress, namelen );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
-		}
-		catch ( ... )
-		{
-			// Convert the exception
-			return -1;
-		}
-		
-		return 0;
-	}
-	
-	int listen( int sockfd, int backlog )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		try
-		{
-			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				sock.Listen( backlog );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
-		}
-		catch ( ... )
-		{
-			// Convert the exception
-			return -1;
-		}
-		
-		return 0;
-	}
-	
-	int accept( int sockfd, struct sockaddr *addr, socklen_t *addrlen )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		try
-		{
-			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				
-				//Accept_Result result = sock->Accept();
-				
-				IORef handle = sock.Accept( (InetAddress*)addr, *addrlen );
-				
-				int fd = LowestUnusedFrom( files, 0 );
-				
-				files[ fd ] = FileDescriptor( handle );
-				
-				return fd;
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
-		}
-		catch ( Io::NoDataPending& )
-		{
-			return CurrentProcess().SetErrno( EAGAIN );
-		}
-		catch ( ... )
-		{
-			// Convert the exception
-			return -1;
-		}
-		
-		return 0;
-	}
-	
-	int connect( int sockfd, const struct sockaddr* serv_addr, socklen_t addrlen )
-	{
-		// Assume sin_family is AF_INET
-		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		const InetAddress* inetAddress = reinterpret_cast< const InetAddress* >( serv_addr );
-		
-		try
-		{
-			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				sock.Connect( inetAddress, addrlen );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
-		}
-		catch ( ... )
-		{
-			// Convert the exception
-			return -1;
-		}
-		
-		return 0;
-	}
-	
-	int getsockname( int sockfd, struct sockaddr* name, socklen_t* namelen )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		try
-		{
-			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				
-				const SocketAddress& address = sock.GetSockName();
-				
-				*namelen = address.Len();
-				std::memcpy( name, address.Get(), address.Len() );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
-		}
-		catch ( ... )
-		{
-			// Convert the exception
-			return -1;
-		}
-		
-		return 0;
-	}
-	
-	int getpeername( int sockfd, struct sockaddr* name, socklen_t* namelen )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		try
-		{
-			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				
-				const SocketAddress& address = sock.GetPeerName();
-				
-				*namelen = address.Len();
-				std::memcpy( name, address.Get(), address.Len() );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
-		}
-		catch ( ... )
-		{
-			// Convert the exception
-			return -1;
-		}
-		
-		return 0;
-	}
-	
-	#endif
-	
-	#pragma mark -
 	#pragma mark ¥ unistd ¥
 	
 	int chdir( const char* path )
@@ -489,42 +237,6 @@ namespace Genie
 	int close( int fd )
 	{
 		Genie::CurrentProcess().FileDescriptors().erase( fd );
-		
-		return 0;
-	}
-	
-	static void FSpFileCopy( const FSSpec&         source,
-	                         const FSSpec&         destDir,
-	                         const unsigned char*  copyName       = NULL,
-	                         void*                 copyBufferPtr  = NULL,
-	                         long                  copyBufferSize = 0,
-	                         bool                  preflight      = true )
-	{
-		N::OnlyOnce< N::RegisterFileManagerErrors >();
-		
-		N::ThrowOSStatus( ::FSpFileCopy( &source,
-		                                 &destDir,
-		                                 copyName,
-		                                 copyBufferPtr,
-		                                 copyBufferSize,
-		                                 preflight ) );
-	}
-	
-	int copyfile( const char* src, const char* dest )
-	{
-		try
-		{
-			const N::FSDirSpec cwd = CurrentProcess().CurrentDirectory();
-			
-			const FSSpec srcFile  = ResolveUnixPathname( src,  cwd );
-			const FSSpec destFile = ResolveUnixPathname( dest, cwd );
-			
-			FSpFileCopy( srcFile, destFile );
-		}
-		catch ( ... )
-		{
-			return CurrentProcess().SetErrno( EINVAL );
-		}
 		
 		return 0;
 	}
