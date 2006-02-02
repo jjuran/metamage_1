@@ -100,10 +100,17 @@ namespace Pedestal
 		                 N::GetTELineHeight( hTE ) );
 	}
 	
+	static int VScrollOffset( TEHandle hTE )
+	{
+		int dv =   N::GetTEViewRect( hTE ).top
+		           - N::GetTEDestRect( hTE ).top;
+		
+		return dv;
+	}
+	
 	Point ScrollPosition( TEHandle hTE )
 	{
-		short dv =   N::GetTEViewRect( hTE ).top
-		           - N::GetTEDestRect( hTE ).top;
+		int dv = VScrollOffset( hTE );
 		
 		return N::SetPt( 0,
 		                 dv == 0 ? 0
@@ -112,12 +119,12 @@ namespace Pedestal
 	
 	void Resize( TEHandle hTE, const Rect& newBounds )
 	{
-		using namespace N::Operators;
+		int dv = VScrollOffset( hTE );
 		
 		Rect viewRect = ViewRectFromBounds( newBounds );
 		
 		N::SetTEViewRect( hTE, viewRect );
-		N::SetTEDestRect( hTE, N::OffsetRect( viewRect, -ScrollPosition( hTE ) ) );
+		N::SetTEDestRect( hTE, N::OffsetRect( viewRect, 0, -dv ) );
 		N::TECalText( hTE );
 		N::InvalRect( newBounds );
 	}
