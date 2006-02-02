@@ -55,17 +55,26 @@ namespace Pedestal
 	short CountLinesForEditing( TEHandle hTE )
 	{
 		short teLength = N::GetTELength( hTE );
+		
 		// An empty buffer counts as one line
 		if ( teLength == 0 )
 		{
 			return 1;
 		}
-		short nLines = N::GetTELineCount( hTE );
-		::Handle hText = N::GetTETextHandle( hTE );
+		
+		short    nLines = N::GetTELineCount ( hTE );
+		::Handle hText  = N::GetTETextHandle( hTE );
+		
 		// Find the last character in the buffer
 		char c = ( *hText )[ teLength - 1 ];
+		
 		// If the last char is a carriage return, add an extra line
-		return nLines + ( c == '\r' ? 1 : 0 );
+		if ( c == '\r' )
+		{
+			++nLines;
+		}
+		
+		return nLines;
 	}
 	
 	short ViewableLines( TEHandle hTE )
@@ -115,19 +124,12 @@ namespace Pedestal
 	
 	void Resize( TEHandle hTE, short width, short height )
 	{
-		using namespace N::Operators;
-		
 		Rect bounds = Bounds( hTE );
 		
 		bounds.right = bounds.left + width;
 		bounds.bottom = bounds.top + height;
 		
-		Rect viewRect = ViewRectFromBounds( bounds );
-		
-		N::SetTEViewRect( hTE, viewRect );
-		N::SetTEDestRect( hTE, N::OffsetRect( viewRect, -ScrollPosition( hTE ) ) );
-		N::TECalText( hTE );
-		N::InvalRect( bounds );
+		Resize( hTE, bounds );
 	}
 	
 	void Scroll( TEHandle hTE, short dh, short dv )
@@ -203,6 +205,23 @@ namespace Pedestal
 		N::EraseRect( right  );
 		
 		N::TEUpdate( bounds, myTE );
+		
+		int textHeight = CountLinesForDisplay( myTE ) * N::GetTELineHeight( myTE );
+		
+		Rect viewRect = N::GetTEViewRect( myTE );
+		short viewHeight = viewRect.bottom - viewRect.top;
+		
+		Rect destRect = N::GetTEDestRect( myTE );
+		destRect.bottom = destRect.top + textHeight;
+		
+		// If the bottom of the text doesn't reach the bottom of the viewing area,
+		if ( destRect.bottom < viewRect.bottom )
+		{
+			// then below the text is a blank space, which TEUpdate() ignores.
+			// So we need to erase it ourselves.
+			viewRect.top = destRect.bottom;
+			N::EraseRect( viewRect );
+		}
 	}
 	
 	bool TEView::UserCommand( MenuItemCode code )
