@@ -8,22 +8,31 @@
 
 // Genie
 #include "Genie/Process.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
 
-#pragma export on
+namespace Genie
+{
 	
-	using Genie::CurrentProcess;
-	using Genie::Process;
-	
-	
-	int SpawnVFork()
+	static int SpawnVFork()
 	{
 		Process* child = new Process( CurrentProcess().ProcessID() );
 		
 		RegisterProcessContext( child );
 		
 		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( SpawnVFork );
+	
+}
+
+#pragma export on
+	
+	int SpawnVFork()
+	{
+		return Genie::SpawnVFork();
 	}
 	
 #pragma export reset

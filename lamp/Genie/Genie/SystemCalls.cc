@@ -41,9 +41,18 @@
 #include "Genie/Pipes.hh"
 #include "Genie/Process.hh"
 #include "Genie/ResourceTable.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Terminal.hh"
 #include "Genie/Yield.hh"
 
+
+extern "C"
+{
+	void PrintPS();
+	
+	OSStatus Path2FSSpec( const char*  pathname,
+	                      FSSpec*      outFSS );
+}
 
 namespace Genie
 {
@@ -123,49 +132,21 @@ namespace Genie
 		);
 	}
 	
-}
-
-#pragma export on
-	
-	extern "C"
-	{
-		void PrintPS();
-		
-		OSStatus Path2FSSpec( const char*  pathname,
-		                      FSSpec*      outFSS );
-	}
-	
-	namespace P7 = POSeven;
-	
-	using Genie::CurrentProcess;
-	using Genie::FileDescriptorMap;
-	using Genie::IORef;
-	using Genie::gProcessTable;
-	using Genie::LowestUnusedFrom;
-	using Genie::ResolveUnixPathname;
-	using Genie::IORef_Cast;
-	using Genie::Process;
-	using Genie::PipeOut_IODetails;
-	using Genie::PipeIn_IODetails;
-	using Genie::kFileDescriptor;
-	using Genie::FileHandle;
-	using Genie::kCharacterDeviceDescriptor;
-	using Genie::CharacterDevice;
-	using Genie::NewPseudoTerminal_Result;
-	using Genie::NewPseudoTerminal;
-	
-	
-	int* ErrnoPtr()
+	static int* ErrnoPtr()
 	{
 		return CurrentProcess().ErrnoData();
 	}
 	
-	char*** EnvironPtr()
+	REGISTER_SYSTEM_CALL( ErrnoPtr );
+	
+	static char*** EnvironPtr()
 	{
 		return CurrentProcess().EnvironData();
 	}
 	
-	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
+	REGISTER_SYSTEM_CALL( EnvironPtr );
+	
+	static OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
 		try
 		{
@@ -190,23 +171,23 @@ namespace Genie
 		return noErr;
 	}
 	
-	void PrintPS()
+	REGISTER_SYSTEM_CALL( AESendBlocking );
+	
+	static void PrintPS()
 	{
-		using Genie::DoPS;
-		
 		DoPS( Io::Stream< IORef >( CurrentProcess().FileDescriptors()[ 1 ].handle ) );
 	}
 	
-	OSStatus Path2FSSpec( const char*  pathname,
-	                      FSSpec*      outFSS )
+	REGISTER_SYSTEM_CALL( PrintPS );
+	
+	static OSStatus Path2FSSpec( const char*  pathname,
+	                             FSSpec*      outFSS )
 	{
-		using Genie::ResolveUnixPathname;
-		
 		try
 		{
 			*outFSS = ResolveUnixPathname( pathname, CurrentProcess().CurrentDirectory() );
 		}
-		catch ( N::OSStatus err )
+		catch ( N::OSStatus& err )
 		{
 			return CurrentProcess().SetErrno( err );
 		}
@@ -214,14 +195,17 @@ namespace Genie
 		return 0;
 	}
 	
+	REGISTER_SYSTEM_CALL( Path2FSSpec );
+	
+	
 	#pragma mark -
 	#pragma mark ¥ unistd ¥
 	
-	int chdir( const char* path )
+	static int chdir( const char* path )
 	{
 		try
 		{
-			int result = Genie::CurrentProcess().ChangeDirectory( path );
+			int result = CurrentProcess().ChangeDirectory( path );
 			
 			return result == 0 ? 0 : -1;
 		}
@@ -234,12 +218,16 @@ namespace Genie
 		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
-	int close( int fd )
+	REGISTER_SYSTEM_CALL( chdir );
+	
+	static int close( int fd )
 	{
-		Genie::CurrentProcess().FileDescriptors().erase( fd );
+		CurrentProcess().FileDescriptors().erase( fd );
 		
 		return 0;
 	}
+	
+	REGISTER_SYSTEM_CALL( close );
 	
 	static int DupFD( int oldfd, int newfd )
 	{
@@ -250,17 +238,21 @@ namespace Genie
 		return newfd;
 	}
 	
-	int dup( int oldfd )
+	static int dup( int oldfd )
 	{
 		return DupFD( oldfd, LowestUnusedFrom( CurrentProcess().FileDescriptors(), 0 ) );
 	}
 	
-	int dup2( int oldfd, int newfd )
+	REGISTER_SYSTEM_CALL( dup );
+	
+	static int dup2( int oldfd, int newfd )
 	{
 		return DupFD( oldfd, newfd );
 	}
 	
-	int execve( const char* path, const char* const argv[], const char* const envp[] )
+	REGISTER_SYSTEM_CALL( dup2 );
+	
+	static int execve( const char* path, const char* const argv[], const char* const envp[] )
 	{
 		try
 		{
@@ -328,7 +320,9 @@ namespace Genie
 		return 0;
 	}
 	
-	void _exit( int status )
+	REGISTER_SYSTEM_CALL( execve );
+	
+	static void _exit( int status )
 	{
 		Process& current( CurrentProcess() );
 		
@@ -344,7 +338,9 @@ namespace Genie
 		current.KillThread();
 	}
 	
-	char* getcwd( char* buf, std::size_t size )
+	REGISTER_SYSTEM_CALL( _exit );
+	
+	static char* getcwd( char* buf, std::size_t size )
 	{
 		std::string result = N::FSpGetPOSIXPathname( N::Convert< FSSpec >( CurrentProcess().CurrentDirectory() ) );
 		
@@ -360,35 +356,43 @@ namespace Genie
 		return buf;
 	}
 	
-	pid_t getpgid( pid_t pid )
+	REGISTER_SYSTEM_CALL( getcwd );
+	
+	static pid_t getpgid( pid_t pid )
 	{
 		if ( pid == 0 )
 		{
 			return getpgrp();
 		}
 		
-		return Genie::gProcessTable[ pid ].GetPGID();
+		return gProcessTable[ pid ].GetPGID();
 	}
 	
-	pid_t getpgrp()
+	REGISTER_SYSTEM_CALL( getpgid );
+	
+	static pid_t getpgrp()
 	{
-		return Genie::CurrentProcess().GetPGID();
+		return CurrentProcess().GetPGID();
 	}
 	
-	pid_t getpid()
+	REGISTER_SYSTEM_CALL( getpgrp );
+	
+	static pid_t getpid()
 	{
-		return Genie::CurrentProcess().ProcessID();
+		return CurrentProcess().ProcessID();
 	}
 	
-	pid_t getppid()
+	REGISTER_SYSTEM_CALL( getpid );
+	
+	static pid_t getppid()
 	{
-		return Genie::CurrentProcess().ParentProcessID();
+		return CurrentProcess().ParentProcessID();
 	}
 	
-	off_t lseek( int fd, off_t offset, int whence )
+	REGISTER_SYSTEM_CALL( getppid );
+	
+	static off_t lseek( int fd, off_t offset, int whence )
 	{
-		
-		
 		try
 		{
 			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -433,17 +437,19 @@ namespace Genie
 		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
-	int pause()
+	REGISTER_SYSTEM_CALL( lseek );
+	
+	static int pause()
 	{
-		Genie::CurrentProcess().Stop();  // Sleep, until...
+		CurrentProcess().Stop();  // Sleep, until...
 		
 		return CurrentProcess().SetErrno( EINTR );
 	}
 	
-	int pipe( int filedes[ 2 ] )
+	REGISTER_SYSTEM_CALL( pause );
+	
+	static int pipe( int filedes[ 2 ] )
 	{
-		using Genie::Pipe;
-		
 		Pipe::Handles handles = Pipe::New();
 		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -460,7 +466,9 @@ namespace Genie
 		return 0;
 	}
 	
-	int peek( int fd, const char** buffer, size_t minBytes )
+	REGISTER_SYSTEM_CALL( pipe );
+	
+	static int peek( int fd, const char** buffer, size_t minBytes )
 	{
 		try
 		{
@@ -503,7 +511,9 @@ namespace Genie
 		return -1;
 	}
 	
-	ssize_t read( int fd, void* buf, size_t count )
+	REGISTER_SYSTEM_CALL( peek );
+	
+	static ssize_t read( int fd, void* buf, size_t count )
 	{
 		try
 		{
@@ -543,7 +553,9 @@ namespace Genie
 	
 	// setctty() makes fd the controlling terminal of the current process.
 	// I made this up.
-	int setctty( int fd )
+	REGISTER_SYSTEM_CALL( read );
+	
+	static int setctty( int fd )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
@@ -561,11 +573,12 @@ namespace Genie
 			}
 		}
 		
-		CurrentProcess().SetErrno( EINVAL );
-		return -1;
+		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
-	int setpgid( pid_t pid, pid_t pgid )
+	REGISTER_SYSTEM_CALL( setctty );
+	
+	static int setpgid( pid_t pid, pid_t pgid )
 	{
 		Process& target( pid != 0 ? gProcessTable[ pid ]
 		                          : CurrentProcess() );
@@ -577,7 +590,9 @@ namespace Genie
 		return pid;
 	}
 	
-	pid_t setsid()
+	REGISTER_SYSTEM_CALL( setpgid );
+	
+	static pid_t setsid()
 	{
 		Process& current( CurrentProcess() );
 		
@@ -591,7 +606,9 @@ namespace Genie
 		return pid;
 	}
 	
-	unsigned int sleep( unsigned int seconds )
+	REGISTER_SYSTEM_CALL( setsid );
+	
+	static unsigned int sleep( unsigned int seconds )
 	{
 		unsigned long ticks = ::TickCount();
 		
@@ -602,7 +619,7 @@ namespace Genie
 			// Yield at least once, even for 0 seconds
 			do
 			{
-				Genie::Yield();
+				Yield();
 			}
 			while ( ::TickCount() < ticks );
 		}
@@ -614,7 +631,9 @@ namespace Genie
 		return 0;
 	}
 	
-	const char* ttyname( int fd )
+	REGISTER_SYSTEM_CALL( sleep );
+	
+	static const char* ttyname( int fd )
 	{
 		try
 		{
@@ -637,11 +656,13 @@ namespace Genie
 		return NULL;
 	}
 	
+	REGISTER_SYSTEM_CALL( ttyname );
+	
 	// ttypair() is analogous to socketpair(), and creates a pseudo-tty device.
 	// File descriptors refering to the master and slave respectively are returned
 	// in filedes.
 	// I made this up too.
-	int ttypair( int filedes[ 2 ] )
+	static int ttypair( int filedes[ 2 ] )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
@@ -659,12 +680,164 @@ namespace Genie
 		return 0;
 	}
 	
-	ssize_t write( int fd, const void* buf, size_t count )
+	REGISTER_SYSTEM_CALL( ttypair );
+	
+	static ssize_t write( int fd, const void* buf, size_t count )
 	{
-		int put = Io::Write( Genie::CurrentProcess().FileDescriptors()[ fd ].handle,
+		int put = Io::Write( CurrentProcess().FileDescriptors()[ fd ].handle,
 		                     reinterpret_cast< const char* >( buf ),
 		                     count );
 		return put;
+	}
+	
+	REGISTER_SYSTEM_CALL( write );
+	
+}
+
+#pragma export on
+	
+	#pragma mark -
+	#pragma mark ¥ Exports ¥
+	
+	int* ErrnoPtr()
+	{
+		return Genie::ErrnoPtr();
+	}
+	
+	char*** EnvironPtr()
+	{
+		return Genie::EnvironPtr();
+	}
+	
+	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
+	{
+		return Genie::AESendBlocking( appleEvent, reply );
+	}
+	
+	void PrintPS()
+	{
+		Genie::PrintPS();
+	}
+	
+	OSStatus Path2FSSpec( const char*  pathname,
+	                      FSSpec*      outFSS )
+	{
+		return Genie::Path2FSSpec( pathname, outFSS );
+	}
+	
+	int chdir( const char* path )
+	{
+		return Genie::chdir( path );
+	}
+	
+	int close( int fd )
+	{
+		return Genie::close( fd );
+	}
+	
+	int dup( int oldfd )
+	{
+		return Genie::dup( oldfd );
+	}
+	
+	int dup2( int oldfd, int newfd )
+	{
+		return Genie::dup2( oldfd, newfd );
+	}
+	
+	int execve( const char* path, const char* const argv[], const char* const envp[] )
+	{
+		return Genie::execve( path, argv, envp );
+	}
+	
+	void _exit( int status )
+	{
+		Genie::_exit( status );
+	}
+	
+	char* getcwd( char* buf, std::size_t size )
+	{
+		return Genie::getcwd( buf, size );
+	}
+	
+	pid_t getpgid( pid_t pid )
+	{
+		return Genie::getpgid( pid );
+	}
+	
+	pid_t getpgrp()
+	{
+		return Genie::getpgrp();
+	}
+	
+	pid_t getpid()
+	{
+		return Genie::getpid();
+	}
+	
+	pid_t getppid()
+	{
+		return Genie::getppid();
+	}
+	
+	off_t lseek( int fd, off_t offset, int whence )
+	{
+		return Genie::lseek( fd, offset, whence );
+	}
+	
+	int pause()
+	{
+		return Genie::pause();
+	}
+	
+	int pipe( int filedes[ 2 ] )
+	{
+		return Genie::pipe( filedes );
+	}
+	
+	int peek( int fd, const char** buffer, size_t minBytes )
+	{
+		return Genie::peek( fd, buffer, minBytes );
+	}
+	
+	ssize_t read( int fd, void* buf, size_t count )
+	{
+		return Genie::read( fd, buf, count );
+	}
+	
+	int setctty( int fd )
+	{
+		return Genie::setctty( fd );
+	}
+	
+	int setpgid( pid_t pid, pid_t pgid )
+	{
+		return Genie::setpgid( pid, pgid );
+	}
+	
+	pid_t setsid()
+	{
+		return Genie::setsid();
+	}
+	
+	unsigned int sleep( unsigned int seconds )
+	{
+		return Genie::sleep( seconds );
+	}
+	
+	const char* ttyname( int fd )
+	{
+		return Genie::ttyname( fd );
+	}
+	
+	int ttypair( int filedes[ 2 ] )
+	{
+		return Genie::ttypair( filedes );
+	}
+	
+	ssize_t write( int fd, const void* buf, size_t count )
+	{
+		return Genie::write( fd, buf, count );
 	}
 	
 #pragma export reset
