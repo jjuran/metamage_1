@@ -24,12 +24,105 @@
 #include "KernelGlue.hh"
 
 
-#ifndef KEROSENE_SHARED_LIB
-#define KEROSENE_SHARED_LIB 0
-#endif
+class UnimplementedSystemCall {};
 
+inline void CheckImportedSymbol( void* symbol )
+{
+	if ( symbol == NULL )
+	{
+		throw UnimplementedSystemCall();
+	}
+}
 
-#if KEROSENE_SHARED_LIB
+#pragma export on
+	
+	// _import_
+	
+	int (*fcntl_import_)( int fd, int cmd, int param );
+	int (*open_import_ )( const char* path, int oflags, mode_t mode );
+	
+	int           (*kill_import_       )( pid_t pid, int sig );
+	int           (*sigaction_import_  )( int signum, const struct sigaction* act, struct sigaction* oldact );
+	int           (*sigprocmask_import_)( int how, const sigset_t* set, sigset_t* oldset );
+	int           (*sigpending_import_ )( sigset_t* set );
+	int           (*sigsuspend_import_ )( const sigset_t* mask );
+	__sig_handler (*signal_import_     )( int sig, __sig_handler func );
+	
+	char* (*getenv_import_  )( const char* name );
+	int   (*setenv_import_  )( const char* name, const char* value, int overwrite );
+	int   (*putenv_import_  )( const char* string );
+	void  (*unsetenv_import_)( const char* name );
+	int   (*clearenv_import_)();
+	
+	int (*select_import_)( int n, fd_set*  readfds,
+	                              fd_set*  writefds,
+	                              fd_set*  exceptfds, struct timeval* timeout );
+	
+	int     (*socket_import_     )( int domain, int type, int protocol );
+	int     (*bind_import_       )( int sockfd, const struct sockaddr* name, socklen_t namelen );
+	int     (*listen_import_     )( int sockfd, int backlog );
+	int     (*accept_import_     )( int sockfd, struct sockaddr* addr, socklen_t* addrlen );
+	int     (*connect_import_    )( int sockfd, const struct sockaddr* serv_addr, socklen_t addrlen );
+	ssize_t (*send_import_       )( int s, const void* buf, size_t len, int flags );
+	ssize_t (*sendto_import_     )( int s, const void* buf, size_t len, int flags, const struct sockaddr* to, socklen_t tolen );
+	ssize_t (*recv_import_       )( int s, void* buf, size_t len, int flags );
+	ssize_t (*recvfrom_import_   )( int s, void* buf, size_t len, int flags, struct sockaddr* from, socklen_t* fromlen );
+	int     (*getsockname_import_)( int sockfd, struct sockaddr* name, socklen_t* namelen );
+	int     (*getpeername_import_)( int sockfd, struct sockaddr* name, socklen_t* namelen );
+	int     (*getsockopt_import_ )( int s, int level, int optname, void* optval, socklen_t* optlen );
+	int     (*setsockopt_import_ )( int s, int  level, int optname, const void* optval, socklen_t optlen );
+	int     (*shutdown_import_   )( int s, int how );
+	
+	int (*chmod_import_ )( const char *path, mode_t mode );
+	int (*fchmod_import_)( int filedes, mode_t mode );
+	int (*fstat_import_ )( int filedes, struct stat* buf );
+	int (*lstat_import_ )( const char* file_name, struct stat* buf);
+	int (*stat_import_  )( const char* file_name, struct stat* buf);
+	
+	int (*gettimeofday_import_)( struct timeval* tv, struct timezone* tz );
+	
+	pid_t (*waitpid_import_)( pid_t pid, int* stat_loc, int options );
+	
+	int  (*execve_import_    )( const char* path, const char* const argv[], const char* const* envp );
+	void (*_exit_import_     )( int status );
+	int  (*SpawnVFork_import_)();
+	
+	int          (*chdir_import_   )( const char* path );
+	int          (*close_import_   )( int filedes );
+	int          (*copyfile_import_)( const char* src, const char* dest );
+	int          (*dup_import_     )( int filedes );
+	int          (*dup2_import_    )( int filedes, int filedes2 );
+	char*        (*getcwd_import_  )( char* buf, size_t size );
+	pid_t        (*getpid_import_  )();
+	pid_t        (*getpgid_import_ )( pid_t pid );
+	pid_t        (*getppid_import_ )();
+	off_t        (*lseek_import_   )( int fildes, off_t offset, int whence );
+	int          (*mkdir_import_   )( const char* pathname, mode_t mode );
+	int          (*rmdir_import_   )( const char* pathname );
+	int          (*pause_import_   )();
+	int          (*peek_import_    )( int fd, const char** buffer, size_t minBytes );
+	int          (*pipe_import_    )( int filedes[ 2 ] );
+	ssize_t      (*read_import_    )( int filedes, void* buf, size_t nbyte );
+	int          (*rename_import_  )( const char* src, const char* dest );
+	int          (*setctty_import_ )( int filedes );
+	int          (*setpgid_import_ )( pid_t pid, pid_t pgid );
+	pid_t        (*setsid_import_  )();
+	unsigned int (*sleep_import_   )( unsigned int seconds );
+	const char*  (*ttyname_import_ )( int filedes );
+	int          (*ttypair_import_ )( int filedes[ 2 ] );
+	int          (*unlink_import_  )( const char* pathname );
+	ssize_t      (*write_import_   )( int filedes, const void* buf, size_t nbyte );
+	
+	int*       (*ErrnoPtr_import_        )();
+	char***    (*EnvironPtr_import_      )();
+	OSStatus   (*AESendBlocking_import_  )( const AppleEvent* appleEvent, AppleEvent* reply );
+	InetSvcRef (*InternetServices_import_)();
+	void       (*PrintPS_import_         )();
+	OSStatus   (*Path2FSSpec_import_     )( const char* pathname, FSSpec* outFSS );
+	
+#pragma export reset
+
+#if 0
 #pragma export on
 #endif
 	
@@ -578,7 +671,7 @@
 		return spec;
 	}
 
-#if KEROSENE_SHARED_LIB	
+#if 0	
 #pragma export reset
 #endif
 
