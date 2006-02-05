@@ -33,6 +33,7 @@
 
 // Genie
 #include "Genie/pathnames.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
 
@@ -365,6 +366,34 @@ namespace Genie
 		return true;
 	}
 	
+	class SymbolImporter
+	{
+		private:
+			N::CFragConnectionID fFragmentConnection;
+		
+		public:
+			SymbolImporter( N::CFragConnectionID conn ) : fFragmentConnection( conn )  {}
+			
+			bool operator()( SystemCallRegistry::value_type systemCall ) const
+			{
+				std::string name = systemCall.first;
+				void*       func = systemCall.second;
+				
+				name += "_import_";
+				
+				return LoadSymbol( fFragmentConnection, N::Str255( name ), func );
+			}
+	};
+	
+	static void ImportSystemCalls( N::CFragConnectionID fragmentConnection )
+	{
+		//LoadSymbol( fragmentConnection, "\p" "_exit_Ptr", &_exit );
+		
+		std::for_each( SystemCallsBegin(),
+		               SystemCallsEnd(),
+		               SymbolImporter( fragmentConnection ) );
+	}
+	
 	int Process::Exec( const FSSpec&        executable,
 	                   const char* const    argv[],
 	                   const char* const*   envp )
@@ -538,6 +567,8 @@ namespace Genie
 		catch ( ... ) {}
 		
 		LoadSymbol( fFragmentConnection, "\p" "_exit_Ptr", &_exit );
+		
+		ImportSystemCalls( fFragmentConnection );
 		
 		Result( 0 );
 		
