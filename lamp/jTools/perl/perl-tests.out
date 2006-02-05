@@ -106,9 +106,9 @@ op/rand...............FAILED at test 7
 op/range..............ok
 op/read...............ok
 op/readdir............skipping test on this platform
-op/recurse............FAILED at test 23
+op/recurse............ok
 op/ref................ok
-op/regexp.............FAILED at test 1
+op/regexp.............ok
 op/regexp_noamp.......ok
 op/regmesg............ok
 op/repeat.............ok
@@ -119,55 +119,157 @@ op/sort...............ok
 op/splice.............ok
 op/split..............ok
 op/sprintf............FAILED at test 129
-op/stat...............FAILED at test 4
+op/stat...............FAILED at test 7
 op/study..............ok
 op/subst..............ok
 op/subst_amp..........ok
 op/subst_wamp.........ok
-op/substr.............ok
-op/sysio.ok
-op/system.skipping test on this platform
-op/taint.FAILED at test 0
-op/tie.ok
-op/tiearray.ok
-op/tiehandle.ok
-op/time.ok
-op/tr.ok
-op/undef.ok
-op/universal.ok
-op/unshift.ok
-op/utf8decode.ok
-op/vec.ok
-op/ver.ok
-op/wantarray.ok
-op/write.ok
-pragma/constant.ok
-pragma/diagnostics.FAILED at test 0
-pragma/locale.ok
-pragma/overload.ok
-pragma/strict.skipping test on this platform
-pragma/sub_lval.ok
-pragma/subs.ok
-pragma/utf8.ok
-pragma/warnings.FAILED at test 0
-lib/abbrev.ok
-lib/ansicolor.ok
-lib/anydbm.FAILED at test 0
-lib/attrs.skipping test on this platform
-lib/autoloader.ok
-lib/b.FAILED at test 0
-lib/basename.ok
-lib/bigfloat.ok
-lib/bigfltpm.FAILED at test 351
-lib/bigint.ok
-lib/bigintpm.ok
-lib/cgi-esc.ok
-lib/cgi-form.ok
-lib/cgi-function.ok
-lib/cgi-html.ok
-lib/cgi-pretty.ok
-lib/cgi-request.ok
-lib/charnames.ok
-lib/checktree.ok
-lib/class-struct.ok
-lib/complex.
+op/sysio..............ok
+op/system.............skipping test on this platform
+op/taint..............FAILED at test 0
+op/tie................ok
+op/tiearray...........ok
+op/tiehandle..........ok
+op/time...............ok
+op/tr.................ok
+op/undef..............ok
+op/universal..........ok
+op/unshift............ok
+op/utf8decode.........ok
+op/vec................ok
+op/ver................ok
+op/wantarray..........ok
+op/write..............ok
+pragma/constant.......ok
+pragma/diagnostics....ok
+pragma/locale.........ok
+pragma/overload.......ok
+pragma/strict.........skipping test on this platform
+pragma/sub_lval.......ok
+pragma/subs...........ok
+pragma/utf8...........ok
+pragma/warnings.......FAILED at test 0
+lib/abbrev............ok
+lib/ansicolor.........ok
+lib/anydbm............FAILED at test 0
+lib/attrs.............skipping test on this platform
+lib/autoloader........ok
+lib/b.................FAILED at test 0
+lib/basename..........ok
+lib/bigfloat..........ok
+lib/bigfltpm..........FAILED at test 351
+lib/bigint............ok
+lib/bigintpm..........ok
+lib/cgi-esc...........ok
+lib/cgi-form..........ok
+lib/cgi-function......ok
+lib/cgi-html..........ok
+lib/cgi-pretty........ok
+lib/cgi-request.......ok
+lib/charnames.........ok
+lib/checktree.........ok
+lib/class-struct......ok
+lib/db-btree..........FAILED at test 0
+lib/db-hash...........FAILED at test 0
+lib/db-recno..........FAILED at test 0
+lib/dirhand...........FAILED at test 1
+lib/dosglob...........FAILED at test 1
+lib/dprof.............FAILED at test 0
+lib/dumper-ovl........FAILED at test 0
+lib/dumper............FAILED at test 0
+lib/english...........ok
+lib/env-array.........ok
+lib/env...............ok
+lib/errno.............FAILED at test 0
+lib/fatal.............FAILED at test 14
+lib/fields............ok
+lib/filecache.........ok
+lib/filecopy..........FAILED at test 6
+lib/filefind-taint....FAILED at test 1
+lib/filefind..........FAILED at test 1
+lib/filefunc..........ok
+lib/filehand..........FAILED at test 0
+lib/filepath..........FAILED at test 2
+lib/filespec..........ok
+lib/findbin...........FAILED at test 0
+lib/ftmp-mktemp.......FAILED at test 0
+lib/ftmp-posix........FAILED at test 0
+lib/ftmp-security.....FAILED at test 0
+lib/ftmp-tempfile.....FAILED at test 0
+lib/gdbm..............skipping test on this platform
+lib/getopt............FAILED at test 0
+lib/glob-basic........FAILED at test 2
+lib/glob-case.........FAILED at test 2
+lib/glob-global.......FAILED at test 0
+lib/glob-taint........FAILED at test 2
+lib/gol-basic.........FAILED at test 0
+lib/gol-compat........FAILED at test 0
+lib/gol-linkage.......FAILED at test 0
+lib/gol-oo............FAILED at test 0
+lib/h2ph..............ok
+lib/hostname..........FAILED at test 0
+lib/io_const..........FAILED at test 0
+lib/io_dir............FAILED at test 0
+lib/io_dup............FAILED at test 0
+lib/io_linenum........FAILED at test 0
+lib/io_multihomed.....skipping test on this platform
+lib/io_pipe...........skipping test on this platform
+lib/io_poll...........FAILED at test 0
+lib/io_sel............FAILED at test 0
+lib/io_sock...........skipping test on this platform
+lib/io_taint..........FAILED at test 0
+lib/io_tell...........FAILED at test 0
+lib/io_udp............FAILED at test 0
+lib/io_unix...........skipping test on this platform
+lib/io_xs.............FAILED at test 0
+lib/ipc_sysv..........skipping test on this platform
+lib/ndbm..............FAILED at test 0
+lib/odbm..............skipping test on this platform
+lib/opcode............FAILED at test 0
+lib/open2.............skipping test on this platform
+lib/open3.............skipping test on this platform
+lib/ops...............FAILED at test 1
+lib/parsewords........ok
+lib/peek..............FAILED at test 0
+lib/ph................ok
+lib/posix.............FAILED at test 0
+lib/safe1.............FAILED at test 0
+lib/safe2.............FAILED at test 0
+lib/sdbm..............skipping test on this platform
+lib/searchdict........ok
+lib/selectsaver.......ok
+lib/selfloader........ok
+lib/socket............FAILED at test 0
+lib/soundex...........ok
+lib/symbol............ok
+lib/syslfs............skipping test on this platform
+lib/syslog............skipping test on this platform
+lib/textfill..........ok
+lib/texttabs..........ok
+lib/textwrap..........ok
+lib/thr5005...........skipping test on this platform
+lib/tie-push..........ok
+lib/tie-refhash.......FAILED at test 0
+lib/tie-splice........ok
+lib/tie-stdarray......ok
+lib/tie-stdhandle.....ok
+lib/tie-stdpush.......ok
+lib/tie-substrhash....ok
+lib/timelocal.........ok
+lib/trig..............ok
+pod/emptycmd..........FAILED at test 0
+pod/find..............FAILED at test 0
+pod/for...............FAILED at test 0
+pod/headings..........FAILED at test 0
+pod/include...........FAILED at test 0
+pod/included..........FAILED at test 0
+pod/lref..............FAILED at test 0
+pod/multiline_items...FAILED at test 0
+pod/nested_items......FAILED at test 0
+pod/nested_seqs.......FAILED at test 0
+pod/oneline_cmds......FAILED at test 0
+pod/pod2usage.........FAILED at test 0
+pod/poderrs...........FAILED at test 0
+pod/podselect.........FAILED at test 0
+pod/special_seqs......FAILED at test 0
+u=2.8447e+11  s=0  cu=0  cs=0  scripts=188  tests=17421

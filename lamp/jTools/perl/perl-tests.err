@@ -116,10 +116,9 @@ op/rand...............FAILED at test 7
 op/range..............ok
 op/read...............ok
 op/readdir............skipping test on this platform
-op/recurse............Out of memory!
-FAILED at test 23
+op/recurse............ok
 op/ref................ok
-op/regexp.............FAILED at test 1
+op/regexp.............ok
 op/regexp_noamp.......ok
 op/regmesg............ok
 op/repeat.............ok
@@ -134,65 +133,358 @@ op/stat...............execvp( rm ) failed: 2
 execvp( ln ) failed: 2
 execvp( chmod ) failed: 2
 Can't run op/stat.t test 35 without pwd working at op/stat.t line 183.
-FAILED at test 4
+FAILED at test 7
 op/study..............ok
 op/subst..............ok
 op/subst_amp..........ok
 op/subst_wamp.........ok
-op/substr.............ok
-op/sysio.ok
-op/system.skipping test on this platform
-op/taint.Can't locate re.pm in @INC (@INC contains: ../lib) at op/taint.t line 214.
+op/sysio..............ok
+op/system.............skipping test on this platform
+op/taint..............Can't locate re.pm in @INC (@INC contains: ../lib) at op/taint.t line 214.
 BEGIN failed--compilation aborted at op/taint.t line 214.
 FAILED at test 0
-op/tie.ok
-op/tiearray.ok
-op/tiehandle.ok
-op/time.ok
-op/tr.ok
-op/undef.ok
-op/universal.ok
-op/unshift.ok
-op/utf8decode.ok
-op/vec.ok
-op/ver.ok
-op/wantarray.ok
-op/write.ok
-pragma/constant.ok
-pragma/diagnostics.Out of memory!
-Callback called exit at pragma/diagnostics.t line 29, <POD_DIAG> line 1.
-BEGIN failed--compilation aborted at pragma/diagnostics.t line 29, <POD_DIAG> line 1.
+op/tie................ok
+op/tiearray...........ok
+op/tiehandle..........ok
+op/time...............ok
+op/tr.................ok
+op/undef..............ok
+op/universal..........ok
+op/unshift............ok
+op/utf8decode.........ok
+op/vec................ok
+op/ver................ok
+op/wantarray..........ok
+op/write..............ok
+pragma/constant.......ok
+pragma/diagnostics....ok
+pragma/locale.........ok
+pragma/overload.......ok
+pragma/strict.........skipping test on this platform
+pragma/sub_lval.......ok
+pragma/subs...........ok
+pragma/utf8...........ok
+pragma/warnings.......Cannot open pragma/warn/CVS: Invalid argument
 FAILED at test 0
-pragma/locale.ok
-pragma/overload.ok
-pragma/strict.skipping test on this platform
-pragma/sub_lval.ok
-pragma/subs.ok
-pragma/utf8.ok
-pragma/warnings.Cannot open pragma/warn/CVS: Invalid argument
-FAILED at test 0
-lib/abbrev.ok
-lib/ansicolor.ok
-lib/anydbm.Can't locate Fcntl.pm in @INC (@INC contains: ../lib) at lib/anydbm.t line 15.
+lib/abbrev............ok
+lib/ansicolor.........ok
+lib/anydbm............Can't locate Fcntl.pm in @INC (@INC contains: ../lib) at lib/anydbm.t line 15.
 BEGIN failed--compilation aborted at lib/anydbm.t line 15.
 FAILED at test 0
-lib/attrs.skipping test on this platform
-lib/autoloader.ok
-lib/b.Can't locate B/Deparse.pm in @INC (@INC contains: . ../lib) at lib/b.t line 24.
+lib/attrs.............skipping test on this platform
+lib/autoloader........ok
+lib/b.................Can't locate B/Deparse.pm in @INC (@INC contains: . ../lib) at lib/b.t line 24.
 BEGIN failed--compilation aborted at lib/b.t line 24.
 FAILED at test 0
-lib/basename.ok
-lib/bigfloat.ok
-lib/bigfltpm.FAILED at test 351
-lib/bigint.ok
-lib/bigintpm.ok
-lib/cgi-esc.ok
-lib/cgi-form.ok
-lib/cgi-function.ok
-lib/cgi-html.ok
-lib/cgi-pretty.ok
-lib/cgi-request.ok
-lib/charnames.ok
-lib/checktree.ok
-lib/class-struct.ok
-lib/complex.
+lib/basename..........ok
+lib/bigfloat..........ok
+lib/bigfltpm..........FAILED at test 351
+lib/bigint............ok
+lib/bigintpm..........ok
+lib/cgi-esc...........ok
+lib/cgi-form..........ok
+lib/cgi-function......ok
+lib/cgi-html..........ok
+lib/cgi-pretty........ok
+lib/cgi-request.......ok
+lib/charnames.........ok
+lib/checktree.........ok
+lib/class-struct......ok
+lib/db-btree..........Can't locate DB_File.pm in @INC (@INC contains: ../lib) at lib/db-btree.t line 14.
+BEGIN failed--compilation aborted at lib/db-btree.t line 14.
+FAILED at test 0
+lib/db-hash...........Can't locate DB_File.pm in @INC (@INC contains: ../lib) at lib/db-hash.t line 14.
+BEGIN failed--compilation aborted at lib/db-hash.t line 14.
+FAILED at test 0
+lib/db-recno..........Can't locate DB_File.pm in @INC (@INC contains: ../lib) at lib/db-recno.t line 12.
+BEGIN failed--compilation aborted at lib/db-recno.t line 12.
+FAILED at test 0
+lib/dirhand...........Unsupported directory function "opendir" called at ../lib/DirHandle.pm line 67.
+FAILED at test 1
+lib/dosglob...........Unsupported directory function "opendir" called at ../lib/File/DosGlob.pm line 56.
+FAILED at test 1
+lib/dprof.............Where's Perl? at lib/dprof.t line 41.
+FAILED at test 0
+lib/dumper-ovl........Can't locate Data/Dumper.pm in @INC (@INC contains: ../lib) at lib/dumper-ovl.t line 13.
+BEGIN failed--compilation aborted at lib/dumper-ovl.t line 13.
+FAILED at test 0
+lib/dumper............Can't locate Data/Dumper.pm in @INC (@INC contains: ../lib) at lib/dumper.t line 16.
+BEGIN failed--compilation aborted at lib/dumper.t line 16.
+FAILED at test 0
+lib/english...........ok
+lib/env-array.........ok
+lib/env...............ok
+lib/errno.............Can't locate Errno.pm in @INC (@INC contains: ../lib) at lib/errno.t line 14.
+BEGIN failed--compilation aborted at lib/errno.t line 14.
+FAILED at test 0
+lib/fatal.............FAILED at test 14
+lib/fields............ok
+lib/filecache.........ok
+lib/filecopy..........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at lib/filecopy.t line 57.
+FAILED at test 6
+lib/filefind-taint....Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+FAILED at test 1
+lib/filefind..........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+FAILED at test 1
+lib/filefunc..........ok
+lib/filehand..........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at lib/filehand.t line 13.
+BEGIN failed--compilation aborted at lib/filehand.t line 13.
+FAILED at test 0
+lib/filepath..........Can't make directory foo read+writeable: No such file or directory at lib/filepath.t line 29
+Unsupported directory function "opendir" called at ../lib/File/Path.pm line 181.
+FAILED at test 2
+lib/filespec..........ok
+lib/findbin...........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at ../lib/FindBin.pm line 166.
+Compilation failed in require at lib/findbin.t line 10.
+BEGIN failed--compilation aborted at lib/findbin.t line 10.
+FAILED at test 0
+lib/ftmp-mktemp.......Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at ../lib/Test/Harness.pm line 7.
+BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
+Compilation failed in require at ../lib/Test.pm line 3.
+BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
+Compilation failed in require at lib/ftmp-mktemp.t line 9.
+BEGIN failed--compilation aborted at lib/ftmp-mktemp.t line 11.
+FAILED at test 0
+lib/ftmp-posix........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at ../lib/Test/Harness.pm line 7.
+BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
+Compilation failed in require at ../lib/Test.pm line 3.
+BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
+Compilation failed in require at lib/ftmp-posix.t line 7.
+BEGIN failed--compilation aborted at lib/ftmp-posix.t line 9.
+FAILED at test 0
+lib/ftmp-security.....Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at ../lib/Test/Harness.pm line 7.
+BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
+Compilation failed in require at ../lib/Test.pm line 3.
+BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
+Compilation failed in require at lib/ftmp-security.t line 11.
+BEGIN failed--compilation aborted at lib/ftmp-security.t line 13.
+FAILED at test 0
+lib/ftmp-tempfile.....Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at ../lib/Test/Harness.pm line 7.
+BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
+Compilation failed in require at ../lib/Test.pm line 3.
+BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
+Compilation failed in require at lib/ftmp-tempfile.t line 7.
+BEGIN failed--compilation aborted at lib/ftmp-tempfile.t line 9.
+FAILED at test 0
+lib/gdbm..............skipping test on this platform
+lib/getopt............Can't locate auto/Getopt/Long/autosplit.ix in @INC (@INC contains: ../lib) at ../lib/AutoLoader.pm line 153.
+Can't locate auto/Getopt/Long/Configure.al in @INC (@INC contains: ../lib) at ../lib/Getopt/Long.pm line 142
+Compilation failed in require at lib/getopt.t line 53.
+BEGIN failed--compilation aborted at lib/getopt.t line 53.
+FAILED at test 0
+lib/glob-basic........Unsupported directory function "opendir" called at lib/glob-basic.t line 34.
+FAILED at test 2
+lib/glob-case.........Undefined subroutine &main::csh_glob called at lib/glob-case.t line 29.
+FAILED at test 2
+lib/glob-global.......Out of memory!
+FAILED at test 3
+lib/glob-taint........Undefined subroutine &File::Glob::bsd_glob called at lib/glob-taint.t line 26.
+FAILED at test 2
+lib/gol-basic.........Can't locate auto/Getopt/Long/autosplit.ix in @INC (@INC contains: ../lib) at ../lib/AutoLoader.pm line 153.
+Can't locate auto/Getopt/Long/Configure.al in @INC (@INC contains: ../lib) at ../lib/Getopt/Long.pm line 142
+Compilation failed in require at lib/gol-basic.t line 8.
+BEGIN failed--compilation aborted at lib/gol-basic.t line 8.
+FAILED at test 0
+lib/gol-compat........Can't locate auto/Getopt/Long/autosplit.ix in @INC (@INC contains: ../lib) at ../lib/AutoLoader.pm line 153.
+Can't locate auto/Getopt/Long/Configure.al in @INC (@INC contains: ../lib) at ../lib/Getopt/Long.pm line 142
+Compilation failed in require at ../lib/newgetopt.pl line 36.
+BEGIN failed--compilation aborted at ../lib/newgetopt.pl line 36.
+Compilation failed in require at lib/gol-compat.t line 8.
+FAILED at test 0
+lib/gol-linkage.......Can't locate auto/Getopt/Long/autosplit.ix in @INC (@INC contains: ../lib) at ../lib/AutoLoader.pm line 153.
+Can't locate auto/Getopt/Long/Configure.al in @INC (@INC contains: ../lib) at ../lib/Getopt/Long.pm line 142
+Compilation failed in require at lib/gol-linkage.t line 8.
+BEGIN failed--compilation aborted at lib/gol-linkage.t line 8.
+FAILED at test 0
+lib/gol-oo............Can't locate auto/Getopt/Long/autosplit.ix in @INC (@INC contains: ../lib) at ../lib/AutoLoader.pm line 153.
+Can't locate auto/Getopt/Long/Configure.al in @INC (@INC contains: ../lib) at ../lib/Getopt/Long.pm line 142
+Compilation failed in require at lib/gol-oo.t line 8.
+BEGIN failed--compilation aborted at lib/gol-oo.t line 8.
+FAILED at test 0
+lib/h2ph..............ok
+lib/hostname..........Can't locate Sys/Hostname.pm in @INC (@INC contains: ../lib) at lib/hostname.t line 13.
+BEGIN failed--compilation aborted at lib/hostname.t line 13.
+FAILED at test 0
+lib/io_const..........Can't locate IO/Handle.pm in @INC (@INC contains: ../lib) at lib/io_const.t line 20.
+BEGIN failed--compilation aborted at lib/io_const.t line 20.
+FAILED at test 0
+lib/io_dir............Can't locate IO/Dir.pm in @INC (@INC contains: ../lib) at lib/io_dir.t line 18.
+BEGIN failed--compilation aborted at lib/io_dir.t line 18.
+FAILED at test 0
+lib/io_dup............Can't locate IO/Handle.pm in @INC (@INC contains: ../lib) at lib/io_dup.t line 21.
+BEGIN failed--compilation aborted at lib/io_dup.t line 21.
+FAILED at test 0
+lib/io_linenum........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at ../lib/Test/Harness.pm line 7.
+BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
+Compilation failed in require at ../lib/Test.pm line 3.
+BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
+Compilation failed in require at lib/io_linenum.t line 20.
+BEGIN failed--compilation aborted at lib/io_linenum.t line 20.
+FAILED at test 0
+lib/io_multihomed.....skipping test on this platform
+lib/io_pipe...........skipping test on this platform
+lib/io_poll...........Can't locate IO/Handle.pm in @INC (@INC contains: ../lib) at lib/io_poll.t line 20.
+BEGIN failed--compilation aborted at lib/io_poll.t line 20.
+FAILED at test 0
+lib/io_sel............Can't locate IO/Select.pm in @INC (@INC contains: ../lib) at lib/io_sel.t line 15.
+BEGIN failed--compilation aborted at lib/io_sel.t line 15.
+FAILED at test 0
+lib/io_sock...........skipping test on this platform
+lib/io_taint..........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at lib/io_taint.t line 24.
+BEGIN failed--compilation aborted at lib/io_taint.t line 24.
+FAILED at test 0
+lib/io_tell...........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at lib/io_tell.t line 27.
+BEGIN failed--compilation aborted at lib/io_tell.t line 27.
+FAILED at test 0
+lib/io_udp............Can't locate Socket.pm in @INC (@INC contains: ../lib) at lib/io_udp.t line 57.
+BEGIN failed--compilation aborted at lib/io_udp.t line 57.
+FAILED at test 0
+lib/io_unix...........skipping test on this platform
+lib/io_xs.............Can't locate IO/File.pm in @INC (@INC contains: ../lib) at lib/io_xs.t line 21.
+BEGIN failed--compilation aborted at lib/io_xs.t line 21.
+FAILED at test 0
+lib/ipc_sysv..........skipping test on this platform
+lib/ndbm..............Can't locate Fcntl.pm in @INC (@INC contains: ../lib) at lib/ndbm.t line 29.
+BEGIN failed--compilation aborted at lib/ndbm.t line 29.
+FAILED at test 0
+lib/odbm..............skipping test on this platform
+lib/opcode............Can't locate Opcode.pm in @INC (@INC contains: ../lib) at lib/opcode.t line 19.
+BEGIN failed--compilation aborted at lib/opcode.t line 19.
+FAILED at test 0
+lib/open2.............skipping test on this platform
+lib/open3.............skipping test on this platform
+lib/ops...............FAILED at test 1
+lib/parsewords........ok
+lib/peek..............Can't locate Devel/Peek.pm in @INC (@INC contains: ../lib) at lib/peek.t line 13.
+BEGIN failed--compilation aborted at lib/peek.t line 13.
+FAILED at test 0
+lib/ph................ok
+lib/posix.............Can't locate POSIX.pm in @INC (@INC contains: ../lib) at lib/posix.t line 13.
+BEGIN failed--compilation aborted at lib/posix.t line 13.
+FAILED at test 0
+lib/safe1.............Can't locate Opcode.pm in @INC (@INC contains: ../lib) at lib/safe1.t line 21.
+BEGIN failed--compilation aborted at lib/safe1.t line 21.
+FAILED at test 0
+lib/safe2.............Can't locate Opcode.pm in @INC (@INC contains: ../lib) at lib/safe2.t line 22.
+BEGIN failed--compilation aborted at lib/safe2.t line 22.
+FAILED at test 0
+lib/sdbm..............skipping test on this platform
+lib/searchdict........ok
+lib/selectsaver.......ok
+lib/selfloader........ok
+lib/socket............Can't locate Socket.pm in @INC (@INC contains: ../lib) at lib/socket.t line 14.
+BEGIN failed--compilation aborted at lib/socket.t line 14.
+FAILED at test 0
+lib/soundex...........ok
+lib/symbol............ok
+lib/syslfs............skipping test on this platform
+lib/syslog............skipping test on this platform
+lib/textfill..........ok
+lib/texttabs..........ok
+lib/textwrap..........ok
+lib/thr5005...........skipping test on this platform
+lib/tie-push..........ok
+lib/tie-refhash.......Can't locate Data/Dumper.pm in @INC (@INC contains: . ../lib) at lib/tie-refhash.t line 20.
+BEGIN failed--compilation aborted at lib/tie-refhash.t line 20.
+FAILED at test 0
+lib/tie-splice........ok
+lib/tie-stdarray......ok
+lib/tie-stdhandle.....ok
+lib/tie-stdpush.......ok
+lib/tie-substrhash....ok
+lib/timelocal.........ok
+lib/trig..............ok
+pod/emptycmd..........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/emptycmd.t line 5.
+BEGIN failed--compilation aborted at pod/emptycmd.t line 7.
+FAILED at test 0
+pod/find..............Can't locate IO/File.pm in @INC (@INC contains: ../lib /usr/lib/perl5 /usr/lib/perl .) at ../lib/FileHandle.pm line 9.
+Compilation failed in require at ../lib/Test/Harness.pm line 7.
+BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
+Compilation failed in require at ../lib/Test.pm line 3.
+BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
+Compilation failed in require at pod/find.t line 11.
+BEGIN failed--compilation aborted at pod/find.t line 11.
+FAILED at test 0
+pod/for...............Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/for.t line 5.
+BEGIN failed--compilation aborted at pod/for.t line 7.
+FAILED at test 0
+pod/headings..........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/headings.t line 5.
+BEGIN failed--compilation aborted at pod/headings.t line 7.
+FAILED at test 0
+pod/include...........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/include.t line 5.
+BEGIN failed--compilation aborted at pod/include.t line 7.
+FAILED at test 0
+pod/included..........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/included.t line 5.
+BEGIN failed--compilation aborted at pod/included.t line 7.
+FAILED at test 0
+pod/lref..............Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/lref.t line 5.
+BEGIN failed--compilation aborted at pod/lref.t line 7.
+FAILED at test 0
+pod/multiline_items...Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/multiline_items.t line 5.
+BEGIN failed--compilation aborted at pod/multiline_items.t line 7.
+FAILED at test 0
+pod/nested_items......Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/nested_items.t line 5.
+BEGIN failed--compilation aborted at pod/nested_items.t line 7.
+FAILED at test 0
+pod/nested_seqs.......Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/nested_seqs.t line 5.
+BEGIN failed--compilation aborted at pod/nested_seqs.t line 7.
+FAILED at test 0
+pod/oneline_cmds......Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/oneline_cmds.t line 5.
+BEGIN failed--compilation aborted at pod/oneline_cmds.t line 7.
+FAILED at test 0
+pod/pod2usage.........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/pod2usage.t line 5.
+BEGIN failed--compilation aborted at pod/pod2usage.t line 7.
+FAILED at test 0
+pod/poderrs...........testcmp.pl did not return a true value at pod/testpchk.pl line 1.
+BEGIN failed--compilation aborted at pod/testpchk.pl line 1.
+Compilation failed in require at pod/poderrs.t line 5.
+BEGIN failed--compilation aborted at pod/poderrs.t line 7.
+FAILED at test 0
+pod/podselect.........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/podselect.t line 5.
+BEGIN failed--compilation aborted at pod/podselect.t line 7.
+FAILED at test 0
+pod/special_seqs......Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
+Compilation failed in require at pod/special_seqs.t line 5.
+BEGIN failed--compilation aborted at pod/special_seqs.t line 7.
+FAILED at test 0
+Failed 75 test scripts out of 189, 60.32% okay.
+   ### Since not all tests were successful, you may want to run some
+   ### of them individually and examine any diagnostic messages they
+   ### produce.  See the INSTALL document's section on "make test".
+   ### If you are testing the compiler, then ignore this message 
+   ### and run 
+   ###      ./perl harness
+   ### in the directory ./t.
+u=2.72301e+11  s=0  cu=0  cs=0  scripts=189  tests=17431
