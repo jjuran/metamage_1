@@ -16,6 +16,7 @@
 // Genie
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
 
@@ -46,6 +47,8 @@ namespace Genie
 		
 		return CurrentProcess().SetErrno( EINVAL );
 	}
+	
+	REGISTER_SYSTEM_CALL( mkdir );
 	
 }
 

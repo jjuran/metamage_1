@@ -18,6 +18,7 @@
 // Genie
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
 
@@ -61,6 +62,8 @@ namespace Genie
 		
 		return 0;
 	}
+	
+	REGISTER_SYSTEM_CALL( copyfile );
 	
 }
 	

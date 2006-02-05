@@ -18,6 +18,7 @@
 
 // Genie
 #include "Genie/Process.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
 
@@ -122,6 +123,8 @@ namespace Genie
 		
 		return -1;
 	}
+	
+	REGISTER_SYSTEM_CALL( select );
 	
 }
 

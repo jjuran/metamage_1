@@ -27,6 +27,7 @@
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SocketHandle.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
 
@@ -57,6 +58,8 @@ namespace Genie
 		
 		return gInetSvcRef;
 	}
+	
+	REGISTER_SYSTEM_CALL( InternetServices );
 	
 	// FIXME:  Duplicate code
 	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
@@ -93,6 +96,8 @@ namespace Genie
 		return fd;
 	}
 	
+	REGISTER_SYSTEM_CALL( socket );
+	
 	static int bind( int sockfd, const struct sockaddr* name, socklen_t namelen )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -121,6 +126,8 @@ namespace Genie
 		return 0;
 	}
 	
+	REGISTER_SYSTEM_CALL( bind );
+	
 	static int listen( int sockfd, int backlog )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -146,6 +153,8 @@ namespace Genie
 		
 		return 0;
 	}
+	
+	REGISTER_SYSTEM_CALL( listen );
 	
 	static int accept( int sockfd, struct sockaddr *addr, socklen_t *addrlen )
 	{
@@ -186,6 +195,8 @@ namespace Genie
 		return 0;
 	}
 	
+	REGISTER_SYSTEM_CALL( accept );
+	
 	static int connect( int sockfd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	{
 		// Assume sin_family is AF_INET
@@ -215,6 +226,8 @@ namespace Genie
 		
 		return 0;
 	}
+	
+	REGISTER_SYSTEM_CALL( connect );
 	
 	static int getsockname( int sockfd, struct sockaddr* name, socklen_t* namelen )
 	{
@@ -246,6 +259,8 @@ namespace Genie
 		return 0;
 	}
 	
+	REGISTER_SYSTEM_CALL( getsockname );
+	
 	static int getpeername( int sockfd, struct sockaddr* name, socklen_t* namelen )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -275,6 +290,8 @@ namespace Genie
 		
 		return 0;
 	}
+	
+	REGISTER_SYSTEM_CALL( getpeername );
 	
 }
 

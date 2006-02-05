@@ -14,6 +14,7 @@
 
 // Genie
 #include "Genie/Process.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
 
@@ -38,10 +39,14 @@ namespace Genie
 		return 0;
 	}
 	
+	REGISTER_SYSTEM_CALL( kill );
+	
 	static __sig_handler signal( int sig, __sig_handler func )
 	{
 		return CurrentProcess().SetSignalAction( sig, func );
 	}
+	
+	REGISTER_SYSTEM_CALL( signal );
 	
 }
 

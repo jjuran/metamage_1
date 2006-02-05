@@ -20,6 +20,7 @@
 #include "Genie/FileHandle.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
+#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
 
@@ -115,6 +116,8 @@ namespace Genie
 		}
 	}
 	
+	REGISTER_SYSTEM_CALL( open );
+	
 	static int DuplicateFD( FileDescriptorMap& files, int oldfd )
 	{
 		int newfd = LowestUnusedFrom( CurrentProcess().FileDescriptors(), 0 );
@@ -176,6 +179,8 @@ namespace Genie
 		
 		return CurrentProcess().SetErrno( EINVAL );
 	}
+	
+	REGISTER_SYSTEM_CALL( fcntl );
 	
 }
 
