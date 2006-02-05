@@ -131,16 +131,16 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	int fcntl( int fd, int cmd, int param )
 	{
-		static Stub3< int, int, int, int > stub( "fcntl" );
+		CheckImportedSymbol( fcntl_import_ );
 		
-		return stub( fd, cmd, param );
+		return fcntl_import_( fd, cmd, param );
 	}
 	
 	int open( const char* path, int oflags, mode_t mode )
 	{
-		static Stub2< int, const char*, int > stub( "open" );
+		CheckImportedSymbol( open_import_ );
 		
-		return stub( path, oflags );
+		return open_import_( path, oflags, mode );
 	}
 	
 	#pragma mark -
@@ -148,44 +148,44 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	int kill( pid_t pid, int sig )
 	{
-		static Stub2< int, pid_t, int > stub( "kill" );
+		CheckImportedSymbol( kill_import_ );
 		
-		return stub( pid, sig );
+		return kill_import_( pid, sig );
 	}
 	
 	int sigaction( int signum, const struct sigaction* act, struct sigaction* oldact )
 	{
-		static Stub3< int, int, const struct sigaction*, struct sigaction* > stub( "sigaction" );
+		CheckImportedSymbol( sigaction_import_ );
 		
-		return stub( signum, act, oldact );
+		return sigaction_import_( signum, act, oldact );
 	}
 	
 	int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
 	{
-		static Stub3< int, int, const sigset_t*, sigset_t* > stub( "sigprocmask" );
+		CheckImportedSymbol( sigprocmask_import_ );
 		
-		return stub( how, set, oldset );
+		return sigprocmask_import_( how, set, oldset );
 	}
 	
 	int sigpending( sigset_t* set )
 	{
-		static Stub1< int, sigset_t* > stub( "sigpending" );
+		CheckImportedSymbol( sigpending_import_ );
 		
-		return stub( set );
+		return sigpending_import_( set );
 	}
 	
 	int sigsuspend( const sigset_t* mask )
 	{
-		static Stub1< int, const sigset_t* > stub( "sigsuspend" );
+		CheckImportedSymbol( sigsuspend_import_ );
 		
-		return stub( mask );
+		return sigsuspend_import_( mask );
 	}
 	
 	__sig_handler signal( int sig, __sig_handler func )
 	{
-		static Stub2< __sig_handler, int, __sig_handler > stub( "signal" );
+		CheckImportedSymbol( signal_import_ );
 		
-		return stub( sig, func );
+		return signal_import_( sig, func );
 	}
 	
 	#pragma mark -
@@ -193,45 +193,37 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	char* getenv( const char* name )
 	{
-		static Stub1< char*, const char* > stub( "getenv" );
+		CheckImportedSymbol( getenv_import_ );
 		
-		return stub( name );
-	}
-	
-	extern "C" char* GetEnv( const char* name );
-	char* GetEnv( const char* name )
-	{
-		static Stub1< char*, const char* > stub( "getenv" );
-		
-		return stub( name );
+		return getenv_import_( name );
 	}
 	
 	int setenv( const char* name, const char* value, int overwrite )
 	{
-		static Stub3< int, const char*, const char*, int > stub( "setenv" );
+		CheckImportedSymbol( setenv_import_ );
 		
-		return stub( name, value, overwrite );
+		return setenv_import_( name, value, overwrite );
 	}
 	
 	int putenv( const char* string )
 	{
-		static Stub1< int, const char* > stub( "putenv" );
+		CheckImportedSymbol( putenv_import_ );
 		
-		return stub( string );
+		return putenv_import_( string );
 	}
 	
 	void unsetenv( const char* name )
 	{
-		static Stub1< void, const char* > stub( "unsetenv" );
+		CheckImportedSymbol( unsetenv_import_ );
 		
-		return stub( name );
+		return unsetenv_import_( name );
 	}
 	
 	int clearenv()
 	{
-		static Stub0< int > stub( "clearenv" );
+		CheckImportedSymbol( clearenv_import_ );
 		
-		return stub();
+		return clearenv_import_();
 	}
 	
 	#pragma mark -
@@ -241,9 +233,9 @@ inline void CheckImportedSymbol( void* symbol )
 	                   fd_set*  writefds,
 	                   fd_set*  exceptfds, struct timeval* timeout )
 	{
-		static Stub5< int, int, fd_set*, fd_set*, fd_set*, struct timeval* > stub( "select" );
+		CheckImportedSymbol( select_import_ );
 		
-		return stub( n, readfds, writefds, exceptfds, timeout );
+		return select_import_( n, readfds, writefds, exceptfds, timeout );
 	}
 	
 	#pragma mark -
@@ -251,100 +243,100 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	int socket( int domain, int type, int protocol )
 	{
-		static Stub3< int, int, int, int > stub( "socket" );
+		CheckImportedSymbol( socket_import_ );
 		
-		return stub( domain, type, protocol );
+		return socket_import_( domain, type, protocol );
 	}
 	
 	int bind( int sockfd, const struct sockaddr* name, socklen_t namelen )
 	{
-		static Stub3< int, int, const struct sockaddr*, socklen_t > stub( "bind" );
+		CheckImportedSymbol( bind_import_ );
 		
-		return stub( sockfd, name, namelen );
+		return bind_import_( sockfd, name, namelen );
 	}
 	
 	int listen( int sockfd, int backlog )
 	{
-		static Stub2< int, int, int > stub( "listen" );
+		CheckImportedSymbol( listen_import_ );
 		
-		return stub( sockfd, backlog );
+		return listen_import_( sockfd, backlog );
 	}
 	
 	int accept( int sockfd, struct sockaddr* addr, socklen_t* addrlen )
 	{
-		static Stub3< int, int, struct sockaddr*, socklen_t* > stub( "accept" );
+		CheckImportedSymbol( accept_import_ );
 		
-		return stub( sockfd, addr, addrlen );
+		return accept_import_( sockfd, addr, addrlen );
 	}
 	
 	int connect( int sockfd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	{
-		static Stub3< int, int, const struct sockaddr*, socklen_t > stub( "connect" );
+		CheckImportedSymbol( connect_import_ );
 		
-		return stub( sockfd, serv_addr, addrlen );
+		return connect_import_( sockfd, serv_addr, addrlen );
 	}
 	
 	ssize_t send  ( int s, const void* buf, size_t len, int flags )
 	{
-		static Stub4< ssize_t, int, const void*, size_t, int > stub( "send" );
+		CheckImportedSymbol( send_import_ );
 		
-		return stub( s, buf, len, flags );
+		return send_import_( s, buf, len, flags );
 	}
 	
 	ssize_t sendto( int s, const void* buf, size_t len, int flags, const struct sockaddr* to, socklen_t tolen )
 	{
-		static Stub6< ssize_t, int, const void*, size_t, int, const struct sockaddr*, socklen_t > stub( "sendto" );
+		CheckImportedSymbol( sendto_import_ );
 		
-		return stub( s, buf, len, flags, to, tolen );
+		return sendto_import_( s, buf, len, flags, to, tolen );
 	}
 	
 	ssize_t recv( int s, void* buf, size_t len, int flags )
 	{
-		static Stub4< ssize_t, int, void*, size_t, int > stub( "recv" );
+		CheckImportedSymbol( recv_import_ );
 		
-		return stub( s, buf, len, flags );
+		return recv_import_( s, buf, len, flags );
 	}
 	
 	ssize_t recvfrom( int s, void* buf, size_t len, int flags, struct sockaddr* from, socklen_t* fromlen )
 	{
-		static Stub6< ssize_t, int, void*, size_t, int, struct sockaddr*, socklen_t* > stub( "recv" );
+		CheckImportedSymbol( recvfrom_import_ );
 		
-		return stub( s, buf, len, flags, from, fromlen );
+		return recvfrom_import_( s, buf, len, flags, from, fromlen );
 	}
 	
 	int getsockname( int sockfd, struct sockaddr* name, socklen_t* namelen )
 	{
-		static Stub3< int, int, struct sockaddr*, socklen_t* > stub( "getsockname" );
+		CheckImportedSymbol( getsockname_import_ );
 		
-		return stub( sockfd, name, namelen );
+		return getsockname_import_( sockfd, name, namelen );
 	}
 	
 	int getpeername( int sockfd, struct sockaddr* name, socklen_t* namelen )
 	{
-		static Stub3< int, int, struct sockaddr*, socklen_t* > stub( "getpeername" );
+		CheckImportedSymbol( getpeername_import_ );
 		
-		return stub( sockfd, name, namelen );
+		return getpeername_import_( sockfd, name, namelen );
 	}
 	
 	int getsockopt( int s, int level, int optname, void* optval, socklen_t* optlen )
 	{
-		static Stub5< int, int, int, int, void*, socklen_t* > stub( "getsockopt" );
+		CheckImportedSymbol( getsockopt_import_ );
 		
-		return stub( s, level, optname, optval, optlen );
+		return getsockopt_import_( s, level, optname, optval, optlen );
 	}
 	
 	int setsockopt( int s, int  level, int optname, const void* optval, socklen_t optlen )
 	{
-		static Stub5< int, int, int, int, const void*, socklen_t > stub( "setsockopt" );
+		CheckImportedSymbol( setsockopt_import_ );
 		
-		return stub( s, level, optname, optval, optlen );
+		return setsockopt_import_( s, level, optname, optval, optlen );
 	}
 	
 	int shutdown( int s, int how )
 	{
-		static Stub2< int, int, int > stub( "shutdown" );
+		CheckImportedSymbol( shutdown_import_ );
 		
-		return stub( s, how );
+		return shutdown_import_( s, how );
 	}
 	
 	#pragma mark -
@@ -352,37 +344,49 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	int chmod( const char *path, mode_t mode )
 	{
-		static Stub2< int, const char*, mode_t > stub( "chmod" );
+		if ( chmod_import_ == NULL )
+		{
+			Errno() = EINVAL;
+			return -1;
+		}
 		
-		return stub( path, mode );
+		CheckImportedSymbol( chmod_import_ );
+		
+		return chmod_import_( path, mode );
 	}
 	
 	int fchmod( int filedes, mode_t mode )
 	{
-		static Stub2< int, int, mode_t > stub( "fchmod" );
+		if ( fchmod_import_ == NULL )
+		{
+			Errno() = EINVAL;
+			return -1;
+		}
 		
-		return stub( filedes, mode );
+		CheckImportedSymbol( fchmod_import_ );
+		
+		return fchmod_import_( filedes, mode );
 	}
 	
 	int fstat( int filedes, struct stat* buf )
 	{
-		static Stub2< int, int, struct stat* > stub( "fstat" );
+		CheckImportedSymbol( fstat_import_ );
 		
-		return stub( filedes, buf );
+		return fstat_import_( filedes, buf );
 	}
 	
 	int lstat( const char* file_name, struct stat* buf)
 	{
-		static Stub2< int, const char*, struct stat* > stub( "lstat" );
+		CheckImportedSymbol( lstat_import_ );
 		
-		return stub( file_name, buf );
+		return lstat_import_( file_name, buf );
 	}
 	
 	int stat( const char* file_name, struct stat* buf)
 	{
-		static Stub2< int, const char*, struct stat* > stub( "stat" );
+		CheckImportedSymbol( stat_import_ );
 		
-		return stub( file_name, buf );
+		return stat_import_( file_name, buf );
 	}
 	
 	#pragma mark -
@@ -390,9 +394,15 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	int gettimeofday( struct timeval* tv, struct timezone* tz )
 	{
-		static Stub2< int, struct timeval*, struct timezone* > stub( "gettimeofday" );
+		if ( gettimeofday_import_ == NULL )
+		{
+			Errno() = EINVAL;
+			return -1;
+		}
 		
-		return stub( tv, tz );
+		CheckImportedSymbol( gettimeofday_import_ );
+		
+		return gettimeofday_import_( tv, tz );
 	}
 	
 	//int settimeofday(const struct timeval *tv , const struct timezone *tz);
@@ -402,9 +412,9 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		static Stub3< pid_t, pid_t, int*, int > stub( "waitpid" );
+		CheckImportedSymbol( waitpid_import_ );
 		
-		return stub( pid, stat_loc, options );
+		return waitpid_import_( pid, stat_loc, options );
 	}
 	
 	#pragma mark -
@@ -412,198 +422,200 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	int chdir( const char* path )
 	{
-		static Stub1< int, const char* > stub( "chdir" );
+		CheckImportedSymbol( chdir_import_ );
 		
-		return stub( path );
+		return chdir_import_( path );
 	}
 	
 	int close( int filedes )
 	{
-		static Stub1< int, int > stub( "close" );
+		CheckImportedSymbol( close_import_ );
 		
-		return stub( filedes );
+		return close_import_( filedes );
 	}
 	
 	int copyfile( const char* src, const char* dest )
 	{
-		static Stub2< int, const char*, const char* > stub( "copyfile" );
+		CheckImportedSymbol( copyfile_import_ );
 		
-		return stub( src, dest );
+		return copyfile_import_( src, dest );
 	}
 	
 	int dup( int filedes )
 	{
-		static Stub1< int, int > stub( "dup" );
+		CheckImportedSymbol( dup_import_ );
 		
-		return stub( filedes );
+		return dup_import_( filedes );
 	}
 	
 	int dup2( int filedes, int filedes2 )
 	{
-		static Stub2< int, int, int > stub( "dup2" );
+		CheckImportedSymbol( dup2_import_ );
 		
-		return stub( filedes, filedes2 );
+		return dup2_import_( filedes, filedes2 );
 	}
 	
 	int execve_Stub( const char* path, const char* const argv[], const char* const* envp )
 	{
-		static Stub3< int, const char*, const char* const*, const char* const* > stub( "execve" );
+		CheckImportedSymbol( execve_import_ );
 		
-		return stub( path, argv, envp );
+		return execve_import_( path, argv, envp );
 	}
 	
+	/*
 	void _exit_Stub( int status )
 	{
 		static Stub1< void, int > stub( "_exit" );
 		
 		stub( status );  // Terminates process but doesn't kill thread (it returns)
 	}
+	*/
 	
 	int SpawnVFork()
 	{
-		static Stub0< int > stub( "SpawnVFork" );
+		CheckImportedSymbol( SpawnVFork_import_ );
 		
-		return stub();
+		return SpawnVFork_import_();
 	}
 	
 	char* getcwd( char* buf, size_t size )
 	{
-		static Stub2< char*, char*, size_t > stub( "getcwd" );
+		CheckImportedSymbol( getcwd_import_ );
 		
-		return stub( buf, size );
+		return getcwd_import_( buf, size );
 	}
 	
 	pid_t getpid()
 	{
-		static Stub0< pid_t > stub( "getpid" );
+		CheckImportedSymbol( getpid_import_ );
 		
-		return stub();
+		return getpid_import_();
 	}
 	
 	pid_t getpgid( pid_t pid )
 	{
-		static Stub1< pid_t, pid_t > stub( "getpgid" );
+		CheckImportedSymbol( getpgid_import_ );
 		
-		return stub( pid );
+		return getpgid_import_( pid );
 	}
 	
 	pid_t getppid()
 	{
-		static Stub0< pid_t > stub( "getppid" );
+		CheckImportedSymbol( getppid_import_ );
 		
-		return stub();
+		return getppid_import_();
 	}
 	
 	off_t lseek( int fildes, off_t offset, int whence )
 	{
-		static Stub3< off_t, int, off_t, int > stub( "lseek" );
+		CheckImportedSymbol( lseek_import_ );
 		
-		return stub( fildes, offset, whence );
+		return lseek_import_( fildes, offset, whence );
 	}
 	
 	int mkdir( const char* pathname, mode_t mode )
 	{
-		static Stub2< int, const char*, mode_t > stub( "mkdir" );
+		CheckImportedSymbol( mkdir_import_ );
 		
-		return stub( pathname, mode );
+		return mkdir_import_( pathname, mode );
 	}
 	
 	int rmdir( const char* pathname )
 	{
-		static Stub1< int, const char* > stub( "rmdir" );
+		CheckImportedSymbol( rmdir_import_ );
 		
-		return stub( pathname );
+		return rmdir_import_( pathname );
 	}
 	
 	int pause()
 	{
-		static Stub0< int > stub( "pause" );
+		CheckImportedSymbol( pause_import_ );
 		
-		return stub();
+		return pause_import_();
 	}
 	
 	int peek( int fd, const char** buffer, size_t minBytes )
 	{
-		static Stub3< int, int, const char**, size_t > stub( "peek" );
+		CheckImportedSymbol( peek_import_ );
 		
-		return stub( fd, buffer, minBytes );
+		return peek_import_( fd, buffer, minBytes );
 	}
 	
 	int pipe( int filedes[ 2 ] )
 	{
-		static Stub1< int, int* > stub( "pipe" );
+		CheckImportedSymbol( pipe_import_ );
 		
-		return stub( filedes );
+		return pipe_import_( filedes );
 	}
 	
 	ssize_t read( int filedes, void* buf, size_t nbyte )
 	{
-		static Stub3< ssize_t, int, void*, size_t > stub  ( "read" );
+		CheckImportedSymbol( read_import_ );
 		
-		return stub( filedes, buf, nbyte );
+		return read_import_( filedes, buf, nbyte );
 	}
 	
 	int rename( const char* src, const char* dest )
 	{
-		static Stub2< int, const char*, const char* > stub( "rename" );
+		CheckImportedSymbol( rename_import_ );
 		
-		return stub( src, dest );
+		return rename_import_( src, dest );
 	}
 	
 	int setctty( int filedes )
 	{
-		static Stub1< int, int > stub( "setctty" );
+		CheckImportedSymbol( setctty_import_ );
 		
-		return stub( filedes );
+		return setctty_import_( filedes );
 	}
 	
 	int setpgid( pid_t pid, pid_t pgid )
 	{
-		static Stub2< int, pid_t, pid_t > stub( "setpgid" );
+		CheckImportedSymbol( setpgid_import_ );
 		
-		return stub( pid, pgid );
+		return setpgid_import_( pid, pgid );
 	}
 	
 	pid_t setsid()
 	{
-		static Stub0< pid_t > stub( "setsid" );
+		CheckImportedSymbol( setsid_import_ );
 		
-		return stub();
+		return setsid_import_();
 	}
 	
 	unsigned int sleep( unsigned int seconds )
 	{
-		static Stub1< unsigned int, unsigned int > stub( "sleep" );
+		CheckImportedSymbol( sleep_import_ );
 		
-		return stub( seconds );
+		return sleep_import_( seconds );
 	}
 	
 	const char* ttyname( int filedes )
 	{
-		static Stub1< const char*, int > stub( "ttyname" );
+		CheckImportedSymbol( ttyname_import_ );
 		
-		return stub( filedes );
+		return ttyname_import_( filedes );
 	}
 	
 	int ttypair( int filedes[ 2 ] )
 	{
-		static Stub1< int, int* > stub( "ttypair" );
+		CheckImportedSymbol( ttypair_import_ );
 		
-		return stub( filedes );
+		return ttypair_import_( filedes );
 	}
 	
 	int unlink( const char* pathname )
 	{
-		static Stub1< int, const char* > stub( "unlink" );
+		CheckImportedSymbol( unlink_import_ );
 		
-		return stub( pathname );
+		return unlink_import_( pathname );
 	}
 	
 	ssize_t write( int filedes, const void* buf, size_t nbyte )
 	{
-		static Stub3< ssize_t, int, const void*, size_t > stub( "write"  );
+		CheckImportedSymbol( write_import_ );
 		
-		return stub( filedes, buf, nbyte );
+		return write_import_( filedes, buf, nbyte );
 	}
 	
 	#pragma mark -
@@ -611,9 +623,9 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	int* ErrnoPtr()
 	{
-		static Stub0< int* > stub( "ErrnoPtr" );
+		CheckImportedSymbol( ErrnoPtr_import_ );
 		
-		int* errnoPtr = stub();
+		int* errnoPtr = ErrnoPtr_import_();
 		
 		//ASSERT( errnoPtr != NULL );
 		
@@ -622,9 +634,9 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	char*** EnvironPtr()
 	{
-		static Stub0< char*** > stub( "EnvironPtr" );
+		CheckImportedSymbol( EnvironPtr_import_ );
 		
-		char*** environPtr = stub();
+		char*** environPtr = EnvironPtr_import_();
 		
 		//ASSERT( environPtr != NULL );
 		
@@ -633,33 +645,33 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
-		static Stub2< OSStatus, const AppleEvent*, AppleEvent* > stub( "AESendBlocking" );
+		CheckImportedSymbol( AESendBlocking_import_ );
 		
-		return stub( appleEvent, reply );
+		return AESendBlocking_import_( appleEvent, reply );
 	}
 	
 	InetSvcRef InternetServices()
 	{
-		static Stub0< InetSvcRef > stub( "InternetServices" );
+		CheckImportedSymbol( InternetServices_import_ );
 		
-		return stub();
+		return InternetServices_import_();
 	}
 	
 	void PrintPS()
 	{
-		static Stub0< void > stub( "PrintPS" );
+		CheckImportedSymbol( PrintPS_import_ );
 		
-		stub();
+		PrintPS_import_();
 	}
 	
 	FSSpec Path2FSS( const char* pathname )
 	{
-		static Stub2< OSStatus, const char*, FSSpec* > stub( "Path2FSSpec" );
+		CheckImportedSymbol( Path2FSSpec_import_ );
 	
 		FSSpec spec;	
 		//Nitrogen::ThrowOSStatus( stub( pathname, &spec ) );
 		
-		OSStatus err = stub( pathname, &spec );
+		OSStatus err = Path2FSSpec_import_( pathname, &spec );
 		
 		if ( err != noErr )
 		{
@@ -670,7 +682,7 @@ inline void CheckImportedSymbol( void* symbol )
 		
 		return spec;
 	}
-
+	
 #if 0	
 #pragma export reset
 #endif
