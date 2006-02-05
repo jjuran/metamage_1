@@ -21,7 +21,6 @@
 
 // Kerosene
 #include "SystemCalls.hh"
-#include "KernelGlue.hh"
 
 
 class UnimplementedSystemCall {};
