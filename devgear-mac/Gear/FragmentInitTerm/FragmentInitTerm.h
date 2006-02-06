@@ -25,12 +25,9 @@
 	
 	static int gInitCount = 0;
 	
-	extern pascal OSErr Muxed_Initialize( const CFragInitBlock* initBlock );
-	extern pascal void Muxed_Terminate();
+	static void Muxed_Terminate();
 	
-#pragma export on
-	
-	pascal OSErr Muxed_Initialize( const CFragInitBlock* initBlock )
+	static OSErr Muxed_Initialize( const CFragInitBlock* initBlock )
 	{
 		for ( gInitCount = 0;  gInitCount < kFragmentProcsCount;  ++gInitCount )
 		{
@@ -49,7 +46,7 @@
 		return noErr;
 	}
 	
-	pascal void Muxed_Terminate()
+	static void Muxed_Terminate()
 	{
 		while ( gInitCount > 0 )
 		{
@@ -57,6 +54,21 @@
 			
 			if ( term ) term();
 		}
+	}
+	
+	extern pascal OSErr InitializeFragment( const CFragInitBlock* initBlock );
+	extern pascal void TerminateFragment();
+	
+#pragma export on
+	
+	pascal OSErr InitializeFragment( const CFragInitBlock* initBlock )
+	{
+		return Muxed_Initialize( initBlock );
+	}
+	
+	pascal void TerminateFragment()
+	{
+		Muxed_Terminate();
 	}
 	
 #pragma export reset
