@@ -267,23 +267,6 @@ namespace Genie
 		return context;
 	}
 	
-	/*
-	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const FSSpec& file )
-	{
-		N::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
-		
-		std::size_t size = N::GetEOF( filehandle );
-		
-		std::auto_ptr< FragmentImage > result;
-		
-		result.reset( static_cast< FragmentImage* >( ::operator new( size ) ) );
-		
-		int bytes = N::FSRead( filehandle, size, reinterpret_cast< char* >( result.get() ) );
-		
-		return NX::DataPtr< FragmentImage >( result, size );
-	}
-	*/
-	
 	Process::Process( RootProcess ) 
 	:
 		myPPID              ( 0 ),
@@ -387,8 +370,6 @@ namespace Genie
 	
 	static void ImportSystemCalls( N::CFragConnectionID fragmentConnection )
 	{
-		//LoadSymbol( fragmentConnection, "\p" "_exit_Ptr", &_exit );
-		
 		std::for_each( SystemCallsBegin(),
 		               SystemCallsEnd(),
 		               SymbolImporter( fragmentConnection ) );
@@ -565,8 +546,6 @@ namespace Genie
 			N::FindSymbol( fFragmentConnection, "\p" "errno", &fErrnoData );
 		}
 		catch ( ... ) {}
-		
-		LoadSymbol( fFragmentConnection, "\p" "_exit_Ptr", &_exit );
 		
 		ImportSystemCalls( fFragmentConnection );
 		
