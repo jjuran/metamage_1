@@ -58,7 +58,9 @@ namespace Nitrogen
 		{
 			OnlyOnce< RegisterThreadManagerErrors >();
 			
-			HandleDestructionOSStatus( ::DisposeThread( thread, NULL, false ) );
+			//HandleDestructionOSStatus( ::DisposeThread( thread, NULL, false ) );
+			
+			::OSStatus err = ::DisposeThread( thread, NULL, false );
 		}
 	};
 	
