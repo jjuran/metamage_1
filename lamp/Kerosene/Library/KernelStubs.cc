@@ -3,6 +3,9 @@
  *	==============
  */
 
+// Standard C
+#include "errno.h"
+
 // POSIX
 #include "fcntl.h"
 #include "signal.h"
@@ -454,21 +457,19 @@ inline void CheckImportedSymbol( void* symbol )
 		return dup2_import_( filedes, filedes2 );
 	}
 	
-	int execve_Stub( const char* path, const char* const argv[], const char* const* envp )
+	int execve_Kernel( const char* path, const char* const argv[], const char* const* envp )
 	{
 		CheckImportedSymbol( execve_import_ );
 		
 		return execve_import_( path, argv, envp );
 	}
 	
-	/*
-	void _exit_Stub( int status )
+	void _exit_Kernel( int status )
 	{
-		static Stub1< void, int > stub( "_exit" );
+		CheckImportedSymbol( _exit_import_ );
 		
-		stub( status );  // Terminates process but doesn't kill thread (it returns)
+		_exit_import_( status );  // Terminates process but returns if forked
 	}
-	*/
 	
 	int SpawnVFork()
 	{
