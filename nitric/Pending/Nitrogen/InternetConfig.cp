@@ -14,6 +14,24 @@
 namespace Nitrogen
 {
 	
+	Owned< ICInstance > ICStart( OSType signature )
+	{
+		OnlyOnce< RegisterInternetConfigErrors >();
+		
+		ICInstance result;
+		
+		ThrowOSStatus( ::ICStart( &result, signature ) );
+		
+		return Owned< ICInstance >::Seize( result );
+	}
+	
+	void ICStop( Owned< ICInstance > inst )
+	{
+		OnlyOnce< RegisterInternetConfigErrors >();
+		
+		ThrowOSStatus( ::ICStop( inst.Release() ) );
+	}
+	
 	Owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                  ConstStr255Param  key,
 	                                  ICAttr&           attr )
