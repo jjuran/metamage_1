@@ -86,7 +86,8 @@ namespace Nitrogen
 		return KeyModifiers( ::GetCurrentKeyModifiers() );
 		
 	#else
-		
+	//		Marshall changed this to return an UInt32, because that's what GetCurrentKeyModifiers returns.
+	//		I don't know that this is correct for the non-Carbon case.
 		return KeyModifiers( *(UInt16 *)0x017A << 9 & 0xFF00 );
 		
 	#endif

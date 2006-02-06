@@ -22,21 +22,27 @@
 namespace Nitrogen
   {
    using ::CGImageRef;
-   
-   template <> struct Disposer< CGImageRef >: public std::unary_function< CGImageRef, void >
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::CGImageRef >: public std::unary_function< Nitrogen::CGImageRef, void >
      {
-      void operator()( CGImageRef image ) const
+      void operator()( Nitrogen::CGImageRef image ) const
         {
          ::CGImageRelease( image );
         }
      };
-   
-   inline Owned<CGImageRef> CGImageRetain( CGImageRef image )
+  }
+
+namespace Nitrogen
+  {
+   inline Nucleus::Owned<CGImageRef> CGImageRetain( CGImageRef image )
      {
-      return Owned<CGImageRef>::Seize( ::CGImageRetain( image ) );
+      return Nucleus::Owned<CGImageRef>::Seize( ::CGImageRetain( image ) );
      }
    
-   inline void CGImageRelease( Owned<CGImageRef> )
+   inline void CGImageRelease( Nucleus::Owned<CGImageRef> )
      {}
   }
 

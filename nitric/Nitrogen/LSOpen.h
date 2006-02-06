@@ -13,16 +13,16 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 #ifndef NITROGEN_CFURL_H
 #include "Nitrogen/CFURL.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen {
@@ -33,31 +33,31 @@ namespace Nitrogen {
 /* ================================================================== */
 
 	inline FSRef LSOpenFSRef ( const FSRef &inRef ) {
-		OnlyOnce<RegisterLSOpenErrors>();
+		Nucleus::OnlyOnce<RegisterLSOpenErrors>();
 		FSRef	result;
 		ThrowOSStatus ( ::LSOpenFSRef ( &inRef, &result ));
 		return result;
 		}
 
-	inline Owned<CFURLRef> LSOpenCFURLRef ( CFURLRef inURL ) {
-		OnlyOnce<RegisterLSOpenErrors>();
+	inline Nucleus::Owned<CFURLRef> LSOpenCFURLRef ( CFURLRef inURL ) {
+		Nucleus::OnlyOnce<RegisterLSOpenErrors>();
 		CFURLRef	result;
 		ThrowOSStatus ( ::LSOpenCFURLRef ( inURL, &result ));
-  	    return Owned<CFURLRef>::Seize( result );
+  	    return Nucleus::Owned<CFURLRef>::Seize( result );
 		}
 
 	inline FSRef LSOpenFromRefSpec ( const LSLaunchFSRefSpec &inLaunchSpec ) {
-		OnlyOnce<RegisterLSOpenErrors>();
+		Nucleus::OnlyOnce<RegisterLSOpenErrors>();
 		FSRef	result;
 		ThrowOSStatus ( ::LSOpenFromRefSpec ( &inLaunchSpec, &result ));
 		return result;
 		}
 
-	inline Owned<CFURLRef> LSOpenFromURLSpec ( const LSLaunchURLSpec &inLaunchSpec ) {
-		OnlyOnce<RegisterLSOpenErrors>();
+	inline Nucleus::Owned<CFURLRef> LSOpenFromURLSpec ( const LSLaunchURLSpec &inLaunchSpec ) {
+		Nucleus::OnlyOnce<RegisterLSOpenErrors>();
 		CFURLRef	result;
 		ThrowOSStatus ( ::LSOpenFromURLSpec ( &inLaunchSpec, &result ));
-  	    return Owned<CFURLRef>::Seize( result );
+  	    return Nucleus::Owned<CFURLRef>::Seize( result );
 		}
 	}
 	

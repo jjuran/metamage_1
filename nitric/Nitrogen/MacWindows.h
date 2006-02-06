@@ -9,8 +9,8 @@
 #ifndef __MACWINDOWS__
 #include FRAMEWORK_HEADER(HIToolbox,MacWindows.h)
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
@@ -74,48 +74,57 @@ namespace Nitrogen
 	#pragma mark ¥ Types ¥
 	
 	class WindowDefProcID_Tag {};
-	typedef SelectorType< WindowDefProcID_Tag, ::SInt16, 0 > WindowDefProcID;
+	typedef Nucleus::SelectorType< WindowDefProcID_Tag, ::SInt16, 0 > WindowDefProcID;
 	
 	class WindowKind_Tag {};
-	typedef SelectorType< WindowKind_Tag, ::SInt16, 0 > WindowKind;
+	typedef Nucleus::SelectorType< WindowKind_Tag, ::SInt16, 0 > WindowKind;
 	
 	class WindowPartCode_Tag {};
-	typedef SelectorType< WindowPartCode_Tag, ::WindowPartCode, 0 > WindowPartCode;
+	typedef Nucleus::SelectorType< WindowPartCode_Tag, ::WindowPartCode, 0 > WindowPartCode;
 	
    class PropertyCreator_Tag {};
-   typedef SelectorType< PropertyCreator_Tag, ::PropertyCreator, '\?\?\?\?' > PropertyCreator;
+   typedef Nucleus::SelectorType< PropertyCreator_Tag, ::PropertyCreator, '\?\?\?\?' > PropertyCreator;
 
    class PropertyTag_Tag {};      // Seems redundant, doesn't it?
-   typedef SelectorType< PropertyTag_Tag, ::PropertyTag, '\?\?\?\?' > PropertyTag;
+   typedef Nucleus::SelectorType< PropertyTag_Tag, ::PropertyTag, '\?\?\?\?' > PropertyTag;
 
    class WindowClass_Tag {};
-   typedef SelectorType< WindowClass_Tag, ::WindowClass, 0 > WindowClass;
+   typedef Nucleus::SelectorType< WindowClass_Tag, ::WindowClass, 0 > WindowClass;
 
    class WindowAttributes_Tag {};
-   typedef FlagType< WindowAttributes_Tag, ::WindowAttributes, kWindowNoAttributes > WindowAttributes;
+   typedef Nucleus::FlagType< WindowAttributes_Tag, ::WindowAttributes, kWindowNoAttributes > WindowAttributes;
 
    class WindowPositionMethod_Tag {};
-   typedef SelectorType< WindowPositionMethod_Tag, ::WindowPositionMethod, 0 > WindowPositionMethod;
+   typedef Nucleus::SelectorType< WindowPositionMethod_Tag, ::WindowPositionMethod, 0 > WindowPositionMethod;
 
    class WindowRegionCode_Tag {};
-   typedef SelectorType< WindowRegionCode_Tag, ::WindowRegionCode, 0 > WindowRegionCode;
+   typedef Nucleus::SelectorType< WindowRegionCode_Tag, ::WindowRegionCode, 0 > WindowRegionCode;
   
    using ::GetWindowRegionRec;
    using ::GetWindowRegionPtr;
    using ::GetWindowRegionRecPtr;
+   //using ::WindowRef;
    
    /* ... */
    
 	#pragma mark -
 	#pragma mark ¥ Specializations ¥
 	
-   template <> struct Disposer< WindowRef >: public std::unary_function< WindowRef, void >
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::WindowRef >: public std::unary_function< Nitrogen::WindowRef, void >
      {
-      void operator()( WindowRef w ) const
+      void operator()( Nitrogen::WindowRef w ) const
         {
          ::DisposeWindow( w );
         }
      };
+  }
+
+namespace Nitrogen
+  {
 
    /* ... */
 
@@ -123,7 +132,7 @@ namespace Nitrogen
 	#pragma mark ¥ Routines ¥
 	
 	// 1402
-	Owned< WindowRef > NewWindow( const Rect&       bounds,
+	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
 	                              ConstStr255Param  title,
 	                              bool              visible,
 	                              WindowDefProcID   procID,
@@ -132,7 +141,7 @@ namespace Nitrogen
 	                              RefCon            refCon );
 	
 	// 1437
-	Owned< WindowRef > NewCWindow( const Rect&       bounds,
+	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
 	                              ConstStr255Param  title,
 	                              bool              visible,
 	                              WindowDefProcID   procID,
@@ -141,7 +150,7 @@ namespace Nitrogen
 	                              RefCon            refCon );
 	
 	// 1457
-	inline void DisposeWindow( Owned< WindowRef > )  {}
+	inline void DisposeWindow( Nucleus::Owned< WindowRef > )  {}
 	
 	struct FindWindow_Result
 	{
@@ -268,19 +277,19 @@ namespace Nitrogen
 /*ÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑ*/
 
 	inline void SetWindowToolbar ( WindowRef inWindow, HIToolbarRef inToolbar ) {
-		OnlyOnce< RegisterWindowManagerErrors >();
+		Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
 		ThrowOSStatus ( ::SetWindowToolbar ( inWindow, inToolbar ));
 		}
 
 	inline HIToolbarRef GetWindowToolbar ( WindowRef inWindow ) {
-		OnlyOnce< RegisterWindowManagerErrors >();
+		Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
 		HIToolbarRef result;
 		ThrowOSStatus ( ::GetWindowToolbar ( inWindow, &result ));
 		return result;
 		}
 
 	inline void ShowHideWindowToolbar ( WindowRef inWindow, Boolean inShow, Boolean inAnimate ) {
-		OnlyOnce< RegisterWindowManagerErrors >();
+		Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
 		ThrowOSStatus ( ::ShowHideWindowToolbar ( inWindow, inShow, inAnimate ));
 		}
 

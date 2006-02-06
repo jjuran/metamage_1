@@ -9,97 +9,114 @@
 #include <SecurityCore/KeychainCore.h>
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
+#endif
+
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
 
+#ifndef NITROGEN_ALIASES_H
+#include "Nitrogen/Aliases.h"
+#endif
+
 namespace Nitrogen {
 
 	void RegisterKeychainCoreErrors ();
-	
-   template <> struct Disposer< KCRef >: public std::unary_function< KCRef, void >
+    
+    using ::KCRef;
+    using ::KCItemRef;
+    using ::KCSearchRef;
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::KCRef >: public std::unary_function< Nitrogen::KCRef, void >
      {
-      void operator()( KCRef kc ) const
+      void operator()( Nitrogen::KCRef kc ) const
         {
          (void) ::KCReleaseKeychain ( &kc );
         }
      };
 
-   template <> struct Disposer< KCItemRef >: public std::unary_function< KCItemRef, void >
+   template <> struct Disposer< Nitrogen::KCItemRef >: public std::unary_function< Nitrogen::KCItemRef, void >
      {
-      void operator()( KCItemRef kci ) const
+      void operator()( Nitrogen::KCItemRef kci ) const
         {
          (void) ::KCReleaseItem ( &kci );
         }
      };
 
-   template <> struct Disposer< KCSearchRef >: public std::unary_function< KCSearchRef, void >
+   template <> struct Disposer< Nitrogen::KCSearchRef >: public std::unary_function< Nitrogen::KCSearchRef, void >
      {
-      void operator()( KCSearchRef kcs ) const
+      void operator()( Nitrogen::KCSearchRef kcs ) const
         {
          (void) ::KCReleaseSearch ( &kcs );
         }
      };
+  }
 
-
+namespace Nitrogen
+  {
 	inline void KCSetInteractionAllowed ( Boolean state ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		ThrowOSStatus ( ::KCSetInteractionAllowed ( state ));
 		}
 		
 //	Boolean KCIsInteractionAllowed ( void );
 	using ::KCIsInteractionAllowed;
 	
-	inline Owned<KCRef> KCMakeKCRefFromFSSpec ( const FSSpec &spec ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+	inline Nucleus::Owned<KCRef> KCMakeKCRefFromFSSpec ( const FSSpec &spec ) {
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		KCRef	result;
 		ThrowOSStatus ( ::KCMakeKCRefFromFSSpec ( const_cast <FSSpec *> ( &spec ), &result ));
-  	    return Owned<KCRef>::Seize( result );
+  	    return Nucleus::Owned<KCRef>::Seize( result );
 		}
 	
-	inline Owned<KCRef> KCMakeKCRefFromAlias ( AliasHandle keychainAlias ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+	inline Nucleus::Owned<KCRef> KCMakeKCRefFromAlias ( AliasHandle keychainAlias ) {
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		KCRef	result;
 		ThrowOSStatus ( ::KCMakeKCRefFromAlias ( keychainAlias, &result ));
-  	    return Owned<KCRef>::Seize( result );
+  	    return Nucleus::Owned<KCRef>::Seize( result );
 		}
 	
-	inline Owned<AliasHandle> KCMakeAliasFromKCRef ( KCRef keychain ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+	inline Nucleus::Owned<AliasHandle> KCMakeAliasFromKCRef ( KCRef keychain ) {
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		AliasHandle	result;
 		ThrowOSStatus ( ::KCMakeAliasFromKCRef ( keychain, &result ));
-  	    return Owned<AliasHandle>::Seize( result );
+  	    return Nucleus::Owned<AliasHandle>::Seize( result );
 		}
 
 //	extern OSStatus KCReleaseKeychain(KCRef * keychain);
-	inline Owned<KCRef> KCGetDefaultKeychain () {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+	inline Nucleus::Owned<KCRef> KCGetDefaultKeychain () {
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		KCRef	result;
 		ThrowOSStatus ( ::KCGetDefaultKeychain ( &result ));
-  	    return Owned<KCRef>::Seize( result );
+  	    return Nucleus::Owned<KCRef>::Seize( result );
 		}
 	
 	inline void KCSetDefaultKeychain ( KCRef keychain ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		ThrowOSStatus ( ::KCSetDefaultKeychain ( keychain ));
 		}
 	
 	inline UInt32 KCGetStatus ( KCRef keychain ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		UInt32	result;
 		ThrowOSStatus ( ::KCGetStatus ( keychain, &result ));
   	    return result;
 		}
 	
-	inline Owned<KCRef> KCGetKeychain ( KCItemRef item ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+	inline Nucleus::Owned<KCRef> KCGetKeychain ( KCItemRef item ) {
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		KCRef	result;
 		ThrowOSStatus ( ::KCGetKeychain ( item, &result ));
-  	    return Owned<KCRef>::Seize( result );
+  	    return Nucleus::Owned<KCRef>::Seize( result );
 		}
 
 
@@ -121,11 +138,11 @@ KCGetKeychainName(
 //	extern UInt16 KCCountKeychains(void)
 	using ::KCCountKeychains;
 
-	inline Owned<KCRef> KCGetIndKeychain ( UInt16 idx ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+	inline Nucleus::Owned<KCRef> KCGetIndKeychain ( UInt16 idx ) {
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		KCRef	result;
 		ThrowOSStatus ( ::KCGetIndKeychain ( idx, &result ));
-  	    return Owned<KCRef>::Seize( result );
+  	    return Nucleus::Owned<KCRef>::Seize( result );
 		}
 
 
@@ -287,16 +304,16 @@ extern OSStatus
 KCRemoveCallback(KCCallbackUPP callbackProc)                  AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER;
 #endif
 
-	inline Owned<KCItemRef> KCNewItem ( KCItemClass itemClass, OSType itemCreator,
+	inline Nucleus::Owned<KCItemRef> KCNewItem ( KCItemClass itemClass, OSType itemCreator,
 								UInt32 length, const void *data ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCNewItem ( itemClass, itemCreator, length, data, &result ));
-  	    return Owned<KCItemRef>::Seize( result );
+  	    return Nucleus::Owned<KCItemRef>::Seize( result );
 		}
 
 	inline void KCSetAttribute ( KCItemRef item, SecKeychainAttrType tag, UInt32 length, const void *data ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 
 		SecKeychainAttribute attr;
 		attr.tag	= tag;
@@ -325,29 +342,29 @@ KCGetAttribute(
 
 
 	inline void KCSetData ( KCItemRef item, UInt32 length, const void *data ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		ThrowOSStatus ( ::KCSetData ( item, length, data ));
 		}
 
 	inline UInt32 KCGetData ( KCItemRef item, UInt32 maxLength, void *data ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		UInt32 result;
 		ThrowOSStatus ( ::KCGetData ( item, maxLength, data, &result ));
 		return result;
 		}
 
 	inline void KCUpdateItem ( KCItemRef item ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		ThrowOSStatus ( ::KCUpdateItem ( item ));
 		}
 
 //	extern OSStatus KCReleaseItem(KCItemRef * item);
 
-	inline Owned<KCItemRef> KCCopyItem ( KCItemRef item, KCRef destKeychain ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+	inline Nucleus::Owned<KCItemRef> KCCopyItem ( KCItemRef item, KCRef destKeychain ) {
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCCopyItem ( item, destKeychain, &result ));
-  	    return Owned<KCItemRef>::Seize( result );
+  	    return Nucleus::Owned<KCItemRef>::Seize( result );
 		}
 
 
@@ -371,23 +388,23 @@ KCFindFirstItem(
 Marshall sez: this is icky because it returns two things that need to be owned.
 #endif
 
-	inline Owned<KCItemRef> KCFindNextItem ( KCSearchRef search ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+	inline Nucleus::Owned<KCItemRef> KCFindNextItem ( KCSearchRef search ) {
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCFindNextItem ( search, &result ));
-  	    return Owned<KCItemRef>::Seize( result );
+  	    return Nucleus::Owned<KCItemRef>::Seize( result );
 		}
 
 //	extern OSStatus KCReleaseSearch(KCSearchRef * search);
 
-//	!!! Should this be an Owned<KCItemRef> ???
+//	!!! Should this be an Nucleus::Owned<KCItemRef> ???
 	inline void KCDeleteItem ( KCItemRef item ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		ThrowOSStatus ( ::KCDeleteItem ( item ));
 		}
 
 	inline void KCLock ( KCRef keychain ) {
-		OnlyOnce<RegisterKeychainCoreErrors>();
+		Nucleus::OnlyOnce<RegisterKeychainCoreErrors>();
 		ThrowOSStatus ( ::KCLock ( keychain ));
 		}
 

@@ -19,13 +19,13 @@
 namespace Nitrogen
 {
 	
-	Owned< StringHandle > NewString( ConstStr255Param string )
+	Nucleus::Owned< StringHandle > NewString( ConstStr255Param string )
 	{
 		StringHandle result = ::NewString( string );
 		
 		MemError();
 		
-		return Owned< StringHandle >::Seize( result );
+		return Nucleus::Owned< StringHandle >::Seize( result );
 	}
 	
 	void SetString( StringHandle string, ConstStr255Param newStr )
@@ -56,7 +56,7 @@ namespace Nitrogen
 	
 	std::string p2cstrcpy( ConstStr255Param src )
 	{
-		return Convert< std::string >( src );
+		return Nucleus::Convert< std::string >( src );
 	}
 	
 }

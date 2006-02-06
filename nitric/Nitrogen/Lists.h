@@ -14,8 +14,8 @@
 #ifndef NITROGEN_EVENTS_H
 #include "Nitrogen/Events.h"
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 #ifndef NITROGEN_RESOURCES_H
 #include "Nitrogen/Resources.h"
@@ -33,18 +33,23 @@ namespace Nitrogen
 	using ::ListRec;
 	using ::ListPtr;
 	using ::ListHandle;
-	
-	template <> struct Disposer< ListHandle > : public std::unary_function< ListHandle, void >
+  }
+
+namespace Nucleus
+  {
+	template <> struct Disposer< Nitrogen::ListHandle > : public std::unary_function< Nitrogen::ListHandle, void >
 	{
-		void operator()( ListHandle list ) const
+		void operator()( Nitrogen::ListHandle list ) const
 		{
 			::LDispose( list );
 		}
 	};
-	
-	
+  }
+
+namespace Nitrogen
+  {
 	// 436
-	Owned< ListHandle > LNew( const Rect&        rView,
+	Nucleus::Owned< ListHandle > LNew( const Rect&        rView,
 	                          const ListBounds&  dataBounds,
 	                          Point              cSize,
 	                          ResID              theProc,
@@ -55,7 +60,7 @@ namespace Nitrogen
 	                          bool               scrollVert );
 	
 	// 457
-	inline void LDispose( Owned< ListHandle > )  {}
+	inline void LDispose( Nucleus::Owned< ListHandle > )  {}
 	
 	// 469, 484, 499, 514
 	using ::LAddColumn;

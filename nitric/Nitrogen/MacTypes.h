@@ -15,23 +15,26 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
-#ifndef NITROGEN_OVERLOADED_MATH_H
-#include "Nitrogen/Overloaded_math.h"
+#ifndef NUCLEUS_OVERLOADED_MATH_H
+#include "Nucleus/Overloaded_math.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_MAKE_H
-#include "Nitrogen/Make.h"
+#ifndef NUCLEUS_MAKE_H
+#include "Nucleus/Make.h"
 #endif
-#ifndef NITROGEN_CONVERT_H
-#include "Nitrogen/Convert.h"
+#ifndef NUCLEUS_CONVERT_H
+#include "Nucleus/Convert.h"
+#endif
+#ifndef NUCLEUS_FLATTENER_H
+#include "Nucleus/Flattener.h"
 #endif
 
 #include <cstddef>
@@ -61,7 +64,7 @@ namespace Nitrogen
    template < class Integral, int fractionBits, class Floating >
    Integral FloatingToFixedPoint( Floating in )
      {
-      return static_cast< Integral >( CStd::nearbyint( std::ldexp( in, fractionBits ) ) );
+      return static_cast< Integral >( Nucleus::CStd::nearbyint( std::ldexp( in, fractionBits ) ) );
      }
    
    inline double FixedToDouble( ::Fixed in )                   { return FixedToFloatingPoint< double,  16 >( in ); }
@@ -76,6 +79,26 @@ namespace Nitrogen
    inline double ShortFixedToDouble( ::ShortFixed in )         { return FixedToFloatingPoint< double,       8 >( in ); }
    inline ::ShortFixed DoubleToShortFixed( double in )         { return FloatingToFixedPoint< ::ShortFixed, 8 >( in ); }
    
+   struct FixedFlattener
+     {
+      typedef double Put_Parameter;
+      
+      template < class Putter > void Put( Put_Parameter toPut, Putter put )
+        {
+         const Fixed fixed = DoubleToFixed( toPut );
+         put( &fixed, &fixed + 1 );
+        }
+      
+      typedef double Get_Result;
+      
+      template < class Getter > Get_Result Get( Getter get )
+        {
+         Fixed fixed;
+         get( &fixed, &fixed + 1 );
+         return FixedToDouble( fixed );
+        }
+     };
+   
    
    using ::Float32;
    using ::Float64;
@@ -85,30 +108,30 @@ namespace Nitrogen
    typedef ::std::size_t  Size;
 
    class OptionBitsTag {};
-   typedef FlagType< OptionBitsTag, ::OptionBits, 0 > OptionBits;
+   typedef Nucleus::FlagType< OptionBitsTag, ::OptionBits, 0 > OptionBits;
    
    class ScriptCodeTag {};
-   typedef SelectorType< ScriptCodeTag, ::ScriptCode, ::smSystemScript > ScriptCode;
+   typedef Nucleus::SelectorType< ScriptCodeTag, ::ScriptCode, ::smSystemScript > ScriptCode;
 
    class LangCodeTag {};
-   typedef SelectorType< LangCodeTag,   ::LangCode,   ::langUnspecified > LangCode;
+   typedef Nucleus::SelectorType< LangCodeTag,   ::LangCode,   ::langUnspecified > LangCode;
 
    class RegionCodeTag {};
-   typedef SelectorType< RegionCodeTag, ::RegionCode, ::verUS > RegionCode;
+   typedef Nucleus::SelectorType< RegionCodeTag, ::RegionCode, ::verUS > RegionCode;
    
    class FourCharCodeTag {};
-   typedef SelectorType< FourCharCodeTag, ::FourCharCode, ::kUnknownType > FourCharCode;
+   typedef Nucleus::SelectorType< FourCharCodeTag, ::FourCharCode, ::kUnknownType > FourCharCode;
    
    class OSTypeTag {};
-   typedef SelectorType< OSTypeTag, ::OSType, ::kUnknownType > OSType;
+   typedef Nucleus::SelectorType< OSTypeTag, ::OSType, ::kUnknownType > OSType;
    
    class ResTypeTag {};
-   typedef SelectorType< ResTypeTag, ::ResType, ::kUnknownType > ResType;
+   typedef Nucleus::SelectorType< ResTypeTag, ::ResType, ::kUnknownType > ResType;
 
    typedef bool Boolean;
 
    class StyleTag {};
-   typedef FlagType< StyleTag, ::Style > Style;
+   typedef Nucleus::FlagType< StyleTag, ::Style > Style;
       //Style may need a conversion to short...
 
    using ::UnicodeScalarValue;
@@ -123,9 +146,13 @@ namespace Nitrogen
    typedef std::basic_string< UniChar > UniString;
    
    using ::Point;
+   using ::Rect;
+  }
 
+namespace Nucleus
+  {
    template <>
-   struct Maker< Point >
+   struct Maker< Nitrogen::Point >
      {
       Point operator()( short v, short h ) const
         {
@@ -140,11 +167,9 @@ namespace Nitrogen
          return operator()( 0, 0 );
         }
      };
-   
-   using ::Rect;
-   
+
    template <>
-   struct Maker< Rect >
+   struct Maker< Nitrogen::Rect >
      {
       Rect operator()( short top, short left, short bottom, short right ) const
         {
@@ -161,12 +186,12 @@ namespace Nitrogen
          return operator()( 0, 0, 0, 0 );
         }
      };
-	
+
 	// Convert string to FourCharCode
 	template < class Tag, ::FourCharCode defaultValue >
 	struct Converter< SelectorType< Tag, ::FourCharCode, defaultValue >, std::string >: public std::unary_function< std::string, SelectorType< Tag, ::FourCharCode, defaultValue > >
 	{
-		typedef SelectorType< Tag, ::FourCharCode, defaultValue > Code;
+		typedef Nucleus::SelectorType< Tag, ::FourCharCode, defaultValue > Code;
 		
 		Code operator()( const std::string& input ) const
 		{
@@ -185,7 +210,7 @@ namespace Nitrogen
 	template < class Tag, ::FourCharCode defaultValue >
 	struct Converter< std::string, SelectorType< Tag, ::FourCharCode, defaultValue > >: public std::unary_function< SelectorType< Tag, ::FourCharCode, defaultValue >, std::string >
 	{
-		typedef SelectorType< Tag, ::FourCharCode, defaultValue > Code;
+		typedef Nucleus::SelectorType< Tag, ::FourCharCode, defaultValue > Code;
 		
 		std::string operator()( Code input ) const
 		{
@@ -193,7 +218,6 @@ namespace Nitrogen
 			return std::string( reinterpret_cast< const char* >( &code ), sizeof (::FourCharCode) );
 		}
 	};
-	
   }
 
 #endif

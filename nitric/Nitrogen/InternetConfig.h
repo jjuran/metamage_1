@@ -19,69 +19,39 @@
 
 
 namespace Nitrogen
-{
-	
+  {
 	void RegisterInternetConfigErrors();
 	
-	using ::ICInstance;
-	
-	template <>
-	struct Disposer< ICInstance > : std::unary_function< ICInstance, void >,
-	                                DefaultDestructionOSStatusPolicy
-	{
-		void operator()( ICInstance inst ) const
-		{
-			HandleDestructionOSStatus( ::ICStop( inst ) );
-		}
-	};
-	
-	class ICVersionType_Tag {};
-	typedef SelectorType< ICVersionType_Tag, long, kICComponentVersion > ICVersionType;
-	
-	template <>  struct OwnedDefaults< ICFontRecordHandle   > : OwnedDefaults< Handle >  {};
-	template <>  struct OwnedDefaults< ICCharTableHandle    > : OwnedDefaults< Handle >  {};
-	template <>  struct OwnedDefaults< ICAppSpecHandle      > : OwnedDefaults< Handle >  {};
-	template <>  struct OwnedDefaults< ICAppSpecListHandle  > : OwnedDefaults< Handle >  {};
-	template <>  struct OwnedDefaults< ICFileSpecHandle     > : OwnedDefaults< Handle >  {};
-	template <>  struct OwnedDefaults< ICMapEntryHandle     > : OwnedDefaults< Handle >  {};
-	template <>  struct OwnedDefaults< ICServiceEntryHandle > : OwnedDefaults< Handle >  {};
-	template <>  struct OwnedDefaults< ICServicesHandle     > : OwnedDefaults< Handle >  {};
-	
-	Owned< ICInstance > ICStart( OSType signature );
-	
-	void ICStop( Owned< ICInstance > inst );
-	
-	void ICGetVersion( ICInstance inst, long versionType, void* outVersion );
-	
-	template < long versionType >
-	struct ICVersion_Traits
-	{
-		// default:  kICComponentVersion
-		typedef UInt32 Type;
-	};
-	
-	template <>
-	struct ICVersion_Traits< kICNumVersion >
-	{
-		typedef NumVersion Type;
-	};
-	
-	template < long versionType >
-	typename ICVersion_Traits< versionType >::Type ICGetVersion( ICInstance inst )
-	{
-		typename ICVersion_Traits< versionType >::Type result;
-		
-		ICGetVersion( inst, versionType, &result );
-		
-		return result;
-	}
-	
+	using ::ICFontRecordHandle;
+	using ::ICCharTableHandle;
+	using ::ICAppSpecHandle;
+	using ::ICAppSpecListHandle;
+	using ::ICFileSpecHandle;
+	using ::ICMapEntryHandle;
+	using ::ICServiceEntryHandle;
+	using ::ICServicesHandle;
+  }
+
+namespace Nucleus
+  {
+	template <>  struct OwnedDefaults< Nitrogen::ICFontRecordHandle   > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct OwnedDefaults< Nitrogen::ICCharTableHandle    > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct OwnedDefaults< Nitrogen::ICAppSpecHandle      > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct OwnedDefaults< Nitrogen::ICAppSpecListHandle  > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct OwnedDefaults< Nitrogen::ICFileSpecHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct OwnedDefaults< Nitrogen::ICMapEntryHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct OwnedDefaults< Nitrogen::ICServiceEntryHandle > : OwnedDefaults< Nitrogen::Handle >  {};
+	template <>  struct OwnedDefaults< Nitrogen::ICServicesHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
+  }
+
+namespace Nitrogen
+  {		
 	// 1179
-	Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                  ConstStr255Param  key,
 	                                  ICAttr&           attr );
 	
-	Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                  ConstStr255Param  key );
 	
 }

@@ -10,16 +10,16 @@
 #endif
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 
@@ -71,27 +71,31 @@ namespace Nitrogen {
 	void RegisterNavServicesErrors ();
 	
 	using ::NavDialogRef;
+    using ::NavReplyRecord;
+  }
 
-	template <> struct Disposer< NavDialogRef >: public std::unary_function< NavDialogRef, void >
+namespace Nucleus
+  {
+	template <> struct Disposer< Nitrogen::NavDialogRef >: public std::unary_function< Nitrogen::NavDialogRef, void >
 		{
-		void operator()( NavDialogRef nav ) const
+		void operator()( Nitrogen::NavDialogRef nav ) const
 			{
 				::NavDialogDispose ( nav );
 			}
 		};
-	
-	using ::NavDialogRef;
-
-
 /*
-	template <> struct Disposer< NavReplyRecord >: public std::unary_function< NavReplyRecord, void >
+	template <> struct Disposer< Nitrogen::NavReplyRecord >: public std::unary_function< Nitrogen::NavReplyRecord, void >
 		{
-		void operator()( NavReplyRecord &nav ) const
+		void operator()( Nitrogen::NavReplyRecord &nav ) const
 			{
 				::NavDisposeReply ( &nav );
 			}
 		};
 */
+  }
+
+namespace Nitrogen
+  {
 
 #if 0
 typedef UInt32 NavUserAction;
@@ -272,12 +276,12 @@ NavTranslateFile(
 
 //	Semantics?? What should happen to the NavReplyRecord here?
 	inline void NavCompleteSave ( NavReplyRecord &reply, NavTranslationOptions howToTranslate ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavCompleteSave ( &reply, howToTranslate ));
 		}
 
 	inline void NavCustomControl ( NavDialogRef dialog, NavCustomControlMessage selector, void *parms ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavCustomControl ( dialog, selector, parms ));
 		}
 
@@ -286,150 +290,150 @@ NavTranslateFile(
 			OSType        previewDataType	= 0,
 			const void *  previewData		= NULL,
 			Size          previewDataSize	= 0 ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavCreatePreview ( theObject, previewDataType, previewData, previewDataSize ));
 		}
 	
 	inline void NavDisposeReply ( NavReplyRecord * reply ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavDisposeReply ( reply ));
 		}		
 	
 	using ::NavServicesAvailable;
 
 	inline NavDialogCreationOptions NavGetDefaultDialogCreationOptions(void) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogCreationOptions result;
 		ThrowOSStatus ( ::NavGetDefaultDialogCreationOptions ( &result ));
 		return result;
 		}
 	
-	inline Owned<NavDialogRef> NavCreateGetFileDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateGetFileDialog (
 			const NavDialogCreationOptions *  inOptions 	= NULL,
 			NavTypeListHandle                 inTypeList	= NULL,
 			NavEventUPP                       inEventProc	= NULL,
 			NavPreviewUPP                     inPreviewProc	= NULL,
 			NavObjectFilterUPP                inFilterProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateGetFileDialog ( inOptions, inTypeList,
 					inEventProc, inPreviewProc, inFilterProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreatePutFileDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreatePutFileDialog (
 			const NavDialogCreationOptions *  inOptions, /* Can be NULL */
 			OSType                            inFileType,
 			OSType                            inFileCreator,
 			NavEventUPP                       inEventProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreatePutFileDialog ( inOptions, inFileType, inFileCreator,
 					inEventProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreateAskReviewDocumentsDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateAskReviewDocumentsDialog (
 			const NavDialogCreationOptions *  inOptions,
 			UInt32                            inDocumentCount,
 			NavEventUPP                       inEventProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateAskReviewDocumentsDialog ( inOptions, inDocumentCount,
 					inEventProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreateAskSaveChangesDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateAskSaveChangesDialog (
 			const NavDialogCreationOptions *  inOptions,
 			NavAskSaveChangesAction           inAction,
 			NavEventUPP                       inEventProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateAskSaveChangesDialog ( inOptions, inAction,
 					inEventProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreateAskDiscardChangesDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateAskDiscardChangesDialog (
 			const NavDialogCreationOptions *  inOptions, /* Can be NULL */
 			NavEventUPP                       inEventProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateAskDiscardChangesDialog ( inOptions,
 					inEventProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreateChooseFileDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateChooseFileDialog (
 			const NavDialogCreationOptions *  inOptions 	= NULL,
 			NavTypeListHandle                 inTypeList	= NULL,
 			NavEventUPP                       inEventProc	= NULL,
 			NavPreviewUPP                     inPreviewProc	= NULL,
 			NavObjectFilterUPP                inFilterProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateChooseFileDialog ( inOptions, inTypeList,
 					inEventProc, inPreviewProc, inFilterProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreateChooseFolderDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateChooseFolderDialog (
 			const NavDialogCreationOptions *  inOptions 	= NULL,
 			NavEventUPP                       inEventProc	= NULL,
 			NavObjectFilterUPP                inFilterProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateChooseFolderDialog ( inOptions,
 					inEventProc, inFilterProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreateChooseVolumeDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateChooseVolumeDialog (
 			const NavDialogCreationOptions *  inOptions 	= NULL,
 			NavEventUPP                       inEventProc	= NULL,
 			NavObjectFilterUPP                inFilterProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateChooseVolumeDialog ( inOptions,
 					inEventProc, inFilterProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreateChooseObjectDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateChooseObjectDialog (
 			const NavDialogCreationOptions *  inOptions 	= NULL,
 			NavEventUPP                       inEventProc	= NULL,
 			NavPreviewUPP                     inPreviewProc	= NULL,
 			NavObjectFilterUPP                inFilterProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateChooseObjectDialog ( inOptions,
 					inEventProc, inPreviewProc, inFilterProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
-	inline Owned<NavDialogRef> NavCreateNewFolderDialog (
+	inline Nucleus::Owned<NavDialogRef> NavCreateNewFolderDialog (
 			const NavDialogCreationOptions *  inOptions 	= NULL,
 			NavEventUPP                       inEventProc	= NULL,
 			void *                            inClientData 	= NULL ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavDialogRef result;
 		ThrowOSStatus ( ::NavCreateNewFolderDialog ( inOptions,
 					inEventProc, inClientData, &result ));
-		return Owned<NavDialogRef>::Seize ( result );
+		return Nucleus::Owned<NavDialogRef>::Seize ( result );
 		}
 
 	inline void NavDialogRun ( NavDialogRef inDialog ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavDialogRun ( inDialog ));
 		}
 
@@ -443,15 +447,15 @@ NavTranslateFile(
 	using ::NavDialogGetUserAction;
 
 #if 0
-	inline Owned<NavReplyRecord> NavDialogGetReply ( NavDialogRef inDialog ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+	inline Nucleus::Owned<NavReplyRecord> NavDialogGetReply ( NavDialogRef inDialog ) {
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavReplyRecord result;
 		ThrowOSStatus ( ::NavDialogGetReply ( inDialog, &result ));
-		return Owned<NavReplyRecord>::Seize ( result );
+		return Nucleus::Owned<NavReplyRecord>::Seize ( result );
 		}
 #endif
 	inline NavReplyRecord NavDialogGetReply ( NavDialogRef inDialog ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		NavReplyRecord result;
 		ThrowOSStatus ( ::NavDialogGetReply ( inDialog, &result ));
 		return result;
@@ -461,7 +465,7 @@ NavTranslateFile(
 	using ::NavDialogGetSaveFileName;
 
 	inline void NavDialogSetSaveFileName ( NavDialogRef inPutFileDialog, CFStringRef inFileName ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavDialogSetSaveFileName ( inPutFileDialog, inFileName ));
 		}
 
@@ -470,7 +474,7 @@ NavTranslateFile(
 		}
 
 	inline void NavDialogSetSaveFileExtensionHidden ( NavDialogRef inPutFileDialog, Boolean inHidden ) {
-		OnlyOnce<RegisterNavServicesErrors> ();
+		Nucleus::OnlyOnce<RegisterNavServicesErrors> ();
 		ThrowOSStatus ( ::NavDialogSetSaveFileExtensionHidden ( inPutFileDialog, inHidden ));
 		}
 

@@ -9,17 +9,17 @@
 #ifndef __FILES__
 #include FRAMEWORK_HEADER(CarbonCore,Files.h)
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
 #ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"
@@ -37,17 +37,17 @@
 #ifndef NITROGEN_TEXTCOMMON_H
 #include "Nitrogen/TextCommon.h"
 #endif
-#ifndef NITROGEN_INDEXUNTILFAILURECONTAINER_H
-#include "Nitrogen/IndexUntilFailureContainer.h"
+#ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
+#include "Nucleus/IndexUntilFailureContainer.h"
 #endif
-#ifndef NITROGEN_INDEXTYPE_H
-#include "Nitrogen/IndexType.h"
+#ifndef NUCLEUS_INDEXTYPE_H
+#include "Nucleus/IndexType.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
-#ifndef NITROGEN_ARRAYCONTAINERFUNCTIONS_H
-#include "Nitrogen/ArrayContainerFunctions.h"
+#ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
+#include "Nucleus/ArrayContainerFunctions.h"
 #endif
 
 #include <vector>
@@ -174,13 +174,13 @@ namespace Nitrogen
    template <> inline   signed long FSDirID::Get<  signed long>() const  { return GetSigned(); }
    
    class FSNodeFlagsTag {};
-   typedef FlagType< FSNodeFlagsTag, UInt16, 0 > FSNodeFlags;
+   typedef Nucleus::FlagType< FSNodeFlagsTag, UInt16, 0 > FSNodeFlags;
    
    class FSNodeIDTag {};
-   typedef IDType< FSNodeIDTag, UInt32, 0 > FSNodeID;
+   typedef Nucleus::IDType< FSNodeIDTag, UInt32, 0 > FSNodeID;
    
    class FSVolumeRefNumTag {};
-   typedef IDType< FSVolumeRefNumTag, ::FSVolumeRefNum, 0 > FSVolumeRefNum;
+   typedef Nucleus::IDType< FSVolumeRefNumTag, ::FSVolumeRefNum, 0 > FSVolumeRefNum;
 
    class FSSharingFlags  // Another one-off: like FlagType< FSSharingFlagsTag, UInt8, 0 > but with both signs
      {
@@ -445,7 +445,7 @@ namespace Nitrogen
    template <> inline SInt8 FSSharingFlags::Get<SInt8>() const  { return GetSInt8(); }
 
    //class FSSharingFlagsTag {};
-   //typedef FlagType< FSSharingFlagsTag, UInt8, 0 > FSSharingFlags;
+   //typedef Nucleus::FlagType< FSSharingFlagsTag, UInt8, 0 > FSSharingFlags;
    typedef FSSharingFlags FSIOFileAttributes;
    typedef FSSharingFlags FSIOFlAttrib;
    
@@ -711,34 +711,34 @@ namespace Nitrogen
    template <> inline SInt8 FSUserPrivileges::Get<SInt8>() const  { return GetSInt8(); }
    
    //class FSUserPrivilegesTag {};
-   //typedef FlagType< FSUserPrivilegesTag, UInt8, 0 > FSUserPrivileges;
+   //typedef Nucleus::FlagType< FSUserPrivilegesTag, UInt8, 0 > FSUserPrivileges;
    typedef FSUserPrivileges FSIOACUser;
 
    class FSIteratorFlagsTag {};
-   typedef FlagType< FSIteratorFlagsTag, ::FSIteratorFlags, 0 > FSIteratorFlags;
+   typedef Nucleus::FlagType< FSIteratorFlagsTag, ::FSIteratorFlags, 0 > FSIteratorFlags;
    
 	class FSFileRefNum_Tag {};
-	typedef IDType< FSFileRefNum_Tag, SInt16, 0 > FSFileRefNum;
+	typedef Nucleus::IDType< FSFileRefNum_Tag, SInt16, 0 > FSFileRefNum;
 	
    class FSForkRefNumTag {};
-   typedef IDType< FSForkRefNumTag, SInt16, 0 > FSForkRefNum;
+   typedef Nucleus::IDType< FSForkRefNumTag, SInt16, 0 > FSForkRefNum;
     
    class FSIOPermssnTag {};
-   typedef FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
+   typedef Nucleus::FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
    typedef FSIOPermssn FSIOPermissions;
 	
    class FSIOPosModeTag {};
-   typedef FlagType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
+   typedef Nucleus::FlagType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
    typedef FSIOPosMode FSIOPositioningMode;
 	
    class FSAllocationFlagsTag {};
-   typedef FlagType< FSAllocationFlagsTag, ::FSAllocationFlags, 0 > FSAllocationFlags;
+   typedef Nucleus::FlagType< FSAllocationFlagsTag, ::FSAllocationFlags, 0 > FSAllocationFlags;
   
    class FSForkIteratorTag {};
-   typedef IDType< FSForkIteratorTag, SInt16, 0 > FSForkIterator;
+   typedef Nucleus::IDType< FSForkIteratorTag, SInt16, 0 > FSForkIterator;
 
    class FSVolumeInfoFlagsTag {};
-   typedef FlagType< FSVolumeInfoFlagsTag, UInt16, 0 > FSVolumeInfoFlags;
+   typedef Nucleus::FlagType< FSVolumeInfoFlagsTag, UInt16, 0 > FSVolumeInfoFlags;
    typedef FSVolumeInfoFlags FSIOVAtrb;
    typedef FSVolumeInfoFlags FSIOVolumeAttributes;
    
@@ -748,75 +748,86 @@ namespace Nitrogen
       static const UnderlyingType defaultValue = 0;
      };
 
-   typedef IndexType< FSVolumeIndex_Specifics > FSVolumeIndex;
+   typedef Nucleus::IndexType< FSVolumeIndex_Specifics > FSVolumeIndex;
    
    class FSFileSystemIDTag {};
-   typedef IDType< FSFileSystemIDTag, UInt16, 0 > FSFileSystemID;
+   typedef Nucleus::IDType< FSFileSystemIDTag, UInt16, 0 > FSFileSystemID;
    typedef FSFileSystemID IOFSID;
    
    class DriverReferenceNumberTag {};
-   typedef IDType< DriverReferenceNumberTag, SInt16, 0 > DriverReferenceNumber;
+   typedef Nucleus::IDType< DriverReferenceNumberTag, SInt16, 0 > DriverReferenceNumber;
    typedef DriverReferenceNumber DRefNum;
    typedef DriverReferenceNumber DriverRefNum;
 
    class HFSCatalogNodeIDTag {};
-   typedef IDType< HFSCatalogNodeIDTag, UInt32, 0 > HFSCatalogNodeID;
-	
-   template <> struct Converter< Owned<CFStringRef>, HFSUniStr255 >: public std::unary_function< HFSUniStr255, Owned<CFStringRef> >
+   typedef Nucleus::IDType< HFSCatalogNodeIDTag, UInt32, 0 > HFSCatalogNodeID;
+   
+   using ::HFSUniStr255;
+   using ::FSSpec;
+   using ::FSRef;
+  }
+
+namespace Nucleus
+  {
+   template <> struct Converter< Nucleus::Owned<Nitrogen::CFStringRef>, Nitrogen::HFSUniStr255 >: public std::unary_function< Nitrogen::HFSUniStr255, Nucleus::Owned<Nitrogen::CFStringRef> >
      {
-      Owned<CFStringRef> operator()( const HFSUniStr255& in ) const
+      Nucleus::Owned<Nitrogen::CFStringRef> operator()( const Nitrogen::HFSUniStr255& in ) const
         {
-         return CFStringCreateWithCharacters( in.unicode, in.length );
+         return Nitrogen::CFStringCreateWithCharacters( in.unicode, in.length );
         }
      };
    
-   template <> struct Converter< HFSUniStr255, CFStringRef >: public std::unary_function< CFStringRef, HFSUniStr255 >
+   template <> struct Converter< Nitrogen::HFSUniStr255, Nitrogen::CFStringRef >: public std::unary_function< Nitrogen::CFStringRef, Nitrogen::HFSUniStr255 >
      {
-      HFSUniStr255 operator()( CFStringRef in ) const
+      Nitrogen::HFSUniStr255 operator()( Nitrogen::CFStringRef in ) const
         {
          CFIndex length = Nitrogen::CFStringGetLength( in );
          if ( length > 255 )
-            throw StringTooLong();
-         HFSUniStr255 result;
+            throw Nitrogen::StringTooLong();
+         Nitrogen::HFSUniStr255 result;
          result.length = Convert<UInt16>( length );
          Nitrogen::CFStringGetCharacters( in, CFRangeMake( 0, length ), result.unicode );
          return result;
         }
      };
 
-   template <> struct Converter< UniString, HFSUniStr255 >: public std::unary_function< HFSUniStr255, UniString >
+   template <> struct Converter< Nitrogen::UniString, Nitrogen::HFSUniStr255 >: public std::unary_function< Nitrogen::HFSUniStr255, Nitrogen::UniString >
      {
-      UniString operator()( const HFSUniStr255& in ) const
+      Nitrogen::UniString operator()( const Nitrogen::HFSUniStr255& in ) const
         {
-         return UniString( in.unicode, in.unicode+in.length );
+         return Nitrogen::UniString( in.unicode, in.unicode+in.length );
         }
      };
   
-   template <> struct Converter< HFSUniStr255, UniString >: public std::unary_function< UniString, HFSUniStr255 >
+   template <> struct Converter< Nitrogen::HFSUniStr255, Nitrogen::UniString >: public std::unary_function< Nitrogen::UniString, Nitrogen::HFSUniStr255 >
      {
-      HFSUniStr255 operator()( const UniString& in ) const
+      Nitrogen::HFSUniStr255 operator()( const Nitrogen::UniString& in ) const
         {
          if ( in.size() > 255 )
-            throw StringTooLong();
-         HFSUniStr255 result;
+            throw Nitrogen::StringTooLong();
+         Nitrogen::HFSUniStr255 result;
          result.length = Convert<UInt16>( in.size() );
          std::copy( in.begin(), in.end(), result.unicode );
          return result;
         }
      };
-	
-	template <> struct Disposer< FSFileRefNum > : public std::unary_function< FSFileRefNum, void >,
-	                                              private DefaultDestructionOSStatusPolicy
+
+	template <> struct Disposer< Nitrogen::FSFileRefNum > : public std::unary_function< Nitrogen::FSFileRefNum, void >,
+	                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( FSFileRefNum file ) const
+		void operator()( Nitrogen::FSFileRefNum file ) const
 		{
-			OnlyOnce< RegisterFileManagerErrors >();
+			Nucleus::OnlyOnce< Nitrogen::RegisterFileManagerErrors >();
 			HandleDestructionOSStatus( ::FSClose( file ) );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	// 2142
-	void FSClose( Owned< FSFileRefNum > fileRefNum );
+	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum );
 	
 	// 2154
 	SInt32 FSRead( FSFileRefNum file,
@@ -867,17 +878,25 @@ namespace Nitrogen
 		FSDirID dirID;
 	};
 	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Maker< FSDirSpec >
+	struct Maker< Nitrogen::FSDirSpec >
 	{
-		FSDirSpec operator()( FSVolumeRefNum vRefNum, FSDirID dirID ) const
+		Nitrogen::FSDirSpec operator()( Nitrogen::FSVolumeRefNum vRefNum, Nitrogen::FSDirID dirID ) const
 		{
-			FSDirSpec result;
+			Nitrogen::FSDirSpec result;
 			result.vRefNum = vRefNum;
 			result.dirID = dirID;
 			return result;
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	// 2872
 	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock );
@@ -913,27 +932,35 @@ namespace Nitrogen
 		return FSMakeFSSpec( dir.vRefNum, dir.dirID, name );
 	}
 	
-	template <> struct Converter< FSSpec, FSDirSpec >: public std::unary_function< FSDirSpec, FSSpec >
+  }
+
+namespace Nucleus
+  {
+	template <> struct Converter< Nitrogen::FSSpec, Nitrogen::FSDirSpec >: public std::unary_function< Nitrogen::FSDirSpec, Nitrogen::FSSpec >
 	{
-		FSSpec operator()( const FSDirSpec& dir ) const
+		Nitrogen::FSSpec operator()( const Nitrogen::FSDirSpec& dir ) const
 		{
-			return FSMakeFSSpec( dir, NULL );
+			return Nitrogen::FSMakeFSSpec( dir, NULL );
 		}
 	};
 	
-	template <> struct Converter< FSDirSpec, FSSpec >: public std::unary_function< FSSpec, FSDirSpec >
+	template <> struct Converter< Nitrogen::FSDirSpec, Nitrogen::FSSpec >: public std::unary_function< Nitrogen::FSSpec, Nitrogen::FSDirSpec >
 	{
-		FSDirSpec operator()( const FSSpec& dir ) const;
+		Nitrogen::FSDirSpec operator()( const Nitrogen::FSSpec& dir ) const;
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	FSSpec FSMakeFSSpec( ConstStr255Param pathname );
 	
 	// 4633
-	Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
+	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
 	                                 FSIOPermssn     permissions );
 	
 	// 4648
-	Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
+	Nucleus::Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
 	                                 FSIOPermssn     permissions );
 	
 	// 4663
@@ -958,25 +985,31 @@ namespace Nitrogen
 	
 	inline void FSpCatMove( const FSSpec& source, FSDirSpec dest )
 	{
-		FSpCatMove( source, Convert< FSSpec >( dest ) );
+		FSpCatMove( source, Nucleus::Convert< FSSpec >( dest ) );
 	}
 	
 	inline void FSpCatMove( const FSSpec& source, FSDirID dest )
 	{
-		FSpCatMove( source, Make< FSDirSpec >( FSVolumeRefNum( source.vRefNum ), dest ) );
+		FSpCatMove( source, Nucleus::Make< FSDirSpec >( FSVolumeRefNum( source.vRefNum ), dest ) );
 	}
 	
    // 5414
    FSRef FSpMakeFSRef( const FSSpec& );
+  }
 
-   template <> struct Converter< FSRef, FSSpec >: public std::unary_function< FSSpec, FSRef >
+namespace Nucleus
+  {
+   template <> struct Converter< Nitrogen::FSRef, Nitrogen::FSSpec >: public std::unary_function< Nitrogen::FSSpec, Nitrogen::FSRef >
      {
-      FSRef operator()( const FSSpec& spec ) const
+      Nitrogen::FSRef operator()( const Nitrogen::FSSpec& spec ) const
         {
-         return FSpMakeFSRef( spec );
+         return Nitrogen::FSpMakeFSRef( spec );
         }
      };
+  }
 
+namespace Nitrogen
+  {
    FSRef FSMakeFSRefUnicode( const FSRef&   parentRef,
                              UniCharCount   nameLength,
                              const UniChar *name,
@@ -994,9 +1027,6 @@ namespace Nitrogen
                              TextEncoding     textEncodingHint );
    
    bool FSCompareFSRefs( const FSRef& ref1, const FSRef& ref2 );
-
-   inline bool operator==( const FSRef& ref1, const FSRef& ref2 )   { return FSCompareFSRefs( ref1, ref2 ); }
-   inline bool operator!=( const FSRef& ref1, const FSRef& ref2 )   { return !( ref1 == ref2 ); }
 
 
    struct FSRefSpec
@@ -1023,19 +1053,30 @@ namespace Nitrogen
          void operator()( const FSRefSpec& r ) const          { operator()( r.fsRef ); }
      };
    
-   template <> struct OwnedDefaults< FSRef >           { typedef FileSystemDisposer Disposer; };
-   template <> struct OwnedDefaults< FSSpec >          { typedef FileSystemDisposer Disposer; };
-   template <> struct OwnedDefaults< FSDirID >         { typedef FileSystemDisposer Disposer; };
-   template <> struct OwnedDefaults< FSRefSpec >       { typedef FileSystemDisposer Disposer; };
-   template <> struct OwnedDefaults< FSRefSpecDirID >  { typedef FileSystemDisposer Disposer; };
+  }
+
+namespace Nucleus
+  {
+   inline bool operator==( const ::FSRef& ref1, const ::FSRef& ref2 )   { return Nitrogen::FSCompareFSRefs( ref1, ref2 ); }
+   inline bool operator!=( const ::FSRef& ref1, const ::FSRef& ref2 )   { return !( ref1 == ref2 ); }
+
+   template <> struct OwnedDefaults< Nitrogen::FSRef >           { typedef Nitrogen::FileSystemDisposer Disposer; };
+   template <> struct OwnedDefaults< Nitrogen::FSSpec >          { typedef Nitrogen::FileSystemDisposer Disposer; };
+   template <> struct OwnedDefaults< Nitrogen::FSDirID >         { typedef Nitrogen::FileSystemDisposer Disposer; };
+   template <> struct OwnedDefaults< Nitrogen::FSRefSpec >       { typedef Nitrogen::FileSystemDisposer Disposer; };
+   template <> struct OwnedDefaults< Nitrogen::FSRefSpecDirID >  { typedef Nitrogen::FileSystemDisposer Disposer; };
    
-   template <> struct LivelinessTraits< FSRef,          FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
-   template <> struct LivelinessTraits< FSSpec,         FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
-   template <> struct LivelinessTraits< FSRefSpec,      FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
-   template <> struct LivelinessTraits< FSRefSpecDirID, FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+   template <> struct LivelinessTraits< Nitrogen::FSRef,          Nitrogen::FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+   template <> struct LivelinessTraits< Nitrogen::FSSpec,         Nitrogen::FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+   template <> struct LivelinessTraits< Nitrogen::FSRefSpec,      Nitrogen::FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+   template <> struct LivelinessTraits< Nitrogen::FSRefSpecDirID, Nitrogen::FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+  }
+
+namespace Nitrogen
+  {
 
 
-   typedef Owned<FSRefSpec> FSCreateFileUnicode_Result;
+   typedef Nucleus::Owned<FSRefSpec> FSCreateFileUnicode_Result;
    
    // 5588
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
@@ -1056,7 +1097,7 @@ namespace Nitrogen
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&     parentRef,
                                                    const UniString& name );
    
-   typedef Owned<FSRefSpecDirID> FSCreateDirectoryUnicode_Result;
+   typedef Nucleus::Owned<FSRefSpecDirID> FSCreateDirectoryUnicode_Result;
    
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&         parentRef,
                                                              UniCharCount         nameLength,
@@ -1082,18 +1123,18 @@ namespace Nitrogen
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&     parentRef,
                                                              const UniString& name );
 
-   void FSDeleteObject( Owned<FSRef> );
+   void FSDeleteObject( Nucleus::Owned<FSRef> );
 
-   void FSMoveObject( Owned<FSRef>&, const FSRef& destDirectory );
+   void FSMoveObject( Nucleus::Owned<FSRef>&, const FSRef& destDirectory );
 
    void FSExchangeObjects( const FSRef& ref, const FSRef& destRef );
    
-   void FSRenameUnicode( Owned<FSRef>&  ref,
+   void FSRenameUnicode( Nucleus::Owned<FSRef>&  ref,
                          UniCharCount   nameLength,
                          const UniChar *name,
                          TextEncoding   textEncodingHint );
 
-   void FSRenameUnicode( Owned<FSRef>&    ref,
+   void FSRenameUnicode( Nucleus::Owned<FSRef>&    ref,
                          const UniString& name,
                          TextEncoding     textEncodingHint );
 
@@ -1265,17 +1306,23 @@ namespace Nitrogen
                           FSCatalogInfoBitmap  whichInfo,
                           const FSCatalogInfo& catalogInfo );
    
-   
-   template <> struct Converter< FSSpec, FSRef >: public std::unary_function< FSRef, FSSpec >
+  }
+
+namespace Nucleus
+  {   
+   template <> struct Converter< Nitrogen::FSSpec, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, Nitrogen::FSSpec >
      {
-      FSSpec operator()( const FSRef& ref ) const
+      Nitrogen::FSSpec operator()( const Nitrogen::FSRef& ref ) const
         {
-         FSSpec result;
-         FSGetCatalogInfo( ref, 0, 0, 0, &result, 0 );
+         ::FSSpec result;
+         Nitrogen::FSGetCatalogInfo( ref, 0, 0, 0, &result, 0 );
          return result;
         }
      };
+  }
 
+namespace Nitrogen
+  {
 
 #ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSCatalogInfoBitmap bit >
@@ -1293,19 +1340,28 @@ namespace Nitrogen
      }
 #endif
 
-   template <> struct Disposer<FSIterator>: public std::unary_function< FSIterator, void >,
-                                            private DefaultDestructionOSStatusPolicy
+   using ::FSIterator;
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer<Nitrogen::FSIterator>: public std::unary_function< Nitrogen::FSIterator, void >,
+                                                      private Nitrogen::DefaultDestructionOSStatusPolicy
      {
-      void operator()( FSIterator iterator ) const
+      void operator()( Nitrogen::FSIterator iterator ) const
         {
-         OnlyOnce<RegisterFileManagerErrors>();
+         Nucleus::OnlyOnce<Nitrogen::RegisterFileManagerErrors>();
          HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
         }
      };
+  }
 
-   Owned<FSIterator> FSOpenIterator( const FSRef& container, FSIteratorFlags iteratorFlags );
+namespace Nitrogen
+  {
+
+   Nucleus::Owned<FSIterator> FSOpenIterator( const FSRef& container, FSIteratorFlags iteratorFlags );
     
-   void FSCloseIterator( Owned<FSIterator> );
+   void FSCloseIterator( Nucleus::Owned<FSIterator> );
 
 #if 0
    template < class Specifics >
@@ -1486,8 +1542,11 @@ namespace Nitrogen
          const UniString& Name() const    { return name; }
      };
    
+   using Nucleus::operator==;
+   
    inline bool operator==( const FSForkRef& a, const FSForkRef& b )
      {
+      //using Nucleus::operator==;
       return a.Name() == b.Name() && a.File() == b.File();
      }
    
@@ -1496,26 +1555,34 @@ namespace Nitrogen
       return !( a == b );
      }
    
-   template <> struct Disposer<FSForkRef>: public std::unary_function< FSForkRef, void >,
-                                           private DefaultDestructionOSStatusPolicy
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer<Nitrogen::FSForkRef>: public std::unary_function< Nitrogen::FSForkRef, void >,
+                                                     private Nitrogen::DefaultDestructionOSStatusPolicy
      {
-      void operator()( const FSForkRef& fork ) const
+      void operator()( const Nitrogen::FSForkRef& fork ) const
         {
-         OnlyOnce<RegisterFileManagerErrors>();
+         Nucleus::OnlyOnce<Nitrogen::RegisterFileManagerErrors>();
          HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
                                                     fork.Name().size(),
                                                     fork.Name().data() ) );
         }
      };
+  }
 
-   Owned<FSForkRef> FSCreateFork( const FSRef&   ref,
+namespace Nitrogen
+  {
+
+   Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&   ref,
                                   UniCharCount   forkNameLength,
                                   const UniChar *forkName );
 
-   Owned<FSForkRef> FSCreateFork( const FSRef&     ref,
+   Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&     ref,
                                   const UniString& forkName );
 
-   void FSDeleteFork( Owned<FSForkRef> );
+   void FSDeleteFork( Nucleus::Owned<FSForkRef> );
    
    struct FSIterateForks_Result
      {
@@ -1527,26 +1594,34 @@ namespace Nitrogen
    FSIterateForks_Result FSIterateForks( const FSRef&    ref,
                                          CatPositionRec& forkIterator );
    
-   template <> struct Disposer<FSForkRefNum>: public std::unary_function< FSForkRefNum, void >,
-                                              private DefaultDestructionOSStatusPolicy
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer<Nitrogen::FSForkRefNum>: public std::unary_function< Nitrogen::FSForkRefNum, void >,
+														private Nitrogen::DefaultDestructionOSStatusPolicy
      {
-      void operator()( FSForkRefNum fork ) const
+      void operator()( Nitrogen::FSForkRefNum fork ) const
         {
-         OnlyOnce<RegisterFileManagerErrors>();
+         Nucleus::OnlyOnce<Nitrogen::RegisterFileManagerErrors>();
          HandleDestructionOSStatus( ::FSCloseFork( fork ) );
         }
      };
+  }
+
+namespace Nitrogen
+  {
    
-   Owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
+   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
                                    UniCharCount   forkNameLength,
                                    const UniChar *forkName,
                                    FSIOPermssn    permissions );
 
-   Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
+   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
                                    const UniString forkName,
                                    FSIOPermssn     permissions );
 
-   Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
+   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
                                    FSIOPermssn      permissions );
    
    ByteCount FSReadFork( FSForkRefNum fork,
@@ -1627,7 +1702,7 @@ namespace Nitrogen
    
    void FSFlushFork( FSForkRefNum forkRefNum );
    
-   void FSCloseFork( Owned<FSForkRefNum> forkRefNum );
+   void FSCloseFork( Nucleus::Owned<FSForkRefNum> forkRefNum );
    
    struct FSGetForkCBInfo_Result
      {
@@ -1733,13 +1808,13 @@ namespace Nitrogen
       static Type Get( const FSVolumeInfo& info )
         {
          FSVolumeInfoFinderInfo result;
-         ArrayAssign( result.finderInfo, info.finderInfo );
+         Nucleus::ArrayAssign( result.finderInfo, info.finderInfo );
          return result;
         }
 
       static void Set( FSVolumeInfo& info, const FSVolumeInfoFinderInfo& value )
         {
-         ArrayAssign( info.finderInfo, value.finderInfo );
+         Nucleus::ArrayAssign( info.finderInfo, value.finderInfo );
         }      
      };
 #endif
@@ -1873,12 +1948,12 @@ namespace Nitrogen
            }
      };
 
-   class Volume_Container: public IndexUntilFailureContainer< Volume_ContainerSpecifics >
+   class Volume_Container: public Nucleus::IndexUntilFailureContainer< Volume_ContainerSpecifics >
      {
       friend Volume_Container Volumes();
       private:
          Volume_Container()
-           : IndexUntilFailureContainer< Volume_ContainerSpecifics >( Volume_ContainerSpecifics() )
+           : Nucleus::IndexUntilFailureContainer< ::Nitrogen::Volume_ContainerSpecifics >( ::Nitrogen::Volume_ContainerSpecifics() )
            {}
      };
 
@@ -1920,13 +1995,13 @@ namespace Nitrogen
    template < ::FSVolumeInfoBitmap whichInfo > VolumeInfo_Container<whichInfo> VolumeInfos();
    
    template < ::FSVolumeInfoBitmap whichInfo >
-   class VolumeInfo_Container: public IndexUntilFailureContainer< VolumeInfo_ContainerSpecifics<whichInfo> >
+   class VolumeInfo_Container: public Nucleus::IndexUntilFailureContainer< VolumeInfo_ContainerSpecifics<whichInfo> >
      {
       friend VolumeInfo_Container<whichInfo> VolumeInfos<whichInfo>();
 
       private:
          VolumeInfo_Container()
-           : IndexUntilFailureContainer< VolumeInfo_ContainerSpecifics<whichInfo> >( VolumeInfo_ContainerSpecifics<whichInfo>() )
+           : Nucleus::IndexUntilFailureContainer< VolumeInfo_ContainerSpecifics<whichInfo> >( VolumeInfo_ContainerSpecifics<whichInfo>() )
            {}
      };
    
@@ -1954,12 +2029,12 @@ namespace Nitrogen
            }
      };
 
-   class VolumeName_Container: public IndexUntilFailureContainer< VolumeName_ContainerSpecifics >
+   class VolumeName_Container: public Nucleus::IndexUntilFailureContainer< VolumeName_ContainerSpecifics >
      {
       friend VolumeName_Container VolumeNames();
       private:
          VolumeName_Container()
-           : IndexUntilFailureContainer< VolumeName_ContainerSpecifics >( VolumeName_ContainerSpecifics() )
+           : Nucleus::IndexUntilFailureContainer< ::Nitrogen::VolumeName_ContainerSpecifics >( ::Nitrogen::VolumeName_ContainerSpecifics() )
            {}
      };
 
@@ -1986,12 +2061,12 @@ namespace Nitrogen
            }
      };
 
-   class VolumeRootDirectory_Container: public IndexUntilFailureContainer< VolumeRootDirectory_ContainerSpecifics >
+   class VolumeRootDirectory_Container: public Nucleus::IndexUntilFailureContainer< VolumeRootDirectory_ContainerSpecifics >
      {
       friend VolumeRootDirectory_Container VolumeRootDirectories();
       private:
          VolumeRootDirectory_Container()
-           : IndexUntilFailureContainer< VolumeRootDirectory_ContainerSpecifics >( VolumeRootDirectory_ContainerSpecifics() )
+           : Nucleus::IndexUntilFailureContainer< ::Nitrogen::VolumeRootDirectory_ContainerSpecifics >( ::Nitrogen::VolumeRootDirectory_ContainerSpecifics() )
            {}
      };
 
@@ -2048,20 +2123,23 @@ namespace Nitrogen
    
    FSPathMakeRef_Result FSPathMakeRef( const UInt8 *path );
    FSPathMakeRef_Result FSPathMakeRef( const std::string& path );
-   
-   template <> struct Converter< FSRef, std::string >: public std::unary_function< std::string, FSRef >
+  }
+
+namespace Nucleus
+  {   
+   template <> struct Converter< Nitrogen::FSRef, std::string >: public std::unary_function< std::string, Nitrogen::FSRef >
      {
-      FSRef operator()( const std::string& path ) const
+      Nitrogen::FSRef operator()( const std::string& path ) const
         {
-         return FSPathMakeRef( path );
+         return Nitrogen::FSPathMakeRef( path );
         }
      };
 
-   template <> struct Converter< std::string, FSRef >: public std::unary_function< FSRef, std::string >
+   template <> struct Converter< std::string, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, std::string >
      {
-      std::string operator()( const FSRef& ref ) const
+      std::string operator()( const Nitrogen::FSRef& ref ) const
         {
-         return FSRefMakePath( ref );
+         return Nitrogen::FSRefMakePath( ref );
         }
      };
   }

@@ -38,8 +38,12 @@
 
 namespace Nitrogen
   {
+   using ::LongDateTime;
+   using ::LongDateRec;
+   using ::DateTimeRec;
+
    class DateForm_Tag {};
-   typedef SelectorType< DateForm_Tag, SInt8, shortDate > DateForm;
+   typedef Nucleus::SelectorType< DateForm_Tag, SInt8, shortDate > DateForm;
    
    typedef UInt32 DateTime;
    
@@ -109,42 +113,45 @@ namespace Nitrogen
 		return d;
 	}
 	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Converter< LongDateTime, LongDateRec > : public std::unary_function< LongDateRec, LongDateTime >
+	struct Converter< Nitrogen::LongDateTime, Nitrogen::LongDateRec > : public std::unary_function< Nitrogen::LongDateRec, Nitrogen::LongDateTime >
 	{
-		LongDateTime operator()( const LongDateRec& input ) const
+		Nitrogen::LongDateTime operator()( const Nitrogen::LongDateRec& input ) const
 		{
-			return LongDateToSeconds( input );
+			return Nitrogen::LongDateToSeconds( input );
 		}
 	};
 	
 	template <>
-	struct Converter< LongDateRec, LongDateTime > : public std::unary_function< LongDateTime, LongDateRec >
+	struct Converter< Nitrogen::LongDateRec, Nitrogen::LongDateTime > : public std::unary_function< Nitrogen::LongDateTime, Nitrogen::LongDateRec >
 	{
-		LongDateRec operator()( const LongDateTime& input ) const
+		Nitrogen::LongDateRec operator()( const Nitrogen::LongDateTime& input ) const
 		{
-			return LongSecondsToDate( input );
+			return Nitrogen::LongSecondsToDate( input );
 		}
 	};
 	
 	template <>
-	struct Converter< DateTime, DateTimeRec > : public std::unary_function< DateTimeRec, DateTime >
+	struct Converter< Nitrogen::DateTime, Nitrogen::DateTimeRec > : public std::unary_function< Nitrogen::DateTimeRec, Nitrogen::DateTime >
 	{
-		DateTime operator()( const DateTimeRec& input ) const
+		Nitrogen::DateTime operator()( const Nitrogen::DateTimeRec& input ) const
 		{
-			return DateToSeconds( input );
+			return Nitrogen::DateToSeconds( input );
 		}
 	};
 	
 	template <>
-	struct Converter< DateTimeRec, DateTime > : public std::unary_function< DateTime, DateTimeRec >
+	struct Converter< Nitrogen::DateTimeRec, Nitrogen::DateTime > : public std::unary_function< Nitrogen::DateTime, Nitrogen::DateTimeRec >
 	{
-		DateTimeRec operator()( const DateTime& input ) const
+		Nitrogen::DateTimeRec operator()( const Nitrogen::DateTime& input ) const
 		{
-			return SecondsToDate( input );
+			return Nitrogen::SecondsToDate( input );
 		}
 	};
-	
   }
 
 #endif

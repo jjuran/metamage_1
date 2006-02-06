@@ -3,8 +3,8 @@
 #ifndef NITROGEN_STR_H
 #define NITROGEN_STR_H
 
-#ifndef NITROGEN_CONVERT_H
-#include "Nitrogen/Convert.h"
+#ifndef NUCLEUS_CONVERT_H
+#include "Nucleus/Convert.h"
 #endif
 
 #include <string>
@@ -54,7 +54,10 @@ namespace Nitrogen
    typedef Str<31>  Str31;
    typedef Str<27>  Str27;
    typedef Str<15>  Str15;
-   
+  }
+
+namespace Nucleus
+  {
    template <>
    struct Converter< std::string, const unsigned char * >: public std::unary_function< const unsigned char *, std::string >
      {
@@ -64,13 +67,11 @@ namespace Nitrogen
          return std::string( begin, begin+input[0] ); 
         }
      };
-	
 	template <>
 	struct ConvertInputTraits< unsigned char* > : ConvertInputTraits< const unsigned char* > {};
 	
 	template < unsigned char length >
 	struct ConvertInputTraits< const unsigned char[length] > : ConvertInputTraits< const unsigned char* > {};
-	
 #ifdef __APPLE_CC__
 	
 	// This must be present for gcc and absent for CodeWarrior.
@@ -82,7 +83,7 @@ namespace Nitrogen
 #endif
 	
 	template < unsigned char length >
-	struct ConvertInputTraits< Str< length > > : ConvertInputTraits< const unsigned char* > {};
+	struct ConvertInputTraits< Nitrogen::Str< length > > : ConvertInputTraits< const unsigned char* > {};
 	
 	// Convert StringHandle to std::string
 	template <>
@@ -92,11 +93,12 @@ namespace Nitrogen
 		{
 			// We don't need to lock the handle because we copy it to static memory
 			// before touching the heap, after which point we work from the copy.
-			return Convert< std::string >( Str255( *input ) );
+			return Convert< std::string >( Nitrogen::
+            Str255( *input ) );
 		}
 	};
-	
-}
+  }
+
 	
 #endif
 

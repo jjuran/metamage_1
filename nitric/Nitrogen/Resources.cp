@@ -25,7 +25,7 @@ namespace Nitrogen
 		return r;
 	}
 	
-	void CloseResFile( Owned< ResFileRefNum > resFileRefNum )
+	void CloseResFile( Nucleus::Owned< ResFileRefNum > resFileRefNum )
 	{
 		::CloseResFile( resFileRefNum.Release() );
 		
@@ -34,7 +34,7 @@ namespace Nitrogen
 	
 	void ResError()
 	{
-		OnlyOnce< RegisterResourceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterResourceManagerErrors >();
 		
 		ThrowOSStatus( ::ResError() );
 	}
@@ -154,12 +154,12 @@ namespace Nitrogen
 		ResError();
 	}
 	
-	Owned< Handle > DetachResource( Handle r )
+	Nucleus::Owned< Handle > DetachResource( Handle r )
 	{
 		::DetachResource( r );
 		ResError();
 		
-		return Owned< Handle >::Seize( r );
+		return Nucleus::Owned< Handle >::Seize( r );
 	}
 	
 	ResID UniqueID ( ResType type )
@@ -207,7 +207,7 @@ namespace Nitrogen
 		ResError();
 	}
 	
-	Handle AddResource( Owned< Handle >   h,
+	Handle AddResource( Nucleus::Owned< Handle >   h,
 	                    ResType           type,
 	                    ResID             resID,
 	                    ConstStr255Param  name )
@@ -218,7 +218,7 @@ namespace Nitrogen
 		return h.Release();
 	}
 	
-	Handle AddResource( Owned< Handle > h, const GetResInfo_Result& resInfo )
+	Handle AddResource( Nucleus::Owned< Handle > h, const GetResInfo_Result& resInfo )
 	{
 		return AddResource( h, resInfo.type, resInfo.id, resInfo.name );
 	}
@@ -251,7 +251,7 @@ namespace Nitrogen
 		ResError();
 	}
 	
-	Owned< Handle > RemoveResource( Handle r )
+	Nucleus::Owned< Handle > RemoveResource( Handle r )
 	{
 		// New Inside Macintosh says that after calling RemoveResource() on a
 		// resource handle, the memory will be released either by calling DisposeHandle,
@@ -265,7 +265,7 @@ namespace Nitrogen
 		::RemoveResource( r );
 		ResError();
 		
-		return Owned< Handle >::Seize( r );
+		return Nucleus::Owned< Handle >::Seize( r );
 	}
 	
 	void UpdateResFile( ResFileRefNum refNum )
@@ -300,16 +300,16 @@ namespace Nitrogen
 		ResError();
 	}
 	
-	Owned< ResFileRefNum > FSpOpenResFile( const FSSpec& spec, FSIOPermssn permissions )
+	Nucleus::Owned< ResFileRefNum > FSpOpenResFile( const FSSpec& spec, FSIOPermssn permissions )
 	{
 		ResFileRefNum refNum( ::FSpOpenResFile( &spec, permissions ) );
 		
 		ResError();
 		
-		return Owned< ResFileRefNum >::Seize( refNum );
+		return Nucleus::Owned< ResFileRefNum >::Seize( refNum );
 	}
 	
-	Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref, 
+	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref, 
 	                                           UniCharCount    forkNameLength, 
 	                                           const UniChar*  forkName, 
 	                                           FSIOPermssn     permissions )
@@ -321,10 +321,10 @@ namespace Nitrogen
 		                                     permissions,
 		                                     &refNum ) );
 		
-		return Owned< ResFileRefNum >::Seize( ResFileRefNum( refNum ) );
+		return Nucleus::Owned< ResFileRefNum >::Seize( ResFileRefNum( refNum ) );
 	}
 	
-	Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref, 
+	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref, 
 	                                           const UniString&  forkName, 
 	                                           FSIOPermssn       permissions )
 	{

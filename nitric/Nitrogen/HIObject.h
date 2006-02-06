@@ -25,16 +25,16 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen {
@@ -43,31 +43,46 @@ namespace Nitrogen {
 	
 	using ::HIObjectRef;
 
+  }
+
+namespace Nucleus
+  {
 //	marshall sez: Dang! - we have to have our own Disposer because we don't have "HIObjectGetTypeID"
 //	template <> struct OwnedDefaults< HIObjectRef > : OwnedDefaults<CFTypeRef>  {};
-//	template <> struct CFType_Traits< HIObjectRef > : Basic_CFType_Traits< CFDateRef, ::HIObjectGetTypeID > {};
-	template <> struct Disposer< HIObjectRef >: public std::unary_function< HIObjectRef, void >
+//	template <> struct CFType_Traits< HIObjectRef > : Basic_CFType_Traits< CFDateRef, ::HIObjectGetTypeID > {};  }
+	template <> struct Disposer< Nitrogen::HIObjectRef >: public std::unary_function< Nitrogen::HIObjectRef, void >
 		{
-		void operator()( HIObjectRef hi ) const
+		void operator()( Nitrogen::HIObjectRef hi ) const
 			{
 				::CFRelease ( hi );
 			}
 		};
+  }
+
+namespace Nitrogen
+  {
 
 	template <> struct DescType_Traits< typeHIObjectRef >: POD_DescType_Traits< HIObjectRef > {};
 
 	using ::HIObjectClassRef;
-	template <> struct Disposer< HIObjectClassRef >: public std::unary_function< HIObjectClassRef, void >
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::HIObjectClassRef >: public std::unary_function< Nitrogen::HIObjectClassRef, void >
 		{
-		void operator()( HIObjectClassRef hi ) const
+		void operator()( Nitrogen::HIObjectClassRef hi ) const
 			{
 				(void) ::HIObjectUnregisterClass ( hi );
 			}
 		};
+  }
 
+namespace Nitrogen
+  {
 
 /*	As Lisa says, Level 0 */
-	inline Owned<HIObjectClassRef> HIObjectRegisterSubclass (
+	inline Nucleus::Owned<HIObjectClassRef> HIObjectRegisterSubclass (
 			  CFStringRef            inClassID,
 			  CFStringRef            inBaseClassID,
 			  OptionBits             inOptions,
@@ -75,17 +90,17 @@ namespace Nitrogen {
 			  UInt32                 inNumEvents,
 			  const EventTypeSpec *  inEventList,
 			  void *                 inConstructData = 0 ) {
-		OnlyOnce<RegisterHIObjectErrors>();
+		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
 		HIObjectClassRef retVal;
 		ThrowOSStatus ( ::HIObjectRegisterSubclass ( inClassID, inBaseClassID, inOptions,
 	  						inConstructProc, inNumEvents, inEventList, inConstructData, &retVal ));
-		return Owned<HIObjectClassRef>::Seize( retVal );
+		return Nucleus::Owned<HIObjectClassRef>::Seize( retVal );
 		}
  
 
 /*	Level 1 (UPP-creating) HIObjectRegisterSubclass */
 	template < EventHandlerProcPtr handler >
-	Owned<HIObjectClassRef> HIObjectRegisterSubclass(
+	Nucleus::Owned<HIObjectClassRef> HIObjectRegisterSubclass(
 			CFStringRef            inClassID,
 			CFStringRef            inBaseClassID,
 			OptionBits             inOptions,
@@ -101,31 +116,31 @@ namespace Nitrogen {
 
 /*	Level 2 (basic Nitrogen signature) HIObjectRegisterSubclass */
 	template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-	Owned<HIObjectClassRef> HIObjectRegisterSubclass (
+	Nucleus::Owned<HIObjectClassRef> HIObjectRegisterSubclass (
 			CFStringRef            inClassID,
 			CFStringRef            inBaseClassID,
 			OptionBits             inOptions,
 			UInt32                 inNumEvents,
 			const EventTypeSpec *  inEventList,
-			typename ObjectParameterTraits<Object>::Type inUserData = typename ObjectParameterTraits<Object>::Type() ) {
+			typename Nucleus::ObjectParameterTraits<Object>::Type inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() ) {
 
 		return HIObjectRegisterSubclass ( inClassID, inBaseClassID, inOptions,
 							EventHandler_Bound_ObjectGlue< Object, handler >::UPP(),
-							inNumEvents, inEventList, ObjectParameterTraits<Object>::ConvertToPointer( inUserData ));
+							inNumEvents, inEventList, Nucleus::ObjectParameterTraits<Object>::ConvertToPointer( inUserData ));
 		}
 
 
 //	inline void HIObjectUnregisterClass ( HIObjectClassRef inClassRef ) {
-//		OnlyOnce<RegisterHIObjectErrors>();
+//		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
 //		ThrowOSStatus ( ::HIObjectUnregisterClass ( inClassRef ));
 //		}
 
 
-	inline Owned<HIObjectRef> HIObjectCreate ( CFStringRef inClassID, EventRef inConstructData ) {
-		OnlyOnce<RegisterHIObjectErrors>();
+	inline Nucleus::Owned<HIObjectRef> HIObjectCreate ( CFStringRef inClassID, EventRef inConstructData ) {
+		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
 		HIObjectRef retVal;
 		ThrowOSStatus ( ::HIObjectCreate ( inClassID, inConstructData, &retVal ));
-  	    return Owned<HIObjectRef>::Seize( retVal );
+  	    return Nucleus::Owned<HIObjectRef>::Seize( retVal );
 		}
 
 /*	extern EventTargetRef HIObjectGetEventTarget(HIObjectRef inObject) */
@@ -143,18 +158,18 @@ namespace Nitrogen {
 /*	extern void * HIObjectDynamicCast(HIObjectRef inObject, CFStringRef inClassID) */
 	using ::HIObjectDynamicCast;
 
-	inline Owned<HIObjectRef> HIObjectCreateFromBundle ( CFBundleRef inBundle ) {
-		OnlyOnce<RegisterHIObjectErrors>();
+	inline Nucleus::Owned<HIObjectRef> HIObjectCreateFromBundle ( CFBundleRef inBundle ) {
+		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
 		HIObjectRef retVal;
 		ThrowOSStatus ( ::HIObjectCreateFromBundle ( inBundle, &retVal ));
-  	    return Owned<HIObjectRef>::Seize( retVal );
+  	    return Nucleus::Owned<HIObjectRef>::Seize( retVal );
 		}
 	
 /*	extern Boolean HIObjectIsAccessibilityIgnored(HIObjectRef inObject) */
 	using ::HIObjectIsAccessibilityIgnored;
 
 	inline void HIObjectSetAccessibilityIgnored ( HIObjectRef inObject, Boolean inIgnored ) {
-		OnlyOnce<RegisterHIObjectErrors>();
+		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
 		ThrowOSStatus ( ::HIObjectSetAccessibilityIgnored ( inObject, inIgnored ));
 		}
 	}

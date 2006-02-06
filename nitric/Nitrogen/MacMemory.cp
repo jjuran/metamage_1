@@ -8,48 +8,48 @@ namespace Nitrogen
   {
    void MemError()
      {
-      OnlyOnce<RegisterMemoryManagerErrors>();
+      Nucleus::OnlyOnce<RegisterMemoryManagerErrors>();
       ThrowOSStatus( ::MemError() );
      }
    
-	Owned< Handle > NewHandle( std::size_t size )
+	Nucleus::Owned< Handle > NewHandle( std::size_t size )
 	{
-		return Owned< Handle >::Seize( CheckMemory( ::NewHandle( size ) ) );
+		return Nucleus::Owned< Handle >::Seize( CheckMemory( ::NewHandle( size ) ) );
 	}
 	
-	Owned< Handle > NewHandleSys( std::size_t size )
+	Nucleus::Owned< Handle > NewHandleSys( std::size_t size )
 	{
-		return Owned< Handle >::Seize( CheckMemory( ::NewHandleSys( size ) ) );
+		return Nucleus::Owned< Handle >::Seize( CheckMemory( ::NewHandleSys( size ) ) );
 	}
 	
-	Owned< Handle > NewHandleClear( std::size_t size )
+	Nucleus::Owned< Handle > NewHandleClear( std::size_t size )
 	{
-		return Owned< Handle >::Seize( CheckMemory( ::NewHandleClear( size ) ) );
+		return Nucleus::Owned< Handle >::Seize( CheckMemory( ::NewHandleClear( size ) ) );
 	}
 	
-	Owned< Handle > NewHandleSysClear( std::size_t size )
+	Nucleus::Owned< Handle > NewHandleSysClear( std::size_t size )
 	{
-		return Owned< Handle >::Seize( CheckMemory( ::NewHandleSysClear( size ) ) );
+		return Nucleus::Owned< Handle >::Seize( CheckMemory( ::NewHandleSysClear( size ) ) );
 	}
 	
-	Owned< Ptr > NewPtr( std::size_t size )
+	Nucleus::Owned< Ptr > NewPtr( std::size_t size )
 	{
-		return Owned< Ptr >::Seize( CheckMemory( ::NewPtr( size ) ) );
+		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtr( size ) ) );
 	}
 	
-	Owned< Ptr > NewPtrSys( std::size_t size )
+	Nucleus::Owned< Ptr > NewPtrSys( std::size_t size )
 	{
-		return Owned< Ptr >::Seize( CheckMemory( ::NewPtrSys( size ) ) );
+		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtrSys( size ) ) );
 	}
 	
-	Owned< Ptr > NewPtrClear( std::size_t size )
+	Nucleus::Owned< Ptr > NewPtrClear( std::size_t size )
 	{
-		return Owned< Ptr >::Seize( CheckMemory( ::NewPtrClear( size ) ) );
+		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtrClear( size ) ) );
 	}
 	
-	Owned< Ptr > NewPtrSysClear( std::size_t size )
+	Nucleus::Owned< Ptr > NewPtrSysClear( std::size_t size )
 	{
-		return Owned< Ptr >::Seize( CheckMemory( ::NewPtrSysClear( size ) ) );
+		return Nucleus::Owned< Ptr >::Seize( CheckMemory( ::NewPtrSysClear( size ) ) );
 	}
 	
 	

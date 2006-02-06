@@ -20,7 +20,7 @@ namespace Nitrogen
 {
 	
 	class GWorldFlags_Tag {};
-	typedef FlagType< GWorldFlags_Tag, ::GWorldFlags > GWorldFlags;
+	typedef Nucleus::FlagType< GWorldFlags_Tag, ::GWorldFlags > GWorldFlags;
 	
 	typedef CGrafPtr GWorldPtr;
 	
@@ -31,13 +31,16 @@ namespace Nitrogen
 	};
 	
 	typedef GWorld_State GetGWorld_Result;
-	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Maker< GWorld_State >
+	struct Maker< Nitrogen::GWorld_State >
 	{
-		GWorld_State operator()( GWorldPtr port, GDHandle gdh = NULL ) const
+		Nitrogen::GWorld_State operator()( Nitrogen::GWorldPtr port, Nitrogen::GDHandle gdh = NULL ) const
 		{
-			GWorld_State result;
+			Nitrogen::GWorld_State result;
 			
 			result.port = port;
 			result.gdh  = gdh;
@@ -45,8 +48,10 @@ namespace Nitrogen
 			return result;
 		}
 	};
-	
-	
+  }
+
+namespace Nitrogen
+  {
 	struct GWorldDisposer : public std::unary_function< GWorldPtr, void >
 	{
 		void operator()( GWorldPtr gWorld ) const
@@ -55,13 +60,13 @@ namespace Nitrogen
 		}
 	};
 	
-	Owned< GWorldPtr, GWorldDisposer > NewGWorld( short        pixelDepth,
+	Nucleus::Owned< GWorldPtr, GWorldDisposer > NewGWorld( short        pixelDepth,
 	                                              const Rect&  boundsRect,
 	                                              CTabHandle   cTable   = NULL,
 	                                              GDHandle     aGDevice = NULL,
 	                                              GWorldFlags  flags    = GWorldFlags() );
 	
-	Owned< GWorldPtr, GWorldDisposer > NewGWorld( short        pixelDepth,
+	Nucleus::Owned< GWorldPtr, GWorldDisposer > NewGWorld( short        pixelDepth,
 	                                              const Rect&  boundsRect,
 	                                              GWorldFlags  flags );
 	
@@ -71,14 +76,14 @@ namespace Nitrogen
 	
 	using ::UnlockPixels;
 	
-	GWorldFlags UpdateGWorld( Owned< GWorldPtr, GWorldDisposer >&  offscreenGWorld,
+	GWorldFlags UpdateGWorld( Nucleus::Owned< GWorldPtr, GWorldDisposer >&  offscreenGWorld,
 	                          short                                pixelDepth,
 	                          const Rect&                          boundsRect,
 	                          CTabHandle                           cTable   = NULL,
 	                          GDHandle                             aGDevice = NULL,
 	                          GWorldFlags                          flags    = GWorldFlags() );
 	
-	inline void DisposeGWorld( Owned< GWorldPtr, GWorldDisposer > )  {}
+	inline void DisposeGWorld( Nucleus::Owned< GWorldPtr, GWorldDisposer > )  {}
 	
 	GWorld_State GetGWorld();
 	
@@ -125,8 +130,8 @@ namespace Nitrogen
 	typedef GWorld_Value       GWorld_Details;
 	typedef PixelsState_Value  PixelsState_Details;
 	
-	typedef Pseudoreference< GWorld_Details      > GWorld;
-	typedef Pseudoreference< PixelsState_Details > PixelsState;
+	typedef Nucleus::Pseudoreference< GWorld_Details      > GWorld;
+	typedef Nucleus::Pseudoreference< PixelsState_Details > PixelsState;
 	
 }
 

@@ -11,14 +11,18 @@
 #endif
 
 // Nitrogen core
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
+#endif
+
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 // Nitrogen Carbon support
@@ -131,85 +135,80 @@ namespace Nitrogen
 	#pragma mark ¥ Types ¥
 	
 	class OTSequence_Tag {};
-	typedef IDType< OTSequence_Tag, ::OTSequence > OTSequence;
+	typedef Nucleus::IDType< OTSequence_Tag, ::OTSequence > OTSequence;
 	
 	class OTNameID_Tag {};
-	typedef IDType< OTNameID_Tag, ::OTNameID > OTNameID;
+	typedef Nucleus::IDType< OTNameID_Tag, ::OTNameID > OTNameID;
 	
 	class OTReason_Tag {};
-	typedef SelectorType< OTReason_Tag, ::OTReason, 0 > OTReason;
+	typedef Nucleus::SelectorType< OTReason_Tag, ::OTReason, 0 > OTReason;
 	
 	class OTCommand_Tag {};
-	typedef SelectorType< OTCommand_Tag, ::OTCommand, 0 > OTCommand;
+	typedef Nucleus::SelectorType< OTCommand_Tag, ::OTCommand, 0 > OTCommand;
 	
 	class OTOpenFlags_Tag {};
-	typedef FlagType< OTOpenFlags_Tag, ::OTOpenFlags > OTOpenFlags;
+	typedef Nucleus::FlagType< OTOpenFlags_Tag, ::OTOpenFlags > OTOpenFlags;
 	
 	class OTUnixErr_Tag {};
-	typedef SelectorType< OTUnixErr_Tag, ::OTUnixErr, 0 > OTUnixErr;
+	typedef Nucleus::SelectorType< OTUnixErr_Tag, ::OTUnixErr, 0 > OTUnixErr;
 	
 	class OTXTIErr_Tag {};
-	typedef SelectorType< OTXTIErr_Tag, ::OTXTIErr, 0 > OTXTIErr;
-	
-	using ::ProviderRef;
-	using ::EndpointRef;
-	using ::MapperRef;
-	
-	template <>
-	struct Disposer< ProviderRef > : std::unary_function< ProviderRef, void >,
-	                                 private DefaultDestructionOSStatusPolicy
-	{
-		void operator()( ProviderRef provider ) const
-		{
-			HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
-		}
-	};
-	
-	template <> struct OwnedDefaults< EndpointRef > : OwnedDefaults< ProviderRef > {};
-	template <> struct OwnedDefaults< MapperRef   > : OwnedDefaults< ProviderRef > {};
-	
-	class OTEventCode_Tag {};
-	typedef SelectorType< OTEventCode_Tag, ::OTEventCode > OTEventCode;
-	
-	class OTXTIStates_Tag {};
-	typedef SelectorType< OTXTIStates_Tag, ::OTXTIStates, T_UNINIT > OTXTIStates;
-	typedef OTXTIStates OTXTIState;
+	typedef Nucleus::SelectorType< OTXTIErr_Tag, ::OTXTIErr, 0 > OTXTIErr;
 	
 	// ...
 	
 	using ::OTConfigurationRef;
-	
+	using ::OTClientContextPtr;
+	using ::EndpointRef;		
+    using ::ProviderRef;
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< OTConfigurationRef > : std::unary_function< OTConfigurationRef, void >
+	struct Disposer< Nitrogen::OTConfigurationRef > : public std::unary_function< Nitrogen::OTConfigurationRef, void >
 	{
-		void operator()( OTConfigurationRef config ) const
+		void operator()( Nitrogen::OTConfigurationRef config ) const
 		{
 			::OTDestroyConfiguration( config );
 		}
 	};
 	
-	using ::OTClientContextPtr;
-	
 	template <>
-	struct Disposer< OTClientContextPtr > : std::unary_function< OTClientContextPtr, void >
+	struct Disposer< Nitrogen::OTClientContextPtr > : public std::unary_function< Nitrogen::OTClientContextPtr, void >
 	{
-		void operator()( OTClientContextPtr context ) const
+		void operator()( Nitrogen::OTClientContextPtr context ) const
 		{
 			::CloseOpenTransportInContext( context );
 		}
 	};
 	
+	template <>
+	struct Disposer< Nitrogen::ProviderRef > : public std::unary_function< Nitrogen::ProviderRef, void >,
+											   private Nitrogen::DefaultDestructionOSStatusPolicy
+	{
+		void operator()( Nitrogen::ProviderRef provider ) const
+		{
+			HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
+		}
+	};
+
+	template <> struct OwnedDefaults< Nitrogen::EndpointRef > : OwnedDefaults< Nitrogen::ProviderRef > {};
+   }
+
+namespace Nitrogen
+  {	
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
 	
-	Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags );
+	Nucleus::Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags );
 	
-	inline void CloseOpenTransportInContext( Owned< OTClientContextPtr > )  {}
+	inline void CloseOpenTransportInContext( Nucleus::Owned< OTClientContextPtr > )  {}
 	
 	void InitOpenTransport();
 	void CloseOpenTransport();
 	
-	void OTCloseProvider( Owned< ProviderRef > provider );
+	void OTCloseProvider( Nucleus::Owned< ProviderRef > provider );
 	
 	// ...
 	
@@ -246,17 +245,17 @@ namespace Nitrogen
 	using ::OTIsNonBlocking;
 	using ::OTIsAsynchronous;
 	
-	Owned< EndpointRef > OTOpenEndpointInContext( Owned< OTConfigurationRef >  config,
+	Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
 	                                              TEndpointInfo*               info          = NULL,
 	                                              OTClientContextPtr           clientContext = NULL );
 	
-	inline Owned< EndpointRef > OTOpenEndpointInContext( Owned< OTConfigurationRef >  config,
+	inline Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
 	                                                     OTClientContextPtr           clientContext )
 	{
 		return OTOpenEndpointInContext( config, NULL, clientContext );
 	}
 	
-	inline Owned< EndpointRef > OTOpenEndpoint( Owned< OTConfigurationRef >  config,
+	inline Nucleus::Owned< EndpointRef > OTOpenEndpoint( Nucleus::Owned< OTConfigurationRef >  config,
 	                                            TEndpointInfo*               info = NULL )
 	{
 		return OTOpenEndpointInContext( config, info );
@@ -264,9 +263,9 @@ namespace Nitrogen
 	
 	TEndpointInfo OTGetEndpointInfo( EndpointRef ref );
 	
-	OTXTIState OTGetEndpointState( EndpointRef ref );
+	OTResult OTGetEndpointState( EndpointRef ref );
 	
-	OTEventCode OTLook( EndpointRef ref );
+	OTResult OTLook( EndpointRef ref );
 	
 	// ...
 	
@@ -297,25 +296,25 @@ namespace Nitrogen
 	
 	void OTRcvOrderlyDisconnect( EndpointRef ref );
 	
-	OTByteCount OTRcv( EndpointRef  ref,
-	                   void*        buf,
-	                   OTByteCount  nbytes,
-	                   OTFlags*     flags );
+	OTResult OTRcv( EndpointRef  ref,
+	                void*        buf,
+	                OTByteCount  nbytes,
+	                OTFlags*     flags );
 	
-	OTByteCount OTRcv( EndpointRef  ref,
-	                   void*        buf,
-	                   OTByteCount  nbytes );
+	OTResult OTRcv( EndpointRef  ref,
+	                void*        buf,
+	                OTByteCount  nbytes );
 	
-	OTByteCount OTSnd( EndpointRef  ref,
-	                   const void*  buf,
-	                   OTByteCount  nbytes,
-	                   OTFlags      flags = OTFlags( 0 ) );
+	OTResult OTSnd( EndpointRef  ref,
+	                const void*  buf,
+	                OTByteCount  nbytes,
+	                OTFlags      flags = OTFlags( 0 ) );
 	
-	Owned< OTConfigurationRef > OTCreateConfiguration( const char* path );
+	Nucleus::Owned< OTConfigurationRef > OTCreateConfiguration( const char* path );
 	
-	Owned< OTConfigurationRef > OTCloneConfiguration( OTConfigurationRef config );
+	Nucleus::Owned< OTConfigurationRef > OTCloneConfiguration( OTConfigurationRef config );
 	
-	inline void OTDestroyConfiguration( Owned< OTConfigurationRef > )  {}
+	inline void OTDestroyConfiguration( Nucleus::Owned< OTConfigurationRef > )  {}
 	
 }
 

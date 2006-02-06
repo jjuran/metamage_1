@@ -27,8 +27,8 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 #ifndef NITROGEN_CFARRAY_H
@@ -59,93 +59,93 @@ namespace Nitrogen {
 	using ::HIToolbarRef;
 	template<> struct DescType_Traits< typeHIToolbarRef		>: POD_DescType_Traits< HIToolbarRef > {};
 
-	inline Owned<HIToolbarRef> HIToolbarCreate ( CFStringRef inIdentifier, ::OptionBits inOptions ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<HIToolbarRef> HIToolbarCreate ( CFStringRef inIdentifier, ::OptionBits inOptions ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		HIToolbarRef result;
 		ThrowOSStatus ( ::HIToolbarCreate ( inIdentifier, inOptions, &result ));
-		return Owned<HIToolbarItemRef>::Seize( result );
+		return Nucleus::Owned<HIToolbarItemRef>::Seize( result );
 		}
 
 	inline OptionBits HIToolbarGetAttributes ( HIToolbarRef toolbar ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		::OptionBits result;
 		ThrowOSStatus ( ::HIToolbarGetAttributes ( toolbar, &result ));
 		return result;
 		}
 
 	inline void HIToolbarChangeAttributes ( HIToolbarRef inToolbar, ::OptionBits inAttrsToSet, ::OptionBits inAttrsToClear ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarChangeAttributes ( inToolbar, inAttrsToSet, inAttrsToClear ));
 		}
 
 	inline HIToolbarDisplayMode HIToolbarGetDisplayMode ( HIToolbarRef toolbar ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		HIToolbarDisplayMode result;
 		ThrowOSStatus ( ::HIToolbarGetDisplayMode ( toolbar, &result ));
 		return result;
 		}
 
 	inline void HIToolbarSetDisplayMode ( HIToolbarRef inToolbar, HIToolbarDisplayMode inDisplayMode ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarSetDisplayMode ( inToolbar, inDisplayMode ));
 		}
 
 	inline HIToolbarDisplaySize HIToolbarGetDisplaySize ( HIToolbarRef toolbar ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		HIToolbarDisplaySize result;
 		ThrowOSStatus ( ::HIToolbarGetDisplayMode ( toolbar, &result ));
 		return result;
 		}
 
 	inline void HIToolbarSetDisplaySize ( HIToolbarRef inToolbar, HIToolbarDisplaySize inSize ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarSetDisplaySize ( inToolbar, inSize ));
 		}
 
-	inline Owned<CFStringRef> HIToolbarCopyIdentifier ( HIToolbarRef inToolbar ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<CFStringRef> HIToolbarCopyIdentifier ( HIToolbarRef inToolbar ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		CFStringRef result;
 		ThrowOSStatus ( ::HIToolbarCopyIdentifier ( inToolbar, &result ));
-		return Owned<CFStringRef>::Seize( result );
+		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
 		
 	inline void HIToolbarSetItemsWithIdentifiers ( HIToolbarRef inToolbar, CFArrayRef inArray ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarSetItemsWithIdentifiers ( inToolbar, inArray ));
 		}
 
-	inline Owned<CFArrayRef> HIToolbarCopyItems ( HIToolbarRef inToolbar ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<CFArrayRef> HIToolbarCopyItems ( HIToolbarRef inToolbar ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		CFArrayRef result;
 		ThrowOSStatus ( ::HIToolbarCopyItems ( inToolbar, &result ));
-		return Owned<CFArrayRef>::Seize( result );
+		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
 		
-	inline Owned<HIToolbarItemRef> HIToolbarCreateItemWithIdentifier ( HIToolbarRef toolbar,
+	inline Nucleus::Owned<HIToolbarItemRef> HIToolbarCreateItemWithIdentifier ( HIToolbarRef toolbar,
 					 		CFStringRef inIdentifier, CFTypeRef inConfigData = NULL ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		HIToolbarItemRef result;
 		ThrowOSStatus ( ::HIToolbarCreateItemWithIdentifier ( toolbar, inIdentifier, inConfigData, &result ));
-		return Owned<HIToolbarItemRef>::Seize( result );
+		return Nucleus::Owned<HIToolbarItemRef>::Seize( result );
 		}
 		
 	inline void HIToolbarInsertItemAtIndex ( HIToolbarRef inToolbar, HIToolbarItemRef inItem, CFIndex inIndex ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarInsertItemAtIndex ( inToolbar, inItem, inIndex ));
 		}
 
 	inline void HIToolbarAppendItem ( HIToolbarRef inToolbar, HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarAppendItem ( inToolbar, inItem ));
 		}
 
 	inline void HIToolbarRemoveItemAtIndex ( HIToolbarRef inToolbar, CFIndex inIndex ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarRemoveItemAtIndex ( inToolbar, inIndex ));
 		}
 
 	inline void HIToolbarSetDelegate ( HIToolbarRef inToolbar, HIObjectRef inDelegate ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarSetDelegate ( inToolbar, inDelegate ));
 		}
 
@@ -158,110 +158,110 @@ namespace Nitrogen {
 	using ::HIToolbarItemRef;
 	template<> struct DescType_Traits< typeHIToolbarItemRef	>: POD_DescType_Traits< HIToolbarItemRef > {};
 
-	inline Owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, OptionBits inOptions ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<HIToolbarItemRef> HIToolbarItemCreate ( CFStringRef inIdentifier, OptionBits inOptions ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		HIToolbarItemRef result;
 		ThrowOSStatus ( ::HIToolbarItemCreate ( inIdentifier, inOptions, &result ));
-		return Owned<HIToolbarItemRef>::Seize( result );
+		return Nucleus::Owned<HIToolbarItemRef>::Seize( result );
 		}
 		
-	inline Owned<CFStringRef> HIToolbarItemCopyIdentifier ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<CFStringRef> HIToolbarItemCopyIdentifier ( HIToolbarItemRef inItem ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		CFStringRef result;
 		ThrowOSStatus ( ::HIToolbarItemCopyIdentifier ( inItem, &result ));
-		return Owned<CFStringRef>::Seize( result );
+		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
 		
 
 	inline OptionBits HIToolbarItemGetAttributes ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		::OptionBits result;
 		ThrowOSStatus ( ::HIToolbarItemGetAttributes ( inItem, &result ));
 		return result;
 		}
 
 	inline void HIToolbarItemChangeAttributes ( HIToolbarItemRef inItem, ::OptionBits inAttrsToSet, ::OptionBits inAttrsToClear ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemChangeAttributes ( inItem, inAttrsToSet, inAttrsToClear ));
 		}
 
 	inline void HIToolbarItemSetLabel ( HIToolbarItemRef inItem, CFStringRef inLabel ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemSetLabel ( inItem, inLabel ));
 		}
 
-	inline Owned<CFStringRef> HIToolbarItemCopyLabel ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<CFStringRef> HIToolbarItemCopyLabel ( HIToolbarItemRef inItem ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		CFStringRef result;
 		ThrowOSStatus ( ::HIToolbarItemCopyLabel ( inItem, &result ));
-		return Owned<CFStringRef>::Seize( result );
+		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
 
 	inline void HIToolbarItemSetHelpText ( HIToolbarItemRef inItem, CFStringRef inShortText, CFStringRef inLongText = NULL ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemSetHelpText ( inItem, inShortText, inLongText ));
 		}
 
 //	!!! This needs some ownership issues resolved
 	inline void HIToolbarItemCopyHelpText ( HIToolbarItemRef inItem, CFStringRef *outShortText, CFStringRef *outLongText ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, outShortText, outLongText ));
 		}
 	
 //	Helper versions
-	inline Owned<CFStringRef> HIToolbarItemCopyShortHelpText ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<CFStringRef> HIToolbarItemCopyShortHelpText ( HIToolbarItemRef inItem ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		CFStringRef retVal;
 		ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, &retVal, NULL ));
-		return Owned<CFStringRef>::Seize ( retVal );
+		return Nucleus::Owned<CFStringRef>::Seize ( retVal );
 		}
 
-	inline Owned<CFStringRef> HIToolbarItemCopyLongHelpText ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<CFStringRef> HIToolbarItemCopyLongHelpText ( HIToolbarItemRef inItem ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		CFStringRef retVal;
 		ThrowOSStatus ( ::HIToolbarItemCopyHelpText ( inItem, NULL, &retVal ));
-		return Owned<CFStringRef>::Seize ( retVal );
+		return Nucleus::Owned<CFStringRef>::Seize ( retVal );
 		}
 
 	inline void HIToolbarItemSetCommandID ( HIToolbarItemRef inItem, ::MenuCommand inCommandID ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemSetCommandID ( inItem, inCommandID ));
 		}
 	
 	inline MenuCommand HIToolbarItemGetCommandID ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		::MenuCommand result;
 		ThrowOSStatus ( ::HIToolbarItemGetCommandID ( inItem, &result ));
 		return result;
 		}
 
 	inline void HIToolbarItemSetIconRef ( HIToolbarItemRef inItem, IconRef inIcon ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemSetIconRef ( inItem, inIcon ));
 		}
 
 	inline void HIToolbarItemSetImage ( HIToolbarItemRef inItem, CGImageRef inImage ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemSetImage ( inItem, inImage ));
 		}
 
-	inline Owned<CGImageRef> HIToolbarItemCopyImage ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<CGImageRef> HIToolbarItemCopyImage ( HIToolbarItemRef inItem ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		CGImageRef result;
 		ThrowOSStatus ( ::HIToolbarItemCopyImage ( inItem, &result ));
-		return Owned<CGImageRef>::Seize( result );
+		return Nucleus::Owned<CGImageRef>::Seize( result );
 		}
 
 	inline void HIToolbarItemSetMenu ( HIToolbarItemRef inItem, MenuRef inMenu ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemSetMenu ( inItem, inMenu ));
 		}
 	
-	inline Owned<MenuRef> HIToolbarItemCopyMenu ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+	inline Nucleus::Owned<MenuRef> HIToolbarItemCopyMenu ( HIToolbarItemRef inItem ) {
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		MenuRef result;
 		ThrowOSStatus ( ::HIToolbarItemCopyMenu ( inItem, &result ));
-		return Owned<MenuRef>::Seize( result );
+		return Nucleus::Owned<MenuRef>::Seize( result );
 		}
 
 //	extern HIToolbarRef HIToolbarItemGetToolbar(HIToolbarItemRef inItem)
@@ -271,12 +271,12 @@ namespace Nitrogen {
 	using ::HIToolbarItemIsEnabled;
 
 	inline void HIToolbarItemSetEnabled ( HIToolbarItemRef inItem, Boolean inEnabled ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemSetEnabled ( inItem, inEnabled ));
 		}
 	
 	inline void HIToolbarItemConfigDataChanged ( HIToolbarItemRef inItem ) {
-     	OnlyOnce<RegisterHIToolbarErrors>();
+     	Nucleus::OnlyOnce<RegisterHIToolbarErrors>();
 		ThrowOSStatus ( ::HIToolbarItemConfigDataChanged ( inItem ));
 		}
 

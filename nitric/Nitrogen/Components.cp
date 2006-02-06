@@ -16,17 +16,17 @@ namespace Nitrogen {
 		RegisterOSStatus< badComponentSelector >();
 	}
 	
-	Owned< ComponentInstance >
+	Nucleus::Owned< ComponentInstance >
 	OpenDefaultComponent( ComponentType componentType, ComponentSubType componentSubType )
 	{
-		OnlyOnce< RegisterComponentManagerErrors >();
+		Nucleus::OnlyOnce< RegisterComponentManagerErrors >();
 		
 		ComponentInstance component = ::OpenDefaultComponent( componentType, componentSubType );
 		if ( component == NULL )
 		{
 			throw OpenDefaultComponent_Failed();
 		}
-		return Owned< ComponentInstance >::Seize( component );
+		return Nucleus::Owned< ComponentInstance >::Seize( component );
 	}
 	
 }

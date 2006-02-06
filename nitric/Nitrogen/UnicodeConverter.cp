@@ -21,7 +21,7 @@ namespace Nitrogen {
 			ItemCount iOffsetCount, const ByteOffset iOffsetArray[], ItemCount *oOffsetCount, ByteOffset oOffsetArray[],
 //	Outputs
 			ByteCount iOutputBufLen, ByteCount * oSourceRead, UniChar oUnicodeStr[] ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ByteCount result;
 
 //	The CFM headers define the iOffsetArray as "ByteOffset iOffsetArray []" (not const) - grumble.
@@ -44,7 +44,7 @@ namespace Nitrogen {
 			TextToUnicodeInfo iTextToUnicodeInfo, ByteCount iSourceLen, ConstLogicalAddress iSourceStr, OptionBits iControlFlags,
 //	Outputs
 			ByteCount iOutputBufLen, ByteCount * oSourceRead, UniChar oUnicodeStr[] ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ByteCount result;
 		ThrowOSStatus ( ::ConvertFromTextToUnicode ( iTextToUnicodeInfo, iSourceLen, iSourceStr, iControlFlags,
 							0, NULL, NULL, NULL,
@@ -61,7 +61,7 @@ namespace Nitrogen {
 //	Outputs
 			ByteCount iOutputBufLen, ByteCount * oInputRead, LogicalAddress oOutputStr ) {
 
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ByteCount result;
 //	The CFM headers define the iOffsetArray as "ByteOffset iOffsetArray []" (not const) - grumble.
 #if TARGET_RT_MAC_MACHO
@@ -84,7 +84,7 @@ namespace Nitrogen {
 //	Outputs
 			ByteCount iOutputBufLen, ByteCount *oInputRead, LogicalAddress oOutputStr ) {
 
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ByteCount result;
 		ThrowOSStatus ( ::ConvertFromUnicodeToText ( iUnicodeToTextInfo, iUnicodeLen, iUnicodeStr, iControlFlags,
 							0, NULL, NULL, NULL,

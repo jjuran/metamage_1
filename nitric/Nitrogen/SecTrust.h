@@ -5,12 +5,12 @@
 #include <Security/SecTrust.h>
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 
@@ -49,49 +49,55 @@ typedef enum {
 typedef SecTrustResultType SecTrustUserSetting;
 #endif
 
-   template <> struct Disposer< SecTrustRef >: public std::unary_function< SecTrustRef, void >
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::SecTrustRef >: public std::unary_function< Nitrogen::SecTrustRef, void >
      {
-      void operator()( SecTrustRef kc ) const
+      void operator()( Nitrogen::SecTrustRef kc ) const
         {
          (void) ::CFRelease ( kc );
         }
      };
+  }
 
-
+namespace Nitrogen
+  {
 //	CFTypeID SecTrustGetTypeID(void);
 	using ::SecTrustGetTypeID;
 	
 	inline void CFShow ( SecTrustRef tr ) { ::CFShow ( tr ); }
 	
-	inline Owned<SecTrustRef> SecTrustCreateWithCertificates ( CFArrayRef certificates, CFTypeRef policies ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+	inline Nucleus::Owned<SecTrustRef> SecTrustCreateWithCertificates ( CFArrayRef certificates, CFTypeRef policies ) {
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecTrustRef	result;
 		ThrowOSStatus ( ::SecTrustCreateWithCertificates ( certificates, policies, &result ));
-  	    return Owned<SecTrustRef>::Seize( result );
+  	    return Nucleus::Owned<SecTrustRef>::Seize( result );
 		}
 
 	inline void SecTrustSetParameters ( SecTrustRef trustRef, CSSM_TP_ACTION action, CFDataRef actionData ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecTrustSetParameters ( trustRef, action, actionData ));
 		}
 
 	inline void SecTrustSetAnchorCertificates ( SecTrustRef trust, CFArrayRef anchorCertificates ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecTrustSetAnchorCertificates ( trust, anchorCertificates ));
 		}
 	
 	inline void SecTrustSetKeychains ( SecTrustRef trust, CFTypeRef keychainOrArray ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecTrustSetKeychains ( trust, keychainOrArray ));
 		}
 
 	inline void SecTrustSetVerifyDate ( SecTrustRef trust, CFDateRef verifyDate ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecTrustSetVerifyDate ( trust, verifyDate ));
 		}
 
 	inline SecTrustResultType SecTrustEvaluate ( SecTrustRef trust ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		::SecTrustResultType result;
 		ThrowOSStatus ( ::SecTrustEvaluate ( trust, &result ));
 		return result;
@@ -99,38 +105,38 @@ typedef SecTrustResultType SecTrustUserSetting;
 
 	struct SecTrustGetResult_Result {
 		SecTrustResultType			resultType;
-		Owned<CFArrayRef>			certChain;
+		Nucleus::Owned<CFArrayRef>			certChain;
 		CSSM_TP_APPLE_EVIDENCE_INFO	*statusChain;
 		};
 	
 	inline SecTrustGetResult_Result SecTrustGetResult ( SecTrustRef trustRef ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecTrustGetResult_Result result;
 		CFArrayRef arrRef;
 		ThrowOSStatus ( ::SecTrustGetResult ( trustRef, &result.resultType, &arrRef, &result.statusChain ));
-		result.certChain = Owned<CFArrayRef>::Seize ( arrRef );
+		result.certChain = Nucleus::Owned<CFArrayRef>::Seize ( arrRef );
 		return result;
 		}
 	
 	inline CSSM_TP_VERIFY_CONTEXT_RESULT_PTR SecTrustGetCssmResult ( SecTrustRef trust ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		::CSSM_TP_VERIFY_CONTEXT_RESULT_PTR result;
 		ThrowOSStatus ( ::SecTrustGetCssmResult ( trust, &result ));
 		return result;
 		}
 
 	inline CSSM_TP_HANDLE SecTrustGetTPHandle ( SecTrustRef trust ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		::CSSM_TP_HANDLE result;
 		ThrowOSStatus ( ::SecTrustGetTPHandle ( trust, &result ));
 		return result;
 		}
 
-	inline Owned<CFArrayRef> SecTrustCopyAnchorCertificates () {
-		OnlyOnce<RegisterSecCertificateErrors>();
+	inline Nucleus::Owned<CFArrayRef> SecTrustCopyAnchorCertificates () {
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		CFArrayRef	result;
 		ThrowOSStatus ( ::SecTrustCopyAnchorCertificates ( &result ));
-  	    return Owned<CFArrayRef>::Seize( result );
+  	    return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
 
 	struct SecTrustGetCSSMAnchorCertificates_Result {
@@ -140,21 +146,21 @@ typedef SecTrustResultType SecTrustUserSetting;
 		};
 	
 	inline SecTrustGetCSSMAnchorCertificates_Result SecTrustGetCSSMAnchorCertificates () {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecTrustGetCSSMAnchorCertificates_Result result;
 		ThrowOSStatus ( ::SecTrustGetCSSMAnchorCertificates ( &result.cssmAnchors, &result.cssmAnchorCount ));
 		return result;
 		}
 		
 	inline SecTrustUserSetting SecTrustGetUserTrust ( SecCertificateRef certificate, SecPolicyRef policy ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		::SecTrustUserSetting result;
 		ThrowOSStatus ( ::SecTrustGetUserTrust ( certificate, policy, &result ));
 		return result;
 		}
 
 	inline void SecTrustSetUserTrust ( SecCertificateRef certificate, SecPolicyRef policy, SecTrustUserSetting trustSetting ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecTrustSetUserTrust ( certificate, policy, trustSetting ));
 		}
 	}

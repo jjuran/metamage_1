@@ -27,29 +27,37 @@ namespace Nitrogen
 {
 	
 	struct Justification_Tag  {};
-	typedef SelectorType< Justification_Tag, short, teFlushDefault > Justification;
+	typedef Nucleus::SelectorType< Justification_Tag, short, teFlushDefault > Justification;
 	
 	inline Justification TEFlushDefault()  { return Justification::Make( teFlushDefault ); }
 	
 	using ::TEHandle;
 	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< TEHandle >
+	struct Disposer< Nitrogen::TEHandle >: public std::unary_function< Nitrogen::TEHandle, void >
 	{
-		void operator()( TEHandle teH ) const
+		void operator()( Nitrogen::TEHandle teH ) const
 		{
 			::TEDispose( teH );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
-	Owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect );
+	Nucleus::Owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect );
 	
-	inline Owned< TEHandle > TENew( const Rect& rect )
+	inline Nucleus::Owned< TEHandle > TENew( const Rect& rect )
 	{
 		return TENew( rect, rect );
 	}
 	
-	inline void TEDispose( Owned< TEHandle > )  {}
+	inline void TEDispose( Nucleus::Owned< TEHandle > )  {}
 	
 	void TESetText( const void* text, std::size_t length, TEHandle hTE );
 	void TESetText( const std::string& text, TEHandle hTE );

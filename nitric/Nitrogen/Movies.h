@@ -6,25 +6,33 @@
 #ifndef NITROGEN_MOVIES_H
 #define NITROGEN_MOVIES_H
 
+#ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
-
-// Mac OS X Frameworks
-#if NITROGEN_USE_FRAMEWORK_INCLUDES
-	#include <QuickTime/QuickTime.h>
+#endif
+#ifndef __MOVIES__
+#include FRAMEWORK_HEADER(QuickTime,QuickTime.h)
 #endif
 
-// Mac OS Universal Interfaces
-#ifndef __MOVIES__
-	#include <Movies.h>
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
+#endif
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
+#endif
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 // Nitrogen
+#ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"
-#include "Nitrogen/FlagType.h"
-#include "Nitrogen/IDType.h"
+#endif
+#ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Owned.h"
+#endif
+#ifndef NITROGEN_RESOURCES_H
 #include "Nitrogen/Resources.h"
+#endif
 
 
 namespace Nitrogen
@@ -35,45 +43,53 @@ namespace Nitrogen
 	using ::Movie;
 	
 	class MovieFileRefNum_Tag {};
-	typedef IDType< MovieFileRefNum_Tag, SInt16, -1 > MovieFileRefNum;
+	typedef Nucleus::IDType< MovieFileRefNum_Tag, SInt16, -1 > MovieFileRefNum;
 	
 	class NewMovieFlags_Tag {};
-	typedef FlagType< NewMovieFlags_Tag, SInt16 > NewMovieFlags;
+	typedef Nucleus::FlagType< NewMovieFlags_Tag, SInt16 > NewMovieFlags;
 	
 	// Opaque pointer type
 	typedef struct FullScreenContext* FullScreenContextPtr;
 	
 	class FullScreenFlags_Tag {};
-	typedef FlagType< FullScreenFlags_Tag, long > FullScreenFlags;
+	typedef Nucleus::FlagType< FullScreenFlags_Tag, long > FullScreenFlags;
 	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< Movie > : public std::unary_function< Movie, void >
+	struct Disposer< Nitrogen::Movie > : public std::unary_function< Nitrogen::Movie, void >
 	{
-		void operator()( Movie movie ) const
+		void operator()( Nitrogen::Movie movie ) const
 		{
 			::DisposeMovie( movie );
 		}
 	};
 	
 	template <>
-	struct Disposer< MovieFileRefNum > : public std::unary_function< MovieFileRefNum, void >,
-	                                     private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::MovieFileRefNum > : public std::unary_function< Nitrogen::MovieFileRefNum, void >,
+	                                               private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( MovieFileRefNum refNum ) const
+		void operator()( Nitrogen::MovieFileRefNum refNum ) const
 		{
 			HandleDestructionOSStatus( ::CloseMovieFile( refNum ) );
 		}
 	};
 	
 	template <>
-	struct Disposer< FullScreenContextPtr > : public std::unary_function< FullScreenContextPtr, void >,
-	                                          private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::FullScreenContextPtr > : public std::unary_function< Nitrogen::FullScreenContextPtr, void >,
+	                                                    private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( FullScreenContextPtr context ) const
+		void operator()( Nitrogen::FullScreenContextPtr context ) const
 		{
 			HandleDestructionOSStatus( ::EndFullScreen( reinterpret_cast< ::Ptr >( context ), 0 ) );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
@@ -86,36 +102,36 @@ namespace Nitrogen
 	
 	// ...
 	
-	Owned< MovieFileRefNum > OpenMovieFile( const FSSpec& file, FSIOPermssn permission );
+	Nucleus::Owned< MovieFileRefNum > OpenMovieFile( const FSSpec& file, FSIOPermssn permission );
 	
 	// DeleteMovieFile
 	
-	Owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
+	Nucleus::Owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
 	                                 ResID            resID,
 	                                 NewMovieFlags    flags );
 	
 	// ...
 	
-	Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                               short            desiredWidth,
 	                                               short            desiredHeight,
 	                                               ::WindowRef*     newWindow,
 	                                               const RGBColor&  eraseColor,
 	                                               FullScreenFlags  flags      = FullScreenFlags() );
 	
-	Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                               short            desiredWidth,
 	                                               short            desiredHeight,
 	                                               ::WindowRef*     newWindow  = NULL,
 	                                               FullScreenFlags  flags      = FullScreenFlags() );
 	
-	Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                               short            desiredWidth,
 	                                               short            desiredHeight,
 	                                               const RGBColor&  eraseColor,
 	                                               FullScreenFlags  flags      = FullScreenFlags() );
 	
-	inline void EndFullScreen( Owned< FullScreenContextPtr > )  {}
+	inline void EndFullScreen( Nucleus::Owned< FullScreenContextPtr > )  {}
 	
 }
 

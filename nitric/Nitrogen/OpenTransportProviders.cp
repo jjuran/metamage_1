@@ -6,6 +6,10 @@
 #include "Nitrogen/OpenTransportProviders.h"
 #endif
 
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
+#endif
+
 
 namespace Nitrogen
 {
@@ -19,7 +23,7 @@ namespace Nitrogen
 	
 	InetHost OTInetStringToHost( const char* str )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		::InetHost result;
 		
@@ -37,10 +41,10 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Owned< InetSvcRef > OTOpenInternetServicesInContext( Owned< OTConfigurationRef >  cfig,
+	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( Nucleus::Owned< OTConfigurationRef >  cfig,
 	                                                     OTClientContextPtr           clientContext )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		::OSStatus err;
 		
@@ -61,13 +65,13 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Owned< InetSvcRef >::Seize( result );
+		return Nucleus::Owned< InetSvcRef >::Seize( result );
 	}
 	
-	Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath,
+	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath,
 	                                                     OTClientContextPtr           clientContext )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		::OSStatus err;
 		
@@ -88,12 +92,12 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Owned< InetSvcRef >::Seize( result );
+		return Nucleus::Owned< InetSvcRef >::Seize( result );
 	}
 	
 	InetHostInfo& OTInetStringToAddress( InetSvcRef ref, char* name, InetHostInfo& hInfo )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTInetStringToAddress( ref, name, &hInfo ) );
 		
@@ -102,7 +106,7 @@ namespace Nitrogen
 	
 	InetDomainName OTInetAddressToName( InetSvcRef ref, InetHost addr )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		::InetDomainName result;
 		
@@ -113,7 +117,7 @@ namespace Nitrogen
 	
 	void OTInetMailExchange( InetSvcRef ref, char* name, std::vector< InetMailExchange >& mx )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		UInt16 num = mx.size();
 		

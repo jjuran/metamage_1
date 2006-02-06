@@ -4,8 +4,8 @@
 #include "Nitrogen/Processes.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -30,7 +30,7 @@ namespace Nitrogen {
 	
 	ProcessSerialNumber GetCurrentProcess()
 	{
-		OnlyOnce< RegisterProcessManagerErrors >();
+		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		ProcessSerialNumber psn;
 		ThrowOSStatus( ::GetCurrentProcess( &psn ) );
@@ -39,7 +39,7 @@ namespace Nitrogen {
 	
 	ProcessSerialNumber GetFrontProcess()
 	{
-		OnlyOnce< RegisterProcessManagerErrors >();
+		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		ProcessSerialNumber psn;
 		ThrowOSStatus( ::GetFrontProcess( &psn ) );
@@ -49,7 +49,7 @@ namespace Nitrogen {
 	bool SameProcess( const ProcessSerialNumber& a, 
 	                  const ProcessSerialNumber& b )
 	{
-		OnlyOnce< RegisterProcessManagerErrors >();
+		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		::Boolean same;
 		ThrowOSStatus( ::SameProcess( &a, &b, &same ) );
@@ -58,14 +58,14 @@ namespace Nitrogen {
 	
 	void SetFrontProcess( const ProcessSerialNumber& psn )
 	{
-		OnlyOnce< RegisterProcessManagerErrors >();
+		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		ThrowOSStatus( ::SetFrontProcess( &psn ) );
 	}
 	
 	ProcessSerialNumber LaunchApplication( const FSSpec& file, LaunchFlags launchFlags, AppParameters* appParameters )
 	{
-		OnlyOnce< RegisterProcessManagerErrors >();
+		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		LaunchParamBlockRec 	pb;
 		
@@ -85,7 +85,7 @@ namespace Nitrogen {
 	
 	ProcessSerialNumber GetNextProcess( ProcessSerialNumber process )
 	{
-		OnlyOnce< RegisterProcessManagerErrors >();
+		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		ThrowOSStatus( ::GetNextProcess( &process ) );
 		return process;
@@ -93,7 +93,7 @@ namespace Nitrogen {
 	
 	ProcessInfoRec& GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& processInfo )
 	{
-		OnlyOnce< RegisterProcessManagerErrors >();
+		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		ThrowOSStatus( ::GetProcessInformation( &process, &processInfo ) );
 		
@@ -104,7 +104,7 @@ namespace Nitrogen {
 	{
 		ProcessInfoRec processInfo;
 		
-		return GetProcessInformation( process, Initialize< ProcessInfoRec >( processInfo ) );
+		return GetProcessInformation( process, Nucleus::Initialize< ProcessInfoRec >( processInfo ) );
 	}
 	
 	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn )
@@ -114,7 +114,7 @@ namespace Nitrogen {
 		ThrowOSStatus( ::GetProcessBundleLocation( &psn, &location ) );
 		return location;
 	#else
-		return Convert< FSRef >( GetProcessAppSpec( psn ) );
+		return Nucleus::Convert< FSRef >( GetProcessAppSpec( psn ) );
 	#endif
 	}
 	
@@ -127,7 +127,7 @@ namespace Nitrogen {
 		return GetProcessInfoAppSpec
 		(
 			GetProcessInformation( process, 
-		                           Initialize< ProcessInfoRec >( processInfo, 
+		                           Nucleus::Initialize< ProcessInfoRec >( processInfo, 
 		                                                         &appSpec ) )
 		);
 	}

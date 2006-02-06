@@ -12,14 +12,14 @@
 #ifndef __MACERRORS__
 #include FRAMEWORK_HEADER(CarbonCore,MacErrors.h)
 #endif
-#ifndef NITROGEN_ERRORCODE_H
-#include "Nitrogen/ErrorCode.h"
+#ifndef NUCLEUS_ERRORCODE_H
+#include "Nucleus/ErrorCode.h"
 #endif
-#ifndef NITROGEN_DESTRUCTIONEXCEPTIONPOLICY_H
-#include "Nitrogen/DestructionExceptionPolicy.h"
+#ifndef NUCLEUS_DESTRUCTIONEXCEPTIONPOLICY_H
+#include "Nucleus/DestructionExceptionPolicy.h"
 #endif
-#ifndef NITROGEN_THEEXCEPTIONBEINGHANDLED_H
-#include "Nitrogen/TheExceptionBeingHandled.h"
+#ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
+#include "Nucleus/TheExceptionBeingHandled.h"
 #endif
 
 #ifdef NITROGEN_DEBUG
@@ -138,20 +138,10 @@ namespace Nitrogen
       #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
      };
    
-   template <>
-   class ErrorCode< OSStatus, memFullErr >: public OSStatus,
-                                            public std::bad_alloc
-     {
-      public:
-         ErrorCode()
-           : OSStatus( memFullErr )
-           {}
-     };
-   
    template < ::OSStatus error >
    void RegisterOSStatus()
      {
-      RegisterErrorCode<OSStatus, error>();
+      Nucleus::RegisterErrorCode<OSStatus, error>();
      }
    
 #ifdef NITROGEN_DEBUG
@@ -177,12 +167,25 @@ namespace Nitrogen
            }
          catch( ... )
            {
-            DestructionExceptionPolicy::HandleDestructionException( TheExceptionBeingHandled() );
+            DestructionExceptionPolicy::HandleDestructionException( Nucleus::TheExceptionBeingHandled() );
            }
         }
      };
    
-   typedef DestructionOSStatusPolicy< DefaultDestructionExceptionPolicy > DefaultDestructionOSStatusPolicy;
+   typedef DestructionOSStatusPolicy< Nucleus::DefaultDestructionExceptionPolicy > DefaultDestructionOSStatusPolicy;
+  }
+
+namespace Nucleus
+  {
+   template <>
+   class ErrorCode< Nitrogen::OSStatus, ::memFullErr >: public Nitrogen::OSStatus,
+										                public std::bad_alloc
+     {
+      public:
+         ErrorCode()
+           : OSStatus( memFullErr )
+           {}
+     };
   }
 
 #endif

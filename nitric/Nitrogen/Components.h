@@ -10,14 +10,14 @@
 #include FRAMEWORK_HEADER(CarbonCore,Components.h)
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -28,33 +28,41 @@ namespace Nitrogen {
 	void RegisterComponentManagerErrors();
 	
 	struct ComponentTypeTag  {};
-	typedef SelectorType< ComponentTypeTag, ::OSType, kAnyComponentType > ComponentType;
+	typedef Nucleus::SelectorType< ComponentTypeTag, ::OSType, kAnyComponentType > ComponentType;
 	
 	struct ComponentSubTypeTag  {};
-	typedef SelectorType< ComponentSubTypeTag, ::OSType, kAnyComponentSubType > ComponentSubType;
+	typedef Nucleus::SelectorType< ComponentSubTypeTag, ::OSType, kAnyComponentSubType > ComponentSubType;
 	
 	struct ComponentManufacturerTag  {};
-	typedef SelectorType< ComponentManufacturerTag, ::OSType, kAnyComponentManufacturer > ComponentManufacturer;
+	typedef Nucleus::SelectorType< ComponentManufacturerTag, ::OSType, kAnyComponentManufacturer > ComponentManufacturer;
 	
 	using ::ComponentInstance;
 	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< ComponentInstance > : public std::unary_function< ComponentInstance, void >,
-	                                       private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::ComponentInstance > : public std::unary_function< Nitrogen::ComponentInstance, void >,
+	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( ComponentInstance component ) const
+		void operator()( Nitrogen::ComponentInstance component ) const
 		{
-			OnlyOnce< RegisterComponentManagerErrors >();
-			DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::CloseComponent( component ) );
+			Nucleus::OnlyOnce< Nitrogen::RegisterComponentManagerErrors >();
+			HandleDestructionOSStatus( ::CloseComponent( component ) );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	struct OpenDefaultComponent_Failed  {};
 	
-	Owned< ComponentInstance >
+	Nucleus::Owned< ComponentInstance >
 	OpenDefaultComponent( ComponentType componentType, ComponentSubType componentSubType );
 	
-	inline void CloseComponent( Owned< ComponentInstance > )  {}
+	inline void CloseComponent( Nucleus::Owned< ComponentInstance > )  {}
 	
 }
 

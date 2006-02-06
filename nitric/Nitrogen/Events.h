@@ -18,8 +18,8 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
 
 namespace Nitrogen
@@ -28,18 +28,18 @@ namespace Nitrogen
 #ifdef JOSHUA_JURAN_EXPERIMENTAL
 	
 	class EventKind_Tag {};
-	typedef SelectorType< EventKind_Tag, ::EventKind, nullEvent > EventKind;
+	typedef Nucleus::SelectorType< EventKind_Tag, ::EventKind, nullEvent > EventKind;
 	
 #endif
 	
 	class EventMask_Tag {};
-	typedef FlagType< EventMask_Tag, ::EventMask > EventMask;
+	typedef Nucleus::FlagType< EventMask_Tag, ::EventMask > EventMask;
 	
 	class EventModifiers_Tag {};
-	typedef FlagType< EventModifiers_Tag, ::EventModifiers > EventModifiers;
+	typedef Nucleus::FlagType< EventModifiers_Tag, ::EventModifiers > EventModifiers;
 	
 	class KeyModifiers_Tag {};
-	typedef FlagType< KeyModifiers_Tag, ::EventModifiers > KeyModifiers;
+	typedef Nucleus::FlagType< KeyModifiers_Tag, ::UInt32 > KeyModifiers;
 	
 	// ...
 	
@@ -63,7 +63,7 @@ namespace Nitrogen
 	
 	inline bool IsNullEvent( const EventRecord& event )
 	{
-		return event.what == nullEvent;
+		return event.what == static_cast < ::EventKind > ( nullEvent );
 	}
 	
 	EventRecord GetNextEvent( EventMask eventMask );

@@ -9,17 +9,17 @@
 #ifndef __MENUS__
 #include FRAMEWORK_HEADER(HIToolbox,Menus.h)
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
@@ -68,53 +68,67 @@ inline MenuRef GetMenuRef( MenuID menuID )  { return GetMenuHandle( menuID ); }
 namespace Nitrogen
   {
    class MenuAttributesTag {};
-   typedef FlagType< MenuAttributesTag, ::MenuAttributes, 0 > MenuAttributes;
+   typedef Nucleus::FlagType< MenuAttributesTag, ::MenuAttributes, 0 > MenuAttributes;
 
    class MenuItemAttributesTag {};
-   typedef FlagType< MenuItemAttributesTag, ::MenuItemAttributes, 0 > MenuItemAttributes;
+   typedef Nucleus::FlagType< MenuItemAttributesTag, ::MenuItemAttributes, 0 > MenuItemAttributes;
     
    class MenuTrackingModeTag {};
-   typedef SelectorType< MenuTrackingModeTag, ::MenuTrackingMode, 0 > MenuTrackingMode;
+   typedef Nucleus::SelectorType< MenuTrackingModeTag, ::MenuTrackingMode, 0 > MenuTrackingMode;
 
    class MenuEventOptionsTag {};
-   typedef FlagType< MenuEventOptionsTag, ::MenuEventOptions, 0 > MenuEventOptions;
+   typedef Nucleus::FlagType< MenuEventOptionsTag, ::MenuEventOptions, 0 > MenuEventOptions;
    
    class MenuIDTag {};
-   typedef IDType< MenuIDTag, ::MenuID, 0 > MenuID;
+   typedef Nucleus::IDType< MenuIDTag, ::MenuID, 0 > MenuID;
    
-   template <> struct Disposer< MenuID >: public std::unary_function< MenuID, void >
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::MenuID >: public std::unary_function< Nitrogen::MenuID, void >
      {
-      void operator()( MenuID id ) const
+      void operator()( Nitrogen::MenuID id ) const
         {
          ::DeleteMenu( id );
         }
      };
+  }
+
+namespace Nitrogen
+  {
 
    using ::MenuItemIndex;
    
    class MenuCommandTag {};
-   typedef SelectorType< MenuCommandTag, ::MenuCommand, 0 > MenuCommand;
+   typedef Nucleus::SelectorType< MenuCommandTag, ::MenuCommand, 0 > MenuCommand;
    
    using ::MenuRef;
-   
-   template <> struct Disposer< MenuRef >: public std::unary_function< MenuRef, void >
+  }
+
+namespace Nucleus
+  {   
+   template <> struct Disposer< Nitrogen::MenuRef >: public std::unary_function< Nitrogen::MenuRef, void >
      {
-      void operator()( MenuRef m ) const
+      void operator()( Nitrogen::MenuRef m ) const
         {
          ::DisposeMenu( m );
         }
      };
+  }
 
+namespace Nitrogen
+  {
    /* ... */
    
    class MenuItemDataFlagsTag {};
-   typedef FlagType< MenuItemDataFlagsTag, ::MenuItemDataFlags, 0 > MenuItemDataFlags;
+   typedef Nucleus::FlagType< MenuItemDataFlagsTag, ::MenuItemDataFlags, 0 > MenuItemDataFlags;
    
    using ::MenuItemDataRec;
    using ::MenuItemDataPtr;
    
    class MenuItemIDTag {};
-   typedef IDType< MenuItemIDTag, ::MenuItemID, 0 > MenuItemID;
+   typedef Nucleus::IDType< MenuItemIDTag, ::MenuItemID, 0 > MenuItemID;
    
    /* ... */
    
@@ -124,7 +138,7 @@ namespace Nitrogen
    class NewMenu_Failed {};
    
    // 1549
-   Owned<MenuRef> NewMenu( MenuID           menuID,
+   Nucleus::Owned<MenuRef> NewMenu( MenuID           menuID,
                            ConstStr255Param menuTitle );
    
 	inline MenuRef CheckResource( MenuRef menu )
@@ -137,7 +151,7 @@ namespace Nitrogen
    inline MenuRef MacGetMenu( ResID resourceID )             { return CheckResource( ::MacGetMenu( resourceID ) ); }
    
    // 1578
-   inline void DisposeMenu( Owned<MenuRef> /* theMenu */ )          {}
+   inline void DisposeMenu( Nucleus::Owned<MenuRef> /* theMenu */ )          {}
    
    using ::CalcMenuSize;
 	
@@ -167,7 +181,7 @@ namespace Nitrogen
    
    /* ... RegisterMenuDefinition */
    
-   Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes = MenuAttributes() );
+   Nucleus::Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes = MenuAttributes() );
 
    /* ... CreateCustomMenu */
    
@@ -225,8 +239,8 @@ namespace Nitrogen
    inline MenuRef GetMenuHandle( MenuID menuID )  { return ::GetMenuHandle( menuID ); }
    inline MenuRef GetMenuRef   ( MenuID menuID )  { return ::GetMenuRef   ( menuID ); }
    
-   Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID = MenuID() );
-   inline void MacDeleteMenu( Owned< MenuID > /* menuID */ )  {}
+   Nucleus::Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID = MenuID() );
+   inline void MacDeleteMenu( Nucleus::Owned< MenuID > /* menuID */ )  {}
    
    /* ... */
 

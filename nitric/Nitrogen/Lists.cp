@@ -12,6 +12,8 @@
 namespace Nitrogen
 {
 	
+#if !TARGET_CPU_68K
+	
 	static void FixListScrollbarBounds( ListHandle list )
 	{
 		bool hasGrow = GetListFlags( list ) & 0x20;
@@ -46,7 +48,7 @@ namespace Nitrogen
 		}
 	}
 	
-	Owned< ListHandle > LNew( const Rect&        rView,
+	Nucleus::Owned< ListHandle > LNew( const Rect&        rView,
 	                          const ListBounds&  dataBounds,
 	                          Point              cSize,
 	                          ResID              theProc,
@@ -70,7 +72,7 @@ namespace Nitrogen
 		
 		FixListScrollbarBounds( list );
 		
-		return Owned< ListHandle >::Seize( list );
+		return Nucleus::Owned< ListHandle >::Seize( list );
 	}
 	
 	void LSize( short width, short height, ListHandle list )
@@ -128,6 +130,8 @@ namespace Nitrogen
 		::GetListDataBounds( list, &result );
 		return result;
 	}
+	
+#endif
 	
 	void RegisterListManagerErrors()
 	{

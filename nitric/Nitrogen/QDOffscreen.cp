@@ -7,7 +7,7 @@
 namespace Nitrogen
 {
 	
-	Owned< GWorldPtr, GWorldDisposer > NewGWorld( short pixelDepth,
+	Nucleus::Owned< GWorldPtr, GWorldDisposer > NewGWorld( short pixelDepth,
 	                                              const Rect& boundsRect,
 	                                              CTabHandle cTable,
 	                                              GDHandle aGDevice,
@@ -22,10 +22,10 @@ namespace Nitrogen
 		                            aGDevice,
 		                            flags ) );
 		
-		return Owned< GWorldPtr, GWorldDisposer >::Seize( newWorld );
+		return Nucleus::Owned< GWorldPtr, GWorldDisposer >::Seize( newWorld );
 	}
 	
-	Owned< GWorldPtr, GWorldDisposer > NewGWorld( short pixelDepth,
+	Nucleus::Owned< GWorldPtr, GWorldDisposer > NewGWorld( short pixelDepth,
 	                                              const Rect& boundsRect,
 	                                              GWorldFlags flags )
 	{
@@ -42,7 +42,7 @@ namespace Nitrogen
 		}
 	}
 	
-	GWorldFlags UpdateGWorld( Owned< GWorldPtr, GWorldDisposer >&  offscreenGWorld,
+	GWorldFlags UpdateGWorld( Nucleus::Owned< GWorldPtr, GWorldDisposer >&  offscreenGWorld,
 	                          short                                pixelDepth,
 	                          const Rect&                          boundsRect,
 	                          CTabHandle                           cTable,
@@ -66,7 +66,7 @@ namespace Nitrogen
 		if ( gWorldPtr != offscreenGWorld.Get() )
 		{
 			offscreenGWorld.Release();
-			offscreenGWorld = Owned< GWorldPtr, GWorldDisposer >::Seize( gWorldPtr );
+			offscreenGWorld = Nucleus::Owned< GWorldPtr, GWorldDisposer >::Seize( gWorldPtr );
 		}
 		
 		return result;

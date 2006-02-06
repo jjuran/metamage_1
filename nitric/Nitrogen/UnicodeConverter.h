@@ -15,12 +15,12 @@
 #include "Nitrogen/MacTypes.h"
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 
@@ -72,104 +72,116 @@ InvokeUnicodeToTextFallbackUPP(
   UnicodeToTextFallbackUPP  userUPP)                          AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER;
 #endif
 
-//	Do these need to take pointers????
-	template <> struct Disposer< TextToUnicodeInfo >: public std::unary_function< TextToUnicodeInfo, void >
+  using ::TextToUnicodeInfo;
+  using ::UnicodeToTextInfo;
+  using ::UnicodeToTextRunInfo;
+  }
+
+
+namespace Nucleus
+  {
+//	Do these need to take pointers???? [ No - they are already pointers ]
+	template <> struct Disposer< Nitrogen::TextToUnicodeInfo >: public std::unary_function< Nitrogen::TextToUnicodeInfo, void >
 		{
-		void operator()( TextToUnicodeInfo ttui ) const
+		void operator()( Nitrogen::TextToUnicodeInfo ttui ) const
 			{
 				(void) ::DisposeTextToUnicodeInfo ( &ttui );
 			}
 		};
 
-	template <> struct Disposer< UnicodeToTextInfo >: public std::unary_function< UnicodeToTextInfo, void >
+	template <> struct Disposer< Nitrogen::UnicodeToTextInfo >: public std::unary_function< Nitrogen::UnicodeToTextInfo, void >
 		{
-		void operator()( UnicodeToTextInfo utti ) const
+		void operator()( Nitrogen::UnicodeToTextInfo utti ) const
 			{
 				(void) ::DisposeUnicodeToTextInfo ( &utti );
 			}
 		};
 
-	template <> struct Disposer< UnicodeToTextRunInfo >: public std::unary_function< UnicodeToTextRunInfo, void >
+	template <> struct Disposer< Nitrogen::UnicodeToTextRunInfo >: public std::unary_function< Nitrogen::UnicodeToTextRunInfo, void >
 		{
-		void operator()( UnicodeToTextRunInfo uttri ) const
+		void operator()( Nitrogen::UnicodeToTextRunInfo uttri ) const
 			{
 				(void) ::DisposeUnicodeToTextRunInfo ( &uttri );
 			}
 		};
+  }
+
+namespace Nitrogen
+  {
 
 //	Shouldn't these pointers be const &s ??
-	inline Owned<TextToUnicodeInfo> CreateTextToUnicodeInfo ( const UnicodeMapping &iUnicodeMapping ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+	inline Nucleus::Owned<TextToUnicodeInfo> CreateTextToUnicodeInfo ( const UnicodeMapping &iUnicodeMapping ) {
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		TextToUnicodeInfo result;
 		ThrowOSStatus ( ::CreateTextToUnicodeInfo ( &iUnicodeMapping, &result ));
-		return Owned<TextToUnicodeInfo>::Seize ( result );
+		return Nucleus::Owned<TextToUnicodeInfo>::Seize ( result );
 		}
 	
-	inline Owned<TextToUnicodeInfo> CreateTextToUnicodeInfoByEncoding ( TextEncoding iEncoding ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+	inline Nucleus::Owned<TextToUnicodeInfo> CreateTextToUnicodeInfoByEncoding ( TextEncoding iEncoding ) {
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		TextToUnicodeInfo result;
 		ThrowOSStatus ( ::CreateTextToUnicodeInfoByEncoding ( iEncoding, &result ));
-		return Owned<TextToUnicodeInfo>::Seize ( result );
+		return Nucleus::Owned<TextToUnicodeInfo>::Seize ( result );
 		}
 
-	inline Owned<UnicodeToTextInfo> CreateUnicodeToTextInfo ( const UnicodeMapping &iUnicodeMapping ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+	inline Nucleus::Owned<UnicodeToTextInfo> CreateUnicodeToTextInfo ( const UnicodeMapping &iUnicodeMapping ) {
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		UnicodeToTextInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextInfo ( &iUnicodeMapping, &result ));
-		return Owned<UnicodeToTextInfo>::Seize ( result );
+		return Nucleus::Owned<UnicodeToTextInfo>::Seize ( result );
 		}
 	
-	inline Owned<UnicodeToTextInfo> CreateUnicodeToTextInfoByEncoding ( TextEncoding iEncoding ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+	inline Nucleus::Owned<UnicodeToTextInfo> CreateUnicodeToTextInfoByEncoding ( TextEncoding iEncoding ) {
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		UnicodeToTextInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextInfoByEncoding ( iEncoding, &result ));
-		return Owned<UnicodeToTextInfo>::Seize ( result );
+		return Nucleus::Owned<UnicodeToTextInfo>::Seize ( result );
 		}
 
-	inline Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfo ( ItemCount iNumberOfMappings, const UnicodeMapping iUnicodeMappings[] ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+	inline Nucleus::Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfo ( ItemCount iNumberOfMappings, const UnicodeMapping iUnicodeMappings[] ) {
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		UnicodeToTextRunInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextRunInfo ( iNumberOfMappings, iUnicodeMappings, &result ));
-		return Owned<UnicodeToTextRunInfo>::Seize ( result );
+		return Nucleus::Owned<UnicodeToTextRunInfo>::Seize ( result );
 		}
 	
-	inline Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByEncoding ( ItemCount iNumberOfEncodings, const ::TextEncoding iEncodings[] ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+	inline Nucleus::Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByEncoding ( ItemCount iNumberOfEncodings, const ::TextEncoding iEncodings[] ) {
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		UnicodeToTextRunInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextRunInfoByEncoding ( iNumberOfEncodings, iEncodings, &result ));
-		return Owned<UnicodeToTextRunInfo>::Seize ( result );
+		return Nucleus::Owned<UnicodeToTextRunInfo>::Seize ( result );
 		}
 
-	inline Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByScriptCode ( ItemCount iNumberOfScriptCodes, const ::ScriptCode iScripts[] ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+	inline Nucleus::Owned<UnicodeToTextRunInfo> CreateUnicodeToTextRunInfoByScriptCode ( ItemCount iNumberOfScriptCodes, const ::ScriptCode iScripts[] ) {
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		UnicodeToTextRunInfo result;
 		ThrowOSStatus ( ::CreateUnicodeToTextRunInfoByScriptCode ( iNumberOfScriptCodes, iScripts, &result ));
-		return Owned<UnicodeToTextRunInfo>::Seize ( result );
+		return Nucleus::Owned<UnicodeToTextRunInfo>::Seize ( result );
 		}
 
 //	I think that these two  should possibly return a new info, rather than changing the input
 	inline void ChangeTextToUnicodeInfo ( TextToUnicodeInfo ioTextToUnicodeInfo, const UnicodeMapping &iUnicodeMapping ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ThrowOSStatus ( ::ChangeTextToUnicodeInfo ( ioTextToUnicodeInfo, &iUnicodeMapping ));
 		}
 
 	inline void ChangeUnicodeToTextInfo ( UnicodeToTextInfo ioUnicodeToTextInfo, const UnicodeMapping &iUnicodeMapping ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ThrowOSStatus ( ::ChangeUnicodeToTextInfo ( ioUnicodeToTextInfo, &iUnicodeMapping ));
 		}
 
 	inline void DisposeTextToUnicodeInfo ( TextToUnicodeInfo *ioTextToUnicodeInfo ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ThrowOSStatus ( ::DisposeTextToUnicodeInfo ( ioTextToUnicodeInfo ));
 		}
 	
 	inline void DisposeUnicodeToTextInfo ( UnicodeToTextInfo *ioUnicodeToTextInfo ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ThrowOSStatus ( ::DisposeUnicodeToTextInfo ( ioUnicodeToTextInfo ));
 		}
 	
 	inline void DisposeUnicodeToTextRunInfo ( UnicodeToTextRunInfo *ioUnicodeToTextRunInfo ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ThrowOSStatus ( ::DisposeUnicodeToTextRunInfo ( ioUnicodeToTextRunInfo ));
 		}
 
@@ -338,7 +350,7 @@ ConvertFromUnicodeToPString(
 
 
 	inline ItemCount CountUnicodeMappings ( OptionBits iFilter, ConstUnicodeMappingPtr iFindMapping ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		::ItemCount result;
 		ThrowOSStatus ( ::CountUnicodeMappings ( iFilter, iFindMapping, &result ));
 		return result;
@@ -401,17 +413,17 @@ SetFallbackUnicodeToTextRun(
 
 
 	inline void ResetTextToUnicodeInfo ( TextToUnicodeInfo ioTextToUnicodeInfo ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ThrowOSStatus ( ::ResetTextToUnicodeInfo ( ioTextToUnicodeInfo ));
 		}
 	
 	inline void ResetUnicodeToTextInfo ( UnicodeToTextInfo ioUnicodeToTextInfo ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ThrowOSStatus ( ::ResetUnicodeToTextInfo ( ioUnicodeToTextInfo ));
 		}
 
 	inline void ResetUnicodeToTextRunInfo ( UnicodeToTextRunInfo ioUnicodeToTextRunInfo ) {
-		OnlyOnce<RegisterTECManagerErrors> ();
+		Nucleus::OnlyOnce<RegisterTECManagerErrors> ();
 		ThrowOSStatus ( ::ResetUnicodeToTextRunInfo ( ioUnicodeToTextRunInfo ));
 		}
 

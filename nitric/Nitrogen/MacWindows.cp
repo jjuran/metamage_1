@@ -4,15 +4,15 @@
 #include "Nitrogen/MacWindows.h"
 #endif
 
-#ifndef NITROGEN_SCOPED_H
-#include "Nitrogen/Scoped.h"
+#ifndef NUCLEUS_SCOPED_H
+#include "Nucleus/Scoped.h"
 #endif
 
 
 namespace Nitrogen
   {
 	
-	Owned< WindowRef > NewWindow( const Rect&       bounds,
+	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
 	                              ConstStr255Param  title,
 	                              bool              visible,
 	                              WindowDefProcID   procID,
@@ -20,13 +20,13 @@ namespace Nitrogen
 	                              bool              goAwayFlag,
 	                              RefCon            refCon )
 	{
-		return Owned< WindowRef >::Seize
+		return Nucleus::Owned< WindowRef >::Seize
 		(
 			::NewWindow( NULL, &bounds, title, visible, procID, behind, goAwayFlag, refCon )
 		);
 	}
 	
-	Owned< WindowRef > NewCWindow( const Rect&       bounds,
+	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
 	                              ConstStr255Param  title,
 	                              bool              visible,
 	                              WindowDefProcID   procID,
@@ -34,7 +34,7 @@ namespace Nitrogen
 	                              bool              goAwayFlag,
 	                              RefCon            refCon )
 	{
-		return Owned< WindowRef >::Seize
+		return Nucleus::Owned< WindowRef >::Seize
 		(
 			::NewCWindow( NULL, &bounds, title, visible, procID, behind, goAwayFlag, refCon )
 		);
@@ -131,7 +131,7 @@ namespace Nitrogen
 		
 		else
 		{
-			Scoped< Port > savedPort;
+			Nucleus::Scoped< Port > savedPort;
 			SetPortWindowPort( window );
 			::InvalRect( &bounds );
 		}
@@ -167,7 +167,7 @@ namespace Nitrogen
 	
    WindowAttributes GetWindowAttributes( WindowRef window )
      {
-      OnlyOnce< RegisterWindowManagerErrors >();
+      Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
       ::WindowAttributes result;
       ThrowOSStatus( ::GetWindowAttributes( window, &result ) );
       return WindowAttributes( result );
@@ -177,7 +177,7 @@ namespace Nitrogen
                                  WindowAttributes setTheseAttributes,
                                  WindowAttributes clearTheseAttributes )
      {
-      OnlyOnce< RegisterWindowManagerErrors >();
+      Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
       ThrowOSStatus( ::ChangeWindowAttributes( window, setTheseAttributes, clearTheseAttributes ) );
      }
    

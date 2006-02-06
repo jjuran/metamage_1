@@ -19,9 +19,9 @@
 namespace Nitrogen
 {
 	
-	Owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect )
+	Nucleus::Owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect )
 	{
-		return Owned< TEHandle >::Seize( ::TENew( &destRect, &viewRect ) );
+		return Nucleus::Owned< TEHandle >::Seize( ::TENew( &destRect, &viewRect ) );
 	}
 	
 	void TESetText( const void* text, std::size_t length, TEHandle hTE )

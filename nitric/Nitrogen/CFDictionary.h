@@ -17,29 +17,35 @@ namespace Nitrogen
   {
    using ::CFDictionaryRef;
    using ::CFDictionaryGetTypeID;
-   template <> struct OwnedDefaults< CFDictionaryRef >: OwnedDefaults< CFTypeRef >  {};
    template <> struct CFType_Traits< CFDictionaryRef >: Basic_CFType_Traits< CFDictionaryRef, ::CFDictionaryGetTypeID > {};
-   inline void CFShow( const CFDictionaryRef d )        { ::CFShow( d ); }
-
-   class CFDictionaryCreate_Failed {};
-   Owned<CFDictionaryRef> CFDictionaryCreate ( CFAllocatorRef allocator, const void **keys, const void **values, CFIndex numValues, 
-   				const CFDictionaryKeyCallBacks *keyCallBacks = NULL, const CFDictionaryValueCallBacks *valueCallBacks = NULL);
 
    using ::CFMutableDictionaryRef;
-   template <> struct OwnedDefaults< CFMutableDictionaryRef >: OwnedDefaults< CFTypeRef >  {};
    template <> struct CFType_Traits< CFMutableDictionaryRef >: Basic_CFType_Traits< CFMutableDictionaryRef, ::CFDictionaryGetTypeID > {};
+   }
+
+namespace Nucleus {
+   template <> struct OwnedDefaults< Nitrogen::CFDictionaryRef >       : OwnedDefaults< Nitrogen::CFTypeRef >  {};
+   template <> struct OwnedDefaults< Nitrogen::CFMutableDictionaryRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+   }
+
+namespace Nitrogen {
+   class CFDictionaryCreate_Failed {};
+   Nucleus::Owned<CFDictionaryRef> CFDictionaryCreate ( CFAllocatorRef allocator, const void **keys, const void **values, CFIndex numValues, 
+   				const CFDictionaryKeyCallBacks *keyCallBacks = NULL, const CFDictionaryValueCallBacks *valueCallBacks = NULL);
+
    inline void CFShow( const CFMutableDictionaryRef d ) { ::CFShow( d ); }
+   inline void CFShow( const CFDictionaryRef d )        { ::CFShow( d ); }
 
    class CFDictionaryCreateMutable_Failed {};
-   Owned<CFMutableDictionaryRef> CFDictionaryCreateMutable ( CFAllocatorRef allocator, CFIndex capacity, 
+   Nucleus::Owned<CFMutableDictionaryRef> CFDictionaryCreateMutable ( CFAllocatorRef allocator, CFIndex capacity, 
    				const CFDictionaryKeyCallBacks *keyCallBacks = NULL, const CFDictionaryValueCallBacks *valueCallBacks = NULL );
    
    
    class CFDictionaryCreateCopy_Failed {};
-   Owned<CFDictionaryRef> CFDictionaryCreateCopy ( CFAllocatorRef allocator, CFDictionaryRef theDict );
+   Nucleus::Owned<CFDictionaryRef> CFDictionaryCreateCopy ( CFAllocatorRef allocator, CFDictionaryRef theDict );
 
    class CFDictionaryCreateMutableCopy_Failed {};
-   Owned<CFMutableDictionaryRef> CFDictionaryCreateMutableCopy ( CFAllocatorRef allocator, CFIndex capacity, CFDictionaryRef theDict );
+   Nucleus::Owned<CFMutableDictionaryRef> CFDictionaryCreateMutableCopy ( CFAllocatorRef allocator, CFIndex capacity, CFDictionaryRef theDict );
 
 //	CFIndex CFDictionaryGetCount		( CFDictionaryRef theDict );
 //	CFIndex CFDictionaryGetCountOfKey	( CFDictionaryRef theDict, const void *key );

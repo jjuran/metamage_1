@@ -9,7 +9,7 @@
 
 namespace Nitrogen
   {
-   Owned<CFURLRef> CFURLCreateWithBytes( CFAllocatorRef     allocator,
+   Nucleus::Owned<CFURLRef> CFURLCreateWithBytes( CFAllocatorRef     allocator,
                                          const UInt8 *      URLBytes,
                                          std::size_t        length,
                                          CFStringEncoding   encoding,
@@ -22,10 +22,10 @@ namespace Nitrogen
                                                 baseURL );
       if ( result == 0 )
          throw CFURLCreateWithBytes_Failed();
-      return Owned<CFURLRef>::Seize( result );
+      return Nucleus::Owned<CFURLRef>::Seize( result );
      }
 
-   Owned<CFDataRef> CFURLCreateData( CFAllocatorRef     allocator,
+   Nucleus::Owned<CFDataRef> CFURLCreateData( CFAllocatorRef     allocator,
                                      CFURLRef           url,
                                      CFStringEncoding   encoding,
                                      bool               escapeWhitespace )
@@ -36,10 +36,10 @@ namespace Nitrogen
                                             escapeWhitespace );
       if ( result == 0 )
          throw CFURLCreateData_Failed();
-      return Owned<CFDataRef>::Seize( result );
+      return Nucleus::Owned<CFDataRef>::Seize( result );
      }
 
-   Owned<CFURLRef> CFURLCreateWithBytes( CFAllocatorRef     allocator,
+   Nucleus::Owned<CFURLRef> CFURLCreateWithBytes( CFAllocatorRef     allocator,
                                          const std::string& string,
                                          CFStringEncoding   encoding,
                                          CFURLRef           baseURL )
@@ -51,17 +51,17 @@ namespace Nitrogen
                                    baseURL );
      }
 
-   Owned<CFURLRef> CFURLCreateWithString( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFURLRef> CFURLCreateWithString( CFAllocatorRef   allocator,
                                           CFStringRef      URLString,
                                           CFURLRef         baseURL )
      {
       CFURLRef result = ::CFURLCreateWithString( allocator, URLString, baseURL );
       if ( result == 0 )
          throw CFURLCreateWithString_Failed();
-      return Owned<CFURLRef>::Seize( result );
+      return Nucleus::Owned<CFURLRef>::Seize( result );
      }
 
-   Owned<CFURLRef> CFURLCreateWithFileSystemPath( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFURLRef> CFURLCreateWithFileSystemPath( CFAllocatorRef   allocator,
                                                   CFStringRef      filePath,
                                                   CFURLPathStyle   pathStyle,
                                                   bool             isDirectory )
@@ -69,10 +69,10 @@ namespace Nitrogen
       CFURLRef result = ::CFURLCreateWithFileSystemPath( allocator, filePath, pathStyle, isDirectory );
       if ( result == 0 )
          throw CFURLCreateWithFileSystemPath_Failed();
-      return Owned<CFURLRef>::Seize( result );
+      return Nucleus::Owned<CFURLRef>::Seize( result );
      }
 
-   Owned<CFURLRef> CFURLCreateFromFileSystemRepresentation( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFURLRef> CFURLCreateFromFileSystemRepresentation( CFAllocatorRef   allocator,
                                                             const UInt8 *    buffer,
                                                             CFIndex          bufLen,
                                                             bool             isDirectory )
@@ -80,10 +80,10 @@ namespace Nitrogen
       CFURLRef result = ::CFURLCreateFromFileSystemRepresentation( allocator, buffer, bufLen, isDirectory );
       if ( result == 0 )
          throw CFURLCreateFromFileSystemRepresentation_Failed();
-      return Owned<CFURLRef>::Seize( result );
+      return Nucleus::Owned<CFURLRef>::Seize( result );
      }
 
-   Owned<CFURLRef> CFURLCreateWithFileSystemPathRelativeToBase( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFURLRef> CFURLCreateWithFileSystemPathRelativeToBase( CFAllocatorRef   allocator,
                                                                 CFStringRef      filePath,
                                                                 CFURLPathStyle   pathStyle,
                                                                 bool             isDirectory,
@@ -92,10 +92,10 @@ namespace Nitrogen
       CFURLRef result = ::CFURLCreateWithFileSystemPathRelativeToBase( allocator, filePath, pathStyle, isDirectory, baseURL );
       if ( result == 0 )
          throw CFURLCreateWithFileSystemPathRelativeToBase_Failed();
-      return Owned<CFURLRef>::Seize( result );
+      return Nucleus::Owned<CFURLRef>::Seize( result );
      }
 
-   Owned<CFURLRef> CFURLCreateFromFileSystemRepresentationRelativeToBase( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFURLRef> CFURLCreateFromFileSystemRepresentationRelativeToBase( CFAllocatorRef   allocator,
                                                                           const UInt8 *    buffer,
                                                                           CFIndex          bufLen,
                                                                           bool             isDirectory,
@@ -104,7 +104,7 @@ namespace Nitrogen
       CFURLRef result = ::CFURLCreateFromFileSystemRepresentationRelativeToBase( allocator, buffer, bufLen, isDirectory, baseURL );
       if ( result == 0 )
          throw CFURLCreateFromFileSystemRepresentationRelativeToBase_Failed();
-      return Owned<CFURLRef>::Seize( result );
+      return Nucleus::Owned<CFURLRef>::Seize( result );
      }
 
    void CFURLGetFileSystemRepresentation( CFURLRef   url,
@@ -116,12 +116,12 @@ namespace Nitrogen
          throw CFURLGetFileSystemRepresentation_Failed();
      }
 
-   Owned<CFURLRef> CFURLCopyAbsoluteURL( CFURLRef relativeURL )
+   Nucleus::Owned<CFURLRef> CFURLCopyAbsoluteURL( CFURLRef relativeURL )
      {
       CFURLRef result = ::CFURLCopyAbsoluteURL( relativeURL );
       if ( result == 0 )
          throw CFURLCopyAbsoluteURL_Failed();
-      return Owned<CFURLRef>::Seize( result );
+      return Nucleus::Owned<CFURLRef>::Seize( result );
      }
 
    CFStringRef CFURLGetString( CFURLRef anURL )
@@ -132,13 +132,13 @@ namespace Nitrogen
       return result;
      }
 
-   Owned<CFURLRef> CFURLCreateFromFSRef( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFURLRef> CFURLCreateFromFSRef( CFAllocatorRef   allocator,
                                          const FSRef&     fsRef )
      {
       CFURLRef result = ::CFURLCreateFromFSRef( allocator, &fsRef );
       if ( result == 0 )
          throw CFURLCreateFromFSRef_Failed();
-      return Owned<CFURLRef>::Seize( result );
+      return Nucleus::Owned<CFURLRef>::Seize( result );
      }
 
    FSRef CFURLGetFSRef( CFURLRef url )
@@ -148,9 +148,12 @@ namespace Nitrogen
          throw CFURLGetFSRef_Failed();
       return result;
      }
+   }
 
-   FSRef Converter< FSRef, CFURLRef >::operator()( CFURLRef url ) const
+namespace Nucleus
+   {
+   Nitrogen::FSRef Converter< Nitrogen::FSRef, Nitrogen::CFURLRef >::operator()( Nitrogen::CFURLRef url ) const
      {
-      return CFURLGetFSRef( url );
+      return Nitrogen::CFURLGetFSRef( url );
      }
   }

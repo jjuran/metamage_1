@@ -7,14 +7,14 @@
 namespace Nitrogen
 {
 	
-	Owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
+	Nucleus::Owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
 	                            AESendMode         sendMode,
 	                            AESendPriority     sendPriority,
 	                            long               timeOutInTicks,
 	                            AEIdleUPP          idleProc,
 	                            AEFilterUPP        filterProc )
 	{
-		OnlyOnce< RegisterAppleEventManagerErrors >();
+		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		AEDesc reply;
 		
@@ -26,12 +26,12 @@ namespace Nitrogen
 		                         idleProc,
 		                         filterProc ) );
 		
-		return Owned< AppleEvent >::Seize( reply );
+		return Nucleus::Owned< AppleEvent >::Seize( reply );
 	}
 	
 	void AEProcessAppleEvent( const EventRecord& event )
 	{
-		OnlyOnce< RegisterAppleEventManagerErrors >();
+		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		ThrowOSStatus( ::AEProcessAppleEvent( &event ) );
 	}

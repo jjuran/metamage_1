@@ -13,9 +13,9 @@
 namespace Nitrogen
 {
 	
-	Owned< CIconHandle > GetCIcon( ResID iconID )
+	Nucleus::Owned< CIconHandle > GetCIcon( ResID iconID )
 	{
-		return Owned< CIconHandle >::Seize( ::GetCIcon( iconID ) );
+		return Nucleus::Owned< CIconHandle >::Seize( ::GetCIcon( iconID ) );
 	}
 	
 	void PlotCIcon( const Rect& rect, CIconHandle icon )
@@ -42,19 +42,19 @@ namespace Nitrogen
 		ThrowOSStatus( ::PlotIconID( &rect, align, transform, resID ) );
 	}
 	
-	Owned< IconSuiteRef > NewIconSuite()
+	Nucleus::Owned< IconSuiteRef > NewIconSuite()
 	{
 		::IconSuiteRef result;
 		ThrowOSStatus( ::NewIconSuite( &result ) );
-		return Owned< IconSuiteRef >::Seize( IconSuiteRef( result ) );
+		return Nucleus::Owned< IconSuiteRef >::Seize( IconSuiteRef( result ) );
 	}
 	
-	void DisposeIconSuite( Owned< IconSuiteRef > iconSuite )
+	void DisposeIconSuite( Nucleus::Owned< IconSuiteRef > iconSuite )
 	{
 		ThrowOSStatus( ::DisposeIconSuite( iconSuite.Release(), true ) );
 	}
 	
-	void DisposeIconSuite( Owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite )
+	void DisposeIconSuite( Nucleus::Owned< IconSuiteRef, DisposeIconSuiteButNotData > iconSuite )
 	{
 		ThrowOSStatus( ::DisposeIconSuite( iconSuite.Release(), false ) );
 	}
@@ -109,41 +109,41 @@ namespace Nitrogen
 		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
 	}
 	
-   Owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType )
+   Nucleus::Owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType )
      {
-      OnlyOnce<RegisterIconManagerErrors>();
+      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef result;
       ThrowOSStatus( ::GetIconRef( vRefNum, creator, iconType, &result ) );
-      return Owned<IconRef>::Seize( result );
+      return Nucleus::Owned<IconRef>::Seize( result );
      }
 
    GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile )
      {
-      OnlyOnce<RegisterIconManagerErrors>();
+      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef icon;
       SInt16 label;
       ThrowOSStatus( ::GetIconRefFromFile( &theFile, &icon, &label ) );
-      return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
+      return GetIconRefFromFile_Result( Nucleus::Owned<IconRef>::Seize( icon ),
                                         IconLabel( label ) );
      }
 
-   Owned<IconRef> GetIconRef( OSType creator, OSType iconType )
+   Nucleus::Owned<IconRef> GetIconRef( OSType creator, OSType iconType )
      {
       return GetIconRef( OnSystemDisk(), creator, iconType );
      }
 
-   Owned<IconRef> GetIconRef( OSType iconType )
+   Nucleus::Owned<IconRef> GetIconRef( OSType iconType )
      {
       return GetIconRef( OnSystemDisk(), kSystemIconsCreator, iconType );
      }
 
-	Owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
+	Nucleus::Owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
 	                                     FSDirID parentFolderID,
 	                                     FSDirID folderID,
 	                                     FSIOFileAttributes attributes,
 	                                     FSUserPrivileges accessPrivileges )
      {
-      OnlyOnce<RegisterIconManagerErrors>();
+      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef result;
       ThrowOSStatus( ::GetIconRefFromFolder( vRefNum,
                                              parentFolderID,
@@ -151,7 +151,7 @@ namespace Nitrogen
                                              attributes,
                                              accessPrivileges,
                                              &result ) );
-      return Owned<IconRef>::Seize( result );
+      return Nucleus::Owned<IconRef>::Seize( result );
      }
 
    GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
@@ -161,7 +161,7 @@ namespace Nitrogen
                                                          const FSCatalogInfo&   inCatalogInfo,
                                                          IconServicesUsageFlags inUsageFlags )
      {
-      OnlyOnce<RegisterIconManagerErrors>();
+      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef icon;
       SInt16 label;
       ThrowOSStatus( ::GetIconRefFromFileInfo( &inRef,
@@ -172,7 +172,7 @@ namespace Nitrogen
                                                inUsageFlags,
                                                &icon,
                                                &label ) );
-      return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
+      return GetIconRefFromFile_Result( Nucleus::Owned<IconRef>::Seize( icon ),
                                         IconLabel( label ) );
      }
 
@@ -181,7 +181,7 @@ namespace Nitrogen
                                                          const UniChar         *inFileName,
                                                          IconServicesUsageFlags inUsageFlags )
      {
-      OnlyOnce<RegisterIconManagerErrors>();
+      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef icon;
       SInt16 label;
       ThrowOSStatus( ::GetIconRefFromFileInfo( &inRef,
@@ -192,26 +192,26 @@ namespace Nitrogen
                                                inUsageFlags,
                                                &icon,
                                                &label ) );
-      return GetIconRefFromFile_Result( Owned<IconRef>::Seize( icon ),
+      return GetIconRefFromFile_Result( Nucleus::Owned<IconRef>::Seize( icon ),
                                         IconLabel( label ) );
      }
 
-   Owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile )
+   Nucleus::Owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile )
      {
-      OnlyOnce<RegisterIconManagerErrors>();
+      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef result;
       ThrowOSStatus( ::RegisterIconRefFromFSRef( creator, iconType, &iconFile, &result ) );
-      return Owned<IconRef>::Seize( result );
+      return Nucleus::Owned<IconRef>::Seize( result );
      }
 
-   Owned<IconRef> RegisterIconRefFromIconFile( OSType creator,
+   Nucleus::Owned<IconRef> RegisterIconRefFromIconFile( OSType creator,
                                                OSType iconType,
                                                const FSSpec& iconFile )
 	  {
-      OnlyOnce<RegisterIconManagerErrors>();
+      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef result;
       ThrowOSStatus( ::RegisterIconRefFromIconFile( creator, iconType, &iconFile, &result ) );
-      return Owned<IconRef>::Seize( result );
+      return Nucleus::Owned<IconRef>::Seize( result );
      }
    
    void RegisterIconManagerErrors()

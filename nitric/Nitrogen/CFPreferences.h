@@ -25,7 +25,7 @@
 namespace Nitrogen
   {
    class CFPreferencesCopyAppValue_Failed {};
-   Owned< CFPropertyListRef > CFPreferencesCopyAppValue( CFStringRef key,
+   Nucleus::Owned< CFPropertyListRef > CFPreferencesCopyAppValue( CFStringRef key,
                                                          CFStringRef applicationID = kCFPreferencesCurrentApplication );
    
    class CFPreferencesGetAppBooleanValue_Failed {};
@@ -61,13 +61,13 @@ namespace Nitrogen
    void CFPreferencesAppSynchronize( CFStringRef applicationID = kCFPreferencesCurrentApplication );
 
    class CFPreferencesCopyValue_Failed {};
-   Owned< CFPropertyListRef > CFPreferencesCopyValue( CFStringRef key,
+   Nucleus::Owned< CFPropertyListRef > CFPreferencesCopyValue( CFStringRef key,
                                                       CFStringRef applicationID = kCFPreferencesCurrentApplication,
                                                       CFStringRef userName      = kCFPreferencesCurrentUser,
                                                       CFStringRef hostName      = kCFPreferencesCurrentHost );
 
    class CFPreferencesCopyMultiple_Failed {};
-   Owned< CFDictionaryRef > CFPreferencesCopyMultiple( CFArrayRef  keysToFetch   = 0,
+   Nucleus::Owned< CFDictionaryRef > CFPreferencesCopyMultiple( CFArrayRef  keysToFetch   = 0,
                                                        CFStringRef applicationID = kCFPreferencesCurrentApplication,
                                                        CFStringRef userName      = kCFPreferencesCurrentUser,
                                                        CFStringRef hostName      = kCFPreferencesCurrentHost );
@@ -98,11 +98,11 @@ namespace Nitrogen
      }
    
    class CFPreferencesCopyApplicationList_Failed {};
-   Owned< CFArrayRef > CFPreferencesCopyApplicationList( CFStringRef userName = kCFPreferencesCurrentUser,
+   Nucleus::Owned< CFArrayRef > CFPreferencesCopyApplicationList( CFStringRef userName = kCFPreferencesCurrentUser,
                                                          CFStringRef hostName = kCFPreferencesCurrentHost );
    
    class CFPreferencesCopyKeyList_Failed {};
-   Owned< CFArrayRef > CFPreferencesCopyKeyList( CFStringRef applicationID = kCFPreferencesCurrentApplication,
+   Nucleus::Owned< CFArrayRef > CFPreferencesCopyKeyList( CFStringRef applicationID = kCFPreferencesCurrentApplication,
                                                  CFStringRef userName      = kCFPreferencesCurrentUser,
                                                  CFStringRef hostName      = kCFPreferencesCurrentHost );
   }

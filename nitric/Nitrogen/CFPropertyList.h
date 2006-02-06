@@ -9,11 +9,11 @@
 #ifndef __CFPROPERTYLIST__
 #include FRAMEWORK_HEADER(CoreFoundation,CFPropertyList.h)
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
-#ifndef NITROGEN_CONVERT_H
-#include "Nitrogen/Convert.h"
+#ifndef NUCLEUS_CONVERT_H
+#include "Nucleus/Convert.h"
 #endif
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"
@@ -97,27 +97,36 @@ namespace Nitrogen
 
 #endif
 
-   template <> struct OwnedDefaults<CFPropertyListRef> : OwnedDefaults<CFTypeRef>  {};
-   
+  }
 
+namespace Nucleus
+  {
+   template <> struct OwnedDefaults<Nitrogen::CFPropertyListRef> : OwnedDefaults<Nitrogen::CFTypeRef>  {};
+  }
+
+namespace Nitrogen
+  {
    template <> CFPropertyListRef CFCast<CFPropertyListRef>( CFTypeRef p );
+  }
 
+namespace Nucleus
+  {
    template <>
-   struct Converter< bool, CFPropertyListRef >: public std::unary_function< CFPropertyListRef, bool >
+   struct Converter< bool, Nitrogen::CFPropertyListRef >: public std::unary_function< Nitrogen::CFPropertyListRef, bool >
      {
       bool operator()( const ::CFPropertyListRef& in ) const
         {
-         return Convert< bool >( CFCast<CFBooleanRef>( in ) );
+         return Convert< bool >( Nitrogen::CFCast<Nitrogen::CFBooleanRef>( in ) );
         }
      };
 
    template <>
-   struct Converter< Owned<CFPropertyListRef>, bool >: public std::unary_function< bool, Owned<CFPropertyListRef> >
+   struct Converter< Nucleus::Owned<Nitrogen::CFPropertyListRef>, bool >: public std::unary_function< bool, Nucleus::Owned<Nitrogen::CFPropertyListRef> >
      {
-      Owned<CFPropertyListRef> operator()( const bool& in ) const
+      Nucleus::Owned<Nitrogen::CFPropertyListRef> operator()( const bool& in ) const
         {
-         return Owned<CFPropertyListRef>( Convert< Owned<CFBooleanRef> >( in ) );
-         // The explicit conversion to Owned<CFPropertyListRef> is a workaround 
+         return Nucleus::Owned<Nitrogen::CFPropertyListRef>( Convert< Nucleus::Owned<Nitrogen::CFBooleanRef> >( in ) );
+         // The explicit conversion to Nucleus::Owned<CFPropertyListRef> is a workaround 
          // for a bug in gcc 3.1 20020420; it rejects the implicit conversion.
         }
      };

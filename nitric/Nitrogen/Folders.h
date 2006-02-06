@@ -19,7 +19,7 @@
 namespace Nitrogen
   {
    class FolderTypeTag {};
-   typedef SelectorType< FolderTypeTag, ::OSType > FolderType;
+   typedef Nucleus::SelectorType< FolderTypeTag, ::OSType > FolderType;
 
    inline FSVolumeRefNum OnSystemDisk()        { return FSVolumeRefNum::Make( kOnSystemDisk      ); }    
    inline FSVolumeRefNum OnAppropriateDisk()   { return FSVolumeRefNum::Make( kOnAppropriateDisk ); }    

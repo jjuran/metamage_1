@@ -64,12 +64,12 @@ namespace Nitrogen
 	
 	typedef UPP< DeferredTaskUPP_Details > DeferredTaskUPP;
 	
-	inline Owned< DeferredTaskUPP > NewDeferredTaskUPP( ::DeferredTaskProcPtr p )
+	inline Nucleus::Owned< DeferredTaskUPP > NewDeferredTaskUPP( ::DeferredTaskProcPtr p )
 	{
 		return NewUPP< DeferredTaskUPP >( p );
 	}
 	
-	inline void DisposeDeferredTaskUPP( Owned< DeferredTaskUPP > )  {}
+	inline void DisposeDeferredTaskUPP( Nucleus::Owned< DeferredTaskUPP > )  {}
 	
 #if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
 	

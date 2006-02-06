@@ -6,7 +6,7 @@
 
 namespace Nitrogen
   {
-   Owned<CFStringRef> CFStringCreateWithPascalString( CFAllocatorRef     alloc,
+   Nucleus::Owned<CFStringRef> CFStringCreateWithPascalString( CFAllocatorRef     alloc,
                                                       ConstStr255Param   pStr,
                                                       CFStringEncoding   encoding )
      {
@@ -15,10 +15,10 @@ namespace Nitrogen
       if ( result == 0 )
          throw CFStringCreateWithPascalString_Failed();
       
-      return Owned<CFStringRef>::Seize( result );
+      return Nucleus::Owned<CFStringRef>::Seize( result );
      }
 
-   Owned<CFStringRef> CFStringCreateWithCString( CFAllocatorRef alloc,
+   Nucleus::Owned<CFStringRef> CFStringCreateWithCString( CFAllocatorRef alloc,
                                                  const char *cStr,
                                                  CFStringEncoding encoding )
      {
@@ -27,10 +27,10 @@ namespace Nitrogen
       if ( result == 0 )
          throw CFStringCreateWithCString_Failed ();
       
-      return Owned<CFStringRef>::Seize( result );
+      return Nucleus::Owned<CFStringRef>::Seize( result );
      }
     
-   Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
+   Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
                                                     const UniChar *  chars,
                                                     CFIndex          numChars )
      {
@@ -39,15 +39,15 @@ namespace Nitrogen
       if ( result == 0 )
          throw CFStringCreateWithCharacters_Failed();
       
-      return Owned<CFStringRef>::Seize( result );
+      return Nucleus::Owned<CFStringRef>::Seize( result );
      }
 
-   inline Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
+   inline Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
                                                            const UniString& string )
      {
       return Nitrogen::CFStringCreateWithCharacters( alloc,
                                                      string.data(),
-                                                     Convert<CFIndex>( string.size() ) );
+                                                     Nucleus::Convert<CFIndex>( string.size() ) );
      }
 
    UniString CFStringGetCharacters( CFStringRef theString, CFRange range )
@@ -60,14 +60,14 @@ namespace Nitrogen
       if ( range.length == 0 )
          return UniString();
       
-      UniString result( Convert<UniString::size_type>( range.length ), UniChar() );
+      UniString result( Nucleus::Convert<UniString::size_type>( range.length ), UniChar() );
       Nitrogen::CFStringGetCharacters( theString,
                                        range,
                                        &*result.begin() );
       return result;
      }
 
-   Owned< CFStringRef > CFStringCreateWithBytes( CFAllocatorRef     alloc,
+   Nucleus::Owned< CFStringRef > CFStringCreateWithBytes( CFAllocatorRef     alloc,
                                                  const UInt8 *      bytes,
                                                  CFIndex            numBytes,
                                                  CFStringEncoding   encoding,
@@ -81,7 +81,7 @@ namespace Nitrogen
       if ( result == 0 )
          throw CFStringCreateWithBytes_Failed();
       
-      return Owned<CFStringRef>::Seize( result );
+      return Nucleus::Owned<CFStringRef>::Seize( result );
      }
    
    UniString CFStringGetCharacters( CFStringRef theString )

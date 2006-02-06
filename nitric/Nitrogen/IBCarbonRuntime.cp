@@ -6,58 +6,58 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen
   {
-   Owned< IBNibRef > CreateNibReference( CFStringRef inNibName )
+   Nucleus::Owned< IBNibRef > CreateNibReference( CFStringRef inNibName )
      {
-      OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
+      Nucleus::OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
       IBNibRef result;
       ThrowOSStatus( ::CreateNibReference( inNibName, &result ) );
-      return Owned<IBNibRef>::Seize( result );
+      return Nucleus::Owned<IBNibRef>::Seize( result );
      }
 
-   Owned< IBNibRef > CreateNibReferenceWithCFBundle( CFBundleRef inBundle,
+   Nucleus::Owned< IBNibRef > CreateNibReferenceWithCFBundle( CFBundleRef inBundle,
                                                      CFStringRef inNibName )
      {
-      OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
+      Nucleus::OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
       IBNibRef result;
       ThrowOSStatus( ::CreateNibReferenceWithCFBundle( inBundle, inNibName, &result ) );
-      return Owned<IBNibRef>::Seize( result );
+      return Nucleus::Owned<IBNibRef>::Seize( result );
      }
 
-   Owned< WindowRef > CreateWindowFromNib( IBNibRef inNibRef, CFStringRef inName )
+   Nucleus::Owned< WindowRef > CreateWindowFromNib( IBNibRef inNibRef, CFStringRef inName )
      {
-      OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
+      Nucleus::OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
       WindowRef result;
       ThrowOSStatus( ::CreateWindowFromNib( inNibRef, inName, &result ) );
-      return Owned<WindowRef>::Seize( result );
+      return Nucleus::Owned<WindowRef>::Seize( result );
      }
 
-   Owned< MenuRef > CreateMenuFromNib( IBNibRef inNibRef, CFStringRef inName )
+   Nucleus::Owned< MenuRef > CreateMenuFromNib( IBNibRef inNibRef, CFStringRef inName )
      {
-      OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
+      Nucleus::OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
       MenuRef result;
       ThrowOSStatus( ::CreateMenuFromNib( inNibRef, inName, &result ) );
-      return Owned<MenuRef>::Seize( result );
+      return Nucleus::Owned<MenuRef>::Seize( result );
      }
 
 #if 0
-   Owned< Handle > CreateMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName )
+   Nucleus::Owned< Handle > CreateMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName )
      {
-      OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
+      Nucleus::OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
       Handle result;
       ThrowOSStatus( ::CreateMenuBarFromNib( inNibRef, inName, &result ) );
-      return Owned<Handle>::Seize( result );
+      return Nucleus::Owned<Handle>::Seize( result );
      }
 #endif
 
    void SetMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName )
      {
-      OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
+      Nucleus::OnlyOnce< RegisterInterfaceBuilderServicesErrors >();
       ThrowOSStatus( ::SetMenuBarFromNib( inNibRef, inName ) );
      }
    

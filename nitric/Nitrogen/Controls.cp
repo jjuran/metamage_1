@@ -6,8 +6,8 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen
@@ -61,7 +61,7 @@ namespace Nitrogen
 	
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ControlRef result;
       ThrowOSStatus( ::GetControlByID( inWindow, &id, &result ) );
       return result;
@@ -96,7 +96,7 @@ namespace Nitrogen
                         Size              inSize,
                         const void *      inData )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ThrowOSStatus( ::SetControlData( inControl,
                                        inPart,
                                        inTagName,
@@ -110,7 +110,7 @@ namespace Nitrogen
                         Size              inBufferSize,
                         void *            inBuffer )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ::Size outActualSize;
       ThrowOSStatus( ::GetControlData( inControl,
                                        inPart,
@@ -132,7 +132,7 @@ namespace Nitrogen
                                    DragTrackingMessage inMessage,
                                    DragReference       inDrag )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ::Boolean outLikesDrag;
       ThrowOSStatus( ::HandleControlDragTracking( inControl, inMessage, inDrag, &outLikesDrag ) );
       return outLikesDrag;
@@ -141,20 +141,20 @@ namespace Nitrogen
    void HandleControlDragReceive( ControlRef    inControl,
                                   DragReference inDrag )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ThrowOSStatus( ::HandleControlDragReceive( inControl, inDrag ) );
      }
 
    void SetControlDragTrackingEnabled( ControlRef theControl,
                                        bool       tracks )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ThrowOSStatus( ::SetControlDragTrackingEnabled( theControl, tracks ) );
      }
 
    bool IsControlDragTrackingEnabled( ControlRef theControl )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ::Boolean tracks;
       ThrowOSStatus( ::IsControlDragTrackingEnabled( theControl, &tracks ) );
       return tracks;
@@ -163,13 +163,13 @@ namespace Nitrogen
    void SetAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow,
                                                          bool      tracks )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ThrowOSStatus( ::SetAutomaticControlDragTrackingEnabledForWindow( theWindow, tracks ) );
      }
   
    bool IsAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow )
      {
-      OnlyOnce< RegisterControlManagerErrors >();
+      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ::Boolean tracks;
       ThrowOSStatus( ::IsAutomaticControlDragTrackingEnabledForWindow( theWindow, &tracks ) );
       return tracks;

@@ -46,7 +46,7 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlBevelButtonLastMenuTag                 >: POD_DescType_Traits           < ::SInt16                        > {};
    template<> struct ControlData_Traits< kControlBevelButtonMenuDelayTag                >: POD_DescType_Traits           < ::SInt32                        > {};
    template<> struct ControlData_Traits< kControlBevelButtonScaleIconTag                >: Converting_DescType_Traits    < bool, Boolean                 > {};
-//   template<> struct ControlData_Traits< kControlBevelButtonOwnedMenuRefTag             >: POD_DescType_Traits           < Owned<MenuRef>                > {};
+//   template<> struct ControlData_Traits< kControlBevelButtonOwnedMenuRefTag             >: POD_DescType_Traits           < Nucleus::Owned<MenuRef>                > {};
    template<> struct ControlData_Traits< kControlBevelButtonKindTag                     >: POD_DescType_Traits           < ThemeButtonKind               > {};
 
    template<> struct ControlData_Traits< kControlTriangleLastValueTag                   >: POD_DescType_Traits           < ::SInt16                        > {};

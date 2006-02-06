@@ -4,8 +4,8 @@
 #include "Nitrogen/OSA.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen {
@@ -28,68 +28,68 @@ namespace Nitrogen {
 		RegisterOSStatus< errOSACantOpenComponent    >();
 	}
 	
-	Owned< OSASpec >
+	Nucleus::Owned< OSASpec >
 	OSALoad(
-		Shared< ComponentInstance > scriptingComponent, 
+		Nucleus::Shared< ComponentInstance > scriptingComponent, 
 		const AEDesc& scriptData, 
 		OSAModeFlags modeFlags)
 	{
-		OnlyOnce< RegisterOSAErrors >();
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
 		
 		::OSAID resultingScriptID;
 		ThrowOSStatus(
 			::OSALoad( scriptingComponent, &scriptData, modeFlags, &resultingScriptID )
 		);
 		
-		return Owned< OSASpec >::Seize(
+		return Nucleus::Owned< OSASpec >::Seize(
 			OSASpec( scriptingComponent, OSAID::Make( resultingScriptID ) )
 		);
 	}
 	
-	Owned< AEDesc >
+	Nucleus::Owned< AEDesc >
 	OSAStore(
 		ComponentInstance scriptingComponent, 
 		OSAID scriptID, 
 		DescType desiredType, 
 		OSAModeFlags modeFlags)
 	{
-		OnlyOnce< RegisterOSAErrors >();
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
 		
 		AEDesc resultingScriptData;
 		ThrowOSStatus(
 			::OSAStore( scriptingComponent, scriptID, desiredType, modeFlags, &resultingScriptData )
 		);
 		
-		return Owned< AEDesc >::Seize( resultingScriptData );
+		return Nucleus::Owned< AEDesc >::Seize( resultingScriptData );
 	}
 	
-	Owned< OSASpec >
+	Nucleus::Owned< OSASpec >
 	OSAExecute(
-		Shared< ComponentInstance > scriptingComponent, 
+		Nucleus::Shared< ComponentInstance > scriptingComponent, 
 		OSAID compiledScriptID, 
 		OSAID contextID, 
 		OSAModeFlags modeFlags)
 	{
-		OnlyOnce< RegisterOSAErrors >();
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
 		
 		::OSAID resultingScriptValueID;
 		ThrowOSStatus(
 			::OSAExecute( scriptingComponent, compiledScriptID, contextID, modeFlags, &resultingScriptValueID )
 		);
 		
-		return Owned< OSASpec >::Seize(
+		return Nucleus::Owned< OSASpec >::Seize(
 			OSASpec( scriptingComponent, OSAID::Make( resultingScriptValueID ) )
 		);
 	}
 	
-	Owned< AEDesc >
+	Nucleus::Owned< AEDesc >
 	OSADisplay(
 		ComponentInstance scriptingComponent, 
 		OSAID scriptValueID, 
 		DescType desiredType, 
 		OSAModeFlags modeFlags)
 	{
-		OnlyOnce< RegisterOSAErrors >();
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
 		
 		AEDesc resultingText;
 		ThrowOSStatus(
@@ -102,14 +102,14 @@ namespace Nitrogen {
 			)
 		);
 		
-		return Owned< AEDesc >::Seize( resultingText );
+		return Nucleus::Owned< AEDesc >::Seize( resultingText );
 	}
 	
-	Owned< OSASpec > OSACompile( Shared< ComponentInstance >  scriptingComponent, 
+	Nucleus::Owned< OSASpec > OSACompile( Nucleus::Shared< ComponentInstance >  scriptingComponent, 
 	                             const AEDesc&                sourceData, 
 	                             OSAModeFlags                 modeFlags )
 	{
-		OnlyOnce< RegisterOSAErrors >();
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
 		
 		::OSAID previousAndResultingScriptID = kOSANullScript;
 		
@@ -121,18 +121,18 @@ namespace Nitrogen {
 			)
 		);
 		
-		return Owned< OSASpec >::Seize
+		return Nucleus::Owned< OSASpec >::Seize
 		(
 			OSASpec( scriptingComponent, OSAID( previousAndResultingScriptID ) )
 		);
 	}
 	
-	Owned< OSASpec > OSACompile( Shared< ComponentInstance >  scriptingComponent, 
+	Nucleus::Owned< OSASpec > OSACompile( Nucleus::Shared< ComponentInstance >  scriptingComponent, 
 	                             const AEDesc&                sourceData, 
 	                             OSAModeFlags                 modeFlags, 
-	                             Owned< OSASpec >             previousScriptID )
+	                             Nucleus::Owned< OSASpec >             previousScriptID )
 	{
-		OnlyOnce< RegisterOSAErrors >();
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
 		
 		::OSAID previousAndResultingScriptID = previousScriptID.Release().id;
 		
@@ -140,7 +140,7 @@ namespace Nitrogen {
 			scriptingComponent, &sourceData, modeFlags, &previousAndResultingScriptID
 		);
 		
-		Owned< OSASpec > resultingScriptID = Owned< OSASpec >::Seize(
+		Nucleus::Owned< OSASpec > resultingScriptID = Nucleus::Owned< OSASpec >::Seize(
 			OSASpec( scriptingComponent, OSAID( previousAndResultingScriptID ) )
 		);
 		if ( err != noErr )

@@ -6,15 +6,15 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen
   {
    long Gestalt( OSType selector )
      {
-      OnlyOnce<RegisterGestaltManagerErrors>();
+      Nucleus::OnlyOnce<RegisterGestaltManagerErrors>();
       
       long result;
       ThrowOSStatus( ::Gestalt( selector, &result ) );
@@ -27,10 +27,9 @@ namespace Nitrogen
         {
          return Gestalt( selector );
         }
-      catch ( const ErrorCode< OSStatus, gestaltUndefSelectorErr >& )
-        {
-         return defaultValue;
-        }
+      catch ( const Nucleus::ErrorCode< OSStatus, gestaltUndefSelectorErr >& )
+        {}
+	  return defaultValue;
      }
 
    void RegisterGestaltManagerErrors()

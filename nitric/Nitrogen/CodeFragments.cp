@@ -22,7 +22,7 @@ namespace Nitrogen
 	
 	static void ThrowOSStatusErrMessage( OSStatus status, ConstStr255Param errMessage )
 	{
-		switch ( status )
+		switch ( status.Get ())
 		{
 			case noErr:
 				return;
@@ -54,7 +54,7 @@ namespace Nitrogen
 	                       CFragConnectionID*  connID,
 	                       SymbolAddressPtr*   mainAddr )
 	{
-		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		CFragConnectionID tempConnID;  // Can't be NULL in OS 8.1 and earlier
 		::Ptr tempMainAddr;
@@ -87,7 +87,7 @@ namespace Nitrogen
 	                      CFragConnectionID*  connID,
 	                      SymbolAddressPtr*   mainAddr )
 	{
-		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		::Ptr tempMainAddr;
 		Str255 errMessage;
@@ -119,7 +119,7 @@ namespace Nitrogen
 	                     CFragConnectionID*  connID,
 	                     SymbolAddressPtr*   mainAddr )
 	{
-		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		::Ptr tempMainAddr;
 		Str255 errMessage;
@@ -139,9 +139,9 @@ namespace Nitrogen
 		}
 	}
 	
-	void CloseConnection( Owned< CFragConnectionID > connID )
+	void CloseConnection( Nucleus::Owned< CFragConnectionID > connID )
 	{
-		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		CFragConnectionID connIDcopy = connID.Release();
 		
@@ -153,7 +153,7 @@ namespace Nitrogen
 	                 SymbolAddressPtr*  symAddr, 
 	                 CFragSymbolClass*  symClass )
 	{
-		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		::Ptr tempSymAddr;
 		::CFragSymbolClass tempSymClass;
@@ -173,7 +173,7 @@ namespace Nitrogen
 	
 	std::size_t CountSymbols( CFragConnectionID connID )
 	{
-		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		long result;
 		
@@ -188,7 +188,7 @@ namespace Nitrogen
 	                   SymbolAddressPtr*  symAddr,
 	                   CFragSymbolClass*  symClass )
 	{
-		OnlyOnce< RegisterCodeFragmentManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
 		
 		::Ptr tempSymAddr;
 		::CFragSymbolClass tempSymClass;

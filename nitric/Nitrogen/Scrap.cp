@@ -4,8 +4,8 @@
 #include "Nitrogen/Scrap.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -41,7 +41,7 @@ namespace Nitrogen {
 	
 	ScrapRef GetCurrentScrap()
 	{
-		OnlyOnce< RegisterScrapManagerErrors >();
+		Nucleus::OnlyOnce< RegisterScrapManagerErrors >();
 		
 		ScrapRef scrap;
 		ThrowOSStatus( ::GetCurrentScrap( &scrap ) );
@@ -50,7 +50,7 @@ namespace Nitrogen {
 	
 	void ClearCurrentScrap()
 	{
-		OnlyOnce< RegisterScrapManagerErrors >();
+		Nucleus::OnlyOnce< RegisterScrapManagerErrors >();
 		
 		ThrowOSStatus( ::ClearCurrentScrap() );
 	}

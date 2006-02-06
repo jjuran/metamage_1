@@ -7,8 +7,8 @@
 #include <Timer.h>
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -25,19 +25,25 @@ namespace Nitrogen
 	
 	using ::TMTask;
 	using ::TMTaskPtr;
-	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< TMTaskPtr > : public  std::unary_function< TMTaskPtr, void >,
-	                               private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::TMTaskPtr > : public  std::unary_function< Nitrogen::TMTaskPtr, void >,
+                                             private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( TMTaskPtr tmTaskPtr ) const
+		void operator()( Nitrogen::TMTaskPtr tmTaskPtr ) const
 		{
-			OnlyOnce< RegisterTimeManagerErrors >();
+			Nucleus::OnlyOnce< Nitrogen::RegisterTimeManagerErrors >();
 			
-			HandleDestructionOSStatus( ::RemoveTimeTask( reinterpret_cast< QElemPtr >( tmTaskPtr ) ) );
+			HandleDestructionOSStatus( ::RemoveTimeTask( reinterpret_cast< ::QElemPtr >( tmTaskPtr ) ) );
 		}
 	};
-	
+  }
+
+namespace Nitrogen
+  {
 	namespace Private
 	{
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
@@ -63,23 +69,23 @@ namespace Nitrogen
 	
 	typedef UPP< TimerUPP_Details > TimerUPP;
 	
-	Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask );
-	Owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask );
+	Nucleus::Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask );
+	Nucleus::Owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask );
 	
 	void PrimeTimeTask( TMTask& tmTask, long count );
 	
-	void RemoveTimeTask( Owned< TMTaskPtr > tmTask );
+	void RemoveTimeTask( Nucleus::Owned< TMTaskPtr > tmTask );
 	
 	// ...
 	
 	UnsignedWide Microseconds();
 	
-	inline Owned< TimerUPP > NewTimerUPP( ::TimerProcPtr p )
+	inline Nucleus::Owned< TimerUPP > NewTimerUPP( ::TimerProcPtr p )
 	{
 		return NewUPP< TimerUPP >( p );
 	}
 	
-	inline void DisposeTimerUPP( Owned< TimerUPP > )  {}
+	inline void DisposeTimerUPP( Nucleus::Owned< TimerUPP > )  {}
 	
 #if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
 	

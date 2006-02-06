@@ -15,40 +15,48 @@
 #include "Nitrogen/CFBase.h"
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 namespace Nitrogen {
 	using ::CFLocaleRef;
-	template <> struct OwnedDefaults< CFLocaleRef >: OwnedDefaults< CFTypeRef >  {};
+  }
+
+namespace Nucleus
+  {
+	template <> struct OwnedDefaults< Nitrogen::CFLocaleRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+  }
+
+namespace Nitrogen
+  {
 	template <> struct CFType_Traits< CFLocaleRef >: Basic_CFType_Traits< CFLocaleRef, ::CFLocaleGetTypeID > {};
 
 //	CFLocaleRef CFLocaleGetSystem ( void );
 	using ::CFLocaleGetSystem;
 	
 
-	inline Owned<CFLocaleRef> CFLocaleCopyCurrent ( void ) {
-		return Owned<CFLocaleRef>::Seize ( ::CFLocaleCopyCurrent ());
+	inline Nucleus::Owned<CFLocaleRef> CFLocaleCopyCurrent ( void ) {
+		return Nucleus::Owned<CFLocaleRef>::Seize ( ::CFLocaleCopyCurrent ());
 		}
 		
-	inline Owned<CFStringRef> CFLocaleCreateCanonicalLocaleIdentifierFromString (
+	inline Nucleus::Owned<CFStringRef> CFLocaleCreateCanonicalLocaleIdentifierFromString (
 			CFAllocatorRef allocator, CFStringRef localeIdentifier ) {
-		return Owned<CFStringRef>::Seize ( ::CFLocaleCreateCanonicalLocaleIdentifierFromString ( allocator, localeIdentifier ));
+		return Nucleus::Owned<CFStringRef>::Seize ( ::CFLocaleCreateCanonicalLocaleIdentifierFromString ( allocator, localeIdentifier ));
 		}
 	
-	inline Owned<CFStringRef> CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes (
+	inline Nucleus::Owned<CFStringRef> CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes (
 			CFAllocatorRef allocator, LangCode lCode, RegionCode rCode ) {
-		return Owned<CFStringRef>::Seize ( ::CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes ( allocator, lCode, rCode ));
+		return Nucleus::Owned<CFStringRef>::Seize ( ::CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes ( allocator, lCode, rCode ));
 		}
 
 	
-	inline Owned<CFLocaleRef> CFLocaleCreate ( CFAllocatorRef allocator, CFStringRef localeIdentifier) {
-		return Owned<CFLocaleRef>::Seize ( ::CFLocaleCreate ( allocator, localeIdentifier ));
+	inline Nucleus::Owned<CFLocaleRef> CFLocaleCreate ( CFAllocatorRef allocator, CFStringRef localeIdentifier) {
+		return Nucleus::Owned<CFLocaleRef>::Seize ( ::CFLocaleCreate ( allocator, localeIdentifier ));
 		}
 		
-	inline Owned<CFLocaleRef> CFLocaleCreateCopy ( CFAllocatorRef allocator, CFLocaleRef locale ) {
-		return Owned<CFLocaleRef>::Seize ( ::CFLocaleCreateCopy ( allocator, locale ));
+	inline Nucleus::Owned<CFLocaleRef> CFLocaleCreateCopy ( CFAllocatorRef allocator, CFLocaleRef locale ) {
+		return Nucleus::Owned<CFLocaleRef>::Seize ( ::CFLocaleCreateCopy ( allocator, locale ));
 		}
 
 //	CFStringRef CFLocaleGetIdentifier ( CFLocaleRef locale );

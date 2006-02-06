@@ -14,14 +14,14 @@
 #include <vector>
 
 // Nitrogen core
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_INITIALIZE_H
-#include "Nitrogen/Initialize.h"
+#ifndef NUCLEUS_INITIALIZE_H
+#include "Nucleus/Initialize.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
 
 // Nitrogen / Carbon support
@@ -40,7 +40,7 @@ namespace Nitrogen
 #undef kDefaultInternetServicesPath
 
 // This definition is useless to clients because OTOpenInternetServices[InContext]() takes
-// Owned< OTConfigurationRef >, not OTConfigurationRef.  You can't get there from here.
+// Nucleus::Owned< OTConfigurationRef >, not OTConfigurationRef.  You can't get there from here.
 // Instead, we define a new class and overload on that.
 
 //static const OTConfigurationRef kDefaultInternetServicesPath = (OTConfigurationRef)-3L;
@@ -80,11 +80,11 @@ namespace Nitrogen
 {
 	
 	class InetPort_Tag {};
-	typedef IDType< InetPort_Tag, ::InetPort, 0 > InetPort;
+	typedef Nucleus::IDType< InetPort_Tag, ::InetPort, 0 > InetPort;
 	
 	/*
 	class InetHost_Tag {};
-	typedef IDType< InetHost_Tag, ::InetHost, 0 > InetHost;
+	typedef Nucleus::IDType< InetHost_Tag, ::InetHost, 0 > InetHost;
 	*/
 	
 	// Default InetHost is kOTAnyInetAddress (i.e. 0).
@@ -117,9 +117,15 @@ namespace Nitrogen
 	
 	using ::InetSvcRef;
 	
-	template <>
-	struct OwnedDefaults< InetSvcRef > : OwnedDefaults< ProviderRef > {};
-	
+  }
+
+namespace Nucleus
+  {
+	template <> struct OwnedDefaults< Nitrogen::InetSvcRef > : OwnedDefaults< Nitrogen::ProviderRef > {};
+  }
+
+namespace Nitrogen
+  {	
 	using ::InetAddress;
 	
 	typedef std::string InetDomainName;
@@ -129,16 +135,22 @@ namespace Nitrogen
 	using ::InetMailExchange;
 	
 	InetAddress& OTInitInetAddress( InetAddress& addr, InetPort port, InetHost host );
-	
+  }
+
+namespace Nucleus
+  {	
 	template <>
-	struct Initializer< InetAddress >
+	struct Initializer< Nitrogen::InetAddress >
 	{
-		InetAddress& operator()( InetAddress& addr, InetPort port, InetHost host )
+		Nitrogen::InetAddress& operator()( Nitrogen::InetAddress& addr, Nitrogen::InetPort port, Nitrogen::InetHost host )
 		{
-			return OTInitInetAddress( addr, port, host );
+			return Nitrogen::OTInitInetAddress( addr, port, host );
 		}
 	};
-	
+  }
+
+namespace Nitrogen
+  {	
 	#pragma mark -
 	#pragma mark ¥ IP address encoding ¥
 	
@@ -150,49 +162,55 @@ namespace Nitrogen
 	}
 	
 	std::string OTInetHostToString( InetHost host );
-	
+  }
+
+namespace Nucleus
+  {	
 	template <>
-	struct Converter< InetHost, const char* > : std::unary_function< const char*, InetHost >
+	struct Converter< Nitrogen::InetHost, const char* > : std::unary_function< const char*, Nitrogen::InetHost >
 	{
-		InetHost operator()( const char* input ) const
+		Nitrogen::InetHost operator()( const char* input ) const
 		{
-			return OTInetStringToHost( input );
+			return Nitrogen::OTInetStringToHost( input );
 		}
 	};
 	
 	template <>
-	struct Converter< InetHost, std::string > : std::unary_function< std::string, InetHost >
+	struct Converter< Nitrogen::InetHost, std::string > : std::unary_function< std::string, Nitrogen::InetHost >
 	{
-		InetHost operator()( const std::string& input ) const
+		Nitrogen::InetHost operator()( const std::string& input ) const
 		{
-			return OTInetStringToHost( input );
+			return Nitrogen::OTInetStringToHost( input );
 		}
 	};
 	
 	template <>
-	struct Converter< std::string, InetHost > : std::unary_function< InetHost, std::string >
+	struct Converter< std::string, Nitrogen::InetHost > : std::unary_function< Nitrogen::InetHost, std::string >
 	{
-		std::string operator()( InetHost input ) const
+		std::string operator()( Nitrogen::InetHost input ) const
 		{
-			return OTInetHostToString( input );
+			return Nitrogen::OTInetHostToString( input );
 		}
 	};
-	
+  }
+
+namespace Nitrogen
+  {	
 	#pragma mark -
 	#pragma mark ¥ DNR ¥
 	
-	Owned< InetSvcRef > OTOpenInternetServicesInContext( Owned< OTConfigurationRef >  cfig,
+	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( Nucleus::Owned< OTConfigurationRef >  cfig,
 	                                                     OTClientContextPtr           clientContext = NULL );
 	
-	Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath,
+	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath,
 	                                                     OTClientContextPtr           clientContext = NULL );
 	
-	inline Owned< InetSvcRef > OTOpenInternetServices( Owned< OTConfigurationRef > cfig )
+	inline Nucleus::Owned< InetSvcRef > OTOpenInternetServices( Nucleus::Owned< OTConfigurationRef > cfig )
 	{
 		return OTOpenInternetServicesInContext( cfig );
 	}
 	
-	inline Owned< InetSvcRef > OTOpenInternetServices( DefaultInternetServicesPath )
+	inline Nucleus::Owned< InetSvcRef > OTOpenInternetServices( DefaultInternetServicesPath )
 	{
 		return OTOpenInternetServicesInContext( kDefaultInternetServicesPath );
 	}

@@ -4,7 +4,7 @@
 #include "Nitrogen/HIObject.h"
 #endif
 
-#include <CarbonCore/MacErrors.h>
+#include "Nitrogen/MacErrors.h"
 
 namespace Nitrogen {
 

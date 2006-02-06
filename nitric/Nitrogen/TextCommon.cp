@@ -3,8 +3,8 @@
 #ifndef NITROGEN_TEXTCOMMON_H
 #include "Nitrogen/TextCommon.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen
@@ -16,7 +16,7 @@ namespace Nitrogen
                                                    ByteCount                iOutputBufLen,
                                                    UInt8                   *oEncodingName )
      {
-      OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
+      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
 
       GetTextEncodingName_Result result;
       ::RegionCode oActualRegion;
@@ -72,12 +72,12 @@ namespace Nitrogen
       return result;
      }
 
-   Owned< TECInfoHandle, Disposer<Handle> > TECGetInfo()
+   Nucleus::Owned< TECInfoHandle, Nucleus::Disposer<Handle> > TECGetInfo()
      {
-      OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
+      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       ::TECInfoHandle result;
       ThrowOSStatus( ::TECGetInfo( &result ) );
-      return Owned< TECInfoHandle, Disposer<Handle> >::Seize( result );
+      return Nucleus::Owned< TECInfoHandle, Nucleus::Disposer<Handle> >::Seize( result );
      }
    
    TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode iTextScriptID,
@@ -85,7 +85,7 @@ namespace Nitrogen
                                                  RegionCode iRegionID,
                                                  ConstStr255Param iTextFontname )
      {
-      OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
+      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       ::TextEncoding result;
       ThrowOSStatus( ::UpgradeScriptInfoToTextEncoding( iTextScriptID,
                                                         iTextLanguageID,
@@ -97,7 +97,7 @@ namespace Nitrogen
 
    RevertTextEncodingToScriptInfo_Result RevertTextEncodingToScriptInfo( TextEncoding iEncoding )
      {
-      OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
+      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       RevertTextEncodingToScriptInfo_Result result;
       ::ScriptCode oTextScriptID;
       ::LangCode   oTextLanguageID;
@@ -112,7 +112,7 @@ namespace Nitrogen
 
    NearestMacTextEncodings_Result NearestMacTextEncodings( TextEncoding generalEncoding )
      {
-      OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
+      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       
       ::TextEncoding bestMacEncoding;
       ::TextEncoding alternateMacEncoding;
@@ -129,7 +129,7 @@ namespace Nitrogen
                                           UniCharCount       textLength,
                                           UCCharPropertyType propType )
      {
-      OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
+      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       ::UCCharPropertyValue result;
       ThrowOSStatus( ::UCGetCharProperty( charPtr, textLength, propType, &result ) );
       return UCCharPropertyValue( result );

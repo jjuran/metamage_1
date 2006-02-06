@@ -24,41 +24,46 @@ namespace Nitrogen
    template <> struct CFType_Traits< CFMutableDataRef >: Basic_CFType_Traits< CFMutableDataRef, ::CFDataGetTypeID > {};
    inline void CFShow( const CFDataRef d )        { ::CFShow( d ); }
 
-   template <> struct OwnedDefaults< CFDataRef        >: OwnedDefaults< CFTypeRef >  {};
-   template <> struct OwnedDefaults< CFMutableDataRef >: OwnedDefaults< CFTypeRef >  {};
    inline void CFShow( const CFMutableDataRef d ) { ::CFShow( d ); }
+   }
    
+namespace Nucleus {
+   template <> struct OwnedDefaults< Nitrogen::CFDataRef        >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+   template <> struct OwnedDefaults< Nitrogen::CFMutableDataRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+   }
+   
+namespace Nitrogen {
    using ::CFDataGetTypeID;
 
    class CFDataCreate_Failed {};
    
-   Owned<CFDataRef> CFDataCreate( CFAllocatorRef allocator,
+   Nucleus::Owned<CFDataRef> CFDataCreate( CFAllocatorRef allocator,
                                   const UInt8 *  bytes,
                                   CFIndex        length );
    
-   inline Owned<CFDataRef> CFDataCreate( const UInt8 *bytes,
+   inline Nucleus::Owned<CFDataRef> CFDataCreate( const UInt8 *bytes,
                                          CFIndex      length )
      {
       return Nitrogen::CFDataCreate( kCFAllocatorDefault, bytes, length );
      }
    
    template < CFIndex length >
-   Owned<CFDataRef> CFDataCreate( CFAllocatorRef allocator,
+   Nucleus::Owned<CFDataRef> CFDataCreate( CFAllocatorRef allocator,
                                   const UInt8    (&bytes)[length] )
      {
       return Nitrogen::CFDataCreate( allocator, bytes, length );
      }
    
    template < CFIndex length >
-   Owned<CFDataRef> CFDataCreate( const UInt8 (&bytes)[length] )
+   Nucleus::Owned<CFDataRef> CFDataCreate( const UInt8 (&bytes)[length] )
      {
       return Nitrogen::CFDataCreate( kCFAllocatorDefault, bytes, length );
      }
    
-   Owned<CFDataRef> CFDataCreate( CFAllocatorRef            allocator,
+   Nucleus::Owned<CFDataRef> CFDataCreate( CFAllocatorRef            allocator,
                                   const std::vector<UInt8>& bytes );
    
-   inline Owned<CFDataRef> CFDataCreate( const std::vector<UInt8>& bytes )
+   inline Nucleus::Owned<CFDataRef> CFDataCreate( const std::vector<UInt8>& bytes )
      {
       return Nitrogen::CFDataCreate( kCFAllocatorDefault, bytes );
      }
@@ -67,12 +72,12 @@ namespace Nitrogen
 
    class CFDataCreateWithBytesNoCopy_Failed {};
    
-   Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef allocator,
+   Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef allocator,
                                                  const UInt8 *  bytes,
                                                  CFIndex        length,
                                                  CFAllocatorRef bytesDeallocator = 0 );
    
-   inline Owned<CFDataRef> CFDataCreateWithBytesNoCopy( const UInt8  * bytes,
+   inline Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( const UInt8  * bytes,
                                                         CFIndex        length,
                                                         CFAllocatorRef bytesDeallocator = 0 )
      {
@@ -80,7 +85,7 @@ namespace Nitrogen
      }
    
    template < CFIndex length >
-   Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef allocator,
+   Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef allocator,
                                                  const UInt8    (&bytes)[length],
                                                  CFAllocatorRef bytesDeallocator = 0 )
      {
@@ -88,16 +93,16 @@ namespace Nitrogen
      }
    
    template < CFIndex length >
-   Owned<CFDataRef> CFDataCreateWithBytesNoCopy( const UInt8    (&bytes)[length],
+   Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( const UInt8    (&bytes)[length],
                                                  CFAllocatorRef bytesDeallocator = 0 )
      {
       return Nitrogen::CFDataCreateWithBytesNoCopy( kCFAllocatorDefault, bytes, length, bytesDeallocator );
      }
 
-   Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef      allocator,
+   Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( CFAllocatorRef      allocator,
                                                  std::vector<UInt8>& bytes );
 
-   inline Owned<CFDataRef> CFDataCreateWithBytesNoCopy( std::vector<UInt8>& bytes )
+   inline Nucleus::Owned<CFDataRef> CFDataCreateWithBytesNoCopy( std::vector<UInt8>& bytes )
      {
       return Nitrogen::CFDataCreateWithBytesNoCopy( kCFAllocatorDefault, bytes );
      }
@@ -107,20 +112,20 @@ namespace Nitrogen
 
    class CFDataCreateCopy_Failed {};
 
-   Owned<CFDataRef> CFDataCreateCopy( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFDataRef> CFDataCreateCopy( CFAllocatorRef   allocator,
                                       CFDataRef        theData );
    
-   inline Owned<CFDataRef> CFDataCreateCopy( CFDataRef theData )
+   inline Nucleus::Owned<CFDataRef> CFDataCreateCopy( CFDataRef theData )
      {
       return Nitrogen::CFDataCreateCopy( kCFAllocatorDefault, theData );
      }
 
    class CFDataCreateMutable_Failed {};
 
-   Owned<CFMutableDataRef> CFDataCreateMutable( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFMutableDataRef> CFDataCreateMutable( CFAllocatorRef   allocator,
                                                 CFIndex          capacity );
    
-   inline Owned<CFMutableDataRef> CFDataCreateMutable( CFIndex capacity )
+   inline Nucleus::Owned<CFMutableDataRef> CFDataCreateMutable( CFIndex capacity )
      {
       return Nitrogen::CFDataCreateMutable( kCFAllocatorDefault, capacity );
      }
@@ -128,11 +133,11 @@ namespace Nitrogen
    
    class CFDataCreateMutableCopy_Failed {};
 
-   Owned<CFMutableDataRef> CFDataCreateMutableCopy( CFAllocatorRef   allocator,
+   Nucleus::Owned<CFMutableDataRef> CFDataCreateMutableCopy( CFAllocatorRef   allocator,
                                                     CFIndex          capacity,
                                                     CFDataRef        theData );
    
-   inline Owned<CFMutableDataRef> CFDataCreateMutableCopy( CFDataRef theData,
+   inline Nucleus::Owned<CFMutableDataRef> CFDataCreateMutableCopy( CFDataRef theData,
                                                            CFIndex   capacity )
      {
       return Nitrogen::CFDataCreateMutableCopy( kCFAllocatorDefault, capacity, theData );

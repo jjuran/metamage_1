@@ -9,12 +9,12 @@
 #ifndef __QUICKDRAW__
 #include FRAMEWORK_HEADER(QD,QuickDraw.h)
 #endif
-#ifndef NITROGEN_PSEUDOREFERENCE_H
-#include "Nitrogen/Pseudoreference.h"
+#ifndef NUCLEUS_PSEUDOREFERENCE_H
+#include "Nucleus/Pseudoreference.h"
 #endif
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 #ifndef NITROGEN_OSSTATUS_H
@@ -33,10 +33,10 @@ namespace Nitrogen
 	#pragma mark ¥ Types ¥
 	
 	class TransferMode_Tag {};
-	typedef FlagType< TransferMode_Tag, ::SInt16 > TransferMode;
+	typedef Nucleus::FlagType< TransferMode_Tag, ::SInt16 > TransferMode;
 	
 	class PixelType_Tag {};
-	typedef SelectorType< PixelType_Tag, ::PixelType > PixelType;
+	typedef Nucleus::SelectorType< PixelType_Tag, ::PixelType > PixelType;
 	
 	using ::BitMap;
 	using ::BitMapPtr;
@@ -52,29 +52,37 @@ namespace Nitrogen
 	using ::PicHandle;
 	using ::PolyHandle;
 	
-	template <> struct Disposer< RgnHandle > : public std::unary_function< RgnHandle, void >
+  }
+
+namespace Nucleus
+  {
+	template <> struct Disposer< Nitrogen::RgnHandle > : public std::unary_function< Nitrogen::RgnHandle, void >
 	{
-		void operator()( RgnHandle h ) const
+		void operator()( Nitrogen::RgnHandle h ) const
 		{
 			::DisposeRgn( h );
 		}
 	};
 	
-	template <> struct Disposer< PicHandle > : public std::unary_function< PicHandle, void >
+	template <> struct Disposer< Nitrogen::PicHandle > : public std::unary_function< Nitrogen::PicHandle, void >
 	{
-		void operator()( PicHandle h ) const
+		void operator()( Nitrogen::PicHandle h ) const
 		{
 			::KillPicture( h );
 		}
 	};
 	
-	template <> struct Disposer< PolyHandle > : public std::unary_function< PolyHandle, void >
+	template <> struct Disposer< Nitrogen::PolyHandle > : public std::unary_function< Nitrogen::PolyHandle, void >
 	{
-		void operator()( PolyHandle h ) const
+		void operator()( Nitrogen::PolyHandle h ) const
 		{
 			::KillPoly( h );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
@@ -180,18 +188,39 @@ namespace Nitrogen
 	
 	using ::CTabHandle;
 	
-	template <> struct Disposer< CTabHandle > : public std::unary_function< CTabHandle, void >
+  }
+
+namespace Nucleus
+  {
+	template <> struct Disposer< Nitrogen::CTabHandle > : public std::unary_function< Nitrogen::CTabHandle, void >
 	{
 		void operator()( CTabHandle h ) const
 		{
 			::DisposeCTable( h );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	using ::PixMap;
 	using ::PixMapPtr;
 	using ::PixMapHandle;
+	using ::PixPatHandle;
+	using ::CCrsrHandle;
+	using ::GDHandle;
+	typedef GrafPtr CGrafPtr;
+
+	namespace Private
+	{
+		void DisposePort( CGrafPtr port );
+	}
 	
+  }
+
+namespace Nucleus
+  {
 	/*
 	template <> struct Disposer< PixMapHandle > : public std::unary_function< PixMapHandle, void >
 	{
@@ -202,59 +231,50 @@ namespace Nitrogen
 	};
 	*/
 	
-	using ::PixPatHandle;
 	
-	template <> struct Disposer< PixPatHandle > : public std::unary_function< PixPatHandle, void >
+	template <> struct Disposer< Nitrogen::PixPatHandle > : public std::unary_function< Nitrogen::PixPatHandle, void >
 	{
-		void operator()( PixPatHandle h ) const
+		void operator()( Nitrogen::PixPatHandle h ) const
 		{
 			::DisposePixPat( h );
 		}
 	};
 	
-	using ::CCrsrHandle;
-	
-	template <> struct Disposer< CCrsrHandle > : public std::unary_function< CCrsrHandle, void >
+	template <> struct Disposer< Nitrogen::CCrsrHandle > : public std::unary_function< Nitrogen::CCrsrHandle, void >
 	{
-		void operator()( CCrsrHandle h ) const
+		void operator()( Nitrogen::CCrsrHandle h ) const
 		{
 			::DisposeCCursor( h );
 		}
 	};
 	
-	using ::GDHandle;
 	
-	template <> struct Disposer< GDHandle > : public std::unary_function< GDHandle, void >
+	template <> struct Disposer< Nitrogen::GDHandle > : public std::unary_function< Nitrogen::GDHandle, void >
 	{
-		void operator()( GDHandle h ) const
+		void operator()( Nitrogen::GDHandle h ) const
 		{
 			::DisposeGDevice( h );
 		}
 	};
 	
-	typedef GrafPtr CGrafPtr;
 	
-	namespace Private
-	{
-		void DisposePort( CGrafPtr port );
-	}
 	
-	template <> struct Disposer< CGrafPtr > : public std::unary_function< CGrafPtr, void >
+	template <> struct Disposer< Nitrogen::CGrafPtr > : public std::unary_function< Nitrogen::CGrafPtr, void >
 	{
-		void operator()( CGrafPtr port ) const
+		void operator()( Nitrogen::CGrafPtr port ) const
 		{
-			Private::DisposePort( port );
+			Nitrogen::Private::DisposePort( port );
 		}
 	};
 	
 	template <>
-	struct Maker< RGBColor >
+	struct Maker< Nitrogen::RGBColor >
 	{
-		RGBColor operator()( unsigned short  red,
-		                     unsigned short  green,
-		                     unsigned short  blue ) const
+		Nitrogen::RGBColor operator()( unsigned short  red,
+		                               unsigned short  green,
+		                               unsigned short  blue ) const
 		{
-			RGBColor result;
+			Nitrogen::RGBColor result;
 			
 			result.red   = red;
 			result.green = green;
@@ -263,16 +283,20 @@ namespace Nitrogen
 			return result;
 		}
 		
-		RGBColor operator()( unsigned short gray ) const
+		Nitrogen::RGBColor operator()( unsigned short gray ) const
 		{
 			return operator()( gray, gray, gray );
 		}
 		
-		RGBColor operator()() const
+		Nitrogen::RGBColor operator()() const
 		{
 			return operator()( 0, 0, 0 );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
@@ -310,7 +334,7 @@ namespace Nitrogen
 	using ::SetOrigin;
 	using ::SetClip;
 	
-	Owned< RgnHandle > GetClip();
+	Nucleus::Owned< RgnHandle > GetClip();
 	
 	inline void ClipRect( const Rect& rect )  { ::ClipRect( &rect ); }
 	
@@ -350,7 +374,7 @@ namespace Nitrogen
 	// BackColor
 	// ColorBit
 	
-	inline Rect MacSetRect( short left, short top, short right, short bottom )  { return Make< Rect >( top, left, bottom, right ); }
+	inline Rect MacSetRect( short left, short top, short right, short bottom )  { return Nucleus::Make< Rect >( top, left, bottom, right ); }
 	inline Rect MacSetRect( Point topLeft, Point bottomRight )  { return MacSetRect( topLeft.h, topLeft.v, bottomRight.h, bottomRight.v ); }
 	
 	Rect MacOffsetRect( const Rect& r, short dh, short dv );
@@ -399,7 +423,7 @@ namespace Nitrogen
 	// Arc
 	
 //	Region handling
-	Owned< RgnHandle > NewRgn();
+	Nucleus::Owned< RgnHandle > NewRgn();
 	
 //	extern void OpenRgn(void)
 	using ::OpenRgn;
@@ -408,19 +432,19 @@ namespace Nitrogen
 	using ::CloseRgn;
 	
 	RgnHandle BitMapToRegion( RgnHandle region, const BitMap& bitMap );
-	Owned< RgnHandle > BitMapToRegion( const BitMap& bitMap );
+	Nucleus::Owned< RgnHandle > BitMapToRegion( const BitMap& bitMap );
 	
 	RgnHandle HandleToRgn( RgnHandle region, Handle oldRegion );
-	Owned< RgnHandle > HandleToRgn( Handle oldRegion );
+	Nucleus::Owned< RgnHandle > HandleToRgn( Handle oldRegion );
 	
-	Owned< Handle > RgnToHandle( RgnHandle region );
+	Nucleus::Owned< Handle > RgnToHandle( RgnHandle region );
 	
-	inline void DisposeRgn( Owned< RgnHandle > )  {}
+	inline void DisposeRgn( Nucleus::Owned< RgnHandle > )  {}
 	
 //	extern void MacCopyRgn ( RgnHandle srcRgn, RgnHandle dstRgn );
 	using ::MacCopyRgn;
 	
-	Owned< RgnHandle > MacCopyRgn( RgnHandle srcRgn );
+	Nucleus::Owned< RgnHandle > MacCopyRgn( RgnHandle srcRgn );
 	
 //	extern void SetEmptyRgn(RgnHandle rgn);
 	using ::SetEmptyRgn;
@@ -431,28 +455,28 @@ namespace Nitrogen
 	                         short      right,
 	                         short      bottom );	
 	
-	Owned< RgnHandle > MacSetRectRgn( short  left,
+	Nucleus::Owned< RgnHandle > MacSetRectRgn( short  left,
 	                                  short  top,
 	                                  short  right,
 	                                  short  bottom );
 	
 	RgnHandle RectRgn( RgnHandle region, const Rect& rect );	
-	Owned< RgnHandle > RectRgn( const Rect& rect );
+	Nucleus::Owned< RgnHandle > RectRgn( const Rect& rect );
 	
 	using ::MacOffsetRgn;
 	using ::InsetRgn;
 	
 	using ::SectRgn;
-	Owned< RgnHandle > SectRgn( RgnHandle a, RgnHandle b );
+	Nucleus::Owned< RgnHandle > SectRgn( RgnHandle a, RgnHandle b );
 	
 	using ::MacUnionRgn;
-	Owned< RgnHandle > MacUnionRgn( RgnHandle a, RgnHandle b );
+	Nucleus::Owned< RgnHandle > MacUnionRgn( RgnHandle a, RgnHandle b );
 	
 	using ::DiffRgn;
-	Owned< RgnHandle > DiffRgn( RgnHandle a, RgnHandle b );
+	Nucleus::Owned< RgnHandle > DiffRgn( RgnHandle a, RgnHandle b );
 	
 	using ::MacXorRgn;
-	Owned< RgnHandle > MacXorRgn( RgnHandle a, RgnHandle b );
+	Nucleus::Owned< RgnHandle > MacXorRgn( RgnHandle a, RgnHandle b );
 	
 	inline bool RectInRgn( const Rect& r, RgnHandle rgn )  { return ::RectInRgn( &r, rgn ); }
 	
@@ -469,7 +493,7 @@ namespace Nitrogen
 	
 	void ScrollRect( const Rect& r, short dh, short dv, RgnHandle updateRgn );
 	
-	Owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv );
+	Nucleus::Owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv );
 	
 	void CopyBits( const BitMap*  srcBits,
 	               const BitMap*  dstBits,
@@ -488,7 +512,7 @@ namespace Nitrogen
 	               const Rect&    maskRect,
 	               const Rect&    dstRect );
 	
-	Owned< PicHandle > OpenPicture( const Rect& picFrame );
+	Nucleus::Owned< PicHandle > OpenPicture( const Rect& picFrame );
 	
 	// PicComment
 	
@@ -496,13 +520,13 @@ namespace Nitrogen
 	
 	inline void DrawPicture( PicHandle pic, const Rect& r )  { ::DrawPicture( pic, &r ); }
 	
-	inline void KillPicture( Owned< PicHandle > )  {}
+	inline void KillPicture( Nucleus::Owned< PicHandle > )  {}
 	
-	Owned< PolyHandle > OpenPoly();
+	Nucleus::Owned< PolyHandle > OpenPoly();
 	
 	using ::ClosePoly;
 	
-	inline void KillPoly( Owned< PolyHandle > )  {}
+	inline void KillPoly( Nucleus::Owned< PolyHandle > )  {}
 	
 	using ::OffsetPoly;
 	using ::FramePoly;
@@ -512,7 +536,7 @@ namespace Nitrogen
 	
 	inline void FillPoly( PolyHandle poly, const Pattern& pat )  { ::FillPoly( poly, &pat ); }
 	
-	inline Point SetPt( short h, short v )  { return Make< Point >( v, h ); }
+	inline Point SetPt( short h, short v )  { return Nucleus::Make< Point >( v, h ); }
 	
 	Point LocalToGlobal( Point point );
 	Rect  LocalToGlobal( const Rect& rect );
@@ -565,18 +589,18 @@ namespace Nitrogen
 	// InitCPort
 	// CloseCPort
 	
-//	Owned< PixMapHandle > NewPixMap();
+//	Nucleus::Owned< PixMapHandle > NewPixMap();
 	
-//	inline void DisposePixMap( Owned< PixMapHandle > )  {}
+//	inline void DisposePixMap( Nucleus::Owned< PixMapHandle > )  {}
 	
 	// CopyPixMap
 	
-	Owned< PixPatHandle > NewPixPat();
+	Nucleus::Owned< PixPatHandle > NewPixPat();
 	
-	inline void DisposePixPat( Owned< PixPatHandle > )  {}
+	inline void DisposePixPat( Nucleus::Owned< PixPatHandle > )  {}
 	
 	PixPatHandle CopyPixPat( PixPatHandle srcPP, PixPatHandle dstPP );
-	Owned< PixPatHandle > CopyPixPat( PixPatHandle pixPat );
+	Nucleus::Owned< PixPatHandle > CopyPixPat( PixPatHandle pixPat );
 	
 	using ::PenPixPat;
 	using ::BackPixPat;
@@ -612,7 +636,7 @@ namespace Nitrogen
 	// OpColor
 	// HiliteColor
 	
-	inline void DisposeCTable( Owned< CTabHandle > )  {}
+	inline void DisposeCTable( Nucleus::Owned< CTabHandle > )  {}
 	
 	// GetCTable
 	// GetCCursor
@@ -620,7 +644,7 @@ namespace Nitrogen
 	
 	using ::AllocCursor;
 	
-	inline void DisposeCCursor( Owned< CCrsrHandle > )  {}
+	inline void DisposeCCursor( Nucleus::Owned< CCrsrHandle > )  {}
 	
 	// SetStdCProcs
 	// GetMaxDevice
@@ -635,7 +659,7 @@ namespace Nitrogen
 	// InitGDevice
 	// NewGDevice
 	
-	inline void DisposeGDevice( Owned< GDHandle > )  {}
+	inline void DisposeGDevice( Nucleus::Owned< GDHandle > )  {}
 	
 	using ::SetGDevice;
 	using ::GetGDevice;
@@ -707,11 +731,11 @@ namespace Nitrogen
 	
 	RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region );
 	
-	Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port );
+	Nucleus::Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port );
 	
 	RgnHandle GetPortClipRegion( CGrafPtr port, RgnHandle region );
 	
-	Owned< RgnHandle > GetPortClipRegion( CGrafPtr port );
+	Nucleus::Owned< RgnHandle > GetPortClipRegion( CGrafPtr port );
 	
 	// ...
 	
@@ -761,9 +785,9 @@ namespace Nitrogen
 	
 	// ...
 	
-	Owned< CGrafPtr > CreateNewPort();
+	Nucleus::Owned< CGrafPtr > CreateNewPort();
 	
-	inline void DisposePort( Owned< CGrafPtr > )  {}
+	inline void DisposePort( Nucleus::Owned< CGrafPtr > )  {}
 	
 	// SetQDError
 	
@@ -786,7 +810,7 @@ namespace Nitrogen
 	// QDDisposeRegionBits
 	
 	// Declared in Nitrogen/CGDirectDisplay.h since it requires CGDirectDisplayID.
-	//Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display );
+	//Nucleus::Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display );
 	
 	// QDDisplayWaitCursor
 	// QDSetPatternOrigin
@@ -815,8 +839,8 @@ namespace Nitrogen
 	class Clip_Value
 	{
 		public:
-			typedef Owned< RgnHandle > Value;
-			typedef Owned< RgnHandle > GetResult;
+			typedef Nucleus::Owned< RgnHandle > Value;
+			typedef Nucleus::Owned< RgnHandle > GetResult;
 			typedef        RgnHandle   SetParameter;
 			
 			static const bool hasSwap = false;
@@ -870,8 +894,8 @@ namespace Nitrogen
 			CGrafPtr port;
 			
 		public:
-			typedef Owned< RgnHandle > Value;
-			typedef Owned< RgnHandle > GetResult;
+			typedef Nucleus::Owned< RgnHandle > Value;
+			typedef Nucleus::Owned< RgnHandle > GetResult;
 			typedef        RgnHandle   SetParameter;
 			
 			static const bool hasSwap = false;
@@ -908,60 +932,65 @@ namespace Nitrogen
 	typedef PortClipRegion_Value  PortClipRegion_Details;
 	typedef PortPenSize_Value     PortPenSize_Details;
 	
-	typedef Pseudoreference< Port_Details           > Port;
-	typedef Pseudoreference< Clip_Details           > Clip;
-	typedef Pseudoreference< PenState_Details       > The_PenState;
-	typedef Pseudoreference< RGBForeColor_Details   > The_RGBForeColor;
-	typedef Pseudoreference< RGBBackColor_Details   > The_RGBBackColor;
-	typedef Pseudoreference< PortClipRegion_Details > PortClipRegion;
-	typedef Pseudoreference< PortPenSize_Details    > PortPenSize;
+	typedef Nucleus::Pseudoreference< Port_Details           > Port;
+	typedef Nucleus::Pseudoreference< Clip_Details           > Clip;
+	typedef Nucleus::Pseudoreference< PenState_Details       > The_PenState;
+	typedef Nucleus::Pseudoreference< RGBForeColor_Details   > The_RGBForeColor;
+	typedef Nucleus::Pseudoreference< RGBBackColor_Details   > The_RGBBackColor;
+	typedef Nucleus::Pseudoreference< PortClipRegion_Details > PortClipRegion;
+	typedef Nucleus::Pseudoreference< PortPenSize_Details    > PortPenSize;
+	
+}
+
+namespace Nucleus
+{
 	
 	#pragma mark -
 	#pragma mark ¥ Operators ¥
 	
-	inline Point operator-( Point pt )
+	inline Nitrogen::Point operator-( Nitrogen::Point pt )
 	{
-		return SetPt( -pt.h,
-		              -pt.v );
+		return Nitrogen::SetPt( -pt.h,
+		                        -pt.v );
 	}
 	
-	inline Point operator+( Point a, Point b )
+	inline Nitrogen::Point operator+( Nitrogen::Point a, Nitrogen::Point b )
 	{
-		return AddPt( a, b );
+		return Nitrogen::AddPt( a, b );
 	}
 	
-	inline Point operator-( Point a, Point b )
+	inline Nitrogen::Point operator-( Nitrogen::Point a, Nitrogen::Point b )
 	{
-		return SubPt( a, b );
+		return Nitrogen::SubPt( a, b );
 	}
 	
 	template < class Factor >
-	Point operator*( Point pt, Factor f )
+	Nitrogen::Point operator*( Nitrogen::Point pt, Factor f )
 	{
-		return SetPt( pt.h * f,
-		              pt.v * f );
+		return Nitrogen::SetPt( pt.h * f,
+		                        pt.v * f );
 	}
 	
 	template < class Divisor >
-	Point operator/( Point pt, Divisor d )
+	Nitrogen::Point operator/( Nitrogen::Point pt, Divisor d )
 	{
-		return SetPt( pt.h / d, 
-		              pt.v / d );
+		return Nitrogen::SetPt( pt.h / d, 
+		                        pt.v / d );
 	}
 	
 	
-	inline Rect operator+( Rect r, Point pt )
+	inline Nitrogen::Rect operator+( Nitrogen::Rect r, Nitrogen::Point pt )
 	{
-		return MacOffsetRect( r, pt );
+		return Nitrogen::MacOffsetRect( r, pt );
 	}
 	
-	inline Rect operator-( Rect r, Point pt )
+	inline Nitrogen::Rect operator-( Nitrogen::Rect r, Nitrogen::Point pt )
 	{
-		return MacOffsetRect( r, -pt );
+		return Nitrogen::MacOffsetRect( r, -pt );
 	}
 	
 }
 
-#include "Nitrogen/Operators.h"
+#include "Nucleus/Operators.h"
 
 #endif

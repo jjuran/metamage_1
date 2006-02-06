@@ -7,32 +7,32 @@
 namespace Nitrogen
 {
 	
-	Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask )
+	Nucleus::Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask )
 	{
-		OnlyOnce< RegisterTimeManagerErrors >();
+		Nucleus::OnlyOnce< RegisterTimeManagerErrors >();
 		
 		ThrowOSStatus( ::InstallTimeTask( reinterpret_cast< QElemPtr >( &tmTask ) ) );
-		return Owned< TMTaskPtr >::Seize( &tmTask );
+		return Nucleus::Owned< TMTaskPtr >::Seize( &tmTask );
 	}
 	
-	Owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask )
+	Nucleus::Owned< TMTaskPtr > InstallXTimeTask( TMTask& tmTask )
 	{
-		OnlyOnce< RegisterTimeManagerErrors >();
+		Nucleus::OnlyOnce< RegisterTimeManagerErrors >();
 		
 		ThrowOSStatus( ::InstallXTimeTask( reinterpret_cast< QElemPtr >( &tmTask ) ) );
-		return Owned< TMTaskPtr >::Seize( &tmTask );
+		return Nucleus::Owned< TMTaskPtr >::Seize( &tmTask );
 	}
 	
 	void PrimeTimeTask( TMTask& tmTask, long count )
 	{
-		OnlyOnce< RegisterTimeManagerErrors >();
+		Nucleus::OnlyOnce< RegisterTimeManagerErrors >();
 		
 		ThrowOSStatus( ::PrimeTimeTask( reinterpret_cast< QElemPtr >( &tmTask ), count ) );
 	}
 	
-	void RemoveTimeTask( Owned< TMTaskPtr > tmTaskPtr )
+	void RemoveTimeTask( Nucleus::Owned< TMTaskPtr > tmTaskPtr )
 	{
-		OnlyOnce< RegisterTimeManagerErrors >();
+		Nucleus::OnlyOnce< RegisterTimeManagerErrors >();
 		
 		ThrowOSStatus( ::RemoveTimeTask( reinterpret_cast< QElemPtr >( tmTaskPtr.Release() ) ) );
 	}

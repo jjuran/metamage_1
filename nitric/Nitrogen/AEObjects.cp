@@ -26,7 +26,7 @@ namespace Nitrogen {
 	
 	void AEObjectInit()
 	{
-		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
 		ThrowOSStatus( ::AEObjectInit() );
 	}
@@ -39,7 +39,7 @@ namespace Nitrogen {
 	                           OSLAdjustMarksUPP    myAdjustMarksProc,
 	                           OSLGetErrDescUPP     myGetErrDescProcPtr )
 	{
-		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
 		ThrowOSStatus( ::AESetObjectCallbacks( myCompareProc,
 		                                       myCountProc,
@@ -88,19 +88,19 @@ namespace Nitrogen {
 	
 #endif
 	
-	Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier, 
+	Nucleus::Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier, 
 	                                             AEResolveCallbackFlags    callbackFlags )
 	{
-		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
 		AEToken token;
 		ThrowOSStatus( ::AEResolve( &objectSpecifier, callbackFlags, &token ) );
-		return Owned< AEToken, AETokenDisposer >::Seize( token );
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( token );
 	}
 	
-	Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall )
+	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall )
 	{
-		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
 		ThrowOSStatus( ::AEInstallObjectAccessor( toInstall.desiredClass,
 		                                          toInstall.containerType,
@@ -108,14 +108,14 @@ namespace Nitrogen {
 		                                          toInstall.accessorRefCon,
 		                                          toInstall.isSysHandler ) );
 		
-		return Owned< OSLAccessor >::Seize( toInstall );
+		return Nucleus::Owned< OSLAccessor >::Seize( toInstall );
 	}
 	
 	OSLAccessor AEGetObjectAccessor( DescType desiredClass,
 	                                 DescType containerType,
 	                                 bool isSysHandler )
 	{
-		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
 		::OSLAccessorUPP accessor;
 		long accessorRefCon;
@@ -129,13 +129,13 @@ namespace Nitrogen {
 		return OSLAccessor( desiredClass, containerType, accessor, accessorRefCon, isSysHandler );
 	}
 	
-	Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
+	Nucleus::Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
 	                                                        const AEToken&  containerToken,
 	                                                        AEObjectClass   containerClass,
 	                                                        AEEnumerated    keyForm,
 	                                                        const AEDesc&   keyData )
 	{
-		OnlyOnce< RegisterObjectSupportLibraryErrors >();
+		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
 		AEToken result;
 		ThrowOSStatus( ::AECallObjectAccessor( desiredClass,
@@ -145,11 +145,11 @@ namespace Nitrogen {
 		                                       &keyData,
 		                                       &result ) );
 		
-		return Owned< AEToken, AETokenDisposer >::Seize( result );
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( result );
 	}
 	
-	Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
-	                                                 Owned< AEToken, AETokenDisposer > token )
+	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
+	                                                 Nucleus::Owned< AEToken, AETokenDisposer > token )
 	{
 		AETokenEditor( token ).Get().descriptorType = typeCode;
 		return token;
@@ -157,7 +157,7 @@ namespace Nitrogen {
 	
 	void RegisterObjectSupportLibraryErrors()
 	{
-		OnlyOnce< RegisterAppleEventManagerErrors >();
+		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 	}
 	
 }

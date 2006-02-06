@@ -30,7 +30,7 @@ namespace Nitrogen
       	    {
       	    try { gOSStatusLoggingProc ( error, file, line ); } catch (...) {}
       	    }
-         ThrowErrorCode< OSStatus >( error );
+         Nucleus::ThrowErrorCode< OSStatus >( error );
          }
      }
 
@@ -40,7 +40,7 @@ namespace Nitrogen
    void ThrowOSStatusInternal( OSStatus error )
      {
       if ( error != noErr )
-         ThrowErrorCode< OSStatus >( error );
+         Nucleus::ThrowErrorCode< OSStatus >( error );
      }
 #endif
   }

@@ -12,8 +12,8 @@
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
 
 namespace Nitrogen
@@ -25,18 +25,18 @@ namespace Nitrogen
 	#pragma mark ¥ Constant types ¥
 	
 	class AELogicalOperator_Tag {};
-	typedef SelectorType< AELogicalOperator_Tag, ::FourCharCode > AELogicalOperator;
+	typedef Nucleus::SelectorType< AELogicalOperator_Tag, ::FourCharCode > AELogicalOperator;
 	typedef AELogicalOperator AELogicalDescriptor;
 	
 	class AEAbsoluteOrdinal_Tag {};
-	typedef SelectorType< AEAbsoluteOrdinal_Tag, ::FourCharCode > AEAbsoluteOrdinal;
+	typedef Nucleus::SelectorType< AEAbsoluteOrdinal_Tag, ::FourCharCode > AEAbsoluteOrdinal;
 	
 	class AERelativeOrdinal_Tag {};
-	typedef SelectorType< AERelativeOrdinal_Tag, ::FourCharCode > AERelativeOrdinal;
+	typedef Nucleus::SelectorType< AERelativeOrdinal_Tag, ::FourCharCode > AERelativeOrdinal;
 	typedef AERelativeOrdinal AERelativeDescriptor;
 	
 	struct AEResolveCallbackFlags_Tag  {};
-	typedef FlagType< AEResolveCallbackFlags_Tag, short, kAEIDoMinimum > AEResolveCallbackFlags;
+	typedef Nucleus::FlagType< AEResolveCallbackFlags_Tag, short, kAEIDoMinimum > AEResolveCallbackFlags;
 	
 	#pragma mark -
 	#pragma mark ¥ AEToken ¥
@@ -49,19 +49,25 @@ namespace Nitrogen
 			::AEDisposeToken( &token );
 		}
 	};
-	
+  }
+
+namespace Nucleus
+  {	
 	template <>
-	struct LivelinessTraits< AEToken, AETokenDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
-	
+	struct LivelinessTraits< Nitrogen::AEToken, Nitrogen::AETokenDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+  }
+
+namespace Nitrogen
+  {	
 	
 	class AETokenEditor
 	{
 		private:
-			Owned< AEToken, AETokenDisposer >& token;
+			Nucleus::Owned< AEToken, AETokenDisposer >& token;
 			AEToken workingCopy;
 		
 		public:
-			AETokenEditor( Owned< AEToken, AETokenDisposer >& token )
+			AETokenEditor( Nucleus::Owned< AEToken, AETokenDisposer >& token )
 			:
 				token      ( token           ),
 				workingCopy( token.Release() )
@@ -69,7 +75,7 @@ namespace Nitrogen
 			
 			~AETokenEditor()
 			{
-				token = Owned< AEToken, AETokenDisposer >::Seize( workingCopy );
+				token = Nucleus::Owned< AEToken, AETokenDisposer >::Seize( workingCopy );
 			}
 			
 			AEToken& Get()       { return workingCopy; }
@@ -92,12 +98,12 @@ namespace Nitrogen
 	
 	typedef UPP< OSLAccessorUPP_Details > OSLAccessorUPP;
 	
-	inline Owned< OSLAccessorUPP > NewOSLAccessorUPP( ::OSLAccessorProcPtr p )
+	inline Nucleus::Owned< OSLAccessorUPP > NewOSLAccessorUPP( ::OSLAccessorProcPtr p )
 	{
 		return NewUPP< OSLAccessorUPP >( p );
 	}
 	
-	inline void DisposeOSLAccessorUPP( Owned< OSLAccessorUPP > )  {}
+	inline void DisposeOSLAccessorUPP( Nucleus::Owned< OSLAccessorUPP > )  {}
 	
 	inline void InvokeOSLAccessorUPP( AEObjectClass   desiredClass,
 	                                  const AEToken&  containerToken,
@@ -111,7 +117,7 @@ namespace Nitrogen
 		ThrowOSStatus( userUPP( desiredClass, &containerToken, containerClass, keyForm, &keyData, &value, accessorRefcon ) );
 	}
 	
-	typedef Owned< AEToken, AETokenDisposer > ( *OSLAccessorProcPtr )( AEObjectClass   desiredClass,
+	typedef Nucleus::Owned< AEToken, AETokenDisposer > ( *OSLAccessorProcPtr )( AEObjectClass   desiredClass,
 	                                                                   const AEToken&  containerToken,
 	                                                                   AEObjectClass   containerClass,
 	                                                                   AEEnumerated    keyForm,
@@ -157,12 +163,12 @@ namespace Nitrogen
 	
 	typedef UPP< OSLCompareUPP_Details > OSLCompareUPP;
 	
-	inline Owned< OSLCompareUPP > NewOSLCompareUPP( ::OSLCompareProcPtr p )
+	inline Nucleus::Owned< OSLCompareUPP > NewOSLCompareUPP( ::OSLCompareProcPtr p )
 	{
 		return NewUPP< OSLCompareUPP >( p );
 	}
 	
-	inline void DisposeOSLCompareUPP( Owned< OSLCompareUPP > )  {}
+	inline void DisposeOSLCompareUPP( Nucleus::Owned< OSLCompareUPP > )  {}
 	
 	inline void InvokeOSLCompareUPP( AECompOperator  oper,
 	                                 const AEToken&  obj1,
@@ -214,11 +220,15 @@ namespace Nitrogen
 		return !( a == b );
 	}
 	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< OSLAccessor > : public std::unary_function< OSLAccessor, void >,
-	                                 private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::OSLAccessor > : public std::unary_function< Nitrogen::OSLAccessor, void >,
+	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( const OSLAccessor& installation ) const
+		void operator()( const Nitrogen::OSLAccessor& installation ) const
 		{
 			HandleDestructionOSStatus
 			(
@@ -229,6 +239,10 @@ namespace Nitrogen
 			);
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	void AEObjectInit();
 	
@@ -252,12 +266,12 @@ namespace Nitrogen
 	
 #endif
 	
-	Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier,
+	Nucleus::Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier,
 	                                             AEResolveCallbackFlags    callbackFlags );
 	
-	Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
+	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
-	inline Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
+	inline Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
 	                                                     DescType         containerType,
 	                                                     OSLAccessorUPP   accessor,
 	                                                     RefCon           accessorRefCon = RefCon(),
@@ -271,7 +285,7 @@ namespace Nitrogen
 	}
 	
 	template < typename OSLAccessorUPP::ProcPtr accessor >
-	Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass  desiredClass,
+	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass  desiredClass,
 	                                              DescType       containerType,
 	                                              RefCon         accessorRefCon = RefCon(),
 	                                              bool           isSysHandler   = false )
@@ -284,7 +298,7 @@ namespace Nitrogen
 	}
 	
 	template < OSLAccessorProcPtr accessor >
-	Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
+	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
 	                                              DescType         containerType,
 	                                              RefCon           accessorRefCon = RefCon(),
 	                                              bool             isSysHandler   = false )
@@ -298,14 +312,14 @@ namespace Nitrogen
 		);
 	}
 	
-	inline void AERemoveObjectAccessor( Owned< OSLAccessor > )  {}
+	inline void AERemoveObjectAccessor( Nucleus::Owned< OSLAccessor > )  {}
 	
 	typedef OSLAccessor AEGetObjectAccessor_Result;
 	OSLAccessor AEGetObjectAccessor( AEObjectClass    desiredClass,
 	                                 DescType         containerType,
 	                                 bool             isSysHandler );
 	
-	Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
+	Nucleus::Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
 	                                                        const AEToken&  containerToken,
 	                                                        AEObjectClass   containerClass,
 	                                                        AEEnumerated    keyForm,
@@ -314,69 +328,69 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AEToken routines ¥
 	
-	inline Owned< AEToken, AETokenDisposer > AEInitializeToken()
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AEInitializeToken()
 	{
-		return Owned< AEToken, AETokenDisposer >::Seize( Make< AEToken >() );
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( Nucleus::Make< AEToken >() );
 	}
 	
-	inline Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, const void* dataPtr, Size dataSize )
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, const void* dataPtr, Size dataSize )
 	{
-		return Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
 		                                                               dataPtr,
 		                                                               dataSize ).Release() );
 	}
 	
-	inline Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Handle handle )
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Handle handle )
 	{
-		return Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
 		                                                               handle ).Release() );
 	}
 	
-	inline Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Owned< Handle > handle )
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Nucleus::Owned< Handle > handle )
 	{
-		return Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc( typeCode,
 		                                                               handle ).Release() );
 	}
 	
 	template < class Data >
-	Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Data** handle )
+	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode, Data** handle )
 	{
 		return AECreateToken( typeCode, Handle( handle ) );
 	}
 	
 	template < class T >
-	Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
-	                                                 Owned< T**, Disposer< Handle > > handle )
+	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
+	                                                 Nucleus::Owned< T**, Nucleus::Disposer< Handle > > handle )
 	{
-		return AECreateToken( typeCode, Owned< Handle >( handle ) );
+		return AECreateToken( typeCode, Nucleus::Owned< Handle >( handle ) );
 	}
 	
-	Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
-	                                                 Owned< AEToken, AETokenDisposer > token );
+	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
+	                                                 Nucleus::Owned< AEToken, AETokenDisposer > token );
 	
 	template < ::DescType type >
-	Owned< AEToken, AETokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
+	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
 	{
-		return Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc< type >( data ).Release() );
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc< type >( data ).Release() );
 	}
 	
-	inline Owned< AEToken, AETokenDisposer > AEDuplicateToken( const AEToken& token )
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AEDuplicateToken( const AEToken& token )
 	{
-		return Owned< AEToken, AETokenDisposer >::Seize( AEDuplicateDesc( token ).Release() );
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AEDuplicateDesc( token ).Release() );
 	}
 	
-	inline Owned< AEToken, AETokenDisposer > AECreateTokenList( bool isRecord = false )
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AECreateTokenList( bool isRecord = false )
 	{
-		return Owned< AEToken, AETokenDisposer >::Seize( AECreateList( isRecord ).Release() );
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AECreateList( isRecord ).Release() );
 	}
 	
 	template < bool isRecord >
-	Owned< AEToken, AETokenDisposer > AECreateTokenList()
+	Nucleus::Owned< AEToken, AETokenDisposer > AECreateTokenList()
 	{
 		return AECreateTokenList( isRecord );
 	}
 	
-	inline void AEPutPtr( Owned< AETokenList, AETokenDisposer >&  tokenList,
+	inline void AEPutPtr( Nucleus::Owned< AETokenList, AETokenDisposer >&  tokenList,
 	                      long                                    index,
 	                      DescType                                typeCode,
 	                      const void*                             dataPtr,
@@ -385,20 +399,20 @@ namespace Nitrogen
 		AEPutPtr( AETokenEditor( tokenList ), index, typeCode, dataPtr, dataSize );
 	}
 	
-	inline void AEPutDesc( Owned< AETokenList, AETokenDisposer >&  tokenList,
+	inline void AEPutDesc( Nucleus::Owned< AETokenList, AETokenDisposer >&  tokenList,
 	                       long                                    index,
 	                       const AEToken&                          token )
 	{
 		AEPutDesc( AETokenEditor( tokenList ), index, token );
 	}
 	
-	inline Owned< AETokenList, AETokenDisposer > AEGetNthToken( const AETokenList&  tokenList,
+	inline Nucleus::Owned< AETokenList, AETokenDisposer > AEGetNthToken( const AETokenList&  tokenList,
 	                                                            long                index )
 	{
-		return Owned< AEToken, AETokenDisposer >::Seize( AEGetNthDesc( tokenList, index ).Release() );
+		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AEGetNthDesc( tokenList, index ).Release() );
 	}
 	
-	inline void AEPutKeyPtr( Owned< AERecord, AETokenDisposer >&  record,
+	inline void AEPutKeyPtr( Nucleus::Owned< AERecord, AETokenDisposer >&  record,
 	                         AEKeyword                            keyword,
 	                         DescType                             typeCode,
 	                         const void*                          dataPtr,
@@ -407,20 +421,20 @@ namespace Nitrogen
 		AEPutKeyPtr( AETokenEditor( record ), keyword, typeCode, dataPtr, dataSize );
 	}
 	
-	inline void AEPutKeyDesc( Owned< AERecord, AETokenDisposer >&  record,
+	inline void AEPutKeyDesc( Nucleus::Owned< AERecord, AETokenDisposer >&  record,
 	                          AEKeyword                            keyword,
 	                          const AEDesc&                        desc )
 	{
 		AEPutKeyDesc( AETokenEditor( record ), keyword, desc );
 	}
 	
-	inline void AEPutKeyDesc( Owned< AERecord, AETokenDisposer >&  record,
+	inline void AEPutKeyDesc( Nucleus::Owned< AERecord, AETokenDisposer >&  record,
 	                          const AEKeyDesc&                     keyDesc )
 	{
 		AEPutKeyDesc( AETokenEditor( record ), keyDesc );
 	}
 	
-	inline void AEDisposeToken( Owned< AEToken, AETokenDisposer > )  {}
+	inline void AEDisposeToken( Nucleus::Owned< AEToken, AETokenDisposer > )  {}
 	
 }
 

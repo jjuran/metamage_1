@@ -50,27 +50,34 @@ namespace Nitrogen
 	#pragma mark ¥ General Types and Constants ¥
 	
 	class CFragArchitecture_Tag {};
-	typedef SelectorType< CFragArchitecture_Tag, ::CFragArchitecture, kAnyCFragArch > CFragArchitecture;
+	typedef Nucleus::SelectorType< CFragArchitecture_Tag, ::CFragArchitecture, kAnyCFragArch > CFragArchitecture;
 	
 	class CFragLoadOptions_Tag {};
-	typedef FlagType< CFragLoadOptions_Tag, ::CFragLoadOptions, 0 > CFragLoadOptions;
+	typedef Nucleus::FlagType< CFragLoadOptions_Tag, ::CFragLoadOptions, 0 > CFragLoadOptions;
 	
 	class CFragSymbolClass_Tag {};
-	typedef SelectorType< CFragSymbolClass_Tag, ::CFragSymbolClass, 0 > CFragSymbolClass;
+	typedef Nucleus::SelectorType< CFragSymbolClass_Tag, ::CFragSymbolClass, 0 > CFragSymbolClass;
 	
 	using ::CFragConnectionID;
 	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< CFragConnectionID > : public std::unary_function< CFragConnectionID, void >,
-	                                       private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::CFragConnectionID > : public std::unary_function< Nitrogen::CFragConnectionID, void >,
+	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( CFragConnectionID connID ) const
+		void operator()( Nitrogen::CFragConnectionID connID ) const
 		{
-			OnlyOnce< RegisterCodeFragmentManagerErrors >();
-			
+			Nucleus::OnlyOnce< Nitrogen::RegisterCodeFragmentManagerErrors >();
 			HandleDestructionOSStatus( ::CloseConnection( &connID ) );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	
 	// Opaque pointer type
@@ -106,11 +113,11 @@ namespace Nitrogen
 	
 	struct Reference_CFragConnection_Traits
 	{
-		typedef Owned< CFragConnectionID > Result;
+		typedef Nucleus::Owned< CFragConnectionID > Result;
 		
 		static Result MakeResult( CFragConnectionID connID )
 		{
-			return Owned< CFragConnectionID >::Seize( connID );
+			return Nucleus::Owned< CFragConnectionID >::Seize( connID );
 		}
 	};
 	
@@ -271,7 +278,7 @@ namespace Nitrogen
 		                                                    NULL );
 	}
 	
-	void CloseConnection( Owned< CFragConnectionID > connID );
+	void CloseConnection( Nucleus::Owned< CFragConnectionID > connID );
 	
 	// 384
 	void FindSymbol( CFragConnectionID  connID,
@@ -324,7 +331,7 @@ namespace Nitrogen
 	{
 		SymbolAddressPtr tempSymAddr;
 		
-		GetIndSymbol( connID, symName, &tempSymAddr, symClass );
+		GetIndSymbol( connID, symIndex, symName, &tempSymAddr, symClass );
 		
 		if ( symAddr != NULL )
 		{

@@ -31,7 +31,7 @@ namespace Nitrogen
 	// Munger
 	// I am *not* porting Munger().  There are C++ algorithms to do the same things type-safely.
 	
-	Owned< StringHandle > NewString( ConstStr255Param string );
+	Nucleus::Owned< StringHandle > NewString( ConstStr255Param string );
 	
 	void SetString( StringHandle string, ConstStr255Param newStr );
 	

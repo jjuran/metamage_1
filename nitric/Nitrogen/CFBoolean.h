@@ -12,8 +12,8 @@
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"
 #endif
-#ifndef NITROGEN_CONVERT_H
-#include "Nitrogen/Convert.h"
+#ifndef NUCLEUS_CONVERT_H
+#include "Nucleus/Convert.h"
 #endif
 
 namespace Nitrogen
@@ -21,35 +21,45 @@ namespace Nitrogen
    using ::CFBooleanRef;
    
    template <> struct CFType_Traits< CFBooleanRef >: Basic_CFType_Traits< CFBooleanRef, ::CFBooleanGetTypeID > {};
-   template <> struct OwnedDefaults< CFBooleanRef >: OwnedDefaults<CFTypeRef>  {};
-   
+  }
+
+namespace Nucleus
+  {
+   template <> struct OwnedDefaults< Nitrogen::CFBooleanRef >: OwnedDefaults<Nitrogen::CFTypeRef>  {};
+  }
+
+namespace Nitrogen
+  {
    inline bool CFBooleanGetValue( const CFBooleanRef b ) { return ::CFBooleanGetValue( b ); }
    inline void CFShow( const CFBooleanRef b )            { ::CFShow( b ); }
-
+  }
+  
+namespace Nucleus
+  {
    template <>
-   struct Converter< bool, CFBooleanRef >: public std::unary_function< CFBooleanRef, bool >
+   struct Converter< bool, Nitrogen::CFBooleanRef >: public std::unary_function< Nitrogen::CFBooleanRef, bool >
      {
-      bool operator()( const CFBooleanRef& in ) const
+      bool operator()( const Nitrogen::CFBooleanRef& in ) const
         {
          return Nitrogen::CFBooleanGetValue( in );
         }
      };
 
    template <>
-   struct Converter< CFBooleanRef, bool >: public std::unary_function< bool, CFBooleanRef >
+   struct Converter< Nitrogen::CFBooleanRef, bool >: public std::unary_function< bool, Nitrogen::CFBooleanRef >
      {
-      CFBooleanRef operator()( const bool& in ) const
+      Nitrogen::CFBooleanRef operator()( const bool& in ) const
         {
          return in ? kCFBooleanTrue : kCFBooleanFalse;
         }
      };
    
    template <>
-   struct Converter< Owned<CFBooleanRef>, bool >: public std::unary_function< bool, Owned<CFBooleanRef> >
+   struct Converter< Nucleus::Owned<Nitrogen::CFBooleanRef>, bool >: public std::unary_function< bool, Nucleus::Owned<Nitrogen::CFBooleanRef> >
      {
-      Owned<CFBooleanRef> operator()( const bool& in ) const
+      Nucleus::Owned<Nitrogen::CFBooleanRef> operator()( const bool& in ) const
         {
-         return CFRetain( Convert<CFBooleanRef>( in ) );
+         return Nitrogen::CFRetain( Convert<Nitrogen::CFBooleanRef>( in ) );
         }
      };
   }

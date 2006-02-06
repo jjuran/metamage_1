@@ -12,17 +12,17 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_MAKE_H
-#include "Nitrogen/Make.h"
+#ifndef NUCLEUS_MAKE_H
+#include "Nucleus/Make.h"
 #endif
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
@@ -37,64 +37,69 @@ namespace Nitrogen
    inline ScriptCode TextScriptDontCare()  { return ScriptCode::Make( kTextScriptDontCare ); }
    
    class TextEncodingBaseTag {};
-   typedef SelectorType< TextEncodingBaseTag, ::TextEncodingBase, kTextEncodingUnknown > TextEncodingBase;
+   typedef Nucleus::SelectorType< TextEncodingBaseTag, ::TextEncodingBase, kTextEncodingUnknown > TextEncodingBase;
 
    class TextEncodingVariantTag {};
-   typedef SelectorType< TextEncodingVariantTag, ::TextEncodingVariant, kTextEncodingDefaultVariant > TextEncodingVariant;
+   typedef Nucleus::SelectorType< TextEncodingVariantTag, ::TextEncodingVariant, kTextEncodingDefaultVariant > TextEncodingVariant;
 
    class TextEncodingFormatTag {};
-   typedef SelectorType< TextEncodingFormatTag, ::TextEncodingFormat, 0 > TextEncodingFormat;
+   typedef Nucleus::SelectorType< TextEncodingFormatTag, ::TextEncodingFormat, 0 > TextEncodingFormat;
 
    class TextEncodingTag {};
-   typedef IDType< TextEncodingTag, ::TextEncoding, 0 > TextEncoding;
+   typedef Nucleus::IDType< TextEncodingTag, ::TextEncoding, 0 > TextEncoding;
 
    class TextEncodingNameSelectorTag {};
-   typedef SelectorType< TextEncodingNameSelectorTag, ::TextEncodingNameSelector, 0 > TextEncodingNameSelector;
+   typedef Nucleus::SelectorType< TextEncodingNameSelectorTag, ::TextEncodingNameSelector, 0 > TextEncodingNameSelector;
 
    using ::TextEncodingRun;
+   using ::ScriptCodeRun;
+  }
 
+namespace Nucleus
+  {
    template <>
-   struct Maker< TextEncodingRun >
+   struct Maker< Nitrogen::TextEncodingRun >
      {
-      TextEncodingRun operator()( ByteOffset offset, TextEncoding textEncoding ) const
+      Nitrogen::TextEncodingRun operator()( ByteOffset offset, Nitrogen::TextEncoding textEncoding ) const
         {
-         TextEncodingRun result;
+         Nitrogen::TextEncodingRun result;
          result.offset = offset;
          result.textEncoding = textEncoding;
          return result;
         }
      };
 
-   using ::ScriptCodeRun;
-
    template <>
-   struct Maker< ScriptCodeRun >
+   struct Maker< Nitrogen::ScriptCodeRun >
      {
-      ScriptCodeRun operator()( ByteOffset offset, ScriptCode script ) const
+      Nitrogen::ScriptCodeRun operator()( ByteOffset offset, Nitrogen::ScriptCode script ) const
         {
-         ScriptCodeRun result;
+         Nitrogen::ScriptCodeRun result;
          result.offset = offset;
          result.script = script;
          return result;
         }
      };
-   
+  }
+
+namespace Nitrogen
+  {
    class UCCharPropertyTypeTag {};
-   typedef SelectorType< UCCharPropertyTypeTag, ::UCCharPropertyType, 0 > UCCharPropertyType;
+   typedef Nucleus::SelectorType< UCCharPropertyTypeTag, ::UCCharPropertyType, 0 > UCCharPropertyType;
 
    class UCCharPropertyValueTag {};
-   typedef SelectorType< UCCharPropertyValueTag, ::UCCharPropertyValue, 0 > UCCharPropertyValue;
+   typedef Nucleus::SelectorType< UCCharPropertyValueTag, ::UCCharPropertyValue, 0 > UCCharPropertyValue;
    
    // UCCharPropertyValue is really three types overloaded: UCCharGenlCategory, UCCharCombiningClass, and UCCharBidiCategory.
    
       class UCCharGenlCategoryTag {};
-      typedef SelectorType< UCCharGenlCategoryTag, ::UCCharPropertyValue, 0 > UCCharGenlCategory;
+      typedef Nucleus::SelectorType< UCCharGenlCategoryTag, ::UCCharPropertyValue, 0 > UCCharGenlCategory;
       
       class UCCharCombiningClassTag {};
-      typedef SelectorType< UCCharCombiningClassTag, ::UCCharPropertyValue, 0 > UCCharCombiningClass;
+      typedef Nucleus::SelectorType< UCCharCombiningClassTag, ::UCCharPropertyValue, 0 > UCCharCombiningClass;
       
       class UCCharBidiCategoryTag {};
-      typedef SelectorType< UCCharBidiCategoryTag, ::UCCharPropertyValue, 0 > UCCharBidiCategory;
+      typedef Nucleus::SelectorType< UCCharBidiCategoryTag, ::UCCharPropertyValue, 0 > UCCharBidiCategory;
 
 
    /* TECInfo... */
@@ -164,7 +169,7 @@ namespace Nitrogen
                                                              RegionCode               iPreferredRegion,
                                                              TextEncoding             iPreferredEncoding );
 
-   Owned< TECInfoHandle, Disposer<Handle> > TECGetInfo();
+   Nucleus::Owned< TECInfoHandle, Nucleus::Disposer<Handle> > TECGetInfo();
 
    TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                  LangCode         iTextLanguageID = TextLanguageDontCare(),

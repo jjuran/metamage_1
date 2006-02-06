@@ -24,20 +24,20 @@
 #ifndef NITROGEN_QUICKDRAW_H
 #include "Nitrogen/Quickdraw.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
-#ifndef NITROGEN_FLATTENER_H
-#include "Nitrogen/Flattener.h"
+#ifndef NUCLEUS_FLATTENER_H
+#include "Nucleus/Flattener.h"
 #endif
 
 namespace Nitrogen
@@ -47,34 +47,34 @@ namespace Nitrogen
    using ::DragRef;
 
    class DragItemRefTag {};
-   typedef IDType< DragItemRefTag, ::DragItemRef, 0 > DragItemRef;
+   typedef Nucleus::IDType< DragItemRefTag, ::DragItemRef, 0 > DragItemRef;
    
    class FlavorTypeTag {};
-   typedef SelectorType< FlavorTypeTag, ::FlavorType, 0 > FlavorType;
+   typedef Nucleus::SelectorType< FlavorTypeTag, ::FlavorType, 0 > FlavorType;
    
    class DragAttributesTag {};
-   typedef FlagType< DragAttributesTag, ::DragAttributes, 0 > DragAttributes;
+   typedef Nucleus::FlagType< DragAttributesTag, ::DragAttributes, 0 > DragAttributes;
    
    class DragBehaviorsTag {};
-   typedef FlagType< DragBehaviorsTag, ::DragBehaviors, 0 > DragBehaviors;
+   typedef Nucleus::FlagType< DragBehaviorsTag, ::DragBehaviors, 0 > DragBehaviors;
    
    class DragImageFlagsTag {};
-   typedef FlagType< DragImageFlagsTag, ::DragImageFlags, 0 > DragImageFlags;
+   typedef Nucleus::FlagType< DragImageFlagsTag, ::DragImageFlags, 0 > DragImageFlags;
     
    class DragRegionMessageTag {};
-   typedef SelectorType< DragRegionMessageTag, ::DragRegionMessage, 0 > DragRegionMessage;
+   typedef Nucleus::SelectorType< DragRegionMessageTag, ::DragRegionMessage, 0 > DragRegionMessage;
     
    class ZoomAccelerationTag {};
-   typedef SelectorType< ZoomAccelerationTag, ::ZoomAcceleration, 0 > ZoomAcceleration;
+   typedef Nucleus::SelectorType< ZoomAccelerationTag, ::ZoomAcceleration, 0 > ZoomAcceleration;
    
    class FlavorFlagsTag {};
-   typedef FlagType< FlavorFlagsTag, ::FlavorFlags, 0 > FlavorFlags;
+   typedef Nucleus::FlagType< FlavorFlagsTag, ::FlavorFlags, 0 > FlavorFlags;
     
    class DragTrackingMessageTag {};
-   typedef SelectorType< DragTrackingMessageTag, ::DragTrackingMessage, 0 > DragTrackingMessage;
+   typedef Nucleus::SelectorType< DragTrackingMessageTag, ::DragTrackingMessage, 0 > DragTrackingMessage;
    
    class DragActionsTag {};
-   typedef FlagType< DragActionsTag, ::DragActions, 0 > DragActions;
+   typedef Nucleus::FlagType< DragActionsTag, ::DragActions, 0 > DragActions;
    
    using ::HFSFlavor;
    using ::PromiseHFSFlavor;
@@ -82,29 +82,37 @@ namespace Nitrogen
    // FlavorType_Traits havce the same format as Flatteners.
    template < ::FlavorType > struct FlavorType_Traits;
    
-   template <> struct FlavorType_Traits< kDragFlavorTypeHFS                  >: public PodFlattener< HFSFlavor > {};
-   template <> struct FlavorType_Traits< kDragFlavorTypePromiseHFS           >: public PodFlattener< PromiseHFSFlavor > {};
-   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public StringFlattener< std::string > {};
-   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public StringFlattener< std::string > {};
-   template <> struct FlavorType_Traits< kFlavorTypeDragToTrashOnly          >: public NoDataFlattener {};
-   template <> struct FlavorType_Traits< kFlavorTypeFinderNoTrackingBehavior >: public NoDataFlattener {};
+   template <> struct FlavorType_Traits< kDragFlavorTypeHFS                  >: public Nucleus::PodFlattener< HFSFlavor > {};
+   template <> struct FlavorType_Traits< kDragFlavorTypePromiseHFS           >: public Nucleus::PodFlattener< PromiseHFSFlavor > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingName             >: public Nucleus::StringFlattener< std::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeClippingFilename         >: public Nucleus::StringFlattener< std::string > {};
+   template <> struct FlavorType_Traits< kFlavorTypeDragToTrashOnly          >: public Nucleus::NoDataFlattener {};
+   template <> struct FlavorType_Traits< kFlavorTypeFinderNoTrackingBehavior >: public Nucleus::NoDataFlattener {};
    
    /* UPPs... */
    /* Handlers... */
 
-   template <> struct Disposer< DragRef >: public std::unary_function< DragRef, void >,
-                                           private DefaultDestructionOSStatusPolicy
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::DragRef >: public std::unary_function< Nitrogen::DragRef, void >,
+                                                     private Nitrogen::DefaultDestructionOSStatusPolicy
      {
-      void operator()( DragRef i ) const
+      void operator()( Nitrogen::DragRef i ) const
         {
-         OnlyOnce<RegisterDragManagerErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::DisposeDrag( i ) );
+         Nucleus::OnlyOnce<Nitrogen::RegisterDragManagerErrors>();
+         HandleDestructionOSStatus( ::DisposeDrag( i ) );
         }
      };
+  }
+
+namespace Nitrogen
+  {
    
-   Owned<DragRef> NewDrag();
+   Nucleus::Owned<DragRef> NewDrag();
    
-   void DisposeDrag( Owned<DragRef> );
+   void DisposeDrag( Nucleus::Owned<DragRef> );
 
    void AddDragItemFlavor( DragRef     theDrag,
                            DragItemRef theItemRef,

@@ -18,20 +18,20 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
-#ifndef NITROGEN_PSEUDOREFERENCE_H
-#include "Nitrogen/Pseudoreference.h"
+#ifndef NUCLEUS_PSEUDOREFERENCE_H
+#include "Nucleus/Pseudoreference.h"
 #endif
 
 namespace Nitrogen
@@ -40,17 +40,17 @@ namespace Nitrogen
 	void RegisterResourceManagerErrors();
 	
 	class ResFileRefNum_Tag {};
-	typedef IDType< ResFileRefNum_Tag, ::ResFileRefNum, kResFileNotOpened > ResFileRefNum;
+	typedef Nucleus::IDType< ResFileRefNum_Tag, ::ResFileRefNum, kResFileNotOpened > ResFileRefNum;
 	
 	class ResID_Tag {};
-	typedef IDType< ResID_Tag, ::ResID, 0 > ResID;
+	typedef Nucleus::IDType< ResID_Tag, ::ResID, 0 > ResID;
 	typedef ResID ResourceID;
 	
 	class ResAttributes_Tag {};
-	typedef FlagType< ResAttributes_Tag, ::ResAttributes, 0 > ResAttributes;
+	typedef Nucleus::FlagType< ResAttributes_Tag, ::ResAttributes, 0 > ResAttributes;
 	
 	class ResFileAttributes_Tag {};
-	typedef FlagType< ResFileAttributes_Tag, ::ResFileAttributes, 0 > ResFileAttributes;
+	typedef Nucleus::FlagType< ResFileAttributes_Tag, ::ResFileAttributes, 0 > ResFileAttributes;
 	
 	// ResourceReleaser is not used as a Disposer for Owned because resource 
 	// handles are owned by the Resource Manager, not the application.
@@ -61,23 +61,31 @@ namespace Nitrogen
 	{
 		void operator()( Handle r ) const
 		{
-			OnlyOnce< RegisterResourceManagerErrors >();
+			Nucleus::OnlyOnce< RegisterResourceManagerErrors >();
 			::ReleaseResource( r );
 			HandleDestructionOSStatus( ::ResError() );
 		}
 	};
 	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< ResFileRefNum > : public std::unary_function< ResFileRefNum, void >,
-	                                   private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::ResFileRefNum > : public std::unary_function< Nitrogen::ResFileRefNum, void >,
+	                                             private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( ResFileRefNum resFile ) const
+		void operator()( Nitrogen::ResFileRefNum resFile ) const
 		{
-			OnlyOnce< RegisterResourceManagerErrors >();
+			Nucleus::OnlyOnce< Nitrogen::RegisterResourceManagerErrors >();
 			::CloseResFile( resFile );
 			HandleDestructionOSStatus( ::ResError() );
 		}
 	};
+  }
+
+namespace Nitrogen
+  {
 	
 	Handle CheckResource( Handle r );
 	
@@ -90,7 +98,7 @@ namespace Nitrogen
 	// InitResources
 	// RsrcZoneInit
 	
-	void CloseResFile( Owned< ResFileRefNum > resFileRefNum );
+	void CloseResFile( Nucleus::Owned< ResFileRefNum > resFileRefNum );
 	
 	void ResError();
 	
@@ -139,8 +147,8 @@ namespace Nitrogen
 	
 	void ReleaseResource( Handle r );
 	
-	void DetachResource( Owned< Handle > h );  // invalid, not defined
-	Owned< Handle >  DetachResource( Handle r );
+	void DetachResource( Nucleus::Owned< Handle > h );  // invalid, not defined
+	Nucleus::Owned< Handle >  DetachResource( Handle r );
 	
 	ResID UniqueID ( ResType type );
 	ResID Unique1ID( ResType type );
@@ -158,12 +166,12 @@ namespace Nitrogen
 	
 	void SetResInfo( Handle r, ResID id, ConstStr255Param name );
 	
-	Handle AddResource( Owned< Handle >   h,
+	Handle AddResource( Nucleus::Owned< Handle >   h,
 	                    ResType           type,
 	                    ResID             resID,
 	                    ConstStr255Param  name );
 	
-	Handle AddResource( Owned< Handle > h, const GetResInfo_Result& resInfo );
+	Handle AddResource( Nucleus::Owned< Handle > h, const GetResInfo_Result& resInfo );
 	
 	std::size_t GetResourceSizeOnDisk( Handle r );
 	
@@ -175,8 +183,8 @@ namespace Nitrogen
 	
 	void ChangedResource( Handle r );
 	
-	void RemoveResource( Owned< Handle > h );  // invalid, not defined
-	Owned< Handle > RemoveResource( Handle r );
+	void RemoveResource( Nucleus::Owned< Handle > h );  // invalid, not defined
+	Nucleus::Owned< Handle > RemoveResource( Handle r );
 	
 	void UpdateResFile( ResFileRefNum refNum );
 	
@@ -193,7 +201,7 @@ namespace Nitrogen
 	// HOpenResFile   -- not implemented; use FSpOpenResFile
 	// HCreateResFile -- not implemented; use FSpCreateResFile
 	
-	Owned< ResFileRefNum > FSpOpenResFile( const FSSpec&  spec,
+	Nucleus::Owned< ResFileRefNum > FSpOpenResFile( const FSSpec&  spec,
 	                                       FSIOPermssn    permissions );
 	
 	void FSpCreateResFile( const FSSpec&  spec,
@@ -214,12 +222,12 @@ namespace Nitrogen
 	// GetTopResourceFile
 	// GetNextResourceFile
 	
-	Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
+	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
 	                                           UniCharCount    forkNameLength,
 	                                           const UniChar*  forkName,
 	                                           FSIOPermssn     permissions );
 	
-	Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref,
+	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref,
 	                                           const UniString&  forkName,
 	                                           FSIOPermssn       permissions );
 	
@@ -243,7 +251,7 @@ namespace Nitrogen
 	
 	typedef ResFile_Value ResFile_Details;
 	
-	typedef Pseudoreference< ResFile_Details > ResFile;
+	typedef Nucleus::Pseudoreference< ResFile_Details > ResFile;
 	
 }
 

@@ -4,14 +4,14 @@
 #include "Nitrogen/Files.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
-#ifndef NITROGEN_INITIALIZE_H
-#include "Nitrogen/Initialize.h"
+#ifndef NUCLEUS_INITIALIZE_H
+#include "Nucleus/Initialize.h"
 #endif
 
 #include <limits>
@@ -19,9 +19,9 @@
 namespace Nitrogen
   {
 	
-	void FSClose( Owned< FSFileRefNum > fileRefNum )
+	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::FSClose( fileRefNum.Release() ) );
 	}
@@ -30,7 +30,7 @@ namespace Nitrogen
 	               SInt32       requestCount,
 	               void *       buffer )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt32 actualCount = requestCount;
 		
@@ -52,7 +52,7 @@ namespace Nitrogen
 	                SInt32       requestCount,
 	                const void * buffer )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt32 actualCount = requestCount;
 		ThrowOSStatus( ::FSWrite( file,
@@ -64,7 +64,7 @@ namespace Nitrogen
 	SInt32 Allocate( FSFileRefNum      fileRefNum,
 	                 SInt32            requestCount )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt32 actualCount = requestCount;
 		ThrowOSStatus( ::Allocate( fileRefNum,
@@ -74,7 +74,7 @@ namespace Nitrogen
 	
 	SInt32 GetEOF( FSFileRefNum fileRefNum )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt32 position;
 		ThrowOSStatus( ::GetEOF( fileRefNum, &position ) );
@@ -84,14 +84,14 @@ namespace Nitrogen
 	void SetEOF( FSFileRefNum fileRefNum,
 	             SInt32       positionOffset )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::SetEOF( fileRefNum, positionOffset ) );
 	}
 	
 	SInt32 GetFPos( FSFileRefNum fileRefNum )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt32 position;
 		ThrowOSStatus( ::GetFPos( fileRefNum, &position ) );
@@ -102,30 +102,37 @@ namespace Nitrogen
 	              FSIOPosMode   positionMode,
 	              SInt32        positionOffset )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::SetFPos( fileRefNum, positionMode.Get(), positionOffset ) );
 	}
 	
 	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::PBGetCatInfoSync( &paramBlock ) );
 		
 		return paramBlock;
 	}
-	
+
+  using ::CInfoPBRec;
+  using ::DirInfo;
+  using ::FileInfo;
+  }
+
+namespace Nucleus
+  {	
 	template <>
-	struct Initializer< CInfoPBRec >
+	struct Initializer< Nitrogen::CInfoPBRec >
 	{
-		CInfoPBRec& operator()( CInfoPBRec&     paramBlock,
-		                        FSVolumeRefNum  vRefNum,
-		                        FSDirID         dirID,
-		                        StringPtr       name,
-		                        SInt16          index )
+		Nitrogen::CInfoPBRec& operator()( Nitrogen::CInfoPBRec&     paramBlock,
+		                        Nitrogen::FSVolumeRefNum  vRefNum,
+		                        Nitrogen::FSDirID         dirID,
+		                        StringPtr                 name,
+		                        SInt16                    index )
 		{
-			DirInfo& dirInfo = paramBlock.dirInfo;
+			Nitrogen::DirInfo& dirInfo = paramBlock.dirInfo;
 			
 			dirInfo.ioNamePtr = name;
 			dirInfo.ioVRefNum = vRefNum;
@@ -135,7 +142,10 @@ namespace Nitrogen
 			return paramBlock;
 		}
 	};
-	
+  }
+
+namespace Nitrogen
+  {	
 	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock )
 	{
 		// There is/was a file sharing problem with null or empty names,
@@ -143,7 +153,7 @@ namespace Nitrogen
 		
 		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
 		
-		PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		PBGetCatInfoSync( Nucleus::Initialize< CInfoPBRec >( paramBlock,
 		                                            item.vRefNum,
 		                                            item.parID,
 		                                            const_cast< StringPtr >( item.name ),
@@ -161,7 +171,7 @@ namespace Nitrogen
 	{
 		// ioFDirIndex < 0:  use ioDrDirID only
 		
-		return PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		return PBGetCatInfoSync( Nucleus::Initialize< CInfoPBRec >( paramBlock,
 		                                                   dir.vRefNum,
 		                                                   dir.dirID,
 		                                                   name,  // Output only
@@ -178,7 +188,7 @@ namespace Nitrogen
 		
 		// Assert index != 0
 		
-		return PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		return PBGetCatInfoSync( Nucleus::Initialize< CInfoPBRec >( paramBlock,
 		                                                   dir.vRefNum,
 		                                                   dir.dirID,
 		                                                   name,  // Output only
@@ -190,26 +200,32 @@ namespace Nitrogen
 	{
 		return paramBlock.hFileInfo.ioFlAttrib & char( kioFlAttribDirMask );
 	}
-	
-	FSDirSpec Converter< FSDirSpec, FSSpec >::operator()( const FSSpec& dir ) const
+  }
+
+namespace Nucleus
+  {	
+	Nitrogen::FSDirSpec Converter< Nitrogen::FSDirSpec, Nitrogen::FSSpec >::operator()( const Nitrogen::FSSpec& dir ) const
 	{
-		CInfoPBRec pb;
-		FSpGetCatInfo( dir, pb );
+		Nitrogen::CInfoPBRec pb;
+		Nitrogen::FSpGetCatInfo( dir, pb );
 		
-		if ( !TestIsDirectory( pb ) )
+		if ( !Nitrogen::TestIsDirectory( pb ) )
 		{
 			// I wanted a dir but you gave me a file.  You creep.
-			throw ErrFSNotAFolder();
+			throw Nitrogen::ErrFSNotAFolder();
 		}
 		
-		FSDirID dirID = FSDirID( pb.dirInfo.ioDrDirID );
+		Nitrogen::FSDirID dirID = Nitrogen::FSDirID( pb.dirInfo.ioDrDirID );
 		
-		return Make< FSDirSpec >( dir.vRefNum, dirID );
+		return Make< Nitrogen::FSDirSpec >( dir.vRefNum, dirID );
 	}
-	
+  }
+
+namespace Nitrogen
+  {	
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::PBHGetVolParmsSync( &paramBlock ) );
 	}
@@ -231,14 +247,14 @@ namespace Nitrogen
 	
 	void PBDTGetPath( DTPBRec& pb )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::PBDTGetPath( &pb ) );
 	}
 	
 	void PBDTGetAPPLSync( DTPBRec& pb )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		try
 		{
@@ -275,7 +291,7 @@ namespace Nitrogen
 	
 	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name)
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		FSSpec result;
 		
@@ -291,29 +307,29 @@ namespace Nitrogen
 		return FSMakeFSSpec( FSVolumeRefNum(), FSDirID(), pathname );
 	}
 	
-	Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
+	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
 	                                 FSIOPermssn     permissions )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt16 result;
 		ThrowOSStatus( ::FSpOpenDF( &spec, permissions, &result ) );
-		return Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
+		return Nucleus::Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
 	}
 	
-	Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
+	Nucleus::Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
 	                                 FSIOPermssn     permissions )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt16 result;
 		ThrowOSStatus( ::FSpOpenRF( &spec, permissions, &result ) );
-		return Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
+		return Nucleus::Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
 	}
 	
 	FSSpec FSpCreate( const FSSpec& file, OSType creator, OSType type, ScriptCode scriptTag )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::FSpCreate( &file, creator, type, scriptTag ) );
 		return file;
@@ -321,24 +337,24 @@ namespace Nitrogen
 	
 	FSDirSpec FSpDirCreate( const FSSpec& dir, ScriptCode scriptTag )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		SInt32 newDirID;
 		ThrowOSStatus( ::FSpDirCreate( &dir, scriptTag, &newDirID ) );
 		
-		return Make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), FSDirID( newDirID ) );
+		return Nucleus::Make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), FSDirID( newDirID ) );
 	}
 	
 	void FSpDelete( const FSSpec& item )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::FSpDelete( &item ) );
 	}
 	
 	FInfo FSpGetFInfo( const FSSpec& file )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		FInfo info;
 		ThrowOSStatus( ::FSpGetFInfo( &file, &info ) );
@@ -347,14 +363,14 @@ namespace Nitrogen
 	
 	void FSpCatMove( const FSSpec& source, const FSSpec& dest )
 	{
-		OnlyOnce< RegisterFileManagerErrors >();
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::FSpCatMove( &source, &dest ) );
 	}
 	
    FSRef FSpMakeFSRef( const FSSpec& spec )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRef result;
       ThrowOSStatus( ::FSpMakeFSRef( &spec, &result ) );
       return result;
@@ -365,7 +381,7 @@ namespace Nitrogen
                              const UniChar *name,
                              TextEncoding textEncodingHint )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRef result;
       ThrowOSStatus( ::FSMakeFSRefUnicode( &parentRef,
                                            nameLength,
@@ -384,7 +400,7 @@ namespace Nitrogen
    
    bool FSCompareFSRefs( const FSRef& ref1, const FSRef& ref2 )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       const OSStatus error = ::FSCompareFSRefs( &ref1, &ref2 );
       if ( error == errFSRefsDifferent )
          return false;
@@ -394,13 +410,13 @@ namespace Nitrogen
 
    void FileSystemDisposer::operator()( const FSRef& ref ) const
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSDeleteObject( &ref ) );
      }
 
    void FileSystemDisposer::operator()( const FSSpec& spec ) const
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSpDelete( &spec ) );
      }
    
@@ -411,7 +427,7 @@ namespace Nitrogen
                                                    FSCatalogInfoBitmap  whichInfo,
                                                    const FSCatalogInfo& catalogInfo )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRefSpec result;
       ThrowOSStatus( ::FSCreateFileUnicode( &parentRef,
                                             nameLength,
@@ -420,14 +436,14 @@ namespace Nitrogen
                                             &catalogInfo,
                                             &result.fsRef,
                                             &result.fsSpec ) );
-      return Owned<FSRefSpec>::Seize( result );
+      return Nucleus::Owned<FSRefSpec>::Seize( result );
      }
 
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&   parentRef,
                                                    UniCharCount   nameLength,
                                                    const UniChar *name )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRefSpec result;
       ThrowOSStatus( ::FSCreateFileUnicode( &parentRef,
                                             nameLength,
@@ -436,7 +452,7 @@ namespace Nitrogen
                                             0,
                                             &result.fsRef,
                                             &result.fsSpec ) );
-      return Owned<FSRefSpec>::Seize( result );
+      return Nucleus::Owned<FSRefSpec>::Seize( result );
      }
 
 
@@ -461,7 +477,7 @@ namespace Nitrogen
                                                              FSCatalogInfoBitmap  whichInfo,
                                                              const FSCatalogInfo& catalogInfo )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRefSpecDirID result;
       UInt32 dirID;
       ThrowOSStatus( ::FSCreateDirectoryUnicode( &parentRef,
@@ -473,14 +489,14 @@ namespace Nitrogen
                                                  &result.fsSpec,
                                                  &dirID ) );
       result.dirID = FSDirID( dirID );
-      return Owned<FSRefSpecDirID>::Seize( result );
+      return Nucleus::Owned<FSRefSpecDirID>::Seize( result );
      }
 
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&   parentRef,
                                                              UniCharCount   nameLength,
                                                              const UniChar *name )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRefSpecDirID result;
       UInt32 dirID;
       ThrowOSStatus( ::FSCreateDirectoryUnicode( &parentRef,
@@ -492,7 +508,7 @@ namespace Nitrogen
                                                  &result.fsSpec,
                                                  &dirID ) );
       result.dirID = FSDirID( dirID );
-      return Owned<FSRefSpecDirID>::Seize( result );
+      return Nucleus::Owned<FSRefSpecDirID>::Seize( result );
      }
 
 
@@ -511,41 +527,41 @@ namespace Nitrogen
       return FSCreateDirectoryUnicode( parentRef, name.size(), name.data() );
      }
 
-   void FSDeleteObject( Owned<FSRef> owned )
+   void FSDeleteObject( Nucleus::Owned<FSRef> owned )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRef unowned = owned.Release();
       ThrowOSStatus( ::FSDeleteObject( &unowned ) );
      }
 
-   void FSMoveObject( Owned<FSRef>& ref, const FSRef& destDirectory )
+   void FSMoveObject( Nucleus::Owned<FSRef>& ref, const FSRef& destDirectory )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRef newRef;
       ThrowOSStatus( ::FSMoveObject( &ref.Get(), &destDirectory, &newRef ) );
       ref.Release();
-      ref = Owned<FSRef>::Seize( newRef );
+      ref = Nucleus::Owned<FSRef>::Seize( newRef );
      }
 
    void FSExchangeObjects( const FSRef& ref, const FSRef& destRef )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSExchangeObjects( &ref, &destRef ) );
      }
 
-   void FSRenameUnicode( Owned<FSRef>&  ref,
+   void FSRenameUnicode( Nucleus::Owned<FSRef>&  ref,
                          UniCharCount   nameLength,
                          const UniChar *name,
                          TextEncoding   textEncodingHint )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRef newRef;
       ThrowOSStatus( ::FSRenameUnicode( &ref.Get(), nameLength, name, textEncodingHint, &newRef ) );
       ref.Release();
-      ref = Owned<FSRef>::Seize( newRef );
+      ref = Nucleus::Owned<FSRef>::Seize( newRef );
      }
 
-   void FSRenameUnicode( Owned<FSRef>&    ref,
+   void FSRenameUnicode( Nucleus::Owned<FSRef>&    ref,
                          const UniString& name,
                          TextEncoding     textEncodingHint )
      {
@@ -559,7 +575,7 @@ namespace Nitrogen
                           FSSpec *            fsSpec,
                           FSRef *             parentRef )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSGetCatalogInfo( &ref, whichInfo, catalogInfo, outName, fsSpec, parentRef ) );
      }
 
@@ -580,21 +596,21 @@ namespace Nitrogen
                           FSCatalogInfoBitmap  whichInfo,
                           const FSCatalogInfo& catalogInfo )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSSetCatalogInfo( &ref, whichInfo, &catalogInfo ) );
      }
    
-   Owned<FSIterator> FSOpenIterator( const FSRef& container, FSIteratorFlags iteratorFlags )
+   Nucleus::Owned<FSIterator> FSOpenIterator( const FSRef& container, FSIteratorFlags iteratorFlags )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSIterator result;
       ThrowOSStatus( ::FSOpenIterator( &container, iteratorFlags, &result ) );
-      return Owned<FSIterator>::Seize( result );
+      return Nucleus::Owned<FSIterator>::Seize( result );
      }
    
-   void FSCloseIterator( Owned<FSIterator> iterator )
+   void FSCloseIterator( Nucleus::Owned<FSIterator> iterator )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSCloseIterator( iterator.Release() ) );
      }
 
@@ -606,7 +622,7 @@ namespace Nitrogen
                                                      FSSpec *            specs,
                                                      HFSUniStr255 *      names )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSGetCatalogInfoBulk_Result result;
       ::Boolean containerChanged = false;    // Prior to 10.2, FSGetCatalogInfoBulk leaves containerChanged unchanged.
       OSStatus error = ::FSGetCatalogInfoBulk( iterator,
@@ -727,7 +743,7 @@ namespace Nitrogen
                                            FSSpec *              specs,
                                            HFSUniStr255 *        names )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSCatalogSearch_Result result;
       ::Boolean containerChanged;
       OSStatus error = ::FSCatalogSearch( iterator,
@@ -754,24 +770,24 @@ namespace Nitrogen
       return result;
      }
 
-   Owned<FSForkRef> FSCreateFork( const FSRef&   ref,
+   Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&   ref,
                                   UniCharCount   forkNameLength,
                                   const UniChar *forkName )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSCreateFork( &ref, forkNameLength, forkName ) );
-      return Owned<FSForkRef>::Seize( FSForkRef( ref, forkNameLength, forkName ) );
+      return Nucleus::Owned<FSForkRef>::Seize( FSForkRef( ref, forkNameLength, forkName ) );
      }
 
-   Owned<FSForkRef> FSCreateFork( const FSRef&     ref,
+   Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&     ref,
                                   const UniString& forkName )
      {
       return FSCreateFork( ref, forkName.size(), forkName.data() );
      }
                                   
-   void FSDeleteFork( Owned<FSForkRef> fork )
+   void FSDeleteFork( Nucleus::Owned<FSForkRef> fork )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       OSStatus error = ::FSDeleteFork( &fork.Get().File(),
                                        fork.Get().Name().size(),
                                        fork.Get().Name().data() );
@@ -782,7 +798,7 @@ namespace Nitrogen
    FSIterateForks_Result FSIterateForks( const FSRef&    ref,
                                          CatPositionRec& forkIterator )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSIterateForks_Result result;
       SInt64 forkSize;
       ThrowOSStatus( ::FSIterateForks( &ref,
@@ -794,25 +810,25 @@ namespace Nitrogen
       return result;
      }   
 
-   Owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
+   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
                                    UniCharCount   forkNameLength,
                                    const UniChar *forkName,
                                    FSIOPermssn    permissions )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       SInt16 result;
       ThrowOSStatus( ::FSOpenFork( &ref, forkNameLength, forkName, permissions, &result ) );
-      return Owned<FSForkRefNum>::Seize( FSForkRefNum( result ) );
+      return Nucleus::Owned<FSForkRefNum>::Seize( FSForkRefNum( result ) );
      }
 
-   Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
+   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
                                    const UniString forkName,
                                    FSIOPermssn     permissions )
      {
       return FSOpenFork( ref, forkName.size(), forkName.data(), permissions );
      }
 
-   Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
+   Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
                                    FSIOPermssn      permissions )
      {
       return FSOpenFork( fork.File(), fork.Name(), permissions );
@@ -824,7 +840,7 @@ namespace Nitrogen
                          ByteCount    requestCount,
                          void *       buffer )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ByteCount actualCount;
       ThrowOSStatus( ::FSReadFork( fork,
                                    positionMode,
@@ -841,7 +857,7 @@ namespace Nitrogen
                           ByteCount    requestCount,
                           const void * buffer )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ByteCount actualCount;
       ThrowOSStatus( ::FSWriteFork( fork,
                                     positionMode,
@@ -854,7 +870,7 @@ namespace Nitrogen
 
    SInt64 FSGetForkPosition( FSForkRefNum forkRefNum )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       SInt64 position;
       ThrowOSStatus( ::FSGetForkPosition( forkRefNum, &position ) );
       return position;
@@ -864,13 +880,13 @@ namespace Nitrogen
                            FSIOPosMode  positionMode,
                            SInt64       positionOffset )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSSetForkPosition( forkRefNum, positionMode, positionOffset ) );
      }
 
    SInt64 FSGetForkSize( FSForkRefNum forkRefNum )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       SInt64 position;
       ThrowOSStatus( ::FSGetForkSize( forkRefNum, &position ) );
       return position;
@@ -880,7 +896,7 @@ namespace Nitrogen
                        FSIOPosMode  positionMode,
                        SInt64       positionOffset )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSSetForkSize( forkRefNum, positionMode, positionOffset ) );
      }
 
@@ -890,7 +906,7 @@ namespace Nitrogen
                           SInt64            positionOffset,
                           UInt64            requestCount )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       UInt64 actualCount;
       ThrowOSStatus( ::FSAllocateFork( forkRefNum,
                                        flags,
@@ -903,19 +919,19 @@ namespace Nitrogen
 
    void FSFlushFork( FSForkRefNum forkRefNum )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSFlushFork( forkRefNum ) );
      }
    
-   void FSCloseFork( Owned<FSForkRefNum> forkRefNum )
+   void FSCloseFork( Nucleus::Owned<FSForkRefNum> forkRefNum )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSCloseFork( forkRefNum.Release() ) );
      }
    
    FSGetForkCBInfo_Result FSGetForkCBInfo( FSForkRefNum desiredRefNum )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSGetForkCBInfo_Result result;
       SInt16 actualRefNum;
       ThrowOSStatus( ::FSGetForkCBInfo( desiredRefNum,
@@ -932,7 +948,7 @@ namespace Nitrogen
    FSGetForkCBInfo_Result FSGetForkCBInfo( FSVolumeRefNum  volume,
                                            FSForkIterator& iterator )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSGetForkCBInfo_Result result;
       SInt16 actualRefNum;
       SInt16 realIterator = iterator;
@@ -961,7 +977,7 @@ namespace Nitrogen
                          HFSUniStr255 *     volumeName,
                          FSRef *            rootDirectory )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ::FSVolumeRefNum actualVolume;
       ThrowOSStatus( ::FSGetVolumeInfo( volume,
                                         volumeIndex,
@@ -1057,7 +1073,7 @@ namespace Nitrogen
 		
 	#endif
 		{
-			OnlyOnce< RegisterFileManagerErrors >();
+			Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 			
 			HParamBlockRec pb;
 			
@@ -1123,13 +1139,13 @@ namespace Nitrogen
                          FSVolumeInfoBitmap  whichInfo,
                          const FSVolumeInfo& volumeInfo )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSSetVolumeInfo( volume, whichInfo, &volumeInfo ) );
      }
    
    HFSUniStr255 FSGetDataForkName()
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       HFSUniStr255 result;
       ThrowOSStatus( ::FSGetDataForkName( &result ) );
       return result;
@@ -1137,7 +1153,7 @@ namespace Nitrogen
    
    HFSUniStr255 FSGetResourceForkName()
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       HFSUniStr255 result;
       ThrowOSStatus( ::FSGetResourceForkName( &result ) );
       return result;
@@ -1147,7 +1163,7 @@ namespace Nitrogen
                        UInt8 *      path,
                        UInt32       maxPathSize )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSRefMakePath( &ref, path, maxPathSize ) );
      }
    
@@ -1179,7 +1195,7 @@ namespace Nitrogen
    
    FSPathMakeRef_Result FSPathMakeRef( const UInt8 *path )
      {
-      OnlyOnce<RegisterFileManagerErrors>();
+      Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSPathMakeRef_Result result;
       ::Boolean isDirectory;
       ThrowOSStatus( ::FSPathMakeRef( path, &result.ref, &isDirectory ) );

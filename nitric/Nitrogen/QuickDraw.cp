@@ -4,8 +4,8 @@
 #include "Nitrogen/QuickDraw.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 #ifndef NITROGEN_MACERRORS_H
@@ -52,14 +52,14 @@ namespace Nitrogen
 	CGrafPtr QDSwapPort( CGrafPtr newPort )
 	{
 		CGrafPtr oldPort;
-		bool portChanged = QDSwapPort( newPort, oldPort );
+		(void) QDSwapPort( newPort, oldPort );
 		
 		return oldPort;
 	}
 	
-	Owned< RgnHandle > GetClip()
+	Nucleus::Owned< RgnHandle > GetClip()
 	{
-		Owned< RgnHandle > result = NewRgn();
+		Nucleus::Owned< RgnHandle > result = NewRgn();
 		::GetClip( result.Get() );
 		
 		return result;
@@ -110,7 +110,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Owned< RgnHandle > NewRgn(void)
+	Nucleus::Owned< RgnHandle > NewRgn(void)
 	{
 		RgnHandle result = ::NewRgn();
 		
@@ -119,12 +119,12 @@ namespace Nitrogen
 			throw MemFullErr();
 		}
 		
-		return Owned< RgnHandle >::Seize( result );
+		return Nucleus::Owned< RgnHandle >::Seize( result );
 	}
 	
-	Owned< RgnHandle > MacCopyRgn( RgnHandle srcRgn )
+	Nucleus::Owned< RgnHandle > MacCopyRgn( RgnHandle srcRgn )
 	{
-		Owned< RgnHandle > result = NewRgn();
+		Nucleus::Owned< RgnHandle > result = NewRgn();
 		::MacCopyRgn( srcRgn, result );
 		
 		return result;
@@ -137,41 +137,41 @@ namespace Nitrogen
 		return region;
 	}
 	
-	Owned< RgnHandle > RectRgn( const Rect& rect )
+	Nucleus::Owned< RgnHandle > RectRgn( const Rect& rect )
 	{
-		Owned< RgnHandle > result = NewRgn();
+		Nucleus::Owned< RgnHandle > result = NewRgn();
 		::RectRgn( result, &rect );
 		
 		return result;
 	}
 	
-	Owned< RgnHandle > SectRgn( RgnHandle a, RgnHandle b )
+	Nucleus::Owned< RgnHandle > SectRgn( RgnHandle a, RgnHandle b )
 	{
-		Owned< RgnHandle > result = NewRgn();
+		Nucleus::Owned< RgnHandle > result = NewRgn();
 		::SectRgn( a, b, result );
 		
 		return result;
 	}
 	
-	Owned< RgnHandle > MacUnionRgn( RgnHandle a, RgnHandle b )
+	Nucleus::Owned< RgnHandle > MacUnionRgn( RgnHandle a, RgnHandle b )
 	{
-		Owned< RgnHandle > result = NewRgn();
+		Nucleus::Owned< RgnHandle > result = NewRgn();
 		::MacUnionRgn( a, b, result );
 		
 		return result;
 	}
 	
-	Owned< RgnHandle > DiffRgn( RgnHandle a, RgnHandle b )
+	Nucleus::Owned< RgnHandle > DiffRgn( RgnHandle a, RgnHandle b )
 	{
-		Owned< RgnHandle > result = NewRgn();
+		Nucleus::Owned< RgnHandle > result = NewRgn();
 		::DiffRgn( a, b, result );
 		
 		return result;
 	}
 	
-	Owned< RgnHandle > MacXorRgn( RgnHandle a, RgnHandle b )
+	Nucleus::Owned< RgnHandle > MacXorRgn( RgnHandle a, RgnHandle b )
 	{
-		Owned< RgnHandle > result = NewRgn();
+		Nucleus::Owned< RgnHandle > result = NewRgn();
 		::MacXorRgn( a, b, result );
 		
 		return result;
@@ -182,9 +182,9 @@ namespace Nitrogen
 		::ScrollRect( &r, dh, dv, updateRgn );
 	}
 	
-	Owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv )
+	Nucleus::Owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv )
 	{
-		Owned< RgnHandle > region = NewRgn();
+		Nucleus::Owned< RgnHandle > region = NewRgn();
 		ScrollRect( r, dh, dv, region );
 		
 		return region;
@@ -264,7 +264,7 @@ namespace Nitrogen
 	
 	void QDError()
 	{
-		OnlyOnce< RegisterQuickDrawErrors >();
+		Nucleus::OnlyOnce< RegisterQuickDrawErrors >();
 		
 		ThrowOSStatus( ::QDError() );
 	}
@@ -331,9 +331,9 @@ namespace Nitrogen
 	#endif
 	}
 	
-	Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port )
+	Nucleus::Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port )
 	{
-		Owned< RgnHandle > region = NewRgn();
+		Nucleus::Owned< RgnHandle > region = NewRgn();
 		(void)Nitrogen::GetPortVisibleRegion( port, region );
 		
 		return region;
@@ -354,9 +354,9 @@ namespace Nitrogen
 	#endif
 	}
 	
-	Owned< RgnHandle > GetPortClipRegion( CGrafPtr port )
+	Nucleus::Owned< RgnHandle > GetPortClipRegion( CGrafPtr port )
 	{
-		Owned< RgnHandle > region = NewRgn();
+		Nucleus::Owned< RgnHandle > region = NewRgn();
 		Nitrogen::GetPortClipRegion( port, region );
 		
 		return region;
@@ -449,7 +449,7 @@ namespace Nitrogen
 	
 #endif
 	
-	Owned< CGrafPtr > CreateNewPort()
+	Nucleus::Owned< CGrafPtr > CreateNewPort()
 	{
 	#if ACCESSOR_CALLS_ARE_FUNCTIONS
 		
@@ -457,7 +457,7 @@ namespace Nitrogen
 		
 	#else
 		
-		Owned< Ptr > portMem = NewPtr( sizeof (::CGrafPort) );
+		Nucleus::Owned< Ptr > portMem = NewPtr( sizeof (::CGrafPort) );
 		
 		::OpenCPort( Ptr_Cast< ::CGrafPort >( portMem.Get() ) );
 		
@@ -465,7 +465,7 @@ namespace Nitrogen
 		
 	#endif
 		
-		return Owned< CGrafPtr >::Seize( result );
+		return Nucleus::Owned< CGrafPtr >::Seize( result );
 	}
 	
 	namespace Private
@@ -481,7 +481,7 @@ namespace Nitrogen
 			
 			::CloseCPort( port );
 			
-			DisposePtr( Owned< Ptr >::Seize( ::CGrafPtr( port ) ) );
+			DisposePtr( Nucleus::Owned< Ptr >::Seize( ::CGrafPtr( port ) ) );
 			
 		#endif
 		}
@@ -492,9 +492,9 @@ namespace Nitrogen
 	
 	// Declared in Nitrogen/CGDirectDisplay.h, since it depends on CGDirectDisplayID
 	
-	Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display )
+	Nucleus::Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display )
 	{
-		return Owned< CGrafPtr >::Seize
+		return Nucleus::Owned< CGrafPtr >::Seize
 		(
 			::CreateNewPortForCGDisplayID( reinterpret_cast< unsigned long >( display ) )
 		);

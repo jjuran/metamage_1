@@ -18,8 +18,8 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NITROGEN_MAKE_H
-#include "Nitrogen/Make.h"
+#ifndef NUCLEUS_MAKE_H
+#include "Nucleus/Make.h"
 #endif
 
 #ifdef DrawOneControl
@@ -35,17 +35,23 @@ namespace Nitrogen
    using ::ControlRef;
    
 	// Not actually used, since controls are owned by the parent window
-	
-   template <> struct Disposer< ControlRef >: public std::unary_function< ControlRef, void >
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::ControlRef >: public std::unary_function< Nitrogen::ControlRef, void >
      {
-      void operator()( ControlRef c ) const
+      void operator()( Nitrogen::ControlRef c ) const
         {
          ::DisposeControl( c );
         }
      };
+  }
 
+namespace Nitrogen
+  {
 	class ControlPartCode_Tag {};
-	typedef SelectorType< ControlPartCode_Tag, ::ControlPartCode, kControlNoPart > ControlPartCode;
+	typedef Nucleus::SelectorType< ControlPartCode_Tag, ::ControlPartCode, kControlNoPart > ControlPartCode;
 	
 	struct ControlActionUPP_Details : Basic_UPP_Details< ::ControlActionUPP,
 	                                                     ::ControlActionProcPtr,
@@ -73,12 +79,12 @@ namespace Nitrogen
 		}
 	};
 	
-	inline Owned< ControlActionUPP > NewControlActionUPP( ::ControlActionProcPtr p )
+	inline Nucleus::Owned< ControlActionUPP > NewControlActionUPP( ::ControlActionProcPtr p )
 	{
 		return NewUPP< ControlActionUPP >( p );
 	}
 
-	inline void DisposeControlActionUPP( Owned< ControlActionUPP > )
+	inline void DisposeControlActionUPP( Nucleus::Owned< ControlActionUPP > )
 	{
 	}
 	
@@ -97,7 +103,7 @@ namespace Nitrogen
 	inline ControlPartCode ControlEntireControl()  { return ControlPartCode::Make( kControlEntireControl ); }
 	
 	class ControlProcID_Tag {};
-	typedef SelectorType< ControlProcID_Tag, ::SInt16, 0 > ControlProcID;
+	typedef Nucleus::SelectorType< ControlProcID_Tag, ::SInt16, 0 > ControlProcID;
 	
 	// 972
 	ControlRef NewControl(
@@ -114,7 +120,7 @@ namespace Nitrogen
 	
 	// 1007
 	using ::DisposeControl;
-	inline void DisposeControl( Owned< ControlRef > )  {}
+	inline void DisposeControl( Nucleus::Owned< ControlRef > )  {}
 	
 	// 1169
 	void HiliteControl( ControlRef control, ControlPartCode hiliteState );
@@ -180,17 +186,25 @@ namespace Nitrogen
 	// 2211
    using ::ControlID;
    
+  }
+
+namespace Nucleus
+  {
    template <>
-   struct Maker< ControlID >
+   struct Maker< Nitrogen::ControlID >
      {
-      ControlID operator()( OSType signature, SInt32 id ) const
+      Nitrogen::ControlID operator()( Nitrogen::OSType signature, SInt32 id ) const
         {
-         ControlID result;
+         Nitrogen::ControlID result;
          result.signature = signature;
          result.id = id;
          return result;
         }
      };   
+  }
+
+namespace Nitrogen
+  {
    
    // 2245
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id );

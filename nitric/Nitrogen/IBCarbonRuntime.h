@@ -9,8 +9,8 @@
 #ifndef __IBCARBONRUNTIME__
 #include FRAMEWORK_HEADER(HIToolbox,IBCarbonRuntime.h)
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 #ifndef NITROGEN_MACWINDOWS_H
 #include "Nitrogen/MacWindows.h"
@@ -23,25 +23,33 @@ namespace Nitrogen
   {
    using ::IBNibRef;
    
-   template <> struct Disposer< IBNibRef >: public std::unary_function< IBNibRef, void >
+  }
+
+namespace Nucleus
+  {
+   template <> struct Disposer< Nitrogen::IBNibRef >: public std::unary_function< Nitrogen::IBNibRef, void >
      {
-      void operator()( IBNibRef n ) const
+      void operator()( Nitrogen::IBNibRef n ) const
         {
          ::DisposeNibReference( n );
         }
      };
-   
-   Owned< IBNibRef > CreateNibReference( CFStringRef inNibName );
-   Owned< IBNibRef > CreateNibReferenceWithCFBundle( CFBundleRef inBundle, CFStringRef inNibName );
+  }
 
-   inline void DisposeNibReference( Owned<IBNibRef> /*toDispose*/ )
+namespace Nitrogen
+  {
+   
+   Nucleus::Owned< IBNibRef > CreateNibReference( CFStringRef inNibName );
+   Nucleus::Owned< IBNibRef > CreateNibReferenceWithCFBundle( CFBundleRef inBundle, CFStringRef inNibName );
+
+   inline void DisposeNibReference( Nucleus::Owned<IBNibRef> /*toDispose*/ )
      {
      }
 
-   Owned< WindowRef > CreateWindowFromNib ( IBNibRef inNibRef, CFStringRef inName );
-   Owned< MenuRef >   CreateMenuFromNib   ( IBNibRef inNibRef, CFStringRef inName );
+   Nucleus::Owned< WindowRef > CreateWindowFromNib ( IBNibRef inNibRef, CFStringRef inName );
+   Nucleus::Owned< MenuRef >   CreateMenuFromNib   ( IBNibRef inNibRef, CFStringRef inName );
 #if 0
-   Owned< Handle >    CreateMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName );
+   Nucleus::Owned< Handle >    CreateMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName );
 #endif
    void SetMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName );
    

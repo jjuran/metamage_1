@@ -3,21 +3,21 @@
 #ifndef NITROGEN_CARBONEVENTS_H
 #include "Nitrogen/CarbonEvents.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen
   {
    void RunCurrentEventLoop( EventTimeout inTimeout )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::RunCurrentEventLoop( inTimeout ) );
      }
 
    void QuitEventLoop( EventLoopRef inEventLoop )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::QuitEventLoop( inEventLoop ) );
      }
    
@@ -26,30 +26,30 @@ namespace Nitrogen
                                        const EventTypeSpec * inList,
                                        EventTimeout          inTimeout )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       EventRef result;
       ThrowOSStatus( ::ReceiveNextEvent( inNumTypes, inList, inTimeout, false, &result ) );
       return result;
      }
 
    template <>
-   Owned<EventRef>ReceiveNextEvent< true >( UInt32                inNumTypes,
+   Nucleus::Owned<EventRef>ReceiveNextEvent< true >( UInt32                inNumTypes,
                                             const EventTypeSpec * inList,
                                             EventTimeout          inTimeout )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       EventRef result;
       ThrowOSStatus( ::ReceiveNextEvent( inNumTypes, inList, inTimeout, true, &result ) );
-      return Owned<EventRef>::Seize( result );
+      return Nucleus::Owned<EventRef>::Seize( result );
      }
 
-   Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
+   Nucleus::Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
                                 CarbonEventKind   kind,
                                 EventTime         when,
                                 EventAttributes   flags )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
 
       EventRef result;
       
@@ -60,17 +60,17 @@ namespace Nitrogen
                                   flags,
                                   &result ) );
       
-      return Owned<EventRef>::Seize( result );
+      return Nucleus::Owned<EventRef>::Seize( result );
      }
 
-   Owned<EventRef> CopyEvent( EventRef inOther )
+   Nucleus::Owned<EventRef> CopyEvent( EventRef inOther )
      {
       EventRef result = ::CopyEvent( inOther );
       
       if ( result == 0 )
          throw CopyEvent_Failed();
       
-      return Owned<EventRef>::Seize( result );
+      return Nucleus::Owned<EventRef>::Seize( result );
      }
 
    void SetEventParameter( EventRef         inEvent,
@@ -79,7 +79,7 @@ namespace Nitrogen
                            UInt32           inSize,
                            const void *     inDataPtr )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
 
       ThrowOSStatus( ::SetEventParameter( inEvent,
                                           inName,
@@ -97,7 +97,7 @@ namespace Nitrogen
       ::EventParamType outActualType;
       UInt32 outActualSize;
 
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
 
       ThrowOSStatus( ::GetEventParameter( inEvent,
                                           inName,
@@ -116,7 +116,7 @@ namespace Nitrogen
 
    void SetEventTime( EventRef inEvent, EventTime inTime )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::SetEventTime( inEvent, inTime ) );
      }
 
@@ -126,28 +126,28 @@ namespace Nitrogen
                                RefCon              inUserData,
                                EventHandlerUPP     userUPP )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( userUPP( inHandlerCallRef, inEvent, inUserData ) );
      }
 
-   Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
+   Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                EventHandlerUPP        inHandler,
                                                UInt32                 inNumTypes,
                                                const EventTypeSpec *  inList,
                                                const void *           inUserData )
      {
       EventHandlerRef result;
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::InstallEventHandler( inTarget,
                                             inHandler,
                                             inNumTypes,
                                             inList,
                                             const_cast<void*>( inUserData ),
                                             &result ) );
-      return Owned<EventHandlerRef>::Seize( result );
+      return Nucleus::Owned<EventHandlerRef>::Seize( result );
      }
 
-   Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
+   Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                EventHandlerUPP        inHandler,
                                                EventClass             eventClass,
                                                CarbonEventKind        eventKind,
@@ -176,41 +176,41 @@ namespace Nitrogen
         }
       catch ( ... )
         {
-         return Convert< OSStatus >( TheExceptionBeingHandled(), EventInternalErr() );
+         return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), EventInternalErr() );
         }
      }
 
    void InstallStandardEventHandler( EventTargetRef inTarget )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::InstallStandardEventHandler( inTarget ) );
      }
 
-   void RemoveEventHandler( Owned<EventHandlerRef> inHandlerRef )
+   void RemoveEventHandler( Nucleus::Owned<EventHandlerRef> inHandlerRef )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::RemoveEventHandler( inHandlerRef.release() ) );
      }
 
    void SendEventToEventTarget( EventRef inEvent, EventTargetRef inTarget )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::SendEventToEventTarget( inEvent, inTarget ) );
      }
 
    void ProcessHICommand( const HICommand& inCommand )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::ProcessHICommand( &inCommand ) );
      }
 
-   Owned< EventHotKeyRef > RegisterEventHotKey( UInt32            inHotKeyCode,
+   Nucleus::Owned< EventHotKeyRef > RegisterEventHotKey( UInt32            inHotKeyCode,
                                                 UInt32            inHotKeyModifiers,
                                                 EventHotKeyID     inHotKeyID,
                                                 EventTargetRef    inTarget,
                                                 ::OptionBits      inOptions )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       EventHotKeyRef result;
       ThrowOSStatus( ::RegisterEventHotKey( inHotKeyCode,
                                             inHotKeyModifiers,
@@ -218,12 +218,12 @@ namespace Nitrogen
                                             inTarget,
                                             inOptions,
                                             &result ) );
-      return Owned< EventHotKeyRef >::Seize( result );
+      return Nucleus::Owned< EventHotKeyRef >::Seize( result );
      }
 
-   void UnregisterEventHotKey( Owned< EventHotKeyRef > hotKey )
+   void UnregisterEventHotKey( Nucleus::Owned< EventHotKeyRef > hotKey )
      {
-      OnlyOnce< RegisterCarbonEventErrors >();
+      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::UnregisterEventHotKey( hotKey.Release() ) );
      }
 

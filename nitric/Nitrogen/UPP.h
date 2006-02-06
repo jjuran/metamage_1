@@ -3,8 +3,8 @@
 #ifndef NITROGEN_UPP_H
 #define NITROGEN_UPP_H
 
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
@@ -355,26 +355,32 @@ namespace Nitrogen
 
    
    template < class NitrogenUPP >
-   Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
+   Nucleus::Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
      {
-      return Owned<NitrogenUPP>::Seize( NitrogenUPP::Details::Create( function ) );
+      return Nucleus::Owned<NitrogenUPP>::Seize( NitrogenUPP::Details::Create( function ) );
      }
-   
+  }
+
+namespace Nucleus
+  {
    template < class UPP_Details >
-   struct Disposer< UPP< UPP_Details > >
-            : public std::unary_function< UPP< UPP_Details >, void >
+   struct Disposer< Nitrogen::UPP< UPP_Details > >
+            : public std::unary_function< Nitrogen::UPP< UPP_Details >, void >
      {      
-      void operator()( UPP< UPP_Details > upp ) const
+      void operator()( Nitrogen::UPP< UPP_Details > upp ) const
         {
          UPP_Details::Dispose( upp );
         }
      };
-   
+  }
+
+namespace Nitrogen
+  {
    template < class NitrogenUPP, typename NitrogenUPP::ProcPtr procPtr >
    NitrogenUPP StaticUPP()
      {
-      static const Owned<NitrogenUPP> upp = procPtr != NULL ? NewUPP<NitrogenUPP>( procPtr )
-                                                            : Owned<NitrogenUPP>();
+      static const Nucleus::Owned<NitrogenUPP> upp = procPtr != NULL ? NewUPP<NitrogenUPP>( procPtr )
+                                                            : Nucleus::Owned<NitrogenUPP>();
       return upp;
      }
      

@@ -16,11 +16,19 @@
 namespace Nitrogen {
 	using ::CFDateRef;
 	using ::CFDateGetTypeID;
-	template <> struct OwnedDefaults< CFDateRef >: OwnedDefaults< CFTypeRef >  {};
-	template <> struct CFType_Traits< CFDateRef >: Basic_CFType_Traits< CFDateRef, ::CFDateGetTypeID > {};
+  }
 
-	inline Owned<CFDateRef> CFDateCreate ( CFAllocatorRef allocator, CFAbsoluteTime at ) {
-		return Owned<CFDateRef>::Seize ( ::CFDateCreate ( allocator, at ));
+namespace Nucleus
+  {
+	template <> struct OwnedDefaults< Nitrogen::CFDateRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+  }
+
+namespace Nitrogen
+  {	
+  	template <> struct CFType_Traits< CFDateRef >: Basic_CFType_Traits< CFDateRef, ::CFDateGetTypeID > {};
+
+	inline Nucleus::Owned<CFDateRef> CFDateCreate ( CFAllocatorRef allocator, CFAbsoluteTime at ) {
+		return Nucleus::Owned<CFDateRef>::Seize ( ::CFDateCreate ( allocator, at ));
 		}
 	
 //	CFAbsoluteTime CFDateGetAbsoluteTime ( CFDateRef theDate );

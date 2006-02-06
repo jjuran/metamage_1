@@ -19,7 +19,15 @@
 namespace Nitrogen
   {
    using ::CFUUIDRef;
-   template <> struct OwnedDefaults< CFUUIDRef >: OwnedDefaults< CFTypeRef >  {};
+  }
+
+namespace Nucleus
+  {
+   template <> struct OwnedDefaults< Nitrogen::CFUUIDRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+  }
+
+namespace Nitrogen
+  {
    template <> struct CFType_Traits< CFUUIDRef >: Basic_CFType_Traits< CFUUIDRef, ::CFUUIDGetTypeID > {};
 
    using ::CFUUIDBytes;
@@ -27,10 +35,10 @@ namespace Nitrogen
    using ::CFUUIDGetTypeID;
    
    class CFUUIDCreate_Failed {};
-   Owned< CFUUIDRef > CFUUIDCreate( CFAllocatorRef alloc = kCFAllocatorDefault );
+   Nucleus::Owned< CFUUIDRef > CFUUIDCreate( CFAllocatorRef alloc = kCFAllocatorDefault );
 
    class CFUUIDCreateWithBytes_Failed {};
-   Owned< CFUUIDRef > CFUUIDCreateWithBytes( CFAllocatorRef alloc,
+   Nucleus::Owned< CFUUIDRef > CFUUIDCreateWithBytes( CFAllocatorRef alloc,
                                              UInt8          byte0,
                                              UInt8          byte1,
                                              UInt8          byte2,
@@ -48,7 +56,7 @@ namespace Nitrogen
                                              UInt8          byte14,
                                              UInt8          byte15 );
    
-   inline Owned< CFUUIDRef > CFUUIDCreateWithBytes( UInt8 byte0,
+   inline Nucleus::Owned< CFUUIDRef > CFUUIDCreateWithBytes( UInt8 byte0,
                                                     UInt8 byte1,
                                                     UInt8 byte2,
                                                     UInt8 byte3,
@@ -73,19 +81,19 @@ namespace Nitrogen
      }
 
    class CFUUIDCreateFromString_Failed {};
-   Owned< CFUUIDRef > CFUUIDCreateFromString( CFAllocatorRef alloc,
+   Nucleus::Owned< CFUUIDRef > CFUUIDCreateFromString( CFAllocatorRef alloc,
                                               CFStringRef    uuidStr );
    
-   inline Owned< CFUUIDRef > CFUUIDCreateFromString( CFStringRef uuidStr )
+   inline Nucleus::Owned< CFUUIDRef > CFUUIDCreateFromString( CFStringRef uuidStr )
      {
       return Nitrogen::CFUUIDCreateFromString( kCFAllocatorDefault, uuidStr );
      }
 
    class CFUUIDCreateString_Failed {};
-   Owned< CFStringRef > CFUUIDCreateString( CFAllocatorRef alloc,
+   Nucleus::Owned< CFStringRef > CFUUIDCreateString( CFAllocatorRef alloc,
                                             CFUUIDRef      uuid );
 
-   inline Owned< CFStringRef > CFUUIDCreateString( CFUUIDRef uuid )
+   inline Nucleus::Owned< CFStringRef > CFUUIDCreateString( CFUUIDRef uuid )
      {
       return Nitrogen::CFUUIDCreateString( kCFAllocatorDefault, uuid );
      }
@@ -136,10 +144,10 @@ namespace Nitrogen
    using ::CFUUIDGetUUIDBytes;
 
    class CFUUIDCreateFromUUIDBytes_Failed {};
-   Owned<CFUUIDRef> CFUUIDCreateFromUUIDBytes( CFAllocatorRef alloc,
+   Nucleus::Owned<CFUUIDRef> CFUUIDCreateFromUUIDBytes( CFAllocatorRef alloc,
                                                CFUUIDBytes    bytes );
    
-   inline Owned< CFUUIDRef > CFUUIDCreateFromUUIDBytes( CFUUIDBytes bytes )
+   inline Nucleus::Owned< CFUUIDRef > CFUUIDCreateFromUUIDBytes( CFUUIDBytes bytes )
      {
       return Nitrogen::CFUUIDCreateFromUUIDBytes( kCFAllocatorDefault, bytes );
      }

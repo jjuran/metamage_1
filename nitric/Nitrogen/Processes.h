@@ -10,11 +10,11 @@
 #include FRAMEWORK_HEADER(HIServices,Processes.h)
 #endif
 
-#ifndef NITROGEN_ADVANCEUNTILFAILURECONTAINER_H
-#include "Nitrogen/AdvanceUntilFailureContainer.h"
+#ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
+#include "Nucleus/AdvanceUntilFailureContainer.h"
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
 #ifndef NITROGEN_CFSTRING_H
 //#include "Nitrogen/CFString.h"
@@ -28,11 +28,11 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NITROGEN_MAKE_H
-#include "Nitrogen/Make.h"
+#ifndef NUCLEUS_MAKE_H
+#include "Nucleus/Make.h"
 #endif
-#ifndef NITROGEN_INITIALIZE_H
-#include "Nitrogen/Initialize.h"
+#ifndef NUCLEUS_INITIALIZE_H
+#include "Nucleus/Initialize.h"
 #endif
 #ifndef NITROGEN_TEXTCOMMON_H
 //#include "Nitrogen/TextCommon.h"
@@ -43,7 +43,7 @@ namespace Nitrogen {
 	void RegisterProcessManagerErrors();
 	
 	struct LaunchFlags_Tag {};
-	typedef FlagType< LaunchFlags_Tag, ::LaunchFlags > LaunchFlags;
+	typedef Nucleus::FlagType< LaunchFlags_Tag, ::LaunchFlags > LaunchFlags;
 	
 	inline LaunchFlags LaunchContinue   ()  { return LaunchFlags::Make( launchContinue    ); }
 	inline LaunchFlags LaunchNoFileFlags()  { return LaunchFlags::Make( launchNoFileFlags ); }
@@ -52,47 +52,55 @@ namespace Nitrogen {
 	using ::ProcessInfoRec;
 	
 	template < unsigned long > struct LowLongOfPSN  {};
-	
+	}
+
+namespace Nucleus {
 	template <>
-	struct Maker< ProcessSerialNumber >
+	struct Maker< Nitrogen::ProcessSerialNumber >
 	{
-		ProcessSerialNumber operator()( unsigned long high, unsigned long low ) const
+		Nitrogen::ProcessSerialNumber operator()( unsigned long high, unsigned long low ) const
 		{
-			ProcessSerialNumber result;
+			Nitrogen::ProcessSerialNumber result;
 			result.highLongOfPSN = high;
 			result.lowLongOfPSN  = low;
 			return result;
 		}
-		
+
 		template < unsigned long k >
-		ProcessSerialNumber operator()( LowLongOfPSN< k > ) const
+		Nitrogen::ProcessSerialNumber operator()( Nitrogen::LowLongOfPSN< k > ) const
 		{
-			ProcessSerialNumber result = { 0, k };
+			::ProcessSerialNumber result = { 0, k };
 			return result;
 		}
 	};
 	
-	inline ProcessSerialNumber NoProcess()       { return Make< ProcessSerialNumber >( LowLongOfPSN< kNoProcess      >() ); }
-	inline ProcessSerialNumber SystemProcess()   { return Make< ProcessSerialNumber >( LowLongOfPSN< kSystemProcess  >() ); }
-	inline ProcessSerialNumber CurrentProcess()  { return Make< ProcessSerialNumber >( LowLongOfPSN< kCurrentProcess >() ); }
-	
 	// Since ProcessSerialNumber is declared at global scope, namespace Nitrogen isn't checked.
-	// We include "Nitrogen/Operators.h" below to make the operators available in Nitrogen::Operators.
-	inline bool operator==( const ProcessSerialNumber& a, const ProcessSerialNumber& b )
+	// We include "Nucleus/Operators.h" below to make the operators available in Nitrogen::Operators.
+	inline bool operator==( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
 	{
 		return a.highLongOfPSN == b.highLongOfPSN
 			&& a.lowLongOfPSN  == b.lowLongOfPSN;
 	}
 	
-	inline bool operator!=( const ProcessSerialNumber& a, const ProcessSerialNumber& b )
+	inline bool operator!=( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
 	{
 		return !( a == b );
 	}
 	
+  }
+
+namespace Nitrogen {
+	inline ProcessSerialNumber NoProcess()       { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kNoProcess      >() ); }
+	inline ProcessSerialNumber SystemProcess()   { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kSystemProcess  >() ); }
+	inline ProcessSerialNumber CurrentProcess()  { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kCurrentProcess >() ); }
+	
+}
+
+namespace Nucleus {
 	template <>
-	struct Initializer< ProcessInfoRec >
+	struct Initializer< Nitrogen::ProcessInfoRec >
 	{
-		ProcessInfoRec& operator()( ProcessInfoRec& processInfo, FSSpec* appSpec = NULL ) const
+		ProcessInfoRec& operator()( Nitrogen::ProcessInfoRec& processInfo, FSSpec* appSpec = NULL ) const
 		{
 			processInfo.processInfoLength = sizeof processInfo;
 			processInfo.processName       = NULL;
@@ -103,16 +111,19 @@ namespace Nitrogen {
 	};
 	
 	template <>
-	struct Maker< ProcessInfoRec >
+	struct Maker< Nitrogen::ProcessInfoRec >
 	{
-		ProcessInfoRec operator()( FSSpec* appSpec = NULL ) const
+		Nitrogen::ProcessInfoRec operator()( FSSpec* appSpec = NULL ) const
 		{
-			ProcessInfoRec result;
+			Nitrogen::ProcessInfoRec result;
 			
 			return Initialize( result, appSpec );
 		}
 	};
 	
+}
+
+namespace Nitrogen {
 	// Nitrogen accessors, since no Carbon accessors exist
 	inline FSSpec GetProcessInfoAppSpec( const ProcessInfoRec& processInfo )  { return *processInfo.processAppSpec; }
 	
@@ -144,7 +155,7 @@ namespace Nitrogen {
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
 			
-			typedef ErrorCode< OSStatus, procNotFound > EndOfEnumeration;
+			typedef Nucleus::ErrorCode< OSStatus, procNotFound > EndOfEnumeration;
 			
 			value_type GetNextValue( const value_type& value )
 			{
@@ -155,13 +166,13 @@ namespace Nitrogen {
 			static value_type end_value()    { return NoProcess(); }
 	};
 	
-	class Process_Container: public AdvanceUntilFailureContainer< Process_ContainerSpecifics >
+	class Process_Container: public Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::Process_ContainerSpecifics >
 	{
 		friend Process_Container Processes();
 		
 		private:
 			Process_Container()
-			: AdvanceUntilFailureContainer< Process_ContainerSpecifics >( Process_ContainerSpecifics() )
+			: Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::Process_ContainerSpecifics >( ::Nitrogen::Process_ContainerSpecifics() )
 			{}
 	};
 	
@@ -173,6 +184,6 @@ namespace Nitrogen {
 }
 
 // Necessary for operators of types declared at global scope, such as ProcessSerialNumber.
-#include "Nitrogen/Operators.h"
+#include "Nucleus/Operators.h"
 
 #endif

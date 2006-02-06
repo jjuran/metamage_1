@@ -9,9 +9,23 @@
 #ifndef __CARBONEVENTS__
 #include FRAMEWORK_HEADER(HIToolbox,CarbonEvents.h)
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
+#ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
+#include "Nucleus/ObjectParameterTraits.h"
+#endif
+#ifndef NUCLEUS_ARRAYSINGLETON_H
+#include "Nucleus/ArraySingleton.h"
+#endif
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
+#endif
+#ifndef NUCLEUS_PSEUDOREFERENCE_H
+#include "Nucleus/Pseudoreference.h"
+#endif
+
 #ifndef NITROGEN_UPP_H
 #include "Nitrogen/UPP.h"
 #endif
@@ -27,12 +41,6 @@
 #ifndef NITROGEN_REFCON_H
 #include "Nitrogen/RefCon.h"
 #endif
-#ifndef NITROGEN_OBJECTPARAMETERTRAITS_H
-#include "Nitrogen/ObjectParameterTraits.h"
-#endif
-#ifndef NITROGEN_ARRAYSINGLETON_H
-#include "Nitrogen/ArraySingleton.h"
-#endif
 #ifndef NITROGEN_APPEARANCE_H
 #include "Nitrogen/Appearance.h"
 #endif
@@ -42,14 +50,11 @@
 #ifndef NITROGEN_AEREGISTRY_H
 #include "Nitrogen/AERegistry.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
-#endif
-#ifndef NITROGEN_PSEUDOREFERENCE_H
-#include "Nitrogen/Pseudoreference.h"
-#endif
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
+#endif
+#ifndef NITROGEN_MENUS_H
+#include "Nitrogen/Menus.h"
 #endif
 
 #include <vector>
@@ -172,23 +177,23 @@ namespace Nitrogen
   {
    void RegisterCarbonEventErrors();
 
-   typedef ErrorCode< OSStatus, eventAlreadyPostedErr           > EventAlreadyPostedErr;
-   typedef ErrorCode< OSStatus, eventTargetBusyErr              > EventTargetBusyErr;
-   typedef ErrorCode< OSStatus, eventClassInvalidErr            > EventClassInvalidErr;
-   typedef ErrorCode< OSStatus, eventClassIncorrectErr          > EventClassIncorrectErr;
-   typedef ErrorCode< OSStatus, eventHandlerAlreadyInstalledErr > EventHandlerAlreadyInstalledErr;
-   typedef ErrorCode< OSStatus, eventInternalErr                > EventInternalErr;
-   typedef ErrorCode< OSStatus, eventKindIncorrectErr           > EventKindIncorrectErr;
-   typedef ErrorCode< OSStatus, eventParameterNotFoundErr       > EventParameterNotFoundErr;
-   typedef ErrorCode< OSStatus, eventNotHandledErr              > EventNotHandledErr;
-   typedef ErrorCode< OSStatus, eventLoopTimedOutErr            > EventLoopTimedOutErr;
-   typedef ErrorCode< OSStatus, eventLoopQuitErr                > EventLoopQuitErr;
-   typedef ErrorCode< OSStatus, eventNotInQueueErr              > EventNotInQueueErr;
-   typedef ErrorCode< OSStatus, eventHotKeyExistsErr            > EventHotKeyExistsErr;
-   typedef ErrorCode< OSStatus, eventHotKeyInvalidErr           > EventHotKeyInvalidErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventAlreadyPostedErr           > EventAlreadyPostedErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventTargetBusyErr              > EventTargetBusyErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventClassInvalidErr            > EventClassInvalidErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventClassIncorrectErr          > EventClassIncorrectErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventHandlerAlreadyInstalledErr > EventHandlerAlreadyInstalledErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventInternalErr                > EventInternalErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventKindIncorrectErr           > EventKindIncorrectErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventParameterNotFoundErr       > EventParameterNotFoundErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventNotHandledErr              > EventNotHandledErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventLoopTimedOutErr            > EventLoopTimedOutErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventLoopQuitErr                > EventLoopQuitErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventNotInQueueErr              > EventNotInQueueErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventHotKeyExistsErr            > EventHotKeyExistsErr;
+   typedef Nucleus::ErrorCode< OSStatus, eventHotKeyInvalidErr           > EventHotKeyInvalidErr;
 
    class EventPriorityTag {};
-   typedef SelectorType< EventPriorityTag, ::EventPriority > EventPriority;
+   typedef Nucleus::SelectorType< EventPriorityTag, ::EventPriority > EventPriority;
       // EventProrities should be ordered; SelectorType isn't quite the right choice.
 
    /* To deal with:
@@ -207,10 +212,10 @@ namespace Nitrogen
    */
 
    class EventClassTag {};
-   typedef SelectorType< EventClassTag, ::UInt32 > EventClass;    // Doesn't exist in Carbon
+   typedef Nucleus::SelectorType< EventClassTag, ::UInt32 > EventClass;    // Doesn't exist in Carbon
 
    class CarbonEventKind_Tag {};
-   typedef SelectorType< CarbonEventKind_Tag, ::UInt32 > CarbonEventKind;
+   typedef Nucleus::SelectorType< CarbonEventKind_Tag, ::UInt32 > CarbonEventKind;
    
 #ifndef JOSHUA_JURAN_EXPERIMENTAL
    
@@ -223,13 +228,13 @@ namespace Nitrogen
    using ::EventTypeSpec;
 
    class MouseTrackingResultTag {};
-   typedef SelectorType< MouseTrackingResultTag, ::MouseTrackingResult > MouseTrackingResult;
+   typedef Nucleus::SelectorType< MouseTrackingResultTag, ::MouseTrackingResult > MouseTrackingResult;
    
    class EventParamNameTag {};
-   typedef SelectorType< EventParamNameTag, ::EventParamName > EventParamName;
+   typedef Nucleus::SelectorType< EventParamNameTag, ::EventParamName > EventParamName;
 
    class EventParamTypeTag {};
-   typedef SelectorType< EventParamTypeTag, ::EventParamType > EventParamType;
+   typedef Nucleus::SelectorType< EventParamTypeTag, ::EventParamType > EventParamType;
    
    using ::EventLoopRef;
    
@@ -241,20 +246,28 @@ namespace Nitrogen
    /* This one is awkward: the Carbon headers don't define CFRunLoopRef, but this
       function is documented to return one. */
    using ::GetCFRunLoopFromEventLoop;
-   
+   using ::EventRef;
+  }
+
+namespace Nucleus
+  {
    template <>
-   struct Disposer< EventRef >: public std::unary_function< EventRef, void >
+   struct Disposer< Nitrogen::EventRef >: public std::unary_function< Nitrogen::EventRef, void >
      {
-      void operator()( EventRef toDispose ) const
+      void operator()( Nitrogen::EventRef toDispose ) const
         {
          ::ReleaseEvent( toDispose );
         }
      };
+  }
+
+namespace Nitrogen
+  {
    
    template < bool inPullEvent > struct ReceiveNextEvent_Traits;
    
    template <> struct ReceiveNextEvent_Traits< false >   { typedef EventRef        Result; };
-   template <> struct ReceiveNextEvent_Traits< true  >   { typedef Owned<EventRef> Result; };
+   template <> struct ReceiveNextEvent_Traits< true  >   { typedef Nucleus::Owned<EventRef> Result; };
    
    template < bool inPullEvent >
    typename ReceiveNextEvent_Traits< inPullEvent >::Result
@@ -268,7 +281,7 @@ namespace Nitrogen
                                        EventTimeout          inTimeout );
 
    template <>
-   Owned<EventRef>ReceiveNextEvent< true >( UInt32                inNumTypes,
+   Nucleus::Owned<EventRef>ReceiveNextEvent< true >( UInt32                inNumTypes,
                                             const EventTypeSpec * inList,
                                             EventTimeout          inTimeout );
      
@@ -288,13 +301,13 @@ namespace Nitrogen
       return ReceiveNextEvent<inPullEvent>( inList.size(), inList.empty() ? 0 : &inList.front(), inTimeout );
      }
 
-   Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
+   Nucleus::Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
                                 CarbonEventKind   kind,
                                 EventTime         when,
                                 EventAttributes   flags );
 
-   inline Owned<EventRef> CreateEvent( EventClass        inClassID,
+   inline Nucleus::Owned<EventRef> CreateEvent( EventClass        inClassID,
                                        CarbonEventKind   kind,
                                        EventTime         when,
                                        EventAttributes   flags )
@@ -303,16 +316,16 @@ namespace Nitrogen
      }
    
    class CopyEvent_Failed {};
-   Owned<EventRef> CopyEvent( EventRef inOther );
+   Nucleus::Owned<EventRef> CopyEvent( EventRef inOther );
    
-   inline Owned<EventRef> RetainEvent( EventRef inEvent )
+   inline Nucleus::Owned<EventRef> RetainEvent( EventRef inEvent )
      {
-      return Owned<EventRef>::Seize( ::RetainEvent( inEvent ) );
+      return Nucleus::Owned<EventRef>::Seize( ::RetainEvent( inEvent ) );
      }
    
    using ::GetEventRetainCount;
    
-   inline void ReleaseEvent( Owned<EventRef> )
+   inline void ReleaseEvent( Nucleus::Owned<EventRef> )
      {}
    
    void SetEventParameter( EventRef         inEvent,
@@ -412,10 +425,10 @@ namespace Nitrogen
 
    // These will become template-typedefs when those become available.
       template < ::EventParamType inDesiredType >
-      class ConstEventParameter: public ConstPseudoreference< EventParameter_Details< inDesiredType > >
+      class ConstEventParameter: public Nucleus::ConstPseudoreference< EventParameter_Details< inDesiredType > >
         {
          private:
-            typedef ConstPseudoreference< EventParameter_Details< inDesiredType > > Base;
+            typedef Nucleus::ConstPseudoreference< EventParameter_Details< inDesiredType > > Base;
 
          public:
             typedef typename Base::Details               Details;
@@ -423,8 +436,8 @@ namespace Nitrogen
             typedef ConstEventParameter< inDesiredType > Reference;
             typedef ConstEventParameter< inDesiredType > ConstReference;
 
-            typedef Pseudopointer< Reference >           Pointer;
-            typedef Pseudopointer< ConstReference >      ConstPointer;
+            typedef Nucleus::Pseudopointer< Reference >           Pointer;
+            typedef Nucleus::Pseudopointer< ConstReference >      ConstPointer;
 
             explicit ConstEventParameter( Details theDetails )                             : Base( theDetails ) {}
             ConstEventParameter( EventRef theEvent, EventParamName theName )               : Base( Details( theEvent, theName ) ) {}
@@ -435,10 +448,10 @@ namespace Nitrogen
         };
 
       template < ::EventParamType inDesiredType >
-      class EventParameter: public Pseudoreference< EventParameter_Details< inDesiredType > >
+      class EventParameter: public Nucleus::Pseudoreference< EventParameter_Details< inDesiredType > >
         {
          private:
-            typedef Pseudoreference< EventParameter_Details< inDesiredType > > Base;
+            typedef Nucleus::Pseudoreference< EventParameter_Details< inDesiredType > > Base;
 
          public:
             typedef typename Base::Details               Details;
@@ -447,8 +460,8 @@ namespace Nitrogen
             typedef EventParameter     < inDesiredType > Reference;
             typedef ConstEventParameter< inDesiredType > ConstReference;
 
-            typedef Pseudopointer< Reference >           Pointer;
-            typedef Pseudopointer< ConstReference >      ConstPointer;
+            typedef Nucleus::Pseudopointer< Reference >           Pointer;
+            typedef Nucleus::Pseudopointer< ConstReference >      ConstPointer;
 
             explicit EventParameter( Details theDetails )                                  : Base( theDetails ) {}
             EventParameter( EventRef theEvent, EventParamName theName )                    : Base( Details( theEvent, theName ) ) {}
@@ -508,12 +521,16 @@ namespace Nitrogen
    
    using ::HICommand;
 
+  }
+
+namespace Nucleus
+  {
    template <>
-   struct Maker< HICommand >
+   struct Maker< Nitrogen::HICommand >
      {
-      HICommand operator()( UInt32 attributes, UInt32 commandID, MenuRef menuRef, MenuItemIndex menuItemIndex ) const
+      Nitrogen::HICommand operator()( UInt32 attributes, UInt32 commandID, Nitrogen::MenuRef menuRef, Nitrogen::MenuItemIndex menuItemIndex ) const
         {
-         HICommand result;
+         Nitrogen::HICommand result;
          result.attributes = attributes;
          result.commandID = commandID;
          result.menu.menuRef = menuRef;
@@ -539,15 +556,21 @@ namespace Nitrogen
          return operator()( 0, commandID );
         }
      };
-   
-   using ::HICommandExtended;
+  }
 
+namespace Nitrogen
+  {
+   using ::HICommandExtended;
+  }
+
+namespace Nucleus
+  {
    template <>
-   struct Maker< HICommandExtended >
+   struct Maker< Nitrogen::HICommandExtended >
      {
-      HICommandExtended operator()( UInt32 attributes, UInt32 commandID, MenuRef menuRef, MenuItemIndex menuItemIndex ) const
+      Nitrogen::HICommandExtended operator()( UInt32 attributes, UInt32 commandID, Nitrogen::MenuRef menuRef, Nitrogen::MenuItemIndex menuItemIndex ) const
         {
-         HICommandExtended result;
+         Nitrogen::HICommandExtended result;
          result.attributes = attributes;
          result.commandID = commandID;
          result.source.menu.menuRef = menuRef;
@@ -587,20 +610,11 @@ namespace Nitrogen
         {
          return operator()( kHICommandFromWindow, commandID, window );
         }
-      
-      HICommand operator()( UInt32 attributes, UInt32 commandID ) const
-        {
-         HICommand result;
-         result.attributes = attributes;
-         result.commandID = commandID;
-         return result;
-        }
-      
-      HICommand operator()( UInt32 commandID ) const
-        {
-         return operator()( 0, commandID );
-        }
      };   
+  }
+
+namespace Nitrogen
+  {
 
 /* ... */
 
@@ -1136,12 +1150,12 @@ namespace Nitrogen
    
    using ::EventHandlerProcPtr;
    
-   inline Owned<EventHandlerUPP> NewEventHandlerUPP( EventHandlerProcPtr p )
+   inline Nucleus::Owned<EventHandlerUPP> NewEventHandlerUPP( EventHandlerProcPtr p )
      {
       return NewUPP<EventHandlerUPP>( p );
      }
 
-   inline void DisposeEventHandlerUPP( Owned<EventHandlerUPP> )
+   inline void DisposeEventHandlerUPP( Nucleus::Owned<EventHandlerUPP> )
      {
      }
    
@@ -1159,25 +1173,33 @@ namespace Nitrogen
    using ::GetUserFocusEventTarget;
    using ::GetEventDispatcherTarget;
 
+  }
+
+namespace Nucleus
+  {
    template <>
-   struct Disposer< EventHandlerRef >: public std::unary_function< EventHandlerRef, void >,
-                                       private DefaultDestructionOSStatusPolicy
+   struct Disposer< Nitrogen::EventHandlerRef >: public std::unary_function< Nitrogen::EventHandlerRef, void >,
+                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( EventHandlerRef toDispose ) const
         {
-         OnlyOnce<RegisterCarbonEventErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
+         Nucleus::OnlyOnce<Nitrogen::RegisterCarbonEventErrors>();
+         HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
         }
      };
+  }
+
+namespace Nitrogen
+  {
 
    /* Level 0 (UPP) InstallEventHandler, for multiple or single events */
-      Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
+      Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                   EventHandlerUPP        inHandler,
                                                   UInt32                 inNumTypes,
                                                   const EventTypeSpec *  inList,
                                                   const void *           inUserData = 0 );
 
-      Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
+      Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                   EventHandlerUPP        inHandler,
                                                   EventClass             eventClass,
                                                   CarbonEventKind        eventKind,
@@ -1186,7 +1208,7 @@ namespace Nitrogen
    /* Level 1 (UPP-creating) InstallEventHandler, for multiple or single events */
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
+      Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                   UInt32                 inNumTypes,
                                                   const EventTypeSpec *  inList,
                                                   const void *           inUserData = 0 )
@@ -1200,7 +1222,7 @@ namespace Nitrogen
 
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
+      Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                   EventClass             eventClass,
                                                   CarbonEventKind        eventKind,
                                                   const void *           inUserData = 0 )
@@ -1239,7 +1261,7 @@ namespace Nitrogen
          
          static EventHandlerUPP UPP()
            {
-            return StaticUPPWorkaround< EventHandlerUPP, ProvideHandler >::StaticUPP();
+            return StaticUPPWorkaround< EventHandlerUPP, EventHandler_Bound_ExceptionGlue::ProvideHandler >::StaticUPP();
            }
         };
       
@@ -1252,7 +1274,7 @@ namespace Nitrogen
          
          static void ExtractObjectParameter( EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void *inUserData, Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( inUserData ), inHandlerCallRef, inEvent );
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( inUserData ), inHandlerCallRef, inEvent );
            }
         };
    
@@ -1280,36 +1302,36 @@ namespace Nitrogen
          
          static EventHandlerUPP UPP()
            {
-            return EventHandler_Bound_ExceptionGlue< ProvideHandler >::UPP();
+            return EventHandler_Bound_ExceptionGlue< EventHandler_Bound_ObjectGlue::ProvideHandler >::UPP();
            }
         };
       
    /* Level 2 (basic Nitrogen signature) InstallEventHandler */
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallEventHandler( EventTargetRef                                 inTarget,
+      Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef                                 inTarget,
                                                   UInt32                                         inNumTypes,
                                                   const EventTypeSpec *                          inList,
-                                                  typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                  typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler( inTarget,
                                      EventHandler_Bound_ObjectGlue< Object, handler >::UPP(),
                                      inNumTypes,
                                      inList,
-                                     ObjectParameterTraits<Object>::ConvertToPointer( inUserData ) );
+                                     Nucleus::ObjectParameterTraits<Object>::ConvertToPointer( inUserData ) );
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallEventHandler( EventTargetRef                                 inTarget,
+      Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef                                 inTarget,
                                                   EventClass                                     eventClass,
                                                   CarbonEventKind                                eventKind,
-                                                  typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                  typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler( inTarget,
                                      EventHandler_Bound_ObjectGlue< Object, handler >::UPP(),
                                      eventClass,
                                      eventKind,
-                                     ObjectParameterTraits<Object>::ConvertToPointer( inUserData ) );
+                                     Nucleus::ObjectParameterTraits<Object>::ConvertToPointer( inUserData ) );
         }
 
    /* Glue for storing an EventHandler's result into the event parameter */
@@ -1347,7 +1369,7 @@ namespace Nitrogen
          
          static EventHandlerUPP UPP()
            {
-            return EventHandler_Bound_ExceptionGlue< ProvideResultNameAndHandler >::UPP();
+            return EventHandler_Bound_ExceptionGlue< EventHandler_Bound_ResultGlue::ProvideResultNameAndHandler >::UPP();
            }
         };
 
@@ -1365,24 +1387,24 @@ namespace Nitrogen
       template < ::EventParamName name0 = 0, ::EventParamName name1 = 0, ::EventParamName name2 = 0, ::EventParamName name3 = 0,
                  ::EventParamName name4 = 0, ::EventParamName name5 = 0, ::EventParamName name6 = 0, ::EventParamName name7 = 0 >
       struct EventParamName_List
-         : ArraySingleton< ::EventParamName >::ArrayType< name0, name1, name2, name3, name4, name5, name6, name7 >
+         : Nucleus::ArraySingleton< ::EventParamName >::ArrayType< name0, name1, name2, name3, name4, name5, name6, name7 >
          {};
 
       template < ::EventParamType type0 = 0, ::EventParamType type1 = 0, ::EventParamType type2 = 0, ::EventParamType type3 = 0,
                  ::EventParamType type4 = 0, ::EventParamType type5 = 0, ::EventParamType type6 = 0, ::EventParamType type7 = 0 >
       struct EventParamType_List
-         : ArraySingleton< ::EventParamType >::ArrayType< type0, type1, type2, type3, type4, type5, type6, type7 >
+         : Nucleus::ArraySingleton< ::EventParamType >::ArrayType< type0, type1, type2, type3, type4, type5, type6, type7 >
          {};
 
       // These specializations take the load off a construct in ArraySingleton.h that CodeWarrior 8.3 can't handle.
          template <>
          struct EventParamName_List< 0, 0, 0, 0, 0, 0, 0, 0 >
-            : ArraySingleton0< ::EventParamName >
+            : Nucleus::ArraySingleton0< ::EventParamName >
             {};
       
          template <>
          struct EventParamType_List< 0, 0, 0, 0, 0, 0, 0, 0 >
-            : ArraySingleton0< ::EventParamType >
+            : Nucleus::ArraySingleton0< ::EventParamType >
             {};
       
    /* Glue for extracting an EventHandler's parameters */
@@ -1409,7 +1431,7 @@ namespace Nitrogen
                                       const ::EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
                             EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
                             EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
                             EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
@@ -1439,7 +1461,7 @@ namespace Nitrogen
                                       const ::EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
                             EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
                             EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
                             EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
@@ -1467,7 +1489,7 @@ namespace Nitrogen
                                       const ::EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
                             EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
                             EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
                             EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
@@ -1493,7 +1515,7 @@ namespace Nitrogen
                                       const ::EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
                             EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
                             EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
                             EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
@@ -1517,7 +1539,7 @@ namespace Nitrogen
                                       const ::EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
                             EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
                             EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
                             EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ),
@@ -1539,7 +1561,7 @@ namespace Nitrogen
                                       const ::EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
                             EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
                             EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ),
                             EventParameter< ParameterTypes::item2 >( event, parameterNames[2] ) );
@@ -1559,7 +1581,7 @@ namespace Nitrogen
                                       const ::EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
                             EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ),
                             EventParameter< ParameterTypes::item1 >( event, parameterNames[1] ) );
            }
@@ -1577,7 +1599,7 @@ namespace Nitrogen
                                       const ::EventParamName parameterNames[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ),
                             EventParameter< ParameterTypes::item0 >( event, parameterNames[0] ) );
            }
         };
@@ -1593,7 +1615,7 @@ namespace Nitrogen
                                       const ::EventParamName[],
                                       Handler handler )
            {
-            return handler( ObjectParameterTraits<Object>::ConvertFromPointer( userData ) );
+            return handler( Nucleus::ObjectParameterTraits<Object>::ConvertFromPointer( userData ) );
            }
         };
 
@@ -1955,16 +1977,14 @@ namespace Nitrogen
                                                           resultParameter,
                                                           Object,
                                                           ParameterNames >::Handler handler >
-      Owned<EventHandlerRef> InstallEventHandler( EventTargetRef                                 inTarget,
-                                                  typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+      Nucleus::Owned<EventHandlerRef> InstallEventHandler( EventTargetRef                                 inTarget,
+                                                  typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          typedef EventHandler_EventSpecificGlue< eventClass, eventKind, resultParameter, Object, ParameterNames > Glue;
 
-         // Glue::UPP is a static template, but CodeWarrior 8.2 hiccups if I write Glue::template UPP<handler>().
-            Glue glue;
-            EventHandlerUPP upp = glue.template UPP< handler >();
+		 EventHandlerUPP upp = Glue::template UPP< handler >();
 
-         const void *userData = ObjectParameterTraits<Object>::ConvertToPointer( inUserData );
+         const void *userData = Nucleus::ObjectParameterTraits<Object>::ConvertToPointer( inUserData );
          
          return InstallEventHandler( inTarget,
                                      upp,
@@ -1973,7 +1993,7 @@ namespace Nitrogen
                                      userData );
         }
       
-      inline Owned<EventHandlerRef> InstallApplicationEventHandler( EventHandlerUPP        inHandler,
+      inline Nucleus::Owned<EventHandlerRef> InstallApplicationEventHandler( EventHandlerUPP        inHandler,
                                                                     UInt32                 inNumTypes,
                                                                     const EventTypeSpec *  inList,
                                                                     const void *           inUserData = 0 )
@@ -1981,7 +2001,7 @@ namespace Nitrogen
          return InstallEventHandler( GetApplicationEventTarget(), inHandler, inNumTypes, inList, inUserData );
         }
       
-      inline Owned<EventHandlerRef> InstallApplicationEventHandler( EventHandlerUPP        inHandler,
+      inline Nucleus::Owned<EventHandlerRef> InstallApplicationEventHandler( EventHandlerUPP        inHandler,
                                                                     EventClass             eventClass,
                                                                     CarbonEventKind        eventKind,
                                                                     const void *           inUserData = 0 )
@@ -1990,7 +2010,7 @@ namespace Nitrogen
         }
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallApplicationEventHandler( UInt32                 inNumTypes,
+      Nucleus::Owned<EventHandlerRef> InstallApplicationEventHandler( UInt32                 inNumTypes,
                                                              const EventTypeSpec *  inList,
                                                              const void *           inUserData = 0 )
         {
@@ -1998,7 +2018,7 @@ namespace Nitrogen
         }
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallApplicationEventHandler( EventClass             eventClass,
+      Nucleus::Owned<EventHandlerRef> InstallApplicationEventHandler( EventClass             eventClass,
                                                              CarbonEventKind        eventKind,
                                                              const void *           inUserData = 0 )
         {
@@ -2006,17 +2026,17 @@ namespace Nitrogen
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallApplicationEventHandler( UInt32                                         inNumTypes,
+      Nucleus::Owned<EventHandlerRef> InstallApplicationEventHandler( UInt32                                         inNumTypes,
                                                              const EventTypeSpec *                          inList,
-                                                             typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                             typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetApplicationEventTarget(), inNumTypes, inList, inUserData );
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallApplicationEventHandler( EventClass                                     eventClass,
+      Nucleus::Owned<EventHandlerRef> InstallApplicationEventHandler( EventClass                                     eventClass,
                                                              CarbonEventKind                                eventKind,
-                                                             typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                             typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetApplicationEventTarget(), eventClass, eventKind, inUserData );
         }
@@ -2031,14 +2051,14 @@ namespace Nitrogen
                                                           resultParameter,
                                                           Object,
                                                           ParameterNames >::Handler handler >
-      Owned<EventHandlerRef> InstallApplicationEventHandler( typename ObjectParameterTraits<Object>::Type inUserData = typename ObjectParameterTraits<Object>::Type() )
+      Nucleus::Owned<EventHandlerRef> InstallApplicationEventHandler( typename Nucleus::ObjectParameterTraits<Object>::Type inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( GetApplicationEventTarget(), inUserData );
         }
 
    /* InstallWindowEventHandler */
 
-      inline Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
+      inline Nucleus::Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
                                                                EventHandlerUPP        inHandler,
                                                                UInt32                 inNumTypes,
                                                                const EventTypeSpec *  inList,
@@ -2047,7 +2067,7 @@ namespace Nitrogen
          return InstallEventHandler( GetWindowEventTarget( window ), inHandler, inNumTypes, inList, inUserData );
         }
       
-      inline Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
+      inline Nucleus::Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
                                                                EventHandlerUPP        inHandler,
                                                                EventClass             eventClass,
                                                                CarbonEventKind        eventKind,
@@ -2057,7 +2077,7 @@ namespace Nitrogen
         }
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
+      Nucleus::Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
                                                         UInt32                 inNumTypes,
                                                         const EventTypeSpec *  inList,
                                                         const void *           inUserData = 0 )
@@ -2066,7 +2086,7 @@ namespace Nitrogen
         }
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
+      Nucleus::Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
                                                         EventClass             eventClass,
                                                         CarbonEventKind        eventKind,
                                                         const void *           inUserData = 0 )
@@ -2075,19 +2095,19 @@ namespace Nitrogen
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef                                      window,
+      Nucleus::Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef                                      window,
                                                         UInt32                                         inNumTypes,
                                                         const EventTypeSpec *                          inList,
-                                                        typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                        typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetWindowEventTarget( window ), inNumTypes, inList, inUserData );
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef                                      window,
+      Nucleus::Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef                                      window,
                                                         EventClass                                     eventClass,
                                                         CarbonEventKind                                eventKind,
-                                                        typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                        typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetWindowEventTarget( window ), eventClass, eventKind, inUserData );
         }
@@ -2102,15 +2122,15 @@ namespace Nitrogen
                                                           resultParameter,
                                                           Object,
                                                           ParameterNames >::Handler handler >
-      Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef                                    window,
-                                                        typename ObjectParameterTraits<Object>::Type inUserData = typename ObjectParameterTraits<Object>::Type() )
+      Nucleus::Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef                                    window,
+                                                        typename Nucleus::ObjectParameterTraits<Object>::Type inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( GetWindowEventTarget( window ), inUserData );
         }
 
    /* InstallControlEventHandler */
 
-      inline Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
+      inline Nucleus::Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
                                                                 EventHandlerUPP        inHandler,
                                                                 UInt32                 inNumTypes,
                                                                 const EventTypeSpec *  inList,
@@ -2119,7 +2139,7 @@ namespace Nitrogen
          return InstallEventHandler( GetControlEventTarget( control ), inHandler, inNumTypes, inList, inUserData );
         }
       
-      inline Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
+      inline Nucleus::Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
                                                                 EventHandlerUPP        inHandler,
                                                                 EventClass             eventClass,
                                                                 CarbonEventKind        eventKind,
@@ -2129,7 +2149,7 @@ namespace Nitrogen
         }
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
+      Nucleus::Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
                                                          UInt32                 inNumTypes,
                                                          const EventTypeSpec *  inList,
                                                          const void *           inUserData = 0 )
@@ -2138,7 +2158,7 @@ namespace Nitrogen
         }
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
+      Nucleus::Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
                                                          EventClass             eventClass,
                                                          CarbonEventKind        eventKind,
                                                          const void *           inUserData = 0 )
@@ -2147,19 +2167,19 @@ namespace Nitrogen
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallControlEventHandler( ControlRef                                     control,
+      Nucleus::Owned<EventHandlerRef> InstallControlEventHandler( ControlRef                                     control,
                                                          UInt32                                         inNumTypes,
                                                          const EventTypeSpec *                          inList,
-                                                         typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                         typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetControlEventTarget( control ), inNumTypes, inList, inUserData );
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallControlEventHandler( ControlRef                                     control,
+      Nucleus::Owned<EventHandlerRef> InstallControlEventHandler( ControlRef                                     control,
                                                          EventClass                                     eventClass,
                                                          CarbonEventKind                                eventKind,
-                                                         typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                         typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetControlEventTarget( control ), eventClass, eventKind, inUserData );
         }
@@ -2174,15 +2194,15 @@ namespace Nitrogen
                                                           resultParameter,
                                                           Object,
                                                           ParameterNames >::Handler handler >
-      Owned<EventHandlerRef> InstallControlEventHandler( ControlRef                                   control,
-                                                         typename ObjectParameterTraits<Object>::Type inUserData = typename ObjectParameterTraits<Object>::Type() )
+      Nucleus::Owned<EventHandlerRef> InstallControlEventHandler( ControlRef                                   control,
+                                                         typename Nucleus::ObjectParameterTraits<Object>::Type inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( GetControlEventTarget( control ), inUserData );
         }
 
    /* InstallMenuEventHandler */
 
-      inline Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
+      inline Nucleus::Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
                                                              EventHandlerUPP        inHandler,
                                                              UInt32                 inNumTypes,
                                                              const EventTypeSpec *  inList,
@@ -2191,7 +2211,7 @@ namespace Nitrogen
          return InstallEventHandler( GetMenuEventTarget( menu ), inHandler, inNumTypes, inList, inUserData );
         }
       
-      inline Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
+      inline Nucleus::Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
                                                              EventHandlerUPP        inHandler,
                                                              EventClass             eventClass,
                                                              CarbonEventKind        eventKind,
@@ -2201,7 +2221,7 @@ namespace Nitrogen
         }
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
+      Nucleus::Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
                                                       UInt32                 inNumTypes,
                                                       const EventTypeSpec *  inList,
                                                       const void *           inUserData = 0 )
@@ -2210,7 +2230,7 @@ namespace Nitrogen
         }
 
       template < EventHandlerProcPtr handler >
-      Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
+      Nucleus::Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
                                                       EventClass             eventClass,
                                                       CarbonEventKind        eventKind,
                                                       const void *           inUserData = 0 )
@@ -2219,19 +2239,19 @@ namespace Nitrogen
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                                        menu,
+      Nucleus::Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                                        menu,
                                                       UInt32                                         inNumTypes,
                                                       const EventTypeSpec *                          inList,
-                                                      typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                      typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetMenuEventTarget( menu ), inNumTypes, inList, inUserData );
         }
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
-      Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                                        menu,
+      Nucleus::Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                                        menu,
                                                       EventClass                                     eventClass,
                                                       CarbonEventKind                                eventKind,
-                                                      typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
+                                                      typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetMenuEventTarget( menu ), eventClass, eventKind, inUserData );
         }
@@ -2246,8 +2266,8 @@ namespace Nitrogen
                                                           resultParameter,
                                                           Object,
                                                           ParameterNames >::Handler handler >
-      Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                                      menu,
-                                                      typename ObjectParameterTraits<Object>::Type inUserData = typename ObjectParameterTraits<Object>::Type() )
+      Nucleus::Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                                      menu,
+                                                      typename Nucleus::ObjectParameterTraits<Object>::Type inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( GetMenuEventTarget( menu ), inUserData );
         }
@@ -2255,7 +2275,7 @@ namespace Nitrogen
 
    void InstallStandardEventHandler( EventTargetRef inTarget );
 
-   void RemoveEventHandler( Owned<EventHandlerRef> inHandlerRef );
+   void RemoveEventHandler( Nucleus::Owned<EventHandlerRef> inHandlerRef );
 
    /* ... */
    
@@ -2272,23 +2292,31 @@ namespace Nitrogen
    using ::EventHotKeyRef;
    using ::EventHotKeyID;
    
+  }
+
+namespace Nucleus
+  {
    template <>
-   struct Disposer< EventHotKeyRef >: public std::unary_function< EventHotKeyRef, void >
+   struct Disposer< Nitrogen::EventHotKeyRef >: public std::unary_function< Nitrogen::EventHotKeyRef, void >
      {
-      void operator()( EventHotKeyRef toDispose ) const
+      void operator()( Nitrogen::EventHotKeyRef toDispose ) const
         {
          ::UnregisterEventHotKey( toDispose );
         }
      };
+  }
 
-   Owned< EventHotKeyRef > RegisterEventHotKey( UInt32            inHotKeyCode,
+namespace Nitrogen
+  {
+
+   Nucleus::Owned< EventHotKeyRef > RegisterEventHotKey( UInt32            inHotKeyCode,
                                                 UInt32            inHotKeyModifiers,
                                                 EventHotKeyID     inHotKeyID,
                                                 EventTargetRef    inTarget,
                                                 ::OptionBits      inOptions = 0 );
 
 
-   void UnregisterEventHotKey( Owned< EventHotKeyRef > );
+   void UnregisterEventHotKey( Nucleus::Owned< EventHotKeyRef > );
   }
 
 #endif

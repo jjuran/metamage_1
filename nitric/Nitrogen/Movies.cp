@@ -8,48 +8,48 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 
 namespace Nitrogen
 {
 	
-	Owned< MovieFileRefNum > OpenMovieFile( const FSSpec& file, FSIOPermssn permission )
+	Nucleus::Owned< MovieFileRefNum > OpenMovieFile( const FSSpec& file, FSIOPermssn permission )
 	{
-		OnlyOnce< RegisterQuickTimeErrors >();
+		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
 		
 		SInt16 result;
 		ThrowOSStatus( ::OpenMovieFile( &file, &result, permission ) );
 		
-		return Owned< MovieFileRefNum >::Seize( MovieFileRefNum( result ) );
+		return Nucleus::Owned< MovieFileRefNum >::Seize( MovieFileRefNum( result ) );
 	}
 	
-	Owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
+	Nucleus::Owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
 	                                 ResID            resID,
 	                                 NewMovieFlags    flags )
 	{
-		OnlyOnce< RegisterQuickTimeErrors >();
+		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
 		
 		Movie result;
 		::ResID resIDcopy = resID;
 		
 		ThrowOSStatus( ::NewMovieFromFile( &result, refNum, &resIDcopy, NULL, flags, NULL ) );
 		
-		return Owned< Movie >::Seize( result );
+		return Nucleus::Owned< Movie >::Seize( result );
 	}
 	
 	// Half-way Nitrified call with eraseColor passed by pointer
 	
-	static Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	static Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                                      short            desiredWidth,
 	                                                      short            desiredHeight,
 	                                                      ::WindowRef*     newWindow,
 	                                                      const RGBColor*  eraseColor,
 	                                                      FullScreenFlags  flags )
 	{
-		OnlyOnce< RegisterQuickTimeErrors >();
+		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
 		
 		FullScreenContextPtr context;
 		
@@ -61,12 +61,12 @@ namespace Nitrogen
 		                                  const_cast< RGBColor* >( eraseColor ),
 		                                  flags ) );
 		
-		return Owned< FullScreenContextPtr >::Seize( context );
+		return Nucleus::Owned< FullScreenContextPtr >::Seize( context );
 	}
 	
 	// Basic Nitrogen version
 	
-	Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                               short            desiredWidth,
 	                                               short            desiredHeight,
 	                                               ::WindowRef*     newWindow,
@@ -83,7 +83,7 @@ namespace Nitrogen
 	
 	// Nitrogen version with eraseColor omitted
 	
-	Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                               short            desiredWidth,
 	                                               short            desiredHeight,
 	                                               ::WindowRef*     newWindow,
@@ -99,7 +99,7 @@ namespace Nitrogen
 	
 	// Nitrogen version with newWindow omitted
 	
-	Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
+	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
 	                                               short            desiredWidth,
 	                                               short            desiredHeight,
 	                                               const RGBColor&  eraseColor,

@@ -6,24 +6,27 @@
 #include "Nitrogen/OpenTransport.h"
 #endif
 
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
+#endif
 
 namespace Nitrogen
 {
 	
-	Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags )
+	Nucleus::Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		OTClientContextPtr result;
 		
 		ThrowOSStatus( ::InitOpenTransportInContext( flags, &result ) );
 		
-		return Owned< OTClientContextPtr >::Seize( result );
+		return Nucleus::Owned< OTClientContextPtr >::Seize( result );
 	}
 	
 	void InitOpenTransport()
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 	#if TARGET_API_MAC_CARBON
 		
@@ -49,37 +52,37 @@ namespace Nitrogen
 	#endif
 	}
 	
-	void OTCloseProvider( Owned< ProviderRef > provider )
+	void OTCloseProvider( Nucleus::Owned< ProviderRef > provider )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTCloseProvider( provider.Release() ) );
 	}
 	
 	void OTSetSynchronous( ProviderRef ref )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTSetSynchronous( ref ) );
 	}
 	
 	void OTSetAsynchronous( ProviderRef ref )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTSetAsynchronous( ref ) );
 	}
 	
 	void OTSetBlocking( ProviderRef ref )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTSetBlocking( ref ) );
 	}
 	
 	void OTSetNonBlocking( ProviderRef ref )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTSetNonBlocking( ref ) );
 	}
@@ -88,7 +91,7 @@ namespace Nitrogen
 	                        OTNotifyUPP  proc,
 	                        void*        contextPtr )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTInstallNotifier( ref, proc, contextPtr ) );
 	}
@@ -96,16 +99,16 @@ namespace Nitrogen
 	void OTUseSyncIdleEvents( ProviderRef  ref,
 	                          bool         useEvents )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTUseSyncIdleEvents( ref, useEvents ) );
 	}
 	
-	Owned< EndpointRef > OTOpenEndpointInContext( Owned< OTConfigurationRef >  config,
+	Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
 	                                              TEndpointInfo*               info,
 	                                              OTClientContextPtr           clientContext )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		::OSStatus err;
 		
@@ -128,21 +131,21 @@ namespace Nitrogen
 		
 		ThrowOSStatus( err );
 		
-		return Owned< EndpointRef >::Seize( result );
+		return Nucleus::Owned< EndpointRef >::Seize( result );
 	}
 	
 	void OTBind( EndpointRef  ref,
 	             TBind*       reqAddr,
 	             TBind*       retAddr )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTBind( ref, reqAddr, retAddr ) );
 	}
 	
 	void OTUnbind( EndpointRef ref )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTUnbind( ref ) );
 	}
@@ -151,7 +154,7 @@ namespace Nitrogen
 	                TCall&       sndCall,
 	                TCall*       rcvCall )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTConnect( ref, &sndCall, rcvCall ) );
 	}
@@ -159,7 +162,7 @@ namespace Nitrogen
 	void OTListen( EndpointRef  ref,
 	               TCall*       call )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTListen( ref, call ) );
 	}
@@ -168,7 +171,7 @@ namespace Nitrogen
 	               EndpointRef  worker,
 	               TCall*       call )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTAccept( listener, worker, call ) );
 	}
@@ -176,14 +179,14 @@ namespace Nitrogen
 	void OTSndDisconnect( EndpointRef  ref,
 	                      TCall*       call )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTSndDisconnect( ref, call ) );
 	}
 	
 	void OTSndOrderlyDisconnect( EndpointRef ref )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTSndOrderlyDisconnect( ref ) );
 	}
@@ -191,14 +194,14 @@ namespace Nitrogen
 	void OTRcvDisconnect( EndpointRef  ref,
 	                      TDiscon*     discon )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTRcvDisconnect( ref, discon ) );
 	}
 	
 	void OTRcvOrderlyDisconnect( EndpointRef ref )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
 		ThrowOSStatus( ::OTRcvOrderlyDisconnect( ref ) );
 	}
@@ -213,41 +216,38 @@ namespace Nitrogen
 		return result;
 	}
 	
-	OTByteCount OTRcv( EndpointRef  ref,
-	                   void*        buf,
-	                   OTByteCount  nbytes,
-	                   OTFlags*     flags )
+	OTResult OTRcv( EndpointRef  ref,
+	                void*        buf,
+	                OTByteCount  nbytes,
+	                OTFlags*     flags )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
-		return OTByteCount( ThrowOTResult( ::OTRcv( ref, buf, nbytes, flags ) ) );
+		return ThrowOTResult( ::OTRcv( ref, buf, nbytes, flags ) );
 	}
 	
-	OTByteCount OTRcv( EndpointRef  ref,
-	                   void*        buf,
-	                   OTByteCount  nbytes )
+	OTResult OTRcv( EndpointRef  ref,
+	                void*        buf,
+	                OTByteCount  nbytes )
 	{
 		OTFlags flags;
 		
 		return Nitrogen::OTRcv( ref, buf, nbytes, &flags );
 	}
 	
-	OTByteCount OTSnd( EndpointRef  ref,
-	                   const void*  buf,
-	                   OTByteCount  nbytes,
-	                   OTFlags      flags )
+	OTResult OTSnd( EndpointRef  ref,
+	                const void*  buf,
+	                OTByteCount  nbytes,
+	                OTFlags      flags )
 	{
-		OnlyOnce< RegisterOpenTransportErrors >();
+		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
-		return OTByteCount( ThrowOTResult( ::OTSnd( ref,
-		                                            const_cast< void* >( buf ),
-		                                            nbytes,
-		                                            flags ) ) );
+		return ThrowOTResult( ::OTSnd( ref, (void*)buf, nbytes, flags ) );
 	}
 	
 	class OTCreateConfiguration_Failed {};
 	
-	Owned< OTConfigurationRef > OTCreateConfiguration( const char* path )
+	Nucleus::Owned< OTConfigurationRef > OTCreateConfiguration( const char* path )
 	{
 		OTConfigurationRef result = ::OTCreateConfiguration( path );
 		
@@ -256,12 +256,12 @@ namespace Nitrogen
 			throw OTCreateConfiguration_Failed();
 		}
 		
-		return Owned< OTConfigurationRef >::Seize( result );
+		return Nucleus::Owned< OTConfigurationRef >::Seize( result );
 	}
 	
-	Owned< OTConfigurationRef > OTCloneConfiguration( OTConfigurationRef config )
+	Nucleus::Owned< OTConfigurationRef > OTCloneConfiguration( OTConfigurationRef config )
 	{
-		return Owned< OTConfigurationRef >::Seize( ::OTCloneConfiguration( config ) );
+		return Nucleus::Owned< OTConfigurationRef >::Seize( ::OTCloneConfiguration( config ) );
 	}
 	
 	void RegisterOpenTransportErrors()

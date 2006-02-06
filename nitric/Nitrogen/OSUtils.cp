@@ -8,8 +8,8 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -20,7 +20,7 @@ namespace Nitrogen
 	
 	void DTInstall( DeferredTask& dtTaskPtr )
 	{
-		OnlyOnce< RegisterDeferredTaskManagerErrors >();
+		Nucleus::OnlyOnce< RegisterDeferredTaskManagerErrors >();
 		
 		ThrowOSStatus( ::DTInstall( &dtTaskPtr ) );
 	}

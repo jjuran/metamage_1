@@ -12,20 +12,20 @@
 #ifndef __CFSTRING__
 #include FRAMEWORK_HEADER(CoreFoundation,CFString.h)
 #endif
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 namespace Nitrogen
   {
    class CFTypeIDTag {};
-   typedef IDType< CFTypeIDTag, ::CFTypeID > CFTypeID;
+   typedef Nucleus::IDType< CFTypeIDTag, ::CFTypeID > CFTypeID;
 
    template < class T > struct CFType_Traits;
    
@@ -74,14 +74,20 @@ namespace Nitrogen
          friend bool operator!=( const ::CFTypeRef& a, const CFTypeRef& b )        { return a != b.Get(); }
      };
 
-   template <> struct Disposer<CFTypeRef>: public std::unary_function< CFTypeRef, void >
+}
+
+namespace Nucleus {
+   template <> struct Disposer<Nitrogen::CFTypeRef>: public std::unary_function< Nitrogen::CFTypeRef, void >
      {
-      void operator()( CFTypeRef cf ) const
+      void operator()( Nitrogen::CFTypeRef cf ) const
         {
          ::CFRelease( cf );
         }
      };
    
+}
+
+namespace Nitrogen {
    template < class T > bool operator==( const CFTypeRef& a, T const *const& b )   { return a == CFTypeRef( b ); }
    template < class T > bool operator!=( const CFTypeRef& a, T const *const& b )   { return a != CFTypeRef( b ); }
    
@@ -89,39 +95,43 @@ namespace Nitrogen
    template < class T > bool operator!=( T const *const& a, const CFTypeRef& b )   { return CFTypeRef( a ) != b; }
 
    class CFOptionFlagsTag {};
-   typedef FlagType< CFOptionFlagsTag, ::CFOptionFlags > CFOptionFlags;
+   typedef Nucleus::FlagType< CFOptionFlagsTag, ::CFOptionFlags > CFOptionFlags;
    
    class CFHashCodeTag {};
-   typedef IDType< CFHashCodeTag, ::CFHashCode > CFHashCode;
+   typedef Nucleus::IDType< CFHashCodeTag, ::CFHashCode > CFHashCode;
    
    using ::CFStringRef;
    using ::CFAllocatorRef;
    
    template <> struct CFType_Traits< CFStringRef >: Basic_CFType_Traits< CFStringRef, ::CFStringGetTypeID > {};
-   template <> struct OwnedDefaults< CFStringRef >: OwnedDefaults<CFTypeRef> {};
-
    template <> struct CFType_Traits< CFAllocatorRef >: Basic_CFType_Traits< CFAllocatorRef, ::CFAllocatorGetTypeID > {};
-   template <> struct OwnedDefaults< CFAllocatorRef >: OwnedDefaults<CFTypeRef> {};
+}
 
+namespace Nucleus {
+   template <> struct OwnedDefaults< Nitrogen::CFStringRef >   : OwnedDefaults< Nitrogen::CFTypeRef > {};
+   template <> struct OwnedDefaults< Nitrogen::CFAllocatorRef >: OwnedDefaults< Nitrogen::CFTypeRef > {};
+}
+
+namespace Nitrogen {
 
    inline CFTypeID CFGetTypeID( CFTypeRef cf )
      {
       return CFTypeID( ::CFGetTypeID( cf ) );
      }
 
-   inline Owned<CFStringRef> CFCopyTypeIDDescription( CFTypeID cf )
+   inline Nucleus::Owned<CFStringRef> CFCopyTypeIDDescription( CFTypeID cf )
      {
-      return Owned<CFStringRef>::Seize( ::CFCopyTypeIDDescription( cf ) );
+      return Nucleus::Owned<CFStringRef>::Seize( ::CFCopyTypeIDDescription( cf ) );
      }
    
    template < class CF >
-   Owned< CF > CFRetain( CF toRetain )
+   Nucleus::Owned< CF > CFRetain( CF toRetain )
      {
       ::CFRetain( CFTypeRef( toRetain ) );
-      return Owned<CF>::Seize( toRetain );
+      return Nucleus::Owned<CF>::Seize( toRetain );
      }
 
-   inline void CFRelease( Owned<CFTypeRef> /*toRelease*/ )
+   inline void CFRelease( Nucleus::Owned<CFTypeRef> /*toRelease*/ )
      {
      }
    
@@ -140,9 +150,9 @@ namespace Nitrogen
       return CFHashCode( ::CFHash( cf ) );
      }
 
-   inline Owned<CFStringRef> CFCopyDescription( CFTypeRef cf )
+   inline Nucleus::Owned<CFStringRef> CFCopyDescription( CFTypeRef cf )
      {
-      return Owned<CFStringRef>::Seize( ::CFCopyDescription( cf ) );
+      return Nucleus::Owned<CFStringRef>::Seize( ::CFCopyDescription( cf ) );
      }
 
    inline CFAllocatorRef CFGetAllocator( CFTypeRef cf )
@@ -164,11 +174,11 @@ namespace Nitrogen
       return static_cast< Desired >( p.Get() );
      }
 
-   template < class Desired > Owned<Desired> CFCast( Owned<CFTypeRef> p )
+   template < class Desired > Nucleus::Owned<Desired> CFCast( Nucleus::Owned<CFTypeRef> p )
      {
       Desired result = CFCast<Desired>( p.get() );
       p.release();
-      return Owned<Desired>::Seize( result );
+      return Nucleus::Owned<Desired>::Seize( result );
      }
   }
 

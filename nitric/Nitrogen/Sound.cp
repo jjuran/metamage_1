@@ -13,7 +13,7 @@ namespace Nitrogen
 	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count )
 	{
-		OnlyOnce< RegisterSoundManagerErrors >();
+		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
 		
 		SPBGetIndexedDevice_Result  result;
 		::Handle                    deviceIconHandle;
@@ -22,25 +22,25 @@ namespace Nitrogen
 		                                      result.deviceName,
 		                                      &deviceIconHandle ) );
 		
-		result.deviceIconHandle = Owned< Handle >::Seize( deviceIconHandle );
+		result.deviceIconHandle = Nucleus::Owned< Handle >::Seize( deviceIconHandle );
 		
 		return result;
 	}
 	
-	Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
+	Nucleus::Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
 	                                         SoundInputPermissions  permission )
 	{
-		OnlyOnce< RegisterSoundManagerErrors >();
+		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
 		
 		long refNum;
 		ThrowOSStatus( ::SPBOpenDevice( deviceName, permission, &refNum ) );
 		
-		return Owned< SoundInputRefNum >::Seize( SoundInputRefNum( refNum ) );
+		return Nucleus::Owned< SoundInputRefNum >::Seize( SoundInputRefNum( refNum ) );
 	}
 	
-	void SPBCloseDevice( Owned< SoundInputRefNum > refNum )
+	void SPBCloseDevice( Nucleus::Owned< SoundInputRefNum > refNum )
 	{
-		OnlyOnce< RegisterSoundManagerErrors >();
+		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
 		
 		ThrowOSStatus( ::SPBCloseDevice( refNum.Release() ) );
 	}
@@ -49,7 +49,7 @@ namespace Nitrogen
 	                       SoundInputDeviceInfoType  infoType,
 	                       void*                     infoData )
 	{
-		OnlyOnce< RegisterSoundManagerErrors >();
+		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
 		
 		ThrowOSStatus( ::SPBGetDeviceInfo( refNum, infoType, infoData ) );
 	}
@@ -58,7 +58,7 @@ namespace Nitrogen
 	                       SoundInputDeviceInfoType  infoType,
 	                       void*                     infoData )
 	{
-		OnlyOnce< RegisterSoundManagerErrors >();
+		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
 		
 		ThrowOSStatus( ::SPBSetDeviceInfo( refNum, infoType, infoData ) );
 	}

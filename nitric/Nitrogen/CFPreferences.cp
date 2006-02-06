@@ -6,13 +6,13 @@
 
 namespace Nitrogen
   {
-   Owned< CFPropertyListRef > CFPreferencesCopyAppValue( CFStringRef key,
+   Nucleus::Owned< CFPropertyListRef > CFPreferencesCopyAppValue( CFStringRef key,
                                                          CFStringRef applicationID )
      {
       ::CFPropertyListRef result = ::CFPreferencesCopyAppValue( key, applicationID );
       if ( result == CFPropertyListRef() )
          throw CFPreferencesCopyAppValue_Failed();
-      return Owned<CFPropertyListRef>::Seize( result );
+      return Nucleus::Owned<CFPropertyListRef>::Seize( result );
      }
    
    bool CFPreferencesGetAppBooleanValue( CFStringRef key,
@@ -41,7 +41,7 @@ namespace Nitrogen
          throw CFPreferencesAppSynchronize_Failed();
      }
 
-   Owned< CFPropertyListRef > CFPreferencesCopyValue( CFStringRef key,
+   Nucleus::Owned< CFPropertyListRef > CFPreferencesCopyValue( CFStringRef key,
                                                       CFStringRef applicationID,
                                                       CFStringRef userName,
                                                       CFStringRef hostName )
@@ -49,10 +49,10 @@ namespace Nitrogen
       CFPropertyListRef result = ::CFPreferencesCopyValue( key, applicationID, userName, hostName );
       if ( result == CFPropertyListRef() )
          throw CFPreferencesCopyValue_Failed();
-      return Owned<CFPropertyListRef>::Seize( result );
+      return Nucleus::Owned<CFPropertyListRef>::Seize( result );
      }
 
-   Owned< CFDictionaryRef > CFPreferencesCopyMultiple( CFArrayRef  keysToFetch,
+   Nucleus::Owned< CFDictionaryRef > CFPreferencesCopyMultiple( CFArrayRef  keysToFetch,
                                                        CFStringRef applicationID,
                                                        CFStringRef userName,
                                                        CFStringRef hostName )
@@ -60,26 +60,26 @@ namespace Nitrogen
       CFDictionaryRef result = ::CFPreferencesCopyMultiple( keysToFetch, applicationID, userName, hostName );
       if ( result == 0 )
          throw CFPreferencesCopyMultiple_Failed();
-      return Owned<CFDictionaryRef>::Seize( result );
+      return Nucleus::Owned<CFDictionaryRef>::Seize( result );
      }
 
-   Owned< CFArrayRef > CFPreferencesCopyApplicationList( CFStringRef userName,
+   Nucleus::Owned< CFArrayRef > CFPreferencesCopyApplicationList( CFStringRef userName,
                                                          CFStringRef hostName )
      {
       CFArrayRef result = ::CFPreferencesCopyApplicationList( userName, hostName );
       if ( result == 0 )
          throw CFPreferencesCopyApplicationList_Failed();
-      return Owned<CFArrayRef>::Seize( result );
+      return Nucleus::Owned<CFArrayRef>::Seize( result );
      }
    
-   Owned< CFArrayRef > CFPreferencesCopyKeyList( CFStringRef applicationID,
+   Nucleus::Owned< CFArrayRef > CFPreferencesCopyKeyList( CFStringRef applicationID,
                                                  CFStringRef userName,
                                                  CFStringRef hostName )
      {
       CFArrayRef result = ::CFPreferencesCopyKeyList( applicationID, userName, hostName );
       if ( result == 0 )
          throw CFPreferencesCopyKeyList_Failed();
-      return Owned<CFArrayRef>::Seize( result );
+      return Nucleus::Owned<CFArrayRef>::Seize( result );
      }
   }
 

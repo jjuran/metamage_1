@@ -21,8 +21,8 @@
 #include "Nitrogen/QuickDraw.h"
 #endif
 
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 
 namespace Nitrogen {
@@ -30,12 +30,20 @@ namespace Nitrogen {
 	void RegisterHIShapeErrors();
 
 	using ::HIShapeRef;
-	template <> struct OwnedDefaults< HIShapeRef >: OwnedDefaults< CFTypeRef >  {};
-	template <> struct CFType_Traits< HIShapeRef >: Basic_CFType_Traits< HIShapeRef, ::HIShapeGetTypeID > {};
-
 	using ::HIMutableShapeRef;
-	template <> struct OwnedDefaults< HIMutableShapeRef >: OwnedDefaults< CFTypeRef >  {};
+  }
+
+namespace Nucleus
+  {
+	template <> struct OwnedDefaults< Nitrogen::HIShapeRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+	template <> struct OwnedDefaults< Nitrogen::HIMutableShapeRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
+  }
+
+namespace Nitrogen
+  {	
+
 	template <> struct CFType_Traits< HIMutableShapeRef >: Basic_CFType_Traits< HIMutableShapeRef, ::HIShapeGetTypeID > {};
+	template <> struct CFType_Traits< HIShapeRef >: Basic_CFType_Traits< HIShapeRef, ::HIShapeGetTypeID > {};
 
 //	extern CFTypeID HIShapeGetTypeID(void)
 	using ::HIShapeGetTypeID;
@@ -45,22 +53,22 @@ namespace Nitrogen {
 /*======================================================================================*/
 
 	class HIShapeCreateWithQDRgn_Failed {};
-	Owned<HIShapeRef> HIShapeCreateWithQDRgn ( RgnHandle inRgn );
+	Nucleus::Owned<HIShapeRef> HIShapeCreateWithQDRgn ( RgnHandle inRgn );
 
 	class HIShapeCreateWithRect_Failed {};
-	Owned<HIShapeRef> HIShapeCreateWithRect ( const HIRect &inRect );
+	Nucleus::Owned<HIShapeRef> HIShapeCreateWithRect ( const HIRect &inRect );
 
 	class HIShapeCreateCopy_Failed {};
-	Owned<HIShapeRef> HIShapeCreateCopy ( HIShapeRef inShape );
+	Nucleus::Owned<HIShapeRef> HIShapeCreateCopy ( HIShapeRef inShape );
 
 	class HIShapeCreateIntersection_Failed {};
-	Owned<HIShapeRef> HIShapeCreateIntersection ( HIShapeRef inShape1, HIShapeRef inShape2 );
+	Nucleus::Owned<HIShapeRef> HIShapeCreateIntersection ( HIShapeRef inShape1, HIShapeRef inShape2 );
 
 	class HIShapeCreateDifference_Failed {};
-	Owned<HIShapeRef> HIShapeCreateDifference ( HIShapeRef inShape1, HIShapeRef inShape2 );
+	Nucleus::Owned<HIShapeRef> HIShapeCreateDifference ( HIShapeRef inShape1, HIShapeRef inShape2 );
 
 	class HIShapeCreateUnion_Failed {};
-	Owned<HIShapeRef> HIShapeCreateUnion ( HIShapeRef inShape1, HIShapeRef inShape2 );
+	Nucleus::Owned<HIShapeRef> HIShapeCreateUnion ( HIShapeRef inShape1, HIShapeRef inShape2 );
 
 //	extern Boolean HIShapeIsEmpty(HIShapeRef inShape)
 	using ::HIShapeIsEmpty;
@@ -78,15 +86,15 @@ namespace Nitrogen {
 		return result;
 		}
 	
-	inline Owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape );
+	inline Nucleus::Owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape );
 	
 	inline void HIShapeReplacePathInCGContext ( HIShapeRef inShape, CGContextRef inContext ) {
-     	OnlyOnce<RegisterHIShapeErrors>();
+     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
 		ThrowOSStatus ( ::HIShapeReplacePathInCGContext ( inShape, inContext ));
 		}
 
 	inline void HIShapeSetQDClip ( HIShapeRef inShape, CGrafPtr inPort ) {
-     	OnlyOnce<RegisterHIShapeErrors>();
+     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
 		ThrowOSStatus ( ::HIShapeSetQDClip ( inShape, inPort ));
 		}
 
@@ -95,33 +103,33 @@ namespace Nitrogen {
 /*======================================================================================*/
 
 	class HIShapeCreateMutable_Failed {};
-	Owned<HIMutableShapeRef> HIShapeCreateMutable ( void );
+	Nucleus::Owned<HIMutableShapeRef> HIShapeCreateMutable ( void );
 
 	class HIShapeCreateMutableCopy_Failed {};
-	Owned<HIMutableShapeRef> HIShapeCreateMutableCopy ( HIShapeRef inOrig );
+	Nucleus::Owned<HIMutableShapeRef> HIShapeCreateMutableCopy ( HIShapeRef inOrig );
 
 	inline void HIShapeSetEmpty ( HIMutableShapeRef inShape ) {
-     	OnlyOnce<RegisterHIShapeErrors>();
+     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
 		ThrowOSStatus ( ::HIShapeSetEmpty ( inShape ));
 		}
 	
 	inline void HIShapeIntersect ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
-     	OnlyOnce<RegisterHIShapeErrors>();
+     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
 		ThrowOSStatus ( ::HIShapeIntersect ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeDifference ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
-     	OnlyOnce<RegisterHIShapeErrors>();
+     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
 		ThrowOSStatus ( ::HIShapeDifference ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeUnion ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
-     	OnlyOnce<RegisterHIShapeErrors>();
+     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
 		ThrowOSStatus ( ::HIShapeUnion ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeOffset ( HIMutableShapeRef inShape, float inDX, float inDY ) {
-     	OnlyOnce<RegisterHIShapeErrors>();
+     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
 		ThrowOSStatus ( ::HIShapeOffset ( inShape, inDX, inDY ));
 		}
 

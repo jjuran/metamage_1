@@ -11,23 +11,23 @@
 #endif
 
 // Nitrogen Core
-#ifndef NITROGEN_FLAGTYPE_H
-#include "Nitrogen/FlagType.h"
+#ifndef NUCLEUS_FLAGTYPE_H
+#include "Nucleus/FlagType.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_INDEXUNTILFAILURECONTAINER_H
-#include "Nitrogen/IndexUntilFailureContainer.h"
+#ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
+#include "Nucleus/IndexUntilFailureContainer.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
-#ifndef NITROGEN_TRANSFERTRAITS_H
-#include "Nitrogen/TransferTraits.h"
+#ifndef NUCLEUS_TRANSFERTRAITS_H
+#include "Nucleus/TransferTraits.h"
 #endif
 
 // Nitrogen Carbon support
@@ -60,34 +60,39 @@ namespace Nitrogen
 	void RegisterSoundManagerErrors();
 	
 	struct SoundInputDeviceInfoType_Tag  {};
-	typedef SelectorType< SoundInputDeviceInfoType_Tag, ::OSType, 0 > SoundInputDeviceInfoType;
+	typedef Nucleus::SelectorType< SoundInputDeviceInfoType_Tag, ::OSType, 0 > SoundInputDeviceInfoType;
 	
 	typedef SoundInputDeviceInfoType SoundInputDeviceInformationSelector;
 	
 	using ::SPB;
 	
 	struct SoundInputReferenceNumber_Tag {};
-	typedef IDType< SoundInputReferenceNumber_Tag, long, 0 > SoundInputReferenceNumber;
+	typedef Nucleus::IDType< SoundInputReferenceNumber_Tag, long, 0 > SoundInputReferenceNumber;
 	
 	typedef SoundInputReferenceNumber SoundInputRefNum;
 	
 	struct SoundInputPermissions_Tag {};
-	typedef FlagType< SoundInputPermissions_Tag, short, 0 > SoundInputPermissions;
+	typedef Nucleus::FlagType< SoundInputPermissions_Tag, short, 0 > SoundInputPermissions;
 	
-	
+  }
+
+namespace Nucleus
+  {
 	template <>
-	struct Disposer< SoundInputRefNum > : public std::unary_function< SoundInputRefNum, void >,
-	                                      private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::SoundInputRefNum > : public std::unary_function< Nitrogen::SoundInputRefNum, void >,
+                                                    private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( SoundInputRefNum refNum ) const
+		void operator()( Nitrogen::SoundInputRefNum refNum ) const
 		{
-			OnlyOnce< RegisterSoundManagerErrors >();
+			Nucleus::OnlyOnce< Nitrogen::RegisterSoundManagerErrors >();
 			
 			HandleDestructionOSStatus( ::SPBCloseDevice( refNum ) );
 		}
 	};
-	
-	
+  }
+
+namespace Nitrogen
+  {	
 #if PRAGMA_STRUCT_ALIGN
 	#pragma options align=mac68k
 #elif PRAGMA_STRUCT_PACKPUSH
@@ -153,12 +158,12 @@ namespace Nitrogen
 		struct Result
 		{
 			UInt16 count;
-			Owned< T**, Disposer< Handle > > data;
+			Nucleus::Owned< T**, Nucleus::Disposer< Handle > > data;
 			
 			struct Transfer
 			{
 				UInt16 count;
-				OwnershipTransfer< T**, Disposer< Handle > > data;
+				Nucleus::OwnershipTransfer< T**, Nucleus::Disposer< Handle > > data;
 				
 				explicit Transfer( Result* s )
 				:
@@ -193,7 +198,7 @@ namespace Nitrogen
 			
 			Result result;
 			result.count = buffer.count;
-			result.data = Owned< T**, Disposer< Handle > >::Seize( handle );
+			result.data = Nucleus::Owned< T**, Nucleus::Disposer< Handle > >::Seize( handle );
 			return result;
 		}
 	};
@@ -222,15 +227,15 @@ namespace Nitrogen
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siInputSourceNames >
 	{
-		typedef Owned< Handle > Result;
+		typedef Nucleus::Owned< Handle > Result;
 		typedef ::Handle GetBuffer;
 		
-		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Owned< Handle >::Seize( buffer ); }
+		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Nucleus::Owned< Handle >::Seize( buffer ); }
 	};
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siDeviceIcon >
 	{
-		typedef Owned< MaskedIconHandle > Result;
+		typedef Nucleus::Owned< MaskedIconHandle > Result;
 		typedef ::Handle GetBuffer;
 		
 		static Result ProcessGetBuffer( const GetBuffer& buffer )  { return Result::Seize( Handle_Cast< MaskedIcon >( buffer ) ); }
@@ -328,7 +333,7 @@ namespace Nitrogen
 		struct Transfer
 		{
 			Str255                                           deviceName;
-			OwnershipTransfer< Handle, Disposer< Handle > >  deviceIconHandle;
+			Nucleus::OwnershipTransfer< Handle, Nucleus::Disposer< Handle > >  deviceIconHandle;
 			
 			explicit Transfer( SPBGetIndexedDevice_Result* value )
 			:
@@ -338,7 +343,7 @@ namespace Nitrogen
 		};
 		
 		Str255 deviceName;
-		Owned< Handle > deviceIconHandle;
+		Nucleus::Owned< Handle > deviceIconHandle;
 		
 		SPBGetIndexedDevice_Result()  {}
 		
@@ -363,22 +368,27 @@ namespace Nitrogen
 		
 		operator ConstStr255Param() const  { return deviceName; }
 	};
-	
-	template <> struct Transfer_Traits< SPBGetIndexedDevice_Result >
+  }
+
+namespace Nucleus
+  {	
+	template <> struct Transfer_Traits< Nitrogen::SPBGetIndexedDevice_Result >
 	{
 		static const bool mayCopyConstSource = false;
 		
-		typedef SPBGetIndexedDevice_Result Type;
-		
-		typedef SPBGetIndexedDevice_Result::Transfer Transfer;
+		typedef Nitrogen::SPBGetIndexedDevice_Result           Type;
+		typedef Nitrogen::SPBGetIndexedDevice_Result::Transfer Transfer;
 	};
-	
+  }
+
+namespace Nitrogen
+  {	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count );
 	
-	Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
+	Nucleus::Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
 	                                         SoundInputPermissions  permission );
 	
-	void SPBCloseDevice( Owned< SoundInputRefNum > );
+	void SPBCloseDevice( Nucleus::Owned< SoundInputRefNum > );
 	
 	// SPBRecord
 	// old SPBRecordToFile
@@ -434,7 +444,7 @@ namespace Nitrogen
 			static size_type begin_position()   { return 1; }
 			static size_type end_position()     { return 0; }
 			
-			typedef ErrorCode< OSStatus, siBadSoundInDevice > EndOfEnumeration;
+			typedef Nucleus::ErrorCode< OSStatus, siBadSoundInDevice > EndOfEnumeration;
 			
 			value_type GetValue( size_type position )
 			{
@@ -442,13 +452,13 @@ namespace Nitrogen
 			}
 	};
 	
-	class SoundInputDevice_Container: public IndexUntilFailureContainer< SoundInputDevice_ContainerSpecifics >
+	class SoundInputDevice_Container: public Nucleus::IndexUntilFailureContainer< SoundInputDevice_ContainerSpecifics >
 	{
 		friend SoundInputDevice_Container SoundInputDevices();
 		
 		private:
 			SoundInputDevice_Container()
-			: IndexUntilFailureContainer< SoundInputDevice_ContainerSpecifics >( SoundInputDevice_ContainerSpecifics() )
+			: Nucleus::IndexUntilFailureContainer< ::Nitrogen::SoundInputDevice_ContainerSpecifics >( ::Nitrogen::SoundInputDevice_ContainerSpecifics() )
 			{}
 	};
 	

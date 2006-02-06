@@ -6,18 +6,18 @@
 
 namespace Nitrogen
   {
-   Owned<MenuRef> NewMenu( MenuID           menuID,
+   Nucleus::Owned<MenuRef> NewMenu( MenuID           menuID,
                            ConstStr255Param menuTitle )
      {
       MenuRef result = ::NewMenu( menuID, menuTitle );
       if ( result == 0 )
          throw NewMenu_Failed();
-      return Owned<MenuRef>::Seize( result );
+      return Nucleus::Owned<MenuRef>::Seize( result );
      }
    
    MenuFont GetMenuFont( MenuRef menu )
      {
-      OnlyOnce< RegisterMenuManagerErrors >();
+      Nucleus::OnlyOnce< RegisterMenuManagerErrors >();
       MenuFont result;
       SInt16 fontID;
       ThrowOSStatus( ::GetMenuFont( menu, &fontID, &result.fontSize ) );
@@ -27,23 +27,23 @@ namespace Nitrogen
 
    void SetMenuFont( MenuRef menu, FontID inFontID, UInt16 inFontSize )
      {
-      OnlyOnce< RegisterMenuManagerErrors >();
+      Nucleus::OnlyOnce< RegisterMenuManagerErrors >();
       ThrowOSStatus( ::SetMenuFont( menu, inFontID, inFontSize ) );
      }
    
    void SetMenuExcludesMarkColumn( MenuRef menu, bool excludesMark )
      {
-      OnlyOnce< RegisterMenuManagerErrors >();
+      Nucleus::OnlyOnce< RegisterMenuManagerErrors >();
       ThrowOSStatus( ::SetMenuExcludesMarkColumn( menu, excludesMark ) );
      }
 
    
-   Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes )
+   Nucleus::Owned<MenuRef> CreateNewMenu( MenuID inMenuID, MenuAttributes inMenuAttributes )
       {
-       OnlyOnce< RegisterMenuManagerErrors >();
+       Nucleus::OnlyOnce< RegisterMenuManagerErrors >();
        MenuRef result;
        ThrowOSStatus( ::CreateNewMenu( inMenuID, inMenuAttributes, &result ) );
-       return Owned<MenuRef>::Seize ( result );
+       return Nucleus::Owned<MenuRef>::Seize ( result );
       }
    
    MenuItemIndex AppendMenuItemTextWithCFString( MenuRef            inMenu,
@@ -51,7 +51,7 @@ namespace Nitrogen
                                                  MenuItemAttributes inAttributes,
                                                  MenuCommand        inCommandID )
      {
-      OnlyOnce< RegisterMenuManagerErrors >();
+      Nucleus::OnlyOnce< RegisterMenuManagerErrors >();
       MenuItemIndex result;
       ThrowOSStatus ( ::AppendMenuItemTextWithCFString( inMenu, inString, inAttributes, inCommandID, &result ) );
       return result;
@@ -63,14 +63,14 @@ namespace Nitrogen
                                         MenuItemAttributes inAttributes,
                                         MenuCommand        inCommandID )
      {
-      OnlyOnce< RegisterMenuManagerErrors >();
+      Nucleus::OnlyOnce< RegisterMenuManagerErrors >();
       ThrowOSStatus ( ::InsertMenuItemTextWithCFString( inMenu, inString, inAfterItem, inAttributes, inCommandID ) );
      }
 
-	Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID )
+	Nucleus::Owned< MenuID > MacInsertMenu( MenuRef menu, MenuID beforeID )
 	{
 		::MacInsertMenu( menu, beforeID );
-		return Owned< MenuID >::Seize( Nitrogen::GetMenuID( menu ) );
+		return Nucleus::Owned< MenuID >::Seize( Nitrogen::GetMenuID( menu ) );
 	}
 	
 	Str255 GetMenuItemText( MenuRef menu, SInt16 item )
@@ -85,7 +85,7 @@ namespace Nitrogen
                                   MenuItemAttributes setTheseAttributes,
                                   MenuItemAttributes clearTheseAttributes )
      {
-      OnlyOnce< RegisterMenuManagerErrors >();
+      Nucleus::OnlyOnce< RegisterMenuManagerErrors >();
       ThrowOSStatus( ::ChangeMenuItemAttributes( menu, item, setTheseAttributes, clearTheseAttributes ) );
      }
    

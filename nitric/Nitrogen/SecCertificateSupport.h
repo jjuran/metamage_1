@@ -21,35 +21,35 @@
 namespace Nitrogen {
 	void RegisterSecCertificateErrors ();
 	
-	inline Owned<SecIdentityRef> SecChooseIdentity ( CFStringRef displayInfo, CFArrayRef identities ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+	inline Nucleus::Owned<SecIdentityRef> SecChooseIdentity ( CFStringRef displayInfo, CFArrayRef identities ) {
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		SecIdentityRef	result;
 		ThrowOSStatus ( ::SecChooseIdentity ( displayInfo, identities, &result ));
-  	    return Owned<SecIdentityRef>::Seize( result );
+  	    return Nucleus::Owned<SecIdentityRef>::Seize( result );
 		}
 
 	inline void SecChooseIdentityAsSheet ( WindowRef parentWindow, EventTargetRef inTarget, CFStringRef displayInfo, CFArrayRef identities ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecChooseIdentityAsSheet ( parentWindow, inTarget, displayInfo, identities ));
 		}
 	
 	inline void SecDisplayCertificate ( SecCertificateRef certificate, CFArrayRef keychainList ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecDisplayCertificate ( certificate, keychainList ));
 		}
 
 	inline void SecDisplayCertificateGroup ( const CSSM_CERTGROUP *certificates, CFArrayRef keychainList ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecDisplayCertificateGroup ( certificates, keychainList ));
 		}
 
 	inline void SecEditTrust ( CFStringRef displayInfo, SecTrustRef trust ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecEditTrust ( displayInfo, trust ));
 		}
 
 	inline void SecEditTrustAsSheet ( WindowRef parentWindow, EventTargetRef inTarget, CFStringRef displayInfo, SecTrustRef trust ) {
-		OnlyOnce<RegisterSecCertificateErrors>();
+		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
 		ThrowOSStatus ( ::SecEditTrustAsSheet ( parentWindow, inTarget, displayInfo, trust ));
 		}
 
