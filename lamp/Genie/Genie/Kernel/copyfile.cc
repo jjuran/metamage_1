@@ -66,13 +66,4 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( copyfile );
 	
 }
-	
-#pragma export on
-	
-	int copyfile( const char* src, const char* dest )
-	{
-		return Genie::copyfile( src, dest );
-	}
-	
-#pragma export reset
 

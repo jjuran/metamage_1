@@ -128,14 +128,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	int select( int n, fd_set*  readfds,
-	                   fd_set*  writefds,
-	                   fd_set*  exceptfds, struct timeval* timeout )
-	{
-		return Genie::select( n, readfds, writefds, exceptfds, timeout );
-	}
-	
-#pragma export reset
-

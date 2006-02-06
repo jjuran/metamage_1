@@ -125,12 +125,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	pid_t waitpid( pid_t pid, int* stat_loc, int options )
-	{
-		return Genie::waitpid( pid, stat_loc, options );
-	}
-	
-#pragma export reset
-

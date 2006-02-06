@@ -28,12 +28,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	int SpawnVFork()
-	{
-		return Genie::SpawnVFork();
-	}
-	
-#pragma export reset
-

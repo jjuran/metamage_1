@@ -67,32 +67,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	char* getenv( const char* name )
-	{
-		return Genie::getenv( name );
-	}
-	
-	int setenv( const char* name, const char* value, int overwrite )
-	{
-		return Genie::setenv( name, value, overwrite );
-	}
-	
-	int putenv( const char* string )
-	{
-		return Genie::putenv( string );
-	}
-	
-	void unsetenv( const char* name )
-	{
-		return Genie::unsetenv( name );
-	}
-	
-	int clearenv()
-	{
-		return Genie::clearenv();
-	}
-	
-#pragma export reset
-

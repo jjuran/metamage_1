@@ -184,17 +184,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	int open( const char* path, int oflag, mode_t mode )
-	{
-		return Genie::open( path, oflag, mode );
-	}
-	
-	int fcntl( int filedes, int cmd, int param )
-	{
-		return Genie::fcntl( filedes, cmd, param );
-	}
-	
-#pragma export reset
-

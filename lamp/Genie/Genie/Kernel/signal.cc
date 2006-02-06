@@ -50,17 +50,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	int kill( pid_t pid, int sig )
-	{
-		return Genie::kill( pid, sig );
-	}
-	
-	__sig_handler signal( int sig, __sig_handler func )
-	{
-		return Genie::signal( sig, func );
-	}
-	
-#pragma export reset
-

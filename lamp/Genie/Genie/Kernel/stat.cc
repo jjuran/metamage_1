@@ -277,22 +277,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	int lstat( const char* path, struct stat* sb )
-	{
-		return Genie::lstat( path, sb );
-	}
-	
-	int stat( const char* path, struct stat* sb )
-	{
-		return Genie::stat( path, sb );
-	}
-	
-	int fstat( int fd, struct stat* sb )
-	{
-		return Genie::fstat( fd, sb );
-	}
-	
-#pragma export reset
-

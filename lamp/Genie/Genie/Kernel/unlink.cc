@@ -61,12 +61,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	int unlink( const char* pathname )
-	{
-		return Genie::unlink( pathname );
-	}
-	
-#pragma export reset
-

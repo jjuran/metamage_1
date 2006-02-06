@@ -65,12 +65,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	int	rmdir( const char* pathname )
-	{
-		return Genie::rmdir( pathname );
-	}
-	
-#pragma export reset
-

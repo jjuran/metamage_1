@@ -52,12 +52,3 @@ namespace Genie
 	
 }
 
-#pragma export on
-	
-	int	mkdir( const char* pathname, mode_t mode )
-	{
-		return Genie::mkdir( pathname, mode );
-	}
-	
-#pragma export reset
-

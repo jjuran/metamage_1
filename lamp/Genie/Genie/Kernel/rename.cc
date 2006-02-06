@@ -188,13 +188,4 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( rename );
 	
 }
-	
-#pragma export on
-	
-	int rename( const char* src, const char* dest )
-	{
-		return Genie::rename( src, dest );
-	}
-	
-#pragma export reset
 

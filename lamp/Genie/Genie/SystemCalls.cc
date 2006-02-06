@@ -146,6 +146,8 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( EnvironPtr );
 	
+	static int pause();
+	
 	static OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
 		try
@@ -357,6 +359,8 @@ namespace Genie
 	}
 	
 	REGISTER_SYSTEM_CALL( getcwd );
+	
+	static pid_t getpgrp();
 	
 	static pid_t getpgid( pid_t pid )
 	{
@@ -693,152 +697,4 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( write );
 	
 }
-
-#pragma export on
-	
-	#pragma mark -
-	#pragma mark ¥ Exports ¥
-	
-	int* ErrnoPtr()
-	{
-		return Genie::ErrnoPtr();
-	}
-	
-	char*** EnvironPtr()
-	{
-		return Genie::EnvironPtr();
-	}
-	
-	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
-	{
-		return Genie::AESendBlocking( appleEvent, reply );
-	}
-	
-	void PrintPS()
-	{
-		Genie::PrintPS();
-	}
-	
-	OSStatus Path2FSSpec( const char*  pathname,
-	                      FSSpec*      outFSS )
-	{
-		return Genie::Path2FSSpec( pathname, outFSS );
-	}
-	
-	int chdir( const char* path )
-	{
-		return Genie::chdir( path );
-	}
-	
-	int close( int fd )
-	{
-		return Genie::close( fd );
-	}
-	
-	int dup( int oldfd )
-	{
-		return Genie::dup( oldfd );
-	}
-	
-	int dup2( int oldfd, int newfd )
-	{
-		return Genie::dup2( oldfd, newfd );
-	}
-	
-	int execve( const char* path, const char* const argv[], const char* const envp[] )
-	{
-		return Genie::execve( path, argv, envp );
-	}
-	
-	void _exit( int status )
-	{
-		Genie::_exit( status );
-	}
-	
-	char* getcwd( char* buf, std::size_t size )
-	{
-		return Genie::getcwd( buf, size );
-	}
-	
-	pid_t getpgid( pid_t pid )
-	{
-		return Genie::getpgid( pid );
-	}
-	
-	pid_t getpgrp()
-	{
-		return Genie::getpgrp();
-	}
-	
-	pid_t getpid()
-	{
-		return Genie::getpid();
-	}
-	
-	pid_t getppid()
-	{
-		return Genie::getppid();
-	}
-	
-	off_t lseek( int fd, off_t offset, int whence )
-	{
-		return Genie::lseek( fd, offset, whence );
-	}
-	
-	int pause()
-	{
-		return Genie::pause();
-	}
-	
-	int pipe( int filedes[ 2 ] )
-	{
-		return Genie::pipe( filedes );
-	}
-	
-	int peek( int fd, const char** buffer, size_t minBytes )
-	{
-		return Genie::peek( fd, buffer, minBytes );
-	}
-	
-	ssize_t read( int fd, void* buf, size_t count )
-	{
-		return Genie::read( fd, buf, count );
-	}
-	
-	int setctty( int fd )
-	{
-		return Genie::setctty( fd );
-	}
-	
-	int setpgid( pid_t pid, pid_t pgid )
-	{
-		return Genie::setpgid( pid, pgid );
-	}
-	
-	pid_t setsid()
-	{
-		return Genie::setsid();
-	}
-	
-	unsigned int sleep( unsigned int seconds )
-	{
-		return Genie::sleep( seconds );
-	}
-	
-	const char* ttyname( int fd )
-	{
-		return Genie::ttyname( fd );
-	}
-	
-	int ttypair( int filedes[ 2 ] )
-	{
-		return Genie::ttypair( filedes );
-	}
-	
-	ssize_t write( int fd, const void* buf, size_t count )
-	{
-		return Genie::write( fd, buf, count );
-	}
-	
-#pragma export reset
 
