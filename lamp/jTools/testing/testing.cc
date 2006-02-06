@@ -10,6 +10,9 @@
 #include <MacErrors.h>
 #endif
 
+// Standard C
+#include "errno.h"
+
 // Standard C++
 #include <functional>
 #include <vector>
@@ -861,6 +864,22 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	return 0;
 }
 
+static int TestStrError( int argc, char const *const argv[] )
+{
+	errno = 0;
+	
+	for ( int errnum = 0;  errnum < 100;  ++errnum )
+	{
+		const char* str = strerror( errnum );
+		
+		if ( str == NULL || errno != 0 )  break;
+		
+		std::printf( "strerror(%d): %s\n", errnum, str );
+	}
+	
+	return 0;
+}
+
 
 int O::Main(int argc, const char *const argv[])
 {
@@ -954,6 +973,10 @@ int O::Main(int argc, const char *const argv[])
 	else if ( arg1 == "gmf" )
 	{
 		return TestGMFShared( argc, argv );
+	}
+	else if ( arg1 == "strerror" )
+	{
+		return TestStrError( argc, argv );
 	}
 	else
 	{
