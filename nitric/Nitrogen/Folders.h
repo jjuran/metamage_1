@@ -29,6 +29,13 @@ namespace Nitrogen
    inline FSVolumeRefNum UserDomain()          { return FSVolumeRefNum::Make( kUserDomain        ); }    
    inline FSVolumeRefNum ClassicDomain()       { return FSVolumeRefNum::Make( kClassicDomain     ); }    
 
+	FSDirSpec FindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
+	
+	inline FSDirSpec FindFolder( FolderType folderType, bool createFolder )
+	{
+		return FindFolder( OnAppropriateDisk(), folderType, createFolder );
+	}
+	
    FSRef FSFindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
 
    inline FSRef FSFindFolder( FolderType folderType, bool createFolder )

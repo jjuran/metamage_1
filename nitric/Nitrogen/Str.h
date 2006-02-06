@@ -64,24 +64,39 @@ namespace Nitrogen
          return std::string( begin, begin+input[0] ); 
         }
      };
-   
-   template <>
-   struct Converter< std::string, unsigned char * >: public std::unary_function< unsigned char *, std::string >
-     {
-      std::string operator()( unsigned char *input ) const
-        {
-         return Converter< std::string, const unsigned char * >()( input );
-        }
-     };
-   
-   template < unsigned char length >
-   struct Converter< std::string, Str<length> >: public std::unary_function< Str<length>, std::string >
-     {
-      std::string operator()( const Str<length>& input ) const
-        {
-         return Converter< std::string, const unsigned char * >()( input );
-        }
-     };
-  }
-
+	
+	template <>
+	struct ConvertInputTraits< unsigned char* > : ConvertInputTraits< const unsigned char* > {};
+	
+	template < unsigned char length >
+	struct ConvertInputTraits< const unsigned char[length] > : ConvertInputTraits< const unsigned char* > {};
+	
+#ifdef __APPLE_CC__
+	
+	// This must be present for gcc and absent for CodeWarrior.
+	// If you're inclined to discover why this is, by all means be my guest.
+	
+	template < unsigned char length >
+	struct ConvertInputTraits<       unsigned char[length] > : ConvertInputTraits< const unsigned char* > {};
+	
 #endif
+	
+	template < unsigned char length >
+	struct ConvertInputTraits< Str< length > > : ConvertInputTraits< const unsigned char* > {};
+	
+	// Convert StringHandle to std::string
+	template <>
+	struct Converter< std::string, unsigned char ** >: public std::unary_function< unsigned char **, std::string >
+	{
+		std::string operator()( unsigned char **input ) const
+		{
+			// We don't need to lock the handle because we copy it to static memory
+			// before touching the heap, after which point we work from the copy.
+			return Convert< std::string >( Str255( *input ) );
+		}
+	};
+	
+}
+	
+#endif
+

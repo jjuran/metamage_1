@@ -30,6 +30,13 @@
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
+// Needed for SMSystemScript()
+#ifndef NITROGEN_SCRIPT_H
+#include "Nitrogen/Script.h"
+#endif
+#ifndef NITROGEN_TEXTCOMMON_H
+#include "Nitrogen/TextCommon.h"
+#endif
 #ifndef NITROGEN_INDEXUNTILFAILURECONTAINER_H
 #include "Nitrogen/IndexUntilFailureContainer.h"
 #endif
@@ -53,6 +60,8 @@ namespace Nitrogen
      {
       private:
          unsigned long value;
+         
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          
          // Forbidden constructors, unimplemented:
             FSDirID(          bool       );
@@ -124,6 +133,7 @@ namespace Nitrogen
             friend void operator!=( unsigned short    , FSDirID );
             friend void operator!=( unsigned int      , FSDirID );
             friend void operator!=( unsigned long long, FSDirID );
+         #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
 
             unsigned long GetUnsigned() const                  { return value; }
             signed long GetSigned() const                      { return static_cast<signed long>( value ); }
@@ -142,16 +152,22 @@ namespace Nitrogen
          template < class T > T Get() const;
          
          friend bool operator==( FSDirID a, FSDirID b )        { return a.GetUnsigned() == b.GetUnsigned(); }
+         
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          friend bool operator==( FSDirID a, unsigned long b )  { return a.GetUnsigned() == b; }
          friend bool operator==( unsigned long a, FSDirID b )  { return a == b.GetUnsigned(); }
          friend bool operator==( FSDirID a,   signed long b )  { return a.GetSigned() == b; }
          friend bool operator==(   signed long a, FSDirID b )  { return a == b.GetSigned(); }
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
 
          friend bool operator!=( FSDirID a, FSDirID b )        { return a.GetUnsigned() != b.GetUnsigned(); }
+         
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          friend bool operator!=( FSDirID a, unsigned long b )  { return a.GetUnsigned() != b; }
          friend bool operator!=( unsigned long a, FSDirID b )  { return a != b.GetUnsigned(); }
          friend bool operator!=( FSDirID a,   signed long b )  { return a.GetSigned() != b; }
          friend bool operator!=(   signed long a, FSDirID b )  { return a != b.GetSigned(); }
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
      };
 
    template <> inline unsigned long FSDirID::Get<unsigned long>() const  { return GetUnsigned(); }
@@ -170,6 +186,8 @@ namespace Nitrogen
      {
       private:
          unsigned char value;
+         
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          
          // Forbidden constructors, unimplemented:
             FSSharingFlags(          bool      );
@@ -327,7 +345,9 @@ namespace Nitrogen
             void operator^=( unsigned int       );
             void operator^=( unsigned long      );
             void operator^=( unsigned long long );
-
+            
+         #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+            
             UInt8 GetUInt8() const                                               { return UInt8( value ); }
             SInt8 GetSInt8() const                                               { return static_cast<SInt8>( value ); }
 
@@ -363,6 +383,7 @@ namespace Nitrogen
             operator   signed char() const                                  { return static_cast<SInt8>( value ); }
             operator unsigned char() const                                  { return value; }
 
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          // Allowed comparisons:
             friend bool operator==( FSSharingFlags a,   signed char  b )    { return a.GetSInt8() == b; }
             friend bool operator==( FSSharingFlags a,   signed int   b )    { return a.GetUInt8() == b; }
@@ -417,6 +438,7 @@ namespace Nitrogen
             FSSharingFlags& operator^=(   signed char b )     { value ^= b; return *this; }
             FSSharingFlags& operator^=(   signed int  b )     { value ^= b; return *this; }
             FSSharingFlags& operator^=( unsigned char b )     { value ^= b; return *this; }
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
      };
 
    template <> inline UInt8 FSSharingFlags::Get<UInt8>() const  { return GetUInt8(); }
@@ -431,6 +453,8 @@ namespace Nitrogen
      {
       private:
          unsigned char value;
+         
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          
          // Forbidden constructors, unimplemented:
             FSUserPrivileges(          bool      );
@@ -588,6 +612,7 @@ namespace Nitrogen
             void operator^=( unsigned int       );
             void operator^=( unsigned long      );
             void operator^=( unsigned long long );
+         #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
 
             UInt8 GetUInt8() const                                               { return value; }
             SInt8 GetSInt8() const                                               { return static_cast<SInt8>( value ); }
@@ -624,6 +649,7 @@ namespace Nitrogen
             operator   signed char() const                                    { return GetSInt8(); }
             operator unsigned char() const                                    { return GetUInt8(); }
 
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
          // Allowed comparisons:
             friend bool operator==( FSUserPrivileges a,   signed char  b )    { return a.GetSInt8() == b; }
             friend bool operator==( FSUserPrivileges a,   signed int   b )    { return a.GetUInt8() == b; }
@@ -678,6 +704,7 @@ namespace Nitrogen
             FSUserPrivileges& operator^=(   signed char b )     { value ^= b; return *this; }
             FSUserPrivileges& operator^=(   signed int  b )     { value ^= b; return *this; }
             FSUserPrivileges& operator^=( unsigned char b )     { value ^= b; return *this; }
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
      };
 
    template <> inline UInt8 FSUserPrivileges::Get<UInt8>() const  { return GetUInt8(); }
@@ -690,17 +717,20 @@ namespace Nitrogen
    class FSIteratorFlagsTag {};
    typedef FlagType< FSIteratorFlagsTag, ::FSIteratorFlags, 0 > FSIteratorFlags;
    
+	class FSFileRefNum_Tag {};
+	typedef IDType< FSFileRefNum_Tag, SInt16, 0 > FSFileRefNum;
+	
    class FSForkRefNumTag {};
    typedef IDType< FSForkRefNumTag, SInt16, 0 > FSForkRefNum;
     
    class FSIOPermssnTag {};
-   typedef FlagType< FSIOPermssnTag, SInt8, fsCurPerm > FSIOPermssn;
+   typedef FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
    typedef FSIOPermssn FSIOPermissions;
-   
+	
    class FSIOPosModeTag {};
-   typedef SelectorType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
+   typedef FlagType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
    typedef FSIOPosMode FSIOPositioningMode;
-
+	
    class FSAllocationFlagsTag {};
    typedef FlagType< FSAllocationFlagsTag, ::FSAllocationFlags, 0 > FSAllocationFlags;
   
@@ -731,8 +761,7 @@ namespace Nitrogen
 
    class HFSCatalogNodeIDTag {};
    typedef IDType< HFSCatalogNodeIDTag, UInt32, 0 > HFSCatalogNodeID;
-
-
+	
    template <> struct Converter< Owned<CFStringRef>, HFSUniStr255 >: public std::unary_function< HFSUniStr255, Owned<CFStringRef> >
      {
       Owned<CFStringRef> operator()( const HFSUniStr255& in ) const
@@ -775,7 +804,169 @@ namespace Nitrogen
          return result;
         }
      };
-   
+	
+	template <> struct Disposer< FSFileRefNum > : public std::unary_function< FSFileRefNum, void >,
+	                                              private DefaultDestructionOSStatusPolicy
+	{
+		void operator()( FSFileRefNum file ) const
+		{
+			OnlyOnce< RegisterFileManagerErrors >();
+			HandleDestructionOSStatus( ::FSClose( file ) );
+		}
+	};
+	
+	// 2142
+	void FSClose( Owned< FSFileRefNum > fileRefNum );
+	
+	// 2154
+	SInt32 FSRead( FSFileRefNum file,
+	               SInt32       requestCount,
+	               void *       buffer );
+	
+	template < class Element, std::size_t count >
+	SInt32 FSRead( FSFileRefNum file,
+	               Element      (&buffer)[count] )
+	{
+		return FSRead( file, count * sizeof (Element), buffer );
+	}
+	
+	// 2169
+	SInt32 FSWrite( FSFileRefNum file,
+	                SInt32       requestCount,
+	                const void * buffer );
+	
+	template < class Element, std::size_t count >
+	SInt32 FSWrite( FSFileRefNum  file,
+	                const Element (&buffer)[count] )
+	{
+		return FSWrite( file, count * sizeof (Element), buffer );
+	}
+	
+	// 2335
+	SInt32 Allocate( FSFileRefNum      fileRefNum,
+	                 SInt32            requestCount );
+	
+	// 2349
+	SInt32 GetEOF( FSFileRefNum fileRefNum );
+	
+	// 2363
+	void SetEOF( FSFileRefNum fileRefNum,
+	             SInt32       positionOffset );
+	
+	// 2377
+	SInt32 GetFPos( FSFileRefNum fileRefNum );
+	
+	// 2391
+	void SetFPos( FSFileRefNum fileRefNum,
+	              FSIOPosMode  positionMode,
+	              SInt32       positionOffset );
+	
+	struct FSDirSpec
+	{
+		FSVolumeRefNum vRefNum;
+		FSDirID dirID;
+	};
+	
+	template <>
+	struct Maker< FSDirSpec >
+	{
+		FSDirSpec operator()( FSVolumeRefNum vRefNum, FSDirID dirID ) const
+		{
+			FSDirSpec result;
+			result.vRefNum = vRefNum;
+			result.dirID = dirID;
+			return result;
+		}
+	};
+	
+	// 2872
+	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock );
+	
+	CInfoPBRec& FSpGetCatInfo( const FSSpec&   item, CInfoPBRec& paramBlock );
+	
+	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       paramBlock,
+	                           StringPtr         name        = NULL );
+	
+	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
+	                           UInt16            index,
+	                           CInfoPBRec&       paramBlock,
+	                           StringPtr         name        = NULL );
+	
+	// 3690
+	void PBHGetVolParmsSync( HParamBlockRec& paramBlock );
+	GetVolParmsInfoBuffer PBHGetVolParmsSync( FSVolumeRefNum vRefNum );
+	
+	// 4167
+	void PBDTGetPath( DTPBRec& pb );
+	
+	// 4279
+	void PBDTGetAPPLSync( DTPBRec& pb );
+	
+	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum );
+	
+	// 4617
+	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name );
+	
+	inline FSSpec FSMakeFSSpec( const FSDirSpec& dir, ConstStr255Param name )
+	{
+		return FSMakeFSSpec( dir.vRefNum, dir.dirID, name );
+	}
+	
+	template <> struct Converter< FSSpec, FSDirSpec >: public std::unary_function< FSDirSpec, FSSpec >
+	{
+		FSSpec operator()( const FSDirSpec& dir ) const
+		{
+			return FSMakeFSSpec( dir, NULL );
+		}
+	};
+	
+	template <> struct Converter< FSDirSpec, FSSpec >: public std::unary_function< FSSpec, FSDirSpec >
+	{
+		FSDirSpec operator()( const FSSpec& dir ) const;
+	};
+	
+	FSSpec FSMakeFSSpec( ConstStr255Param pathname );
+	
+	// 4633
+	Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
+	                                 FSIOPermssn     permissions );
+	
+	// 4648
+	Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
+	                                 FSIOPermssn     permissions );
+	
+	// 4663
+	FSSpec FSpCreate( const FSSpec&  file, 
+	                  OSType         creator, 
+	                  OSType         type, 
+	                  ScriptCode     scriptTag = SMSystemScript() );
+	
+	// 4679
+	FSDirSpec FSpDirCreate( const FSSpec&  dir, 
+	                        ScriptCode     scriptTag = SMSystemScript() );
+	
+	// 4694
+	void FSpDelete( const FSSpec& item );
+	
+	// 4706
+	FInfo FSpGetFInfo( const FSSpec& file );
+	
+	// 4772
+	// dest is the directory to move source *into*, not the actual new location of source.
+	void FSpCatMove( const FSSpec& source, const FSSpec& dest );
+	
+	inline void FSpCatMove( const FSSpec& source, FSDirSpec dest )
+	{
+		FSpCatMove( source, Convert< FSSpec >( dest ) );
+	}
+	
+	inline void FSpCatMove( const FSSpec& source, FSDirID dest )
+	{
+		FSpCatMove( source, Make< FSDirSpec >( FSVolumeRefNum( source.vRefNum ), dest ) );
+	}
+	
+   // 5414
    FSRef FSpMakeFSRef( const FSSpec& );
 
    template <> struct Converter< FSRef, FSSpec >: public std::unary_function< FSSpec, FSRef >
@@ -839,12 +1030,14 @@ namespace Nitrogen
    template <> struct OwnedDefaults< FSRefSpecDirID >  { typedef FileSystemDisposer Disposer; };
    
    template <> struct LivelinessTraits< FSRef,          FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
+   template <> struct LivelinessTraits< FSSpec,         FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
    template <> struct LivelinessTraits< FSRefSpec,      FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
    template <> struct LivelinessTraits< FSRefSpecDirID, FileSystemDisposer >   { typedef SeizedValuesAreLive LivelinessTest; };
 
 
    typedef Owned<FSRefSpec> FSCreateFileUnicode_Result;
    
+   // 5588
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
                                                    UniCharCount         nameLength,
                                                    const UniChar *      name,
@@ -963,6 +1156,7 @@ namespace Nitrogen
       UInt32 permissions[4];
      };
    
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template < class DesiredType, class MemberType, MemberType FSCatalogInfo::*member >
    struct Basic_FSCatalogInfoBit_Traits
      {
@@ -1040,6 +1234,7 @@ namespace Nitrogen
    template <> struct FSCatalogInfoBit_Traits< kFSCatInfoPermissions  > : Array_FSCatalogInfoBit_Traits< Permissions,   ::UInt32, 4, &FSCatalogInfo::permissions,   &Permissions::permissions     > {};
    template <> struct FSCatalogInfoBit_Traits< kFSCatInfoFinderInfo   > : Array_FSCatalogInfoBit_Traits< FinderInfo,    ::UInt8, 16, &FSCatalogInfo::finderInfo,    &FinderInfo::finderInfo       > {};
    template <> struct FSCatalogInfoBit_Traits< kFSCatInfoFinderXInfo  > : Array_FSCatalogInfoBit_Traits< ExtFinderInfo, ::UInt8, 16, &FSCatalogInfo::extFinderInfo, &ExtFinderInfo::extFinderInfo > {};
+#endif
 
    void FSGetCatalogInfo( const FSRef&        ref,
                           FSCatalogInfoBitmap whichInfo,
@@ -1050,6 +1245,7 @@ namespace Nitrogen
    
    FSGetCatalogInfo_Result FSGetCatalogInfo( const FSRef& ref, FSCatalogInfoBitmap whichInfo );
    
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSCatalogInfoBitmap bit >
    struct FSGetCatalogInfo_Traits
      {
@@ -1063,6 +1259,7 @@ namespace Nitrogen
       FSGetCatalogInfo( ref, bit, &info, 0, 0, 0 );
       return FSCatalogInfoBit_Traits<bit>::Get( info );
      }
+#endif
 
    void FSSetCatalogInfo( const FSRef&         ref,
                           FSCatalogInfoBitmap  whichInfo,
@@ -1080,6 +1277,7 @@ namespace Nitrogen
      };
 
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSCatalogInfoBitmap bit >
    struct FSSetCatalogInfo_Traits
      {
@@ -1093,6 +1291,7 @@ namespace Nitrogen
       FSCatalogInfoBit_Traits<bit>::Set( info, value );
       FSSetCatalogInfo( ref, bit, info );
      }
+#endif
 
    template <> struct Disposer<FSIterator>: public std::unary_function< FSIterator, void >,
                                             private DefaultDestructionOSStatusPolicy
@@ -1100,7 +1299,7 @@ namespace Nitrogen
       void operator()( FSIterator iterator ) const
         {
          OnlyOnce<RegisterFileManagerErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
+         HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
         }
      };
 
@@ -1303,9 +1502,9 @@ namespace Nitrogen
       void operator()( const FSForkRef& fork ) const
         {
          OnlyOnce<RegisterFileManagerErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
-                                                                                      fork.Name().size(),
-                                                                                      fork.Name().data() ) );
+         HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
+                                                    fork.Name().size(),
+                                                    fork.Name().data() ) );
         }
      };
 
@@ -1334,7 +1533,7 @@ namespace Nitrogen
       void operator()( FSForkRefNum fork ) const
         {
          OnlyOnce<RegisterFileManagerErrors>();
-         DefaultDestructionOSStatusPolicy::HandleDestructionOSStatus( ::FSCloseFork( fork ) );
+         HandleDestructionOSStatus( ::FSCloseFork( fork ) );
         }
      };
    
@@ -1360,7 +1559,7 @@ namespace Nitrogen
                                 ByteCount    requestCount,
                                 void *       buffer )
      {
-      return FSReadFork( fork, fsAtMark, 0, requestCount, buffer );
+      return FSReadFork( fork, FSIOPosMode::Make( fsAtMark ), 0, requestCount, buffer );
      }
 
    template < class Element, std::size_t count >
@@ -1389,7 +1588,7 @@ namespace Nitrogen
                                  ByteCount    requestCount,
                                  const void * buffer )
      {
-      return FSWriteFork( fork, fsAtMark, 0, requestCount, buffer );
+      return FSWriteFork( fork, FSIOPosMode::Make( fsAtMark ), 0, requestCount, buffer );
      }
 
    template < class Element, std::size_t count >
@@ -1446,6 +1645,7 @@ namespace Nitrogen
    FSGetForkCBInfo_Result FSGetForkCBInfo( FSForkIterator& iterator );
 
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template < class DesiredType, class MemberType, MemberType FSVolumeInfo::*member >
    struct Basic_FSVolumeInfoBit_Traits
      {
@@ -1474,6 +1674,7 @@ namespace Nitrogen
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoDataClump   > : Const_FSVolumeInfoBit_Traits< UInt32,            ::UInt32,        &FSVolumeInfo::dataClumpSize  > {};
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoNextID      > : Const_FSVolumeInfoBit_Traits< HFSCatalogNodeID,  ::UInt32,        &FSVolumeInfo::nextCatalogID  > {};
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFlags       > : Basic_FSVolumeInfoBit_Traits< FSVolumeInfoFlags, ::UInt16,        &FSVolumeInfo::flags          > {};
+#endif
 
    struct FSVolumeInfoSizes
      {
@@ -1481,6 +1682,7 @@ namespace Nitrogen
       UInt64 freeBytes;
      };
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoSizes >
      {
       typedef FSVolumeInfoSizes Type;
@@ -1493,6 +1695,7 @@ namespace Nitrogen
          return result;
         }
      };
+#endif
 
    struct FSVolumeInfoBlocks
      {
@@ -1501,6 +1704,7 @@ namespace Nitrogen
       UInt32 freeBlocks;
      };
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoBlocks >
      {
       typedef FSVolumeInfoBlocks Type;
@@ -1514,12 +1718,14 @@ namespace Nitrogen
          return result;
         }
      };
+#endif
    
    struct FSVolumeInfoFinderInfo
      {
       UInt8 finderInfo[32];
      };
    
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFinderInfo >
      {
       typedef FSVolumeInfoFinderInfo Type;
@@ -1536,6 +1742,7 @@ namespace Nitrogen
          ArrayAssign( info.finderInfo, value.finderInfo );
         }      
      };
+#endif
    
    struct FSVolumeInfoFSInfo
      {
@@ -1543,6 +1750,7 @@ namespace Nitrogen
       UInt16 signature;
      };
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFSInfo >
      {
       typedef FSVolumeInfoFSInfo Type;
@@ -1550,11 +1758,12 @@ namespace Nitrogen
       static Type Get( const FSVolumeInfo& info )
         {
          FSVolumeInfoFSInfo result;
-         result.filesystemID = info.filesystemID;
+         result.filesystemID = FSFileSystemID( info.filesystemID );
          result.signature = info.signature;
          return result;
         }
      };
+#endif
    
    struct FSVolumeInfoDriveInfo
      {
@@ -1562,6 +1771,7 @@ namespace Nitrogen
       DriverReferenceNumber driverRefNum;
      };
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template <> struct FSVolumeInfoBit_Traits< kFSVolInfoDriveInfo >
      {
       typedef FSVolumeInfoDriveInfo Type;
@@ -1570,10 +1780,11 @@ namespace Nitrogen
         {
          FSVolumeInfoDriveInfo result;
          result.driveNumber = info.driveNumber;
-         result.driverRefNum = info.driverRefNum;
+         result.driverRefNum = DriverReferenceNumber( info.driverRefNum );
          return result;
         }
      };
+#endif
 
 
    struct FSGetVolumeInfo_Result
@@ -1612,6 +1823,7 @@ namespace Nitrogen
    FSGetVolumeInfo_Result FSGetVolumeInfo( FSVolumeIndex volumeIndex,
                                            FSVolumeInfoBitmap whichInfo);
 
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSVolumeInfoBitmap bit >
    struct FSGetVolumeInfo_Traits
      {
@@ -1633,6 +1845,7 @@ namespace Nitrogen
       FSGetVolumeInfo( volume, 0, bit, &info, 0, 0 );
       return FSVolumeInfoBit_Traits<bit>::Get( info );
      }
+#endif
      
    FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex );
    
@@ -1791,6 +2004,7 @@ namespace Nitrogen
                          FSVolumeInfoBitmap  whichInfo,
                          const FSVolumeInfo& volumeInfo );
    
+#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
    template< ::FSVolumeInfoBitmap bit >
    struct FSSetVolumeInfo_Traits
      {
@@ -1804,6 +2018,7 @@ namespace Nitrogen
       FSVolumeInfoBit_Traits<bit>::Set( info, value );
       FSSetVolumeInfo( volume, bit, info );
      }
+#endif
    
    
    HFSUniStr255 FSGetDataForkName();

@@ -9,6 +9,9 @@
 
 namespace Nitrogen
   {
+
+#ifndef JOSHUA_JURAN_EXPERIMENTAL
+
    template < class UnderlyingType,
               class T,
               bool promotable = EnumerationIsPromotable< UnderlyingType, T >::promotable >
@@ -136,12 +139,16 @@ namespace Nitrogen
       typedef bool BitwiseAllowed;
      };
 
+#endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+
    template < class Tag, class UnderlyingType, UnderlyingType defaultValue = 0 >
    class FlagType
      {
       private:
          UnderlyingType value;
-
+         
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
+         
          template < class T > struct Blacklist :FlagTypeBlacklist< UnderlyingType, T > {};
          
          // Forbidden constructors, unimplemented:
@@ -345,16 +352,27 @@ namespace Nitrogen
             void operator^=( typename Blacklist< unsigned int       >::BitwiseForbidden );
             void operator^=( typename Blacklist< unsigned long      >::BitwiseForbidden );
             void operator^=( typename Blacklist< unsigned long long >::BitwiseForbidden );
-
+      
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+      
       public:
          FlagType()                                            : value( defaultValue )    {}
-
+      
+      #ifdef JOSHUA_JURAN_EXPERIMENTAL
+         
+         FlagType( UnderlyingType theValue )                   : value( theValue )        {}
+         operator UnderlyingType() const                       { return value; }
+         
+      #endif  // #ifdef JOSHUA_JURAN_EXPERIMENTAL
+      
          static FlagType Make( UnderlyingType v )              { return FlagType( v ); }
          UnderlyingType Get() const                            { return value; }
          
          bool operator!() const                                { return !value; }
-         FlagType operator~() const                            { return static_cast<UnderlyingType>( ~value ); }
+         FlagType operator~() const                            { return FlagType( ~value ); }
          
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
+      
          friend bool operator==( FlagType a, FlagType b )      { return a.Get() == b.Get(); }
          friend bool operator!=( FlagType a, FlagType b )      { return a.Get() != b.Get(); }
 
@@ -362,9 +380,13 @@ namespace Nitrogen
          friend FlagType operator&( FlagType a, FlagType b )   { return static_cast<UnderlyingType>( a.Get() & b.Get() ); }
          friend FlagType operator^( FlagType a, FlagType b )   { return static_cast<UnderlyingType>( a.Get() ^ b.Get() ); }
 
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+      
          FlagType& operator|=( FlagType b )                    { value |= b.Get(); return *this; }
          FlagType& operator&=( FlagType b )                    { value &= b.Get(); return *this; }
          FlagType& operator^=( FlagType b )                    { value ^= b.Get(); return *this; }
+      
+      #ifndef JOSHUA_JURAN_EXPERIMENTAL
       
          // Allowed converting constructors:
             FlagType( typename Blacklist<          bool      >::ConstructionAllowed v ) : value( static_cast<UnderlyingType>( v ) )  {}
@@ -565,6 +587,9 @@ namespace Nitrogen
             FlagType& operator^=( typename Blacklist< unsigned int       >::BitwiseAllowed b )     { value ^= b; return *this; }
             FlagType& operator^=( typename Blacklist< unsigned long      >::BitwiseAllowed b )     { value ^= b; return *this; }
             FlagType& operator^=( typename Blacklist< unsigned long long >::BitwiseAllowed b )     { value ^= b; return *this; }
+         
+      #endif  // #ifndef JOSHUA_JURAN_EXPERIMENTAL
+         
      };
   }
 

@@ -3,17 +3,355 @@
 #ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"
 #endif
+
 #ifndef NITROGEN_ONLYONCE_H
 #include "Nitrogen/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
+#ifndef NITROGEN_INITIALIZE_H
+#include "Nitrogen/Initialize.h"
+#endif
 
 #include <limits>
 
 namespace Nitrogen
   {
+	
+	void FSClose( Owned< FSFileRefNum > fileRefNum )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSClose( fileRefNum.Release() ) );
+	}
+	
+	SInt32 FSRead( FSFileRefNum file,
+	               SInt32       requestCount,
+	               void *       buffer )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 actualCount = requestCount;
+		
+		OSStatus err = ::FSRead( file,
+	                             &actualCount,
+	                             buffer );
+		
+		if ( err == eofErr  &&  actualCount > 0 )
+		{
+			err = noErr;
+		}
+		
+		ThrowOSStatus( err );
+		
+		return actualCount;
+	}
+	
+	SInt32 FSWrite( FSFileRefNum file,
+	                SInt32       requestCount,
+	                const void * buffer )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 actualCount = requestCount;
+		ThrowOSStatus( ::FSWrite( file,
+	                             &actualCount,
+	                             buffer ) );
+		return actualCount;
+	}
+	
+	SInt32 Allocate( FSFileRefNum      fileRefNum,
+	                 SInt32            requestCount )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 actualCount = requestCount;
+		ThrowOSStatus( ::Allocate( fileRefNum,
+	                              &actualCount ) );
+		return actualCount;
+	}
+	
+	SInt32 GetEOF( FSFileRefNum fileRefNum )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 position;
+		ThrowOSStatus( ::GetEOF( fileRefNum, &position ) );
+		return position;
+	}
+	
+	void SetEOF( FSFileRefNum fileRefNum,
+	             SInt32       positionOffset )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::SetEOF( fileRefNum, positionOffset ) );
+	}
+	
+	SInt32 GetFPos( FSFileRefNum fileRefNum )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 position;
+		ThrowOSStatus( ::GetFPos( fileRefNum, &position ) );
+		return position;
+	}
+	
+	void SetFPos( FSFileRefNum  fileRefNum,
+	              FSIOPosMode   positionMode,
+	              SInt32        positionOffset )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::SetFPos( fileRefNum, positionMode.Get(), positionOffset ) );
+	}
+	
+	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBGetCatInfoSync( &paramBlock ) );
+		
+		return paramBlock;
+	}
+	
+	template <>
+	struct Initializer< CInfoPBRec >
+	{
+		CInfoPBRec& operator()( CInfoPBRec&     paramBlock,
+		                        FSVolumeRefNum  vRefNum,
+		                        FSDirID         dirID,
+		                        StringPtr       name,
+		                        SInt16          index )
+		{
+			DirInfo& dirInfo = paramBlock.dirInfo;
+			
+			dirInfo.ioNamePtr = name;
+			dirInfo.ioVRefNum = vRefNum;
+			dirInfo.ioDrDirID = dirID;
+			dirInfo.ioFDirIndex = index;
+			
+			return paramBlock;
+		}
+	};
+	
+	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock )
+	{
+		// There is/was a file sharing problem with null or empty names,
+		// but an FSSpec's name is never empty (and can't be null).
+		
+		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
+		
+		PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		                                            item.vRefNum,
+		                                            item.parID,
+		                                            const_cast< StringPtr >( item.name ),
+		                                            0 ) );
+		
+		// Don't break the const contract on item.name
+		paramBlock.dirInfo.ioNamePtr = NULL;
+		
+		return paramBlock;
+	}
+	
+	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       paramBlock,
+	                           StringPtr         name )
+	{
+		// ioFDirIndex < 0:  use ioDrDirID only
+		
+		return PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		                                                   dir.vRefNum,
+		                                                   dir.dirID,
+		                                                   name,  // Output only
+		                                                   -1 ) );
+		
+	}
+	
+	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
+	                           UInt16            index,
+	                           CInfoPBRec&       paramBlock,
+	                           StringPtr         name )
+	{
+		// ioFDirIndex > 0:  use ioDrDirID only
+		
+		// Assert index != 0
+		
+		return PBGetCatInfoSync( Initialize< CInfoPBRec >( paramBlock,
+		                                                   dir.vRefNum,
+		                                                   dir.dirID,
+		                                                   name,  // Output only
+		                                                   index ) );
+		
+	}
+	
+	inline bool TestIsDirectory( const CInfoPBRec& paramBlock )
+	{
+		return paramBlock.hFileInfo.ioFlAttrib & char( kioFlAttribDirMask );
+	}
+	
+	FSDirSpec Converter< FSDirSpec, FSSpec >::operator()( const FSSpec& dir ) const
+	{
+		CInfoPBRec pb;
+		FSpGetCatInfo( dir, pb );
+		
+		if ( !TestIsDirectory( pb ) )
+		{
+			// I wanted a dir but you gave me a file.  You creep.
+			throw ErrFSNotAFolder();
+		}
+		
+		FSDirID dirID = FSDirID( pb.dirInfo.ioDrDirID );
+		
+		return Make< FSDirSpec >( dir.vRefNum, dirID );
+	}
+	
+	void PBHGetVolParmsSync( HParamBlockRec& paramBlock )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBHGetVolParmsSync( &paramBlock ) );
+	}
+	
+	GetVolParmsInfoBuffer PBHGetVolParmsSync( FSVolumeRefNum vRefNum )
+	{
+		HParamBlockRec pb;
+		GetVolParmsInfoBuffer info;
+		
+		pb.ioParam.ioNamePtr  = NULL;
+		pb.ioParam.ioVRefNum  = vRefNum;
+		pb.ioParam.ioBuffer   = reinterpret_cast< ::Ptr >( &info );
+		pb.ioParam.ioReqCount = sizeof info;
+		
+		PBHGetVolParmsSync( pb );
+		
+		return info;
+	}
+	
+	void PBDTGetPath( DTPBRec& pb )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBDTGetPath( &pb ) );
+	}
+	
+	void PBDTGetAPPLSync( DTPBRec& pb )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		try
+		{
+			ThrowOSStatus( ::PBDTGetAPPLSync( &pb ) );
+		}
+		catch ( FNFErr )
+		{
+			// PBDTGetAPPLSync() is documented as returning afpItemNotFound, but not fnfErr.
+			// We compensate for the bug here.
+			// If this is actually a documentation bug, then this block should be removed
+			// (although the comments should be left for posterity).
+			throw AFPItemNotFound();
+		}
+	}
+	
+	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum )
+	{
+		DTPBRec pb;
+		
+		pb.ioVRefNum = vRefNum;
+		pb.ioNamePtr = NULL;
+		
+		PBDTGetPath( pb );
+		
+		Str255 name;  // Stack space is free
+		pb.ioIndex       = 0;
+		pb.ioFileCreator = signature;
+		pb.ioNamePtr     = name;
+		
+		PBDTGetAPPLSync( pb );
+		
+		return FSMakeFSSpec( vRefNum, FSDirID( pb.ioAPPLParID ), name );
+	}
+	
+	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name)
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		FSSpec result;
+		
+		ThrowOSStatus( ::FSMakeFSSpec( vRefNum, dirID, name, &result ) );
+		
+		return result;
+	}
+	
+	// The cheap and easy way to do it.  This will throw if the pathname exceeds 255 characters.
+	// It might be nice to have a backup method for when this one fails.
+	FSSpec FSMakeFSSpec( ConstStr255Param pathname )
+	{
+		return FSMakeFSSpec( FSVolumeRefNum(), FSDirID(), pathname );
+	}
+	
+	Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
+	                                 FSIOPermssn     permissions )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt16 result;
+		ThrowOSStatus( ::FSpOpenDF( &spec, permissions, &result ) );
+		return Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
+	}
+	
+	Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
+	                                 FSIOPermssn     permissions )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt16 result;
+		ThrowOSStatus( ::FSpOpenRF( &spec, permissions, &result ) );
+		return Owned< FSFileRefNum >::Seize( FSFileRefNum( result ) );
+	}
+	
+	FSSpec FSpCreate( const FSSpec& file, OSType creator, OSType type, ScriptCode scriptTag )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpCreate( &file, creator, type, scriptTag ) );
+		return file;
+	}
+	
+	FSDirSpec FSpDirCreate( const FSSpec& dir, ScriptCode scriptTag )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		SInt32 newDirID;
+		ThrowOSStatus( ::FSpDirCreate( &dir, scriptTag, &newDirID ) );
+		
+		return Make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), FSDirID( newDirID ) );
+	}
+	
+	void FSpDelete( const FSSpec& item )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpDelete( &item ) );
+	}
+	
+	FInfo FSpGetFInfo( const FSSpec& file )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		FInfo info;
+		ThrowOSStatus( ::FSpGetFInfo( &file, &info ) );
+		return info;
+	}
+	
+	void FSpCatMove( const FSSpec& source, const FSSpec& dest )
+	{
+		OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpCatMove( &source, &dest ) );
+	}
+	
    FSRef FSpMakeFSRef( const FSSpec& spec )
      {
       OnlyOnce<RegisterFileManagerErrors>();
@@ -134,7 +472,7 @@ namespace Nitrogen
                                                  &result.fsRef,
                                                  &result.fsSpec,
                                                  &dirID ) );
-      result.dirID = dirID;
+      result.dirID = FSDirID( dirID );
       return Owned<FSRefSpecDirID>::Seize( result );
      }
 
@@ -153,7 +491,7 @@ namespace Nitrogen
                                                  &result.fsRef,
                                                  &result.fsSpec,
                                                  &dirID ) );
-      result.dirID = dirID;
+      result.dirID = FSDirID( dirID );
       return Owned<FSRefSpecDirID>::Seize( result );
      }
 
@@ -464,7 +802,7 @@ namespace Nitrogen
       OnlyOnce<RegisterFileManagerErrors>();
       SInt16 result;
       ThrowOSStatus( ::FSOpenFork( &ref, forkNameLength, forkName, permissions, &result ) );
-      return Owned<FSForkRefNum>::Seize( result );
+      return Owned<FSForkRefNum>::Seize( FSForkRefNum( result ) );
      }
 
    Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
@@ -587,7 +925,7 @@ namespace Nitrogen
                                         &result.forkInfo,
                                         &result.ref,
                                         &result.outForkName ) );
-      result.actualRefNum = actualRefNum;
+      result.actualRefNum = FSForkRefNum( actualRefNum );
       return result;
      }
 
@@ -605,8 +943,8 @@ namespace Nitrogen
                                         &result.forkInfo,
                                         &result.ref,
                                         &result.outForkName ) );
-      result.actualRefNum = actualRefNum;
-      iterator = realIterator;
+      result.actualRefNum = FSForkRefNum( actualRefNum );
+      iterator = FSForkIterator( realIterator );
       return result;
      }
 
@@ -633,7 +971,7 @@ namespace Nitrogen
                                         volumeName,
                                         rootDirectory ) );
       if ( resultVolume != 0 )
-         *resultVolume = actualVolume;
+         *resultVolume = FSVolumeRefNum( actualVolume );
      }
 
    void FSGetVolumeInfo( FSVolumeRefNum     volume,
@@ -693,18 +1031,45 @@ namespace Nitrogen
                        &result.rootDirectory );
       return result;
      }
-
-   FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
-     {
-      FSVolumeRefNum result;
-      FSGetVolumeInfo( volumeIndex,
-                       &result,
-                       kFSVolInfoNone,
-                       0,
-                       0,
-                       0 );
-      return result;
-     }
+	
+	
+	static void PBHGetVInfoSync( HParamBlockRec& pb )
+	{
+		ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
+	}
+	
+	FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
+	{
+	#if TARGET_CPU_PPC
+		
+		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC  &&  ::FSGetVolumeInfo != NULL )
+		{
+			FSVolumeRefNum result;
+			FSGetVolumeInfo( volumeIndex,
+			                 &result,
+			                 kFSVolInfoNone,
+			                 0,
+			                 0,
+			                 0 );
+			return result;
+		}
+		else
+		
+	#endif
+		{
+			OnlyOnce< RegisterFileManagerErrors >();
+			
+			HParamBlockRec pb;
+			
+			pb.volumeParam.ioNamePtr = NULL;
+			pb.volumeParam.ioVRefNum = 0;
+			pb.volumeParam.ioVolIndex = volumeIndex;
+			
+			PBHGetVInfoSync( pb );
+			
+			return FSVolumeRefNum( pb.volumeParam.ioVRefNum );
+		}
+	}
 
    HFSUniStr255 FSGetVolumeName( FSVolumeRefNum volume )
      {
@@ -792,7 +1157,7 @@ namespace Nitrogen
         {
          try
            {
-            std::string result( '\0', maxPathSize );
+            std::string result( maxPathSize, '\0' );
             FSRefMakePath( ref, reinterpret_cast<UInt8 *>( &result[0] ), result.size() );
             result.erase( std::strlen( result.c_str() ) );
             return result;
@@ -824,7 +1189,7 @@ namespace Nitrogen
    
    FSPathMakeRef_Result FSPathMakeRef( const std::string& path )
      {
-      return FSPathMakeRef( path.c_str() );
+      return FSPathMakeRef( reinterpret_cast< const UInt8* >( path.c_str() ) );
      }
    
    void RegisterFileManagerErrors()

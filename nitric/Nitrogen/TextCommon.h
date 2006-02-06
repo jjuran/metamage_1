@@ -32,6 +32,10 @@ namespace Nitrogen
   {
    void RegisterTextEncodingConversionManagerErrors();
    
+   inline LangCode TextLanguageDontCare()  { return LangCode::Make( kTextLanguageDontCare ); }
+   inline RegionCode TextRegionDontCare()  { return RegionCode::Make( kTextRegionDontCare ); }
+   inline ScriptCode TextScriptDontCare()  { return ScriptCode::Make( kTextScriptDontCare ); }
+   
    class TextEncodingBaseTag {};
    typedef SelectorType< TextEncodingBaseTag, ::TextEncodingBase, kTextEncodingUnknown > TextEncodingBase;
 
@@ -99,27 +103,27 @@ namespace Nitrogen
                                            TextEncodingVariant encodingVariant,
                                            TextEncodingFormat encodingFormat )
      {
-      return ::CreateTextEncoding( encodingBase, encodingVariant, encodingFormat );
+      return TextEncoding( ::CreateTextEncoding( encodingBase, encodingVariant, encodingFormat ) );
      }
    
    inline TextEncodingBase GetTextEncodingBase( TextEncoding encoding )
      {
-      return ::GetTextEncodingBase( encoding );
+      return TextEncodingBase( ::GetTextEncodingBase( encoding ) );
      }
    
    inline TextEncodingVariant GetTextEncodingVariant( TextEncoding encoding )
      {
-      return ::GetTextEncodingVariant( encoding );
+      return TextEncodingVariant( ::GetTextEncodingVariant( encoding ) );
      }
    
    inline TextEncodingFormat GetTextEncodingFormat( TextEncoding encoding )
      {
-      return ::GetTextEncodingFormat( encoding );
+      return TextEncodingFormat( ::GetTextEncodingFormat( encoding ) );
      }
    
    inline TextEncoding ResolveDefaultTextEncoding( TextEncoding encoding )
      {
-      return ::ResolveDefaultTextEncoding( encoding );
+      return TextEncoding( ::ResolveDefaultTextEncoding( encoding ) );
      }
    
    struct GetTextEncodingName_Result
@@ -163,52 +167,52 @@ namespace Nitrogen
    Owned< TECInfoHandle, Disposer<Handle> > TECGetInfo();
 
    TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
-                                                 LangCode         iTextLanguageID = kTextLanguageDontCare,
-                                                 RegionCode       iRegionID       = kTextRegionDontCare,
+                                                 LangCode         iTextLanguageID = TextLanguageDontCare(),
+                                                 RegionCode       iRegionID       = TextRegionDontCare(),
                                                  ConstStr255Param iTextFontname   = 0 );
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                         RegionCode       iRegionID,
                                                         ConstStr255Param iTextFontname = 0 )
      {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, kTextLanguageDontCare, iRegionID, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( iTextScriptID, TextLanguageDontCare(), iRegionID, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                         LangCode         iTextLanguageID,
                                                         ConstStr255Param iTextFontname )
      {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, iTextLanguageID, kTextRegionDontCare, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( iTextScriptID, iTextLanguageID, TextRegionDontCare(), iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                         ConstStr255Param iTextFontname )
      {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, kTextLanguageDontCare, kTextRegionDontCare, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( iTextScriptID, TextLanguageDontCare(), TextRegionDontCare(), iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( LangCode         iTextLanguageID,
-                                                        RegionCode       iRegionID       = kTextRegionDontCare,
+                                                        RegionCode       iRegionID       = TextRegionDontCare(),
                                                         ConstStr255Param iTextFontname   = 0 )
      {
-      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, iTextLanguageID, iRegionID, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( TextScriptDontCare(), iTextLanguageID, iRegionID, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( LangCode         iTextLanguageID,
                                                         ConstStr255Param iTextFontname )
      {
-      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, iTextLanguageID, kTextRegionDontCare, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( TextScriptDontCare(), iTextLanguageID, TextRegionDontCare(), iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( RegionCode       iRegionID,
                                                         ConstStr255Param iTextFontname = 0 )
      {
-      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, kTextLanguageDontCare, iRegionID, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( TextScriptDontCare(), TextLanguageDontCare(), iRegionID, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( ConstStr255Param iTextFontname )
      {
-      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, kTextLanguageDontCare, kTextRegionDontCare, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( TextScriptDontCare(), TextLanguageDontCare(), TextRegionDontCare(), iTextFontname );
      }
 
    struct RevertTextEncodingToScriptInfo_Result

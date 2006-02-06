@@ -6,7 +6,7 @@
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
 #endif
-#ifndef __CGCOLORSPACE__
+#ifndef CGCOLORSPACE_H_
 #include FRAMEWORK_HEADER(CoreGraphics,CGColorSpace.h)
 #endif
 #ifndef NITROGEN_CGBASE_H

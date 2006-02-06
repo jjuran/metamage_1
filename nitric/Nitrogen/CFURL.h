@@ -29,6 +29,8 @@ namespace Nitrogen
 
    template <> struct OwnedDefaults< CFURLRef >: OwnedDefaults< CFTypeRef >  {};
 
+   inline void CFShow( const CFURLRef u )        { ::CFShow( u ); }
+
    class CFURLCreateWithBytes_Failed {};
    Owned<CFURLRef> CFURLCreateWithBytes( CFAllocatorRef     allocator,
                                          const UInt8 *      URLBytes,

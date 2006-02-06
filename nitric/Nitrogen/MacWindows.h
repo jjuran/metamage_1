@@ -55,8 +55,33 @@
 #include "Nitrogen/CFString.h"
 #endif
 
+
+#ifdef kFirstWindowOfClass
+#undef kFirstWindowOfClass
+static const WindowRef kFirstWindowOfClass = reinterpret_cast< WindowRef >( -1 );
+#endif
+
+#ifdef kLastWindowOfClass
+#undef kLastWindowOfClass
+static const WindowRef kLastWindowOfClass  = reinterpret_cast< WindowRef >( 0 );
+#endif
+
 namespace Nitrogen
   {
+   void RegisterWindowManagerErrors();
+	
+	#pragma mark -
+	#pragma mark ¥ Types ¥
+	
+	class WindowDefProcID_Tag {};
+	typedef SelectorType< WindowDefProcID_Tag, ::SInt16, 0 > WindowDefProcID;
+	
+	class WindowKind_Tag {};
+	typedef SelectorType< WindowKind_Tag, ::SInt16, 0 > WindowKind;
+	
+	class WindowPartCode_Tag {};
+	typedef SelectorType< WindowPartCode_Tag, ::WindowPartCode, 0 > WindowPartCode;
+	
    class PropertyCreator_Tag {};
    typedef SelectorType< PropertyCreator_Tag, ::PropertyCreator, '\?\?\?\?' > PropertyCreator;
 
@@ -67,7 +92,7 @@ namespace Nitrogen
    typedef SelectorType< WindowClass_Tag, ::WindowClass, 0 > WindowClass;
 
    class WindowAttributes_Tag {};
-   typedef SelectorType< WindowAttributes_Tag, ::WindowAttributes, kWindowNoAttributes > WindowAttributes;
+   typedef FlagType< WindowAttributes_Tag, ::WindowAttributes, kWindowNoAttributes > WindowAttributes;
 
    class WindowPositionMethod_Tag {};
    typedef SelectorType< WindowPositionMethod_Tag, ::WindowPositionMethod, 0 > WindowPositionMethod;
@@ -81,8 +106,9 @@ namespace Nitrogen
    
    /* ... */
    
-   using ::WindowRef;
-   
+	#pragma mark -
+	#pragma mark ¥ Specializations ¥
+	
    template <> struct Disposer< WindowRef >: public std::unary_function< WindowRef, void >
      {
       void operator()( WindowRef w ) const
@@ -93,11 +119,142 @@ namespace Nitrogen
 
    /* ... */
 
+	#pragma mark -
+	#pragma mark ¥ Routines ¥
+	
+	// 1402
+	Owned< WindowRef > NewWindow( const Rect&       bounds,
+	                              ConstStr255Param  title,
+	                              bool              visible,
+	                              WindowDefProcID   procID,
+	                              WindowRef         behind,
+	                              bool              goAwayFlag,
+	                              RefCon            refCon );
+	
+	// 1437
+	Owned< WindowRef > NewCWindow( const Rect&       bounds,
+	                              ConstStr255Param  title,
+	                              bool              visible,
+	                              WindowDefProcID   procID,
+	                              WindowRef         behind,
+	                              bool              goAwayFlag,
+	                              RefCon            refCon );
+	
+	// 1457
+	inline void DisposeWindow( Owned< WindowRef > )  {}
+	
+	struct FindWindow_Result
+	{
+		operator WindowRef     () const  { return window; }
+		operator WindowPartCode() const  { return part;   }
+		
+		WindowRef      window;
+		WindowPartCode part;
+	};
+	typedef FindWindow_Result MacFindWindow_Result;
+	
+	// 3426
+	FindWindow_Result MacFindWindow( Point point );
+	
+	// 3777
+	void SetWRefCon( WindowRef window, RefCon refCon );
+	
+	// 3791
+	RefCon GetWRefCon( WindowRef window );
+	
+	// 3987
+	void InvalWindowRect( WindowRef window, const Rect& bounds );
+	
+	// 4051
+	void SetWTitle( WindowRef window, ConstStr255Param title );
+	
+	// 4065
+	Str255 GetWTitle( WindowRef window );
+	
+	// 4580
+	void SizeWindow( WindowRef window, short width, short height, bool updateFlag );
+	
+	union GrowWindow_Result
+	{
+		long grew;         // zero if no change
+		Point dimensions;  // otherwise, the new dimensions
+		
+		operator long () const  { return grew;       }
+		operator Point() const  { return dimensions; }
+	};
+	
+	// 4598
+	GrowWindow_Result GrowWindow( WindowRef window, Point startPt, const Rect& bBox );
+	
+#if TARGET_API_MAC_CARBON
+	
+	GrowWindow_Result GrowWindow( WindowRef window, Point startPt );
+	
+#endif
+	
+	// 4614
+	void DragWindow( WindowRef window, Point point, const Rect& dragRect );
+	
+	// 6333
+	WindowKind GetWindowKind( WindowRef window );
+	
+	// 6484
+	void SetWindowKind( WindowRef window, WindowKind windowKind );
+	
+#if OPAQUE_TOOLBOX_STRUCTS
+	
+	// 3443
+	using ::FrontWindow;
+	
+	// 3481
+	using ::SelectWindow;
+	
+	// 4036
+	using ::DrawGrowIcon;
+	
+	// 5978
+	using ::TrackGoAway;
+	
+	// 6301
+	using ::GetWindowPort;
+	
+	// 6551
+	using ::SetPortWindowPort;
+	
+	// 6598
+	using ::GetWindowFromPort;
+	
+#else
+	
+	inline WindowRef FrontWindow()                            { return ::FrontWindow();                }
+	
+	inline void SelectWindow( WindowRef window )              { ::SelectWindow( window );              }
+	
+	inline void DrawGrowIcon( WindowRef window )              { ::DrawGrowIcon( window );              }
+	
+	inline bool TrackGoAway( WindowRef window, Point point )  { return ::TrackGoAway( window, point ); }
+	
+	inline GrafPtr GetWindowPort( WindowRef window )          { return GrafPtr( window.Get() );        }
+	
+	inline void SetPortWindowPort( WindowRef window )         { ::SetPort( window );                   }
+	
+	inline WindowRef GetWindowFromPort( CGrafPtr port )       { return ::GrafPtr( port );              }
+	
+#endif
+	
    WindowAttributes GetWindowAttributes( WindowRef window );
 
    void ChangeWindowAttributes ( WindowRef        window,
                                  WindowAttributes setTheseAttributes,
                                  WindowAttributes clearTheseAttributes );
+   
+	inline void SetWindowAttributes ( WindowRef window, WindowAttributes setTheseAttributes ) {
+		Nitrogen::ChangeWindowAttributes ( window, setTheseAttributes, WindowAttributes::Make( 0 ) );
+		}
+
+	inline void ClearWindowAttributes ( WindowRef window, WindowAttributes clearTheseAttributes ) {
+		Nitrogen::ChangeWindowAttributes ( window, WindowAttributes::Make( 0 ), clearTheseAttributes );
+		}
    
    /* ... */
    
@@ -105,7 +262,32 @@ namespace Nitrogen
 
    /* ... */
    
-   void RegisterWindowManagerErrors();
+#if TARGET_RT_MAC_MACHO
+/*ÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑ*/
+/* ¥ Window Toolbars -- Tool bars are Mach-O only                                       */
+/*ÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑ*/
+
+	inline void SetWindowToolbar ( WindowRef inWindow, HIToolbarRef inToolbar ) {
+		OnlyOnce< RegisterWindowManagerErrors >();
+		ThrowOSStatus ( ::SetWindowToolbar ( inWindow, inToolbar ));
+		}
+
+	inline HIToolbarRef GetWindowToolbar ( WindowRef inWindow ) {
+		OnlyOnce< RegisterWindowManagerErrors >();
+		HIToolbarRef result;
+		ThrowOSStatus ( ::GetWindowToolbar ( inWindow, &result ));
+		return result;
+		}
+
+	inline void ShowHideWindowToolbar ( WindowRef inWindow, Boolean inShow, Boolean inAnimate ) {
+		OnlyOnce< RegisterWindowManagerErrors >();
+		ThrowOSStatus ( ::ShowHideWindowToolbar ( inWindow, inShow, inAnimate ));
+		}
+
+//	extern Boolean IsWindowToolbarVisible(WindowRef inWindow);
+	using ::IsWindowToolbarVisible;
+#endif
+	
   }
 
 #endif

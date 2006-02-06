@@ -48,6 +48,9 @@
 #ifndef NITROGEN_PSEUDOREFERENCE_H
 #include "Nitrogen/Pseudoreference.h"
 #endif
+#ifndef NITROGEN_MACERRORS_H
+#include "Nitrogen/MacErrors.h"
+#endif
 
 #include <vector>
 
@@ -206,8 +209,16 @@ namespace Nitrogen
    class EventClassTag {};
    typedef SelectorType< EventClassTag, ::UInt32 > EventClass;    // Doesn't exist in Carbon
 
-   class EventKindTag {};
-   typedef SelectorType< EventClassTag, ::UInt32 > EventKind;    // Doesn't exist in Carbon
+   class CarbonEventKind_Tag {};
+   typedef SelectorType< CarbonEventKind_Tag, ::UInt32 > CarbonEventKind;
+   
+#ifndef JOSHUA_JURAN_EXPERIMENTAL
+   
+   // This conflicts with Events.h
+   typedef CarbonEventKind_Tag EventKind_Tag;
+   typedef CarbonEventKind     EventKind;
+   
+#endif
    
    using ::EventTypeSpec;
 
@@ -279,12 +290,12 @@ namespace Nitrogen
 
    Owned<EventRef> CreateEvent( CFAllocatorRef    inAllocator,
                                 EventClass        inClassID,
-                                EventKind         kind,
+                                CarbonEventKind   kind,
                                 EventTime         when,
                                 EventAttributes   flags );
 
    inline Owned<EventRef> CreateEvent( EventClass        inClassID,
-                                       EventKind         kind,
+                                       CarbonEventKind   kind,
                                        EventTime         when,
                                        EventAttributes   flags )
      {
@@ -463,9 +474,9 @@ namespace Nitrogen
             template < class T > const EventParameter& operator>>=( const T& rhs ) const  { Set( Get() >> rhs ); return *this; }
         };
 
-   inline EventClass GetEventClass( EventRef inEvent )     { return ::GetEventClass( inEvent ); }
-   inline EventKind  GetEventKind ( EventRef inEvent )     { return ::GetEventKind ( inEvent ); }
-   inline EventTime  GetEventTime ( EventRef inEvent )     { return ::GetEventTime ( inEvent ); }
+   inline EventClass       GetEventClass( EventRef inEvent )     { return EventClass     ( ::GetEventClass( inEvent ) ); }
+   inline CarbonEventKind  GetEventKind ( EventRef inEvent )     { return CarbonEventKind( ::GetEventKind ( inEvent ) ); }
+   inline EventTime        GetEventTime ( EventRef inEvent )     { return EventTime      ( ::GetEventTime ( inEvent ) ); }
  
    void SetEventTime( EventRef inEvent, EventTime inTime );
 
@@ -491,7 +502,7 @@ namespace Nitrogen
    template < UInt32 eventClass, UInt32 eventKind >
    struct EventParameter_Traits< eventClass, eventKind, noEventHandlerResult >
      {
-      static const ::EventParamType type = typeNull;
+      static const ::EventParamType type = ::typeNull;
       typedef typename DescType_Traits< type >::Result Type;
      };
    
@@ -639,37 +650,37 @@ namespace Nitrogen
 /* ... */
 
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamMouseLocation      >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamKeyModifiers       >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamKeyModifiers       >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamMouseButton        >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamClickCount         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamMouseChord         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamTabletEventType    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamClickCount         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamMouseChord         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamTabletEventType    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamTabletPointRec     >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamTabletProximityRec >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamMouseLocation      >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamKeyModifiers       >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamKeyModifiers       >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamMouseButton        >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamClickCount         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamMouseChord         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamTabletEventType    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamClickCount         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamMouseChord         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamTabletEventType    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamTabletPointRec     >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseUp,         kEventParamTabletProximityRec >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseMoved,      kEventParamMouseLocation      >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseMoved,      kEventParamMouseDelta         >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseMoved,      kEventParamKeyModifiers       >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseMoved,      kEventParamTabletEventType    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseMoved,      kEventParamKeyModifiers       >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseMoved,      kEventParamTabletEventType    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseMoved,      kEventParamTabletPointRec     >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseMoved,      kEventParamTabletProximityRec >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamMouseLocation      >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamMouseDelta         >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamKeyModifiers       >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamKeyModifiers       >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamMouseButton        >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamMouseChord         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamTabletEventType    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamMouseChord         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamTabletEventType    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamTabletPointRec     >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDragged,    kEventParamTabletProximityRec >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseWheelMoved, kEventParamMouseLocation      >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseWheelMoved, kEventParamKeyModifiers       >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseWheelMoved, kEventParamKeyModifiers       >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseWheelMoved, kEventParamMouseWheelAxis     >: Basic_EventParameter_Traits< typeMouseWheelAxis,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseWheelMoved, kEventParamMouseWheelDelta    >: Basic_EventParameter_Traits< typeLongInteger,             true,  false >{};
 
@@ -683,8 +694,8 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUpdateActiveInputArea, kEventParamTextInputSendHiliteRng              >: Basic_EventParameter_Traits< typeTextRangeArray,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUpdateActiveInputArea, kEventParamTextInputSendClauseRng              >: Basic_EventParameter_Traits< typeOffsetArray,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUpdateActiveInputArea, kEventParamTextInputSendPinRng                 >: Basic_EventParameter_Traits< typeTextRange,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUpdateActiveInputArea, kEventParamTextInputSendTextServiceEncoding    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUpdateActiveInputArea, kEventParamTextInputSendTextServiceMacEncoding >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUpdateActiveInputArea, kEventParamTextInputSendTextServiceEncoding    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUpdateActiveInputArea, kEventParamTextInputSendTextServiceMacEncoding >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUnicodeForKeyEvent,    kEventParamTextInputSendComponentInstance      >: Basic_EventParameter_Traits< typeComponentInstance,       true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUnicodeForKeyEvent,    kEventParamTextInputSendRefCon                 >: Basic_EventParameter_Traits< typeLongInteger,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputUnicodeForKeyEvent,    kEventParamTextInputSendSLRec                  >: Basic_EventParameter_Traits< typeIntlWritingCode,         true,  false >{};
@@ -695,65 +706,65 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputSendTextOffset             >: Basic_EventParameter_Traits< typeLongInteger,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyPoint                 >: Basic_EventParameter_Traits< typeQDPoint,                 false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputSendSLRec                  >: Basic_EventParameter_Traits< typeIntlWritingCode,         true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputSendLeadingEdge            >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputSendLeadingEdge            >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplySLRec                 >: Basic_EventParameter_Traits< typeIntlWritingCode,         false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyFont                  >: Basic_EventParameter_Traits< typeLongInteger,             false, true  >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyFMFont                >: Basic_EventParameter_Traits< typeUInt32,                  false, true  >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyPointSize             >: Basic_EventParameter_Traits< typeFixed,                   false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyFMFont                >: Basic_EventParameter_Traits< ::typeUInt32,                  false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyPointSize             >: Basic_EventParameter_Traits< ::typeFixed,                   false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyLineHeight            >: Basic_EventParameter_Traits< typeShortInteger,            false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyLineAscent            >: Basic_EventParameter_Traits< typeShortInteger,            false, true  >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyTextAngle             >: Basic_EventParameter_Traits< typeFixed,                   false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputOffsetToPos,           kEventParamTextInputReplyTextAngle             >: Basic_EventParameter_Traits< ::typeFixed,                   false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputSendComponentInstance      >: Basic_EventParameter_Traits< typeComponentInstance,       true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputSendRefCon                 >: Basic_EventParameter_Traits< typeLongInteger,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputSendCurrentPoint           >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputReplyRegionClass           >: Basic_EventParameter_Traits< typeLongInteger,             false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputReplyTextOffset            >: Basic_EventParameter_Traits< typeLongInteger,             false, true  >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputSendDraggingMode           >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputReplyLeadingEdge           >: Basic_EventParameter_Traits< typeBoolean,                 false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputSendDraggingMode           >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputReplyLeadingEdge           >: Basic_EventParameter_Traits< ::typeBoolean,                 false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputPosToOffset,           kEventParamTextInputReplySLRec                 >: Basic_EventParameter_Traits< typeIntlWritingCode,         false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputShowHideBottomWindow,  kEventParamTextInputSendComponentInstance      >: Basic_EventParameter_Traits< typeComponentInstance,       true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputShowHideBottomWindow,  kEventParamTextInputSendRefCon                 >: Basic_EventParameter_Traits< typeLongInteger,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputShowHideBottomWindow,  kEventParamTextInputSendShowHide               >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputShowHideBottomWindow,  kEventParamTextInputReplyShowHide              >: Basic_EventParameter_Traits< typeBoolean,                 false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputShowHideBottomWindow,  kEventParamTextInputSendShowHide               >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputShowHideBottomWindow,  kEventParamTextInputReplyShowHide              >: Basic_EventParameter_Traits< ::typeBoolean,                 false, true  >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputSendComponentInstance      >: Basic_EventParameter_Traits< typeComponentInstance,       true,  false >{};
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputSendRefCon                 >: Basic_EventParameter_Traits< typeLongInteger,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputSendLeadingEdge            >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputSendTextServiceEncoding    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputSendTextServiceMacEncoding >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputSendLeadingEdge            >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputSendTextServiceEncoding    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputSendTextServiceMacEncoding >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
  //template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputReplyText                  >: Basic_EventParameter_Traits< typeUnicodeText,             false, true  >{};
  //The data type depends on the TSMDocument.
    template <> struct EventParameter_Traits< kEventClassTextInput, kEventTextInputGetSelectedText,       kEventParamTextInputReplySLRec                 >: Basic_EventParameter_Traits< typeIntlWritingCode,         false, true  >{};
 
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyMacCharCodes >: Basic_EventParameter_Traits< typeChar,                    true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyMacCharCodes >: Basic_EventParameter_Traits< ::typeChar,                    true,  false >{};
    template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyUnicodes     >: Basic_EventParameter_Traits< typeUnicodeText,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyCode         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyModifiers    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyboardType    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyMacCharCodes >: Basic_EventParameter_Traits< typeChar,                    true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyCode         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyModifiers    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyDown,             kEventParamKeyboardType    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyMacCharCodes >: Basic_EventParameter_Traits< ::typeChar,                    true,  false >{};
    template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyUnicodes     >: Basic_EventParameter_Traits< typeUnicodeText,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyCode         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyModifiers    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyboardType    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyMacCharCodes >: Basic_EventParameter_Traits< typeChar,                    true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyCode         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyModifiers    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyRepeat,           kEventParamKeyboardType    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyMacCharCodes >: Basic_EventParameter_Traits< ::typeChar,                    true,  false >{};
    template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyUnicodes     >: Basic_EventParameter_Traits< typeUnicodeText,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyCode         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyModifiers    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyboardType    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyModifiersChanged, kEventParamKeyModifiers    >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyCode         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyModifiers    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyUp,               kEventParamKeyboardType    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassKeyboard, kEventRawKeyModifiersChanged, kEventParamKeyModifiers    >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassKeyboard, kEventHotKeyPressed,          kEventParamDirectObject    >: Basic_EventParameter_Traits< typeEventHotKeyID,           true,  false >{};
    template <> struct EventParameter_Traits< kEventClassKeyboard, kEventHotKeyReleased,         kEventParamDirectObject    >: Basic_EventParameter_Traits< typeEventHotKeyID,           true,  false >{};
 
    template <> struct EventParameter_Traits< kEventClassApplication, kEventAppActivated,          kEventParamWindowRef    >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppLaunchNotification, kEventParamProcessID    >: Basic_EventParameter_Traits< typeProcessSerialNumber,     true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppLaunchNotification, kEventParamLaunchRefCon >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppLaunchNotification, kEventParamProcessID    >: Basic_EventParameter_Traits< ::typeProcessSerialNumber,     true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppLaunchNotification, kEventParamLaunchRefCon >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassApplication, kEventAppLaunchNotification, kEventParamLaunchErr    >: Basic_EventParameter_Traits< typeOSStatus,                true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppLaunched,           kEventParamProcessID    >: Basic_EventParameter_Traits< typeProcessSerialNumber,     true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppTerminated,         kEventParamProcessID    >: Basic_EventParameter_Traits< typeProcessSerialNumber,     true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppFrontSwitched,      kEventParamProcessID    >: Basic_EventParameter_Traits< typeProcessSerialNumber,     true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppLaunched,           kEventParamProcessID    >: Basic_EventParameter_Traits< ::typeProcessSerialNumber,     true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppTerminated,         kEventParamProcessID    >: Basic_EventParameter_Traits< ::typeProcessSerialNumber,     true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassApplication, kEventAppFrontSwitched,      kEventParamProcessID    >: Basic_EventParameter_Traits< ::typeProcessSerialNumber,     true,  false >{};
    template <> struct EventParameter_Traits< kEventClassApplication, kEventAppGetDockTileMenu,    kEventParamMenuRef      >: Basic_EventParameter_Traits< typeMenuRef,                 false, true  >{};
 
-   template <> struct EventParameter_Traits< kEventClassAppleEvent, kEventAppleEvent,             kEventParamAEEventClass >: Basic_EventParameter_Traits< typeType,                    true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassAppleEvent, kEventAppleEvent,             kEventParamAEEventID    >: Basic_EventParameter_Traits< typeType,                    true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassAppleEvent, kEventAppleEvent,             kEventParamAEEventClass >: Basic_EventParameter_Traits< ::typeType,                    true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassAppleEvent, kEventAppleEvent,             kEventParamAEEventID    >: Basic_EventParameter_Traits< ::typeType,                    true,  false >{};
 
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowUpdate,                kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDrawContent,           kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
@@ -761,7 +772,7 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDeactivated,           kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetClickActivation,    kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetClickActivation,    kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetClickActivation,    kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetClickActivation,    kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetClickActivation,    kEventParamWindowDefPart           >: Basic_EventParameter_Traits< typeWindowDefPartCode,       true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetClickActivation,    kEventParamControlRef              >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetClickActivation,    kEventParamClickActivation         >: Basic_EventParameter_Traits< typeClickActivationResult,   false, true  >{};
@@ -770,12 +781,12 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowShown,                 kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHidden,                kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanging,        kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanging,        kEventParamAttributes              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanging,        kEventParamAttributes              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanging,        kEventParamOriginalBounds          >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanging,        kEventParamPreviousBounds          >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanging,        kEventParamCurrentBounds           >: Basic_EventParameter_Traits< typeQDRectangle,             true,  true  >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanged,         kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanged,         kEventParamAttributes              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanged,         kEventParamAttributes              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanged,         kEventParamOriginalBounds          >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanged,         kEventParamPreviousBounds          >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowBoundsChanged,         kEventParamCurrentBounds           >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
@@ -784,80 +795,80 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDragStarted,           kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDragCompleted,         kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickResizeRgn,        kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCollapseRgn,      kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickCloseRgn,         kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickZoomRgn,          kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickContentRgn,       kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickProxyIconRgn,     kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickToolbarButtonRgn, kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCursorChange,          kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCursorChange,          kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCursorChange,          kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCursorChange,          kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCollapse,              kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCollapsed,             kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCollapseAll,           kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
@@ -880,16 +891,16 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetMaximumSize,        kEventParamDimensions              >: Basic_EventParameter_Traits< typeQDPoint,                 false, true  >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamAvailableBounds         >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamAttributes              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamAttributes              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamWindowRegionCode        >: Basic_EventParameter_Traits< typeWindowRegionCode,        true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamRgnHandle               >: Basic_EventParameter_Traits< typeQDRgnHandle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamKeyModifiers            >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamKeyModifiers            >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamMouseButton             >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamClickCount              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamMouseChord              >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamTabletEventType         >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamClickCount              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamMouseChord              >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamTabletEventType         >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamTabletPointRec          >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowProxyBeginDrag,        kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
@@ -906,21 +917,21 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHitTest,               kEventParamMouseLocation           >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHitTest,               kEventParamWindowDefPart           >: Basic_EventParameter_Traits< typeWindowDefPartCode,       false, true  >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowInit,                  kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowInit,                  kEventParamWindowFeatures          >: Basic_EventParameter_Traits< typeUInt32,                  false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowInit,                  kEventParamWindowFeatures          >: Basic_EventParameter_Traits< ::typeUInt32,                  false, true  >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDispose,               kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDragHilite,            kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDragHilite,            kEventParamWindowDragHiliteFlag    >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDragHilite,            kEventParamWindowDragHiliteFlag    >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowModified,              kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowModified,              kEventParamWindowModifiedFlag      >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowModified,              kEventParamWindowModifiedFlag      >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowSetupProxyDragImage,   kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowSetupProxyDragImage,   kEventParamWindowProxyImageRgn     >: Basic_EventParameter_Traits< typeQDRgnHandle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowSetupProxyDragImage,   kEventParamWindowProxyOutlineRgn   >: Basic_EventParameter_Traits< typeQDRgnHandle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowSetupProxyDragImage,   kEventParamWindowProxyGWorldPtr    >: Basic_EventParameter_Traits< typeGWorldPtr,               false, true  >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowStateChanged,          kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowStateChanged,          kEventParamWindowStateChangedFlags >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowStateChanged,          kEventParamWindowStateChangedFlags >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowMeasureTitle,          kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowMeasureTitle,          kEventParamWindowTitleFullWidth    >: Basic_EventParameter_Traits< typeSInt16,                  false, true  >{};
-   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowMeasureTitle,          kEventParamWindowTitleTextWidth    >: Basic_EventParameter_Traits< typeSInt16,                  false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowMeasureTitle,          kEventParamWindowTitleFullWidth    >: Basic_EventParameter_Traits< ::typeSInt16,                  false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowMeasureTitle,          kEventParamWindowTitleTextWidth    >: Basic_EventParameter_Traits< ::typeSInt16,                  false, true  >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDrawGrowBox,           kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetGrowImageRegion,    kEventParamDirectObject            >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetGrowImageRegion,    kEventParamWindowGrowRect          >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
@@ -929,31 +940,31 @@ namespace Nitrogen
 
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuBeginTracking,      kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuBeginTracking,      kEventParamCurrentMenuTrackingMode   >: Basic_EventParameter_Traits< typeMenuTrackingMode,        true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuBeginTracking,      kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuBeginTracking,      kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuEndTracking,        kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuEndTracking,        kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuEndTracking,        kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuChangeTrackingMode, kEventParamCurrentMenuTrackingMode   >: Basic_EventParameter_Traits< typeMenuTrackingMode,        true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuChangeTrackingMode, kEventParamNewMenuTrackingMode       >: Basic_EventParameter_Traits< typeMenuTrackingMode,        true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuChangeTrackingMode, kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuChangeTrackingMode, kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuOpening,            kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuOpening,            kEventParamMenuFirstOpen             >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuOpening,            kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuOpening,            kEventParamMenuFirstOpen             >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuOpening,            kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuClosed,             kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuClosed,             kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuClosed,             kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuTargetItem,         kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuTargetItem,         kEventParamMenuItemIndex             >: Basic_EventParameter_Traits< typeMenuItemIndex,           true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuTargetItem,         kEventParamMenuCommand               >: Basic_EventParameter_Traits< typeMenuCommand,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuTargetItem,         kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuTargetItem,         kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMatchKey,           kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMatchKey,           kEventParamEventRef                  >: Basic_EventParameter_Traits< typeEventRef,                true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMatchKey,           kEventParamMenuEventOptions          >: Basic_EventParameter_Traits< typeMenuEventOptions,        true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMatchKey,           kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMatchKey,           kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMatchKey,           kEventParamMenuItemIndex             >: Basic_EventParameter_Traits< typeMenuItemIndex,           false, true  >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuEnableItems,        kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuEnableItems,        kEventParamEnableMenuForKeyEvent     >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuEnableItems,        kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuEnableItems,        kEventParamEnableMenuForKeyEvent     >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuEnableItems,        kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuPopulate,           kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuPopulate,           kEventParamMenuContext               >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuPopulate,           kEventParamMenuContext               >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMeasureItemWidth,   kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMeasureItemWidth,   kEventParamMenuItemIndex             >: Basic_EventParameter_Traits< typeMenuItemIndex,           true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuMeasureItemWidth,   kEventParamMenuItemWidth             >: Basic_EventParameter_Traits< typeShortInteger,            false, true  >{};
@@ -978,7 +989,7 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDrawItemContent,    kEventParamMenuItemIndex             >: Basic_EventParameter_Traits< typeMenuItemIndex,           true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDrawItemContent,    kEventParamMenuItemBounds            >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDrawItemContent,    kEventParamDeviceDepth               >: Basic_EventParameter_Traits< typeShortInteger,            true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDrawItemContent,    kEventParamDeviceColor               >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDrawItemContent,    kEventParamDeviceColor               >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDrawItemContent,    kEventParamCGContextRef              >: Basic_EventParameter_Traits< typeCGContextRef,            true,  false >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDrawItemContent,    kEventParamMenuMarkBounds            >: Basic_EventParameter_Traits< typeQDRectangle,             false, true  >{};
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDrawItemContent,    kEventParamMenuIconBounds            >: Basic_EventParameter_Traits< typeQDRectangle,             false, true  >{};
@@ -988,20 +999,20 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassMenu, kEventMenuDispose,            kEventParamDirectObject              >: Basic_EventParameter_Traits< typeMenuRef,                 true,  false >{};
 
    template <> struct EventParameter_Traits< kEventClassCommand, kEventCommandProcess,      kEventParamDirectObject >: Basic_EventParameter_Traits< typeHICommand,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassCommand, kEventCommandProcess,      kEventParamKeyModifiers >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassCommand, kEventCommandProcess,      kEventParamKeyModifiers >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassCommand, kEventCommandUpdateStatus, kEventParamDirectObject >: Basic_EventParameter_Traits< typeHICommand,               true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassCommand, kEventCommandUpdateStatus, kEventParamMenuContext  >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassCommand, kEventCommandUpdateStatus, kEventParamMenuContext  >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
 
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlInitialize,                 kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlInitialize,                 kEventParamInitCollection                 >: Basic_EventParameter_Traits< typeCollection,              true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlInitialize,                 kEventParamControlFeatures                >: Basic_EventParameter_Traits< typeUInt32,                  false, true  >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlInitialize,                 kEventParamControlFeatures                >: Basic_EventParameter_Traits< ::typeUInt32,                  false, true  >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlDispose,                    kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetOptimalBounds,           kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetOptimalBounds,           kEventParamControlOptimalBounds           >: Basic_EventParameter_Traits< typeQDRectangle,             false, true  >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetOptimalBounds,           kEventParamControlOptimalBaselineOffset   >: Basic_EventParameter_Traits< typeShortInteger,            false, true  >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlHit,                        kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlHit,                        kEventParamControlPart                    >: Basic_EventParameter_Traits< typeControlPartCode,         true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlHit,                        kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlHit,                        kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlSimulateHit,                kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlHitTest,                    kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlHitTest,                    kEventParamMouseLocation                  >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
@@ -1012,12 +1023,12 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamControlSubControl              >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamControlDrawDepth               >: Basic_EventParameter_Traits< typeShortInteger,            true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamControlDrawInColor             >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamControlDrawInColor             >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamGrafPort                       >: Basic_EventParameter_Traits< typeGrafPtr,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamControlSubControl              >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamControlDrawDepth               >: Basic_EventParameter_Traits< typeShortInteger,            true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamControlDrawInColor             >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamControlDrawInColor             >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamCGContextRef                   >: Basic_EventParameter_Traits< typeCGContextRef,            true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamGrafPort                       >: Basic_EventParameter_Traits< typeGrafPtr,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlSetFocusPart,               kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
@@ -1028,37 +1039,37 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlDeactivate,                 kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlSetCursor,                  kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlSetCursor,                  kEventParamMouseLocation                  >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlSetCursor,                  kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlSetCursor,                  kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlContextualMenuClick,        kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlContextualMenuClick,        kEventParamMouseLocation                  >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamMouseLocation                  >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamMouseButton                    >: Basic_EventParameter_Traits< typeMouseButton,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamClickCount                     >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamMouseChord                     >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamTabletEventType                >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamClickCount                     >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamMouseChord                     >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamTabletEventType                >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamTabletPointRec                 >: Basic_EventParameter_Traits< typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlClick,                      kEventParamTabletProximityRec             >: Basic_EventParameter_Traits< typeTabletProximityRec,      true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlTrack,                      kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlTrack,                      kEventParamMouseLocation                  >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlTrack,                      kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< typeUInt32,                  true,  true  >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlTrack,                      kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  true  >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlTrack,                      kEventParamControlAction                  >: Basic_EventParameter_Traits< typeControlActionUPP,        true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlTrack,                      kEventParamControlPart                    >: Basic_EventParameter_Traits< typeControlPartCode,         false, true  >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetScrollToHereStartPoint,  kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetScrollToHereStartPoint,  kEventParamMouseLocation                  >: Basic_EventParameter_Traits< typeQDPoint,                 true,  true  >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetScrollToHereStartPoint,  kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetScrollToHereStartPoint,  kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetIndicatorDragConstraint, kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetIndicatorDragConstraint, kEventParamMouseLocation                  >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetIndicatorDragConstraint, kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetIndicatorDragConstraint, kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetIndicatorDragConstraint, kEventParamControlIndicatorDragConstraint >: Basic_EventParameter_Traits< typeIndicatorDragConstraint, false, true  >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlIndicatorMoved,             kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlIndicatorMoved,             kEventParamControlIndicatorRegion         >: Basic_EventParameter_Traits< typeQDRgnHandle,             true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlIndicatorMoved,             kEventParamControlIsGhosting              >: Basic_EventParameter_Traits< typeBoolean,                 true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlIndicatorMoved,             kEventParamControlIsGhosting              >: Basic_EventParameter_Traits< ::typeBoolean,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGhostingFinished,           kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGhostingFinished,           kEventParamControlIndicatorOffset         >: Basic_EventParameter_Traits< typeQDPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetActionProcPart,          kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetActionProcPart,          kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetActionProcPart,          kEventParamKeyModifiers                   >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetActionProcPart,          kEventParamControlPart                    >: Basic_EventParameter_Traits< typeControlPartCode,         true,  true  >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetPartRegion,              kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlGetPartRegion,              kEventParamControlPart                    >: Basic_EventParameter_Traits< typeControlPartCode,         true,  false >{};
@@ -1082,12 +1093,12 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlRemovingSubControl,         kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlRemovingSubControl,         kEventParamControlSubControl              >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlBoundsChanged,              kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlBoundsChanged,              kEventParamAttributes                     >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlBoundsChanged,              kEventParamAttributes                     >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlBoundsChanged,              kEventParamOriginalBounds                 >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlBoundsChanged,              kEventParamPreviousBounds                 >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlBoundsChanged,              kEventParamCurrentBounds                  >: Basic_EventParameter_Traits< typeQDRectangle,             true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlOwningWindowChanged,        kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
-   template <> struct EventParameter_Traits< kEventClassControl, kEventControlOwningWindowChanged,        kEventParamAttributes                     >: Basic_EventParameter_Traits< typeUInt32,                  true,  false >{};
+   template <> struct EventParameter_Traits< kEventClassControl, kEventControlOwningWindowChanged,        kEventParamAttributes                     >: Basic_EventParameter_Traits< ::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlOwningWindowChanged,        kEventParamControlOriginalOwningWindow    >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlOwningWindowChanged,        kEventParamControlCurrentOwningWindow     >: Basic_EventParameter_Traits< typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlArbitraryMessage,           kEventParamDirectObject                   >: Basic_EventParameter_Traits< typeControlRef,              true,  false >{};
@@ -1169,7 +1180,7 @@ namespace Nitrogen
       Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                   EventHandlerUPP        inHandler,
                                                   EventClass             eventClass,
-                                                  EventKind              eventKind,
+                                                  CarbonEventKind        eventKind,
                                                   const void *           inUserData = 0 );
    
    /* Level 1 (UPP-creating) InstallEventHandler, for multiple or single events */
@@ -1191,7 +1202,7 @@ namespace Nitrogen
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallEventHandler( EventTargetRef         inTarget,
                                                   EventClass             eventClass,
-                                                  EventKind              eventKind,
+                                                  CarbonEventKind        eventKind,
                                                   const void *           inUserData = 0 )
         {
          return InstallEventHandler( inTarget,
@@ -1207,10 +1218,10 @@ namespace Nitrogen
         {
          typedef void (*Handler)( EventHandlerCallRef, EventRef, void * );
                   
-         static OSStatus CatchExceptions( EventHandlerCallRef inHandlerCallRef,
-                                          EventRef inEvent,
-                                          void *inUserData,
-                                          Handler handler );
+         static ::OSStatus CatchExceptions( EventHandlerCallRef inHandlerCallRef,
+                                            EventRef inEvent,
+                                            void *inUserData,
+                                            Handler handler );
         };
          
       template < EventHandler_ExceptionGlue::Handler handler >
@@ -1291,7 +1302,7 @@ namespace Nitrogen
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallEventHandler( EventTargetRef                                 inTarget,
                                                   EventClass                                     eventClass,
-                                                  EventKind                                      eventKind,
+                                                  CarbonEventKind                                eventKind,
                                                   typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler( inTarget,
@@ -1341,7 +1352,7 @@ namespace Nitrogen
         };
 
       template < ::EventParamName resultParameter, EventHandler_ExceptionGlue::Handler handler >
-      struct EventHandler_Bound_ResultGlue< typeNull, resultParameter, handler >
+      struct EventHandler_Bound_ResultGlue< ::typeNull, resultParameter, handler >
         {
          static EventHandlerUPP UPP()
            {
@@ -1972,7 +1983,7 @@ namespace Nitrogen
       
       inline Owned<EventHandlerRef> InstallApplicationEventHandler( EventHandlerUPP        inHandler,
                                                                     EventClass             eventClass,
-                                                                    EventKind              eventKind,
+                                                                    CarbonEventKind        eventKind,
                                                                     const void *           inUserData = 0 )
         {
          return InstallEventHandler( GetApplicationEventTarget(), inHandler, eventClass, eventKind, inUserData );
@@ -1988,7 +1999,7 @@ namespace Nitrogen
 
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallApplicationEventHandler( EventClass             eventClass,
-                                                             EventKind              eventKind,
+                                                             CarbonEventKind        eventKind,
                                                              const void *           inUserData = 0 )
         {
          return InstallEventHandler< handler >( GetApplicationEventTarget(), eventClass, eventKind, inUserData );
@@ -2004,7 +2015,7 @@ namespace Nitrogen
 
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallApplicationEventHandler( EventClass                                     eventClass,
-                                                             EventKind                                      eventKind,
+                                                             CarbonEventKind                                eventKind,
                                                              typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetApplicationEventTarget(), eventClass, eventKind, inUserData );
@@ -2039,7 +2050,7 @@ namespace Nitrogen
       inline Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
                                                                EventHandlerUPP        inHandler,
                                                                EventClass             eventClass,
-                                                               EventKind              eventKind,
+                                                               CarbonEventKind        eventKind,
                                                                const void *           inUserData = 0 )
         {
          return InstallEventHandler( GetWindowEventTarget( window ), inHandler, eventClass, eventKind, inUserData );
@@ -2057,7 +2068,7 @@ namespace Nitrogen
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
                                                         EventClass             eventClass,
-                                                        EventKind              eventKind,
+                                                        CarbonEventKind        eventKind,
                                                         const void *           inUserData = 0 )
         {
          return InstallEventHandler< handler >( GetWindowEventTarget( window ), eventClass, eventKind, inUserData );
@@ -2075,7 +2086,7 @@ namespace Nitrogen
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallWindowEventHandler( WindowRef                                      window,
                                                         EventClass                                     eventClass,
-                                                        EventKind                                      eventKind,
+                                                        CarbonEventKind                                eventKind,
                                                         typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetWindowEventTarget( window ), eventClass, eventKind, inUserData );
@@ -2111,7 +2122,7 @@ namespace Nitrogen
       inline Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
                                                                 EventHandlerUPP        inHandler,
                                                                 EventClass             eventClass,
-                                                                EventKind              eventKind,
+                                                                CarbonEventKind        eventKind,
                                                                 const void *           inUserData = 0 )
         {
          return InstallEventHandler( GetControlEventTarget( control ), inHandler, eventClass, eventKind, inUserData );
@@ -2129,7 +2140,7 @@ namespace Nitrogen
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallControlEventHandler( ControlRef             control,
                                                          EventClass             eventClass,
-                                                         EventKind              eventKind,
+                                                         CarbonEventKind        eventKind,
                                                          const void *           inUserData = 0 )
         {
          return InstallEventHandler< handler >( GetControlEventTarget( control ), eventClass, eventKind, inUserData );
@@ -2147,7 +2158,7 @@ namespace Nitrogen
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallControlEventHandler( ControlRef                                     control,
                                                          EventClass                                     eventClass,
-                                                         EventKind                                      eventKind,
+                                                         CarbonEventKind                                eventKind,
                                                          typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetControlEventTarget( control ), eventClass, eventKind, inUserData );
@@ -2183,7 +2194,7 @@ namespace Nitrogen
       inline Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
                                                              EventHandlerUPP        inHandler,
                                                              EventClass             eventClass,
-                                                             EventKind              eventKind,
+                                                             CarbonEventKind        eventKind,
                                                              const void *           inUserData = 0 )
         {
          return InstallEventHandler( GetMenuEventTarget( menu ), inHandler, eventClass, eventKind, inUserData );
@@ -2201,7 +2212,7 @@ namespace Nitrogen
       template < EventHandlerProcPtr handler >
       Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                menu,
                                                       EventClass             eventClass,
-                                                      EventKind              eventKind,
+                                                      CarbonEventKind        eventKind,
                                                       const void *           inUserData = 0 )
         {
          return InstallEventHandler< handler >( GetMenuEventTarget( menu ), eventClass, eventKind, inUserData );
@@ -2219,7 +2230,7 @@ namespace Nitrogen
       template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
       Owned<EventHandlerRef> InstallMenuEventHandler( MenuRef                                        menu,
                                                       EventClass                                     eventClass,
-                                                      EventKind                                      eventKind,
+                                                      CarbonEventKind                                eventKind,
                                                       typename ObjectParameterTraits<Object>::Type   inUserData = typename ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< Object, handler >( GetMenuEventTarget( menu ), eventClass, eventKind, inUserData );

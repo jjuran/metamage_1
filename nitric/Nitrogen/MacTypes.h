@@ -6,7 +6,7 @@
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
 #endif
-#ifndef __MacTypes__
+#ifndef __MACTYPES__
 #include FRAMEWORK_HEADER(CarbonCore,MacTypes.h)
 #endif
 #ifndef __SCRIPT__
@@ -29,6 +29,9 @@
 #endif
 #ifndef NITROGEN_MAKE_H
 #include "Nitrogen/Make.h"
+#endif
+#ifndef NITROGEN_CONVERT_H
+#include "Nitrogen/Convert.h"
 #endif
 
 #include <cstddef>
@@ -94,18 +97,14 @@ namespace Nitrogen
    typedef SelectorType< RegionCodeTag, ::RegionCode, ::verUS > RegionCode;
    
    class FourCharCodeTag {};
-   typedef SelectorType< FourCharCodeTag, ::FourCharCode, '\?\?\?\?' > FourCharCode;
+   typedef SelectorType< FourCharCodeTag, ::FourCharCode, ::kUnknownType > FourCharCode;
    
    class OSTypeTag {};
-   typedef SelectorType< OSTypeTag, ::OSType, '\?\?\?\?' > OSType;
+   typedef SelectorType< OSTypeTag, ::OSType, ::kUnknownType > OSType;
    
    class ResTypeTag {};
-   typedef SelectorType< ResTypeTag, ::ResType, '\?\?\?\?' > ResType;
+   typedef SelectorType< ResTypeTag, ::ResType, ::kUnknownType > ResType;
 
-   class ResourceIDTag {};
-   typedef IDType< ResourceIDTag, SInt16, 0 > ResourceID;
-   typedef ResourceID ResID;
-   
    typedef bool Boolean;
 
    class StyleTag {};
@@ -161,7 +160,40 @@ namespace Nitrogen
         {
          return operator()( 0, 0, 0, 0 );
         }
-     };   
+     };
+	
+	// Convert string to FourCharCode
+	template < class Tag, ::FourCharCode defaultValue >
+	struct Converter< SelectorType< Tag, ::FourCharCode, defaultValue >, std::string >: public std::unary_function< std::string, SelectorType< Tag, ::FourCharCode, defaultValue > >
+	{
+		typedef SelectorType< Tag, ::FourCharCode, defaultValue > Code;
+		
+		Code operator()( const std::string& input ) const
+		{
+			if ( input.size() != sizeof (::FourCharCode) )
+			{
+				throw ConversionFromStringFailed();
+			}
+			
+			::FourCharCode result;
+			std::copy( input.begin(), input.end(), reinterpret_cast< char* >( &result ) );
+			return Code( result );
+		}
+	};
+	
+	// Convert FourCharCode to string
+	template < class Tag, ::FourCharCode defaultValue >
+	struct Converter< std::string, SelectorType< Tag, ::FourCharCode, defaultValue > >: public std::unary_function< SelectorType< Tag, ::FourCharCode, defaultValue >, std::string >
+	{
+		typedef SelectorType< Tag, ::FourCharCode, defaultValue > Code;
+		
+		std::string operator()( Code input ) const
+		{
+			::FourCharCode code = input;
+			return std::string( reinterpret_cast< const char* >( &code ), sizeof (::FourCharCode) );
+		}
+	};
+	
   }
 
 #endif
