@@ -339,7 +339,7 @@ namespace ALine
 		
 		std::string TargetApplication() const
 		{
-			return gnu ? "" : "-xm a -export pragma";
+			return gnu ? "" : "-xm a -dead off";
 		}
 		
 		// CodeWarrior only
@@ -357,7 +357,7 @@ namespace ALine
 		// CodeWarrior only
 		std::string MWTargetKeroseneShLib() const
 		{
-			return "-xm s -init Muxed_Initialize -term Muxed_Terminate -export pragma";
+			return "-xm s -init InitializeFragment -term TerminateFragment -export pragma";
 		}
 		
 		std::string TargetCommandLineTool() const
