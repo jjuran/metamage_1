@@ -40,10 +40,10 @@ extern "C" {
 	int execve( const char* path, const char* const argv[], const char* const envp[] );
 	int execvp( const char* file, const char* const argv[] );
 	
-	int execve_Stub( const char* path, const char* const argv[], const char* const envp[] );
+	int execve_Kernel( const char* path, const char* const argv[], const char* const envp[] );
 	
 	void _exit( int status );
-	void _exit_Stub( int status );
+	void _exit_Kernel( int status );
 	
 	int fork();
 	
