@@ -84,6 +84,7 @@ namespace Pedestal
 		return *gApp;
 	}
 	
+	/*
 	bool DoNextEvent( short eventMask )
 	{
 		EventRecord event;
@@ -101,6 +102,7 @@ namespace Pedestal
 	{
 		DoNextEvent( updateMask );
 	}
+	*/
 	
 	bool MenuItemDispatcher::Run( MenuItemCode code ) const
 	{
@@ -129,26 +131,30 @@ namespace Pedestal
 	
 	static void Suspend()
 	{
-		// FIXME
-		/*
-		PedWindow *window = MyFrontWindow();
-		if ( window )
+		N::WindowRef window = N::FrontWindow();
+		
+		if ( window  &&  N::GetWindowKind( window ) == kApplicationWindowKind )
 		{
-			window->Deactivate();
+			if ( WindowBase* base = N::GetWRefCon( window ) )
+			{
+				N::SetPortWindowPort( window );
+				return base->Activate( false );
+			}
 		}
-		*/
 	}
 	
 	static void Resume()
 	{
-		// FIXME
-		/*
-		PedWindow *window = MyFrontWindow();
-		if ( window )
+		N::WindowRef window = N::FrontWindow();
+		
+		if ( window  &&  N::GetWindowKind( window ) == kApplicationWindowKind )
 		{
-			window->Activate();
+			if ( WindowBase* base = N::GetWRefCon( window ) )
+			{
+				N::SetPortWindowPort( window );
+				return base->Activate( true );
+			}
 		}
-		*/
 	}
 	
 	
@@ -162,12 +168,7 @@ namespace Pedestal
 	{
 		N::WindowRef window = N::FrontWindow();
 		
-		if ( window == NULL )
-		{
-			return false;
-		}
-		
-		if ( N::GetWindowKind( window ) == kApplicationWindowKind )
+		if ( window  &&  N::GetWindowKind( window ) == kApplicationWindowKind )
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
@@ -264,8 +265,6 @@ namespace Pedestal
 	{
 		if ( N::TrackGoAway( window, event.where ) )
 		{
-			//TheApp().DoCloseWindow( window );
-			
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
 				base->Closure().RequestWindowClosure( window );
@@ -407,9 +406,9 @@ namespace Pedestal
 						NX::Clipboard::Resume();
 					}
 					
-					Resume();
-					
 				#endif
+					
+					Resume();
 				}
 				else
 				{
