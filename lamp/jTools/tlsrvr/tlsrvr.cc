@@ -180,7 +180,7 @@ static void MyOSStatusLogger( N::OSStatus error, const char *file, int line )
 
 int O::Main( int argc, const char *const argv[] )
 {
-	N::SetOSStatusLoggingProc( MyOSStatusLogger );
+	//N::SetOSStatusLoggingProc( MyOSStatusLogger );
 	
 	O::Options options = DefineOptions();
 	options.GetOptions( argc, argv );
