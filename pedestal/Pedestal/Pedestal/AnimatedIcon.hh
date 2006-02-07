@@ -3,7 +3,8 @@
  *	===============
  */
 
-#pragma once
+#ifndef PEDESTAL_ANIMATEDICON_HH
+#define PEDESTAL_ANIMATEDICON_HH
 
 // Nitrogen
 #include "Nitrogen/QDOffScreen.h"
@@ -45,4 +46,6 @@ namespace Pedestal
 	};
 	
 }
+
+#endif
 
