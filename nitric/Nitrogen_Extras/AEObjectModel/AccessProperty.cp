@@ -22,9 +22,9 @@ namespace Nitrogen
 {
 	
 	
-	Owned< AEToken, AETokenDisposer > AccessProperty( AEPropertyID    propertyID,
-	                                                  const AEToken&  containerToken,
-	                                                  AEObjectClass   containerClass )
+	Nucleus::Owned< AEToken, AETokenDisposer > AccessProperty( AEPropertyID    propertyID,
+	                                                           const AEToken&  containerToken,
+	                                                           AEObjectClass   containerClass )
 	{
 		return TheGlobalPropertyAccessor().AccessProperty( propertyID, containerToken, containerClass );
 	}
@@ -76,16 +76,16 @@ namespace Nitrogen
 		throw ErrAEEventNotHandled();
 	}
 	
-	Owned< AEToken, AETokenDisposer > PropertyAccessor::AccessProperty( AEPropertyID    propertyID,
-	                                                                    const AEToken&  containerToken,
-	                                                                    AEObjectClass   containerClass )
+	Nucleus::Owned< AEToken, AETokenDisposer > PropertyAccessor::AccessProperty( AEPropertyID    propertyID,
+	                                                                             const AEToken&  containerToken,
+	                                                                             AEObjectClass   containerClass )
 	{
 		Callback accessor = FindAccessor( propertyID, containerToken.descriptorType );
 		return accessor( propertyID, containerToken, containerClass );
 	}
 	
-	Owned< AEToken, AETokenDisposer > PropertyAccessor::AccessAll( const AEToken&  containerToken,
-	                                                               AEObjectClass   containerClass )
+	Nucleus::Owned< AEToken, AETokenDisposer > PropertyAccessor::AccessAll( const AEToken&  containerToken,
+	                                                                        AEObjectClass   containerClass )
 	{
 		Map::const_iterator foundType = map.find( containerToken.descriptorType );
 		if ( foundType == map.end() )
@@ -93,7 +93,7 @@ namespace Nitrogen
 			throw ErrAEEventNotHandled();
 		}
 		
-		Owned< AEToken, AETokenDisposer > result = AECreateTokenList< true >();
+		Nucleus::Owned< AEToken, AETokenDisposer > result = AECreateTokenList< true >();
 		
 		for ( PropertyMap::const_iterator itProp = foundType->second.begin();
 		      itProp != foundType->second.end();
@@ -101,7 +101,7 @@ namespace Nitrogen
 		{
 			AEPropertyID propertyID = itProp->first;
 			
-			Owned< AEToken, AETokenDisposer > propertyToken;
+			Nucleus::Owned< AEToken, AETokenDisposer > propertyToken;
 			
 			try
 			{
@@ -128,16 +128,16 @@ namespace Nitrogen
 		return theGlobalPropertyAccessor;
 	}
 	
-	Owned< AEToken, AETokenDisposer > AccessClassProperty( AEPropertyID    /* propertyID */,
-	                                                       const AEToken&  /* containerToken */,
-	                                                       AEObjectClass   containerClass )
+	Nucleus::Owned< AEToken, AETokenDisposer > AccessClassProperty( AEPropertyID    /* propertyID */,
+	                                                                const AEToken&  /* containerToken */,
+	                                                                AEObjectClass   containerClass )
 	{
 		return AECreateToken< typeType >( containerClass );
 	}
 	
-	Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    propertyID,
-	                                                       const AEToken&  containerToken,
-	                                                       AEObjectClass   containerClass )
+	Nucleus::Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    propertyID,
+	                                                                const AEToken&  containerToken,
+	                                                                AEObjectClass   containerClass )
 	{
 		return TheGlobalPropertyAccessor().AccessAll( containerToken, containerClass );
 	}

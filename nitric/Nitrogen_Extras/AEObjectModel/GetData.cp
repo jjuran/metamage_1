@@ -11,14 +11,19 @@
 #include "Nitrogen/MacErrors.h"
 #endif
 
+// Nitrogen Extras / Operators
+#include "Operators/AEDataModel.h"
+
 
 namespace Nitrogen
 {
 	
-	Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
-	                                                    const AEObjectSpecifier&  container,
-	                                                    AEEnumeration             keyForm,
-	                                                    const AEDesc&             keyData )
+	using namespace Nucleus::Operators;
+	
+	Nucleus::Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
+	                                                             const AEObjectSpecifier&  container,
+	                                                             AEEnumeration             keyForm,
+	                                                             const AEDesc&             keyData )
 	{
 		return AECoerceDesc
 		(
@@ -32,7 +37,7 @@ namespace Nitrogen
 		);
 	}
 	
-	Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType )
+	Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType )
 	{
 		return TheGlobalDataGetter().GetData( obj, desiredType );
 	}
@@ -42,9 +47,10 @@ namespace Nitrogen
 		Register< typeNull >();
 	}
 	
-	Owned< AEDesc > DataGetter::GetData( const AEToken& obj, DescType desiredType )
+	Nucleus::Owned< AEDesc > DataGetter::GetData( const AEToken& obj, DescType desiredType )
 	{
 		Map::const_iterator found = map.find( obj.descriptorType );
+		
 		if ( found == map.end() )
 		{
 			throw ErrAEEventNotHandled();

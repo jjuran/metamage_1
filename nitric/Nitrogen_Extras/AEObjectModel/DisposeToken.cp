@@ -21,7 +21,7 @@
 namespace Nitrogen
 {
 	
-	void DisposeToken( Owned< AEToken > token )
+	void DisposeToken( Nucleus::Owned< AEToken > token )
 	{
 		return TheGlobalTokenDisposer().DisposeToken( token );
 	}
@@ -31,7 +31,7 @@ namespace Nitrogen
 		Register( typeAEList, DisposeTokenList );
 	}
 	
-	void TokenDisposer::DisposeToken( Owned< AEToken > token )
+	void TokenDisposer::DisposeToken( Nucleus::Owned< AEToken > token )
 	{
 		Map::const_iterator found = map.find( token.Get().descriptorType );
 		if ( found == map.end() )
@@ -53,12 +53,12 @@ namespace Nitrogen
 		return theGlobalTokenDisposer;
 	}
 	
-	static void AEDisposeTokenFromList( Owned< AEToken > token )
+	static void AEDisposeTokenFromList( Nucleus::Owned< AEToken > token )
 	{
-		AEDisposeToken( Owned< AEToken, AETokenDisposer >::Seize( token.Release() ) );
+		AEDisposeToken( Nucleus::Owned< AEToken, AETokenDisposer >::Seize( token.Release() ) );
 	}
 	
-	void DisposeTokenList( Owned< AETokenList > tokenList )
+	void DisposeTokenList( Nucleus::Owned< AETokenList > tokenList )
 	{
 		AEDescList_ItemValue_Container tokens = AEDescList_ItemValues( tokenList );
 		

@@ -21,7 +21,7 @@
 namespace Nitrogen
 {
 	
-	inline Owned< AEToken, AETokenDisposer > GetRootToken()
+	inline Nucleus::Owned< AEToken, AETokenDisposer > GetRootToken()
 	{
 		return AEInitializeToken();
 	}
@@ -46,19 +46,19 @@ namespace Nitrogen
 	
 	void AESetObjectCallbacks();
 	
-	Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   desiredClass,
-	                                                          const AEToken&  containerToken,
-	                                                          AEObjectClass   containerClass,
-	                                                          AEEnumerated    keyForm,
-	                                                          const AEDesc&   keyData,
-	                                                          RefCon );
+	Nucleus::Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   desiredClass,
+	                                                                   const AEToken&  containerToken,
+	                                                                   AEObjectClass   containerClass,
+	                                                                   AEEnumerated    keyForm,
+	                                                                   const AEDesc&   keyData,
+	                                                                   RefCon );
 	
-	Owned< AEToken, AETokenDisposer > DispatchAccessToList( AEObjectClass   desiredClass,
-	                                                        const AEToken&  containerToken,
-	                                                        AEObjectClass   containerClass,
-	                                                        AEEnumerated    keyForm,
-	                                                        const AEDesc&   keyData,
-	                                                        RefCon );
+	Nucleus::Owned< AEToken, AETokenDisposer > DispatchAccessToList( AEObjectClass   desiredClass,
+	                                                                 const AEToken&  containerToken,
+	                                                                 AEObjectClass   containerClass,
+	                                                                 AEEnumerated    keyForm,
+	                                                                 const AEDesc&   keyData,
+	                                                                 RefCon );
 	
 }
 

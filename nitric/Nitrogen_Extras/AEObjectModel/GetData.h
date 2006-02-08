@@ -16,29 +16,29 @@
 namespace Nitrogen
 {
 	
-	inline Owned< AEObjectSpecifier > GetRootObjectSpecifier()
+	inline Nucleus::Owned< AEObjectSpecifier > GetRootObjectSpecifier()
 	{
 		return AEInitializeDesc();
 	}
 	
-	Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
-	                                                    const AEObjectSpecifier&  container,
-	                                                    AEEnumeration             keyForm,
-	                                                    const AEDesc&             keyData );
+	Nucleus::Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
+	                                                             const AEObjectSpecifier&  container,
+	                                                             AEEnumeration             keyForm,
+	                                                             const AEDesc&             keyData );
 	
-	Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType = typeWildCard );
+	Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType = typeWildCard );
 	
 	template < ::DescType tokenType > struct GetData_Traits;
 	
 	template <> struct GetData_Traits< typeNull >
 	{
-		static Owned< AEDesc > GetData( const AEToken&, DescType )  { return GetRootObjectSpecifier(); }
+		static Nucleus::Owned< AEDesc > GetData( const AEToken&, DescType )  { return GetRootObjectSpecifier(); }
 	};
 	
 	class DataGetter
 	{
 		public:
-			typedef Owned< AEDesc > (*Callback)( const AEToken&, DescType );
+			typedef Nucleus::Owned< AEDesc > (*Callback)( const AEToken&, DescType );
 		
 		private:
 			typedef std::map< DescType, Callback >  Map;
@@ -63,7 +63,7 @@ namespace Nitrogen
 				Register( tokenType, GetData_Traits< tokenType >::GetData );
 			}
 			
-			Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType );
+			Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType );
 	};
 	
 	DataGetter& TheGlobalDataGetter();

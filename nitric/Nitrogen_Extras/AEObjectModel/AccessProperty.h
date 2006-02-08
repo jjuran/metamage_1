@@ -36,7 +36,7 @@ namespace Nitrogen
 		
 		typedef typename DescType_Traits< descType >::Result Result;
 		
-		static Owned< AEToken, AETokenDisposer >
+		static Nucleus::Owned< AEToken, AETokenDisposer >
 		AccessProperty( AEPropertyID    /* propertyID */,
 	                    const AEToken&  containerToken,
 	                    AEObjectClass   /* containerClass */ )
@@ -53,14 +53,14 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AccessProperty ¥
 	
-	Owned< AEToken, AETokenDisposer > AccessProperty( AEPropertyID    propertyID,
-	                                                  const AEToken&  containerToken,
-	                                                  AEObjectClass   containerClass );
+	Nucleus::Owned< AEToken, AETokenDisposer > AccessProperty( AEPropertyID    propertyID,
+	                                                           const AEToken&  containerToken,
+	                                                           AEObjectClass   containerClass );
 	
 	class PropertyAccessor
 	{
 		public:
-			typedef Owned< AEToken, AETokenDisposer > (*Callback)( AEPropertyID, const AEToken&, AEObjectClass );
+			typedef Nucleus::Owned< AEToken, AETokenDisposer > (*Callback)( AEPropertyID, const AEToken&, AEObjectClass );
 		
 		private:
 			typedef std::map< AEPropertyID, Callback >  PropertyMap;
@@ -88,12 +88,12 @@ namespace Nitrogen
 			
 			Callback FindAccessor( AEPropertyID  propertyID, DescType tokenType );
 			
-			Owned< AEToken, AETokenDisposer > AccessProperty( AEPropertyID    propertyID,
-			                                                  const AEToken&  containerToken,
-			                                                  AEObjectClass   containerClass );
+			Nucleus::Owned< AEToken, AETokenDisposer > AccessProperty( AEPropertyID    propertyID,
+			                                                           const AEToken&  containerToken,
+			                                                           AEObjectClass   containerClass );
 			
-			Owned< AEToken, AETokenDisposer > AccessAll( const AEToken&  containerToken,
-			                                             AEObjectClass   containerClass );
+			Nucleus::Owned< AEToken, AETokenDisposer > AccessAll( const AEToken&  containerToken,
+			                                                      AEObjectClass   containerClass );
 	};
 	
 	PropertyAccessor& TheGlobalPropertyAccessor();
@@ -109,13 +109,13 @@ namespace Nitrogen
 		TheGlobalPropertyAccessor().template Register< propertyID, containerType >();
 	}
 	
-	Owned< AEToken, AETokenDisposer > AccessClassProperty( AEPropertyID    /* propertyID */,
-	                                                       const AEToken&  /* containerToken */,
-	                                                       AEObjectClass   containerClass );
+	Nucleus::Owned< AEToken, AETokenDisposer > AccessClassProperty( AEPropertyID    /* propertyID */,
+	                                                                const AEToken&  /* containerToken */,
+	                                                                AEObjectClass   containerClass );
 	
-	Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    propertyID,
-	                                                       const AEToken&  containerToken,
-	                                                       AEObjectClass   containerClass );
+	Nucleus::Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    propertyID,
+	                                                                const AEToken&  containerToken,
+	                                                                AEObjectClass   containerClass );
 	
 }
 

@@ -170,7 +170,7 @@ namespace Nitrogen
 			// and the Owned destructor will call AEDisposeDesc() for us.
 			
 			// Atom or list, it will hence be missed.
-			DisposeToken( Owned< AEDesc >::Seize( *token ) );
+			DisposeToken( Nucleus::Owned< AEDesc >::Seize( *token ) );
 		}
 		catch ( OSStatus err )
 		{
@@ -191,12 +191,12 @@ namespace Nitrogen
 		                                ( ::OSLGetErrDescProcPtr   )NULL );
 	}
 	
-	Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   desiredClass,
-	                                                          const AEToken&  containerToken,
-	                                                          AEObjectClass   containerClass,
-	                                                          AEEnumerated    keyForm,
-	                                                          const AEDesc&   keyData,
-	                                                          RefCon )
+	Nucleus::Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   desiredClass,
+	                                                                   const AEToken&  containerToken,
+	                                                                   AEObjectClass   containerClass,
+	                                                                   AEEnumerated    keyForm,
+	                                                                   const AEDesc&   keyData,
+	                                                                   RefCon )
 	{
 		
 		AEPropertyID propertyID = AEGetDescData< typeType >( keyData );
@@ -223,8 +223,8 @@ namespace Nitrogen
 		{}
 	};
 	
-	static Owned< AEToken, AETokenDisposer > CallObjectAccessor( const AEToken& containerToken,
-	                                                             const ObjectAccessContext& context )
+	static Nucleus::Owned< AEToken, AETokenDisposer > CallObjectAccessor( const AEToken& containerToken,
+	                                                                      const ObjectAccessContext& context )
 	{
 		return AECallObjectAccessor( context.desiredClass,
 		                             containerToken,
@@ -233,21 +233,21 @@ namespace Nitrogen
 		                             context.keyData );
 	}
 	
-	static Owned< AEToken, AETokenDisposer > CallObjectAccessorWithContext( const AEToken& containerToken,
-	                                                                        const ObjectAccessContext& context )
+	static Nucleus::Owned< AEToken, AETokenDisposer > CallObjectAccessorWithContext( const AEToken& containerToken,
+	                                                                                 const ObjectAccessContext& context )
 	{
 		return CallObjectAccessor( containerToken,
 		                           context );
 	}
 	
-	Owned< AEToken, AETokenDisposer > DispatchAccessToList( AEObjectClass   desiredClass,
-	                                                        const AEToken&  containerToken,
-	                                                        AEObjectClass   containerClass,
-	                                                        AEEnumerated    keyForm,
-	                                                        const AEDesc&   keyData,
-	                                                        RefCon )
+	Nucleus::Owned< AEToken, AETokenDisposer > DispatchAccessToList( AEObjectClass   desiredClass,
+	                                                                 const AEToken&  containerToken,
+	                                                                 AEObjectClass   containerClass,
+	                                                                 AEEnumerated    keyForm,
+	                                                                 const AEDesc&   keyData,
+	                                                                 RefCon )
 	{
-		Owned< AEDescList, AETokenDisposer > result = AECreateTokenList();
+		Nucleus::Owned< AEDescList, AETokenDisposer > result = AECreateTokenList();
 		
 		AEDescList_ItemValue_Container values = AEDescList_ItemValues( containerToken );
 		
