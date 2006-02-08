@@ -37,5 +37,11 @@
 	
 #endif
 
+#ifndef NUCLEUS_DEBUG
+#ifdef ALINE_DEBUG
+#define NUCLEUS_DEBUG
+#endif
+#endif
+
 #include "NitrogenHeaders.cp"
 
