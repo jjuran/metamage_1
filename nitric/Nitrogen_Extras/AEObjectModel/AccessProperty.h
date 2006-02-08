@@ -44,7 +44,7 @@ namespace Nitrogen
 			RecordPtr record = AEGetDescData< tokenType >( containerToken );
 			Member member = PropertyTraits::Member();
 			Field fieldValue = record->*member;
-			Result result = Convert< Result >( fieldValue );
+			Result result = Nucleus::Convert< Result >( fieldValue );
 			
 			return AECreateToken< descType >( result );
 		}
