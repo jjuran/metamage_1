@@ -6,9 +6,9 @@
 #ifndef CLASSICEXTRAS_CDROM_H
 #define CLASSICEXTRAS_CDROM_H
 
-// Nitrogen Core
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+// Nucleus
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
 
 // Nitrogen Extras / ClassicToolbox
@@ -21,6 +21,7 @@ namespace NitrogenExtras
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	namespace Constants
 	{
@@ -38,7 +39,7 @@ namespace NitrogenExtras
 	using namespace Constants;
 	
 	class CDROMPowerLevel_Tag {};
-	typedef N::SelectorType< CDROMPowerLevel_Tag, unsigned char > CDROMPowerLevel;
+	typedef NN::SelectorType< CDROMPowerLevel_Tag, unsigned char > CDROMPowerLevel;
 	
 	
 	struct CDROMDrive

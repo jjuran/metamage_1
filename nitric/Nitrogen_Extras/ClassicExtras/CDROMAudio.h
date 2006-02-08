@@ -15,7 +15,7 @@
 namespace NitrogenExtras
 {
 	
-	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	namespace Constants
 	{
@@ -102,10 +102,10 @@ namespace NitrogenExtras
 	};
 	
 	class OpticalPositioningType_Tag {};
-	typedef N::SelectorType< OpticalPositioningType_Tag, unsigned short > OpticalPositioningType;
+	typedef NN::SelectorType< OpticalPositioningType_Tag, unsigned short > OpticalPositioningType;
 	
 	class TrackControl_Tag {};
-	typedef N::SelectorType< TrackControl_Tag, unsigned char > TrackControl;
+	typedef NN::SelectorType< TrackControl_Tag, unsigned char > TrackControl;
 	
 	
 	typedef unsigned short TrackNumber, TrackCount;

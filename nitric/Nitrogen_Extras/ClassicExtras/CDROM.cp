@@ -9,8 +9,8 @@
 #endif
 #endif
 
-// Nitrogen Core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen Extras / ClassicExtras
 #ifndef CLASSICEXTRAS_APPLECD_H
