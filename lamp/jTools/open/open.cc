@@ -26,6 +26,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace NX = NitrogenExtras;
 namespace O = Orion;
 
@@ -135,7 +136,7 @@ void Opener::operator()( const string& pathname ) const
 	else
 	{
 		const std::string sigParam = options.GetString( optOpenInAppWithSignature );
-		signature = N::Convert< N::OSType >( sigParam );
+		signature = NN::Convert< N::OSType >( sigParam );
 	}
 	
 	if ( signature != N::OSType() )

@@ -10,8 +10,8 @@
 // POSIX
 #include "unistd.h"
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen / Mac OS support
 #include "Nitrogen/OSStatus.h"
@@ -28,6 +28,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 
 
@@ -79,7 +80,7 @@ int O::Main( int argc, const char *const argv[] )
 		std::string destDirPath = argv[ 3 ] ? argv[ 3 ] : ".";
 		
 		MacBinaryIII::Decode( Path2FSS( target ),
-		                      N::Convert< N::FSDirSpec >( Path2FSS( destDirPath ) ) );
+		                      NN::Convert< N::FSDirSpec >( Path2FSS( destDirPath ) ) );
 	}
 	else
 	{

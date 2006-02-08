@@ -51,6 +51,7 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace O = Orion;
 	namespace CD = CompileDriver;
 	
@@ -136,7 +137,7 @@ namespace ALine
 			
 		#if TARGET_RT_MAC_MACHO
 			
-			FSSpec dirFSS = N::Convert< FSSpec >( FSRef( N::FSPathMakeRef( dirPath ) ) );
+			FSSpec dirFSS = NN::Convert< FSSpec >( FSRef( N::FSPathMakeRef( dirPath ) ) );
 			
 		#else
 			
@@ -144,7 +145,7 @@ namespace ALine
 			
 		#endif
 			
-			dir = N::Convert< N::FSDirSpec >( dirFSS );
+			dir = NN::Convert< N::FSDirSpec >( dirFSS );
 		}
 		catch ( N::FNFErr )
 		{
@@ -312,7 +313,7 @@ namespace ALine
 				                search.end(),
 				                sourceDirs.begin(),
 				                std::bind1st( N::PtrFun( FindSearchDir ),
-					                          N::FSpGetPOSIXPathname( N::Convert< FSSpec >( projFolder ) ) ) );
+					                          N::FSpGetPOSIXPathname( NN::Convert< FSSpec >( projFolder ) ) ) );
 			}
 			else
 			{
@@ -447,7 +448,7 @@ namespace ALine
 					N::PtrFun( AddSourceFile ), 
 					ext::compose1
 					(
-						N::Converter< string, const unsigned char* >(), 
+						NN::Converter< string, const unsigned char* >(), 
 						N::PtrFun( GetFileName )
 					), 
 					ext::identity< FSSpec >()
@@ -471,7 +472,7 @@ namespace ALine
 					std::ptr_fun( IsCompilableFilename ), 
 					ext::compose1
 					(
-						N::Converter< string, const unsigned char* >(), 
+						NN::Converter< string, const unsigned char* >(), 
 						N::PtrFun( GetFileName )
 					)
 				)
@@ -498,7 +499,7 @@ namespace ALine
 			
 			for ( vFS_ci it = sources.begin();  it != sources.end();  ++it )
 			{
-				string name = N::Convert< string >( it->name );
+				string name = NN::Convert< string >( it->name );
 				if ( Membership( neededSources )( name ) )
 				{
 					mySources.push_back( *it );
@@ -560,7 +561,7 @@ namespace ALine
 					std::ptr_fun( AddRezFile ), 
 					ext::compose1
 					(
-						N::Converter< string, const unsigned char* >(), 
+						NN::Converter< string, const unsigned char* >(), 
 						N::PtrFun( GetFileName )
 					), 
 					ext::identity< FSSpec >()

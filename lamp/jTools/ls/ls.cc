@@ -20,6 +20,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 
 using std::string;
@@ -71,7 +72,7 @@ int O::Main(int argc, const char *const argv[])
 			{
 				try
 				{
-					IterateDir( N::Convert< N::FSDirSpec >( item ) );
+					IterateDir( NN::Convert< N::FSDirSpec >( item ) );
 				}
 				catch ( ... )
 				{
@@ -85,7 +86,7 @@ int O::Main(int argc, const char *const argv[])
 	{
 		try
 		{
-			IterateDir( N::Convert< N::FSDirSpec >( CurrentDirectory() ) );
+			IterateDir( NN::Convert< N::FSDirSpec >( CurrentDirectory() ) );
 		}
 		catch ( ... )
 		{

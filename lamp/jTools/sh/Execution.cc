@@ -35,7 +35,7 @@
 #include "PositionalParameters.hh"
 
 
-namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 namespace Sh = ShellShock;
 
@@ -107,11 +107,11 @@ std::string ShellParameterDictionary::Lookup( const std::string& param ) const
 {
 	if ( param == "$" )
 	{
-		return N::Convert< std::string >( getpid() );
+		return NN::Convert< std::string >( getpid() );
 	}
 	else if ( param == "?" )
 	{
-		return N::Convert< std::string >( gLastResult );
+		return NN::Convert< std::string >( gLastResult );
 	}
 	
 	std::size_t paramCount = gParameterCount;
@@ -120,7 +120,7 @@ std::string ShellParameterDictionary::Lookup( const std::string& param ) const
 	
 	if ( param == "#" )
 	{
-		return N::Convert< std::string >( paramCount );
+		return NN::Convert< std::string >( paramCount );
 	}
 	else if ( param == "*" )
 	{

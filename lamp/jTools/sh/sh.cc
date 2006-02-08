@@ -14,11 +14,8 @@
 #include "fcntl.h"
 #include <unistd.h>
 
-// Nitrogen Core
-#include "Nitrogen/Assert.h"
-
-// Nitrogen Carbon
-//#include "Nitrogen/QuickDraw.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // POSeven
 #include "POSeven/FileDescriptor.h"
@@ -35,7 +32,6 @@
 #include "ReadExecuteLoop.hh"
 
 
-namespace N = Nitrogen;
 namespace P7 = POSeven;
 namespace O = Orion;
 

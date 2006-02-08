@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen / Mac OS support
 #include "Nitrogen/OSA.h"
@@ -22,12 +22,13 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 
 
 static std::string ReadFileData( const FSSpec& file )
 {
-	N::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
+	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
 	
 	std::size_t fileSize = N::GetEOF( fileH );
 	
@@ -40,17 +41,17 @@ static std::string ReadFileData( const FSSpec& file )
 	return std::string( &data[ 0 ], bytes );
 }
 
-static N::Owned< N::OSASpec > CompileSource( const AEDesc& source )
+static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 {
 	return N::OSACompile( N::OpenDefaultComponent( kOSAComponentType,
 	                                               kOSAGenericScriptingComponentSubtype ),
 	                      source );
 }
 
-static N::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
+static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 {
-	N::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( scriptFile,
-	                                                          fsRdPerm ) );
+	NN::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( scriptFile,
+	                                                           fsRdPerm ) );
 	
 	return N::OSALoad( N::OpenGenericScriptingComponent(),
 	                   N::AECreateDesc( typeOSAGenericStorage,
@@ -58,7 +59,7 @@ static N::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 	                                                     N::ResID( 128 ) ) ) );
 }
 
-static N::Owned< N::OSASpec > LoadScriptFile( const FSSpec& scriptFile )
+static NN::Owned< N::OSASpec > LoadScriptFile( const FSSpec& scriptFile )
 {
 	OSType type = N::FSpGetFInfo( scriptFile ).fdType;
 	
@@ -73,7 +74,7 @@ static N::Owned< N::OSASpec > LoadScriptFile( const FSSpec& scriptFile )
 			break;
 	}
 	
-	return N::Owned< N::OSASpec >();
+	return NN::Owned< N::OSASpec >();
 }
 
 enum
@@ -107,7 +108,7 @@ int O::Main( int argc, const char *const argv[] )
 	
 	const std::vector< const char* >& params = options.GetFreeParams();
 	
-	N::Owned< N::OSASpec > script;
+	NN::Owned< N::OSASpec > script;
 	std::vector< std::string > inlineScriptPieces = options.GetStringList( optInlineScript );
 	
 	if ( !inlineScriptPieces.empty() )
@@ -123,7 +124,7 @@ int O::Main( int argc, const char *const argv[] )
 		}
 	}
 	
-	N::Owned< N::OSASpec > result = N::OSAExecute( script );
+	NN::Owned< N::OSASpec > result = N::OSAExecute( script );
 	
 	if ( result.Get().id != kOSANullScript )
 	{

@@ -9,9 +9,12 @@
 #include "Nitrogen/Str.h"
 
 
-namespace ALine {
+namespace ALine
+{
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	
 	
 	struct AllFilter
 	{
@@ -42,7 +45,7 @@ namespace ALine {
 			
 			bool operator()( const FSSpec& file ) const
 			{
-				return N::Convert< string >( file.name ) == nameToMatch;
+				return NN::Convert< string >( file.name ) == nameToMatch;
 			}
 	};
 	

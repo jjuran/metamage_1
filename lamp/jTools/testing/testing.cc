@@ -23,8 +23,9 @@
 // MoreFiles
 #include "MoreFilesExtras.h"
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
+#include "Nucleus/Scoped.h"
 
 // Nitrogen / Mac OS support
 #include "Nitrogen/CodeFragments.h"
@@ -33,7 +34,6 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/OSUtils.h"
 //#include "Nitrogen/Resources.h"
-#include "Nitrogen/Scoped.h"
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Str.h"
 
@@ -78,6 +78,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace FS = FileSystem;
 namespace NX = NitrogenExtras;
 //namespace V = Veneer;
@@ -145,10 +146,10 @@ static int TestSerial(int argc, const char *const argv[])
 	
 #else
 	
-	N::Owned< N::SerialDeviceRef > port( N::Open_SerialDevice( (argc > 2) ? argv[ 2 ]
-	                                                                      : "A"       ) );
+	NN::Owned< N::SerialDeviceRef > port( N::Open_SerialDevice( (argc > 2) ? argv[ 2 ]
+	                                                                       : "A"       ) );
 	
-	N::Control< kSERDHandshake >( port.Get()->output, N::Make< N::SerShk >() );
+	N::Control< kSERDHandshake >( port.Get()->output, NN::Make< N::SerShk >() );
 	
 	N::SerReset( port, baud19200 | data8 | noParity | stop10 );
 	
@@ -576,7 +577,7 @@ static int TestProcesses( int argc, char const *const argv[] )
 		N::GetProcessInformation( *it, info );
 		
 		Io::Out << "'"
-		        << N::Convert< std::string >( N::FourCharCode( info.processSignature ) )
+		        << NN::Convert< std::string >( N::FourCharCode( info.processSignature ) )
 		        << "' "
 		        << name
 		        << "\n";
@@ -629,7 +630,7 @@ static void PrintString( const std::string& s )
 static int TestAE( int argc, char const *const argv[] )
 {
 	//if (argc < 3)  return 1;
-	N::Owned< AEDescList > list = N::AECreateList< false >();
+	NN::Owned< AEDescList > list = N::AECreateList< false >();
 	
 	N::AEPutPtr< typeChar >( list, 0, "foo" );
 	N::AEPutPtr< typeChar >( list, 0, "bar" );
@@ -641,7 +642,7 @@ static int TestAE( int argc, char const *const argv[] )
 	N::AEDescListItemData< typeChar > foo = *listData.begin();
 	
 	{
-		N::Scoped< N::AEDescListItemData< typeChar > > scoped( foo );
+		NN::Scoped< N::AEDescListItemData< typeChar > > scoped( foo );
 		
 		foo = "zee";
 		
@@ -686,10 +687,10 @@ static int TestThread( int argc, char const *const argv[] )
 		param = argv[ 2 ];
 	}
 	
-	N::Owned< N::ThreadID > thread = N::NewThread< const std::string&, MyThreadRoutine >( kCooperativeThread,
-	                                                                                      param,
-	                                                                                      0,
-	                                                                                      N::ThreadOptions() );
+	NN::Owned< N::ThreadID > thread = N::NewThread< const std::string&, MyThreadRoutine >( kCooperativeThread,
+	                                                                                       param,
+	                                                                                       0,
+	                                                                                       N::ThreadOptions() );
 	N::ThreadState state = N::GetThreadState( thread );
 	
 	int count = 0;
@@ -720,7 +721,7 @@ static int TestThread( int argc, char const *const argv[] )
 
 static std::string ReadFileData( const FSSpec& file )
 {
-	N::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
+	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
 	
 	unsigned fileSize = N::GetEOF( fileH );
 	
@@ -737,9 +738,9 @@ static std::string ReadFileData( const FSSpec& file )
 static void DoSomethingWithServiceFile( const FSSpec& file )
 {
 	// Find Info.plist
-	FSSpec infoPListFile = N::Convert< N::FSDirSpec >( file ) << "Contents" & "Info.plist";
+	FSSpec infoPListFile = NN::Convert< N::FSDirSpec >( file ) << "Contents" & "Info.plist";
 	// Read the entire file contents
-	std::string infoPList = ReadFileData( N::Convert< FSSpec >( infoPListFile ) );
+	std::string infoPList = ReadFileData( NN::Convert< FSSpec >( infoPListFile ) );
 	// Search for a menu item
 	std::size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
 	
@@ -820,7 +821,7 @@ static int TestNull( int argc, char const *const argv[] )
 	
 	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const FSSpec& file )
 	{
-		N::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
+		NN::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
 		
 		std::size_t size = N::GetEOF( filehandle );
 		
@@ -847,7 +848,7 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	
 	std::printf( "Fragment length: %d bytes\n", len );
 	
-	N::Owned< CFragConnectionID > one = N::GetMemFragment< kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
+	NN::Owned< CFragConnectionID > one = N::GetMemFragment< kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
 	
 	int* scratch;
 	
@@ -855,7 +856,7 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	
 	*scratch = 42;
 	
-	N::Owned< CFragConnectionID > two = N::GetMemFragment< kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
+	NN::Owned< CFragConnectionID > two = N::GetMemFragment< kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
 	
 	N::FindSymbol( two, "\p" "gScratch", &scratch );
 	
@@ -875,6 +876,20 @@ static int TestStrError( int argc, char const *const argv[] )
 		if ( str == NULL || errno != 0 )  break;
 		
 		std::printf( "strerror(%d): %s\n", errnum, str );
+	}
+	
+	return 0;
+}
+
+static int TestThrow( int argc, char const *const argv[] )
+{
+	if ( argc < 3 )  return 1;
+	
+	int errnum = std::atoi( argv[2] );
+	
+	if ( errnum < 0 )
+	{
+		N::ThrowOSStatus( errnum );
 	}
 	
 	return 0;
@@ -977,6 +992,10 @@ int O::Main(int argc, const char *const argv[])
 	else if ( arg1 == "strerror" )
 	{
 		return TestStrError( argc, argv );
+	}
+	else if ( arg1 == "throw" )
+	{
+		return TestThrow( argc, argv );
 	}
 	else
 	{

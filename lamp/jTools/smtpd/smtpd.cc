@@ -17,8 +17,8 @@
 // POSIX
 #include "sys/socket.h"
 
-// Nitrogen core
-#include "Nitrogen/Shared.h"
+// Nitrogen Nucleus
+#include "Nucleus/Shared.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/DateTimeUtils.h"
@@ -50,6 +50,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 
 namespace ext = N::STLExtensions;
@@ -78,7 +79,7 @@ namespace Nitrogen
 	{
 		if ( FSpTestDirectoryExists( item ) )
 		{
-			RecursivelyDeleteDirectoryContents( Convert< FSDirSpec >( item ) );
+			RecursivelyDeleteDirectoryContents( Nucleus::Convert< FSDirSpec >( item ) );
 		}
 		
 		FSpDelete( item );
@@ -88,12 +89,17 @@ namespace Nitrogen
 	{
 		void operator()( const FSDirSpec& dir ) const
 		{
-			RecursivelyDelete( Convert< FSSpec >( dir ) );
+			RecursivelyDelete( Nucleus::Convert< FSSpec >( dir ) );
 		}
 	};
 	
+}
+
+namespace Nucleus
+{
+	
 	template <>
-	struct LivelinessTraits< FSDirSpec, RecursiveFSDeleter >   { typedef SeizedValuesAreLive LivelinessTest; };
+	struct LivelinessTraits< Nitrogen::FSDirSpec, Nitrogen::RecursiveFSDeleter >   { typedef SeizedValuesAreLive LivelinessTest; };
 	
 }
 
@@ -183,8 +189,8 @@ static N::FSDirSpec QueueDirectory()
 class PartialMessage
 {
 	private:
-		N::Owned< N::FSDirSpec, N::RecursiveFSDeleter > dir;
-		N::Owned< N::FSFileRefNum > out;
+		NN::Owned< N::FSDirSpec, N::RecursiveFSDeleter > dir;
+		NN::Owned< N::FSFileRefNum > out;
 		unsigned int bytes;
 	
 	public:
@@ -200,8 +206,8 @@ class PartialMessage
 
 PartialMessage::PartialMessage( const FSSpec& dirLoc )
 :
-	dir( N::Owned< N::FSDirSpec, N::RecursiveFSDeleter >::Seize( N::FSpDirCreate( dirLoc ) ) ), 
-	out( N::FSpOpenDF( N::FSpCreate( dir & "Message",
+	dir( NN::Owned< N::FSDirSpec, N::RecursiveFSDeleter >::Seize( N::FSpDirCreate( dirLoc ) ) ), 
+	out( N::FSpOpenDF( N::FSpCreate( dir.Get() & "Message",
 	                                 'R*ch',
 	                                 'TEXT'),
 	                   fsWrPerm ) )

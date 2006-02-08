@@ -43,6 +43,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 
 
@@ -213,7 +214,7 @@ static void Relay( const std::string& returnPath,
 	
 	SMTP::Client::Session smtpSession( io );
 	
-	N::Owned< N::FSFileRefNum > msg = N::FSpOpenDF( message, fsRdPerm );
+	NN::Owned< N::FSFileRefNum > msg = N::FSpOpenDF( message, fsRdPerm );
 	
 	//smtpSession.Hello      ( HW::GetHostname() );
 	smtpSession.Hello      ( "hostname"  );
@@ -304,7 +305,7 @@ static void ProcessMessage( const FSSpec& msgFolderItem )
 {
 	if ( !N::FSpTestDirectoryExists( msgFolderItem ) )  return;  // Icon files, et al
 	
-	N::FSDirSpec msgFolder = N::Convert< N::FSDirSpec >( msgFolderItem );
+	N::FSDirSpec msgFolder = NN::Convert< N::FSDirSpec >( msgFolderItem );
 	
 	FSSpec       message    = msgFolder & "Message";
 	FSSpec       returnPath = msgFolder & "Return-Path";
@@ -316,10 +317,10 @@ static void ProcessMessage( const FSSpec& msgFolderItem )
 	               Transmitter( ReadOneLiner( returnPath ),
 	                            message ) );
 	
-	N::FSpDelete( N::Convert< FSSpec >( destFolder ) );  // this fails if destinations remain
+	N::FSpDelete( NN::Convert< FSSpec >( destFolder ) );  // this fails if destinations remain
 	N::FSpDelete( returnPath );
 	N::FSpDelete( message    );
-	N::FSpDelete( N::Convert< FSSpec >( msgFolder )  );
+	N::FSpDelete( NN::Convert< FSSpec >( msgFolder )  );
 }
 
 

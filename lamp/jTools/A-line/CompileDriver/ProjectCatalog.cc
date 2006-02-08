@@ -20,13 +20,14 @@ namespace CompileDriver
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	static void ScanItemForProjects( const FSSpec&                                       item,
 	                                 std::back_insert_iterator< std::vector< FSSpec > >  output )
 	{
 		if ( N::FSpTestDirectoryExists( item ) )
 		{
-			ScanDirForProjects( N::Convert< N::FSDirSpec >( item ), output );
+			ScanDirForProjects( NN::Convert< N::FSDirSpec >( item ), output );
 		}
 	}
 	
@@ -45,7 +46,7 @@ namespace CompileDriver
 		
 		if ( N::FSpTestDirectoryExists( confd ) )
 		{
-			N::FSDirSpec confdir = N::Convert< N::FSDirSpec >( confd );
+			N::FSDirSpec confdir = NN::Convert< N::FSDirSpec >( confd );
 			
 			std::copy( N::FSContents( confdir ).begin(),
 			           N::FSContents( confdir ).end(),

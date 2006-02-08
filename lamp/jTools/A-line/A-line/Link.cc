@@ -42,6 +42,7 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
 	using BitsAndBytes::q;
@@ -84,7 +85,7 @@ namespace ALine
 			
 			result = "-wi ";
 		}
-		else if ( LibNeedsWeakImport( N::Convert< std::string >( import.name ) ) )
+		else if ( LibNeedsWeakImport( NN::Convert< std::string >( import.name ) ) )
 		{
 			result = "-wi ";
 		}
@@ -112,12 +113,12 @@ namespace ALine
 		FSSpec mpwShell = NX::DTGetAPPL( 'MPS ' );
 		N::FSDirSpec mpw = N::FSpGetParent( mpwShell );
 		
-		return N::FSpGetParent( N::Convert< FSSpec >( mpw ) ) << "Interfaces&Libraries";
+		return N::FSpGetParent( NN::Convert< FSSpec >( mpw ) ) << "Interfaces&Libraries";
 	}
 	
 	static std::string GetFileName( const FSSpec& file )
 	{
-		return N::Convert< std::string >( file.name );
+		return NN::Convert< std::string >( file.name );
 	}
 	
 	static std::string Pathname( const FSSpec& file )
@@ -234,6 +235,7 @@ namespace ALine
 		N::FSDirSpec ppcLibs    = libsFolder << "PPCLibraries";
 		N::FSDirSpec libs68K    = libsFolder << "Libraries";
 		N::FSDirSpec mwppcLibs  = libsFolder << "MWPPCLibraries";
+		N::FSDirSpec mw68kLibs  = libsFolder << "MW68KLibraries";
 		
 		std::string actualName = filename;
 		
@@ -259,6 +261,10 @@ namespace ALine
 		{
 			return mwppcLibs & filename;
 		}
+		else if ( N::FSpTestItemExists( mw68kLibs & actualName ) )
+		{
+			return mw68kLibs & filename;
+		}
 		else
 		{
 			throw N::FNFErr();
@@ -283,7 +289,7 @@ namespace ALine
 		
 		Project& project = *proj;
 		
-		using namespace N::Operators;
+		using namespace NN::Operators;
 		
 		switch ( project.Product() )
 		{
@@ -292,7 +298,7 @@ namespace ALine
 				// but no source.
 				
 				// This doesn't compile -- CW says "Output" is an illegal operand.
-				//return N::Convert< FSSpec >( project.ProjectFolder() << "Output" & name );
+				//return NN::Convert< FSSpec >( project.ProjectFolder() << "Output" & name );
 				
 				{
 					N::FSDirSpec projectFolder = project.ProjectFolder();
@@ -427,7 +433,7 @@ namespace ALine
 	
 	static void GetProjectLib( const Project& project, std::vector< FSSpec >* const& outUsed )
 	{
-		using namespace N::Operators;
+		using namespace NN::Operators;
 		
 		try
 		{
@@ -472,7 +478,7 @@ namespace ALine
 			return N::FSpDirCreate( dir );
 		}
 		
-		return N::Convert< N::FSDirSpec >( dir );
+		return NN::Convert< N::FSDirSpec >( dir );
 	}
 	
 	static void CreateAppBundle( const N::FSDirSpec& location, const std::string& name )
@@ -569,7 +575,7 @@ namespace ALine
 		N::FSDirSpec objectsDir = ProjectObjectsFolder  ( project.Name(), targetName );
 		N::FSDirSpec libsDir    = ProjectLibrariesFolder( project.Name(), targetName );
 		
-		using namespace N::Operators;
+		using namespace NN::Operators;
 		
 		FSSpec outFile = libsDir & linkName;
 		bool outFileExists = N::FSpTestItemExists( outFile );
@@ -584,7 +590,7 @@ namespace ALine
 		
 		for ( it = project.Sources().begin();  it != end;  ++it )
 		{
-			std::string sourceName = N::Convert< std::string >( it->name );
+			std::string sourceName = NN::Convert< std::string >( it->name );
 			
 			FSSpec objectFile = objectsDir & ObjectFileName( sourceName );
 			
@@ -686,7 +692,7 @@ namespace ALine
 		
 		command = cmdgen.MakeNativeCommand( command );
 		
-		QueueCommand( "echo Linking:  " + N::Convert< std::string >( outFile.name ) );
+		QueueCommand( "echo Linking:  " + NN::Convert< std::string >( outFile.name ) );
 		QueueCommand( command );
 		
 		FSSpec rsrcFile = outFile;
@@ -706,7 +712,7 @@ namespace ALine
 				rezFiles.push_back( RezLocation( "CarbonApp.r" ) );
 			}
 			
-			FSSpec includeDir = N::Convert< FSSpec >( ProjectIncludesFolder( project.ProjectFolder() ) );
+			FSSpec includeDir = NN::Convert< FSSpec >( ProjectIncludesFolder( project.ProjectFolder() ) );
 			std::string rezCommand = "Rez -append -d __ALINE_REZ_MPW__";
 			
 			if ( gnu )
@@ -735,7 +741,7 @@ namespace ALine
 			
 			rezCommand = cmdgen.MakeNativeCommand( rezCommand );
 			
-			QueueCommand( "echo Rezzing:  " + N::Convert< std::string >( rsrcFile.name ) );
+			QueueCommand( "echo Rezzing:  " + NN::Convert< std::string >( rsrcFile.name ) );
 			QueueCommand( rezCommand );
 		}
 		
@@ -770,7 +776,7 @@ namespace ALine
 			
 			cpresCommand << q( N::FSpGetPOSIXPathname( rsrcFile ) );
 			
-			QueueCommand( "echo Copying resources:  " + N::Convert< std::string >( rsrcFile.name ) );
+			QueueCommand( "echo Copying resources:  " + NN::Convert< std::string >( rsrcFile.name ) );
 			QueueCommand( cpresCommand );
 		}
 	}

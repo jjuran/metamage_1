@@ -29,7 +29,6 @@
 
 // Nitrogen
 #include "Nitrogen/OpenTransportProviders.h"
-#include "Nitrogen/Owned.h"
 
 // POSeven
 #include "POSeven/Errno.h"
@@ -325,7 +324,6 @@ int O::Main(int argc, char const* const argv[])
 	gRemoteAddress = remoteAddr;
 	
 	Io::Out << "Secure tunnel daemon starting up...";
-	//ForceUpdate();
 	
 	unsigned int listen_ip = INADDR_ANY;
 	
@@ -335,13 +333,9 @@ int O::Main(int argc, char const* const argv[])
 	listenAddr.sin_port = listener_port;
 	listenAddr.sin_addr.s_addr = listen_ip;
 	
-//	gDaemon.Start( listenAddr );
-	
 	Startup( listenAddr );
 	
 	Io::Out << " done.\n";
-	
-//	Continue( Active );
 	
 	WaitForClients();
 	

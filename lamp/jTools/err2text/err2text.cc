@@ -12,8 +12,8 @@
 #include <string>
 #include <vector>
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen Extras / Templates
 #include "Templates/FunctionalExtensions.h"
@@ -30,6 +30,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 
 namespace ext = N::STLExtensions;
@@ -102,7 +103,7 @@ SysErrsDotErrTOC::SysErrsDotErrTOC( const FSSpec& errFile )
 :
 	myCount( 0 )
 {
-	N::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( errFile, fsRdPerm ) );
+	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( errFile, fsRdPerm ) );
 	
 	ReadData( fileH, myCount );
 	
@@ -151,7 +152,7 @@ class SysErrsDotErrText
 
 string SysErrsDotErrText::GetStringAt( UInt16 offset )
 {
-	N::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( myErrFile, fsRdPerm ) );
+	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( myErrFile, fsRdPerm ) );
 	
 	N::SetFPos( fileH, fsFromStart, offset );
 	

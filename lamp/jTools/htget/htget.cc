@@ -46,6 +46,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
 //namespace Lox = Locksmith;
@@ -125,7 +126,7 @@ namespace htget
 	
 }
 
-namespace Nitrogen
+namespace Nucleus
 {
 	
 	template <>
@@ -148,7 +149,7 @@ namespace htget
 		
 		FSSpec gSaveLocation;
 		
-		N::Owned< HTTPClientTransaction* > gTransaction;
+		NN::Owned< HTTPClientTransaction* > gTransaction;
 		
 	}
 	
@@ -310,7 +311,7 @@ namespace htget
 	
 	static N::OSType MakeOSType( const std::string& hexCodes )
 	{
-		return N::Convert< N::OSType >( Bits::DecodeHex( hexCodes ) );
+		return NN::Convert< N::OSType >( Bits::DecodeHex( hexCodes ) );
 	}
 	
 	void HTTPClientTransaction::ReceiveData( const char* data, unsigned int byteCount )
@@ -476,11 +477,11 @@ namespace htget
 	}
 	
 	
-	static N::Owned< HTTPClientTransaction* >
+	static NN::Owned< HTTPClientTransaction* >
 	NewTransaction( P7::FileDescriptor  socket,
 	                const sockaddr_in&  addr )
 	{
-		return N::Owned< HTTPClientTransaction* >::Seize
+		return NN::Owned< HTTPClientTransaction* >::Seize
 		(
 			new HTTPClientTransaction( socket, addr )
 		);

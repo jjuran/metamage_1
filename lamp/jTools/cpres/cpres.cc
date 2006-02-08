@@ -18,6 +18,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 
 
@@ -53,7 +54,7 @@ int O::Main( int argc, char const *const argv[] )
 	
 	::FSpCreateResFile( &dest, 'RSED', 'rsrc', smRoman );
 	
-	N::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( dest, fsRdWrPerm ) );
+	NN::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( dest, fsRdWrPerm ) );
 	
 	// Try to copy each file.  Return whether any errors occurred.
 	for ( int index = 1;  index < argc - 1;  ++index )
@@ -82,7 +83,7 @@ int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
 		return 1;
 	}
 	
-	N::Owned< N::ResFileRefNum > sourceRes( N::FSpOpenResFile( source, fsRdPerm ) );
+	NN::Owned< N::ResFileRefNum > sourceRes( N::FSpOpenResFile( source, fsRdPerm ) );
 	
 	int types = N::Count1Types();
 	

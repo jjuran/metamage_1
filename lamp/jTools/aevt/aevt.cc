@@ -43,12 +43,13 @@ namespace jTools
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	using std::string;
 	using std::vector;
 	
 	
-	static N::Owned< AEDesc > BuildAppleEvent
+	static NN::Owned< AEDesc > BuildAppleEvent
 	(
 		AEEventClass eventClass, AEEventID eventID, 
 		const AEAddressDesc& address, const char* buildString, va_list args, 
@@ -74,27 +75,27 @@ namespace jTools
 			)
 		);
 		
-		return N::Owned< AEDesc >::Seize( appleEvent );
+		return NN::Owned< AEDesc >::Seize( appleEvent );
 	}
 	
 #if CALL_NOT_IN_CARBON
 	
 	static TargetID LocateTarget( const string& appName, const string& machine, const string& host )
 	{
-		PPCPortRec name = N::Make< PPCPortRec >( N::Str32( appName ), "\p=" );
+		PPCPortRec name = NN::Make< PPCPortRec >( N::Str32( appName ), "\p=" );
 		
 		LocationNameRec location = machine.empty() 
 			? host.empty()
-				? N::Make< LocationNameRec >()
-				: N::Make< LocationNameRec >( N::Make< PPCAddrRec >( N::Make< PPCXTIAddress >( host ) ) )
-			: N::Make< LocationNameRec >( N::Make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) );
+				? NN::Make< LocationNameRec >()
+				: NN::Make< LocationNameRec >( NN::Make< PPCAddrRec >( NN::Make< PPCXTIAddress >( host ) ) )
+			: NN::Make< LocationNameRec >( NN::Make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) );
 		
-		return N::Make< TargetID >( N::IPCListPortsSync( name, location ).name, location );
+		return NN::Make< TargetID >( N::IPCListPortsSync( name, location ).name, location );
 	}
 	
 #endif
 	
-	static N::Owned< AEDesc > SelectAddress( OSType sig, const string& app, const string& machine, const string& host, const string& url )
+	static NN::Owned< AEDesc > SelectAddress( OSType sig, const string& app, const string& machine, const string& host, const string& url )
 	{
 		if ( sig != kUnknownType )
 		{
@@ -114,7 +115,7 @@ namespace jTools
 		}
 		
 		// Not reached
-		return N::Owned< AEDesc >();
+		return NN::Owned< AEDesc >();
 	}
 	
 	// shell$ aevt -m Otter -a Genie |gan Exec '----':[“shutdown”,“-h”]
@@ -199,10 +200,10 @@ namespace jTools
 		string app     = options.GetString( optApplicationName );
 		string sig     = options.GetString( optApplicationSignature );
 		
-		OSType sigCode = (sig.size() == 4) ? N::Convert< N::OSType >( sig ).Get() : kUnknownType;
+		OSType sigCode = (sig.size() == 4) ? NN::Convert< N::OSType >( sig ).Get() : kUnknownType;
 		
-		AEEventClass eventClass = N::Convert< N::AEEventClass >( argEventClass );
-		AEEventID    eventID    = N::Convert< N::AEEventID    >( argEventID    );
+		AEEventClass eventClass = NN::Convert< N::AEEventClass >( argEventClass );
+		AEEventID    eventID    = NN::Convert< N::AEEventID    >( argEventID    );
 		
 		N::AESend
 		(

@@ -24,8 +24,8 @@
 
 #include "vfork.h"
 
-// Nitrogen Core
-#include "Nitrogen/Assert.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/OpenTransportProviders.h"

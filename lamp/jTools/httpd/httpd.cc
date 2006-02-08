@@ -23,7 +23,6 @@
 // Nitrogen
 #include "Nitrogen/Folders.h"
 #include "Nitrogen/OpenTransportProviders.h"
-#include "Nitrogen/Shared.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
@@ -48,6 +47,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
 
@@ -282,13 +282,13 @@ static FSSpec LocateResource( const string& resource )
 	typedef ResourceParser::const_iterator const_iterator;
 	for ( const_iterator it = parser.begin();  it != parser.end();  ++it )
 	{
-		N::FSDirSpec dir = N::Convert< N::FSDirSpec >( item );
+		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( item );
 		item = dir & *it;
 	}
 	
 	if ( N::FSpTestDirectoryExists( item ) )
 	{
-		item = N::Convert< N::FSDirSpec >( item ) & "index.html";
+		item = NN::Convert< N::FSDirSpec >( item ) & "index.html";
 	}
 	
 	if ( !N::FSpTestFileExists( item ) )
@@ -317,7 +317,7 @@ static string FilenameExtension(const string& filename)
 
 static string FilenameExtension(const unsigned char* filename)
 {
-	return FilenameExtension( N::Convert< string >( filename ) );
+	return FilenameExtension( NN::Convert< string >( filename ) );
 }
 
 static string GuessContentType( const FSSpec& file )
@@ -348,7 +348,7 @@ static string HTTPHeader( const string& field, const string& value )
 
 static void DumpFile( const FSSpec& file )
 {
-	N::Owned< N::FSFileRefNum > input( N::FSpOpenDF( file, fsRdPerm ) );
+	NN::Owned< N::FSFileRefNum > input( N::FSpOpenDF( file, fsRdPerm ) );
 	
 	int bytes;
 	enum { dataSize = 512 };

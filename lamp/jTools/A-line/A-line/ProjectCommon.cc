@@ -13,12 +13,12 @@
 // POSIX
 #include "unistd.h"
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
+#include "Nucleus/Shared.h"
 
 // Nitrogen / Mac OS support
 #include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Shared.h"
 #include "Nitrogen/Threads.h"
 
 // Nitrogen Extras / Templates
@@ -38,12 +38,13 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
 	using BitsAndBytes::q;
 	
 	
-	typedef std::map< ProjName, N::Shared< Project*, N::DisposeWithDelete > > ProjectMap;
+	typedef std::map< ProjName, NN::Shared< Project*, NN::DisposeWithDelete > > ProjectMap;
 	typedef std::map< ProjName, N::FSDirSpec > IncludeDirMap;
 	typedef std::map< FileName, FSSpec > FileMap;
 	typedef std::map< IncludePath, FSSpec > IncludeMap;
@@ -70,7 +71,7 @@ namespace ALine
 		}
 		
 		// Load it
-		N::Owned< Project*, N::DisposeWithDelete > newProject = N::Owned< Project*, N::DisposeWithDelete >::Seize( new Project( projName ) );
+		NN::Owned< Project*, NN::DisposeWithDelete > newProject = NN::Owned< Project*, NN::DisposeWithDelete >::Seize( new Project( projName ) );
 		Project& project = *( gProjects[ projName ] = newProject ).Get();
 		
 		project.Study();
@@ -215,10 +216,9 @@ namespace ALine
 	
 	static void FixNullFileType( const FSSpec& file )
 	{
+	#if !TARGET_API_MAC_CARBON  // FIXME:  This is a hack -- check Gestalt
 		
 		CInfoPBRec pb;
-		
-	#if !TARGET_API_MAC_CARBON  // FIXME:  This is a hack -- check Gestalt
 		
 		N::FSpGetCatInfo( file, pb );
 		
@@ -237,7 +237,6 @@ namespace ALine
 		}
 		
 	#endif
-		
 	}
 	
 	struct TickCounter

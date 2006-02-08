@@ -22,6 +22,7 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	using std::string;
 	using std::vector;
@@ -75,7 +76,7 @@ namespace ALine
 		}
 		else if ( N::FSpTestDirectoryExists( item ) )
 		{
-			SearchDir( N::Convert< N::FSDirSpec >( item ) );
+			SearchDir( NN::Convert< N::FSDirSpec >( item ) );
 		}
 		return *this;
 	}

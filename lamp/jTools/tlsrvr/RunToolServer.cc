@@ -16,13 +16,16 @@
 // C++ Standard Library
 #include <string>
 
-// Nitrogen Core
-#include "Nitrogen/Assert.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen Carbon
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Folders.h"
 //#include "Nitrogen/Threads.h"
+
+// Nitrogen Extras / Operators
+#include "Operators/AEDataModel.h"
 
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
@@ -55,25 +58,28 @@ namespace RunToolServer
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace FS = FileSystem;
 	namespace NX = NitrogenExtras;
 	
 	using BitsAndBytes::q;
 	
+	using namespace Nucleus::Operators;
+	
 	
 	class AEDescEditor
 	{
 		private:
-			N::Owned< AEDesc >& desc;
+			NN::Owned< AEDesc >& desc;
 			AEDesc workingCopy;
 		
 		public:
-			AEDescEditor( N::Owned< AEDesc >& desc )
+			AEDescEditor( NN::Owned< AEDesc >& desc )
 			:
 				desc       ( desc           ), 
 				workingCopy( desc.Release() )
 			{}
-			~AEDescEditor()  { desc = N::Owned< AEDesc >::Seize( workingCopy ); }
+			~AEDescEditor()  { desc = NN::Owned< AEDesc >::Seize( workingCopy ); }
 			
 			AEDesc& Get()       { return workingCopy; }
 			operator AEDesc&()  { return Get();       }
@@ -120,7 +126,7 @@ namespace RunToolServer
 	static void WriteInputFile( const FSSpec& file )
 	{
 		// Prepare stdin file
-		N::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
+		NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
 		
 		// FIXME:  Needs to be implemented
 	}
@@ -171,7 +177,7 @@ namespace RunToolServer
 	}
 	
 	
-	static N::Owned< AppleEvent > CreateScriptEvent( const std::string& script )
+	static NN::Owned< AppleEvent > CreateScriptEvent( const std::string& script )
 	{
 		return N::AECreateAppleEvent( kAEMiscStandards,
 		                              kAEDoScript,
@@ -186,7 +192,7 @@ namespace RunToolServer
 		
 		const bool waitForReply = TARGET_RT_MAC_MACHO;
 		
-		N::Owned< AppleEvent > reply = N::AESend
+		NN::Owned< AppleEvent > reply = N::AESend
 		(
 			appleEvent, 
 			( waitForReply ? kAEWaitReply : kAEQueueReply ) | kAECanInteract, 
@@ -212,9 +218,9 @@ namespace RunToolServer
 	
 #endif
 	
-	static N::Owned< AppleEvent > AESendBlocking( const AppleEvent& appleEvent )
+	static NN::Owned< AppleEvent > AESendBlocking( const AppleEvent& appleEvent )
 	{
-		N::Owned< AppleEvent > replyEvent = N::AEInitializeDesc();
+		NN::Owned< AppleEvent > replyEvent = N::AEInitializeDesc();
 		
 		// Declare a block to limit the scope of mutableReply
 		{
@@ -241,7 +247,7 @@ namespace RunToolServer
 		return dir & name;
 	}
 	
-	static N::Owned< FSSpec > NewTempFile( const FSSpec& item )
+	static NN::Owned< FSSpec > NewTempFile( const FSSpec& item )
 	{
 		if ( N::FSpTestFileExists( item ) )
 		{
@@ -250,10 +256,10 @@ namespace RunToolServer
 		
 		N::FSpCreate( item, 'R*ch', 'TEXT' );
 		
-		return N::Owned< FSSpec >::Seize( item );
+		return NN::Owned< FSSpec >::Seize( item );
 	}
 	
-	N::Owned< FSSpec > gTempFiles[ 4 ];
+	NN::Owned< FSSpec > gTempFiles[ 4 ];
 	
 	static std::string SetUpScript( const std::string& command )
 	{
@@ -307,7 +313,7 @@ namespace RunToolServer
 	
 	static void DumpFile( const FSSpec& file, int fd )
 	{
-		N::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( file, fsRdPerm );
+		NN::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( file, fsRdPerm );
 		
 		std::size_t length = N::GetEOF( fileH );
 		

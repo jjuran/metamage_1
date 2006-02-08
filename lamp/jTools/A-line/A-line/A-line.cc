@@ -18,12 +18,12 @@
 // POSIX
 #include "unistd.h"
 
-// Nitrogen Core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
+#include "Nucleus/Shared.h"
 
 // Nitrogen / Carbon
 #include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Shared.h"
 #include "Nitrogen/Threads.h"
 
 // Nitrogen Extras / Templates
@@ -58,6 +58,7 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace CD = CompileDriver;
 	
 	using std::string;
@@ -178,7 +179,7 @@ namespace ALine
 		LinkProduct   ( project, info );
 	}
 	
-	typedef std::map< ProjName, N::Shared< Job*, N::DisposeWithDelete > > JobSubMap;
+	typedef std::map< ProjName, NN::Shared< Job*, NN::DisposeWithDelete > > JobSubMap;
 	typedef std::map< TargetName, JobSubMap > JobMap;
 	
 	static Job& BuildJob( const ProjName& projName, const TargetInfo& targetInfo )
@@ -194,7 +195,7 @@ namespace ALine
 		}
 		else
 		{
-			Job& job = *( subMap[ projName ] = N::Owned< Job*, N::DisposeWithDelete >::Seize
+			Job& job = *( subMap[ projName ] = NN::Owned< Job*, NN::DisposeWithDelete >::Seize
 			(
 				new Job( GetProject( projName ), targetInfo ) )
 			);
@@ -405,7 +406,7 @@ int O::Main( int argc, char const* const argv[] )
 		catch ( BadSourceAlias& ex )
 		{
 			Io::Err << argv[ 0 ] 
-				<< ": Unresolvable source alias " << q( N::Convert< string >( ex.alias.name ) )
+				<< ": Unresolvable source alias " << q( NN::Convert< string >( ex.alias.name ) )
 				<< " in " << ex.proj.Name() << "\n";
 		}
 		catch ( N::OSStatus err )

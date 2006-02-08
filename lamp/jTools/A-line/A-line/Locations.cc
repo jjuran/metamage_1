@@ -24,6 +24,7 @@
 namespace ALine {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace CD = CompileDriver;
 	
 	
@@ -31,7 +32,7 @@ namespace ALine {
 	{
 		if ( N::FSpTestItemExists( folder ) )
 		{
-			return N::Convert< N::FSDirSpec >( folder );
+			return NN::Convert< N::FSDirSpec >( folder );
 		}
 		
 		return N::FSpDirCreate( folder );
@@ -47,7 +48,7 @@ namespace ALine {
 		
 		if ( const char* home = getenv( "HOME" ) )
 		{
-			return N::Convert< N::FSDirSpec >( Path2FSS( home ) );
+			return NN::Convert< N::FSDirSpec >( Path2FSS( home ) );
 		}
 		
 		return N::RootDirectory( N::BootVolume() ) << "Users" << "jjuran";

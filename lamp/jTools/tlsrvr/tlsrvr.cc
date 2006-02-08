@@ -13,8 +13,8 @@
 // Standard C/C++
 #include <cctype>
 
-// Nitrogen Core
-#include "Nitrogen/Assert.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen Carbon
 #include "Nitrogen/Events.h"

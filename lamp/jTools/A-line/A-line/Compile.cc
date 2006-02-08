@@ -21,6 +21,9 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Str.h"
 
+// Nitrogen Extras / Operators
+#include "Operators/AEDataModel.h"
+
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
 
@@ -48,6 +51,7 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
 	using BitsAndBytes::q;
@@ -205,7 +209,7 @@ namespace ALine
 	{
 		if ( N::FSpTestItemExists( folder ) )
 		{
-			return N::Convert< N::FSDirSpec >( folder );
+			return NN::Convert< N::FSDirSpec >( folder );
 		}
 		
 		return N::FSpDirCreate( folder );
@@ -254,7 +258,7 @@ namespace ALine
 		
 		command << cmdgen.AllCompilerOptions();
 		
-		std::string filename = N::Convert< std::string >( file.name );
+		std::string filename = NN::Convert< std::string >( file.name );
 		
 		if ( !IsCFile( filename ) )
 		{
@@ -274,7 +278,7 @@ namespace ALine
 			if ( options.HasPrecompiledHeaderSource() )
 			{
 				// Specify by name only, so gcc will search for the .gch image.
-				std::string pchSourceName = N::Convert< std::string >( options.PrecompiledHeaderSource().name );
+				std::string pchSourceName = NN::Convert< std::string >( options.PrecompiledHeaderSource().name );
 				
 				//command << "-include" << q( pchSourceName );
 				command << cmdgen.Prefix( pchSourceName );
@@ -291,7 +295,7 @@ namespace ALine
 		
 		command << inc;
 		
-		using namespace N::Operators;
+		using namespace NN::Operators;
 		
 		command << cmdgen.Output( N::FSpGetPOSIXPathname( options.Output() & ObjectFileName( filename ) ) );
 		
@@ -328,7 +332,7 @@ namespace ALine
 				throw N::ParamErr();
 		}
 		
-		std::string filename = N::Convert< std::string >( file.name );
+		std::string filename = NN::Convert< std::string >( file.name );
 		
 		QueueCommand( "echo Compiling:  " + filename );
 		QueueCommand( command );
@@ -452,7 +456,7 @@ namespace ALine
 		
 		command << cmdgen.AllCompilerOptions();
 		
-		std::string filename = N::Convert< std::string >( file.name );
+		std::string filename = NN::Convert< std::string >( file.name );
 		
 		if ( !IsCFile( filename ) )
 		{
@@ -473,7 +477,7 @@ namespace ALine
 		
 		command << cmdgen.Input( N::FSpGetPOSIXPathname( file ) );
 		
-		using namespace N::Operators;
+		using namespace NN::Operators;
 		
 		N::FSDirSpec diagnosticsFolder = CreateFolder( N::FSDirGetParent( options.Output() ) & "Diagnostics" );
 		FSSpec diagnosticsFile = diagnosticsFolder & DiagnosticsFilenameFromSourceFilename( filename );
@@ -502,7 +506,7 @@ namespace ALine
 				throw N::ParamErr();
 		}
 		
-		QueueCommand( "echo Precompiling:  " + N::Convert< std::string >( file.name ) );
+		QueueCommand( "echo Precompiling:  " + NN::Convert< std::string >( file.name ) );
 		QueueCommand( command );
 	}
 	
@@ -517,7 +521,7 @@ namespace ALine
 		std::string pchImageName = gnu ? pchSourceName + ".gch"
 		                               : projName      + ".phi";
 		
-		using namespace N::Operators;
+		using namespace NN::Operators;
 		
 		return folder & pchImageName;
 	}
@@ -546,7 +550,7 @@ namespace ALine
 			
 			// Locate the precompiled header image file.
 			pchSource = IncludeLocation( pchSourcePath );
-			std::string pchSourceName = N::Convert< std::string >( pchSource.name );
+			std::string pchSourceName = NN::Convert< std::string >( pchSource.name );
 			
 			pchImage = PrecompiledHeaderImageFile( project.Name(),
 			                                       pchSourceName,
@@ -577,7 +581,7 @@ namespace ALine
 			{
 				pchSourcePath = GetProject( *found ).PrecompiledHeaderSource();
 				pchSource = IncludeLocation( pchSourcePath );
-				std::string pchSourceName = N::Convert< std::string >( pchSource.name );
+				std::string pchSourceName = NN::Convert< std::string >( pchSource.name );
 				
 				pchImage = PrecompiledHeaderImageFile( *found,
 				                                       pchSourceName,
@@ -604,7 +608,7 @@ namespace ALine
 		
 		for ( it = project.Sources().begin();  it != end;  ++it )
 		{
-			using namespace N::Operators;
+			using namespace NN::Operators;
 			
 			sleep( 0 );
 			
@@ -623,7 +627,7 @@ namespace ALine
 			}
 			
 			// The file's name
-			const std::string& sourceName = N::Convert< std::string >( sourceFile.name );
+			const std::string& sourceName = NN::Convert< std::string >( sourceFile.name );
 			
 			// The object file for this source file, which may or may not exist yet.
 			FSSpec objectFile = outDir & ObjectFileName( sourceName );

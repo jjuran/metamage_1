@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-// Nitrogen
-#include "Nitrogen/ResourceTransfer.h"
+// Nitrogen Nucleus
+#include "Nucleus/ResourceTransfer.h"
 
 // Nitrogen Extras / Templates
 #include "Templates/FunctionalExtensions.h"
@@ -30,6 +30,7 @@ namespace CompileDriver
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	namespace ext = N::STLExtensions;
 	
@@ -79,7 +80,7 @@ namespace CompileDriver
 		return found;
 	}
 	
-	static void SetPlatformInfo( N::ResourceTransfer< Platform > platform, const std::string& info )
+	static void SetPlatformInfo( NN::ResourceTransfer< Platform > platform, const std::string& info )
 	{
 		if ( info == "68k" )
 		{
@@ -142,7 +143,7 @@ namespace CompileDriver
 		std::for_each( infos.begin(),
 		               infos.end(),
 		               std::bind1st( N::PtrFun( SetPlatformInfo ),
-		                             N::ResourceTransfer< Platform >( result ) ) );
+		                             NN::ResourceTransfer< Platform >( result ) ) );
 		
 		return result;
 	}
@@ -174,7 +175,7 @@ namespace CompileDriver
 	
 	static N::FSDirSpec DescendPathToDir( const N::FSDirSpec& dir, const std::string& path )
 	{
-		using namespace N::Operators;
+		using namespace NN::Operators;
 		
 		typedef std::string::size_type size_type;
 		const size_type npos = std::string::npos;
@@ -194,7 +195,7 @@ namespace CompileDriver
 	
 	static void AddPendingConfigFile( const FSSpec& file )
 	{
-		std::string filename = N::Convert< std::string >( N::FSpGetName( file ) );
+		std::string filename = NN::Convert< std::string >( N::FSpGetName( file ) );
 		std::string extension = ".conf";
 		
 		std::string::difference_type rootSize = filename.size() - extension.size();
@@ -205,12 +206,12 @@ namespace CompileDriver
 		}
 		
 		N::FSDirSpec parent = N::FSpGetParent( file );
-		std::string name = N::Convert< std::string >( N::FSDirGetName( parent ) );
+		std::string name = NN::Convert< std::string >( N::FSDirGetName( parent ) );
 		
 		if ( name == "A-line.confd" )
 		{
 			parent = N::FSDirGetParent( parent );
-			name = N::Convert< std::string >( N::FSDirGetName( parent ) );
+			name = NN::Convert< std::string >( N::FSDirGetName( parent ) );
 		}
 		
 		DotConfData data;
