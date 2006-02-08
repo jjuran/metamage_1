@@ -41,7 +41,7 @@ namespace Nitrogen
 		{
 			CInfoPBRec pb;
 			
-			return FSpGetCatInfo( Convert< FSDirSpec >( dir ), pb ).dirInfo.ioDrNmFls;
+			return FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), pb ).dirInfo.ioDrNmFls;
 		}
 		
 		static value_type GetValue( ContainerType dir, size_type position )
@@ -49,9 +49,9 @@ namespace Nitrogen
 			CInfoPBRec pb;
 			Str255 name;
 			
-			FSpGetCatInfo( Convert< FSDirSpec >( dir ), position + 1, pb, name );  // one-based
+			FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), position + 1, pb, name );  // one-based
 			
-			return Convert< value_type >( Convert< FSDirSpec >( dir ) & name );
+			return Nucleus::Convert< value_type >( Nucleus::Convert< FSDirSpec >( dir ) & name );
 		}
 		
 		typedef ContainerType ContainerState;
