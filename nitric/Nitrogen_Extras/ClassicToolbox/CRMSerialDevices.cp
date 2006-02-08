@@ -18,19 +18,19 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	static Owned< StringHandle > NewHandleSys( ConstStr255Param str )
+	static Nucleus::Owned< StringHandle > NewHandleSys( ConstStr255Param str )
 	{
 		std::size_t size = 1 + str[0];
-		Owned< StringHandle > block = Handle_Cast< unsigned char >( NewHandleSys( size ) );
+		Nucleus::Owned< StringHandle > block = Handle_Cast< unsigned char >( NewHandleSys( size ) );
 		::BlockMoveData( str, *block.Get(), size );
 		return block;
 	}
 	
-	Owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
-	                                           ConstStr255Param outputDriverName,
-	                                           ConstStr255Param portName )
+	Nucleus::Owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
+	                                                    ConstStr255Param outputDriverName,
+	                                                    ConstStr255Param portName )
 	{
-		Owned< CRMSerialPtr > result = Owned< CRMSerialPtr >::Seize
+		Nucleus::Owned< CRMSerialPtr > result = Nucleus::Owned< CRMSerialPtr >::Seize
 		(
 			Ptr_Cast< CRMSerialRecord >( NewPtrSysClear( sizeof (CRMSerialRecord) ).Release() )
 		);

@@ -13,24 +13,26 @@
 #endif
 #endif
 
+// Nitrogen Nucleus
+#ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
+#include "Nucleus/AdvanceUntilFailureContainer.h"
+#endif
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
+#endif
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
+#endif
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
+#endif
+
 // Nitrogen
-#ifndef NITROGEN_ADVANCEUNTILFAILURECONTAINER_H
-#include "Nitrogen/AdvanceUntilFailureContainer.h"
-#endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
-#endif
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
 #endif
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
-#endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
-#endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
 #endif
 
 
@@ -53,10 +55,10 @@ namespace Nitrogen
 	using ::CRMRecPtr;
 	
 	struct CRMDeviceType_Tag  {};
-	typedef IDType< CRMDeviceType_Tag, long, 0 > CRMDeviceType;
+	typedef Nucleus::IDType< CRMDeviceType_Tag, long, 0 > CRMDeviceType;
 	
 	struct CRMDeviceID_Tag  {};
-	typedef IDType< CRMDeviceID_Tag, long, 0 > CRMDeviceID;
+	typedef Nucleus::IDType< CRMDeviceID_Tag, long, 0 > CRMDeviceID;
 	
 	struct CRMAttributes_Tag;
 	typedef CRMAttributes_Tag* CRMAttributes;
@@ -105,7 +107,7 @@ namespace Nitrogen
 			{
 				static void ForCRMAttributes( CRMAttributes crmAttributes )
 				{
-					Disposer< T >()( reinterpret_cast< T >( crmAttributes ) );
+					Nucleus::Disposer< T >()( reinterpret_cast< T >( crmAttributes ) );
 				}
 			};
 		
@@ -134,15 +136,20 @@ namespace Nitrogen
 	void DisposeCRMAttributes( CRMDeviceType  crmDeviceType,
 	                           CRMAttributes  crmAttributes );
 	
+}
+
+namespace Nucleus
+{
+	
 	#pragma mark -
 	#pragma mark ¥ Specializations ¥
 	
 	template < long crmDeviceType >
-	struct Disposer< CRMAttributes > : public std::unary_function< CRMAttributes, void >
+	struct Disposer< Nitrogen::CRMAttributes > : public std::unary_function< Nitrogen::CRMAttributes, void >
 	{
-		void operator()( CRMAttributes crmAttributes ) const
+		void operator()( Nitrogen::CRMAttributes crmAttributes ) const
 		{
-			DisposeCRMAttributes( crmDeviceType, crmAttributes );
+			Nitrogen::DisposeCRMAttributes( crmDeviceType, crmAttributes );
 		}
 	};
 	
@@ -150,22 +157,28 @@ namespace Nitrogen
 	{
 		void operator()( CRMRecPtr crmRec ) const
 		{
-			DisposeCRMAttributes
+			Nitrogen::DisposeCRMAttributes
 			(
 				crmRec->crmDeviceType,
-				reinterpret_cast< CRMAttributes >( crmRec->crmAttributes )
+				reinterpret_cast< Nitrogen::CRMAttributes >( crmRec->crmAttributes )
 			);
 			
-			Disposer< Ptr >()( crmRec );
+			Disposer< Nitrogen::Ptr >()( crmRec );
 		}
 	};
+	
+}
+
+namespace Nitrogen
+{
 	
 	struct CRMRemover : public std::unary_function< CRMRecPtr, void >,
 	                    private DefaultDestructionOSStatusPolicy
 	{
 		void operator()( CRMRecPtr crmRec ) const
 		{
-			OnlyOnce< RegisterCommunicationResourceManagerErrors >();
+			Nucleus::OnlyOnce< RegisterCommunicationResourceManagerErrors >();
+			
 			HandleDestructionOSStatus( ::CRMRemove( crmRec ) );
 		}
 	};
@@ -175,9 +188,9 @@ namespace Nitrogen
 	
 	void InitCRM();
 	
-	Owned< CRMRecPtr, CRMRemover > CRMInstall( Owned< CRMRecPtr > crmRec );
+	Nucleus::Owned< CRMRecPtr, CRMRemover > CRMInstall( Nucleus::Owned< CRMRecPtr > crmRec );
 	
-	Owned< CRMRecPtr > CRMRemove( Owned< CRMRecPtr, CRMRemover > crmRec );
+	Nucleus::Owned< CRMRecPtr > CRMRemove( Nucleus::Owned< CRMRecPtr, CRMRemover > crmRec );
 	
 	struct CRMSearch_Failed  {};
 	
@@ -197,14 +210,14 @@ namespace Nitrogen
 		return ::CRMIsDriverOpen( driverName );
 	}
 	
-	Owned< CRMRecPtr > New_CRMRecord();
+	Nucleus::Owned< CRMRecPtr > New_CRMRecord();
 	
 	template < long crmDeviceType >
-	Owned< CRMRecPtr > New_CRMRecord( Owned< typename CRMAttributes_Traits< crmDeviceType >::Type > crmAttributes )
+	Nucleus::Owned< CRMRecPtr > New_CRMRecord( Nucleus::Owned< typename CRMAttributes_Traits< crmDeviceType >::Type > crmAttributes )
 	{
 		RegisterCRMAttributesDisposer< crmDeviceType >();
 		
-		Owned< CRMRecPtr > result = New_CRMRecord();
+		Nucleus::Owned< CRMRecPtr > result = New_CRMRecord();
 		
 		CRMRecPtr crmRec = result;
 		
@@ -244,14 +257,14 @@ namespace Nitrogen
 			static value_type end_value()    { return NULL; }
 	};
 	
-	class CRMResource_Container: public AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
+	class CRMResource_Container: public Nucleus::AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
 	{
 		friend CRMResource_Container CRMResources( CRMDeviceType crmDeviceType );
 		
 		private:
 			CRMResource_Container( CRMDeviceType crmDeviceType )
 			:
-				AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
+				Nucleus::AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
 				(
 					CRMResource_Container_Specifics( crmDeviceType )
 				)

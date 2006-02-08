@@ -13,8 +13,8 @@
 #endif
 
 // Nitrogen
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -27,7 +27,7 @@ namespace Nitrogen
 	
 	void IPCListPortsSync( IPCListPortsPBRec& pb )
 	{
-		OnlyOnce< RegisterPPCToolboxErrors >();
+		Nucleus::OnlyOnce< RegisterPPCToolboxErrors >();
 		
 		ThrowOSStatus( ::IPCListPortsSync( &pb ) );
 	}
@@ -36,7 +36,7 @@ namespace Nitrogen
 	{
 		PortInfoRec portInfo;
 		
-		IPCListPortsPBRec pb = Make< IPCListPortsPBRec >( &name, &location, &portInfo );
+		IPCListPortsPBRec pb = Nucleus::Make< IPCListPortsPBRec >( &name, &location, &portInfo );
 		
 		IPCListPortsSync( pb );
 		
@@ -47,7 +47,7 @@ namespace Nitrogen
 	{
 		PortInfoRec portInfo;
 		
-		IPCListPortsPBRec pb = Make< IPCListPortsPBRec >( &name, &portInfo );
+		IPCListPortsPBRec pb = Nucleus::Make< IPCListPortsPBRec >( &name, &portInfo );
 		
 		IPCListPortsSync( pb );
 		

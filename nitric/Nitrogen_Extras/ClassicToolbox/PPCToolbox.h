@@ -22,11 +22,11 @@
 #ifndef NITROGEN_STR_H
 #include "Nitrogen/Str.h"
 #endif
-#ifndef NITROGEN_IDTYPE_H
-#include "Nitrogen/IDType.h"
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
 
 // Nitrogen Extras / ClassicToolbox
@@ -51,25 +51,25 @@ namespace Nitrogen
 	using ::IPCListPortsPBRec;
 	
 	struct PPCServiceType_Tag {};
-	typedef SelectorType< PPCServiceType_Tag, UInt8, 0 > PPCServiceType;
+	typedef Nucleus::SelectorType< PPCServiceType_Tag, UInt8, 0 > PPCServiceType;
 	
 	struct PPCLocationKind_Tag {};
-	typedef SelectorType< PPCLocationKind_Tag, SInt16, ppcNoLocation > PPCLocationKind;
+	typedef Nucleus::SelectorType< PPCLocationKind_Tag, SInt16, ppcNoLocation > PPCLocationKind;
 	
 	struct PPCPortKinds_Tag {};
-	typedef SelectorType< PPCPortKinds_Tag, SInt16, 0 > PPCPortKinds;
+	typedef Nucleus::SelectorType< PPCPortKinds_Tag, SInt16, 0 > PPCPortKinds;
 	
 	struct PPCSessionOrigin_Tag {};
-	typedef SelectorType< PPCSessionOrigin_Tag, UInt8, 0 > PPCSessionOrigin;
+	typedef Nucleus::SelectorType< PPCSessionOrigin_Tag, UInt8, 0 > PPCSessionOrigin;
 	
 	struct PPCPortRefNum_Tag {};
-	typedef IDType< PPCPortRefNum_Tag, short, 0 > PPCPortRefNum;
+	typedef Nucleus::IDType< PPCPortRefNum_Tag, short, 0 > PPCPortRefNum;
 	
 	struct PPCSessRefNum_Tag {};
-	typedef IDType< PPCSessRefNum_Tag, long, 0 > PPCSessRefNum;
+	typedef Nucleus::IDType< PPCSessRefNum_Tag, long, 0 > PPCSessRefNum;
 	
 	struct PPCXTIAddressType_Tag {};
-	typedef SelectorType< PPCXTIAddressType_Tag, SInt16, 0 > PPCXTIAddressType;
+	typedef Nucleus::SelectorType< PPCXTIAddressType_Tag, SInt16, 0 > PPCXTIAddressType;
 	
 	#pragma mark -
 	#pragma mark ¥ Typed constants ¥
@@ -92,6 +92,11 @@ namespace Nitrogen
 	static PPCXTIAddressType sINETAddrType = kINETAddrType;
 	static PPCXTIAddressType sDNSAddrType  = kDNSAddrType;
 	
+}
+
+namespace Nucleus
+{
+	
 	#pragma mark -
 	#pragma mark ¥ Specializations ¥
 	
@@ -107,9 +112,11 @@ namespace Nitrogen
 			PPCXTIAddress xtiAddr;
 			
 			xtiAddr.fAddressType = kDNSAddrType;
+			
 			std::fill( xtiAddr.fAddress,
 			           xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
 			           '\0' );
+			
 			std::copy( address.begin(), 
 			           address.begin() + std::min< std::size_t >( address.size(),
 			                                                      kMaxPPCXTIAddress ), 
@@ -165,7 +172,7 @@ namespace Nitrogen
 			LocationNameRec location;
 			
 			location.locationKindSelector = ppcNBPTypeLocation;
-			CopyToPascalString( nbpType, location.u.nbpType, 32 );
+			Nitrogen::CopyToPascalString( nbpType, location.u.nbpType, 32 );
 			
 			return location;
 		}
@@ -189,8 +196,8 @@ namespace Nitrogen
 			
 			port.nameScript = smSystemScript;  // FIXME
 			
-			CopyToPascalString( name,        port.name,          32 );
-			CopyToPascalString( portTypeStr, port.u.portTypeStr, 32 );
+			Nitrogen::CopyToPascalString( name,        port.name,          32 );
+			Nitrogen::CopyToPascalString( portTypeStr, port.u.portTypeStr, 32 );
 			
 			port.portKindSelector = ppcByString;
 			
@@ -218,6 +225,11 @@ namespace Nitrogen
 			return Make< IPCListPortsPBRec >( name, static_cast< const LocationNameRec* >( NULL ), portInfo );
 		}
 	};
+	
+}
+
+namespace Nitrogen
+{
 	
 #if CALL_NOT_IN_CARBON
 	

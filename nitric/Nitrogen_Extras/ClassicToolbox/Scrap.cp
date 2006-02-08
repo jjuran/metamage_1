@@ -10,10 +10,12 @@
 #include "ClassicToolbox/Scrap.h"
 #endif
 
-// Nitrogen
-#ifndef NITROGEN_ONLYONCE_H
-#include "Nitrogen/OnlyOnce.h"
+// Nucleus
+#ifndef NUCLEUS_ONLYONCE_H
+#include "Nucleus/OnlyOnce.h"
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
@@ -26,7 +28,7 @@ namespace Nitrogen
 	
 	void ZeroScrap()
 	{
-		OnlyOnce< RegisterScrapManagerErrors >();
+		Nucleus::OnlyOnce< RegisterScrapManagerErrors >();
 		
 		ThrowOSStatus( ::ZeroScrap() );
 	}

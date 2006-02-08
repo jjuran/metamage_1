@@ -36,24 +36,24 @@ namespace Nitrogen
 	
 	void InitCRM()
 	{
-		OnlyOnce< RegisterCommunicationResourceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCommunicationResourceManagerErrors >();
 		
 		ThrowOSStatus( ::InitCRM() );
 	}
 	
-	Owned< CRMRecPtr, CRMRemover > CRMInstall( Owned< CRMRecPtr > crmRec )
+	Nucleus::Owned< CRMRecPtr, CRMRemover > CRMInstall( Nucleus::Owned< CRMRecPtr > crmRec )
 	{
 		// ::CRMInstall() returns void.  There's no means for reporting errors.
 		::CRMInstall( crmRec.Get() );
-		return Owned< CRMRecPtr, CRMRemover >::Seize( crmRec.Release() );
+		return Nucleus::Owned< CRMRecPtr, CRMRemover >::Seize( crmRec.Release() );
 	}
 	
-	Owned< CRMRecPtr > CRMRemove( Owned< CRMRecPtr, CRMRemover > crmRec )
+	Nucleus::Owned< CRMRecPtr > CRMRemove( Nucleus::Owned< CRMRecPtr, CRMRemover > crmRec )
 	{
-		OnlyOnce< RegisterCommunicationResourceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterCommunicationResourceManagerErrors >();
 		
 		ThrowOSStatus( ::CRMRemove( crmRec.Get() ) );
-		return Owned< CRMRecPtr >::Seize( crmRec.Release() );
+		return Nucleus::Owned< CRMRecPtr >::Seize( crmRec.Release() );
 	}
 	
 	CRMRecPtr CRMSearch( const CRMRec& crmRec )
@@ -77,9 +77,9 @@ namespace Nitrogen
 		return CRMSearch( crmRec );
 	}
 	
-	Owned< CRMRecPtr > New_CRMRecord()
+	Nucleus::Owned< CRMRecPtr > New_CRMRecord()
 	{
-		Owned< CRMRecPtr > result = Owned< CRMRecPtr >::Seize
+		Nucleus::Owned< CRMRecPtr > result = Nucleus::Owned< CRMRecPtr >::Seize
 		(
 			reinterpret_cast< CRMRecPtr >
 			(

@@ -17,8 +17,8 @@
 #ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"
 #endif
-#ifndef NITROGEN_SELECTORTYPE_H
-#include "Nitrogen/SelectorType.h"
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
 #endif
 
 
@@ -30,19 +30,29 @@ namespace Nitrogen
 #if CALL_NOT_IN_CARBON
 	
 	struct ControlStatusCode_Tag  {};
-	typedef SelectorType< ControlStatusCode_Tag, short, 0 > ControlStatusCode;
+	typedef Nucleus::SelectorType< ControlStatusCode_Tag, short, 0 > ControlStatusCode;
 	
 	typedef ControlStatusCode CSCode;
 	
-	template <> struct Disposer< DriverRefNum > : public std::unary_function< DriverRefNum, void >,
-	                                              private DefaultDestructionOSStatusPolicy
+}
+
+namespace Nucleus
+{
+	
+	template <> struct Disposer< Nitrogen::DriverRefNum > : public std::unary_function< Nitrogen::DriverRefNum, void >,
+	                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( DriverRefNum driverRefNum ) const
+		void operator()( Nitrogen::DriverRefNum driverRefNum ) const
 		{
-			OnlyOnce< RegisterDeviceManagerErrors >();
+			OnlyOnce< Nitrogen::RegisterDeviceManagerErrors >();
 			HandleDestructionOSStatus( ::CloseDriver( driverRefNum ) );
 		}
 	};
+	
+}
+
+namespace Nitrogen
+{
 	
 	template < SInt16 csCode >  struct Control_Default;
 	
@@ -55,11 +65,11 @@ namespace Nitrogen
 	#pragma mark ¥ Routines ¥
 	
 	// 1158
-	Owned< DriverRefNum > MacOpenDriver( ConstStr255Param name );
-	Owned< DriverRefNum > MacOpenDriver( const std::string& name );
+	Nucleus::Owned< DriverRefNum > MacOpenDriver( ConstStr255Param name );
+	Nucleus::Owned< DriverRefNum > MacOpenDriver( const std::string& name );
 	
 	// 1175
-	void MacCloseDriver( Owned< DriverRefNum > driverRefNum );
+	void MacCloseDriver( Nucleus::Owned< DriverRefNum > driverRefNum );
 	
 	// 1190
 	void Control( DriverRefNum       driverRefNum,

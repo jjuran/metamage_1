@@ -56,26 +56,36 @@ namespace Nitrogen
 		return !( a == b );
 	}
 	
+}
+
+namespace Nucleus
+{
+	
 	template <>
-	struct Disposer< VBLTaskPtr > : public  std::unary_function< VBLTaskPtr, void >,
-	                                private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::VBLTaskPtr > : public  std::unary_function< Nitrogen::VBLTaskPtr, void >,
+	                                          private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( VBLTaskPtr vblTaskPtr ) const
+		void operator()( Nitrogen::VBLTaskPtr vblTaskPtr ) const
 		{
-			HandleDestructionOSStatus( ::VRemove( reinterpret_cast< QElemPtr >( vblTaskPtr ) ) );
+			HandleDestructionOSStatus( ::VRemove( reinterpret_cast< ::QElemPtr >( vblTaskPtr ) ) );
 		}
 	};
 	
 	template <>
-	struct Disposer< SlotVBLTask > : public  std::unary_function< SlotVBLTask, void >,
-	                                 private DefaultDestructionOSStatusPolicy
+	struct Disposer< Nitrogen::SlotVBLTask > : public  std::unary_function< Nitrogen::SlotVBLTask, void >,
+	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
-		void operator()( SlotVBLTask slotVBLTask ) const
+		void operator()( Nitrogen::SlotVBLTask slotVBLTask ) const
 		{
-			HandleDestructionOSStatus( ::SlotVRemove( reinterpret_cast< QElemPtr >( slotVBLTask.task ),
+			HandleDestructionOSStatus( ::SlotVRemove( reinterpret_cast< ::QElemPtr >( slotVBLTask.task ),
 			                                          slotVBLTask.slot ) );
 		}
 	};
+	
+}
+
+namespace Nitrogen
+{
 	
 	namespace Private
 	{
@@ -102,12 +112,12 @@ namespace Nitrogen
 	
 	typedef UPP< VBLUPP_Details > VBLUPP;
 	
-	inline Owned< VBLUPP > NewVBLUPP( ::VBLProcPtr p )
+	inline Nucleus::Owned< VBLUPP > NewVBLUPP( ::VBLProcPtr p )
 	{
 		return NewUPP< VBLUPP >( p );
 	}
 	
-	inline void DisposeVBLUPP( Owned< VBLUPP > )  {}
+	inline void DisposeVBLUPP( Nucleus::Owned< VBLUPP > )  {}
 	
 #if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
 	
@@ -119,15 +129,15 @@ namespace Nitrogen
 	
 #endif
 	
-	Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot );
+	Nucleus::Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot );
 	
-	void SlotVRemove( Owned< SlotVBLTask > vblTask );
+	void SlotVRemove( Nucleus::Owned< SlotVBLTask > vblTask );
 	
 	// ...
 	
-	Owned< VBLTaskPtr > VInstall( VBLTask& vblTask );
+	Nucleus::Owned< VBLTaskPtr > VInstall( VBLTask& vblTask );
 	
-	void VRemove( Owned< VBLTaskPtr > vblTask );
+	void VRemove( Nucleus::Owned< VBLTaskPtr > vblTask );
 	
 #endif  // CALL_NOT_IN_CARBON
 	

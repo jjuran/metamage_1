@@ -24,45 +24,45 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	Owned< DriverRefNum > OpenDriver( ConstStr255Param name )
+	Nucleus::Owned< DriverRefNum > OpenDriver( ConstStr255Param name )
 	{
-		OnlyOnce< RegisterDeviceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
 		
 		SInt16 result;
 		ThrowOSStatus( ::OpenDriver( name, &result ) );
 		
-		return Owned< DriverRefNum >::Seize( DriverRefNum( result ) );
+		return Nucleus::Owned< DriverRefNum >::Seize( DriverRefNum( result ) );
 	}
 	
-	Owned< DriverRefNum > OpenDriver( const std::string& name )
+	Nucleus::Owned< DriverRefNum > OpenDriver( const std::string& name )
 	{
 		return OpenDriver( Str255( name ) );
 	}
 	
-	void CloseDriver( Owned< DriverRefNum > driverRefNum )
+	void CloseDriver( Nucleus::Owned< DriverRefNum > driverRefNum )
 	{
-		OnlyOnce< RegisterDeviceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
 		
 		ThrowOSStatus( ::CloseDriver( driverRefNum.Release() ) );
 	}
 	
 	void KillIO( DriverRefNum driverRefNum )
 	{
-		OnlyOnce< RegisterDeviceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
 		
 		ThrowOSStatus( ::KillIO( driverRefNum ) );
 	}
 	
 	void Control( DriverRefNum driverRefNum, CSCode csCode, const void* csParamPtr )
 	{
-		OnlyOnce< RegisterDeviceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
 		
 		ThrowOSStatus( ::Control( driverRefNum, csCode, csParamPtr ) );
 	}
 	
 	void Status( DriverRefNum driverRefNum, CSCode csCode, void* csParamPtr )
 	{
-		OnlyOnce< RegisterDeviceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
 		
 		ThrowOSStatus( ::Status( driverRefNum, csCode, csParamPtr ) );
 	}
@@ -81,7 +81,7 @@ namespace Nitrogen
 	
 	int Read( DriverRefNum driverRefNum, char* data, std::size_t byteCount )
 	{
-		OnlyOnce< RegisterDeviceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
 		
 		ParamBlockRec pb;
 		IOParam& io = pb.ioParam;
@@ -100,7 +100,7 @@ namespace Nitrogen
 	
 	int Write( DriverRefNum driverRefNum, const char* data, std::size_t byteCount )
 	{
-		OnlyOnce< RegisterDeviceManagerErrors >();
+		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
 		
 		ParamBlockRec pb;
 		IOParam& io = pb.ioParam;

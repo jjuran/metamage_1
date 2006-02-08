@@ -6,9 +6,9 @@
 #ifndef CLASSICTOOLBOX_MACWINDOWS_H
 #define CLASSICTOOLBOX_MACWINDOWS_H
 
-// Nitrogen core
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+// Nitrogen Nucleus
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 // Nitrogen Carbon support
@@ -30,7 +30,7 @@ namespace Nitrogen
 		}
 	};
 	
-	inline void MacCloseWindow( Owned< WindowRef, WindowCloser > )  {}
+	inline void MacCloseWindow( Nucleus::Owned< WindowRef, WindowCloser > )  {}
 	
 	inline void InvalRect( const Rect& r )  { ::InvalRect( &r ); }
 	

@@ -24,15 +24,17 @@
 #include <ext/functional>
 #endif
 
+// Nucleus
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
+#endif
+
 // Nitrogen
 #ifndef NITROGEN_ICONS_H
 #include "Nitrogen/Icons.h"
 #endif
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
-#endif
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
 #endif
 
 // Nitrogen Extras / ClassicToolbox
@@ -49,12 +51,6 @@ enum
 namespace Nitrogen
 {
 	
-#ifdef __MWERKS__
-	namespace ext = std;
-#else
-	namespace ext = __gnu_cxx;
-#endif
-	
 #if CALL_NOT_IN_CARBON
 	
 	using ::CRMIconRecord;
@@ -66,64 +62,81 @@ namespace Nitrogen
 	
 	template <> struct CRMAttributes_Traits< crmSerialDevice >  { typedef CRMSerialPtr Type; };
 	
-	template <> struct Disposer< CRMIconHandle > : public std::unary_function< CRMIconHandle, void >
+}
+
+namespace Nucleus
+{
+	
+	template <> struct Disposer< Nitrogen::CRMIconHandle > : public std::unary_function< Nitrogen::CRMIconHandle, void >
 	{
-		void operator()( CRMIconHandle deviceIcon ) const
+		void operator()( Nitrogen::CRMIconHandle deviceIcon ) const
 		{
-			IconSuiteRef iconSuite = (*deviceIcon)->theSuite;
-			Disposer< IconSuiteRef >()( iconSuite  );
-			Disposer< Handle       >()( deviceIcon );
+			Nitrogen::IconSuiteRef iconSuite = (*deviceIcon)->theSuite;
+			
+			Disposer< Nitrogen::IconSuiteRef >()( iconSuite  );
+			Disposer< Nitrogen::Handle       >()( deviceIcon );
 		}
 	};
 	
-	template <> struct Disposer< CRMSerialPtr > : public std::unary_function< CRMSerialPtr, void >
+	template <> struct Disposer< Nitrogen::CRMSerialPtr > : public std::unary_function< Nitrogen::CRMSerialPtr, void >
 	{
-		void operator()( CRMSerialPtr crmSerial ) const
+		void operator()( Nitrogen::CRMSerialPtr crmSerial ) const
 		{
-			Disposer< Handle        >()( crmSerial->inputDriverName  );
-			Disposer< Handle        >()( crmSerial->outputDriverName );
-			Disposer< Handle        >()( crmSerial->name             );
-			Disposer< CRMIconHandle >()( crmSerial->deviceIcon       );
-			Disposer< Ptr           >()( crmSerial                   );
+			Disposer< Nitrogen::Handle        >()( crmSerial->inputDriverName  );
+			Disposer< Nitrogen::Handle        >()( crmSerial->outputDriverName );
+			Disposer< Nitrogen::Handle        >()( crmSerial->name             );
+			Disposer< Nitrogen::CRMIconHandle >()( crmSerial->deviceIcon       );
+			Disposer< Nitrogen::Ptr           >()( crmSerial                   );
 		}
 	};
 	
-	inline Str255 GetCRMSerialName( CRMSerialPtr crmSerial )  { return *crmSerial->name; }
-	
-	template <> struct Converter< CRMSerialPtr, CRMRecPtr > : public std::unary_function< CRMRecPtr, CRMSerialPtr >
+	template <> struct Converter< Nitrogen::CRMSerialPtr, Nitrogen::CRMRecPtr > : public std::unary_function< Nitrogen::CRMRecPtr, Nitrogen::CRMSerialPtr >
 	{
-		CRMSerialPtr operator()( CRMRecPtr crmRec ) const
+		Nitrogen::CRMSerialPtr operator()( Nitrogen::CRMRecPtr crmRec ) const
 		{
 			// FIXME:  Throw if device type is wrong
-			return GetCRMAttributes< crmSerialDevice >( crmRec );
+			return Nitrogen::GetCRMAttributes< crmSerialDevice >( crmRec );
 		}
 	};
 	
-	template <> struct Converter< CRMRecPtr, CRMSerialPtr > : public std::unary_function< CRMSerialPtr, CRMRecPtr >
+#ifdef __MWERKS__
+	namespace ext = std;
+#else
+	namespace ext = __gnu_cxx;
+#endif
+	
+	template <> struct Converter< Nitrogen::CRMRecPtr, Nitrogen::CRMSerialPtr > : public std::unary_function< Nitrogen::CRMSerialPtr, Nitrogen::CRMRecPtr >
 	{
-		CRMRecPtr operator()( CRMSerialPtr crmSerialPtr ) const
+		Nitrogen::CRMRecPtr operator()( Nitrogen::CRMSerialPtr crmSerialPtr ) const
 		{
-			typedef CRMResource_Container::const_iterator const_iterator;
+			typedef Nitrogen::CRMResource_Container::const_iterator const_iterator;
 			
-			CRMResource_Container crmResources = CRMResources( crmSerialDevice );
+			Nitrogen::CRMResource_Container crmResources = Nitrogen::CRMResources( crmSerialDevice );
 			
 			const_iterator it = std::find_if( crmResources.begin(),
 			                                  crmResources.end(),
-			                                  ext::compose1( std::bind2nd( std::equal_to< CRMSerialPtr >(),
+			                                  ext::compose1( std::bind2nd( std::equal_to< Nitrogen::CRMSerialPtr >(),
 			                                                               crmSerialPtr ),
-			                                                 CRMAttributes_Getter< crmSerialDevice >() ) );
+			                                                 Nitrogen::CRMAttributes_Getter< crmSerialDevice >() ) );
 			if ( it == crmResources.end() )
 			{
-				throw CRMSearch_Failed();
+				throw Nitrogen::CRMSearch_Failed();
 			}
 			
 			return *it;
 		}
 	};
 	
-	Owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
-	                                           ConstStr255Param outputDriverName,
-	                                           ConstStr255Param portName );
+}
+
+namespace Nitrogen
+{
+	
+	inline Str255 GetCRMSerialName( CRMSerialPtr crmSerial )  { return *crmSerial->name; }
+	
+	Nucleus::Owned< CRMSerialPtr > New_CRMSerialRecord( ConstStr255Param inputDriverName,
+	                                                    ConstStr255Param outputDriverName,
+	                                                    ConstStr255Param portName );
 	
 	class CRMSerialDevice_Container : public CRMResource_Container
 	{

@@ -15,31 +15,31 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot )
+	Nucleus::Owned< SlotVBLTask > SlotVInstall( VBLTask& vblTask, short slot )
 	{
-		ThrowOSStatus( ::SlotVInstall( reinterpret_cast< QElemPtr >( &vblTask ), slot ) );
+		ThrowOSStatus( ::SlotVInstall( reinterpret_cast< ::QElemPtr >( &vblTask ), slot ) );
 		
-		return Owned< SlotVBLTask >::Seize( SlotVBLTask( &vblTask, slot ) );
+		return Nucleus::Owned< SlotVBLTask >::Seize( SlotVBLTask( &vblTask, slot ) );
 	}
 	
-	void SlotVRemove( Owned< SlotVBLTask > slotVBLTask )
+	void SlotVRemove( Nucleus::Owned< SlotVBLTask > slotVBLTask )
 	{
 		SlotVBLTask released = slotVBLTask.Release();
 		
-		ThrowOSStatus( ::SlotVRemove( reinterpret_cast< QElemPtr >( released.task ),
+		ThrowOSStatus( ::SlotVRemove( reinterpret_cast< ::QElemPtr >( released.task ),
 		                              released.slot ) );
 	}
 	
-	Owned< VBLTaskPtr > VInstall( VBLTask& vblTask )
+	Nucleus::Owned< VBLTaskPtr > VInstall( VBLTask& vblTask )
 	{
-		ThrowOSStatus( ::VInstall( reinterpret_cast< QElemPtr >( &vblTask ) ) );
+		ThrowOSStatus( ::VInstall( reinterpret_cast< ::QElemPtr >( &vblTask ) ) );
 		
-		return Owned< VBLTaskPtr >::Seize( &vblTask );
+		return Nucleus::Owned< VBLTaskPtr >::Seize( &vblTask );
 	}
 	
-	void VRemove( Owned< VBLTaskPtr > vblTask )
+	void VRemove( Nucleus::Owned< VBLTaskPtr > vblTask )
 	{
-		ThrowOSStatus( ::VRemove( reinterpret_cast< QElemPtr >( vblTask.Release() ) ) );
+		ThrowOSStatus( ::VRemove( reinterpret_cast< ::QElemPtr >( vblTask.Release() ) ) );
 	}
 	
 #endif  // CALL_NOT_IN_CARBON

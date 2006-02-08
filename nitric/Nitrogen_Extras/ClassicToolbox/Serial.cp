@@ -26,7 +26,7 @@ namespace Nitrogen
 	
 	std::size_t SerGetBuf( SerialDeviceRef serialDevice )
 	{
-		OnlyOnce< RegisterSerialDriverErrors >();
+		Nucleus::OnlyOnce< RegisterSerialDriverErrors >();
 		
 		CheckNULL( serialDevice );
 		long count;
@@ -36,7 +36,7 @@ namespace Nitrogen
 	
 	void SerSetBuf( SerialDeviceRef serialDevice, void* buf, std::size_t bufSize )
 	{
-		OnlyOnce< RegisterSerialDriverErrors >();
+		Nucleus::OnlyOnce< RegisterSerialDriverErrors >();
 		
 		const std::size_t maxSize = 32767;
 		
@@ -47,7 +47,7 @@ namespace Nitrogen
 	
 	SerStaRec SerStatus( SerialDeviceRef serialDevice )
 	{
-		OnlyOnce< RegisterSerialDriverErrors >();
+		Nucleus::OnlyOnce< RegisterSerialDriverErrors >();
 		
 		CheckNULL( serialDevice );
 		SerStaRec serStatus;
@@ -57,7 +57,7 @@ namespace Nitrogen
 	
 	void SerReset( SerialDeviceRef serialDevice, SerConfig serConfig )
 	{
-		OnlyOnce< RegisterSerialDriverErrors >();
+		Nucleus::OnlyOnce< RegisterSerialDriverErrors >();
 		
 		CheckNULL( serialDevice );
 		ThrowOSStatus( ::SerReset( serialDevice->output.Get(), serConfig ) );
@@ -90,17 +90,17 @@ namespace Nitrogen
 		return std::string( "." ) + portName + directionName;
 	}
 	
-	Owned< SerialDeviceRef > Open_SerialDevice( const std::string& portName )
+	Nucleus::Owned< SerialDeviceRef > Open_SerialDevice( const std::string& portName )
 	{
 		// Open the output driver FIRST, then the input driver.
 		// Open the output driver even if you aren't going to use it.
-		Owned< DriverRefNum > output = OpenDriver( MakeDriverName( portName, "Out" ) );
-		Owned< DriverRefNum > input  = OpenDriver( MakeDriverName( portName, "In"  ) );
+		Nucleus::Owned< DriverRefNum > output = OpenDriver( MakeDriverName( portName, "Out" ) );
+		Nucleus::Owned< DriverRefNum > input  = OpenDriver( MakeDriverName( portName, "In"  ) );
 		
-		return Owned< SerialDeviceRef >::Seize( new SerialDevice_Record( output, input ) );
+		return Nucleus::Owned< SerialDeviceRef >::Seize( new SerialDevice_Record( output, input ) );
 	}
 	
-	void Close_SerialDevice( Owned< SerialDeviceRef > serialDevice )
+	void Close_SerialDevice( Nucleus::Owned< SerialDeviceRef > serialDevice )
 	{
 		// Serial drivers will be closed (and the object deleted) when serialDevice goes out of scope.
 	}

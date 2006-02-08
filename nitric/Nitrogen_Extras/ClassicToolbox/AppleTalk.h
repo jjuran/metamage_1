@@ -8,12 +8,14 @@
 #include <AppleTalk.h>
 #endif
 
+// Nucleus
+#ifndef NUCLEUS_MAKE_H
+#include "Nucleus/Make.h"
+#endif
+
 // Nitrogen
 #ifndef NITROGEN_STR_H
 #include "Nitrogen/Str.h"
-#endif
-#ifndef NITROGEN_MAKE_H
-#include "Nitrogen/Make.h"
 #endif
 
 
@@ -25,6 +27,11 @@ namespace Nitrogen
 #if CALL_NOT_IN_CARBON
 	
 	using ::EntityName;
+	
+}
+
+namespace Nucleus
+{
 	
 	template <>  struct Maker< EntityName >
 	{
@@ -38,13 +45,18 @@ namespace Nitrogen
 		{
 			EntityName entityName;
 			
-			CopyToPascalString( object, entityName.objStr,  32 );
-			CopyToPascalString( type,   entityName.typeStr, 32 );
-			CopyToPascalString( zone,   entityName.zoneStr, 32 );
+			Nitrogen::CopyToPascalString( object, entityName.objStr,  32 );
+			Nitrogen::CopyToPascalString( type,   entityName.typeStr, 32 );
+			Nitrogen::CopyToPascalString( zone,   entityName.zoneStr, 32 );
 			
 			return entityName;
 		}
 	};
+	
+}
+
+namespace Nitrogen
+{
 	
 	static EntityName NBPSetEntity
 	(

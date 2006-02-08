@@ -21,6 +21,11 @@ namespace Nitrogen
 	
 	using ::TargetID;
 	
+}
+
+namespace Nucleus
+{
+	
 	template <>  struct Maker< TargetID >
 	{
 		TargetID operator()( const PPCPortRec& name, const LocationNameRec& location ) const
@@ -40,6 +45,11 @@ namespace Nitrogen
 			return Make< TargetID >( name, Make< LocationNameRec >() );
 		}
 	};
+	
+}
+
+namespace Nitrogen
+{
 	
 #if CALL_NOT_IN_CARBON
 	

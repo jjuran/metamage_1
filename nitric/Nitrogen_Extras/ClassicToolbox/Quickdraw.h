@@ -12,12 +12,12 @@
 #endif
 
 // Nitrogen core
-#ifndef NITROGEN_OWNED_H
-#include "Nitrogen/Owned.h"
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
 #endif
 
 
-namespace Nitrogen
+namespace Nucleus
 {
 	
 #if !OPAQUE_TOOLBOX_STRUCTS
@@ -40,21 +40,26 @@ namespace Nitrogen
 	
 #endif
 	
+}
+
+namespace Nitrogen
+{
+	
 #if CALL_NOT_IN_CARBON
 	
 	using ::InitGraf;
 	
-	Owned< ::GrafPtr > OpenPort( ::GrafPtr port );
+	Nucleus::Owned< ::GrafPtr > OpenPort( ::GrafPtr port );
 	
 	using ::InitPort;
 	
-	inline void ClosePort( Owned< ::GrafPtr > )  {}
+	inline void ClosePort( Nucleus::Owned< ::GrafPtr > )  {}
 	
-	Owned< ::CGrafPtr > OpenCPort( ::CGrafPtr port );
+	Nucleus::Owned< ::CGrafPtr > OpenCPort( ::CGrafPtr port );
 	
 	using ::InitCPort;
 	
-	inline void CloseCPort( Owned< ::CGrafPtr > )  {}
+	inline void CloseCPort( Nucleus::Owned< ::CGrafPtr > )  {}
 	
 #endif  // CALL_NOT_IN_CARBON
 	

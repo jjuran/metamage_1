@@ -27,24 +27,30 @@ namespace Nitrogen
 #if CALL_NOT_IN_CARBON
 	
 	struct SerConfig_Tag  {};
-	typedef FlagType< SerConfig_Tag, short > SerConfig;
+	typedef Nucleus::FlagType< SerConfig_Tag, short > SerConfig;
 	
 	using ::SerStaRec;
 	using ::SerShk;
 	
+}
+
+namespace Nucleus
+{
+	
 	template <>
-	struct Maker< SerShk >
+	struct Maker< Nitrogen::SerShk >
 	{
-		SerShk operator()( Byte           fXOn = 0,
-		                   Byte           fCTS = 0,
-		                   unsigned char  xOn  = 0,
-		                   unsigned char  xOff = 0,
-		                   Byte           errs = 0,
-		                   Byte           evts = 0,
-		                   Byte           fInX = 0,
-		                   Byte           fDTR = 0 ) const
+		Nitrogen::SerShk operator()( Byte           fXOn = 0,
+		                             Byte           fCTS = 0,
+		                             unsigned char  xOn  = 0,
+		                             unsigned char  xOff = 0,
+		                             Byte           errs = 0,
+		                             Byte           evts = 0,
+		                             Byte           fInX = 0,
+		                             Byte           fDTR = 0 ) const
 		{
-			SerShk result;
+			Nitrogen::SerShk result;
+			
 			result.fXOn = fXOn;
 			result.fCTS = fCTS;
 			result.xOn  = xOn;
@@ -53,9 +59,15 @@ namespace Nitrogen
 			result.evts = evts;
 			result.fInX = fInX;
 			result.fDTR = fDTR;
+			
 			return result;
 		}
 	};
+	
+}
+
+namespace Nitrogen
+{
 	
 	struct SerialDevice_Record;
 	
@@ -63,13 +75,13 @@ namespace Nitrogen
 	
 	struct SerialDevice_Record
 	{
-		Owned< DriverRefNum > output;
-		Owned< DriverRefNum > input;
+		Nucleus::Owned< DriverRefNum > output;
+		Nucleus::Owned< DriverRefNum > input;
 		
 		SerialDevice_Record()  {}
 		
-		SerialDevice_Record( Owned< DriverRefNum > output,
-		                     Owned< DriverRefNum > input )
+		SerialDevice_Record( Nucleus::Owned< DriverRefNum > output,
+		                     Nucleus::Owned< DriverRefNum > input )
 		:
 			output( output ),
 			input ( input  )
@@ -77,7 +89,17 @@ namespace Nitrogen
 		
 	};
 	
-	template <> struct Disposer< SerialDeviceRef > : public DisposeWithDelete  {};
+}
+
+namespace Nucleus
+{
+	
+	template <> struct Disposer< Nitrogen::SerialDeviceRef > : public DisposeWithDelete  {};
+	
+}
+
+namespace Nitrogen
+{
 	
 	template <>  struct Control_Default< kSERDHandshake >
 	{
@@ -99,7 +121,7 @@ namespace Nitrogen
 	void SerSetBuf( SerialDeviceRef serialDevice, void* buf, std::size_t bufSize );
 	
 	// 290
-	void SerHShake( SerialDeviceRef serialDevice, const SerShk& serShk = Make< SerShk >() );
+	void SerHShake( SerialDeviceRef serialDevice, const SerShk& serShk = Nucleus::Make< SerShk >() );
 	
 	// 328
 	std::size_t SerGetBuf( SerialDeviceRef serialDevice );
@@ -114,9 +136,9 @@ namespace Nitrogen
 	int Read ( SerialDeviceRef serialDevice,       char* data, std::size_t byteCount );
 	int Write( SerialDeviceRef serialDevice, const char* data, std::size_t byteCount );
 	
-	Owned< SerialDeviceRef > Open_SerialDevice( const std::string& portName );
+	Nucleus::Owned< SerialDeviceRef > Open_SerialDevice( const std::string& portName );
 	
-	void Close_SerialDevice( Owned< SerialDeviceRef > serialDevice );
+	void Close_SerialDevice( Nucleus::Owned< SerialDeviceRef > serialDevice );
 	
 #endif
 	
