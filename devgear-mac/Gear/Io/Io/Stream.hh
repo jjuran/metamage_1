@@ -14,8 +14,8 @@
 // Standard C++
 #include <string>
 
-// Nitrogen
-#include "Nitrogen/Convert.h"
+// Nucleus
+#include "Nucleus/Convert.h"
 
 
 namespace Io
@@ -65,7 +65,7 @@ namespace Io
 	{
 		// Covers anything that implicitly converts to a std::string
 		// or has a Converter specialized for it
-		return s << Nitrogen::Convert< std::string >( object );
+		return s << Nucleus::Convert< std::string >( object );
 	}
 	
 }

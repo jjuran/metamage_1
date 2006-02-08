@@ -3,19 +3,17 @@
  *	=========
  */
 
-#pragma once
-
 #ifndef IO_HANDLE_HH
 #define IO_HANDLE_HH
 
-// Nitrogen
-#include "Nitrogen/Shared.h"
+// Nucleus
+#include "Nucleus/Shared.h"
 
 
 namespace Io
 {
 	
-	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	inline void SetBlockingNoOp( void*, bool )
 	{
@@ -43,7 +41,7 @@ namespace Io
 					void operator()( void* object ) const  { deleter( object ); }
 			};
 			
-			N::Shared< void*, Disposer > object;
+			NN::Shared< void*, Disposer > object;
 			BlockingSetter blockingSetter;
 			Reader reader;
 			Writer writer;
@@ -63,7 +61,7 @@ namespace Io
 			        Writer          writer,
 			        Deleter         deleter )
 			:
-				object( N::Owned< void*, Disposer >::Seize( object, deleter ) ),
+				object( NN::Owned< void*, Disposer >::Seize( object, deleter ) ),
 				blockingSetter( blockingSetter ),
 				reader( reader ),
 				writer( writer )
