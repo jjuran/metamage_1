@@ -17,7 +17,7 @@ namespace NitrogenExtras
 	
 	namespace N = Nitrogen;
 	
-	using namespace N::Operators;
+	using namespace Nucleus::Operators;
 	
 	inline int RectWidth( const Rect& rect )
 	{
