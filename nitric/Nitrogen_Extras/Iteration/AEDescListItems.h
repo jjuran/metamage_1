@@ -6,11 +6,12 @@
 #ifndef ITERATION_AEDESCLISTITEMS_H
 #define ITERATION_AEDESCLISTITEMS_H
 
+#ifndef NUCLEUS_PSEUDOREFERENCE_H
+#include "Nucleus/Pseudoreference.h"
+#endif
+
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
-#endif
-#ifndef NITROGEN_PSEUDOREFERENCE_H
-#include "Nitrogen/Pseudoreference.h"
 #endif
 
 #ifndef NITROGEN_INDEXEDVALUECONTAINER_H
@@ -28,7 +29,7 @@ namespace Nitrogen
 			std::size_t index;
 			
 		public:
-			typedef Owned< AEDesc > Value;
+			typedef Nucleus::Owned< AEDesc > Value;
 			typedef Value           GetResult;
 			
 			Const_AEDescList_Item_Details( const AEDescList& list, std::size_t index ) 
@@ -39,32 +40,32 @@ namespace Nitrogen
 			GetResult Get() const  { return AEGetNthDesc( list, index ); }
 	};
 	
-	typedef ConstPseudoreference< Const_AEDescList_Item_Details > Const_AEDescList_Item;
+	typedef Nucleus::ConstPseudoreference< Const_AEDescList_Item_Details > Const_AEDescList_Item;
 	
 	class AEDescList_Item_Details
 	{
 		private:
-			Owned< AEDescList >& list;
+			Nucleus::Owned< AEDescList >& list;
 			std::size_t index;
 			
 		public:
-			typedef Owned< AEDesc > Value;
+			typedef Nucleus::Owned< AEDesc > Value;
 			typedef Value           GetResult;
 			typedef const AEDesc&   SetParameter;
 			
-			AEDescList_Item_Details( Owned< AEDescList >& list, std::size_t index ) : list( list ), index( index )  {}
+			AEDescList_Item_Details( Nucleus::Owned< AEDescList >& list, std::size_t index ) : list( list ), index( index )  {}
 			
 			GetResult Get() const  { return AEGetNthDesc( list, index ); }
 			void Set( SetParameter param ) const  { AEPutDesc( list, index, param ); }
 	};
 	
-	typedef Pseudoreference< AEDescList_Item_Details > AEDescList_Item;
+	typedef Nucleus::Pseudoreference< AEDescList_Item_Details > AEDescList_Item;
 	
 	struct AEDescList_Item_Specifics
 	{
 		typedef UInt32                   size_type;
 		typedef SInt32                   difference_type;
-		typedef Owned< AEDesc >          value_type;
+		typedef Nucleus::Owned< AEDesc >          value_type;
 		
 		static std::size_t Size( const AEDescList& list )
 		{
@@ -92,7 +93,7 @@ namespace Nitrogen
 		public:
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
-			typedef Owned< AEDesc > value_type;
+			typedef Nucleus::Owned< AEDesc > value_type;
 		
 		private:
 			typedef AEDescList_Item_ValueIterator This;
@@ -101,7 +102,7 @@ namespace Nitrogen
 			size_type position;
 		
 		public:
-			AEDescList_Item_ValueIterator() : list( Make< AEDescList >() )  {}
+			AEDescList_Item_ValueIterator() : list( Nucleus::Make< AEDescList >() )  {}
 			
 			AEDescList_Item_ValueIterator( const AEDescList& list, size_type pos )
 			:
@@ -136,7 +137,7 @@ namespace Nitrogen
 		private:
 			typedef AEDescList_Item_BackInsertionIterator< Disposer > This;
 			typedef This Proxy;
-			typedef Owned< AEDescList, Disposer > List;
+			typedef Nucleus::Owned< AEDescList, Disposer > List;
 			
 			List& list;
 		
@@ -153,7 +154,7 @@ namespace Nitrogen
 	
 	template < class Disposer >
 	AEDescList_Item_BackInsertionIterator< Disposer >
-	AEDescList_Item_BackInserter( Owned< AEDescList, Disposer >& list )
+	AEDescList_Item_BackInserter( Nucleus::Owned< AEDescList, Disposer >& list )
 	{
 		return AEDescList_Item_BackInsertionIterator< Disposer >( list );
 	}

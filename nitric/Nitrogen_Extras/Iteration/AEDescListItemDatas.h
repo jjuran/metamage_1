@@ -6,11 +6,11 @@
 #ifndef ITERATION_AEDESCLISTITEMDATAS_H
 #define ITERATION_AEDESCLISTITEMDATAS_H
 
+#ifndef NUCLEUS_PSEUDOREFERENCE_H
+#include "Nucleus/Pseudoreference.h"
+#endif
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
-#endif
-#ifndef NITROGEN_PSEUDOREFERENCE_H
-#include "Nitrogen/Pseudoreference.h"
 #endif
 
 #ifndef NITROGEN_INDEXEDVALUECONTAINER_H
@@ -41,10 +41,10 @@ namespace Nitrogen
 	};
 	
 	template < ::DescType type >
-	class Const_AEDescList_ItemData : public ConstPseudoreference< Const_AEDescList_ItemData_Details< type > >
+	class Const_AEDescList_ItemData : public Nucleus::ConstPseudoreference< Const_AEDescList_ItemData_Details< type > >
 	{
 		private:
-			typedef ConstPseudoreference< Const_AEDescList_ItemData_Details< type > > Base;
+			typedef Nucleus::ConstPseudoreference< Const_AEDescList_ItemData_Details< type > > Base;
 			
 		public:
 			typedef typename Base::Details Details;
@@ -53,8 +53,8 @@ namespace Nitrogen
 			typedef Const_AEDescList_ItemData< type > Reference;
 			typedef Const_AEDescList_ItemData< type > ConstReference;
 			
-			typedef Pseudopointer< Reference > Pointer;
-			typedef Pseudopointer< ConstReference > ConstPointer;
+			typedef Nucleus::Pseudopointer< Reference > Pointer;
+			typedef Nucleus::Pseudopointer< ConstReference > ConstPointer;
 			
 			explicit Const_AEDescList_ItemData( Details theDetails ) : Base( theDetails )  {}
 			Const_AEDescList_ItemData( const AEDescList& list, std::size_t index ) : Base( Details( list, index ) )  {}
@@ -70,7 +70,7 @@ namespace Nitrogen
 	class AEDescList_ItemData_Details
 	{
 		private:
-			Owned< AEDescList >& list;
+			Nucleus::Owned< AEDescList >& list;
 			std::size_t index;
 			
 		public:
@@ -78,17 +78,17 @@ namespace Nitrogen
 			typedef typename DescType_Traits< type >::Result    GetResult;
 			typedef typename DescType_Traits< type >::Parameter SetParameter;
 			
-			AEDescList_ItemData_Details( Owned< AEDescList >& list, std::size_t index ) : list( list ), index( index )  {}
+			AEDescList_ItemData_Details( Nucleus::Owned< AEDescList >& list, std::size_t index ) : list( list ), index( index )  {}
 			
 			GetResult Get() const  { return AEGetNthPtr< type >( list, index ); }
 			void Set( SetParameter param ) const  { AEPutPtr< type >( list, index, param ); }
 	};
 	
 	template < ::DescType type >
-	class AEDescList_ItemData : public Pseudoreference< AEDescList_ItemData_Details< type > >
+	class AEDescList_ItemData : public Nucleus::Pseudoreference< AEDescList_ItemData_Details< type > >
 	{
 		private:
-			typedef Pseudoreference< AEDescList_ItemData_Details< type > > Base;
+			typedef Nucleus::Pseudoreference< AEDescList_ItemData_Details< type > > Base;
 			
 		public:
 			typedef typename Base::Details Details;
@@ -98,11 +98,11 @@ namespace Nitrogen
 			typedef AEDescList_ItemData< type > Reference;
 			typedef Const_AEDescList_ItemData< type > ConstReference;
 			
-			typedef Pseudopointer< Reference > Pointer;
-			typedef Pseudopointer< ConstReference > ConstPointer;
+			typedef Nucleus::Pseudopointer< Reference > Pointer;
+			typedef Nucleus::Pseudopointer< ConstReference > ConstPointer;
 			
 			explicit AEDescList_ItemData( Details theDetails ) : Base( theDetails )  {}
-			AEDescList_ItemData( Owned< AEDescList >& list, std::size_t index ) : Base( Details( list, index ) )  {}
+			AEDescList_ItemData( Nucleus::Owned< AEDescList >& list, std::size_t index ) : Base( Details( list, index ) )  {}
 			
 			Pointer operator&() const  { return Pointer( Base::operator&().Get() ); }
 			
@@ -117,16 +117,26 @@ namespace Nitrogen
 			const AEDescList_ItemData& operator=( const AEDescList_ItemData& rhs ) const  { Set( rhs.Get() ); return *this; }
 	};
 	
+}
+
+namespace Nucleus
+{
+	
 	template < ::DescType type >
-	struct ReferenceTraits< AEDescList_ItemData< type > >
+	struct ReferenceTraits< Nitrogen::AEDescList_ItemData< type > >
 	{
-		typedef AEDescList_ItemData< type > Reference;
+		typedef Nitrogen::AEDescList_ItemData< type > Reference;
 		
 		typedef typename Reference::Value           Value;
 		typedef typename Reference::Pointer         Pointer;
 		typedef typename Reference::ConstReference  ConstReference;
 		typedef typename Reference::ConstPointer    ConstPointer;
 	};
+	
+}
+
+namespace Nitrogen
+{
 	
 	template < ::DescType type >
 	struct AEDescList_ItemData_Specifics
@@ -225,7 +235,7 @@ namespace Nitrogen
 		private:
 			typedef AEDescList_ItemData_BackInsertionIterator< type, Disposer > This;
 			typedef This Proxy;
-			typedef Owned< AEDescList, Disposer > List;
+			typedef Nucleus::Owned< AEDescList, Disposer > List;
 			typedef typename DescType_Traits< type >::Parameter Parameter;
 			
 			List& list;
@@ -243,7 +253,7 @@ namespace Nitrogen
 	
 	template < ::DescType type, class Disposer >
 	AEDescList_ItemData_BackInsertionIterator< type, Disposer >
-	AEDescList_ItemData_BackInserter( Owned< AEDescList, Disposer >& list )
+	AEDescList_ItemData_BackInserter( Nucleus::Owned< AEDescList, Disposer >& list )
 	{
 		return AEDescList_ItemData_BackInsertionIterator< type, Disposer >( list );
 	}
