@@ -7,7 +7,7 @@
 
 // Nitrogen
 #include "Nitrogen/Icons.h"
-#include "Nitrogen/Scoped.h"
+#include "Nucleus/Scoped.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/RectangleMath.h"
@@ -49,7 +49,7 @@ namespace Pedestal
 		
 		// Lock pixels
 		N::PixelsState_Details details( N::GetGWorldPixMap( myGWorld ) );
-		N::Scoped< N::PixelsState > savedPixelsState( N::PixelsState( details ) );
+		NN::Scoped< N::PixelsState > savedPixelsState( N::PixelsState( details ) );
 		
 		N::LockPixels( N::GetGWorldPixMap( myGWorld ) );
 		

@@ -16,12 +16,13 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	class GWorldView
 	{
 		private:
 			Rect bounds;
-			N::Owned< N::GWorldPtr, N::GWorldDisposer > myGWorld;
+			NN::Owned< N::GWorldPtr, N::GWorldDisposer > myGWorld;
 		
 		public:
 			GWorldView( const Rect& bounds );

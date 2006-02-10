@@ -13,10 +13,11 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	class GWorld : public Graphic
 	{
-		typedef N::Owned< N::GWorldPtr, N::GWorldDisposer > Value;
+		typedef NN::Owned< N::GWorldPtr, N::GWorldDisposer > Value;
 		
 		private:
 			Value fGWorld;
@@ -38,16 +39,16 @@ namespace Pedestal
 	class GWorldTransfer : public Graphic
 	{
 		private:
-			N::Shared< N::GWorldPtr, N::GWorldDisposer > fGWorld;
+			NN::Shared< N::GWorldPtr, N::GWorldDisposer > fGWorld;
 			N::TransferMode fMode;
 		
 		public:
 			struct Initializer
 			{
-				N::Shared< N::GWorldPtr, N::GWorldDisposer > gworld;
+				NN::Shared< N::GWorldPtr, N::GWorldDisposer > gworld;
 				N::TransferMode mode;
 				
-				Initializer( const N::Shared< N::GWorldPtr, N::GWorldDisposer >&  gworld,
+				Initializer( const NN::Shared< N::GWorldPtr, N::GWorldDisposer >&  gworld,
 				             N::TransferMode                                      mode )
 				:
 					gworld( gworld ),
@@ -57,7 +58,7 @@ namespace Pedestal
 			
 			GWorldTransfer( Initializer init ) : fGWorld( init.gworld ), fMode( init.mode )  {}
 			
-			N::Shared< N::GWorldPtr, N::GWorldDisposer > Get() const  { return fGWorld; }
+			NN::Shared< N::GWorldPtr, N::GWorldDisposer > Get() const  { return fGWorld; }
 			
 			void Plot( const Rect& area ) const;
 	};

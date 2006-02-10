@@ -11,8 +11,8 @@
 // Standard C++
 #include <algorithm>
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/TextEdit.h"

@@ -14,6 +14,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	struct NewWindowContext
@@ -41,17 +42,17 @@ namespace Pedestal
 		{}
 	};
 	
-	N::Owned< N::WindowRef > CreateWindow( const Rect& bounds,
-	                                       ConstStr255Param title,
-	                                       bool visible,
-	                                       N::WindowDefProcID procID,
-	                                       N::WindowRef behind,
-	                                       bool goAwayFlag,
-	                                       N::RefCon refCon );
+	NN::Owned< N::WindowRef > CreateWindow( const Rect& bounds,
+	                                        ConstStr255Param title,
+	                                        bool visible,
+	                                        N::WindowDefProcID procID,
+	                                        N::WindowRef behind,
+	                                        bool goAwayFlag,
+	                                        N::RefCon refCon );
 	
-	inline N::Owned< N::WindowRef > CreateWindow( const NewWindowContext&  context,
-	                                              N::WindowDefProcID       procID,
-	                                              N::RefCon                refCon )
+	inline NN::Owned< N::WindowRef > CreateWindow( const NewWindowContext&  context,
+	                                               N::WindowDefProcID       procID,
+	                                               N::RefCon                refCon )
 	{
 		return CreateWindow( context.bounds,
 		                     context.title,
@@ -97,10 +98,10 @@ namespace Pedestal
 	class WindowRefOwner
 	{
 		private:
-			N::Owned< N::WindowRef > windowRef;
+			NN::Owned< N::WindowRef > windowRef;
 		
 		public:
-			WindowRefOwner( N::Owned< N::WindowRef > windowRef ) : windowRef( windowRef )  {}
+			WindowRefOwner( NN::Owned< N::WindowRef > windowRef ) : windowRef( windowRef )  {}
 			
 			N::WindowRef Get()      const  { return windowRef; }
 			operator N::WindowRef() const  { return Get();     }
@@ -279,7 +280,7 @@ namespace Pedestal
 	template < class Window >
 	class WindowsOwner
 	{
-		typedef std::map< ::WindowRef, N::Shared< Window*, N::DisposeWithDelete > > WindowStorage;
+		typedef std::map< ::WindowRef, NN::Shared< Window*, NN::DisposeWithDelete > > WindowStorage;
 		
 		class Closure : public WindowClosure
 		{
@@ -318,7 +319,7 @@ namespace Pedestal
 			{
 				Window* window = new Window( fClosure );
 				
-				fWindows[ window->Get() ] = N::Owned< Window*, N::DisposeWithDelete >::Seize( window );
+				fWindows[ window->Get() ] = NN::Owned< Window*, NN::DisposeWithDelete >::Seize( window );
 			}
 	};
 	

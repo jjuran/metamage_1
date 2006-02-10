@@ -11,8 +11,8 @@
 // Standard C++
 #include <set>
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
 
 
 namespace Pedestal

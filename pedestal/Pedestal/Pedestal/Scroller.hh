@@ -11,8 +11,8 @@
 #include <ControlDefinitions.h>
 #endif
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/Controls.h"
@@ -452,7 +452,7 @@ namespace Pedestal
 	template < class ScrollViewType, ScrollbarConfig config >
 	void Scroller< ScrollViewType, config >::UpdateScrollbars( Point oldRange, Point oldPosition )
 	{
-		using namespace N::Operators;
+		using namespace Nucleus::Operators;
 		
 		Point range = ScrollableRange( ScrollView() );
 		Point pos = ScrollPosition( ScrollView() );

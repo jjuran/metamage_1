@@ -13,6 +13,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	class RGBConstant
 	{
@@ -33,7 +34,7 @@ namespace Pedestal
 		public:
 			const RGBColor& operator()( double x, double y ) const
 			{
-				return N::Make< RGBColor >( (x + y) / 2 * 65535.0 );
+				return NN::Make< RGBColor >( (x + y) / 2 * 65535.0 );
 			}
 	};
 	
@@ -42,7 +43,7 @@ namespace Pedestal
 		public:
 			const RGBColor& operator()( double x, double y ) const
 			{
-				return N::Make< RGBColor >( (x * y) * 65535.0 );
+				return NN::Make< RGBColor >( (x * y) * 65535.0 );
 			}
 	};
 	

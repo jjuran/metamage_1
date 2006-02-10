@@ -16,8 +16,9 @@
 namespace Pedestal {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
-	N::Owned< N::WindowRef > CreateWindow
+	NN::Owned< N::WindowRef > CreateWindow
 	(
 		const Rect& bounds, 
 		ConstStr255Param title, 
@@ -28,7 +29,7 @@ namespace Pedestal {
 		N::RefCon refCon
 	)
 	{
-		N::Owned< N::WindowRef > window = N::NewCWindow( bounds, title, visible, procID, behind, goAwayFlag, refCon );
+		NN::Owned< N::WindowRef > window = N::NewCWindow( bounds, title, visible, procID, behind, goAwayFlag, refCon );
 		
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );

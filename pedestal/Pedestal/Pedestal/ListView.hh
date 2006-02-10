@@ -16,6 +16,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	Rect Bounds( ListHandle list );
@@ -34,7 +35,7 @@ namespace Pedestal
 			};
 			
 			TextAttributes textAttributes;
-			N::Owned< ListHandle > list;
+			NN::Owned< ListHandle > list;
 		
 		public:
 			ListView( const Rect& bounds );

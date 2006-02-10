@@ -17,12 +17,13 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	class AnimatedIcon : public View
 	{
 		private:
 			Rect bounds;
-			N::Owned< N::GWorldPtr, N::GWorldDisposer > myGWorld;
+			NN::Owned< N::GWorldPtr, N::GWorldDisposer > myGWorld;
 			bool mAnimating;
 			long mCurrentFrame;
 			long mTicksPerFrame;

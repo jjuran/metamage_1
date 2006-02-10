@@ -17,6 +17,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	inline double Inv( double x )  { return 1.0 - x; }
 	
@@ -24,9 +25,9 @@ namespace Pedestal
 			                            double y,
 			                            double t ) const
 	{
-		return N::Make< RGBColor >( 65535.0 * x,
-		                            65535.0 * y,
-		                            65535.0 * t );
+		return NN::Make< RGBColor >( 65535.0 * x,
+		                             65535.0 * y,
+		                             65535.0 * t );
 	}
 	
 	template < class A, class B >
@@ -49,13 +50,13 @@ namespace Pedestal
 		      closure,
 		      #if 0
 		      MakePair( N::DetachResource( N::GetResource< kLarge1BitMask >( N::ResID( 128 ) ) ),
-		                N::Make< RGBColor >( 0xDDDD ) )
+		                NN::Make< RGBColor >( 0xDDDD ) )
 		      #elif 0
 		      std::make_pair( N::ResID( 128 ),
-		                      N::Make< RGBColor >( 0xDDDD ) )
+		                      NN::Make< RGBColor >( 0xDDDD ) )
 		      #else
 		      std::make_pair( GEN_FUNCTION(),
-		                      N::Make< RGBColor >( 0xDDDD ) )
+		                      NN::Make< RGBColor >( 0xDDDD ) )
 		      #endif
 		)
 	{

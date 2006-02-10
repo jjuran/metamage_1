@@ -23,6 +23,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	struct AppleEventSignature
@@ -103,11 +104,11 @@ namespace Pedestal
 			MenuItemHandlerMap menuItemHandlers;
 			
 			MenuBar myMenubar;
-			N::Owned< N::MenuID > myAppleMenu;
-			N::Owned< N::MenuID > myFileMenu;
-			N::Owned< N::MenuID > myEditMenu;
+			NN::Owned< N::MenuID > myAppleMenu;
+			NN::Owned< N::MenuID > myFileMenu;
+			NN::Owned< N::MenuID > myEditMenu;
 			
-			N::Owned< N::AEEventHandler > myCoreEventsHandler;
+			NN::Owned< N::AEEventHandler > myCoreEventsHandler;
 		
 			PedChoreKeeper myRepeaters;
 	};

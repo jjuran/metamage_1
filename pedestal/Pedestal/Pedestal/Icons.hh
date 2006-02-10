@@ -13,13 +13,14 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	class PlainIcon : public Graphic
 	{
 		typedef N::PlainIconHandle Handle;
 		
-		typedef N::Owned< Handle >  Value;
-		typedef N::Owned< Handle >  Parameter;
+		typedef NN::Owned< Handle >  Value;
+		typedef NN::Owned< Handle >  Parameter;
 		typedef Handle              GetResult;
 		
 		private:
@@ -39,8 +40,8 @@ namespace Pedestal
 	{
 		typedef N::MaskedIconHandle Handle;
 		
-		typedef N::Owned< Handle >  Value;
-		typedef N::Owned< Handle >  Parameter;
+		typedef NN::Owned< Handle >  Value;
+		typedef NN::Owned< Handle >  Parameter;
 		typedef Handle              GetResult;
 		
 		private:

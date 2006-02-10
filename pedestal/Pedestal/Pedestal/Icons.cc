@@ -13,6 +13,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	template < class Icon >
@@ -54,9 +55,9 @@ namespace Pedestal
 		}
 	};
 	
-	static N::Owned< N::PlainIconHandle > GetIconMask( N::MaskedIconHandle maskedIcon )
+	static NN::Owned< N::PlainIconHandle > GetIconMask( N::MaskedIconHandle maskedIcon )
 	{
-		N::Owned< N::PlainIconHandle > result = N::NewHandleArray< N::PlainIcon >();
+		NN::Owned< N::PlainIconHandle > result = N::NewHandleArray< N::PlainIcon >();
 		
 		**result.Get() = (**maskedIcon).mask;
 		
@@ -97,9 +98,9 @@ namespace Pedestal
 	}
 	
 	template < class Icon >
-	static N::Owned< N::GWorldPtr, N::GWorldDisposer > MakeGWorldFromIcon( Icon icon )
+	static NN::Owned< N::GWorldPtr, N::GWorldDisposer > MakeGWorldFromIcon( Icon icon )
 	{
-		N::Owned< N::GWorldPtr, N::GWorldDisposer > gWorld = N::NewGWorld( 1, LargeIconRect() );
+		NN::Owned< N::GWorldPtr, N::GWorldDisposer > gWorld = N::NewGWorld( 1, LargeIconRect() );
 		
 		CopyPlainIconToGWorld( icon, gWorld );
 		
@@ -126,13 +127,13 @@ namespace Pedestal
 	void MaskedIcon::Plot( const Rect& area ) const
 	{
 		// Make a new icon handle for the mask
-		N::Owned< N::PlainIconHandle > mask = GetIconMask( fIcon );
+		NN::Owned< N::PlainIconHandle > mask = GetIconMask( fIcon );
 		
-		N::Owned< N::GWorldPtr, N::GWorldDisposer > gWorld = N::NewGWorld( 1, LargeIconRect() );
+		NN::Owned< N::GWorldPtr, N::GWorldDisposer > gWorld = N::NewGWorld( 1, LargeIconRect() );
 		
 		// Lock pixels
 		N::PixelsState_Details details( N::GetGWorldPixMap( gWorld ) );
-		N::Scoped< N::PixelsState > savedPixelsState( N::PixelsState( details ) );
+		NN::Scoped< N::PixelsState > savedPixelsState( N::PixelsState( details ) );
 		
 		N::LockPixels( N::GetGWorldPixMap( gWorld ) );
 		

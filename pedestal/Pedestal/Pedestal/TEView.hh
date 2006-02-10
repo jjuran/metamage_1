@@ -18,6 +18,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	Rect Bounds( TEHandle hTE );
@@ -38,7 +39,7 @@ namespace Pedestal
 	class TEView : public View
 	{
 		private:
-			N::Owned< TEHandle > myTE;
+			NN::Owned< TEHandle > myTE;
 		
 		public:
 			TEView( const Rect& bounds, Initializer );

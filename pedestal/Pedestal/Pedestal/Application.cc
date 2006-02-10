@@ -12,8 +12,8 @@
 	#include <ToolUtils.h>
 #endif
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/AEInteraction.h"

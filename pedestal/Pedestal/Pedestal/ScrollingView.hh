@@ -25,6 +25,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
 	
@@ -38,7 +39,7 @@ namespace Pedestal
 			{
 				N::SetOrigin( h, v );
 				
-				N::Owned< RgnHandle > clip = N::GetClip();
+				NN::Owned< RgnHandle > clip = N::GetClip();
 				::OffsetRgn( clip, h, v );
 				N::SetClip( clip );
 			}
@@ -46,7 +47,7 @@ namespace Pedestal
 			{
 				N::SetOrigin( h, v );
 				
-				N::Owned< RgnHandle > clip = N::CopyRgn( newClip );
+				NN::Owned< RgnHandle > clip = N::CopyRgn( newClip );
 				::OffsetRgn( clip, h, v );
 				N::SetClip( clip );
 			}
@@ -200,10 +201,10 @@ namespace Pedestal
 	template < class SubViewType >
 	void ScrollingView< SubViewType >::Scroll( short dh, short dv, bool updateNow )
 	{
-		using namespace N::Operators;
+		using namespace NN::Operators;
 		scrollPosition = scrollPosition + N::SetPt( dh, dv );
 		
-		N::Owned< RgnHandle > updateRegion = N::ScrollRect( Bounds(), -dh, -dv );
+		NN::Owned< RgnHandle > updateRegion = N::ScrollRect( Bounds(), -dh, -dv );
 		
 		if ( updateNow )
 		{
