@@ -64,6 +64,30 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	namespace NX = NitrogenExtras;
 	
+	struct RunState
+	{
+		AppleEventSignature signatureOfFirstAppleEvent;
+		UInt32 ticksSinceLastLayerSwitch;
+		
+		bool inForeground;     // set to true when the app is frontmost
+		bool startupComplete;  // set to true once the app is ready to respond to events
+		bool quitRequested;    // set to true when quitting is in process, to false if cancelled
+		bool endOfEventLoop;   // set to true once the app is ready to stop processing events
+		
+		RunState()
+		:
+			ticksSinceLastLayerSwitch( 0 ),
+			inForeground   ( false ),  // we have to check
+			startupComplete( false ),
+			quitRequested  ( false ),
+			endOfEventLoop ( false )
+		{}
+	};
+	
+	
+	RunState gRunState;
+	
+	
 	inline void DebugBeep()
 	{
 		N::SysBeep();
@@ -397,7 +421,7 @@ namespace Pedestal
 		switch ( (event.message & osEvtMessageMask) >> 24 )
 		{
 			case suspendResumeMessage:
-				if ( event.message & resumeFlag )
+				if ( gRunState.inForeground = event.message & resumeFlag )
 				{
 				#if !TARGET_API_MAC_CARBON
 					
@@ -528,36 +552,44 @@ namespace Pedestal
 	
 	void Application::EventLoop()
 	{
-		long sleepTicks = 4;
-		
 		// Use two levels of looping.
 		// This lets us loop inside the try block without entering and leaving,
 		// and will continue looping if an exception is thrown.
-		while ( !runState.endOfEventLoop )
+		while ( !gRunState.endOfEventLoop )
 		{
 			try
 			{
-				while ( !runState.endOfEventLoop )
+				while ( !gRunState.endOfEventLoop )
 				{
 					Repeaters().PerformAll();
 					
 					N::YieldToAnyThread();
 					
-					EventRecord event = N::WaitNextEvent( everyEvent, sleepTicks );
+					UInt32 minTicksBetweenWNE = gRunState.inForeground ?  2 :  2;
+					UInt32 maxTicksToSleep    = gRunState.inForeground ?  4 : 10;
 					
-					(void)DispatchCursor( event );
+					UInt32 timetoWNE = gRunState.ticksSinceLastLayerSwitch + minTicksBetweenWNE;
 					
-					if ( event.what != nullEvent )
+					if ( ::TickCount() >= timetoWNE )
 					{
-						DispatchEvent( event );
-					}
-					else if ( runState.quitRequested )
-					{
-						runState.endOfEventLoop = true;
-					}
-					else
-					{
-						GiveIdleTimeToWindows( event );
+						EventRecord event = N::WaitNextEvent( everyEvent, maxTicksToSleep );
+						
+						gRunState.ticksSinceLastLayerSwitch = ::TickCount();
+						
+						(void)DispatchCursor( event );
+						
+						if ( event.what != nullEvent )
+						{
+							DispatchEvent( event );
+						}
+						else if ( gRunState.quitRequested )
+						{
+							gRunState.endOfEventLoop = true;
+						}
+						else
+						{
+							GiveIdleTimeToWindows( event );
+						}
 					}
 				}
 			}
@@ -571,6 +603,8 @@ namespace Pedestal
 	int Application::Run()
 	{
 		NX::Clipboard myClipboard;
+		
+		gRunState.inForeground = N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
 		
 		EventLoop();
 		
@@ -586,7 +620,7 @@ namespace Pedestal
 		
 		if ( firstTime )
 		{
-			runState.signatureOfFirstAppleEvent = AppleEventSignature( eventClass, eventID );
+			gRunState.signatureOfFirstAppleEvent = AppleEventSignature( eventClass, eventID );
 			firstTime = false;
 		}
 		
@@ -599,7 +633,7 @@ namespace Pedestal
 					break;
 				
 				case kAEQuitApplication:
-					runState.quitRequested = true;
+					gRunState.quitRequested = true;
 					break;
 				
 				default:
