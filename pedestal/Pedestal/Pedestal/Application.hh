@@ -40,21 +40,6 @@ namespace Pedestal
 		{}
 	};
 	
-	struct RunState
-	{
-		AppleEventSignature signatureOfFirstAppleEvent;
-		bool startupComplete;  // set to true when the app is ready to respond to events
-		bool quitRequested;    // set to true when quitting is in process, to false if cancelled
-		bool endOfEventLoop;   // set when the app is ready to stop processing events
-		
-		RunState()
-		:
-			startupComplete( false ),
-			quitRequested  ( false ),
-			endOfEventLoop ( false )
-		{}
-	};
-	
 	class Application;
 	
 	class MenuItemDispatcher : public MenuItemHandler
@@ -98,7 +83,6 @@ namespace Pedestal
 		
 		private:
 			//V::ObjectSupportLibrary myObjectSupportLib;
-			RunState runState;
 			
 			MenuItemDispatcher menuItemDispatcher;
 			MenuItemHandlerMap menuItemHandlers;
