@@ -54,8 +54,7 @@ op/cmp................ok
 op/concat.............ok
 op/cond...............ok
 op/context............ok
-op/defins.............Unsupported directory function "opendir" called at op/defins.t line 67.
-FAILED at test 6
+op/defins.............ok
 op/delete.............ok
 op/die................ok
 op/die_exit...........ok
@@ -115,7 +114,7 @@ op/quotemeta..........ok
 op/rand...............FAILED at test 7
 op/range..............ok
 op/read...............ok
-op/readdir............skipping test on this platform
+op/readdir............ok
 op/recurse............ok
 op/ref................ok
 op/regexp.............ok
@@ -132,7 +131,7 @@ op/sprintf............FAILED at test 129
 op/stat...............execvp( rm ) failed: 2
 execvp( ln ) failed: 2
 execvp( chmod ) failed: 2
-Can't run op/stat.t test 35 without pwd working at op/stat.t line 183.
+Can't open /dev/tty--run t/TEST outside of make.
 FAILED at test 7
 op/study..............ok
 op/subst..............ok
@@ -199,10 +198,8 @@ FAILED at test 0
 lib/db-recno..........Can't locate DB_File.pm in @INC (@INC contains: ../lib) at lib/db-recno.t line 12.
 BEGIN failed--compilation aborted at lib/db-recno.t line 12.
 FAILED at test 0
-lib/dirhand...........Unsupported directory function "opendir" called at ../lib/DirHandle.pm line 67.
-FAILED at test 1
-lib/dosglob...........Unsupported directory function "opendir" called at ../lib/File/DosGlob.pm line 56.
-FAILED at test 1
+lib/dirhand...........ok
+lib/dosglob...........ok
 lib/dprof.............Where's Perl? at lib/dprof.t line 41.
 FAILED at test 0
 lib/dumper-ovl........Can't locate Data/Dumper.pm in @INC (@INC contains: ../lib) at lib/dumper-ovl.t line 13.
@@ -217,29 +214,29 @@ lib/env...............ok
 lib/errno.............Can't locate Errno.pm in @INC (@INC contains: ../lib) at lib/errno.t line 14.
 BEGIN failed--compilation aborted at lib/errno.t line 14.
 FAILED at test 0
-lib/fatal.............FAILED at test 14
+lib/fatal.............ok
 lib/fields............ok
 lib/filecache.........ok
 lib/filecopy..........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at lib/filecopy.t line 57.
 FAILED at test 6
-lib/filefind-taint....Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
-FAILED at test 1
-lib/filefind..........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
-FAILED at test 1
+lib/filefind-taint....Can't cd to /Users/jjuran/Developer/Projects/MacPerl/extra/t: No such file or directory
+FAILED at test 2
+lib/filefind..........Can't cd to /Users/jjuran/Developer/Projects/MacPerl/extra/t: No such file or directory
+FAILED at test 2
 lib/filefunc..........ok
 lib/filehand..........Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
 Compilation failed in require at lib/filehand.t line 13.
 BEGIN failed--compilation aborted at lib/filehand.t line 13.
 FAILED at test 0
-lib/filepath..........Can't make directory foo read+writeable: No such file or directory at lib/filepath.t line 29
-Unsupported directory function "opendir" called at ../lib/File/Path.pm line 181.
-FAILED at test 2
+lib/filepath..........Can't make directory foo read+writeable: Invalid argument at lib/filepath.t line 29
+Can't make directory foo/bar read+writeable: Invalid argument at lib/filepath.t line 29
+Can't make directory foo read+writeable: Invalid argument at lib/filepath.t line 29
+Can't make directory foo/bar read+writeable: Invalid argument at lib/filepath.t line 29
+ok
 lib/filespec..........ok
-lib/findbin...........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
-BEGIN failed--compilation aborted at ../lib/FindBin.pm line 166.
-Compilation failed in require at lib/findbin.t line 10.
-BEGIN failed--compilation aborted at lib/findbin.t line 10.
-FAILED at test 0
+lib/findbin...........stat(/Users/jjuran/Developer/Projects/MacPerl/extra/t/lib/): No such file or directory at ../lib/FindBin.pm line 162
+stat(/Users/jjuran/Developer/Projects/MacPerl/extra/t/lib/): No such file or directory at ../lib/FindBin.pm line 163
+FAILED at test 1
 lib/ftmp-mktemp.......Can't locate IO/File.pm in @INC (@INC contains: ../lib) at ../lib/FileHandle.pm line 9.
 Compilation failed in require at ../lib/Test/Harness.pm line 7.
 BEGIN failed--compilation aborted at ../lib/Test/Harness.pm line 7.
@@ -278,7 +275,7 @@ Can't locate auto/Getopt/Long/Configure.al in @INC (@INC contains: ../lib) at ..
 Compilation failed in require at lib/getopt.t line 53.
 BEGIN failed--compilation aborted at lib/getopt.t line 53.
 FAILED at test 0
-lib/glob-basic........Unsupported directory function "opendir" called at lib/glob-basic.t line 34.
+lib/glob-basic........Undefined subroutine &File::Glob::glob called at lib/glob-basic.t line 38.
 FAILED at test 2
 lib/glob-case.........Undefined subroutine &main::csh_glob called at lib/glob-case.t line 29.
 FAILED at test 2
@@ -401,7 +398,7 @@ lib/tie-stdpush.......ok
 lib/tie-substrhash....ok
 lib/timelocal.........ok
 lib/trig..............ok
-pod/emptycmd..........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/emptycmd..........testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/emptycmd.t line 5.
 BEGIN failed--compilation aborted at pod/emptycmd.t line 7.
@@ -414,52 +411,52 @@ BEGIN failed--compilation aborted at ../lib/Test.pm line 3.
 Compilation failed in require at pod/find.t line 11.
 BEGIN failed--compilation aborted at pod/find.t line 11.
 FAILED at test 0
-pod/for...............Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/for...............testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/for.t line 5.
 BEGIN failed--compilation aborted at pod/for.t line 7.
 FAILED at test 0
-pod/headings..........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/headings..........testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/headings.t line 5.
 BEGIN failed--compilation aborted at pod/headings.t line 7.
 FAILED at test 0
-pod/include...........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/include...........testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/include.t line 5.
 BEGIN failed--compilation aborted at pod/include.t line 7.
 FAILED at test 0
-pod/included..........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/included..........testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/included.t line 5.
 BEGIN failed--compilation aborted at pod/included.t line 7.
 FAILED at test 0
-pod/lref..............Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/lref..............testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/lref.t line 5.
 BEGIN failed--compilation aborted at pod/lref.t line 7.
 FAILED at test 0
-pod/multiline_items...Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/multiline_items...testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/multiline_items.t line 5.
 BEGIN failed--compilation aborted at pod/multiline_items.t line 7.
 FAILED at test 0
-pod/nested_items......Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/nested_items......testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/nested_items.t line 5.
 BEGIN failed--compilation aborted at pod/nested_items.t line 7.
 FAILED at test 0
-pod/nested_seqs.......Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/nested_seqs.......testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/nested_seqs.t line 5.
 BEGIN failed--compilation aborted at pod/nested_seqs.t line 7.
 FAILED at test 0
-pod/oneline_cmds......Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/oneline_cmds......testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/oneline_cmds.t line 5.
 BEGIN failed--compilation aborted at pod/oneline_cmds.t line 7.
 FAILED at test 0
-pod/pod2usage.........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/pod2usage.........testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/pod2usage.t line 5.
 BEGIN failed--compilation aborted at pod/pod2usage.t line 7.
@@ -469,17 +466,17 @@ BEGIN failed--compilation aborted at pod/testpchk.pl line 1.
 Compilation failed in require at pod/poderrs.t line 5.
 BEGIN failed--compilation aborted at pod/poderrs.t line 7.
 FAILED at test 0
-pod/podselect.........Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/podselect.........testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/podselect.t line 5.
 BEGIN failed--compilation aborted at pod/podselect.t line 7.
 FAILED at test 0
-pod/special_seqs......Unsupported directory function "opendir" called at ../lib/Cwd.pm line 283.
+pod/special_seqs......testcmp.pl did not return a true value at pod/testp2pt.pl line 1.
 BEGIN failed--compilation aborted at pod/testp2pt.pl line 1.
 Compilation failed in require at pod/special_seqs.t line 5.
 BEGIN failed--compilation aborted at pod/special_seqs.t line 7.
 FAILED at test 0
-Failed 75 test scripts out of 189, 60.32% okay.
+Failed 70 test scripts out of 191, 63.35% okay.
    ### Since not all tests were successful, you may want to run some
    ### of them individually and examine any diagnostic messages they
    ### produce.  See the INSTALL document's section on "make test".
@@ -487,4 +484,4 @@ Failed 75 test scripts out of 189, 60.32% okay.
    ### and run 
    ###      ./perl harness
    ### in the directory ./t.
-u=2.72301e+11  s=0  cu=0  cs=0  scripts=189  tests=17431
+u=3.19546e+11  s=0  cu=0  cs=0  scripts=191  tests=17435
