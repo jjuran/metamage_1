@@ -6,9 +6,11 @@
 // Standard C++
 #include <set>
 
+// Nitrogen Nucleus
+#include "Nucleus/Owned.h"
+
 // Nitrogen
 #include "Nitrogen/AEDataModel.h"
-#include "Nitrogen/Owned.h"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -26,6 +28,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	
@@ -59,7 +62,7 @@ namespace Genie
 			Ped::NewHandler  < App > newHandler;
 			GenieHandlerReply myReplyEventHandler;
 			GenieExecHandler myExecHandler;
-			N::Owned< N::AEEventHandler > myOpenDocsEventHandler;
+			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
 			GenieChoreProcessTable myChore;
 		
 		public:
@@ -99,9 +102,9 @@ namespace Genie
 	
 	void App::HandleAppleEvent(const AppleEvent& appleEvent, AppleEvent& reply)
 	{
-		N::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
-		                                                       keyDirectObject,
-		                                                       typeAEList );
+		NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
+		                                                        keyDirectObject,
+		                                                        typeAEList );
 		
 		int docCount = N::AECountItems( docList );
 		

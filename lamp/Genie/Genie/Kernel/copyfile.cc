@@ -26,6 +26,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	static void FSpFileCopy( const FSSpec&         source,
 	                         const FSSpec&         destDir,
@@ -34,7 +35,7 @@ namespace Genie
 	                         long                  copyBufferSize = 0,
 	                         bool                  preflight      = true )
 	{
-		N::OnlyOnce< N::RegisterFileManagerErrors >();
+		NN::OnlyOnce< N::RegisterFileManagerErrors >();
 		
 		N::ThrowOSStatus( ::FSpFileCopy( &source,
 		                                 &destDir,

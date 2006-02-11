@@ -24,6 +24,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
 	IORef NewSocket( bool blockingMode = true );
@@ -52,7 +53,7 @@ namespace Genie
 	class SocketHandle : public IOStream
 	{
 		private:
-			N::Owned< N::EndpointRef > endpoint;
+			NN::Owned< N::EndpointRef > endpoint;
 			SocketAddress fSocketAddress;
 			SocketAddress fPeerAddress;
 			bool fBound;

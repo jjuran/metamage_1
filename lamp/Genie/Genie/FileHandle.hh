@@ -17,18 +17,19 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
-	IORef OpenFile( N::Owned< N::FSFileRefNum > refNum );
+	IORef OpenFile( NN::Owned< N::FSFileRefNum > refNum );
 	
 	IORef OpenFile( const FSSpec& file, N::FSIOPermissions perm );
 	
 	class FileHandle : public IOStream
 	{
 		private:
-			N::Owned< N::FSFileRefNum > fRefNum;
+			NN::Owned< N::FSFileRefNum > fRefNum;
 		
 		public:
-			FileHandle( N::Owned< N::FSFileRefNum > refNum )
+			FileHandle( NN::Owned< N::FSFileRefNum > refNum )
 			:
 				fRefNum( refNum )
 			{}

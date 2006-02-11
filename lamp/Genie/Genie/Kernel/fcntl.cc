@@ -28,6 +28,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	// FIXME:  Duplicate code
 	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
@@ -73,7 +74,7 @@ namespace Genie
 			{
 				// assume it's a file
 				FSSpec file = ResolveUnixPathname( path,
-				                                   N::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() ) );
+				                                   NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() ) );
 				
 				if ( creating )
 				{
@@ -91,7 +92,7 @@ namespace Genie
 					}
 				}
 				
-				N::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( file, rdPerm | wrPerm );
+				NN::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( file, rdPerm | wrPerm );
 				
 				if ( truncating )
 				{

@@ -20,10 +20,10 @@ namespace Genie
 	
 	Pipe::Handles Pipe::New()
 	{
-		N::Shared< PipeState* > pipe = N::Owned< PipeState* >::Seize( new PipeState );
+		NN::Shared< PipeState* > pipe = NN::Owned< PipeState* >::Seize( new PipeState );
 		
-		return Handles( PipeInHandle ( pipe, N::Owned< PipeState*, CloseInput  >::Seize( pipe.Get() ) ),
-		                PipeOutHandle( pipe, N::Owned< PipeState*, CloseOutput >::Seize( pipe.Get() ) ) );
+		return Handles( PipeInHandle ( pipe, NN::Owned< PipeState*, CloseInput  >::Seize( pipe.Get() ) ),
+		                PipeOutHandle( pipe, NN::Owned< PipeState*, CloseOutput >::Seize( pipe.Get() ) ) );
 	}
 	
 	int PipeState::Read( char* data, std::size_t byteCount )

@@ -9,14 +9,14 @@
 #include <list>
 #include <string>
 
-// Nitrogen
-#include "Nitrogen/Shared.h"
+// Nitrogen Nucleus
+#include "Nucleus/Shared.h"
 
 
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	class PipeState
 	{
@@ -67,7 +67,7 @@ namespace Genie
 	
 }
 
-namespace Nitrogen
+namespace Nucleus
 {
 	
 	template <>  struct Disposer< Genie::PipeState* > : DisposeWithDelete  {};
@@ -80,14 +80,14 @@ namespace Genie
 	class PipeOutHandle
 	{
 		private:
-			N::Shared< PipeState*              > pipe;
-			N::Shared< PipeState*, CloseOutput > output;
+			NN::Shared< PipeState*              > pipe;
+			NN::Shared< PipeState*, CloseOutput > output;
 		
 		public:
 			PipeOutHandle()  {}
 			
-			PipeOutHandle( N::Shared< PipeState*              > pipe, 
-			               N::Shared< PipeState*, CloseOutput > output )
+			PipeOutHandle( NN::Shared< PipeState*              > pipe, 
+			               NN::Shared< PipeState*, CloseOutput > output )
 			:
 				pipe  ( pipe   ), 
 				output( output )
@@ -102,14 +102,14 @@ namespace Genie
 	class PipeInHandle
 	{
 		private:
-			N::Shared< PipeState*             > pipe;
-			N::Shared< PipeState*, CloseInput > input;
+			NN::Shared< PipeState*             > pipe;
+			NN::Shared< PipeState*, CloseInput > input;
 		
 		public:
 			PipeInHandle()  {}
 			
-			PipeInHandle( N::Shared< PipeState*             > pipe,
-			              N::Shared< PipeState*, CloseInput > input )
+			PipeInHandle( NN::Shared< PipeState*             > pipe,
+			              NN::Shared< PipeState*, CloseInput > input )
 			:
 				pipe ( pipe  ), 
 				input( input )

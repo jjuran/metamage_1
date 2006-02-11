@@ -58,6 +58,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	namespace P7 = POSeven;
 	
@@ -300,7 +301,7 @@ namespace Genie
 			}
 			catch ( N::ErrMessage& msg )
 			{
-				errMsg = ", errMessage: " + N::Convert< std::string >( msg.errMessage ) + "\n";
+				errMsg = ", errMessage: " + NN::Convert< std::string >( msg.errMessage ) + "\n";
 				//std::printf( "errMessage: '%s'\n", str.c_str() );
 			}
 			catch ( N::FNFErr& )
@@ -344,7 +345,7 @@ namespace Genie
 	
 	static char* getcwd( char* buf, std::size_t size )
 	{
-		std::string result = N::FSpGetPOSIXPathname( N::Convert< FSSpec >( CurrentProcess().CurrentDirectory() ) );
+		std::string result = N::FSpGetPOSIXPathname( NN::Convert< FSSpec >( CurrentProcess().CurrentDirectory() ) );
 		
 		if ( result.size() + 1 > size )
 		{

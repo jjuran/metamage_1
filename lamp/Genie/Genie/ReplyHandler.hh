@@ -13,8 +13,9 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
-	class GenieHandlerReply : public N::Owned< N::AEEventHandler >
+	class GenieHandlerReply : public NN::Owned< N::AEEventHandler >
 	{
 		public:
 			static void AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, GenieHandlerReply* handler );

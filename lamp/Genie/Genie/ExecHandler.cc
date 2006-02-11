@@ -23,6 +23,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	void GenieExecHandler::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, GenieExecHandler* handler )
@@ -32,7 +33,7 @@ namespace Genie
 	
 	GenieExecHandler::GenieExecHandler()
 	:
-		N::Owned< N::AEEventHandler >
+		NN::Owned< N::AEEventHandler >
 		(
 			N::AEInstallEventHandler< GenieExecHandler*, AppleEventHandler >( kAEPipeOrganSuite,
 			                                                                  kAEExec,
@@ -52,8 +53,8 @@ namespace Genie
 	{
 		try
 		{
-			return N::Convert< N::FSDirSpec >( N::AEGetParamPtr< typeFSS >( appleEvent,
-			                                                                keyCurrentWorkingDir ) );
+			return NN::Convert< N::FSDirSpec >( N::AEGetParamPtr< typeFSS >( appleEvent,
+			                                                                 keyCurrentWorkingDir ) );
 		}
 		catch ( N::ErrAEDescNotFound )
 		{
@@ -79,7 +80,7 @@ namespace Genie
 		{
 			throw N::ErrAEEventNotHandled();
 			
-			N::Owned< N::AEDescList > list = N::AEGetParamDesc( appleEvent, keyDirectObject, typeWildCard );
+			NN::Owned< N::AEDescList > list = N::AEGetParamDesc( appleEvent, keyDirectObject, typeWildCard );
 			
 			std::vector< std::string > argVec;
 			

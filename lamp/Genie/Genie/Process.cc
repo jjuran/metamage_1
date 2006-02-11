@@ -12,8 +12,8 @@
 // POSIX
 #include "unistd.h"
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/Aliases.h"
@@ -86,6 +86,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	namespace Sh = ShellShock;
 	namespace K = Kerosene;
@@ -158,7 +159,7 @@ namespace Genie
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
 			
-			N::Owned< N::FSFileRefNum > script = N::FSpOpenDF( context.executable, fsRdPerm );
+			NN::Owned< N::FSFileRefNum > script = N::FSpOpenDF( context.executable, fsRdPerm );
 			
 			char data[ 1024 + 1 ];
 			data[1024] = '\0';
@@ -400,7 +401,7 @@ namespace Genie
 		}
 		
 		// Do we take the name before or after normalization?
-		ProgramName( N::Convert< std::string >( executable.name ) );
+		ProgramName( NN::Convert< std::string >( executable.name ) );
 		
 		ExecContext context( executable, argv );
 		
@@ -757,7 +758,7 @@ namespace Genie
 		{
 			// Either of these may throw
 			FSSpec spec = ResolveUnixPathname( pathname, myCWD );
-			myCWD = N::Convert< N::FSDirSpec >( spec );
+			myCWD = NN::Convert< N::FSDirSpec >( spec );
 		}
 		else
 		{
@@ -949,7 +950,7 @@ namespace Genie
 	
 	int GenieProcessTable::NewProcess( Process* process )
 	{
-		myProcesses[ myNextPID ] = N::Owned< Process* >::Seize( process );
+		myProcesses[ myNextPID ] = NN::Owned< Process* >::Seize( process );
 		return myNextPID++;
 	}
 	

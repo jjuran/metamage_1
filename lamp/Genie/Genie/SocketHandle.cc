@@ -5,8 +5,8 @@
 
 #include "Genie/SocketHandle.hh"
 
-// Nitrogen core
-#include "Nitrogen/OnlyOnce.h"
+// Nucleus
+#include "Nucleus/OnlyOnce.h"
 
 // POSeven
 #include "POSeven/Errno.h"
@@ -39,7 +39,7 @@ namespace Genie
 	
 	IORef NewSocket( bool blockingMode )
 	{
-		N::OnlyOnce< RegisterSocketRefMod >();
+		NN::OnlyOnce< RegisterSocketRefMod >();
 		
 		SocketHandle* socket = new SocketHandle( blockingMode );
 		

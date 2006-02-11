@@ -12,8 +12,10 @@
 #include <string>
 #include <vector>
 
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
+
 // Nitrogen
-#include "Nitrogen/Assert.h"
 #include "Nitrogen/Processes.h"
 #include "Nitrogen/Sound.h"
 
@@ -34,6 +36,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
 	
 	
@@ -402,7 +405,7 @@ namespace Genie
 			external->SetControllingTerminal( &IORef_Cast< CharacterDevice >( terminal ) );
 		}
 		
-		std::string programName = N::Convert< std::string >( program.name );
+		std::string programName = NN::Convert< std::string >( program.name );
 		
 		char const *const argv[] = { programName.c_str(), NULL };
 		
@@ -421,7 +424,7 @@ namespace Genie
 	
 	class ConsolesOwner
 	{
-		typedef std::map< Console*, N::Shared< Console*, N::DisposeWithDelete > > Map;
+		typedef std::map< Console*, NN::Shared< Console*, NN::DisposeWithDelete > > Map;
 		
 		private:
 			Map map;
@@ -435,7 +438,7 @@ namespace Genie
 	Console* ConsolesOwner::NewConsole( CharacterDevice* terminal )
 	{
 		Console* console = new Console( terminal );
-		map[ console ] = N::Owned< Console*, N::DisposeWithDelete >::Seize( console );
+		map[ console ] = NN::Owned< Console*, NN::DisposeWithDelete >::Seize( console );
 		
 		return console;
 	}

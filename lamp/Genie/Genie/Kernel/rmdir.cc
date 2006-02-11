@@ -26,12 +26,13 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	static int rmdir( const char* pathname )
 	{
 		try
 		{
-			N::FSDirSpec current = N::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
+			N::FSDirSpec current = NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
 			
 			FSSpec dir = ResolveUnixPathname( pathname, current );
 			

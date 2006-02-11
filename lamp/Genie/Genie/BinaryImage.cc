@@ -13,6 +13,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	BinaryImage::BinaryImage( std::auto_ptr< Data > data, std::size_t size )
 	: fData( data ), fDataSize( size )
@@ -95,7 +96,7 @@ namespace Genie
 	
 	static BinaryImage LoadBinaryImage( const FSSpec& file )
 	{
-		N::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
+		NN::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
 		
 		std::size_t size = N::GetEOF( filehandle );
 		

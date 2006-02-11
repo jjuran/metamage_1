@@ -6,8 +6,8 @@
 #ifndef GENIE_RESOURCETABLE_HH
 #define GENIE_RESOURCETABLE_HH
 
-// Nitrogen core
-#include "Nitrogen/OnlyOnce.h"
+// Standard C++
+#include <vector>
 
 
 namespace Genie

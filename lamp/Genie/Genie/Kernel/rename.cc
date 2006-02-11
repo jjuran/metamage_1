@@ -37,6 +37,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	static const char* Basename( const char* path )
 	{
@@ -91,7 +92,7 @@ namespace Genie
 					// Directory specified -- look within
 					N::FSDirID dirID = paramBlock.dirInfo.ioDrDirID;
 					//destFile = N::FSMakeFSSpec( vRefNum, dirID, srcFile.name );
-					destFile = N::Convert< N::FSDirSpec >( destFile ) & srcFile.name;
+					destFile = NN::Convert< N::FSDirSpec >( destFile ) & srcFile.name;
 					
 					N::FSpGetCatInfo( destFile, paramBlock );
 					isDir = N::PBTestIsDirectory( paramBlock );

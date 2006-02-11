@@ -39,6 +39,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	inline unsigned long MacUnixEpochOffset()
@@ -169,7 +170,7 @@ namespace Genie
 			
 			try
 			{
-				N::FSDirSpec current = N::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
+				N::FSDirSpec current = NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
 				
 				FSSpec file = ResolveUnixPathname( path, current );
 				

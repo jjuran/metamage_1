@@ -5,8 +5,8 @@
 
 #include "Genie/FileHandle.hh"
 
-// Nitrogen core
-#include "Nitrogen/OnlyOnce.h"
+// Nitrogen Nucleus
+#include "Nucleus/OnlyOnce.h"
 
 // Genie
 #include "Genie/ResourceTable.hh"
@@ -28,9 +28,9 @@ namespace Genie
 	}
 	
 	
-	IORef OpenFile( N::Owned< N::FSFileRefNum > refNum )
+	IORef OpenFile( NN::Owned< N::FSFileRefNum > refNum )
 	{
-		N::OnlyOnce< RegisterFileRefMod >();
+		NN::OnlyOnce< RegisterFileRefMod >();
 		
 		FileHandle* handle = new FileHandle( refNum );
 		
@@ -41,7 +41,7 @@ namespace Genie
 	
 	IORef OpenFile( const FSSpec& file, N::FSIOPermissions perm )
 	{
-		N::OnlyOnce< RegisterFileRefMod >();
+		NN::OnlyOnce< RegisterFileRefMod >();
 		
 		FileHandle* handle = new FileHandle( file, perm );
 		

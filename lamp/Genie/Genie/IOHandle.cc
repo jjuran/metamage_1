@@ -15,7 +15,7 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	typedef ResourceTable< IOHandle > IOTable;
 	
@@ -53,7 +53,7 @@ namespace Genie
 	
 	IORef NewGenericIO( const Io::Handle& io )
 	{
-		N::OnlyOnce< RegisterGenericIORefMod >();
+		NN::OnlyOnce< RegisterGenericIORefMod >();
 		
 		IOHandle* newIO = new IOHandle( io );
 		

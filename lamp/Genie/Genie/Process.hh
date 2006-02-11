@@ -15,9 +15,11 @@
 #include <map>
 #include <string>
 
+// Nucleus
+#include "Nucleus/Shared.h"
+
 // Nitrogen
 #include "Nitrogen/CodeFragments.h"
-#include "Nitrogen/Shared.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Threads.h"
@@ -44,7 +46,7 @@ namespace Genie
 	
 }
 
-namespace Nitrogen
+namespace Nucleus
 {
 	
 	template <>
@@ -59,6 +61,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	namespace Ag = Silver;
 	namespace Sh = ShellShock;
@@ -158,8 +161,8 @@ namespace Genie
 		private:
 			BinaryImage fFragmentImage;
 			BinaryImage fOldFragmentImage;
-			N::Owned< CFragConnectionID > fFragmentConnection;
-			N::Owned< CFragConnectionID > fOldFragmentConnection;
+			NN::Owned< CFragConnectionID > fFragmentConnection;
+			NN::Owned< CFragConnectionID > fOldFragmentConnection;
 			
 			std::auto_ptr< Sh::StringArray > argvStorage;
 			std::auto_ptr< Sh::VarArray    > environStorage;
@@ -251,7 +254,7 @@ namespace Genie
 	class GenieProcessTable
 	{
 		public:
-			typedef std::map< int, N::Shared< Process* > > ProcessMap;
+			typedef std::map< int, NN::Shared< Process* > > ProcessMap;
 			typedef ProcessMap::const_iterator const_iterator;
 			typedef ProcessMap::iterator iterator;
 		

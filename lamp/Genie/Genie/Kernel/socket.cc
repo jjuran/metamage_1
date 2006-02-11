@@ -34,6 +34,7 @@
 namespace Genie
 {
 	
+	namespace NN = Nucleus;
 	//namespace P7 = POSeven;
 	
 	
@@ -53,7 +54,7 @@ namespace Genie
 	{
 		Check_InitOpenTransport();
 		
-		static N::Owned< InetSvcRef >
+		static NN::Owned< InetSvcRef >
 		       gInetSvcRef = N::OTOpenInternetServices( kDefaultInternetServicesPath );
 		
 		return gInetSvcRef;

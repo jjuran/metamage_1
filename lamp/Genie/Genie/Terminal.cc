@@ -8,8 +8,8 @@
 // Standard C++
 #include <memory>
 
-// Nitrogen core
-#include "Nitrogen/OnlyOnce.h"
+// Nucleus
+#include "Nucleus/OnlyOnce.h"
 
 // Io
 #include "Io/StringBuffer.hh"
@@ -30,7 +30,7 @@ namespace Genie
 	
 }
 
-namespace Nitrogen
+namespace Nucleus
 {
 	
 	template <>
@@ -44,7 +44,7 @@ namespace Nitrogen
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	int CharacterDevice::SysRead( char* data, std::size_t byteCount )
 	{
@@ -54,10 +54,10 @@ namespace Genie
 	class PseudoTerminalMaster : public CharacterDevice
 	{
 		private:
-			N::Shared< Tube* > fTube;
+			NN::Shared< Tube* > fTube;
 		
 		public:
-			PseudoTerminalMaster( const N::Shared< Tube* >& tube ) : fTube( tube )  {}
+			PseudoTerminalMaster( const NN::Shared< Tube* >& tube ) : fTube( tube )  {}
 			
 			bool IsATTY() const  { return true; }
 			
@@ -85,16 +85,16 @@ namespace Genie
 	class PseudoTerminalSlave : public CharacterDevice
 	{
 		private:
-			N::Shared< Tube* > fTube;
+			NN::Shared< Tube* > fTube;
 			std::string fName;
 		
 		public:
-			PseudoTerminalSlave( const N::Shared< Tube* >& tube, int id )
+			PseudoTerminalSlave( const NN::Shared< Tube* >& tube, int id )
 			:
 				fTube( tube        ),
 				fName( "/dev/pts/" )
 			{
-				fName += N::Convert< std::string >( id );
+				fName += NN::Convert< std::string >( id );
 			}
 			
 			bool IsATTY() const  { return true; }
@@ -131,11 +131,11 @@ namespace Genie
 	
 	NewPseudoTerminal_Result NewPseudoTerminal()
 	{
-		N::OnlyOnce< RegisterCharacterDeviceRefMod >();
+		NN::OnlyOnce< RegisterCharacterDeviceRefMod >();
 		
 		static int gNextID = 0;
 		
-		N::Shared< Tube* > tube = N::Owned< Tube* >::Seize( new Tube );
+		NN::Shared< Tube* > tube = NN::Owned< Tube* >::Seize( new Tube );
 		
 		std::auto_ptr< PseudoTerminalMaster > master( new PseudoTerminalMaster( tube ) );
 		std::auto_ptr< PseudoTerminalSlave  > slave ( new PseudoTerminalSlave ( tube, gNextID++ ) );
@@ -163,7 +163,7 @@ namespace Genie
 			Terminal( std::size_t id )
 			:
 				fID( id ),
-				fName( "/dev/tty" + N::Convert< std::string >( fID ) ),
+				fName( "/dev/tty" + NN::Convert< std::string >( fID ) ),
 				fConsole( NULL )
 			{}
 			
@@ -210,7 +210,7 @@ namespace Genie
 	
 	IORef NewTerminal()
 	{
-		N::OnlyOnce< RegisterCharacterDeviceRefMod >();
+		NN::OnlyOnce< RegisterCharacterDeviceRefMod >();
 		
 		static std::size_t gLastID = 0;
 		
