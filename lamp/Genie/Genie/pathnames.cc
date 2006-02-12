@@ -17,8 +17,8 @@
 // MoreFiles
 #include "MoreFilesExtras.h"
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/Aliases.h"
@@ -32,6 +32,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	static bool PathBeginsWith( const std::string& str, const std::string& sub )
@@ -53,7 +54,7 @@ namespace Genie
 		// Try current directory first
 		if ( N::FSpTestDirectoryExists( result = N::FSDirSpec() & "j" ) )
 		{
-			return N::Convert< N::FSDirSpec >( result );
+			return NN::Convert< N::FSDirSpec >( result );
 		}
 		
 		// Then root, or bust
@@ -223,8 +224,12 @@ namespace Genie
 					}
 					else if ( dirName.size() == 2  &&  p[ 1 ] == '.' )
 					{
-						// parent dir
-						dir = N::FSpGetParent( N::Convert< FSSpec >( dir ) );
+						if ( static_cast< long >( dir.dirID ) != fsRtDirID )
+						{
+							// parent dir
+							dir = N::FSpGetParent( NN::Convert< FSSpec >( dir ) );
+						}
+						
 						break;
 					}
 					// Otherwise, not . or ..
@@ -237,7 +242,7 @@ namespace Genie
 					if ( *q == '/' )
 					{
 						// expecting a directory
-						dir = N::Convert< N::FSDirSpec >( FSSpec( N::ResolveAliasFile( spec, true ) ) );
+						dir = NN::Convert< N::FSDirSpec >( FSSpec( N::ResolveAliasFile( spec, true ) ) );
 						scratch = "";
 					}
 					else
@@ -265,13 +270,13 @@ namespace Genie
 		
 		while ( spec.parID != fsRtParID )
 		{
-			rpath.push_back( N::Convert< std::string >( spec.name ) );
-			spec = N::Convert< FSSpec >( N::FSpGetParent( spec ) );
+			rpath.push_back( NN::Convert< std::string >( spec.name ) );
+			spec = NN::Convert< FSSpec >( N::FSpGetParent( spec ) );
 		}
 		
 		if ( spec.vRefNum != N::BootVolume().Get() )
 		{
-			rpath.push_back( N::Convert< std::string >( spec.name ) );
+			rpath.push_back( NN::Convert< std::string >( spec.name ) );
 			rpath.push_back( "Volumes" );
 		}
 		
