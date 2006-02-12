@@ -7,6 +7,7 @@
 #define GENIE_IOREF_HH
 
 // Genie
+#include "Genie/IOStream.hh"
 #include "Genie/ResourceTable.hh"  // Needed for IORef_Cast
 
 
@@ -18,18 +19,12 @@ namespace Genie
 		// Quick temporary hack
 		kUnknownIODescriptor       = 0,
 		kGenericIODescriptor       = 1,
-		kBlockDeviceDescriptor     = 2,
-		kCharacterDeviceDescriptor = 3,
-		kFileDescriptor            = 4,
-		kTerminalDescriptor        = 5,
-		kSocketDescriptor          = 6
-	};
-	
-	enum
-	{
-		kPollRead   = 1,
-		kPollWrite  = 2,
-		kPollExcept = 4
+		kCharacterDeviceDescriptor = 2,
+		kDirectoryIterator         = 3,
+		kBlockDeviceDescriptor     = 4,
+		kFileDescriptor            = 5,
+		kTerminalDescriptor        = 6,
+		kSocketDescriptor          = 7
 	};
 	
 	typedef std::size_t (*RefMod)( std::size_t offset, int delta );
@@ -51,33 +46,6 @@ namespace Genie
 	                     IOWriter writer,
 	                     IOPoller poller );
 	
-	
-	class IOStream
-	{
-		private:
-			std::string fPeekBuffer;
-		
-		public:
-			
-			virtual unsigned int SysPoll() const = 0;
-			
-			virtual int SysRead( char* data, std::size_t byteCount ) = 0;
-			
-			virtual int SysWrite( const char* data, std::size_t byteCount ) = 0;
-			
-			virtual bool IsBlocking() const = 0;
-			
-			virtual void SetBlocking   () = 0;
-			virtual void SetNonBlocking() = 0;
-			
-			const std::string& Peek( ByteCount minBytes );
-			
-			unsigned int Poll() const;
-			
-			int Read( char* data, std::size_t byteCount );
-			
-			int Write( const char* data, std::size_t byteCount );
-	};
 	
 	class IORef
 	{
