@@ -28,6 +28,18 @@
 #include "Utilities/Files.h"
 
 
+namespace Nitrogen
+{
+	
+	static bool operator==( const FSDirSpec& a, const FSDirSpec& b )
+	{
+		return a.vRefNum == b.vRefNum
+		    && a.dirID   == b.dirID;
+	}
+	
+}
+
+
 namespace Genie
 {
 	
@@ -105,6 +117,87 @@ namespace Genie
 		return DetermineVRefNum( N::Str27( name ), vRefNum );
 	}
 	
+	static N::FSDirSpec HomeDir( const std::string& user = std::string() )
+	{
+		return N::FSDirSpec();
+	}
+	
+	static N::FSDirSpec VolumesDir()
+	{
+		FSSpec volumes = N::RootDirectory( N::BootVolume() ) & "Volumes";
+		
+		try
+		{
+			return NN::Convert< N::FSDirSpec >( volumes );
+		}
+		catch ( const N::FNFErr& err )
+		{
+			// continue
+		}
+		
+		return N::FSpDirCreate( volumes );
+	}
+	
+	static N::FSDirSpec DirLookupDir( const N::FSDirSpec& dir, const std::string& name )
+	{
+		if ( name == ""   )  return dir;
+		if ( name == "."  )  return dir;
+		
+		if ( name == ".." )
+		{
+			if ( long( dir.dirID ) == long( fsRtDirID ) )
+			{
+				if ( dir.vRefNum == N::BootVolume() )
+				{
+					return dir;
+				}
+				
+				return VolumesDir();
+			}
+			
+			return N::FSpGetParent( NN::Convert< FSSpec >( dir ) );
+		}
+		
+		std::string macName = UntweakMacFilename( name );
+		
+		if ( dir == VolumesDir() )
+		{
+			return N::RootDirectory( DetermineVRefNum( macName + ":" ) );
+		}
+		
+		return dir << macName;
+	}
+	
+	static FSSpec DirLookupSpec( const N::FSDirSpec& dir, const std::string& name )
+	{
+		if ( name == ""   )  return dir & "";
+		if ( name == "."  )  return dir & "";
+		
+		if ( name == ".." )
+		{
+			if ( long( dir.dirID ) == long( fsRtDirID ) )
+			{
+				if ( dir.vRefNum == N::BootVolume() )
+				{
+					return dir & "";
+				}
+				
+				return VolumesDir() & "";
+			}
+			
+			return N::FSpGetParent( NN::Convert< FSSpec >( dir ) ) & "";
+		}
+		
+		std::string macName = UntweakMacFilename( name );
+		
+		if ( dir == VolumesDir() )
+		{
+			return N::RootDirectory( DetermineVRefNum( macName + ":" ) ) & "";
+		}
+		
+		return dir & macName;
+	}
+	
 	static FSSpec UnixPathname2FSSpec( const N::FSDirSpec&  cwd,
 	                                   const char*          pathname )
 	{
@@ -118,7 +211,6 @@ namespace Genie
 		
 		N::FSDirSpec dir = cwd;
 		
-		std::string scratch;
 		const char *p, *q;
 		
 		p = q = pathname;
@@ -127,39 +219,6 @@ namespace Genie
 		{
 			dir = N::RootDirectory( N::BootVolume() );
 			q = ++p;  // skip the leading slash
-			
-			// advance to the next slash
-			while ( ( *q != '\0' ) && ( *q != '/' ) )
-			{
-				++q;
-			}
-			
-			if ( *q == '/' )
-			{
-				q++;  // skip the slash
-				
-				if ( std::string( p, q - p ) == "Volumes/" )
-				{
-					p = q;
-					
-					// advance to the third slash, if any
-					while ( ( *q != '\0' ) && ( *q != '/' ) )
-					{
-						++q;
-					}
-					
-					if ( p == q )
-					{
-						throw N::FNFErr();
-					}
-					
-					std::string volName( p, q - p );
-					dir = N::RootDirectory( DetermineVRefNum( volName ) );
-					p = ++q;  // skip the slash
-				}
-			}
-			
-			q = p;  // backtrack, restore q
 		}
 		else if ( pathname[ 0 ] == '~' )
 		{
@@ -171,18 +230,9 @@ namespace Genie
 				++q;
 			}
 			
-			if ( q == p )
-			{
-				// First path component is ~, home dir (system volume for now)
-				dir = N::RootDirectory( N::BootVolume() );
-			}
-			else
-			{
-				// Otherwise, it's someone else's home dir.
-				// For us, it's a named volume.  Copy the name.
-				scratch = UntweakMacFilename( std::string( p, q - p ) ) + ":";
-				dir = N::RootDirectory( DetermineVRefNum( scratch ) );
-			}
+			std::string username( p, q - p );
+			
+			dir = HomeDir( username );
 			
 			// skip the slash
 			if ( *q != '\0' )
@@ -195,6 +245,8 @@ namespace Genie
 		
 		// p and q now point to the first path component which is not special
 		// (i.e. not "" or "~..."), or the end of the string.
+		
+		std::string scratch;
 		
 		while ( *q != '\0' )
 		{
@@ -224,12 +276,7 @@ namespace Genie
 					}
 					else if ( dirName.size() == 2  &&  p[ 1 ] == '.' )
 					{
-						if ( static_cast< long >( dir.dirID ) != fsRtDirID )
-						{
-							// parent dir
-							dir = N::FSpGetParent( NN::Convert< FSSpec >( dir ) );
-						}
-						
+						dir = DirLookupDir( dir, dirName );
 						break;
 					}
 					// Otherwise, not . or ..
@@ -237,7 +284,7 @@ namespace Genie
 				
 				default:  // 
 					scratch = UntweakMacFilename( dirName );
-					FSSpec spec = dir & scratch;
+					FSSpec spec = DirLookupSpec( dir, UntweakMacFilename( dirName ) );
 					
 					if ( *q == '/' )
 					{
@@ -259,7 +306,7 @@ namespace Genie
 			}
 		}
 		
-		return N::FSDirSpec( dir ) & scratch;
+		return DirLookupSpec( dir, scratch );
 	}
 	
 	static std::string FSSpec2UnixAbsolutePathname( const FSSpec& item )
