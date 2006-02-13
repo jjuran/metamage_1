@@ -339,7 +339,7 @@ namespace ALine
 		
 		std::string TargetApplication() const
 		{
-			return gnu ? "" : "-xm a -dead off";
+			return gnu ? "" : "-xm a -dead " + std::string( m68k ? "code" : "off" );
 		}
 		
 		// CodeWarrior only
