@@ -878,6 +878,17 @@ namespace Nitrogen
 		FSDirID dirID;
 	};
 	
+	inline bool operator==( const FSDirSpec& a, const FSDirSpec& b )
+	{
+		return a.vRefNum == b.vRefNum
+		    && a.dirID   == b.dirID;
+	}
+	
+	inline bool operator!=( const FSDirSpec& a, const FSDirSpec& b )
+	{
+		return !( a == b );
+	}
+	
   }
 
 namespace Nucleus
