@@ -191,14 +191,6 @@
 		return "";
 	}
 	
-	//#pragma mark -
-	#pragma mark ¥ dirent ¥
-	
-	int closedir( DIR* dir )
-	{
-		return -1;
-	}
-	
 	#pragma mark -
 	#pragma mark ¥ stdlib ¥
 	
