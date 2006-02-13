@@ -130,9 +130,13 @@ namespace Genie
 			}
 			
 		}
+		catch ( const N::FNFErr& err )
+		{
+			CurrentProcess().SetErrno( 0 );
+		}
 		catch ( ... )
 		{
-			// return NULL
+			CurrentProcess().SetErrno( EINVAL );
 		}
 		
 		return NULL;
