@@ -3,15 +3,15 @@
  *	=====
  */
 
-// Nitrogen
-#include "Nitrogen/Files.h"
-#include "Nitrogen/OSStatus.h"
+// Standard C
+#include "errno.h"
 
-// Nitrogen Extras / Iteration
-#include "Iteration/FSContents.h"
+// Standard C/C++
+#include <cstring>
 
-// Nitrogen Extras / Templates
-#include "Templates/PointerToFunction.h"
+// POSIX
+#include "dirent.h"
+#include "sys/stat.h"
 
 // Orion
 #include "Orion/Main.hh"
@@ -19,23 +19,19 @@
 #include "SystemCalls.hh"
 
 
-namespace N = Nitrogen;
-namespace NN = Nucleus;
 namespace O = Orion;
 
-using std::string;
 
-
-static void ListItem( const FSSpec& item )
+static void iterate_dir( const char* pathname )
 {
-	Io::Out << item.name << "\n";
-}
-
-static void IterateDir( const N::FSDirSpec& dir )
-{
-	std::for_each( N::FSContents( dir ).begin(),
-	               N::FSContents( dir ).end(),
-	               N::PtrFun( ListItem ) );
+	DIR* iter = opendir( pathname );
+	
+	while ( const dirent* ent = readdir( iter ) )
+	{
+		Io::Out << ent->d_name << "\n";
+	}
+	
+	closedir( iter );
 }
 
 int O::Main(int argc, const char *const argv[])
@@ -46,52 +42,32 @@ int O::Main(int argc, const char *const argv[])
 		
 		for ( int i = 1; i < argc; i++ )
 		{
-			FSSpec item;
+			struct stat st;
 			
-			try
+			int result = stat( argv[ i ], &st );
+			
+			if ( result == -1 )
 			{
-				item = Path2FSS( argv[ i ] );
-			}
-			catch ( N::OSStatus err )
-			{
-				Io::Err << argv[ 0 ]
-				        << ": "
-				        << argv[ i ]
-				        << ": No such file or directory"
-				        << err
-				        << "\n";
-				fail++;
+				++fail;
+				int errnum = errno;
+				Io::Err << "failed to stat( " << argv[ i ] << " ), " << std::strerror( errnum ) << "\n";
 				continue;
 			}
 			
-			if ( !N::FSpTestDirectoryExists( item ) )
+			if ( S_ISDIR( st.st_mode ) )
 			{
-				ListItem( item );
+				iterate_dir( argv[ i ] );
 			}
 			else
 			{
-				try
-				{
-					IterateDir( NN::Convert< N::FSDirSpec >( item ) );
-				}
-				catch ( ... )
-				{
-				 	fail++;
-				}
+				Io::Out << argv[ i ] << "\n";
 			}
 		}
 		return fail;
 	}
 	else
 	{
-		try
-		{
-			IterateDir( NN::Convert< N::FSDirSpec >( CurrentDirectory() ) );
-		}
-		catch ( ... )
-		{
-			return 1;  // Generic error
-		}
+		iterate_dir( "." );
 	}
 	
 	return 0;
