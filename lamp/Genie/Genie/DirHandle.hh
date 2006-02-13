@@ -26,22 +26,25 @@ namespace Genie
 	
 	class DirHandle : public IOStream
 	{
+		protected:
+			dirent fLastEntry;
+			UInt32 fIndex;
+		
 		private:
 			N::FSDirSpec fDir;
-			UInt32 fIndex;
-			
-			dirent fLastEntry;
 		
 		public:
 			DirHandle( const N::FSDirSpec& dir )
 			:
-				fDir( dir ),
-				fIndex( 0 )
+				fIndex( 0 ),
+				fDir( dir )
 			{}
+			
+			virtual ~DirHandle()  {}
 			
 			const N::FSDirSpec& GetDir() const  { return fDir; }
 			
-			const dirent* ReadDir();
+			virtual const dirent* ReadDir();
 			
 			void RewindDir();
 			void SeekDir( off_t index );
