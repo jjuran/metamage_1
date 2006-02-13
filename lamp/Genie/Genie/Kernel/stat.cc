@@ -112,7 +112,7 @@ namespace Genie
 		mode_t mode = isDir ? S_IFDIR | S_IXUSR : S_IFREG;
 		mode |= S_IRUSR;
 		
-		sb->st_dev = 0;
+		sb->st_dev = -paramBlock.hFileInfo.ioVRefNum;
 		sb->st_ino = paramBlock.hFileInfo.ioDirID;
 		sb->st_mode = mode;
 		sb->st_nlink = 1;
@@ -178,11 +178,11 @@ namespace Genie
 				
 				return 0;
 			}
-			catch ( N::FNFErr& )
+			catch ( const N::FNFErr& err )
 			{
 				return CurrentProcess().SetErrno( ENOENT );
 			}
-			catch ( N::OSStatus& err )
+			catch ( const N::OSStatus& err )
 			{
 				
 			}
