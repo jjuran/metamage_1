@@ -16,18 +16,6 @@
 #include "Genie/ResourceTable.hh"
 
 
-namespace Nitrogen
-{
-	
-	static bool operator==( const FSDirSpec& a, const FSDirSpec& b )
-	{
-		return a.vRefNum == b.vRefNum
-		    && a.dirID   == b.dirID;
-	}
-	
-}
-
-
 namespace Genie
 {
 	
