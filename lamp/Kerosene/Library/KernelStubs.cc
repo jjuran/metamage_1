@@ -7,6 +7,7 @@
 #include "errno.h"
 
 // POSIX
+#include "dirent.h"
 #include "fcntl.h"
 #include "signal.h"
 #include "stdlib.h"
@@ -39,6 +40,13 @@ inline void CheckImportedSymbol( void* symbol )
 #pragma export on
 	
 	// _import_
+	
+	DIR*    (*opendir_import_  )( const char* pathname );
+	int     (*closedir_import_ )( DIR* dir );
+	dirent* (*readdir_import_  )( DIR* dir );
+	void    (*rewinddir_import_)( DIR* dir );
+	void    (*seekdir_import_  )( DIR* dir, off_t offset );
+	off_t   (*telldir_import_  )( DIR* );
 	
 	int (*fcntl_import_)( int fd, int cmd, int param );
 	int (*open_import_ )( const char* path, int oflags, mode_t mode );
@@ -128,7 +136,52 @@ inline void CheckImportedSymbol( void* symbol )
 #pragma export on
 #endif
 	
-	//#pragma mark -
+	#pragma mark -
+	#pragma mark ¥ dirent ¥
+	
+	DIR* opendir( const char* pathname )
+	{
+		CheckImportedSymbol( opendir_import_ );
+		
+		return opendir_import_( pathname );
+	}
+	
+	int closedir( DIR* dir )
+	{
+		CheckImportedSymbol( closedir_import_ );
+		
+		return closedir_import_( dir );
+	}
+	
+	struct dirent* readdir( DIR* dir )
+	{
+		CheckImportedSymbol( readdir_import_ );
+		
+		return readdir_import_( dir );
+	}
+	
+	void rewinddir( DIR* dir )
+	{
+		CheckImportedSymbol( rewinddir_import_ );
+		
+		return rewinddir_import_( dir );
+	}
+	
+	void seekdir( DIR* dir, off_t offset )
+	{
+		CheckImportedSymbol( seekdir_import_ );
+		
+		return seekdir_import_( dir, offset );
+	}
+	
+	off_t telldir( DIR* dir )
+	{
+		CheckImportedSymbol( telldir_import_ );
+		
+		return telldir_import_( dir );
+	}
+	
+	#pragma mark -
 	#pragma mark ¥ fcntl ¥
 	
 	int fcntl( int fd, int cmd, int param )
