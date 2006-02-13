@@ -1404,7 +1404,7 @@ Perl_do_exec3(pTHX_ char *cmd, int fd, int do_report)
 {
     register char **a;
     register char *s;
-    char flags[10];
+    
 
     while (*cmd && isSPACE(*cmd))
 	cmd++;
@@ -1413,6 +1413,8 @@ Perl_do_exec3(pTHX_ char *cmd, int fd, int do_report)
 
 #ifdef CSH
     if (strnEQ(cmd,PL_cshname,PL_cshlen) && strnEQ(cmd+PL_cshlen," -c",3)) {
+	char flags[10];
+	
 	strcpy(flags,"-c");
 	s = cmd+PL_cshlen+3;
 	if (*s == 'f') {
@@ -1516,7 +1518,6 @@ I32
 Perl_apply(pTHX_ I32 type, register SV **mark, register SV **sp)
 {
     register I32 val;
-    register I32 val2;
     register I32 tot = 0;
     char *what;
     char *s;
@@ -1559,6 +1560,8 @@ Perl_apply(pTHX_ I32 type, register SV **mark, register SV **sp)
 	what = "chown";
 	APPLY_TAINT_PROPER();
 	if (sp - mark > 2) {
+	    register I32 val2;
+	    
 	    val = SvIVx(*++mark);
 	    val2 = SvIVx(*++mark);
 	    APPLY_TAINT_PROPER();
