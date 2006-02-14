@@ -195,6 +195,8 @@ namespace Genie
 		
 		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
+		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		
 		sb->st_dev = -hFileInfo.ioVRefNum;
 		sb->st_ino = hFileInfo.ioDirID;
 		sb->st_mode = GetItemMode( hFileInfo );
@@ -202,7 +204,7 @@ namespace Genie
 		sb->st_uid = 0;
 		sb->st_gid = 0;
 		sb->st_rdev = 0;
-		sb->st_size = hFileInfo.ioFlLgLen;
+		sb->st_size = isDir ? paramBlock.dirInfo.ioDrNmFls : hFileInfo.ioFlLgLen;
 		sb->st_blksize = 4096;
 		sb->st_blocks = hFileInfo.ioFlPyLen / 512;
 		sb->st_atime = hFileInfo.ioFlMdDat - timeDiff;
