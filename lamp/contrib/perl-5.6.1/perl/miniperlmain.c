@@ -20,6 +20,8 @@ static PerlInterpreter *my_perl;
 long _stksize = 64 * 1024;
 #endif
 
+#pragma export on
+
 int
 main(int argc, char **argv, char **env)
 {
@@ -60,6 +62,8 @@ main(int argc, char **argv, char **env)
     exit(exitstatus);
     return exitstatus;
 }
+
+#pragma export reset
 
 /* Register any extra external extensions */
 
