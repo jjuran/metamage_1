@@ -1859,8 +1859,6 @@ PP(pp_truncate)
     /* XXX Configure probe for the length type of *truncate() needed XXX */
     Off_t len;
     int result = 1;
-    GV *tmpgv;
-    STRLEN n_a;
 
 #if Size_t_size > IVSIZE
     len = (Off_t)POPn;
@@ -1873,7 +1871,7 @@ PP(pp_truncate)
     SETERRNO(0,0);
 #if defined(HAS_TRUNCATE) || defined(HAS_CHSIZE) || defined(F_FREESP)
     if (PL_op->op_flags & OPf_SPECIAL) {
-	tmpgv = gv_fetchpv(POPpx, FALSE, SVt_PVIO);
+	GV *tmpgv = gv_fetchpv(POPpx, FALSE, SVt_PVIO);
     do_ftruncate:
 	TAINT_PROPER("truncate");
 	if (!GvIO(tmpgv) || !IoIFP(GvIOp(tmpgv)))
@@ -2010,13 +2008,13 @@ PP(pp_ioctl)
 PP(pp_flock)
 {
     dSP; dTARGET;
+#ifdef FLOCK
     I32 value;
     int argtype;
     GV *gv;
     IO *io = NULL;
     PerlIO *fp;
 
-#ifdef FLOCK
     argtype = POPi;
     if (MAXARG == 0)
 	gv = PL_last_in_gv;
@@ -3225,9 +3223,8 @@ PP(pp_chdir)
 PP(pp_chown)
 {
     dSP; dMARK; dTARGET;
-    I32 value;
 #ifdef HAS_CHOWN
-    value = (I32)apply(PL_op->op_type, MARK, SP);
+    I32 value = (I32)apply(PL_op->op_type, MARK, SP);
     SP = MARK;
     PUSHi(value);
     RETURN;
