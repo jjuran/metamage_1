@@ -185,9 +185,23 @@ namespace Genie
 		
 		HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
+		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		
+		if ( isDir )
+		{
+			// Can't change permissions on directories
+			throw P7::Errno( EPERM );
+		}
+		
 		mode_t current_mode = GetItemMode( hFileInfo );
 		
 		mode_t changed_bits = new_mode ^ current_mode;
+		
+		if ( changed_bits & S_IRUSR )
+		{
+			// Can't make anything unreadable
+			throw P7::Errno( EPERM );
+		}
 		
 		if ( changed_bits & S_IXUSR )
 		{
@@ -205,6 +219,20 @@ namespace Genie
 			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
 			
 			N::FSpSetFInfo( file, info );
+		}
+		
+		if ( changed_bits & S_IWUSR )
+		{
+			if ( new_mode & S_IWUSR )
+			{
+				// writeable: reset the lock
+				N::FSpRstFLock( file );
+			}
+			else
+			{
+				// not writeable: set the lock
+				N::FSpSetFLock( file );
+			}
 		}
 	}
 	
