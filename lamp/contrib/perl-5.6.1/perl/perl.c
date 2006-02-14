@@ -2282,11 +2282,11 @@ Perl_moreswitches(pTHX_ char *s)
 
 	PerlIO_printf(PerlIO_stdout(),
 		      "\n\nCopyright 1987-2002, Larry Wall\n");
-#ifdef MACOS_TRADITIONAL
+#ifdef MACOS_LAMP
 	PerlIO_printf(PerlIO_stdout(),
 		      "\nMac OS/Lamp port by Joshua Juran, 2005-2006\n");
 #endif
-#ifdef MACOS_LAMP
+#ifdef MACOS_TRADITIONAL
 	PerlIO_printf(PerlIO_stdout(),
 		      "\nMac OS port Copyright 1991-2002, Matthias Neeracher;\n"
 		      "maintained by Chris Nandor\n");
