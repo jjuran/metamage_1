@@ -10,6 +10,7 @@
 
 #include "sys/time.h"
 #include "sys/types.h"
+#include "vfork.h"
 
 #ifdef __cplusplus
 extern "C" {
