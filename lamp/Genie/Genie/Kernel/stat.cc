@@ -153,6 +153,35 @@ namespace Genie
 		return mode;
 	}
 	
+	static void FSpSetFInfo( const FSSpec& file, const FInfo& info )
+	{
+		N::ThrowOSStatus( ::FSpSetFInfo( &file, &info ) );
+	}
+	
+	static void ChangeFileMode( const FSSpec& file, mode_t new_mode )
+	{
+		CInfoPBRec paramBlock;
+		
+		N::FSpGetCatInfo( file, paramBlock );
+		
+		HFileInfo& hFileInfo = paramBlock.hFileInfo;
+		
+		mode_t current_mode = GetItemMode( hFileInfo );
+		
+		mode_t changed_bits = new_mode ^ current_mode;
+		
+		if ( changed_bits & S_IXUSR )
+		{
+			bool x_bit = new_mode & S_IXUSR;
+			
+			FInfo& info = hFileInfo.ioFlFndrInfo;
+			
+			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
+			
+			FSpSetFInfo( file, info );
+		}
+	}
+	
 	static void StatFile( const FSSpec& file, struct stat* sb )
 	{
 		MachineLocation loc;
@@ -206,6 +235,43 @@ namespace Genie
 		StatGeneric( sb );
 	}
 	
+	static int chmod_file( const char* path, mode_t mode )
+	{
+		std::string pathname = path;
+		
+		IORef io;
+		
+		if ( pathname.substr( 0, 5 ) == "/dev/" )
+		{
+			
+		}
+		else
+		{
+			// assume it's a file
+			
+			try
+			{
+				N::FSDirSpec current = NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
+				
+				FSSpec file = ResolveUnixPathname( path, current );
+				
+				ChangeFileMode( file, mode );
+				
+				return 0;
+			}
+			catch ( const N::FNFErr& err )
+			{
+				return CurrentProcess().SetErrno( ENOENT );
+			}
+			catch ( const N::OSStatus& err )
+			{
+				
+			}
+		}
+		
+		return CurrentProcess().SetErrno( EINVAL );
+	}
+	
 	static int stat_file( const char* path, struct stat* sb )
 	{
 		std::memset( (void*)sb, '\0', sizeof (struct stat) );
@@ -244,6 +310,13 @@ namespace Genie
 		
 		return CurrentProcess().SetErrno( EINVAL );
 	}
+	
+	static int chmod( const char* path, mode_t mode )
+	{
+		return chmod_file( path, mode );
+	}
+	
+	REGISTER_SYSTEM_CALL( chmod );
 	
 	static int lstat( const char* path, struct stat* sb )
 	{
