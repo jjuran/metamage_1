@@ -254,22 +254,15 @@ namespace Genie
 	
 	static int fstat( int fd, struct stat* sb )
 	{
-		Genie::FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		try
 		{
-			using Genie::kFileDescriptor;
-			using Genie::kGenericIODescriptor;
-			using Genie::kCharacterDeviceDescriptor;
-			
-			Genie::IORef handle = files[ fd ].handle;
+			IORef handle = files[ fd ].handle;
 			
 			// FIXME:  Verify file exists first
 			if ( handle.IsType( kFileDescriptor ) )
 			{
-				using Genie::FileHandle;
-				using Genie::IORef_Cast;
-				
 				const FileHandle& fh = IORef_Cast< FileHandle >( handle );
 				
 				const N::FSFileRefNum refNum = fh.GetRefNum();
