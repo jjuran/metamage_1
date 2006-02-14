@@ -2027,7 +2027,7 @@ Perl_my_setenv(pTHX_ char *nam, char *val)
     (void)sprintf(environ[i],"%s=%s",nam,val);/* all that work just for this */
 
 #else   /* PERL_USE_SAFE_PUTENV */
-#   if defined(__CYGWIN__)
+#   if defined(__CYGWIN__) || defined(MACOS_LAMP)
     setenv(nam, val, 1);
 #   else
     char *new_env;
