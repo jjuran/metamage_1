@@ -1662,7 +1662,11 @@ typedef struct ptr_tbl PTR_TBL_t;
 #               define NO_ENVIRON_ARRAY
 #             endif
 #           else
-#             include "unixish.h"
+#             if defined(MACOS_LAMP)
+#               include "macos/macish.h"
+#             else
+#               include "unixish.h"
+#             endif
 #           endif
 #         endif
 #       endif
