@@ -5,14 +5,7 @@ Author	:	Matthias Neeracher
 
 *********************************************************************/
 
-//#include <MacTypes.h>
 #include <ConditionalMacros.h>
-
-#include <time.h>
-
-#define sys_nerr	80
-
-extern char * sys_errlist[];
 
 /* For now we get compiler this way, until we can
    find a better way */
