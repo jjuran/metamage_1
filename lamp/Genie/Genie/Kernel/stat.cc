@@ -20,6 +20,9 @@
 // Nitrogen / Carbon
 #include "Nitrogen/OSStatus.h"
 
+// POSeven
+#include "POSeven/Errno.h"
+
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 
@@ -40,6 +43,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	
 	
 	static FSSpec FSSpecFromFRefNum( N::FSFileRefNum refNum )
@@ -172,9 +176,16 @@ namespace Genie
 		
 		if ( changed_bits & S_IXUSR )
 		{
-			bool x_bit = new_mode & S_IXUSR;
-			
 			FInfo& info = hFileInfo.ioFlFndrInfo;
+			
+			if ( info.fdType != 'TEXT' )
+			{
+				// Can't change executability of non-scripts
+				// (e.g. don't remove Shared bit on apps)
+				throw P7::Errno( EPERM );
+			}
+			
+			bool x_bit = new_mode & S_IXUSR;
 			
 			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
 			
@@ -260,6 +271,10 @@ namespace Genie
 				ChangeFileMode( file, mode );
 				
 				return 0;
+			}
+			catch ( const P7::Errno& err )
+			{
+				return CurrentProcess().SetErrno( err );
 			}
 			catch ( const N::FNFErr& err )
 			{
