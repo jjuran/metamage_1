@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.1  2006-02-14 01:01:52  jax
+Revision 1.2  2006-02-14 04:08:22  jax
+Various changes to work in Lamp.
+
+Revision 1.1  2006/02/14 01:01:52  jax
 Initial check-in.  Copied from MacPerl's CVS.
 
 Revision 1.12  2002/10/30 07:12:31  neeri
@@ -61,6 +64,9 @@ First build released to public
 
 #ifndef _config_h_
 #define _config_h_
+
+#define MACOS_LAMP
+#define PERL_USE_SAFE_PUTENV
 
 /* LOC_SED:
  *	This symbol holds the complete pathname to the sed program.
@@ -259,7 +265,7 @@ First build released to public
  *	the getpgid(pid) function is available to get the
  *	process group id.
  */
-#undef HAS_GETPGID		/**/
+#define HAS_GETPGID		/**/
 
 /* HAS_GETPGRP2:
  *	This symbol, if defined, indicates that the getpgrp2() (as in DG/UX)
@@ -271,7 +277,7 @@ First build released to public
  *	This symbol, if defined, indicates that the getppid routine is
  *	available to get the parent process ID.
  */
-#undef HAS_GETPPID		/**/
+#define HAS_GETPPID		/**/
 
 /* HAS_GETPRIORITY:
  *	This symbol, if defined, indicates that the getpriority routine is
@@ -513,7 +519,7 @@ First build released to public
  *	This symbol, if defined, indicates that the setpgid(pid, gpid)
  *	routine is available to set process group ID.
  */
-#undef HAS_SETPGID	/**/
+#define HAS_SETPGID	/**/
 
 /* HAS_SETPGRP2:
  *	This symbol, if defined, indicates that the setpgrp2() (as in DG/UX)
@@ -569,7 +575,7 @@ First build released to public
  *	This symbol, if defined, indicates that the setsid routine is
  *	available to set the process group ID.
  */
-#undef HAS_SETSID	/**/
+#define HAS_SETSID	/**/
 
 /* Shmat_t:
  *	This symbol holds the return type of the shmat() system call.
@@ -700,7 +706,7 @@ First build released to public
  *	This symbol, if defined, indicates that the waitpid routine is
  *	available to wait for child process.
  */
-#undef HAS_WAITPID	/**/
+#define HAS_WAITPID	/**/
 
 /* HAS_WCSTOMBS:
  *	This symbol, if defined, indicates that the wcstombs routine is
@@ -906,7 +912,7 @@ First build released to public
  *	This symbol, if defined, indicates to the C program that it should
  *	include <sys/wait.h>.
  */
-#undef I_SYS_WAIT	/**/
+#define I_SYS_WAIT	/**/
 
 /* I_TERMIO:
  *	This symbol, if defined, indicates that the program should include
@@ -963,7 +969,7 @@ First build released to public
  *	This symbol, if defined, indicates to the C program that it should
  *	include vfork.h.
  */
-#undef I_VFORK	/**/
+#define I_VFORK	/**/
 
 /* CAN_PROTOTYPE:
  *	If defined, this macro indicates that the C compiler can handle
@@ -990,7 +996,7 @@ First build released to public
  *	/bin/pdksh, /bin/ash, /bin/bash, or even something such as
  *	D:/bin/sh.exe.
  */
-#define SH_PATH "Shell ? We don't need no stinking shell!"  /**/
+#define SH_PATH "/bin/sh"  /**/
 
 /* CROSSCOMPILE:
  *	This symbol, if defined, signifies that we our
@@ -1068,7 +1074,7 @@ First build released to public
  *	by Configure.  You shouldn't rely on it too much; the specific
  *	feature tests from Configure are generally more reliable.
  */
-#define OSNAME "MacOS"		/**/
+#define OSNAME "Lamp"		/**/
 
 /* MEM_ALIGNBYTES:
  *	This symbol contains the number of bytes required to align a
@@ -1920,7 +1926,7 @@ First build released to public
  *	arguments whereas USG one needs none.  See also HAS_SETPGID
  *	for a POSIX interface.
  */
-#undef HAS_SETPGRP		/**/
+#define HAS_SETPGRP		/**/
 #undef USE_BSD_SETPGRP	/**/
 
 /* HAS_SETPROCTITLE:
@@ -2265,7 +2271,7 @@ First build released to public
 /* HAS_VFORK:
  *	This symbol, if defined, indicates that vfork() exists.
  */
-#undef HAS_VFORK /**/
+#define HAS_VFORK /**/
 
 /* Signal_t:
  *	This symbol's value is either "void" or "int", corresponding to the
@@ -2436,7 +2442,7 @@ First build released to public
  *     This symbol, if defined, indicates to the C program that it should
  *     include <netinet/tcp.h>.
  */
-#undef I_NETINET_TCP /**/
+#define I_NETINET_TCP /**/
 
 /* I_POLL:
  *	This symbol, if defined, indicates that <poll.h> exists and
@@ -2602,7 +2608,7 @@ First build released to public
  *	This symbol, if defined, indicates that Perl is to be installed
  * 	also as /usr/bin/perl.
  */
-#undef INSTALL_USR_BIN_PERL /**/
+#define INSTALL_USR_BIN_PERL /**/
 
 /* PERL_PRIfldbl:
  *	This symbol, if defined, contains the string used by stdio to
@@ -3059,7 +3065,7 @@ First build released to public
  *	script to make sure (one hopes) that it runs with perl and not
  *	some shell.
  */
-#define STARTPERL "Perl -Sx \"{0}\" {\"Parameters\"}; Exit {Status}\n#!perl"		/**/
+#define STARTPERL "#!/usr/bin/perl"		/**/
 
 /* STDCHAR:
  *	This symbol is defined to be the type of char used in stdio.h.
@@ -3294,9 +3300,11 @@ First build released to public
 
 /* MacOS Specials */
 
-#define STANDARD_C 1
+// Not implemented yet
+#undef HAS_SIGPROCMASK
+#undef HAS_SIGACTION
 
-#define NO_ENVIRON_ARRAY
+#define STANDARD_C 1
 
 // #define NO_LOCALE  /* ??? */
 
@@ -3313,3 +3321,4 @@ First build released to public
 #include <compat.h>
 
 #endif
+

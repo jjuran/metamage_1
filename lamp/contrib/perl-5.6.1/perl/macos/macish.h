@@ -5,8 +5,10 @@ Author	:	Matthias Neeracher
 
 *********************************************************************/
 
-#include <Types.h>
+//#include <MacTypes.h>
 #include <ConditionalMacros.h>
+
+#include <time.h>
 
 #define sys_nerr	80
 
@@ -34,53 +36,8 @@ extern char * sys_errlist[];
 #  endif
 #endif
 
-#ifndef MP_EXT
-#define MP_EXT extern
-#define MP_INIT(x)
-#endif
-
-MP_EXT char	gMacPerl_AlwaysExtract		MP_INIT(false);
-MP_EXT char	gMacPerl_SyntaxError;
-MP_EXT char	gMacPerl_MustPrime;
-MP_EXT char *	gMacPerl_Perl5DB;
-MP_EXT char	gMacPerl_InModalDialog		MP_INIT(false);
-MP_EXT short	gMacPerl_OSErr;
-MP_EXT char 	gMacPerl_PseudoFileName[256];
-MP_EXT int	gMacPerl_Quit;
-MP_EXT clock_t	gMacPerl_StartClock;
-MP_EXT int	gMacPerl_ErrorFormat		MP_INIT(1);
-
-#ifdef MAC_CONTEXT
-#undef Move
-#include <Events.h>
-#include <Dialogs.h>
-#include <Files.h>
-
-MP_EXT Handle		gMacPerl_Reply;
-MP_EXT void  		(*gMacPerl_HandleEvent)(EventRecord * ev)	MP_INIT(nil);
-MP_EXT void		(*gMacPerl_FilterEvent)(EventRecord * ev)	MP_INIT(nil);
-MP_EXT Boolean		(*gMacPerl_FilterMenu)(long menuSelection)	MP_INIT(nil);
-void MacPerl_WaitEvent(Boolean busy, long sleep, RgnHandle rgn);
-MP_EXT void		(*gMacPerl_WaitEvent)(Boolean busy, long sleep, RgnHandle rgn)	MP_INIT(MacPerl_WaitEvent);
-
-typedef OSErr	MacOSRet;
-typedef Handle	HandleRet;
-typedef Ptr	RawPtr;
-typedef Ptr	PtrRet;
-#endif
-
-typedef int (*MacPerl_EmulationProc)(void *, char *);
-void MacPerl_AddWriteEmulationProc(const char * command, MacPerl_EmulationProc proc);
-char * MacPerl_MPWFileName(char * file);
-char * GetSysErrText(short, char *);
-unsigned char * MacPerl_CopyC2P(const char * c, unsigned char * p);
-const char * MacPerl_CanonDir(const char * dir, char * buf, Boolean is_file);
+void MacPerl_init();
 void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
-void MacPerl_Exit(int status);
-void MacPerl_InitCursorCtl(short acur);
-
-#undef PerlProc_exit
-#define PerlProc_exit(s)	my_exit((s))
 
 #define Big_time_t	unsigned long
 
@@ -116,7 +73,7 @@ void MacPerl_InitCursorCtl(short acur);
 #undef HAS_PASSWD		/**/
 
 #define HAS_KILL
-#undef HAS_WAIT
+#define HAS_WAIT
   
 /* USEMYBINMODE
  *	This symbol, if defined, indicates that the program should
@@ -205,7 +162,7 @@ void MacPerl_InitCursorCtl(short acur);
 
 #ifndef PERL_SYS_INIT3
 #	define PERL_SYS_INIT3(c,v,e) \
-		MacPerl_init(); init_env(*e); \
+		MacPerl_init(); \
 		PL_opargs[OP_TIME] &= ~OA_RETINTEGER; MALLOC_INIT
 #endif
 
@@ -213,26 +170,13 @@ void MacPerl_InitCursorCtl(short acur);
 #define PERL_SYS_TERM()		MALLOC_TERM
 #endif
 
-MP_EXT Boolean			gMacPerl_HasAsyncTasks;
-void MacPerl_DoAsyncTasks();
-#define PERL_ASYNC_CHECK() while (gMacPerl_HasAsyncTasks) MacPerl_DoAsyncTasks()
-typedef struct MacPerl_AsyncTask {
-	void	*	qLink;		/* Don't set */
-	short    qType;		/* Queue type. Ignore */
-	Boolean  fPending;   /* Is element queued already? */
-	Boolean  fill;
-	void     (*fProc)(struct MacPerl_AsyncTask * task); /* Procedure to call */
-} MacPerl_AsyncTask;
-Boolean MacPerl_QueueAsyncTask(MacPerl_AsyncTask * task);
+#define PERL_ASYNC_CHECK() NULL
 
 #define PERL_WRITE_MSG_TO_CONSOLE(io, msg, len) MacPerl_WriteMsg(io, msg, len)
 
-#define BIT_BUCKET "Dev:Null"
+#define BIT_BUCKET "/dev/null"
 
 #define dXSUB_SYS
-
-#define DYNAMIC_ENV_FETCH 1
-#define ENV_HV_NAME "%EnV%MacOS%"
 
 struct tms {
 	clock_t tms_utime;	/* User CPU time */
@@ -254,17 +198,20 @@ clock_t	MacPerl_times(struct tms *);
 #define sind_amg    sin_amg
 #define sqrtd_amg   sqrt_amg
 
-#ifdef __SC__
-#undef Perl_modf
-double Perl_modf(double x, double * iptr);
-#endif
+// Not yet implemented
+#undef HAS_ENDSERVENT
+#undef HAS_GETSERVENT
+#undef HAS_GETSERVBYPORT
+#undef HAS_GETSERVBYNAME
+#undef HAS_GETPROTOBYNUMBER
+#undef HAS_GETPROTOBYNAME
+#undef HAS_GETHOSTBYADDR
+#undef HAS_GETHOSTBYNAME
+#undef HOST_NOT_FOUND
+#undef HAS_ALARM
+#undef HAS_READLINK
+#undef HAS_SYMLINK
+#undef HAS_SOCKETPAIR
+#undef HAS_IOCTL
+#undef HAS_TRUNCATE
 
-#if defined(__SC__) || defined(__MRC__)
-#include <fp.h>
-#undef Perl_atof
-double Perl_atof(const char *s);
-#endif
-
-#ifdef __SC__
-#pragma segment perl
-#endif
