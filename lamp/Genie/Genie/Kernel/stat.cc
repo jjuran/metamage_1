@@ -17,7 +17,7 @@
 #include "stdlib.h"
 #include "sys/stat.h"
 
-// Nitrogen / Carbon
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
 
 // POSeven
@@ -37,6 +37,26 @@
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
+
+namespace Nitrogen
+{
+	
+	static void FSpSetFInfo( const FSSpec& file, const FInfo& info )
+	{
+		ThrowOSStatus( ::FSpSetFInfo( &file, &info ) );
+	}
+	
+	static void FSpSetFLock( const FSSpec& file )
+	{
+		ThrowOSStatus( ::FSpSetFLock( &file ) );
+	}
+	
+	static void FSpRstFLock( const FSSpec& file )
+	{
+		ThrowOSStatus( ::FSpRstFLock( &file ) );
+	}
+	
+}
 
 namespace Genie
 {
@@ -157,11 +177,6 @@ namespace Genie
 		return mode;
 	}
 	
-	static void FSpSetFInfo( const FSSpec& file, const FInfo& info )
-	{
-		N::ThrowOSStatus( ::FSpSetFInfo( &file, &info ) );
-	}
-	
 	static void ChangeFileMode( const FSSpec& file, mode_t new_mode )
 	{
 		CInfoPBRec paramBlock;
@@ -189,7 +204,7 @@ namespace Genie
 			
 			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
 			
-			FSpSetFInfo( file, info );
+			N::FSpSetFInfo( file, info );
 		}
 	}
 	
