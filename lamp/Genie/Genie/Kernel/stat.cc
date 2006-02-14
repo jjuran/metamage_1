@@ -42,6 +42,25 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
+	static FSSpec FSSpecFromFRefNum( N::FSFileRefNum refNum )
+	{
+		FSSpec result;
+		
+		FCBPBRec pb;
+		
+		pb.ioVRefNum = 0;
+		pb.ioFCBIndx = 0;
+		pb.ioRefNum  = refNum;
+		pb.ioNamePtr = result.name;
+		
+		N::ThrowOSStatus( ::PBGetFCBInfoSync( &pb ) );
+		
+		result.vRefNum = pb.ioFCBVRefNum;
+		result.parID   = pb.ioFCBParID;
+		
+		return result;
+	}
+	
 	inline unsigned long MacUnixEpochOffset()
 	{
 		// Returns the number of seconds between Mac and Unix epochs (global time).
@@ -112,16 +131,26 @@ namespace Genie
 		return false;
 	}
 	
-	static mode_t FileModeBits( const HFileInfo& pb )
+	static mode_t FileWXModeBits( const HFileInfo& hFileInfo )
 	{
-		bool locked = pb.ioFlAttrib & kioFlAttribLockedMask;
+		bool locked = hFileInfo.ioFlAttrib & kioFlAttribLockedMask;
 		bool writable = !locked;
 		
-		const FInfo& info = pb.ioFlFndrInfo;
+		const FInfo& info = hFileInfo.ioFlFndrInfo;
 		OSType type = info.fdType;
 		bool executable = TypeIsExecutable( type ) || type == 'TEXT' && info.fdFlags & kIsShared;
 		
 		return ( writable ? S_IWUSR : 0 ) | ( executable ? S_IXUSR : 0 );
+	}
+	
+	static mode_t GetItemMode( const HFileInfo& hFileInfo )
+	{
+		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		
+		mode_t mode = S_IRUSR | ( isDir ? S_IFDIR | S_IWUSR | S_IXUSR
+		                                : S_IFREG | FileWXModeBits( hFileInfo ) );
+		
+		return mode;
 	}
 	
 	static void StatFile( const FSSpec& file, struct stat* sb )
@@ -135,24 +164,21 @@ namespace Genie
 		
 		N::FSpGetCatInfo( file, paramBlock );
 		
-		bool isDir = N::PBTestIsDirectory( paramBlock );
+		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
-		mode_t mode = S_IRUSR | ( isDir ? S_IFDIR | S_IWUSR | S_IXUSR
-		                                : S_IFREG | FileModeBits( paramBlock.hFileInfo ) );
-		
-		sb->st_dev = -paramBlock.hFileInfo.ioVRefNum;
-		sb->st_ino = paramBlock.hFileInfo.ioDirID;
-		sb->st_mode = mode;
+		sb->st_dev = -hFileInfo.ioVRefNum;
+		sb->st_ino = hFileInfo.ioDirID;
+		sb->st_mode = GetItemMode( hFileInfo );
 		sb->st_nlink = 1;
 		sb->st_uid = 0;
 		sb->st_gid = 0;
 		sb->st_rdev = 0;
-		sb->st_size = paramBlock.hFileInfo.ioFlLgLen;
+		sb->st_size = hFileInfo.ioFlLgLen;
 		sb->st_blksize = 4096;
-		sb->st_blocks = paramBlock.hFileInfo.ioFlPyLen / 512;
-		sb->st_atime = paramBlock.hFileInfo.ioFlMdDat - timeDiff;
-		sb->st_mtime = paramBlock.hFileInfo.ioFlMdDat - timeDiff;
-		sb->st_ctime = paramBlock.hFileInfo.ioFlMdDat - timeDiff;
+		sb->st_blocks = hFileInfo.ioFlPyLen / 512;
+		sb->st_atime = hFileInfo.ioFlMdDat - timeDiff;
+		sb->st_mtime = hFileInfo.ioFlMdDat - timeDiff;
+		sb->st_ctime = hFileInfo.ioFlMdDat - timeDiff;
 	}
 	
 	static void StatGeneric( struct stat* sb )
@@ -232,25 +258,6 @@ namespace Genie
 	}
 	
 	REGISTER_SYSTEM_CALL( stat );
-	
-	static FSSpec FSSpecFromFRefNum( N::FSFileRefNum refNum )
-	{
-		FSSpec result;
-		
-		FCBPBRec pb;
-		
-		pb.ioVRefNum = 0;
-		pb.ioFCBIndx = 0;
-		pb.ioRefNum  = refNum;
-		pb.ioNamePtr = result.name;
-		
-		N::ThrowOSStatus( ::PBGetFCBInfoSync( &pb ) );
-		
-		result.vRefNum = pb.ioFCBVRefNum;
-		result.parID = pb.ioFCBParID;
-		
-		return result;
-	}
 	
 	static int fstat( int fd, struct stat* sb )
 	{
