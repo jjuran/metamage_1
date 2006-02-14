@@ -1663,7 +1663,7 @@ typedef struct ptr_tbl PTR_TBL_t;
 #             endif
 #           else
 #             if defined(MACOS_LAMP)
-#               include "macos/macish.h"
+#include "macos/macish.h"
 #             else
 #               include "unixish.h"
 #             endif
