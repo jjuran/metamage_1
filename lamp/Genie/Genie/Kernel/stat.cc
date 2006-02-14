@@ -96,6 +96,34 @@ namespace Genie
 		return gmtDelta;
 	}
 	
+	static bool TypeIsExecutable( OSType type )
+	{
+		switch ( type )
+		{
+			case 'Wish':
+			case 'MPST':
+			case 'APPL':
+				return true;
+			
+			default:
+				break;
+		}
+		
+		return false;
+	}
+	
+	static mode_t FileModeBits( const HFileInfo& pb )
+	{
+		bool locked = pb.ioFlAttrib & kioFlAttribLockedMask;
+		bool writable = !locked;
+		
+		const FInfo& info = pb.ioFlFndrInfo;
+		OSType type = info.fdType;
+		bool executable = TypeIsExecutable( type ) || type == 'TEXT' && info.fdFlags & kIsShared;
+		
+		return ( writable ? S_IWUSR : 0 ) | ( executable ? S_IXUSR : 0 );
+	}
+	
 	static void StatFile( const FSSpec& file, struct stat* sb )
 	{
 		MachineLocation loc;
@@ -109,8 +137,8 @@ namespace Genie
 		
 		bool isDir = N::PBTestIsDirectory( paramBlock );
 		
-		mode_t mode = isDir ? S_IFDIR | S_IXUSR : S_IFREG;
-		mode |= S_IRUSR;
+		mode_t mode = S_IRUSR | ( isDir ? S_IFDIR | S_IWUSR | S_IXUSR
+		                                : S_IFREG | FileModeBits( paramBlock.hFileInfo ) );
 		
 		sb->st_dev = -paramBlock.hFileInfo.ioVRefNum;
 		sb->st_ino = paramBlock.hFileInfo.ioDirID;
