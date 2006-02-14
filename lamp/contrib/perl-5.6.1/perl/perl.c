@@ -2257,7 +2257,7 @@ Perl_moreswitches(pTHX_ char *s)
 	s++;
 	return s;
     case 'u':
-#ifdef MACOS_TRADITIONAL
+#if defined(MACOS_TRADITIONAL) || defined(MACOS_LAMP)
 	Perl_croak(aTHX_ "Believe me, you don't want to use \"-u\" on a Macintosh");
 #endif
 	PL_do_undump = TRUE;
@@ -2283,6 +2283,10 @@ Perl_moreswitches(pTHX_ char *s)
 	PerlIO_printf(PerlIO_stdout(),
 		      "\n\nCopyright 1987-2002, Larry Wall\n");
 #ifdef MACOS_TRADITIONAL
+	PerlIO_printf(PerlIO_stdout(),
+		      "\nMac OS/Lamp port by Joshua Juran, 2005-2006\n");
+#endif
+#ifdef MACOS_LAMP
 	PerlIO_printf(PerlIO_stdout(),
 		      "\nMac OS port Copyright 1991-2002, Matthias Neeracher;\n"
 		      "maintained by Chris Nandor\n");
