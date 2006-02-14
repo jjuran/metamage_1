@@ -86,15 +86,17 @@ extern "C" {
 	//int open( const char* path, int oflag );
 	int open( const char* path, int oflag, mode_t mode = 0 );
 	
+	int fcntl( int fd, int cmd, int param );
+	
 	#else
 	
 	int open( const char* path, int oflag, ... );
 	
+	int fcntl( int fd, int cmd, ... );
+	
 	#endif
 	
 	int creat( const char* pathname, mode_t mode );
-	
-	int fcntl( int fd, int cmd, int param );
 	
 	inline int setblocking   ( int fd  )  { return fcntl( fd, F_ClearFlag, O_NONBLOCK ); }
 	inline int setnonblocking( int fd  )  { return fcntl( fd, F_SetFlag,   O_NONBLOCK ); }
