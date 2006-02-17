@@ -15,6 +15,9 @@
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Str.h"
 
+// Nitrogen Extras / Operators
+#include "Operators/AEDataModel.h"
+
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 #include "Utilities/Processes.h"
@@ -45,6 +48,8 @@ enum
 
 static void OpenItemInRunningApp( const FSSpec& item, const ProcessSerialNumber& psn )
 {
+	using namespace NN::Operators;
+	
 	N::AESend( N::AECreateAppleEvent( kCoreEventClass,
 				                      kAEOpenDocuments,
 				                      N::AECreateDesc< typeProcessSerialNumber >( psn ) )
