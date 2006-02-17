@@ -4,14 +4,9 @@
 
 #include "ShellShock/StringArray.hh"
 
-// Nitrogen
-#include "Nitrogen/Owned.h"
-
 
 namespace ShellShock
 {
-	
-	namespace N = Nitrogen;
 	
 	std::size_t CountStringArray( char const* const* arrayPointer )
 	{
