@@ -9,7 +9,7 @@
 **	AT&T Labs
 */
 
-#include	"FEATURE/sfio"
+#include	"features/sfio-mac.h"
 #include	"sfio_t.h"
 
 /* avoid conflict with BSDI's SF_APPEND */
