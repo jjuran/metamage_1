@@ -1,0 +1,42 @@
+INTRODUCTION
+
+This is sfio, ported to the Apple Macintosh. This port has not yet been
+tested extensively, except for the standard test programs. Several Unix
+features (sfpopen()) have been removed; the only feature that has been
+added is the %#s format specifier for Pascal String I/O.
+
+USING SFIO
+
+To use this version of sfio, you need GUSI 2.0. If you're using sfio in 
+combination with the MPW shell, please run Sfio_Install.MPW, which will 
+cause the SFIO shell variable to be set to the sfio installation at
+startup. 
+
+The sfio include directory needs to be specified in your access paths *before* 
+the standard C compiler includes. This will allow you to use sfio's stdio 
+emulation. There is no way yet to use sfio with C++ IOstreams.
+
+BUGS
+
+Please report Macintosh related bugs to me:
+
+Matthias Neeracher
+20875 Valley Green Dr. #50			
+Cupertino, CA 95014					
+Email:	<neeri@iis.ee.ethz.ch>	
+
+RELEASE NOTES
+
+30Jun99
+	- Support for SC and MrC added.
+ 	- Signal support added
+
+AUTHOR
+
+sfio was written by:
+
+Phong Vo
+AT&T Labs - Research
+180 Park Avenue
+Florham Park, NJ07932
+kpv@research.att.com
