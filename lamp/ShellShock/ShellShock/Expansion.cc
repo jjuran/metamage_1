@@ -14,8 +14,8 @@
 // POSIX
 //#include "unistd.h"
 
-// Nitrogen core
-#include "Nitrogen/Assert.h"
+// Nitrogen Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
@@ -28,6 +28,7 @@ namespace ShellShock
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	static bool IsAShellQuoteChar( char c )
 	{
@@ -425,7 +426,7 @@ namespace ShellShock
 	{
 		FSSpec cwd = Path2FSS( in_dir.empty() ? "." : in_dir );
 		
-		N::FSDirSpec dir = N::Convert< N::FSDirSpec >( cwd );
+		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( cwd );
 		
 		N::Str255 name;
 		
@@ -436,7 +437,7 @@ namespace ShellShock
 			while ( true )
 			{
 				GetNthCatName( dir, ++index, name );  // throws fnfErr at end of dir
-				std::string cname = N::Convert< std::string >( name );
+				std::string cname = NN::Convert< std::string >( name );
 				
 				bool matched = NameMatchesPattern( cname.c_str(), pattern );
 				
