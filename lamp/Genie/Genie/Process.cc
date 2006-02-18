@@ -249,16 +249,14 @@ namespace Genie
 			
 			// argv == { "script", "foo", "bar", "foo", "bar", "baz", NULL }
 			
-			context.argVector[ 0 ] = "tlsrvr";
+			context.argVector[ 0 ] = "/usr/bin/tlsrvr";
 			context.argVector[ 1 ] = "--escape";
 			context.argVector[ 2 ] = "--";
 			context.argVector[ 3 ] = context.scriptPath.c_str();  // Overwrite with full pathname
 			
 			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
 			
-			context.executable = N::RootDirectory( N::BootVolume() ) << "j"
-			                                                         << "usr"
-			                                                         << "bin" & "tlsrvr";
+			context.executable = ResolveUnixPathname( "/usr/bin/tlsrvr", cwd );
 		}
 		else
 		{
