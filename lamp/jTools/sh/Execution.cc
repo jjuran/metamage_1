@@ -233,11 +233,11 @@ static int Exec( char const* const argv[] )
 		return exec_result;
 	}
 	
-	int error = errno;
+	int errnum = errno;
 	
-	Io::Err << "execvp( " << file << " ) failed: " << error << "\n";
+	Io::Err << "execvp( " << file << " ) failed: " << std::strerror( errnum ) << "\n";
 	
-	_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
+	_exit( 127 );  // Use _exit() to exit a forked but not exec'ed process.
 	
 	return -1;
 }
