@@ -54,6 +54,18 @@ namespace Nitrogen
    typedef unsigned long long       UnsignedWide;
 
 
+	namespace Detail
+	{
+		
+		inline UInt32 Distance( const void *begin, const void *end )
+		{
+			return static_cast< UInt32 >(   static_cast< const char * >( end   )
+										  - static_cast< const char * >( begin ) );
+		}
+		
+	}
+	
+	
    // Nitrogen uses floating point types in preference to fixed-point types.
    template < class Floating, int fractionBits, class Integral >
    Floating FixedToFloatingPoint( Integral in )
