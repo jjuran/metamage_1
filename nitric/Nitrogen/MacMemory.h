@@ -24,6 +24,9 @@
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif
+#ifndef NUCLEUS_SCOPED_H
+#include "Nucleus/Scoped.h"
+#endif
 
 #include <cstddef>
 
@@ -282,6 +285,15 @@ namespace Nitrogen
 	
 	// 1058
 	inline void DisposePtr( Nucleus::Owned< Ptr > )  {}
+	
+	inline std::size_t GetPtrSize( Ptr p )
+	{
+		std::size_t size = ::GetPtrSize( p );
+		
+		MemError();
+		
+		return size;
+	}
 	
 	// 1102
 	inline void DisposeHandle( Nucleus::Owned< Handle > )  {}
