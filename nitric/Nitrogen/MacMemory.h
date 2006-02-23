@@ -366,6 +366,43 @@ namespace Nitrogen
 	
 	typedef Nucleus::Pseudoreference< HandleState_Details > HandleState;
    	
+	template < class T >
+	struct HandleFlattener
+	{
+		typedef T   DataType;
+		typedef T** HandleType;
+		
+		typedef HandleType Put_Parameter;
+		
+		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		{
+			Nucleus::Scoped< HandleState > hState( HandleState( toPut ) );
+			HLock( toPut );
+			
+			const T* begin = *toPut;
+			const std::size_t size = GetHandleArraySize( toPut );
+			
+			put( begin, begin + size );
+		}
+		
+		typedef Nucleus::Owned< HandleType > Get_Result;
+		
+		template < class Getter > Get_Result Get( Getter get )
+		{
+			const std::size_t size = get.size();
+			Get_Result result = NewHandle( size );
+			
+			Nucleus::Scoped< HandleState > hState( HandleState( result ) );
+			HLock( result );
+			
+			T* begin = *result;
+			
+			get( begin, begin + size );
+			
+			return result;
+		}
+	};
+	
   }
 
 #endif
