@@ -17,6 +17,8 @@
 namespace Nitrogen {
 
 	void RegisterSecCertificateErrors ();
+	
+	using ::SecTrustRef;
 
 #if 0
 /*!
