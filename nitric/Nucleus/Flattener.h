@@ -84,7 +84,9 @@ namespace Nucleus
       
       template < class Getter > Get_Result Get( Getter get )
         {
-         Get_Result result( get.size() );
+         Get_Result result;
+         result.resize( get.size() );
+         
          typename T::value_type *begin = result.empty() ? 0 : &*result.begin();
          get( begin, begin + result.size() );
          return result;
