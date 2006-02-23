@@ -14,6 +14,9 @@
 #ifndef NITROGEN_CFBASE_H
 #include "Nitrogen/CFBase.h"
 #endif
+#ifndef NITROGEN_CFDATE_H
+#include "Nitrogen/CFDate.h"
+#endif
 
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -21,20 +24,16 @@
 
 namespace Nitrogen {
 	using ::CFDateFormatterRef;
-	using ::CFDateRef;
    }
 
 namespace Nucleus
    {
 	template <> struct OwnedDefaults< Nitrogen::CFDateFormatterRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
-	template <> struct OwnedDefaults< Nitrogen::CFDateRef >: OwnedDefaults< Nitrogen::CFTypeRef >  {};
   }
 
 namespace Nitrogen
   {
 	template <> struct CFType_Traits< CFDateFormatterRef >: Basic_CFType_Traits< CFDateFormatterRef, ::CFDateFormatterGetTypeID > {};
-
-	template <> struct CFType_Traits< CFDateRef >: Basic_CFType_Traits< CFDateRef, ::CFDateFormatterGetTypeID > {};
 
 	inline Nucleus::Owned<CFDateFormatterRef> CFDateFormatterCreate ( CFAllocatorRef allocator, 
 			CFLocaleRef locale, CFDateFormatterStyle dateStyle, CFDateFormatterStyle timeStyle ) {
