@@ -47,6 +47,9 @@
      };
 */
 
+#include <memory>
+
+
 namespace Nucleus
   {
    template < class T >
@@ -119,6 +122,35 @@ namespace Nucleus
            }
      };
    
+	template < class T, std::size_t (*SizeOf)( const T& ) >
+	struct VariableLengthPodFlattener
+	{
+		typedef const T& Put_Parameter;
+		
+		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		{
+			const T* begin = &toPut;
+			const std::size_t size = SizeOf( toPut );
+			
+			put( begin, begin + size );
+		}
+		
+		typedef std::auto_ptr< T > Get_Result;
+		
+		template < class Getter > Get_Result Get( Getter get )
+		{
+			const std::size_t size = get.size();
+			
+			Get_Result result = std::auto_ptr< T >( static_cast< T* >( ::operator new( size ) ) );
+			
+			T* begin = &result;
+			
+			get( begin, begin + size );
+			
+			return result;
+		}
+	};
+	
    
    struct NoData {};
    
