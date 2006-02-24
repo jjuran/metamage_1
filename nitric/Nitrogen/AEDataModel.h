@@ -13,6 +13,9 @@
 #include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
 
+#ifndef NUCLEUS_NASSERT_H
+#include "Nucleus/NAssert.h"
+#endif
 #ifndef NUCLEUS_SELECTORTYPE_H
 #include "Nucleus/SelectorType.h"
 #endif
@@ -1159,56 +1162,90 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Powered by DescType_Traits ¥
 	
+	class AECoercePtr_Putter
+	{
+		private:
+			DescType fromType;
+			DescType toType;
+			Nucleus::Owned< AEDesc >& theDesc;
+		
+		public:
+			AECoercePtr_Putter( DescType                   from,
+			                    DescType                   to,
+			                    Nucleus::Owned< AEDesc >&  desc )
+			: fromType( from ),
+			  toType  ( to   ),
+			  theDesc ( desc )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				theDesc = AECoercePtr( fromType, begin, Detail::Distance( begin, end ), toType );
+			}
+	};
+	
 	template < ::DescType type >
 	Nucleus::Owned< AEDesc > AECoercePtr( typename DescType_Traits< type >::Parameter  data,
 	                                      DescType                                     toType )
 	{
-		typedef DescType_Traits< type > Traits;
+		Nucleus::Owned< AEDesc > result;
 		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		Nucleus::Owned< AEDesc > result = AECoercePtr( DescType( type ),
-		                                               Traits::OutputBufferStart ( buffer ),
-		                                               Traits::OutputBufferLength( buffer ),
-		                                               toType );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data, AECoercePtr_Putter( DescType( type ), toType, result ) );
 		
 		return result;
 	}
 	
+	class AECreateDesc_Putter
+	{
+		private:
+			DescType theType;
+			Nucleus::Owned< AEDesc >& theDesc;
+		
+		public:
+			AECreateDesc_Putter( DescType type, Nucleus::Owned< AEDesc >& desc ) : theType( type ), theDesc( desc )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				theDesc = AECreateDesc( theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
+	
 	template < ::DescType type >
 	Nucleus::Owned< AEDesc > AECreateDesc( typename DescType_Traits< type >::Parameter data )
 	{
-		typedef DescType_Traits< type > Traits;
+		Nucleus::Owned< AEDesc > result;
 		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
+		DescType_Traits< type >().Put( data, AECreateDesc_Putter( DescType( type ), result ) );
 		
-		Nucleus::Owned< AEDesc > desc = AECreateDesc( DescType( type ),
-		                                              Traits::OutputBufferStart ( buffer ),
-		                                              Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
-		
-		return desc;
+		return result;
 	}
+	
+	class AEPutPtr_Putter
+	{
+		private:
+			AEDescList& theList;
+			long        theIndex;
+			DescType    theType;
+		
+		public:
+			AEPutPtr_Putter( AEDescList&  list,
+			                 long         index,
+			                 DescType     type )
+			: theList ( list  ),
+			  theIndex( index ),
+			  theType ( type  )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				AEPutPtr( theList, theIndex, theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	void AEPutPtr( AEDescList&                                  list,
 	               long                                         index,
 	               typename DescType_Traits< type >::Parameter  data )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEPutPtr( list,
-		          index,
-		          DescType( type ),
-		          Traits::OutputBufferStart ( buffer ),
-		          Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data, AEPutPtr_Putter( list, index, DescType( type ) ) );
 	}
 	
 	template < ::DescType type, class Disposer >
@@ -1216,59 +1253,75 @@ namespace Nitrogen
 	               long                                                  index,
 	               typename DescType_Traits< type >::Parameter           data )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEPutPtr( list,
-		          index,
-		          DescType( type ),
-		          Traits::OutputBufferStart ( buffer ),
-		          Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data,
+		                               AEPutPtr_Putter( Detail::AEDescEditor( list ),
+		                                                index,
+		                                                DescType( type ) ) );
 	}
+	
+	class AEGetNthPtr_Getter
+	{
+		private:
+			const AEDescList& theList;
+			long              theIndex;
+			DescType          theType;
+		
+		public:
+			AEGetNthPtr_Getter( const AEDescList& list, long index, DescType type )
+			: theList ( list  ),
+			  theIndex( index ),
+			  theType ( type  )  {}
+			
+			std::size_t size() const
+			{
+				AESizeOfNthItem_Result info = AESizeOfNthItem( theList, theIndex );
+				
+				ASSERT( info.typeCode == theType );
+				
+				return info.dataSize;
+			}
+			
+			void operator()( void *begin, void *end ) const
+			{
+				AEGetNthPtr( theList, theIndex, theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	typename DescType_Traits< type >::Result
 	AEGetNthPtr( const AEDescList&  listDesc,
 	             long               index )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::InputBuffer buffer;
-		
-		if ( Traits::inputHasVariableLength )
-		{
-			Traits::SetInputBufferLength( buffer,
-			                              AESizeOfNthItem( listDesc, index ) );
-		}
-		
-		AEGetNthPtr( listDesc,
-		             index,
-		             DescType( type ),
-		             Traits::InputBufferStart ( buffer ),
-		             Traits::InputBufferLength( buffer ) );
-		
-		return Traits::ProcessInputBuffer( buffer );
+		return DescType_Traits< type >().Get( AEGetNthPtr_Getter( listDesc, index, DescType( type ) ) );
 	}
+	
+	class AEPutKeyPtr_Putter
+	{
+		private:
+			AERecord& theRecord;
+			AEKeyword theKeyword;
+			DescType  theType;
+		
+		public:
+			AEPutKeyPtr_Putter( AERecord&  record,
+			                    AEKeyword  keyword,
+			                    DescType   type )
+			: theRecord ( record  ),
+			  theKeyword( keyword ),
+			  theType   ( type    )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				AEPutKeyPtr( theRecord, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	void AEPutKeyPtr( AERecord&                                    record,
 	                  AEKeyword                                    keyword,
 	                  typename DescType_Traits< type >::Parameter  data )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEPutKeyPtr( record,
-		             keyword,
-		             DescType( type ),
-		             Traits::OutputBufferStart ( buffer ),
-		             Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data, AEPutKeyPtr_Putter( record, keyword, DescType( type ) ) );
 	}
 	
 	template < ::DescType type, class Disposer >
@@ -1276,59 +1329,75 @@ namespace Nitrogen
 	                  AEKeyword                                             keyword,
 	                  typename DescType_Traits< type >::Parameter           data )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEPutKeyPtr( record,
-		             keyword,
-		             DescType( type ),
-		             Traits::OutputBufferStart ( buffer ),
-		             Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data,
+		                               AEPutKeyPtr_Putter( Detail::AEDescEditor( record ),
+		                                                   keyword,
+		                                                   DescType( type ) ) );
 	}
+	
+	class AEGetKeyPtr_Getter
+	{
+		private:
+			const AERecord& theRecord;
+			AEKeyword       theKeyword;
+			DescType        theType;
+		
+		public:
+			AEGetKeyPtr_Getter( const AERecord& record, AEKeyword keyword, DescType type )
+			: theRecord ( record  ),
+			  theKeyword( keyword ),
+			  theType   ( type    )  {}
+			
+			std::size_t size() const
+			{
+				AESizeOfKeyDesc_Result info = AESizeOfKeyDesc( theRecord, theKeyword );
+				
+				ASSERT( info.typeCode == theType );
+				
+				return info.dataSize;
+			}
+			
+			void operator()( void *begin, void *end ) const
+			{
+				AEGetKeyPtr( theRecord, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	typename DescType_Traits< type >::Result
 	AEGetKeyPtr( const AERecord&  record,
 	             AEKeyword        keyword )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::InputBuffer buffer;
-		
-		if ( Traits::inputHasVariableLength )
-		{
-			Traits::SetInputBufferLength( buffer,
-			                              AESizeOfKeyDesc( record, keyword ) );
-		}
-		
-		AEGetKeyPtr( record,
-		             keyword,
-		             DescType( type ),
-		             Traits::InputBufferStart ( buffer ),
-		             Traits::InputBufferLength( buffer ) );
-		
-		return Traits::ProcessInputBuffer( buffer );
+		return DescType_Traits< type >().Get( AEGetKeyPtr_Getter( record, keyword, DescType( type ) ) );
 	}
+	
+	class AEPutParamPtr_Putter
+	{
+		private:
+			AppleEvent& theAppleEvent;
+			AEKeyword   theKeyword;
+			DescType    theType;
+		
+		public:
+			AEPutParamPtr_Putter( AppleEvent&  appleEvent,
+			                      AEKeyword    keyword,
+			                      DescType     type )
+			: theAppleEvent( appleEvent  ),
+			  theKeyword   ( keyword     ),
+			  theType      ( type        )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				AEPutParamPtr( theAppleEvent, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	void AEPutParamPtr( AppleEvent&                                  appleEvent,
 	                    AEKeyword                                    keyword,
 	                    typename DescType_Traits< type >::Parameter  data )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEPutParamPtr( appleEvent,
-		               keyword,
-		               DescType( type ),
-		               Traits::OutputBufferStart ( buffer ),
-		               Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data, AEPutParamPtr_Putter( appleEvent, keyword, DescType( type ) ) );
 	}
 	
 	template < ::DescType type, class Disposer >
@@ -1336,59 +1405,75 @@ namespace Nitrogen
 	                    AEKeyword                                             keyword,
 	                    typename DescType_Traits< type >::Parameter           data )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEPutParamPtr( appleEvent,
-		               keyword,
-		               DescType( type ),
-		               Traits::OutputBufferStart ( buffer ),
-		               Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data,
+		                               AEPutParamPtr_Putter( Detail::AEDescEditor( appleEvent ),
+		                                                     keyword,
+		                                                     DescType( type ) ) );
 	}
+	
+	class AEGetParamPtr_Getter
+	{
+		private:
+			const AppleEvent& theAppleEvent;
+			AEKeyword         theKeyword;
+			DescType          theType;
+		
+		public:
+			AEGetParamPtr_Getter( const AppleEvent& appleEvent, AEKeyword keyword, DescType type )
+			: theAppleEvent( appleEvent ),
+			  theKeyword   ( keyword    ),
+			  theType      ( type       )  {}
+			
+			std::size_t size() const
+			{
+				AESizeOfParam_Result info = AESizeOfParam( theAppleEvent, theKeyword );
+				
+				ASSERT( info.typeCode == theType );
+				
+				return info.dataSize;
+			}
+			
+			void operator()( void *begin, void *end ) const
+			{
+				AEGetParamPtr( theAppleEvent, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	typename DescType_Traits< type >::Result
 	AEGetParamPtr( const AppleEvent&  appleEvent,
 	               AEKeyword          keyword )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::InputBuffer buffer;
-		
-		if ( Traits::inputHasVariableLength )
-		{
-			Traits::SetInputBufferLength( buffer,
-			                              AESizeOfParam( appleEvent, keyword ) );
-		}
-		
-		AEGetParamPtr( appleEvent,
-		               keyword,
-		               DescType( type ),
-		               Traits::InputBufferStart ( buffer ),
-		               Traits::InputBufferLength( buffer ) );
-		
-		return Traits::ProcessInputBuffer( buffer );
+		return DescType_Traits< type >().Get( AEGetParamPtr_Getter( appleEvent, keyword, DescType( type ) ) );
 	}
+	
+	class AEPutAttributePtr_Putter
+	{
+		private:
+			AppleEvent& theAppleEvent;
+			AEKeyword   theKeyword;
+			DescType    theType;
+		
+		public:
+			AEPutAttributePtr_Putter( AppleEvent&  appleEvent,
+			                          AEKeyword    keyword,
+			                          DescType     type )
+			: theAppleEvent( appleEvent  ),
+			  theKeyword   ( keyword     ),
+			  theType      ( type        )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				AEPutAttributePtr( theAppleEvent, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	void AEPutAttributePtr( AppleEvent&                                  appleEvent,
 	                        AEKeyword                                    keyword,
 	                        typename DescType_Traits< type >::Parameter  data )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEPutAttributePtr( appleEvent,
-		                   keyword,
-		                   DescType( type ),
-		                   Traits::OutputBufferStart ( buffer ),
-		                   Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data, AEPutAttributePtr_Putter( appleEvent, keyword, DescType( type ) ) );
 	}
 	
 	template < ::DescType type, class Disposer >
@@ -1396,60 +1481,70 @@ namespace Nitrogen
 	                        AEKeyword                                             keyword,
 	                        typename DescType_Traits< type >::Parameter           data )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEPutAttributePtr( appleEvent,
-		                   keyword,
-		                   DescType( type ),
-		                   Traits::OutputBufferStart ( buffer ),
-		                   Traits::OutputBufferLength( buffer ) );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data,
+		                               AEPutAttributePtr_Putter( Detail::AEDescEditor( appleEvent ),
+		                                                         keyword,
+		                                                         DescType( type ) ) );
 	}
+	
+	class AEGetAttributePtr_Getter
+	{
+		private:
+			const AppleEvent& theAppleEvent;
+			AEKeyword         theKeyword;
+			DescType          theType;
+		
+		public:
+			AEGetAttributePtr_Getter( const AppleEvent& appleEvent, AEKeyword keyword, DescType type )
+			: theAppleEvent( appleEvent ),
+			  theKeyword   ( keyword    ),
+			  theType      ( type       )  {}
+			
+			std::size_t size() const
+			{
+				AESizeOfAttribute_Result info = AESizeOfAttribute( theAppleEvent, theKeyword );
+				
+				ASSERT( info.typeCode == theType );
+				
+				return info.dataSize;
+			}
+			
+			void operator()( void *begin, void *end ) const
+			{
+				AEGetAttributePtr( theAppleEvent, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	typename DescType_Traits< type >::Result
 	AEGetAttributePtr( const AppleEvent&  appleEvent,
 	                   AEKeyword          keyword )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::InputBuffer buffer;
-		
-		if ( Traits::inputHasVariableLength )
-		{
-			Traits::SetInputBufferLength( buffer,
-			                              AESizeOfAttribute( appleEvent, keyword ) );
-		}
-		
-		AEGetAttributePtr( appleEvent,
-		                   keyword,
-		                   DescType( type ),
-		                   Traits::InputBufferStart ( buffer ),
-		                   Traits::InputBufferLength( buffer ) );
-		
-		return Traits::ProcessInputBuffer( buffer );
+		return DescType_Traits< type >().Get( AEGetAttributePtr_Getter( appleEvent, keyword, DescType( type ) ) );
 	}
+	
+	class AEGetDescData_Getter
+	{
+		private:
+			const AEDesc& theDesc;
+		
+		public:
+			AEGetDescData_Getter( const AEDesc& desc = AEInitializeDesc() ) : theDesc( desc )  {}
+			
+			std::size_t size() const  { return AEGetDescDataSize( theDesc ); }
+			
+			void operator()( void *begin, void *end ) const
+			{
+				AEGetDescData( theDesc, begin, Detail::Distance( begin, end ) );
+			}
+	};
 	
 	template < ::DescType type >
 	typename DescType_Traits< type >::Result AEGetDescData( const AEDesc& desc )
 	{
-		typedef DescType_Traits< type > Traits;
+		ASSERT( type == desc.descriptorType );
 		
-		typename Traits::InputBuffer buffer;
-		
-		if ( Traits::inputHasVariableLength )
-		{
-			Traits::SetInputBufferLength( buffer, AEGetDescDataSize( desc ) );
-		}
-		
-		AEGetDescData( desc,
-		               Traits::InputBufferStart ( buffer ),
-		               Traits::InputBufferLength( buffer ) );
-		
-		return Traits::ProcessInputBuffer( buffer );
+		return DescType_Traits< type >().Get( AEGetDescData_Getter( desc ) );
 	}
 	
 	template < ::DescType type >
@@ -1458,36 +1553,36 @@ namespace Nitrogen
 		return AEGetDescData< type >( AECoerceDesc( desc, type ) );
 	}
 	
+	class AEReplaceDescData_Putter
+	{
+		private:
+			DescType theType;
+			Nucleus::Owned< AEDesc >& theDesc;
+		
+		public:
+			AEReplaceDescData_Putter( DescType                   type,
+			                          Nucleus::Owned< AEDesc >&  desc )
+			: theType( type ),
+			  theDesc( desc )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				AEReplaceDescData( theType, begin, Detail::Distance( begin, end ), theDesc );
+			}
+	};
+	
 	template < ::DescType type >
 	void AEReplaceDescData( typename DescType_Traits< type >::Parameter  data,
 	                        AEDesc&                                      result )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEReplaceDescData( DescType( type ),
-		                   Traits::OutputBufferStart( buffer ),
-		                   Traits::OutputBufferLength( buffer ),
-		                   result );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data, AEReplaceDescData_Putter( type, result ) );
 	}
-
+	
 	template < ::DescType type, class Disposer >
 	void AEReplaceDescData( typename DescType_Traits< type >::Parameter           data,
 	                        Nucleus::Owned< AEDesc, Disposer >&                   result )
 	{
-		typedef DescType_Traits< type > Traits;
-		
-		typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( data );
-		
-		AEReplaceDescData( DescType( type ),
-		                   Traits::OutputBufferStart( buffer ),
-		                   Traits::OutputBufferLength( buffer ),
-		                   result );
-		
-		Traits::ReleaseOutputBuffer( buffer );
+		DescType_Traits< type >().Put( data, AEReplaceDescData_Putter( type, Detail::AEDescEditor( result ) ) );
 	}
 	
 }
