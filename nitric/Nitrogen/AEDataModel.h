@@ -214,7 +214,7 @@ namespace Nitrogen
       */
       
    template < class FinalType >
-   struct POD_DescType_Traits
+   struct POD_DescType_Traits : public Nucleus::PodFlattener< FinalType >
      {
       typedef FinalType Result;
       typedef const FinalType& Parameter;
@@ -236,7 +236,7 @@ namespace Nitrogen
      };
 
    template < class FinalType, class OriginalType >
-   struct Converting_DescType_Traits
+   struct Converting_DescType_Traits : public Nucleus::ConvertingFlattener< FinalType, Nucleus::PodFlattener< OriginalType > >
      {
       typedef FinalType Result;
       typedef const FinalType& Parameter;
@@ -280,7 +280,7 @@ namespace Nitrogen
      };
 
    template< class POD, std::size_t (*SizeOf)( const POD& ) >
-   struct VariableLengthPOD_DescType_Traits
+   struct VariableLengthPOD_DescType_Traits : public Nucleus::VariableLengthPodFlattener< POD, SizeOf >
      {
       typedef std::auto_ptr< POD > Result;
       typedef const POD& Parameter;
@@ -312,7 +312,7 @@ namespace Nitrogen
      };
 
 	template< class T >
-	struct Handle_DescType_Traits
+	struct Handle_DescType_Traits : public HandleFlattener< T >
 	{
 		typedef T   DataType;
 		typedef T** HandleType;
@@ -349,7 +349,7 @@ namespace Nitrogen
 		static void ReleaseOutputBuffer( OutputBuffer buffer )                { ::HUnlock( (Handle)buffer ); }
 	};
 	
-   template<> struct DescType_Traits< ::typeChar >
+   template<> struct DescType_Traits< ::typeChar > : public Nucleus::StringFlattener< std::string >
      {
       typedef std::string Result;
       typedef const std::string& Parameter;
@@ -370,7 +370,7 @@ namespace Nitrogen
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
      };
 
-   template<> struct DescType_Traits< ::typeFixed >
+   template<> struct DescType_Traits< ::typeFixed > : public FixedFlattener
      {
       typedef double Result;
       typedef double Parameter;
