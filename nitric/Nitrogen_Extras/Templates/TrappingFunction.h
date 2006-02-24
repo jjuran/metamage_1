@@ -30,7 +30,7 @@ namespace Nitrogen
 				{
 					throw;
 				}
-				catch ( Exception )  {}
+				catch ( const Exception& )  {}
 				
 				return closure();
 			}
