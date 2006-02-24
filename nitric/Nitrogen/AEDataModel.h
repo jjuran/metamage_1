@@ -822,6 +822,29 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AEDescs ¥
 	
+	namespace Detail
+	{
+		
+		class AEDescEditor
+		{
+			private:
+				Nucleus::Owned< AEDesc >& desc;
+				AEDesc workingCopy;
+			
+			public:
+				AEDescEditor( Nucleus::Owned< AEDesc >& desc )
+				:
+					desc       ( desc           ), 
+					workingCopy( desc.Release() )
+				{}
+				~AEDescEditor()  { desc = Nucleus::Owned< AEDesc >::Seize( workingCopy ); }
+				
+				AEDesc& Get()       { return workingCopy; }
+				operator AEDesc&()  { return Get();       }
+		};
+		
+	}
+	
 	struct AEDesc_Info
 	{
 		DescType typeCode;

@@ -147,24 +147,6 @@ namespace Nitrogen {
 		return Nucleus::Owned< AEDesc >::Seize( result );
 	}
 	
-	class AEDescEditor
-	{
-		private:
-			Nucleus::Owned< AEDesc >& desc;
-			AEDesc workingCopy;
-		
-		public:
-			AEDescEditor( Nucleus::Owned< AEDesc >& desc )
-			:
-				desc       ( desc           ), 
-				workingCopy( desc.Release() )
-			{}
-			~AEDescEditor()  { desc = Nucleus::Owned< AEDesc >::Seize( workingCopy ); }
-			
-			AEDesc& Get()       { return workingCopy; }
-			operator AEDesc&()  { return Get();       }
-	};
-	
 	// Mac OS X allows AERecord arguments to have any descriptorType.
 	// Mac OS 9 does not, so we fake this behavior by adjusting the descriptorType
 	// prior to calling the function.
@@ -224,7 +206,7 @@ namespace Nitrogen {
 	
 	Nucleus::Owned< AEDesc > AECreateDesc( DescType typeCode, Nucleus::Owned< AEDesc > desc )
 	{
-		AEDescEditor( desc ).Get().descriptorType = typeCode;
+		Detail::AEDescEditor( desc ).Get().descriptorType = typeCode;
 		return desc;
 	}
 	
@@ -279,7 +261,7 @@ namespace Nitrogen {
 	               const void*           dataPtr, 
 	               Size                  dataSize )
 	{
-		AEPutPtr( AEDescEditor( list ), index, type, dataPtr, dataSize );
+		AEPutPtr( Detail::AEDescEditor( list ), index, type, dataPtr, dataSize );
 	}
 	
 	void AEPutDesc( AEDescList& list, long index, const AEDesc& desc )
@@ -293,7 +275,7 @@ namespace Nitrogen {
 	
 	void AEPutDesc( Nucleus::Owned< AEDescList >& list, long index, const AEDesc& desc )
 	{
-		AEPutDesc( AEDescEditor( list ), index, desc );
+		AEPutDesc( Detail::AEDescEditor( list ), index, desc );
 	}
 	
 	GetNthPtr_Result AEGetNthPtr( const AEDesc& listDesc, 
@@ -381,7 +363,7 @@ namespace Nitrogen {
 	
 	void AEDeleteItem( Nucleus::Owned< AEDescList >& list, long index )
 	{
-		AEDeleteItem( AEDescEditor( list ), index );
+		AEDeleteItem( Detail::AEDescEditor( list ), index );
 	}
 	
 	void AEPutKeyPtr(
@@ -407,7 +389,7 @@ namespace Nitrogen {
 		const void* dataPtr, 
 		std::size_t dataSize)
 	{
-		AEPutKeyPtr( AEDescEditor( record ), keyword, typeCode, dataPtr, dataSize );
+		AEPutKeyPtr( Detail::AEDescEditor( record ), keyword, typeCode, dataPtr, dataSize );
 	}
 	
 	void AEPutKeyDesc(
@@ -434,14 +416,14 @@ namespace Nitrogen {
 		AEKeyword keyword, 
 		const AEDesc& desc)
 	{
-		AEPutKeyDesc( AEDescEditor( record ), keyword, desc );
+		AEPutKeyDesc( Detail::AEDescEditor( record ), keyword, desc );
 	}
 	
 	void AEPutKeyDesc(
 		Nucleus::Owned< AERecord >& record, 
 		const AEKeyDesc& keyDesc)
 	{
-		AEPutKeyDesc( AEDescEditor( record ), keyDesc );
+		AEPutKeyDesc( Detail::AEDescEditor( record ), keyDesc );
 	}
 	
 	AEGetKeyPtr_Result AEGetKeyPtr(
@@ -544,7 +526,7 @@ namespace Nitrogen {
 		Nucleus::Owned< AERecord >& record, 
 		AEKeyword keyword)
 	{
-		AEDeleteKeyDesc( AEDescEditor( record ), keyword );
+		AEDeleteKeyDesc( Detail::AEDescEditor( record ), keyword );
 	}
 	
 	Nucleus::Owned< AppleEvent > AECreateAppleEvent(
@@ -598,7 +580,7 @@ namespace Nitrogen {
 		std::size_t dataSize)
 	{
 		AEPutParamPtr(
-			AEDescEditor( appleEvent ), 
+			Detail::AEDescEditor( appleEvent ), 
 			keyword, 
 			typeCode, 
 			dataPtr, 
@@ -623,7 +605,7 @@ namespace Nitrogen {
 		AEKeyword keyword, 
 		const AEDesc& desc)
 	{
-		AEPutParamDesc( AEDescEditor( appleEvent ), keyword, desc );
+		AEPutParamDesc( Detail::AEDescEditor( appleEvent ), keyword, desc );
 	}
 	
 	AEGetParamPtr_Result AEGetParamPtr(
@@ -720,7 +702,7 @@ namespace Nitrogen {
 		Nucleus::Owned< AppleEvent >& appleEvent, 
 		AEKeyword keyword)
 	{
-		AEDeleteParam( AEDescEditor( appleEvent ), keyword );
+		AEDeleteParam( Detail::AEDescEditor( appleEvent ), keyword );
 	}
 	
 	void AEPutAttributePtr(
@@ -751,7 +733,7 @@ namespace Nitrogen {
 		std::size_t dataSize)
 	{
 		AEPutAttributePtr(
-			AEDescEditor( appleEvent ), 
+			Detail::AEDescEditor( appleEvent ), 
 			keyword, 
 			typeCode, 
 			dataPtr, 
@@ -776,7 +758,7 @@ namespace Nitrogen {
 		AEKeyword keyword, 
 		const AEDesc& desc)
 	{
-		AEPutAttributeDesc( AEDescEditor( appleEvent ), keyword, desc );
+		AEPutAttributeDesc( Detail::AEDescEditor( appleEvent ), keyword, desc );
 	}
 	
 	AEGetAttributePtr_Result AEGetAttributePtr(
@@ -929,7 +911,7 @@ namespace Nitrogen {
 	                        std::size_t       dataSize,
 	                        Nucleus::Owned< AEDesc >&  result)
 	{
-		AEReplaceDescData( typeCode, dataPtr, dataSize, AEDescEditor( result ) );
+		AEReplaceDescData( typeCode, dataPtr, dataSize, Detail::AEDescEditor( result ) );
 	}
 	
 }
