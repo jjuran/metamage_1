@@ -352,7 +352,7 @@ namespace Nitrogen {
 		return AEGetNthDesc( listDesc, index, typeWildCard, keywordResult );
 	}
 	
-	Size AESizeOfNthItem( const AEDescList& list, long index )
+	AESizeOfNthItem_Result AESizeOfNthItem( const AEDescList& list, long index )
 	{
 		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 		
@@ -364,7 +364,7 @@ namespace Nitrogen {
 		                                  &typeCode, 
 		                                  &dataSize ) );
 		
-		AEGetParamPtr_Result result;
+		AESizeOfNthItem_Result result;
 		
 		result.typeCode = typeCode;
 		result.dataSize = dataSize;

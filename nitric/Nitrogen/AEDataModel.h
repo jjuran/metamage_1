@@ -938,7 +938,7 @@ namespace Nitrogen
 	                                       long           index,
 	                                       ::AEKeyword*   keyword );
 	
-	Size AESizeOfNthItem( const AEDescList& list, long index );
+	AESizeOfNthItem_Result AESizeOfNthItem( const AEDescList& list, long index );
 	
 	void AEDeleteItem(                 AEDescList  & listDesc, long index );
 	void AEDeleteItem( Nucleus::Owned< AEDescList >& listDesc, long index );
