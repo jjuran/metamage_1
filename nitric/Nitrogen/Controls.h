@@ -33,12 +33,12 @@
 namespace Nitrogen
   {
    using ::ControlRef;
-   
-	// Not actually used, since controls are owned by the parent window
   }
 
 namespace Nucleus
   {
+   // Not actually used, since controls are owned by the parent window
+   
    template <> struct Disposer< Nitrogen::ControlRef >: public std::unary_function< Nitrogen::ControlRef, void >
      {
       void operator()( Nitrogen::ControlRef c ) const
