@@ -11,9 +11,7 @@
 //  library does not provide char_traits for 2 byte characters
 //
 
-//#ifndef	__MWERKS__
-#if 0
-
+#ifndef	__MWERKS__
 
 #include <ext/algorithm>
 
