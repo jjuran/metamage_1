@@ -11,7 +11,7 @@
 //  library does not provide char_traits for 2 byte characters
 //
 
-#ifndef	__MWERKS__
+#ifdef	__GNUC__
 
 #include <ext/algorithm>
 
