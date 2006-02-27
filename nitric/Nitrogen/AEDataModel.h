@@ -236,6 +236,8 @@ namespace Nitrogen
       static std::size_t OutputBufferLength( OutputBuffer buffer )          { return sizeof( buffer ); }
       static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
+      
+      static const bool hasStaticSize = true;
      };
 
    template < class FinalType, class OriginalType >
@@ -258,6 +260,8 @@ namespace Nitrogen
       static std::size_t OutputBufferLength( const OutputBuffer& buffer )   { return sizeof( buffer ); }
       static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
       static void ReleaseOutputBuffer( OutputBuffer& )                      {}
+      
+      static const bool hasStaticSize = true;
      };
 
    template< class Ownable >
@@ -280,6 +284,8 @@ namespace Nitrogen
       static std::size_t OutputBufferLength( OutputBuffer buffer )           { return sizeof( buffer ); }
       static OutputBuffer PrepareOutputBuffer( const Parameter& output )     { return output; }
       static void ReleaseOutputBuffer( OutputBuffer )                        {}
+      
+      static const bool hasStaticSize = false;
      };
 
    template< class POD, std::size_t (*SizeOf)( const POD& ) >
@@ -312,6 +318,8 @@ namespace Nitrogen
       static std::size_t OutputBufferLength( OutputBuffer buffer )          { return SizeOf( buffer ); }
       static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
+      
+      static const bool hasStaticSize = false;
      };
 
 	template< class T >
@@ -350,6 +358,8 @@ namespace Nitrogen
 		static std::size_t OutputBufferLength( OutputBuffer buffer )          { return GetHandleSize( buffer ); }
 		static OutputBuffer PrepareOutputBuffer( Parameter output )           { HLock( output );  return output; }
 		static void ReleaseOutputBuffer( OutputBuffer buffer )                { ::HUnlock( (Handle)buffer ); }
+      
+		static const bool hasStaticSize = false;
 	};
 	
    template<> struct DescType_Traits< ::typeChar > : public Nucleus::StringFlattener< std::string >
@@ -371,6 +381,8 @@ namespace Nitrogen
       static std::size_t OutputBufferLength( OutputBuffer buffer )          { return buffer.size(); }
       static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
+      
+      static const bool hasStaticSize = false;
      };
 
    template<> struct DescType_Traits< ::typeFixed > : public FixedFlattener
@@ -392,6 +404,8 @@ namespace Nitrogen
       static std::size_t OutputBufferLength( OutputBuffer &buffer )          { return sizeof( buffer ); }
       static OutputBuffer PrepareOutputBuffer( Parameter output )           { return DoubleToFixed( output ); }
       static void ReleaseOutputBuffer( OutputBuffer )                       {}
+      
+      static const bool hasStaticSize = true;
      };
 
    class AEEnumeratedTag {};
@@ -1259,31 +1273,35 @@ namespace Nitrogen
 		                                                DescType( type ) ) );
 	}
 	
+	template < ::DescType type >
 	class AEGetNthPtr_Getter
 	{
 		private:
 			const AEDescList& theList;
 			long              theIndex;
-			DescType          theType;
 		
 		public:
-			AEGetNthPtr_Getter( const AEDescList& list, long index, DescType type )
+			AEGetNthPtr_Getter( const AEDescList& list, long index )
 			: theList ( list  ),
-			  theIndex( index ),
-			  theType ( type  )  {}
+			  theIndex( index )  {}
 			
 			std::size_t size() const
 			{
 				AESizeOfNthItem_Result info = AESizeOfNthItem( theList, theIndex );
 				
-				ASSERT( info.typeCode == theType );
+				if ( DescType_Traits< type >::hasStaticSize )
+				{
+					return sizeof (typename DescType_Traits< type >::InputBuffer);
+				}
+				
+				ASSERT( info.typeCode == type );
 				
 				return info.dataSize;
 			}
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetNthPtr( theList, theIndex, theType, begin, Detail::Distance( begin, end ) );
+				AEGetNthPtr( theList, theIndex, type, begin, Detail::Distance( begin, end ) );
 			}
 	};
 	
@@ -1292,7 +1310,7 @@ namespace Nitrogen
 	AEGetNthPtr( const AEDescList&  listDesc,
 	             long               index )
 	{
-		return DescType_Traits< type >().Get( AEGetNthPtr_Getter( listDesc, index, DescType( type ) ) );
+		return DescType_Traits< type >().Get( AEGetNthPtr_Getter< type >( listDesc, index ) );
 	}
 	
 	class AEPutKeyPtr_Putter
@@ -1335,31 +1353,35 @@ namespace Nitrogen
 		                                                   DescType( type ) ) );
 	}
 	
+	template < ::DescType type >
 	class AEGetKeyPtr_Getter
 	{
 		private:
 			const AERecord& theRecord;
 			AEKeyword       theKeyword;
-			DescType        theType;
 		
 		public:
-			AEGetKeyPtr_Getter( const AERecord& record, AEKeyword keyword, DescType type )
+			AEGetKeyPtr_Getter( const AERecord& record, AEKeyword keyword )
 			: theRecord ( record  ),
-			  theKeyword( keyword ),
-			  theType   ( type    )  {}
+			  theKeyword( keyword )  {}
 			
 			std::size_t size() const
 			{
 				AESizeOfKeyDesc_Result info = AESizeOfKeyDesc( theRecord, theKeyword );
 				
-				ASSERT( info.typeCode == theType );
+				if ( DescType_Traits< type >::hasStaticSize )
+				{
+					return sizeof (typename DescType_Traits< type >::InputBuffer);
+				}
+				
+				ASSERT( info.typeCode == type );
 				
 				return info.dataSize;
 			}
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetKeyPtr( theRecord, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+				AEGetKeyPtr( theRecord, theKeyword, type, begin, Detail::Distance( begin, end ) );
 			}
 	};
 	
@@ -1368,7 +1390,7 @@ namespace Nitrogen
 	AEGetKeyPtr( const AERecord&  record,
 	             AEKeyword        keyword )
 	{
-		return DescType_Traits< type >().Get( AEGetKeyPtr_Getter( record, keyword, DescType( type ) ) );
+		return DescType_Traits< type >().Get( AEGetKeyPtr_Getter< type >( record, keyword ) );
 	}
 	
 	class AEPutParamPtr_Putter
@@ -1411,31 +1433,35 @@ namespace Nitrogen
 		                                                     DescType( type ) ) );
 	}
 	
+	template < ::DescType type >
 	class AEGetParamPtr_Getter
 	{
 		private:
 			const AppleEvent& theAppleEvent;
 			AEKeyword         theKeyword;
-			DescType          theType;
 		
 		public:
-			AEGetParamPtr_Getter( const AppleEvent& appleEvent, AEKeyword keyword, DescType type )
+			AEGetParamPtr_Getter( const AppleEvent& appleEvent, AEKeyword keyword )
 			: theAppleEvent( appleEvent ),
-			  theKeyword   ( keyword    ),
-			  theType      ( type       )  {}
+			  theKeyword   ( keyword    )  {}
 			
 			std::size_t size() const
 			{
 				AESizeOfParam_Result info = AESizeOfParam( theAppleEvent, theKeyword );
 				
-				ASSERT( info.typeCode == theType );
+				if ( DescType_Traits< type >::hasStaticSize )
+				{
+					return sizeof (typename DescType_Traits< type >::InputBuffer);
+				}
+				
+				ASSERT( info.typeCode == type );
 				
 				return info.dataSize;
 			}
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetParamPtr( theAppleEvent, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+				AEGetParamPtr( theAppleEvent, theKeyword, type, begin, Detail::Distance( begin, end ) );
 			}
 	};
 	
@@ -1444,7 +1470,7 @@ namespace Nitrogen
 	AEGetParamPtr( const AppleEvent&  appleEvent,
 	               AEKeyword          keyword )
 	{
-		return DescType_Traits< type >().Get( AEGetParamPtr_Getter( appleEvent, keyword, DescType( type ) ) );
+		return DescType_Traits< type >().Get( AEGetParamPtr_Getter< type >( appleEvent, keyword ) );
 	}
 	
 	class AEPutAttributePtr_Putter
@@ -1487,31 +1513,35 @@ namespace Nitrogen
 		                                                         DescType( type ) ) );
 	}
 	
+	template < ::DescType type >
 	class AEGetAttributePtr_Getter
 	{
 		private:
 			const AppleEvent& theAppleEvent;
 			AEKeyword         theKeyword;
-			DescType          theType;
 		
 		public:
-			AEGetAttributePtr_Getter( const AppleEvent& appleEvent, AEKeyword keyword, DescType type )
+			AEGetAttributePtr_Getter( const AppleEvent& appleEvent, AEKeyword keyword )
 			: theAppleEvent( appleEvent ),
-			  theKeyword   ( keyword    ),
-			  theType      ( type       )  {}
+			  theKeyword   ( keyword    )  {}
 			
 			std::size_t size() const
 			{
 				AESizeOfAttribute_Result info = AESizeOfAttribute( theAppleEvent, theKeyword );
 				
-				ASSERT( info.typeCode == theType );
+				if ( DescType_Traits< type >::hasStaticSize )
+				{
+					return sizeof (typename DescType_Traits< type >::InputBuffer);
+				}
+				
+				ASSERT( info.typeCode == type );
 				
 				return info.dataSize;
 			}
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetAttributePtr( theAppleEvent, theKeyword, theType, begin, Detail::Distance( begin, end ) );
+				AEGetAttributePtr( theAppleEvent, theKeyword, type, begin, Detail::Distance( begin, end ) );
 			}
 	};
 	
@@ -1520,7 +1550,7 @@ namespace Nitrogen
 	AEGetAttributePtr( const AppleEvent&  appleEvent,
 	                   AEKeyword          keyword )
 	{
-		return DescType_Traits< type >().Get( AEGetAttributePtr_Getter( appleEvent, keyword, DescType( type ) ) );
+		return DescType_Traits< type >().Get( AEGetAttributePtr_Getter< type >( appleEvent, keyword ) );
 	}
 	
 	class AEGetDescData_Getter
