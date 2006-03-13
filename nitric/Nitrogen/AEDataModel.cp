@@ -725,67 +725,53 @@ namespace Nitrogen {
 		);
 	}
 	
-	void AEPutAttributePtr(
-		Nucleus::Owned< AppleEvent >& appleEvent, 
-		AEKeyword keyword, 
-		DescType typeCode, 
-		const void* dataPtr, 
-		std::size_t dataSize)
+	void AEPutAttributePtr( Nucleus::Owned< AppleEvent >&  appleEvent,
+	                        AEKeyword                      keyword,
+	                        DescType                       typeCode,
+	                        const void*                    dataPtr,
+	                        std::size_t                    dataSize )
 	{
-		AEPutAttributePtr(
-			Detail::AEDescEditor( appleEvent ), 
-			keyword, 
-			typeCode, 
-			dataPtr, 
-			dataSize
-		);
+		AEPutAttributePtr( Detail::AEDescEditor( appleEvent ),
+		                   keyword,
+		                   typeCode,
+		                   dataPtr,
+		                   dataSize );
 	}
 	
-	void AEPutAttributeDesc(
-		AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		const AEDesc& desc)
+	void AEPutAttributeDesc( AppleEvent&    appleEvent,
+	                         AEKeyword      keyword,
+	                         const AEDesc&  desc )
 	{
 		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-		ThrowOSStatus(
-			::AEPutAttributeDesc( &appleEvent, keyword, &desc )
-		);
+		ThrowOSStatus( ::AEPutAttributeDesc( &appleEvent, keyword, &desc ) );
 	}
 	
-	void AEPutAttributeDesc(
-		Nucleus::Owned< AppleEvent >& appleEvent, 
-		AEKeyword keyword, 
-		const AEDesc& desc)
+	void AEPutAttributeDesc( Nucleus::Owned< AppleEvent >&  appleEvent,
+	                         AEKeyword                      keyword,
+	                         const AEDesc&                  desc )
 	{
 		AEPutAttributeDesc( Detail::AEDescEditor( appleEvent ), keyword, desc );
 	}
 	
-	AEGetAttributePtr_Result AEGetAttributePtr(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		DescType desiredType, 
-		void* dataPtr, 
-		std::size_t maximumSize)
+	AEGetAttributePtr_Result AEGetAttributePtr( const AppleEvent&  appleEvent,
+	                                            AEKeyword          keyword,
+	                                            DescType           desiredType,
+	                                            void*              dataPtr,
+	                                            std::size_t        maximumSize )
 	{
 		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		::DescType typeCode;
-		::Size dataSize;
+		::Size     dataSize;
 		
-		ThrowOSStatus
-		(
-			::AEGetAttributePtr
-			(
-				&appleEvent, 
-				keyword, 
-				desiredType, 
-				&typeCode, 
-				dataPtr, 
-				maximumSize, 
-				&dataSize
-			)
-		);
+		ThrowOSStatus( ::AEGetAttributePtr( &appleEvent,
+		                                    keyword,
+		                                    desiredType,
+		                                    &typeCode,
+		                                    dataPtr,
+		                                    maximumSize,
+		                                    &dataSize ) );
 		
 		AEGetAttributePtr_Result result;
 		
@@ -795,44 +781,34 @@ namespace Nitrogen {
 		return result;
 	}
 	
-	Nucleus::Owned< AEDesc > AEGetAttributeDesc(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword, 
-		DescType desiredType)
+	Nucleus::Owned< AEDesc > AEGetAttributeDesc( const AppleEvent&  appleEvent,
+	                                             AEKeyword          keyword,
+	                                             DescType           desiredType )
 	{
 		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		AEDesc result;
-		ThrowOSStatus(
-			::AEGetAttributeDesc(
-				&appleEvent, 
-				keyword, 
-				desiredType, 
-				&result
-			)
-		);
+		
+		ThrowOSStatus( ::AEGetAttributeDesc( &appleEvent,
+		                                     keyword,
+		                                     desiredType,
+		                                     &result ) );
+		
 		return Nucleus::Owned< AEDesc >::Seize( result );
 	}
 	
-	AESizeOfAttribute_Result AESizeOfAttribute(
-		const AppleEvent& appleEvent, 
-		AEKeyword keyword)
+	AESizeOfAttribute_Result AESizeOfAttribute( const AppleEvent&  appleEvent,
+	                                            AEKeyword          keyword )
 	{
 		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 		
 		::DescType typeCode;
 		::Size dataSize;
 		
-		ThrowOSStatus
-		(
-			::AESizeOfAttribute
-			(
-				&appleEvent, 
-				keyword, 
-				&typeCode, 
-				&dataSize
-			)
-		);
+		ThrowOSStatus( ::AESizeOfAttribute( &appleEvent,
+		                                    keyword,
+		                                    &typeCode,
+		                                    &dataSize ) );
 		
 		AESizeOfAttribute_Result result;
 		
@@ -906,9 +882,9 @@ namespace Nitrogen {
 	#endif
 	}
 	
-	void AEReplaceDescData( DescType          typeCode,
-	                        const void*       dataPtr,
-	                        std::size_t       dataSize,
+	void AEReplaceDescData( DescType                   typeCode,
+	                        const void*                dataPtr,
+	                        std::size_t                dataSize,
 	                        Nucleus::Owned< AEDesc >&  result)
 	{
 		AEReplaceDescData( typeCode, dataPtr, dataSize, Detail::AEDescEditor( result ) );
