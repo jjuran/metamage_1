@@ -39,11 +39,11 @@ namespace Nitrogen {
 	using ::AEIdleProcPtr;
 	
 	Nucleus::Owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
-	                            AESendMode         sendMode,
-	                            AESendPriority     sendPriority   = AESendPriority( kAENormalPriority ),
-	                            long               timeOutInTicks = kAEDefaultTimeout,
-	                            AEIdleUPP          idleProc       = NULL,
-	                            AEFilterUPP        filterProc     = NULL
+	                                     AESendMode         sendMode,
+	                                     AESendPriority     sendPriority   = AESendPriority( kAENormalPriority ),
+	                                     long               timeOutInTicks = kAEDefaultTimeout,
+	                                     AEIdleUPP          idleProc       = NULL,
+	                                     AEFilterUPP        filterProc     = NULL
 	);
 	
 	void AEProcessAppleEvent( const EventRecord& event );

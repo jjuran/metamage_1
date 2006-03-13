@@ -130,14 +130,15 @@ namespace Nitrogen {
 	}
 	
 	Nucleus::Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
-	                                                        const AEToken&  containerToken,
-	                                                        AEObjectClass   containerClass,
-	                                                        AEEnumerated    keyForm,
-	                                                        const AEDesc&   keyData )
+	                                                                 const AEToken&  containerToken,
+	                                                                 AEObjectClass   containerClass,
+	                                                                 AEEnumerated    keyForm,
+	                                                                 const AEDesc&   keyData )
 	{
 		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
 		AEToken result;
+		
 		ThrowOSStatus( ::AECallObjectAccessor( desiredClass,
 		                                       &containerToken,
 		                                       containerClass,
@@ -149,9 +150,10 @@ namespace Nitrogen {
 	}
 	
 	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
-	                                                 Nucleus::Owned< AEToken, AETokenDisposer > token )
+	                                                          Nucleus::Owned< AEToken, AETokenDisposer > token )
 	{
 		AETokenEditor( token ).Get().descriptorType = typeCode;
+		
 		return token;
 	}
 	
