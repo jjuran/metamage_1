@@ -33,8 +33,6 @@ namespace NN = Nucleus;
 namespace NX = NitrogenExtras;
 namespace O = Orion;
 
-using std::string;
-
 
 enum
 {
@@ -122,10 +120,10 @@ class Opener
 	public:
 		Opener( const O::Options& options ) : options( options )  {}
 		
-		void operator()( const string& pathname ) const;
+		void operator()( const std::string& pathname ) const;
 };
 
-void Opener::operator()( const string& pathname ) const
+void Opener::operator()( const std::string& pathname ) const
 {
 	bool useMacPathnames = options.GetFlag( optInterpretMacPathnames );
 	
