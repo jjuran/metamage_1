@@ -968,11 +968,11 @@ namespace Nitrogen
 	
 	// 4633
 	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
-	                                 FSIOPermssn     permissions );
+	                                          FSIOPermssn     permissions );
 	
 	// 4648
 	Nucleus::Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
-	                                 FSIOPermssn     permissions );
+	                                          FSIOPermssn     permissions );
 	
 	// 4663
 	FSSpec FSpCreate( const FSSpec&  file, 
@@ -1141,13 +1141,13 @@ namespace Nitrogen
    void FSExchangeObjects( const FSRef& ref, const FSRef& destRef );
    
    void FSRenameUnicode( Nucleus::Owned<FSRef>&  ref,
-                         UniCharCount   nameLength,
-                         const UniChar *name,
-                         TextEncoding   textEncodingHint );
+                         UniCharCount            nameLength,
+                         const UniChar          *name,
+                         TextEncoding            textEncodingHint );
 
    void FSRenameUnicode( Nucleus::Owned<FSRef>&    ref,
-                         const UniString& name,
-                         TextEncoding     textEncodingHint );
+                         const UniString&          name,
+                         TextEncoding              textEncodingHint );
 
    struct FSGetCatalogInfo_Result
      {
@@ -1610,7 +1610,7 @@ namespace Nitrogen
 namespace Nucleus
   {
    template <> struct Disposer<Nitrogen::FSForkRefNum>: public std::unary_function< Nitrogen::FSForkRefNum, void >,
-														private Nitrogen::DefaultDestructionOSStatusPolicy
+                                                        private Nitrogen::DefaultDestructionOSStatusPolicy
      {
       void operator()( Nitrogen::FSForkRefNum fork ) const
         {
@@ -1624,16 +1624,16 @@ namespace Nitrogen
   {
    
    Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
-                                   UniCharCount   forkNameLength,
-                                   const UniChar *forkName,
-                                   FSIOPermssn    permissions );
+                                            UniCharCount   forkNameLength,
+                                            const UniChar *forkName,
+                                            FSIOPermssn    permissions );
 
    Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
-                                   const UniString forkName,
-                                   FSIOPermssn     permissions );
+                                            const UniString forkName,
+                                            FSIOPermssn     permissions );
 
    Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
-                                   FSIOPermssn      permissions );
+                                            FSIOPermssn      permissions );
    
    ByteCount FSReadFork( FSForkRefNum fork,
                          FSIOPosMode  positionMode,
