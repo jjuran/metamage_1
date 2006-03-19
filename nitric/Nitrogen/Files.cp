@@ -307,6 +307,21 @@ namespace Nitrogen
 		return FSMakeFSSpec( FSVolumeRefNum(), FSDirID(), pathname );
 	}
 	
+	static bool FSCompareNames( ConstStr255Param a, ConstStr255Param b )
+	{
+		const bool caseSensitive        = false;
+		const bool diacriticalSensitive = true;
+		
+		return ::EqualString( a, b, caseSensitive, diacriticalSensitive );
+	}
+	
+	bool FSCompareFSSpecs( const FSSpec& a, const FSSpec& b )
+	{
+		return    a.vRefNum == b.vRefNum
+		       && a.parID   == b.parID
+		       && FSCompareNames( a.name, b.name );
+	}
+	
 	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions )
 	{
