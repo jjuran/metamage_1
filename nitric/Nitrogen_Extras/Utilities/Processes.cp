@@ -67,6 +67,24 @@ namespace NitrogenExtras
 		return *proc;
 	}
 	
+	ProcessSerialNumber FindProcess( const FSSpec& appFile )
+	{
+		typedef N::Process_Container::const_iterator const_iterator;
+		
+		const_iterator proc = std::find_if( N::Processes().begin(),
+		                                    N::Processes().end(),
+		                                    compose1( std::bind2nd( std::ptr_fun( N::FSCompareFSSpecs ),
+		                                                            appFile ),
+		                                              std::ptr_fun( N::GetProcessAppSpec ) ) );
+		
+		if ( proc == N::Processes().end() )
+		{
+			throw N::ProcNotFound();
+		}
+		
+		return *proc;
+	}
+	
 	ProcessSerialNumber LaunchApplication( N::OSType signature )
 	{
 		try
