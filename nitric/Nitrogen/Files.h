@@ -966,6 +966,8 @@ namespace Nitrogen
 	
 	FSSpec FSMakeFSSpec( ConstStr255Param pathname );
 	
+	bool FSCompareFSSpecs( const FSSpec& a, const FSSpec& b );
+	
 	// 4633
 	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions );
