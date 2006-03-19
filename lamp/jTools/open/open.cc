@@ -8,12 +8,20 @@
 #include <AERegistry.h>
 #endif
 
+// C Standard Library
+#include <stdlib.h>
+
 // C++ Standard Library
+#include <functional>
 #include <string>
+#include <vector>
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Str.h"
+
+// Nitrogen Extras / Iteration
+#include "Iteration/AEDescListItems.h"
 
 // Nitrogen Extras / Operators
 #include "Operators/AEDataModel.h"
@@ -44,58 +52,56 @@ enum
 	sigGoodTextEditor = TARGET_API_MAC_CARBON ? sigTextWrangler : sigBBEdit
 };
 
-static void OpenItemInRunningApp( const FSSpec& item, const ProcessSerialNumber& psn )
+static FSSpec ResolvePathname( const std::string& pathname, bool macPathname )
 {
+	return macPathname ? N::FSMakeFSSpec( N::Str255( pathname ) ) 
+	                   : Path2FSS       (            pathname   );
+}
+
+static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >&  items,
+                                                     const ProcessSerialNumber&    psn )
+{
+	NN::Owned< N::AEDescList > documents = N::AECreateList< false >();
+	
+	typedef NN::Owned< N::AEDesc > (* Coercer )( const FSSpec&, N::DescType );
+	
+	std::transform( items.begin(),
+	                items.end(),
+	                N::AEDescList_Item_BackInserter( documents ),
+	                std::bind2nd( std::ptr_fun( Coercer( &N::AECoercePtr< typeFSS > ) ),
+	                              typeAlias )
+	                );
+	
 	using namespace NN::Operators;
 	
-	N::AESend( N::AECreateAppleEvent( kCoreEventClass,
-				                      kAEOpenDocuments,
-				                      N::AECreateDesc< typeProcessSerialNumber >( psn ) )
-			   << keyDirectObject + ( N::AECreateList< false >()
-			                          << N::AECoercePtr< typeFSS >( item, typeAlias ) ),
-			   kAEWaitReply | kAECanInteract );
-	
+	return N::AECreateAppleEvent( kCoreEventClass,
+	                              kAEOpenDocuments,
+	                              N::AECreateDesc< typeProcessSerialNumber >( psn ) )
+	       << keyDirectObject + documents;
 }
 
-static void OpenItemInApp( const FSSpec& item, N::OSType signature )
+static void OpenItemsWithRunningApp( const std::vector< FSSpec >& items, const ProcessSerialNumber& psn )
 {
-	// Make sure the app is running first
-	OpenItemInRunningApp( item, NX::LaunchApplication( signature ) );
+	N::AESend( MakeOpenDocsEvent( items, psn ),
+	           kAENoReply | kAECanInteract );
 }
 
-static void Open( const FSSpec& item )
+static void LaunchApplicationWithDocsToOpen( const FSSpec& app, const std::vector< FSSpec >& items )
 {
-	FInfo info;
+	std::auto_ptr< AppParameters > appParameters
+		= N::AEGetDescData< typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
+	                                                              typeAppParameters ) );
 	
-	if ( N::FSpTestDirectoryExists( item ) )
-	{
-		// is a directory
-		info.fdType = 'fold';
-	}
-	else
-	{
-		// is a file or doesn't exist; we'll soon find out which
-		info = N::FSpGetFInfo( item );
-	}
-	
-	switch ( info.fdType )
-	{
-		case 'APPL':
-			ProcessSerialNumber psn = N::LaunchApplication( item );
-			break;
-		
-		default:
-			OpenItemInApp( item, sigFinder );
-			break;
-	}
+	N::LaunchApplication( app, LaunchFlags(), appParameters.get() );
 }
 
 
 enum
 {
-	optOpenInApp, 
-	optOpenInAppWithSignature, 
-	optOpenInEditor, 
+	optOpenInApp,
+	optOpenInAppWithSignature,
+	optInBackground,
+	optOpenInEditor,
 	optInterpretMacPathnames
 };
 
@@ -105,51 +111,119 @@ static O::Options DefineOptions()
 	
 	options.DefineSetString( "--app", optOpenInApp );
 	options.DefineSetString( "-a",    optOpenInApp );
+	
 	options.DefineSetString( "--sig", optOpenInAppWithSignature );
+	
 	options.DefineSetFlag(   "-e",    optOpenInEditor );
+	options.DefineSetFlag(   "-t",    optOpenInEditor );
+	
 	options.DefineSetFlag(   "--mac", optInterpretMacPathnames );
 	
 	return options;
 }
 
-class Opener
+static N::OSType SignatureOfAppForOpening( const O::Options& options )
 {
-	private:
-		const O::Options& options;
-	
-	public:
-		Opener( const O::Options& options ) : options( options )  {}
-		
-		void operator()( const std::string& pathname ) const;
-};
-
-void Opener::operator()( const std::string& pathname ) const
-{
-	bool useMacPathnames = options.GetFlag( optInterpretMacPathnames );
-	
-	FSSpec item = useMacPathnames ? N::FSMakeFSSpec( N::Str255( pathname ) ) 
-	                              : Path2FSS       ( pathname              );
-	
-	N::OSType signature;
-	
 	if ( options.GetFlag( optOpenInEditor ) )
 	{
-		signature = sigGoodTextEditor;
-	}
-	else
-	{
-		const std::string sigParam = options.GetString( optOpenInAppWithSignature );
-		signature = NN::Convert< N::OSType >( sigParam );
+		// User has specified default text editor.
+		// Check MAC_EDITOR environment variable first.
+		// If set, it must be a four-character code.
+		
+		if ( const char* macEditorSignature = getenv( "MAC_EDITOR" ) )
+		{
+			return NN::Convert< N::OSType, std::string >( macEditorSignature );
+		}
+		
+		// No MAC_EDITOR; default to BBEdit/TextWrangler.
+		// FIXME:  We could be smarter about this...
+		
+		return N::OSType( sigGoodTextEditor );
 	}
 	
-	if ( signature != N::OSType() )
+	const std::string appSignatureArg = options.GetString( optOpenInAppWithSignature );
+	
+	if ( !appSignatureArg.empty() )
 	{
-		OpenItemInApp( item, signature );
+		// User has specified an application by its signature
+		return NN::Convert< N::OSType >( appSignatureArg );
+	}
+	
+	// Otherwise, give everything to the Finder.
+	
+	return N::OSType( sigFinder );
+}
+
+static void OpenItemsUsingOptions( const std::vector< FSSpec >& items, const O::Options& options )
+{
+	// we either have a pathname or signature for the app.
+	// if pathname, resolve to FSSpec and check if it's running.
+	// if running, send AE and return
+	// if signature, check if it's running.
+	// if it's running, send it odoc and return
+	// if not, lookup in DT
+	// launch with app parameters
+	
+	// ways to specify app:
+	// --app: pathname
+	// --sig: signature
+	// -e or -t: either?
+	// default: sig
+	
+	const std::string appPathname = options.GetString( optOpenInApp );
+	
+	FSSpec appFile;
+	
+	if ( !appPathname.empty() )
+	{
+		// User has specified an application by its pathname
+		
+		// Resolve to FSSpec
+		appFile = Path2FSS( appPathname );
+		
+		try
+		{
+			// Find it if running
+			ProcessSerialNumber psn = NX::FindProcess( appFile );
+			
+			// The app is already running -- send it an odoc event
+			OpenItemsWithRunningApp( items, psn );
+			
+			// We're done
+			return;
+		}
+		catch ( const N::ProcNotFound& )
+		{
+			// No such process
+			// appFile is already set
+		}
 	}
 	else
 	{
-		Open( item );
+		// Look up by signature.
+		
+		// Pick a signature
+		N::OSType signature = SignatureOfAppForOpening( options );
+		
+		try
+		{
+			// Find it if running
+			ProcessSerialNumber psn = NX::FindProcess( signature );
+			
+			// The app is already running -- send it an odoc event
+			OpenItemsWithRunningApp( items, psn );
+			
+			// We're done
+			return;
+		}
+		catch ( const N::ProcNotFound& )
+		{
+			// No such process
+			appFile = NX::DTGetAPPL( signature );
+		}
 	}
+	
+	LaunchApplicationWithDocsToOpen( appFile, items );
 }
 
 int O::Main( int argc, char const *const argv[] )
@@ -159,7 +233,29 @@ int O::Main( int argc, char const *const argv[] )
 	
 	const std::vector< const char* >& params = options.GetFreeParams();
 	
-	std::for_each( params.begin(), params.end(), Opener( options ) );
+	bool useMacPathnames = options.GetFlag( optInterpretMacPathnames );
+	
+	std::vector< FSSpec > itemsToOpen;
+	
+	typedef std::vector< const char* >::const_iterator const_iterator;
+	
+	for ( const_iterator it = params.begin();  it != params.end();  ++it )
+	{
+		const char* pathname = *it;
+		
+		try
+		{
+			FSSpec item = ResolvePathname( pathname, useMacPathnames );
+			
+			itemsToOpen.push_back( item );
+		}
+		catch ( ... )
+		{
+			// do nothing at the moment
+		}
+	}
+	
+	OpenItemsUsingOptions( itemsToOpen, options );
 	
 	return 0;
 }
