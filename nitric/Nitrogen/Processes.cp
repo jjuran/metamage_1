@@ -14,7 +14,9 @@
 #include "Nitrogen/Files.h"
 #endif
 
-namespace Nitrogen {
+
+namespace Nitrogen
+{
 	
 	void RegisterProcessManagerErrors()
 	{
@@ -34,6 +36,7 @@ namespace Nitrogen {
 		
 		ProcessSerialNumber psn;
 		ThrowOSStatus( ::GetCurrentProcess( &psn ) );
+		
 		return psn;
 	}
 	
@@ -43,16 +46,18 @@ namespace Nitrogen {
 		
 		ProcessSerialNumber psn;
 		ThrowOSStatus( ::GetFrontProcess( &psn ) );
+		
 		return psn;
 	}
 	
-	bool SameProcess( const ProcessSerialNumber& a, 
-	                  const ProcessSerialNumber& b )
+	bool SameProcess( const ProcessSerialNumber&  a, 
+	                  const ProcessSerialNumber&  b )
 	{
 		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		::Boolean same;
 		ThrowOSStatus( ::SameProcess( &a, &b, &same ) );
+		
 		return same;
 	}
 	
@@ -63,7 +68,9 @@ namespace Nitrogen {
 		ThrowOSStatus( ::SetFrontProcess( &psn ) );
 	}
 	
-	ProcessSerialNumber LaunchApplication( const FSSpec& file, LaunchFlags launchFlags, AppParameters* appParameters )
+	ProcessSerialNumber LaunchApplication( const FSSpec&   file,
+	                                       LaunchFlags     launchFlags,
+	                                       AppParameters*  appParameters )
 	{
 		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
@@ -88,10 +95,12 @@ namespace Nitrogen {
 		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
 		ThrowOSStatus( ::GetNextProcess( &process ) );
+		
 		return process;
 	}
 	
-	ProcessInfoRec& GetProcessInformation( const ProcessSerialNumber& process, ProcessInfoRec& processInfo )
+	ProcessInfoRec& GetProcessInformation( const ProcessSerialNumber&  process,
+	                                       ProcessInfoRec&             processInfo )
 	{
 		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
 		
@@ -110,11 +119,16 @@ namespace Nitrogen {
 	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn )
 	{
 	#if TARGET_API_MAC_CARBON
+		
 		FSRef location;
 		ThrowOSStatus( ::GetProcessBundleLocation( &psn, &location ) );
+		
 		return location;
+		
 	#else
+		
 		return Nucleus::Convert< FSRef >( GetProcessAppSpec( psn ) );
+		
 	#endif
 	}
 	
@@ -128,7 +142,7 @@ namespace Nitrogen {
 		(
 			GetProcessInformation( process, 
 		                           Nucleus::Initialize< ProcessInfoRec >( processInfo, 
-		                                                         &appSpec ) )
+		                                                                  &appSpec ) )
 		);
 	}
 	
