@@ -154,10 +154,10 @@ namespace Nitrogen
 		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
 		
 		PBGetCatInfoSync( Nucleus::Initialize< CInfoPBRec >( paramBlock,
-		                                            item.vRefNum,
-		                                            item.parID,
-		                                            const_cast< StringPtr >( item.name ),
-		                                            0 ) );
+		                                                     item.vRefNum,
+		                                                     item.parID,
+		                                                     const_cast< StringPtr >( item.name ),
+		                                                     0 ) );
 		
 		// Don't break the const contract on item.name
 		paramBlock.dirInfo.ioNamePtr = NULL;
@@ -172,10 +172,10 @@ namespace Nitrogen
 		// ioFDirIndex < 0:  use ioDrDirID only
 		
 		return PBGetCatInfoSync( Nucleus::Initialize< CInfoPBRec >( paramBlock,
-		                                                   dir.vRefNum,
-		                                                   dir.dirID,
-		                                                   name,  // Output only
-		                                                   -1 ) );
+		                                                            dir.vRefNum,
+		                                                            dir.dirID,
+		                                                            name,  // Output only
+		                                                            -1 ) );
 		
 	}
 	
@@ -189,10 +189,10 @@ namespace Nitrogen
 		// Assert index != 0
 		
 		return PBGetCatInfoSync( Nucleus::Initialize< CInfoPBRec >( paramBlock,
-		                                                   dir.vRefNum,
-		                                                   dir.dirID,
-		                                                   name,  // Output only
-		                                                   index ) );
+		                                                            dir.vRefNum,
+		                                                            dir.dirID,
+		                                                            name,  // Output only
+		                                                            index ) );
 		
 	}
 	
@@ -308,7 +308,7 @@ namespace Nitrogen
 	}
 	
 	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
-	                                 FSIOPermssn     permissions )
+	                                          FSIOPermssn     permissions )
 	{
 		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
@@ -318,7 +318,7 @@ namespace Nitrogen
 	}
 	
 	Nucleus::Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
-	                                 FSIOPermssn     permissions )
+	                                          FSIOPermssn     permissions )
 	{
 		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
@@ -550,9 +550,9 @@ namespace Nitrogen
      }
 
    void FSRenameUnicode( Nucleus::Owned<FSRef>&  ref,
-                         UniCharCount   nameLength,
-                         const UniChar *name,
-                         TextEncoding   textEncodingHint )
+                         UniCharCount            nameLength,
+                         const UniChar          *name,
+                         TextEncoding            textEncodingHint )
      {
       Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       FSRef newRef;
@@ -562,8 +562,8 @@ namespace Nitrogen
      }
 
    void FSRenameUnicode( Nucleus::Owned<FSRef>&    ref,
-                         const UniString& name,
-                         TextEncoding     textEncodingHint )
+                         const UniString&          name,
+                         TextEncoding              textEncodingHint )
      {
       FSRenameUnicode( ref, name.size(), name.data(), textEncodingHint );
      }
@@ -771,8 +771,8 @@ namespace Nitrogen
      }
 
    Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&   ref,
-                                  UniCharCount   forkNameLength,
-                                  const UniChar *forkName )
+                                           UniCharCount   forkNameLength,
+                                           const UniChar *forkName )
      {
       Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       ThrowOSStatus( ::FSCreateFork( &ref, forkNameLength, forkName ) );
@@ -780,7 +780,7 @@ namespace Nitrogen
      }
 
    Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&     ref,
-                                  const UniString& forkName )
+                                           const UniString& forkName )
      {
       return FSCreateFork( ref, forkName.size(), forkName.data() );
      }
@@ -811,9 +811,9 @@ namespace Nitrogen
      }   
 
    Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&   ref,
-                                   UniCharCount   forkNameLength,
-                                   const UniChar *forkName,
-                                   FSIOPermssn    permissions )
+                                            UniCharCount   forkNameLength,
+                                            const UniChar *forkName,
+                                            FSIOPermssn    permissions )
      {
       Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       SInt16 result;
@@ -822,14 +822,14 @@ namespace Nitrogen
      }
 
    Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSRef&    ref,
-                                   const UniString forkName,
-                                   FSIOPermssn     permissions )
+                                            const UniString forkName,
+                                            FSIOPermssn     permissions )
      {
       return FSOpenFork( ref, forkName.size(), forkName.data(), permissions );
      }
 
    Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
-                                   FSIOPermssn      permissions )
+                                            FSIOPermssn      permissions )
      {
       return FSOpenFork( fork.File(), fork.Name(), permissions );
      }
