@@ -143,7 +143,7 @@ namespace Nucleus
 			
 			Get_Result result = std::auto_ptr< T >( static_cast< T* >( ::operator new( size ) ) );
 			
-			T* begin = &result;
+			T* begin = result.get();
 			
 			get( begin, begin + size );
 			
