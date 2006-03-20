@@ -87,17 +87,20 @@ namespace Pedestal {
 	short FigureScrollDistance( N::ControlPartCode part, short pageDistance )
 	{
 		short scrollDistance = 0;
+		
 		switch ( ::ControlPartCode( part ) )
 		{
 			case kControlUpButtonPart:
 			case kControlDownButtonPart:
 				scrollDistance = 1;
 				break;
+			
 			case kControlPageUpPart:
 			case kControlPageDownPart:
 				scrollDistance = pageDistance;
 				break;
 		}
+		
 		if ( part == N::ControlUpButtonPart() || part == N::ControlPageUpPart() )
 		{
 			scrollDistance = -scrollDistance;
