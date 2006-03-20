@@ -12,24 +12,25 @@
 #include "Nitrogen/ControlDefinitions.h"
 
 
-namespace Pedestal {
+namespace Pedestal
+{
 	
 	namespace N = Nitrogen;
 	
-	Scrollbar::Scrollbar( const Rect& bounds, N::RefCon refCon, ControlTracker tracker )
-	:
-		control
-		(
-			N::NewControl
-			(
-				N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
-				bounds,
-				"\p", true, 0, 0, 0, scrollBarProc,
-				&controlHooks
-			)
-		)
+	Scrollbar::Scrollbar( const Rect&     bounds,
+	                      N::RefCon       refCon,
+	                      ControlTracker  tracker )
+	: control( N::NewControl( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
+	                          bounds,
+	                          "\p",
+	                          true,
+	                          0,
+	                          0,
+	                          0,
+	                          scrollBarProc,
+	                          &controlHooks ) )
 	{
-		controlHooks.data = refCon;
+		controlHooks.data      = refCon;
 		controlHooks.trackHook = tracker;
 	}
 	
