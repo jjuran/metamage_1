@@ -15,7 +15,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	typedef Ped::Window< Ped::Scroller< Ped::Console,
-	                                    Ped::kVerticalScrollbar > >
+	                                    Ped::kLiveFeedbackVariant > >
 	        SystemConsoleBase;
 	
 	class SystemConsole : public SystemConsoleBase

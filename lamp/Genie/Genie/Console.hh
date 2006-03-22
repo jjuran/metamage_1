@@ -62,10 +62,10 @@ namespace Genie
 			void Paste();
 	};
 	
-	class GenieWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kVerticalScrollbar > >
+	class GenieWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >
 	{
 		public:
-			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kVerticalScrollbar > > Base;
+			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
 			
 			GenieWindow( Ped::WindowClosure& closure );
 			GenieWindow( Ped::WindowClosure& closure, ConstStr255Param title );
