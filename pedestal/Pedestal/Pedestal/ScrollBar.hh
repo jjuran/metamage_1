@@ -23,7 +23,10 @@ namespace Pedestal
 			Control_Hooks controlHooks;
 		
 		public:
-			Scrollbar( const Rect& bounds, N::RefCon refCon, ControlTracker tracker );
+			Scrollbar( const Rect&       bounds,
+			           N::ControlProcID  procID,
+			           N::RefCon         refCon,
+			           ControlTracker    tracker );
 			
 			ControlRef Get() const  { return control; }
 			

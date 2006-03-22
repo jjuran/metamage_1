@@ -17,9 +17,10 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	
-	Scrollbar::Scrollbar( const Rect&     bounds,
-	                      N::RefCon       refCon,
-	                      ControlTracker  tracker )
+	Scrollbar::Scrollbar( const Rect&       bounds,
+	                      N::ControlProcID  procID,
+	                      N::RefCon         refCon,
+	                      ControlTracker    tracker )
 	: control( N::NewControl( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
 	                          bounds,
 	                          "\p",
@@ -27,7 +28,7 @@ namespace Pedestal
 	                          0,
 	                          0,
 	                          0,
-	                          scrollBarProc,
+	                          procID,
 	                          &controlHooks ) )
 	{
 		controlHooks.data      = refCon;
