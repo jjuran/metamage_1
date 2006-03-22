@@ -67,26 +67,29 @@ namespace Pedestal
 			}
 	};
 	
-	template < bool present >  struct Scrollbar_Traits;
+	template < bool present >  struct ScrollbarPresence_Traits;
 	
 	// present:  Is the scrollbar present?
 	// Type:     The storage type of the scrollbar object.
 	// profile:  The amount the scrollbar encroaches on the scroll view.
 	
-	template <>  struct Scrollbar_Traits< true >
+	template <>  struct ScrollbarPresence_Traits< true >
 	{
 		static const bool present = true;
 		typedef Scrollbar Type;
 		static const short profile = 15;
 	};
 	
-	template <>  struct Scrollbar_Traits< false >
+	template <>  struct ScrollbarPresence_Traits< false >
 	{
 		static const bool present = false;
 		
+		struct NoProcID {};
+		static NoProcID ProcID()  { return NoProcID(); }
+		
 		struct Type
 		{
-			Type( const Rect&, N::RefCon, ControlTracker )  {}
+			Type( const Rect&, NoProcID, N::RefCon, ControlTracker )  {}
 			
 			Type& Get()  { return *this; }
 			
@@ -94,6 +97,44 @@ namespace Pedestal
 		};
 		
 		static const short profile = 0;
+	};
+	
+	enum ScrollbarConfig
+	{
+		kNoScrollbar            = 0,
+		kOldSchoolVariant       = 1,
+		kAppearanceSavvyVariant = 2,
+		kLiveFeedbackVariant    = 3
+	};
+	
+	enum ScrollbarAxis
+	{
+		kVertical,
+		kHorizontal
+	};
+	
+	template < ScrollbarConfig config > struct ScrollbarVariant_Traits {};
+	
+	template <> struct ScrollbarVariant_Traits< kOldSchoolVariant >
+	{
+		static N::ControlProcID ProcID()  { return N::ControlProcID( scrollBarProc ); }
+	};
+	
+	template <> struct ScrollbarVariant_Traits< kAppearanceSavvyVariant >
+	{
+		static N::ControlProcID ProcID()  { return N::ControlProcID( kControlScrollBarProc ); }
+	};
+	
+	template <> struct ScrollbarVariant_Traits< kLiveFeedbackVariant >
+	{
+		static N::ControlProcID ProcID()  { return N::ControlProcID( kControlScrollBarLiveProc ); }
+	};
+	
+	template < ScrollbarConfig config >
+	struct Scrollbar_Traits : public ScrollbarPresence_Traits< config != kNoScrollbar >,
+	                          public ScrollbarVariant_Traits< config >
+	{
+		
 	};
 	
 	using N::SetControlMaximum;
@@ -112,52 +153,30 @@ namespace Pedestal
 	
 	static void InvalidateControl( ControlRef control )  { N::InvalRect( N::GetControlBounds( control ) ); }
 	
-	static void SetBounds         ( Scrollbar_Traits< false >::Type, Rect  )  {}
-	static void SetControlMaximum ( Scrollbar_Traits< false >::Type, short )  {}
-	static void SetValueStretch   ( Scrollbar_Traits< false >::Type, short )  {}
-	static void SetControlViewSize( Scrollbar_Traits< false >::Type, long  )  {}
-	static void InvalidateControl ( Scrollbar_Traits< false >::Type        )  {}
+	static void SetBounds         ( ScrollbarPresence_Traits< false >::Type, Rect  )  {}
+	static void SetControlMaximum ( ScrollbarPresence_Traits< false >::Type, short )  {}
+	static void SetValueStretch   ( ScrollbarPresence_Traits< false >::Type, short )  {}
+	static void SetControlViewSize( ScrollbarPresence_Traits< false >::Type, long  )  {}
+	static void InvalidateControl ( ScrollbarPresence_Traits< false >::Type        )  {}
 	
-	enum
+	template < ScrollbarConfig vertical, ScrollbarConfig horizontal >  struct Scroller_Traits
 	{
-		kVerticalScrollbarBit, 
-		kHorizontalScrollbarBit, 
-		
-		kVerticalScrollbarMask   = 1 << kVerticalScrollbarBit, 
-		kHorizontalScrollbarMask = 1 << kHorizontalScrollbarBit
-	};
-	
-	enum ScrollbarConfig
-	{
-		kNoScrollbars, 
-		kVerticalScrollbar       = kVerticalScrollbarMask, 
-		kHorizontalScrollbar     = kHorizontalScrollbarMask, 
-		kBothScrollbars          = kVerticalScrollbar | kHorizontalScrollbar
-	};
-	
-	template < ScrollbarConfig config >  struct Scroller_Traits
-	{
-		typedef Scrollbar_Traits< bool( config & kVerticalScrollbarMask   ) > VerticalTraits;
-		typedef Scrollbar_Traits< bool( config & kHorizontalScrollbarMask ) > HorizontalTraits;
+		typedef Scrollbar_Traits< vertical   > VerticalTraits;
+		typedef Scrollbar_Traits< horizontal > HorizontalTraits;
 		
 		typedef typename VerticalTraits  ::Type VerticalScrollbarType;
 		typedef typename HorizontalTraits::Type HorizontalScrollbarType;
 	};
 	
-	template < ScrollbarConfig config >  struct Scroller_Traits;
 	
-	enum ScrollbarAxis
-	{
-		kVertical   = kVerticalScrollbar, 
-		kHorizontal = kHorizontalScrollbar
-	};
-	
-	
-	template < class ScrollViewType, ScrollbarConfig config >
-	class Scroller : public BoundedView, public Scroller_Traits< config >
+	template < class            ScrollViewType,
+	           ScrollbarConfig  vertical,
+	           ScrollbarConfig  horizontal = kNoScrollbar >
+	class Scroller : public BoundedView,
+	                 public Scroller_Traits< vertical, horizontal >
 	{
 		private:
-			typedef Scroller_Traits< config > Traits;
+			typedef Scroller_Traits< vertical, horizontal > Traits;
 			
 			typedef typename Traits::VerticalTraits   VerticalTraits;
 			typedef typename Traits::HorizontalTraits HorizontalTraits;
@@ -308,10 +327,10 @@ namespace Pedestal
 	};
 	
 	
-	template < class ScrollViewType, ScrollbarConfig config, ScrollbarAxis axis >
+	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal, ScrollbarAxis axis >
 	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
 	{
-		typedef Scroller< ScrollViewType, config > Scroller;
+		typedef Scroller< ScrollViewType, vertical, horizontal > Scroller;
 		
 		Control_Hooks* controlHooks = N::GetControlReference( control );
 		Scroller* scroller = controlHooks ? static_cast< Scroller* >( controlHooks->data ) : NULL;
@@ -320,7 +339,7 @@ namespace Pedestal
 		scroller->template ScrollAction< axis >( control, part );
 	}
 	
-	template < class ScrollViewType, ScrollbarConfig config, ScrollbarAxis axis >
+	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal, ScrollbarAxis axis >
 	void Track( ControlRef control, N::ControlPartCode part, Point point )
 	{
 		N::Saved< N::Clip_Value > savedClip;
@@ -329,64 +348,75 @@ namespace Pedestal
 		switch ( ::ControlPartCode( part ) )
 		{
 			case kControlIndicatorPart:
-			{
-				short oldValue = N::GetControlValue( control );
-				part = N::TrackControl( control, point );
-				if ( part == N::ControlIndicatorPart() )
+				if ( (axis == kVertical ? vertical : horizontal)  !=  kLiveFeedbackVariant )
 				{
-					short scrollDistance = N::GetControlValue( control ) - oldValue;
-					if ( scrollDistance != 0 )
+					// Handle indicator tracking specially
+					
+					short oldValue = N::GetControlValue( control );
+					part = N::TrackControl( control, point );
+					
+					if ( part == N::ControlIndicatorPart() )
 					{
-						typedef Scroller< ScrollViewType, config > Scroller;
+						short scrollDistance = N::GetControlValue( control ) - oldValue;
 						
-						Control_Hooks* controlHooks = N::GetControlReference( control );
-						Scroller* scroller = controlHooks ? reinterpret_cast< Scroller* >( controlHooks->data ) : NULL;
-						ASSERT( scroller != NULL );
-						
-						scroller->Scroll
-						(
-							( axis != kVertical ) ? scrollDistance : 0, 
-							( axis == kVertical ) ? scrollDistance : 0, 
-							false
-						);
+						if ( scrollDistance != 0 )
+						{
+							typedef Scroller< ScrollViewType, vertical, horizontal > Scroller;
+							
+							Control_Hooks* controlHooks = N::GetControlReference( control );
+							Scroller* scroller = controlHooks ? reinterpret_cast< Scroller* >( controlHooks->data ) : NULL;
+							ASSERT( scroller != NULL );
+							
+							scroller->Scroll
+							(
+								( axis != kVertical ) ? scrollDistance : 0,
+								( axis == kVertical ) ? scrollDistance : 0,
+								false
+							);
+						}
 					}
+					break;
 				}
-				break;
-			}
+				// else fall through for live feedback scrolling
 			case kControlUpButtonPart:
 			case kControlDownButtonPart:
 			case kControlPageUpPart:
 			case kControlPageDownPart:
-				part = N::TrackControl< N::ControlActionProcPtr( ScrollbarAction< ScrollViewType, config, axis > ) >( control, point );
+				part = N::TrackControl< N::ControlActionProcPtr( ScrollbarAction< ScrollViewType, vertical, horizontal, axis > ) >( control, point );
 				break;
+			
 			default:
 				break;
 		}
 	}
 	
 	
-	template < class ScrollViewType, ScrollbarConfig config >
-	Rect Bounds( const Scroller< ScrollViewType, config >& scroller )
+	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
+	Rect Bounds( const Scroller< ScrollViewType, vertical, horizontal >& scroller )
 	{
 		return scroller.Bounds();
 	}
 	
-	template < class ScrollViewType, ScrollbarConfig config >
-	Scroller< ScrollViewType, config >::Scroller( const Rect& bounds, Initializer init )
+	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
+	Scroller< ScrollViewType, vertical, horizontal >::Scroller( const Rect& bounds, Initializer init )
 	: 
-		BoundedView( bounds ), 
+		BoundedView( bounds ),
 		myScrollV( VerticalScrollbarBounds  ( bounds,
 		                                      true ),
+		           VerticalTraits::ProcID(),
 		           this,
 		           Track< ScrollViewType,
-		                  config,
-		                  kVertical   > ), 
+		                  vertical,
+		                  horizontal,
+		                  kVertical   > ),
 		myScrollH( HorizontalScrollbarBounds( bounds,
 		                                      true ),
+		           HorizontalTraits::ProcID(),
 		           this,
 		           Track< ScrollViewType,
-		                  config,
-		                  kHorizontal > ), 
+		                  vertical,
+		                  horizontal,
+		                  kHorizontal > ),
 		myScrollView( Aperture( bounds,
 		                        VerticalTraits::profile,
 		                        HorizontalTraits::profile ),
@@ -395,8 +425,8 @@ namespace Pedestal
 		SetControlViewSizes();
 	}
 	
-	template < class ScrollViewType, ScrollbarConfig config >
-	void Scroller< ScrollViewType, config >::SetControlViewSizes()
+	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
+	void Scroller< ScrollViewType, vertical, horizontal >::SetControlViewSizes()
 	{
 		Point range = ViewableRange( myScrollView );
 		
@@ -404,8 +434,8 @@ namespace Pedestal
 		Pedestal::SetControlViewSize( HorizontalScrollbar().Get(), range.h );
 	}
 	
-	template < class ScrollViewType, ScrollbarConfig config >
-	void Scroller< ScrollViewType, config >::Calibrate()
+	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
+	void Scroller< ScrollViewType, vertical, horizontal >::Calibrate()
 	{
 		Point scrollRange = ScrollableRange( myScrollView );
 		Point viewRange   = ViewableRange  ( myScrollView );
@@ -418,9 +448,9 @@ namespace Pedestal
 		SetControlMaximum( myScrollH.Get(), max.h );
 	}
 	
-	template < class ScrollViewType, ScrollbarConfig config >
+	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
 	template < ScrollbarAxis axis >
-	void Scroller< ScrollViewType, config >::ScrollAction( ControlRef control, N::ControlPartCode part )
+	void Scroller< ScrollViewType, vertical, horizontal >::ScrollAction( ControlRef control, N::ControlPartCode part )
 	{
 		Point viewRange = ViewableRange( myScrollView );
 		short jump = ( ( axis == kVertical ) ? viewRange.v : viewRange.h ) - 1;
@@ -428,12 +458,21 @@ namespace Pedestal
 		
 		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
 		
+		if ( part == kControlIndicatorPart )
+		{
+			Point pos = ScrollPosition( ScrollView() );
+			
+			short oldValue = ( axis == kVertical ) ? pos.v : pos.h;
+			
+			delta = N::GetControlValue( control ) - oldValue;
+		}
+		
 		if ( delta != 0 )
 		{
 			Scroll
 			(
-				( axis != kVertical ) ? delta : 0, 
-				( axis == kVertical ) ? delta : 0, 
+				( axis != kVertical ) ? delta : 0,
+				( axis == kVertical ) ? delta : 0,
 				true
 			);
 		}
@@ -449,8 +488,8 @@ namespace Pedestal
 		return !( a == b );
 	}
 	
-	template < class ScrollViewType, ScrollbarConfig config >
-	void Scroller< ScrollViewType, config >::UpdateScrollbars( Point oldRange, Point oldPosition )
+	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
+	void Scroller< ScrollViewType, vertical, horizontal >::UpdateScrollbars( Point oldRange, Point oldPosition )
 	{
 		using namespace Nucleus::Operators;
 		
