@@ -8,6 +8,9 @@
 // Nitrogen
 #include "Nitrogen/Icons.h"
 
+// Nitrogen Extras / Utilities
+#include "Utilities/Saved.h"
+
 
 namespace Pedestal
 {

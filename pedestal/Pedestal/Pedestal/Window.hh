@@ -184,7 +184,7 @@ namespace Pedestal
 			{
 				SubView().Update();
 				
-				if ( HasGrowIcon() )
+				if ( DefProcID_Traits< defProcID >::HasGrowIcon() )
 				{
 					DrawWindow( Get() );
 				}
@@ -312,8 +312,6 @@ namespace Pedestal
 		
 		public:
 			WindowsOwner() : fClosure( fWindows )  {}
-			
-			Window& Get()  { return *fWindow.get(); }
 			
 			void NewWindow()
 			{

@@ -32,7 +32,7 @@ namespace Pedestal
 	class XYAverage
 	{
 		public:
-			const RGBColor& operator()( double x, double y ) const
+			RGBColor operator()( double x, double y ) const
 			{
 				return NN::Make< RGBColor >( (x + y) / 2 * 65535.0 );
 			}
@@ -41,7 +41,7 @@ namespace Pedestal
 	class XTimesY
 	{
 		public:
-			const RGBColor& operator()( double x, double y ) const
+			RGBColor operator()( double x, double y ) const
 			{
 				return NN::Make< RGBColor >( (x * y) * 65535.0 );
 			}

@@ -28,6 +28,7 @@
 // Pedestal
 #include "Pedestal/View.hh"
 #include "Pedestal/Scrollbar.hh"
+#include "Pedestal/ScrollingView.hh"
 
 
 namespace Pedestal
@@ -382,7 +383,10 @@ namespace Pedestal
 			case kControlDownButtonPart:
 			case kControlPageUpPart:
 			case kControlPageDownPart:
-				part = N::TrackControl< N::ControlActionProcPtr( ScrollbarAction< ScrollViewType, vertical, horizontal, axis > ) >( control, point );
+				part = N::TrackControl< ScrollbarAction< ScrollViewType,
+				                                         vertical,
+				                                         horizontal,
+				                                         axis >  >( control, point );
 				break;
 			
 			default:
