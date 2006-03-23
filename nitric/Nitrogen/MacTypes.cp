@@ -11,24 +11,27 @@
 //  library does not provide char_traits for 2 byte characters
 //
 
-#ifdef	__GNUC__
+#if defined(__GNUC__) && (__GNUC__ < 4)
 
 #include <ext/algorithm>
 
 namespace std
 {
 	
+	template <>
 	UTF16Char * char_traits< UTF16Char >::copy( UTF16Char* dest, UTF16Char const* src, size_t n )
 	{
 		std::copy( src, src + n, dest );
 		return dest;
 	}
 
+	template <>
 	int char_traits< UTF16Char >::compare( UTF16Char const* s1, UTF16Char const* s2, size_t n )
 	{
 		return __gnu_cxx::lexicographical_compare_3way( s1, s1 + n, s2, s2 + n );
 	}
 
+	template <>
 	UTF16Char* char_traits< UTF16Char >::move( UTF16Char* dest, const UTF16Char* src, size_t n )
 	{
 		if ( src < dest )
@@ -43,6 +46,7 @@ namespace std
 		return dest;
 	}
 
+	template <>
 	UTF16Char* char_traits< UTF16Char >::assign( UTF16Char* dest, size_t n, UTF16Char c )
 	{
 		std::fill( dest, dest + n, c );
