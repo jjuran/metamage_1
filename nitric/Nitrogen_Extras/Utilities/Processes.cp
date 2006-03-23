@@ -22,6 +22,10 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
+// Nitrogen Extras / Templates
+#include "Templates/FunctionalExtensions.h"
+#include "Templates/PointerToFunction.h"
+
 // Nitrogen Extras / Utilities
 #ifndef UTILITIES_FILES_H
 #include "Utilities/Files.h"
@@ -32,12 +36,7 @@ namespace NitrogenExtras
 {
 	
 	namespace N = Nitrogen;
-	
-#ifdef __MWERKS__
-	using std::compose1;
-#else
-	using __gnu_cxx::compose1;
-#endif
+	namespace ext = N::STLExtensions;
 	
 	static N::OSType GetProcessInfoSignature( const ProcessInfoRec& processInfo )
 	{
@@ -55,9 +54,9 @@ namespace NitrogenExtras
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    compose1( std::bind2nd( std::equal_to< N::OSType >(),
-		                                                            signature ),
-		                                              std::ptr_fun( GetProcessSignature ) ) );
+		                                    ext::compose1( std::bind2nd( std::equal_to< N::OSType >(),
+		                                                                 signature ),
+		                                                   std::ptr_fun( GetProcessSignature ) ) );
 		
 		if ( proc == N::Processes().end() )
 		{
@@ -73,9 +72,9 @@ namespace NitrogenExtras
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    compose1( std::bind2nd( std::ptr_fun( N::FSCompareFSSpecs ),
-		                                                            appFile ),
-		                                              std::ptr_fun( N::GetProcessAppSpec ) ) );
+		                                    ext::compose1( std::bind2nd( N::PtrFun( N::FSCompareFSSpecs ),
+		                                                                 appFile ),
+		                                                   N::PtrFun( N::GetProcessAppSpec ) ) );
 		
 		if ( proc == N::Processes().end() )
 		{
