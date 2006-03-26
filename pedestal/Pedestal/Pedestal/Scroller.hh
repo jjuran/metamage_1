@@ -383,7 +383,11 @@ namespace Pedestal
 			case kControlDownButtonPart:
 			case kControlPageUpPart:
 			case kControlPageDownPart:
-				part = N::TrackControl< ScrollbarAction< ScrollViewType,
+				part = N::TrackControl<
+				                        #ifdef __MWERKS__
+				                        (N::ControlActionProcPtr)
+				                        #endif
+				                        ScrollbarAction< ScrollViewType,
 				                                         vertical,
 				                                         horizontal,
 				                                         axis >  >( control, point );
