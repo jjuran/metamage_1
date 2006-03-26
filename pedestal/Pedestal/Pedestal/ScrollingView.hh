@@ -3,7 +3,8 @@
  *	================
  */
 
-#pragma once
+#ifndef PEDESTAL_SCROLLINGVIEW_HH
+#define PEDESTAL_SCROLLINGVIEW_HH
 
 // Universal Interfaces
 #include <Events.h>
@@ -32,25 +33,29 @@ namespace Pedestal
 	class ScopedOrigin
 	{
 		private:
-			N::Saved< N::Clip_Value > savedClip;
+			N::Saved< N::Clip_Value > savedClip;  // automatically save and restore the clip region
+			
+			void Setup( short h, short v, RgnHandle copyOfClipRegion );
 		
 		public:
+			// Temporarily adjust the origin
 			ScopedOrigin( short h, short v )
 			{
-				N::SetOrigin( h, v );
-				
-				NN::Owned< RgnHandle > clip = N::GetClip();
-				::OffsetRgn( clip, h, v );
-				N::SetClip( clip );
+				Setup( h, v, N::GetClip() );
 			}
+			
+			ScopedOrigin( Point origin )
+			{
+				Setup( origin.h, origin.v, N::GetClip() );
+			}
+			
+			// Temporarily adjust the origin and set a new clip region
 			ScopedOrigin( short h, short v, RgnHandle newClip )
 			{
-				N::SetOrigin( h, v );
-				
-				NN::Owned< RgnHandle > clip = N::CopyRgn( newClip );
-				::OffsetRgn( clip, h, v );
-				N::SetClip( clip );
+				Setup( h, v, N::CopyRgn( newClip ) );
 			}
+			
+			// Restore (assumed) zero origin (and the original clip region)
 			~ScopedOrigin()  { N::SetOrigin( 0, 0 ); }
 	};
 	
@@ -93,8 +98,7 @@ namespace Pedestal
 			
 			void Idle( const EventRecord& event )
 			{
-				ScopedOrigin scopedOrigin( ScrollPosition().h,
-				                           ScrollPosition().v );
+				ScopedOrigin scopedOrigin( ScrollPosition() );
 				
 				SubView().Idle( event );
 			}
@@ -125,8 +129,7 @@ namespace Pedestal
 				N::EraseRect( bottom );
 				N::EraseRect( right  );
 				
-				ScopedOrigin scopedOrigin( ScrollPosition().h,
-				                           ScrollPosition().v );
+				ScopedOrigin scopedOrigin( ScrollPosition() );
 				
 				SubView().Update();
 			}
@@ -222,4 +225,6 @@ namespace Pedestal
 	}
 	
 }
+
+#endif
 
