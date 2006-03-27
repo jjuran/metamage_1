@@ -9,22 +9,33 @@
 
 // Nitrogen Nucleus
 #include "Nucleus/NAssert.h"
+#include "Nucleus/Owned.h"
 
 // Nitrogen / Mac OS support
+#include "Nitrogen/Files.h"
 #include "Nitrogen/OSA.h"
 #include "Nitrogen/Resources.h"
+
+// Divergence
+#include "Divergence/Utilities.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
-#include "SystemCalls.hh"
 
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace Div = Divergence;
 namespace O = Orion;
 
+
+inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
+{
+	return N::OpenDefaultComponent( kOSAComponentType,
+	                                kOSAGenericScriptingComponentSubtype );
+}
 
 static std::string ReadFileData( const FSSpec& file )
 {
@@ -43,9 +54,7 @@ static std::string ReadFileData( const FSSpec& file )
 
 static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 {
-	return N::OSACompile( N::OpenDefaultComponent( kOSAComponentType,
-	                                               kOSAGenericScriptingComponentSubtype ),
-	                      source );
+	return N::OSACompile( OpenGenericScriptingComponent(), source );
 }
 
 static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
@@ -53,7 +62,7 @@ static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 	NN::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( scriptFile,
 	                                                           fsRdPerm ) );
 	
-	return N::OSALoad( N::OpenGenericScriptingComponent(),
+	return N::OSALoad( OpenGenericScriptingComponent(),
 	                   N::AECreateDesc( typeOSAGenericStorage,
 	                                    N::Get1Resource( kOSAScriptResourceType,
 	                                                     N::ResID( 128 ) ) ) );
@@ -120,7 +129,7 @@ int O::Main( int argc, const char *const argv[] )
 	{
 		if ( !params.empty() )
 		{
-			script = LoadScriptFile( Path2FSS( params[ 0 ] ) );
+			script = LoadScriptFile( Div::ResolvePathToFSSpec( params[ 0 ] ) );
 		}
 	}
 	
