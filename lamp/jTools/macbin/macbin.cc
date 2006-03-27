@@ -16,11 +16,11 @@
 // Nitrogen / Mac OS support
 #include "Nitrogen/OSStatus.h"
 
+// Divergence
+#include "Divergence/Utilities.hh"
+
 // Misc
 #include "MacBinaryIII.hh"
-
-// Kerosene
-#include "SystemCalls.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -29,6 +29,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace Div = Divergence;
 namespace O = Orion;
 
 
@@ -57,9 +58,9 @@ int O::Main( int argc, const char *const argv[] )
 	}
 	
 	std::string op     = argv[ 1 ];
-	std::string target = argv[ 2 ];
+	const char* target = argv[ 2 ];
 	
-	FSSpec file = Path2FSS( target );
+	FSSpec targetFile = Div::ResolvePathToFSSpec( target );
 	
 	if (false)
 	{
@@ -72,15 +73,16 @@ int O::Main( int argc, const char *const argv[] )
 			return Usage();
 		}
 		
-		MacBinaryIII::Encode( Path2FSS( target ), Path2FSS( argv[ 3 ] ) );
+		MacBinaryIII::Encode( targetFile,
+		                      Div::ResolvePathToFSSpec( argv[ 3 ] ) );
 	}
 	else if ( op == "--decode" )
 	{
 		// FIXME:  Can't decode from a stream
-		std::string destDirPath = argv[ 3 ] ? argv[ 3 ] : ".";
+		const char* destDirPath = argv[ 3 ] ? argv[ 3 ] : ".";
 		
-		MacBinaryIII::Decode( Path2FSS( target ),
-		                      NN::Convert< N::FSDirSpec >( Path2FSS( destDirPath ) ) );
+		MacBinaryIII::Decode( targetFile,
+		                      NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( destDirPath ) ) );
 	}
 	else
 	{
