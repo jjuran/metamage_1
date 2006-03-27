@@ -15,6 +15,20 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	inline UInt16 DenormalizeUInt16( double x )  { return UInt16( 65535.0 * x ); }
+	
+	inline RGBColor DenormalizeRGBColor( double r, double g, double b )
+	{
+		return NN::Make< RGBColor >( DenormalizeUInt16( r ),
+		                             DenormalizeUInt16( g ),
+		                             DenormalizeUInt16( b ) );
+	}
+	
+	inline RGBColor DenormalizeRGBColor( double grey )
+	{
+		return DenormalizeRGBColor( grey, grey, grey );
+	}
+	
 	class RGBConstant
 	{
 		private:
@@ -34,7 +48,7 @@ namespace Pedestal
 		public:
 			RGBColor operator()( double x, double y ) const
 			{
-				return NN::Make< RGBColor >( (x + y) / 2 * 65535.0 );
+				return DenormalizeRGBColor( (x + y) / 2 );
 			}
 	};
 	
@@ -43,7 +57,7 @@ namespace Pedestal
 		public:
 			RGBColor operator()( double x, double y ) const
 			{
-				return NN::Make< RGBColor >( (x * y) * 65535.0 );
+				return DenormalizeRGBColor( x * y );
 			}
 	};
 	

@@ -25,9 +25,7 @@ namespace Pedestal
 			                            double y,
 			                            double t ) const
 	{
-		return NN::Make< RGBColor >( 65535.0 * x,
-		                             65535.0 * y,
-		                             65535.0 * t );
+		return DenormalizeRGBColor( x, y, t );
 	}
 	
 	template < class A, class B >
