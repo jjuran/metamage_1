@@ -4,12 +4,11 @@
  */
 
 // Mac OS
-#ifndef __QUICKDRAW__
 #include <Quickdraw.h>
-#endif
 
 // Standard C/C++
 #include <cstddef>
+#include <cstdlib>
 #include <cstdio>
 
 
