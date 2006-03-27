@@ -15,7 +15,9 @@
 #include "Utilities/Files.h"
 
 // Kerosene
+#if TARGET_RT_MAC_CFM
 #include "SystemCalls.hh"
+#endif
 
 // CompileDriver
 #include "CompileDriver/ProjectConfig.hh"
@@ -148,14 +150,14 @@ namespace ALine {
 		return ProjectControlFolder( folder ) & "Source.list";
 	}
 	
-	static N::FSDirSpec ProjectLabFolder( const std::string& name )
+	static N::FSDirSpec TargetFolder( const std::string& target )
 	{
-		return CreateFolder( UserLabFolder() & name );
+		return CreateFolder( UserLabFolder() & target );
 	}
 	
 	static N::FSDirSpec ProjectTargetFolder( const std::string& proj, const std::string& target )
 	{
-		return CreateFolder( ProjectLabFolder( proj ) & target );
+		return CreateFolder( TargetFolder( target ) & proj );
 	}
 	
 	N::FSDirSpec ProjectDiagnosticsFolder( const std::string& proj, const std::string& target )
