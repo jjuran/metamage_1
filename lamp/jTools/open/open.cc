@@ -127,15 +127,15 @@ static N::OSType SignatureOfAppForOpening( const O::Options& options )
 	if ( options.GetFlag( optOpenInEditor ) )
 	{
 		// User has specified default text editor.
-		// Check MAC_EDITOR environment variable first.
+		// Check MAC_EDITOR_SIGNATURE environment variable first.
 		// If set, it must be a four-character code.
 		
-		if ( const char* macEditorSignature = getenv( "MAC_EDITOR" ) )
+		if ( const char* macEditorSignature = getenv( "MAC_EDITOR_SIGNATURE" ) )
 		{
 			return NN::Convert< N::OSType, std::string >( macEditorSignature );
 		}
 		
-		// No MAC_EDITOR; default to BBEdit/TextWrangler.
+		// No MAC_EDITOR_SIGNATURE; default to BBEdit/TextWrangler.
 		// FIXME:  We could be smarter about this...
 		
 		return N::OSType( sigGoodTextEditor );
