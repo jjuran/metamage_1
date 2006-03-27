@@ -14,7 +14,7 @@
 // POSIX
 //#include "unistd.h"
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
 
 // Nitrogen Extras / Templates
@@ -652,7 +652,7 @@ namespace ShellShock
 				break;
 			
 			default:
-				for ( end = var;  std::isalnum( *end );  ++end ) continue;
+				for ( end = var;  std::isalnum( *end ) || *end == '_';  ++end ) continue;
 				p = end;
 				// p == var if name is empty, p > var otherwise
 				break;
