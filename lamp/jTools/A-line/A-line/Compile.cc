@@ -345,11 +345,11 @@ namespace ALine
 			
 			if ( N::GetEOF( N::FSpOpenDF( diagnostics, fsRdPerm ) ) > 0 )
 			{
-				const static N::OSType sigBBEdit = 'R*ch';
+				const static N::OSType sigTextWrangler = '!Rch';
 				
 				N::AESend( N::AECreateAppleEvent( kCoreEventClass, 
 				                                  kAEOpenDocuments, 
-				                                  N::AECreateDesc< typeProcessSerialNumber >( NX::LaunchApplication( sigBBEdit ) ) ) 
+				                                  N::AECreateDesc< typeProcessSerialNumber >( NX::LaunchApplication( sigTextWrangler ) ) ) 
 				           << keyDirectObject + ( N::AECreateList< false >() 
 				                                  << N::AECreateDesc< typeAlias >( N::NewAlias( diagnostics ) ) ), 
 				           kAENoReply | kAECanInteract );
