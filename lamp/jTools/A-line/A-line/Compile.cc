@@ -5,6 +5,9 @@
 
 #include "A-line/Compile.hh"
 
+// C Standard Library
+#include <stdlib.h>
+
 // C++
 #include <algorithm>
 #include <functional>
@@ -312,6 +315,28 @@ namespace ALine
 		return command;
 	}
 	
+	static N::OSType EditorSignature()
+	{
+		try
+		{
+			const char* envMacEditorSignature = getenv( "MAC_EDITOR_SIGNATURE" );
+			
+			if ( envMacEditorSignature )
+			{
+				N::OSType signature = NN::Convert< N::OSType, std::string >( envMacEditorSignature );
+				
+				return signature;
+			}
+		}
+		catch ( ... )
+		{
+		}
+		
+		const N::OSType sigTextWrangler = '!Rch';
+		
+		return sigTextWrangler;
+	}
+	
 	static void BuildSourceFile( CompilerOptions options, const FSSpec& file )
 	{
 		options.DefineMacro( "__ALINE_MAC_FILE__",  qq( N::FSpGetMacPathname  ( file ) ) );
@@ -345,11 +370,9 @@ namespace ALine
 			
 			if ( N::GetEOF( N::FSpOpenDF( diagnostics, fsRdPerm ) ) > 0 )
 			{
-				const static N::OSType sigTextWrangler = '!Rch';
-				
 				N::AESend( N::AECreateAppleEvent( kCoreEventClass, 
 				                                  kAEOpenDocuments, 
-				                                  N::AECreateDesc< typeProcessSerialNumber >( NX::LaunchApplication( sigTextWrangler ) ) ) 
+				                                  N::AECreateDesc< typeProcessSerialNumber >( NX::LaunchApplication( EditorSignature() ) ) ) 
 				           << keyDirectObject + ( N::AECreateList< false >() 
 				                                  << N::AECreateDesc< typeAlias >( N::NewAlias( diagnostics ) ) ), 
 				           kAENoReply | kAECanInteract );
