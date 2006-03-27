@@ -22,7 +22,6 @@
 // Nitrogen Carbon
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Folders.h"
-//#include "Nitrogen/Threads.h"
 
 // Nitrogen Extras / Operators
 #include "Operators/AEDataModel.h"
@@ -40,9 +39,11 @@
 // BitsAndBytes
 #include "StringFilters.hh"
 
+// Divergence
+#include "Divergence/Utilities.hh"
+
 // Orion
 #include "Orion/StandardIO.hh"
-#include "SystemCalls.hh"
 
 #include "ToolServer.hh"
 
@@ -59,31 +60,13 @@ namespace RunToolServer
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Div = Divergence;
 	namespace FS = FileSystem;
 	namespace NX = NitrogenExtras;
 	
 	using BitsAndBytes::q;
 	
 	using namespace Nucleus::Operators;
-	
-	
-	class AEDescEditor
-	{
-		private:
-			NN::Owned< AEDesc >& desc;
-			AEDesc workingCopy;
-		
-		public:
-			AEDescEditor( NN::Owned< AEDesc >& desc )
-			:
-				desc       ( desc           ), 
-				workingCopy( desc.Release() )
-			{}
-			~AEDescEditor()  { desc = NN::Owned< AEDesc >::Seize( workingCopy ); }
-			
-			AEDesc& Get()       { return workingCopy; }
-			operator AEDesc&()  { return Get();       }
-	};
 	
 	
 	static std::string& operator<<( std::string& str, const std::string& appendage )
@@ -103,7 +86,7 @@ namespace RunToolServer
 	static void WriteCommandFile( const std::string& command, const FSSpec& scriptFile )
 	{
 		// Write the command into a file.
-		FSSpec cwd = CurrentDirectory();
+		FSSpec cwd = Div::ResolvePathToFSSpec( "." );
 		
 		FSSpec status = N::FSpGetParent( scriptFile ) & "Status";
 		
@@ -186,6 +169,7 @@ namespace RunToolServer
 		          + N::AECreateDesc< typeChar >( script );
 	}
 	
+	/*
 	static AEReturnID SendScriptEvent( const AppleEvent& appleEvent )
 	{
 		// Build and send the event.
@@ -202,31 +186,17 @@ namespace RunToolServer
 		
 		return N::AEGetAttributePtr< typeSInt32 >( appleEvent, keyReturnIDAttr );
 	}
+	*/
 	
-#if TARGET_RT_MAC_MACHO
-	
-	static OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
-	{
-		return ::AESend( appleEvent,
-		                 reply,
-		                 kAEWaitReply | kAECanInteract,
-		                 kAENormalPriority,
-		                 kAENoTimeout,
-		                 NULL,
-		                 NULL );
-	}
-	
-#endif
-	
-	static NN::Owned< AppleEvent > AESendBlocking( const AppleEvent& appleEvent )
+	static NN::Owned< N::AppleEvent > AESendBlocking( const N::AppleEvent& appleEvent )
 	{
 		NN::Owned< AppleEvent > replyEvent = N::AEInitializeDesc();
 		
 		// Declare a block to limit the scope of mutableReply
 		{
-			AEDescEditor mutableReply( replyEvent );
+			N::Detail::AEDescEditor mutableReply( replyEvent );
 			
-			N::ThrowOSStatus( AESendBlocking( &appleEvent, &mutableReply.Get() ) );
+			N::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &mutableReply.Get() ) );
 			
 			// Reply is available.  End scope to restore the reply.
 		}
