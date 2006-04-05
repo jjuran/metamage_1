@@ -241,7 +241,6 @@ namespace Nucleus
          
          class Seizing {};
          explicit Owned( Seizing, const Resource& r ) : body( r, true ) {}
-         explicit Owned( const Resource& r, const Disposer& d ) : body( r, d ) {}
          explicit Owned( Seizing, const Body& r )     : body( r )       {}
          
       public:                                       
@@ -273,7 +272,7 @@ namespace Nucleus
          
          static Owned Seize( const Body& r )          { return Owned( Seizing(), r ); }
          static Owned Seize( const Resource& r )      { return Owned( Seizing(), r ); }
-         static Owned Seize( const Resource& r, const Disposer& d )      { return Owned( r, d ); }
+         static Owned Seize( const Resource& r, const Disposer& d )      { return Seize( Body( r, d ) ); }
          
          Body ReleaseWithDisposer()
            {
