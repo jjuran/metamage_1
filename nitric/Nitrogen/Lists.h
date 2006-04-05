@@ -3,11 +3,8 @@
 #ifndef NITROGEN_LISTS_H
 #define NITROGEN_LISTS_H
 
-#include <TargetConditionals.h>
-#if TARGET_RT_MAC_MACHO
-
-#else
-	#include <Lists.h>
+#ifndef __LISTS__
+#include <Lists.h>
 #endif
 
 // Nitrogen
@@ -33,10 +30,12 @@ namespace Nitrogen
 	using ::ListRec;
 	using ::ListPtr;
 	using ::ListHandle;
-  }
+	
+}
 
 namespace Nucleus
-  {
+{
+	
 	template <> struct Disposer< Nitrogen::ListHandle > : public std::unary_function< Nitrogen::ListHandle, void >
 	{
 		void operator()( Nitrogen::ListHandle list ) const
@@ -44,20 +43,22 @@ namespace Nucleus
 			::LDispose( list );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {
+{
+	
 	// 436
 	Nucleus::Owned< ListHandle > LNew( const Rect&        rView,
-	                          const ListBounds&  dataBounds,
-	                          Point              cSize,
-	                          ResID              theProc,
-	                          WindowRef          theWindow,
-	                          bool               drawIt,
-	                          bool               hasGrow,
-	                          bool               scrollHoriz,
-	                          bool               scrollVert );
+	                                   const ListBounds&  dataBounds,
+	                                   Point              cSize,
+	                                   ResID              theProc,
+	                                   WindowRef          theWindow,
+	                                   bool               drawIt,
+	                                   bool               hasGrow,
+	                                   bool               scrollHoriz,
+	                                   bool               scrollVert );
 	
 	// 457
 	inline void LDispose( Nucleus::Owned< ListHandle > )  {}
