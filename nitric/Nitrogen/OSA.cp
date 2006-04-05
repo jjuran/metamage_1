@@ -101,6 +101,34 @@ namespace Nitrogen
 		return Nucleus::Owned< AEDesc >::Seize( resultingText );
 	}
 	
+	Nucleus::Owned< AEDesc > OSAScriptError( ComponentInstance  scriptingComponent,
+	                                         AEKeyword          selector,
+	                                         DescType           desiredType )
+	{
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
+		
+		AEDesc resultingErrorDescription;
+		
+		ThrowOSStatus( ::OSAScriptError( scriptingComponent,
+		                                 selector,
+		                                 desiredType,
+		                                 &resultingErrorDescription ) );
+		
+		return Nucleus::Owned< AEDesc >::Seize( resultingErrorDescription );
+	}
+	
+	Nucleus::Owned< AEDesc > OSAScriptingComponentName( ComponentInstance scriptingComponent )
+	{
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
+		
+		AEDesc resultingScriptingComponentName;
+		
+		ThrowOSStatus( ::OSAScriptingComponentName( scriptingComponent,
+		                                            &resultingScriptingComponentName ) );
+		
+		return Nucleus::Owned< AEDesc >::Seize( resultingScriptingComponentName );
+	}
+	
 	Nucleus::Owned< OSASpec > OSACompile( Nucleus::Shared< ComponentInstance >  scriptingComponent, 
 	                             const AEDesc&                sourceData, 
 	                             OSAModeFlags                 modeFlags )
@@ -149,6 +177,72 @@ namespace Nitrogen
 		ThrowOSStatus( err );
 		
 		return resultingScriptID;
+	}
+	
+	void OSACopyID( OSAID                       fromID,
+	                Nucleus::Owned< OSASpec >&  to )
+	{
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
+		
+		::OSAID toID = to.Get().id;
+		
+		ThrowOSStatus( ::OSACopyID( to.Get().component,
+		                            fromID,
+		                            &toID ) );
+		
+		if ( toID != to.Get().id )
+		{
+			to.Release();
+			
+			to = Nucleus::Owned< OSASpec >::Seize( OSASpec( to.Get().component,
+			                                                OSAID( toID ) ) );
+		}
+	}
+	
+	void OSACopyID( Nucleus::Shared< ComponentInstance >  scriptingComponent,
+	                OSAID                                 fromID,
+	                Nucleus::Owned< OSASpec >&            to )
+	{
+		if ( scriptingComponent.Get() != to.Get().component )
+		{
+			throw ErrOSAComponentMismatch();
+		}
+		
+		OSACopyID( fromID, to );
+	}
+	
+	Nucleus::Owned< OSASpec > OSACopyID( Nucleus::Shared< ComponentInstance >  scriptingComponent,
+	                                     OSAID                                 fromID )
+	{
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
+		
+		::OSAID toID = kOSANullScript;
+		
+		ThrowOSStatus( ::OSACopyID( scriptingComponent,
+		                            fromID,
+		                            &toID ) );
+		
+		return Nucleus::Owned< OSASpec >::Seize( OSASpec( scriptingComponent,
+		                                                  OSAID::Make( toID ) ) );
+	}
+	
+	Nucleus::Owned< OSASpec > OSAExecuteEvent( Nucleus::Shared< ComponentInstance >  scriptingComponent,
+	                                           const AppleEvent&                     appleEvent,
+	                                           OSAID                                 contextID,
+	                                           OSAModeFlags                          modeFlags )
+	{
+		Nucleus::OnlyOnce< RegisterOSAErrors >();
+		
+		::OSAID resultingScriptValueID;
+		
+		ThrowOSStatus( ::OSAExecuteEvent( scriptingComponent,
+		                                  &appleEvent,
+		                                  contextID,
+		                                  modeFlags,
+		                                  &resultingScriptValueID ) );
+		
+		return Nucleus::Owned< OSASpec >::Seize( OSASpec( scriptingComponent,
+		                                                  OSAID::Make( resultingScriptValueID ) ) );
 	}
 	
 }
