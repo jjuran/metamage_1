@@ -50,15 +50,7 @@ static const Nitrogen::DefaultInternetServicesPath
 
 #endif
 
-// However, we still need to use it internally, so we define it under a different name.
-
-namespace Nitrogen
-{
-	
-	static const OTConfigurationRef
-	       kDefaultInternetServicesPath_Internal = (OTConfigurationRef)-3L;
-	
-}
+// However, we still need to use it internally, so we define it in OpenTransportProviders.cp.
 
 
 #ifdef SET_TOS
@@ -117,15 +109,18 @@ namespace Nitrogen
 	
 	using ::InetSvcRef;
 	
-  }
+}
 
 namespace Nucleus
-  {
+{
+	
 	template <> struct OwnedDefaults< Nitrogen::InetSvcRef > : OwnedDefaults< Nitrogen::ProviderRef > {};
-  }
+	
+}
 
 namespace Nitrogen
-  {	
+{
+	
 	using ::InetAddress;
 	
 	typedef std::string InetDomainName;
@@ -135,22 +130,28 @@ namespace Nitrogen
 	using ::InetMailExchange;
 	
 	InetAddress& OTInitInetAddress( InetAddress& addr, InetPort port, InetHost host );
-  }
+	
+}
 
 namespace Nucleus
-  {	
+{
+	
 	template <>
 	struct Initializer< Nitrogen::InetAddress >
 	{
-		Nitrogen::InetAddress& operator()( Nitrogen::InetAddress& addr, Nitrogen::InetPort port, Nitrogen::InetHost host )
+		Nitrogen::InetAddress& operator()( Nitrogen::InetAddress&  addr,
+		                                   Nitrogen::InetPort      port,
+		                                   Nitrogen::InetHost      host )
 		{
 			return Nitrogen::OTInitInetAddress( addr, port, host );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {	
+{
+	
 	#pragma mark -
 	#pragma mark ¥ IP address encoding ¥
 	
@@ -162,10 +163,11 @@ namespace Nitrogen
 	}
 	
 	std::string OTInetHostToString( InetHost host );
-  }
+	
+}
 
 namespace Nucleus
-  {	
+{
 	template <>
 	struct Converter< Nitrogen::InetHost, const char* > : std::unary_function< const char*, Nitrogen::InetHost >
 	{
@@ -192,30 +194,34 @@ namespace Nucleus
 			return Nitrogen::OTInetHostToString( input );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {	
+{
+	
 	#pragma mark -
 	#pragma mark ¥ DNR ¥
 	
 	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( Nucleus::Owned< OTConfigurationRef >  cfig,
-	                                                     OTClientContextPtr           clientContext = NULL );
+	                                                              OTClientContextPtr                    clientContext = NULL );
 	
-	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath,
-	                                                     OTClientContextPtr           clientContext = NULL );
+	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath  /**/,
+	                                                              OTClientContextPtr           clientContext = NULL );
 	
 	inline Nucleus::Owned< InetSvcRef > OTOpenInternetServices( Nucleus::Owned< OTConfigurationRef > cfig )
 	{
 		return OTOpenInternetServicesInContext( cfig );
 	}
 	
-	inline Nucleus::Owned< InetSvcRef > OTOpenInternetServices( DefaultInternetServicesPath )
+	inline Nucleus::Owned< InetSvcRef > OTOpenInternetServices( DefaultInternetServicesPath /**/ )
 	{
 		return OTOpenInternetServicesInContext( kDefaultInternetServicesPath );
 	}
 	
-	InetHostInfo& OTInetStringToAddress( InetSvcRef ref, char* name, InetHostInfo& hInfo );
+	InetHostInfo& OTInetStringToAddress( InetSvcRef     ref,
+	                                     char*          name,
+	                                     InetHostInfo&  hInfo );
 	
 	inline InetHostInfo OTInetStringToAddress( InetSvcRef ref, char* name )
 	{
@@ -228,9 +234,9 @@ namespace Nitrogen
 	
 	// OTInetSysInfo
 	
-	void OTInetMailExchange( InetSvcRef ref,
-	                         char* name,
-	                         std::vector< InetMailExchange >& mx );
+	void OTInetMailExchange( InetSvcRef                        ref,
+	                         char*                             name,
+	                         std::vector< InetMailExchange >&  mx );
 	
 }
 

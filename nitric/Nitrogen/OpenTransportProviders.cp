@@ -14,7 +14,17 @@
 namespace Nitrogen
 {
 	
-	InetAddress& OTInitInetAddress( InetAddress& addr, InetPort port, InetHost host )
+	namespace Detail
+	{
+		
+		static const OTConfigurationRef kDefaultInternetServicesPath = (OTConfigurationRef)-3L;
+		
+	}
+	
+	
+	InetAddress& OTInitInetAddress( InetAddress&  addr,
+	                                InetPort      port,
+	                                InetHost      host )
 	{
 		::OTInitInetAddress( &addr, port, host );
 		
@@ -42,7 +52,7 @@ namespace Nitrogen
 	}
 	
 	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( Nucleus::Owned< OTConfigurationRef >  cfig,
-	                                                     OTClientContextPtr           clientContext )
+	                                                              OTClientContextPtr                    clientContext )
 	{
 		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
@@ -68,8 +78,8 @@ namespace Nitrogen
 		return Nucleus::Owned< InetSvcRef >::Seize( result );
 	}
 	
-	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath,
-	                                                     OTClientContextPtr           clientContext )
+	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath  /**/,
+	                                                              OTClientContextPtr           clientContext )
 	{
 		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
@@ -77,14 +87,14 @@ namespace Nitrogen
 		
 	#if TARGET_API_MAC_CARBON
 		
-		InetSvcRef result = ::OTOpenInternetServicesInContext( kDefaultInternetServicesPath_Internal,
+		InetSvcRef result = ::OTOpenInternetServicesInContext( Detail::kDefaultInternetServicesPath,
 		                                                       OTOpenFlags( 0 ),
 		                                                       &err,
 		                                                       clientContext );
 		
 	#else
 		
-		InetSvcRef result = ::OTOpenInternetServices( kDefaultInternetServicesPath_Internal,
+		InetSvcRef result = ::OTOpenInternetServices( Detail::kDefaultInternetServicesPath,
 		                                              OTOpenFlags( 0 ),
 		                                              &err );
 		
@@ -95,7 +105,9 @@ namespace Nitrogen
 		return Nucleus::Owned< InetSvcRef >::Seize( result );
 	}
 	
-	InetHostInfo& OTInetStringToAddress( InetSvcRef ref, char* name, InetHostInfo& hInfo )
+	InetHostInfo& OTInetStringToAddress( InetSvcRef     ref,
+	                                     char*          name,
+	                                     InetHostInfo&  hInfo )
 	{
 		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
@@ -115,7 +127,9 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void OTInetMailExchange( InetSvcRef ref, char* name, std::vector< InetMailExchange >& mx )
+	void OTInetMailExchange( InetSvcRef                        ref,
+	                         char*                             name,
+	                         std::vector< InetMailExchange >&  mx )
 	{
 		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		
