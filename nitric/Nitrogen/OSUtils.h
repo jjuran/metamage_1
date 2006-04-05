@@ -94,6 +94,7 @@ namespace Nitrogen
 	{
 		UInt32 finalTicks;
 		::Delay( ticks, &finalTicks );
+		
 		return finalTicks;
 	}
 	

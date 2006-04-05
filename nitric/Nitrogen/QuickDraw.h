@@ -52,10 +52,11 @@ namespace Nitrogen
 	using ::PicHandle;
 	using ::PolyHandle;
 	
-  }
+}
 
 namespace Nucleus
-  {
+{
+	
 	template <> struct Disposer< Nitrogen::RgnHandle > : public std::unary_function< Nitrogen::RgnHandle, void >
 	{
 		void operator()( Nitrogen::RgnHandle h ) const
@@ -79,10 +80,10 @@ namespace Nucleus
 			::KillPoly( h );
 		}
 	};
-  }
+}
 
 namespace Nitrogen
-  {
+{
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
@@ -188,10 +189,11 @@ namespace Nitrogen
 	
 	using ::CTabHandle;
 	
-  }
+}
 
 namespace Nucleus
-  {
+{
+	
 	template <> struct Disposer< Nitrogen::CTabHandle > : public std::unary_function< Nitrogen::CTabHandle, void >
 	{
 		void operator()( CTabHandle h ) const
@@ -199,10 +201,10 @@ namespace Nucleus
 			::DisposeCTable( h );
 		}
 	};
-  }
+}
 
 namespace Nitrogen
-  {
+{
 	
 	using ::PixMap;
 	using ::PixMapPtr;
@@ -217,10 +219,11 @@ namespace Nitrogen
 		void DisposePort( CGrafPtr port );
 	}
 	
-  }
+}
 
 namespace Nucleus
-  {
+{
+	
 	/*
 	template <> struct Disposer< PixMapHandle > : public std::unary_function< PixMapHandle, void >
 	{
@@ -293,10 +296,11 @@ namespace Nucleus
 			return operator()( 0, 0, 0 );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {
+{
 	
 	#pragma mark -
 	#pragma mark ¥ Routines ¥

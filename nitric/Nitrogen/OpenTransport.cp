@@ -105,8 +105,8 @@ namespace Nitrogen
 	}
 	
 	Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
-	                                              TEndpointInfo*               info,
-	                                              OTClientContextPtr           clientContext )
+	                                                       TEndpointInfo*                        info,
+	                                                       OTClientContextPtr                    clientContext )
 	{
 		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
 		

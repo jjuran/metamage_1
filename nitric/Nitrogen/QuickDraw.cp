@@ -23,7 +23,7 @@
 #endif
 
 namespace Nitrogen
-  {
+{
 	
 	GrafPtr GetPort()
 	{
@@ -190,12 +190,12 @@ namespace Nitrogen
 		return region;
 	}
 	
-	void CopyBits( const BitMap* srcBits,
-	               const BitMap* dstBits,
-	               const Rect& srcRect,
-	               const Rect& dstRect,
-	               TransferMode mode,
-	               RgnHandle maskRgn )
+	void CopyBits( const BitMap*  srcBits,
+	               const BitMap*  dstBits,
+	               const Rect&    srcRect,
+	               const Rect&    dstRect,
+	               TransferMode   mode,
+	               RgnHandle      maskRgn )
 	{
 		::CopyBits( srcBits, dstBits, &srcRect, &dstRect, mode, maskRgn );
 	}

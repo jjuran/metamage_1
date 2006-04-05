@@ -161,10 +161,12 @@ namespace Nitrogen
 	using ::OTClientContextPtr;
 	using ::EndpointRef;		
     using ::ProviderRef;
-  }
+    
+}
 
 namespace Nucleus
-  {
+{
+	
 	template <>
 	struct Disposer< Nitrogen::OTConfigurationRef > : public std::unary_function< Nitrogen::OTConfigurationRef, void >
 	{
@@ -194,10 +196,12 @@ namespace Nucleus
 	};
 
 	template <> struct OwnedDefaults< Nitrogen::EndpointRef > : OwnedDefaults< Nitrogen::ProviderRef > {};
-   }
+	
+}
 
 namespace Nitrogen
-  {	
+{	
+	
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
 	
@@ -246,17 +250,17 @@ namespace Nitrogen
 	using ::OTIsAsynchronous;
 	
 	Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
-	                                              TEndpointInfo*               info          = NULL,
-	                                              OTClientContextPtr           clientContext = NULL );
+	                                                       TEndpointInfo*                        info          = NULL,
+	                                                       OTClientContextPtr                    clientContext = NULL );
 	
 	inline Nucleus::Owned< EndpointRef > OTOpenEndpointInContext( Nucleus::Owned< OTConfigurationRef >  config,
-	                                                     OTClientContextPtr           clientContext )
+	                                                              OTClientContextPtr                    clientContext )
 	{
 		return OTOpenEndpointInContext( config, NULL, clientContext );
 	}
 	
 	inline Nucleus::Owned< EndpointRef > OTOpenEndpoint( Nucleus::Owned< OTConfigurationRef >  config,
-	                                            TEndpointInfo*               info = NULL )
+	                                                     TEndpointInfo*                        info = NULL )
 	{
 		return OTOpenEndpointInContext( config, info );
 	}

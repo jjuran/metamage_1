@@ -38,7 +38,8 @@
 //#include "Nitrogen/TextCommon.h"
 #endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
 	
 	void RegisterProcessManagerErrors();
 	
@@ -52,9 +53,12 @@ namespace Nitrogen {
 	using ::ProcessInfoRec;
 	
 	template < unsigned long > struct LowLongOfPSN  {};
-	}
+	
+}
 
-namespace Nucleus {
+namespace Nucleus
+{
+	
 	template <>
 	struct Maker< Nitrogen::ProcessSerialNumber >
 	{
@@ -87,16 +91,20 @@ namespace Nucleus {
 		return !( a == b );
 	}
 	
-  }
+}
 
-namespace Nitrogen {
+namespace Nitrogen
+{
+	
 	inline ProcessSerialNumber NoProcess()       { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kNoProcess      >() ); }
 	inline ProcessSerialNumber SystemProcess()   { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kSystemProcess  >() ); }
 	inline ProcessSerialNumber CurrentProcess()  { return Nucleus::Make< ProcessSerialNumber >( LowLongOfPSN< kCurrentProcess >() ); }
 	
 }
 
-namespace Nucleus {
+namespace Nucleus
+{
+	
 	template <>
 	struct Initializer< Nitrogen::ProcessInfoRec >
 	{
@@ -123,9 +131,14 @@ namespace Nucleus {
 	
 }
 
-namespace Nitrogen {
+namespace Nitrogen
+{
+	
 	// Nitrogen accessors, since no Carbon accessors exist
-	inline FSSpec GetProcessInfoAppSpec( const ProcessInfoRec& processInfo )  { return *processInfo.processAppSpec; }
+	inline FSSpec GetProcessInfoAppSpec( const ProcessInfoRec& processInfo )
+	{
+		return *processInfo.processAppSpec;
+	}
 	
 	ProcessSerialNumber GetCurrentProcess();
 	
@@ -136,7 +149,9 @@ namespace Nitrogen {
 	
 	void SetFrontProcess( const ProcessSerialNumber& psn );
 	
-	ProcessSerialNumber LaunchApplication( const FSSpec& file, LaunchFlags launchFlags = LaunchFlags(), AppParameters* appParameters = NULL );
+	ProcessSerialNumber LaunchApplication( const FSSpec&   file,
+	                                       LaunchFlags     launchFlags   = LaunchFlags(),
+	                                       AppParameters*  appParameters = NULL );
 	
 	ProcessSerialNumber GetNextProcess( ProcessSerialNumber process );
 	
@@ -187,3 +202,4 @@ namespace Nitrogen {
 #include "Nucleus/Operators.h"
 
 #endif
+

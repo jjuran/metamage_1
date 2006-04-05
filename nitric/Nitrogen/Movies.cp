@@ -16,7 +16,8 @@
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< MovieFileRefNum > OpenMovieFile( const FSSpec& file, FSIOPermssn permission )
+	Nucleus::Owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,
+	                                                 FSIOPermssn    permission )
 	{
 		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
 		
@@ -27,8 +28,8 @@ namespace Nitrogen
 	}
 	
 	Nucleus::Owned< Movie > NewMovieFromFile( MovieFileRefNum  refNum,
-	                                 ResID            resID,
-	                                 NewMovieFlags    flags )
+	                                          ResID            resID,
+	                                          NewMovieFlags    flags )
 	{
 		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
 		
@@ -43,11 +44,11 @@ namespace Nitrogen
 	// Half-way Nitrified call with eraseColor passed by pointer
 	
 	static Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
-	                                                      short            desiredWidth,
-	                                                      short            desiredHeight,
-	                                                      ::WindowRef*     newWindow,
-	                                                      const RGBColor*  eraseColor,
-	                                                      FullScreenFlags  flags )
+	                                                               short            desiredWidth,
+	                                                               short            desiredHeight,
+	                                                               ::WindowRef*     newWindow,
+	                                                               const RGBColor*  eraseColor,
+	                                                               FullScreenFlags  flags )
 	{
 		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
 		
@@ -67,11 +68,11 @@ namespace Nitrogen
 	// Basic Nitrogen version
 	
 	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
-	                                               short            desiredWidth,
-	                                               short            desiredHeight,
-	                                               ::WindowRef*     newWindow,
-	                                               const RGBColor&  eraseColor,
-	                                               FullScreenFlags  flags )
+	                                                        short            desiredWidth,
+	                                                        short            desiredHeight,
+	                                                        ::WindowRef*     newWindow,
+	                                                        const RGBColor&  eraseColor,
+	                                                        FullScreenFlags  flags )
 	{
 		return BeginFullScreen( whichGD,
 		                        desiredWidth,
@@ -84,10 +85,10 @@ namespace Nitrogen
 	// Nitrogen version with eraseColor omitted
 	
 	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
-	                                               short            desiredWidth,
-	                                               short            desiredHeight,
-	                                               ::WindowRef*     newWindow,
-	                                               FullScreenFlags  flags )
+	                                                        short            desiredWidth,
+	                                                        short            desiredHeight,
+	                                                        ::WindowRef*     newWindow,
+	                                                        FullScreenFlags  flags )
 	{
 		return BeginFullScreen( whichGD,
 		                        desiredWidth,
@@ -100,10 +101,10 @@ namespace Nitrogen
 	// Nitrogen version with newWindow omitted
 	
 	Nucleus::Owned< FullScreenContextPtr > BeginFullScreen( GDHandle         whichGD,
-	                                               short            desiredWidth,
-	                                               short            desiredHeight,
-	                                               const RGBColor&  eraseColor,
-	                                               FullScreenFlags  flags )
+	                                                        short            desiredWidth,
+	                                                        short            desiredHeight,
+	                                                        const RGBColor&  eraseColor,
+	                                                        FullScreenFlags  flags )
 	{
 		return BeginFullScreen( whichGD,
 		                        desiredWidth,
