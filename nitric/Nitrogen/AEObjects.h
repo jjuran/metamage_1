@@ -41,20 +41,28 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AEToken ¥
 	
-	struct AETokenDisposer : public std::unary_function< AEToken, void >
+	namespace Detail
 	{
-		// parameter can't be const
-		void operator()( AEToken token ) const
+		
+		struct AETokenDisposer : public std::unary_function< AEToken, void >
 		{
-			::AEDisposeToken( &token );
-		}
-	};
-  }
+			// parameter can't be const
+			void operator()( AEToken token ) const
+			{
+				::AEDisposeToken( &token );
+			}
+		};
+		
+	}
+	
+	using Detail::AETokenDisposer;
+	
+}
 
 namespace Nucleus
 {
 	template <>
-	struct LivelinessTraits< Nitrogen::AEToken, Nitrogen::AETokenDisposer >
+	struct LivelinessTraits< Nitrogen::AEToken, Nitrogen::Detail::AETokenDisposer >
 	{
 		typedef SeizedValuesAreLive LivelinessTest;
 	};
@@ -63,27 +71,32 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-	class AETokenEditor
+	namespace Detail
 	{
-		private:
-			Nucleus::Owned< AEToken, AETokenDisposer >& token;
-			AEToken workingCopy;
 		
-		public:
-			AETokenEditor( Nucleus::Owned< AEToken, AETokenDisposer >& token )
-			:
-				token      ( token           ),
-				workingCopy( token.Release() )
-			{}
+		class AETokenEditor
+		{
+			private:
+				Nucleus::Owned< AEToken, AETokenDisposer >& token;
+				AEToken workingCopy;
 			
-			~AETokenEditor()
-			{
-				token = Nucleus::Owned< AEToken, AETokenDisposer >::Seize( workingCopy );
-			}
-			
-			AEToken& Get()       { return workingCopy; }
-			operator AEToken&()  { return Get();       }
-	};
+			public:
+				AETokenEditor( Nucleus::Owned< AEToken, AETokenDisposer >& token )
+				:
+					token      ( token           ),
+					workingCopy( token.Release() )
+				{}
+				
+				~AETokenEditor()
+				{
+					token = Nucleus::Owned< AEToken, AETokenDisposer >::Seize( workingCopy );
+				}
+				
+				AEToken& Get()       { return workingCopy; }
+				operator AEToken&()  { return Get();       }
+		};
+		
+	}
 	
 	typedef AEDescList AETokenList;
 	typedef DescType AECompOperator;
@@ -411,14 +424,18 @@ namespace Nitrogen
 	                      const void*                                      dataPtr,
 	                      Size                                             dataSize )
 	{
-		AEPutPtr( AETokenEditor( tokenList ), index, typeCode, dataPtr, dataSize );
+		AEPutPtr( Detail::AETokenEditor( tokenList ),
+		          index,
+		          typeCode,
+		          dataPtr,
+		          dataSize );
 	}
 	
 	inline void AEPutDesc( Nucleus::Owned< AETokenList, AETokenDisposer >&  tokenList,
 	                       long                                             index,
 	                       const AEToken&                                   token )
 	{
-		AEPutDesc( AETokenEditor( tokenList ), index, token );
+		AEPutDesc( Detail::AETokenEditor( tokenList ), index, token );
 	}
 	
 	inline Nucleus::Owned< AETokenList, AETokenDisposer > AEGetNthToken( const AETokenList&  tokenList,
@@ -433,20 +450,24 @@ namespace Nitrogen
 	                         const void*                                   dataPtr,
 	                         std::size_t                                   dataSize )
 	{
-		AEPutKeyPtr( AETokenEditor( record ), keyword, typeCode, dataPtr, dataSize );
+		AEPutKeyPtr( Detail::AETokenEditor( record ),
+		             keyword,
+		             typeCode,
+		             dataPtr,
+		             dataSize );
 	}
 	
 	inline void AEPutKeyDesc( Nucleus::Owned< AERecord, AETokenDisposer >&  record,
 	                          AEKeyword                                     keyword,
 	                          const AEDesc&                                 desc )
 	{
-		AEPutKeyDesc( AETokenEditor( record ), keyword, desc );
+		AEPutKeyDesc( Detail::AETokenEditor( record ), keyword, desc );
 	}
 	
 	inline void AEPutKeyDesc( Nucleus::Owned< AERecord, AETokenDisposer >&  record,
 	                          const AEKeyDesc&                              keyDesc )
 	{
-		AEPutKeyDesc( AETokenEditor( record ), keyDesc );
+		AEPutKeyDesc( Detail::AETokenEditor( record ), keyDesc );
 	}
 	
 	inline void AEDisposeToken( Nucleus::Owned< AEToken, AETokenDisposer > )  {}

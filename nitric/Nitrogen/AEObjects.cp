@@ -89,12 +89,13 @@ namespace Nitrogen {
 #endif
 	
 	Nucleus::Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier, 
-	                                             AEResolveCallbackFlags    callbackFlags )
+	                                                      AEResolveCallbackFlags    callbackFlags )
 	{
 		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
 		AEToken token;
 		ThrowOSStatus( ::AEResolve( &objectSpecifier, callbackFlags, &token ) );
+		
 		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( token );
 	}
 	
@@ -126,7 +127,11 @@ namespace Nitrogen {
 		                                      &accessorRefCon,
 		                                      isSysHandler ) );
 		
-		return OSLAccessor( desiredClass, containerType, accessor, accessorRefCon, isSysHandler );
+		return OSLAccessor( desiredClass,
+		                    containerType,
+		                    accessor,
+		                    accessorRefCon,
+		                    isSysHandler );
 	}
 	
 	Nucleus::Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
@@ -152,7 +157,7 @@ namespace Nitrogen {
 	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
 	                                                          Nucleus::Owned< AEToken, AETokenDisposer > token )
 	{
-		AETokenEditor( token ).Get().descriptorType = typeCode;
+		Detail::AETokenEditor( token ).Get().descriptorType = typeCode;
 		
 		return token;
 	}
