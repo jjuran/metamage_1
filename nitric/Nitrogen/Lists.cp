@@ -16,8 +16,9 @@ namespace Nitrogen
 	
 	static void FixListScrollbarBounds( ListHandle list )
 	{
-		bool hasGrow = GetListFlags( list ) & 0x20;
-		bool scrollVert = GetListVerticalScrollBar( list );
+		bool hasGrow     = GetListFlags( list ) & 0x20;
+		
+		bool scrollVert  = GetListVerticalScrollBar  ( list );
 		bool scrollHoriz = GetListHorizontalScrollBar( list );
 		
 		// List Manager bug:  LNew() and LSize() ignore hasGrow, so we have to fudge it
@@ -40,7 +41,6 @@ namespace Nitrogen
 				scrollbar = GetListHorizontalScrollBar( list );
 				bounds = GetControlBounds( scrollbar );
 				bounds.right -= 15;
-				SetControlBounds( scrollbar, bounds );
 			}
 			
 			SetControlBounds( scrollbar, bounds );
@@ -49,14 +49,14 @@ namespace Nitrogen
 	}
 	
 	Nucleus::Owned< ListHandle > LNew( const Rect&        rView,
-	                          const ListBounds&  dataBounds,
-	                          Point              cSize,
-	                          ResID              theProc,
-	                          WindowRef          theWindow,
-	                          bool               drawIt,
-	                          bool               hasGrow,
-	                          bool               scrollHoriz,
-	                          bool               scrollVert )
+	                                   const ListBounds&  dataBounds,
+	                                   Point              cSize,
+	                                   ResID              theProc,
+	                                   WindowRef          theWindow,
+	                                   bool               drawIt,
+	                                   bool               hasGrow,
+	                                   bool               scrollHoriz,
+	                                   bool               scrollVert )
 	{
 		ListHandle list = ::LNew( &rView,
 		                          &dataBounds,
@@ -98,6 +98,7 @@ namespace Nitrogen
 	{
 		Rect rect;
 		::LRect( &rect, cell, lHandle );
+		
 		return rect;
 	}
 	
@@ -114,6 +115,7 @@ namespace Nitrogen
 	{
 		Rect result;
 		::GetListViewBounds( list, &result );
+		
 		return result;
 	}
 	
@@ -121,6 +123,7 @@ namespace Nitrogen
 	{
 		ListBounds result;
 		::GetListVisibleCells( list, &result );
+		
 		return result;
 	}
 	
@@ -128,6 +131,7 @@ namespace Nitrogen
 	{
 		ListBounds result;
 		::GetListDataBounds( list, &result );
+		
 		return result;
 	}
 	

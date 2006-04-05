@@ -74,6 +74,7 @@ namespace Nitrogen
 	{
 		LongDateTime lSecs;
 		::LongDateToSeconds( &lDate, &lSecs );
+		
 		return lSecs;
 	}
 	
@@ -82,6 +83,7 @@ namespace Nitrogen
 	{
 		LongDateRec lDate;
 		::LongSecondsToDate( &lSecs, &lDate );
+		
 		return lDate;
 	}
 	
@@ -92,6 +94,7 @@ namespace Nitrogen
 	{
 		UInt32 secs;
 		::GetDateTime( &secs );
+		
 		return secs;
 	}
 	
@@ -102,6 +105,7 @@ namespace Nitrogen
 	{
 		UInt32 secs;
 		::DateToSeconds( &d, &secs );
+		
 		return secs;
 	}
 	
@@ -110,13 +114,15 @@ namespace Nitrogen
 	{
 		DateTimeRec d;
 		::SecondsToDate( secs, &d );
+		
 		return d;
 	}
 	
-  }
+}
 
 namespace Nucleus
-  {
+{
+	
 	template <>
 	struct Converter< Nitrogen::LongDateTime, Nitrogen::LongDateRec > : public std::unary_function< Nitrogen::LongDateRec, Nitrogen::LongDateTime >
 	{
@@ -152,6 +158,8 @@ namespace Nucleus
 			return Nitrogen::SecondsToDate( input );
 		}
 	};
-  }
+	
+}
 
 #endif
+

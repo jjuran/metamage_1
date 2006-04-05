@@ -51,8 +51,8 @@ namespace Nitrogen
 	
 	// 127
 	Nucleus::Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
-	                                                  ConstStr32Param     zoneName,
-	                                                  ConstStr31Param     serverName );
+	                                                           ConstStr32Param     zoneName,
+	                                                           ConstStr31Param     serverName );
 	
 	inline Nucleus::Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string& fullPath )
 	{
@@ -83,10 +83,11 @@ namespace Nitrogen
 	};
 	
 	// 221
-	ResolveAliasFile_Result ResolveAliasFile( const FSSpec& target, bool resolveAliasChains );
+	ResolveAliasFile_Result ResolveAliasFile( const FSSpec&  target,
+	                                          bool           resolveAliasChains );
 	
    Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
-                                  const FSRef& target );
+                                           const FSRef& target );
    
    Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& target );
   }

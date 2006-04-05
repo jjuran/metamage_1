@@ -23,7 +23,8 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
 	
 	void RegisterComponentManagerErrors();
 	
@@ -41,7 +42,8 @@ namespace Nitrogen {
   }
 
 namespace Nucleus
-  {
+{
+	
 	template <>
 	struct Disposer< Nitrogen::ComponentInstance > : public std::unary_function< Nitrogen::ComponentInstance, void >,
 	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
@@ -52,15 +54,16 @@ namespace Nucleus
 			HandleDestructionOSStatus( ::CloseComponent( component ) );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {
+{
 	
 	struct OpenDefaultComponent_Failed  {};
 	
-	Nucleus::Owned< ComponentInstance >
-	OpenDefaultComponent( ComponentType componentType, ComponentSubType componentSubType );
+	Nucleus::Owned< ComponentInstance > OpenDefaultComponent( ComponentType     componentType,
+	                                                          ComponentSubType  componentSubType );
 	
 	inline void CloseComponent( Nucleus::Owned< ComponentInstance > )  {}
 	

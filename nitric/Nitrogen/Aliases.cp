@@ -11,12 +11,14 @@ namespace Nitrogen
 	{
 		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
 		
-		AliasHandle result;
+		::AliasHandle result;
 		ThrowOSStatus( ::NewAlias( fromFile, &target, &result ) );
+		
 		return Nucleus::Owned< AliasHandle >::Seize( result );
 	}
 	
-	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec& fromFile, const FSSpec& target )
+	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec&  fromFile,
+	                                        const FSSpec&  target )
 	{
 		return NewAlias( &fromFile, target );
 	}
@@ -27,13 +29,18 @@ namespace Nitrogen
 	}
 	
 	Nucleus::Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
-	                                                  ConstStr32Param     zoneName,
-	                                                  ConstStr31Param     serverName )
+	                                                           ConstStr32Param     zoneName,
+	                                                           ConstStr31Param     serverName )
 	{
 		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
 		
 		::AliasHandle result;
-		ThrowOSStatus( ::NewAliasMinimalFromFullPath( fullPath.size(), fullPath.data(), zoneName, serverName, &result ) );
+		ThrowOSStatus( ::NewAliasMinimalFromFullPath( fullPath.size(),
+		                                              fullPath.data(),
+		                                              zoneName,
+		                                              serverName,
+		                                              &result ) );
+		
 		return Nucleus::Owned< AliasHandle >::Seize( result );
 	}
 	
@@ -44,39 +51,58 @@ namespace Nitrogen
 		
 		::Boolean wasChanged;
 		ResolveAlias_Result result;
-		ThrowOSStatus( ::ResolveAlias( &fromFile, alias, &result.target, &wasChanged ) );
+		
+		ThrowOSStatus( ::ResolveAlias( &fromFile,
+		                               alias,
+		                               &result.target,
+		                               &wasChanged ) );
+		
+		result.wasChanged = wasChanged;
+		
 		return result;
 	}
 	
-	ResolveAlias_Result ResolveAlias( AliasHandle    alias )
+	ResolveAlias_Result ResolveAlias( AliasHandle alias )
 	{
 		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
 		
 		::Boolean wasChanged;
 		ResolveAlias_Result result;
-		ThrowOSStatus( ::ResolveAlias( NULL, alias, &result.target, &wasChanged ) );
+		
+		ThrowOSStatus( ::ResolveAlias( NULL,
+		                               alias,
+		                               &result.target,
+		                               &wasChanged ) );
+		
+		result.wasChanged = wasChanged;
+		
 		return result;
 	}
 	
-	ResolveAliasFile_Result ResolveAliasFile( const FSSpec& target, bool resolveAliasChains )
+	ResolveAliasFile_Result ResolveAliasFile( const FSSpec& target,
+	                                          bool resolveAliasChains )
 	{
 		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
 		
 		ResolveAliasFile_Result result;
 		result.target = target;
+		
 		::Boolean targetIsFolder;
 		::Boolean wasAliased;
 		
-		ThrowOSStatus( ::ResolveAliasFile( &result.target, resolveAliasChains, &targetIsFolder, &wasAliased ) );
+		ThrowOSStatus( ::ResolveAliasFile( &result.target,
+		                                   resolveAliasChains,
+		                                   &targetIsFolder,
+		                                   &wasAliased ) );
 		
 		result.targetIsFolder = targetIsFolder;
-		result.wasAliased = wasAliased;
+		result.wasAliased     = wasAliased;
 		
 		return result;
 	}
 	
    Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
-                                  const FSRef& target )
+                                           const FSRef& target )
      {
       Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       AliasHandle result;

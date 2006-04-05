@@ -4,7 +4,8 @@
 #include "Nitrogen/Components.h"
 #endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
 	
 	void RegisterComponentManagerErrors()
 	{
@@ -17,15 +18,18 @@ namespace Nitrogen {
 	}
 	
 	Nucleus::Owned< ComponentInstance >
-	OpenDefaultComponent( ComponentType componentType, ComponentSubType componentSubType )
+	OpenDefaultComponent( ComponentType     componentType,
+	                      ComponentSubType  componentSubType )
 	{
 		Nucleus::OnlyOnce< RegisterComponentManagerErrors >();
 		
-		ComponentInstance component = ::OpenDefaultComponent( componentType, componentSubType );
+		ComponentInstance component = ::OpenDefaultComponent( componentType,
+		                                                      componentSubType );
 		if ( component == NULL )
 		{
 			throw OpenDefaultComponent_Failed();
 		}
+		
 		return Nucleus::Owned< ComponentInstance >::Seize( component );
 	}
 	

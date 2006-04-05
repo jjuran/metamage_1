@@ -182,10 +182,10 @@ namespace Nitrogen
 	template < class Object,
 	           typename AEEventHandler_RefCon_Traits< Object >::ProcPtr handler >
 	inline Nucleus::Owned< AEEventHandler >
-	AEInstallEventHandler( AEEventClass                                    theAEEventClass,
-	                       AEEventID                                       theAEEventID,
+	AEInstallEventHandler( AEEventClass                                             theAEEventClass,
+	                       AEEventID                                                theAEEventID,
 	                       typename Nucleus::ObjectParameterTraits< Object >::Type  handlerRefCon   = typename Nucleus::ObjectParameterTraits< Object >::Type(),
-	                       Boolean                                         isSysHandler    = false )
+	                       Boolean                                                  isSysHandler    = false )
 	{
 		return AEInstallEventHandler< AEEventHandler_Callback< Object, handler >::Adapter >
 		(

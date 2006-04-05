@@ -12,6 +12,7 @@ namespace Nitrogen
 	{
 		Point pt;
 		::GetMouse( &pt );
+		
 		return pt;
 	}
 	
@@ -42,6 +43,7 @@ namespace Nitrogen
 	{
 		EventRecord event;
 		::GetNextEvent( eventMask, &event );
+		
 		return event;
 	}
 	
@@ -49,6 +51,7 @@ namespace Nitrogen
 	{
 		EventRecord event;
 		::WaitNextEvent( eventMask, &event, sleep, mouseRgn );
+		
 		return event;
 	}
 	
@@ -56,6 +59,7 @@ namespace Nitrogen
 	{
 		EventRecord event;
 		::EventAvail( eventMask, &event );
+		
 		return event;
 	}
 	
@@ -70,6 +74,7 @@ namespace Nitrogen
 		
 		Point result;
 		::GetGlobalMouse( &result );
+		
 		return result;
 		
 	#else
