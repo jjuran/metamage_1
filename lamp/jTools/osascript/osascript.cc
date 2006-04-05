@@ -31,6 +31,30 @@ namespace Div = Divergence;
 namespace O = Orion;
 
 
+template < ::DescType desiredType >
+typename N::DescType_Traits< desiredType >::Result
+GetScriptErrorData( N::ComponentInstance scriptingComponent, N::AEKeyword keyword )
+{
+	return N::AEGetDescData< desiredType >( N::OSAScriptError( scriptingComponent,
+	                                                           keyword,
+	                                                           desiredType ) );
+}
+
+static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* step )
+{
+	SInt16       errorNumber  = GetScriptErrorData< typeSInt16 >( comp, kOSAErrorNumber  );
+	std::string  errorMessage = GetScriptErrorData< typeChar   >( comp, kOSAErrorMessage );
+	
+	if ( errorNumber < 0 )
+	{
+		Io::Err << "OSA script error " << errorNumber << " during " << step << ":" << "\n";
+	}
+	
+	Io::Err << errorMessage << "\n";
+	
+	O::ThrowExitStatus( errorNumber > 0 ? errorNumber : 1 );
+}
+
 inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
 {
 	return N::OpenDefaultComponent( kOSAComponentType,
@@ -49,12 +73,30 @@ static std::string ReadFileData( const FSSpec& file )
 	
 	ASSERT( bytes == fileSize );
 	
+	if ( data.size() >= 2  &&  data[0] == '#'  &&  data[1] == '!' )
+	{
+		data[0] = data[1] = '-';  // Turn she-bang line into comment 
+	}
+	
 	return std::string( &data[ 0 ], bytes );
 }
 
 static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 {
-	return N::OSACompile( OpenGenericScriptingComponent(), source );
+	NN::Shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
+	
+	try
+	{
+		return N::OSACompile( scriptingComponent,
+							  source,
+							  N::OSAModeFlags( kOSAModeCompileIntoContext ) );
+	}
+	catch ( const N::ErrOSAScriptError& )  {}
+	
+	ReportAndThrowScriptError( scriptingComponent, "compilation" );
+	
+	// Not reached
+	return NN::Owned< N::OSASpec >();
 }
 
 static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
@@ -117,6 +159,11 @@ int O::Main( int argc, const char *const argv[] )
 	
 	const std::vector< const char* >& params = options.GetFreeParams();
 	
+	typedef std::vector< const char* >::const_iterator const_iterator;
+	
+	const_iterator params_begin = params.begin();
+	const_iterator params_end   = params.end  ();
+	
 	NN::Owned< N::OSASpec > script;
 	std::vector< std::string > inlineScriptPieces = options.GetStringList( optInlineScript );
 	
@@ -130,14 +177,52 @@ int O::Main( int argc, const char *const argv[] )
 		if ( !params.empty() )
 		{
 			script = LoadScriptFile( Div::ResolvePathToFSSpec( params[ 0 ] ) );
+			++params_begin;
 		}
 	}
 	
-	NN::Owned< N::OSASpec > result = N::OSAExecute( script );
+	NN::Owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( kCoreEventClass,
+	                                                             kAEOpenApplication,
+	                                                             NN::Make< N::AEAddressDesc >() );
 	
-	if ( result.Get().id != kOSANullScript )
+	// Add the list, even if there are zero parameters.
 	{
-		Io::Out << N::AEGetDescData< typeChar >( N::OSADisplay( result ) ) << "\n";
+		NN::Owned< N::AEDescList > list = N::AECreateList< false >();
+		
+		for ( const_iterator it = params_begin;  it != params_end;  ++it )
+		{
+			N::AEPutPtr< typeChar >( list, 0, *it );
+		}
+		
+		N::AEPutParamDesc( runEvent, keyDirectObject, list );
+	}
+	
+	try
+	{
+		NN::Owned< N::OSASpec > result = N::OSAExecuteEvent( runEvent, script );
+		
+		if ( result.Get().id != kOSANullScript )
+		{
+			// human-readable by default, like Apple osascript
+			bool humanReadable = options.GetEnum( optResultFormat ) != resultsRecompilableSource;
+			
+			N::OSAModeFlags displayFlags( humanReadable ? kOSAModeDisplayForHumans : kOSAModeNull );
+			
+			std::string output = N::AEGetDescData< typeChar >( N::OSADisplay( result,
+			                                                                  typeChar,
+			                                                                  displayFlags ) );
+			
+			if ( *output.rbegin() != '\n' )
+			{
+				output += "\n";
+			}
+			
+			Io::Out << output;
+		}
+	}
+	catch ( const N::ErrOSAScriptError& )
+	{
+		ReportAndThrowScriptError( script.Get().component, "execution" );
 	}
 	
 	return 0;
