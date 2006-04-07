@@ -1570,9 +1570,10 @@ namespace Nitrogen
 	};
 	
 	template < ::DescType type >
-	typename DescType_Traits< type >::Result AEGetDescData( const AEDesc& desc )
+	typename DescType_Traits< type >::Result AEGetDescData( const AEDesc&  desc,
+	                                                        DescType       requiredType = type )
 	{
-		ASSERT( type == desc.descriptorType );
+		ASSERT( requiredType == typeWildCard || requiredType == desc.descriptorType );
 		
 		return DescType_Traits< type >().Get( AEGetDescData_Getter( desc ) );
 	}
