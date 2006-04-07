@@ -28,13 +28,6 @@ namespace Nitrogen
 	
 	Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType = typeWildCard );
 	
-	template < ::DescType tokenType > struct GetData_Traits;
-	
-	template <> struct GetData_Traits< typeNull >
-	{
-		static Nucleus::Owned< AEDesc > GetData( const AEToken&, DescType )  { return GetRootObjectSpecifier(); }
-	};
-	
 	class DataGetter
 	{
 		public:
@@ -57,12 +50,6 @@ namespace Nitrogen
 				map[ tokenType ] = callback;
 			}
 			
-			template < ::DescType tokenType >
-			void Register()
-			{
-				Register( tokenType, GetData_Traits< tokenType >::GetData );
-			}
-			
 			Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType );
 	};
 	
@@ -71,12 +58,6 @@ namespace Nitrogen
 	inline void RegisterDataGetter( DescType tokenType, DataGetter::Callback callback )
 	{
 		TheGlobalDataGetter().Register( tokenType, callback );
-	}
-	
-	template < ::DescType tokenType >
-	void RegisterDataGetter()
-	{
-		TheGlobalDataGetter().template Register< tokenType >();
 	}
 	
 }
