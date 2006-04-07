@@ -59,57 +59,62 @@ namespace Nitrogen
 	UInt32 ComputeAbsoluteIndex( const AEDesc&  keyData,
 	                             std::size_t    count )
 	{
-		AEEnumerated ordinal;
-		SInt32 index;
-		
 		switch ( keyData.descriptorType )
 		{
 			case typeAbsoluteOrdinal:
-				ordinal = AEGetDescData< typeEnumerated >( keyData );
-				
-				// Check for 'every' first
-				if ( ordinal == kAEAll )
 				{
-					return 0;
-				}
-				else
-				{
-					// Anything else requires a non-empty list
-					if ( count == 0 )
+					AEAbsoluteOrdinal ordinal = AEGetDescData< typeAbsoluteOrdinal >( keyData );
+					
+					// Check for 'every' first
+					if ( ordinal == kAEAll )
 					{
-						throw ErrAENoSuchObject();
+						return 0;
 					}
-				}
-				
-				switch ( ordinal )
-				{
-					case kAEFirst:
-						return 1;
-					case kAELast:
-						return count;
-					case kAEMiddle:
-						// If there's an even number of elements,
-						// this picks the one before the midpoint.
-						return (count + 1) / 2;
-					case kAEAny:
-						return UInt32( std::rand() / (RAND_MAX + 1.0) * count ) + 1;
-					default:
-						break;
+					else
+					{
+						// Anything else requires a non-empty list
+						if ( count == 0 )
+						{
+							throw ErrAENoSuchObject();
+						}
+					}
+					
+					switch ( ordinal )
+					{
+						case kAEFirst:
+							return 1;
+						
+						case kAELast:
+							return count;
+						
+						case kAEMiddle:
+							// If there's an even number of elements,
+							// this picks the one before the midpoint.
+							return (count + 1) / 2;
+						
+						case kAEAny:
+							return UInt32( std::rand() / (RAND_MAX + 1.0) * count ) + 1;
+						
+						default:
+							break;
+					}
 				}
 				break;
 			
 			case typeSInt32:
-				index = AEGetDescData< typeSInt32 >( keyData );
-				
-				if ( index < 0 )
 				{
-					// e.g. count == 10, index == -2 -> index = 9
-					index = count + (index + 1);
-				}
-				
-				if ( index > 0  &&  index < count )
-				{
-					return index;
+					SInt32 index = AEGetDescData< typeSInt32 >( keyData );
+					
+					if ( index < 0 )
+					{
+						// e.g. count == 10, index == -2 -> index = 9
+						index = count + (index + 1);
+					}
+					
+					if ( index > 0  &&  index <= count )
+					{
+						return index;
+					}
 				}
 				
 				break;
@@ -198,6 +203,10 @@ namespace Nitrogen
 	                                                                   const AEDesc&   keyData,
 	                                                                   RefCon )
 	{
+		if ( keyData.descriptorType == typeAbsoluteOrdinal )
+		{
+			return AccessAllProperties( containerToken, containerClass );
+		}
 		
 		AEPropertyID propertyID = AEGetDescData< typeType >( keyData );
 		
