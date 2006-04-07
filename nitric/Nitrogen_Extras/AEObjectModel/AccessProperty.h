@@ -117,6 +117,12 @@ namespace Nitrogen
 	                                                                const AEToken&  containerToken,
 	                                                                AEObjectClass   containerClass );
 	
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AccessAllProperties( const AEToken&  containerToken,
+	                                                                       AEObjectClass   containerClass )
+	{
+		return AccessAllProperties( AEPropertyID(), containerToken, containerClass );
+	}
+	
 }
 
 #endif
