@@ -18,13 +18,36 @@
 namespace Nitrogen
 {
 	
-	using namespace Nucleus::Operators;
+	static Nucleus::Owned< AEDesc > GetDataFromAppToken( const AEToken&, DescType )
+	{
+		return GetRootObjectSpecifier();
+	}
+	
+	static Nucleus::Owned< AEDesc > GetDataFromTokenList( const AEToken& obj, DescType desiredType )
+	{
+		Nucleus::Owned< AEDescList > list = AECreateList< false >();
+		
+		UInt32 count = AECountItems( obj );
+		
+		for ( UInt32 i = 1;  i <= count;  ++i )
+		{
+			AEPutDesc( list,
+			           0,
+			           GetData( AEGetNthDesc( obj, i ),
+			                    desiredType ) );
+		}
+		
+		return list;
+	}
+	
 	
 	Nucleus::Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
 	                                                             const AEObjectSpecifier&  container,
 	                                                             AEEnumeration             keyForm,
 	                                                             const AEDesc&             keyData )
 	{
+		using namespace Nucleus::Operators;
+		
 		return AECoerceDesc
 		(
 			AECreateList< true >()
@@ -44,7 +67,8 @@ namespace Nitrogen
 	
 	DataGetter::DataGetter()
 	{
-		Register< typeNull >();
+		Register( typeNull,   GetDataFromAppToken  );
+		Register( typeAEList, GetDataFromTokenList );
 	}
 	
 	Nucleus::Owned< AEDesc > DataGetter::GetData( const AEToken& obj, DescType desiredType )
