@@ -38,6 +38,8 @@ namespace Nitrogen
 	struct AEResolveCallbackFlags_Tag  {};
 	typedef Nucleus::FlagType< AEResolveCallbackFlags_Tag, short, kAEIDoMinimum > AEResolveCallbackFlags;
 	
+	template <> struct DescType_Traits< typeAbsoluteOrdinal > : Converting_DescType_Traits< AEAbsoluteOrdinal, ::FourCharCode >   {};
+	
 	#pragma mark -
 	#pragma mark ¥ AEToken ¥
 	
