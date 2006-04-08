@@ -164,28 +164,9 @@ namespace Pedestal
 				return SubView().SetCursor( location, mouseRgn );
 			}
 			
-			void MouseDown( const EventRecord& event )
-			{
-				// FIXME:  The window may want clicks even if it's not in front.
-				if ( Get() != N::FrontWindow() )
-				{
-					N::SelectWindow( Get() );
-				}
-				else
-				{
-					SubView().MouseDown( event );
-				}
-			}
+			void MouseDown( const EventRecord& event );
 			
-			void Update()
-			{
-				SubView().Update();
-				
-				if ( DefProcID_Traits< defProcID >::HasGrowIcon() )
-				{
-					DrawWindow( Get() );
-				}
-			}
+			void Update();
 			
 	};
 	
@@ -200,6 +181,31 @@ namespace Pedestal
 		                              static_cast< WindowBase* >( this ) ) ),
 		mySubView     ( N::GlobalToLocal( context.bounds ), init )
 	{
+	}
+	
+	template < class Type, short defProcID >
+	void Window< Type, defProcID >::MouseDown( const EventRecord& event )
+	{
+		// FIXME:  The window may want clicks even if it's not in front.
+		if ( Get() != N::FrontWindow() )
+		{
+			N::SelectWindow( Get() );
+		}
+		else
+		{
+			SubView().MouseDown( event );
+		}
+	}
+	
+	template < class Type, short defProcID >
+	void Window< Type, defProcID >::Update()
+	{
+		SubView().Update();
+		
+		if ( DefProcID_Traits< defProcID >::HasGrowIcon() )
+		{
+			DrawWindow( Get() );
+		}
 	}
 	
 	
