@@ -54,7 +54,6 @@ namespace Pedestal
 	{
 		public:
 			AboutBoxOwner()  {}
-			~AboutBoxOwner();
 			
 			void ShowAboutBox()  { Show(); }
 	};
