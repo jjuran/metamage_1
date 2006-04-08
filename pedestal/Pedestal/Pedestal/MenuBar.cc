@@ -82,6 +82,10 @@ namespace Pedestal
 		N::InvalMenuBar();
 	}
 	
+	MenuBar::~MenuBar()
+	{
+	}
+	
 	void MenuBar::AddMenu( N::MenuID menuID )
 	{
 		MenuRef menu = N::GetMenuRef( menuID );

@@ -47,12 +47,14 @@ namespace Pedestal
 			typedef AboutBoxBase Base;
 			
 			AboutBox( WindowClosure& closure );
+			~AboutBox();
 	};
 	
 	class AboutBoxOwner : public UniqueWindowOwner< AboutBox >
 	{
 		public:
 			AboutBoxOwner()  {}
+			~AboutBoxOwner();
 			
 			void ShowAboutBox()  { Show(); }
 	};

@@ -35,6 +35,7 @@ namespace Pedestal
 	{
 		public:
 			MenuBar( const MenuItemHandler& handler );
+			~MenuBar();
 			
 			void AddMenu     ( N::MenuID menuID );
 			void AddAppleMenu( N::MenuID menuID );
