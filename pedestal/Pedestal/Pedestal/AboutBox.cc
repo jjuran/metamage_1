@@ -64,5 +64,9 @@ namespace Pedestal
 	{
 	}
 	
+	AboutBoxOwner::~AboutBoxOwner()
+	{
+	}
+	
 }
 
