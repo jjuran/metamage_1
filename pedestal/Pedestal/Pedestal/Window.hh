@@ -22,21 +22,18 @@ namespace Pedestal
 		const Rect&         bounds;
 		ConstStr255Param    title;
 		bool                visible;
-		//N::WindowDefProcID  procID;
 		N::WindowRef        behind;
 		bool                goAwayFlag;
 		
 		NewWindowContext( const Rect&         bounds,
 			              ConstStr255Param    title,
 			              bool                visible    = true,
-			              //N::WindowDefProcID  procID     = defProcID,
 			              N::WindowRef        behind     = kFirstWindowOfClass,
 			              bool                goAwayFlag = true )
 		:
 			bounds    ( bounds     ),
 			title     ( title      ),
 			visible   ( visible    ),
-			//procID    ( procID     ),
 			behind    ( behind     ),
 			goAwayFlag( goAwayFlag )
 		{}
@@ -120,7 +117,7 @@ namespace Pedestal
 			virtual void Activate   ( bool activating                    ) = 0;
 			virtual bool SetCursor  ( Point location, RgnHandle mouseRgn ) = 0;
 			virtual void Resized    ( const Rect& newBounds              ) = 0;
-			virtual bool UserCommand( MenuItemCode code                       ) = 0;
+			virtual bool UserCommand( MenuItemCode code                  ) = 0;
 	};
 	
 	class ClosableWindow
