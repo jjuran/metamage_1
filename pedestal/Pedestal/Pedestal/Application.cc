@@ -550,6 +550,10 @@ namespace Pedestal
 		N::InvalMenuBar();
 	}
 	
+	Application::~Application()
+	{
+	}
+	
 	void Application::EventLoop()
 	{
 		// Use two levels of looping.

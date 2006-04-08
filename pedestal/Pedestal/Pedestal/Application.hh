@@ -60,6 +60,7 @@ namespace Pedestal
 			
 			// Constructor & destructor.
 			Application();
+			~Application();
 			
 			// Control
 			int Run(); // This calls the main event loop.
