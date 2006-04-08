@@ -83,8 +83,6 @@ namespace Pedestal
 			void RegisterMenuItemHandler( MenuItemCode code, MenuItemHandler* handler );
 		
 		private:
-			//V::ObjectSupportLibrary myObjectSupportLib;
-			
 			MenuItemDispatcher menuItemDispatcher;
 			MenuItemHandlerMap menuItemHandlers;
 			
@@ -133,10 +131,6 @@ namespace Pedestal
 	Application& TheApp();
 	
 	void DispatchEvent( const EventRecord& event );
-	
-	bool DoNextEvent( short eventMask );
-	
-	void ForceUpdateEvent();
 	
 }
 

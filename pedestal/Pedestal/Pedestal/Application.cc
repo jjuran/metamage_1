@@ -108,26 +108,6 @@ namespace Pedestal
 		return *gApp;
 	}
 	
-	/*
-	bool DoNextEvent( short eventMask )
-	{
-		EventRecord event;
-		
-		if ( ::WaitNextEvent( eventMask, &event, 1, NULL ) )
-		{
-			DispatchEvent( event );
-			return true;
-		}
-		
-		return false;
-	}
-	
-	void ForceUpdateEvent()
-	{
-		DoNextEvent( updateMask );
-	}
-	*/
-	
 	bool MenuItemDispatcher::Run( MenuItemCode code ) const
 	{
 		bool handled = false;
