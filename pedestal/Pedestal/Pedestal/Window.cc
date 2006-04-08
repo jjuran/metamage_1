@@ -13,23 +13,27 @@
 #include "Utilities/Saved.h"
 
 
-namespace Pedestal {
+namespace Pedestal
+{
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	NN::Owned< N::WindowRef > CreateWindow
-	(
-		const Rect& bounds, 
-		ConstStr255Param title, 
-		bool visible, 
-		N::WindowDefProcID procID, 
-		N::WindowRef behind, 
-		bool goAwayFlag, 
-		N::RefCon refCon
-	)
+	NN::Owned< N::WindowRef > CreateWindow( const Rect&         bounds,
+	                                        ConstStr255Param    title,
+	                                        bool                visible,
+	                                        N::WindowDefProcID  procID,
+	                                        N::WindowRef        behind,
+	                                        bool                goAwayFlag,
+	                                        N::RefCon           refCon )
 	{
-		NN::Owned< N::WindowRef > window = N::NewCWindow( bounds, title, visible, procID, behind, goAwayFlag, refCon );
+		NN::Owned< N::WindowRef > window = N::NewCWindow( bounds,
+		                                                  title,
+		                                                  visible,
+		                                                  procID,
+		                                                  behind,
+		                                                  goAwayFlag,
+		                                                  refCon );
 		
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );
