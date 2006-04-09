@@ -292,7 +292,7 @@ namespace Nitrogen
 #endif
 	
 	Nucleus::Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier,
-	                                                      AEResolveCallbackFlags    callbackFlags );
+	                                                      AEResolveCallbackFlags    callbackFlags = AEResolveCallbackFlags() );
 	
 	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall );
 	
