@@ -26,7 +26,9 @@ namespace Orion
 			UndefinedOption( const std::string& option )
 			: message( std::string() + "Undefined option " + option )  {}
 			
-			const char* what() const  { return message.c_str(); }
+			~UndefinedOption() throw ()  {}
+			
+			const char* what() const throw ()  { return message.c_str(); }
 	};
 	
 	class Options
