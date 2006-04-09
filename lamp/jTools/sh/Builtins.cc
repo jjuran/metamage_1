@@ -18,7 +18,7 @@
 #include "unistd.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.h"
+#include "POSeven/FileDescriptor.hh"
 
 // Orion
 #include "Orion/Main.hh"

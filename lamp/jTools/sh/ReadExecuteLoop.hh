@@ -9,7 +9,7 @@
 #include <vector>
 
 // POSeven
-#include "POSeven/FileDescriptor.h"
+#include "POSeven/FileDescriptor.hh"
 
 // Io
 #include "Io/Handle.hh"

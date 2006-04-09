@@ -18,7 +18,7 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.h"
+#include "POSeven/FileDescriptor.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
