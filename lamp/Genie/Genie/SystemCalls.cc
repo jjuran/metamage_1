@@ -17,7 +17,7 @@
 #include "AEFramework/AEFramework.h"
 
 // POSeven
-#include "POSeven/Errno.h"
+#include "POSeven/Errno.hh"
 
 // Nitrogen Extras / Templates
 #include "Templates/FunctionalExtensions.h"

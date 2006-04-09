@@ -9,7 +9,7 @@
 #include "Nitrogen/Threads.h"
 
 // POSeven
-#include "POSeven/Errno.h"
+#include "POSeven/Errno.hh"
 
 // Genie
 #include "Genie/Process.hh"
