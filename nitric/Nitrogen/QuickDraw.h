@@ -213,11 +213,6 @@ namespace Nitrogen
 	using ::CCrsrHandle;
 	using ::GDHandle;
 	typedef GrafPtr CGrafPtr;
-
-	namespace Private
-	{
-		void DisposePort( CGrafPtr port );
-	}
 	
 }
 
@@ -266,7 +261,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::CGrafPtr port ) const
 		{
-			Nitrogen::Private::DisposePort( port );
+			::DisposePort( port );
 		}
 	};
 	
@@ -327,7 +322,8 @@ namespace Nitrogen
 	
 	GrafPtr GetPort();
 	
-	bool QDSwapPort( CGrafPtr newPort, CGrafPtr& oldPort );
+	inline bool QDSwapPort( CGrafPtr newPort, CGrafPtr& oldPort )  { return ::QDSwapPort( newPort, reinterpret_cast< ::CGrafPtr* >( &oldPort ) ); }
+	
 	CGrafPtr QDSwapPort( CGrafPtr newPort );
 	
 	// GrafDevice
@@ -708,25 +704,9 @@ namespace Nitrogen
 	// GetPortPixMap
 	// ...
 	
-#if OPAQUE_TOOLBOX_STRUCTS
-	
-	using ::GetPortBitMapForCopyBits;
+	const BitMap* GetPortBitMapForCopyBits( CGrafPtr port );
 	
 	Rect GetPortBounds( CGrafPtr port );
-	
-#else
-	
-	inline const BitMap* GetPortBitMapForCopyBits( CGrafPtr port )
-	{
-		return &::GrafPtr( port )->portBits;
-	}
-	
-	inline const Rect& GetPortBounds( CGrafPtr port )
-	{
-		return ::GrafPtr( port )->portRect;
-	}
-	
-#endif
 	
 	RGBColor GetPortForeColor( CGrafPtr port );
 	RGBColor GetPortBackColor( CGrafPtr port );
@@ -761,7 +741,7 @@ namespace Nitrogen
 	
 	// GetQDGlobalsRandomSeed
 	
-#if OPAQUE_TOOLBOX_STRUCTS
+#if ACCESSOR_CALLS_ARE_FUNCTIONS
 	
 	const BitMap&  GetQDGlobalsScreenBits();
 	const Cursor&  GetQDGlobalsArrow();
@@ -770,8 +750,6 @@ namespace Nitrogen
 	const Pattern& GetQDGlobalsGray();
 	const Pattern& GetQDGlobalsBlack();
 	const Pattern& GetQDGlobalsWhite();
-	
-	using ::GetQDGlobalsThePort;
 	
 #else
 	
@@ -783,9 +761,9 @@ namespace Nitrogen
 	inline const Pattern& GetQDGlobalsBlack()       { return qd.black; }
 	inline const Pattern& GetQDGlobalsWhite()       { return qd.white; }
 	
-	inline GrafPtr        GetQDGlobalsThePort()     { return qd.thePort; }
-	
 #endif
+	
+	using ::GetQDGlobalsThePort;
 	
 	// ...
 	

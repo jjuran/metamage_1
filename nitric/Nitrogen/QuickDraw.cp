@@ -22,6 +22,7 @@
 #endif
 #endif
 
+
 namespace Nitrogen
 {
 	
@@ -31,22 +32,6 @@ namespace Nitrogen
 		::GetPort( &port );
 		
 		return port;
-	}
-	
-	bool QDSwapPort( CGrafPtr newPort, CGrafPtr& oldPort )
-	{
-	#if TARGET_API_MAC_CARBON
-		
-		return ::QDSwapPort( newPort, &oldPort );
-		
-	#else
-		
-		oldPort = GetPort();
-		SetPort( newPort );
-		
-		return oldPort != newPort;
-		
-	#endif
 	}
 	
 	CGrafPtr QDSwapPort( CGrafPtr newPort )
@@ -274,7 +259,10 @@ namespace Nitrogen
 		return CheckResource( ::MacGetCursor( id ) );
 	}
 	
-#if OPAQUE_TOOLBOX_STRUCTS
+	const BitMap* GetPortBitMapForCopyBits( CGrafPtr port )
+	{
+		return ::GetPortBitMapForCopyBits( port );
+	}
 	
 	Rect GetPortBounds( CGrafPtr port )
 	{
@@ -282,53 +270,25 @@ namespace Nitrogen
 		return *( ::GetPortBounds( port, &bounds ) );
 	}
 	
-#endif
-	
 	RGBColor GetPortForeColor( CGrafPtr port )
 	{
-	#if TARGET_API_MAC_CARBON
-		
 		RGBColor result;
 		::GetPortForeColor( port, &result );
 		
 		return result;
-		
-	#else
-		
-		return ::CGrafPtr( port )->rgbFgColor;
-		
-	#endif
 	}
 	
 	RGBColor GetPortBackColor( CGrafPtr port )
 	{
-	#if TARGET_API_MAC_CARBON
-		
 		RGBColor result;
 		::GetPortBackColor( port, &result );
 		
 		return result;
-		
-	#else
-		
-		return ::CGrafPtr( port )->rgbBkColor;
-		
-	#endif
 	}
 	
 	RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		return ::GetPortVisibleRegion( port, region );
-		
-	#else
-		
-		::MacCopyRgn( ::GrafPtr( port )->visRgn, region );
-		
-		return region;
-		
-	#endif
 	}
 	
 	Nucleus::Owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port )
@@ -341,17 +301,7 @@ namespace Nitrogen
 	
 	RgnHandle GetPortClipRegion( CGrafPtr port, RgnHandle region )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		return ::GetPortClipRegion( port, region );
-		
-	#else
-		
-		::MacCopyRgn( ::GrafPtr( port )->clipRgn, region );
-		
-		return region;
-		
-	#endif
 	}
 	
 	Nucleus::Owned< RgnHandle > GetPortClipRegion( CGrafPtr port )
@@ -364,74 +314,47 @@ namespace Nitrogen
 	
 	Point GetPortPenSize( CGrafPtr port )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		Point result;
 		(void)::GetPortPenSize( port, &result );
 		
 		return result;
-		
-	#else
-		
-		return ::GrafPtr( port )->pnSize;
-		
-	#endif
 	}
 	
 	bool IsPortColor( CGrafPtr port )
 	{
-	#if TARGET_API_MAC_CARBON
-		
 		return ::IsPortColor( port );
-		
-	#else
-		
-		// Taken from QISA/MoreIsBetter/MoreQuickDraw.cp
-		return ::CGrafPtr( port )->portVersion < 0;
-		
-	#endif
 	}
 	
 	void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		::SetPortClipRegion( port, clipRgn );
-		
-	#else
-		
-		MacCopyRgn( clipRgn, ::GrafPtr( port )->clipRgn );
-		
-	#endif
 	}
 	
 	void SetPortPenSize( CGrafPtr port, Point penSize )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		::SetPortPenSize( port, penSize );
-		
-	#else
-		
-		::GrafPtr( port )->pnSize = penSize;
-		
-	#endif
 	}
 	
-#if OPAQUE_TOOLBOX_STRUCTS
+#if ACCESSOR_CALLS_ARE_FUNCTIONS
 	
-	template < class Type >
-	Type& QDGlobalsVar
-	(
-	#if !TARGET_RT_MAC_MACHO
-		pascal
-	#endif
-		Type* (getter)(Type*)
-	)
+	namespace Detail
 	{
-		static Type var;
-		return *getter( &var );
+		
+		template < class Type >
+		Type& QDGlobalsVar
+		(
+		#if !TARGET_RT_MAC_MACHO
+			pascal
+		#endif
+			Type* (getter)(Type*)
+		)
+		{
+			static Type var;
+			return *getter( &var );
+		}
+		
 	}
+	
 	
 	// Thread-safety note:
 	//
@@ -439,53 +362,19 @@ namespace Nitrogen
 	// since two simultaneous accesses would be copying the same data.
 	// The Pattern-returning functions are not thread-safe.
 	
-	const BitMap&  GetQDGlobalsScreenBits()  { return QDGlobalsVar( ::GetQDGlobalsScreenBits ); }
-	const Cursor&  GetQDGlobalsArrow()       { return QDGlobalsVar( ::GetQDGlobalsArrow      ); }
-	const Pattern& GetQDGlobalsDarkGray()    { return QDGlobalsVar( ::GetQDGlobalsDarkGray   ); }
-	const Pattern& GetQDGlobalsLightGray()   { return QDGlobalsVar( ::GetQDGlobalsLightGray  ); }
-	const Pattern& GetQDGlobalsGray()        { return QDGlobalsVar( ::GetQDGlobalsGray       ); }
-	const Pattern& GetQDGlobalsBlack()       { return QDGlobalsVar( ::GetQDGlobalsBlack      ); }
-	const Pattern& GetQDGlobalsWhite()       { return QDGlobalsVar( ::GetQDGlobalsWhite      ); }
+	const BitMap&  GetQDGlobalsScreenBits()  { return Detail::QDGlobalsVar( ::GetQDGlobalsScreenBits ); }
+	const Cursor&  GetQDGlobalsArrow()       { return Detail::QDGlobalsVar( ::GetQDGlobalsArrow      ); }
+	const Pattern& GetQDGlobalsDarkGray()    { return Detail::QDGlobalsVar( ::GetQDGlobalsDarkGray   ); }
+	const Pattern& GetQDGlobalsLightGray()   { return Detail::QDGlobalsVar( ::GetQDGlobalsLightGray  ); }
+	const Pattern& GetQDGlobalsGray()        { return Detail::QDGlobalsVar( ::GetQDGlobalsGray       ); }
+	const Pattern& GetQDGlobalsBlack()       { return Detail::QDGlobalsVar( ::GetQDGlobalsBlack      ); }
+	const Pattern& GetQDGlobalsWhite()       { return Detail::QDGlobalsVar( ::GetQDGlobalsWhite      ); }
 	
 #endif
 	
 	Nucleus::Owned< CGrafPtr > CreateNewPort()
 	{
-	#if ACCESSOR_CALLS_ARE_FUNCTIONS
-		
-		CGrafPtr result = ::CreateNewPort();
-		
-	#else
-		
-		Nucleus::Owned< Ptr > portMem = NewPtr( sizeof (::CGrafPort) );
-		
-		::OpenCPort( Ptr_Cast< ::CGrafPort >( portMem.Get() ) );
-		
-		CGrafPtr result( Ptr_Cast< ::CGrafPort >( portMem.Release() ) );
-		
-	#endif
-		
-		return Nucleus::Owned< CGrafPtr >::Seize( result );
-	}
-	
-	namespace Private
-	{
-		
-		void DisposePort( CGrafPtr port )
-		{
-		#if ACCESSOR_CALLS_ARE_FUNCTIONS
-			
-			::DisposePort( port );
-			
-		#else
-			
-			::CloseCPort( port );
-			
-			DisposePtr( Nucleus::Owned< Ptr >::Seize( ::CGrafPtr( port ) ) );
-			
-		#endif
-		}
-		
+		return Nucleus::Owned< CGrafPtr >::Seize( ::CreateNewPort() );
 	}
 	
 #if TARGET_API_MAC_OSX
