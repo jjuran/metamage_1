@@ -13,31 +13,39 @@ namespace Nitrogen
   {
 	
 	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
-	                              ConstStr255Param  title,
-	                              bool              visible,
-	                              WindowDefProcID   procID,
-	                              WindowRef         behind,
-	                              bool              goAwayFlag,
-	                              RefCon            refCon )
+	                                       ConstStr255Param  title,
+	                                       bool              visible,
+	                                       WindowDefProcID   procID,
+	                                       WindowRef         behind,
+	                                       bool              goAwayFlag,
+	                                       RefCon            refCon )
 	{
-		return Nucleus::Owned< WindowRef >::Seize
-		(
-			::NewWindow( NULL, &bounds, title, visible, procID, behind, goAwayFlag, refCon )
-		);
+		return Nucleus::Owned< WindowRef >::Seize( ::NewWindow( NULL,
+		                                                        &bounds,
+		                                                        title,
+		                                                        visible,
+		                                                        procID,
+		                                                        behind,
+		                                                        goAwayFlag,
+		                                                        refCon ) );
 	}
 	
 	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
-	                              ConstStr255Param  title,
-	                              bool              visible,
-	                              WindowDefProcID   procID,
-	                              WindowRef         behind,
-	                              bool              goAwayFlag,
-	                              RefCon            refCon )
+	                                        ConstStr255Param  title,
+	                                        bool              visible,
+	                                        WindowDefProcID   procID,
+	                                        WindowRef         behind,
+	                                        bool              goAwayFlag,
+	                                        RefCon            refCon )
 	{
-		return Nucleus::Owned< WindowRef >::Seize
-		(
-			::NewCWindow( NULL, &bounds, title, visible, procID, behind, goAwayFlag, refCon )
-		);
+		return Nucleus::Owned< WindowRef >::Seize( ::NewCWindow( NULL,
+		                                                         &bounds,
+		                                                         title,
+		                                                         visible,
+		                                                         procID,
+		                                                         behind,
+		                                                         goAwayFlag,
+		                                                         refCon ) );
 	}
 	
 	FindWindow_Result MacFindWindow( Point point )
@@ -60,36 +68,54 @@ namespace Nitrogen
 	{
 		::Str255 title;
 		::GetWTitle( window, title );
+		
 		return title;
 	}
 	
-	void SizeWindow( WindowRef window, short width, short height, bool updateFlag )
+	void SizeWindow( WindowRef  window,
+	                 short      width,
+	                 short      height,
+	                 bool       updateFlag )
 	{
 		::SizeWindow( window, width, height, updateFlag );
 	}
 	
-	static GrowWindow_Result GrowWindow_( WindowRef window, Point startPt, const Rect* bBox )
+	namespace Detail
 	{
-		GrowWindow_Result result;
-		result.grew = ::GrowWindow( window, startPt, bBox );
-		return result;
+	
+		static GrowWindow_Result GrowWindow( WindowRef    window,
+		                                     Point        startPt,
+		                                     const Rect*  bBox )
+		{
+			GrowWindow_Result result;
+			result.grew = ::GrowWindow( window, startPt, bBox );
+			
+			return result;
+		}
+		
 	}
 	
-	GrowWindow_Result GrowWindow( WindowRef window, Point startPt, const Rect& bBox )
+	GrowWindow_Result GrowWindow( WindowRef    window,
+	                              Point        startPt,
+	                              const Rect&  bBox )
 	{
-		return GrowWindow_( window, startPt, &bBox );
+		return Detail::GrowWindow( window, startPt, &bBox );
 	}
 	
 #if TARGET_API_MAC_CARBON
 	
+	// Carbon allows you to pass a NULL Rect*
+	
 	GrowWindow_Result GrowWindow( WindowRef window, Point startPt )
 	{
-		return GrowWindow_( window, startPt, NULL );
+		return Detail::GrowWindow( window, startPt, NULL );
 	}
 	
 #endif
 	
-	void DragWindow( WindowRef window, Point point, const Rect& dragRect )
+	void DragWindow( WindowRef    window,
+	                 Point        point,
+	                 const Rect&  dragRect )
 	{
 		::DragWindow( window, point, &dragRect );
 	}
@@ -133,6 +159,7 @@ namespace Nitrogen
 		{
 			Nucleus::Scoped< Port > savedPort;
 			SetPortWindowPort( window );
+			
 			::InvalRect( &bounds );
 		}
 		
