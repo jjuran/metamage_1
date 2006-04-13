@@ -198,11 +198,7 @@ namespace Nitrogen
 	// 4598
 	GrowWindow_Result GrowWindow( WindowRef window, Point startPt, const Rect& bBox );
 	
-#if TARGET_API_MAC_CARBON
-	
 	GrowWindow_Result GrowWindow( WindowRef window, Point startPt );
-	
-#endif
 	
 	// 4614
 	void DragWindow( WindowRef window, Point point, const Rect& dragRect );

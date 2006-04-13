@@ -102,16 +102,20 @@ namespace Nitrogen
 		return Detail::GrowWindow( window, startPt, &bBox );
 	}
 	
-#if TARGET_API_MAC_CARBON
-	
-	// Carbon allows you to pass a NULL Rect*
-	
 	GrowWindow_Result GrowWindow( WindowRef window, Point startPt )
 	{
+	#if TARGET_API_MAC_CARBON
+		
+		// Carbon allows you to pass a NULL Rect*
 		return Detail::GrowWindow( window, startPt, NULL );
+		
+	#else
+		
+		const Rect unbounded = { -32767, -32767, 32767, 32767 };
+		return Detail::GrowWindow( window, startPt, &unbounded );
+		
+	#endif
 	}
-	
-#endif
 	
 	void DragWindow( WindowRef    window,
 	                 Point        point,
