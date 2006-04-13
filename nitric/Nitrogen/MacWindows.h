@@ -133,12 +133,12 @@ namespace Nitrogen
 	
 	// 1402
 	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
-	                              ConstStr255Param  title,
-	                              bool              visible,
-	                              WindowDefProcID   procID,
-	                              WindowRef         behind,
-	                              bool              goAwayFlag,
-	                              RefCon            refCon );
+	                                       ConstStr255Param  title,
+	                                       bool              visible,
+	                                       WindowDefProcID   procID,
+	                                       WindowRef         behind,
+	                                       bool              goAwayFlag,
+	                                       RefCon            refCon );
 	
 	// 1437
 	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
@@ -181,7 +181,10 @@ namespace Nitrogen
 	Str255 GetWTitle( WindowRef window );
 	
 	// 4580
-	void SizeWindow( WindowRef window, short width, short height, bool updateFlag );
+	void SizeWindow( WindowRef  window,
+	                 short      width,
+	                 short      height,
+	                 bool       updateFlag );
 	
 	union GrowWindow_Result
 	{
