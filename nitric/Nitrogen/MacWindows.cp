@@ -122,28 +122,12 @@ namespace Nitrogen
 	
 	void SetWRefCon( WindowRef window, RefCon refCon )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		::SetWRefCon( window, refCon );
-		
-	#else
-		
-		reinterpret_cast< WindowPeek >( window.Get() )->refCon = refCon;
-		
-	#endif
 	}
 	
 	RefCon GetWRefCon( WindowRef window )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		return ::GetWRefCon( window );
-		
-	#else
-		
-		return reinterpret_cast< WindowPeek >( window.Get() )->refCon;
-		
-	#endif
 	}
 	
 	void InvalWindowRect( WindowRef window, const Rect& bounds )
@@ -168,28 +152,12 @@ namespace Nitrogen
 	
 	WindowKind GetWindowKind( WindowRef window )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-			
 		return ::GetWindowKind( window );
-			
-	#else
-			
-		return reinterpret_cast< WindowPeek >( window.Get() )->windowKind;
-			
-	#endif
 	}
 	
 	void SetWindowKind( WindowRef window, WindowKind windowKind )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		::SetWindowKind( window, windowKind );
-		
-	#else
-		
-		reinterpret_cast< WindowPeek >( window.Get() )->windowKind = windowKind;
-		
-	#endif
 	}
 	
    WindowAttributes GetWindowAttributes( WindowRef window )
