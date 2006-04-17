@@ -7,11 +7,14 @@
 #include <string>
 #include <vector>
 
-// Nitrogen Nucleus
+// POSIX
+#include "unistd.h"
+
+// Nucleus
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Owned.h"
 
-// Nitrogen / Mac OS support
+// Nitrogen
 #include "Nitrogen/Files.h"
 #include "Nitrogen/OSA.h"
 #include "Nitrogen/Resources.h"
@@ -81,15 +84,42 @@ static std::string ReadFileData( const FSSpec& file )
 	return std::string( &data[ 0 ], bytes );
 }
 
+static NN::Owned< N::OSASpec > MakeCWDContext()
+{
+	char stupid_buffer[ 1024 ];
+	char* gotcwd = getcwd( stupid_buffer, 1024 );
+	
+	if ( gotcwd == NULL )
+	{
+		Io::Err << "getcwd() returned NULL, sorry\n";
+		
+		O::ThrowExitStatus( 1 );
+	}
+	
+	std::string cwd( stupid_buffer );
+	
+	std::string cwdProperty = "property gCurrentWorkingDirectory : \"" + cwd + "\"";
+	
+	
+	return
+	N::OSACompile( OpenGenericScriptingComponent(),
+	               N::AECreateDesc< typeChar >( cwdProperty ),
+	               N::OSAModeFlags( kOSAModeCompileIntoContext ) );
+}
+
 static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 {
-	NN::Shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
+	NN::Owned< N::OSASpec > cwdContext = MakeCWDContext();
+	
+	//NN::Shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
+	NN::Shared< N::ComponentInstance > scriptingComponent = cwdContext.Get().component;
 	
 	try
 	{
 		return N::OSACompile( scriptingComponent,
 							  source,
-							  N::OSAModeFlags( kOSAModeCompileIntoContext ) );
+							  N::OSAModeFlags( kOSAModeAugmentContext ),
+							  cwdContext );
 	}
 	catch ( const N::ErrOSAScriptError& )  {}
 	
