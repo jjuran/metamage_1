@@ -213,8 +213,7 @@ namespace ALine
 				
 				if ( extraLibs )
 				{
-					systemLibs          << q( Pathname( sharedLibs & "ObjectSupportLib" ) )
-					           << "-wi" << q( Pathname( sharedLibs & "ControlsLib"      ) )
+					systemLibs << "-wi" << q( Pathname( sharedLibs & "ControlsLib"      ) )
 					           << "-wi" << q( Pathname( sharedLibs & "WindowsLib"       ) )
 					           << "-wi" << q( Pathname( sharedLibs & "MenusLib"         ) );
 				}
