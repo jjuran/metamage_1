@@ -689,6 +689,10 @@ namespace ALine
 		{
 			command << "> /tmp/link-errs.txt 2>&1";
 		}
+		else
+		{
+			command << " 2>&1 | filter-mwlink-warnings";
+		}
 		
 		command = cmdgen.MakeNativeCommand( command );
 		
