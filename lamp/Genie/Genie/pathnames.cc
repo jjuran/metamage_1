@@ -67,7 +67,8 @@ namespace Genie
 		
 		std::string pathname = path;
 		
-		if (    PathBeginsWith( pathname, "/bin"  )
+		if (    PathBeginsWith( pathname, "/Developer" )
+		     || PathBeginsWith( pathname, "/bin"  )
 		     || PathBeginsWith( pathname, "/etc"  )
 		     || PathBeginsWith( pathname, "/lib"  )
 		     || PathBeginsWith( pathname, "/sbin" )
