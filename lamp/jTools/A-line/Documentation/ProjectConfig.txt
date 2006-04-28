@@ -61,7 +61,7 @@ developer - The name or names of whoever gets credit for this project.
 distributor - The name of whoever packaged this project for use with A-line.
 website - A Web site address for this project in URL form.
 
-A glance through these directive reveals these parts of speech:
+A glance through these directives reveals these parts of speech:
 
 noun, verb (imperative), verb (present tense, third person singular)
 
