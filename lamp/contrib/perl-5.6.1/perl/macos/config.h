@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.2  2006-02-14 04:08:22  jax
+Revision 1.3  2006-04-28 04:35:39  jax
+Define directories for Perl modules.
+
+Revision 1.2  2006/02/14 04:08:22  jax
 Various changes to work in Lamp.
 
 Revision 1.1  2006/02/14 01:01:52  jax
@@ -2900,7 +2903,9 @@ First build released to public
  *	in programs that are not prepared to deal with ~ expansion at run-time.
  */
 #undef PRIVLIB 	/**/
-#define PRIVLIB_EXP ""		/**/
+//#define PRIVLIB_EXP ""		/**/
+
+#define PRIVLIB_EXP "/usr/lib/perl5:/usr/lib/perl"
 
 /* PTRSIZE:
  *	This symbol contains the size of a pointer, so that the C preprocessor
