@@ -3,8 +3,8 @@
  *	======
  */
 
-// Nitrogen Core
-#include "Nitrogen/Assert.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // Nitrogen Extras / ClassicExtras
 #include "ClassicExtras/CDROMAudio.h"
