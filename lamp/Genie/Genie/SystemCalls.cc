@@ -689,10 +689,24 @@ namespace Genie
 	
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
-		int put = Io::Write( CurrentProcess().FileDescriptors()[ fd ].handle,
-		                     reinterpret_cast< const char* >( buf ),
-		                     count );
-		return put;
+		try
+		{
+			int put = Io::Write( CurrentProcess().FileDescriptors()[ fd ].handle,
+								 reinterpret_cast< const char* >( buf ),
+								 count );
+			return put;
+		}
+		catch ( const P7::Errno& error )
+		{
+			CurrentProcess().SetErrno( error );
+		}
+		catch ( ... )
+		{
+			// FIXME:  Is there a better course of action, or at least a better default?
+			CurrentProcess().SetErrno( EIO );
+		}
+		
+		return -1;
 	}
 	
 	REGISTER_SYSTEM_CALL( write );
