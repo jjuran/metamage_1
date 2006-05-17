@@ -369,7 +369,9 @@ namespace Genie
 	{
 		if ( fWindow.Get() == NULL )
 		{
-			fWindow.Open( fProgramName );
+			//const unsigned char* name = fProgramName;
+			const unsigned char* name = "\p" "gterm";
+			fWindow.Open( name );
 			myInput = &Input();
 		}
 		
