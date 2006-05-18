@@ -67,18 +67,22 @@ namespace Pedestal
 	struct RunState
 	{
 		AppleEventSignature signatureOfFirstAppleEvent;
-		UInt32 ticksSinceLastLayerSwitch;
+		UInt32 tickCountAtLastLayerSwitch;
+		UInt32 maxTicksToSleep;
 		
 		bool inForeground;     // set to true when the app is frontmost
 		bool startupComplete;  // set to true once the app is ready to respond to events
+		bool activelyBusy;     // set to true by active threads, reset in event loop
 		bool quitRequested;    // set to true when quitting is in process, to false if cancelled
 		bool endOfEventLoop;   // set to true once the app is ready to stop processing events
 		
 		RunState()
 		:
-			ticksSinceLastLayerSwitch( 0 ),
+			tickCountAtLastLayerSwitch( 0 ),
+			maxTicksToSleep           ( 0 ),
 			inForeground   ( false ),  // we have to check
 			startupComplete( false ),
+			activelyBusy   ( false ),
 			quitRequested  ( false ),
 			endOfEventLoop ( false )
 		{}
@@ -534,6 +538,19 @@ namespace Pedestal
 	{
 	}
 	
+	static bool ReadyToWaitForEvents()
+	{
+		UInt32 minTicksBetweenWNE = gRunState.inForeground ?  2 :  1;
+		
+		UInt32 timetoWNE = gRunState.tickCountAtLastLayerSwitch + minTicksBetweenWNE;
+		
+		UInt32 now = ::TickCount();
+		
+		bool readyToWait = !gRunState.activelyBusy || now >= timetoWNE;
+		
+		return readyToWait;
+	}
+	
 	void Application::EventLoop()
 	{
 		// Use two levels of looping.
@@ -545,26 +562,25 @@ namespace Pedestal
 			{
 				while ( !gRunState.endOfEventLoop )
 				{
+					gRunState.activelyBusy = false;
+					
 					Repeaters().PerformAll();
 					
 					N::YieldToAnyThread();
 					
-					UInt32 minTicksBetweenWNE = gRunState.inForeground ?  2 :  2;
-					UInt32 maxTicksToSleep    = gRunState.inForeground ?  4 : 10;
-					
-					UInt32 timetoWNE = gRunState.ticksSinceLastLayerSwitch + minTicksBetweenWNE;
-					
-					if ( ::TickCount() >= timetoWNE )
+					if ( ReadyToWaitForEvents() )
 					{
-						EventRecord event = N::WaitNextEvent( everyEvent, maxTicksToSleep );
+						EventRecord event = N::WaitNextEvent( everyEvent, gRunState.maxTicksToSleep );
 						
-						gRunState.ticksSinceLastLayerSwitch = ::TickCount();
+						gRunState.tickCountAtLastLayerSwitch = ::TickCount();
 						
 						(void)DispatchCursor( event );
 						
 						if ( event.what != nullEvent )
 						{
 							DispatchEvent( event );
+							
+							gRunState.maxTicksToSleep = 0;  // Always idle after an event
 						}
 						else if ( gRunState.quitRequested )
 						{
@@ -572,6 +588,8 @@ namespace Pedestal
 						}
 						else
 						{
+							gRunState.maxTicksToSleep = 0x7FFFFFFF;
+							
 							GiveIdleTimeToWindows( event );
 						}
 					}
@@ -671,6 +689,19 @@ namespace Pedestal
 		}
 		
 		return true;
+	}
+	
+	void AdjustSleepForTimer( UInt32 ticksToSleep )
+	{
+		if ( ticksToSleep < gRunState.maxTicksToSleep )
+		{
+			gRunState.maxTicksToSleep = ticksToSleep;
+		}
+	}
+	
+	void AdjustSleepForActivity()
+	{
+		gRunState.activelyBusy = true;
 	}
 	
 }
