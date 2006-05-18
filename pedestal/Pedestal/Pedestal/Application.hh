@@ -132,5 +132,9 @@ namespace Pedestal
 	
 	void DispatchEvent( const EventRecord& event );
 	
+	void AdjustSleepForTimer( UInt32 ticksToSleep );
+	
+	void AdjustSleepForActivity();
+	
 }
 
