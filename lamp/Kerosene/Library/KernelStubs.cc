@@ -29,10 +29,16 @@
 
 class UnimplementedSystemCall {};
 
-inline void CheckImportedSymbol( void* symbol )
+inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 {
 	if ( symbol == NULL )
 	{
+		if ( !wouldRecurse )
+		{
+			const char warning[] = "Unimplemented system call\n";
+			write( 2, warning, sizeof warning - 1 );
+		}
+		
 		throw UnimplementedSystemCall();
 	}
 }
@@ -666,7 +672,7 @@ inline void CheckImportedSymbol( void* symbol )
 	
 	ssize_t write( int filedes, const void* buf, size_t nbyte )
 	{
-		CheckImportedSymbol( write_import_ );
+		CheckImportedSymbol( write_import_, true );
 		
 		return write_import_( filedes, buf, nbyte );
 	}
