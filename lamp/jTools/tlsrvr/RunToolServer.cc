@@ -88,22 +88,14 @@ namespace RunToolServer
 		// Write the command into a file.
 		FSSpec cwd = Div::ResolvePathToFSSpec( "." );
 		
-		FSSpec status = N::FSpGetParent( scriptFile ) & "Status";
+		std::string script;
 		
-		Io::S( N::FSpOpenDF( scriptFile, fsWrPerm ) ) << "Directory "
-		                                              << q( N::FSpGetMacPathname( cwd ) )
-		                                              << "\r"
-		                                              
-		                                              << command
-		                                              << "\r"
-		                                              
-		                                              /*
-		                                              << "Echo {Status} > "
-		                                              << q( N::FSpGetMacPathname( status ) )
-		                                              << "\r"
-		                                              */
-		                                              ;
+		script += "Directory " + q( N::FSpGetMacPathname( cwd ) ) + "\r";
+		script += command + "\r";
 		
+		N::FSWrite( N::FSpOpenDF( scriptFile, fsWrPerm ),
+		            script.size(),
+		            script.data() );
 	}
 	
 	static void WriteInputFile( const FSSpec& file )
@@ -147,16 +139,14 @@ namespace RunToolServer
 	
 	static long GetResult( const AppleEvent& reply )
 	{
-		std::string stat = N::AEGetParamPtr< typeChar >( reply, 'stat' );
+		long stat = N::AEGetParamPtr< typeSInt32 >( reply, 'stat' );
 		
-		long result = std::atoi( stat.c_str() );
-		
-		if ( result != 0 )
+		if ( stat != 0 )
 		{
 			Io::Out << "Reply stat is '" << stat << "'.\n";
 		}
 		
-		return result;
+		return stat;
 	}
 	
 	
