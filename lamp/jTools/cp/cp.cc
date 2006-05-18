@@ -19,7 +19,7 @@
 #include "Nitrogen/OSStatus.h"
 
 // Nitrogen Extras / POSeven
-#include "POSeven/Errno.h"
+#include "POSeven/Errno.hh"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"

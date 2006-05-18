@@ -31,7 +31,7 @@
 #include "Nitrogen/OpenTransportProviders.h"
 
 // POSeven
-#include "POSeven/Errno.h"
+#include "POSeven/Errno.hh"
 
 // Io
 #include "Io/Exceptions.hh"

@@ -7,7 +7,7 @@
 #include <string>
 
 // POSeven
-#include "POSeven/FileDescriptor.h"
+#include "POSeven/FileDescriptor.hh"
 
 // Io
 #include "Io/Exceptions.hh"

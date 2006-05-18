@@ -36,7 +36,7 @@
 #include "HexStrings.hh"
 
 // POSeven
-#include "POSeven/Errno.h"
+#include "POSeven/Errno.hh"
 
 // Orion
 #include "Orion/Main.hh"
