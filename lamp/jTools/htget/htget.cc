@@ -20,8 +20,8 @@
 #include "Nitrogen/OpenTransportProviders.h"
 #include "Nitrogen/Threads.h"
 
-// Nitrogen Extras / POSeven
-#include "POSeven/FileDescriptor.h"
+// POSeven
+#include "POSeven/FileDescriptor.hh"
 
 // Io
 #include "Io/Exceptions.hh"
@@ -172,7 +172,7 @@ namespace htget
 		if ( myNullReadOccurred && myContentLengthKnown )
 		{
 			Io::Err << "Error: remote socket closed, "
-			        << myContentLengthKnown
+			        << myContentBytesReceived
 			        << " out of "
 			        << myContentLength
 			        << " bytes received.\n";
@@ -218,46 +218,21 @@ namespace htget
 				bytesToRead = std::min( bytesToRead, bytesToGo );
 			}
 			
-			try
-			{
-				//int received = mySocket.Read( data, bytesToRead );
-				int received = read( mySocket, data, bytesToRead );
-				
-				if ( received == 0 )
-				{
-					myNullReadOccurred = true;
-					break;
-				}
-				else if ( received == -1 )
-				{
-					Io::Err << "Errno " << errno << " on read()\n";
-					
-					O::ThrowExitStatus( 1 );
-				}
-				
-				ReceiveData( data, received );
-			}
-			/*
-			catch ( Io::NoDataPending )
-			{
-				break;
-			}
-			catch ( HW::PeerClosedSocket )
+			int received = read( mySocket, data, bytesToRead );
+			
+			if ( received == 0 )
 			{
 				myNullReadOccurred = true;
 				break;
 			}
-			catch ( G::POSIXError& error )
+			else if ( received == -1 )
 			{
-				Io::Err << "Read error: " << error.Errno() << "\n";
-				O::Return( error.Errno() );
-				break;
+				Io::Err << "Errno " << errno << " on read()\n";
+				
+				O::ThrowExitStatus( 1 );
 			}
-			*/
-			catch ( ... )
-			{
-				Io::Err << "Unknown read error\n";
-			}
+			
+			ReceiveData( data, received );
 		}
 	}
 	
