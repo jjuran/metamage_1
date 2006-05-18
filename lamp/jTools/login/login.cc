@@ -23,15 +23,21 @@ namespace O = Orion;
 
 static void SetVariables()
 {
-	setenv( "HOSTTYPE", "powerpc"            , 0 );
-	setenv( "OSTYPE",                  "lamp", 0 );
-	setenv( "MACHTYPE", "powerpc-jtools-lamp", 0 );
+#if TARGET_CPU_68K
+#define ENV_HOSTTYPE "m68k"
+#else
+#define ENV_HOSTTYPE "powerpc"
+#endif
 	
-	FSSpec genie = N::GetProcessAppSpec( N::CurrentProcess() );
-	N::FSDirSpec parent = N::FSpGetParent( genie );
+	setenv( "HOSTTYPE", ENV_HOSTTYPE               , 0 );
+	setenv( "OSTYPE",                        "lamp", 0 );
+	setenv( "MACHTYPE", ENV_HOSTTYPE "-jtools-lamp", 0 );
 	
-	setenv( "SHELL",    N::FSpGetPOSIXPathname( genie       ).c_str(), 0 );
-	setenv( "SHELLDIR", N::FSpGetPOSIXPathname( parent & "" ).c_str(), 0 );
+	//FSSpec genie = N::GetProcessAppSpec( N::CurrentProcess() );
+	//N::FSDirSpec parent = N::FSpGetParent( genie );
+	
+	//setenv( "SHELL",    N::FSpGetPOSIXPathname( genie       ).c_str(), 0 );
+	//setenv( "SHELLDIR", N::FSpGetPOSIXPathname( parent & "" ).c_str(), 0 );
 	
 	const char* path =  "/usr/local/sbin"
 	                   ":/usr/local/bin"
