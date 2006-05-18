@@ -337,7 +337,14 @@
 	int isatty( int fd )
 	{
 		// This is a hack
-		std::string name = ttyname( fd );
+		const char* tty_name = ttyname( fd );
+		
+		if ( tty_name == NULL )
+		{
+			return false;
+		}
+		
+		std::string name = tty_name;
 		
 		const char tty[] = "/dev/tty";
 		
