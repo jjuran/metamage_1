@@ -35,6 +35,9 @@
 #include "KEnvironment.hh"
 #include "SystemCalls.hh"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // Genie
 #include "Genie/FileHandle.hh"
 #include "Genie/pathnames.hh"
@@ -61,6 +64,8 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	namespace P7 = POSeven;
+	
+	namespace Ped = Pedestal;
 	
 	
 	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
@@ -615,18 +620,24 @@ namespace Genie
 	
 	static unsigned int sleep( unsigned int seconds )
 	{
-		unsigned long ticks = ::TickCount();
+		SInt32 remaining = seconds * 60;  // Close enough
 		
-		ticks += seconds * 60;  // Close enough
+		UInt32 startTicks = ::TickCount();
+		
+		UInt32 endTicks = startTicks + remaining;
 		
 		try
 		{
 			// Yield at least once, even for 0 seconds
 			do
 			{
+				Ped::AdjustSleepForTimer( remaining );
+				
 				Yield();
+				
+				remaining = endTicks - ::TickCount();
 			}
-			while ( ::TickCount() < ticks );
+			while ( remaining > 0 );
 		}
 		catch ( P7::Errno& error )
 		{
