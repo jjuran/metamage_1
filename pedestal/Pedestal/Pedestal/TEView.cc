@@ -24,6 +24,9 @@
 // Nitrogen Extras / Utilities
 #include "Utilities/Clipboard.h"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 
 namespace Pedestal
 {
@@ -163,6 +166,8 @@ namespace Pedestal
 	void TEView::Idle( const EventRecord& )
 	{
 		N::TEIdle( myTE );
+		
+		AdjustSleepForTimer( ::GetCaretTime() );
 	}
 	
 	void TEView::MouseDown( const EventRecord& event )
