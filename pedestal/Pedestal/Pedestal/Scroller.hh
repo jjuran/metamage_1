@@ -104,8 +104,20 @@ namespace Pedestal
 	{
 		kNoScrollbar            = 0,
 		kOldSchoolVariant       = 1,
+		
+	#if TARGET_CPU_68K
+		
+		// Cheap hack until we figure out something better
+		
+		kAppearanceSavvyVariant = kOldSchoolVariant,
+		kLiveFeedbackVariant    = kOldSchoolVariant
+		
+	#else
+		
 		kAppearanceSavvyVariant = 2,
 		kLiveFeedbackVariant    = 3
+		
+	#endif
 	};
 	
 	enum ScrollbarAxis
@@ -121,6 +133,8 @@ namespace Pedestal
 		static N::ControlProcID ProcID()  { return N::ControlProcID( scrollBarProc ); }
 	};
 	
+#if !TARGET_CPU_68K
+	
 	template <> struct ScrollbarVariant_Traits< kAppearanceSavvyVariant >
 	{
 		static N::ControlProcID ProcID()  { return N::ControlProcID( kControlScrollBarProc ); }
@@ -130,6 +144,8 @@ namespace Pedestal
 	{
 		static N::ControlProcID ProcID()  { return N::ControlProcID( kControlScrollBarLiveProc ); }
 	};
+	
+#endif
 	
 	template < ScrollbarConfig config >
 	struct Scrollbar_Traits : public ScrollbarPresence_Traits< config != kNoScrollbar >,
