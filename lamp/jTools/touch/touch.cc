@@ -4,7 +4,7 @@
  */
 
 // Universal Interfaces
-#include <Errors.h>
+#include <MacErrors.h>
 
 // MoreFiles
 #include "MoreFilesExtras.h"
