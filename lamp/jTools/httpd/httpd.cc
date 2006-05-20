@@ -135,11 +135,11 @@ static std::string ReadHTTPRequest()
 			}
 		}
 	}
-	catch ( P7::Errno& error )
+	catch ( const P7::Errno& error )
 	{
 		Io::Err << "Read error: " << error.Get() << "\n";
 	}
-	catch ( Io::EndOfInput )
+	catch ( const Io::EndOfInput& )
 	{
 		Io::Err << "Connection dropped by peer\n";
 	}
@@ -360,7 +360,7 @@ static void DumpFile( const FSSpec& file )
 			Io::Put( Io::Out, data, bytes);
 		}
 	}
-	catch ( N::EOFErr )
+	catch ( const N::EOFErr& )
 	{
 		// end of file reached -- we're done
 	}
@@ -379,7 +379,7 @@ static void SendResponse( const std::string& request )
 	{
 		file = LocateResource( parsed.resource );
 	}
-	catch ( N::FNFErr )
+	catch ( const N::FNFErr& )
 	{
 		Io::Out << httpVersion + " 404 Not Found"                "\r\n"
 		                         "Content-Type: text/html"       "\r\n"
