@@ -51,8 +51,6 @@ namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
 
-using std::string;
-
 using BitsAndBytes::EncodeAsHex;
 
 
@@ -101,10 +99,10 @@ static std::string ReadHTTPRequest()
 			char buf[ 1024 ];
 			
 			int received = Io::Read( Io::in, buf, 1024 );
-			partial += string( buf, received );
+			partial += std::string( buf, received );
 			
 			// search for \r\n
-			string::size_type cr = partial.find( '\r' );
+			std::string::size_type cr = partial.find( '\r' );
 			
 			while ( cr < partial.npos  &&  partial.size() >= cr + 2 )
 			{
@@ -128,7 +126,7 @@ static std::string ReadHTTPRequest()
 				}
 				else
 				{
-					string line = partial.substr( 0, cr );
+					std::string line = partial.substr( 0, cr );
 					Io::Err << line << "\n";
 					lines.push_back( line );
 					partial = partial.substr( cr + 2, partial.npos );
@@ -156,32 +154,32 @@ static std::string ReadHTTPRequest()
 	return "";
 }
 
-static string RequestType( const string& request )
+static std::string RequestType( const std::string& request )
 {
-	string::size_type end = request.find( ' ' );
+	std::string::size_type end = request.find( ' ' );
 	return request.substr( 0, end );
 }
 
 struct ParsedRequest
 {
-	string type;
-	string resource;
-	string version;
+	std::string type;
+	std::string resource;
+	std::string version;
 };
 
-static ParsedRequest ParseRequest( const string& request )
+static ParsedRequest ParseRequest( const std::string& request )
 {
 	// E.g.  "GET / HTTP/1.0"
 	
 	ParsedRequest parsed;
 	
 	// Find the first space (which ends the request type)
-	string::size_type end = request.find( ' ' );
+	std::string::size_type end = request.find( ' ' );
 	
 	parsed.type = request.substr( 0, end - 0 );  // e.g. "GET"
 	
 	// The resource starts after the space
-	string::size_type resource = end + 1;
+	std::string::size_type resource = end + 1;
 	
 	// and ends with the next space
 	end = request.find( ' ', resource );
@@ -189,9 +187,9 @@ static ParsedRequest ParseRequest( const string& request )
 	parsed.resource = request.substr( resource, end - resource );  // e.g. "/logo.png"
 	
 	// HTTP version string starts after the second space
-	string::size_type version = end + 1;
+	std::string::size_type version = end + 1;
 	// and runs to the end
-	end = string::npos;
+	end = std::string::npos;
 	
 	parsed.version = request.substr( version, end - version );  // e.g. "HTTP/1.1"
 	
@@ -201,35 +199,35 @@ static ParsedRequest ParseRequest( const string& request )
 class ResourceParser
 {
 	private:
-		string resource;
+		std::string resource;
 	
 	public:
 		class const_iterator
 		{
 			private:
-				const string& s;
-				string::size_type pos, end;
+				const std::string& s;
+				std::string::size_type pos, end;
 			
 			public:
-				enum { npos = string::npos };
+				enum { npos = std::string::npos };
 				struct End  {};
 				static End kEnd;
 				
-				const_iterator( const string& s )
+				const_iterator( const std::string& s )
 				:
 					s  ( s                  ),
 					pos( 1                  ),
 					end( s.find( '/', pos ) )
 				{}
 				
-				const_iterator( const string& s, End )
+				const_iterator( const std::string& s, End )
 				:
 					s  ( s    ),
 					pos( npos ),
 					end( npos )
 				{}
 				
-				string operator*() const  { return s.substr( pos, end - pos ); }
+				std::string operator*() const  { return s.substr( pos, end - pos ); }
 				
 				const_iterator& operator++()
 				{
@@ -240,7 +238,7 @@ class ResourceParser
 					}
 					else
 					{
-						pos = end = string::npos;
+						pos = end = std::string::npos;
 					}
 					
 					return *this;
@@ -265,13 +263,13 @@ class ResourceParser
 				}
 		};
 		
-		ResourceParser( const string& resource ) : resource( resource + "/" )  {}
+		ResourceParser( const std::string& resource ) : resource( resource + "/" )  {}
 		
 		const_iterator begin() const  { return const_iterator( resource                       ); }
 		const_iterator end()   const  { return const_iterator( resource, const_iterator::kEnd ); }
 };
 
-static FSSpec LocateResource( const string& resource )
+static FSSpec LocateResource( const std::string& resource )
 {
 	FSSpec docRoot = Path2FSS( "/var/www" );
 	FSSpec item = docRoot;
@@ -300,14 +298,14 @@ static FSSpec LocateResource( const string& resource )
 	return item;
 }
 
-static string FilenameExtension(const string& filename)
+static std::string FilenameExtension(const std::string& filename)
 {
 	// This will break for index.html.en and similar
-	string::size_type lastDot = filename.find_last_of( "." );
+	std::string::size_type lastDot = filename.find_last_of( "." );
 	
-	if ( lastDot != string::npos )
+	if ( lastDot != std::string::npos )
 	{
-		return filename.substr( lastDot, string::npos );
+		return filename.substr( lastDot, std::string::npos );
 	}
 	else
 	{
@@ -315,15 +313,15 @@ static string FilenameExtension(const string& filename)
 	}
 }
 
-static string FilenameExtension(const unsigned char* filename)
+static std::string FilenameExtension(const unsigned char* filename)
 {
-	return FilenameExtension( NN::Convert< string >( filename ) );
+	return FilenameExtension( NN::Convert< std::string >( filename ) );
 }
 
-static string GuessContentType( const FSSpec& file )
+static std::string GuessContentType( const FSSpec& file )
 {
 	OSType type = N::FSpGetFInfo( file ).fdType;
-	string ext = FilenameExtension( file.name );
+	std::string ext = FilenameExtension( file.name );
 	
 	if ( ext == ".html" )
 	{
@@ -341,7 +339,7 @@ static string GuessContentType( const FSSpec& file )
 	return "application/octet-stream";
 }
 
-static string HTTPHeader( const string& field, const string& value )
+static std::string HTTPHeader( const std::string& field, const std::string& value )
 {
 	return field + ": " + value + "\r\n";
 }
