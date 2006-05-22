@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
 END {
     close STDOUT || die "$0: can't close stdout: $!\n";
