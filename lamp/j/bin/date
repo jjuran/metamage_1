@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 use strict;
 
 my ($arg, $format, $time, $hr_diff, $let, $date_str);
@@ -66,7 +66,7 @@ my %format_hash = (
 	'W' => zpad(int(($y_day + $wk_offset - 1)/7)),
 	'y' => substr($year, -2, 2),
 	'Y' => $year + 1900,
-	'Z' => gettz((gmtime())[2] - $hour, $isdst),
+	'Z' => gettz( ((gmtime)[2] + 24 - $hour) % 24, $isdst),
 );
 
 while($format ne '') {
