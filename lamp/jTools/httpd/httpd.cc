@@ -162,7 +162,7 @@ static std::string RequestType( const std::string& request )
 
 struct ParsedRequest
 {
-	std::string type;
+	std::string method;
 	std::string resource;
 	std::string version;
 };
@@ -173,10 +173,10 @@ static ParsedRequest ParseRequest( const std::string& request )
 	
 	ParsedRequest parsed;
 	
-	// Find the first space (which ends the request type)
+	// Find the first space (which ends the request method)
 	std::string::size_type end = request.find( ' ' );
 	
-	parsed.type = request.substr( 0, end - 0 );  // e.g. "GET"
+	parsed.method = request.substr( 0, end - 0 );  // e.g. "GET"
 	
 	// The resource starts after the space
 	std::string::size_type resource = end + 1;
@@ -418,7 +418,10 @@ static void SendResponse( const std::string& request )
 		
 		Io::Out << responseHeader;
 		
-		DumpFile( file );
+		if ( parsed.method != "HEAD" )
+		{
+			DumpFile( file );
+		}
 	}
 }
 
