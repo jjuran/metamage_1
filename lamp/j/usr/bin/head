@@ -1,11 +1,11 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
 #
 # $Id$
 #
 # $Log$
-# Revision 1.1  2006-05-22 08:42:14  jax
-# Copied from PPT.
+# Revision 1.2  2006-05-22 08:47:13  jax
+# Fixed she-bang path.
 #
 # Revision 1.3  2004/08/05 14:19:08  cwest
 # cleanup, new version number on website
@@ -130,8 +130,8 @@ This I<head> implementation is compatible with the B<OpenBSD> implementation.
 =head1 REVISION HISTORY
 
     $Log$
-    Revision 1.1  2006-05-22 08:42:14  jax
-    Copied from PPT.
+    Revision 1.2  2006-05-22 08:47:13  jax
+    Fixed she-bang path.
 
     Revision 1.3  2004/08/05 14:19:08  cwest
     cleanup, new version number on website
