@@ -446,7 +446,7 @@ sub Order {
 getopts('1ACFLRSTWacdfgiklmnopqrstux', \%Options);
 
 # ------ get (or guess) window size
-if (ioctl(STDOUT, $TIOCGWINSZ, $WinSize)) {
+if ( eval { ioctl(STDOUT, $TIOCGWINSZ, $WinSize) } ) {
 	($WinRows, $WinCols, $Xpixel, $Ypixel) = unpack('S4', $WinSize);
 } else {
 	$WinCols = 80;
