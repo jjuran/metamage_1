@@ -15,17 +15,12 @@ namespace Io
 	
 	namespace N = Nitrogen;
 	
-	typedef Nitrogen::EOFErr EndOfInput;
-	
-	#if 0
-	// If we do use this, we need to catch N::EOFErr from FSRead() et al and convert it.
 	struct EndOfInput
 	{
 		operator N::OSStatus() const  { return eofErr; }
 		
 		// EOF is indicated in Unix by a zero return from read().
 	};
-	#endif
 	
 	struct NoDataPending
 	{
