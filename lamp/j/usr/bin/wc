@@ -1,0 +1,342 @@
+#!/usr/local/bin/perl -w
+
+END {
+    close STDOUT || die "$0: can't close stdout: $!\n";
+    $? = 1 if $? == 255;  # from die
+}
+
+sub usage {
+    warn "$0: @_\n" if @_;
+    print "usage: $0 [-a | [-p] [-l] [-w] [-m] [-c] ] file [file1 [file2...]]\n";
+    exit 0;
+}
+
+if ($#ARGV < 0) { usage(); }
+
+use strict;
+use locale;
+use File::Basename;
+
+use vars qw($opt %opt);
+
+@opt{ qw/? a p l w m c/ } = qw(0 0 0 0 0 0 0);
+
+# The $MacPerl::Version variable should be on if ($^O =~ /MacOS/)
+# this unusual construct gets around -w -Mstrict in other places too.
+if ( $MacPerl::Version && $MacPerl::Version =~ /App/) {
+    $opt = MacPerl::Pick("Which wc option?",
+      "all","default (lwc)",
+      "-l (lines)","-w (words)","-c (bytes)",
+      "-m (chars)","-p (paragraphs)");
+    if ($opt eq "all") { $opt{'a'} = 1; }
+    if ($opt =~ /^-p/) { $opt{'p'} = 1; }
+    if ($opt =~ /^-l/) { $opt{'l'} = 1; }
+    if ($opt =~ /^-w/) { $opt{'w'} = 1; }
+    if ($opt =~ /^-m/) { $opt{'m'} = 1; }
+    if ($opt =~ /^-c/) { $opt{'c'} = 1; }
+}
+else {
+    # use regular switches under the MPW tool and everywhere else.
+    while ($ARGV[0] =~ /^-/) {
+        $ARGV[0] =~ s/^-//; 
+        for my $flag (split(//,$ARGV[0])) {
+            usage() if '?' =~ /\Q$flag/;
+            usage("unknown flag: `$flag'") unless 'aplwmc' =~ /\Q$flag/;
+            warn "$0: `$flag' flag already set\n" if $opt{$flag}++;
+        } 
+        shift;
+    }
+} 
+
+if ((!($opt{'p'} && $opt{'l'} && $opt{'w'} && $opt{'c'})) || ($opt{'a'})) {
+   $opt{'l'} = 1; $opt{'w'} = 1; $opt{'c'} = 1;
+}
+
+if ($opt{'a'}) { $opt{'p'} = 1; $opt{'m'} = 1; }
+
+my ($total_paras, $total_lines, $total_words, $total_chars, $total_bytes) = 
+ qw(0 0 0 0 0);
+
+my $out = "";
+my $par_flag = 0;
+
+# Refer to Ken Lunde's B<CJKV Information Processing> pp. 01021-1022 
+# for further discussion (c) O'Reilly & Associates 1999, ISBN 1-56592-224-7.
+
+# This encoding ought to have -m and -c yield the same counts
+# no matter what the input.
+# all single byte (ASCII+eight bit || ISO 8859-n || EBCDIC)
+my $single_byte = q{ [\x00-\xFF] }; 
+
+# UTF-8
+my $utf_8 = q{
+    [\x00-\x7F]                                                 # one byte
+  | [\xC2-\xDF][\x80-\xBF]                                      # two byte
+  | \xE0[\xA0-\xBF][\x80-\xBF]                                  # three byte
+  | [\xE1-\xEF][\xA0-\xBF][\x80-\xBF]                           # three byte
+  | \xF0[\x90-\xBF][\x80-\xBF][\x80-\xBF]                       # four byte
+  | [\xF1-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF]                # four byte
+  | \xF8[\x88-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF]            # five byte
+  | [\xF9-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF]     # five byte
+  | \xFC[\x84-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF] # six byte
+  | \xFD[\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF] # six byte
+};
+
+# This encoding ought to have -m yield -c/2 
+# no matter what the input.
+# UCS-2
+my $ucs_2 = q{ [\x00-\xFF][\x00-\xFF] };
+
+# UTF-16 for little endian machines (Intel, VAX, etc.)
+my $utf16_little_endian = q{
+    [\x00-\xFF][\x00-\xD7\xE0-\xFF]               # UCS-2
+  | [\x00-\xFF][\xD8-\xDB][\x00-\xFF][\xDC-\xDF]  # UTF-16 surrogates
+};
+
+# UTF-16 for big endian machines (Motorola, PPC, etc.)
+my $utf_16_big_endian = q{
+    [\x00-\xD7\xE0-\xFF][\x00-\xFF]               # UCS-2
+  | [\xD8-\xDB][\x00-\xFF][\xDC-\xDF][\x00-\xFF]  # UTF-16 surrogates
+};
+
+# EUC-CN and EUC-KR
+my $euc = q{
+    [\x00-\x7F]              # code set 0 (ASCII or equivalent)
+  | [\xA1-\xFE][\xA1-\xFE]   # code set 1 (GB 2312-80 or KS X 1001:1992)
+};
+
+# Big five
+my $big_5 = q{
+    [\x00-\x7F]                      # ASCII/CNS-Roman
+  | [\xA1-\xFE][\x40-\x7E\xA1-\xFE]  # Big Five
+};
+
+# GBK and Big five plus
+my $gbk = q{
+    [\x00-\x7F]                      # ASCII or equivalent
+  | [\x81-\xFE][\x40-\x7E\x80-\xFE]  # two byte (GBK or Big Five plus)
+};
+
+# EUC-TW 
+my $euc_tw = q{
+    [\x00-\x7F]                            # code set 0 (CNS-Roman)
+  | [\xA1-\xFE][\xA1-\xFE]                 # code set 1 (plane 1)
+  | \x8E[\xA1-\xB0][\xA1-\xFE][\xA1-\xFE]  # code set 2 (planes 1-16)
+};
+
+# Shift-JIS
+my $shift_jis = q{
+    [\x00-\x7F]                               # ASCII/JIS-Roman
+  | [\x81-\x9F\xE0-\xFC][\x40-\x7E\x80-\xFC]  # JIS X 0208:1997
+  | [\xA0-\xDF]                               # half width katakana
+};
+
+# EUC-JP 
+my $euc_jp = q{
+    [\x00-\x7F]                 # code set 0 (ASCII/JIS-Roman)
+  | [\xA1-\xFE][\xA1-\xFE]      # code set 1 (JIS X 0208:1997)
+  | \x8E[\xA0-\xDF]             # code set 2 (half width katakana)
+  | \x8F[\xA1-\xFE][\xA1-\xFE]  # code set 3 (JIS X 0212:1990)
+};
+
+# Johab
+my $johab = q{
+    [\x00-\x7F]                               # ASCII/KS-Roman
+  | [\x84-\xD3][\x41-\x7E\x81-\xFE]           # modern hangul
+  | [\xD8-\xDE\xE0-\xF9][\x31-\x7E\x91-\xFE]  # symbols and hanja
+};
+
+# UHC
+my $uhc = q{
+    [\x00-\x7F]                               # one byte
+  | [\x81-\xFE][\x41-\x5A\x61-\x7A\x81-\xFE]  # two byte
+};
+
+# change the following assignment to suite your multi-byte character
+# needs:
+
+my $encoding = $utf_8;
+
+foreach my $filename (@ARGV) {
+    my $paras = 0;
+    my $lines = 0;
+    my $words = 0;
+    my @words = (); # splitting into @_ is deprecated under -w
+    my @chars = ();
+    my $chars = 0;
+    my $bytes = 0;
+    open(FH, "< $filename") or die "cannot open $filename: $!\n";
+    # without the following binmode() byte counts on dosish machines will
+    # come out the same as on unix and macs since CR's will not
+    # be read in.  Unfortunately the byte count would be lower than
+    # what other dosish system utilities report for file size 
+    # hence it is left in:
+    binmode(FH);
+    while (<FH>) {
+        $lines++;
+        if ($opt{'p'}) {
+            if (/^\s*$/) { 
+                if ($par_flag) {
+                    $paras++;
+                    $par_flag = 0; 
+                }
+            }
+            else {
+                if ($paras == 0) { $paras++; } 
+                $par_flag = 1;
+            }
+        }
+        if ($opt{'w'}) {
+            @words = split(/\w+/,$_);
+            $words += $#words;
+        }
+        if ($opt{'m'}) {
+            @chars = m/$encoding/gox;
+            $chars += scalar(@chars);
+        }
+        if ($opt{'c'}) {
+            $bytes += length($_);
+        }
+    }
+    close(FH);
+    if ($paras > 1) { $paras--; }
+ #   if ($words > 0) { $words--; }
+    if ($words > 1) { $words--; }
+    $total_paras += $paras;
+    $total_lines += $lines; $total_words += $words; 
+    $total_chars += $chars; $total_bytes += $bytes; 
+    $out = sprintf(" %s\n",basename($filename));
+    $out = sprintf(" %9u%s",$bytes,$out) if ($opt{'c'});
+    $out = sprintf(" %9u%s",$chars,$out) if ($opt{'m'});
+    $out = sprintf(" %9u%s",$words,$out) if ($opt{'w'});
+    $out = sprintf(" %9u%s",$lines,$out) if ($opt{'l'});
+    $out = sprintf(" %9u%s",$paras,$out) if ($opt{'p'});
+    print "$out";
+}
+
+if ($#ARGV >= 1) {
+    $out = sprintf(" %s\n","total");
+    $out = sprintf(" %9u%s",$total_bytes,$out) if ($opt{'c'});
+    $out = sprintf(" %9u%s",$total_chars,$out) if ($opt{'m'});
+    $out = sprintf(" %9u%s",$total_words,$out) if ($opt{'w'});
+    $out = sprintf(" %9u%s",$total_lines,$out) if ($opt{'l'});
+    $out = sprintf(" %9u%s",$total_paras,$out) if ($opt{'p'});
+    print "$out";
+}
+
+__END__
+
+=pod
+
+=head1 NAME
+
+wc -- paragraph, line, word, character, and byte counter.
+
+=head1 SYNOPSIS
+
+wc [-a | [-p] [-l] [-w] [-m] [-c] ] file [file1 [file2...]]
+
+=head1 DESCRIPTION
+
+I<wc> reads one or more input text files and, by default, writes the number of 
+lines, words, and bytes contained in each input file to the standard output.
+An optional count of paragraphs or characters is also possible in this 
+implementation.  If more than one text file is specified, a line of total 
+count(s) for all named files is output on a separate line following the 
+last file count.
+
+By default, the standard output contains a line for each input file of
+the form:
+
+     lines     words     bytes file_name
+
+With all options specified the output line for each input file is
+of the form:
+
+     paras     lines     words     chars     bytes file_name
+
+I<wc> uses Perl's C<use locale> pragma.
+
+=head2 OPTIONS
+
+=over 5
+
+=item none
+
+No options to I<wc> is equivalent to specifying I<-l> I<-w> 
+and I<-c>.
+
+=item B<-a>
+
+Is equivalent to specifying I<-p> I<-l> I<-w> I<-m> and I<-c>.
+
+=item B<-p>
+
+Tells I<wc> to count paragraphs in the input file(s). 
+The algorithm employed counts lumped groups of lines that 
+do not contain only zero or more space characters (C</^\s*$/>).
+This regular expression is sensitive to locale settings.
+
+=item B<-l>
+
+Tells I<wc> to count lines in the input file(s).
+
+=item B<-w>
+
+Tells I<wc> to count words in the input file(s) as 
+determined by perl's C</\w+/> regular expression which
+is locale sensitive. 
+
+=item B<-m>
+
+Tells I<wc> to count characters in the input file(s).
+This is implemented with a multi-byte character counting
+regular expression C<m/$encoding/gox>.  The C<$encoding> 
+defaults to one sensitive to well formed UTF-8 encodings 
+(one to six byte characters) though this may be altered 
+to other encodings by alteration of the program code.
+Note that some 8 bit single byte characters will be 
+missed by the UTF-8 character counter since such characters
+fall outside the UTF-8 encoding.
+
+=item B<-c>
+
+Tells I<wc> to count bytes in the input file(s).
+This is implemented with perl's L<perlfunc/length>
+built in function.
+
+=back
+
+=head1 ENVIRONMENT
+
+The working of I<wc> may be influenced by your locale since it 
+uses the I<locale> pragma and this could have an effect on I<-w>
+(word) and I<-p> (paragraph) counts.  I<wc> may also be influenced by
+C<PERLLIB> or C<PERL5LIB> since it uses L<File::Basename>, L<locale>,
+and L<strict> internally.
+
+=head1 SEE ALSO
+
+L<perllocale>.
+
+=head1 BUGS
+
+I<wc> has no known bugs.
+
+=head1 STANDARDS
+
+The I<-a> and I<-p> options are peculiarities of this Perl implementation.
+
+=head1 AUTHOR
+
+Peter Prymmer I<pvhp@best.com>.
+
+=head1 COPYRIGHT and LICENSE
+
+This program is copyright (c) by Peter Prymmer 1999.
+
+This program is free and open software.  You may use, copy, modify, distribute
+and sell this program (and any modified variants) in any way you wish,
+provided you do not restrict others to do the same.
+
+=cut
