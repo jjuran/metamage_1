@@ -1,0 +1,158 @@
+#!/usr/local/bin/perl -w
+use strict;
+
+my ($arg, $format, $time, $hr_diff, $let, $date_str);
+my ($sec, $min, $hour, $m_day, $mon, $year, $w_day, $y_day, $isdst);
+
+$time = time();
+$format = "%a %b %e %T %Z %Y";
+($sec, $min, $hour, $m_day, $mon, $year, $w_day, $y_day, $isdst) =
+	localtime($time);
+
+if (@ARGV) {
+	foreach $arg(@ARGV) {
+	if($arg =~ /^\-u/) {
+		($sec, $min, $hour, $m_day, $mon, $year, $w_day, $y_day, $isdst)
+			= gmtime($time);
+	} elsif($arg =~ /^\-/ || $arg !~ /^\+/) {
+		usage("Option $arg not support in this version.\n");
+	} elsif ($arg =~ s/(^\+)//){
+			$format = $arg;
+			last;
+		}
+	} #end foreach $arg
+}# end else
+
+my $s = " ";
+my $c = ":";
+my $l = "/";
+
+my $wk_offset = 7 - (($y_day - $w_day) % 7);
+
+my $mon_name = (qw(January February March April May June July August
+	September October November December))[$mon];
+my $wk_name = (qw(Sunday Monday Tuesday Wednesday Thursday Friday
+	Saturday))[$w_day];
+
+my %format_hash = (
+	'%' => '%',
+	'a' => substr($wk_name,0,3),
+	'A' => $wk_name,
+	'B' => $mon_name,
+	'b' => substr($mon_name,0,3),
+	'C' => zpad(int($year/100 + 19)),
+	'd' => zpad($m_day),
+	'D' => zpad($mon+1).$l.zpad($m_day).$l.substr($year, -2, 2),
+	'e' => spad($m_day),
+	'h' => substr($mon_name,0,3),
+	'H' => zpad($hour),
+	'I' => zpad(hour12($hour)),
+	'j' => zpad3($y_day + 1),
+	'k' => spad($hour),
+	'l' => spad(hour12($hour)),
+	'm' => zpad($mon+1),
+	'M' => zpad($min),
+	'n' => "\n",
+	'p' => ampm($hour),
+	'r' => zpad(hour12($hour)).$c.zpad($min).$c.zpad($sec).$s.ampm($hour),
+	'R' => zpad($hour).$c.zpad($min),
+	's' => $time,
+	'S' => zpad($sec),
+	't' => "\t",
+	'T' => zpad($hour).$c.zpad($min).$c.zpad($sec),
+	'u' => $w_day ? $w_day : 7,
+	'U' => zpad(int(($y_day + $wk_offset)/7)),
+	'w' => $w_day,
+	'W' => zpad(int(($y_day + $wk_offset - 1)/7)),
+	'y' => substr($year, -2, 2),
+	'Y' => $year + 1900,
+	'Z' => gettz((gmtime())[2] - $hour, $isdst),
+);
+
+while($format ne '') {
+	$let = lpop(\$format);
+	if($let eq "%") {
+		$let = lpop(\$format);
+		$date_str .= $format_hash{$let} || "%".$let;
+	} else {
+		$date_str .= $let;
+	}
+}
+print $date_str."\n";
+
+#################################################################################
+#####             Formatting Functions and Date Functions Below              ####
+#################################################################################
+
+sub gettz {
+	my ($offset, $isdst) = @_;
+	if($isdst) {
+		return (undef,undef,undef,undef,'EDT','CDT','MDT','PDT')[$offset];
+	} else {
+		return ('GMT',undef,undef,undef,undef,'EST','CST','MST','PST')[$offset];
+	}
+} # determine time zone
+sub lpop { ${$_[0]} =~ s/(^.)(.*)/$2/; return $1 } # pop a letter off
+sub zpad { 
+	my $num = shift || 0;
+	$num =~ /^\d{2}/ ? return $num : return "0$num";
+} # pad number to two digits w/ spaces
+sub zpad3 {
+	my $num = shift || 0;
+	$num ="00".$num;
+	return substr($num, -3, 3);
+} # pad number to three digits w/ zeros
+sub spad  {
+	my $num = shift || 0;
+	$num =~ /^\d{2}/ ? return $num : return " $num";
+} # pad number to two chars w/ space
+sub hour12 { $_[0]==12 || $_[0]==0 ? return 12 : return($_[0] % 12); }
+# convert 24 hour to 12 hour
+sub ampm { $_[0] >= 12 ? return "PM" : return "AM" }
+# determine am or pm
+
+sub usage {
+	my $usage =$_[0]."usage: $0".' [-u] [+format]
+formats
+%% - The character %.
+%a - Three-letter weekday name.
+%A - Full weekday name.
+%b - Three-letter month name.
+%B - Full month name.
+%C - Century (00-99).
+%d - Day of month (padded w/ zero).
+%D - Date in MM/DD/YY format.
+%e - Day of month (padded w/ space).
+%g - ISO 8601 year (not implemented).
+%G - ISO 8601 year (not implemented).
+%h - Three-letter month name.
+%H - Hour HH.
+%I - Hour HH (12 hour).
+%j - Three-digit Julian day.
+%k - Hour - space padded.
+%l - Hour - space padded (12 hour).
+%m - Month number 01-12.
+%M - Minute MM.
+%n - Newline.
+%p - AM or PM.
+%r - Time in HH(12 hour):MM:SS (AM|PM) format.
+%R - Time in HH:MM format.
+%s - Absolute seconds (since epoch).
+%S - Seconds SS.
+%t - Tab.
+%T - Time in HH:MM:SS format.
+%u - Day of week, 1=Monday, 7=Sunday.
+%U - Two digit week number, start Sunday.
+%w - Day of week, 0=Sunday, 6=Saturday.
+%W - Two digit week number, start Monday.
+%y - Two-digit year.
+%Y - Four-digit year.
+%Z - Time zone code.';
+	 die $usage."\n";
+}
+# This program is copyright (c) Joshua Gross 1999.
+# You may distribute, alter, duplicate, copy or use this program in any legal
+# manner, so long as you don't restrict the ability of other to do likewise.
+# This program is offered with no guarantees, warranties, or vague promises.
+
+
