@@ -135,8 +135,18 @@ namespace Genie
 				// OTRcv() will block until ALL bytes requested are received
 				// (unlike read()), so we block only while reading the first byte.
 				
-				// Always 1 byte (unless there's an error); may block
-				std::size_t bytes = N::OTRcv( endpoint, data, 1 );
+				std::size_t bytes = 0;
+				
+				try
+				{
+					// Always 1 byte (unless there's an error); may block
+					bytes = N::OTRcv( endpoint, data, 1 );
+				}
+				catch ( const N::OTNoDataErr& )
+				{
+					// ::OTRcv() returns kOTNoDataErr to signal EOF in blocking mode
+					throw Io::EndOfInput();
+				}
 				
 				SetNonBlocking();
 				
