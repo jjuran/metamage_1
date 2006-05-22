@@ -8,6 +8,9 @@
 // Nitrogen Nucleus
 #include "Nucleus/OnlyOnce.h"
 
+// Io
+#include "Io/Exceptions.hh"
+
 // Genie
 #include "Genie/ResourceTable.hh"
 
@@ -59,7 +62,19 @@ namespace Genie
 	
 	int FileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return N::FSRead( fRefNum, byteCount, data );
+		try
+		{
+			return N::FSRead( fRefNum, byteCount, data );
+		}
+		catch ( const N::EOFErr& err )
+		{
+			ASSERT( err.Get() == eofErr );
+			
+			throw Io::EndOfInput();
+		}
+		
+		// Not reached
+		return 0;
 	}
 	
 	int FileHandle::SysWrite( const char* data, std::size_t byteCount )
