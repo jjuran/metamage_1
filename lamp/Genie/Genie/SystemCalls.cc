@@ -539,16 +539,16 @@ namespace Genie
 			                    count );
 			return get;
 		}
-		catch ( Io::EndOfInput )
+		catch ( const Io::EndOfInput& )
 		{
 			// Zero return from read() indicates EOF
 			return 0;
 		}
-		catch ( Io::NoDataPending )
+		catch ( const Io::NoDataPending& )
 		{
 			CurrentProcess().SetErrno( EWOULDBLOCK );
 		}
-		catch ( P7::Errno& error )
+		catch ( const P7::Errno& error )
 		{
 			CurrentProcess().SetErrno( error );
 		}
