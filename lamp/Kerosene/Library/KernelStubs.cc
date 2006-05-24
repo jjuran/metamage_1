@@ -11,6 +11,7 @@
 #include "fcntl.h"
 #include "signal.h"
 #include "stdlib.h"
+#include "sys/ioctl.h"
 #include "sys/select.h"
 #include "sys/socket.h"
 #include "sys/stat.h"
@@ -47,6 +48,7 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	
 	// _import_
 	
+	// dirent
 	DIR*    (*opendir_import_  )( const char* pathname );
 	int     (*closedir_import_ )( DIR* dir );
 	dirent* (*readdir_import_  )( DIR* dir );
@@ -54,9 +56,11 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	void    (*seekdir_import_  )( DIR* dir, off_t offset );
 	off_t   (*telldir_import_  )( DIR* );
 	
+	// fcntl
 	int (*fcntl_import_)( int fd, int cmd, int param );
 	int (*open_import_ )( const char* path, int oflags, mode_t mode );
 	
+	// signal
 	int           (*kill_import_       )( pid_t pid, int sig );
 	int           (*sigaction_import_  )( int signum, const struct sigaction* act, struct sigaction* oldact );
 	int           (*sigprocmask_import_)( int how, const sigset_t* set, sigset_t* oldset );
@@ -64,16 +68,22 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	int           (*sigsuspend_import_ )( const sigset_t* mask );
 	__sig_handler (*signal_import_     )( int sig, __sig_handler func );
 	
+	// stdlib
 	char* (*getenv_import_  )( const char* name );
 	int   (*setenv_import_  )( const char* name, const char* value, int overwrite );
 	int   (*putenv_import_  )( const char* string );
 	void  (*unsetenv_import_)( const char* name );
 	int   (*clearenv_import_)();
 	
+	// sys/ioctl
+	int (*ioctl_import_)( int fd, unsigned long cmd, int* argp );
+	
+	// sys/select
 	int (*select_import_)( int n, fd_set*  readfds,
 	                              fd_set*  writefds,
 	                              fd_set*  exceptfds, struct timeval* timeout );
 	
+	// sys/socket
 	int     (*socket_import_     )( int domain, int type, int protocol );
 	int     (*bind_import_       )( int sockfd, const struct sockaddr* name, socklen_t namelen );
 	int     (*listen_import_     )( int sockfd, int backlog );
@@ -89,20 +99,25 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	int     (*setsockopt_import_ )( int s, int  level, int optname, const void* optval, socklen_t optlen );
 	int     (*shutdown_import_   )( int s, int how );
 	
+	// sys/stat
 	int (*chmod_import_ )( const char *path, mode_t mode );
 	int (*fchmod_import_)( int filedes, mode_t mode );
 	int (*fstat_import_ )( int filedes, struct stat* buf );
 	int (*lstat_import_ )( const char* file_name, struct stat* buf);
 	int (*stat_import_  )( const char* file_name, struct stat* buf);
 	
+	// sys/wait
 	int (*gettimeofday_import_)( struct timeval* tv, struct timezone* tz );
 	
+	// sys/wait
 	pid_t (*waitpid_import_)( pid_t pid, int* stat_loc, int options );
 	
+	// unistd
 	int  (*execve_import_    )( const char* path, const char* const argv[], const char* const* envp );
 	void (*_exit_import_     )( int status );
 	int  (*SpawnVFork_import_)();
 	
+	// unistd
 	int          (*chdir_import_   )( const char* path );
 	int          (*close_import_   )( int filedes );
 	int          (*copyfile_import_)( const char* src, const char* dest );
@@ -285,6 +300,16 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 		CheckImportedSymbol( clearenv_import_ );
 		
 		return clearenv_import_();
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ sys/ioctl ¥
+	
+	int ioctl( int fd, unsigned long cmd, int* argp )
+	{
+		CheckImportedSymbol( ioctl_import_ );
+		
+		return ioctl_import_( fd, cmd, argp );
 	}
 	
 	#pragma mark -
