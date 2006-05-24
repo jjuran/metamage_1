@@ -14,8 +14,8 @@
 
 // POSIX
 #include <errno.h>
-#include <fcntl.h>
 #include <netinet/in.h>
+#include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -222,6 +222,13 @@ static void Poll( SSL* client_session, int server_socket )
 	{
 		exit( 1 );
 	}
+}
+
+static int setnonblocking( int fd )
+{
+	int nonblocking = true;
+	
+	return ioctl( fd, FIONBIO, &nonblocking );
 }
 
 static void WaitForClients()
