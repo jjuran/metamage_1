@@ -6,8 +6,14 @@
 #ifndef IO_FILES_HH
 #define IO_FILES_HH
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Nitrogen
 #include "Nitrogen/Files.h"
+
+// Io
+#include "Io/Exceptions.hh"
 
 
 namespace Io
@@ -17,7 +23,20 @@ namespace Io
 	
 	inline int Read ( N::FSFileRefNum fRefNum,       char* data, std::size_t byteCount )
 	{
-		return N::FSRead( fRefNum, byteCount, data );
+		try
+		{
+			return N::FSRead( fRefNum, byteCount, data );
+		}
+		catch ( const N::EOFErr& err )
+		{
+			ASSERT( err.Get() == eofErr );
+			
+			throw EndOfInput();
+		}
+		
+		// Not reached
+		
+		return 0;
 	}
 	
 	inline int Write( N::FSFileRefNum fRefNum, const char* data, std::size_t byteCount )
