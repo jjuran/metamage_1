@@ -3,7 +3,8 @@
  *	============
  */
 
-#pragma once
+#ifndef GENIE_PATHNAMES_HH
+#define GENIE_PATHNAMES_HH
 
 // Nitrogen
 #include "Nitrogen/Files.h"
@@ -24,4 +25,6 @@ namespace Genie
 	}
 	
 }
+
+#endif
 
