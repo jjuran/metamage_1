@@ -3,6 +3,9 @@
  *	=====================
  */
 
+#ifndef GENIE_SYSTEMCALLREGISTRY_HH
+#define GENIE_SYSTEMCALLREGISTRY_HH
+
 namespace Genie
 {
 	
@@ -29,4 +32,6 @@ namespace Genie
 	SystemCallRegistry::const_iterator SystemCallsEnd();
 	
 }
+
+#endif
 
