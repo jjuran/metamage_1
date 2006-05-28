@@ -14,7 +14,9 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/pathnames.hh"
 #include "Genie/PipeOrganSuite.h"
+#include "Genie/Process.hh"
 
 
 // FIXME:  Replace this with a userspace interface, in the manner of Berkeley sockets.
@@ -78,8 +80,6 @@ namespace Genie
 		} 
 		else
 		{
-			throw N::ErrAEEventNotHandled();
-			
 			NN::Owned< N::AEDescList > list = N::AEGetParamDesc( appleEvent, keyDirectObject, typeWildCard );
 			
 			std::vector< std::string > argVec;
@@ -100,25 +100,49 @@ namespace Genie
 		//N::AEPutParamPtr<typeSInt32>( outReply, keyDirectObject, returnValue );
 	}
 	
-	int GenieExecHandler::ExecArgList( const std::vector< std::string >& argVec )
+	int GenieExecHandler::ExecArgList( const std::vector< std::string >& args )
 	{
 		int result = 0;
 		
+		std::vector< const char* > argv( args.size() + 1 );
+		
+		for ( int i = 0; i < args.size();  ++i )
+		{
+			argv[i] = args[i].c_str();
+		}
+		
+		argv.back() = NULL;
+		
 	#if 0
 		// Echo the input line to the console.  Use stderr, not stdout.
-		if ( argCount > 0 )
+		if ( args.size() > 0 )
 		{
-			fprintf( stderr, "$ " );
-			fprintf( stderr, "%s", static_cast< const char * >( inArgVec[ 0 ] ) );
+			std::fprintf( stderr, "$ " );
+			std::fprintf( stderr, "%s", argv[ 0 ] );
 			
-			for ( index = 1;  index < argCount;  ++index )
+			for ( int i = 1;  i < args.size();  ++i )
 			{
-				fprintf( stderr, " %s", static_cast< const char * >( inArgVec[ index ] ) );
+				fprintf( stderr, " %s", argv[ i ] );
 			}
 			
 			fprintf( stderr, "\n" );
 		}
 	#endif
+		
+		FSSpec program = ResolveUnixPathname( argv[0] );
+		
+		const int ppid = 1;
+		
+		GenieProcess* process = new GenieProcess( ppid );
+		
+		try
+		{
+			process->Exec( program, &argv[0], NULL );
+		}
+		catch ( ... )
+		{
+			process->Terminate();
+		}
 		
 		//int pid = gProcessTable[GenieProcess::kRootProcessPID].ForkExec(inArgVec);
 		
@@ -140,7 +164,13 @@ namespace Genie
 		return result;
 		*/
 		
-		throw N::ErrAEEventNotHandled();
+		std::vector< std::string > argv;
+		
+		argv.push_back( "/bin/sh" );
+		argv.push_back( "-c" );
+		argv.push_back( cmd );
+		
+		return ExecArgList( argv );
 	}
 	
 }
