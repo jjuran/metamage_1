@@ -6,6 +6,15 @@
 #ifndef PEDESTAL_WINDOW_HH
 #define PEDESTAL_WINDOW_HH
 
+// Standard C++
+#include <map>
+
+// Nucleus
+#include "Nucleus/Shared.h"
+
+// Nitrogen
+#include "Nitrogen/MacWindows.h"
+
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
 
