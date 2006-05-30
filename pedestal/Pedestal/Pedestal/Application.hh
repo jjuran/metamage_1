@@ -3,10 +3,14 @@
  *	==============
  */
 
-#pragma once
+#ifndef PEDESTAL_APPLICATION_HH
+#define PEDESTAL_APPLICATION_HH
 
 // Standard C++
 #include <map>
+
+// Mac OS Universal Interfaces
+#include <AERegistry.h>
 
 // Nitrogen
 #include "Nitrogen/AppleEvents.h"
@@ -137,4 +141,6 @@ namespace Pedestal
 	void AdjustSleepForActivity();
 	
 }
+
+#endif
 
