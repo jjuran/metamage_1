@@ -6,6 +6,11 @@
 #ifndef IO_EXCEPTIONS_HH
 #define IO_EXCEPTIONS_HH
 
+#ifndef OTUNIXERRORS
+#define OTUNIXERRORS 1
+#endif
+
+// Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OpenTransport.h"
 
