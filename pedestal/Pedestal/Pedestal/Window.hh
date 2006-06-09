@@ -9,8 +9,11 @@
 // Standard C++
 #include <map>
 
+// Boost
+#include <boost/shared_ptr.hpp>
+
 // Nucleus
-#include "Nucleus/Shared.h"
+#include "Nucleus/Owned.h"
 
 // Nitrogen
 #include "Nitrogen/MacWindows.h"
@@ -292,7 +295,7 @@ namespace Pedestal
 	template < class Window >
 	class WindowsOwner
 	{
-		typedef std::map< ::WindowRef, NN::Shared< Window*, NN::DisposeWithDelete > > WindowStorage;
+		typedef std::map< ::WindowRef, boost::shared_ptr< Window > > WindowStorage;
 		
 		class Closure : public WindowClosure
 		{
@@ -329,7 +332,7 @@ namespace Pedestal
 			{
 				Window* window = new Window( fClosure );
 				
-				fWindows[ window->Get() ] = NN::Owned< Window*, NN::DisposeWithDelete >::Seize( window );
+				fWindows[ window->Get() ] = boost::shared_ptr< Window >( window );
 			}
 	};
 	
