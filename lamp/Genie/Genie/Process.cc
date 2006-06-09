@@ -92,15 +92,6 @@ namespace Genie
 	namespace K = Kerosene;
 	
 	
-	FileDescriptor::FileDescriptor( const FileDescriptor& other )
-	:
-		handle     ( other.handle      ),
-		closeOnExec( other.closeOnExec )
-	{
-		int goodPlaceToSetABreakPoint = 0;
-		if ( goodPlaceToSetABreakPoint );
-	}
-	
 	GenieProcessTable gProcessTable;
 	
 	int ExternalProcessExecutor::operator()( ThreadContext& context ) const
@@ -437,9 +428,9 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
+			//Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
 			
-			Err << "Missing main() entry point.\n";
+			//Err << "Missing main() entry point.\n";
 			throw;
 		}
 		
@@ -462,9 +453,9 @@ namespace Genie
 			// refuse to run it.)
 			if ( mainEntryPoint == NULL )
 			{
-				Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
+				//Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
 				
-				Err << "No version data found.\n";
+				//Err << "No version data found.\n";
 			}
 		}
 		
@@ -473,33 +464,37 @@ namespace Genie
 		
 		if ( kCurrentVersion > versions->current )
 		{
+			/*
 			Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
 			
 			// Plugin interface is older than what we know
 			Err << "Plugin uses interface version "
 			    << versions->current
 			    << "\n";
+			*/
 			
 			if ( versions->current < kLastCompatibleLibVersion )
 			{
 				// It's too old
-				Err << "The plugin is too old\n";
+				//Err << "The plugin is too old\n";
 				throw N::CFragImportTooOldErr();
 			}
 		}
 		else if ( kCurrentVersion < versions->current )
 		{
+			/*
 			Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
 			
 			// Plugin interface is newer than we know
 			Err << "Plugin uses interface version "
 			    << versions->current
 			    << "\n";
+			*/
 			
 			if ( kCurrentVersion < versions->lastCompatible )
 			{
 				// We're too old
-				Err << "The plugin is too new\n";
+				//Err << "The plugin is too new\n";
 				throw N::CFragImportTooNewErr();
 			}
 		}
@@ -571,6 +566,7 @@ namespace Genie
 		return 0;
 	}
 	
+	/*
 	int Process::TryExec( const FSSpec&        executable,
 	                      const char* const    argv[],
 	                      const char* const*   envp )
@@ -625,6 +621,7 @@ namespace Genie
 		// Not reached...
 		return -1;
 	}
+	*/
 	
 	int Process::SetErrno( int errorNumber )
 	{
@@ -1016,7 +1013,7 @@ namespace Genie
 		}
 	}
 	
-	void GenieProcessTable::SendSignalToProcessesControlledByTerminal( int sig, CharacterDevice* terminal )
+	void GenieProcessTable::SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal )
 	{
 		for ( ProcessMap::iterator it = myProcesses.begin();  it != myProcesses.end();  ++it )
 		{

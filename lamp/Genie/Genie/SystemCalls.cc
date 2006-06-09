@@ -8,6 +8,7 @@
 #include <string.h>
 
 // POSIX
+#include "sys/ioctl.h"
 #include "unistd.h"
 
 // Nitrogen / Carbon
@@ -20,15 +21,14 @@
 #include "POSeven/Errno.hh"
 
 // Nitrogen Extras / Templates
-#include "Templates/FunctionalExtensions.h"
-#include "Templates/PointerToFunction.h"
+//#include "Templates/FunctionalExtensions.h"
+//#include "Templates/PointerToFunction.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 
 // Io
 #include "Io/Exceptions.hh"
-#include "Io/MakeHandle.hh"
 #include "Io/Stream.hh"
 
 // Kerosene/Common
@@ -39,13 +39,12 @@
 #include "Pedestal/Application.hh"
 
 // Genie
-#include "Genie/FileHandle.hh"
 #include "Genie/pathnames.hh"
-#include "Genie/Pipes.hh"
+#include "Genie/IO/Pipe.hh"
+#include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/TTY.hh"
 #include "Genie/Process.hh"
-#include "Genie/ResourceTable.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/Terminal.hh"
 #include "Genie/Yield.hh"
 
 
@@ -79,24 +78,10 @@ namespace Genie
 	}
 	
 	
-	/*
-	#pragma mark -
-	#pragma mark ¥ unistd ¥
-	
-	static int isatty( K::Environment*, int filedes )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		IORef ref = files[ filedes ].handle;
-		
-		return    ref.IsType( kCharacterDeviceDescriptor )
-		       && IORef_Cast< CharacterDevice >( ref ).IsATTY();
-	}
-	*/
-	
 	#pragma mark -
 	#pragma mark ¥ Genie ¥
 	
+	/*
 	static void ListOneProcess( const Process* proc, const Io::Stream< IORef >& Out )
 	{
 		int pid  = proc->ProcessID();
@@ -104,9 +89,9 @@ namespace Genie
 		int pgid = proc->GetPGID();
 		int sid  = proc->GetSID();
 		
-		CharacterDevice* tty = proc->ControllingTerminal();
+		TTYHandle* tty = proc->ControllingTerminal();
 		
-		const char* dev = tty ? tty->DeviceName() : "?";
+		const char* dev = tty ? tty->TTYName() : "?";
 		
 		const std::string& name = proc->ProgramName();
 		
@@ -117,9 +102,11 @@ namespace Genie
 		    << dev  << "  "
 		    << name << "\n";
 	}
+	*/
 	
-	namespace ext = N::STLExtensions;
+	//namespace ext = N::STLExtensions;
 	
+	/*
 	static void DoPS( const Io::Stream< IORef >& Out )
 	{
 		std::for_each
@@ -137,6 +124,7 @@ namespace Genie
 			)
 		);
 	}
+	*/
 	
 	static int* ErrnoPtr()
 	{
@@ -183,7 +171,7 @@ namespace Genie
 	
 	static void PrintPS()
 	{
-		DoPS( Io::Stream< IORef >( CurrentProcess().FileDescriptors()[ 1 ].handle ) );
+		//DoPS( Io::Stream< IORef >( CurrentProcess().FileDescriptors()[ 1 ].handle ) );
 	}
 	
 	REGISTER_SYSTEM_CALL( PrintPS );
@@ -407,44 +395,13 @@ namespace Genie
 		{
 			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 			
-			IORef ref = files[ fd ].handle;
+			RegularFileHandle& fh = IOHandle_Cast< RegularFileHandle >( *files[ fd ].handle );
 			
-			if ( !ref.IsType( kFileDescriptor ) )
-			{
-				return CurrentProcess().SetErrno( ESPIPE );
-			}
-			
-			FileHandle& fh = IORef_Cast< FileHandle >( ref );
-			
-			N::FSFileRefNum refNum = fh.GetRefNum();
-			
-			N::FSIOPosMode mode;
-			
-			switch ( whence )
-			{
-				case SEEK_SET:
-					mode = fsFromStart;
-					break;
-				
-				case SEEK_CUR:
-					mode = fsFromMark;
-					break;
-				
-				case SEEK_END:
-					mode = fsFromLEOF;
-					break;
-				
-				default:
-					return CurrentProcess().SetErrno( EINVAL );
-			}
-			
-			N::SetFPos( refNum, mode, offset );
-			
-			return N::GetFPos( refNum );
+			return fh.Seek( offset, whence );
 		}
 		catch ( ... ) {}
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return CurrentProcess().SetErrno( ESPIPE );
 	}
 	
 	REGISTER_SYSTEM_CALL( lseek );
@@ -460,15 +417,18 @@ namespace Genie
 	
 	static int pipe( int filedes[ 2 ] )
 	{
-		Pipe::Handles handles = Pipe::New();
-		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		int reader = LowestUnusedFrom( files, 3 );
 		int writer = LowestUnusedFrom( files, reader + 1 );
 		
-		files[ reader ] = Io::MakeHandleFromCopy< PipeOut_IODetails >( handles.out );
-		files[ writer ] = Io::MakeHandleFromCopy< PipeIn_IODetails  >( handles.in  );
+		boost::shared_ptr< PipeState > pipeState( new PipeState );
+		
+		boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( pipeState ) );
+		boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( pipeState ) );
+		
+		files[ reader ] = pipeOut;
+		files[ writer ] = pipeIn;
 		
 		filedes[ 0 ] = reader;
 		filedes[ 1 ] = writer;
@@ -490,7 +450,9 @@ namespace Genie
 				return NULL;
 			}
 			
-			const std::string& peekBuffer = files[ fd ].handle.Peek( minBytes );
+			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ fd ].handle );
+			
+			const std::string& peekBuffer = stream.Peek( minBytes );
 			
 			if ( buffer != NULL )
 			{
@@ -534,9 +496,11 @@ namespace Genie
 				return CurrentProcess().SetErrno( EBADF );
 			}
 			
-			int get = Io::Read( files[ fd ].handle,
-			                    reinterpret_cast< char* >( buf ),
-			                    count );
+			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ fd ].handle );
+			
+			int get = stream.Read( reinterpret_cast< char* >( buf ),
+			                       count );
+			
 			return get;
 		}
 		catch ( const Io::EndOfInput& )
@@ -561,32 +525,7 @@ namespace Genie
 		return -1;
 	}
 	
-	// setctty() makes fd the controlling terminal of the current process.
-	// I made this up.
 	REGISTER_SYSTEM_CALL( read );
-	
-	static int setctty( int fd )
-	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		IORef ref = files[ fd ].handle;
-		
-		if ( ref.IsType( kCharacterDeviceDescriptor ) )
-		{
-			CharacterDevice& dev = IORef_Cast< CharacterDevice >( ref );
-			
-			if ( dev.IsATTY() )
-			{
-				CurrentProcess().SetControllingTerminal( &dev );
-				
-				return 0;
-			}
-		}
-		
-		return CurrentProcess().SetErrno( EINVAL );
-	}
-	
-	REGISTER_SYSTEM_CALL( setctty );
 	
 	static int setpgid( pid_t pid, pid_t pgid )
 	{
@@ -655,17 +594,9 @@ namespace Genie
 		{
 			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 			
-			IORef ref = files[ fd ].handle;
+			TTYHandle& tty = IOHandle_Cast< TTYHandle >( *files[ fd ].handle );
 			
-			if ( ref.IsType( kCharacterDeviceDescriptor ) )
-			{
-				CharacterDevice& dev = IORef_Cast< CharacterDevice >( ref );
-				
-				if ( dev.IsATTY() )
-				{
-					return dev.DeviceName();
-				}
-			}
+			return tty.TTYName().c_str();
 		}
 		catch ( ... ) {}
 		
@@ -674,6 +605,7 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( ttyname );
 	
+	/*
 	// ttypair() is analogous to socketpair(), and creates a pseudo-tty device.
 	// File descriptors refering to the master and slave respectively are returned
 	// in filedes.
@@ -697,14 +629,16 @@ namespace Genie
 	}
 	
 	REGISTER_SYSTEM_CALL( ttypair );
+	*/
 	
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
 		try
 		{
-			int put = Io::Write( CurrentProcess().FileDescriptors()[ fd ].handle,
-								 reinterpret_cast< const char* >( buf ),
-								 count );
+			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *CurrentProcess().FileDescriptors()[ fd ].handle );
+			
+			int put = stream.Write( reinterpret_cast< const char* >( buf ),
+								    count );
 			return put;
 		}
 		catch ( const P7::Errno& error )

@@ -16,8 +16,7 @@
 #include "Utilities/Files.h"
 
 // Genie
-#include "Genie/Devices.hh"
-#include "Genie/FileHandle.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -28,32 +27,40 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	static int ioctl( int filedes, unsigned long request, int* argp )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
-		switch ( request )
+		try
 		{
-			case FIONBIO:
-				if ( *argp )
-				{
-					files[ filedes ].handle.SetNonBlocking();
-				}
-				else
-				{
-					files[ filedes ].handle.SetBlocking();
-				}
+			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ filedes ].handle );
+			
+			switch ( request )
+			{
+				case FIONBIO:
+					if ( *argp )
+					{
+						stream.SetNonBlocking();
+					}
+					else
+					{
+						stream.SetBlocking();
+					}
+					
+					return 0;
 				
-				return 0;
-			
-			case FIONREAD:
-				// not implemented
-				break;
-			
-			default:
-				break;
+				case FIONREAD:
+					// not implemented
+					break;
+				
+				default:
+					stream.IOCtl( request, argp );
+					return 0;
+			}
+		}
+		catch ( ... )
+		{
 		}
 		
 		return CurrentProcess().SetErrno( EINVAL );

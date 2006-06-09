@@ -27,8 +27,9 @@
 #include "Io/Stream.hh"
 
 // Genie
+#include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/pathnames.hh"
-#include "Genie/Terminal.hh"
+#include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
 
@@ -282,13 +283,21 @@ namespace Genie
 	}
 	
 	
-	Console::Console( CharacterDevice* terminal, ConstStr255Param name )
+	bool HangupWindowClosure::RequestWindowClosure( N::WindowRef )
+	{
+		gProcessTable.SendSignalToProcessesControlledByTerminal( SIGHUP, fTerminal );
+		
+		// Assuming the window does get shut, it hasn't happened yet
+		return false;
+	}
+	
+	Console::Console( ConsoleTTYHandle* terminal, ConstStr255Param name )
 	:
 		fProgramName( name ),
 		fWindow( terminal ),
 		myInput( NULL ),
 		//stayOpen( true ),
-		blockingMode( true )
+		blockingMode( false )
 	{
 	}
 	
@@ -371,7 +380,9 @@ namespace Genie
 		{
 			//const unsigned char* name = fProgramName;
 			const unsigned char* name = "\p" "gterm";
+			
 			fWindow.Open( name );
+			
 			myInput = &Input();
 		}
 		
@@ -386,6 +397,8 @@ namespace Genie
 	
 	void SpawnNewConsole( const FSSpec& program )
 	{
+		static std::size_t gLastID = 0;
+		
 		// Create new console/terminal device
 		// Spawn new process with file descriptors set
 		
@@ -398,13 +411,15 @@ namespace Genie
 		// Temporary IORef in nested block goes out of scope prior to Exec().
 		// This is necessary because an unforked exec() will lose temporaries.
 		{
-			IORef terminal = NewTerminal();
+			ConsoleTTYHandle* tty = new ConsoleTTYHandle( ++gLastID );
+			
+			boost::shared_ptr< IOHandle > terminal( tty );
 			
 			files[ 0 ] = terminal;
 			files[ 1 ] = terminal;
 			files[ 2 ] = terminal;
 			
-			external->SetControllingTerminal( &IORef_Cast< CharacterDevice >( terminal ) );
+			external->SetControllingTerminal( tty );
 		}
 		
 		std::string programName = NN::Convert< std::string >( program.name );
@@ -432,12 +447,12 @@ namespace Genie
 			Map map;
 		
 		public:
-			Console* NewConsole( CharacterDevice* terminal );
+			Console* NewConsole( ConsoleTTYHandle* terminal );
 			
 			void CloseConsole( Console* console );
 	};
 	
-	Console* ConsolesOwner::NewConsole( CharacterDevice* terminal )
+	Console* ConsolesOwner::NewConsole( ConsoleTTYHandle* terminal )
 	{
 		Console* console = new Console( terminal );
 		map[ console ] = NN::Owned< Console*, NN::DisposeWithDelete >::Seize( console );
@@ -452,7 +467,7 @@ namespace Genie
 	
 	static ConsolesOwner gConsolesOwner;
 	
-	Console* NewConsole( CharacterDevice* terminal )
+	Console* NewConsole( ConsoleTTYHandle* terminal )
 	{
 		return gConsolesOwner.NewConsole( terminal );
 	}

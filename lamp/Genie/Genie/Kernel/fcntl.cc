@@ -17,7 +17,8 @@
 
 // Genie
 #include "Genie/Devices.hh"
-#include "Genie/FileHandle.hh"
+#include "Genie/IO/SimpleDevice.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -29,6 +30,11 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	
+	static boost::shared_ptr< RegularFileHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
+	{
+		return boost::shared_ptr< RegularFileHandle >( new RegularFileHandle( refNum ) );
+	}
 	
 	// FIXME:  Duplicate code
 	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
@@ -64,7 +70,7 @@ namespace Genie
 			
 			std::string pathname = path;
 			
-			IORef io;
+			boost::shared_ptr< IOHandle > io;
 			
 			if ( pathname.substr( 0, 5 ) == "/dev/" )
 			{
@@ -135,7 +141,7 @@ namespace Genie
 		switch ( cmd )
 		{
 			case F_DUPFD:
-				//return DuplicateFD( files, filedes );
+				return DuplicateFD( files, filedes );
 			
 			case F_GETFD:
 				return files[ filedes ].closeOnExec;
@@ -151,26 +157,30 @@ namespace Genie
 			*/
 			
 			case F_GetFlag:
-				if ( param == O_NONBLOCK )
-				{
-					bool blocking = files[ filedes ].handle.IsBlocking();
-					return !blocking;
-				}
-				break;
-			
 			case F_SetFlag:
-				if ( param == O_NONBLOCK )
-				{
-					files[ filedes ].handle.SetNonBlocking();
-					return 0;
-				}
-				break;
-			
 			case F_ClearFlag:
 				if ( param == O_NONBLOCK )
 				{
-					files[ filedes ].handle.SetBlocking();
-					return 0;
+					IOHandle& handle = *files[ filedes ].handle;
+					StreamHandle& stream = IOHandle_Cast< StreamHandle >( handle );
+					
+					switch ( cmd )
+					{
+						case F_GetFlag:
+							bool blocking = stream.IsBlocking();
+							return !blocking;
+						
+						case F_SetFlag:
+							stream.SetNonBlocking();
+							return 0;
+						
+						case F_ClearFlag:
+							stream.SetBlocking();
+							return 0;
+						
+						default:
+							break;
+					};
 				}
 				break;
 			

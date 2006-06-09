@@ -27,16 +27,12 @@
 // Silver
 #include "Silver/ProcTypes.hh"
 
-// Io
-#include "Io/Handle.hh"
-
 // ShellShock
 #include "ShellShock/VarArray.hh"
 
 // Genie
 #include "Genie/BinaryImage.hh"
 #include "Genie/FileDescriptor.hh"
-#include "Genie/Terminal.hh"
 
 
 namespace Genie
@@ -123,6 +119,7 @@ namespace Genie
 	typedef int*     ErrnoDataPtr;
 	typedef char***  EnvironDataPtr;
 	
+	class TTYHandle;
 	
 	class Process
 	{
@@ -152,7 +149,7 @@ namespace Genie
 			UInt32 fPreviousSignals;
 			std::string myName;
 			N::FSDirSpec myCWD;
-			CharacterDevice* fControllingTerminal;
+			TTYHandle* fControllingTerminal;
 			FileDescriptorMap myFileDescriptors;
 			EStatus myStatus;
 			int myResult;
@@ -188,7 +185,7 @@ namespace Genie
 			int Result()          const  { return myResult; }
 			std::string ProgramName()  const  { return myName;   }
 			
-			CharacterDevice* ControllingTerminal() const  { return fControllingTerminal; }
+			TTYHandle* ControllingTerminal() const  { return fControllingTerminal; }
 			
 			N::FSDirSpec CurrentDirectory() const  { return myCWD; }
 			
@@ -214,7 +211,7 @@ namespace Genie
 			
 			void ProgramName( const std::string& name )  { myName = name; }
 			
-			void SetControllingTerminal( CharacterDevice* terminal )  { fControllingTerminal = terminal; }
+			void SetControllingTerminal( TTYHandle* terminal )  { fControllingTerminal = terminal; }
 			
 			//long ChangeDirectory( const N::FSDirSpec& dir );
 			int ChangeDirectory( const char* pathname );
@@ -278,7 +275,7 @@ namespace Genie
 			
 			void Reap();
 			
-			void SendSignalToProcessesControlledByTerminal( int sig, CharacterDevice* terminal );
+			void SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal );
 			
 			ProcessMap const& Map() const  { return myProcesses; }
 			ProcessMap      & Map()        { return myProcesses; }

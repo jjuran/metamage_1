@@ -3,16 +3,21 @@
  *	==========
  */
 
-#pragma once
+#ifndef GENIE_DEVICES_HH
+#define GENIE_DEVICES_HH
 
-// Genie
-#include "Genie/IORef.hh"
+// Boost
+#include <boost/shared_ptr.hpp>
 
 
 namespace Genie
 {
 	
-	IORef GetSimpleDeviceHandle( const char* path );
+	class SimpleDeviceHandle;
+	
+	boost::shared_ptr< SimpleDeviceHandle > GetSimpleDeviceHandle( const char* path );
 	
 }
+
+#endif
 

@@ -11,12 +11,14 @@
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Io
 #include "Io/Exceptions.hh"
-#include "Io/Handle.hh"
 
 // Genie
-#include "Genie/IOHandle.hh"
+#include "Genie/IO/SimpleDevice.hh"
 #include "Genie/SystemConsole.hh"
 
 
@@ -24,26 +26,23 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace P7 = POSeven;
 	
 	// General
 	
-	static int ReadNull( void*, char*, std::size_t )
+	static int ReadNull( char*, std::size_t )
 	{
 		throw Io::EndOfInput();
 	}
 	
-	static int WriteVoid( void*, const char*, std::size_t byteCount )
+	static int WriteVoid( const char*, std::size_t byteCount )
 	{
 		return byteCount;
 	}
 	
-	static void DeleteNothing( void* )
-	{
-	}
-	
 	// Zero
 	
-	static int ReadZero( void*, char* data, std::size_t byteCount )
+	static int ReadZero( char* data, std::size_t byteCount )
 	{
 		std::fill( data,
 		           data + byteCount,
@@ -54,21 +53,14 @@ namespace Genie
 	
 	// Console
 	
-	static int WriteConsole( void*, const char* data, std::size_t byteCount )
+	static int WriteConsole( const char* data, std::size_t byteCount )
 	{
 		return WriteToSystemConsole( data, byteCount );
 	}
 	
 	
-	typedef int (*Reader)( void*, char*, std::size_t );
-	typedef int (*Writer)( void*, const char*, std::size_t );
-	
-	struct DeviceIOSpec
-	{
-		const char* name;
-		Reader reader;
-		Writer writer;
-	};
+	typedef int (*Reader)( char*, std::size_t );
+	typedef int (*Writer)( const char*, std::size_t );
 	
 	static DeviceIOSpec gDeviceIOSpecs[] =
 	{
@@ -77,8 +69,6 @@ namespace Genie
 		{ "/dev/console", ReadNull, WriteConsole },
 		{ NULL,           NULL,     NULL         }
 	};
-	
-	
 	
 	typedef std::map< std::string, DeviceIOSpec > DeviceIOMap;
 	
@@ -101,7 +91,7 @@ namespace Genie
 		return gDeviceMap;
 	}
 	
-	IORef GetSimpleDeviceHandle( const char* path )
+	boost::shared_ptr< SimpleDeviceHandle > GetSimpleDeviceHandle( const char* path )
 	{
 		DeviceIOMap::const_iterator found = DeviceMap().find( path );
 		
@@ -110,15 +100,7 @@ namespace Genie
 			throw N::FNFErr();
 		}
 		
-		const DeviceIOSpec& dev = found->second;
-		
-		void* const object = NULL;
-		
-		return NewGenericIO( Io::Handle( object,
-		                                 Io::SetBlockingNoOp,
-		                                 dev.reader,
-		                                 dev.writer,
-		                                 DeleteNothing ) );
+		return boost::shared_ptr< SimpleDeviceHandle >( new SimpleDeviceHandle( found->second ) );
 	}
 	
 }

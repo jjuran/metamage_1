@@ -22,9 +22,6 @@
 #include "Pedestal/Window.hh"
 #include "Pedestal/View.hh"
 
-// Genie
-#include "Genie/Process.hh"
-
 
 namespace Genie
 {
@@ -72,21 +69,17 @@ namespace Genie
 	};
 	
 	
+	class ConsoleTTYHandle;
+	
 	class HangupWindowClosure : public Ped::WindowClosure
 	{
 		private:
-			CharacterDevice* fTerminal;
+			ConsoleTTYHandle* fTerminal;
 		
 		public:
-			HangupWindowClosure( CharacterDevice* terminal ) : fTerminal( terminal )  {}
+			HangupWindowClosure( ConsoleTTYHandle* terminal ) : fTerminal( terminal )  {}
 			
-			bool RequestWindowClosure( N::WindowRef )
-			{
-				gProcessTable.SendSignalToProcessesControlledByTerminal( SIGHUP, fTerminal );
-				
-				// Assuming the window does get shut, it hasn't happened yet
-				return false;
-			}
+			bool RequestWindowClosure( N::WindowRef );
 	};
 	
 	class TerminalWindowOwner : private HangupWindowClosure
@@ -97,7 +90,7 @@ namespace Genie
 			WindowStorage         fWindow;
 		
 		public:
-			TerminalWindowOwner( CharacterDevice* terminal ) : HangupWindowClosure( terminal )  {}
+			TerminalWindowOwner( ConsoleTTYHandle* terminal ) : HangupWindowClosure( terminal )  {}
 			
 			GenieWindow const* Get() const  { return fWindow.get(); }
 			GenieWindow      * Get()        { return fWindow.get(); }
@@ -120,11 +113,9 @@ namespace Genie
 			bool blockingMode;
 		
 		public:
-			Console( CharacterDevice* terminal, ConstStr255Param name = "\p" "gterm" );
+			Console( ConsoleTTYHandle* terminal, ConstStr255Param name = "\p" "gterm" );
 			
 			~Console()  {}
-			
-			void SetBlockingMode( bool mode )  { blockingMode = mode; }
 			
 			bool IsReadable() const;
 			
@@ -140,7 +131,7 @@ namespace Genie
 	void SpawnNewConsole( const FSSpec& program );
 	void SpawnNewConsole();
 	
-	Console* NewConsole( CharacterDevice* terminal );
+	Console* NewConsole( ConsoleTTYHandle* terminal );
 	
 	void CloseConsole( Console* console );
 	

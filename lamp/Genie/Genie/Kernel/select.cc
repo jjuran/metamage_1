@@ -17,6 +17,7 @@
 #include "POSeven/Errno.hh"
 
 // Genie
+#include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
@@ -71,9 +72,9 @@ namespace Genie
 							return CurrentProcess().SetErrno( EBADF );
 						}
 						
-						IORef ref = files[ i ].handle;
+						StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ i ].handle );
 						
-						unsigned int poll = ref.Poll();
+						unsigned int poll = stream.Poll();
 						
 						//if ( poll == 0 )  continue;  // Optimization
 						

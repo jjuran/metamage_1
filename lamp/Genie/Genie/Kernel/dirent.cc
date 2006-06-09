@@ -14,7 +14,7 @@
 #include "Nitrogen/OSStatus.h"
 
 // Genie
-#include "Genie/DirHandle.hh"
+#include "Genie/IO/Directory.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -26,6 +26,15 @@ namespace Genie
 
 	namespace N = Nitrogen;
 	
+	
+	static boost::shared_ptr< DirHandle > OpenDir( const N::FSDirSpec& dir )
+	{
+		N::FSDirSpec volumes = NN::Convert< N::FSDirSpec >( ResolveUnixPathname( "/Volumes" ) );
+		
+		DirHandle* handle = dir == volumes ? new VolumesDirHandle() : new DirHandle( dir );
+		
+		return boost::shared_ptr< DirHandle >( handle );
+	}
 	
 	/*
 	struct dirent
@@ -62,9 +71,7 @@ namespace Genie
 			
 			N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( spec );
 			
-			IORef ref = OpenDir( dir );
-			
-			files[ fd ] = ref;
+			files[ fd ] = boost::shared_ptr< IOHandle >( OpenDir( dir ) );
 			
 			return reinterpret_cast< DIR* >( fd );
 		}
@@ -91,17 +98,11 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify dirhandle exists first
-			if ( files[ fd ].handle.IsType( kDirectoryIterator ) )
-			{
-				files.erase( fd );
-				
-				return 0;
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTDIR );
-			}
+			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
 			
+			files.erase( fd );
+			
+			return 0;
 		}
 		catch ( ... )
 		{
@@ -122,13 +123,9 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify dirhandle exists first
-			if ( files[ fd ].handle.IsType( kDirectoryIterator ) )
-			{
-				DirHandle& dir = IORef_Cast< DirHandle >( files[ fd ].handle );
-				
-				return dir.ReadDir();
-			}
+			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
 			
+			return dir.ReadDir();
 		}
 		catch ( const N::FNFErr& err )
 		{
@@ -153,17 +150,9 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify dirhandle exists first
-			if ( files[ fd ].handle.IsType( kDirectoryIterator ) )
-			{
-				DirHandle& dir = IORef_Cast< DirHandle >( files[ fd ].handle );
-				
-				dir.RewindDir();
-			}
-			else
-			{
-				CurrentProcess().SetErrno( ENOTDIR );
-			}
+			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
 			
+			dir.RewindDir();
 		}
 		catch ( ... )
 		{
@@ -184,17 +173,9 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify dirhandle exists first
-			if ( files[ fd ].handle.IsType( kDirectoryIterator ) )
-			{
-				DirHandle& dir = IORef_Cast< DirHandle >( files[ fd ].handle );
-				
-				dir.SeekDir( offset );
-			}
-			else
-			{
-				CurrentProcess().SetErrno( ENOTDIR );
-			}
+			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
 			
+			dir.SeekDir( offset );
 		}
 		catch ( ... )
 		{
@@ -215,17 +196,9 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify dirhandle exists first
-			if ( files[ fd ].handle.IsType( kDirectoryIterator ) )
-			{
-				DirHandle& dir = IORef_Cast< DirHandle >( files[ fd ].handle );
-				
-				return dir.TellDir();
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTDIR );
-			}
+			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
 			
+			return dir.TellDir();
 		}
 		catch ( ... )
 		{

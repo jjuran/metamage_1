@@ -15,9 +15,6 @@
 // Nitrogen / Carbon
 #include "Nitrogen/OpenTransportProviders.h"
 
-// POSeven
-//#include "POSeven/Errno.h"
-
 // Io
 #include "Io/Exceptions.hh"
 
@@ -26,7 +23,7 @@
 
 // Genie
 #include "Genie/Process.hh"
-#include "Genie/SocketHandle.hh"
+#include "Genie/IO/SocketStream.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
@@ -35,7 +32,6 @@ namespace Genie
 {
 	
 	namespace NN = Nucleus;
-	//namespace P7 = POSeven;
 	
 	
 	struct OTInitialization
@@ -86,7 +82,7 @@ namespace Genie
 		
 		try
 		{
-			files[ fd ] = NewSocket();
+			files[ fd ] = boost::shared_ptr< IOHandle >( new SocketHandle );
 		}
 		catch ( ... )
 		{
@@ -108,6 +104,10 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify socket exists first
+			SocketHandle& sock = IOHandle_Cast< SocketHandle >( *files[ sockfd ].handle );
+			sock.Bind( inetAddress, namelen );
+			
+			/*
 			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
 			{
 				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
@@ -117,6 +117,7 @@ namespace Genie
 			{
 				return CurrentProcess().SetErrno( ENOTSOCK );
 			}
+			*/
 		}
 		catch ( ... )
 		{
@@ -136,15 +137,9 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				sock.Listen( backlog );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
+			SocketHandle& sock = IOHandle_Cast< SocketHandle >( *files[ sockfd ].handle );
+			
+			sock.Listen( backlog );
 		}
 		catch ( ... )
 		{
@@ -164,24 +159,15 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				
-				//Accept_Result result = sock->Accept();
-				
-				IORef handle = sock.Accept( (InetAddress*)addr, *addrlen );
-				
-				int fd = LowestUnusedFrom( files, 0 );
-				
-				files[ fd ] = FileDescriptor( handle );
-				
-				return fd;
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
+			SocketHandle& sock = IOHandle_Cast< SocketHandle >( *files[ sockfd ].handle );
+			
+			std::auto_ptr< SocketHandle > incoming( sock.Accept( (InetAddress*)addr, *addrlen ) );
+			
+			int fd = LowestUnusedFrom( files, 0 );
+			
+			files[ fd ] = boost::shared_ptr< IOHandle >( incoming );
+			
+			return fd;
 		}
 		catch ( Io::NoDataPending& )
 		{
@@ -209,15 +195,9 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				sock.Connect( inetAddress, addrlen );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
+			SocketHandle& sock = IOHandle_Cast< SocketHandle >( *files[ sockfd ].handle );
+			
+			sock.Connect( inetAddress, addrlen );
 		}
 		catch ( ... )
 		{
@@ -237,19 +217,12 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				
-				const SocketAddress& address = sock.GetSockName();
-				
-				*namelen = address.Len();
-				std::memcpy( name, address.Get(), address.Len() );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
+			SocketHandle& sock = IOHandle_Cast< SocketHandle >( *files[ sockfd ].handle );
+			
+			const SocketAddress& address = sock.GetSockName();
+			
+			*namelen = address.Len();
+			std::memcpy( name, address.Get(), address.Len() );
 		}
 		catch ( ... )
 		{
@@ -269,19 +242,12 @@ namespace Genie
 		try
 		{
 			// FIXME:  Verify socket exists first
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				
-				const SocketAddress& address = sock.GetPeerName();
-				
-				*namelen = address.Len();
-				std::memcpy( name, address.Get(), address.Len() );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
+			SocketHandle& sock = IOHandle_Cast< SocketHandle >( *files[ sockfd ].handle );
+			
+			const SocketAddress& address = sock.GetPeerName();
+			
+			*namelen = address.Len();
+			std::memcpy( name, address.Get(), address.Len() );
 		}
 		catch ( ... )
 		{
