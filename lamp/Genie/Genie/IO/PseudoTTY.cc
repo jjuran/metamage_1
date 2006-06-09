@@ -15,6 +15,8 @@
 namespace Genie
 {
 	
+	namespace NN = Nucleus;
+	
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
 	                                  boost::shared_ptr< Io::StringBuffer >  input,
 	                                  boost::shared_ptr< Io::StringBuffer >  output )
