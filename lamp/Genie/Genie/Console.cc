@@ -441,7 +441,7 @@ namespace Genie
 	
 	class ConsolesOwner
 	{
-		typedef std::map< Console*, NN::Shared< Console*, NN::DisposeWithDelete > > Map;
+		typedef std::map< Console*, boost::shared_ptr< Console > > Map;
 		
 		private:
 			Map map;
@@ -455,7 +455,7 @@ namespace Genie
 	Console* ConsolesOwner::NewConsole( ConsoleTTYHandle* terminal )
 	{
 		Console* console = new Console( terminal );
-		map[ console ] = NN::Owned< Console*, NN::DisposeWithDelete >::Seize( console );
+		map[ console ] = boost::shared_ptr< Console >( console );
 		
 		return console;
 	}

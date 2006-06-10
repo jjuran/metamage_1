@@ -15,8 +15,11 @@
 #include <map>
 #include <string>
 
+// Boost
+#include <boost/shared_ptr.hpp>
+
 // Nucleus
-#include "Nucleus/Shared.h"
+#include "Nucleus/Owned.h"
 
 // Nitrogen
 #include "Nitrogen/CodeFragments.h"
@@ -34,24 +37,6 @@
 #include "Genie/BinaryImage.hh"
 #include "Genie/FileDescriptor.hh"
 
-
-namespace Genie
-{
-	
-	class Process;
-	
-}
-
-namespace Nucleus
-{
-	
-	template <>
-	struct OwnedDefaults< Genie::Process* >
-	{
-		typedef DisposeWithDelete Disposer;
-	};
-	
-}
 
 namespace Genie
 {
@@ -251,7 +236,7 @@ namespace Genie
 	class GenieProcessTable
 	{
 		public:
-			typedef std::map< int, NN::Shared< Process* > > ProcessMap;
+			typedef std::map< int, boost::shared_ptr< Process > > ProcessMap;
 			typedef ProcessMap::const_iterator const_iterator;
 			typedef ProcessMap::iterator iterator;
 		

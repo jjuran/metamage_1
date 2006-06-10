@@ -940,18 +940,18 @@ namespace Genie
 			throw NoSuchProcess();
 		}
 		
-		return *it->second.Get();
+		return *it->second;
 	}
 	
 	int GenieProcessTable::NewProcess( Process* process )
 	{
-		myProcesses[ myNextPID ] = NN::Owned< Process* >::Seize( process );
+		myProcesses[ myNextPID ] = boost::shared_ptr< Process >( process );
 		return myNextPID++;
 	}
 	
 	int GenieProcessTable::RemoveProcess( iterator it )
 	{
-		int result = it->second.Get()->Result();
+		int result = it->second->Result();
 		
 		myProcesses.erase( it );
 		
