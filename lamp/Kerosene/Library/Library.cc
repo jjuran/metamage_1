@@ -16,6 +16,7 @@
 // POSIX
 #include "dirent.h"
 #include "fcntl.h"
+#include "sys/ioctl.h"
 #include "sys/wait.h"
 #include "unistd.h"
 
@@ -349,6 +350,11 @@
 		const char tty[] = "/dev/tty";
 		
 		return name.substr( 0, sizeof tty - 1 ) == tty;
+	}
+	
+	int setctty( int fd )
+	{
+		return ioctl( fd, TIOCSCTTY, NULL );
 	}
 	
 	int setpgrp()

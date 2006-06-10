@@ -135,7 +135,6 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	int          (*pipe_import_    )( int filedes[ 2 ] );
 	ssize_t      (*read_import_    )( int filedes, void* buf, size_t nbyte );
 	int          (*rename_import_  )( const char* src, const char* dest );
-	int          (*setctty_import_ )( int filedes );
 	int          (*setpgid_import_ )( pid_t pid, pid_t pgid );
 	pid_t        (*setsid_import_  )();
 	unsigned int (*sleep_import_   )( unsigned int seconds );
@@ -644,13 +643,6 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 		CheckImportedSymbol( rename_import_ );
 		
 		return rename_import_( src, dest );
-	}
-	
-	int setctty( int filedes )
-	{
-		CheckImportedSymbol( setctty_import_ );
-		
-		return setctty_import_( filedes );
 	}
 	
 	int setpgid( pid_t pid, pid_t pgid )
