@@ -251,6 +251,11 @@ namespace Genie
 			// ignore null path components
 			if ( dirName.size() == 0 )
 			{
+				if ( *q != '\0' )
+				{
+					p = ++q;
+				}
+				
 				continue;
 			}
 			
