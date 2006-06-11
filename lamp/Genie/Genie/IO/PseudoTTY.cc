@@ -8,9 +8,6 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 
-// Genie
-#include "Genie/Console.hh"
-
 
 namespace Genie
 {
