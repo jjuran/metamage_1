@@ -32,7 +32,7 @@ namespace Genie
 		// FIXME:  Replace with find_if
 		for ( iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
 		{
-			Process& proc = *it->second.Get();
+			Process& proc = *it->second;
 			
 			if ( proc.ParentProcessID() == ppid )
 			{
@@ -64,12 +64,12 @@ namespace Genie
 			P7::ThrowErrno( ECHILD );
 		}
 		
-		if ( found->second.Get()->ParentProcessID() != ppid )
+		if ( found->second->ParentProcessID() != ppid )
 		{
 			// complain
 		}
 		
-		if ( found->second.Get()->Status() != Process::kTerminated )
+		if ( found->second->Status() != Process::kTerminated )
 		{
 			found = gProcessTable.end();
 		}
@@ -94,7 +94,7 @@ namespace Genie
 				{
 					if ( stat_loc != NULL )
 					{
-						*stat_loc = found->second.Get()->Result();
+						*stat_loc = found->second->Result();
 					}
 					
 					int foundPID = found->first;
