@@ -24,9 +24,12 @@ namespace Genie
 	
 	class DirHandle : public IOHandle
 	{
+		private:
+			static const SInt32 kStartIndex = -2;
+		
 		protected:
 			dirent fLastEntry;
-			UInt32 fIndex;
+			SInt32 fIndex;
 		
 		private:
 			N::FSDirSpec fDir;
@@ -34,7 +37,7 @@ namespace Genie
 		public:
 			DirHandle( const N::FSDirSpec& dir )
 			:
-				fIndex( 0 ),
+				fIndex( kStartIndex ),
 				fDir( dir )
 			{}
 			

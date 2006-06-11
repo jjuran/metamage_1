@@ -14,46 +14,73 @@ namespace Genie
 	
 	namespace NN = Nucleus;
 	
+	static const dirent* SetDirEntry( dirent& dir, N::FSDirID inode, ConstStr255Param name )
+	{
+		dir.d_ino = inode;
+		p2cstrcpy( dir.d_name, name );
+		
+		return &dir;
+	}
+	
 	const dirent* DirHandle::ReadDir()
 	{
 		CInfoPBRec pb;
-		::Str255 name;
+		UInt32 dirID = 0;
+		::Str255 name_buffer;
 		
-		N::FSpGetCatInfo( fDir, ++fIndex, pb, name );
+		ConstStr255Param name = name_buffer;
 		
-		fLastEntry.d_ino = pb.hFileInfo.ioDirID;
-		p2cstrcpy( fLastEntry.d_name, name );
+		if ( ++fIndex <= 0 )
+		{
+			dirID = fIndex == -1 ? SInt32( fDir.dirID ) : NN::Convert< FSSpec >( fDir ).parID;
+			name  = fIndex == -1 ? "\p."                : "\p..";
+		}
+		else
+		{
+			N::FSpGetCatInfo( fDir, fIndex, pb, name_buffer );
+			dirID = pb.hFileInfo.ioDirID;
+		}
 		
-		return &fLastEntry;
+		return SetDirEntry( fLastEntry, dirID, name );
 	}
 	
 	const dirent* VolumesDirHandle::ReadDir()
 	{
-		N::Volume_Container::const_iterator it = N::Volumes().begin();
+		UInt32 dirID = fsRtDirID;
 		
-		for ( int i = fIndex++; i > 0; --i )
+		ConstStr255Param name = "\p";
+		
+		if ( ++fIndex <= 0 )
 		{
-			++it;
+			dirID = fIndex == -1 ? fsRtParID : fsRtDirID;
+			name  = fIndex == -1 ? "\p."     : "\p..";
+		}
+		else
+		{
+			N::Volume_Container::const_iterator it = N::Volumes().begin();
 			
-			if ( it == N::Volumes().end() )
+			for ( int i = fIndex - 1;  i > 0;  --i )
 			{
-				return NULL;
+				++it;
+				
+				if ( it == N::Volumes().end() )
+				{
+					return NULL;
+				}
 			}
+			
+			N::FSVolumeRefNum vRefNum = *it;
+			
+			FSSpec volSpec = NN::Convert< FSSpec >( N::RootDirectory( vRefNum ) );
+			name = volSpec.name;
 		}
 		
-		N::FSVolumeRefNum vRefNum = *it;
-		
-		FSSpec volSpec = NN::Convert< FSSpec >( N::RootDirectory( vRefNum ) );
-		
-		fLastEntry.d_ino = fsRtDirID;
-		p2cstrcpy( fLastEntry.d_name, volSpec.name );
-		
-		return &fLastEntry;
+		return SetDirEntry( fLastEntry, dirID, name );
 	}
 	
 	void DirHandle::RewindDir()
 	{
-		fIndex = 0;
+		fIndex = kStartIndex;
 	}
 	
 	void DirHandle::SeekDir( off_t index )
