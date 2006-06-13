@@ -8,6 +8,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include "sys/ioctl.h"
 #include "unistd.h"
 
 // Nitrogen Extras / Utilities
@@ -32,12 +33,6 @@ static void SetVariables()
 	setenv( "HOSTTYPE", ENV_HOSTTYPE               , 0 );
 	setenv( "OSTYPE",                        "lamp", 0 );
 	setenv( "MACHTYPE", ENV_HOSTTYPE "-jtools-lamp", 0 );
-	
-	//FSSpec genie = N::GetProcessAppSpec( N::CurrentProcess() );
-	//N::FSDirSpec parent = N::FSpGetParent( genie );
-	
-	//setenv( "SHELL",    N::FSpGetPOSIXPathname( genie       ).c_str(), 0 );
-	//setenv( "SHELLDIR", N::FSpGetPOSIXPathname( parent & "" ).c_str(), 0 );
 	
 	const char* path =  "/usr/local/sbin"
 	                   ":/usr/local/bin"
@@ -79,7 +74,7 @@ int O::Main( int argc, char const *const argv[] )
 	dup2( STDOUT_FILENO, STDERR_FILENO );
 	
 	setsid();  // New session
-	setctty( STDIN_FILENO );  // Reattach to terminal
+	ioctl( STDIN_FILENO, TIOCSCTTY, NULL );  // Reattach to terminal
 	
 	SetVariables();
 	
@@ -89,11 +84,8 @@ int O::Main( int argc, char const *const argv[] )
 	
 	int result = execv( "/bin/sh", exec_argv );
 	
-	if ( result == -1 )
-	{
-		_exit( result );
-	}
+	_exit( result );
 	
-	return result;
+	return 0;  // Not reached
 }
 
