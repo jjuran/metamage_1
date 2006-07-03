@@ -111,7 +111,6 @@ static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 {
 	NN::Owned< N::OSASpec > cwdContext = MakeCWDContext();
 	
-	//NN::Shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
 	NN::Shared< N::ComponentInstance > scriptingComponent = cwdContext.Get().component;
 	
 	try
