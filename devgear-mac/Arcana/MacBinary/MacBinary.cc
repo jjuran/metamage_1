@@ -30,8 +30,9 @@
 // Standard C++
 #include <algorithm>
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
+#include "Nucleus/Convert.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
@@ -293,6 +294,7 @@ namespace MacBinary
 	enum HeaderField
 	{
 		kOldVersion,
+		kOldVersionForMacBinaryIIPlus,
 		kFileName,
 		kFileType,
 		kFileCreator,
@@ -322,8 +324,6 @@ namespace MacBinary
 	struct Header
 	{
 		unsigned char data[ kMacBinaryHeaderLength ];
-	
-		//Header();
 		
 		template < HeaderField field >
 		typename Field_Traits< field >::Value Get() const
@@ -350,16 +350,19 @@ namespace MacBinary
 		}
 	};
 	
-	template < std::size_t offset >
-	struct Zero_Field_Traits
+	template < UInt8 value, std::size_t offset >
+	struct Byte_Field_Traits
 	{
 		typedef UInt8 Value;
 		
 		static bool Check( const Header& h )
 		{
-			return h.data[ offset ] == 0;
+			return h.data[ offset ] == value;
 		}
 	};
+	
+	template < std::size_t offset >
+	struct Zero_Field_Traits : Byte_Field_Traits< 0, offset > {};
 	
 	template < class Type, std::size_t offset >
 	struct POD_Field_Traits
@@ -404,6 +407,8 @@ namespace MacBinary
 	};
 	
 	template <> struct Field_Traits< kOldVersion > : Zero_Field_Traits< 0 > {};
+	
+	template <> struct Field_Traits< kOldVersionForMacBinaryIIPlus > : Byte_Field_Traits< 1, 0 > {};
 	
 	template <>
 	struct Field_Traits< kFileName >
@@ -527,15 +532,6 @@ namespace MacBinary
 		static void Set( Header& h )  { Field::Set( h, CRC( h.data ) ); }
 	};
 	
-	
-	/*
-	Header::Header()
-	{
-		std::fill( data,
-		           data + kMacBinaryHeaderLength,
-		           '\0' );
-	}
-	*/
 	
 	static void ZeroHeader( Header& h )
 	{
@@ -727,13 +723,15 @@ namespace MacBinary
 	
 	Decoder::Decoder( const N::FSDirSpec& destination )
 	:
-		fDestDir( destination ),
+		//fDestDir( destination ),
+		isFolder( false ),
 		fHeaderReceived( false ),
 		fDataForkLength       ( 0 ),
 		fResourceForkLength   ( 0 ),
 		fSecondaryHeaderLength( 0 ),
 		fCommentLength        ( 0 )
 	{
+		frame.destDir = destination;
 	}
 	
 	// Contrary to <http://www.lazerware.com/formats/macbinary/macbinary_iii.html>,
@@ -763,9 +761,6 @@ namespace MacBinary
 		bool macBinIIIsig = h.Check< kMacBinaryIIISignature >();
 		bool crc          = h.Check< kCRC                   >();
 		
-		Byte currentVersion = h.Get< kCurrentVersion >();
-		Byte minimumVersion = h.Get< kMinimumVersion >();
-		
 		if ( zeroByte0 && zeroByte74 )
 		{
 			if ( crc )
@@ -779,7 +774,29 @@ namespace MacBinary
 			}
 		}
 		
-		return 0;  // Not MacBinary
+		// Not a MacBinary-encoded file, check for a directory tree
+		
+		bool versionOne = h.Check< kOldVersionForMacBinaryIIPlus >();
+		
+		::OSType type    = h.Get< kFileType    >();
+		::OSType creator = h.Get< kFileCreator >();
+		
+		if ( versionOne  &&  crc  &&  type == 'fold'  &&  (creator & 0xFFFFFFFE) == 0xFFFFFFFE )
+		{
+			return creator & 0x000000FF;
+		}
+		
+		return 0;
+	}
+	
+	static bool CheckMacBinaryIIPlusHeader( const Header& h )
+	{
+		bool versionOne = h.Check< kOldVersionForMacBinaryIIPlus >();
+		
+		::OSType type    = h.Get< kFileType    >();
+		::OSType creator = h.Get< kFileCreator >();
+		
+		return versionOne  &&  type == 'fold'  &&  creator == 0xFFFFFFFF;
 	}
 	
 	void Decoder::DecodeHeader( const char* header )
@@ -793,6 +810,15 @@ namespace MacBinary
 			throw InvalidMacBinaryHeader();
 		}
 		
+		isFolder = check >= 0xFE;
+		
+		trailerReceived = check == 0xFE;
+		
+		if ( trailerReceived )
+		{
+			return;
+		}
+		
 		Byte minimumVersion = h.Get< kMinimumVersion >();
 		
 		if ( kCurrentMacBinaryVersion < minimumVersion )
@@ -803,36 +829,50 @@ namespace MacBinary
 		ConstStr63Param name = h.Get< kFileName >();
 		
 		//fFile = N::FSMakeFSSpec( fDestDir, name );
-		fFile = fDestDir & name;
+		frame.file = frame.destDir & name;
 		
-		N::FSpCreate( fFile, h.Get< kFileCreator >(),
-		                     h.Get< kFileType    >() );
+		if ( isFolder )
+		{
+			N::FSpDirCreate( frame.file );
+		}
+		else
+		{
+			N::FSpCreate( frame.file, h.Get< kFileCreator >(),
+								      h.Get< kFileType    >() );
+		}
 		
 		CInfoPBRec pb;
 		
-		N::FSpGetCatInfo( fFile, pb );
+		N::FSpGetCatInfo( frame.file, pb );
 		
-		pb.hFileInfo.ioDirID = fFile.parID;
+		pb.hFileInfo.ioNamePtr = frame.file.name;
+		pb.hFileInfo.ioDirID = frame.file.parID;
 		
 		pb.hFileInfo.ioFlFndrInfo = h.Get< kFInfo >();
 		
 		pb.hFileInfo.ioFlCrDat = h.Get< kFileCreationDate     >();
-		//pb.hFileInfo.ioFlMdDat = h.Get< kFileModificationDate >();
+		pb.hFileInfo.ioFlMdDat = h.Get< kFileModificationDate >();
 		
-		pb.hFileInfo.ioFlLgLen  = fDataForkLength     = h.Get< kDataForkLength     >();
-		pb.hFileInfo.ioFlRLgLen = fResourceForkLength = h.Get< kResourceForkLength >();
+		if ( !isFolder )
+		{
+			pb.hFileInfo.ioFlLgLen  = fDataForkLength     = h.Get< kDataForkLength     >();
+			pb.hFileInfo.ioFlRLgLen = fResourceForkLength = h.Get< kResourceForkLength >();
+		}
 		
 		reinterpret_cast< ExtendedFileInfo& >( pb.hFileInfo.ioFlXFndrInfo ).extendedFinderFlags = h.Get< kExtendedFinderFlags >();
 		
 		N::ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
 		
-		fModificationDate = h.Get< kFileModificationDate >();
+		frame.modificationDate = h.Get< kFileModificationDate >();
 		
 		fSecondaryHeaderLength = h.Get< kSecondaryHeaderLength >();
 		fCommentLength         = h.Get< kGetInfoCommentLength  >();
 		
-		fDataFork     = N::FSpOpenDF( fFile, fsWrPerm );
-		fResourceFork = N::FSpOpenRF( fFile, fsWrPerm );
+		if ( !isFolder )
+		{
+			fDataFork     = N::FSpOpenDF( frame.file, fsWrPerm );
+			fResourceFork = N::FSpOpenRF( frame.file, fsWrPerm );
+		}
 		
 		fHeaderReceived = true;
 	}
@@ -850,6 +890,8 @@ namespace MacBinary
 		{
 			throw N::ParamErr();
 		}
+		
+	Loop:
 		
 		if ( !fHeaderReceived )
 		{
@@ -895,7 +937,7 @@ namespace MacBinary
 			
 			fCommentLength -= commentBytes;
 			
-			fComment.append( data, commentBytes );
+			frame.comment.append( data, commentBytes );
 			
 			data += PaddedLength( commentBytes, kMacBinaryBlockSize );
 		}
@@ -906,26 +948,56 @@ namespace MacBinary
 		     && !fCommentLength )
 		{
 			// We're done
-			FS::Close( fDataFork     );
-			FS::Close( fResourceFork );
 			
-			if ( !fComment.empty() )
+			fHeaderReceived = false;
+			
+			if ( isFolder && !trailerReceived )
 			{
-				N::FSpDTSetComment( fFile, fComment );
+				frameStack.push_back( frame );
+				
+				frame.destDir = NN::Convert< N::FSDirSpec >( frame.file );
+				frame.comment.clear();
 			}
-			
-			CInfoPBRec pb;
-			
-			N::FSpGetCatInfo( fFile, pb );
-			
-			pb.hFileInfo.ioDirID = fFile.parID;
-			
-			pb.hFileInfo.ioFlMdDat = fModificationDate;
-			
-			N::ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
+			else
+			{
+				if ( isFolder )
+				{
+					if ( frameStack.empty() )
+					{
+						throw TooManyEndBlocks();
+					}
+					
+					frame = frameStack.back();
+					frameStack.pop_back();
+				}
+				else
+				{
+					FS::Close( fDataFork     );
+					FS::Close( fResourceFork );
+				}
+				
+				if ( !frame.comment.empty() )
+				{
+					N::FSpDTSetComment( frame.file, frame.comment );
+				}
+				
+				CInfoPBRec pb;
+				
+				N::FSpGetCatInfo( frame.file, pb );
+				
+				pb.hFileInfo.ioNamePtr = frame.file.name;
+				pb.hFileInfo.ioDirID = frame.file.parID;
+				
+				pb.hFileInfo.ioFlMdDat = frame.modificationDate;
+				
+				N::ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
+			}
 		}
 		
-		// If we got here, there's excess data.  Do we throw?
+		if ( data < end )
+		{
+			goto Loop;
+		}
 		
 		return data - start;
 	}

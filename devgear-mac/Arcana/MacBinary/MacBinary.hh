@@ -8,6 +8,7 @@
 
 // Standard C++
 #include <list>
+#include <vector>
 
 // Nitrogen Carbon support
 #include "Nitrogen/Files.h"
@@ -24,6 +25,8 @@ namespace MacBinary
 	
 	class InvalidMacBinaryHeader      {};  // The stream lacks a valid MacBinary header.
 	class IncompatibleMacBinaryHeader {};  // The header says we're too old to decode it.
+	class MacBinaryIIPlusNotSupported {};  // The file has a valid MacBinary II+ header
+	class TooManyEndBlocks            {};  // Directory end block received without start
 	
 	// High-level interface
 	
@@ -58,23 +61,42 @@ namespace MacBinary
 	class Decoder
 	{
 		private:
-			N::FSDirSpec  fDestDir;
-			FSSpec        fFile;
+			struct Frame
+			{
+				N::FSDirSpec  destDir;
+				FSSpec        file;
+				UInt32        modificationDate;
+				std::string   comment;
+				
+				Frame()  {}
+				
+				Frame( N::FSDirSpec  destDir,
+				       FSSpec        file,
+				       UInt32        modificationDate,
+				       std::string   comment )
+				: destDir( destDir ),
+				  file( file ),
+				  modificationDate( modificationDate ),
+				  comment( comment )
+				{
+				}
+			};
 			
+			Frame frame;
+			std::vector< Frame > frameStack;
+			
+			bool isFolder;
 			bool fHeaderReceived;
+			bool trailerReceived;
 			
 			ByteCount fDataForkLength;
 			ByteCount fResourceForkLength;
 			UInt16    fSecondaryHeaderLength;
 			UInt16    fCommentLength;
 			
-			UInt32 fModificationDate;
-			
 			NN::Owned< N::FSFileRefNum > fDataFork;
 			NN::Owned< N::FSFileRefNum > fResourceFork;
 			
-			std::string fComment;
-		
 		public:
 			Decoder( const N::FSDirSpec& destination );
 			
