@@ -28,15 +28,6 @@ namespace MacBinary
 	class MacBinaryIIPlusNotSupported {};  // The file has a valid MacBinary II+ header
 	class TooManyEndBlocks            {};  // Directory end block received without start
 	
-	// High-level interface
-	
-	bool Check( const FSSpec& file );
-	
-	void Encode( const FSSpec& source, const FSSpec& dest );
-	void Decode( const FSSpec& source, const N::FSDirSpec& destDir );
-	
-	// Low-level interface
-	
 	struct Block
 	{
 		char data[ kMacBinaryBlockSize ];
@@ -97,10 +88,10 @@ namespace MacBinary
 			NN::Owned< N::FSFileRefNum > fDataFork;
 			NN::Owned< N::FSFileRefNum > fResourceFork;
 			
+			void DecodeHeader( const char* header );
+			
 		public:
 			Decoder( const N::FSDirSpec& destination );
-			
-			void DecodeHeader( const char* header );
 			
 			int Write( const char* data, ByteCount byteCount );
 	};

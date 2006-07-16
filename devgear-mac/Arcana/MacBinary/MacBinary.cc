@@ -210,52 +210,6 @@ namespace MacBinary
 		kCurrentMacBinaryVersion = kVersionMacBinaryIII
 	};
 	
-	// High-level implementation
-	
-	void Encode( const FSSpec& source, const FSSpec& dest )
-	{
-		Encoder encoder( source );
-		
-		N::FSpCreate( dest, '????', 'BINA' );
-		
-		NN::Owned< N::FSFileRefNum > out = N::FSpOpenDF( dest, fsWrPerm );
-		
-		char data[ 4096 ];
-		
-		try
-		{
-			while ( true )
-			{
-				std::size_t bytes = encoder.Read( data, 4096 );
-				
-				FS::Write( out, data, bytes );
-			}
-		}
-		catch ( FS::EndOfFile& ) {}
-	}
-	
-	void Decode( const FSSpec& source, const N::FSDirSpec& destDir )
-	{
-		NN::Owned< N::FSFileRefNum > in = N::FSpOpenDF( source, fsRdPerm );
-		
-		Decoder decoder( destDir );
-		
-		char data[ 4096 ];
-		
-		try
-		{
-			while ( true )
-			{
-				std::size_t bytes = FS::Read( in, data, 4096 );
-				
-				decoder.Write( data, bytes );
-			}
-		}
-		catch ( FS::EndOfFile& ) {}
-	}
-	
-	// Low-level implementation
-	
 	static unsigned short CalcCRC( register const unsigned char *dataBuf, std::size_t size )
 	{
 		//#define CCITT_CRC_GEN	0x1021
@@ -787,16 +741,6 @@ namespace MacBinary
 		}
 		
 		return 0;
-	}
-	
-	static bool CheckMacBinaryIIPlusHeader( const Header& h )
-	{
-		bool versionOne = h.Check< kOldVersionForMacBinaryIIPlus >();
-		
-		::OSType type    = h.Get< kFileType    >();
-		::OSType creator = h.Get< kFileCreator >();
-		
-		return versionOne  &&  type == 'fold'  &&  creator == 0xFFFFFFFF;
 	}
 	
 	void Decoder::DecodeHeader( const char* header )
