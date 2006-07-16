@@ -115,6 +115,11 @@ Offset	Type	Description
 namespace Nitrogen
 {
 	
+	static void PBSetCatInfoSync( CInfoPBRec& cInfo )
+	{
+		ThrowOSStatus( ::PBSetCatInfoSync( &cInfo ) );
+	}
+	
 	#ifdef PBDTGetPath
 	#undef PBDTGetPath
 	#endif
@@ -805,7 +810,7 @@ namespace MacBinary
 		
 		reinterpret_cast< ExtendedFileInfo& >( pb.hFileInfo.ioFlXFndrInfo ).extendedFinderFlags = h.Get< kExtendedFinderFlags >();
 		
-		N::ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
+		N::PBSetCatInfoSync( pb );
 		
 		frame.modificationDate = h.Get< kFileModificationDate >();
 		
@@ -934,7 +939,7 @@ namespace MacBinary
 				
 				pb.hFileInfo.ioFlMdDat = frame.modificationDate;
 				
-				N::ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
+				N::PBSetCatInfoSync( pb );
 			}
 		}
 		
