@@ -3,6 +3,9 @@
  *	=========
  */
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C++
 #include <functional>
 #include <vector>
@@ -13,14 +16,17 @@
 // Nitrogen Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen / Mac OS support
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
+
+// Nitrogen Extras / Utilities
+#include "Utilities/Files.h"
 
 // Divergence
 #include "Divergence/Utilities.hh"
 
 // Misc
-#include "MacBinaryIII.hh"
+#include "MacBinary.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -29,6 +35,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace FS = FileSystem;
 namespace Div = Divergence;
 namespace O = Orion;
 
@@ -50,6 +57,61 @@ static int Usage()
 	return 1;
 }
 
+	static void Encode( const FSSpec& source, const FSSpec& dest )
+	{
+		MacBinary::Encoder encoder( source );
+		
+		N::FSpCreate( dest, '????', 'BINA' );
+		
+		NN::Owned< N::FSFileRefNum > out = N::FSpOpenDF( dest, fsWrPerm );
+		
+		char data[ 4096 ];
+		
+		try
+		{
+			while ( true )
+			{
+				std::size_t bytes = encoder.Read( data, 4096 );
+				
+				FS::Write( out, data, bytes );
+			}
+		}
+		catch ( FS::EndOfFile& ) {}
+	}
+	
+	static void Decode( const FSSpec& source, const N::FSDirSpec& destDir )
+	{
+		NN::Owned< N::FSFileRefNum > in = N::FSpOpenDF( source, fsRdPerm );
+		
+		MacBinary::Decoder decoder( destDir );
+		
+		char data[ 4096 ];
+		
+		std::size_t totalBytes = 0;
+		
+		try
+		{
+			while ( true )
+			{
+				std::size_t bytes = FS::Read( in, data, 4096 );
+				
+				decoder.Write( data, bytes );
+				
+				totalBytes += bytes;
+				
+				sleep( 0 );
+			}
+		}
+		catch ( const FS::EndOfFile& )
+		{
+		}
+		catch ( const MacBinary::InvalidMacBinaryHeader& )
+		{
+			std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
+			O::ThrowExitStatus( 1 );
+		}
+	}
+	
 int O::Main( int argc, const char *const argv[] )
 {
 	if ( argc < 3 )
@@ -73,16 +135,29 @@ int O::Main( int argc, const char *const argv[] )
 			return Usage();
 		}
 		
-		MacBinaryIII::Encode( targetFile,
-		                      Div::ResolvePathToFSSpec( argv[ 3 ] ) );
+		Encode( targetFile,
+		        Div::ResolvePathToFSSpec( argv[ 3 ] ) );
 	}
 	else if ( op == "--decode" )
 	{
 		// FIXME:  Can't decode from a stream
 		const char* destDirPath = argv[ 3 ] ? argv[ 3 ] : ".";
 		
-		MacBinaryIII::Decode( targetFile,
-		                      NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( destDirPath ) ) );
+		try
+		{
+			Decode( targetFile,
+			        NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( destDirPath ) ) );
+		}
+		catch ( const MacBinary::InvalidMacBinaryHeader& )
+		{
+			std::fprintf( stderr, "%s\n", "Invalid MacBinary header" );
+			return 1;
+		}
+		catch ( const MacBinary::IncompatibleMacBinaryHeader& )
+		{
+			std::fprintf( stderr, "%s\n", "Incompatible (newer) MacBinary format." );
+			return 2;
+		}
 	}
 	else
 	{
