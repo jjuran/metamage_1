@@ -117,13 +117,6 @@ namespace MacBinary
 	
 	namespace FS = FileSystem;
 	
-	enum
-	{
-		kVersionMacBinaryII  = 129,
-		kVersionMacBinaryIII = 130,
-		
-		kCurrentMacBinaryVersion = kVersionMacBinaryIII
-	};
 	
 	static unsigned short CalcCRC( register const unsigned char *dataBuf, std::size_t size )
 	{
@@ -159,6 +152,13 @@ namespace MacBinary
 		
 		return crc;
 	}
+	
+	
+	const UInt8 kVersionMacBinaryII  = 129;
+	const UInt8 kVersionMacBinaryIII = 130;
+	
+	const UInt8 kCurrentMacBinaryVersion = kVersionMacBinaryIII;
+	
 	
 	enum HeaderField
 	{
@@ -402,13 +402,6 @@ namespace MacBinary
 	};
 	
 	
-	static void ZeroHeader( Header& h )
-	{
-		std::fill( h.data,
-		           h.data + kMacBinaryHeaderLength,
-		           '\0' );
-	}
-	
 	// 0 < k < blockSize
 	// 
 	// 0             -> 0
@@ -419,6 +412,13 @@ namespace MacBinary
 	static std::size_t PaddedLength( std::size_t length, std::size_t blockSize )
 	{
 		return length + blockSize - ( (length + blockSize - 1) % blockSize + 1 );
+	}
+	
+	static void ZeroHeader( Header& h )
+	{
+		std::fill( h.data,
+		           h.data + kMacBinaryHeaderLength,
+		           '\0' );
 	}
 	
 	static void MakeHeader( const HFileInfo& pb, Header& h )
@@ -460,41 +460,6 @@ namespace MacBinary
 		Block block;
 	};
 	
-	Encoder::Encoder( const FSSpec& file )
-	:
-		fDataFork    ( N::FSpOpenDF( file, fsRdPerm ) ),
-		fResourceFork( N::FSpOpenRF( file, fsRdPerm ) )
-	{
-		CInfoPBRec pb;
-		
-		N::FSpGetCatInfo( file, pb );
-		
-		if ( pb.hFileInfo.ioFlLgLen == 0 )
-		{
-			FS::Close( fDataFork );
-		}
-		
-		if ( pb.hFileInfo.ioFlRLgLen == 0 )
-		{
-			FS::Close( fResourceFork );
-		}
-		
-		pb.hFileInfo.ioNamePtr = const_cast< unsigned char* >( file.name );
-		
-		HeaderBlock u;
-		
-		MakeHeader( pb.hFileInfo, u.h );
-		
-		fBlocks.push_back( u.block );
-		
-		try
-		{
-			fComment = N::FSpDTGetComment( file );
-			fComment.resize( PaddedLength( fComment.size(), kMacBinaryBlockSize ) );
-		}
-		catch ( ... ) {}
-	}
-	
 	static void ReadBlocks( NN::Owned< N::FSFileRefNum >&  fork,
 	                        char*&                         data,
 	                        std::size_t&                   blocksRemaining )
@@ -528,6 +493,41 @@ namespace MacBinary
 		{
 			FS::Close( fork );
 		}
+	}
+	
+	Encoder::Encoder( const FSSpec& file )
+	:
+		fDataFork    ( N::FSpOpenDF( file, fsRdPerm ) ),
+		fResourceFork( N::FSpOpenRF( file, fsRdPerm ) )
+	{
+		CInfoPBRec pb;
+		
+		N::FSpGetCatInfo( file, pb );
+		
+		if ( pb.hFileInfo.ioFlLgLen == 0 )
+		{
+			FS::Close( fDataFork );
+		}
+		
+		if ( pb.hFileInfo.ioFlRLgLen == 0 )
+		{
+			FS::Close( fResourceFork );
+		}
+		
+		pb.hFileInfo.ioNamePtr = const_cast< unsigned char* >( file.name );
+		
+		HeaderBlock u;
+		
+		MakeHeader( pb.hFileInfo, u.h );
+		
+		fBlocks.push_back( u.block );
+		
+		try
+		{
+			fComment = N::FSpDTGetComment( file );
+			fComment.resize( PaddedLength( fComment.size(), kMacBinaryBlockSize ) );
+		}
+		catch ( ... ) {}
 	}
 	
 	int Encoder::Read( char* data, std::size_t byteCount )
@@ -590,22 +590,6 @@ namespace MacBinary
 		return bytesRead;
 	}
 	
-	Decoder::Decoder( const N::FSDirSpec& destination )
-	:
-		//fDestDir( destination ),
-		isFolder( false ),
-		fHeaderReceived( false ),
-		fDataForkLength       ( 0 ),
-		fResourceForkLength   ( 0 ),
-		fSecondaryHeaderLength( 0 ),
-		fCommentLength        ( 0 )
-	{
-		frame.destDir = destination;
-	}
-	
-	// Contrary to <http://www.lazerware.com/formats/macbinary/macbinary_iii.html>,
-	// we will not be satisfied with the presence of 'mBIN' at offset 102.
-	
 	static bool VerifyMacBinaryI( const Header& h )
 	{
 		bool zeroByte82   = h.Check< kZeroByte82 >();
@@ -622,6 +606,9 @@ namespace MacBinary
 	{
 		return true;
 	}
+	
+	// Contrary to <http://www.lazerware.com/formats/macbinary/macbinary_iii.html>,
+	// we will not be satisfied with the presence of 'mBIN' at offset 102.
 	
 	static Byte CheckHeader( const Header& h )
 	{
@@ -656,6 +643,19 @@ namespace MacBinary
 		}
 		
 		return 0;
+	}
+	
+	Decoder::Decoder( const N::FSDirSpec& destination )
+	:
+		//fDestDir( destination ),
+		isFolder( false ),
+		fHeaderReceived( false ),
+		fDataForkLength       ( 0 ),
+		fResourceForkLength   ( 0 ),
+		fSecondaryHeaderLength( 0 ),
+		fCommentLength        ( 0 )
+	{
+		frame.destDir = destination;
 	}
 	
 	void Decoder::DecodeHeader( const char* header )
