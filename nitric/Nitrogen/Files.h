@@ -912,6 +912,10 @@ namespace Nitrogen
 	// 2872
 	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock );
 	
+	void PBSetCatInfoSync( CInfoPBRec& cInfo );
+	
+	// ...
+	
 	CInfoPBRec& FSpGetCatInfo( const FSSpec&   item, CInfoPBRec& paramBlock );
 	
 	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
@@ -927,13 +931,44 @@ namespace Nitrogen
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock );
 	GetVolParmsInfoBuffer PBHGetVolParmsSync( FSVolumeRefNum vRefNum );
 	
-	// 4167
-	void PBDTGetPath( DTPBRec& pb );
+	// Desktop Manager
+	// ---------------
 	
-	// 4279
+	void PBDTGetPath( DTPBRec& pb );
+	void PBDTGetPath( FSVolumeRefNum vRefNum, DTPBRec& pb );
+	
+	DTPBRec& FSpDTGetPath( const FSSpec& file, DTPBRec& pb );
+	
+	// PBDTCloseDown
+	// PBDTAddIconSync
+	// PBDTGetIconSync
+	// PBDTGetIconInfoSync
+	// PBDTAddAPPLSync
+	// PBDTRemoveAPPLSync
+	
 	void PBDTGetAPPLSync( DTPBRec& pb );
 	
 	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum );
+	
+	void PBDTSetCommentSync( DTPBRec& pb );
+	
+	void DTSetComment( DTPBRec& pb, const std::string& comment );
+	
+	void FSpDTSetComment( const FSSpec& file, const std::string& comment );
+	
+	// PBDTRemoveCommentSync
+	
+	void PBDTGetCommentSync( DTPBRec& pb );
+	
+	std::string DTGetComment( DTPBRec& pb );
+	
+	std::string FSpDTGetComment( const FSSpec& file );
+	
+	// PBDTFlushSync
+	// PBDTResetSync
+	// PBDTGetInfoSync
+	// PBDTOpenInform
+	// PBDTDeleteSync
 	
 	// 4617
 	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name );

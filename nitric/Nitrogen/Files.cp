@@ -10,8 +10,12 @@
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
+
 #ifndef NUCLEUS_INITIALIZE_H
 #include "Nucleus/Initialize.h"
+#endif
+#ifndef NUCLEUS_NASSERT_H
+#include "Nucleus/NAssert.h"
 #endif
 
 #include <limits>
@@ -115,7 +119,14 @@ namespace Nitrogen
 		
 		return paramBlock;
 	}
-
+	
+	void PBSetCatInfoSync( CInfoPBRec& cInfo )
+	{
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBSetCatInfoSync( &cInfo ) );
+	}
+	
   using ::CInfoPBRec;
   using ::DirInfo;
   using ::FileInfo;
@@ -245,11 +256,35 @@ namespace Nitrogen
 		return info;
 	}
 	
+#pragma mark -
+#pragma mark ¥ Desktop Manager ¥
+	
+	// Desktop Manager
+	// ---------------
+	
 	void PBDTGetPath( DTPBRec& pb )
 	{
 		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
 		
 		ThrowOSStatus( ::PBDTGetPath( &pb ) );
+	}
+	
+	void PBDTGetPath( FSVolumeRefNum vRefNum, DTPBRec& pb )
+	{
+		pb.ioVRefNum = vRefNum;
+		pb.ioNamePtr = NULL;
+		
+		PBDTGetPath( pb );
+	}
+	
+	DTPBRec& FSpDTGetPath( const FSSpec& file, DTPBRec& pb )
+	{
+		PBDTGetPath( file.vRefNum, pb );
+		
+		pb.ioNamePtr = const_cast< unsigned char* >( file.name );
+		pb.ioDirID   = file.parID;
+		
+		return pb;
 	}
 	
 	void PBDTGetAPPLSync( DTPBRec& pb )
@@ -288,6 +323,61 @@ namespace Nitrogen
 		
 		return FSMakeFSSpec( vRefNum, FSDirID( pb.ioAPPLParID ), name );
 	}
+	
+	void PBDTSetCommentSync( DTPBRec& pb )
+	{
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBDTSetCommentSync( &pb ) );
+	}
+	
+	void DTSetComment( DTPBRec& pb, const std::string& comment )
+	{
+		pb.ioDTBuffer = const_cast< char* >( comment.data() );
+		pb.ioDTReqCount = comment.size();
+		
+		PBDTSetCommentSync( pb );
+	}
+	
+	void FSpDTSetComment( const FSSpec& file, const std::string& comment )
+	{
+		DTPBRec pb;
+		
+		return DTSetComment( FSpDTGetPath( file, pb ), comment );
+	}
+	
+	void PBDTGetCommentSync( DTPBRec& pb )
+	{
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::PBDTGetCommentSync( &pb ) );
+	}
+	
+	std::string DTGetComment( DTPBRec& pb )
+	{
+		const ByteCount kMaximumCommentLength      = 200;
+		const ByteCount kExperimentalCommentLength = 256;
+		
+		char comment[ kExperimentalCommentLength ];
+		
+		pb.ioDTBuffer = comment;
+		pb.ioDTReqCount = kExperimentalCommentLength;
+		
+		ThrowOSStatus( ::PBDTGetCommentSync( &pb ) );
+		
+		ASSERT( pb.ioDTActCount >=   0 );
+		ASSERT( pb.ioDTActCount <= 200 );
+		
+		return std::string( comment, pb.ioDTActCount );
+	}
+	
+	std::string FSpDTGetComment( const FSSpec& file )
+	{
+		DTPBRec pb;
+		
+		return DTGetComment( FSpDTGetPath( file, pb ) );
+	}
+	
 	
 	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name)
 	{
