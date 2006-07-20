@@ -37,6 +37,9 @@
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 
+// Nitrogen Extras / Iteration
+#include "Iteration/FSContents.h"
+
 
 /*
 
@@ -227,6 +230,11 @@ namespace MacBinary
 		static bool Check( const Header& h )
 		{
 			return h.data[ offset ] == value;
+		}
+		
+		static void Set( Header& h )
+		{
+			h.data[ offset ] = value;
 		}
 	};
 	
@@ -421,7 +429,7 @@ namespace MacBinary
 		           '\0' );
 	}
 	
-	static void MakeHeader( const HFileInfo& pb, Header& h )
+	static void MakePartialHeaderForItem( const HFileInfo& pb, Header& h )
 	{
 		ZeroHeader( h );
 		
@@ -446,10 +454,47 @@ namespace MacBinary
 		h.Set< kFileCreationDate     >( pb.ioFlCrDat );
 		h.Set< kFileModificationDate >( pb.ioFlMdDat );
 		
+		h.Set< kExtendedFinderFlags >( reinterpret_cast< const ExtendedFileInfo& >( pb.ioFlXFndrInfo ).extendedFinderFlags );
+	}
+	
+	static void MakeFileHeader( const HFileInfo& pb, Header& h )
+	{
+		MakePartialHeaderForItem( pb, h );
+		
+		h.Set< kOldVersion >();
+		
 		h.Set< kDataForkLength     >( pb.ioFlLgLen  );
 		h.Set< kResourceForkLength >( pb.ioFlRLgLen );
 		
-		h.Set< kExtendedFinderFlags >( reinterpret_cast< const ExtendedFileInfo& >( pb.ioFlXFndrInfo ).extendedFinderFlags );
+		h.Set< kCRC >();
+	}
+	
+	static void MakeFolderHeader( const HFileInfo& pb, Header& h )
+	{
+		MakePartialHeaderForItem( pb, h );
+		
+		h.Set< kOldVersionForMacBinaryIIPlus >();
+		
+		h.Set< kFileType    >( 'fold'     );
+		h.Set< kFileCreator >( 0xFFFFFFFF );
+		
+		h.Set< kCRC >();
+	}
+	
+	static void MakeHeader( const HFileInfo& pb, Header& h )
+	{
+		MakePartialHeaderForItem( pb, h );
+		
+		bool isDir = N::PBTestIsDirectory( pb );
+		
+		if ( isDir )
+		{
+		}
+		else
+		{
+			h.Set< kDataForkLength     >( pb.ioFlLgLen  );
+			h.Set< kResourceForkLength >( pb.ioFlRLgLen );
+		}
 		
 		h.Set< kCRC >();
 	}
@@ -460,134 +505,97 @@ namespace MacBinary
 		Block block;
 	};
 	
-	static void ReadBlocks( NN::Owned< N::FSFileRefNum >&  fork,
-	                        char*&                         data,
-	                        std::size_t&                   blocksRemaining )
+	static void ReadWrite( N::FSFileRefNum file, BlockWriter blockWrite, int output, std::size_t byteCount )
 	{
-		if ( !blocksRemaining || fork.Get() == N::FSFileRefNum() )
-		{
-			return;
-		}
+		std::size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
 		
-		try
-		{
-			std::size_t bytes = FS::Read( fork,
-			                              data,
-			                              blocksRemaining * kMacBinaryBlockSize );
-			
-			if ( bytes % kMacBinaryBlockSize != 0 )
-			{
-				std::size_t roundedBytes = PaddedLength( bytes, kMacBinaryBlockSize );
-				
-				std::fill( data + bytes,
-				           data + roundedBytes,
-				           '\0' );
-				
-				bytes = roundedBytes;
-			}
-			
-			data += bytes;
-			blocksRemaining -= bytes / kMacBinaryBlockSize;
-		}
-		catch ( N::EOFErr& )
-		{
-			FS::Close( fork );
-		}
+		std::vector< char > buffer( paddedCount );
+		
+		UInt32 bytesRead = N::FSRead( file, byteCount, &buffer[0] );
+		
+		std::fill( buffer.begin() + bytesRead, buffer.end(), '\0' );
+		
+		blockWrite( output, &buffer[0], paddedCount );
 	}
 	
-	Encoder::Encoder( const FSSpec& file )
-	:
-		fDataFork    ( N::FSpOpenDF( file, fsRdPerm ) ),
-		fResourceFork( N::FSpOpenRF( file, fsRdPerm ) )
+	static void EncodeFile( const FSSpec& file, HFileInfo& hFileInfo, BlockWriter blockWrite, int output )
 	{
-		CInfoPBRec pb;
-		
-		N::FSpGetCatInfo( file, pb );
-		
-		if ( pb.hFileInfo.ioFlLgLen == 0 )
-		{
-			FS::Close( fDataFork );
-		}
-		
-		if ( pb.hFileInfo.ioFlRLgLen == 0 )
-		{
-			FS::Close( fResourceFork );
-		}
-		
-		pb.hFileInfo.ioNamePtr = const_cast< unsigned char* >( file.name );
-		
 		HeaderBlock u;
 		
-		MakeHeader( pb.hFileInfo, u.h );
+		MakeFileHeader( hFileInfo, u.h );
 		
-		fBlocks.push_back( u.block );
+		blockWrite( output, u.block.data, sizeof u.block );
+		
+		if ( hFileInfo.ioFlLgLen > 0 )
+		{
+			ReadWrite( N::FSpOpenDF( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlLgLen );
+		}
+		
+		if ( hFileInfo.ioFlRLgLen > 0 )
+		{
+			ReadWrite( N::FSpOpenRF( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlRLgLen );
+		}
 		
 		try
 		{
-			fComment = N::FSpDTGetComment( file );
-			fComment.resize( PaddedLength( fComment.size(), kMacBinaryBlockSize ) );
+			std::string comment = N::FSpDTGetComment( file );
+			comment.resize( PaddedLength( comment.size(), kMacBinaryBlockSize ) );
+			
+			blockWrite( output, comment.data(), comment.size() );
 		}
 		catch ( ... ) {}
+		
 	}
 	
-	int Encoder::Read( char* data, std::size_t byteCount )
+	static void EncodeFolder( CInfoPBRec& cInfo, BlockWriter blockWrite, int output )
 	{
-		char* const start = data;
+		HeaderBlock u;
 		
-		if ( byteCount % kMacBinaryBlockSize != 0 )
+		MakeFolderHeader( cInfo.hFileInfo, u.h );
+		
+		blockWrite( output, u.block.data, sizeof u.block );
+		
+		N::FSDirSpec dir = NN::Make< N::FSDirSpec >( cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID );
+		
+		N::FSSpecContents_Container contents = N::FSContents( dir );
+		
+		/*
+		std::for_each( contents.begin(),
+		               contents.end(),
+		               std::bind2nd( Encoder, output ) );
+		*/
+		
+		typedef N::FSSpecContents_Container::const_iterator const_iterator;
+		
+		for ( const_iterator it = contents.begin();  it != contents.end();  ++it )
 		{
-			throw N::ParamErr();
+			Encode( *it, blockWrite, output );
 		}
 		
-		const std::size_t blockCount = byteCount / kMacBinaryBlockSize;
+		u.h.Set< kFileCreator >( 0xFFFFFFFE );
+		u.h.Set< kCRC >();
 		
-		std::size_t blocksToCopy = std::min( blockCount, fBlocks.size() );
+		blockWrite( output, u.block.data, sizeof u.block );
+	}
+	
+	void Encode( const FSSpec& file, BlockWriter blockWrite, int output )
+	{
+		CInfoPBRec cInfo;
 		
-		// This will be true after the while loop, but we calculate it here
-		std::size_t blocksRemaining = blockCount - blocksToCopy;
+		N::FSpGetCatInfo( file, cInfo );
 		
-		while ( blocksToCopy > 0 )
+		cInfo.hFileInfo.ioNamePtr = const_cast< unsigned char* >( file.name );
+		
+		bool isDir = N::PBTestIsDirectory( cInfo );
+		
+		if ( isDir )
 		{
-			const char* block = fBlocks.front().data;
-			
-			std::copy( block, block + kMacBinaryBlockSize, data );
-			
-			fBlocks.pop_front();
-			
-			data += kMacBinaryBlockSize;
-			
-			--blocksToCopy;
+			EncodeFolder( cInfo, blockWrite, output );
 		}
-		
-		ReadBlocks( fDataFork,     data, blocksRemaining );
-		ReadBlocks( fResourceFork, data, blocksRemaining );
-		
-		if ( blocksRemaining && !fComment.empty() )
+		else
 		{
-			ByteCount bytes = std::min( blocksRemaining * kMacBinaryBlockSize, fComment.size() );
-			
-			std::copy( fComment.begin(),
-			           fComment.begin() + bytes,
-			           data );
-			
-			std::copy( fComment.begin() + bytes,
-			           fComment.end(),
-			           fComment.begin() );
-			
-			fComment.resize( fComment.size() - bytes );
-			
-			data += bytes;
-			//blocksRemaining -= bytes / kMacBinaryBlockSize;
+			EncodeFile( file, cInfo.hFileInfo, blockWrite, output );
 		}
-		
-		std::size_t bytesRead = data - start;
-		
-		if ( bytesRead == 0 )
-		{
-			throw FS::EndOfFile();
-		}
-		
-		return bytesRead;
 	}
 	
 	static bool VerifyMacBinaryI( const Header& h )

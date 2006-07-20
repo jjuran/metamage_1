@@ -10,15 +10,16 @@
 #include <list>
 #include <vector>
 
-// Nitrogen Carbon support
-#include "Nitrogen/Files.h"
-
 
 namespace MacBinary
 {
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	
+	typedef void (*BlockWriter)( int, const void*, std::size_t );
+	
+	void Encode( const FSSpec& file, BlockWriter blockWrite, int output );
 	
 	static const std::size_t kMacBinaryBlockSize    = 128;
 	static const std::size_t kMacBinaryHeaderLength = 128;
@@ -31,22 +32,6 @@ namespace MacBinary
 	struct Block
 	{
 		char data[ kMacBinaryBlockSize ];
-	};
-	
-	class Encoder
-	{
-		private:
-			std::list< Block > fBlocks;
-			
-			std::string fComment;
-			
-			NN::Owned< N::FSFileRefNum > fDataFork;
-			NN::Owned< N::FSFileRefNum > fResourceFork;
-		
-		public:
-			Encoder( const FSSpec& file );
-			
-			int Read( char* data, std::size_t byteCount );
 	};
 	
 	class Decoder
