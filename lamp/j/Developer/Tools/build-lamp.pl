@@ -23,6 +23,15 @@ my $source_tree = "$ENV{HOME}/Developer/Projects/SourceForge/LAMP/j";
 
 my $root_name = 'lamp_';
 
+my @programs = qw
+(
+	aevt tlsrvr A-line cpres
+	cat cp echo false kill login mkdir mv pwd sh sleep true
+	beep err2text gzip htget macbin open osascript perl tty
+	superd inetd httpd
+);
+my %is_program = map { $_ => 1 } @programs;
+
 my @scripts = qw
 (
 	activate quit system
@@ -30,11 +39,12 @@ my @scripts = qw
 	filter-mwlink-warnings
 	filter-mwlink-warnings.pl
 	build-lamp.pl
-	chmod date ls tee tr
+	install-usr-lib-perl
+	chmod date ls test
+	env grep head printenv strings tee time tr wc
 	
 	profile
 );
-my %is_script = map { $_ => 1 } @scripts;
 
 my %fsmap =
 (
@@ -42,31 +52,33 @@ my %fsmap =
 	{
 		Tools => [qw( aevt activate quit system File Line tlsrvr A-line cpres filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl )],
 	},
-	bin => [qw( true false login sh sleep kill pwd date echo cat chmod ls cp mv mkdir )],
-	etc => [qw( profile )],
+	bin => [qw( cat cp echo false kill login mkdir mv pwd sh sleep true ), qw( chmod date ls test )],
+	etc => [qw( inetd.conf motd profile )],
 	sbin => [],
 	tmp => [],
 	usr =>
 	{
-		bin => [qw( beep env tee tr tty open osascript err2text htget aevt perl )],
+		bin => [qw( aevt beep err2text gzip htget macbin open osascript perl tty ), qw( env grep head printenv strings tee time tr wc )],
 		lib =>
 		{
-			perl => sub { copy_tree( '/usr/lib/perl', shift ); },
+			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
-		sbin => [qw( superd inetd httpd )],
+		sbin => [qw( install-usr-lib-perl superd inetd httpd )],
 	},
 );
 
 
 sub timestamp
 {
-	my $stamp = `date +"%Y%m%d-%H%M%S"`;
+	#my $stamp = `date +"%Y%m%d-%H%M%S"`;
+	my $stamp = `date +"%Y%m%d-%H%M"`;
 	
 	chop $stamp;
 	
 	return $stamp;
 }
 
+=pod
 sub run_native_command
 {
 	my ( $command, $cwd ) = @_;
@@ -81,7 +93,9 @@ sub run_native_command
 	#warn "$native_command\n";
 	system $native_command;
 }
+=cut
 
+=pod
 sub copy_tree
 {
 	my ( $source, $dest ) = @_;
@@ -91,6 +105,7 @@ sub copy_tree
 	
 	run_native_command( "ditto $source $dest", "/usr" );
 }
+=cut
 
 sub want_dir
 {
@@ -149,13 +164,13 @@ sub create_file
 {
 	my ( $path, $file ) = @_;
 	
-	if ( $is_script{ $file } )
+	if ( $is_program{ $file } )
 	{
-		install_script( $file, $path );
+		install_program( $file, $path );
 	}
 	else
 	{
-		install_program( $file, $path );
+		install_script( $file, $path );
 	}
 }
 
@@ -199,6 +214,7 @@ sub create_node
 	return;
 }
 
+=pod
 sub make_tarball
 {
 	my ( $tree, $tmp_dir ) = @_;
@@ -210,10 +226,33 @@ sub make_tarball
 	
 	return $tarball;
 }
+=cut
+
+sub make_macball
+{
+	my ( $tree_path ) = @_;
+	
+	my $macbin = "$tree_path.bin";
+	
+	system 'macbin', '--encode', $tree_path, $macbin;
+	
+	system 'gzip', $macbin;
+}
+
+
+sub Echo
+{
+	my ( $text ) = @_;
+	
+	print "$text\n";
+	
+	sleep 0;
+	
+	return;
+}
 
 # This avoids a bug that squelches error output
-print STDERR "Building...\n";
-sleep 0;
+Echo "Building...";
 
 $root_name .= timestamp();
 
@@ -232,7 +271,10 @@ install_program( 'Genie', "$lamp/" );
 
 create_node( $lamp, 'j', \%fsmap );
 
-my $tarball = make_tarball( $root_name, $tmp_dir );
+Echo "Archiving...";
+
+#my $tarball = make_tarball( $root_name, $tmp_dir );
+my $macball = make_macball( "$tmp_dir/$root_name" );
 
 my $build_area_path = "$builds_dir_path/$build_area";
 
