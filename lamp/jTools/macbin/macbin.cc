@@ -11,6 +11,8 @@
 #include <vector>
 
 // POSIX
+#include "errno.h"
+#include "fcntl.h"
 #include "unistd.h"
 
 // Nitrogen Nucleus
@@ -57,32 +59,20 @@ static int Usage()
 	return 1;
 }
 
-	static void Encode( const FSSpec& source, const FSSpec& dest )
-	{
-		MacBinary::Encoder encoder( source );
-		
-		N::FSpCreate( dest, '????', 'BINA' );
-		
-		NN::Owned< N::FSFileRefNum > out = N::FSpOpenDF( dest, fsWrPerm );
-		
-		char data[ 4096 ];
-		
-		try
-		{
-			while ( true )
-			{
-				std::size_t bytes = encoder.Read( data, 4096 );
-				
-				FS::Write( out, data, bytes );
-			}
-		}
-		catch ( FS::EndOfFile& ) {}
-	}
+static void BlockWrite( int fd, const void* data, std::size_t byteCount )
+{
+	int written = write( fd, data, byteCount );
 	
-	static void Decode( const FSSpec& source, const N::FSDirSpec& destDir )
+	if ( written < 0 )
 	{
-		NN::Owned< N::FSFileRefNum > in = N::FSpOpenDF( source, fsRdPerm );
+		std::fprintf( stderr, "macbin: Write error: %s\n", strerror( errno ) );
 		
+		O::ThrowExitStatus( 1 );
+	}
+}
+
+	static void Decode( int input, const N::FSDirSpec& destDir )
+	{
 		MacBinary::Decoder decoder( destDir );
 		
 		char data[ 4096 ];
@@ -93,7 +83,17 @@ static int Usage()
 		{
 			while ( true )
 			{
-				std::size_t bytes = FS::Read( in, data, 4096 );
+				std::size_t bytes = read( input, data, 4096 );
+				
+				if ( bytes == 0 )
+				{
+					break;
+				}
+				else if ( bytes < 0 )
+				{
+					std::fprintf( stderr, "macbin: Read failure: %s\n", strerror( errno ) );
+					O::ThrowExitStatus( 1 );
+				}
 				
 				decoder.Write( data, bytes );
 				
@@ -135,8 +135,22 @@ int O::Main( int argc, const char *const argv[] )
 			return Usage();
 		}
 		
-		Encode( targetFile,
-		        Div::ResolvePathToFSSpec( argv[ 3 ] ) );
+		const char* dest = argv[3];
+		
+		bool use_stdout = dest[0] == '-'  &&  dest[1] == '\0';
+		
+		int output = use_stdout ? 1 : open( dest, O_WRONLY | O_EXCL | O_CREAT );
+		
+		if ( output < 0 )
+		{
+			std::fprintf( stderr, "macbin: Couldn't open %s: %s\n", dest, strerror( errno ) );
+			
+			O::ThrowExitStatus( 1 );
+		}
+		
+		MacBinary::Encode( targetFile, &BlockWrite, output );
+		
+		close( output );
 	}
 	else if ( op == "--decode" )
 	{
@@ -145,8 +159,24 @@ int O::Main( int argc, const char *const argv[] )
 		
 		try
 		{
-			Decode( targetFile,
+			bool use_stdin = target[0] == '-'  &&  target[1] == '\0';
+			
+			int input = use_stdin ? 0 : open( target, O_RDONLY );
+			
+			if ( input < 0 )
+			{
+				std::fprintf( stderr, "macbin: Couldn't open %s: %s\n", target, strerror( errno ) );
+				
+				O::ThrowExitStatus( 1 );
+			}
+			
+			Decode( input,
 			        NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( destDirPath ) ) );
+			
+			if ( !use_stdin )
+			{
+				close( input );
+			}
 		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
