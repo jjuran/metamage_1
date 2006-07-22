@@ -32,20 +32,6 @@ my @programs = qw
 );
 my %is_program = map { $_ => 1 } @programs;
 
-my @scripts = qw
-(
-	activate quit system
-	ainstall File Line
-	filter-mwlink-warnings
-	filter-mwlink-warnings.pl
-	build-lamp.pl
-	install-usr-lib-perl
-	chmod date ls test
-	env grep head printenv strings tee time tr wc
-	
-	profile
-);
-
 my %fsmap =
 (
 	Developer =>
@@ -70,42 +56,12 @@ my %fsmap =
 
 sub timestamp
 {
-	#my $stamp = `date +"%Y%m%d-%H%M%S"`;
 	my $stamp = `date +"%Y%m%d-%H%M"`;
 	
 	chop $stamp;
 	
 	return $stamp;
 }
-
-=pod
-sub run_native_command
-{
-	my ( $command, $cwd ) = @_;
-	
-	my $native_command = "system '$command'";
-	
-	if ( defined $cwd )
-	{
-		$native_command = "cd '$cwd'; " . $native_command;
-	}
-	
-	#warn "$native_command\n";
-	system $native_command;
-}
-=cut
-
-=pod
-sub copy_tree
-{
-	my ( $source, $dest ) = @_;
-	
-	$source = "..$source";
-	$dest   = "..$dest";
-	
-	run_native_command( "ditto $source $dest", "/usr" );
-}
-=cut
 
 sub want_dir
 {
@@ -214,20 +170,6 @@ sub create_node
 	return;
 }
 
-=pod
-sub make_tarball
-{
-	my ( $tree, $tmp_dir ) = @_;
-	
-	#my $tree    = "$native_tmp_dir_path/$root_name";
-	my $tarball = "$tree.tar.gz";
-	
-	run_native_command( "tar czf $tarball $tree", $tmp_dir );
-	
-	return $tarball;
-}
-=cut
-
 sub make_macball
 {
 	my ( $tree_path ) = @_;
@@ -273,7 +215,6 @@ create_node( $lamp, 'j', \%fsmap );
 
 Echo "Archiving...";
 
-#my $tarball = make_tarball( $root_name, $tmp_dir );
 my $macball = make_macball( "$tmp_dir/$root_name" );
 
 my $build_area_path = "$builds_dir_path/$build_area";
@@ -281,8 +222,6 @@ my $build_area_path = "$builds_dir_path/$build_area";
 mkdir $build_area_path;
 
 rename "$tmp_dir", "$build_area_path/";
-#rename "$tmp_dir/$root_name", "$build_area_path/$root_name";
-#rename "$tmp_dir/$tarball",   "$build_area_path/$tarball";
 
 print "Done.\n";
 
