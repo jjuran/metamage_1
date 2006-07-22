@@ -1,0 +1,4 @@
+#!/bin/sh
+
+aevt -s "$1" misc actv
+

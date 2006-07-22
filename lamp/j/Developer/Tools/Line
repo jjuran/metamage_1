@@ -1,0 +1,1 @@
+aevt -s $MAC_EDITOR_SIGNATURE misc slct "'----':obj{want:type(clin), form:indx, seld:$1, from:obj{want:type(cwin), form:indx, seld:1, from:null()}}"

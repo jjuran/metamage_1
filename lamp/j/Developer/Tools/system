@@ -1,0 +1,31 @@
+#!/usr/bin/osascript
+
+-- +--------+
+-- | system |
+-- +--------+
+-- 
+-- Part of the Lamp project
+-- 
+-- Runs its arguments in a host-native shell.
+-- 
+-- Copyright 2006 Joshua Juran
+
+
+on run argv
+	
+	set argc to count argv
+	
+	if argc = 0 then return
+	
+	set command to "cd " & gCurrentWorkingDirectory & ";"
+	
+	repeat with i from 1 to argc
+		
+		set command to command & space & item i of argv
+		
+	end repeat
+	
+	do shell script command without altering line endings
+	
+end
+
