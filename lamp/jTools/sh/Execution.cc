@@ -189,7 +189,7 @@ static void RedirectIO( Sh::Redirection redirection )
 		switch ( redirection.op )
 		{
 			case Sh::kRedirectInput:
-				dup2( Open( param, 0 ), fd );
+				dup2( Open( param, O_RDONLY ), fd );
 				break;
 			
 			case Sh::kRedirectInputHere:
@@ -201,7 +201,7 @@ static void RedirectIO( Sh::Redirection redirection )
 				break;
 			
 			case Sh::kRedirectInputAndOutput:
-				file = Open( param, 2 );
+				file = Open( param, O_RDWR );
 				
 				if ( fd == -1 )
 				{
@@ -217,11 +217,11 @@ static void RedirectIO( Sh::Redirection redirection )
 			case Sh::kRedirectOutput:
 				// Throw if noclobber
 			case Sh::kRedirectOutputClobbering:
-				dup2( Open( param, 1 | 0x0200 | 0x0400 ), fd );
+				dup2( Open( param, O_WRONLY | O_CREAT | O_TRUNC ), fd );
 				break;
 			
 			case Sh::kRedirectOutputAppending:
-				dup2( Open( param, 1 | 8 | 0x0200 ), fd );
+				dup2( Open( param, O_WRONLY | O_APPEND | O_CREAT ), fd );
 				break;
 			
 			case Sh::kRedirectOutputDuplicate:
@@ -229,7 +229,7 @@ static void RedirectIO( Sh::Redirection redirection )
 				break;
 			
 			case Sh::kRedirectOutputAndError:
-				file = Open( param, 1 | 0x0200 | 0x0400 );
+				file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
 				dup2( file, 1 );
 				dup2( file, 2 );
 				break;
