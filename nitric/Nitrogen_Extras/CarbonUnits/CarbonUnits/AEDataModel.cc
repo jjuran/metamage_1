@@ -5,6 +5,10 @@
 #include <AEDataModel.h>
 #endif
 
+#ifndef __MACERRORS__
+#include <MacErrors.h>
+#endif
+
 #if TARGET_API_MAC_CARBON
 #error Configuration error:  This file is for classic only
 #endif
@@ -17,7 +21,9 @@
 
 // These functions are always declared in the headers and are always extern.
 
-// Search AEDataModel.h for 'Non-Carbon CFM:   not available'
+// The comments in AEDataModel.h are wrong -- these functions ARE in CarbonAccessors.o.
+
+#if TARGET_CPU_68K
 
 extern "C" Boolean AECheckIsRecord( const AEDesc* desc )
 {
@@ -41,4 +47,6 @@ extern "C" OSStatus AEUnflattenDesc( Ptr buffer, AEDesc* result )
 {
 	return paramErr;
 }
+
+#endif
 
