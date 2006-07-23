@@ -13,6 +13,10 @@
 #include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
 
+#if !TARGET_API_MAC_CARBON
+#include "CarbonUnits/AEDataModel.hh"
+#endif
+
 #ifndef NUCLEUS_NASSERT_H
 #include "Nucleus/NAssert.h"
 #endif
@@ -1120,15 +1124,7 @@ namespace Nitrogen
 	
 	inline std::size_t AEGetDescDataSize( const AEDesc& desc )
 	{
-	#if ACCESSOR_CALLS_ARE_FUNCTIONS
-		
 		return ::AEGetDescDataSize( &desc );
-		
-	#else
-		
-		return GetHandleSize( desc.dataHandle );
-		
-	#endif
 	}
 	
 	void AEReplaceDescData( DescType     typeCode,

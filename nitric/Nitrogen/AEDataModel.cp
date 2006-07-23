@@ -800,15 +800,7 @@ namespace Nitrogen
 	{
 		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 		
-	#if ACCESSOR_CALLS_ARE_FUNCTIONS
-		
 		ThrowOSStatus( ::AEGetDescData( &desc, dataPtr, maximumSize ) );
-		
-	#else
-		
-		::BlockMoveData( *desc.dataHandle, dataPtr, maximumSize );
-		
-	#endif
 	}
 	
 	void AEReplaceDescData( DescType     typeCode,
@@ -817,47 +809,8 @@ namespace Nitrogen
 	                        AEDesc&      result )
 	{
 		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
-	
-	#if ACCESSOR_CALLS_ARE_FUNCTIONS
 		
 		ThrowOSStatus( ::AEReplaceDescData( typeCode, dataPtr, dataSize, &result ) );
-		
-	#else
-		
-		bool typeIsNull = typeCode == typeNull;
-		bool ptrIsNull  = dataPtr  == NULL;
-		
-		// The parameters must be consistently null or non-null.
-		if ( typeIsNull != ptrIsNull )
-		{
-			throw ParamErr();
-		}
-		
-		bool descWasNull = result.dataHandle == NULL;
-		
-		if ( !descWasNull && !ptrIsNull )
-		{
-			// Replace the data.  Resize the handle, copy the data, and set the type.
-			SetHandleSize( result.dataHandle, dataSize );
-			::BlockMoveData( dataPtr, *result.dataHandle, dataSize );
-			result.descriptorType = typeCode;
-		}
-		else if ( descWasNull && !ptrIsNull )
-		{
-			// Create a new descriptor record.
-			result = AECreateDesc( typeCode, dataPtr, dataSize ).Release();
-		}
-		else if ( !descWasNull )
-		{
-			// Delete the existing descriptor record.
-			ThrowOSStatus( ::AEDisposeDesc( &result ) );
-		}
-		else
-		{
-			// Replace null with null == do nothing.
-		}
-		
-	#endif
 	}
 	
 	void AEReplaceDescData( DescType                   typeCode,
