@@ -19,6 +19,9 @@
 // BSD
 #include "vfork.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Io
 #include "Io/TextInput.hh"
 
@@ -36,6 +39,7 @@
 
 
 namespace NN = Nucleus;
+namespace P7 = POSeven;
 namespace O = Orion;
 namespace Sh = ShellShock;
 
@@ -164,6 +168,14 @@ std::string ShellParameterDictionary::Lookup( const std::string& param ) const
 	return "";
 }
 
+static int Open( const char* path, mode_t mode )
+{
+	int opened = open( path, mode );
+	
+	P7::ThrowPOSIXResult( opened );
+	
+	return opened;
+}
 
 static void RedirectIO( Sh::Redirection redirection )
 {
@@ -172,54 +184,63 @@ static void RedirectIO( Sh::Redirection redirection )
 	
 	int file = -1;
 	
-	switch ( redirection.op )
+	try
 	{
-		case Sh::kRedirectInput:
-			dup2( open( param, 0 ), fd );
-			break;
-		
-		case Sh::kRedirectInputHere:
-		case Sh::kRedirectInputHereStrippingTabs:
-			break;
-		
-		case Sh::kRedirectInputDuplicate:
-			dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if param isn't an integer
-			break;
-		
-		case Sh::kRedirectInputAndOutput:
-			file = open( param, 2 );
+		switch ( redirection.op )
+		{
+			case Sh::kRedirectInput:
+				dup2( Open( param, 0 ), fd );
+				break;
 			
-			if ( fd == -1 )
-			{
-				dup2( file, 0 );
+			case Sh::kRedirectInputHere:
+			case Sh::kRedirectInputHereStrippingTabs:
+				break;
+			
+			case Sh::kRedirectInputDuplicate:
+				dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if param isn't an integer
+				break;
+			
+			case Sh::kRedirectInputAndOutput:
+				file = Open( param, 2 );
+				
+				if ( fd == -1 )
+				{
+					dup2( file, 0 );
+					dup2( file, 1 );
+				}
+				else
+				{
+					dup2( file, fd );
+				}
+				break;
+			
+			case Sh::kRedirectOutput:
+				// Throw if noclobber
+			case Sh::kRedirectOutputClobbering:
+				dup2( Open( param, 1 | 0x0200 | 0x0400 ), fd );
+				break;
+			
+			case Sh::kRedirectOutputAppending:
+				dup2( Open( param, 1 | 8 | 0x0200 ), fd );
+				break;
+			
+			case Sh::kRedirectOutputDuplicate:
+				dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if atoi returns 0
+				break;
+			
+			case Sh::kRedirectOutputAndError:
+				file = Open( param, 1 | 0x0200 | 0x0400 );
 				dup2( file, 1 );
-			}
-			else
-			{
-				dup2( file, fd );
-			}
-			break;
+				dup2( file, 2 );
+				break;
+		}  // switch
+	}
+	catch ( const P7::Errno& errnum )
+	{
+		std::fprintf( stderr, "sh: %s: %s\n", param, strerror( errnum ) );
 		
-		case Sh::kRedirectOutput:
-			// Throw if noclobber
-		case Sh::kRedirectOutputClobbering:
-			dup2( open( param, 1 | 0x0200 | 0x0400 ), fd );
-			break;
-		
-		case Sh::kRedirectOutputAppending:
-			dup2( open( param, 1 | 8 | 0x0200 ), fd );
-			break;
-		
-		case Sh::kRedirectOutputDuplicate:
-			dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if atoi returns 0
-			break;
-		
-		case Sh::kRedirectOutputAndError:
-			file = open( param, 1 | 0x0200 | 0x0400 );
-			dup2( file, 1 );
-			dup2( file, 2 );
-			break;
-	}  // switch
+		throw;
+	}
 }
 
 static void RedirectIOs( const std::vector< Sh::Redirection >& redirections )
@@ -315,27 +336,37 @@ static int ExecuteCommand( const Command& command )
 		
 		if ( pid == 0 )
 		{
-			RedirectIOs( command.redirections );
+			try
+			{
+				RedirectIOs( command.redirections );
+				
+				if ( builtin != NULL )
+				{
+					try
+					{
+						CallBuiltin( builtin, argv );
+						
+						_exit( 0 );
+					}
+					catch ( const O::ExitStatus& status )
+					{
+						exiting = true;
+						
+						_exit( status );
+					}
+				}
+				else
+				{
+					Exec( argv );
+				}
+			}
+			catch ( ... )
+			{
+				// Don't unwind past vfork()
+			}
 			
-			if ( builtin != NULL )
-			{
-				try
-				{
-					CallBuiltin( builtin, argv );
-					
-					_exit( 0 );
-				}
-				catch ( const O::ExitStatus& status )
-				{
-					exiting = true;
-					
-					_exit( status );
-				}
-			}
-			else
-			{
-				Exec( argv );
-			}
+			// If the child hasn't exited by now, do so.
+			_exit( 1 );
 		}
 		
 		int exit_status = exit_from_wait( Wait( pid ) );
