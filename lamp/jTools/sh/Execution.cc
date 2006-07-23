@@ -222,6 +222,13 @@ static void RedirectIO( Sh::Redirection redirection )
 	}  // switch
 }
 
+static void RedirectIOs( const std::vector< Sh::Redirection >& redirections )
+{
+	std::for_each( redirections.begin(),
+				   redirections.end(),
+				   std::ptr_fun( RedirectIO ) );
+}
+
 static int Exec( char const* const argv[] )
 {
 	const char* file = argv[ 0 ];
@@ -266,6 +273,13 @@ static int exit_from_wait( int stat )
 }
 
 
+static int CallBuiltin( Builtin builtin, char** argv )
+{
+	int argc = Sh::CountStringArray( argv );
+	
+	return builtin( argc, argv );
+}
+
 static int ExecuteCommand( const Command& command )
 {
 	Sh::StringArray argvec( command.args );
@@ -286,33 +300,54 @@ static int ExecuteCommand( const Command& command )
 		return Assign( name, eq + 1 );
 	}
 	
+	Builtin builtin = FindBuiltin( argv[ 0 ] );
+	
 	try
 	{
-		if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
+		if ( builtin != NULL  &&  command.redirections.empty() )
 		{
-			SetInputFD();
-			SetOutputFD();
-			SetErrorFD();
-			
-			int argc = Sh::CountStringArray( argv );
-			
-			return builtin( argc, argv );
+			return CallBuiltin( builtin, argv );
 		}
+		
+		volatile bool exiting = false;
 		
 		int pid = vfork();
 		
 		if ( pid == 0 )
 		{
-			std::for_each( command.redirections.begin(),
-			               command.redirections.end(),
-			               std::ptr_fun( RedirectIO ) );
+			RedirectIOs( command.redirections );
 			
-			Exec( argv );
+			if ( builtin != NULL )
+			{
+				try
+				{
+					CallBuiltin( builtin, argv );
+					
+					_exit( 0 );
+				}
+				catch ( const O::ExitStatus& status )
+				{
+					exiting = true;
+					
+					_exit( status );
+				}
+			}
+			else
+			{
+				Exec( argv );
+			}
 		}
 		
-		return exit_from_wait( Wait( pid ) );
+		int exit_status = exit_from_wait( Wait( pid ) );
+		
+		if ( exiting )
+		{
+			O::ThrowExitStatus( exit_status );
+		}
+		
+		return exit_status;
 	}
-	catch ( O::ExitStatus )
+	catch ( const O::ExitStatus& )
 	{
 		throw;
 	}
@@ -348,10 +383,6 @@ static int ExecuteCommandFromPipeline( const Command& command )
 	{
 		if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
 		{
-			SetInputFD();
-			SetOutputFD();
-			SetErrorFD();
-			
 			int argc = Sh::CountStringArray( argv );
 			
 			// Don't exec a new shell, just call the builtin inside the forked child
