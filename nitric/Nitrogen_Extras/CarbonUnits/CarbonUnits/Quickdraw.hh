@@ -86,6 +86,66 @@ CARBONUNITS_LINKAGE Boolean IsPortColor( CGrafPtr port )
 	return port->portVersion < 0;
 }
 
+CARBONUNITS_LINKAGE Boolean IsPortVisibleRegionEmpty( CGrafPtr port )
+{
+	return EmptyRgn( port->visRgn );
+}
+
+CARBONUNITS_LINKAGE Boolean IsPortClipRegionEmpty( CGrafPtr port )
+{
+	return EmptyRgn( port->clipRgn );
+}
+
+// SectRegionWithPortClipRegion
+// SectRegionWithPortVisibleRegion
+
+CARBONUNITS_LINKAGE Handle SwapPortPicSaveHandle( CGrafPtr port, Handle newHandle )
+{
+	Handle oldHandle = port->picSave;
+	
+	port->picSave = newHandle;
+	
+	return oldHandle;
+}
+
+CARBONUNITS_LINKAGE Handle SwapPortPolySaveHandle( CGrafPtr port, Handle newHandle )
+{
+	Handle oldHandle = port->polySave;
+	
+	port->polySave = newHandle;
+	
+	return oldHandle;
+}
+
+CARBONUNITS_LINKAGE Handle SwapPortRegionSaveHandle( CGrafPtr port, Handle newHandle )
+{
+	Handle oldHandle = port->rgnSave;
+	
+	port->rgnSave = newHandle;
+	
+	return oldHandle;
+}
+
+CARBONUNITS_LINKAGE void SetPortTextFont( CGrafPtr port, short txFont )
+{
+	port->txFont = txFont;
+}
+
+CARBONUNITS_LINKAGE void SetPortTextSize( CGrafPtr port, short txSize )
+{
+	port->txSize = txSize;
+}
+
+CARBONUNITS_LINKAGE void SetPortTextFace( CGrafPtr port, StyleParameter face )
+{
+	port->txFace = face;
+}
+
+CARBONUNITS_LINKAGE void SetPortTextMode( CGrafPtr port, short mode )
+{
+	port->txMode = mode;
+}
+
 CARBONUNITS_LINKAGE void SetPortClipRegion( CGrafPtr cport, RgnHandle clipRgn )
 {
 	GrafPtr port = reinterpret_cast< GrafPtr >( cport );

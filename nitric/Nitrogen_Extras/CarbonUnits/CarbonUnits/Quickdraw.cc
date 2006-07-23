@@ -51,66 +51,6 @@ pascal Boolean QDSwapPort( CGrafPtr newCPort, CGrafPtr* oldCPortPtr )
 // StdOpcode
 // IsValidPort
 
-pascal Boolean IsPortVisibleRegionEmpty( CGrafPtr port )
-{
-	return EmptyRgn( port->visRgn );
-}
-
-pascal Boolean IsPortClipRegionEmpty( CGrafPtr port )
-{
-	return EmptyRgn( port->clipRgn );
-}
-
-// SectRegionWithPortClipRegion
-// SectRegionWithPortVisibleRegion
-
-pascal Handle SwapPortPicSaveHandle( CGrafPtr port, Handle newHandle )
-{
-	Handle oldHandle = port->picSave;
-	
-	port->picSave = newHandle;
-	
-	return oldHandle;
-}
-
-pascal Handle SwapPortPolySaveHandle( CGrafPtr port, Handle newHandle )
-{
-	Handle oldHandle = port->polySave;
-	
-	port->polySave = newHandle;
-	
-	return oldHandle;
-}
-
-pascal Handle SwapPortRegionSaveHandle( CGrafPtr port, Handle newHandle )
-{
-	Handle oldHandle = port->rgnSave;
-	
-	port->rgnSave = newHandle;
-	
-	return oldHandle;
-}
-
-pascal void SetPortTextFont( CGrafPtr port, short txFont )
-{
-	port->txFont = txFont;
-}
-
-pascal void SetPortTextSize( CGrafPtr port, short txSize )
-{
-	port->txSize = txSize;
-}
-
-pascal void SetPortTextFace( CGrafPtr port, StyleParameter face )
-{
-	port->txFace = face;
-}
-
-pascal void SetPortTextMode( CGrafPtr port, short mode )
-{
-	port->txMode = mode;
-}
-
 // QDLocalToGlobalPoint
 // QDGlobalToLocalPoint
 // QDLocalToGlobalRect
