@@ -39,30 +39,12 @@ static StringMap gAliases;
 
 static std::set< std::string > gVariablesToExport;
 
-static Io::Stream< Io::FD > In, Out, Err;
-
-
-void SetInputFD( int fd )
-{
-	In = Io::FD( fd );
-}
-
-void SetOutputFD( int fd )
-{
-	Out = Io::FD( fd );
-}
-
-void SetErrorFD( int fd )
-{
-	Err = Io::FD( fd );
-}
-
 static void PrintVariable( const StringMap::value_type& var )
 {
 	const std::string& name  = var.first;
 	const std::string& value = var.second;
 	
-	Out << name << "='" << value << "'\n";
+	std::printf( "%s='%s'\n", name.c_str(), value.c_str() );
 }
 
 static void PrintAlias( const StringMap::value_type& var )
@@ -70,7 +52,7 @@ static void PrintAlias( const StringMap::value_type& var )
 	const std::string& name  = var.first;
 	const std::string& value = var.second;
 	
-	Out << "alias " << name << "='" << value << "'\n";
+	std::printf( "alias %s='%s'\n", name.c_str(), value.c_str() );
 }
 
 
@@ -166,15 +148,15 @@ static int Builtin_Echo( int argc, char const* const argv[] )
 {
 	if ( argc > 1 )
 	{
-		Out << argv[ 1 ];
+		std::printf( "%s", argv[1] );
 		
 		for ( short i = 2; i < argc; i++ )
 		{
-			Out << " " << argv[ i ];
+			std::printf( " %s", argv[i] );
 		}
 	}
 	
-	Out << "\n";
+	std::printf( "\n" );
 	
 	return 0;
 }
@@ -203,7 +185,7 @@ static int Builtin_Export( int argc, char const* const argv[] )
 		
 		while ( *envp != NULL )
 		{
-			Out << "export " << *envp << "\n";
+			std::printf( "export %s\n", *envp );
 			++envp;
 		}
 	}
@@ -270,7 +252,7 @@ static int Builtin_PWD( int argc, char const* const argv[] )
 		cwd.resize( cwd.size() * 2 );
 	}
 	
-	Out << cwd.c_str() << "\n";
+	std::printf( "%s\n", cwd.c_str() );
 	
 	return 0;
 }
@@ -339,7 +321,7 @@ static int BuiltinDot( int argc, char const* const argv[] )
 {
 	if ( argc < 2 )
 	{
-		Err << "sh: .: filename argument required\n";
+		std::fprintf( stderr, "%s\n", "sh: .: filename argument required" );
 		return 2;
 	}
 	
