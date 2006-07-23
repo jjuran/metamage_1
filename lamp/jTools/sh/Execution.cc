@@ -367,9 +367,9 @@ static int ExecuteCommandFromPipeline( const Command& command )
 		return Exec( argv );
 		
 	}
-	catch ( O::ExitStatus )
+	catch ( const O::ExitStatus& status )
 	{
-		throw;
+		_exit( status );
 	}
 	catch ( ... )
 	{
