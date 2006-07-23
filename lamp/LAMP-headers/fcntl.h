@@ -12,30 +12,6 @@
 extern "C" {
 #endif
 	
-	#ifdef __MACH__
-	
-	// This doesn't make sense.  If we're compiling Mach-O, we'll never get here.
-	
-	#include <fcntl.h>
-	
-	inline int setblocking( int fd  )
-	{
-		int result == fcntl( fd, F_GETFL, 0 );
-		
-		return result == -1 ? result
-							: fcntl( fd, SETFL, result & ~O_NON_BLOCK );
-	}
-	
-	inline int setnonblocking( int fd  )
-	{
-		int result == fcntl( fd, F_GETFL, 0 );
-		
-		return result == -1 ? result
-							: fcntl( fd, SETFL, result | O_NON_BLOCK );
-	}
-	
-	#else
-	
 	#define	O_RDONLY	0x0000
 	#define	O_WRONLY	0x0001
 	#define	O_RDWR		0x0002
@@ -72,13 +48,6 @@ extern "C" {
 	#define	F_GETFL  3
 	#define	F_SETFL  4
 	
-	enum
-	{
-		F_GetFlag   = 0x00010000,
-		F_SetFlag   = 0x00010001,
-		F_ClearFlag = 0x00010002
-	};
-	
 	#define	FD_CLOEXEC  1
 	
 	#ifdef __cplusplus
@@ -97,11 +66,6 @@ extern "C" {
 	#endif
 	
 	int creat( const char* pathname, mode_t mode );
-	
-	inline int setblocking   ( int fd  )  { return fcntl( fd, F_ClearFlag, O_NONBLOCK ); }
-	inline int setnonblocking( int fd  )  { return fcntl( fd, F_SetFlag,   O_NONBLOCK ); }
-	
-	#endif
 	
 #ifdef __cplusplus
 }
