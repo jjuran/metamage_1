@@ -205,6 +205,5 @@ clock_t	MacPerl_times(struct tms *);
 #undef HAS_READLINK
 #undef HAS_SYMLINK
 #undef HAS_SOCKETPAIR
-#undef HAS_IOCTL
 #undef HAS_TRUNCATE
 
