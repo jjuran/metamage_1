@@ -106,6 +106,9 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	int (*lstat_import_ )( const char* file_name, struct stat* buf);
 	int (*stat_import_  )( const char* file_name, struct stat* buf);
 	
+	// sys/utsname
+	int (*uname_import_)( struct utsname* );
+	
 	// sys/wait
 	int (*gettimeofday_import_)( struct timeval* tv, struct timezone* tz );
 	
@@ -472,6 +475,16 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 		CheckImportedSymbol( stat_import_ );
 		
 		return stat_import_( file_name, buf );
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ sys/utsname ¥
+	
+	int uname( struct utsname* uts )
+	{
+		CheckImportedSymbol( uname_import_ );
+		
+		return uname_import_( uts );
 	}
 	
 	#pragma mark -
