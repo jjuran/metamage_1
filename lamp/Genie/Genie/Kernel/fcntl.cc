@@ -116,7 +116,7 @@ namespace Genie
 			
 			return fd;
 		}
-		catch ( N::OSStatus& err )
+		catch ( ... )
 		{
 			// FIXME
 			return CurrentProcess().SetErrno( EINVAL );
@@ -155,34 +155,6 @@ namespace Genie
 			case F_SETFL:
 				break;
 			*/
-			
-			case F_GetFlag:
-			case F_SetFlag:
-			case F_ClearFlag:
-				if ( param == O_NONBLOCK )
-				{
-					IOHandle& handle = *files[ filedes ].handle;
-					StreamHandle& stream = IOHandle_Cast< StreamHandle >( handle );
-					
-					switch ( cmd )
-					{
-						case F_GetFlag:
-							bool blocking = stream.IsBlocking();
-							return !blocking;
-						
-						case F_SetFlag:
-							stream.SetNonBlocking();
-							return 0;
-						
-						case F_ClearFlag:
-							stream.SetBlocking();
-							return 0;
-						
-						default:
-							break;
-					};
-				}
-				break;
 			
 			default:
 				break;
