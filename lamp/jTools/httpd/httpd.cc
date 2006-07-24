@@ -346,6 +346,10 @@ static std::string GuessContentType( const FSSpec& file )
 	{
 		return "text/html";
 	}
+	else if ( ext == ".css" )
+	{
+		return "text/css";
+	}
 	else if ( type == 'TEXT' )
 	{
 		return "text/plain";
