@@ -994,15 +994,12 @@ namespace Genie
 		{
 			Process& proc = *it->second;
 			
-			if ( proc.Status() == Process::kTerminated )
+			int pid = proc.ProcessID();
+			
+			if (    proc.Status() == Process::kZombie
+			     || proc.Status() == Process::kTerminated  &&  proc.ParentProcessID() == 1 )
 			{
-				int pid = proc.ProcessID();
-				int ppid = proc.ParentProcessID();
-				
-				if ( ppid == 1 )
-				{
-					hitlist.push_back( pid );
-				}
+				hitlist.push_back( pid );
 			}
 		}
 		
