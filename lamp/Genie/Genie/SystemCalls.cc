@@ -229,6 +229,13 @@ namespace Genie
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
+		FileDescriptorMap::const_iterator it = files.find( oldfd );
+		
+		if ( it == files.end() )
+		{
+			return CurrentProcess().SetErrno( EBADF );
+		}
+		
 		files[ newfd ] = files[ oldfd ].handle;  // Clears the closeOnExec flag
 		
 		return newfd;
