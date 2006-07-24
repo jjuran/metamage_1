@@ -225,6 +225,11 @@
 	#pragma mark -
 	#pragma mark ¥ unistd ¥
 	
+	int chown( const char* path, uid_t owner, gid_t group )
+	{
+		return 0;
+	}
+	
 	int execl( const char* path, const char* arg0, ... )
 	{
 		va_list va;
