@@ -379,7 +379,7 @@ static void DumpFile( const FSSpec& file )
 			Io::Put( Io::Out, data, bytes);
 		}
 	}
-	catch ( const N::EOFErr& )
+	catch ( const Io::EndOfInput& )
 	{
 		// end of file reached -- we're done
 	}
