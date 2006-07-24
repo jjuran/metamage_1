@@ -13,6 +13,6 @@ export MAC_EDITOR_SIGNATURE='!Rch'  # TextWrangler
 # You don't need these except for development, although some are still useful
 PATH=$PATH:/Developer/Tools
 
-If you have MPW installed here and want to call tools directly
+# If you have MPW installed here and want to call tools directly
 #PATH=$PATH:$HOME/Developer/Applications/MPW/Tools
 
