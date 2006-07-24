@@ -99,7 +99,9 @@ namespace Genie
 					
 					int foundPID = found->first;
 					
-					(void)gProcessTable.RemoveProcess( found );
+					found->second->Status( Process::kZombie );
+					
+					Yield();
 					
 					return foundPID;
 				}
