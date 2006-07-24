@@ -87,28 +87,49 @@ static int ForkExecWait( const char* path, char const* const argv[] )
 }
 
 
-static std::string ReadHTTPRequest()
+struct HTTPRequestData
+{
+	std::vector< std::string > lines;
+	
+	std::string partialData;
+	
+	void Read();
+};
+
+class HTTPRequest
+{
+	private:
+		HTTPRequestData data;
+	
+	public:
+		HTTPRequest()  { data.lines.push_back( std::string() ); }
+		HTTPRequest( const HTTPRequestData& data ) : data( data )  {}
+		
+		std::string Command() const  { return data.lines.front(); }
+		std::string Method() const;
+		std::string Resource() const;
+		std::string HTTPVersion() const;
+};
+
+void HTTPRequestData::Read()
 {
 	try
 	{
-		std::vector< std::string > lines;
-		std::string partial;
-		
 		while ( true )
 		{
 			char buf[ 1024 ];
 			
 			int received = Io::Read( Io::in, buf, 1024 );
-			partial += std::string( buf, received );
+			partialData += std::string( buf, received );
 			
 			// search for \r\n
-			std::string::size_type cr = partial.find( '\r' );
+			std::string::size_type cr = partialData.find( '\r' );
 			
-			while ( cr < partial.npos  &&  partial.size() >= cr + 2 )
+			while ( cr < partialData.npos  &&  partialData.size() >= cr + 2 )
 			{
-				if ( partial[ cr + 1 ] != '\n' )
+				if ( partialData[ cr + 1 ] != '\n' )
 				{
-					// Bad input
+					// CR not followed by LF -- bad input
 					O::ThrowExitStatus( 1 );
 				}
 				
@@ -122,15 +143,16 @@ static std::string ReadHTTPRequest()
 					
 					//for_each( lines.begin() + 1, lines.end(), ParseHeader( myHeaders ) );
 					
-					return lines.front();
+					//return lines.front();
+					return;
 				}
 				else
 				{
-					std::string line = partial.substr( 0, cr );
+					std::string line = partialData.substr( 0, cr );
 					Io::Err << line << "\n";
 					lines.push_back( line );
-					partial = partial.substr( cr + 2, partial.npos );
-					cr = partial.find( '\r' );
+					partialData = partialData.substr( cr + 2, partialData.npos );
+					cr = partialData.find( '\r' );
 				}
 			}
 		}
@@ -149,9 +171,6 @@ static std::string ReadHTTPRequest()
 	}
 	
 	O::ThrowExitStatus( 1 );
-	
-	// Not reached
-	return "";
 }
 
 static std::string RequestType( const std::string& request )
@@ -367,9 +386,9 @@ static void DumpFile( const FSSpec& file )
 }
 
 
-static void SendResponse( const std::string& request )
+static void SendResponse( const HTTPRequestData& request )
 {
-	ParsedRequest parsed = ParseRequest( request );
+	ParsedRequest parsed = ParseRequest( request.lines.front() );
 	
 	std::string httpVersion = "HTTP/1.0";
 	
@@ -439,7 +458,9 @@ int O::Main( int argc, char const* const argv[] )
 		        << ".\n";
 	}
 	
-	std::string request = ReadHTTPRequest();
+	HTTPRequestData request;
+	
+	request.Read();
 	
 	SendResponse( request );
 	
