@@ -41,7 +41,7 @@ namespace Nucleus
      {
       void operator()( Nitrogen::ABPickerRef pick ) const
         {
-         OnlyOnce<Nitrogen::RegisterAddressBookErrors>();
+//       Nucleus::OnlyOnce<Nitrogen::RegisterAddressBookErrors>();	// Why is this here?
          ::CFRelease ( pick );
         }
      };
