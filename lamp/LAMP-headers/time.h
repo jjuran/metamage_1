@@ -42,6 +42,8 @@ extern "C" {
 		suseconds_t	tv_usec;	/* and microseconds */
 	};
 	
+	char* ctime( const time_t* time );
+	
 	clock_t clock( void );
 	struct tm* gmtime( const time_t* );
 	struct tm* localtime( const time_t* );
