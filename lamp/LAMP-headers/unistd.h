@@ -26,6 +26,8 @@ extern "C" {
 	
 	int chdir( const char* path );
 	
+	int chown( const char* path, uid_t owner, gid_t group );
+	
 	int close( int fd );
 	
 	int copyfile( const char* src, const char* dest );
