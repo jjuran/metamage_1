@@ -39,6 +39,10 @@
 
 /* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
 
+#ifndef _ERRNO_H
+#error You must include <errno.h> before <sys/errno.h>.
+#endif
+
 #define	EPERM		1		/* Operation not permitted */
 #define	ENOENT		2		/* No such file or directory */
 #define	ESRCH		3		/* No such process */
