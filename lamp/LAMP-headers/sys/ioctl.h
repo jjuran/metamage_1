@@ -67,7 +67,7 @@ struct ttysize {
 
 #ifdef __cplusplus
 
-int ioctl( int, unsigned long, int* );
+extern "C" int ioctl( int, unsigned long, int* );
 
 #else
 
