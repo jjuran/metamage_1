@@ -99,7 +99,30 @@ namespace Nitrogen
 	}
 	
 	// ...
-	
+
+#if	TARGET_RT_MAC_MACHO
+/*	
+	There's a long note in technical Q & A #1078
+		http://developer.apple.com/qa/qa2001/qa1078.html
+	about how to make CSCopyMachineName and CSCopyUserName work in all environments (OS 9, CFM, etc)
+	I'm going the easy way here, and making it work for Mach-O.
+*/
+
+	class CSCopyUserName_Failed {};
+	inline Nucleus::Owned<CFStringRef> CSCopyUserName ( Boolean useShortName ) {
+		CFStringRef result = ::CSCopyUserName ( useShortName );
+		if ( NULL == result ) throw CSCopyUserName_Failed();
+		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		}
+
+	class CSCopyMachineName_Failed {};
+	inline Nucleus::Owned<CFStringRef> CSCopyMachineName (void) {
+		CFStringRef result = ::CSCopyMachineName();
+		if ( NULL == result ) throw CSCopyMachineName_Failed();
+		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		}
+#endif
+
 }
 
 #endif
