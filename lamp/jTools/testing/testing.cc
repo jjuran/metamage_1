@@ -38,8 +38,10 @@
 #include "Nitrogen/Str.h"
 
 // Nitrogen Extras / ClassicToolbox
+#if !TARGET_API_MAC_CARBON
 #include "ClassicToolbox/AppleTalk.h"
 #include "ClassicToolbox/Serial.h"
+#endif
 
 // Nitrogen Extras / Iteration
 #include "Iteration/AEDescListItems.h"
@@ -67,10 +69,11 @@
 // Misc
 #include "CRC32.hh"
 #include "MD5.hh"
-#include "MacBinaryIII.hh"
 
 // Kerosene
+#ifndef __GNUC__
 #include "SystemCalls.hh"
+#endif
 
 // Orion
 #include "Orion/Main.hh"
@@ -81,7 +84,6 @@ namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace FS = FileSystem;
 namespace NX = NitrogenExtras;
-//namespace V = Veneer;
 namespace O = Orion;
 
 using BitsAndBytes::EncodeAsHex;
@@ -95,13 +97,6 @@ static int TestUnit( int argc, const char *const argv[] )
 	tester.RunAll();
 	
 	const Test::FullResults& results = tester.Results();
-	
-	/*
-	Io::Out << results.fTestsPassed << " tests passed.\n";
-	Io::Out << results.fTestsFailed << " tests failed.\n";
-	
-	return results.fTestsFailed ? 1 : 0;
-	*/
 	
 	Test::Status status = Test::AggregateStatus( results );
 	
@@ -469,41 +464,6 @@ static int TestMD5(int argc, const char *const argv[])
 	return 0;
 }
 
-static int TestMacBinaryIII( int argc, const char *const argv[] )
-{
-	if (argc < 3)  return 1;
-	
-	const char* path = argv[ 2 ];
-	
-	FSSpec file = Path2FSS( path );
-	
-	if ( argc > 3 )
-	{
-		const char* destPath = argv[ 3 ];
-		
-		FSSpec dest = Path2FSS( destPath );
-		
-		MacBinaryIII::Encode( file, dest );
-	}
-	else
-	{
-		MacBinaryIII::Encoder encoder( file );
-		
-		char data[ 128 ];
-		
-		try
-		{
-			while ( encoder.Read( data, 128 ) )
-			{
-				Io::Out << std::string( data, 128 );
-			}
-		}
-		catch ( N::EOFErr& ) {}
-	}
-	
-	return 0;
-}
-
 /*
 static int TestOSX(int argc, const char *const argv[])
 {
@@ -601,7 +561,11 @@ static int TestSoundInput( int argc, char const *const argv[] )
 	
 	typedef N::SoundInputDevice_Container::const_iterator SID_ci;
 	
-	for ( SID_ci it = N::SoundInputDevices().begin();  it != N::SoundInputDevices().end();  ++it )
+	//SID_ci it = N::SoundInputDevices().begin();
+	SID_ci it ( N::SoundInputDevices().begin() );
+	SID_ci end( N::SoundInputDevices().end()   );
+	
+	for ( ;  it != end;  ++it )
 	{
 		Io::Out << *it
 		        << "\n";
@@ -836,6 +800,8 @@ static int TestNull( int argc, char const *const argv[] )
 	
 static int TestGMFShared( int argc, char const *const argv[] )
 {
+#ifndef __GNUC__
+	
 	if ( argc < 3 )  return 1;
 	
 	const char* pathname = argv[2];
@@ -861,6 +827,8 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	N::FindSymbol( two, "\p" "gScratch", &scratch );
 	
 	std::printf( "Second connection scratch value: %d\n", *scratch );
+	
+#endif
 	
 	return 0;
 }
@@ -946,10 +914,6 @@ int O::Main(int argc, const char *const argv[])
 	else if (arg1 == "md5")
 	{
 		return TestMD5(argc, argv);
-	}
-	else if (arg1 == "macbin")
-	{
-		return TestMacBinaryIII(argc, argv);
 	}
 	/*
 	else if (arg1 == "X")
