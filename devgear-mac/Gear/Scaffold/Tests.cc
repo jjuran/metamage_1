@@ -109,20 +109,23 @@ namespace Test
 	{
 		ASSERT( group != NULL );
 		
-		//Io::Out << "Testing case " << group->label << "\n";
+		std::printf( "Testing case %s\n", group->label );
+		
 		fResults.push_back( GroupResult( *group ) );
 		
 		TesterBase::Run( group );
+		
+		std::printf( "\n" );
 	}
 	
 	void SampleTester::Assert( bool condition, const char* test, const char* file, int line )
 	{
-		/*
-		if ( fVerbose )
+		bool verbose = true;
+		
+		if ( verbose )
 		{
-			Io::Out << (condition ? "PASSED" : "FAILED") << ": " << test << "\n";
+			std::printf( "%s: %s\n", (condition ? "PASSED" : "FAILED"), test );
 		}
-		*/
 		
 		fResults.back().fResults.push_back( Result( condition ? kTestPassed
 		                                                      : kTestFailed, test ) );
