@@ -30,6 +30,7 @@
 #include "ReadExecuteLoop.hh"
 
 
+namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
 
@@ -325,13 +326,11 @@ static int BuiltinDot( int argc, char const* const argv[] )
 		return 2;
 	}
 	
-	P7::FileDescriptor fd = open( argv[ 1 ], 0 );
+	NN::Owned< P7::FileDescriptor > fd = P7::Open( argv[ 1 ], 0 );
 	
 	ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 	
 	int result = ReadExecuteLoop( fd, false );
-	
-	(void)close( fd );
 	
 	return result;
 }
