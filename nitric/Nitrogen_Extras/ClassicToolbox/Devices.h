@@ -17,9 +17,6 @@
 #ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
-#endif
 
 
 namespace Nitrogen
@@ -29,8 +26,11 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	struct ControlStatusCode_Tag  {};
-	typedef Nucleus::SelectorType< ControlStatusCode_Tag, short, 0 > ControlStatusCode;
+	enum ControlStatusCode
+	{
+		kControlStatusCode_Min = -32768,
+		kControlStatusCode_Max = -32767
+	};
 	
 	typedef ControlStatusCode CSCode;
 	
@@ -54,7 +54,7 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-	template < SInt16 csCode >  struct Control_Default;
+	template < ControlStatusCode csCode >  struct Control_Default;
 	
 	struct Control_NullParamDefaults
 	{
@@ -76,14 +76,14 @@ namespace Nitrogen
 	              ControlStatusCode  csCode,
 	              const void*        csParamPtr );
 	
-	template < SInt16 csCode >
+	template < ControlStatusCode csCode >
 	void Control( DriverRefNum                                        driverRefNum,
 	              typename Control_Default< csCode >::parameter_type  csParam )
 	{
 		Control( driverRefNum, ControlStatusCode( csCode ), &csParam );
 	}
 	
-	template < SInt16 csCode >
+	template < ControlStatusCode csCode >
 	void Control( DriverRefNum driverRefNum )
 	{
 		Control( driverRefNum,
