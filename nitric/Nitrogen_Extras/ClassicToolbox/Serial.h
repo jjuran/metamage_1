@@ -29,6 +29,11 @@ namespace Nitrogen
 	struct SerConfig_Tag  {};
 	typedef Nucleus::FlagType< SerConfig_Tag, short > SerConfig;
 	
+	static const CSCode kSERDHandshake     = CSCode( ::kSERDHandshake     );
+	static const CSCode kSERDAssertDTR     = CSCode( ::kSERDAssertDTR     );
+	static const CSCode kSERDNegateDTR     = CSCode( ::kSERDNegateDTR     );
+	static const CSCode kSERDClearXOffFlag = CSCode( ::kSERDClearXOffFlag );
+	
 	using ::SerStaRec;
 	using ::SerShk;
 	
