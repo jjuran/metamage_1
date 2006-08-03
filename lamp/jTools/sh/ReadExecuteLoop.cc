@@ -40,7 +40,7 @@ static void Prompt()
 int ReadExecuteLoop( P7::FileDescriptor  fd,
                      bool                prompts )
 {
-	Io::Handle in = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::FD( fd.Get() ) );
+	Io::Handle in = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::FD( int( fd ) ) );
 	
 	Io::TextInputAdapter input( in );
 	
