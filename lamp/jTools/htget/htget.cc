@@ -553,7 +553,7 @@ int O::Main( int argc, char const *const argv[] )
 		gSaveLocation = Path2FSS( DocName( urlPath ) );
 	}
 	
-	P7::FileDescriptor sock = socket( PF_INET, SOCK_STREAM, INET_TCP );
+	P7::FileDescriptor sock = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, INET_TCP ) );
 	
 	if ( scheme == "http" )
 	{
