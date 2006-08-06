@@ -14,6 +14,7 @@
 
 // Nitrogen
 #include "Nitrogen/OpenTransport.h"
+#include "Nitrogen/OpenTransportProviders.h"
 
 // Nitrogen Extras / Templates
 #include "Templates/DataPointer.h"
