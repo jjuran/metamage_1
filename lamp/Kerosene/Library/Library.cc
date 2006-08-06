@@ -6,6 +6,7 @@
 // Standard C
 #include "errno.h"
 #include <stdarg.h>
+#include <stdio.h>
 #include "stdlib.h"
 #include "string.h"
 
@@ -114,9 +115,7 @@
 	// Length of array (not counting trailing NULL)
 	int sys_nerr = sizeof sys_errlist / sizeof (const char*) - 1;
 	
-	extern "C" char* strerror( int errnum );
-	
-	char* strerror( int errnum )
+	char* std::strerror( int errnum )
 	{
 		if ( errnum < 0 )
 		{
@@ -131,6 +130,16 @@
 		}
 		
 		return const_cast< char* >( sys_errlist[ errnum ] );
+	}
+	
+	void std::perror( const char* s )
+	{
+		if ( s != NULL )
+		{
+			std::fprintf( stderr, "%s: ", s );
+		}
+		
+		std::fprintf( stderr, "%s\n", std::strerror( errno ) );
 	}
 
 	static std::string LookupPath( const char* filename )
