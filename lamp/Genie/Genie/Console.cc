@@ -19,9 +19,6 @@
 #include "Nitrogen/Processes.h"
 #include "Nitrogen/Sound.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Io
 #include "Io/MakeHandle.hh"
 #include "Io/Stream.hh"

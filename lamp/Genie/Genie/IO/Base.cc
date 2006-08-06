@@ -5,9 +5,6 @@
 
 #include "Genie/IO/Base.hh"
 
-// POSIX
-#include "sys/errno.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
