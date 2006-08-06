@@ -30,7 +30,8 @@ namespace Pedestal
 				graphic( init   )
 			{}
 			
-			Graphic& Get() const  { return graphic; }
+			Graphic const& Get() const  { return graphic; }
+			Graphic      & Get()        { return graphic; }
 			
 			const Rect& Bounds() const  { return bounds; }
 			
