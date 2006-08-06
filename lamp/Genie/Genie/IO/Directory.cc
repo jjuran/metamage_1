@@ -5,6 +5,9 @@
 
 #include "Genie/IO/Directory.hh"
 
+// Mac OS Universal Interfaces
+#include <TextUtils.h>
+
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 

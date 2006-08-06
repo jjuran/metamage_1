@@ -3,8 +3,9 @@
  *	=========
  */
 
-// Universal Interfaces
+// Mac OS Universal Interfaces
 #include <OSUtils.h>
+#include <TextUtils.h>
 
 // Standard C
 #include <errno.h>
