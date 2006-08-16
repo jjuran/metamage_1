@@ -30,11 +30,11 @@ namespace Nucleus
 			kMaxBit = Enum::bitWidth - 1
 		};
 		
-		// The only defined bitshift operation is left-shift,
-		// for the purpose of shifting a 1 bit to the left by some number of bits
-		// defined as a constant for that purpose, and this mainly for defining
-		// the enum constants.  Bitfields are not numbers as such and there's no
-		// reason to shift the bits around.
+		// The only defined bitshift operation is left-shift, for the purpose of
+		// shifting a 1 bit to the left by some number of bits defined as a
+		// constant for that purpose, and this mainly for defining the enum
+		// constants.  Bitfields are not numbers as such and there's no
+		// reason to shift the bits around as there is to set and clear them.
 		
 		friend Type operator<<( BitState value, Bit bit )
 		{
