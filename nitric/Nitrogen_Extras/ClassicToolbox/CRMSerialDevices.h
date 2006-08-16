@@ -60,6 +60,8 @@ namespace Nitrogen
 	using ::CRMSerialRecord;
 	using ::CRMSerialPtr;
 	
+	static const CRMDeviceType crmSerialDevice = CRMDeviceType( ::crmSerialDevice );
+	
 	template <> struct CRMAttributes_Traits< crmSerialDevice >  { typedef CRMSerialPtr Type; };
 	
 }
@@ -94,6 +96,8 @@ namespace Nucleus
 	{
 		Nitrogen::CRMSerialPtr operator()( Nitrogen::CRMRecPtr crmRec ) const
 		{
+			using Nitrogen::crmSerialDevice;
+			
 			// FIXME:  Throw if device type is wrong
 			return Nitrogen::GetCRMAttributes< crmSerialDevice >( crmRec );
 		}
@@ -109,6 +113,8 @@ namespace Nucleus
 	{
 		Nitrogen::CRMRecPtr operator()( Nitrogen::CRMSerialPtr crmSerialPtr ) const
 		{
+			using Nitrogen::crmSerialDevice;
+			
 			typedef Nitrogen::CRMResource_Container::const_iterator const_iterator;
 			
 			Nitrogen::CRMResource_Container crmResources = Nitrogen::CRMResources( crmSerialDevice );
