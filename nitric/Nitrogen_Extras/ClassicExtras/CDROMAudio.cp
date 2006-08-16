@@ -255,7 +255,7 @@ namespace NitrogenExtras
 		
 		ReadTheQSubcode_Result q;
 		
-		q.control = pb.ReadTheQSubcode.control;
+		q.control = TrackControl( pb.ReadTheQSubcode.control );
 		q.track = DecodeBCD( pb.ReadTheQSubcode.track );
 		q.index = pb.ReadTheQSubcode.index;
 		
@@ -417,9 +417,10 @@ namespace NitrogenExtras
 		
 		AudioStatus_Result result;
 		
-		result.status   = pb.AudioStatus.status;
-		result.playMode = pb.AudioStatus.playMode;
-		result.control  = pb.AudioStatus.control;
+		result.status   = AudioStatusCode( pb.AudioStatus.status   );
+		result.playMode = AudioPlayMode  ( pb.AudioStatus.playMode );
+		result.control  = TrackControl   ( pb.AudioStatus.control  );
+		
 		result.minutes  = pb.AudioStatus.minutes;
 		result.seconds  = pb.AudioStatus.seconds;
 		result.frames   = pb.AudioStatus.frames;

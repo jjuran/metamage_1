@@ -6,6 +6,14 @@
 #ifndef CLASSICEXTRAS_CDROMAUDIO_H
 #define CLASSICEXTRAS_CDROMAUDIO_H
 
+// Nucleus
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
+#endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
+#endif
+
 // Nitrogen Extras / ClassicExtras
 #ifndef CLASSICEXTRAS_CDROM_H
 #include "ClassicExtras/CDROM.h"
@@ -17,56 +25,63 @@ namespace NitrogenExtras
 	
 	namespace NN = Nucleus;
 	
+	typedef NN::Selector< struct OpticalPositioningType_Tag, ::UInt16 >::Type OpticalPositioningType;
+	
+	typedef NN::Selector< struct AudioStatusCode_Tag, ::UInt8 >::Type AudioStatusCode;
+	
+	typedef NN::Flag< struct AudioPlayMode_Tag, ::UInt8 >::Type  AudioPlayMode;
+	typedef NN::Flag< struct AudioPlayMode_Tag, ::UInt8 >::Bit   AudioPlayModeBit;
+	
+	typedef NN::Selector< struct TrackControl_Tag, ::UInt8 >::Type TrackControl;
+	
 	namespace Constants
 	{
 		
-		enum
-		{
-			kOpticalPositioningLogicalBlockAddress = 0x0000,
-			kOpticalPositioningRunningTimeBCD      = 0x0001,
-			kOpticalPositioningTrackNumberBCD      = 0x0002,
-			kOpticalPositioningPlayListIndex       = 0x0003
-		};
+		static const OpticalPositioningType kOpticalPositioningLogicalBlockAddress = OpticalPositioningType( 0x0000 );
+		static const OpticalPositioningType kOpticalPositioningRunningTimeBCD      = OpticalPositioningType( 0x0001 );
+		static const OpticalPositioningType kOpticalPositioningTrackNumberBCD      = OpticalPositioningType( 0x0002 );
+		static const OpticalPositioningType kOpticalPositioningPlayListIndex       = OpticalPositioningType( 0x0003 );
 		
-		enum
-		{
-			kTrackControlTrackFormatMask = 0x0D,
-			kTrackControlDigitalCopyMask = 0x02,
-			
-			kTrackControl2AudioChannels = 0x00,
-			kTrackControl4AudioChannels = 0x08,
-			
-			kTrackControlNoPreemphasis  = 0x00,
-			kTrackControlPreemphasis    = 0x01,
-			
-			kTrackControlData = 0x04,
-			
-			kTrackControlDigitalCopyProhibited = 0x00,
-			kTrackControlDigitalCopyPermitted  = 0x02
-		};
+		static const AudioStatusCode kAudioStatusPlaying = AudioStatusCode( 0 );
+		static const AudioStatusCode kAudioStatusPaused  = AudioStatusCode( 1 );
+		static const AudioStatusCode kAudioStatusMuteOn  = AudioStatusCode( 2 );
+		static const AudioStatusCode kAudioStatusDone    = AudioStatusCode( 3 );
+		static const AudioStatusCode kAudioStatusError   = AudioStatusCode( 4 );
+		static const AudioStatusCode kAudioStatusNil     = AudioStatusCode( 5 );
 		
-		enum
-		{
-			kAudioPlayModeMute = 0,
-			
-			kAudioPlayModeRightThruRightBit = 0,
-			kAudioPlayModeLeftThruRightBit  = 1,
-			kAudioPlayModeRightThruLeftBit  = 2,
-			kAudioPlayModeLeftThruLeftBit   = 3,
-			
-			kAudioPlayModeRightThruRight = 1 << kAudioPlayModeRightThruRightBit,
-			kAudioPlayModeLeftThruRight  = 1 << kAudioPlayModeLeftThruRightBit,
-			kAudioPlayModeRightThruLeft  = 1 << kAudioPlayModeRightThruLeftBit,
-			kAudioPlayModeLeftThruLeft   = 1 << kAudioPlayModeLeftThruLeftBit,
-			
-			kAudioPlayModeStereo   =   kAudioPlayModeLeftThruLeft
-			                         | kAudioPlayModeRightThruRight,
-			
-			kAudioPlayModeMonaural =   kAudioPlayModeLeftThruLeft
-			                         | kAudioPlayModeRightThruLeft
-			                         | kAudioPlayModeLeftThruRight
-			                         | kAudioPlayModeRightThruRight
-		};
+		static const AudioPlayModeBit kAudioPlayModeRightThruRightBit = AudioPlayModeBit( 0 );
+		static const AudioPlayModeBit kAudioPlayModeLeftThruRightBit  = AudioPlayModeBit( 1 );
+		static const AudioPlayModeBit kAudioPlayModeRightThruLeftBit  = AudioPlayModeBit( 2 );
+		static const AudioPlayModeBit kAudioPlayModeLeftThruLeftBit   = AudioPlayModeBit( 3 );
+		
+		static const AudioPlayMode kAudioPlayModeMute = AudioPlayMode( 0 );
+		
+		static const AudioPlayMode kAudioPlayModeRightThruRight = NN::On << kAudioPlayModeRightThruRightBit;
+		static const AudioPlayMode kAudioPlayModeLeftThruRight  = NN::On << kAudioPlayModeLeftThruRightBit;
+		static const AudioPlayMode kAudioPlayModeRightThruLeft  = NN::On << kAudioPlayModeRightThruLeftBit;
+		static const AudioPlayMode kAudioPlayModeLeftThruLeft   = NN::On << kAudioPlayModeLeftThruLeftBit;
+		
+		static const AudioPlayMode kAudioPlayModeStereo =   kAudioPlayModeLeftThruLeft
+		                                                  | kAudioPlayModeRightThruRight;
+		
+		static const AudioPlayMode kAudioPlayModeMonaural =   kAudioPlayModeLeftThruLeft
+		                                                    | kAudioPlayModeRightThruLeft
+		                                                    | kAudioPlayModeLeftThruRight
+		                                                    | kAudioPlayModeRightThruRight;
+		
+		static const TrackControl kTrackControlTrackFormatMask = TrackControl( 0x0D );
+		static const TrackControl kTrackControlDigitalCopyMask = TrackControl( 0x02 );
+		
+		static const TrackControl kTrackControl2AudioChannels = TrackControl( 0x00 );
+		static const TrackControl kTrackControl4AudioChannels = TrackControl( 0x08 );
+		
+		static const TrackControl kTrackControlNoPreemphasis = TrackControl( 0x00 );
+		static const TrackControl kTrackControlPreemphasis   = TrackControl( 0x01 );
+		
+		static const TrackControl kTrackControlData = TrackControl( 0x04 );
+		
+		static const TrackControl kTrackControlDigitalCopyProhibited = TrackControl( 0x00 );
+		static const TrackControl kTrackControlDigitalCopyPermitted  = TrackControl( 0x02 );
 		
 	}
 	
@@ -100,12 +115,6 @@ namespace NitrogenExtras
 			{}
 			
 	};
-	
-	class OpticalPositioningType_Tag {};
-	typedef NN::SelectorType< OpticalPositioningType_Tag, unsigned short > OpticalPositioningType;
-	
-	class TrackControl_Tag {};
-	typedef NN::SelectorType< TrackControl_Tag, unsigned char > TrackControl;
 	
 	
 	typedef unsigned short TrackNumber, TrackCount;
@@ -175,8 +184,6 @@ namespace NitrogenExtras
 	// csCode 102
 	// ReadHeader
 	
-	typedef unsigned char AudioPlayMode;
-	
 	// csCode 103
 	void AudioTrackSearch( const CDROMDrive&       drive,
 	                       OpticalPositioningType  positioningType,
@@ -213,8 +220,6 @@ namespace NitrogenExtras
 	void AudioStop( const CDROMDrive& drive );
 	
 	void AudioStopAtTrack( const CDROMDrive& drive, TrackNumber track );
-	
-	typedef unsigned char AudioStatusCode;
 	
 	struct AudioStatus_Result
 	{
