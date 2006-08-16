@@ -7,8 +7,8 @@
 #define CLASSICEXTRAS_CDROM_H
 
 // Nucleus
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 
 // Nitrogen Extras / ClassicToolbox
@@ -23,23 +23,19 @@ namespace NitrogenExtras
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	typedef NN::Selector< struct CDROMPowerLevel_Tag, unsigned char >::Type CDROMPowerLevel;
+	
 	namespace Constants
 	{
 		
-		enum
-		{
-			kCDROMPowerLevelActive  = 0,
-			kCDROMPowerLevelStandby = 1,
-			kCDROMPowerLevelIdle    = 2,
-			kCDROMPowerLevelSleep   = 3
-		};
+		static const CDROMPowerLevel kCDROMPowerLevelActive  = CDROMPowerLevel( 0 );
+		static const CDROMPowerLevel kCDROMPowerLevelStandby = CDROMPowerLevel( 1 );
+		static const CDROMPowerLevel kCDROMPowerLevelIdle    = CDROMPowerLevel( 2 );
+		static const CDROMPowerLevel kCDROMPowerLevelSleep   = CDROMPowerLevel( 3 );
 		
 	}
 	
 	using namespace Constants;
-	
-	class CDROMPowerLevel_Tag {};
-	typedef NN::SelectorType< CDROMPowerLevel_Tag, unsigned char > CDROMPowerLevel;
 	
 	
 	struct CDROMDrive
@@ -49,7 +45,9 @@ namespace NitrogenExtras
 		
 		CDROMDrive()  {}
 		
-		CDROMDrive( N::DriverRefNum d, N::FSVolumeRefNum v = 1 ) : dRefNum( d ), vRefNum( v )  {}
+		CDROMDrive( N::DriverRefNum    d,
+		            N::FSVolumeRefNum  v = 1 ) : dRefNum( d ),
+		                                         vRefNum( v )  {}
 	};
 	
 #if CALL_NOT_IN_CARBON
