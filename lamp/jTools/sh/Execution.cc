@@ -330,6 +330,9 @@ static int ExecuteCommand( const Command& command )
 			return CallBuiltin( builtin, argv );
 		}
 		
+		// This variable is set before and examined after a longjmp(), so it
+		// needs to be volatile to make sure it doesn't wind up in a register
+		// and subsequently clobbered.
 		volatile bool exiting = false;
 		
 		int pid = vfork();
@@ -346,33 +349,43 @@ static int ExecuteCommand( const Command& command )
 					{
 						CallBuiltin( builtin, argv );
 						
+						// Since we didn't actually exec anything, we have to exit manually
 						_exit( 0 );
 					}
 					catch ( const O::ExitStatus& status )
 					{
+						// We get here if the 'exit' builtin was called.
+						// But we can't let the exception unwind past vfork(),
+						// so we catch it here, set a flag, and exit normally.
 						exiting = true;
 						
 						_exit( status );
 					}
+					
+					// Not reached
 				}
 				else
 				{
 					Exec( argv );
 				}
+				
+				// Not reached
 			}
 			catch ( ... )
 			{
-				// Don't unwind past vfork()
+				// Don't unwind past vfork().  That would be Bad.
 			}
 			
 			// If the child hasn't exited by now, do so.
 			_exit( 1 );
 		}
 		
+		// Wait for the child process to exit
 		int exit_status = exit_from_wait( Wait( pid ) );
 		
 		if ( exiting )
 		{
+			// The 'child' was the 'exit' builtin, meaning we should exit
 			O::ThrowExitStatus( exit_status );
 		}
 		
@@ -380,6 +393,7 @@ static int ExecuteCommand( const Command& command )
 	}
 	catch ( const O::ExitStatus& )
 	{
+		// Rethrow.  We catch here so a thrown exit doesn't get caught below.
 		throw;
 	}
 	catch ( ... )
@@ -464,7 +478,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	
 	int pipes[ 2 ];
 	
-	pipe( pipes );
+	pipe( pipes );  // pipe between first two processes
 	
 	int reading = pipes[ 0 ];
 	int writing = pipes[ 1 ];
@@ -478,8 +492,8 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		dup2( writing, 1 );
 		
 		// Close duped write-end and unused read-end
-		close( writing );
-		close( pipes[ 0 ] );
+		close( writing );     // we duped this, close it
+		close( pipes[ 0 ] );  // we don't read from this pipe, close it
 		
 		setpgrp();
 		
@@ -487,56 +501,65 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		ExecuteCommandFromPipeline( commands.front() );
 	}
 	
+	// previous pipe fd's are saved in 'reading' and 'writing'.
+	
 	while ( ++command != commands.end() - 1 )
 	{
-		pipe( pipes );
+		pipe( pipes );  // next pipe
 		
 		// Close previous write-end
 		close( writing );
 		
-		writing = pipes[ 1 ];
+		writing = pipes[ 1 ];  // write-end of next pipe
 		
 		// Middle command in the pipeline (not first or last)
 		int middle = vfork();
 		
 		if ( middle == 0 )
 		{
-			// Redirect input from read-end of pipe
+			// Redirect input from read-end of previous pipe
 			dup2( reading, 0 );
 			
-			// Redirect output to write-end of pipe
+			// Redirect output to write-end of next pipe
 			dup2( writing, 1 );
 			
 			// Close duped pipe-in, duped pipe-out, and unused read-end
-			close( reading );
-			close( writing );
-			close( pipes[ 0 ] );
+			close( reading );     // we duped this, close it
+			close( writing );     // we duped this, close it
+			close( pipes[ 0 ] );  // we don't read from this pipe, close it
 			
 			setpgid( 0, first );
 			
 			ExecuteCommandFromPipeline( *command );
 		}
 		
+		// Child is forked, so we're done reading
 		close( reading );
-		reading = pipes[ 0 ];
+		
+		reading = pipes[ 0 ];  // read-end of next pipe
 	}
+	
+	// previous pipe fd's are saved in 'reading' and 'writing'.
+	
+	// Close previous write-end
+	close( writing );
 	
 	int last = vfork();
 	
 	if ( last == 0 )
 	{
+		// Redirect input from read-end of previous pipe
 		dup2( reading, 0 );
 		
-		close( reading );
-		close( pipes[ 1 ] );
+		close( reading );     // we duped this, close it
 		
 		setpgid( 0, first );
 		
 		ExecuteCommandFromPipeline( *command );
 	}
 	
-	close( pipes[ 0 ] );
-	close( pipes[ 1 ] );
+	// Child is forked, so we're done reading
+	close( reading );
 	
 	int processes = commands.size();
 	
@@ -545,12 +568,15 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	while ( processes )
 	{
 		int stat = -1;
+		
+		// Wait for every child process
 		pid_t pid = waitpid( -1, &stat, 0 );
 		
 		--processes;
 		
 		if ( pid == last )
 		{
+			// And keep the result from the last one
 			result = exit_from_wait( stat );
 		}
 	}
