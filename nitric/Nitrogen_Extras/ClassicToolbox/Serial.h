@@ -13,6 +13,11 @@
 #endif
 #endif
 
+// Nucleus
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
+#endif
+
 // Nitrogen Extras / ClassicToolbox
 #ifndef CLASSICTOOLBOX_DEVICES_H
 #include "ClassicToolbox/Devices.h"
@@ -26,8 +31,35 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	struct SerConfig_Tag  {};
-	typedef Nucleus::FlagType< SerConfig_Tag, short > SerConfig;
+	typedef Nucleus::Flag< struct SerConfig_Tag, short >::Type SerConfig;
+	
+	static const SerConfig baud150   = SerConfig( ::baud150   );
+	static const SerConfig baud300   = SerConfig( ::baud300   );
+	static const SerConfig baud600   = SerConfig( ::baud600   );
+	static const SerConfig baud1200  = SerConfig( ::baud1200  );
+	static const SerConfig baud2400  = SerConfig( ::baud2400  );
+	static const SerConfig baud3600  = SerConfig( ::baud3600  );
+	static const SerConfig baud4800  = SerConfig( ::baud4800  );
+	static const SerConfig baud7200  = SerConfig( ::baud7200  );
+	static const SerConfig baud9600  = SerConfig( ::baud9600  );
+	static const SerConfig baud14400 = SerConfig( ::baud14400 );
+	static const SerConfig baud19200 = SerConfig( ::baud19200 );
+	static const SerConfig baud28800 = SerConfig( ::baud28800 );
+	static const SerConfig baud38400 = SerConfig( ::baud38400 );
+	static const SerConfig baud57600 = SerConfig( ::baud57600 );
+	
+	static const SerConfig stop10 = SerConfig( ::stop10 );
+	static const SerConfig stop15 = SerConfig( ::stop15 );
+	static const SerConfig stop20 = SerConfig( ::stop20 );
+	
+	static const SerConfig noParity   = SerConfig( ::noParity   );
+	static const SerConfig oddParity  = SerConfig( ::oddParity  );
+	static const SerConfig evenParity = SerConfig( ::evenParity );
+	
+	static const SerConfig data5 = SerConfig( ::data5 );
+	static const SerConfig data6 = SerConfig( ::data6 );
+	static const SerConfig data7 = SerConfig( ::data7 );
+	static const SerConfig data8 = SerConfig( ::data8 );
 	
 	static const CSCode kSERDHandshake     = CSCode( ::kSERDHandshake     );
 	static const CSCode kSERDAssertDTR     = CSCode( ::kSERDAssertDTR     );
