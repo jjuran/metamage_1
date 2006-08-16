@@ -33,7 +33,7 @@ namespace Nitrogen
   }
 
 namespace Nucleus
-  {
+{
 	template <>  struct OwnedDefaults< Nitrogen::ICFontRecordHandle   > : OwnedDefaults< Nitrogen::Handle >  {};
 	template <>  struct OwnedDefaults< Nitrogen::ICCharTableHandle    > : OwnedDefaults< Nitrogen::Handle >  {};
 	template <>  struct OwnedDefaults< Nitrogen::ICAppSpecHandle      > : OwnedDefaults< Nitrogen::Handle >  {};
@@ -42,17 +42,17 @@ namespace Nucleus
 	template <>  struct OwnedDefaults< Nitrogen::ICMapEntryHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
 	template <>  struct OwnedDefaults< Nitrogen::ICServiceEntryHandle > : OwnedDefaults< Nitrogen::Handle >  {};
 	template <>  struct OwnedDefaults< Nitrogen::ICServicesHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
-  }
+}
 
 namespace Nitrogen
-  {		
+{
 	// 1179
 	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
-	                                  ConstStr255Param  key,
-	                                  ICAttr&           attr );
+	                                           ConstStr255Param  key,
+	                                           ICAttr&           attr );
 	
 	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
-	                                  ConstStr255Param  key );
+	                                           ConstStr255Param  key );
 	
 }
 
