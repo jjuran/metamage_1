@@ -24,15 +24,32 @@ namespace O = Orion;
 
 static void SetVariables()
 {
-#if TARGET_CPU_68K
-#define ENV_HOSTTYPE "m68k"
-#else
-#define ENV_HOSTTYPE "powerpc"
-#endif
+	#if TARGET_CPU_68K
+	#define ENV_HOSTTYPE "m68k"
+	#elif TARGET_CPU_PPC
+	#define ENV_HOSTTYPE "powerpc"
+	#endif
+	
+	#if TARGET_RT_MAC_CFM
+	#define ENV_MAC_RUNTIME "cfm"
+	#elif TARGET_RT_MAC_MACHO
+	#define ENV_MAC_RUNTIME "mach-o"
+	#else
+	#define ENV_MAC_RUNTIME "rsrc"
+	#endif
+	
+	#if TARGET_API_MAC_CARBON
+	#define ENV_MAC_BACKEND "carbon"
+	#else
+	#define ENV_MAC_BACKEND "classic"
+	#endif
 	
 	setenv( "HOSTTYPE", ENV_HOSTTYPE               , 0 );
 	setenv( "OSTYPE",                        "lamp", 0 );
 	setenv( "MACHTYPE", ENV_HOSTTYPE "-jtools-lamp", 0 );
+	
+	setenv( "MAC_RUNTIME", ENV_MAC_RUNTIME, 0 );
+	setenv( "MAC_BACKEND", ENV_MAC_BACKEND, 0 );
 	
 	const char* path =  "/usr/local/sbin"
 	                   ":/usr/local/bin"
