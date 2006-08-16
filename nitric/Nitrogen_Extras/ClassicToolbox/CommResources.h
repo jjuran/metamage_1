@@ -13,18 +13,21 @@
 #endif
 #endif
 
-// Nitrogen Nucleus
+// Nucleus
 #ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
 #include "Nucleus/AdvanceUntilFailureContainer.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_ONLYONCE_H
 #include "Nucleus/OnlyOnce.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
+#endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 
 // Nitrogen
@@ -54,22 +57,18 @@ namespace Nitrogen
 	using ::CRMRec;
 	using ::CRMRecPtr;
 	
-	struct CRMDeviceType_Tag  {};
-	typedef Nucleus::IDType< CRMDeviceType_Tag, long, 0 > CRMDeviceType;
+	typedef Nucleus::Selector< struct CRMDeviceType_Tag, long >::Type CRMDeviceType;
+	typedef Nucleus::ID      < struct CRMDeviceID_Tag,   long >::Type CRMDeviceID;
 	
-	struct CRMDeviceID_Tag  {};
-	typedef Nucleus::IDType< CRMDeviceID_Tag, long, 0 > CRMDeviceID;
-	
-	struct CRMAttributes_Tag;
-	typedef CRMAttributes_Tag* CRMAttributes;
+	typedef struct CRMAttributes_Tag* CRMAttributes;
 	
 	
 	#pragma mark -
 	#pragma mark ¥ CRM attributes ¥
 	
-	template < long crmDeviceType >  struct CRMAttributes_Traits;
+	template < CRMDeviceType crmDeviceType >  struct CRMAttributes_Traits;
 	
-	template < long crmDeviceType >
+	template < CRMDeviceType crmDeviceType >
 	typename CRMAttributes_Traits< crmDeviceType >::Type
 	GetCRMAttributes( CRMRecPtr crmRec )
 	{
@@ -77,7 +76,7 @@ namespace Nitrogen
 		return reinterpret_cast< Type >( crmRec->crmAttributes );
 	}
 	
-	template < long crmDeviceType >
+	template < CRMDeviceType crmDeviceType >
 	struct CRMAttributes_Getter : public std::unary_function< CRMRecPtr, typename CRMAttributes_Traits< crmDeviceType >::Type >
 	{
 		typedef typename CRMAttributes_Traits< crmDeviceType >::Type Type;
@@ -114,7 +113,7 @@ namespace Nitrogen
 		public:
 			CRMAttributesDisposer()  {}
 			
-			template < long crmDeviceType >
+			template < CRMDeviceType crmDeviceType >
 			void Register()
 			{
 				typedef typename CRMAttributes_Traits< crmDeviceType >::Type Type;
@@ -127,7 +126,7 @@ namespace Nitrogen
 	
 	CRMAttributesDisposer& TheGlobalCRMAttributesDisposer();
 	
-	template < long crmDeviceType >
+	template < CRMDeviceType crmDeviceType >
 	void RegisterCRMAttributesDisposer()
 	{
 		TheGlobalCRMAttributesDisposer().template Register< crmDeviceType >();
@@ -144,7 +143,7 @@ namespace Nucleus
 	#pragma mark -
 	#pragma mark ¥ Specializations ¥
 	
-	template < long crmDeviceType >
+	template < Nitrogen::CRMDeviceType crmDeviceType >
 	struct Disposer< Nitrogen::CRMAttributes > : public std::unary_function< Nitrogen::CRMAttributes, void >
 	{
 		void operator()( Nitrogen::CRMAttributes crmAttributes ) const
@@ -159,7 +158,7 @@ namespace Nucleus
 		{
 			Nitrogen::DisposeCRMAttributes
 			(
-				crmRec->crmDeviceType,
+				Nitrogen::CRMDeviceType( crmRec->crmDeviceType ),
 				reinterpret_cast< Nitrogen::CRMAttributes >( crmRec->crmAttributes )
 			);
 			
@@ -199,7 +198,7 @@ namespace Nitrogen
 	CRMRecPtr CRMSearch( CRMDeviceType  crmDeviceType,
 	                     CRMDeviceID    crmDeviceID );
 	
-	template < long crmDeviceType >
+	template < CRMDeviceType crmDeviceType >
 	CRMRecPtr CRMSearch( CRMDeviceID crmDeviceID )
 	{
 		return CRMSearch( crmDeviceType, crmDeviceID );
@@ -212,7 +211,7 @@ namespace Nitrogen
 	
 	Nucleus::Owned< CRMRecPtr > New_CRMRecord();
 	
-	template < long crmDeviceType >
+	template < CRMDeviceType crmDeviceType >
 	Nucleus::Owned< CRMRecPtr > New_CRMRecord( Nucleus::Owned< typename CRMAttributes_Traits< crmDeviceType >::Type > crmAttributes )
 	{
 		RegisterCRMAttributesDisposer< crmDeviceType >();
@@ -222,7 +221,7 @@ namespace Nitrogen
 		CRMRecPtr crmRec = result;
 		
 		crmRec->crmDeviceType = crmDeviceType;
-		crmRec->crmAttributes = reinterpret_cast< long >( crmAttributes.Release() );
+		crmRec->crmAttributes = reinterpret_cast< CRMDeviceType >( crmAttributes.Release() );
 		
 		return result;
 	}
@@ -250,7 +249,7 @@ namespace Nitrogen
 			value_type GetNextValue( const value_type& value )
 			{
 				return CRMSearch( crmDeviceType,
-				                  value != NULL ? value->crmDeviceID : 0 );
+				                  CRMDeviceID( value != NULL ? value->crmDeviceID : 0 ) );
 			}
 			
 			static value_type begin_value()  { return NULL; }
