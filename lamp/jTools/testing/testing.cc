@@ -13,6 +13,9 @@
 // Standard C
 #include "errno.h"
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C++
 #include <functional>
 #include <vector>
@@ -135,7 +138,8 @@ static int TestSerial(int argc, const char *const argv[])
 {
 #if TARGET_API_MAC_CARBON
 	
-	Io::Err << "No serial I/O in Carbon."  "\n";
+	std::fprintf( stderr, "%s\n", "No serial I/O in Carbon." );
+	
 	return 1;
 	
 #else
