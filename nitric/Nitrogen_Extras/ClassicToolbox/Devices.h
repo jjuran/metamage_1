@@ -13,6 +13,11 @@
 #endif
 #endif
 
+// Nucleus
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
+#endif
+
 // Nitrogen
 #ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"
@@ -26,11 +31,7 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	enum ControlStatusCode
-	{
-		kControlStatusCode_Min = -32768,
-		kControlStatusCode_Max = -32767
-	};
+	typedef Nucleus::Selector< struct CSCode_Tag, SInt16 >::Type ControlStatusCode;
 	
 	typedef ControlStatusCode CSCode;
 	
