@@ -23,9 +23,8 @@
 // MoreFiles
 #include "MoreFilesExtras.h"
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
-#include "Nucleus/Scoped.h"
 
 // Nitrogen / Mac OS support
 #include "Nitrogen/CodeFragments.h"
@@ -143,6 +142,12 @@ static int TestSerial(int argc, const char *const argv[])
 	
 	NN::Owned< N::SerialDeviceRef > port( N::Open_SerialDevice( (argc > 2) ? argv[ 2 ]
 	                                                                       : "A"       ) );
+	
+	using N::kSERDHandshake;
+	using N::baud19200;
+	using N::data8;
+	using N::noParity;
+	using N::stop10;
 	
 	N::Control< kSERDHandshake >( port.Get()->output, NN::Make< N::SerShk >() );
 	
