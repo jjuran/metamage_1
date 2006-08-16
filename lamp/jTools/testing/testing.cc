@@ -442,15 +442,16 @@ static std::string MD5Hex( const char* text )
 	return EncodeAsHex( MD5String( text ) );
 }
 
-TEST( 2005-03-03 17:20:00 )
+TEST( MD5 )
 {
-	TEST_ASSERT( MD5Hex( "" )    == "d41d8cd98f00b204e9800998ecf8427e" );
-	TEST_ASSERT( MD5Hex( "a" )   == "0cc175b9c0f1b6a831c399e269772661" );
-	TEST_ASSERT( MD5Hex( "abc" ) == "900150983cd24fb0d6963f7d28e17f72" );
-	TEST_ASSERT( MD5Hex( "message digest" ) == "f96b697d7cb7938d525a2f31aaf161d0" );
-	TEST_ASSERT( MD5Hex( "abcdefghijklmnopqrstuvwxyz" ) == "c3fcd3d76192e4007dfb496cca67e13b" );
-	TEST_ASSERT( MD5Hex( "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" ) == "d174ab98d277d9f5a5611c2c9f419d9f" );
-	TEST_ASSERT( MD5Hex( "12345678901234567890123456789012345678901234567890123456789012345678901234567890" ) == "57edf4a22be3c955ac49da2e2107b67a" );
+	TEST_ASSERT( "d41d8cd98f00b204e9800998ecf8427e" == MD5Hex( "" ) );
+	TEST_ASSERT( "0cc175b9c0f1b6a831c399e269772661" == MD5Hex( "a" ) );
+	TEST_ASSERT( "900150983cd24fb0d6963f7d28e17f72" == MD5Hex( "abc" ) );
+	TEST_ASSERT( "f96b697d7cb7938d525a2f31aaf161d0" == MD5Hex( "message digest" ) );
+	TEST_ASSERT( "c3fcd3d76192e4007dfb496cca67e13b" == MD5Hex( "abcdefghijklmnop" "qrstuvwxyz" ) );
+	TEST_ASSERT( "d174ab98d277d9f5a5611c2c9f419d9f" == MD5Hex( "ABCDEFGHIJKLMNOP" "QRSTUVWXYZabcdef" "ghijklmnopqrstuv" "wxyz0123456789" ) );
+	TEST_ASSERT( "57edf4a22be3c955ac49da2e2107b67a" == MD5Hex( "1234567890123456" "7890123456789012" "3456789012345678" "9012345678901234"
+	                                                           "5678901234567890" ) );
 }
 
 static int TestMD5(int argc, const char *const argv[])
