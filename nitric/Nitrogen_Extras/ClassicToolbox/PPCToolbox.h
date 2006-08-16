@@ -18,15 +18,17 @@
 #include <algorithm>
 #include <string>
 
+// Nucleus
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
+#endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
+#endif
+
 // Nitrogen
 #ifndef NITROGEN_STR_H
 #include "Nitrogen/Str.h"
-#endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
-#endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
 #endif
 
 // Nitrogen Extras / ClassicToolbox
@@ -50,47 +52,34 @@ namespace Nitrogen
 	using ::PortInfoRec;
 	using ::IPCListPortsPBRec;
 	
-	struct PPCServiceType_Tag {};
-	typedef Nucleus::SelectorType< PPCServiceType_Tag, UInt8, 0 > PPCServiceType;
-	
-	struct PPCLocationKind_Tag {};
-	typedef Nucleus::SelectorType< PPCLocationKind_Tag, SInt16, ppcNoLocation > PPCLocationKind;
-	
-	struct PPCPortKinds_Tag {};
-	typedef Nucleus::SelectorType< PPCPortKinds_Tag, SInt16, 0 > PPCPortKinds;
-	
-	struct PPCSessionOrigin_Tag {};
-	typedef Nucleus::SelectorType< PPCSessionOrigin_Tag, UInt8, 0 > PPCSessionOrigin;
-	
-	struct PPCPortRefNum_Tag {};
-	typedef Nucleus::IDType< PPCPortRefNum_Tag, short, 0 > PPCPortRefNum;
-	
-	struct PPCSessRefNum_Tag {};
-	typedef Nucleus::IDType< PPCSessRefNum_Tag, long, 0 > PPCSessRefNum;
-	
-	struct PPCXTIAddressType_Tag {};
-	typedef Nucleus::SelectorType< PPCXTIAddressType_Tag, SInt16, 0 > PPCXTIAddressType;
+	typedef Nucleus::Selector< struct PPCServiceType_Tag,    UInt8  >::Type PPCServiceType;
+	typedef Nucleus::Selector< struct PPCLocationKind_Tag,   SInt16 >::Type PPCLocationKind;
+	typedef Nucleus::Selector< struct PPCPortKinds_Tag,      SInt16 >::Type PPCPortKinds;
+	typedef Nucleus::Selector< struct PPCSessionOrigin_Tag,  UInt8  >::Type PPCSessionOrigin;
+	typedef Nucleus::ID      < struct PPCPortRefNum_Tag,     short  >::Type PPCPortRefNum;
+	typedef Nucleus::ID      < struct PPCSessRefNum_Tag,     long   >::Type PPCSessRefNum;
+	typedef Nucleus::Selector< struct PPCXTIAddressType_Tag, SInt16 >::Type PPCXTIAddressType;
 	
 	#pragma mark -
 	#pragma mark ¥ Typed constants ¥
 	
-	static PPCServiceType sPPCServiceRealTime = ppcServiceRealTime;
+	static const PPCServiceType ppcServiceRealTime = PPCServiceType( ::ppcServiceRealTime );
 	
-	static PPCLocationKind sPPCNoLocation      = ppcNoLocation;
-	static PPCLocationKind sPPCNBPLocation     = ppcNBPLocation;
-	static PPCLocationKind sPPCNBPTypeLocation = ppcNBPTypeLocation;
-	static PPCLocationKind sPPCXTIAddrLocation = ppcXTIAddrLocation;
+	static const PPCLocationKind ppcNoLocation      = PPCLocationKind( ::ppcNoLocation      );
+	static const PPCLocationKind ppcNBPLocation     = PPCLocationKind( ::ppcNBPLocation     );
+	static const PPCLocationKind ppcNBPTypeLocation = PPCLocationKind( ::ppcNBPTypeLocation );
+	static const PPCLocationKind ppcXTIAddrLocation = PPCLocationKind( ::ppcXTIAddrLocation );
 	
-	static PPCPortKinds sPPCByCreatorAndType = ppcByCreatorAndType;
-	static PPCPortKinds sPPCByString         = ppcByString;
+	static const PPCPortKinds ppcByCreatorAndType = PPCPortKinds( ::ppcByCreatorAndType );
+	static const PPCPortKinds ppcByString         = PPCPortKinds( ::ppcByString         );
 	
-	static PPCSessionOrigin sPPCLocalOrigin  = ppcLocalOrigin;
-	static PPCSessionOrigin sPPCRemoteOrigin = ppcRemoteOrigin;
+	static const PPCSessionOrigin ppcLocalOrigin  = PPCSessionOrigin( ::ppcLocalOrigin  );
+	static const PPCSessionOrigin ppcRemoteOrigin = PPCSessionOrigin( ::ppcRemoteOrigin );
 	
-	static std::size_t sMaxPPCXTIAddress = kMaxPPCXTIAddress;
+	static const std::size_t kMaxPPCXTIAddress = ::kMaxPPCXTIAddress;
 	
-	static PPCXTIAddressType sINETAddrType = kINETAddrType;
-	static PPCXTIAddressType sDNSAddrType  = kDNSAddrType;
+	static const PPCXTIAddressType kINETAddrType = PPCXTIAddressType( ::kINETAddrType );
+	static const PPCXTIAddressType kDNSAddrType  = PPCXTIAddressType( ::kDNSAddrType  );
 	
 }
 
@@ -207,13 +196,15 @@ namespace Nucleus
 	
 	template <>  struct Maker< IPCListPortsPBRec >
 	{
-		IPCListPortsPBRec operator()( const PPCPortRec* name, const LocationNameRec* location, PortInfoRec* portInfo ) const
+		IPCListPortsPBRec operator()( const PPCPortRec*       name,
+		                              const LocationNameRec*  location,
+		                              PortInfoRec*            portInfo ) const
 		{
 			IPCListPortsPBRec pb;
 			
-			pb.startIndex = 0;
+			pb.startIndex   = 0;
 			pb.requestCount = 1;
-			pb.portName = const_cast< PPCPortRec* >( name );
+			pb.portName     = const_cast< PPCPortRec*      >( name     );
 			pb.locationName = const_cast< LocationNameRec* >( location );
 			pb.bufferPtr = portInfo;
 			
