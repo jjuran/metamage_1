@@ -262,6 +262,7 @@ namespace Nitrogen
      {
      };
    
+   static const bool gUseFlattenersForControlData = false;
    
    // 2835
    void SetControlData( ControlRef        inControl,
@@ -270,12 +271,46 @@ namespace Nitrogen
                         Size              inSize,
                         const void *      inData );
 
+	class SetControlData_Putter
+	{
+		private:
+			ControlRef       myControl;
+			ControlPartCode  myPart;
+			ResType          myTagName;
+		
+		public:
+			SetControlData_Putter( ControlRef       control,
+			                       ControlPartCode  part,
+			                       ResType          tagName ) : myControl( control ),
+			                                                    myPart   ( part    ),
+			                                                    myTagName( tagName )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				Nitrogen::SetControlData( myControl,
+				                          myPart,
+				                          myTagName,
+				                          Detail::Distance( begin, end ),
+				                          begin );
+			}
+	};
+	
    template < ::ResType inTagName >
    void SetControlData( ControlRef                                               inControl,
                         ControlPartCode                                          inPart,
                         typename SetControlData_Traits< inTagName >::InData_Type inData )
      {
       typedef SetControlData_Traits< inTagName > Traits;
+      
+      if ( gUseFlattenersForControlData )
+      {
+         Traits().Put( inData,
+		               SetControlData_Putter( inControl,
+		                                      inPart,
+		                                      inTagName ) );
+         
+         return;
+      }
       
       typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( inData );
       
@@ -306,12 +341,49 @@ namespace Nitrogen
                         ControlPartCode   inPart,
                         ResType           inTagName );
    
+	template < ::ResType tagName >
+	class GetControlData_Getter
+	{
+		private:
+			ControlRef myControl;
+			ControlPartCode myPart;
+		
+		public:
+			GetControlData_Getter( ControlRef       control,
+			                       ControlPartCode  part ) : myControl( control ),
+			                                                 myPart   ( part    )  {}
+			
+			std::size_t size() const
+			{
+				if ( GetControlData_Traits< type >::hasStaticSize )
+				{
+					return sizeof (typename GetControlData_Traits< type >::Buffer);
+				}
+				
+				return GetControlData( myControl, myPart, tagName );
+			}
+			
+			void operator()( void *begin, void *end ) const
+			{
+				GetControlData( myControl,
+				                myPart,
+				                tagName,
+				                Detail::Distance( begin, end ),
+				                begin );
+			}
+	};
+	
    template < ::ResType inTagName >
    typename GetControlData_Traits<inTagName>::Result
    GetControlData( ControlRef        inControl,
                    ControlPartCode   inPart = ControlEntireControl() )
      {
       typedef GetControlData_Traits< inTagName > Traits;
+      
+      if ( gUseFlattenersForControlData )
+      {
+         return Traits().Get( GetControlData_Getter< inTagName >( inControl, inPart ) );
+      }
       
       typename Traits::InputBuffer buffer;
       
