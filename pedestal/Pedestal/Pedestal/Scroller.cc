@@ -101,7 +101,7 @@ namespace Pedestal {
 				break;
 		}
 		
-		if ( part == N::ControlUpButtonPart() || part == N::ControlPageUpPart() )
+		if ( part == kControlUpButtonPart || part == kControlPageUpPart )
 		{
 			scrollDistance = -scrollDistance;
 		}
