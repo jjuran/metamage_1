@@ -151,9 +151,6 @@ namespace Nucleus
 		
 		template < class Putter > void Put( Put_Parameter toPut, Putter put )
 		{
-			const T* begin = &toPut;
-			const std::size_t size = SizeOf( toPut );
-			
 			put( &toPut, &toPut + 1 );
 		}
 		
