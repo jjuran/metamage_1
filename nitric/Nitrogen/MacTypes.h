@@ -114,6 +114,7 @@ namespace Nitrogen
       typedef Get_Result    Result;
       
       static const bool hasStaticSize = true;
+      
       typedef ::Fixed Buffer;
      };
    
@@ -183,7 +184,7 @@ namespace Nitrogen
 			const std::size_t size = get.size();
 			Get_Result result;
 			
-			result.resize( size / sizeof (UTFChar ) );
+			result.resize( size / sizeof (UTFChar) );
 			
 			UTFChar* begin = &result[0];
 			
