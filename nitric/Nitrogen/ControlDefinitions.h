@@ -27,26 +27,26 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlBevelButtonTextPlaceTag                >: POD_DescType_Traits           < ControlButtonTextPlacement    > {};
    template<> struct ControlData_Traits< kControlBevelButtonMenuValueTag                >: POD_DescType_Traits           < ::SInt16                        > {};
    template<> struct ControlData_Traits< kControlBevelButtonMenuRefTag                  >: POD_DescType_Traits           < MenuRef                       > {};
-   template<> struct ControlData_Traits< kControlBevelButtonCenterPopupGlyphTag         >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlBevelButtonCenterPopupGlyphTag         >: DescType_Traits               < ::typeBoolean                 > {};
    template<> struct ControlData_Traits< kControlBevelButtonLastMenuTag                 >: POD_DescType_Traits           < ::SInt16                        > {};
    template<> struct ControlData_Traits< kControlBevelButtonMenuDelayTag                >: POD_DescType_Traits           < ::SInt32                        > {};
-   template<> struct ControlData_Traits< kControlBevelButtonScaleIconTag                >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlBevelButtonScaleIconTag                >: DescType_Traits               < ::typeBoolean                 > {};
 //   template<> struct ControlData_Traits< kControlBevelButtonOwnedMenuRefTag             >: POD_DescType_Traits           < Nucleus::Owned<MenuRef>                > {};
    template<> struct ControlData_Traits< kControlBevelButtonKindTag                     >: POD_DescType_Traits           < ThemeButtonKind               > {};
 
    template<> struct ControlData_Traits< kControlTriangleLastValueTag                   >: POD_DescType_Traits           < ::SInt16                        > {};
 
-   template<> struct ControlData_Traits< kControlProgressBarIndeterminateTag            >: Converting_DescType_Traits    < bool, Boolean                 > {};
-   template<> struct ControlData_Traits< kControlProgressBarAnimatingTag                >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlProgressBarIndeterminateTag            >: DescType_Traits               < ::typeBoolean                 > {};
+   template<> struct ControlData_Traits< kControlProgressBarAnimatingTag                >: DescType_Traits               < ::typeBoolean                 > {};
 
    template<> struct ControlData_Traits< kControlTabContentRectTag                      >: POD_DescType_Traits           < Rect                          > {};
-   template<> struct ControlData_Traits< kControlTabEnabledFlagTag                      >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlTabEnabledFlagTag                      >: DescType_Traits               < ::typeBoolean                 > {};
    template<> struct ControlData_Traits< kControlTabInfoTag                             >: POD_DescType_Traits           < ControlTabInfoRec             > {};
 
    template<> struct ControlData_Traits< kControlGroupBoxMenuHandleTag                  >: POD_DescType_Traits           < MenuRef                       > {};
    template<> struct ControlData_Traits< kControlGroupBoxTitleRectTag                   >: POD_DescType_Traits           < Rect                          > {};
 
-   template<> struct ControlData_Traits< kControlImageWellIsDragDestinationTag          >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlImageWellIsDragDestinationTag          >: DescType_Traits               < ::typeBoolean                 > {};
 
    template<> struct ControlData_Traits< kControlClockLongDateTag                       >: POD_DescType_Traits           < LongDateRec                   > {};
 
@@ -65,7 +65,7 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlEditTextSelectionTag                   >: POD_DescType_Traits           < ControlEditTextSelectionRec   > {};
    template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: DescType_Traits               < ::typeChar                      > {};
    template<> struct ControlData_Traits< kControlEditTextKeyScriptBehaviorTag           >: POD_DescType_Traits           < ControlKeyScriptBehavior      > {};
-   template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: DescType_Traits               < ::typeBoolean                 > {};
    template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: DescType_Traits               < ::typeChar                      > {};
    template<> struct ControlData_Traits< kControlEditTextValidationProcTag              >: POD_DescType_Traits           < ControlEditTextValidationUPP  > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePreUpdateProcTag         >: POD_DescType_Traits           < TSMTEPreUpdateUPP             > {};
@@ -83,15 +83,15 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlIconResourceIDTag                      >: POD_DescType_Traits           < ::SInt16                        > {};
 
    template<> struct ControlData_Traits< kControlListBoxListHandleTag                   >: POD_DescType_Traits           < ListHandle                    > {};
-   template<> struct ControlData_Traits< kControlListBoxDoubleClickTag                  >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlListBoxDoubleClickTag                  >: DescType_Traits               < ::typeBoolean                 > {};
    template<> struct ControlData_Traits< kControlListBoxLDEFTag                         >: POD_DescType_Traits           < ::SInt16                        > {};
 
-   template<> struct ControlData_Traits< kControlPushButtonDefaultTag                   >: Converting_DescType_Traits    < bool, Boolean                 > {};
-   template<> struct ControlData_Traits< kControlPushButtonCancelTag                    >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlPushButtonDefaultTag                   >: DescType_Traits               < ::typeBoolean                 > {};
+   template<> struct ControlData_Traits< kControlPushButtonCancelTag                    >: DescType_Traits               < ::typeBoolean                 > {};
 
    template<> struct ControlData_Traits< kControlPopupButtonMenuIDTag                   >: POD_DescType_Traits           < ::SInt16                        > {};
    template<> struct ControlData_Traits< kControlPopupButtonExtraHeightTag              >: POD_DescType_Traits           < ::SInt16                        > {};
-   template<> struct ControlData_Traits< kControlPopupButtonCheckCurrentTag             >: Converting_DescType_Traits    < bool, Boolean                 > {};
+   template<> struct ControlData_Traits< kControlPopupButtonCheckCurrentTag             >: DescType_Traits               < ::typeBoolean                 > {};
 
    template<> struct ControlData_Traits< kControlScrollTextBoxDelayBeforeAutoScrollTag  >: POD_DescType_Traits           < ::UInt32                        > {};
    template<> struct ControlData_Traits< kControlScrollTextBoxDelayBetweenAutoScrollTag >: POD_DescType_Traits           < ::UInt32                        > {};
