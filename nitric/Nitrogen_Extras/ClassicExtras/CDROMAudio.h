@@ -32,6 +32,8 @@ namespace NitrogenExtras
 	typedef NN::Flag< struct AudioPlayMode_Tag, ::UInt8 >::Type  AudioPlayMode;
 	//typedef NN::Flag< struct AudioPlayMode_Tag, ::UInt8 >::Bit   AudioPlayModeBit;
 	
+	NUCLEUS_DEFINE_FLAG_OPS( AudioPlayMode )
+	
 	typedef NN::Selector< struct TrackControl_Tag, ::UInt8 >::Type TrackControl;
 	
 	namespace Constants
