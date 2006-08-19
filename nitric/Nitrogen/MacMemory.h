@@ -401,6 +401,11 @@ namespace Nitrogen
 			
 			return result;
 		}
+		
+		typedef Put_Parameter Parameter;
+		typedef Get_Result    Result;
+		
+		static const bool hasStaticSize = false;
 	};
 	
   }
