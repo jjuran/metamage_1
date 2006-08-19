@@ -112,9 +112,9 @@ namespace Nitrogen {
 		return Nucleus::Owned< OSLAccessor >::Seize( toInstall );
 	}
 	
-	OSLAccessor AEGetObjectAccessor( DescType desiredClass,
-	                                 DescType containerType,
-	                                 bool isSysHandler )
+	OSLAccessor AEGetObjectAccessor( AEObjectClass  desiredClass,
+	                                 DescType       containerType,
+	                                 bool           isSysHandler )
 	{
 		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
 		
