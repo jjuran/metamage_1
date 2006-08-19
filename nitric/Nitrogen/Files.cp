@@ -503,11 +503,19 @@ namespace Nitrogen
       return FSMakeFSRefUnicode( parentRef, name.size(), name.data(), textEncodingHint );
      }
    
+/*
+Return Value
+	A result code. See “File Manager Result Codes”. 
+	If the two FSRef structures refer to the same file or directory, then noErr is returned. 
+	If they refer to objects on different volumes, then diffVolErr is returned. 
+	If they refer to different files or directories on the same volume, then errFSRefsDifferent is returned. 
+	This function may return other errors, including nsvErr, fnfErr, dirNFErr, and volOffLinErr.
+*/
    bool FSCompareFSRefs( const FSRef& ref1, const FSRef& ref2 )
      {
       Nucleus::OnlyOnce<RegisterFileManagerErrors>();
       const OSStatus error = ::FSCompareFSRefs( &ref1, &ref2 );
-      if ( error == errFSRefsDifferent )
+      if ( errFSRefsDifferent == error || diffVolErr == error )
          return false;
       ThrowOSStatus( error );
       return true;
