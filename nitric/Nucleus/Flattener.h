@@ -47,7 +47,11 @@
      };
 */
 
+// Standard C++
 #include <memory>
+
+// Nucleus
+#include "Nucleus/Owned.h"
 
 
 namespace Nucleus
@@ -140,6 +144,35 @@ namespace Nucleus
          typedef typename BaseFlattener::Buffer Buffer;
      };
    
+	template < class Ownable >
+	struct SeizingPODFlattener
+	{
+		typedef Ownable Put_Parameter;
+		
+		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		{
+			const T* begin = &toPut;
+			const std::size_t size = SizeOf( toPut );
+			
+			put( &toPut, &toPut + 1 );
+		}
+		
+		typedef Nucleus::Owned< Ownable > Get_Result;
+		
+		template < class Getter > Get_Result Get( Getter get )
+		{
+			Get_Result result;
+			
+			get( &result, &result + 1 );
+			
+			return Nucleus::Owned< Ownable >::Seize( result );
+		}
+		
+		static const bool hasStaticSize = true;
+		
+		typedef Ownable Buffer;
+	};
+	
 	template < class T, std::size_t (*SizeOf)( const T& ) >
 	struct VariableLengthPodFlattener
 	{
@@ -167,11 +200,11 @@ namespace Nucleus
 			
 			return result;
 		}
-      
-      typedef Put_Parameter Parameter;
-      typedef Get_Result    Result;
-      
-      static const bool hasStaticSize = false;
+		
+		typedef Put_Parameter Parameter;
+		typedef Get_Result    Result;
+		
+		static const bool hasStaticSize = false;
 	};
 	
    
