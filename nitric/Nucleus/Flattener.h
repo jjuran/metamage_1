@@ -70,6 +70,12 @@ namespace Nucleus
          get( &result, &result + 1 );
          return result;
         }
+      
+      typedef Put_Parameter Parameter;
+      typedef Get_Result    Result;
+      
+      static const bool hasStaticSize = true;
+      typedef T Buffer;
      };
    
    template < class T >
@@ -94,6 +100,11 @@ namespace Nucleus
          get( begin, begin + result.size() );
          return result;
         }
+      
+      typedef Put_Parameter Parameter;
+      typedef Get_Result    Result;
+      
+      static const bool hasStaticSize = false;
      };
    
    template < class T >
@@ -120,6 +131,13 @@ namespace Nucleus
            {
             return base.Get( get );
            }
+         
+         typedef Put_Parameter Parameter;
+         typedef Get_Result    Result;
+      
+         static const bool hasStaticSize = BaseFlattener::hasStaticSize;
+         
+         typedef typename BaseFlattener::Buffer Buffer;
      };
    
 	template < class T, std::size_t (*SizeOf)( const T& ) >
@@ -149,6 +167,11 @@ namespace Nucleus
 			
 			return result;
 		}
+      
+      typedef Put_Parameter Parameter;
+      typedef Get_Result    Result;
+      
+      static const bool hasStaticSize = false;
 	};
 	
    
@@ -170,6 +193,11 @@ namespace Nucleus
          get( 0, 0 );  // So it has a chance to throw
          return NoData();
         }
+      
+      typedef Put_Parameter Parameter;
+      typedef Get_Result    Result;
+      
+      static const bool hasStaticSize = true;
      };
   }
 
