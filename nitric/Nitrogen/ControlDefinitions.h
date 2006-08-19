@@ -18,21 +18,6 @@
 
 namespace Nitrogen
   {
-	
-	inline ControlProcID PushButProc  ()  { return ControlProcID::Make( pushButProc   ); }
-	inline ControlProcID CheckBoxProc ()  { return ControlProcID::Make( checkBoxProc  ); }
-	inline ControlProcID RadioButProc ()  { return ControlProcID::Make( radioButProc  ); }
-	inline ControlProcID ScrollBarProc()  { return ControlProcID::Make( scrollBarProc ); }
-	inline ControlProcID PopupMenuProc()  { return ControlProcID::Make( popupMenuProc ); }
-	
-	inline ControlPartCode ControlButtonPart     ()  { return ControlPartCode::Make( kControlButtonPart      ); }
-	inline ControlPartCode ControlCheckBoxPart   ()  { return ControlPartCode::Make( kControlCheckBoxPart    ); }
-	inline ControlPartCode ControlRadioButtonPart()  { return ControlPartCode::Make( kControlRadioButtonPart ); }
-	inline ControlPartCode ControlUpButtonPart   ()  { return ControlPartCode::Make( kControlUpButtonPart    ); }
-	inline ControlPartCode ControlDownButtonPart ()  { return ControlPartCode::Make( kControlDownButtonPart  ); }
-	inline ControlPartCode ControlPageUpPart     ()  { return ControlPartCode::Make( kControlPageUpPart      ); }
-	inline ControlPartCode ControlPageDownPart   ()  { return ControlPartCode::Make( kControlPageDownPart    ); }
-	
    template<> struct ControlData_Traits< kControlBevelButtonContentTag                  >: POD_DescType_Traits           < ControlButtonContentInfo      > {};
    template<> struct ControlData_Traits< kControlBevelButtonTransformTag                >: POD_DescType_Traits           < IconTransformType             > {};
    template<> struct ControlData_Traits< kControlBevelButtonTextAlignTag                >: POD_DescType_Traits           < ControlButtonTextAlignment    > {};
