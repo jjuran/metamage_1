@@ -74,5 +74,7 @@ namespace Nucleus
 	
 }
 
+#define NUCLEUS_DEFINE_FLAG_OPS( EnumType )
+
 #endif
 
