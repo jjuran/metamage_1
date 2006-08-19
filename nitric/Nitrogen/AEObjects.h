@@ -16,6 +16,20 @@
 #include "Nucleus/FlagType.h"
 #endif
 
+
+// Christopher Nebel personally gave his blessing to these names at WWDC 2006
+typedef DescType AEObjectClass, AEPropertyID;
+
+typedef DescType AELogicalDescriptor, AEAbsoluteOrdinal, AERelativeDescriptor;
+
+// These I made up
+enum
+{
+	typeObjectClass = 'Clas',
+	typePropertyID  = 'Prop'
+};
+
+
 namespace Nitrogen
 {
 	
@@ -24,21 +38,28 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Constant types ¥
 	
-	class AELogicalOperator_Tag {};
-	typedef Nucleus::SelectorType< AELogicalOperator_Tag, ::FourCharCode > AELogicalOperator;
-	typedef AELogicalOperator AELogicalDescriptor;
+	typedef Nucleus::SelectorType< struct AEObjectClass_Tag, ::AEObjectClass > AEObjectClass;
+	typedef Nucleus::SelectorType< struct AEPropertyID_Tag,  ::AEPropertyID  > AEPropertyID;
 	
-	class AEAbsoluteOrdinal_Tag {};
-	typedef Nucleus::SelectorType< AEAbsoluteOrdinal_Tag, ::FourCharCode > AEAbsoluteOrdinal;
+	typedef Nucleus::SelectorType< struct AELogicalDescriptor_Tag, ::AELogicalDescriptor  > AELogicalDescriptor;
+	typedef Nucleus::SelectorType< struct AEAbsoluteOrdinal_Tag,   ::AEAbsoluteOrdinal    > AEAbsoluteOrdinal;
+	typedef Nucleus::SelectorType< struct AERelativeOrdinal_Tag,   ::AERelativeDescriptor > AERelativeDescriptor;
 	
-	class AERelativeOrdinal_Tag {};
-	typedef Nucleus::SelectorType< AERelativeOrdinal_Tag, ::FourCharCode > AERelativeOrdinal;
-	typedef AERelativeOrdinal AERelativeDescriptor;
+	template <> struct DescType_Traits< typeObjectClass > : Converting_DescType_Traits< AEObjectClass, ::AEObjectClass >   {};
+	template <> struct DescType_Traits< typePropertyID >  : Converting_DescType_Traits< AEPropertyID, ::AEPropertyID >   {};
+	
+	template <> struct DescType_Traits< typeLogicalDescriptor  > : Converting_DescType_Traits< AELogicalDescriptor,  ::AELogicalDescriptor  >  {};
+	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : Converting_DescType_Traits< AEAbsoluteOrdinal,    ::AEAbsoluteOrdinal    >  {};
+	template <> struct DescType_Traits< typeRelativeDescriptor > : Converting_DescType_Traits< AERelativeDescriptor, ::AERelativeDescriptor >  {};
+	
+	template <> struct DescType_Map_Traits< typeObjectClass        > { static const ::DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typePropertyID         > { static const ::DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeLogicalDescriptor  > { static const ::DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeAbsoluteOrdinal    > { static const ::DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeRelativeDescriptor > { static const ::DescType result = typeType; };
 	
 	struct AEResolveCallbackFlags_Tag  {};
 	typedef Nucleus::FlagType< AEResolveCallbackFlags_Tag, short, kAEIDoMinimum > AEResolveCallbackFlags;
-	
-	template <> struct DescType_Traits< typeAbsoluteOrdinal > : Converting_DescType_Traits< AEAbsoluteOrdinal, ::FourCharCode >   {};
 	
 	#pragma mark -
 	#pragma mark ¥ AEToken ¥
