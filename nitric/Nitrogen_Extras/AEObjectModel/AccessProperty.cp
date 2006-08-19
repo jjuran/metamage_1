@@ -132,7 +132,7 @@ namespace Nitrogen
 	                                                                const AEToken&  /* containerToken */,
 	                                                                AEObjectClass   containerClass )
 	{
-		return AECreateToken< typeType >( containerClass );
+		return AECreateToken< typeObjectClass >( containerClass );
 	}
 	
 	Nucleus::Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    propertyID,
