@@ -267,7 +267,7 @@ namespace Nitrogen
      };
 
    template< class Ownable >
-   struct Seizing_DescType_Traits
+   struct Seizing_DescType_Traits : public Nucleus::SeizingPODFlattener< Ownable >
      {
       typedef Nucleus::Owned< Ownable > Result;
       typedef Ownable Parameter;
