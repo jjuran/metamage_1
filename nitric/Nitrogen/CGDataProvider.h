@@ -33,6 +33,8 @@ namespace Nucleus {
 
 namespace Nitrogen
   {
+#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+  
   using ::CGDataProviderGetTypeID;
   
 //	CG_EXTERN CGDataProviderRef CGDataProviderCreate(void *info, const CGDataProviderCallbacks *callbacks);
@@ -45,6 +47,8 @@ namespace Nitrogen
 		if ( NULL == result ) throw CGDataProviderCreateWithCFData_Failed ();
 		return Nucleus::Owned< CGDataProviderRef>::Seize ( result );
 		}
+  
+#endif
 	
 	class CGDataProviderCreateWithURL_Failed {};
 	inline Nucleus::Owned<CGDataProviderRef> CGDataProviderCreateWithURL ( CFURLRef url ) {

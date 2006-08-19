@@ -45,6 +45,8 @@ namespace Nitrogen
    inline void CGImageRelease( Nucleus::Owned<CGImageRef> )
      {}
 	 
+#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+	
 	using ::CGImageGetTypeID;	// CFTypeID CGImageGetTypeID(void)
 	
 
@@ -59,6 +61,8 @@ namespace Nitrogen
 		return Nucleus::Owned<CGImageRef>::Seize ( result );
 		}
 	
+#endif
+	
 	class CGImageMaskCreate_Failed {};
 	inline Nucleus::Owned<CGImageRef> CGImageMaskCreate (
 				size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow, 
@@ -69,6 +73,8 @@ namespace Nitrogen
 		return Nucleus::Owned<CGImageRef>::Seize ( result );
 		}
 
+#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+
 	class CGImageCreateCopy_Failed {};
 	inline Nucleus::Owned<CGImageRef> CGImageCreateCopy ( CGImageRef image ) {
 		CGImageRef result = ::CGImageCreateCopy ( image ); 
@@ -76,6 +82,7 @@ namespace Nitrogen
 		return Nucleus::Owned<CGImageRef>::Seize ( result );
 		}
 	
+#endif
 
 	class CGImageCreateWithJPEGDataProvider_Failed {};
 	inline Nucleus::Owned<CGImageRef> CGImageCreateWithJPEGDataProvider (
@@ -86,6 +93,7 @@ namespace Nitrogen
 		return Nucleus::Owned<CGImageRef>::Seize ( result );
 		}
 
+#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
 
 	class CGImageCreateWithPNGDataProvider_Failed {};
 	inline Nucleus::Owned<CGImageRef> CGImageCreateWithPNGDataProvider (
@@ -96,7 +104,6 @@ namespace Nitrogen
 		return Nucleus::Owned<CGImageRef>::Seize ( result );
 		}
 	
-
 	class CGImageCreateWithImageInRect_Failed {};
 	inline Nucleus::Owned<CGImageRef> CGImageCreateWithImageInRect ( CGImageRef image, CGRect rect ) {
 		CGImageRef result = ::CGImageCreateWithImageInRect ( image, rect );
@@ -111,6 +118,8 @@ namespace Nitrogen
 		if ( NULL == result ) throw CGImageCreateWithMask_Failed ();
 		return Nucleus::Owned<CGImageRef>::Seize ( result );
 		}
+
+#endif
 
 //	CG_EXTERN CGImageRef CGImageCreateWithMaskingColors(CGImageRef image, const float components[]) AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
 //	CG_EXTERN CGImageRef CGImageCreateCopyWithColorSpace(CGImageRef image, CGColorSpaceRef colorspace) AVAILABLE_MAC_OS_X_VERSION_10_3_AND_LATER;
@@ -128,8 +137,12 @@ namespace Nitrogen
 //	const float *CGImageGetDecode(CGImageRef image);
 	using ::CGImageGetShouldInterpolate;
 	using ::CGImageGetRenderingIntent;
+
+#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+
 	using ::CGImageGetBitmapInfo;
 	
+#endif
   }
 
 #endif
