@@ -355,9 +355,9 @@ namespace Nitrogen
 			
 			std::size_t size() const
 			{
-				if ( GetControlData_Traits< type >::hasStaticSize )
+				if ( GetControlData_Traits< tagName >::hasStaticSize )
 				{
-					return sizeof (typename GetControlData_Traits< type >::Buffer);
+					return sizeof (typename GetControlData_Traits< tagName >::Buffer);
 				}
 				
 				return GetControlData( myControl, myPart, tagName );
