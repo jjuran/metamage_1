@@ -51,6 +51,8 @@ typedef enum {
 typedef SecTrustResultType SecTrustUserSetting;
 #endif
 
+	using ::SecTrustRef;
+
   }
 
 namespace Nucleus

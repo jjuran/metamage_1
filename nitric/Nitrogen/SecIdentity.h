@@ -20,7 +20,7 @@
 
 
 namespace Nitrogen {
-	void RegisterSecurityErrors ();
+	void RegisterSecCertificateErrors ();
 	
 	using ::SecIdentityRef;
 	using ::SecCertificateRef;
