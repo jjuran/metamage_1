@@ -22,7 +22,7 @@ namespace Nitrogen
 		return TheGlobalCounter().Count( desiredClass, containerClass, containerToken );
 	}
 	
-	std::size_t Counter::Count( AECompOperator  desiredClass,
+	std::size_t Counter::Count( AEObjectClass   desiredClass,
 	                            AEObjectClass   containerClass,
 	                            const AEToken&  containerToken )
 	{
