@@ -30,7 +30,7 @@ namespace NitrogenExtras
 	typedef NN::Selector< struct AudioStatusCode_Tag, ::UInt8 >::Type AudioStatusCode;
 	
 	typedef NN::Flag< struct AudioPlayMode_Tag, ::UInt8 >::Type  AudioPlayMode;
-	typedef NN::Flag< struct AudioPlayMode_Tag, ::UInt8 >::Bit   AudioPlayModeBit;
+	//typedef NN::Flag< struct AudioPlayMode_Tag, ::UInt8 >::Bit   AudioPlayModeBit;
 	
 	typedef NN::Selector< struct TrackControl_Tag, ::UInt8 >::Type TrackControl;
 	
@@ -49,25 +49,27 @@ namespace NitrogenExtras
 		static const AudioStatusCode kAudioStatusError   = AudioStatusCode( 4 );
 		static const AudioStatusCode kAudioStatusNil     = AudioStatusCode( 5 );
 		
+		/*
 		static const AudioPlayModeBit kAudioPlayModeRightThruRightBit = AudioPlayModeBit( 0 );
 		static const AudioPlayModeBit kAudioPlayModeLeftThruRightBit  = AudioPlayModeBit( 1 );
 		static const AudioPlayModeBit kAudioPlayModeRightThruLeftBit  = AudioPlayModeBit( 2 );
 		static const AudioPlayModeBit kAudioPlayModeLeftThruLeftBit   = AudioPlayModeBit( 3 );
+		*/
 		
 		static const AudioPlayMode kAudioPlayModeMute = AudioPlayMode( 0 );
 		
-		static const AudioPlayMode kAudioPlayModeRightThruRight = NN::On << kAudioPlayModeRightThruRightBit;
-		static const AudioPlayMode kAudioPlayModeLeftThruRight  = NN::On << kAudioPlayModeLeftThruRightBit;
-		static const AudioPlayMode kAudioPlayModeRightThruLeft  = NN::On << kAudioPlayModeRightThruLeftBit;
-		static const AudioPlayMode kAudioPlayModeLeftThruLeft   = NN::On << kAudioPlayModeLeftThruLeftBit;
+		static const AudioPlayMode kAudioPlayModeRightThruRight = AudioPlayMode( 1 << 0 );
+		static const AudioPlayMode kAudioPlayModeLeftThruRight  = AudioPlayMode( 1 << 1 );
+		static const AudioPlayMode kAudioPlayModeRightThruLeft  = AudioPlayMode( 1 << 2 );
+		static const AudioPlayMode kAudioPlayModeLeftThruLeft   = AudioPlayMode( 1 << 3 );
 		
-		static const AudioPlayMode kAudioPlayModeStereo =   kAudioPlayModeLeftThruLeft
-		                                                  | kAudioPlayModeRightThruRight;
+		static const AudioPlayMode kAudioPlayModeStereo = AudioPlayMode(   kAudioPlayModeLeftThruLeft
+		                                                                 + kAudioPlayModeRightThruRight );
 		
-		static const AudioPlayMode kAudioPlayModeMonaural =   kAudioPlayModeLeftThruLeft
-		                                                    | kAudioPlayModeRightThruLeft
-		                                                    | kAudioPlayModeLeftThruRight
-		                                                    | kAudioPlayModeRightThruRight;
+		static const AudioPlayMode kAudioPlayModeMonaural = AudioPlayMode(   kAudioPlayModeLeftThruLeft
+		                                                                   + kAudioPlayModeRightThruLeft
+		                                                                   + kAudioPlayModeLeftThruRight
+		                                                                   + kAudioPlayModeRightThruRight );
 		
 		static const TrackControl kTrackControlTrackFormatMask = TrackControl( 0x0D );
 		static const TrackControl kTrackControlDigitalCopyMask = TrackControl( 0x02 );
