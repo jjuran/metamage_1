@@ -16,3 +16,6 @@ PATH=$PATH:/Developer/Tools
 # If you have MPW installed here and want to call tools directly
 #PATH=$PATH:$HOME/Developer/Applications/MPW/Tools
 
+# Advise if the perl lib is missing
+/etc/bootstrap/check-perl-lib.pl
+
