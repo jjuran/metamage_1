@@ -1,21 +1,21 @@
 /*	===========
  *	BCDCodes.hh
  *	===========
- *	
- *	No implementation necessary.
  */
 
-#pragma once
+#ifndef BITSANDBYTES_BCDCODES_HH
+#define BITSANDBYTES_BCDCODES_HH
 
 #include "HexCodes.hh"
 
 
-namespace BitsAndBytes {
+namespace BitsAndBytes
+{
 	
-	inline unsigned char DecodeBCD(unsigned char bcd)
+	inline unsigned char DecodeBCD( unsigned char bcd )
 	{
-		char tens = HighNibble(bcd);
-		char units = LowNibble(bcd);
+		char tens = HighNibble( bcd );
+		char units = LowNibble( bcd );
 		
 		unsigned char result = tens * 10 + units;
 		
@@ -23,4 +23,6 @@ namespace BitsAndBytes {
 	}
 	
 }
+
+#endif
 

@@ -3,7 +3,8 @@
  *	===========
  */
 
-#pragma once
+#ifndef BITSANDBYTES_HEXCODES_HH
+#define BITSANDBYTES_HEXCODES_HH
 
 
 namespace BitsAndBytes
@@ -46,4 +47,6 @@ namespace BitsAndBytes
 	}
 	
 }
+
+#endif
 

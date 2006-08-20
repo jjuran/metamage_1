@@ -1,25 +1,25 @@
 /*	===================
  *	StringPredicates.hh
  *	===================
- *	
- *	No implementation necessary.
  */
 
-#pragma once
+#ifndef BITSANDBYTES_STRINGPREDICATES_HH
+#define BITSANDBYTES_STRINGPREDICATES_HH
 
 // Standard C++
 #include <string>
 
 
-namespace BitsAndBytes {
-	
-	using std::string;
+namespace BitsAndBytes
+{
 	
 	// End of string
-	inline bool eos(string::size_type pos)
+	inline bool eos( std::size_t pos )
 	{
-		return pos == string::npos;
+		return pos == std::string::npos;
 	}
 	
 }
+
+#endif
 

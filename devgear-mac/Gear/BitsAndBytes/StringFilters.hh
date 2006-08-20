@@ -1,34 +1,34 @@
 /*	================
  *	StringFilters.hh
  *	================
- *	
- *	No implementation necessary.
  */
 
-#pragma once
+#ifndef BITSANDBYTES_STRINGFILTERS_HH
+#define BITSANDBYTES_STRINGFILTERS_HH
 
 // Standard C++
 #include <string>
 
 
-namespace BitsAndBytes {
+namespace BitsAndBytes
+{
 	
-	using std::string;
-	
-	inline string q(const string& str)
+	inline std::string q( const std::string& str )
 	{
-		return string("'") + str + "'";
+		return std::string( "'" ) + str + "'";
 	}
 	
-	inline string qq(const string& str)
+	inline std::string qq( const std::string& str )
 	{
-		return string("\"") + str + '"';
+		return std::string( "\"" ) + str + '"';
 	}
 	
-	inline string uq(const string& str)
+	inline std::string uq( const std::string& str )
 	{
-		return string("`") + str + "'";
+		return std::string( "`" ) + str + "'";
 	}
 	
 }
+
+#endif
 
