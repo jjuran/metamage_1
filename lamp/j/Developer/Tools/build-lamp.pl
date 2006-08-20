@@ -3,23 +3,51 @@
 use warnings;
 use strict;
 
-use fatal 'mkdir';
+use fatal qw( close mkdir open print chmod );
 
 $| = 1;  # piping hot output
 
 die "\$HOME must be defined\n" if !exists $ENV{HOME};
 
-my $build_area = shift || 'PPC-CFM-Carbon-Debug';
+my %arches   = qw( m68k 68K  powerpc PPC );
+my %runtimes = qw( cfm CFM );
+my %backends = qw( classic Toolbox  carbon Carbon );
+
+my $arch    = $ENV{HOSTTYPE}    or die "Missing HOSTTYPE\n";
+my $runtime = $ENV{MAC_RUNTIME} or die "Missing MAC_RUNTIME\n";
+my $backend = $ENV{MAC_BACKEND} or die "Missing MAC_BACKEND\n";
+
+my $build_config_name = join '-', $arches{$arch}, $runtimes{$runtime}, $backends{$backend}, 'Debug';
+
+sub Echo
+{
+	my ( $text ) = @_;
+	
+	print "$text\n";
+	
+	sleep 0;
+	
+	return;
+}
+
+# This avoids a bug that squelches error output
+Echo "Building for $build_config_name...\n";
+
+my $build_area = shift || $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
+
+my $should_copy_syms = $ENV{LAMP_SYMS};
 
 my $lamp_dir_path = "$ENV{HOME}/Developer/Lamp";
 
 my $builds_dir_path      = "$lamp_dir_path/Builds";
-my $native_root_dir_path = "$lamp_dir_path/j";
+#my $native_root_dir_path = "$lamp_dir_path/j";
 
-my $native_tmp_dir_path;
+#my $native_tmp_dir_path;
 
 my $build_tree = "$ENV{HOME}/Developer/Lab/$build_area";
-my $source_tree = "$ENV{HOME}/Developer/Projects/SourceForge/LAMP/j";
+my $source_tree = "$ENV{HOME}/Developer/Projects/SourceForge/Lamp/j";
+
+-d $build_tree or die "Missing build tree at $build_tree\n";
 
 my $root_name = 'lamp_';
 
@@ -39,7 +67,15 @@ my %fsmap =
 		Tools => [qw( aevt activate quit system File Line tlsrvr A-line cpres filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl )],
 	},
 	bin => [qw( cat cp echo false kill login mkdir mv pwd sh sleep true ), qw( chmod date ls test )],
-	etc => [qw( inetd.conf motd profile )],
+	etc =>
+	[
+		qw( inetd.conf motd profile ),
+		{
+			#build_date => sub { system "date > '$_[0]'" },
+			#build_date => sub { open my $fh, '>', $_[0]; print $fh `date`; close $fh; },
+			bootstrap => [qw( check-perl-lib.pl install-usr-lib-perl )],
+		},
+	],
 	sbin => [],
 	tmp => [],
 	usr =>
@@ -49,8 +85,18 @@ my %fsmap =
 		{
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
-		sbin => [qw( install-usr-lib-perl superd inetd httpd )],
+		sbin => [qw( superd inetd httpd )],
 	},
+	var =>
+	{
+		www =>
+		[
+			qw( index.html help.html main.css cubes.gif ),
+			{
+				'cgi-bin' => [qw( motd )],
+			},
+		],
+	}
 );
 
 
@@ -92,6 +138,17 @@ sub build_output
 	return $result;
 }
 
+sub copy_file
+{
+	my ( $src, $dest ) = @_;
+	
+	-f $src or die "Missing file $src for copy\n";
+	
+	system( 'cp', $src, $dest ) == 0 or die "cp '$src' '$dest' failed: $!\n";
+	
+	return;
+}
+
 sub install_script
 {
 	my ( $name, $install_path ) = @_;
@@ -104,16 +161,19 @@ sub install_script
 	
 	-f $file or die "Missing static file /$path_from_root/$name\n";
 	
-	system 'cp', $file, $install_path;
+	copy_file( $file, $install_path );
+	
+	chmod 0700, "$install_path/$name";
 }
 
 sub install_program
 {
 	my ( $project, $install_path ) = @_;
 	
-	my $return = system 'cp', build_output( $project ), $install_path;
+	my $output = build_output( $project );
 	
-	die "Copy failed" if $return != 0;
+	copy_file(  $output,       $install_path );
+	copy_file( "$output.xSYM", $install_path )  if $should_copy_syms;
 }
 
 sub create_file
@@ -128,16 +188,19 @@ sub create_file
 	{
 		install_script( $file, $path );
 	}
+	
+	return;
 }
 
 sub create_node
 {
 	my ( $path, $dir, $param ) = @_;
 	
-	my $ref = ref $param or return;
+	#print "create_node( '$path', '$dir', '$param' )\n";
 	
-	$path .= "/$dir";
-	mkdir $path;
+	my $ref = ref $param or return create_file( $path, $param );
+	
+	$path .= "/$dir"  unless $dir eq '.';
 	
 	if ( $ref eq "CODE" )
 	{
@@ -145,11 +208,13 @@ sub create_node
 		return;
 	}
 	
+	mkdir $path;
+	
 	if ( $ref eq "ARRAY" )
 	{
 		foreach my $file ( @$param )
 		{
-			create_file( $path, $file );
+			create_node( $path, '.', $file );
 		}
 		
 		return;
@@ -182,20 +247,6 @@ sub make_macball
 }
 
 
-sub Echo
-{
-	my ( $text ) = @_;
-	
-	print "$text\n";
-	
-	sleep 0;
-	
-	return;
-}
-
-# This avoids a bug that squelches error output
-Echo "Building...";
-
 $root_name .= timestamp();
 
 want_dir( "/tmp" );
@@ -204,14 +255,20 @@ my $dir_name = unique_dir_name();
 my $tmp_dir = "/tmp/$dir_name";
 mkdir $tmp_dir;
 
-$native_tmp_dir_path = $native_root_dir_path . $tmp_dir;
+#$native_tmp_dir_path = $native_root_dir_path . $tmp_dir;
 
 my $lamp = "$tmp_dir/$root_name";
 mkdir $lamp;
 
 install_program( 'Genie', "$lamp/" );
 
-create_node( $lamp, 'j', \%fsmap );
+eval { create_node( $lamp, 'j' => \%fsmap ); };
+
+if ( $@ )
+{
+	print $@;
+	exit 1;
+}
 
 Echo "Archiving...";
 
