@@ -4,7 +4,14 @@
  */
 
 // Universal Interfaces
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
+#endif
+#if UNIVERSAL_INTERFACES_VERSION < 0x0400
 #include <FileTypesAndCreators.h>  // for sigMPWShell
+#else
+enum { sigMPWShell = 'MPS ' };
+#endif
 
 // C++ Standard Library
 #include <algorithm>
