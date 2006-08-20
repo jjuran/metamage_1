@@ -42,8 +42,6 @@ namespace O = Orion;
 
 namespace ext = N::STLExtensions;
 
-using std::string;
-
 using FSLocator::FSLocatorChainedT;
 using FSLocator::FSLocatorAppBySignature;
 using FSLocator::FSLinkNewName;
@@ -154,10 +152,10 @@ class SysErrsDotErrText
 	
 	public:
 		SysErrsDotErrText( const FSSpec& errFile ) : myErrFile( errFile )  {}
-		string GetStringAt( UInt16 offset );
+		std::string GetStringAt( UInt16 offset );
 };
 
-string SysErrsDotErrText::GetStringAt( UInt16 offset )
+std::string SysErrsDotErrText::GetStringAt( UInt16 offset )
 {
 	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( myErrFile, fsRdPerm ) );
 	
@@ -169,7 +167,7 @@ string SysErrsDotErrText::GetStringAt( UInt16 offset )
 	Io::Read( fileH, buf, bufSize - 1 );
 	ASSERT(buf[bufSize - 1] == '\0');
 	
-	return string( buf );
+	return std::string( buf );
 }
 
 class Errortable
@@ -188,10 +186,10 @@ class Errortable
 			myText( myFile             )
 		{}
 		
-		string Lookup( OSErr err );
+		std::string Lookup( OSErr err );
 };
 
-string Errortable::Lookup( OSErr err )
+std::string Errortable::Lookup( OSErr err )
 {
 	UInt16 offset = myTOC.OffsetOf( err );
 	
