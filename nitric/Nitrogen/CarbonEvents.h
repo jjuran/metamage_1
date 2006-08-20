@@ -328,12 +328,40 @@ namespace Nitrogen
    inline void ReleaseEvent( Nucleus::Owned<EventRef> )
      {}
    
+   
+   static const bool gUseFlattenersForEventParameter = false;
+   
+   
    void SetEventParameter( EventRef         inEvent,
                            EventParamName   inName,
                            EventParamType   inType,
                            UInt32           inSize,
                            const void *     inDataPtr );
 
+	class SetEventParameter_Putter
+	{
+		private:
+			EventRef        myEvent;
+			EventParamName  myName;
+			EventParamType  myType;
+		
+		public:
+			SetEventParameter_Putter( EventRef        event,
+			                          EventParamName  name,
+			                          EventParamType  type ) : myEvent( event ),
+			                                                   myName ( name  ),
+			                                                   myType ( type  )  {}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				Nitrogen::SetEventParameter( myEvent,
+				                             myName,
+				                             myType,
+				                             Detail::Distance( begin, end ),
+				                             begin );
+			}
+	};
+	
    template < ::EventParamType inType >
    struct SetEventParameter_Traits
      {
@@ -346,6 +374,16 @@ namespace Nitrogen
                            typename SetEventParameter_Traits<inType>::InData_Type inData )
      {
       typedef DescType_Traits< inType > Traits;
+      
+      if ( gUseFlattenersForEventParameter )
+      {
+         Traits().Put( inData,
+		               SetEventParameter_Putter( inEvent,
+		                                         inName,
+		                                         inType ) );
+         
+         return;
+      }
       
       typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( inData );
       
@@ -377,6 +415,38 @@ namespace Nitrogen
       return GetEventParameter( inEvent, inName, inDesiredType, 0, 0 );
      }
    
+	template < ::EventParamType desiredType >
+	class GetEventParameter_Getter
+	{
+		private:
+			EventRef        myEvent;
+			EventParamName  myName;
+		
+		public:
+			GetEventParameter_Getter( EventRef        event,
+			                          EventParamName  name ) : myEvent( event ),
+			                                                   myName ( name  )  {}
+			
+			std::size_t size() const
+			{
+				if ( DescType_Traits< desiredType >::hasStaticSize )
+				{
+					return sizeof (typename DescType_Traits< desiredType >::Buffer);
+				}
+				
+				return GetEventParameter( myEvent, myName, desiredType ).outActualSize;
+			}
+			
+			void operator()( void *begin, void *end ) const
+			{
+				GetEventParameter( myEvent,
+				                   myName,
+				                   desiredType,
+				                   Detail::Distance( begin, end ),
+				                   begin );
+			}
+	};
+	
    template < ::EventParamType inDesiredType >
    struct GetEventParameter_Traits
      {
@@ -387,6 +457,11 @@ namespace Nitrogen
    typename GetEventParameter_Traits<inDesiredType>::Result GetEventParameter( EventRef inEvent, EventParamName inName )
      {
       typedef DescType_Traits< inDesiredType > Traits;
+      
+      if ( gUseFlattenersForEventParameter )
+      {
+         return Traits().Get( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
+      }
       
       typename Traits::InputBuffer buffer;
       
