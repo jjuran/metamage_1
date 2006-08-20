@@ -33,6 +33,8 @@ namespace Nitrogen
 	
 	typedef Nucleus::Flag< struct SerConfig_Tag, short >::Type SerConfig;
 	
+	NUCLEUS_DEFINE_FLAG_OPS( SerConfig )
+	
 	static const SerConfig baud150   = SerConfig( ::baud150   );
 	static const SerConfig baud300   = SerConfig( ::baud300   );
 	static const SerConfig baud600   = SerConfig( ::baud600   );
