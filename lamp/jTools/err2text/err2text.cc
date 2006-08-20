@@ -13,11 +13,14 @@
 enum { sigMPWShell = 'MPS ' };
 #endif
 
-// C++ Standard Library
+// Standard C++
 #include <algorithm>
 #include <functional>
 #include <string>
 #include <vector>
+
+// Standard C/C++
+#include <cstdio>
 
 // Nitrogen Nucleus
 #include "Nucleus/NAssert.h"
@@ -30,7 +33,6 @@ enum { sigMPWShell = 'MPS ' };
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 // err2text
 #include "FSLocator.hh"
@@ -116,7 +118,7 @@ SysErrsDotErrTOC::SysErrsDotErrTOC( const FSSpec& errFile )
 	ReadData( fileH, reserved );
 	
 	// FIXME:  These should probably return errors or throw exceptions or something.
-	switch (reserved)
+	switch ( reserved )
 	{
 		case 0x0000:
 		case 0xFFFF:
@@ -140,6 +142,7 @@ UInt16 SysErrsDotErrTOC::OffsetOf( OSErr err )
 	                                  ext::compose1( std::bind1st( std::equal_to< SInt16 >(),
 	                                                               err ),
 	                                                 std::ptr_fun( TOCEntry::GetError ) ) );
+	
 	bool found = it != myTOCEntries.end();
 	
 	return found ? it->offset : 0;
@@ -152,6 +155,7 @@ class SysErrsDotErrText
 	
 	public:
 		SysErrsDotErrText( const FSSpec& errFile ) : myErrFile( errFile )  {}
+		
 		std::string GetStringAt( UInt16 offset );
 };
 
@@ -163,9 +167,12 @@ std::string SysErrsDotErrText::GetStringAt( UInt16 offset )
 	
 	enum { bufSize = 512 };
 	char buf[ bufSize ];
+	
 	buf[ bufSize - 1 ] = '\0';
+	
 	Io::Read( fileH, buf, bufSize - 1 );
-	ASSERT(buf[bufSize - 1] == '\0');
+	
+	ASSERT( buf[ bufSize - 1 ] == '\0' );
 	
 	return std::string( buf );
 }
@@ -179,12 +186,9 @@ class Errortable
 		SysErrsDotErrText myText;
 	
 	public:
-		Errortable()
-		:
-			myFile( myLocator.Locate() ),
-			myTOC ( myFile             ),
-			myText( myFile             )
-		{}
+		Errortable() : myFile( myLocator.Locate() ),
+		               myTOC ( myFile             ),
+		               myText( myFile             )  {}
 		
 		std::string Lookup( OSErr err );
 };
@@ -211,11 +215,12 @@ int O::Main( int argc, const char *const argv[] )
 {
 	Errortable table;
 	
-	for ( int i = 1;  i < argc;  i++ )
+	for ( int i = 1;  i < argc;  ++i )
 	{
 		int errNum = std::atoi( argv[ i ] );
+		
 		// look up and print
-		Io::Out << table.Lookup( errNum ) << "\n";
+		std::printf( "%s\n", table.Lookup( errNum ).c_str() );
 	}
 	
 	return 0;
