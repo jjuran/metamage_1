@@ -328,7 +328,9 @@ namespace Pedestal
 			// no commands on autoKey
 			if ( event.what == keyDown )
 			{
-				TheApp().HandleMenuChoice( ::MenuKey( event.message & charCodeMask ) );
+				char keyChar = event.message & charCodeMask;
+				
+				TheApp().HandleMenuChoice( ::MenuKey( keyChar ) );
 			}
 		}
 		else if ( N::WindowRef window = N::FrontWindow() )
