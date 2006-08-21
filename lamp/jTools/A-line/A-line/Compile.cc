@@ -237,7 +237,7 @@ namespace ALine
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
 		
-		inc << "-I-";
+		//inc << "-I-";  // This makes gcc pissy
 		
 		if ( options.UserAndSystemIncludeDirs().size() > 0 )
 		{
@@ -455,7 +455,7 @@ namespace ALine
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
 		
-		inc << "-I-";
+		//inc << "-I-";  // This makes gcc pissy
 		
 		if ( options.UserAndSystemIncludeDirs().size() > 0 )
 		{
