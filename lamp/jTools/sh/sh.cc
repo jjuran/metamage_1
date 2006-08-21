@@ -12,6 +12,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include "sys/stat.h"
 #include <unistd.h>
 
 // Nucleus
@@ -122,7 +123,7 @@ int O::Main( int argc, const char *const argv[] )
 	gParameters = options.Begin();
 	gParameterCount = options.GetFreeParams().size();
 	
-	P7::FileDescriptor fd = Io::in;
+	P7::FileDescriptor fd( P7::kStdIn_FileNo );
 	
 	if ( gParameterCount > 0 )
 	{
@@ -131,7 +132,7 @@ int O::Main( int argc, const char *const argv[] )
 		++gParameters;
 		--gParameterCount;
 		
-		fd = open( gArgZero, O_RDONLY );
+		fd = P7::Open( gArgZero, O_RDONLY ).Release();
 		
 		gInteractive = options.GetFlag( optInteractive );
 	}
@@ -147,11 +148,12 @@ int O::Main( int argc, const char *const argv[] )
 		
 		if ( gLoginShell )
 		{
-			P7::FileDescriptor profile = open( "/etc/profile", O_RDONLY );
+			struct ::stat sb;
 			
-			if ( profile != -1 )
+			int statted = stat( "/etc/profile", &sb );
+			
+			if ( statted != -1 )
 			{
-				(void)close( profile );
 				ExecuteCmdLine( ". /etc/profile" );
 			}
 		}
