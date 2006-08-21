@@ -3,7 +3,7 @@
 use warnings;
 use strict;
 
-use fatal qw( close mkdir open print chmod );
+use fatal qw( close mkdir open print chmod read );
 
 $| = 1;  # piping hot output
 
@@ -163,7 +163,11 @@ sub install_script
 	
 	copy_file( $file, $install_path );
 	
-	chmod 0700, "$install_path/$name";
+	open( my $fh, '<', $file );
+	
+	read( $fh, my $shebang, 2 );
+	
+	chmod 0700, "$install_path/$name" if $shebang eq '#!';
 }
 
 sub install_program
