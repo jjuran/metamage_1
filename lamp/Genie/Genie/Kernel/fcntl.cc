@@ -19,6 +19,7 @@
 #include "Genie/Devices.hh"
 #include "Genie/IO/SimpleDevice.hh"
 #include "Genie/IO/RegularFile.hh"
+#include "Genie/FileSignature.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -46,6 +47,7 @@ namespace Genie
 		
 		return fd;
 	}
+	
 	
 	static int open( const char* path, int oflag, mode_t mode )
 	{
@@ -86,10 +88,11 @@ namespace Genie
 				{
 					if ( !N::FSpTestFileExists( file ) )
 					{
-						// FIXME:  Need a way to guess or otherwise choose creator and type
-						// Cheap hack:
-						N::OSType creator = TARGET_API_MAC_CARBON ? '!Rch' : 'R*ch';
-						N::FSpCreate( file, creator, 'TEXT' );
+						std::string name = NN::Convert< std::string >( file.name );
+						
+						FileSignature sig = PickFileSignatureForName( name );
+						
+						N::FSpCreate( file, sig.creator, sig.type );
 					}
 					else if ( excluding )
 					{
