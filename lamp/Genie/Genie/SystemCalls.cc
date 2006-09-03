@@ -159,7 +159,7 @@ namespace Genie
 			// Sleep until the reply is delivered
 			pause();
 		}
-		catch ( N::OSStatus& err )
+		catch ( const N::OSStatus& err )
 		{
 			return err;
 		}
@@ -183,7 +183,7 @@ namespace Genie
 		{
 			*outFSS = ResolveUnixPathname( pathname, CurrentProcess().CurrentDirectory() );
 		}
-		catch ( N::OSStatus& err )
+		catch ( const N::OSStatus& err )
 		{
 			return CurrentProcess().SetErrno( err );
 		}
@@ -205,7 +205,7 @@ namespace Genie
 			
 			return result == 0 ? 0 : -1;
 		}
-		catch ( N::FNFErr& )
+		catch ( const N::FNFErr& )
 		{
 			return CurrentProcess().SetErrno( ENOENT );
 		}
@@ -295,7 +295,7 @@ namespace Genie
 		{
 			return CurrentProcess().SetErrno( err );
 		}
-		catch ( N::OSStatus& err )
+		catch ( const N::OSStatus& err )
 		{
 			std::string errMsg = "\n";
 			
@@ -303,12 +303,12 @@ namespace Genie
 			{
 				throw;
 			}
-			catch ( N::ErrMessage& msg )
+			catch ( const N::ErrMessage& msg )
 			{
 				errMsg = ", errMessage: " + NN::Convert< std::string >( msg.errMessage ) + "\n";
 				//std::printf( "errMessage: '%s'\n", str.c_str() );
 			}
-			catch ( N::FNFErr& )
+			catch ( const N::FNFErr& )
 			{
 				return CurrentProcess().SetErrno( ENOENT );
 			}
@@ -472,16 +472,16 @@ namespace Genie
 			
 			return peekBuffer.size();
 		}
-		catch ( Io::EndOfInput )
+		catch ( const Io::EndOfInput& )
 		{
 			// Zero return from peek() indicates EOF
 			return 0;
 		}
-		catch ( Io::NoDataPending )
+		catch ( const Io::NoDataPending& )
 		{
 			CurrentProcess().SetErrno( EWOULDBLOCK );
 		}
-		catch ( P7::Errno& error )
+		catch ( const P7::Errno& error )
 		{
 			CurrentProcess().SetErrno( error );
 		}
@@ -589,7 +589,7 @@ namespace Genie
 			}
 			while ( remaining > 0 );
 		}
-		catch ( P7::Errno& error )
+		catch ( const P7::Errno& error )
 		{
 			return CurrentProcess().SetErrno( error );
 		}
