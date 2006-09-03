@@ -25,6 +25,9 @@
 #include "Utilities/Files.h"
 #include "Utilities/Threads.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Io
 #include "Io/Stream.hh"
 
@@ -88,6 +91,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
+	namespace P7 = POSeven;
 	namespace Sh = ShellShock;
 	namespace K = Kerosene;
 	
@@ -136,6 +140,8 @@ namespace Genie
 		{}
 	};
 	
+	inline P7::Errno NotExecutable()  { return P7::Errno( EPERM ); }
+	
 	static ExecContext& Normalize( ExecContext& context, const N::FSDirSpec& cwd )
 	{
 		const OSType type = N::FSpGetFInfo( context.executable ).fdType;
@@ -168,7 +174,7 @@ namespace Genie
 				
 				if ( nl == NULL )
 				{
-					throw NotExecutableError();  // #! line too long
+					throw NotExecutable();  // #! line too long
 				}
 				
 				*nl = '\0';
@@ -251,7 +257,7 @@ namespace Genie
 		}
 		else
 		{
-			throw NotExecutableError();
+			throw NotExecutable();
 		}
 		
 		return context;
