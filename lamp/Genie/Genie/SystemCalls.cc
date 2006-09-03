@@ -291,6 +291,10 @@ namespace Genie
 				return 0;  // just in case
 			}
 		}
+		catch ( const P7::Errno& err )
+		{
+			return CurrentProcess().SetErrno( err );
+		}
 		catch ( N::OSStatus& err )
 		{
 			std::string errMsg = "\n";
