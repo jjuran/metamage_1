@@ -32,6 +32,7 @@
 
 // Genie
 #include "Genie/IO/File.hh"
+#include "Genie/FileSignature.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
@@ -89,7 +90,7 @@ namespace Genie
 		
 		const FInfo& info = hFileInfo.ioFlFndrInfo;
 		OSType type = info.fdType;
-		bool executable = TypeIsExecutable( type ) || type == 'TEXT' && info.fdFlags & kIsShared;
+		bool executable = TypeIsExecutable( type ) || type == 'TEXT' && (info.fdFlags & kIsShared || info.fdCreator == 'Poof');
 		
 		return ( writable ? S_IWUSR : 0 ) | ( executable ? S_IXUSR : 0 );
 	}
@@ -144,6 +145,7 @@ namespace Genie
 			bool x_bit = new_mode & S_IXUSR;
 			
 			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
+			info.fdCreator = x_bit ? 'Poof' : TextFileCreator();
 			
 			N::FSpSetFInfo( file, info );
 		}
