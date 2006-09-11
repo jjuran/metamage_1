@@ -873,6 +873,45 @@ static int TestThrow( int argc, char const *const argv[] )
 	return 0;
 }
 
+static int TestReadLoc( int argc, char const *const argv[] )
+{
+	//if ( argc < 3 )  return 1;
+	
+	MachineLocation loc;
+	
+	::ReadLocation( &loc );
+	
+	double latitude  = loc.latitude;
+	double longitude = loc.longitude;
+	
+	// Convert from Fract to normal -- move binary point
+	latitude  /= (1 << 30);
+	longitude /= (1 << 30);
+	
+	// Convert to degrees
+	latitude  *= 90;
+	longitude *= 90;
+	
+	long gmtDelta = loc.u.gmtDelta;
+	
+	bool dls = gmtDelta & 0x80000000;
+	
+	gmtDelta &= 0x00FFFFFF;
+	
+	bool signExtend = gmtDelta & 0x00800000;
+	
+	gmtDelta |= signExtend ? 0xFF000000 : 0x00000000;
+	
+	std::printf( "Latitude: %d degrees\n",  int( latitude  ) );
+	std::printf( "Longitude: %d degrees\n", int( longitude ) );
+	
+	std::printf( "Daylight Savings Time: %s\n", dls ? "on" : "off" );
+	
+	std::printf( "GMT delta: %d hours\n", int( gmtDelta / 3600 ) );
+	
+	return 0;
+}
+
 
 int O::Main(int argc, const char *const argv[])
 {
@@ -970,6 +1009,10 @@ int O::Main(int argc, const char *const argv[])
 	else if ( arg1 == "throw" )
 	{
 		return TestThrow( argc, argv );
+	}
+	else if ( arg1 == "loc" )
+	{
+		return TestReadLoc( argc, argv );
 	}
 	else
 	{
