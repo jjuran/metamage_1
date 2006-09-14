@@ -168,13 +168,44 @@ namespace Nitrogen
       Nitrogen::CFURLGetFileSystemRepresentation( url, resolveAgainstBase, buffer, maxBufLen );
      }
 
-   class CFURLCopyAbsoluteURL_Failed {};
-   Nucleus::Owned<CFURLRef> CFURLCopyAbsoluteURL( CFURLRef relativeURL );
-
-   class CFURLGetString_Failed {};
-   CFStringRef CFURLGetString( CFURLRef anURL );
-
-   using ::CFURLGetBaseURL;
+	class CFURLCopyAbsoluteURL_Failed {};
+	Nucleus::Owned<CFURLRef> CFURLCopyAbsoluteURL( CFURLRef relativeURL );
+	
+	class CFURLGetString_Failed {};
+	CFStringRef CFURLGetString( CFURLRef anURL );
+	
+	using ::CFURLGetBaseURL;
+	
+	class CFURLCopyFileSystemPath_Failed {};
+	inline Nucleus::Owned<CFStringRef> CFURLCopyFileSystemPath ( CFURLRef anURL, CFURLPathStyle pathStyle = kCFURLPOSIXPathStyle ) {
+		CFStringRef result = ::CFURLCopyFileSystemPath ( anURL, pathStyle );
+		if ( NULL == result ) throw CFURLCopyFileSystemPath_Failed ();
+		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		}
+	
+	class CFURLCreateCopyDeletingLastPathComponent_Failed {};
+	inline Nucleus::Owned<CFURLRef> CFURLCreateCopyDeletingLastPathComponent ( CFAllocatorRef allocator, CFURLRef anURL ) {
+		CFURLRef result = ::CFURLCreateCopyDeletingLastPathComponent ( allocator, anURL );
+		if ( NULL == result ) throw CFURLCreateCopyDeletingLastPathComponent_Failed ();
+		return Nucleus::Owned<CFURLRef>::Seize ( result );
+		}
+	
+	
+	class CFURLCopyLastPathComponent_Failed {};
+	inline Nucleus::Owned<CFStringRef> CFURLCopyLastPathComponent ( CFURLRef anURL ) {
+		CFStringRef result = ::CFURLCopyLastPathComponent ( anURL );
+		if ( NULL == result ) throw CFURLCopyLastPathComponent_Failed ();
+		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		}
+	
+	//	CFMutableStringRef CFStringCreateMutableCopy(CFAllocatorRef alloc, CFIndex maxLength, CFStringRef theString);
+	class CFStringCreateMutableCopy_Failed {};
+	inline Nucleus::Owned<CFMutableStringRef> CFStringCreateMutableCopy ( CFAllocatorRef alloc, CFIndex maxLength, CFStringRef theString ) {
+		CFMutableStringRef result = ::CFStringCreateMutableCopy ( alloc, maxLength, theString );
+		if ( NULL == result ) throw CFStringCreateMutableCopy_Failed ();
+		return Nucleus::Owned<CFMutableStringRef>::Seize ( result );
+		}
+	
 
    /*...*/
 
