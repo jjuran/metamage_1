@@ -1,9 +1,13 @@
-/*	========
- *	Icons.hh
- *	========
+/*	=================
+ *	Pedestal/Icons.hh
+ *	=================
  */
 
-#pragma once
+#ifndef PEDESTAL_ICONS_HH
+#define PEDESTAL_ICONS_HH
+
+// Nitrogen
+#include "Nitrogen/Icons.h"
 
 // Pedestal
 #include "Pedestal/Graphic.hh"
@@ -77,4 +81,6 @@ namespace Pedestal
 	};
 	
 }
+
+#endif
 

@@ -3,7 +3,11 @@
  *	============================
  */
 
-#pragma once
+#ifndef PEDESTAL_GENERATEDGRAPHIC_HH
+#define PEDESTAL_GENERATEDGRAPHIC_HH
+
+// Nitrogen
+#include "Nitrogen/QuickDraw.h"
 
 // Pedestal
 #include "Pedestal/Graphic.hh"
@@ -99,4 +103,6 @@ namespace Pedestal
 	}
 	
 }
+
+#endif
 

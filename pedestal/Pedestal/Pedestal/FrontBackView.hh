@@ -3,7 +3,11 @@
  *	================
  */
 
-#pragma once
+#ifndef PEDESTAL_FRONTBACKVIEW_HH
+#define PEDESTAL_FRONTBACKVIEW_HH
+
+// Standard C++
+#include <utility>
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -44,4 +48,6 @@ namespace Pedestal
 	};
 	
 }
+
+#endif
 
