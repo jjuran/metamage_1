@@ -5,6 +5,9 @@
 
 #include "Pedestal/ApplicationContext.hh"
 
+// Nitrogen
+#include "Nitrogen/Processes.h"
+
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 

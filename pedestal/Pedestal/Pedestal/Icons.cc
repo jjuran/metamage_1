@@ -7,6 +7,7 @@
 
 // Nitrogen
 #include "Nitrogen/Icons.h"
+#include "Nitrogen/QDOffscreen.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Saved.h"
