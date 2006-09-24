@@ -5,17 +5,21 @@
 
 #include "A-line/A-line.hh"
 
-// C++
+// Standard C++
 #include <algorithm>
 #include <functional>
 #include <map>
 #include <numeric>
 #include <vector>
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C
 #include "stdlib.h"
 
 // POSIX
+#include "sys/wait.h"
 #include "unistd.h"
 
 // Nitrogen Nucleus
@@ -115,19 +119,18 @@ namespace ALine
 			Io::Out << "  " << command << "\n";
 		}
 		
-		//int result = system( command.c_str() );
-		int result = system( command.c_str() );
+		int wait_result = system( command.c_str() );
 		
-		if ( gOptions.verbose )
+		if ( wait_result != 0 )
 		{
-			Io::Out << "Result:  " << result << "\n\n";
-		}
-		
-		if ( result != 0 )
-		{
-			Io::Err << "The last command returned " << result << ".  Aborting.\n";
+			bool signaled = WIFSIGNALED( wait_result );
 			
-			O::ThrowExitStatus( result );
+			const char* ended  = signaled ? "terminated via signal" : "exited with status";
+			int         status = signaled ? WTERMSIG( wait_result ) : WEXITSTATUS( wait_result );
+			
+			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
+			
+			O::ThrowExitStatus( signaled ? 2 : 1 );
 		}
 	}
 	
