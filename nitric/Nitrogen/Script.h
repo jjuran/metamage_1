@@ -17,10 +17,6 @@
 namespace Nitrogen
 {
 	
-	inline ScriptCode SMSystemScript ()  { return ScriptCode::Make( smSystemScript  ); }
-	inline ScriptCode SMCurrentScript()  { return ScriptCode::Make( smCurrentScript ); }
-	inline ScriptCode SMAllScripts   ()  { return ScriptCode::Make( smAllScripts    ); }
-	
 }
 
 #endif
