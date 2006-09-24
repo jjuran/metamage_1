@@ -3,7 +3,11 @@
  *	===================
  */
 
-#pragma once
+#ifndef PEDESTAL_FRONTBACKGRAPHIC_HH
+#define PEDESTAL_FRONTBACKGRAPHIC_HH
+
+// Standard C++
+#include <utility>
 
 // Pedestal
 #include "Pedestal/Graphic.hh"
@@ -11,8 +15,6 @@
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
 	
 	template < class Front, class Back >
 	class FrontBackGraphic : public Graphic
@@ -42,4 +44,6 @@ namespace Pedestal
 	};
 	
 }
+
+#endif
 
