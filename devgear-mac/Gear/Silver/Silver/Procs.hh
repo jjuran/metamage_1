@@ -9,6 +9,11 @@
 #ifndef SILVER_PROCS_HH
 #define SILVER_PROCS_HH
 
+#include <Events.h>
+#include <Menus.h>
+#include <Resources.h>
+#include <TextEdit.h>
+
 // Silver
 #include "Silver/ProcTypes.hh"
 
