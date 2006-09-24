@@ -12,8 +12,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
 	template < class Graphic >
 	class GraphicView : public View
 	{
