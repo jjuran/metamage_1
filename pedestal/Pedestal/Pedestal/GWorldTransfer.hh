@@ -3,7 +3,14 @@
  *	=================
  */
 
-#pragma once
+#ifndef PEDESTAL_QWORLDTRANSFER_HH
+#define PEDESTAL_QWORLDTRANSFER_HH
+
+// Nucleus
+#include "Nucleus/Shared.h"
+
+// Nitrogen
+#include "Nitrogen/QDOffscreen.h"
 
 // Pedestal
 #include "Pedestal/Graphic.hh"
@@ -49,7 +56,7 @@ namespace Pedestal
 				N::TransferMode mode;
 				
 				Initializer( const NN::Shared< N::GWorldPtr, N::GWorldDisposer >&  gworld,
-				             N::TransferMode                                      mode )
+				             N::TransferMode                                       mode )
 				:
 					gworld( gworld ),
 					mode  ( mode   )
@@ -64,4 +71,6 @@ namespace Pedestal
 	};
 	
 }
+
+#endif
 
