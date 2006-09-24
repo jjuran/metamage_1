@@ -1015,11 +1015,11 @@ namespace Nitrogen
 	FSSpec FSpCreate( const FSSpec&  file, 
 	                  OSType         creator, 
 	                  OSType         type, 
-	                  ScriptCode     scriptTag = SMSystemScript() );
+	                  ScriptCode     scriptTag = ScriptCode( smSystemScript ) );
 	
 	// 4679
 	FSDirSpec FSpDirCreate( const FSSpec&  dir, 
-	                        ScriptCode     scriptTag = SMSystemScript() );
+	                        ScriptCode     scriptTag = ScriptCode( smSystemScript ) );
 	
 	// 4694
 	void FSpDelete( const FSSpec& item );
