@@ -18,7 +18,10 @@
 #include "Nucleus/OnlyOnce.h"
 #endif
 
-// Nitrogen Carbon support
+// Nitrogen
+#ifndef NITROGEN_MACTYPES_H
+#include "Nitrogen/MacTypes.h"
+#endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
