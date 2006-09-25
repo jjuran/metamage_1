@@ -12,6 +12,16 @@
 namespace Nitrogen
   {
 	
+#if OPAQUE_TOOLBOX_STRUCTS
+	
+	static       Nucleus::OwnedDefaults< WindowRef >::Disposer gDisposeWindow;
+	
+#else
+		
+	static const Nucleus::OwnedDefaults< WindowRef >::Disposer gDisposeWindow( &::DisposeWindow );
+		
+#endif
+	
 	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
 	                                       ConstStr255Param  title,
 	                                       bool              visible,
@@ -27,7 +37,7 @@ namespace Nitrogen
 		                                                        procID,
 		                                                        behind,
 		                                                        goAwayFlag,
-		                                                        refCon ) );
+		                                                        refCon ), gDisposeWindow );
 	}
 	
 	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
@@ -45,7 +55,7 @@ namespace Nitrogen
 		                                                         procID,
 		                                                         behind,
 		                                                         goAwayFlag,
-		                                                         refCon ) );
+		                                                         refCon ), gDisposeWindow );
 	}
 	
 	FindWindow_Result MacFindWindow( Point point )
