@@ -17,6 +17,9 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
+// Nitrogen
+#include "Nitrogen/Files.h"
+
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
 
