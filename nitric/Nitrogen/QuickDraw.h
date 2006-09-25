@@ -85,105 +85,11 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-#if OPAQUE_TOOLBOX_STRUCTS
-	
 	using ::GrafPtr;
 	using ::WindowPtr;
 	using ::DialogPtr;
 	
-#else
-	
-	class GrafPtr
-	{
-		private:
-			typedef ::GrafPtr UnderlyingType;
-			UnderlyingType value;
-			
-			::GrafPtr  GetGrafPtr()  const                         { return value; }
-			::CGrafPtr GetCGrafPtr() const                         { return reinterpret_cast< ::CGrafPtr >( value ); }
-			
-		public:
-			GrafPtr() : value( NULL )  {}
-			GrafPtr( ::GrafPtr  value ) : value( value )  {}
-			GrafPtr( ::CGrafPtr value ) : value( reinterpret_cast< ::GrafPtr >( value ) )  {}
-			
-			operator ::GrafPtr()  const                            { return GetGrafPtr();  }
-			operator ::CGrafPtr() const                            { return GetCGrafPtr(); }
-			
-			static GrafPtr Make( ::GrafPtr  v )  { return GrafPtr( v ); }
-			static GrafPtr Make( ::CGrafPtr v )  { return GrafPtr( v ); }
-			
-			template < class T > T Get() const;
-			
-			friend bool operator==( GrafPtr a, GrafPtr b )     { return a.value == b.value; }
-			friend bool operator==( GrafPtr a, ::GrafPtr b )   { return a.Get< ::GrafPtr >() == b; }
-			friend bool operator==( ::GrafPtr a, GrafPtr b )   { return a == b.Get< ::GrafPtr >(); }
-			friend bool operator==( GrafPtr a, ::CGrafPtr b )  { return a.Get< ::CGrafPtr >() == b; }
-			friend bool operator==( ::CGrafPtr a, GrafPtr b )  { return a == b.Get< ::CGrafPtr >(); }
-			
-			friend bool operator!=( GrafPtr a, GrafPtr b )     { return a.value != b.value; }
-			friend bool operator!=( GrafPtr a, ::GrafPtr b )   { return a.Get< ::GrafPtr >() != b; }
-			friend bool operator!=( ::GrafPtr a, GrafPtr b )   { return a != b.Get< ::GrafPtr >(); }
-			friend bool operator!=( GrafPtr a, ::CGrafPtr b )  { return a.Get< ::CGrafPtr >() != b; }
-			friend bool operator!=( ::CGrafPtr a, GrafPtr b )  { return a != b.Get< ::CGrafPtr >(); }
-	};
-	
-	template <> inline ::GrafPtr  GrafPtr::Get< ::GrafPtr  >() const  { return GetGrafPtr();  }
-	template <> inline ::CGrafPtr GrafPtr::Get< ::CGrafPtr >() const  { return GetCGrafPtr(); }
-	
-	class WindowPtr
-	{
-		private:
-			typedef ::WindowPtr UnderlyingType;
-			UnderlyingType value;
-			
-		public:
-			WindowPtr() : value( NULL )  {}
-			WindowPtr( ::WindowPtr  value ) : value( value )  {}
-			
-			operator ::WindowPtr()  const                          { return value;  }
-			
-			static WindowPtr Make( ::WindowPtr  v )                { return WindowPtr( v ); }
-			
-			::WindowPtr Get() const                                { return value; }
-			
-			friend bool operator==( WindowPtr a, WindowPtr b )     { return a.Get() == b.Get(); }
-			friend bool operator==( WindowPtr a, ::WindowPtr b )   { return a.Get() == b; }
-			friend bool operator==( ::WindowPtr a, WindowPtr b )   { return a == b.Get(); }
-			
-			friend bool operator!=( WindowPtr a, WindowPtr b )     { return a.Get() != b.Get(); }
-			friend bool operator!=( WindowPtr a, ::WindowPtr b )   { return a.Get() != b; }
-			friend bool operator!=( ::WindowPtr a, WindowPtr b )   { return a != b.Get(); }
-	};
-	
-	class DialogPtr
-	{
-		private:
-			typedef ::DialogPtr UnderlyingType;
-			UnderlyingType value;
-			
-		public:
-			DialogPtr() : value( NULL )  {}
-			DialogPtr( ::DialogPtr  value ) : value( value )  {}
-			
-			operator ::DialogPtr()  const                          { return value;  }
-			
-			static DialogPtr Make( ::DialogPtr  v )                { return DialogPtr( v ); }
-			
-			::DialogPtr Get() const                                { return value; }
-			
-			friend bool operator==( DialogPtr a, DialogPtr b )     { return a.Get() == b.Get(); }
-			friend bool operator==( DialogPtr a, ::DialogPtr b )   { return a.Get() == b; }
-			friend bool operator==( ::DialogPtr a, DialogPtr b )   { return a == b.Get(); }
-			
-			friend bool operator!=( DialogPtr a, DialogPtr b )     { return a.Get() != b.Get(); }
-			friend bool operator!=( DialogPtr a, ::DialogPtr b )   { return a.Get() != b; }
-			friend bool operator!=( ::DialogPtr a, DialogPtr b )   { return a != b.Get(); }
-	};
-	
-#endif
-	
-	typedef WindowPtr WindowRef;
+	using ::WindowRef;
 	
 	using ::RGBColor;
 	
@@ -212,7 +118,34 @@ namespace Nitrogen
 	using ::PixPatHandle;
 	using ::CCrsrHandle;
 	using ::GDHandle;
-	typedef GrafPtr CGrafPtr;
+	using ::CGrafPtr;
+	
+#if !OPAQUE_TOOLBOX_STRUCTS
+	
+	namespace Detail
+	{
+		
+		template < class Port >
+		class PortDisposer : public std::unary_function< Port, void >
+		{
+			private:
+				typedef pascal void (*Dispose)( Port );
+				
+				Dispose dispose;
+			
+			public:
+				PortDisposer() : dispose( NULL )  {}
+				PortDisposer( Dispose d ) : dispose( d )  {}
+				
+				void operator()( Port port ) const
+				{
+					if ( dispose )  dispose( port );
+				}
+		};
+		
+	}
+	
+#endif
 	
 }
 
@@ -256,6 +189,7 @@ namespace Nucleus
 	};
 	
 	
+#if OPAQUE_TOOLBOX_STRUCTS
 	
 	template <> struct Disposer< Nitrogen::CGrafPtr > : public std::unary_function< Nitrogen::CGrafPtr, void >
 	{
@@ -264,6 +198,20 @@ namespace Nucleus
 			::DisposePort( port );
 		}
 	};
+	
+#else
+	
+	template <> struct OwnedDefaults< Nitrogen::GrafPtr >
+	{
+		typedef Nitrogen::Detail::PortDisposer< Nitrogen::GrafPtr > Disposer;
+	};
+	
+	template <> struct OwnedDefaults< Nitrogen::CGrafPtr >
+	{
+		typedef Nitrogen::Detail::PortDisposer< Nitrogen::CGrafPtr > Disposer;
+	};
+	
+#endif
 	
 	template <>
 	struct Maker< Nitrogen::RGBColor >
@@ -310,21 +258,22 @@ namespace Nitrogen
 	
 	// QDRegionToRects
 	
-#if OPAQUE_TOOLBOX_STRUCTS
-	
 	using ::MacSetPort;
-	
-#else
-	
-	inline void MacSetPort( GrafPtr port )  { ::MacSetPort( port ); }
-	
-#endif
 	
 	GrafPtr GetPort();
 	
 	inline bool QDSwapPort( CGrafPtr newPort, CGrafPtr& oldPort )  { return ::QDSwapPort( newPort, reinterpret_cast< ::CGrafPtr* >( &oldPort ) ); }
 	
 	CGrafPtr QDSwapPort( CGrafPtr newPort );
+	
+#if !OPAQUE_TOOLBOX_STRUCTS
+	
+	inline GrafPtr QDSwapPort( GrafPtr newPort )
+	{
+		return reinterpret_cast< GrafPtr >( QDSwapPort( reinterpret_cast< CGrafPtr >( newPort ) ) );
+	}
+	
+#endif
 	
 	// GrafDevice
 	// SetPortBits
@@ -813,7 +762,7 @@ namespace Nitrogen
 			static const bool hasSwap = true;
 			
 			GetResult Get() const                      { return GetPort();          }
-			void Set( SetParameter port ) const        { SetPort( port );           }
+			void Set( SetParameter port ) const        { Nitrogen::SetPort( port ); }
 			
 			GetResult Swap( SetParameter port ) const  { return QDSwapPort( port ); }
 	};
