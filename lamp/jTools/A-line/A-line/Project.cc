@@ -57,9 +57,6 @@ namespace ALine
 	
 	namespace ext = N::STLExtensions;
 	
-	using std::string;
-	using std::vector;
-	
 	using BitsAndBytes::eos;
 	using BitsAndBytes::q;
 	
@@ -72,11 +69,11 @@ namespace ALine
 	static FSSpec ResolveIncludePath( const N::FSDirSpec& includeDir, const IncludePath& includePath )
 	{
 		N::FSDirSpec dir = includeDir;
-		string::size_type start = 0, stop;
+		std::size_t start = 0, stop;
 		
 		while ( !eos( stop = includePath.find( '/', start ) ) )
 		{
-			string::size_type len = stop - start;
+			std::size_t len = stop - start;
 			dir = dir << includePath.substr( start, len );
 			start = stop + 1;
 		}
@@ -100,9 +97,9 @@ namespace ALine
 	
 	static N::FSDirSpec gCurrentSourceDir;
 	
-	bool Project::FindInclude( const string& includePath )
+	bool Project::FindInclude( const std::string& includePath )
 	{
-		typedef vector< N::FSDirSpec >::const_iterator vDS_ci;
+		typedef std::vector< N::FSDirSpec >::const_iterator vDS_ci;
 		
 		for ( vDS_ci it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
 		{
@@ -122,12 +119,12 @@ namespace ALine
 		return false;
 	}
 	
-	static string First( const vector< string >& v )
+	static std::string First( const std::vector< std::string >& v )
 	{
-		return ( v.size() > 0 ) ? v[ 0 ] : string();
+		return ( v.size() > 0 ) ? v[ 0 ] : std::string();
 	}
 	
-	static N::FSDirSpec FindSearchDir( const string& cwdPath, const string& pathname )
+	static N::FSDirSpec FindSearchDir( const std::string& cwdPath, const std::string& pathname )
 	{
 		N::FSDirSpec dir;
 		
@@ -192,7 +189,7 @@ namespace ALine
 		return productNotBuilt;
 	}
 	
-	Project::Project( const string& proj )
+	Project::Project( const std::string& proj )
 	:
 		projName  ( proj ),
 		projFolder( CD::GetProjectFolder( proj, Options().platform ) ),
@@ -248,10 +245,21 @@ namespace ALine
 				                                    CD::apiMacToolbox );
 			}
 			
-			typedef vector< ProjName >::const_iterator vPN_ci;
+			typedef std::vector< ProjName >::const_iterator vPN_ci;
 			
 			// Figure out which projects we use
-			const vector< ProjName >& usedProjects = config[ "uses" ];
+			const std::vector< ProjName >& moreUsedProjects = config[ "use" ];
+			
+			std::vector< ProjName > usedProjects = config[ "uses" ];
+			
+			std::size_t usedCount = usedProjects.size();
+			
+			usedProjects.resize( usedCount + moreUsedProjects.size() );
+			
+			std::copy( moreUsedProjects.begin(),
+			           moreUsedProjects.end(),
+			           usedProjects.begin() + usedCount );
+			
 			std::set< ProjName > allUsedSet;
 			
 			// For each project named in the 'uses' directive:
@@ -273,7 +281,7 @@ namespace ALine
 				Project& used = GetProject( *it );
 				
 				// Find out which projects it uses
-				const vector< ProjName >& subUsed = used.AllUsedProjects();
+				const std::vector< ProjName >& subUsed = used.AllUsedProjects();
 				
 				// For each project even indirectly used by this one:
 				for ( vPN_ci it2 = subUsed.begin();  it2 != subUsed.end();  ++it2 )
@@ -293,15 +301,15 @@ namespace ALine
 			// Check for special options.
 			// Currently, there's cwd-source, which indicates that we should
 			// pass '-cwd source' to CodeWarrior.  OpenSSL needs it.
-			const vector< string >& options = config[ "options" ];
+			const std::vector< std::string >& options = config[ "options" ];
 			
 			needsCwdSourceOption = std::find( options.begin(),
 			                                  options.end(),
-			                                  string( "cwd-source" ) )
+			                                  std::string( "cwd-source" ) )
 			                       != options.end();
 			
 			// Locate source files
-			const vector< string >& search = config[ "search" ];
+			const std::vector< std::string >& search = config[ "search" ];
 			
 			// If search folders are specified,
 			if ( search.size() > 0 )
@@ -351,7 +359,7 @@ namespace ALine
 		rezFiles       = config[ "rez"        ];  // Rez files to compile.
 	}
 	
-	static bool IsCompilableExtension( const string& ext )
+	static bool IsCompilableExtension( const std::string& ext )
 	{
 		if ( ext == ".c"   )  return true;
 		if ( ext == ".cc"  )  return true;
@@ -362,12 +370,12 @@ namespace ALine
 		return false;
 	}
 	
-	static bool IsCompilableFilename( const string& filename )
+	static bool IsCompilableFilename( const std::string& filename )
 	{
-		string::size_type lastDot = filename.find_last_of( "." );
+		std::size_t lastDot = filename.find_last_of( "." );
 		
-		return    lastDot != string::npos
-		       && IsCompilableExtension( filename.substr( lastDot, string::npos ) );
+		return    lastDot != std::string::npos
+		       && IsCompilableExtension( filename.substr( lastDot, std::string::npos ) );
 	}
 	
 	
@@ -438,7 +446,7 @@ namespace ALine
 		FSSpec exportsDir = projFolder & "Exports";
 		if ( N::FSpTestItemExists( exportsDir ) )
 		{
-			vector< FSSpec > exports = DeepFiles( exportsDir );
+			std::vector< FSSpec > exports = DeepFiles( exportsDir );
 			std::for_each
 			(
 				exports.begin(), 
@@ -448,7 +456,7 @@ namespace ALine
 					N::PtrFun( AddSourceFile ), 
 					ext::compose1
 					(
-						NN::Converter< string, const unsigned char* >(), 
+						NN::Converter< std::string, const unsigned char* >(), 
 						N::PtrFun( GetFileName )
 					), 
 					ext::identity< FSSpec >()
@@ -458,13 +466,13 @@ namespace ALine
 		
 		if ( product == productNotBuilt )  return;
 		
-		typedef vector< N::FSDirSpec >::const_iterator vDS_ci;
+		typedef std::vector< N::FSDirSpec >::const_iterator vDS_ci;
 		
 		// Enumerate our source files
-		vector< FSSpec > sources;
+		std::vector< FSSpec > sources;
 		for ( vDS_ci it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
 		{
-			vector< FSSpec > deepSources = DeepFiles
+			std::vector< FSSpec > deepSources = DeepFiles
 			(
 				*it, 
 				ext::compose1
@@ -472,7 +480,7 @@ namespace ALine
 					std::ptr_fun( IsCompilableFilename ), 
 					ext::compose1
 					(
-						NN::Converter< string, const unsigned char* >(), 
+						NN::Converter< std::string, const unsigned char* >(), 
 						N::PtrFun( GetFileName )
 					)
 				)
@@ -481,7 +489,7 @@ namespace ALine
 			std::copy( deepSources.begin(), deepSources.end(), sources.end() - deepSources.size() );
 		}
 		
-		vector< string > sourceList = Options().files;
+		std::vector< std::string > sourceList = Options().files;
 		if ( sourceList.size() == 0 )
 		{
 			FSSpec sourceDotListfile = SourceDotListFile( projFolder );
@@ -493,14 +501,37 @@ namespace ALine
 		
 		if ( sourceList.size() > 0 )
 		{
-			std::set< string > neededSources( sourceList.begin(), sourceList.end() );
+			std::set< std::string > neededSources( sourceList.begin(), sourceList.end() );
 			
-			typedef vector< FSSpec >::const_iterator vFS_ci;
+			typedef std::vector< FSSpec >::const_iterator vFS_ci;
 			
 			for ( vFS_ci it = sources.begin();  it != sources.end();  ++it )
 			{
-				string name = NN::Convert< string >( it->name );
-				if ( Membership( neededSources )( name ) )
+				std::string name = NN::Convert< std::string >( it->name );
+				
+				N::FSDirSpec parent = N::FSpGetParent( *it );
+				
+				FSSpec parentSpec = NN::Convert< FSSpec >( parent );
+				
+				std::string parentName = NN::Convert< std::string >( parentSpec.name );
+				
+				std::string twoLevelPathname = parentName + "/" + name;
+				
+				bool found = true;
+				
+				if ( Membership( neededSources )( twoLevelPathname ) )
+				{
+					name = twoLevelPathname;
+				}
+				else if ( Membership( neededSources )( name ) )
+				{
+				}
+				else
+				{
+					found = false;
+				}
+				
+				if ( found )
 				{
 					mySources.push_back( *it );
 					neededSources.erase( name );
@@ -551,7 +582,7 @@ namespace ALine
 		// Locate resources
 		try
 		{
-			vector< FSSpec > rezFiles = DeepFiles( projFolder << "Resources" );
+			std::vector< FSSpec > rezFiles = DeepFiles( projFolder << "Resources" );
 			std::for_each
 			(
 				rezFiles.begin(), 
@@ -561,7 +592,7 @@ namespace ALine
 					std::ptr_fun( AddRezFile ), 
 					ext::compose1
 					(
-						NN::Converter< string, const unsigned char* >(), 
+						NN::Converter< std::string, const unsigned char* >(), 
 						N::PtrFun( GetFileName )
 					), 
 					ext::identity< FSSpec >()
