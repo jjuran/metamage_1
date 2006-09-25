@@ -16,6 +16,9 @@ static registration -- a file-static object registers the test in its constructo
 
 #include "Tests.hh"
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C++
 #include <algorithm>
 #include <vector>

@@ -18,6 +18,7 @@ static registration -- a file-static object registers the test in its constructo
 #include <algorithm>
 #include <functional>
 #include <numeric>
+#include <vector>
 
 #define TESTING ALINE_DEBUG
 
