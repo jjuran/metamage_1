@@ -112,6 +112,8 @@ namespace Nitrogen
 	
   }
 
+#if OPAQUE_TOOLBOX_STRUCTS
+
 namespace Nucleus
   {
    template <> struct Disposer< Nitrogen::WindowRef >: public std::unary_function< Nitrogen::WindowRef, void >
@@ -122,6 +124,8 @@ namespace Nucleus
         }
      };
   }
+
+#endif
 
 namespace Nitrogen
   {
@@ -209,8 +213,6 @@ namespace Nitrogen
 	// 6484
 	void SetWindowKind( WindowRef window, WindowKind windowKind );
 	
-#if OPAQUE_TOOLBOX_STRUCTS
-	
 	// 3443
 	using ::FrontWindow;
 	
@@ -231,24 +233,6 @@ namespace Nitrogen
 	
 	// 6598
 	using ::GetWindowFromPort;
-	
-#else
-	
-	inline WindowRef FrontWindow()                            { return ::FrontWindow();                }
-	
-	inline void SelectWindow( WindowRef window )              { ::SelectWindow( window );              }
-	
-	inline void DrawGrowIcon( WindowRef window )              { ::DrawGrowIcon( window );              }
-	
-	inline bool TrackGoAway( WindowRef window, Point point )  { return ::TrackGoAway( window, point ); }
-	
-	inline GrafPtr GetWindowPort( WindowRef window )          { return GrafPtr( window.Get() );        }
-	
-	inline void SetPortWindowPort( WindowRef window )         { ::SetPort( window );                   }
-	
-	inline WindowRef GetWindowFromPort( CGrafPtr port )       { return ::GrafPtr( port );              }
-	
-#endif
 	
    WindowAttributes GetWindowAttributes( WindowRef window );
 
