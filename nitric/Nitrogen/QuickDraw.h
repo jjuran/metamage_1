@@ -120,8 +120,6 @@ namespace Nitrogen
 	using ::GDHandle;
 	using ::CGrafPtr;
 	
-#if !OPAQUE_TOOLBOX_STRUCTS
-	
 	namespace Detail
 	{
 		
@@ -144,8 +142,6 @@ namespace Nitrogen
 		};
 		
 	}
-	
-#endif
 	
 }
 
@@ -189,26 +185,16 @@ namespace Nucleus
 	};
 	
 	
-#if OPAQUE_TOOLBOX_STRUCTS
-	
-	template <> struct Disposer< Nitrogen::CGrafPtr > : public std::unary_function< Nitrogen::CGrafPtr, void >
+	template <> struct OwnedDefaults< Nitrogen::CGrafPtr >
 	{
-		void operator()( Nitrogen::CGrafPtr port ) const
-		{
-			::DisposePort( port );
-		}
+		typedef Nitrogen::Detail::PortDisposer< Nitrogen::CGrafPtr > Disposer;
 	};
 	
-#else
+#if !OPAQUE_TOOLBOX_STRUCTS
 	
 	template <> struct OwnedDefaults< Nitrogen::GrafPtr >
 	{
 		typedef Nitrogen::Detail::PortDisposer< Nitrogen::GrafPtr > Disposer;
-	};
-	
-	template <> struct OwnedDefaults< Nitrogen::CGrafPtr >
-	{
-		typedef Nitrogen::Detail::PortDisposer< Nitrogen::CGrafPtr > Disposer;
 	};
 	
 #endif

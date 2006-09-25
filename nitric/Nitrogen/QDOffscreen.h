@@ -22,7 +22,7 @@ namespace Nitrogen
 	class GWorldFlags_Tag {};
 	typedef Nucleus::FlagType< GWorldFlags_Tag, ::GWorldFlags > GWorldFlags;
 	
-	typedef CGrafPtr GWorldPtr;
+	using ::GWorldPtr;
 	
 	struct GWorld_State
 	{
@@ -57,23 +57,15 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-	struct GWorldDisposer : public std::unary_function< GWorldPtr, void >
-	{
-		void operator()( GWorldPtr gWorld ) const
-		{
-			::DisposeGWorld( gWorld );
-		}
-	};
+	Nucleus::Owned< GWorldPtr > NewGWorld( short        pixelDepth,
+	                                       const Rect&  boundsRect,
+	                                       CTabHandle   cTable   = NULL,
+	                                       GDHandle     aGDevice = NULL,
+	                                       GWorldFlags  flags    = GWorldFlags() );
 	
-	Nucleus::Owned< GWorldPtr, GWorldDisposer > NewGWorld( short        pixelDepth,
-	                                                       const Rect&  boundsRect,
-	                                                       CTabHandle   cTable   = NULL,
-	                                                       GDHandle     aGDevice = NULL,
-	                                                       GWorldFlags  flags    = GWorldFlags() );
-	
-	Nucleus::Owned< GWorldPtr, GWorldDisposer > NewGWorld( short        pixelDepth,
-	                                                       const Rect&  boundsRect,
-	                                                       GWorldFlags  flags );
+	Nucleus::Owned< GWorldPtr > NewGWorld( short        pixelDepth,
+	                                       const Rect&  boundsRect,
+	                                       GWorldFlags  flags );
 	
 	struct LockPixels_Failed {};
 	
@@ -81,14 +73,14 @@ namespace Nitrogen
 	
 	using ::UnlockPixels;
 	
-	GWorldFlags UpdateGWorld( Nucleus::Owned< GWorldPtr, GWorldDisposer >&  offscreenGWorld,
-	                          short                                         pixelDepth,
-	                          const Rect&                                   boundsRect,
-	                          CTabHandle                                    cTable   = NULL,
-	                          GDHandle                                      aGDevice = NULL,
-	                          GWorldFlags                                   flags    = GWorldFlags() );
+	GWorldFlags UpdateGWorld( Nucleus::Owned< GWorldPtr >&  offscreenGWorld,
+	                          short                         pixelDepth,
+	                          const Rect&                   boundsRect,
+	                          CTabHandle                    cTable   = NULL,
+	                          GDHandle                      aGDevice = NULL,
+	                          GWorldFlags                   flags    = GWorldFlags() );
 	
-	inline void DisposeGWorld( Nucleus::Owned< GWorldPtr, GWorldDisposer > )  {}
+	inline void DisposeGWorld( Nucleus::Owned< GWorldPtr > )  {}
 	
 	GWorld_State GetGWorld();
 	

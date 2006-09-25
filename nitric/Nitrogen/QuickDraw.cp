@@ -385,7 +385,8 @@ namespace Nitrogen
 	
 	Nucleus::Owned< CGrafPtr > CreateNewPort()
 	{
-		return Nucleus::Owned< CGrafPtr >::Seize( ::CreateNewPort() );
+		return Nucleus::Owned< CGrafPtr >::Seize( ::CreateNewPort(),
+		                                          &::DisposePort );
 	}
 	
 #if TARGET_API_MAC_OSX
@@ -394,10 +395,10 @@ namespace Nitrogen
 	
 	Nucleus::Owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display )
 	{
-		return Nucleus::Owned< CGrafPtr >::Seize
-		(
-			::CreateNewPortForCGDisplayID( reinterpret_cast< unsigned long >( display ) )
-		);
+		unsigned long id = reinterpret_cast< unsigned long >( display );
+		
+		return Nucleus::Owned< CGrafPtr >::Seize( ::CreateNewPortForCGDisplayID( id ),
+		                                          &::DisposePort );
 	}
 	
 #endif
