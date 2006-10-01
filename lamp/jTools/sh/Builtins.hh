@@ -6,6 +6,7 @@
 #define BUILTINS_HH
 
 // Standard C++
+#include <map>
 #include <string>
 
 typedef int (*Builtin)( int argc, char const* const argv[] );
