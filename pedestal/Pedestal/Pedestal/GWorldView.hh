@@ -22,7 +22,7 @@ namespace Pedestal
 	{
 		private:
 			Rect bounds;
-			NN::Owned< N::GWorldPtr, N::GWorldDisposer > myGWorld;
+			NN::Owned< N::GWorldPtr > myGWorld;
 		
 		public:
 			GWorldView( const Rect& bounds );

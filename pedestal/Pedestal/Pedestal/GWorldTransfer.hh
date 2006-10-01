@@ -24,7 +24,7 @@ namespace Pedestal
 	
 	class GWorld : public Graphic
 	{
-		typedef NN::Owned< N::GWorldPtr, N::GWorldDisposer > Value;
+		typedef NN::Owned< N::GWorldPtr > Value;
 		
 		private:
 			Value fGWorld;
@@ -46,16 +46,16 @@ namespace Pedestal
 	class GWorldTransfer : public Graphic
 	{
 		private:
-			NN::Shared< N::GWorldPtr, N::GWorldDisposer > fGWorld;
+			NN::Shared< N::GWorldPtr > fGWorld;
 			N::TransferMode fMode;
 		
 		public:
 			struct Initializer
 			{
-				NN::Shared< N::GWorldPtr, N::GWorldDisposer > gworld;
+				NN::Shared< N::GWorldPtr > gworld;
 				N::TransferMode mode;
 				
-				Initializer( const NN::Shared< N::GWorldPtr, N::GWorldDisposer >&  gworld,
+				Initializer( const NN::Shared< N::GWorldPtr >&  gworld,
 				             N::TransferMode                                       mode )
 				:
 					gworld( gworld ),
@@ -65,7 +65,7 @@ namespace Pedestal
 			
 			GWorldTransfer( Initializer init ) : fGWorld( init.gworld ), fMode( init.mode )  {}
 			
-			NN::Shared< N::GWorldPtr, N::GWorldDisposer > Get() const  { return fGWorld; }
+			NN::Shared< N::GWorldPtr > Get() const  { return fGWorld; }
 			
 			void Plot( const Rect& area ) const;
 	};

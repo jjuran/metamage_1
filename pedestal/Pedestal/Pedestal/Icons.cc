@@ -102,7 +102,7 @@ namespace Pedestal
 	}
 	
 	template < class Icon >
-	static NN::Owned< N::GWorldPtr, N::GWorldDisposer > MakeGWorldFromIcon( Icon icon )
+	static NN::Owned< N::GWorldPtr > MakeGWorldFromIcon( Icon icon )
 	{
 		NN::Owned< N::GWorldPtr, N::GWorldDisposer > gWorld = N::NewGWorld( 1, LargeIconRect() );
 		
