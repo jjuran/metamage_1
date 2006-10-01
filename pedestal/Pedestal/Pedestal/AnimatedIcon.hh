@@ -23,7 +23,7 @@ namespace Pedestal
 	{
 		private:
 			Rect bounds;
-			NN::Owned< N::GWorldPtr, N::GWorldDisposer > myGWorld;
+			NN::Owned< N::GWorldPtr > myGWorld;
 			bool mAnimating;
 			long mCurrentFrame;
 			long mTicksPerFrame;
