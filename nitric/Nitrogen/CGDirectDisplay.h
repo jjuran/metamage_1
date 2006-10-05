@@ -15,6 +15,10 @@
 #include "Nucleus/Owned.h"
 #endif
 
+//	we need this include in order to instantiate Owned<CGrafPtr>
+#ifndef NITROGEN_QUICKDRAW_H
+#include "Nitrogen/QuickDraw.h"
+#endif
 
 namespace Nitrogen
 {
