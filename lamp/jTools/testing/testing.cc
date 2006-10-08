@@ -18,6 +18,7 @@
 
 // Standard C++
 #include <functional>
+#include <map>
 #include <vector>
 
 // POSIX
@@ -64,9 +65,6 @@
 // BitsAndBytes
 #include "DecimalStrings.hh"
 #include "HexStrings.hh"
-
-// Veneer
-//#include "VMacGestalt.hh"
 
 // Misc
 #include "CRC32.hh"
@@ -493,16 +491,19 @@ static int TestOADC(int argc, const char *const argv[])
 {
 	//if (argc < 3)  return 1;
 	
-	ComponentInstance ci;
-	
-	OSErr err = ::OpenADefaultComponent('Foo ', 'Bar ', &ci);
-	
-	if ( err == noErr )
+	if ( TARGET_CPU_PPC )
 	{
-		::CloseComponent( ci );
+		ComponentInstance ci;
+		
+		OSErr err = ::OpenADefaultComponent( 'Foo ', 'Bar ', &ci );
+		
+		if ( err == noErr )
+		{
+			::CloseComponent( ci );
+		}
+		
+		Io::Out << "OpenADefaultComponent returned " << err << ".\n";
 	}
-	
-	Io::Out << "OpenADefaultComponent returned " << err << ".\n";
 	
 	return 0;
 }
@@ -549,7 +550,7 @@ static int TestProcesses( int argc, char const *const argv[] )
 		Io::Out << "'"
 		        << NN::Convert< std::string >( N::FourCharCode( info.processSignature ) )
 		        << "' "
-		        << name
+		        << NN::Convert< std::string, const unsigned char* >( name )
 		        << "\n";
 	}
 	
@@ -810,7 +811,7 @@ static int TestNull( int argc, char const *const argv[] )
 	
 static int TestGMFShared( int argc, char const *const argv[] )
 {
-#ifndef __GNUC__
+#if TARGET_RT_MAC_CFM
 	
 	if ( argc < 3 )  return 1;
 	
@@ -902,28 +903,131 @@ static int TestReadLoc( int argc, char const *const argv[] )
 	
 	gmtDelta |= signExtend ? 0xFF000000 : 0x00000000;
 	
+	/*
+	Io::Out << "Latitude:  " << latitude  << " degrees\n";
+	Io::Out << "Longitude: " << longitude << " degrees\n";
+	Io::Out << "Daylight Savings Time: " << (dls ? "on" : "off") << "\n";
+	Io::Out << "GMT delta: " << gmtDelta / 3600 << " hours\n";
+	*/
+	
+	/*
 	std::printf( "Latitude: %d degrees\n",  int( latitude  ) );
 	std::printf( "Longitude: %d degrees\n", int( longitude ) );
 	
 	std::printf( "Daylight Savings Time: %s\n", dls ? "on" : "off" );
 	
 	std::printf( "GMT delta: %d hours\n", int( gmtDelta / 3600 ) );
+	*/
+	
+	#define ENDL "\n"
+	//#define ENDL ",  "
+	
+	std::printf( "Latitude: %d degrees"      ENDL
+	             "Longitude: %d degrees"     ENDL
+	             "Daylight Savings Time: %s" ENDL
+	             "GMT delta: %d hours"       "\n", int( latitude  ),
+	                                               int( longitude ),
+	                                               dls ? "on" : "off",
+	                                               int( gmtDelta / 3600 ) );
+	
+	//std::fflush( stdout );
 	
 	return 0;
 }
 
 
+typedef int (*MainProcPtr)(int argc, const char *const argv[]);
+
+struct SubMain
+{
+	const char* name;
+	MainProcPtr proc;
+};
+
+const SubMain gSubs[] =
+{
+	{ "unit",      TestUnit       },
+	{ "assert",    TestAssert     },
+	{ "map",       TestMap        },
+	
+#if !TARGET_API_MAC_CARBON
+	
+	{ "serial",    TestSerial     },
+	{ "afp",       TestAFP        },
+	
+#endif
+	
+	{ "date",      TestDate       },
+	{ "crc16",     TestCRC16      },
+	{ "crc32",     TestCRC32      },
+	{ "md5",       TestMD5        },
+//	{ "X",         TestOSX        },
+	{ "OADC",      TestOADC       },
+	{ "proc",      TestProcesses  },
+	{ "si",        TestSoundInput },
+	{ "ae",        TestAE         },
+	{ "svcs",      TestServices   },
+	{ "thread",    TestThread     },
+	{ "null",      TestNull       },
+	
+#if TARGET_RT_MAC_CFM
+	
+	{ "gmf",       TestGMFShared  },
+	
+#endif
+	
+	{ "strerror",  TestStrError   },
+	{ "throw",     TestThrow      },
+	{ "loc",       TestReadLoc    }
+};
+
+std::map< std::string, const SubMain* > gMapping;
+
+static void MakeMap()
+{
+	const SubMain* p = gSubs + sizeof gSubs / sizeof (SubMain);
+	
+	while ( --p >= gSubs )
+	{
+		gMapping[ p->name ] = p;
+	}
+}
+
 int O::Main(int argc, const char *const argv[])
 {
 	//Assert_(argc > 0);
 	
+	MakeMap();
+	
 	if (argc <= 1)
 	{
-		Io::Err << "testing: I'd like to have an argument, please.\n";
-		return 1;
+		//Io::Err << "testing: I'd like to have an argument, please.\n";
+		//return 1;
+		
+		typedef std::map< std::string, const SubMain* >::const_iterator const_iterator;
+		
+		for ( const_iterator it = gMapping.begin();  it != gMapping.end();  ++it )
+		{
+			const char* name = it->second->name;
+			
+			Io::Out << name << "\n";
+		}
+		
+		return 0;
 	}
 	
 	std::string arg1 = argv[1];
+	
+	const SubMain* sub = gMapping[ arg1 ];
+	
+	if ( sub == NULL )
+	{
+		Io::Err << "No such test '" << arg1 << "'.\n";
+		
+		return 1;
+	}
+	
+	return sub->proc( argc, argv );
 	
 	if (false)
 	{
