@@ -349,7 +349,10 @@ namespace Genie
 	
 	static char* getcwd( char* buf, std::size_t size )
 	{
-		std::string result = N::FSpGetPOSIXPathname( NN::Convert< FSSpec >( CurrentProcess().CurrentDirectory() ) );
+		FSSpec cwd = NN::Convert< FSSpec >( CurrentProcess().CurrentDirectory() );
+		
+		//std::string result = N::FSpGetPOSIXPathname( cwd );
+		std::string result = MakeUnixPathname( cwd );
 		
 		if ( result.size() + 1 > size )
 		{
