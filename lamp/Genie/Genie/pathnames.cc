@@ -67,14 +67,12 @@ namespace Genie
 		
 		std::string pathname = path;
 		
-		if (    PathBeginsWith( pathname, "/Developer" )
-		     || PathBeginsWith( pathname, "/bin"  )
-		     || PathBeginsWith( pathname, "/etc"  )
-		     || PathBeginsWith( pathname, "/lib"  )
-		     || PathBeginsWith( pathname, "/sbin" )
-		     || PathBeginsWith( pathname, "/tmp"  )
-		     || PathBeginsWith( pathname, "/usr"  )
-		     || PathBeginsWith( pathname, "/var"  ) )
+		if ( PathBeginsWith( pathname, "/Users" ) )
+		{
+			return pathname;
+		}
+		
+		if ( pathname[0] == '/' )
 		{
 			std::string j = N::FSDirGetPOSIXPathname( FindJDirectory() );
 			j.resize( j.size() - 1 );  // Lose trailing slash
@@ -113,7 +111,8 @@ namespace Genie
 	
 	static N::FSDirSpec VolumesDir()
 	{
-		FSSpec volumes = N::RootDirectory( N::BootVolume() ) & "Volumes";
+		//FSSpec volumes = N::RootDirectory( N::BootVolume() ) & "Volumes";
+		FSSpec volumes = FindJDirectory() & "Volumes";
 		
 		try
 		{
@@ -134,13 +133,15 @@ namespace Genie
 		
 		if ( name == ".." )
 		{
+			// 'j' dir is /, so .. is also /
+			if ( dir == FindJDirectory() )
+			{
+				return dir;
+			}
+			
+			// All volumes are in /Volumes, so .. gets us there
 			if ( long( dir.dirID ) == long( fsRtDirID ) )
 			{
-				if ( dir.vRefNum == N::BootVolume() )
-				{
-					return dir;
-				}
-				
 				return VolumesDir();
 			}
 			
@@ -149,6 +150,7 @@ namespace Genie
 		
 		std::string macName = UntweakMacFilename( name );
 		
+		// In /Volumes, descend into a volume by name
 		if ( dir == VolumesDir() )
 		{
 			return N::RootDirectory( DetermineVRefNum( macName + ":" ) );
@@ -164,13 +166,13 @@ namespace Genie
 		
 		if ( name == ".." )
 		{
+			if ( dir == FindJDirectory() )
+			{
+				return dir & "";
+			}
+			
 			if ( long( dir.dirID ) == long( fsRtDirID ) )
 			{
-				if ( dir.vRefNum == N::BootVolume() )
-				{
-					return dir & "";
-				}
-				
 				return VolumesDir() & "";
 			}
 			
@@ -190,13 +192,17 @@ namespace Genie
 	static FSSpec UnixPathname2FSSpec( const N::FSDirSpec&  cwd,
 	                                   const char*          pathname )
 	{
-		std::string realPath = ExpandVirtualUnixPathname( pathname );
-		pathname = realPath.c_str();
+		ASSERT( pathname != NULL );
 		
 		if ( pathname[ 0 ] == '\0' )
 		{
+			// No empty strings, please
 			throw N::ParamErr();
 		}
+		
+		// Transform Genie pathname (e.g. '/bin') into OS X pathname (e.g. '/Users/jjuran/Lamp/j/bin')
+		std::string realPath = ExpandVirtualUnixPathname( pathname );
+		pathname = realPath.c_str();
 		
 		N::FSDirSpec dir = cwd;
 		
@@ -305,17 +311,40 @@ namespace Genie
 	
 	static std::string FSSpec2UnixAbsolutePathname( const FSSpec& item )
 	{
+		N::FSDirSpec jDir = FindJDirectory();
+		
+		try
+		{
+			if ( NN::Convert< N::FSDirSpec >( item ) == jDir )
+			{
+				return "/";
+			}
+		}
+		catch ( ... )
+		{
+		}
+		
 		std::vector< std::string > rpath;
 		
 		FSSpec spec = item;
 		
+		// Walk up the directory tree, storing path component names starting with the file
 		while ( spec.parID != fsRtParID )
 		{
 			rpath.push_back( NN::Convert< std::string >( spec.name ) );
-			spec = NN::Convert< FSSpec >( N::FSpGetParent( spec ) );
+			
+			N::FSDirSpec parent = N::FSpGetParent( spec );
+			
+			if ( parent == jDir )
+			{
+				break;
+			}
+			
+			spec = NN::Convert< FSSpec >( parent );
 		}
 		
-		if ( spec.vRefNum != N::BootVolume().Get() )
+		//if ( spec.vRefNum != N::BootVolume().Get() )
+		if ( spec.parID == fsRtParID )
 		{
 			rpath.push_back( NN::Convert< std::string >( spec.name ) );
 			rpath.push_back( "Volumes" );
@@ -331,6 +360,12 @@ namespace Genie
 			pathname += "/" + name;
 		}
 		
+		ASSERT( !pathname.empty() );
+		if ( pathname.empty() )
+		{
+			return "/";
+		}
+		
 		return pathname;
 	}
 	
@@ -338,6 +373,11 @@ namespace Genie
 	                            const N::FSDirSpec&  cwd )
 	{
 		return UnixPathname2FSSpec( cwd, path );
+	}
+	
+	std::string MakeUnixPathname( const FSSpec& item )
+	{
+		return FSSpec2UnixAbsolutePathname( item );
 	}
 	
 }
