@@ -27,11 +27,25 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
+	static bool DirHasPathname( const N::FSDirSpec& dir, const char* pathname )
+	{
+		try
+		{
+			N::FSDirSpec pathDir = NN::Convert< N::FSDirSpec >( ResolveUnixPathname( pathname ) );
+			
+			return dir == pathDir;
+		}
+		catch ( ... )
+		{
+			return false;
+		}
+	}
+	
 	static boost::shared_ptr< DirHandle > OpenDir( const N::FSDirSpec& dir )
 	{
-		N::FSDirSpec volumes = NN::Convert< N::FSDirSpec >( ResolveUnixPathname( "/Volumes" ) );
-		
-		DirHandle* handle = dir == volumes ? new VolumesDirHandle() : new DirHandle( dir );
+		DirHandle* handle = DirHasPathname( dir, "/Volumes" ) ? new VolumesDirHandle()
+		                  : DirHasPathname( dir, "/proc"    ) ? new ProcDirHandle()
+		                  :                                     new DirHandle( dir );
 		
 		return boost::shared_ptr< DirHandle >( handle );
 	}

@@ -61,6 +61,14 @@ namespace Genie
 			const dirent* ReadDir();
 	};
 	
+	class ProcDirHandle : public DirHandle
+	{
+		public:
+			ProcDirHandle() : DirHandle( N::FSDirSpec() )  {}
+			
+			const dirent* ReadDir();
+	};
+	
 }
 
 #endif

@@ -8,8 +8,14 @@
 // Mac OS Universal Interfaces
 #include <TextUtils.h>
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
+
+// Genie
+#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -21,6 +27,16 @@ namespace Genie
 	{
 		dir.d_ino = inode;
 		p2cstrcpy( dir.d_name, name );
+		
+		return &dir;
+	}
+	
+	static const dirent* SetProcDirEntry( dirent& dir, int pid )
+	{
+		ASSERT( pid > 0 );
+		
+		dir.d_ino = pid;
+		std::sprintf( dir.d_name, "%d", pid );
 		
 		return &dir;
 	}
@@ -79,6 +95,35 @@ namespace Genie
 		}
 		
 		return SetDirEntry( fLastEntry, dirID, name );
+	}
+	
+	const dirent* ProcDirHandle::ReadDir()
+	{
+		if ( ++fIndex <= 0 )
+		{
+			ConstStr255Param name = fIndex == -1 ? "\p."
+			                                     : "\p..";
+			
+			return SetDirEntry( fLastEntry, 0L, name );
+		}
+		else
+		{
+			GenieProcessTable::const_iterator it = gProcessTable.begin();
+			
+			for ( int i = fIndex - 1;  i > 0;  --i )
+			{
+				++it;
+				
+				if ( it == gProcessTable.end() )
+				{
+					return NULL;
+				}
+			}
+			
+			int pid = it->first;
+			
+			return SetProcDirEntry( fLastEntry, pid );
+		}
 	}
 	
 	void DirHandle::RewindDir()
