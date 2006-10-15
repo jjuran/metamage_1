@@ -24,6 +24,8 @@ namespace Genie
 		return ResolveUnixPathname( pathname.c_str(), cwd );
 	}
 	
+	std::string MakeUnixPathname( const FSSpec& item );
+	
 }
 
 #endif
