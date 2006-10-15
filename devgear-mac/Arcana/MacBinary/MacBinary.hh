@@ -10,6 +10,9 @@
 #include <list>
 #include <vector>
 
+// Nitrogen
+#include "Nitrogen/Files.h"
+
 
 namespace MacBinary
 {
