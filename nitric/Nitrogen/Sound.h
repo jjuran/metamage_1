@@ -472,7 +472,7 @@ namespace Nitrogen
 		
 		SoundInputDevice_Container::const_iterator Bar();
 		
-		static void Foo()
+		static inline void Foo()
 		{
 			typedef SoundInputDevice_Container::const_iterator const_iterator;
 			
