@@ -31,7 +31,7 @@ namespace Nitrogen
       if ( std::strlen( source ) > destinationLength )
          throw StringTooLong();
       
-      CopyCStringToPascal( source, destination );
+      ::CopyCStringToPascal( source, destination );
      }
 
    void CopyToPascalString( const std::string& source,
