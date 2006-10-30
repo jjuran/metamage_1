@@ -36,6 +36,7 @@
 // Genie
 #include "Genie/BinaryImage.hh"
 #include "Genie/FileDescriptor.hh"
+#include "Genie/FileSystem/FSTree.hh"
 
 
 namespace Genie
@@ -173,6 +174,7 @@ namespace Genie
 			TTYHandle* ControllingTerminal() const  { return fControllingTerminal; }
 			
 			N::FSDirSpec CurrentDirectory() const  { return myCWD; }
+			FSTreePtr CurrentWorkingDirectory() const  { return FSTreeFromFSSpec( NN::Convert< FSSpec >( CurrentDirectory() ) ); }
 			
 			FileDescriptorMap& FileDescriptors()  { return myFileDescriptors; }
 			
