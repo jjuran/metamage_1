@@ -9,13 +9,11 @@
 // POSIX
 #include "dirent.h"
 
-// Nitrogen / Carbon
-#include "Nitrogen/Files.h"
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
 
 // Genie
 #include "Genie/IO/Directory.hh"
-#include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
@@ -27,27 +25,96 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static bool DirHasPathname( const N::FSDirSpec& dir, const char* pathname )
+	class PathnameComponentIterator
 	{
-		try
-		{
-			N::FSDirSpec pathDir = NN::Convert< N::FSDirSpec >( ResolveUnixPathname( pathname ) );
+		private:
+			const char* pathname_begin;
+			const char* pathname_end;
+			const char* p;
+			const char* q;
+		
+		public:
+			PathnameComponentIterator( const std::string& pathname ) : pathname_begin( pathname.c_str() ),
+			                                                           pathname_end  ( pathname_begin + pathname.size() ),
+			                                                           p             ( pathname_begin ),
+			                                                           q             ( p )
+			{
+				Scan();
+			}
 			
-			return dir == pathDir;
-		}
-		catch ( ... )
+			void Scan()
+			{
+				q = std::strchr( p, '/' );
+				
+				if ( q == NULL )
+				{
+					q = pathname_end;
+				}
+			}
+			
+			bool Done() const
+			{
+				return p == pathname_end;
+			}
+			
+			void Advance()
+			{
+				do
+				{
+					if ( q == pathname_end )
+					{
+						p = q;
+						break;
+					}
+					
+					p = q + 1;
+					Scan();
+				}
+				while ( p == q );  // Skip empty segments
+			}
+			
+			std::string Get() const
+			{
+				ASSERT( p != NULL );
+				ASSERT( q != NULL );
+				
+				ASSERT( p <= q );
+				
+				ASSERT( p >= pathname_begin );
+				ASSERT( q <= pathname_end   );
+				
+				return std::string( p, q );
+			}
+	};
+	
+	static FSTreePtr ResolvePathname( const std::string& pathname, FSTreePtr current )
+	{
+		PathnameComponentIterator path( pathname );
+		
+		if ( path.Get().empty() )
 		{
-			return false;
+			current = FSRoot();
+			
+			path.Advance();
 		}
+		
+		FSTreePtr result = current;
+		
+		while ( !path.Done() )
+		{
+			result = result->Lookup( path.Get() );
+			
+			path.Advance();
+		}
+		
+		return result;
 	}
 	
-	static boost::shared_ptr< DirHandle > OpenDir( const N::FSDirSpec& dir )
+	static boost::shared_ptr< DirHandle > OpenDir( const std::string& pathname )
 	{
-		DirHandle* handle = DirHasPathname( dir, "/Volumes" ) ? new VolumesDirHandle()
-		                  : DirHasPathname( dir, "/proc"    ) ? new ProcDirHandle()
-		                  :                                     new DirHandle( dir );
+		FSTreePtr current( CurrentProcess().CurrentWorkingDirectory() );
 		
-		return boost::shared_ptr< DirHandle >( handle );
+		return boost::shared_ptr< DirHandle >( new DirHandle( ResolvePathname( pathname, current ) ) );
 	}
 	
 	/*
@@ -79,13 +146,7 @@ namespace Genie
 		
 		try
 		{
-			N::FSDirSpec current = NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
-			
-			FSSpec spec = ResolveUnixPathname( pathname, current );
-			
-			N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( spec );
-			
-			files[ fd ] = boost::shared_ptr< IOHandle >( OpenDir( dir ) );
+			files[ fd ] = boost::shared_ptr< IOHandle >( OpenDir( pathname ) );
 			
 			return reinterpret_cast< DIR* >( fd );
 		}
