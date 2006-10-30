@@ -5,140 +5,52 @@
 
 #include "Genie/IO/Directory.hh"
 
-// Mac OS Universal Interfaces
-#include <TextUtils.h>
-
-// Nucleus
-#include "Nucleus/NAssert.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
-// Genie
-#include "Genie/Process.hh"
+#include <cstring>
 
 
 namespace Genie
 {
 	
-	namespace NN = Nucleus;
 	
-	static const dirent* SetDirEntry( dirent& dir, N::FSDirID inode, ConstStr255Param name )
+	static const dirent* SetDirEntry( dirent& dir, ino_t inode, const std::string& name )
 	{
 		dir.d_ino = inode;
-		p2cstrcpy( dir.d_name, name );
+		std::strcpy( dir.d_name, name.c_str() );  // FIXME:  Unsafe!
 		
 		return &dir;
 	}
 	
-	static const dirent* SetProcDirEntry( dirent& dir, int pid )
+	DirHandle::DirHandle( const FSTreePtr tree ) : iterator( tree->Iterate() )
 	{
-		ASSERT( pid > 0 );
-		
-		dir.d_ino = pid;
-		std::sprintf( dir.d_name, "%d", pid );
-		
-		return &dir;
 	}
 	
 	const dirent* DirHandle::ReadDir()
 	{
-		CInfoPBRec pb;
-		UInt32 dirID = 0;
-		::Str255 name_buffer;
+		FSNode node = iterator->Get();
 		
-		ConstStr255Param name = name_buffer;
-		
-		if ( ++fIndex <= 0 )
+		if ( node.tree == NULL )
 		{
-			dirID = fIndex == -1 ? SInt32( fDir.dirID ) : NN::Convert< FSSpec >( fDir ).parID;
-			name  = fIndex == -1 ? "\p."                : "\p..";
-		}
-		else
-		{
-			N::FSpGetCatInfo( fDir, fIndex, pb, name_buffer );
-			dirID = pb.hFileInfo.ioDirID;
+			return NULL;
 		}
 		
-		return SetDirEntry( fLastEntry, dirID, name );
-	}
-	
-	const dirent* VolumesDirHandle::ReadDir()
-	{
-		UInt32 dirID = fsRtDirID;
+		iterator->Advance();
 		
-		ConstStr255Param name = "\p";
-		
-		if ( ++fIndex <= 0 )
-		{
-			dirID = fIndex == -1 ? fsRtParID : fsRtDirID;
-			name  = fIndex == -1 ? "\p."     : "\p..";
-		}
-		else
-		{
-			N::Volume_Container::const_iterator it = N::Volumes().begin();
-			
-			for ( int i = fIndex - 1;  i > 0;  --i )
-			{
-				++it;
-				
-				if ( it == N::Volumes().end() )
-				{
-					return NULL;
-				}
-			}
-			
-			N::FSVolumeRefNum vRefNum = *it;
-			
-			FSSpec volSpec = NN::Convert< FSSpec >( N::RootDirectory( vRefNum ) );
-			name = volSpec.name;
-		}
-		
-		return SetDirEntry( fLastEntry, dirID, name );
-	}
-	
-	const dirent* ProcDirHandle::ReadDir()
-	{
-		if ( ++fIndex <= 0 )
-		{
-			ConstStr255Param name = fIndex == -1 ? "\p."
-			                                     : "\p..";
-			
-			return SetDirEntry( fLastEntry, 0L, name );
-		}
-		else
-		{
-			GenieProcessTable::const_iterator it = gProcessTable.begin();
-			
-			for ( int i = fIndex - 1;  i > 0;  --i )
-			{
-				++it;
-				
-				if ( it == gProcessTable.end() )
-				{
-					return NULL;
-				}
-			}
-			
-			int pid = it->first;
-			
-			return SetProcDirEntry( fLastEntry, pid );
-		}
+		return SetDirEntry( fLastEntry, node.tree->Inode(), node.name );
 	}
 	
 	void DirHandle::RewindDir()
 	{
-		fIndex = kStartIndex;
+		iterator->Rewind();
 	}
 	
 	void DirHandle::SeekDir( off_t index )
 	{
-		fIndex = index;
+		iterator->Seek( index );
 	}
 	
 	off_t DirHandle::TellDir() const
 	{
-		return fIndex;
+		return iterator->Tell();
 	}
 	
 }

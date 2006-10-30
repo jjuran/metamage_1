@@ -8,65 +8,29 @@
 
 // POSIX
 #include "dirent.h"
-#include "sys/types.h"
-
-// Nitrogen
-#include "Nitrogen/Files.h"
 
 // Genie
+#include "Genie/FileSystem/FSTree.hh"
 #include "Genie/IO/Base.hh"
 
 
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
 	class DirHandle : public IOHandle
 	{
 		private:
-			static const SInt32 kStartIndex = -2;
-		
-		protected:
 			dirent fLastEntry;
-			SInt32 fIndex;
-		
-		private:
-			N::FSDirSpec fDir;
+			FSIteratorPtr iterator;
 		
 		public:
-			DirHandle( const N::FSDirSpec& dir )
-			:
-				fIndex( kStartIndex ),
-				fDir( dir )
-			{}
+			DirHandle( const FSTreePtr tree );
 			
-			virtual ~DirHandle()  {}
-			
-			const N::FSDirSpec& GetDir() const  { return fDir; }
-			
-			virtual const dirent* ReadDir();
+			const dirent* ReadDir();
 			
 			void RewindDir();
 			void SeekDir( off_t index );
 			off_t TellDir() const;
-			
-	};
-	
-	class VolumesDirHandle : public DirHandle
-	{
-		public:
-			VolumesDirHandle() : DirHandle( N::FSDirSpec() )  {}
-			
-			const dirent* ReadDir();
-	};
-	
-	class ProcDirHandle : public DirHandle
-	{
-		public:
-			ProcDirHandle() : DirHandle( N::FSDirSpec() )  {}
-			
-			const dirent* ReadDir();
 	};
 	
 }
