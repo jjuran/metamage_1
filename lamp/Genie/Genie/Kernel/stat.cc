@@ -33,6 +33,7 @@
 // Genie
 #include "Genie/IO/File.hh"
 #include "Genie/FileSignature.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
@@ -225,11 +226,11 @@ namespace Genie
 			
 			try
 			{
-				N::FSDirSpec current = NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
+				FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
 				
-				FSSpec file = ResolveUnixPathname( path, current );
+				FSTreePtr file = ResolvePathname( path, current );
 				
-				StatFile( file, sb );
+				file->Stat( *sb );
 				
 				return 0;
 			}
