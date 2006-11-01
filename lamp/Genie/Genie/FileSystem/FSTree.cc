@@ -24,6 +24,7 @@
 #include "Utilities/Files.h"
 
 // Genie
+#include "Genie/FileSystem/StatFile.hh"
 #include "Genie/Process.hh"
 
 
@@ -75,17 +76,25 @@ namespace Genie
 	
 	class FSTree_FSSpec : public FSTree_Regular
 	{
-		private:
+		protected:
 			FSSpec fileSpec;
 		
 		public:
 			FSTree_FSSpec( const FSSpec& item ) : fileSpec( item )  {}
 			
-			ino_t Inode() const;
+			virtual void Stat( struct ::stat& sb ) const;
 			
 			FSTreePtr Lookup_Regular( const std::string& name ) const;
 			
 			FSIteratorPtr Iterate() const;
+	};
+	
+	class FSTree_FSSpec_ResFile : public FSTree_FSSpec
+	{
+		public:
+			FSTree_FSSpec_ResFile( const FSSpec& file ) : FSTree_FSSpec( file )  {}
+			
+			void Stat( struct ::stat& sb ) const;
 	};
 	
 	class FSTree_Virtual : public FSTree_Regular
@@ -95,7 +104,7 @@ namespace Genie
 	class FSTree_Volumes : public FSTree
 	{
 		public:
-			ino_t Inode() const;
+			void Stat( struct ::stat& sb ) const;
 			
 			FSTreePtr Lookup( const std::string& name ) const;
 			
@@ -105,7 +114,7 @@ namespace Genie
 	class FSTree_proc : public FSTree
 	{
 		public:
-			ino_t Inode() const;
+			void Stat( struct ::stat& sb ) const;
 			
 			FSTreePtr Lookup( const std::string& name ) const;
 			
@@ -228,17 +237,18 @@ namespace Genie
 	}
 	
 	
-	ino_t FSTree_FSSpec::Inode() const
+	void FSTree_FSSpec::Stat( struct ::stat& sb ) const
 	{
-		CInfoPBRec pb;
-		
-		N::FSpGetCatInfo( fileSpec, pb );
-		
-		return pb.hFileInfo.ioDirID;
+		StatFile( fileSpec, &sb );
 	}
 	
 	FSTreePtr FSTree_FSSpec::Lookup_Regular( const std::string& name ) const
 	{
+		if ( N::FSpTestFileExists( fileSpec )  &&  name == "rsrc" )
+		{
+			return FSTreePtr( new FSTree_FSSpec_ResFile( fileSpec ) );
+		}
+		
 		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( fileSpec );
 		
 		FSSpec item = dir & name;
@@ -275,10 +285,15 @@ namespace Genie
 		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
 	}
 	
-	
-	ino_t FSTree_Volumes::Inode() const
+	void FSTree_FSSpec_ResFile::Stat( struct ::stat& sb ) const
 	{
-		return fsRtDirID;
+		StatFile( fileSpec, &sb, true );
+	}
+	
+	
+	void FSTree_Volumes::Stat( struct ::stat& sb ) const
+	{
+		StatGeneric( &sb );
 	}
 	
 	FSTreePtr FSTree_Volumes::Lookup( const std::string& name ) const
@@ -323,9 +338,9 @@ namespace Genie
 	}
 	
 	
-	ino_t FSTree_proc::Inode() const
+	void FSTree_proc::Stat( struct ::stat& sb ) const
 	{
-		return 0;
+		StatGeneric( &sb );
 	}
 	
 	FSTreePtr FSTree_proc::Lookup( const std::string& name ) const

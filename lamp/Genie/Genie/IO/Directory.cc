@@ -5,7 +5,11 @@
 
 #include "Genie/IO/Directory.hh"
 
+// Standard C/C++
 #include <cstring>
+
+// POSIX
+#include "sys/stat.h"
 
 
 namespace Genie
@@ -35,7 +39,11 @@ namespace Genie
 		
 		iterator->Advance();
 		
-		return SetDirEntry( fLastEntry, node.tree->Inode(), node.name );
+		struct ::stat sb;
+		
+		node.tree->Stat( sb );
+		
+		return SetDirEntry( fLastEntry, sb.st_ino, node.name );
 	}
 	
 	void DirHandle::RewindDir()

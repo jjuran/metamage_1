@@ -12,11 +12,11 @@
 // boost
 #include <boost/shared_ptr.hpp>
 
-// POSIX
-#include "sys/types.h"
-
 // Files.h
 struct FSSpec;
+
+// <sys/stat.h>
+struct stat;
 
 
 namespace Genie
@@ -66,7 +66,7 @@ namespace Genie
 		public:
 			virtual ~FSTree()  {}
 			
-			virtual ino_t Inode() const = 0;
+			virtual void Stat( struct ::stat& sb ) const = 0;
 			
 			virtual FSTreePtr Lookup( const std::string& name ) const = 0;
 			
