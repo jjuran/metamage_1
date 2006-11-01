@@ -117,7 +117,7 @@ namespace Genie
 		return mode;
 	}
 	
-	void StatFile( const FSSpec& file, struct stat* sb )
+	void StatFile( const FSSpec& file, struct stat* sb, bool wantRsrcFork )
 	{
 		MachineLocation loc;
 		ReadLocation( &loc );
@@ -135,17 +135,22 @@ namespace Genie
 		sb->st_dev = -hFileInfo.ioVRefNum;
 		sb->st_ino = hFileInfo.ioDirID;
 		sb->st_mode = GetItemMode( hFileInfo );
-		sb->st_nlink = 1;
+		sb->st_nlink = isDir ? paramBlock.dirInfo.ioDrNmFls + 2: 1;
 		sb->st_uid = 0;
 		sb->st_gid = 0;
 		sb->st_rdev = 0;
-		sb->st_size = isDir ? paramBlock.dirInfo.ioDrNmFls : hFileInfo.ioFlLgLen;
+		sb->st_size = isDir ? 0
+		                    : wantRsrcFork ? hFileInfo.ioFlRLgLen
+		                                   : hFileInfo.ioFlLgLen;
 		sb->st_blksize = 4096;
-		sb->st_blocks = hFileInfo.ioFlPyLen / 512;
+		sb->st_blocks = isDir ? 0
+		                      : (wantRsrcFork ? hFileInfo.ioFlRPyLen
+		                                      : hFileInfo.ioFlPyLen) / 512;
 		sb->st_atime = hFileInfo.ioFlMdDat - timeDiff;
 		sb->st_mtime = hFileInfo.ioFlMdDat - timeDiff;
 		sb->st_ctime = hFileInfo.ioFlMdDat - timeDiff;
 	}
+	
 	
 	void StatGeneric( struct stat* sb )
 	{
