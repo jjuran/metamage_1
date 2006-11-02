@@ -17,6 +17,12 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
+// Nitrogen
+#include "Nitrogen/Files.h"
+
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
 
@@ -30,6 +36,11 @@
 
 namespace Genie
 {
+	
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	namespace P7 = POSeven;
+	
 	
 	typedef std::vector< FSNode > FSTreeCache;
 	
@@ -55,6 +66,13 @@ namespace Genie
 			off_t Tell() const  { return nextOffset; }
 	};
 	
+	
+	class FSTree_Null : public FSTree
+	{
+		public:
+			void Stat( struct ::stat& sb ) const  { P7::ThrowErrno( ENOENT ); }
+	};
+	
 	class FSTree_Regular : public FSTree
 	{
 		private:
@@ -74,27 +92,34 @@ namespace Genie
 			virtual FSTreePtr Lookup_Regular( const std::string& name ) const = 0;
 	};
 	
-	class FSTree_FSSpec : public FSTree_Regular
+	class FSTree_RsrcFile : public FSTree
 	{
-		protected:
+		private:
 			FSSpec fileSpec;
 		
 		public:
-			FSTree_FSSpec( const FSSpec& item ) : fileSpec( item )  {}
+			FSTree_RsrcFile( const FSSpec& file ) : fileSpec( file )  {}
 			
-			virtual void Stat( struct ::stat& sb ) const;
+			void Stat( struct ::stat& sb ) const;
+	};
+	
+	class FSTree_FSSpec : public FSTree_Regular
+	{
+		private:
+			FSSpec fileSpec;
+		
+		public:
+			FSTree_FSSpec( const FSSpec& file ) : fileSpec( file )  {}
+			
+			void Stat( struct ::stat& sb ) const;
+			
+			void Delete() const;
+			
+			void CreateDirectory( mode_t mode ) const;
 			
 			FSTreePtr Lookup_Regular( const std::string& name ) const;
 			
 			FSIteratorPtr Iterate() const;
-	};
-	
-	class FSTree_FSSpec_ResFile : public FSTree_FSSpec
-	{
-		public:
-			FSTree_FSSpec_ResFile( const FSSpec& file ) : FSTree_FSSpec( file )  {}
-			
-			void Stat( struct ::stat& sb ) const;
 	};
 	
 	class FSTree_Virtual : public FSTree_Regular
@@ -161,9 +186,6 @@ namespace Genie
 	}
 	
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
 	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
 	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
 	{
@@ -178,6 +200,34 @@ namespace Genie
 	{
 		return DetermineVRefNum( N::Str27( name ), vRefNum );
 	}
+	
+	
+	void FSTree::Delete() const
+	{
+		P7::ThrowErrno( EPERM );
+	}
+	
+	void FSTree::CreateDirectory( mode_t mode ) const
+	{
+		P7::ThrowErrno( EPERM );
+	}
+	
+	FSTreePtr FSTree::Lookup( const std::string& name ) const
+	{
+		P7::ThrowErrno( ENOENT );
+		
+		// Not reached
+		return FSTreePtr();
+	}
+	
+	FSIteratorPtr FSTree::Iterate() const
+	{
+		P7::ThrowErrno( ENOENT );
+		
+		// Not reached
+		return FSIteratorPtr();
+	}
+	
 	
 	void FSTree_Regular::Mount( const std::string& name, FSTreePtr tree )
 	{
@@ -231,22 +281,38 @@ namespace Genie
 		std::string name = NN::Convert< std::string >( pid );
 		
 		//FSTreePtr tree( new FSTree_pid( pid ) );
-		FSTreePtr tree;
+		FSTreePtr tree( new FSTree_Null() );
 		
 		return FSNode( name, tree );
 	}
 	
 	
+	void FSTree_RsrcFile::Stat( struct ::stat& sb ) const
+	{
+		StatFile( fileSpec, &sb, true );
+	}
+	
+	
 	void FSTree_FSSpec::Stat( struct ::stat& sb ) const
 	{
-		StatFile( fileSpec, &sb );
+		StatFile( fileSpec, &sb, false );
+	}
+	
+	void FSTree_FSSpec::Delete() const
+	{
+		N::FSpDelete( fileSpec );
+	}
+	
+	void FSTree_FSSpec::CreateDirectory( mode_t mode ) const
+	{
+		N::FSpDirCreate( fileSpec );
 	}
 	
 	FSTreePtr FSTree_FSSpec::Lookup_Regular( const std::string& name ) const
 	{
 		if ( N::FSpTestFileExists( fileSpec )  &&  name == "rsrc" )
 		{
-			return FSTreePtr( new FSTree_FSSpec_ResFile( fileSpec ) );
+			return FSTreePtr( new FSTree_RsrcFile( fileSpec ) );
 		}
 		
 		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( fileSpec );
@@ -283,11 +349,6 @@ namespace Genie
 		std::swap( cache, *newCache );
 		
 		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
-	}
-	
-	void FSTree_FSSpec_ResFile::Stat( struct ::stat& sb ) const
-	{
-		StatFile( fileSpec, &sb, true );
 	}
 	
 	
@@ -357,7 +418,7 @@ namespace Genie
 		pid_t pid = std::atoi( name.c_str() );
 		
 		//return FSTreePtr( new FSTree_pid( pid ) );
-		return FSTreePtr();
+		return FSTreePtr( new FSTree_Null() );
 	}
 	
 	FSIteratorPtr FSTree_proc::Iterate() const
