@@ -7,13 +7,14 @@
 #include <errno.h>
 
 // POSIX
+#include "sys/stat.h"
 #include "unistd.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Genie
-#include "Genie/pathnames.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
@@ -23,31 +24,37 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	
 	static int unlink( const char* pathname )
 	{
+		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus >();
+		
 		try
 		{
-			const N::FSDirSpec cwd = CurrentProcess().CurrentDirectory();
+			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
 			
-			FSSpec file = ResolveUnixPathname( pathname, cwd );
+			FSTreePtr file = ResolvePathname( pathname, current );
 			
-			CInfoPBRec paramBlock;
+			struct ::stat sb;
 			
-			N::FSpGetCatInfo( file, paramBlock );
+			file->Stat( sb );
 			
-			bool isDir = N::PBTestIsDirectory( paramBlock );
+			bool isDir = sb.st_mode & S_IFDIR;
 			
 			if ( isDir )
 			{
 				return CurrentProcess().SetErrno( EISDIR );
 			}
 			
-			N::FSpDelete( file );
+			file->Delete();
 		}
-		catch ( N::FNFErr& )
+		catch ( const N::OSStatus& err )
 		{
-			return CurrentProcess().SetErrno( ENOENT );
+			P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled() );
+			
+			return CurrentProcess().SetErrno( errnum );
 		}
 		catch ( ... )
 		{
