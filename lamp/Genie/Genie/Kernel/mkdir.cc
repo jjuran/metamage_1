@@ -14,7 +14,7 @@
 #include "Nitrogen/OSStatus.h"
 
 // Genie
-#include "Genie/pathnames.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
@@ -26,15 +26,15 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	static int mkdir( const char* pathname, mode_t /*mode*/ )
+	static int mkdir( const char* pathname, mode_t mode )
 	{
 		try
 		{
-			N::FSDirSpec current = NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
+			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
 			
-			FSSpec spec = ResolveUnixPathname( pathname, current );
+			FSTreePtr location = ResolvePathname( pathname, current );
 			
-			N::FSpDirCreate( spec );
+			location->CreateDirectory( mode );
 			
 			return 0;
 		}

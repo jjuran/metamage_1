@@ -9,14 +9,14 @@
 // POSIX
 #include "sys/stat.h"
 
-// Nitrogen / Carbon
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Genie
-#include "Genie/pathnames.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
@@ -27,33 +27,50 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
+	
+	static void RegisterMacToUnixErrorConversions()
+	{
+		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus >();
+	}
 	
 	static int rmdir( const char* pathname )
 	{
+		RegisterMacToUnixErrorConversions();
+		
 		try
 		{
-			N::FSDirSpec current = NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
+			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
 			
-			FSSpec dir = ResolveUnixPathname( pathname, current );
+			FSTreePtr dir = ResolvePathname( pathname, current );
 			
-			CInfoPBRec paramBlock;
+			struct ::stat sb;
 			
-			N::FSpGetCatInfo( dir, paramBlock );
+			dir->Stat( sb );
 			
-			bool isDir = N::PBTestIsDirectory( paramBlock );
+			bool isDir = sb.st_mode & S_IFDIR;
 			
 			if ( !isDir )
 			{
 				return CurrentProcess().SetErrno( ENOTDIR );
 			}
 			
-			N::FSpDelete( dir );
+			dir->Delete();
 			
 			return 0;
 		}
-		catch ( N::FNFErr& )
+		catch ( const N::OSStatus& err )
 		{
-			return CurrentProcess().SetErrno( ENOENT );
+			P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled() );
+			
+			// Unfortunately, fBsyErr can mean different things.
+			// Here we assume it means the directory is not empty.
+			if ( errnum == EBUSY )
+			{
+				errnum = ENOTEMPTY;
+			}
+			
+			return CurrentProcess().SetErrno( errnum );
 		}
 		catch ( ... )
 		{
