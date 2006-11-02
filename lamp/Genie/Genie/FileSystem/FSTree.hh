@@ -66,11 +66,19 @@ namespace Genie
 		public:
 			virtual ~FSTree()  {}
 			
+			// General methods
+			
 			virtual void Stat( struct ::stat& sb ) const = 0;
 			
-			virtual FSTreePtr Lookup( const std::string& name ) const = 0;
+			virtual void Delete() const;
 			
-			virtual FSIteratorPtr Iterate() const = 0;
+			// Directory methods
+			
+			virtual void CreateDirectory( mode_t mode ) const;
+			
+			virtual FSTreePtr Lookup( const std::string& name ) const;
+			
+			virtual FSIteratorPtr Iterate() const;
 	};
 	
 }
