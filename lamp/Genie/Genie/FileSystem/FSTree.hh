@@ -22,6 +22,10 @@ struct stat;
 namespace Genie
 {
 	
+	class IOHandle;
+	
+	typedef int OpenFlags;
+	
 	class FSTree;
 	class FSIterator;
 	
@@ -70,7 +74,14 @@ namespace Genie
 			
 			virtual void Stat( struct ::stat& sb ) const = 0;
 			
+			virtual void ChangeMode( mode_t mode ) const;
+			
 			virtual void Delete() const;
+			
+			// File methods
+			
+			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
+			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			
 			// Directory methods
 			
