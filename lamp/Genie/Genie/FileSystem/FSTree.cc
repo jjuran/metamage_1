@@ -11,6 +11,9 @@
 #include <map>
 #include <vector>
 
+// POSIX
+#include "fcntl.h"
+
 // MoreFiles
 #include "MoreFilesExtras.h"
 
@@ -30,7 +33,9 @@
 #include "Utilities/Files.h"
 
 // Genie
+#include "Genie/FileSignature.hh"
 #include "Genie/FileSystem/StatFile.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 
 
@@ -113,7 +118,12 @@ namespace Genie
 			
 			void Stat( struct ::stat& sb ) const;
 			
+			void ChangeMode( mode_t mode ) const;
+			
 			void Delete() const;
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			
 			void CreateDirectory( mode_t mode ) const;
 			
@@ -167,6 +177,9 @@ namespace Genie
 		
 		FSTreePtr result( tree = new FSTree_FSSpec( FindJDirectory() & "" ) );
 		
+		FSTreePtr users( new FSTree_FSSpec( N::RootDirectory( N::BootVolume() ) & "Users" ) );
+		
+		tree->Mount( "Users",   users );
 		tree->Mount( "Volumes", FSTreePtr( new FSTree_Volumes() ) );
 		tree->Mount( "proc",    FSTreePtr( new FSTree_proc()    ) );
 		
@@ -202,10 +215,33 @@ namespace Genie
 	}
 	
 	
+	void FSTree::ChangeMode( mode_t mode ) const
+	{
+		P7::ThrowErrno( EPERM );
+	}
+	
 	void FSTree::Delete() const
 	{
 		P7::ThrowErrno( EPERM );
 	}
+	
+	
+	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t mode ) const
+	{
+		P7::ThrowErrno( EPERM );  // Assume creation attempt if mode is passed
+		
+		// Not reached
+		return boost::shared_ptr< IOHandle >();
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags ) const
+	{
+		P7::ThrowErrno( ENOENT );  // Assume read attempt if no mode
+		
+		// Not reached
+		return boost::shared_ptr< IOHandle >();
+	}
+	
 	
 	void FSTree::CreateDirectory( mode_t mode ) const
 	{
@@ -298,9 +334,73 @@ namespace Genie
 		StatFile( fileSpec, &sb, false );
 	}
 	
+	void FSTree_FSSpec::ChangeMode( mode_t mode ) const
+	{
+		ChangeFileMode( fileSpec, mode );
+	}
+	
 	void FSTree_FSSpec::Delete() const
 	{
 		N::FSpDelete( fileSpec );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags, mode_t mode ) const
+	{
+		bool creating  = flags & O_CREAT;
+		bool excluding = flags & O_EXCL;
+		
+		if ( creating )
+		{
+			if ( !N::FSpTestFileExists( fileSpec ) )
+			{
+				std::string name = NN::Convert< std::string >( fileSpec.name );
+				
+				FileSignature sig = PickFileSignatureForName( name );
+				
+				N::FSpCreate( fileSpec, sig.creator, sig.type );
+			}
+			else if ( excluding )
+			{
+				//throw N::DupFNErr();
+				P7::ThrowErrno( EEXIST );
+			}
+		}
+		
+		return Open( flags );
+	}
+	
+	static boost::shared_ptr< RegularFileHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
+	{
+		return boost::shared_ptr< RegularFileHandle >( new RegularFileHandle( refNum ) );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags ) const
+	{
+		unsigned char rdPerm = flags + 1  &  FREAD;
+		unsigned char wrPerm = flags + 1  &  FWRITE;
+		
+		bool nonblocking = flags & O_NONBLOCK;
+		bool appending   = flags & O_APPEND;
+		// ...
+		bool creating    = flags & O_CREAT;
+		bool truncating  = flags & O_TRUNC;
+		bool excluding   = flags & O_EXCL;
+		// ...
+		bool resFork     = flags & O_ResFork;
+		bool resMap      = flags & O_ResMap;
+		
+		NN::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( fileSpec, rdPerm | wrPerm );
+		
+		if ( truncating )
+		{
+			N::SetEOF( fileH, 0 );
+		}
+		else if ( appending )
+		{
+			N::SetFPos( fileH, fsFromLEOF, 0 );
+		}
+		
+		return OpenFile( fileH );
 	}
 	
 	void FSTree_FSSpec::CreateDirectory( mode_t mode ) const
