@@ -17,9 +17,10 @@
 
 // Genie
 #include "Genie/Devices.hh"
+#include "Genie/FileSignature.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/SimpleDevice.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/FileSignature.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -57,19 +58,6 @@ namespace Genie
 			
 			int fd = LowestUnusedFrom( files, 0 );
 			
-			unsigned char rdPerm = oflag + 1  &  FREAD;
-			unsigned char wrPerm = oflag + 1  &  FWRITE;
-			
-			bool nonblocking = oflag & O_NONBLOCK;
-			bool appending   = oflag & O_APPEND;
-			// ...
-			bool creating    = oflag & O_CREAT;
-			bool truncating  = oflag & O_TRUNC;
-			bool excluding   = oflag & O_EXCL;
-			// ...
-			bool resFork     = oflag & O_ResFork;
-			bool resMap      = oflag & O_ResMap;
-			
 			std::string pathname = path;
 			
 			boost::shared_ptr< IOHandle > io;
@@ -80,39 +68,9 @@ namespace Genie
 			}
 			else
 			{
-				// assume it's a file
-				FSSpec file = ResolveUnixPathname( path,
-				                                   NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() ) );
+				FSTreePtr file = ResolvePathname( path, CurrentProcess().CurrentWorkingDirectory() );
 				
-				if ( creating )
-				{
-					if ( !N::FSpTestFileExists( file ) )
-					{
-						std::string name = NN::Convert< std::string >( file.name );
-						
-						FileSignature sig = PickFileSignatureForName( name );
-						
-						N::FSpCreate( file, sig.creator, sig.type );
-					}
-					else if ( excluding )
-					{
-						// error creating
-						throw N::DupFNErr();
-					}
-				}
-				
-				NN::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( file, rdPerm | wrPerm );
-				
-				if ( truncating )
-				{
-					N::SetEOF( fileH, 0 );
-				}
-				else if ( appending )
-				{
-					N::SetFPos( fileH, fsFromLEOF, 0 );
-				}
-				
-				io = OpenFile( fileH );
+				io = file->Open( oflag, mode );
 			}
 			
 			files[ fd ] = io;
