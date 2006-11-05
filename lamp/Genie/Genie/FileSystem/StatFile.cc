@@ -15,14 +15,41 @@
 #include "stdlib.h"
 #include "sys/stat.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 
+// Genie
+#include "Genie/FileSignature.hh"
+
+
+namespace Nitrogen
+{
+	
+	static void FSpSetFInfo( const FSSpec& file, const FInfo& info )
+	{
+		ThrowOSStatus( ::FSpSetFInfo( &file, &info ) );
+	}
+	
+	static void FSpSetFLock( const FSSpec& file )
+	{
+		ThrowOSStatus( ::FSpSetFLock( &file ) );
+	}
+	
+	static void FSpRstFLock( const FSSpec& file )
+	{
+		ThrowOSStatus( ::FSpRstFLock( &file ) );
+	}
+	
+}
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace P7 = POSeven;
 	
 	
 	inline unsigned long MacUnixEpochOffset()
@@ -102,7 +129,7 @@ namespace Genie
 		
 		const FInfo& info = hFileInfo.ioFlFndrInfo;
 		OSType type = info.fdType;
-		bool executable = TypeIsExecutable( type ) || type == 'TEXT' && info.fdFlags & kIsShared;
+		bool executable = TypeIsExecutable( type ) || type == 'TEXT' && (info.fdFlags & kIsShared || info.fdCreator == 'Poof');
 		
 		return ( writable ? S_IWUSR : 0 ) | ( executable ? S_IXUSR : 0 );
 	}
@@ -170,6 +197,66 @@ namespace Genie
 		sb->st_mtime = 0;
 		sb->st_ctime = 0;
 		
+	}
+	
+	void ChangeFileMode( const FSSpec& file, mode_t new_mode )
+	{
+		CInfoPBRec paramBlock;
+		
+		N::FSpGetCatInfo( file, paramBlock );
+		
+		HFileInfo& hFileInfo = paramBlock.hFileInfo;
+		
+		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		
+		if ( isDir )
+		{
+			// Can't change permissions on directories
+			P7::ThrowErrno( EPERM );
+		}
+		
+		mode_t current_mode = GetItemMode( hFileInfo );
+		
+		mode_t changed_bits = new_mode ^ current_mode;
+		
+		if ( changed_bits & S_IRUSR )
+		{
+			// Can't make anything unreadable
+			throw P7::Errno( EPERM );
+		}
+		
+		if ( changed_bits & S_IXUSR )
+		{
+			FInfo& info = hFileInfo.ioFlFndrInfo;
+			
+			if ( info.fdType != 'TEXT' )
+			{
+				// Can't change executability of non-scripts
+				// (e.g. don't remove Shared bit on apps)
+				throw P7::Errno( EPERM );
+			}
+			
+			bool x_bit = new_mode & S_IXUSR;
+			
+			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
+			info.fdCreator = x_bit ? 'Poof' : TextFileCreator();
+			
+			N::FSpSetFInfo( file, info );
+		}
+		
+		if ( changed_bits & S_IWUSR )
+		{
+			if ( new_mode & S_IWUSR )
+			{
+				// writeable: reset the lock
+				N::FSpRstFLock( file );
+			}
+			else
+			{
+				// not writeable: set the lock
+				N::FSpSetFLock( file );
+			}
+		}
 	}
 	
 }
