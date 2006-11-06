@@ -23,9 +23,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Kerosene/Common
 #include "KEnvironment.hh"
 #include "SystemCalls.hh"
@@ -34,7 +31,6 @@
 #include "Genie/IO/File.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
-#include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
@@ -66,11 +62,11 @@ namespace Genie
 			
 			try
 			{
-				N::FSDirSpec current = NN::Convert< N::FSDirSpec >( CurrentProcess().CurrentDirectory() );
+				FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
 				
-				FSSpec file = ResolveUnixPathname( path, current );
+				FSTreePtr file = ResolvePathname( path, current );
 				
-				ChangeFileMode( file, mode );
+				file->ChangeMode( mode );
 				
 				return 0;
 			}
