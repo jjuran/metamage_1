@@ -13,9 +13,9 @@
 #include "Nitrogen/QuickDraw.h"
 #endif
 
-// Nitrogen Extras / Utilities
-#ifndef UTILITIES_SAVED_H
-#include "Utilities/Saved.h"
+// Nucleus
+#ifndef NUCLEUS_SAVED_H
+#include "Nucleus/Saved.h"
 #endif
 
 
@@ -74,7 +74,7 @@ namespace Nitrogen
 	
 	void OpenDeskAcc( ConstStr255Param deskAccName )
 	{
-		Saved< Port_Value > savedPort;
+		Nucleus::Saved< Port_Value > savedPort;
 
 		::OpenDeskAcc( deskAccName );
 	}
