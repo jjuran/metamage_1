@@ -122,14 +122,24 @@ namespace Genie
 		return false;
 	}
 	
+	static bool FInfoIsExecutable( const FInfo& info )
+	{
+		::OSType type = info.fdType;
+		
+		if ( TypeIsExecutable( type ) )  return true;
+		
+		if ( type != 'TEXT' )  return false;
+		
+		return info.fdFlags & kIsShared || info.fdCreator == 'Poof';
+	}
+	
 	static mode_t FileWXModeBits( const HFileInfo& hFileInfo )
 	{
 		bool locked = hFileInfo.ioFlAttrib & kioFlAttribLockedMask;
 		bool writable = !locked;
 		
 		const FInfo& info = hFileInfo.ioFlFndrInfo;
-		OSType type = info.fdType;
-		bool executable = TypeIsExecutable( type ) || type == 'TEXT' && (info.fdFlags & kIsShared || info.fdCreator == 'Poof');
+		bool executable = FInfoIsExecutable( info );
 		
 		return ( writable ? S_IWUSR : 0 ) | ( executable ? S_IXUSR : 0 );
 	}
