@@ -106,6 +106,9 @@ namespace Genie
 			FSTree_RsrcFile( const FSSpec& file ) : fileSpec( file )  {}
 			
 			void Stat( struct ::stat& sb ) const;
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 	};
 	
 	class FSTree_FSSpec : public FSTree_Regular
@@ -323,9 +326,65 @@ namespace Genie
 	}
 	
 	
+	static boost::shared_ptr< RegularFileHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
+	{
+		return boost::shared_ptr< RegularFileHandle >( new RegularFileHandle( refNum ) );
+	}
+	
+	static boost::shared_ptr< IOHandle > OpenFSSpec( const FSSpec& fileSpec, OpenFlags flags, bool rsrcFork )
+	{
+		unsigned char rdPerm = flags + 1  &  FREAD;
+		unsigned char wrPerm = flags + 1  &  FWRITE;
+		
+		bool nonblocking = flags & O_NONBLOCK;
+		bool appending   = flags & O_APPEND;
+		// ...
+		bool creating    = flags & O_CREAT;
+		bool truncating  = flags & O_TRUNC;
+		bool excluding   = flags & O_EXCL;
+		// ...
+		bool resFork     = flags & O_ResFork;
+		bool resMap      = flags & O_ResMap;
+		
+		NN::Owned< N::FSFileRefNum > fileH = rsrcFork ? N::FSpOpenRF( fileSpec, rdPerm | wrPerm )
+		                                              : N::FSpOpenDF( fileSpec, rdPerm | wrPerm );
+		
+		if ( truncating )
+		{
+			N::SetEOF( fileH, 0 );
+		}
+		else if ( appending )
+		{
+			N::SetFPos( fileH, fsFromLEOF, 0 );
+		}
+		
+		return OpenFile( fileH );
+	}
+	
+	
 	void FSTree_RsrcFile::Stat( struct ::stat& sb ) const
 	{
 		StatFile( fileSpec, &sb, true );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_RsrcFile::Open( OpenFlags flags, mode_t mode ) const
+	{
+		bool creating  = flags & O_CREAT;
+		bool excluding = flags & O_EXCL;
+		
+		if ( creating && excluding )
+		{
+			P7::ThrowErrno( EPERM );
+		}
+		
+		return Open( flags );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_RsrcFile::Open( OpenFlags flags ) const
+	{
+		const bool rsrcFork = true;
+		
+		return OpenFSSpec( fileSpec, flags, rsrcFork );
 	}
 	
 	
@@ -369,40 +428,12 @@ namespace Genie
 		return Open( flags );
 	}
 	
-	static boost::shared_ptr< RegularFileHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
-	{
-		return boost::shared_ptr< RegularFileHandle >( new RegularFileHandle( refNum ) );
-	}
-	
 	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags ) const
 	{
-		unsigned char rdPerm = flags + 1  &  FREAD;
-		unsigned char wrPerm = flags + 1  &  FWRITE;
+		const bool notRsrcFork = false;
 		
-		bool nonblocking = flags & O_NONBLOCK;
-		bool appending   = flags & O_APPEND;
-		// ...
-		bool creating    = flags & O_CREAT;
-		bool truncating  = flags & O_TRUNC;
-		bool excluding   = flags & O_EXCL;
-		// ...
-		bool resFork     = flags & O_ResFork;
-		bool resMap      = flags & O_ResMap;
-		
-		NN::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( fileSpec, rdPerm | wrPerm );
-		
-		if ( truncating )
-		{
-			N::SetEOF( fileH, 0 );
-		}
-		else if ( appending )
-		{
-			N::SetFPos( fileH, fsFromLEOF, 0 );
-		}
-		
-		return OpenFile( fileH );
+		return OpenFSSpec( fileSpec, flags, notRsrcFork );
 	}
-	
 	void FSTree_FSSpec::CreateDirectory( mode_t mode ) const
 	{
 		N::FSpDirCreate( fileSpec );
