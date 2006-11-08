@@ -104,7 +104,7 @@ namespace Pedestal
 	template < class Icon >
 	static NN::Owned< N::GWorldPtr > MakeGWorldFromIcon( Icon icon )
 	{
-		NN::Owned< N::GWorldPtr, N::GWorldDisposer > gWorld = N::NewGWorld( 1, LargeIconRect() );
+		NN::Owned< N::GWorldPtr > gWorld = N::NewGWorld( 1, LargeIconRect() );
 		
 		CopyPlainIconToGWorld( icon, gWorld );
 		
@@ -133,7 +133,7 @@ namespace Pedestal
 		// Make a new icon handle for the mask
 		NN::Owned< N::PlainIconHandle > mask = GetIconMask( fIcon );
 		
-		NN::Owned< N::GWorldPtr, N::GWorldDisposer > gWorld = N::NewGWorld( 1, LargeIconRect() );
+		NN::Owned< N::GWorldPtr > gWorld = N::NewGWorld( 1, LargeIconRect() );
 		
 		// Lock pixels
 		N::PixelsState_Details details( N::GetGWorldPixMap( gWorld ) );
