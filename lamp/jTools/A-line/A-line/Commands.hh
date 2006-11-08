@@ -238,9 +238,12 @@ namespace ALine
 		{
 			std::string result;
 			
+			// gcc won't compile shared_ptr without RTTI
+			
 			result = PascalStrings()
 			       + " " + StrictPrototypes()
-			       + " " + NoRTTI();
+			       + (gnu ? ""
+			              : " " + NoRTTI());
 			
 			return result;
 		}
