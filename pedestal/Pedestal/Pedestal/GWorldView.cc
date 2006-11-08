@@ -5,12 +5,14 @@
 
 #include "Pedestal/GWorldView.hh"
 
-// Nitrogen
-#include "Utilities/Saved.h"
+// Nucleus
+#include "Nucleus/Saved.h"
 
 
 namespace Pedestal
 {
+	
+	namespace NN = Nucleus;
 	
 	GWorldView::GWorldView( const Rect& bounds )
 	:
@@ -23,7 +25,7 @@ namespace Pedestal
 	{
 		// Lock pixels
 		PixMapHandle pix = N::GetGWorldPixMap( myGWorld );
-		N::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
 		
 		N::LockPixels( pix );
 		

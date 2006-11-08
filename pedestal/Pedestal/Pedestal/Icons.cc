@@ -5,12 +5,12 @@
 
 #include "Pedestal/Icons.hh"
 
+// Nucleus
+#include "Nucleus/Saved.h"
+
 // Nitrogen
 #include "Nitrogen/Icons.h"
 #include "Nitrogen/QDOffscreen.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Saved.h"
 
 
 namespace Pedestal
@@ -94,7 +94,7 @@ namespace Pedestal
 	{
 		// Lock pixels
 		PixMapHandle pix = N::GetGWorldPixMap( gWorld );
-		N::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
 		
 		N::LockPixels( pix );
 		
