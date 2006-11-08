@@ -255,7 +255,14 @@ namespace Nucleus
 			}
 			
 			::FourCharCode result;
+			
 			std::copy( input.begin(), input.end(), reinterpret_cast< char* >( &result ) );
+			
+			if ( TARGET_RT_LITTLE_ENDIAN )
+			{
+				result = ::CFSwapInt32BigToHost( result );
+			}
+			
 			return Code( result );
 		}
 	};
@@ -269,6 +276,12 @@ namespace Nucleus
 		std::string operator()( Code input ) const
 		{
 			::FourCharCode code = input;
+			
+			if ( TARGET_RT_LITTLE_ENDIAN )
+			{
+				code = ::CFSwapInt32HostToBig( code );
+			}
+			
 			return std::string( reinterpret_cast< const char* >( &code ), sizeof (::FourCharCode) );
 		}
 	};
