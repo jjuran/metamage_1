@@ -3,9 +3,6 @@
  *	========
  */
 
-// Universal Interfaces
-#include <MacTypes.h>
-
 // Standard C
 #include "errno.h"
 
@@ -16,15 +13,11 @@
 // POSIX
 #include "sys/stat.h"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.h"
-
 // Orion
 #include "Orion/Main.hh"
 #include "SystemCalls.hh"
 
 
-namespace N = Nitrogen;
 namespace O = Orion;
 
 
