@@ -139,7 +139,7 @@ int O::Main( int argc, const char *const argv[] )
 		
 		bool use_stdout = dest[0] == '-'  &&  dest[1] == '\0';
 		
-		int output = use_stdout ? 1 : open( dest, O_WRONLY | O_EXCL | O_CREAT );
+		int output = use_stdout ? 1 : open( dest, O_WRONLY | O_EXCL | O_CREAT, 0644 );
 		
 		if ( output < 0 )
 		{
