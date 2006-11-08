@@ -5,17 +5,18 @@
 
 #include "Pedestal/SolidColorGraphic.hh"
 
+// Nucleus
+#include "Nucleus/Saved.h"
+
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Saved.h"
 
 
 namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	SolidColorGraphic::SolidColorGraphic( const RGBColor& color )
 	:
@@ -25,7 +26,7 @@ namespace Pedestal
 	
 	void SolidColorGraphic::Plot( const Rect& area )
 	{
-		N::Saved< N::RGBForeColor_Value > saved;
+		NN::Saved< N::RGBForeColor_Value > saved;
 		
 		N::RGBForeColor( color );
 		

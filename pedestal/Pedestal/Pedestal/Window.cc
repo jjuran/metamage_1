@@ -5,12 +5,14 @@
 
 #include "Pedestal/Window.hh"
 
-// Nitrogen Extras / ClassicToolbox
+// Nucleus
+#include "Nucleus/Saved.h"
+
+// ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Quickdraw.h"
-#include "Utilities/Saved.h"
 
 
 namespace Pedestal
@@ -43,7 +45,7 @@ namespace Pedestal
 	
 	void DrawWindow( N::WindowRef window )
 	{
-		N::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip_Value > savedClip;
 		
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
 		
