@@ -11,19 +11,19 @@
 #include <ControlDefinitions.h>
 #endif
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
+#include "Nucleus/Saved.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/Controls.h"
 
-// Nitrogen Extras / ClassicToolbox
+// ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Quickdraw.h"
 #include "Utilities/RectangleMath.h"
-#include "Utilities/Saved.h"
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -236,8 +236,8 @@ namespace Pedestal
 			{
 				// Intersect the clip region with the scrollview bounds,
 				// so the scrollview doesn't overpaint the scroll bars.
-				N::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-				                                                 N::RectRgn( ScrollView().Bounds() ) ) );
+				NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
+				                                                  N::RectRgn( ScrollView().Bounds() ) ) );
 				
 				ScrollView().Idle( event );
 			}
@@ -273,8 +273,8 @@ namespace Pedestal
 			{
 				// Intersect the clip region with the scrollview bounds,
 				// so the scrollview doesn't overpaint the scroll bars.
-				N::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-				                                                 N::RectRgn( ScrollView().Bounds() ) ) );
+				NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
+				                                                  N::RectRgn( ScrollView().Bounds() ) ) );
 				
 				ScrollView().Update();
 			}
@@ -283,7 +283,7 @@ namespace Pedestal
 			{
 				ScrollView().Activate( activating );
 				
-				N::Saved< N::Clip_Value > savedClip;
+				NN::Saved< N::Clip_Value > savedClip;
 				N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 				
 				
@@ -359,7 +359,7 @@ namespace Pedestal
 	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal, ScrollbarAxis axis >
 	void Track( ControlRef control, N::ControlPartCode part, Point point )
 	{
-		N::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip_Value > savedClip;
 		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		
 		switch ( ::ControlPartCode( part ) )
@@ -522,7 +522,7 @@ namespace Pedestal
 		
 		if ( oldPosition != pos  ||  oldRange != range )
 		{
-			N::Saved< N::Clip_Value > savedClip;
+			NN::Saved< N::Clip_Value > savedClip;
 			
 			N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 			

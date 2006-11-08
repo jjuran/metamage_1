@@ -9,13 +9,15 @@
 // Universal Interfaces
 #include <Events.h>
 
+// Nucleus
+#include "Nucleus/Saved.h"
+
 // Nitrogen Extras / ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Quickdraw.h"
 #include "Utilities/RectangleMath.h"
-#include "Utilities/Saved.h"
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
@@ -33,7 +35,7 @@ namespace Pedestal
 	class ScopedOrigin
 	{
 		private:
-			N::Saved< N::Clip_Value > savedClip;  // automatically save and restore the clip region
+			NN::Saved< N::Clip_Value > savedClip;  // automatically save and restore the clip region
 			
 			void Setup( short h, short v, RgnHandle copyOfClipRegion );
 		
@@ -213,7 +215,7 @@ namespace Pedestal
 		{
 			// Update immediately
 			
-			N::Saved< N::Clip_Value > savedClip( updateRegion );
+			NN::Saved< N::Clip_Value > savedClip( updateRegion );
 			
 			N::EraseRgn( updateRegion );
 			Update();
