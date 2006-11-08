@@ -121,6 +121,59 @@ namespace MacBinary
 	namespace FS = FileSystem;
 	
 	
+	template < class Type > struct ByteSwap_Traits
+	{
+		static Type Swap( Type value )
+		{
+			return value;
+		}
+	};
+	
+#if TARGET_RT_LITTLE_ENDIAN
+	
+	template <> struct ByteSwap_Traits< ::UInt16 >
+	{
+		static ::UInt16 Swap( ::UInt16 value )
+		{
+			return ::CFSwapInt16( value );
+		}
+	};
+	
+	template <> struct ByteSwap_Traits< ::UInt32 >
+	{
+		static ::UInt32 Swap( ::UInt32 value )
+		{
+			return ::CFSwapInt32( value );
+		}
+	};
+	
+	template <> struct ByteSwap_Traits< ::Point >
+	{
+		static ::Point Swap( ::Point point )
+		{
+			point.h = ::CFSwapInt16( point.h );
+			point.v = ::CFSwapInt16( point.v );
+			
+			return point;
+		}
+	};
+	
+	template <> struct ByteSwap_Traits< ::FInfo >
+	{
+		static ::FInfo Swap( ::FInfo info )
+		{
+			info.fdType    = ::CFSwapInt32( info.fdType    );
+			info.fdCreator = ::CFSwapInt32( info.fdCreator );
+			info.fdFlags   = ::CFSwapInt16( info.fdFlags   );
+			
+			info.fdLocation = ByteSwap_Traits< ::Point >::Swap( info.fdLocation );
+			
+			return info;
+		}
+	};
+	
+#endif
+	
 	static unsigned short CalcCRC( register const unsigned char *dataBuf, std::size_t size )
 	{
 		//#define CCITT_CRC_GEN	0x1021
@@ -172,7 +225,7 @@ namespace MacBinary
 		kFileCreator,
 		kFinderFlags,
 		kZeroByte74,
-		kIconPosition,
+		//kIconPosition,
 		//kFileFolderID,  // reserved in Mac OS 8
 		kFInfo,
 		//kProtectedFlag,  // not used in sample code
@@ -248,12 +301,12 @@ namespace MacBinary
 		
 		static Value Get( const Header& h )
 		{
-			return reinterpret_cast< const Value& >( h.data[ offset ] );
+			return ByteSwap_Traits< Type >::Swap( reinterpret_cast< const Value& >( h.data[ offset ] ) );
 		}
 		
 		static void Set( Header& h, Value v )
 		{
-			reinterpret_cast< Value& >( h.data[ offset ] ) = v;
+			reinterpret_cast< Value& >( h.data[ offset ] ) = ByteSwap_Traits< Type >::Swap( v );
 		}
 	};
 	
@@ -270,11 +323,13 @@ namespace MacBinary
 			           h.data + offset + sizeof (Value),
 			           reinterpret_cast< unsigned char* >( &result ) );
 			
-			return result;
+			return ByteSwap_Traits< Type >::Swap( result );
 		}
 		
 		static void Set( Header& h, Value v )
 		{
+			v = ByteSwap_Traits< Type >::Swap( v );
+			
 			const unsigned char* value = reinterpret_cast< const unsigned char* >( &v );
 			
 			std::copy( value,
@@ -333,7 +388,7 @@ namespace MacBinary
 	
 	template <> struct Field_Traits< kZeroByte74 > : Zero_Field_Traits< 74 > {};
 	
-	template <> struct Field_Traits< kIconPosition > : MisalignedPOD_Field_Traits< Point, 75 > {};
+	//template <> struct Field_Traits< kIconPosition > : MisalignedPOD_Field_Traits< ::Point, 75 > {};
 	
 	template <>
 	struct Field_Traits< kFInfo >
