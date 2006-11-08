@@ -12,8 +12,9 @@
 	#include <ToolUtils.h>
 #endif
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
+#include "Nucleus/Saved.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/AEInteraction.h"
@@ -25,7 +26,6 @@
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Clipboard.h"
-#include "Utilities/Saved.h"
 
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
@@ -62,6 +62,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
 	struct RunState
@@ -378,7 +379,7 @@ namespace Pedestal
 			}
 		}
 		
-		N::Saved< N::Clip_Value > savedClip;
+		NN::Saved< N::Clip_Value > savedClip;
 		
 		N::ClipRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
 		
@@ -468,7 +469,7 @@ namespace Pedestal
 	
 	static void GiveIdleTimeToWindows( const EventRecord& event )
 	{
-		N::Saved< N::Port_Value > savePort;
+		NN::Saved< N::Port_Value > savePort;
 		
 		// FIXME:  Use window iterator
 		for ( N::WindowRef window = N::FrontWindow();
