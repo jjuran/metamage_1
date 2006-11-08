@@ -10,7 +10,7 @@
 #include <ToolUtils.h>
 #endif
 
-// Nitrogen Extras / ClassicToolbox
+// ClassicToolbox
 #if CALL_NOT_IN_CARBON
 #include "ClassicToolbox/Devices.h"
 #endif
@@ -21,6 +21,8 @@
 
 namespace Pedestal
 {
+	
+	namespace NN = Nucleus;
 	
 	struct UnhighlightMenus
 	{
@@ -43,10 +45,12 @@ namespace Pedestal
 		int len = ioItemText[ 0 ];
 		
 		if ( len < 7 )  return 0;
-		if ( ioItemText[ len ] != ']' )  return 0;
+		
+		if ( ioItemText[ len     ] != ']' )  return 0;
 		if ( ioItemText[ len - 5 ] != '[' )  return 0;
 		
-		MenuItemCode code = *reinterpret_cast< MenuItemCode* >( &ioItemText[ len - 4 ] );
+		MenuItemCode code = NN::Convert< N::OSType >( std::string( &ioItemText[ len - 4 ],
+		                                                           &ioItemText[ len     ] ) );
 		ioItemText[ 0 ] -= 7;
 		
 		return code;
