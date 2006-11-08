@@ -45,57 +45,67 @@ namespace jTools
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	using std::string;
-	using std::vector;
 	
-	
-	static NN::Owned< AEDesc > BuildAppleEvent
-	(
-		AEEventClass eventClass, AEEventID eventID, 
-		const AEAddressDesc& address, const char* buildString, va_list args, 
-		AEReturnID returnID = kAutoGenerateReturnID, 
-		AETransactionID transactionID = kAnyTransactionID )
+	static NN::Owned< AEDesc > BuildAppleEvent( AEEventClass          eventClass,
+	                                            AEEventID             eventID,
+	                                            const AEAddressDesc&  address,
+	                                            const char*           buildString,
+	                                            va_list               args,
+	                                            AEReturnID            returnID      = kAutoGenerateReturnID,
+	                                            AETransactionID       transactionID = kAnyTransactionID )
 	{
 		std::size_t addrSize = N::AEGetDescDataSize( address );
-		vector<char> addrData( addrSize );
+		
+		std::vector< char > addrData( addrSize );
+		
 		N::AEGetDescData( address, &addrData.front(), addrSize );
 		
 		N::AEDesc appleEvent;
 		AEBuildError aeErr;
 		
-		N::ThrowOSStatus
-		(
-			::vAEBuildAppleEvent
-			(
-				eventClass, eventID,
-				address.descriptorType, &addrData.front(), addrSize,
-				returnID, transactionID, &appleEvent, 
-				&aeErr,
-				buildString, args
-			)
-		);
+		N::ThrowOSStatus( ::vAEBuildAppleEvent( eventClass,
+		                                        eventID,
+		                                        address.descriptorType,
+		                                        &addrData.front(),
+		                                        addrSize,
+		                                        returnID,
+		                                        transactionID,
+		                                        &appleEvent,
+		                                        &aeErr,
+		                                        buildString,
+		                                        args ) );
 		
 		return NN::Owned< AEDesc >::Seize( appleEvent );
 	}
 	
 #if CALL_NOT_IN_CARBON
 	
-	static TargetID LocateTarget( const string& appName, const string& machine, const string& host )
+	static TargetID LocateTarget( const std::string& appName,
+	                              const std::string& machine,
+	                              const std::string& host )
 	{
 		PPCPortRec name = NN::Make< PPCPortRec >( N::Str32( appName ), "\p=" );
 		
-		LocationNameRec location = machine.empty() 
-			? host.empty()
-				? NN::Make< LocationNameRec >()
-				: NN::Make< LocationNameRec >( NN::Make< PPCAddrRec >( NN::Make< PPCXTIAddress >( host ) ) )
-			: NN::Make< LocationNameRec >( NN::Make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) );
+		/*
+		LocationNameRec location = machine.empty() ? host.empty() ? NN::Make< LocationNameRec >()
+		                                                          : NN::Make< LocationNameRec >( NN::Make< PPCAddrRec >( NN::Make< PPCXTIAddress >( host ) ) )
+		                                           : NN::Make< LocationNameRec >( NN::Make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) );
+		*/
+		
+		LocationNameRec location = !machine.empty() ? NN::Make< LocationNameRec >( NN::Make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) )
+		                         : !host.empty()    ? NN::Make< LocationNameRec >( NN::Make< PPCAddrRec >( NN::Make< PPCXTIAddress >( host ) ) )
+		                                            : NN::Make< LocationNameRec >();
 		
 		return NN::Make< TargetID >( N::IPCListPortsSync( name, location ).name, location );
 	}
 	
 #endif
 	
-	static NN::Owned< AEDesc > SelectAddress( OSType sig, const string& app, const string& machine, const string& host, const string& url )
+	static NN::Owned< AEDesc > SelectAddress( OSType              sig,
+	                                          const std::string&  app,
+	                                          const std::string&  machine,
+	                                          const std::string&  host,
+	                                          const std::string&  url )
 	{
 		if ( sig != kUnknownType )
 		{
@@ -157,10 +167,9 @@ namespace jTools
 		O::Options options = DefineOptions();
 		options.GetOptions( argc, argv );
 		
-		const vector< const char* >& params = options.GetFreeParams();
+		const std::vector< const char* >& params = options.GetFreeParams();
 		
-		string argBuild, argEventClass, argEventID;
-		long i = 0;
+		std::string argBuild, argEventClass, argEventID;
 		
 		if ( params.size() == 0 )
 		{
@@ -191,30 +200,27 @@ namespace jTools
 		if ( argEventClass.size() != 4  ||  argEventID.size() != 4 )
 		{
 			Io::Err << "aevt: invalid parameter" "\n";
+			
 			return 1;
 		}
 		
-		string url     = options.GetString( optURL );
-		string host    = options.GetString( optHost );
-		string machine = options.GetString( optMachine );
-		string app     = options.GetString( optApplicationName );
-		string sig     = options.GetString( optApplicationSignature );
+		std::string url     = options.GetString( optURL );
+		std::string host    = options.GetString( optHost );
+		std::string machine = options.GetString( optMachine );
+		std::string app     = options.GetString( optApplicationName );
+		std::string sig     = options.GetString( optApplicationSignature );
 		
 		OSType sigCode = (sig.size() == 4) ? NN::Convert< N::OSType >( sig ).Get() : kUnknownType;
 		
 		AEEventClass eventClass = NN::Convert< N::AEEventClass >( argEventClass );
 		AEEventID    eventID    = NN::Convert< N::AEEventID    >( argEventID    );
 		
-		N::AESend
-		(
-			BuildAppleEvent
-			(
-				eventClass, eventID, 
-				SelectAddress( sigCode, app, machine, host, url ), 
-				argBuild.c_str(), NULL
-			), 
-			kAENoReply | kAECanInteract
-		);
+		N::AESend( BuildAppleEvent( eventClass,
+		                            eventID,
+		                            SelectAddress( sigCode, app, machine, host, url ),
+		                            argBuild.c_str(),
+		                            NULL ),
+		           kAENoReply | kAECanInteract );
 		
 		return 0;
 	}
