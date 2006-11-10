@@ -58,24 +58,33 @@ namespace Genie
 		// -----
 		// .sit is ambiguous: 'SIT!', 'SITD', and 'SIT5' are all possible translations.
 		// My copy of Internet Config uses 'SITD'.
+		
 		// .bin is ambiguous, used for MacBinary and disk images.
 		// We'll need to have a generic binary type and a means of autodetection.
+		// UPDATE:  To avoid pain, we're going with .mbin / 'mBIN' for new archives.
 		
 		// Archive formats
-		{ "bin", 'BINA', "MacBinary" " archive" },  // with the II+ folder extension
-		{ "zip", 'ZIP ', "zip"       " archive" },
-		{ "tar", 'TARF', "TAR"       " archive" },
-		{ "lha", 'LHA ', "LHA"       " archive" },
-		{ "rar", 'RARf', "RAR"       " archive" },
-		{ "sit", 'SITD', "StuffIt"   " archive" },
+		{ "mbin", 'mBIN', "MacBinary III+" " archive" },
+		{ "mbi",  'mBIN', "MacBinary III+" " archive" },
+		{ "zip",  'ZIP ', "zip"            " archive" },
+		{ "tar",  'TARF', "TAR"            " archive" },
+		{ "lha",  'LHA ', "LHA"            " archive" },
+		{ "rar",  'RARf', "RAR"            " archive" },
+		{ "sit",  'SITD', "StuffIt"        " archive" },
 		
 		// Single-file encoding formats
 		{ "as",  'ApSi', "AppleSingle"  "-encoded file" },
+		{ "bin", 'BINA', "MacBinary"    "-encoded file" },
 		
 		// Single-file compression formats
 		{ "Z",   'ZIVU', "Z"     "-compressed file" },
 		{ "gz",  'Gzip', "gzip"  "-compressed file" },
 		{ "bz2", 'Bzp2', "bzip2" "-compressed file" },
+		
+		// Compressed archive coalesced extensions
+		{ "taz", 'ZIVU', "Z"    "-compressed " "tarball" },
+		{ "tgz", 'Gzip', "gzip" "-compressed " "tarball" },
+		{ "mbz", 'Gzip', "gzip" "-compressed " "MacBinary archive" },
 		
 		// Image formats
 		{ "gif",  'GIFf', "GIF"  " image" },
@@ -129,9 +138,6 @@ namespace Genie
 			{
 				return FileSignature( '????', it->second );
 			}
-			
-			//if ( extension == "bin" )  return FileSignature( '????', 'BINA' );
-			//if ( extension == "gz"  )  return FileSignature( '????', 'Gzip' );
 		}
 		
 		return FileSignature( TextFileCreator(), 'TEXT' );
