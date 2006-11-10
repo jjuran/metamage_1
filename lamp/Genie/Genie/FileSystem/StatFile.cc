@@ -169,23 +169,31 @@ namespace Genie
 		
 		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		
-		sb->st_dev = -hFileInfo.ioVRefNum;
-		sb->st_ino = hFileInfo.ioDirID;
+		sb->st_dev = -hFileInfo.ioVRefNum;  // inverted vRefNum (positive integer) for device
+		sb->st_ino = hFileInfo.ioDirID;     // file or dir ID for inode
 		sb->st_mode = GetItemMode( hFileInfo );
+		// dirs: # of items (including . and ..)
+		// files: # of hard links (always one, for now)
 		sb->st_nlink = isDir ? paramBlock.dirInfo.ioDrNmFls + 2: 1;
 		sb->st_uid = 0;
 		sb->st_gid = 0;
 		sb->st_rdev = 0;
+		// logical fork length in bytes
 		sb->st_size = isDir ? 0
 		                    : wantRsrcFork ? hFileInfo.ioFlRLgLen
 		                                   : hFileInfo.ioFlLgLen;
+		// preferred I/O blocking factor for buffering
 		sb->st_blksize = 4096;
+		// physical fork length in 512-byte blocks
 		sb->st_blocks = isDir ? 0
 		                      : (wantRsrcFork ? hFileInfo.ioFlRPyLen
 		                                      : hFileInfo.ioFlPyLen) / 512;
-		sb->st_atime = hFileInfo.ioFlMdDat - timeDiff;
-		sb->st_mtime = hFileInfo.ioFlMdDat - timeDiff;
-		sb->st_ctime = hFileInfo.ioFlMdDat - timeDiff;
+		// time of last access:  pretend mod time; provide backup stamp for rsrc.
+		sb->st_atime = (wantRsrcFork ? hFileInfo.ioFlBkDat : hFileInfo.ioFlMdDat) - timeDiff;
+		// time of last modification.
+		sb->st_mtime =                                       hFileInfo.ioFlMdDat  - timeDiff;
+		// time of last inode change:  pretend mod time; provide creation stamp for rsrc.
+		sb->st_ctime = (wantRsrcFork ? hFileInfo.ioFlCrDat : hFileInfo.ioFlMdDat) - timeDiff;
 	}
 	
 	
