@@ -83,6 +83,8 @@ namespace Genie
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			
+			virtual void Exec( const char* const argv[], const char* const envp[] ) const;
+			
 			// Directory methods
 			
 			virtual void CreateDirectory( mode_t mode ) const;

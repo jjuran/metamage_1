@@ -37,6 +37,7 @@
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
+#include "Genie/Yield.hh"
 
 
 namespace Genie
@@ -127,6 +128,8 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
+			
+			void Exec( const char* const argv[], const char* const envp[] ) const;
 			
 			void CreateDirectory( mode_t mode ) const;
 			
@@ -243,6 +246,11 @@ namespace Genie
 		
 		// Not reached
 		return boost::shared_ptr< IOHandle >();
+	}
+	
+	void FSTree::Exec( const char* const argv[], const char* const envp[] ) const
+	{
+		P7::ThrowErrno( ENOEXEC );
 	}
 	
 	
@@ -467,6 +475,11 @@ namespace Genie
 		const bool notRsrcFork = false;
 		
 		return OpenFSSpec( fileSpec, flags, notRsrcFork );
+	}
+	
+	void FSTree_FSSpec::Exec( const char* const argv[], const char* const envp[] ) const
+	{
+		CurrentProcess().Exec( fileSpec, argv, envp );
 	}
 	
 	void FSTree_FSSpec::CreateDirectory( mode_t mode ) const
