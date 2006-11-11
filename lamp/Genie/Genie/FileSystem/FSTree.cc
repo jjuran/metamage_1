@@ -293,9 +293,42 @@ namespace Genie
 	}
 	
 	
+	static std::string MacFromUnixName( const std::string& name )
+	{
+		//ASSERT( name != "."  );
+		//ASSERT( name != ".." );
+		
+		std::string result;
+		
+		result.resize( name.size() );
+		
+		std::replace_copy( name.begin(),
+		                   name.end(),
+		                   result.begin(),
+		                   ':',
+		                   '/' );
+		
+		return result;
+	}
+	
+	static std::string UnixFromMacName( const std::string& name )
+	{
+		std::string result;
+		
+		result.resize( name.size() );
+		
+		std::replace_copy( name.begin(),
+		                   name.end(),
+		                   result.begin(),
+		                   '/',
+		                   ':' );
+		
+		return result;
+	}
+	
 	static FSNode MakeFSNode_FSSpec( const FSSpec& item )
 	{
-		std::string name = NN::Convert< std::string >( item.name );
+		std::string name = UnixFromMacName( NN::Convert< std::string >( item.name ) );
 		
 		FSTreePtr tree( new FSTree_FSSpec( item ) );
 		
@@ -306,7 +339,7 @@ namespace Genie
 	{
 		FSSpec volume = N::FSMakeFSSpec( vRefNum, N::FSDirID( long( fsRtDirID ) ), "\p" );
 		
-		std::string name = NN::Convert< std::string >( volume.name );
+		std::string name = UnixFromMacName( NN::Convert< std::string >( volume.name ) );
 		
 		FSTreePtr tree( new FSTree_FSSpec( volume ) );
 		
@@ -412,6 +445,7 @@ namespace Genie
 		{
 			if ( !N::FSpTestFileExists( fileSpec ) )
 			{
+				// No need to convert name -- for examination only
 				std::string name = NN::Convert< std::string >( fileSpec.name );
 				
 				FileSignature sig = PickFileSignatureForName( name );
@@ -434,6 +468,7 @@ namespace Genie
 		
 		return OpenFSSpec( fileSpec, flags, notRsrcFork );
 	}
+	
 	void FSTree_FSSpec::CreateDirectory( mode_t mode ) const
 	{
 		N::FSpDirCreate( fileSpec );
@@ -448,7 +483,7 @@ namespace Genie
 		
 		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( fileSpec );
 		
-		FSSpec item = dir & name;
+		FSSpec item = dir & MacFromUnixName( name );
 		
 		return FSTreePtr( new FSTree_FSSpec( item ) );
 	}
