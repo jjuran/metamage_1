@@ -910,7 +910,14 @@ namespace MacBinary
 				pb.hFileInfo.ioNamePtr = frame.file.name;
 				pb.hFileInfo.ioDirID = frame.file.parID;
 				
+				// Writing to the file bumps the mod date, so set it back
 				pb.hFileInfo.ioFlMdDat = frame.modificationDate;
+				
+				// Clear Inited flag per spec
+				if ( !isFolder )
+				{
+					pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~kHasBeenInited;
+				}
 				
 				N::PBSetCatInfoSync( pb );
 			}
