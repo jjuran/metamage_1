@@ -349,6 +349,11 @@ namespace MacBinary
 		
 		static const std::size_t offset = 1;
 		
+		static bool Check( const Header& h )
+		{
+			return h.data[ offset ] != 0;  // Non-empty filename
+		}
+		
 		static Value Get( const Header& h )  { return &h.data[ offset ]; }
 		
 		static void Set( Header& h, Value v )
@@ -676,9 +681,15 @@ namespace MacBinary
 	static Byte CheckHeader( const Header& h )
 	{
 		bool zeroByte0    = h.Check< kOldVersion            >();
+		bool hasFilename  = h.Check< kFileName              >();
 		bool zeroByte74   = h.Check< kZeroByte74            >();
 		bool macBinIIIsig = h.Check< kMacBinaryIIISignature >();
 		bool crc          = h.Check< kCRC                   >();
+		
+		if ( !hasFilename )
+		{
+			return 0;
+		}
 		
 		if ( zeroByte0 && zeroByte74 )
 		{
@@ -913,10 +924,23 @@ namespace MacBinary
 				// Writing to the file bumps the mod date, so set it back
 				pb.hFileInfo.ioFlMdDat = frame.modificationDate;
 				
-				// Clear Inited flag per spec
+				// Clear flags
+				UInt16 flagsToClear = kIsOnDesk;
+				
 				if ( !isFolder )
 				{
-					pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~kHasBeenInited;
+					flagsToClear |= kHasBeenInited;
+				}
+				
+				pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~flagsToClear;
+				
+				if ( frameStack.empty() )
+				{
+					// Root folder / file
+					static const Point emptyPoint = { 0, 0 };
+					
+					pb.hFileInfo.ioFlFndrInfo.fdLocation = emptyPoint;
+					pb.hFileInfo.ioFlFndrInfo.fdFldr     = 0;
 				}
 				
 				N::PBSetCatInfoSync( pb );
