@@ -11,7 +11,10 @@
 #include "sys/ioctl.h"
 #include "unistd.h"
 
-// Nitrogen / Carbon
+// Nucleus
+#include "Nucleus/NAssert.h"
+
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
 
 // Nitrogen Extras / AEFramework
@@ -39,6 +42,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/pathnames.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -261,35 +265,23 @@ namespace Genie
 		{
 			Process& current( CurrentProcess() );
 			
-			FSSpec progFile = ResolveUnixPathname( path, current.CurrentDirectory() );
+			FSTreePtr progFile = ResolvePathname( path, current.CurrentWorkingDirectory() );
 			
-			if ( current.Forked() )
-			{
-				Process* parent = &gProcessTable[ current.ParentProcessID() ];
-				
-				// start a new thread with the child's process context
-				current.Exec( progFile, argv, envp );
-				
-				// Hope nothing bad happened while we thought we were still the child
-				
-				// set this thread's process context back to the forker
-				RegisterProcessContext( parent );
-				
-				// Yes, in Genie a forked exec() DOES return on success.
-				return 0;
-				
-				// For vfork hack:
-				//return childPID;  // user will longjmp()
-			}
-			else
-			{
-				// save thread object
-				// replace process context's thread with a new one
-				// dispose old thread
-				current.Exec( progFile, argv, envp );  // shouldn't return
-				
-				return 0;  // just in case
-			}
+			bool forked = current.Forked();
+			
+			// Start a new thread with the child's process context
+			// Warning:  may kill the thread -- watch out for local variables
+			progFile->Exec( argv, envp );
+			
+			// A non-forked exec kills its own thread and doesn't return
+			ASSERT( forked );
+			
+			// Hope nothing bad happened while we thought we were still the child
+			
+			// Set this thread's process context back to the forker
+			Process* parent = &gProcessTable[ current.ParentProcessID() ];
+			
+			RegisterProcessContext( parent );
 		}
 		catch ( const P7::Errno& err )
 		{
@@ -316,7 +308,6 @@ namespace Genie
 			
 			std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
 			
-			// This is wrong -- we should return a unix error, not an OSStatus.
 			return CurrentProcess().SetErrno( EINVAL );
 		}
 		catch ( ... )
@@ -324,6 +315,7 @@ namespace Genie
 			return -1;
 		}
 		
+		// Yes, in Genie a forked exec() DOES return on success.
 		return 0;
 	}
 	
