@@ -7,10 +7,12 @@
 #define KEROSENE_SYSTEMCALLS_HH
 
 // Universal Interfaces
-#include <AEDataModel.h>
+//#include <AEDataModel.h>
 #include <Files.h>
-
 //#include <OpenTransportProviders.h>
+
+struct AEDesc;
+typedef AEDesc AppleEvent;
 
 /*
    Define the InetSvcRef type.  This type needs special
@@ -43,9 +45,6 @@ extern "C" {
 	
 	InetSvcRef InternetServices();
 	
-	void PrintPS();
-	
-	FSSpec CurrentDirectory();
 	FSSpec Path2FSS( const char* pathname );
 	
 #ifdef __cplusplus
