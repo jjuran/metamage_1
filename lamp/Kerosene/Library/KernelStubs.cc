@@ -151,7 +151,6 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	char***    (*EnvironPtr_import_      )();
 	OSStatus   (*AESendBlocking_import_  )( const AppleEvent* appleEvent, AppleEvent* reply );
 	InetSvcRef (*InternetServices_import_)();
-	void       (*PrintPS_import_         )();
 	OSStatus   (*Path2FSSpec_import_     )( const char* pathname, FSSpec* outFSS );
 	
 #pragma export reset
@@ -745,13 +744,6 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 		CheckImportedSymbol( InternetServices_import_ );
 		
 		return InternetServices_import_();
-	}
-	
-	void PrintPS()
-	{
-		CheckImportedSymbol( PrintPS_import_ );
-		
-		PrintPS_import_();
 	}
 	
 	FSSpec Path2FSS( const char* pathname )
