@@ -329,7 +329,7 @@ namespace Nitrogen
      {}
    
    
-   static const bool gUseFlattenersForEventParameter = false;
+   static const bool gUseFlattenersForEventParameter = true;
    
    
    void SetEventParameter( EventRef         inEvent,

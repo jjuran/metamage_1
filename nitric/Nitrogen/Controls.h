@@ -262,7 +262,7 @@ namespace Nitrogen
      {
      };
    
-   static const bool gUseFlattenersForControlData = false;
+   static const bool gUseFlattenersForControlData = true;
    
    // 2835
    void SetControlData( ControlRef        inControl,
