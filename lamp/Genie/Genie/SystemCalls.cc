@@ -108,28 +108,6 @@ namespace Genie
 	}
 	*/
 	
-	//namespace ext = N::STLExtensions;
-	
-	/*
-	static void DoPS( const Io::Stream< IORef >& Out )
-	{
-		std::for_each
-		(
-			gProcessTable.begin(), 
-			gProcessTable.end(), 
-			ext::compose1
-			(
-				std::bind2nd
-				(
-					N::PtrFun( ListOneProcess ), 
-					Out
-				), 
-				ext::select2nd< std::pair< int, Process* > >()
-			)
-		);
-	}
-	*/
-	
 	static int* ErrnoPtr()
 	{
 		return CurrentProcess().ErrnoData();
@@ -172,13 +150,6 @@ namespace Genie
 	}
 	
 	REGISTER_SYSTEM_CALL( AESendBlocking );
-	
-	static void PrintPS()
-	{
-		//DoPS( Io::Stream< IORef >( CurrentProcess().FileDescriptors()[ 1 ].handle ) );
-	}
-	
-	REGISTER_SYSTEM_CALL( PrintPS );
 	
 	static OSStatus Path2FSSpec( const char*  pathname,
 	                             FSSpec*      outFSS )
