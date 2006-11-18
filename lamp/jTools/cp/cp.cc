@@ -18,8 +18,11 @@
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 
-// Nitrogen Extras / POSeven
+// POSeven
 #include "POSeven/Errno.hh"
+
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
@@ -147,113 +150,6 @@ int O::Main(int argc, const char *const argv[])
 	return fail;
 }
 
-namespace Nucleus
-{
-	
-	template < class OutputErrorClass,
-	           class InputErrorClass,
-	           typename ErrorClassTraits<InputErrorClass>::ErrorNumber number >
-	struct ErrorConversion_Traits;
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, -12345 >
-	{
-		static const int converted = 1;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, fnfErr >
-	{
-		static const int converted = ENOENT;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, memFullErr >
-	{
-		static const int converted = ENOMEM;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, userCanceledErr >
-	{
-		static const int converted = ECANCELED;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, fBsyErr >
-	{
-		static const int converted = EBUSY;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, dupFNErr >
-	{
-		static const int converted = EEXIST;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, diffVolErr >
-	{
-		static const int converted = EXDEV;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, dirNFErr >
-	{
-		static const int converted = ENOTDIR;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, notAFileErr >
-	{
-		static const int converted = EISDIR;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, paramErr >
-	{
-		static const int converted = EINVAL;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, dskFulErr >
-	{
-		static const int converted = ENOSPC;
-	};
-	
-	template <> struct ErrorConversion_Traits< POSeven::Errno, OSStatus, vLckdErr >
-	{
-		static const int converted = EROFS;
-	};
-	
-	/*
-	template < class OutputErrorClass,
-	           class InputErrorClass,
-	           typename ErrorClassTraits<InputErrorClass>::ErrorNumber number >
-	struct Converter< OutputErrorClass, ErrorCode< InputErrorClass, number > > : public std::unary_function< ErrorCode< InputErrorClass, number >, OutputErrorClass >
-	{
-		OutputErrorClass operator()( ErrorCode< InputErrorClass, number > ) const
-		{
-			typedef ErrorConversion_Traits< OutputErrorClass, InputErrorClass, number > Traits;
-			
-			return OutputErrorClass( Traits::converted );
-		}
-	};
-	*/
-	
-	template <>
-	struct Converter< POSeven::Errno, N::OSStatus > : public std::unary_function< N::OSStatus, POSeven::Errno >
-	{
-		POSeven::Errno operator()( N::OSStatus error ) const
-		{
-			int result = 0;
-			
-			switch ( error.Get() )
-			{
-				case fnfErr         :  result = ENOENT;     break;
-				case memFullErr     :  result = ENOMEM;     break;
-				case userCanceledErr:  result = ECANCELED;  break;
-				case fBsyErr        :  result = EBUSY;      break;
-				case dupFNErr       :  result = EEXIST;     break;
-				case paramErr       :  result = EINVAL;     break;
-				
-				default:               result = -1;         break;
-			}
-			
-			return POSeven::Errno( result );
-		}
-	};
-	
-}
 
 static void RegisterMacToUnixErrorConversions()
 {
