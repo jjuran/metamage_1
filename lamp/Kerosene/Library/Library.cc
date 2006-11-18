@@ -205,6 +205,13 @@
 	
 	int system( const char* command )
 	{
+		if ( command == NULL )
+		{
+			const bool shellExists = true;
+			
+			return shellExists;
+		}
+		
 		int pid = vfork();
 		
 		if ( pid == 0 )
@@ -213,7 +220,9 @@
 			
 			execv( "/bin/sh", (char**)argv );
 			
-			_exit( 1 );
+			const int exitStatusForExecFailure = 127;
+			
+			_exit( exitStatusForExecFailure );
 		}
 		
 		int stat = -1;
@@ -368,11 +377,6 @@
 	int setpgrp()
 	{
 		return setpgid( 0, 0 );
-	}
-	
-	FSSpec CurrentDirectory()
-	{
-		return Path2FSS( "." );
 	}
 	
 	#pragma mark -
