@@ -236,13 +236,6 @@ static int Builtin_Export( int argc, char const* const argv[] )
 	return 0;
 }
 
-static int Builtin_PS( int argc, char const* const argv[] )
-{
-	PrintPS();
-	
-	return 0;
-}
-
 static int Builtin_PWD( int argc, char const* const argv[] )
 {
 	std::string cwd;
@@ -346,7 +339,6 @@ static BuiltinMap MakeBuiltins()
 	builtins[ "echo"    ] = Builtin_Echo;
 	builtins[ "exit"    ] = Builtin_Exit;
 	builtins[ "export"  ] = Builtin_Export;
-	builtins[ "ps"      ] = Builtin_PS;
 	builtins[ "pwd"     ] = Builtin_PWD;
 	builtins[ "set"     ] = Builtin_Set;
 	builtins[ "unalias" ] = Builtin_Unalias;
