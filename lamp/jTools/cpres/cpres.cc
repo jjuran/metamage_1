@@ -3,13 +3,15 @@
  *	========
  */
 
+// Nucleus
+#include "Nucleus/Saved.h"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Resources.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
-#include "Utilities/Saved.h"
 
 // Orion
 #include "Orion/Main.hh"
@@ -97,7 +99,7 @@ int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
 			Handle h = N::Get1IndResource( type, iRsrc );
 			::HNoPurge( h );
 			
-			N::Saved< N::ResFile_Value > savedResFile( destRes );
+			NN::Saved< N::ResFile_Value > savedResFile( destRes );
 			
 			N::GetResInfo_Result resInfo = N::GetResInfo( h );
 			
