@@ -49,15 +49,6 @@ namespace ALine
 	using BitsAndBytes::qq;
 	
 	
-	static std::string ShellScript( const std::string& command )
-	{
-#ifdef __MACH__
-		return command;
-#else
-		return std::string( "dss " ) + qq( command + " && true" );
-#endif
-	}
-	
 	static bool LibNeedsWeakImport( const std::string& lib )
 	{
 		if ( lib == "InterfaceLib"    )  return true;
