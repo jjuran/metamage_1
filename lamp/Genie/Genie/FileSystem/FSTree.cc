@@ -13,6 +13,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include "sys/stat.h"
 
 // MoreFiles
 #include "MoreFilesExtras.h"
@@ -49,6 +50,26 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
+	
+	static void StatDirectory( struct ::stat& sb )
+	{
+		mode_t mode = S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
+		
+		sb.st_dev = 0;
+		sb.st_ino = 0;
+		sb.st_mode = mode;
+		sb.st_nlink = 1;
+		sb.st_uid = 0;
+		sb.st_gid = 0;
+		sb.st_rdev = 0;
+		sb.st_size = 0;
+		sb.st_blksize = 4096;
+		sb.st_blocks = 0;
+		sb.st_atime = 0;
+		sb.st_mtime = 0;
+		sb.st_ctime = 0;
+		
+	}
 	
 	static std::string MacFromUnixName( const std::string& name )
 	{
@@ -165,6 +186,8 @@ namespace Genie
 			virtual FSTreePtr Self()   const = 0;
 			virtual FSTreePtr Parent() const = 0;
 			
+			void Stat( struct ::stat& sb ) const  { StatDirectory( sb ); }
+			
 			FSTreePtr Lookup( const std::string& name ) const;
 			
 			virtual FSTreePtr Lookup_Child( const std::string& name ) const = 0;
@@ -182,8 +205,6 @@ namespace Genie
 			
 			FSTreePtr Self()   const  { return GetSingleton(); }
 			FSTreePtr Parent() const  { return FSRoot(); }
-			
-			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const  { return Details::Lookup( name ); }
 			
@@ -255,8 +276,6 @@ namespace Genie
 	class FSTree_Virtual : public FSTree_Mappable
 	{
 		public:
-			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
-			
 			FSTreePtr Lookup_Regular( const std::string& name ) const  { return FSNull(); }
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -271,8 +290,6 @@ namespace Genie
 			
 			FSTreePtr Self()   const  { return GetSingleton(); }
 			FSTreePtr Parent() const  { return FSRoot(); }
-			
-			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
 	};
 	
 	class FSTree_Device : public FSTree
