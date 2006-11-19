@@ -4,5 +4,5 @@
 
 -d '/usr/lib/perl' and exit;
 
-print "Run 'install-usr-lib-perl' to install the perl library.\n\n"
+print "Run '/etc/bootstrap/install-usr-lib-perl' to install the perl library.\n\n"
 
