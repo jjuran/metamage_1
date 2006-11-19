@@ -23,10 +23,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// Kerosene/Common
-#include "KEnvironment.hh"
-#include "SystemCalls.hh"
-
 // Genie
 #include "Genie/IO/File.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -40,7 +36,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
 	static void StatCharacterDevice( struct stat* sb )
@@ -50,38 +45,27 @@ namespace Genie
 	
 	static int chmod_file( const char* path, mode_t mode )
 	{
-		std::string pathname = path;
-		
-		if ( pathname.substr( 0, 5 ) == "/dev/" )
+		try
 		{
+			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
 			
+			FSTreePtr file = ResolvePathname( path, current );
+			
+			file->ChangeMode( mode );
+			
+			return 0;
 		}
-		else
+		catch ( const P7::Errno& err )
 		{
-			// assume it's a file
+			return CurrentProcess().SetErrno( err );
+		}
+		catch ( const N::FNFErr& err )
+		{
+			return CurrentProcess().SetErrno( ENOENT );
+		}
+		catch ( const N::OSStatus& err )
+		{
 			
-			try
-			{
-				FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
-				
-				FSTreePtr file = ResolvePathname( path, current );
-				
-				file->ChangeMode( mode );
-				
-				return 0;
-			}
-			catch ( const P7::Errno& err )
-			{
-				return CurrentProcess().SetErrno( err );
-			}
-			catch ( const N::FNFErr& err )
-			{
-				return CurrentProcess().SetErrno( ENOENT );
-			}
-			catch ( const N::OSStatus& err )
-			{
-				
-			}
 		}
 		
 		return CurrentProcess().SetErrno( EINVAL );
@@ -91,34 +75,27 @@ namespace Genie
 	{
 		std::memset( (void*)sb, '\0', sizeof (struct stat) );
 		
-		std::string pathname = path;
-		
-		if ( pathname.substr( 0, 5 ) == "/dev/" )
+		try
+		{
+			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
+			
+			FSTreePtr file = ResolvePathname( path, current );
+			
+			file->Stat( *sb );
+			
+			return 0;
+		}
+		catch ( const N::FNFErr& err )
+		{
+			return CurrentProcess().SetErrno( ENOENT );
+		}
+		catch ( const N::OSStatus& err )
 		{
 			
 		}
-		else
+		catch ( const P7::Errno& err )
 		{
-			// assume it's a file
-			
-			try
-			{
-				FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
-				
-				FSTreePtr file = ResolvePathname( path, current );
-				
-				file->Stat( *sb );
-				
-				return 0;
-			}
-			catch ( const N::FNFErr& err )
-			{
-				return CurrentProcess().SetErrno( ENOENT );
-			}
-			catch ( const N::OSStatus& err )
-			{
-				
-			}
+			return CurrentProcess().SetErrno( err );
 		}
 		
 		return CurrentProcess().SetErrno( EINVAL );

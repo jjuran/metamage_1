@@ -9,19 +9,11 @@
 // POSIX
 #include "fcntl.h"
 
-// Nitrogen / Carbon
-#include "Nitrogen/OSStatus.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
+// POSeven
+#include "Errno.hh"
 
 // Genie
-#include "Genie/Devices.hh"
-#include "Genie/FileSignature.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/IO/SimpleDevice.hh"
-#include "Genie/IO/RegularFile.hh"
-#include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
@@ -30,13 +22,7 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	static boost::shared_ptr< RegularFileHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
-	{
-		return boost::shared_ptr< RegularFileHandle >( new RegularFileHandle( refNum ) );
-	}
+	namespace P7 = POSeven;
 	
 	// FIXME:  Duplicate code
 	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
@@ -58,28 +44,20 @@ namespace Genie
 			
 			int fd = LowestUnusedFrom( files, 0 );
 			
-			std::string pathname = path;
+			FSTreePtr file = ResolvePathname( path, CurrentProcess().CurrentWorkingDirectory() );
 			
-			boost::shared_ptr< IOHandle > io;
-			
-			if ( pathname.substr( 0, 5 ) == "/dev/" )
-			{
-				io = GetSimpleDeviceHandle( path );
-			}
-			else
-			{
-				FSTreePtr file = ResolvePathname( path, CurrentProcess().CurrentWorkingDirectory() );
-				
-				io = file->Open( oflag, mode );
-			}
+			boost::shared_ptr< IOHandle > io = file->Open( oflag, mode );
 			
 			files[ fd ] = io;
 			
 			return fd;
 		}
+		catch ( const P7::Errno& err )
+		{
+			return CurrentProcess().SetErrno( err );
+		}
 		catch ( ... )
 		{
-			// FIXME
 			return CurrentProcess().SetErrno( EINVAL );
 		}
 	}
