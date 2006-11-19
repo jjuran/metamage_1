@@ -19,6 +19,14 @@ my $backend = $ENV{MAC_BACKEND} or die "Missing MAC_BACKEND\n";
 
 my $build_config_name = join '-', $arches{$arch}, $runtimes{$runtime}, $backends{$backend}, 'Debug';
 
+my %supported_configs = qw
+(
+	PPC-CFM-Toolbox-Debug  std
+	PPC-CFM-Carbon-Debug   osx
+);
+
+my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
+
 sub Echo
 {
 	my ( $text ) = @_;
@@ -49,7 +57,7 @@ my $source_tree = "$ENV{HOME}/Developer/Projects/SourceForge/Lamp/j";
 
 -d $build_tree or die "Missing build tree at $build_tree\n";
 
-my $root_name = 'lamp_';
+my $root_name = "lamp-${config_short_name}_";
 
 my @programs = qw
 (
@@ -144,7 +152,8 @@ sub copy_file
 	
 	-f $src or die "Missing file $src for copy\n";
 	
-	system( 'cp', $src, $dest ) == 0 or die "cp '$src' '$dest' failed: $!\n";
+	my $wait_status = system( 'cp', $src, $dest );
+	$wait_status == 0 or die "cp '$src' '$dest' failed: $!\n";
 	
 	return;
 }
