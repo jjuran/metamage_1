@@ -33,9 +33,11 @@
 #include "Utilities/Files.h"
 
 // Genie
+#include "Genie/Devices.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/SimpleDevice.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -46,6 +48,73 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
+	
+	
+	static std::string MacFromUnixName( const std::string& name )
+	{
+		//ASSERT( name != "."  );
+		//ASSERT( name != ".." );
+		
+		std::string result;
+		
+		result.resize( name.size() );
+		
+		std::replace_copy( name.begin(),
+		                   name.end(),
+		                   result.begin(),
+		                   ':',
+		                   '/' );
+		
+		return result;
+	}
+	
+	static std::string UnixFromMacName( const std::string& name )
+	{
+		std::string result;
+		
+		result.resize( name.size() );
+		
+		std::replace_copy( name.begin(),
+		                   name.end(),
+		                   result.begin(),
+		                   '/',
+		                   ':' );
+		
+		return result;
+	}
+	
+	static N::FSDirSpec FindJDirectory()
+	{
+		FSSpec result;
+		
+		// Try current directory first
+		if ( N::FSpTestDirectoryExists( result = N::FSDirSpec() & "j" ) )
+		{
+			return NN::Convert< N::FSDirSpec >( result );
+		}
+		
+		// Then root, or bust
+		return N::RootDirectory( N::BootVolume() ) << "j";
+	}
+	
+	
+	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
+	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
+	{
+		::FSVolumeRefNum actualVRefNum;
+		N::ThrowOSStatus( ::DetermineVRefNum( name, vRefNum, &actualVRefNum ) );
+		
+		return N::FSVolumeRefNum( actualVRefNum );
+	}
+	
+	static N::FSVolumeRefNum DetermineVRefNum( const std::string&  name,
+	                                           N::FSVolumeRefNum   vRefNum = N::FSVolumeRefNum() )
+	{
+		return DetermineVRefNum( N::Str27( name ), vRefNum );
+	}
+	
+	
+	static FSTreePtr FSNull();
 	
 	
 	typedef std::vector< FSNode > FSTreeCache;
@@ -73,6 +142,21 @@ namespace Genie
 	};
 	
 	
+	template < class FSTree_Type >
+	FSTreePtr GetSingleton()
+	{
+		static FSTreePtr singleton = FSTreePtr( new FSTree_Type() );
+		
+		return singleton;
+	}
+	
+	
+	class FSTree_Null : public FSTree
+	{
+		public:
+			void Stat( struct ::stat& sb ) const  { P7::ThrowErrno( ENOENT ); }
+	};
+	
 	class FSTree_Directory : public FSTree
 	{
 		public:
@@ -84,29 +168,44 @@ namespace Genie
 			FSTreePtr Lookup( const std::string& name ) const;
 			
 			virtual FSTreePtr Lookup_Child( const std::string& name ) const = 0;
+			
+			FSIteratorPtr Iterate() const;
+			
+			virtual void IterateIntoCache( FSTreeCache& cache ) const = 0;
 	};
 	
-	class FSTree_Null : public FSTree
+	template < class Details >
+	class FSTree_Special : public FSTree_Directory
 	{
 		public:
-			void Stat( struct ::stat& sb ) const  { P7::ThrowErrno( ENOENT ); }
+			static FSTreePtr GetSingleton()  { return Genie::GetSingleton< FSTree_Special >(); }
+			
+			FSTreePtr Self()   const  { return GetSingleton(); }
+			FSTreePtr Parent() const  { return FSRoot(); }
+			
+			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const  { return Details::Lookup( name ); }
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	class FSTree_Regular : public FSTree_Directory
+	
+	class FSTree_Mappable : public FSTree_Directory
 	{
-		private:
-			typedef std::map< std::string, FSTreePtr > MountPoints;
+		protected:
+			typedef std::map< std::string, FSTreePtr > Mappings;
 			
-			MountPoints mountPoints;
+			Mappings mappings;
 		
 		public:
-			virtual ~FSTree_Regular()  {}
+			virtual ~FSTree_Mappable()  {}
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
-			void Mount( const std::string& name, FSTreePtr tree );
+			void Map( const std::string& name, FSTreePtr tree );
 			
-			FSTreePtr Lookup_MountPoint( const std::string& name ) const;
+			FSTreePtr Lookup_Mapping( const std::string& name ) const;
 			
 			virtual FSTreePtr Lookup_Regular( const std::string& name ) const = 0;
 	};
@@ -121,11 +220,10 @@ namespace Genie
 			
 			void Stat( struct ::stat& sb ) const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	class FSTree_FSSpec : public FSTree_Regular
+	class FSTree_FSSpec : public FSTree_Mappable
 	{
 		private:
 			FSSpec fileSpec;
@@ -151,55 +249,141 @@ namespace Genie
 			
 			FSTreePtr Lookup_Regular( const std::string& name ) const;
 			
-			FSIteratorPtr Iterate() const;
+			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	/*
-	class FSTree_Virtual : public FSTree_Regular
-	{
-	};
-	*/
-	
-	class FSTree_Volumes : public FSTree_Directory
+	class FSTree_Virtual : public FSTree_Mappable
 	{
 		public:
-			FSTreePtr Self()   const;
-			FSTreePtr Parent() const;
+			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
 			
-			void Stat( struct ::stat& sb ) const;
+			FSTreePtr Lookup_Regular( const std::string& name ) const  { return FSNull(); }
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
-			
-			FSIteratorPtr Iterate() const;
+			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	class FSTree_proc : public FSTree_Directory
+	class FSTree_dev : public FSTree_Virtual
 	{
 		public:
-			FSTreePtr Self()   const;
-			FSTreePtr Parent() const;
+			FSTree_dev();
 			
-			void Stat( struct ::stat& sb ) const;
+			static FSTreePtr GetSingleton()  { return Genie::GetSingleton< FSTree_dev >(); }
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
+			FSTreePtr Self()   const  { return GetSingleton(); }
+			FSTreePtr Parent() const  { return FSRoot(); }
 			
-			FSIteratorPtr Iterate() const;
+			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
 	};
 	
-	
-	static N::FSDirSpec FindJDirectory()
+	class FSTree_Device : public FSTree
 	{
-		FSSpec result;
+		private:
+			std::string deviceName;
 		
-		// Try current directory first
-		if ( N::FSpTestDirectoryExists( result = N::FSDirSpec() & "j" ) )
+		public:
+			FSTree_Device( const std::string& name ) : deviceName( name )  {}
+			
+			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	class FSTree_pid : public FSTree_Directory
+	{
+		public:
+			FSTree_pid( pid_t pid )  {}
+			
+			FSTreePtr Self()   const;
+			FSTreePtr Parent() const;
+			
+			void Stat( struct ::stat& sb ) const;
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+	};
+	
+	
+	FSIteratorPtr FSTree_Directory::Iterate() const
+	{
+		FSTreeCache cache( 2 );
+		
+		cache[0] = FSNode( ".",  Self()   );
+		cache[1] = FSNode( "..", Parent() );
+		
+		IterateIntoCache( cache );
+		
+		FSTreeCache* newCache = new FSTreeCache();
+		
+		FSTreeCachePtr cachePtr( newCache );
+		
+		std::swap( cache, *newCache );
+		
+		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
+	}
+	
+	
+	template < class Details >
+	void FSTree_Special< Details >::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		std::transform( Details::ItemSequence().begin(),
+		                Details::ItemSequence().end(),
+		                std::back_inserter( cache ),
+		                std::ptr_fun( Details::ConvertToFSNode ) );
+	}
+	
+	
+	struct Volumes_Details
+	{
+		static FSTreePtr Lookup( const std::string& name )
 		{
-			return NN::Convert< N::FSDirSpec >( result );
+			N::FSDirSpec rootDir( N::RootDirectory( DetermineVRefNum( name + ":" ) ) );
+			
+			return FSTreePtr( new FSTree_FSSpec( rootDir & "" ) );
 		}
 		
-		// Then root, or bust
-		return N::RootDirectory( N::BootVolume() ) << "j";
-	}
+		static N::Volume_Container ItemSequence()  { return N::Volumes(); }
+		
+		static FSNode ConvertToFSNode( N::FSVolumeRefNum vRefNum )
+		{
+			FSSpec volume = N::FSMakeFSSpec( vRefNum, N::FSDirID( long( fsRtDirID ) ), "\p" );
+			
+			std::string name = UnixFromMacName( NN::Convert< std::string >( volume.name ) );
+			
+			FSTreePtr tree( new FSTree_FSSpec( volume ) );
+			
+			return FSNode( name, tree );
+		}
+	};
+	
+	typedef FSTree_Special< Volumes_Details > FSTree_Volumes;
+	
+	
+	struct proc_Details
+	{
+		static FSTreePtr Lookup( const std::string& name )
+		{
+			pid_t pid = std::atoi( name.c_str() );
+			
+			return FSTreePtr( new FSTree_pid( pid ) );
+		}
+		
+		static const GenieProcessTable& ItemSequence()  { return gProcessTable; }
+		
+		static FSNode ConvertToFSNode( GenieProcessTable::ProcessMap::value_type proc )
+		{
+			pid_t pid = proc.first;
+			
+			std::string name = NN::Convert< std::string >( pid );
+			
+			FSTreePtr tree( new FSTree_pid( pid ) );
+			
+			return FSNode( name, tree );
+		}
+	};
+	
+	typedef FSTree_Special< proc_Details > FSTree_proc;
+	
 	
 	static FSTreePtr MakeFSRoot()
 	{
@@ -209,11 +393,21 @@ namespace Genie
 		
 		FSTreePtr users( new FSTree_FSSpec( N::RootDirectory( N::BootVolume() ) & "Users" ) );
 		
-		tree->Mount( "Users",   users );
-		tree->Mount( "Volumes", FSTreePtr( new FSTree_Volumes() ) );
-		tree->Mount( "proc",    FSTreePtr( new FSTree_proc()    ) );
+		tree->Map( "Users",   users );
+		tree->Map( "Volumes", FSTreePtr( new FSTree_Volumes() ) );
+		
+		tree->Map( "proc", GetSingleton< FSTree_proc >() );
+		tree->Map( "dev",  GetSingleton< FSTree_dev  >() );
 		
 		return result;
+	}
+	
+	
+	static FSTreePtr FSNull()
+	{
+		static FSTreePtr null = FSTreePtr( new FSTree_Null() );
+		
+		return null;
 	}
 	
 	FSTreePtr FSRoot()
@@ -223,25 +417,10 @@ namespace Genie
 		return root;
 	}
 	
+	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
 		return FSTreePtr( new FSTree_FSSpec( item ) );
-	}
-	
-	
-	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
-	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
-	{
-		::FSVolumeRefNum actualVRefNum;
-		N::ThrowOSStatus( ::DetermineVRefNum( name, vRefNum, &actualVRefNum ) );
-		
-		return N::FSVolumeRefNum( actualVRefNum );
-	}
-	
-	static N::FSVolumeRefNum DetermineVRefNum( const std::string&  name,
-	                                           N::FSVolumeRefNum   vRefNum = N::FSVolumeRefNum() )
-	{
-		return DetermineVRefNum( N::Str27( name ), vRefNum );
 	}
 	
 	
@@ -258,10 +437,15 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t mode ) const
 	{
-		P7::ThrowErrno( EPERM );  // Assume creation attempt if mode is passed
+		bool creating  = flags & O_CREAT;
+		bool excluding = flags & O_EXCL;
 		
-		// Not reached
-		return boost::shared_ptr< IOHandle >();
+		if ( creating && excluding )
+		{
+			P7::ThrowErrno( EPERM );
+		}
+		
+		return Open( flags );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags ) const
@@ -315,14 +499,14 @@ namespace Genie
 	}
 	
 	
-	void FSTree_Regular::Mount( const std::string& name, FSTreePtr tree )
+	void FSTree_Mappable::Map( const std::string& name, FSTreePtr tree )
 	{
-		mountPoints[ name ] = tree;
+		mappings[ name ] = tree;
 	}
 	
-	FSTreePtr FSTree_Regular::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_Mappable::Lookup_Child( const std::string& name ) const
 	{
-		FSTreePtr result = Lookup_MountPoint( name );
+		FSTreePtr result = Lookup_Mapping( name );
 		
 		if ( result == NULL )
 		{
@@ -332,45 +516,20 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr FSTree_Regular::Lookup_MountPoint( const std::string& name ) const
+	FSTreePtr FSTree_Mappable::Lookup_Mapping( const std::string& name ) const
 	{
-		MountPoints::const_iterator found = mountPoints.find( name );
+		Mappings::const_iterator found = mappings.find( name );
 		
-		return found != mountPoints.end() ? found->second : FSTreePtr();
+		return found != mappings.end() ? found->second : FSTreePtr();
 	}
 	
 	
-	static std::string MacFromUnixName( const std::string& name )
+	static FSNode MakeFSNode_Virtual( const std::pair< const std::string, FSTreePtr >& node )
 	{
-		//ASSERT( name != "."  );
-		//ASSERT( name != ".." );
+		const std::string& name( node.first );
+		const FSTreePtr  & tree( node.second );
 		
-		std::string result;
-		
-		result.resize( name.size() );
-		
-		std::replace_copy( name.begin(),
-		                   name.end(),
-		                   result.begin(),
-		                   ':',
-		                   '/' );
-		
-		return result;
-	}
-	
-	static std::string UnixFromMacName( const std::string& name )
-	{
-		std::string result;
-		
-		result.resize( name.size() );
-		
-		std::replace_copy( name.begin(),
-		                   name.end(),
-		                   result.begin(),
-		                   '/',
-		                   ':' );
-		
-		return result;
+		return FSNode( name, tree );
 	}
 	
 	static FSNode MakeFSNode_FSSpec( const FSSpec& item )
@@ -389,18 +548,6 @@ namespace Genie
 		std::string name = UnixFromMacName( NN::Convert< std::string >( volume.name ) );
 		
 		FSTreePtr tree( new FSTree_FSSpec( volume ) );
-		
-		return FSNode( name, tree );
-	}
-	
-	static FSNode MakeFSNode_proc( GenieProcessTable::ProcessMap::value_type proc )
-	{
-		pid_t pid = proc.first;
-		
-		std::string name = NN::Convert< std::string >( pid );
-		
-		//FSTreePtr tree( new FSTree_pid( pid ) );
-		FSTreePtr tree( new FSTree_Null() );
 		
 		return FSNode( name, tree );
 	}
@@ -445,19 +592,6 @@ namespace Genie
 	void FSTree_RsrcFile::Stat( struct ::stat& sb ) const
 	{
 		StatFile( fileSpec, &sb, true );
-	}
-	
-	boost::shared_ptr< IOHandle > FSTree_RsrcFile::Open( OpenFlags flags, mode_t mode ) const
-	{
-		bool creating  = flags & O_CREAT;
-		bool excluding = flags & O_EXCL;
-		
-		if ( creating && excluding )
-		{
-			P7::ThrowErrno( EPERM );
-		}
-		
-		return Open( flags );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_RsrcFile::Open( OpenFlags flags ) const
@@ -550,118 +684,68 @@ namespace Genie
 		return FSTreePtr( new FSTree_FSSpec( item ) );
 	}
 	
-	FSIteratorPtr FSTree_FSSpec::Iterate() const
+	void FSTree_FSSpec::IterateIntoCache( FSTreeCache& cache ) const
 	{
 		N::FSDirSpec dir( NN::Convert< N::FSDirSpec >( fileSpec ) );
 		
 		N::FSSpecContents_Container contents = N::FSContents( dir );
 		
-		FSTreeCache cache( 2 + contents.size() );
-		
-		cache[0] = FSNode( ".",  Self()   );
-		cache[1] = FSNode( "..", Parent() );
-		
 		std::transform( contents.begin(),
 		                contents.end(),
-		                cache.begin() + 2,
-		                std::ptr_fun( MakeFSNode_FSSpec ) );
-		
-		FSTreeCache* newCache = new FSTreeCache();
-		
-		FSTreeCachePtr cachePtr( newCache );
-		
-		std::swap( cache, *newCache );
-		
-		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
-	}
-	
-	
-	FSTreePtr FSTree_Volumes::Self() const
-	{
-		return FSTreePtr( new FSTree_Volumes( *this ) );
-	}
-	
-	FSTreePtr FSTree_Volumes::Parent() const
-	{
-		return FSRoot();
-	}
-	
-	void FSTree_Volumes::Stat( struct ::stat& sb ) const
-	{
-		StatGeneric( &sb );
-	}
-	
-	FSTreePtr FSTree_Volumes::Lookup_Child( const std::string& name ) const
-	{
-		return FSTreePtr( new FSTree_FSSpec( N::RootDirectory( DetermineVRefNum( name + ":" ) ) & "" ) );
-	}
-	
-	FSIteratorPtr FSTree_Volumes::Iterate() const
-	{
-		N::Volume_Container volumes = N::Volumes();
-		
-		FSTreeCache cache( 2 );
-		
-		cache[0] = FSNode( ".",  Self()   );
-		cache[1] = FSNode( "..", Parent() );
-		
-		std::transform( volumes.begin(),
-		                volumes.end(),
+		                //cache.begin() + 2,
 		                std::back_inserter( cache ),
-		                std::ptr_fun( MakeFSNode_Volume ) );
-		
-		FSTreeCache* newCache = new FSTreeCache();
-		
-		FSTreeCachePtr cachePtr( newCache );
-		
-		std::swap( cache, *newCache );
-		
-		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
+		                std::ptr_fun( MakeFSNode_FSSpec ) );
 	}
 	
 	
-	FSTreePtr FSTree_proc::Self() const
+	void FSTree_Virtual::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		return FSTreePtr( new FSTree_proc( *this ) );
+		std::transform( mappings.begin(),
+		                mappings.end(),
+		                std::back_inserter( cache ),
+		                std::ptr_fun( MakeFSNode_Virtual ) );
 	}
 	
-	FSTreePtr FSTree_proc::Parent() const
+	
+	boost::shared_ptr< IOHandle > FSTree_Device::Open( OpenFlags flags ) const
 	{
-		return FSRoot();
+		return GetSimpleDeviceHandle( deviceName );
 	}
 	
-	void FSTree_proc::Stat( struct ::stat& sb ) const
+	
+	FSTree_dev::FSTree_dev()
+	{
+		Map( "null", FSTreePtr( new FSTree_Device( "null" ) ) );
+		Map( "zero", FSTreePtr( new FSTree_Device( "zero" ) ) );
+		Map( "console", FSTreePtr( new FSTree_Device( "console" ) ) );
+	}
+	
+	
+	FSTreePtr FSTree_pid::Self() const
+	{
+		return FSTreePtr( new FSTree_pid( *this ) );
+	}
+	
+	FSTreePtr FSTree_pid::Parent() const
+	{
+		return FSTreePtr( new FSTree_proc() );
+	}
+	
+	void FSTree_pid::Stat( struct ::stat& sb ) const
 	{
 		StatGeneric( &sb );
 	}
 	
-	FSTreePtr FSTree_proc::Lookup_Child( const std::string& name ) const
+	FSTreePtr FSTree_pid::Lookup_Child( const std::string& name ) const
 	{
 		pid_t pid = std::atoi( name.c_str() );
 		
-		//return FSTreePtr( new FSTree_pid( pid ) );
-		return FSTreePtr( new FSTree_Null() );
+		return GetSingleton< FSTree_Null >();
 	}
 	
-	FSIteratorPtr FSTree_proc::Iterate() const
+	void FSTree_pid::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		FSTreeCache cache( 2 );
-		
-		cache[0] = FSNode( ".",  Self()   );
-		cache[1] = FSNode( "..", Parent() );
-		
-		std::transform( gProcessTable.begin(),
-		                gProcessTable.end(),
-		                std::back_inserter( cache ),
-		                std::ptr_fun( MakeFSNode_proc ) );
-		
-		FSTreeCache* newCache = new FSTreeCache();
-		
-		FSTreeCachePtr cachePtr( newCache );
-		
-		std::swap( cache, *newCache );
-		
-		return FSIteratorPtr( new FSIterator_Cache( cachePtr ) );
+		//
 	}
 	
 }
