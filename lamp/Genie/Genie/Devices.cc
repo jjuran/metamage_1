@@ -64,10 +64,10 @@ namespace Genie
 	
 	static DeviceIOSpec gDeviceIOSpecs[] =
 	{
-		{ "/dev/null",    ReadNull, WriteVoid    },
-		{ "/dev/zero",    ReadZero, WriteVoid    },
-		{ "/dev/console", ReadNull, WriteConsole },
-		{ NULL,           NULL,     NULL         }
+		{ "null",    ReadNull, WriteVoid    },
+		{ "zero",    ReadZero, WriteVoid    },
+		{ "console", ReadNull, WriteConsole },
+		{ NULL,      NULL,     NULL         }
 	};
 	
 	typedef std::map< std::string, DeviceIOSpec > DeviceIOMap;
@@ -91,7 +91,7 @@ namespace Genie
 		return gDeviceMap;
 	}
 	
-	boost::shared_ptr< SimpleDeviceHandle > GetSimpleDeviceHandle( const char* path )
+	boost::shared_ptr< SimpleDeviceHandle > GetSimpleDeviceHandle( const std::string& path )
 	{
 		DeviceIOMap::const_iterator found = DeviceMap().find( path );
 		
