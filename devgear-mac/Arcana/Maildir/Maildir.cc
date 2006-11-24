@@ -5,6 +5,9 @@
 
 #include "Maildir.hh"
 
+// Nitrogen Extras / Utilities
+#include "Utilities/Files.h"
+
 // Io
 #include "Io/Stream.hh"
 
@@ -13,6 +16,7 @@ namespace Artifact
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	static FSSpec GetCur( const N::FSDirSpec& maildir )
 	{
@@ -31,17 +35,17 @@ namespace Artifact
 	
 	static N::FSDirSpec GetCurDir( const N::FSDirSpec& maildir )
 	{
-		return N::Convert< N::FSDirSpec >( GetCur( maildir ) );
+		return NN::Convert< N::FSDirSpec >( GetCur( maildir ) );
 	}
 	
 	static N::FSDirSpec GetNewDir( const N::FSDirSpec& maildir )
 	{
-		return N::Convert< N::FSDirSpec >( GetNew( maildir ) );
+		return NN::Convert< N::FSDirSpec >( GetNew( maildir ) );
 	}
 	
 	static N::FSDirSpec GetTmpDir( const N::FSDirSpec& maildir )
 	{
-		return N::Convert< N::FSDirSpec >( GetTmp( maildir ) );
+		return NN::Convert< N::FSDirSpec >( GetTmp( maildir ) );
 	}
 	
 	bool IsMaildir( const N::FSDirSpec& dir )
@@ -53,7 +57,7 @@ namespace Artifact
 	
 	bool IsMaildir( const FSSpec& dir )
 	{
-		return N::FSpTestDirectoryExists( dir ) && IsMaildir( N::Convert< N::FSDirSpec >( dir ) );
+		return N::FSpTestDirectoryExists( dir ) && IsMaildir( NN::Convert< N::FSDirSpec >( dir ) );
 	}
 	
 	static N::FSDirSpec CreateMissingDirectory( const FSSpec& dir )
@@ -63,7 +67,7 @@ namespace Artifact
 			return N::FSpDirCreate( dir );
 		}
 		
-		return N::Convert< N::FSDirSpec >( dir );
+		return NN::Convert< N::FSDirSpec >( dir );
 	}
 	
 	N::FSDirSpec CreateMaildir( const FSSpec& dir )
@@ -81,13 +85,13 @@ namespace Artifact
 	class IncomingMessageDelivery
 	{
 		private:
-			N::Owned< FileAccess > myFileAccess;
+			NN::Owned< FileAccess > myFileAccess;
 			CommitFunc myCommit;
 			RollbackFunc myRollback;
 			bool myIsComplete, myRolledBack;
 		
 		public:
-			IncomingMessageDelivery( N::Owned< FileAccess > fileAccess,
+			IncomingMessageDelivery( NN::Owned< FileAccess > fileAccess,
 			                         const CommitFunc& commit,
 			                         const RollbackFunc& rollback )
 			:
@@ -102,10 +106,14 @@ namespace Artifact
 			
 			void WriteLine( const std::string& line )
 			{
-				Io::S( myFileAccess ) << line + "\r\n";
+				std::string entireLine = line + "\r\n";
+				
+				//Io::S( myFileAccess ) << entireLine;
+				
+				N::FSWrite( myFileAccess, entireLine.size(), entireLine.c_str() );
 			}
 			
-			void CloseFile()  { myFileAccess = N::Owned< FileAccess >(); }
+			void CloseFile()  { myFileAccess = NN::Owned< FileAccess >(); }
 			
 			void Commit()
 			{
