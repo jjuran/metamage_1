@@ -11,8 +11,8 @@
 #include <string>
 #include <vector>
 
-// Nitrogen
-#include "Nitrogen/Convert.h"
+// Nucleus
+#include "Nucleus/Convert.h"
 
 // Io
 #include "Io/Stream.hh"
@@ -21,7 +21,7 @@
 namespace POP3
 {
 	
-	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	inline std::string Censored( const std::string& password )
 	{
@@ -182,7 +182,7 @@ namespace POP3
 					
 					std::string Generate( Debugging d = Debugging() ) const
 					{
-						return name + " " + N::Convert< std::string >( arg );
+						return name + " " + NN::Convert< std::string >( arg );
 					}
 			};
 			
@@ -205,8 +205,8 @@ namespace POP3
 					
 					std::string Generate( Debugging d = Debugging() ) const
 					{
-						return name + " " + N::Convert< std::string >( arg1 )
-						            + " " + N::Convert< std::string >( arg2 );
+						return name + " " + NN::Convert< std::string >( arg1 )
+						            + " " + NN::Convert< std::string >( arg2 );
 					}
 			};
 			
