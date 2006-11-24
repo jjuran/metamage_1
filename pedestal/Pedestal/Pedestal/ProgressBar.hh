@@ -14,7 +14,7 @@ namespace Pedestal
 	class ProgressBar : public View
 	{
 		public:
-			ProgressBar( const Rect& bounds );
+			ProgressBar( const Rect& bounds, View::Initializer init = View::Initializer() );
 			
 			void ZeroProgress();
 			void SetProgress( double progress );
