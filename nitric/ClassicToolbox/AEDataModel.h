@@ -27,7 +27,7 @@ namespace Nitrogen
    // TargetID is defined for Carbon, but typeTargetID is not.
 #if CALL_NOT_IN_CARBON
 	
-	template <> struct DescType_Traits< ::typeTargetID > : POD_DescType_Traits< TargetID > {};
+	template <> struct DescType_Traits< ::typeTargetID > : Nucleus::PodFlattener< TargetID > {};
 	
 #endif
 	
