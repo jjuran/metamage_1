@@ -41,6 +41,16 @@
 #include <string>
 #include <cmath>
 
+
+// Temporary measure until this code moves elsewhere
+#if !TARGET_API_MAC_OSX
+
+inline UInt32 CFSwapInt32BigToHost( UInt32 x )  { return x; }
+inline UInt32 CFSwapInt32HostToBig( UInt32 x )  { return x; }
+
+#endif
+
+
 namespace Nitrogen
   {
    using ::UInt8;
@@ -197,6 +207,7 @@ namespace Nitrogen
 		typedef Get_Result    Result;
 		
 		static const bool hasStaticSize = false;
+		struct Buffer {};
 	};
    
    using ::Point;
