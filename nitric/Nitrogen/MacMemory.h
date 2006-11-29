@@ -406,6 +406,7 @@ namespace Nitrogen
 		typedef Get_Result    Result;
 		
 		static const bool hasStaticSize = false;
+		struct Buffer {};
 	};
 	
   }
