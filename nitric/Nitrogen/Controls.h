@@ -262,8 +262,6 @@ namespace Nitrogen
      {
      };
    
-   static const bool gUseFlattenersForControlData = true;
-   
    // 2835
    void SetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
@@ -302,25 +300,10 @@ namespace Nitrogen
      {
       typedef SetControlData_Traits< inTagName > Traits;
       
-      if ( gUseFlattenersForControlData )
-      {
-         Traits().Put( inData,
-		               SetControlData_Putter( inControl,
-		                                      inPart,
-		                                      inTagName ) );
-         
-         return;
-      }
-      
-      typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( inData );
-      
-      Nitrogen::SetControlData( inControl,
-                              inPart,
-                              inTagName,
-                              Traits::OutputBufferLength( buffer ),
-                              Traits::OutputBufferStart( buffer ) );
-      
-      Traits::ReleaseOutputBuffer( buffer );
+      Traits().Put( inData,
+		            SetControlData_Putter( inControl,
+		                                   inPart,
+		                                   inTagName ) );
      }
 
    template < ::ResType inTagName >
@@ -380,23 +363,7 @@ namespace Nitrogen
      {
       typedef GetControlData_Traits< inTagName > Traits;
       
-      if ( gUseFlattenersForControlData )
-      {
-         return Traits().Get( GetControlData_Getter< inTagName >( inControl, inPart ) );
-      }
-      
-      typename Traits::InputBuffer buffer;
-      
-      if ( Traits::inputHasVariableLength )
-         Traits::SetInputBufferLength( buffer, GetControlData( inControl, inPart, inTagName ) );
-      
-      GetControlData( inControl,
-                      inPart,
-                      inTagName,
-                      Traits::InputBufferLength( buffer ),
-                      Traits::InputBufferStart( buffer ) );
-      
-      return Traits::ProcessInputBuffer( buffer );
+      return Traits().Get( GetControlData_Getter< inTagName >( inControl, inPart ) );
      }
    
    /* ... */

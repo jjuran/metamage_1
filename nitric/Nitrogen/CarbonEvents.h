@@ -329,9 +329,6 @@ namespace Nitrogen
      {}
    
    
-   static const bool gUseFlattenersForEventParameter = true;
-   
-   
    void SetEventParameter( EventRef         inEvent,
                            EventParamName   inName,
                            EventParamType   inType,
@@ -375,26 +372,11 @@ namespace Nitrogen
      {
       typedef DescType_Traits< inType > Traits;
       
-      if ( gUseFlattenersForEventParameter )
-      {
-         Traits().Put( inData,
-		               SetEventParameter_Putter( inEvent,
-		                                         inName,
-		                                         inType ) );
-         
-         return;
+      Traits().Put( inData,
+		            SetEventParameter_Putter( inEvent,
+		                                      inName,
+		                                      inType ) );
       }
-      
-      typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( inData );
-      
-      Nitrogen::SetEventParameter( inEvent,
-                                   inName,
-                                   inType,
-                                   Traits::OutputBufferLength( buffer ),
-                                   Traits::OutputBufferStart( buffer ) );
-
-      Traits::ReleaseOutputBuffer( buffer );
-     }
 
    struct GetEventParameter_Result
      {
@@ -458,23 +440,7 @@ namespace Nitrogen
      {
       typedef DescType_Traits< inDesiredType > Traits;
       
-      if ( gUseFlattenersForEventParameter )
-      {
-         return Traits().Get( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
-      }
-      
-      typename Traits::InputBuffer buffer;
-      
-      if ( Traits::inputHasVariableLength )
-         Traits::SetInputBufferLength( buffer, GetEventParameter( inEvent, inName, inDesiredType ).outActualSize );
-      
-      GetEventParameter( inEvent,
-                         inName,
-                         inDesiredType,
-                         Traits::InputBufferLength( buffer ),
-                         Traits::InputBufferStart( buffer ) );
-      
-      return Traits::ProcessInputBuffer( buffer );
+      return Traits().Get( GetEventParameter_Getter< inDesiredType >( inEvent, inName ) );
      }
 
    template < ::EventParamType inDesiredType >
