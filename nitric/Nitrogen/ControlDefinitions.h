@@ -18,87 +18,87 @@
 
 namespace Nitrogen
   {
-   template<> struct ControlData_Traits< kControlBevelButtonContentTag                  >: POD_DescType_Traits    < ControlButtonContentInfo      > {};
-   template<> struct ControlData_Traits< kControlBevelButtonTransformTag                >: POD_DescType_Traits    < IconTransformType             > {};
-   template<> struct ControlData_Traits< kControlBevelButtonTextAlignTag                >: POD_DescType_Traits    < ControlButtonTextAlignment    > {};
-   template<> struct ControlData_Traits< kControlBevelButtonTextOffsetTag               >: POD_DescType_Traits    < ::SInt16                      > {};
-   template<> struct ControlData_Traits< kControlBevelButtonGraphicAlignTag             >: POD_DescType_Traits    < ControlButtonGraphicAlignment > {};
-   template<> struct ControlData_Traits< kControlBevelButtonGraphicOffsetTag            >: POD_DescType_Traits    < Point                         > {};
-   template<> struct ControlData_Traits< kControlBevelButtonTextPlaceTag                >: POD_DescType_Traits    < ControlButtonTextPlacement    > {};
-   template<> struct ControlData_Traits< kControlBevelButtonMenuValueTag                >: POD_DescType_Traits    < ::SInt16                      > {};
-   template<> struct ControlData_Traits< kControlBevelButtonMenuRefTag                  >: POD_DescType_Traits    < MenuRef                       > {};
+   template<> struct ControlData_Traits< kControlBevelButtonContentTag                  >: Nucleus::PodFlattener    < ControlButtonContentInfo      > {};
+   template<> struct ControlData_Traits< kControlBevelButtonTransformTag                >: Nucleus::PodFlattener    < IconTransformType             > {};
+   template<> struct ControlData_Traits< kControlBevelButtonTextAlignTag                >: Nucleus::PodFlattener    < ControlButtonTextAlignment    > {};
+   template<> struct ControlData_Traits< kControlBevelButtonTextOffsetTag               >: Nucleus::PodFlattener    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlBevelButtonGraphicAlignTag             >: Nucleus::PodFlattener    < ControlButtonGraphicAlignment > {};
+   template<> struct ControlData_Traits< kControlBevelButtonGraphicOffsetTag            >: Nucleus::PodFlattener    < Point                         > {};
+   template<> struct ControlData_Traits< kControlBevelButtonTextPlaceTag                >: Nucleus::PodFlattener    < ControlButtonTextPlacement    > {};
+   template<> struct ControlData_Traits< kControlBevelButtonMenuValueTag                >: Nucleus::PodFlattener    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlBevelButtonMenuRefTag                  >: Nucleus::PodFlattener    < MenuRef                       > {};
    template<> struct ControlData_Traits< kControlBevelButtonCenterPopupGlyphTag         >: DescType_Traits        < ::typeBoolean                 > {};
-   template<> struct ControlData_Traits< kControlBevelButtonLastMenuTag                 >: POD_DescType_Traits    < ::SInt16                      > {};
-   template<> struct ControlData_Traits< kControlBevelButtonMenuDelayTag                >: POD_DescType_Traits    < ::SInt32                      > {};
+   template<> struct ControlData_Traits< kControlBevelButtonLastMenuTag                 >: Nucleus::PodFlattener    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlBevelButtonMenuDelayTag                >: Nucleus::PodFlattener    < ::SInt32                      > {};
    template<> struct ControlData_Traits< kControlBevelButtonScaleIconTag                >: DescType_Traits        < ::typeBoolean                 > {};
-//   template<> struct ControlData_Traits< kControlBevelButtonOwnedMenuRefTag             >: POD_DescType_Traits    < Nucleus::Owned<MenuRef>                > {};
-   template<> struct ControlData_Traits< kControlBevelButtonKindTag                     >: POD_DescType_Traits    < ThemeButtonKind               > {};
+//   template<> struct ControlData_Traits< kControlBevelButtonOwnedMenuRefTag             >: Nucleus::PodFlattener    < Nucleus::Owned<MenuRef>                > {};
+   template<> struct ControlData_Traits< kControlBevelButtonKindTag                     >: Nucleus::PodFlattener    < ThemeButtonKind               > {};
 
-   template<> struct ControlData_Traits< kControlTriangleLastValueTag                   >: POD_DescType_Traits    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlTriangleLastValueTag                   >: Nucleus::PodFlattener    < ::SInt16                      > {};
 
    template<> struct ControlData_Traits< kControlProgressBarIndeterminateTag            >: DescType_Traits        < ::typeBoolean                 > {};
    template<> struct ControlData_Traits< kControlProgressBarAnimatingTag                >: DescType_Traits        < ::typeBoolean                 > {};
 
-   template<> struct ControlData_Traits< kControlTabContentRectTag                      >: POD_DescType_Traits    < Rect                          > {};
+   template<> struct ControlData_Traits< kControlTabContentRectTag                      >: Nucleus::PodFlattener    < Rect                          > {};
    template<> struct ControlData_Traits< kControlTabEnabledFlagTag                      >: DescType_Traits        < ::typeBoolean                 > {};
-   template<> struct ControlData_Traits< kControlTabInfoTag                             >: POD_DescType_Traits    < ControlTabInfoRec             > {};
+   template<> struct ControlData_Traits< kControlTabInfoTag                             >: Nucleus::PodFlattener    < ControlTabInfoRec             > {};
 
-   template<> struct ControlData_Traits< kControlGroupBoxMenuHandleTag                  >: POD_DescType_Traits    < MenuRef                       > {};
-   template<> struct ControlData_Traits< kControlGroupBoxTitleRectTag                   >: POD_DescType_Traits    < Rect                          > {};
+   template<> struct ControlData_Traits< kControlGroupBoxMenuHandleTag                  >: Nucleus::PodFlattener    < MenuRef                       > {};
+   template<> struct ControlData_Traits< kControlGroupBoxTitleRectTag                   >: Nucleus::PodFlattener    < Rect                          > {};
 
    template<> struct ControlData_Traits< kControlImageWellIsDragDestinationTag          >: DescType_Traits        < ::typeBoolean                 > {};
 
-   template<> struct ControlData_Traits< kControlClockLongDateTag                       >: POD_DescType_Traits    < LongDateRec                   > {};
+   template<> struct ControlData_Traits< kControlClockLongDateTag                       >: Nucleus::PodFlattener    < LongDateRec                   > {};
 
-   template<> struct ControlData_Traits< kControlUserItemDrawProcTag                    >: POD_DescType_Traits    < UserItemUPP                   > {};
-   template<> struct ControlData_Traits< kControlUserPaneDrawProcTag                    >: POD_DescType_Traits    < ControlUserPaneDrawUPP        > {};
-   template<> struct ControlData_Traits< kControlUserPaneHitTestProcTag                 >: POD_DescType_Traits    < ControlUserPaneHitTestUPP     > {};
-   template<> struct ControlData_Traits< kControlUserPaneTrackingProcTag                >: POD_DescType_Traits    < ControlUserPaneTrackingUPP    > {};
-   template<> struct ControlData_Traits< kControlUserPaneIdleProcTag                    >: POD_DescType_Traits    < ControlUserPaneIdleUPP        > {};
-   template<> struct ControlData_Traits< kControlUserPaneKeyDownProcTag                 >: POD_DescType_Traits    < ControlUserPaneKeyDownUPP     > {};
-   template<> struct ControlData_Traits< kControlUserPaneActivateProcTag                >: POD_DescType_Traits    < ControlUserPaneActivateUPP    > {};
-   template<> struct ControlData_Traits< kControlUserPaneFocusProcTag                   >: POD_DescType_Traits    < ControlUserPaneFocusUPP       > {};
-   template<> struct ControlData_Traits< kControlUserPaneBackgroundProcTag              >: POD_DescType_Traits    < ControlUserPaneBackgroundUPP  > {};
+   template<> struct ControlData_Traits< kControlUserItemDrawProcTag                    >: Nucleus::PodFlattener    < UserItemUPP                   > {};
+   template<> struct ControlData_Traits< kControlUserPaneDrawProcTag                    >: Nucleus::PodFlattener    < ControlUserPaneDrawUPP        > {};
+   template<> struct ControlData_Traits< kControlUserPaneHitTestProcTag                 >: Nucleus::PodFlattener    < ControlUserPaneHitTestUPP     > {};
+   template<> struct ControlData_Traits< kControlUserPaneTrackingProcTag                >: Nucleus::PodFlattener    < ControlUserPaneTrackingUPP    > {};
+   template<> struct ControlData_Traits< kControlUserPaneIdleProcTag                    >: Nucleus::PodFlattener    < ControlUserPaneIdleUPP        > {};
+   template<> struct ControlData_Traits< kControlUserPaneKeyDownProcTag                 >: Nucleus::PodFlattener    < ControlUserPaneKeyDownUPP     > {};
+   template<> struct ControlData_Traits< kControlUserPaneActivateProcTag                >: Nucleus::PodFlattener    < ControlUserPaneActivateUPP    > {};
+   template<> struct ControlData_Traits< kControlUserPaneFocusProcTag                   >: Nucleus::PodFlattener    < ControlUserPaneFocusUPP       > {};
+   template<> struct ControlData_Traits< kControlUserPaneBackgroundProcTag              >: Nucleus::PodFlattener    < ControlUserPaneBackgroundUPP  > {};
 
    template<> struct ControlData_Traits< kControlEditTextTextTag                        >: DescType_Traits        < ::typeChar                    > {};
-   template<> struct ControlData_Traits< kControlEditTextTEHandleTag                    >: POD_DescType_Traits    < TEHandle                      > {};
-   template<> struct ControlData_Traits< kControlEditTextSelectionTag                   >: POD_DescType_Traits    < ControlEditTextSelectionRec   > {};
+   template<> struct ControlData_Traits< kControlEditTextTEHandleTag                    >: Nucleus::PodFlattener    < TEHandle                      > {};
+   template<> struct ControlData_Traits< kControlEditTextSelectionTag                   >: Nucleus::PodFlattener    < ControlEditTextSelectionRec   > {};
    template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: DescType_Traits        < ::typeChar                    > {};
-   template<> struct ControlData_Traits< kControlEditTextKeyScriptBehaviorTag           >: POD_DescType_Traits    < ControlKeyScriptBehavior      > {};
+   template<> struct ControlData_Traits< kControlEditTextKeyScriptBehaviorTag           >: Nucleus::PodFlattener    < ControlKeyScriptBehavior      > {};
    template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: DescType_Traits        < ::typeBoolean                 > {};
    template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: DescType_Traits        < ::typeChar                    > {};
-   template<> struct ControlData_Traits< kControlEditTextValidationProcTag              >: POD_DescType_Traits    < ControlEditTextValidationUPP  > {};
-   template<> struct ControlData_Traits< kControlEditTextInlinePreUpdateProcTag         >: POD_DescType_Traits    < TSMTEPreUpdateUPP             > {};
-   template<> struct ControlData_Traits< kControlEditTextInlinePostUpdateProcTag        >: POD_DescType_Traits    < TSMTEPostUpdateUPP            > {};
-   template<> struct ControlData_Traits< kControlEditTextCFStringTag                    >: Seizing_DescType_Traits< CFStringRef                   > {};
-   template<> struct ControlData_Traits< kControlEditTextPasswordCFStringTag            >: Seizing_DescType_Traits< CFStringRef                   > {};
+   template<> struct ControlData_Traits< kControlEditTextValidationProcTag              >: Nucleus::PodFlattener    < ControlEditTextValidationUPP  > {};
+   template<> struct ControlData_Traits< kControlEditTextInlinePreUpdateProcTag         >: Nucleus::PodFlattener    < TSMTEPreUpdateUPP             > {};
+   template<> struct ControlData_Traits< kControlEditTextInlinePostUpdateProcTag        >: Nucleus::PodFlattener    < TSMTEPostUpdateUPP            > {};
+   template<> struct ControlData_Traits< kControlEditTextCFStringTag                    >: Nucleus::SeizingPODFlattener< CFStringRef                   > {};
+   template<> struct ControlData_Traits< kControlEditTextPasswordCFStringTag            >: Nucleus::SeizingPODFlattener< CFStringRef                   > {};
 
-   template<> struct ControlData_Traits< kControlStaticTextTextHeightTag                >: POD_DescType_Traits    < ::SInt16                      > {};
-   template<> struct ControlData_Traits< kControlStaticTextTruncTag                     >: POD_DescType_Traits    < TruncCode                     > {};
+   template<> struct ControlData_Traits< kControlStaticTextTextHeightTag                >: Nucleus::PodFlattener    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlStaticTextTruncTag                     >: Nucleus::PodFlattener    < TruncCode                     > {};
 
-   template<> struct ControlData_Traits< kControlPictureHandleTag                       >: POD_DescType_Traits    < PicHandle                     > {};
+   template<> struct ControlData_Traits< kControlPictureHandleTag                       >: Nucleus::PodFlattener    < PicHandle                     > {};
 
-   template<> struct ControlData_Traits< kControlIconTransformTag                       >: POD_DescType_Traits    < IconTransformType             > {};
-   template<> struct ControlData_Traits< kControlIconAlignmentTag                       >: POD_DescType_Traits    < IconAlignmentType             > {};
-   template<> struct ControlData_Traits< kControlIconResourceIDTag                      >: POD_DescType_Traits    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlIconTransformTag                       >: Nucleus::PodFlattener    < IconTransformType             > {};
+   template<> struct ControlData_Traits< kControlIconAlignmentTag                       >: Nucleus::PodFlattener    < IconAlignmentType             > {};
+   template<> struct ControlData_Traits< kControlIconResourceIDTag                      >: Nucleus::PodFlattener    < ::SInt16                      > {};
 
-   template<> struct ControlData_Traits< kControlListBoxListHandleTag                   >: POD_DescType_Traits    < ListHandle                    > {};
+   template<> struct ControlData_Traits< kControlListBoxListHandleTag                   >: Nucleus::PodFlattener    < ListHandle                    > {};
    template<> struct ControlData_Traits< kControlListBoxDoubleClickTag                  >: DescType_Traits        < ::typeBoolean                 > {};
-   template<> struct ControlData_Traits< kControlListBoxLDEFTag                         >: POD_DescType_Traits    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlListBoxLDEFTag                         >: Nucleus::PodFlattener    < ::SInt16                      > {};
 
    template<> struct ControlData_Traits< kControlPushButtonDefaultTag                   >: DescType_Traits        < ::typeBoolean                 > {};
    template<> struct ControlData_Traits< kControlPushButtonCancelTag                    >: DescType_Traits        < ::typeBoolean                 > {};
 
-   template<> struct ControlData_Traits< kControlPopupButtonMenuIDTag                   >: POD_DescType_Traits    < ::SInt16                      > {};
-   template<> struct ControlData_Traits< kControlPopupButtonExtraHeightTag              >: POD_DescType_Traits    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlPopupButtonMenuIDTag                   >: Nucleus::PodFlattener    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlPopupButtonExtraHeightTag              >: Nucleus::PodFlattener    < ::SInt16                      > {};
    template<> struct ControlData_Traits< kControlPopupButtonCheckCurrentTag             >: DescType_Traits        < ::typeBoolean                 > {};
 
-   template<> struct ControlData_Traits< kControlScrollTextBoxDelayBeforeAutoScrollTag  >: POD_DescType_Traits    < ::UInt32                      > {};
-   template<> struct ControlData_Traits< kControlScrollTextBoxDelayBetweenAutoScrollTag >: POD_DescType_Traits    < ::UInt32                      > {};
-   template<> struct ControlData_Traits< kControlScrollTextBoxAutoScrollAmountTag       >: POD_DescType_Traits    < ::UInt16                      > {};
-   template<> struct ControlData_Traits< kControlScrollTextBoxContentsTag               >: POD_DescType_Traits    < ::SInt16                      > {};
+   template<> struct ControlData_Traits< kControlScrollTextBoxDelayBeforeAutoScrollTag  >: Nucleus::PodFlattener    < ::UInt32                      > {};
+   template<> struct ControlData_Traits< kControlScrollTextBoxDelayBetweenAutoScrollTag >: Nucleus::PodFlattener    < ::UInt32                      > {};
+   template<> struct ControlData_Traits< kControlScrollTextBoxAutoScrollAmountTag       >: Nucleus::PodFlattener    < ::UInt16                      > {};
+   template<> struct ControlData_Traits< kControlScrollTextBoxContentsTag               >: Nucleus::PodFlattener    < ::SInt16                      > {};
 
-   template<> struct ControlData_Traits< kControlEditUnicodeTextPostUpdateProcTag       >: POD_DescType_Traits    < EditUnicodePostUpdateUPP      > {};
+   template<> struct ControlData_Traits< kControlEditUnicodeTextPostUpdateProcTag       >: Nucleus::PodFlattener    < EditUnicodePostUpdateUPP      > {};
   }
 
 #endif

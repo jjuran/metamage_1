@@ -45,12 +45,12 @@ namespace Nitrogen
 	typedef Nucleus::SelectorType< struct AEAbsoluteOrdinal_Tag,   ::AEAbsoluteOrdinal    > AEAbsoluteOrdinal;
 	typedef Nucleus::SelectorType< struct AERelativeOrdinal_Tag,   ::AERelativeDescriptor > AERelativeDescriptor;
 	
-	template <> struct DescType_Traits< typeObjectClass > : Converting_DescType_Traits< AEObjectClass, ::AEObjectClass >   {};
-	template <> struct DescType_Traits< typePropertyID >  : Converting_DescType_Traits< AEPropertyID, ::AEPropertyID >   {};
+	template <> struct DescType_Traits< typeObjectClass > : Nucleus::ConvertingPODFlattener< AEObjectClass, ::AEObjectClass >   {};
+	template <> struct DescType_Traits< typePropertyID >  : Nucleus::ConvertingPODFlattener< AEPropertyID, ::AEPropertyID >   {};
 	
-	template <> struct DescType_Traits< typeLogicalDescriptor  > : Converting_DescType_Traits< AELogicalDescriptor,  ::AELogicalDescriptor  >  {};
-	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : Converting_DescType_Traits< AEAbsoluteOrdinal,    ::AEAbsoluteOrdinal    >  {};
-	template <> struct DescType_Traits< typeRelativeDescriptor > : Converting_DescType_Traits< AERelativeDescriptor, ::AERelativeDescriptor >  {};
+	template <> struct DescType_Traits< typeLogicalDescriptor  > : Nucleus::ConvertingPODFlattener< AELogicalDescriptor,  ::AELogicalDescriptor  >  {};
+	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : Nucleus::ConvertingPODFlattener< AEAbsoluteOrdinal,    ::AEAbsoluteOrdinal    >  {};
+	template <> struct DescType_Traits< typeRelativeDescriptor > : Nucleus::ConvertingPODFlattener< AERelativeDescriptor, ::AERelativeDescriptor >  {};
 	
 	template <> struct DescType_Map_Traits< typeObjectClass        > { static const ::DescType result = typeType; };
 	template <> struct DescType_Map_Traits< typePropertyID         > { static const ::DescType result = typeType; };

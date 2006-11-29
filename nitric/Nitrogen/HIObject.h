@@ -62,7 +62,7 @@ namespace Nucleus
 namespace Nitrogen
   {
 
-	template <> struct DescType_Traits< typeHIObjectRef >: POD_DescType_Traits< HIObjectRef > {};
+	template <> struct DescType_Traits< typeHIObjectRef >: Nucleus::PodFlattener< HIObjectRef > {};
 
 	using ::HIObjectClassRef;
   }
