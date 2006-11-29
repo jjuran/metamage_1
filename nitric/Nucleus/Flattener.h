@@ -109,6 +109,7 @@ namespace Nucleus
       typedef Get_Result    Result;
       
       static const bool hasStaticSize = false;
+      struct Buffer {};
      };
    
    template < class T >
@@ -207,6 +208,7 @@ namespace Nucleus
 		typedef Get_Result    Result;
 		
 		static const bool hasStaticSize = false;
+		struct Buffer {};
 	};
 	
    
@@ -233,6 +235,7 @@ namespace Nucleus
       typedef Get_Result    Result;
       
       static const bool hasStaticSize = true;
+      typedef NoData Buffer;
      };
   }
 
