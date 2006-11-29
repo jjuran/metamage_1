@@ -144,6 +144,11 @@ namespace Nucleus
          typedef typename BaseFlattener::Buffer Buffer;
      };
    
+	template < class Converted, class POD >
+	struct ConvertingPODFlattener : public ConvertingFlattener< Converted, PodFlattener< POD > >
+	{
+	};
+	
 	template < class Ownable >
 	struct SeizingPODFlattener
 	{
