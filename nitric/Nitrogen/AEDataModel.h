@@ -1092,7 +1092,7 @@ namespace Nitrogen
 				
 				if ( DescType_Traits< type >::hasStaticSize )
 				{
-					return sizeof (typename DescType_Traits< type >::InputBuffer);
+					return sizeof (typename DescType_Traits< type >::Buffer);
 				}
 				
 				ASSERT( info.typeCode == type );
@@ -1175,7 +1175,7 @@ namespace Nitrogen
 				
 				if ( DescType_Traits< type >::hasStaticSize )
 				{
-					return sizeof (typename DescType_Traits< type >::InputBuffer);
+					return sizeof (typename DescType_Traits< type >::Buffer);
 				}
 				
 				ASSERT( info.typeCode == type );
@@ -1258,7 +1258,7 @@ namespace Nitrogen
 				
 				if ( DescType_Traits< type >::hasStaticSize )
 				{
-					return sizeof (typename DescType_Traits< type >::InputBuffer);
+					return sizeof (typename DescType_Traits< type >::Buffer);
 				}
 				
 				ASSERT( info.typeCode == type );
@@ -1341,7 +1341,7 @@ namespace Nitrogen
 				
 				if ( DescType_Traits< type >::hasStaticSize )
 				{
-					return sizeof (typename DescType_Traits< type >::InputBuffer);
+					return sizeof (typename DescType_Traits< type >::Buffer);
 				}
 				
 				ASSERT( info.typeCode == type );
