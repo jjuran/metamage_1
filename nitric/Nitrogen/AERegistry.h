@@ -40,26 +40,7 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeComponentInstance         >: POD_DescType_Traits< ComponentInstance         > {};
    template<> struct DescType_Traits< typeEventRef                  >: POD_DescType_Traits< EventRef                  > {};
 
-   template<> struct DescType_Traits< typeUnicodeText >
-     {
-      typedef UniString Result;
-      typedef const UniString& Parameter;
-      
-      typedef UniString        InputBuffer;
-      typedef const UniString& OutputBuffer;
-
-      static const bool inputHasVariableLength = true;
-      static void SetInputBufferLength( InputBuffer& b, std::size_t s )     { b.resize( s/sizeof(UniChar) ); }
-
-      static void *      InputBufferStart(  InputBuffer& buffer )           { return buffer.empty() ? 0 : &buffer[0]; }
-      static std::size_t InputBufferLength( InputBuffer& buffer )           { return buffer.size() * sizeof(UniChar); }
-      static Result  ProcessInputBuffer( InputBuffer& buffer )              { return buffer; }
-
-      static const void *OutputBufferStart(  OutputBuffer buffer )          { return buffer.data(); }
-      static std::size_t OutputBufferLength( OutputBuffer buffer )          { return buffer.size() * sizeof(UniChar); }
-      static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
-      static void ReleaseOutputBuffer( OutputBuffer )                       {}
-     };
+   template<> struct DescType_Traits< typeUnicodeText >: UnicodeFlattener< UniChar > {};
 	
 	using ::VersRec;
 	
