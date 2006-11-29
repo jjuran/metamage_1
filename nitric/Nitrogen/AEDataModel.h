@@ -183,22 +183,7 @@ namespace Nitrogen
 	#pragma mark ¥ DescType_Traits ¥
 	
    template < ::DescType > struct DescType_Traits;
-       
-   template < class FinalType >
-   struct POD_DescType_Traits : public Nucleus::PodFlattener< FinalType > {};
-
-   template < class FinalType, class OriginalType >
-   struct Converting_DescType_Traits : public Nucleus::ConvertingPODFlattener< FinalType, OriginalType > {};
-
-   template< class Ownable >
-   struct Seizing_DescType_Traits : public Nucleus::SeizingPODFlattener< Ownable > {};
-
-   template< class POD, std::size_t (*SizeOf)( const POD& ) >
-   struct VariableLengthPOD_DescType_Traits : public Nucleus::VariableLengthPodFlattener< POD, SizeOf > {};
-
-	template< class T >
-	struct Handle_DescType_Traits : public HandleFlattener< T > {};
-	
+   
    template<> struct DescType_Traits< ::typeChar > : public Nucleus::StringFlattener< std::string > {};
 
    template<> struct DescType_Traits< ::typeFixed > : public FixedFlattener {};
