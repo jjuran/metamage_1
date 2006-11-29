@@ -28,17 +28,17 @@
 namespace Nitrogen
   {
 	
-   template<> struct DescType_Traits< typeFixedPoint                >: POD_DescType_Traits< FixedPoint                > {};
-   template<> struct DescType_Traits< typeFixedRectangle            >: POD_DescType_Traits< FixedRect                 > {};
-   template<> struct DescType_Traits< typeIntlWritingCode           >: POD_DescType_Traits< ScriptCode                > {};
-   template<> struct DescType_Traits< typePtr                       >: POD_DescType_Traits< void *                    > {};
-   template<> struct DescType_Traits< typeQDPoint                   >: POD_DescType_Traits< Point                     > {};
-   template<> struct DescType_Traits< typeRectangle                 >: POD_DescType_Traits< Rect                      > {};
-   template<> struct DescType_Traits< typeRGBColor                  >: POD_DescType_Traits< RGBColor                  > {};
-   template<> struct DescType_Traits< typeScript                    >: POD_DescType_Traits< ScriptCode                > {};
-   template<> struct DescType_Traits< typeTextRange                 >: POD_DescType_Traits< TextRange                 > {};
-   template<> struct DescType_Traits< typeComponentInstance         >: POD_DescType_Traits< ComponentInstance         > {};
-   template<> struct DescType_Traits< typeEventRef                  >: POD_DescType_Traits< EventRef                  > {};
+   template<> struct DescType_Traits< typeFixedPoint                >: Nucleus::PodFlattener< FixedPoint                > {};
+   template<> struct DescType_Traits< typeFixedRectangle            >: Nucleus::PodFlattener< FixedRect                 > {};
+   template<> struct DescType_Traits< typeIntlWritingCode           >: Nucleus::PodFlattener< ScriptCode                > {};
+   template<> struct DescType_Traits< typePtr                       >: Nucleus::PodFlattener< void *                    > {};
+   template<> struct DescType_Traits< typeQDPoint                   >: Nucleus::PodFlattener< Point                     > {};
+   template<> struct DescType_Traits< typeRectangle                 >: Nucleus::PodFlattener< Rect                      > {};
+   template<> struct DescType_Traits< typeRGBColor                  >: Nucleus::PodFlattener< RGBColor                  > {};
+   template<> struct DescType_Traits< typeScript                    >: Nucleus::PodFlattener< ScriptCode                > {};
+   template<> struct DescType_Traits< typeTextRange                 >: Nucleus::PodFlattener< TextRange                 > {};
+   template<> struct DescType_Traits< typeComponentInstance         >: Nucleus::PodFlattener< ComponentInstance         > {};
+   template<> struct DescType_Traits< typeEventRef                  >: Nucleus::PodFlattener< EventRef                  > {};
 
    template<> struct DescType_Traits< typeUnicodeText >: UnicodeFlattener< UniChar > {};
 	
@@ -72,9 +72,9 @@ namespace Nitrogen
       return sizeof( array ) - sizeof( array.fRange ) + array.fNumOfRanges * sizeof( TextRange );
      }
    
-   template<> struct DescType_Traits< typeVersion        >: VariableLengthPOD_DescType_Traits< VersRec,        SizeOf_VersRec        > {};
-   template<> struct DescType_Traits< typeOffsetArray    >: VariableLengthPOD_DescType_Traits< OffsetArray,    SizeOf_OffsetArray    > {};
-   template<> struct DescType_Traits< typeTextRangeArray >: VariableLengthPOD_DescType_Traits< TextRangeArray, SizeOf_TextRangeArray > {};
+   template<> struct DescType_Traits< typeVersion        >: Nucleus::VariableLengthPodFlattener< VersRec,        SizeOf_VersRec        > {};
+   template<> struct DescType_Traits< typeOffsetArray    >: Nucleus::VariableLengthPodFlattener< OffsetArray,    SizeOf_OffsetArray    > {};
+   template<> struct DescType_Traits< typeTextRangeArray >: Nucleus::VariableLengthPodFlattener< TextRangeArray, SizeOf_TextRangeArray > {};
   }
 
 #endif

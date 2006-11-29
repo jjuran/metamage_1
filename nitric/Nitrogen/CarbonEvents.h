@@ -659,48 +659,48 @@ namespace Nitrogen
 
 /* ... */
 
-   template<> struct DescType_Traits< typeWindowRef               >: POD_DescType_Traits< WindowRef               > {};
-   template<> struct DescType_Traits< typeGrafPtr                 >: POD_DescType_Traits< CGrafPtr                > {};
-   template<> struct DescType_Traits< typeGWorldPtr               >: POD_DescType_Traits< GWorldPtr               > {};
-   template<> struct DescType_Traits< typeDragRef                 >: POD_DescType_Traits< DragRef                 > {};
-   template<> struct DescType_Traits< typeMenuRef                 >: POD_DescType_Traits< MenuRef                 > {};
-   template<> struct DescType_Traits< typeControlRef              >: POD_DescType_Traits< ControlRef              > {};
-   template<> struct DescType_Traits< typeCollection              >: POD_DescType_Traits< Collection              > {};
-   template<> struct DescType_Traits< typeQDRgnHandle             >: POD_DescType_Traits< RgnHandle               > {};
-   template<> struct DescType_Traits< typeOSStatus                >: POD_DescType_Traits< OSStatus                > {};
-   template<> struct DescType_Traits< typeCFStringRef             >: POD_DescType_Traits< CFStringRef             > {};
-   template<> struct DescType_Traits< typeCGContextRef            >: POD_DescType_Traits< CGContextRef            > {};
-   template<> struct DescType_Traits< typeHIPoint                 >: POD_DescType_Traits< HIPoint                 > {};
+   template<> struct DescType_Traits< typeWindowRef               >: Nucleus::PodFlattener< WindowRef               > {};
+   template<> struct DescType_Traits< typeGrafPtr                 >: Nucleus::PodFlattener< CGrafPtr                > {};
+   template<> struct DescType_Traits< typeGWorldPtr               >: Nucleus::PodFlattener< GWorldPtr               > {};
+   template<> struct DescType_Traits< typeDragRef                 >: Nucleus::PodFlattener< DragRef                 > {};
+   template<> struct DescType_Traits< typeMenuRef                 >: Nucleus::PodFlattener< MenuRef                 > {};
+   template<> struct DescType_Traits< typeControlRef              >: Nucleus::PodFlattener< ControlRef              > {};
+   template<> struct DescType_Traits< typeCollection              >: Nucleus::PodFlattener< Collection              > {};
+   template<> struct DescType_Traits< typeQDRgnHandle             >: Nucleus::PodFlattener< RgnHandle               > {};
+   template<> struct DescType_Traits< typeOSStatus                >: Nucleus::PodFlattener< OSStatus                > {};
+   template<> struct DescType_Traits< typeCFStringRef             >: Nucleus::PodFlattener< CFStringRef             > {};
+   template<> struct DescType_Traits< typeCGContextRef            >: Nucleus::PodFlattener< CGContextRef            > {};
+   template<> struct DescType_Traits< typeHIPoint                 >: Nucleus::PodFlattener< HIPoint                 > {};
 
-   template<> struct DescType_Traits< typeMouseButton             >: POD_DescType_Traits< EventMouseButton        > {};
-   template<> struct DescType_Traits< typeMouseWheelAxis          >: POD_DescType_Traits< EventMouseWheelAxis     > {};
+   template<> struct DescType_Traits< typeMouseButton             >: Nucleus::PodFlattener< EventMouseButton        > {};
+   template<> struct DescType_Traits< typeMouseWheelAxis          >: Nucleus::PodFlattener< EventMouseWheelAxis     > {};
 
-   template<> struct DescType_Traits< typeEventHotKeyID           >: POD_DescType_Traits< EventHotKeyID           > {};
+   template<> struct DescType_Traits< typeEventHotKeyID           >: Nucleus::PodFlattener< EventHotKeyID           > {};
 
-   template<> struct DescType_Traits< typeHICommand               >: POD_DescType_Traits< HICommand               > {};
+   template<> struct DescType_Traits< typeHICommand               >: Nucleus::PodFlattener< HICommand               > {};
 
-   template<> struct DescType_Traits< typeWindowRegionCode        >: POD_DescType_Traits< WindowRegionCode        > {};
-   template<> struct DescType_Traits< typeWindowDefPartCode       >: POD_DescType_Traits< WindowDefPartCode       > {};
-   template<> struct DescType_Traits< typeClickActivationResult   >: POD_DescType_Traits< ClickActivationResult   > {};
+   template<> struct DescType_Traits< typeWindowRegionCode        >: Nucleus::PodFlattener< WindowRegionCode        > {};
+   template<> struct DescType_Traits< typeWindowDefPartCode       >: Nucleus::PodFlattener< WindowDefPartCode       > {};
+   template<> struct DescType_Traits< typeClickActivationResult   >: Nucleus::PodFlattener< ClickActivationResult   > {};
 
-   template<> struct DescType_Traits< typeControlActionUPP        >: POD_DescType_Traits< ControlActionUPP        > {};
-   template<> struct DescType_Traits< typeIndicatorDragConstraint >: POD_DescType_Traits< IndicatorDragConstraint > {};
-   template<> struct DescType_Traits< typeControlPartCode         >: POD_DescType_Traits< ControlPartCode         > {};
+   template<> struct DescType_Traits< typeControlActionUPP        >: Nucleus::PodFlattener< ControlActionUPP        > {};
+   template<> struct DescType_Traits< typeIndicatorDragConstraint >: Nucleus::PodFlattener< IndicatorDragConstraint > {};
+   template<> struct DescType_Traits< typeControlPartCode         >: Nucleus::PodFlattener< ControlPartCode         > {};
 
-   template<> struct DescType_Traits< typeMenuItemIndex           >: POD_DescType_Traits< MenuItemIndex           > {};
-   template<> struct DescType_Traits< typeMenuCommand             >: POD_DescType_Traits< MenuCommand             > {};
-   template<> struct DescType_Traits< typeMenuTrackingMode        >: POD_DescType_Traits< MenuTrackingMode        > {};
-   template<> struct DescType_Traits< typeMenuEventOptions        >: POD_DescType_Traits< MenuEventOptions        > {};
-   template<> struct DescType_Traits< typeThemeMenuState          >: POD_DescType_Traits< ThemeMenuState          > {};
-   template<> struct DescType_Traits< typeThemeMenuItemType       >: POD_DescType_Traits< ThemeMenuItemType       > {};
+   template<> struct DescType_Traits< typeMenuItemIndex           >: Nucleus::PodFlattener< MenuItemIndex           > {};
+   template<> struct DescType_Traits< typeMenuCommand             >: Nucleus::PodFlattener< MenuCommand             > {};
+   template<> struct DescType_Traits< typeMenuTrackingMode        >: Nucleus::PodFlattener< MenuTrackingMode        > {};
+   template<> struct DescType_Traits< typeMenuEventOptions        >: Nucleus::PodFlattener< MenuEventOptions        > {};
+   template<> struct DescType_Traits< typeThemeMenuState          >: Nucleus::PodFlattener< ThemeMenuState          > {};
+   template<> struct DescType_Traits< typeThemeMenuItemType       >: Nucleus::PodFlattener< ThemeMenuItemType       > {};
 
-   template<> struct DescType_Traits< typeTabletPointRec          >: POD_DescType_Traits< TabletPointRec          > {};
-   template<> struct DescType_Traits< typeTabletProximityRec      >: POD_DescType_Traits< TabletProximityRec      > {};
+   template<> struct DescType_Traits< typeTabletPointRec          >: Nucleus::PodFlattener< TabletPointRec          > {};
+   template<> struct DescType_Traits< typeTabletProximityRec      >: Nucleus::PodFlattener< TabletProximityRec      > {};
 
-   template<> struct DescType_Traits< typeScrapRef                >: POD_DescType_Traits< ScrapRef                > {};
-   template<> struct DescType_Traits< typeCFMutableArrayRef       >: POD_DescType_Traits< CFMutableArrayRef       > {};
+   template<> struct DescType_Traits< typeScrapRef                >: Nucleus::PodFlattener< ScrapRef                > {};
+   template<> struct DescType_Traits< typeCFMutableArrayRef       >: Nucleus::PodFlattener< CFMutableArrayRef       > {};
 
-   template<> struct DescType_Traits< typeFSVolumeRefNum          >: POD_DescType_Traits< FSVolumeRefNum          > {};
+   template<> struct DescType_Traits< typeFSVolumeRefNum          >: Nucleus::PodFlattener< FSVolumeRefNum          > {};
 
 /* ... */
 

@@ -183,232 +183,25 @@ namespace Nitrogen
 	#pragma mark ¥ DescType_Traits ¥
 	
    template < ::DescType > struct DescType_Traits;
-      /*
-         The DescType_Traits are used according to these formulas:
-         
-         template < ::DescType type >
-         typename DescType_Traits< type >::Result GetWhatever( ...parameters... )
-           {
-            typedef DescType_Traits< type > Traits;
-            
-            typename Traits::InputBuffer buffer;
-            
-            if ( Traits::inputHasVariableLength )
-               Traits::SetInputBufferLength( buffer, GetWhateverLength( ...parameters... ) );
-            
-            GetWhateverData( Traits::InputBufferLength( buffer ),
-                             Traits::InputBufferStart( buffer ),
-                              ...parameters... );
-            
-            return Traits::ProcessInputBuffer( buffer );
-           }
-
-         template < ::DescType type >
-         void PutWhatever( typename DescType_Traits< type >::Parameter toPut, ...parameters... )
-           {
-            typedef DescType_Traits< type > Traits;
-            
-            typename Traits::OutputBuffer buffer = Traits::PrepareOutputBuffer( toPut );
-            
-            PutWhateverData( Traits::OutputBufferLength( buffer ),
-                             Traits::OutputBufferStart( buffer ),
-                              ...parameters... );
-            
-            Traits::ReleaseOutputBuffer( buffer );
-           }
-      */
-      
+       
    template < class FinalType >
-   struct POD_DescType_Traits : public Nucleus::PodFlattener< FinalType >
-     {
-      typedef FinalType Result;
-      typedef const FinalType& Parameter;
-      
-      typedef FinalType InputBuffer;
-      typedef const FinalType& OutputBuffer;
-
-      static const bool inputHasVariableLength = false;
-      static void SetInputBufferLength( InputBuffer&, std::size_t )         {}
-
-      static void *      InputBufferStart(   InputBuffer& buffer )          { return &buffer; }
-      static std::size_t InputBufferLength(  InputBuffer& buffer )          { return sizeof( buffer ); }
-      static Result  ProcessInputBuffer( InputBuffer& buffer )              { return buffer; }
-      
-      static const void *OutputBufferStart(  OutputBuffer buffer )          { return &buffer; }
-      static std::size_t OutputBufferLength( OutputBuffer buffer )          { return sizeof( buffer ); }
-      static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
-      static void ReleaseOutputBuffer( OutputBuffer )                       {}
-      
-      static const bool hasStaticSize = true;
-     };
+   struct POD_DescType_Traits : public Nucleus::PodFlattener< FinalType > {};
 
    template < class FinalType, class OriginalType >
-   struct Converting_DescType_Traits : public Nucleus::ConvertingFlattener< FinalType, Nucleus::PodFlattener< OriginalType > >
-     {
-      typedef FinalType Result;
-      typedef const FinalType& Parameter;
-      
-      typedef OriginalType       InputBuffer;
-      typedef const OriginalType OutputBuffer;
-
-      static const bool inputHasVariableLength = false;
-      static void SetInputBufferLength( InputBuffer&, std::size_t )         {}
-
-      static void *      InputBufferStart(  InputBuffer& buffer )           { return &buffer; }
-      static std::size_t InputBufferLength( InputBuffer& buffer )           { return sizeof( buffer ); }
-      static Result  ProcessInputBuffer( InputBuffer& buffer )              { return Result( buffer ); }
-
-      static const void *OutputBufferStart(  const OutputBuffer& buffer )   { return &buffer; }
-      static std::size_t OutputBufferLength( const OutputBuffer& buffer )   { return sizeof( buffer ); }
-      static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
-      static void ReleaseOutputBuffer( OutputBuffer& )                      {}
-      
-      static const bool hasStaticSize = true;
-     };
+   struct Converting_DescType_Traits : public Nucleus::ConvertingPODFlattener< FinalType, OriginalType > {};
 
    template< class Ownable >
-   struct Seizing_DescType_Traits : public Nucleus::SeizingPODFlattener< Ownable >
-     {
-      typedef Nucleus::Owned< Ownable > Result;
-      typedef Ownable Parameter;
-      
-      typedef Ownable        InputBuffer;
-      typedef const Ownable& OutputBuffer;
-
-      static const bool inputHasVariableLength = false;
-      static void SetInputBufferLength( InputBuffer&, std::size_t )          {}
-
-      static void *      InputBufferStart(  InputBuffer& buffer )            { return &buffer; }
-      static std::size_t InputBufferLength( InputBuffer& buffer )            { return sizeof( buffer ); }
-      static Result   ProcessInputBuffer( InputBuffer& buffer )              { return Nucleus::Owned< Ownable >::Seize( buffer ); }
-
-      static const void *OutputBufferStart(  OutputBuffer buffer )           { return &buffer; }
-      static std::size_t OutputBufferLength( OutputBuffer buffer )           { return sizeof( buffer ); }
-      static OutputBuffer PrepareOutputBuffer( const Parameter& output )     { return output; }
-      static void ReleaseOutputBuffer( OutputBuffer )                        {}
-      
-      static const bool hasStaticSize = false;
-     };
+   struct Seizing_DescType_Traits : public Nucleus::SeizingPODFlattener< Ownable > {};
 
    template< class POD, std::size_t (*SizeOf)( const POD& ) >
-   struct VariableLengthPOD_DescType_Traits : public Nucleus::VariableLengthPodFlattener< POD, SizeOf >
-     {
-      typedef std::auto_ptr< POD > Result;
-      typedef const POD& Parameter;
-      
-      struct InputBuffer
-        {
-         std::size_t length;
-         std::auto_ptr< POD > result;
-        };
-      
-      typedef const POD& OutputBuffer;
-
-      static const bool inputHasVariableLength = true;
-      
-      static void SetInputBufferLength( InputBuffer& b, std::size_t s )
-        {
-         b.length = s;
-         b.result = std::auto_ptr< POD >( static_cast<POD*>( ::operator new( s ) ) );
-        }
-
-      static void *      InputBufferStart(  InputBuffer& buffer )           { return buffer.result.get(); }
-      static std::size_t InputBufferLength( InputBuffer& buffer )           { return buffer.length; }
-      static Result  ProcessInputBuffer( InputBuffer& buffer )              { return buffer.result; }
-
-      static const void *OutputBufferStart(  OutputBuffer buffer )          { return &buffer; }
-      static std::size_t OutputBufferLength( OutputBuffer buffer )          { return SizeOf( buffer ); }
-      static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
-      static void ReleaseOutputBuffer( OutputBuffer )                       {}
-      
-      static const bool hasStaticSize = false;
-     };
+   struct VariableLengthPOD_DescType_Traits : public Nucleus::VariableLengthPodFlattener< POD, SizeOf > {};
 
 	template< class T >
-	struct Handle_DescType_Traits : public HandleFlattener< T >
-	{
-		typedef T   DataType;
-		typedef T** HandleType;
-		
-		typedef Nucleus::Owned< HandleType > Result;
-		typedef HandleType Parameter;
-		
-		typedef Nucleus::Owned< Handle > InputBuffer;
-		
-		typedef HandleType OutputBuffer;
-
-		static const bool inputHasVariableLength = true;
-		
-		static void SetInputBufferLength( InputBuffer& b, std::size_t s )
-		{
-			b = NewHandle( s );
-			HLock( b );
-		}
-
-		static void *      InputBufferStart(  InputBuffer& buffer )           { return *buffer.Get(); }
-		static std::size_t InputBufferLength( InputBuffer& buffer )           { return GetHandleSize( buffer ); }
-		static Result  ProcessInputBuffer( InputBuffer& buffer )
-		{
-			::HUnlock( buffer.Get() );
-			return Handle_Cast< DataType >( buffer );
-		}
-		
-		// Yes, this loses the previous locked state, which could be bad.
-		// When DescType_Traits are made exception-safe, then I'll deal with it.
-		
-		static const void *OutputBufferStart(  OutputBuffer buffer )          { return *buffer; }
-		static std::size_t OutputBufferLength( OutputBuffer buffer )          { return GetHandleSize( buffer ); }
-		static OutputBuffer PrepareOutputBuffer( Parameter output )           { HLock( output );  return output; }
-		static void ReleaseOutputBuffer( OutputBuffer buffer )                { ::HUnlock( (Handle)buffer ); }
-      
-		static const bool hasStaticSize = false;
-	};
+	struct Handle_DescType_Traits : public HandleFlattener< T > {};
 	
-   template<> struct DescType_Traits< ::typeChar > : public Nucleus::StringFlattener< std::string >
-     {
-      typedef std::string Result;
-      typedef const std::string& Parameter;
-      
-      typedef std::string        InputBuffer;
-      typedef const std::string& OutputBuffer;
+   template<> struct DescType_Traits< ::typeChar > : public Nucleus::StringFlattener< std::string > {};
 
-      static const bool inputHasVariableLength = true;
-      static void SetInputBufferLength( InputBuffer& b, std::size_t s )     { b.resize( s ); }
-
-      static void *      InputBufferStart(  InputBuffer& buffer )           { return buffer.empty() ? 0 : &buffer[0]; }
-      static std::size_t InputBufferLength( InputBuffer& buffer )           { return buffer.size(); }
-      static Result  ProcessInputBuffer( InputBuffer& buffer )              { return buffer; }
-
-      static const void *OutputBufferStart(  OutputBuffer buffer )          { return buffer.data(); }
-      static std::size_t OutputBufferLength( OutputBuffer buffer )          { return buffer.size(); }
-      static OutputBuffer PrepareOutputBuffer( Parameter output )           { return output; }
-      static void ReleaseOutputBuffer( OutputBuffer )                       {}
-      
-      static const bool hasStaticSize = false;
-     };
-
-   template<> struct DescType_Traits< ::typeFixed > : public FixedFlattener
-     {
-      typedef double Result;
-      typedef double Parameter;
-      
-      typedef ::Fixed InputBuffer;
-      typedef ::Fixed OutputBuffer;
-
-      static const bool inputHasVariableLength = false;
-      static void SetInputBufferLength( InputBuffer&, std::size_t )         {}
-
-      static void *      InputBufferStart(  InputBuffer& buffer )           { return &buffer; }
-      static std::size_t InputBufferLength( InputBuffer& buffer )           { return sizeof( buffer ); }
-      static Result ProcessInputBuffer( InputBuffer& buffer )               { return FixedToDouble( buffer ); }
-
-      static const void *OutputBufferStart(  OutputBuffer &buffer )          { return &buffer; }
-      static std::size_t OutputBufferLength( OutputBuffer &buffer )          { return sizeof( buffer ); }
-      static OutputBuffer PrepareOutputBuffer( Parameter output )           { return DoubleToFixed( output ); }
-      static void ReleaseOutputBuffer( OutputBuffer )                       {}
-      
-      static const bool hasStaticSize = true;
-     };
+   template<> struct DescType_Traits< ::typeFixed > : public FixedFlattener {};
 
    class AEEnumeratedTag {};
    typedef Nucleus::SelectorType< AEEnumeratedTag, UInt32 > AEEnumerated;
@@ -422,32 +215,32 @@ namespace Nitrogen
    
    template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
    
-   template<> struct DescType_Traits< typeBoolean >                : Converting_DescType_Traits< bool, ::Boolean >        {};
-   template<> struct DescType_Traits< typeSInt16 >                 : POD_DescType_Traits< SInt16 >                        {};
-   template<> struct DescType_Traits< typeSInt32 >                 : POD_DescType_Traits< SInt32 >                        {};
-   template<> struct DescType_Traits< typeUInt32 >                 : POD_DescType_Traits< UInt32 >                        {};
-   template<> struct DescType_Traits< typeSInt64 >                 : POD_DescType_Traits< SInt64 >                        {};
-   template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : POD_DescType_Traits< float >                         {};
-   template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : POD_DescType_Traits< double >                        {};
-   template<> struct DescType_Traits< type128BitFloatingPoint >    : POD_DescType_Traits< long double >                   {};
+   template<> struct DescType_Traits< typeBoolean >                : Nucleus::ConvertingPODFlattener< bool, ::Boolean > {};
+   template<> struct DescType_Traits< typeSInt16 >                 : Nucleus::PodFlattener< SInt16 >                    {};
+   template<> struct DescType_Traits< typeSInt32 >                 : Nucleus::PodFlattener< SInt32 >                    {};
+   template<> struct DescType_Traits< typeUInt32 >                 : Nucleus::PodFlattener< UInt32 >                    {};
+   template<> struct DescType_Traits< typeSInt64 >                 : Nucleus::PodFlattener< SInt64 >                    {};
+   template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : Nucleus::PodFlattener< float >                     {};
+   template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : Nucleus::PodFlattener< double >                    {};
+   template<> struct DescType_Traits< type128BitFloatingPoint >    : Nucleus::PodFlattener< long double >               {};
 
 	inline std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
 	{
 		return sizeof (AppParameters) + appParameters.messageLength;
 	}
 	
-   template<> struct DescType_Traits< typeEventRecord >            : POD_DescType_Traits< EventRecord >                   {};
-   template<> struct DescType_Traits< typeAlias >                  : Handle_DescType_Traits< AliasRecord >                {};
-   template<> struct DescType_Traits< typeEnumerated >             : Converting_DescType_Traits< AEEnumerated, UInt32 >   {};
-   template<> struct DescType_Traits< typeType >                   : Converting_DescType_Traits< DescType, ::DescType >   {};
-   template<> struct DescType_Traits< typeAppParameters >          : VariableLengthPOD_DescType_Traits< AppParameters, SizeOf_AppParameters > {};
-   template<> struct DescType_Traits< typeFSS >                    : POD_DescType_Traits< FSSpec >                        {};
-   template<> struct DescType_Traits< typeFSRef >                  : POD_DescType_Traits< FSRef >                         {};
-   template<> struct DescType_Traits< typeKeyword >                : Converting_DescType_Traits< AEKeyword, ::AEKeyword > {};
-   template<> struct DescType_Traits< typeApplSignature >          : Converting_DescType_Traits< OSType, ::OSType >       {};
-   template<> struct DescType_Traits< typeQDRectangle >            : POD_DescType_Traits< Rect >                          {};
-   template<> struct DescType_Traits< typeProcessSerialNumber >    : POD_DescType_Traits< ProcessSerialNumber >           {};
-   template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                          {};
+   template<> struct DescType_Traits< typeEventRecord >            : Nucleus::PodFlattener< EventRecord >                      {};
+   template<> struct DescType_Traits< typeAlias >                  : HandleFlattener< AliasRecord >                            {};
+   template<> struct DescType_Traits< typeEnumerated >             : Nucleus::ConvertingPODFlattener< AEEnumerated, UInt32 >   {};
+   template<> struct DescType_Traits< typeType >                   : Nucleus::ConvertingPODFlattener< DescType, ::DescType >   {};
+   template<> struct DescType_Traits< typeAppParameters >          : Nucleus::VariableLengthPodFlattener< AppParameters, SizeOf_AppParameters > {};
+   template<> struct DescType_Traits< typeFSS >                    : Nucleus::PodFlattener< FSSpec >                           {};
+   template<> struct DescType_Traits< typeFSRef >                  : Nucleus::PodFlattener< FSRef >                            {};
+   template<> struct DescType_Traits< typeKeyword >                : Nucleus::ConvertingPODFlattener< AEKeyword, ::AEKeyword > {};
+   template<> struct DescType_Traits< typeApplSignature >          : Nucleus::ConvertingPODFlattener< OSType, ::OSType >       {};
+   template<> struct DescType_Traits< typeQDRectangle >            : Nucleus::PodFlattener< Rect >                             {};
+   template<> struct DescType_Traits< typeProcessSerialNumber >    : Nucleus::PodFlattener< ProcessSerialNumber >              {};
+   template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                               {};
    
 	
 	template < ::DescType type >
