@@ -92,13 +92,6 @@ namespace Nitrogen
 		userUPP( theControl, partCode );
 	}
 	
-	inline ControlPartCode ControlNoPart()         { return ControlPartCode::Make( kControlNoPart        ); }
-	inline ControlPartCode ControlIndicatorPart()  { return ControlPartCode::Make( kControlIndicatorPart ); }
-	inline ControlPartCode ControlDisabledPart()   { return ControlPartCode::Make( kControlDisabledPart  ); }
-	inline ControlPartCode ControlInactivePart()   { return ControlPartCode::Make( kControlInactivePart  ); }
-	
-	inline ControlPartCode ControlEntireControl()  { return ControlPartCode::Make( kControlEntireControl ); }
-	
 	class ControlProcID_Tag {};
 	typedef Nucleus::SelectorType< ControlProcID_Tag, ::SInt16, 0 > ControlProcID;
 	
@@ -356,7 +349,7 @@ namespace Nitrogen
    template < ::ResType inTagName >
    typename GetControlData_Traits<inTagName>::Result
    GetControlData( ControlRef        inControl,
-                   ControlPartCode   inPart = ControlEntireControl() )
+                   ControlPartCode   inPart = ControlPartCode( kControlEntireControl ) )
      {
       typedef GetControlData_Traits< inTagName > Traits;
       
