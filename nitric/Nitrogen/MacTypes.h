@@ -158,6 +158,8 @@ namespace Nitrogen
    typedef Nucleus::SelectorType< ResTypeTag, ::ResType, ::kUnknownType > ResType;
 
    typedef bool Boolean;
+   
+   typedef Nucleus::ConvertingPODFlattener< bool, ::Boolean > BooleanFlattener;
 
    class StyleTag {};
    typedef Nucleus::FlagType< StyleTag, ::Style > Style;

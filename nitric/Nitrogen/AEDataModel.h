@@ -200,14 +200,14 @@ namespace Nitrogen
    
    template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
    
-   template<> struct DescType_Traits< typeBoolean >                : Nucleus::ConvertingPODFlattener< bool, ::Boolean > {};
-   template<> struct DescType_Traits< typeSInt16 >                 : Nucleus::PodFlattener< SInt16 >                    {};
-   template<> struct DescType_Traits< typeSInt32 >                 : Nucleus::PodFlattener< SInt32 >                    {};
-   template<> struct DescType_Traits< typeUInt32 >                 : Nucleus::PodFlattener< UInt32 >                    {};
-   template<> struct DescType_Traits< typeSInt64 >                 : Nucleus::PodFlattener< SInt64 >                    {};
-   template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : Nucleus::PodFlattener< float >                     {};
-   template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : Nucleus::PodFlattener< double >                    {};
-   template<> struct DescType_Traits< type128BitFloatingPoint >    : Nucleus::PodFlattener< long double >               {};
+   template<> struct DescType_Traits< typeBoolean >                : BooleanFlattener                     {};
+   template<> struct DescType_Traits< typeSInt16 >                 : Nucleus::PodFlattener< SInt16 >      {};
+   template<> struct DescType_Traits< typeSInt32 >                 : Nucleus::PodFlattener< SInt32 >      {};
+   template<> struct DescType_Traits< typeUInt32 >                 : Nucleus::PodFlattener< UInt32 >      {};
+   template<> struct DescType_Traits< typeSInt64 >                 : Nucleus::PodFlattener< SInt64 >      {};
+   template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : Nucleus::PodFlattener< float >       {};
+   template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : Nucleus::PodFlattener< double >      {};
+   template<> struct DescType_Traits< type128BitFloatingPoint >    : Nucleus::PodFlattener< long double > {};
 
 	inline std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
 	{
