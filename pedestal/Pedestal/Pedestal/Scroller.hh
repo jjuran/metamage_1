@@ -372,7 +372,7 @@ namespace Pedestal
 					short oldValue = N::GetControlValue( control );
 					part = N::TrackControl( control, point );
 					
-					if ( part == N::ControlIndicatorPart() )
+					if ( part == kControlIndicatorPart )
 					{
 						short scrollDistance = N::GetControlValue( control ) - oldValue;
 						
