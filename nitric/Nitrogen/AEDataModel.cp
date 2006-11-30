@@ -64,14 +64,12 @@ namespace Nitrogen
 		RegisterOSStatus< errAERecordingIsAlreadyOn >();
 	}
 	
-	AECoercionHandler::AECoercionHandler()
-	:
-		fromType(),
-		toType(),
-		handler(),
-		handlerRefCon(),
-		fromTypeIsDesc(),
-		isSysHandler()
+	AECoercionHandler::AECoercionHandler() : fromType(),
+	                                         toType(),
+	                                         handler(),
+	                                         handlerRefCon(),
+	                                         fromTypeIsDesc(),
+	                                         isSysHandler()
 	{}
 	
 	bool operator==( const AECoercionHandler& a, const AECoercionHandler& b )
@@ -104,13 +102,12 @@ namespace Nitrogen
 		long                    handlerRefCon;
 		::Boolean               fromTypeIsDesc;
 		
-		ThrowOSStatus( ::AEGetCoercionHandler(
-		               fromType,
-		               toType,
-		               &handler,
-		               &handlerRefCon,
-		               &fromTypeIsDesc,
-		               isSysHandler ) );
+		ThrowOSStatus( ::AEGetCoercionHandler( fromType,
+		                                       toType,
+		                                       &handler,
+		                                       &handlerRefCon,
+		                                       &fromTypeIsDesc,
+		                                       isSysHandler ) );
 		
 		return AECoercionHandler( fromType,
 		                          toType,
