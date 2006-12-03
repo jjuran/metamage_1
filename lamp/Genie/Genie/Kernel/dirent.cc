@@ -58,7 +58,7 @@ namespace Genie
 		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
-		int fd = LowestUnusedFrom( files, 0 );
+		int fd = LowestUnusedFrom( files, 3 );
 		
 		try
 		{
