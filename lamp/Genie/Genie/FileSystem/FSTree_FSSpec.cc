@@ -92,7 +92,14 @@ namespace Genie
 		static FSNode ConvertToFSNode( N::FSVolumeRefNum vRefNum );
 	};
 	
-	typedef FSTree_Special< Volumes_Details > FSTree_Volumes;
+	class FSTree_Volumes : public FSTree_Special< Volumes_Details >
+	{
+		private:
+			typedef FSTree_Special< Volumes_Details > Base;
+		
+		public:
+			void Stat( struct ::stat& sb ) const;
+	};
 	
 	
 	static std::string MacFromUnixName( const std::string& name )
@@ -254,6 +261,16 @@ namespace Genie
 	
 	FSTreePtr FSTree_FSSpec::Parent() const
 	{
+		if ( NN::Convert< N::FSDirSpec >( fileSpec ) == FindJDirectory() )
+		{
+			return FSRoot();
+		}
+		
+		if ( fileSpec.parID == fsRtParID )
+		{
+			return FSTree_Volumes::GetSingleton();
+		}
+		
 		return FSTreePtr( new FSTree_FSSpec( NN::Convert< FSSpec >( N::FSpGetParent( fileSpec ) ) ) );
 	}
 	
@@ -359,6 +376,13 @@ namespace Genie
 		FSTreePtr tree( new FSTree_FSSpec( volume ) );
 		
 		return FSNode( name, tree );
+	}
+	
+	void FSTree_Volumes::Stat( struct ::stat& sb ) const
+	{
+		Base::Stat( sb );
+		
+		sb.st_ino = fsRtParID;
 	}
 	
 }
