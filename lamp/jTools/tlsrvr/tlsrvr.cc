@@ -9,6 +9,7 @@
 #include <memory>
 #include <numeric>
 #include <string>
+#include <vector>
 
 // Standard C/C++
 #include <cctype>
@@ -41,8 +42,6 @@ namespace O = Orion;
 
 namespace ext = N::STLExtensions;
 
-using std::string;
-using std::vector;
 using RunToolServer::sigToolServer;
 using RunToolServer::sEscapedQuote;
 using RunToolServer::RunCommandInToolServer;
@@ -57,7 +56,7 @@ class Concat
 	public:
 		Concat() : f( F() )  {}
 		Concat( const F& f ) : f( f )  {}
-		string operator()( const string& one, const char* other ) const
+		std::string operator()( const std::string& one, const char* other ) const
 		{
 			return one + " " + f( other );
 		}
@@ -70,13 +69,13 @@ Concat< F > MakeConcat( const F& f )
 }
 
 
-static string QuoteForMPW( const string& str )
+static std::string QuoteForMPW( const std::string& str )
 {
-	string::const_iterator p = str.begin(), q = p, end = str.end();
+	std::string::const_iterator p = str.begin(), q = p, end = str.end();
 	
 	bool needsQuoting = false;
 	
-	string result = "'";
+	std::string result = "'";
 	
 	while ( p < end )
 	{
@@ -86,7 +85,7 @@ static string QuoteForMPW( const string& str )
 			++q;
 		}
 		
-		result += string( p, q );
+		result += std::string( p, q );
 		
 		if ( q < end )
 		{
@@ -109,9 +108,9 @@ static string QuoteForMPW( const string& str )
 }
 
 
-static string MakeCommand( const vector<const char*>& args, bool needToEscape )
+static std::string MakeCommand( const std::vector< const char* >& args, bool needToEscape )
 {
-	string command;
+	std::string command;
 	
 	if ( args.size() > 0 )
 	{
@@ -131,7 +130,7 @@ static string MakeCommand( const vector<const char*>& args, bool needToEscape )
 			(
 				args.begin() + 1, 
 				args.end(), 
-				string( args[ 0 ] ), 
+				std::string( args[ 0 ] ), 
 				Concat< ext::identity< const char* > >()
 			);
 		}
@@ -185,9 +184,9 @@ int O::Main( int argc, const char *const argv[] )
 	O::Options options = DefineOptions();
 	options.GetOptions( argc, argv );
 	
-	const vector< const char* >& params = options.GetFreeParams();
+	const std::vector< const char* >& params = options.GetFreeParams();
 	
-	string command = MakeCommand( params, options.GetFlag( optEscapeForMPW ) );
+	std::string command = MakeCommand( params, options.GetFlag( optEscapeForMPW ) );
 	
 	bool gSwitchLayers = options.GetFlag( optSwitchLayers );
 	
