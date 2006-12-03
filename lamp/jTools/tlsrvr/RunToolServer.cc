@@ -83,14 +83,26 @@ namespace RunToolServer
 	}
 	
 	
+	static std::string DirectoryCommandForMPW()
+	{
+		try
+		{
+			FSSpec cwd = Div::ResolvePathToFSSpec( "." );
+			
+			return "Directory " + q( N::FSpGetMacPathname( cwd ) ) + "\r";
+		}
+		catch ( ... )
+		{
+			return "Echo 'Warning:  Current directory not convertible to FSSpec, ignoring'\r";
+		}
+	}
+	
 	static void WriteCommandFile( const std::string& command, const FSSpec& scriptFile )
 	{
 		// Write the command into a file.
-		FSSpec cwd = Div::ResolvePathToFSSpec( "." );
-		
 		std::string script;
 		
-		script += "Directory " + q( N::FSpGetMacPathname( cwd ) ) + "\r";
+		script += DirectoryCommandForMPW();
 		script += command + "\r";
 		
 		N::FSWrite( N::FSpOpenDF( scriptFile, fsWrPerm ),
