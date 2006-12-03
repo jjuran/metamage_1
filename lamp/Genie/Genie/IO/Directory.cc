@@ -24,7 +24,7 @@ namespace Genie
 		return &dir;
 	}
 	
-	DirHandle::DirHandle( const FSTreePtr tree ) : iterator( tree->Iterate() )
+	DirHandle::DirHandle( const FSTreePtr& tree ) : iterator( tree->Iterate() )
 	{
 	}
 	

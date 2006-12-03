@@ -24,7 +24,7 @@ namespace Genie
 			FSIteratorPtr iterator;
 		
 		public:
-			DirHandle( const FSTreePtr tree );
+			DirHandle( const FSTreePtr& tree );
 			
 			const dirent* ReadDir();
 			
