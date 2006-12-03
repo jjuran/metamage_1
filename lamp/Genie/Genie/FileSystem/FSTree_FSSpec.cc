@@ -362,7 +362,7 @@ namespace Genie
 	
 	FSTreePtr Volumes_Details::Lookup( const std::string& name )
 	{
-		N::FSDirSpec rootDir( N::RootDirectory( DetermineVRefNum( name + ":" ) ) );
+		N::FSDirSpec rootDir( N::RootDirectory( DetermineVRefNum( MacFromUnixName( name ) + ":" ) ) );
 		
 		return FSTreePtr( new FSTree_FSSpec( rootDir & "" ) );
 	}
