@@ -9,9 +9,6 @@
 // POSIX
 #include "signal.h"
 
-// POSeven
-//#include "POSeven/Errno.h"
-
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -21,14 +18,11 @@
 namespace Genie
 {
 	
-	//namespace P7 = POSeven;
-	
-	
 	static int kill( pid_t pid, int sig )
 	{
 		if ( !gProcessTable.Exists( pid ) )
 		{
-			return -1;  // FIXME:  set errno
+			return CurrentProcess().SetErrno( ESRCH );
 		}
 		
 		if ( sig != 0 )
