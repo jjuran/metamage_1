@@ -636,7 +636,7 @@ namespace Genie
 			*fErrnoData = errorNumber;
 		}
 		
-		return -1;
+		return errorNumber == 0 ? 0 : -1;
 	}
 	
 	char* Process::GetEnv( const char* name )
