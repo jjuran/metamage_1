@@ -149,8 +149,8 @@ namespace Genie
 				}
 				
 				// Rename source to dest
-				//N::FSpRename( srcFile, destFile.name );
-				N::ThrowOSStatus( ::FSpRename( &srcFile, destFile.name ) );
+				//N::FSpRename( srcFile, requestedDestName );
+				N::ThrowOSStatus( ::FSpRename( &srcFile, requestedDestName ) );
 				
 				// And we're done
 				return 0;
