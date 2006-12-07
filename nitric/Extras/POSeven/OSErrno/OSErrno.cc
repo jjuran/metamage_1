@@ -2,6 +2,9 @@
 
 #include "OSErrno/OSErrno.hh"
 
+// Nitrogen
+#include "Nitrogen/OpenTransport.h"
+
 
 namespace OSErrno
 {
@@ -9,6 +12,15 @@ namespace OSErrno
 	POSeven::Errno ErrnoFromOSStatus( const Nitrogen::OSStatus& error )
 	{
 		int result = 0;
+		
+	#if OTUNIXERRORS
+		
+		if ( ::IsEError( error ) )
+		{
+			return POSeven::Errno( ::OSStatus2E( error ) );
+		}
+		
+	#endif
 		
 		switch ( error.Get() )
 		{
