@@ -466,6 +466,34 @@ namespace Nitrogen
 		return info;
 	}
 	
+	void FSpSetFInfo( const FSSpec& file, const FInfo& info )
+	{
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpSetFInfo( &file, &info ) );
+	}
+	
+	void FSpSetFLock( const FSSpec& file )
+	{
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpSetFLock( &file ) );
+	}
+	
+	void FSpRstFLock( const FSSpec& file )
+	{
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpRstFLock( &file ) );
+	}
+	
+	void FSpRename( const FSSpec& item, ConstStr255Param newName )
+	{
+		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
+		
+		ThrowOSStatus( ::FSpRename( &item, newName ) );
+	}
+	
 	void FSpCatMove( const FSSpec& source, const FSSpec& dest )
 	{
 		Nucleus::OnlyOnce< RegisterFileManagerErrors >();
