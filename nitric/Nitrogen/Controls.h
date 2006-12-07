@@ -300,7 +300,7 @@ namespace Nitrogen
    void SetControlData( ControlRef                                               inControl,
                         typename SetControlData_Traits< inTagName >::InData_Type inData )
      {
-      return SetControlData< inTagName >( inControl, ControlEntireControl(), inData );
+      return SetControlData< inTagName >( inControl, ControlPartCode( kControlEntireControl ), inData );
      }
 
 	// 2852
