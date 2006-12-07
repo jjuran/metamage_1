@@ -43,9 +43,6 @@
 #ifndef NUCLEUS_INDEXTYPE_H
 #include "Nucleus/IndexType.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 #ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
 #include "Nucleus/ArrayContainerFunctions.h"
 #endif
@@ -54,6 +51,28 @@
 
 namespace Nitrogen
   {
+	
+	class FileManagerErrorsRegistration
+	{
+		private:
+			FileManagerErrorsRegistration();
+			
+			static FileManagerErrorsRegistration theRegistration;
+		
+		public:
+			static void Trigger();
+	};
+	
+	inline void ThrowFileManagerError( ::OSStatus err )
+	{
+		if ( err != noErr )
+		{
+			FileManagerErrorsRegistration::Trigger();
+			
+			ThrowOSStatus( err );
+		}
+	}
+	
    void RegisterFileManagerErrors();
 
    class FSDirID     // A one-off: like IDType< FSDirIDTag, long, 0 >, but sometimes it's signed, sometimes unsigned
@@ -817,7 +836,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::FSFileRefNum file ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterFileManagerErrors >();
+			Nitrogen::FileManagerErrorsRegistration::Trigger();
 			HandleDestructionOSStatus( ::FSClose( file ) );
 		}
 	};
@@ -1419,7 +1438,7 @@ namespace Nucleus
      {
       void operator()( Nitrogen::FSIterator iterator ) const
         {
-         Nucleus::OnlyOnce<Nitrogen::RegisterFileManagerErrors>();
+         Nitrogen::FileManagerErrorsRegistration::Trigger();
          HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
         }
      };
@@ -1633,7 +1652,7 @@ namespace Nucleus
      {
       void operator()( const Nitrogen::FSForkRef& fork ) const
         {
-         Nucleus::OnlyOnce<Nitrogen::RegisterFileManagerErrors>();
+         Nitrogen::FileManagerErrorsRegistration::Trigger();
          HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
                                                     fork.Name().size(),
                                                     fork.Name().data() ) );
@@ -1672,7 +1691,7 @@ namespace Nucleus
      {
       void operator()( Nitrogen::FSForkRefNum fork ) const
         {
-         Nucleus::OnlyOnce<Nitrogen::RegisterFileManagerErrors>();
+         Nitrogen::FileManagerErrorsRegistration::Trigger();
          HandleDestructionOSStatus( ::FSCloseFork( fork ) );
         }
      };

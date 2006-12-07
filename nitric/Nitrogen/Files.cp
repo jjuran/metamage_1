@@ -4,9 +4,6 @@
 #include "Nitrogen/Files.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
@@ -22,18 +19,6 @@
 
 namespace Nitrogen
   {
-	
-	class FileManagerErrorsRegistration
-	{
-		private:
-			FileManagerErrorsRegistration();
-			
-			static FileManagerErrorsRegistration theRegistration;
-		
-		public:
-			static void Trigger();
-	};
-	
 	
 	FileManagerErrorsRegistration FileManagerErrorsRegistration::theRegistration;
 	
