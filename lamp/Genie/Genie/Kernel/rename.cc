@@ -116,7 +116,7 @@ namespace Genie
 			
 			bool srcAndDestNamesEqual = std::equal( srcFile.name,
 			                                        srcFile.name + 1 + srcFile.name[0],
-			                                        destFile.name );
+			                                        ConstStr63Param( requestedDestName ) );
 			
 			if ( srcFile.parID == destFile.parID )
 			{
@@ -129,7 +129,7 @@ namespace Genie
 					// Could be a case change.
 					bool caseChanged = !std::equal( destFile.name,
 					                                destFile.name + 1 + destFile.name[0],
-					                                static_cast< const unsigned char* >( requestedDestName ) );
+					                                ConstStr63Param( requestedDestName ) );
 					
 					if ( !caseChanged )
 					{
@@ -149,8 +149,7 @@ namespace Genie
 				}
 				
 				// Rename source to dest
-				//N::FSpRename( srcFile, requestedDestName );
-				N::ThrowOSStatus( ::FSpRename( &srcFile, requestedDestName ) );
+				N::FSpRename( srcFile, requestedDestName );
 				
 				// And we're done
 				return 0;
@@ -176,9 +175,9 @@ namespace Genie
 			
 			// Darn, we have to move *and* rename.  Use MoreFiles.
 			
-			N::Str255 name = destFile.name;
 			destFile.name[0] = '\0';
-			N::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFile, name ) );
+			
+			N::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFile, requestedDestName ) );
 		}
 		catch ( ... )
 		{
