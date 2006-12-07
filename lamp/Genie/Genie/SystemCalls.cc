@@ -23,6 +23,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// OSErrno
+#include "OSErrno/OSErrno.hh"
+
 // Nitrogen Extras / Templates
 //#include "Templates/FunctionalExtensions.h"
 //#include "Templates/PointerToFunction.h"
@@ -49,6 +52,7 @@
 #include "Genie/IO/TTY.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -60,6 +64,29 @@ extern "C"
 	                      FSSpec*      outFSS );
 }
 
+namespace Nucleus
+{
+	
+	template <>
+	struct Converter< POSeven::Errno, Io::EndOfInput > : public std::unary_function< Io::EndOfInput, POSeven::Errno >
+	{
+		POSeven::Errno operator()( Io::EndOfInput ) const
+		{
+			return POSeven::Errno( 0 );
+		}
+	};
+	
+	template <>
+	struct Converter< POSeven::Errno, Io::NoDataPending > : public std::unary_function< Io::NoDataPending, POSeven::Errno >
+	{
+		POSeven::Errno operator()( Io::NoDataPending ) const
+		{
+			return POSeven::Errno( EAGAIN );  // or EWOULDBLOCK?
+		}
+	};
+	
+}
+
 namespace Genie
 {
 	
@@ -69,6 +96,18 @@ namespace Genie
 	namespace P7 = POSeven;
 	
 	namespace Ped = Pedestal;
+	
+	
+	int GetErrnoFromExceptionInSystemCall()
+	{
+		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus       >();
+		NN::RegisterExceptionConversion< P7::Errno, Io::EndOfInput    >();
+		NN::RegisterExceptionConversion< P7::Errno, Io::NoDataPending >();
+		
+		P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled(), EINVAL );
+		
+		return CurrentProcess().SetErrno( errnum );
+	}
 	
 	
 	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
@@ -180,13 +219,10 @@ namespace Genie
 			
 			return result == 0 ? 0 : -1;
 		}
-		catch ( const N::FNFErr& )
+		catch ( ... )
 		{
-			return CurrentProcess().SetErrno( ENOENT );
+			return GetErrnoFromExceptionInSystemCall();
 		}
-		catch ( ... ) {}
-		
-		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
 	REGISTER_SYSTEM_CALL( chdir );
@@ -254,10 +290,6 @@ namespace Genie
 			
 			RegisterProcessContext( parent );
 		}
-		catch ( const P7::Errno& err )
-		{
-			return CurrentProcess().SetErrno( err );
-		}
 		catch ( const N::OSStatus& err )
 		{
 			std::string errMsg = "\n";
@@ -279,11 +311,11 @@ namespace Genie
 			
 			std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
 			
-			return CurrentProcess().SetErrno( EINVAL );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		catch ( ... )
 		{
-			return -1;
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		// Yes, in Genie a forked exec() DOES return on success.
@@ -438,26 +470,10 @@ namespace Genie
 			
 			return peekBuffer.size();
 		}
-		catch ( const Io::EndOfInput& )
-		{
-			// Zero return from peek() indicates EOF
-			return 0;
-		}
-		catch ( const Io::NoDataPending& )
-		{
-			CurrentProcess().SetErrno( EWOULDBLOCK );
-		}
-		catch ( const P7::Errno& error )
-		{
-			CurrentProcess().SetErrno( error );
-		}
 		catch ( ... )
 		{
-			// FIXME:  Is there a better course of action, or at least a better default?
-			CurrentProcess().SetErrno( EIO );
+			return GetErrnoFromExceptionInSystemCall();
 		}
-		
-		return -1;
 	}
 	
 	REGISTER_SYSTEM_CALL( peek );
@@ -480,26 +496,10 @@ namespace Genie
 			
 			return get;
 		}
-		catch ( const Io::EndOfInput& )
-		{
-			// Zero return from read() indicates EOF
-			return 0;
-		}
-		catch ( const Io::NoDataPending& )
-		{
-			CurrentProcess().SetErrno( EWOULDBLOCK );
-		}
-		catch ( const P7::Errno& error )
-		{
-			CurrentProcess().SetErrno( error );
-		}
 		catch ( ... )
 		{
-			// FIXME:  Is there a better course of action, or at least a better default?
-			CurrentProcess().SetErrno( EIO );
+			return GetErrnoFromExceptionInSystemCall();
 		}
-		
-		return -1;
 	}
 	
 	REGISTER_SYSTEM_CALL( read );
@@ -555,9 +555,9 @@ namespace Genie
 			}
 			while ( remaining > 0 );
 		}
-		catch ( const P7::Errno& error )
+		catch ( ... )
 		{
-			return CurrentProcess().SetErrno( error );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;
@@ -618,17 +618,10 @@ namespace Genie
 								    count );
 			return put;
 		}
-		catch ( const P7::Errno& error )
-		{
-			CurrentProcess().SetErrno( error );
-		}
 		catch ( ... )
 		{
-			// FIXME:  Is there a better course of action, or at least a better default?
-			CurrentProcess().SetErrno( EIO );
+			return GetErrnoFromExceptionInSystemCall();
 		}
-		
-		return -1;
 	}
 	
 	REGISTER_SYSTEM_CALL( write );
