@@ -826,10 +826,22 @@ namespace Nucleus
 namespace Nitrogen
   {
 	
-	// 2142
+	void UnmountVol( ConstStr63Param volName = NULL );
+	
+	void UnmountVol( FSVolumeRefNum vRefNum );
+	
+	//void UnmountVol( FSDriveIndex drive );
+	
+	void FlushVol( ConstStr63Param volName = NULL );
+	
+	void FlushVol( FSVolumeRefNum vRefNum );
+	
+	//void FlushVol( FSDriveIndex drive );
+	
+	// HSetVol
+	
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum );
 	
-	// 2154
 	SInt32 FSRead( FSFileRefNum file,
 	               SInt32       requestCount,
 	               void *       buffer );
@@ -841,7 +853,6 @@ namespace Nitrogen
 		return FSRead( file, count * sizeof (Element), buffer );
 	}
 	
-	// 2169
 	SInt32 FSWrite( FSFileRefNum file,
 	                SInt32       requestCount,
 	                const void * buffer );
@@ -853,24 +864,21 @@ namespace Nitrogen
 		return FSWrite( file, count * sizeof (Element), buffer );
 	}
 	
-	// 2335
 	SInt32 Allocate( FSFileRefNum      fileRefNum,
 	                 SInt32            requestCount );
 	
-	// 2349
 	SInt32 GetEOF( FSFileRefNum fileRefNum );
 	
-	// 2363
 	void SetEOF( FSFileRefNum fileRefNum,
 	             SInt32       positionOffset );
 	
-	// 2377
 	SInt32 GetFPos( FSFileRefNum fileRefNum );
 	
-	// 2391
 	void SetFPos( FSFileRefNum fileRefNum,
 	              FSIOPosMode  positionMode,
 	              SInt32       positionOffset );
+	
+	// GetVRefNum
 	
 	struct FSDirSpec
 	{
@@ -909,7 +917,10 @@ namespace Nucleus
 namespace Nitrogen
   {
 	
-	// 2872
+	// PBHSetVolSync
+	
+	// ...
+	
 	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock );
 	
 	void PBSetCatInfoSync( CInfoPBRec& cInfo );
@@ -927,7 +938,8 @@ namespace Nitrogen
 	                           CInfoPBRec&       paramBlock,
 	                           StringPtr         name        = NULL );
 	
-	// 3690
+	// ...
+	
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock );
 	GetVolParmsInfoBuffer PBHGetVolParmsSync( FSVolumeRefNum vRefNum );
 	
@@ -970,7 +982,6 @@ namespace Nitrogen
 	// PBDTOpenInform
 	// PBDTDeleteSync
 	
-	// 4617
 	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name );
 	
 	inline FSSpec FSMakeFSSpec( const FSDirSpec& dir, ConstStr255Param name )
@@ -1003,31 +1014,37 @@ namespace Nitrogen
 	
 	bool FSCompareFSSpecs( const FSSpec& a, const FSSpec& b );
 	
-	// 4633
 	Nucleus::Owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions );
 	
-	// 4648
 	Nucleus::Owned< FSFileRefNum > FSpOpenRF( const FSSpec&   spec,
 	                                          FSIOPermssn     permissions );
 	
-	// 4663
 	FSSpec FSpCreate( const FSSpec&  file, 
 	                  OSType         creator, 
 	                  OSType         type, 
 	                  ScriptCode     scriptTag = ScriptCode( smSystemScript ) );
 	
-	// 4679
 	FSDirSpec FSpDirCreate( const FSSpec&  dir, 
 	                        ScriptCode     scriptTag = ScriptCode( smSystemScript ) );
 	
-	// 4694
 	void FSpDelete( const FSSpec& item );
 	
-	// 4706
 	FInfo FSpGetFInfo( const FSSpec& file );
 	
-	// 4772
+	void FSpSetFInfo( const FSSpec& file, const FInfo& info );
+	
+	void FSpSetFLock( const FSSpec& file );
+	
+	void FSpRstFLock( const FSSpec& file );
+	
+	void FSpRename( const FSSpec& item, ConstStr255Param newName );
+	
+	inline void FSpRename( const FSSpec& item, const std::string& newName )
+	{
+		FSpRename( item, Str255( newName ) );
+	}
+	
 	// dest is the directory to move source *into*, not the actual new location of source.
 	void FSpCatMove( const FSSpec& source, const FSSpec& dest );
 	
@@ -1040,6 +1057,10 @@ namespace Nitrogen
 	{
 		FSpCatMove( source, Nucleus::Make< FSDirSpec >( FSVolumeRefNum( source.vRefNum ), dest ) );
 	}
+	
+	void FSpExchangeFiles( const FSSpec& a, const FSSpec& b );
+	
+	// ...
 	
    // 5414
    FSRef FSpMakeFSRef( const FSSpec& );
