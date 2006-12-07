@@ -3,9 +3,6 @@
  *	===========
  */
 
-// Standard C
-#include <errno.h>
-
 // POSIX
 #include "unistd.h"
 
@@ -19,6 +16,7 @@
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -58,7 +56,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return CurrentProcess().SetErrno( EINVAL );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;

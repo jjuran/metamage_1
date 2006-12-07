@@ -17,20 +17,15 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace P7 = POSeven;
-	
 	static int unlink( const char* pathname )
 	{
-		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus >();
-		
 		try
 		{
 			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
@@ -50,15 +45,9 @@ namespace Genie
 			
 			file->Delete();
 		}
-		catch ( const N::OSStatus& err )
-		{
-			P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled() );
-			
-			return CurrentProcess().SetErrno( errnum );
-		}
 		catch ( ... )
 		{
-			return CurrentProcess().SetErrno( EINVAL );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;

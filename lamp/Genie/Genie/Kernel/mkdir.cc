@@ -3,28 +3,19 @@
  *	========
  */
 
-// Standard C
-#include <errno.h>
-
 // POSIX
 #include "sys/stat.h"
-
-// Nitrogen / Carbon
-#include "Nitrogen/Files.h"
-#include "Nitrogen/OSStatus.h"
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	static int mkdir( const char* pathname, mode_t mode )
 	{
@@ -35,18 +26,13 @@ namespace Genie
 			FSTreePtr location = ResolvePathname( pathname, current );
 			
 			location->CreateDirectory( mode );
-			
-			return 0;
-		}
-		catch ( N::DupFNErr& )
-		{
-			return CurrentProcess().SetErrno( EEXIST );
 		}
 		catch ( ... )
 		{
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return 0;
 	}
 	
 	REGISTER_SYSTEM_CALL( mkdir );

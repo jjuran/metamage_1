@@ -3,20 +3,18 @@
  *	=========
  */
 
-// Standard C
-#include <errno.h>
-
 // POSIX
 #include "dirent.h"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/MacErrors.h"
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -66,13 +64,9 @@ namespace Genie
 			
 			return reinterpret_cast< DIR* >( fd );
 		}
-		catch ( N::FNFErr& )
-		{
-			CurrentProcess().SetErrno( ENOENT );
-		}
 		catch ( ... )
 		{
-			CurrentProcess().SetErrno( EINVAL );
+			(void) GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return NULL;
@@ -92,15 +86,13 @@ namespace Genie
 			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
 			
 			files.erase( fd );
-			
-			return 0;
 		}
 		catch ( ... )
 		{
-			
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return 0;
 	}
 	
 	REGISTER_SYSTEM_CALL( closedir );
@@ -120,11 +112,12 @@ namespace Genie
 		}
 		catch ( const N::FNFErr& err )
 		{
+			// End of iteration -- not an error, so clear errno
 			CurrentProcess().SetErrno( 0 );
 		}
 		catch ( ... )
 		{
-			CurrentProcess().SetErrno( EINVAL );
+			(void) GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return NULL;
@@ -147,10 +140,8 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			
+			(void) GetErrnoFromExceptionInSystemCall();
 		}
-		
-		CurrentProcess().SetErrno( EINVAL );
 	}
 	
 	REGISTER_SYSTEM_CALL( rewinddir );
@@ -170,10 +161,8 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			
+			(void) GetErrnoFromExceptionInSystemCall();
 		}
-		
-		CurrentProcess().SetErrno( EINVAL );
 	}
 	
 	REGISTER_SYSTEM_CALL( seekdir );
@@ -193,10 +182,8 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			
+			return GetErrnoFromExceptionInSystemCall();
 		}
-		
-		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
 	REGISTER_SYSTEM_CALL( telldir );

@@ -4,7 +4,7 @@
  */
 
 // Standard C
-#include <errno.h>
+//#include <errno.h>
 
 // Standard C/C++
 #include <cstring>
@@ -15,9 +15,6 @@
 // Nitrogen / Carbon
 #include "Nitrogen/OpenTransportProviders.h"
 
-// Io
-#include "Io/Exceptions.hh"
-
 // Kerosene/Common
 #include "SystemCalls.hh"
 
@@ -25,6 +22,7 @@
 #include "Genie/Process.hh"
 #include "Genie/IO/SocketStream.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -86,8 +84,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			// convert exception
-			return -1;
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return fd;
@@ -121,8 +118,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			// Convert the exception
-			return -1;
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;
@@ -143,8 +139,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			// Convert the exception
-			return -1;
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;
@@ -169,14 +164,9 @@ namespace Genie
 			
 			return fd;
 		}
-		catch ( Io::NoDataPending& )
-		{
-			return CurrentProcess().SetErrno( EAGAIN );
-		}
 		catch ( ... )
 		{
-			// Convert the exception
-			return -1;
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;
@@ -201,8 +191,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			// Convert the exception
-			return -1;
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;
@@ -226,8 +215,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			// Convert the exception
-			return -1;
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;
@@ -251,8 +239,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			// Convert the exception
-			return -1;
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;

@@ -16,6 +16,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -52,13 +53,9 @@ namespace Genie
 			
 			return fd;
 		}
-		catch ( const P7::Errno& err )
-		{
-			return CurrentProcess().SetErrno( err );
-		}
 		catch ( ... )
 		{
-			return CurrentProcess().SetErrno( EINVAL );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 	}
 	

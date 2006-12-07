@@ -3,23 +3,18 @@
  *	=========
  */
 
-// Standard C
-#include <errno.h>
-
 // POSIX
 #include "sys/select.h"
 #include "unistd.h"
 
-// Nitrogen / Carbon
+// Nitrogen
 #include "Nitrogen/Timer.h"
-
-// POSeven
-#include "POSeven/Errno.hh"
 
 // Genie
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -27,7 +22,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace P7 = POSeven;
 	
 	
 	static int select( int n, fd_set*  readfds,
@@ -112,17 +106,10 @@ namespace Genie
 			
 			return result;
 		}
-		catch ( P7::Errno& error )
-		{
-			CurrentProcess().SetErrno( error );
-		}
 		catch ( ... )
 		{
-			// FIXME:  Is there a better course of action, or at least a better default?
-			CurrentProcess().SetErrno( EIO );
+			return GetErrnoFromExceptionInSystemCall();
 		}
-		
-		return -1;
 	}
 	
 	REGISTER_SYSTEM_CALL( select );

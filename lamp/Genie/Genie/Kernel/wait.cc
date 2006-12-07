@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -115,11 +116,12 @@ namespace Genie
 				Yield();
 			}
 		}
-		catch ( P7::Errno& err )
+		catch ( ... )
 		{
-			CurrentProcess().SetErrno( err );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
+		// Not reached
 		return -1;
 	}
 	

@@ -4,24 +4,17 @@
  */
 
 // Universal Interfaces
-#include <OSUtils.h>
+//#include <OSUtils.h>
 
-// Standard C
-#include <errno.h>
-#include <string.h>
+// Standard C/C++
+#include <cstring>
 
 // Standard C++
 #include <string>
 
 // POSIX
-#include "stdlib.h"
+//#include "stdlib.h"
 #include "sys/stat.h"
-
-// Nitrogen
-#include "Nitrogen/OSStatus.h"
-
-// POSeven
-#include "POSeven/Errno.hh"
 
 // Genie
 #include "Genie/IO/File.hh"
@@ -29,14 +22,12 @@
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	namespace P7 = POSeven;
 	
 	static void StatCharacterDevice( struct stat* sb )
 	{
@@ -52,23 +43,13 @@ namespace Genie
 			FSTreePtr file = ResolvePathname( path, current );
 			
 			file->ChangeMode( mode );
-			
-			return 0;
 		}
-		catch ( const P7::Errno& err )
+		catch ( ... )
 		{
-			return CurrentProcess().SetErrno( err );
-		}
-		catch ( const N::FNFErr& err )
-		{
-			return CurrentProcess().SetErrno( ENOENT );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return 0;
 	}
 	
 	static int stat_file( const char* path, struct stat* sb )
@@ -82,23 +63,13 @@ namespace Genie
 			FSTreePtr file = ResolvePathname( path, current );
 			
 			file->Stat( *sb );
-			
-			return 0;
 		}
-		catch ( const N::FNFErr& err )
+		catch ( ... )
 		{
-			return CurrentProcess().SetErrno( ENOENT );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			
-		}
-		catch ( const P7::Errno& err )
-		{
-			return CurrentProcess().SetErrno( err );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return 0;
 	}
 	
 	static int chmod( const char* path, mode_t mode )
@@ -131,13 +102,10 @@ namespace Genie
 			FileHandle& fh = IOHandle_Cast< FileHandle >( *files[ fd ].handle );
 			
 			fh.Stat( sb );
-			
-			return 0;
 		}
 		catch ( ... )
 		{
-			// Convert the exception
-			return CurrentProcess().SetErrno( EINVAL );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;

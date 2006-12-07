@@ -31,6 +31,7 @@
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -108,12 +109,14 @@ namespace Genie
 				// destFile is now the item we're going to replace
 				destExists = true;
 			}
-			catch ( N::FNFErr& )
+			catch ( const N::FNFErr& )
 			{
 				// destFile is absent
 			}
 			
-			bool srcAndDestNamesEqual = std::equal( srcFile.name, srcFile.name + 1 + srcFile.name[0], destFile.name );
+			bool srcAndDestNamesEqual = std::equal( srcFile.name,
+			                                        srcFile.name + 1 + srcFile.name[0],
+			                                        destFile.name );
 			
 			if ( srcFile.parID == destFile.parID )
 			{
@@ -124,7 +127,9 @@ namespace Genie
 				if ( sameFile )
 				{
 					// Could be a case change.
-					bool caseChanged = !std::equal( destFile.name, destFile.name + 1 + destFile.name[0], static_cast< const unsigned char* >( requestedDestName ) );
+					bool caseChanged = !std::equal( destFile.name,
+					                                destFile.name + 1 + destFile.name[0],
+					                                static_cast< const unsigned char* >( requestedDestName ) );
 					
 					if ( !caseChanged )
 					{
@@ -175,13 +180,9 @@ namespace Genie
 			destFile.name[0] = '\0';
 			N::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFile, name ) );
 		}
-		catch ( N::FNFErr& )
-		{
-			return CurrentProcess().SetErrno( ENOENT );
-		}
 		catch ( ... )
 		{
-			return CurrentProcess().SetErrno( EINVAL );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
 		return 0;

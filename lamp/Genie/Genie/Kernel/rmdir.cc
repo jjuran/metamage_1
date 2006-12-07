@@ -19,6 +19,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -29,15 +30,9 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
-	static void RegisterMacToUnixErrorConversions()
-	{
-		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus >();
-	}
 	
 	static int rmdir( const char* pathname )
 	{
-		RegisterMacToUnixErrorConversions();
-		
 		try
 		{
 			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
@@ -56,27 +51,25 @@ namespace Genie
 			}
 			
 			dir->Delete();
-			
-			return 0;
 		}
 		catch ( const N::OSStatus& err )
 		{
-			P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled() );
-			
 			// Unfortunately, fBsyErr can mean different things.
 			// Here we assume it means the directory is not empty.
-			if ( errnum == EBUSY )
+			
+			if ( err == fBsyErr )
 			{
-				errnum = ENOTEMPTY;
+				return CurrentProcess().SetErrno( ENOTEMPTY );
 			}
 			
-			return CurrentProcess().SetErrno( errnum );
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		catch ( ... )
 		{
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return 0;
 	}
 	
 	REGISTER_SYSTEM_CALL( rmdir );

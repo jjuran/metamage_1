@@ -9,24 +9,19 @@
 // POSIX
 #include "sys/ioctl.h"
 
-// Nitrogen / Carbon
-#include "Nitrogen/OSStatus.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
+// OSErrno
+#include "OSErrno/OSErrno.hh"
 
 // Genie
 #include "Genie/IO/Stream.hh"
-#include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
 	
 	static int ioctl( int filedes, unsigned long request, int* argp )
 	{
@@ -48,22 +43,23 @@ namespace Genie
 						stream.SetBlocking();
 					}
 					
-					return 0;
+					break;
 				
 				case FIONREAD:
 					// not implemented
-					break;
+					return CurrentProcess().SetErrno( EINVAL );
 				
 				default:
 					stream.IOCtl( request, argp );
-					return 0;
+					break;
 			}
 		}
 		catch ( ... )
 		{
+			return GetErrnoFromExceptionInSystemCall();
 		}
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return 0;
 	}
 	
 	REGISTER_SYSTEM_CALL( ioctl );
