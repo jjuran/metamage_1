@@ -20,7 +20,8 @@
 namespace Nitrogen
   {
 	
-	FileManagerErrorsRegistration FileManagerErrorsRegistration::theRegistration;
+	static FileManagerErrorsRegistration theRegistration;
+	
 	
 	FileManagerErrorsRegistration::FileManagerErrorsRegistration()
 	{

@@ -54,12 +54,9 @@ namespace Nitrogen
 	
 	class FileManagerErrorsRegistration
 	{
-		private:
+		public:
 			FileManagerErrorsRegistration();
 			
-			static FileManagerErrorsRegistration theRegistration;
-		
-		public:
 			static void Trigger();
 	};
 	

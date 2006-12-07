@@ -14,7 +14,8 @@
 namespace Nitrogen
 {
 	
-	AppleEventManagerErrorsRegistration AppleEventManagerErrorsRegistration::theRegistration;
+	static AppleEventManagerErrorsRegistration theRegistration;
+	
 	
 	AppleEventManagerErrorsRegistration::AppleEventManagerErrorsRegistration()
 	{

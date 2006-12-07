@@ -152,12 +152,9 @@ namespace Nitrogen
 	
 	class AppleEventManagerErrorsRegistration
 	{
-		private:
+		public:
 			AppleEventManagerErrorsRegistration();
 			
-			static AppleEventManagerErrorsRegistration theRegistration;
-		
-		public:
 			static void Trigger();
 	};
 	
