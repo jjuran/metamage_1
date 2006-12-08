@@ -12,7 +12,6 @@
 #include "FileCopy.h"
 
 // Nitrogen Nucleus
-#include "Nucleus/OnlyOnce.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
 // Nitrogen
@@ -49,7 +48,7 @@ namespace
 	                  long                  copyBufferSize = 0,
 	                  bool                  preflight      = true )
 	{
-		NN::OnlyOnce< N::RegisterFileManagerErrors >();
+		(void) N::FileManagerErrorsRegistrationDependency();
 		
 		N::ThrowOSStatus( ::FSpFileCopy( &source,
 		                                 &destDir,
@@ -189,10 +188,6 @@ int TryHFSCopy(const FSSpec& source, const FSSpec& dest)
 			}
 			catch ( ... )
 			{
-				//NN::RegisterExceptionConversion< P7::Errno, N::FNFErr >();
-				//NN::RegisterExceptionConversion< P7::Errno, N::FBsyErr >();
-				//NN::RegisterExceptionConversion< P7::Errno, N::MemFullErr >();
-				
 				P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled() );
 				
 				if ( errnum == -1 )
