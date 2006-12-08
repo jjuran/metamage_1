@@ -25,26 +25,6 @@
 #include "Genie/FileSignature.hh"
 
 
-namespace Nitrogen
-{
-	
-	static void FSpSetFInfo( const FSSpec& file, const FInfo& info )
-	{
-		ThrowOSStatus( ::FSpSetFInfo( &file, &info ) );
-	}
-	
-	static void FSpSetFLock( const FSSpec& file )
-	{
-		ThrowOSStatus( ::FSpSetFLock( &file ) );
-	}
-	
-	static void FSpRstFLock( const FSSpec& file )
-	{
-		ThrowOSStatus( ::FSpRstFLock( &file ) );
-	}
-	
-}
-
 namespace Genie
 {
 	
