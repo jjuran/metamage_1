@@ -52,26 +52,22 @@
 namespace Nitrogen
   {
 	
-	class FileManagerErrorsRegistration
+	class FileManagerErrorsRegistrationDependency
 	{
 		public:
-			FileManagerErrorsRegistration();
-			
-			static void Trigger();
+			FileManagerErrorsRegistrationDependency();
 	};
 	
 	inline void ThrowFileManagerError( ::OSStatus err )
 	{
 		if ( err != noErr )
 		{
-			FileManagerErrorsRegistration::Trigger();
+			(void) FileManagerErrorsRegistrationDependency();
 			
 			ThrowOSStatus( err );
 		}
 	}
 	
-   void RegisterFileManagerErrors();
-
    class FSDirID     // A one-off: like IDType< FSDirIDTag, long, 0 >, but sometimes it's signed, sometimes unsigned
      {
       private:
@@ -833,7 +829,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::FSFileRefNum file ) const
 		{
-			Nitrogen::FileManagerErrorsRegistration::Trigger();
+			(void) Nitrogen::FileManagerErrorsRegistrationDependency();
 			HandleDestructionOSStatus( ::FSClose( file ) );
 		}
 	};
@@ -1435,7 +1431,7 @@ namespace Nucleus
      {
       void operator()( Nitrogen::FSIterator iterator ) const
         {
-         Nitrogen::FileManagerErrorsRegistration::Trigger();
+         (void) Nitrogen::FileManagerErrorsRegistrationDependency();
          HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
         }
      };
@@ -1649,7 +1645,7 @@ namespace Nucleus
      {
       void operator()( const Nitrogen::FSForkRef& fork ) const
         {
-         Nitrogen::FileManagerErrorsRegistration::Trigger();
+         (void) Nitrogen::FileManagerErrorsRegistrationDependency();
          HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
                                                     fork.Name().size(),
                                                     fork.Name().data() ) );
@@ -1688,7 +1684,7 @@ namespace Nucleus
      {
       void operator()( Nitrogen::FSForkRefNum fork ) const
         {
-         Nitrogen::FileManagerErrorsRegistration::Trigger();
+         (void) Nitrogen::FileManagerErrorsRegistrationDependency();
          HandleDestructionOSStatus( ::FSCloseFork( fork ) );
         }
      };

@@ -20,18 +20,23 @@
 namespace Nitrogen
   {
 	
-	static FileManagerErrorsRegistration theRegistration;
-	
-	
-	FileManagerErrorsRegistration::FileManagerErrorsRegistration()
-	{
-		RegisterFileManagerErrors();
-	}
-	
-	void FileManagerErrorsRegistration::Trigger()
+	FileManagerErrorsRegistrationDependency::FileManagerErrorsRegistrationDependency()
 	{
 		// does nothing, but guarantees construction of theRegistration
 	}
+	
+	
+	static void RegisterFileManagerErrors();
+	
+	
+	class FileManagerErrorsRegistration
+	{
+		public:
+			FileManagerErrorsRegistration()  { RegisterFileManagerErrors(); }
+	};
+	
+	static FileManagerErrorsRegistration theRegistration;
+	
 	
 	
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum )
