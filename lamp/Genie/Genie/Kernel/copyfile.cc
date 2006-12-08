@@ -9,7 +9,8 @@
 // MoreFiles
 #include "FileCopy.h"
 
-// Nitrogen / Carbon
+// Nitrogen
+#include "Nitrogen/Files.h"
 #include "Nitrogen/OSStatus.h"
 
 // Genie
@@ -24,7 +25,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	static void FSpFileCopy( const FSSpec&         source,
 	                         const FSSpec&         destDir,
@@ -33,7 +33,7 @@ namespace Genie
 	                         long                  copyBufferSize = 0,
 	                         bool                  preflight      = true )
 	{
-		NN::OnlyOnce< N::RegisterFileManagerErrors >();
+		(void) N::FileManagerErrorsRegistrationDependency();
 		
 		N::ThrowOSStatus( ::FSpFileCopy( &source,
 		                                 &destDir,
