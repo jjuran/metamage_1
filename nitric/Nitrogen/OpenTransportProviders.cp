@@ -6,13 +6,12 @@
 #include "Nitrogen/OpenTransportProviders.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
-
 
 namespace Nitrogen
 {
+	
+	static OpenTransportErrorsRegistrationDependency gOpenTransportErrorsRegistrationDependency;
+	
 	
 	namespace Detail
 	{
@@ -33,8 +32,6 @@ namespace Nitrogen
 	
 	InetHost OTInetStringToHost( const char* str )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		::InetHost result;
 		
 		ThrowOSStatus( ::OTInetStringToHost( str, &result ) );
@@ -54,8 +51,6 @@ namespace Nitrogen
 	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( Nucleus::Owned< OTConfigurationRef >  cfig,
 	                                                              OTClientContextPtr                    clientContext )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		::OSStatus err;
 		
 	#if TARGET_API_MAC_CARBON
@@ -81,8 +76,6 @@ namespace Nitrogen
 	Nucleus::Owned< InetSvcRef > OTOpenInternetServicesInContext( DefaultInternetServicesPath  /**/,
 	                                                              OTClientContextPtr           clientContext )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		::OSStatus err;
 		
 	#if TARGET_API_MAC_CARBON
@@ -109,8 +102,6 @@ namespace Nitrogen
 	                                     char*          name,
 	                                     InetHostInfo&  hInfo )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTInetStringToAddress( ref, name, &hInfo ) );
 		
 		return hInfo;
@@ -118,8 +109,6 @@ namespace Nitrogen
 	
 	InetDomainName OTInetAddressToName( InetSvcRef ref, InetHost addr )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		::InetDomainName result;
 		
 		ThrowOSStatus( ::OTInetAddressToName( ref, addr, result ) );
@@ -131,8 +120,6 @@ namespace Nitrogen
 	                         char*                             name,
 	                         std::vector< InetMailExchange >&  mx )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		UInt16 num = mx.size();
 		
 		ThrowOSStatus( ::OTInetMailExchange( ref, name, &num, &mx.front() ) );

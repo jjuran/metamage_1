@@ -129,8 +129,12 @@ inline bool OTIsAsynchronous( ProviderRef ref )  { return !OTIsSynchronous( ref 
 namespace Nitrogen
 {
 	
-	void RegisterOpenTransportErrors();
-	
+	class OpenTransportErrorsRegistrationDependency
+	{
+		public:
+			OpenTransportErrorsRegistrationDependency();
+	};
+ 	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
@@ -191,6 +195,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ProviderRef provider ) const
 		{
+			(void) Nitrogen::OpenTransportErrorsRegistrationDependency();
 			HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
 		}
 	};

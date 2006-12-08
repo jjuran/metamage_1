@@ -6,17 +6,30 @@
 #include "Nitrogen/OpenTransport.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 
 namespace Nitrogen
 {
 	
+	OpenTransportErrorsRegistrationDependency::OpenTransportErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterOpenTransportErrors();
+	
+	
+	class OpenTransportErrorsRegistration
+	{
+		public:
+			OpenTransportErrorsRegistration()  { RegisterOpenTransportErrors(); }
+	};
+	
+	static OpenTransportErrorsRegistration theRegistration;
+	
+	
 	Nucleus::Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		OTClientContextPtr result;
 		
 		ThrowOSStatus( ::InitOpenTransportInContext( flags, &result ) );
@@ -26,8 +39,6 @@ namespace Nitrogen
 	
 	void InitOpenTransport()
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 	#if TARGET_API_MAC_CARBON
 		
 		ThrowOSStatus( ::InitOpenTransportInContext( kInitOTForApplicationMask, NULL ) );
@@ -54,36 +65,26 @@ namespace Nitrogen
 	
 	void OTCloseProvider( Nucleus::Owned< ProviderRef > provider )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTCloseProvider( provider.Release() ) );
 	}
 	
 	void OTSetSynchronous( ProviderRef ref )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTSetSynchronous( ref ) );
 	}
 	
 	void OTSetAsynchronous( ProviderRef ref )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTSetAsynchronous( ref ) );
 	}
 	
 	void OTSetBlocking( ProviderRef ref )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTSetBlocking( ref ) );
 	}
 	
 	void OTSetNonBlocking( ProviderRef ref )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTSetNonBlocking( ref ) );
 	}
 	
@@ -91,16 +92,12 @@ namespace Nitrogen
 	                        OTNotifyUPP  proc,
 	                        void*        contextPtr )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTInstallNotifier( ref, proc, contextPtr ) );
 	}
 	
 	void OTUseSyncIdleEvents( ProviderRef  ref,
 	                          bool         useEvents )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTUseSyncIdleEvents( ref, useEvents ) );
 	}
 	
@@ -108,8 +105,6 @@ namespace Nitrogen
 	                                                       TEndpointInfo*                        info,
 	                                                       OTClientContextPtr                    clientContext )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		::OSStatus err;
 		
 	#if TARGET_API_MAC_CARBON
@@ -138,15 +133,11 @@ namespace Nitrogen
 	             TBind*       reqAddr,
 	             TBind*       retAddr )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTBind( ref, reqAddr, retAddr ) );
 	}
 	
 	void OTUnbind( EndpointRef ref )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTUnbind( ref ) );
 	}
 	
@@ -154,16 +145,12 @@ namespace Nitrogen
 	                TCall&       sndCall,
 	                TCall*       rcvCall )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTConnect( ref, &sndCall, rcvCall ) );
 	}
 	
 	void OTListen( EndpointRef  ref,
 	               TCall*       call )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTListen( ref, call ) );
 	}
 	
@@ -171,38 +158,28 @@ namespace Nitrogen
 	               EndpointRef  worker,
 	               TCall*       call )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTAccept( listener, worker, call ) );
 	}
 	
 	void OTSndDisconnect( EndpointRef  ref,
 	                      TCall*       call )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTSndDisconnect( ref, call ) );
 	}
 	
 	void OTSndOrderlyDisconnect( EndpointRef ref )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTSndOrderlyDisconnect( ref ) );
 	}
 	
 	void OTRcvDisconnect( EndpointRef  ref,
 	                      TDiscon*     discon )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTRcvDisconnect( ref, discon ) );
 	}
 	
 	void OTRcvOrderlyDisconnect( EndpointRef ref )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		ThrowOSStatus( ::OTRcvOrderlyDisconnect( ref ) );
 	}
 	
@@ -221,8 +198,6 @@ namespace Nitrogen
 	                OTByteCount  nbytes,
 	                OTFlags*     flags )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		return ThrowOTResult( ::OTRcv( ref, buf, nbytes, flags ) );
 	}
 	
@@ -240,8 +215,6 @@ namespace Nitrogen
 	                OTByteCount  nbytes,
 	                OTFlags      flags )
 	{
-		Nucleus::OnlyOnce< RegisterOpenTransportErrors >();
-		
 		return ThrowOTResult( ::OTSnd( ref, (void*)buf, nbytes, flags ) );
 	}
 	
