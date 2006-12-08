@@ -4,7 +4,11 @@
 #include "Nitrogen/AEObjects.h"
 #endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
+	
+	static AppleEventManagerErrorsRegistrationDependency gAppleEventManagerErrorsRegistrationDependency;
+	
 	
 	OSLAccessor::OSLAccessor()
 	:
@@ -26,8 +30,6 @@ namespace Nitrogen {
 	
 	void AEObjectInit()
 	{
-		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
-		
 		ThrowOSStatus( ::AEObjectInit() );
 	}
 	
@@ -39,8 +41,6 @@ namespace Nitrogen {
 	                           OSLAdjustMarksUPP    myAdjustMarksProc,
 	                           OSLGetErrDescUPP     myGetErrDescProcPtr )
 	{
-		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
-		
 		ThrowOSStatus( ::AESetObjectCallbacks( myCompareProc,
 		                                       myCountProc,
 		                                       myDisposeTokenProc,
@@ -91,8 +91,6 @@ namespace Nitrogen {
 	Nucleus::Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier, 
 	                                                      AEResolveCallbackFlags    callbackFlags )
 	{
-		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
-		
 		AEToken token;
 		ThrowOSStatus( ::AEResolve( &objectSpecifier, callbackFlags, &token ) );
 		
@@ -101,8 +99,6 @@ namespace Nitrogen {
 	
 	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall )
 	{
-		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
-		
 		ThrowOSStatus( ::AEInstallObjectAccessor( toInstall.desiredClass,
 		                                          toInstall.containerType,
 		                                          toInstall.accessor,
@@ -116,8 +112,6 @@ namespace Nitrogen {
 	                                 DescType       containerType,
 	                                 bool           isSysHandler )
 	{
-		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
-		
 		::OSLAccessorUPP accessor;
 		long accessorRefCon;
 		
@@ -140,8 +134,6 @@ namespace Nitrogen {
 	                                                                 AEEnumerated    keyForm,
 	                                                                 const AEDesc&   keyData )
 	{
-		Nucleus::OnlyOnce< RegisterObjectSupportLibraryErrors >();
-		
 		AEToken result;
 		
 		ThrowOSStatus( ::AECallObjectAccessor( desiredClass,
@@ -160,11 +152,6 @@ namespace Nitrogen {
 		Detail::AETokenEditor( token ).Get().descriptorType = typeCode;
 		
 		return token;
-	}
-	
-	void RegisterObjectSupportLibraryErrors()
-	{
-		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
 	}
 	
 }

@@ -33,7 +33,7 @@ enum
 namespace Nitrogen
 {
 	
-	void RegisterObjectSupportLibraryErrors();
+	typedef AppleEventManagerErrorsRegistrationDependency ObjectSupportLibraryErrorsRegistrationDependency;
 	
 	#pragma mark -
 	#pragma mark ¥ Constant types ¥

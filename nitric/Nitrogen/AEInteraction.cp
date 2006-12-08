@@ -7,6 +7,8 @@
 namespace Nitrogen
 {
 	
+	static AppleEventManagerErrorsRegistrationDependency gAppleEventManagerErrorsRegistrationDependency;
+	
 	Nucleus::Owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
 	                                     AESendMode         sendMode,
 	                                     AESendPriority     sendPriority,
@@ -14,8 +16,6 @@ namespace Nitrogen
 	                                     AEIdleUPP          idleProc,
 	                                     AEFilterUPP        filterProc )
 	{
-		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
-		
 		AEDesc reply;
 		
 		ThrowOSStatus( ::AESend( &appleEvent,
@@ -31,8 +31,6 @@ namespace Nitrogen
 	
 	void AEProcessAppleEvent( const EventRecord& event )
 	{
-		Nucleus::OnlyOnce< RegisterAppleEventManagerErrors >();
-		
 		ThrowOSStatus( ::AEProcessAppleEvent( &event ) );
 	}
 	

@@ -14,18 +14,22 @@
 namespace Nitrogen
 {
 	
-	static AppleEventManagerErrorsRegistration theRegistration;
-	
-	
-	AppleEventManagerErrorsRegistration::AppleEventManagerErrorsRegistration()
-	{
-		RegisterAppleEventManagerErrors();
-	}
-	
-	void AppleEventManagerErrorsRegistration::Trigger()
+	AppleEventManagerErrorsRegistrationDependency::AppleEventManagerErrorsRegistrationDependency()
 	{
 		// does nothing, but guarantees construction of theRegistration
 	}
+	
+	
+	static void RegisterAppleEventManagerErrors();
+	
+	
+	class AppleEventManagerErrorsRegistration
+	{
+		public:
+			AppleEventManagerErrorsRegistration()  { RegisterAppleEventManagerErrors(); }
+	};
+	
+	static AppleEventManagerErrorsRegistration theRegistration;
 	
 	
 	void RegisterAppleEventManagerErrors()
