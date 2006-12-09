@@ -14,6 +14,24 @@
 namespace Nitrogen
 {
 	
+	CodeFragmentManagerErrorsRegistrationDependency::CodeFragmentManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterCodeFragmentManagerErrors();
+	
+	
+	class CodeFragmentManagerErrorsRegistration
+	{
+		public:
+			CodeFragmentManagerErrorsRegistration()  { RegisterCodeFragmentManagerErrors(); }
+	};
+	
+	static CodeFragmentManagerErrorsRegistration theRegistration;
+	
+	
 	template < class ErrorCode >
 	void ThrowOSStatusErrMessage( ConstStr255Param errMessage )
 	{
@@ -54,8 +72,6 @@ namespace Nitrogen
 	                       CFragConnectionID*  connID,
 	                       SymbolAddressPtr*   mainAddr )
 	{
-		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
-		
 		CFragConnectionID tempConnID;  // Can't be NULL in OS 8.1 and earlier
 		::Ptr tempMainAddr;
 		Str255 errMessage;
@@ -87,8 +103,6 @@ namespace Nitrogen
 	                      CFragConnectionID*  connID,
 	                      SymbolAddressPtr*   mainAddr )
 	{
-		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
-		
 		::Ptr tempMainAddr;
 		Str255 errMessage;
 		
@@ -119,8 +133,6 @@ namespace Nitrogen
 	                     CFragConnectionID*  connID,
 	                     SymbolAddressPtr*   mainAddr )
 	{
-		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
-		
 		::Ptr tempMainAddr;
 		Str255 errMessage;
 		
@@ -141,8 +153,6 @@ namespace Nitrogen
 	
 	void CloseConnection( Nucleus::Owned< CFragConnectionID > connID )
 	{
-		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
-		
 		CFragConnectionID connIDcopy = connID.Release();
 		
 		ThrowOSStatus( ::CloseConnection( &connIDcopy ) );
@@ -153,8 +163,6 @@ namespace Nitrogen
 	                 SymbolAddressPtr*  symAddr, 
 	                 CFragSymbolClass*  symClass )
 	{
-		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
-		
 		::Ptr tempSymAddr;
 		::CFragSymbolClass tempSymClass;
 		
@@ -173,8 +181,6 @@ namespace Nitrogen
 	
 	std::size_t CountSymbols( CFragConnectionID connID )
 	{
-		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
-		
 		long result;
 		
 		ThrowOSStatus( ::CountSymbols( connID, &result ) );
@@ -188,8 +194,6 @@ namespace Nitrogen
 	                   SymbolAddressPtr*  symAddr,
 	                   CFragSymbolClass*  symClass )
 	{
-		Nucleus::OnlyOnce< RegisterCodeFragmentManagerErrors >();
-		
 		::Ptr tempSymAddr;
 		::CFragSymbolClass tempSymClass;
 		
