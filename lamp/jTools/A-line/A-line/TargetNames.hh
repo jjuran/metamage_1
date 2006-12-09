@@ -20,11 +20,9 @@ namespace ALine
 	
 	namespace CD = CompileDriver;
 	
-	using std::string;
+	typedef std::string TargetName;
 	
-	typedef string TargetName;
-	
-	string ArchName( CD::Architecture arch );
+	std::string ArchName( CD::Architecture arch );
 	
 	TargetName MakeTargetName( CD::Architecture, CD::Runtime, CD::MacAPI, BuildVariety );
 	

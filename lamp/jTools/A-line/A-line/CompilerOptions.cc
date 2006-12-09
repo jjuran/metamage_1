@@ -24,17 +24,17 @@ namespace ALine {
 		
 	}
 	
-	void CompilerOptions::DefineMacro( const string& macro, const string& value )
+	void CompilerOptions::DefineMacro( const std::string& macro, const std::string& value )
 	{
 		myMacros[ macro ] = value;
 	}
 	
-	void CompilerOptions::DefineMacro( const string& macro, const char* value )
+	void CompilerOptions::DefineMacro( const std::string& macro, const char* value )
 	{
-		DefineMacro( macro, string( value ) );
+		DefineMacro( macro, std::string( value ) );
 	}
 	
-	void CompilerOptions::DefineMacro( const string& macro, bool value )
+	void CompilerOptions::DefineMacro( const std::string& macro, bool value )
 	{
 		DefineMacro( macro, value ? "1" : "0" );
 	}

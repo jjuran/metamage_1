@@ -8,7 +8,7 @@
 
 namespace ALine {
 	
-	string ArchName( CD::Architecture arch )
+	std::string ArchName( CD::Architecture arch )
 	{
 		switch ( arch )
 		{
@@ -16,11 +16,13 @@ namespace ALine {
 				return "68K";
 			case CD::archPPC:
 				return "PPC";
+			case CD::archX86:
+				return "X86";
 		};
 		return "";
 	}
 	
-	static string ToolkitName( Toolkit tools )
+	static std::string ToolkitName( Toolkit tools )
 	{
 		switch ( tools )
 		{
@@ -32,7 +34,7 @@ namespace ALine {
 		return "";
 	}
 	
-	static string RuntimeName( CD::Runtime rt )
+	static std::string RuntimeName( CD::Runtime rt )
 	{
 		switch ( rt )
 		{
@@ -48,7 +50,7 @@ namespace ALine {
 		return "";
 	}
 	
-	static string APIName( CD::MacAPI api )
+	static std::string APIName( CD::MacAPI api )
 	{
 		switch ( api )
 		{
@@ -62,7 +64,7 @@ namespace ALine {
 		return "";
 	}
 	
-	static string BuildName( BuildVariety build )
+	static std::string BuildName( BuildVariety build )
 	{
 		switch ( build )
 		{
