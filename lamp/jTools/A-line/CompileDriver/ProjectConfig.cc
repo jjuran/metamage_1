@@ -94,6 +94,10 @@ namespace CompileDriver
 		{
 			platform->arch = MergeAttributes( platform->arch, archPPC );
 		}
+		else if ( info == "x86" )
+		{
+			platform->arch = MergeAttributes( platform->arch, archX86 );
+		}
 		
 		if ( info == "a4" )
 		{
@@ -119,8 +123,7 @@ namespace CompileDriver
 		{
 			platform->runtime = MergeAttributes( platform->runtime, runtimeMachO );
 			
-			// Only Carbon and PowerPC are supported for Mac OS X
-			platform->arch = MergeAttributes( platform->arch, archPPC      );
+			// Only Carbon is supported for Mac OS X
 			platform->api  = MergeAttributes( platform->api,  apiMacCarbon );
 		}
 		
@@ -131,9 +134,6 @@ namespace CompileDriver
 		else if ( info == "carbon" )
 		{
 			platform->api = MergeAttributes( platform->api, apiMacCarbon );
-			
-			// Carbon is only supported on PowerPC
-			platform->arch = MergeAttributes( platform->arch, archPPC );
 		}
 	}
 	

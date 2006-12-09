@@ -3,10 +3,10 @@
  *	===========
  */
 
-#pragma once
-
 #ifndef COMPILEDRIVER_PLATFORM_HH
 #define COMPILEDRIVER_PLATFORM_HH
+
+#include <TargetConditionals.h>
 
 /*
 
@@ -53,7 +53,8 @@ namespace CompileDriver
 	{
 		archUnspecified,
 		arch68K,
-		archPPC
+		archPPC,
+		archX86
 	};
 	
 	enum Runtime
@@ -136,6 +137,7 @@ namespace CompileDriver
 	
 	static void ApplyPlatformDefaults( Platform& platform )
 	{
+		// FIXME for 64-bit
 		if ( platform.arch == archUnspecified )
 		{
 			if ( TARGET_CPU_68K )
@@ -148,9 +150,13 @@ namespace CompileDriver
 					platform.runtime = runtimeA5CodeSegments;
 				}
 			}
-			else
+			else if ( TARGET_CPU_PPC )
 			{
 				platform.arch = archPPC;
+			}
+			else
+			{
+				platform.arch = archX86;
 			}
 		}
 		
