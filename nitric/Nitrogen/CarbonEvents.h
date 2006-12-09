@@ -702,6 +702,9 @@ namespace Nitrogen
 
    template<> struct DescType_Traits< typeFSVolumeRefNum          >: Nucleus::PodFlattener< FSVolumeRefNum          > {};
 
+/*	This one is different; N::CFTypeRef is a type defined in Nitrogen; so we use ConvertingPODFlattener */
+   template<> struct DescType_Traits< typeCFTypeRef               >: Nucleus::ConvertingPODFlattener< CFTypeRef, ::CFTypeRef > {};
+
 /* ... */
 
    template <> struct EventParameter_Traits< kEventClassMouse, kEventMouseDown,       kEventParamMouseLocation      >: Basic_EventParameter_Traits< typeHIPoint,                 true,  false >{};
