@@ -742,6 +742,8 @@ namespace Nitrogen
    //typedef Nucleus::FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
 	typedef Nucleus::Flag< class FSIOPermssn_Tag, SInt8 >::Type FSIOPermssn;
 	
+	NUCLEUS_DEFINE_FLAG_OPS( FSIOPermssn )
+	
    typedef FSIOPermssn FSIOPermissions;
 	
    class FSIOPosModeTag {};
