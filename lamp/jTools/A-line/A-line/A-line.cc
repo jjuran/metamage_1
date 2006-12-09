@@ -295,6 +295,8 @@ static O::Options DefineOptions()
 	options.DefineSelectEnum( "-6",    optArch, CD::arch68K );
 	options.DefineSelectEnum( "--ppc", optArch, CD::archPPC );
 	options.DefineSelectEnum( "-P",    optArch, CD::archPPC );
+	options.DefineSelectEnum( "--x86", optArch, CD::archX86 );
+	options.DefineSelectEnum( "-8",    optArch, CD::archX86 );
 	
 	options.DefineSelectEnum( "--a4",    optRuntime, CD::runtimeA4CodeResource );
 	options.DefineSelectEnum( "-4",      optRuntime, CD::runtimeA4CodeResource );

@@ -520,6 +520,7 @@ namespace ALine
 			
 			case productApplication:
 				command << cmdgen.TargetApplication();
+				command << cmdgen.TargetArchitecture();
 				
 				needCarbResource =    targetInfo.platform.api     == CD::apiMacCarbon
 				                   && targetInfo.platform.runtime == CD::runtimeCodeFragments;
@@ -545,6 +546,7 @@ namespace ALine
 			case productWish:
 				gccSupported = true;
 				command << cmdgen.TargetCommandLineTool();
+				command << cmdgen.TargetArchitecture();
 				break;
 			
 			case productSharedLib:

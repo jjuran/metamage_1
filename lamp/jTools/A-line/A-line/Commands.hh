@@ -135,7 +135,7 @@ namespace ALine
 	{
 		TargetInfo target;
 		
-		bool m68k, ppc;
+		bool m68k, ppc, x86;
 		bool a4, a5, cfm, machO;
 		bool classic, carbon;
 		bool debug;
@@ -146,6 +146,7 @@ namespace ALine
 			target( target ),
 			m68k( target.platform.arch == CD::arch68K ),
 			ppc ( target.platform.arch == CD::archPPC ),
+			x86 ( target.platform.arch == CD::archX86 ),
 			a4( target.platform.runtime == CD::runtimeA4CodeResource ),
 			a5( target.platform.runtime == CD::runtimeA5CodeSegments ),
 			cfm( target.platform.runtime == CD::runtimeCodeFragments ),
@@ -184,6 +185,13 @@ namespace ALine
 		{
 			return gnu ? "libtool"
 			           : MWLinkerName() + " -xm l";
+		}
+		
+		std::string TargetArchitecture() const
+		{
+			return gnu ? ppc ? "-arch ppc"
+			                 : "-arch i386"
+			           : "";
 		}
 		
 		// CodeWarrior only
@@ -295,7 +303,8 @@ namespace ALine
 		{
 			std::string result;
 			
-			result =         ( gnu ? "" : MWMiscCompilerOptions() )
+			result =         TargetArchitecture()
+			         + " " + ( gnu ? "" : MWMiscCompilerOptions() )
 			         + " " + PreprocessorOptions()
 			         + " " + LanguageOptions()
 			         + " " + CodeGenOptions();
