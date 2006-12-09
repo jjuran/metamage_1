@@ -31,6 +31,8 @@ namespace ALine
 	{
 		struct BadIncludeDirective {};
 		
+		using N::fsRdPerm;
+		
 		Io::TextInputAdapter input( Io::MakeHandleFromCopy< Io::FileRefNum_Details >( N::FSpOpenDF( file, fsRdPerm ) ) );
 		
 		std::vector< string > includes;

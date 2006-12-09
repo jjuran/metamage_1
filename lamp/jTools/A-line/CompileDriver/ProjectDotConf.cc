@@ -79,6 +79,8 @@ namespace CompileDriver
 	
 	void ReadProjectDotConf( const FSSpec& confFile, DotConfData& data )
 	{
+		using N::fsRdPerm;
+		
 		// Open the config file, and read as a text input stream.
 		Io::TextInputAdapter input( Io::MakeHandleFromCopy< Io::FileRefNum_Details >( N::FSpOpenDF( confFile, fsRdPerm ) ) );
 		

@@ -26,6 +26,8 @@ namespace ALine
 	
 	std::vector< string > ReadSourceDotList( const FSSpec& sourceList )
 	{
+		using N::fsRdPerm;
+		
 		Io::TextInputAdapter input( Io::MakeHandleFromCopy< Io::FileRefNum_Details >( N::FSpOpenDF( sourceList, fsRdPerm ) ) );
 		
 		std::vector< string > files;

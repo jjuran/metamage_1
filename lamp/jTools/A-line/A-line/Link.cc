@@ -667,6 +667,8 @@ namespace ALine
 			}
 			catch ( ... )  {}
 			
+			using N::fsWrPerm;
+			
 			Io::Write( N::FSpOpenDF( pkgInfo, fsWrPerm ),
 			           std::string( "APPL" ) + project.CreatorCode() );
 		}

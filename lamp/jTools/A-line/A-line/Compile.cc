@@ -368,6 +368,8 @@ namespace ALine
 			                     << "Diagnostics"
 			                     & DiagnosticsFilenameFromSourceFilename( filename );
 			
+			using N::fsRdPerm;
+			
 			if ( N::GetEOF( N::FSpOpenDF( diagnostics, fsRdPerm ) ) > 0 )
 			{
 				N::AESend( N::AECreateAppleEvent( kCoreEventClass, 
