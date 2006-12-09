@@ -22,16 +22,16 @@ namespace Io
 	
 	struct EndOfInput
 	{
-		operator N::OSStatus() const  { return eofErr; }
+		operator N::OSStatus() const  { return N::OSStatus( eofErr ); }
 		
 		// EOF is indicated in Unix by a zero return from read().
 	};
 	
 	struct NoDataPending
 	{
-		operator N::OSStatus() const  { return kEWOULDBLOCKErr; }
+		operator N::OSStatus() const  { return N::OSStatus( kEWOULDBLOCKErr ); }
 		
-		operator N::OTUnixErr() const  { return EWOULDBLOCK; }
+		operator N::OTUnixErr() const  { return N::OTUnixErr( EWOULDBLOCK ); }
 	};
 	
 }
