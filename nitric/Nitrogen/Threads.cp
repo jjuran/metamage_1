@@ -7,6 +7,24 @@
 namespace Nitrogen
 {
 	
+	ThreadManagerErrorsRegistrationDependency::ThreadManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterThreadManagerErrors();
+	
+	
+	class ThreadManagerErrorsRegistration
+	{
+		public:
+			ThreadManagerErrorsRegistration()  { RegisterThreadManagerErrors(); }
+	};
+	
+	static ThreadManagerErrorsRegistration theRegistration;
+	
+	
 	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
 	                             ThreadEntryTPP  threadEntry,
 	                             void*           threadParam,
@@ -14,8 +32,6 @@ namespace Nitrogen
 	                             ThreadOptions   options,
 	                             void**          threadResult )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		::ThreadID result;
 		
 		ThrowOSStatus( ::NewThread( threadStyle,
@@ -31,8 +47,6 @@ namespace Nitrogen
 	
 	void SetThreadScheduler( ThreadSchedulerTPP threadScheduler )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::SetThreadScheduler( threadScheduler ) );
 	}
 	
@@ -41,8 +55,6 @@ namespace Nitrogen
 	                        void*            switchProcParam,
 	                        bool             inVsOut )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::SetThreadSwitcher( thread, threadSwitcher, switchProcParam, inVsOut ) );
 	}
 	
@@ -50,8 +62,6 @@ namespace Nitrogen
 	                          ThreadTerminationTPP  threadTerminator,
 	                          void *                terminationProcParam )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::SetThreadTerminator( thread, threadTerminator, terminationProcParam ) );
 	}
 	
@@ -59,8 +69,6 @@ namespace Nitrogen
 	                                   DebuggerDisposeThreadTPP    notifyDisposeThread,
 	                                   DebuggerThreadSchedulerTPP  notifyThreadScheduler )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::SetDebuggerNotificationProcs( notifyNewThread,
 		                                               notifyDisposeThread,
 		                                               notifyThreadScheduler ) );
@@ -70,15 +78,11 @@ namespace Nitrogen
 	                       std::size_t  numToCreate,
 	                       Size         stackSize )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::CreateThreadPool( threadStyle, numToCreate, stackSize ) );
 	}
 	
 	std::size_t GetFreeThreadCount( ThreadStyle threadStyle )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		SInt16 result;
 		ThrowOSStatus( ::GetFreeThreadCount( threadStyle, &result ) );
 		
@@ -88,8 +92,6 @@ namespace Nitrogen
 	std::size_t GetSpecificFreeThreadCount( ThreadStyle  threadStyle,
 	                                        Size         stackSize )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		SInt16 result;
 		ThrowOSStatus( ::GetSpecificFreeThreadCount( threadStyle, stackSize, &result ) );
 		
@@ -98,8 +100,6 @@ namespace Nitrogen
 	
 	Size GetDefaultThreadStackSize( ThreadStyle threadStyle )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		::Size result;
 		ThrowOSStatus( ::GetDefaultThreadStackSize( threadStyle, &result ) );
 		
@@ -108,8 +108,6 @@ namespace Nitrogen
 	
 	std::size_t ThreadCurrentStackSpace( ThreadID thread )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		UInt32 result;
 		ThrowOSStatus( ::ThreadCurrentStackSpace( thread, &result ) );
 		
@@ -120,29 +118,21 @@ namespace Nitrogen
 	                    void*              threadResult,
 	                    bool               recycleThread )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::DisposeThread( thread.Release(), threadResult, recycleThread ) );
 	}
 	
 	void YieldToThread( ThreadID suggestedThread )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::YieldToThread( suggestedThread ) );
 	}
 	
 	void YieldToAnyThread()
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::YieldToAnyThread() );
 	}
 	
 	ThreadID MacGetCurrentThread()
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		::ThreadID result;
 		ThrowOSStatus( ::MacGetCurrentThread( &result ) );
 		
@@ -151,8 +141,6 @@ namespace Nitrogen
 	
 	ThreadState GetThreadState( ThreadID thread )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		::ThreadState result;
 		ThrowOSStatus( ::GetThreadState( thread, &result ) );
 		
@@ -163,8 +151,6 @@ namespace Nitrogen
 	                     ThreadState  newState,
 	                     ThreadID     suggestedThread )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::SetThreadState( threadToSet,
 		                                 newState,
 		                                 suggestedThread ) );
@@ -174,8 +160,6 @@ namespace Nitrogen
 	                                ThreadState  newState,
 	                                ThreadID     suggestedThread )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::SetThreadStateEndCritical( threadToSet,
 		                                            newState,
 		                                            suggestedThread ) );
@@ -183,22 +167,16 @@ namespace Nitrogen
 	
 	void ThreadBeginCritical()
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::ThreadBeginCritical() );
 	}
 	
 	void ThreadEndCritical()
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::ThreadEndCritical() );
 	}
 	
 	ThreadTaskRef GetThreadCurrentTaskRef()
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		::ThreadTaskRef result;
 		ThrowOSStatus( ::GetThreadCurrentTaskRef( &result ) );
 		
@@ -208,8 +186,6 @@ namespace Nitrogen
 	ThreadState GetThreadStateGivenTaskRef( ThreadTaskRef  threadTaskRef,
 	                                        ThreadID       threadToGet )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		::ThreadState result;
 		ThrowOSStatus( ::GetThreadStateGivenTaskRef( threadTaskRef,
 		                                             threadToGet,
@@ -221,8 +197,6 @@ namespace Nitrogen
 	void SetThreadReadyGivenTaskRef( ThreadTaskRef  threadTaskRef,
 	                                 ThreadID       threadToSet )
 	{
-		Nucleus::OnlyOnce< RegisterThreadManagerErrors >();
-		
 		ThrowOSStatus( ::SetThreadReadyGivenTaskRef( threadTaskRef, threadToSet ) );
 	}
 	

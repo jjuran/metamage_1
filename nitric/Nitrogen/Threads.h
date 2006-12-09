@@ -14,9 +14,6 @@
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 
 // Nitrogen
 #ifndef NITROGEN_MACTYPES_H
@@ -45,7 +42,12 @@
 namespace Nitrogen
 {
 	
-	void RegisterThreadManagerErrors();
+	class ThreadManagerErrorsRegistrationDependency
+	{
+		public:
+			ThreadManagerErrorsRegistrationDependency();
+	};
+	
 	
 	class ThreadState_Tag {};
 	typedef Nucleus::SelectorType< ThreadState_Tag, ::ThreadState, kReadyThreadState > ThreadState;
@@ -75,7 +77,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ThreadID thread ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterThreadManagerErrors >();
+			(void) Nitrogen::ThreadManagerErrorsRegistrationDependency();
 			
 			HandleDestructionOSStatus( ::DisposeThread( thread, NULL, false ) );
 		}
