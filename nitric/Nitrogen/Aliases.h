@@ -28,7 +28,12 @@
 
 namespace Nitrogen
   {
-   void RegisterAliasManagerErrors();
+	class AliasManagerErrorsRegistrationDependency
+	{
+		public:
+			AliasManagerErrorsRegistrationDependency();
+	};
+ 	
    
    class MountFlags_Tag {};
    typedef Nucleus::FlagType< MountFlags_Tag, unsigned long, 0 > MountFlags;

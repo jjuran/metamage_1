@@ -7,10 +7,26 @@
 namespace Nitrogen
   {
 	
+	AliasManagerErrorsRegistrationDependency::AliasManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterAliasManagerErrors();
+	
+	
+	class AliasManagerErrorsRegistration
+	{
+		public:
+			AliasManagerErrorsRegistration()  { RegisterAliasManagerErrors(); }
+	};
+	
+	static AliasManagerErrorsRegistration theRegistration;
+	
+	
 	static Nucleus::Owned< AliasHandle > NewAlias( const FSSpec* fromFile, const FSSpec& target )
 	{
-		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
-		
 		::AliasHandle result;
 		ThrowOSStatus( ::NewAlias( fromFile, &target, &result ) );
 		
@@ -32,8 +48,6 @@ namespace Nitrogen
 	                                                           ConstStr32Param     zoneName,
 	                                                           ConstStr31Param     serverName )
 	{
-		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
-		
 		::AliasHandle result;
 		ThrowOSStatus( ::NewAliasMinimalFromFullPath( fullPath.size(),
 		                                              fullPath.data(),
@@ -47,8 +61,6 @@ namespace Nitrogen
 	ResolveAlias_Result ResolveAlias( const FSSpec&  fromFile,
 	                                  AliasHandle    alias )
 	{
-		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
-		
 		::Boolean wasChanged;
 		ResolveAlias_Result result;
 		
@@ -64,8 +76,6 @@ namespace Nitrogen
 	
 	ResolveAlias_Result ResolveAlias( AliasHandle alias )
 	{
-		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
-		
 		::Boolean wasChanged;
 		ResolveAlias_Result result;
 		
@@ -82,8 +92,6 @@ namespace Nitrogen
 	ResolveAliasFile_Result ResolveAliasFile( const FSSpec& target,
 	                                          bool resolveAliasChains )
 	{
-		Nucleus::OnlyOnce< RegisterAliasManagerErrors >();
-		
 		ResolveAliasFile_Result result;
 		result.target = target;
 		
@@ -104,7 +112,6 @@ namespace Nitrogen
    Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
                                            const FSRef& target )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       AliasHandle result;
       ThrowOSStatus( ::FSNewAlias( &fromFile, &target, &result ) );
       return Nucleus::Owned<AliasHandle>::Seize( result );
@@ -112,7 +119,6 @@ namespace Nitrogen
    
    Nucleus::Owned<AliasHandle> FSNewAlias( const FSRef& target )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       AliasHandle result;
       ThrowOSStatus( ::FSNewAlias( 0, &target, &result ) );
       return Nucleus::Owned<AliasHandle>::Seize( result );
@@ -120,7 +126,6 @@ namespace Nitrogen
 
    Nucleus::Owned<AliasHandle> FSNewAliasMinimal( const FSRef& target )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       AliasHandle result;
       ThrowOSStatus( ::FSNewAliasMinimal( &target, &result ) );
       return Nucleus::Owned<AliasHandle>::Seize( result );
@@ -128,7 +133,6 @@ namespace Nitrogen
   
    FSIsAliasFile_Result FSIsAliasFile( const FSRef& fileRef )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       ::Boolean aliasFileFlag;
       ::Boolean folderFlag;
       ThrowOSStatus( ::FSIsAliasFile( &fileRef, &aliasFileFlag, &folderFlag ) );
@@ -143,7 +147,6 @@ namespace Nitrogen
                                                                      AliasHandle   inAlias,
                                                                      MountFlags    mountFlags )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       FSResolveAliasWithMountFlags_Result result;
       ::Boolean wasChanged;
       ThrowOSStatus( ::FSResolveAliasWithMountFlags( &fromFile, inAlias, &result.target, &wasChanged, mountFlags ) );
@@ -154,7 +157,6 @@ namespace Nitrogen
    FSResolveAliasWithMountFlags_Result FSResolveAliasWithMountFlags( AliasHandle   inAlias,
                                                                      MountFlags    mountFlags )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       FSResolveAliasWithMountFlags_Result result;
       ::Boolean wasChanged;
       ThrowOSStatus( ::FSResolveAliasWithMountFlags( 0, inAlias, &result.target, &wasChanged, mountFlags ) );
@@ -165,7 +167,6 @@ namespace Nitrogen
    FSResolveAlias_Result FSResolveAlias( const FSRef&  fromFile,
                                          AliasHandle   inAlias )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       FSResolveAlias_Result result;
       ::Boolean wasChanged;
       ThrowOSStatus( ::FSResolveAlias( &fromFile, inAlias, &result.target, &wasChanged ) );
@@ -175,7 +176,6 @@ namespace Nitrogen
 
    FSResolveAlias_Result FSResolveAlias( AliasHandle inAlias )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       FSResolveAlias_Result result;
       ::Boolean wasChanged;
       ThrowOSStatus( ::FSResolveAlias( 0, inAlias, &result.target, &wasChanged ) );
@@ -187,7 +187,6 @@ namespace Nitrogen
                                                                              bool         resolveAliasChains,
                                                                              MountFlags   mountFlags )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       FSResolveAliasFileWithMountFlags_Result result;
       result.theRef = theRef;
       ::Boolean targetIsFolder;
@@ -202,7 +201,6 @@ namespace Nitrogen
                                                  bool         resolveAliasChains )
 
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       FSResolveAliasFile_Result result;
       result.theRef = theRef;
       ::Boolean targetIsFolder;
@@ -217,7 +215,6 @@ namespace Nitrogen
                                                    AliasHandle  alias,
                                                    bool         logon )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       FSFollowFinderAlias_Result result;
       ::Boolean wasChanged;
       ThrowOSStatus( ::FSFollowFinderAlias( &fromFile, alias, logon, &result.target, &wasChanged ) );
@@ -228,7 +225,6 @@ namespace Nitrogen
    FSFollowFinderAlias_Result FSFollowFinderAlias( AliasHandle  alias,
                                                    bool         logon )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       FSFollowFinderAlias_Result result;
       ::Boolean wasChanged;
       ThrowOSStatus( ::FSFollowFinderAlias( 0, alias, logon, &result.target, &wasChanged ) );
@@ -240,7 +236,6 @@ namespace Nitrogen
                        const FSRef& target,
                        AliasHandle  alias )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       ::Boolean result;
       ThrowOSStatus( ::FSUpdateAlias( &fromFile, &target, alias, &result ) );
       return result;
@@ -249,7 +244,6 @@ namespace Nitrogen
    bool FSUpdateAlias( const FSRef& target,
                        AliasHandle  alias )
      {
-      Nucleus::OnlyOnce<RegisterAliasManagerErrors>();
       ::Boolean result;
       ThrowOSStatus( ::FSUpdateAlias( 0, &target, alias, &result ) );
       return result;

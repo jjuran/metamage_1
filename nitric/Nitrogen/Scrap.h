@@ -19,10 +19,15 @@ static const ScrapRef kScrapRefNone = ScrapRef( NULL );
 
 #endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
 	
-	void RegisterScrapManagerErrors();
-	
+	class ScrapManagerErrorsRegistrationDependency
+	{
+		public:
+			ScrapManagerErrorsRegistrationDependency();
+	};
+ 	
 	using ::ScrapRef;
 	
 	ScrapRef GetCurrentScrap();

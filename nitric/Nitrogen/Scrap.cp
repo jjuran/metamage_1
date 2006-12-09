@@ -4,14 +4,42 @@
 #include "Nitrogen/Scrap.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
+	
+	ScrapManagerErrorsRegistrationDependency::ScrapManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterScrapManagerErrors();
+	
+	
+	class ScrapManagerErrorsRegistration
+	{
+		public:
+			ScrapManagerErrorsRegistration()  { RegisterScrapManagerErrors(); }
+	};
+	
+	static ScrapManagerErrorsRegistration theRegistration;
+	
+	
+	ScrapRef GetCurrentScrap()
+	{
+		ScrapRef scrap;
+		ThrowOSStatus( ::GetCurrentScrap( &scrap ) );
+		return scrap;
+	}
+	
+	void ClearCurrentScrap()
+	{
+		ThrowOSStatus( ::ClearCurrentScrap() );
+	}
 	
 	void RegisterScrapManagerErrors()
 	{
@@ -37,22 +65,6 @@ namespace Nitrogen {
 		RegisterOSStatus< illegalScrapFlavorFlagsErr  >();
 		RegisterOSStatus< illegalScrapFlavorTypeErr   >();
 		RegisterOSStatus< illegalScrapFlavorSizeErr   >();
-	}
-	
-	ScrapRef GetCurrentScrap()
-	{
-		Nucleus::OnlyOnce< RegisterScrapManagerErrors >();
-		
-		ScrapRef scrap;
-		ThrowOSStatus( ::GetCurrentScrap( &scrap ) );
-		return scrap;
-	}
-	
-	void ClearCurrentScrap()
-	{
-		Nucleus::OnlyOnce< RegisterScrapManagerErrors >();
-		
-		ThrowOSStatus( ::ClearCurrentScrap() );
 	}
 	
 }
