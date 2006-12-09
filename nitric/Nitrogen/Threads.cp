@@ -26,11 +26,11 @@ namespace Nitrogen
 	
 	
 	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
-	                             ThreadEntryTPP  threadEntry,
-	                             void*           threadParam,
-	                             Size            stackSize,
-	                             ThreadOptions   options,
-	                             void**          threadResult )
+	                                      ThreadEntryTPP  threadEntry,
+	                                      void*           threadParam,
+	                                      Size            stackSize,
+	                                      ThreadOptions   options,
+	                                      void**          threadResult )
 	{
 		::ThreadID result;
 		
@@ -115,10 +115,12 @@ namespace Nitrogen
 	}
 	
 	void DisposeThread( Nucleus::Owned< ThreadID >  thread,
-	                    void*              threadResult,
-	                    bool               recycleThread )
+	                    void*                       threadResult,
+	                    bool                        recycleThread )
 	{
-		ThrowOSStatus( ::DisposeThread( thread.Release(), threadResult, recycleThread ) );
+		ThrowOSStatus( ::DisposeThread( thread.Release(),
+		                                threadResult,
+		                                recycleThread ) );
 	}
 	
 	void YieldToThread( ThreadID suggestedThread )
