@@ -72,6 +72,9 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlEditTextInlinePostUpdateProcTag        >: Nucleus::PodFlattener    < TSMTEPostUpdateUPP            > {};
    template<> struct ControlData_Traits< kControlEditTextCFStringTag                    >: Nucleus::SeizingPODFlattener< CFStringRef                   > {};
    template<> struct ControlData_Traits< kControlEditTextPasswordCFStringTag            >: Nucleus::SeizingPODFlattener< CFStringRef                   > {};
+   
+   // Same as kControlEditTextCFStringTag
+   //template<> struct ControlData_Traits< kControlStaticTextCFStringTag                  >: Nucleus::SeizingPODFlattener< CFStringRef                   > {};
 
    template<> struct ControlData_Traits< kControlStaticTextTextHeightTag                >: Nucleus::PodFlattener    < ::SInt16                      > {};
    template<> struct ControlData_Traits< kControlStaticTextTruncTag                     >: Nucleus::PodFlattener    < TruncCode                     > {};
