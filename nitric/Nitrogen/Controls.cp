@@ -12,7 +12,25 @@
 
 namespace Nitrogen
   {
-  
+	
+	ControlManagerErrorsRegistrationDependency::ControlManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterControlManagerErrors();
+	
+	
+	class ControlManagerErrorsRegistration
+	{
+		public:
+			ControlManagerErrorsRegistration()  { RegisterControlManagerErrors(); }
+	};
+	
+	static ControlManagerErrorsRegistration theRegistration;
+	
+	
 	ControlRef NewControl( WindowRef         owningWindow,
 	                       const Rect&       boundsRect, 
 	                       ConstStr255Param  controlTitle,
@@ -65,7 +83,6 @@ namespace Nitrogen
 	
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ControlRef result;
       ThrowOSStatus( ::GetControlByID( inWindow, &id, &result ) );
       return result;
@@ -100,7 +117,6 @@ namespace Nitrogen
                         Size              inSize,
                         const void *      inData )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ThrowOSStatus( ::SetControlData( inControl,
                                        inPart,
                                        inTagName,
@@ -114,7 +130,6 @@ namespace Nitrogen
                         Size              inBufferSize,
                         void *            inBuffer )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ::Size outActualSize;
       ThrowOSStatus( ::GetControlData( inControl,
                                        inPart,
@@ -136,7 +151,6 @@ namespace Nitrogen
                                    DragTrackingMessage inMessage,
                                    DragReference       inDrag )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ::Boolean outLikesDrag;
       ThrowOSStatus( ::HandleControlDragTracking( inControl, inMessage, inDrag, &outLikesDrag ) );
       return outLikesDrag;
@@ -145,20 +159,17 @@ namespace Nitrogen
    void HandleControlDragReceive( ControlRef    inControl,
                                   DragReference inDrag )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ThrowOSStatus( ::HandleControlDragReceive( inControl, inDrag ) );
      }
 
    void SetControlDragTrackingEnabled( ControlRef theControl,
                                        bool       tracks )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ThrowOSStatus( ::SetControlDragTrackingEnabled( theControl, tracks ) );
      }
 
    bool IsControlDragTrackingEnabled( ControlRef theControl )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ::Boolean tracks;
       ThrowOSStatus( ::IsControlDragTrackingEnabled( theControl, &tracks ) );
       return tracks;
@@ -167,13 +178,11 @@ namespace Nitrogen
    void SetAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow,
                                                          bool      tracks )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ThrowOSStatus( ::SetAutomaticControlDragTrackingEnabledForWindow( theWindow, tracks ) );
      }
   
    bool IsAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow )
      {
-      Nucleus::OnlyOnce< RegisterControlManagerErrors >();
       ::Boolean tracks;
       ThrowOSStatus( ::IsAutomaticControlDragTrackingEnabledForWindow( theWindow, &tracks ) );
       return tracks;

@@ -29,6 +29,13 @@
 
 namespace Nitrogen
   {
+	
+	class ControlManagerErrorsRegistrationDependency
+	{
+		public:
+			ControlManagerErrorsRegistrationDependency();
+	};
+	
    using ::ControlRef;
   }
 
@@ -385,7 +392,6 @@ namespace Nitrogen
 	
    /* ... */
    
-   void RegisterControlManagerErrors();
   }
 
 #endif
