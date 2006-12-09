@@ -25,8 +25,6 @@ namespace Nitrogen {
 	
 	using ::ScrapRef;
 	
-	inline ScrapRef ScrapRefNone()  { return kScrapRefNone; }
-	
 	ScrapRef GetCurrentScrap();
 	
 	void ClearCurrentScrap();
