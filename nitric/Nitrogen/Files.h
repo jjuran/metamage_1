@@ -744,7 +744,15 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIOPermssn )
 	
-   typedef FSIOPermssn FSIOPermissions;
+	typedef FSIOPermssn FSIOPermissions;
+	
+	static const FSIOPermssn fsCurPerm    = FSIOPermssn( ::fsCurPerm    );
+	static const FSIOPermssn fsRdPerm     = FSIOPermssn( ::fsRdPerm     );
+	static const FSIOPermssn fsWrPerm     = FSIOPermssn( ::fsWrPerm     );
+	static const FSIOPermssn fsRdWrPerm   = FSIOPermssn( ::fsRdWrPerm   );
+	static const FSIOPermssn fsRdWrShPerm = FSIOPermssn( ::fsRdWrShPerm );
+	static const FSIOPermssn fsRdDenyPerm = FSIOPermssn( ::fsRdDenyPerm );
+	static const FSIOPermssn fsWrDenyPerm = FSIOPermssn( ::fsWrDenyPerm );
 	
    class FSIOPosModeTag {};
    typedef Nucleus::FlagType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
