@@ -16,9 +16,6 @@
 #ifndef NUCLEUS_SELECTORTYPE_H
 #include "Nucleus/SelectorType.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
@@ -26,7 +23,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterComponentManagerErrors();
+	class ComponentManagerErrorsRegistrationDependency
+	{
+		public:
+			ComponentManagerErrorsRegistrationDependency();
+	};
 	
 	struct ComponentTypeTag  {};
 	typedef Nucleus::SelectorType< ComponentTypeTag, ::OSType, kAnyComponentType > ComponentType;
@@ -50,7 +51,8 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ComponentInstance component ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterComponentManagerErrors >();
+			(void) Nitrogen::ComponentManagerErrorsRegistrationDependency();
+			
 			HandleDestructionOSStatus( ::CloseComponent( component ) );
 		}
 	};

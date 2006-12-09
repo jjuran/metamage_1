@@ -7,22 +7,28 @@
 namespace Nitrogen
 {
 	
-	void RegisterComponentManagerErrors()
+	ComponentManagerErrorsRegistrationDependency::ComponentManagerErrorsRegistrationDependency()
 	{
-		RegisterOSStatus< resFNotFound         >();
-		RegisterOSStatus< invalidComponentID   >();
-		RegisterOSStatus< validInstancesExist  >();
-		RegisterOSStatus< componentNotCaptured >();
-		RegisterOSStatus< badComponentInstance >();
-		RegisterOSStatus< badComponentSelector >();
+		// does nothing, but guarantees construction of theRegistration
 	}
+	
+	
+	static void RegisterComponentManagerErrors();
+	
+	
+	class ComponentManagerErrorsRegistration
+	{
+		public:
+			ComponentManagerErrorsRegistration()  { RegisterComponentManagerErrors(); }
+	};
+	
+	static ComponentManagerErrorsRegistration theRegistration;
+	
 	
 	Nucleus::Owned< ComponentInstance >
 	OpenDefaultComponent( ComponentType     componentType,
 	                      ComponentSubType  componentSubType )
 	{
-		Nucleus::OnlyOnce< RegisterComponentManagerErrors >();
-		
 		ComponentInstance component = ::OpenDefaultComponent( componentType,
 		                                                      componentSubType );
 		if ( component == NULL )
@@ -31,6 +37,16 @@ namespace Nitrogen
 		}
 		
 		return Nucleus::Owned< ComponentInstance >::Seize( component );
+	}
+	
+	void RegisterComponentManagerErrors()
+	{
+		RegisterOSStatus< resFNotFound         >();
+		RegisterOSStatus< invalidComponentID   >();
+		RegisterOSStatus< validInstancesExist  >();
+		RegisterOSStatus< componentNotCaptured >();
+		RegisterOSStatus< badComponentInstance >();
+		RegisterOSStatus< badComponentSelector >();
 	}
 	
 }
