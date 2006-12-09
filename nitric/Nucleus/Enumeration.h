@@ -18,7 +18,7 @@ namespace Nucleus
 		
 		const static int binaryDigits = bitWidth - int( isSigned );
 		
-		const static IntegralType min = isSigned ? 1 << binaryDigits : 0;
+		const static IntegralType min = isSigned ? 1ULL << binaryDigits : 0;
 		const static IntegralType max = IntegralType(~0) ^ (isSigned ? min : 0);
 		
 		enum Type
