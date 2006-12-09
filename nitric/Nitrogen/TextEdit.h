@@ -14,6 +14,11 @@
 // Standard C++
 #include <string>
 
+// Nucleus
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
+#endif
+
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
@@ -26,10 +31,7 @@
 namespace Nitrogen
 {
 	
-	struct Justification_Tag  {};
-	typedef Nucleus::SelectorType< Justification_Tag, short, teFlushDefault > Justification;
-	
-	inline Justification TEFlushDefault()  { return Justification::Make( teFlushDefault ); }
+	typedef Nucleus::Selector< class Justification_Tag, short >::Type Justification;
 	
 	using ::TEHandle;
 	
@@ -83,8 +85,8 @@ namespace Nitrogen
 	
 	void TEUpdate( const Rect& rUpdate, TEHandle hTE );
 	
-	void TETextBox( const void* text, std::size_t length, const Rect& box, Justification just = TEFlushDefault() );
-	void TETextBox( const std::string& text, const Rect& box, Justification just = TEFlushDefault() );
+	void TETextBox( const void* text, std::size_t length, const Rect& box, Justification just = Justification( teFlushDefault ) );
+	void TETextBox( const std::string& text, const Rect& box, Justification just = Justification( teFlushDefault ) );
 	
 	using ::TEPinScroll;
 	using ::TEAutoView;
