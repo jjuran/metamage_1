@@ -18,6 +18,9 @@
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
+#endif
 #ifndef NUCLEUS_FLAGTYPE_H
 #include "Nucleus/FlagType.h"
 #endif
@@ -735,8 +738,10 @@ namespace Nitrogen
    class FSForkRefNumTag {};
    typedef Nucleus::IDType< FSForkRefNumTag, SInt16, 0 > FSForkRefNum;
     
-   class FSIOPermssnTag {};
-   typedef Nucleus::FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
+   //class FSIOPermssnTag {};
+   //typedef Nucleus::FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
+	typedef Nucleus::Flag< class FSIOPermssn_Tag, SInt8 >::Type FSIOPermssn;
+	
    typedef FSIOPermssn FSIOPermissions;
 	
    class FSIOPosModeTag {};
