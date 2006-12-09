@@ -38,7 +38,6 @@ namespace Nitrogen
 	static FileManagerErrorsRegistration theRegistration;
 	
 	
-	
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum )
 	{
 		ThrowOSStatus( ::FSClose( fileRefNum.Release() ) );
@@ -341,7 +340,7 @@ namespace Nitrogen
 	
 	std::string DTGetComment( DTPBRec& pb )
 	{
-		const ByteCount kMaximumCommentLength      = 200;
+		//const ByteCount kMaximumCommentLength      = 200;
 		const ByteCount kExperimentalCommentLength = 256;
 		
 		char comment[ kExperimentalCommentLength ];
