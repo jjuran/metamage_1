@@ -14,6 +14,24 @@
 namespace Nitrogen
 {
 	
+	ResourceManagerErrorsRegistrationDependency::ResourceManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterResourceManagerErrors();
+	
+	
+	class ResourceManagerErrorsRegistration
+	{
+		public:
+			ResourceManagerErrorsRegistration()  { RegisterResourceManagerErrors(); }
+	};
+	
+	static ResourceManagerErrorsRegistration theRegistration;
+	
+	
 	Handle CheckResource( Handle r )
 	{
 		if ( NULL == r.Get ())
@@ -34,8 +52,6 @@ namespace Nitrogen
 	
 	void ResError()
 	{
-		Nucleus::OnlyOnce< RegisterResourceManagerErrors >();
-		
 		ThrowOSStatus( ::ResError() );
 	}
 	

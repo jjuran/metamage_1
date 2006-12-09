@@ -24,12 +24,6 @@
 #ifndef NUCLEUS_FLAGTYPE_H
 #include "Nucleus/FlagType.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif
@@ -37,7 +31,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterResourceManagerErrors();
+	class ResourceManagerErrorsRegistrationDependency
+	{
+		public:
+			ResourceManagerErrorsRegistrationDependency();
+	};
 	
 	class ResFileRefNum_Tag {};
 	typedef Nucleus::IDType< ResFileRefNum_Tag, ::ResFileRefNum, kResFileNotOpened > ResFileRefNum;
@@ -61,7 +59,7 @@ namespace Nitrogen
 	{
 		void operator()( Handle r ) const
 		{
-			Nucleus::OnlyOnce< RegisterResourceManagerErrors >();
+			(void) ResourceManagerErrorsRegistrationDependency();
 			::ReleaseResource( r );
 			HandleDestructionOSStatus( ::ResError() );
 		}
@@ -77,7 +75,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ResFileRefNum resFile ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterResourceManagerErrors >();
+			(void) Nitrogen::ResourceManagerErrorsRegistrationDependency();
 			::CloseResFile( resFile );
 			HandleDestructionOSStatus( ::ResError() );
 		}
