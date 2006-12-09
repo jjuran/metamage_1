@@ -171,6 +171,9 @@ namespace Nucleus
 			return Nucleus::Owned< Ownable >::Seize( result );
 		}
 		
+		typedef Put_Parameter Parameter;
+		typedef Get_Result    Result;
+		
 		static const bool hasStaticSize = true;
 		
 		typedef Ownable Buffer;
