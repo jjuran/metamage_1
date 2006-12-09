@@ -15,9 +15,6 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 #ifndef NUCLEUS_FLAGTYPE_H
 #include "Nucleus/FlagType.h"
 #endif
@@ -42,8 +39,14 @@ inline Ptr    NewPtrSysClear   ( long bytes )  { return NewPtrClear   ( bytes );
 #endif
 
 namespace Nitrogen
-  {
-   void RegisterMemoryManagerErrors();
+{
+	
+	class MemoryManagerErrorsRegistrationDependency
+	{
+		public:
+			MemoryManagerErrorsRegistrationDependency();
+	};
+	
    
 	class Ptr
 	{
@@ -75,7 +78,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::Ptr ptr ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterMemoryManagerErrors >();
+			(void) Nitrogen::MemoryManagerErrorsRegistrationDependency();
 			::DisposePtr( ptr );
 			HandleDestructionOSStatus( ::MemError() );
 		}
@@ -119,7 +122,7 @@ namespace Nucleus
      {
       void operator()( Nitrogen::Handle h ) const
         {
-         Nucleus::OnlyOnce<Nitrogen::RegisterMemoryManagerErrors>();
+         (void) Nitrogen::MemoryManagerErrorsRegistrationDependency();
          ::DisposeHandle( h );
          HandleDestructionOSStatus( ::MemError() );
         }
@@ -409,6 +412,6 @@ namespace Nitrogen
 		struct Buffer {};
 	};
 	
-  }
+}
 
 #endif

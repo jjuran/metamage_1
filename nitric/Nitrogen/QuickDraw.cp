@@ -405,7 +405,7 @@ namespace Nitrogen
 	
 	void RegisterQuickDrawErrors()
 	{
-		RegisterMemoryManagerErrors();
+		(void) MemoryManagerErrorsRegistrationDependency();
 		
 		// CopyBits couldn't allocate required temporary memory
 		RegisterOSStatus< -143                    >();

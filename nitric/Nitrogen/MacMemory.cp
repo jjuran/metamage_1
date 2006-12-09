@@ -6,9 +6,27 @@
 
 namespace Nitrogen
   {
+	
+	MemoryManagerErrorsRegistrationDependency::MemoryManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterMemoryManagerErrors();
+	
+	
+	class MemoryManagerErrorsRegistration
+	{
+		public:
+			MemoryManagerErrorsRegistration()  { RegisterMemoryManagerErrors(); }
+	};
+	
+	static MemoryManagerErrorsRegistration theRegistration;
+	
+	
    void MemError()
      {
-      Nucleus::OnlyOnce<RegisterMemoryManagerErrors>();
       ThrowOSStatus( ::MemError() );
      }
    
