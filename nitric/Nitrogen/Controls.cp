@@ -13,28 +13,25 @@
 namespace Nitrogen
   {
   
-	ControlRef NewControl(
-		WindowRef owningWindow, 
-		const Rect& boundsRect, 
-		ConstStr255Param controlTitle, 
-		bool initiallyVisible, 
-		short initialValue, 
-		short minimumValue, 
-		short maximumValue, 
-		ControlProcID procID, 
-		RefCon refCon)
+	ControlRef NewControl( WindowRef         owningWindow,
+	                       const Rect&       boundsRect, 
+	                       ConstStr255Param  controlTitle,
+	                       bool              initiallyVisible,
+	                       short             initialValue,
+	                       short             minimumValue,
+	                       short             maximumValue,
+	                       ControlProcID     procID,
+	                       RefCon            refCon )
 	{
-		return ::NewControl(
-			owningWindow, 
-			&boundsRect, 
-			controlTitle, 
-			initiallyVisible, 
-			initialValue, 
-			minimumValue, 
-			maximumValue, 
-			procID, 
-			refCon
-		);
+		return ::NewControl( owningWindow,
+		                     &boundsRect,
+		                     controlTitle,
+		                     initiallyVisible,
+		                     initialValue,
+		                     minimumValue,
+		                     maximumValue,
+		                     procID,
+		                     refCon );
 	}
 	
 	void HiliteControl( ControlRef control, ControlPartCode hiliteState )
@@ -42,15 +39,22 @@ namespace Nitrogen
 		::HiliteControl( control, hiliteState );
 	}
 	
-	ControlPartCode TrackControl( ControlRef theControl, Point startPoint, ControlActionUPP actionProc )
+	ControlPartCode TrackControl( ControlRef        theControl,
+	                              Point             startPoint,
+	                              ControlActionUPP  actionProc )
 	{
-		return ControlPartCode( ::TrackControl( theControl, startPoint, actionProc ) );
+		return ControlPartCode( ::TrackControl( theControl,
+		                                        startPoint,
+		                                        actionProc ) );
 	}
 	
 	FindControl_Result FindControl( Point testPoint, WindowRef theWindow )
 	{
 		FindControl_Result result;
-		result.part = ControlPartCode( ::FindControl( testPoint, theWindow, &result.control ) );
+		result.part = ControlPartCode( ::FindControl( testPoint,
+		                                              theWindow,
+		                                              &result.control ) );
+		
 		return result;
 	}
 	
