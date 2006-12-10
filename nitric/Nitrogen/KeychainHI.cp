@@ -6,8 +6,7 @@
 
 namespace Nitrogen {
 
-//	All the errors are registered in RegisterKeychainCoreErrors
-	void RegisterKeychainHIErrors () {
-		}
+//	All the errors are registered in RegisterKeychainErrors
+	static KeychainErrorsRegistrationDependency gKeychainErrorsRegistrationDependency;
 
 	}

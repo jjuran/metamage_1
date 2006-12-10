@@ -6,7 +6,25 @@
 
 namespace Nitrogen {
 
-	void RegisterKeychainCoreErrors () {
+	KeychainErrorsRegistrationDependency::KeychainErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterKeychainErrors();
+	
+	
+	class KeychainErrorsRegistration
+	{
+		public:
+			KeychainErrorsRegistration()  { RegisterKeychainErrors(); }
+	};
+	
+	static KeychainErrorsRegistration theRegistration;
+	
+	
+	void RegisterKeychainErrors () {
 		RegisterOSStatus< errKCNotAvailable          >();
 		RegisterOSStatus< errKCReadOnly              >();
 		RegisterOSStatus< errKCAuthFailed            >();

@@ -23,13 +23,11 @@
 
 namespace Nitrogen {
 
-	void RegisterKeychainHIErrors ();
-
 	inline Nucleus::Owned<KCItemRef> KCAddAppleSharePassword (
 				AFPServerSignature *serverSignature, StringPtr serverAddress,
 				StringPtr serverName, StringPtr volumeName, StringPtr accountName,
 				UInt32 passwordLength, const void *passwordData ) {
-		Nucleus::OnlyOnce<RegisterKeychainHIErrors>();
+		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCAddAppleSharePassword ( serverSignature, serverAddress, 
 				serverName, volumeName, accountName, passwordLength, passwordData, &result ));
@@ -40,7 +38,7 @@ namespace Nitrogen {
 				StringPtr serverName, StringPtr securityDomain, StringPtr accountName,
 				UInt16 port, OSType protocol, OSType authType,
 				UInt32 passwordLength, const void *passwordData ) {
-		Nucleus::OnlyOnce<RegisterKeychainHIErrors>();
+		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCAddInternetPassword ( serverName, securityDomain, accountName, 
 				port, protocol, authType, passwordLength, passwordData, &result ));
@@ -49,7 +47,7 @@ namespace Nitrogen {
 	
 	inline Nucleus::Owned<KCItemRef> KCAddGenericPassword ( StringPtr serviceName, 
 				StringPtr accountName, UInt32 passwordLength, const void *passwordData ) {
-		Nucleus::OnlyOnce<RegisterKeychainHIErrors>();
+		(void) KeychainErrorsRegistrationDependency();
 		KCItemRef	result;
 		ThrowOSStatus ( ::KCAddGenericPassword ( serviceName, accountName, 
 				passwordLength, passwordData, &result ));
@@ -57,24 +55,24 @@ namespace Nitrogen {
 		}
 	
 	inline void KCAddItem ( KCItemRef item ) {
-		Nucleus::OnlyOnce<RegisterKeychainHIErrors>();
+		(void) KeychainErrorsRegistrationDependency();
 		ThrowOSStatus ( ::KCAddItem ( item ));
 		}
 
 	inline void KCUnlock ( KCRef keychain, ConstStr255Param password = NULL ) {
-		Nucleus::OnlyOnce<RegisterKeychainHIErrors>();
+		(void) KeychainErrorsRegistrationDependency();
 		ThrowOSStatus ( ::KCUnlock ( keychain, const_cast<StringPtr> ( password )));
 		}
 	
 	inline Nucleus::Owned<KCRef> KCCreateKeychain ( ConstStr255Param password = NULL ) {
-		Nucleus::OnlyOnce<RegisterKeychainHIErrors>();
+		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
 		ThrowOSStatus ( ::KCCreateKeychain ( const_cast<StringPtr> ( password ), &result ));
   	    return Nucleus::Owned<KCRef>::Seize( result );
 		}
 
 	inline void KCChangeSettings ( KCRef keychain ) {
-		Nucleus::OnlyOnce<RegisterKeychainHIErrors>();
+		(void) KeychainErrorsRegistrationDependency();
 		ThrowOSStatus ( ::KCChangeSettings ( keychain ));
 		}
 	}
