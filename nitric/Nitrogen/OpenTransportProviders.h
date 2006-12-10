@@ -5,7 +5,7 @@
 #ifndef NITROGEN_OPENTRANSPORTPROVIDERS_H
 #define NITROGEN_OPENTRANSPORTPROVIDERS_H
 
-// Universal Interfaces
+// Mac OS Universal Interfaces
 #ifndef __OPENTRANSPORTPROVIDERS__
 #include <OpenTransportProviders.h>
 #endif
@@ -13,21 +13,22 @@
 // Standard C++
 #include <vector>
 
-// Nitrogen core
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+// Nucleus
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_INITIALIZE_H
 #include "Nucleus/Initialize.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 
-// Nitrogen / Carbon support
+// Nitrogen
 #ifndef NITROGEN_OPENTRANSPORT_H
 #include "Nitrogen/OpenTransport.h"
 #endif
+
 
 namespace Nitrogen
 {
@@ -71,13 +72,9 @@ inline unsigned char SET_TOS( unsigned char prec, unsigned char tos )
 namespace Nitrogen
 {
 	
-	class InetPort_Tag {};
-	typedef Nucleus::IDType< InetPort_Tag, ::InetPort, 0 > InetPort;
+	typedef Nucleus::ID< class InetPort_Tag, ::InetPort >::Type InetPort;
 	
-	/*
-	class InetHost_Tag {};
-	typedef Nucleus::IDType< InetHost_Tag, ::InetHost, 0 > InetHost;
-	*/
+	//typedef Nucleus::ID< class InetHost_Tag, ::InetHost >::Type InetHost;
 	
 	// Default InetHost is kOTAnyInetAddress (i.e. 0).
 	// Alternative choice is 0xFFFFFFFF (no address).

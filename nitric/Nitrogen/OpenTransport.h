@@ -5,27 +5,27 @@
 #ifndef NITROGEN_OPENTRANSPORT_H
 #define NITROGEN_OPENTRANSPORT_H
 
-// Universal Interfaces
+// Mac OS Universal Interfaces
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
 #endif
 
-// Nitrogen core
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+// Nucleus
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
 
-// Nitrogen Carbon support
+// Nitrogen
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
@@ -138,26 +138,19 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
-	class OTSequence_Tag {};
-	typedef Nucleus::IDType< OTSequence_Tag, ::OTSequence > OTSequence;
+	typedef Nucleus::ID< class OTSequence_Tag, ::OTSequence >::Type OTSequence;
 	
-	class OTNameID_Tag {};
-	typedef Nucleus::IDType< OTNameID_Tag, ::OTNameID > OTNameID;
+	typedef Nucleus::ID< class OTNameID_Tag, ::OTNameID >::Type OTNameID;
 	
-	class OTReason_Tag {};
-	typedef Nucleus::SelectorType< OTReason_Tag, ::OTReason, 0 > OTReason;
+	typedef Nucleus::Selector< class OTReason_Tag, ::OTReason >::Type OTReason;
 	
-	class OTCommand_Tag {};
-	typedef Nucleus::SelectorType< OTCommand_Tag, ::OTCommand, 0 > OTCommand;
+	typedef Nucleus::Selector< class OTCommand_Tag, ::OTCommand >::Type OTCommand;
 	
-	class OTOpenFlags_Tag {};
-	typedef Nucleus::FlagType< OTOpenFlags_Tag, ::OTOpenFlags > OTOpenFlags;
+	typedef Nucleus::Flag< class OTOpenFlags_Tag, ::OTOpenFlags >::Type OTOpenFlags;
 	
-	class OTUnixErr_Tag {};
-	typedef Nucleus::SelectorType< OTUnixErr_Tag, ::OTUnixErr, 0 > OTUnixErr;
+	typedef Nucleus::Selector< class OTUnixErr_Tag, ::OTUnixErr >::Type OTUnixErr;
 	
-	class OTXTIErr_Tag {};
-	typedef Nucleus::SelectorType< OTXTIErr_Tag, ::OTXTIErr, 0 > OTXTIErr;
+	typedef Nucleus::Selector< class OTXTIErr_Tag, ::OTXTIErr >::Type OTXTIErr;
 	
 	// ...
 	
