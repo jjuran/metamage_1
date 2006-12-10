@@ -42,7 +42,12 @@
 
 namespace Nitrogen
   {
-   void RegisterDragManagerErrors();
+	class DragManagerErrorsRegistrationDependency
+	{
+		public:
+			DragManagerErrorsRegistrationDependency();
+	};
+	
    
    using ::DragRef;
 
@@ -101,7 +106,7 @@ namespace Nucleus
      {
       void operator()( Nitrogen::DragRef i ) const
         {
-         Nucleus::OnlyOnce<Nitrogen::RegisterDragManagerErrors>();
+         (void) Nitrogen::DragManagerErrorsRegistrationDependency();
          HandleDestructionOSStatus( ::DisposeDrag( i ) );
         }
      };
