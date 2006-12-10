@@ -21,6 +21,13 @@
 
 namespace Nitrogen
   {
+	
+	class InterfaceBuilderServicesErrorsRegistrationDependency
+	{
+		public:
+			InterfaceBuilderServicesErrorsRegistrationDependency();
+	};
+	
    using ::IBNibRef;
    
   }
@@ -53,7 +60,6 @@ namespace Nitrogen
 #endif
    void SetMenuBarFromNib( IBNibRef inNibRef, CFStringRef inName );
    
-   void RegisterInterfaceBuilderServicesErrors();
   }
 
 #endif
