@@ -7,20 +7,31 @@
 #include "Nitrogen/Movies.h"
 #endif
 
-// Nitrogen
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
-
 
 namespace Nitrogen
 {
 	
+	QuickTimeErrorsRegistrationDependency::QuickTimeErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterQuickTimeErrors();
+	
+	
+	class QuickTimeErrorsRegistration
+	{
+		public:
+			QuickTimeErrorsRegistration()  { RegisterQuickTimeErrors(); }
+	};
+	
+	static QuickTimeErrorsRegistration theRegistration;
+	
+	
 	Nucleus::Owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,
 	                                                 FSIOPermssn    permission )
 	{
-		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
-		
 		SInt16 result;
 		ThrowOSStatus( ::OpenMovieFile( &file, &result, permission ) );
 		
@@ -31,8 +42,6 @@ namespace Nitrogen
 	                                          ResID            resID,
 	                                          NewMovieFlags    flags )
 	{
-		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
-		
 		Movie result;
 		::ResID resIDcopy = resID;
 		
@@ -50,8 +59,6 @@ namespace Nitrogen
 	                                                               const RGBColor*  eraseColor,
 	                                                               FullScreenFlags  flags )
 	{
-		Nucleus::OnlyOnce< RegisterQuickTimeErrors >();
-		
 		FullScreenContextPtr context;
 		
 		ThrowOSStatus( ::BeginFullScreen( reinterpret_cast< ::Ptr* >( &context ),
