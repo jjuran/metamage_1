@@ -20,7 +20,7 @@
 #if defined(CARBONUNITS_LINKAGE) && ACCESSOR_CALLS_ARE_FUNCTIONS && TARGET_CPU_68K || !defined(CARBONUNITS_LINKAGE) && !ACCESSOR_CALLS_ARE_FUNCTIONS
 
 #ifndef CARBONUNITS_LINKAGE
-#define CARBONUNITS_LINKAGE inline
+#define CARBONUNITS_LINKAGE inline pascal
 #endif
 
 CARBONUNITS_LINKAGE BitMap* GetPortBitMapForCopyBits( CGrafPtr cport )
@@ -209,9 +209,9 @@ CARBONUNITS_LINKAGE Pattern* GetQDGlobalsWhite( Pattern* result )
 	return result;
 }
 
-CARBONUNITS_LINKAGE GrafPtr GetQDGlobalsThePort()
+CARBONUNITS_LINKAGE CGrafPtr GetQDGlobalsThePort()
 {
-	return qd.thePort;
+	return reinterpret_cast< CGrafPtr >( qd.thePort );
 }
 
 CARBONUNITS_LINKAGE CGrafPtr CreateNewPort()
