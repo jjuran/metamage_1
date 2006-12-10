@@ -25,10 +25,6 @@
 #include "Nitrogen/CFString.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
-
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
@@ -45,7 +41,12 @@
 
 namespace Nitrogen {
 
-	void RegisterAddressBookErrors ( void );
+	class AddressBookErrorsRegistrationDependency
+	{
+		public:
+			AddressBookErrorsRegistrationDependency();
+	};
+	
 	
 //	typedef void                            *ABRecordRef;
 //	typedef struct __ABPerson               *ABPersonRef;
@@ -124,7 +125,7 @@ namespace Nitrogen
 	
 //	--- Searching
     inline Nucleus::Owned<CFArrayRef> ABCopyArrayOfMatchingRecords ( ABAddressBookRef addressBook, ABSearchElementRef search ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABCopyArrayOfMatchingRecords ( addressBook, search );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
     	}
@@ -146,7 +147,7 @@ namespace Nitrogen
 
 // Returns the record class Name for a particular uniqueId
 	inline Nucleus::Owned<CFStringRef> ABCopyRecordTypeFromUniqueId ( ABAddressBookRef addressBook, CFStringRef uniqueId ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABCopyRecordTypeFromUniqueId ( addressBook, uniqueId );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
     	}
@@ -161,7 +162,7 @@ namespace Nitrogen
 	using ::ABRemoveProperties;
 	
 	inline Nucleus::Owned<CFArrayRef> ABCopyArrayOfPropertiesForRecordType ( ABAddressBookRef addressBook, CFStringRef recordType ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABCopyArrayOfPropertiesForRecordType ( addressBook, recordType );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
     	}
@@ -171,7 +172,7 @@ namespace Nitrogen
 
 // --- Records (Person, Group)
     inline Nucleus::Owned<ABRecordRef> ABCopyRecordForUniqueId ( ABAddressBookRef addressBook, CFStringRef uniqueId ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABRecordRef result = ::ABCopyRecordForUniqueId ( addressBook, uniqueId );
 		return Nucleus::Owned<ABRecordRef>::Seize( result );
     	}
@@ -184,14 +185,14 @@ namespace Nitrogen
 
 // --- People
 	inline Nucleus::Owned<CFArrayRef> ABCopyArrayOfAllPeople ( ABAddressBookRef addressBook ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABCopyArrayOfAllPeople ( addressBook );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
     	}
 
 // --- Groups
     inline Nucleus::Owned<CFArrayRef> ABCopyArrayOfAllGroups ( ABAddressBookRef addressBook ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABCopyArrayOfAllGroups ( addressBook );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
     	}
@@ -201,14 +202,14 @@ namespace Nitrogen
 // --------------------------------------------------------------------------------
 // --- Record Type
 	inline Nucleus::Owned<CFStringRef> ABRecordCopyRecordType ( ABRecordRef record ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABRecordCopyRecordType ( record );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
     	}
 
 // --- Property value
 	inline Nucleus::Owned<CFTypeRef> ABRecordCopyValue ( ABRecordRef record, CFStringRef property ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFTypeRef result = ::ABRecordCopyValue ( record, property );
 		return Nucleus::Owned<CFTypeRef>::Seize( result );
     	}
@@ -223,7 +224,7 @@ namespace Nitrogen
 	
 // ---- Unique ID access convenience
 	inline Nucleus::Owned<CFStringRef> ABRecordCopyUniqueId ( ABRecordRef record ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABRecordCopyUniqueId ( record );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
     	}
@@ -232,33 +233,33 @@ namespace Nitrogen
 //      ABPerson
 // --------------------------------------------------------------------------------
 	inline Nucleus::Owned<ABPersonRef> ABPersonCreate ( void ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABPersonRef result = ::ABPersonCreate ();
 		return Nucleus::Owned<ABPersonRef>::Seize( result );
 		}
 	
 	inline Nucleus::Owned<ABPersonRef> ABPersonCreateWithVCardRepresentation ( CFDataRef vCard ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABPersonRef result = ::ABPersonCreateWithVCardRepresentation ( vCard );
 		return Nucleus::Owned<ABPersonRef>::Seize( result );
 		}
 
 	inline Nucleus::Owned<CFDataRef> ABPersonCopyVCardRepresentation ( ABPersonRef person ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFDataRef result = ::ABPersonCopyVCardRepresentation ( person );
 		return Nucleus::Owned<CFDataRef>::Seize( result );
 		}
 
 //	Groups this person belongs to
  	inline Nucleus::Owned<CFArrayRef> ABPersonCopyParentGroups ( ABPersonRef person ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPersonCopyParentGroups ( person );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
 
 // --- Search elements
  	inline Nucleus::Owned<ABSearchElementRef> ABPersonCreateSearchElement ( CFStringRef property, CFStringRef label, CFStringRef key, CFTypeRef value, ABSearchComparison comparison ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABSearchElementRef result = ::ABPersonCreateSearchElement ( property, label, key, value, comparison );
 		return Nucleus::Owned<ABSearchElementRef>::Seize( result );
 		}
@@ -268,14 +269,14 @@ namespace Nitrogen
 // --------------------------------------------------------------------------------
 
  	inline Nucleus::Owned<ABGroupRef> ABGroupCreate ( void ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABGroupRef result = ::ABGroupCreate ();
 		return Nucleus::Owned<ABGroupRef>::Seize( result );
 		}
 
 // --- Dealing with Persons
  	inline Nucleus::Owned<CFArrayRef> ABGroupCopyArrayOfAllMembers ( ABGroupRef group ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABGroupCopyArrayOfAllMembers ( group );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
@@ -288,7 +289,7 @@ namespace Nitrogen
 
 // --- Dealing with Groups
  	inline Nucleus::Owned<CFArrayRef> ABGroupCopyArrayOfAllSubgroups ( ABGroupRef group ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABGroupCopyArrayOfAllSubgroups ( group );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
@@ -300,7 +301,7 @@ namespace Nitrogen
 
 // --- Dealong with Parents
  	inline Nucleus::Owned<CFArrayRef> ABGroupCopyParentGroups ( ABGroupRef group ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABGroupCopyParentGroups ( group );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
@@ -310,14 +311,14 @@ namespace Nitrogen
 	using ::ABGroupSetDistributionIdentifier;
 	
  	inline Nucleus::Owned<CFStringRef> ABGroupCopyDistributionIdentifier ( ABGroupRef group, ABPersonRef person, CFStringRef property ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABGroupCopyDistributionIdentifier ( group, person, property );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
 
 // --- Search elements
  	inline Nucleus::Owned<ABSearchElementRef> ABGroupCreateSearchElement ( CFStringRef property, CFStringRef label, CFStringRef key, CFTypeRef value, ABSearchComparison comparison ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABSearchElementRef result = ::ABGroupCreateSearchElement ( property, label, key, value, comparison );
 		return Nucleus::Owned<ABSearchElementRef>::Seize( result );
 		}
@@ -326,7 +327,7 @@ namespace Nitrogen
 //      ABSearchElement
 // --------------------------------------------------------------------------------
  	inline Nucleus::Owned<ABSearchElementRef> ABSearchElementCreateWithConjunction ( ABSearchConjunction conjunction, CFArrayRef childrenSearchElement ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABSearchElementRef result = ::ABSearchElementCreateWithConjunction ( conjunction, childrenSearchElement );
 		return Nucleus::Owned<ABSearchElementRef>::Seize( result );
 		}
@@ -338,7 +339,7 @@ namespace Nitrogen
 //      ABMultiValue
 // --------------------------------------------------------------------------------
  	inline Nucleus::Owned<ABMultiValueRef> ABMultiValueCreate ( void ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABMultiValueRef result = ::ABMultiValueCreate ();
 		return Nucleus::Owned<ABMultiValueRef>::Seize( result );
 		}
@@ -349,19 +350,19 @@ namespace Nitrogen
 
 //	And if ABMultiValueCount returns an unsigned here, why is index an 'int' ????
 	inline Nucleus::Owned<CFTypeRef> ABMultiValueCopyValueAtIndex ( ABMultiValueRef multiValue, int index ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFTypeRef result = ::ABMultiValueCopyValueAtIndex ( multiValue, index );
 		return Nucleus::Owned<CFTypeRef>::Seize( result );
 		}
 
 	inline Nucleus::Owned<CFStringRef> ABMultiValueCopyLabelAtIndex ( ABMultiValueRef multiValue, int index ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABMultiValueCopyLabelAtIndex ( multiValue, index );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
 
 	inline Nucleus::Owned<CFStringRef> ABMultiValueCopyPrimaryIdentifier ( ABMultiValueRef multiValue ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABMultiValueCopyPrimaryIdentifier ( multiValue );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
@@ -370,7 +371,7 @@ namespace Nitrogen
 	using ::ABMultiValueIndexForIdentifier;
 	
 	inline Nucleus::Owned<CFStringRef> ABMultiValueCopyIdentifierAtIndex ( ABMultiValueRef multiValue, int index ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABMultiValueCopyIdentifierAtIndex ( multiValue, index );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
@@ -379,7 +380,7 @@ namespace Nitrogen
 	using ::ABMultiValuePropertyType;
 	
  	inline Nucleus::Owned<ABMultiValueRef> ABMultiValueCreateCopy ( ABMultiValueRef multiValue ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABMultiValueRef result = ::ABMultiValueCreateCopy ( multiValue );
 		return Nucleus::Owned<ABMultiValueRef>::Seize( result );
 		}
@@ -388,13 +389,13 @@ namespace Nitrogen
 //      ABMutableMultiValue
 // --------------------------------------------------------------------------------
  	inline Nucleus::Owned<ABMutableMultiValueRef> ABMultiValueCreateMutable ( void ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABMutableMultiValueRef result = ::ABMultiValueCreateMutable ();
 		return Nucleus::Owned<ABMutableMultiValueRef>::Seize( result );
 		}
 
 	inline Nucleus::Owned<CFStringRef> ABMultiValueAdd ( ABMutableMultiValueRef multiValue, CFTypeRef value, CFStringRef label ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result;
 		if ( !::ABMultiValueAdd ( multiValue, value, label, &result ))
 			throw MemFullErr ();
@@ -402,7 +403,7 @@ namespace Nitrogen
 		}
 
 	inline Nucleus::Owned<CFStringRef> ABMultiValueInsert ( ABMutableMultiValueRef multiValue, CFTypeRef value, CFStringRef label, int index ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result;
 		if ( !::ABMultiValueInsert ( multiValue, value, label, index, &result ))
 			throw MemFullErr ();
@@ -421,7 +422,7 @@ namespace Nitrogen
 	using ::ABMultiValueReplaceLabel;
 	
 	inline Nucleus::Owned<ABMutableMultiValueRef> ABMultiValueCreateMutableCopy ( ABMultiValueRef multiValue ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABMutableMultiValueRef result = ::ABMultiValueCreateMutableCopy ( multiValue );
 		return Nucleus::Owned<ABMutableMultiValueRef>::Seize( result );
 		}
@@ -430,20 +431,20 @@ namespace Nitrogen
 //      Localization of properties or labels
 // --------------------------------------------------------------------------------
 	inline Nucleus::Owned<CFStringRef> ABCopyLocalizedPropertyOrLabel ( CFStringRef labelOrProperty ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABCopyLocalizedPropertyOrLabel ( labelOrProperty );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
 
 // --- Address formatting
 	inline Nucleus::Owned<CFStringRef> ABCreateFormattedAddressFromDictionary ( ABAddressBookRef addressBook, CFDictionaryRef address ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABCreateFormattedAddressFromDictionary ( addressBook, address );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
 
 	inline Nucleus::Owned<CFStringRef> ABCopyDefaultCountryCode ( ABAddressBookRef addressBook ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABCopyDefaultCountryCode ( addressBook );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
 		}
@@ -455,7 +456,7 @@ namespace Nitrogen
 	using ::ABPersonSetImageData;
 
 	inline Nucleus::Owned<CFDataRef> ABPersonCopyImageData ( ABPersonRef person ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFDataRef result = ::ABPersonCopyImageData ( person );
 		return Nucleus::Owned<CFDataRef>::Seize( result );
 		}

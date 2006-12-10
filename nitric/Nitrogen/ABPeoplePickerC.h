@@ -57,19 +57,19 @@ namespace Nitrogen
 //	Creates an ABPickerRef. The window is created hidden. 
 //	Call ABPickerSetVisibility() to show it.
     inline Nucleus::Owned<ABPickerRef> ABPickerCreate ( void ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		ABPickerRef result = ::ABPickerCreate ();
 		return Nucleus::Owned<ABPickerRef>::Seize( result );
     	}
 
 // Change the structural frame of the window.
     inline void ABPickerSetFrame ( ABPickerRef inPicker, const HIRect &inFrame ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		::ABPickerSetFrame ( inPicker, &inFrame );
 		}
 	 
     inline HIRect ABPickerGetFrame ( ABPickerRef inPicker ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		HIRect result;
 		::ABPickerGetFrame ( inPicker, &result );
 		return result;
@@ -117,7 +117,7 @@ namespace Nitrogen
 	
 // Returns an array of AB Properties as CFStringRefs.
     inline Nucleus::Owned<CFArrayRef> ABPickerCopyProperties ( ABPickerRef inPicker ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopyProperties ( inPicker );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
@@ -127,7 +127,7 @@ namespace Nitrogen
 	using ::ABPickerSetColumnTitle;
 	
     inline Nucleus::Owned<CFStringRef> ABPickerCopyColumnTitle ( ABPickerRef inPicker, CFStringRef inProperty ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABPickerCopyColumnTitle ( inPicker, inProperty );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
     	}
@@ -137,7 +137,7 @@ namespace Nitrogen
 	using ::ABPickerSetDisplayedProperty;
 	
 	inline Nucleus::Owned<CFStringRef> ABPickerCopyDisplayedProperty ( ABPickerRef inPicker ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFStringRef result = ::ABPickerCopyDisplayedProperty ( inPicker );
 		return Nucleus::Owned<CFStringRef>::Seize( result );
     	}
@@ -148,14 +148,14 @@ namespace Nitrogen
 
 //	Returns group column selection as an array of ABGroupRef objects.
 	inline Nucleus::Owned<CFArrayRef> ABPickerCopySelectedGroups ( ABPickerRef inPicker ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopySelectedGroups ( inPicker );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
 
 //	Returns names column selection as an array of ABGroupRef or ABPersonRef objects.
 	inline Nucleus::Owned<CFArrayRef> ABPickerCopySelectedRecords ( ABPickerRef inPicker ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopySelectedRecords ( inPicker );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
@@ -163,14 +163,14 @@ namespace Nitrogen
 //	This method returns an array of selected multi-value identifiers. Returns nil if the displayed
 //	property is a single value type.
 	inline Nucleus::Owned<CFArrayRef> ABPickerCopySelectedIdentifiers ( ABPickerRef inPicker, ABPersonRef inPerson ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopySelectedIdentifiers ( inPicker, inPerson );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
 
 //	Returns an array containing CFStringRefs for each item selected in the values column.
 	inline Nucleus::Owned<CFArrayRef> ABPickerCopySelectedValues ( ABPickerRef inPicker ) {
-		Nucleus::OnlyOnce<RegisterAddressBookErrors>();
+		(void) AddressBookErrorsRegistrationDependency();
 		CFArrayRef result = ::ABPickerCopySelectedValues ( inPicker );
 		return Nucleus::Owned<CFArrayRef>::Seize( result );
 		}
