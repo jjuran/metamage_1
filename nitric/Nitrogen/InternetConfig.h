@@ -20,7 +20,11 @@
 
 namespace Nitrogen
   {
-	void RegisterInternetConfigErrors();
+	class InternetConfigErrorsRegistrationDependency
+	{
+		public:
+			InternetConfigErrorsRegistrationDependency();
+	};
 	
 	using ::ICFontRecordHandle;
 	using ::ICCharTableHandle;

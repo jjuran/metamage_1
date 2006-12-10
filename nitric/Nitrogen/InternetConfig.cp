@@ -14,12 +14,28 @@
 namespace Nitrogen
 {
 	
+	InternetConfigErrorsRegistrationDependency::InternetConfigErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterInternetConfigErrors();
+	
+	
+	class InternetConfigErrorsRegistration
+	{
+		public:
+			InternetConfigErrorsRegistration()  { RegisterInternetConfigErrors(); }
+	};
+	
+	static InternetConfigErrorsRegistration theRegistration;
+	
+	
 	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                  ConstStr255Param  key,
 	                                  ICAttr&           attr )
 	{
-		Nucleus::OnlyOnce< RegisterInternetConfigErrors >();
-		
 		Nucleus::Owned< Handle > prefh = NewHandle( 0 );
 		ThrowOSStatus( ::ICFindPrefHandle( instance, key, &attr, prefh.Get() ) );
 		return prefh;
