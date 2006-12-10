@@ -96,6 +96,8 @@ namespace Genie
 	
 	static BinaryImage LoadBinaryImage( const FSSpec& file )
 	{
+		using N::fsRdPerm;
+		
 		NN::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
 		
 		std::size_t size = N::GetEOF( filehandle );

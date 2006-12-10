@@ -156,6 +156,8 @@ namespace Genie
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
 			
+			using N::fsRdPerm;
+			
 			NN::Owned< N::FSFileRefNum > script = N::FSpOpenDF( context.executable, fsRdPerm );
 			
 			char data[ 1024 + 1 ];

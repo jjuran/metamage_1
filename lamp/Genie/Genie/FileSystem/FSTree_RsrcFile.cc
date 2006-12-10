@@ -53,8 +53,8 @@ namespace Genie
 	
 	static boost::shared_ptr< IOHandle > OpenFSSpec( const FSSpec& fileSpec, OpenFlags flags, bool rsrcFork )
 	{
-		unsigned char rdPerm = flags + 1  &  FREAD;
-		unsigned char wrPerm = flags + 1  &  FWRITE;
+		N::FSIOPermissions rdPerm = N::FSIOPermissions( flags + 1  &  FREAD  );
+		N::FSIOPermissions wrPerm = N::FSIOPermissions( flags + 1  &  FWRITE );
 		
 		bool nonblocking = flags & O_NONBLOCK;
 		bool appending   = flags & O_APPEND;
