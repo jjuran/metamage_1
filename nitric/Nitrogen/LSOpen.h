@@ -21,40 +21,42 @@
 #include "Nitrogen/CFURL.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 
 namespace Nitrogen {
-	void RegisterLSOpenErrors ();
+	
+	class LaunchServicesErrorsRegistrationDependency
+	{
+		public:
+			LaunchServicesErrorsRegistrationDependency();
+	};
 	
 /* ================================================================== */
 /* LaunchServices API                                                                                       */
 /* ================================================================== */
 
 	inline FSRef LSOpenFSRef ( const FSRef &inRef ) {
-		Nucleus::OnlyOnce<RegisterLSOpenErrors>();
+		(void) LaunchServicesErrorsRegistrationDependency();
 		FSRef	result;
 		ThrowOSStatus ( ::LSOpenFSRef ( &inRef, &result ));
 		return result;
 		}
 
 	inline Nucleus::Owned<CFURLRef> LSOpenCFURLRef ( CFURLRef inURL ) {
-		Nucleus::OnlyOnce<RegisterLSOpenErrors>();
+		(void) LaunchServicesErrorsRegistrationDependency();
 		CFURLRef	result;
 		ThrowOSStatus ( ::LSOpenCFURLRef ( inURL, &result ));
   	    return Nucleus::Owned<CFURLRef>::Seize( result );
 		}
 
 	inline FSRef LSOpenFromRefSpec ( const LSLaunchFSRefSpec &inLaunchSpec ) {
-		Nucleus::OnlyOnce<RegisterLSOpenErrors>();
+		(void) LaunchServicesErrorsRegistrationDependency();
 		FSRef	result;
 		ThrowOSStatus ( ::LSOpenFromRefSpec ( &inLaunchSpec, &result ));
 		return result;
 		}
 
 	inline Nucleus::Owned<CFURLRef> LSOpenFromURLSpec ( const LSLaunchURLSpec &inLaunchSpec ) {
-		Nucleus::OnlyOnce<RegisterLSOpenErrors>();
+		(void) LaunchServicesErrorsRegistrationDependency();
 		CFURLRef	result;
 		ThrowOSStatus ( ::LSOpenFromURLSpec ( &inLaunchSpec, &result ));
   	    return Nucleus::Owned<CFURLRef>::Seize( result );

@@ -6,7 +6,25 @@
 
 namespace Nitrogen {
 
-	void RegisterLSOpenErrors () {
+	LaunchServicesErrorsRegistrationDependency::LaunchServicesErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterLaunchServicesErrors();
+	
+	
+	class LaunchServicesErrorsRegistration
+	{
+		public:
+			LaunchServicesErrorsRegistration()  { RegisterLaunchServicesErrors(); }
+	};
+	
+	static LaunchServicesErrorsRegistration theRegistration;
+	
+	
+	void RegisterLaunchServicesErrors () {
 		RegisterOSStatus< kLSAppInTrashErr                   >();
 		RegisterOSStatus< kLSUnknownErr                      >();
 		RegisterOSStatus< kLSNotAnApplicationErr             >();
