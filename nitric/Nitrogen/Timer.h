@@ -7,9 +7,6 @@
 #include <Timer.h>
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
@@ -21,7 +18,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterTimeManagerErrors();
+	class TimeManagerErrorsRegistrationDependency
+	{
+		public:
+			TimeManagerErrorsRegistrationDependency();
+	};
 	
 	using ::TMTask;
 	using ::TMTaskPtr;
@@ -35,7 +36,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::TMTaskPtr tmTaskPtr ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterTimeManagerErrors >();
+			(void) Nitrogen::TimeManagerErrorsRegistrationDependency();
 			
 			HandleDestructionOSStatus( ::RemoveTimeTask( reinterpret_cast< ::QElemPtr >( tmTaskPtr ) ) );
 		}
