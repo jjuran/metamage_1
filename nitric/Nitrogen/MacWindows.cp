@@ -35,8 +35,21 @@ namespace Nitrogen
 	static       Nucleus::OwnedDefaults< WindowRef >::Disposer gDisposeWindow;
 	
 #else
+	
+	namespace Function
+	{
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
-	static const Nucleus::OwnedDefaults< WindowRef >::Disposer gDisposeWindow( &::DisposeWindow );
+		static pascal void DisposeWindow( WindowRef window )  { ::DisposeWindow( window ); }
+		
+	#else
+		
+		using ::DisposeWindow;
+		
+	#endif
+	}
+	
+	static const Nucleus::OwnedDefaults< WindowRef >::Disposer gDisposeWindow( &Function::DisposeWindow );
 		
 #endif
 	

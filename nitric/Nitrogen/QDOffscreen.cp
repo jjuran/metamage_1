@@ -7,6 +7,19 @@
 namespace Nitrogen
 {
 	
+	namespace Function
+	{
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		
+		static pascal void DisposeGWorld( GWorldPtr world )  { ::DisposeGWorld( world ); }
+		
+	#else
+		
+		using ::DisposeGWorld;
+		
+	#endif
+	}
+	
 	Nucleus::Owned< GWorldPtr > NewGWorld( short        pixelDepth,
 	                                       const Rect&  boundsRect,
 	                                       CTabHandle   cTable,
@@ -22,7 +35,7 @@ namespace Nitrogen
 		                            aGDevice,
 		                            flags ) );
 		
-		return Nucleus::Owned< GWorldPtr >::Seize( newWorld, &::DisposeGWorld );
+		return Nucleus::Owned< GWorldPtr >::Seize( newWorld, &Function::DisposeGWorld );
 	}
 	
 	Nucleus::Owned< GWorldPtr > NewGWorld( short        pixelDepth,
@@ -67,7 +80,7 @@ namespace Nitrogen
 		{
 			offscreenGWorld.Release();
 			
-			offscreenGWorld = Nucleus::Owned< GWorldPtr >::Seize( gWorldPtr, &::DisposeGWorld );
+			offscreenGWorld = Nucleus::Owned< GWorldPtr >::Seize( gWorldPtr, &Function::DisposeGWorld );
 		}
 		
 		return result;
