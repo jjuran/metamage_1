@@ -4,10 +4,6 @@
 #include "Nitrogen/UnicodeConverter.h"
 #endif
 
-#ifndef NITROGEN_TEXTCOMMON_H
-#include "Nitrogen/TextCommon.h"
-#endif
-
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif

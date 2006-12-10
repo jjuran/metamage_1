@@ -15,8 +15,8 @@
 #include "Nitrogen/MacTypes.h"
 #endif
 
-#ifndef NITROGEN_UNICODECONVERTER_H
-#include "Nitrogen/UnicodeConverter.h"
+#ifndef NITROGEN_TEXTCOMMON_H
+#include "Nitrogen/TextCommon.h"
 #endif
 
 #ifndef NUCLEUS_OWNED_H
