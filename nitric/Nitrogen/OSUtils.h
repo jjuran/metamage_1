@@ -35,7 +35,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterDeferredTaskManagerErrors();
+	class DeferredTaskManagerErrorsRegistrationDependency
+	{
+		public:
+			DeferredTaskManagerErrorsRegistrationDependency();
+	};
 	
 	// ...
 	
