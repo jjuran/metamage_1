@@ -27,7 +27,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterQuickDrawErrors ();
+	class QuickDrawErrorsRegistrationDependency
+	{
+		public:
+			QuickDrawErrorsRegistrationDependency();
+	};
 	
 	#pragma mark -
 	#pragma mark ¥ Types ¥

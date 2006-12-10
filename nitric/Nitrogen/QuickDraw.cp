@@ -15,10 +15,6 @@
 #include "Nitrogen/QuickDraw.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
-
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
@@ -36,6 +32,24 @@
 
 namespace Nitrogen
 {
+	
+	QuickDrawErrorsRegistrationDependency::QuickDrawErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterQuickDrawErrors();
+	
+	
+	class QuickDrawErrorsRegistration
+	{
+		public:
+			QuickDrawErrorsRegistration()  { RegisterQuickDrawErrors(); }
+	};
+	
+	static QuickDrawErrorsRegistration theRegistration;
+	
 	
 	GrafPtr GetPort()
 	{
@@ -260,8 +274,6 @@ namespace Nitrogen
 	
 	void QDError()
 	{
-		Nucleus::OnlyOnce< RegisterQuickDrawErrors >();
-		
 		ThrowOSStatus( ::QDError() );
 	}
 	
