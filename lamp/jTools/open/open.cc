@@ -30,15 +30,18 @@
 #include "Utilities/Files.h"
 #include "Utilities/Processes.h"
 
+// Divergence
+#include "Divergence/Utilities.hh"
+
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "SystemCalls.hh"
 
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace NX = NitrogenExtras;
+namespace Div = Divergence;
 namespace O = Orion;
 
 
@@ -54,8 +57,13 @@ enum
 
 static FSSpec ResolvePathname( const std::string& pathname, bool macPathname )
 {
-	return macPathname ? N::FSMakeFSSpec( N::Str255( pathname ) ) 
-	                   : Path2FSS       (            pathname   );
+	return macPathname ? N::FSMakeFSSpec         ( N::Str255( pathname       ) ) 
+	                   : Div::ResolvePathToFSSpec(            pathname.c_str() );
+}
+
+static NN::Owned< N::AEDesc > CoerceFSSpecToAliasDesc( const FSSpec& item )
+{
+	return N::AECoercePtr< typeFSS >( item, N::DescType( typeAlias ) );
 }
 
 static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >&  items,
@@ -63,14 +71,10 @@ static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >
 {
 	NN::Owned< N::AEDescList > documents = N::AECreateList< false >();
 	
-	typedef NN::Owned< N::AEDesc > (* Coercer )( const FSSpec&, N::DescType );
-	
 	std::transform( items.begin(),
 	                items.end(),
 	                N::AEDescList_Item_BackInserter( documents ),
-	                std::bind2nd( std::ptr_fun( Coercer( &N::AECoercePtr< typeFSS > ) ),
-	                              typeAlias )
-	                );
+	                std::ptr_fun( CoerceFSSpecToAliasDesc ) );
 	
 	using namespace NN::Operators;
 	
@@ -179,7 +183,7 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items, const O::
 		// User has specified an application by its pathname
 		
 		// Resolve to FSSpec
-		appFile = Path2FSS( appPathname );
+		appFile = Div::ResolvePathToFSSpec( appPathname.c_str() );
 		
 		try
 		{
