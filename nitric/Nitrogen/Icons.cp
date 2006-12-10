@@ -13,6 +13,24 @@
 namespace Nitrogen
 {
 	
+	IconManagerErrorsRegistrationDependency::IconManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterIconManagerErrors();
+	
+	
+	class IconManagerErrorsRegistration
+	{
+		public:
+			IconManagerErrorsRegistration()  { RegisterIconManagerErrors(); }
+	};
+	
+	static IconManagerErrorsRegistration theRegistration;
+	
+	
 	Nucleus::Owned< CIconHandle > GetCIcon( ResID iconID )
 	{
 		return Nucleus::Owned< CIconHandle >::Seize( ::GetCIcon( iconID ) );
@@ -111,7 +129,6 @@ namespace Nitrogen
 	
    Nucleus::Owned<IconRef> GetIconRef( FSVolumeRefNum vRefNum, OSType creator, OSType iconType )
      {
-      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef result;
       ThrowOSStatus( ::GetIconRef( vRefNum, creator, iconType, &result ) );
       return Nucleus::Owned<IconRef>::Seize( result );
@@ -119,7 +136,6 @@ namespace Nitrogen
 
    GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile )
      {
-      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef icon;
       SInt16 label;
       ThrowOSStatus( ::GetIconRefFromFile( &theFile, &icon, &label ) );
@@ -143,7 +159,6 @@ namespace Nitrogen
 	                                     FSIOFileAttributes attributes,
 	                                     FSUserPrivileges accessPrivileges )
      {
-      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef result;
       ThrowOSStatus( ::GetIconRefFromFolder( vRefNum,
                                              parentFolderID,
@@ -161,7 +176,6 @@ namespace Nitrogen
                                                          const FSCatalogInfo&   inCatalogInfo,
                                                          IconServicesUsageFlags inUsageFlags )
      {
-      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef icon;
       SInt16 label;
       ThrowOSStatus( ::GetIconRefFromFileInfo( &inRef,
@@ -181,7 +195,6 @@ namespace Nitrogen
                                                          const UniChar         *inFileName,
                                                          IconServicesUsageFlags inUsageFlags )
      {
-      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef icon;
       SInt16 label;
       ThrowOSStatus( ::GetIconRefFromFileInfo( &inRef,
@@ -198,7 +211,6 @@ namespace Nitrogen
 
    Nucleus::Owned<IconRef> RegisterIconRefFromFSRef( OSType creator, OSType iconType, const FSRef& iconFile )
      {
-      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef result;
       ThrowOSStatus( ::RegisterIconRefFromFSRef( creator, iconType, &iconFile, &result ) );
       return Nucleus::Owned<IconRef>::Seize( result );
@@ -208,7 +220,6 @@ namespace Nitrogen
                                                OSType iconType,
                                                const FSSpec& iconFile )
 	  {
-      Nucleus::OnlyOnce<RegisterIconManagerErrors>();
       IconRef result;
       ThrowOSStatus( ::RegisterIconRefFromIconFile( creator, iconType, &iconFile, &result ) );
       return Nucleus::Owned<IconRef>::Seize( result );

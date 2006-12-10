@@ -30,7 +30,11 @@
 
 namespace Nitrogen
 {
-	void RegisterIconManagerErrors();
+	class IconManagerErrorsRegistrationDependency
+	{
+		public:
+			IconManagerErrorsRegistrationDependency();
+	};
 	
 	struct IconAlignmentType_Tag  {};
 	typedef Nucleus::FlagType< IconAlignmentType_Tag, ::IconAlignmentType, kAlignNone > IconAlignmentType;
@@ -95,7 +99,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::CIconHandle h ) const
 		{
-			//Nucleus::OnlyOnce< RegisterIconManagerErrors >();
+			//(void) Nitrogen::IconManagerErrorsRegistrationDependency();
 			::DisposeCIcon( h );
 		}
 	};
@@ -147,7 +151,7 @@ namespace Nucleus
 		
 		void operator()( Nitrogen::IconSuiteRef i ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterIconManagerErrors >();
+			(void) Nitrogen::IconManagerErrorsRegistrationDependency();
 			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
 		}
 	};
@@ -163,7 +167,7 @@ namespace Nitrogen
 		
 		void operator()( IconSuiteRef i ) const
 		{
-			Nucleus::OnlyOnce< RegisterIconManagerErrors >();
+			(void) IconManagerErrorsRegistrationDependency();
 			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
 		}
 	};
@@ -179,7 +183,7 @@ namespace Nucleus
      {
       void operator()( Nitrogen::IconRef i ) const
         {
-         Nucleus::OnlyOnce< Nitrogen::RegisterIconManagerErrors >();
+         (void) Nitrogen::IconManagerErrorsRegistrationDependency();
          HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
         }
      };
