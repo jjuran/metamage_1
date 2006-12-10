@@ -41,7 +41,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterProcessManagerErrors();
+	class ProcessManagerErrorsRegistrationDependency
+	{
+		public:
+			ProcessManagerErrorsRegistrationDependency();
+	};
 	
 	struct LaunchFlags_Tag {};
 	typedef Nucleus::FlagType< LaunchFlags_Tag, ::LaunchFlags > LaunchFlags;

@@ -18,22 +18,26 @@
 namespace Nitrogen
 {
 	
-	void RegisterProcessManagerErrors()
+	ProcessManagerErrorsRegistrationDependency::ProcessManagerErrorsRegistrationDependency()
 	{
-		RegisterOSStatus< paramErr      >();
-		RegisterOSStatus< memFullErr    >();
-		RegisterOSStatus< resNotFound   >();
-		RegisterOSStatus< procNotFound  >();
-		RegisterOSStatus< memFragErr    >();
-		RegisterOSStatus< appModeErr    >();
-		RegisterOSStatus< appMemFullErr >();
-		RegisterOSStatus< appIsDaemon   >();
+		// does nothing, but guarantees construction of theRegistration
 	}
+	
+	
+	static void RegisterProcessManagerErrors();
+	
+	
+	class ProcessManagerErrorsRegistration
+	{
+		public:
+			ProcessManagerErrorsRegistration()  { RegisterProcessManagerErrors(); }
+	};
+	
+	static ProcessManagerErrorsRegistration theRegistration;
+	
 	
 	ProcessSerialNumber GetCurrentProcess()
 	{
-		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
-		
 		ProcessSerialNumber psn;
 		ThrowOSStatus( ::GetCurrentProcess( &psn ) );
 		
@@ -42,8 +46,6 @@ namespace Nitrogen
 	
 	ProcessSerialNumber GetFrontProcess()
 	{
-		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
-		
 		ProcessSerialNumber psn;
 		ThrowOSStatus( ::GetFrontProcess( &psn ) );
 		
@@ -53,8 +55,6 @@ namespace Nitrogen
 	bool SameProcess( const ProcessSerialNumber&  a, 
 	                  const ProcessSerialNumber&  b )
 	{
-		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
-		
 		::Boolean same;
 		ThrowOSStatus( ::SameProcess( &a, &b, &same ) );
 		
@@ -63,8 +63,6 @@ namespace Nitrogen
 	
 	void SetFrontProcess( const ProcessSerialNumber& psn )
 	{
-		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
-		
 		ThrowOSStatus( ::SetFrontProcess( &psn ) );
 	}
 	
@@ -72,8 +70,6 @@ namespace Nitrogen
 	                                       LaunchFlags     launchFlags,
 	                                       AppParameters*  appParameters )
 	{
-		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
-		
 		LaunchParamBlockRec 	pb;
 		
 		pb.reserved1			= 0;
@@ -92,8 +88,6 @@ namespace Nitrogen
 	
 	ProcessSerialNumber GetNextProcess( ProcessSerialNumber process )
 	{
-		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
-		
 		ThrowOSStatus( ::GetNextProcess( &process ) );
 		
 		return process;
@@ -102,8 +96,6 @@ namespace Nitrogen
 	ProcessInfoRec& GetProcessInformation( const ProcessSerialNumber&  process,
 	                                       ProcessInfoRec&             processInfo )
 	{
-		Nucleus::OnlyOnce< RegisterProcessManagerErrors >();
-		
 		ThrowOSStatus( ::GetProcessInformation( &process, &processInfo ) );
 		
 		return processInfo;
@@ -144,6 +136,18 @@ namespace Nitrogen
 		                           Nucleus::Initialize< ProcessInfoRec >( processInfo, 
 		                                                                  &appSpec ) )
 		);
+	}
+	
+	void RegisterProcessManagerErrors()
+	{
+		RegisterOSStatus< paramErr      >();
+		RegisterOSStatus< memFullErr    >();
+		RegisterOSStatus< resNotFound   >();
+		RegisterOSStatus< procNotFound  >();
+		RegisterOSStatus< memFragErr    >();
+		RegisterOSStatus< appModeErr    >();
+		RegisterOSStatus< appMemFullErr >();
+		RegisterOSStatus< appIsDaemon   >();
 	}
 	
 }
