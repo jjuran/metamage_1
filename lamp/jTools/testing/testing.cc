@@ -22,6 +22,8 @@
 #include <vector>
 
 // POSIX
+#include "fcntl.h"
+#include "sys/stat.h"
 #include "unistd.h"
 
 // MoreFiles
@@ -30,7 +32,7 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen / Mac OS support
+// Nitrogen
 #include "Nitrogen/CodeFragments.h"
 #include "Nitrogen/DateTimeUtils.h"
 #include "Nitrogen/MacMemory.h"
@@ -39,6 +41,9 @@
 //#include "Nitrogen/Resources.h"
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Str.h"
+
+// POSeven
+#include "POSeven/FileDescriptor.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON
@@ -70,11 +75,6 @@
 #include "CRC32.hh"
 #include "MD5.hh"
 
-// Kerosene
-#ifndef __GNUC__
-#include "SystemCalls.hh"
-#endif
-
 // Orion
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
@@ -82,6 +82,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace P7 = POSeven;
 namespace FS = FileSystem;
 namespace NX = NitrogenExtras;
 namespace O = Orion;
@@ -794,6 +795,7 @@ static int TestNull( int argc, char const *const argv[] )
 
 	struct FragmentImage {};
 	
+	/*
 	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const FSSpec& file )
 	{
 		NN::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
@@ -808,6 +810,26 @@ static int TestNull( int argc, char const *const argv[] )
 		
 		return NX::DataPtr< FragmentImage >( result, size );
 	}
+	*/
+	
+	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const char* pathname )
+	{
+		NN::Owned< P7::FileDescriptor > filehandle = P7::Open( pathname, O_RDONLY );
+		
+		struct ::stat stat_buffer;
+		
+		int statted = stat( pathname, &stat_buffer );
+		
+		std::size_t size = stat_buffer.st_size;
+		
+		std::auto_ptr< FragmentImage > result;
+		
+		result.reset( static_cast< FragmentImage* >( ::operator new( size ) ) );
+		
+		int bytes = read( filehandle, reinterpret_cast< char* >( result.get() ), size );
+		
+		return NX::DataPtr< FragmentImage >( result, size );
+	}
 	
 static int TestGMFShared( int argc, char const *const argv[] )
 {
@@ -817,9 +839,7 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	
 	const char* pathname = argv[2];
 	
-	FSSpec file = Path2FSS( pathname );
-	
-	NX::DataPtr< FragmentImage > fragment = ReadFragmentImageFromPluginFile( file );
+	NX::DataPtr< FragmentImage > fragment = ReadFragmentImageFromPluginFile( pathname );
 	
 	int len = fragment.Len();
 	
