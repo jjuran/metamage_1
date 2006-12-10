@@ -9,6 +9,25 @@
 
 namespace Nitrogen
   {
+	
+	TextEncodingConversionManagerErrorsRegistrationDependency::TextEncodingConversionManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterTextEncodingConversionManagerErrors();
+	
+	
+	class TextEncodingConversionManagerErrorsRegistration
+	{
+		public:
+			TextEncodingConversionManagerErrorsRegistration()  { RegisterTextEncodingConversionManagerErrors(); }
+	};
+	
+	static TextEncodingConversionManagerErrorsRegistration theRegistration;
+	
+	
    GetTextEncodingName_Result GetTextEncodingName( TextEncoding             iEncoding,
                                                    TextEncodingNameSelector iNamePartSelector,
                                                    RegionCode               iPreferredRegion,
@@ -16,8 +35,6 @@ namespace Nitrogen
                                                    ByteCount                iOutputBufLen,
                                                    UInt8                   *oEncodingName )
      {
-      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
-
       GetTextEncodingName_Result result;
       ::RegionCode oActualRegion;
       ::TextEncoding oActualEncoding;
@@ -74,7 +91,6 @@ namespace Nitrogen
 
    Nucleus::Owned< TECInfoHandle, Nucleus::Disposer<Handle> > TECGetInfo()
      {
-      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       ::TECInfoHandle result;
       ThrowOSStatus( ::TECGetInfo( &result ) );
       return Nucleus::Owned< TECInfoHandle, Nucleus::Disposer<Handle> >::Seize( result );
@@ -85,7 +101,6 @@ namespace Nitrogen
                                                  RegionCode iRegionID,
                                                  ConstStr255Param iTextFontname )
      {
-      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       ::TextEncoding result;
       ThrowOSStatus( ::UpgradeScriptInfoToTextEncoding( iTextScriptID,
                                                         iTextLanguageID,
@@ -97,7 +112,6 @@ namespace Nitrogen
 
    RevertTextEncodingToScriptInfo_Result RevertTextEncodingToScriptInfo( TextEncoding iEncoding )
      {
-      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       RevertTextEncodingToScriptInfo_Result result;
       ::ScriptCode oTextScriptID;
       ::LangCode   oTextLanguageID;
@@ -112,7 +126,6 @@ namespace Nitrogen
 
    NearestMacTextEncodings_Result NearestMacTextEncodings( TextEncoding generalEncoding )
      {
-      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       
       ::TextEncoding bestMacEncoding;
       ::TextEncoding alternateMacEncoding;
@@ -129,7 +142,6 @@ namespace Nitrogen
                                           UniCharCount       textLength,
                                           UCCharPropertyType propType )
      {
-      Nucleus::OnlyOnce<RegisterTextEncodingConversionManagerErrors>();
       ::UCCharPropertyValue result;
       ThrowOSStatus( ::UCGetCharProperty( charPtr, textLength, propType, &result ) );
       return UCCharPropertyValue( result );

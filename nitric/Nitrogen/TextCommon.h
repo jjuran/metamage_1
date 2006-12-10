@@ -30,7 +30,13 @@
 
 namespace Nitrogen
   {
-   void RegisterTextEncodingConversionManagerErrors();
+  
+	class TextEncodingConversionManagerErrorsRegistrationDependency
+	{
+		public:
+			TextEncodingConversionManagerErrorsRegistrationDependency();
+	};
+	
    
    inline LangCode TextLanguageDontCare()  { return LangCode::Make( kTextLanguageDontCare ); }
    inline RegionCode TextRegionDontCare()  { return RegionCode::Make( kTextRegionDontCare ); }
