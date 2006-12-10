@@ -64,6 +64,9 @@ namespace RunToolServer
 	namespace FS = FileSystem;
 	namespace NX = NitrogenExtras;
 	
+	using N::fsRdPerm;
+	using N::fsWrPerm;
+	
 	using BitsAndBytes::q;
 	
 	using namespace Nucleus::Operators;

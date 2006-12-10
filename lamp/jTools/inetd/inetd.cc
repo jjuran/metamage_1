@@ -274,7 +274,7 @@ static Record MakeRecord( const std::vector< std::string >& tokens )
 	
 	Record result;
 	
-	result.port = std::atoi( tokens[ kPort ].c_str() );
+	result.port = N::InetPort( std::atoi( tokens[ kPort ].c_str() ) );
 	result.path = tokens[ kPath ];
 	
 	std::size_t argc = tokens.size() - kArgv;

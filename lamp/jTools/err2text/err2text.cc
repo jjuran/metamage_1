@@ -110,6 +110,8 @@ SysErrsDotErrTOC::SysErrsDotErrTOC( const FSSpec& errFile )
 :
 	myCount( 0 )
 {
+	using N::fsRdPerm;
+	
 	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( errFile, fsRdPerm ) );
 	
 	ReadData( fileH, myCount );
@@ -161,6 +163,8 @@ class SysErrsDotErrText
 
 std::string SysErrsDotErrText::GetStringAt( UInt16 offset )
 {
+	using N::fsRdPerm;
+	
 	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( myErrFile, fsRdPerm ) );
 	
 	N::SetFPos( fileH, fsFromStart, offset );

@@ -369,6 +369,8 @@ static std::string HTTPHeader( const std::string& field, const std::string& valu
 
 static void DumpFile( const FSSpec& file )
 {
+	using N::fsRdPerm;
+	
 	NN::Owned< N::FSFileRefNum > input( N::FSpOpenDF( file, fsRdPerm ) );
 	
 	int bytes;

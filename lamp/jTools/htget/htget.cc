@@ -69,6 +69,9 @@ namespace Io
 namespace htget
 {
 	
+	using N::fsWrPerm;
+	
+	
 	static Io::Handle gStdOut = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::out );
 	
 	class HTTPClientTransaction
@@ -542,7 +545,7 @@ int O::Main( int argc, char const *const argv[] )
 	std::string urlPath;
 	std::string portStr;
 	
-	N::InetPort defaultPort = 0;
+	N::InetPort defaultPort = N::InetPort( 0 );
 	
 	bool parsed = htget::ParseURL( params[ 0 ], scheme, hostname, portStr, urlPath );
 	
@@ -558,7 +561,7 @@ int O::Main( int argc, char const *const argv[] )
 	if ( scheme == "http" )
 	{
 		//sock = HW::MakeHandleFromCopy< HW::TCPSocket_Details >( HW::NewSocket() );
-		defaultPort = 80;
+		defaultPort = N::InetPort( 80 );
 	}
 	/*
 	else if ( scheme == "https" )
@@ -573,7 +576,7 @@ int O::Main( int argc, char const *const argv[] )
 		return 2;
 	}
 	
-	N::InetPort port = ( !portStr.empty() ) ? std::atoi( portStr.c_str() )
+	N::InetPort port = ( !portStr.empty() ) ? N::InetPort( std::atoi( portStr.c_str() ) )
 	                                        : defaultPort;
 	
 	N::InetHost ip = N::OTInetStringToAddress( InternetServices(),

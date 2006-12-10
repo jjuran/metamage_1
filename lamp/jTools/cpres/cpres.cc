@@ -56,6 +56,8 @@ int O::Main( int argc, char const *const argv[] )
 	
 	::FSpCreateResFile( &dest, 'RSED', 'rsrc', smRoman );
 	
+	using N::fsRdWrPerm;
+	
 	NN::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( dest, fsRdWrPerm ) );
 	
 	// Try to copy each file.  Return whether any errors occurred.
@@ -84,6 +86,8 @@ int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
 		Io::Err << "cpres: " << source.name << ": omitting directory\n";
 		return 1;
 	}
+	
+	using N::fsRdPerm;
 	
 	NN::Owned< N::ResFileRefNum > sourceRes( N::FSpOpenResFile( source, fsRdPerm ) );
 	

@@ -214,6 +214,8 @@ static void Relay( const std::string& returnPath,
 	
 	SMTP::Client::Session smtpSession( io );
 	
+	using N::fsRdPerm;
+	
 	NN::Owned< N::FSFileRefNum > msg = N::FSpOpenDF( message, fsRdPerm );
 	
 	//smtpSession.Hello      ( HW::GetHostname() );
@@ -263,6 +265,8 @@ static std::string ReadOneLiner( N::FSFileRefNum fileH )
 
 static std::string ReadOneLiner( const FSSpec& file )
 {
+	using N::fsRdPerm;
+	
 	return ReadOneLiner( N::FSpOpenDF( file, fsRdPerm ) );
 }
 
@@ -287,6 +291,8 @@ void Transmitter::operator()( const FSSpec& destFile )
 {
 	try
 	{
+		using N::fsRdWrPerm;
+		
 		// destFile serves as a lock on this destination
 		Relay( returnPath,
 		       ReadOneLiner( N::FSpOpenDF( destFile, fsRdWrPerm ) ),

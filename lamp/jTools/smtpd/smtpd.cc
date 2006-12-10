@@ -163,6 +163,8 @@ static string GetReversePath( const string& fromLine )
 
 static void CreateOneLiner( const FSSpec& file, const std::string& line )
 {
+	using N::fsWrPerm;
+	
 	Io::S( N::FSpOpenDF( N::FSpCreate( file,
 	                                   'R*ch',
 	                                   'TEXT' ),
@@ -210,7 +212,7 @@ PartialMessage::PartialMessage( const FSSpec& dirLoc )
 	out( N::FSpOpenDF( N::FSpCreate( dir.Get() & "Message",
 	                                 'R*ch',
 	                                 'TEXT'),
-	                   fsWrPerm ) )
+	                   N::fsWrPerm ) )
 {
 	//
 }
