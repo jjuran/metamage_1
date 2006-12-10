@@ -66,6 +66,8 @@ inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
 
 static std::string ReadFileData( const FSSpec& file )
 {
+	using N::fsRdPerm;
+	
 	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
 	
 	std::size_t fileSize = N::GetEOF( fileH );
@@ -130,6 +132,8 @@ static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 
 static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 {
+	using N::fsRdPerm;
+	
 	NN::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( scriptFile,
 	                                                           fsRdPerm ) );
 	
