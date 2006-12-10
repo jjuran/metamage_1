@@ -12,6 +12,24 @@
 namespace Nitrogen
   {
 	
+	WindowManagerErrorsRegistrationDependency::WindowManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterWindowManagerErrors();
+	
+	
+	class WindowManagerErrorsRegistration
+	{
+		public:
+			WindowManagerErrorsRegistration()  { RegisterWindowManagerErrors(); }
+	};
+	
+	static WindowManagerErrorsRegistration theRegistration;
+	
+	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
 	static       Nucleus::OwnedDefaults< WindowRef >::Disposer gDisposeWindow;
@@ -176,7 +194,6 @@ namespace Nitrogen
 	
    WindowAttributes GetWindowAttributes( WindowRef window )
      {
-      Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
       ::WindowAttributes result;
       ThrowOSStatus( ::GetWindowAttributes( window, &result ) );
       return WindowAttributes( result );
@@ -186,7 +203,6 @@ namespace Nitrogen
                                  WindowAttributes setTheseAttributes,
                                  WindowAttributes clearTheseAttributes )
      {
-      Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
       ThrowOSStatus( ::ChangeWindowAttributes( window, setTheseAttributes, clearTheseAttributes ) );
      }
    

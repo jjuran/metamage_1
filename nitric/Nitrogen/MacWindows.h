@@ -68,7 +68,11 @@ static const WindowRef kLastWindowOfClass  = reinterpret_cast< WindowRef >( 0 );
 
 namespace Nitrogen
   {
-   void RegisterWindowManagerErrors();
+	class WindowManagerErrorsRegistrationDependency
+	{
+		public:
+			WindowManagerErrorsRegistrationDependency();
+	};
 	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
@@ -260,19 +264,19 @@ namespace Nitrogen
 /*ÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑ*/
 
 	inline void SetWindowToolbar ( WindowRef inWindow, HIToolbarRef inToolbar ) {
-		Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
+		(void) WindowManagerErrorsRegistrationDependency();
 		ThrowOSStatus ( ::SetWindowToolbar ( inWindow, inToolbar ));
 		}
 
 	inline HIToolbarRef GetWindowToolbar ( WindowRef inWindow ) {
-		Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
+		(void) WindowManagerErrorsRegistrationDependency();
 		HIToolbarRef result;
 		ThrowOSStatus ( ::GetWindowToolbar ( inWindow, &result ));
 		return result;
 		}
 
 	inline void ShowHideWindowToolbar ( WindowRef inWindow, Boolean inShow, Boolean inAnimate ) {
-		Nucleus::OnlyOnce< RegisterWindowManagerErrors >();
+		(void) WindowManagerErrorsRegistrationDependency();
 		ThrowOSStatus ( ::ShowHideWindowToolbar ( inWindow, inShow, inAnimate ));
 		}
 
