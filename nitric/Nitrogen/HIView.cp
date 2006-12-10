@@ -6,8 +6,25 @@
 
 namespace Nitrogen {
 
+	HIViewErrorsRegistrationDependency::HIViewErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterHIViewErrors();
+	
+	
+	class HIViewErrorsRegistration
+	{
+		public:
+			HIViewErrorsRegistration()  { RegisterHIViewErrors(); }
+	};
+	
+	static HIViewErrorsRegistration theRegistration;
+	
+	
 	HIViewCreateOffscreenImage_Result HIViewCreateOffscreenImage ( HIViewRef inView, OptionBits inOptions ) {
-     	Nucleus::OnlyOnce<RegisterHIViewErrors>();
 		HIViewCreateOffscreenImage_Result retVal;
 		CGImageRef	returnedCG;
 		ThrowOSStatus ( ::HIViewCreateOffscreenImage ( inView, inOptions, &retVal.frame, &returnedCG ));
@@ -28,7 +45,6 @@ namespace Nitrogen {
 
 //	Multiple variations of "HISegmentedViewSetSegmentImage"
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
-     	Nucleus::OnlyOnce<RegisterHIViewErrors>();
 		HIViewImageContentInfo cinfo;
 		cinfo.contentType	= kControlNoContent;
 		cinfo.u.iconSuite	= NULL;	/* It's a union */
@@ -36,7 +52,6 @@ namespace Nitrogen {
 		}
 	
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, IconRef iconRef ) {
-     	Nucleus::OnlyOnce<RegisterHIViewErrors>();
 		HIViewImageContentInfo cinfo;
 		cinfo.contentType	= kControlContentIconRef;
 		cinfo.u.iconRef		= iconRef;	/* It's a union */
@@ -44,7 +59,6 @@ namespace Nitrogen {
 		}
 	
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, CGImageRef imageRef ) {
-     	Nucleus::OnlyOnce<RegisterHIViewErrors>();
 		HIViewImageContentInfo cinfo;
 		cinfo.contentType	= kControlContentCGImageRef;
 		cinfo.u.imageRef	= imageRef;	/* It's a union */
@@ -53,7 +67,6 @@ namespace Nitrogen {
 	
 #if 0
 	template < Nucleus::Owned<CGImageRef> > HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
-     	Nucleus::OnlyOnce<RegisterHIViewErrors>();
 		HIViewImageContentInfo result;
 		cinfo.contentType	= kControlContentCGImageRef;
 		cinfo.u.imageRef	= NULL;	/* It's a union */
@@ -65,7 +78,6 @@ namespace Nitrogen {
 //	!!! Should we have an Nucleus::Owned<HIViewImageContentInfo> here?
 //	We should have a whole series of these, maybe templated on what kind of info we want to return
 	inline HIViewImageContentInfo HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
-     	Nucleus::OnlyOnce<RegisterHIViewErrors>();
 		HIViewImageContentInfo retVal;
 		ThrowOSStatus ( ::HISegmentedViewCopySegmentImage ( inSegmentedView, inSegmentIndexOneBased, &retVal ));
 		return retVal;
@@ -73,7 +85,6 @@ namespace Nitrogen {
 
 	template <typename returnType, int returnTag>
 	Nucleus::Owned<returnType> HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
-     	Nucleus::OnlyOnce<RegisterHIViewErrors>();
 		HIViewImageContentInfo cinfo;
 		cinfo.contentType = returnTag;
 		cinfo.u.iconSuite = NULL;	/* It's a union */
