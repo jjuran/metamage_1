@@ -120,6 +120,9 @@ namespace MacBinary
 	
 	namespace FS = FileSystem;
 	
+	using N::fsRdPerm;
+	using N::fsWrPerm;
+	
 	
 	template < class Type > struct ByteSwap_Traits
 	{
