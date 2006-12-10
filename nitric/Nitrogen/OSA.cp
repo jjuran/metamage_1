@@ -4,37 +4,32 @@
 #include "Nitrogen/OSA.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 
 namespace Nitrogen
 {
 	
-	void RegisterOSAErrors()
+	OSAErrorsRegistrationDependency::OSAErrorsRegistrationDependency()
 	{
-		RegisterOSStatus< badComponentInstance       >();
-		RegisterOSStatus< errOSASystemError          >();
-		RegisterOSStatus< errOSAInvalidID            >();
-		RegisterOSStatus< errOSABadStorageType       >();
-		RegisterOSStatus< errOSAScriptError          >();
-		RegisterOSStatus< errOSABadSelector          >();
-		RegisterOSStatus< errOSASourceNotAvailable   >();
-		RegisterOSStatus< errOSANoSuchDialect        >();
-		RegisterOSStatus< errOSADataFormatObsolete   >();
-		RegisterOSStatus< errOSADataFormatTooNew     >();
-		RegisterOSStatus< errOSACorruptData          >();
-		RegisterOSStatus< errOSARecordingIsAlreadyOn >();
-		RegisterOSStatus< errOSAComponentMismatch    >();
-		RegisterOSStatus< errOSACantOpenComponent    >();
+		// does nothing, but guarantees construction of theRegistration
 	}
+	
+	
+	static void RegisterOSAErrors();
+	
+	
+	class OSAErrorsRegistration
+	{
+		public:
+			OSAErrorsRegistration()  { RegisterOSAErrors(); }
+	};
+	
+	static OSAErrorsRegistration theRegistration;
+	
 	
 	Nucleus::Owned< OSASpec > OSALoad( Nucleus::Shared< ComponentInstance >  scriptingComponent, 
 	                                   const AEDesc&                         scriptData, 
 	                                   OSAModeFlags                          modeFlags )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		::OSAID resultingScriptID;
 		
 		ThrowOSStatus( ::OSALoad( scriptingComponent,
@@ -51,8 +46,6 @@ namespace Nitrogen
 	                                   DescType           desiredType,
 	                                   OSAModeFlags       modeFlags )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		AEDesc resultingScriptData;
 		
 		ThrowOSStatus( ::OSAStore( scriptingComponent,
@@ -69,8 +62,6 @@ namespace Nitrogen
 	                                      OSAID                                 contextID,
 	                                      OSAModeFlags                          modeFlags )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		::OSAID resultingScriptValueID;
 		
 		ThrowOSStatus( ::OSAExecute( scriptingComponent,
@@ -88,8 +79,6 @@ namespace Nitrogen
 	                                     DescType           desiredType,
 	                                     OSAModeFlags       modeFlags )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		AEDesc resultingText;
 		
 		ThrowOSStatus( ::OSADisplay( scriptingComponent,
@@ -105,8 +94,6 @@ namespace Nitrogen
 	                                         AEKeyword          selector,
 	                                         DescType           desiredType )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		AEDesc resultingErrorDescription;
 		
 		ThrowOSStatus( ::OSAScriptError( scriptingComponent,
@@ -119,8 +106,6 @@ namespace Nitrogen
 	
 	Nucleus::Owned< AEDesc > OSAScriptingComponentName( ComponentInstance scriptingComponent )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		AEDesc resultingScriptingComponentName;
 		
 		ThrowOSStatus( ::OSAScriptingComponentName( scriptingComponent,
@@ -133,8 +118,6 @@ namespace Nitrogen
 	                             const AEDesc&                sourceData, 
 	                             OSAModeFlags                 modeFlags )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		::OSAID previousAndResultingScriptID = kOSANullScript;
 		
 		ThrowOSStatus
@@ -156,8 +139,6 @@ namespace Nitrogen
 	                                      OSAModeFlags                          modeFlags, 
 	                                      Nucleus::Owned< OSASpec >             previousScriptID )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		::OSAID previousAndResultingScriptID = previousScriptID.Release().id;
 		
 		OSAError err = ::OSACompile( scriptingComponent,
@@ -182,8 +163,6 @@ namespace Nitrogen
 	void OSACopyID( OSAID                       fromID,
 	                Nucleus::Owned< OSASpec >&  to )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		::OSAID toID = to.Get().id;
 		
 		ThrowOSStatus( ::OSACopyID( to.Get().component,
@@ -214,8 +193,6 @@ namespace Nitrogen
 	Nucleus::Owned< OSASpec > OSACopyID( Nucleus::Shared< ComponentInstance >  scriptingComponent,
 	                                     OSAID                                 fromID )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		::OSAID toID = kOSANullScript;
 		
 		ThrowOSStatus( ::OSACopyID( scriptingComponent,
@@ -231,8 +208,6 @@ namespace Nitrogen
 	                                           OSAID                                 contextID,
 	                                           OSAModeFlags                          modeFlags )
 	{
-		Nucleus::OnlyOnce< RegisterOSAErrors >();
-		
 		::OSAID resultingScriptValueID;
 		
 		ThrowOSStatus( ::OSAExecuteEvent( scriptingComponent,
@@ -243,6 +218,24 @@ namespace Nitrogen
 		
 		return Nucleus::Owned< OSASpec >::Seize( OSASpec( scriptingComponent,
 		                                                  OSAID::Make( resultingScriptValueID ) ) );
+	}
+	
+	void RegisterOSAErrors()
+	{
+		RegisterOSStatus< badComponentInstance       >();
+		RegisterOSStatus< errOSASystemError          >();
+		RegisterOSStatus< errOSAInvalidID            >();
+		RegisterOSStatus< errOSABadStorageType       >();
+		RegisterOSStatus< errOSAScriptError          >();
+		RegisterOSStatus< errOSABadSelector          >();
+		RegisterOSStatus< errOSASourceNotAvailable   >();
+		RegisterOSStatus< errOSANoSuchDialect        >();
+		RegisterOSStatus< errOSADataFormatObsolete   >();
+		RegisterOSStatus< errOSADataFormatTooNew     >();
+		RegisterOSStatus< errOSACorruptData          >();
+		RegisterOSStatus< errOSARecordingIsAlreadyOn >();
+		RegisterOSStatus< errOSAComponentMismatch    >();
+		RegisterOSStatus< errOSACantOpenComponent    >();
 	}
 	
 }

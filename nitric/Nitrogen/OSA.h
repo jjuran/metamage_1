@@ -34,7 +34,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterOSAErrors();
+	class OSAErrorsRegistrationDependency
+	{
+		public:
+			OSAErrorsRegistrationDependency();
+	};
 	
 	struct OSAID_Tag  {};
 	typedef Nucleus::IDType< OSAID_Tag, ::OSAID, kOSANullScript > OSAID;
@@ -77,7 +81,8 @@ namespace Nucleus
 	{
 		void operator()( const Nitrogen::OSASpec& osaSpec ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterOSAErrors >();
+			(void) Nitrogen::OSAErrorsRegistrationDependency();
+			
 			HandleDestructionOSStatus( ::OSADispose( osaSpec.component, osaSpec.id ) );
 		}
 	};
