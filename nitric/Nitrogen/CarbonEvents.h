@@ -19,9 +19,6 @@
 #ifndef NUCLEUS_ARRAYSINGLETON_H
 #include "Nucleus/ArraySingleton.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
 #endif
@@ -175,8 +172,12 @@
 
 namespace Nitrogen
   {
-   void RegisterCarbonEventErrors();
-
+	class CarbonEventManagerErrorsRegistrationDependency
+	{
+		public:
+			CarbonEventManagerErrorsRegistrationDependency();
+	};
+	
    typedef Nucleus::ErrorCode< OSStatus, eventAlreadyPostedErr           > EventAlreadyPostedErr;
    typedef Nucleus::ErrorCode< OSStatus, eventTargetBusyErr              > EventTargetBusyErr;
    typedef Nucleus::ErrorCode< OSStatus, eventClassInvalidErr            > EventClassInvalidErr;
@@ -1227,7 +1228,8 @@ namespace Nucleus
      {
       void operator()( EventHandlerRef toDispose ) const
         {
-         Nucleus::OnlyOnce<Nitrogen::RegisterCarbonEventErrors>();
+         (void) Nitrogen::CarbonEventManagerErrorsRegistrationDependency();
+         
          HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
         }
      };

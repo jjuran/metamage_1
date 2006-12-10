@@ -3,21 +3,35 @@
 #ifndef NITROGEN_CARBONEVENTS_H
 #include "Nitrogen/CarbonEvents.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 
 namespace Nitrogen
   {
+	
+	CarbonEventManagerErrorsRegistrationDependency::CarbonEventManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterCarbonEventManagerErrors();
+	
+	
+	class CarbonEventManagerErrorsRegistration
+	{
+		public:
+			CarbonEventManagerErrorsRegistration()  { RegisterCarbonEventManagerErrors(); }
+	};
+	
+	static CarbonEventManagerErrorsRegistration theRegistration;
+	
+	
    void RunCurrentEventLoop( EventTimeout inTimeout )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::RunCurrentEventLoop( inTimeout ) );
      }
 
    void QuitEventLoop( EventLoopRef inEventLoop )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::QuitEventLoop( inEventLoop ) );
      }
    
@@ -26,7 +40,6 @@ namespace Nitrogen
                                        const EventTypeSpec * inList,
                                        EventTimeout          inTimeout )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       EventRef result;
       ThrowOSStatus( ::ReceiveNextEvent( inNumTypes, inList, inTimeout, false, &result ) );
       return result;
@@ -37,7 +50,6 @@ namespace Nitrogen
                                             const EventTypeSpec * inList,
                                             EventTimeout          inTimeout )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       EventRef result;
       ThrowOSStatus( ::ReceiveNextEvent( inNumTypes, inList, inTimeout, true, &result ) );
       return Nucleus::Owned<EventRef>::Seize( result );
@@ -49,7 +61,6 @@ namespace Nitrogen
                                 EventTime         when,
                                 EventAttributes   flags )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
 
       EventRef result;
       
@@ -79,7 +90,6 @@ namespace Nitrogen
                            UInt32           inSize,
                            const void *     inDataPtr )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
 
       ThrowOSStatus( ::SetEventParameter( inEvent,
                                           inName,
@@ -97,7 +107,6 @@ namespace Nitrogen
       ::EventParamType outActualType;
       UInt32 outActualSize;
 
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
 
       ThrowOSStatus( ::GetEventParameter( inEvent,
                                           inName,
@@ -116,7 +125,6 @@ namespace Nitrogen
 
    void SetEventTime( EventRef inEvent, EventTime inTime )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::SetEventTime( inEvent, inTime ) );
      }
 
@@ -126,7 +134,6 @@ namespace Nitrogen
                                RefCon              inUserData,
                                EventHandlerUPP     userUPP )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( userUPP( inHandlerCallRef, inEvent, inUserData ) );
      }
 
@@ -137,7 +144,6 @@ namespace Nitrogen
                                                const void *           inUserData )
      {
       EventHandlerRef result;
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::InstallEventHandler( inTarget,
                                             inHandler,
                                             inNumTypes,
@@ -182,25 +188,21 @@ namespace Nitrogen
 
    void InstallStandardEventHandler( EventTargetRef inTarget )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::InstallStandardEventHandler( inTarget ) );
      }
 
    void RemoveEventHandler( Nucleus::Owned<EventHandlerRef> inHandlerRef )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::RemoveEventHandler( inHandlerRef.release() ) );
      }
 
    void SendEventToEventTarget( EventRef inEvent, EventTargetRef inTarget )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::SendEventToEventTarget( inEvent, inTarget ) );
      }
 
    void ProcessHICommand( const HICommand& inCommand )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::ProcessHICommand( &inCommand ) );
      }
 
@@ -210,7 +212,6 @@ namespace Nitrogen
                                                 EventTargetRef    inTarget,
                                                 ::OptionBits      inOptions )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       EventHotKeyRef result;
       ThrowOSStatus( ::RegisterEventHotKey( inHotKeyCode,
                                             inHotKeyModifiers,
@@ -223,11 +224,10 @@ namespace Nitrogen
 
    void UnregisterEventHotKey( Nucleus::Owned< EventHotKeyRef > hotKey )
      {
-      Nucleus::OnlyOnce< RegisterCarbonEventErrors >();
       ThrowOSStatus( ::UnregisterEventHotKey( hotKey.Release() ) );
      }
 
-   void RegisterCarbonEventErrors()
+   void RegisterCarbonEventManagerErrors()
      {
       RegisterOSStatus< eventAlreadyPostedErr           >();
       RegisterOSStatus< eventTargetBusyErr              >();
