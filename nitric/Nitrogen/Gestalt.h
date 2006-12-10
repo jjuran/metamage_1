@@ -15,6 +15,12 @@
 
 namespace Nitrogen
   {
+	class GestaltManagerErrorsRegistrationDependency
+	{
+		public:
+			GestaltManagerErrorsRegistrationDependency();
+	};
+	
    long Gestalt( OSType selector );
    long Gestalt( OSType selector, long defaultValue );
    
@@ -64,7 +70,6 @@ namespace Nitrogen
 	template <> struct GestaltDefault< gestaltComponentMgr     >: GestaltVersionDefaults {};  // 427
 	template <> struct GestaltDefault< gestaltQuickTimeVersion >: GestaltVersionDefaults {};  // 1521
 	
-   void RegisterGestaltManagerErrors();
   }
 
 #endif

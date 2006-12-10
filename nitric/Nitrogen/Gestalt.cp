@@ -6,16 +6,29 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 
 namespace Nitrogen
   {
+	GestaltManagerErrorsRegistrationDependency::GestaltManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterGestaltManagerErrors();
+	
+	
+	class GestaltManagerErrorsRegistration
+	{
+		public:
+			GestaltManagerErrorsRegistration()  { RegisterGestaltManagerErrors(); }
+	};
+	
+	static GestaltManagerErrorsRegistration theRegistration;
+	
+	
    long Gestalt( OSType selector )
      {
-      Nucleus::OnlyOnce<RegisterGestaltManagerErrors>();
-      
       long result;
       ThrowOSStatus( ::Gestalt( selector, &result ) );
       return result;
