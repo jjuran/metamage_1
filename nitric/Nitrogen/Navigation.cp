@@ -5,6 +5,24 @@
 
 namespace Nitrogen {
 
+	NavServicesErrorsRegistrationDependency::NavServicesErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterNavServicesErrors();
+	
+	
+	class NavServicesErrorsRegistration
+	{
+		public:
+			NavServicesErrorsRegistration()  { RegisterNavServicesErrors(); }
+	};
+	
+	static NavServicesErrorsRegistration theRegistration;
+	
+	
 	void RegisterNavServicesErrors () {
 		RegisterOSStatus< kNavWrongDialogStateErr            >();
 		RegisterOSStatus< kNavWrongDialogClassErr            >();
