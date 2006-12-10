@@ -11,10 +11,26 @@
 namespace Nitrogen
 {
 	
+	SoundManagerErrorsRegistrationDependency::SoundManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterSoundManagerErrors();
+	
+	
+	class SoundManagerErrorsRegistration
+	{
+		public:
+			SoundManagerErrorsRegistration()  { RegisterSoundManagerErrors(); }
+	};
+	
+	static SoundManagerErrorsRegistration theRegistration;
+	
+	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count )
 	{
-		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
-		
 		SPBGetIndexedDevice_Result  result;
 		::Handle                    deviceIconHandle;
 		
@@ -30,8 +46,6 @@ namespace Nitrogen
 	Nucleus::Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
 	                                         SoundInputPermissions  permission )
 	{
-		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
-		
 		long refNum;
 		ThrowOSStatus( ::SPBOpenDevice( deviceName, permission, &refNum ) );
 		
@@ -40,8 +54,6 @@ namespace Nitrogen
 	
 	void SPBCloseDevice( Nucleus::Owned< SoundInputRefNum > refNum )
 	{
-		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
-		
 		ThrowOSStatus( ::SPBCloseDevice( refNum.Release() ) );
 	}
 	
@@ -49,8 +61,6 @@ namespace Nitrogen
 	                       SoundInputDeviceInfoType  infoType,
 	                       void*                     infoData )
 	{
-		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
-		
 		ThrowOSStatus( ::SPBGetDeviceInfo( refNum, infoType, infoData ) );
 	}
 	
@@ -58,8 +68,6 @@ namespace Nitrogen
 	                       SoundInputDeviceInfoType  infoType,
 	                       void*                     infoData )
 	{
-		Nucleus::OnlyOnce< RegisterSoundManagerErrors >();
-		
 		ThrowOSStatus( ::SPBSetDeviceInfo( refNum, infoType, infoData ) );
 	}
 	

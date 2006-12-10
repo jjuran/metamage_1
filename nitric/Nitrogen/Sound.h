@@ -57,7 +57,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterSoundManagerErrors();
+	class SoundManagerErrorsRegistrationDependency
+	{
+		public:
+			SoundManagerErrorsRegistrationDependency();
+	};
 	
 	struct SoundInputDeviceInfoType_Tag  {};
 	typedef Nucleus::SelectorType< SoundInputDeviceInfoType_Tag, ::OSType, 0 > SoundInputDeviceInfoType;
@@ -84,7 +88,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::SoundInputRefNum refNum ) const
 		{
-			Nucleus::OnlyOnce< Nitrogen::RegisterSoundManagerErrors >();
+			(void) Nitrogen::SoundManagerErrorsRegistrationDependency();
 			
 			HandleDestructionOSStatus( ::SPBCloseDevice( refNum ) );
 		}
