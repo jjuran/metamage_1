@@ -27,7 +27,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterSerialDriverErrors();
+	class SerialDriverErrorsRegistrationDependency
+	{
+		public:
+			SerialDriverErrorsRegistrationDependency();
+	};
 	
 #if CALL_NOT_IN_CARBON
 	

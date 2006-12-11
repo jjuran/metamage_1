@@ -27,7 +27,11 @@
 namespace Nitrogen
 {
 	
-	void RegisterDeviceManagerErrors();
+	class DeviceManagerErrorsRegistrationDependency
+	{
+		public:
+			DeviceManagerErrorsRegistrationDependency();
+	};
 	
 #if CALL_NOT_IN_CARBON
 	
@@ -45,7 +49,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::DriverRefNum driverRefNum ) const
 		{
-			OnlyOnce< Nitrogen::RegisterDeviceManagerErrors >();
+			(void) Nitrogen::DeviceManagerErrorsRegistrationDependency();
 			HandleDestructionOSStatus( ::CloseDriver( driverRefNum ) );
 		}
 	};

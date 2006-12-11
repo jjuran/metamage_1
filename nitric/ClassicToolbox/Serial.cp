@@ -11,6 +11,24 @@
 namespace Nitrogen
 {
 	
+	SerialDriverErrorsRegistrationDependency::SerialDriverErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterSerialDriverErrors();
+	
+	
+	class SerialDriverErrorsRegistration
+	{
+		public:
+			SerialDriverErrorsRegistration()  { RegisterSerialDriverErrors(); }
+	};
+	
+	static SerialDriverErrorsRegistration theRegistration;
+	
+	
 #if CALL_NOT_IN_CARBON
 	
 	template < class Type >
@@ -26,8 +44,6 @@ namespace Nitrogen
 	
 	std::size_t SerGetBuf( SerialDeviceRef serialDevice )
 	{
-		Nucleus::OnlyOnce< RegisterSerialDriverErrors >();
-		
 		CheckNULL( serialDevice );
 		long count;
 		ThrowOSStatus( ::SerGetBuf( serialDevice->input.Get(), &count ) );
@@ -36,8 +52,6 @@ namespace Nitrogen
 	
 	void SerSetBuf( SerialDeviceRef serialDevice, void* buf, std::size_t bufSize )
 	{
-		Nucleus::OnlyOnce< RegisterSerialDriverErrors >();
-		
 		const std::size_t maxSize = 32767;
 		
 		ThrowOSStatus( ::SerSetBuf( serialDevice->input.Get(),
@@ -47,8 +61,6 @@ namespace Nitrogen
 	
 	SerStaRec SerStatus( SerialDeviceRef serialDevice )
 	{
-		Nucleus::OnlyOnce< RegisterSerialDriverErrors >();
-		
 		CheckNULL( serialDevice );
 		SerStaRec serStatus;
 		ThrowOSStatus( ::SerStatus( serialDevice->output.Get(), &serStatus ) );
@@ -57,8 +69,6 @@ namespace Nitrogen
 	
 	void SerReset( SerialDeviceRef serialDevice, SerConfig serConfig )
 	{
-		Nucleus::OnlyOnce< RegisterSerialDriverErrors >();
-		
 		CheckNULL( serialDevice );
 		ThrowOSStatus( ::SerReset( serialDevice->output.Get(), serConfig ) );
 	}

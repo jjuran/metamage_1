@@ -22,12 +22,28 @@
 namespace Nitrogen
 {
 	
+	DeviceManagerErrorsRegistrationDependency::DeviceManagerErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterDeviceManagerErrors();
+	
+	
+	class DeviceManagerErrorsRegistration
+	{
+		public:
+			DeviceManagerErrorsRegistration()  { RegisterDeviceManagerErrors(); }
+	};
+	
+	static DeviceManagerErrorsRegistration theRegistration;
+	
+	
 #if CALL_NOT_IN_CARBON
 	
 	Nucleus::Owned< DriverRefNum > OpenDriver( ConstStr255Param name )
 	{
-		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
-		
 		SInt16 result;
 		ThrowOSStatus( ::OpenDriver( name, &result ) );
 		
@@ -41,29 +57,21 @@ namespace Nitrogen
 	
 	void CloseDriver( Nucleus::Owned< DriverRefNum > driverRefNum )
 	{
-		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
-		
 		ThrowOSStatus( ::CloseDriver( driverRefNum.Release() ) );
 	}
 	
 	void KillIO( DriverRefNum driverRefNum )
 	{
-		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
-		
 		ThrowOSStatus( ::KillIO( driverRefNum ) );
 	}
 	
 	void Control( DriverRefNum driverRefNum, CSCode csCode, const void* csParamPtr )
 	{
-		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
-		
 		ThrowOSStatus( ::Control( driverRefNum, csCode, csParamPtr ) );
 	}
 	
 	void Status( DriverRefNum driverRefNum, CSCode csCode, void* csParamPtr )
 	{
-		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
-		
 		ThrowOSStatus( ::Status( driverRefNum, csCode, csParamPtr ) );
 	}
 	
@@ -81,8 +89,6 @@ namespace Nitrogen
 	
 	int Read( DriverRefNum driverRefNum, char* data, std::size_t byteCount )
 	{
-		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
-		
 		ParamBlockRec pb;
 		IOParam& io = pb.ioParam;
 		
@@ -100,8 +106,6 @@ namespace Nitrogen
 	
 	int Write( DriverRefNum driverRefNum, const char* data, std::size_t byteCount )
 	{
-		Nucleus::OnlyOnce< RegisterDeviceManagerErrors >();
-		
 		ParamBlockRec pb;
 		IOParam& io = pb.ioParam;
 		
