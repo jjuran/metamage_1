@@ -4,6 +4,26 @@
 
 namespace Nitrogen {
 
+	/*
+	HIShapeErrorsRegistrationDependency::HIShapeErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	*/
+	
+	
+	static void RegisterHIShapeErrors();
+	
+	
+	class HIShapeErrorsRegistration
+	{
+		public:
+			HIShapeErrorsRegistration()  { RegisterHIShapeErrors(); }
+	};
+	
+	static HIShapeErrorsRegistration theRegistration;
+	
+	
 /*======================================================================================*/
 /*  IMMUTABLE FUNCTIONS                                                                 */
 /*======================================================================================*/
@@ -45,7 +65,6 @@ namespace Nitrogen {
 		}
 
 	inline Nucleus::Owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape ) {
-     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
 		Nucleus::Owned<RgnHandle> result = Nucleus::Owned<RgnHandle>::Seize ( NewRgn ());
 		ThrowOSStatus ( ::HIShapeGetAsQDRgn ( inShape, result ));
 		return result;

@@ -21,14 +21,21 @@
 #include "Nitrogen/QuickDraw.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 
 namespace Nitrogen {
 
-	void RegisterHIShapeErrors();
-
+	class HIShapeErrorsRegistrationDependency
+	{
+		public:
+			HIShapeErrorsRegistrationDependency();
+	};
+	
+	inline HIShapeErrorsRegistrationDependency::HIShapeErrorsRegistrationDependency()
+	{
+		// Apple hasn't documented any HIShape errors.
+	}
+	
+ 	
 	using ::HIShapeRef;
 	using ::HIMutableShapeRef;
   }
@@ -89,12 +96,12 @@ namespace Nitrogen
 	inline Nucleus::Owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape );
 	
 	inline void HIShapeReplacePathInCGContext ( HIShapeRef inShape, CGContextRef inContext ) {
-     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
+     	(void) HIShapeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIShapeReplacePathInCGContext ( inShape, inContext ));
 		}
 
 	inline void HIShapeSetQDClip ( HIShapeRef inShape, CGrafPtr inPort ) {
-     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
+     	(void) HIShapeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIShapeSetQDClip ( inShape, inPort ));
 		}
 
@@ -109,27 +116,27 @@ namespace Nitrogen
 	Nucleus::Owned<HIMutableShapeRef> HIShapeCreateMutableCopy ( HIShapeRef inOrig );
 
 	inline void HIShapeSetEmpty ( HIMutableShapeRef inShape ) {
-     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
+     	(void) HIShapeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIShapeSetEmpty ( inShape ));
 		}
 	
 	inline void HIShapeIntersect ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
-     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
+     	(void) HIShapeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIShapeIntersect ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeDifference ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
-     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
+     	(void) HIShapeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIShapeDifference ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeUnion ( HIShapeRef inShape1, HIShapeRef inShape2, HIMutableShapeRef outResult ) {
-     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
+     	(void) HIShapeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIShapeUnion ( inShape1, inShape2, outResult ));
 		}
 
 	inline void HIShapeOffset ( HIMutableShapeRef inShape, float inDX, float inDY ) {
-     	Nucleus::OnlyOnce<RegisterHIShapeErrors>();
+     	(void) HIShapeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIShapeOffset ( inShape, inDX, inDY ));
 		}
 

@@ -8,6 +8,24 @@
 
 namespace Nitrogen {
 
+	HIObjectErrorsRegistrationDependency::HIObjectErrorsRegistrationDependency()
+	{
+		// does nothing, but guarantees construction of theRegistration
+	}
+	
+	
+	static void RegisterHIObjectErrors();
+	
+	
+	class HIObjectErrorsRegistration
+	{
+		public:
+			HIObjectErrorsRegistration()  { RegisterHIObjectErrors(); }
+	};
+	
+	static HIObjectErrorsRegistration theRegistration;
+	
+	
   	void RegisterHIObjectErrors () {
 		RegisterOSStatus< hiObjectClassExistsErr        >();
 		RegisterOSStatus< hiObjectClassHasInstancesErr  >();

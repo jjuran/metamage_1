@@ -33,13 +33,14 @@
 #include "Nitrogen/AEDataModel.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
 
 namespace Nitrogen {
 	
-	void RegisterHIObjectErrors ();
+	class HIObjectErrorsRegistrationDependency
+	{
+		public:
+			HIObjectErrorsRegistrationDependency();
+	};
 	
 	using ::HIObjectRef;
 
@@ -90,7 +91,7 @@ namespace Nitrogen
 			  UInt32                 inNumEvents,
 			  const EventTypeSpec *  inEventList,
 			  void *                 inConstructData = 0 ) {
-		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
+		(void) HIObjectErrorsRegistrationDependency();
 		HIObjectClassRef retVal;
 		ThrowOSStatus ( ::HIObjectRegisterSubclass ( inClassID, inBaseClassID, inOptions,
 	  						inConstructProc, inNumEvents, inEventList, inConstructData, &retVal ));
@@ -131,13 +132,13 @@ namespace Nitrogen
 
 
 //	inline void HIObjectUnregisterClass ( HIObjectClassRef inClassRef ) {
-//		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
+//		(void) HIObjectErrorsRegistrationDependency();
 //		ThrowOSStatus ( ::HIObjectUnregisterClass ( inClassRef ));
 //		}
 
 
 	inline Nucleus::Owned<HIObjectRef> HIObjectCreate ( CFStringRef inClassID, EventRef inConstructData ) {
-		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
+		(void) HIObjectErrorsRegistrationDependency();
 		HIObjectRef retVal;
 		ThrowOSStatus ( ::HIObjectCreate ( inClassID, inConstructData, &retVal ));
   	    return Nucleus::Owned<HIObjectRef>::Seize( retVal );
@@ -159,7 +160,7 @@ namespace Nitrogen
 	using ::HIObjectDynamicCast;
 
 	inline Nucleus::Owned<HIObjectRef> HIObjectCreateFromBundle ( CFBundleRef inBundle ) {
-		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
+		(void) HIObjectErrorsRegistrationDependency();
 		HIObjectRef retVal;
 		ThrowOSStatus ( ::HIObjectCreateFromBundle ( inBundle, &retVal ));
   	    return Nucleus::Owned<HIObjectRef>::Seize( retVal );
@@ -169,7 +170,7 @@ namespace Nitrogen
 	using ::HIObjectIsAccessibilityIgnored;
 
 	inline void HIObjectSetAccessibilityIgnored ( HIObjectRef inObject, Boolean inIgnored ) {
-		Nucleus::OnlyOnce<RegisterHIObjectErrors>();
+		(void) HIObjectErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIObjectSetAccessibilityIgnored ( inObject, inIgnored ));
 		}
 	}

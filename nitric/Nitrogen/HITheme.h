@@ -17,12 +17,19 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
-
 namespace Nitrogen {
-	void RegisterHIThemeErrors ();
+	
+	class HIThemeErrorsRegistrationDependency
+	{
+		public:
+			HIThemeErrorsRegistrationDependency();
+	};
+	
+	inline HIThemeErrorsRegistrationDependency::HIThemeErrorsRegistrationDependency()
+	{
+		// Apple hasn't documented any HITheme errors.
+	}
+	
 	
 /* -------------------------------------------------------------------------- */
 /*  Buttons                                                                   */
@@ -30,28 +37,28 @@ namespace Nitrogen {
 
 	inline HIRect HIThemeDrawButton ( const HIRect &inBounds, const HIThemeButtonDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeDrawButton ( &inBounds, &inDrawInfo, inContext, inOrientation, &retVal ));
 		return retVal;
 		}
 
 	inline HIShapeRef HIThemeGetButtonShape ( const HIRect &inBounds, const HIThemeButtonDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIShapeRef retVal;
 		ThrowOSStatus ( ::HIThemeGetButtonShape ( &inBounds, &inDrawInfo, &retVal ));
 		return retVal;
 		}
 
 	inline HIRect HIThemeGetButtonContentBounds ( const HIRect &inBounds, const HIThemeButtonDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeGetButtonContentBounds ( &inBounds, &inDrawInfo, &retVal ));
 		return retVal;
 		}
 
 	inline HIRect HIThemeGetButtonBackgroundBounds ( const HIRect &inBounds, const HIThemeButtonDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeGetButtonBackgroundBounds ( &inBounds, &inDrawInfo, &retVal ));
 		return retVal;
@@ -59,13 +66,13 @@ namespace Nitrogen {
 
 	inline void HIThemeDrawChasingArrows ( const HIRect &inBounds, const HIThemeChasingArrowsDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawChasingArrows ( &inBounds, &inDrawInfo, inContext, inOrientation ));
 		}
 	
 	inline void HIThemeDrawPopupArrow ( const HIRect &inBounds, const HIThemePopupArrowDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawPopupArrow ( &inBounds, &inDrawInfo, inContext, inOrientation ));
 		}
 	
@@ -76,13 +83,13 @@ namespace Nitrogen {
 
 	inline void HIThemeDrawMenuBarBackground ( const HIRect &inBounds, const HIThemeMenuBarDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawMenuBarBackground ( &inBounds, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline HIRect HIThemeDrawMenuTitle ( const HIRect &inMenuBarRect, const HIRect &inTitleRect, 
 					const HIThemeMenuTitleDrawInfo &inDrawInfo, CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeDrawMenuTitle ( &inMenuBarRect, &inTitleRect, &inDrawInfo, inContext, inOrientation, &retVal ));
 		return retVal;
@@ -90,13 +97,13 @@ namespace Nitrogen {
 
 	inline void HIThemeDrawMenuBackground ( const HIRect &inMenuRect, const HIThemeMenuDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawMenuBackground ( &inMenuRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline HIRect HIThemeDrawMenuItem ( const HIRect &inMenuRect, const HIRect &inItemRect, 
 					const HIThemeMenuItemDrawInfo &inDrawInfo, CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeDrawMenuItem ( &inMenuRect, &inItemRect, &inDrawInfo, inContext, inOrientation, &retVal ));
 		return retVal;
@@ -104,12 +111,12 @@ namespace Nitrogen {
 
 	inline void HIThemeDrawMenuSeparator ( const HIRect &inMenuRect, const HIRect &inItemRect, 
 					const HIThemeMenuItemDrawInfo &inDrawInfo, CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawMenuSeparator ( &inMenuRect, &inItemRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline HIShapeRef HIThemeGetMenuBackgroundShape ( const HIRect &inMenuRect, const HIThemeMenuDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIShapeRef retVal;
 		ThrowOSStatus ( ::HIThemeGetMenuBackgroundShape ( &inMenuRect, &inDrawInfo, &retVal ));
 		return retVal;
@@ -122,41 +129,41 @@ namespace Nitrogen {
 
 	inline void HIThemeDrawTabPane ( const HIRect &inRect, const HIThemeTabPaneDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawTabPane ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline HIRect HIThemeDrawTab ( const HIRect &inRect, 
 					const HIThemeTabDrawInfo &inDrawInfo, CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeDrawTab ( &inRect, &inDrawInfo, inContext, inOrientation, &retVal ));
 		return retVal;
 		}
 
 	inline HIShapeRef HIThemeGetTabPaneDrawShape ( const HIRect &inRect, ThemeTabDirection inDirection, HIThemeTabSize inTabSize ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIShapeRef retVal;
 		ThrowOSStatus ( ::HIThemeGetTabPaneDrawShape ( &inRect, inDirection, inTabSize, &retVal ));
 		return retVal;
 		}
 
 	inline HIShapeRef HIThemeGetTabPaneContentShape ( const HIRect &inRect, ThemeTabDirection inDirection, HIThemeTabSize inTabSize ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIShapeRef retVal;
 		ThrowOSStatus ( ::HIThemeGetTabPaneContentShape ( &inRect, inDirection, inTabSize, &retVal ));
 		return retVal;
 		}
 
 	inline HIShapeRef HIThemeGetTabDrawShape ( const HIRect &inRect, const HIThemeTabDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIShapeRef retVal;
 		ThrowOSStatus ( ::HIThemeGetTabDrawShape ( &inRect, &inDrawInfo, &retVal ));
 		return retVal;
 		}
 
 	inline HIShapeRef HIThemeGetTabShape ( const HIRect &inRect, const HIThemeTabDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIShapeRef retVal;
 		ThrowOSStatus ( ::HIThemeGetTabShape ( &inRect, &inDrawInfo, &retVal ));
 		return retVal;
@@ -177,7 +184,7 @@ namespace Nitrogen {
 //	!!! Marshall says - what an awful API
 	inline HIThemeGetTextDimensions_Result HIThemeGetTextDimensions ( CFStringRef inString,
   							float inWidth, HIThemeTextInfo &inTextInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
   		HIThemeGetTextDimensions_Result retVal;
   		ThrowOSStatus ( ::HIThemeGetTextDimensions ( inString, inWidth, &inTextInfo,
   							&retVal.textWidth, &retVal.textHeight, &retVal.textBaseline ));
@@ -186,7 +193,7 @@ namespace Nitrogen {
   	
 	inline void HIThemeDrawTextBox ( CFStringRef inString, const HIRect &inBounds, HIThemeTextInfo &inTextInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawTextBox ( inString, &inBounds, &inTextInfo, inContext, inOrientation ));
 		}
 	
@@ -197,24 +204,24 @@ namespace Nitrogen {
 
 	inline void HIThemeDrawTrack ( const HIThemeTrackDrawInfo &inDrawInfo, const HIRect &inBounds,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawTrack ( &inDrawInfo, &inBounds, inContext, inOrientation ));
 		}
 	
 	inline void HIThemeDrawTrackTickMarks ( const HIThemeTrackDrawInfo &inDrawInfo, ItemCount inNumTicks,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawTrackTickMarks ( &inDrawInfo, inNumTicks, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawTickMark ( const HIRect &inBounds, const HIThemeTickMarkDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawTickMark ( &inBounds, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline HIShapeRef HIThemeGetTrackThumbShape ( const HIThemeTrackDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIShapeRef retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackThumbShape ( &inDrawInfo, &retVal ));
 		return retVal;
@@ -228,7 +235,7 @@ namespace Nitrogen {
 
 //	!!! This is awkward
 	inline HIThemeHitTestTrack_Result HIThemeHitTestTrack ( const HIThemeTrackDrawInfo &inDrawInfo, const HIPoint &inMousePoint ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIThemeHitTestTrack_Result retVal;
 		::ControlPartCode trackPartHit;
 		retVal.trackWasHit	= ::HIThemeHitTestTrack ( &inDrawInfo, &inMousePoint, &trackPartHit );
@@ -237,14 +244,14 @@ namespace Nitrogen {
 		}
 
 	inline HIRect HIThemeGetTrackBounds ( const HIThemeTrackDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackBounds ( &inDrawInfo, &retVal ));
 		return retVal;
 		}
 
 	inline HIRect HIThemeGetTrackPartBounds ( const HIThemeTrackDrawInfo &inDrawInfo, ControlPartCode inPartCode ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackPartBounds ( &inDrawInfo, inPartCode, &retVal ));
 		return retVal;
@@ -252,7 +259,7 @@ namespace Nitrogen {
 
 //	A helper function for HIThemeGetTrackParts
 	inline UInt32 HIThemeCountTrackParts ( const HIThemeTrackDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		UInt32 retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackParts ( &inDrawInfo, &retVal, 0, NULL ));
 		return retVal;
@@ -260,42 +267,42 @@ namespace Nitrogen {
 
 	inline UInt32 HIThemeGetTrackParts ( const HIThemeTrackDrawInfo &inDrawInfo, 
 								UInt32 ioMaxParts, ::ControlPartCode *ioPartsBuffer ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		UInt32 retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackParts ( &inDrawInfo, &retVal, ioMaxParts, ioPartsBuffer ));
 		return retVal;
 		}
 	
 	inline HIRect HIThemeGetTrackDragRect ( const HIThemeTrackDrawInfo &inDrawInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackDragRect ( &inDrawInfo, &retVal ));
 		return retVal;
 		}
 
 	inline float HIThemeGetTrackThumbPositionFromOffset ( const HIThemeTrackDrawInfo &inDrawInfo, const HIPoint &inThumbOffset ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		float retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackThumbPositionFromOffset ( &inDrawInfo, &inThumbOffset, &retVal ));
 		return retVal;
 		}
 
 	inline float HIThemeGetTrackThumbPositionFromBounds ( const HIThemeTrackDrawInfo &inDrawInfo, const HIRect &inThumbBounds ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		float retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackThumbPositionFromBounds ( &inDrawInfo, &inThumbBounds, &retVal ));
 		return retVal;
 		}
 
 	inline SInt32 HIThemeGetTrackLiveValue ( const HIThemeTrackDrawInfo &inDrawInfo, float inRelativePosition ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		SInt32 retVal;
 		ThrowOSStatus ( ::HIThemeGetTrackLiveValue ( &inDrawInfo, inRelativePosition, &retVal ));
 		return retVal;
 		}
 
 	inline HIRect HIThemeGetScrollBarTrackRect ( const HIRect &inBounds, const HIScrollBarTrackInfo &inTrackInfo, Boolean inIsHoriz ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeGetScrollBarTrackRect ( &inBounds, &inTrackInfo, inIsHoriz, &retVal ));
 		return retVal;
@@ -310,7 +317,7 @@ namespace Nitrogen {
 	
 	inline HIThemeHitTestScrollBarArrows_Result HIThemeHitTestScrollBarArrows ( const HIRect &inBounds, 
 					const HIScrollBarTrackInfo &inTrackInfo, Boolean inIsHoriz, const HIPoint &inPtHit ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIThemeHitTestScrollBarArrows_Result retVal;
 		::ControlPartCode	partCode;
 		retVal.controlWasHit = ::HIThemeHitTestScrollBarArrows ( &inBounds, &inTrackInfo, inIsHoriz, &inPtHit,
@@ -321,7 +328,7 @@ namespace Nitrogen {
 	
 	inline void HIThemeDrawScrollBarDelimiters ( const HIRect &inContRect, const HIThemeScrollBarDelimitersDrawInfo &inDrawInfo, 
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawScrollBarDelimiters ( &inContRect, &inDrawInfo, inContext, inOrientation ));
 		}
 	
@@ -332,7 +339,7 @@ namespace Nitrogen {
 
 	inline HIRect HIThemeDrawWindowFrame ( const HIRect &inContRect, const HIThemeWindowDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeDrawWindowFrame ( &inContRect, &inDrawInfo, inContext, inOrientation, &retVal ));
 		return retVal;
@@ -340,18 +347,18 @@ namespace Nitrogen {
 
 	inline void HIThemeDrawTitleBarWidget ( const HIRect &inContRect, const HIThemeWindowWidgetDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawTitleBarWidget ( &inContRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawGrowBox ( const HIPoint &inOrigin, const HIThemeGrowBoxDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawGrowBox ( &inOrigin, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline HIRect HIThemeGetGrowBoxBounds ( const HIPoint &inOrigin, const HIThemeGrowBoxDrawInfo &inTrackInfo ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIRect retVal;
 		ThrowOSStatus ( ::HIThemeGetGrowBoxBounds ( &inOrigin, &inTrackInfo, &retVal ));
 		return retVal;
@@ -359,7 +366,7 @@ namespace Nitrogen {
 
 	inline HIShapeRef HIThemeGetWindowShape ( const HIRect &inContRect, const HIThemeWindowDrawInfo &inTrackInfo,
 												WindowRegionCode inWinRegion ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		HIShapeRef retVal;
 		ThrowOSStatus ( ::HIThemeGetWindowShape ( &inContRect, &inTrackInfo, inWinRegion, &retVal ));
 		return retVal;
@@ -385,67 +392,67 @@ namespace Nitrogen {
 
 	inline void HIThemeDrawFrame ( const HIRect &inRect, const HIThemeFrameDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawFrame ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawGroupBox ( const HIRect &inRect, const HIThemeGroupBoxDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawGroupBox ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawGenericWell ( const HIRect &inRect, const HIThemeButtonDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawGenericWell ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawPaneSplitter ( const HIRect &inRect, const HIThemeSplitterDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawPaneSplitter ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawGrabber ( const HIRect &inRect, const HIThemeGrabberDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawGrabber ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawPlacard ( const HIRect &inRect, const HIThemePlacardDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawPlacard ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawHeader ( const HIRect &inRect, const HIThemeHeaderDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawHeader ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawFocusRect ( const HIRect &inRect, Boolean inHasFocus,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawFocusRect ( &inRect, inHasFocus, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawSeparator ( const HIRect &inRect, const HIThemeSeparatorDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawSeparator ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeApplyBackground ( const HIRect &inRect, const HIThemeBackgroundDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeApplyBackground ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
 	inline void HIThemeDrawBackground ( const HIRect &inRect, const HIThemeBackgroundDrawInfo &inDrawInfo,
 									  CGContextRef inContext, HIThemeOrientation inOrientation ) {
-     	Nucleus::OnlyOnce<RegisterHIThemeErrors>();
+     	(void) HIThemeErrorsRegistrationDependency();
 		ThrowOSStatus ( ::HIThemeDrawBackground ( &inRect, &inDrawInfo, inContext, inOrientation ));
 		}
 
