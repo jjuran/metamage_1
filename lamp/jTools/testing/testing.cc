@@ -19,6 +19,7 @@
 // Standard C++
 #include <functional>
 #include <map>
+#include <string>
 #include <vector>
 
 // POSIX
@@ -30,6 +31,7 @@
 #include "MoreFilesExtras.h"
 
 // Nucleus
+#include "Nucleus/Convert.h"
 #include "Nucleus/NAssert.h"
 
 // Nitrogen
@@ -74,6 +76,11 @@
 // Misc
 #include "CRC32.hh"
 #include "MD5.hh"
+
+// Vectoria
+#include "Vectoria/Matrix.hh"
+#include "Vectoria/Vector.hh"
+#include "Vectoria/CrossProduct3D.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -133,7 +140,161 @@ static int TestMap( int argc, const char *const argv[] )
 	return 0;
 }
 
-static int TestSerial(int argc, const char *const argv[])
+
+template < class Component, unsigned rows, unsigned cols >
+std::string PrintableValue( const Vectoria::Matrix< Component, rows, cols >& matrix )
+{
+	std::string result;
+	
+	// 0x0:  "[]"
+	// 0x2:  "[]"
+	// 2x0:  "[  ]"
+	// 2x2:  "[ 1 0  0 1 ]"
+	
+	result += "[";
+	
+	for ( unsigned i = 0;  i < rows;  ++i )
+	{
+		result += "";
+		
+		for ( unsigned j = 0;  j < cols;  ++j )
+		{
+			result += " ";
+			
+			int value = matrix.Cell( i, j );
+			
+			std::string string = NN::Convert< std::string >( value );
+			
+			result += string;
+			
+			result += "";
+		}
+		
+		result += " ";
+	}
+	
+	result += "]";
+	
+	return result;
+}
+
+/*
+TEST( 1x1 Matrix )
+{
+	namespace V = Vectoria;
+	
+	typedef V::Matrix< int, 1, 1 > OneByOne;
+	
+	OneByOne a;
+	
+	*a.begin() = 2;
+	
+	TEST_ASSERT( PrintableValue( a ) == "[ 2 ]" );
+	
+	V::BasicMatrix< int, 1, 1 >::Assign( a, V::ZeroMatrix );
+	
+	TEST_ASSERT( PrintableValue( a ) == "[ 0 ]" );
+	
+	V::SquareMatrix< int, 1 >::Assign( a, V::IdentityMatrix );
+	
+	TEST_ASSERT( PrintableValue( a ) == "[ 1 ]" );
+	
+	a *= 4;
+	
+	TEST_ASSERT( PrintableValue( a ) == "[ 4 ]" );
+	
+	OneByOne b = a;
+	
+	TEST_ASSERT( PrintableValue( b ) == "[ 4 ]" );
+	
+	b /= 2;
+	
+	TEST_ASSERT( PrintableValue( b ) == "[ 2 ]" );
+	
+	a += b;
+	
+	TEST_ASSERT( PrintableValue( a ) == "[ 6 ]" );
+	
+	a += -b;
+	
+	TEST_ASSERT( PrintableValue( a ) == "[ 4 ]" );
+	
+	OneByOne c = a * b;
+	
+	TEST_ASSERT( PrintableValue( c ) == "[ 8 ]" );
+	
+	c = V::Transpose( a );
+	
+	TEST_ASSERT( PrintableValue( c ) == "[ 4 ]" );
+}
+*/
+
+TEST( Matrix )
+{
+	namespace V = Vectoria;
+	
+	typedef V::Matrix< int, 1, 1 > OneByOne;  // dot
+	typedef V::Matrix< int, 1, 2 > OneByTwo;  // dash
+	typedef V::Matrix< int, 2, 1 > TwoByOne;  // pipe
+	typedef V::Matrix< int, 2, 2 > TwoByTwo;  // square
+	
+	TwoByTwo square_1 = V::ZeroMatrix();
+	
+	int* p = square_1.begin();
+	
+	TEST_ASSERT( PrintableValue( square_1 ) == "[ 0 0  0 0 ]" );
+	
+	V::IdentityMatrix::Initialize( square_1 );
+	
+	TEST_ASSERT( PrintableValue( square_1 ) == "[ 1 0  0 1 ]" );
+	
+	p[1] = 2;
+	p[2] = 3;
+	p[3] = 4;
+	
+	TwoByTwo square_2 = square_1;
+	
+	int* q = square_2.begin();
+	
+	TEST_ASSERT( PrintableValue( square_2 ) == "[ 1 2  3 4 ]" );
+	
+	TEST_ASSERT( PrintableValue( V::Transpose( square_2 ) ) == "[ 1 3  2 4 ]" );
+	
+	TEST_ASSERT( PrintableValue( square_2 * 2 ) == "[ 2 4  6 8 ]" );
+	
+	TEST_ASSERT( PrintableValue( -square_2 ) == "[ -1 -2  -3 -4 ]" );
+	
+}
+
+TEST( Vector )
+{
+	namespace V = Vectoria;
+	
+	typedef V::Matrix< int, 2, 1 > Vector_2;
+	typedef V::Matrix< int, 3, 1 > Vector_3;
+	
+	Vector_2 v2;
+	
+	int* p = v2.begin();
+	
+	p[0] = 3;
+	p[1] = 4;
+	
+	TEST_ASSERT( V::MagnitudeSquared( v2 ) == 25 );
+}
+
+static int TestVectoria( int argc, const char *const argv[] )
+{
+	namespace V = Vectoria;
+	
+	std::printf( "%s\n%s\n", PrintableValue( V::IdentityMatrix::Make< int, 1 >() ).c_str(),
+	                         PrintableValue( V::IdentityMatrix::Make< int, 2 >() ).c_str() );
+	
+	return 0;
+}
+
+
+static int TestSerial( int argc, const char *const argv[] )
 {
 #if TARGET_API_MAC_CARBON
 	
@@ -697,7 +858,7 @@ static int TestThread( int argc, char const *const argv[] )
 
 static std::string ReadFileData( const FSSpec& file )
 {
-	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
+	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, N::fsRdPerm ) );
 	
 	unsigned fileSize = N::GetEOF( fileH );
 	
@@ -969,6 +1130,7 @@ const SubMain gSubs[] =
 	{ "unit",      TestUnit       },
 	{ "assert",    TestAssert     },
 	{ "map",       TestMap        },
+	{ "vector",    TestVectoria   },
 	
 #if !TARGET_API_MAC_CARBON
 	
