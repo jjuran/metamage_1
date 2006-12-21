@@ -18,11 +18,11 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
@@ -37,18 +37,20 @@ namespace Nitrogen
 			ResourceManagerErrorsRegistrationDependency();
 	};
 	
-	class ResFileRefNum_Tag {};
-	typedef Nucleus::IDType< ResFileRefNum_Tag, ::ResFileRefNum, kResFileNotOpened > ResFileRefNum;
+	typedef Nucleus::ID< class ResFileRefNum_Tag, ::ResFileRefNum >::Type ResFileRefNum;
 	
-	class ResID_Tag {};
-	typedef Nucleus::IDType< ResID_Tag, ::ResID, 0 > ResID;
+	static const ResFileRefNum kResFileNotOpened = ResFileRefNum( ::kResFileNotOpened );
+	
+	typedef Nucleus::ID< class ResID_Tag, ::ResID >::Type ResID;
 	typedef ResID ResourceID;
 	
-	class ResAttributes_Tag {};
-	typedef Nucleus::FlagType< ResAttributes_Tag, ::ResAttributes, 0 > ResAttributes;
+	typedef Nucleus::Flag< class ResAttributes_Tag, ::ResAttributes >::Type ResAttributes;
 	
-	class ResFileAttributes_Tag {};
-	typedef Nucleus::FlagType< ResFileAttributes_Tag, ::ResFileAttributes, 0 > ResFileAttributes;
+	NUCLEUS_DEFINE_FLAG_OPS( ResAttributes )
+	
+	typedef Nucleus::Flag< class ResFileAttributes_Tag, ::ResFileAttributes >::Type ResFileAttributes;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( ResFileAttributes )
 	
 	// ResourceReleaser is not used as a Disposer for Owned because resource 
 	// handles are owned by the Resource Manager, not the application.

@@ -57,7 +57,7 @@ namespace Nitrogen
 	
 	ResFileRefNum CurResFile()
 	{
-		ResFileRefNum refNum( ::CurResFile() );
+		ResFileRefNum refNum = ResFileRefNum( ::CurResFile() );
 		ResError();
 		
 		return refNum;
@@ -65,7 +65,7 @@ namespace Nitrogen
 	
 	ResFileRefNum HomeResFile( Handle r )
 	{
-		ResFileRefNum refNum( ::HomeResFile( r ) );
+		ResFileRefNum refNum = ResFileRefNum( ::HomeResFile( r ) );
 		ResError();
 		
 		return refNum;
@@ -180,7 +180,7 @@ namespace Nitrogen
 	
 	ResID UniqueID ( ResType type )
 	{
-		ResID resID( ::UniqueID( type ) );
+		ResID resID = ResID( ::UniqueID( type ) );
 		ResError();
 		
 		return resID;
@@ -188,7 +188,7 @@ namespace Nitrogen
 	
 	ResID Unique1ID ( ResType type )
 	{
-		ResID resID( ::Unique1ID( type ) );
+		ResID resID = ResID( ::Unique1ID( type ) );
 		ResError();
 		
 		return resID;
@@ -196,7 +196,7 @@ namespace Nitrogen
 	
 	ResAttributes GetResAttrs( Handle r )
 	{
-		ResAttributes attrs( ::GetResAttrs( r ) );
+		ResAttributes attrs = ResAttributes( ::GetResAttrs( r ) );
 		ResError();
 		
 		return attrs;
@@ -304,7 +304,7 @@ namespace Nitrogen
 	
 	ResFileAttributes GetResFileAttrs( ResFileRefNum refNum )
 	{
-		ResFileAttributes attrs( ::GetResFileAttrs( refNum ) );
+		ResFileAttributes attrs = ResFileAttributes( ::GetResFileAttrs( refNum ) );
 		ResError();
 		
 		return attrs;
@@ -318,7 +318,7 @@ namespace Nitrogen
 	
 	Nucleus::Owned< ResFileRefNum > FSpOpenResFile( const FSSpec& spec, FSIOPermssn permissions )
 	{
-		ResFileRefNum refNum( ::FSpOpenResFile( &spec, permissions ) );
+		ResFileRefNum refNum = ResFileRefNum( ::FSpOpenResFile( &spec, permissions ) );
 		
 		ResError();
 		
