@@ -395,9 +395,9 @@ namespace Nitrogen
 	                         short      bottom );	
 	
 	Nucleus::Owned< RgnHandle > MacSetRectRgn( short  left,
-	                                  short  top,
-	                                  short  right,
-	                                  short  bottom );
+	                                           short  top,
+	                                           short  right,
+	                                           short  bottom );
 	
 	RgnHandle RectRgn( RgnHandle region, const Rect& rect );	
 	Nucleus::Owned< RgnHandle > RectRgn( const Rect& rect );
@@ -477,11 +477,11 @@ namespace Nitrogen
 	
 	inline Point SetPt( short h, short v )  { return Nucleus::Make< Point >( v, h ); }
 	
-	Point LocalToGlobal( Point point );
-	Rect  LocalToGlobal( const Rect& rect );
+	Point LocalToGlobal( Point        point );
+	Rect  LocalToGlobal( const Rect&  rect );
 	
-	Point GlobalToLocal( Point point );
-	Rect  GlobalToLocal( const Rect& rect );
+	Point GlobalToLocal( Point        point );
+	Rect  GlobalToLocal( const Rect&  rect );
 	
 	using ::Random;
 	
@@ -539,6 +539,7 @@ namespace Nitrogen
 	inline void DisposePixPat( Nucleus::Owned< PixPatHandle > )  {}
 	
 	PixPatHandle CopyPixPat( PixPatHandle srcPP, PixPatHandle dstPP );
+	
 	Nucleus::Owned< PixPatHandle > CopyPixPat( PixPatHandle pixPat );
 	
 	using ::PenPixPat;
