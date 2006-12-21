@@ -145,7 +145,13 @@ namespace Nitrogen
 	
 	void ReleaseResource( Handle r );
 	
-	void DetachResource( Nucleus::Owned< Handle > h );  // invalid, not defined
+	// Nucleus::Owned< Handle > is never a resource handle, so any attempt to
+	// detach or remove one is invalid.
+	// This function is not defined, and calling it results in a link error.
+	// It's here so the real DetachResource() (below) doesn't get called instead.
+	
+	void DetachResource( Nucleus::Owned< Handle > h );
+	
 	Nucleus::Owned< Handle >  DetachResource( Handle r );
 	
 	ResID UniqueID ( ResType type );
@@ -164,10 +170,10 @@ namespace Nitrogen
 	
 	void SetResInfo( Handle r, ResID id, ConstStr255Param name );
 	
-	Handle AddResource( Nucleus::Owned< Handle >   h,
-	                    ResType           type,
-	                    ResID             resID,
-	                    ConstStr255Param  name );
+	Handle AddResource( Nucleus::Owned< Handle >  h,
+	                    ResType                   type,
+	                    ResID                     resID,
+	                    ConstStr255Param          name );
 	
 	Handle AddResource( Nucleus::Owned< Handle > h, const GetResInfo_Result& resInfo );
 	
@@ -181,7 +187,9 @@ namespace Nitrogen
 	
 	void ChangedResource( Handle r );
 	
-	void RemoveResource( Nucleus::Owned< Handle > h );  // invalid, not defined
+	// Invalid; not defined.  See notes for DetachResource() above.
+	void RemoveResource( Nucleus::Owned< Handle > h );
+	
 	Nucleus::Owned< Handle > RemoveResource( Handle r );
 	
 	void UpdateResFile( ResFileRefNum refNum );
@@ -200,7 +208,7 @@ namespace Nitrogen
 	// HCreateResFile -- not implemented; use FSpCreateResFile
 	
 	Nucleus::Owned< ResFileRefNum > FSpOpenResFile( const FSSpec&  spec,
-	                                       FSIOPermssn    permissions );
+	                                                FSIOPermssn    permissions );
 	
 	void FSpCreateResFile( const FSSpec&  spec,
 	                       OSType         creator   = 'RSED',
@@ -221,13 +229,13 @@ namespace Nitrogen
 	// GetNextResourceFile
 	
 	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
-	                                           UniCharCount    forkNameLength,
-	                                           const UniChar*  forkName,
-	                                           FSIOPermssn     permissions );
+	                                                    UniCharCount    forkNameLength,
+	                                                    const UniChar*  forkName,
+	                                                    FSIOPermssn     permissions );
 	
 	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&      ref,
-	                                           const UniString&  forkName,
-	                                           FSIOPermssn       permissions );
+	                                                    const UniString&  forkName,
+	                                                    FSIOPermssn       permissions );
 	
 	// FSCreateResFile
 	// FSResourceFileAlreadyOpen
