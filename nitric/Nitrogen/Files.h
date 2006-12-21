@@ -3,26 +3,39 @@
 #ifndef NITROGEN_FILES_H
 #define NITROGEN_FILES_H
 
-#ifndef NITROGEN_FRAMEWORKHEADER_H
-#include "Nitrogen/FrameworkHeader.h"
-#endif
-#ifndef __FILES__
-#include FRAMEWORK_HEADER(CarbonCore,Files.h)
-#endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
-#endif
-#ifndef NITROGEN_MACTYPES_H
-#include "Nitrogen/MacTypes.h"
-#endif
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
+#ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
+#include "Nucleus/ArrayContainerFunctions.h"
 #endif
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_FLAGTYPE_H
 #include "Nucleus/FlagType.h"
+#endif
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
+#endif
+#ifndef NUCLEUS_IDTYPE_H
+#include "Nucleus/IDType.h"
+#endif
+#ifndef NUCLEUS_INDEXTYPE_H
+#include "Nucleus/IndexType.h"
+#endif
+#ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
+#include "Nucleus/IndexUntilFailureContainer.h"
+#endif
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
+#endif
+
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
+#endif
+#ifndef __FILES__
+#include FRAMEWORK_HEADER(CarbonCore,Files.h)
+#endif
+#ifndef NITROGEN_MACTYPES_H
+#include "Nitrogen/MacTypes.h"
 #endif
 #ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"
@@ -39,15 +52,6 @@
 #endif
 #ifndef NITROGEN_TEXTCOMMON_H
 #include "Nitrogen/TextCommon.h"
-#endif
-#ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
-#include "Nucleus/IndexUntilFailureContainer.h"
-#endif
-#ifndef NUCLEUS_INDEXTYPE_H
-#include "Nucleus/IndexType.h"
-#endif
-#ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
-#include "Nucleus/ArrayContainerFunctions.h"
 #endif
 
 #include <vector>
@@ -732,14 +736,11 @@ namespace Nitrogen
    class FSIteratorFlagsTag {};
    typedef Nucleus::FlagType< FSIteratorFlagsTag, ::FSIteratorFlags, 0 > FSIteratorFlags;
    
-	class FSFileRefNum_Tag {};
-	typedef Nucleus::IDType< FSFileRefNum_Tag, SInt16, 0 > FSFileRefNum;
+	typedef Nucleus::ID< class FSFileRefNum_Tag, SInt16 >::Type FSFileRefNum;
 	
    class FSForkRefNumTag {};
    typedef Nucleus::IDType< FSForkRefNumTag, SInt16, 0 > FSForkRefNum;
     
-   //class FSIOPermssnTag {};
-   //typedef Nucleus::FlagType< FSIOPermssnTag, SInt8, ::fsCurPerm > FSIOPermssn;
 	typedef Nucleus::Flag< class FSIOPermssn_Tag, SInt8 >::Type FSIOPermssn;
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIOPermssn )
@@ -781,8 +782,8 @@ namespace Nitrogen
    typedef Nucleus::IDType< FSFileSystemIDTag, UInt16, 0 > FSFileSystemID;
    typedef FSFileSystemID IOFSID;
    
-   class DriverReferenceNumberTag {};
-   typedef Nucleus::IDType< DriverReferenceNumberTag, SInt16, 0 > DriverReferenceNumber;
+	typedef Nucleus::ID< class DriverReferenceNumber_Tag, SInt16 >::Type DriverReferenceNumber;
+	
    typedef DriverReferenceNumber DRefNum;
    typedef DriverReferenceNumber DriverRefNum;
 
