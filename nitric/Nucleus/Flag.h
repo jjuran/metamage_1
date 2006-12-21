@@ -20,9 +20,9 @@ namespace Nucleus
 	template < class Tag, class Int >
 	struct Flag
 	{
-		typedef Int                  IntegralType;
-		typedef Enumeration< Int >   Enum;
-		typedef typename Enum::Type  Type;
+		typedef Int                      IntegralType;
+		typedef Enumeration< Tag, Int >  Enum;
+		typedef typename Enum::Type      Type;
 		
 		enum Bit
 		{

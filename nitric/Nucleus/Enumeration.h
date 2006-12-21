@@ -6,7 +6,7 @@
 namespace Nucleus
 {
 	
-	template < class Int >
+	template < class Tag, class Int >
 	struct Enumeration
 	{
 		typedef Int IntegralType;

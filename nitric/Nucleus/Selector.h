@@ -14,7 +14,7 @@ namespace Nucleus
 	template < class Tag, class Int >
 	struct Selector
 	{
-		typedef typename Enumeration< Int >::Type Type;
+		typedef typename Enumeration< Tag, Int >::Type Type;
 	};
 	
 }
