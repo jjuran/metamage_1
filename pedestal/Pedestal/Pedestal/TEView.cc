@@ -273,7 +273,7 @@ namespace Pedestal
 	{
 		if ( N::PtInRect( location, Bounds() ) )
 		{
-			N::SetCursor( N::GetCursor( iBeamCursor ) );
+			N::SetCursor( N::GetCursor( N::iBeamCursor ) );
 			return true;
 		}
 		else
