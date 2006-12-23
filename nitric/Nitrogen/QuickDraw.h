@@ -33,6 +33,16 @@ namespace Nitrogen
 			QuickDrawErrorsRegistrationDependency();
 	};
 	
+	
+	// Constants of types defined elsewhere
+	
+	static const ResID sysPatListID = ResID( ::sysPatListID );
+	
+	static const ResID iBeamCursor = ResID( ::iBeamCursor );
+	static const ResID crossCursor = ResID( ::crossCursor );
+	static const ResID plusCursor  = ResID( ::plusCursor  );
+	static const ResID watchCursor = ResID( ::watchCursor );
+	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
