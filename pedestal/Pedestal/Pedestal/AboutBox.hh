@@ -3,7 +3,8 @@
  *	===========
  */
 
-#pragma once
+#ifndef PEDESTAL_ABOUTBOX_HH
+#define PEDESTAL_ABOUTBOX_HH
 
 // Standard C++
 #include <memory>
@@ -38,7 +39,7 @@ namespace Pedestal
 	
 	typedef Window< GraphicView< FrontBackGraphic< ABOUT_GRAPHIC,
 	                                               SolidColorGraphic > >,
-	                noGrowDocProc >
+	                N::noGrowDocProc >
 	        AboutBoxBase;
 	
 	class AboutBox : public AboutBoxBase
@@ -54,9 +55,12 @@ namespace Pedestal
 	{
 		public:
 			AboutBoxOwner()  {}
+			~AboutBoxOwner();
 			
 			void ShowAboutBox()  { Show(); }
 	};
 	
 }
+
+#endif
 
