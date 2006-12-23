@@ -87,16 +87,16 @@ namespace Pedestal
 		bool HasGrowIcon() const  { return hasGrowIcon; }
 	};
 	
-	template < short defProcID >  struct DefProcID_Traits;
+	template < N::WindowDefProcID defProcID >  struct DefProcID_Traits;
 	
-	template <>  struct DefProcID_Traits< documentProc    > : DefProcID_HasGrowIcon< true  >  {};
-	template <>  struct DefProcID_Traits< dBoxProc        > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< plainDBox       > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< altDBoxProc     > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< noGrowDocProc   > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< movableDBoxProc > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
-	template <>  struct DefProcID_Traits< zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< N::documentProc    > : DefProcID_HasGrowIcon< true  >  {};
+	template <>  struct DefProcID_Traits< N::dBoxProc        > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< N::plainDBox       > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< N::altDBoxProc     > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< N::noGrowDocProc   > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< N::movableDBoxProc > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< N::zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
+	template <>  struct DefProcID_Traits< N::zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
 	
 	class WindowClosure
 	{
@@ -143,7 +143,7 @@ namespace Pedestal
 			WindowClosure& Closure()  { return closure; }
 	};
 	
-	template < class Type, short defProcID = documentProc >
+	template < class Type, N::WindowDefProcID defProcID = N::documentProc >
 	class Window : private DefProcID_Traits< defProcID >,
 	               public  WindowBase,
 	               public  ClosableWindow,
@@ -182,7 +182,7 @@ namespace Pedestal
 			
 	};
 	
-	template < class Type, short defProcID >
+	template < class Type, N::WindowDefProcID defProcID >
 	Window< Type, defProcID >::Window( const NewWindowContext&  context,
 	                                   WindowClosure&           closure,
 	                                   Initializer              init = Initializer() )
@@ -195,7 +195,7 @@ namespace Pedestal
 	{
 	}
 	
-	template < class Type, short defProcID >
+	template < class Type, N::WindowDefProcID defProcID >
 	void Window< Type, defProcID >::MouseDown( const EventRecord& event )
 	{
 		// FIXME:  The window may want clicks even if it's not in front.
@@ -209,7 +209,7 @@ namespace Pedestal
 		}
 	}
 	
-	template < class Type, short defProcID >
+	template < class Type, N::WindowDefProcID defProcID >
 	void Window< Type, defProcID >::Update()
 	{
 		SubView().Update();
