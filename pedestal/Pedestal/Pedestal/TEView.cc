@@ -13,6 +13,7 @@
 
 // Nucleus
 #include "Nucleus/NAssert.h"
+#include "Nucleus/Saved.h"
 
 // Nitrogen / Carbon support
 #include "Nitrogen/TextEdit.h"
@@ -303,10 +304,16 @@ namespace Pedestal
 		N::SetTELength( myTE, len + byteCount );
 		N::TECalText( myTE );
 		N::TESetSelect( 32767, 32767, myTE );
-		//SuperView().Refresh();
+		
 		N::GrafPtr port = N::GetTEPort( myTE );
 		
-		//N::InvalWindowRect( N::GetWindowFromPort( port ), N::GetPortBounds( port ) );
+		// This is correct but MWPro6 breaks on it
+		//NN::Saved< N::Port_Value > savedPort( port );
+		
+		NN::Saved< N::Port_Value > savedPort;
+		
+		N::SetPort( port );
+		
 		Update();
 		
 		return byteCount;
