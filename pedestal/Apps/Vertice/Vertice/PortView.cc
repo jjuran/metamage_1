@@ -881,7 +881,7 @@ namespace Vertice
 	
 	bool PortView::DispatchCursor( const EventRecord& event )
 	{
-		N::SetCursor( N::GetCursor( crossCursor ) );
+		N::SetCursor( N::GetCursor( N::crossCursor ) );
 		
 		return true;
 	}
