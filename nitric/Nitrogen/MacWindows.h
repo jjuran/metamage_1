@@ -9,6 +9,9 @@
 #ifndef __MACWINDOWS__
 #include FRAMEWORK_HEADER(HIToolbox,MacWindows.h)
 #endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
+#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
@@ -77,8 +80,16 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
-	class WindowDefProcID_Tag {};
-	typedef Nucleus::SelectorType< WindowDefProcID_Tag, ::SInt16, 0 > WindowDefProcID;
+	typedef Nucleus::Selector< class WindowDefProcID_Tag, ::SInt16 >::Type WindowDefProcID;
+	
+	static const WindowDefProcID documentProc    = WindowDefProcID( ::documentProc    );
+	static const WindowDefProcID dBoxProc        = WindowDefProcID( ::dBoxProc        );
+	static const WindowDefProcID plainDBox       = WindowDefProcID( ::plainDBox       );
+	static const WindowDefProcID altDBoxProc     = WindowDefProcID( ::altDBoxProc     );
+	static const WindowDefProcID noGrowDocProc   = WindowDefProcID( ::noGrowDocProc   );
+	static const WindowDefProcID movableDBoxProc = WindowDefProcID( ::movableDBoxProc );
+	static const WindowDefProcID zoomDocProc     = WindowDefProcID( ::zoomDocProc     );
+	static const WindowDefProcID zoomNoGrow      = WindowDefProcID( ::zoomNoGrow      );
 	
 	class WindowKind_Tag {};
 	typedef Nucleus::SelectorType< WindowKind_Tag, ::SInt16, 0 > WindowKind;
