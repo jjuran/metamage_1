@@ -252,7 +252,7 @@ sub make_macball
 {
 	my ( $tree_path ) = @_;
 	
-	my $macbin = "$tree_path.bin";
+	my $macbin = "$tree_path.mbin";
 	
 	system 'macbin', '--encode', $tree_path, $macbin;
 	
@@ -279,7 +279,7 @@ eval { create_node( $lamp, 'j' => \%fsmap ); };
 
 if ( $@ )
 {
-	print $@;
+	print STDERR $@;
 	exit 1;
 }
 
