@@ -221,7 +221,7 @@ namespace Nitrogen
 		CRMRecPtr crmRec = result;
 		
 		crmRec->crmDeviceType = crmDeviceType;
-		crmRec->crmAttributes = reinterpret_cast< CRMDeviceType >( crmAttributes.Release() );
+		crmRec->crmAttributes = reinterpret_cast< long >( crmAttributes.Release() );
 		
 		return result;
 	}
