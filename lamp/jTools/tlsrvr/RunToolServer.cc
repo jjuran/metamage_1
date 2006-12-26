@@ -234,7 +234,7 @@ namespace RunToolServer
 		return NN::Owned< FSSpec >::Seize( item );
 	}
 	
-	NN::Owned< FSSpec > gTempFiles[ 4 ];
+	NN::Shared< FSSpec > gTempFiles[ 4 ];
 	
 	static std::string SetUpScript( const std::string& command )
 	{
@@ -324,6 +324,11 @@ namespace RunToolServer
 		
 		DumpFile( gTempFiles[ kErrorFile  ], Io::err );
 		DumpFile( gTempFiles[ kOutputFile ], Io::out );
+		
+		// Delete temp files
+		std::fill( gTempFiles,
+		           gTempFiles + 4,
+		           NN::Shared< FSSpec >() );
 		
 		return result;
 	}
