@@ -5,7 +5,7 @@ use strict;
 
 use fatal qw( close mkdir open print chmod read );
 
-$| = 1;  # piping hot output
+local $| = 1;  # piping hot output
 
 die "\$HOME must be defined\n" if !exists $ENV{HOME};
 
@@ -27,19 +27,8 @@ my %supported_configs = qw
 
 my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
 
-sub Echo
-{
-	my ( $text ) = @_;
-	
-	print "$text\n";
-	
-	sleep 0;
-	
-	return;
-}
-
 # This avoids a bug that squelches error output
-Echo "Building for $build_config_name...\n";
+print "Building for $build_config_name...\n";
 
 my $build_area = shift || $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
 
@@ -81,7 +70,7 @@ my %fsmap =
 		{
 			#build_date => sub { system "date > '$_[0]'" },
 			#build_date => sub { open my $fh, '>', $_[0]; print $fh `date`; close $fh; },
-			bootstrap => [qw( check-perl-lib.pl install-usr-lib-perl )],
+			bootstrap => [qw( check-perl-lib.pl install-usr-lib-perl usr-lib-perl.mbin.gz.md5 )],
 		},
 	],
 	sbin => [],
@@ -146,14 +135,22 @@ sub build_output
 	return $result;
 }
 
+sub verbose_system
+{
+	print join( " ", @_ ), "\n";
+	
+	my $wait_status = system @_;
+	
+	$wait_status == 0 or die "system() failed: $!\n";
+}
+
 sub copy_file
 {
 	my ( $src, $dest ) = @_;
 	
 	-f $src or die "Missing file $src for copy\n";
 	
-	my $wait_status = system( 'cp', $src, $dest );
-	$wait_status == 0 or die "cp '$src' '$dest' failed: $!\n";
+	verbose_system( 'cp', $src, $dest );
 	
 	return;
 }
@@ -254,9 +251,9 @@ sub make_macball
 	
 	my $macbin = "$tree_path.mbin";
 	
-	system 'macbin', '--encode', $tree_path, $macbin;
+	verbose_system 'macbin', '--encode', $tree_path, $macbin;
 	
-	system 'gzip', $macbin;
+	verbose_system 'gzip', $macbin;
 }
 
 
@@ -275,23 +272,17 @@ mkdir $lamp;
 
 install_program( 'Genie', "$lamp/" );
 
-eval { create_node( $lamp, 'j' => \%fsmap ); };
+create_node( $lamp, 'j' => \%fsmap );
 
-if ( $@ )
-{
-	print STDERR $@;
-	exit 1;
-}
-
-Echo "Archiving...";
+print "Archiving...\n";
 
 my $macball = make_macball( "$tmp_dir/$root_name" );
 
 my $build_area_path = "$builds_dir_path/$build_area";
 
-mkdir $build_area_path;
+mkdir $build_area_path  if ! -d $build_area_path;
 
-rename "$tmp_dir", "$build_area_path/";
+rename "$tmp_dir", "$build_area_path/$dir_name" or die "rename $tmp_dir $build_area_path/$dir_name failed: $!\n";
 
 print "Done.\n";
 
