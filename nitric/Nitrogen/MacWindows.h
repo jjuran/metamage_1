@@ -237,12 +237,36 @@ namespace Nitrogen
 	// 4036
 	using ::DrawGrowIcon;
 	
+	inline Nucleus::Owned<CFStringRef> CopyWindowTitleAsCFString ( WindowRef inWindow ) {
+		(void) WindowManagerErrorsRegistrationDependency();
+		CFStringRef result;
+		ThrowOSStatus ( ::CopyWindowTitleAsCFString ( inWindow, &result ));
+		return Nucleus::Owned<CFStringRef>::Seize ( result );
+		}
+	
+	inline void SetWindowTitleWithCFString ( WindowRef inWindow, CFStringRef inString ) {
+		(void) WindowManagerErrorsRegistrationDependency();
+		ThrowOSStatus ( ::SetWindowTitleWithCFString ( inWindow, inString ));
+		}
+	
 	// 5978
 	using ::TrackGoAway;
 	
 	// 6301
 	using ::GetWindowPort;
 	
+	inline void SetWindowBounds ( WindowRef inWindow, WindowRegionCode regionCode, const Rect &globalBounds ) {
+		(void) WindowManagerErrorsRegistrationDependency();
+		ThrowOSStatus ( ::SetWindowBounds ( inWindow, regionCode, &globalBounds ));
+		}
+
+	inline Rect GetWindowBounds ( WindowRef inWindow, WindowRegionCode regionCode ) {
+		(void) WindowManagerErrorsRegistrationDependency();
+		Rect retVal;
+		ThrowOSStatus ( ::GetWindowBounds ( inWindow, regionCode, &retVal ));
+		return retVal;
+		}
+
 	// 6551
 	using ::SetPortWindowPort;
 	
@@ -295,6 +319,36 @@ namespace Nitrogen
 	using ::IsWindowToolbarVisible;
 #endif
 	
+	inline void HIWindowSetProxyFSRef ( WindowRef inWindow, const FSRef &inRef ) {
+		ThrowOSStatus ( ::HIWindowSetProxyFSRef ( inWindow, &inRef ));
+		}
+		
+	inline FSRef HIWindowGetProxyFSRef ( WindowRef inWindow ) {
+		::FSRef retVal;
+		ThrowOSStatus ( ::HIWindowGetProxyFSRef ( inWindow, &retVal ));
+		return retVal;
+		}
+		
+	inline void SetWindowProxyAlias ( WindowRef inWindow, AliasHandle inAlias ) {
+		ThrowOSStatus ( ::SetWindowProxyAlias ( inWindow, inAlias ));
+		}
+	
+	inline Nucleus::Owned<AliasHandle> GetWindowProxyAlias ( WindowRef inWindow ) {
+		AliasHandle result;
+		ThrowOSStatus ( ::GetWindowProxyAlias ( inWindow, &result ));
+		return Nucleus::Owned<AliasHandle>::Seize ( result );
+		}
+
+	inline void SetWindowProxyIcon ( WindowRef inWindow, IconRef icon ) {
+		ThrowOSStatus ( ::SetWindowProxyIcon ( inWindow, icon ));
+		}
+	
+	inline Nucleus::Owned<IconRef> GetWindowProxyIcon ( WindowRef inWindow ) {
+		IconRef result;
+		ThrowOSStatus ( ::GetWindowProxyIcon ( inWindow, &result ));
+		return Nucleus::Owned<IconRef>::Seize ( result );
+		}
+
   }
 
 #endif
