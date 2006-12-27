@@ -130,6 +130,24 @@
      }
 #endif
 
+#ifdef HIViewInstallEventHandler
+   #undef HIViewInstallEventHandler
+   inline OSStatus HIViewInstallEventHandler( HIViewRef              inTarget,
+                                            EventHandlerUPP        inHandler,
+                                            UInt32                 inNumTypes,
+                                            const EventTypeSpec *  inList,
+                                            void *                 inUserData,
+                                            EventHandlerRef *      outRef )
+     {
+      return InstallEventHandler( HIObjectGetEventTarget((HIObjectRef) inTarget ),
+                                  inHandler,
+                                  inNumTypes,
+                                  inList,
+                                  inUserData,
+                                  outRef );
+     }
+#endif
+
 #ifdef SendEventToApplication
    #undef SendEventToApplication
    inline OSStatus SendEventToApplication( EventRef inEvent )
@@ -2316,6 +2334,79 @@ namespace Nitrogen
                                                       typename Nucleus::ObjectParameterTraits<Object>::Type inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
         {
          return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( GetMenuEventTarget( menu ), inUserData );
+        }
+
+
+   /* HIViewInstallEventHandler */
+
+      inline Nucleus::Owned<EventHandlerRef> HIViewInstallEventHandler( HIViewRef   view,
+                                                             EventHandlerUPP        inHandler,
+                                                             UInt32                 inNumTypes,
+                                                             const EventTypeSpec *  inList,
+                                                             const void *           inUserData = 0 )
+        {
+         return InstallEventHandler( HIObjectGetEventTarget((HIObjectRef) view ), inHandler, inNumTypes, inList, inUserData );
+        }
+      
+      inline Nucleus::Owned<EventHandlerRef> HIViewInstallEventHandler( HIViewRef     view,
+                                                             EventHandlerUPP        inHandler,
+                                                             EventClass             eventClass,
+                                                             CarbonEventKind        eventKind,
+                                                             const void *           inUserData = 0 )
+        {
+         return InstallEventHandler( HIObjectGetEventTarget((HIObjectRef) view ), inHandler, eventClass, eventKind, inUserData );
+        }
+
+      template < EventHandlerProcPtr handler >
+      Nucleus::Owned<EventHandlerRef> HIViewInstallEventHandler( HIViewRef   view,
+                                                      UInt32                 inNumTypes,
+                                                      const EventTypeSpec *  inList,
+                                                      const void *           inUserData = 0 )
+        {
+         return InstallEventHandler< handler >( HIObjectGetEventTarget((HIObjectRef) view ), inNumTypes, inList, inUserData );
+        }
+
+      template < EventHandlerProcPtr handler >
+      Nucleus::Owned<EventHandlerRef> HIViewInstallEventHandler( HIViewRef   view,
+                                                      EventClass             eventClass,
+                                                      CarbonEventKind        eventKind,
+                                                      const void *           inUserData = 0 )
+        {
+         return InstallEventHandler< handler >( HIObjectGetEventTarget((HIObjectRef) view ), eventClass, eventKind, inUserData );
+        }
+
+      template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
+      Nucleus::Owned<EventHandlerRef> HIViewInstallEventHandler( HIViewRef                           view,
+                                                      UInt32                                         inNumTypes,
+                                                      const EventTypeSpec *                          inList,
+                                                      typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
+        {
+         return InstallEventHandler< Object, handler >( HIObjectGetEventTarget((HIObjectRef) view ), inNumTypes, inList, inUserData );
+        }
+
+      template < class Object, typename EventHandler_ObjectGlue<Object>::Handler handler >
+      Nucleus::Owned<EventHandlerRef> HIViewInstallEventHandler( HIViewRef                           view,
+                                                      EventClass                                     eventClass,
+                                                      CarbonEventKind                                eventKind,
+                                                      typename Nucleus::ObjectParameterTraits<Object>::Type   inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
+        {
+         return InstallEventHandler< Object, handler >( HIObjectGetEventTarget((HIObjectRef) view ), eventClass, eventKind, inUserData );
+        }
+
+      template < UInt32 eventClass,
+                 UInt32 eventKind,
+                 ::EventParamName resultParameter,
+                 class Object,
+                 class ParameterNames,
+                 typename EventHandler_EventSpecificGlue< eventClass,
+                                                          eventKind,
+                                                          resultParameter,
+                                                          Object,
+                                                          ParameterNames >::Handler handler >
+      Nucleus::Owned<EventHandlerRef> HIViewInstallEventHandler( HIViewRef                                  view,
+                                                      typename Nucleus::ObjectParameterTraits<Object>::Type inUserData = typename Nucleus::ObjectParameterTraits<Object>::Type() )
+        {
+         return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( HIObjectGetEventTarget((HIObjectRef) view ), inUserData );
         }
 
 
