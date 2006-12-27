@@ -354,6 +354,10 @@ namespace Nitrogen {
 		return retVal;
 		}
 
+	inline HIViewRef HIViewFindByID ( WindowRef aWindow, HIViewID inID ) {
+		return Nitrogen::HIViewFindByID ( HIViewGetRoot ( aWindow ), inID );
+		}
+
 	inline OptionBits HIViewGetAttributes ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
