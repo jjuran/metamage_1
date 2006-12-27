@@ -44,6 +44,15 @@ namespace Nitrogen
 		return NewAlias( NULL, target );
 	}
 	
+	Nucleus::Owned< AliasHandle > NewAlias( CFDataRef theData )
+	{
+	   CFIndex dataSize = CFDataGetLength ( theData );
+	   Nucleus::Owned<AliasHandle> retVal = NewHandle<AliasRecord> ( dataSize );
+	   CFDataGetBytes ( theData, CFRangeMake ( 0, dataSize ), (UInt8 *) *retVal );
+	   return retVal;
+	}
+
+
 	Nucleus::Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
 	                                                           ConstStr32Param     zoneName,
 	                                                           ConstStr31Param     serverName )
@@ -191,6 +200,15 @@ namespace Nitrogen
 	   CFDataGetBytes ( alias, CFRangeMake ( 0, dataSize ), (UInt8 *) *h.get () );
 	   return FSResolveAlias ((AliasHandle) h.get ().Get() );
 	  }
+
+
+   Nucleus::Owned<CFDataRef> AliasAsDataRef ( CFAllocatorRef allocator, AliasHandle inAlias )
+     {
+      CFDataRef result = ::CFDataCreate ( allocator, (UInt8*) *inAlias, GetHandleSize((Handle) inAlias ));
+      if ( NULL == result )
+        throw AliasAsDataRef_Failed ();
+      return Nucleus::Owned<CFDataRef>::Seize ( result );
+     }
 
 
    FSResolveAliasFileWithMountFlags_Result FSResolveAliasFileWithMountFlags( const FSRef& theRef,

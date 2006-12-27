@@ -55,6 +55,7 @@ namespace Nitrogen
 	                               const FSSpec& target );
 	
 	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec& target );
+	Nucleus::Owned< AliasHandle > NewAlias( CFDataRef theData );
 	
 	// 127
 	Nucleus::Owned< AliasHandle > NewAliasMinimalFromFullPath( const std::string&  fullPath,
@@ -147,6 +148,9 @@ namespace Nitrogen
    FSResolveAlias_Result FSResolveAlias( AliasHandle   inAlias );
 
    FSResolveAlias_Result FSResolveAlias( CFDataRef alias );
+
+   struct AliasAsDataRef_Failed {};
+   Nucleus::Owned<CFDataRef> AliasAsDataRef ( CFAllocatorRef allocator, AliasHandle inAlias );
   }
 
 namespace Nucleus
