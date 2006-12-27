@@ -183,6 +183,16 @@ namespace Nitrogen
       return result;
      }
    
+//	Resolve an alias inside a CFDataRef. Copy the data into a handle.
+	FSResolveAlias_Result FSResolveAlias ( CFDataRef alias )
+	  {
+	   CFIndex dataSize = CFDataGetLength ( alias );
+	   Nucleus::Owned<Handle> h = NewHandle ( dataSize );
+	   CFDataGetBytes ( alias, CFRangeMake ( 0, dataSize ), (UInt8 *) *h.get () );
+	   return FSResolveAlias ((AliasHandle) h.get ().Get() );
+	  }
+
+
    FSResolveAliasFileWithMountFlags_Result FSResolveAliasFileWithMountFlags( const FSRef& theRef,
                                                                              bool         resolveAliasChains,
                                                                              MountFlags   mountFlags )

@@ -21,7 +21,9 @@
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
 #endif
-
+#ifndef NITROGEN_CFDATA_H
+#include "Nitrogen/CFData.h"
+#endif
 
 #include <string>
 
@@ -143,6 +145,8 @@ namespace Nitrogen
                                          AliasHandle   inAlias );
 
    FSResolveAlias_Result FSResolveAlias( AliasHandle   inAlias );
+
+   FSResolveAlias_Result FSResolveAlias( CFDataRef alias );
   }
 
 namespace Nucleus
@@ -194,6 +198,7 @@ namespace Nitrogen
 
    bool FSUpdateAlias( const FSRef& target,
                        AliasHandle  alias );
+
   }
 
 #endif
