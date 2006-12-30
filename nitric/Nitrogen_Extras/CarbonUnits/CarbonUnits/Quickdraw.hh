@@ -23,6 +23,11 @@
 #define CARBONUNITS_LINKAGE inline pascal
 #endif
 
+CARBONUNITS_LINKAGE PixMapHandle GetPortPixMap( CGrafPtr port )
+{
+	return port->portPixMap;
+}
+
 CARBONUNITS_LINKAGE BitMap* GetPortBitMapForCopyBits( CGrafPtr cport )
 {
 	GrafPtr port = reinterpret_cast< GrafPtr >( cport );
@@ -30,10 +35,8 @@ CARBONUNITS_LINKAGE BitMap* GetPortBitMapForCopyBits( CGrafPtr cport )
 	return &port->portBits;
 }
 
-CARBONUNITS_LINKAGE Rect* GetPortBounds( CGrafPtr cport, Rect* bounds )
+CARBONUNITS_LINKAGE Rect* GetPortBounds( CGrafPtr port, Rect* bounds )
 {
-	GrafPtr port = reinterpret_cast< GrafPtr >( cport );
-	
 	*bounds = port->portRect;
 	
 	return bounds;
@@ -53,32 +56,143 @@ CARBONUNITS_LINKAGE RGBColor* GetPortBackColor( CGrafPtr port, RGBColor* color )
 	return color;
 }
 
-CARBONUNITS_LINKAGE RgnHandle GetPortVisibleRegion( CGrafPtr cport, RgnHandle region )
+CARBONUNITS_LINKAGE RGBColor* GetPortOpColor( CGrafPtr port, RGBColor* color )
 {
-	GrafPtr port = reinterpret_cast< GrafPtr >( cport );
+	Handle h = port->grafVars;
 	
+	GVarHandle grafVars = reinterpret_cast< GVarHandle >( h );
+	
+	*color = grafVars[0]->rgbOpColor;
+	
+	return color;
+}
+
+CARBONUNITS_LINKAGE RGBColor* GetPortHiliteColor( CGrafPtr port, RGBColor* color )
+{
+	Handle h = port->grafVars;
+	
+	GVarHandle grafVars = reinterpret_cast< GVarHandle >( h );
+	
+	*color = grafVars[0]->rgbHiliteColor;
+	
+	return color;
+}
+
+CARBONUNITS_LINKAGE CQDProcsPtr GetPortGrafProcs( CGrafPtr port )
+{
+	return port->grafProcs;
+}
+
+CARBONUNITS_LINKAGE short GetPortTextFont( CGrafPtr port )
+{
+	return port->txFont;
+}
+
+CARBONUNITS_LINKAGE short GetPortTextFace( CGrafPtr port )
+{
+	return port->txFace;
+}
+
+CARBONUNITS_LINKAGE short GetPortTextMode( CGrafPtr port )
+{
+	return port->txMode;
+}
+
+CARBONUNITS_LINKAGE short GetPortTextSize( CGrafPtr port )
+{
+	return port->txSize;
+}
+
+CARBONUNITS_LINKAGE short GetPortChExtra( CGrafPtr port )
+{
+	return port->chExtra;
+}
+
+CARBONUNITS_LINKAGE short GetPortFracHPenLocation( CGrafPtr port )
+{
+	return port->pnLocHFrac;
+}
+
+CARBONUNITS_LINKAGE Fixed GetPortSpExtra( CGrafPtr port )
+{
+	return port->spExtra;
+}
+
+CARBONUNITS_LINKAGE short GetPortPenVisibility( CGrafPtr port )
+{
+	return port->pnVis;
+}
+
+CARBONUNITS_LINKAGE RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region )
+{
 	MacCopyRgn( port->visRgn, region );
 	
 	return region;
 }
 
-CARBONUNITS_LINKAGE RgnHandle GetPortClipRegion( CGrafPtr cport, RgnHandle region )
+CARBONUNITS_LINKAGE RgnHandle GetPortClipRegion( CGrafPtr port, RgnHandle region )
 {
-	GrafPtr port = reinterpret_cast< GrafPtr >( cport );
-	
 	MacCopyRgn( port->clipRgn, region );
 	
 	return region;
 }
 
-CARBONUNITS_LINKAGE Point* GetPortPenSize( CGrafPtr cport, Point* penSize )
+CARBONUNITS_LINKAGE PixPatHandle GetPortBackPixPat( CGrafPtr port, PixPatHandle backPattern )
 {
-	GrafPtr port = reinterpret_cast< GrafPtr >( cport );
+	CopyPixPat( port->bkPixPat, backPattern );
 	
+	return backPattern;
+}
+
+CARBONUNITS_LINKAGE PixPatHandle GetPortPenPixPat( CGrafPtr port, PixPatHandle penPattern )
+{
+	CopyPixPat( port->pnPixPat, penPattern );
+	
+	return penPattern;
+}
+
+CARBONUNITS_LINKAGE PixPatHandle GetPortFillPixPat( CGrafPtr port, PixPatHandle fillPattern )
+{
+	CopyPixPat( port->fillPixPat, fillPattern );
+	
+	return fillPattern;
+}
+
+CARBONUNITS_LINKAGE Point* GetPortPenSize( CGrafPtr port, Point* penSize )
+{
 	*penSize = port->pnSize;
 	
 	return penSize;
 }
+
+CARBONUNITS_LINKAGE SInt32 GetPortPenMode( CGrafPtr port )
+{
+	return port->pnMode;
+}
+
+CARBONUNITS_LINKAGE Point* GetPortPenLocation( CGrafPtr port, Point* penLocation )
+{
+	*penLocation = port->pnLoc;
+	
+	return penLocation;
+}
+
+CARBONUNITS_LINKAGE Boolean IsPortRegionBeingDefined( CGrafPtr port )
+{
+	return port->rgnSave != NULL;
+}
+
+CARBONUNITS_LINKAGE Boolean IsPortPictureBeingDefined( CGrafPtr port )
+{
+	return port->picSave != NULL;
+}
+
+CARBONUNITS_LINKAGE Boolean IsPortPolyBeingDefined( CGrafPtr port )
+{
+	return port->polySave != NULL;
+}
+
+// IsPortOffscreen
 
 CARBONUNITS_LINKAGE Boolean IsPortColor( CGrafPtr port )
 {
@@ -126,6 +240,10 @@ CARBONUNITS_LINKAGE Handle SwapPortRegionSaveHandle( CGrafPtr port, Handle newHa
 	return oldHandle;
 }
 
+// SetPortBounds
+// SetPortOpColor
+// SetPortGrafProcs
+
 CARBONUNITS_LINKAGE void SetPortTextFont( CGrafPtr port, short txFont )
 {
 	port->txFont = txFont;
@@ -146,18 +264,47 @@ CARBONUNITS_LINKAGE void SetPortTextMode( CGrafPtr port, short mode )
 	port->txMode = mode;
 }
 
-CARBONUNITS_LINKAGE void SetPortClipRegion( CGrafPtr cport, RgnHandle clipRgn )
+CARBONUNITS_LINKAGE void SetPortVisibleRegion( CGrafPtr port, RgnHandle visRgn )
 {
-	GrafPtr port = reinterpret_cast< GrafPtr >( cport );
-	
+	MacCopyRgn( visRgn, port->visRgn );
+}
+
+CARBONUNITS_LINKAGE void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )
+{
 	MacCopyRgn( clipRgn, port->clipRgn );
 }
 
-CARBONUNITS_LINKAGE void SetPortPenSize( CGrafPtr cport, Point penSize )
+// SetPortPenPixPat
+// SetPortFillPixPat
+// SetPortBackPixPat
+
+CARBONUNITS_LINKAGE void SetPortPenSize( CGrafPtr port, Point penSize )
 {
-	GrafPtr port = reinterpret_cast< GrafPtr >( cport );
-	
 	port->pnSize = penSize;
+}
+
+CARBONUNITS_LINKAGE void SetPortPenMode( CGrafPtr port, SInt32 penMode )
+{
+	port->pnMode = penMode;
+}
+
+CARBONUNITS_LINKAGE void SetPortFracHPenLocation( CGrafPtr port, short pnLocHFrac )
+{
+	port->pnLocHFrac = pnLocHFrac;
+}
+
+CARBONUNITS_LINKAGE Rect* GetPixBounds( PixMapHandle pixMap, Rect* bounds )
+{
+	*bounds = pixMap[0]->bounds;
+	
+	return bounds;
+}
+
+// GetPixDepth
+
+CARBONUNITS_LINKAGE long GetQDGlobalsRandomSeed()
+{
+	return qd.randSeed;
 }
 
 CARBONUNITS_LINKAGE BitMap* GetQDGlobalsScreenBits( BitMap* result )
@@ -214,6 +361,25 @@ CARBONUNITS_LINKAGE CGrafPtr GetQDGlobalsThePort()
 	return reinterpret_cast< CGrafPtr >( qd.thePort );
 }
 
+CARBONUNITS_LINKAGE void SetQDGlobalsRandomSeed( long randomSeed )
+{
+	qd.randSeed = randomSeed;
+}
+
+CARBONUNITS_LINKAGE void SetQDGlobalsArrow( const Cursor* arrow )
+{
+	qd.arrow = *arrow;
+}
+
+CARBONUNITS_LINKAGE Rect* GetRegionBounds( RgnHandle region, Rect* bounds )
+{
+	*bounds = region[0]->rgnBBox;
+	
+	return bounds;
+}
+
+// IsRegionRectangular
+
 CARBONUNITS_LINKAGE CGrafPtr CreateNewPort()
 {
 	Ptr portMem = NewPtr( sizeof (CGrafPort) );
@@ -233,6 +399,8 @@ CARBONUNITS_LINKAGE void DisposePort( CGrafPtr port )
 	
 	DisposePtr( reinterpret_cast< Ptr >( port ) );
 }
+
+// SetQDError
 
 #undef CARBONUNITS_LINKAGE
 
