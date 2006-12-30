@@ -13,6 +13,9 @@
 #include "Nitrogen/Files.h"
 #include "Nitrogen/OSStatus.h"
 
+// Nitrogen Extras / Utilities
+#include "Utilities/Files.h"
+
 // Genie
 #include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
@@ -52,7 +55,23 @@ namespace Genie
 			const FSSpec srcFile  = ResolveUnixPathname( src,  cwd );
 			const FSSpec destFile = ResolveUnixPathname( dest, cwd );
 			
-			FSpFileCopy( srcFile, destFile );
+			N::FSDirSpec destDir = N::FSpGetParent( destFile );
+			
+			bool renaming = !std::equal( srcFile.name,
+			                             srcFile.name + 1 + srcFile.name[0],
+			                             destFile.name );
+			
+			ConstStr255Param name = renaming ? destFile.name : NULL;
+			
+			// FIXME:  This logic should be worked into the file copy routine
+			// Maybe use ExchangeFiles() for safety?
+			
+			if ( N::FSpTestFileExists( destFile ) )
+			{
+				N::FSpDelete( destFile );
+			}
+			
+			FSpFileCopy( srcFile, destDir & "", name );
 		}
 		catch ( ... )
 		{
