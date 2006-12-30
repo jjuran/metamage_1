@@ -138,7 +138,7 @@ namespace Nitrogen
 		::ThreadID result;
 		ThrowOSStatus( ::MacGetCurrentThread( &result ) );
 		
-		return result;
+		return ThreadID( result );
 	}
 	
 	ThreadState GetThreadState( ThreadID thread )
@@ -146,7 +146,7 @@ namespace Nitrogen
 		::ThreadState result;
 		ThrowOSStatus( ::GetThreadState( thread, &result ) );
 		
-		return result;
+		return ThreadState( result );
 	}
 	
 	void SetThreadState( ThreadID     threadToSet,
@@ -193,7 +193,7 @@ namespace Nitrogen
 		                                             threadToGet,
 		                                             &result ) );
 		
-		return result;
+		return ThreadState( result );
 	}
 	
 	void SetThreadReadyGivenTaskRef( ThreadTaskRef  threadTaskRef,
