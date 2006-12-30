@@ -2339,6 +2339,8 @@ namespace Nitrogen
 
    /* HIViewInstallEventHandler */
 
+#if TARGET_RT_MAC_MACHO
+
       inline Nucleus::Owned<EventHandlerRef> HIViewInstallEventHandler( HIViewRef   view,
                                                              EventHandlerUPP        inHandler,
                                                              UInt32                 inNumTypes,
@@ -2409,6 +2411,7 @@ namespace Nitrogen
          return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( HIObjectGetEventTarget((HIObjectRef) view ), inUserData );
         }
 
+#endif
 
    void InstallStandardEventHandler( EventTargetRef inTarget );
 

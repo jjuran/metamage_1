@@ -317,7 +317,6 @@ namespace Nitrogen
 
 //	extern Boolean IsWindowToolbarVisible(WindowRef inWindow);
 	using ::IsWindowToolbarVisible;
-#endif
 	
 	inline void HIWindowSetProxyFSRef ( WindowRef inWindow, const FSRef &inRef ) {
 		ThrowOSStatus ( ::HIWindowSetProxyFSRef ( inWindow, &inRef ));
@@ -328,6 +327,7 @@ namespace Nitrogen
 		ThrowOSStatus ( ::HIWindowGetProxyFSRef ( inWindow, &retVal ));
 		return retVal;
 		}
+#endif
 		
 	inline void SetWindowProxyAlias ( WindowRef inWindow, AliasHandle inAlias ) {
 		ThrowOSStatus ( ::SetWindowProxyAlias ( inWindow, inAlias ));
