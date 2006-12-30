@@ -35,13 +35,9 @@ namespace Nucleus
 	
 	template <>  struct Maker< EntityName >
 	{
-		EntityName operator()
-		(
-			ConstStr32Param object, 
-			ConstStr32Param type, 
-			ConstStr32Param zone = "\p*"
-		)
-		const
+		EntityName operator()( ConstStr32Param  object,
+		                       ConstStr32Param  type,
+		                       ConstStr32Param  zone = "\p*" ) const
 		{
 			EntityName entityName;
 			
@@ -58,14 +54,13 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-	static EntityName NBPSetEntity
-	(
-		ConstStr32Param object, 
-		ConstStr32Param type, 
-		ConstStr32Param zone = "\p*" )
+	static EntityName NBPSetEntity( ConstStr32Param  object,
+	                                ConstStr32Param  type,
+	                                ConstStr32Param  zone = "\p*" )
 	{
 		EntityName entityName;
 		::NBPSetEntity( reinterpret_cast< char* >( &entityName ), object, type, zone );
+		
 		return entityName;
 	}
 	
