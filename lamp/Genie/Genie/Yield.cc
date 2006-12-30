@@ -73,7 +73,7 @@ namespace Genie
 		
 		gCurrentProcess = NULL;
 		
-		N::SetThreadState( thread, kStoppedThreadState );
+		N::SetThreadState( thread, N::kStoppedThreadState );
 		
 		gCurrentProcess = me;
 		
@@ -91,7 +91,7 @@ namespace Genie
 		
 		gCurrentProcess = NULL;
 		
-		N::SetThreadState( thread, kReadyThreadState );
+		N::SetThreadState( thread, N::kReadyThreadState );
 		
 		gCurrentProcess = me;
 		

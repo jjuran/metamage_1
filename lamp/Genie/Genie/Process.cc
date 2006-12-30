@@ -1040,7 +1040,7 @@ namespace Genie
 	{
 		if ( N::GetThreadState( thread->Get() ) == kStoppedThreadState )
 		{
-			N::SetThreadState( thread->Get(), kReadyThreadState );
+			N::SetThreadState( thread->Get(), N::kReadyThreadState );
 		}
 	}
 	
