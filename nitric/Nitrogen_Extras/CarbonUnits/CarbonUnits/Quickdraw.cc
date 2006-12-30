@@ -49,12 +49,81 @@ pascal Boolean QDSwapPort( CGrafPtr newCPort, CGrafPtr* oldCPortPtr )
 // HandleToRgn
 // RgnToHandle
 // StdOpcode
-// IsValidPort
 
-// QDLocalToGlobalPoint
-// QDGlobalToLocalPoint
-// QDLocalToGlobalRect
-// QDGlobalToLocalRect
+pascal Boolean IsValidPort( CGrafPtr port )
+{
+	// FIXME:  What logic should go here?
+	bool valid = port != NULL;
+	
+	return valid;
+}
+
+pascal Point* QDLocalToGlobalPoint( CGrafPtr port, Point* point )
+{
+	CGrafPtr saved;
+	bool swapped = QDSwapPort( port, &saved );
+	
+	LocalToGlobal( point );
+	
+	if ( swapped )
+	{
+		(void) QDSwapPort( saved, NULL );
+	}
+	
+	return point;
+}
+
+pascal Point* QDGlobalToLocalPoint( CGrafPtr port, Point* point )
+{
+	CGrafPtr saved;
+	bool swapped = QDSwapPort( port, &saved );
+	
+	GlobalToLocal( point );
+	
+	if ( swapped )
+	{
+		(void) QDSwapPort( saved, NULL );
+	}
+	
+	return point;
+}
+
+pascal Rect* QDLocalToGlobalRect( CGrafPtr port, Rect* rect )
+{
+	CGrafPtr saved;
+	bool swapped = QDSwapPort( port, &saved );
+	
+	Point* points = reinterpret_cast< Point* >( rect );
+	
+	LocalToGlobal( &points[0] );
+	LocalToGlobal( &points[1] );
+	
+	if ( swapped )
+	{
+		(void) QDSwapPort( saved, NULL );
+	}
+	
+	return rect;
+}
+
+pascal Rect* QDGlobalToLocalRect( CGrafPtr port, Rect* rect )
+{
+	CGrafPtr saved;
+	bool swapped = QDSwapPort( port, &saved );
+	
+	Point* points = reinterpret_cast< Point* >( rect );
+	
+	GlobalToLocal( &points[0] );
+	GlobalToLocal( &points[1] );
+	
+	if ( swapped )
+	{
+		(void) QDSwapPort( saved, NULL );
+	}
+	
+	return rect;
+}
+
 // QDLocalToGlobalRegion
 // QDGlobalToLocalRegion
 
