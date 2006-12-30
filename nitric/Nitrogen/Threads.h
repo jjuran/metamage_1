@@ -10,9 +10,18 @@
 #include <Threads.h>
 #endif
 
-// Nitrogen core
+// Nucleus
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
+#endif
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
+#endif
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
+#endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 
 // Nitrogen
@@ -26,18 +35,6 @@
 #include "Nitrogen/UPP.h"
 #endif
 
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
-#endif
-
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
-#endif
-
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
-#endif
-
 
 namespace Nitrogen
 {
@@ -48,20 +45,37 @@ namespace Nitrogen
 			ThreadManagerErrorsRegistrationDependency();
 	};
 	
+	#pragma mark -
+	#pragma mark ¥ Types and constants ¥
 	
-	class ThreadState_Tag {};
-	typedef Nucleus::SelectorType< ThreadState_Tag, ::ThreadState, kReadyThreadState > ThreadState;
+	typedef Nucleus::Selector< class ThreadState_Tag, ::ThreadState >::Type ThreadState;
+	
+	static const ThreadState kReadyThreadState   = ThreadState( ::kReadyThreadState   );
+	static const ThreadState kStoppedThreadState = ThreadState( ::kStoppedThreadState );
+	static const ThreadState kRunningThreadState = ThreadState( ::kRunningThreadState );
 	
 	using ::ThreadTaskRef;  // FIXME
 	
-	class ThreadStyle_Tag {};
-	typedef Nucleus::SelectorType< ThreadStyle_Tag, ::ThreadStyle, kCooperativeThread > ThreadStyle;
+	typedef Nucleus::Selector< class ThreadStyle_Tag, ::ThreadStyle >::Type ThreadStyle;
 	
-	class ThreadID_Tag {};
-	typedef Nucleus::IDType< ThreadID_Tag, ::ThreadID, kNoThreadID > ThreadID;
+	static const ThreadStyle kCooperativeThread = ThreadStyle( ::kCooperativeThread );
+	static const ThreadStyle kPreemptiveThread  = ThreadStyle( ::kPreemptiveThread  );
 	
-	class ThreadOptions_Tag {};
-	typedef Nucleus::FlagType< ThreadOptions_Tag, ::ThreadOptions > ThreadOptions;
+	typedef Nucleus::ID< class ThreadID_Tag, ::ThreadID >::Type ThreadID;
+	
+	static const ThreadID kNoThreadID          = ThreadID( ::kNoThreadID          );
+	static const ThreadID kCurrentThreadID     = ThreadID( ::kCurrentThreadID     );
+	static const ThreadID kApplicationThreadID = ThreadID( ::kApplicationThreadID );
+	
+	typedef Nucleus::Flag< class ThreadOptions_Tag, ::ThreadOptions >::Type ThreadOptions;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( ThreadOptions )
+	
+	static const ThreadOptions kNewSuspend       = ThreadOptions( ::kNewSuspend       );
+	static const ThreadOptions kUsePremadeThread = ThreadOptions( ::kUsePremadeThread );
+	static const ThreadOptions kCreateIfNeeded   = ThreadOptions( ::kCreateIfNeeded   );
+	static const ThreadOptions kFPUNotNeeded     = ThreadOptions( ::kFPUNotNeeded     );
+	static const ThreadOptions kExactMatchThread = ThreadOptions( ::kExactMatchThread );
 	
 	using ::SchedulerInfoRec;
 	
@@ -86,6 +100,31 @@ namespace Nucleus
 
 namespace Nitrogen
   {
+	
+	namespace Detail
+	{
+		
+		class ThreadDisposer : public std::unary_function< ThreadID, void >,
+	                           private DefaultDestructionOSStatusPolicy
+		{
+			private:
+				bool recycleThread;
+			
+			public:
+				ThreadDisposer( bool recycleThread = false ) : recycleThread( recycleThread )  {}
+				
+				void operator()( ThreadID thread ) const
+				{
+					(void) ThreadManagerErrorsRegistrationDependency();
+					
+					HandleDestructionOSStatus( ::DisposeThread( thread, NULL, recycleThread ) );
+				}
+		};
+		
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ ThreadEntryUPP ¥
 	
 	struct ThreadEntryUPP_Details : Basic_UPP_Details< ::ThreadEntryUPP,
 	                                                   ::ThreadEntryProcPtr,
@@ -157,7 +196,7 @@ namespace Nitrogen
 		
 		static void* Invoke( ProcPtr proc, void* param )
 		{
-			(void)Traits::InvokeWithResult( proc, param );
+			(void) Traits::InvokeWithResult( proc, param );
 			
 			return NULL;
 		}
@@ -174,30 +213,33 @@ namespace Nitrogen
 			{
 				return ThreadEntry_Invoke_Traits< Param, Result >::Invoke( threadEntry, threadParam );
 			}
-			catch ( OSStatus err )
+			catch ( ... )
 			{
 				return NULL;  // FIXME:  What if the thread routine throws?
 			}
 		}
 	};
 	
+	#pragma mark -
+	#pragma mark ¥ NewThread ¥
+	
 	// Level 0, returns Nucleus::Owned< ThreadID >
 	
 	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
-	                             ThreadEntryTPP  threadEntry,
-	                             void*           threadParam,
-	                             Size            stackSize,
-	                             ThreadOptions   options,
-	                             void**          threadResult = NULL );
+	                                      ThreadEntryTPP  threadEntry,
+	                                      void*           threadParam,
+	                                      Size            stackSize,
+	                                      ThreadOptions   options,
+	                                      void**          threadResult = NULL );
 	
 	// Level 1, creates static UPP
 	
 	template < ::ThreadEntryProcPtr threadEntry >
 	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
-	                             void*           threadParam,
-	                             Size            stackSize,
-	                             ThreadOptions   options,
-	                             void**          threadResult = NULL )
+	                                      void*           threadParam,
+	                                      Size            stackSize,
+	                                      ThreadOptions   options,
+	                                      void**          threadResult = NULL )
 	{
 		return NewThread( threadStyle,
 		                  StaticUPP< ThreadEntryUPP, threadEntry >(),
