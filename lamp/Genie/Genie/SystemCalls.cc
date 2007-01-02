@@ -54,8 +54,6 @@
 
 extern "C"
 {
-	void PrintPS();
-	
 	OSStatus Path2FSSpec( const char*  pathname,
 	                      FSSpec*      outFSS );
 }
