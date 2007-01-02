@@ -20,8 +20,15 @@ namespace UseEdit
 	
 	namespace FS = FileSystem;
 	
-	static std::string ReadFileData( const FSSpec& file );
-	static std::string ReadFileData( const FSRef & file );
+#if TARGET_API_MAC_CARBON
+	
+	static std::string ReadFileData( const FSSpec& file )  { return ""; }
+	
+#else
+	
+	static std::string ReadFileData( const FSRef & file )  { return ""; }
+	
+#endif
 	
 	static std::string ReadFileData( const FS::Spec& file )
 	{
@@ -62,7 +69,7 @@ namespace UseEdit
 		
 		itsWindow.Get().SetName( file.name );
 		
-		itsWindow.Get().SubView().ScrollView().AppendChars( contents.data(), contents.size() );
+		itsWindow.Get().SubView().ScrolledView().AppendChars( contents.data(), contents.size() );
 	}
 	
 	Document::Document( Ped::WindowClosure& closure, const FSRef& file )
@@ -83,7 +90,7 @@ namespace UseEdit
 		
 		itsWindow.Get().SetName( name );
 		
-		itsWindow.Get().SubView().ScrollView().AppendChars( contents.data(), contents.size() );
+		itsWindow.Get().SubView().ScrolledView().AppendChars( contents.data(), contents.size() );
 	}
 	
 }
