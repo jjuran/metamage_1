@@ -86,7 +86,8 @@ namespace Pedestal
 			Clear();
 		}
 		
-		AppendChars(text.c_str(), text.size());
+		AppendChars( text.c_str(), text.size(), true );
+		
 		return byteCount;
 	}
 	
