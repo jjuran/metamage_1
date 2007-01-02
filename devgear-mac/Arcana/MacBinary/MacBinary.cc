@@ -764,7 +764,6 @@ namespace MacBinary
 		
 		ConstStr63Param name = h.Get< kFileName >();
 		
-		//fFile = N::FSMakeFSSpec( fDestDir, name );
 		itsFrame.file = itsFrame.destDir & name;
 		
 		if ( itIsFolder )
