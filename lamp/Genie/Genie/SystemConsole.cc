@@ -63,7 +63,7 @@ namespace Genie
 		
 		gSystemConsoleOwner.Show();
 		
-		gSystemConsoleOwner.fWindow->SubView().ScrollView().WriteChars( data, byteCount );
+		gSystemConsoleOwner.fWindow->SubView().ScrolledView().WriteChars( data, byteCount );
 		
 		return byteCount;
 	}

@@ -123,7 +123,7 @@ namespace Genie
 			int Write( const char* data, std::size_t byteCount );
 			
 			GenieWindow* Window()  { return fWindow.Get(); }  // NULL if no window
-			ConsolePane& Pane  ()  { return fWindow.Get()->SubView().ScrollView(); }
+			ConsolePane& Pane  ()  { return fWindow.Get()->SubView().ScrolledView(); }
 			
 			Io::StringPipe& Input()  { return Pane().Input(); }
 	};
