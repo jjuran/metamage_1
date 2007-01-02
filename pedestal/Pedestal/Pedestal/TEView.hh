@@ -54,7 +54,7 @@ namespace Pedestal
 			
 			void SetSelection( short start, short end );
 			
-			int AppendChars( const char* data, unsigned int byteCount );
+			int AppendChars( const char* data, unsigned int byteCount, bool updateNow );
 			
 			void Cut();
 			void Copy();

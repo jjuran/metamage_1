@@ -288,7 +288,7 @@ namespace Pedestal
 		N::TESetSelect( start, end, myTE );
 	}
 	
-	int TEView::AppendChars( const char* data, unsigned int byteCount )
+	int TEView::AppendChars( const char* data, unsigned int byteCount, bool updateNow )
 	{
 		if ( byteCount == 0 )  return 0;
 		
@@ -305,16 +305,19 @@ namespace Pedestal
 		N::TECalText( myTE );
 		N::TESetSelect( 32767, 32767, myTE );
 		
-		N::GrafPtr port = N::GetTEPort( myTE );
-		
-		// This is correct but MWPro6 breaks on it
-		//NN::Saved< N::Port_Value > savedPort( port );
-		
-		NN::Saved< N::Port_Value > savedPort;
-		
-		N::SetPort( port );
-		
-		Update();
+		if ( updateNow )
+		{
+			N::GrafPtr port = N::GetTEPort( myTE );
+			
+			// This is correct but MWPro6 breaks on it
+			//NN::Saved< N::Port_Value > savedPort( port );
+			
+			NN::Saved< N::Port_Value > savedPort;
+			
+			N::SetPort( port );
+			
+			Update();
+		}
 		
 		return byteCount;
 	}
