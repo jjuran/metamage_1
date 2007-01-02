@@ -47,6 +47,12 @@ namespace UseEdit
 		
 		ASSERT( bytes == fileSize );
 		
+		// Allow LF newlines
+		std::replace( data.begin(),
+		              data.end(),
+		              '\n',
+		              '\r' );
+		
 		return data;
 	}
 	
