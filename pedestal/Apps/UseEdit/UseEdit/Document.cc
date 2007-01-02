@@ -46,30 +46,30 @@ namespace UseEdit
 	
 	Document::Document( Ped::WindowClosure& closure )
 	: 
-		fWindow   ( closure ),
-		fHasFile  ( false   ),
-		fDirtyFlag( false   )   // A new document is never dirty, even if not saved
+		itsWindow( closure ),
+		itHasFile( false   ),
+		itIsDirty( false   )   // A new document is never dirty, even if not saved
 	{
 	}
 	
 	Document::Document( Ped::WindowClosure& closure, const FSSpec& file )
 	: 
-		fWindow   ( closure ),
-		fHasFile  ( true    ),
-		fDirtyFlag( false   )
+		itsWindow( closure ),
+		itHasFile( true    ),
+		itIsDirty( false   )
 	{
 		std::string contents = ReadFileData( file );
 		
-		fWindow.Get().SetName( file.name );
+		itsWindow.Get().SetName( file.name );
 		
-		fWindow.Get().SubView().ScrollView().AppendChars( contents.data(), contents.size() );
+		itsWindow.Get().SubView().ScrollView().AppendChars( contents.data(), contents.size() );
 	}
 	
 	Document::Document( Ped::WindowClosure& closure, const FSRef& file )
 	: 
-		fWindow   ( closure ),
-		fHasFile  ( true    ),
-		fDirtyFlag( false   )
+		itsWindow( closure ),
+		itHasFile( true    ),
+		itIsDirty( false   )
 	{
 		std::string contents = ReadFileData( file );
 		
@@ -81,9 +81,9 @@ namespace UseEdit
 		
 		N::Str255 name( string );
 		
-		fWindow.Get().SetName( name );
+		itsWindow.Get().SetName( name );
 		
-		fWindow.Get().SubView().ScrollView().AppendChars( contents.data(), contents.size() );
+		itsWindow.Get().SubView().ScrollView().AppendChars( contents.data(), contents.size() );
 	}
 	
 }

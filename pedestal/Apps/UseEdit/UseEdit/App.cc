@@ -231,7 +231,7 @@ namespace UseEdit
 			throw N::ErrAENoSuchObject();
 		}
 		
-		Map::const_iterator it = map.begin();
+		Map::const_iterator it = itsMap.begin();
 		
 		std::advance( it, index - 1 );
 		
@@ -240,9 +240,9 @@ namespace UseEdit
 	
 	const Document& DocumentContainer::GetDocumentByID( UInt32 id ) const
 	{
-		Map::const_iterator it = map.find( reinterpret_cast< ::WindowRef >( id ) );
+		Map::const_iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
 		
-		if ( it == map.end() )
+		if ( it == itsMap.end() )
 		{
 			throw N::ErrAENoSuchObject();
 		}
@@ -252,12 +252,12 @@ namespace UseEdit
 	
 	void DocumentContainer::StoreNewElement( Document* doc )
 	{
-		map[ doc->GetWindowRef() ] = boost::shared_ptr< Document >( doc );
+		itsMap[ doc->GetWindowRef() ] = boost::shared_ptr< Document >( doc );
 	}
 	
 	bool DocumentContainer::ExistsElementByID( UInt32 id ) const
 	{
-		return map.find( reinterpret_cast< ::WindowRef >( id ) ) != map.end();
+		return itsMap.find( reinterpret_cast< ::WindowRef >( id ) ) != itsMap.end();
 	}
 	
 	NN::Owned< N::AEToken, N::AETokenDisposer > DocumentContainer::GetElementByIndex( std::size_t index ) const
@@ -277,23 +277,23 @@ namespace UseEdit
 			throw N::ErrAENoSuchObject();
 		}
 		
-		Map::iterator it = map.begin();
+		Map::iterator it = itsMap.begin();
 		
 		std::advance( it, index - 1 );
 		
-		map.erase( it );
+		itsMap.erase( it );
 	}
 	
 	void DocumentContainer::DeleteElementByID( UInt32 id )
 	{
-		Map::iterator it = map.find( reinterpret_cast< ::WindowRef >( id ) );
+		Map::iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
 		
-		if ( it == map.end() )
+		if ( it == itsMap.end() )
 		{
 			throw N::ErrAENoSuchObject();
 		}
 		
-		map.erase( it );
+		itsMap.erase( it );
 	}
 	
 	
@@ -303,7 +303,7 @@ namespace UseEdit
 	
 	bool DocumentsOwner::RequestWindowClosure( N::WindowRef window )
 	{
-		documents.DeleteElementByID( reinterpret_cast< UInt32 >( ::WindowRef( window ) ) );
+		itsDocuments.DeleteElementByID( reinterpret_cast< UInt32 >( ::WindowRef( window ) ) );
 		
 		return true;
 	}
@@ -311,13 +311,13 @@ namespace UseEdit
 	void DocumentsOwner::NewWindow()
 	{
 		Document* doc = new Document( *this );
-		documents.StoreNewElement( doc );
+		itsDocuments.StoreNewElement( doc );
 	}
 	
 	void DocumentsOwner::OpenDocument( const FS::Spec& file )
 	{
 		Document* doc = new Document( *this, file );
-		documents.StoreNewElement( doc );
+		itsDocuments.StoreNewElement( doc );
 	}
 	
 	App& App::Get()
@@ -329,24 +329,24 @@ namespace UseEdit
 	
 	App::App()
 	: 
-		aboutHandler( *this ),
-		newHandler  ( *this ),
-		myOpenDocsEventHandler( N::AEInstallEventHandler< App*, HandleOpenDocumentsAppleEvent >( kCoreEventClass,
-		                                                                                         kAEOpenDocuments,
-		                                                                                         this ) ),
-		myCountHandler( N::AEInstallEventHandler< App*, HandleCountAppleEvent >( kAECoreSuite,
-		                                                                         kAECountElements,
-		                                                                         this ) ),
-		myGetDataHandler( N::AEInstallEventHandler< App*, HandleGetDataAppleEvent >( kAECoreSuite,
-		                                                                             kAEGetData,
-		                                                                             this ) )
+		itsAboutHandler( *this ),
+		itsNewHandler  ( *this ),
+		itsOpenDocsEventHandler( N::AEInstallEventHandler< App*, HandleOpenDocumentsAppleEvent >( kCoreEventClass,
+		                                                                                          kAEOpenDocuments,
+		                                                                                          this ) ),
+		itsCountHandler( N::AEInstallEventHandler< App*, HandleCountAppleEvent >( kAECoreSuite,
+		                                                                          kAECountElements,
+		                                                                          this ) ),
+		itsGetDataHandler( N::AEInstallEventHandler< App*, HandleGetDataAppleEvent >( kAECoreSuite,
+		                                                                              kAEGetData,
+		                                                                              this ) )
 	{
 		ASSERT( theApp == NULL );
 		
 		theApp = this;
 		
-		RegisterMenuItemHandler( 'abou', &aboutHandler );
-		RegisterMenuItemHandler( 'new ', &newHandler   );
+		RegisterMenuItemHandler( 'abou', &itsAboutHandler );
+		RegisterMenuItemHandler( 'new ', &itsNewHandler   );
 		
 		// Initialize the Object Support Library.
 		N::AEObjectInit();

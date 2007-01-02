@@ -40,7 +40,7 @@ namespace UseEdit
 		private:
 			typedef std::map< ::WindowRef, boost::shared_ptr< Document > > Map;
 			
-			Map map;
+			Map itsMap;
 		
 		public:
 			~DocumentContainer();
@@ -50,7 +50,7 @@ namespace UseEdit
 			
 			void StoreNewElement( Document* doc );
 			
-			size_t CountElements() const  { return map.size(); }
+			size_t CountElements() const  { return itsMap.size(); }
 			
 			bool ExistsElementByIndex( std::size_t index ) const  { return index <= CountElements(); }
 			bool ExistsElementByID   ( UInt32      id    ) const;
@@ -66,14 +66,14 @@ namespace UseEdit
 	class DocumentsOwner : private Ped::WindowClosure
 	{
 		private:
-			DocumentContainer documents;
+			DocumentContainer itsDocuments;
 		
 		public:
 			~DocumentsOwner();
 			
 			bool RequestWindowClosure( N::WindowRef window );
 			
-			DocumentContainer& Documents()  { return documents; }
+			DocumentContainer& Documents()  { return itsDocuments; }
 			
 			void NewWindow();
 			void OpenDocument( const FS::Spec& file );
@@ -86,11 +86,11 @@ namespace UseEdit
 		private:
 			static App* theApp;
 			
-			Ped::AboutHandler< App > aboutHandler;
-			Ped::NewHandler  < App > newHandler;
-			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
-			NN::Owned< N::AEEventHandler > myCountHandler;
-			NN::Owned< N::AEEventHandler > myGetDataHandler;
+			Ped::AboutHandler< App > itsAboutHandler;
+			Ped::NewHandler  < App > itsNewHandler;
+			NN::Owned< N::AEEventHandler > itsOpenDocsEventHandler;
+			NN::Owned< N::AEEventHandler > itsCountHandler;
+			NN::Owned< N::AEEventHandler > itsGetDataHandler;
 		
 		public:
 			static App& Get();

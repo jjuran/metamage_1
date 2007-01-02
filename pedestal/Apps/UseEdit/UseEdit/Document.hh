@@ -21,17 +21,17 @@ namespace UseEdit
 	class Document
 	{
 		private:
-			Ped::SingleWindowOwner< Window >  fWindow;
-			bool                              fHasFile;
-			bool                              fDirtyFlag;
+			Ped::SingleWindowOwner< Window >  itsWindow;
+			bool                              itHasFile;
+			bool                              itIsDirty;
 		
 		public:
 			Document( Ped::WindowClosure& closure );
 			Document( Ped::WindowClosure& closure, const FSSpec& file );
 			Document( Ped::WindowClosure& closure, const FSRef & file );
 			
-			Window const& GetWindow() const  { return fWindow.Get(); }
-			Window      & GetWindow()        { return fWindow.Get(); }
+			Window const& GetWindow() const  { return itsWindow.Get(); }
+			Window      & GetWindow()        { return itsWindow.Get(); }
 			
 			N::WindowRef GetWindowRef() const  { return GetWindow().Get(); }
 			
