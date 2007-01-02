@@ -46,19 +46,6 @@ namespace MacBinary
 				FSSpec        file;
 				UInt32        modificationDate;
 				std::string   comment;
-				
-				Frame()  {}
-				
-				Frame( N::FSDirSpec  destDir,
-				       FSSpec        file,
-				       UInt32        modificationDate,
-				       std::string   comment )
-				: destDir( destDir ),
-				  file( file ),
-				  modificationDate( modificationDate ),
-				  comment( comment )
-				{
-				}
 			};
 			
 			Frame itsFrame;
