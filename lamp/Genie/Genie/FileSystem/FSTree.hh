@@ -72,6 +72,10 @@ namespace Genie
 			
 			// General methods
 			
+			virtual std::string Name() const;
+			
+			virtual FSSpec GetFSSpec() const;
+			
 			virtual void Stat( struct ::stat& sb ) const = 0;
 			
 			virtual void ChangeMode( mode_t mode ) const;

@@ -61,6 +61,10 @@ namespace Genie
 		public:
 			FSTree_FSSpec( const FSSpec& file ) : fileSpec( file )  {}
 			
+			std::string Name() const;
+			
+			FSSpec GetFSSpec() const;
+			
 			FSTreePtr Self()   const;
 			FSTreePtr Parent() const;
 			
@@ -85,6 +89,8 @@ namespace Genie
 	
 	struct Volumes_Details
 	{
+		static std::string Name()  { return "Volumes"; }
+		
 		static FSTreePtr Lookup( const std::string& name );
 		
 		static N::Volume_Container ItemSequence()  { return N::Volumes(); }
@@ -253,6 +259,21 @@ namespace Genie
 		return OpenFile( fileH );
 	}
 	
+	
+	std::string FSTree_FSSpec::Name() const
+	{
+		if ( NN::Convert< N::FSDirSpec >( fileSpec ) == FindJDirectory() )
+		{
+			return "";
+		}
+		
+		return NN::Convert< std::string >( fileSpec.name );
+	}
+	
+	FSSpec FSTree_FSSpec::GetFSSpec() const
+	{
+		return fileSpec;
+	}
 	
 	FSTreePtr FSTree_FSSpec::Self() const
 	{

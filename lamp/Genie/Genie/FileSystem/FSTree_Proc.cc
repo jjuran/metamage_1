@@ -21,6 +21,8 @@ namespace Genie
 	
 	struct proc_Details
 	{
+		static std::string Name()  { return "proc"; }
+		
 		static FSTreePtr Lookup( const std::string& name );
 		
 		static const GenieProcessTable& ItemSequence()  { return gProcessTable; }
@@ -33,8 +35,13 @@ namespace Genie
 	
 	class FSTree_pid : public FSTree_Directory
 	{
+		private:
+			pid_t itsPID;
+		
 		public:
-			FSTree_pid( pid_t pid )  {}
+			FSTree_pid( pid_t pid ) : itsPID( pid )  {}
+			
+			std::string Name() const;
 			
 			FSTreePtr Self()   const;
 			FSTreePtr Parent() const;
@@ -71,6 +78,11 @@ namespace Genie
 		return FSNode( name, tree );
 	}
 	
+	
+	std::string FSTree_pid::Name() const
+	{
+		return NN::Convert< std::string >( itsPID );
+	}
 	
 	FSTreePtr FSTree_pid::Self() const
 	{

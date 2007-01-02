@@ -59,6 +59,8 @@ namespace Genie
 		public:
 			static FSTreePtr GetSingleton()  { return Genie::GetSingleton< FSTree_Special >(); }
 			
+			std::string Name() const  { return Details::Name(); }
+			
 			FSTreePtr Self()   const  { return GetSingleton(); }
 			FSTreePtr Parent() const  { return FSRoot(); }
 			

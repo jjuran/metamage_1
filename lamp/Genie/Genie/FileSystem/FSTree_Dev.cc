@@ -22,6 +22,8 @@ namespace Genie
 			
 			static FSTreePtr GetSingleton()  { return Genie::GetSingleton< FSTree_dev >(); }
 			
+			std::string Name() const  { return "dev"; }
+			
 			FSTreePtr Self()   const  { return GetSingleton(); }
 			FSTreePtr Parent() const  { return FSRoot(); }
 	};
@@ -33,6 +35,8 @@ namespace Genie
 		
 		public:
 			FSTree_Device( const std::string& name ) : deviceName( name )  {}
+			
+			std::string Name() const  { return deviceName; }
 			
 			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
 			

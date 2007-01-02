@@ -21,6 +21,20 @@ namespace Genie
 	namespace P7 = POSeven;
 	
 	
+	std::string FSTree::Name() const
+	{
+		P7::ThrowErrno( ENOENT );
+		
+		return "";  // Not reached
+	}
+	
+	FSSpec FSTree::GetFSSpec() const
+	{
+		P7::ThrowErrno( EXDEV );
+		
+		return FSSpec();  // Not reached
+	}
+	
 	void FSTree::ChangeMode( mode_t mode ) const
 	{
 		P7::ThrowErrno( EPERM );
