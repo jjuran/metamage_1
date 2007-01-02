@@ -30,9 +30,6 @@
 //#include "Templates/FunctionalExtensions.h"
 //#include "Templates/PointerToFunction.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Io
 #include "Io/Exceptions.hh"
 #include "Io/Stream.hh"
@@ -46,7 +43,6 @@
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/pathnames.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/TTY.hh"
@@ -195,11 +191,15 @@ namespace Genie
 	{
 		try
 		{
-			*outFSS = ResolveUnixPathname( pathname, CurrentProcess().CurrentDirectory() );
+			*outFSS = ResolvePathname( pathname, CurrentProcess().CurrentWorkingDirectory() )->GetFSSpec();
 		}
 		catch ( const N::OSStatus& err )
 		{
 			return CurrentProcess().SetErrno( err );
+		}
+		catch ( ... )
+		{
+			return extFSErr;  // Just a guess
 		}
 		
 		return 0;
@@ -342,12 +342,36 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( _exit );
 	
+	static std::string MakeFSTreePathname( FSTreePtr node )
+	{
+		std::string name = node->Name();
+		
+		if ( name.empty() )
+		{
+			return "/";
+		}
+		
+		std::string result = name;
+		
+		// Root dir has empty name
+		
+		while ( result[0] != '/' )
+		{
+			//node = node->Parent();
+			node = node->Lookup( ".." );
+			name = node->Name();
+			
+			result = name + "/" + result;
+		}
+		
+		return result;
+	}
+	
 	static char* getcwd( char* buf, std::size_t size )
 	{
-		FSSpec cwd = NN::Convert< FSSpec >( CurrentProcess().CurrentDirectory() );
+		FSTreePtr cwd = CurrentProcess().CurrentWorkingDirectory();
 		
-		//std::string result = N::FSpGetPOSIXPathname( cwd );
-		std::string result = MakeUnixPathname( cwd );
+		std::string result = MakeFSTreePathname( cwd );
 		
 		if ( result.size() + 1 > size )
 		{
