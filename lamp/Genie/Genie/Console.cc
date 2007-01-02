@@ -24,8 +24,8 @@
 #include "Io/Stream.hh"
 
 // Genie
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/ConsoleTTY.hh"
-#include "Genie/pathnames.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -428,7 +428,7 @@ namespace Genie
 	
 	static FSSpec LoginExecutable()
 	{
-		return ResolveUnixPathname( "/bin/login" );
+		return ResolvePathname( "/bin/login", FSTreePtr() )->GetFSSpec();
 	}
 	
 	void SpawnNewConsole()

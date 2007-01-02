@@ -28,7 +28,7 @@
 #include "Utilities/Files.h"
 
 // Genie
-#include "Genie/pathnames.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -64,10 +64,10 @@ namespace Genie
 	{
 		try
 		{
-			const N::FSDirSpec cwd = CurrentProcess().CurrentDirectory();
+			FSTreePtr cwd = CurrentProcess().CurrentWorkingDirectory();
 			
-			FSSpec srcFile  = ResolveUnixPathname( src,  cwd );
-			FSSpec destFile = ResolveUnixPathname( dest, cwd );
+			FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec();
+			FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec();
 			
 			N::Str63 requestedDestName = UntweakMacFilename( Basename( dest ) );
 			

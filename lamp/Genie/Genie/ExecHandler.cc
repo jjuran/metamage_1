@@ -14,7 +14,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
-#include "Genie/pathnames.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/PipeOrganSuite.h"
 #include "Genie/Process.hh"
 
@@ -129,7 +129,7 @@ namespace Genie
 		}
 	#endif
 		
-		FSSpec program = ResolveUnixPathname( argv[0] );
+		FSSpec program = ResolvePathname( argv[0], FSTreePtr() )->GetFSSpec();
 		
 		const int ppid = 1;
 		
