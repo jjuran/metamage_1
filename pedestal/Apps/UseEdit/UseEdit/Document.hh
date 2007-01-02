@@ -7,7 +7,7 @@
 #define USEEDIT_DOCUMENT_HH
 
 // Standard C++
-#include <memory>
+#include <string>
 
 // UseEdit
 #include "UseEdit/Window.hh"
@@ -22,13 +22,13 @@ namespace UseEdit
 	{
 		private:
 			Ped::SingleWindowOwner< Window >  fWindow;
-			FSSpec                            fFile;
 			bool                              fHasFile;
 			bool                              fDirtyFlag;
 		
 		public:
 			Document( Ped::WindowClosure& closure );
 			Document( Ped::WindowClosure& closure, const FSSpec& file );
+			Document( Ped::WindowClosure& closure, const FSRef & file );
 			
 			Window const& GetWindow() const  { return fWindow.Get(); }
 			Window      & GetWindow()        { return fWindow.Get(); }

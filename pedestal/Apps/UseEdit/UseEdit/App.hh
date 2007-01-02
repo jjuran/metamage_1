@@ -15,6 +15,9 @@
 // Nucleus
 #include "Nucleus/Owned.h"
 
+// Nitrogen Extras / Utilities
+#include "Utilities/Files.h"
+
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/AboutBox.hh"
@@ -25,6 +28,7 @@ namespace UseEdit
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace FS = FileSystem;
 	namespace Ped = Pedestal;
 	
 	
@@ -72,7 +76,7 @@ namespace UseEdit
 			DocumentContainer& Documents()  { return documents; }
 			
 			void NewWindow();
-			void OpenDocument( const FSSpec& file );
+			void OpenDocument( const FS::Spec& file );
 	};
 	
 	class App : public Ped::Application,
