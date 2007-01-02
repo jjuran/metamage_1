@@ -213,7 +213,7 @@ namespace Pedestal
 			static bool ScrollsVertically()    { return VerticalTraits::present; }
 			static bool ScrollsHorizontally()  { return HorizontalTraits::present; }
 			
-			ScrollViewType&          ScrollView()           { return myScrollView; }
+			ScrollViewType&          ScrolledView()         { return myScrollView; }
 			VerticalScrollbarType&   VerticalScrollbar()    { return myScrollV; }
 			HorizontalScrollbarType& HorizontalScrollbar()  { return myScrollH; }
 			
@@ -223,7 +223,7 @@ namespace Pedestal
 			
 			void Scroll(short dh, short dv, bool updateNow = 0)
 			{
-				Pedestal::Scroll( myScrollView, dh, dv, updateNow );
+				ScrollView( myScrollView, dh, dv, updateNow );
 				Calibrate();
 			}
 			
@@ -237,19 +237,19 @@ namespace Pedestal
 				// Intersect the clip region with the scrollview bounds,
 				// so the scrollview doesn't overpaint the scroll bars.
 				NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-				                                                  N::RectRgn( ScrollView().Bounds() ) ) );
+				                                                  N::RectRgn( ScrolledView().Bounds() ) ) );
 				
-				ScrollView().Idle( event );
+				ScrolledView().Idle( event );
 			}
 			
 			void MouseDown( const EventRecord& event )
 			{
-				if ( N::PtInRect( N::GlobalToLocal( event.where ), ScrollView().Bounds() ) )
+				if ( N::PtInRect( N::GlobalToLocal( event.where ), ScrolledView().Bounds() ) )
 				{
-					Point scrollableRange = ScrollableRange( ScrollView() );
-					Point scrollPosition  = ScrollPosition ( ScrollView() );
+					Point scrollableRange = ScrollableRange( ScrolledView() );
+					Point scrollPosition  = ScrollPosition ( ScrolledView() );
 					
-					ScrollView().MouseDown( event );
+					ScrolledView().MouseDown( event );
 					
 					UpdateScrollbars( scrollableRange, scrollPosition );
 				}
@@ -257,10 +257,10 @@ namespace Pedestal
 			
 			bool KeyDown( const EventRecord& event )
 			{
-				Point scrollableRange = ScrollableRange( ScrollView() );
-				Point scrollPosition  = ScrollPosition ( ScrollView() );
+				Point scrollableRange = ScrollableRange( ScrolledView() );
+				Point scrollPosition  = ScrollPosition ( ScrolledView() );
 				
-				if ( ScrollView().KeyDown( event ) )
+				if ( ScrolledView().KeyDown( event ) )
 				{
 					UpdateScrollbars( scrollableRange, scrollPosition );
 					return true;
@@ -274,14 +274,14 @@ namespace Pedestal
 				// Intersect the clip region with the scrollview bounds,
 				// so the scrollview doesn't overpaint the scroll bars.
 				NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-				                                                  N::RectRgn( ScrollView().Bounds() ) ) );
+				                                                  N::RectRgn( ScrolledView().Bounds() ) ) );
 				
-				ScrollView().Update();
+				ScrolledView().Update();
 			}
 			
 			void Activate( bool activating )
 			{
-				ScrollView().Activate( activating );
+				ScrolledView().Activate( activating );
 				
 				NN::Saved< N::Clip_Value > savedClip;
 				N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
@@ -293,9 +293,9 @@ namespace Pedestal
 			
 			bool SetCursor( Point location, RgnHandle mouseRgn )
 			{
-				if ( N::PtInRect( location, ScrollView().Bounds() ) )
+				if ( N::PtInRect( location, ScrolledView().Bounds() ) )
 				{
-					return ScrollView().SetCursor( location, mouseRgn );
+					return ScrolledView().SetCursor( location, mouseRgn );
 				}
 				
 				return false;
@@ -303,10 +303,10 @@ namespace Pedestal
 			
 			bool UserCommand( MenuItemCode code )
 			{
-				Point scrollableRange = ScrollableRange( ScrollView() );
-				Point scrollPosition  = ScrollPosition ( ScrollView() );
+				Point scrollableRange = ScrollableRange( ScrolledView() );
+				Point scrollPosition  = ScrollPosition ( ScrolledView() );
 				
-				if ( ScrollView().UserCommand( code ) )
+				if ( ScrolledView().UserCommand( code ) )
 				{
 					UpdateScrollbars( scrollableRange, scrollPosition );
 					return true;
@@ -335,7 +335,7 @@ namespace Pedestal
 				InvalidateControl( VerticalScrollbar  ().Get() );
 				InvalidateControl( HorizontalScrollbar().Get() );
 				
-				ScrollView().Resize( aperture );
+				ScrolledView().Resize( aperture );
 				
 				Calibrate();
 				
@@ -484,7 +484,7 @@ namespace Pedestal
 		
 		if ( part == kControlIndicatorPart )
 		{
-			Point pos = ScrollPosition( ScrollView() );
+			Point pos = ScrollPosition( ScrolledView() );
 			
 			short oldValue = ( axis == kVertical ) ? pos.v : pos.h;
 			
@@ -517,8 +517,8 @@ namespace Pedestal
 	{
 		using namespace Nucleus::Operators;
 		
-		Point range = ScrollableRange( ScrollView() );
-		Point pos = ScrollPosition( ScrollView() );
+		Point range = ScrollableRange( ScrolledView() );
+		Point pos   = ScrollPosition ( ScrolledView() );
 		
 		if ( oldPosition != pos  ||  oldRange != range )
 		{

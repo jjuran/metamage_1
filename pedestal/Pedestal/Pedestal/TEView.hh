@@ -92,7 +92,7 @@ namespace Pedestal
 		return ScrollPosition( view.Get() );
 	}
 	
-	inline void Scroll( TEView& view, short dh, short dv, bool /*updateNow*/ )
+	inline void ScrollView( TEView& view, short dh, short dv, bool /*updateNow*/ )
 	{
 		Scroll( view.Get(), dh, dv );
 	}

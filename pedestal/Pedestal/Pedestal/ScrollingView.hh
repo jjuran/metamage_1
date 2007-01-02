@@ -197,7 +197,7 @@ namespace Pedestal
 	}
 	
 	template < class SubViewType >
-	void Scroll( ScrollingView< SubViewType >& scroll, short dh, short dv, bool updateNow )
+	void ScrollView( ScrollingView< SubViewType >& scroll, short dh, short dv, bool updateNow )
 	{
 		scroll.Scroll( dh, dv, updateNow );
 	}
