@@ -134,7 +134,7 @@ namespace Genie
 			UInt32 fPendingSignals;
 			UInt32 fPreviousSignals;
 			std::string myName;
-			N::FSDirSpec myCWD;
+			FSTreePtr itsCWD;
 			TTYHandle* fControllingTerminal;
 			FileDescriptorMap myFileDescriptors;
 			EStatus myStatus;
@@ -173,8 +173,7 @@ namespace Genie
 			
 			TTYHandle* ControllingTerminal() const  { return fControllingTerminal; }
 			
-			N::FSDirSpec CurrentDirectory() const  { return myCWD; }
-			FSTreePtr CurrentWorkingDirectory() const  { return FSTreeFromFSSpec( NN::Convert< FSSpec >( CurrentDirectory() ) ); }
+			FSTreePtr CurrentWorkingDirectory() const  { return itsCWD; }
 			
 			FileDescriptorMap& FileDescriptors()  { return myFileDescriptors; }
 			

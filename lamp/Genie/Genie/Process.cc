@@ -35,7 +35,7 @@
 #include "KEnvironment.hh"
 
 // Genie
-#include "Genie/pathnames.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
@@ -142,7 +142,7 @@ namespace Genie
 	
 	inline P7::Errno NotExecutable()  { return P7::Errno( EPERM ); }
 	
-	static ExecContext& Normalize( ExecContext& context, const N::FSDirSpec& cwd )
+	static ExecContext& Normalize( ExecContext& context, const FSTreePtr& cwd )
 	{
 		const OSType type = N::FSpGetFInfo( context.executable ).fdType;
 		
@@ -224,7 +224,7 @@ namespace Genie
 			
 			// argv == { "sh", "--", "script", "foo", "bar", "baz", NULL }
 			
-			context.executable = ResolveUnixPathname( context.interpreterPath, cwd );
+			context.executable = ResolvePathname( context.interpreterPath, cwd )->GetFSSpec();
 		}
 		else if ( type == 'MPST' )
 		{
@@ -255,7 +255,7 @@ namespace Genie
 			
 			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
 			
-			context.executable = ResolveUnixPathname( "/usr/bin/tlsrvr", cwd );
+			context.executable = ResolvePathname( "/usr/bin/tlsrvr", cwd )->GetFSSpec();
 		}
 		else
 		{
@@ -274,7 +274,7 @@ namespace Genie
 		fPendingSignals     ( 0 ),
 		fPreviousSignals    ( 0 ),
 		myName              ( "init" ),
-		myCWD               ( N::FSDirSpec() ),
+		itsCWD              ( FSRoot() ),
 		fControllingTerminal( NULL ),
 		myFileDescriptors   ( FileDescriptorMap() ),
 		myStatus            ( kStarting ),
@@ -293,7 +293,7 @@ namespace Genie
 		fPendingSignals     ( 0 ),
 		fPreviousSignals    ( 0 ),
 		myName              ( gProcessTable[ ppid ].ProgramName() ),
-		myCWD               ( gProcessTable[ ppid ].CurrentDirectory() ),
+		itsCWD              ( gProcessTable[ ppid ].CurrentWorkingDirectory() ),
 		fControllingTerminal( gProcessTable[ ppid ].fControllingTerminal ),
 		myFileDescriptors   ( gProcessTable[ ppid ].FileDescriptors() ),
 		myStatus            ( kStarting ),
@@ -314,7 +314,7 @@ namespace Genie
 	void Process::InitThread()
 	{
 		N::CloseConnection( fOldFragmentConnection );
-		//fOldFragmentImage = NX::DataPtr< FragmentImage >();
+		
 		fOldFragmentImage = BinaryImage();
 	}
 	
@@ -402,7 +402,7 @@ namespace Genie
 		
 		ExecContext context( executable, argv );
 		
-		Normalize( context, CurrentDirectory() );
+		Normalize( context, CurrentWorkingDirectory() );
 		
 		FSSpec programFile = context.executable;
 		
@@ -760,8 +760,9 @@ namespace Genie
 		if ( pathname != NULL )
 		{
 			// Either of these may throw
-			FSSpec spec = ResolveUnixPathname( pathname, myCWD );
-			myCWD = NN::Convert< N::FSDirSpec >( spec );
+			itsCWD = ResolvePathname( pathname, CurrentWorkingDirectory() );
+			
+			//myCWD = NN::Convert< N::FSDirSpec >( itsCWD->GetFSSpec() );
 		}
 		else
 		{
