@@ -65,6 +65,17 @@ namespace UseEdit
 	{
 	}
 	
+	static void LoadText( Window::Base::SubViewType& scroller, const std::string& text )
+	{
+		Ped::TEView& editor( scroller.ScrolledView() );
+		
+		editor.AppendChars( text.data(), text.size(), false );
+		
+		editor.SetSelection( 0, 0 );
+		
+		scroller.Calibrate();
+	}
+	
 	Document::Document( Ped::WindowClosure& closure, const FSSpec& file )
 	: 
 		itsWindow( closure ),
@@ -75,7 +86,7 @@ namespace UseEdit
 		
 		itsWindow.Get().SetName( file.name );
 		
-		itsWindow.Get().SubView().ScrolledView().AppendChars( contents.data(), contents.size() );
+		LoadText( itsWindow.Get().SubView(), contents );
 	}
 	
 	Document::Document( Ped::WindowClosure& closure, const FSRef& file )
@@ -96,7 +107,7 @@ namespace UseEdit
 		
 		itsWindow.Get().SetName( name );
 		
-		itsWindow.Get().SubView().ScrolledView().AppendChars( contents.data(), contents.size() );
+		LoadText( itsWindow.Get().SubView(), contents );
 	}
 	
 }
