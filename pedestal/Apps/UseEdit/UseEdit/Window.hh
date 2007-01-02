@@ -10,9 +10,9 @@
 #include <string>
 
 // Pedestal
-#include "Pedestal/Window.hh"
-#include "Pedestal/TEView.hh"
 #include "Pedestal/Scroller.hh"
+#include "Pedestal/TEView.hh"
+#include "Pedestal/Window.hh"
 
 
 namespace UseEdit
