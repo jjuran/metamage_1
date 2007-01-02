@@ -43,7 +43,9 @@ namespace Pedestal
 	static void PaintProgress( const Rect& bounds )
 	{
 		N::RGBForeColor( gDarkGrey );
+		
 		N::PaintRect( bounds );
+		
 		N::RGBForeColor( gBlack );
 	}
 	
@@ -52,35 +54,42 @@ namespace Pedestal
 		//N::EraseRect( bounds );
 		
 		N::RGBForeColor( gSkyBlue );
+		
 		N::PaintRect( bounds );
+		
 		N::RGBForeColor( gBlack );
 	}
 	
 	ProgressBar::ProgressBar( const Rect& bounds, View::Initializer init )
 	:
-		myBounds( CalcCenteredProgressBarRect( bounds ) ), 
-		myProgress( 0 )
+		itsBounds( CalcCenteredProgressBarRect( bounds ) ), 
+		itsProgress( 0 )
 	{
 		
 	}
 	
 	void ProgressBar::ZeroProgress()
 	{
-		myProgress = 0;
-		EraseProgress( ProgressBarInsetBounds( myBounds ) );
+		itsProgress = 0;
+		
+		// Erase the progress bar, leaving the black outline intact.
+		EraseProgress( ProgressBarInsetBounds( itsBounds ) );
 	}
 	
 	void ProgressBar::SetProgress( double progress )
 	{
-		myProgress = progress;
+		itsProgress = progress;
+		
 		DrawProgress();
 	}
 	
 	void ProgressBar::DrawProgress()
 	{
-		Rect bounds = ProgressBarInsetBounds( myBounds );
+		Rect bounds = ProgressBarInsetBounds( itsBounds );
+		
 		double boundsWidth = NX::RectWidth( bounds );
-		double progressWidth = myProgress * boundsWidth;
+		double progressWidth = itsProgress * boundsWidth;
+		
 		bounds.right = bounds.left + short( progressWidth );
 		
 		PaintProgress( bounds );
@@ -88,9 +97,9 @@ namespace Pedestal
 	
 	void ProgressBar::Update()
 	{
-		N::FrameRect( myBounds );
+		N::FrameRect( itsBounds );
 		
-		EraseProgress( ProgressBarInsetBounds( myBounds ) );
+		EraseProgress( ProgressBarInsetBounds( itsBounds ) );
 		
 		DrawProgress();
 	}
