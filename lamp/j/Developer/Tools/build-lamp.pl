@@ -50,7 +50,7 @@ my $root_name = "lamp-${config_short_name}_";
 
 my @programs = qw
 (
-	aevt tlsrvr A-line cpres
+	aevt tlsrvr A-line cpres keymods
 	cat cp echo false kill login mkdir mv pwd sh sleep true
 	argv0 beep err2text gzip htget macbin md5sum open osascript perl tty
 	superd inetd httpd
@@ -61,7 +61,7 @@ my %fsmap =
 (
 	Developer =>
 	{
-		Tools => [qw( aevt activate quit system File Line tlsrvr A-line cpres filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl )],
+		Tools => [qw( keymods aevt activate quit system File Line tlsrvr A-line cpres filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl )],
 	},
 	bin => [qw( cat cp echo false kill login mkdir mv pwd sh sleep true ), qw( chmod date ls test )],
 	etc =>
