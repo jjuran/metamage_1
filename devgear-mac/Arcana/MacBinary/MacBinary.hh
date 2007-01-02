@@ -61,20 +61,20 @@ namespace MacBinary
 				}
 			};
 			
-			Frame frame;
-			std::vector< Frame > frameStack;
+			Frame itsFrame;
+			std::vector< Frame > itsFrameStack;
 			
-			bool isFolder;
-			bool fHeaderReceived;
-			bool trailerReceived;
+			bool itIsFolder;
+			bool itsHeaderWasReceived;
+			bool itsTrailerWasReceived;
 			
-			ByteCount fDataForkLength;
-			ByteCount fResourceForkLength;
-			UInt16    fSecondaryHeaderLength;
-			UInt16    fCommentLength;
+			ByteCount itsDataForkLength;
+			ByteCount itsResourceForkLength;
+			UInt16    itsSecondaryHeaderLength;
+			UInt16    itsCommentLength;
 			
-			NN::Owned< N::FSFileRefNum > fDataFork;
-			NN::Owned< N::FSFileRefNum > fResourceFork;
+			NN::Owned< N::FSFileRefNum > itsDataFork;
+			NN::Owned< N::FSFileRefNum > itsResourceFork;
 			
 			void DecodeHeader( const char* header );
 			

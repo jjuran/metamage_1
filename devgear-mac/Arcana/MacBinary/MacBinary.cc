@@ -725,14 +725,14 @@ namespace MacBinary
 	Decoder::Decoder( const N::FSDirSpec& destination )
 	:
 		//fDestDir( destination ),
-		isFolder( false ),
-		fHeaderReceived( false ),
-		fDataForkLength       ( 0 ),
-		fResourceForkLength   ( 0 ),
-		fSecondaryHeaderLength( 0 ),
-		fCommentLength        ( 0 )
+		itIsFolder( false ),
+		itsHeaderWasReceived( false ),
+		itsDataForkLength       ( 0 ),
+		itsResourceForkLength   ( 0 ),
+		itsSecondaryHeaderLength( 0 ),
+		itsCommentLength        ( 0 )
 	{
-		frame.destDir = destination;
+		itsFrame.destDir = destination;
 	}
 	
 	void Decoder::DecodeHeader( const char* header )
@@ -746,11 +746,11 @@ namespace MacBinary
 			throw InvalidMacBinaryHeader();
 		}
 		
-		isFolder = check >= 0xFE;
+		itIsFolder = check >= 0xFE;
 		
-		trailerReceived = check == 0xFE;
+		itsTrailerWasReceived = check == 0xFE;
 		
-		if ( trailerReceived )
+		if ( itsTrailerWasReceived )
 		{
 			return;
 		}
@@ -765,52 +765,52 @@ namespace MacBinary
 		ConstStr63Param name = h.Get< kFileName >();
 		
 		//fFile = N::FSMakeFSSpec( fDestDir, name );
-		frame.file = frame.destDir & name;
+		itsFrame.file = itsFrame.destDir & name;
 		
-		if ( isFolder )
+		if ( itIsFolder )
 		{
-			N::FSpDirCreate( frame.file );
+			N::FSpDirCreate( itsFrame.file );
 		}
 		else
 		{
-			N::FSpCreate( frame.file, h.Get< kFileCreator >(),
-								      h.Get< kFileType    >() );
+			N::FSpCreate( itsFrame.file, h.Get< kFileCreator >(),
+								         h.Get< kFileType    >() );
 		}
 		
 		CInfoPBRec pb;
 		
-		N::FSpGetCatInfo( frame.file, pb );
+		N::FSpGetCatInfo( itsFrame.file, pb );
 		
-		pb.hFileInfo.ioNamePtr = frame.file.name;
-		pb.hFileInfo.ioDirID = frame.file.parID;
+		pb.hFileInfo.ioNamePtr = itsFrame.file.name;
+		pb.hFileInfo.ioDirID   = itsFrame.file.parID;
 		
 		pb.hFileInfo.ioFlFndrInfo = h.Get< kFInfo >();
 		
 		pb.hFileInfo.ioFlCrDat = h.Get< kFileCreationDate     >();
 		pb.hFileInfo.ioFlMdDat = h.Get< kFileModificationDate >();
 		
-		if ( !isFolder )
+		if ( !itIsFolder )
 		{
-			pb.hFileInfo.ioFlLgLen  = fDataForkLength     = h.Get< kDataForkLength     >();
-			pb.hFileInfo.ioFlRLgLen = fResourceForkLength = h.Get< kResourceForkLength >();
+			pb.hFileInfo.ioFlLgLen  = itsDataForkLength     = h.Get< kDataForkLength     >();
+			pb.hFileInfo.ioFlRLgLen = itsResourceForkLength = h.Get< kResourceForkLength >();
 		}
 		
 		reinterpret_cast< ExtendedFileInfo& >( pb.hFileInfo.ioFlXFndrInfo ).extendedFinderFlags = h.Get< kExtendedFinderFlags >();
 		
 		N::PBSetCatInfoSync( pb );
 		
-		frame.modificationDate = h.Get< kFileModificationDate >();
+		itsFrame.modificationDate = h.Get< kFileModificationDate >();
 		
-		fSecondaryHeaderLength = h.Get< kSecondaryHeaderLength >();
-		fCommentLength         = h.Get< kGetInfoCommentLength  >();
+		itsSecondaryHeaderLength = h.Get< kSecondaryHeaderLength >();
+		itsCommentLength         = h.Get< kGetInfoCommentLength  >();
 		
-		if ( !isFolder )
+		if ( !itIsFolder )
 		{
-			fDataFork     = N::FSpOpenDF( frame.file, fsWrPerm );
-			fResourceFork = N::FSpOpenRF( frame.file, fsWrPerm );
+			itsDataFork     = N::FSpOpenDF( itsFrame.file, fsWrPerm );
+			itsResourceFork = N::FSpOpenRF( itsFrame.file, fsWrPerm );
 		}
 		
-		fHeaderReceived = true;
+		itsHeaderWasReceived = true;
 	}
 	
 	int Decoder::Write( const char* data, ByteCount byteCount )
@@ -829,115 +829,115 @@ namespace MacBinary
 		
 	Loop:
 		
-		if ( !fHeaderReceived )
+		if ( !itsHeaderWasReceived )
 		{
 			DecodeHeader( data );
 			
 			data += kMacBinaryHeaderLength;
 		}
 		
-		if ( fSecondaryHeaderLength  &&  data < end )
+		if ( itsSecondaryHeaderLength  &&  data < end )
 		{
-			ByteCount headerBytes = std::min< ByteCount >( fSecondaryHeaderLength, end - data );
+			ByteCount headerBytes = std::min< ByteCount >( itsSecondaryHeaderLength, end - data );
 			
-			fSecondaryHeaderLength -= headerBytes;
+			itsSecondaryHeaderLength -= headerBytes;
 			
 			data += PaddedLength( headerBytes, kMacBinaryBlockSize );
 		}
 		
-		if ( fDataForkLength  &&  data < end )
+		if ( itsDataForkLength  &&  data < end )
 		{
-			ByteCount dataBytes = std::min< ByteCount >( fDataForkLength, end - data );
+			ByteCount dataBytes = std::min< ByteCount >( itsDataForkLength, end - data );
 			
-			fDataForkLength -= dataBytes;
+			itsDataForkLength -= dataBytes;
 			
-			FS::Write( fDataFork, data, dataBytes );
+			FS::Write( itsDataFork, data, dataBytes );
 			
 			data += PaddedLength( dataBytes, kMacBinaryBlockSize );
 		}
 		
-		if ( fResourceForkLength  &&  data < end )
+		if ( itsResourceForkLength  &&  data < end )
 		{
-			ByteCount resourceBytes = std::min< ByteCount >( fResourceForkLength, end - data );
+			ByteCount resourceBytes = std::min< ByteCount >( itsResourceForkLength, end - data );
 			
-			fResourceForkLength -= resourceBytes;
+			itsResourceForkLength -= resourceBytes;
 			
-			FS::Write( fResourceFork, data, resourceBytes );
+			FS::Write( itsResourceFork, data, resourceBytes );
 			
 			data += PaddedLength( resourceBytes, kMacBinaryBlockSize );
 		}
 		
-		if ( fCommentLength  &&  data < end )
+		if ( itsCommentLength  &&  data < end )
 		{
-			ByteCount commentBytes = std::min< ByteCount >( fCommentLength, end - data );
+			ByteCount commentBytes = std::min< ByteCount >( itsCommentLength, end - data );
 			
-			fCommentLength -= commentBytes;
+			itsCommentLength -= commentBytes;
 			
-			frame.comment.append( data, commentBytes );
+			itsFrame.comment.append( data, commentBytes );
 			
 			data += PaddedLength( commentBytes, kMacBinaryBlockSize );
 		}
 		
-		if (    !fSecondaryHeaderLength
-		     && !fDataForkLength
-		     && !fResourceForkLength
-		     && !fCommentLength )
+		if (    !itsSecondaryHeaderLength
+		     && !itsDataForkLength
+		     && !itsResourceForkLength
+		     && !itsCommentLength )
 		{
 			// We're done
 			
-			fHeaderReceived = false;
+			itsHeaderWasReceived = false;
 			
-			if ( isFolder && !trailerReceived )
+			if ( itIsFolder && !itsTrailerWasReceived )
 			{
-				frameStack.push_back( frame );
+				itsFrameStack.push_back( itsFrame );
 				
-				frame.destDir = NN::Convert< N::FSDirSpec >( frame.file );
-				frame.comment.clear();
+				itsFrame.destDir = NN::Convert< N::FSDirSpec >( itsFrame.file );
+				itsFrame.comment.clear();
 			}
 			else
 			{
-				if ( isFolder )
+				if ( itIsFolder )
 				{
-					if ( frameStack.empty() )
+					if ( itsFrameStack.empty() )
 					{
 						throw TooManyEndBlocks();
 					}
 					
-					frame = frameStack.back();
-					frameStack.pop_back();
+					itsFrame = itsFrameStack.back();
+					itsFrameStack.pop_back();
 				}
 				else
 				{
-					FS::Close( fDataFork     );
-					FS::Close( fResourceFork );
+					FS::Close( itsDataFork     );
+					FS::Close( itsResourceFork );
 				}
 				
-				if ( !frame.comment.empty() )
+				if ( !itsFrame.comment.empty() )
 				{
-					N::FSpDTSetComment( frame.file, frame.comment );
+					N::FSpDTSetComment( itsFrame.file, itsFrame.comment );
 				}
 				
 				CInfoPBRec pb;
 				
-				N::FSpGetCatInfo( frame.file, pb );
+				N::FSpGetCatInfo( itsFrame.file, pb );
 				
-				pb.hFileInfo.ioNamePtr = frame.file.name;
-				pb.hFileInfo.ioDirID = frame.file.parID;
+				pb.hFileInfo.ioNamePtr = itsFrame.file.name;
+				pb.hFileInfo.ioDirID   = itsFrame.file.parID;
 				
 				// Writing to the file bumps the mod date, so set it back
-				pb.hFileInfo.ioFlMdDat = frame.modificationDate;
+				pb.hFileInfo.ioFlMdDat = itsFrame.modificationDate;
 				
 				// Clear flags
 				UInt16 flagsToClear = kIsOnDesk;
 				
-				if ( !isFolder )
+				if ( !itIsFolder )
 				{
 					flagsToClear |= kHasBeenInited;
 				}
 				
 				pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~flagsToClear;
 				
-				if ( frameStack.empty() )
+				if ( itsFrameStack.empty() )
 				{
 					// Root folder / file
 					static const Point emptyPoint = { 0, 0 };
