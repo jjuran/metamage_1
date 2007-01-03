@@ -39,18 +39,18 @@ namespace Pedestal
 	class TEView : public View
 	{
 		private:
-			NN::Owned< TEHandle > myTE;
+			NN::Owned< TEHandle > itsTE;
 		
 		public:
 			TEView( const Rect& bounds, Initializer );
 			
-			TEHandle Get() const  { return myTE; }
+			TEHandle Get() const  { return itsTE; }
 			
 			Rect Bounds() const  { return Pedestal::Bounds( Get() ); }
 			
 			// Text manipulation
-			SInt16 TextLength() const  { return N::GetTELength( myTE ); }
-			Handle TextHandle()  { return N::GetTETextHandle( myTE ); }
+			SInt16 TextLength() const  { return N::GetTELength( itsTE ); }
+			Handle TextHandle()  { return N::GetTETextHandle( itsTE ); }
 			
 			void SetSelection( short start, short end );
 			

@@ -159,14 +159,14 @@ namespace Pedestal
 	
 	TEView::TEView( const Rect& bounds, Initializer )
 	:
-		myTE( ( SetTextAttributes(), N::TENew( ViewRectFromBounds( bounds ) ) ) )
+		itsTE( ( SetTextAttributes(), N::TENew( ViewRectFromBounds( bounds ) ) ) )
 	{
-		N::TEAutoView( true, myTE );  // enable auto-scrolling
+		N::TEAutoView( true, itsTE );  // enable auto-scrolling
 	}
 	
 	void TEView::Idle( const EventRecord& )
 	{
-		N::TEIdle( myTE );
+		N::TEIdle( itsTE );
 		
 		AdjustSleepForTimer( ::GetCaretTime() );
 	}
@@ -175,12 +175,12 @@ namespace Pedestal
 	{
 		N::TEClick( N::GlobalToLocal( event.where ),
 		            event.modifiers & shiftKey,
-		            myTE );
+		            itsTE );
 	}
 	
 	bool TEView::KeyDown( const EventRecord& event )
 	{
-		N::TEKey( event.message & charCodeMask, myTE );
+		N::TEKey( event.message & charCodeMask, itsTE );
 		return true;
 	}
 	
@@ -188,17 +188,17 @@ namespace Pedestal
 	{
 		if ( activating )
 		{
-			N::TEActivate( myTE );
+			N::TEActivate( itsTE );
 		}
 		else
 		{
-			N::TEDeactivate( myTE );
+			N::TEDeactivate( itsTE );
 		}
 	}
 	
 	void TEView::Update()
 	{
-		Rect bounds = Pedestal::Bounds( myTE.Get() );
+		Rect bounds = Pedestal::Bounds( itsTE.Get() );
 		
 		Rect top = bounds;
 		top.bottom = top.top + 4;
@@ -217,14 +217,14 @@ namespace Pedestal
 		N::EraseRect( bottom );
 		N::EraseRect( right  );
 		
-		N::TEUpdate( bounds, myTE );
+		N::TEUpdate( bounds, itsTE );
 		
-		int textHeight = CountLinesForDisplay( myTE ) * N::GetTELineHeight( myTE );
+		int textHeight = CountLinesForDisplay( itsTE ) * N::GetTELineHeight( itsTE );
 		
-		Rect viewRect = N::GetTEViewRect( myTE );
+		Rect viewRect = N::GetTEViewRect( itsTE );
 		short viewHeight = viewRect.bottom - viewRect.top;
 		
-		Rect destRect = N::GetTEDestRect( myTE );
+		Rect destRect = N::GetTEDestRect( itsTE );
 		destRect.bottom = destRect.top + textHeight;
 		
 		// If the bottom of the text doesn't reach the bottom of the viewing area,
@@ -285,7 +285,7 @@ namespace Pedestal
 	
 	void TEView::SetSelection( short start, short end )
 	{
-		N::TESetSelect( start, end, myTE );
+		N::TESetSelect( start, end, itsTE );
 	}
 	
 	int TEView::AppendChars( const char* data, unsigned int byteCount, bool updateNow )
@@ -294,20 +294,20 @@ namespace Pedestal
 		
 		ASSERT( data != NULL );
 		
-		Handle hText = N::GetTETextHandle( myTE );
-		short len = N::GetTELength( myTE );
+		Handle hText = N::GetTETextHandle( itsTE );
+		short len = N::GetTELength( itsTE );
 		
 		byteCount = std::min< unsigned int >( byteCount, 32000 - len );
 		
 		N::SetHandleSize( hText, len + byteCount );
 		std::copy( data, data + byteCount, *hText + len );
-		N::SetTELength( myTE, len + byteCount );
-		N::TECalText( myTE );
-		N::TESetSelect( 32767, 32767, myTE );
+		N::SetTELength( itsTE, len + byteCount );
+		N::TECalText( itsTE );
+		N::TESetSelect( 32767, 32767, itsTE );
 		
 		if ( updateNow )
 		{
-			N::GrafPtr port = N::GetTEPort( myTE );
+			N::GrafPtr port = N::GetTEPort( itsTE );
 			
 			// This is correct but MWPro6 breaks on it
 			//NN::Saved< N::Port_Value > savedPort( port );
@@ -324,27 +324,27 @@ namespace Pedestal
 	
 	void TEView::Cut()
 	{
-		NX::Clipboard::TECut( myTE );
+		NX::Clipboard::TECut( itsTE );
 	}
 	
 	void TEView::Copy()
 	{
-		NX::Clipboard::TECopy( myTE );
+		NX::Clipboard::TECopy( itsTE );
 	}
 	
 	void TEView::Paste()
 	{
-		NX::Clipboard::TEPaste( myTE );
+		NX::Clipboard::TEPaste( itsTE );
 	}
 	
 	void TEView::Clear()
 	{
-		N::TEDelete( myTE );
+		N::TEDelete( itsTE );
 	}
 	
 	void TEView::SelectAll()
 	{
-		N::TESetSelect( 0, 32767, myTE );
+		N::TESetSelect( 0, 32767, itsTE );
 	}
 	
 }
