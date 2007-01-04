@@ -18,6 +18,14 @@
 
 namespace Nitrogen
   {
+	
+	static const ControlProcID pushButProc   = ControlProcID( ::pushButProc   );
+	static const ControlProcID checkBoxProc  = ControlProcID( ::checkBoxProc  );
+	static const ControlProcID radioButProc  = ControlProcID( ::radioButProc  );
+	static const ControlProcID scrollBarProc = ControlProcID( ::scrollBarProc );
+	static const ControlProcID popupMenuProc = ControlProcID( ::popupMenuProc );
+	
+	
    template<> struct ControlData_Traits< kControlBevelButtonContentTag                  >: Nucleus::PodFlattener    < ControlButtonContentInfo      > {};
    template<> struct ControlData_Traits< kControlBevelButtonTransformTag                >: Nucleus::PodFlattener    < IconTransformType             > {};
    template<> struct ControlData_Traits< kControlBevelButtonTextAlignTag                >: Nucleus::PodFlattener    < ControlButtonTextAlignment    > {};

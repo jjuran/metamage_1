@@ -18,6 +18,9 @@
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
 #endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
+#endif
 
 #ifdef DrawOneControl
    #undef DrawOneControl
@@ -99,8 +102,7 @@ namespace Nitrogen
 		userUPP( theControl, partCode );
 	}
 	
-	class ControlProcID_Tag {};
-	typedef Nucleus::SelectorType< ControlProcID_Tag, ::SInt16, 0 > ControlProcID;
+	typedef Nucleus::Selector< class ControlProcID_Tag, ::SInt16 >::Type ControlProcID;
 	
 	// 972
 	ControlRef NewControl( WindowRef         owningWindow,
