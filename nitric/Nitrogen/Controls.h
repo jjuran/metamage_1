@@ -77,7 +77,7 @@ namespace Nitrogen
 			{
 				actionProc( control, ControlPartCode( partCode ) );
 			}
-			catch ( OSStatus err )
+			catch ( ... )
 			{
 			}
 		}
@@ -92,9 +92,9 @@ namespace Nitrogen
 	{
 	}
 	
-	inline void InvokeControlActionUPP( ControlRef theControl, 
-	                                    ControlPartCode partCode,
-	                                    ControlActionUPP userUPP )
+	inline void InvokeControlActionUPP( ControlRef        theControl, 
+	                                    ControlPartCode   partCode,
+	                                    ControlActionUPP  userUPP )
 	{
 		userUPP( theControl, partCode );
 	}
@@ -103,17 +103,15 @@ namespace Nitrogen
 	typedef Nucleus::SelectorType< ControlProcID_Tag, ::SInt16, 0 > ControlProcID;
 	
 	// 972
-	ControlRef NewControl(
-		WindowRef owningWindow, 
-		const Rect& boundsRect, 
-		ConstStr255Param controlTitle, 
-		bool initiallyVisible, 
-		short initialValue, 
-		short minimumValue, 
-		short maximumValue, 
-		ControlProcID procID, 
-		RefCon refCon
-	);
+	ControlRef NewControl( WindowRef         owningWindow,
+	                       const Rect&       boundsRect,
+	                       ConstStr255Param  controlTitle,
+	                       bool              initiallyVisible,
+	                       short             initialValue,
+	                       short             minimumValue,
+	                       short             maximumValue,
+	                       ControlProcID     procID,
+	                       RefCon            refCon );
 	
 	// 1007
 	using ::DisposeControl;
@@ -137,28 +135,34 @@ namespace Nitrogen
 	
 	inline void UpdateControls( WindowRef window )
 	{
-		::UpdateControls( window, GetPortVisibleRegion( GetWindowPort( window ) ) );
+		::UpdateControls( window,
+		                  GetPortVisibleRegion( GetWindowPort( window ) ) );
 	}
 	
 	// 1711
-	ControlPartCode TrackControl( ControlRef theControl, Point startPoint, ControlActionUPP actionProc = NULL );
+	ControlPartCode TrackControl( ControlRef        theControl,
+	                              Point             startPoint,
+	                              ControlActionUPP  actionProc = NULL );
 	
 	template < typename ControlActionUPP::ProcPtr actionProc >
 	ControlPartCode TrackControl( ControlRef theControl, Point startPoint )
 	{
-		return TrackControl( theControl, startPoint, StaticUPP< ControlActionUPP, actionProc >() );
+		return TrackControl( theControl,
+		                     startPoint,
+		                     StaticUPP< ControlActionUPP, actionProc >() );
 	}
 	
 	template < ControlActionProcPtr actionProc >
 	ControlPartCode TrackControl( ControlRef theControl, Point startPoint )
 	{
-		return TrackControl< Adapt_ControlAction< actionProc >::ToCallback >( theControl, startPoint );
+		return TrackControl< Adapt_ControlAction< actionProc >::ToCallback >( theControl,
+		                                                                      startPoint );
 	}
 	
 	struct FindControl_Result
 	{
-		ControlRef control;
-		ControlPartCode part;
+		ControlRef       control;
+		ControlPartCode  part;
 	};
 	
 	// 1757
@@ -269,22 +273,22 @@ namespace Nitrogen
 	class SetControlData_Putter
 	{
 		private:
-			ControlRef       myControl;
-			ControlPartCode  myPart;
-			ResType          myTagName;
+			ControlRef       itsControl;
+			ControlPartCode  itsPart;
+			ResType          itsTagName;
 		
 		public:
 			SetControlData_Putter( ControlRef       control,
 			                       ControlPartCode  part,
-			                       ResType          tagName ) : myControl( control ),
-			                                                    myPart   ( part    ),
-			                                                    myTagName( tagName )  {}
+			                       ResType          tagName ) : itsControl( control ),
+			                                                    itsPart   ( part    ),
+			                                                    itsTagName( tagName )  {}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				Nitrogen::SetControlData( myControl,
-				                          myPart,
-				                          myTagName,
+				Nitrogen::SetControlData( itsControl,
+				                          itsPart,
+				                          itsTagName,
 				                          Detail::Distance( begin, end ),
 				                          begin );
 			}
@@ -325,13 +329,13 @@ namespace Nitrogen
 	class GetControlData_Getter
 	{
 		private:
-			ControlRef myControl;
-			ControlPartCode myPart;
+			ControlRef       itsControl;
+			ControlPartCode  itsPart;
 		
 		public:
 			GetControlData_Getter( ControlRef       control,
-			                       ControlPartCode  part ) : myControl( control ),
-			                                                 myPart   ( part    )  {}
+			                       ControlPartCode  part ) : itsControl( control ),
+			                                                 itsPart   ( part    )  {}
 			
 			std::size_t size() const
 			{
@@ -340,13 +344,13 @@ namespace Nitrogen
 					return sizeof (typename GetControlData_Traits< tagName >::Buffer);
 				}
 				
-				return GetControlData( myControl, myPart, tagName );
+				return GetControlData( itsControl, itsPart, tagName );
 			}
 			
 			void operator()( void *begin, void *end ) const
 			{
-				GetControlData( myControl,
-				                myPart,
+				GetControlData( itsControl,
+				                itsPart,
 				                tagName,
 				                Detail::Distance( begin, end ),
 				                begin );
