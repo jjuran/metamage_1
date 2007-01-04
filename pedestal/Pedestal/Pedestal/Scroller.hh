@@ -126,6 +126,11 @@ namespace Pedestal
 		kHorizontal
 	};
 	
+	template < ScrollbarConfig config > struct ScrollbarLiveScrolling_Traits
+	{
+		static const bool scrollingIsLive = false;
+	};
+	
 	template < ScrollbarConfig config > struct ScrollbarVariant_Traits {};
 	
 	template <> struct ScrollbarVariant_Traits< kOldSchoolVariant >
@@ -145,11 +150,17 @@ namespace Pedestal
 		static N::ControlProcID ProcID()  { return N::ControlProcID( kControlScrollBarLiveProc ); }
 	};
 	
+	template <> struct ScrollbarLiveScrolling_Traits< kLiveFeedbackVariant >
+	{
+		static const bool scrollingIsLive = true;
+	};
+	
 #endif
 	
 	template < ScrollbarConfig config >
 	struct Scrollbar_Traits : public ScrollbarPresence_Traits< config != kNoScrollbar >,
-	                          public ScrollbarVariant_Traits< config >
+	                          public ScrollbarVariant_Traits< config >,
+	                          public ScrollbarLiveScrolling_Traits< config >
 	{
 		
 	};
@@ -176,33 +187,200 @@ namespace Pedestal
 	static void SetControlViewSize( ScrollbarPresence_Traits< false >::Type, long  )  {}
 	static void InvalidateControl ( ScrollbarPresence_Traits< false >::Type        )  {}
 	
-	template < ScrollbarConfig vertical, ScrollbarConfig horizontal >  struct Scroller_Traits
+	
+	template < class ScrollViewType >
+	Point ComputeScrollbarMaxima( const ScrollViewType&  scrolledView )
 	{
-		typedef Scrollbar_Traits< vertical   > VerticalTraits;
-		typedef Scrollbar_Traits< horizontal > HorizontalTraits;
+		Point scrollRange = ScrollableRange( scrolledView );
+		Point viewRange   = ViewableRange  ( scrolledView );
 		
-		typedef typename VerticalTraits  ::Type VerticalScrollbarType;
-		typedef typename HorizontalTraits::Type HorizontalScrollbarType;
-	};
+		Point scrollPos   = ScrollPosition ( scrolledView );
+		
+		Point maxima = ScrollbarMaxima( scrollRange, viewRange, scrollPos );
+		
+		return maxima;
+	}
+	
+	template < class Vertical, class Horizontal >
+	void SetScrollbarMaxima( const Vertical&    verticalScrollbar,
+	                         const Horizontal&  horizontalScrollbar,
+	                         Point              maxima )
+	{
+		SetControlMaximum( verticalScrollbar,   maxima.v );
+		SetControlMaximum( horizontalScrollbar, maxima.h );
+	}
+	
+	template < ScrollbarAxis axis >
+	void SetScrollbarMaximum( ControlRef control, Point maxima )
+	{
+		SetControlMaximum( control, ( axis == kVertical ) ? maxima.v : maxima.h );
+	}
+	
+	
+	template < class ScrollViewType >
+	const ScrollViewType& RecoverScrolledViewFromScrollbar( ControlRef control )
+	{
+		Control_Hooks* controlHooks = N::GetControlReference( control );
+		
+		ASSERT( controlHooks       != NULL );
+		ASSERT( controlHooks->data != NULL );
+		
+		const ScrollViewType& scrolledView = *static_cast< const ScrollViewType* >( controlHooks->data );
+		
+		return scrolledView;
+	}
+	
+	
+	template < ScrollbarAxis axis, class ScrollViewType >
+	void ScrollByDelta( const ScrollViewType& scrolledView, ControlRef control, short delta, bool updateNow )
+	{
+		if ( delta != 0 )
+		{
+			ScrollView( scrolledView,
+			            ( axis != kVertical ) ? delta : 0,
+			            ( axis == kVertical ) ? delta : 0,
+			            updateNow );
+			
+			SetScrollbarMaximum< axis >( control, ComputeScrollbarMaxima( scrolledView ) );
+		}
+	}
+	
+	template < ScrollbarAxis axis, class ScrollViewType >
+	void ScrollByDelta( ControlRef control, short delta, bool updateNow )
+	{
+		const ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
+		
+		ScrollByDelta< axis >( scrolledView, control, delta, updateNow );
+	}
+	
+	template < ScrollbarAxis axis, class ScrollViewType >
+	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
+	{
+		const ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
+		
+		Point viewRange = ViewableRange( scrolledView );
+		short jump = ( ( axis == kVertical ) ? viewRange.v : viewRange.h ) - 1;
+		short scrollDistance = FigureScrollDistance( part, jump );
+		
+		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
+		
+		if ( part == kControlIndicatorPart )
+		{
+			Point pos = ScrollPosition( scrolledView );
+			
+			short oldValue = ( axis == kVertical ) ? pos.v : pos.h;
+			
+			delta = N::GetControlValue( control ) - oldValue;
+		}
+		
+		ScrollByDelta< axis >( scrolledView, control, delta, true );
+	}
+	
+	template < ScrollbarAxis axis, bool scrollingIsLive, class ScrollViewType >
+	void Track( ControlRef control, N::ControlPartCode part, Point point )
+	{
+		NN::Saved< N::Clip_Value > savedClip;
+		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		
+		switch ( ::ControlPartCode( part ) )
+		{
+			case kControlIndicatorPart:
+				// The user clicked on the indicator
+				
+				if ( !scrollingIsLive )
+				{
+					// Classic scrolling, handled specially.
+					
+					// Get the current scrollbar value.
+					short oldValue = N::GetControlValue( control );
+					
+					// Let the system track the drag...
+					part = N::TrackControl( control, point );
+					
+					if ( part == kControlIndicatorPart )
+					{
+						// Drag was successful (i.e. within bounds).  Subtract to get distance.
+						short scrollDistance = N::GetControlValue( control ) - oldValue;
+						
+						// Scroll by that amount, but don't update just yet.
+						ScrollByDelta< axis, ScrollViewType >( control, scrollDistance, false );
+					}
+					
+					// Break here for classic thumb-scrolling (whether sucessful or not).
+					break;
+				}
+				// else fall through for live feedback scrolling
+			case kControlUpButtonPart:
+			case kControlDownButtonPart:
+			case kControlPageUpPart:
+			case kControlPageDownPart:
+				part = N::TrackControl<
+				                        #ifdef __MWERKS__
+				                        (N::ControlActionProcPtr)
+				                        #endif
+				                        ScrollbarAction< axis, ScrollViewType >  >( control, point );
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	
+	inline bool operator==( Point a, Point b )
+	{
+		return a.h == b.h  &&  a.v == b.v;
+	}
+	
+	inline bool operator!=( Point a, Point b )
+	{
+		return !( a == b );
+	}
+	
+	template < class ScrollViewType, class Vertical, class Horizontal >
+	void UpdateScrollbars( const ScrollViewType&  scrolledView,
+	                       const Vertical&        verticalScrollbar,
+	                       const Horizontal&      horizontalScrollbar,
+	                       Point                  oldRange,
+	                       Point                  oldPosition )
+	{
+		using namespace Nucleus::Operators;
+		
+		Point range = ScrollableRange( scrolledView );
+		Point pos   = ScrollPosition ( scrolledView );
+		
+		if ( oldPosition != pos  ||  oldRange != range )
+		{
+			NN::Saved< N::Clip_Value > savedClip;
+			
+			N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+			
+			SetValueStretch( horizontalScrollbar, pos.h );
+			SetValueStretch( verticalScrollbar,   pos.v );
+			
+			// need to update scrollbar maxima
+			SetScrollbarMaxima( verticalScrollbar,
+			                    horizontalScrollbar,
+			                    ComputeScrollbarMaxima( scrolledView ) );
+		}
+	}
 	
 	
 	template < class            ScrollViewType,
 	           ScrollbarConfig  vertical,
 	           ScrollbarConfig  horizontal = kNoScrollbar >
-	class Scroller : public BoundedView,
-	                 public Scroller_Traits< vertical, horizontal >
+	class Scroller : public BoundedView
 	{
 		private:
-			typedef Scroller_Traits< vertical, horizontal > Traits;
+			typedef Scrollbar_Traits< vertical   > VerticalTraits;
+			typedef Scrollbar_Traits< horizontal > HorizontalTraits;
 			
-			typedef typename Traits::VerticalTraits   VerticalTraits;
-			typedef typename Traits::HorizontalTraits HorizontalTraits;
+			typedef typename VerticalTraits  ::Type VerticalScrollbarType;
+			typedef typename HorizontalTraits::Type HorizontalScrollbarType;
 			
-			typedef typename Traits::VerticalScrollbarType   VerticalScrollbarType;
-			typedef typename Traits::HorizontalScrollbarType HorizontalScrollbarType;
+			VerticalScrollbarType    myScrollV;
+			HorizontalScrollbarType  myScrollH;
 			
-			VerticalScrollbarType myScrollV;
-			HorizontalScrollbarType myScrollH;
 			ScrollViewType myScrollView;
 		
 		public:
@@ -210,7 +388,7 @@ namespace Pedestal
 			
 			Scroller( const Rect& bounds, Initializer init = Initializer() );
 			
-			static bool ScrollsVertically()    { return VerticalTraits::present; }
+			static bool ScrollsVertically()    { return VerticalTraits  ::present; }
 			static bool ScrollsHorizontally()  { return HorizontalTraits::present; }
 			
 			ScrollViewType&          ScrolledView()         { return myScrollView; }
@@ -219,7 +397,12 @@ namespace Pedestal
 			
 			void SetControlViewSizes();
 			
-			void Calibrate();
+			void Calibrate()
+			{
+				SetScrollbarMaxima( myScrollV.Get(),
+				                    myScrollH.Get(),
+				                    ComputeScrollbarMaxima( myScrollView ) );
+			}
 			
 			void Scroll(short dh, short dv, bool updateNow = 0)
 			{
@@ -227,10 +410,10 @@ namespace Pedestal
 				Calibrate();
 			}
 			
-			template < ScrollbarAxis axis >
-			void ScrollAction( ControlRef control, N::ControlPartCode part );
-			
-			void UpdateScrollbars( Point oldRange, Point oldPosition );
+			void UpdateScrollbars( Point oldRange, Point oldPosition )
+			{
+				Pedestal::UpdateScrollbars( myScrollView, myScrollV.Get(), myScrollH.Get(), oldRange, oldPosition );
+			}
 			
 			void Idle( const EventRecord& event )
 			{
@@ -344,77 +527,6 @@ namespace Pedestal
 	};
 	
 	
-	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal, ScrollbarAxis axis >
-	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
-	{
-		typedef Scroller< ScrollViewType, vertical, horizontal > Scroller;
-		
-		Control_Hooks* controlHooks = N::GetControlReference( control );
-		Scroller* scroller = controlHooks ? static_cast< Scroller* >( controlHooks->data ) : NULL;
-		ASSERT( scroller != NULL );
-		
-		scroller->template ScrollAction< axis >( control, part );
-	}
-	
-	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal, ScrollbarAxis axis >
-	void Track( ControlRef control, N::ControlPartCode part, Point point )
-	{
-		NN::Saved< N::Clip_Value > savedClip;
-		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-		
-		switch ( ::ControlPartCode( part ) )
-		{
-			case kControlIndicatorPart:
-				if ( (axis == kVertical ? vertical : horizontal)  !=  kLiveFeedbackVariant )
-				{
-					// Handle indicator tracking specially
-					
-					short oldValue = N::GetControlValue( control );
-					part = N::TrackControl( control, point );
-					
-					if ( part == kControlIndicatorPart )
-					{
-						short scrollDistance = N::GetControlValue( control ) - oldValue;
-						
-						if ( scrollDistance != 0 )
-						{
-							typedef Scroller< ScrollViewType, vertical, horizontal > Scroller;
-							
-							Control_Hooks* controlHooks = N::GetControlReference( control );
-							Scroller* scroller = controlHooks ? reinterpret_cast< Scroller* >( controlHooks->data ) : NULL;
-							ASSERT( scroller != NULL );
-							
-							scroller->Scroll
-							(
-								( axis != kVertical ) ? scrollDistance : 0,
-								( axis == kVertical ) ? scrollDistance : 0,
-								false
-							);
-						}
-					}
-					break;
-				}
-				// else fall through for live feedback scrolling
-			case kControlUpButtonPart:
-			case kControlDownButtonPart:
-			case kControlPageUpPart:
-			case kControlPageDownPart:
-				part = N::TrackControl<
-				                        #ifdef __MWERKS__
-				                        (N::ControlActionProcPtr)
-				                        #endif
-				                        ScrollbarAction< ScrollViewType,
-				                                         vertical,
-				                                         horizontal,
-				                                         axis >  >( control, point );
-				break;
-			
-			default:
-				break;
-		}
-	}
-	
-	
 	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
 	Rect Bounds( const Scroller< ScrollViewType, vertical, horizontal >& scroller )
 	{
@@ -428,19 +540,17 @@ namespace Pedestal
 		myScrollV( VerticalScrollbarBounds  ( bounds,
 		                                      true ),
 		           VerticalTraits::ProcID(),
-		           this,
-		           Track< ScrollViewType,
-		                  vertical,
-		                  horizontal,
-		                  kVertical   > ),
+		           &myScrollView,
+		           Track< kVertical,
+		                  Scrollbar_Traits< vertical >::scrollingIsLive,
+		                  ScrollViewType > ),
 		myScrollH( HorizontalScrollbarBounds( bounds,
 		                                      true ),
 		           HorizontalTraits::ProcID(),
-		           this,
-		           Track< ScrollViewType,
-		                  vertical,
-		                  horizontal,
-		                  kHorizontal > ),
+		           &myScrollView,
+		           Track< kHorizontal,
+		                  Scrollbar_Traits< horizontal >::scrollingIsLive,
+		                  ScrollViewType > ),
 		myScrollView( Aperture( bounds,
 		                        VerticalTraits::profile,
 		                        HorizontalTraits::profile ),
@@ -456,82 +566,6 @@ namespace Pedestal
 		
 		Pedestal::SetControlViewSize( VerticalScrollbar  ().Get(), range.v );
 		Pedestal::SetControlViewSize( HorizontalScrollbar().Get(), range.h );
-	}
-	
-	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
-	void Scroller< ScrollViewType, vertical, horizontal >::Calibrate()
-	{
-		Point scrollRange = ScrollableRange( myScrollView );
-		Point viewRange   = ViewableRange  ( myScrollView );
-		
-		Point scrollPos   = ScrollPosition ( myScrollView );
-		
-		Point max = ScrollbarMaxima( scrollRange, viewRange, scrollPos );
-		
-		SetControlMaximum( myScrollV.Get(), max.v );
-		SetControlMaximum( myScrollH.Get(), max.h );
-	}
-	
-	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
-	template < ScrollbarAxis axis >
-	void Scroller< ScrollViewType, vertical, horizontal >::ScrollAction( ControlRef control, N::ControlPartCode part )
-	{
-		Point viewRange = ViewableRange( myScrollView );
-		short jump = ( ( axis == kVertical ) ? viewRange.v : viewRange.h ) - 1;
-		short scrollDistance = FigureScrollDistance( part, jump );
-		
-		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
-		
-		if ( part == kControlIndicatorPart )
-		{
-			Point pos = ScrollPosition( ScrolledView() );
-			
-			short oldValue = ( axis == kVertical ) ? pos.v : pos.h;
-			
-			delta = N::GetControlValue( control ) - oldValue;
-		}
-		
-		if ( delta != 0 )
-		{
-			Scroll
-			(
-				( axis != kVertical ) ? delta : 0,
-				( axis == kVertical ) ? delta : 0,
-				true
-			);
-		}
-	}
-	
-	inline bool operator==( Point a, Point b )
-	{
-		return a.h == b.h  &&  a.v == b.v;
-	}
-	
-	inline bool operator!=( Point a, Point b )
-	{
-		return !( a == b );
-	}
-	
-	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
-	void Scroller< ScrollViewType, vertical, horizontal >::UpdateScrollbars( Point oldRange, Point oldPosition )
-	{
-		using namespace Nucleus::Operators;
-		
-		Point range = ScrollableRange( ScrolledView() );
-		Point pos   = ScrollPosition ( ScrolledView() );
-		
-		if ( oldPosition != pos  ||  oldRange != range )
-		{
-			NN::Saved< N::Clip_Value > savedClip;
-			
-			N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-			
-			SetValueStretch( myScrollH.Get(), pos.h );
-			SetValueStretch( myScrollV.Get(), pos.v );
-			
-			// need to update scrollbar maxima
-			Calibrate();
-		}
 	}
 	
 }
