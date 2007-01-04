@@ -76,7 +76,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void SetControlTitle( ControlRef control, std::string title )
+	void SetControlTitle( ControlRef control, const std::string& title )
 	{
 		::SetControlTitle( control, Str255( title ) );
 	}

@@ -174,7 +174,7 @@ namespace Nitrogen
 	
 	// 1947
 	using ::SetControlTitle;
-	void SetControlTitle( ControlRef control, std::string title );
+	void SetControlTitle( ControlRef control, const std::string& title );
 	
 	// 2006, 2018, 2032, 2044, 2058, 2070
 	using ::GetControlValue;
