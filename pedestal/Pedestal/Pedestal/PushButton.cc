@@ -61,7 +61,7 @@ namespace Pedestal
 		                      0,
 		                      0,
 		                      1,
-		                      pushButProc,
+		                      N::pushButProc,
 		                      refCon );
 	}
 	
