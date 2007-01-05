@@ -219,21 +219,21 @@ namespace Pedestal
 	
 	
 	template < class ScrollViewType >
-	const ScrollViewType& RecoverScrolledViewFromScrollbar( ControlRef control )
+	ScrollViewType& RecoverScrolledViewFromScrollbar( ControlRef control )
 	{
 		Control_Hooks* controlHooks = N::GetControlReference( control );
 		
 		ASSERT( controlHooks       != NULL );
 		ASSERT( controlHooks->data != NULL );
 		
-		const ScrollViewType& scrolledView = *static_cast< const ScrollViewType* >( controlHooks->data );
+		ScrollViewType& scrolledView = *static_cast< ScrollViewType* >( controlHooks->data );
 		
 		return scrolledView;
 	}
 	
 	
 	template < ScrollbarAxis axis, class ScrollViewType >
-	void ScrollByDelta( const ScrollViewType& scrolledView, ControlRef control, short delta, bool updateNow )
+	void ScrollByDelta( ScrollViewType& scrolledView, ControlRef control, short delta, bool updateNow )
 	{
 		if ( delta != 0 )
 		{
@@ -249,7 +249,7 @@ namespace Pedestal
 	template < ScrollbarAxis axis, class ScrollViewType >
 	void ScrollByDelta( ControlRef control, short delta, bool updateNow )
 	{
-		const ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
+		ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
 		
 		ScrollByDelta< axis >( scrolledView, control, delta, updateNow );
 	}
@@ -257,7 +257,7 @@ namespace Pedestal
 	template < ScrollbarAxis axis, class ScrollViewType >
 	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
 	{
-		const ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
+		ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
 		
 		short jump = VHSelect< axis >( ViewableRange( scrolledView ) ) - 1;
 		short scrollDistance = FigureScrollDistance( part, jump );
