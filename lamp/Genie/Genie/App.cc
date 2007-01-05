@@ -3,19 +3,12 @@
  *	============
  */
 
-// Standard C++
-#include <set>
-
-// Nitrogen Nucleus
-#include "Nucleus/Owned.h"
-
 // Nitrogen
 #include "Nitrogen/AEDataModel.h"
 
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/AboutBox.hh"
-#include "Pedestal/Chore.hh"
 
 // Genie
 #include "Genie/Console.hh"
@@ -30,18 +23,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace Ped = Pedestal;
-	
-	
-	class GenieChoreProcessTable : public Ped::PedChore
-	{
-		public:
-			void Perform();
-	};
-	
-	void GenieChoreProcessTable::Perform()
-	{
-		gProcessTable.Reap();
-	}
 	
 	
 	class TerminalsOwner
@@ -63,7 +44,6 @@ namespace Genie
 			GenieHandlerReply myReplyEventHandler;
 			GenieExecHandler myExecHandler;
 			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
-			GenieChoreProcessTable myChore;
 		
 		public:
 			static void AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, App* app );
@@ -92,7 +72,6 @@ namespace Genie
 		RegisterMenuItemHandler( 'new ', &newHandler   );
 		
 		CreateSystemConsole();
-		myChore.Schedule( Repeaters() );
 	}
 	
 	void App::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, App* app )
