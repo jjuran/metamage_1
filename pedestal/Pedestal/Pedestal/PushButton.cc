@@ -21,6 +21,8 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	namespace NX = NitrogenExtras;
 	
+	using N::kControlNoPart;
+	
 	
 	void PushButton::TrackControl( ControlRef control, ControlPartCode part, Point point )
 	{

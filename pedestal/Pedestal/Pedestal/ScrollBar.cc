@@ -40,12 +40,12 @@ namespace Pedestal
 		if ( activating )
 		{
 			//N::ShowControl( control );
-			N::HiliteControl( control, kControlNoPart );
+			N::HiliteControl( control, N::kControlNoPart );
 		}
 		else
 		{
 			//N::HideControl( control );
-			N::HiliteControl( control, kControlInactivePart );
+			N::HiliteControl( control, N::kControlInactivePart );
 		}
 	}
 	

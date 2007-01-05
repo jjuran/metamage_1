@@ -14,6 +14,9 @@ namespace Pedestal {
 	
 	namespace N = Nitrogen;
 	
+	using N::kControlNoPart;
+	
+	
 	bool TrackControl( const FindControl_Result& param, Point startPoint )
 	{
 		// Did we actually hit a control?

@@ -86,7 +86,8 @@ namespace Pedestal
 		static const bool present = false;
 		
 		struct NoProcID {};
-		static NoProcID ProcID()  { return NoProcID(); }
+		
+		static NoProcID procID;
 		
 		struct Type
 		{
@@ -135,19 +136,19 @@ namespace Pedestal
 	
 	template <> struct ScrollbarVariant_Traits< kOldSchoolVariant >
 	{
-		static N::ControlProcID ProcID()  { return N::ControlProcID( scrollBarProc ); }
+		static const N::ControlProcID procID = N::scrollBarProc;
 	};
 	
 #if !TARGET_CPU_68K
 	
 	template <> struct ScrollbarVariant_Traits< kAppearanceSavvyVariant >
 	{
-		static N::ControlProcID ProcID()  { return N::ControlProcID( kControlScrollBarProc ); }
+		static const N::ControlProcID procID = N::kControlScrollBarProc;
 	};
 	
 	template <> struct ScrollbarVariant_Traits< kLiveFeedbackVariant >
 	{
-		static N::ControlProcID ProcID()  { return N::ControlProcID( kControlScrollBarLiveProc ); }
+		static const N::ControlProcID procID = N::kControlScrollBarLiveProc;
 	};
 	
 	template <> struct ScrollbarLiveScrolling_Traits< kLiveFeedbackVariant >
@@ -264,7 +265,7 @@ namespace Pedestal
 		
 		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
 		
-		if ( part == kControlIndicatorPart )
+		if ( part == N::kControlIndicatorPart )
 		{
 			Point pos = ScrollPosition( scrolledView );
 			
@@ -282,7 +283,7 @@ namespace Pedestal
 		NN::Saved< N::Clip_Value > savedClip;
 		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		
-		switch ( ::ControlPartCode( part ) )
+		switch ( part )
 		{
 			case kControlIndicatorPart:
 				// The user clicked on the indicator
@@ -297,7 +298,7 @@ namespace Pedestal
 					// Let the system track the drag...
 					part = N::TrackControl( control, point );
 					
-					if ( part == kControlIndicatorPart )
+					if ( part == N::kControlIndicatorPart )
 					{
 						// Drag was successful (i.e. within bounds).  Subtract to get distance.
 						short scrollDistance = N::GetControlValue( control ) - oldValue;
@@ -539,14 +540,14 @@ namespace Pedestal
 		BoundedView( bounds ),
 		myScrollV( VerticalScrollbarBounds  ( bounds,
 		                                      true ),
-		           VerticalTraits::ProcID(),
+		           VerticalTraits::procID,
 		           &myScrollView,
 		           Track< kVertical,
 		                  Scrollbar_Traits< vertical >::scrollingIsLive,
 		                  ScrollViewType > ),
 		myScrollH( HorizontalScrollbarBounds( bounds,
 		                                      true ),
-		           HorizontalTraits::ProcID(),
+		           HorizontalTraits::procID,
 		           &myScrollView,
 		           Track< kHorizontal,
 		                  Scrollbar_Traits< horizontal >::scrollingIsLive,
