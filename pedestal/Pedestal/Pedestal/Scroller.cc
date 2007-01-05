@@ -88,7 +88,7 @@ namespace Pedestal {
 	{
 		short scrollDistance = 0;
 		
-		switch ( ::ControlPartCode( part ) )
+		switch ( part )
 		{
 			case kControlUpButtonPart:
 			case kControlDownButtonPart:
@@ -101,7 +101,7 @@ namespace Pedestal {
 				break;
 		}
 		
-		if ( part == kControlUpButtonPart || part == kControlPageUpPart )
+		if ( part == N::kControlUpButtonPart  ||  part == N::kControlPageUpPart )
 		{
 			scrollDistance = -scrollDistance;
 		}
