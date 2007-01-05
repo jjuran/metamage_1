@@ -567,8 +567,6 @@ namespace Pedestal
 				{
 					gRunState.activelyBusy = false;
 					
-					Repeaters().PerformAll();
-					
 					N::YieldToAnyThread();
 					
 					if ( ReadyToWaitForEvents() )

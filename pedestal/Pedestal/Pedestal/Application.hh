@@ -18,7 +18,6 @@
 
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
-#include "Pedestal/Chore.hh"
 #include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/Menubar.hh"
 
@@ -75,8 +74,6 @@ namespace Pedestal
 			
 			bool DoCommand( MenuItemCode code );
 			
-			PedChoreKeeper& Repeaters()  { return myRepeaters; }
-			
 			DescType Class() const  { return cApplication; }
 		
 		protected:
@@ -96,8 +93,6 @@ namespace Pedestal
 			NN::Owned< N::MenuID > myEditMenu;
 			
 			NN::Owned< N::AEEventHandler > myCoreEventsHandler;
-		
-			PedChoreKeeper myRepeaters;
 	};
 	
 	template < class Responder >
