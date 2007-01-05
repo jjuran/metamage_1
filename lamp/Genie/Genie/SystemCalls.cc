@@ -367,20 +367,27 @@ namespace Genie
 	
 	static char* getcwd( char* buf, std::size_t size )
 	{
-		FSTreePtr cwd = CurrentProcess().CurrentWorkingDirectory();
-		
-		std::string result = MakeFSTreePathname( cwd );
-		
-		if ( result.size() + 1 > size )
+		try
+		{
+			FSTreePtr cwd = CurrentProcess().CurrentWorkingDirectory();
+			
+			std::string result = MakeFSTreePathname( cwd );
+			
+			if ( result.size() + 1 > size )
+			{
+				return NULL;
+			}
+			
+			std::copy( result.c_str(),
+			           result.c_str() + result.size() + 1,
+			           buf );
+			
+			return buf;
+		}
+		catch ( ... )
 		{
 			return NULL;
 		}
-		
-		std::copy( result.c_str(),
-		           result.c_str() + result.size() + 1,
-		           buf );
-		
-		return buf;
 	}
 	
 	REGISTER_SYSTEM_CALL( getcwd );
