@@ -380,6 +380,8 @@ namespace Nitrogen
 //	extern void CloseRgn(RgnHandle dstRgn)
 	using ::CloseRgn;
 	
+	Nucleus::Owned< RgnHandle > CloseRgn();
+	
 	RgnHandle BitMapToRegion( RgnHandle region, const BitMap& bitMap );
 	Nucleus::Owned< RgnHandle > BitMapToRegion( const BitMap& bitMap );
 	

@@ -132,6 +132,15 @@ namespace Nitrogen
 		return Nucleus::Owned< RgnHandle >::Seize( result );
 	}
 	
+	Nucleus::Owned< RgnHandle > CloseRgn()
+	{
+		Nucleus::Owned< RgnHandle > result = NewRgn();
+		
+		::CloseRgn( result.Get() );
+		
+		return result;
+	}
+	
 	Nucleus::Owned< RgnHandle > MacCopyRgn( RgnHandle srcRgn )
 	{
 		Nucleus::Owned< RgnHandle > result = NewRgn();
