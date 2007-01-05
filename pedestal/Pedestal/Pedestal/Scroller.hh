@@ -189,6 +189,12 @@ namespace Pedestal
 	static void InvalidateControl ( ScrollbarPresence_Traits< false >::Type        )  {}
 	
 	
+	template < ScrollbarAxis axis >
+	short VHSelect( Point point )
+	{
+		return ( axis == kVertical ) ? point.v : point.h;
+	}
+	
 	template < class ScrollViewType >
 	Point ComputeScrollbarMaxima( const ScrollViewType&  scrolledView )
 	{
@@ -209,12 +215,6 @@ namespace Pedestal
 	{
 		SetControlMaximum( verticalScrollbar,   maxima.v );
 		SetControlMaximum( horizontalScrollbar, maxima.h );
-	}
-	
-	template < ScrollbarAxis axis >
-	void SetScrollbarMaximum( ControlRef control, Point maxima )
-	{
-		SetControlMaximum( control, ( axis == kVertical ) ? maxima.v : maxima.h );
 	}
 	
 	
@@ -242,7 +242,7 @@ namespace Pedestal
 			            ( axis == kVertical ) ? delta : 0,
 			            updateNow );
 			
-			SetScrollbarMaximum< axis >( control, ComputeScrollbarMaxima( scrolledView ) );
+			SetControlMaximum( control, VHSelect< axis >( ComputeScrollbarMaxima( scrolledView ) ) );
 		}
 	}
 	
@@ -259,17 +259,14 @@ namespace Pedestal
 	{
 		const ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
 		
-		Point viewRange = ViewableRange( scrolledView );
-		short jump = ( ( axis == kVertical ) ? viewRange.v : viewRange.h ) - 1;
+		short jump = VHSelect< axis >( ViewableRange( scrolledView ) ) - 1;
 		short scrollDistance = FigureScrollDistance( part, jump );
 		
 		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
 		
 		if ( part == N::kControlIndicatorPart )
 		{
-			Point pos = ScrollPosition( scrolledView );
-			
-			short oldValue = ( axis == kVertical ) ? pos.v : pos.h;
+			short oldValue = VHSelect< axis >( ScrollPosition( scrolledView ) );
 			
 			delta = N::GetControlValue( control ) - oldValue;
 		}
@@ -338,6 +335,25 @@ namespace Pedestal
 		return !( a == b );
 	}
 	
+	template < class Vertical, class Horizontal >
+	void UpdateScrollbars( const Vertical&        verticalScrollbar,
+	                       const Horizontal&      horizontalScrollbar,
+	                       Point                  maxima,
+	                       Point                  position )
+	{
+		NN::Saved< N::Clip_Value > savedClip;
+		
+		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		
+		SetValueStretch( horizontalScrollbar, position.h );
+		SetValueStretch( verticalScrollbar,   position.v );
+		
+		// need to update scrollbar maxima
+		SetScrollbarMaxima( verticalScrollbar,
+		                    horizontalScrollbar,
+		                    maxima );
+	}
+	
 	template < class ScrollViewType, class Vertical, class Horizontal >
 	void UpdateScrollbars( const ScrollViewType&  scrolledView,
 	                       const Vertical&        verticalScrollbar,
@@ -352,17 +368,10 @@ namespace Pedestal
 		
 		if ( oldPosition != pos  ||  oldRange != range )
 		{
-			NN::Saved< N::Clip_Value > savedClip;
-			
-			N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
-			
-			SetValueStretch( horizontalScrollbar, pos.h );
-			SetValueStretch( verticalScrollbar,   pos.v );
-			
-			// need to update scrollbar maxima
-			SetScrollbarMaxima( verticalScrollbar,
-			                    horizontalScrollbar,
-			                    ComputeScrollbarMaxima( scrolledView ) );
+			UpdateScrollbars( verticalScrollbar,
+			                  horizontalScrollbar,
+			                  ComputeScrollbarMaxima( scrolledView ),
+			                  pos );
 		}
 	}
 	
