@@ -239,7 +239,7 @@ namespace Nitrogen {
 		HIThemeHitTestTrack_Result retVal;
 		::ControlPartCode trackPartHit;
 		retVal.trackWasHit	= ::HIThemeHitTestTrack ( &inDrawInfo, &inMousePoint, &trackPartHit );
-		retVal.trackPartHit = trackPartHit;
+		retVal.trackPartHit = ControlPartCode( trackPartHit );
 		return retVal;
 		}
 
@@ -322,7 +322,7 @@ namespace Nitrogen {
 		::ControlPartCode	partCode;
 		retVal.controlWasHit = ::HIThemeHitTestScrollBarArrows ( &inBounds, &inTrackInfo, inIsHoriz, &inPtHit,
 											&retVal.trackBounds, &partCode );
-		retVal.partCode = partCode;
+		retVal.partCode = ControlPartCode( partCode );
 		return retVal;
 		}
 	

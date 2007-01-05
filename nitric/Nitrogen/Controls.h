@@ -57,8 +57,7 @@ namespace Nucleus
 
 namespace Nitrogen
   {
-	class ControlPartCode_Tag {};
-	typedef Nucleus::SelectorType< ControlPartCode_Tag, ::ControlPartCode, kControlNoPart > ControlPartCode;
+	typedef Nucleus::Selector< class ControlPartCode_Tag, ::ControlPartCode >::Type ControlPartCode;
 	
 	struct ControlActionUPP_Details : Basic_UPP_Details< ::ControlActionUPP,
 	                                                     ::ControlActionProcPtr,
@@ -101,6 +100,13 @@ namespace Nitrogen
 	{
 		userUPP( theControl, partCode );
 	}
+	
+	static ControlPartCode kControlNoPart        = ControlPartCode( ::kControlNoPart        );
+	static ControlPartCode kControlIndicatorPart = ControlPartCode( ::kControlIndicatorPart );
+	static ControlPartCode kControlDisabledPart  = ControlPartCode( ::kControlDisabledPart  );
+	static ControlPartCode kControlInactivePart  = ControlPartCode( ::kControlInactivePart  );
+	
+	static ControlPartCode kControlEntireControl = ControlPartCode( ::kControlEntireControl );
 	
 	typedef Nucleus::Selector< class ControlProcID_Tag, ::SInt16 >::Type ControlProcID;
 	
@@ -313,7 +319,7 @@ namespace Nitrogen
    void SetControlData( ControlRef                                               inControl,
                         typename SetControlData_Traits< inTagName >::InData_Type inData )
      {
-      return SetControlData< inTagName >( inControl, ControlPartCode( kControlEntireControl ), inData );
+      return SetControlData< inTagName >( inControl, kControlEntireControl, inData );
      }
 
 	// 2852
@@ -362,7 +368,7 @@ namespace Nitrogen
    template < ::ResType inTagName >
    typename GetControlData_Traits<inTagName>::Result
    GetControlData( ControlRef        inControl,
-                   ControlPartCode   inPart = ControlPartCode( kControlEntireControl ) )
+                   ControlPartCode   inPart = kControlEntireControl )
      {
       typedef GetControlData_Traits< inTagName > Traits;
       

@@ -164,7 +164,7 @@ namespace Nitrogen {
      	(void) HIViewErrorsRegistrationDependency();
 		::ControlPartCode retVal;
 		ThrowOSStatus ( ::HIViewSimulateClick ( inView, inPartToClick, inModifiers, &retVal ));
-		return retVal;
+		return ControlPartCode( retVal );
 		}
 	
 	inline HIViewPartCode HIViewGetPartHit ( HIViewRef inView, const HIPoint &inPoint ) {

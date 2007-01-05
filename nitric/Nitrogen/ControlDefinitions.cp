@@ -11,7 +11,7 @@ namespace Nitrogen
 	{
 		static void Test_kControlEditTextCFStringTag( ControlRef control, CFStringRef string )
 		{
-			Nitrogen::SetControlData< kControlEditTextCFStringTag >( control, 0, string );
+			Nitrogen::SetControlData< kControlEditTextCFStringTag >( control, kControlNoPart, string );
 		}
 	}
 	
