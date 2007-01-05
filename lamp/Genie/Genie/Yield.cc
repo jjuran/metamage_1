@@ -61,6 +61,8 @@ namespace Genie
 		
 		N::YieldToAnyThread();
 		
+		gProcessTable.Reap();  // FIXME:  This is a bit of a hack
+		
 		gCurrentProcess = me;
 		
 		// Yield() should only be called from the yielding process' thread.
