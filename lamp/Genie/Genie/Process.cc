@@ -10,6 +10,7 @@
 #include <signal.h>
 
 // POSIX
+#include "sys/stat.h"
 #include "unistd.h"
 
 // Nucleus
@@ -759,10 +760,18 @@ namespace Genie
 	{
 		if ( pathname != NULL )
 		{
-			// Either of these may throw
-			itsCWD = ResolvePathname( pathname, CurrentWorkingDirectory() );
+			FSTreePtr dir = ResolvePathname( pathname, CurrentWorkingDirectory() );
 			
-			//myCWD = NN::Convert< N::FSDirSpec >( itsCWD->GetFSSpec() );
+			struct ::stat sb;
+			
+			dir->Stat( sb );  // Throws if nonexistent
+			
+			if ( !(sb.st_mode & S_IFDIR) )
+			{
+				P7::ThrowErrno( ENOTDIR );
+			}
+			
+			itsCWD = dir;
 		}
 		else
 		{
