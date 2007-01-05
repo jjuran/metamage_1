@@ -5,6 +5,8 @@
  *	Implemented by PedChore.cc
  */
 
+#error Chores are no longer supported, please use threads
+
 #ifndef PEDESTAL_CHORE_HH
 #define PEDESTAL_CHORE_HH
 
