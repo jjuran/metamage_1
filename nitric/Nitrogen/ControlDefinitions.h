@@ -25,6 +25,31 @@ namespace Nitrogen
 	static const ControlProcID scrollBarProc = ControlProcID( ::scrollBarProc );
 	static const ControlProcID popupMenuProc = ControlProcID( ::popupMenuProc );
 	
+	static const ControlPartCode kControlLabelPart              = ControlPartCode( ::kControlLabelPart              );
+	static const ControlPartCode kControlMenuPart               = ControlPartCode( ::kControlMenuPart               );
+	static const ControlPartCode kControlTrianglePart           = ControlPartCode( ::kControlTrianglePart           );
+	static const ControlPartCode kControlEditTextPart           = ControlPartCode( ::kControlEditTextPart           );
+	static const ControlPartCode kControlPicturePart            = ControlPartCode( ::kControlPicturePart            );
+	static const ControlPartCode kControlIconPart               = ControlPartCode( ::kControlIconPart               );
+	static const ControlPartCode kControlClockPart              = ControlPartCode( ::kControlClockPart              );
+	static const ControlPartCode kControlListBoxPart            = ControlPartCode( ::kControlListBoxPart            );
+	static const ControlPartCode kControlListBoxDoubleClickPart = ControlPartCode( ::kControlListBoxDoubleClickPart );
+	static const ControlPartCode kControlImageWellPart          = ControlPartCode( ::kControlImageWellPart          );
+	static const ControlPartCode kControlRadioGroupPart         = ControlPartCode( ::kControlRadioGroupPart         );
+	static const ControlPartCode kControlButtonPart             = ControlPartCode( ::kControlButtonPart             );
+	static const ControlPartCode kControlCheckBoxPart           = ControlPartCode( ::kControlCheckBoxPart           );
+	static const ControlPartCode kControlRadioButtonPart        = ControlPartCode( ::kControlRadioButtonPart        );
+	static const ControlPartCode kControlUpButtonPart           = ControlPartCode( ::kControlUpButtonPart           );
+	static const ControlPartCode kControlDownButtonPart         = ControlPartCode( ::kControlDownButtonPart         );
+	static const ControlPartCode kControlPageUpPart             = ControlPartCode( ::kControlPageUpPart             );
+	static const ControlPartCode kControlPageDownPart           = ControlPartCode( ::kControlPageDownPart           );
+	static const ControlPartCode kControlClockHourDayPart       = ControlPartCode( ::kControlClockHourDayPart       );
+	static const ControlPartCode kControlClockMinuteMonthPart   = ControlPartCode( ::kControlClockMinuteMonthPart   );
+	static const ControlPartCode kControlClockSecondYearPart    = ControlPartCode( ::kControlClockSecondYearPart    );
+	static const ControlPartCode kControlClockAMPMPart          = ControlPartCode( ::kControlClockAMPMPart          );
+	static const ControlPartCode kControlDataBrowserPart        = ControlPartCode( ::kControlDataBrowserPart        );
+	static const ControlPartCode kControlDataBrowserDraggedPart = ControlPartCode( ::kControlDataBrowserDraggedPart );
+	
 	
    template<> struct ControlData_Traits< kControlBevelButtonContentTag                  >: Nucleus::PodFlattener    < ControlButtonContentInfo      > {};
    template<> struct ControlData_Traits< kControlBevelButtonTransformTag                >: Nucleus::PodFlattener    < IconTransformType             > {};
