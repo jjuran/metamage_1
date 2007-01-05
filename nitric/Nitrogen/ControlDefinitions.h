@@ -110,6 +110,11 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlScrollTextBoxContentsTag               >: Nucleus::PodFlattener    < ::SInt16                      > {};
 
    template<> struct ControlData_Traits< kControlEditUnicodeTextPostUpdateProcTag       >: Nucleus::PodFlattener    < EditUnicodePostUpdateUPP      > {};
+	
+	
+	static const ControlProcID kControlScrollBarProc     = ControlProcID( ::kControlScrollBarProc     );
+	static const ControlProcID kControlScrollBarLiveProc = ControlProcID( ::kControlScrollBarLiveProc );
+	
   }
 
 #endif
