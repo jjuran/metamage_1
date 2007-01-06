@@ -3,8 +3,6 @@
  *	============
  */
 
-#pragma once
-
 #ifndef IO_TEXTINPUT_HH
 #define IO_TEXTINPUT_HH
 
@@ -16,10 +14,10 @@
 #include "Io/Exceptions.hh"
 #include "Io/Handle.hh"
 
+
 namespace Io
 {
 	
-	// Object must have a default constructor (or we could use exceptions).
 	template < class Object >
 	class ObjectPipe
 	{
@@ -30,10 +28,9 @@ namespace Io
 			bool Empty() const  { return objects.empty(); }
 			bool Ready() const  { return !Empty();        }
 			
-			int Write( const Object& data )
+			void Write( const Object& data )
 			{
 				objects.push_back( data );
-				return data.size();
 			}
 			
 			Object Read()
