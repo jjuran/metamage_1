@@ -49,34 +49,49 @@ namespace Io
 	
 	typedef ObjectPipe< std::string > StringPipe;
 	
-	class TextInputAdapter
+	class TextInputBuffer
 	{
 		private:
-			IOHandle input;             // The raw input stream
 			StringPipe myStrings;       // A queue for storing lines of text
 			std::string myPartialData;  // Storage for the current line of text
 			char myLastNewlineChar;     // Used for automatic newline recognition
 			bool ended;                 // Indicates end-of-file.
+		
+		public:
+			TextInputBuffer() : myLastNewlineChar( '\0'  ),
+			                    ended            ( false )  {}
+			
+			void Receive( const char* data, std::size_t bytes );
+			
+			bool Ended() const  { return ended; }
+			bool Ready() const  { return myStrings.Ready(); }
+			
+			std::string Read()  { return myStrings.Read(); }
+			
+			bool WritePartialData();
+	};
+	
+	class TextInputAdapter
+	{
+		private:
+			IOHandle input;             // The raw input stream
+			TextInputBuffer buffer;
 			
 			bool GetMore();             // Called when the string pipe is empty.
 		
 		public:
 			TextInputAdapter()  {}
 			
-			TextInputAdapter( const IOHandle& input, std::size_t bufferSize = 512 ) 
-			:
-				input            ( input ),
-				myLastNewlineChar( '\0'  ),
-				ended            ( false )
-			{}
+			TextInputAdapter( const IOHandle& input ) : input( input )  {}
 			
-			bool Ended() const  { return ended; }
-			bool Ready()  { return myStrings.Ready()  ||  GetMore() && Ready(); }
+			bool Ended() const  { return buffer.Ended(); }
+			bool Ready()  { return buffer.Ready()  ||  GetMore() && Ready(); }
 			
 			std::string Read()
 			{
 				Ready();
-				return myStrings.Read();
+				
+				return buffer.Read();
 			}
 	};
 	
