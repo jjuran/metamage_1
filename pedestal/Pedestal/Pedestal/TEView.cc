@@ -149,6 +149,51 @@ namespace Pedestal
 		N::TEPinScroll( -dh * scrollStep.h, -dv * scrollStep.v, hTE );
 	}
 	
+	
+	static TEView* gCurrentTEView = NULL;
+	
+	static void CustomClickLoop()
+	{
+		if ( gCurrentTEView == NULL )  return;
+		
+		TEHandle hTE = gCurrentTEView->Get();
+	}
+	
+	// This gets set the first time we call TENew().
+	static ::TEClickLoopUPP gSystemClickLoop = NULL;
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	static pascal asm void MasterTEClickLoop()
+	{
+		MOVEA.L		gSystemClickLoop,A0	;  // load the default clickLoop
+		
+		JSR			(A0)				;  // invoke it
+		
+		MOVEM.L		D1-D2/A1,-(SP)		;  // save registers
+		JSR			CustomClickLoop		;  // invoke our custom clickLoop
+		MOVEM.L		(SP)+,D1-D2/A1		;  // restore registers
+		
+		MOVEQ		#1,D0				;  // return true by clearing the zero flag
+		RTS
+	}
+	
+#else
+	
+	static pascal Boolean MasterTEClickLoop( TEPtr pTE )
+	{
+		(void) ::InvokeTEClickLoopUPP( pTE, gSystemClickLoop );
+		
+		CustomClickLoop();
+		
+		return true;
+	}
+	
+#endif
+	
+	static ::TEClickLoopUPP gMasterClickLoop = ::NewTEClickLoopUPP( MasterTEClickLoop );
+	
+	
 	static int SetTextAttributes()
 	{
 		::TextFont( kFontIDMonaco );
@@ -157,11 +202,16 @@ namespace Pedestal
 		return 0;
 	}
 	
-	TEView::TEView( const Rect& bounds, Initializer )
-	:
-		itsTE( ( SetTextAttributes(), N::TENew( ViewRectFromBounds( bounds ) ) ) )
+	
+	TEView::TEView( const Rect&  bounds,
+	                Initializer  /**/ ) : itsTE( ( SetTextAttributes(),
+	                                               N::TENew( ViewRectFromBounds( bounds ) ) ) )
 	{
 		N::TEAutoView( true, itsTE );  // enable auto-scrolling
+		
+		static ::TEClickLoopUPP clickLoop = gSystemClickLoop = itsTE.Get()[0]->clickLoop;
+		
+		itsTE.Get()[0]->clickLoop = gMasterClickLoop;
 	}
 	
 	void TEView::Idle( const EventRecord& )
@@ -173,9 +223,13 @@ namespace Pedestal
 	
 	void TEView::MouseDown( const EventRecord& event )
 	{
+		gCurrentTEView = this;
+		
 		N::TEClick( N::GlobalToLocal( event.where ),
 		            event.modifiers & shiftKey,
 		            itsTE );
+		
+		gCurrentTEView = NULL;
 	}
 	
 	bool TEView::KeyDown( const EventRecord& event )
