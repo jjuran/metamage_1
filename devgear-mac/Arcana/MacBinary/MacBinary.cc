@@ -618,7 +618,7 @@ namespace MacBinary
 		
 		blockWrite( output, u.block.data, sizeof u.block );
 		
-		N::FSDirSpec dir = NN::Make< N::FSDirSpec >( cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID );
+		N::FSDirSpec dir = NN::Make< N::FSDirSpec >( cInfo );
 		
 		N::FSSpecContents_Container contents = N::FSContents( dir );
 		
