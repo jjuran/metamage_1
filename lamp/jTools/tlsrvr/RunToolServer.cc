@@ -257,10 +257,10 @@ namespace RunToolServer
 		
 		static char const* filenames[ 4 ] =
 		{
-			"tlsrvr-script", 
-			"tlsrvr-stdin", 
-			"tlsrvr-stdout", 
-			"tlsrvr-stderr"
+			".tlsrvr-script", 
+			".tlsrvr-stdin", 
+			".tlsrvr-stdout", 
+			".tlsrvr-stderr"
 		};
 		
 		static FSSpec files[ 4 ];
