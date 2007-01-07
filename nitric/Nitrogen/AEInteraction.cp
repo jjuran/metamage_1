@@ -29,6 +29,14 @@ namespace Nitrogen
 		return Nucleus::Owned< AppleEvent >::Seize( reply );
 	}
 	
+	Nucleus::Owned< AppleEvent > AESend( AEEventClass eventClass, AEEventID eventID )
+	{
+		return AESend( AECreateAppleEvent( eventClass,
+				                           eventID,
+				                           AECreateDesc< typeProcessSerialNumber >( CurrentProcess() ) ),
+				       AESendMode( kAEWaitReply ) );
+	}
+	
 	void AEProcessAppleEvent( const EventRecord& event )
 	{
 		ThrowOSStatus( ::AEProcessAppleEvent( &event ) );

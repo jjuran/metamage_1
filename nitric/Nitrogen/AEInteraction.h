@@ -46,6 +46,8 @@ namespace Nitrogen {
 	                                     AEFilterUPP        filterProc     = NULL
 	);
 	
+	Nucleus::Owned< AppleEvent > AESend( AEEventClass eventClass, AEEventID eventID );
+	
 	void AEProcessAppleEvent( const EventRecord& event );
 	
 	inline Nucleus::Owned< AEIdleUPP > NewAEIdleUPP( AEIdleProcPtr p )
