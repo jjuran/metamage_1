@@ -10,7 +10,7 @@
 #include FRAMEWORK_HEADER(CarbonSound,Sound.h)
 #endif
 
-// Nitrogen Core
+// Nucleus
 #ifndef NUCLEUS_FLAGTYPE_H
 #include "Nucleus/FlagType.h"
 #endif
@@ -30,7 +30,7 @@
 #include "Nucleus/TransferTraits.h"
 #endif
 
-// Nitrogen Carbon support
+// Nitrogen
 #ifndef NITROGEN_COMPONENTS_H
 #include "Nitrogen/Components.h"
 #endif
@@ -201,8 +201,10 @@ namespace Nitrogen
 			T** handle = Handle_Cast< T >( Handle( buffer.data ) );
 			
 			Result result;
+			
 			result.count = buffer.count;
-			result.data = Nucleus::Owned< T**, Nucleus::Disposer< Handle > >::Seize( handle );
+			result.data  = Nucleus::Owned< T**, Nucleus::Disposer< Handle > >::Seize( handle );
+			
 			return result;
 		}
 	};
@@ -336,7 +338,7 @@ namespace Nitrogen
 	{
 		struct Transfer
 		{
-			Str255                                           deviceName;
+			Str255                                                             deviceName;
 			Nucleus::OwnershipTransfer< Handle, Nucleus::Disposer< Handle > >  deviceIconHandle;
 			
 			explicit Transfer( SPBGetIndexedDevice_Result* value )
@@ -390,7 +392,7 @@ namespace Nitrogen
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count );
 	
 	Nucleus::Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
-	                                         SoundInputPermissions  permission );
+	                                                  SoundInputPermissions  permission );
 	
 	void SPBCloseDevice( Nucleus::Owned< SoundInputRefNum > );
 	
@@ -401,10 +403,14 @@ namespace Nitrogen
 	// SPBStopRecording
 	// SPBGetRecordingStatus
 	
-	void SPBGetDeviceInfo( SoundInputRefNum refNum, SoundInputDeviceInfoType infoType, void* infoData );
+	void SPBGetDeviceInfo( SoundInputRefNum          refNum,
+	                       SoundInputDeviceInfoType  infoType,
+	                       void*                     infoData );
 	
 	// 2873
-	void SPBSetDeviceInfo( SoundInputRefNum refNum, SoundInputDeviceInfoType infoType, void* infoData );
+	void SPBSetDeviceInfo( SoundInputRefNum          refNum,
+	                       SoundInputDeviceInfoType  infoType,
+	                       void*                     infoData );
 	
 	template < ::OSType infoType >
 	typename SoundInputDeviceInfoType_Traits< infoType >::Result SPBGetDeviceInfo( SoundInputRefNum refNum )
@@ -469,37 +475,6 @@ namespace Nitrogen
 	inline SoundInputDevice_Container SoundInputDevices()
 	{
 		return SoundInputDevice_Container();
-	}
-	
-	namespace Tests
-	{
-		
-		SoundInputDevice_Container::const_iterator Bar();
-		
-		static inline void Foo()
-		{
-			typedef SoundInputDevice_Container::const_iterator const_iterator;
-			
-			SPBGetIndexedDevice_Result result = SPBGetIndexedDevice( 1 );
-			
-			result = SPBGetIndexedDevice( 2 );
-			
-			const_iterator one;
-			
-			const_iterator two = one;
-			
-			const_iterator three( const_iterator() );
-			
-			SoundInputDevices().begin();
-			
-			const_iterator::Transfer( Bar() );
-			
-			one = const_iterator::Transfer( SoundInputDevices().begin() );
-			one = SoundInputDevices().begin();
-			
-			const_iterator four = SoundInputDevices().begin();
-		}
-		
 	}
 	
 }
