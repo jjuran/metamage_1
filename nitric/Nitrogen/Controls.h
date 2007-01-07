@@ -215,6 +215,29 @@ namespace Nucleus
 namespace Nitrogen
   {
    
+	typedef Nucleus::Selector< class ControlDataTag_Tag, ::FourCharCode >::Type ControlDataTag;
+	
+	static const ControlDataTag kControlFontStyleTag = ControlDataTag( ::kControlFontStyleTag );
+	static const ControlDataTag kControlKeyFilterTag = ControlDataTag( ::kControlKeyFilterTag );
+	static const ControlDataTag kControlKindTag      = ControlDataTag( ::kControlKindTag      );
+	static const ControlDataTag kControlSizeTag      = ControlDataTag( ::kControlSizeTag      );
+	
+   template < ::ResType inTagName > struct ControlData_Traits;
+
+   template<> struct ControlData_Traits< kControlFontStyleTag >: Nucleus::PodFlattener< ControlFontStyleRec > {};
+   template<> struct ControlData_Traits< kControlKeyFilterTag >: Nucleus::PodFlattener< ControlKeyFilterUPP > {};
+   template<> struct ControlData_Traits< kControlKindTag      >: Nucleus::PodFlattener< ControlKind         > {};
+   template<> struct ControlData_Traits< kControlSizeTag      >: Nucleus::PodFlattener< ControlSize         > {};
+
+   struct ControlKeyFilterUPP_Details: Basic_UPP_Details< ::ControlKeyFilterUPP,
+                                                          ::ControlKeyFilterProcPtr,
+                                                          ::NewControlKeyFilterUPP,
+                                                          ::DisposeControlKeyFilterUPP,
+                                                          ::InvokeControlKeyFilterUPP >
+     {};
+   
+   typedef UPP< ControlKeyFilterUPP_Details > ControlKeyFilterUPP;
+   
    // 2245
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id );
    ControlRef GetControlByID( WindowRef inWindow, OSType signature, SInt32 id );  // To be removed; use Make.
@@ -243,22 +266,6 @@ namespace Nitrogen
 	// 2534
 	RefCon GetControlReference( ControlRef control );
 	
-   template < ::ResType inTagName > struct ControlData_Traits;
-
-   struct ControlKeyFilterUPP_Details: Basic_UPP_Details< ::ControlKeyFilterUPP,
-                                                          ::ControlKeyFilterProcPtr,
-                                                          ::NewControlKeyFilterUPP,
-                                                          ::DisposeControlKeyFilterUPP,
-                                                          ::InvokeControlKeyFilterUPP >
-     {};
-   
-   typedef UPP< ControlKeyFilterUPP_Details > ControlKeyFilterUPP;
-   
-   template<> struct ControlData_Traits< kControlFontStyleTag >: Nucleus::PodFlattener< ControlFontStyleRec > {};
-   template<> struct ControlData_Traits< kControlKeyFilterTag >: Nucleus::PodFlattener< ControlKeyFilterUPP > {};
-   template<> struct ControlData_Traits< kControlKindTag      >: Nucleus::PodFlattener< ControlKind         > {};
-   template<> struct ControlData_Traits< kControlSizeTag      >: Nucleus::PodFlattener< ControlSize         > {};
-
 
    template < ::ResType inTagName >
    struct SetControlData_Traits: public ControlData_Traits<inTagName>

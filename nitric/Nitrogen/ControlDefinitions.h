@@ -51,6 +51,91 @@ namespace Nitrogen
 	static const ControlPartCode kControlDataBrowserDraggedPart = ControlPartCode( ::kControlDataBrowserDraggedPart );
 	
 	
+	static const ControlDataTag kControlBevelButtonContentTag                  = ControlDataTag( ::kControlBevelButtonContentTag                  );
+	static const ControlDataTag kControlBevelButtonTransformTag                = ControlDataTag( ::kControlBevelButtonTransformTag                );
+	static const ControlDataTag kControlBevelButtonTextAlignTag                = ControlDataTag( ::kControlBevelButtonTextAlignTag                );
+	static const ControlDataTag kControlBevelButtonTextOffsetTag               = ControlDataTag( ::kControlBevelButtonTextOffsetTag               );
+	static const ControlDataTag kControlBevelButtonGraphicAlignTag             = ControlDataTag( ::kControlBevelButtonGraphicAlignTag             );
+	static const ControlDataTag kControlBevelButtonGraphicOffsetTag            = ControlDataTag( ::kControlBevelButtonGraphicOffsetTag            );
+	static const ControlDataTag kControlBevelButtonTextPlaceTag                = ControlDataTag( ::kControlBevelButtonTextPlaceTag                );
+	static const ControlDataTag kControlBevelButtonMenuValueTag                = ControlDataTag( ::kControlBevelButtonMenuValueTag                );
+	static const ControlDataTag kControlBevelButtonMenuRefTag                  = ControlDataTag( ::kControlBevelButtonMenuRefTag                  );
+	static const ControlDataTag kControlBevelButtonCenterPopupGlyphTag         = ControlDataTag( ::kControlBevelButtonCenterPopupGlyphTag         );
+	static const ControlDataTag kControlBevelButtonLastMenuTag                 = ControlDataTag( ::kControlBevelButtonLastMenuTag                 );
+	static const ControlDataTag kControlBevelButtonMenuDelayTag                = ControlDataTag( ::kControlBevelButtonMenuDelayTag                );
+	static const ControlDataTag kControlBevelButtonScaleIconTag                = ControlDataTag( ::kControlBevelButtonScaleIconTag                );
+	static const ControlDataTag kControlBevelButtonOwnedMenuRefTag             = ControlDataTag( ::kControlBevelButtonOwnedMenuRefTag             );
+	static const ControlDataTag kControlBevelButtonKindTag                     = ControlDataTag( ::kControlBevelButtonKindTag                     );
+	
+	static const ControlDataTag kControlTriangleLastValueTag                   = ControlDataTag( ::kControlTriangleLastValueTag                   );
+	
+	static const ControlDataTag kControlProgressBarIndeterminateTag            = ControlDataTag( ::kControlProgressBarIndeterminateTag            );
+	static const ControlDataTag kControlProgressBarAnimatingTag                = ControlDataTag( ::kControlProgressBarAnimatingTag                );
+	
+	static const ControlDataTag kControlTabContentRectTag                      = ControlDataTag( ::kControlTabContentRectTag                      );
+	static const ControlDataTag kControlTabEnabledFlagTag                      = ControlDataTag( ::kControlTabEnabledFlagTag                      );
+	static const ControlDataTag kControlTabInfoTag                             = ControlDataTag( ::kControlTabInfoTag                             );
+	
+	static const ControlDataTag kControlGroupBoxMenuHandleTag                  = ControlDataTag( ::kControlGroupBoxMenuHandleTag                  );
+	static const ControlDataTag kControlGroupBoxTitleRectTag                   = ControlDataTag( ::kControlGroupBoxTitleRectTag                   );
+	
+	static const ControlDataTag kControlImageWellIsDragDestinationTag          = ControlDataTag( ::kControlImageWellIsDragDestinationTag          );
+	
+	static const ControlDataTag kControlClockLongDateTag                       = ControlDataTag( ::kControlClockLongDateTag                       );
+	
+	static const ControlDataTag kControlUserItemDrawProcTag                    = ControlDataTag( ::kControlUserItemDrawProcTag                    );
+	static const ControlDataTag kControlUserPaneDrawProcTag                    = ControlDataTag( ::kControlUserPaneDrawProcTag                    );
+	static const ControlDataTag kControlUserPaneHitTestProcTag                 = ControlDataTag( ::kControlUserPaneHitTestProcTag                 );
+	static const ControlDataTag kControlUserPaneTrackingProcTag                = ControlDataTag( ::kControlUserPaneTrackingProcTag                );
+	static const ControlDataTag kControlUserPaneIdleProcTag                    = ControlDataTag( ::kControlUserPaneIdleProcTag                    );
+	static const ControlDataTag kControlUserPaneKeyDownProcTag                 = ControlDataTag( ::kControlUserPaneKeyDownProcTag                 );
+	static const ControlDataTag kControlUserPaneActivateProcTag                = ControlDataTag( ::kControlUserPaneActivateProcTag                );
+	static const ControlDataTag kControlUserPaneFocusProcTag                   = ControlDataTag( ::kControlUserPaneFocusProcTag                   );
+	static const ControlDataTag kControlUserPaneBackgroundProcTag              = ControlDataTag( ::kControlUserPaneBackgroundProcTag              );
+	
+	static const ControlDataTag kControlEditTextTextTag                        = ControlDataTag( ::kControlEditTextTextTag                        );
+	static const ControlDataTag kControlEditTextTEHandleTag                    = ControlDataTag( ::kControlEditTextTEHandleTag                    );
+	static const ControlDataTag kControlEditTextSelectionTag                   = ControlDataTag( ::kControlEditTextSelectionTag                   );
+	static const ControlDataTag kControlEditTextPasswordTag                    = ControlDataTag( ::kControlEditTextPasswordTag                    );
+	static const ControlDataTag kControlEditTextKeyScriptBehaviorTag           = ControlDataTag( ::kControlEditTextKeyScriptBehaviorTag           );
+	static const ControlDataTag kControlEditTextLockedTag                      = ControlDataTag( ::kControlEditTextLockedTag                      );
+	static const ControlDataTag kControlEditTextFixedTextTag                   = ControlDataTag( ::kControlEditTextFixedTextTag                   );
+	static const ControlDataTag kControlEditTextValidationProcTag              = ControlDataTag( ::kControlEditTextValidationProcTag              );
+	static const ControlDataTag kControlEditTextInlinePreUpdateProcTag         = ControlDataTag( ::kControlEditTextInlinePreUpdateProcTag         );
+	static const ControlDataTag kControlEditTextInlinePostUpdateProcTag        = ControlDataTag( ::kControlEditTextInlinePostUpdateProcTag        );
+	static const ControlDataTag kControlEditTextCFStringTag                    = ControlDataTag( ::kControlEditTextCFStringTag                    );
+	static const ControlDataTag kControlEditTextPasswordCFStringTag            = ControlDataTag( ::kControlEditTextPasswordCFStringTag            );
+	
+	static const ControlDataTag kControlStaticTextCFStringTag                  = ControlDataTag( ::kControlStaticTextCFStringTag                  );
+	
+	static const ControlDataTag kControlStaticTextTextHeightTag                = ControlDataTag( ::kControlStaticTextTextHeightTag                );
+	static const ControlDataTag kControlStaticTextTruncTag                     = ControlDataTag( ::kControlStaticTextTruncTag                     );
+	
+	static const ControlDataTag kControlPictureHandleTag                       = ControlDataTag( ::kControlPictureHandleTag                       );
+	
+	static const ControlDataTag kControlIconTransformTag                       = ControlDataTag( ::kControlIconTransformTag                       );
+	static const ControlDataTag kControlIconAlignmentTag                       = ControlDataTag( ::kControlIconAlignmentTag                       );
+	static const ControlDataTag kControlIconResourceIDTag                      = ControlDataTag( ::kControlIconResourceIDTag                      );
+	
+	static const ControlDataTag kControlListBoxListHandleTag                   = ControlDataTag( ::kControlListBoxListHandleTag                   );
+	static const ControlDataTag kControlListBoxDoubleClickTag                  = ControlDataTag( ::kControlListBoxDoubleClickTag                  );
+	static const ControlDataTag kControlListBoxLDEFTag                         = ControlDataTag( ::kControlListBoxLDEFTag                         );
+	
+	static const ControlDataTag kControlPushButtonDefaultTag                   = ControlDataTag( ::kControlPushButtonDefaultTag                   );
+	static const ControlDataTag kControlPushButtonCancelTag                    = ControlDataTag( ::kControlPushButtonCancelTag                    );
+	
+	static const ControlDataTag kControlPopupButtonMenuIDTag                   = ControlDataTag( ::kControlPopupButtonMenuIDTag                   );
+	static const ControlDataTag kControlPopupButtonExtraHeightTag              = ControlDataTag( ::kControlPopupButtonExtraHeightTag              );
+	static const ControlDataTag kControlPopupButtonCheckCurrentTag             = ControlDataTag( ::kControlPopupButtonCheckCurrentTag             );
+	
+	static const ControlDataTag kControlScrollTextBoxDelayBeforeAutoScrollTag  = ControlDataTag( ::kControlScrollTextBoxDelayBeforeAutoScrollTag  );
+	static const ControlDataTag kControlScrollTextBoxDelayBetweenAutoScrollTag = ControlDataTag( ::kControlScrollTextBoxDelayBetweenAutoScrollTag );
+	static const ControlDataTag kControlScrollTextBoxAutoScrollAmountTag       = ControlDataTag( ::kControlScrollTextBoxAutoScrollAmountTag       );
+	static const ControlDataTag kControlScrollTextBoxContentsTag               = ControlDataTag( ::kControlScrollTextBoxContentsTag               );
+	
+	static const ControlDataTag kControlEditUnicodeTextPostUpdateProcTag       = ControlDataTag( ::kControlEditUnicodeTextPostUpdateProcTag       );
+	
+	
    template<> struct ControlData_Traits< kControlBevelButtonContentTag                  >: Nucleus::PodFlattener    < ControlButtonContentInfo      > {};
    template<> struct ControlData_Traits< kControlBevelButtonTransformTag                >: Nucleus::PodFlattener    < IconTransformType             > {};
    template<> struct ControlData_Traits< kControlBevelButtonTextAlignTag                >: Nucleus::PodFlattener    < ControlButtonTextAlignment    > {};
