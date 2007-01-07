@@ -21,7 +21,7 @@
 namespace Nitrogen
 {
 	
-	template < ::DescType type >
+	template < DescType type >
 	class Const_AEDescList_ItemData_Details
 	{
 		private:
@@ -40,7 +40,7 @@ namespace Nitrogen
 			GetResult Get() const  { return AEGetNthPtr< type >( list, index ); }
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	class Const_AEDescList_ItemData : public Nucleus::ConstPseudoreference< Const_AEDescList_ItemData_Details< type > >
 	{
 		private:
@@ -66,7 +66,7 @@ namespace Nitrogen
 			operator GetResult() const  { return Get(); }
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	class AEDescList_ItemData_Details
 	{
 		private:
@@ -84,7 +84,7 @@ namespace Nitrogen
 			void Set( SetParameter param ) const  { AEPutPtr< type >( list, index, param ); }
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	class AEDescList_ItemData : public Nucleus::Pseudoreference< AEDescList_ItemData_Details< type > >
 	{
 		private:
@@ -122,7 +122,7 @@ namespace Nitrogen
 namespace Nucleus
 {
 	
-	template < ::DescType type >
+	template < DescType type >
 	struct ReferenceTraits< Nitrogen::AEDescList_ItemData< type > >
 	{
 		typedef Nitrogen::AEDescList_ItemData< type > Reference;
@@ -138,7 +138,7 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
-	template < ::DescType type >
+	template < DescType type >
 	struct AEDescList_ItemData_Specifics
 	{
 		typedef UInt32                                    size_type;
@@ -159,7 +159,7 @@ namespace Nitrogen
 		typedef ContainerState IteratorState;
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	class AEDescList_ItemDataValue_Container : public IndexedValueContainer< AEDescList_ItemData_Specifics< type > >
 	{
 		private:
@@ -177,13 +177,13 @@ namespace Nitrogen
 			}
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	inline AEDescList_ItemDataValue_Container< type > AEDescList_ItemDataValues( const AEDescList& list )
 	{
 		return AEDescList_ItemDataValue_Container< type >::New( list );
 	}
 	
-	template < ::DescType type >
+	template < DescType type >
 	class AEDescList_ItemData_ValueIterator
 	{
 		public:
@@ -215,21 +215,21 @@ namespace Nitrogen
 			friend bool operator!=( const This& a, const This& b )  { return !( a == b ); }
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	AEDescList_ItemData_ValueIterator< type >
 	AEDescList_ItemData_ValuesBegin( const AEDescList& list )
 	{
 		return AEDescList_ItemData_ValueIterator< type >( list, 0 );
 	}
 	
-	template < ::DescType type >
+	template < DescType type >
 	AEDescList_ItemData_ValueIterator< type >
 	AEDescList_ItemData_ValuesEnd( const AEDescList& list )
 	{
 		return AEDescList_ItemData_ValueIterator< type >( list, AECountItems( list ) );
 	}
 	
-	template < ::DescType type, class Disposer >
+	template < DescType type, class Disposer >
 	class AEDescList_ItemData_BackInsertionIterator
 	{
 		private:
@@ -251,7 +251,7 @@ namespace Nitrogen
 			This& operator++(int)  { return *this; }
 	};
 	
-	template < ::DescType type, class Disposer >
+	template < DescType type, class Disposer >
 	AEDescList_ItemData_BackInsertionIterator< type, Disposer >
 	AEDescList_ItemData_BackInserter( Nucleus::Owned< AEDescList, Disposer >& list )
 	{
