@@ -34,21 +34,21 @@
 #ifndef __FILES__
 #include FRAMEWORK_HEADER(CarbonCore,Files.h)
 #endif
-#ifndef NITROGEN_MACTYPES_H
-#include "Nitrogen/MacTypes.h"
-#endif
 #ifndef NITROGEN_CFSTRING_H
 #include "Nitrogen/CFString.h"
-#endif
-#ifndef NITROGEN_STR_H
-#include "Nitrogen/Str.h"
 #endif
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
-// Needed for SMSystemScript()
+#ifndef NITROGEN_MACTYPES_H
+#include "Nitrogen/MacTypes.h"
+#endif
+// Needed for smSystemScript
 #ifndef NITROGEN_SCRIPT_H
 #include "Nitrogen/Script.h"
+#endif
+#ifndef NITROGEN_STR_H
+#include "Nitrogen/Str.h"
 #endif
 #ifndef NITROGEN_TEXTCOMMON_H
 #include "Nitrogen/TextCommon.h"
@@ -75,7 +75,7 @@ namespace Nitrogen
 		}
 	}
 	
-	typedef Nucleus::ID< class FSDirID_Tag, ::UInt32 >::Type FSDirID;
+	typedef Nucleus::ID< class FSDirID_Tag, UInt32 >::Type FSDirID;
 	
 	static const FSDirID fsRtParID = FSDirID( ::fsRtParID );
 	static const FSDirID fsRtDirID = FSDirID( ::fsRtDirID );
@@ -239,41 +239,41 @@ namespace Nitrogen
 	
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum );
 	
-	SInt32 FSRead( FSFileRefNum file,
-	               SInt32       requestCount,
-	               void *       buffer );
+	SInt32 FSRead( FSFileRefNum  file,
+	               SInt32        requestCount,
+	               void *        buffer );
 	
 	template < class Element, std::size_t count >
-	SInt32 FSRead( FSFileRefNum file,
-	               Element      (&buffer)[count] )
+	SInt32 FSRead( FSFileRefNum  file,
+	               Element       (&buffer)[count] )
 	{
 		return FSRead( file, count * sizeof (Element), buffer );
 	}
 	
-	SInt32 FSWrite( FSFileRefNum file,
-	                SInt32       requestCount,
-	                const void * buffer );
+	SInt32 FSWrite( FSFileRefNum  file,
+	                SInt32        requestCount,
+	                const void *  buffer );
 	
 	template < class Element, std::size_t count >
-	SInt32 FSWrite( FSFileRefNum  file,
-	                const Element (&buffer)[count] )
+	SInt32 FSWrite( FSFileRefNum   file,
+	                const Element  (&buffer)[count] )
 	{
 		return FSWrite( file, count * sizeof (Element), buffer );
 	}
 	
-	SInt32 Allocate( FSFileRefNum      fileRefNum,
-	                 SInt32            requestCount );
+	SInt32 Allocate( FSFileRefNum  fileRefNum,
+	                 SInt32        requestCount );
 	
 	SInt32 GetEOF( FSFileRefNum fileRefNum );
 	
-	void SetEOF( FSFileRefNum fileRefNum,
-	             SInt32       positionOffset );
+	void SetEOF( FSFileRefNum  fileRefNum,
+	             SInt32        positionOffset );
 	
 	SInt32 GetFPos( FSFileRefNum fileRefNum );
 	
-	void SetFPos( FSFileRefNum fileRefNum,
-	              FSIOPosMode  positionMode,
-	              SInt32       positionOffset );
+	void SetFPos( FSFileRefNum  fileRefNum,
+	              FSIOPosMode   positionMode,
+	              SInt32        positionOffset );
 	
 	// GetVRefNum
 	
@@ -340,7 +340,7 @@ namespace Nitrogen
 	
 	// ...
 	
-	CInfoPBRec& FSpGetCatInfo( const FSSpec&   item, CInfoPBRec& paramBlock );
+	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock );
 	
 	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
 	                           CInfoPBRec&       paramBlock,
@@ -395,7 +395,9 @@ namespace Nitrogen
 	// PBDTOpenInform
 	// PBDTDeleteSync
 	
-	FSSpec FSMakeFSSpec( FSVolumeRefNum vRefNum, FSDirID dirID, ConstStr255Param name );
+	FSSpec FSMakeFSSpec( FSVolumeRefNum    vRefNum,
+	                     FSDirID           dirID,
+	                     ConstStr255Param  name );
 	
 	inline FSSpec FSMakeFSSpec( const FSDirSpec& dir, ConstStr255Param name )
 	{
