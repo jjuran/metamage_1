@@ -77,18 +77,18 @@ namespace Genie
 			}
 	};
 	
-	FSTreePtr ResolvePathname( const std::string& pathname, FSTreePtr current )
+	FSTreePtr ResolvePathname( const std::string& pathname, const FSTreePtr& current )
 	{
 		PathnameComponentIterator path( pathname );
 		
+		FSTreePtr result = current;
+		
 		if ( path.Get().empty() )
 		{
-			current = FSRoot();
+			result = FSRoot();
 			
 			path.Advance();
 		}
-		
-		FSTreePtr result = current;
 		
 		while ( !path.Done() )
 		{

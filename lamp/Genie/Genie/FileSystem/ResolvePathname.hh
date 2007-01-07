@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr ResolvePathname( const std::string& pathname, FSTreePtr current );
+	FSTreePtr ResolvePathname( const std::string& pathname, const FSTreePtr& current );
 	
 }
 
