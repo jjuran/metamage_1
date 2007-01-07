@@ -202,8 +202,6 @@ clock_t	MacPerl_times(struct tms *);
 #undef HAS_GETHOSTBYNAME
 #undef HOST_NOT_FOUND
 #undef HAS_ALARM
-#undef HAS_READLINK
-#undef HAS_SYMLINK
 #undef HAS_SOCKETPAIR
 #undef HAS_TRUNCATE
 
