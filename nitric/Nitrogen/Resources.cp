@@ -325,6 +325,16 @@ namespace Nitrogen
 		return Nucleus::Owned< ResFileRefNum >::Seize( refNum );
 	}
 	
+	void FSpCreateResFile( const FSSpec&  spec,
+	                       OSType         creator,
+	                       OSType         type,
+	                       ScriptCode     scriptTag )
+	{
+		::FSpCreateResFile( &spec, creator, type, scriptTag );
+		
+		ResError();
+	}
+	
 	Nucleus::Owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref, 
 	                                           UniCharCount    forkNameLength, 
 	                                           const UniChar*  forkName, 
