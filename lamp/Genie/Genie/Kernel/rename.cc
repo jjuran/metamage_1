@@ -92,7 +92,7 @@ namespace Genie
 				if ( isDir )
 				{
 					// Directory specified -- look within
-					N::FSDirID dirID = paramBlock.dirInfo.ioDrDirID;
+					N::FSDirID dirID = N::FSDirID( paramBlock.dirInfo.ioDrDirID );
 					//destFile = N::FSMakeFSSpec( vRefNum, dirID, srcFile.name );
 					destFile = NN::Convert< N::FSDirSpec >( destFile ) & srcFile.name;
 					
@@ -167,7 +167,7 @@ namespace Genie
 				// Same name, different dir.
 				
 				// Move source to dest
-				N::FSpCatMove( srcFile, destFile.parID );
+				N::FSpCatMove( srcFile, N::FSDirID( destFile.parID ) );
 				
 				// And we're done
 				return 0;
