@@ -75,6 +75,8 @@ namespace Nitrogen
 		}
 	}
 	
+#ifndef JOSHUA_JURAN_EXPERIMENTAL
+	
    class FSDirID     // A one-off: like IDType< FSDirIDTag, long, 0 >, but sometimes it's signed, sometimes unsigned
      {
       private:
@@ -191,6 +193,15 @@ namespace Nitrogen
 
    template <> inline unsigned long FSDirID::Get<unsigned long>() const  { return GetUnsigned(); }
    template <> inline   signed long FSDirID::Get<  signed long>() const  { return GetSigned(); }
+   
+#else
+	
+	typedef Nucleus::ID< class FSDirID_Tag, ::UInt32 >::Type FSDirID;
+	
+	static const FSDirID fsRtParID = FSDirID( ::fsRtParID );
+	static const FSDirID fsRtDirID = FSDirID( ::fsRtDirID );
+	
+#endif
    
    class FSNodeFlagsTag {};
    typedef Nucleus::FlagType< FSNodeFlagsTag, UInt16, 0 > FSNodeFlags;
@@ -928,19 +939,35 @@ namespace Nitrogen
   }
 
 namespace Nucleus
-  {
+{
+	
 	template <>
 	struct Maker< Nitrogen::FSDirSpec >
 	{
-		Nitrogen::FSDirSpec operator()( Nitrogen::FSVolumeRefNum vRefNum, Nitrogen::FSDirID dirID ) const
+		Nitrogen::FSDirSpec operator()( Nitrogen::FSVolumeRefNum  vRefNum,
+		                                Nitrogen::FSDirID         dirID ) const
 		{
 			Nitrogen::FSDirSpec result;
+			
 			result.vRefNum = vRefNum;
-			result.dirID = dirID;
+			result.dirID   = dirID;
+			
 			return result;
 		}
+		
+		Nitrogen::FSDirSpec operator()( const ::DirInfo& dirInfo ) const
+		{
+			return operator()( Nitrogen::FSVolumeRefNum( dirInfo.ioVRefNum ),
+			                   Nitrogen::FSDirID       ( dirInfo.ioDrDirID ) );
+		}
+		
+		Nitrogen::FSDirSpec operator()( const ::CInfoPBRec& cInfo ) const
+		{
+			return operator()( cInfo.dirInfo );
+		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
   {
