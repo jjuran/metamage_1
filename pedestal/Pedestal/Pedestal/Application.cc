@@ -678,10 +678,7 @@ namespace Pedestal
 			
 			case 'quit':
 				// Direct dispatch
-				N::AESend( N::AECreateAppleEvent( kCoreEventClass,
-				                                  kAEQuitApplication,
-				                                  N::AECreateDesc< typeProcessSerialNumber >( N::CurrentProcess() ) ),
-				           kAEWaitReply );
+				N::AESend( kCoreEventClass, kAEQuitApplication );
 				break;
 			
 			default:
