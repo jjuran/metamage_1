@@ -12,19 +12,19 @@
 
 // Nucleus
 #ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
-#endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
+#endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 #ifndef NUCLEUS_TRANSFERTRAITS_H
 #include "Nucleus/TransferTraits.h"
@@ -161,18 +161,19 @@ namespace Nitrogen
 	
 	using ::SPB;
 	
-	struct SoundInputReferenceNumber_Tag {};
-	typedef Nucleus::IDType< SoundInputReferenceNumber_Tag, long, 0 > SoundInputReferenceNumber;
+	typedef Nucleus::ID< class SoundInputReferenceNumber_Tag, long >::Type SoundInputReferenceNumber;
 	
 	typedef SoundInputReferenceNumber SoundInputRefNum;
 	
-	struct SoundInputPermissions_Tag {};
-	typedef Nucleus::FlagType< SoundInputPermissions_Tag, short, 0 > SoundInputPermissions;
+	typedef Nucleus::Flag< class SoundInputPermissions_Tag, short >::Type SoundInputPermissions;
 	
-  }
+	NUCLEUS_DEFINE_FLAG_OPS( SoundInputPermissions )
+	
+}
 
 namespace Nucleus
-  {
+{
+	
 	template <>
 	struct Disposer< Nitrogen::SoundInputRefNum > : public std::unary_function< Nitrogen::SoundInputRefNum, void >,
                                                     private Nitrogen::DefaultDestructionOSStatusPolicy
@@ -184,10 +185,12 @@ namespace Nucleus
 			HandleDestructionOSStatus( ::SPBCloseDevice( refNum ) );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {	
+{
+	
 #if PRAGMA_STRUCT_ALIGN
 	#pragma options align=mac68k
 #elif PRAGMA_STRUCT_PACKPUSH
@@ -465,10 +468,11 @@ namespace Nitrogen
 		
 		operator ConstStr255Param() const  { return deviceName; }
 	};
-  }
+	
+}
 
 namespace Nucleus
-  {	
+{	
 	template <> struct Transfer_Traits< Nitrogen::SPBGetIndexedDevice_Result >
 	{
 		static const bool mayCopyConstSource = false;
@@ -476,10 +480,10 @@ namespace Nucleus
 		typedef Nitrogen::SPBGetIndexedDevice_Result           Type;
 		typedef Nitrogen::SPBGetIndexedDevice_Result::Transfer Transfer;
 	};
-  }
+}
 
 namespace Nitrogen
-  {	
+{	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count );
 	
 	Nucleus::Owned< SoundInputRefNum > SPBOpenDevice( ConstStr255Param       deviceName,
