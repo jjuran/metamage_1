@@ -20,8 +20,8 @@
 #ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -63,10 +63,101 @@ namespace Nitrogen
 			SoundManagerErrorsRegistrationDependency();
 	};
 	
-	struct SoundInputDeviceInfoType_Tag  {};
-	typedef Nucleus::SelectorType< SoundInputDeviceInfoType_Tag, ::OSType, 0 > SoundInputDeviceInfoType;
+	typedef Nucleus::Selector< class SoundInputDeviceInfoType_Tag, ::OSType >::Type SoundInputDeviceInfoType;
 	
 	typedef SoundInputDeviceInfoType SoundInputDeviceInformationSelector;
+	
+	static const SoundInputDeviceInfoType siActiveChannels            = SoundInputDeviceInfoType( ::siActiveChannels            );
+	static const SoundInputDeviceInfoType siActiveLevels              = SoundInputDeviceInfoType( ::siActiveLevels              );
+	static const SoundInputDeviceInfoType siAGCOnOff                  = SoundInputDeviceInfoType( ::siAGCOnOff                  );
+	static const SoundInputDeviceInfoType siAsync                     = SoundInputDeviceInfoType( ::siAsync                     );
+	static const SoundInputDeviceInfoType siAVDisplayBehavior         = SoundInputDeviceInfoType( ::siAVDisplayBehavior         );
+	static const SoundInputDeviceInfoType siChannelAvailable          = SoundInputDeviceInfoType( ::siChannelAvailable          );
+	static const SoundInputDeviceInfoType siCompressionAvailable      = SoundInputDeviceInfoType( ::siCompressionAvailable      );
+	static const SoundInputDeviceInfoType siCompressionChannels       = SoundInputDeviceInfoType( ::siCompressionChannels       );
+	static const SoundInputDeviceInfoType siCompressionFactor         = SoundInputDeviceInfoType( ::siCompressionFactor         );
+	static const SoundInputDeviceInfoType siCompressionHeader         = SoundInputDeviceInfoType( ::siCompressionHeader         );
+	static const SoundInputDeviceInfoType siCompressionNames          = SoundInputDeviceInfoType( ::siCompressionNames          );
+	static const SoundInputDeviceInfoType siCompressionParams         = SoundInputDeviceInfoType( ::siCompressionParams         );
+	static const SoundInputDeviceInfoType siCompressionSampleRate     = SoundInputDeviceInfoType( ::siCompressionSampleRate     );
+	static const SoundInputDeviceInfoType siCompressionType           = SoundInputDeviceInfoType( ::siCompressionType           );
+	static const SoundInputDeviceInfoType siContinuous                = SoundInputDeviceInfoType( ::siContinuous                );
+	static const SoundInputDeviceInfoType siDecompressionParams       = SoundInputDeviceInfoType( ::siDecompressionParams       );
+	static const SoundInputDeviceInfoType siDeviceBufferInfo          = SoundInputDeviceInfoType( ::siDeviceBufferInfo          );
+	static const SoundInputDeviceInfoType siDeviceConnected           = SoundInputDeviceInfoType( ::siDeviceConnected           );
+	static const SoundInputDeviceInfoType siDeviceIcon                = SoundInputDeviceInfoType( ::siDeviceIcon                );
+	static const SoundInputDeviceInfoType siDeviceName                = SoundInputDeviceInfoType( ::siDeviceName                );
+	static const SoundInputDeviceInfoType siEQSpectrumBands           = SoundInputDeviceInfoType( ::siEQSpectrumBands           );
+	static const SoundInputDeviceInfoType siEQSpectrumLevels          = SoundInputDeviceInfoType( ::siEQSpectrumLevels          );
+	static const SoundInputDeviceInfoType siEQSpectrumOnOff           = SoundInputDeviceInfoType( ::siEQSpectrumOnOff           );
+	static const SoundInputDeviceInfoType siEQSpectrumResolution      = SoundInputDeviceInfoType( ::siEQSpectrumResolution      );
+	static const SoundInputDeviceInfoType siEQToneControlGain         = SoundInputDeviceInfoType( ::siEQToneControlGain         );
+	static const SoundInputDeviceInfoType siEQToneControlOnOff        = SoundInputDeviceInfoType( ::siEQToneControlOnOff        );
+	static const SoundInputDeviceInfoType siHardwareBalance           = SoundInputDeviceInfoType( ::siHardwareBalance           );
+	static const SoundInputDeviceInfoType siHardwareBalanceSteps      = SoundInputDeviceInfoType( ::siHardwareBalanceSteps      );
+	static const SoundInputDeviceInfoType siHardwareBass              = SoundInputDeviceInfoType( ::siHardwareBass              );
+	static const SoundInputDeviceInfoType siHardwareBassSteps         = SoundInputDeviceInfoType( ::siHardwareBassSteps         );
+	static const SoundInputDeviceInfoType siHardwareBusy              = SoundInputDeviceInfoType( ::siHardwareBusy              );
+	static const SoundInputDeviceInfoType siHardwareFormat            = SoundInputDeviceInfoType( ::siHardwareFormat            );
+	static const SoundInputDeviceInfoType siHardwareMute              = SoundInputDeviceInfoType( ::siHardwareMute              );
+	static const SoundInputDeviceInfoType siHardwareMuteNoPrefs       = SoundInputDeviceInfoType( ::siHardwareMuteNoPrefs       );
+	static const SoundInputDeviceInfoType siHardwareTreble            = SoundInputDeviceInfoType( ::siHardwareTreble            );
+	static const SoundInputDeviceInfoType siHardwareTrebleSteps       = SoundInputDeviceInfoType( ::siHardwareTrebleSteps       );
+	static const SoundInputDeviceInfoType siHardwareVolume            = SoundInputDeviceInfoType( ::siHardwareVolume            );
+	static const SoundInputDeviceInfoType siHardwareVolumeSteps       = SoundInputDeviceInfoType( ::siHardwareVolumeSteps       );
+	static const SoundInputDeviceInfoType siHeadphoneMute             = SoundInputDeviceInfoType( ::siHeadphoneMute             );
+	static const SoundInputDeviceInfoType siHeadphoneVolume           = SoundInputDeviceInfoType( ::siHeadphoneVolume           );
+	static const SoundInputDeviceInfoType siHeadphoneVolumeSteps      = SoundInputDeviceInfoType( ::siHeadphoneVolumeSteps      );
+	static const SoundInputDeviceInfoType siInputAvailable            = SoundInputDeviceInfoType( ::siInputAvailable            );
+	static const SoundInputDeviceInfoType siInputGain                 = SoundInputDeviceInfoType( ::siInputGain                 );
+	static const SoundInputDeviceInfoType siInputSource               = SoundInputDeviceInfoType( ::siInputSource               );
+	static const SoundInputDeviceInfoType siInputSourceNames          = SoundInputDeviceInfoType( ::siInputSourceNames          );
+	static const SoundInputDeviceInfoType siLevelMeterOnOff           = SoundInputDeviceInfoType( ::siLevelMeterOnOff           );
+	static const SoundInputDeviceInfoType siModemGain                 = SoundInputDeviceInfoType( ::siModemGain                 );
+	static const SoundInputDeviceInfoType siMonitorAvailable          = SoundInputDeviceInfoType( ::siMonitorAvailable          );
+	static const SoundInputDeviceInfoType siMonitorSource             = SoundInputDeviceInfoType( ::siMonitorSource             );
+	static const SoundInputDeviceInfoType siNumberChannels            = SoundInputDeviceInfoType( ::siNumberChannels            );
+	static const SoundInputDeviceInfoType siOptionsDialog             = SoundInputDeviceInfoType( ::siOptionsDialog             );
+	static const SoundInputDeviceInfoType siOSTypeInputSource         = SoundInputDeviceInfoType( ::siOSTypeInputSource         );
+	static const SoundInputDeviceInfoType siOSTypeInputAvailable      = SoundInputDeviceInfoType( ::siOSTypeInputAvailable      );
+	static const SoundInputDeviceInfoType siOutputDeviceName          = SoundInputDeviceInfoType( ::siOutputDeviceName          );
+	static const SoundInputDeviceInfoType siPlayThruOnOff             = SoundInputDeviceInfoType( ::siPlayThruOnOff             );
+	static const SoundInputDeviceInfoType siPostMixerSoundComponent   = SoundInputDeviceInfoType( ::siPostMixerSoundComponent   );
+	static const SoundInputDeviceInfoType siPreMixerSoundComponent    = SoundInputDeviceInfoType( ::siPreMixerSoundComponent    );
+	static const SoundInputDeviceInfoType siQuality                   = SoundInputDeviceInfoType( ::siQuality                   );
+	static const SoundInputDeviceInfoType siRateMultiplier            = SoundInputDeviceInfoType( ::siRateMultiplier            );
+	static const SoundInputDeviceInfoType siRecordingQuality          = SoundInputDeviceInfoType( ::siRecordingQuality          );
+	static const SoundInputDeviceInfoType siSampleRate                = SoundInputDeviceInfoType( ::siSampleRate                );
+	static const SoundInputDeviceInfoType siSampleRateAvailable       = SoundInputDeviceInfoType( ::siSampleRateAvailable       );
+	static const SoundInputDeviceInfoType siSampleSize                = SoundInputDeviceInfoType( ::siSampleSize                );
+	static const SoundInputDeviceInfoType siSampleSizeAvailable       = SoundInputDeviceInfoType( ::siSampleSizeAvailable       );
+	static const SoundInputDeviceInfoType siSetupCDAudio              = SoundInputDeviceInfoType( ::siSetupCDAudio              );
+	static const SoundInputDeviceInfoType siSetupModemAudio           = SoundInputDeviceInfoType( ::siSetupModemAudio           );
+	static const SoundInputDeviceInfoType siSlopeAndIntercept         = SoundInputDeviceInfoType( ::siSlopeAndIntercept         );
+	static const SoundInputDeviceInfoType siSoundClock                = SoundInputDeviceInfoType( ::siSoundClock                );
+	static const SoundInputDeviceInfoType siUseThisSoundClock         = SoundInputDeviceInfoType( ::siUseThisSoundClock         );
+	static const SoundInputDeviceInfoType siSpeakerMute               = SoundInputDeviceInfoType( ::siSpeakerMute               );
+	static const SoundInputDeviceInfoType siSpeakerVolume             = SoundInputDeviceInfoType( ::siSpeakerVolume             );
+	static const SoundInputDeviceInfoType siSSpCPULoadLimit           = SoundInputDeviceInfoType( ::siSSpCPULoadLimit           );
+	static const SoundInputDeviceInfoType siSSpLocalization           = SoundInputDeviceInfoType( ::siSSpLocalization           );
+	static const SoundInputDeviceInfoType siSSpSpeakerSetup           = SoundInputDeviceInfoType( ::siSSpSpeakerSetup           );
+	static const SoundInputDeviceInfoType siStereoInputGain           = SoundInputDeviceInfoType( ::siStereoInputGain           );
+	static const SoundInputDeviceInfoType siSubwooferMute             = SoundInputDeviceInfoType( ::siSubwooferMute             );
+	static const SoundInputDeviceInfoType siTerminalType              = SoundInputDeviceInfoType( ::siTerminalType              );
+	static const SoundInputDeviceInfoType siTwosComplementOnOff       = SoundInputDeviceInfoType( ::siTwosComplementOnOff       );
+	static const SoundInputDeviceInfoType siVendorProduct             = SoundInputDeviceInfoType( ::siVendorProduct             );
+	static const SoundInputDeviceInfoType siVolume                    = SoundInputDeviceInfoType( ::siVolume                    );
+	static const SoundInputDeviceInfoType siVoxRecordInfo             = SoundInputDeviceInfoType( ::siVoxRecordInfo             );
+	static const SoundInputDeviceInfoType siVoxStopInfo               = SoundInputDeviceInfoType( ::siVoxStopInfo               );
+	static const SoundInputDeviceInfoType siWideStereo                = SoundInputDeviceInfoType( ::siWideStereo                );
+	static const SoundInputDeviceInfoType siSupportedExtendedFlags    = SoundInputDeviceInfoType( ::siSupportedExtendedFlags    );
+	static const SoundInputDeviceInfoType siRateConverterRollOffSlope = SoundInputDeviceInfoType( ::siRateConverterRollOffSlope );
+	static const SoundInputDeviceInfoType siOutputLatency             = SoundInputDeviceInfoType( ::siOutputLatency             );
+	
+	static const SoundInputDeviceInfoType siCloseDriver       = SoundInputDeviceInfoType( ::siCloseDriver       );
+	static const SoundInputDeviceInfoType siInitializeDriver  = SoundInputDeviceInfoType( ::siInitializeDriver  );
+	static const SoundInputDeviceInfoType siPauseRecording    = SoundInputDeviceInfoType( ::siPauseRecording    );
+	static const SoundInputDeviceInfoType siUserInterruptProc = SoundInputDeviceInfoType( ::siUserInterruptProc );
 	
 	using ::SPB;
 	
@@ -209,7 +300,7 @@ namespace Nitrogen
 		}
 	};
 	
-	template < ::OSType infoType >  struct SoundInputDeviceInfoType_Traits;
+	template < SoundInputDeviceInfoType infoType >  struct SoundInputDeviceInfoType_Traits;
 	
 	template <>  struct SoundInputDeviceInfoType_Traits< siAGCOnOff            > : InfoData_Traits< bool >  {};
 	template <>  struct SoundInputDeviceInfoType_Traits< siOptionsDialog       > : InfoData_Traits< bool >  {};
@@ -412,7 +503,7 @@ namespace Nitrogen
 	                       SoundInputDeviceInfoType  infoType,
 	                       void*                     infoData );
 	
-	template < ::OSType infoType >
+	template < SoundInputDeviceInfoType infoType >
 	typename SoundInputDeviceInfoType_Traits< infoType >::Result SPBGetDeviceInfo( SoundInputRefNum refNum )
 	{
 		typedef SoundInputDeviceInfoType_Traits< infoType > Traits;
@@ -424,7 +515,7 @@ namespace Nitrogen
 		return Traits::ProcessGetBuffer( infoData );
 	}
 	
-	template < ::OSType infoType >
+	template < SoundInputDeviceInfoType infoType >
 	void SPBSetDeviceInfo( SoundInputRefNum                                                 refNum,
 	                       typename SoundInputDeviceInfoType_Traits< infoType >::Parameter  param )
 	{
