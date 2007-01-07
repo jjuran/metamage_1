@@ -824,7 +824,7 @@ static int TestThread( int argc, char const *const argv[] )
 		param = argv[ 2 ];
 	}
 	
-	NN::Owned< N::ThreadID > thread = N::NewThread< const std::string&, MyThreadRoutine >( kCooperativeThread,
+	NN::Owned< N::ThreadID > thread = N::NewThread< const std::string&, MyThreadRoutine >( N::kCooperativeThread,
 	                                                                                       param,
 	                                                                                       0,
 	                                                                                       N::ThreadOptions() );
@@ -959,7 +959,7 @@ static int TestNull( int argc, char const *const argv[] )
 	/*
 	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const FSSpec& file )
 	{
-		NN::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
+		NN::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, N::fsRdPerm );
 		
 		std::size_t size = N::GetEOF( filehandle );
 		
