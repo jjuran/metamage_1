@@ -138,10 +138,12 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	int          (*peek_import_    )( int fd, const char** buffer, size_t minBytes );
 	int          (*pipe_import_    )( int filedes[ 2 ] );
 	ssize_t      (*read_import_    )( int filedes, void* buf, size_t nbyte );
+	int          (*readlink_import_)( const char* path, char* buf, int len );
 	int          (*rename_import_  )( const char* src, const char* dest );
 	int          (*setpgid_import_ )( pid_t pid, pid_t pgid );
 	pid_t        (*setsid_import_  )();
 	unsigned int (*sleep_import_   )( unsigned int seconds );
+	int          (*symlink_import_ )( const char* target, const char* link );
 	const char*  (*ttyname_import_ )( int filedes );
 	int          (*ttypair_import_ )( int filedes[ 2 ] );
 	int          (*unlink_import_  )( const char* pathname );
@@ -651,6 +653,13 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 		return read_import_( filedes, buf, nbyte );
 	}
 	
+	int readlink( const char* path, char* buf, size_t len )
+	{
+		CheckImportedSymbol( readlink_import_ );
+		
+		return readlink_import_( path, buf, len );
+	}
+	
 	int rename( const char* src, const char* dest )
 	{
 		CheckImportedSymbol( rename_import_ );
@@ -677,6 +686,13 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 		CheckImportedSymbol( sleep_import_ );
 		
 		return sleep_import_( seconds );
+	}
+	
+	int symlink( const char* target, const char* link )
+	{
+		CheckImportedSymbol( symlink_import_ );
+		
+		return symlink_import_( target, link );
 	}
 	
 	const char* ttyname( int filedes )
