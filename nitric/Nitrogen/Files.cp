@@ -161,7 +161,7 @@ namespace Nitrogen
 		
 		PBGetCatInfoSync( Nucleus::Initialize< CInfoPBRec >( paramBlock,
 		                                                     item.vRefNum,
-		                                                     item.parID,
+		                                                     FSDirID( item.parID ),
 		                                                     const_cast< StringPtr >( item.name ),
 		                                                     0 ) );
 		
