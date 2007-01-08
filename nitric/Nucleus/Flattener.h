@@ -134,7 +134,7 @@ namespace Nucleus
          
          template < class Getter > Get_Result Get( Getter get )
            {
-            return base.Get( get );
+            return Get_Result( base.Get( get ) );
            }
          
          typedef Put_Parameter Parameter;
