@@ -260,11 +260,36 @@ namespace Nitrogen
 		static const ::DescType result = type;
 	};
 	
+	template < class Integer > struct Integer_DescType_Traits;
+	
+	template <> struct Integer_DescType_Traits< SInt16 >  { static const ::DescType descType = typeSInt16; };
+	template <> struct Integer_DescType_Traits< SInt32 >  { static const ::DescType descType = typeSInt32; };
+	template <> struct Integer_DescType_Traits< UInt32 >  { static const ::DescType descType = typeUInt32; };
+	
+	template < class Tag, class Int >
+	struct Integer_DescType_Traits< typename Nucleus::Enumeration< Tag, Int >::Type > : Integer_DescType_Traits< Int >  {};
+	
 	template < AEKeyword key > struct AEKeyword_Traits;
 	
-	template <> struct AEKeyword_Traits< keyReturnIDAttr > : Nucleus::ConvertingPODFlattener< AEReturnID, ::AEReturnID >
+	template <> struct AEKeyword_Traits< keyTransactionIDAttr > : Nucleus::ConvertingPODFlattener< AETransactionID, ::AETransactionID >
 	{
-		static const ::DescType type = typeSInt16;
+		static const ::DescType descType = typeSInt32;
+	};
+	
+	template <> struct AEKeyword_Traits< keyReturnIDAttr > : Nucleus::ConvertingPODFlattener< AEReturnID, ::AEReturnID >,
+	                                                         Integer_DescType_Traits< ::AEReturnID >
+	{
+		//static const ::DescType descType = typeSInt16;
+	};
+	
+	template <> struct AEKeyword_Traits< keyEventClassAttr > : Nucleus::ConvertingPODFlattener< AEEventClass, ::AEEventClass >
+	{
+		static const ::DescType descType = typeType;
+	};
+	
+	template <> struct AEKeyword_Traits< keyEventIDAttr > : Nucleus::ConvertingPODFlattener< AEEventID, ::AEEventID >
+	{
+		static const ::DescType descType = typeType;
 	};
 	
 	#pragma mark -
@@ -1385,7 +1410,7 @@ namespace Nitrogen
 	typename AEKeyword_Traits< key >::Result
 	AEGetAttributePtr( const AppleEvent&  appleEvent )
 	{
-		return AEKeyword_Traits< key >().Get( AEGetAttributePtr_Getter< AEKeyword_Traits< key >::type >( appleEvent, key ) );
+		return AEKeyword_Traits< key >().Get( AEGetAttributePtr_Getter< AEKeyword_Traits< key >::descType >( appleEvent, key ) );
 	}
 	
 	class AEGetDescData_Getter
