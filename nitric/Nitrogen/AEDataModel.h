@@ -17,35 +17,45 @@
 #include "CarbonUnits/AEDataModel.hh"
 #endif
 
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
+#endif
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
+#endif
 #ifndef NUCLEUS_NASSERT_H
 #include "Nucleus/NAssert.h"
-#endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
-#endif
-#ifndef NITROGEN_UPP_H
-#include "Nitrogen/UPP.h"
-#endif
-#ifndef NITROGEN_REFCON_H
-#include "Nitrogen/RefCon.h"
-#endif
-#ifndef NITROGEN_OSSTATUS_H
-#include "Nitrogen/OSStatus.h"
-#endif
-#ifndef NITROGEN_MACTYPES_H
-#include "Nitrogen/MacTypes.h"
-#endif
-#ifndef NITROGEN_MACMEMORY_H
-#include "Nitrogen/MacMemory.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
+#endif
+#ifndef NUCLEUS_SELECTORTYPE_H
+#include "Nucleus/SelectorType.h"
+#endif
+
+#ifndef NITROGEN_ALIASES_H
+#include "Nitrogen/Aliases.h"
+#endif
+#ifndef NITROGEN_MACMEMORY_H
+#include "Nitrogen/MacMemory.h"
+#endif
+#ifndef NITROGEN_MACTYPES_H
+#include "Nitrogen/MacTypes.h"
+#endif
 #ifndef NITROGEN_PROCESSES_H
 #include "Nitrogen/Processes.h"
 #endif
-#ifndef NITROGEN_ALIASES_H
-#include "Nitrogen/Aliases.h"
+#ifndef NITROGEN_OSSTATUS_H
+#include "Nitrogen/OSStatus.h"
+#endif
+#ifndef NITROGEN_REFCON_H
+#include "Nitrogen/RefCon.h"
+#endif
+#ifndef NITROGEN_UPP_H
+#include "Nitrogen/UPP.h"
 #endif
 
 #include <string>
@@ -162,20 +172,32 @@ namespace Nitrogen
 	class DescType_Tag {};
 	typedef Nucleus::SelectorType< DescType_Tag, ::DescType > DescType;
 	
-	class AEKeyword_Tag {};
-	typedef Nucleus::SelectorType< AEKeyword_Tag, ::AEKeyword > AEKeyword;
+	typedef Nucleus::Selector< class AEKeyword_Tag, ::AEKeyword >::Type AEKeyword;
+	
+	static const AEKeyword keyTransactionIDAttr   = AEKeyword( ::keyTransactionIDAttr   );
+	static const AEKeyword keyReturnIDAttr        = AEKeyword( ::keyReturnIDAttr        );
+	static const AEKeyword keyEventClassAttr      = AEKeyword( ::keyEventClassAttr      );
+	static const AEKeyword keyEventIDAttr         = AEKeyword( ::keyEventIDAttr         );
+	static const AEKeyword keyAddressAttr         = AEKeyword( ::keyAddressAttr         );
+	static const AEKeyword keyOptionalKeywordAttr = AEKeyword( ::keyOptionalKeywordAttr );
+	static const AEKeyword keyTimeoutAttr         = AEKeyword( ::keyTimeoutAttr         );
+	static const AEKeyword keyInteractLevelAttr   = AEKeyword( ::keyInteractLevelAttr   );
+	static const AEKeyword keyEventSourceAttr     = AEKeyword( ::keyEventSourceAttr     );
+	static const AEKeyword keyMissedKeywordAttr   = AEKeyword( ::keyMissedKeywordAttr   );
+	static const AEKeyword keyOriginalAddressAttr = AEKeyword( ::keyOriginalAddressAttr );
+	static const AEKeyword keyAcceptTimeoutAttr   = AEKeyword( ::keyAcceptTimeoutAttr   );
 	
 	// Constants used creating an AppleEvent
 	
-	class AEReturnID_Tag {};
-	typedef Nucleus::IDType< AEReturnID_Tag, ::AEReturnID > AEReturnID;
+	typedef Nucleus::ID< class AEReturnID_Tag, ::AEReturnID >::Type AEReturnID;
 	
-	inline AEReturnID AutoGenerateReturnID()  { return AEReturnID::Make( kAutoGenerateReturnID ); }
+	static const AEReturnID kAutoGenerateReturnID = AEReturnID( ::kAutoGenerateReturnID );
 	
-	class AETransactionID_Tag {};
-	typedef Nucleus::IDType< AETransactionID_Tag, ::AETransactionID > AETransactionID;
 	
-	inline AETransactionID AnyTransactionID()  { return AETransactionID::Make( kAnyTransactionID ); }
+	typedef Nucleus::ID< class AETransactionID_Tag, ::AETransactionID >::Type AETransactionID;
+	
+	static const AETransactionID kAnyTransactionID = AETransactionID( ::kAnyTransactionID );
+	
 	
 	struct AESendPriority_Tag  {};
 	typedef Nucleus::FlagType< AESendPriority_Tag, ::AESendPriority, kAENormalPriority > AESendPriority;
