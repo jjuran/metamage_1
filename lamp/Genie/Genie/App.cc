@@ -82,7 +82,7 @@ namespace Genie
 	void App::HandleAppleEvent(const AppleEvent& appleEvent, AppleEvent& reply)
 	{
 		NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
-		                                                        keyDirectObject,
+		                                                        N::keyDirectObject,
 		                                                        typeAEList );
 		
 		int docCount = N::AECountItems( docList );

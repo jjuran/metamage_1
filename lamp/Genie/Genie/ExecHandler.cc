@@ -27,6 +27,8 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	using N::keyDirectObject;
+	
 	
 	void GenieExecHandler::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, GenieExecHandler* handler )
 	{
