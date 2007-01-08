@@ -46,7 +46,7 @@ namespace Nitrogen
 	
 	void ReceiveReply( const AppleEvent& reply )
 	{
-		AEReturnID returnID = AEGetAttributePtr< typeSInt32 >( reply, keyReturnIDAttr );
+		AEReturnID returnID = AEGetAttributePtr< keyReturnIDAttr >( reply );
 		
 		ExpectedReplies::iterator found = gExpectedReplies.find( returnID );
 		
