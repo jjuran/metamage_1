@@ -115,7 +115,7 @@ namespace Nitrogen
 			}
 			
 			AEPutKeyDesc( result,
-			              AEKeyword( propertyID ),
+			              AEKeyword( ::FourCharCode( propertyID ) ),
 			              propertyToken );
 		}
 		
