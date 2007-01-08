@@ -283,8 +283,8 @@ namespace Nitrogen
 		
 		GetNthPtr_Result result;
 		
-		result.keyword    = keyword;
-		result.typeCode   = typeCode;
+		result.keyword    = AEKeyword( keyword );
+		result.typeCode   = DescType( typeCode );
 		result.actualSize = actualSize;
 		
 		return result;
@@ -383,7 +383,9 @@ namespace Nitrogen
 	void AEPutKeyDesc( AERecord&         record,
 	                   const AEKeyDesc&  keyDesc )
 	{
-		AEPutKeyDesc( record, keyDesc.descKey, keyDesc.descContent );;
+		AEPutKeyDesc( record,
+		              AEKeyword( keyDesc.descKey ),
+		              keyDesc.descContent );
 	}
 	
 	void AEPutKeyDesc( Nucleus::Owned< AERecord >&  record,
