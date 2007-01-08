@@ -98,7 +98,7 @@ namespace UseEdit
 			N::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 			
 			// The kind of thing we're counting, e.g. 'file'
-			N::AEObjectClass desiredClass = N::AEGetParamPtr< typeObjectClass >( appleEvent, keyAEObjectClass );
+			N::AEObjectClass desiredClass = N::AEGetParamPtr< keyAEObjectClass >( appleEvent );
 			
 			std::size_t count = N::Count( desiredClass, containerClass, containerToken );
 			
