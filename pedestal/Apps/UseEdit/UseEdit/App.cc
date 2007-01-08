@@ -49,6 +49,34 @@ namespace UseEdit
 		
 		// Apple event handlers
 		
+		void HandleCloseAppleEvent( const AppleEvent&  appleEvent,
+		                            AppleEvent&        reply,
+		                            App*               app )
+		{
+			ASSERT( app != NULL );
+			
+			NN::Owned< N::AEToken, N::AETokenDisposer > token = N::AEResolve( N::AEGetParamDesc( appleEvent,
+			                                                                                     keyDirectObject,
+			                                                                                     typeWildCard ) );
+			
+			switch ( token.Get().descriptorType )
+			{
+				case typeDocument:
+					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< typePtr >( token ) ) )
+					{
+						if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
+						{
+							base->Closure().RequestWindowClosure( window );
+						}
+					}
+					break;
+				
+				default:
+					throw N::ErrAEEventNotHandled();
+					break;
+			}
+		}
+		
 		void HandleCountAppleEvent( const AppleEvent&  appleEvent,
 		                            AppleEvent&        reply,
 		                            App*               app )
@@ -334,6 +362,9 @@ namespace UseEdit
 		itsOpenDocsEventHandler( N::AEInstallEventHandler< App*, HandleOpenDocumentsAppleEvent >( kCoreEventClass,
 		                                                                                          kAEOpenDocuments,
 		                                                                                          this ) ),
+		itsCloseHandler( N::AEInstallEventHandler< App*, HandleCloseAppleEvent >( kAECoreSuite,
+		                                                                          kAEClose,
+		                                                                          this ) ),
 		itsCountHandler( N::AEInstallEventHandler< App*, HandleCountAppleEvent >( kAECoreSuite,
 		                                                                          kAECountElements,
 		                                                                          this ) ),
@@ -352,10 +383,10 @@ namespace UseEdit
 		N::AEObjectInit();
 		
 		// List multiplexor, e.g. for 'get name of every window'
-		N::AEInstallObjectAccessor< N::DispatchAccessToList >( typeWildCard, typeAEList   ).Release();
+		N::AEInstallObjectAccessor< N::DispatchAccessToList >( typeWildCard, typeAEList ).Release();
 		
 		// Property accessors
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeNull ).Release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeNull     ).Release();
 		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeDocument ).Release();
 		
 		// Document accessor
@@ -365,7 +396,7 @@ namespace UseEdit
 		N::AESetObjectCallbacks();
 		
 		// Count documents
-		N::RegisterCounter( cDocument, typeNull, UseEdit::CountDocuments );
+		N::RegisterCounter( cDocument, typeNull, CountDocuments );
 		
 		// Literal data tokens
 		N::RegisterDataGetter( typeChar,     GetLiteralData );
