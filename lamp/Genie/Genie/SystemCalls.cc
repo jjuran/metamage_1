@@ -166,7 +166,7 @@ namespace Genie
 			                 kAENormalPriority );
 			
 			// Now that we've sent the event, retrieve the return ID
-			N::AEReturnID returnID = N::AEGetAttributePtr< typeSInt32 >( *appleEvent, keyReturnIDAttr );
+			N::AEReturnID returnID = N::AEGetAttributePtr< N::keyReturnIDAttr >( *appleEvent );
 			
 			// Subscribe to AEFramework's queued reply delivery and wake-up service
 			N::ExpectReply( returnID, reply );
