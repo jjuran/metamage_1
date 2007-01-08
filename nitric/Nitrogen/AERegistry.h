@@ -148,6 +148,8 @@ namespace Nitrogen
 	static const AEKeyword keyHighLevelClass    = AEKeyword( ::keyHighLevelClass    );
 	static const AEKeyword keyHighLevelID       = AEKeyword( ::keyHighLevelID       );
 	
+	template <> struct AEKeyword_Traits< keyAEObjectClass > : Type_AEKeyword_Traits< AEObjectClass > {};
+	
    template<> struct DescType_Traits< typeFixedPoint                >: Nucleus::PodFlattener< FixedPoint                > {};
    template<> struct DescType_Traits< typeFixedRectangle            >: Nucleus::PodFlattener< FixedRect                 > {};
    template<> struct DescType_Traits< typeIntlWritingCode           >: Nucleus::PodFlattener< ScriptCode                > {};
