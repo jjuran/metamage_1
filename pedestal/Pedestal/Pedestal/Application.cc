@@ -482,16 +482,6 @@ namespace Pedestal
 		}
 	}
 	
-	static AEEventClass GetEventClass( const AppleEvent& appleEvent )
-	{
-		return AEEventClass( N::AEGetAttributePtr< typeType >( appleEvent, N::AEKeyword::Make( keyEventClassAttr ) ) );
-	}
-	
-	static AEEventID GetEventID( const AppleEvent& appleEvent )
-	{
-		return AEEventID( N::AEGetAttributePtr< typeType >( appleEvent, N::AEKeyword::Make( keyEventIDAttr ) ) );
-	}
-	
 	void Application::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, Application* app )
 	{
 		app->HandleAppleEvent( appleEvent, reply );
@@ -616,8 +606,8 @@ namespace Pedestal
 	
 	void Application::HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& reply )
 	{
-		AEEventClass eventClass = GetEventClass( appleEvent );
-		AEEventID    eventID    = GetEventID   ( appleEvent );
+		AEEventClass eventClass = N::AEGetAttributePtr< N::keyEventClassAttr >( appleEvent );
+		AEEventID    eventID    = N::AEGetAttributePtr< N::keyEventIDAttr    >( appleEvent );
 		
 		static bool firstTime = true;
 		
