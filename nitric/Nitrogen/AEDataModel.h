@@ -260,6 +260,13 @@ namespace Nitrogen
 		static const ::DescType result = type;
 	};
 	
+	template < AEKeyword key > struct AEKeyword_Traits;
+	
+	template <> struct AEKeyword_Traits< keyReturnIDAttr > : Nucleus::ConvertingPODFlattener< AEReturnID, ::AEReturnID >
+	{
+		static const ::DescType type = typeSInt16;
+	};
+	
 	#pragma mark -
 	#pragma mark ¥ AEDesc ¥
 	
@@ -1372,6 +1379,13 @@ namespace Nitrogen
 	                   AEKeyword          keyword )
 	{
 		return DescType_Traits< type >().Get( AEGetAttributePtr_Getter< DescType_Map_Traits< type >::result >( appleEvent, keyword ) );
+	}
+	
+	template < AEKeyword key >
+	typename AEKeyword_Traits< key >::Result
+	AEGetAttributePtr( const AppleEvent&  appleEvent )
+	{
+		return AEKeyword_Traits< key >().Get( AEGetAttributePtr_Getter< AEKeyword_Traits< key >::type >( appleEvent, key ) );
 	}
 	
 	class AEGetDescData_Getter
