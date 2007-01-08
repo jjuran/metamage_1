@@ -32,6 +32,18 @@
 namespace Nitrogen
 {
 	
+	static const AEKeyword keyDirectObject        = AEKeyword( ::keyDirectObject        );
+	static const AEKeyword keyErrorNumber         = AEKeyword( ::keyErrorNumber         );
+	static const AEKeyword keyErrorString         = AEKeyword( ::keyErrorString         );
+	static const AEKeyword keyProcessSerialNumber = AEKeyword( ::keyProcessSerialNumber );
+	static const AEKeyword keyPreDispatch         = AEKeyword( ::keyPreDispatch         );
+	static const AEKeyword keySelectProc          = AEKeyword( ::keySelectProc          );
+                      
+	static const AEKeyword keyAERecorderCount     = AEKeyword( ::keyAERecorderCount     );
+                      
+	static const AEKeyword keyAEVersion           = AEKeyword( ::keyAEVersion           );
+	
+	
 	class AEEventSource_Tag {};
 	typedef Nucleus::SelectorType< AEEventSource_Tag, ::AEEventSource, kAEUnknownSource > AEEventSource;
 	

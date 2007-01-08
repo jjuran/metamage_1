@@ -38,6 +38,29 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Constant types ¥
 	
+	static const AEKeyword keyAECompOperator    = AEKeyword( ::keyAECompOperator    );
+	static const AEKeyword keyAELogicalTerms    = AEKeyword( ::keyAELogicalTerms    );
+	static const AEKeyword keyAELogicalOperator = AEKeyword( ::keyAELogicalOperator );
+	static const AEKeyword keyAEObject1         = AEKeyword( ::keyAEObject1         );
+	static const AEKeyword keyAEObject2         = AEKeyword( ::keyAEObject2         );
+                    
+	static const AEKeyword keyAEDesiredClass    = AEKeyword( ::keyAEDesiredClass    );
+	static const AEKeyword keyAEContainer       = AEKeyword( ::keyAEContainer       );
+	static const AEKeyword keyAEKeyForm         = AEKeyword( ::keyAEKeyForm         );
+	static const AEKeyword keyAEKeyData         = AEKeyword( ::keyAEKeyData         );
+	
+	static const AEKeyword keyAERangeStart      = AEKeyword( ::keyAERangeStart      );
+	static const AEKeyword keyAERangeStop       = AEKeyword( ::keyAERangeStop       );
+                    
+	static const AEKeyword keyDisposeTokenProc  = AEKeyword( ::keyDisposeTokenProc  );
+	static const AEKeyword keyAECompareProc     = AEKeyword( ::keyAECompareProc     );
+	static const AEKeyword keyAECountProc       = AEKeyword( ::keyAECountProc       );
+	static const AEKeyword keyAEMarkTokenProc   = AEKeyword( ::keyAEMarkTokenProc   );
+	static const AEKeyword keyAEMarkProc        = AEKeyword( ::keyAEMarkProc        );
+	static const AEKeyword keyAEAdjustMarksProc = AEKeyword( ::keyAEAdjustMarksProc );
+	static const AEKeyword keyAEGetErrDescProc  = AEKeyword( ::keyAEGetErrDescProc  );
+	
+	
 	typedef Nucleus::SelectorType< struct AEObjectClass_Tag, ::AEObjectClass > AEObjectClass;
 	typedef Nucleus::SelectorType< struct AEPropertyID_Tag,  ::AEPropertyID  > AEPropertyID;
 	
