@@ -32,53 +32,6 @@ namespace Nitrogen
 	static AppleEventManagerErrorsRegistration theRegistration;
 	
 	
-	void RegisterAppleEventManagerErrors()
-	{
-		RegisterOSStatus< paramErr                  >();
-		RegisterOSStatus< eLenErr                   >();
-		RegisterOSStatus< memFullErr                >();
-		RegisterOSStatus< userCanceledErr           >();
-		RegisterOSStatus< procNotFound              >();
-		RegisterOSStatus< bufferIsSmall             >();
-		RegisterOSStatus< noOutstandingHLE          >();
-		RegisterOSStatus< connectionInvalid         >();
-		RegisterOSStatus< noUserInteractionAllowed  >();
-		RegisterOSStatus< noPortErr                 >();
-		RegisterOSStatus< destPortErr               >();
-		RegisterOSStatus< sessClosedErr             >();
-		RegisterOSStatus< errAECoercionFail         >();
-		RegisterOSStatus< errAEDescNotFound         >();
-		RegisterOSStatus< errAECorruptData          >();
-		RegisterOSStatus< errAEWrongDataType        >();
-		RegisterOSStatus< errAENotAEDesc            >();
-		RegisterOSStatus< errAEBadListItem          >();
-		RegisterOSStatus< errAENewerVersion         >();
-		RegisterOSStatus< errAENotAppleEvent        >();
-		RegisterOSStatus< errAEEventNotHandled      >();
-		RegisterOSStatus< errAEReplyNotValid        >();
-		RegisterOSStatus< errAEUnknownSendMode      >();
-		RegisterOSStatus< errAEWaitCanceled         >();
-		RegisterOSStatus< errAETimeout              >();
-		RegisterOSStatus< errAENoUserInteraction    >();
-		RegisterOSStatus< errAENotASpecialFunction  >();
-		RegisterOSStatus< errAEParamMissed          >();
-		RegisterOSStatus< errAEUnknownAddressType   >();
-		RegisterOSStatus< errAEHandlerNotFound      >();
-		RegisterOSStatus< errAEReplyNotArrived      >();
-		RegisterOSStatus< errAEIllegalIndex         >();
-		RegisterOSStatus< errAEImpossibleRange      >();
-		RegisterOSStatus< errAEWrongNumberArgs      >();
-		RegisterOSStatus< errAEAccessorNotFound     >();
-		RegisterOSStatus< errAENoSuchLogical        >();
-		RegisterOSStatus< errAEBadTestKey           >();
-		RegisterOSStatus< errAENotAnObjSpec         >();
-		RegisterOSStatus< errAENoSuchObject         >();
-		RegisterOSStatus< errAENegativeCount        >();
-		RegisterOSStatus< errAEEmptyListContainer   >();
-		RegisterOSStatus< errAEUnknownObjectType    >();
-		RegisterOSStatus< errAERecordingIsAlreadyOn >();
-	}
-	
 	AECoercionHandler::AECoercionHandler() : fromType(),
 	                                         toType(),
 	                                         handler(),
@@ -767,6 +720,53 @@ namespace Nitrogen
 	                        Nucleus::Owned< AEDesc >&  result)
 	{
 		AEReplaceDescData( typeCode, dataPtr, dataSize, Detail::AEDescEditor( result ) );
+	}
+	
+	void RegisterAppleEventManagerErrors()
+	{
+		RegisterOSStatus< paramErr                  >();
+		RegisterOSStatus< eLenErr                   >();
+		RegisterOSStatus< memFullErr                >();
+		RegisterOSStatus< userCanceledErr           >();
+		RegisterOSStatus< procNotFound              >();
+		RegisterOSStatus< bufferIsSmall             >();
+		RegisterOSStatus< noOutstandingHLE          >();
+		RegisterOSStatus< connectionInvalid         >();
+		RegisterOSStatus< noUserInteractionAllowed  >();
+		RegisterOSStatus< noPortErr                 >();
+		RegisterOSStatus< destPortErr               >();
+		RegisterOSStatus< sessClosedErr             >();
+		RegisterOSStatus< errAECoercionFail         >();
+		RegisterOSStatus< errAEDescNotFound         >();
+		RegisterOSStatus< errAECorruptData          >();
+		RegisterOSStatus< errAEWrongDataType        >();
+		RegisterOSStatus< errAENotAEDesc            >();
+		RegisterOSStatus< errAEBadListItem          >();
+		RegisterOSStatus< errAENewerVersion         >();
+		RegisterOSStatus< errAENotAppleEvent        >();
+		RegisterOSStatus< errAEEventNotHandled      >();
+		RegisterOSStatus< errAEReplyNotValid        >();
+		RegisterOSStatus< errAEUnknownSendMode      >();
+		RegisterOSStatus< errAEWaitCanceled         >();
+		RegisterOSStatus< errAETimeout              >();
+		RegisterOSStatus< errAENoUserInteraction    >();
+		RegisterOSStatus< errAENotASpecialFunction  >();
+		RegisterOSStatus< errAEParamMissed          >();
+		RegisterOSStatus< errAEUnknownAddressType   >();
+		RegisterOSStatus< errAEHandlerNotFound      >();
+		RegisterOSStatus< errAEReplyNotArrived      >();
+		RegisterOSStatus< errAEIllegalIndex         >();
+		RegisterOSStatus< errAEImpossibleRange      >();
+		RegisterOSStatus< errAEWrongNumberArgs      >();
+		RegisterOSStatus< errAEAccessorNotFound     >();
+		RegisterOSStatus< errAENoSuchLogical        >();
+		RegisterOSStatus< errAEBadTestKey           >();
+		RegisterOSStatus< errAENotAnObjSpec         >();
+		RegisterOSStatus< errAENoSuchObject         >();
+		RegisterOSStatus< errAENegativeCount        >();
+		RegisterOSStatus< errAEEmptyListContainer   >();
+		RegisterOSStatus< errAEUnknownObjectType    >();
+		RegisterOSStatus< errAERecordingIsAlreadyOn >();
 	}
 	
 }
