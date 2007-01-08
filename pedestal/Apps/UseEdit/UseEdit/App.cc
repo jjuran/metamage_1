@@ -34,6 +34,8 @@ namespace UseEdit
 	namespace N = Nitrogen;
 	namespace FS = FileSystem;
 	
+	using N::keyDirectObject;
+	using N::keyAEObjectClass;
 	
 	App* App::theApp = NULL;
 	
@@ -127,7 +129,9 @@ namespace UseEdit
 			typedef N::AEDescList_ItemDataValue_Container< FS::typeFileSpec > Container;
 			typedef Container::const_iterator const_iterator;
 			
-			NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent, keyDirectObject, typeAEList );
+			NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
+			                                                        keyDirectObject,
+			                                                        typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< FS::typeFileSpec >( docList );
 			
