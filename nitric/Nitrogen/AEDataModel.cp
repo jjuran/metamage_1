@@ -112,7 +112,7 @@ namespace Nitrogen
 		// Necessary for OS 9; OS X does this automatically
 		if ( toType == typeWildCard )
 		{
-			toType = desc.descriptorType;
+			toType = DescType( desc.descriptorType );
 		}
 		
 		AEDesc result;
@@ -327,7 +327,7 @@ namespace Nitrogen
 		
 		AESizeOfNthItem_Result result;
 		
-		result.typeCode = typeCode;
+		result.typeCode = DescType( typeCode );
 		result.dataSize = dataSize;
 		
 		return result;
