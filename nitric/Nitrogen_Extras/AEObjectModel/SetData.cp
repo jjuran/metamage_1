@@ -26,7 +26,8 @@ namespace Nitrogen
 	
 	void DataSetter::SetData( const AEToken& obj, const AEDesc& data )
 	{
-		Map::const_iterator found = map.find( obj.descriptorType );
+		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
+		
 		if ( found == map.end() )
 		{
 			throw ErrAEEventNotHandled();
@@ -38,6 +39,7 @@ namespace Nitrogen
 	DataSetter& TheGlobalDataSetter()
 	{
 		static DataSetter theGlobalDataSetter;
+		
 		return theGlobalDataSetter;
 	}
 	

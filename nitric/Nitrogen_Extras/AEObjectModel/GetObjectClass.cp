@@ -19,7 +19,7 @@ namespace Nitrogen
 	{
 		try
 		{
-			return TheGlobalObjectClassMap().GetObjectClass( obj.descriptorType );
+			return TheGlobalObjectClassMap().GetObjectClass( DescType( obj.descriptorType ) );
 		}
 		catch ( ErrAEEventNotHandled )  {}
 		
@@ -29,7 +29,7 @@ namespace Nitrogen
 		}
 		catch ( ErrAEEventNotHandled )  {}
 		
-		return obj.descriptorType;
+		return AEObjectClass( obj.descriptorType );
 	}
 	
 	#pragma mark -
@@ -43,6 +43,7 @@ namespace Nitrogen
 	AEObjectClass ObjectClassMap::GetObjectClass( DescType tokenType )
 	{
 		Map::const_iterator found = map.find( tokenType );
+		
 		if ( found == map.end() )
 		{
 			throw ErrAEEventNotHandled();
@@ -54,6 +55,7 @@ namespace Nitrogen
 	ObjectClassMap& TheGlobalObjectClassMap()
 	{
 		static ObjectClassMap theGlobalObjectClassMap;
+		
 		return theGlobalObjectClassMap;
 	}
 	
@@ -66,11 +68,12 @@ namespace Nitrogen
 	
 	AEObjectClass ObjectClassGetter::GetObjectClass( const AEToken& obj )
 	{
-		Map::const_iterator found = map.find( obj.descriptorType );
+		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
+		
 		if ( found == map.end() )
 		{
 			//throw ErrAEEventNotHandled();
-			return obj.descriptorType;
+			return AEObjectClass( obj.descriptorType );
 		}
 		
 		return found->second( obj );
@@ -79,6 +82,7 @@ namespace Nitrogen
 	ObjectClassGetter& TheGlobalObjectClassGetter()
 	{
 		static ObjectClassGetter theGlobalObjectClassGetter;
+		
 		return theGlobalObjectClassGetter;
 	}
 	

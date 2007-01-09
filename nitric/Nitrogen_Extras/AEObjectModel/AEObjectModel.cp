@@ -66,7 +66,7 @@ namespace Nitrogen
 					AEAbsoluteOrdinal ordinal = AEGetDescData< typeAbsoluteOrdinal >( keyData );
 					
 					// Check for 'every' first
-					if ( ordinal == kAEAll )
+					if ( ordinal == AEAbsoluteOrdinal( kAEAll ) )
 					{
 						return 0;
 					}
@@ -136,7 +136,7 @@ namespace Nitrogen
 	{
 		try
 		{
-			*result = Compare( op, *obj1, *obj2 );
+			*result = Compare( AECompOperator( op ), *obj1, *obj2 );
 		}
 		catch ( OSStatus err )
 		{
@@ -153,7 +153,9 @@ namespace Nitrogen
 	{
 		try
 		{
-			*result = Count( desiredClass, containerClass, *containerToken );
+			*result = Count( AEObjectClass( desiredClass   ),
+			                 AEObjectClass( containerClass ),
+			                 *containerToken );
 		}
 		catch ( OSStatus err )
 		{

@@ -26,16 +26,20 @@ namespace Nitrogen
 	                            AEObjectClass   containerClass,
 	                            const AEToken&  containerToken )
 	{
-		Map::const_iterator found = map.find( Key( desiredClass, containerToken.descriptorType ) );
+		Map::const_iterator found = map.find( Key( desiredClass, DescType( containerToken.descriptorType ) ) );
+		
 		if ( found == map.end() )
 		{
-			found = map.find( Key( typeWildCard, containerToken.descriptorType ) );
+			found = map.find( Key( AEObjectClass( typeWildCard ), DescType( containerToken.descriptorType ) ) );
+			
 			if ( found == map.end() )
 			{
 				found = map.find( Key( desiredClass, typeWildCard ) );
+				
 				if ( found == map.end() )
 				{
-					found = map.find( Key( typeWildCard, typeWildCard ) );
+					found = map.find( Key( AEObjectClass( typeWildCard ), typeWildCard ) );
+					
 					if ( found == map.end() )
 					{
 						throw ErrAEEventNotHandled();
@@ -50,6 +54,7 @@ namespace Nitrogen
 	Counter& TheGlobalCounter()
 	{
 		static Counter theGlobalCounter;
+		
 		return theGlobalCounter;
 	}
 	

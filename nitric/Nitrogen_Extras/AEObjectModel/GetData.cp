@@ -51,7 +51,7 @@ namespace Nitrogen
 		return AECoerceDesc
 		(
 			AECreateList< true >()
-				<< keyAEDesiredClass + AECreateDesc< typeType       >( DescType( objectClass ) )
+				<< keyAEDesiredClass + AECreateDesc< typeType       >( DescType( ::FourCharCode( objectClass ) ) )
 				<< keyAEKeyForm      + AECreateDesc< typeEnumerated >(              keyForm    )
 				<< keyAEKeyData      + keyData
 				<< keyAEContainer    + container,
@@ -73,7 +73,7 @@ namespace Nitrogen
 	
 	Nucleus::Owned< AEDesc > DataGetter::GetData( const AEToken& obj, DescType desiredType )
 	{
-		Map::const_iterator found = map.find( obj.descriptorType );
+		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
 		
 		if ( found == map.end() )
 		{
@@ -86,6 +86,7 @@ namespace Nitrogen
 	DataGetter& TheGlobalDataGetter()
 	{
 		static DataGetter theGlobalDataGetter;
+		
 		return theGlobalDataGetter;
 	}
 	

@@ -23,14 +23,14 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ ObjectClassMap ¥
 	
-	template < ::DescType tokenType > struct ObjectClass_Traits;
+	template < DescType tokenType > struct ObjectClass_Traits;
 	
-	template < ::DescType objectClass > struct Basic_ObjectClass_Traits
+	template < AEObjectClass objectClass > struct Basic_ObjectClass_Traits
 	{
 		static AEObjectClass ObjectClass()  { return objectClass; }
 	};
 	
-	template <> struct ObjectClass_Traits< typeNull > : Basic_ObjectClass_Traits< cApplication > {};
+	template <> struct ObjectClass_Traits< typeNull > : Basic_ObjectClass_Traits< AEObjectClass( cApplication ) > {};
 	
 	class ObjectClassMap
 	{
@@ -51,7 +51,7 @@ namespace Nitrogen
 				map[ tokenType ] = objectClass;
 			}
 			
-			template < ::DescType tokenType >
+			template < DescType tokenType >
 			void Register()
 			{
 				Register( tokenType, ObjectClass_Traits< tokenType >::ObjectClass() );
@@ -67,7 +67,7 @@ namespace Nitrogen
 		TheGlobalObjectClassMap().Register( tokenType, objectClass );
 	}
 	
-	template < ::DescType tokenType >
+	template < DescType tokenType >
 	void RegisterObjectClass()
 	{
 		TheGlobalObjectClassMap().template Register< tokenType >();
@@ -76,7 +76,7 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ ObjectClassGetter ¥
 	
-	template < ::DescType tokenType > struct GetObjectClass_Traits;
+	template < DescType tokenType > struct GetObjectClass_Traits;
 	
 	class ObjectClassGetter
 	{
@@ -100,7 +100,7 @@ namespace Nitrogen
 				map[ tokenType ] = callback;
 			}
 			
-			template < ::DescType tokenType >
+			template < DescType tokenType >
 			void Register()
 			{
 				Register( tokenType, GetObjectClass_Traits< tokenType >::GetObjectClass );
@@ -116,7 +116,7 @@ namespace Nitrogen
 		TheGlobalObjectClassGetter().Register( tokenType, callback );
 	}
 	
-	template < ::DescType tokenType >
+	template < DescType tokenType >
 	void RegisterObjectClassGetter()
 	{
 		TheGlobalObjectClassGetter().template Register< tokenType >();

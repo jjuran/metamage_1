@@ -21,9 +21,9 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Property traits ¥
 	
-	template < ::DescType propertyID, ::DescType tokenType >  struct Property_Traits;
+	template < AEPropertyID propertyID, DescType tokenType >  struct Property_Traits;
 	
-	template < ::DescType propertyID, ::DescType tokenType >
+	template < AEPropertyID propertyID, DescType tokenType >
 	struct Basic_PropertyAccessor
 	{
 		typedef typename DescType_Traits< tokenType >::Result RecordPtr;
@@ -80,7 +80,7 @@ namespace Nitrogen
 				map[ containerType ][ propertyID ] = callback;
 			}
 			
-			template < ::DescType propertyID, ::DescType containerType >
+			template < AEPropertyID propertyID, DescType containerType >
 			void Register()
 			{
 				Register( propertyID, containerType, Basic_PropertyAccessor< propertyID, containerType >::AccessProperty );
@@ -103,7 +103,7 @@ namespace Nitrogen
 		TheGlobalPropertyAccessor().Register( propertyID, containerType, callback );
 	}
 	
-	template < ::DescType propertyID, ::DescType containerType >
+	template < AEPropertyID propertyID, DescType containerType >
 	void RegisterPropertyAccessor()
 	{
 		TheGlobalPropertyAccessor().template Register< propertyID, containerType >();

@@ -77,7 +77,7 @@ namespace Nitrogen
 		                     const AEToken&  obj1,
 		                     const AEToken&  obj2 )
 		{
-			if ( op != kAEEquals )
+			if ( op != AECompOperator( kAEEquals ) )
 			{
 				throw ErrAEEventNotHandled();
 			}

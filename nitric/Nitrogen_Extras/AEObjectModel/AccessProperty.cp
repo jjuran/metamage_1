@@ -31,8 +31,8 @@ namespace Nitrogen
 	
 	PropertyAccessor::PropertyAccessor()
 	{
-		Register( pClass, typeWildCard, AccessClassProperty );
-		Register( kAEAll, typeWildCard, AccessAllProperties );
+		Register( AEPropertyID( pClass ), typeWildCard, AccessClassProperty );
+		Register( AEPropertyID( kAEAll ), typeWildCard, AccessAllProperties );
 	}
 	
 	PropertyAccessor::Callback PropertyAccessor::FindAccessor( AEPropertyID  propertyID,
@@ -42,15 +42,18 @@ namespace Nitrogen
 		PropertyMap::const_iterator foundProp;
 		
 		foundType = map.find( tokenType );
+		
 		if ( foundType != map.end() )
 		{
 			foundProp = foundType->second.find( propertyID );
+			
 			if ( foundProp != foundType->second.end() )
 			{
 				return foundProp->second;
 			}
 			
-			foundProp = foundType->second.find( typeWildCard );
+			foundProp = foundType->second.find( AEPropertyID( typeWildCard ) );
+			
 			if ( foundProp != foundType->second.end() )
 			{
 				return foundProp->second;
@@ -58,15 +61,18 @@ namespace Nitrogen
 		}
 		
 		foundType = map.find( typeWildCard );
+		
 		if ( foundType != map.end() )
 		{
 			foundProp = foundType->second.find( propertyID );
+			
 			if ( foundProp != foundType->second.end() )
 			{
 				return foundProp->second;
 			}
 			
-			foundProp = foundType->second.find( typeWildCard );
+			foundProp = foundType->second.find( AEPropertyID( typeWildCard ) );
+			
 			if ( foundProp != foundType->second.end() )
 			{
 				return foundProp->second;
@@ -80,14 +86,16 @@ namespace Nitrogen
 	                                                                             const AEToken&  containerToken,
 	                                                                             AEObjectClass   containerClass )
 	{
-		Callback accessor = FindAccessor( propertyID, containerToken.descriptorType );
+		Callback accessor = FindAccessor( propertyID, DescType( containerToken.descriptorType ) );
+		
 		return accessor( propertyID, containerToken, containerClass );
 	}
 	
 	Nucleus::Owned< AEToken, AETokenDisposer > PropertyAccessor::AccessAll( const AEToken&  containerToken,
 	                                                                        AEObjectClass   containerClass )
 	{
-		Map::const_iterator foundType = map.find( containerToken.descriptorType );
+		Map::const_iterator foundType = map.find( DescType( containerToken.descriptorType ) );
+		
 		if ( foundType == map.end() )
 		{
 			throw ErrAEEventNotHandled();
@@ -111,7 +119,7 @@ namespace Nitrogen
 			}
 			catch ( ErrAENoSuchObject )
 			{
-				propertyToken = AECreateToken< typeType >( cMissingValue );
+				propertyToken = AECreateToken< typeType >( DescType( cMissingValue ) );
 			}
 			
 			AEPutKeyDesc( result,
@@ -132,7 +140,8 @@ namespace Nitrogen
 	                                                                const AEToken&  /* containerToken */,
 	                                                                AEObjectClass   containerClass )
 	{
-		return AECreateToken< typeObjectClass >( containerClass );
+		//return AECreateToken< typeObjectClass >( containerClass );
+		return AECreateToken< typeType >( DescType( ::FourCharCode( containerClass ) ) );
 	}
 	
 	Nucleus::Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    propertyID,
