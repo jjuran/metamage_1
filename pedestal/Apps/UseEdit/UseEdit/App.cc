@@ -36,14 +36,19 @@ namespace UseEdit
 	
 	using N::keyDirectObject;
 	using N::keyAEObjectClass;
+	using N::typeWildCard;
+	using N::typePtr;
+	using N::typeUInt32;
+	using N::typeAEList;
+	using N::typeChar;
+	using N::typeNull;
+	using N::typeAERecord;
+	
 	
 	App* App::theApp = NULL;
 	
 	
-	enum
-	{
-		typeDocument = 'Doc '
-	};
+	static const N::DescType typeDocument = N::DescType( 'Doc ' );
 	
 	
 	namespace
@@ -61,7 +66,7 @@ namespace UseEdit
 			                                                                                     keyDirectObject,
 			                                                                                     typeWildCard ) );
 			
-			switch ( token.Get().descriptorType )
+			switch ( N::DescType( token.Get().descriptorType ) )
 			{
 				case typeDocument:
 					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< typePtr >( token ) ) )
@@ -151,7 +156,7 @@ namespace UseEdit
 	                                                                    N::AEObjectClass   containerClass )
 		{
 			
-			return N::AECreateToken< typeBoolean >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
+			return N::AECreateToken< N::typeBoolean >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
 		}
 		
 		NN::Owned< N::AEToken, N::AETokenDisposer > AccessAppName( N::AEPropertyID    propertyID,
@@ -243,7 +248,7 @@ namespace UseEdit
 			AEDesc keyData = obj;
 			keyData.descriptorType = typeUInt32;
 			
-			return N::AECreateObjectSpecifier( cDocument,
+			return N::AECreateObjectSpecifier( N::AEObjectClass( cDocument ),
 			                                   N::GetRootObjectSpecifier(),
 			                                   formUniqueID,
 			                                   keyData );
@@ -387,20 +392,20 @@ namespace UseEdit
 		N::AEObjectInit();
 		
 		// List multiplexor, e.g. for 'get name of every window'
-		N::AEInstallObjectAccessor< N::DispatchAccessToList >( typeWildCard, typeAEList ).Release();
+		N::AEInstallObjectAccessor< N::DispatchAccessToList >( N::AEObjectClass( typeWildCard ), typeAEList ).Release();
 		
 		// Property accessors
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeNull     ).Release();
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeDocument ).Release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::AEObjectClass( cProperty ), typeNull     ).Release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::AEObjectClass( cProperty ), typeDocument ).Release();
 		
 		// Document accessor
-		N::AEInstallObjectAccessor< AccessDocument >( cDocument, typeNull ).Release();
+		N::AEInstallObjectAccessor< AccessDocument >( N::AEObjectClass( cDocument ), typeNull ).Release();
 		
 		// Set up AEObjectModel
 		N::AESetObjectCallbacks();
 		
 		// Count documents
-		N::RegisterCounter( cDocument, typeNull, CountDocuments );
+		N::RegisterCounter( N::AEObjectClass( cDocument ), typeNull, CountDocuments );
 		
 		// Literal data tokens
 		N::RegisterDataGetter( typeChar,     GetLiteralData );
@@ -410,11 +415,11 @@ namespace UseEdit
 		N::RegisterDataGetter( typeDocument, GetDocument );
 		
 		// Name of app
-		N::RegisterPropertyAccessor( pName,           typeNull, AccessAppName );
-		N::RegisterPropertyAccessor( pIsFrontProcess, typeNull, AccessAppFrontmost );
+		N::RegisterPropertyAccessor( N::AEPropertyID( pName           ), typeNull, AccessAppName );
+		N::RegisterPropertyAccessor( N::AEPropertyID( pIsFrontProcess ), typeNull, AccessAppFrontmost );
 		
 		// Name of document
-		N::RegisterPropertyAccessor( pName, typeDocument, AccessDocName );
+		N::RegisterPropertyAccessor( N::AEPropertyID( pName ), typeDocument, AccessDocName );
 	}
 	
 	App::~App()
