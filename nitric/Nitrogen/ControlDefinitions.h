@@ -178,13 +178,13 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlUserPaneFocusProcTag                   >: Nucleus::PodFlattener    < ControlUserPaneFocusUPP       > {};
    template<> struct ControlData_Traits< kControlUserPaneBackgroundProcTag              >: Nucleus::PodFlattener    < ControlUserPaneBackgroundUPP  > {};
 
-   template<> struct ControlData_Traits< kControlEditTextTextTag                        >: DescType_Traits        < ::typeChar                    > {};
+   template<> struct ControlData_Traits< kControlEditTextTextTag                        >: DescType_Traits          < typeChar                      > {};
    template<> struct ControlData_Traits< kControlEditTextTEHandleTag                    >: Nucleus::PodFlattener    < TEHandle                      > {};
    template<> struct ControlData_Traits< kControlEditTextSelectionTag                   >: Nucleus::PodFlattener    < ControlEditTextSelectionRec   > {};
-   template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: DescType_Traits        < ::typeChar                    > {};
+   template<> struct ControlData_Traits< kControlEditTextPasswordTag                    >: DescType_Traits          < typeChar                      > {};
    template<> struct ControlData_Traits< kControlEditTextKeyScriptBehaviorTag           >: Nucleus::PodFlattener    < ControlKeyScriptBehavior      > {};
    template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: BooleanFlattener                                           {};
-   template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: DescType_Traits        < ::typeChar                    > {};
+   template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: DescType_Traits          < typeChar                      > {};
    template<> struct ControlData_Traits< kControlEditTextValidationProcTag              >: Nucleus::PodFlattener    < ControlEditTextValidationUPP  > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePreUpdateProcTag         >: Nucleus::PodFlattener    < TSMTEPreUpdateUPP             > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePostUpdateProcTag        >: Nucleus::PodFlattener    < TSMTEPostUpdateUPP            > {};
