@@ -62,6 +62,9 @@ namespace Nitrogen {
 		// Apple hasn't documented any HIToolbar errors.
 	}
 	
+	static const EventParamType typeHIToolbarRef     = EventParamType( ::typeHIToolbarRef     );
+	static const EventParamType typeHIToolbarItemRef = EventParamType( ::typeHIToolbarItemRef );
+	
 /*==========================================================================*/
 /* HITOOLBAR                                                                */
 /*==========================================================================*/

@@ -148,6 +148,78 @@ namespace Nitrogen
 	static const AEKeyword keyHighLevelClass    = AEKeyword( ::keyHighLevelClass    );
 	static const AEKeyword keyHighLevelID       = AEKeyword( ::keyHighLevelID       );
 	
+	
+	static const DescType typeAEText             = DescType( ::typeAEText             );
+	static const DescType typeArc                = DescType( ::typeArc                );
+	static const DescType typeBest               = DescType( ::typeBest               );
+	static const DescType typeCell               = DescType( ::typeCell               );
+	static const DescType typeClassInfo          = DescType( ::typeClassInfo          );
+	static const DescType typeColorTable         = DescType( ::typeColorTable         );
+	static const DescType typeColumn             = DescType( ::typeColumn             );
+	static const DescType typeDashStyle          = DescType( ::typeDashStyle          );
+	static const DescType typeData               = DescType( ::typeData               );
+	static const DescType typeDrawingArea        = DescType( ::typeDrawingArea        );
+	static const DescType typeElemInfo           = DescType( ::typeElemInfo           );
+	static const DescType typeEnumeration        = DescType( ::typeEnumeration        );
+	static const DescType typeEPS                = DescType( ::typeEPS                );
+	static const DescType typeEventInfo          = DescType( ::typeEventInfo          );
+	static const DescType typeFinderWindow       = DescType( ::typeFinderWindow       );
+	static const DescType typeFixedPoint         = DescType( ::typeFixedPoint         );
+	static const DescType typeFixedRectangle     = DescType( ::typeFixedRectangle     );
+	static const DescType typeGraphicLine        = DescType( ::typeGraphicLine        );
+	static const DescType typeGraphicText        = DescType( ::typeGraphicText        );
+	static const DescType typeGroupedGraphic     = DescType( ::typeGroupedGraphic     );
+	static const DescType typeInsertionLoc       = DescType( ::typeInsertionLoc       );
+	static const DescType typeIntlText           = DescType( ::typeIntlText           );
+	static const DescType typeIntlWritingCode    = DescType( ::typeIntlWritingCode    );
+	static const DescType typeLongDateTime       = DescType( ::typeLongDateTime       );
+	static const DescType typeLongFixed          = DescType( ::typeLongFixed          );
+	static const DescType typeLongFixedPoint     = DescType( ::typeLongFixedPoint     );
+	static const DescType typeLongFixedRectangle = DescType( ::typeLongFixedRectangle );
+	static const DescType typeLongPoint          = DescType( ::typeLongPoint          );
+	static const DescType typeLongRectangle      = DescType( ::typeLongRectangle      );
+	static const DescType typeMachineLoc         = DescType( ::typeMachineLoc         );
+	static const DescType typeOval               = DescType( ::typeOval               );
+	static const DescType typeParamInfo          = DescType( ::typeParamInfo          );
+	static const DescType typePict               = DescType( ::typePict               );
+	static const DescType typePixelMap           = DescType( ::typePixelMap           );
+	static const DescType typePixMapMinus        = DescType( ::typePixMapMinus        );
+	static const DescType typePolygon            = DescType( ::typePolygon            );
+	static const DescType typePropInfo           = DescType( ::typePropInfo           );
+	static const DescType typePtr                = DescType( ::typePtr                );
+	static const DescType typeQDPoint            = DescType( ::typeQDPoint            );
+	static const DescType typeQDRegion           = DescType( ::typeQDRegion           );
+	static const DescType typeRectangle          = DescType( ::typeRectangle          );
+	static const DescType typeRGB16              = DescType( ::typeRGB16              );
+	static const DescType typeRGB96              = DescType( ::typeRGB96              );
+	static const DescType typeRGBColor           = DescType( ::typeRGBColor           );
+	static const DescType typeRotation           = DescType( ::typeRotation           );
+	static const DescType typeRoundedRectangle   = DescType( ::typeRoundedRectangle   );
+	static const DescType typeRow                = DescType( ::typeRow                );
+	static const DescType typeScrapStyles        = DescType( ::typeScrapStyles        );
+	static const DescType typeScript             = DescType( ::typeScript             );
+	static const DescType typeStyledText         = DescType( ::typeStyledText         );
+	static const DescType typeSuiteInfo          = DescType( ::typeSuiteInfo          );
+	static const DescType typeTable              = DescType( ::typeTable              );
+	static const DescType typeTextStyles         = DescType( ::typeTextStyles         );
+	static const DescType typeTIFF               = DescType( ::typeTIFF               );
+	static const DescType typeVersion            = DescType( ::typeVersion            );
+	
+	static const DescType typeTextRange           = DescType( ::typeTextRange           );
+	static const DescType typeComponentInstance   = DescType( ::typeComponentInstance   );
+	static const DescType typeOffsetArray         = DescType( ::typeOffsetArray         );
+	static const DescType typeTextRangeArray      = DescType( ::typeTextRangeArray      );
+	static const DescType typeLowLevelEventRecord = DescType( ::typeLowLevelEventRecord );
+	static const DescType typeEventRef            = DescType( ::typeEventRef            );
+	static const DescType typeText                = DescType( ::typeText                );
+	
+	static const DescType typeUnicodeText       = DescType( ::typeUnicodeText       );
+	static const DescType typeStyledUnicodeText = DescType( ::typeStyledUnicodeText );
+	static const DescType typeEncodedString     = DescType( ::typeEncodedString     );
+	static const DescType typeCString           = DescType( ::typeCString           );
+	static const DescType typePString           = DescType( ::typePString           );
+	
+	
 	template <> struct AEKeyword_Traits< keyAEObjectClass > : Type_AEKeyword_Traits< AEObjectClass > {};
 	
    template<> struct DescType_Traits< typeFixedPoint                >: Nucleus::PodFlattener< FixedPoint                > {};

@@ -60,13 +60,28 @@ namespace Nitrogen
 	static const AEKeyword keyAEAdjustMarksProc = AEKeyword( ::keyAEAdjustMarksProc );
 	static const AEKeyword keyAEGetErrDescProc  = AEKeyword( ::keyAEGetErrDescProc  );
 	
+	static const DescType typeObjectSpecifier     = DescType( ::typeObjectSpecifier     );
+	static const DescType typeObjectBeingExamined = DescType( ::typeObjectBeingExamined );
+	static const DescType typeCurrentContainer    = DescType( ::typeCurrentContainer    );
+	static const DescType typeToken               = DescType( ::typeToken               );
+	static const DescType typeRelativeDescriptor  = DescType( ::typeRelativeDescriptor  );
+	static const DescType typeAbsoluteOrdinal     = DescType( ::typeAbsoluteOrdinal     );
+	static const DescType typeIndexDescriptor     = DescType( ::typeIndexDescriptor     );
+	static const DescType typeRangeDescriptor     = DescType( ::typeRangeDescriptor     );
+	static const DescType typeLogicalDescriptor   = DescType( ::typeLogicalDescriptor   );
+	static const DescType typeCompDescriptor      = DescType( ::typeCompDescriptor      );
+	static const DescType typeOSLTokenList        = DescType( ::typeOSLTokenList        );
 	
-	typedef Nucleus::SelectorType< struct AEObjectClass_Tag, ::AEObjectClass > AEObjectClass;
-	typedef Nucleus::SelectorType< struct AEPropertyID_Tag,  ::AEPropertyID  > AEPropertyID;
+	static const DescType typeObjectClass = DescType( ::typeObjectClass );
+	static const DescType typePropertyID  = DescType( ::typePropertyID  );
 	
-	typedef Nucleus::SelectorType< struct AELogicalDescriptor_Tag, ::AELogicalDescriptor  > AELogicalDescriptor;
-	typedef Nucleus::SelectorType< struct AEAbsoluteOrdinal_Tag,   ::AEAbsoluteOrdinal    > AEAbsoluteOrdinal;
-	typedef Nucleus::SelectorType< struct AERelativeOrdinal_Tag,   ::AERelativeDescriptor > AERelativeDescriptor;
+	
+	typedef Nucleus::Selector< class AEObjectClass_Tag, ::AEObjectClass >::Type AEObjectClass;
+	typedef Nucleus::Selector< class AEPropertyID_Tag,  ::AEPropertyID  >::Type AEPropertyID;
+	
+	typedef Nucleus::Selector< class AELogicalDescriptor_Tag, ::AELogicalDescriptor  >::Type AELogicalDescriptor;
+	typedef Nucleus::Selector< class AEAbsoluteOrdinal_Tag,   ::AEAbsoluteOrdinal    >::Type AEAbsoluteOrdinal;
+	typedef Nucleus::Selector< class AERelativeOrdinal_Tag,   ::AERelativeDescriptor >::Type AERelativeDescriptor;
 	
 	template <> struct DescType_Traits< typeObjectClass > : Nucleus::ConvertingPODFlattener< AEObjectClass, ::AEObjectClass >   {};
 	template <> struct DescType_Traits< typePropertyID >  : Nucleus::ConvertingPODFlattener< AEPropertyID, ::AEPropertyID >   {};
@@ -75,11 +90,11 @@ namespace Nitrogen
 	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : Nucleus::ConvertingPODFlattener< AEAbsoluteOrdinal,    ::AEAbsoluteOrdinal    >  {};
 	template <> struct DescType_Traits< typeRelativeDescriptor > : Nucleus::ConvertingPODFlattener< AERelativeDescriptor, ::AERelativeDescriptor >  {};
 	
-	template <> struct DescType_Map_Traits< typeObjectClass        > { static const ::DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typePropertyID         > { static const ::DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typeLogicalDescriptor  > { static const ::DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typeAbsoluteOrdinal    > { static const ::DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typeRelativeDescriptor > { static const ::DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeObjectClass        > { static const DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typePropertyID         > { static const DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeLogicalDescriptor  > { static const DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeAbsoluteOrdinal    > { static const DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeRelativeDescriptor > { static const DescType result = typeType; };
 	
 	struct AEResolveCallbackFlags_Tag  {};
 	typedef Nucleus::FlagType< AEResolveCallbackFlags_Tag, short, kAEIDoMinimum > AEResolveCallbackFlags;
@@ -205,9 +220,9 @@ namespace Nitrogen
 		{
 			try
 			{
-				*value = handler( desiredClass,
+				*value = handler( AEObjectClass( desiredClass ),
 				                  *containerToken,
-				                  containerClass,
+				                  AEObjectClass( containerClass ),
 				                  keyForm,
 				                  *keyData,
 				                  accessorRefcon ).Release();
@@ -442,7 +457,7 @@ namespace Nitrogen
 	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
 	                                                          Nucleus::Owned< AEToken, AETokenDisposer > token );
 	
-	template < ::DescType type >
+	template < DescType type >
 	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
 	{
 		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc< type >( data ).Release() );

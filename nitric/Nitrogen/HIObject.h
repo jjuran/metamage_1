@@ -62,7 +62,9 @@ namespace Nucleus
 
 namespace Nitrogen
   {
-
+	
+	static const EventParamType typeHIObjectRef = EventParamType( ::typeHIObjectRef );
+	
 	template <> struct DescType_Traits< typeHIObjectRef >: Nucleus::PodFlattener< HIObjectRef > {};
 
 	using ::HIObjectClassRef;

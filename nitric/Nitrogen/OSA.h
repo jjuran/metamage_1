@@ -40,6 +40,8 @@ namespace Nitrogen
 			OSAErrorsRegistrationDependency();
 	};
 	
+	static const DescType typeOSAGenericStorage = DescType( ::typeOSAGenericStorage );
+	
 	struct OSAID_Tag  {};
 	typedef Nucleus::IDType< OSAID_Tag, ::OSAID, kOSANullScript > OSAID;
 	

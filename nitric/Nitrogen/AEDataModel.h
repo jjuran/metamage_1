@@ -169,8 +169,44 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ DescType ¥
 	
-	class DescType_Tag {};
-	typedef Nucleus::SelectorType< DescType_Tag, ::DescType > DescType;
+	typedef Nucleus::Selector< class DescType_Tag, ::DescType >::Type DescType;
+	
+	static const DescType typeBoolean                = DescType( ::typeBoolean                );
+	static const DescType typeChar                   = DescType( ::typeChar                   );
+	
+	static const DescType typeSInt16                 = DescType( ::typeSInt16                 );
+	static const DescType typeSInt32                 = DescType( ::typeSInt32                 );
+	static const DescType typeUInt32                 = DescType( ::typeUInt32                 );
+	static const DescType typeSInt64                 = DescType( ::typeSInt64                 );
+	static const DescType typeIEEE32BitFloatingPoint = DescType( ::typeIEEE32BitFloatingPoint );
+	static const DescType typeIEEE64BitFloatingPoint = DescType( ::typeIEEE64BitFloatingPoint );
+	static const DescType type128BitFloatingPoint    = DescType( ::type128BitFloatingPoint    );
+	static const DescType typeDecimalStruct          = DescType( ::typeDecimalStruct          );
+	
+	static const DescType typeAEList                 = DescType( ::typeAEList                 );
+	static const DescType typeAERecord               = DescType( ::typeAERecord               );
+	static const DescType typeAppleEvent             = DescType( ::typeAppleEvent             );
+	static const DescType typeEventRecord            = DescType( ::typeEventRecord            );
+	static const DescType typeTrue                   = DescType( ::typeTrue                   );
+	static const DescType typeFalse                  = DescType( ::typeFalse                  );
+	static const DescType typeAlias                  = DescType( ::typeAlias                  );
+	static const DescType typeEnumerated             = DescType( ::typeEnumerated             );
+	static const DescType typeType                   = DescType( ::typeType                   );
+	static const DescType typeAppParameters          = DescType( ::typeAppParameters          );
+	static const DescType typeProperty               = DescType( ::typeProperty               );
+	static const DescType typeFSS                    = DescType( ::typeFSS                    );
+	static const DescType typeFSRef                  = DescType( ::typeFSRef                  );
+	static const DescType typeFileURL                = DescType( ::typeFileURL                );
+	static const DescType typeKeyword                = DescType( ::typeKeyword                );
+	static const DescType typeSectionH               = DescType( ::typeSectionH               );
+	static const DescType typeWildCard               = DescType( ::typeWildCard               );
+	static const DescType typeApplSignature          = DescType( ::typeApplSignature          );
+	static const DescType typeQDRectangle            = DescType( ::typeQDRectangle            );
+	static const DescType typeFixed                  = DescType( ::typeFixed                  );
+	static const DescType typeProcessSerialNumber    = DescType( ::typeProcessSerialNumber    );
+	static const DescType typeApplicationURL         = DescType( ::typeApplicationURL         );
+	static const DescType typeNull                   = DescType( ::typeNull                   );
+	
 	
 	typedef Nucleus::Selector< class AEKeyword_Tag, ::AEKeyword >::Type AEKeyword;
 	
@@ -208,11 +244,11 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ DescType_Traits ¥
 	
-   template < ::DescType > struct DescType_Traits;
+   template < DescType > struct DescType_Traits;
    
-   template<> struct DescType_Traits< ::typeChar > : public Nucleus::StringFlattener< std::string > {};
+   template<> struct DescType_Traits< typeChar > : public Nucleus::StringFlattener< std::string > {};
 
-   template<> struct DescType_Traits< ::typeFixed > : public FixedFlattener {};
+   template<> struct DescType_Traits< typeFixed > : public FixedFlattener {};
 
    class AEEnumeratedTag {};
    typedef Nucleus::SelectorType< AEEnumeratedTag, UInt32 > AEEnumerated;
@@ -254,19 +290,19 @@ namespace Nitrogen
    template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                               {};
    
 	
-	template < ::DescType type >
+	template < DescType type >
 	struct DescType_Map_Traits
 	{
-		static const ::DescType result = type;
+		static const DescType result = type;
 	};
 	
 	template < class Integer > struct Integer_DescType_Traits;
 	
-	template <> struct Integer_DescType_Traits< SInt16 >  { static const ::DescType descType = typeSInt16; };
-	template <> struct Integer_DescType_Traits< SInt32 >  { static const ::DescType descType = typeSInt32; };
-	template <> struct Integer_DescType_Traits< UInt32 >  { static const ::DescType descType = typeUInt32; };
+	template <> struct Integer_DescType_Traits< SInt16 >  { static const DescType descType = typeSInt16; };
+	template <> struct Integer_DescType_Traits< SInt32 >  { static const DescType descType = typeSInt32; };
+	template <> struct Integer_DescType_Traits< UInt32 >  { static const DescType descType = typeUInt32; };
 	
-	struct Type_DescType_Traits  { static const ::DescType descType = typeType; };
+	struct Type_DescType_Traits  { static const DescType descType = typeType; };
 	
 	template < class POD, class Integer >
 	struct Integer_AEKeyword_Traits : Nucleus::ConvertingPODFlattener< POD, Integer >,
@@ -541,7 +577,7 @@ namespace Nitrogen
 		{
 			try
 			{
-				*result = handler( *fromDesc, toType, refCon ).Release();
+				*result = handler( *fromDesc, DescType( toType ), refCon ).Release();
 			}
 			catch ( OSStatus err )
 			{
@@ -564,10 +600,10 @@ namespace Nitrogen
 		{
 			try
 			{
-				*result = handler( typeCode,
+				*result = handler( DescType( typeCode ),
 				                   dataPtr,
 				                   dataSize,
-				                   toType,
+				                   DescType( toType ),
 				                   refCon ).Release();
 			}
 			catch ( OSStatus err )
@@ -1029,7 +1065,7 @@ namespace Nitrogen
 			}
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	Nucleus::Owned< AEDesc > AECoercePtr( typename DescType_Traits< type >::Parameter  data,
 	                                      DescType                                     toType )
 	{
@@ -1059,7 +1095,7 @@ namespace Nitrogen
 			}
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	Nucleus::Owned< AEDesc > AECreateDesc( typename DescType_Traits< type >::Parameter data )
 	{
 		Nucleus::Owned< AEDesc > result;
@@ -1093,7 +1129,7 @@ namespace Nitrogen
 			}
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	void AEPutPtr( AEDescList&                                  list,
 	               long                                         index,
 	               typename DescType_Traits< type >::Parameter  data )
@@ -1104,7 +1140,7 @@ namespace Nitrogen
 		                               DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < ::DescType type, class Disposer >
+	template < DescType type, class Disposer >
 	void AEPutPtr( Nucleus::Owned< AEDescList, Disposer >&               list,
 	               long                                                  index,
 	               typename DescType_Traits< type >::Parameter           data )
@@ -1116,7 +1152,7 @@ namespace Nitrogen
 	}
 	
 	
-	template < ::DescType type >
+	template < DescType type >
 	class AEGetNthPtr_Getter
 	{
 		private:
@@ -1148,7 +1184,7 @@ namespace Nitrogen
 			}
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	typename DescType_Traits< type >::Result
 	AEGetNthPtr( const AEDescList&  listDesc,
 	             long               index )
@@ -1178,8 +1214,7 @@ namespace Nitrogen
 			}
 	};
 	
-	/*
-	template < ::DescType type >
+	template < DescType type >
 	void AEPutKeyPtr( AERecord&                                    record,
 	                  AEKeyword                                    keyword,
 	                  typename DescType_Traits< type >::Parameter  data )
@@ -1190,7 +1225,7 @@ namespace Nitrogen
 		                                                   DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < ::DescType type, class Disposer >
+	template < DescType type, class Disposer >
 	void AEPutKeyPtr( Nucleus::Owned< AERecord, Disposer >&                 record,
 	                  AEKeyword                                             keyword,
 	                  typename DescType_Traits< type >::Parameter           data )
@@ -1200,7 +1235,6 @@ namespace Nitrogen
 		                                                   keyword,
 		                                                   DescType( DescType_Map_Traits< type >::result ) ) );
 	}
-	*/
 	
 	template < AEKeyword key >
 	void AEPutKeyPtr( AERecord&                                    record,
@@ -1220,7 +1254,7 @@ namespace Nitrogen
 	}
 	
 	
-	template < ::DescType type >
+	template < DescType type >
 	class AEGetKeyPtr_Getter
 	{
 		private:
@@ -1252,15 +1286,13 @@ namespace Nitrogen
 			}
 	};
 	
-	/*
-	template < ::DescType type >
+	template < DescType type >
 	typename DescType_Traits< type >::Result
 	AEGetKeyPtr( const AERecord&  record,
 	             AEKeyword        keyword )
 	{
 		return DescType_Traits< type >().Get( AEGetKeyPtr_Getter< DescType_Map_Traits< type >::result >( record, keyword ) );
 	}
-	*/
 	
 	template < AEKeyword key >
 	typename AEKeyword_Traits< key >::Result
@@ -1291,8 +1323,7 @@ namespace Nitrogen
 			}
 	};
 	
-	/*
-	template < ::DescType type >
+	template < DescType type >
 	void AEPutParamPtr( AppleEvent&                                  appleEvent,
 	                    AEKeyword                                    keyword,
 	                    typename DescType_Traits< type >::Parameter  data )
@@ -1303,7 +1334,7 @@ namespace Nitrogen
 		                                                     DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < ::DescType type, class Disposer >
+	template < DescType type, class Disposer >
 	void AEPutParamPtr( Nucleus::Owned< AppleEvent, Disposer >&               appleEvent,
 	                    AEKeyword                                             keyword,
 	                    typename DescType_Traits< type >::Parameter           data )
@@ -1313,7 +1344,6 @@ namespace Nitrogen
 		                                                     keyword,
 		                                                     DescType( DescType_Map_Traits< type >::result ) ) );
 	}
-	*/
 	
 	template < AEKeyword key >
 	void AEPutParamPtr( AppleEvent&                                  appleEvent,
@@ -1333,7 +1363,7 @@ namespace Nitrogen
 	}
 	
 	
-	template < ::DescType type >
+	template < DescType type >
 	class AEGetParamPtr_Getter
 	{
 		private:
@@ -1365,15 +1395,13 @@ namespace Nitrogen
 			}
 	};
 	
-	/*
-	template < ::DescType type >
+	template < DescType type >
 	typename DescType_Traits< type >::Result
 	AEGetParamPtr( const AppleEvent&  appleEvent,
 	               AEKeyword          keyword )
 	{
 		return DescType_Traits< type >().Get( AEGetParamPtr_Getter< DescType_Map_Traits< type >::result >( appleEvent, keyword ) );
 	}
-	*/
 	
 	template < AEKeyword key >
 	typename AEKeyword_Traits< key >::Result
@@ -1404,8 +1432,7 @@ namespace Nitrogen
 			}
 	};
 	
-	/*
-	template < ::DescType type >
+	template < DescType type >
 	void AEPutAttributePtr( AppleEvent&                                  appleEvent,
 	                        AEKeyword                                    keyword,
 	                        typename DescType_Traits< type >::Parameter  data )
@@ -1416,7 +1443,7 @@ namespace Nitrogen
 		                               DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < ::DescType type, class Disposer >
+	template < DescType type, class Disposer >
 	void AEPutAttributePtr( Nucleus::Owned< AppleEvent, Disposer >&               appleEvent,
 	                        AEKeyword                                             keyword,
 	                        typename DescType_Traits< type >::Parameter           data )
@@ -1426,7 +1453,6 @@ namespace Nitrogen
 		                                                         keyword,
 		                                                         DescType( DescType_Map_Traits< type >::result ) ) );
 	}
-	*/
 	
 	template < AEKeyword key >
 	void AEPutAttributePtr( AppleEvent&                                  appleEvent,
@@ -1446,7 +1472,7 @@ namespace Nitrogen
 	}
 	
 	
-	template < ::DescType type >
+	template < DescType type >
 	class AEGetAttributePtr_Getter
 	{
 		private:
@@ -1478,15 +1504,13 @@ namespace Nitrogen
 			}
 	};
 	
-	/*
-	template < ::DescType type >
+	template < DescType type >
 	typename DescType_Traits< type >::Result
 	AEGetAttributePtr( const AppleEvent&  appleEvent,
 	                   AEKeyword          keyword )
 	{
 		return DescType_Traits< type >().Get( AEGetAttributePtr_Getter< DescType_Map_Traits< type >::result >( appleEvent, keyword ) );
 	}
-	*/
 	
 	template < AEKeyword key >
 	typename AEKeyword_Traits< key >::Result
@@ -1512,7 +1536,7 @@ namespace Nitrogen
 			}
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	typename DescType_Traits< type >::Result AEGetDescData( const AEDesc&  desc,
 	                                                        DescType       requiredType = DescType_Map_Traits< type >::result )
 	{
@@ -1521,7 +1545,7 @@ namespace Nitrogen
 		return DescType_Traits< type >().Get( AEGetDescData_Getter( desc ) );
 	}
 	
-	template < ::DescType type >
+	template < DescType type >
 	typename DescType_Traits< type >::Result AECoerceDescData( const AEDesc& desc )
 	{
 		return AEGetDescData< type >( AECoerceDesc( desc, DescType_Map_Traits< type >::result ) );
@@ -1546,7 +1570,7 @@ namespace Nitrogen
 			}
 	};
 	
-	template < ::DescType type >
+	template < DescType type >
 	void AEReplaceDescData( typename DescType_Traits< type >::Parameter  data,
 	                        AEDesc&                                      result )
 	{
@@ -1555,7 +1579,7 @@ namespace Nitrogen
 		                                                         result ) );
 	}
 	
-	template < ::DescType type, class Disposer >
+	template < DescType type, class Disposer >
 	void AEReplaceDescData( typename DescType_Traits< type >::Parameter           data,
 	                        Nucleus::Owned< AEDesc, Disposer >&                   result )
 	{
