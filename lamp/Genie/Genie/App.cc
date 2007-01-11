@@ -83,13 +83,13 @@ namespace Genie
 	{
 		NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
 		                                                        N::keyDirectObject,
-		                                                        typeAEList );
+		                                                        N::typeAEList );
 		
 		int docCount = N::AECountItems( docList );
 		
 		for ( int index = 1; index <= docCount; ++index )
 		{
-			FSSpec fss = N::AEGetNthPtr< typeFSS >( docList, index );
+			FSSpec fss = N::AEGetNthPtr< N::typeFSS >( docList, index );
 			
 			OpenDocument( fss );
 		}

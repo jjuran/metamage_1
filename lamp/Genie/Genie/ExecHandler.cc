@@ -57,8 +57,8 @@ namespace Genie
 	{
 		try
 		{
-			return NN::Convert< N::FSDirSpec >( N::AEGetParamPtr< typeFSS >( appleEvent,
-			                                                                 keyCurrentWorkingDir ) );
+			return NN::Convert< N::FSDirSpec >( N::AEGetParamPtr< N::typeFSS >( appleEvent,
+			                                                                    keyCurrentWorkingDir ) );
 		}
 		catch ( N::ErrAEDescNotFound )
 		{
@@ -76,13 +76,13 @@ namespace Genie
 		
 		if ( N::AESizeOfParam( appleEvent, keyDirectObject ).typeCode != typeAEList )
 		{
-			std::string str = N::AEGetParamPtr< typeChar >( appleEvent, keyDirectObject );
+			std::string str = N::AEGetParamPtr< N::typeChar >( appleEvent, N::keyDirectObject );
 			
 			returnValue = ExecString(str, cwd);
 		} 
 		else
 		{
-			NN::Owned< N::AEDescList > list = N::AEGetParamDesc( appleEvent, keyDirectObject, typeWildCard );
+			NN::Owned< N::AEDescList > list = N::AEGetParamDesc( appleEvent, N::keyDirectObject, N::typeWildCard );
 			
 			std::vector< std::string > argVec;
 			
@@ -91,7 +91,7 @@ namespace Genie
 			// Load the arg vector
 			for ( int index = 1;  index <= argCount;  index++ )
 			{
-				argVec.push_back( N::AEGetNthPtr< typeChar >( list, index ) );
+				argVec.push_back( N::AEGetNthPtr< N::typeChar >( list, index ) );
 			}
 			
 			// Attach our flow director to the output console to redirect output.
