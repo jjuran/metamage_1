@@ -154,7 +154,7 @@ namespace RunToolServer
 	
 	static long GetResult( const AppleEvent& reply )
 	{
-		long stat = N::AEGetParamPtr< typeSInt32 >( reply, 'stat' );
+		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, N::AEKeyword( 'stat' ) );
 		
 		if ( stat != 0 )
 		{
@@ -169,9 +169,9 @@ namespace RunToolServer
 	{
 		return N::AECreateAppleEvent( kAEMiscStandards,
 		                              kAEDoScript,
-		                              N::AECreateDesc< typeProcessSerialNumber >( NX::LaunchApplication( sigToolServer ) ) )
-		       << keyDirectObject
-		          + N::AECreateDesc< typeChar >( script );
+		                              N::AECreateDesc< N::typeProcessSerialNumber >( NX::LaunchApplication( sigToolServer ) ) )
+		       << N::keyDirectObject
+		          + N::AECreateDesc< N::typeChar >( script );
 	}
 	
 	/*

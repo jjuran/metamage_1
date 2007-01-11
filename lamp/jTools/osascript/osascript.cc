@@ -34,7 +34,7 @@ namespace Div = Divergence;
 namespace O = Orion;
 
 
-template < ::DescType desiredType >
+template < N::DescType desiredType >
 typename N::DescType_Traits< desiredType >::Result
 GetScriptErrorData( N::ComponentInstance scriptingComponent, N::AEKeyword keyword )
 {
@@ -45,8 +45,8 @@ GetScriptErrorData( N::ComponentInstance scriptingComponent, N::AEKeyword keywor
 
 static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* step )
 {
-	SInt16       errorNumber  = GetScriptErrorData< typeSInt16 >( comp, kOSAErrorNumber  );
-	std::string  errorMessage = GetScriptErrorData< typeChar   >( comp, kOSAErrorMessage );
+	SInt16       errorNumber  = GetScriptErrorData< N::typeSInt16 >( comp, N::AEKeyword( kOSAErrorNumber  ) );
+	std::string  errorMessage = GetScriptErrorData< N::typeChar   >( comp, N::AEKeyword( kOSAErrorMessage ) );
 	
 	if ( errorNumber < 0 )
 	{
@@ -105,7 +105,7 @@ static NN::Owned< N::OSASpec > MakeCWDContext()
 	
 	return
 	N::OSACompile( OpenGenericScriptingComponent(),
-	               N::AECreateDesc< typeChar >( cwdProperty ),
+	               N::AECreateDesc< N::typeChar >( cwdProperty ),
 	               N::OSAModeFlags( kOSAModeCompileIntoContext ) );
 }
 
@@ -138,7 +138,7 @@ static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 	                                                           fsRdPerm ) );
 	
 	return N::OSALoad( OpenGenericScriptingComponent(),
-	                   N::AECreateDesc( typeOSAGenericStorage,
+	                   N::AECreateDesc( N::typeOSAGenericStorage,
 	                                    N::Get1Resource( kOSAScriptResourceType,
 	                                                     N::ResID( 128 ) ) ) );
 }
@@ -154,7 +154,7 @@ static NN::Owned< N::OSASpec > LoadScriptFile( const FSSpec& scriptFile )
 			break;
 		
 		case 'TEXT':
-			return CompileSource( N::AECreateDesc< typeChar >( ReadFileData( scriptFile ) ) );
+			return CompileSource( N::AECreateDesc< N::typeChar >( ReadFileData( scriptFile ) ) );
 			break;
 	}
 	
@@ -203,7 +203,7 @@ int O::Main( int argc, const char *const argv[] )
 	if ( !inlineScriptPieces.empty() )
 	{
 		// FIXME:  accumulate -e
-		script = CompileSource( N::AECreateDesc< typeChar >( inlineScriptPieces[ 0 ] ) );
+		script = CompileSource( N::AECreateDesc< N::typeChar >( inlineScriptPieces[ 0 ] ) );
 	}
 	else
 	{
@@ -224,10 +224,10 @@ int O::Main( int argc, const char *const argv[] )
 		
 		for ( const_iterator it = params_begin;  it != params_end;  ++it )
 		{
-			N::AEPutPtr< typeChar >( list, 0, *it );
+			N::AEPutPtr< N::typeChar >( list, 0, *it );
 		}
 		
-		N::AEPutParamDesc( runEvent, keyDirectObject, list );
+		N::AEPutParamDesc( runEvent, N::keyDirectObject, list );
 	}
 	
 	try
@@ -241,9 +241,9 @@ int O::Main( int argc, const char *const argv[] )
 			
 			N::OSAModeFlags displayFlags( humanReadable ? kOSAModeDisplayForHumans : kOSAModeNull );
 			
-			std::string output = N::AEGetDescData< typeChar >( N::OSADisplay( result,
-			                                                                  typeChar,
-			                                                                  displayFlags ) );
+			std::string output = N::AEGetDescData< N::typeChar >( N::OSADisplay( result,
+			                                                                     N::typeChar,
+			                                                                     displayFlags ) );
 			
 			if ( *output.rbegin() != '\n' )
 			{

@@ -374,9 +374,9 @@ namespace ALine
 			{
 				N::AESend( N::AECreateAppleEvent( kCoreEventClass, 
 				                                  kAEOpenDocuments, 
-				                                  N::AECreateDesc< typeProcessSerialNumber >( NX::LaunchApplication( EditorSignature() ) ) ) 
-				           << keyDirectObject + ( N::AECreateList< false >() 
-				                                  << N::AECreateDesc< typeAlias >( N::NewAlias( diagnostics ) ) ), 
+				                                  N::AECreateDesc< N::typeProcessSerialNumber >( NX::LaunchApplication( EditorSignature() ) ) ) 
+				           << N::keyDirectObject + ( N::AECreateList< false >() 
+				                                     << N::AECreateDesc< N::typeAlias >( N::NewAlias( diagnostics ) ) ), 
 				           kAENoReply | kAECanInteract );
 				
 			}

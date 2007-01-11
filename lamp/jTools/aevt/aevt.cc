@@ -109,17 +109,17 @@ namespace jTools
 	{
 		if ( sig != kUnknownType )
 		{
-			return N::AECreateDesc< typeApplSignature >( sig );
+			return N::AECreateDesc< N::typeApplSignature >( sig );
 		}
 		else
 		{
 		#if CALL_NOT_IN_CARBON
 			
-			return N::AECreateDesc< typeTargetID >( LocateTarget( app, machine, host ) );
+			return N::AECreateDesc< N::typeTargetID >( LocateTarget( app, machine, host ) );
 			
 		#else
 			
-			return N::AECreateDesc< typeApplicationURL >( url );
+			return N::AECreateDesc< N::typeApplicationURL >( url );
 			
 		#endif
 		}
@@ -194,8 +194,9 @@ namespace jTools
 		{
 			argBuild = params[2];
 		}
+		
 		argEventClass = params[0];
-		argEventID = params[1];
+		argEventID    = params[1];
 		
 		if ( argEventClass.size() != 4  ||  argEventID.size() != 4 )
 		{

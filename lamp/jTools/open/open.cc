@@ -63,7 +63,7 @@ static FSSpec ResolvePathname( const std::string& pathname, bool macPathname )
 
 static NN::Owned< N::AEDesc > CoerceFSSpecToAliasDesc( const FSSpec& item )
 {
-	return N::AECoercePtr< typeFSS >( item, N::DescType( typeAlias ) );
+	return N::AECoercePtr< N::typeFSS >( item, N::typeAlias );
 }
 
 static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >&  items,
@@ -80,8 +80,8 @@ static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >
 	
 	return N::AECreateAppleEvent( kCoreEventClass,
 	                              kAEOpenDocuments,
-	                              N::AECreateDesc< typeProcessSerialNumber >( psn ) )
-	       << keyDirectObject + documents;
+	                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) )
+	       << N::keyDirectObject + documents;
 }
 
 static void OpenItemsWithRunningApp( const std::vector< FSSpec >& items, const ProcessSerialNumber& psn )
@@ -93,8 +93,8 @@ static void OpenItemsWithRunningApp( const std::vector< FSSpec >& items, const P
 static void LaunchApplicationWithDocsToOpen( const FSSpec& app, const std::vector< FSSpec >& items )
 {
 	std::auto_ptr< AppParameters > appParameters
-		= N::AEGetDescData< typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
-	                                                              typeAppParameters ) );
+		= N::AEGetDescData< N::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
+	                                                                 N::typeAppParameters ) );
 	
 	N::LaunchApplication( app, LaunchFlags(), appParameters.get() );
 }
