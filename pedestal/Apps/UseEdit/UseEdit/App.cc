@@ -69,7 +69,7 @@ namespace UseEdit
 			switch ( N::DescType( token.Get().descriptorType ) )
 			{
 				case typeDocument:
-					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< typePtr >( token ) ) )
+					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< typePtr >( token, typeDocument ) ) )
 					{
 						if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
 						{
