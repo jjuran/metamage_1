@@ -162,8 +162,8 @@ namespace Genie
 		try
 		{
 			(void)N::AESend( *appleEvent,
-			                 kAEQueueReply | kAECanInteract,
-			                 kAENormalPriority );
+			                 N::kAEQueueReply | N::kAECanInteract,
+			                 N::kAENormalPriority );
 			
 			// Now that we've sent the event, retrieve the return ID
 			N::AEReturnID returnID = N::AEGetAttributePtr< N::keyReturnIDAttr >( *appleEvent );

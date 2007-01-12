@@ -1,11 +1,10 @@
 /*	================
  *	PipeOrganSuite.h
  *	================
- *	
- *	No implementation necessary.
  */
 
-#pragma once
+#ifndef GENIE_PIPEORGANSUITE_H
+#define GENIE_PIPEORGANSUITE_H
 
 #include "Nitrogen/AEDataModel.h"
 
@@ -15,11 +14,9 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	
-	enum { kAEPipeOrganSuite = '|gan' };
-	enum
-	{
-		kAEExec = 'Exec'
-	};
+	static const N::AEEventClass kAEPipeOrganSuite = N::AEEventClass( '|gan' );
+	
+	static const N::AEEventID kAEExec = N::AEEventID( 'Exec' );
 	
 	static const N::AEKeyword keyCurrentWorkingDir = N::AEKeyword( 'CWD ' );
 	static const N::AEKeyword keyRedirectedInput   = N::AEKeyword( '0<  ' );
@@ -30,4 +27,6 @@ namespace Genie
 	static const N::AEKeyword keyPOSIXEnvironment  = N::AEKeyword( 'Envi' );
 	
 }
+
+#endif
 

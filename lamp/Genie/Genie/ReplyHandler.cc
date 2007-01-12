@@ -37,8 +37,8 @@ namespace Genie
 		NN::Owned< N::AEEventHandler >
 		(
 			N::AEInstallEventHandler< GenieHandlerReply*,
-			                          AppleEventHandler >( kCoreEventClass,
-			                                               kAEAnswer,
+			                          AppleEventHandler >( N::kCoreEventClass,
+			                                               N::kAEAnswer,
 			                                               this )
 		)
 	{

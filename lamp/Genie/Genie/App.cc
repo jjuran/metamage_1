@@ -63,8 +63,8 @@ namespace Genie
 		newHandler  ( *this ),
 		myOpenDocsEventHandler
 		(
-			N::AEInstallEventHandler< App*, AppleEventHandler >( kCoreEventClass,
-			                                                     kAEOpenDocuments,
+			N::AEInstallEventHandler< App*, AppleEventHandler >( N::kCoreEventClass,
+			                                                     N::kAEOpenDocuments,
 			                                                     this )
 		)
 	{
