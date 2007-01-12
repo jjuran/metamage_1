@@ -12,11 +12,9 @@
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
-#endif
 
-namespace Nitrogen {
+namespace Nitrogen
+{
 	
 	struct AEIdleUPP_Details : Basic_UPP_Details< ::AEIdleUPP,
 	                                              ::AEIdleProcPtr,
