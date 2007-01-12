@@ -20,30 +20,28 @@
 namespace CompileDriver
 {
 	
-	using std::string;
-	using std::vector;
 	using BitsAndBytes::eos;
 	
 	
-	static std::pair< string, string > ParseKeyValue( const string& line )
+	static std::pair< std::string, std::string > ParseKeyValue( const std::string& line )
 	{
 		//if (line.size() == 0)  return;  // Redundant
 		const char* ws = " \t";
-		string::size_type posWhitespace = line.find_first_of( ws );
+		std::size_t posWhitespace = line.find_first_of( ws );
 		// FIXME:  This will break when leading whitespace precedes key
-		string key = line.substr( 0, posWhitespace );
-		string value;
+		std::string key = line.substr( 0, posWhitespace );
+		std::string value;
 		
 		if ( !eos( posWhitespace ) )
 		{
 			// Whitespace follows the key
-			string::size_type posValue = line.find_first_not_of( ws, posWhitespace );
+			std::size_t posValue = line.find_first_not_of( ws, posWhitespace );
 			
 			if ( !eos( posValue ) )
 			{
 				// A value is present
-				string::size_type posLastPrintableChar = line.find_last_not_of( ws );
-				string::size_type posEndOfValue = posLastPrintableChar + 1;
+				std::size_t posLastPrintableChar = line.find_last_not_of( ws );
+				std::size_t posEndOfValue = posLastPrintableChar + 1;
 				value = line.substr( posValue, posEndOfValue );
 			}
 		}
@@ -51,10 +49,10 @@ namespace CompileDriver
 		return std::make_pair( key, value );
 	}
 	
-	static void Tokenize( const string& line,
+	static void Tokenize( const std::string& line,
 	                      std::back_insert_iterator< std::vector< std::string > > tokens )
 	{
-		typedef string::size_type size_type;
+		typedef std::size_t size_type;
 		
 		const char* ws = " \t";
 		size_type iLastPrintableChar = line.find_last_not_of( ws );
@@ -89,7 +87,7 @@ namespace CompileDriver
 		while ( input.Ready() )
 		{
 			// Read a line
-			string text = input.Read();
+			std::string text = input.Read();
 			++lineCount;
 			// Skip blank lines
 			if ( text.size() == 0 )  continue;
@@ -102,12 +100,12 @@ namespace CompileDriver
 			
 			// Parse a line into key and value
 			//G::ref( line.key, value ) = ParseKeyValue( text );
-			std::pair< string, string > kv = ParseKeyValue( text );
+			std::pair< std::string, std::string > kv = ParseKeyValue( text );
 			line.key          = kv.first;
 			std::string value = kv.second;
 			
 			// Check for double-quotes
-			string::size_type size = value.size();
+			std::size_t size = value.size();
 			
 			if ( value[ 0 ] == '"'  &&  value[ size - 1 ] == '"' )
 			{
