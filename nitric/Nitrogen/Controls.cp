@@ -113,7 +113,7 @@ namespace Nitrogen
 	
    void SetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
-                        ResType           inTagName,
+                        ControlDataTag    inTagName,
                         Size              inSize,
                         const void *      inData )
      {
@@ -126,7 +126,7 @@ namespace Nitrogen
 
    Size GetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
-                        ResType           inTagName,
+                        ControlDataTag    inTagName,
                         Size              inBufferSize,
                         void *            inBuffer )
      {
@@ -142,7 +142,7 @@ namespace Nitrogen
 
    Size GetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
-                        ResType           inTagName )
+                        ControlDataTag    inTagName )
      {
       return GetControlData( inControl, inPart, inTagName, 0, 0 );
      }
