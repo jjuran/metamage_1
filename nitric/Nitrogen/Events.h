@@ -18,8 +18,8 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
 
 namespace Nitrogen
@@ -27,19 +27,41 @@ namespace Nitrogen
 	
 #ifdef JOSHUA_JURAN_EXPERIMENTAL
 	
-	class EventKind_Tag {};
-	typedef Nucleus::SelectorType< EventKind_Tag, ::EventKind, nullEvent > EventKind;
+	typedef Nucleus::Selector< class EventKind_Tag, ::EventKind >::Type EventKind;
+	
+	static const EventKind nullEvent       = EventKind( ::nullEvent       );
+	static const EventKind mouseDown       = EventKind( ::mouseDown       );
+	static const EventKind mouseUp         = EventKind( ::mouseUp         );
+	static const EventKind keyDown         = EventKind( ::keyDown         );
+	static const EventKind keyUp           = EventKind( ::keyUp           );
+	static const EventKind autoKey         = EventKind( ::autoKey         );
+	static const EventKind updateEvt       = EventKind( ::updateEvt       );
+	static const EventKind diskEvt         = EventKind( ::diskEvt         );
+	static const EventKind activateEvt     = EventKind( ::activateEvt     );
+	static const EventKind osEvt           = EventKind( ::osEvt           );
+	static const EventKind kHighLevelEvent = EventKind( ::kHighLevelEvent );
+	
 	
 #endif
 	
-	class EventMask_Tag {};
-	typedef Nucleus::FlagType< EventMask_Tag, ::EventMask > EventMask;
+	typedef Nucleus::Flag< class EventMask_Tag, ::EventMask >::Type EventMask;
 	
-	class EventModifiers_Tag {};
-	typedef Nucleus::FlagType< EventModifiers_Tag, ::EventModifiers > EventModifiers;
+	static const EventMask mDownMask          = EventMask( ::mDownMask          );
+	static const EventMask mUpMask            = EventMask( ::mUpMask            );
+	static const EventMask keyDownMask        = EventMask( ::keyDownMask        );
+	static const EventMask keyUpMask          = EventMask( ::keyUpMask          );
+	static const EventMask autoKeyMask        = EventMask( ::autoKeyMask        );
+	static const EventMask updateMask         = EventMask( ::updateMask         );
+	static const EventMask diskMask           = EventMask( ::diskMask           );
+	static const EventMask activMask          = EventMask( ::activMask          );
+	static const EventMask highLevelEventMask = EventMask( ::highLevelEventMask );
+	static const EventMask osMask             = EventMask( ::osMask             );
+	static const EventMask everyEvent         = EventMask( ::everyEvent         );
 	
-	class KeyModifiers_Tag {};
-	typedef Nucleus::FlagType< KeyModifiers_Tag, ::UInt32 > KeyModifiers;
+	
+	typedef Nucleus::Flag< class EventModifiers_Tag, ::EventModifiers >::Type EventModifiers;
+	
+	typedef Nucleus::Flag< class KeyModifiers_Tag, UInt32 >::Type KeyModifiers;
 	
 	// ...
 	
@@ -63,7 +85,7 @@ namespace Nitrogen
 	
 	inline bool IsNullEvent( const EventRecord& event )
 	{
-		return event.what == static_cast < ::EventKind > ( nullEvent );
+		return event.what == static_cast< ::EventKind >( nullEvent );
 	}
 	
 	EventRecord GetNextEvent( EventMask eventMask );
