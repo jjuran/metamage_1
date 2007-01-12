@@ -40,6 +40,8 @@ namespace Nitrogen
 			OSAErrorsRegistrationDependency();
 	};
 	
+	static const ResType kOSAScriptResourceType = ResType( ::kOSAScriptResourceType );
+	
 	static const DescType typeOSAGenericStorage = DescType( ::typeOSAGenericStorage );
 	
 	struct OSAID_Tag  {};
