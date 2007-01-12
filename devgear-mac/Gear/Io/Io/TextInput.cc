@@ -9,43 +9,47 @@
 namespace Io
 {
 	
-	void TextInputBuffer::Receive( const char* data, std::size_t bytes )
+	void TextInputBuffer::WritePartialData()
 	{
-		const char* p = data;
-		const char* q = p;
+		itsStrings.Write( itsPartialData );
+		itsPartialData = "";
+	}
+	
+	void TextInputBuffer::ReceiveBlock( const char* data, std::size_t bytes )
+	{
+		const char* p   = data;
+		const char* q   = data;
 		const char* end = data + bytes;
 		
 		while ( q < end )
 		{
-			while ( (q < end)  &&  (*q != '\r')  &&  (*q != '\n') )  q++;
+			while ( (q < end)  &&  (*q != '\r')  &&  (*q != '\n') )  ++q;
 			
-			myPartialData += std::string( p, q - p );
+			itsPartialData += std::string( p, q - p );
 			
 			if ( q < end )
 			{
 				// Avoid generating an extra blank line for LF after CR
-				bool isCRLF = (p == q) && (myLastNewlineChar == '\r') && (*q == '\n');
+				bool isCRLF = (p == q) && (itsLastNewlineChar == '\r') && (*q == '\n');
 				
 				if ( !isCRLF )
 				{
-					myStrings.Write( myPartialData );
-					myPartialData = "";
+					WritePartialData();
 				}
 				
-				myLastNewlineChar = *q;
+				itsLastNewlineChar = *q;
 				p = ++q;
 			}
 		}
 	}
 	
-	bool TextInputBuffer::WritePartialData()
+	bool TextInputBuffer::ReceiveEndOfInput()
 	{
-		ended = true;
+		itHasReachedEndOfInput = true;
 		
-		if ( !myPartialData.empty() )
+		if ( !itsPartialData.empty() )
 		{
-			myStrings.Write( myPartialData );
-			myPartialData = "";
+			WritePartialData();
 			
 			return true;
 		}
@@ -55,22 +59,22 @@ namespace Io
 	
 	bool TextInputAdapter::GetMore()
 	{
-		enum { bufSize = 512 };  // FIXME
+		enum { blockSize = 4096 };
 		
-		char data[ bufSize ];
+		char data[ blockSize ];
 		
 		try
 		{
-			int bytes = input.Read( data, bufSize );  // result is always positive
+			int bytes = input.Read( data, blockSize );  // result is always positive
 			
-			buffer.Receive( data, bytes );
+			buffer.ReceiveBlock( data, bytes );
 			
 			return true;
 		}
-		catch ( NoDataPending ) {}
-		catch ( EndOfInput    )
+		catch ( const NoDataPending& ) {}
+		catch ( const EndOfInput&    )
 		{
-			return buffer.WritePartialData();
+			return buffer.ReceiveEndOfInput();
 		}
 		
 		return false;

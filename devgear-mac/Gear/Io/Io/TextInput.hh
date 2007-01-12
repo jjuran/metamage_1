@@ -49,30 +49,32 @@ namespace Io
 	class TextInputBuffer
 	{
 		private:
-			StringPipe myStrings;       // A queue for storing lines of text
-			std::string myPartialData;  // Storage for the current line of text
-			char myLastNewlineChar;     // Used for automatic newline recognition
-			bool ended;                 // Indicates end-of-file.
+			StringPipe   itsStrings;              // A queue for storing lines of text
+			std::string  itsPartialData;          // Storage for the current line of text
+			char         itsLastNewlineChar;      // Used for automatic newline recognition
+			bool         itHasReachedEndOfInput;  // Indicates end-of-file.
+			
+			void WritePartialData();
 		
 		public:
-			TextInputBuffer() : myLastNewlineChar( '\0'  ),
-			                    ended            ( false )  {}
+			TextInputBuffer() : itsLastNewlineChar    ( '\0'  ),
+			                    itHasReachedEndOfInput( false )  {}
 			
-			void Receive( const char* data, std::size_t bytes );
+			void ReceiveBlock( const char* data, std::size_t bytes );
 			
-			bool Ended() const  { return ended; }
-			bool Ready() const  { return myStrings.Ready(); }
+			bool Ended() const  { return itHasReachedEndOfInput; }
+			bool Ready() const  { return itsStrings.Ready(); }
 			
-			std::string Read()  { return myStrings.Read(); }
+			std::string Read()  { return itsStrings.Read(); }
 			
-			bool WritePartialData();
+			bool ReceiveEndOfInput();
 	};
 	
 	class TextInputAdapter
 	{
 		private:
-			IOHandle input;             // The raw input stream
-			TextInputBuffer buffer;
+			IOHandle         input;   // The raw input stream
+			TextInputBuffer  buffer;
 			
 			bool GetMore();             // Called when the string pipe is empty.
 		
@@ -86,7 +88,7 @@ namespace Io
 			
 			std::string Read()
 			{
-				Ready();
+				(void) Ready();
 				
 				return buffer.Read();
 			}
