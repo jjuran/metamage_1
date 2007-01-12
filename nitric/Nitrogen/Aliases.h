@@ -21,6 +21,9 @@
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"
 #endif
+#ifndef NITROGEN_RESOURCES_H
+#include "Nitrogen/Resources.h"
+#endif
 #ifndef NITROGEN_CFDATA_H
 #include "Nitrogen/CFData.h"
 #endif
@@ -36,7 +39,11 @@ namespace Nitrogen
 			AliasManagerErrorsRegistrationDependency();
 	};
  	
+ 	
+ 	static const ResType rAliasType = ResType( ::rAliasType );
    
+	template <> struct ResType_Traits< rAliasType > : Handle_ResType_Traits< AliasRecord > {};
+	
    class MountFlags_Tag {};
    typedef Nucleus::Flag< class MountFlags_Tag, unsigned long >::Type MountFlags;
    
