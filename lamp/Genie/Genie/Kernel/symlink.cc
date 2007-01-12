@@ -16,7 +16,6 @@
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
-#include "Utilities/Resources.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -84,7 +83,7 @@ namespace Genie
 		
 		NN::Owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
 		
-		(void) N::AddResource< rAliasType >( alias, N::ResID( 0 ), "\p" );
+		(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
 	}
 	
 	static int symlink( const char* target_path, const char* link_location )
