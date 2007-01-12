@@ -171,8 +171,7 @@ namespace Nitrogen
    class OSTypeTag {};
    typedef Nucleus::SelectorType< OSTypeTag, ::OSType, ::kUnknownType > OSType;
    
-   class ResTypeTag {};
-   typedef Nucleus::SelectorType< ResTypeTag, ::ResType, ::kUnknownType > ResType;
+   typedef Nucleus::Selector< class ResType_Tag, ::ResType >::Type ResType;
 
    typedef bool Boolean;
    

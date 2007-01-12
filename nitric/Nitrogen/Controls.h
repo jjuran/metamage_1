@@ -281,7 +281,7 @@ namespace Nitrogen
    // 2835
    void SetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
-                        ResType           inTagName,
+                        ControlDataTag    inTagName,
                         Size              inSize,
                         const void *      inData );
 
@@ -290,12 +290,12 @@ namespace Nitrogen
 		private:
 			ControlRef       itsControl;
 			ControlPartCode  itsPart;
-			ResType          itsTagName;
+			ControlDataTag   itsTagName;
 		
 		public:
 			SetControlData_Putter( ControlRef       control,
 			                       ControlPartCode  part,
-			                       ResType          tagName ) : itsControl( control ),
+			                       ControlDataTag   tagName ) : itsControl( control ),
 			                                                    itsPart   ( part    ),
 			                                                    itsTagName( tagName )  {}
 			
@@ -319,7 +319,7 @@ namespace Nitrogen
       Traits().Put( inData,
 		            SetControlData_Putter( inControl,
 		                                   inPart,
-		                                   inTagName ) );
+		                                   ControlDataTag( inTagName ) ) );
      }
 
    template < ::ResType inTagName >
@@ -332,13 +332,13 @@ namespace Nitrogen
 	// 2852
    Size GetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
-                        ResType           inTagName,
+                        ControlDataTag    inTagName,
                         Size              inBufferSize,
                         void *            inBuffer );
 
    Size GetControlData( ControlRef        inControl,
                         ControlPartCode   inPart,
-                        ResType           inTagName );
+                        ControlDataTag    inTagName );
    
 	template < ::ResType tagName >
 	class GetControlData_Getter
