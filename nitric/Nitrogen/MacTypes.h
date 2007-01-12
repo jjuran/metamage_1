@@ -161,7 +161,7 @@ namespace Nitrogen
 			
 			FourCharCode( ::FourCharCode value ) : itsValue( value )  {}
 			
-			FourCharCode& operator=( ::FourCharCode value )  { itsValue = value; }
+			FourCharCode& operator=( ::FourCharCode value )  { itsValue = value;  return *this; }
 			
 			::FourCharCode Get() const  { return itsValue; }
 			
