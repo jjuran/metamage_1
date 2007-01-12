@@ -167,8 +167,8 @@ namespace RunToolServer
 	
 	static NN::Owned< AppleEvent > CreateScriptEvent( const std::string& script )
 	{
-		return N::AECreateAppleEvent( kAEMiscStandards,
-		                              kAEDoScript,
+		return N::AECreateAppleEvent( N::kAEMiscStandards,
+		                              N::kAEDoScript,
 		                              N::AECreateDesc< N::typeProcessSerialNumber >( NX::LaunchApplication( sigToolServer ) ) )
 		       << N::keyDirectObject
 		          + N::AECreateDesc< N::typeChar >( script );

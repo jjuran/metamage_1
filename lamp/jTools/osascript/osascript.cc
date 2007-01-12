@@ -214,8 +214,8 @@ int O::Main( int argc, const char *const argv[] )
 		}
 	}
 	
-	NN::Owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( kCoreEventClass,
-	                                                             kAEOpenApplication,
+	NN::Owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( N::kCoreEventClass,
+	                                                             N::kAEOpenApplication,
 	                                                             NN::Make< N::AEAddressDesc >() );
 	
 	// Add the list, even if there are zero parameters.

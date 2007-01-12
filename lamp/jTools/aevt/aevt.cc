@@ -213,8 +213,11 @@ namespace jTools
 		
 		OSType sigCode = (sig.size() == 4) ? NN::Convert< N::OSType >( sig ).Get() : kUnknownType;
 		
-		AEEventClass eventClass = NN::Convert< N::AEEventClass >( argEventClass );
-		AEEventID    eventID    = NN::Convert< N::AEEventID    >( argEventID    );
+		AEEventClass eventClass = NN::Convert< N::FourCharCode >( argEventClass );
+		AEEventID    eventID    = NN::Convert< N::FourCharCode >( argEventID    );
+		
+		using N::kAENoReply;
+		using N::kAECanInteract;
 		
 		N::AESend( BuildAppleEvent( eventClass,
 		                            eventID,

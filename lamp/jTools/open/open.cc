@@ -78,8 +78,8 @@ static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >
 	
 	using namespace NN::Operators;
 	
-	return N::AECreateAppleEvent( kCoreEventClass,
-	                              kAEOpenDocuments,
+	return N::AECreateAppleEvent( N::kCoreEventClass,
+	                              N::kAEOpenDocuments,
 	                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) )
 	       << N::keyDirectObject + documents;
 }
@@ -87,7 +87,7 @@ static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >
 static void OpenItemsWithRunningApp( const std::vector< FSSpec >& items, const ProcessSerialNumber& psn )
 {
 	N::AESend( MakeOpenDocsEvent( items, psn ),
-	           kAENoReply | kAECanInteract );
+	           N::kAENoReply | N::kAECanInteract );
 }
 
 static void LaunchApplicationWithDocsToOpen( const FSSpec& app, const std::vector< FSSpec >& items )

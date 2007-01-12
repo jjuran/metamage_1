@@ -372,12 +372,12 @@ namespace ALine
 			
 			if ( N::GetEOF( N::FSpOpenDF( diagnostics, fsRdPerm ) ) > 0 )
 			{
-				N::AESend( N::AECreateAppleEvent( kCoreEventClass, 
-				                                  kAEOpenDocuments, 
+				N::AESend( N::AECreateAppleEvent( N::kCoreEventClass, 
+				                                  N::kAEOpenDocuments, 
 				                                  N::AECreateDesc< N::typeProcessSerialNumber >( NX::LaunchApplication( EditorSignature() ) ) ) 
 				           << N::keyDirectObject + ( N::AECreateList< false >() 
 				                                     << N::AECreateDesc< N::typeAlias >( N::NewAlias( diagnostics ) ) ), 
-				           kAENoReply | kAECanInteract );
+				           N::kAENoReply | N::kAECanInteract );
 				
 			}
 			else
