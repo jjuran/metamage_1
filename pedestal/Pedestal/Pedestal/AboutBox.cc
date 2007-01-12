@@ -10,8 +10,6 @@
 #include "Nitrogen/QuickDraw.h"
 #include "Nitrogen/Timer.h"
 
-#include "Utilities/Resources.h"
-
 
 namespace Pedestal
 {
