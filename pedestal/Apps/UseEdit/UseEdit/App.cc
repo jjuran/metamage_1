@@ -43,7 +43,18 @@ namespace UseEdit
 	using N::typeChar;
 	using N::typeNull;
 	using N::typeAERecord;
-	
+	using N::formUniqueID;
+	using N::formAbsolutePosition;
+	using N::kCoreEventClass;
+	using N::kAEOpenDocuments;
+	using N::kAECoreSuite;
+	using N::kAEClose;
+	using N::kAECountElements;
+	using N::kAEGetData;
+	using N::cProperty;
+	using N::cDocument;
+	using N::pName;
+	using N::pIsFrontProcess;
 	
 	App* App::theApp = NULL;
 	
@@ -248,7 +259,7 @@ namespace UseEdit
 			AEDesc keyData = obj;
 			keyData.descriptorType = typeUInt32;
 			
-			return N::AECreateObjectSpecifier( N::AEObjectClass( cDocument ),
+			return N::AECreateObjectSpecifier( cDocument,
 			                                   N::GetRootObjectSpecifier(),
 			                                   formUniqueID,
 			                                   keyData );
@@ -395,17 +406,17 @@ namespace UseEdit
 		N::AEInstallObjectAccessor< N::DispatchAccessToList >( N::AEObjectClass( typeWildCard ), typeAEList ).Release();
 		
 		// Property accessors
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::AEObjectClass( cProperty ), typeNull     ).Release();
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::AEObjectClass( cProperty ), typeDocument ).Release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeNull     ).Release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeDocument ).Release();
 		
 		// Document accessor
-		N::AEInstallObjectAccessor< AccessDocument >( N::AEObjectClass( cDocument ), typeNull ).Release();
+		N::AEInstallObjectAccessor< AccessDocument >( cDocument, typeNull ).Release();
 		
 		// Set up AEObjectModel
 		N::AESetObjectCallbacks();
 		
 		// Count documents
-		N::RegisterCounter( N::AEObjectClass( cDocument ), typeNull, CountDocuments );
+		N::RegisterCounter( cDocument, typeNull, CountDocuments );
 		
 		// Literal data tokens
 		N::RegisterDataGetter( typeChar,     GetLiteralData );
@@ -415,11 +426,11 @@ namespace UseEdit
 		N::RegisterDataGetter( typeDocument, GetDocument );
 		
 		// Name of app
-		N::RegisterPropertyAccessor( N::AEPropertyID( pName           ), typeNull, AccessAppName );
-		N::RegisterPropertyAccessor( N::AEPropertyID( pIsFrontProcess ), typeNull, AccessAppFrontmost );
+		N::RegisterPropertyAccessor( pName,           typeNull, AccessAppName );
+		N::RegisterPropertyAccessor( pIsFrontProcess, typeNull, AccessAppFrontmost );
 		
 		// Name of document
-		N::RegisterPropertyAccessor( N::AEPropertyID( pName ), typeDocument, AccessDocName );
+		N::RegisterPropertyAccessor( pName, typeDocument, AccessDocName );
 	}
 	
 	App::~App()
