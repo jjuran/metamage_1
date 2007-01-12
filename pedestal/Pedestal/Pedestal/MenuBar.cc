@@ -97,10 +97,8 @@ namespace Pedestal
 		ExtractCmdCodes( menu, myMenus[ menuID ] );
 	}
 	
-	enum
-	{
-		kDeskAccessoryResourceType = 'DRVR'
-	};
+	
+	static const N::ResType kDeskAccessoryResourceType = N::ResType( 'DRVR' );
 	
 	void MenuBar::AddAppleMenu( N::MenuID menuID )
 	{
