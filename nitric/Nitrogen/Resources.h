@@ -37,6 +37,7 @@ namespace Nitrogen
 			ResourceManagerErrorsRegistrationDependency();
 	};
 	
+	
 	typedef Nucleus::ID< class ResFileRefNum_Tag, ::ResFileRefNum >::Type ResFileRefNum;
 	
 	static const ResFileRefNum kResFileNotOpened = ResFileRefNum( ::kResFileNotOpened );
@@ -260,6 +261,131 @@ namespace Nitrogen
 	typedef ResFile_Value ResFile_Details;
 	
 	typedef Nucleus::Pseudoreference< ResFile_Details > ResFile;
+	
+	
+	namespace Constants
+	{
+		
+		static const ResType kTextResourceType = ResType( 'TEXT' );
+		
+	}
+	
+	using namespace Constants;
+	
+	
+	#pragma mark -
+	#pragma mark ¥ ResType_Traits ¥
+	#pragma mark -
+	
+	template < ResType resType >
+	struct ResType_Traits
+	{
+		typedef                 Handle    Result;
+		typedef Nucleus::Owned< Handle >  Parameter;
+		
+		static Result MakeFromHandle( Handle h )  { return h; }
+		
+		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter h )  { return h; }
+	};
+	
+	template <>
+	struct ResType_Traits< kTextResourceType >
+	{
+		typedef       std::string   Result;
+		typedef const std::string&  Parameter;
+		
+		static Result MakeFromHandle( Handle h )
+		{
+			std::string result;
+			result.resize( GetHandleSize( h ) );
+			
+			std::copy( *h.Get(),
+			           *h.Get() + result.size(),
+			           result.begin() );
+			
+			return result;
+		}
+		
+		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter text )
+		{
+			Nucleus::Owned< Handle > result = NewHandle( text.size() );
+			
+			std::copy( text.begin(), text.end(), *result.Get().Get() );
+			
+			return result;
+		}
+	};
+	
+	template < class Data >
+	struct Handle_ResType_Traits
+	{
+		typedef                 Data**                                 Result;
+		typedef Nucleus::Owned< Data**, Nucleus::Disposer< Handle > >  Parameter;
+		
+		static Result MakeFromHandle( Handle h )  { return Handle_Cast< Data >( h ); }
+		
+		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter h )
+		{
+			return Handle_Cast< Data >( h );
+		}
+	};
+	
+	template < class FinalType >
+	struct POD_ResType_Traits
+	{
+		typedef       FinalType   Result;
+		typedef const FinalType&  Parameter;
+		
+		static Result MakeFromHandle( Handle h )  { return **Handle_Cast< Result >( h ); }
+		
+		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter pod )
+		{
+			Nucleus::Owned< Handle > result = NewHandle( sizeof (Result) );
+			
+			**result.Get() = pod;
+			
+			return result;
+		}
+	};
+	
+	
+	template < ResType type >
+	typename ResType_Traits< type >::Result GetIndResource( short index )
+	{
+		return ResType_Traits< type >::MakeFromHandle( GetIndResource( type, index ) );
+	}
+	
+	template < ResType type >
+	typename ResType_Traits< type >::Result Get1IndResource( short index )
+	{
+		return ResType_Traits< type >::MakeFromHandle( Get1IndResource( type, index ) );
+	}
+	
+	template < ResType type >
+	typename ResType_Traits< type >::Result GetResource( short index )
+	{
+		return ResType_Traits< type >::MakeFromHandle( GetResource( type, index ) );
+	}
+	
+	template < ResType type >
+	typename ResType_Traits< type >::Result Get1Resource( short index )
+	{
+		return ResType_Traits< type >::MakeFromHandle( Get1Resource( type, index ) );
+	}
+	
+	template < class Data >
+	Nucleus::Owned< Data**, Nucleus::Disposer< Handle > > DetachResource( Data** h )
+	{
+		return Handle_Cast< Data >( DetachResource( Handle( h ) ) );
+	}
+	
+	template < ResType type >
+	Handle AddResource( typename ResType_Traits< type >::Parameter  param,
+	                    ResID                                       id,
+	                    ConstStr255Param                            name = "\p" )
+	{
+		return AddResource( ResType_Traits< type >::MakeIntoHandle( param ), type, id, name );
+	}
 	
 }
 

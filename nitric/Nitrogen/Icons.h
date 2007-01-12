@@ -36,6 +36,31 @@ namespace Nitrogen
 			IconManagerErrorsRegistrationDependency();
 	};
 	
+	namespace Constants
+	{
+		
+		static const ResType kPlainIconResourceType = ResType( 'ICON' );
+		static const ResType kColorIconResourceType = ResType( 'cicn' );
+		
+	}
+	
+	using namespace Constants;
+	
+	static const ResType kLarge1BitMask  = ResType( ::kLarge1BitMask  );
+	static const ResType kLarge4BitData  = ResType( ::kLarge4BitData  );
+	static const ResType kLarge8BitData  = ResType( ::kLarge8BitData  );
+	static const ResType kLarge32BitData = ResType( ::kLarge32BitData );
+	static const ResType kLarge8BitMask  = ResType( ::kLarge8BitMask  );
+	static const ResType kSmall1BitMask  = ResType( ::kSmall1BitMask  );
+	static const ResType kSmall4BitData  = ResType( ::kSmall4BitData  );
+	static const ResType kSmall8BitData  = ResType( ::kSmall8BitData  );
+	static const ResType kSmall32BitData = ResType( ::kSmall32BitData );
+	static const ResType kSmall8BitMask  = ResType( ::kSmall8BitMask  );
+	static const ResType kMini1BitMask   = ResType( ::kMini1BitMask   );
+	static const ResType kMini4BitData   = ResType( ::kMini4BitData   );
+	static const ResType kMini8BitData   = ResType( ::kMini8BitData   );
+	
+	
 	struct IconAlignmentType_Tag  {};
 	typedef Nucleus::FlagType< IconAlignmentType_Tag, ::IconAlignmentType, kAlignNone > IconAlignmentType;
 	
@@ -77,7 +102,13 @@ namespace Nitrogen
 	
 	typedef SmallIcon       SICN;
 	typedef SmallIconHandle SICNHandle;
-  }
+	
+	
+	template <> struct ResType_Traits< kPlainIconResourceType > : Handle_ResType_Traits< PlainIcon   > {};
+	template <> struct ResType_Traits< kColorIconResourceType > : Handle_ResType_Traits< CIcon       > {};
+	template <> struct ResType_Traits< kLarge1BitMask         > : Handle_ResType_Traits< MaskedIcon  > {};
+	
+}
 
 namespace Nucleus
    {
