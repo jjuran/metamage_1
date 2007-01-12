@@ -10,8 +10,8 @@
 #include FRAMEWORK_HEADER(HIToolbox,CarbonEvents.h)
 #endif
 
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
@@ -211,9 +211,8 @@ namespace Nitrogen
    typedef Nucleus::ErrorCode< OSStatus, eventHotKeyExistsErr            > EventHotKeyExistsErr;
    typedef Nucleus::ErrorCode< OSStatus, eventHotKeyInvalidErr           > EventHotKeyInvalidErr;
 
-   class EventPriorityTag {};
-   typedef Nucleus::SelectorType< EventPriorityTag, ::EventPriority > EventPriority;
-      // EventProrities should be ordered; SelectorType isn't quite the right choice.
+   typedef Nucleus::Selector< class EventPriority_Tag, ::EventPriority >::Type EventPriority;
+      // EventProrities should be ordered; Selector::Type isn't quite the right choice.
 
    /* To deal with:
    typedef double                          EventTime;
@@ -230,27 +229,22 @@ namespace Nitrogen
    #define kEventDurationForever           ((EventTime)(-1.0))
    */
 
-   class EventClassTag {};
-   typedef Nucleus::SelectorType< EventClassTag, ::UInt32 > EventClass;    // Doesn't exist in Carbon
+   typedef Nucleus::Selector< class EventClass_Tag, ::UInt32 >::Type EventClass;    // Doesn't exist in Carbon
 
-   class CarbonEventKind_Tag {};
-   typedef Nucleus::SelectorType< CarbonEventKind_Tag, ::UInt32 > CarbonEventKind;
+   typedef Nucleus::Selector< class CarbonEventKind_Tag, ::UInt32 >::Type CarbonEventKind;
    
 #ifndef JOSHUA_JURAN_EXPERIMENTAL
    
    // This conflicts with Events.h
-   typedef CarbonEventKind_Tag EventKind_Tag;
    typedef CarbonEventKind     EventKind;
    
 #endif
    
    using ::EventTypeSpec;
 
-   class MouseTrackingResultTag {};
-   typedef Nucleus::SelectorType< MouseTrackingResultTag, ::MouseTrackingResult > MouseTrackingResult;
+   typedef Nucleus::Selector< class MouseTrackingResult_Tag, ::MouseTrackingResult >::Type MouseTrackingResult;
    
-   class EventParamNameTag {};
-   typedef Nucleus::SelectorType< EventParamNameTag, ::EventParamName > EventParamName;
+   typedef Nucleus::Selector< class EventParamName_Tag, ::EventParamName >::Type EventParamName;
 
 	//typedef Nucleus::Selector< class EventParamType_Tag, ::EventParamType >::Type EventParamType;
 	
