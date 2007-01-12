@@ -44,8 +44,30 @@ namespace Nitrogen
 	static const AEKeyword keyAEVersion           = AEKeyword( ::keyAEVersion           );
 	
 	
-	class AEEventSource_Tag {};
-	typedef Nucleus::SelectorType< AEEventSource_Tag, ::AEEventSource, kAEUnknownSource > AEEventSource;
+	static const AEEventClass kCoreEventClass = AEEventClass( ::kCoreEventClass );
+	
+	static const AEEventID kAEOpenApplication = AEEventID( ::kAEOpenApplication );
+	static const AEEventID kAEOpenDocuments   = AEEventID( ::kAEOpenDocuments   );
+	static const AEEventID kAEPrintDocuments  = AEEventID( ::kAEPrintDocuments  );
+	static const AEEventID kAEQuitApplication = AEEventID( ::kAEQuitApplication );
+	static const AEEventID kAEAnswer          = AEEventID( ::kAEAnswer          );
+	static const AEEventID kAEApplicationDied = AEEventID( ::kAEApplicationDied );
+	static const AEEventID kAEShowPreferences = AEEventID( ::kAEShowPreferences );
+	
+	
+	static const AEEventID kAEStartRecording       = AEEventID( ::kAEStartRecording       );
+	static const AEEventID kAEStopRecording        = AEEventID( ::kAEStopRecording        );
+	static const AEEventID kAENotifyStartRecording = AEEventID( ::kAENotifyStartRecording );
+	static const AEEventID kAENotifyStopRecording  = AEEventID( ::kAENotifyStopRecording  );
+	static const AEEventID kAENotifyRecording      = AEEventID( ::kAENotifyRecording      );
+	
+	typedef Nucleus::Selector< class AEEventSource_Tag, ::AEEventSource >::Type AEEventSource;
+	
+	static const AEEventSource kAEUnknownSource = AEEventSource( ::kAEUnknownSource );
+	static const AEEventSource kAEDirectCall    = AEEventSource( ::kAEDirectCall    );
+	static const AEEventSource kAESameProcess   = AEEventSource( ::kAESameProcess   );
+	static const AEEventSource kAELocalProcess  = AEEventSource( ::kAELocalProcess  );
+	static const AEEventSource kAERemoteProcess = AEEventSource( ::kAERemoteProcess );
 	
    struct AEEventHandler
      {

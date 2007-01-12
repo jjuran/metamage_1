@@ -32,9 +32,6 @@
 #ifndef NUCLEUS_SELECTOR_H
 #include "Nucleus/Selector.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
-#endif
 
 #ifndef NITROGEN_ALIASES_H
 #include "Nitrogen/Aliases.h"
@@ -234,12 +231,37 @@ namespace Nitrogen
 	
 	static const AETransactionID kAnyTransactionID = AETransactionID( ::kAnyTransactionID );
 	
+	typedef Nucleus::Selector< class AEEventClass_Tag, ::AEEventClass >::Type  AEEventClass;
+	typedef Nucleus::Selector< class AEEventID_Tag,    ::AEEventID    >::Type  AEEventID;
 	
-	struct AESendPriority_Tag  {};
-	typedef Nucleus::FlagType< AESendPriority_Tag, ::AESendPriority, kAENormalPriority > AESendPriority;
+	typedef Nucleus::Selector< class AEEnumerated_Tag, UInt32 >::Type AEEnumerated;
+	typedef AEEnumerated AEEnumeration;
+	typedef AEEnumerated AEKeyForm;
 	
-	struct AESendMode_Tag  {};
-	typedef Nucleus::FlagType< AESendMode_Tag, ::AESendMode > AESendMode;
+	
+	typedef Nucleus::Flag< class AESendPriority_Tag, ::AESendPriority >::Type AESendPriority;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( AESendPriority )
+	
+	static const AESendPriority kAENormalPriority = AESendPriority( ::kAENormalPriority );
+	static const AESendPriority kAEHighPriority   = AESendPriority( ::kAEHighPriority   );
+	
+	typedef Nucleus::Flag< class AESendMode_Tag, ::AESendMode >::Type AESendMode;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( AESendMode )
+	
+	static const AESendMode kAENoReply               = AESendMode( ::kAENoReply               );
+	static const AESendMode kAEQueueReply            = AESendMode( ::kAEQueueReply            );
+	static const AESendMode kAEWaitReply             = AESendMode( ::kAEWaitReply             );
+	static const AESendMode kAEDontReconnect         = AESendMode( ::kAEDontReconnect         );
+	static const AESendMode kAEWantReceipt           = AESendMode( ::kAEWantReceipt           );
+	static const AESendMode kAENeverInteract         = AESendMode( ::kAENeverInteract         );
+	static const AESendMode kAECanInteract           = AESendMode( ::kAECanInteract           );
+	static const AESendMode kAEAlwaysInteract        = AESendMode( ::kAEAlwaysInteract        );
+	static const AESendMode kAECanSwitchLayer        = AESendMode( ::kAECanSwitchLayer        );
+	static const AESendMode kAEDontRecord            = AESendMode( ::kAEDontRecord            );
+	static const AESendMode kAEDontExecute           = AESendMode( ::kAEDontExecute           );
+	static const AESendMode kAEProcessNonReplyEvents = AESendMode( ::kAEProcessNonReplyEvents );
 	
 	#pragma mark -
 	#pragma mark ¥ DescType_Traits ¥
@@ -250,16 +272,6 @@ namespace Nitrogen
 
    template<> struct DescType_Traits< typeFixed > : public FixedFlattener {};
 
-   class AEEnumeratedTag {};
-   typedef Nucleus::SelectorType< AEEnumeratedTag, UInt32 > AEEnumerated;
-   typedef AEEnumerated AEEnumeration;
-   
-   class AEEventClassTag {};
-   typedef Nucleus::SelectorType< AEEventClassTag, ::AEEventClass > AEEventClass;
-
-   class AEEventIDTag {};
-   typedef Nucleus::SelectorType< AEEventIDTag, ::AEEventID > AEEventID;
-   
    template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
    
    template<> struct DescType_Traits< typeBoolean >                : BooleanFlattener                     {};
