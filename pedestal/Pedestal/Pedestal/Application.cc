@@ -65,6 +65,9 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
+	using N::kCoreEventClass;
+	using N::kAEQuitApplication;
+	
 	struct RunState
 	{
 		AppleEventSignature signatureOfFirstAppleEvent;
@@ -499,15 +502,10 @@ namespace Pedestal
 		myAppleMenu( N::InsertMenu( N::GetMenu( N::ResID( idAppleMENU ) ) ) ),
 		myFileMenu ( N::InsertMenu( N::GetMenu( N::ResID( idFileMENU  ) ) ) ),
 		myEditMenu ( N::InsertMenu( N::GetMenu( N::ResID( idEditMENU  ) ) ) ),
-		myCoreEventsHandler
-		(
-			N::AEInstallEventHandler< Application*, AppleEventHandler >
-			(
-				kCoreEventClass,
-				typeWildCard,
-				this
-			)
-		)
+		myCoreEventsHandler( N::AEInstallEventHandler< Application*,
+		                                               AppleEventHandler >( kCoreEventClass,
+		                                                                    N::AEEventID( typeWildCard ),
+		                                                                    this ) )
 	{
 		ASSERT( gApp == NULL );
 		gApp = this;
@@ -606,8 +604,8 @@ namespace Pedestal
 	
 	void Application::HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& reply )
 	{
-		AEEventClass eventClass = N::AEGetAttributePtr< N::keyEventClassAttr >( appleEvent );
-		AEEventID    eventID    = N::AEGetAttributePtr< N::keyEventIDAttr    >( appleEvent );
+		N::AEEventClass eventClass = N::AEGetAttributePtr< N::keyEventClassAttr >( appleEvent );
+		N::AEEventID    eventID    = N::AEGetAttributePtr< N::keyEventIDAttr    >( appleEvent );
 		
 		static bool firstTime = true;
 		
