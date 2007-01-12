@@ -559,7 +559,7 @@ namespace Pedestal
 					
 					if ( ReadyToWaitForEvents() )
 					{
-						EventRecord event = N::WaitNextEvent( everyEvent, gRunState.maxTicksToSleep );
+						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
 						gRunState.tickCountAtLastLayerSwitch = ::TickCount();
 						
