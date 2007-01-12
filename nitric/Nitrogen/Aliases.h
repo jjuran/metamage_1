@@ -12,8 +12,8 @@
 #ifndef NITROGEN_FILES_H
 #include "Nitrogen/Files.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -38,8 +38,10 @@ namespace Nitrogen
  	
    
    class MountFlags_Tag {};
-   typedef Nucleus::FlagType< MountFlags_Tag, unsigned long, 0 > MountFlags;
+   typedef Nucleus::Flag< class MountFlags_Tag, unsigned long >::Type MountFlags;
    
+	NUCLEUS_DEFINE_FLAG_OPS( MountFlags )
+	
    using ::AliasHandle;
   }
 

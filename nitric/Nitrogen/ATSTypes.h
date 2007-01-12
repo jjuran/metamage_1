@@ -18,18 +18,16 @@
 #ifndef NITROGEN_MIXEDMODE_H
 #include "Nitrogen/MixedMode.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 
 namespace Nitrogen
   {
-   class FMFontFamilyTag {};
-   typedef Nucleus::IDType< FMFontFamilyTag, ::FMFontFamily, 0 > FMFontFamily;
+   typedef Nucleus::ID< class FMFontFamily_Tag, ::FMFontFamily >::Type FMFontFamily;
    typedef FMFontFamily FontID;
     
-   class FMFontStyleTag {};
-   typedef Nucleus::IDType< FMFontStyleTag, ::FMFontStyle, 0 > FMFontStyle;
+   typedef Nucleus::ID< class FMFontStyle_Tag, ::FMFontStyle >::Type FMFontStyle;
   }
 
 #endif
