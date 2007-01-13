@@ -139,7 +139,7 @@ static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 	
 	return N::OSALoad( OpenGenericScriptingComponent(),
 	                   N::AECreateDesc( N::typeOSAGenericStorage,
-	                                    N::Get1Resource( kOSAScriptResourceType,
+	                                    N::Get1Resource( N::kOSAScriptResourceType,
 	                                                     N::ResID( 128 ) ) ) );
 }
 
