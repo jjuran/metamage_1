@@ -128,8 +128,11 @@ namespace Genie
 	{
 		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		
-		mode_t mode = S_IRUSR | ( isDir ? S_IFDIR | S_IWUSR | S_IXUSR
-		                                : S_IFREG | FileWXModeBits( hFileInfo ) );
+		bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+		
+		mode_t mode = isDir   ? S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR
+		            : isAlias ? S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR
+		            :           S_IFREG | S_IRUSR | FileWXModeBits( hFileInfo );
 		
 		return mode;
 	}
