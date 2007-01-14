@@ -37,6 +37,8 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
 	
+	std::string GetFSTreePathname( FSTreePtr node );
+	
 	
 	struct FSNode
 	{
@@ -72,17 +74,27 @@ namespace Genie
 			
 			// General methods
 			
+			virtual bool Exists() const;
+			virtual bool IsFile() const;
+			virtual bool IsDirectory() const;
+			virtual bool IsLink() const;
+			
 			virtual std::string Name() const;
+			
+			virtual FSTreePtr Parent() const = 0;
 			
 			virtual FSSpec GetFSSpec() const;
 			
-			virtual void Stat( struct ::stat& sb ) const = 0;
+			virtual void Stat( struct ::stat& sb ) const;
 			
 			virtual void ChangeMode( mode_t mode ) const;
 			
 			virtual void Delete() const;
 			
 			// File methods
+			
+			virtual std::string ReadLink() const;
+			virtual FSTreePtr ResolveLink() const;
 			
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;

@@ -7,6 +7,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include "sys/stat.h"
 
 // Nucleus
 //#include "Nucleus/NAssert.h"
@@ -20,6 +21,53 @@ namespace Genie
 	
 	namespace P7 = POSeven;
 	
+	
+	std::string GetFSTreePathname( FSTreePtr node )
+	{
+		std::string name = node->Name();
+		
+		if ( name.empty() )
+		{
+			return "/";
+		}
+		
+		std::string result = name;
+		
+		// Root dir has empty name
+		
+		while ( result[0] != '/' )
+		{
+			node = node->Parent();
+			name = node->Name();
+			
+			result = name + "/" + result;
+		}
+		
+		return result;
+	}
+	
+	
+	bool FSTree::Exists() const
+	{
+		// Reasonable default -- most items do or they wouldn't have FSTrees.
+		return true;
+	}
+	
+	bool FSTree::IsFile() const
+	{
+		// Reasonable default -- most virtual dirs are bottlenecked through a superclass
+		return true;
+	}
+	
+	bool FSTree::IsDirectory() const
+	{
+		return false;
+	}
+	
+	bool FSTree::IsLink() const
+	{
+		return false;
+	}
 	
 	std::string FSTree::Name() const
 	{
@@ -35,6 +83,20 @@ namespace Genie
 		return FSSpec();  // Not reached
 	}
 	
+	void FSTree::Stat( struct ::stat& sb ) const
+	{
+		if ( ! Exists() )
+		{
+			P7::ThrowErrno( ENOENT );
+		}
+		
+		mode_t mode = IsDirectory() ? S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR
+		            : IsLink()      ? S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR
+		            :                 S_IFREG | S_IRUSR;
+		
+		sb.st_mode = mode;
+	}
+	
 	void FSTree::ChangeMode( mode_t mode ) const
 	{
 		P7::ThrowErrno( EPERM );
@@ -45,6 +107,19 @@ namespace Genie
 		P7::ThrowErrno( EPERM );
 	}
 	
+	std::string FSTree::ReadLink() const
+	{
+		P7::ThrowErrno( EINVAL );
+		
+		return std::string();
+	}
+	
+	FSTreePtr FSTree::ResolveLink() const
+	{
+		P7::ThrowErrno( EINVAL );
+		
+		return FSTreePtr();
+	}
 	
 	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t mode ) const
 	{
