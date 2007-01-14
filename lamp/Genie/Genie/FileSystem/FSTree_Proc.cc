@@ -11,6 +11,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/Process.hh"
+#include "Genie/Yield.hh"
 
 
 namespace Genie
@@ -44,12 +45,53 @@ namespace Genie
 			std::string Name() const;
 			
 			FSTreePtr Self()   const;
-			FSTreePtr Parent() const;
+			FSTreePtr Parent() const  { return GetProcFSTree(); }
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
+	
+	
+	class FSTree_proc_self : public FSTree
+	{
+		private:
+			pid_t getpid() const  { return CurrentProcess().ProcessID(); }
+		
+		public:
+			bool IsLink() const  { return true; }
+			
+			std::string Name() const  { return "self"; }
+			
+			FSTreePtr Parent() const  { return GetProcFSTree(); }
+			
+			std::string ReadLink() const  { return NN::Convert< std::string >( getpid() ); }
+			
+			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_pid( getpid() ) ); }
+	};
+	
+	/*
+	class FSTree_pid_exe : public FSTree
+	{
+		private:
+			pid_t itsPID;
+		
+			pid_t getpid() const  { return CurrentProcess().ProcessID(); }
+		
+		public:
+			FSTree_pid_exe( pid_t pid ) : itsPID( pid )  {}
+			
+			bool IsLink() const  { return true; }
+			
+			std::string Name() const  { return "exe"; }
+			
+			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_pid( itsPID ) ); }
+			
+			std::string ReadLink() const  { return NN::Convert< std::string >( getpid() ); }
+			
+			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_pid( getpid() ) ); }
+	};
+	*/
 	
 	
 	FSTreePtr GetProcFSTree()
@@ -62,6 +104,11 @@ namespace Genie
 	
 	FSTreePtr proc_Details::Lookup( const std::string& name )
 	{
+		if ( name == "self" )
+		{
+			return FSTreePtr( new FSTree_proc_self() );
+		}
+		
 		pid_t pid = std::atoi( name.c_str() );
 		
 		return FSTreePtr( new FSTree_pid( pid ) );
@@ -87,11 +134,6 @@ namespace Genie
 	FSTreePtr FSTree_pid::Self() const
 	{
 		return FSTreePtr( new FSTree_pid( *this ) );
-	}
-	
-	FSTreePtr FSTree_pid::Parent() const
-	{
-		return FSTreePtr( new FSTree_proc() );
 	}
 	
 	FSTreePtr FSTree_pid::Lookup_Child( const std::string& name ) const
