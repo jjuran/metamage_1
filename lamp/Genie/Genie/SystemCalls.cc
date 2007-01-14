@@ -340,38 +340,13 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( _exit );
 	
-	static std::string MakeFSTreePathname( FSTreePtr node )
-	{
-		std::string name = node->Name();
-		
-		if ( name.empty() )
-		{
-			return "/";
-		}
-		
-		std::string result = name;
-		
-		// Root dir has empty name
-		
-		while ( result[0] != '/' )
-		{
-			//node = node->Parent();
-			node = node->Lookup( ".." );
-			name = node->Name();
-			
-			result = name + "/" + result;
-		}
-		
-		return result;
-	}
-	
 	static char* getcwd( char* buf, std::size_t size )
 	{
 		try
 		{
 			FSTreePtr cwd = CurrentProcess().CurrentWorkingDirectory();
 			
-			std::string result = MakeFSTreePathname( cwd );
+			std::string result = GetFSTreePathname( cwd );
 			
 			if ( result.size() + 1 > size )
 			{
