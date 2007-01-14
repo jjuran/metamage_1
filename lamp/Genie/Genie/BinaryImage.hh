@@ -24,17 +24,17 @@ namespace Genie
 			struct Data {};
 		
 		private:
-			boost::shared_ptr< Data > fData;
-			std::size_t fDataSize;
+			boost::shared_ptr< Data > itsData;
+			std::size_t itsDataSize;
 		
 		public:
-			BinaryImage() : fDataSize()  {}
+			BinaryImage() : itsDataSize()  {}
 			
 			BinaryImage( std::auto_ptr< Data > data, std::size_t size );
 			
-			std::size_t GetSize() const  { return fDataSize; }
+			std::size_t GetSize() const  { return itsDataSize; }
 			
-			const void* GetPointer() const  { return fData.get(); }
+			const void* GetPointer() const  { return itsData.get(); }
 	};
 	
 	BinaryImage GetBinaryImage( const FSSpec& file );

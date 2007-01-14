@@ -15,25 +15,25 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	BinaryImage::BinaryImage( std::auto_ptr< Data > data, std::size_t size )
-	: fData( data ), fDataSize( size )
+	BinaryImage::BinaryImage( std::auto_ptr< Data >  data,
+	                          std::size_t            size ) : itsData    ( data ),
+	                                                          itsDataSize( size )
 	{
-		
 	}
 	
 	struct BinaryFileMetadata
 	{
-		UInt32 fDataForkLength;
-		UInt32 fCreationDate;
-		UInt32 fModificationDate;
-		UInt32 fFileID;
+		UInt32 dataForkLength;
+		UInt32 creationDate;
+		UInt32 modificationDate;
+		UInt32 fileID;
 		
 		friend bool operator==( const BinaryFileMetadata& a, const BinaryFileMetadata& b )
 		{
-			return    a.fDataForkLength   == b.fDataForkLength
-			       && a.fCreationDate     == b.fCreationDate
-			       && a.fModificationDate == b.fModificationDate
-			       && a.fFileID           == b.fFileID;
+			return    a.dataForkLength   == b.dataForkLength
+			       && a.creationDate     == b.creationDate
+			       && a.modificationDate == b.modificationDate
+			       && a.fileID           == b.fileID;
 		}
 		
 		friend bool operator!=( const BinaryFileMetadata& a, const BinaryFileMetadata& b )
@@ -44,8 +44,8 @@ namespace Genie
 	
 	struct BinaryImageCacheEntry
 	{
-		BinaryImage fImage;
-		BinaryFileMetadata fMetadata;
+		BinaryImage         image;
+		BinaryFileMetadata  metadata;
 	};
 	
 	template < class T > static int cmp( const T& a, const T& b )
@@ -76,6 +76,7 @@ namespace Genie
 	};
 	
 	typedef std::map< FSSpec, BinaryImageCacheEntry, less_FSSpecs > BinaryImageCache;
+	
 	static BinaryImageCache gBinaryImageCache;
 	
 	static BinaryFileMetadata GetFileMetadata( const FSSpec& file )
@@ -86,10 +87,10 @@ namespace Genie
 		
 		BinaryFileMetadata result;
 		
-		result.fDataForkLength   = pb.hFileInfo.ioFlLgLen;
-		result.fCreationDate     = pb.hFileInfo.ioFlCrDat;
-		result.fModificationDate = pb.hFileInfo.ioFlMdDat;
-		result.fFileID           = pb.hFileInfo.ioDirID;
+		result.dataForkLength   = pb.hFileInfo.ioFlLgLen;
+		result.creationDate     = pb.hFileInfo.ioFlCrDat;
+		result.modificationDate = pb.hFileInfo.ioFlMdDat;
+		result.fileID           = pb.hFileInfo.ioDirID;
 		
 		return result;
 	}
@@ -125,9 +126,9 @@ namespace Genie
 			cacheEntry = &it->second;
 			
 			// Do the metadata match?
-			if ( cacheEntry->fMetadata == metadata )
+			if ( cacheEntry->metadata == metadata )
 			{
-				return cacheEntry->fImage;  // Yup, we're done
+				return cacheEntry->image;  // Yup, we're done
 			}
 		}
 		else
@@ -137,13 +138,13 @@ namespace Genie
 		
 		BinaryImageCacheEntry newEntry;
 		
-		newEntry.fMetadata = metadata;
-		newEntry.fImage = LoadBinaryImage( file );
+		newEntry.metadata = metadata;
+		newEntry.image    = LoadBinaryImage( file );
 		
 		// Install the new cache entry
 		*cacheEntry = newEntry;
 		
-		return newEntry.fImage;
+		return newEntry.image;
 	}
 	
 }
