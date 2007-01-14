@@ -147,5 +147,31 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( symlink );
 	
+	static int readlink( const char *path, char *buf, size_t bufsiz )
+	{
+		try
+		{
+			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
+			
+			FSTreePtr link = ResolvePathname( path, current );
+			
+			std::string linkPath = link->ReadLink();
+			
+			bufsiz = std::min( bufsiz, linkPath.size() );
+			
+			std::copy( linkPath.begin(),
+			           linkPath.begin() + bufsiz,
+			           buf );
+			
+			return bufsiz;
+		}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
+	}
+	
+	REGISTER_SYSTEM_CALL( readlink );
+	
 }
 
