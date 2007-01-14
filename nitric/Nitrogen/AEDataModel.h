@@ -13,10 +13,6 @@
 #include FRAMEWORK_HEADER(HIToolbox,Events.h)
 #endif
 
-#if !TARGET_API_MAC_CARBON
-#include "CarbonUnits/AEDataModel.hh"
-#endif
-
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
