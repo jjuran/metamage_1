@@ -29,6 +29,9 @@ namespace Genie
 		public:
 			virtual ~FSTree_Directory()  {}
 			
+			bool IsFile     () const  { return false; }
+			bool IsDirectory() const  { return true;  }
+			
 			virtual FSTreePtr Self()   const = 0;
 			virtual FSTreePtr Parent() const = 0;
 			
