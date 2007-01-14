@@ -38,6 +38,8 @@ namespace Genie
 			
 			std::string Name() const  { return deviceName; }
 			
+			FSTreePtr Parent() const  { return GetDevFSTree(); }
+			
 			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;

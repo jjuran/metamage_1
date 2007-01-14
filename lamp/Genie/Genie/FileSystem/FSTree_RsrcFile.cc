@@ -36,6 +36,8 @@ namespace Genie
 			
 			std::string Name() const  { return "rsrc"; }
 			
+			FSTreePtr Parent() const  { return FSTreeFromFSSpec( fileSpec ); }
+			
 			void Stat( struct ::stat& sb ) const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
