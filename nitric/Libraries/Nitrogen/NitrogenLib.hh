@@ -39,13 +39,15 @@
 	
 	#include <ConditionalMacros.h>
 	
-	#if !ACCESSOR_CALLS_ARE_FUNCTIONS
+	#if !TARGET_API_MAC_CARBON
 		
-		// This symbol controls the declarations of various Carbon accessors.
-		// Some of them have macro/inline alternatives, and some do not.
-		// If accessor calls are not functions, we replace the missing inlines.
+		// CarbonUnits provides:
+		// * Implementations of Carbon-only routines
+		// * Implementations of Carbon accessors as functions for 68K
+		// * Implementations of Carbon accessors as inlines
+		// * Implementations of Carbon-renamed routines for CFM-68K
 		
-		#include "CarbonUnits/Quickdraw.hh"
+		#include "CarbonUnits/CarbonUnits.hh"
 		
 	#endif
 	
