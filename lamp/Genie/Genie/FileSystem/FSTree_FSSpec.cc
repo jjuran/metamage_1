@@ -22,6 +22,7 @@
 #include "Nucleus/NAssert.h"
 
 // Nitrogen
+#include "Nitrogen/Aliases.h"
 #include "Nitrogen/Files.h"
 
 // POSeven
@@ -61,18 +62,28 @@ namespace Genie
 		public:
 			FSTree_FSSpec( const FSSpec& file ) : fileSpec( file )  {}
 			
-			std::string Name() const;
+			bool Exists() const;
+			bool IsFile() const;
+			bool IsDirectory() const;
+			bool IsLink() const;
 			
-			FSSpec GetFSSpec() const;
+			bool IsRootDirectory() const;
+			
+			std::string Name() const;
 			
 			FSTreePtr Self()   const;
 			FSTreePtr Parent() const;
+			
+			FSSpec GetFSSpec() const;
 			
 			void Stat( struct ::stat& sb ) const;
 			
 			void ChangeMode( mode_t mode ) const;
 			
 			void Delete() const;
+			
+			std::string ReadLink() const;
+			FSTreePtr ResolveLink() const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
@@ -259,20 +270,58 @@ namespace Genie
 		return OpenFile( fileH );
 	}
 	
+	bool FSTree_FSSpec::Exists() const
+	{
+		return N::FSpTestItemExists( fileSpec );
+	}
+	
+	bool FSTree_FSSpec::IsFile() const
+	{
+		return N::FSpTestFileExists( fileSpec );
+	}
+	
+	bool FSTree_FSSpec::IsDirectory() const
+	{
+		return N::FSpTestDirectoryExists( fileSpec );
+	}
+	
+	bool FSTree_FSSpec::IsLink() const
+	{
+		CInfoPBRec paramBlock;
+		
+		N::FSpGetCatInfo( fileSpec, paramBlock );
+		
+		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
+		
+		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+		
+		bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+		
+		return isAlias;
+	}
+	
+	bool FSTree_FSSpec::IsRootDirectory() const
+	{
+		try
+		{
+			return NN::Convert< N::FSDirSpec >( fileSpec ) == FindJDirectory();
+		}
+		catch ( ... )
+		{
+			// Not a directory
+		}
+		
+		return false;
+	}
 	
 	std::string FSTree_FSSpec::Name() const
 	{
-		if ( NN::Convert< N::FSDirSpec >( fileSpec ) == FindJDirectory() )
+		if ( IsRootDirectory() )
 		{
 			return "";
 		}
 		
 		return NN::Convert< std::string >( fileSpec.name );
-	}
-	
-	FSSpec FSTree_FSSpec::GetFSSpec() const
-	{
-		return fileSpec;
 	}
 	
 	FSTreePtr FSTree_FSSpec::Self() const
@@ -282,7 +331,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_FSSpec::Parent() const
 	{
-		if ( NN::Convert< N::FSDirSpec >( fileSpec ) == FindJDirectory() )
+		if ( IsRootDirectory() )
 		{
 			return FSRoot();
 		}
@@ -293,6 +342,11 @@ namespace Genie
 		}
 		
 		return FSTreePtr( new FSTree_FSSpec( NN::Convert< FSSpec >( N::FSpGetParent( fileSpec ) ) ) );
+	}
+	
+	FSSpec FSTree_FSSpec::GetFSSpec() const
+	{
+		return fileSpec;
 	}
 	
 	void FSTree_FSSpec::Stat( struct ::stat& sb ) const
@@ -308,6 +362,24 @@ namespace Genie
 	void FSTree_FSSpec::Delete() const
 	{
 		N::FSpDelete( fileSpec );
+	}
+	
+	
+	std::string FSTree_FSSpec::ReadLink() const
+	{
+		if ( !IsLink() )
+		{
+			P7::ThrowErrno( EINVAL );
+		}
+		
+		return GetFSTreePathname( ResolveLink() );
+	}
+	
+	FSTreePtr FSTree_FSSpec::ResolveLink() const
+	{
+		FSSpec target = N::ResolveAliasFile( fileSpec, true );
+		
+		return FSTreePtr( new FSTree_FSSpec( target ) );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags, mode_t mode ) const
@@ -340,7 +412,9 @@ namespace Genie
 	{
 		const bool notRsrcFork = false;
 		
-		return OpenFSSpec( fileSpec, flags, notRsrcFork );
+		FSSpec target = N::ResolveAliasFile( fileSpec, true );
+		
+		return OpenFSSpec( target, flags, notRsrcFork );
 	}
 	
 	void FSTree_FSSpec::Exec( const char* const argv[], const char* const envp[] ) const
@@ -355,12 +429,14 @@ namespace Genie
 	
 	FSTreePtr FSTree_FSSpec::Lookup_Regular( const std::string& name ) const
 	{
-		if ( N::FSpTestFileExists( fileSpec )  &&  name == "rsrc" )
+		FSSpec target = N::ResolveAliasFile( fileSpec, true );
+		
+		if ( N::FSpTestFileExists( target )  &&  name == "rsrc" )
 		{
-			return GetRsrcForkFSTree( fileSpec );
+			return GetRsrcForkFSTree( target );
 		}
 		
-		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( fileSpec );
+		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( target );
 		
 		FSSpec item = dir & MacFromUnixName( name );
 		
