@@ -49,7 +49,7 @@ namespace Genie
 		return 0;
 	}
 	
-	static int stat_file( const char* path, struct stat* sb )
+	static int stat_file( const char* path, struct stat* sb, bool resolveLinks )
 	{
 		std::memset( (void*)sb, '\0', sizeof (struct stat) );
 		
@@ -58,6 +58,11 @@ namespace Genie
 			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
 			
 			FSTreePtr file = ResolvePathname( path, current );
+			
+			if ( resolveLinks && file->IsLink() )
+			{
+				file = file->ResolveLink();
+			}
 			
 			file->Stat( *sb );
 		}
@@ -78,14 +83,14 @@ namespace Genie
 	
 	static int lstat( const char* path, struct stat* sb )
 	{
-		return stat_file( path, sb );
+		return stat_file( path, sb, false );
 	}
 	
 	REGISTER_SYSTEM_CALL( lstat );
 	
 	static int stat( const char* path, struct stat* sb )
 	{
-		return stat_file( path, sb );  // FIXME:  Resolve symlinks
+		return stat_file( path, sb, true );  // FIXME:  Resolve symlinks
 	}
 	
 	REGISTER_SYSTEM_CALL( stat );
