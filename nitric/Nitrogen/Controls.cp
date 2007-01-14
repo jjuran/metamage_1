@@ -190,29 +190,13 @@ namespace Nitrogen
 
 	Rect GetControlBounds( ControlRef control )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		Rect bounds;
 		return *( ::GetControlBounds( control, &bounds ) );
-		
-	#else
-		
-		return (**control).contrlRect;
-		
-	#endif
 	}
 	
 	void SetControlBounds( ControlRef control, const Rect& bounds )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		::SetControlBounds( control, &bounds );
-		
-	#else
-		
-		(**control).contrlRect = bounds;
-		
-	#endif
 	}
 	
    void RegisterControlManagerErrors()

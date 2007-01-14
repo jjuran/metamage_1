@@ -145,7 +145,7 @@ namespace Nitrogen
    
    // 1549
    Nucleus::Owned<MenuRef> NewMenu( MenuID           menuID,
-                           ConstStr255Param menuTitle );
+                                    ConstStr255Param menuTitle );
    
 	inline MenuRef CheckResource( MenuRef menu )
 	{
@@ -161,15 +161,7 @@ namespace Nitrogen
    
    using ::CalcMenuSize;
 	
-#if TARGET_CPU_68K && TARGET_RT_MAC_CFM
-	
-	inline UInt16 CountMenuItems( MenuRef menu )  { return ::CountMItems( menu ); }
-	
-#else
-	
 	using ::CountMenuItems;
-	
-#endif
 	
    struct MenuFont
      {
@@ -271,15 +263,7 @@ namespace Nitrogen
 	// 5826
 	inline MenuID GetMenuID( MenuRef menu )
 	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
 		return MenuID( ::GetMenuID( menu ) );
-		
-	#else
-		
-		return MenuID( (**menu).menuID );
-		
-	#endif
 	}
 	
   }
