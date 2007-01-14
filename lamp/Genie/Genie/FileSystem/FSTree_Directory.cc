@@ -68,7 +68,10 @@ namespace Genie
 	class FSTree_Null : public FSTree
 	{
 		public:
-			void Stat( struct ::stat& sb ) const  { P7::ThrowErrno( ENOENT ); }
+			bool Exists() const  { return false; }
+			bool IsFile() const  { return false; }
+			
+			FSTreePtr Parent() const  { P7::ThrowErrno( ENOENT );  return FSTreePtr(); }
 	};
 	
 	
