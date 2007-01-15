@@ -15,6 +15,13 @@
 #include "Genie/Yield.hh"
 
 
+#if TARGET_RT_MAC_CFM
+
+typedef __sig_handler sig_t;
+
+#endif
+
+
 namespace Genie
 {
 	
@@ -35,7 +42,7 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( kill );
 	
-	static __sig_handler signal( int sig, __sig_handler func )
+	static sig_t signal( int sig, sig_t func )
 	{
 		return CurrentProcess().SetSignalAction( sig, func );
 	}
