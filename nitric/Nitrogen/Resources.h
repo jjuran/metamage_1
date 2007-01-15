@@ -326,7 +326,7 @@ namespace Nitrogen
 		
 		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter h )
 		{
-			return Handle_Cast< Data >( h );
+			return Nucleus::Owned< Handle >( h );
 		}
 	};
 	
