@@ -17,10 +17,10 @@
 #include "Nitrogen/OpenTransportProviders.h"
 
 // Nitrogen Extras / Templates
-#include "Templates/DataPointer.h"
+//#include "Templates/DataPointer.h"
 
- // Genie
- #include "Genie/IO/Stream.hh"
+// Genie
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -28,12 +28,32 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
+	//namespace NX = NitrogenExtras;
 	
 	typedef const InetAddress* ConstSockAddrParam;
 	typedef       InetAddress*      SockAddrParam;
 	
-	typedef NX::DataPtr< InetAddress, int > SocketAddress;
+	//typedef NX::DataPtr< InetAddress, int > SocketAddress;
+	
+	struct SocketAddress
+	{
+		InetAddress  address;
+		socklen_t    length;
+		
+		SocketAddress()  {}
+		SocketAddress( const InetAddress* addr, socklen_t len ) : address( *addr ), length( len )  {}
+		
+		InetAddress const* Get() const  { return &address; }
+		InetAddress      * Get()        { return &address; }
+		
+		socklen_t Len() const  { return length; }
+		
+		void Assign( const InetAddress* addr, socklen_t len )
+		{
+			address = *addr;
+			length  = len;
+		}
+	};
 	
 	class SocketHandle;
 	
