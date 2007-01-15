@@ -136,7 +136,7 @@ namespace Genie
 			
 			if ( it != mapping.end() )
 			{
-				return FileSignature( '????', it->second );
+				return FileSignature( '\?\?\?\?', it->second );
 			}
 		}
 		
