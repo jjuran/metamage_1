@@ -88,7 +88,7 @@ namespace Genie
 		}
 		else if ( state == T_DATAXFER )
 		{
-			std::size_t count;
+			::OTByteCount count;
 			
 			canRead = ::OTCountDataBytes( endpoint, &count ) == noErr;
 		}
