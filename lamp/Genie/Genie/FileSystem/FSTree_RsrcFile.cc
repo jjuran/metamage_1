@@ -67,8 +67,11 @@ namespace Genie
 		bool truncating  = flags & O_TRUNC;
 		bool excluding   = flags & O_EXCL;
 		// ...
+		
+		#if 0
 		bool resFork     = flags & O_ResFork;
 		bool resMap      = flags & O_ResMap;
+		#endif
 		
 		NN::Owned< N::FSFileRefNum > fileH = rsrcFork ? N::FSpOpenRF( fileSpec, rdPerm | wrPerm )
 		                                              : N::FSpOpenDF( fileSpec, rdPerm | wrPerm );
