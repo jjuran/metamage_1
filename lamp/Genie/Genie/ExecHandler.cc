@@ -74,7 +74,7 @@ namespace Genie
 		
 		// Currently, we're expecting a string or a list of strings.
 		
-		if ( N::AESizeOfParam( appleEvent, keyDirectObject ).typeCode != typeAEList )
+		if ( N::AESizeOfParam( appleEvent, keyDirectObject ).typeCode != N::typeAEList )
 		{
 			std::string str = N::AEGetParamPtr< N::typeChar >( appleEvent, N::keyDirectObject );
 			
