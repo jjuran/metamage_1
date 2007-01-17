@@ -920,12 +920,20 @@ Return Value
                          void *       buffer )
      {
       ByteCount actualCount;
-      ThrowOSStatus( ::FSReadFork( fork,
+      OSStatus err = ::FSReadFork( fork,
                                    positionMode,
                                    positionOffset,
                                    requestCount,
                                    buffer,
-                                   &actualCount ) );
+                                   &actualCount );
+      
+      if ( err == eofErr  &&  actualCount > 0 )
+      {
+         err = noErr;
+      }
+      
+      ThrowOSStatus( err );
+      
       return actualCount;
      }
 
