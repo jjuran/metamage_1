@@ -21,6 +21,9 @@
 #ifndef NUCLEUS_THEEXCEPTIONBEINGHANDLED_H
 #include "Nucleus/TheExceptionBeingHandled.h"
 #endif
+#ifndef IO_IO_HH
+#include "io/io.hh"
+#endif
 
 #ifdef NITROGEN_DEBUG
 #define	ThrowOSStatus(err)	ThrowOSStatusInternal(err, __FILE__, __LINE__)
@@ -186,6 +189,23 @@ namespace Nucleus
            : OSStatus( memFullErr )
            {}
      };
+	
+	template <>
+	class ErrorCode< Nitrogen::OSStatus, ::eofErr > : public Nitrogen::OSStatus,
+	                                                  public io::end_of_input
+	{
+		public:
+			ErrorCode() : OSStatus( eofErr )  {}
+	};
+	
+	template <>
+	class ErrorCode< Nitrogen::OSStatus, ::kOTNoDataErr > : public Nitrogen::OSStatus,
+	                                                        public io::no_input_pending
+	{
+		public:
+			ErrorCode() : OSStatus( kOTNoDataErr )  {}
+	};
+	
   }
 
 #endif
