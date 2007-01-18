@@ -8,6 +8,9 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
+// Io
+#include "io/slurp.hh"
+
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 
@@ -18,34 +21,10 @@ namespace UseEdit
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	namespace FS = FileSystem;
-	
-#if TARGET_API_MAC_CARBON
-	
-	static std::string ReadFileData( const FSSpec& file )  { return ""; }
-	
-#else
-	
-	static std::string ReadFileData( const FSRef & file )  { return ""; }
-	
-#endif
-	
-	static std::string ReadFileData( const FS::Spec& file )
+	template < class FileSpec >
+	static std::string ReadFileData( const FileSpec& file )
 	{
-		using N::fsRdPerm;
-		
-		NN::Owned< FS::Stream > fileH( FS::Open( file, fsRdPerm ) );
-		
-		SInt64 fileSize = FS::GetForkSize( fileH );
-		
-		// check for negative file size
-		
-		std::string data;
-		data.resize( fileSize );
-		
-		std::size_t bytes = FS::Read( fileH, &data[ 0 ], fileSize );
-		
-		ASSERT( bytes == fileSize );
+		std::string data = io::slurp_file< NN::StringFlattener< std::string > >( file );
 		
 		// Allow LF newlines
 		std::replace( data.begin(),
@@ -56,6 +35,21 @@ namespace UseEdit
 		return data;
 	}
 	
+	inline ConstStr255Param GetFilenameAsPascalString( const FSSpec& file )
+	{
+		return file.name;
+	}
+	
+	static N::Str255 GetFilenameAsPascalString( const FSRef& file )
+	{
+		N::FSGetCatalogInfo_Result info = N::FSGetCatalogInfo( file, kFSCatInfoNone );
+		
+		N::UniString unistring = NN::Convert< N::UniString >( info.outName );
+		
+		std::string string( unistring.begin(), unistring.end() );
+		
+		return N::Str255( string );
+	}
 	
 	Document::Document( Ped::WindowClosure& closure )
 	: 
@@ -82,11 +76,9 @@ namespace UseEdit
 		itHasFile( true    ),
 		itIsDirty( false   )
 	{
-		std::string contents = ReadFileData( file );
+		itsWindow.Get().SetName( GetFilenameAsPascalString( file ) );
 		
-		itsWindow.Get().SetName( file.name );
-		
-		LoadText( itsWindow.Get().SubView(), contents );
+		LoadText( itsWindow.Get().SubView(), ReadFileData( file ) );
 	}
 	
 	Document::Document( Ped::WindowClosure& closure, const FSRef& file )
@@ -95,19 +87,9 @@ namespace UseEdit
 		itHasFile( true    ),
 		itIsDirty( false   )
 	{
-		std::string contents = ReadFileData( file );
+		itsWindow.Get().SetName( GetFilenameAsPascalString( file ) );
 		
-		N::FSGetCatalogInfo_Result info = N::FSGetCatalogInfo( file, kFSCatInfoNone );
-		
-		N::UniString unistring = NN::Convert< N::UniString >( info.outName );
-		
-		std::string string( unistring.begin(), unistring.end() );
-		
-		N::Str255 name( string );
-		
-		itsWindow.Get().SetName( name );
-		
-		LoadText( itsWindow.Get().SubView(), contents );
+		LoadText( itsWindow.Get().SubView(), ReadFileData( file ) );
 	}
 	
 }
