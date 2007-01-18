@@ -3,6 +3,10 @@
 #ifndef NITROGEN_FILES_H
 #define NITROGEN_FILES_H
 
+#ifndef IO_IO_HH
+#include "io/io.hh"
+#endif
+
 #ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
 #include "Nucleus/ArrayContainerFunctions.h"
 #endif
@@ -1628,4 +1632,88 @@ namespace Nucleus
      };
   }
 
+namespace Nitrogen
+{
+	
+	struct FSSpec_Io_Details
+	{
+		typedef FSSpec file_spec;
+		
+		typedef Nitrogen::FSFileRefNum stream;
+		
+		typedef SInt32 byte_count;
+	};
+	
+	struct FSRef_Io_Details
+	{
+		typedef FSRef file_spec;
+		
+		typedef Nitrogen::FSForkRefNum stream;
+		
+		typedef SInt64 byte_count;
+	};
+	
+}
+
+namespace io
+{
+	
+	template <> struct filespec_traits< FSSpec > : public Nitrogen::FSSpec_Io_Details {};
+	
+	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file )
+	{
+		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdPerm );
+	}
+	
+	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_writing( const FSSpec& file )
+	{
+		return Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
+	}
+	
+	inline SInt32 get_file_size( Nitrogen::FSFileRefNum stream )
+	{
+		return Nitrogen::GetEOF( stream );
+	}
+	
+	inline SInt32 read( Nitrogen::FSFileRefNum input, char* data, SInt32 byteCount )
+	{
+		return Nitrogen::FSRead( input, byteCount, data );
+	}
+	
+	inline SInt32 write( Nitrogen::FSFileRefNum output, const char* data, SInt32 byteCount )
+	{
+		return Nitrogen::FSWrite( output, byteCount, data );
+	}
+	
+	
+	template <> struct filespec_traits< FSRef  > : public Nitrogen::FSRef_Io_Details {};
+	
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_reading( const FSRef& file )
+	{
+		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdPerm );
+	}
+	
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_writing( const FSRef& file )
+	{
+		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsWrPerm );
+	}
+	
+	inline SInt64 get_file_size( Nitrogen::FSForkRefNum stream )
+	{
+		return Nitrogen::FSGetForkSize( stream );
+	}
+	
+	inline ByteCount read( Nitrogen::FSForkRefNum input, char* data, ByteCount byteCount )
+	{
+		return Nitrogen::FSReadFork( input, byteCount, data );
+	}
+	
+	inline ByteCount write( Nitrogen::FSForkRefNum output, const char* data, ByteCount byteCount )
+	{
+		return Nitrogen::FSWriteFork( output, byteCount, data );
+	}
+	
+}
+
 #endif
+
