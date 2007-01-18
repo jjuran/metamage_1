@@ -10,6 +10,9 @@
 #define OTUNIXERRORS 1
 #endif
 
+// Io
+#include "io/io.hh"
+
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OpenTransport.h"
@@ -20,14 +23,9 @@ namespace Io
 	
 	namespace N = Nitrogen;
 	
-	struct EndOfInput
-	{
-		operator N::OSStatus() const  { return N::OSStatus( eofErr ); }
-		
-		// EOF is indicated in Unix by a zero return from read().
-	};
+	typedef io::end_of_input EndOfInput;
 	
-	struct NoDataPending
+	struct NoDataPending : public io::no_data_pending
 	{
 		operator N::OSStatus() const  { return N::OSStatus( kEWOULDBLOCKErr ); }
 		
