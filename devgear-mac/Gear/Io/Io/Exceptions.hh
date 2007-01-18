@@ -25,7 +25,7 @@ namespace Io
 	
 	typedef io::end_of_input EndOfInput;
 	
-	struct NoDataPending : public io::no_data_pending
+	struct NoDataPending : public io::no_input_pending
 	{
 		operator N::OSStatus() const  { return N::OSStatus( kEWOULDBLOCKErr ); }
 		
