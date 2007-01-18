@@ -135,7 +135,7 @@ namespace Genie
 		
 		const int ppid = 1;
 		
-		GenieProcess* process = new GenieProcess( ppid );
+		Process* process = new Process( ppid );
 		
 		try
 		{
@@ -146,7 +146,7 @@ namespace Genie
 			process->Terminate();
 		}
 		
-		//int pid = gProcessTable[GenieProcess::kRootProcessPID].ForkExec(inArgVec);
+		//int pid = gProcessTable[Process::kRootProcessPID].ForkExec(inArgVec);
 		
 		// FIXME:  We're assuming an immediate result
 		//result = gProcessTable[pid].Result();
@@ -157,7 +157,7 @@ namespace Genie
 	int GenieExecHandler::ExecString( const std::string& cmd, const N::FSDirSpec& cwd )
 	{
 		/*
-		int pid = ( new GenieShell( GenieProcess::kRootProcessPID, cmd ) )->ProcessID();
+		int pid = ( new GenieShell( Process::kRootProcessPID, cmd ) )->ProcessID();
 		gProcessTable[ pid ].ChangeDirectory( cwd );
 		
 		// FIXME:  We're assuming an immediate result

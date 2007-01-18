@@ -401,7 +401,7 @@ namespace Genie
 		
 		const int ppid = 1;
 		
-		GenieProcess* external = new GenieProcess( ppid );
+		Process* external = new Process( ppid );
 		
 		FileDescriptorMap& files = external->FileDescriptors();
 		
