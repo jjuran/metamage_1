@@ -127,61 +127,74 @@ namespace Genie
 			};
 		
 		private:
-			int myPPID;
-			int myPID;
-			int fPGID;
-			int fSID;
-			UInt32 fPendingSignals;
-			UInt32 fPreviousSignals;
-			std::string myName;
+			pid_t itsPPID;
+			pid_t itsPID;
+			pid_t itsPGID;
+			pid_t itsSID;
+			
+			UInt32 itsPendingSignals;
+			UInt32 itsPreviousSignals;
+			
+			std::string itsName;
+			
 			FSTreePtr itsCWD;
-			TTYHandle* fControllingTerminal;
-			FileDescriptorMap myFileDescriptors;
-			EStatus myStatus;
-			int myResult;
-			std::map< int, sig_t > signalMap;
+			
+			TTYHandle* itsControllingTerminal;
+			
+			FileDescriptorMap itsFileDescriptors;
+			
+			EStatus itsStatus;
+			
+			int itsResult;
+			
+			std::map< int, sig_t > itsSignalMap;
 		
 		private:
-			BinaryImage fFragmentImage;
-			BinaryImage fOldFragmentImage;
-			NN::Owned< CFragConnectionID > fFragmentConnection;
-			NN::Owned< CFragConnectionID > fOldFragmentConnection;
+			BinaryImage itsFragmentImage;
+			BinaryImage itsOldFragmentImage;
+			NN::Owned< CFragConnectionID > itsFragmentConnection;
+			NN::Owned< CFragConnectionID > itsOldFragmentConnection;
 			
-			std::auto_ptr< Sh::StringArray > argvStorage;
-			std::auto_ptr< Sh::VarArray    > environStorage;
-			std::auto_ptr< Thread > thread;
+			std::auto_ptr< Sh::StringArray > itsArgvStorage;
+			std::auto_ptr< Sh::VarArray    > itsEnvironStorage;
+			std::auto_ptr< Thread > itsThread;
 			
-			ErrnoDataPtr fErrnoData;
-			EnvironDataPtr fEnvironData;
-			std::string fLastEnv;
+			ErrnoDataPtr   itsErrnoData;
+			EnvironDataPtr itsEnvironData;
+			
+			std::string itsLastEnv;
 		
 		public:
 			struct RootProcess {};
 			
 			Process( RootProcess );
-			Process( int ppid );
+			Process( pid_t ppid );
 			
 			~Process()  {}
 			
-			int ParentProcessID() const  { return myPPID;   }
-			int ProcessID()       const  { return myPID;    }
-			int GetPGID()         const  { return fPGID;    }
-			int GetSID()          const  { return fSID;     }
-			EStatus Status()      const  { return myStatus; }
-			int Result()          const  { return myResult; }
-			std::string ProgramName()  const  { return myName;   }
+			pid_t ParentProcessID() const  { return itsPPID; }
+			pid_t ProcessID()       const  { return itsPID;  }
 			
-			TTYHandle* ControllingTerminal() const  { return fControllingTerminal; }
+			pid_t GetPPID() const  { return itsPPID; }
+			pid_t GetPID()  const  { return itsPID;  }
+			pid_t GetPGID() const  { return itsPGID; }
+			pid_t GetSID()  const  { return itsSID;  }
+			
+			EStatus Status()      const  { return itsStatus; }
+			int Result()          const  { return itsResult; }
+			std::string ProgramName()  const  { return itsName;   }
+			
+			TTYHandle* ControllingTerminal() const  { return itsControllingTerminal; }
 			
 			FSTreePtr CurrentWorkingDirectory() const  { return itsCWD; }
 			
-			FileDescriptorMap& FileDescriptors()  { return myFileDescriptors; }
+			FileDescriptorMap& FileDescriptors()  { return itsFileDescriptors; }
 			
-			int const* ErrnoData()  const { return fErrnoData; }
-			int      * ErrnoData()        { return fErrnoData; }
+			int const* ErrnoData()  const { return itsErrnoData; }
+			int      * ErrnoData()        { return itsErrnoData; }
 			
-			char** const* EnvironData()  const { return fEnvironData; }
-			char**      * EnvironData()        { return fEnvironData; }
+			char** const* EnvironData()  const { return itsEnvironData; }
+			char**      * EnvironData()        { return itsEnvironData; }
 			
 			char* GetEnv( const char* name );
 			void SetEnv( const char* name, const char* value, bool overwrite );
@@ -189,15 +202,15 @@ namespace Genie
 			void UnsetEnv( const char* name );
 			void ClearEnv();
 			
-			void SetPGID( int pgid )  { fPGID = pgid; }
-			void SetSID ( int sid  )  { fSID  = sid;  }
+			void SetPGID( pid_t pgid )  { itsPGID = pgid; }
+			void SetSID ( pid_t sid  )  { itsSID  = sid;  }
 			
-			void Status( EStatus status )  { myStatus = status; }
-			void Result( int     result )  { myResult = result; }
+			void Status( EStatus status )  { itsStatus = status; }
+			void Result( int     result )  { itsResult = result; }
 			
-			void ProgramName( const std::string& name )  { myName = name; }
+			void ProgramName( const std::string& name )  { itsName = name; }
 			
-			void SetControllingTerminal( TTYHandle* terminal )  { fControllingTerminal = terminal; }
+			void SetControllingTerminal( TTYHandle* terminal )  { itsControllingTerminal = terminal; }
 			
 			//long ChangeDirectory( const N::FSDirSpec& dir );
 			int ChangeDirectory( const char* pathname );
@@ -209,7 +222,7 @@ namespace Genie
 			void Terminate( int result );
 		
 		public:
-			bool Forked() const  { return thread.get() == NULL; }
+			bool Forked() const  { return itsThread.get() == NULL; }
 			
 			int Exec( const FSSpec& progFile,
 			          const char* const argv[],
@@ -230,32 +243,34 @@ namespace Genie
 			bool HandlePendingSignals();
 	};
 	
-	typedef Process GenieProcess;
-	
 	struct NoSuchProcess  {};
 	
 	class GenieProcessTable
 	{
 		public:
-			typedef std::map< int, boost::shared_ptr< Process > > ProcessMap;
+			typedef std::map< pid_t, boost::shared_ptr< Process > > ProcessMap;
 			typedef ProcessMap::const_iterator const_iterator;
 			typedef ProcessMap::iterator iterator;
+		
+		private:
+			ProcessMap itsProcesses;
+			pid_t itsNextPID;
 		
 		public:
 			GenieProcessTable();
 			~GenieProcessTable()
 			{
-				//ASSERT( myProcesses.size() == 1 );
+				//ASSERT( itsProcesses.size() == 1 );
 			}
 			
-			bool Exists( int pid ) const  { return myProcesses.count( pid ) > 0; }
+			bool Exists( pid_t pid ) const  { return itsProcesses.count( pid ) > 0; }
 			
-			Process& operator[]( int pid );
+			Process& operator[]( pid_t pid );
 			
 			int NewProcess( Process* process );
 			
 			int RemoveProcess( iterator it );
-			int RemoveProcess( int pid );
+			int RemoveProcess( pid_t pid );
 			
 			void KillAll();
 			
@@ -263,18 +278,14 @@ namespace Genie
 			
 			void SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal );
 			
-			ProcessMap const& Map() const  { return myProcesses; }
-			ProcessMap      & Map()        { return myProcesses; }
+			ProcessMap const& Map() const  { return itsProcesses; }
+			ProcessMap      & Map()        { return itsProcesses; }
 			
-			const_iterator begin() const  { return myProcesses.begin(); }
-			const_iterator end  () const  { return myProcesses.end  (); }
+			const_iterator begin() const  { return itsProcesses.begin(); }
+			const_iterator end  () const  { return itsProcesses.end  (); }
 			
-			iterator begin()  { return myProcesses.begin(); }
-			iterator end  ()  { return myProcesses.end  (); }
-		
-		private:
-			ProcessMap myProcesses;
-			int myNextPID;
+			iterator begin()  { return itsProcesses.begin(); }
+			iterator end  ()  { return itsProcesses.end  (); }
 	};
 	
 	extern GenieProcessTable gProcessTable;

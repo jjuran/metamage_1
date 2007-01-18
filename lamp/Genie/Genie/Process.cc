@@ -268,55 +268,55 @@ namespace Genie
 	
 	Process::Process( RootProcess ) 
 	:
-		myPPID              ( 0 ),
-		myPID               ( gProcessTable.NewProcess( this ) ),
-		fPGID               ( 0 ),
-		fSID                ( 0 ),
-		fPendingSignals     ( 0 ),
-		fPreviousSignals    ( 0 ),
-		myName              ( "init" ),
-		itsCWD              ( FSRoot() ),
-		fControllingTerminal( NULL ),
-		myFileDescriptors   ( FileDescriptorMap() ),
-		myStatus            ( kStarting ),
-		environStorage      ( new Sh::VarArray() ),
-		fErrnoData          ( NULL ),
-		fEnvironData        ( NULL )
+		itsPPID               ( 0 ),
+		itsPID                ( gProcessTable.NewProcess( this ) ),
+		itsPGID               ( 0 ),
+		itsSID                ( 0 ),
+		itsPendingSignals     ( 0 ),
+		itsPreviousSignals    ( 0 ),
+		itsName               ( "init" ),
+		itsCWD                ( FSRoot() ),
+		itsControllingTerminal( NULL ),
+		itsFileDescriptors    ( FileDescriptorMap() ),
+		itsStatus             ( kStarting ),
+		itsEnvironStorage     ( new Sh::VarArray() ),
+		itsErrnoData          ( NULL ),
+		itsEnvironData        ( NULL )
 	{
 	}
 	
-	Process::Process( int ppid ) 
+	Process::Process( pid_t ppid ) 
 	:
-		myPPID              ( ppid ),
-		myPID               ( gProcessTable.NewProcess( this ) ),
-		fPGID               ( gProcessTable[ ppid ].GetPGID() ),
-		fSID                ( gProcessTable[ ppid ].GetSID() ),
-		fPendingSignals     ( 0 ),
-		fPreviousSignals    ( 0 ),
-		myName              ( gProcessTable[ ppid ].ProgramName() ),
-		itsCWD              ( gProcessTable[ ppid ].CurrentWorkingDirectory() ),
-		fControllingTerminal( gProcessTable[ ppid ].fControllingTerminal ),
-		myFileDescriptors   ( gProcessTable[ ppid ].FileDescriptors() ),
-		myStatus            ( kStarting ),
-		environStorage      ( new Sh::VarArray( gProcessTable[ ppid ].environStorage->GetPointer() ) ),
-		fErrnoData          ( gProcessTable[ ppid ].fErrnoData ),
-		fEnvironData        ( gProcessTable[ ppid ].fEnvironData )
+		itsPPID               ( ppid ),
+		itsPID                ( gProcessTable.NewProcess( this ) ),
+		itsPGID               ( gProcessTable[ ppid ].GetPGID() ),
+		itsSID                ( gProcessTable[ ppid ].GetSID() ),
+		itsPendingSignals     ( 0 ),
+		itsPreviousSignals    ( 0 ),
+		itsName               ( gProcessTable[ ppid ].ProgramName() ),
+		itsCWD                ( gProcessTable[ ppid ].CurrentWorkingDirectory() ),
+		itsControllingTerminal( gProcessTable[ ppid ].itsControllingTerminal ),
+		itsFileDescriptors    ( gProcessTable[ ppid ].FileDescriptors() ),
+		itsStatus             ( kStarting ),
+		itsEnvironStorage     ( new Sh::VarArray( gProcessTable[ ppid ].itsEnvironStorage->GetPointer() ) ),
+		itsErrnoData          ( gProcessTable[ ppid ].itsErrnoData ),
+		itsEnvironData        ( gProcessTable[ ppid ].itsEnvironData )
 	{
 		// The environment data and the pointer to the fragment's environ
 		// variable have been copied from the parent.
 		// The calling fragment is now associated with the new process.
 		// Update its environ to point to our storage.
-		if ( fEnvironData != NULL )
+		if ( itsEnvironData != NULL )
 		{
-			*fEnvironData = environStorage->GetPointer();
+			*itsEnvironData = itsEnvironStorage->GetPointer();
 		}
 	}
 	
 	void Process::InitThread()
 	{
-		N::CloseConnection( fOldFragmentConnection );
+		N::CloseConnection( itsOldFragmentConnection );
 		
-		fOldFragmentImage = BinaryImage();
+		itsOldFragmentImage = BinaryImage();
 	}
 	
 	void Process::KillThread()
@@ -325,7 +325,7 @@ namespace Genie
 		
 		// This is bad if we're killing ourselves, since the very thread we're killing
 		// is the one performing the operation, which therefore won't complete.
-		thread.reset( NULL );
+		itsThread.reset( NULL );
 	}
 	
 	template < class Type >
@@ -351,10 +351,10 @@ namespace Genie
 	class SymbolImporter
 	{
 		private:
-			N::CFragConnectionID fFragmentConnection;
+			N::CFragConnectionID itsFragmentConnection;
 		
 		public:
-			SymbolImporter( N::CFragConnectionID conn ) : fFragmentConnection( conn )  {}
+			SymbolImporter( N::CFragConnectionID conn ) : itsFragmentConnection( conn )  {}
 			
 			bool operator()( SystemCallRegistry::value_type systemCall ) const
 			{
@@ -363,7 +363,7 @@ namespace Genie
 				
 				name += "_import_";
 				
-				return LoadSymbol( fFragmentConnection, N::Str255( name ), func );
+				return LoadSymbol( itsFragmentConnection, N::Str255( name ), func );
 			}
 	};
 	
@@ -383,7 +383,7 @@ namespace Genie
 		
 		std::vector< int > toClose;
 		
-		for ( FDIter it = myFileDescriptors.begin();  it != myFileDescriptors.end();  ++it )
+		for ( FDIter it = itsFileDescriptors.begin();  it != itsFileDescriptors.end();  ++it )
 		{
 			if ( it->second.closeOnExec )
 			{
@@ -395,7 +395,7 @@ namespace Genie
 		
 		for ( ToCloseIter it = toClose.begin();  it != toClose.end();  ++it )
 		{
-			myFileDescriptors.erase( *it );
+			itsFileDescriptors.erase( *it );
 		}
 		
 		// Do we take the name before or after normalization?
@@ -409,18 +409,18 @@ namespace Genie
 		
 		// Save the fragment image and the connection that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.
-		fOldFragmentImage      = fFragmentImage;
-		fOldFragmentConnection = fFragmentConnection;
+		itsOldFragmentImage      = itsFragmentImage;
+		itsOldFragmentConnection = itsFragmentConnection;
 		
 		{
 			BinaryImage binary = GetBinaryImage( programFile );
 		}
 		
-		//fFragmentImage = ReadFragmentImageFromPluginFile( programFile );
-		fFragmentImage = GetBinaryImage( programFile );
+		//itsFragmentImage = ReadFragmentImageFromPluginFile( programFile );
+		itsFragmentImage = GetBinaryImage( programFile );
 		
-		fFragmentConnection = N::GetMemFragment< kPrivateCFragCopy >( fFragmentImage.GetPointer(),
-		                                                              fFragmentImage.GetSize() );
+		itsFragmentConnection = N::GetMemFragment< kPrivateCFragCopy >( itsFragmentImage.GetPointer(),
+		                                                                itsFragmentImage.GetSize() );
 		
 		K::Versions assumedVersions;
 		
@@ -433,7 +433,7 @@ namespace Genie
 		
 		try
 		{
-			N::FindSymbol( fFragmentConnection, "\p" "main", &mainEntryPoint );
+			N::FindSymbol( itsFragmentConnection, "\p" "main", &mainEntryPoint );
 		}
 		catch ( ... )
 		{
@@ -445,7 +445,7 @@ namespace Genie
 		
 		try
 		{
-			N::FindSymbol( fFragmentConnection, "\p" "gVersions", &versions );
+			N::FindSymbol( itsFragmentConnection, "\p" "gVersions", &versions );
 		}
 		catch ( ... )
 		{
@@ -508,14 +508,14 @@ namespace Genie
 			}
 		}
 		
-		argvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
+		itsArgvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
 		
 		// We need to set the calling fragment's environ back to the parent
 		// process' environment storage.
-		if ( fEnvironData != NULL )
+		if ( itsEnvironData != NULL )
 		{
-			*fEnvironData = myPPID > 0 ? gProcessTable[ myPPID ].environStorage->GetPointer()
-			                           : NULL;
+			*itsEnvironData = itsPPID > 0 ? gProcessTable[ itsPPID ].itsEnvironStorage->GetPointer()
+			                              : NULL;
 		}
 		
 		// Reset the environment storage as a copy of envp (or empty).
@@ -525,46 +525,46 @@ namespace Genie
 		
 		if ( envp == NULL )
 		{
-			environStorage.reset( new Sh::VarArray );
+			itsEnvironStorage.reset( new Sh::VarArray );
 		}
-		else if ( envp != environStorage->GetPointer() )
+		else if ( envp != itsEnvironStorage->GetPointer() )
 		{
-			environStorage.reset( new Sh::VarArray( envp ) );
+			itsEnvironStorage.reset( new Sh::VarArray( envp ) );
 		}
 		
 		try
 		{
-			fEnvironData = NULL;
+			itsEnvironData = NULL;
 			
-			N::FindSymbol( fFragmentConnection, "\p" "environ", &fEnvironData );
+			N::FindSymbol( itsFragmentConnection, "\p" "environ", &itsEnvironData );
 			
-			*fEnvironData = environStorage->GetPointer();
+			*itsEnvironData = itsEnvironStorage->GetPointer();
 		}
 		catch ( ... ) {}
 		
 		try
 		{
-			fErrnoData = NULL;
+			itsErrnoData = NULL;
 			
-			N::FindSymbol( fFragmentConnection, "\p" "errno", &fErrnoData );
+			N::FindSymbol( itsFragmentConnection, "\p" "errno", &itsErrnoData );
 		}
 		catch ( ... ) {}
 		
-		ImportSystemCalls( fFragmentConnection );
+		ImportSystemCalls( itsFragmentConnection );
 		
 		Result( 0 );
 		
 		ThreadContext threadContext( this,
 		                             mainEntryPoint,
-		                             argvStorage->GetPointer(),
-		                             environStorage->GetPointer() );
+		                             itsArgvStorage->GetPointer(),
+		                             itsEnvironStorage->GetPointer() );
 		
 		// Warning -- if a program calls exec() without forking,
 		// then the current thread might be the one we're about to replace.
 		// Make sure the assignment is complete before disposing the thread.
 		
-		std::auto_ptr< Thread > savedThread = thread;
-		thread.reset( new Thread( threadContext ) );
+		std::auto_ptr< Thread > savedThread = itsThread;
+		itsThread.reset( new Thread( threadContext ) );
 		
 		Status( Process::kRunning );
 		
@@ -634,9 +634,9 @@ namespace Genie
 	
 	int Process::SetErrno( int errorNumber )
 	{
-		if ( fErrnoData != NULL )
+		if ( itsErrnoData != NULL )
 		{
-			*fErrnoData = errorNumber;
+			*itsErrnoData = errorNumber;
 		}
 		
 		return errorNumber == 0 ? 0 : -1;
@@ -646,7 +646,7 @@ namespace Genie
 	{
 		char* result = NULL;
 		
-		Sh::SVector::const_iterator it = environStorage->Find( name );
+		Sh::SVector::const_iterator it = itsEnvironStorage->Find( name );
 		
 		const char* var = *it;
 		
@@ -655,12 +655,12 @@ namespace Genie
 		// Did we find the right environment variable?
 		if ( end != NULL  &&  *end == '='  &&  Sh::VarMatchesName( var, end, name ) )
 		{
-			fLastEnv = var;
-			fLastEnv += "\0";  // make sure we have a trailing null
+			itsLastEnv = var;
+			itsLastEnv += "\0";  // make sure we have a trailing null
 			
 			std::size_t offset = end + 1 - var;
 			
-			result = &fLastEnv[ offset ];
+			result = &itsLastEnv[ offset ];
 		}
 		
 		return result;
@@ -668,7 +668,7 @@ namespace Genie
 	
 	void Process::SetEnv( const char* name, const char* value, bool overwrite )
 	{
-		Sh::SVector::iterator it = environStorage->Find( name );
+		Sh::SVector::iterator it = itsEnvironStorage->Find( name );
 		
 		const char* var = *it;
 		
@@ -680,16 +680,16 @@ namespace Genie
 		
 		if ( inserting )
 		{
-			environStorage->Insert( it, Sh::MakeVar( name, value ) );
+			itsEnvironStorage->Insert( it, Sh::MakeVar( name, value ) );
 			
-			if ( fEnvironData )
+			if ( itsEnvironData )
 			{
-				*fEnvironData = environStorage->GetPointer();
+				*itsEnvironData = itsEnvironStorage->GetPointer();
 			}
 		}
 		else if ( overwrite )
 		{
-			environStorage->Overwrite( it, Sh::MakeVar( name, value ) );
+			itsEnvironStorage->Overwrite( it, Sh::MakeVar( name, value ) );
 		}
 	}
 	
@@ -698,7 +698,7 @@ namespace Genie
 		std::string name = string;
 		name.resize( name.find( '=' ) );
 		
-		Sh::SVector::iterator it = environStorage->Find( name.c_str() );
+		Sh::SVector::iterator it = itsEnvironStorage->Find( name.c_str() );
 		
 		const char* var = *it;
 		
@@ -710,22 +710,22 @@ namespace Genie
 		
 		if ( inserting )
 		{
-			environStorage->Insert( it, string );
+			itsEnvironStorage->Insert( it, string );
 			
-			if ( fEnvironData )
+			if ( itsEnvironData )
 			{
-				*fEnvironData = environStorage->GetPointer();
+				*itsEnvironData = itsEnvironStorage->GetPointer();
 			}
 		}
 		else
 		{
-			environStorage->Overwrite( it, string );
+			itsEnvironStorage->Overwrite( it, string );
 		}
 	}
 	
 	void Process::UnsetEnv( const char* name )
 	{
-		Sh::SVector::iterator it = environStorage->Find( name );
+		Sh::SVector::iterator it = itsEnvironStorage->Find( name );
 		
 		const char* var = *it;
 		
@@ -734,17 +734,17 @@ namespace Genie
 		
 		if ( match )
 		{
-			environStorage->Remove( it );
+			itsEnvironStorage->Remove( it );
 		}
 	}
 	
 	void Process::ClearEnv()
 	{
-		environStorage->Clear();
+		itsEnvironStorage->Clear();
 		
-		if ( fEnvironData )
+		if ( itsEnvironData )
 		{
-			*fEnvironData = NULL;
+			*itsEnvironData = NULL;
 		}
 	}
 	
@@ -785,7 +785,7 @@ namespace Genie
 	{
 		Status( kTerminated );
 		
-		myFileDescriptors.clear();
+		itsFileDescriptors.clear();
 		
 		int ppid = ParentProcessID();
 		int pid = ProcessID();
@@ -811,16 +811,17 @@ namespace Genie
 	
 	void Process::Terminate( int result )
 	{
-		myResult = result;
+		itsResult = result;
 		
 		Terminate();
 	}
 	
 	void Process::Orphan()
 	{
-		ASSERT( myPID != 1 );
-		myPPID = 1;
-		myFileDescriptors.clear();
+		ASSERT( itsPID != 1 );
+		
+		itsPPID = 1;
+		itsFileDescriptors.clear();
 	}
 	
 	sig_t Process::SetSignalAction( int signal, sig_t signalAction )
@@ -831,16 +832,16 @@ namespace Genie
 			return SIG_ERR;
 		}
 		
-		sig_t result = signalMap[ signal ];
+		sig_t result = itsSignalMap[ signal ];
 		
-		signalMap[ signal ] = signalAction;
+		itsSignalMap[ signal ] = signalAction;
 		
 		return result;
 	}
 	
 	void Process::Raise( int signal )
 	{
-		sig_t action = signalMap[ signal ];
+		sig_t action = itsSignalMap[ signal ];
 		
 		if ( action == SIG_IGN )
 		{
@@ -908,7 +909,7 @@ namespace Genie
 		else
 		{
 			// FIXME:  Block this signal during the function call
-			fPendingSignals |= 1 << signal - 1;
+			itsPendingSignals |= 1 << signal - 1;
 			
 			Continue();
 		}
@@ -916,44 +917,42 @@ namespace Genie
 	
 	bool Process::HandlePendingSignals()
 	{
-		fPreviousSignals = fPendingSignals;
+		itsPreviousSignals = itsPendingSignals;
 		
-		UInt32 bits = fPendingSignals;
+		UInt32 bits = itsPendingSignals;
 		int signal = 1;
 		
 		while ( bits )
 		{
 			if ( bits & 1 )
 			{
-				sig_t action = signalMap[ signal ];
+				sig_t action = itsSignalMap[ signal ];
 				
 				ASSERT( action != SIG_IGN );
 				ASSERT( action != SIG_DFL );
 				
 				action( signal );
 				
-				fPendingSignals &= ~( 1 << signal - 1 );
+				itsPendingSignals &= ~( 1 << signal - 1 );
 			}
 			
 			bits >>= 1;
 			++signal;
 		}
 		
-		return fPreviousSignals;
+		return itsPreviousSignals;
 	}
 	
-	GenieProcessTable::GenieProcessTable()
-	: 
-		myNextPID( 1 )
+	GenieProcessTable::GenieProcessTable() : itsNextPID( 1 )
 	{
 		new Process( Process::RootProcess() );
 	}
 	
-	Process& GenieProcessTable::operator[]( int pid )
+	Process& GenieProcessTable::operator[]( pid_t pid )
 	{
-		ProcessMap::iterator it = myProcesses.find( pid );
+		ProcessMap::iterator it = itsProcesses.find( pid );
 		
-		if ( it == myProcesses.end() )
+		if ( it == itsProcesses.end() )
 		{
 			throw NoSuchProcess();
 		}
@@ -961,28 +960,30 @@ namespace Genie
 		return *it->second;
 	}
 	
-	int GenieProcessTable::NewProcess( Process* process )
+	pid_t GenieProcessTable::NewProcess( Process* process )
 	{
-		myProcesses[ myNextPID ] = boost::shared_ptr< Process >( process );
-		return myNextPID++;
+		itsProcesses[ itsNextPID ] = boost::shared_ptr< Process >( process );
+		
+		return itsNextPID++;
 	}
 	
 	int GenieProcessTable::RemoveProcess( iterator it )
 	{
 		int result = it->second->Result();
 		
-		myProcesses.erase( it );
+		itsProcesses.erase( it );
 		
 		return result;
 	}
 	
-	int GenieProcessTable::RemoveProcess( int pid )
+	int GenieProcessTable::RemoveProcess( pid_t pid )
 	{
-		iterator found = myProcesses.find( pid );
+		iterator found = itsProcesses.find( pid );
 		
-		if ( found == myProcesses.end() )
+		if ( found == itsProcesses.end() )
 		{
 			N::SysBeep();
+			
 			return -1;
 		}
 		
@@ -991,7 +992,7 @@ namespace Genie
 	
 	void GenieProcessTable::KillAll()
 	{
-		for ( ProcessMap::iterator it = myProcesses.begin();  it != myProcesses.end();  ++it )
+		for ( ProcessMap::iterator it = itsProcesses.begin();  it != itsProcesses.end();  ++it )
 		{
 			Process& proc = *it->second;
 			
@@ -1008,7 +1009,7 @@ namespace Genie
 	{
 		std::vector< int > hitlist;
 		
-		for ( ProcessMap::iterator it = myProcesses.begin();  it != myProcesses.end();  ++it )
+		for ( ProcessMap::iterator it = itsProcesses.begin();  it != itsProcesses.end();  ++it )
 		{
 			Process& proc = *it->second;
 			
@@ -1030,7 +1031,7 @@ namespace Genie
 	
 	void GenieProcessTable::SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal )
 	{
-		for ( ProcessMap::iterator it = myProcesses.begin();  it != myProcesses.end();  ++it )
+		for ( ProcessMap::iterator it = itsProcesses.begin();  it != itsProcesses.end();  ++it )
 		{
 			Process& proc = *it->second;
 			
@@ -1043,14 +1044,14 @@ namespace Genie
 	
 	void Process::Stop()
 	{
-		StopThread( thread->Get() );
+		StopThread( itsThread->Get() );
 	}
 	
 	void Process::Continue()
 	{
-		if ( N::GetThreadState( thread->Get() ) == N::kStoppedThreadState )
+		if ( N::GetThreadState( itsThread->Get() ) == N::kStoppedThreadState )
 		{
-			N::SetThreadState( thread->Get(), N::kReadyThreadState );
+			N::SetThreadState( itsThread->Get(), N::kReadyThreadState );
 		}
 	}
 	
