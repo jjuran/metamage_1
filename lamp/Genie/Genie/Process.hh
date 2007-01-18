@@ -267,7 +267,7 @@ namespace Genie
 			
 			Process& operator[]( pid_t pid );
 			
-			int NewProcess( Process* process );
+			pid_t NewProcess( Process* process );
 			
 			int RemoveProcess( iterator it );
 			int RemoveProcess( pid_t pid );
