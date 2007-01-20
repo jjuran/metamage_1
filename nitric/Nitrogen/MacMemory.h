@@ -139,6 +139,12 @@ namespace Nitrogen
 		return reinterpret_cast< T* >( p.Get() );
 	}
 	
+	template < class T >
+	Nucleus::Owned< T*, Nucleus::Disposer< Ptr > > Ptr_Cast( Nucleus::Owned< Ptr > p )
+	{
+		return Nucleus::Owned< T*, Nucleus::Disposer< Ptr > >::Seize( reinterpret_cast< T* >( p.Release().Get() ) );
+	}
+   
    template < class T >
    T** Handle_Cast( Handle h )
      {
@@ -148,11 +154,6 @@ namespace Nitrogen
    template < class T >
    Nucleus::Owned< T**, Nucleus::Disposer<Handle> > Handle_Cast( Nucleus::Owned< Handle > h )
      {
-      // It seems silly to Release and Seize when we merely want to convert,
-      // But Handle doesn't convert directly to T**.
-      // A workaround would be to define a class AnyHandle that constructs from Handle
-      // and converts to T**, and convert h to Nucleus::Owned< AnyHandle, Disposer< Handle > > 
-      // and that to Nucleus::Owned< T**, Disposer< Handle > >.
       return Nucleus::Owned< T**, Nucleus::Disposer<Handle> >::Seize( reinterpret_cast< T** >( h.Release().Get() ) );
      }
    
@@ -298,6 +299,12 @@ namespace Nitrogen
 		return size;
 	}
 	
+	template < class T >
+	inline std::size_t GetPtrArraySize( T* p )
+	{
+		return Nitrogen::GetPtrSize( Ptr( p ) ) / sizeof (T);
+	}
+	
 	// 1102
 	inline void DisposeHandle( Nucleus::Owned< Handle > )  {}
 	
@@ -369,26 +376,82 @@ namespace Nitrogen
 	
 	typedef Nucleus::Pseudoreference< HandleState_Details > HandleState;
    	
+	struct PtrFlattener
+	{
+		typedef Ptr Put_Parameter;
+		
+		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		{
+			const char* begin = toPut;
+			const std::size_t size = GetPtrSize( toPut );
+			
+			put( begin, begin + size );
+		}
+		
+		typedef Nucleus::Owned< Ptr > Get_Result;
+		
+		template < class Getter > Get_Result Get( Getter get )
+		{
+			const std::size_t size = get.size();
+			Get_Result result = NewPtr( size );
+			
+			char* begin = result.Get();
+			
+			get( begin, begin + size );
+			
+			return result;
+		}
+		
+		typedef Put_Parameter Parameter;
+		typedef Get_Result    Result;
+		
+		static const bool hasStaticSize = false;
+		struct Buffer {};
+	};
+	
 	template < class T >
-	struct HandleFlattener
+	struct TypedPtrFlattener
 	{
 		typedef T   DataType;
-		typedef T** HandleType;
+		typedef T*  PtrType;
 		
-		typedef HandleType Put_Parameter;
+		typedef PtrType Put_Parameter;
+		
+		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		{
+			PtrFlattener().Put( Ptr( toPut ), put );
+		}
+		
+		typedef Nucleus::Owned< PtrType > Get_Result;
+		
+		template < class Getter > Get_Result Get( Getter get )
+		{
+			return Ptr_Cast< T >( PtrFlattener().Get( get ) );
+		}
+		
+		typedef Put_Parameter Parameter;
+		typedef Get_Result    Result;
+		
+		static const bool hasStaticSize = false;
+		struct Buffer {};
+	};
+	
+	struct HandleFlattener
+	{
+		typedef Handle Put_Parameter;
 		
 		template < class Putter > void Put( Put_Parameter toPut, Putter put )
 		{
 			Nucleus::Scoped< HandleState > hState( HandleState( toPut ) );
 			HLock( toPut );
 			
-			const T* begin = *toPut;
-			const std::size_t size = GetHandleArraySize( toPut );
+			const char* begin = *toPut;
+			const std::size_t size = GetHandleSize( toPut );
 			
 			put( begin, begin + size );
 		}
 		
-		typedef Nucleus::Owned< HandleType > Get_Result;
+		typedef Nucleus::Owned< Handle > Get_Result;
 		
 		template < class Getter > Get_Result Get( Getter get )
 		{
@@ -398,11 +461,38 @@ namespace Nitrogen
 			Nucleus::Scoped< HandleState > hState( HandleState( result ) );
 			HLock( result );
 			
-			T* begin = *result;
+			char* begin = *result.Get();
 			
 			get( begin, begin + size );
 			
 			return result;
+		}
+		
+		typedef Put_Parameter Parameter;
+		typedef Get_Result    Result;
+		
+		static const bool hasStaticSize = false;
+		struct Buffer {};
+	};
+	
+	template < class T >
+	struct TypedHandleFlattener
+	{
+		typedef T   DataType;
+		typedef T** HandleType;
+		
+		typedef HandleType Put_Parameter;
+		
+		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		{
+			HandleFlattener().Put( Handle( toPut ), put );
+		}
+		
+		typedef Nucleus::Owned< HandleType > Get_Result;
+		
+		template < class Getter > Get_Result Get( Getter get )
+		{
+			return Handle_Cast< T >( HandleFlattener().Get( get ) );
 		}
 		
 		typedef Put_Parameter Parameter;
