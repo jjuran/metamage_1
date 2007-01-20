@@ -7,35 +7,24 @@
 #define GENIE_BINARYIMAGE_HH
 
 // Mac OS
-#include <Files.h>
+//#include <Files.h>
 
-// boost
-#include "boost/shared_ptr.hpp"
+struct FSSpec;
+
+// Nucleus
+#include "Nucleus/Shared.h"
+
+// Nitrogen
+#include "Nitrogen/MacMemory.h"
 
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
-	class BinaryImage
-	{
-		public:
-			struct Data {};
-		
-		private:
-			boost::shared_ptr< Data > itsData;
-			std::size_t itsDataSize;
-		
-		public:
-			BinaryImage() : itsDataSize()  {}
-			
-			BinaryImage( std::auto_ptr< Data > data, std::size_t size );
-			
-			std::size_t GetSize() const  { return itsDataSize; }
-			
-			const void* GetPointer() const  { return itsData.get(); }
-	};
+	typedef NN::Shared< N::Ptr > BinaryImage;
 	
 	BinaryImage GetBinaryImage( const FSSpec& file );
 	

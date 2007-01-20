@@ -5,8 +5,11 @@
 
 #include "Genie/BinaryImage.hh"
 
-// Nitrogen / Mac OS
+// Nitrogen
 #include "Nitrogen/Files.h"
+
+// Io
+#include "io/slurp.hh"
 
 
 namespace Genie
@@ -15,18 +18,21 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	BinaryImage::BinaryImage( std::auto_ptr< Data >  data,
-	                          std::size_t            size ) : itsData    ( data ),
-	                                                          itsDataSize( size )
-	{
-	}
-	
 	struct BinaryFileMetadata
 	{
 		UInt32 dataForkLength;
 		UInt32 creationDate;
 		UInt32 modificationDate;
 		UInt32 fileID;
+		
+		BinaryFileMetadata()  {}
+		
+		BinaryFileMetadata( const HFileInfo& hFileInfo ) : dataForkLength  ( hFileInfo.ioFlLgLen ),
+		                                                   creationDate    ( hFileInfo.ioFlCrDat ),
+		                                                   modificationDate( hFileInfo.ioFlMdDat ),
+		                                                   fileID          ( hFileInfo.ioDirID   )
+		{
+		}
 		
 		friend bool operator==( const BinaryFileMetadata& a, const BinaryFileMetadata& b )
 		{
@@ -44,8 +50,9 @@ namespace Genie
 	
 	struct BinaryImageCacheEntry
 	{
-		BinaryImage         image;
-		BinaryFileMetadata  metadata;
+		//BinaryImage         image;
+		NN::Shared< N::Ptr >  image;
+		BinaryFileMetadata   metadata;
 	};
 	
 	template < class T > static int cmp( const T& a, const T& b )
@@ -85,34 +92,10 @@ namespace Genie
 		
 		N::FSpGetCatInfo( file, pb );
 		
-		BinaryFileMetadata result;
-		
-		result.dataForkLength   = pb.hFileInfo.ioFlLgLen;
-		result.creationDate     = pb.hFileInfo.ioFlCrDat;
-		result.modificationDate = pb.hFileInfo.ioFlMdDat;
-		result.fileID           = pb.hFileInfo.ioDirID;
-		
-		return result;
+		return BinaryFileMetadata( pb.hFileInfo );
 	}
 	
-	static BinaryImage LoadBinaryImage( const FSSpec& file )
-	{
-		using N::fsRdPerm;
-		
-		NN::Owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, fsRdPerm );
-		
-		std::size_t size = N::GetEOF( filehandle );
-		
-		std::auto_ptr< BinaryImage::Data > result;
-		
-		result.reset( static_cast< BinaryImage::Data* >( ::operator new( size ) ) );
-		
-		int bytes = N::FSRead( filehandle, size, reinterpret_cast< char* >( result.get() ) );
-		
-		return BinaryImage( result, size );
-	}
-	
-	BinaryImage GetBinaryImage( const FSSpec& file )
+	NN::Shared< N::Ptr > GetBinaryImage( const FSSpec& file )
 	{
 		BinaryFileMetadata metadata = GetFileMetadata( file );
 		
@@ -139,7 +122,7 @@ namespace Genie
 		BinaryImageCacheEntry newEntry;
 		
 		newEntry.metadata = metadata;
-		newEntry.image    = LoadBinaryImage( file );
+		newEntry.image    = io::slurp_file< N::PtrFlattener >( file );
 		
 		// Install the new cache entry
 		*cacheEntry = newEntry;
