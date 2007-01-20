@@ -70,13 +70,10 @@ namespace Genie
 			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_pid( getpid() ) ); }
 	};
 	
-	/*
 	class FSTree_pid_exe : public FSTree
 	{
 		private:
 			pid_t itsPID;
-		
-			pid_t getpid() const  { return CurrentProcess().ProcessID(); }
 		
 		public:
 			FSTree_pid_exe( pid_t pid ) : itsPID( pid )  {}
@@ -87,11 +84,10 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_pid( itsPID ) ); }
 			
-			std::string ReadLink() const  { return NN::Convert< std::string >( getpid() ); }
+			std::string ReadLink() const  { return GetFSTreePathname( ResolveLink() ); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_pid( getpid() ) ); }
+			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( gProcessTable[ itsPID ].ProgramFile() ); }
 	};
-	*/
 	
 	
 	FSTreePtr GetProcFSTree()
@@ -138,7 +134,10 @@ namespace Genie
 	
 	FSTreePtr FSTree_pid::Lookup_Child( const std::string& name ) const
 	{
-		pid_t pid = std::atoi( name.c_str() );
+		if ( name == "exe" )
+		{
+			return FSTreePtr( new FSTree_pid_exe( itsPID ) );
+		}
 		
 		return FSNull();
 	}
