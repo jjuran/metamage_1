@@ -150,6 +150,7 @@ namespace Genie
 			std::map< int, sig_t > itsSignalMap;
 		
 		private:
+			FSSpec itsProgramFile;
 			BinaryImage itsFragmentImage;
 			BinaryImage itsOldFragmentImage;
 			NN::Owned< CFragConnectionID > itsFragmentConnection;
@@ -183,6 +184,8 @@ namespace Genie
 			EStatus Status()      const  { return itsStatus; }
 			int Result()          const  { return itsResult; }
 			std::string ProgramName()  const  { return itsName;   }
+			
+			FSSpec ProgramFile() const  { return itsProgramFile; }
 			
 			TTYHandle* ControllingTerminal() const  { return itsControllingTerminal; }
 			

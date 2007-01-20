@@ -405,7 +405,7 @@ namespace Genie
 		
 		Normalize( context, CurrentWorkingDirectory() );
 		
-		FSSpec programFile = context.executable;
+		itsProgramFile = context.executable;
 		
 		// Save the fragment image and the connection that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.
@@ -413,14 +413,13 @@ namespace Genie
 		itsOldFragmentConnection = itsFragmentConnection;
 		
 		{
-			BinaryImage binary = GetBinaryImage( programFile );
+			BinaryImage binary = GetBinaryImage( itsProgramFile );
 		}
 		
-		//itsFragmentImage = ReadFragmentImageFromPluginFile( programFile );
-		itsFragmentImage = GetBinaryImage( programFile );
+		itsFragmentImage = GetBinaryImage( itsProgramFile );
 		
-		itsFragmentConnection = N::GetMemFragment< kPrivateCFragCopy >( itsFragmentImage.GetPointer(),
-		                                                                itsFragmentImage.GetSize() );
+		itsFragmentConnection = N::GetMemFragment< kPrivateCFragCopy >( itsFragmentImage.Get(),
+		                                                                N::GetPtrSize( itsFragmentImage ) );
 		
 		K::Versions assumedVersions;
 		
