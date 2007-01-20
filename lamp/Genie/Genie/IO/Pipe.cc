@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// Io
+#include "io/io.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -53,7 +56,7 @@ namespace Genie
 				
 				if ( myStrings.empty() )
 				{
-					throw Io::EndOfInput();
+					throw io::end_of_input();
 				}
 			}
 			

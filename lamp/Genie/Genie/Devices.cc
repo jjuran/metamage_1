@@ -8,14 +8,14 @@
 // Standard C++ library
 #include <algorithm>
 
+// Io
+#include "io/io.hh"
+
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
-
-// Io
-#include "Io/Exceptions.hh"
 
 // Genie
 #include "Genie/IO/SimpleDevice.hh"
@@ -32,7 +32,7 @@ namespace Genie
 	
 	static int ReadNull( char*, std::size_t )
 	{
-		throw Io::EndOfInput();
+		throw io::end_of_input();
 	}
 	
 	static int WriteVoid( const char*, std::size_t byteCount )

@@ -12,8 +12,11 @@
 #include <string>
 #include <vector>
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
+
+// Io
+#include "io/io.hh"
 
 // Nitrogen
 #include "Nitrogen/Processes.h"
@@ -351,7 +354,7 @@ namespace Genie
 			
 			if ( Pane().eofReceived )
 			{
-				throw Io::EndOfInput();
+				throw io::end_of_input();
 			}
 			else
 			{
