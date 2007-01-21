@@ -92,6 +92,11 @@ namespace Genie
 		
 		while ( !path.Done() )
 		{
+			if ( result->IsLink() )
+			{
+				result = result->ResolveLink();
+			}
+			
 			result = result->Lookup( path.Get() );
 			
 			path.Advance();
