@@ -761,11 +761,12 @@ namespace Genie
 		{
 			FSTreePtr dir = ResolvePathname( pathname, CurrentWorkingDirectory() );
 			
-			struct ::stat sb;
+			if ( dir->IsLink() )
+			{
+				dir = dir->ResolveLink();
+			}
 			
-			dir->Stat( sb );  // Throws if nonexistent
-			
-			if ( !(sb.st_mode & S_IFDIR) )
+			if ( !dir->IsDirectory() )
 			{
 				P7::ThrowErrno( ENOTDIR );
 			}
