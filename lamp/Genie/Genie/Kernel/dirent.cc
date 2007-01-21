@@ -28,7 +28,14 @@ namespace Genie
 	{
 		FSTreePtr current( CurrentProcess().CurrentWorkingDirectory() );
 		
-		return boost::shared_ptr< DirHandle >( new DirHandle( ResolvePathname( pathname, current ) ) );
+		FSTreePtr dir = ResolvePathname( pathname, current );
+		
+		if ( dir->IsLink() )
+		{
+			dir = dir->ResolveLink();
+		}
+		
+		return boost::shared_ptr< DirHandle >( new DirHandle( dir ) );
 	}
 	
 	/*
