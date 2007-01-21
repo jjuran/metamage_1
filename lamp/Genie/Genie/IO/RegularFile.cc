@@ -11,9 +11,6 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
-// Io
-#include "Io/Exceptions.hh"
-
 // Genie
 #include "Genie/FileSystem/StatFile.hh"
 
@@ -47,19 +44,7 @@ namespace Genie
 	
 	int RegularFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		try
-		{
-			return N::FSRead( refNum, byteCount, data );
-		}
-		catch ( const N::EOFErr& err )
-		{
-			ASSERT( err.Get() == eofErr );
-			
-			throw Io::EndOfInput();
-		}
-		
-		// Not reached
-		return 0;
+		return N::FSRead( refNum, byteCount, data );
 	}
 	
 	int RegularFileHandle::SysWrite( const char* data, std::size_t byteCount )
