@@ -34,22 +34,18 @@ namespace Genie
 	typedef FSTree_Special< proc_Details > FSTree_proc;
 	
 	
-	class FSTree_pid : public FSTree_Directory
+	class FSTree_pid : public FSTree_Virtual
 	{
 		private:
 			pid_t itsPID;
 		
 		public:
-			FSTree_pid( pid_t pid ) : itsPID( pid )  {}
+			FSTree_pid( pid_t pid );
 			
 			std::string Name() const;
 			
 			FSTreePtr Self()   const;
 			FSTreePtr Parent() const  { return GetProcFSTree(); }
-			
-			FSTreePtr Lookup_Child( const std::string& name ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	
@@ -70,6 +66,25 @@ namespace Genie
 			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_pid( getpid() ) ); }
 	};
 	
+	class FSTree_pid_cwd : public FSTree
+	{
+		private:
+			pid_t itsPID;
+		
+		public:
+			FSTree_pid_cwd( pid_t pid ) : itsPID( pid )  {}
+			
+			bool IsLink() const  { return true; }
+			
+			std::string Name() const  { return "cwd"; }
+			
+			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_pid( itsPID ) ); }
+			
+			std::string ReadLink() const  { return GetFSTreePathname( ResolveLink() ); }
+			
+			FSTreePtr ResolveLink() const  { return gProcessTable[ itsPID ].CurrentWorkingDirectory(); }
+	};
+	
 	class FSTree_pid_exe : public FSTree
 	{
 		private:
@@ -87,6 +102,26 @@ namespace Genie
 			std::string ReadLink() const  { return GetFSTreePathname( ResolveLink() ); }
 			
 			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( gProcessTable[ itsPID ].ProgramFile() ); }
+	};
+	
+	class FSTree_pid_root : public FSTree
+	{
+		private:
+			pid_t itsPID;
+		
+		public:
+			FSTree_pid_root( pid_t pid ) : itsPID( pid )  {}
+			
+			bool IsLink() const  { return true; }
+			
+			std::string Name() const  { return "root"; }
+			
+			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_pid( itsPID ) ); }
+			
+			std::string ReadLink() const  { return GetFSTreePathname( ResolveLink() ); }
+			
+			//FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( gProcessTable[ itsPID ].RootDirectory() ); }
+			FSTreePtr ResolveLink() const  { return FSRoot(); }
 	};
 	
 	
@@ -122,6 +157,13 @@ namespace Genie
 	}
 	
 	
+	FSTree_pid::FSTree_pid( pid_t pid ) : itsPID( pid )
+	{
+		Map( "cwd",  FSTreePtr( new FSTree_pid_cwd ( pid ) ) );
+		Map( "exe",  FSTreePtr( new FSTree_pid_exe ( pid ) ) );
+		Map( "root", FSTreePtr( new FSTree_pid_root( pid ) ) );
+	}
+	
 	std::string FSTree_pid::Name() const
 	{
 		return NN::Convert< std::string >( itsPID );
@@ -130,21 +172,6 @@ namespace Genie
 	FSTreePtr FSTree_pid::Self() const
 	{
 		return FSTreePtr( new FSTree_pid( *this ) );
-	}
-	
-	FSTreePtr FSTree_pid::Lookup_Child( const std::string& name ) const
-	{
-		if ( name == "exe" )
-		{
-			return FSTreePtr( new FSTree_pid_exe( itsPID ) );
-		}
-		
-		return FSNull();
-	}
-	
-	void FSTree_pid::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		//
 	}
 	
 }
