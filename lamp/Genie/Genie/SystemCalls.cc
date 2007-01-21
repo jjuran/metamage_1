@@ -14,6 +14,9 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
+// Io
+#include "io/io.hh"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 
@@ -62,9 +65,9 @@ namespace Nucleus
 {
 	
 	template <>
-	struct Converter< POSeven::Errno, Io::EndOfInput > : public std::unary_function< Io::EndOfInput, POSeven::Errno >
+	struct Converter< POSeven::Errno, io::end_of_input > : public std::unary_function< io::end_of_input, POSeven::Errno >
 	{
-		POSeven::Errno operator()( Io::EndOfInput ) const
+		POSeven::Errno operator()( io::end_of_input ) const
 		{
 			return POSeven::Errno( 0 );
 		}
@@ -95,7 +98,7 @@ namespace Genie
 	int GetErrnoFromExceptionInSystemCall()
 	{
 		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus       >();
-		NN::RegisterExceptionConversion< P7::Errno, Io::EndOfInput    >();
+		NN::RegisterExceptionConversion< P7::Errno, io::end_of_input  >();
 		NN::RegisterExceptionConversion< P7::Errno, Io::NoDataPending >();
 		
 		P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled(), EINVAL );

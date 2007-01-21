@@ -5,6 +5,9 @@
 
 #include "Genie/IO/SocketStream.hh"
 
+// Io
+#include "io/io.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -115,7 +118,7 @@ namespace Genie
 				catch ( const N::OTNoDataErr& )
 				{
 					// ::OTRcv() returns kOTNoDataErr to signal EOF in blocking mode
-					throw Io::EndOfInput();
+					throw io::end_of_input();
 				}
 				
 				SetNonBlocking();
