@@ -11,8 +11,7 @@
 #include <string>
 
 // Io
-#include "Io/Exceptions.hh"
-#include "Io/Handle.hh"
+#include "io/io.hh"
 
 
 namespace Io
@@ -35,7 +34,7 @@ namespace Io
 			
 			Object Read()
 			{
-				if ( Empty() )  throw NoDataPending();
+				if ( Empty() )  throw io::no_input_pending();
 				
 				Object obj = objects.front();
 				objects.pop_front();
@@ -70,10 +69,11 @@ namespace Io
 			bool ReceiveEndOfInput();
 	};
 	
+	template < class Input >
 	class TextInputAdapter
 	{
 		private:
-			IOHandle         itsInput;   // The raw input stream
+			Input            itsInput;   // The raw input stream
 			TextInputBuffer  itsBuffer;
 			
 			bool GetMore();              // Called when the string pipe is empty.
@@ -81,7 +81,7 @@ namespace Io
 		public:
 			TextInputAdapter()  {}
 			
-			TextInputAdapter( const IOHandle& input ) : itsInput( input )  {}
+			TextInputAdapter( Input input ) : itsInput( input )  {}
 			
 			bool Ended() const  { return itsBuffer.Ended(); }
 			bool Ready()  { return itsBuffer.Ready()  ||  GetMore() && Ready(); }
@@ -93,6 +93,30 @@ namespace Io
 				return itsBuffer.Read();
 			}
 	};
+	
+	template < class Input >
+	bool TextInputAdapter< Input >::GetMore()
+	{
+		enum { blockSize = 4096 };
+		
+		char data[ blockSize ];
+		
+		try
+		{
+			std::size_t bytes = io::read( itsInput, data, blockSize );  // result is always positive
+			
+			itsBuffer.ReceiveBlock( data, bytes );
+			
+			return true;
+		}
+		catch ( const io::no_input_pending& ) {}
+		catch ( const io::end_of_input&     )
+		{
+			return itsBuffer.ReceiveEndOfInput();
+		}
+		
+		return false;
+	}
 	
 }
 

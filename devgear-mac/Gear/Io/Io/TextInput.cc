@@ -57,28 +57,5 @@ namespace Io
 		return false;
 	}
 	
-	bool TextInputAdapter::GetMore()
-	{
-		enum { blockSize = 4096 };
-		
-		char data[ blockSize ];
-		
-		try
-		{
-			int bytes = itsInput.Read( data, blockSize );  // result is always positive
-			
-			itsBuffer.ReceiveBlock( data, bytes );
-			
-			return true;
-		}
-		catch ( const NoDataPending& ) {}
-		catch ( const EndOfInput&    )
-		{
-			return itsBuffer.ReceiveEndOfInput();
-		}
-		
-		return false;
-	}
-	
 }
 
