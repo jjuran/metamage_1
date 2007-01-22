@@ -445,7 +445,7 @@ namespace Nitrogen
 			Nucleus::Scoped< HandleState > hState( HandleState( toPut ) );
 			HLock( toPut );
 			
-			const char* begin = *toPut;
+			const char* begin = *toPut.Get();
 			const std::size_t size = GetHandleSize( toPut );
 			
 			put( begin, begin + size );
