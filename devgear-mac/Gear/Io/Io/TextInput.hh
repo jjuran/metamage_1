@@ -73,24 +73,24 @@ namespace Io
 	class TextInputAdapter
 	{
 		private:
-			IOHandle         input;   // The raw input stream
-			TextInputBuffer  buffer;
+			IOHandle         itsInput;   // The raw input stream
+			TextInputBuffer  itsBuffer;
 			
-			bool GetMore();             // Called when the string pipe is empty.
+			bool GetMore();              // Called when the string pipe is empty.
 		
 		public:
 			TextInputAdapter()  {}
 			
-			TextInputAdapter( const IOHandle& input ) : input( input )  {}
+			TextInputAdapter( const IOHandle& input ) : itsInput( input )  {}
 			
-			bool Ended() const  { return buffer.Ended(); }
-			bool Ready()  { return buffer.Ready()  ||  GetMore() && Ready(); }
+			bool Ended() const  { return itsBuffer.Ended(); }
+			bool Ready()  { return itsBuffer.Ready()  ||  GetMore() && Ready(); }
 			
 			std::string Read()
 			{
 				(void) Ready();
 				
-				return buffer.Read();
+				return itsBuffer.Read();
 			}
 	};
 	

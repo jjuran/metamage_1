@@ -65,16 +65,16 @@ namespace Io
 		
 		try
 		{
-			int bytes = input.Read( data, blockSize );  // result is always positive
+			int bytes = itsInput.Read( data, blockSize );  // result is always positive
 			
-			buffer.ReceiveBlock( data, bytes );
+			itsBuffer.ReceiveBlock( data, bytes );
 			
 			return true;
 		}
 		catch ( const NoDataPending& ) {}
 		catch ( const EndOfInput&    )
 		{
-			return buffer.ReceiveEndOfInput();
+			return itsBuffer.ReceiveEndOfInput();
 		}
 		
 		return false;
