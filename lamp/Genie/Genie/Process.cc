@@ -374,16 +374,14 @@ namespace Genie
 		               SymbolImporter( fragmentConnection ) );
 	}
 	
-	int Process::Exec( const FSSpec&        executable,
-	                   const char* const    argv[],
-	                   const char* const*   envp )
+	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors )
 	{
 		// Close file descriptors with close-on-exec flag.
 		typedef FileDescriptorMap::iterator FDIter;
 		
 		std::vector< int > toClose;
 		
-		for ( FDIter it = itsFileDescriptors.begin();  it != itsFileDescriptors.end();  ++it )
+		for ( FDIter it = fileDescriptors.begin();  it != fileDescriptors.end();  ++it )
 		{
 			if ( it->second.closeOnExec )
 			{
@@ -395,8 +393,15 @@ namespace Genie
 		
 		for ( ToCloseIter it = toClose.begin();  it != toClose.end();  ++it )
 		{
-			itsFileDescriptors.erase( *it );
+			fileDescriptors.erase( *it );
 		}
+	}
+	
+	int Process::Exec( const FSSpec&        executable,
+	                   const char* const    argv[],
+	                   const char* const*   envp )
+	{
+		CloseMarkedFileDescriptors( itsFileDescriptors );
 		
 		// Do we take the name before or after normalization?
 		ProgramName( NN::Convert< std::string >( executable.name ) );
