@@ -212,13 +212,25 @@ namespace Genie
 	#pragma mark -
 	#pragma mark ¥ unistd ¥
 	
-	static int chdir( const char* path )
+	static int chdir( const char* pathname )
 	{
 		try
 		{
-			int result = CurrentProcess().ChangeDirectory( path );
+			if ( pathname == NULL )
+			{
+				return CurrentProcess().SetErrno( EINVAL );
+			}
 			
-			return result == 0 ? 0 : -1;
+			FSTreePtr newCWD = ResolvePathname( pathname, CurrentProcess().CurrentWorkingDirectory() );
+			
+			if ( newCWD->IsLink() )
+			{
+				newCWD = newCWD->ResolveLink();
+			}
+			
+			CurrentProcess().ChangeDirectory( newCWD );
+			
+			return 0;
 		}
 		catch ( ... )
 		{

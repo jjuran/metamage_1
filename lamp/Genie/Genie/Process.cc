@@ -747,38 +747,14 @@ namespace Genie
 		}
 	}
 	
-	/*
-	long Process::ChangeDirectory( const N::FSDirSpec& dir )
+	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
-		myCWD = dir;
-		return 0;
-	}
-	*/
-	
-	int Process::ChangeDirectory( const char* pathname )
-	{
-		if ( pathname != NULL )
+		if ( !newCWD->IsDirectory() )
 		{
-			FSTreePtr dir = ResolvePathname( pathname, CurrentWorkingDirectory() );
-			
-			if ( dir->IsLink() )
-			{
-				dir = dir->ResolveLink();
-			}
-			
-			if ( !dir->IsDirectory() )
-			{
-				P7::ThrowErrno( ENOTDIR );
-			}
-			
-			itsCWD = dir;
-		}
-		else
-		{
-			// What constitutes home here?
+			P7::ThrowErrno( ENOTDIR );
 		}
 		
-		return 0;
+		itsCWD = newCWD;
 	}
 	
 	void Process::Terminate()

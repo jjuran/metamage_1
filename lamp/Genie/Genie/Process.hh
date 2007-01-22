@@ -215,8 +215,7 @@ namespace Genie
 			
 			void SetControllingTerminal( TTYHandle* terminal )  { itsControllingTerminal = terminal; }
 			
-			//long ChangeDirectory( const N::FSDirSpec& dir );
-			int ChangeDirectory( const char* pathname );
+			void ChangeDirectory( const FSTreePtr& newCWD );
 			
 			void Orphan();
 			sig_t SetSignalAction( int signal, sig_t signalAction );
