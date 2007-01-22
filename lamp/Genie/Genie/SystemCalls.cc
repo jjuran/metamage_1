@@ -350,7 +350,11 @@ namespace Genie
 			return;
 		}
 		
-		current.KillThread();
+		while ( true )
+		{
+			// Stay awhile...  Stay forever!
+			Yield();
+		}
 	}
 	
 	REGISTER_SYSTEM_CALL( _exit );

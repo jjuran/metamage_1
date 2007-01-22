@@ -235,7 +235,6 @@ namespace Genie
 			             const char* const* envp );
 			
 			void InitThread();
-			void KillThread();
 			
 			int SetErrno( int errorNumber );
 			

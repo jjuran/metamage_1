@@ -116,10 +116,6 @@ namespace Genie
 		
 		context.processContext->Terminate( (result & 0xFF) << 8 );
 		
-		// This is a necessary hack for now to keep the thread from terminating naturally.
-		// If that happens, the ThreadID Disposer throws -618 (thread not found)
-		//context.processContext->KillThread();
-		
 		return result;
 	}
 	
@@ -317,15 +313,6 @@ namespace Genie
 		N::CloseConnection( itsOldFragmentConnection );
 		
 		itsOldFragmentImage = BinaryImage();
-	}
-	
-	void Process::KillThread()
-	{
-		// Kill the thread.
-		
-		// This is bad if we're killing ourselves, since the very thread we're killing
-		// is the one performing the operation, which therefore won't complete.
-		itsThread.reset( NULL );
 	}
 	
 	template < class Type >
@@ -863,8 +850,7 @@ namespace Genie
 				case SIGUSR1:
 				case SIGUSR2:
 					// terminate process
-					Terminate( signal );
-					KillThread();
+					Terminate( signal );  // doesn't reap immediately
 					break;
 				case SIGCONT:
 				case SIGURG:
