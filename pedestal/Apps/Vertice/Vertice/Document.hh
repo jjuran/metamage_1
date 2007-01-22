@@ -6,9 +6,6 @@
 #ifndef VERTICE_DOCUMENT_HH
 #define VERTICE_DOCUMENT_HH
 
-// Io
-#include "Io/TextInput.hh"
-
 // Pedestal
 #include "Pedestal/Window.hh"
 
@@ -29,7 +26,6 @@ namespace Vertice
 			
 			Model& ItsModel()  { return SubView().ItsModel(); }
 			
-			void Load( Io::TextInputAdapter input );
 			void Load( const FSSpec& file );
 			void Store();
 	};

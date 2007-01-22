@@ -19,8 +19,7 @@
 #include <vector>
 
 // Io
-#include "Io/Files.hh"
-#include "Io/MakeHandle.hh"
+#include "Io/TextInput.hh"
 
 // Vectoria
 #include "Vectoria/Point3D.hh"
@@ -278,8 +277,12 @@ namespace Vertice
 		}
 	}
 	
-	void Window::Load( Io::TextInputAdapter input )
+	void Window::Load( const FSSpec& file )
 	{
+		N::SetWTitle( Get(), file.name );
+		
+		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( file ) );
+		
 		Parser parser;
 		std::list< Parser > savedParsers;
 		
@@ -301,14 +304,6 @@ namespace Vertice
 				parser.ParseLine( ItsModel(), line );
 			}
 		}
-	}
-	
-	void Window::Load( const FSSpec& file )
-	{
-		N::SetWTitle( Get(), file.name );
-		
-		Load( Io::MakeHandleFromCopy< Io::FileRefNum_Details >( N::FSpOpenDF( file,
-		                                                                      N::fsRdPerm ) ) );
 	}
 	
 	void Window::Store()
