@@ -10,6 +10,9 @@
 #include <functional>
 #include <vector>
 
+// Io
+#include "io/io.hh"
+
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
@@ -669,8 +672,11 @@ namespace ALine
 			
 			using N::fsWrPerm;
 			
-			Io::Write( N::FSpOpenDF( pkgInfo, fsWrPerm ),
-			           std::string( "APPL" ) + project.CreatorCode() );
+			std::string info = std::string( "APPL" ) + project.CreatorCode();
+			
+			io::write( N::FSpOpenDF( pkgInfo, fsWrPerm ),
+			           info.data(),
+			           info.size() );
 		}
 		
 		std::string outputPathname = GetPathname( outFile );
