@@ -14,7 +14,6 @@
 #include "unistd.h"
 
 // Io
-#include "Io/MakeHandle.hh"
 #include "Io/TextInput.hh"
 
 // Orion
@@ -40,9 +39,7 @@ static void Prompt()
 int ReadExecuteLoop( P7::FileDescriptor  fd,
                      bool                prompts )
 {
-	Io::Handle in = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::FD( int( fd ) ) );
-	
-	Io::TextInputAdapter input( in );
+	Io::TextInputAdapter< P7::FileDescriptor > input( fd );
 	
 	int result = 0;
 	
