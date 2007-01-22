@@ -6,8 +6,6 @@
 #include "A-line/SourceDotList.hh"
 
 // Io
-#include "Io/Files.hh"
-#include "Io/MakeHandle.hh"
 #include "Io/TextInput.hh"
 
 // BitsAndBytes
@@ -18,6 +16,7 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	using std::string;
 	
@@ -26,9 +25,7 @@ namespace ALine
 	
 	std::vector< string > ReadSourceDotList( const FSSpec& sourceList )
 	{
-		using N::fsRdPerm;
-		
-		Io::TextInputAdapter input( Io::MakeHandleFromCopy< Io::FileRefNum_Details >( N::FSpOpenDF( sourceList, fsRdPerm ) ) );
+		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( sourceList ) );
 		
 		std::vector< string > files;
 		

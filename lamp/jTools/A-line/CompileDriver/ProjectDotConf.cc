@@ -6,8 +6,6 @@
 #include "CompileDriver/ProjectDotConf.hh"
 
 // Io
-#include "Io/Files.hh"
-#include "Io/MakeHandle.hh"
 #include "Io/TextInput.hh"
 
 // BitsAndBytes
@@ -19,6 +17,8 @@
 
 namespace CompileDriver
 {
+	
+	namespace NN = Nucleus;
 	
 	using BitsAndBytes::eos;
 	
@@ -77,10 +77,8 @@ namespace CompileDriver
 	
 	void ReadProjectDotConf( const FSSpec& confFile, DotConfData& data )
 	{
-		using N::fsRdPerm;
-		
 		// Open the config file, and read as a text input stream.
-		Io::TextInputAdapter input( Io::MakeHandleFromCopy< Io::FileRefNum_Details >( N::FSpOpenDF( confFile, fsRdPerm ) ) );
+		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( confFile ) );
 		
 		std::size_t lineCount = 0;
 		
