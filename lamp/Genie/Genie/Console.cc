@@ -365,7 +365,7 @@ namespace Genie
 				}
 				else
 				{
-					throw Io::NoDataPending();
+					throw io::no_input_pending();
 				}
 			}
 		}

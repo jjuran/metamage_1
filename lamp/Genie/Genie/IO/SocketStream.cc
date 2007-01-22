@@ -146,7 +146,7 @@ namespace Genie
 		}
 		catch ( const N::OTNoDataErr& )
 		{
-			throw Io::NoDataPending();
+			throw io::no_input_pending();
 		}
 		
 		// Not reached
@@ -203,7 +203,7 @@ namespace Genie
 		}
 		catch ( const N::OTNoDataErr& )
 		{
-			throw Io::NoDataPending();
+			throw io::no_input_pending();
 		}
 		
 		len = call.addr.len;

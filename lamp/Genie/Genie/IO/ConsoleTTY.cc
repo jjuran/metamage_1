@@ -54,7 +54,7 @@ namespace Genie
 			{
 				return console->Read( data, byteCount );
 			}
-			catch ( const Io::NoDataPending& )
+			catch ( const io::no_input_pending& )
 			{
 				if ( IsBlocking() )
 				{

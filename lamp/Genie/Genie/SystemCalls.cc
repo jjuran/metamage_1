@@ -74,9 +74,9 @@ namespace Nucleus
 	};
 	
 	template <>
-	struct Converter< POSeven::Errno, Io::NoDataPending > : public std::unary_function< Io::NoDataPending, POSeven::Errno >
+	struct Converter< POSeven::Errno, io::no_input_pending > : public std::unary_function< io::no_input_pending, POSeven::Errno >
 	{
-		POSeven::Errno operator()( Io::NoDataPending ) const
+		POSeven::Errno operator()( io::no_input_pending ) const
 		{
 			return POSeven::Errno( EAGAIN );  // or EWOULDBLOCK?
 		}
@@ -97,9 +97,9 @@ namespace Genie
 	
 	int GetErrnoFromExceptionInSystemCall()
 	{
-		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus       >();
-		NN::RegisterExceptionConversion< P7::Errno, io::end_of_input  >();
-		NN::RegisterExceptionConversion< P7::Errno, Io::NoDataPending >();
+		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus          >();
+		NN::RegisterExceptionConversion< P7::Errno, io::end_of_input     >();
+		NN::RegisterExceptionConversion< P7::Errno, io::no_input_pending >();
 		
 		P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled(), EINVAL );
 		

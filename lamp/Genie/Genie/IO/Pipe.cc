@@ -41,7 +41,7 @@ namespace Genie
 				{
 					if ( !isBlocking )
 					{
-						throw Io::NoDataPending();
+						throw io::no_input_pending();
 					}
 					
 					while ( myStrings.empty() && !inputClosed )
