@@ -17,13 +17,16 @@
 // POSIX
 #include "sys/socket.h"
 
-// Nitrogen Nucleus
+// Nitrogen
 #include "Nucleus/Shared.h"
 
-// Nitrogen / Carbon support
+// Nitrogen
 #include "Nitrogen/DateTimeUtils.h"
 #include "Nitrogen/Folders.h"
 #include "Nitrogen/OpenTransportProviders.h"
+
+// POSeven
+#include "POSeven/FileDescriptor.hh"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
@@ -36,8 +39,6 @@
 #include "Utilities/Files.h"
 
 // Io
-#include "Io/Files.hh"
-#include "Io/MakeHandle.hh"
 #include "Io/TextInput.hh"
 
 // BitsAndBytes
@@ -51,6 +52,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace P7 = POSeven;
 namespace O = Orion;
 
 namespace ext = N::STLExtensions;
@@ -381,7 +383,7 @@ int O::Main( int argc, char const *const argv[] )
 		        << ".\n";
 	}
 	
-	Io::TextInputAdapter input( Io::MakeHandleFromCast< Io::FD_Details >( Io::in ) );
+	Io::TextInputAdapter< P7::FileDescriptor > input( P7::kStdIn_FileNo );
 	
 	const char* hostname = "temporarily.out.of.order";
 	
