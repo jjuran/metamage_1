@@ -97,5 +97,20 @@ namespace Io
 	
 }
 
+namespace io
+{
+	
+	inline int read( Io::Handle h, char* buffer, std::size_t byteCount )
+	{
+		return Io::Read( h, buffer, byteCount );
+	}
+	
+	inline int write( Io::Handle h, const char* buffer, std::size_t byteCount )
+	{
+		return Io::Write( h, buffer, byteCount );
+	}
+	
+}
+
 #endif
 
