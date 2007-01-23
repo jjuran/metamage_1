@@ -15,6 +15,9 @@
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
 #endif
+#ifndef NITROGEN_AEOBJECTS_H
+#include "Nitrogen/AEObjects.h"
+#endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
