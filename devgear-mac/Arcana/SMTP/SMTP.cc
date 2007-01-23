@@ -25,7 +25,7 @@ namespace SMTP
 			std::copy( response.begin(), response.begin() + size, chars );
 		}
 		
-		ResponseCode GetResponse( Io::TextInputAdapter& input )
+		ResponseCode GetResponse( Io::TextInputAdapter< Io::IOHandle >& input )
 		{
 			while ( true )
 			{

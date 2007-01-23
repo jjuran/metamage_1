@@ -10,6 +10,7 @@
 #include <vector>
 
 // Io
+#include "Io/Handle.hh"
 #include "Io/TextInput.hh"
 
 
@@ -64,7 +65,7 @@ namespace SMTP
 			char chars[ size ];
 		};
 		
-		ResponseCode GetResponse( Io::TextInputAdapter& input );
+		ResponseCode GetResponse( Io::TextInputAdapter< Io::IOHandle >& input );
 		
 		ResponseCode VerifySuccess( ResponseCode code );
 		
@@ -78,7 +79,7 @@ namespace SMTP
 		{
 			private:
 				Io::IOHandle io;
-				Io::TextInputAdapter input;
+				Io::TextInputAdapter< Io::IOHandle > input;
 			
 			public:
 				Session( Io::Handle socket );
