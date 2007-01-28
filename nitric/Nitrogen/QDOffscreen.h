@@ -19,8 +19,9 @@
 namespace Nitrogen
 {
 	
-	class GWorldFlags_Tag {};
-	typedef Nucleus::FlagType< GWorldFlags_Tag, ::GWorldFlags > GWorldFlags;
+	typedef Nucleus::Flag< class GWorldFlags_Tag, ::GWorldFlags >::Type GWorldFlags;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( GWorldFlags )
 	
 	using ::GWorldPtr;
 	

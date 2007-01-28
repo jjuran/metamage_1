@@ -18,29 +18,33 @@
 
 namespace Nitrogen
   {
-   class FolderTypeTag {};
-   typedef Nucleus::SelectorType< FolderTypeTag, ::OSType > FolderType;
-
-   inline FSVolumeRefNum OnSystemDisk()        { return FSVolumeRefNum::Make( kOnSystemDisk      ); }    
-   inline FSVolumeRefNum OnAppropriateDisk()   { return FSVolumeRefNum::Make( kOnAppropriateDisk ); }    
-   inline FSVolumeRefNum SystemDomain()        { return FSVolumeRefNum::Make( kSystemDomain      ); }    
-   inline FSVolumeRefNum LocalDomain()         { return FSVolumeRefNum::Make( kLocalDomain       ); }    
-   inline FSVolumeRefNum NetworkDomain()       { return FSVolumeRefNum::Make( kNetworkDomain     ); }    
-   inline FSVolumeRefNum UserDomain()          { return FSVolumeRefNum::Make( kUserDomain        ); }    
-   inline FSVolumeRefNum ClassicDomain()       { return FSVolumeRefNum::Make( kClassicDomain     ); }    
-
+   typedef Nucleus::Selector< class FolderType_Tag, ::OSType >::Type FolderType;
+	
+	static const FSVolumeRefNum kOnSystemDisk      = FSVolumeRefNum( ::kOnSystemDisk      );
+	static const FSVolumeRefNum kOnAppropriateDisk = FSVolumeRefNum( ::kOnAppropriateDisk );
+	
+	static const FSVolumeRefNum kSystemDomain  = FSVolumeRefNum( ::kSystemDomain  );
+	static const FSVolumeRefNum kLocalDomain   = FSVolumeRefNum( ::kLocalDomain   );
+	static const FSVolumeRefNum kNetworkDomain = FSVolumeRefNum( ::kNetworkDomain );
+	static const FSVolumeRefNum kUserDomain    = FSVolumeRefNum( ::kUserDomain    );
+	static const FSVolumeRefNum kClassicDomain = FSVolumeRefNum( ::kClassicDomain );
+	
+	static const FolderType kSystemFolderType = FolderType( ::kSystemFolderType );
+	// ...
+	static const FolderType kTemporaryFolderType = FolderType( ::kTemporaryFolderType );
+	
 	FSDirSpec FindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
 	
 	inline FSDirSpec FindFolder( FolderType folderType, bool createFolder )
 	{
-		return FindFolder( OnAppropriateDisk(), folderType, createFolder );
+		return FindFolder( kOnAppropriateDisk, folderType, createFolder );
 	}
 	
    FSRef FSFindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
 
    inline FSRef FSFindFolder( FolderType folderType, bool createFolder )
      {
-      return FSFindFolder( OnAppropriateDisk(), folderType, createFolder );
+      return FSFindFolder( kOnAppropriateDisk, folderType, createFolder );
      }
   }
 

@@ -21,30 +21,42 @@ namespace Nitrogen
 			GestaltManagerErrorsRegistrationDependency();
 	};
 	
-   long Gestalt( OSType selector );
-   long Gestalt( OSType selector, long defaultValue );
+	typedef Nucleus::Selector< class GestaltSelector_Tag, ::OSType >::Type GestaltSelector;
+	
+	static const GestaltSelector gestaltAliasMgrAttr     = GestaltSelector( ::gestaltAliasMgrAttr     );
+	static const GestaltSelector gestaltAppleEventsAttr  = GestaltSelector( ::gestaltAppleEventsAttr  );
+	static const GestaltSelector gestaltFindFolderAttr   = GestaltSelector( ::gestaltFindFolderAttr   );
+	static const GestaltSelector gestaltHelpMgrAttr      = GestaltSelector( ::gestaltHelpMgrAttr      );
+	static const GestaltSelector gestaltMenuMgrAttr      = GestaltSelector( ::gestaltMenuMgrAttr      );
+	static const GestaltSelector gestaltStandardFileAttr = GestaltSelector( ::gestaltStandardFileAttr );
+	
+	static const GestaltSelector gestaltComponentMgr     = GestaltSelector( ::gestaltComponentMgr     );
+	static const GestaltSelector gestaltQuickTimeVersion = GestaltSelector( ::gestaltQuickTimeVersion );
+	
+   long Gestalt( GestaltSelector selector );
+   long Gestalt( GestaltSelector selector, long defaultValue );
    
-   template < ::OSType selector > struct GestaltDefault;
+   template < GestaltSelector selector > struct GestaltDefault;
    
-   template < ::OSType selector >
+   template < GestaltSelector selector >
    long Gestalt()
      {
-      return Gestalt( OSType( selector ), GestaltDefault<selector>::defaultValue );
+      return Gestalt( selector, GestaltDefault<selector>::defaultValue );
      }
    
-	template < ::OSType selector, SInt32 bitMask >
+	template < GestaltSelector selector, SInt32 bitMask >
 	bool Gestalt_Mask()
 	{
 		return Gestalt< selector >() & bitMask;
 	}
 	
-	template < ::OSType selector, SInt32 bitOffset >
+	template < GestaltSelector selector, SInt32 bitOffset >
 	bool Gestalt_Bit()
 	{
 		return Gestalt_Mask< selector, 1 << bitOffset >();
 	}
 	
-	template < ::OSType selector >
+	template < GestaltSelector selector >
 	bool Gestalt_NonZero()
 	{
 		return Gestalt_Mask< selector, 0xffffffff >();

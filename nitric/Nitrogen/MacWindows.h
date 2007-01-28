@@ -91,29 +91,27 @@ namespace Nitrogen
 	static const WindowDefProcID zoomDocProc     = WindowDefProcID( ::zoomDocProc     );
 	static const WindowDefProcID zoomNoGrow      = WindowDefProcID( ::zoomNoGrow      );
 	
-	class WindowKind_Tag {};
-	typedef Nucleus::SelectorType< WindowKind_Tag, ::SInt16, 0 > WindowKind;
+	typedef Nucleus::Selector< class WindowKind_Tag, ::SInt16 >::Type WindowKind;
 	
-	class WindowPartCode_Tag {};
-	typedef Nucleus::SelectorType< WindowPartCode_Tag, ::WindowPartCode, 0 > WindowPartCode;
+	static const WindowKind kApplicationWindowKind = WindowKind( ::kApplicationWindowKind );
 	
-   class PropertyCreator_Tag {};
-   typedef Nucleus::SelectorType< PropertyCreator_Tag, ::PropertyCreator, '\?\?\?\?' > PropertyCreator;
+	typedef Nucleus::Selector< class WindowPartCode_Tag, ::WindowPartCode >::Type WindowPartCode;
+	
+   typedef Nucleus::Selector< class PropertyCreator_Tag, ::PropertyCreator >::Type PropertyCreator;
 
-   class PropertyTag_Tag {};      // Seems redundant, doesn't it?
-   typedef Nucleus::SelectorType< PropertyTag_Tag, ::PropertyTag, '\?\?\?\?' > PropertyTag;
+   typedef Nucleus::Selector< class PropertyTag_Tag, ::PropertyTag >::Type PropertyTag;
 
-   class WindowClass_Tag {};
-   typedef Nucleus::SelectorType< WindowClass_Tag, ::WindowClass, 0 > WindowClass;
+   typedef Nucleus::Selector< class WindowClass_Tag, ::WindowClass >::Type WindowClass;
 
-   class WindowAttributes_Tag {};
-   typedef Nucleus::FlagType< WindowAttributes_Tag, ::WindowAttributes, kWindowNoAttributes > WindowAttributes;
+   typedef Nucleus::Flag< class WindowAttributes_Tag, ::WindowAttributes >::Type WindowAttributes;
+   
+   NUCLEUS_DEFINE_FLAG_OPS( WindowAttributes )
+   
+   static const WindowAttributes kWindowNoAttributes = WindowAttributes( ::kWindowNoAttributes );
 
-   class WindowPositionMethod_Tag {};
-   typedef Nucleus::SelectorType< WindowPositionMethod_Tag, ::WindowPositionMethod, 0 > WindowPositionMethod;
+    typedef Nucleus::Selector< class WindowPositionMethod_Tag, ::WindowPositionMethod >::Type WindowPositionMethod;
 
-   class WindowRegionCode_Tag {};
-   typedef Nucleus::SelectorType< WindowRegionCode_Tag, ::WindowRegionCode, 0 > WindowRegionCode;
+   typedef Nucleus::Selector< class WindowRegionCode_Tag, ::WindowRegionCode >::Type WindowRegionCode;
   
    using ::GetWindowRegionRec;
    using ::GetWindowRegionPtr;
@@ -280,11 +278,11 @@ namespace Nitrogen
                                  WindowAttributes clearTheseAttributes );
    
 	inline void SetWindowAttributes ( WindowRef window, WindowAttributes setTheseAttributes ) {
-		Nitrogen::ChangeWindowAttributes ( window, setTheseAttributes, WindowAttributes::Make( 0 ) );
+		Nitrogen::ChangeWindowAttributes ( window, setTheseAttributes, kWindowNoAttributes );
 		}
 
 	inline void ClearWindowAttributes ( WindowRef window, WindowAttributes clearTheseAttributes ) {
-		Nitrogen::ChangeWindowAttributes ( window, WindowAttributes::Make( 0 ), clearTheseAttributes );
+		Nitrogen::ChangeWindowAttributes ( window, kWindowNoAttributes, clearTheseAttributes );
 		}
    
    /* ... */

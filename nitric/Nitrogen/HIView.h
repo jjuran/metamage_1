@@ -362,7 +362,7 @@ namespace Nitrogen {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
 		ThrowOSStatus ( ::HIViewGetAttributes ( inView, &retVal ));
-		return retVal;
+		return OptionBits( retVal );
 		}
 
 	inline void HIViewChangeAttributes ( HIViewRef inView, OptionBits inAttrsToSet, OptionBits inAttrsToClear ) {
@@ -377,7 +377,7 @@ namespace Nitrogen {
 		operator CGImageRef () const  { return image; }
  		};
 	
-	HIViewCreateOffscreenImage_Result HIViewCreateOffscreenImage ( HIViewRef inView, OptionBits inOptions = 0 );
+	HIViewCreateOffscreenImage_Result HIViewCreateOffscreenImage ( HIViewRef inView, OptionBits inOptions = OptionBits() );
 
 	inline void HIViewDrawCGImage ( CGContextRef inContext, const HIRect &inBounds, CGImageRef inImage ) {
      	(void) HIViewErrorsRegistrationDependency();
@@ -556,7 +556,7 @@ namespace Nitrogen {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
 		ThrowOSStatus ( ::HIComboBoxGetAttributes ( inComboBox, &retVal ));
-		return retVal;
+		return OptionBits( retVal );
 		}
 
 
@@ -607,7 +607,7 @@ namespace Nitrogen {
      	(void) HIViewErrorsRegistrationDependency();
 		::OptionBits retVal;
 		ThrowOSStatus ( ::HISearchFieldGetAttributes ( inSearchField, &retVal ));
-		return retVal;
+		return OptionBits( retVal );
 		}
 
 	inline void HISearchFieldSetDescriptiveText ( HIViewRef inSearchField, CFStringRef inDescription ) {

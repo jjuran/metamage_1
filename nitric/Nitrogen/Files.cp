@@ -107,7 +107,7 @@ namespace Nitrogen
 	              FSIOPosMode   positionMode,
 	              SInt32        positionOffset )
 	{
-		ThrowOSStatus( ::SetFPos( fileRefNum, positionMode.Get(), positionOffset ) );
+		ThrowOSStatus( ::SetFPos( fileRefNum, positionMode, positionOffset ) );
 	}
 	
 	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock )
@@ -160,7 +160,7 @@ namespace Nitrogen
 		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
 		
 		PBGetCatInfoSync( Nucleus::Initialize< CInfoPBRec >( paramBlock,
-		                                                     item.vRefNum,
+		                                                     FSVolumeRefNum( item.vRefNum ),
 		                                                     FSDirID( item.parID ),
 		                                                     const_cast< StringPtr >( item.name ),
 		                                                     0 ) );
@@ -223,7 +223,7 @@ namespace Nucleus
 		
 		Nitrogen::FSDirID dirID = Nitrogen::FSDirID( pb.dirInfo.ioDrDirID );
 		
-		return Make< Nitrogen::FSDirSpec >( dir.vRefNum, dirID );
+		return Make< Nitrogen::FSDirSpec >( Nitrogen::FSVolumeRefNum( dir.vRefNum ), dirID );
 	}
   }
 
@@ -270,7 +270,7 @@ namespace Nitrogen
 	
 	DTPBRec& FSpDTGetPath( const FSSpec& file, DTPBRec& pb )
 	{
-		PBDTGetPath( file.vRefNum, pb );
+		PBDTGetPath( FSVolumeRefNum( file.vRefNum ), pb );
 		
 		pb.ioNamePtr = const_cast< unsigned char* >( file.name );
 		pb.ioDirID   = file.parID;

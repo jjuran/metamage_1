@@ -13,8 +13,8 @@
 #ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
 #include "Nucleus/AdvanceUntilFailureContainer.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
 #ifndef NITROGEN_CFSTRING_H
 //#include "Nitrogen/CFString.h"
@@ -47,11 +47,12 @@ namespace Nitrogen
 			ProcessManagerErrorsRegistrationDependency();
 	};
 	
-	struct LaunchFlags_Tag {};
-	typedef Nucleus::FlagType< LaunchFlags_Tag, ::LaunchFlags > LaunchFlags;
+	typedef Nucleus::Flag< class LaunchFlags_Tag, ::LaunchFlags >::Type LaunchFlags;
 	
-	inline LaunchFlags LaunchContinue   ()  { return LaunchFlags::Make( launchContinue    ); }
-	inline LaunchFlags LaunchNoFileFlags()  { return LaunchFlags::Make( launchNoFileFlags ); }
+	NUCLEUS_DEFINE_FLAG_OPS( LaunchFlags )
+	
+	static const LaunchFlags launchContinue    = LaunchFlags( ::launchContinue    );
+	static const LaunchFlags launchNoFileFlags = LaunchFlags( ::launchNoFileFlags );
 	
 	using ::ProcessSerialNumber;
 	using ::ProcessInfoRec;

@@ -12,14 +12,14 @@
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
@@ -73,20 +73,21 @@ namespace Nitrogen
 			MenuManagerErrorsRegistrationDependency();
 	};
 	
-   class MenuAttributesTag {};
-   typedef Nucleus::FlagType< MenuAttributesTag, ::MenuAttributes, 0 > MenuAttributes;
-
-   class MenuItemAttributesTag {};
-   typedef Nucleus::FlagType< MenuItemAttributesTag, ::MenuItemAttributes, 0 > MenuItemAttributes;
-    
-   class MenuTrackingModeTag {};
-   typedef Nucleus::SelectorType< MenuTrackingModeTag, ::MenuTrackingMode, 0 > MenuTrackingMode;
-
-   class MenuEventOptionsTag {};
-   typedef Nucleus::FlagType< MenuEventOptionsTag, ::MenuEventOptions, 0 > MenuEventOptions;
+   typedef Nucleus::Flag< class MenuAttributes_Tag, ::MenuAttributes >::Type MenuAttributes;
    
-   class MenuIDTag {};
-   typedef Nucleus::IDType< MenuIDTag, ::MenuID, 0 > MenuID;
+   NUCLEUS_DEFINE_FLAG_OPS( MenuAttributes )
+
+   typedef Nucleus::Flag< class MenuItemAttributes_Tag, ::MenuItemAttributes >::Type MenuItemAttributes;
+   
+   NUCLEUS_DEFINE_FLAG_OPS( MenuItemAttributes )
+    
+   typedef Nucleus::Selector< class MenuTrackingMode_Tag, ::MenuTrackingMode >::Type MenuTrackingMode;
+
+   typedef Nucleus::Flag< class MenuEventOptions_Tag, ::MenuEventOptions >::Type MenuEventOptions;
+   
+   NUCLEUS_DEFINE_FLAG_OPS( MenuEventOptions )
+   
+   typedef Nucleus::ID< class MenuID_Tag, ::MenuID >::Type MenuID;
    
   }
 
@@ -106,8 +107,7 @@ namespace Nitrogen
 
    using ::MenuItemIndex;
    
-   class MenuCommandTag {};
-   typedef Nucleus::SelectorType< MenuCommandTag, ::MenuCommand, 0 > MenuCommand;
+   typedef Nucleus::Selector< class MenuCommand_Tag, ::MenuCommand >::Type MenuCommand;
    
    using ::MenuRef;
   }
@@ -127,14 +127,14 @@ namespace Nitrogen
   {
    /* ... */
    
-   class MenuItemDataFlagsTag {};
-   typedef Nucleus::FlagType< MenuItemDataFlagsTag, ::MenuItemDataFlags, 0 > MenuItemDataFlags;
+   typedef Nucleus::Flag< class MenuItemDataFlags_Tag, ::MenuItemDataFlags >::Type MenuItemDataFlags;
+   
+   NUCLEUS_DEFINE_FLAG_OPS( MenuItemDataFlags )
    
    using ::MenuItemDataRec;
    using ::MenuItemDataPtr;
    
-   class MenuItemIDTag {};
-   typedef Nucleus::IDType< MenuItemIDTag, ::MenuItemID, 0 > MenuItemID;
+   typedef Nucleus::ID< class MenuItemID_Tag, ::MenuItemID >::Type MenuItemID;
    
    /* ... */
    

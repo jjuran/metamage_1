@@ -287,7 +287,7 @@ NavTranslateFile(
 
 	inline void NavCreatePreview (
 			AEDesc *theObject,
-			OSType        previewDataType	= 0,
+			OSType        previewDataType	= OSType(),
 			const void *  previewData		= NULL,
 			Size          previewDataSize	= 0 ) {
 		(void) NavServicesErrorsRegistrationDependency();

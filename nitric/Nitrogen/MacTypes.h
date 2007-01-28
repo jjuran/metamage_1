@@ -18,17 +18,14 @@
 #ifndef NUCLEUS_SELECTOR_H
 #include "Nucleus/Selector.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
-#endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_OVERLOADED_MATH_H
 #include "Nucleus/Overloaded_math.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
@@ -156,17 +153,19 @@ namespace Nitrogen
    
    typedef ::std::size_t  Size;
 
-   class OptionBitsTag {};
-   typedef Nucleus::FlagType< OptionBitsTag, ::OptionBits, 0 > OptionBits;
+   typedef Nucleus::Flag< class OptionBits_Tag, ::OptionBits >::Type OptionBits;
    
-   class ScriptCodeTag {};
-   typedef Nucleus::SelectorType< ScriptCodeTag, ::ScriptCode, ::smSystemScript > ScriptCode;
-
-   class LangCodeTag {};
-   typedef Nucleus::SelectorType< LangCodeTag,   ::LangCode,   ::langUnspecified > LangCode;
-
-   class RegionCodeTag {};
-   typedef Nucleus::SelectorType< RegionCodeTag, ::RegionCode, ::verUS > RegionCode;
+   NUCLEUS_DEFINE_FLAG_OPS( OptionBits )
+	
+	typedef Nucleus::Selector< class ScriptCode_Tag, ::ScriptCode >::Type ScriptCode;
+	typedef Nucleus::Selector< class LangCode_Tag,   ::LangCode   >::Type LangCode;
+	typedef Nucleus::Selector< class RegionCode_Tag, ::RegionCode >::Type RegionCode;
+	
+	static const ScriptCode smSystemScript = ScriptCode( ::smSystemScript );
+	
+	static const LangCode langUnspecified = LangCode( ::langUnspecified );
+	
+	static const RegionCode verUS = RegionCode( ::verUS );
 	
 	class FourCharCode
 	{
@@ -185,8 +184,7 @@ namespace Nitrogen
 			operator ::FourCharCode() const  { return Get(); }
 	};
 	
-   class OSTypeTag {};
-   typedef Nucleus::SelectorType< OSTypeTag, ::OSType, ::kUnknownType > OSType;
+   typedef Nucleus::Selector< class OSType_Tag, ::OSType >::Type OSType;
    
    typedef Nucleus::Selector< class ResType_Tag, ::ResType >::Type ResType;
    
@@ -196,8 +194,8 @@ namespace Nitrogen
    
    typedef Nucleus::ConvertingPODFlattener< bool, ::Boolean > BooleanFlattener;
 
-   class StyleTag {};
-   typedef Nucleus::FlagType< StyleTag, ::Style > Style;
+   typedef Nucleus::Flag< class Style_Tag, ::Style >::Type Style;
+   NUCLEUS_DEFINE_FLAG_OPS( Style )
       //Style may need a conversion to short...
 
    using ::UnicodeScalarValue;
@@ -288,32 +286,6 @@ namespace Nucleus
          return operator()( 0, 0, 0, 0 );
         }
      };
-
-	// Convert string to FourCharCode
-	template < class Tag, ::FourCharCode defaultValue >
-	struct Converter< SelectorType< Tag, ::FourCharCode, defaultValue >, std::string >: public std::unary_function< std::string, SelectorType< Tag, ::FourCharCode, defaultValue > >
-	{
-		typedef Nucleus::SelectorType< Tag, ::FourCharCode, defaultValue > Code;
-		
-		Code operator()( const std::string& input ) const
-		{
-			if ( input.size() != sizeof (::FourCharCode) )
-			{
-				throw ConversionFromStringFailed();
-			}
-			
-			::FourCharCode result;
-			
-			std::copy( input.begin(), input.end(), reinterpret_cast< char* >( &result ) );
-			
-			if ( TARGET_RT_LITTLE_ENDIAN )
-			{
-				result = ::CFSwapInt32BigToHost( result );
-			}
-			
-			return Code( result );
-		}
-	};
 	
 	// Convert string to FourCharCode
 	template <>
@@ -336,25 +308,6 @@ namespace Nucleus
 			}
 			
 			return Nitrogen::FourCharCode( result );
-		}
-	};
-	
-	// Convert FourCharCode to string
-	template < class Tag, ::FourCharCode defaultValue >
-	struct Converter< std::string, SelectorType< Tag, ::FourCharCode, defaultValue > >: public std::unary_function< SelectorType< Tag, ::FourCharCode, defaultValue >, std::string >
-	{
-		typedef Nucleus::SelectorType< Tag, ::FourCharCode, defaultValue > Code;
-		
-		std::string operator()( Code input ) const
-		{
-			::FourCharCode code = input;
-			
-			if ( TARGET_RT_LITTLE_ENDIAN )
-			{
-				code = ::CFSwapInt32HostToBig( code );
-			}
-			
-			return std::string( reinterpret_cast< const char* >( &code ), sizeof (::FourCharCode) );
 		}
 	};
 	

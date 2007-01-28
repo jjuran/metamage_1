@@ -53,18 +53,67 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ General Types and Constants ¥
 	
-	class CFragArchitecture_Tag {};
-	typedef Nucleus::SelectorType< CFragArchitecture_Tag, ::CFragArchitecture, kAnyCFragArch > CFragArchitecture;
+	static const ResType kCFragResourceType = ResType( ::kCFragResourceType );
 	
-	class CFragLoadOptions_Tag {};
-	typedef Nucleus::FlagType< CFragLoadOptions_Tag, ::CFragLoadOptions, 0 > CFragLoadOptions;
+	static const ResID kCFragResourceID = ResID( ::kCFragResourceID );
 	
-	class CFragSymbolClass_Tag {};
-	typedef Nucleus::SelectorType< CFragSymbolClass_Tag, ::CFragSymbolClass, 0 > CFragSymbolClass;
+	typedef Nucleus::Selector< class CFragArchitecture_Tag, ::CFragArchitecture >::Type CFragArchitecture;
+	
+	static const CFragArchitecture kPowerPCCFragArch     = CFragArchitecture( ::kPowerPCCFragArch     );
+	static const CFragArchitecture kMotorola68KCFragArch = CFragArchitecture( ::kMotorola68KCFragArch );
+	static const CFragArchitecture kAnyCFragArch         = CFragArchitecture( ::kAnyCFragArch         );
+	
+#if TARGET_CPU_PPC || TARGET_CPU_68K
+	
+	static const CFragArchitecture kCompiledCFragArch    = CFragArchitecture( ::kCompiledCFragArch    );
+	
+#endif
+	
+	using ::CFragVersionNumber;
+	
+	typedef Nucleus::Selector< class CFragUsage_Tag, ::CFragUsage >::Type CFragUsage;
+	
+	static const CFragUsage kImportLibraryCFrag   = CFragUsage( ::kImportLibraryCFrag   );
+	static const CFragUsage kApplicationCFrag     = CFragUsage( ::kApplicationCFrag     );
+	static const CFragUsage kDropInAdditionCFrag  = CFragUsage( ::kDropInAdditionCFrag  );
+	static const CFragUsage kStubLibraryCFrag     = CFragUsage( ::kStubLibraryCFrag     );
+	static const CFragUsage kWeakStubLibraryCFrag = CFragUsage( ::kWeakStubLibraryCFrag );
+	
+	typedef Nucleus::Selector< class CFragLocatorKind_Tag, ::CFragLocatorKind >::Type CFragLocatorKind;
+	
+	static const CFragLocatorKind kMemoryCFragLocator        = CFragLocatorKind( ::kMemoryCFragLocator        );
+	static const CFragLocatorKind kDataForkCFragLocator      = CFragLocatorKind( ::kDataForkCFragLocator      );
+	static const CFragLocatorKind kResourceCFragLocator      = CFragLocatorKind( ::kResourceCFragLocator      );
+	static const CFragLocatorKind kNamedFragmentCFragLocator = CFragLocatorKind( ::kNamedFragmentCFragLocator );
+	static const CFragLocatorKind kCFBundleCFragLocator      = CFragLocatorKind( ::kCFBundleCFragLocator      );
+	
+#if !TARGET_RT_MAC_MACHO
+	
+	static const CFragLocatorKind kCFBundleIntCFragLocator   = CFragLocatorKind( ::kCFBundleIntCFragLocator   );
+	
+#endif
 	
 	using ::CFragConnectionID;
 	
-  }
+	typedef Nucleus::Flag< class CFragLoadOptions_Tag, ::CFragLoadOptions >::Type CFragLoadOptions;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( CFragLoadOptions )
+	
+	static const CFragLoadOptions kReferenceCFrag   = CFragLoadOptions( ::kReferenceCFrag   );
+	static const CFragLoadOptions kFindCFrag        = CFragLoadOptions( ::kFindCFrag        );
+	static const CFragLoadOptions kPrivateCFragCopy = CFragLoadOptions( ::kPrivateCFragCopy );
+	
+	static const void* const kUnresolvedCFragSymbolAddress = NULL;
+	
+	typedef Nucleus::Selector< class CFragSymbolClass_Tag, ::CFragSymbolClass >::Type CFragSymbolClass;
+	
+	static const CFragSymbolClass kCodeCFragSymbol    = CFragSymbolClass( ::kCodeCFragSymbol    );
+	static const CFragSymbolClass kDataCFragSymbol    = CFragSymbolClass( ::kDataCFragSymbol    );
+	static const CFragSymbolClass kTVectorCFragSymbol = CFragSymbolClass( ::kTVectorCFragSymbol );
+	static const CFragSymbolClass kTOCCFragSymbol     = CFragSymbolClass( ::kTOCCFragSymbol     );
+	static const CFragSymbolClass kGlueCFragSymbol    = CFragSymbolClass( ::kGlueCFragSymbol    );
+	
+}
 
 namespace Nucleus
   {
@@ -107,7 +156,7 @@ namespace Nitrogen
 		{}
 	};
 	
-	template < ::CFragLoadOptions options >  struct CFragLoadOptions_Traits;
+	template < CFragLoadOptions options >  struct CFragLoadOptions_Traits;
 	
 	struct Find_CFragConnection_Traits
 	{
@@ -149,7 +198,7 @@ namespace Nitrogen
 	                       CFragConnectionID*  connID   = NULL,
 	                       SymbolAddressPtr*   mainAddr = NULL );
 	
-	template < ::CFragLoadOptions options, class MainAddrType >
+	template < CFragLoadOptions options, class MainAddrType >
 	typename CFragLoadOptions_Traits< options >::Result
 	GetSharedLibrary( ConstStr63Param     libName,
 	                  CFragArchitecture   archType,
@@ -174,7 +223,7 @@ namespace Nitrogen
 		return Traits::MakeResult( connID );
 	}
 	
-	template < ::CFragLoadOptions options >
+	template < CFragLoadOptions options >
 	typename CFragLoadOptions_Traits< options >::Result
 	GetSharedLibrary( ConstStr63Param     libName,
 	                  CFragArchitecture   archType )
@@ -192,7 +241,7 @@ namespace Nitrogen
 	                      CFragConnectionID*  connID   = NULL,
 	                      SymbolAddressPtr*   mainAddr = NULL );
 	
-	template < ::CFragLoadOptions options, class MainAddrType >
+	template < CFragLoadOptions options, class MainAddrType >
 	typename CFragLoadOptions_Traits< options >::Result
 	GetDiskFragment( const FSSpec&    file,
 	                 std::size_t      offset,
@@ -221,7 +270,7 @@ namespace Nitrogen
 		return Traits::MakeResult( connID );
 	}
 	
-	template < ::CFragLoadOptions options >
+	template < CFragLoadOptions options >
 	typename CFragLoadOptions_Traits< options >::Result
 	GetDiskFragment( const FSSpec&    file,
 	                 std::size_t      offset   = 0,
@@ -244,7 +293,7 @@ namespace Nitrogen
 	                     CFragConnectionID*  connID   = NULL,
 	                     SymbolAddressPtr*   mainAddr = NULL );
 	
-	template < ::CFragLoadOptions options, class MainAddrType >
+	template < CFragLoadOptions options, class MainAddrType >
 	typename CFragLoadOptions_Traits< options >::Result
 	GetMemFragment( const void*      memAddr,
 	                std::size_t      length,
@@ -271,7 +320,7 @@ namespace Nitrogen
 		return Traits::MakeResult( connID );
 	}
 	
-	template < ::CFragLoadOptions options >
+	template < CFragLoadOptions options >
 	typename CFragLoadOptions_Traits< options >::Result
 	GetMemFragment( const void*      memAddr,
 	                std::size_t      length,

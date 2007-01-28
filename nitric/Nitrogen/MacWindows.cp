@@ -94,7 +94,7 @@ namespace Nitrogen
 		FindWindow_Result result;
 		::WindowRef window;
 		
-		result.part = ::MacFindWindow( point, &window );
+		result.part = WindowPartCode( ::MacFindWindow( point, &window ) );
 		result.window = window;
 		
 		return result;
@@ -197,7 +197,7 @@ namespace Nitrogen
 	
 	WindowKind GetWindowKind( WindowRef window )
 	{
-		return ::GetWindowKind( window );
+		return WindowKind( ::GetWindowKind( window ) );
 	}
 	
 	void SetWindowKind( WindowRef window, WindowKind windowKind )

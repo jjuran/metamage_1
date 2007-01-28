@@ -13,14 +13,8 @@
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
-#endif
 #ifndef NUCLEUS_ID_H
 #include "Nucleus/ID.h"
-#endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
 #endif
 #ifndef NUCLEUS_INDEXTYPE_H
 #include "Nucleus/IndexType.h"
@@ -84,14 +78,13 @@ namespace Nitrogen
 	static const FSDirID fsRtParID = FSDirID( ::fsRtParID );
 	static const FSDirID fsRtDirID = FSDirID( ::fsRtDirID );
 	
-   class FSNodeFlagsTag {};
-   typedef Nucleus::FlagType< FSNodeFlagsTag, UInt16, 0 > FSNodeFlags;
+   typedef Nucleus::Flag< class FSNodeFlags_Tag, UInt16 >::Type FSNodeFlags;
    
-   class FSNodeIDTag {};
-   typedef Nucleus::IDType< FSNodeIDTag, UInt32, 0 > FSNodeID;
+   NUCLEUS_DEFINE_FLAG_OPS( FSNodeFlags )
    
-   class FSVolumeRefNumTag {};
-   typedef Nucleus::IDType< FSVolumeRefNumTag, ::FSVolumeRefNum, 0 > FSVolumeRefNum;
+   typedef Nucleus::ID< class FSNodeID_Tag, UInt32 >::Type FSNodeID;
+   
+   typedef Nucleus::ID< class FSVolumeRefNum_Tag, ::FSVolumeRefNum >::Type FSVolumeRefNum;
 
 	typedef Nucleus::Flag< class FSSharingFlags_Tag, UInt8 >::Type FSSharingFlags;
 	
@@ -104,15 +97,14 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSUserPrivileges )
 	
-   typedef FSUserPrivileges FSIOACUser;
-
-   class FSIteratorFlagsTag {};
-   typedef Nucleus::FlagType< FSIteratorFlagsTag, ::FSIteratorFlags, 0 > FSIteratorFlags;
-   
-	typedef Nucleus::ID< class FSFileRefNum_Tag, SInt16 >::Type FSFileRefNum;
+	typedef FSUserPrivileges FSIOACUser;
 	
-   class FSForkRefNumTag {};
-   typedef Nucleus::IDType< FSForkRefNumTag, SInt16, 0 > FSForkRefNum;
+	typedef Nucleus::Flag< class FSIteratorFlags_Tag, ::FSIteratorFlags >::Type FSIteratorFlags;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( FSIteratorFlags )
+	
+	typedef Nucleus::ID< class FSFileRefNum_Tag, SInt16 >::Type FSFileRefNum;
+	typedef Nucleus::ID< class FSForkRefNum_Tag, SInt16 >::Type FSForkRefNum;
     
 	typedef Nucleus::Flag< class FSIOPermssn_Tag, SInt8 >::Type FSIOPermssn;
 	
@@ -128,21 +120,25 @@ namespace Nitrogen
 	static const FSIOPermssn fsRdDenyPerm = FSIOPermssn( ::fsRdDenyPerm );
 	static const FSIOPermssn fsWrDenyPerm = FSIOPermssn( ::fsWrDenyPerm );
 	
-   class FSIOPosModeTag {};
-   typedef Nucleus::FlagType< FSIOPosModeTag, UInt16, fsAtMark > FSIOPosMode;
+   typedef Nucleus::Flag< class FSIOPosMode_Tag, UInt16 >::Type FSIOPosMode;
    typedef FSIOPosMode FSIOPositioningMode;
 	
-   class FSAllocationFlagsTag {};
-   typedef Nucleus::FlagType< FSAllocationFlagsTag, ::FSAllocationFlags, 0 > FSAllocationFlags;
+	NUCLEUS_DEFINE_FLAG_OPS( FSIOPosMode )
+	
+	static const FSIOPosMode fsAtMark = FSIOPosMode( ::fsAtMark );
+	
+   typedef Nucleus::Flag< class FSAllocationFlags_Tag, ::FSAllocationFlags >::Type FSAllocationFlags;
   
-   class FSForkIteratorTag {};
-   typedef Nucleus::IDType< FSForkIteratorTag, SInt16, 0 > FSForkIterator;
+	NUCLEUS_DEFINE_FLAG_OPS( FSAllocationFlags )
+	
+   typedef Nucleus::ID< class FSForkIterator_Tag, SInt16 >::Type FSForkIterator;
 
-   class FSVolumeInfoFlagsTag {};
-   typedef Nucleus::FlagType< FSVolumeInfoFlagsTag, UInt16, 0 > FSVolumeInfoFlags;
+   typedef Nucleus::Flag< class FSVolumeInfoFlags_Tag, UInt16 >::Type FSVolumeInfoFlags;
    typedef FSVolumeInfoFlags FSIOVAtrb;
    typedef FSVolumeInfoFlags FSIOVolumeAttributes;
    
+	NUCLEUS_DEFINE_FLAG_OPS( FSVolumeInfoFlags )
+	
    struct FSVolumeIndex_Specifics
      {
       typedef ::ItemCount UnderlyingType;
@@ -151,8 +147,7 @@ namespace Nitrogen
 
    typedef Nucleus::IndexType< FSVolumeIndex_Specifics > FSVolumeIndex;
    
-   class FSFileSystemIDTag {};
-   typedef Nucleus::IDType< FSFileSystemIDTag, UInt16, 0 > FSFileSystemID;
+   typedef Nucleus::ID< class FSFileSystemID_Tag, UInt16 >::Type FSFileSystemID;
    typedef FSFileSystemID IOFSID;
    
 	typedef Nucleus::ID< class DriverReferenceNumber_Tag, SInt16 >::Type DriverReferenceNumber;
@@ -160,8 +155,7 @@ namespace Nitrogen
    typedef DriverReferenceNumber DRefNum;
    typedef DriverReferenceNumber DriverRefNum;
 
-   class HFSCatalogNodeIDTag {};
-   typedef Nucleus::IDType< HFSCatalogNodeIDTag, UInt32, 0 > HFSCatalogNodeID;
+   typedef Nucleus::ID< class HFSCatalogNodeID_Tag, UInt32 >::Type HFSCatalogNodeID;
    
    using ::HFSUniStr255;
    using ::FSSpec;
@@ -1122,7 +1116,7 @@ namespace Nitrogen
                                 ByteCount    requestCount,
                                 void *       buffer )
      {
-      return FSReadFork( fork, FSIOPosMode::Make( fsAtMark ), 0, requestCount, buffer );
+      return FSReadFork( fork, fsAtMark, 0, requestCount, buffer );
      }
 
    template < class Element, std::size_t count >
@@ -1151,7 +1145,7 @@ namespace Nitrogen
                                  ByteCount    requestCount,
                                  const void * buffer )
      {
-      return FSWriteFork( fork, FSIOPosMode::Make( fsAtMark ), 0, requestCount, buffer );
+      return FSWriteFork( fork, fsAtMark, 0, requestCount, buffer );
      }
 
    template < class Element, std::size_t count >

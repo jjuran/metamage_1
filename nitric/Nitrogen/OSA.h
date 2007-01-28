@@ -20,11 +20,11 @@
 #include "Nitrogen/MacErrors.h"
 #endif
 
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_SHARED_H
 #include "Nucleus/Shared.h"
@@ -40,15 +40,24 @@ namespace Nitrogen
 			OSAErrorsRegistrationDependency();
 	};
 	
+	
+	static const ComponentType kOSAComponentType = ComponentType( ::kOSAComponentType );
+	
+	static const ComponentSubType kOSAGenericScriptingComponentSubtype = ComponentSubType( ::kOSAGenericScriptingComponentSubtype );
+	
+	static const AEEventClass kOSASuite = AEEventClass( ::kOSASuite );
+	
 	static const ResType kOSAScriptResourceType = ResType( ::kOSAScriptResourceType );
 	
 	static const DescType typeOSAGenericStorage = DescType( ::typeOSAGenericStorage );
 	
-	struct OSAID_Tag  {};
-	typedef Nucleus::IDType< OSAID_Tag, ::OSAID, kOSANullScript > OSAID;
+	typedef Nucleus::ID< class OSAID_Tag, ::OSAID >::Type OSAID;
 	
-	struct OSAModeFlagsTag;
-	typedef Nucleus::FlagType< OSAModeFlagsTag, long, kOSAModeNull > OSAModeFlags;
+	static const OSAID kOSANullScript = OSAID( ::kOSANullScript );
+	
+	typedef Nucleus::Flag< class OSAModeFlagsTag, long >::Type OSAModeFlags;
+	
+	static const OSAModeFlags kOSAModeNull = OSAModeFlags( ::kOSAModeNull );
 	
 	struct OSASpec 
 	{
@@ -268,13 +277,6 @@ namespace Nitrogen
 	// OSADebuggerGetPreviousCallFrame
 	// OSADebuggerDisposeCallFrame
 	// OSADebuggerCountVariables
-	
-	inline Nucleus::Owned< ComponentInstance >
-	OpenGenericScriptingComponent()
-	{
-		return Nitrogen::OpenDefaultComponent( kOSAComponentType,
-		                                       kOSAGenericScriptingComponentSubtype );
-	}
 	
 }
 

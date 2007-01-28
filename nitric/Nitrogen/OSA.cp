@@ -38,7 +38,7 @@ namespace Nitrogen
 		                          &resultingScriptID ) );
 		
 		return Nucleus::Owned< OSASpec >::Seize( OSASpec( scriptingComponent,
-		                                                  OSAID::Make( resultingScriptID ) ) );
+		                                                  OSAID( resultingScriptID ) ) );
 	}
 	
 	Nucleus::Owned< AEDesc > OSAStore( ComponentInstance  scriptingComponent,
@@ -71,7 +71,7 @@ namespace Nitrogen
 		                             &resultingScriptValueID ) );
 		
 		return Nucleus::Owned< OSASpec >::Seize( OSASpec( scriptingComponent,
-		                                                  OSAID::Make( resultingScriptValueID ) ) );
+		                                                  OSAID( resultingScriptValueID ) ) );
 	}
 	
 	Nucleus::Owned< AEDesc > OSADisplay( ComponentInstance  scriptingComponent,
@@ -200,7 +200,7 @@ namespace Nitrogen
 		                            &toID ) );
 		
 		return Nucleus::Owned< OSASpec >::Seize( OSASpec( scriptingComponent,
-		                                                  OSAID::Make( toID ) ) );
+		                                                  OSAID( toID ) ) );
 	}
 	
 	Nucleus::Owned< OSASpec > OSAExecuteEvent( Nucleus::Shared< ComponentInstance >  scriptingComponent,
@@ -217,7 +217,7 @@ namespace Nitrogen
 		                                  &resultingScriptValueID ) );
 		
 		return Nucleus::Owned< OSASpec >::Seize( OSASpec( scriptingComponent,
-		                                                  OSAID::Make( resultingScriptValueID ) ) );
+		                                                  OSAID( resultingScriptValueID ) ) );
 	}
 	
 	void RegisterOSAErrors()

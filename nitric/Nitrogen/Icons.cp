@@ -52,10 +52,10 @@ namespace Nitrogen
 		::PlotIcon( &rect, Handle( icon ) );
 	}
 	
-	void PlotIconID( const Rect& rect,
-	                 IconAlignmentType align,
-	                 IconTransformType transform,
-	                 ResID resID )
+	void PlotIconID( const Rect&        rect,
+	                 IconAlignmentType  align,
+	                 IconTransformType  transform,
+	                 ResID              resID )
 	{
 		ThrowOSStatus( ::PlotIconID( &rect, align, transform, resID ) );
 	}
@@ -145,12 +145,12 @@ namespace Nitrogen
 
    Nucleus::Owned<IconRef> GetIconRef( OSType creator, OSType iconType )
      {
-      return GetIconRef( OnSystemDisk(), creator, iconType );
+      return GetIconRef( kOnSystemDisk, creator, iconType );
      }
 
    Nucleus::Owned<IconRef> GetIconRef( OSType iconType )
      {
-      return GetIconRef( OnSystemDisk(), kSystemIconsCreator, iconType );
+      return GetIconRef( kOnSystemDisk, kSystemIconsCreator, iconType );
      }
 
 	Nucleus::Owned<IconRef> GetIconRefFromFolder( FSVolumeRefNum vRefNum,
@@ -217,8 +217,8 @@ namespace Nitrogen
      }
 
    Nucleus::Owned<IconRef> RegisterIconRefFromIconFile( OSType creator,
-                                               OSType iconType,
-                                               const FSSpec& iconFile )
+                                                        OSType iconType,
+                                                        const FSSpec& iconFile )
 	  {
       IconRef result;
       ThrowOSStatus( ::RegisterIconRefFromIconFile( creator, iconType, &iconFile, &result ) );

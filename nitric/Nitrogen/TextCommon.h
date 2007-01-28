@@ -12,14 +12,11 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
-#endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_MAKE_H
 #include "Nucleus/Make.h"
@@ -38,24 +35,23 @@ namespace Nitrogen
 	};
 	
    
-   inline LangCode TextLanguageDontCare()  { return LangCode::Make( kTextLanguageDontCare ); }
-   inline RegionCode TextRegionDontCare()  { return RegionCode::Make( kTextRegionDontCare ); }
-   inline ScriptCode TextScriptDontCare()  { return ScriptCode::Make( kTextScriptDontCare ); }
+   static const LangCode kTextLanguageDontCare = LangCode( ::kTextLanguageDontCare );
+   static const RegionCode kTextRegionDontCare = RegionCode( ::kTextRegionDontCare );
+   static const ScriptCode kTextScriptDontCare = ScriptCode( ::kTextScriptDontCare );
    
-   class TextEncodingBaseTag {};
-   typedef Nucleus::SelectorType< TextEncodingBaseTag, ::TextEncodingBase, kTextEncodingUnknown > TextEncodingBase;
+   typedef Nucleus::Selector< class TextEncodingBase_Tag, ::TextEncodingBase >::Type TextEncodingBase;
 
-   class TextEncodingVariantTag {};
-   typedef Nucleus::SelectorType< TextEncodingVariantTag, ::TextEncodingVariant, kTextEncodingDefaultVariant > TextEncodingVariant;
+   typedef Nucleus::Selector< class TextEncodingVariant_Tag, ::TextEncodingVariant >::Type TextEncodingVariant;
+   
+   static const TextEncodingVariant kTextEncodingDefaultVariant = TextEncodingVariant( ::kTextEncodingDefaultVariant );
 
-   class TextEncodingFormatTag {};
-   typedef Nucleus::SelectorType< TextEncodingFormatTag, ::TextEncodingFormat, 0 > TextEncodingFormat;
+   typedef Nucleus::Selector< class TextEncodingFormat_Tag, ::TextEncodingFormat >::Type TextEncodingFormat;
 
-   class TextEncodingTag {};
-   typedef Nucleus::IDType< TextEncodingTag, ::TextEncoding, 0 > TextEncoding;
+   typedef Nucleus::ID< class TextEncoding_Tag, ::TextEncoding >::Type TextEncoding;
+   
+   static const TextEncoding kTextEncodingUnknown = TextEncoding( ::kTextEncodingUnknown );
 
-   class TextEncodingNameSelectorTag {};
-   typedef Nucleus::SelectorType< TextEncodingNameSelectorTag, ::TextEncodingNameSelector, 0 > TextEncodingNameSelector;
+   typedef Nucleus::Selector< class TextEncodingNameSelector_Tag, ::TextEncodingNameSelector >::Type TextEncodingNameSelector;
 
    using ::TextEncodingRun;
    using ::ScriptCodeRun;
@@ -90,22 +86,17 @@ namespace Nucleus
 
 namespace Nitrogen
   {
-   class UCCharPropertyTypeTag {};
-   typedef Nucleus::SelectorType< UCCharPropertyTypeTag, ::UCCharPropertyType, 0 > UCCharPropertyType;
+   typedef Nucleus::Selector< class UCCharPropertyType_Tag, ::UCCharPropertyType >::Type UCCharPropertyType;
 
-   class UCCharPropertyValueTag {};
-   typedef Nucleus::SelectorType< UCCharPropertyValueTag, ::UCCharPropertyValue, 0 > UCCharPropertyValue;
+   typedef Nucleus::Selector< class UCCharPropertyValue_Tag, ::UCCharPropertyValue >::Type UCCharPropertyValue;
    
    // UCCharPropertyValue is really three types overloaded: UCCharGenlCategory, UCCharCombiningClass, and UCCharBidiCategory.
    
-      class UCCharGenlCategoryTag {};
-      typedef Nucleus::SelectorType< UCCharGenlCategoryTag, ::UCCharPropertyValue, 0 > UCCharGenlCategory;
+      typedef Nucleus::Selector< class UCCharGenlCategory_Tag, ::UCCharPropertyValue >::Type UCCharGenlCategory;
       
-      class UCCharCombiningClassTag {};
-      typedef Nucleus::SelectorType< UCCharCombiningClassTag, ::UCCharPropertyValue, 0 > UCCharCombiningClass;
+      typedef Nucleus::Selector< class UCCharCombiningClass_Tag, ::UCCharPropertyValue >::Type UCCharCombiningClass;
       
-      class UCCharBidiCategoryTag {};
-      typedef Nucleus::SelectorType< UCCharBidiCategoryTag, ::UCCharPropertyValue, 0 > UCCharBidiCategory;
+      typedef Nucleus::Selector< class CCharBidiCategory_Tag, ::UCCharPropertyValue >::Type UCCharBidiCategory;
 
 
    /* TECInfo... */
@@ -178,52 +169,52 @@ namespace Nitrogen
    Nucleus::Owned< TECInfoHandle, Nucleus::Disposer<Handle> > TECGetInfo();
 
    TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
-                                                 LangCode         iTextLanguageID = TextLanguageDontCare(),
-                                                 RegionCode       iRegionID       = TextRegionDontCare(),
+                                                 LangCode         iTextLanguageID = kTextLanguageDontCare,
+                                                 RegionCode       iRegionID       = kTextRegionDontCare,
                                                  ConstStr255Param iTextFontname   = 0 );
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                         RegionCode       iRegionID,
                                                         ConstStr255Param iTextFontname = 0 )
      {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, TextLanguageDontCare(), iRegionID, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( iTextScriptID, kTextLanguageDontCare, iRegionID, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                         LangCode         iTextLanguageID,
                                                         ConstStr255Param iTextFontname )
      {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, iTextLanguageID, TextRegionDontCare(), iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( iTextScriptID, iTextLanguageID, kTextRegionDontCare, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( ScriptCode       iTextScriptID,
                                                         ConstStr255Param iTextFontname )
      {
-      return UpgradeScriptInfoToTextEncoding( iTextScriptID, TextLanguageDontCare(), TextRegionDontCare(), iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( iTextScriptID, kTextLanguageDontCare, kTextRegionDontCare, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( LangCode         iTextLanguageID,
-                                                        RegionCode       iRegionID       = TextRegionDontCare(),
+                                                        RegionCode       iRegionID       = kTextRegionDontCare,
                                                         ConstStr255Param iTextFontname   = 0 )
      {
-      return UpgradeScriptInfoToTextEncoding( TextScriptDontCare(), iTextLanguageID, iRegionID, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, iTextLanguageID, iRegionID, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( LangCode         iTextLanguageID,
                                                         ConstStr255Param iTextFontname )
      {
-      return UpgradeScriptInfoToTextEncoding( TextScriptDontCare(), iTextLanguageID, TextRegionDontCare(), iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, iTextLanguageID, kTextRegionDontCare, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( RegionCode       iRegionID,
                                                         ConstStr255Param iTextFontname = 0 )
      {
-      return UpgradeScriptInfoToTextEncoding( TextScriptDontCare(), TextLanguageDontCare(), iRegionID, iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, kTextLanguageDontCare, iRegionID, iTextFontname );
      }
 
    inline TextEncoding UpgradeScriptInfoToTextEncoding( ConstStr255Param iTextFontname )
      {
-      return UpgradeScriptInfoToTextEncoding( TextScriptDontCare(), TextLanguageDontCare(), TextRegionDontCare(), iTextFontname );
+      return UpgradeScriptInfoToTextEncoding( kTextScriptDontCare, kTextLanguageDontCare, kTextRegionDontCare, iTextFontname );
      }
 
    struct RevertTextEncodingToScriptInfo_Result
@@ -261,13 +252,13 @@ namespace Nitrogen
    typename UCGetCharProperty_Traits<propType>::Result UCGetCharProperty( const UniChar *charPtr,
                                                                           UniCharCount   textLength )
      {
-      return UCGetCharProperty( charPtr, textLength, propType ).Get();
+      return UCGetCharProperty( charPtr, textLength, propType );
      }
    
    template < ::UCCharPropertyType propType >
    typename UCGetCharProperty_Traits<propType>::Result UCGetCharProperty( const UniString& text )
      {
-      return UCGetCharProperty( text, propType ).Get();
+      return UCGetCharProperty( text, propType );
      }
   }
 

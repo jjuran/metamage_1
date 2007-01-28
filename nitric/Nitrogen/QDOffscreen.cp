@@ -64,14 +64,14 @@ namespace Nitrogen
 	{
 		::GWorldPtr gWorldPtr = offscreenGWorld.Get();
 		
-		GWorldFlags result( ::UpdateGWorld( &gWorldPtr,
-		                                    pixelDepth,
-		                                    &boundsRect,
-		                                    cTable,
-		                                    aGDevice,
-		                                    flags ) );
+		GWorldFlags result = GWorldFlags( ::UpdateGWorld( &gWorldPtr,
+		                                                  pixelDepth,
+		                                                  &boundsRect,
+		                                                  cTable,
+		                                                  aGDevice,
+		                                                  flags ) );
 		
-		if ( result.Get() & gwFlagErr )
+		if ( result & gwFlagErr )
 		{
 			ThrowOSStatus( ::QDError() );
 		}

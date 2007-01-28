@@ -123,11 +123,11 @@ namespace Nitrogen {
 	struct UTGetOSTypeFromString_Failed {};
 
 	inline OSType UTGetOSTypeFromString ( CFStringRef inString ) {
-		OSType retVal = ::UTGetOSTypeFromString ( inString );
+		OSType retVal = OSType( ::UTGetOSTypeFromString ( inString ) );
 //  Result:
 //    the OSType value encoded in the string, or 0 if the string is not
 //    a valid encoding of an OSType
-		if ( retVal == OSType::Make( 0 ) )
+		if ( retVal == OSType() )
 			throw UTGetOSTypeFromString_Failed ();
 		return retVal;
 		}

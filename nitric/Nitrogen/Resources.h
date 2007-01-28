@@ -214,9 +214,9 @@ namespace Nitrogen
 	                                                FSIOPermssn    permissions );
 	
 	void FSpCreateResFile( const FSSpec&  spec,
-	                       OSType         creator   = 'RSED',
-	                       OSType         type      = 'rsrc',
-	                       ScriptCode     scriptTag = ScriptCode( smSystemScript ) );
+	                       OSType         creator   = OSType( 'RSED' ),
+	                       OSType         type      = OSType( 'rsrc' ),
+	                       ScriptCode     scriptTag = smSystemScript );
 	
 	// ReadPartialResource
 	// WritePartialResource

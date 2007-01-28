@@ -46,6 +46,8 @@ namespace Nitrogen
 	
 	typedef Nucleus::Flag< class EventMask_Tag, ::EventMask >::Type EventMask;
 	
+	NUCLEUS_DEFINE_FLAG_OPS( EventMask )
+	
 	static const EventMask mDownMask          = EventMask( ::mDownMask          );
 	static const EventMask mUpMask            = EventMask( ::mUpMask            );
 	static const EventMask keyDownMask        = EventMask( ::keyDownMask        );
@@ -61,7 +63,11 @@ namespace Nitrogen
 	
 	typedef Nucleus::Flag< class EventModifiers_Tag, ::EventModifiers >::Type EventModifiers;
 	
+	NUCLEUS_DEFINE_FLAG_OPS( EventModifiers )
+	
 	typedef Nucleus::Flag< class KeyModifiers_Tag, UInt32 >::Type KeyModifiers;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( KeyModifiers )
 	
 	// ...
 	

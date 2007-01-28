@@ -15,8 +15,8 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
 #ifndef NUCLEUS_PSEUDOREFERENCE_H
 #include "Nucleus/Pseudoreference.h"
@@ -335,14 +335,15 @@ namespace Nitrogen
 		return Nitrogen::GetHandleSize( Handle( h ) ) / sizeof (T);
 	}
 	
-	class HandleFlags_Tag {};
-	typedef Nucleus::FlagType< HandleFlags_Tag, SInt8 > Handle_Flags;
+	typedef Nucleus::Flag< class HandleFlags_Tag, SInt8 >::Type Handle_Flags;
 	
 	// 1253
 	inline Handle_Flags HGetState( Handle h )
 	{
-		Handle_Flags flags( ::HGetState( h ) );
+		Handle_Flags flags = Handle_Flags( ::HGetState( h ) );
+		
 		MemError();
+		
 		return flags;
 	}
 	
@@ -350,6 +351,7 @@ namespace Nitrogen
 	inline void HSetState( Handle h, Handle_Flags state )
 	{
 		::HSetState( h, state );
+		
 		MemError();
 	}
 	

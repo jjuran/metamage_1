@@ -46,11 +46,13 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
-	class TransferMode_Tag {};
-	typedef Nucleus::FlagType< TransferMode_Tag, ::SInt16 > TransferMode;
+	typedef Nucleus::Flag< class TransferMode_Tag, ::SInt16 >::Type TransferMode;
 	
-	class PixelType_Tag {};
-	typedef Nucleus::SelectorType< PixelType_Tag, ::PixelType > PixelType;
+	static const TransferMode srcCopy = TransferMode( ::srcCopy );
+	
+	NUCLEUS_DEFINE_FLAG_OPS( TransferMode )
+	
+	typedef Nucleus::Selector< class PixelType_Tag, ::PixelType >::Type PixelType;
 	
 	using ::BitMap;
 	using ::BitMapPtr;

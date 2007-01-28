@@ -42,8 +42,11 @@ namespace Nitrogen
    using ::LongDateRec;
    using ::DateTimeRec;
 
-   class DateForm_Tag {};
-   typedef Nucleus::SelectorType< DateForm_Tag, SInt8, shortDate > DateForm;
+   typedef Nucleus::Selector< class DateForm_Tag, SInt8 >::Type DateForm;
+   
+   static const DateForm shortDate  = DateForm( ::shortDate  );
+   static const DateForm longDate   = DateForm( ::longDate   );
+   static const DateForm abbrevDate = DateForm( ::abbrevDate );
    
    typedef UInt32 DateTime;
    

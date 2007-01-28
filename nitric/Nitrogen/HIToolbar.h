@@ -82,7 +82,7 @@ namespace Nitrogen {
      	(void) HIToolbarErrorsRegistrationDependency();
 		::OptionBits result;
 		ThrowOSStatus ( ::HIToolbarGetAttributes ( toolbar, &result ));
-		return result;
+		return OptionBits( result );
 		}
 
 	inline void HIToolbarChangeAttributes ( HIToolbarRef inToolbar, ::OptionBits inAttrsToSet, ::OptionBits inAttrsToClear ) {
@@ -189,7 +189,7 @@ namespace Nitrogen {
      	(void) HIToolbarErrorsRegistrationDependency();
 		::OptionBits result;
 		ThrowOSStatus ( ::HIToolbarItemGetAttributes ( inItem, &result ));
-		return result;
+		return OptionBits( result );
 		}
 
 	inline void HIToolbarItemChangeAttributes ( HIToolbarItemRef inItem, ::OptionBits inAttrsToSet, ::OptionBits inAttrsToClear ) {
@@ -244,7 +244,7 @@ namespace Nitrogen {
      	(void) HIToolbarErrorsRegistrationDependency();
 		::MenuCommand result;
 		ThrowOSStatus ( ::HIToolbarItemGetCommandID ( inItem, &result ));
-		return result;
+		return MenuCommand( result );
 		}
 
 	inline void HIToolbarItemSetIconRef ( HIToolbarItemRef inItem, IconRef inIcon ) {

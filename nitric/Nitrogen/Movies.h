@@ -13,11 +13,11 @@
 #include FRAMEWORK_HEADER(QuickTime,QuickTime.h)
 #endif
 
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -46,17 +46,18 @@ namespace Nitrogen
 	
 	using ::Movie;
 	
-	class MovieFileRefNum_Tag {};
-	typedef Nucleus::IDType< MovieFileRefNum_Tag, SInt16, -1 > MovieFileRefNum;
+	typedef Nucleus::ID< class MovieFileRefNum_Tag, SInt16 >::Type MovieFileRefNum;
 	
-	class NewMovieFlags_Tag {};
-	typedef Nucleus::FlagType< NewMovieFlags_Tag, SInt16 > NewMovieFlags;
+	typedef Nucleus::Flag< class NewMovieFlags_Tag, SInt16 >::Type NewMovieFlags;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( NewMovieFlags )
 	
 	// Opaque pointer type
 	typedef struct FullScreenContext* FullScreenContextPtr;
 	
-	class FullScreenFlags_Tag {};
-	typedef Nucleus::FlagType< FullScreenFlags_Tag, long > FullScreenFlags;
+	typedef Nucleus::Flag< class FullScreenFlags_Tag, long >::Type FullScreenFlags;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( FullScreenFlags )
 	
 }
 

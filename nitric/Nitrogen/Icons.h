@@ -61,19 +61,26 @@ namespace Nitrogen
 	static const ResType kMini8BitData   = ResType( ::kMini8BitData   );
 	
 	
-	struct IconAlignmentType_Tag  {};
-	typedef Nucleus::FlagType< IconAlignmentType_Tag, ::IconAlignmentType, kAlignNone > IconAlignmentType;
+	typedef Nucleus::Flag< class IconAlignmentType_Tag, ::IconAlignmentType >::Type IconAlignmentType;
+	typedef Nucleus::Flag< class IconTransformType_Tag, ::IconTransformType >::Type IconTransformType;
+	typedef Nucleus::Flag< class IconSelectorValue_Tag, ::IconSelectorValue >::Type IconSelectorValue;
 	
-	struct IconTransformType_Tag  {};
-	typedef Nucleus::FlagType< IconTransformType_Tag, ::IconTransformType, kTransformNone > IconTransformType;
+	NUCLEUS_DEFINE_FLAG_OPS( IconAlignmentType )
+	NUCLEUS_DEFINE_FLAG_OPS( IconTransformType )
+	NUCLEUS_DEFINE_FLAG_OPS( IconSelectorValue )
 	
-	struct IconSelectorValue_Tag  {};
-	typedef Nucleus::FlagType< IconSelectorValue_Tag, ::IconSelectorValue, kSelectorAllAvailableData > IconSelectorValue;
+	static const IconAlignmentType kAlignNone = IconAlignmentType( ::kAlignNone );
 	
-   class IconLabelTag {};
-   typedef Nucleus::IDType< IconLabelTag, SInt16, 0 > IconLabel;
-   
+	static const IconTransformType kTransformNone = IconTransformType( ::kTransformNone );
+	
+	static const IconSelectorValue kSelectorAllAvailableData = IconSelectorValue( ::kSelectorAllAvailableData );
+	
+	
+	typedef Nucleus::ID< class IconLabel_Tag, SInt16 >::Type IconLabel;
+	
 	// ...
+	
+	static const OSType kSystemIconsCreator = OSType( ::kSystemIconsCreator );
 	
 	// ResType 'ICON'
 	struct PlainIcon
@@ -306,11 +313,15 @@ namespace Nitrogen
 	                      IconTransformType  transform,
 	                      CIconHandle        theCIcon );
 	
-	class IconServicesUsageFlags_Tag {};
-	typedef Nucleus::FlagType< IconServicesUsageFlags_Tag, ::IconServicesUsageFlags, 0 > IconServicesUsageFlags;
+	typedef Nucleus::Flag< class IconServicesUsageFlags_Tag, ::IconServicesUsageFlags >::Type IconServicesUsageFlags;
 	
-	class PlotIconRefFlags_Tag {};
-	typedef Nucleus::FlagType< PlotIconRefFlags_Tag, ::PlotIconRefFlags, 0 > PlotIconRefFlags;
+	NUCLEUS_DEFINE_FLAG_OPS( IconServicesUsageFlags )
+	
+	static const IconServicesUsageFlags kIconServicesNormalUsageFlag = IconServicesUsageFlags( ::kIconServicesNormalUsageFlag );
+	
+	typedef Nucleus::Flag< class PlotIconRefFlags_Tag, ::PlotIconRefFlags >::Type PlotIconRefFlags;
+	
+	NUCLEUS_DEFINE_FLAG_OPS( PlotIconRefFlags )
 	
 	// ... Icon Families
 	// ... Initialization and Termination

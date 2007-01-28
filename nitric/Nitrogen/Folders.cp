@@ -7,16 +7,20 @@
 namespace Nitrogen
   {
    
-	FSDirSpec FindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder )
+	FSDirSpec FindFolder( FSVolumeRefNum  vRefNum,
+	                      FolderType      folderType,
+	                      bool            createFolder )
 	{
 		::FSVolumeRefNum outVRefNum;
 		SInt32 dirID;
-		ThrowOSStatus
-		(
-			::FindFolder( vRefNum, folderType, createFolder, &outVRefNum, &dirID )
-		);
 		
-		return Nucleus::Make< FSDirSpec >( outVRefNum, FSDirID( dirID ) );
+		ThrowOSStatus( ::FindFolder( vRefNum,
+		                             folderType,
+		                             createFolder,
+		                             &outVRefNum,
+		                             &dirID ) );
+		
+		return Nucleus::Make< FSDirSpec >( FSVolumeRefNum( outVRefNum ), FSDirID( dirID ) );
 	}
 	
    FSRef FSFindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder )

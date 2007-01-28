@@ -13,8 +13,8 @@
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -29,14 +29,18 @@ namespace Nitrogen
 			ComponentManagerErrorsRegistrationDependency();
 	};
 	
-	struct ComponentTypeTag  {};
-	typedef Nucleus::SelectorType< ComponentTypeTag, ::OSType, kAnyComponentType > ComponentType;
+	typedef Nucleus::Selector< class ComponentType_Tag,         ::OSType >::Type ComponentType;
+	typedef Nucleus::Selector< class ComponentSubType_Tag,      ::OSType >::Type ComponentSubType;
+	typedef Nucleus::Selector< class ComponentManufacturer_Tag, ::OSType >::Type ComponentManufacturer;
 	
-	struct ComponentSubTypeTag  {};
-	typedef Nucleus::SelectorType< ComponentSubTypeTag, ::OSType, kAnyComponentSubType > ComponentSubType;
+	static const ComponentManufacturer kAppleManufacturer = ComponentManufacturer( ::kAppleManufacturer );
 	
-	struct ComponentManufacturerTag  {};
-	typedef Nucleus::SelectorType< ComponentManufacturerTag, ::OSType, kAnyComponentManufacturer > ComponentManufacturer;
+	static const ResType kComponentResourceType      = ResType( ::kComponentResourceType      );
+	static const ResType kComponentAliasResourceType = ResType( ::kComponentAliasResourceType );
+	
+	static const ComponentType         kAnyComponentType         = ComponentType        ( ::kAnyComponentType         );
+	static const ComponentSubType      kAnyComponentSubType      = ComponentSubType     ( ::kAnyComponentSubType      );
+	static const ComponentManufacturer kAnyComponentManufacturer = ComponentManufacturer( ::kAnyComponentManufacturer );
 	
 	using ::ComponentInstance;
 	
