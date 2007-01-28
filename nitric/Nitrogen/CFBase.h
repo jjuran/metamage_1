@@ -12,11 +12,11 @@
 #ifndef __CFSTRING__
 #include FRAMEWORK_HEADER(CoreFoundation,CFString.h)
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -24,8 +24,7 @@
 
 namespace Nitrogen
   {
-   class CFTypeIDTag {};
-   typedef Nucleus::IDType< CFTypeIDTag, ::CFTypeID > CFTypeID;
+   typedef Nucleus::ID< class CFTypeID_Tag, ::CFTypeID >::Type CFTypeID;
 
    template < class T > struct CFType_Traits;
    
@@ -94,11 +93,11 @@ namespace Nitrogen {
    template < class T > bool operator==( T const *const& a, const CFTypeRef& b )   { return CFTypeRef( a ) == b; }
    template < class T > bool operator!=( T const *const& a, const CFTypeRef& b )   { return CFTypeRef( a ) != b; }
 
-   class CFOptionFlagsTag {};
-   typedef Nucleus::FlagType< CFOptionFlagsTag, ::CFOptionFlags > CFOptionFlags;
+   typedef Nucleus::Flag< class CFOptionFlags_Tag, ::CFOptionFlags >::Type CFOptionFlags;
    
-   class CFHashCodeTag {};
-   typedef Nucleus::IDType< CFHashCodeTag, ::CFHashCode > CFHashCode;
+   NUCLEUS_DEFINE_FLAG_OPS( CFOptionFlags )
+   
+   typedef Nucleus::ID< class CFHashCode_Tag, ::CFHashCode >::Type CFHashCode;
    
    using ::CFStringRef;
    using ::CFAllocatorRef;
