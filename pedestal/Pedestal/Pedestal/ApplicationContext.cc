@@ -47,7 +47,7 @@ namespace Pedestal
 		// Read our version resource.
 		try
 		{
-			return **N::Handle_Cast< VersRec >( N::Get1Resource( N::ResType( 'vers' ), N::ResID( 1 ) ) );
+			return N::Get1Resource< N::kVersionResType >( N::ResID( 1 ) );
 		}
 		catch ( const N::ResNotFound& )
 		{
