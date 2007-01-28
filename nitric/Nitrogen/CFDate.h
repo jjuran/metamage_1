@@ -41,10 +41,14 @@ namespace Nitrogen
 		return ::CFDateCompare ( theDate, otherDate, context );
 		}
 
-	inline Boolean CFGregorianDateIsValid ( CFGregorianDate gDate, CFOptionFlags unitFlags = kCFGregorianAllUnits ) {
+	inline Boolean CFGregorianDateIsValid ( CFGregorianDate gDate, CFOptionFlags unitFlags ) {
 		return ::CFGregorianDateIsValid ( gDate, unitFlags );
 		}
 	
+	inline Boolean CFGregorianDateIsValid( CFGregorianDate date, CFGregorianUnitFlags unitFlags = kCFGregorianAllUnits )
+	{
+		return CFGregorianDateIsValid( date, CFOptionFlags( unitFlags ) );
+	}
 
 //	CFAbsoluteTime CFGregorianDateGetAbsoluteTime ( CFGregorianDate gdate, CFTimeZoneRef tz );
 	using ::CFGregorianDateGetAbsoluteTime;
