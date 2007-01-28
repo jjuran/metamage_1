@@ -24,14 +24,14 @@
 #ifndef NITROGEN_QUICKDRAW_H
 #include "Nitrogen/Quickdraw.h"
 #endif
-#ifndef NUCLEUS_IDTYPE_H
-#include "Nucleus/IDType.h"
+#ifndef NUCLEUS_ID_H
+#include "Nucleus/ID.h"
 #endif
-#ifndef NUCLEUS_FLAGTYPE_H
-#include "Nucleus/FlagType.h"
+#ifndef NUCLEUS_FLAG_H
+#include "Nucleus/Flag.h"
 #endif
-#ifndef NUCLEUS_SELECTORTYPE_H
-#include "Nucleus/SelectorType.h"
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -51,35 +51,35 @@ namespace Nitrogen
    
    using ::DragRef;
 
-   class DragItemRefTag {};
-   typedef Nucleus::IDType< DragItemRefTag, ::DragItemRef, 0 > DragItemRef;
+   typedef Nucleus::ID< class DragItemRef_Tag, ::DragItemRef >::Type DragItemRef;
    
-   class FlavorTypeTag {};
-   typedef Nucleus::SelectorType< FlavorTypeTag, ::FlavorType, 0 > FlavorType;
+   typedef Nucleus::Selector< class FlavorType_Tag, ::FlavorType >::Type FlavorType;
    
-   class DragAttributesTag {};
-   typedef Nucleus::FlagType< DragAttributesTag, ::DragAttributes, 0 > DragAttributes;
+   typedef Nucleus::Flag< class DragAttributes_Tag, ::DragAttributes >::Type DragAttributes;
    
-   class DragBehaviorsTag {};
-   typedef Nucleus::FlagType< DragBehaviorsTag, ::DragBehaviors, 0 > DragBehaviors;
+   NUCLEUS_DEFINE_FLAG_OPS( DragAttributes )
    
-   class DragImageFlagsTag {};
-   typedef Nucleus::FlagType< DragImageFlagsTag, ::DragImageFlags, 0 > DragImageFlags;
+   typedef Nucleus::Flag< class DragBehaviors_Tag, ::DragBehaviors >::Type DragBehaviors;
+   
+   NUCLEUS_DEFINE_FLAG_OPS( DragBehaviors )
+   
+   typedef Nucleus::Flag< class DragImageFlags_Tag, ::DragImageFlags >::Type DragImageFlags;
+   
+   NUCLEUS_DEFINE_FLAG_OPS( DragImageFlags )
     
-   class DragRegionMessageTag {};
-   typedef Nucleus::SelectorType< DragRegionMessageTag, ::DragRegionMessage, 0 > DragRegionMessage;
+   typedef Nucleus::Selector< class DragRegionMessage_Tag, ::DragRegionMessage >::Type DragRegionMessage;
     
-   class ZoomAccelerationTag {};
-   typedef Nucleus::SelectorType< ZoomAccelerationTag, ::ZoomAcceleration, 0 > ZoomAcceleration;
+   typedef Nucleus::Selector< class ZoomAcceleration_Tag, ::ZoomAcceleration >::Type ZoomAcceleration;
    
-   class FlavorFlagsTag {};
-   typedef Nucleus::FlagType< FlavorFlagsTag, ::FlavorFlags, 0 > FlavorFlags;
+   typedef Nucleus::Flag< class FlavorFlags_Tag, ::FlavorFlags >::Type FlavorFlags;
+   
+   NUCLEUS_DEFINE_FLAG_OPS( FlavorFlags )
     
-   class DragTrackingMessageTag {};
-   typedef Nucleus::SelectorType< DragTrackingMessageTag, ::DragTrackingMessage, 0 > DragTrackingMessage;
+   typedef Nucleus::Selector< class DragTrackingMessage_Tag, ::DragTrackingMessage >::Type DragTrackingMessage;
    
-   class DragActionsTag {};
-   typedef Nucleus::FlagType< DragActionsTag, ::DragActions, 0 > DragActions;
+   typedef Nucleus::Flag< class DragActions_Tag, ::DragActions >::Type DragActions;
+   
+   NUCLEUS_DEFINE_FLAG_OPS( DragActions )
    
    using ::HFSFlavor;
    using ::PromiseHFSFlavor;
