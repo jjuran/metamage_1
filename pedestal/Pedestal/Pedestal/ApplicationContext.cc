@@ -8,9 +8,6 @@
 // Nitrogen
 #include "Nitrogen/Processes.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 
 namespace Pedestal
 {
@@ -67,7 +64,6 @@ namespace Pedestal
 	:
 		fMemoryInit   ( 0 ), 
 		fResFileRefNum( N::CurResFile() ), 
-		fLaunchDir    ( N::FSpGetParent( N::GetProcessAppSpec( N::CurrentProcess() ) ) ), 
 		fVersion      ( ReadVersion() )
 	{
 	}

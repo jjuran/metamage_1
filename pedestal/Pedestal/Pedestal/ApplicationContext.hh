@@ -31,14 +31,12 @@ namespace Pedestal
 			MacToolboxInit    fMacToolboxInit;
 			MemoryInit        fMemoryInit;
 			N::ResFileRefNum  fResFileRefNum;
-			N::FSDirSpec      fLaunchDir;
 			VersRec           fVersion;
 		
 		public:
 			ApplicationContext();
 			
 			N::ResFileRefNum    ResFileAccessPath() const  { return fResFileRefNum; }
-			const N::FSDirSpec& LaunchDirectory  () const  { return fLaunchDir;     }
 			const VersRec&      Version          () const  { return fVersion;       }
 	};
 	
