@@ -29,14 +29,6 @@
 // OSErrno
 #include "OSErrno/OSErrno.hh"
 
-// Nitrogen Extras / Templates
-//#include "Templates/FunctionalExtensions.h"
-//#include "Templates/PointerToFunction.h"
-
-// Io
-#include "Io/Exceptions.hh"
-#include "Io/Stream.hh"
-
 // Kerosene/Common
 #include "KEnvironment.hh"
 #include "SystemCalls.hh"

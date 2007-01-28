@@ -14,9 +14,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// Io
-#include "Io/Exceptions.hh"
-
 // Genie
 #include "Genie/Yield.hh"
 

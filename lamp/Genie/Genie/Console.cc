@@ -22,10 +22,6 @@
 #include "Nitrogen/Processes.h"
 #include "Nitrogen/Sound.h"
 
-// Io
-#include "Io/MakeHandle.hh"
-#include "Io/Stream.hh"
-
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/ConsoleTTY.hh"
