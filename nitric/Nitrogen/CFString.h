@@ -56,39 +56,39 @@ namespace Nitrogen {
    
    class CFStringCreateWithPascalString_Failed {};
    Nucleus::Owned<CFStringRef> CFStringCreateWithPascalString( CFAllocatorRef     alloc,
-                                                      ConstStr255Param   pStr,
-                                                      CFStringEncoding   encoding );
+                                                               ConstStr255Param   pStr,
+                                                               CFStringEncoding   encoding );
    
    inline Nucleus::Owned<CFStringRef> CFStringCreateWithPascalString( ConstStr255Param   pStr,
-                                                             CFStringEncoding   encoding )
+                                                                      CFStringEncoding   encoding )
      {
       return Nitrogen::CFStringCreateWithPascalString( kCFAllocatorDefault, pStr, encoding );
      }
 
    class CFStringCreateWithCString_Failed {};
    Nucleus::Owned<CFStringRef> CFStringCreateWithCString( CFAllocatorRef alloc,
-                                                 const char *cStr,
-                                                 CFStringEncoding encoding );
+                                                          const char *cStr,
+                                                          CFStringEncoding encoding );
 
    inline Nucleus::Owned<CFStringRef> CFStringCreateWithCString( const char *cStr,
-                                                        CFStringEncoding encoding )
+                                                                 CFStringEncoding encoding )
      {
       return Nitrogen::CFStringCreateWithCString( kCFAllocatorDefault, cStr, encoding );
      }
    
    class CFStringCreateWithCharacters_Failed {};
    Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
-                                                    const UniChar *  chars,
-                                                    CFIndex          numChars );
+                                                             const UniChar *  chars,
+                                                             CFIndex          numChars );
 
    inline Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( const UniChar *  chars,
-                                                           CFIndex          numChars )
+                                                                    CFIndex          numChars )
      {
       return Nitrogen::CFStringCreateWithCharacters( kCFAllocatorDefault, chars, numChars );
      }
 
    Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( CFAllocatorRef   alloc,
-                                                    const UniString& string );
+                                                             const UniString& string );
 
    inline Nucleus::Owned<CFStringRef> CFStringCreateWithCharacters( const UniString& string )
      {
@@ -113,15 +113,15 @@ namespace Nitrogen {
    class CFStringCreateWithBytes_Failed {};
    
    Nucleus::Owned< CFStringRef > CFStringCreateWithBytes( CFAllocatorRef     alloc,
-                                                 const UInt8 *      bytes,
-                                                 CFIndex            numBytes,
-                                                 CFStringEncoding   encoding,
-                                                 bool               isExternalRepresentation );
+                                                          const UInt8 *      bytes,
+                                                          CFIndex            numBytes,
+                                                          CFStringEncoding   encoding,
+                                                          bool               isExternalRepresentation );
 
    inline Nucleus::Owned< CFStringRef > CFStringCreateWithBytes( const UInt8 *      bytes,
-                                                        CFIndex            numBytes,
-                                                        CFStringEncoding   encoding,
-                                                        bool               isExternalRepresentation )
+                                                                 CFIndex            numBytes,
+                                                                 CFStringEncoding   encoding,
+                                                                 bool               isExternalRepresentation )
      {
       return Nitrogen::CFStringCreateWithBytes( kCFAllocatorDefault,
                                                 bytes,
@@ -131,8 +131,8 @@ namespace Nitrogen {
      }
 
    inline Nucleus::Owned< CFStringRef > CFStringCreateWithBytes( const std::string& string,
-                                                        CFStringEncoding   encoding,
-                                                        bool               isExternalRepresentation )
+                                                                 CFStringEncoding   encoding,
+                                                                 bool               isExternalRepresentation )
      {
       return Nitrogen::CFStringCreateWithBytes( reinterpret_cast< const UInt8 * >( string.data() ),
                                                 Nucleus::Convert<CFIndex>( string.size() ),
