@@ -28,16 +28,16 @@ namespace Pedestal
 	class ApplicationContext
 	{
 		private:
-			MacToolboxInit    fMacToolboxInit;
-			MemoryInit        fMemoryInit;
-			N::ResFileRefNum  fResFileRefNum;
-			VersRec           fVersion;
+			MacToolboxInit    itsMacToolboxInit;
+			MemoryInit        itsMemoryInit;
+			N::ResFileRefNum  itsResFileRefNum;
+			VersRec           itsVersion;
 		
 		public:
 			ApplicationContext();
 			
-			N::ResFileRefNum    ResFileAccessPath() const  { return fResFileRefNum; }
-			const VersRec&      Version          () const  { return fVersion;       }
+			N::ResFileRefNum    ResFileAccessPath() const  { return itsResFileRefNum; }
+			const VersRec&      Version          () const  { return itsVersion;       }
 	};
 	
 }

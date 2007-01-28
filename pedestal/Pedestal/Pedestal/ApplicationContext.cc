@@ -5,9 +5,6 @@
 
 #include "Pedestal/ApplicationContext.hh"
 
-// Nitrogen
-#include "Nitrogen/Processes.h"
-
 
 namespace Pedestal
 {
@@ -52,7 +49,7 @@ namespace Pedestal
 		{
 			return **N::Handle_Cast< VersRec >( N::Get1Resource( N::ResType( 'vers' ), N::ResID( 1 ) ) );
 		}
-		catch ( N::ResNotFound )
+		catch ( const N::ResNotFound& )
 		{
 			// Return below
 		}
@@ -62,9 +59,9 @@ namespace Pedestal
 	
 	ApplicationContext::ApplicationContext()
 	:
-		fMemoryInit   ( 0 ), 
-		fResFileRefNum( N::CurResFile() ), 
-		fVersion      ( ReadVersion() )
+		itsMemoryInit   ( 0 ), 
+		itsResFileRefNum( N::CurResFile() ), 
+		itsVersion      ( ReadVersion() )
 	{
 	}
 	
