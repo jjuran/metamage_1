@@ -16,7 +16,7 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
 
-// Nitrogen / Carbon support
+// Nitrogen
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Events.h"
 #include "Nitrogen/Gestalt.h"
@@ -24,11 +24,9 @@
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Threads.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Clipboard.h"
-
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
+#include "Pedestal/Clipboard.hh"
 #include "Pedestal/Control.hh"
 #include "Pedestal/Window.hh"
 
@@ -63,7 +61,6 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
 	
 	using N::kCoreEventClass;
 	using N::kAEQuitApplication;
@@ -417,7 +414,7 @@ namespace Pedestal
 					
 					if ( event.message & convertClipboardFlag )
 					{
-						NX::Clipboard::Resume();
+						Clipboard::Resume();
 					}
 					
 				#endif
@@ -427,7 +424,7 @@ namespace Pedestal
 				else
 				{
 					Suspend();
-					NX::Clipboard::Suspend();
+					Clipboard::Suspend();
 				}
 				break;
 			
@@ -593,7 +590,7 @@ namespace Pedestal
 	
 	int Application::Run()
 	{
-		NX::Clipboard myClipboard;
+		Clipboard myClipboard;
 		
 		gRunState.inForeground = N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
 		
