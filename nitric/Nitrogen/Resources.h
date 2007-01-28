@@ -348,6 +348,31 @@ namespace Nitrogen
 		}
 	};
 	
+	template < class FinalType, std::size_t (*SizeOf)( const FinalType& ) >
+	struct VariableLengthPOD_ResType_Traits
+	{
+		typedef       FinalType   Result;
+		typedef const FinalType&  Parameter;
+		
+		static Result MakeFromHandle( Handle h )  { return **Handle_Cast< Result >( h ); }
+		
+		static Nucleus::Owned< Handle > MakeIntoHandle( Parameter pod )
+		{
+			const std::size_t size = SizeOf( pod );
+			
+			Nucleus::Owned< Handle > result = NewHandle( size );
+			
+			const char* const begin = reinterpret_cast< const char* >( &pod );
+			
+			std::copy( begin, begin + size, *result.Get() );
+			
+			return result;
+		}
+	};
+	
+	template <>
+	struct ResType_Traits< kVersionResType > : VariableLengthPOD_ResType_Traits< VersRec, SizeOf_VersRec > {};
+	
 	
 	template < ResType type >
 	typename ResType_Traits< type >::Result GetIndResource( short index )
@@ -362,15 +387,15 @@ namespace Nitrogen
 	}
 	
 	template < ResType type >
-	typename ResType_Traits< type >::Result GetResource( short index )
+	typename ResType_Traits< type >::Result GetResource( ResID resID )
 	{
-		return ResType_Traits< type >::MakeFromHandle( GetResource( type, index ) );
+		return ResType_Traits< type >::MakeFromHandle( GetResource( type, resID ) );
 	}
 	
 	template < ResType type >
-	typename ResType_Traits< type >::Result Get1Resource( short index )
+	typename ResType_Traits< type >::Result Get1Resource( ResID resID )
 	{
-		return ResType_Traits< type >::MakeFromHandle( Get1Resource( type, index ) );
+		return ResType_Traits< type >::MakeFromHandle( Get1Resource( type, resID ) );
 	}
 	
 	template < class Data >
