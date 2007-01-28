@@ -15,6 +15,9 @@
 #include "Nucleus/ID.h"
 #include "Nucleus/Owned.h"
 
+// Io
+#include "io/io.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -22,9 +25,7 @@
 namespace POSeven
 {
 	
-	namespace NN = Nucleus;
-	
-	typedef NN::ID< struct FileDescriptor_Tag, int >::Type FileDescriptor;
+	typedef Nucleus::ID< class FileDescriptor_Tag, int >::Type FileDescriptor;
 	
 	namespace Constants
 	{
@@ -67,8 +68,37 @@ namespace POSeven
 	
 	void Close( Nucleus::Owned< FileDescriptor > fd );
 	
-	int Read( FileDescriptor fd );
-	int Write( FileDescriptor fd );
+	ssize_t Read( FileDescriptor fd, char* buffer, std::size_t byteCount );
+	
+	ssize_t Write( FileDescriptor fd, const char* buffer, std::size_t byteCount );
+	
+	struct POSIX_Io_Details
+	{
+		typedef std::string file_spec;
+		
+		typedef FileDescriptor stream;
+		
+		typedef std::size_t byte_count;
+	};
+	
+}
+
+namespace io
+{
+	
+	template <> struct filespec_traits< std::string > : public POSeven::POSIX_Io_Details {};
+	
+	template < class ByteCount >
+	inline ssize_t read( POSeven::FileDescriptor fd, char* buffer, ByteCount byteCount )
+	{
+		return POSeven::Read( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
+	}
+	
+	template < class ByteCount >
+	inline ssize_t write( POSeven::FileDescriptor fd, const char* buffer, ByteCount byteCount )
+	{
+		return POSeven::Write( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
+	}
 	
 }
 
