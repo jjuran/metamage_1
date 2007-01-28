@@ -22,18 +22,15 @@
 #include "ClassicToolbox/MacWindows.h"
 #include "ClassicToolbox/Scrap.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Clipboard.h"
-
 // Pedestal
 #include "Pedestal/Application.hh"
+#include "Pedestal/Clipboard.hh"
 
 
 namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
-	namespace NX = NitrogenExtras;
 	
 	
 	static Rect ViewRectFromBounds( const Rect& bounds )
@@ -378,17 +375,17 @@ namespace Pedestal
 	
 	void TEView::Cut()
 	{
-		NX::Clipboard::TECut( itsTE );
+		Clipboard::TECut( itsTE );
 	}
 	
 	void TEView::Copy()
 	{
-		NX::Clipboard::TECopy( itsTE );
+		Clipboard::TECopy( itsTE );
 	}
 	
 	void TEView::Paste()
 	{
-		NX::Clipboard::TEPaste( itsTE );
+		Clipboard::TEPaste( itsTE );
 	}
 	
 	void TEView::Clear()
