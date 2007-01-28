@@ -44,7 +44,6 @@ namespace Nitrogen
    
 	template <> struct ResType_Traits< rAliasType > : Handle_ResType_Traits< AliasRecord > {};
 	
-   class MountFlags_Tag {};
    typedef Nucleus::Flag< class MountFlags_Tag, unsigned long >::Type MountFlags;
    
 	NUCLEUS_DEFINE_FLAG_OPS( MountFlags )
@@ -61,7 +60,7 @@ namespace Nitrogen
   {
 	// 90
 	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec& fromFile,
-	                               const FSSpec& target );
+	                                        const FSSpec& target );
 	
 	Nucleus::Owned< AliasHandle > NewAlias( const FSSpec& target );
 	Nucleus::Owned< AliasHandle > NewAlias( CFDataRef theData );
