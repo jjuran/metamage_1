@@ -11,15 +11,18 @@ namespace Nucleus
 	{
 		typedef Int IntegralType;
 		
-		const static bool isSigned = IntegralType( -1 ) < IntegralType( 0 );
+		const static IntegralType zero = IntegralType( 0 );
+		const static IntegralType one = zero + 1;
+		
+		const static bool isSigned = ~zero < zero;
 		
 		const static int byteWidth = sizeof (IntegralType);
 		const static int bitWidth  = byteWidth * 8;
 		
 		const static int binaryDigits = bitWidth - int( isSigned );
 		
-		const static IntegralType min = isSigned ? 1ULL << binaryDigits : 0;
-		const static IntegralType max = IntegralType(~0) ^ min;
+		const static IntegralType min = isSigned ? one << bitWidth - 1 : 0;
+		const static IntegralType max = ~zero ^ min;
 		
 		enum Type
 		{
