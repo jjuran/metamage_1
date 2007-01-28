@@ -119,7 +119,7 @@ namespace Pedestal
 		
 		if ( N::WindowRef window = N::FrontWindow() )
 		{
-			if ( N::GetWindowKind( window ) == kApplicationWindowKind )
+			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
 				if ( WindowBase* base = N::GetWRefCon( window ) )
 				{
@@ -142,7 +142,7 @@ namespace Pedestal
 	{
 		N::WindowRef window = N::FrontWindow();
 		
-		if ( window  &&  N::GetWindowKind( window ) == kApplicationWindowKind )
+		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
@@ -156,7 +156,7 @@ namespace Pedestal
 	{
 		N::WindowRef window = N::FrontWindow();
 		
-		if ( window  &&  N::GetWindowKind( window ) == kApplicationWindowKind )
+		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
@@ -177,7 +177,7 @@ namespace Pedestal
 	{
 		N::WindowRef window = N::FrontWindow();
 		
-		if ( window  &&  N::GetWindowKind( window ) == kApplicationWindowKind )
+		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
@@ -240,7 +240,7 @@ namespace Pedestal
 		{
 			
 		}
-		else if ( N::GetWindowKind( window ) == kApplicationWindowKind )
+		else if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
@@ -257,7 +257,7 @@ namespace Pedestal
 		
 		if ( grown.h != 0  ||  grown.v != 0 )
 		{
-			if ( N::GetWindowKind( window ) == kApplicationWindowKind )
+			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
 				if ( WindowBase* base = N::GetWRefCon( window ) )
 				{
@@ -287,7 +287,7 @@ namespace Pedestal
 		
 		N::FindWindow_Result found = N::FindWindow( event.where );
 		
-		if ( found.part.Get() == inMenuBar )
+		if ( found.part == inMenuBar )
 		{
 			TheApp().HandleMenuChoice( ::MenuSelect( event.where ) );
 			return;
@@ -297,7 +297,7 @@ namespace Pedestal
 		
 	#if CALL_NOT_IN_CARBON
 		
-		if ( found.part.Get() == inSysWindow )
+		if ( found.part == inSysWindow )
 		{
 			::SystemClick( &event, found.window );
 			
@@ -308,7 +308,7 @@ namespace Pedestal
 		
 		N::SetPortWindowPort( found.window );
 		
-		switch ( found.part.Get() )
+		switch ( found.part )
 		{
 			case inDrag:     RespondToDrag   ( event, found.window );  break;
 			case inContent:  RespondToContent( event, found.window );  break;
@@ -336,7 +336,7 @@ namespace Pedestal
 		}
 		else if ( N::WindowRef window = N::FrontWindow() )
 		{
-			if ( N::GetWindowKind( window ) == kApplicationWindowKind )
+			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
 				if ( WindowBase* base = N::GetWRefCon( window ) )
 				{
@@ -354,7 +354,7 @@ namespace Pedestal
 		
 		N::SetPortWindowPort( window );
 		
-		if ( N::GetWindowKind( window ) == kApplicationWindowKind )
+		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
@@ -371,7 +371,7 @@ namespace Pedestal
 		
 		N::Update_Scope update( window );
 		
-		if ( N::GetWindowKind( window ) == kApplicationWindowKind )
+		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
@@ -458,7 +458,7 @@ namespace Pedestal
 	
 	static void GiveIdleTimeToWindow( N::WindowRef window, const EventRecord& event )
 	{
-		if ( N::GetWindowKind( window ) == kApplicationWindowKind )
+		if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
@@ -507,7 +507,7 @@ namespace Pedestal
 		ASSERT( gApp == NULL );
 		gApp = this;
 		
-		if ( N::Gestalt_Mask< gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutMask >() )
+		if ( N::Gestalt_Mask< N::gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutMask >() )
 		{
 			MenuRef fileMenu = N::GetMenuRef( myFileMenu );
 			SInt16 last = N::CountMenuItems( fileMenu );

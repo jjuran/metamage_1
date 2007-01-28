@@ -114,16 +114,16 @@ namespace Pedestal
 	void PlainIcon::Plot( const Rect& area ) const
 	{
 		N::PlotIconHandle( area,
-		                   kAlignNone,
-		                   kTransformNone,
+		                   N::kAlignNone,
+		                   N::kTransformNone,
 		                   value );
 	}
 	
 	void MaskedIcon::Plot( const Rect& area ) const
 	{
 		N::PlotIconHandle( area,
-		                   kAlignNone,
-		                   kTransformNone,
+		                   N::kAlignNone,
+		                   N::kTransformNone,
 		                   value );
 	}
 	
@@ -164,8 +164,8 @@ namespace Pedestal
 	void IconID::Plot( const Rect& area ) const
 	{
 		N::PlotIconID( area,
-		               kAlignNone,
-		               kTransformNone,
+		               N::kAlignNone,
+		               N::kTransformNone,
 		               value );
 	}
 	

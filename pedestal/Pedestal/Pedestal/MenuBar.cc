@@ -49,8 +49,8 @@ namespace Pedestal
 		if ( ioItemText[ len     ] != ']' )  return 0;
 		if ( ioItemText[ len - 5 ] != '[' )  return 0;
 		
-		MenuItemCode code = NN::Convert< N::OSType >( std::string( &ioItemText[ len - 4 ],
-		                                                           &ioItemText[ len     ] ) );
+		MenuItemCode code = NN::Convert< N::FourCharCode >( std::string( &ioItemText[ len - 4 ],
+		                                                                 &ioItemText[ len     ] ) );
 		ioItemText[ 0 ] -= 7;
 		
 		return code;
@@ -142,8 +142,8 @@ namespace Pedestal
 	
 	void MenuBar::ProcessMenuItem( int menuItem )
 	{
-		N::MenuID menuID = HiWord( menuItem );
-		SInt16    item   = LoWord( menuItem );
+		N::MenuID menuID = N::MenuID( HiWord( menuItem ) );
+		SInt16    item   =            LoWord( menuItem );
 		
 		ProcessMenuItem( menuID, item );
 		

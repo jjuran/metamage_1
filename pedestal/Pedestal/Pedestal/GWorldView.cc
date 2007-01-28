@@ -34,7 +34,7 @@ namespace Pedestal
 		             N::GetPortBitMapForCopyBits( N::GetQDGlobalsThePort() ),
 		             N::GetPortBounds( myGWorld ),
 		             bounds,
-		             srcCopy );
+		             N::srcCopy );
 		
 		// Unlock pixels
 	}
