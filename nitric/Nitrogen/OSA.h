@@ -59,6 +59,8 @@ namespace Nitrogen
 	
 	static const OSAModeFlags kOSAModeNull = OSAModeFlags( ::kOSAModeNull );
 	
+	static const OSAModeFlags kOSAModeDisplayForHumans = OSAModeFlags( ::kOSAModeDisplayForHumans );
+	
 	struct OSASpec 
 	{
 		OSASpec() : component(), id()  {}
