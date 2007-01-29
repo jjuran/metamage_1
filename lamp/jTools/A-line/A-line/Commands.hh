@@ -30,6 +30,7 @@ namespace ALine
 	using BitsAndBytes::q;
 	using BitsAndBytes::qq;
 	
+	static const std::string space = " ";
 	
 	enum PathnameType
 	{
@@ -349,9 +350,14 @@ namespace ALine
 		
 		std::string CustomDriverHeader() const  { return "-custom"; }
 		
+		std::string AppHeapSize() const
+		{
+			return "-sizemin 4096 -sizemax 8192";
+		}
+		
 		std::string TargetApplication() const
 		{
-			return gnu ? "" : "-xm a -dead " + std::string( m68k ? "code" : "off" );
+			return gnu ? "" : "-xm a -dead " + std::string( m68k ? "code" : "off" ) + space + AppHeapSize();
 		}
 		
 		// CodeWarrior only
@@ -369,7 +375,7 @@ namespace ALine
 		// CodeWarrior only
 		std::string MWTargetKeroseneShLib() const
 		{
-			return "-xm s -init InitializeFragment -term TerminateFragment -export pragma";
+			return "-xm s -init InitializeFragment -term TerminateFragment -export pragma" + space + AppHeapSize();
 		}
 		
 		std::string TargetCommandLineTool() const
