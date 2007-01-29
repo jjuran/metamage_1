@@ -28,9 +28,6 @@ enum { sigMPWShell = 'MPS ' };
 // Nitrogen Extras / Templates
 #include "Templates/FunctionalExtensions.h"
 
-// Io
-#include "Io/Files.hh"
-
 // Orion
 #include "Orion/Main.hh"
 
@@ -58,7 +55,7 @@ typedef FSLocatorChainedT< FSLocatorAppBySignature,
 class SysErrsDotErrLocator : public NextToApp
 {
 	public:
-		SysErrsDotErrLocator() : NextToApp( FSLocatorAppBySignature( sigMPWShell ),
+		SysErrsDotErrLocator() : NextToApp( FSLocatorAppBySignature( N::OSType( sigMPWShell ) ),
 		                                    FSLinkNewName( "SysErrs.err" ) )
 		{}
 };
@@ -87,7 +84,7 @@ class SysErrsDotErrTOC
 template < class DataType, class InputStream >
 void ReadData( InputStream& stream, DataType& outData )
 {
-	int bytes = Io::Read( stream, reinterpret_cast< char* >( &outData ), sizeof outData );
+	int bytes = io::read( stream, reinterpret_cast< char* >( &outData ), sizeof outData );
 	
 	if ( bytes != sizeof outData )
 	{
@@ -98,7 +95,7 @@ void ReadData( InputStream& stream, DataType& outData )
 template < class DataType, class InputStream >
 void ReadDataArray( InputStream& stream, DataType* outData, unsigned int count )
 {
-	int bytes = Io::Read( stream, reinterpret_cast< char* >( outData ), sizeof outData * count );
+	int bytes = io::read( stream, reinterpret_cast< char* >( outData ), sizeof outData * count );
 	
 	if ( bytes != sizeof outData * count )
 	{
@@ -167,14 +164,14 @@ std::string SysErrsDotErrText::GetStringAt( UInt16 offset )
 	
 	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( myErrFile, fsRdPerm ) );
 	
-	N::SetFPos( fileH, fsFromStart, offset );
+	N::SetFPos( fileH, N::fsFromStart, offset );
 	
 	enum { bufSize = 512 };
 	char buf[ bufSize ];
 	
 	buf[ bufSize - 1 ] = '\0';
 	
-	Io::Read( fileH, buf, bufSize - 1 );
+	io::read( fileH, buf, bufSize - 1 );
 	
 	ASSERT( buf[ bufSize - 1 ] == '\0' );
 	
