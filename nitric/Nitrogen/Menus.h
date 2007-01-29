@@ -80,6 +80,8 @@ namespace Nitrogen
    typedef Nucleus::Flag< class MenuItemAttributes_Tag, ::MenuItemAttributes >::Type MenuItemAttributes;
    
    NUCLEUS_DEFINE_FLAG_OPS( MenuItemAttributes )
+   
+   static const MenuItemAttributes kMenuItemAttrIgnoreMeta = MenuItemAttributes( ::kMenuItemAttrIgnoreMeta );
     
    typedef Nucleus::Selector< class MenuTrackingMode_Tag, ::MenuTrackingMode >::Type MenuTrackingMode;
 

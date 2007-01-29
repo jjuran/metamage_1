@@ -671,7 +671,36 @@ namespace Nucleus
 namespace Nitrogen
   {
 	
+	static const EventClass kEventClassCommand = EventClass( ::kEventClassCommand );
+	
+	static const CarbonEventKind kEventProcessCommand      = CarbonEventKind( ::kEventProcessCommand      );
+	static const CarbonEventKind kEventCommandUpdateStatus = CarbonEventKind( ::kEventCommandUpdateStatus );
+	
+	
 	static const EventParamType typeFSVolumeRefNum = EventParamType( ::typeFSVolumeRefNum );
+	
+	static const EventParamName kEventParamDirectObject = EventParamName( ::kEventParamDirectObject );
+	
+	static const EventParamName kEventParamPostTarget = EventParamName( ::kEventParamPostTarget );
+	
+	static const EventParamType typeEventTargetRef = EventParamType( ::typeEventTargetRef );
+	
+	
+	static const EventParamName kEventParamWindowRef       = EventParamName( ::kEventParamWindowRef       );
+	static const EventParamName kEventParamGrafPort        = EventParamName( ::kEventParamGrafPort        );
+	static const EventParamName kEventParamDragRef         = EventParamName( ::kEventParamDragRef         );
+	static const EventParamName kEventParamMenuRef         = EventParamName( ::kEventParamMenuRef         );
+	static const EventParamName kEventParamEventRef        = EventParamName( ::kEventParamEventRef        );
+	static const EventParamName kEventParamControlRef      = EventParamName( ::kEventParamControlRef      );
+	static const EventParamName kEventParamRgnHandle       = EventParamName( ::kEventParamRgnHandle       );
+	static const EventParamName kEventParamEnabled         = EventParamName( ::kEventParamEnabled         );
+	static const EventParamName kEventParamDimensions      = EventParamName( ::kEventParamDimensions      );
+	static const EventParamName kEventParamAvailableBounds = EventParamName( ::kEventParamAvailableBounds );
+	static const EventParamName kEventParamAEEventID       = EventParamName( ::kEventParamAEEventID       );
+	static const EventParamName kEventParamAEEventClass    = EventParamName( ::kEventParamAEEventClass    );
+	static const EventParamName kEventParamCGContextRef    = EventParamName( ::kEventParamCGContextRef    );
+	static const EventParamName kEventParamDeviceDepth     = EventParamName( ::kEventParamDeviceDepth     );
+	static const EventParamName kEventParamDeviceColor     = EventParamName( ::kEventParamDeviceColor     );
 	
 	static const EventParamType typeWindowRef    = EventParamType( ::typeWindowRef    );
 	static const EventParamType typeGrafPtr      = EventParamType( ::typeGrafPtr      );
@@ -690,6 +719,16 @@ namespace Nitrogen
 	static const EventParamType typeHISize       = EventParamType( ::typeHISize       );
 	static const EventParamType typeHIRect       = EventParamType( ::typeHIRect       );
 	
+	
+	static const EventParamName kEventParamMouseLocation   = EventParamName( ::kEventParamMouseLocation   );
+	static const EventParamName kEventParamMouseButton     = EventParamName( ::kEventParamMouseButton     );
+	static const EventParamName kEventParamClickCount      = EventParamName( ::kEventParamClickCount      );
+	static const EventParamName kEventParamMouseWheelAxis  = EventParamName( ::kEventParamMouseWheelAxis  );
+	static const EventParamName kEventParamMouseWheelDelta = EventParamName( ::kEventParamMouseWheelDelta );
+	static const EventParamName kEventParamMouseDelta      = EventParamName( ::kEventParamMouseDelta      );
+	static const EventParamName kEventParamMouseChord      = EventParamName( ::kEventParamMouseChord      );
+	static const EventParamName kEventParamTabletEventType = EventParamName( ::kEventParamTabletEventType );
+	
 	static const EventParamType typeMouseButton    = EventParamType( ::typeMouseButton    );
 	static const EventParamType typeMouseWheelAxis = EventParamType( ::typeMouseWheelAxis );
 	
@@ -700,6 +739,12 @@ namespace Nitrogen
 	static const EventParamType typeWindowRegionCode      = EventParamType( ::typeWindowRegionCode      );
 	static const EventParamType typeWindowDefPartCode     = EventParamType( ::typeWindowDefPartCode     );
 	static const EventParamType typeClickActivationResult = EventParamType( ::typeClickActivationResult );
+	
+#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+	
+	static const EventParamName kEventParamControlWouldAcceptDrop = EventParamName( ::kEventParamControlWouldAcceptDrop );
+	
+#endif
 	
 	static const EventParamType typeControlActionUPP        = EventParamType( ::typeControlActionUPP        );
 	static const EventParamType typeIndicatorDragConstraint = EventParamType( ::typeIndicatorDragConstraint );
