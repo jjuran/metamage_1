@@ -45,9 +45,9 @@ namespace NitrogenExtras
 		
 		CDROMDrive()  {}
 		
-		CDROMDrive( N::DriverRefNum    d,
-		            N::FSVolumeRefNum  v = 1 ) : dRefNum( d ),
-		                                         vRefNum( v )  {}
+		CDROMDrive( N::DriverRefNum   d,
+		            N::FSVolumeIndex  v = 1 ) : dRefNum( d ),
+		                                        vRefNum( N::FSVolumeRefNum( v.Get() ) )  {}
 	};
 	
 #if CALL_NOT_IN_CARBON
