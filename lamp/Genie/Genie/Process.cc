@@ -410,8 +410,8 @@ namespace Genie
 		
 		itsFragmentImage = GetBinaryImage( itsProgramFile );
 		
-		itsFragmentConnection = N::GetMemFragment< kPrivateCFragCopy >( itsFragmentImage.Get(),
-		                                                                N::GetPtrSize( itsFragmentImage ) );
+		itsFragmentConnection = N::GetMemFragment< N::kPrivateCFragCopy >( itsFragmentImage.Get(),
+		                                                                   N::GetPtrSize( itsFragmentImage ) );
 		
 		K::Versions assumedVersions;
 		
