@@ -53,19 +53,6 @@ namespace O = Orion;
 namespace Bits = BitsAndBytes;
 
 
-namespace Io
-{
-	
-	static int Write( P7::FileDescriptor fd, const char* data, std::size_t byteCount )
-	{
-		int written = write( fd, data, byteCount );
-		P7::ThrowPOSIXResult( written );
-		
-		return written;
-	}
-	
-}
-
 namespace htget
 {
 	
