@@ -73,6 +73,20 @@ namespace Nitrogen
 		}
 	}
 	
+	
+	struct FileSignature
+	{
+		OSType creator;
+		OSType type;
+		
+		FileSignature() : creator(), type()  {}
+		
+		FileSignature( OSType creator,
+		               OSType type ) : creator( creator ),
+		                               type   ( type    )  {}
+	};
+	
+	
 	typedef Nucleus::ID< class FSDirID_Tag, UInt32 >::Type FSDirID;
 	
 	static const FSDirID fsRtParID = FSDirID( ::fsRtParID );
@@ -436,10 +450,17 @@ namespace Nitrogen
 	FSSpec FSpCreate( const FSSpec&  file, 
 	                  OSType         creator, 
 	                  OSType         type, 
-	                  ScriptCode     scriptTag = ScriptCode( smSystemScript ) );
+	                  ScriptCode     scriptTag = smSystemScript );
+	
+	inline FSSpec FSpCreate( const FSSpec&  file,
+	                         FileSignature  signature,
+	                         ScriptCode     scriptTag = smSystemScript )
+	{
+		return FSpCreate( file, signature.creator, signature.type, scriptTag );
+	}
 	
 	FSDirSpec FSpDirCreate( const FSSpec&  dir, 
-	                        ScriptCode     scriptTag = ScriptCode( smSystemScript ) );
+	                        ScriptCode     scriptTag = smSystemScript );
 	
 	void FSpDelete( const FSSpec& item );
 	
