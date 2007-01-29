@@ -84,6 +84,9 @@ namespace Nitrogen
 		FileSignature( OSType creator,
 		               OSType type ) : creator( creator ),
 		                               type   ( type    )  {}
+		
+		FileSignature( const FInfo& fInfo ) : creator( OSType( fInfo.fdCreator ) ),
+		                                      type   ( OSType( fInfo.fdType    ) )  {}
 	};
 	
 	
@@ -452,9 +455,9 @@ namespace Nitrogen
 	                  OSType         type, 
 	                  ScriptCode     scriptTag = smSystemScript );
 	
-	inline FSSpec FSpCreate( const FSSpec&  file,
-	                         FileSignature  signature,
-	                         ScriptCode     scriptTag = smSystemScript )
+	inline FSSpec FSpCreate( const FSSpec&         file,
+	                         const FileSignature&  signature,
+	                         ScriptCode            scriptTag = smSystemScript )
 	{
 		return FSpCreate( file, signature.creator, signature.type, scriptTag );
 	}
