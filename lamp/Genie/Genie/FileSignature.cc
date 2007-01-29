@@ -25,13 +25,13 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	::OSType TextFileCreator()
+	N::OSType TextFileCreator()
 	{
 		if ( const char* macEditorSignature = CurrentProcess().GetEnv( "MAC_EDITOR_SIGNATURE" ) )
 		{
 			try
 			{
-				return NN::Convert< N::OSType, std::string >( macEditorSignature );
+				return N::OSType( NN::Convert< N::FourCharCode, std::string >( macEditorSignature ).Get() );
 			}
 			catch ( ... )
 			{
@@ -39,7 +39,7 @@ namespace Genie
 			}
 		}
 		
-		const ::OSType sigSimpleText = 'ttxt';
+		const N::OSType sigSimpleText = N::OSType( 'ttxt' );
 		
 		return sigSimpleText;
 	}
@@ -96,7 +96,7 @@ namespace Genie
 	};
 	
 	
-	typedef std::map< std::string, ::OSType > ExtensionToTypeMapping;
+	typedef std::map< std::string, N::OSType > ExtensionToTypeMapping;
 	
 	
 	static ExtensionToTypeMapping BuildExtensionToTypeMapping()
@@ -109,7 +109,7 @@ namespace Genie
 		for ( const ExtensionToTypeRecord* p = gExtensionToTypeMappingInput;  p < gExtensionToTypeMappingInput + extensionCount;  ++p )
 		{
 			// ASSERT( p->extension != NULL );
-			result[ std::string( p->extension ) ] = p->type;
+			result[ std::string( p->extension ) ] = N::OSType( p->type );
 		}
 		
 		return result;
@@ -122,7 +122,7 @@ namespace Genie
 		return mapping;
 	}
 	
-	FileSignature PickFileSignatureForName( const std::string& name )
+	N::FileSignature PickFileSignatureForName( const std::string& name )
 	{
 		std::size_t dot = name.find_last_of( "." );
 		
@@ -136,11 +136,11 @@ namespace Genie
 			
 			if ( it != mapping.end() )
 			{
-				return FileSignature( '\?\?\?\?', it->second );
+				return N::FileSignature( N::OSType( '\?\?\?\?' ), it->second );
 			}
 		}
 		
-		return FileSignature( TextFileCreator(), 'TEXT' );
+		return N::FileSignature( TextFileCreator(), N::OSType( 'TEXT' ) );
 	}
 	
 }

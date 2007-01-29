@@ -9,28 +9,18 @@
 // Standard C++
 #include <string>
 
-// Mac OS Universal Interfaces
-#include <MacTypes.h>
+// Nitrogen
+#include "Nitrogen/Files.h"
 
 
 namespace Genie
 {
 	
-	struct FileSignature
-	{
-		::OSType creator;
-		::OSType type;
-		
-		FileSignature() : creator(), type()  {}
-		
-		FileSignature( ::OSType creator,
-		               ::OSType type ) : creator( creator ),
-		                                 type   ( type    )  {}
-	};
+	namespace N = Nitrogen;
 	
-	::OSType TextFileCreator();
+	N::OSType TextFileCreator();
 	
-	FileSignature PickFileSignatureForName( const std::string& name );
+	N::FileSignature PickFileSignatureForName( const std::string& name );
 	
 }
 
