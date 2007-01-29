@@ -101,7 +101,7 @@ namespace jTools
 	
 #endif
 	
-	static NN::Owned< AEDesc > SelectAddress( OSType              sig,
+	static NN::Owned< AEDesc > SelectAddress( N::OSType           sig,
 	                                          const std::string&  app,
 	                                          const std::string&  machine,
 	                                          const std::string&  host,
@@ -211,7 +211,7 @@ namespace jTools
 		std::string app     = options.GetString( optApplicationName );
 		std::string sig     = options.GetString( optApplicationSignature );
 		
-		OSType sigCode = (sig.size() == 4) ? NN::Convert< N::OSType >( sig ).Get() : kUnknownType;
+		N::OSType sigCode = (sig.size() == 4) ? NN::Convert< N::OSType >( sig ) : N::kUnknownType;
 		
 		AEEventClass eventClass = NN::Convert< N::FourCharCode >( argEventClass );
 		AEEventID    eventID    = NN::Convert< N::FourCharCode >( argEventID    );
