@@ -33,6 +33,8 @@ namespace Nitrogen
 	// ...
 	static const FolderType kTemporaryFolderType = FolderType( ::kTemporaryFolderType );
 	
+	static const FolderType kCurrentUserFolderType = FolderType( ::kCurrentUserFolderType );
+	
 	FSDirSpec FindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
 	
 	inline FSDirSpec FindFolder( FolderType folderType, bool createFolder )
