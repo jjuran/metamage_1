@@ -870,7 +870,7 @@ namespace Vertice
 		             N::GetPortBitMapForCopyBits( thePort ),
 		             myBounds,
 		             myBounds,
-		             srcCopy );
+		             N::srcCopy );
 		
 		if ( TARGET_API_MAC_CARBON )
 		{
