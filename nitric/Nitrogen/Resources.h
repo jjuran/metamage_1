@@ -218,6 +218,13 @@ namespace Nitrogen
 	                       OSType         type      = OSType( 'rsrc' ),
 	                       ScriptCode     scriptTag = smSystemScript );
 	
+	inline void FSpCreateResFile( const FSSpec&         spec,
+	                              const FileSignature&  signature,
+	                              ScriptCode            scriptTag = smSystemScript )
+	{
+		FSpCreateResFile( spec, signature.creator, signature.type, scriptTag );
+	}
+	
 	// ReadPartialResource
 	// WritePartialResource
 	// SetResourceSize
