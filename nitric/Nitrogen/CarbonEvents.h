@@ -2144,8 +2144,8 @@ namespace Nitrogen
          
          return InstallEventHandler( inTarget,
                                      upp,
-                                     eventClass,
-                                     eventKind,
+                                     EventClass( eventClass ),
+                                     CarbonEventKind( eventKind ),
                                      userData );
         }
       

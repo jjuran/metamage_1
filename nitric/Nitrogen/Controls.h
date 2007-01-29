@@ -366,7 +366,7 @@ namespace Nitrogen
 			{
 				GetControlData( itsControl,
 				                itsPart,
-				                tagName,
+				                Nitrogen::ControlDataTag( tagName ),
 				                Detail::Distance( begin, end ),
 				                begin );
 			}
