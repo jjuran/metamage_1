@@ -142,7 +142,10 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIOPosMode )
 	
-	static const FSIOPosMode fsAtMark = FSIOPosMode( ::fsAtMark );
+	static const FSIOPosMode fsAtMark    = FSIOPosMode( ::fsAtMark    );
+	static const FSIOPosMode fsFromStart = FSIOPosMode( ::fsFromStart );
+	static const FSIOPosMode fsFromLEOF  = FSIOPosMode( ::fsFromLEOF  );
+	static const FSIOPosMode fsFromMark  = FSIOPosMode( ::fsFromMark  );
 	
    typedef Nucleus::Flag< class FSAllocationFlags_Tag, ::FSAllocationFlags >::Type FSAllocationFlags;
   
