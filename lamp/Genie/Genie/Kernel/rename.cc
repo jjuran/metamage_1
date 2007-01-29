@@ -77,7 +77,7 @@ namespace Genie
 				return CurrentProcess().SetErrno( EXDEV );
 			}
 			
-			N::FSVolumeRefNum vRefNum = srcFile.vRefNum;
+			N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFile.vRefNum );
 			
 			bool destExists = false;
 			

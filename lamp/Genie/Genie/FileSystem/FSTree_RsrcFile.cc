@@ -82,7 +82,7 @@ namespace Genie
 		}
 		else if ( appending )
 		{
-			N::SetFPos( fileH, fsFromLEOF, 0 );
+			N::SetFPos( fileH, N::fsFromLEOF, 0 );
 		}
 		
 		return OpenFile( fileH );

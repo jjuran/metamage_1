@@ -73,7 +73,7 @@ namespace Genie
 		
 		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
 		
-		N::FSpCreateResFile( linkSpec, fInfo.fdCreator, fInfo.fdType );
+		N::FSpCreateResFile( linkSpec, N::FileSignature( fInfo ) );
 		
 		fInfo = N::FSpGetFInfo( linkSpec );
 		

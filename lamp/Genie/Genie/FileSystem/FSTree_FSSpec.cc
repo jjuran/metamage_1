@@ -267,7 +267,7 @@ namespace Genie
 		}
 		else if ( appending )
 		{
-			N::SetFPos( fileH, fsFromLEOF, 0 );
+			N::SetFPos( fileH, N::fsFromLEOF, 0 );
 		}
 		
 		return OpenFile( fileH );
@@ -397,9 +397,9 @@ namespace Genie
 				// No need to convert name -- for examination only
 				std::string name = NN::Convert< std::string >( fileSpec.name );
 				
-				FileSignature sig = PickFileSignatureForName( name );
+				N::FileSignature sig = PickFileSignatureForName( name );
 				
-				N::FSpCreate( fileSpec, sig.creator, sig.type );
+				N::FSpCreate( fileSpec, sig );
 			}
 			else if ( excluding )
 			{

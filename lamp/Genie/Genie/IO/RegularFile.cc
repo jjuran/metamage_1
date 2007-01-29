@@ -66,15 +66,15 @@ namespace Genie
 		switch ( whence )
 		{
 			case SEEK_SET:
-				mode = fsFromStart;
+				mode = N::fsFromStart;
 				break;
 			
 			case SEEK_CUR:
-				mode = fsFromMark;
+				mode = N::fsFromMark;
 				break;
 			
 			case SEEK_END:
-				mode = fsFromLEOF;
+				mode = N::fsFromLEOF;
 				break;
 			
 			default:
