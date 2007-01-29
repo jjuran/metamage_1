@@ -155,6 +155,8 @@ namespace Nitrogen
 
    typedef Nucleus::Flag< class OptionBits_Tag, ::OptionBits >::Type OptionBits;
    
+   static const OptionBits kNilOptions = OptionBits( ::kNilOptions );
+   
    NUCLEUS_DEFINE_FLAG_OPS( OptionBits )
 	
 	typedef Nucleus::Selector< class ScriptCode_Tag, ::ScriptCode >::Type ScriptCode;
@@ -185,6 +187,8 @@ namespace Nitrogen
 	};
 	
    typedef Nucleus::Selector< class OSType_Tag, ::OSType >::Type OSType;
+   
+   static const OSType kUnknownType = OSType( ::kUnknownType );
    
    typedef Nucleus::Selector< class ResType_Tag, ::ResType >::Type ResType;
    
@@ -247,6 +251,50 @@ namespace Nitrogen
    
    using ::Point;
    using ::Rect;
+	
+	
+	// Convert string to FourCharCode
+	template < class CodeType >
+	struct StringToFourCharCode_Converter : public std::unary_function< std::string, CodeType >
+	{
+		CodeType operator()( const std::string& input ) const
+		{
+			if ( input.size() != sizeof (::FourCharCode) )
+			{
+				throw Nucleus::ConversionFromStringFailed();
+			}
+			
+			::FourCharCode result;
+			
+			std::copy( input.begin(), input.end(), reinterpret_cast< char* >( &result ) );
+			
+			if ( TARGET_RT_LITTLE_ENDIAN )
+			{
+				result = ::CFSwapInt32BigToHost( result );
+			}
+			
+			return CodeType( result );
+		}
+	};
+	
+	// Convert FourCharCode to string
+	template < class CodeType >
+	struct FourCharCodeToString_Converter : public std::unary_function< CodeType, std::string >
+	{
+		std::string operator()( CodeType input ) const
+		{
+			::FourCharCode code = input;
+			
+			if ( TARGET_RT_LITTLE_ENDIAN )
+			{
+				code = ::CFSwapInt32HostToBig( code );
+			}
+			
+			return std::string( reinterpret_cast< const char* >( &code ), sizeof (::FourCharCode) );
+		}
+	};
+	
+	
   }
 
 namespace Nucleus
@@ -287,46 +335,12 @@ namespace Nucleus
         }
      };
 	
-	// Convert string to FourCharCode
-	template <>
-	struct Converter< Nitrogen::FourCharCode, std::string >: public std::unary_function< std::string, FourCharCode >
-	{
-		Nitrogen::FourCharCode operator()( const std::string& input ) const
-		{
-			if ( input.size() != sizeof (::FourCharCode) )
-			{
-				throw ConversionFromStringFailed();
-			}
-			
-			::FourCharCode result;
-			
-			std::copy( input.begin(), input.end(), reinterpret_cast< char* >( &result ) );
-			
-			if ( TARGET_RT_LITTLE_ENDIAN )
-			{
-				result = ::CFSwapInt32BigToHost( result );
-			}
-			
-			return Nitrogen::FourCharCode( result );
-		}
-	};
 	
-	// Convert FourCharCode to string
-	template <>
-	struct Converter< std::string, FourCharCode >: public std::unary_function< FourCharCode, std::string >
-	{
-		std::string operator()( Nitrogen::FourCharCode input ) const
-		{
-			::FourCharCode code = input;
-			
-			if ( TARGET_RT_LITTLE_ENDIAN )
-			{
-				code = ::CFSwapInt32HostToBig( code );
-			}
-			
-			return std::string( reinterpret_cast< const char* >( &code ), sizeof (::FourCharCode) );
-		}
-	};
+	template <> struct Converter< Nitrogen::FourCharCode, std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::FourCharCode > {};
+	template <> struct Converter< Nitrogen::OSType,       std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::OSType       > {};
+	
+	template <> struct Converter< std::string, Nitrogen::FourCharCode > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::FourCharCode > {};
+	template <> struct Converter< std::string, Nitrogen::OSType       > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::OSType       > {};
 	
   }
 
