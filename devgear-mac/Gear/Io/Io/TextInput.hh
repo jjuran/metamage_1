@@ -97,7 +97,7 @@ namespace Io
 	template < class Input >
 	bool TextInputAdapter< Input >::GetMore()
 	{
-		enum { blockSize = 4096 };
+		const std::size_t blockSize = 4096;
 		
 		char data[ blockSize ];
 		
