@@ -96,7 +96,7 @@ static void LaunchApplicationWithDocsToOpen( const FSSpec& app, const std::vecto
 		= N::AEGetDescData< N::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
 	                                                                 N::typeAppParameters ) );
 	
-	N::LaunchApplication( app, LaunchFlags(), appParameters.get() );
+	N::LaunchApplication( app, N::LaunchFlags(), appParameters.get() );
 }
 
 

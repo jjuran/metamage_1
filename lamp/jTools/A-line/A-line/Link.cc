@@ -104,7 +104,9 @@ namespace ALine
 	
 	static N::FSDirSpec InterfacesAndLibraries()
 	{
-		FSSpec mpwShell = NX::DTGetAPPL( 'MPS ' );
+		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
+		
+		FSSpec mpwShell = NX::DTGetAPPL( sigMPWShell );
 		N::FSDirSpec mpw = N::FSpGetParent( mpwShell );
 		
 		return N::FSpGetParent( NN::Convert< FSSpec >( mpw ) ) << "Interfaces&Libraries";

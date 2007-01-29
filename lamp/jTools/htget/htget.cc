@@ -335,7 +335,7 @@ namespace htget
 				
 				if ( gSaveToFile )
 				{
-					TypeAndCreator signature( kUnknownType, kUnknownType );
+					TypeAndCreator signature( N::kUnknownType, N::kUnknownType );
 					
 					try
 					{

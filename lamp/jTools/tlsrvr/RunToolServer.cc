@@ -229,7 +229,7 @@ namespace RunToolServer
 			N::FSpDelete( item );
 		}
 		
-		N::FSpCreate( item, 'R*ch', 'TEXT' );
+		N::FSpCreate( item, N::OSType( 'R*ch' ), N::OSType( 'TEXT' ) );
 		
 		return NN::Owned< FSSpec >::Seize( item );
 	}

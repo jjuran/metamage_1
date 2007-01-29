@@ -332,7 +332,7 @@ namespace ALine
 		{
 		}
 		
-		const N::OSType sigTextWrangler = '!Rch';
+		const N::OSType sigTextWrangler = N::OSType( '!Rch' );
 		
 		return sigTextWrangler;
 	}

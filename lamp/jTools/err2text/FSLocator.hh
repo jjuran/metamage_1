@@ -21,10 +21,10 @@ namespace FSLocator
 	class FSLocatorAppBySignature
 	{
 		private:
-			OSType mySig;
+			N::OSType mySig;
 		
 		public:
-			FSLocatorAppBySignature(OSType sig) : mySig(sig)  {}
+			FSLocatorAppBySignature( N::OSType sig ) : mySig( sig )  {}
 			
 			FSSpec Locate() const;
 	};

@@ -60,12 +60,14 @@ static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* st
 
 inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
 {
-	return N::OpenDefaultComponent( kOSAComponentType,
-	                                kOSAGenericScriptingComponentSubtype );
+	return N::OpenDefaultComponent( N::kOSAComponentType,
+	                                N::kOSAGenericScriptingComponentSubtype );
 }
 
 static std::string ReadFileData( const FSSpec& file )
 {
+	//return N::FSpSlurp< NN::StringFlattener< std::string > >( file );
+	
 	using N::fsRdPerm;
 	
 	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
@@ -234,12 +236,12 @@ int O::Main( int argc, const char *const argv[] )
 	{
 		NN::Owned< N::OSASpec > result = N::OSAExecuteEvent( runEvent, script );
 		
-		if ( result.Get().id != kOSANullScript )
+		if ( result.Get().id != N::kOSANullScript )
 		{
 			// human-readable by default, like Apple osascript
 			bool humanReadable = options.GetEnum( optResultFormat ) != resultsRecompilableSource;
 			
-			N::OSAModeFlags displayFlags( humanReadable ? kOSAModeDisplayForHumans : kOSAModeNull );
+			N::OSAModeFlags displayFlags( humanReadable ? N::kOSAModeDisplayForHumans : N::kOSAModeNull );
 			
 			std::string output = N::AEGetDescData< N::typeChar >( N::OSADisplay( result,
 			                                                                     N::typeChar,

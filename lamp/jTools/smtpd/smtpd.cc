@@ -167,11 +167,14 @@ static void CreateOneLiner( const FSSpec& file, const std::string& line )
 {
 	using N::fsWrPerm;
 	
-	Io::S( N::FSpOpenDF( N::FSpCreate( file,
-	                                   'R*ch',
-	                                   'TEXT' ),
-	                     fsWrPerm ) )
-	<< line + "\n";
+	std::string output = line + "\n";
+	
+	io::write( N::FSpOpenDF( N::FSpCreate( file,
+	                                       N::OSType( 'R*ch' ),
+	                                       N::OSType( 'TEXT' ) ),
+	                         fsWrPerm ),
+	           output.data(),
+	           output.size() );
 }
 
 static void CreateDestinationFile( const N::FSDirSpec& destFolder, const std::string& dest )
@@ -212,8 +215,8 @@ PartialMessage::PartialMessage( const FSSpec& dirLoc )
 :
 	dir( NN::Owned< N::FSDirSpec, N::RecursiveFSDeleter >::Seize( N::FSpDirCreate( dirLoc ) ) ), 
 	out( N::FSpOpenDF( N::FSpCreate( dir.Get() & "Message",
-	                                 'R*ch',
-	                                 'TEXT'),
+	                                 N::OSType( 'R*ch' ),
+	                                 N::OSType( 'TEXT' ) ),
 	                   N::fsWrPerm ) )
 {
 	//
