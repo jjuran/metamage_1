@@ -9,9 +9,6 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
-// Io
-#include "Io/Exceptions.hh"
-
 // BitsAndBytes
 #include "HexStrings.hh"
 

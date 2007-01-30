@@ -27,14 +27,11 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen / Carbon support
+// Nitrogen
 #include "Nitrogen/OpenTransportProviders.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
-
-// Io
-#include "Io/Exceptions.hh"
 
 // Orion
 #include "Orion/Main.hh"

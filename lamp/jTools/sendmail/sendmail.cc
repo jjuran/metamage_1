@@ -26,7 +26,6 @@
 #include "Utilities/Files.h"
 
 // Io
-#include "Io/Exceptions.hh"
 #include "Io/Files.hh"
 #include "Io/MakeHandle.hh"
 
