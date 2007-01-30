@@ -5,13 +5,13 @@
 
 // Standard C/C++
 #include <cerrno>
-//#include <cstdio>
 #include <cstdlib>
 
 // Standard C++
 #include <string>
 
 // POSIX
+#include "fcntl.h"
 #include "netinet/in.h"
 #include "sys/socket.h"
 #include "unistd.h"
@@ -24,17 +24,11 @@
 #include "POSeven/FileDescriptor.hh"
 
 // Io
-#include "Io/Exceptions.hh"
-#include "Io/Files.hh"
-#include "Io/MakeHandle.hh"
 #include "Io/Stream.hh"
 #include "Io/TextInput.hh"
 
 // BitsAndBytes
 #include "HexStrings.hh"
-
-// Locksmith
-//#include "SecureSocket.hh"
 
 // Kerosene
 #include "SystemCalls.hh"
@@ -49,7 +43,6 @@ namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
-//namespace Lox = Locksmith;
 namespace Bits = BitsAndBytes;
 
 
@@ -59,12 +52,37 @@ namespace htget
 	using N::fsWrPerm;
 	
 	
-	static Io::Handle gStdOut = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::out );
+	class FileDescriptorCloser
+	{
+		private:
+			bool itShouldClose;
+		
+		public:
+			FileDescriptorCloser( bool shouldClose = true ) : itShouldClose( shouldClose )  {}
+			
+			void operator()( P7::FileDescriptor fd ) const
+			{
+				if ( itShouldClose )
+				{
+					int closed = ::close( fd );
+				}
+			}
+	};
+	
+	static NN::Owned< P7::FileDescriptor, FileDescriptorCloser > StdIn()
+	{
+		return NN::Owned< P7::FileDescriptor, FileDescriptorCloser >::Seize( P7::kStdOut_FileNo, FileDescriptorCloser( false ) );
+	}
+	
+	static NN::Owned< P7::FileDescriptor, FileDescriptorCloser > Receive( NN::Owned< P7::FileDescriptor > fd )
+	{
+		return NN::Owned< P7::FileDescriptor, FileDescriptorCloser >::Seize( fd.Release() );
+	}
 	
 	class HTTPClientTransaction
 	{
 		private:
-			Io::Stream< Io::Handle > myReceiver;
+			NN::Owned< P7::FileDescriptor, FileDescriptorCloser > myReceiver;
 			P7::FileDescriptor mySocket;
 			Io::StringPipe myPendingWrites;
 			std::string myReceivedData;
@@ -78,7 +96,7 @@ namespace htget
 			HTTPClientTransaction( P7::FileDescriptor  sock,
 			                       const sockaddr_in&  serverAddr )
 			:
-				myReceiver              ( gStdOut ),
+				myReceiver              ( StdIn() ),
 				mySocket                ( sock ),
 				myContentLength         ( 0 ),
 				myContentBytesReceived  ( 0 ),
@@ -87,7 +105,6 @@ namespace htget
 				myNullReadOccurred      ( false )
 			{
 				// Don't make the connect non-blocking until we can handle it
-				//mySocket.Connect( serverAddr );
 				int result = connect( sock, (const sockaddr*)&serverAddr, sizeof (sockaddr_in) );
 				//Socket().SetNonblocking();
 			}
@@ -137,7 +154,7 @@ namespace htget
 		bool gExpectNoContent = false;
 		bool gSaveToFile      = false;
 		
-		FSSpec gSaveLocation;
+		std::string gSaveLocation;
 		
 		NN::Owned< HTTPClientTransaction* > gTransaction;
 		
@@ -309,8 +326,7 @@ namespace htget
 				
 				if ( gDumpHeaders )
 				{
-					//Io::Put( myReceiver, myReceivedData.data(), startOfContent );
-					myReceiver << allHeaders;
+					io::write( myReceiver, allHeaders.data(), allHeaders.size() );
 				}
 				
 				if ( gExpectNoContent )
@@ -334,13 +350,11 @@ namespace htget
 					}
 					catch ( ... ) {}
 					
-					myReceiver = Io::MakeHandleFromCopy< Io::FileRefNum_Details >
-					(
-						N::FSpOpenDF( N::FSpCreate( gSaveLocation,
-						                            signature.creator,
-						                            signature.type ),
-						              fsWrPerm )
-					);
+					N::FSpCreate( Path2FSS( gSaveLocation ),
+					              signature.creator,
+					              signature.type );
+					
+					myReceiver = Receive( P7::Open( gSaveLocation.c_str(), O_WRONLY ) );
 				}
 				
 				// Anything left over is content
@@ -350,7 +364,7 @@ namespace htget
 				// Start writing content if we have any
 				if ( leftOver > 0 )
 				{
-					Io::Put( myReceiver, myReceivedData.data() + startOfContent, leftOver );
+					io::write( myReceiver, myReceivedData.data() + startOfContent, leftOver );
 				}
 				
 				/*
@@ -395,7 +409,7 @@ namespace htget
 		{
 			// We already have the headers, just count and write the data
 			myContentBytesReceived += byteCount;
-			Io::Put( myReceiver, data, byteCount );
+			io::write( myReceiver, data, byteCount );
 		}
 	}
 	
@@ -540,14 +554,13 @@ int O::Main( int argc, char const *const argv[] )
 	
 	if ( gSaveToFile )
 	{
-		gSaveLocation = Path2FSS( DocName( urlPath ) );
+		gSaveLocation = DocName( urlPath );
 	}
 	
 	P7::FileDescriptor sock = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, INET_TCP ) );
 	
 	if ( scheme == "http" )
 	{
-		//sock = HW::MakeHandleFromCopy< HW::TCPSocket_Details >( HW::NewSocket() );
 		defaultPort = N::InetPort( 80 );
 	}
 	/*
@@ -579,7 +592,7 @@ int O::Main( int argc, char const *const argv[] )
 	{
 		const char* pathname = params[ 1 ];
 		
-		gSaveLocation = Path2FSS( pathname );
+		gSaveLocation = pathname;
 	}
 	
 	gTransaction = htget::NewTransaction( sock, inetAddress );
