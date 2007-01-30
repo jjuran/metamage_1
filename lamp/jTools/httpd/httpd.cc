@@ -162,7 +162,7 @@ void HTTPRequestData::Read()
 	{
 		Io::Err << "Read error: " << error.Get() << "\n";
 	}
-	catch ( const Io::EndOfInput& )
+	catch ( const io::end_of_input& )
 	{
 		Io::Err << "Connection dropped by peer\n";
 	}
@@ -401,7 +401,7 @@ static void DumpFile( const FSSpec& file )
 			Io::Put( Io::Out, data, bytes);
 		}
 	}
-	catch ( const Io::EndOfInput& )
+	catch ( const io::end_of_input& )
 	{
 		// end of file reached -- we're done
 	}

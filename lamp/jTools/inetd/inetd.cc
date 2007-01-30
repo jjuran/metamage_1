@@ -190,7 +190,7 @@ static std::string ReadLine( int fd )
 		
 		if ( peeked == 0 )
 		{
-			throw Io::EndOfInput();
+			throw io::end_of_input();
 		}
 		
 		const char* cr = std::strchr( p, '\r' );
@@ -338,7 +338,7 @@ static void ReadInetdDotConf()
 			ProcessLine( ReadLine( fd ) );
 		}
 	}
-	catch ( Io::EndOfInput& ) {}
+	catch ( const io::end_of_input& ) {}
 	
 	close( fd );
 }

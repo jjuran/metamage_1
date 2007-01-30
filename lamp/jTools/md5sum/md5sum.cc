@@ -45,7 +45,7 @@ static std::string MD5Sum( P7::FileDescriptor input )
 		}
 		// loop exits on a partial block
 	}
-	catch ( Io::EndOfInput )
+	catch ( const io::end_of_input& )
 	{
 		// We get here if there's no partial block following the last full block.
 		bytes = 0;

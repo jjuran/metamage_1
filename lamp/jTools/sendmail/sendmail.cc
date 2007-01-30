@@ -236,7 +236,7 @@ static void Relay( const std::string& returnPath,
 			int bytes = Io::Read( msg, data, kDataSize );
 			io.Write( data, bytes );
 		}
-		catch ( Io::EndOfInput )
+		catch ( const io::end_of_input& )
 		{
 			break;
 		}
