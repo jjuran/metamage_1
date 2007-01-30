@@ -33,9 +33,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// Io
-#include "Io/Exceptions.hh"
-
 // Kerosene
 #include "SystemCalls.hh"
 
@@ -75,7 +72,7 @@ static int SSLRead( SSL* session, char* data, std::size_t byteCount )
 		
 		case SSL_ERROR_WANT_READ:
 		case SSL_ERROR_WANT_WRITE:
-			throw Io::NoDataPending();
+			throw io::no_input_pending();
 			break;
 		
 		case SSL_ERROR_SYSCALL:
@@ -154,7 +151,7 @@ static void Poll( SSL* client_session, int server_socket )
 			if (bytes != dataSize)  break;
 		}
 	}
-	catch ( Io::NoDataPending& )
+	catch ( const io::no_input_pending& )
 	{
 	}
 	catch ( PeerClosedSocket& )
@@ -196,7 +193,7 @@ static void Poll( SSL* client_session, int server_socket )
 			if ( bytes != dataSize )  break;
 		}
 	}
-	catch ( Io::NoDataPending& )
+	catch ( const io::no_input_pending& )
 	{
 		
 	}
