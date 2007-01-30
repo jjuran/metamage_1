@@ -7,11 +7,9 @@
 #include "fcntl.h"
 #include "unistd.h"
 
-// Io
-#include "Io/Exceptions.hh"
-
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/FileDescriptor.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -28,6 +26,7 @@ int O::Main( int argc, const char *const argv[] )
 	if ( argc != 2 )
 	{
 		Io::Err << "tee: needs one argument\n";
+		
 		return 1;
 	}
 	
@@ -40,26 +39,21 @@ int O::Main( int argc, const char *const argv[] )
 	{
 		while ( true )
 		{
-			enum { kDataSize = 512 };
+			enum { kDataSize = 4096 };
 			
 			char data[ kDataSize ];
 			
-			int bytes = Io::Read( Io::in, data, kDataSize );
+			int bytes = io::read( P7::kStdIn_FileNo, data, kDataSize );
 			
-			/*
-			Io::Put( Io::S( gOut ), data, bytes );
-			Io::Put( Io::Out,       data, bytes );
-			*/
-			
-			(void)write( output, data, bytes );  // FIXME:  check for errors
-			(void)write( stdOut, data, bytes );
+			(void) write( output, data, bytes );  // FIXME:  check for errors
+			(void) write( stdOut, data, bytes );
 		}
 	}
-	catch ( Io::EndOfInput )
+	catch ( const io::end_of_input& )
 	{
 		// We're done
 	}
-	catch ( P7::Errno& err )
+	catch ( const P7::Errno& err )
 	{
 		return err.Get() != 0;
 	}
