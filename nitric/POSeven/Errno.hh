@@ -18,6 +18,10 @@
 #include "Nucleus/TheExceptionBeingHandled.h"
 #endif
 
+#ifndef IO_IO_HH
+#include "io/io.hh"
+#endif
+
 
 #ifdef NUCLEUS_DEBUG
 #define ThrowPOSIXResult(result)  ThrowPOSIXResultInternalDebug( result, #result, __FILE__, __LINE__ )
@@ -55,18 +59,18 @@ namespace POSeven
 	class Errno
 	{
 		private:
-			int number;
+			int itsNumber;
 		
 		public:
 			typedef int ErrorNumber;
 			
-			Errno() : number( 0 )  {}
-			Errno( int n ) : number( n )  {}
+			Errno(       ) : itsNumber( 0 )  {}
+			Errno( int n ) : itsNumber( n )  {}
 			
 			static Errno Make( int n )    { return Errno( n ); }
 			
-			int Get() const               { return number; }
-			operator int() const          { return number; }
+			int Get() const               { return itsNumber; }
+			operator int() const          { return itsNumber; }
 	};
 	
 	template < int number >
@@ -107,6 +111,41 @@ namespace POSeven
 	
 	typedef Nucleus::ErrorCode< Errno, ENOENT > ENoEnt;
 	typedef Nucleus::ErrorCode< Errno, EEXIST > EExist;
+	
+}
+
+namespace Nucleus
+{
+	
+	template <>
+	class ErrorCode< POSeven::Errno, ENOMEM > : public POSeven::Errno, std::bad_alloc
+	{
+		public:
+			ErrorCode() : Errno( ENOMEM )  {}
+	};
+	
+	template <>
+	class ErrorCode< POSeven::Errno, EAGAIN > : public POSeven::Errno, io::no_input_pending
+	{
+		public:
+			ErrorCode() : Errno( EAGAIN )  {}
+	};
+	
+	template <> struct Converter< POSeven::Errno, std::bad_alloc >: public std::unary_function< std::bad_alloc, POSeven::Errno >
+	{
+		POSeven::Errno operator()( const std::bad_alloc& ) const
+		{
+			return POSeven::Errno( ENOMEM );
+		}
+	};
+	
+	template <> struct Converter< POSeven::Errno, io::no_input_pending >: public std::unary_function< io::no_input_pending, POSeven::Errno >
+	{
+		POSeven::Errno operator()( const io::no_input_pending& ) const
+		{
+			return POSeven::Errno( EAGAIN );
+		}
+	};
 	
 }
 
