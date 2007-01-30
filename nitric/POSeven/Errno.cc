@@ -11,6 +11,17 @@
 namespace POSeven
 {
 	
+	static void RegisterPOSIXErrnos();
+	
+	class POSIXErrnosRegistration
+	{
+		public:
+			POSIXErrnosRegistration()  { RegisterPOSIXErrnos(); }
+	};
+	
+	static POSIXErrnosRegistration theRegistration;
+	
+	
 	static ErrnoLoggingProc gErrnoLoggingProc = NULL;
 	
 	ErrnoLoggingProc SetErrnoLoggingProc( ErrnoLoggingProc newProc )
@@ -57,6 +68,13 @@ namespace POSeven
 	void ThrowErrnoInternal( Errno number )
 	{
 		Nucleus::ThrowErrorCode< Errno >( errno );
+	}
+	
+	void RegisterPOSIXErrnos()
+	{
+		RegisterErrno< ENOENT >();
+		RegisterErrno< ENOMEM >();
+		RegisterErrno< EAGAIN >();
 	}
 	
 }
