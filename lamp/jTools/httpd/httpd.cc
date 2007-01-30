@@ -15,6 +15,7 @@
 
 // POSIX
 #include "sys/socket.h"
+#include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"
 
@@ -288,33 +289,48 @@ class ResourceParser
 		const_iterator end()   const  { return const_iterator( resource, const_iterator::kEnd ); }
 };
 
-static FSSpec LocateResource( const std::string& resource )
+static std::string LocateResource( const std::string& resource )
 {
-	FSSpec docRoot = Path2FSS( "/var/www" );
-	FSSpec item = docRoot;
+	std::string documentRoot = "/var/www";
 	
 	ResourceParser parser( resource );
-	//FSSpec file = std::accumulate( parser.begin(), parser.end(), root );
 	
+	// FIXME:  This can be an algorithm
 	typedef ResourceParser::const_iterator const_iterator;
 	for ( const_iterator it = parser.begin();  it != parser.end();  ++it )
 	{
-		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( item );
-		item = dir & *it;
+		std::string component = *it;
+		
+		if ( !component.empty() && component[0] == '.' )
+		{
+			// No screwing around with the pathname, please.
+			throw N::FNFErr();
+		}
 	}
 	
-	if ( N::FSpTestDirectoryExists( item ) )
+	std::string pathname = documentRoot + resource;
+	
+	struct stat sb;
+	int status = stat( pathname.c_str(), &sb );
+	
+	P7::ThrowPOSIXResult( status );
+	
+	bool isDir = sb.st_mode & S_IFDIR;
+	
+	if ( isDir )
 	{
-		item = NN::Convert< N::FSDirSpec >( item ) & "index.html";
+		if ( *pathname.rbegin() == '/' )
+		{
+			pathname += "index.html";
+		}
+		else
+		{
+			// FIXME:  Throw redirect
+			throw N::FNFErr();
+		}
 	}
 	
-	if ( !N::FSpTestFileExists( item ) )
-	{
-		// item is missing or index.html is a directory
-		throw N::FNFErr();
-	}
-	
-	return item;
+	return pathname;
 }
 
 static std::string FilenameExtension(const std::string& filename)
@@ -374,7 +390,7 @@ static void DumpFile( const FSSpec& file )
 	NN::Owned< N::FSFileRefNum > input( N::FSpOpenDF( file, fsRdPerm ) );
 	
 	int bytes;
-	enum { dataSize = 512 };
+	enum { dataSize = 4096 };
 	char data[ dataSize ];
 	
 	try
@@ -398,13 +414,13 @@ static void SendResponse( const HTTPRequestData& request )
 	
 	std::string httpVersion = "HTTP/1.0";
 	
-	FSSpec file;
+	std::string pathname;
 	
 	try
 	{
-		file = LocateResource( parsed.resource );
+		pathname = LocateResource( parsed.resource );
 	}
-	catch ( const N::FNFErr& )
+	catch ( ... )
 	{
 		Io::Out << httpVersion + " 404 Not Found"                "\r\n"
 		                         "Content-Type: text/html"       "\r\n"
@@ -421,7 +437,6 @@ static void SendResponse( const HTTPRequestData& request )
 	{
 		//Io::Out << httpVersion + " 200 OK\r\n";
 		
-		std::string pathname = N::FSpGetPOSIXPathname( file );
 		const char* path = pathname.c_str();
 		
 		char const* const argv[] = { path, NULL };
@@ -430,6 +445,8 @@ static void SendResponse( const HTTPRequestData& request )
 	}
 	else
 	{
+		FSSpec file = Path2FSS( pathname );
+		
 		FInfo info = N::FSpGetFInfo( file );
 		
 		std::string contentType = GuessContentType( file );
