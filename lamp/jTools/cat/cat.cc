@@ -11,9 +11,8 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Threads.h"
 
-// Io
-#include "Io/Exceptions.hh"
-#include "Io/MakeHandle.hh"
+// POSeven
+#include "POSeven/FileDescriptor.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -21,10 +20,11 @@
 
 
 namespace N = Nitrogen;
+namespace P7 = POSeven;
 namespace O = Orion;
 
 
-static int DumpFile( const Io::Handle& io );
+static int DumpFile( P7::FileDescriptor in );
 
 static bool PathnameMeansStdIn( const std::string& pathname )
 {
@@ -37,6 +37,7 @@ int O::Main( int argc, const char *const argv[] )
 	if ( argc < 2 )
 	{
 		Io::Err << "cat: missing arguments\n";
+		
 		return 1;
 	}
 	
@@ -57,54 +58,55 @@ int O::Main( int argc, const char *const argv[] )
 			continue;
 		}
 		
-		Io::Handle in = Io::MakeHandleFromCast< Io::FD_Details, Io::FD >( Io::FD( fd ) );
-		
 		try
 		{
-			fail += DumpFile( in );
+			fail += DumpFile( P7::FileDescriptor( fd ) );
 		}
 		catch ( ... )
 		{
 			Io::Err << "cat: " << pathname << ": DumpFile() failed\n";
-			fail++;
+			++fail;
 		}
 		
 		if ( fd != 0 )
 		{
-			(void)close( fd );
+			(void) close( fd );
 		}
 	}
 	
 	return (fail == 0) ? 0 : 1;
 }
 
-int DumpFile( const Io::Handle& in )
+int DumpFile( P7::FileDescriptor in )
 {
 	while ( true )
 	{
 		try
 		{
-			enum { blockSize = 512 };
+			enum { blockSize = 4096 };
+			
 			char data[ blockSize ];
 			
-			int bytes = in.Read( data, blockSize );
+			int bytes = io::read( in, data, blockSize );
 			
-			Io::Put( Io::Out, data, bytes );
+			write( STDOUT_FILENO, data, bytes );
 		}
-		catch ( Io::EndOfInput err )
+		catch ( const io::end_of_input& err )
 		{
 			break;
 		}
-		catch ( Io::NoDataPending )
+		catch ( const io::no_input_pending& )
 		{
 			sleep( 0 );
 		}
-		catch ( N::OSStatus err )
+		catch ( const N::OSStatus& err )
 		{
 			Io::Err << "cat: OSStatus " << err << "\n";
+			
 			return 1;
 		}
 	}
 	
 	return 0;
 }
+
