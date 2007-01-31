@@ -16,6 +16,9 @@
 #include "sys/socket.h"
 #include "unistd.h"
 
+// Io
+#include "io/slurp.hh"
+
 // Nitrogen
 #include "Nitrogen/OpenTransportProviders.h"
 
@@ -119,7 +122,7 @@ static std::string OTLookup( const std::string& domain )
 	results.resize( 10 );  // Should be more than enough
 	
 	N::OTInetMailExchange( InternetServices(),
-	                       (char*)domain.c_str(),
+	                       (char*) domain.c_str(),
 	                       results );
 	
 	/*
@@ -134,9 +137,9 @@ static std::string OTLookup( const std::string& domain )
 	return results.front().exchange;
 }
 
-static void Relay( const std::string& returnPath,
-                   const std::string& forwardPath,
-                   const FSSpec& message )
+static void Relay( const std::string&  returnPath,
+                   const std::string&  forwardPath,
+                   const FSSpec&       messageFile )
 {
 	if ( forwardPath == "" )
 	{
@@ -183,7 +186,7 @@ static void Relay( const std::string& returnPath,
 	//HW::IPAddress ip = HW::DNSResolve( smtpServer );
 	
 	N::InetHost ip = N::OTInetStringToAddress( InternetServices(),
-	                                           (char*)smtpServer.c_str() ).addrs[ 0 ];
+	                                           (char*) smtpServer.c_str() ).addrs[ 0 ];
 	
 	/*
 	InetHostInfo hInfo;
@@ -207,15 +210,13 @@ static void Relay( const std::string& returnPath,
 	inetAddress.sin_port = smtpPort;
 	inetAddress.sin_addr.s_addr = ip;
 	
-	int result = connect( sock, (const sockaddr*)&inetAddress, sizeof (sockaddr_in) );
+	int result = connect( sock, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) );
 	
 	Io::Handle io = Io::MakeHandleFromCast< Io::FD_Details >( sock );
 	
 	SMTP::Client::Session smtpSession( io );
 	
-	using N::fsRdPerm;
-	
-	NN::Owned< N::FSFileRefNum > msg = N::FSpOpenDF( message, fsRdPerm );
+	NN::Owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
 	
 	//smtpSession.Hello      ( HW::GetHostname() );
 	smtpSession.Hello      ( "hostname"  );
@@ -232,7 +233,7 @@ static void Relay( const std::string& returnPath,
 		
 		try
 		{
-			int bytes = Io::Read( msg, data, kDataSize );
+			int bytes = io::read( messageStream, data, kDataSize );
 			io.Write( data, bytes );
 		}
 		catch ( const io::end_of_input& )
@@ -252,35 +253,39 @@ static bool IsControlChar( char c )
 
 static std::string ReadOneLiner( N::FSFileRefNum fileH )
 {
-	std::vector< char > data( N::GetEOF( fileH ) );
+	std::string contents;
 	
-	Io::Read( fileH, data.begin(), data.size() );
+	contents.resize( N::GetEOF( fileH ) );
 	
-	return std::string( data.begin(),
-	                    std::find_if( data.begin(),
-	                                  data.end(),
-	                                  std::ptr_fun( IsControlChar ) ) );
+	io::read( fileH, &contents[0], contents.size() );
+	
+	const std::string::const_iterator end_of_first_line = std::find_if( contents.begin(),
+	                                                                    contents.end(),
+	                                                                    std::ptr_fun( IsControlChar ) );
+	
+	const std::size_t length_of_first_line = end_of_first_line - contents.begin();
+	
+	contents.resize( length_of_first_line );
+	
+	return contents;
 }
 
 static std::string ReadOneLiner( const FSSpec& file )
 {
-	using N::fsRdPerm;
-	
-	return ReadOneLiner( N::FSpOpenDF( file, fsRdPerm ) );
+	return ReadOneLiner( io::open_for_reading( file ) );
 }
 
 
 class Transmitter
 {
 	private:
-		std::string returnPath;
-		FSSpec message;
+		std::string  itsReturnPath;
+		FSSpec       itsMessageFile;
 	
 	public:
-		Transmitter( const std::string& returnPath, const FSSpec& message )
-		:
-			returnPath( returnPath ),
-			message   ( message    )
+		Transmitter( const std::string&  returnPath,
+		             const FSSpec&       message ) : itsReturnPath ( returnPath ),
+		                                             itsMessageFile( message    )
 		{}
 		
 		void operator()( const FSSpec& destFile );
@@ -293,9 +298,9 @@ void Transmitter::operator()( const FSSpec& destFile )
 		using N::fsRdWrPerm;
 		
 		// destFile serves as a lock on this destination
-		Relay( returnPath,
+		Relay( itsReturnPath,
 		       ReadOneLiner( N::FSpOpenDF( destFile, fsRdWrPerm ) ),
-		       message );
+		       itsMessageFile );
 		
 		N::FSpDelete( destFile );
 	}
