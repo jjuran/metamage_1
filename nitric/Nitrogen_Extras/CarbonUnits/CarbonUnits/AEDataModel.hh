@@ -11,6 +11,10 @@
 #include <MacErrors.h>
 #endif
 
+#ifndef __MACMEMORY__
+#include <MacMemory.h>
+#endif
+
 #if TARGET_API_MAC_CARBON
 #error Configuration error:  This file is for classic only
 #endif

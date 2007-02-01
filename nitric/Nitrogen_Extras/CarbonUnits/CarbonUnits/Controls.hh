@@ -74,7 +74,7 @@ CARBONUNITS_LINKAGE void SetControlDataHandle( ControlRef control, Handle dataHa
 
 CARBONUNITS_LINKAGE void SetControlBounds( ControlRef control, const Rect* bounds )
 {
-	control[0]->contrlRect = bounds;
+	control[0]->contrlRect = *bounds;
 }
 
 CARBONUNITS_LINKAGE void SetControlPopupMenuHandle( ControlRef control, MenuRef popupMenu )
@@ -82,7 +82,7 @@ CARBONUNITS_LINKAGE void SetControlPopupMenuHandle( ControlRef control, MenuRef 
 	reinterpret_cast< popupPrivateData* >( *control[0]->contrlData )->mHandle = popupMenu;
 }
 
-CARBONUNITS_LINKAGE void SetControlPopupMenuHandle( ControlRef control, short menuID )
+CARBONUNITS_LINKAGE void SetControlPopupMenuID( ControlRef control, short menuID )
 {
 	reinterpret_cast< popupPrivateData* >( *control[0]->contrlData )->mID = menuID;
 }

@@ -85,7 +85,7 @@ CARBONUNITS_LINKAGE void SetMenuTitle( MenuRef menu, ConstStr255Param title )
 {
 	std::copy( title,
 	           title + 1 + title[0],
-	           menu[0]->menuData;
+	           menu[0]->menuData );
 }
 
 #undef CARBONUNITS_LINKAGE
