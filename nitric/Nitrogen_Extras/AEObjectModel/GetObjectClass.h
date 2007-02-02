@@ -30,7 +30,7 @@ namespace Nitrogen
 		static AEObjectClass ObjectClass()  { return objectClass; }
 	};
 	
-	template <> struct ObjectClass_Traits< typeNull > : Basic_ObjectClass_Traits< AEObjectClass( cApplication ) > {};
+	template <> struct ObjectClass_Traits< typeNull > : Basic_ObjectClass_Traits< cApplication > {};
 	
 	class ObjectClassMap
 	{
