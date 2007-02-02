@@ -873,6 +873,25 @@ namespace Nitrogen
 	void AEPutKeyDesc( Nucleus::Owned< AERecord >&  record,
 	                   const AEKeyDesc&             keyDesc );
 	
+	class AEPutKeyDesc_Binding
+	{
+		private:
+			AEKeyword      itsKey;
+			const AEDesc&  itsData;
+		
+		public:
+			AEPutKeyDesc_Binding( AEKeyword key, const AEDesc& data ) : itsKey( key ), itsData( data )  {}
+			
+			AEKeyword Key() const  { return itsKey; }
+			
+			const AEDesc& Data() const  { return itsData; }
+	};
+	
+	inline AEPutKeyDesc_Binding AEPutKeyDesc( AEKeyword key, const AEDesc& data )
+	{
+		return AEPutKeyDesc_Binding( key, data );
+	}
+	
 	AEGetKeyPtr_Result AEGetKeyPtr( const AERecord&  record,
 	                                AEKeyword        keyword,
 	                                DescType         desiredType,
