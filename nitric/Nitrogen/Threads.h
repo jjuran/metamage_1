@@ -14,14 +14,11 @@
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
 #endif
+#ifndef NUCLEUS_ENUMERATION_H
+#include "Nucleus/Enumeration.h"
+#endif
 #ifndef NUCLEUS_FLAG_H
 #include "Nucleus/Flag.h"
-#endif
-#ifndef NUCLEUS_ID_H
-#include "Nucleus/ID.h"
-#endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
 #endif
 
 // Nitrogen
@@ -48,34 +45,46 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Types and constants ¥
 	
-	typedef Nucleus::Selector< class ThreadState_Tag, ::ThreadState >::Type ThreadState;
-	
-	static const ThreadState kReadyThreadState   = ThreadState( ::kReadyThreadState   );
-	static const ThreadState kStoppedThreadState = ThreadState( ::kStoppedThreadState );
-	static const ThreadState kRunningThreadState = ThreadState( ::kRunningThreadState );
+	enum ThreadState
+	{
+		kReadyThreadState   = ::kReadyThreadState,
+		kStoppedThreadState = ::kStoppedThreadState,
+		kRunningThreadState = ::kRunningThreadState,
+		
+		kThreadState_Max = Nucleus::Enumeration_Traits< ::ThreadState >::max
+	};
 	
 	using ::ThreadTaskRef;  // FIXME
 	
-	typedef Nucleus::Selector< class ThreadStyle_Tag, ::ThreadStyle >::Type ThreadStyle;
+	enum ThreadStyle
+	{
+		kCooperativeThread = ::kCooperativeThread,
+		kPreemptiveThread  = ::kPreemptiveThread,
+		
+		kThreadStyle_Max = Nucleus::Enumeration_Traits< ::ThreadStyle >::max
+	};
 	
-	static const ThreadStyle kCooperativeThread = ThreadStyle( ::kCooperativeThread );
-	static const ThreadStyle kPreemptiveThread  = ThreadStyle( ::kPreemptiveThread  );
+	enum ThreadID
+	{
+		kNoThreadID          = ::kNoThreadID,
+		kCurrentThreadID     = ::kCurrentThreadID,
+		kApplicationThreadID = ::kApplicationThreadID,
+		
+		kThreadID_Max = Nucleus::Enumeration_Traits< ::ThreadID >::max
+	};
 	
-	typedef Nucleus::ID< class ThreadID_Tag, ::ThreadID >::Type ThreadID;
-	
-	static const ThreadID kNoThreadID          = ThreadID( ::kNoThreadID          );
-	static const ThreadID kCurrentThreadID     = ThreadID( ::kCurrentThreadID     );
-	static const ThreadID kApplicationThreadID = ThreadID( ::kApplicationThreadID );
-	
-	typedef Nucleus::Flag< class ThreadOptions_Tag, ::ThreadOptions >::Type ThreadOptions;
+	enum ThreadOptions
+	{
+		kNewSuspend       = ::kNewSuspend,
+		kUsePremadeThread = ::kUsePremadeThread,
+		kCreateIfNeeded   = ::kCreateIfNeeded,
+		kFPUNotNeeded     = ::kFPUNotNeeded,
+		kExactMatchThread = ::kExactMatchThread,
+		
+		kThreadOptions_Max = Nucleus::Enumeration_Traits< ::ThreadOptions >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( ThreadOptions )
-	
-	static const ThreadOptions kNewSuspend       = ThreadOptions( ::kNewSuspend       );
-	static const ThreadOptions kUsePremadeThread = ThreadOptions( ::kUsePremadeThread );
-	static const ThreadOptions kCreateIfNeeded   = ThreadOptions( ::kCreateIfNeeded   );
-	static const ThreadOptions kFPUNotNeeded     = ThreadOptions( ::kFPUNotNeeded     );
-	static const ThreadOptions kExactMatchThread = ThreadOptions( ::kExactMatchThread );
 	
 	using ::SchedulerInfoRec;
 	
