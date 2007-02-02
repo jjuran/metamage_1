@@ -6,8 +6,8 @@
 namespace Nucleus
 {
 	
-	template < class Tag, class Int >
-	struct Enumeration
+	template < class Int >
+	struct Enumeration_Traits
 	{
 		typedef Int IntegralType;
 		
@@ -23,11 +23,17 @@ namespace Nucleus
 		
 		const static IntegralType min = isSigned ? one << bitWidth - 1 : 0;
 		const static IntegralType max = ~zero ^ min;
+	};
+	
+	template < class Tag, class Int >
+	struct Enumeration : public Enumeration_Traits< Int >
+	{
+		typedef Enumeration_Traits< Int > Traits;
 		
 		enum Type
 		{
-			kMin = min,
-			kMax = max
+			kMin = Traits::min,
+			kMax = Traits::max
 		};
 	};
 	
