@@ -90,10 +90,13 @@ namespace Nitrogen
 	};
 	
 	
-	typedef Nucleus::ID< class FSDirID_Tag, UInt32 >::Type FSDirID;
-	
-	static const FSDirID fsRtParID = FSDirID( ::fsRtParID );
-	static const FSDirID fsRtDirID = FSDirID( ::fsRtDirID );
+	enum FSDirID
+	{
+		fsRtParID = ::fsRtParID,
+		fsRtDirID = ::fsRtDirID,
+		
+		kFSDirID_Max = Nucleus::Enumeration_Traits< UInt32 >::max
+	};
 	
    typedef Nucleus::Flag< class FSNodeFlags_Tag, UInt16 >::Type FSNodeFlags;
    
@@ -123,29 +126,36 @@ namespace Nitrogen
 	typedef Nucleus::ID< class FSFileRefNum_Tag, SInt16 >::Type FSFileRefNum;
 	typedef Nucleus::ID< class FSForkRefNum_Tag, SInt16 >::Type FSForkRefNum;
     
-	typedef Nucleus::Flag< class FSIOPermssn_Tag, SInt8 >::Type FSIOPermssn;
+	enum FSIOPermssn
+	{
+		fsCurPerm    = ::fsCurPerm,
+		fsRdPerm     = ::fsRdPerm,
+		fsWrPerm     = ::fsWrPerm,
+		fsRdWrPerm   = ::fsRdWrPerm,
+		fsRdWrShPerm = ::fsRdWrShPerm,
+		fsRdDenyPerm = ::fsRdDenyPerm,
+		fsWrDenyPerm = ::fsWrDenyPerm,
+		
+		kFSIOPermssn_Max = Nucleus::Enumeration_Traits< SInt8 >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIOPermssn )
 	
 	typedef FSIOPermssn FSIOPermissions;
 	
-	static const FSIOPermssn fsCurPerm    = FSIOPermssn( ::fsCurPerm    );
-	static const FSIOPermssn fsRdPerm     = FSIOPermssn( ::fsRdPerm     );
-	static const FSIOPermssn fsWrPerm     = FSIOPermssn( ::fsWrPerm     );
-	static const FSIOPermssn fsRdWrPerm   = FSIOPermssn( ::fsRdWrPerm   );
-	static const FSIOPermssn fsRdWrShPerm = FSIOPermssn( ::fsRdWrShPerm );
-	static const FSIOPermssn fsRdDenyPerm = FSIOPermssn( ::fsRdDenyPerm );
-	static const FSIOPermssn fsWrDenyPerm = FSIOPermssn( ::fsWrDenyPerm );
-	
-   typedef Nucleus::Flag< class FSIOPosMode_Tag, UInt16 >::Type FSIOPosMode;
-   typedef FSIOPosMode FSIOPositioningMode;
+	enum FSIOPosMode
+	{
+		fsAtMark    = ::fsAtMark,
+		fsFromStart = ::fsFromStart,
+		fsFromLEOF  = ::fsFromLEOF,
+		fsFromMark  = ::fsFromMark,
+		
+		kFSIOPosMode_Max = Nucleus::Enumeration_Traits< UInt16 >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( FSIOPosMode )
 	
-	static const FSIOPosMode fsAtMark    = FSIOPosMode( ::fsAtMark    );
-	static const FSIOPosMode fsFromStart = FSIOPosMode( ::fsFromStart );
-	static const FSIOPosMode fsFromLEOF  = FSIOPosMode( ::fsFromLEOF  );
-	static const FSIOPosMode fsFromMark  = FSIOPosMode( ::fsFromMark  );
+	typedef FSIOPosMode FSIOPositioningMode;
 	
    typedef Nucleus::Flag< class FSAllocationFlags_Tag, ::FSAllocationFlags >::Type FSAllocationFlags;
   

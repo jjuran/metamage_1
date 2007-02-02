@@ -35,49 +35,37 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Constant types ¥
 	
-	typedef Nucleus::Selector< class AELogicalDescriptor_Tag, ::DescType >::Type AELogicalDescriptor;
+	enum AELogicalDescriptor
+	{
+		kAEAND = ::kAEAND,
+		kAEOR  = ::kAEOR,
+		kAENOT = ::kAENOT,
+		
+		kAELogicalDescriptor_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+	};
+	
 	typedef AELogicalDescriptor AELogicalOperator;
 	
-	static const AELogicalDescriptor kAEAND = AELogicalDescriptor( ::kAEAND );
-	static const AELogicalDescriptor kAEOR  = AELogicalDescriptor( ::kAEOR  );
-	static const AELogicalDescriptor kAENOT = AELogicalDescriptor( ::kAENOT );
+	enum AEAbsoluteOrdinal
+	{
+		kAEFirst  = ::kAEFirst,
+		kAELast   = ::kAELast,
+		kAEMiddle = ::kAEMiddle,
+		kAEAny    = ::kAEAny,
+		kAEAll    = ::kAEAll,
+		
+		kAEAbsoluteOrdinal_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+	};
 	
-	typedef Nucleus::Selector< class AEAbsoluteOrdinal_Tag, ::DescType >::Type AEAbsoluteOrdinal;
+	enum AERelativeDescriptor
+	{
+		kAENext     = ::kAENext,
+		kAEPrevious = ::kAEPrevious,
+		
+		kAERelativeDescriptor_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+	};
 	
-	static const AELogicalDescriptor kAEFirst  = AELogicalDescriptor( ::kAEFirst  );
-	static const AELogicalDescriptor kAELast   = AELogicalDescriptor( ::kAELast   );
-	static const AELogicalDescriptor kAEMiddle = AELogicalDescriptor( ::kAEMiddle );
-	static const AELogicalDescriptor kAEAny    = AELogicalDescriptor( ::kAEAny    );
-	static const AELogicalDescriptor kAEAll    = AELogicalDescriptor( ::kAEAll    );
-	
-	typedef Nucleus::Selector< class AERelativeOrdinal_Tag, ::DescType >::Type AERelativeDescriptor;
 	typedef AERelativeDescriptor AERelativeOrdinal;
-	
-	static const AERelativeDescriptor kAENext     = AERelativeDescriptor( ::kAENext     );
-	static const AERelativeDescriptor kAEPrevious = AERelativeDescriptor( ::kAEPrevious );
-	
-	
-	static const AEKeyword keyAECompOperator    = AEKeyword( ::keyAECompOperator    );
-	static const AEKeyword keyAELogicalTerms    = AEKeyword( ::keyAELogicalTerms    );
-	static const AEKeyword keyAELogicalOperator = AEKeyword( ::keyAELogicalOperator );
-	static const AEKeyword keyAEObject1         = AEKeyword( ::keyAEObject1         );
-	static const AEKeyword keyAEObject2         = AEKeyword( ::keyAEObject2         );
-                    
-	static const AEKeyword keyAEDesiredClass    = AEKeyword( ::keyAEDesiredClass    );
-	static const AEKeyword keyAEContainer       = AEKeyword( ::keyAEContainer       );
-	static const AEKeyword keyAEKeyForm         = AEKeyword( ::keyAEKeyForm         );
-	static const AEKeyword keyAEKeyData         = AEKeyword( ::keyAEKeyData         );
-	
-	static const AEKeyword keyAERangeStart      = AEKeyword( ::keyAERangeStart      );
-	static const AEKeyword keyAERangeStop       = AEKeyword( ::keyAERangeStop       );
-                    
-	static const AEKeyword keyDisposeTokenProc  = AEKeyword( ::keyDisposeTokenProc  );
-	static const AEKeyword keyAECompareProc     = AEKeyword( ::keyAECompareProc     );
-	static const AEKeyword keyAECountProc       = AEKeyword( ::keyAECountProc       );
-	static const AEKeyword keyAEMarkTokenProc   = AEKeyword( ::keyAEMarkTokenProc   );
-	static const AEKeyword keyAEMarkProc        = AEKeyword( ::keyAEMarkProc        );
-	static const AEKeyword keyAEAdjustMarksProc = AEKeyword( ::keyAEAdjustMarksProc );
-	static const AEKeyword keyAEGetErrDescProc  = AEKeyword( ::keyAEGetErrDescProc  );
 	
 	
 	static const AEKeyForm formAbsolutePosition = AEKeyForm( ::formAbsolutePosition );
@@ -88,19 +76,6 @@ namespace Nitrogen
 	static const AEKeyForm formName             = AEKeyForm( ::formName             );
 	
 	
-	static const DescType typeObjectSpecifier     = DescType( ::typeObjectSpecifier     );
-	static const DescType typeObjectBeingExamined = DescType( ::typeObjectBeingExamined );
-	static const DescType typeCurrentContainer    = DescType( ::typeCurrentContainer    );
-	static const DescType typeToken               = DescType( ::typeToken               );
-	static const DescType typeRelativeDescriptor  = DescType( ::typeRelativeDescriptor  );
-	static const DescType typeAbsoluteOrdinal     = DescType( ::typeAbsoluteOrdinal     );
-	static const DescType typeIndexDescriptor     = DescType( ::typeIndexDescriptor     );
-	static const DescType typeRangeDescriptor     = DescType( ::typeRangeDescriptor     );
-	static const DescType typeLogicalDescriptor   = DescType( ::typeLogicalDescriptor   );
-	static const DescType typeCompDescriptor      = DescType( ::typeCompDescriptor      );
-	static const DescType typeOSLTokenList        = DescType( ::typeOSLTokenList        );
-	
-	
 	static const DescType typeObjectClass = DescType( ::typeObjectClass );
 	static const DescType typePropertyID  = DescType( ::typePropertyID  );
 	
@@ -108,8 +83,8 @@ namespace Nitrogen
 	typedef Nucleus::Selector< class AEObjectClass_Tag, ::DescType >::Type AEObjectClass;
 	typedef Nucleus::Selector< class AEPropertyID_Tag,  ::DescType >::Type AEPropertyID;
 	
-	template <> struct DescType_Traits< typeObjectClass > : Nucleus::ConvertingPODFlattener< AEObjectClass, ::AEObjectClass >   {};
-	template <> struct DescType_Traits< typePropertyID >  : Nucleus::ConvertingPODFlattener< AEPropertyID, ::AEPropertyID >   {};
+	template <> struct DescType_Traits< typeObjectClass > : Nucleus::ConvertingPODFlattener< AEObjectClass, ::AEObjectClass >  {};
+	template <> struct DescType_Traits< typePropertyID >  : Nucleus::ConvertingPODFlattener< AEPropertyID,  ::AEPropertyID  >  {};
 	
 	template <> struct DescType_Traits< typeLogicalDescriptor  > : Nucleus::ConvertingPODFlattener< AELogicalDescriptor,  ::AELogicalDescriptor  >  {};
 	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : Nucleus::ConvertingPODFlattener< AEAbsoluteOrdinal,    ::AEAbsoluteOrdinal    >  {};
@@ -121,17 +96,24 @@ namespace Nitrogen
 	template <> struct DescType_Map_Traits< typeAbsoluteOrdinal    > { static const DescType result = typeType; };
 	template <> struct DescType_Map_Traits< typeRelativeDescriptor > { static const DescType result = typeType; };
 	
-	typedef Nucleus::Flag< class AEResolveCallbackFlags_Tag, short >::Type AEResolveCallbackFlags;
+	template <> struct AEKeyword_Traits< keyAEDesiredClass > : Type_AEKeyword_Traits< AEObjectClass > {};
+	template <> struct AEKeyword_Traits< keyAEKeyForm      > : Enum_AEKeyword_Traits< AEKeyForm     > {};
+	
+	enum AEResolveCallbackFlags
+	{
+		kAEIDoMinimum           = ::kAEIDoMinimum,
+		kAEIDoWhose             = ::kAEIDoWhose,
+		kAEIDoMarking           = ::kAEIDoMarking,
+		kAEPassSubDescs         = ::kAEPassSubDescs,
+		kAEResolveNestedLists   = ::kAEResolveNestedLists,
+		kAEHandleSimpleRanges   = ::kAEHandleSimpleRanges,
+		kAEUseRelativeIterators = ::kAEUseRelativeIterators,
+		
+		kAEResolveCallbackFlags_Max = Nucleus::Enumeration_Traits< short >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( AEResolveCallbackFlags )
 	
-	static const AEResolveCallbackFlags kAEIDoMinimum           = AEResolveCallbackFlags( ::kAEIDoMinimum           );
-	static const AEResolveCallbackFlags kAEIDoWhose             = AEResolveCallbackFlags( ::kAEIDoWhose             );
-	static const AEResolveCallbackFlags kAEIDoMarking           = AEResolveCallbackFlags( ::kAEIDoMarking           );
-	static const AEResolveCallbackFlags kAEPassSubDescs         = AEResolveCallbackFlags( ::kAEPassSubDescs         );
-	static const AEResolveCallbackFlags kAEResolveNestedLists   = AEResolveCallbackFlags( ::kAEResolveNestedLists   );
-	static const AEResolveCallbackFlags kAEHandleSimpleRanges   = AEResolveCallbackFlags( ::kAEHandleSimpleRanges   );
-	static const AEResolveCallbackFlags kAEUseRelativeIterators = AEResolveCallbackFlags( ::kAEUseRelativeIterators );
 	
 	
 	#pragma mark -

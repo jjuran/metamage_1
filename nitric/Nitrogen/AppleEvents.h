@@ -61,13 +61,16 @@ namespace Nitrogen
 	static const AEEventID kAENotifyStopRecording  = AEEventID( ::kAENotifyStopRecording  );
 	static const AEEventID kAENotifyRecording      = AEEventID( ::kAENotifyRecording      );
 	
-	typedef Nucleus::Selector< class AEEventSource_Tag, ::AEEventSource >::Type AEEventSource;
-	
-	static const AEEventSource kAEUnknownSource = AEEventSource( ::kAEUnknownSource );
-	static const AEEventSource kAEDirectCall    = AEEventSource( ::kAEDirectCall    );
-	static const AEEventSource kAESameProcess   = AEEventSource( ::kAESameProcess   );
-	static const AEEventSource kAELocalProcess  = AEEventSource( ::kAELocalProcess  );
-	static const AEEventSource kAERemoteProcess = AEEventSource( ::kAERemoteProcess );
+	enum AEEventSource
+	{
+		kAEUnknownSource = ::kAEUnknownSource,
+		kAEDirectCall    = ::kAEDirectCall,
+		kAESameProcess   = ::kAESameProcess,
+		kAELocalProcess  = ::kAELocalProcess,
+		kAERemoteProcess = ::kAERemoteProcess,
+		
+		kAEEventSource_Max = Nucleus::Enumeration_Traits< ::AEEventSource >::max
+	};
 	
    struct AEEventHandler
      {

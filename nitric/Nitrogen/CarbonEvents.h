@@ -677,13 +677,9 @@ namespace Nitrogen
 	static const CarbonEventKind kEventCommandUpdateStatus = CarbonEventKind( ::kEventCommandUpdateStatus );
 	
 	
-	static const EventParamType typeFSVolumeRefNum = EventParamType( ::typeFSVolumeRefNum );
-	
 	static const EventParamName kEventParamDirectObject = EventParamName( ::kEventParamDirectObject );
 	
 	static const EventParamName kEventParamPostTarget = EventParamName( ::kEventParamPostTarget );
-	
-	static const EventParamType typeEventTargetRef = EventParamType( ::typeEventTargetRef );
 	
 	
 	static const EventParamName kEventParamWindowRef       = EventParamName( ::kEventParamWindowRef       );
@@ -702,24 +698,6 @@ namespace Nitrogen
 	static const EventParamName kEventParamDeviceDepth     = EventParamName( ::kEventParamDeviceDepth     );
 	static const EventParamName kEventParamDeviceColor     = EventParamName( ::kEventParamDeviceColor     );
 	
-	static const EventParamType typeWindowRef    = EventParamType( ::typeWindowRef    );
-	static const EventParamType typeGrafPtr      = EventParamType( ::typeGrafPtr      );
-	static const EventParamType typeGWorldPtr    = EventParamType( ::typeGWorldPtr    );
-	static const EventParamType typeDragRef      = EventParamType( ::typeDragRef      );
-	static const EventParamType typeMenuRef      = EventParamType( ::typeMenuRef      );
-	static const EventParamType typeControlRef   = EventParamType( ::typeControlRef   );
-	static const EventParamType typeCollection   = EventParamType( ::typeCollection   );
-	static const EventParamType typeQDRgnHandle  = EventParamType( ::typeQDRgnHandle  );
-	static const EventParamType typeOSStatus     = EventParamType( ::typeOSStatus     );
-	static const EventParamType typeCFStringRef  = EventParamType( ::typeCFStringRef  );
-	static const EventParamType typeCFIndex      = EventParamType( ::typeCFIndex      );
-	static const EventParamType typeCFTypeRef    = EventParamType( ::typeCFTypeRef    );
-	static const EventParamType typeCGContextRef = EventParamType( ::typeCGContextRef );
-	static const EventParamType typeHIPoint      = EventParamType( ::typeHIPoint      );
-	static const EventParamType typeHISize       = EventParamType( ::typeHISize       );
-	static const EventParamType typeHIRect       = EventParamType( ::typeHIRect       );
-	
-	
 	static const EventParamName kEventParamMouseLocation   = EventParamName( ::kEventParamMouseLocation   );
 	static const EventParamName kEventParamMouseButton     = EventParamName( ::kEventParamMouseButton     );
 	static const EventParamName kEventParamClickCount      = EventParamName( ::kEventParamClickCount      );
@@ -729,40 +707,11 @@ namespace Nitrogen
 	static const EventParamName kEventParamMouseChord      = EventParamName( ::kEventParamMouseChord      );
 	static const EventParamName kEventParamTabletEventType = EventParamName( ::kEventParamTabletEventType );
 	
-	static const EventParamType typeMouseButton    = EventParamType( ::typeMouseButton    );
-	static const EventParamType typeMouseWheelAxis = EventParamType( ::typeMouseWheelAxis );
-	
-	static const EventParamType typeEventHotKeyID = EventParamType( ::typeEventHotKeyID );
-	
-	static const EventParamType typeHICommand = EventParamType( ::typeHICommand );
-	
-	static const EventParamType typeWindowRegionCode      = EventParamType( ::typeWindowRegionCode      );
-	static const EventParamType typeWindowDefPartCode     = EventParamType( ::typeWindowDefPartCode     );
-	static const EventParamType typeClickActivationResult = EventParamType( ::typeClickActivationResult );
-	
 #if UNIVERSAL_INTERFACES_VERSION >= 0x0400
 	
 	static const EventParamName kEventParamControlWouldAcceptDrop = EventParamName( ::kEventParamControlWouldAcceptDrop );
 	
 #endif
-	
-	static const EventParamType typeControlActionUPP        = EventParamType( ::typeControlActionUPP        );
-	static const EventParamType typeIndicatorDragConstraint = EventParamType( ::typeIndicatorDragConstraint );
-	static const EventParamType typeControlPartCode         = EventParamType( ::typeControlPartCode         );
-	
-	static const EventParamType typeMenuItemIndex     = EventParamType( ::typeMenuItemIndex     );
-	static const EventParamType typeMenuCommand       = EventParamType( ::typeMenuCommand       );
-	static const EventParamType typeMenuTrackingMode  = EventParamType( ::typeMenuTrackingMode  );
-	static const EventParamType typeMenuEventOptions  = EventParamType( ::typeMenuEventOptions  );
-	static const EventParamType typeThemeMenuState    = EventParamType( ::typeThemeMenuState    );
-	static const EventParamType typeThemeMenuItemType = EventParamType( ::typeThemeMenuItemType );
-	
-	static const EventParamType typeTabletPointRec     = EventParamType( ::typeTabletPointRec     );
-	static const EventParamType typeTabletProximityRec = EventParamType( ::typeTabletProximityRec );
-	static const EventParamType typeTabletPointerRec   = EventParamType( ::typeTabletPointerRec   );
-	
-	static const EventParamType typeScrapRef          = EventParamType( ::typeScrapRef          );
-	static const EventParamType typeCFMutableArrayRef = EventParamType( ::typeCFMutableArrayRef );
 	
 	
 	

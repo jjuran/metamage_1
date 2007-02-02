@@ -29,6 +29,13 @@
 #include "Nucleus/Selector.h"
 #endif
 
+#ifndef NITROGEN_AEKEYWORD_H
+#include "Nitrogen/AEKeyword.h"
+#endif
+#ifndef NITROGEN_DESCTYPE_H
+#include "Nitrogen/DescType.h"
+#endif
+
 #ifndef NITROGEN_ALIASES_H
 #include "Nitrogen/Aliases.h"
 #endif
@@ -162,70 +169,21 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ DescType ¥
 	
-	typedef Nucleus::Selector< class DescType_Tag, ::DescType >::Type DescType;
-	
-	static const DescType typeBoolean                = DescType( ::typeBoolean                );
-	static const DescType typeChar                   = DescType( ::typeChar                   );
-	
-	static const DescType typeSInt16                 = DescType( ::typeSInt16                 );
-	static const DescType typeSInt32                 = DescType( ::typeSInt32                 );
-	static const DescType typeUInt32                 = DescType( ::typeUInt32                 );
-	static const DescType typeSInt64                 = DescType( ::typeSInt64                 );
-	static const DescType typeIEEE32BitFloatingPoint = DescType( ::typeIEEE32BitFloatingPoint );
-	static const DescType typeIEEE64BitFloatingPoint = DescType( ::typeIEEE64BitFloatingPoint );
-	static const DescType type128BitFloatingPoint    = DescType( ::type128BitFloatingPoint    );
-	static const DescType typeDecimalStruct          = DescType( ::typeDecimalStruct          );
-	
-	static const DescType typeAEList                 = DescType( ::typeAEList                 );
-	static const DescType typeAERecord               = DescType( ::typeAERecord               );
-	static const DescType typeAppleEvent             = DescType( ::typeAppleEvent             );
-	static const DescType typeEventRecord            = DescType( ::typeEventRecord            );
-	static const DescType typeTrue                   = DescType( ::typeTrue                   );
-	static const DescType typeFalse                  = DescType( ::typeFalse                  );
-	static const DescType typeAlias                  = DescType( ::typeAlias                  );
-	static const DescType typeEnumerated             = DescType( ::typeEnumerated             );
-	static const DescType typeType                   = DescType( ::typeType                   );
-	static const DescType typeAppParameters          = DescType( ::typeAppParameters          );
-	static const DescType typeProperty               = DescType( ::typeProperty               );
-	static const DescType typeFSS                    = DescType( ::typeFSS                    );
-	static const DescType typeFSRef                  = DescType( ::typeFSRef                  );
-	static const DescType typeFileURL                = DescType( ::typeFileURL                );
-	static const DescType typeKeyword                = DescType( ::typeKeyword                );
-	static const DescType typeSectionH               = DescType( ::typeSectionH               );
-	static const DescType typeWildCard               = DescType( ::typeWildCard               );
-	static const DescType typeApplSignature          = DescType( ::typeApplSignature          );
-	static const DescType typeQDRectangle            = DescType( ::typeQDRectangle            );
-	static const DescType typeFixed                  = DescType( ::typeFixed                  );
-	static const DescType typeProcessSerialNumber    = DescType( ::typeProcessSerialNumber    );
-	static const DescType typeApplicationURL         = DescType( ::typeApplicationURL         );
-	static const DescType typeNull                   = DescType( ::typeNull                   );
-	
-	
-	typedef Nucleus::Selector< class AEKeyword_Tag, ::AEKeyword >::Type AEKeyword;
-	
-	static const AEKeyword keyTransactionIDAttr   = AEKeyword( ::keyTransactionIDAttr   );
-	static const AEKeyword keyReturnIDAttr        = AEKeyword( ::keyReturnIDAttr        );
-	static const AEKeyword keyEventClassAttr      = AEKeyword( ::keyEventClassAttr      );
-	static const AEKeyword keyEventIDAttr         = AEKeyword( ::keyEventIDAttr         );
-	static const AEKeyword keyAddressAttr         = AEKeyword( ::keyAddressAttr         );
-	static const AEKeyword keyOptionalKeywordAttr = AEKeyword( ::keyOptionalKeywordAttr );
-	static const AEKeyword keyTimeoutAttr         = AEKeyword( ::keyTimeoutAttr         );
-	static const AEKeyword keyInteractLevelAttr   = AEKeyword( ::keyInteractLevelAttr   );
-	static const AEKeyword keyEventSourceAttr     = AEKeyword( ::keyEventSourceAttr     );
-	static const AEKeyword keyMissedKeywordAttr   = AEKeyword( ::keyMissedKeywordAttr   );
-	static const AEKeyword keyOriginalAddressAttr = AEKeyword( ::keyOriginalAddressAttr );
-	static const AEKeyword keyAcceptTimeoutAttr   = AEKeyword( ::keyAcceptTimeoutAttr   );
-	
 	// Constants used creating an AppleEvent
 	
-	typedef Nucleus::ID< class AEReturnID_Tag, ::AEReturnID >::Type AEReturnID;
+	enum AEReturnID
+	{
+		kAutoGenerateReturnID = ::kAutoGenerateReturnID,
+		
+		kAEReturnID_Max = Nucleus::Enumeration_Traits< ::AEReturnID >::max
+	};
 	
-	static const AEReturnID kAutoGenerateReturnID = AEReturnID( ::kAutoGenerateReturnID );
-	
-	
-	typedef Nucleus::ID< class AETransactionID_Tag, ::AETransactionID >::Type AETransactionID;
-	
-	static const AETransactionID kAnyTransactionID = AETransactionID( ::kAnyTransactionID );
+	enum AETransactionID
+	{
+		kAnyTransactionID = ::kAnyTransactionID,
+		
+		kAETransactionID_Max = Nucleus::Enumeration_Traits< ::AETransactionID >::max
+	};
 	
 	typedef Nucleus::Selector< class AEEventClass_Tag, ::AEEventClass >::Type  AEEventClass;
 	typedef Nucleus::Selector< class AEEventID_Tag,    ::AEEventID    >::Type  AEEventID;
@@ -235,29 +193,36 @@ namespace Nitrogen
 	typedef AEEnumerated AEKeyForm;
 	
 	
-	typedef Nucleus::Flag< class AESendPriority_Tag, ::AESendPriority >::Type AESendPriority;
+	enum AESendPriority
+	{
+		kAENormalPriority = ::kAENormalPriority,
+		kAEHighPriority   = ::kAEHighPriority,
+		
+		kAESendPriority_Max = Nucleus::Enumeration_Traits< ::AESendPriority >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( AESendPriority )
 	
-	static const AESendPriority kAENormalPriority = AESendPriority( ::kAENormalPriority );
-	static const AESendPriority kAEHighPriority   = AESendPriority( ::kAEHighPriority   );
-	
-	typedef Nucleus::Flag< class AESendMode_Tag, ::AESendMode >::Type AESendMode;
+	enum AESendMode
+	{
+		kAENoReply               = ::kAENoReply,
+		kAEQueueReply            = ::kAEQueueReply,
+		kAEWaitReply             = ::kAEWaitReply,
+		kAEDontReconnect         = ::kAEDontReconnect,
+		kAEWantReceipt           = ::kAEWantReceipt,
+		kAENeverInteract         = ::kAENeverInteract,
+		kAECanInteract           = ::kAECanInteract,
+		kAEAlwaysInteract        = ::kAEAlwaysInteract,
+		kAECanSwitchLayer        = ::kAECanSwitchLayer,
+		kAEDontRecord            = ::kAEDontRecord,
+		kAEDontExecute           = ::kAEDontExecute,
+		kAEProcessNonReplyEvents = ::kAEProcessNonReplyEvents,
+		
+		kAESendMode_Max = Nucleus::Enumeration_Traits< ::AESendMode >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( AESendMode )
 	
-	static const AESendMode kAENoReply               = AESendMode( ::kAENoReply               );
-	static const AESendMode kAEQueueReply            = AESendMode( ::kAEQueueReply            );
-	static const AESendMode kAEWaitReply             = AESendMode( ::kAEWaitReply             );
-	static const AESendMode kAEDontReconnect         = AESendMode( ::kAEDontReconnect         );
-	static const AESendMode kAEWantReceipt           = AESendMode( ::kAEWantReceipt           );
-	static const AESendMode kAENeverInteract         = AESendMode( ::kAENeverInteract         );
-	static const AESendMode kAECanInteract           = AESendMode( ::kAECanInteract           );
-	static const AESendMode kAEAlwaysInteract        = AESendMode( ::kAEAlwaysInteract        );
-	static const AESendMode kAECanSwitchLayer        = AESendMode( ::kAECanSwitchLayer        );
-	static const AESendMode kAEDontRecord            = AESendMode( ::kAEDontRecord            );
-	static const AESendMode kAEDontExecute           = AESendMode( ::kAEDontExecute           );
-	static const AESendMode kAEProcessNonReplyEvents = AESendMode( ::kAEProcessNonReplyEvents );
 	
 	#pragma mark -
 	#pragma mark ¥ DescType_Traits ¥
@@ -310,7 +275,8 @@ namespace Nitrogen
 	template <> struct Integer_DescType_Traits< SInt32 >  { static const DescType descType = typeSInt32; };
 	template <> struct Integer_DescType_Traits< UInt32 >  { static const DescType descType = typeUInt32; };
 	
-	struct Type_DescType_Traits  { static const DescType descType = typeType; };
+	struct Type_DescType_Traits  { static const DescType descType = typeType;       };
+	struct Enum_DescType_Traits  { static const DescType descType = typeEnumerated; };
 	
 	template < class POD, class Integer >
 	struct Integer_AEKeyword_Traits : Nucleus::ConvertingPODFlattener< POD, Integer >,
@@ -321,6 +287,12 @@ namespace Nitrogen
 	template < class POD >
 	struct Type_AEKeyword_Traits : Nucleus::ConvertingPODFlattener< POD, ::FourCharCode >,
 	                               Type_DescType_Traits
+	{
+	};
+	
+	template < class POD >
+	struct Enum_AEKeyword_Traits : Nucleus::ConvertingPODFlattener< POD, ::FourCharCode >,
+	                               Enum_DescType_Traits
 	{
 	};
 	
@@ -1259,6 +1231,26 @@ namespace Nitrogen
 	                  typename AEKeyword_Traits< key >::Parameter  data )
 	{
 		AEPutKeyPtr< key >( Detail::AEDescEditor( record ), data );
+	}
+	
+	template < AEKeyword key >
+	class AEPutKeyPtr_Binding
+	{
+		private:
+			typedef typename AEKeyword_Traits< key >::Parameter Parameter;
+			
+			Parameter itsData;
+		
+		public:
+			AEPutKeyPtr_Binding( Parameter data ) : itsData( data )  {}
+			
+			Parameter Data() const  { return itsData; }
+	};
+	
+	template < AEKeyword key >
+	AEPutKeyPtr_Binding< key > AEPutKeyPtr( typename AEKeyword_Traits< key >::Parameter data )
+	{
+		return AEPutKeyPtr_Binding< key >( data );
 	}
 	
 	
