@@ -48,16 +48,11 @@ namespace Nitrogen
 	{
 		using namespace Nucleus::Operators;
 		
-		return AECoerceDesc
-		(
-			AECreateList< true >()
-				<< keyAEDesiredClass + AECreateDesc< typeType       >( DescType( ::FourCharCode( objectClass ) ) )
-				<< keyAEKeyForm      + AECreateDesc< typeEnumerated >(              keyForm    )
-				<< keyAEKeyData      + keyData
-				<< keyAEContainer    + container,
-				
-			typeObjectSpecifier
-		);
+		return AECoerceDesc( AECreateList< true >() << AEPutKeyPtr< keyAEDesiredClass >( objectClass )
+		                                            << AEPutKeyPtr< keyAEKeyForm      >( keyForm     )
+		                                            << AEPutKeyDesc( keyAEKeyData,   keyData   )
+		                                            << AEPutKeyDesc( keyAEContainer, container ),
+		                     typeObjectSpecifier );
 	}
 	
 	Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType )
