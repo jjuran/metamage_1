@@ -41,6 +41,7 @@ namespace Nucleus
 			return Type( value << int( bit ) );
 		}
 		
+		/*
 		friend Type operator&( Type a, Type b )
 		{
 			return Type( IntegralType( a ) & IntegralType( b ) );
@@ -70,11 +71,41 @@ namespace Nucleus
 		{
 			return a = a ^ b;
 		}
+		*/
 	};
 	
 }
 
-#define NUCLEUS_DEFINE_FLAG_OPS( EnumType )
+#define NUCLEUS_DEFINE_FLAG_OPS( Type )         \
+	inline Type operator&( Type a, Type b )     \
+	{                                           \
+		return Type( a & b );                   \
+	}                                           \
+	                                            \
+	inline Type operator|( Type a, Type b )     \
+	{                                           \
+		return Type( a | b );                   \
+	}                                           \
+	                                            \
+	inline Type operator^( Type a, Type b )     \
+	{                                           \
+		return Type( a ^ b );                   \
+	}                                           \
+	                                            \
+	inline Type& operator&=( Type& a, Type b )  \
+	{                                           \
+		return a = a & b;                       \
+	}                                           \
+	                                            \
+	inline Type& operator|=( Type& a, Type b )  \
+	{                                           \
+		return a = a | b;                       \
+	}                                           \
+	                                            \
+	inline Type& operator^=( Type& a, Type b )  \
+	{                                           \
+		return a = a ^ b;                       \
+	}
 
 #endif
 
