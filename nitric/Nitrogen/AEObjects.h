@@ -3,6 +3,13 @@
 #ifndef NITROGEN_AEOBJECTS_H
 #define NITROGEN_AEOBJECTS_H
 
+#ifndef NITROGEN_AEOBJECTCLASS_H
+#include "Nitrogen/AEObjectClass.h"
+#endif
+#ifndef NITROGEN_AEPROPERTYID_H
+#include "Nitrogen/AEPropertyID.h"
+#endif
+
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
 #endif
@@ -79,9 +86,6 @@ namespace Nitrogen
 	static const DescType typeObjectClass = DescType( ::typeObjectClass );
 	static const DescType typePropertyID  = DescType( ::typePropertyID  );
 	
-	
-	typedef Nucleus::Selector< class AEObjectClass_Tag, ::DescType >::Type AEObjectClass;
-	typedef Nucleus::Selector< class AEPropertyID_Tag,  ::DescType >::Type AEPropertyID;
 	
 	template <> struct DescType_Traits< typeObjectClass > : Nucleus::ConvertingPODFlattener< AEObjectClass, ::AEObjectClass >  {};
 	template <> struct DescType_Traits< typePropertyID >  : Nucleus::ConvertingPODFlattener< AEPropertyID,  ::AEPropertyID  >  {};

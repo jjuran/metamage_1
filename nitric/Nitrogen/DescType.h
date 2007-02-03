@@ -19,6 +19,9 @@
 #ifndef __AEREGISTRY__
 #include FRAMEWORK_HEADER(AE,AERegistry.h)
 #endif
+#ifndef __ASREGISTRY__
+#include <ASRegistry.h>
+#endif
 #ifndef __CARBONEVENTS__
 #include FRAMEWORK_HEADER(HIToolbox,CarbonEvents.h)
 #endif
@@ -160,6 +163,16 @@ namespace Nitrogen
 		typePString           = ::typePString,
 		
 		// typeMeters .. typeDegreesK
+		
+		// ASRegistry
+		// ----------
+		
+		typeAETE = ::typeAETE,
+		typeAEUT = ::typeAEUT,
+		
+		typeScszResource = ::typeScszResource,
+		
+		typeSound = ::typeSound,
 		
 		// CarbonEvents
 		// ------------

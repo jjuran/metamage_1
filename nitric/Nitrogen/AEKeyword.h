@@ -19,6 +19,9 @@
 #ifndef __AEREGISTRY__
 #include FRAMEWORK_HEADER(AE,AERegistry.h)
 #endif
+#ifndef __ASREGISTRY__
+#include <ASRegistry.h>
+#endif
 
 
 namespace Nitrogen
@@ -190,6 +193,23 @@ namespace Nitrogen
 		keyErrorCode         = ::keyErrorCode,
 		keyHighLevelClass    = ::keyHighLevelClass,
 		keyHighLevelID       = ::keyHighLevelID,
+		
+		// ASRegistry
+		// ----------
+		
+		keyAETarget    = ::keyAETarget,
+		keySubjectAttr = ::keySubjectAttr,
+		keyASReturning = ::keyASReturning,
+		
+		keyScszResource = ::keyScszResource,
+		
+		keyASSubroutineName = ::keyASSubroutineName,
+		
+		keyASPositionalArgs = ::keyASPositionalArgs,
+		
+		keyAppHandledCoercion = ::keyAppHandledCoercion,
+		
+		// keyASPrepositionAt .. keyASPrepositionUntil
 		
 		kAEKeyword_Max = Nucleus::Enumeration_Traits< ::AEKeyword >::max
 	};
