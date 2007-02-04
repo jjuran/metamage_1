@@ -74,37 +74,47 @@ namespace Nucleus
 		*/
 	};
 	
+	template < unsigned size > struct EnumSize_Traits;
+	
+	template <> struct EnumSize_Traits< sizeof (unsigned char     ) > { typedef unsigned char       Type; };
+	template <> struct EnumSize_Traits< sizeof (unsigned short    ) > { typedef unsigned short      Type; };
+	template <> struct EnumSize_Traits< sizeof (unsigned int      ) > { typedef unsigned int        Type; };
+	template <> struct EnumSize_Traits< sizeof (unsigned long long) > { typedef unsigned long long  Type; };
+	
 }
 
-#define NUCLEUS_DEFINE_FLAG_OPS( Type )         \
-	inline Type operator&( Type a, Type b )     \
-	{                                           \
-		return Type( a & b );                   \
-	}                                           \
-	                                            \
-	inline Type operator|( Type a, Type b )     \
-	{                                           \
-		return Type( a | b );                   \
-	}                                           \
-	                                            \
-	inline Type operator^( Type a, Type b )     \
-	{                                           \
-		return Type( a ^ b );                   \
-	}                                           \
-	                                            \
-	inline Type& operator&=( Type& a, Type b )  \
-	{                                           \
-		return a = a & b;                       \
-	}                                           \
-	                                            \
-	inline Type& operator|=( Type& a, Type b )  \
-	{                                           \
-		return a = a | b;                       \
-	}                                           \
-	                                            \
-	inline Type& operator^=( Type& a, Type b )  \
-	{                                           \
-		return a = a ^ b;                       \
+#define NUCLEUS_DEFINE_FLAG_OPS( Enum )                               \
+	inline Enum operator&( Enum a, Enum b )                           \
+	{                                                                 \
+		typedef Nucleus::EnumSize_Traits< sizeof (Enum) >::Type Int;  \
+		return Enum( Int( a ) & Int( b ) );                           \
+	}                                                                 \
+	                                                                  \
+	inline Enum operator|( Enum a, Enum b )                           \
+	{                                                                 \
+		typedef Nucleus::EnumSize_Traits< sizeof (Enum) >::Type Int;  \
+		return Enum( Int( a ) | Int( b ) );                           \
+	}                                                                 \
+	                                                                  \
+	inline Enum operator^( Enum a, Enum b )                           \
+	{                                                                 \
+		typedef Nucleus::EnumSize_Traits< sizeof (Enum) >::Type Int;  \
+		return Enum( Int( a ) ^ Int( b ) );                           \
+	}                                                                 \
+	                                                                  \
+	inline Enum& operator&=( Enum& a, Enum b )                        \
+	{                                                                 \
+		return a = a & b;                                             \
+	}                                                                 \
+	                                                                  \
+	inline Enum& operator|=( Enum& a, Enum b )                        \
+	{                                                                 \
+		return a = a | b;                                             \
+	}                                                                 \
+	                                                                  \
+	inline Enum& operator^=( Enum& a, Enum b )                        \
+	{                                                                 \
+		return a = a ^ b;                                             \
 	}
 
 #endif
