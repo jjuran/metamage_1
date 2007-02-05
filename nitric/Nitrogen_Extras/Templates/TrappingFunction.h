@@ -37,7 +37,7 @@ namespace Nitrogen
 	};
 	
 	template < class Exception, class Closure >
-	ExceptionTrap< Exception, Closure > TrapException( Exception, const Closure& closure )
+	inline ExceptionTrap< Exception, Closure > TrapException( Exception, const Closure& closure )
 	{
 		return ExceptionTrap< Exception, Closure >( closure );
 	}
@@ -66,8 +66,8 @@ namespace Nitrogen
 	};
 	
 	template < class Trap, class F >
-	UnaryTrappingFunction< F, Trap > Trap1( const F&     f,
-	                                        const Trap&  trap )
+	inline UnaryTrappingFunction< F, Trap > Trap1( const F&     f,
+	                                               const Trap&  trap )
 	{
 		return UnaryTrappingFunction< F, Trap >( f, trap );
 	}
