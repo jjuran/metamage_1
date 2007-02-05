@@ -20,7 +20,7 @@ namespace Nucleus
 		
 		NUCLEUS_DEFINE_FLAG_OPS( Foo )
 		
-		void TestFlagOps()
+		static void TestFlagOps()
 		{
 			Foo bitUnion = foo1 | foo2;
 		}
