@@ -59,7 +59,7 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType tokenType >
-	void RegisterTokenDisposer()
+	inline void RegisterTokenDisposer()
 	{
 		TheGlobalTokenDisposer().template Register< tokenType >();
 	}

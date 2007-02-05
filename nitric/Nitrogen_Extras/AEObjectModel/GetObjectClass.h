@@ -68,7 +68,7 @@ namespace Nitrogen
 	}
 	
 	template < DescType tokenType >
-	void RegisterObjectClass()
+	inline void RegisterObjectClass()
 	{
 		TheGlobalObjectClassMap().template Register< tokenType >();
 	}
@@ -117,7 +117,7 @@ namespace Nitrogen
 	}
 	
 	template < DescType tokenType >
-	void RegisterObjectClassGetter()
+	inline void RegisterObjectClassGetter()
 	{
 		TheGlobalObjectClassGetter().template Register< tokenType >();
 	}

@@ -62,7 +62,7 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType tokenType >
-	void RegisterDataSetter()
+	inline void RegisterDataSetter()
 	{
 		TheGlobalDataSetter().template Register< tokenType >();
 	}

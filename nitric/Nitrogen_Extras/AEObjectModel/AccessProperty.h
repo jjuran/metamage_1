@@ -104,7 +104,7 @@ namespace Nitrogen
 	}
 	
 	template < AEPropertyID propertyID, DescType containerType >
-	void RegisterPropertyAccessor()
+	inline void RegisterPropertyAccessor()
 	{
 		TheGlobalPropertyAccessor().template Register< propertyID, containerType >();
 	}

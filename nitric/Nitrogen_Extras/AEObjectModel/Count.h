@@ -84,7 +84,7 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType desiredClass, ::DescType containerType >
-	void RegisterCounter()
+	inline void RegisterCounter()
 	{
 		TheGlobalCounter().template Register< desiredClass, containerType >();
 	}

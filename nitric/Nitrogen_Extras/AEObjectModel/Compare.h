@@ -63,7 +63,7 @@ namespace Nitrogen
 	}
 	
 	template < ::DescType tokenType >
-	void RegisterComparer()
+	inline void RegisterComparer()
 	{
 		TheGlobalComparer().template Register< tokenType >();
 	}
