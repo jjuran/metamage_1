@@ -171,7 +171,7 @@ namespace Genie
 			Process( RootProcess );
 			Process( pid_t ppid );
 			
-			~Process()  {}
+			~Process();
 			
 			pid_t ParentProcessID() const  { return itsPPID; }
 			pid_t ProcessID()       const  { return itsPID;  }
@@ -226,9 +226,9 @@ namespace Genie
 		public:
 			bool Forked() const  { return itsThread.get() == NULL; }
 			
-			int Exec( const FSSpec& progFile,
-			          const char* const argv[],
-			          const char* const* envp );
+			NN::Owned< N::ThreadID > Exec( const FSSpec&       progFile,
+			                               const char* const   argv[],
+			                               const char* const*  envp );
 			
 			int TryExec( const FSSpec& progFile,
 			             const char* const argv[],
