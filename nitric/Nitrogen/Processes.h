@@ -47,12 +47,15 @@ namespace Nitrogen
 			ProcessManagerErrorsRegistrationDependency();
 	};
 	
-	typedef Nucleus::Flag< class LaunchFlags_Tag, ::LaunchFlags >::Type LaunchFlags;
+	enum LaunchFlags
+	{
+		launchContinue    = ::launchContinue,
+		launchNoFileFlags = ::launchNoFileFlags,
+		
+		kLaunchFlags_Max = Nucleus::Enumeration_Traits< ::LaunchFlags >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( LaunchFlags )
-	
-	static const LaunchFlags launchContinue    = LaunchFlags( ::launchContinue    );
-	static const LaunchFlags launchNoFileFlags = LaunchFlags( ::launchNoFileFlags );
 	
 	using ::ProcessSerialNumber;
 	using ::ProcessInfoRec;
