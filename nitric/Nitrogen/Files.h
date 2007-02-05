@@ -1706,12 +1706,14 @@ namespace io
 		return Nitrogen::GetEOF( stream );
 	}
 	
-	inline SInt32 read( Nitrogen::FSFileRefNum input, char* data, SInt32 byteCount )
+	template < class ByteCount >
+	inline SInt32 read( Nitrogen::FSFileRefNum input, char* data, ByteCount byteCount )
 	{
 		return Nitrogen::FSRead( input, byteCount, data );
 	}
 	
-	inline SInt32 write( Nitrogen::FSFileRefNum output, const char* data, SInt32 byteCount )
+	template < class ByteCount >
+	inline SInt32 write( Nitrogen::FSFileRefNum output, const char* data, ByteCount byteCount )
 	{
 		return Nitrogen::FSWrite( output, byteCount, data );
 	}
@@ -1734,11 +1736,13 @@ namespace io
 		return Nitrogen::FSGetForkSize( stream );
 	}
 	
+	template < class ByteCount >
 	inline ByteCount read( Nitrogen::FSForkRefNum input, char* data, ByteCount byteCount )
 	{
 		return Nitrogen::FSReadFork( input, byteCount, data );
 	}
 	
+	template < class ByteCount >
 	inline ByteCount write( Nitrogen::FSForkRefNum output, const char* data, ByteCount byteCount )
 	{
 		return Nitrogen::FSWriteFork( output, byteCount, data );
