@@ -13,6 +13,9 @@
 #endif
 
 // Nitrogen
+#ifndef NITROGEN_ASREGISTRY_H
+#include "Nitrogen/ASRegistry.h"
+#endif
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
@@ -119,7 +122,7 @@ namespace Nitrogen
 			}
 			catch ( ErrAENoSuchObject )
 			{
-				propertyToken = AECreateToken< typeType >( DescType( cMissingValue ) );
+				propertyToken = MissingValue();
 			}
 			
 			AEPutKeyDesc( result,
