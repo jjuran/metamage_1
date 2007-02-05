@@ -61,14 +61,14 @@ namespace Nucleus
      {
       typedef const T& Put_Parameter;
       
-      template < class Putter > void Put( Put_Parameter toPut, Putter put )
+      template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
         {
          put( &toPut, &toPut + 1 );
         }
       
       typedef T Get_Result;
       
-      template < class Getter > Get_Result Get( Getter get )
+      template < class Getter > Get_Result Get( const Getter& get )
         {
          Get_Result result;
          get( &result, &result + 1 );
@@ -87,7 +87,7 @@ namespace Nucleus
      {
       typedef const T& Put_Parameter;
       
-      template < class Putter > void Put( Put_Parameter toPut, Putter put )
+      template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
         {
          const typename T::value_type *begin = toPut.empty() ? 0 : &*toPut.begin();
          put( begin, begin + toPut.size() );
@@ -95,7 +95,7 @@ namespace Nucleus
       
       typedef T Get_Result;
       
-      template < class Getter > Get_Result Get( Getter get )
+      template < class Getter > Get_Result Get( const Getter& get )
         {
          Get_Result result;
          result.resize( get.size() );
@@ -125,14 +125,14 @@ namespace Nucleus
       public:
          typedef const Converted& Put_Parameter;
          
-         template < class Putter > void Put( Put_Parameter toPut, Putter put )
+         template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
            {
             base.Put( toPut, put );
            }
          
          typedef Converted Get_Result;
          
-         template < class Getter > Get_Result Get( Getter get )
+         template < class Getter > Get_Result Get( const Getter& get )
            {
             return Get_Result( base.Get( get ) );
            }
@@ -155,14 +155,14 @@ namespace Nucleus
 	{
 		typedef Ownable Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
 		{
 			put( &toPut, &toPut + 1 );
 		}
 		
 		typedef Nucleus::Owned< Ownable > Get_Result;
 		
-		template < class Getter > Get_Result Get( Getter get )
+		template < class Getter > Get_Result Get( const Getter& get )
 		{
 			Get_Result result;
 			
@@ -184,7 +184,7 @@ namespace Nucleus
 	{
 		typedef const T& Put_Parameter;
 		
-		template < class Putter > void Put( Put_Parameter toPut, Putter put )
+		template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
 		{
 			const T* begin = &toPut;
 			const std::size_t size = SizeOf( toPut );
@@ -194,7 +194,7 @@ namespace Nucleus
 		
 		typedef std::auto_ptr< T > Get_Result;
 		
-		template < class Getter > Get_Result Get( Getter get )
+		template < class Getter > Get_Result Get( const Getter& get )
 		{
 			const std::size_t size = get.size();
 			
@@ -221,14 +221,14 @@ namespace Nucleus
      {
       typedef NoData Put_Parameter;
       
-      template < class Putter > void Put( Put_Parameter toPut, Putter put )
+      template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
         {
          put( 0, 0 );
         }
       
       typedef NoData Get_Result;
       
-      template < class Getter > Get_Result Get( Getter get )
+      template < class Getter > Get_Result Get( const Getter& get )
         {
          get( 0, 0 );  // So it has a chance to throw
          return NoData();
