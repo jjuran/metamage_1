@@ -243,8 +243,46 @@ namespace Nitrogen
    using ::EventTypeSpec;
 
    typedef Nucleus::Selector< class MouseTrackingResult_Tag, ::MouseTrackingResult >::Type MouseTrackingResult;
-   
-   typedef Nucleus::Selector< class EventParamName_Tag, ::EventParamName >::Type EventParamName;
+	
+	enum EventParamName
+	{
+		kEventParamDirectObject = ::kEventParamDirectObject,
+		
+		kEventParamPostTarget = ::kEventParamPostTarget,
+		
+		kEventParamWindowRef       = ::kEventParamWindowRef,
+		kEventParamGrafPort        = ::kEventParamGrafPort,
+		kEventParamDragRef         = ::kEventParamDragRef,
+		kEventParamMenuRef         = ::kEventParamMenuRef,
+		kEventParamEventRef        = ::kEventParamEventRef,
+		kEventParamControlRef      = ::kEventParamControlRef,
+		kEventParamRgnHandle       = ::kEventParamRgnHandle,
+		kEventParamEnabled         = ::kEventParamEnabled,
+		kEventParamDimensions      = ::kEventParamDimensions,
+		kEventParamAvailableBounds = ::kEventParamAvailableBounds,
+		kEventParamAEEventID       = ::kEventParamAEEventID,
+		kEventParamAEEventClass    = ::kEventParamAEEventClass,
+		kEventParamCGContextRef    = ::kEventParamCGContextRef,
+		kEventParamDeviceDepth     = ::kEventParamDeviceDepth,
+		kEventParamDeviceColor     = ::kEventParamDeviceColor,
+		
+		kEventParamMouseLocation   = ::kEventParamMouseLocation,
+		kEventParamMouseButton     = ::kEventParamMouseButton,
+		kEventParamClickCount      = ::kEventParamClickCount,
+		kEventParamMouseWheelAxis  = ::kEventParamMouseWheelAxis,
+		kEventParamMouseWheelDelta = ::kEventParamMouseWheelDelta,
+		kEventParamMouseDelta      = ::kEventParamMouseDelta,
+		kEventParamMouseChord      = ::kEventParamMouseChord,
+		kEventParamTabletEventType = ::kEventParamTabletEventType,
+		
+	#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+		
+		kEventParamControlWouldAcceptDrop = ::kEventParamControlWouldAcceptDrop,
+		
+	#endif
+		
+		kEventParamName_Max = Nucleus::Enumeration_Traits< ::EventParamName >::max
+	};
 
 	//typedef Nucleus::Selector< class EventParamType_Tag, ::EventParamType >::Type EventParamType;
 	
@@ -675,44 +713,6 @@ namespace Nitrogen
 	
 	static const CarbonEventKind kEventProcessCommand      = CarbonEventKind( ::kEventProcessCommand      );
 	static const CarbonEventKind kEventCommandUpdateStatus = CarbonEventKind( ::kEventCommandUpdateStatus );
-	
-	
-	static const EventParamName kEventParamDirectObject = EventParamName( ::kEventParamDirectObject );
-	
-	static const EventParamName kEventParamPostTarget = EventParamName( ::kEventParamPostTarget );
-	
-	
-	static const EventParamName kEventParamWindowRef       = EventParamName( ::kEventParamWindowRef       );
-	static const EventParamName kEventParamGrafPort        = EventParamName( ::kEventParamGrafPort        );
-	static const EventParamName kEventParamDragRef         = EventParamName( ::kEventParamDragRef         );
-	static const EventParamName kEventParamMenuRef         = EventParamName( ::kEventParamMenuRef         );
-	static const EventParamName kEventParamEventRef        = EventParamName( ::kEventParamEventRef        );
-	static const EventParamName kEventParamControlRef      = EventParamName( ::kEventParamControlRef      );
-	static const EventParamName kEventParamRgnHandle       = EventParamName( ::kEventParamRgnHandle       );
-	static const EventParamName kEventParamEnabled         = EventParamName( ::kEventParamEnabled         );
-	static const EventParamName kEventParamDimensions      = EventParamName( ::kEventParamDimensions      );
-	static const EventParamName kEventParamAvailableBounds = EventParamName( ::kEventParamAvailableBounds );
-	static const EventParamName kEventParamAEEventID       = EventParamName( ::kEventParamAEEventID       );
-	static const EventParamName kEventParamAEEventClass    = EventParamName( ::kEventParamAEEventClass    );
-	static const EventParamName kEventParamCGContextRef    = EventParamName( ::kEventParamCGContextRef    );
-	static const EventParamName kEventParamDeviceDepth     = EventParamName( ::kEventParamDeviceDepth     );
-	static const EventParamName kEventParamDeviceColor     = EventParamName( ::kEventParamDeviceColor     );
-	
-	static const EventParamName kEventParamMouseLocation   = EventParamName( ::kEventParamMouseLocation   );
-	static const EventParamName kEventParamMouseButton     = EventParamName( ::kEventParamMouseButton     );
-	static const EventParamName kEventParamClickCount      = EventParamName( ::kEventParamClickCount      );
-	static const EventParamName kEventParamMouseWheelAxis  = EventParamName( ::kEventParamMouseWheelAxis  );
-	static const EventParamName kEventParamMouseWheelDelta = EventParamName( ::kEventParamMouseWheelDelta );
-	static const EventParamName kEventParamMouseDelta      = EventParamName( ::kEventParamMouseDelta      );
-	static const EventParamName kEventParamMouseChord      = EventParamName( ::kEventParamMouseChord      );
-	static const EventParamName kEventParamTabletEventType = EventParamName( ::kEventParamTabletEventType );
-	
-#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
-	
-	static const EventParamName kEventParamControlWouldAcceptDrop = EventParamName( ::kEventParamControlWouldAcceptDrop );
-	
-#endif
-	
 	
 	
 /* ... */
