@@ -66,7 +66,7 @@ namespace Nitrogen
 					AEAbsoluteOrdinal ordinal = AEGetDescData< typeAbsoluteOrdinal >( keyData );
 					
 					// Check for 'every' first
-					if ( ordinal == AEAbsoluteOrdinal( kAEAll ) )
+					if ( ordinal == kAEAll )
 					{
 						return 0;
 					}
