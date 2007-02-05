@@ -422,7 +422,7 @@ namespace Genie
 		
 		char const *const argv[] = { programName.c_str(), NULL };
 		
-		external->Exec( program, argv, NULL );
+		(void) external->Exec( program, argv, NULL );
 	}
 	
 	static FSSpec LoginExecutable()
