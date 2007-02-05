@@ -146,49 +146,49 @@ namespace Nitrogen
 	};
 	
 	template < class Result >
-	PointerToConstantFunction< Result >
+	inline PointerToConstantFunction< Result >
 	PtrFun( Result (f)() )
 	{
 		return PointerToConstantFunction< Result >( f );
 	}
 	
 	template < class T1, class Result >
-	PointerToUnaryFunction< T1, Result >
+	inline PointerToUnaryFunction< T1, Result >
 	PtrFun( Result (f)( T1 ) )
 	{
 		return PointerToUnaryFunction< T1, Result >( f );
 	}
 	
 	template < class T1, class Result >
-	PointerToUnaryFunctionWithConstArg< T1, Result >
+	inline PointerToUnaryFunctionWithConstArg< T1, Result >
 	PtrFun( Result (f)( const T1& ) )
 	{
 		return PointerToUnaryFunctionWithConstArg< T1, Result >( f );
 	}
 	
 	template < class T1, class T2, class Result >
-	PointerToBinaryFunction< T1, T2, Result >
+	inline PointerToBinaryFunction< T1, T2, Result >
 	PtrFun( Result (f)( T1, T2 ) )
 	{
 		return PointerToBinaryFunction< T1, T2, Result >( f );
 	}
 	
 	template < class T1, class T2, class Result >
-	PointerToBinaryFunctionWithConstArg1< T1, T2, Result >
+	inline PointerToBinaryFunctionWithConstArg1< T1, T2, Result >
 	PtrFun( Result (f)( const T1&, T2 ) )
 	{
 		return PointerToBinaryFunctionWithConstArg1< T1, T2, Result >( f );
 	}
 	
 	template < class T1, class T2, class Result >
-	PointerToBinaryFunctionWithConstArg2< T1, T2, Result >
+	inline PointerToBinaryFunctionWithConstArg2< T1, T2, Result >
 	PtrFun( Result (f)( T1, const T2& ) )
 	{
 		return PointerToBinaryFunctionWithConstArg2< T1, T2, Result >( f );
 	}
 	
 	template < class T1, class T2, class Result >
-	PointerToBinaryFunctionWithConstArgs< T1, T2, Result >
+	inline PointerToBinaryFunctionWithConstArgs< T1, T2, Result >
 	PtrFun( Result (f)( const T1&, const T2& ) )
 	{
 		return PointerToBinaryFunctionWithConstArgs< T1, T2, Result >( f );
