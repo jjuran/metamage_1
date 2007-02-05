@@ -80,7 +80,7 @@ namespace Genie
 	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		int ppid = CurrentProcess().ProcessID();
+		pid_t ppid = CurrentProcess().ProcessID();
 		
 		try
 		{
@@ -98,7 +98,7 @@ namespace Genie
 						*stat_loc = found->second->Result();
 					}
 					
-					int foundPID = found->first;
+					pid_t foundPID = found->first;
 					
 					found->second->Status( Process::kZombie );
 					
