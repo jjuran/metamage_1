@@ -65,15 +65,6 @@ namespace Nucleus
 		}
 	};
 	
-	template <>
-	struct Converter< POSeven::Errno, io::no_input_pending > : public std::unary_function< io::no_input_pending, POSeven::Errno >
-	{
-		POSeven::Errno operator()( io::no_input_pending ) const
-		{
-			return POSeven::Errno( EAGAIN );  // or EWOULDBLOCK?
-		}
-	};
-	
 }
 
 namespace Genie
@@ -277,13 +268,26 @@ namespace Genie
 		{
 			Process& current( CurrentProcess() );
 			
-			FSTreePtr progFile = ResolvePathname( path, current.CurrentWorkingDirectory() );
-			
 			bool forked = current.Forked();
 			
-			// Start a new thread with the child's process context
-			// Warning:  may kill the thread -- watch out for local variables
-			progFile->Exec( argv, envp );
+			NN::Owned< N::ThreadID > savedThread;
+			
+			// Local scope to make sure progFile gets destroyed
+			{
+				FSTreePtr progFile = ResolvePathname( path, current.CurrentWorkingDirectory() );
+				
+				// Start a new thread with the child's process context
+				
+				//progFile->Exec( argv, envp );
+				
+				savedThread = current.Exec( progFile->GetFSSpec(), argv, envp );
+			}
+			
+			// If this thread is us (i.e. we didn't fork), we're now toast.
+			if ( savedThread.Get() != N::kNoThreadID )
+			{
+				N::DisposeThread( savedThread, NULL, false );
+			}
 			
 			// A non-forked exec kills its own thread and doesn't return
 			ASSERT( forked );
@@ -294,6 +298,9 @@ namespace Genie
 			Process* parent = &gProcessTable[ current.ParentProcessID() ];
 			
 			RegisterProcessContext( parent );
+			
+			// Yes, in Genie a forked exec() DOES return on success.
+			return 0;
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -306,25 +313,17 @@ namespace Genie
 			catch ( const N::ErrMessage& msg )
 			{
 				errMsg = ", errMessage: " + NN::Convert< std::string >( msg.errMessage ) + "\n";
-				//std::printf( "errMessage: '%s'\n", str.c_str() );
-			}
-			catch ( const N::FNFErr& )
-			{
-				return CurrentProcess().SetErrno( ENOENT );
 			}
 			catch ( ... )  {}
 			
-			std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
-			
-			return GetErrnoFromExceptionInSystemCall();
+			if ( err.Get() != fnfErr )
+			{
+				std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
+			}
 		}
-		catch ( ... )
-		{
-			return GetErrnoFromExceptionInSystemCall();
-		}
+		catch ( ... )  {}
 		
-		// Yes, in Genie a forked exec() DOES return on success.
-		return 0;
+		return GetErrnoFromExceptionInSystemCall();
 	}
 	
 	REGISTER_SYSTEM_CALL( execve );
