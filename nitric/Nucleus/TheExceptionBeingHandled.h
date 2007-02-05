@@ -139,10 +139,16 @@ namespace Nucleus
       // not reached:
       throw;
      }
-
+	
+	template < class Output, class Exception >
+	Output ConvertException( const Exception& e )
+	{
+		return Convert( e );
+	}
+	
    template < class Output,
               class Exception,
-              Output (*convert)( const Exception& ) = static_cast< Output(*)( const Exception& ) >( Convert ) >
+              Output (*convert)( const Exception& ) = static_cast< Output(*)( const Exception& ) >( ConvertException ) >
    class ExceptionConversionRegistration
      {
       private:
