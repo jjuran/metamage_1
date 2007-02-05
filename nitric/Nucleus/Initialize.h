@@ -37,55 +37,55 @@ namespace Nucleus
 	struct Initializer;
 	
 	template < class R >
-	R& Initialize( R& r )
+	inline R& Initialize( R& r )
 	{
 		return Initializer< R >()( r );
 	}
 	
 	template < class R, class P0 >
-	R& Initialize( R& r, P0 p0 )
+	inline R& Initialize( R& r, P0 p0 )
 	{
 		return Initializer< R >()( r, p0 );
 	}
 
 	template < class R, class P0, class P1 >
-	R& Initialize( R& r, P0 p0, P1 p1 )
+	inline R& Initialize( R& r, P0 p0, P1 p1 )
 	{
 		return Initializer< R >()( r, p0, p1 );
 	}
 
 	template < class R, class P0, class P1, class P2 >
-	R& Initialize( R& r, P0 p0, P1 p1, P2 p2 )
+	inline R& Initialize( R& r, P0 p0, P1 p1, P2 p2 )
 	{
 		return Initializer< R >()( r, p0, p1, p2 );
 	}
 
 	template < class R, class P0, class P1, class P2, class P3 >
-	R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3 )
+	inline R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3 )
 	{
 		return Initializer< R >()( r, p0, p1, p2, p3 );
 	}
 
 	template < class R, class P0, class P1, class P2, class P3, class P4 >
-	R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3, P4 p4 )
+	inline R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3, P4 p4 )
 	{
 		return Initializer< R >()( r, p0, p1, p2, p3, p4 );
 	}
 
 	template < class R, class P0, class P1, class P2, class P3, class P4, class P5 >
-	R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5 )
+	inline R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5 )
 	{
 		return Initializer< R >()( r, p0, p1, p2, p3, p4, p5 );
 	}
 
 	template < class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6 >
-	R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6 )
+	inline R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6 )
 	{
 		return Initializer< R >()( r, p0, p1, p2, p3, p4, p5, p6 );
 	}
 
 	template < class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7 >
-	R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7 )
+	inline R& Initialize( R& r, P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7 )
 	{
 		return Initializer< R >()( r, p0, p1, p2, p3, p4, p5, p6, p7 );
 	}

@@ -41,55 +41,55 @@ namespace Nucleus
    struct Maker;
    
    template < class R >
-   R Make()
+   inline R Make()
      {
       return Maker<R>()();
      }
 
    template < class R, class P0 >
-   R Make( P0 p0 )
+   inline R Make( P0 p0 )
      {
       return Maker<R>()( p0 );
      }
 
    template < class R, class P0, class P1 >
-   R Make( P0 p0, P1 p1 )
+   inline R Make( P0 p0, P1 p1 )
      {
       return Maker<R>()( p0, p1 );
      }
 
    template < class R, class P0, class P1, class P2 >
-   R Make( P0 p0, P1 p1, P2 p2 )
+   inline R Make( P0 p0, P1 p1, P2 p2 )
      {
       return Maker<R>()( p0, p1, p2 );
      }
 
    template < class R, class P0, class P1, class P2, class P3 >
-   R Make( P0 p0, P1 p1, P2 p2, P3 p3 )
+   inline R Make( P0 p0, P1 p1, P2 p2, P3 p3 )
      {
       return Maker<R>()( p0, p1, p2, p3 );
      }
 
    template < class R, class P0, class P1, class P2, class P3, class P4 >
-   R Make( P0 p0, P1 p1, P2 p2, P3 p3, P4 p4 )
+   inline R Make( P0 p0, P1 p1, P2 p2, P3 p3, P4 p4 )
      {
       return Maker<R>()( p0, p1, p2, p3, p4 );
      }
 
    template < class R, class P0, class P1, class P2, class P3, class P4, class P5 >
-   R Make( P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5 )
+   inline R Make( P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5 )
      {
       return Maker<R>()( p0, p1, p2, p3, p4, p5 );
      }
 
    template < class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6 >
-   R Make( P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6 )
+   inline R Make( P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6 )
      {
       return Maker<R>()( p0, p1, p2, p3, p4, p5, p6 );
      }
 
    template < class R, class P0, class P1, class P2, class P3, class P4, class P5, class P6, class P7 >
-   R Make( P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7 )
+   inline R Make( P0 p0, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7 )
      {
       return Maker<R>()( p0, p1, p2, p3, p4, p5, p6, p7 );
      }

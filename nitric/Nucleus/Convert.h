@@ -76,25 +76,25 @@ namespace Nucleus
      };
    
    template < class Output, class Input >
-   Output Convert( const Input& input )
+   inline Output Convert( const Input& input )
      {
       return Converter< Output, typename ConvertInputTraits<Input>::ConverterInputType >()( input );
      }
 
    template < class Output, class Input, class P1 >
-   Output Convert( const Input& input, const P1& p1 )
+   inline Output Convert( const Input& input, const P1& p1 )
      {
       return Converter< Output, typename ConvertInputTraits<Input>::ConverterInputType >( p1 )( input );
      }
 
    template < class Output, class Input, class P1, class P2 >
-   Output Convert( const Input& input, const P1& p1, const P2& p2 )
+   inline Output Convert( const Input& input, const P1& p1, const P2& p2 )
      {
       return Converter< Output, typename ConvertInputTraits<Input>::ConverterInputType >( p1, p2 )( input );
      }
 
    template < class Output, class Input, class P1, class P2, class P3 >
-   Output Convert( const Input& input, const P1& p1, const P2& p2, const P3& p3 )
+   inline Output Convert( const Input& input, const P1& p1, const P2& p2, const P3& p3 )
      {
       return Converter< Output, typename ConvertInputTraits<Input>::ConverterInputType >( p1, p2, p3 )( input );
      }
