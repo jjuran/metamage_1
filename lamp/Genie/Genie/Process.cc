@@ -308,6 +308,10 @@ namespace Genie
 		}
 	}
 	
+	Process::~Process()
+	{
+	}
+	
 	void Process::InitThread()
 	{
 		N::CloseConnection( itsOldFragmentConnection );
@@ -384,9 +388,9 @@ namespace Genie
 		}
 	}
 	
-	int Process::Exec( const FSSpec&        executable,
-	                   const char* const    argv[],
-	                   const char* const*   envp )
+	NN::Owned< N::ThreadID >  Process::Exec( const FSSpec&        executable,
+	                                         const char* const    argv[],
+	                                         const char* const*   envp )
 	{
 		CloseMarkedFileDescriptors( itsFileDescriptors );
 		
@@ -550,20 +554,22 @@ namespace Genie
 		                             itsArgvStorage->GetPointer(),
 		                             itsEnvironStorage->GetPointer() );
 		
-		// Warning -- if a program calls exec() without forking,
-		// then the current thread might be the one we're about to replace.
-		// Make sure the assignment is complete before disposing the thread.
+		// We always spawn a new thread for the exec'ed process.
+		// If we've forked, then the thread is null, but if not, it's the
+		// current thread -- be careful!
 		
-		std::auto_ptr< Thread > savedThread = itsThread;
-		itsThread.reset( new Thread( threadContext ) );
+		// Create the new thread
+		std::auto_ptr< Thread > newThread( new Thread( threadContext ) );
+		
+		// Make the new thread belong to this process...
+		std::swap( itsThread, newThread );
+		
+		// ...saving the old one so we don't die just yet.
+		std::auto_ptr< Thread >& savedThread = newThread;
 		
 		Status( Process::kRunning );
 		
-		savedThread.reset( NULL );  // If this is us, we're toast
-		
-		// If we're still here, then we must have been forked.
-		
-		return 0;
+		return savedThread.get() ? savedThread->HandOff() : NN::Owned< N::ThreadID >();
 	}
 	
 	/*
@@ -755,8 +761,8 @@ namespace Genie
 		
 		itsFileDescriptors.clear();
 		
-		int ppid = ParentProcessID();
-		int pid = ProcessID();
+		pid_t ppid = ParentProcessID();
+		pid_t pid = ProcessID();
 		
 		if ( ppid > 0 )
 		{
@@ -927,8 +933,25 @@ namespace Genie
 		return *it->second;
 	}
 	
+	namespace
+	{
+		
+		void ReaperThreadEntry()
+		{
+			while ( true )
+			{
+				gProcessTable.Reap();
+				
+				N::YieldToAnyThread();
+			}
+		}
+		
+	}
+	
 	pid_t GenieProcessTable::NewProcess( Process* process )
 	{
+		static NN::Owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
+		
 		itsProcesses[ itsNextPID ] = boost::shared_ptr< Process >( process );
 		
 		return itsNextPID++;
@@ -974,13 +997,13 @@ namespace Genie
 	
 	void GenieProcessTable::Reap()
 	{
-		std::vector< int > hitlist;
+		std::vector< pid_t > hitlist;
 		
 		for ( ProcessMap::iterator it = itsProcesses.begin();  it != itsProcesses.end();  ++it )
 		{
 			Process& proc = *it->second;
 			
-			int pid = proc.ProcessID();
+			pid_t pid = proc.ProcessID();
 			
 			if (    proc.Status() == Process::kZombie
 			     || proc.Status() == Process::kTerminated  &&  proc.ParentProcessID() == 1 )
@@ -989,10 +1012,11 @@ namespace Genie
 			}
 		}
 		
-		for ( std::vector< int >::iterator it = hitlist.begin();  it != hitlist.end();  ++it )
+		for ( std::vector< pid_t >::iterator it = hitlist.begin();  it != hitlist.end();  ++it )
 		{
-			int pid = *it;
-			(void)RemoveProcess( pid );
+			pid_t pid = *it;
+			
+			(void) RemoveProcess( pid );
 		}
 	}
 	
