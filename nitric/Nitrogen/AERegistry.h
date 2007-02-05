@@ -38,16 +38,13 @@ namespace Nitrogen
 	// kAEAsk                                                 
 	// kAEBefore                                              
 	// kAEBeginning                                           
-	// kAEBeginsWith                                          
 	// kAEBeginTransaction                                    
 	// kAEBold                                                
-	// kAECaseSensEquals                                      
 	// kAECentered                                            
 	// kAEChangeView                                          
 	// kAEClone                                               
 	static const AEEventID kAEClose = AEEventID( ::kAEClose );
 	// kAECondensed                                           
-	// kAEContains                                            
 	static const AEEventID kAECopy = AEEventID( ::kAECopy );
 	static const AEEventClass kAECoreSuite = AEEventClass( ::kAECoreSuite );
 	static const AEEventID kAECountElements = AEEventID( ::kAECountElements );
@@ -62,9 +59,7 @@ namespace Nitrogen
 	// kAEEditGraphic                                         
 	// kAEEmptyTrash                                          
 	// kAEEnd                                                 
-	// kAEEndsWith                                            
 	// kAEEndTransaction                                      
-	// kAEEquals                                              
 	// kAEExpanded                                            
 	// kAEFast                                                
 	// kAEFinderEvents                                        
@@ -77,8 +72,6 @@ namespace Nitrogen
 	// kAEGetInfoSelection                                    
 	// kAEGetPrivilegeSelection                               
 	// kAEGetSuiteInfo                                        
-	// kAEGreaterThan                                         
-	// kAEGreaterThanEquals                                   
 	// kAEGrow                                                
 	// kAEHidden                                              
 	// kAEHiQuality                                           
@@ -86,8 +79,6 @@ namespace Nitrogen
 	// kAEIsUniform                                           
 	// kAEItalic                                              
 	// kAELeftJustified                                       
-	// kAELessThan                                            
-	// kAELessThanEquals                                      
 	// kAELowercase                                           
 	// kAEMakeObjectsVisible                                  
 	static const AEEventClass kAEMiscStandards = AEEventClass( ::kAEMiscStandards );
