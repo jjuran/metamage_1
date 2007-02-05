@@ -24,9 +24,9 @@
 // Christopher Nebel personally gave his blessing to these names at WWDC 2006
 typedef DescType AEObjectClass, AEPropertyID;
 
-typedef DescType AELogicalDescriptor, AEAbsoluteOrdinal, AERelativeDescriptor;
-
 // These I made up
+typedef DescType AEAbsoluteOrdinal;
+
 enum
 {
 	typeObjectClass = 'Clas',
@@ -42,16 +42,15 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Constant types ¥
 	
-	enum AELogicalDescriptor
+	enum AERelativeDescriptor
 	{
-		kAEAND = ::kAEAND,
-		kAEOR  = ::kAEOR,
-		kAENOT = ::kAENOT,
+		kAENext     = ::kAENext,
+		kAEPrevious = ::kAEPrevious,
 		
-		kAELogicalDescriptor_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kAERelativeDescriptor_Max = Nucleus::Enumeration_Traits< ::DescType >::max
 	};
 	
-	typedef AELogicalDescriptor AELogicalOperator;
+	typedef AERelativeDescriptor AERelativeOrdinal;
 	
 	enum AEAbsoluteOrdinal
 	{
@@ -64,15 +63,33 @@ namespace Nitrogen
 		kAEAbsoluteOrdinal_Max = Nucleus::Enumeration_Traits< ::DescType >::max
 	};
 	
-	enum AERelativeDescriptor
+	enum AELogicalOperator
 	{
-		kAENext     = ::kAENext,
-		kAEPrevious = ::kAEPrevious,
+		kAEAND = ::kAEAND,
+		kAEOR  = ::kAEOR,
+		kAENOT = ::kAENOT,
 		
-		kAERelativeDescriptor_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+		kAELogicalOperator_Max = Nucleus::Enumeration_Traits< ::DescType >::max
 	};
 	
-	typedef AERelativeDescriptor AERelativeOrdinal;
+	//typedef AELogicalOperator AELogicalDescriptor;
+	
+	enum AEComparisonOperator
+	{
+		kAEBeginsWith        = ::kAEBeginsWith,
+		kAECaseSensEquals    = ::kAECaseSensEquals,
+		kAEContains          = ::kAEContains,
+		kAEEndsWith          = ::kAEEndsWith,
+		kAEEquals            = ::kAEEquals,
+		kAEGreaterThan       = ::kAEGreaterThan,
+		kAEGreaterThanEquals = ::kAEGreaterThanEquals,
+		kAELessThan          = ::kAELessThan,
+		kAELessThanEquals    = ::kAELessThanEquals,
+		
+		kAEComparisonOperator_Max = Nucleus::Enumeration_Traits< ::DescType >::max
+	};
+	
+	typedef AEComparisonOperator AECompOperator;
 	
 	
 	static const AEKeyForm formAbsolutePosition = AEKeyForm( ::formAbsolutePosition );
@@ -90,15 +107,14 @@ namespace Nitrogen
 	template <> struct DescType_Traits< typeObjectClass > : Nucleus::ConvertingPODFlattener< AEObjectClass, ::AEObjectClass >  {};
 	template <> struct DescType_Traits< typePropertyID >  : Nucleus::ConvertingPODFlattener< AEPropertyID,  ::AEPropertyID  >  {};
 	
-	template <> struct DescType_Traits< typeLogicalDescriptor  > : Nucleus::ConvertingPODFlattener< AELogicalDescriptor,  ::AELogicalDescriptor  >  {};
-	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : Nucleus::ConvertingPODFlattener< AEAbsoluteOrdinal,    ::AEAbsoluteOrdinal    >  {};
-	template <> struct DescType_Traits< typeRelativeDescriptor > : Nucleus::ConvertingPODFlattener< AERelativeDescriptor, ::AERelativeDescriptor >  {};
+	template <> struct DescType_Traits< typeAbsoluteOrdinal    > : Nucleus::ConvertingPODFlattener< AEAbsoluteOrdinal,    ::DescType    >  {};
 	
-	template <> struct DescType_Map_Traits< typeObjectClass        > { static const DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typePropertyID         > { static const DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typeLogicalDescriptor  > { static const DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typeAbsoluteOrdinal    > { static const DescType result = typeType; };
-	template <> struct DescType_Map_Traits< typeRelativeDescriptor > { static const DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeObjectClass     > { static const DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typePropertyID      > { static const DescType result = typeType; };
+	template <> struct DescType_Map_Traits< typeAbsoluteOrdinal > { static const DescType result = typeType; };
+	
+	template <> struct AEKeyword_Traits< keyAECompOperator    > : Type_AEKeyword_Traits< AEComparisonOperator > {};
+	template <> struct AEKeyword_Traits< keyAELogicalOperator > : Type_AEKeyword_Traits< AELogicalOperator    > {};
 	
 	template <> struct AEKeyword_Traits< keyAEDesiredClass > : Type_AEKeyword_Traits< AEObjectClass > {};
 	template <> struct AEKeyword_Traits< keyAEKeyForm      > : Enum_AEKeyword_Traits< AEKeyForm     > {};
@@ -181,7 +197,6 @@ namespace Nitrogen
 	}
 	
 	typedef AEDescList AETokenList;
-	typedef DescType AECompOperator;
 	
 	
 	#pragma mark -
@@ -390,10 +405,10 @@ namespace Nitrogen
 	}
 	
 	template < typename OSLAccessorUPP::ProcPtr accessor >
-	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass  desiredClass,
-	                                                       DescType       containerType,
-	                                                       RefCon         accessorRefCon = RefCon(),
-	                                                       bool           isSysHandler   = false )
+	inline Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass  desiredClass,
+	                                                              DescType       containerType,
+	                                                              RefCon         accessorRefCon = RefCon(),
+	                                                              bool           isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
 		                                             containerType,
@@ -403,10 +418,10 @@ namespace Nitrogen
 	}
 	
 	template < OSLAccessorProcPtr accessor >
-	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
-	                                                       DescType         containerType,
-	                                                       RefCon           accessorRefCon = RefCon(),
-	                                                       bool             isSysHandler   = false )
+	inline Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( AEObjectClass    desiredClass,
+	                                                              DescType         containerType,
+	                                                              RefCon           accessorRefCon = RefCon(),
+	                                                              bool             isSysHandler   = false )
 	{
 		return AEInstallObjectAccessor< Adapt_OSLAccessor< accessor >::ToCallback >
 		(
@@ -462,24 +477,24 @@ namespace Nitrogen
 	}
 	
 	template < class Data >
-	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType  typeCode,
-	                                                          Data**    handle )
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType  typeCode,
+	                                                                 Data**    handle )
 	{
 		return AECreateToken( typeCode, Handle( handle ) );
 	}
 	
 	template < class T >
-	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
-	                                                          Nucleus::Owned< T**, Nucleus::Disposer< Handle > > handle )
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType                                            typeCode,
+	                                                                 Nucleus::Owned< T**, Nucleus::Disposer< Handle > >  handle )
 	{
 		return AECreateToken( typeCode, Nucleus::Owned< Handle >( handle ) );
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
-	                                                          Nucleus::Owned< AEToken, AETokenDisposer > token );
+	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType                                    typeCode,
+	                                                          Nucleus::Owned< AEToken, AETokenDisposer >  token );
 	
 	template < DescType type >
-	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( typename DescType_Traits< type >::Parameter data )
 	{
 		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( AECreateDesc< type >( data ).Release() );
 	}
@@ -495,7 +510,7 @@ namespace Nitrogen
 	}
 	
 	template < bool isRecord >
-	Nucleus::Owned< AEToken, AETokenDisposer > AECreateTokenList()
+	inline Nucleus::Owned< AEToken, AETokenDisposer > AECreateTokenList()
 	{
 		return AECreateTokenList( isRecord );
 	}
