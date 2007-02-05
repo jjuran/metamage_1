@@ -21,17 +21,21 @@ namespace Nitrogen
 			GestaltManagerErrorsRegistrationDependency();
 	};
 	
-	typedef Nucleus::Selector< class GestaltSelector_Tag, ::OSType >::Type GestaltSelector;
+	enum GestaltSelector
+	{
+		gestaltAliasMgrAttr     = ::gestaltAliasMgrAttr,
+		gestaltAppleEventsAttr  = ::gestaltAppleEventsAttr,
+		gestaltFindFolderAttr   = ::gestaltFindFolderAttr,
+		gestaltHelpMgrAttr      = ::gestaltHelpMgrAttr,
+		gestaltMenuMgrAttr      = ::gestaltMenuMgrAttr,
+		gestaltStandardFileAttr = ::gestaltStandardFileAttr,
+		
+		gestaltComponentMgr     = ::gestaltComponentMgr,
+		gestaltQuickTimeVersion = ::gestaltQuickTimeVersion,
+		
+		kGestaltSelector_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+	};
 	
-	static const GestaltSelector gestaltAliasMgrAttr     = GestaltSelector( ::gestaltAliasMgrAttr     );
-	static const GestaltSelector gestaltAppleEventsAttr  = GestaltSelector( ::gestaltAppleEventsAttr  );
-	static const GestaltSelector gestaltFindFolderAttr   = GestaltSelector( ::gestaltFindFolderAttr   );
-	static const GestaltSelector gestaltHelpMgrAttr      = GestaltSelector( ::gestaltHelpMgrAttr      );
-	static const GestaltSelector gestaltMenuMgrAttr      = GestaltSelector( ::gestaltMenuMgrAttr      );
-	static const GestaltSelector gestaltStandardFileAttr = GestaltSelector( ::gestaltStandardFileAttr );
-	
-	static const GestaltSelector gestaltComponentMgr     = GestaltSelector( ::gestaltComponentMgr     );
-	static const GestaltSelector gestaltQuickTimeVersion = GestaltSelector( ::gestaltQuickTimeVersion );
 	
    long Gestalt( GestaltSelector selector );
    long Gestalt( GestaltSelector selector, long defaultValue );
@@ -39,25 +43,25 @@ namespace Nitrogen
    template < GestaltSelector selector > struct GestaltDefault;
    
    template < GestaltSelector selector >
-   long Gestalt()
+   inline long Gestalt()
      {
       return Gestalt( selector, GestaltDefault<selector>::defaultValue );
      }
    
 	template < GestaltSelector selector, SInt32 bitMask >
-	bool Gestalt_Mask()
+	inline bool Gestalt_Mask()
 	{
 		return Gestalt< selector >() & bitMask;
 	}
 	
 	template < GestaltSelector selector, SInt32 bitOffset >
-	bool Gestalt_Bit()
+	inline bool Gestalt_Bit()
 	{
 		return Gestalt_Mask< selector, 1 << bitOffset >();
 	}
 	
 	template < GestaltSelector selector >
-	bool Gestalt_NonZero()
+	inline bool Gestalt_NonZero()
 	{
 		return Gestalt_Mask< selector, 0xffffffff >();
 	}

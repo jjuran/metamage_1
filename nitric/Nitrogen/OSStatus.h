@@ -142,7 +142,7 @@ namespace Nitrogen
      };
    
    template < ::OSStatus error >
-   void RegisterOSStatus()
+   inline void RegisterOSStatus()
      {
       Nucleus::RegisterErrorCode<OSStatus, error>();
      }

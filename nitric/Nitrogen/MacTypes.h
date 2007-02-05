@@ -95,13 +95,13 @@ namespace Nitrogen
 	
    // Nitrogen uses floating point types in preference to fixed-point types.
    template < class Floating, int fractionBits, class Integral >
-   Floating FixedToFloatingPoint( Integral in )
+   inline Floating FixedToFloatingPoint( Integral in )
      {
       return std::ldexp( static_cast<Floating>(in), -fractionBits );
      }
 
    template < class Integral, int fractionBits, class Floating >
-   Integral FloatingToFixedPoint( Floating in )
+   inline Integral FloatingToFixedPoint( Floating in )
      {
       return static_cast< Integral >( Nucleus::CStd::nearbyint( std::ldexp( in, fractionBits ) ) );
      }

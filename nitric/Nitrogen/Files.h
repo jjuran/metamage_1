@@ -272,8 +272,8 @@ namespace Nitrogen
 	               void *        buffer );
 	
 	template < class Element, std::size_t count >
-	SInt32 FSRead( FSFileRefNum  file,
-	               Element       (&buffer)[count] )
+	inline SInt32 FSRead( FSFileRefNum  file,
+	                      Element       (&buffer)[count] )
 	{
 		return FSRead( file, count * sizeof (Element), buffer );
 	}
@@ -283,8 +283,8 @@ namespace Nitrogen
 	                const void *  buffer );
 	
 	template < class Element, std::size_t count >
-	SInt32 FSWrite( FSFileRefNum   file,
-	                const Element  (&buffer)[count] )
+	inline SInt32 FSWrite( FSFileRefNum   file,
+	                       const Element  (&buffer)[count] )
 	{
 		return FSWrite( file, count * sizeof (Element), buffer );
 	}
@@ -813,7 +813,7 @@ namespace Nitrogen
      };
    
    template< ::FSCatalogInfoBitmap bit >
-   typename FSGetCatalogInfo_Traits<bit>::Result FSGetCatalogInfo( const FSRef& ref )
+   inline typename FSGetCatalogInfo_Traits<bit>::Result FSGetCatalogInfo( const FSRef& ref )
      {
       FSCatalogInfo info;
       FSGetCatalogInfo( ref, bit, &info, 0, 0, 0 );
@@ -851,7 +851,7 @@ namespace Nitrogen
      };
 
    template< ::FSCatalogInfoBitmap bit >
-   void FSSetCatalogInfo( const FSRef& ref, typename FSSetCatalogInfo_Traits<bit>::ParameterType value )
+   inline void FSSetCatalogInfo( const FSRef& ref, typename FSSetCatalogInfo_Traits<bit>::ParameterType value )
      {
       FSCatalogInfo info; 
       FSCatalogInfoBit_Traits<bit>::Set( info, value );
@@ -997,7 +997,7 @@ namespace Nitrogen
      };
 
    template < ::FSCatalogInfoBitmap whichInfo > class FSCatalogInfo_Container;
-   template < ::FSCatalogInfoBitmap whichInfo > FSCatalogInfo_Container<whichInfo> FSCatalogInfos();
+   template < ::FSCatalogInfoBitmap whichInfo > inline FSCatalogInfo_Container<whichInfo> FSCatalogInfos();
    
    template < ::FSCatalogInfoBitmap whichInfo >
    class FSCatalogInfo_Container: public IndexUntilFailureContainer< FSCatalogInfo_ContainerSpecifics<whichInfo> >
@@ -1011,7 +1011,7 @@ namespace Nitrogen
      };
    
    template < ::FSCatalogInfoBitmap whichInfo >
-   FSCatalogInfo_Container<whichInfo> FSCatalogInfos()
+   inline FSCatalogInfo_Container<whichInfo> FSCatalogInfos()
      {
       return FSCatalogInfo_Container<whichInfo>();
      }
@@ -1157,17 +1157,17 @@ namespace Nitrogen
      }
 
    template < class Element, std::size_t count >
-   ByteCount FSReadFork( FSForkRefNum fork,
-                         FSIOPosMode  positionMode,
-                         SInt64       positionOffset,
-                         Element      (&buffer)[count] )
+   inline ByteCount FSReadFork( FSForkRefNum fork,
+                                FSIOPosMode  positionMode,
+                                SInt64       positionOffset,
+                                Element      (&buffer)[count] )
      {
       return FSReadFork( fork, positionMode, positionOffset, count*sizeof(Element), buffer );
      }
 
    template < class Element, std::size_t count >
-   ByteCount FSReadFork( FSForkRefNum fork,
-                         Element      (&buffer)[count] )
+   inline ByteCount FSReadFork( FSForkRefNum fork,
+                                Element      (&buffer)[count] )
      {
       return FSReadFork( fork, count*sizeof(Element), buffer );
      }
@@ -1186,17 +1186,17 @@ namespace Nitrogen
      }
 
    template < class Element, std::size_t count >
-   ByteCount FSWriteFork( FSForkRefNum  fork,
-                          FSIOPosMode   positionMode,
-                          SInt64        positionOffset,
-                          const Element (&buffer)[count] )
+   inline ByteCount FSWriteFork( FSForkRefNum  fork,
+                                 FSIOPosMode   positionMode,
+                                 SInt64        positionOffset,
+                                 const Element (&buffer)[count] )
      {
       return FSWriteFork( fork, positionMode, positionOffset, count*sizeof(Element), buffer );
      }
 
    template < class Element, std::size_t count >
-   ByteCount FSWriteFork( FSForkRefNum  fork,
-                          const Element (&buffer)[count] )
+   inline ByteCount FSWriteFork( FSForkRefNum  fork,
+                                 const Element (&buffer)[count] )
      {
       return FSWriteFork( fork, count*sizeof(Element), buffer );
      }
@@ -1425,7 +1425,7 @@ namespace Nitrogen
      };
    
    template< ::FSVolumeInfoBitmap bit >
-   typename FSGetVolumeInfo_Traits<bit>::Result FSGetVolumeInfo( FSVolumeRefNum volume )
+   inline typename FSGetVolumeInfo_Traits<bit>::Result FSGetVolumeInfo( FSVolumeRefNum volume )
      {
       FSVolumeInfo info;
       FSGetVolumeInfo( volume, 0, bit, &info, 0, 0 );
@@ -1433,7 +1433,7 @@ namespace Nitrogen
      }
    
    template< ::FSVolumeInfoBitmap bit >
-   typename FSGetVolumeInfo_Traits<bit>::Result FSGetVolumeInfo( FSVolumeIndex volume )
+   inline typename FSGetVolumeInfo_Traits<bit>::Result FSGetVolumeInfo( FSVolumeIndex volume )
      {
       FSVolumeInfo info;
       FSGetVolumeInfo( volume, 0, bit, &info, 0, 0 );
@@ -1511,7 +1511,7 @@ namespace Nitrogen
      };
 
    template < ::FSVolumeInfoBitmap whichInfo > class VolumeInfo_Container;
-   template < ::FSVolumeInfoBitmap whichInfo > VolumeInfo_Container<whichInfo> VolumeInfos();
+   template < ::FSVolumeInfoBitmap whichInfo > inline VolumeInfo_Container<whichInfo> VolumeInfos();
    
    template < ::FSVolumeInfoBitmap whichInfo >
    class VolumeInfo_Container: public Nucleus::IndexUntilFailureContainer< VolumeInfo_ContainerSpecifics<whichInfo> >
@@ -1525,7 +1525,7 @@ namespace Nitrogen
      };
    
    template < ::FSVolumeInfoBitmap whichInfo >
-   VolumeInfo_Container<whichInfo> VolumeInfos()
+   inline VolumeInfo_Container<whichInfo> VolumeInfos()
      {
       return VolumeInfo_Container<whichInfo>();
      }
@@ -1606,7 +1606,7 @@ namespace Nitrogen
      };
 
    template< ::FSVolumeInfoBitmap bit >
-   void FSSetVolumeInfo( FSVolumeRefNum volume, typename FSSetVolumeInfo_Traits<bit>::ParameterType value )
+   inline void FSSetVolumeInfo( FSVolumeRefNum volume, typename FSSetVolumeInfo_Traits<bit>::ParameterType value )
      {
       FSVolumeInfo info;
       FSVolumeInfoBit_Traits<bit>::Set( info, value );
@@ -1624,8 +1624,8 @@ namespace Nitrogen
                        UInt32       maxPathSize );
 
    template < UInt32 size >
-   void FSRefMakePath( const FSRef& ref,
-                       UInt8 (&path)[size] )
+   inline void FSRefMakePath( const FSRef& ref,
+                              UInt8 (&path)[size] )
      {
       FSRefMakePath( ref, path, size );
      }

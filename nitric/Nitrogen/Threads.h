@@ -244,11 +244,11 @@ namespace Nitrogen
 	// Level 1, creates static UPP
 	
 	template < ::ThreadEntryProcPtr threadEntry >
-	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
-	                                      void*           threadParam,
-	                                      Size            stackSize,
-	                                      ThreadOptions   options,
-	                                      void**          threadResult = NULL )
+	inline Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,
+	                                             void*           threadParam,
+	                                             Size            stackSize,
+	                                             ThreadOptions   options,
+	                                             void**          threadResult = NULL )
 	{
 		return NewThread( threadStyle,
 		                  StaticUPP< ThreadEntryUPP, threadEntry >(),

@@ -91,7 +91,7 @@ namespace Nitrogen
 	Handle CheckResource( Handle r );
 	
 	template < class T >
-	T** CheckResource( T** r )
+	inline T** CheckResource( T** r )
 	{
 		return Handle_Cast< T >( CheckResource( Handle( r ) ) );
 	}
@@ -382,39 +382,39 @@ namespace Nitrogen
 	
 	
 	template < ResType type >
-	typename ResType_Traits< type >::Result GetIndResource( short index )
+	inline typename ResType_Traits< type >::Result GetIndResource( short index )
 	{
 		return ResType_Traits< type >::MakeFromHandle( GetIndResource( type, index ) );
 	}
 	
 	template < ResType type >
-	typename ResType_Traits< type >::Result Get1IndResource( short index )
+	inline typename ResType_Traits< type >::Result Get1IndResource( short index )
 	{
 		return ResType_Traits< type >::MakeFromHandle( Get1IndResource( type, index ) );
 	}
 	
 	template < ResType type >
-	typename ResType_Traits< type >::Result GetResource( ResID resID )
+	inline typename ResType_Traits< type >::Result GetResource( ResID resID )
 	{
 		return ResType_Traits< type >::MakeFromHandle( GetResource( type, resID ) );
 	}
 	
 	template < ResType type >
-	typename ResType_Traits< type >::Result Get1Resource( ResID resID )
+	inline typename ResType_Traits< type >::Result Get1Resource( ResID resID )
 	{
 		return ResType_Traits< type >::MakeFromHandle( Get1Resource( type, resID ) );
 	}
 	
 	template < class Data >
-	Nucleus::Owned< Data**, Nucleus::Disposer< Handle > > DetachResource( Data** h )
+	inline Nucleus::Owned< Data**, Nucleus::Disposer< Handle > > DetachResource( Data** h )
 	{
 		return Handle_Cast< Data >( DetachResource( Handle( h ) ) );
 	}
 	
 	template < ResType type >
-	Handle AddResource( typename ResType_Traits< type >::Parameter  param,
-	                    ResID                                       id,
-	                    ConstStr255Param                            name = "\p" )
+	inline Handle AddResource( typename ResType_Traits< type >::Parameter  param,
+	                           ResID                                       id,
+	                           ConstStr255Param                            name = "\p" )
 	{
 		return AddResource( ResType_Traits< type >::MakeIntoHandle( param ), type, id, name );
 	}

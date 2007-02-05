@@ -355,7 +355,7 @@ namespace Nitrogen
 
    
    template < class NitrogenUPP >
-   Nucleus::Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
+   inline Nucleus::Owned< NitrogenUPP > NewUPP( typename NitrogenUPP::ProcPtr function )
      {
       return Nucleus::Owned<NitrogenUPP>::Seize( NitrogenUPP::Details::Create( function ) );
      }
