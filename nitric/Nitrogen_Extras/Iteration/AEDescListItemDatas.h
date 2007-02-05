@@ -216,14 +216,14 @@ namespace Nitrogen
 	};
 	
 	template < DescType type >
-	AEDescList_ItemData_ValueIterator< type >
+	inline AEDescList_ItemData_ValueIterator< type >
 	AEDescList_ItemData_ValuesBegin( const AEDescList& list )
 	{
 		return AEDescList_ItemData_ValueIterator< type >( list, 0 );
 	}
 	
 	template < DescType type >
-	AEDescList_ItemData_ValueIterator< type >
+	inline AEDescList_ItemData_ValueIterator< type >
 	AEDescList_ItemData_ValuesEnd( const AEDescList& list )
 	{
 		return AEDescList_ItemData_ValueIterator< type >( list, AECountItems( list ) );
@@ -252,7 +252,7 @@ namespace Nitrogen
 	};
 	
 	template < DescType type, class Disposer >
-	AEDescList_ItemData_BackInsertionIterator< type, Disposer >
+	inline AEDescList_ItemData_BackInsertionIterator< type, Disposer >
 	AEDescList_ItemData_BackInserter( Nucleus::Owned< AEDescList, Disposer >& list )
 	{
 		return AEDescList_ItemData_BackInsertionIterator< type, Disposer >( list );

@@ -153,7 +153,7 @@ namespace Nitrogen
 	};
 	
 	template < class Disposer >
-	AEDescList_Item_BackInsertionIterator< Disposer >
+	inline AEDescList_Item_BackInsertionIterator< Disposer >
 	AEDescList_Item_BackInserter( Nucleus::Owned< AEDescList, Disposer >& list )
 	{
 		return AEDescList_Item_BackInsertionIterator< Disposer >( list );
