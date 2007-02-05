@@ -153,7 +153,7 @@ namespace Nitrogen
 	                              ControlActionUPP  actionProc = NULL );
 	
 	template < typename ControlActionUPP::ProcPtr actionProc >
-	ControlPartCode TrackControl( ControlRef theControl, Point startPoint )
+	inline ControlPartCode TrackControl( ControlRef theControl, Point startPoint )
 	{
 		return TrackControl( theControl,
 		                     startPoint,
@@ -161,7 +161,7 @@ namespace Nitrogen
 	}
 	
 	template < ControlActionProcPtr actionProc >
-	ControlPartCode TrackControl( ControlRef theControl, Point startPoint )
+	inline ControlPartCode TrackControl( ControlRef theControl, Point startPoint )
 	{
 		return TrackControl< Adapt_ControlAction< actionProc >::ToCallback >( theControl,
 		                                                                      startPoint );
@@ -246,13 +246,13 @@ namespace Nitrogen
 	void SetControlAction( ControlRef control, ControlActionUPP actionProc );
 	
 	template < typename ControlActionUPP::ProcPtr actionProc >
-	void SetControlAction( ControlRef control )
+	inline void SetControlAction( ControlRef control )
 	{
 		SetControlAction( control, StaticUPP< ControlActionUPP, actionProc >() );
 	}
 	
 	template < ControlActionProcPtr actionProc >
-	void SetControlAction( ControlRef control )
+	inline void SetControlAction( ControlRef control )
 	{
 		SetControlAction< Adapt_ControlAction< actionProc >::ToCallback >( control );
 	}
@@ -310,9 +310,9 @@ namespace Nitrogen
 	};
 	
    template < ::ResType inTagName >
-   void SetControlData( ControlRef                                               inControl,
-                        ControlPartCode                                          inPart,
-                        typename SetControlData_Traits< inTagName >::InData_Type inData )
+   inline void SetControlData( ControlRef                                               inControl,
+                               ControlPartCode                                          inPart,
+                               typename SetControlData_Traits< inTagName >::InData_Type inData )
      {
       typedef SetControlData_Traits< inTagName > Traits;
       
@@ -323,8 +323,8 @@ namespace Nitrogen
      }
 
    template < ::ResType inTagName >
-   void SetControlData( ControlRef                                               inControl,
-                        typename SetControlData_Traits< inTagName >::InData_Type inData )
+   inline void SetControlData( ControlRef                                               inControl,
+                               typename SetControlData_Traits< inTagName >::InData_Type inData )
      {
       return SetControlData< inTagName >( inControl, kControlEntireControl, inData );
      }
@@ -373,7 +373,7 @@ namespace Nitrogen
 	};
 	
    template < ::ResType inTagName >
-   typename GetControlData_Traits<inTagName>::Result
+   inline typename GetControlData_Traits<inTagName>::Result
    GetControlData( ControlRef        inControl,
                    ControlPartCode   inPart = kControlEntireControl )
      {
