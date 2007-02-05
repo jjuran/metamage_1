@@ -12,7 +12,7 @@
 #include FRAMEWORK_HEADER(AE,AppleEvents.h)
 #endif
 
-// Nitrogen core
+// Nucleus
 #ifndef NUCLEUS_OBJECTPARAMETERTRAITS_H
 #include "Nucleus/ObjectParameterTraits.h"
 #endif
@@ -20,7 +20,7 @@
 #include "Nucleus/Owned.h"
 #endif
 
-// Nitrogen Carbon support
+// Nitrogen
 #ifndef NITROGEN_AEDATAMODEL_H
 #include "Nitrogen/AEDataModel.h"
 #endif
@@ -31,18 +31,6 @@
 
 namespace Nitrogen
 {
-	
-	static const AEKeyword keyDirectObject        = AEKeyword( ::keyDirectObject        );
-	static const AEKeyword keyErrorNumber         = AEKeyword( ::keyErrorNumber         );
-	static const AEKeyword keyErrorString         = AEKeyword( ::keyErrorString         );
-	static const AEKeyword keyProcessSerialNumber = AEKeyword( ::keyProcessSerialNumber );
-	static const AEKeyword keyPreDispatch         = AEKeyword( ::keyPreDispatch         );
-	static const AEKeyword keySelectProc          = AEKeyword( ::keySelectProc          );
-                      
-	static const AEKeyword keyAERecorderCount     = AEKeyword( ::keyAERecorderCount     );
-                      
-	static const AEKeyword keyAEVersion           = AEKeyword( ::keyAEVersion           );
-	
 	
 	static const AEEventClass kCoreEventClass = AEEventClass( ::kCoreEventClass );
 	
@@ -71,6 +59,8 @@ namespace Nitrogen
 		
 		kAEEventSource_Max = Nucleus::Enumeration_Traits< ::AEEventSource >::max
 	};
+	
+	template <> struct AEKeyword_Traits< keyEventSourceAttr > : Integer_AEKeyword_Traits< AEEventSource, SInt16 > {};
 	
    struct AEEventHandler
      {
@@ -149,9 +139,9 @@ namespace Nitrogen
 				         *reply,
 				         reinterpret_cast< RefConType >( refCon ) );
 			}
-			catch ( OSStatus err )
+			catch ( ... )
 			{
-				return err.Get();
+				return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( errAEEventFailed ) );
 			}
 			
 			return noErr;
@@ -170,9 +160,9 @@ namespace Nitrogen
 				handler( *appleEvent,
 				         *reply );
 			}
-			catch ( OSStatus err )
+			catch ( ... )
 			{
-				return err.Get();
+				return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(), OSStatus( errAEEventFailed ) );
 			}
 			
 			return noErr;
