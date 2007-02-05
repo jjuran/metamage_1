@@ -16,6 +16,9 @@
 #ifndef __AEOBJECTS__
 #include FRAMEWORK_HEADER(AE,AEObjects.h)
 #endif
+#ifndef __APPLEEVENTS__
+#include FRAMEWORK_HEADER(AE,AppleEvents.h)
+#endif
 #ifndef __AEREGISTRY__
 #include FRAMEWORK_HEADER(AE,AERegistry.h)
 #endif
@@ -70,6 +73,20 @@ namespace Nitrogen
 		keyAEMarkProc        = ::keyAEMarkProc,
 		keyAEAdjustMarksProc = ::keyAEAdjustMarksProc,
 		keyAEGetErrDescProc  = ::keyAEGetErrDescProc,
+		
+		// AppleEvents
+		// -----------
+		
+		keyDirectObject        = ::keyDirectObject,
+		keyErrorNumber         = ::keyErrorNumber,
+		keyErrorString         = ::keyErrorString,
+		keyProcessSerialNumber = ::keyProcessSerialNumber,
+		keyPreDispatch         = ::keyPreDispatch,
+		keySelectProc          = ::keySelectProc,
+		
+		keyAERecorderCount     = ::keyAERecorderCount,
+		
+		keyAEVersion           = ::keyAEVersion,
 		
 		// AERegistry
 		// ----------
