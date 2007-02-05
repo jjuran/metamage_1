@@ -62,13 +62,9 @@ namespace Genie
 		       :          0;
 	}
 	
-	static int ComparePascalStrings( const unsigned char* a, const unsigned char* b )
+	static int less_PascalStrings( const unsigned char* a, const unsigned char* b )
 	{
-		int result = std::lexicographical_compare( a, a + 1 + a[0], b, b + 1 + b[0] );
-		
-		if ( result == 0 )  result = cmp( a[0], b[0] );
-		
-		return result;
+		return std::lexicographical_compare( a + 1, a + 1 + a[0], b + 1, b + 1 + b[0] );
 	}
 	
 	struct less_FSSpecs
@@ -77,8 +73,7 @@ namespace Genie
 		{
 			return   a.vRefNum != b.vRefNum ? a.vRefNum > b.vRefNum  // -1 before -2
 			       : a.parID   != b.parID   ? a.parID   < b.parID
-			       : a.name[0] != b.name[0] ? a.name[0] < b.name[0]  // ok to sort by length
-			       :                          ComparePascalStrings( a.name, b.name ) < 0;
+			       :                          less_PascalStrings( a.name, b.name );
 		}
 	};
 	
