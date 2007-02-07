@@ -31,7 +31,9 @@
 #include "HexStrings.hh"
 
 // Kerosene
+#if TARGET_RT_MAC_CFM
 #include "SystemCalls.hh"
+#endif
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -258,16 +260,14 @@ namespace htget
 	static std::string GetHTTPHeader( const std::string&  headerName,
 	                                  const std::string&  allHeaders )
 	{
-		using std::string;
-		
-		typedef string::size_type Position;
+		typedef std::size_t Position;
 		
 		// FIXME:  Be case-insensitive.
 		
 		// Find the header in the headers
 		Position headerPos = allHeaders.find( headerName );
 		
-		if ( headerPos == string::npos )
+		if ( headerPos == allHeaders.npos )
 		{
 			return "";
 		}
@@ -280,15 +280,13 @@ namespace htget
 	
 	static std::string GetHTTPHeaderValue( const std::string& headerName, const std::string& allHeaders )
 	{
-		using std::string;
+		typedef std::size_t Position;
 		
-		typedef string::size_type Position;
-		
-		string header = GetHTTPHeader( headerName, allHeaders );
+		std::string header = GetHTTPHeader( headerName, allHeaders );
 		
 		Position valuePos = header.find_first_not_of( " \t", headerName.size() + 1 );
 		
-		return header.substr( valuePos, string::npos );
+		return header.substr( valuePos, header.npos );
 	}
 	
 	static N::OSType MakeOSType( const std::string& hexCodes )
@@ -296,31 +294,45 @@ namespace htget
 		return NN::Convert< N::OSType >( Bits::DecodeHex( hexCodes ) );
 	}
 	
+	static NN::Owned< P7::FileDescriptor > CreateAndOpenFileWithSignature( const std::string& pathname, const TypeAndCreator& sig )
+	{
+		int open_flags = O_WRONLY;
+		
+	#if TARGET_RT_MAC_CFM
+		
+		N::FSpCreate( Path2FSS( pathname ),
+		              sig.creator,
+		              sig.type );
+		
+	#else
+		
+		open_flags |= O_CREAT | O_EXCL;
+		
+	#endif
+		
+		return P7::Open( pathname.c_str(), open_flags );
+	}
+	
 	void HTTPClientTransaction::ReceiveData( const char* data, unsigned int byteCount )
 	{
-		using std::string;
-		
-		typedef string::size_type size_type;
-		const size_type npos = string::npos;
-		
 		// Are we receiving headers or content?
 		if ( !myReceivedAllHeadersFlag )
 		{
 			// We haven't received all the headers yet.
 			// We need to concatenate all received data to check for the EOH marker.
-			myReceivedData += string( data, byteCount );
-			size_type eohMarker = myReceivedData.find( "\r\n\r\n" );
+			myReceivedData += std::string( data, byteCount );
+			std::size_t eohMarker = myReceivedData.find( "\r\n\r\n" );
 			
-			if ( eohMarker != npos )
+			if ( eohMarker != myReceivedData.npos )
 			{
 				// Found it, so we've got all the headers now
 				myReceivedAllHeadersFlag = true;
 				
 				// The first CRLF ends the headers
-				size_type endOfHeaders = eohMarker + 2;
+				std::size_t endOfHeaders = eohMarker + 2;
 				
 				// The content starts after the second
-				size_type startOfContent = endOfHeaders + 2;
+				std::size_t startOfContent = endOfHeaders + 2;
 				
 				std::string allHeaders = myReceivedData.substr( 0, startOfContent );
 				
@@ -350,15 +362,11 @@ namespace htget
 					}
 					catch ( ... ) {}
 					
-					N::FSpCreate( Path2FSS( gSaveLocation ),
-					              signature.creator,
-					              signature.type );
-					
-					myReceiver = Receive( P7::Open( gSaveLocation.c_str(), O_WRONLY ) );
+					myReceiver = Receive( CreateAndOpenFileWithSignature( gSaveLocation, signature ) );
 				}
 				
 				// Anything left over is content
-				size_type leftOver = byteCount - startOfContent;
+				std::size_t leftOver = byteCount - startOfContent;
 				myContentBytesReceived = leftOver;
 				
 				// Start writing content if we have any
@@ -368,9 +376,9 @@ namespace htget
 				}
 				
 				/*
-				string contentLengthName = "Content-Length:";
+				std::string contentLengthName = "Content-Length:";
 				// Find the Content-Length header in the headers
-				size_type contentLengthHeaderPos = myReceivedData.find( contentLengthName );
+				std::size_t contentLengthHeaderPos = myReceivedData.find( contentLengthName );
 				
 				// If we can't find it, assume no content
 				if ( contentLengthHeaderPos == npos )
@@ -381,13 +389,13 @@ namespace htget
 				}
 				
 				// Skip over the key and locate the value
-				size_type contentLengthPos = contentLengthHeaderPos + contentLengthName.size() + 1;
+				std::size_t contentLengthPos = contentLengthHeaderPos + contentLengthName.size() + 1;
 				
 				// Get the length of the value (not the most efficient way, but it works)
-				size_type contentLengthLen = myReceivedData.substr( contentLengthPos, npos ).find( "\r\n" );
+				std::size_t contentLengthLen = myReceivedData.substr( contentLengthPos, npos ).find( "\r\n" );
 				
 				// Get the value
-				string contentLength = myReceivedData.substr( contentLengthPos, contentLengthLen );
+				std::string contentLength = myReceivedData.substr( contentLengthPos, contentLengthLen );
 				*/
 				
 				try
@@ -420,28 +428,19 @@ namespace htget
 	                      std::string& outPort,
 	                      std::string& outURLpath )
 	{
-		using std::string;
-		/*
-		// Should work but doesn't
-		using string::size_type;
-		using string::npos;
-		*/
-		typedef string::size_type size_type;
-		const size_type npos = string::npos;
+		std::size_t colonSlashSlash = url.find( "://" );
 		
-		size_type colonSlashSlash = url.find( "://" );
-		
-		if ( colonSlashSlash == npos )
+		if ( colonSlashSlash == url.npos )
 		{
 			return false;
 		}
 		
 		outURLScheme = url.substr( 0, colonSlashSlash );
 		
-		size_type hostnameStart = colonSlashSlash + 3;
-		size_type slash = url.find( "/", hostnameStart );
-		size_type colon = url.find( ":", hostnameStart );
-		size_type hostnameEnd = std::min( slash, colon );
+		std::size_t hostnameStart = colonSlashSlash + 3;
+		std::size_t slash = url.find( "/", hostnameStart );
+		std::size_t colon = url.find( ":", hostnameStart );
+		std::size_t hostnameEnd = std::min( slash, colon );
 		
 		outHostname = url.substr( hostnameStart, hostnameEnd - hostnameStart );
 		
@@ -450,7 +449,7 @@ namespace htget
 			outPort = url.substr( colon + 1, slash - (colon + 1) );
 		}
 		
-		outURLpath = (slash == npos) ? string( "/" ) : url.substr( slash, npos );
+		outURLpath = (slash == url.npos) ? std::string( "/" ) : url.substr( slash, url.npos );
 		
 		return true;
 	}
@@ -471,15 +470,13 @@ namespace htget
 
 static std::string DocName( const std::string& urlPath )
 {
-	using std::string;
-	
-	string::size_type lastSlash = urlPath.find_last_of( "/" );
+	std::size_t lastSlash = urlPath.find_last_of( "/" );
 	
 	// Skip the slash.
 	// If there wasn't one, then lastSlash == string::npos == 0xFFFFFFFF == -1.
 	// Adding one then yields zero, which is exactly what we want.
 	
-	return urlPath.substr( lastSlash + 1, string::npos );
+	return urlPath.substr( lastSlash + 1, urlPath.npos );
 }
 
 
