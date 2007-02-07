@@ -18,7 +18,7 @@ namespace Vectoria
 	
 	
 	template < class Source, class Transform >
-	Source Transformation( const Source& source, const Transform& xform )
+	inline Source Transformation( const Source& source, const Transform& xform )
 	{
 		return xform * source;
 	}
@@ -66,7 +66,7 @@ namespace Vectoria
 	typedef Translation_T< double > Translation;
 	
 	template < class Num >
-	Matrix< Num, 4, 4 > Translation_T< Num >::Make() const
+	inline Matrix< Num, 4, 4 > Translation_T< Num >::Make() const
 	{
 		Matrix< Num, 4, 4 > matrix = IdentityMatrix::Make< Num, 4 >();
 		
@@ -191,7 +191,7 @@ namespace Vectoria
 	typedef Scale_T< double > Scale;
 	
 	template < class Num >
-	Matrix< Num, 4, 4 > Scale_T< Num >::Make() const
+	inline Matrix< Num, 4, 4 > Scale_T< Num >::Make() const
 	{
 		Matrix< Num, 4, 4 > matrix = IdentityMatrix::Make< Num, 4 >();
 		

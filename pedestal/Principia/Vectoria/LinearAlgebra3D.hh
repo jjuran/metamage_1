@@ -16,7 +16,7 @@ namespace Vectoria
 {
 	
 	template < class Vector, class Plane >
-	bool LineIntersectsPlane( Vector& V, const Plane& L )
+	inline bool LineIntersectsPlane( Vector& V, const Plane& L )
 	{
 		return DotProduct( L, V ) != 0;
 	}

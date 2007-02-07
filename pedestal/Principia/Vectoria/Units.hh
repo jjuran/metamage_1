@@ -79,20 +79,20 @@ namespace Vectoria
 	};
 	
 	template < class Category, class Conversion >
-	double Value( const Units< Category, Conversion >& val )
+	inline double Value( const Units< Category, Conversion >& val )
 	{
 		return val.Value();
 	}
 	
 	template < class Category, class Conversion >
-	Units< Category, Identity_Conversion > Normal( const Units< Category, Conversion >& val )
+	inline Units< Category, Identity_Conversion > Normal( const Units< Category, Conversion >& val )
 	{
 		return Units< Category, Identity_Conversion >( val.NormalizedValue() );
 	}
 	
 	// Negate
 	template < class Category, class Conversion >
-	Units< Category, Conversion > operator-( const Units< Category, Conversion >& x )
+	inline Units< Category, Conversion > operator-( const Units< Category, Conversion >& x )
 	{
 		typedef Units< Category, Conversion > Unit;
 		
@@ -101,8 +101,8 @@ namespace Vectoria
 	
 	// Add two values in the same units
 	template < class Category, class Conversion >
-	Units< Category, Conversion > operator+( const Units< Category, Conversion >&  one,
-	                                         const Units< Category, Conversion >&  other )
+	inline Units< Category, Conversion > operator+( const Units< Category, Conversion >&  one,
+	                                                const Units< Category, Conversion >&  other )
 	{
 		typedef Units< Category, Conversion > Unit;
 		
@@ -111,8 +111,8 @@ namespace Vectoria
 	
 	// Subtract one value from another in the same units
 	template < class Category, class Conversion >
-	Units< Category, Conversion > operator-( const Units< Category, Conversion >&  one,
-	                                         const Units< Category, Conversion >&  other )
+	inline Units< Category, Conversion > operator-( const Units< Category, Conversion >&  one,
+	                                                const Units< Category, Conversion >&  other )
 	{
 		typedef Units< Category, Conversion > Unit;
 		
@@ -121,8 +121,8 @@ namespace Vectoria
 	
 	// Multiply a value by a coefficient factor
 	template < class Category, class Conversion >
-	Units< Category, Conversion > operator*( const Units< Category, Conversion >&  one,
-	                                         double                                factor )
+	inline Units< Category, Conversion > operator*( const Units< Category, Conversion >&  one,
+	                                                double                                factor )
 	{
 		typedef Units< Category, Conversion > Unit;
 		
@@ -131,8 +131,8 @@ namespace Vectoria
 	
 	// Divide a value by a coefficient divisor
 	template < class Category, class Conversion >
-	Units< Category, Conversion > operator/( const Units< Category, Conversion >&  one,
-	                                         double                                divisor )
+	inline Units< Category, Conversion > operator/( const Units< Category, Conversion >&  one,
+	                                                double                                divisor )
 	{
 		typedef Units< Category, Conversion > Unit;
 		
@@ -141,8 +141,8 @@ namespace Vectoria
 	
 	// Divide a value by another in the same units
 	template < class Category, class Conversion >
-	double operator/( const Units< Category, Conversion >&  one,
-	                  const Units< Category, Conversion >&  other )
+	inline double operator/( const Units< Category, Conversion >&  one,
+	                         const Units< Category, Conversion >&  other )
 	{
 		return one.Value() / other.Value();
 	}

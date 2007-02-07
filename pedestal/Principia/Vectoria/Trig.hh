@@ -18,20 +18,20 @@ namespace Vectoria
 	const double pi = piOver2 * 2;
 	
 	template < class Num, class Angle >
-	void Polar2XY( Num    r,
-	               Angle  theta,
-	               Num&   x,
-	               Num&   y )
+	inline void Polar2XY( Num    r,
+	                      Angle  theta,
+	                      Num&   x,
+	                      Num&   y )
 	{
 		x = r * std::cos( theta );
 		y = r * std::sin( theta );
 	}
 	
 	template < class Num, class Angle >
-	void XY2Polar( Num     x,
-	               Num     y,
-	               Num&    r,
-	               Angle&  theta )
+	inline void XY2Polar( Num     x,
+	                      Num     y,
+	                      Num&    r,
+	                      Angle&  theta )
 	{
 		theta = (x == 0) ? ( (y >= 0) ?  pi/2
 		                              : -pi/2 )

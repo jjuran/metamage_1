@@ -43,14 +43,14 @@ namespace Vectoria
 	
 	// FIXME:  These two functions belong elsewhere.
 	template < class Num >
-	int Compare( Num a, Num b )
+	inline int Compare( Num a, Num b )
 	{
 		return (a < b) ? -1 :
 		       (b < a) ?  1 : 0;
 	}
 	
 	template < class Num >
-	int sign( Num inNum )
+	inline int sign( Num inNum )
 	{
 		return Compare( inNum, 0.0 );
 	}

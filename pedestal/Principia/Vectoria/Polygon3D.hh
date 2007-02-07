@@ -59,13 +59,13 @@ namespace Vectoria
 	}
 	
 	template < class Points >
-	Vector3D::Type LeadingTangent( const Points& points )
+	inline Vector3D::Type LeadingTangent( const Points& points )
 	{
 		return points[ 1 ] - points[ 0 ];
 	}
 	
 	template < class Points >
-	Vector3D::Type FaceNormal( const Points& points )
+	inline Vector3D::Type FaceNormal( const Points& points )
 	{
 		return CrossProduct( points[ 1 ] - points[ 0 ],
 		                     points[ 2 ] - points[ 0 ] );
@@ -78,7 +78,7 @@ namespace Vectoria
 	}
 	
 	template < class Points >
-	Plane3D::Type PlaneVector( const Points& points )
+	inline Plane3D::Type PlaneVector( const Points& points )
 	{
 		Vector3D::Type normal = FaceNormal( points );
 		
@@ -88,7 +88,7 @@ namespace Vectoria
 	}
 	
 	template < class Points >
-	Point2D::Type ProjectionOfPointOntoPolygon( const Points& points, const Point3D::Type& pt )
+	inline Point2D::Type ProjectionOfPointOntoPolygon( const Points& points, const Point3D::Type& pt )
 	{
 		Vector3D::Type v = pt - points[ 0 ];
 		Vector3D::Type tangent = LeadingTangent( points );

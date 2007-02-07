@@ -26,14 +26,14 @@ namespace Vectoria
 	};
 	
 	template < class Component, unsigned Length >
-	unsigned Dimensionality( const Matrix< Component, Length, 1 >& )
+	inline unsigned Dimensionality( const Matrix< Component, Length, 1 >& )
 	{
 		return Length;
 	}
 	
 	template < class Component, unsigned Length >
-	Component DotProduct( const Matrix< Component, Length, 1 >& a,
-	                      const Matrix< Component, Length, 1 >& b )
+	inline Component DotProduct( const Matrix< Component, Length, 1 >& a,
+	                             const Matrix< Component, Length, 1 >& b )
 	{
 		return std::inner_product( a.begin(),
 		                           a.end(),
@@ -42,33 +42,33 @@ namespace Vectoria
 	}
 	
 	template < class Component, unsigned Length >
-	Component MagnitudeSquared( const Matrix< Component, Length, 1 >& v )
+	inline Component MagnitudeSquared( const Matrix< Component, Length, 1 >& v )
 	{
 		return DotProduct( v, v );
 	}
 	
 	template < class Component, unsigned Length >
-	Component Magnitude( const Matrix< Component, Length, 1 >& v )
+	inline Component Magnitude( const Matrix< Component, Length, 1 >& v )
 	{
 		return std::sqrt( MagnitudeSquared( v ) );
 	}
 	
 	template < class Component, unsigned Length >
-	Matrix< Component, Length, 1 > UnitLength( const Matrix< Component, Length, 1 >& v )
+	inline Matrix< Component, Length, 1 > UnitLength( const Matrix< Component, Length, 1 >& v )
 	{
 		return v / Magnitude( v );
 	}
 	
 	template < class Component, unsigned Length >
-	Matrix< Component, Length, 1 > Projection( const Matrix< Component, Length, 1 >&  P,
-	                                           const Matrix< Component, Length, 1 >&  Q )
+	inline Matrix< Component, Length, 1 > Projection( const Matrix< Component, Length, 1 >&  P,
+	                                                  const Matrix< Component, Length, 1 >&  Q )
 	{
 		return DotProduct( P, Q ) / MagnitudeSquared( Q ) * Q;
 	}
 	
 	template < class Component, unsigned Length >
-	Matrix< Component, Length, 1 > Perpendicular( const Matrix< Component, Length, 1 >&  P,
-	                                              const Matrix< Component, Length, 1 >&  Q )
+	inline Matrix< Component, Length, 1 > Perpendicular( const Matrix< Component, Length, 1 >&  P,
+	                                                     const Matrix< Component, Length, 1 >&  Q )
 	{
 		return P - Projection( P, Q );
 	}

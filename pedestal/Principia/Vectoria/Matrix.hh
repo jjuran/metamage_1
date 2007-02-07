@@ -144,7 +144,7 @@ namespace Vectoria
 	
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, C, R > Transpose( const Matrix< T, R, C >& matrix )
+	inline Matrix< T, C, R > Transpose( const Matrix< T, R, C >& matrix )
 	{
 		Matrix< T, C, R > transpose;
 		
@@ -160,7 +160,7 @@ namespace Vectoria
 	}
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, R, C > operator-( const Matrix< T, R, C >& matrix )
+	inline Matrix< T, R, C > operator-( const Matrix< T, R, C >& matrix )
 	{
 		Matrix< T, R, C > addInverse;
 		
@@ -173,8 +173,8 @@ namespace Vectoria
 	}
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, R, C > operator+( const Matrix< T, R, C >& a,
-	                             const Matrix< T, R, C >& b )
+	inline Matrix< T, R, C > operator+( const Matrix< T, R, C >& a,
+	                                    const Matrix< T, R, C >& b )
 	{
 		Matrix< T, R, C > sum = a;
 		
@@ -184,8 +184,8 @@ namespace Vectoria
 	}
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, R, C > operator-( const Matrix< T, R, C >& a,
-	                             const Matrix< T, R, C >& b )
+	inline Matrix< T, R, C > operator-( const Matrix< T, R, C >& a,
+	                                    const Matrix< T, R, C >& b )
 	{
 		Matrix< T, R, C > difference = a;
 		
@@ -195,8 +195,8 @@ namespace Vectoria
 	}
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, R, C > operator*( const Matrix< T, R, C >&  matrix,
-	                             T                         factor )
+	inline Matrix< T, R, C > operator*( const Matrix< T, R, C >&  matrix,
+	                                    T                         factor )
 	{
 		Matrix< T, R, C > product = matrix;
 		
@@ -206,15 +206,15 @@ namespace Vectoria
 	}
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, R, C > operator*( T                         factor,
-	                             const Matrix< T, R, C >&  matrix )
+	inline Matrix< T, R, C > operator*( T                         factor,
+	                                    const Matrix< T, R, C >&  matrix )
 	{
 		return matrix * factor;
 	}
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, R, C > operator/( const Matrix< T, R, C >&  matrix,
-	                             T                         divisor )
+	inline Matrix< T, R, C > operator/( const Matrix< T, R, C >&  matrix,
+	                                    T                         divisor )
 	{
 		Matrix< T, R, C > quotient = matrix;
 		
@@ -224,8 +224,8 @@ namespace Vectoria
 	}
 	
 	template < class T, unsigned R1, unsigned R2C1, unsigned C2 >
-	Matrix< T, R1, C2 > operator*( const Matrix< T, R1, R2C1 >&  a,
-	                               const Matrix< T, R2C1, C2 >&  b )
+	inline Matrix< T, R1, C2 > operator*( const Matrix< T, R1, R2C1 >&  a,
+	                                      const Matrix< T, R2C1, C2 >&  b )
 	{
 		Matrix< T, R1, C2 > result;
 		
@@ -261,7 +261,7 @@ namespace Vectoria
 	};
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, R, C >&
+	inline Matrix< T, R, C >&
 	ZeroMatrix::Initialize( Matrix< T, R, C >& matrix )
 	{
 		std::fill( matrix.begin(), matrix.end(), T( 0 ) );

@@ -13,7 +13,7 @@ namespace Vectoria
 {
 	
 	template < class Point, class Plane >
-	bool ClipPointAgainstPlane( const Point& pt, const Plane& plane )
+	inline bool ClipPointAgainstPlane( const Point& pt, const Plane& plane )
 	{
 		return DotProduct( plane, pt ) >= 0;
 	}

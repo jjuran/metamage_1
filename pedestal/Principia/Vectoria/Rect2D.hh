@@ -50,8 +50,8 @@ namespace Vectoria
 	};
 	
 	template < class Num >
-	Rect2D< Num > operator*( const Rect2D< Num >& a,
-	                         const Rect2D< Num >& b )
+	inline Rect2D< Num > operator*( const Rect2D< Num >& a,
+	                                const Rect2D< Num >& b )
 	{
 		Rect2D< Num > r;
 		
