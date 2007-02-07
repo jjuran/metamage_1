@@ -28,19 +28,12 @@ namespace Orion
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
-	static void RegisterMacToUnixErrorConversions()
-	{
-		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus >();
-	}
-	
 	extern "C" int main( int argc, const char* const argv[] );
 	
 #pragma export on
 	
 	int main( int argc, const char* const argv[] )
 	{
-		RegisterMacToUnixErrorConversions();
-		
 		try
 		{
 			return Main( argc, argv );
@@ -52,6 +45,8 @@ namespace Orion
 		catch ( const N::OSStatus& err )
 		{
 			Io::Err << "Orion: Main() threw OSStatus " << err.Get() << ".\n";
+			
+			NN::RegisterExceptionConversion< P7::Errno, N::OSStatus >();
 			
 			P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled() );
 			
