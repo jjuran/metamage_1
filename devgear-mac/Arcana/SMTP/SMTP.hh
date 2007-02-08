@@ -65,30 +65,56 @@ namespace SMTP
 			char chars[ size ];
 		};
 		
-		ResponseCode GetResponse( Io::TextInputAdapter< Io::IOHandle >& input );
+		bool CheckResponse( const std::string& response );
+		
+		template < class Stream >
+		ResponseCode GetResponse( Io::TextInputAdapter< Stream >& input )
+		{
+			while ( true )
+			{
+				std::string response = input.Read();
+				ResponseCode code = response;
+				
+				if ( CheckResponse( response ) )
+				{
+					return code;
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
+		
 		
 		ResponseCode VerifySuccess( ResponseCode code );
 		
-		inline void SendCommand( Io::IOHandle io, const std::string& command )
+		template < class Stream >
+		inline void SendCommand( Stream stream, const std::string& command )
 		{
-			io.Write( command.data(), command.size() );
-			io.Write( "\r\n", 2 );  // FIXME
+			io::write( stream, command.data(), command.size() );
+			io::write( stream, "\r\n", 2 );  // FIXME
 		}
 		
+		template < class Stream >
 		class Session
 		{
 			private:
-				Io::IOHandle io;
-				Io::TextInputAdapter< Io::IOHandle > input;
+				Io::TextInputAdapter< Stream >  itsInput;
 			
 			public:
-				Session( Io::Handle socket );
+				// If Stream is Owned<>, then initializing itsInput transfers ownership
+				Session( Stream stream ) : itsInput( stream )
+				{
+					VerifySuccess( GetResponse( itsInput ) );
+				}
+				
 				~Session()  {}
 				
 				void DoCommand( const std::string& command )
 				{
-					SendCommand( io, command );
-					VerifySuccess( GetResponse( input ) );
+					SendCommand( itsInput.GetStream(), command );
+					VerifySuccess( GetResponse( itsInput ) );
 				}
 				
 				void Hello( const std::string& hostname )
@@ -111,11 +137,9 @@ namespace SMTP
 					DoCommand( Commands::BeginData() );
 				}
 				
-				void WriteRaw( const char* data, unsigned int byteCount );
-				
 				void EndData()
 				{
-					VerifySuccess( GetResponse( input ) );
+					VerifySuccess( GetResponse( itsInput ) );
 				}
 				
 				void Quit()

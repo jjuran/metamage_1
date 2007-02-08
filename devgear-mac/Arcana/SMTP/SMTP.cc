@@ -25,26 +25,20 @@ namespace SMTP
 			std::copy( response.begin(), response.begin() + size, chars );
 		}
 		
-		ResponseCode GetResponse( Io::TextInputAdapter< Io::IOHandle >& input )
+		bool CheckResponse( const std::string& response )
 		{
-			while ( true )
+			if ( response.size() >= ResponseCode::size )
 			{
-				std::string response = input.Read();
-				ResponseCode code = response;
-				
-				if ( response[ 3 ] == ' ' )
+				switch ( response[ 3 ] )
 				{
-					return code;
-				}
-				else if ( response[ 3 ] == '-' )
-				{
-					continue;
-				}
-				else
-				{
-					throw InvalidResponse();
+					case ' ':  return true;
+					case '-':  return false;
+					
+					default:  break;
 				}
 			}
+			
+			throw InvalidResponse();
 		}
 		
 		ResponseCode VerifySuccess( ResponseCode code )
@@ -60,15 +54,6 @@ namespace SMTP
 			}
 			
 			return code;
-		}
-		
-		
-		Session::Session( Io::Handle socket )
-		:
-			io   ( socket ),
-			input( socket )
-		{
-			VerifySuccess( GetResponse( input ) );
 		}
 		
 	}  // namespace Client
