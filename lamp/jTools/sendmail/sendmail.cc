@@ -22,15 +22,14 @@
 // Nitrogen
 #include "Nitrogen/OpenTransportProviders.h"
 
+// POSeven
+#include "POSeven/FileDescriptor.hh"
+
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
-
-// Io
-#include "Io/Files.hh"
-#include "Io/MakeHandle.hh"
 
 // Arcana / SMTP
 #include "SMTP.hh"
@@ -46,6 +45,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace P7 = POSeven;
 namespace O = Orion;
 
 
@@ -197,12 +197,12 @@ static void Relay( const std::string&  returnPath,
 	Io::Out << "Address of " << smtpServer << " is " << ip << ".\n";
 	
 	// Make a new socket
-	//N::Owned< HW::FileDescriptor > theSocket( HW::NewSocket() );
 	
 	int sock = socket( PF_INET, SOCK_STREAM, INET_TCP );
 	
+	P7::FileDescriptor serverStream = P7::FileDescriptor( sock );
+	
 	// and connect to the server.  This could fail, thanks to a bunch of Cox.
-	//HW::ConnectSocket( theSocket, N::Make< HW::PortAddress >( ip, smtpPort ) );
 	
 	struct sockaddr_in inetAddress;
 	
@@ -212,9 +212,7 @@ static void Relay( const std::string&  returnPath,
 	
 	int result = connect( sock, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) );
 	
-	Io::Handle io = Io::MakeHandleFromCast< Io::FD_Details >( sock );
-	
-	SMTP::Client::Session smtpSession( io );
+	SMTP::Client::Session< P7::FileDescriptor > smtpSession( serverStream );
 	
 	NN::Owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
 	
@@ -234,7 +232,8 @@ static void Relay( const std::string&  returnPath,
 		try
 		{
 			int bytes = io::read( messageStream, data, kDataSize );
-			io.Write( data, bytes );
+			
+			io::write( serverStream, data, bytes );
 		}
 		catch ( const io::end_of_input& )
 		{
