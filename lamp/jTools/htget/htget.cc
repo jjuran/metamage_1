@@ -11,14 +11,15 @@
 #include <string>
 
 // POSIX
+#include "arpa/inet.h"
 #include "fcntl.h"
+#include "netdb.h"
 #include "netinet/in.h"
 #include "sys/socket.h"
 #include "unistd.h"
 
 // Nitrogen
 #include "Nitrogen/OpenTransportProviders.h"
-#include "Nitrogen/Threads.h"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
@@ -106,9 +107,7 @@ namespace htget
 				myContentLengthKnown    ( false ),
 				myNullReadOccurred      ( false )
 			{
-				// Don't make the connect non-blocking until we can handle it
-				int result = connect( sock, (const sockaddr*)&serverAddr, sizeof (sockaddr_in) );
-				//Socket().SetNonblocking();
+				P7::ThrowPOSIXResult( connect( sock, (const sockaddr*) &serverAddr, sizeof (sockaddr_in) ) );
 			}
 			
 			~HTTPClientTransaction()  {}
@@ -310,7 +309,7 @@ namespace htget
 		
 	#endif
 		
-		return P7::Open( pathname.c_str(), open_flags );
+		return P7::Open( pathname.c_str(), open_flags, 0644 );
 	}
 	
 	void HTTPClientTransaction::ReceiveData( const char* data, unsigned int byteCount )
@@ -500,6 +499,37 @@ static O::Options DefineOptions()
 	return options;
 }
 
+static N::InetHost ResolveHostname( const char* hostname )
+{
+#if TARGET_RT_MAC_CFM
+	
+	return N::OTInetStringToAddress( InternetServices(),
+	                                 (char*) hostname ).addrs[ 0 ];
+	
+#else
+	
+	hostent* hosts = gethostbyname( hostname );
+	
+	if ( !hosts || h_errno )
+	{
+		Io::Err << "Domain name lookup failed: " << h_errno << "\n";
+		O::ThrowExitStatus( 1 );
+	}
+	
+	//const char* printable_address = hosts->h_addr_list[0];
+	
+	//Io::Out << hostname << " resolves to " << printable_address << "\n";
+	
+	//in_addr addr;
+	//P7::ThrowPOSIXResult( inet_pton( AF_INET, printable_address, &addr ) );
+	
+	in_addr addr = *(in_addr*) hosts->h_addr;
+	
+	return N::InetHost( addr.s_addr );
+	
+#endif
+}
+
 int O::Main( int argc, char const *const argv[] )
 {
 	Options options = DefineOptions();
@@ -576,13 +606,12 @@ int O::Main( int argc, char const *const argv[] )
 	N::InetPort port = ( !portStr.empty() ) ? N::InetPort( std::atoi( portStr.c_str() ) )
 	                                        : defaultPort;
 	
-	N::InetHost ip = N::OTInetStringToAddress( InternetServices(),
-	                                           (char*)hostname.c_str() ).addrs[ 0 ];
+	N::InetHost ip = ResolveHostname( hostname.c_str() );
 	
-	struct sockaddr_in inetAddress;
+	struct sockaddr_in inetAddress = { 0 };
 	
 	inetAddress.sin_family = AF_INET;
-	inetAddress.sin_port = port;
+	inetAddress.sin_port = htons( port );
 	inetAddress.sin_addr.s_addr = ip;
 	
 	if ( params.size() > 1 )
