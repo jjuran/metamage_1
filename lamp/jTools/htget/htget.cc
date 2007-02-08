@@ -285,6 +285,11 @@ namespace htget
 		
 		Position valuePos = header.find_first_not_of( " \t", headerName.size() + 1 );
 		
+		if ( valuePos == header.npos )
+		{
+			return "";
+		}
+		
 		return header.substr( valuePos, header.npos );
 	}
 	
