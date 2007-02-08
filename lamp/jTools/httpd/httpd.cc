@@ -33,6 +33,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/FileDescriptor.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -380,9 +381,7 @@ static std::string HTTPHeader( const std::string& field, const std::string& valu
 
 static void DumpFile( const FSSpec& file )
 {
-	using N::fsRdPerm;
-	
-	NN::Owned< N::FSFileRefNum > input( N::FSpOpenDF( file, fsRdPerm ) );
+	NN::Owned< N::FSFileRefNum > input( io::open_for_reading( file ) );
 	
 	int bytes;
 	enum { dataSize = 4096 };
@@ -392,8 +391,9 @@ static void DumpFile( const FSSpec& file )
 	{
 		while ( true )
 		{
-			bytes = Io::Read( input, data, dataSize );
-			Io::Put( Io::Out, data, bytes);
+			bytes = io::read( input, data, dataSize );
+			
+			io::write( P7::kStdOut_FileNo, data, bytes);
 		}
 	}
 	catch ( const io::end_of_input& )
