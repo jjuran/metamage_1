@@ -55,37 +55,10 @@ namespace htget
 	using N::fsWrPerm;
 	
 	
-	class FileDescriptorCloser
-	{
-		private:
-			bool itShouldClose;
-		
-		public:
-			FileDescriptorCloser( bool shouldClose = true ) : itShouldClose( shouldClose )  {}
-			
-			void operator()( P7::FileDescriptor fd ) const
-			{
-				if ( itShouldClose )
-				{
-					int closed = ::close( fd );
-				}
-			}
-	};
-	
-	static NN::Owned< P7::FileDescriptor, FileDescriptorCloser > StdIn()
-	{
-		return NN::Owned< P7::FileDescriptor, FileDescriptorCloser >::Seize( P7::kStdOut_FileNo, FileDescriptorCloser( false ) );
-	}
-	
-	static NN::Owned< P7::FileDescriptor, FileDescriptorCloser > Receive( NN::Owned< P7::FileDescriptor > fd )
-	{
-		return NN::Owned< P7::FileDescriptor, FileDescriptorCloser >::Seize( fd.Release() );
-	}
-	
 	class HTTPClientTransaction
 	{
 		private:
-			NN::Owned< P7::FileDescriptor, FileDescriptorCloser > myReceiver;
+			P7::FileDescriptor myReceiver;
 			P7::FileDescriptor mySocket;
 			Io::StringPipe myPendingWrites;
 			std::string myReceivedData;
@@ -99,7 +72,7 @@ namespace htget
 			HTTPClientTransaction( P7::FileDescriptor  sock,
 			                       const sockaddr_in&  serverAddr )
 			:
-				myReceiver              ( StdIn() ),
+				myReceiver              ( P7::kStdOut_FileNo ),
 				mySocket                ( sock ),
 				myContentLength         ( 0 ),
 				myContentBytesReceived  ( 0 ),
@@ -366,7 +339,7 @@ namespace htget
 					}
 					catch ( ... ) {}
 					
-					myReceiver = Receive( CreateAndOpenFileWithSignature( gSaveLocation, signature ) );
+					myReceiver = CreateAndOpenFileWithSignature( gSaveLocation, signature ).Release();
 				}
 				
 				// Anything left over is content
@@ -521,13 +494,6 @@ static N::InetHost ResolveHostname( const char* hostname )
 		O::ThrowExitStatus( 1 );
 	}
 	
-	//const char* printable_address = hosts->h_addr_list[0];
-	
-	//Io::Out << hostname << " resolves to " << printable_address << "\n";
-	
-	//in_addr addr;
-	//P7::ThrowPOSIXResult( inet_pton( AF_INET, printable_address, &addr ) );
-	
 	in_addr addr = *(in_addr*) hosts->h_addr;
 	
 	return N::InetHost( addr.s_addr );
@@ -635,6 +601,7 @@ int O::Main( int argc, char const *const argv[] )
 	while ( !gTransaction.Get()->IsComplete() )
 	{
 		sleep( 0 );
+		
 		gTransaction.Get()->DoIO();
 	}
 	
