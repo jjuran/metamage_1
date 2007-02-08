@@ -54,7 +54,7 @@ namespace Nitrogen
             operator bool() const;
             operator char() const;
             operator signed char() const;
-            operator signed short() const;
+            //operator signed short() const;
             operator signed int() const;
             operator signed long long() const;
             operator unsigned char() const;
@@ -118,8 +118,10 @@ namespace Nitrogen
          static OSStatus Make( ::OSStatus s )                  { return OSStatus( s ); }
          ::OSStatus Get() const                                { return status; }
          operator ::OSStatus() const                           { return status; }
-
+         
       #ifndef JOSHUA_JURAN_EXPERIMENTAL
+         operator ::OSErr() const                              { return Nucleus::Convert< ::OSErr >( status ); }
+
          friend bool operator==( OSStatus a, OSStatus b )      { return a.Get() == b.Get(); }
          friend bool operator!=( OSStatus a, OSStatus b )      { return a.Get() != b.Get(); }
          
