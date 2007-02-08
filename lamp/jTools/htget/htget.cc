@@ -60,7 +60,6 @@ namespace htget
 		private:
 			P7::FileDescriptor myReceiver;
 			P7::FileDescriptor mySocket;
-			Io::StringPipe myPendingWrites;
 			std::string myReceivedData;
 			int myContentLength;
 			int myContentBytesReceived;
@@ -84,21 +83,6 @@ namespace htget
 			}
 			
 			~HTTPClientTransaction()  {}
-			
-			void WriteLine( const std::string& data )
-			{
-				myPendingWrites.Write( data + "\r\n" );
-			}
-			
-			void WriteLine( const char* data, unsigned int byteCount)
-			{
-				WriteLine( std::string( data, byteCount ) );
-			}
-			
-			void WriteLine(const char* data)
-			{
-				WriteLine( std::string( data ) );
-			}
 			
 			void DoIO();
 			void ReceiveData( const char* data, unsigned int byteCount );
@@ -175,14 +159,6 @@ namespace htget
 		{
 			O::ThrowExitStatus( 0 );
 		}
-		
-		while ( myPendingWrites.Ready() )
-		{
-			std::string str = myPendingWrites.Read();
-			Io::S( mySocket ) << str;
-		}
-		
-		//mySocket.SetNonblocking();
 		
 		while ( true )
 		{
@@ -501,6 +477,13 @@ static N::InetHost ResolveHostname( const char* hostname )
 #endif
 }
 
+static void WriteLine( P7::FileDescriptor stream, const std::string& text )
+{
+	std::string line = text + "\r\n";
+	
+	io::write( stream, line.data(), line.size() );
+}
+
 int O::Main( int argc, char const *const argv[] )
 {
 	Options options = DefineOptions();
@@ -594,9 +577,9 @@ int O::Main( int argc, char const *const argv[] )
 	
 	gTransaction = htget::NewTransaction( sock, inetAddress );
 	
-	gTransaction.Get()->WriteLine( method + " " + urlPath + " HTTP/1.0" );
-	gTransaction.Get()->WriteLine( "Host: " + hostname );
-	gTransaction.Get()->WriteLine( "" );
+	WriteLine( sock, method + " " + urlPath + " HTTP/1.0" );
+	WriteLine( sock, "Host: " + hostname );
+	WriteLine( sock, "" );
 	
 	while ( !gTransaction.Get()->IsComplete() )
 	{
