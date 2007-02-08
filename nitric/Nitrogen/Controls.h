@@ -57,7 +57,18 @@ namespace Nucleus
 
 namespace Nitrogen
   {
-	typedef Nucleus::Selector< class ControlPartCode_Tag, ::ControlPartCode >::Type ControlPartCode;
+	
+	enum ControlPartCode
+	{
+		kControlNoPart        = ::kControlNoPart,
+		kControlIndicatorPart = ::kControlIndicatorPart,
+		kControlDisabledPart  = ::kControlDisabledPart,
+		kControlInactivePart  = ::kControlInactivePart,
+		
+		kControlEntireControl = ::kControlEntireControl,
+		
+		kControlPartCode_Max = Nucleus::Enumeration_Traits< ::ControlPartCode >::max
+	};
 	
 	struct ControlActionUPP_Details : Basic_UPP_Details< ::ControlActionUPP,
 	                                                     ::ControlActionProcPtr,
@@ -100,13 +111,6 @@ namespace Nitrogen
 	{
 		userUPP( theControl, partCode );
 	}
-	
-	static ControlPartCode kControlNoPart        = ControlPartCode( ::kControlNoPart        );
-	static ControlPartCode kControlIndicatorPart = ControlPartCode( ::kControlIndicatorPart );
-	static ControlPartCode kControlDisabledPart  = ControlPartCode( ::kControlDisabledPart  );
-	static ControlPartCode kControlInactivePart  = ControlPartCode( ::kControlInactivePart  );
-	
-	static ControlPartCode kControlEntireControl = ControlPartCode( ::kControlEntireControl );
 	
 	typedef Nucleus::Selector< class ControlProcID_Tag, ::SInt16 >::Type ControlProcID;
 	
