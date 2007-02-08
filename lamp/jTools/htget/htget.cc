@@ -61,8 +61,8 @@ namespace htget
 			P7::FileDescriptor myReceiver;
 			P7::FileDescriptor mySocket;
 			std::string myReceivedData;
-			int myContentLength;
-			int myContentBytesReceived;
+			std::size_t myContentLength;
+			std::size_t myContentBytesReceived;
 			bool myReceivedAllHeadersFlag;
 			bool myContentLengthKnown;
 			bool myNullReadOccurred;
@@ -84,7 +84,7 @@ namespace htget
 			
 			~HTTPClientTransaction()  {}
 			
-			void DoIO();
+			void Download();
 			void ReceiveData( const char* data, unsigned int byteCount );
 			bool IsComplete();
 	};
@@ -153,22 +153,17 @@ namespace htget
 		return false;
 	}
 	
-	void HTTPClientTransaction::DoIO()
+	void HTTPClientTransaction::Download()
 	{
-		if ( IsComplete() )
-		{
-			O::ThrowExitStatus( 0 );
-		}
-		
 		while ( true )
 		{
 			enum { blockSize = 1024 };
 			char data[ blockSize ];
-			int bytesToRead = blockSize;
+			std::size_t bytesToRead = blockSize;
 			
 			if ( myReceivedAllHeadersFlag && myContentLengthKnown )
 			{
-				int bytesToGo = myContentLength - myContentBytesReceived;
+				std::size_t bytesToGo = myContentLength - myContentBytesReceived;
 				
 				if ( bytesToGo == 0 )  break;
 				
@@ -191,6 +186,8 @@ namespace htget
 			
 			ReceiveData( data, received );
 		}
+		
+		(void) IsComplete();
 	}
 	
 	struct TypeAndCreator
@@ -328,29 +325,6 @@ namespace htget
 					io::write( myReceiver, myReceivedData.data() + startOfContent, leftOver );
 				}
 				
-				/*
-				std::string contentLengthName = "Content-Length:";
-				// Find the Content-Length header in the headers
-				std::size_t contentLengthHeaderPos = myReceivedData.find( contentLengthName );
-				
-				// If we can't find it, assume no content
-				if ( contentLengthHeaderPos == npos )
-				{
-					// myContentLength is already set to 0
-					// myContentLengthKnown is already false
-					return;
-				}
-				
-				// Skip over the key and locate the value
-				std::size_t contentLengthPos = contentLengthHeaderPos + contentLengthName.size() + 1;
-				
-				// Get the length of the value (not the most efficient way, but it works)
-				std::size_t contentLengthLen = myReceivedData.substr( contentLengthPos, npos ).find( "\r\n" );
-				
-				// Get the value
-				std::string contentLength = myReceivedData.substr( contentLengthPos, contentLengthLen );
-				*/
-				
 				try
 				{
 					std::string contentLength = GetHTTPHeaderValue( "Content-Length", allHeaders );
@@ -370,6 +344,7 @@ namespace htget
 		{
 			// We already have the headers, just count and write the data
 			myContentBytesReceived += byteCount;
+			
 			io::write( myReceiver, data, byteCount );
 		}
 	}
@@ -581,12 +556,7 @@ int O::Main( int argc, char const *const argv[] )
 	WriteLine( sock, "Host: " + hostname );
 	WriteLine( sock, "" );
 	
-	while ( !gTransaction.Get()->IsComplete() )
-	{
-		sleep( 0 );
-		
-		gTransaction.Get()->DoIO();
-	}
+	gTransaction.Get()->Download();
 	
 	return 0;
 }
