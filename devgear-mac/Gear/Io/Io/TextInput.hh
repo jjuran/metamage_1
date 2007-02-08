@@ -83,6 +83,8 @@ namespace Io
 			
 			TextInputAdapter( Input input ) : itsInput( input )  {}
 			
+			Input& GetStream()  { return itsInput; }
+			
 			bool Ended() const  { return itsBuffer.Ended(); }
 			bool Ready()  { return itsBuffer.Ready()  ||  GetMore() && Ready(); }
 			
