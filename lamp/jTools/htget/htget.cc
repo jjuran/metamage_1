@@ -58,26 +58,29 @@ namespace htget
 	class HTTPClientTransaction
 	{
 		private:
-			P7::FileDescriptor myReceiver;
-			P7::FileDescriptor mySocket;
-			std::string myReceivedData;
-			std::size_t myContentLength;
-			std::size_t myContentBytesReceived;
-			bool myReceivedAllHeadersFlag;
-			bool myContentLengthKnown;
-			bool myNullReadOccurred;
+			P7::FileDescriptor itsReceiver;
+			P7::FileDescriptor itsSocket;
+			std::string itsReceivedData;
+			std::size_t itsContentLength;
+			std::size_t itsContentBytesReceived;
+			bool itHasReceivedAllHeaders;
+			bool itsContentLengthIsKnown;
+			bool itHasReachedEndOfInput;
+			
+			void ReceiveData( const char* data, std::size_t byteCount );
+			bool IsComplete();
 		
 		public:
 			HTTPClientTransaction( P7::FileDescriptor  sock,
 			                       const sockaddr_in&  serverAddr )
 			:
-				myReceiver              ( P7::kStdOut_FileNo ),
-				mySocket                ( sock ),
-				myContentLength         ( 0 ),
-				myContentBytesReceived  ( 0 ),
-				myReceivedAllHeadersFlag( false ),
-				myContentLengthKnown    ( false ),
-				myNullReadOccurred      ( false )
+				itsReceiver            ( P7::kStdOut_FileNo ),
+				itsSocket              ( sock ),
+				itsContentLength       ( 0 ),
+				itsContentBytesReceived( 0 ),
+				itHasReceivedAllHeaders( false ),
+				itsContentLengthIsKnown( false ),
+				itHasReachedEndOfInput ( false )
 			{
 				P7::ThrowPOSIXResult( connect( sock, (const sockaddr*) &serverAddr, sizeof (sockaddr_in) ) );
 			}
@@ -85,8 +88,6 @@ namespace htget
 			~HTTPClientTransaction()  {}
 			
 			void Download();
-			void ReceiveData( const char* data, unsigned int byteCount );
-			bool IsComplete();
 	};
 	
 }
@@ -123,31 +124,31 @@ namespace htget
 	
 	bool HTTPClientTransaction::IsComplete()
 	{
-		if ( myContentLengthKnown  &&  myContentBytesReceived > myContentLength )
+		if ( itsContentLengthIsKnown  &&  itsContentBytesReceived > itsContentLength )
 		{
 			Io::Err << "Error:  Received more data (" 
-			        << myContentBytesReceived
+			        << itsContentBytesReceived
 			        << " bytes) than was specified ("
-			        << myContentLength
+			        << itsContentLength
 			        << " bytes).\n";
 			
 			return true;
 		}
 		
-		if ( myNullReadOccurred && myContentLengthKnown )
+		if ( itHasReachedEndOfInput && itsContentLengthIsKnown )
 		{
 			Io::Err << "Error: remote socket closed, "
-			        << myContentBytesReceived
+			        << itsContentBytesReceived
 			        << " out of "
-			        << myContentLength
+			        << itsContentLength
 			        << " bytes received.\n";
 		}
 		
-		if ( myNullReadOccurred )  return true;
+		if ( itHasReachedEndOfInput )  return true;
 		
-		if ( myReceivedAllHeadersFlag && myContentLengthKnown )
+		if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
 		{
-			return ( myContentBytesReceived == myContentLength );
+			return ( itsContentBytesReceived == itsContentLength );
 		}
 		
 		return false;
@@ -161,20 +162,20 @@ namespace htget
 			char data[ blockSize ];
 			std::size_t bytesToRead = blockSize;
 			
-			if ( myReceivedAllHeadersFlag && myContentLengthKnown )
+			if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
 			{
-				std::size_t bytesToGo = myContentLength - myContentBytesReceived;
+				std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
 				
 				if ( bytesToGo == 0 )  break;
 				
 				bytesToRead = std::min( bytesToRead, bytesToGo );
 			}
 			
-			int received = read( mySocket, data, bytesToRead );
+			int received = read( itsSocket, data, bytesToRead );
 			
 			if ( received == 0 )
 			{
-				myNullReadOccurred = true;
+				itHasReachedEndOfInput = true;
 				break;
 			}
 			else if ( received == -1 )
@@ -263,20 +264,20 @@ namespace htget
 		return P7::Open( pathname.c_str(), open_flags, 0644 );
 	}
 	
-	void HTTPClientTransaction::ReceiveData( const char* data, unsigned int byteCount )
+	void HTTPClientTransaction::ReceiveData( const char* data, std::size_t byteCount )
 	{
 		// Are we receiving headers or content?
-		if ( !myReceivedAllHeadersFlag )
+		if ( !itHasReceivedAllHeaders )
 		{
 			// We haven't received all the headers yet.
 			// We need to concatenate all received data to check for the EOH marker.
-			myReceivedData += std::string( data, byteCount );
-			std::size_t eohMarker = myReceivedData.find( "\r\n\r\n" );
+			itsReceivedData += std::string( data, byteCount );
+			std::size_t eohMarker = itsReceivedData.find( "\r\n\r\n" );
 			
-			if ( eohMarker != myReceivedData.npos )
+			if ( eohMarker != itsReceivedData.npos )
 			{
 				// Found it, so we've got all the headers now
-				myReceivedAllHeadersFlag = true;
+				itHasReceivedAllHeaders = true;
 				
 				// The first CRLF ends the headers
 				std::size_t endOfHeaders = eohMarker + 2;
@@ -284,17 +285,17 @@ namespace htget
 				// The content starts after the second
 				std::size_t startOfContent = endOfHeaders + 2;
 				
-				std::string allHeaders = myReceivedData.substr( 0, startOfContent );
+				std::string allHeaders = itsReceivedData.substr( 0, startOfContent );
 				
 				if ( gDumpHeaders )
 				{
-					io::write( myReceiver, allHeaders.data(), allHeaders.size() );
+					io::write( itsReceiver, allHeaders.data(), allHeaders.size() );
 				}
 				
 				if ( gExpectNoContent )
 				{
-					// myContentLength and myContentBytesReceived are already 0
-					myContentLengthKnown = true;
+					// itsContentLength and itsContentBytesReceived are already 0
+					itsContentLengthIsKnown = true;
 					return;
 				}
 				
@@ -312,17 +313,17 @@ namespace htget
 					}
 					catch ( ... ) {}
 					
-					myReceiver = CreateAndOpenFileWithSignature( gSaveLocation, signature ).Release();
+					itsReceiver = CreateAndOpenFileWithSignature( gSaveLocation, signature ).Release();
 				}
 				
 				// Anything left over is content
 				std::size_t leftOver = byteCount - startOfContent;
-				myContentBytesReceived = leftOver;
+				itsContentBytesReceived = leftOver;
 				
 				// Start writing content if we have any
 				if ( leftOver > 0 )
 				{
-					io::write( myReceiver, myReceivedData.data() + startOfContent, leftOver );
+					io::write( itsReceiver, itsReceivedData.data() + startOfContent, leftOver );
 				}
 				
 				try
@@ -330,22 +331,22 @@ namespace htget
 					std::string contentLength = GetHTTPHeaderValue( "Content-Length", allHeaders );
 					
 					// Now get the *real* value, as opposed to its textual representation
-					myContentLength = std::atoi( contentLength.c_str() );
-					myContentLengthKnown = true;
+					itsContentLength = std::atoi( contentLength.c_str() );
+					itsContentLengthIsKnown = true;
 				}
 				catch ( ... )
 				{
-					// myContentLength is already set to 0
-					// myContentLengthKnown is already false
+					// itsContentLength is already set to 0
+					// itsContentLengthIsKnown is already false
 				}
 			}
 		}
 		else
 		{
 			// We already have the headers, just count and write the data
-			myContentBytesReceived += byteCount;
+			itsContentBytesReceived += byteCount;
 			
-			io::write( myReceiver, data, byteCount );
+			io::write( itsReceiver, data, byteCount );
 		}
 	}
 	
