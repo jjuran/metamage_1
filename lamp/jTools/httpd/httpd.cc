@@ -120,7 +120,7 @@ void HTTPRequestData::Read()
 		{
 			char buf[ 1024 ];
 			
-			int received = Io::Read( Io::in, buf, 1024 );
+			int received = io::read( P7::kStdIn_FileNo, buf, 1024 );
 			partialData += std::string( buf, received );
 			
 			// search for \r\n
