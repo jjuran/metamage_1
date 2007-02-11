@@ -35,37 +35,40 @@ namespace Nitrogen
 	
 #if CALL_NOT_IN_CARBON
 	
-	typedef Nucleus::Flag< struct SerConfig_Tag, short >::Type SerConfig;
+	enum SerConfig
+	{
+		baud150   = ::baud150,
+		baud300   = ::baud300,
+		baud600   = ::baud600,
+		baud1200  = ::baud1200,
+		baud2400  = ::baud2400,
+		baud3600  = ::baud3600,
+		baud4800  = ::baud4800,
+		baud7200  = ::baud7200,
+		baud9600  = ::baud9600,
+		baud14400 = ::baud14400,
+		baud19200 = ::baud19200,
+		baud28800 = ::baud28800,
+		baud38400 = ::baud38400,
+		baud57600 = ::baud57600,
+		
+		stop10 = ::stop10,
+		stop15 = ::stop15,
+		stop20 = ::stop20,
+		
+		noParity   = ::noParity,
+		oddParity  = ::oddParity,
+		evenParity = ::evenParity,
+		
+		data5 = ::data5,
+		data6 = ::data6,
+		data7 = ::data7,
+		data8 = ::data8,
+		
+		kSerConfig_Max = Nucleus::Enumeration_Traits< short >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( SerConfig )
-	
-	static const SerConfig baud150   = SerConfig( ::baud150   );
-	static const SerConfig baud300   = SerConfig( ::baud300   );
-	static const SerConfig baud600   = SerConfig( ::baud600   );
-	static const SerConfig baud1200  = SerConfig( ::baud1200  );
-	static const SerConfig baud2400  = SerConfig( ::baud2400  );
-	static const SerConfig baud3600  = SerConfig( ::baud3600  );
-	static const SerConfig baud4800  = SerConfig( ::baud4800  );
-	static const SerConfig baud7200  = SerConfig( ::baud7200  );
-	static const SerConfig baud9600  = SerConfig( ::baud9600  );
-	static const SerConfig baud14400 = SerConfig( ::baud14400 );
-	static const SerConfig baud19200 = SerConfig( ::baud19200 );
-	static const SerConfig baud28800 = SerConfig( ::baud28800 );
-	static const SerConfig baud38400 = SerConfig( ::baud38400 );
-	static const SerConfig baud57600 = SerConfig( ::baud57600 );
-	
-	static const SerConfig stop10 = SerConfig( ::stop10 );
-	static const SerConfig stop15 = SerConfig( ::stop15 );
-	static const SerConfig stop20 = SerConfig( ::stop20 );
-	
-	static const SerConfig noParity   = SerConfig( ::noParity   );
-	static const SerConfig oddParity  = SerConfig( ::oddParity  );
-	static const SerConfig evenParity = SerConfig( ::evenParity );
-	
-	static const SerConfig data5 = SerConfig( ::data5 );
-	static const SerConfig data6 = SerConfig( ::data6 );
-	static const SerConfig data7 = SerConfig( ::data7 );
-	static const SerConfig data8 = SerConfig( ::data8 );
 	
 	static const CSCode kSERDHandshake     = CSCode( ::kSERDHandshake     );
 	static const CSCode kSERDAssertDTR     = CSCode( ::kSERDAssertDTR     );
