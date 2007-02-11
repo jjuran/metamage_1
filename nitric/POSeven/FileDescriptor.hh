@@ -9,6 +9,7 @@
 #include <errno.h>
 
 // POSIX
+#include "fcntl.h"
 #include <unistd.h>
 
 // Nucleus
@@ -87,6 +88,16 @@ namespace io
 {
 	
 	template <> struct filespec_traits< std::string > : public POSeven::POSIX_Io_Details {};
+	
+	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_reading( const char* pathname )
+	{
+		return POSeven::Open( pathname, O_RDONLY );
+	}
+	
+	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_reading( const std::string& pathname )
+	{
+		return open_for_reading( pathname.c_str() );
+	}
 	
 	template < class ByteCount >
 	inline ssize_t read( POSeven::FileDescriptor fd, char* buffer, ByteCount byteCount )
