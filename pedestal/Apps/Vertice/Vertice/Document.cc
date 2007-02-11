@@ -41,7 +41,7 @@ namespace Vertice
 	using V::Z;
 	
 	template < class Point >
-	V::Translation MakeTranslation( const Point& pt )
+	inline V::Translation MakeTranslation( const Point& pt )
 	{
 		return V::Translation( pt[ X ],
 		                       pt[ Y ],
