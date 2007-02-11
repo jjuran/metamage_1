@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#ifdef	__MACH__
+#if defined(__MWERKS__) && defined(__MACH__)
 	
 	/*
 	 *	Apple Framework Headers
@@ -15,6 +15,10 @@
 	#ifndef __CF_USE_FRAMEWORK_INCLUDES__
 		#define __CF_USE_FRAMEWORK_INCLUDES__
 	#endif
+	
+#endif
+
+#ifdef __MACH__
 	
 	#include <Carbon/Carbon.h>
 	
@@ -55,5 +59,5 @@
 #endif
 #endif
 
-#include "NitrogenHeaders.cp"
+#include "Nitrogen/Nitrogen.h"
 
