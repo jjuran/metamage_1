@@ -10,7 +10,6 @@
 #include <string>
 
 // Genie
-#include "Genie/FileSystem/FSTree.hh"
 #include "Genie/IO/Base.hh"
 
 
