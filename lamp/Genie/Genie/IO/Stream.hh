@@ -9,8 +9,9 @@
 // Standard C++
 #include <string>
 
- // Genie
- #include "Genie/IO/Base.hh"
+// Genie
+#include "Genie/FileSystem/FSTree.hh"
+#include "Genie/IO/Base.hh"
 
 
 namespace Genie
@@ -25,8 +26,6 @@ namespace Genie
 			virtual ~StreamHandle()  {}
 			
 			static TypeCode Type()  { return kStreamType; }
-			
-			//StreamHandle( TypeCode type ) : IOHandle( type )  {}
 			
 			virtual TypeCode ActualType() const  { return Type(); }
 			
