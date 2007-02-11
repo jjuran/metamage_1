@@ -47,6 +47,11 @@ namespace Genie
 			
 			FSTreePtr file = ResolvePathname( path, CurrentProcess().CurrentWorkingDirectory() );
 			
+			if ( file->IsLink() )
+			{
+				file = file->ResolveLink();
+			}
+			
 			boost::shared_ptr< IOHandle > io = file->Open( oflag, mode );
 			
 			files[ fd ] = io;
