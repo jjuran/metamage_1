@@ -19,7 +19,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+#if TARGET_RT_MAC_CFM
 #include "vfork.h"
+#endif
 
 // Nitrogen
 #include "Nitrogen/Folders.h"
@@ -40,7 +42,9 @@
 #include "Orion/StandardIO.hh"
 
 // Kerosene
+#if TARGET_RT_MAC_CFM
 #include "SystemCalls.hh"
+#endif
 
 
 namespace N = Nitrogen;
@@ -349,10 +353,9 @@ static std::string FilenameExtension(const unsigned char* filename)
 	return FilenameExtension( NN::Convert< std::string >( filename ) );
 }
 
-static std::string GuessContentType( const FSSpec& file )
+static std::string GuessContentType( const std::string& filename, ::OSType type )
 {
-	OSType type = N::FSpGetFInfo( file ).fdType;
-	std::string ext = FilenameExtension( file.name );
+	std::string ext = FilenameExtension( filename );
 	
 	if ( ext == ".html" )
 	{
@@ -374,24 +377,31 @@ static std::string GuessContentType( const FSSpec& file )
 	return "application/octet-stream";
 }
 
+static std::string GuessContentType( const FSSpec& file )
+{
+	std::string filename = NN::Convert< std::string >( file.name );
+	OSType type = N::FSpGetFInfo( file ).fdType;
+	
+	return GuessContentType( filename, type );
+}
+
 static std::string HTTPHeader( const std::string& field, const std::string& value )
 {
 	return field + ": " + value + "\r\n";
 }
 
-static void DumpFile( const FSSpec& file )
+static void DumpFile( const std::string& pathname )
 {
-	NN::Owned< N::FSFileRefNum > input( io::open_for_reading( file ) );
+	NN::Owned< P7::FileDescriptor > input( io::open_for_reading( pathname ) );
 	
-	int bytes;
-	enum { dataSize = 4096 };
+	const std::size_t dataSize = 4096;
 	char data[ dataSize ];
 	
 	try
 	{
 		while ( true )
 		{
-			bytes = io::read( input, data, dataSize );
+			std::size_t bytes = io::read( input, data, dataSize );
 			
 			io::write( P7::kStdOut_FileNo, data, bytes);
 		}
@@ -440,24 +450,38 @@ static void SendResponse( const HTTPRequestData& request )
 	}
 	else
 	{
+		OSType type = kUnknownType;
+		
+	#if TARGET_RT_MAC_CFM
+		
 		FSSpec file = Path2FSS( pathname );
 		
 		FInfo info = N::FSpGetFInfo( file );
 		
-		std::string contentType = GuessContentType( file );
+		type = info.fdType;
+		
+	#endif
+		
+		std::string contentType = GuessContentType( pathname, type );
 		
 		std::string responseHeader = httpVersion + " 200 OK\r\n";
 		
 		responseHeader += HTTPHeader( "Content-Type",  contentType                   );
+		
+	#if TARGET_RT_MAC_CFM
+		
 		responseHeader += HTTPHeader( "X-Mac-Type",    EncodeAsHex( info.fdType    ) );
 		responseHeader += HTTPHeader( "X-Mac-Creator", EncodeAsHex( info.fdCreator ) );
+		
+	#endif
+		
 		responseHeader += "\r\n";
 		
 		Io::Out << responseHeader;
 		
 		if ( parsed.method != "HEAD" )
 		{
-			DumpFile( file );
+			DumpFile( pathname );
 		}
 	}
 }
