@@ -319,7 +319,8 @@ static int TestSerial( int argc, const char *const argv[] )
 	
 	const char* str = "AT\015";
 	
-	Io::S( port ) << str;
+	//Io::S( port ) << str;
+	N::Write( port, str, sizeof str - 1 );
 	
 	N::Delay( 8 );
 	
@@ -332,7 +333,7 @@ static int TestSerial( int argc, const char *const argv[] )
 	}
 	
 	std::vector< char > block( count );
-	int read = Io::Read( port, &block.front(), count );
+	int read = N::Read( port, &block.front(), count );
 	
 	if (read < count)
 	{
@@ -1006,7 +1007,7 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	
 	std::printf( "Fragment length: %d bytes\n", len );
 	
-	NN::Owned< CFragConnectionID > one = N::GetMemFragment< kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
+	NN::Owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
 	
 	int* scratch;
 	
@@ -1014,7 +1015,7 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	
 	*scratch = 42;
 	
-	NN::Owned< CFragConnectionID > two = N::GetMemFragment< kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
+	NN::Owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
 	
 	N::FindSymbol( two, "\p" "gScratch", &scratch );
 	
