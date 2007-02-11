@@ -771,5 +771,51 @@ namespace Nitrogen
 		RegisterOSStatus< errAERecordingIsAlreadyOn >();
 	}
 	
+	
+	namespace CompileTests
+	{
+		
+		namespace
+		{
+			
+			pascal OSErr AECoercerOfDescs_ProcPtr( const AEDesc* fromDesc, ::DescType toType, long refCon, AEDesc* result )
+			{
+				return errAEEventNotHandled;
+			}
+			
+			Nucleus::Owned< AEDesc > AECoercerOfDescs_N( const AEDesc& fromDesc, DescType toType, RefCon refCon )
+			{
+				return Nucleus::Owned< AEDesc >::Seize( fromDesc );
+			}
+			
+		}
+		
+		static Nucleus::Owned< AECoercionHandler > InstallCoercionHandler_ProcPtr()
+		{
+			return AEInstallCoercionHandler< AECoercerOfDescs_ProcPtr >( DescType( 'from' ), DescType( 'to  ' ) );
+		}
+		
+		static Nucleus::Owned< AECoercionHandler > InstallCoercionHandler_N()
+		{
+			return AEInstallCoercionHandler< AECoercerOfDescs_N >( DescType( 'from' ), DescType( 'to  ' ) );
+		}
+		
+		static std::string GetTextAttr( const AppleEvent& appleEvent, AEKeyword keyword )
+		{
+			return AEGetAttributePtr< typeChar >( appleEvent, keyword );
+		}
+		
+		static AEReturnID GetReturnID( const AppleEvent& appleEvent )
+		{
+			return AEGetAttributePtr< keyReturnIDAttr >( appleEvent );
+		}
+		
+		static AEEventClass GetEventClass( const AppleEvent& appleEvent )
+		{
+			return AEGetAttributePtr< keyEventClassAttr >( appleEvent );
+		}
+		
+	}
+	
 }
 
