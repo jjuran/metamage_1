@@ -183,9 +183,9 @@ namespace Pedestal
 	};
 	
 	template < class Type, N::WindowDefProcID defProcID >
-	Window< Type, defProcID >::Window( const NewWindowContext&  context,
-	                                   WindowClosure&           closure,
-	                                   Initializer              init = Initializer() )
+	inline Window< Type, defProcID >::Window( const NewWindowContext&  context,
+	                                          WindowClosure&           closure,
+	                                          Initializer              init = Initializer() )
 	:
 		ClosableWindow( closure ),
 		WindowRefOwner( CreateWindow( context,
@@ -196,7 +196,7 @@ namespace Pedestal
 	}
 	
 	template < class Type, N::WindowDefProcID defProcID >
-	void Window< Type, defProcID >::MouseDown( const EventRecord& event )
+	inline void Window< Type, defProcID >::MouseDown( const EventRecord& event )
 	{
 		// FIXME:  The window may want clicks even if it's not in front.
 		if ( Get() != N::FrontWindow() )
@@ -210,7 +210,7 @@ namespace Pedestal
 	}
 	
 	template < class Type, N::WindowDefProcID defProcID >
-	void Window< Type, defProcID >::Update()
+	inline void Window< Type, defProcID >::Update()
 	{
 		SubView().Update();
 		
@@ -279,7 +279,7 @@ namespace Pedestal
 	};
 	
 	template < class Window >
-	void UniqueWindowOwner< Window >::Show()
+	inline void UniqueWindowOwner< Window >::Show()
 	{
 		if ( fWindow.get() )
 		{

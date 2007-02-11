@@ -159,37 +159,37 @@ namespace Pedestal
 	};
 	
 	template < class SubViewType >
-	Rect Bounds( const ScrollingView< SubViewType >& scroll )
+	inline Rect Bounds( const ScrollingView< SubViewType >& scroll )
 	{
 		return scroll.Bounds();
 	}
 	
 	template < class SubViewType >
-	Point ScrollPosition( const ScrollingView< SubViewType >& scroll )
+	inline Point ScrollPosition( const ScrollingView< SubViewType >& scroll )
 	{
 		return scroll.ScrollPosition();
 	}
 	
 	template < class SubViewType >
-	Point ScrollableArea( const ScrollingView< SubViewType >& scroll )
+	inline Point ScrollableArea( const ScrollingView< SubViewType >& scroll )
 	{
 		return NX::RectSize( scroll.SubView().Bounds() );
 	}
 	
 	template < class SubViewType >
-	Point ScrollableRange( const ScrollingView< SubViewType >& scroll )
+	inline Point ScrollableRange( const ScrollingView< SubViewType >& scroll )
 	{
 		return ScrollableArea( scroll );
 	}
 	
 	template < class SubViewType >
-	Point ViewableRange( const ScrollingView< SubViewType >& scroll )
+	inline Point ViewableRange( const ScrollingView< SubViewType >& scroll )
 	{
 		return NX::RectSize( Bounds( scroll ) );
 	}
 	
 	template < class SubViewType >
-	void Resize( ScrollingView< SubViewType >& scroll, short width, short height )
+	inline void Resize( ScrollingView< SubViewType >& scroll, short width, short height )
 	{
 		scroll.Resize( width, height );
 		
@@ -197,7 +197,7 @@ namespace Pedestal
 	}
 	
 	template < class SubViewType >
-	void ScrollView( ScrollingView< SubViewType >& scroll, short dh, short dv, bool updateNow )
+	inline void ScrollView( ScrollingView< SubViewType >& scroll, short dh, short dv, bool updateNow )
 	{
 		scroll.Scroll( dh, dv, updateNow );
 	}

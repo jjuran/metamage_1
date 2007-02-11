@@ -190,13 +190,13 @@ namespace Pedestal
 	
 	
 	template < ScrollbarAxis axis >
-	short VHSelect( Point point )
+	inline short VHSelect( Point point )
 	{
 		return ( axis == kVertical ) ? point.v : point.h;
 	}
 	
 	template < class ScrollViewType >
-	Point ComputeScrollbarMaxima( const ScrollViewType&  scrolledView )
+	inline Point ComputeScrollbarMaxima( const ScrollViewType&  scrolledView )
 	{
 		Point scrollRange = ScrollableRange( scrolledView );
 		Point viewRange   = ViewableRange  ( scrolledView );
@@ -209,9 +209,9 @@ namespace Pedestal
 	}
 	
 	template < class Vertical, class Horizontal >
-	void SetScrollbarMaxima( const Vertical&    verticalScrollbar,
-	                         const Horizontal&  horizontalScrollbar,
-	                         Point              maxima )
+	inline void SetScrollbarMaxima( const Vertical&    verticalScrollbar,
+	                                const Horizontal&  horizontalScrollbar,
+	                                Point              maxima )
 	{
 		SetControlMaximum( verticalScrollbar,   maxima.v );
 		SetControlMaximum( horizontalScrollbar, maxima.h );
@@ -219,7 +219,7 @@ namespace Pedestal
 	
 	
 	template < class ScrollViewType >
-	ScrollViewType& RecoverScrolledViewFromScrollbar( ControlRef control )
+	inline ScrollViewType& RecoverScrolledViewFromScrollbar( ControlRef control )
 	{
 		Control_Hooks* controlHooks = N::GetControlReference( control );
 		
@@ -233,7 +233,7 @@ namespace Pedestal
 	
 	
 	template < ScrollbarAxis axis, class ScrollViewType >
-	void ScrollByDelta( ScrollViewType& scrolledView, ControlRef control, short delta, bool updateNow )
+	inline void ScrollByDelta( ScrollViewType& scrolledView, ControlRef control, short delta, bool updateNow )
 	{
 		if ( delta != 0 )
 		{
@@ -247,7 +247,7 @@ namespace Pedestal
 	}
 	
 	template < ScrollbarAxis axis, class ScrollViewType >
-	void ScrollByDelta( ControlRef control, short delta, bool updateNow )
+	inline void ScrollByDelta( ControlRef control, short delta, bool updateNow )
 	{
 		ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
 		
@@ -255,7 +255,7 @@ namespace Pedestal
 	}
 	
 	template < ScrollbarAxis axis, class ScrollViewType >
-	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
+	inline void ScrollbarAction( ControlRef control, N::ControlPartCode part )
 	{
 		ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
 		
@@ -275,7 +275,7 @@ namespace Pedestal
 	}
 	
 	template < ScrollbarAxis axis, bool scrollingIsLive, class ScrollViewType >
-	void Track( ControlRef control, N::ControlPartCode part, Point point )
+	inline void Track( ControlRef control, N::ControlPartCode part, Point point )
 	{
 		NN::Saved< N::Clip_Value > savedClip;
 		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
@@ -336,10 +336,10 @@ namespace Pedestal
 	}
 	
 	template < class Vertical, class Horizontal >
-	void UpdateScrollbars( const Vertical&        verticalScrollbar,
-	                       const Horizontal&      horizontalScrollbar,
-	                       Point                  maxima,
-	                       Point                  position )
+	inline void UpdateScrollbars( const Vertical&        verticalScrollbar,
+	                              const Horizontal&      horizontalScrollbar,
+	                              Point                  maxima,
+	                              Point                  position )
 	{
 		NN::Saved< N::Clip_Value > savedClip;
 		
@@ -355,11 +355,11 @@ namespace Pedestal
 	}
 	
 	template < class ScrollViewType, class Vertical, class Horizontal >
-	void UpdateScrollbars( const ScrollViewType&  scrolledView,
-	                       const Vertical&        verticalScrollbar,
-	                       const Horizontal&      horizontalScrollbar,
-	                       Point                  oldRange,
-	                       Point                  oldPosition )
+	inline void UpdateScrollbars( const ScrollViewType&  scrolledView,
+	                              const Vertical&        verticalScrollbar,
+	                              const Horizontal&      horizontalScrollbar,
+	                              Point                  oldRange,
+	                              Point                  oldPosition )
 	{
 		using namespace Nucleus::Operators;
 		
@@ -564,7 +564,7 @@ namespace Pedestal
 	
 	
 	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
-	Rect Bounds( const Scroller< ScrollViewType, vertical, horizontal >& scroller )
+	inline Rect Bounds( const Scroller< ScrollViewType, vertical, horizontal >& scroller )
 	{
 		return scroller.Bounds();
 	}
