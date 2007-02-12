@@ -225,7 +225,16 @@ namespace Genie
 	
 	static int close( int fd )
 	{
-		CurrentProcess().FileDescriptors().erase( fd );
+		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		
+		FileDescriptorMap::iterator found = files.find( fd );
+		
+		if ( found == files.end() )
+		{
+			return CurrentProcess().SetErrno( EBADF );
+		}
+		
+		CurrentProcess().FileDescriptors().erase( found );
 		
 		return 0;
 	}
