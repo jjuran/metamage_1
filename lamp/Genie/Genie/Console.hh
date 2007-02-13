@@ -1,14 +1,19 @@
-/*	===================
- *	GenieConsoleTerm.hh
- *	===================
+/*	================
+ *	Genie/Console.hh
+ *	================
  */
 
-#pragma once
+#ifndef GENIE_CONSOLE_HH
+#define GENIE_CONSOLE_HH
 
 // Standard C++
 #include <list>
+#include <map>
 #include <memory>
 #include <string>
+
+// boost
+#include <boost/shared_ptr.hpp>
 
 // Nitrogen
 #include "Nitrogen/Files.h"
@@ -79,6 +84,8 @@ namespace Genie
 		public:
 			HangupWindowClosure( ConsoleTTYHandle* terminal ) : fTerminal( terminal )  {}
 			
+			const std::string& TTYName() const;
+			
 			bool RequestWindowClosure( N::WindowRef );
 	};
 	
@@ -94,6 +101,8 @@ namespace Genie
 			
 			GenieWindow const* Get() const  { return fWindow.get(); }
 			GenieWindow      * Get()        { return fWindow.get(); }
+			
+			const std::string& TTYName() const  { return HangupWindowClosure::TTYName(); }
 			
 			void Open( ConstStr255Param title )
 			{
@@ -122,11 +131,31 @@ namespace Genie
 			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );
 			
+			const std::string& TTYName() const  { return fWindow.TTYName(); }
+			
 			GenieWindow* Window()  { return fWindow.Get(); }  // NULL if no window
 			ConsolePane& Pane  ()  { return fWindow.Get()->SubView().ScrolledView(); }
 			
 			Io::StringPipe& Input()  { return Pane().Input(); }
 	};
+	
+	class ConsolesOwner
+	{
+		public:
+			typedef std::map< Console*, boost::shared_ptr< Console > > Map;
+		
+		private:
+			Map map;
+		
+		public:
+			const Map& GetMap() const  { return map; }
+			
+			Console* NewConsole( ConsoleTTYHandle* terminal );
+			
+			void CloseConsole( Console* console );
+	};
+	
+	const ConsolesOwner::Map& GetConsoleMap();
 	
 	void SpawnNewConsole( const FSSpec& program );
 	void SpawnNewConsole();
@@ -136,4 +165,6 @@ namespace Genie
 	void CloseConsole( Console* console );
 	
 }
+
+#endif
 

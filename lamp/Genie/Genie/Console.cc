@@ -279,6 +279,11 @@ namespace Genie
 	}
 	
 	
+	const std::string& HangupWindowClosure::TTYName() const
+	{
+		return fTerminal->TTYName();
+	}
+	
 	bool HangupWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
 		gProcessTable.SendSignalToProcessesControlledByTerminal( SIGHUP, fTerminal );
@@ -435,18 +440,6 @@ namespace Genie
 		return SpawnNewConsole( LoginExecutable() );
 	}
 	
-	class ConsolesOwner
-	{
-		typedef std::map< Console*, boost::shared_ptr< Console > > Map;
-		
-		private:
-			Map map;
-		
-		public:
-			Console* NewConsole( ConsoleTTYHandle* terminal );
-			
-			void CloseConsole( Console* console );
-	};
 	
 	Console* ConsolesOwner::NewConsole( ConsoleTTYHandle* terminal )
 	{
@@ -462,6 +455,11 @@ namespace Genie
 	}
 	
 	static ConsolesOwner gConsolesOwner;
+	
+	const ConsolesOwner::Map& GetConsoleMap()
+	{
+		return gConsolesOwner.GetMap();
+	}
 	
 	Console* NewConsole( ConsoleTTYHandle* terminal )
 	{
