@@ -28,7 +28,6 @@ namespace Genie
 			
 			std::string Name() const  { return "dev"; }
 			
-			FSTreePtr Self()   const  { return GetSingleton< FSTree_dev >(); }
 			FSTreePtr Parent() const  { return FSRoot(); }
 	};
 	
@@ -58,8 +57,7 @@ namespace Genie
 	{
 		static std::string Name()  { return "term"; }
 		
-		FSTreePtr Self()   const  { return FSTreePtr( GetSingleton< FSTree_dev_term >() ); }
-		FSTreePtr Parent() const  { return FSTreePtr( GetSingleton< FSTree_dev      >() ); }
+		FSTreePtr Parent() const  { return FSTreePtr( GetSingleton< FSTree_dev >() ); }
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		

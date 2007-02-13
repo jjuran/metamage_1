@@ -41,7 +41,6 @@ namespace Genie
 			bool IsFile     () const  { return false; }
 			bool IsDirectory() const  { return true;  }
 			
-			virtual FSTreePtr Self()   const = 0;
 			virtual FSTreePtr Parent() const = 0;
 			
 			void Stat( struct ::stat& sb ) const;
@@ -69,7 +68,6 @@ namespace Genie
 			
 			std::string Name() const  { return itsDetails.Name(); }
 			
-			FSTreePtr Self()   const  { return itsDetails.Self(); }
 			FSTreePtr Parent() const  { return itsDetails.Parent(); }
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const  { return itsDetails.Lookup( name ); }
@@ -91,7 +89,6 @@ namespace Genie
 	template < class Details >
 	struct UniqueDetails : public Details
 	{
-		FSTreePtr Self()   const  { return GetSingleton< FSTree_Special_Unique< Details > >(); }
 		FSTreePtr Parent() const  { return FSRoot(); }
 	};
 	

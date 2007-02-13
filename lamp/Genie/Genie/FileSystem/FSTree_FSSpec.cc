@@ -71,7 +71,6 @@ namespace Genie
 			
 			std::string Name() const;
 			
-			FSTreePtr Self()   const;
 			FSTreePtr Parent() const;
 			
 			FSSpec GetFSSpec() const;
@@ -327,11 +326,6 @@ namespace Genie
 		}
 		
 		return NN::Convert< std::string >( fileSpec.name );
-	}
-	
-	FSTreePtr FSTree_FSSpec::Self() const
-	{
-		return FSTreePtr( new FSTree_FSSpec( *this ) );
 	}
 	
 	FSTreePtr FSTree_FSSpec::Parent() const

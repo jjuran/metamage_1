@@ -51,7 +51,6 @@ namespace Genie
 			
 			std::string Name() const;
 			
-			FSTreePtr Self()   const;
 			FSTreePtr Parent() const  { return GetProcFSTree(); }
 	};
 	
@@ -86,7 +85,6 @@ namespace Genie
 		
 		static std::string Name()  { return "fd"; }
 		
-		FSTreePtr Self()   const  { return FSTreePtr( new FSTree_PID_fd( PID_fd_Details( itsPID ) ) ); }
 		FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID   ( itsPID ) ); }
 		
 		FSTreePtr Lookup( const std::string& name ) const;
@@ -220,11 +218,6 @@ namespace Genie
 	std::string FSTree_PID::Name() const
 	{
 		return NN::Convert< std::string >( itsPID );
-	}
-	
-	FSTreePtr FSTree_PID::Self() const
-	{
-		return FSTreePtr( new FSTree_PID( *this ) );
 	}
 	
 	FSTreePtr PID_fd_Details::Lookup( const std::string& name ) const

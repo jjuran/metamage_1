@@ -10,6 +10,7 @@
 #include <string>
 
 // boost
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 
 // Files.h
@@ -67,7 +68,7 @@ namespace Genie
 	};
 	
 	
-	class FSTree
+	class FSTree : public boost::enable_shared_from_this< const FSTree >
 	{
 		public:
 			virtual ~FSTree()  {}
@@ -80,6 +81,8 @@ namespace Genie
 			virtual bool IsLink() const;
 			
 			virtual std::string Name() const;
+			
+			FSTreePtr Self() const  { return shared_from_this(); }
 			
 			virtual FSTreePtr Parent() const = 0;
 			
