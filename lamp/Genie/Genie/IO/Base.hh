@@ -6,6 +6,12 @@
 #ifndef GENIE_IO_BASE_HH
 #define GENIE_IO_BASE_HH
 
+// boost
+#include <boost/enable_shared_from_this.hpp>
+
+// Genie
+#include "Genie/FileSystem/FSTree.hh"
+
 
 namespace Genie
 {
@@ -37,7 +43,7 @@ namespace Genie
 			kBarType       = 13
 	};
 	
-	class IOHandle
+	class IOHandle : public boost::enable_shared_from_this< IOHandle >
 	{
 		public:
 			virtual ~IOHandle()  {}
@@ -45,6 +51,8 @@ namespace Genie
 			static TypeCode Type()  { return kBaseType; }
 			
 			virtual TypeCode ActualType() const  { return Type(); }
+			
+			virtual FSTreePtr GetFile();
 	};
 	
 	void Check_IOHandle_Cast( IOHandle& handle, TypeCode desiredType );
