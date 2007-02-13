@@ -6,11 +6,20 @@
 #include "Genie/IO/SimpleDevice.hh"
 
 // Genie
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
 
 
 namespace Genie
 {
+	
+	FSTreePtr SimpleDeviceHandle::GetFile()
+	{
+		std::string deviceName = "/dev/";
+		deviceName += io.name;
+		
+		return ResolvePathname( deviceName, FSRoot() );
+	}
 	
 	int SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{

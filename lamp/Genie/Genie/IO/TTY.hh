@@ -28,6 +28,8 @@ namespace Genie
 			
 			TypeCode ActualType() const  { return Type(); }
 			
+			FSTreePtr GetFile();
+			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
 			const std::string& TTYName() const  { return ttyName; }

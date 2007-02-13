@@ -12,6 +12,7 @@
 #include "POSeven/Errno.hh"
 
 // Genie
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -20,6 +21,11 @@ namespace Genie
 {
 	
 	namespace P7 = POSeven;
+	
+	FSTreePtr TTYHandle::GetFile()
+	{
+		return ResolvePathname( ttyName, FSRoot() );
+	}
 	
 	void TTYHandle::IOCtl( unsigned long request, int* argp )
 	{

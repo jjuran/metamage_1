@@ -42,6 +42,11 @@ namespace Genie
 	{
 	}
 	
+	FSTreePtr RegularFileHandle::GetFile()
+	{
+		return FSTreePtr( FSTreeFromFSSpec( FSSpecFromFRefNum( refNum ) ) );
+	}
+	
 	int RegularFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		return N::FSRead( refNum, byteCount, data );

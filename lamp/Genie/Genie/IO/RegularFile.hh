@@ -37,6 +37,8 @@ namespace Genie
 			
 			TypeCode ActualType() const  { return Type(); }
 			
+			FSTreePtr GetFile();
+			
 			unsigned int SysPoll() const  { return kPollRead | kPollWrite | kPollExcept; }
 			
 			int SysRead( char* data, std::size_t byteCount );
