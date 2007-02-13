@@ -21,6 +21,15 @@ namespace Genie
 	FSTreePtr FSNull();
 	
 	
+	template < class FSTree_Type >
+	FSTreePtr GetSingleton()
+	{
+		static FSTreePtr singleton = FSTreePtr( new FSTree_Type() );
+		
+		return singleton;
+	}
+	
+	
 	typedef std::vector< FSNode > FSTreeCache;
 	
 	
@@ -47,40 +56,48 @@ namespace Genie
 	};
 	
 	
-	template < class FSTree_Type >
-	FSTreePtr GetSingleton()
-	{
-		static FSTreePtr singleton = FSTreePtr( new FSTree_Type() );
-		
-		return singleton;
-	}
-	
-	
 	template < class Details >
 	class FSTree_Special : public FSTree_Directory
 	{
+		private:
+			Details itsDetails;
+		
 		public:
-			static FSTreePtr GetSingleton()  { return Genie::GetSingleton< FSTree_Special >(); }
+			FSTree_Special() : itsDetails()  {}
 			
-			std::string Name() const  { return Details::Name(); }
+			FSTree_Special( const Details& details ) : itsDetails( details )  {}
 			
-			FSTreePtr Self()   const  { return GetSingleton(); }
-			FSTreePtr Parent() const  { return FSRoot(); }
+			std::string Name() const  { return itsDetails.Name(); }
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const  { return Details::Lookup( name ); }
+			FSTreePtr Self()   const  { return itsDetails.Self(); }
+			FSTreePtr Parent() const  { return itsDetails.Parent(); }
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const  { return itsDetails.Lookup( name ); }
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	
 	template < class Details >
 	void FSTree_Special< Details >::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		std::transform( Details::ItemSequence().begin(),
-		                Details::ItemSequence().end(),
+		std::transform( itsDetails.ItemSequence().begin(),
+		                itsDetails.ItemSequence().end(),
 		                std::back_inserter( cache ),
-		                std::ptr_fun( Details::ConvertToFSNode ) );
+		                itsDetails );
 	}
+	
+	
+	template < class Details >
+	struct UniqueDetails : public Details
+	{
+		FSTreePtr Self()   const  { return GetSingleton< FSTree_Special_Unique< Details > >(); }
+		FSTreePtr Parent() const  { return FSRoot(); }
+	};
+	
+	template < class Details >
+	struct FSTree_Special_Unique : public FSTree_Special< UniqueDetails< Details > >
+	{
+	};
 	
 	
 	class FSTree_Mappable : public FSTree_Directory
