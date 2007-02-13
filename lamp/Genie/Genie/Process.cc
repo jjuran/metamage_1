@@ -561,15 +561,20 @@ namespace Genie
 		// Create the new thread
 		std::auto_ptr< Thread > newThread( new Thread( threadContext ) );
 		
-		// Make the new thread belong to this process...
-		std::swap( itsThread, newThread );
+		// Save the old thread
+		NN::Owned< N::ThreadID > savedThreadID;
 		
-		// ...saving the old one so we don't die just yet.
-		std::auto_ptr< Thread >& savedThread = newThread;
+		if ( itsThread.get() )
+		{
+			savedThreadID = itsThread->HandOff();
+		}
+		
+		// Make the new thread belong to this process
+		itsThread = newThread;
 		
 		Status( Process::kRunning );
 		
-		return savedThread.get() ? savedThread->HandOff() : NN::Owned< N::ThreadID >();
+		return savedThreadID;
 	}
 	
 	/*
