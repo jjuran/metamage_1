@@ -27,7 +27,7 @@ namespace Genie
 	}
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( std::size_t id )
-	: TTYHandle( "/dev/tty" + NN::Convert< std::string >( id ) ),
+	: TTYHandle( "/dev/term/" + NN::Convert< std::string >( id ) ),
 	  id( id ),
 	  console( NULL )
 	{
