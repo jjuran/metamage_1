@@ -100,19 +100,21 @@ namespace Genie
 	
 	struct Volumes_Details
 	{
-		static std::string Name()  { return "Volumes"; }
+		std::string Name() const  { return "Volumes"; }
 		
-		static FSTreePtr Lookup( const std::string& name );
+		FSTreePtr Lookup( const std::string& name ) const;
 		
-		static N::Volume_Container ItemSequence()  { return N::Volumes(); }
+		N::Volume_Container ItemSequence() const  { return N::Volumes(); }
 		
 		static FSNode ConvertToFSNode( N::FSVolumeRefNum vRefNum );
+		
+		FSNode operator()( N::FSVolumeRefNum vRefNum ) const  { return ConvertToFSNode( vRefNum ); }
 	};
 	
-	class FSTree_Volumes : public FSTree_Special< Volumes_Details >
+	class FSTree_Volumes : public FSTree_Special_Unique< Volumes_Details >
 	{
 		private:
-			typedef FSTree_Special< Volumes_Details > Base;
+			typedef FSTree_Special_Unique< Volumes_Details > Base;
 		
 		public:
 			void Stat( struct ::stat& sb ) const;
@@ -198,7 +200,7 @@ namespace Genie
 		FSTreePtr users( new FSTree_FSSpec( N::RootDirectory( N::BootVolume() ) & "Users" ) );
 		
 		tree->Map( "Users",   users );
-		tree->Map( "Volumes", FSTreePtr( new FSTree_Volumes() ) );
+		tree->Map( "Volumes", FSTreePtr( GetSingleton< FSTree_Volumes >() ) );
 		
 		tree->Map( "proc", GetProcFSTree() );
 		tree->Map( "dev",  GetDevFSTree () );
@@ -341,7 +343,7 @@ namespace Genie
 		
 		if ( fileSpec.parID == fsRtParID )
 		{
-			return FSTree_Volumes::GetSingleton();
+			return GetSingleton< FSTree_Volumes >();
 		}
 		
 		return FSTreePtr( new FSTree_FSSpec( NN::Convert< FSSpec >( N::FSpGetParent( fileSpec ) ) ) );
@@ -460,7 +462,7 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr Volumes_Details::Lookup( const std::string& name )
+	FSTreePtr Volumes_Details::Lookup( const std::string& name ) const
 	{
 		N::FSDirSpec rootDir( N::RootDirectory( DetermineVRefNum( MacFromUnixName( name ) + ":" ) ) );
 		
