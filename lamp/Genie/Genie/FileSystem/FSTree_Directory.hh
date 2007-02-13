@@ -86,6 +86,7 @@ namespace Genie
 		                itsDetails );
 	}
 	
+	template < class Details > struct FSTree_Special_Unique;
 	
 	template < class Details >
 	struct UniqueDetails : public Details
