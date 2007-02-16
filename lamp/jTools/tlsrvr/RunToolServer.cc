@@ -19,7 +19,10 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen Carbon
+// POSeven
+#include "POSeven/FileDescriptor.hh"
+
+// Nitrogen
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Folders.h"
 
@@ -48,20 +51,13 @@
 #include "ToolServer.hh"
 
 
-namespace Io
-{
-	
-	using FileSystem::Write;
-	
-}
-
 namespace RunToolServer
 {
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	namespace Div = Divergence;
-	namespace FS = FileSystem;
 	namespace NX = NitrogenExtras;
 	
 	using N::fsRdPerm;
@@ -80,8 +76,10 @@ namespace RunToolServer
 			{
 				str += " ";
 			}
+			
 			str += appendage;
 		}
+		
 		return str;
 	}
 	
@@ -288,7 +286,7 @@ namespace RunToolServer
 		return script;
 	}
 	
-	static void DumpFile( const FSSpec& file, int fd )
+	static void DumpFile( const FSSpec& file, P7::FileDescriptor fd )
 	{
 		NN::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( file, fsRdPerm );
 		
@@ -301,29 +299,21 @@ namespace RunToolServer
 		
 		std::vector< char > v( length );
 		
-		int bytes = FS::Read( fileH, &v[ 0 ], v.size() );
+		int bytes = io::read( fileH, &v[ 0 ], v.size() );
 		
 		ASSERT( bytes == v.size() );
 		
 		std::replace( v.begin(), v.end(), '\r', '\n' );
 		
-		write( fd, &v[ 0 ], bytes );
+		io::write( fd, &v[ 0 ], bytes );
 	}
 	
 	int RunCommandInToolServer( const std::string& command )
 	{
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		/*
-		Z::Follower tailOut( gTempFiles[ kOutputFile ] );
-		Z::Follower tailErr( gTempFiles[ kErrorFile  ] );
-		
-		tailErr.Advance( Io::Err );
-		tailOut.Advance( Io::Out );
-		*/
-		
-		DumpFile( gTempFiles[ kErrorFile  ], Io::err );
-		DumpFile( gTempFiles[ kOutputFile ], Io::out );
+		DumpFile( gTempFiles[ kErrorFile  ], P7::kStdErr_FileNo );
+		DumpFile( gTempFiles[ kOutputFile ], P7::kStdOut_FileNo );
 		
 		// Delete temp files
 		std::fill( gTempFiles,
