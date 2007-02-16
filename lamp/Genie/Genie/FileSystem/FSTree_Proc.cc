@@ -130,7 +130,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID( itsPID ) ); }
 			
-			std::string ReadLink() const  { return GetFSTreePathname( ResolveLink() ); }
+			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const  { return gProcessTable[ itsPID ].CurrentWorkingDirectory(); }
 	};
@@ -149,7 +149,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID( itsPID ) ); }
 			
-			std::string ReadLink() const  { return GetFSTreePathname( ResolveLink() ); }
+			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( gProcessTable[ itsPID ].ProgramFile() ); }
 	};
@@ -168,7 +168,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID( itsPID ) ); }
 			
-			std::string ReadLink() const  { return GetFSTreePathname( ResolveLink() ); }
+			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			//FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( gProcessTable[ itsPID ].RootDirectory() ); }
 			FSTreePtr ResolveLink() const  { return FSRoot(); }

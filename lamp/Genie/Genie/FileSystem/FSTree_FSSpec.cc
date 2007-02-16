@@ -371,7 +371,7 @@ namespace Genie
 			P7::ThrowErrno( EINVAL );
 		}
 		
-		return GetFSTreePathname( ResolveLink() );
+		return ResolveLink()->Pathname();
 	}
 	
 	FSTreePtr FSTree_FSSpec::ResolveLink() const

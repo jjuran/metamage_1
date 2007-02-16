@@ -365,7 +365,7 @@ namespace Genie
 		{
 			FSTreePtr cwd = CurrentProcess().CurrentWorkingDirectory();
 			
-			std::string result = GetFSTreePathname( cwd );
+			std::string result = cwd->Pathname();
 			
 			if ( result.size() + 1 > size )
 			{
