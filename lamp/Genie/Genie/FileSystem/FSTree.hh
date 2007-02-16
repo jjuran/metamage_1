@@ -38,8 +38,6 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
 	
-	std::string GetFSTreePathname( FSTreePtr node );
-	
 	
 	struct FSNode
 	{
@@ -81,7 +79,7 @@ namespace Genie
 			virtual bool IsLink() const;
 			
 			virtual std::string Name() const;
-			virtual std::string Pathname() const  { return GetFSTreePathname( shared_from_this() ); }
+			virtual std::string Pathname() const;
 			
 			FSTreePtr Self() const  { return shared_from_this(); }
 			
