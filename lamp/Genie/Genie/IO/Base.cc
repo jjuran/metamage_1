@@ -24,11 +24,13 @@ namespace Genie
 			
 			std::string Name() const  { return "io:[]"; }
 			
-			FSTreePtr Parent() const  { P7::ThrowErrno( ENOENT );  return FSTreePtr(); }
+			std::string Pathname() const  { return Name(); }
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
+			FSTreePtr Parent() const
 			{
-				return itsHandle;
+				P7::ThrowErrno( ENOENT );
+				
+				return FSTreePtr();
 			}
 	};
 	
