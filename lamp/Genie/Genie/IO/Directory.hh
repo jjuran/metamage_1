@@ -21,10 +21,17 @@ namespace Genie
 	{
 		private:
 			dirent fLastEntry;
+			FSTreePtr      itsDir;
 			FSIteratorPtr iterator;
 		
 		public:
+			static TypeCode Type()  { return kDirectoryType; }
+			
 			DirHandle( const FSTreePtr& tree );
+			
+			TypeCode ActualType() const  { return Type(); }
+			
+			FSTreePtr GetFile()  { return itsDir; }
 			
 			const dirent* ReadDir();
 			

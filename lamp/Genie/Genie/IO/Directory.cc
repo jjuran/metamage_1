@@ -15,6 +15,10 @@
 namespace Genie
 {
 	
+	DirHandle::DirHandle( const FSTreePtr& tree ) : itsDir( tree ), iterator( tree->Iterate() )
+	{
+	}
+	
 	
 	static const dirent* SetDirEntry( dirent& dir, ino_t inode, const std::string& name )
 	{
@@ -22,10 +26,6 @@ namespace Genie
 		std::strcpy( dir.d_name, name.c_str() );  // FIXME:  Unsafe!
 		
 		return &dir;
-	}
-	
-	DirHandle::DirHandle( const FSTreePtr& tree ) : iterator( tree->Iterate() )
-	{
 	}
 	
 	const dirent* DirHandle::ReadDir()
