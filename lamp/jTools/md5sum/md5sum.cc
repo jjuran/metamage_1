@@ -28,7 +28,7 @@ namespace Bits = BitsAndBytes;
 
 static std::string MD5Sum( P7::FileDescriptor input )
 {
-	enum { blockSize = 64 };
+	const std::size_t blockSize = 64;
 	
 	char data[ blockSize ];
 	int bytes;
@@ -36,7 +36,7 @@ static std::string MD5Sum( P7::FileDescriptor input )
 	
 	try
 	{
-		while ( ( bytes = O::Read( input, data, blockSize ) ) == blockSize )
+		while ( ( bytes = io::read( input, data, blockSize ) ) == blockSize )
 		{
 			engine.DoBlock( data );
 		}
