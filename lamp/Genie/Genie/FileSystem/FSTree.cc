@@ -24,18 +24,18 @@ namespace Genie
 	
 	std::string FSTree::Pathname() const
 	{
-		FSTreePtr node = shared_from_this();
+		std::string name = Name();
 		
-		std::string name = node->Name();
+		// Root dir has empty name
 		
 		if ( name.empty() )
 		{
 			return "/";
 		}
 		
-		std::string result = name;
+		FSTreePtr node = shared_from_this();
 		
-		// Root dir has empty name
+		std::string result = name;
 		
 		while ( result[0] != '/' )
 		{
