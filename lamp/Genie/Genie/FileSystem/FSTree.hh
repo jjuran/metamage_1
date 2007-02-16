@@ -81,6 +81,7 @@ namespace Genie
 			virtual bool IsLink() const;
 			
 			virtual std::string Name() const;
+			virtual std::string Pathname() const  { return GetFSTreePathname( shared_from_this() ); }
 			
 			FSTreePtr Self() const  { return shared_from_this(); }
 			
