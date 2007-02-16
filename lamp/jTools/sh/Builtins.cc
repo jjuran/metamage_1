@@ -22,7 +22,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 #include "SystemCalls.hh"
 
 // sh

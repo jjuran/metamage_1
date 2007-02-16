@@ -22,9 +22,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// Io
-#include "Io/TextInput.hh"
-
 // Orion
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
