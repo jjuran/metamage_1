@@ -13,7 +13,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
-#include "Genie/IO/Stream.hh"
+#include "Genie/IO/Base.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -111,7 +111,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID_fd( itsPID ) ); }
 			
-			std::string ReadLink() const  { return GetFSTreePathname( ResolveLink() ); }
+			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const;
 	};
@@ -246,6 +246,25 @@ namespace Genie
 	}
 	
 	
+	class FSTree_MagicFileReference : public FSTree
+	{
+		private:
+			boost::shared_ptr< IOHandle > itsHandle;
+		
+		public:
+			FSTree_MagicFileReference( const boost::shared_ptr< IOHandle >& io ) : itsHandle( io )  {}
+			
+			std::string Name    () const  { return itsHandle->GetFile()->Name    (); }
+			std::string Pathname() const  { return itsHandle->GetFile()->Pathname(); }
+			
+			FSTreePtr Parent() const  { return itsHandle->GetFile()->Parent(); }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
+			{
+				return itsHandle;
+			}
+	};
+	
 	std::string FSTree_PID_fd_N::Name() const
 	{
 		return NN::Convert< std::string >( itsFD );
@@ -260,9 +279,7 @@ namespace Genie
 			P7::ThrowErrno( ENOENT );
 		}
 		
-		StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ itsFD ].handle );
-		
-		return stream.GetFile();
+		return FSTreePtr( new FSTree_MagicFileReference( files[ itsFD ].handle ) );
 	}
 	
 }
