@@ -11,9 +11,6 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
-// Io
-#include "Io/Handle.hh"
-
 
 namespace P7 = POSeven;
 
