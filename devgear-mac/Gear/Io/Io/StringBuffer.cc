@@ -9,7 +9,7 @@
 #include <algorithm>
 
 // Io
-#include "Io/Exceptions.hh"
+#include "io/io.hh"
 
 
 namespace Io
@@ -24,7 +24,7 @@ namespace Io
 		
 		if ( fData.empty() )
 		{
-			throw Io::NoDataPending();
+			throw io::no_input_pending();
 		}
 		
 		// Don't copy more than (a) fits in the dest buffer, or (b) we have available.
