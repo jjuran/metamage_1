@@ -5,9 +5,8 @@
 #ifndef POSITIONALPARAMETERS_HH
 #define POSITIONALPARAMETERS_HH
 
-// Standard C++
-#include <string>
-#include <vector>
+// Standard C/C++
+#include <cstddef>
 
 extern const char* gArgZero;
 
