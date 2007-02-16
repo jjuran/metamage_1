@@ -52,7 +52,6 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace O = Orion;
 	namespace CD = CompileDriver;
 	
 	namespace ext = N::STLExtensions;
