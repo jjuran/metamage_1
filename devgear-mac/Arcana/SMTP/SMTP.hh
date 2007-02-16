@@ -3,14 +3,14 @@
  *	=======
  */
 
-#pragma once
+#ifndef ARCANA_SMTP_HH
+#define ARCANA_SMTP_HH
 
 // Standard C++
 #include <string>
 #include <vector>
 
 // Io
-#include "Io/Handle.hh"
 #include "Io/TextInput.hh"
 
 
@@ -151,4 +151,6 @@ namespace SMTP
 	}  // namespace Client
 	
 }  // namespace SMTP
+
+#endif
 
