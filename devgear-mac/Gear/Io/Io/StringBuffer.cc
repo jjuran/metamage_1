@@ -22,32 +22,32 @@ namespace Io
 			return 0;
 		}
 		
-		if ( fData.empty() )
+		if ( itsData.empty() )
 		{
 			throw io::no_input_pending();
 		}
 		
 		// Don't copy more than (a) fits in the dest buffer, or (b) we have available.
-		std::size_t bytesCopied = std::min( byteCount, fData.size() );
+		std::size_t bytesCopied = std::min( byteCount, itsData.size() );
 		
 		// Copy to output buffer.
-		std::copy( fData.begin(),
-		           fData.begin() + bytesCopied,
+		std::copy( itsData.begin(),
+		           itsData.begin() + bytesCopied,
 		           data );
 		
 		// Move remainder of source (if any) to the beginning.
-		std::copy( fData.begin() + bytesCopied,
-		           fData.end(),
-		           fData.begin() );
+		std::copy( itsData.begin() + bytesCopied,
+		           itsData.end(),
+		           itsData.begin() );
 		
-		fData.resize( fData.size() - bytesCopied );
+		itsData.resize( itsData.size() - bytesCopied );
 		
 		return bytesCopied;
 	}
 	
 	int StringBuffer::Write( const char* data, std::size_t byteCount )
 	{
-		fData.append( data, byteCount );
+		itsData.append( data, byteCount );
 		
 		return byteCount;
 	}

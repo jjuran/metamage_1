@@ -16,10 +16,10 @@ namespace Io
 	class StringBuffer
 	{
 		private:
-			std::string fData;
+			std::string itsData;
 		
 		public:
-			bool Empty() const  { return fData.empty(); }
+			bool Empty() const  { return itsData.empty(); }
 			
 			int Read( char* data, std::size_t byteCount );
 			
