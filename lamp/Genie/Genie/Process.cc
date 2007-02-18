@@ -285,7 +285,7 @@ namespace Genie
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( gProcessTable[ ppid ].ProgramName() ),
-		itsCWD                ( gProcessTable[ ppid ].CurrentWorkingDirectory() ),
+		itsCWD                ( gProcessTable[ ppid ].GetCWD() ),
 		itsControllingTerminal( gProcessTable[ ppid ].itsControllingTerminal ),
 		itsFileDescriptors    ( gProcessTable[ ppid ].FileDescriptors() ),
 		itsStatus             ( kStarting ),
@@ -394,7 +394,7 @@ namespace Genie
 		
 		ExecContext context( executable, argv );
 		
-		Normalize( context, CurrentWorkingDirectory() );
+		Normalize( context, GetCWD() );
 		
 		itsProgramFile = context.executable;
 		
@@ -761,8 +761,8 @@ namespace Genie
 		
 		itsFileDescriptors.clear();
 		
-		pid_t ppid = ParentProcessID();
-		pid_t pid = ProcessID();
+		pid_t ppid = GetPPID();
+		pid_t pid  = GetPID();
 		
 		if ( ppid > 0 )
 		{
@@ -775,7 +775,7 @@ namespace Genie
 		{
 			Process& proc = *( *it ).second;
 			
-			if ( proc.ParentProcessID() == pid )
+			if ( proc.GetPPID() == pid )
 			{
 				proc.Raise( SIGHUP );
 				proc.Orphan();
@@ -829,7 +829,7 @@ namespace Genie
 		
 		if ( action == SIG_DFL )
 		{
-			if ( ProcessID() == 1 )
+			if ( GetPID() == 1 )
 			{
 				return;
 			}
@@ -1005,7 +1005,7 @@ namespace Genie
 		{
 			Process& proc = *it->second;
 			
-			if ( proc.Status() != Process::kTerminated  &&  proc.ProcessID() != 1 )
+			if ( proc.Status() != Process::kTerminated  &&  proc.GetPID() != 1 )
 			{
 				proc.Raise( SIGKILL );
 			}
@@ -1022,10 +1022,10 @@ namespace Genie
 		{
 			Process& proc = *it->second;
 			
-			pid_t pid = proc.ProcessID();
+			pid_t pid = proc.GetPID();
 			
 			if (    proc.Status() == Process::kZombie
-			     || proc.Status() == Process::kTerminated  &&  proc.ParentProcessID() == 1 )
+			     || proc.Status() == Process::kTerminated  &&  proc.GetPPID() == 1 )
 			{
 				hitlist.push_back( pid );
 			}
