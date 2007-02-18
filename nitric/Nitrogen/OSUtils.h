@@ -32,6 +32,28 @@
 #endif
 
 
+#ifdef GetMMUMode
+#undef GetMMUMode
+
+inline pascal SInt8 GetMMUMode()
+{
+	return true32b;
+}
+
+#endif
+
+
+#ifdef SwapMMUMode
+#undef SwapMMUMode
+
+inline pascal void SwapMMUMode( SInt8* mode )
+{
+	*mode = true32b;
+}
+
+#endif
+
+
 namespace Nitrogen
 {
 	
@@ -39,6 +61,16 @@ namespace Nitrogen
 	{
 		public:
 			DeferredTaskManagerErrorsRegistrationDependency();
+	};
+	
+	// Serial port usage
+	
+	enum MMUMode
+	{
+		false32b = ::false32b,
+		true32b  = ::true32b,
+		
+		kMMUMode_Max = Nucleus::Enumeration_Traits< SInt8 >::max
 	};
 	
 	// ...
@@ -88,11 +120,17 @@ namespace Nitrogen
 	using ::DeferredTask;
 	using ::DeferredTaskPtr;
 	
-	// ...
+	using ::MachineLocation;
+	
+	inline bool IsMetric()  { return ::IsMetric(); }
+	
+	using ::GetSysPPtr;
 	
 	void DTInstall( DeferredTask& dtTaskPtr );
 	
-	// ...
+	inline MMUMode GetMMUMode()  { return MMUMode( ::GetMMUMode() ); }
+	
+	// SwapMMUMode
 	
 	inline UInt32 Delay( UInt32 ticks )
 	{
@@ -102,8 +140,29 @@ namespace Nitrogen
 		return finalTicks;
 	}
 	
-	// ...
-
+	// WriteParam
+	// Enqueue
+	// Dequeue
+	// SetCurrentA5
+	// SetA5
+	// InitUtil
+	
+	using ::MakeDataExecutable;
+	
+	inline void ReadLocation ( MachineLocation      & loc )  { ::ReadLocation ( &loc ); }
+	inline void WriteLocation( MachineLocation const& loc )  { ::WriteLocation( &loc ); }
+	
+	inline MachineLocation ReadLocation()
+	{
+		MachineLocation result;
+		
+		ReadLocation( result );
+		
+		return result;
+	}
+	
+	using ::TickCount;
+	
 #if	TARGET_RT_MAC_MACHO
 /*	
 	There's a long note in technical Q & A #1078
