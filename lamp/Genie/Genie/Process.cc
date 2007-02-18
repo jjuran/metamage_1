@@ -24,13 +24,9 @@
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
-#include "Utilities/Threads.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
-
-// Io
-#include "Io/Stream.hh"
 
 // Kerosene/Common
 #include "KEnvironment.hh"
@@ -91,7 +87,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
 	namespace P7 = POSeven;
 	namespace Sh = ShellShock;
 	namespace K = Kerosene;
@@ -820,6 +815,11 @@ namespace Genie
 	
 	void Process::Raise( int signal )
 	{
+		if ( itsStatus == kTerminated  ||  itsResult != 0 )
+		{
+			return;
+		}
+		
 		sig_t action = itsSignalMap[ signal ];
 		
 		if ( action == SIG_IGN )
@@ -861,8 +861,10 @@ namespace Genie
 				case SIGUSR1:
 				case SIGUSR2:
 					// terminate process
-					Terminate( signal );  // doesn't reap immediately
+					itsResult = signal;  // indicates fatal signal
+					Continue();
 					break;
+				
 				case SIGCONT:
 				case SIGURG:
 				case SIGCHLD:
@@ -872,6 +874,7 @@ namespace Genie
 					// continue and discard signal
 					Continue();
 					break;
+				
 				case SIGSTOP:
 				case SIGTSTP:
 				case SIGTTIN:
@@ -895,6 +898,17 @@ namespace Genie
 	
 	bool Process::HandlePendingSignals()
 	{
+		if ( itsResult != 0 )
+		{
+			// Fatal signal received.  Terminate.
+			Terminate();
+			
+			while ( true )
+			{
+				N::YieldToAnyThread();
+			}
+		}
+		
 		itsPreviousSignals = itsPendingSignals;
 		
 		UInt32 bits = itsPendingSignals;
@@ -993,11 +1007,11 @@ namespace Genie
 			
 			if ( proc.Status() != Process::kTerminated  &&  proc.ProcessID() != 1 )
 			{
-				proc.Terminate();
+				proc.Raise( SIGKILL );
 			}
 		}
 		
-		Reap();
+		N::YieldToAnyThread();
 	}
 	
 	void GenieProcessTable::Reap()
