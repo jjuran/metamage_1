@@ -191,6 +191,8 @@ namespace Genie
 			
 			FSTreePtr CurrentWorkingDirectory() const  { return itsCWD; }
 			
+			FSTreePtr GetCWD() const  { return itsCWD; }
+			
 			FileDescriptorMap& FileDescriptors()  { return itsFileDescriptors; }
 			
 			int const* ErrnoData()  const { return itsErrnoData; }
