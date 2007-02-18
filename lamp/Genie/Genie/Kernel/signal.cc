@@ -27,14 +27,24 @@ namespace Genie
 	
 	static int kill( pid_t pid, int sig )
 	{
-		if ( !gProcessTable.Exists( pid ) )
+		GenieProcessTable::ProcessMap::const_iterator found = gProcessTable.Map().find( pid );
+		
+		if ( found == gProcessTable.end() )
 		{
 			return CurrentProcess().SetErrno( ESRCH );
 		}
 		
 		if ( sig != 0 )
 		{
-			gProcessTable[ pid ].Raise( sig );
+			Process& process = *found->second;
+			
+			process.Raise( sig );
+			
+			if ( process.ProcessID() == pid )
+			{
+				// If we sent ourselves the signal, handle it now
+				process.HandlePendingSignals();
+			}
 		}
 		
 		return 0;
