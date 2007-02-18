@@ -40,7 +40,7 @@ namespace Genie
 			
 			process.Raise( sig );
 			
-			if ( process.ProcessID() == pid )
+			if ( CurrentProcess().GetPID() == pid )
 			{
 				// If we sent ourselves the signal, handle it now
 				process.HandlePendingSignals();
