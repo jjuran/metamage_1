@@ -1062,7 +1062,7 @@ static int TestReadLoc( int argc, char const *const argv[] )
 	
 	MachineLocation loc;
 	
-	::ReadLocation( &loc );
+	N::ReadLocation( loc );
 	
 	double latitude  = loc.latitude;
 	double longitude = loc.longitude;
