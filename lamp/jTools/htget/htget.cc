@@ -221,6 +221,8 @@ namespace htget
 		// This is never npos if allHeaders is valid.
 		Position eol = allHeaders.find( "\r\n", headerPos );
 		
+		ASSERT( eol != allHeaders.npos );
+		
 		return allHeaders.substr( headerPos, eol - headerPos );
 	}
 	
@@ -326,15 +328,15 @@ namespace htget
 					io::write( itsReceiver, itsReceivedData.data() + startOfContent, leftOver );
 				}
 				
-				try
+				std::string contentLength = GetHTTPHeaderValue( "Content-Length", allHeaders );
+				
+				if ( !contentLength.empty() )
 				{
-					std::string contentLength = GetHTTPHeaderValue( "Content-Length", allHeaders );
-					
 					// Now get the *real* value, as opposed to its textual representation
 					itsContentLength = std::atoi( contentLength.c_str() );
 					itsContentLengthIsKnown = true;
 				}
-				catch ( ... )
+				else
 				{
 					// itsContentLength is already set to 0
 					// itsContentLengthIsKnown is already false
