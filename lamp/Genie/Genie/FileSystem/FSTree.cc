@@ -33,19 +33,14 @@ namespace Genie
 			return "/";
 		}
 		
-		FSTreePtr node = shared_from_this();
+		std::string parentPathname = Parent()->Pathname();
 		
-		std::string result = name;
-		
-		while ( result[0] != '/' )
+		if ( parentPathname != "/" )
 		{
-			node = node->Parent();
-			name = node->Name();
-			
-			result = name + "/" + result;
+			parentPathname += "/";
 		}
 		
-		return result;
+		return parentPathname + Name();
 	}
 	
 	
