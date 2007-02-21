@@ -16,7 +16,7 @@
 
 // Genie
 #include "Genie/FileSystem/StatFile.hh"
-#include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/MacFile.hh"
 
 
 namespace Genie
@@ -50,9 +50,9 @@ namespace Genie
 	}
 	
 	
-	static boost::shared_ptr< RegularFileHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
+	static boost::shared_ptr< IOHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
 	{
-		return boost::shared_ptr< RegularFileHandle >( new RegularFileHandle( refNum ) );
+		return boost::shared_ptr< IOHandle >( new MacRsrcForkHandle( refNum ) );
 	}
 	
 	static boost::shared_ptr< IOHandle > OpenFSSpec( const FSSpec& fileSpec, OpenFlags flags, bool rsrcFork )

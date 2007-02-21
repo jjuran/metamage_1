@@ -41,7 +41,7 @@
 #include "Genie/FileSystem/FSTree_Proc.hh"
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
 #include "Genie/FileSystem/StatFile.hh"
-#include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/MacFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -236,9 +236,9 @@ namespace Genie
 	}
 	
 	
-	static boost::shared_ptr< RegularFileHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
+	static boost::shared_ptr< IOHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
 	{
-		return boost::shared_ptr< RegularFileHandle >( new RegularFileHandle( refNum ) );
+		return boost::shared_ptr< IOHandle >( new MacDataForkHandle( refNum ) );
 	}
 	
 	static boost::shared_ptr< IOHandle > OpenFSSpec( const FSSpec& fileSpec, OpenFlags flags, bool rsrcFork )
