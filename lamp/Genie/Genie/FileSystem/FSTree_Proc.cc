@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
+#include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
@@ -207,12 +208,43 @@ namespace Genie
 	}
 	
 	
+	class proc_PID_stat_Query
+	{
+		private:
+			pid_t itsPID;
+		
+		public:
+			proc_PID_stat_Query( pid_t pid ) : itsPID( pid )  {}
+			
+			std::string operator()() const
+			{
+				const Process& process = gProcessTable[ itsPID ];
+				
+				pid_t ppid = process.GetPPID();
+				pid_t pgid = process.GetPGID();
+				pid_t sid = process.GetSID();
+				
+				return NN::Convert< std::string >( itsPID ) + " "
+				       "(" + process.ProgramName() + ")"      " "
+				       "?"                                  + " " +
+				       NN::Convert< std::string >( ppid   ) + " " +
+				       NN::Convert< std::string >( pgid   ) + " " +
+				       NN::Convert< std::string >( sid    ) + " "
+				       "\n";
+			}
+	};
+	
+	
 	FSTree_PID::FSTree_PID( pid_t pid ) : itsPID( pid )
 	{
 		Map( "fd",   FSTreePtr( new FSTree_PID_fd  ( pid ) ) );
 		Map( "cwd",  FSTreePtr( new FSTree_PID_cwd ( pid ) ) );
 		Map( "exe",  FSTreePtr( new FSTree_PID_exe ( pid ) ) );
 		Map( "root", FSTreePtr( new FSTree_PID_root( pid ) ) );
+		
+		Map( "stat", FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( Pathname(),
+		                                                                     "stat",
+		                                                                     proc_PID_stat_Query( pid ) ) ) );
 	}
 	
 	std::string FSTree_PID::Name() const
