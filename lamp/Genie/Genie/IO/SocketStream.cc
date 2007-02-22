@@ -104,56 +104,46 @@ namespace Genie
 	
 	int SocketHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		try
+		if ( IsBlocking() )
 		{
-			if ( IsBlocking() )
+			// OTRcv() will block until ALL bytes requested are received
+			// (unlike read()), so we block only while reading the first byte.
+			
+			std::size_t bytes = 0;
+			
+			try
 			{
-				// OTRcv() will block until ALL bytes requested are received
-				// (unlike read()), so we block only while reading the first byte.
-				
-				std::size_t bytes = 0;
-				
-				try
-				{
-					// Always 1 byte (unless there's an error); may block
-					bytes = N::OTRcv( endpoint, data, 1 );
-				}
-				catch ( const N::OTNoDataErr& )
-				{
-					// ::OTRcv() returns kOTNoDataErr to signal EOF in blocking mode
-					throw io::end_of_input();
-				}
-				
-				SetNonBlocking();
-				
-				try
-				{
-					// Read whatever's left, nonblocking
-					bytes += N::OTRcv( endpoint, data + 1, byteCount - 1 );
-				}
-				catch ( const N::OTNoDataErr& ) {}  // There was only one byte
-				catch ( ... )
-				{
-					// FIXME:  This smells
-					SetBlocking();
-					throw;
-				}
-				
-				SetBlocking();
-				
-				// And return one or more bytes.  Yay, POSIX semantics!
-				return bytes;
+				// Always 1 byte (unless there's an error); may block
+				bytes = N::OTRcv( endpoint, data, 1 );
+			}
+			catch ( const N::OTNoDataErr& )
+			{
+				// ::OTRcv() returns kOTNoDataErr to signal EOF in blocking mode
+				throw io::end_of_input();
 			}
 			
-			return N::OTRcv( endpoint, data, byteCount );
-		}
-		catch ( const N::OTNoDataErr& )
-		{
-			throw io::no_input_pending();
+			SetNonBlocking();
+			
+			try
+			{
+				// Read whatever's left, nonblocking
+				bytes += N::OTRcv( endpoint, data + 1, byteCount - 1 );
+			}
+			catch ( const N::OTNoDataErr& ) {}  // There was only one byte
+			catch ( ... )
+			{
+				// FIXME:  This smells
+				SetBlocking();
+				throw;
+			}
+			
+			SetBlocking();
+			
+			// And return one or more bytes.  Yay, POSIX semantics!
+			return bytes;
 		}
 		
-		// Not reached
-		return -1;
+		return N::OTRcv( endpoint, data, byteCount );
 	}
 	
 	int SocketHandle::SysWrite( const char* data, std::size_t byteCount )
