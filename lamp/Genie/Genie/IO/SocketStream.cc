@@ -200,19 +200,7 @@ namespace Genie
 		call.addr.buf = reinterpret_cast< unsigned char* >( client );
 		call.addr.maxlen = len;
 		
-		try
-		{
-			N::OTListen( endpoint, &call );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			if ( err == kOTNoDataErr )
-			{
-				throw io::no_input_pending();
-			}
-			
-			throw;
-		}
+		N::OTListen( endpoint, &call );
 		
 		len = call.addr.len;
 		
