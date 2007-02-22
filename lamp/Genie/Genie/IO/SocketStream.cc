@@ -11,6 +11,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Nitrogen
+#include "Nitrogen/OSUtils.h"
+
 // Genie
 #include "Genie/Yield.hh"
 
@@ -19,6 +22,7 @@ namespace Genie
 {
 	
 	namespace P7 = POSeven;
+	
 	
 	static pascal void YieldingNotifier( void* contextPtr,
 	                                     OTEventCode code,
@@ -37,11 +41,13 @@ namespace Genie
 				{
 					Yield();
 				}
-				catch ( const P7::Errno& err )
-				{
-					// FIXME
-				}
 				catch ( ... ) {}
+				break;
+			
+			case kOTProviderWillClose:
+				break;
+			
+			case kOTProviderIsClosed:
 				break;
 			
 			default:
@@ -198,9 +204,14 @@ namespace Genie
 		{
 			N::OTListen( endpoint, &call );
 		}
-		catch ( const N::OTNoDataErr& )
+		catch ( const N::OSStatus& err )
 		{
-			throw io::no_input_pending();
+			if ( err == kOTNoDataErr )
+			{
+				throw io::no_input_pending();
+			}
+			
+			throw;
 		}
 		
 		len = call.addr.len;
