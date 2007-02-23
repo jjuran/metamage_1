@@ -87,11 +87,21 @@ namespace Genie
 			P7::ThrowErrno( ENOENT );
 		}
 		
+		time_t now = time( NULL );
+		
 		mode_t mode = IsDirectory() ? S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR
 		            : IsLink()      ? S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR
 		            :                 S_IFREG | S_IRUSR;
 		
 		sb.st_mode = mode;
+		
+		sb.st_nlink = 1;
+		
+		sb.st_blksize = 4096;
+		
+		sb.st_atime = now;
+		sb.st_mtime = now;
+		sb.st_ctime = now;
 	}
 	
 	void FSTree::ChangeMode( mode_t mode ) const
