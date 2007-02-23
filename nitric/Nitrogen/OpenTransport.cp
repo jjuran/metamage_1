@@ -129,16 +129,19 @@ namespace Nitrogen
 		return Nucleus::Owned< EndpointRef >::Seize( result );
 	}
 	
-	OTResult OTLook( EndpointRef ref )
+	static OTResult ThrowOTResult( OTResult result )
 	{
-		OTResult result = OTResult( ::OTLook( ref ) );
-		
 		if ( result < 0 )
 		{
 			ThrowOSStatus( result );
 		}
 		
 		return result;
+	}
+	
+	OTResult OTLook( EndpointRef ref )
+	{
+		return ThrowOTResult( ::OTLook( ref ) );
 	}
 	
 	void OTBind( EndpointRef  ref,
@@ -193,16 +196,6 @@ namespace Nitrogen
 	void OTRcvOrderlyDisconnect( EndpointRef ref )
 	{
 		ThrowOSStatus( ::OTRcvOrderlyDisconnect( ref ) );
-	}
-	
-	static OTResult ThrowOTResult( OTResult result )
-	{
-		if ( result < 0 )
-		{
-			ThrowOSStatus( result );
-		}
-		
-		return result;
 	}
 	
 	OTResult OTRcv( EndpointRef  ref,
