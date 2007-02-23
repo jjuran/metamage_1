@@ -22,7 +22,7 @@ namespace Genie
 	boost::shared_ptr< IOHandle > const& GetFileHandle( int fd );
 	
 	template < class Handle >
-	inline Handle& GetCastIOHandle( int fd )
+	inline Handle& GetFileHandleWithCast( int fd )
 	{
 		return IOHandle_Cast< Handle >( *GetFileHandle( fd ) );
 	}
