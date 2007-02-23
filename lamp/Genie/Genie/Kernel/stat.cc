@@ -14,9 +14,10 @@
 #include "sys/stat.h"
 
 // Genie
-#include "Genie/IO/File.hh"
+#include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
+#include "Genie/IO/File.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -51,7 +52,7 @@ namespace Genie
 	
 	static int stat_file( const char* path, struct stat* sb, bool resolveLinks )
 	{
-		std::memset( (void*)sb, '\0', sizeof (struct stat) );
+		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		try
 		{
@@ -97,13 +98,11 @@ namespace Genie
 	
 	static int fstat( int fd, struct stat* sb )
 	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		try
 		{
-			FileHandle& fh = IOHandle_Cast< FileHandle >( *files[ fd ].handle );
-			
-			fh.Stat( sb );
+			GetFileHandle( fd )->GetFile()->Stat( *sb );
 		}
 		catch ( ... )
 		{
