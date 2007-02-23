@@ -34,8 +34,6 @@ namespace Genie
 			
 			void SetBlocking   ()  { isBlocking = true;  }
 			void SetNonBlocking()  { isBlocking = false; }
-			
-			virtual void Stat( struct ::stat* sb ) const = 0;
 	};
 	
 }

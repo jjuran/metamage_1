@@ -51,11 +51,6 @@ namespace Genie
 		return byteCount;
 	}
 	
-	void QueryFileHandle::Stat( struct stat* sb ) const
-	{
-		//StatFile( file, sb );
-	}
-	
 	off_t QueryFileHandle::Seek( off_t offset, int whence )
 	{
 		switch ( whence )

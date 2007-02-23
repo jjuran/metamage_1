@@ -46,8 +46,6 @@ namespace Genie
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			void Stat( struct stat* sb ) const;
-			
 			off_t Seek( off_t offset, int whence );
 	};
 	

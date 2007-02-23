@@ -24,8 +24,6 @@ namespace Genie
 			virtual TypeCode ActualType() const  { return Type(); }
 			
 			virtual ~DeviceHandle()  {}
-			
-			virtual void Stat( struct ::stat* sb ) const;
 	};
 	
 }

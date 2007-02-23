@@ -53,13 +53,6 @@ namespace Genie
 		return N::FSWrite( refNum, byteCount, data );
 	}
 	
-	void MacFileHandle::Stat( struct stat* sb ) const
-	{
-		FSSpec file = FSSpecFromFRefNum( refNum );
-		
-		StatFile( file, sb );
-	}
-	
 	off_t MacFileHandle::Seek( off_t offset, int whence )
 	{
 		N::FSIOPosMode mode;
