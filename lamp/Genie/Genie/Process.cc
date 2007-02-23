@@ -104,6 +104,8 @@ namespace Genie
 		
 		if ( context.externalMain != NULL )
 		{
+			context.processContext->Status( kProcessRunning );
+			
 			result = context.externalMain( Sh::CountStringArray( context.argv ),
 			                               context.argv,
 			                               context.envp );
@@ -269,7 +271,7 @@ namespace Genie
 		itsCWD                ( FSRoot() ),
 		itsControllingTerminal( NULL ),
 		itsFileDescriptors    ( FileDescriptorMap() ),
-		itsStatus             ( kStarting ),
+		itsStatus             ( kProcessStateless ),
 		itsEnvironStorage     ( new Sh::VarArray() ),
 		itsErrnoData          ( NULL ),
 		itsEnvironData        ( NULL )
@@ -288,7 +290,7 @@ namespace Genie
 		itsCWD                ( gProcessTable[ ppid ].GetCWD() ),
 		itsControllingTerminal( gProcessTable[ ppid ].itsControllingTerminal ),
 		itsFileDescriptors    ( gProcessTable[ ppid ].FileDescriptors() ),
-		itsStatus             ( kStarting ),
+		itsStatus             ( kProcessForked ),
 		itsEnvironStorage     ( new Sh::VarArray( gProcessTable[ ppid ].itsEnvironStorage->GetPointer() ) ),
 		itsErrnoData          ( gProcessTable[ ppid ].itsErrnoData ),
 		itsEnvironData        ( gProcessTable[ ppid ].itsEnvironData )
@@ -567,7 +569,7 @@ namespace Genie
 		// Make the new thread belong to this process
 		itsThread = newThread;
 		
-		Status( Process::kRunning );
+		Status( kProcessSleeping );
 		
 		return savedThreadID;
 	}
@@ -757,7 +759,7 @@ namespace Genie
 	
 	void Process::Terminate()
 	{
-		Status( kTerminated );
+		Status( kProcessTerminated );
 		
 		itsFileDescriptors.clear();
 		
@@ -815,7 +817,7 @@ namespace Genie
 	
 	void Process::Raise( int signal )
 	{
-		if ( itsStatus == kTerminated  ||  itsResult != 0 )
+		if ( itsStatus == kProcessTerminated  ||  itsResult != 0 )
 		{
 			return;
 		}
@@ -862,7 +864,7 @@ namespace Genie
 				case SIGUSR2:
 					// terminate process
 					itsResult = signal;  // indicates fatal signal
-					Continue();
+					Continue();  // Wake the thread if it's stopped so it can die
 					break;
 				
 				case SIGCONT:
@@ -1005,7 +1007,7 @@ namespace Genie
 		{
 			Process& proc = *it->second;
 			
-			if ( proc.Status() != Process::kTerminated  &&  proc.GetPID() != 1 )
+			if ( proc.Status() != kProcessTerminated  &&  proc.GetPID() != 1 )
 			{
 				proc.Raise( SIGKILL );
 			}
@@ -1024,8 +1026,8 @@ namespace Genie
 			
 			pid_t pid = proc.GetPID();
 			
-			if (    proc.Status() == Process::kZombie
-			     || proc.Status() == Process::kTerminated  &&  proc.GetPPID() == 1 )
+			if (    proc.Status() == kProcessReleased
+			     || proc.Status() == kProcessTerminated  &&  proc.GetPPID() == 1 )
 			{
 				hitlist.push_back( pid );
 			}
@@ -1054,6 +1056,8 @@ namespace Genie
 	
 	void Process::Stop()
 	{
+		Status( kProcessStopped );
+		
 		StopThread( itsThread->Get() );
 	}
 	
@@ -1061,6 +1065,8 @@ namespace Genie
 	{
 		if ( N::GetThreadState( itsThread->Get() ) == N::kStoppedThreadState )
 		{
+			Status( kProcessSleeping );
+			
 			N::SetThreadState( itsThread->Get(), N::kReadyThreadState );
 		}
 	}

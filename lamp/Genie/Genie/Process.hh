@@ -107,19 +107,21 @@ namespace Genie
 	
 	class TTYHandle;
 	
+	enum ProcessState
+	{
+		kProcessStateless,
+		kProcessForked,
+		kProcessForking,
+		kProcessRunning,
+		kProcessSleeping,
+		kProcessStopped,
+		kProcessTerminated,
+		kProcessReleased
+	};
+	
 	class Process
 	{
 		public:
-			enum EStatus
-			{
-				kStarting,
-				kRunning,
-				kSleeping,
-				kStopped,
-				kTerminated,
-				kZombie
-			};
-			
 			enum
 			{
 				kNoProcessPID   = 0,
@@ -143,7 +145,7 @@ namespace Genie
 			
 			FileDescriptorMap itsFileDescriptors;
 			
-			EStatus itsStatus;
+			ProcessState itsStatus;
 			
 			int itsResult;
 			
@@ -181,7 +183,7 @@ namespace Genie
 			pid_t GetPGID() const  { return itsPGID; }
 			pid_t GetSID()  const  { return itsSID;  }
 			
-			EStatus Status()      const  { return itsStatus; }
+			ProcessState Status()      const  { return itsStatus; }
 			int Result()          const  { return itsResult; }
 			std::string ProgramName()  const  { return itsName;   }
 			
@@ -210,8 +212,8 @@ namespace Genie
 			void SetPGID( pid_t pgid )  { itsPGID = pgid; }
 			void SetSID ( pid_t sid  )  { itsSID  = sid;  }
 			
-			void Status( EStatus status )  { itsStatus = status; }
-			void Result( int     result )  { itsResult = result; }
+			void Status( ProcessState status )  { itsStatus = status; }
+			void Result( int          result )  { itsResult = result; }
 			
 			void ProgramName( const std::string& name )  { itsName = name; }
 			

@@ -37,7 +37,7 @@ namespace Genie
 			
 			if ( proc.ParentProcessID() == ppid )
 			{
-				if ( proc.Status() == Process::kTerminated )
+				if ( proc.Status() == kProcessTerminated )
 				{
 					return it;
 				}
@@ -70,7 +70,7 @@ namespace Genie
 			// complain
 		}
 		
-		if ( found->second->Status() != Process::kTerminated )
+		if ( found->second->Status() != kProcessTerminated )
 		{
 			found = gProcessTable.end();
 		}
@@ -100,7 +100,7 @@ namespace Genie
 					
 					pid_t foundPID = found->first;
 					
-					found->second->Status( Process::kZombie );
+					found->second->Status( kProcessReleased );
 					
 					Yield();
 					

@@ -19,7 +19,11 @@ namespace Genie
 	
 	static int SpawnVFork()
 	{
-		Process* child = new Process( CurrentProcess().ProcessID() );
+		Process& parent = CurrentProcess();
+		
+		parent.Status( kProcessForking );
+		
+		Process* child = new Process( parent.ProcessID() );
 		
 		RegisterProcessContext( child );
 		

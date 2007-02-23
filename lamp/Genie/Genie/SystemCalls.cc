@@ -291,6 +291,8 @@ namespace Genie
 			// Set this thread's process context back to the forker
 			Process* parent = &gProcessTable[ current.ParentProcessID() ];
 			
+			parent->Status( kProcessRunning );
+			
 			RegisterProcessContext( parent );
 			
 			// Yes, in Genie a forked exec() DOES return on success.
@@ -338,7 +340,7 @@ namespace Genie
 		while ( true )
 		{
 			// Stay awhile...  Stay forever!
-			Yield();
+			N::YieldToAnyThread();
 		}
 	}
 	
