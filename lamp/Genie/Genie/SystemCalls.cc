@@ -37,6 +37,7 @@
 #include "Pedestal/Application.hh"
 
 // Genie
+#include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -87,17 +88,6 @@ namespace Genie
 		P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled(), EINVAL );
 		
 		return CurrentProcess().SetErrno( errnum );
-	}
-	
-	
-	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
-	{
-		while ( files.find( fd ) != files.end() )
-		{
-			++fd;
-		}
-		
-		return fd;
 	}
 	
 	
@@ -221,18 +211,17 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( chdir );
 	
+	
 	static int close( int fd )
 	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		FileDescriptorMap::iterator found = files.find( fd );
-		
-		if ( found == files.end() )
+		try
 		{
-			return CurrentProcess().SetErrno( EBADF );
+			CloseFileDescriptor( fd );
 		}
-		
-		CurrentProcess().FileDescriptors().erase( found );
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
 		
 		return 0;
 	}
@@ -241,23 +230,21 @@ namespace Genie
 	
 	static int DupFD( int oldfd, int newfd )
 	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		FileDescriptorMap::const_iterator it = files.find( oldfd );
-		
-		if ( it == files.end() )
+		try
 		{
-			return CurrentProcess().SetErrno( EBADF );
+			AssignFileDescriptor( newfd, GetFileHandle( oldfd ) );  // Clears the closeOnExec flag
+			
+			return newfd;
 		}
-		
-		files[ newfd ] = files[ oldfd ].handle;  // Clears the closeOnExec flag
-		
-		return newfd;
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
 	}
 	
 	static int dup( int oldfd )
 	{
-		return DupFD( oldfd, LowestUnusedFrom( CurrentProcess().FileDescriptors(), 0 ) );
+		return DupFD( oldfd, LowestUnusedFileDescriptor() );
 	}
 	
 	REGISTER_SYSTEM_CALL( dup );
@@ -423,13 +410,14 @@ namespace Genie
 	{
 		try
 		{
-			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-			
-			RegularFileHandle& fh = IOHandle_Cast< RegularFileHandle >( *files[ fd ].handle );
+			RegularFileHandle& fh = GetFileHandleWithCast< RegularFileHandle >( fd );
 			
 			return fh.Seek( offset, whence );
 		}
-		catch ( ... ) {}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
 		
 		return CurrentProcess().SetErrno( ESPIPE );
 	}
@@ -449,16 +437,16 @@ namespace Genie
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
-		int reader = LowestUnusedFrom( files, 3 );
-		int writer = LowestUnusedFrom( files, reader + 1 );
+		int reader = LowestUnusedFileDescriptor( 3 );
+		int writer = LowestUnusedFileDescriptor( reader + 1 );
 		
 		boost::shared_ptr< PipeState > pipeState( new PipeState );
 		
 		boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( pipeState ) );
 		boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( pipeState ) );
 		
-		files[ reader ] = pipeOut;
-		files[ writer ] = pipeIn;
+		AssignFileDescriptor( reader, pipeOut );
+		AssignFileDescriptor( writer, pipeIn );
 		
 		filedes[ 0 ] = reader;
 		filedes[ 1 ] = writer;
@@ -472,15 +460,7 @@ namespace Genie
 	{
 		try
 		{
-			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-			
-			if ( !files.count( fd ) )
-			{
-				CurrentProcess().SetErrno( EBADF );
-				return NULL;
-			}
-			
-			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ fd ].handle );
+			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
 			
 			const std::string& peekBuffer = stream.Peek( minBytes );
 			
@@ -503,14 +483,7 @@ namespace Genie
 	{
 		try
 		{
-			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-			
-			if ( !files.count( fd ) )
-			{
-				return CurrentProcess().SetErrno( EBADF );
-			}
-			
-			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ fd ].handle );
+			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
 			
 			int get = stream.Read( reinterpret_cast< char* >( buf ),
 			                       count );
@@ -527,14 +500,21 @@ namespace Genie
 	
 	static int setpgid( pid_t pid, pid_t pgid )
 	{
-		Process& target( pid != 0 ? gProcessTable[ pid ]
-		                          : CurrentProcess() );
-		
-		pid = target.ProcessID();
-		
-		target.SetPGID( pgid != 0 ? pgid : pid );
-		
-		return pid;
+		try
+		{
+			Process& target( pid != 0 ? gProcessTable[ pid ]
+			                          : CurrentProcess() );
+			
+			pid = target.ProcessID();
+			
+			target.SetPGID( pgid != 0 ? pgid : pid );
+			
+			return pid;
+		}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
 	}
 	
 	REGISTER_SYSTEM_CALL( setpgid );
@@ -590,9 +570,7 @@ namespace Genie
 	{
 		try
 		{
-			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-			
-			TTYHandle& tty = IOHandle_Cast< TTYHandle >( *files[ fd ].handle );
+			TTYHandle& tty = GetFileHandleWithCast< TTYHandle >( fd );
 			
 			return tty.TTYName().c_str();
 		}
@@ -633,10 +611,12 @@ namespace Genie
 	{
 		try
 		{
-			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *CurrentProcess().FileDescriptors()[ fd ].handle );
+			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
 			
-			int put = stream.Write( reinterpret_cast< const char* >( buf ),
-								    count );
+			const char* data = reinterpret_cast< const char* >( buf );
+			
+			int put = stream.Write( data, count );
+			
 			return put;
 		}
 		catch ( ... )
