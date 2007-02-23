@@ -208,6 +208,24 @@ namespace Genie
 	}
 	
 	
+	static char ProcessStateCode( ProcessState state )
+	{
+		switch ( state )
+		{
+			case kProcessStateless:   return '-';
+			case kProcessForked:      return 'f';
+			case kProcessForking:     return 'F';
+			case kProcessRunning:     return 'R';
+			case kProcessSleeping:    return 'S';
+			case kProcessStopped:     return '.';
+			case kProcessTerminated:  return 'Z';
+			case kProcessReleased:    return 'X';
+			
+			default:
+				return '?';
+		}
+	}
+	
 	class proc_PID_stat_Query
 	{
 		private:
@@ -225,8 +243,8 @@ namespace Genie
 				pid_t sid = process.GetSID();
 				
 				return NN::Convert< std::string >( itsPID ) + " "
-				       "(" + process.ProgramName() + ")"      " "
-				       "?"                                  + " " +
+				       "(" + process.ProgramName() + ")"      " " +
+				       ProcessStateCode( process.Status() ) + " " +
 				       NN::Convert< std::string >( ppid   ) + " " +
 				       NN::Convert< std::string >( pgid   ) + " " +
 				       NN::Convert< std::string >( sid    ) + " "
