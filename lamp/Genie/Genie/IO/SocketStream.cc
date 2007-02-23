@@ -116,10 +116,31 @@ namespace Genie
 				// Always 1 byte (unless there's an error); may block
 				bytes = N::OTRcv( endpoint, data, 1 );
 			}
-			catch ( const N::OTNoDataErr& )
+			catch ( const N::OSStatus& err )
 			{
-				// ::OTRcv() returns kOTNoDataErr to signal EOF in blocking mode
-				throw io::end_of_input();
+				if ( err == kOTLookErr )
+				{
+					OTResult look = N::OTLook( endpoint );
+					
+					switch ( look )
+					{
+						case T_ORDREL:
+							N::OTRcvOrderlyDisconnect( endpoint );
+							
+							throw io::end_of_input();
+						
+						default:
+							break;
+					}
+					
+					std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
+				}
+				else
+				{
+					std::fprintf( stderr, "OSStatus %d from OTRcv()\n", err.Get() );
+				}
+				
+				throw;
 			}
 			
 			SetNonBlocking();
@@ -129,7 +150,7 @@ namespace Genie
 				// Read whatever's left, nonblocking
 				bytes += N::OTRcv( endpoint, data + 1, byteCount - 1 );
 			}
-			catch ( const N::OTNoDataErr& ) {}  // There was only one byte
+			catch ( const io::no_input_pending& ) {}  // There was only one byte
 			catch ( ... )
 			{
 				// FIXME:  This smells
