@@ -129,6 +129,18 @@ namespace Nitrogen
 		return Nucleus::Owned< EndpointRef >::Seize( result );
 	}
 	
+	OTResult OTLook( EndpointRef ref )
+	{
+		OTResult result = OTResult( ::OTLook( ref ) );
+		
+		if ( result < 0 )
+		{
+			ThrowOSStatus( result );
+		}
+		
+		return result;
+	}
+	
 	void OTBind( EndpointRef  ref,
 	             TBind*       reqAddr,
 	             TBind*       retAddr )
