@@ -44,7 +44,7 @@ namespace ALine {
 	{
 	#if TARGET_RT_MAC_MACHO
 		
-		return N::FindFolder( N::FolderType( kCurrentUserFolderType ), kDontCreateFolder );
+		return N::FindFolder( N::kCurrentUserFolderType, kDontCreateFolder );
 		
 	#else
 		
