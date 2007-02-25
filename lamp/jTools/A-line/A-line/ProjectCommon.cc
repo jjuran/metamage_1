@@ -64,6 +64,7 @@ namespace ALine
 	Project& GetProject( const ProjName& projName )
 	{
 		ProjectMap::iterator it = gProjects.find( projName );
+		
 		if ( it != gProjects.end() )
 		{
 			// We already have it
@@ -87,12 +88,16 @@ namespace ALine
 	bool GetIncludeDir( const ProjName& projName, N::FSDirSpec& dir, bool isSystem )
 	{
 		const IncludeDirMap& includeDirs( isSystem ? gSystemIncludeDirs : gIncludeDirs );
+		
 		IncludeDirMap::const_iterator it = includeDirs.find( projName );
+		
 		if ( it != includeDirs.end() )
 		{
 			dir = it->second;
+			
 			return true;
 		}
+		
 		return false;
 	}
 	
@@ -127,7 +132,8 @@ namespace ALine
 	
 	void SetCurrentSourceDir( int zero )
 	{
-		ASSERT(zero == 0);
+		ASSERT( zero == 0 );
+		
 		gNeedsCwdSourceOption = false;
 	}
 	
@@ -169,6 +175,7 @@ namespace ALine
 		}
 		
 		IncludeDirMap::const_iterator it, end = gIncludeDirs.end();
+		
 		// For each project with an include folder,
 		for ( it = gIncludeDirs.begin();  it != end;  ++it )
 		{
