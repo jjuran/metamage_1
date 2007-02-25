@@ -183,6 +183,13 @@ namespace Genie
 	#pragma mark -
 	#pragma mark ¥ unistd ¥
 	
+	static unsigned int alarm( unsigned int seconds )
+	{
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( alarm );
+	
 	static int chdir( const char* pathname )
 	{
 		try
