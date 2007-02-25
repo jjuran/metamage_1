@@ -275,7 +275,7 @@ static int Wait( pid_t pid )
 	
 	if ( resultpid == -1 )
 	{
-		Io::Err << "waitpid() failed\n";
+		std::perror( "sh: waitpid() failed" );
 	}
 	
 	return stat;
