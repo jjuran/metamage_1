@@ -905,7 +905,7 @@ namespace Nitrogen
 	
 	Nucleus::Owned< AEDesc > AEGetKeyDesc( const AERecord&  record,
 	                                       AEKeyword        keyword,
-	                                       DescType         desiredType );
+	                                       DescType         desiredType = typeWildCard );
 	
 	AESizeOfKeyDesc_Result AESizeOfKeyDesc( const AERecord&  record,
 	                                        AEKeyword        keyword );
@@ -950,7 +950,7 @@ namespace Nitrogen
 	
 	Nucleus::Owned< AEDesc > AEGetParamDesc( const AppleEvent&  appleEvent,
 	                                         AEKeyword          keyword,
-	                                         DescType           desiredType );
+	                                         DescType           desiredType = typeWildCard );
 	
 	AESizeOfParam_Result AESizeOfParam( const AppleEvent&  appleEvent,
 	                                    AEKeyword          keyword );
@@ -986,7 +986,7 @@ namespace Nitrogen
 	
 	Nucleus::Owned< AEDesc > AEGetAttributeDesc( const AppleEvent&  appleEvent,
 	                                             AEKeyword          keyword,
-	                                             DescType           desiredType );
+	                                             DescType           desiredType = typeWildCard );
 	
 	AESizeOfAttribute_Result AESizeOfAttribute( const AppleEvent&  appleEvent,
 	                                            AEKeyword          keyword );
