@@ -1,11 +1,10 @@
 /*	============
  *	DeepFiles.hh
  *	============
- *	
- *	Implemented by DeepFiles.cc
  */
 
-#pragma once
+#ifndef ALINE_DEEPFILES_HH
+#define ALINE_DEEPFILES_HH
 
 // C++
 #include <string>
@@ -24,21 +23,22 @@ namespace ALine
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	using std::string;
-	using std::vector;
-	
 	
 	template < class Filter >
 	class DeepFileSearch
 	{
+		private:
+			const Filter& filter;
+			std::vector< FSSpec > result;
+		
 		public:
 			DeepFileSearch( const Filter& filter ) : filter( filter )  {}
 			
-			operator const vector< FSSpec >&() const  { return result; }
+			operator const std::vector< FSSpec >&() const  { return result; }
 			
 		#ifndef __MWERKS__
 			
-			DeepFileSearch< Filter >& SearchItem( const FSSpec item );
+			DeepFileSearch< Filter >& SearchItem( const FSSpec  item );
 			
 		#else
 			
@@ -47,10 +47,6 @@ namespace ALine
 		#endif
 			
 			DeepFileSearch< Filter >& SearchDir( const N::FSDirSpec& dir );
-		
-		private:
-			const Filter& filter;
-			vector< FSSpec > result;
 	};
 	
 	template < class Filter >
@@ -58,11 +54,11 @@ namespace ALine
 	
 #ifndef __MWERKS__
 	
-	DeepFileSearch<Filter>::SearchItem(const FSSpec item)
+	DeepFileSearch< Filter >::SearchItem( const FSSpec  item )
 	
 #else
 	
-	DeepFileSearch<Filter>::SearchItem(const FSSpec& item)
+	DeepFileSearch< Filter >::SearchItem( const FSSpec& item )
 	
 #endif
 	
@@ -78,6 +74,7 @@ namespace ALine
 		{
 			SearchDir( NN::Convert< N::FSDirSpec >( item ) );
 		}
+		
 		return *this;
 	}
 	
@@ -94,22 +91,24 @@ namespace ALine
 	
 	
 	template < class Filter >
-	vector< FSSpec > DeepFiles( const N::FSDirSpec& dir, const Filter& filter )
+	std::vector< FSSpec > DeepFiles( const N::FSDirSpec& dir, const Filter& filter )
 	{
 		return DeepFileSearch< Filter >( filter ).SearchDir( dir );
 	}
 	
 	template <class Filter>
-	vector< FSSpec > DeepFiles( const FSSpec& item, const Filter& filter )
+	std::vector< FSSpec > DeepFiles( const FSSpec& item, const Filter& filter )
 	{
 		return DeepFileSearch< Filter >( filter ).SearchItem( item );
 	}
 	
-	vector< FSSpec > DeepFiles( const N::FSDirSpec& dir );
-	vector< FSSpec > DeepFiles( const FSSpec& item );
+	std::vector< FSSpec > DeepFiles( const N::FSDirSpec&  dir );
+	std::vector< FSSpec > DeepFiles( const FSSpec&        item );
 	
-	vector< FSSpec > DeepFiles( const N::FSDirSpec& dir, const string& name );
-	vector< FSSpec > DeepFiles( const FSSpec& item, const string& name );
+	std::vector< FSSpec > DeepFiles( const N::FSDirSpec&  dir,  const std::string& name );
+	std::vector< FSSpec > DeepFiles( const FSSpec&        item, const std::string& name );
 	
 }
+
+#endif
 

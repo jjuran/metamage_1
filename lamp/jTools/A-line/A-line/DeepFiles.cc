@@ -24,12 +24,12 @@ namespace ALine
 	static AllFilter All;
 	
 	
-	vector< FSSpec > DeepFiles( const N::FSDirSpec& dir )
+	std::vector< FSSpec > DeepFiles( const N::FSDirSpec& dir )
 	{
 		return DeepFiles( dir, All );
 	}
 	
-	vector< FSSpec > DeepFiles( const FSSpec& item )
+	std::vector< FSSpec > DeepFiles( const FSSpec& item )
 	{
 		return DeepFiles( item, All );
 	}
@@ -38,23 +38,23 @@ namespace ALine
 	class NameFilter
 	{
 		private:
-			string nameToMatch;
+			std::string nameToMatch;
 			
 		public:
-			NameFilter( const string& name ) : nameToMatch( name )  {}
+			NameFilter( const std::string& name ) : nameToMatch( name )  {}
 			
 			bool operator()( const FSSpec& file ) const
 			{
-				return NN::Convert< string >( file.name ) == nameToMatch;
+				return NN::Convert< std::string >( file.name ) == nameToMatch;
 			}
 	};
 	
-	vector< FSSpec > DeepFiles( const N::FSDirSpec& dir, const string& name )
+	std::vector< FSSpec > DeepFiles( const N::FSDirSpec& dir, const std::string& name )
 	{
 		return DeepFiles( dir, NameFilter( name ) );
 	}
 	
-	vector< FSSpec > DeepFiles( const FSSpec& item, const string& name )
+	std::vector< FSSpec > DeepFiles( const FSSpec& item, const std::string& name )
 	{
 		return DeepFiles( item, NameFilter( name ) );
 	}
