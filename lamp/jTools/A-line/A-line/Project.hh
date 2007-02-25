@@ -1,9 +1,7 @@
 /*	==========
  *	Project.hh
  *	==========
- *	
- *	Implemented by Project.cc
- */
+  */
 
 #ifndef ALINE_PROJECT_HH
 #define ALINE_PROJECT_HH
@@ -19,15 +17,13 @@
 #include "A-line/TargetInfo.hh"
 
 
-namespace ALine {
+namespace ALine
+{
 	
 	namespace N = Nitrogen;
 	
-	using std::string;
-	using std::vector;
 	
-	
-	typedef string ProjName, FileName, IncludePath;
+	typedef std::string ProjName, FileName, IncludePath;
 	
 	class Project
 	{
@@ -42,21 +38,21 @@ namespace ALine {
 			const IncludePath& PrecompiledHeaderSource() const  { return precompiledHeaderSource; }
 			bool NeedsCwdSourceOption() const  { return needsCwdSourceOption; }
 			
-			const vector< ProjName >& AllUsedProjects() const  { return allUsedProjects; }
+			const std::vector< ProjName >& AllUsedProjects() const  { return allUsedProjects; }
 			
 			FSSpec PrecompiledHeaderImage() const;
 			
-			const vector< N::FSDirSpec >& SearchDirs() const  { return sourceDirs; }
+			const std::vector< N::FSDirSpec >& SearchDirs() const  { return sourceDirs; }
 			
-			vector< FileName > ExtraSources()  const  { return myExtraSources; }
-			vector< FileName > LibImports()    const  { return myImports; }
-			vector< FileName > Frameworks()    const  { return myFrameworks; }
-			vector< FileName > UsedRezFiles()  const  { return rezFiles; }
-			vector< FileName > UsedRsrcFiles() const  { return rsrcFiles; }
+			std::vector< FileName > ExtraSources()  const  { return myExtraSources; }
+			std::vector< FileName > LibImports()    const  { return myImports; }
+			std::vector< FileName > Frameworks()    const  { return myFrameworks; }
+			std::vector< FileName > UsedRezFiles()  const  { return rezFiles; }
+			std::vector< FileName > UsedRsrcFiles() const  { return rsrcFiles; }
 			
-			string CreatorCode() const  { return creator; }
+			std::string CreatorCode() const  { return creator; }
 			
-			const vector< FSSpec >& Sources() const  { return mySources; }
+			const std::vector< FSSpec >& Sources() const  { return mySources; }
 			
 			void Study();
 			
@@ -76,19 +72,19 @@ namespace ALine {
 			// Ugly hack used for OpenSSL.
 			bool needsCwdSourceOption;
 			// The names of all projects used directly or indirectly by this one.
-			vector< ProjName > allUsedProjects;
+			std::vector< ProjName > allUsedProjects;
 			// Directories to search for source files.
-			vector< N::FSDirSpec > sourceDirs;
+			std::vector< N::FSDirSpec > sourceDirs;
 			// Include dirs from used projects.
-			vector< N::FSDirSpec > myUsedIncludeDirs;
+			std::vector< N::FSDirSpec > myUsedIncludeDirs;
 			// System include dirs from used projects.
-			vector< N::FSDirSpec > myUsedSystemIncludeDirs;
+			std::vector< N::FSDirSpec > myUsedSystemIncludeDirs;
 			// Various things to link with.
-			vector< FileName > rezFiles, rsrcFiles, myExtraSources, myImports, myFrameworks;
+			std::vector< FileName > rezFiles, rsrcFiles, myExtraSources, myImports, myFrameworks;
 			// Creator code / signature for output files.
-			string creator;
+			std::string creator;
 			// Source files to compile.
-			vector< FSSpec > mySources;
+			std::vector< FSSpec > mySources;
 	};
 	
 }
