@@ -34,8 +34,8 @@ namespace Nitrogen
 	
 	PropertyAccessor::PropertyAccessor()
 	{
-		Register( AEPropertyID( pClass ), typeWildCard, AccessClassProperty );
-		Register( AEPropertyID( kAEAll ), typeWildCard, AccessAllProperties );
+		Register( pClass, typeWildCard, AccessClassProperty );
+		Register( pAll,   typeWildCard, AccessAllProperties );
 	}
 	
 	PropertyAccessor::Callback PropertyAccessor::FindAccessor( AEPropertyID  propertyID,
