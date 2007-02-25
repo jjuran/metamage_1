@@ -9,7 +9,7 @@
 namespace ALine
 {
 	
-	string& operator<<( string& str, const string& appendage )
+	std::string& operator<<( std::string& str, const std::string& appendage )
 	{
 		if ( appendage.size() > 0 )
 		{
@@ -17,8 +17,10 @@ namespace ALine
 			{
 				str += " ";
 			}
+			
 			str += appendage;
 		}
+		
 		return str;
 	}
 	
