@@ -18,7 +18,6 @@
 
 namespace Nitrogen
   {
-   typedef Nucleus::Selector< class FolderType_Tag, ::OSType >::Type FolderType;
 	
 	static const FSVolumeRefNum kOnSystemDisk      = FSVolumeRefNum( ::kOnSystemDisk      );
 	static const FSVolumeRefNum kOnAppropriateDisk = FSVolumeRefNum( ::kOnAppropriateDisk );
@@ -29,11 +28,28 @@ namespace Nitrogen
 	static const FSVolumeRefNum kUserDomain    = FSVolumeRefNum( ::kUserDomain    );
 	static const FSVolumeRefNum kClassicDomain = FSVolumeRefNum( ::kClassicDomain );
 	
-	static const FolderType kSystemFolderType = FolderType( ::kSystemFolderType );
-	// ...
-	static const FolderType kTemporaryFolderType = FolderType( ::kTemporaryFolderType );
-	
-	static const FolderType kCurrentUserFolderType = FolderType( ::kCurrentUserFolderType );
+	enum FolderType
+	{
+		kSystemFolderType             = ::kSystemFolderType,
+		kDesktopFolderType            = ::kDesktopFolderType,
+		kSystemDesktopFolderType      = ::kSystemDesktopFolderType,
+		kTrashFolderType              = ::kTrashFolderType,
+		kSystemTrashFolderType        = ::kSystemTrashFolderType,
+		kWhereToEmptyTrashFolderType  = ::kWhereToEmptyTrashFolderType,
+		kPrintMonitorDocsFolderType   = ::kPrintMonitorDocsFolderType,
+		kStartupFolderType            = ::kStartupFolderType,
+		kShutdownFolderType           = ::kShutdownFolderType,
+		kAppleMenuFolderType          = ::kAppleMenuFolderType,
+		kControlPanelFolderType       = ::kControlPanelFolderType,
+		kSystemControlPanelFolderType = ::kSystemControlPanelFolderType,
+		kExtensionFolderType          = ::kExtensionFolderType,
+		kFontsFolderType              = ::kFontsFolderType,
+		kPreferencesFolderType        = ::kPreferencesFolderType,
+		kSystemPreferencesFolderType  = ::kSystemPreferencesFolderType,
+		kTemporaryFolderType          = ::kTemporaryFolderType,
+		
+		kFolderType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+	};
 	
 	FSDirSpec FindFolder( FSVolumeRefNum vRefNum, FolderType folderType, bool createFolder );
 	
