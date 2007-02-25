@@ -265,6 +265,7 @@ namespace Genie
 		itsPID                ( gProcessTable.NewProcess( this ) ),
 		itsPGID               ( 0 ),
 		itsSID                ( 0 ),
+		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( "init" ),
@@ -284,6 +285,7 @@ namespace Genie
 		itsPID                ( gProcessTable.NewProcess( this ) ),
 		itsPGID               ( gProcessTable[ ppid ].GetPGID() ),
 		itsSID                ( gProcessTable[ ppid ].GetSID() ),
+		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( gProcessTable[ ppid ].ProgramName() ),
@@ -307,6 +309,22 @@ namespace Genie
 	
 	Process::~Process()
 	{
+	}
+	
+	unsigned int Process::SetAlarm( unsigned int seconds )
+	{
+		UInt64 now = N::Microseconds();
+		
+		unsigned int remainder = 0;
+		
+		if ( itsAlarmClock )
+		{
+			remainder = (itsAlarmClock - now) / 1000000 + 1;
+		}
+		
+		itsAlarmClock = seconds ? now + seconds * 1000000 : 0;
+		
+		return remainder;
 	}
 	
 	void Process::InitThread()
@@ -868,13 +886,15 @@ namespace Genie
 					break;
 				
 				case SIGCONT:
+					Continue();
+					break;
+				
 				case SIGURG:
 				case SIGCHLD:
 				case SIGIO:
 				case SIGWINCH:
 				//case SIGINFO:
-					// continue and discard signal
-					Continue();
+					// discard signal
 					break;
 				
 				case SIGSTOP:
@@ -900,6 +920,16 @@ namespace Genie
 	
 	bool Process::HandlePendingSignals()
 	{
+		if ( itsAlarmClock )
+		{
+			UInt64 now = N::Microseconds();
+			
+			if ( now > itsAlarmClock )
+			{
+				Raise( SIGALRM );
+			}
+		}
+		
 		if ( itsResult != 0 )
 		{
 			// Fatal signal received.  Terminate.

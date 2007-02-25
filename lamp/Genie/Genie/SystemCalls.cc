@@ -185,7 +185,7 @@ namespace Genie
 	
 	static unsigned int alarm( unsigned int seconds )
 	{
-		return 0;
+		return CurrentProcess().SetAlarm( seconds );
 	}
 	
 	REGISTER_SYSTEM_CALL( alarm );

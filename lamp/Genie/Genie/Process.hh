@@ -134,6 +134,8 @@ namespace Genie
 			pid_t itsPGID;
 			pid_t itsSID;
 			
+			UInt64 itsAlarmClock;
+			
 			UInt32 itsPendingSignals;
 			UInt32 itsPreviousSignals;
 			
@@ -182,6 +184,8 @@ namespace Genie
 			pid_t GetPID()  const  { return itsPID;  }
 			pid_t GetPGID() const  { return itsPGID; }
 			pid_t GetSID()  const  { return itsSID;  }
+			
+			unsigned int SetAlarm( unsigned int seconds );
 			
 			ProcessState Status()      const  { return itsStatus; }
 			int Result()          const  { return itsResult; }
