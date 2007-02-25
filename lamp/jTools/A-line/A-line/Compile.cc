@@ -17,6 +17,9 @@
 // POSIX
 #include "unistd.h"
 
+// Io
+#include "io/io.hh"
+
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Aliases.h"
@@ -368,9 +371,7 @@ namespace ALine
 			                     << "Diagnostics"
 			                     & DiagnosticsFilenameFromSourceFilename( filename );
 			
-			using N::fsRdPerm;
-			
-			if ( N::GetEOF( N::FSpOpenDF( diagnostics, fsRdPerm ) ) > 0 )
+			if ( N::GetEOF( io::open_for_reading( diagnostics ) ) > 0 )
 			{
 				N::AESend( N::AECreateAppleEvent( N::kCoreEventClass, 
 				                                  N::kAEOpenDocuments, 
