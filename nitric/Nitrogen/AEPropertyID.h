@@ -24,6 +24,8 @@ namespace Nitrogen
 	enum AEPropertyID
 	{
 		
+		pAll = ::kAEAll,
+		
 		// AERegistry
 		// ----------
 		
