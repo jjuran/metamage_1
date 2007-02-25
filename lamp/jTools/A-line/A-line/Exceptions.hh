@@ -1,8 +1,6 @@
-/*	===================
- *	A-lineExceptions.hh
- *	===================
- *	
- *	No implementation necessary.
+/*	=============
+ *	Exceptions.hh
+ *	=============
  */
 
 #pragma once
@@ -11,20 +9,21 @@
 #include "A-line/Project.hh"
 
 
-namespace ALine {
+namespace ALine
+{
 	
 	struct NoSuchProject  {};
 	
 	struct NoSuchUsedProject
 	{
-		NoSuchUsedProject( const ProjName& projName, const string& used ) 
+		NoSuchUsedProject( const ProjName& projName, const std::string& used )
 		:
 			projName( projName ), 
 			used    ( used )
 		{}
 		
 		ProjName projName;
-		string used;
+		std::string used;
 	};
 	
 	struct BadSourceAlias
