@@ -9,10 +9,8 @@
 #include "A-line/TargetNames.hh"
 
 
-namespace ALine {
-	
-	// Static variables are zero-initialized
-	static FSSpec sNullFSSpec;
+namespace ALine
+{
 	
 	CompilerOptions::CompilerOptions( const TargetInfo& targetInfo )
 	:
