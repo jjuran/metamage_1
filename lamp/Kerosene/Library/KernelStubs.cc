@@ -122,6 +122,7 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	int  (*SpawnVFork_import_)();
 	
 	// unistd
+	unsigned int (*alarm_import_   )( unsigned int seconds );
 	int          (*chdir_import_   )( const char* path );
 	int          (*close_import_   )( int filedes );
 	int          (*copyfile_import_)( const char* src, const char* dest );
@@ -519,6 +520,13 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	
 	#pragma mark -
 	#pragma mark ¥ unistd ¥
+	
+	unsigned int alarm( unsigned int seconds )
+	{
+		CheckImportedSymbol( alarm_import_ );
+		
+		return alarm_import_( seconds );
+	}
 	
 	int chdir( const char* path )
 	{
