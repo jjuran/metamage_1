@@ -41,6 +41,11 @@ namespace UseEdit
 			typedef std::map< ::WindowRef, boost::shared_ptr< Document > > Map;
 			
 			Map itsMap;
+			
+			Map::const_iterator Find( UInt32 id ) const;
+			Map::      iterator Find( UInt32 id );
+			
+			void ThrowIfNoSuchObject( Map::const_iterator it ) const;
 		
 		public:
 			~DocumentContainer();

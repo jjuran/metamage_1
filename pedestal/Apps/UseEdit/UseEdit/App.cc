@@ -74,8 +74,7 @@ namespace UseEdit
 			ASSERT( app != NULL );
 			
 			NN::Owned< N::AEToken, N::AETokenDisposer > token = N::AEResolve( N::AEGetParamDesc( appleEvent,
-			                                                                                     keyDirectObject,
-			                                                                                     typeWildCard ) );
+			                                                                                     keyDirectObject ) );
 			
 			switch ( N::DescType( token.Get().descriptorType ) )
 			{
@@ -102,8 +101,7 @@ namespace UseEdit
 			ASSERT( app != NULL );
 			
 			NN::Owned< N::AEDesc > containerObjSpec = N::AEGetParamDesc( appleEvent,
-			                                                             keyDirectObject,
-			                                                             typeWildCard );
+			                                                             keyDirectObject );
 			
 			bool containerIsRoot = containerObjSpec.Get().descriptorType == typeNull;
 			
@@ -132,8 +130,7 @@ namespace UseEdit
 			N::AEPutParamDesc( reply,
 			                   keyDirectObject,
 			                   N::GetData( N::AEResolve( N::AEGetParamDesc( appleEvent,
-			                                                                keyDirectObject,
-			                                                                typeWildCard ) ) ) );
+			                                                                keyDirectObject ) ) ) );
 		}
 		
 		void HandleOpenDocumentsAppleEvent( const AppleEvent&  appleEvent,
@@ -272,6 +269,30 @@ namespace UseEdit
 	{
 	}
 	
+	
+	inline DocumentContainer::Map::const_iterator DocumentContainer::Find( UInt32 id ) const
+	{
+		Map::const_iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
+		
+		return it;
+	}
+	
+	inline DocumentContainer::Map::iterator DocumentContainer::Find( UInt32 id )
+	{
+		Map::iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
+		
+		return it;
+	}
+	
+	inline void DocumentContainer::ThrowIfNoSuchObject( Map::const_iterator it ) const
+	{
+		if ( it == itsMap.end() )
+		{
+			throw N::ErrAENoSuchObject();
+		}
+	}
+	
+	
 	const Document& DocumentContainer::GetDocumentByIndex( std::size_t index ) const
 	{
 		if ( !ExistsElementByIndex( index ) )
@@ -288,12 +309,9 @@ namespace UseEdit
 	
 	const Document& DocumentContainer::GetDocumentByID( UInt32 id ) const
 	{
-		Map::const_iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
+		Map::const_iterator it = Find( id );
 		
-		if ( it == itsMap.end() )
-		{
-			throw N::ErrAENoSuchObject();
-		}
+		ThrowIfNoSuchObject( it );
 		
 		return *it->second.get();
 	}
@@ -305,7 +323,7 @@ namespace UseEdit
 	
 	bool DocumentContainer::ExistsElementByID( UInt32 id ) const
 	{
-		return itsMap.find( reinterpret_cast< ::WindowRef >( id ) ) != itsMap.end();
+		return Find( id ) != itsMap.end();
 	}
 	
 	NN::Owned< N::AEToken, N::AETokenDisposer > DocumentContainer::GetElementByIndex( std::size_t index ) const
@@ -334,12 +352,9 @@ namespace UseEdit
 	
 	void DocumentContainer::DeleteElementByID( UInt32 id )
 	{
-		Map::iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
+		Map::iterator it = Find( id );
 		
-		if ( it == itsMap.end() )
-		{
-			throw N::ErrAENoSuchObject();
-		}
+		ThrowIfNoSuchObject( it );
 		
 		itsMap.erase( it );
 	}
