@@ -97,6 +97,12 @@ namespace Genie
 		
 		sb.st_nlink = 1;
 		
+		try
+		{
+			sb.st_size = IsDirectory() ? 0 : GetEOF();
+		}
+		catch ( ... ) {}
+		
 		sb.st_blksize = 4096;
 		
 		sb.st_atime = now;
@@ -112,6 +118,18 @@ namespace Genie
 	void FSTree::Delete() const
 	{
 		P7::ThrowErrno( EPERM );
+	}
+	
+	off_t FSTree::GetEOF() const
+	{
+		P7::ThrowErrno( IsDirectory() ? EISDIR : EINVAL );
+		
+		return 0;  // Not reached
+	}
+	
+	void FSTree::SetEOF( off_t length ) const
+	{
+		P7::ThrowErrno( IsDirectory() ? EISDIR : EINVAL );
 	}
 	
 	std::string FSTree::ReadLink() const
