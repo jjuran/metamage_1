@@ -5,9 +5,6 @@
 
 #include "Genie/FileSystem/StatFile.hh"
 
-// Universal Interfaces
-#include <OSUtils.h>
-
 // Standard C++
 #include <string>
 
@@ -17,6 +14,9 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+
+// Nitrogen
+#include "Nitrogen/OSUtils.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
@@ -139,10 +139,9 @@ namespace Genie
 	
 	void StatFile( const FSSpec& file, struct stat* sb, bool wantRsrcFork )
 	{
-		MachineLocation loc;
-		ReadLocation( &loc );
+		long gmtDelta = N::ReadLocation().u.gmtDelta;
 		
-		const unsigned long timeDiff = MacUnixEpochOffset() + MacLocalTimeDeltaForFiles( loc.u.gmtDelta );
+		const unsigned long timeDiff = MacUnixEpochOffset() + MacLocalTimeDeltaForFiles( gmtDelta );
 		
 		CInfoPBRec paramBlock;
 		
