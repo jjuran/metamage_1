@@ -575,6 +575,42 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( sleep );
 	
+	static int truncate( const char* path, off_t length )
+	{
+		try
+		{
+			FSTreePtr file = ResolvePathname( path, CurrentProcess().CurrentWorkingDirectory() );
+			
+			file->SetEOF( length );
+		}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( truncate );
+	
+	static int ftruncate( int fd, off_t length )
+	{
+		try
+		{
+			RegularFileHandle& fh = GetFileHandleWithCast< RegularFileHandle >( fd );
+			
+			fh.SetEOF( length );
+		}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( ftruncate );
+	
 	static const char* ttyname( int fd )
 	{
 		try
