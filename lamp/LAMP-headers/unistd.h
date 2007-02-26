@@ -106,6 +106,10 @@ extern "C" {
 	
 	int symlink(const char *oldpath, const char *newpath);
 	
+	int truncate( const char* path, off_t length );
+	
+	int ftruncate( int fd, off_t length );
+	
 	const char* ttyname( int filedes );
 	
 	// ttypair() is analogous to socketpair(), and creates a pseudo-tty device.
