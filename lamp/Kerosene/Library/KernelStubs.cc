@@ -122,33 +122,35 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	int  (*SpawnVFork_import_)();
 	
 	// unistd
-	unsigned int (*alarm_import_   )( unsigned int seconds );
-	int          (*chdir_import_   )( const char* path );
-	int          (*close_import_   )( int filedes );
-	int          (*copyfile_import_)( const char* src, const char* dest );
-	int          (*dup_import_     )( int filedes );
-	int          (*dup2_import_    )( int filedes, int filedes2 );
-	char*        (*getcwd_import_  )( char* buf, size_t size );
-	pid_t        (*getpid_import_  )();
-	pid_t        (*getpgid_import_ )( pid_t pid );
-	pid_t        (*getppid_import_ )();
-	off_t        (*lseek_import_   )( int fildes, off_t offset, int whence );
-	int          (*mkdir_import_   )( const char* pathname, mode_t mode );
-	int          (*rmdir_import_   )( const char* pathname );
-	int          (*pause_import_   )();
-	int          (*peek_import_    )( int fd, const char** buffer, size_t minBytes );
-	int          (*pipe_import_    )( int filedes[ 2 ] );
-	ssize_t      (*read_import_    )( int filedes, void* buf, size_t nbyte );
-	int          (*readlink_import_)( const char* path, char* buf, int len );
-	int          (*rename_import_  )( const char* src, const char* dest );
-	int          (*setpgid_import_ )( pid_t pid, pid_t pgid );
-	pid_t        (*setsid_import_  )();
-	unsigned int (*sleep_import_   )( unsigned int seconds );
-	int          (*symlink_import_ )( const char* target, const char* link );
-	const char*  (*ttyname_import_ )( int filedes );
-	int          (*ttypair_import_ )( int filedes[ 2 ] );
-	int          (*unlink_import_  )( const char* pathname );
-	ssize_t      (*write_import_   )( int filedes, const void* buf, size_t nbyte );
+	unsigned int (*alarm_import_    )( unsigned int seconds );
+	int          (*chdir_import_    )( const char* path );
+	int          (*close_import_    )( int filedes );
+	int          (*copyfile_import_ )( const char* src, const char* dest );
+	int          (*dup_import_      )( int filedes );
+	int          (*dup2_import_     )( int filedes, int filedes2 );
+	char*        (*getcwd_import_   )( char* buf, size_t size );
+	pid_t        (*getpid_import_   )();
+	pid_t        (*getpgid_import_  )( pid_t pid );
+	pid_t        (*getppid_import_  )();
+	off_t        (*lseek_import_    )( int fildes, off_t offset, int whence );
+	int          (*mkdir_import_    )( const char* pathname, mode_t mode );
+	int          (*rmdir_import_    )( const char* pathname );
+	int          (*pause_import_    )();
+	int          (*peek_import_     )( int fd, const char** buffer, size_t minBytes );
+	int          (*pipe_import_     )( int filedes[ 2 ] );
+	ssize_t      (*read_import_     )( int filedes, void* buf, size_t nbyte );
+	int          (*readlink_import_ )( const char* path, char* buf, int len );
+	int          (*rename_import_   )( const char* src, const char* dest );
+	int          (*setpgid_import_  )( pid_t pid, pid_t pgid );
+	pid_t        (*setsid_import_   )();
+	unsigned int (*sleep_import_    )( unsigned int seconds );
+	int          (*symlink_import_  )( const char* target, const char* link );
+	int          (*truncate_import_ )( const char* path, off_t length );
+	int          (*ftruncate_import_)( int fd, off_t length );
+	const char*  (*ttyname_import_  )( int filedes );
+	int          (*ttypair_import_  )( int filedes[ 2 ] );
+	int          (*unlink_import_   )( const char* pathname );
+	ssize_t      (*write_import_    )( int filedes, const void* buf, size_t nbyte );
 	
 	int*       (*ErrnoPtr_import_        )();
 	char***    (*EnvironPtr_import_      )();
@@ -701,6 +703,20 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 		CheckImportedSymbol( symlink_import_ );
 		
 		return symlink_import_( target, link );
+	}
+	
+	int truncate( const char* path, off_t length )
+	{
+		CheckImportedSymbol( truncate_import_ );
+		
+		return truncate_import_( path, length );
+	}
+	
+	int ftruncate( int fd, off_t length )
+	{
+		CheckImportedSymbol( ftruncate_import_ );
+		
+		return ftruncate_import_( fd, length );
 	}
 	
 	const char* ttyname( int filedes )
