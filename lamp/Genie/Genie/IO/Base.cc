@@ -5,6 +5,9 @@
 
 #include "Genie/IO/Base.hh"
 
+// Nucleus
+#include "Nucleus/Convert.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -12,17 +15,23 @@
 namespace Genie
 {
 	
+	namespace NN = Nucleus;
 	namespace P7 = POSeven;
+	
+	static std::string IOName( unsigned long id )
+	{
+		return "io:[" + NN::Convert< std::string >( id ) + "]";
+	}
 	
 	class FSTree_IOHandle : public FSTree
 	{
 		private:
-			boost::shared_ptr< IOHandle > itsHandle;
+			std::string itsName;
 		
 		public:
-			FSTree_IOHandle( const boost::shared_ptr< IOHandle >& handle ) : itsHandle( handle )  {}
+			FSTree_IOHandle( const void* address ) : itsName( IOName( (unsigned long) address ) )  {}
 			
-			std::string Name() const  { return "io:[]"; }
+			std::string Name() const  { return itsName; }
 			
 			std::string Pathname() const  { return Name(); }
 			
@@ -35,9 +44,9 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr IOHandle::GetFile()
+	FSTreePtr IOHandle::GetFile() const
 	{
-		return FSTreePtr( new FSTree_IOHandle( shared_from_this() ) );
+		return FSTreePtr( new FSTree_IOHandle( this ) );
 	}
 	
 	void Check_IOHandle_Cast( IOHandle& handle, TypeCode desiredType )
