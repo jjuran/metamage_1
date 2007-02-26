@@ -38,7 +38,7 @@ namespace Genie
 			
 			TypeCode ActualType() const  { return Type(); }
 			
-			FSTreePtr GetFile();
+			FSTreePtr GetFile() const;
 			
 			unsigned int SysPoll() const  { return kPollRead | kPollWrite | kPollExcept; }
 			

@@ -59,7 +59,7 @@ namespace Genie
 			
 			MacDataForkHandle( NN::Owned< N::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
 			
-			FSTreePtr GetFile();
+			FSTreePtr GetFile() const;
 	};
 	
 	class MacRsrcForkHandle : public MacFileHandle
@@ -71,7 +71,7 @@ namespace Genie
 			
 			MacRsrcForkHandle( NN::Owned< N::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
 			
-			FSTreePtr GetFile();
+			FSTreePtr GetFile() const;
 	};
 	
 }

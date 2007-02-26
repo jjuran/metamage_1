@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	FSTreePtr SimpleDeviceHandle::GetFile()
+	FSTreePtr SimpleDeviceHandle::GetFile() const
 	{
 		std::string deviceName = "/dev/";
 		deviceName += io.name;

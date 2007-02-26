@@ -31,7 +31,7 @@ namespace Genie
 			
 			TypeCode ActualType() const  { return Type(); }
 			
-			FSTreePtr GetFile()  { return itsDir; }
+			FSTreePtr GetFile() const  { return itsDir; }
 			
 			const dirent* ReadDir();
 			

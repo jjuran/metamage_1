@@ -22,7 +22,7 @@ namespace Genie
 	
 	namespace P7 = POSeven;
 	
-	FSTreePtr TTYHandle::GetFile()
+	FSTreePtr TTYHandle::GetFile() const
 	{
 		return ResolvePathname( ttyName, FSRoot() );
 	}

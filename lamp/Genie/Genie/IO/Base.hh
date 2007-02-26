@@ -107,7 +107,7 @@ namespace Genie
 			
 			virtual TypeCode ActualType() const  { return Type(); }
 			
-			virtual FSTreePtr GetFile();
+			virtual FSTreePtr GetFile() const;
 	};
 	
 	void Check_IOHandle_Cast( IOHandle& handle, TypeCode desiredType );

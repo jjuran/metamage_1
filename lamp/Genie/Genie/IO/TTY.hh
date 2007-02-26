@@ -28,7 +28,7 @@ namespace Genie
 			
 			TypeCode ActualType() const  { return Type(); }
 			
-			FSTreePtr GetFile();
+			FSTreePtr GetFile() const;
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			

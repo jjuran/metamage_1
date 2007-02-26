@@ -86,12 +86,12 @@ namespace Genie
 		return FSSpecFromFRefNum( refNum );
 	}
 	
-	FSTreePtr MacDataForkHandle::GetFile()
+	FSTreePtr MacDataForkHandle::GetFile() const
 	{
 		return FSTreeFromFSSpec( GetFSSpec() );
 	}
 	
-	FSTreePtr MacRsrcForkHandle::GetFile()
+	FSTreePtr MacRsrcForkHandle::GetFile() const
 	{
 		return GetRsrcForkFSTree( GetFSSpec() );
 	}
