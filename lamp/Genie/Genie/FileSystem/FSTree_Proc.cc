@@ -313,6 +313,8 @@ namespace Genie
 			{
 				return itsHandle;
 			}
+			
+			off_t GetEOF() const  { return IOHandle_Cast< RegularFileHandle >( *itsHandle.get() ).GetEOF(); }
 	};
 	
 	std::string FSTree_PID_fd_N::Name() const
