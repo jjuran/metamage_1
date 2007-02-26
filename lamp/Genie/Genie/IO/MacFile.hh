@@ -47,6 +47,10 @@ namespace Genie
 			
 			off_t Seek( off_t offset, int whence );
 			
+			off_t GetEOF() const  { return N::GetEOF( refNum ); }
+			
+			void SetEOF( off_t length ) const  { N::SetEOF( refNum, length ); }
+			
 			FSSpec GetFSSpec() const;
 	};
 	

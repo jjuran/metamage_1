@@ -95,6 +95,9 @@ namespace Genie
 			
 			// File methods
 			
+			virtual off_t GetEOF() const;
+			virtual void  SetEOF( off_t length ) const;
+			
 			virtual std::string ReadLink() const;
 			virtual FSTreePtr ResolveLink() const;
 			

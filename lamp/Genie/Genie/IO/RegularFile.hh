@@ -23,6 +23,10 @@ namespace Genie
 			unsigned int SysPoll() const  { return kPollRead | kPollWrite | kPollExcept; }
 			
 			virtual off_t Seek( off_t offset, int whence ) = 0;
+			
+			virtual off_t GetEOF() const;
+			
+			virtual void SetEOF( off_t length ) const;
 	};
 	
 }
