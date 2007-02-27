@@ -114,6 +114,9 @@ namespace Genie
 			
 			const SocketAddress& GetSockName() const  { return socketAddress; }
 			const SocketAddress& GetPeerName() const  { return peerAddress;   }
+			
+			void ShutdownReading()  {}
+			void ShutdownWriting();
 	};
 	
 }

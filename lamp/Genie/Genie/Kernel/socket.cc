@@ -215,5 +215,36 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( getpeername );
 	
+	static int shutdown( int fd, int how )
+	{
+		try
+		{
+			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
+			
+			int flags = how + 1;
+			
+			bool stop_reading = flags & 1;
+			bool stop_writing = flags & 2;
+			
+			if ( stop_reading )
+			{
+				sock.ShutdownReading();
+			}
+			
+			if ( stop_writing )
+			{
+				sock.ShutdownWriting();
+			}
+		}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( shutdown );
+	
 }
 

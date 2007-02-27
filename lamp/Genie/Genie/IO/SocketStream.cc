@@ -255,5 +255,10 @@ namespace Genie
 		N::OTConnect( endpoint, sndCall );
 	}
 	
+	void SocketHandle::ShutdownWriting()
+	{
+		N::OTSndOrderlyDisconnect( endpoint );
+	}
+	
 }
 
