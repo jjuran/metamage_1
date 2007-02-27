@@ -19,27 +19,27 @@ namespace Genie
 	class PipeState
 	{
 		private:
-			std::list< std::string > myStrings;
-			std::string partialRead;
-			bool inputClosed, outputClosed;
-			bool isBlocking;
+			std::list< std::string > itsStrings;
+			std::string itsAvailableInput;
+			bool itsInputHasClosed, itsOutputHasClosed;
+			bool itIsBlocking;
 		
 		public:
 			PipeState()
 			:
-				inputClosed ( false ),
-				outputClosed( false ),
-				isBlocking  ( true )
+				itsInputHasClosed ( false ),
+				itsOutputHasClosed( false ),
+				itIsBlocking      ( true )
 			{}
 			
-			void InputClosed()   { inputClosed  = true; }
-			void OutputClosed()  { outputClosed = true; }
+			void InputClosed()   { itsInputHasClosed  = true; }
+			void OutputClosed()  { itsOutputHasClosed = true; }
 			
-			bool CloseInput()   { inputClosed  = true;  return outputClosed; }
-			bool CloseOutput()  { outputClosed = true;  return inputClosed;  }
+			bool CloseInput()   { itsInputHasClosed  = true;  return itsOutputHasClosed; }
+			bool CloseOutput()  { itsOutputHasClosed = true;  return itsInputHasClosed;  }
 			
-			bool IsBlocking()  { return isBlocking; }
-			void SetBlocking( bool blocking )  { isBlocking = blocking; }
+			bool IsBlocking()  { return itIsBlocking; }
+			void SetBlocking( bool blocking )  { itIsBlocking = blocking; }
 			
 			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );

@@ -30,49 +30,62 @@ namespace Genie
 			return 0;
 		}
 		
-		if ( partialRead.empty() )
+		if ( itsAvailableInput.empty() )
 		{
-			if ( myStrings.empty() )
+			// Need more input.
+			
+			if ( itsStrings.empty() )
 			{
-				if ( !inputClosed )
+				// Oops, nothing queued right now
+				
+				if ( !itsInputHasClosed )
 				{
-					if ( !isBlocking )
+					// Still open, maybe we'll get something later
+					
+					if ( !itIsBlocking )
 					{
+						// But we're not going to wait
 						throw io::no_input_pending();
 					}
 					
-					while ( myStrings.empty() && !inputClosed )
+					// Input or bust
+					while ( itsStrings.empty() && !itsInputHasClosed )
 					{
+						// I can wait forever...
 						Yield();
 					}
 				}
 				
 				// Either a string was written, or input was closed,
-				// or possibly both, so check myStrings rather than inputClosed
+				// or possibly both, so check itsStrings rather than itsInputHasClosed
 				// so we don't miss data.
 				
-				if ( myStrings.empty() )
+				// If the string queue is still empty then input must have closed.
+				if ( itsStrings.empty() )
 				{
 					throw io::end_of_input();
 				}
 			}
 			
 			// Only reached if a string is available.
-			partialRead = myStrings.front();
-			myStrings.pop_front();
+			itsAvailableInput = itsStrings.front();
+			itsStrings.pop_front();
 		}
 		
-		std::size_t bytesCopied = std::min( partialRead.size(), byteCount );
+		std::size_t bytesCopied = std::min( itsAvailableInput.size(), byteCount );
 		
-		std::copy( partialRead.begin(),
-		           partialRead.begin() + bytesCopied,
+		// Copy from our input store to the supplied buffer
+		std::copy( itsAvailableInput.begin(),
+		           itsAvailableInput.begin() + bytesCopied,
 		           data );
 		
-		std::copy( partialRead.begin() + bytesCopied,
-		           partialRead.end(),
-		           partialRead.begin() );
+		// Slide any unused input to the beginning
+		// This would really suck for reading lots of data through a pipe one byte at a time
+		std::copy( itsAvailableInput.begin() + bytesCopied,
+		           itsAvailableInput.end(),
+		           itsAvailableInput.begin() );
 		
-		partialRead.resize( partialRead.size() - bytesCopied );
+		itsAvailableInput.resize( itsAvailableInput.size() - bytesCopied );
 		
 		return bytesCopied;
 	}
@@ -81,7 +94,7 @@ namespace Genie
 	{
 		if ( byteCount != 0 )
 		{
-			myStrings.push_back( std::string( data, byteCount ) );
+			itsStrings.push_back( std::string( data, byteCount ) );
 		}
 		
 		return byteCount;
