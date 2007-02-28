@@ -299,7 +299,7 @@ int O::Main(int argc, char const* const argv[])
 	
 	const std::vector< const char* >& params = options.GetFreeParams();
 	
-	int listener_port = options.GetInteger( optListenerPort );
+	N::InetPort listener_port = N::InetPort( options.GetInteger( optListenerPort ) );
 	
 	if ( listener_port == 0 )
 	{
@@ -309,7 +309,7 @@ int O::Main(int argc, char const* const argv[])
 	
 	std::string host = options.GetString ( optRemoteHost );
 	
-	N::InetPort remotePort = options.GetInteger( optRemotePort );
+	N::InetPort remotePort = N::InetPort( options.GetInteger( optRemotePort ) );
 	
 	if ( remotePort == 0 )
 	{
