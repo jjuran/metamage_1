@@ -815,7 +815,6 @@ namespace Genie
 		ASSERT( itsPID != 1 );
 		
 		itsPPID = 1;
-		itsFileDescriptors.clear();
 	}
 	
 	sig_t Process::SetSignalAction( int signal, sig_t signalAction )
