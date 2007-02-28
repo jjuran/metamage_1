@@ -293,7 +293,19 @@ namespace Genie
 	{
 		CInfoPBRec paramBlock;
 		
-		N::FSpGetCatInfo( fileSpec, paramBlock );
+		try
+		{
+			N::FSpGetCatInfo( fileSpec, paramBlock );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err == fnfErr )
+			{
+				return false;
+			}
+			
+			throw;
+		}
 		
 		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
