@@ -158,7 +158,8 @@ static void WaitForClients()
 				
 				if ( client == -1 )
 				{
-					Io::Err << "accept() failed:  " << errno << "\n";
+					std::perror( "inetd: accept() failed" );
+					
 					return;
 				}
 				
