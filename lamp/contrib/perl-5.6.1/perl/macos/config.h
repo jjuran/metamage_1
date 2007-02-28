@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.3  2006-04-28 04:35:39  jax
+Revision 1.4  2007-02-28 07:50:25  jax
+Fixed broken signal names.
+
+Revision 1.3  2006/04/28 04:35:39  jax
 Define directories for Perl modules.
 
 Revision 1.2  2006/02/14 04:08:22  jax
@@ -2989,8 +2992,8 @@ First build released to public
  *	This variable contains the number of elements of the sig_name
  *	and sig_num arrays, excluding the final NULL entry.
  */
-#define SIG_NAME "NUM0", "NUM1", "INT", "NUM3", "ILL", "NUM5", "NUM6", "NUM7", "FPE", "NUM9", "NUM10", "SEGV", "NUM12", "NUM13", "ALRM", "TERM", \
-	"NUM16", "NUM17", "NUM18", "NUM19", "NUM20", "NUM11", "NUM22", "NUM23", "HUP", "NUM25", "NUM26", "NUM27", "NUM28", "NUM29", "NUM30", "NUM31", 0
+#define SIG_NAME "NUM0", "HUP", "INT", "QUIT", "ILL", "TRAP", "ABRT", "NUM7", "FPE", "KILL", "NUM10", "SEGV", "NUM12", "PIPE", "ALRM", "TERM", \
+	"NUM16", "CHLD", "CONT", "STOP", "TSTP", "TTIN", "TTOU", "NUM23", "NUM24", "NUM25", "NUM26", "NUM27", "WINCH", "NUM29", "NUM30", "NUM31", 0
 #define SIG_NUM 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0
 #define SIG_SIZE 32			/**/
 
