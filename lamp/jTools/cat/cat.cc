@@ -7,10 +7,6 @@
 #include "fcntl.h"
 #include "unistd.h"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Threads.h"
-
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
@@ -19,12 +15,11 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace N = Nitrogen;
 namespace P7 = POSeven;
 namespace O = Orion;
 
 
-static int DumpFile( P7::FileDescriptor in );
+static void DumpFile( P7::FileDescriptor in );
 
 static bool PathnameMeansStdIn( const std::string& pathname )
 {
@@ -60,7 +55,7 @@ int O::Main( int argc, const char *const argv[] )
 		
 		try
 		{
-			fail += DumpFile( P7::FileDescriptor( fd ) );
+			DumpFile( P7::FileDescriptor( fd ) );
 		}
 		catch ( ... )
 		{
@@ -77,7 +72,7 @@ int O::Main( int argc, const char *const argv[] )
 	return (fail == 0) ? 0 : 1;
 }
 
-int DumpFile( P7::FileDescriptor in )
+void DumpFile( P7::FileDescriptor in )
 {
 	while ( true )
 	{
@@ -99,14 +94,6 @@ int DumpFile( P7::FileDescriptor in )
 		{
 			sleep( 0 );
 		}
-		catch ( const N::OSStatus& err )
-		{
-			Io::Err << "cat: OSStatus " << err << "\n";
-			
-			return 1;
-		}
 	}
-	
-	return 0;
 }
 
