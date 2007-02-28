@@ -21,12 +21,12 @@ int O::Main( int argc, char const *const argv[] )
 {
 	if ( argc < 3 )
 	{
-		Io::Err << "Usage: argv0 arg0 command [ arg1 ... argn ]\n";
+		Io::Err << "Usage: argv0 command arg0 [ arg1 ... argn ]\n";
 		
 		return 1;
 	}
 	
-	int result = execvp( argv[ 1 ], argv + 1 );
+	int result = execvp( argv[ 1 ], argv + 2 );
 	
 	if ( result == -1 )
 	{
