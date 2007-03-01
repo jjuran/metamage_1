@@ -169,6 +169,9 @@ namespace Genie
 			
 			std::string itsLastEnv;
 		
+		private:
+			void Orphan();
+		
 		public:
 			struct RootProcess {};
 			
@@ -177,27 +180,33 @@ namespace Genie
 			
 			~Process();
 			
-			pid_t ParentProcessID() const  { return itsPPID; }
-			pid_t ProcessID()       const  { return itsPID;  }
-			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
 			pid_t GetPGID() const  { return itsPGID; }
 			pid_t GetSID()  const  { return itsSID;  }
 			
-			unsigned int SetAlarm( unsigned int seconds );
+			void SetPGID( pid_t pgid )  { itsPGID = pgid; }
+			void SetSID ( pid_t sid  )  { itsSID  = sid;  }
 			
-			ProcessState Status()      const  { return itsStatus; }
+			ProcessState Status() const  { return itsStatus; }
 			int Result()          const  { return itsResult; }
-			std::string ProgramName()  const  { return itsName;   }
 			
-			FSSpec ProgramFile() const  { return itsProgramFile; }
+			void Status( ProcessState status )  { itsStatus = status; }
+			void Result( int          result )  { itsResult = result; }
 			
 			TTYHandle* ControllingTerminal() const  { return itsControllingTerminal; }
 			
-			FSTreePtr CurrentWorkingDirectory() const  { return itsCWD; }
+			void SetControllingTerminal( TTYHandle* terminal )  { itsControllingTerminal = terminal; }
 			
 			FSTreePtr GetCWD() const  { return itsCWD; }
+			
+			void ChangeDirectory( const FSTreePtr& newCWD );
+			
+			std::string ProgramName()  const  { return itsName;   }
+			
+			void ProgramName( const std::string& name )  { itsName = name; }
+			
+			FSSpec ProgramFile() const  { return itsProgramFile; }
 			
 			FileDescriptorMap& FileDescriptors()  { return itsFileDescriptors; }
 			
@@ -213,21 +222,12 @@ namespace Genie
 			void UnsetEnv( const char* name );
 			void ClearEnv();
 			
-			void SetPGID( pid_t pgid )  { itsPGID = pgid; }
-			void SetSID ( pid_t sid  )  { itsSID  = sid;  }
+			unsigned int SetAlarm( unsigned int seconds );
 			
-			void Status( ProcessState status )  { itsStatus = status; }
-			void Result( int          result )  { itsResult = result; }
-			
-			void ProgramName( const std::string& name )  { itsName = name; }
-			
-			void SetControllingTerminal( TTYHandle* terminal )  { itsControllingTerminal = terminal; }
-			
-			void ChangeDirectory( const FSTreePtr& newCWD );
-			
-			void Orphan();
 			sig_t SetSignalAction( int signal, sig_t signalAction );
+			
 			void Raise( int signal );
+			
 			void Terminate();
 			void Terminate( int result );
 		
@@ -237,10 +237,6 @@ namespace Genie
 			NN::Owned< N::ThreadID > Exec( const FSSpec&       progFile,
 			                               const char* const   argv[],
 			                               const char* const*  envp );
-			
-			int TryExec( const FSSpec& progFile,
-			             const char* const argv[],
-			             const char* const* envp );
 			
 			void InitThread();
 			
