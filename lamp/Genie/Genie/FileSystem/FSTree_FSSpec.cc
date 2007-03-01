@@ -75,6 +75,9 @@ namespace Genie
 			
 			FSSpec GetFSSpec() const;
 			
+			//mode_t FileTypeMode() const;
+			//mode_t FilePermMode() const;
+			
 			void Stat( struct ::stat& sb ) const;
 			
 			void ChangeMode( mode_t mode ) const;

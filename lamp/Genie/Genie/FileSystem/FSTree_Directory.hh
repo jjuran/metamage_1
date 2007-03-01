@@ -11,6 +11,9 @@
 #include <functional>
 #include <vector>
 
+// POSIX
+#include "sys/stat.h"
+
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
 
@@ -43,7 +46,8 @@ namespace Genie
 			
 			virtual FSTreePtr Parent() const = 0;
 			
-			void Stat( struct ::stat& sb ) const;
+			mode_t FileTypeMode() const  { return S_IFDIR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR | S_IXUSR; }
 			
 			FSTreePtr Lookup( const std::string& name ) const;
 			

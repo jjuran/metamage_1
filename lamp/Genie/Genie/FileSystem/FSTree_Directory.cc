@@ -21,26 +21,6 @@ namespace Genie
 	namespace P7 = POSeven;
 	
 	
-	static void StatDirectory( struct ::stat& sb )
-	{
-		mode_t mode = S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
-		
-		sb.st_dev = 0;
-		sb.st_ino = 0;
-		sb.st_mode = mode;
-		sb.st_nlink = 1;
-		sb.st_uid = 0;
-		sb.st_gid = 0;
-		sb.st_rdev = 0;
-		sb.st_size = 0;
-		sb.st_blksize = 4096;
-		sb.st_blocks = 0;
-		sb.st_atime = 0;
-		sb.st_mtime = 0;
-		sb.st_ctime = 0;
-		
-	}
-	
 	
 	typedef boost::shared_ptr< const FSTreeCache > FSTreeCachePtr;
 	
@@ -82,11 +62,6 @@ namespace Genie
 		return null;
 	}
 	
-	
-	void FSTree_Directory::Stat( struct ::stat& sb ) const
-	{
-		StatDirectory( sb );
-	}
 	
 	FSIteratorPtr FSTree_Directory::Iterate() const
 	{

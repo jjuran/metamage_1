@@ -80,6 +80,24 @@ namespace Genie
 		return FSSpec();  // Not reached
 	}
 	
+	mode_t FSTree::FileTypeMode() const
+	{
+		mode_t type = IsDirectory() ? S_IFDIR
+		            : IsLink()      ? S_IFLNK
+		            :                 S_IFREG;
+		
+		return type;
+	}
+	
+	mode_t FSTree::FilePermMode() const
+	{
+		mode_t perm = IsDirectory() ? S_IRUSR | S_IWUSR | S_IXUSR
+		            : IsLink()      ? S_IRUSR | S_IWUSR | S_IXUSR
+		            :                 S_IRUSR;
+		
+		return perm;
+	}
+	
 	void FSTree::Stat( struct ::stat& sb ) const
 	{
 		if ( ! Exists() )
@@ -89,11 +107,7 @@ namespace Genie
 		
 		time_t now = time( NULL );
 		
-		mode_t mode = IsDirectory() ? S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR
-		            : IsLink()      ? S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR
-		            :                 S_IFREG | S_IRUSR;
-		
-		sb.st_mode = mode;
+		sb.st_mode = FileTypeMode() | FilePermMode();
 		
 		sb.st_nlink = 1;
 		

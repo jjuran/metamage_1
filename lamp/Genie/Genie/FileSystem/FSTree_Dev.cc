@@ -12,7 +12,6 @@
 #include "Genie/Console.hh"
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/FSTree_Directory.hh"
-#include "Genie/FileSystem/StatFile.hh"
 #include "Genie/IO/SimpleDevice.hh"
 
 
@@ -43,7 +42,8 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return GetDevFSTree(); }
 			
-			void Stat( struct ::stat& sb ) const  { StatGeneric( &sb ); }
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
@@ -80,6 +80,9 @@ namespace Genie
 			std::string Name() const;
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_term >(); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 	};
 	
 	

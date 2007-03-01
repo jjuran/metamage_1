@@ -87,6 +87,9 @@ namespace Genie
 			
 			virtual FSSpec GetFSSpec() const;
 			
+			virtual mode_t FileTypeMode() const;
+			virtual mode_t FilePermMode() const;
+			
 			virtual void Stat( struct ::stat& sb ) const;
 			
 			virtual void ChangeMode( mode_t mode ) const;
