@@ -50,7 +50,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr cwd = CurrentProcess().CurrentWorkingDirectory();
+			FSTreePtr cwd = CurrentProcess().GetCWD();
 			
 			const FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec();
 			const FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec();

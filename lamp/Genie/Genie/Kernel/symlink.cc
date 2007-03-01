@@ -90,7 +90,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
+			FSTreePtr current = CurrentProcess().GetCWD();
 			
 			FSTreePtr link = ResolvePathname( link_location, current );
 			
@@ -151,7 +151,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr current = CurrentProcess().CurrentWorkingDirectory();
+			FSTreePtr current = CurrentProcess().GetCWD();
 			
 			FSTreePtr link = ResolvePathname( path, current );
 			

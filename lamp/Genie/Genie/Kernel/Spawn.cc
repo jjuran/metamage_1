@@ -23,7 +23,7 @@ namespace Genie
 		
 		parent.Status( kProcessForking );
 		
-		Process* child = new Process( parent.ProcessID() );
+		Process* child = new Process( parent.GetPID() );
 		
 		RegisterProcessContext( child );
 		

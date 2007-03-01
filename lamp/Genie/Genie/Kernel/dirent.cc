@@ -26,7 +26,7 @@ namespace Genie
 	
 	static boost::shared_ptr< DirHandle > OpenDir( const std::string& pathname )
 	{
-		FSTreePtr current( CurrentProcess().CurrentWorkingDirectory() );
+		FSTreePtr current( CurrentProcess().GetCWD() );
 		
 		FSTreePtr dir = ResolvePathname( pathname, current );
 		

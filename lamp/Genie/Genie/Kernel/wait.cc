@@ -35,7 +35,7 @@ namespace Genie
 		{
 			Process& proc = *it->second;
 			
-			if ( proc.ParentProcessID() == ppid )
+			if ( proc.GetPPID() == ppid )
 			{
 				if ( proc.Status() == kProcessTerminated )
 				{
@@ -65,7 +65,7 @@ namespace Genie
 			P7::ThrowErrno( ECHILD );
 		}
 		
-		if ( found->second->ParentProcessID() != ppid )
+		if ( found->second->GetPPID() != ppid )
 		{
 			// complain
 		}
@@ -80,7 +80,7 @@ namespace Genie
 	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		pid_t ppid = CurrentProcess().ProcessID();
+		pid_t ppid = CurrentProcess().GetPID();
 		
 		try
 		{

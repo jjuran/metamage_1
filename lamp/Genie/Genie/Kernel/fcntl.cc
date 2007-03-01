@@ -45,7 +45,7 @@ namespace Genie
 			
 			int fd = LowestUnusedFrom( files, 0 );
 			
-			FSTreePtr file = ResolvePathname( path, CurrentProcess().CurrentWorkingDirectory() );
+			FSTreePtr file = ResolvePathname( path, CurrentProcess().GetCWD() );
 			
 			if ( file->IsLink() )
 			{

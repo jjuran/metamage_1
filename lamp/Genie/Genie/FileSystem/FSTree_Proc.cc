@@ -59,7 +59,7 @@ namespace Genie
 	class FSTree_proc_self : public FSTree
 	{
 		private:
-			pid_t getpid() const  { return CurrentProcess().ProcessID(); }
+			pid_t getpid() const  { return CurrentProcess().GetPID(); }
 		
 		public:
 			bool IsLink() const  { return true; }
@@ -133,7 +133,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return gProcessTable[ itsPID ].CurrentWorkingDirectory(); }
+			FSTreePtr ResolveLink() const  { return gProcessTable[ itsPID ].GetCWD(); }
 	};
 	
 	class FSTree_PID_exe : public FSTree

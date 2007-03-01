@@ -97,8 +97,8 @@ namespace Genie
 	/*
 	static void ListOneProcess( const Process* proc, const Io::Stream< IORef >& Out )
 	{
-		int pid  = proc->ProcessID();
-		int ppid = proc->ParentProcessID();
+		int pid  = proc->GetPID();
+		int ppid = proc->GetPPID();
 		int pgid = proc->GetPGID();
 		int sid  = proc->GetSID();
 		
@@ -163,7 +163,7 @@ namespace Genie
 	{
 		try
 		{
-			*outFSS = ResolvePathname( pathname, CurrentProcess().CurrentWorkingDirectory() )->GetFSSpec();
+			*outFSS = ResolvePathname( pathname, CurrentProcess().GetCWD() )->GetFSSpec();
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -199,7 +199,7 @@ namespace Genie
 				return CurrentProcess().SetErrno( EINVAL );
 			}
 			
-			FSTreePtr newCWD = ResolvePathname( pathname, CurrentProcess().CurrentWorkingDirectory() );
+			FSTreePtr newCWD = ResolvePathname( pathname, CurrentProcess().GetCWD() );
 			
 			if ( newCWD->IsLink() )
 			{
@@ -275,7 +275,7 @@ namespace Genie
 			
 			// Local scope to make sure progFile gets destroyed
 			{
-				FSTreePtr progFile = ResolvePathname( path, current.CurrentWorkingDirectory() );
+				FSTreePtr progFile = ResolvePathname( path, current.GetCWD() );
 				
 				// Start a new thread with the child's process context
 				
@@ -296,7 +296,7 @@ namespace Genie
 			// Hope nothing bad happened while we thought we were still the child
 			
 			// Set this thread's process context back to the forker
-			Process* parent = &gProcessTable[ current.ParentProcessID() ];
+			Process* parent = &gProcessTable[ current.GetPPID() ];
 			
 			parent->Status( kProcessRunning );
 			
@@ -339,7 +339,7 @@ namespace Genie
 		
 		if ( current.Forked() )
 		{
-			RegisterProcessContext( &gProcessTable[ current.ParentProcessID() ] );
+			RegisterProcessContext( &gProcessTable[ current.GetPPID() ] );
 			
 			return;
 		}
@@ -357,7 +357,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr cwd = CurrentProcess().CurrentWorkingDirectory();
+			FSTreePtr cwd = CurrentProcess().GetCWD();
 			
 			std::string result = cwd->Pathname();
 			
@@ -403,14 +403,14 @@ namespace Genie
 	
 	static pid_t getpid()
 	{
-		return CurrentProcess().ProcessID();
+		return CurrentProcess().GetPID();
 	}
 	
 	REGISTER_SYSTEM_CALL( getpid );
 	
 	static pid_t getppid()
 	{
-		return CurrentProcess().ParentProcessID();
+		return CurrentProcess().GetPPID();
 	}
 	
 	REGISTER_SYSTEM_CALL( getppid );
@@ -514,7 +514,7 @@ namespace Genie
 			Process& target( pid != 0 ? gProcessTable[ pid ]
 			                          : CurrentProcess() );
 			
-			pid = target.ProcessID();
+			pid = target.GetPID();
 			
 			target.SetPGID( pgid != 0 ? pgid : pid );
 			
@@ -534,7 +534,7 @@ namespace Genie
 		
 		current.SetControllingTerminal( NULL );
 		
-		int pid = current.ProcessID();
+		int pid = current.GetPID();
 		
 		current.SetPGID( pid );
 		current.SetSID ( pid );
@@ -579,7 +579,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = ResolvePathname( path, CurrentProcess().CurrentWorkingDirectory() );
+			FSTreePtr file = ResolvePathname( path, CurrentProcess().GetCWD() );
 			
 			file->SetEOF( length );
 		}
