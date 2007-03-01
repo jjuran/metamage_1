@@ -12,7 +12,7 @@
 #include <functional>
 
 // POSIX
-//#include "unistd.h"
+#include "dirent.h"
 
 // Nucleus
 #include "Nucleus/NAssert.h"
@@ -31,7 +31,7 @@ namespace ShellShock
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
+	//namespace NN = Nucleus;
 	
 	static bool IsAShellQuoteChar( char c )
 	{
@@ -418,41 +418,28 @@ namespace ShellShock
 		return false;
 	}
 	
-	static void GetNthCatName( const N::FSDirSpec& dir, UInt32 index, StringPtr name = NULL )
-	{
-		CInfoPBRec pb;
-		
-		N::FSpGetCatInfo( dir, index, pb, name );
-	}
-	
 	static void MatchPathnames( const std::string& in_dir, const char* pattern, std::vector< std::string >& result )
 	{
-		FSSpec cwd = Path2FSS( in_dir.empty() ? "." : in_dir );
+		const char* dir_pathname = in_dir.empty() ? "." : in_dir.c_str();
 		
-		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( cwd );
+		DIR* dir = opendir( dir_pathname );
 		
-		N::Str255 name;
-		
-		UInt32 index = 0;
-		
-		try
+		if ( dir == NULL )
 		{
-			while ( true )
-			{
-				GetNthCatName( dir, ++index, name );  // throws fnfErr at end of dir
-				std::string cname = NN::Convert< std::string >( name );
-				
-				bool matched = NameMatchesPattern( cname.c_str(), pattern );
-				
-				if ( matched )
-				{
-					result.push_back( in_dir + cname );
-				}
-			}
+			//P7::ThrowErrno( ENOENT );
+			return;
 		}
-		catch ( N::FNFErr& )
+		
+		while ( dirent* entry = readdir( dir ) )
 		{
-			//
+			const char* name = entry->d_name;
+			
+			bool matched = NameMatchesPattern( name, pattern );
+			
+			if ( matched )
+			{
+				result.push_back( in_dir + name );
+			}
 		}
 		
 	}
