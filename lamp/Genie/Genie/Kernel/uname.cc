@@ -32,11 +32,21 @@ namespace Genie
 	// Genie relies on CFM, so don't compile for Intel (below)
 	
 	
+#if defined(_UTSNAME_LENGTH)
+	
+	static const unsigned kNameLength = _UTSNAME_LENGTH;
+	
+#elif defined(_SYS_NAMELEN)
+	
+	static const unsigned kNameLength = _SYS_NAMELEN;
+	
+#endif
+	
 	static void CopyString( const char* str, char* dest )
 	{
 		std::size_t len = std::strlen( str );
 		
-		ASSERT( len < _UTSNAME_LENGTH );
+		ASSERT( len < kNameLength );
 		
 		std::copy( str, str + len + 1, dest );  // copy length byte too
 	}
