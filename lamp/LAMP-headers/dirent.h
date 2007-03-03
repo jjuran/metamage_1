@@ -53,6 +53,7 @@ void rewinddir __P((DIR *));
 int closedir __P((DIR *));
 long telldir __P((DIR *));
 void seekdir __P((DIR *, long));
+int dirfd __P((DIR *));
 __END_DECLS
 
 #endif /* !_DIRENT_H_ */
