@@ -55,7 +55,8 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 	dirent* (*readdir_import_  )( DIR* dir );
 	void    (*rewinddir_import_)( DIR* dir );
 	void    (*seekdir_import_  )( DIR* dir, off_t offset );
-	off_t   (*telldir_import_  )( DIR* );
+	off_t   (*telldir_import_  )( DIR* dir );
+	int     (*dirfd_import_    )( DIR* dir );
 	
 	// fcntl
 	int (*fcntl_import_)( int fd, int cmd, int param );
@@ -207,6 +208,13 @@ inline void CheckImportedSymbol( void* symbol, bool wouldRecurse = false )
 		CheckImportedSymbol( telldir_import_ );
 		
 		return telldir_import_( dir );
+	}
+	
+	int dirfd( DIR* dir )
+	{
+		CheckImportedSymbol( dirfd_import_ );
+		
+		return dirfd_import_( dir );
 	}
 	
 	#pragma mark -
