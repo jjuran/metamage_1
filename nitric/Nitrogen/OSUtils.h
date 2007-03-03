@@ -147,7 +147,11 @@ namespace Nitrogen
 	// SetA5
 	// InitUtil
 	
+#if !TARGET_CPU_68K
+	
 	using ::MakeDataExecutable;
+	
+#endif
 	
 	inline void ReadLocation ( MachineLocation      & loc )  { ::ReadLocation ( &loc ); }
 	inline void WriteLocation( MachineLocation const& loc )  { ::WriteLocation( &loc ); }
