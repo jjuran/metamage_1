@@ -5,6 +5,7 @@
 
 // Standard C
 #include "errno.h"
+#include "signal.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include "stdlib.h"
@@ -202,6 +203,16 @@
 	
 	#pragma mark -
 	#pragma mark ¥ stdlib ¥
+	
+	void abort()
+	{
+		(void) raise( SIGABRT );
+	}
+	
+	int raise( int sig )
+	{
+		return kill( getpid(), sig );
+	}
 	
 	int system( const char* command )
 	{
