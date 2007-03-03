@@ -10,6 +10,7 @@
 #include "Nitrogen/MacErrors.h"
 
 // Genie
+#include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/Process.hh"
@@ -24,7 +25,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static boost::shared_ptr< DirHandle > OpenDir( const std::string& pathname )
+	static boost::shared_ptr< IOHandle > OpenDir( const std::string& pathname )
 	{
 		FSTreePtr current( CurrentProcess().GetCWD() );
 		
@@ -35,7 +36,7 @@ namespace Genie
 			dir = dir->ResolveLink();
 		}
 		
-		return boost::shared_ptr< DirHandle >( new DirHandle( dir ) );
+		return boost::shared_ptr< IOHandle >( new DirHandle( dir ) );
 	}
 	
 	/*
@@ -46,28 +47,15 @@ namespace Genie
 	};
 	*/
 	
-	// FIXME:  Duplicate code
-	static int LowestUnusedFrom( const FileDescriptorMap& files, int fd )
-	{
-		while ( files.find( fd ) != files.end() )
-		{
-			++fd;
-		}
-		
-		return fd;
-	}
-	
 	static DIR* opendir( const char* pathname )
 	{
 		Yield();
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
-		int fd = LowestUnusedFrom( files, 3 );
-		
 		try
 		{
-			files[ fd ] = boost::shared_ptr< IOHandle >( OpenDir( pathname ) );
+			int fd = LowestUnusedFileDescriptor( 3 );
+			
+			AssignFileDescriptor( fd, OpenDir( pathname ) );
 			
 			return reinterpret_cast< DIR* >( fd );
 		}
@@ -85,14 +73,11 @@ namespace Genie
 	{
 		int fd = reinterpret_cast< int >( dir );
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
 		try
 		{
-			// FIXME:  Verify dirhandle exists first
-			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
+			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
 			
-			files.erase( fd );
+			CloseFileDescriptor( fd );
 		}
 		catch ( ... )
 		{
@@ -108,12 +93,9 @@ namespace Genie
 	{
 		int fd = reinterpret_cast< int >( dir );
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
 		try
 		{
-			// FIXME:  Verify dirhandle exists first
-			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
+			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
 			
 			return dir.ReadDir();
 		}
@@ -136,12 +118,9 @@ namespace Genie
 	{
 		int fd = reinterpret_cast< int >( dir );
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
 		try
 		{
-			// FIXME:  Verify dirhandle exists first
-			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
+			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
 			
 			dir.RewindDir();
 		}
@@ -157,12 +136,9 @@ namespace Genie
 	{
 		int fd = reinterpret_cast< int >( dir );
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
 		try
 		{
-			// FIXME:  Verify dirhandle exists first
-			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
+			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
 			
 			dir.SeekDir( offset );
 		}
@@ -178,12 +154,9 @@ namespace Genie
 	{
 		int fd = reinterpret_cast< int >( dir );
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
 		try
 		{
-			// FIXME:  Verify dirhandle exists first
-			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
+			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
 			
 			return dir.TellDir();
 		}
@@ -199,12 +172,9 @@ namespace Genie
 	{
 		int fd = reinterpret_cast< int >( dir );
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
-		
 		try
 		{
-			// FIXME:  Verify dirhandle exists first
-			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
+			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
 			
 			return fd;
 		}
