@@ -33,6 +33,10 @@ extern "C" {
 	
 	int clearenv();
 	
+	long random( void );
+	
+	void srandom( unsigned long seed );
+	
 #ifdef __cplusplus
 }
 #endif
