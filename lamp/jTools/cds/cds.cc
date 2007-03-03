@@ -18,7 +18,7 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace O = Orion;
+#if !TARGET_API_MAC_CARBON
 
 namespace CDS
 {
@@ -49,8 +49,6 @@ namespace CDS
 	
 	static void PrintStatus()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
 		const char* state = "ERROR";
 		
 		switch ( gStatus.status )
@@ -77,8 +75,6 @@ namespace CDS
 		time[ 4 ] = '0' | gStatus.seconds & 0x0F;
 		
 		Io::Out << "Time: " << time << "\n";
-		
-	#endif
 	}
 	
 	static void PrintInfo()
@@ -88,8 +84,6 @@ namespace CDS
 	
 	static void PrintList()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
 		NX::TrackCount tracks = NX::CountTracks( gTOC );
 		
 		for ( int track = 1;  track <= tracks;  ++track )
@@ -99,15 +93,10 @@ namespace CDS
 			
 			Io::Out << "Track " << track << ": " << MinSec( seconds ) << "\n";
 		}
-		
-	#endif
-		
 	}
 	
 	static void PrintDiscID()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
 		unsigned int discID = NX::CDDBDiscID( gTOC );
 		
 		Io::Out << "Disc ID is " << Bits::EncodeAsHex( discID ) << "\n";
@@ -124,9 +113,6 @@ namespace CDS
 		}
 		
 		Io::Out << " " << NX::DiscLength( gTOC ) / 75 << "\n";
-		
-	#endif
-		
 	}
 	
 	
@@ -250,9 +236,20 @@ namespace CDS
 	
 }
 
-int O::Main( int argc, const char *const argv[] )
+#endif
+
+
+int Orion::Main( int argc, const char *const argv[] )
 {
 	ASSERT( argc > 0 );
+	
+#if TARGET_API_MAC_CARBON
+	
+	Io::Err << "cds: Sorry, no Carbon support!\n";
+	
+	return 1;
+	
+#else
 	
 	if ( argc <= 1 )
 	{
@@ -261,5 +258,7 @@ int O::Main( int argc, const char *const argv[] )
 	}
 	
 	return CDS::Main( argv[ 1 ] );
+	
+#endif
 }
 
