@@ -145,17 +145,17 @@ namespace Nitrogen
 	
 	GrowWindow_Result GrowWindow( WindowRef window, Point startPt )
 	{
-	#if TARGET_API_MAC_CARBON
-		
 		// Carbon allows you to pass a NULL Rect*
-		return Detail::GrowWindow( window, startPt, NULL );
+		const Rect* unbounded = NULL;
 		
-	#else
+		if ( !TARGET_API_MAC_CARBON )
+		{
+			static const Rect reallyBigRect = { -32767, -32767, 32767, 32767 };
+			
+			unbounded = &reallyBigRect;
+		}
 		
-		const Rect unbounded = { -32767, -32767, 32767, 32767 };
-		return Detail::GrowWindow( window, startPt, &unbounded );
-		
-	#endif
+		return Detail::GrowWindow( window, startPt, unbounded );
 	}
 	
 	void DragWindow( WindowRef    window,
