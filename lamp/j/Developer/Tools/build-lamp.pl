@@ -52,7 +52,7 @@ my @programs = qw
 (
 	aevt tlsrvr A-line cpres keymods
 	cat cp echo false kill login mkdir mv pwd readlink sh sleep true
-	argv0 beep err2text gzip htget macbin md5sum open osascript perl tty
+	argv0 beep err2text gzip htget macbin md5sum nohup open osascript perl tty
 	superd inetd httpd
 );
 my %is_program = map { $_ => 1 } @programs;
@@ -77,7 +77,7 @@ my %fsmap =
 	tmp => [],
 	usr =>
 	{
-		bin => [qw( argv0 beep err2text gzip htget macbin md5sum open osascript perl tty ), qw( env grep head printenv strings tee time tr wc )],
+		bin => [qw( argv0 beep err2text gzip htget macbin md5sum nohup open osascript perl tty ), qw( env grep head printenv strings tee time tr wc )],
 		lib =>
 		{
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
