@@ -195,5 +195,26 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( telldir );
 	
+	static int dirfd( DIR* dir )
+	{
+		int fd = reinterpret_cast< int >( dir );
+		
+		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		
+		try
+		{
+			// FIXME:  Verify dirhandle exists first
+			DirHandle& dir = IOHandle_Cast< DirHandle >( *files[ fd ].handle );
+			
+			return fd;
+		}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
+	}
+	
+	REGISTER_SYSTEM_CALL( dirfd );
+	
 }
 
