@@ -9,6 +9,7 @@
 
 // POSIX
 #include "sys/ioctl.h"
+#include "sys/stat.h"
 #include "unistd.h"
 
 // Nucleus
@@ -276,6 +277,15 @@ namespace Genie
 			// Local scope to make sure progFile gets destroyed
 			{
 				FSTreePtr progFile = ResolvePathname( path, current.GetCWD() );
+				
+				struct ::stat sb;
+				
+				progFile->Stat( sb );
+				
+				if ( (sb.st_mode & S_IXUSR) == 0 )
+				{
+					return CurrentProcess().SetErrno( EACCES );
+				}
 				
 				// Start a new thread with the child's process context
 				
