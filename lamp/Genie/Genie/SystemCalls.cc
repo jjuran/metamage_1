@@ -443,6 +443,13 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( lseek );
 	
+	static int mknod( const char* path, mode_t mode, dev_t dev )
+	{
+		return CurrentProcess().SetErrno( EINVAL );
+	}
+	
+	REGISTER_SYSTEM_CALL( mknod );
+	
 	static int pause()
 	{
 		CurrentProcess().Stop();  // Sleep, until...
