@@ -4,9 +4,7 @@
  */
 
 // BSD
-#ifndef __MACH__
-#include "vfork.h"
-#endif
+#include "unistd.h"
 
 // Genie
 #include "Genie/Process.hh"
