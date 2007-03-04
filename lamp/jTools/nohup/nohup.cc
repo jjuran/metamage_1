@@ -73,7 +73,7 @@ int main( int argc, char const *const argv[] )
 	
 	bool noSuchFile = errno == ENOENT;
 	
-	std::fprintf( stderr, "%s: %s: %s", argv[0], argv[1], std::strerror( errno ) );
+	std::fprintf( stderr, "%s: %s: %s\n", argv[0], argv[1], std::strerror( errno ) );
 	
 	return noSuchFile ? 127 : 126;
 }
