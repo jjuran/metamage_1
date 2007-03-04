@@ -6,6 +6,7 @@
 #ifndef KEROSENE_VFORK_H
 #define KEROSENE_VFORK_H
 
+// Standard C
 #include <setjmp.h>
 
 #ifdef __cplusplus
@@ -18,8 +19,6 @@ extern "C" {
 	int Kerosene_SpawnVFork();
 	
 	#define Kerosene_vfork() ( Kerosene_SpawnVFork() ? -1 : setjmp(gKerosene_vfork_jmp_buf) )
-	
-	#define vfork() Kerosene_vfork()
 	
 #ifdef __cplusplus
 }
