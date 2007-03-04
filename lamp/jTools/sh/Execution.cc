@@ -253,14 +253,9 @@ static int Exec( char const* const argv[] )
 	
 	int exec_result = execvp( file, const_cast< char** >( argv ) );
 	
-	if ( exec_result != -1 )
-	{
-		return exec_result;
-	}
+	const char* error_msg = errno == ENOENT ? "command not found" : std::strerror( errno );
 	
-	int errnum = errno;
-	
-	Io::Err << "execvp( " << file << " ) failed: " << std::strerror( errnum ) << "\n";
+	std::fprintf( stderr, "%s: %s: %s\n", "sh", file, error_msg );
 	
 	_exit( 127 );  // Use _exit() to exit a forked but not exec'ed process.
 	
