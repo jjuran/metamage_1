@@ -9,31 +9,24 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// POSeven
-#include "POSeven/Errno.hh"
 
-// Orion
-#include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
+#pragma export on
 
-
-namespace P7 = POSeven;
-namespace O = Orion;
-
-
-int O::Main( int argc, char const *const argv[] )
+int main( int argc, char const *const argv[] )
 {
 	// Check for correct number of args
 	if ( argc != 2 )
 	{
-		Io::Err << "usage: readlink <file>\n";
+		const char usage[] = "usage: readlink <file>\n";
+		
+		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
 		
 		return 1;
 	}
 	
 	const std::size_t path_len = 1024;
 	
-	char target_path[ path_len ];
+	char target_path[ path_len + 1];  // leave room for "\n"
 	
 	int result = readlink( argv[1], target_path, path_len );
 	
@@ -44,8 +37,12 @@ int O::Main( int argc, char const *const argv[] )
 	
 	ASSERT( result > 0 );
 	
-	Io::Out << std::string( target_path, result ) << "\n";
+	target_path[ result++ ] = '\n';
+	
+	(void) write( STDOUT_FILENO, target_path, result );
 	
 	return 0;
 }
+
+#pragma export reset
 

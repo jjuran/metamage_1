@@ -3,18 +3,16 @@
  *	======
  */
 
+// Standard C++
+#include <string>
+
 // POSIX
 #include "unistd.h"
 
-// Orion
-#include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
+#pragma export on
 
-namespace O = Orion;
-
-
-int O::Main( int argc, char const *const argv[] )
+int main( int argc, char const *const argv[] )
 {
 	std::string path;
 	
@@ -25,8 +23,12 @@ int O::Main( int argc, char const *const argv[] )
 		path.resize( path.size() * 2 );
 	}
 	
-	Io::Out << path << "\n";
+	path += "\n";
+	
+	write( STDOUT_FILENO, path.data(), path.size() );
 	
 	return 0;
 }
+
+#pragma export reset
 

@@ -3,23 +3,24 @@
  *	========
  */
 
+// Standard C/C++
+#include <cstdlib>
+
 // POSIX
 #include "unistd.h"
 
-// Orion
-#include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
+#pragma export on
 
-namespace O = Orion;
-
-
-int O::Main( int argc, char const *const argv[] )
+int main( int argc, char const *const argv[] )
 {
 	// Check for correct number of args
 	if ( argc != 2 )
 	{
-		Io::Err << "usage: sleep seconds\n";
+		const char usage[] = "usage: sleep seconds\n";
+		
+		write( STDERR_FILENO, usage, sizeof usage - 1 );
+		
 		return 1;
 	}
 	
@@ -29,4 +30,6 @@ int O::Main( int argc, char const *const argv[] )
 	
 	return 0;
 }
+
+#pragma export reset
 

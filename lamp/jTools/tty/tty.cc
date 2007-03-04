@@ -3,23 +3,33 @@
  *	======
  */
 
+// Standard C/C++
+#include <cstring>
+
 // POSIX
 #include "unistd.h"
 
-// Orion
-#include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
+#pragma export on
 
-namespace O = Orion;
-
-
-int O::Main( int argc, char const *const argv[] )
+int main( int argc, char const *const argv[] )
 {
-	const char* name = ttyname( 0 );
+	const char* name = ttyname( STDIN_FILENO );
 	
-	Io::Out << ( name ? name : "not a tty" ) << "\n";
+	if ( name != NULL )
+	{
+		write( STDOUT_FILENO, name, std::strlen( name ) );
+		write( STDOUT_FILENO, "\n", 1                   );
+	}
+	else
+	{
+		const char noTTY[] = "not a tty\n";
+		
+		write( STDOUT_FILENO, noTTY, sizeof noTTY - 1 );
+	}
 	
 	return 0;
 }
+
+#pragma export reset
 
