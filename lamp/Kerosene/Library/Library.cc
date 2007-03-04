@@ -18,6 +18,7 @@
 // POSIX
 #include "dirent.h"
 #include "fcntl.h"
+#include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"
 
@@ -172,23 +173,22 @@
 				
 				const char* foo = separator;
 				
+				struct ::stat sb;
+				int status = stat( tryPath.c_str(), &sb );
+				
+				if ( status == 0  &&  sb.st_mode & S_IXUSR )
+				{
+					return tryPath;
+				}
+				
 				// This seems to trash separator in CFM68K
-				int fd = open( tryPath.c_str(), O_RDONLY );
+				//int fd = open( tryPath.c_str(), O_RDONLY );
 				
 				separator = foo;
 				
 				if ( foo != separator )
 				{
 					//std::printf( "%s\n", "Warning: foo != separator" );
-				}
-				
-				if ( fd != -1 )
-				{
-					close( fd );
-					
-					//std::printf( "%s\n", " ok" );
-					
-					return tryPath;
 				}
 				
 				//std::printf( "%s\n", " nope" );
