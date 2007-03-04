@@ -22,6 +22,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_wait )
+	DEFINE_MODULE_INIT( Kernel_wait )
+	
 	namespace P7 = POSeven;
 	
 	static GenieProcessTable::iterator CheckAnyPID( pid_t ppid )

@@ -23,6 +23,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_fcntl )
+	DEFINE_MODULE_INIT( Kernel_fcntl )
+	
 	namespace P7 = POSeven;
 	
 	// FIXME:  Duplicate code

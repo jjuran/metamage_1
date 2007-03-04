@@ -17,6 +17,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_Spawn )
+	DEFINE_MODULE_INIT( Kernel_Spawn )
+	
 	static int SpawnVFork()
 	{
 		Process& parent = CurrentProcess();

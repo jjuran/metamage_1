@@ -27,10 +27,8 @@
 namespace Genie
 {
 	
-	static void StatCharacterDevice( struct stat* sb )
-	{
-		StatGeneric( sb );
-	}
+	DECLARE_MODULE_INIT( Kernel_stat )
+	DEFINE_MODULE_INIT(Kernel_stat)
 	
 	static int chmod_file( const char* path, mode_t mode )
 	{

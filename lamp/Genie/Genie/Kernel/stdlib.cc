@@ -5,12 +5,7 @@
 
 // Standard C
 #include <errno.h>
-
-// POSIX
-#include "stdlib.h"
-
-// POSeven
-//#include "POSeven/Errno.h"
+#include <stdlib.h>
 
 // Genie
 #include "Genie/Process.hh"
@@ -21,7 +16,8 @@
 namespace Genie
 {
 	
-	//namespace P7 = POSeven;
+	DECLARE_MODULE_INIT( Kernel_stdlib )
+	DEFINE_MODULE_INIT( Kernel_stdlib )
 	
 	
 	static char* getenv( const char* name )

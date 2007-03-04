@@ -10,37 +10,28 @@
 namespace Genie
 {
 	
-#if defined(__MWERKS__) && TARGET_CPU_68K
+#if TARGET_CPU_68K && defined(__MWERKS__)
 	
-	extern SystemCall setenv_syscall_;
-	extern SystemCall SpawnVFork_syscall_;
+	DECLARE_MODULE_INIT( Kernel_fcntl  )
+	DECLARE_MODULE_INIT( Kernel_Spawn  )
+	DECLARE_MODULE_INIT( Kernel_stat   )
+	DECLARE_MODULE_INIT( Kernel_stdlib )
+	DECLARE_MODULE_INIT( Kernel_wait   )
 	
-	static bool LinkMyInitCodeYouSonOfABitch()
+	void InitKernelModules()
 	{
-		if ( &setenv_syscall_ == NULL )
-		{
-			return false;
-		}
-		
-		if ( &SpawnVFork_syscall_ == NULL )
-		{
-			return false;
-		}
-		
-		return false;
+		CALL_MODULE_INIT( Kernel_fcntl  );
+		CALL_MODULE_INIT( Kernel_Spawn  );
+		CALL_MODULE_INIT( Kernel_stat   );
+		CALL_MODULE_INIT( Kernel_stdlib );
+		CALL_MODULE_INIT( Kernel_wait   );
 	}
-	
-#else
-	
-	inline bool LinkMyInitCodeYouSonOfABitch()  { return true; }
 	
 #endif
 	
 	static SystemCallRegistry& TheSystemCallRegistry()
 	{
 		static SystemCallRegistry theSystemCallRegistry;
-		
-		(void)LinkMyInitCodeYouSonOfABitch();
 		
 		return theSystemCallRegistry;
 	}
