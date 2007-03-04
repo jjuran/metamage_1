@@ -85,7 +85,7 @@ namespace Io
 			
 			Input& GetStream()  { return itsInput; }
 			
-			bool Ended() const  { return itsBuffer.Ended(); }
+			bool Ended()  { return !Ready()  &&  itsBuffer.Ended(); }
 			bool Ready()  { return itsBuffer.Ready()  ||  GetMore() && Ready(); }
 			
 			std::string Read()
