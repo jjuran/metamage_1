@@ -107,6 +107,7 @@ int fchmod( int filedes, mode_t mode );
 int	fstat __P((int, struct stat *));
 //int	mkdir __P((const char *, ...));
 int	mkdir __P((const char *, mode_t));
+int	mkfifo __P((const char *, mode_t));
 int	stat __P((const char *, struct stat *));
 int	lstat __P((const char *, struct stat *));
 __END_DECLS
