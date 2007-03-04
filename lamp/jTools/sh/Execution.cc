@@ -295,7 +295,9 @@ static int CallBuiltin( Builtin builtin, char** argv )
 
 static int ExecuteCommand( const Command& command )
 {
-	Sh::StringArray argvec( command.args );
+	Command parsedCommand = Sh::ParseCommand( command, ShellParameterDictionary() );
+	
+	Sh::StringArray argvec( parsedCommand.args );
 	
 	char** argv = argvec.GetPointer();
 	
@@ -399,7 +401,9 @@ static int ExecuteCommand( const Command& command )
 
 static int ExecuteCommandFromPipeline( const Command& command )
 {
-	Sh::StringArray argvec( command.args );
+	Command parsedCommand = Sh::ParseCommand( command, ShellParameterDictionary() );
+	
+	Sh::StringArray argvec( parsedCommand.args );
 	
 	char** argv = argvec.GetPointer();
 	
@@ -587,7 +591,8 @@ static int ExecuteCircuit( const Circuit& circuit )
 	if ( circuit.op == Sh::kControlBackground )
 	{
 		Io::Err << "Background jobs are not supported.  Sorry.\n";
-		O::ThrowExitStatus( 1 );
+		
+		return 127;
 	}
 	
 	int result = 0;
@@ -623,7 +628,7 @@ static int ExecuteList( const List& list )
 
 int ExecuteCmdLine( const std::string& cmd )
 {
-	List list = Sh::ParseCommandLine( cmd, ShellParameterDictionary() );
+	List list = Sh::Tokenization( cmd );
 	
 	int result = ExecuteList( list );
 	
