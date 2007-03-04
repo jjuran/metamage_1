@@ -4,18 +4,18 @@
  */
 
 // Standard C
-#include "signal.h"
-#include "stdlib.h"
+#include <errno.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-// Orion
-#include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
-
-
-namespace O = Orion;
+// POSIX
+#include <unistd.h>
 
 
-int O::Main( int argc, char const *const argv[] )
+#pragma export on
+
+int main( int argc, char const *const argv[] )
 {
 	int sig = SIGTERM;
 	
@@ -31,7 +31,10 @@ int O::Main( int argc, char const *const argv[] )
 	
 	if ( argc != 2 )
 	{
-		Io::Err << "kill: usage: kill [-sig] pid\n";
+		const char usage[] = "kill: usage: kill [-sig] pid\n";
+		
+		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
+		
 		return 1;
 	}
 	
@@ -41,10 +44,13 @@ int O::Main( int argc, char const *const argv[] )
 	
 	if ( killed == -1 )
 	{
-		Io::Err << "kill: no such process\n";
+		std::fprintf( stderr, "%s: %s: %s\n", argv[0], argp[1], std::strerror( errno ) );
+		
 		return 1;
 	}
 	
 	return 0;
 }
+
+#pragma export reset
 

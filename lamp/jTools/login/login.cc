@@ -4,22 +4,12 @@
  */
 
 // Standard C
-#include "stdlib.h"
+#include <stdlib.h>
 
 // POSIX
-#include "fcntl.h"
-#include "sys/ioctl.h"
-#include "unistd.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
-// Orion
-#include "Orion/Main.hh"
-
-
-namespace N = Nitrogen;
-namespace O = Orion;
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 
 static void SetVariables()
@@ -81,11 +71,13 @@ static void DumpMOTD()
 			bytes = write( STDOUT_FILENO, data, bytes );
 		}
 		
-		(void)close( fd );
+		(void) close( fd );
 	}
 }
 
-int O::Main( int argc, char const *const argv[] )
+#pragma export on
+
+int main( int argc, char const *const argv[] )
 {
 	// Error output may be going to a log somewhere
 	dup2( STDOUT_FILENO, STDERR_FILENO );
@@ -105,4 +97,6 @@ int O::Main( int argc, char const *const argv[] )
 	
 	return 0;  // Not reached
 }
+
+#pragma export reset
 

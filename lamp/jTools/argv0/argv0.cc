@@ -5,36 +5,31 @@
 
 // Standard C
 #include <errno.h>
+#include <stdio.h>
 
 // POSIX
 #include <unistd.h>
 
-// Orion
-#include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
+#pragma export on
 
-namespace O = Orion;
-
-
-int O::Main( int argc, char const *const argv[] )
+int main( int argc, char const *const argv[] )
 {
 	if ( argc < 3 )
 	{
-		Io::Err << "Usage: argv0 command arg0 [ arg1 ... argn ]\n";
+		const char usage[] = "Usage: argv0 command arg0 [ arg1 ... argn ]\n";
+		
+		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
 		
 		return 1;
 	}
 	
-	int result = execvp( argv[ 1 ], argv + 2 );
+	(void) execvp( argv[ 1 ], argv + 2 );
 	
-	if ( result == -1 )
-	{
-		int error = errno;
-		
-		Io::Err << argv[ 0 ] << ": execvp() got errno " << error << "\n";
-	}
+	std::fprintf( stderr, "%s: %s: %s\n", argv[0], argv[1], std::strerror( errno ) );
 	
-	return result ? 1 : 0;
+	return 127;
 }
+
+#pragma export reset
 
