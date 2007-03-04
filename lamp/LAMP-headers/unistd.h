@@ -76,6 +76,8 @@ extern "C" {
 	
 	off_t lseek( int fildes, off_t offset, int whence );
 	
+	int mknod( const char* path, mode_t mode, dev_t dev );
+	
 	int pause();
 	
 	int peek( int fd, const char** buffer, size_t minBytes );
@@ -119,6 +121,8 @@ extern "C" {
 	int ttypair( int filedes[ 2 ] );
 	
 	int unlink( const char *pathname );
+	
+	#define vfork()  pid_t( Kerosene_vfork() )
 	
 	ssize_t write( int fd, const void* buf, size_t count );
 	
