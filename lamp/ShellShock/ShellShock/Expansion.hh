@@ -40,8 +40,8 @@ namespace ShellShock
 	
 	std::string QuoteRemoval( const std::string& word );
 	
-	List ParseCommandLine( const std::string&          command,
-	                       const ParameterDictionary&  dictionary );
+	Command ParseCommand( const Command&              command,
+	                      const ParameterDictionary&  dictionary );
 	
 }
 

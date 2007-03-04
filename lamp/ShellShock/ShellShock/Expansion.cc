@@ -605,7 +605,7 @@ namespace ShellShock
 	}
 	
 	template < class T >
-	std::vector< T > MakeVector( const T& value )
+	inline std::vector< T > MakeVector( const T& value )
 	{
 		return std::vector< T >( 1, value );
 	}
@@ -689,7 +689,7 @@ namespace ShellShock
 	}
 	
 	template < class Inserter >
-	void Copy( const std::string& word, Inserter inserter )
+	inline void Copy( const std::string& word, Inserter inserter )
 	{
 		*inserter++ = word;
 	}
@@ -730,76 +730,13 @@ namespace ShellShock
 	
 	
 	template < class Algorithm >
-	class ApplyPipeline
+	inline Command Apply( Algorithm algorithm, const Command& command )
 	{
-		public:
-			ApplyPipeline( const Algorithm& algorithm ) : algorithm( algorithm )  {}
-			
-			Pipeline operator()( const Pipeline& pipeline ) const;
-		
-		private:
-			const Algorithm& algorithm;
-	};
-	
-	template < class Algorithm >
-	Pipeline ApplyPipeline< Algorithm >::operator()( const Pipeline& pipeline ) const
-	{
-		Pipeline result;
-		result.op = pipeline.op;
-		result.commands.resize( pipeline.commands.size() );
-		
-		std::transform( pipeline.commands.begin(),
-		                pipeline.commands.end(),
-		                result.commands.begin(),
-		                ApplyCommand< Algorithm >( algorithm ) );
-		
-		return result;
+		return ApplyCommand< Algorithm >( algorithm )( command );
 	}
 	
-	
-	template < class Algorithm >
-	class ApplyCircuit
-	{
-		public:
-			ApplyCircuit( const Algorithm& algorithm ) : algorithm( algorithm )  {}
-			
-			Circuit operator()( const Circuit& circuit ) const;
-		
-		private:
-			const Algorithm& algorithm;
-	};
-	
-	template < class Algorithm >
-	Circuit ApplyCircuit< Algorithm >::operator()( const Circuit& circuit ) const
-	{
-		Circuit result;
-		result.op = circuit.op;
-		result.pipelines.resize( circuit.pipelines.size() );
-		
-		std::transform( circuit.pipelines.begin(),
-		                circuit.pipelines.end(),
-		                result.pipelines.begin(),
-		                ApplyPipeline< Algorithm >( algorithm ) );
-		
-		return result;
-	}
-	
-	
-	template < class Algorithm >
-	List Apply( Algorithm algorithm, const List& list )
-	{
-		List result( list.size() );
-		
-		std::transform( list.begin(),
-		                list.end(),
-		                result.begin(),
-		                ApplyCircuit< Algorithm >( algorithm ) );
-		
-		return result;
-	}
-	
-	List ParseCommandLine( const std::string&          command,
-	                       const ParameterDictionary&  dictionary )
+	Command ParseCommand( const Command&              command,
+	                      const ParameterDictionary&  dictionary )
 	{
 		return 
 			Apply( QuoteRemoval,
@@ -817,7 +754,7 @@ namespace ShellShock
 										),
 										Apply( TildeExpansion,
 											Apply( BraceExpansion,
-												Tokenization( command )
+												command
 											)
 										)
 									)
