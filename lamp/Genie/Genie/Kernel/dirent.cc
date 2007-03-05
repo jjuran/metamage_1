@@ -19,6 +19,9 @@
 #include "Genie/Yield.hh"
 
 
+#undef dirfd
+
+
 namespace Genie
 {
 
