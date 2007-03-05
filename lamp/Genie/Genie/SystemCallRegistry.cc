@@ -12,6 +12,7 @@ namespace Genie
 	
 #if TARGET_CPU_68K && defined(__MWERKS__)
 	
+	DECLARE_MODULE_INIT( Kernel_dirent )
 	DECLARE_MODULE_INIT( Kernel_fcntl  )
 	DECLARE_MODULE_INIT( Kernel_Spawn  )
 	DECLARE_MODULE_INIT( Kernel_stat   )
@@ -20,6 +21,7 @@ namespace Genie
 	
 	void InitKernelModules()
 	{
+		CALL_MODULE_INIT( Kernel_dirent );
 		CALL_MODULE_INIT( Kernel_fcntl  );
 		CALL_MODULE_INIT( Kernel_Spawn  );
 		CALL_MODULE_INIT( Kernel_stat   );
