@@ -25,8 +25,8 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_fcntl )
-	DEFINE_MODULE_INIT( Kernel_fcntl )
+	DECLARE_MODULE_INIT( Kernel_dirent )
+	DEFINE_MODULE_INIT( Kernel_dirent )
 	
 	namespace N = Nitrogen;
 	
