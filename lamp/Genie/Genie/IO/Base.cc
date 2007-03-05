@@ -5,6 +5,9 @@
 
 #include "Genie/IO/Base.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Nucleus
 #include "Nucleus/Convert.h"
 
@@ -41,6 +44,9 @@ namespace Genie
 				
 				return FSTreePtr();
 			}
+			
+			mode_t FileTypeMode() const  { return S_IFIFO; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 	};
 	
 	
