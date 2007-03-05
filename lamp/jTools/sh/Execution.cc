@@ -308,11 +308,17 @@ static int ExecuteCommand( const Command& command )
 	
 	if ( char* eq = std::strchr( argv[ 0 ], '=' ) )
 	{
-		*eq = '\0';
-		
-		const char* name = argv[ 0 ];
-		
-		return Assign( name, eq + 1 );
+		if ( argv[1] == NULL )
+		{
+			// The assignment is the only word in the command.  Set a shell variable.
+			
+			*eq = '\0';
+			
+			const char* name = argv[ 0 ];
+			const char* value = eq + 1;
+			
+			return Assign( name, value );
+		}
 	}
 	
 	Builtin builtin = FindBuiltin( argv[ 0 ] );
@@ -360,6 +366,13 @@ static int ExecuteCommand( const Command& command )
 				}
 				else
 				{
+					while ( std::strchr( argv[ 0 ], '=' ) )
+					{
+						putenv( argv[0] );
+						
+						++argv;
+					}
+					
 					Exec( argv );
 				}
 				
