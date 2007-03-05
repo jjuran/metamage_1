@@ -22,9 +22,6 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// BSD
-#include <vfork.h>
-
 // Kerosene
 #include "SystemCalls.hh"
 
@@ -206,6 +203,7 @@
 	
 	void abort()
 	{
+		(void) signal( SIGABRT, SIG_DFL );
 		(void) raise( SIGABRT );
 	}
 	
@@ -249,6 +247,14 @@
 	int creat( const char* path, mode_t mode )
 	{
 		return open( path, O_CREAT | O_TRUNC | O_WRONLY, mode );
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ sys/stat ¥
+	
+	int mkfifo( const char* path, mode_t mode )
+	{
+		return mknod( path, S_IFIFO | mode, 0 );
 	}
 	
 	#pragma mark -
