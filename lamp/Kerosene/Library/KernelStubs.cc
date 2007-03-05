@@ -293,7 +293,8 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	int kill( pid_t pid, int sig )
 	{
-		CHECK_IMPORT( kill );
+		//CHECK_IMPORT( kill );
+		CheckCriticalImport( kill_import_ );
 		
 		return kill_import_( pid, sig );
 	}
