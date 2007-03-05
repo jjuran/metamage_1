@@ -307,7 +307,7 @@ int O::Main( int argc, const char *const argv[] )
 		gPipes.push_back( fds );
 	}
 	
-	int pid = vfork();
+	pid_t pid = vfork();
 	
 	if ( pid == 0 )
 	{
