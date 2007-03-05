@@ -24,7 +24,10 @@
 
 namespace Genie
 {
-
+	
+	DECLARE_MODULE_INIT( Kernel_fcntl )
+	DEFINE_MODULE_INIT( Kernel_fcntl )
+	
 	namespace N = Nitrogen;
 	
 	
@@ -102,10 +105,17 @@ namespace Genie
 			
 			return dir.ReadDir();
 		}
-		catch ( const N::FNFErr& err )
+		catch ( const N::OSStatus& err )
 		{
-			// End of iteration -- not an error, so clear errno
-			CurrentProcess().SetErrno( 0 );
+			if ( err == fnfErr )
+			{
+				// End of iteration -- not an error, so clear errno
+				CurrentProcess().SetErrno( 0 );
+			}
+			else
+			{
+				(void) GetErrnoFromExceptionInSystemCall();
+			}
 		}
 		catch ( ... )
 		{
