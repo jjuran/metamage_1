@@ -309,6 +309,8 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return itsHandle->GetFile()->Parent(); }
 			
+			void Stat( struct ::stat& sb ) const  { itsHandle->GetFile()->Stat( sb ); }
+			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{
 				return itsHandle;
