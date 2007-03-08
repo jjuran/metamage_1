@@ -52,17 +52,27 @@ static int exit_from_wait( int stat )
 	return result;
 }
 
-enum IoOperation
+enum IoOperator
 {
-	kNoOp,               // 0  nil
-	kOutputMatchesThis,  // 1  >=
-	kOutputMatchesHere,  // 2  >>
-	kInputThis,          // 3  <=
-	kInputHere,          // 4  <<
-	kClosed              // 5  --
+	kNoOp = -1,
+	
+	kIOMask = 0x01,
+		kInput  = 0,
+		kOutput = 1,
+	
+	kFormatMask = 0x02,
+		kOneLine = 0,
+		kHereDoc = 2,
+	
+	kInputLine       = kInput  | kOneLine,  // 0  >=
+	kInputHere       = kInput  | kHereDoc,  // 1  >>
+	kMatchOutputLine = kOutput | kOneLine,  // 2  <=
+	kMatchOutputHere = kOutput | kHereDoc,  // 3  <<
+	
+	kClosed = 4                             // 4  --
 };
 
-static IoOperation ReadOp( const char* s )
+static IoOperator ReadOp( const char* s )
 {
 	bool input = false;
 	bool here = false;
@@ -80,7 +90,7 @@ static IoOperation ReadOp( const char* s )
 			if      ( s[1] == s[0] )  here = true;
 			else if ( s[1] != '='  )  return kNoOp;
 			
-			return IoOperation( (input << 1 | here) + 1 );
+			return IoOperator( (input ? kInput : kOutput)  |  (here ? kHereDoc : kOneLine) );
 		
 		default:
 			return kNoOp;
@@ -90,10 +100,10 @@ static IoOperation ReadOp( const char* s )
 struct Redirection
 {
 	int          fd;
-	IoOperation  op;
+	IoOperator   op;
 	std::string  data;
 	
-	Redirection( int fd, IoOperation op, const std::string& data ) : fd( fd ), op( op ), data( data )  {}
+	Redirection( int fd, IoOperator op, const std::string& data ) : fd( fd ), op( op ), data( data )  {}
 };
 
 static std::vector< Redirection > gRedirections;
@@ -111,11 +121,13 @@ struct Pipe
 
 static std::vector< Pipe > gPipes;
 
-static void AddRedirection( int fd, IoOperation op, const std::string& param )
+static std::vector< int > gWriteEnds;
+
+static void AddRedirection( int fd, IoOperator op, const std::string& param )
 {
 	gRedirections.push_back( Redirection( fd, op, param ) );
 	
-	if ( op == kOutputMatchesThis )
+	if ( op == kOutput )
 	{
 		++gPipesNeeded;
 	}
@@ -132,7 +144,7 @@ static void ApplyRedirection( Redirection& redir )
 			close( redir.fd );
 			break;
 		
-		case kInputThis:
+		case kInputLine:
 			pipe( fds );
 			write( fds[1], redir.data.data(), redir.data.size() );
 			close( fds[1] );
@@ -140,11 +152,12 @@ static void ApplyRedirection( Redirection& redir )
 			close( fds[0] );
 			break;
 		
-		case kOutputMatchesThis:
+		case kMatchOutputLine:
 			fds = gPipes.back().itsFDs;
 			dup2( fds[1], redir.fd );
 			close( fds[1] );
 			redir.fd = fds[0];
+			gWriteEnds.push_back( fds[1] );
 			gPipes.pop_back();
 			break;
 		
@@ -156,23 +169,29 @@ static void ApplyRedirection( Redirection& redir )
 
 static bool DiscrepantOutput( const Redirection& redir )
 {
-	if ( redir.op != kOutputMatchesThis )  return false;
+	if ( redir.op != kOutput )  return false;
+	
+	std::string actual_output;
 	
 	char data[ 4096 ];
 	
-	int bytes_read = read( redir.fd, data, 4096 -1 );
-	
-	if ( bytes_read == -1 )
+	while ( int bytes_read = read( redir.fd, data, 4096 ) )
 	{
-		bytes_read = 0;
-		std::perror( "Error reading captured output" );
+		if ( bytes_read == -1 )
+		{
+			bytes_read = 0;
+			std::perror( "Error reading captured output" );
+			
+			return true;
+		}
+		
+		actual_output += std::string( data, bytes_read );
 	}
 	
-	data[ bytes_read ] = '\0';
 	
 	close( redir.fd );
 	
-	bool match = bytes_read == redir.data.size()  &&  std::memcmp( data, redir.data.data(), bytes_read ) == 0;
+	bool match = actual_output == redir.data;
 	
 	if ( !match )
 	{
@@ -255,7 +274,7 @@ int O::Main( int argc, const char *const argv[] )
 				return 1;
 			}
 			
-			IoOperation op = ReadOp( line.c_str() + start_of_op );
+			IoOperator op = ReadOp( line.c_str() + start_of_op );
 			
 			if ( op == kNoOp )
 			{
@@ -283,7 +302,39 @@ int O::Main( int argc, const char *const argv[] )
 				
 				param = line.substr( start_of_param, end_of_param - start_of_param );
 				
-				param += "\n";
+				if ( (op & kFormatMask) == kOneLine )
+				{
+					param += "\n";
+				}
+				else
+				{
+					std::string hereDoc;
+					bool premature_EOF = false;
+					
+					while ( !( input.Ended() && (premature_EOF = true) ) )
+					{
+						std::string nextLine = input.Read();
+						
+						if ( nextLine == param )
+						{
+							break;
+						}
+						
+						hereDoc += nextLine + "\n";
+					}
+					
+					if ( premature_EOF )
+					{
+						std::fprintf( stderr, "Missing heredoc terminator '%s'\n", param.c_str() );
+						
+						return 1;
+					}
+					
+					std::swap( param, hereDoc );
+				}
+				
+				//op &= kIOMask;
+				op = IoOperator( op & kIOMask );
 			}
 			
 			AddRedirection( fd_to_redirect, op, param );
@@ -323,6 +374,10 @@ int O::Main( int argc, const char *const argv[] )
 		
 		_exit( 127 );
 	}
+	
+	std::for_each( gWriteEnds.begin(),
+		           gWriteEnds.end(),
+		           std::ptr_fun( close ) );
 	
 	int wait_status = -1;
 	pid_t resultpid = waitpid( pid, &wait_status, 0 );
