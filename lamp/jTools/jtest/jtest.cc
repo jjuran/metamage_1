@@ -370,7 +370,7 @@ int O::Main( int argc, const char *const argv[] )
 		
 		argv[2] = command.c_str();
 		
-		execv( "/bin/sh", argv );
+		execv( "/bin/sh", (char**) argv );
 		
 		_exit( 127 );
 	}
