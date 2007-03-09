@@ -50,10 +50,26 @@ my $root_name = "lamp-${config_short_name}_";
 
 my @programs = qw
 (
-	aevt tlsrvr A-line cpres keymods
-	cat cp echo false kill login mkdir mv pwd readlink sh sleep true
-	argv0 beep err2text gzip htget macbin md5sum nohup open osascript perl tty
-	superd inetd httpd
+	A-line
+	abort aevt argv0
+	beep
+	cat cds cp cpres
+	echo err2text
+	false
+	gzip
+	htget httpd
+	inetd
+	jtest
+	keymods kill
+	login
+	macbin md5sum mkdir mv
+	nohup
+	open osascript
+	perl pwd
+	readlink
+	sh sleep superd
+	tlsrvr true tty
+	uncaught_exception
 );
 my %is_program = map { $_ => 1 } @programs;
 
@@ -61,9 +77,17 @@ my %fsmap =
 (
 	Developer =>
 	{
-		Tools => [qw( keymods aevt activate quit system File Line tlsrvr A-line cpres filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl )],
+		Tools =>
+		[
+			qw( A-line abort activate aevt cpres keymods quit system File Line tlsrvr jtest ),
+			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl ),
+		],
 	},
-	bin => [qw( cat cp echo false kill login mkdir mv pwd readlink sh sleep true ), qw( chmod date ls test )],
+	bin =>
+	[
+		qw( cat cp echo false kill login mkdir mv pwd readlink sh sleep true ),
+		qw( chmod date ls test ),
+	],
 	etc =>
 	[
 		qw( inetd.conf motd profile ),
@@ -77,7 +101,11 @@ my %fsmap =
 	tmp => [],
 	usr =>
 	{
-		bin => [qw( argv0 beep err2text gzip htget macbin md5sum nohup open osascript perl tty ), qw( env grep head printenv strings tee time tr wc )],
+		bin =>
+		[
+			qw( argv0 beep cds err2text gzip htget keymods macbin md5sum nohup open osascript perl tty ),
+			qw( env grep head printenv strings tee time tr wc ),
+		],
 		lib =>
 		{
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
