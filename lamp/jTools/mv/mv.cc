@@ -4,31 +4,26 @@
  */
 
 // Standard C
-#include "errno.h"
+#include <errno.h>
 
 // Standard C/C++
 #include <cstdio>
 
 // POSIX
-#include "sys/stat.h"
-#include "unistd.h"
-
-// Orion
-#include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
+#include <sys/stat.h>
+#include <unistd.h>
 
 
-namespace O = Orion;
+#pragma export on
 
-
-int O::Main( int argc, const char *const argv[] )
+int main( int argc, char const *const argv[] )
 {
 	// Check for sufficient number of args
 	if (argc < 3)
 	{
 		const char* prerequisite = (argc == 1) ? "file arguments" : "destination file";
 		
-		Io::Err << "mv: missing " << prerequisite << "\n";
+		std::fprintf( stderr, "%s: missing %s\n", argv[0], prerequisite );
 		
 		return 1;
 	}
@@ -52,7 +47,6 @@ int O::Main( int argc, const char *const argv[] )
 		
 		if ( !S_ISDIR( sb.st_mode ) )
 		{
-			//Io::Err << "mv: moving multiple files, but last argument (" << argv[argc - 1] << ") is not a directory.\n";
 			const char* format = "%s: moving multiple files, but last argument (%s) is not a directory.\n";
 			
 			std::fprintf( stderr, format, argv[ 0 ], destDir );
@@ -76,26 +70,9 @@ int O::Main( int argc, const char *const argv[] )
 		
 		if ( renamed == -1 )
 		{
-			int err = errno;
+			const char* error_msg = errno == EXDEV ? "can't move across partitions" : std::strerror( errno );
 			
-			const char* msg = "unchecked error";
-			
-			switch ( errno )
-			{
-				case ENOENT:
-					msg = "No such file or directory";
-					break;
-				
-				case EXDEV:
-					msg = "can't move across partitions";
-					break;
-				
-				default:
-					std::fprintf( stderr, "Errno = %d\n", errno );
-					break;
-			}
-			
-			std::fprintf( stderr, "%s: rename %s to %s: %s\n", argv[ 0 ], srcPath, destPath, msg );
+			std::fprintf( stderr, "%s: rename %s to %s: %s\n", argv[ 0 ], srcPath, destPath, error_msg );
 			
 			return 1;
 		}
@@ -105,4 +82,6 @@ int O::Main( int argc, const char *const argv[] )
 	
 	return fail != 0;
 }
+
+#pragma export reset
 
