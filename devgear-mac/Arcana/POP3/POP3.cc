@@ -52,7 +52,7 @@ namespace POP3
 			maxMessageLineCount = 10240
 		};
 		
-		static bool CheckResponse( const std::string& response )
+		bool CheckResponse( const std::string& response )
 		{
 			if ( response.size() >= 3 )
 			{
@@ -225,17 +225,6 @@ namespace POP3
 			static char const *const Delete = Dele;
 			
 		}  // namespace Commands
-		
-		std::string GetResponse( Io::TextInputAdapter& input )
-		{
-			std::string response = input.Read();
-			
-			DebugReceived( response );
-			
-			CheckResponse( response );
-			
-			return response;
-		}
 		
 		Session::Session( Io::Handle socket )
 		:

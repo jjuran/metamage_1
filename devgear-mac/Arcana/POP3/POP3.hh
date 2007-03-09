@@ -45,13 +45,25 @@ namespace POP3
 			{}
 		};
 		
-		std::string GetResponse( Io::TextInputAdapter& input );
+		bool CheckResponse( const std::string& response );
 		
+		template < class Stream >
+		std::string GetResponse( Io::TextInputAdapter< Stream >& input )
+		{
+			std::string response = input.Read();
+			
+			//DebugReceived( response );
+			
+			CheckResponse( response );
+			
+			return response;
+		}
+		
+		template < class Stream >
 		class Session
 		{
 			private:
-				Io::Handle io;
-				Io::TextInputAdapter input;
+				Io::TextInputAdapter< Stream >  itsInput;
 			
 			public:
 				Session( Io::Handle socket );
