@@ -190,9 +190,9 @@ namespace Artifact
 		FSSpec msgFile = GetTmpDir( maildir ) & filename;
 		
 		MessageDelivery msg( N::FSpOpenDF( N::FSpCreate( msgFile,
-		                                                 'R*ch',
-		                                                 'TEXT' ),
-		                                   fsWrPerm ),
+		                                                 N::OSType( 'R*ch' ),
+		                                                 N::OSType( 'TEXT' ) ),
+		                                   N::fsWrPerm ),
 		                     MoveFileToDir( msgFile, GetNewDir( maildir ) ),
 		                     DeleteFile( msgFile ) );
 		
