@@ -89,14 +89,21 @@ int Assign( const char* name, const char* value )
 
 static int Builtin_CD( int argc, char const* const argv[] )
 {
+	const char* dir = argv[1];
+	
 	if ( argc == 1 )
 	{
-		// cd home
+		if ( const char* home = getenv( "HOME" ) )
+		{
+			dir = home;
+		}
+		else
+		{
+			dir = "/";
+		}
 	}
-	else
-	{
-		chdir( argv[ 1 ] );
-	}
+	
+	chdir( dir );
 	
 	// Apparently setenv() breaks something.
 	//setenv( "OLDPWD", getenv( "PWD" ), 1 );
@@ -290,14 +297,14 @@ static int Builtin_Unset( int argc, char const* const argv[] )
 class ReplacedParametersScope
 {
 	private:
-		std::size_t         fSavedParameterCount;
-		char const* const*  fSavedParameters;
+		std::size_t         itsSavedParameterCount;
+		char const* const*  itsSavedParameters;
 	
 	public:
 		ReplacedParametersScope( std::size_t count, char const* const* params )
 		:
-			fSavedParameterCount( gParameterCount ),
-			fSavedParameters    ( gParameters     )
+			itsSavedParameterCount( gParameterCount ),
+			itsSavedParameters    ( gParameters     )
 		{
 			gParameterCount = count;
 			gParameters     = params;
@@ -305,8 +312,8 @@ class ReplacedParametersScope
 		
 		~ReplacedParametersScope()
 		{
-			gParameterCount = fSavedParameterCount;
-			gParameters     = fSavedParameters;
+			gParameterCount = itsSavedParameterCount;
+			gParameters     = itsSavedParameters;
 		}
 };
 
