@@ -24,16 +24,40 @@
 #include "Execution.hh"
 
 
-static void Prompt()
+static PromptLevel gPromptLevel = kPS1;
+
+void SetPromptLevel( PromptLevel level )
 {
-	const char* ps1 = getenv( "PS1" );
+	gPromptLevel = level;
+}
+
+struct Prompt
+{
+	const char*  environmentVariableName;
+	const char*  defaultValue;
+};
+
+static const Prompt gPrompts[] =
+{
+	{ "", "" },
+	{ "PS1", "$ " },
+	{ "PS2", "> " },
+	{ "PS3", "" },
+	{ "PS4", "" },
+};
+
+static void SendPrompt()
+{
+	const Prompt& prompt = gPrompts[ gPromptLevel ];
 	
-	if ( ps1 == NULL )
+	const char* prompt_string = getenv( prompt.environmentVariableName );
+	
+	if ( prompt_string == NULL )
 	{
-		ps1 = "$ ";
+		prompt_string = prompt.defaultValue;
 	}
 	
-	Io::Out << ps1;
+	Io::Out << prompt_string;
 }
 
 int ReadExecuteLoop( P7::FileDescriptor  fd,
@@ -47,7 +71,7 @@ int ReadExecuteLoop( P7::FileDescriptor  fd,
 	{
 		Io::Out << "Shell spawned with pid " << getpid() << "\n";
 		
-		Prompt();
+		SendPrompt();
 	}
 	
 	while ( !input.Ended() )
@@ -65,7 +89,7 @@ int ReadExecuteLoop( P7::FileDescriptor  fd,
 			
 			if ( prompts )
 			{
-				Prompt();
+				SendPrompt();
 			}
 		}
 	}

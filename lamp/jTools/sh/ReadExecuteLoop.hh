@@ -16,6 +16,16 @@ namespace P7 = POSeven;
 
 extern int gLastResult;
 
+enum PromptLevel
+{
+	kPS1 = 1,
+	kPS2 = 2,
+	kPS3 = 3,
+	kPS4 = 4
+};
+
+void SetPromptLevel( PromptLevel level );
+
 int ReadExecuteLoop( P7::FileDescriptor  fd,
                      bool                prompts );
 
