@@ -30,62 +30,70 @@ namespace Genie
 			return 0;
 		}
 		
-		if ( itsAvailableInput.empty() )
+		if ( itsStrings.empty() )
 		{
-			// Need more input.
+			// Oops, nothing queued right now
 			
-			if ( itsStrings.empty() )
+			if ( !itsInputHasClosed )
 			{
-				// Oops, nothing queued right now
+				// Still open, maybe we'll get something later
 				
-				if ( !itsInputHasClosed )
+				if ( !itIsBlocking )
 				{
-					// Still open, maybe we'll get something later
-					
-					if ( !itIsBlocking )
-					{
-						// But we're not going to wait
-						throw io::no_input_pending();
-					}
-					
-					// Input or bust
-					while ( itsStrings.empty() && !itsInputHasClosed )
-					{
-						// I can wait forever...
-						Yield();
-					}
+					// But we're not going to wait
+					throw io::no_input_pending();
 				}
 				
-				// Either a string was written, or input was closed,
-				// or possibly both, so check itsStrings rather than itsInputHasClosed
-				// so we don't miss data.
-				
-				// If the string queue is still empty then input must have closed.
-				if ( itsStrings.empty() )
+				// Input or bust
+				while ( itsStrings.empty() && !itsInputHasClosed )
 				{
-					throw io::end_of_input();
+					// I can wait forever...
+					Yield();
 				}
 			}
 			
-			// Only reached if a string is available.
-			itsAvailableInput = itsStrings.front();
-			itsStrings.pop_front();
+			// Either a string was written, or input was closed,
+			// or possibly both, so check itsStrings rather than itsInputHasClosed
+			// so we don't miss data.
+			
+			// If the string queue is still empty then input must have closed.
+			if ( itsStrings.empty() )
+			{
+				throw io::end_of_input();
+			}
 		}
 		
-		std::size_t bytesCopied = std::min( itsAvailableInput.size(), byteCount );
+		// Only reached if a string is available.
+		std::size_t bytesCopied = 0;
 		
-		// Copy from our input store to the supplied buffer
-		std::copy( itsAvailableInput.begin(),
-		           itsAvailableInput.begin() + bytesCopied,
-		           data );
-		
-		// Slide any unused input to the beginning
-		// This would really suck for reading lots of data through a pipe one byte at a time
-		std::copy( itsAvailableInput.begin() + bytesCopied,
-		           itsAvailableInput.end(),
-		           itsAvailableInput.begin() );
-		
-		itsAvailableInput.resize( itsAvailableInput.size() - bytesCopied );
+		do
+		{
+			std::string& inputChunk = itsStrings.front();
+			//itsStrings.pop_front();
+			
+			std::size_t bytesToCopy = std::min( inputChunk.size(), byteCount - bytesCopied );
+			
+			// Copy from our input store to the supplied buffer
+			std::copy( inputChunk.begin(),
+			           inputChunk.begin() + bytesToCopy,
+			           data + bytesCopied );
+			
+			// Slide any unused input to the beginning
+			// This would really suck for reading lots of data through a pipe one byte at a time
+			std::copy( inputChunk.begin() + bytesToCopy,
+			           inputChunk.end(),
+			           inputChunk.begin() );
+			
+			bytesCopied += bytesToCopy;
+			
+			inputChunk.resize( inputChunk.size() - bytesToCopy );
+			
+			if ( inputChunk.empty() )
+			{
+				itsStrings.pop_front();
+			}
+		}
+		while ( !itsStrings.empty()  &&  bytesCopied < byteCount );
 		
 		return bytesCopied;
 	}

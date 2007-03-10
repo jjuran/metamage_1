@@ -20,7 +20,6 @@ namespace Genie
 	{
 		private:
 			std::list< std::string > itsStrings;
-			std::string itsAvailableInput;
 			bool itsInputHasClosed, itsOutputHasClosed;
 			bool itIsBlocking;
 		
