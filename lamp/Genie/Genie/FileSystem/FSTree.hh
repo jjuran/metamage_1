@@ -77,6 +77,8 @@ namespace Genie
 			virtual bool IsFile() const;
 			virtual bool IsDirectory() const;
 			virtual bool IsLink() const;
+			virtual bool IsPipe() const;
+			virtual bool IsAnonymous() const;
 			
 			virtual std::string Name() const;
 			virtual std::string Pathname() const;

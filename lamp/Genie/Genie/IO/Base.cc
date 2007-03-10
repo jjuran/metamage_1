@@ -5,9 +5,6 @@
 
 #include "Genie/IO/Base.hh"
 
-// POSIX
-#include <sys/stat.h>
-
 // Nucleus
 #include "Nucleus/Convert.h"
 
@@ -34,6 +31,9 @@ namespace Genie
 		public:
 			FSTree_IOHandle( const void* address ) : itsName( IOName( (unsigned long) address ) )  {}
 			
+			bool IsPipe()      const  { return true; }
+			bool IsAnonymous() const  { return true; }
+			
 			std::string Name() const  { return itsName; }
 			
 			std::string Pathname() const  { return Name(); }
@@ -44,9 +44,6 @@ namespace Genie
 				
 				return FSTreePtr();
 			}
-			
-			mode_t FileTypeMode() const  { return S_IFIFO; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 	};
 	
 	

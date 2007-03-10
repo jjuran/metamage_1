@@ -66,6 +66,16 @@ namespace Genie
 		return false;
 	}
 	
+	bool FSTree::IsPipe() const
+	{
+		return false;
+	}
+	
+	bool FSTree::IsAnonymous() const
+	{
+		return false;
+	}
+	
 	std::string FSTree::Name() const
 	{
 		P7::ThrowErrno( ENOENT );
@@ -84,6 +94,7 @@ namespace Genie
 	{
 		mode_t type = IsDirectory() ? S_IFDIR
 		            : IsLink()      ? S_IFLNK
+		            : IsPipe()      ? S_IFIFO
 		            :                 S_IFREG;
 		
 		return type;
@@ -93,6 +104,7 @@ namespace Genie
 	{
 		mode_t perm = IsDirectory() ? S_IRUSR | S_IWUSR | S_IXUSR
 		            : IsLink()      ? S_IRUSR | S_IWUSR | S_IXUSR
+		            : IsPipe()      ? S_IRUSR | S_IWUSR
 		            :                 S_IRUSR;
 		
 		return perm;
