@@ -1,4 +1,4 @@
-// CarbonUnits/Events.cc
+// Carbonate/Events.cc
 
 
 #ifndef __EVENTS__
@@ -11,8 +11,8 @@
 
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
 // Compile the Carbon accessors as extern pascal functions.
-#define CARBONUNITS_LINKAGE pascal
-#include "CarbonUnits/Events.hh"
+#define CARBONATE_LINKAGE pascal
+#include "Carbonate/Events.hh"
 #endif
 
 // These functions are always declared in the headers and are always extern.

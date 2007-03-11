@@ -1,4 +1,4 @@
-// CarbonUnits/Quickdraw.cc
+// Carbonate/Quickdraw.cc
 
 
 #ifndef __QUICKDRAW__
@@ -11,8 +11,8 @@
 
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
 // Compile the Carbon accessors as extern pascal functions.
-#define CARBONUNITS_LINKAGE pascal
-#include "CarbonUnits/Quickdraw.hh"
+#define CARBONATE_LINKAGE pascal
+#include "Carbonate/Quickdraw.hh"
 #endif
 
 // These functions are always declared in the headers and are always extern.

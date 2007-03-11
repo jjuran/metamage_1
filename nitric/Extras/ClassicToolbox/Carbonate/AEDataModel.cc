@@ -1,4 +1,4 @@
-// CarbonUnits/AEDataModel.cc
+// Carbonate/AEDataModel.cc
 
 
 #ifndef __AEDATAMODEL__
@@ -15,8 +15,8 @@
 
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
 // Compile the Carbon accessors as extern pascal functions.
-#define CARBONUNITS_LINKAGE pascal
-#include "CarbonUnits/AEDataModel.hh"
+#define CARBONATE_LINKAGE pascal
+#include "Carbonate/AEDataModel.hh"
 #endif
 
 // These functions are always declared in the headers and are always extern.

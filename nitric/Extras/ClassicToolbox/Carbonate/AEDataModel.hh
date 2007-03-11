@@ -1,4 +1,4 @@
-// CarbonUnits/AEDataModel.hh
+// Carbonate/AEDataModel.hh
 
 #ifndef CARBONUNITS_AEDATAMODEL_HH
 #define CARBONUNITS_AEDATAMODEL_HH
@@ -23,18 +23,18 @@
 // 1. Accessors are functions on 68K (no CarbonAccessors.o), for compiling
 // 2. Accessors are not functions, for including
 
-// CARBONUNITS_LINKAGE is only defined (to 'pascal') if we're compiling.
+// CARBONATE_LINKAGE is only defined (to 'pascal') if we're compiling.
 
-#if defined(CARBONUNITS_LINKAGE) && ACCESSOR_CALLS_ARE_FUNCTIONS && TARGET_CPU_68K || !defined(CARBONUNITS_LINKAGE) && !ACCESSOR_CALLS_ARE_FUNCTIONS
+#if defined(CARBONATE_LINKAGE) && ACCESSOR_CALLS_ARE_FUNCTIONS && TARGET_CPU_68K || !defined(CARBONATE_LINKAGE) && !ACCESSOR_CALLS_ARE_FUNCTIONS
 
-#ifndef CARBONUNITS_LINKAGE
-#define CARBONUNITS_LINKAGE inline
+#ifndef CARBONATE_LINKAGE
+#define CARBONATE_LINKAGE inline pascal
 #endif
 
 
-CARBONUNITS_LINKAGE OSErr AEGetDescData( const AEDesc*  desc,
-                                         void*          dataPtr,
-                                         Size           maximumSize )
+CARBONATE_LINKAGE OSErr AEGetDescData( const AEDesc*  desc,
+                                       void*          dataPtr,
+                                       Size           maximumSize )
 {
 	if ( desc->dataHandle == NULL )
 	{
@@ -58,15 +58,15 @@ CARBONUNITS_LINKAGE OSErr AEGetDescData( const AEDesc*  desc,
 	return noErr;
 }
 
-CARBONUNITS_LINKAGE Size AEGetDescDataSize( const AEDesc* desc )
+CARBONATE_LINKAGE Size AEGetDescDataSize( const AEDesc* desc )
 {
 	return GetHandleSize( desc->dataHandle );
 }
 
-CARBONUNITS_LINKAGE OSErr AEReplaceDescData( DescType     typeCode,
-                                             const void*  dataPtr,
-                                             Size         dataSize,
-                                             AEDesc*      desc )
+CARBONATE_LINKAGE OSErr AEReplaceDescData( DescType     typeCode,
+                                           const void*  dataPtr,
+                                           Size         dataSize,
+                                           AEDesc*      desc )
 {
 	bool typeIsNull = typeCode == typeNull;
 	bool ptrIsNull  = dataPtr  == NULL;
@@ -112,7 +112,7 @@ CARBONUNITS_LINKAGE OSErr AEReplaceDescData( DescType     typeCode,
 }
 
 
-#undef CARBONUNITS_LINKAGE
+#undef CARBONATE_LINKAGE
 
 #endif
 
