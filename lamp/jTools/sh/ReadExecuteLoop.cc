@@ -26,9 +26,16 @@
 
 static PromptLevel gPromptLevel = kPS1;
 
+static bool gExitOnError = false;
+
 void SetPromptLevel( PromptLevel level )
 {
 	gPromptLevel = level;
+}
+
+void SetWhetherToExitOnBatchError( bool exit )
+{
+	gExitOnError = exit;
 }
 
 struct Prompt
@@ -86,6 +93,11 @@ int ReadExecuteLoop( P7::FileDescriptor  fd,
 			}
 			
 			result = ExecuteCmdLine( command );
+			
+			if ( !prompts  &&  gExitOnError  &&  result != 0 )
+			{
+				break;
+			}
 			
 			if ( prompts )
 			{

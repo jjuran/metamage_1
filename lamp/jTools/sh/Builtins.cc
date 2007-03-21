@@ -268,6 +268,10 @@ static int Builtin_Set( int argc, char const* const argv[] )
 	}
 	else if ( argc == 2 )
 	{
+		if ( argv[1] == std::string( "-o" ) )
+		{
+			SetWhetherToExitOnBatchError( true );
+		}
 	}
 	
 	return 0;
