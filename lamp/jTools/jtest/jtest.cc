@@ -106,66 +106,89 @@ struct Redirection
 	Redirection( int fd, IoOperator op, const std::string& data ) : fd( fd ), op( op ), data( data )  {}
 };
 
-static std::vector< Redirection > gRedirections;
 
-static unsigned gPipesNeeded = 0;
-
-struct Pipe
+static Redirection GetRedirectionFromLine( const std::string& line, Io::TextInputAdapter< P7::FileDescriptor >& input )
 {
-	int itsFDs[2];
+	std::size_t end_of_fd = line.find_first_not_of( "0123456789" );
 	
-	Pipe()  {}
+	int fd_to_redirect = std::atoi( line.substr( 0, end_of_fd - 0 ).c_str() );
 	
-	Pipe( const int fds[2] )  { std::copy( fds, fds + 2, itsFDs ); }
-};
-
-static std::vector< Pipe > gPipes;
-
-static std::vector< int > gWriteEnds;
-
-static void AddRedirection( int fd, IoOperator op, const std::string& param )
-{
-	gRedirections.push_back( Redirection( fd, op, param ) );
+	std::size_t start_of_op = line.find_first_not_of( " \t", end_of_fd );
 	
-	if ( op == kOutput )
+	std::size_t end_of_op = start_of_op + 2;
+	
+	if ( line.size() < end_of_op )
 	{
-		++gPipesNeeded;
+		std::fprintf( stderr, "Missing operator in line: %s\n", line.c_str() );
+		O::ThrowExitStatus( 1 );
 	}
+	
+	IoOperator op = ReadOp( line.c_str() + start_of_op );
+	
+	if ( op == kNoOp )
+	{
+		std::fprintf( stderr, "Unrecognized operator in line: %s\n", line.c_str() );
+		O::ThrowExitStatus( 1 );
+	}
+	
+	std::string param;
+	
+	if ( op != kClosed )
+	{
+		std::size_t start_of_param = line.find_first_not_of( " \t", end_of_op );
+		
+		char param0 = line[ start_of_param ];
+		char delimiter = ' ';
+		
+		if ( param0 == '"'  ||  param0 == '\'' )
+		{
+			delimiter = param0;
+			
+			++start_of_param;
+		}
+		
+		std::size_t end_of_param = line.find( delimiter, start_of_param );
+		
+		param = line.substr( start_of_param, end_of_param - start_of_param );
+		
+		if ( (op & kFormatMask) == kOneLine )
+		{
+			param += "\n";
+		}
+		else
+		{
+			std::string hereDoc;
+			bool premature_EOF = false;
+			
+			while ( !( input.Ended() && (premature_EOF = true) ) )
+			{
+				std::string nextLine = input.Read();
+				
+				if ( nextLine == param )
+				{
+					break;
+				}
+				
+				hereDoc += nextLine + "\n";
+			}
+			
+			if ( premature_EOF )
+			{
+				std::fprintf( stderr, "Missing heredoc terminator '%s'\n", param.c_str() );
+				
+				O::ThrowExitStatus( 1 );
+			}
+			
+			std::swap( param, hereDoc );
+		}
+		
+		//op &= kIOMask;
+		op = IoOperator( op & kIOMask );
+	}
+	
+	return Redirection( fd_to_redirect, op, param );
 }
 
-static void ApplyRedirection( Redirection& redir )
-{
-	int pipe_fds[2];
-	int* fds = pipe_fds;
-	
-	switch ( redir.op )
-	{
-		case kClosed:
-			close( redir.fd );
-			break;
-		
-		case kInputLine:
-			pipe( fds );
-			write( fds[1], redir.data.data(), redir.data.size() );
-			close( fds[1] );
-			dup2( fds[0], redir.fd );
-			close( fds[0] );
-			break;
-		
-		case kMatchOutputLine:
-			fds = gPipes.back().itsFDs;
-			dup2( fds[1], redir.fd );
-			close( fds[1] );
-			redir.fd = fds[0];
-			gWriteEnds.push_back( fds[1] );
-			gPipes.pop_back();
-			break;
-		
-		default:
-			std::fprintf( stderr, "Error in redirection\n" );
-			break;
-	}
-}
 
 static bool DiscrepantOutput( const Redirection& redir )
 {
@@ -201,19 +224,202 @@ static bool DiscrepantOutput( const Redirection& redir )
 	return !match;
 }
 
+
+struct Pipe
+{
+	int itsFDs[2];
+	
+	Pipe()  {}
+	
+	Pipe( const int fds[2] )  { std::copy( fds, fds + 2, itsFDs ); }
+};
+
+
+class TestCase
+{
+	private:
+		std::string itsCommand;
+		int itsExpectedExitStatus;
+		std::vector< Redirection > itsRedirections;
+		unsigned itsCountOfPipesNeeded;
+		std::vector< Pipe > itsPipes;
+		std::vector< int > itsWriteEnds;
+	
+	public:
+		TestCase() : itsExpectedExitStatus(), itsCountOfPipesNeeded()  {}
+		
+		void SetCommand( const std::string& command )  { itsCommand = command; }
+		void SetExitStatus( int status )  { itsExpectedExitStatus = status; }
+		void AddRedirection( const Redirection& redir );
+		
+		void Redirect( Redirection& redir );
+		
+		bool Run();
+	
+	private:
+		struct Redirecting
+		{
+			TestCase& test;
+			
+			Redirecting( TestCase& test ) : test( test )  {}
+			void operator()( Redirection& redir )  { test.Redirect( redir ); }
+		};
+		
+		Redirecting Redirector()  { return Redirecting( *this ); }
+		
+		void CheckForCompleteness();
+		
+		void CreatePipes();
+		
+		void ClosePipeWriters();
+		
+		bool DoesOutputMatch() const;
+};
+
+
+void TestCase::AddRedirection( const Redirection& redir )
+{
+	itsRedirections.push_back( redir );
+	
+	if ( redir.op == kOutput )
+	{
+		++itsCountOfPipesNeeded;
+	}
+}
+
+void TestCase::CheckForCompleteness()
+{
+	if ( itsCommand.empty() )
+	{
+		std::fprintf( stderr, "Command missing\n" );
+		
+		O::ThrowExitStatus( 1 );
+	}
+}
+
+
+void TestCase::CreatePipes()
+{
+	unsigned pipes = itsCountOfPipesNeeded;
+	
+	while ( pipes-- )
+	{
+		int fds[2];
+		pipe( fds );
+		itsPipes.push_back( fds );
+	}
+}
+
+void TestCase::Redirect( Redirection& redir )
+{
+	int pipe_fds[2];
+	int* fds = pipe_fds;
+	
+	switch ( redir.op )
+	{
+		case kClosed:
+			close( redir.fd );
+			break;
+		
+		case kInputLine:
+			pipe( fds );
+			write( fds[1], redir.data.data(), redir.data.size() );
+			close( fds[1] );
+			dup2( fds[0], redir.fd );
+			close( fds[0] );
+			break;
+		
+		case kMatchOutputLine:
+			fds = itsPipes.back().itsFDs;
+			dup2( fds[1], redir.fd );
+			close( fds[1] );
+			redir.fd = fds[0];
+			itsWriteEnds.push_back( fds[1] );
+			itsPipes.pop_back();
+			break;
+		
+		default:
+			std::fprintf( stderr, "Error in redirection\n" );
+			break;
+	}
+}
+
+void TestCase::ClosePipeWriters()
+{
+	std::for_each( itsWriteEnds.begin(),
+		           itsWriteEnds.end(),
+		           std::ptr_fun( close ) );
+	
+	itsWriteEnds.clear();
+}
+
+bool TestCase::DoesOutputMatch() const
+{
+	std::vector< Redirection >::const_iterator it = std::find_if( itsRedirections.begin(),
+	                                                              itsRedirections.end(),
+	                                                              std::ptr_fun( DiscrepantOutput ) );
+	
+	bool output_matches = it == itsRedirections.end();
+	
+	return output_matches;
+}
+
+
+bool TestCase::Run()
+{
+	CheckForCompleteness();
+	
+	CreatePipes();
+	
+	pid_t pid = vfork();
+	
+	if ( pid == 0 )
+	{
+		std::for_each( itsRedirections.begin(),
+		               itsRedirections.end(),
+		               Redirector() );
+		
+		const char* argv[] = { "sh", "-c", "", NULL };
+		
+		argv[2] = itsCommand.c_str();
+		
+		execv( "/bin/sh", (char**) argv );
+		
+		_exit( 127 );
+	}
+	
+	ClosePipeWriters();
+	
+	int wait_status = -1;
+	pid_t resultpid = waitpid( pid, &wait_status, 0 );
+	
+	bool output_matches = DoesOutputMatch();
+	bool status_matches = exit_from_wait( wait_status ) == itsExpectedExitStatus;
+	
+	bool test_ok = status_matches && output_matches;
+	
+	return test_ok;
+}
+
+
+static void RunTest( TestCase& test )
+{
+	static unsigned gLastNumber = 0;
+	
+	bool test_ok = test.Run();
+	
+	std::string result = test_ok ? "ok" : "not ok";
+	
+	result += " " + NN::Convert< std::string >( ++gLastNumber );
+	
+	result += "\n";
+	
+	(void) write( STDOUT_FILENO, result.data(), result.size() );
+}
+
 int O::Main( int argc, const char *const argv[] )
 {
 	const char* jtest = argv[0];
-	
-	unsigned number = 0;
-	
-	if ( argc > 2  &&  std::string( argv[1] ) == "--num" )
-	{
-		number = std::atoi( argv[2] );
-		
-		argc -= 2;
-		argv += 2;
-	}
 	
 	int fd = 0;  // Default to stdin
 	
@@ -231,8 +437,8 @@ int O::Main( int argc, const char *const argv[] )
 	
 	Io::TextInputAdapter< P7::FileDescriptor > input = P7::FileDescriptor( fd );
 	
-	std::string command;
-	int exit_status = 0;
+	std::vector< TestCase > battery;
+	TestCase test;
 	
 	while ( !input.Ended() )
 	{
@@ -242,165 +448,50 @@ int O::Main( int argc, const char *const argv[] )
 		
 		if ( line[0] == '#' )
 		{
-			//number = std::atoi( line.substr( line.find_first_not_of( " \t", 1 ), line.npos ).c_str() );
+			// comment
 			continue;
 		}
 		
 		if ( line[0] == '$' )
 		{
-			command = line.substr( line.find_first_not_of( " \t", 1 ), line.npos );
+			std::string command = line.substr( line.find_first_not_of( " \t", 1 ), line.npos );
+			
+			test.SetCommand( command );
+			
 			continue;
 		}
 		
 		if ( line[0] == '?' )
 		{
-			exit_status = std::atoi( line.substr( line.find_first_not_of( " \t", 1 ), line.npos ).c_str() );
+			int exit_status = std::atoi( line.substr( line.find_first_not_of( " \t", 1 ), line.npos ).c_str() );
+			test.SetExitStatus( exit_status );
 			continue;
 		}
 		
 		if ( std::isdigit( line[0] ) )
 		{
-			std::size_t end_of_fd = line.find_first_not_of( "0123456789" );
+			test.AddRedirection( GetRedirectionFromLine( line, input ) );
 			
-			int fd_to_redirect = std::atoi( line.substr( 0, end_of_fd - 0 ).c_str() );
-			
-			std::size_t start_of_op = line.find_first_not_of( " \t", end_of_fd );
-			
-			std::size_t end_of_op = start_of_op + 2;
-			
-			if ( line.size() < end_of_op )
-			{
-				std::fprintf( stderr, "Missing operator in line: %s\n", line.c_str() );
-				return 1;
-			}
-			
-			IoOperator op = ReadOp( line.c_str() + start_of_op );
-			
-			if ( op == kNoOp )
-			{
-				std::fprintf( stderr, "Unrecognized operator in line: %s\n", line.c_str() );
-				return 1;
-			}
-			
-			std::string param;
-			
-			if ( op != kClosed )
-			{
-				std::size_t start_of_param = line.find_first_not_of( " \t", end_of_op );
-				
-				char param0 = line[ start_of_param ];
-				char delimiter = ' ';
-				
-				if ( param0 == '"'  ||  param0 == '\'' )
-				{
-					delimiter = param0;
-					
-					++start_of_param;
-				}
-				
-				std::size_t end_of_param = line.find( delimiter, start_of_param );
-				
-				param = line.substr( start_of_param, end_of_param - start_of_param );
-				
-				if ( (op & kFormatMask) == kOneLine )
-				{
-					param += "\n";
-				}
-				else
-				{
-					std::string hereDoc;
-					bool premature_EOF = false;
-					
-					while ( !( input.Ended() && (premature_EOF = true) ) )
-					{
-						std::string nextLine = input.Read();
-						
-						if ( nextLine == param )
-						{
-							break;
-						}
-						
-						hereDoc += nextLine + "\n";
-					}
-					
-					if ( premature_EOF )
-					{
-						std::fprintf( stderr, "Missing heredoc terminator '%s'\n", param.c_str() );
-						
-						return 1;
-					}
-					
-					std::swap( param, hereDoc );
-				}
-				
-				//op &= kIOMask;
-				op = IoOperator( op & kIOMask );
-			}
-			
-			AddRedirection( fd_to_redirect, op, param );
-			
+			continue;
+		}
+		
+		if ( line[0] == '%' )
+		{
+			battery.push_back( test );
+			test = TestCase();
 			continue;
 		}
 		
 		std::fprintf( stderr, "Unprocessed line: %s\n", line.c_str() );
 	}
 	
-	if ( command.empty() )
-	{
-		std::fprintf( stderr, "Command missing\n" );
-		return 1;
-	}
+	battery.push_back( test );
 	
-	while ( gPipesNeeded-- )
-	{
-		int fds[2];
-		pipe( fds );
-		gPipes.push_back( fds );
-	}
+	std::string header = "1.." + NN::Convert< std::string >( battery.size() ) + "\n";
 	
-	pid_t pid = vfork();
+	(void) write( STDOUT_FILENO, header.data(), header.size() );
 	
-	if ( pid == 0 )
-	{
-		std::for_each( gRedirections.begin(),
-		               gRedirections.end(),
-		               std::ptr_fun( ApplyRedirection ) );
-		
-		const char* argv[] = { "sh", "-c", "", NULL };
-		
-		argv[2] = command.c_str();
-		
-		execv( "/bin/sh", (char**) argv );
-		
-		_exit( 127 );
-	}
-	
-	std::for_each( gWriteEnds.begin(),
-		           gWriteEnds.end(),
-		           std::ptr_fun( close ) );
-	
-	int wait_status = -1;
-	pid_t resultpid = waitpid( pid, &wait_status, 0 );
-	
-	std::vector< Redirection >::const_iterator it = std::find_if( gRedirections.begin(),
-	                                                              gRedirections.end(),
-	                                                              std::ptr_fun( DiscrepantOutput ) );
-	
-	bool output_matches = it == gRedirections.end();
-	bool status_matches = exit_from_wait( wait_status ) == exit_status;
-	
-	bool test = status_matches && output_matches;
-	
-	std::string result = test ? "ok" : "not ok";
-	
-	if ( number > 0 )
-	{
-		result += " " + NN::Convert< std::string >( number );
-	}
-	
-	result += "\n";
-	
-	(void) write( STDOUT_FILENO, result.data(), result.size() );
+	std::for_each( battery.begin(), battery.end(), std::ptr_fun( RunTest ) );
 	
 	return 0;
 }
