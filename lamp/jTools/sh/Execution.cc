@@ -174,6 +174,11 @@ static int Open( const char* path, mode_t mode )
 	return opened;
 }
 
+static void Dup2( int oldfd, int newfd )
+{
+	P7::ThrowPOSIXResult( dup2( oldfd, newfd ) );
+}
+
 static void RedirectIO( Sh::Redirection redirection )
 {
 	int fd = redirection.fd;
@@ -186,7 +191,7 @@ static void RedirectIO( Sh::Redirection redirection )
 		switch ( redirection.op )
 		{
 			case Sh::kRedirectInput:
-				dup2( Open( param, O_RDONLY ), fd );
+				Dup2( Open( param, O_RDONLY ), fd );
 				break;
 			
 			case Sh::kRedirectInputHere:
@@ -194,7 +199,7 @@ static void RedirectIO( Sh::Redirection redirection )
 				break;
 			
 			case Sh::kRedirectInputDuplicate:
-				dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if param isn't an integer
+				Dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if param isn't an integer
 				break;
 			
 			case Sh::kRedirectInputAndOutput:
@@ -202,33 +207,35 @@ static void RedirectIO( Sh::Redirection redirection )
 				
 				if ( fd == -1 )
 				{
-					dup2( file, 0 );
-					dup2( file, 1 );
+					Dup2( file, 0 );
+					Dup2( file, 1 );
 				}
 				else
 				{
-					dup2( file, fd );
+					Dup2( file, fd );
 				}
 				break;
 			
 			case Sh::kRedirectOutput:
-				// Throw if noclobber
+				Dup2( Open( param, O_WRONLY | O_CREAT | O_EXCL ), fd );
+				break;
+				
 			case Sh::kRedirectOutputClobbering:
-				dup2( Open( param, O_WRONLY | O_CREAT | O_TRUNC ), fd );
+				Dup2( Open( param, O_WRONLY | O_CREAT | O_TRUNC ), fd );
 				break;
 			
 			case Sh::kRedirectOutputAppending:
-				dup2( Open( param, O_WRONLY | O_APPEND | O_CREAT ), fd );
+				Dup2( Open( param, O_WRONLY | O_APPEND | O_CREAT ), fd );
 				break;
 			
 			case Sh::kRedirectOutputDuplicate:
-				dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if atoi returns 0
+				Dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if atoi returns 0
 				break;
 			
 			case Sh::kRedirectOutputAndError:
 				file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
-				dup2( file, 1 );
-				dup2( file, 2 );
+				Dup2( file, 1 );
+				Dup2( file, 2 );
 				break;
 		}  // switch
 	}
