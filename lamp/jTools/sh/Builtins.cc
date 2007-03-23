@@ -26,6 +26,7 @@
 
 // sh
 #include "PositionalParameters.hh"
+#include "Execution.hh"
 #include "ReadExecuteLoop.hh"
 
 
@@ -268,9 +269,13 @@ static int Builtin_Set( int argc, char const* const argv[] )
 	}
 	else if ( argc == 2 )
 	{
-		if ( argv[1] == std::string( "-o" ) )
+		if ( argv[1] == std::string( "-e" ) )
 		{
 			SetWhetherToExitOnBatchError( true );
+		}
+		else if ( argv[1] == std::string( "+e" ) )
+		{
+			SetWhetherToExitOnBatchError( false );
 		}
 	}
 	

@@ -63,7 +63,6 @@ static O::Options DefineOptions()
 }
 
 bool gStandardIn  = false;
-bool gInteractive = false;
 bool gLoginShell  = false;
 
 const char* gArgZero = NULL;
@@ -75,7 +74,7 @@ struct OnExit
 {
 	~OnExit()
 	{
-		if ( gInteractive )
+		if ( GetInteractiveness() )
 		{
 			Io::Out << ( gLoginShell ? "logout\n" : "exit\n" );
 		}
@@ -134,7 +133,7 @@ int O::Main( int argc, const char *const argv[] )
 		
 		fd = P7::Open( gArgZero, O_RDONLY ).Release();
 		
-		gInteractive = options.GetFlag( optInteractive );
+		SetInteractiveness( options.GetFlag( optInteractive ) );
 	}
 	else
 	{
@@ -144,7 +143,7 @@ int O::Main( int argc, const char *const argv[] )
 		// If first char of arg 0 is a hyphen (e.g. "-sh") it's a login shell
 		gLoginShell = argv[ 0 ][ 0 ] == '-';
 		
-		gInteractive = true;
+		SetInteractiveness( true );
 		
 		if ( gLoginShell )
 		{
@@ -169,6 +168,6 @@ int O::Main( int argc, const char *const argv[] )
 	
 	OnExit onExit;
 	
-	return ReadExecuteLoop( fd, gInteractive );
+	return ReadExecuteLoop( fd, GetInteractiveness() );
 }
 

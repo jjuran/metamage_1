@@ -26,8 +26,6 @@ enum PromptLevel
 
 void SetPromptLevel( PromptLevel level );
 
-void SetWhetherToExitOnBatchError( bool exit );
-
 int ReadExecuteLoop( P7::FileDescriptor  fd,
                      bool                prompts );
 

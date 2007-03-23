@@ -50,6 +50,32 @@ using Sh::List;
 int gLastResult = 0;
 
 
+static bool gInteractive = false;
+
+bool GetInteractiveness()
+{
+	return gInteractive;
+}
+
+void SetInteractiveness( bool interactive )
+{
+	gInteractive = interactive;
+}
+
+
+static bool gExitOnError = false;
+
+bool GetWhetherToExitOnBatchError()
+{
+	return gExitOnError;
+}
+
+void SetWhetherToExitOnBatchError( bool toExit )
+{
+	gExitOnError = toExit;
+}
+
+
 struct Job
 {
 	Circuit circuit;
@@ -641,6 +667,11 @@ static int ExecuteList( const List& list )
 	for ( vP_ci it = list.begin();  it != list.end();  ++it )
 	{
 		result = ExecuteCircuit( *it );
+		
+		if ( gExitOnError  &&  result != 0 )
+		{
+			break;
+		}
 	}
 	
 	return result;
