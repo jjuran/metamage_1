@@ -1,5 +1,19 @@
 #!/usr/bin/jtest
 
+$ sh -c 'set -e; echo pretty; false; echo bad'
+
+? 1
+
+1 >= pretty
+
+%%
+
+$ sh -c 'set -e; set +e; false; echo good'
+
+1 >= good
+
+%%
+
 $ sh /proc/self/fd/3
 
 ? 1
