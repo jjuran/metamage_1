@@ -13,6 +13,7 @@
 // Standard C++
 #include <algorithm>
 #include <functional>
+#include <vector>
 
 // POSIX
 #include "fcntl.h"
