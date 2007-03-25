@@ -41,13 +41,13 @@
 	
 	#if !TARGET_API_MAC_CARBON
 		
-		// CarbonUnits provides:
+		// Carbonate provides:
 		// * Implementations of Carbon-only routines
 		// * Implementations of Carbon accessors as functions for 68K
 		// * Implementations of Carbon accessors as inlines
 		// * Implementations of Carbon-renamed routines for CFM-68K
 		
-		#include "CarbonUnits/CarbonUnits.hh"
+		#include "Carbonate/Carbonate.hh"
 		
 	#endif
 	
