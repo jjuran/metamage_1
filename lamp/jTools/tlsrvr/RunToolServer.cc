@@ -36,9 +36,6 @@
 #include "Utilities/Files.h"
 #include "Utilities/Processes.h"
 
-// Io
-#include "Io/Stream.hh"
-
 // BitsAndBytes
 #include "StringFilters.hh"
 
