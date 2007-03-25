@@ -25,7 +25,6 @@
 #include "POSeven/FileDescriptor.hh"
 
 // Io
-#include "Io/Stream.hh"
 #include "Io/TextInput.hh"
 
 // BitsAndBytes
