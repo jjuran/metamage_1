@@ -8,14 +8,17 @@
 // Standard C
 #include "errno.h"
 
+// Nucleus
+#include "Nucleus/Exception.h"
+
 // Nitrogen
-#include "Nitrogen/OSStatus.h"
+//#include "Nitrogen/OSStatus.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
 
 // OSErrno
-#include "OSErrno/OSErrno.hh"
+//#include "OSErrno/OSErrno.hh"
 
 // Orion
 #include "Orion/StandardIO.hh"
@@ -42,6 +45,7 @@ namespace Orion
 		{
 			return exit.Get();
 		}
+		/*
 		catch ( const N::OSStatus& err )
 		{
 			Io::Err << "Orion: Main() threw OSStatus " << err.Get() << ".\n";
@@ -57,6 +61,7 @@ namespace Orion
 			
 			return 1;
 		}
+		*/
 		catch ( const P7::Errno& err )
 		{
 			Io::Err << "Orion: Main() threw errno " << err.Get() << ": " << std::strerror( err ) << ".\n";
@@ -64,12 +69,25 @@ namespace Orion
 		}
 		catch ( const std::exception& e )
 		{
-			Io::Err << e.what() << "\n";
+			Io::Err << "Exception: " << e.what() << "\n";
 			return 1;
 		}
 		catch ( ... )
 		{
-			Io::Err << "Kerosene: Uncaught exception.\n";
+			//NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+			
+			try
+			{
+				NN::Exception e = NN::Convert< NN::Exception >( NN::TheExceptionBeingHandled() );
+				
+				Io::Err << "Exception: " << e.what() << "\n";
+			}
+			catch ( ... )
+			{
+				Io::Err << "Kerosene: Uncaught exception.\n";
+			}
+			
+			
 			return 1;
 		}
 	}
