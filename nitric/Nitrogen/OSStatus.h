@@ -15,6 +15,9 @@
 #ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
 #endif
+#ifndef NUCLEUS_EXCEPTION_H
+#include "Nucleus/Exception.h"
+#endif
 #ifndef NUCLEUS_DESTRUCTIONEXCEPTIONPOLICY_H
 #include "Nucleus/DestructionExceptionPolicy.h"
 #endif
@@ -190,6 +193,8 @@ namespace Nucleus
          ErrorCode()
            : OSStatus( memFullErr )
            {}
+         
+         const char* what() const throw()  { return "OSStatus -108 (memFullErr)"; }
      };
 	
 	template <>
@@ -206,6 +211,16 @@ namespace Nucleus
 	{
 		public:
 			ErrorCode() : OSStatus( kOTNoDataErr )  {}
+	};
+	
+	
+	template <>
+	struct Converter< Exception, Nitrogen::OSStatus > : public std::unary_function< Nitrogen::OSStatus, Exception >
+	{
+		Exception operator()( Nitrogen::OSStatus error ) const
+		{
+			return Exception( "OSStatus " + Convert< std::string >( error ) );
+		}
 	};
 	
   }
