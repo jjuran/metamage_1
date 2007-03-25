@@ -27,7 +27,7 @@
 namespace Orion
 {
 	
-	namespace N = Nitrogen;
+	//namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
