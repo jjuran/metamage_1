@@ -20,7 +20,6 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace N = Nitrogen;
 namespace P7 = POSeven;
 namespace O = Orion;
 namespace Bits = BitsAndBytes;
