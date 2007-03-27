@@ -236,30 +236,25 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( close );
 	
-	static int DupFD( int oldfd, int newfd )
-	{
-		try
-		{
-			AssignFileDescriptor( newfd, GetFileHandle( oldfd ) );  // Clears the closeOnExec flag
-			
-			return newfd;
-		}
-		catch ( ... )
-		{
-			return GetErrnoFromExceptionInSystemCall();
-		}
-	}
+	static int dup2( int oldfd, int newfd );
 	
 	static int dup( int oldfd )
 	{
-		return DupFD( oldfd, LowestUnusedFileDescriptor() );
+		return dup2( oldfd, LowestUnusedFileDescriptor() );
 	}
 	
 	REGISTER_SYSTEM_CALL( dup );
 	
 	static int dup2( int oldfd, int newfd )
 	{
-		return DupFD( oldfd, newfd );
+		try
+		{
+			return DuplicateFileDescriptor( oldfd, newfd );
+		}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
 	}
 	
 	REGISTER_SYSTEM_CALL( dup2 );
