@@ -13,11 +13,17 @@
 namespace Genie
 {
 	
+	struct FileDescriptor;
+	
 	int LowestUnusedFileDescriptor( int fd = 0 );
 	
 	void CloseFileDescriptor( int fd );
 	
+	int DuplicateFileDescriptor( int oldfd, int newfd = LowestUnusedFileDescriptor() );
+	
 	void AssignFileDescriptor( int fd, const boost::shared_ptr< IOHandle >& handle );
+	
+	FileDescriptor& GetFileDescriptor( int fd );
 	
 	boost::shared_ptr< IOHandle > const& GetFileHandle( int fd );
 	

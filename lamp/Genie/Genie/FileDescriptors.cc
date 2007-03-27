@@ -55,6 +55,13 @@ namespace Genie
 		CurrentProcess().FileDescriptors().erase( it );
 	}
 	
+	int DuplicateFileDescriptor( int oldfd, int newfd )
+	{
+		AssignFileDescriptor( newfd, GetFileHandle( oldfd ) );  // Clears the closeOnExec flag
+		
+		return newfd;
+	}
+	
 	void AssignFileDescriptor( int fd, const boost::shared_ptr< IOHandle >& handle )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
@@ -62,11 +69,16 @@ namespace Genie
 		files[ fd ] = handle;
 	}
 	
+	FileDescriptor& GetFileDescriptor( int fd )
+	{
+		FileDescriptorMap::iterator it = FindFDIterator( fd );
+		
+		return it->second;
+	}
+	
 	boost::shared_ptr< IOHandle > const& GetFileHandle( int fd )
 	{
-		FileDescriptorMap::const_iterator it = FindFDIterator( fd );
-		
-		return it->second.handle;
+		return GetFileDescriptor( fd ).handle;
 	}
 	
 }
