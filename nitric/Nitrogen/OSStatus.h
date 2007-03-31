@@ -34,6 +34,7 @@
 #define	ThrowOSStatus(err)	ThrowOSStatusInternal(err)
 #endif
 
+
 namespace Nitrogen
   {
    class OSStatus
@@ -41,11 +42,25 @@ namespace Nitrogen
       private:
          ::OSStatus status;
          
+         // Not implemented:
+            OSStatus(          bool      );
+            OSStatus(          char      );
+            OSStatus(   signed char      );
+            OSStatus(   signed long long );
+            OSStatus( unsigned char      );
+            OSStatus( unsigned short     );
+            OSStatus( unsigned int       );
+            OSStatus( unsigned long      );
+            OSStatus( unsigned long long );
+         
       public:
          typedef ::OSStatus ErrorNumber;
          
          OSStatus()                                            : status( noErr )    {}
          OSStatus( ::OSStatus s )                              : status( s )        {}
+      
+         OSStatus( ::OSErr s )                                 : status( s )        {}
+         OSStatus( signed int s )                              : status( s )        {}
          
          static OSStatus Make( ::OSStatus s )                  { return OSStatus( s ); }
          ::OSStatus Get() const                                { return status; }
