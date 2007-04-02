@@ -12,6 +12,7 @@
 #include "Genie/Console.hh"
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/FSTree_Directory.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/SimpleDevice.hh"
 
 
@@ -28,6 +29,19 @@ namespace Genie
 			std::string Name() const  { return "dev"; }
 			
 			FSTreePtr Parent() const  { return FSRoot(); }
+	};
+	
+	class FSTree_dev_fd : public FSTree
+	{
+		bool IsLink() const { return true; }
+		
+		std::string Name() const  { return "fd"; }
+		
+		FSTreePtr Parent() const  { return GetDevFSTree(); }
+		
+		std::string ReadLink() const  { return "/proc/self/fd"; }
+		
+		FSTreePtr ResolveLink() const  { return ResolvePathname( ReadLink(), FSRoot() ); }
 	};
 	
 	class FSTree_Device : public FSTree
@@ -105,6 +119,7 @@ namespace Genie
 		Map( "console", FSTreePtr( new FSTree_Device( "console" ) ) );
 		
 		Map( "term", FSTreePtr( GetSingleton< FSTree_dev_term >() ) );
+		Map( "fd",   FSTreePtr( GetSingleton< FSTree_dev_fd   >() ) );
 	}
 	
 	
