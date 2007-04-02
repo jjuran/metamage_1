@@ -14,7 +14,7 @@ $ sh -c 'set -e; set +e; false; echo good'
 
 %%
 
-$ sh /proc/self/fd/3
+$ sh /dev/fd/3
 
 ? 1
 
@@ -29,7 +29,7 @@ END
 
 %%
 
-$ sh /proc/self/fd/3
+$ sh /dev/fd/3
 
 ? 0
 
