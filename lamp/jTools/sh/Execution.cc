@@ -13,6 +13,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"
 
@@ -200,6 +201,43 @@ static int Open( const char* path, mode_t mode )
 	return opened;
 }
 
+static int OpenNoClobber( const char* path )
+{
+	// Try a non-creative open first.
+	int opened = open( path, O_WRONLY );
+	
+	if ( opened == -1 )
+	{
+		if ( errno != ENOENT )
+		{
+			P7::ThrowErrno( errno );
+		}
+		
+		// No such file, exclusively create it, or bust.
+		opened = Open( path, O_WRONLY | O_CREAT | O_EXCL );
+		
+		// Return exclusively created file.
+		return opened;
+	}
+	
+	struct ::stat sb;
+	
+	int status = fstat( opened, &sb );
+	
+	if ( status == -1  ||  S_ISREG( sb.st_mode ) )
+	{
+		// Either the stat failed and something's wrong, or a regular file exists.
+		int error = status == -1 ? errno : EEXIST;
+		
+		int closed = close( opened );
+		
+		P7::ThrowErrno( error );
+	}
+	
+	// Return non-regular file -- maybe a device/pipe/socket, etc.
+	return opened;
+}
+
 static void Dup2( int oldfd, int newfd )
 {
 	P7::ThrowPOSIXResult( dup2( oldfd, newfd ) );
@@ -243,7 +281,7 @@ static void RedirectIO( Sh::Redirection redirection )
 				break;
 			
 			case Sh::kRedirectOutput:
-				Dup2( Open( param, O_WRONLY | O_CREAT | O_EXCL ), fd );
+				Dup2( OpenNoClobber( param ), fd );
 				break;
 				
 			case Sh::kRedirectOutputClobbering:
