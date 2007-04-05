@@ -5,8 +5,14 @@
 
 #include "Genie/FileSystem/FSTree_Dev.hh"
 
+// Standard C
+#include "errno.h"
+
 // Nucleus
 #include "Nucleus/Convert.h"
+
+// POSeven
+#include "POSeven/Errno.hh"
 
 // Genie
 #include "Genie/Console.hh"
@@ -14,12 +20,16 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/SimpleDevice.hh"
+#include "Genie/IO/TTY.hh"
+#include "Genie/Process.hh"
+#include "Genie/Yield.hh"
 
 
 namespace Genie
 {
 	
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	
 	class FSTree_dev : public FSTree_Virtual
 	{
@@ -53,6 +63,19 @@ namespace Genie
 			FSTree_Device( const std::string& name ) : deviceName( name )  {}
 			
 			std::string Name() const  { return deviceName; }
+			
+			FSTreePtr Parent() const  { return GetDevFSTree(); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	class FSTree_dev_tty : public FSTree
+	{
+		public:
+			std::string Name() const  { return "tty"; }
 			
 			FSTreePtr Parent() const  { return GetDevFSTree(); }
 			
@@ -111,12 +134,26 @@ namespace Genie
 		return GetSimpleDeviceHandle( deviceName );
 	}
 	
+	boost::shared_ptr< IOHandle > FSTree_dev_tty::Open( OpenFlags flags ) const
+	{
+		TTYHandle* tty = CurrentProcess().ControllingTerminal();
+		
+		if ( tty == NULL )
+		{
+			P7::ThrowErrno( ENOENT );
+		}
+		
+		return tty->shared_from_this();
+	}
+	
 	
 	FSTree_dev::FSTree_dev()
 	{
 		Map( "null",    FSTreePtr( new FSTree_Device( "null"    ) ) );
 		Map( "zero",    FSTreePtr( new FSTree_Device( "zero"    ) ) );
 		Map( "console", FSTreePtr( new FSTree_Device( "console" ) ) );
+		
+		Map( "tty", FSTreePtr( GetSingleton< FSTree_dev_tty >() ) );
 		
 		Map( "term", FSTreePtr( GetSingleton< FSTree_dev_term >() ) );
 		Map( "fd",   FSTreePtr( GetSingleton< FSTree_dev_fd   >() ) );
