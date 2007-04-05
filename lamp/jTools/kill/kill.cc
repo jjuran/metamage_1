@@ -9,21 +9,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Standard C/C++
+#include <cctype>
+
 // POSIX
 #include <unistd.h>
 
+// Orion
+#include "Orion/Main.hh"
+#include "Orion/SignalLookup.hh"
 
-#pragma export on
 
-int main( int argc, char const *const argv[] )
+int Orion::Main( int argc, char const *const argv[] )
 {
-	int sig = SIGTERM;
+	int sig_number = SIGTERM;
 	
 	char const *const *argp = argv;
 	
 	if ( argc > 1  &&  argp[ 1 ][ 0 ] == '-' )
 	{
-		sig = std::atoi( argp[ 1 ] + 1 );
+		const char* sig = argp[ 1 ] + 1;
+		
+		bool numeric = std::isdigit( *sig );
+		
+		// FIXME:  Needs error checking instead of silently using 0
+		sig_number = numeric ? std::atoi( sig ) : Orion::SignalLookup( sig );
 		
 		++argp;
 		--argc;
@@ -40,7 +50,7 @@ int main( int argc, char const *const argv[] )
 	
 	int pid = std::atoi( argp[ 1 ] );
 	
-	int killed = kill( pid, sig );
+	int killed = kill( pid, sig_number );
 	
 	if ( killed == -1 )
 	{
@@ -51,6 +61,4 @@ int main( int argc, char const *const argv[] )
 	
 	return 0;
 }
-
-#pragma export reset
 
