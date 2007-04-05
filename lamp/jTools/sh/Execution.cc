@@ -229,6 +229,7 @@ static int OpenNoClobber( const char* path )
 		// Either the stat failed and something's wrong, or a regular file exists.
 		int error = status == -1 ? errno : EEXIST;
 		
+		// Close the file.
 		int closed = close( opened );
 		
 		P7::ThrowErrno( error );
@@ -237,6 +238,46 @@ static int OpenNoClobber( const char* path )
 	// Return non-regular file -- maybe a device/pipe/socket, etc.
 	return opened;
 }
+
+/*
+static int OpenNoClobber( const char* path )
+{
+	// Try exclusively creating first.
+	int opened = open( path, O_WRONLY | O_CREAT | O_EXCL );
+	
+	if ( opened >= 0 )
+	{
+		// Return a newly created regular file.
+		return opened;
+	}
+	
+	if ( errno != EEXIST )
+	{
+		P7::ThrowErrno( errno );  // Some error occurred (besides an existing file)
+	}
+	
+	// File exists.  Try again without creating.
+	opened = Open( path, O_WRONLY );
+	
+	struct ::stat sb;
+	
+	int status = fstat( opened, &sb );
+	
+	if ( status == -1  ||  S_ISREG( sb.st_mode ) )
+	{
+		// Either the stat failed and something's wrong, or a regular file exists.
+		int error = status == -1 ? errno : EEXIST;
+		
+		// Close the file.
+		int closed = close( opened );
+		
+		P7::ThrowErrno( error );
+	}
+	
+	// Return existing non-regular file -- maybe a device/pipe/socket, etc.
+	return opened;
+}
+*/
 
 static void Dup2( int oldfd, int newfd )
 {
