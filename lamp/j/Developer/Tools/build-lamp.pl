@@ -60,7 +60,7 @@ my @programs = qw
 	htget httpd
 	inetd
 	jtest
-	keymods kill
+	keymods kill killall
 	login
 	macbin md5sum mkdir mv
 	nohup
@@ -103,7 +103,7 @@ my %fsmap =
 	{
 		bin =>
 		[
-			qw( argv0 beep cds err2text gzip htget keymods macbin md5sum nohup open osascript perl tty ),
+			qw( argv0 beep cds err2text gzip htget keymods killall macbin md5sum nohup open osascript perl tty ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
 		lib =>
