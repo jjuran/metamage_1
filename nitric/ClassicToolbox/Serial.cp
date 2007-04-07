@@ -42,58 +42,56 @@ namespace Nitrogen
 		return ptr;
 	}
 	
-	std::size_t SerGetBuf( SerialDeviceRef serialDevice )
+	std::size_t SerGetBuf( DriverRefNum inputDriverRefNum )
 	{
-		CheckNULL( serialDevice );
 		long count;
-		ThrowOSStatus( ::SerGetBuf( serialDevice->input.Get(), &count ) );
+		ThrowOSStatus( ::SerGetBuf( inputDriverRefNum, &count ) );
 		return count;
 	}
 	
-	void SerSetBuf( SerialDeviceRef serialDevice, void* buf, std::size_t bufSize )
+	void SerSetBuf( DriverRefNum inputDriverRefNum, void* buf, std::size_t bufSize )
 	{
 		const std::size_t maxSize = 32767;
 		
-		ThrowOSStatus( ::SerSetBuf( serialDevice->input.Get(),
+		ThrowOSStatus( ::SerSetBuf( inputDriverRefNum,
 		                            reinterpret_cast< ::Ptr >( buf ),
 		                            std::min( bufSize, maxSize ) ) );
 	}
 	
-	SerStaRec SerStatus( SerialDeviceRef serialDevice )
+	SerStaRec SerStatus( DriverRefNum outputDriverRefNum )
 	{
-		CheckNULL( serialDevice );
 		SerStaRec serStatus;
-		ThrowOSStatus( ::SerStatus( serialDevice->output.Get(), &serStatus ) );
+		ThrowOSStatus( ::SerStatus( outputDriverRefNum, &serStatus ) );
 		return serStatus;
 	}
 	
-	void SerReset( SerialDeviceRef serialDevice, SerConfig serConfig )
+	void SerReset( DriverRefNum outputDriverRefNum, SerConfig serConfig )
 	{
-		CheckNULL( serialDevice );
-		ThrowOSStatus( ::SerReset( serialDevice->output.Get(), serConfig ) );
+		ThrowOSStatus( ::SerReset( outputDriverRefNum, serConfig ) );
 	}
 	
-	void SerHShake( SerialDeviceRef serialDevice, const SerShk& serShk )
+	void SerHShake( DriverRefNum outputDriverRefNum, const SerShk& serShk )
 	{
-		Control< kSERDHandshake >( CheckNULL( serialDevice )->output.Get(), serShk );
+		Control< kSERDHandshake >( outputDriverRefNum, serShk );
 	}
 	
-	void AssertDTR( SerialDeviceRef serialDevice )
+	void AssertDTR( DriverRefNum outputDriverRefNum )
 	{
-		Control< kSERDAssertDTR >( CheckNULL( serialDevice )->output.Get() );
+		Control< kSERDAssertDTR >( outputDriverRefNum );
 	}
 	
-	void NegateDTR( SerialDeviceRef serialDevice )
+	void NegateDTR( DriverRefNum outputDriverRefNum )
 	{
-		Control< kSERDNegateDTR >( CheckNULL( serialDevice )->output.Get() );
+		Control< kSERDNegateDTR >( outputDriverRefNum );
 	}
 	
-	void ClearXOFF( SerialDeviceRef serialDevice )
+	void ClearXOFF( DriverRefNum outputDriverRefNum )
 	{
-		Control< kSERDClearXOffFlag >( CheckNULL( serialDevice )->output.Get() );
+		Control< kSERDClearXOffFlag >( outputDriverRefNum );
 	}
 	
 	
+	/*
 	static std::string MakeDriverName( const std::string&  portName,
 	                                   const std::string&  directionName )
 	{
@@ -115,8 +113,7 @@ namespace Nitrogen
 		// Serial drivers will be closed (and the object deleted) when serialDevice goes out of scope.
 	}
 	
-	
-	int Read( SerialDeviceRef serialDevice, char* data, std::size_t byteCount )
+	int Read( DriverRefNum inputDriverRefNum, char* data, std::size_t byteCount )
 	{
 		CheckNULL( serialDevice );
 		
@@ -138,12 +135,7 @@ namespace Nitrogen
 		
 		return Read( serialDevice->input, data, byteCount );
 	}
-	
-	int Write( SerialDeviceRef serialDevice, const char* data, std::size_t byteCount )
-	{
-		CheckNULL( serialDevice );
-		return Write( serialDevice->output, data, byteCount );
-	}
+	*/
 	
 #endif  // CALL_NOT_IN_CARBON
 	

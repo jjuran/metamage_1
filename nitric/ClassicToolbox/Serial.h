@@ -112,6 +112,7 @@ namespace Nucleus
 	
 }
 
+/*
 namespace Nitrogen
 {
 	
@@ -143,6 +144,7 @@ namespace Nucleus
 	template <> struct Disposer< Nitrogen::SerialDeviceRef > : public DisposeWithDelete  {};
 	
 }
+*/
 
 namespace Nitrogen
 {
@@ -161,35 +163,38 @@ namespace Nitrogen
 	#pragma mark ¥ Routines ¥
 	
 	// 261
-	void SerReset( SerialDeviceRef serialDevice, SerConfig serConfig );
+	void SerReset( DriverRefNum outputDriverRefNum, SerConfig serConfig );
 	
 	// 275
-	void SerSetBuf( SerialDeviceRef serialDevice, void* buf, std::size_t bufSize );
+	void SerSetBuf( DriverRefNum inputDriverRefNum, void* buf, std::size_t bufSize );
 	
 	// 290
-	void SerHShake( SerialDeviceRef serialDevice, const SerShk& serShk = Nucleus::Make< SerShk >() );
+	void SerHShake( DriverRefNum outputDriverRefNum, const SerShk& serShk = Nucleus::Make< SerShk >() );
 	
 	// 328
-	std::size_t SerGetBuf( SerialDeviceRef serialDevice );
+	std::size_t SerGetBuf( DriverRefNum inputDriverRefNum );
 	
 	// 342
-	SerStaRec SerStatus( SerialDeviceRef serialDevice );
+	SerStaRec SerStatus( DriverRefNum outputDriverRefNum );
 	
-	void AssertDTR( SerialDeviceRef serialDevice );
-	void NegateDTR( SerialDeviceRef serialDevice );
-	void ClearXOFF( SerialDeviceRef serialDevice );
+	void AssertDTR( DriverRefNum outputDriverRefNum );
+	void NegateDTR( DriverRefNum outputDriverRefNum );
+	void ClearXOFF( DriverRefNum outputDriverRefNum );
 	
-	int Read ( SerialDeviceRef serialDevice,       char* data, std::size_t byteCount );
-	int Write( SerialDeviceRef serialDevice, const char* data, std::size_t byteCount );
+	int Read ( DriverRefNum inputDriverRefNum,        char* data, std::size_t byteCount );
+	int Write( DriverRefNum outputDriverRefNum, const char* data, std::size_t byteCount );
 	
+	/*
 	Nucleus::Owned< SerialDeviceRef > Open_SerialDevice( const std::string& portName );
 	
 	void Close_SerialDevice( Nucleus::Owned< SerialDeviceRef > serialDevice );
+	*/
 	
 #endif
 	
 }
 
+/*
 namespace Io
 {
 	
@@ -201,6 +206,7 @@ namespace Io
 #endif
 	
 }
+*/
 
 #endif
 
