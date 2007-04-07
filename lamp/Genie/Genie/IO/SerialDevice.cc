@@ -8,6 +8,9 @@
 // Boost
 #include "boost/shared_ptr.hpp"
 
+// ClassicToolbox
+#include "ClassicToolbox/Serial.h"
+
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
@@ -17,10 +20,47 @@
 namespace Genie
 {
 	
-	static boost::weak_ptr< IOHandle > gSerialDevice;
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	
+	
+#if !TARGET_API_MAC_CARBON
+	
+	class SerialDeviceHandle : public DeviceHandle
+	{
+		private:
+			NN::Owned< N::DriverRefNum > itsOutputRefNum;
+			NN::Owned< N::DriverRefNum > itsInputRefNum;
+		
+		public:
+			SerialDeviceHandle( const std::string& portName = "A" );
+			
+			static TypeCode Type()  { return kDeviceFileType; }  // FIXME:  Need a new type
+			
+			TypeCode ActualType() const  { return Type(); }
+			
+			unsigned int SysPoll() const;
+			
+			int SysRead( char* data, std::size_t byteCount );
+			
+			int SysWrite( const char* data, std::size_t byteCount );
+	};
+	
+#endif
+	
 	
 	boost::shared_ptr< IOHandle > OpenSerialDevice()
 	{
+	#if TARGET_API_MAC_CARBON
+		
+		N::ThrowOSStatus( fnfErr );
+		
+		return boost::shared_ptr< IOHandle >();
+		
+	#else
+		
+		static boost::weak_ptr< IOHandle > gSerialDevice;
+		
 		if ( gSerialDevice.expired() )
 		{
 			boost::shared_ptr< IOHandle > result( new SerialDeviceHandle() );
@@ -31,7 +71,11 @@ namespace Genie
 		}
 		
 		return boost::shared_ptr< IOHandle >( gSerialDevice );
+		
+	#endif
 	}
+	
+#if !TARGET_API_MAC_CARBON
 	
 	static std::string MakeDriverName( const std::string&  portName,
 	                                   const std::string&  directionName )
@@ -94,6 +138,8 @@ namespace Genie
 	{
 		return N::Write( itsOutputRefNum, data, byteCount );
 	}
+	
+#endif
 	
 }
 
