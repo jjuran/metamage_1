@@ -65,17 +65,13 @@ void SetInteractiveness( bool interactive )
 }
 
 
-static bool gExitOnError = false;
-
 bool GetWhetherToExitOnBatchError()
 {
-	//return gExitOnError;
 	return GetOption( "errexit" );
 }
 
 void SetWhetherToExitOnBatchError( bool toExit )
 {
-	//gExitOnError = toExit;
 	SetOption( "errexit", toExit );
 }
 
