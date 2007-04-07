@@ -5,13 +5,33 @@
 
 #include "Genie/IO/SerialDevice.hh"
 
+// Boost
+#include "boost/shared_ptr.hpp"
+
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
+#include "Genie/Yield.hh"
 
 
 namespace Genie
 {
+	
+	static boost::weak_ptr< IOHandle > gSerialDevice;
+	
+	boost::shared_ptr< IOHandle > OpenSerialDevice()
+	{
+		if ( gSerialDevice.expired() )
+		{
+			boost::shared_ptr< IOHandle > result( new SerialDeviceHandle() );
+			
+			gSerialDevice = result;
+			
+			return result;
+		}
+		
+		return boost::shared_ptr< IOHandle >( gSerialDevice );
+	}
 	
 	static std::string MakeDriverName( const std::string&  portName,
 	                                   const std::string&  directionName )
@@ -50,7 +70,17 @@ namespace Genie
 			return 0;
 		}
 		
-		byteCount = std::min( byteCount, N::SerGetBuf( itsInputRefNum ) );
+		std::size_t bytesAvailable = N::SerGetBuf( itsInputRefNum );
+		
+		// Assume blocking I/O for now
+		do
+		{
+			Yield();
+			bytesAvailable = N::SerGetBuf( itsInputRefNum );
+		}
+		while ( bytesAvailable == 0 );
+		
+		byteCount = std::min( byteCount, bytesAvailable );
 		
 		if ( byteCount == 0 )
 		{

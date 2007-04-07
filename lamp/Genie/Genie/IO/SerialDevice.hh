@@ -9,7 +9,7 @@
 // ClassicToolbox
 #include "ClassicToolbox/Serial.h"
 
- // Genie
+// Genie
 #include "Genie/IO/Device.hh"
 
 
@@ -38,6 +38,8 @@ namespace Genie
 			
 			int SysWrite( const char* data, std::size_t byteCount );
 	};
+	
+	boost::shared_ptr< IOHandle > OpenSerialDevice();
 	
 }
 

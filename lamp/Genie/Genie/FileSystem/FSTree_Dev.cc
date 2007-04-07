@@ -162,7 +162,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_modem::Open( OpenFlags flags ) const
 	{
-		return boost::shared_ptr< IOHandle >( new SerialDeviceHandle() );
+		return OpenSerialDevice();
 	}
 	
 	
