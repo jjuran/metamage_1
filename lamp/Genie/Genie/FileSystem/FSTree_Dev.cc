@@ -19,6 +19,7 @@
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
 #include "Genie/IO/TTY.hh"
 #include "Genie/Process.hh"
@@ -76,6 +77,19 @@ namespace Genie
 	{
 		public:
 			std::string Name() const  { return "tty"; }
+			
+			FSTreePtr Parent() const  { return GetDevFSTree(); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	class FSTree_dev_modem : public FSTree
+	{
+		public:
+			std::string Name() const  { return "cu.modem"; }
 			
 			FSTreePtr Parent() const  { return GetDevFSTree(); }
 			
@@ -146,6 +160,11 @@ namespace Genie
 		return tty->shared_from_this();
 	}
 	
+	boost::shared_ptr< IOHandle > FSTree_dev_modem::Open( OpenFlags flags ) const
+	{
+		return boost::shared_ptr< IOHandle >( new SerialDeviceHandle() );
+	}
+	
 	
 	FSTree_dev::FSTree_dev()
 	{
@@ -154,6 +173,8 @@ namespace Genie
 		Map( "console", FSTreePtr( new FSTree_Device( "console" ) ) );
 		
 		Map( "tty", FSTreePtr( GetSingleton< FSTree_dev_tty >() ) );
+		
+		Map( "cu.modem", FSTreePtr( GetSingleton< FSTree_dev_modem >() ) );
 		
 		Map( "term", FSTreePtr( GetSingleton< FSTree_dev_term >() ) );
 		Map( "fd",   FSTreePtr( GetSingleton< FSTree_dev_fd   >() ) );
