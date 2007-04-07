@@ -1,0 +1,70 @@
+/*	========
+ *	lf2cr.cc
+ *	========
+ */
+
+// Standard C
+#include <errno.h>
+
+// Standard C++
+#include <algorithm>
+
+// POSIX
+#include <unistd.h>
+
+
+#pragma export on
+
+int main( int argc, const char *const argv[] )
+{
+	while ( true )
+	{
+		enum { blockSize = 4096 };
+		
+		char data[ blockSize ];
+		
+		int bytes_read = read( STDIN_FILENO, data, blockSize );
+		
+		if ( bytes_read == 0 )
+		{
+			break;  // EOF
+		}
+		else if ( bytes_read == -1 )
+		{
+			if ( errno == EAGAIN )
+			{
+				sleep( 0 );
+			}
+			else
+			{
+				return 1;
+			}
+		}
+		
+		std::replace( data, data + bytes_read, '\n', '\r' );
+		
+		int bytes_written = write( STDOUT_FILENO, data, bytes_read );
+		
+		if ( bytes_written == -1 )
+		{
+			if ( errno == EAGAIN )
+			{
+				return 3;  // FIXME
+			}
+			else
+			{
+				return 2;
+			}
+		}
+		
+		if ( bytes_written < bytes_read )
+		{
+			return 4;
+		}
+	}
+	
+	return 0;
+}
+
+#pragma export reset
+
