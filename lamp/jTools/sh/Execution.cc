@@ -33,6 +33,7 @@
 
 // sh
 #include "Builtins.hh"
+#include "Options.hh"
 #include "PositionalParameters.hh"
 
 
@@ -68,12 +69,14 @@ static bool gExitOnError = false;
 
 bool GetWhetherToExitOnBatchError()
 {
-	return gExitOnError;
+	//return gExitOnError;
+	return GetOption( "errexit" );
 }
 
 void SetWhetherToExitOnBatchError( bool toExit )
 {
-	gExitOnError = toExit;
+	//gExitOnError = toExit;
+	SetOption( "errexit", toExit );
 }
 
 
@@ -747,7 +750,7 @@ static int ExecuteList( const List& list )
 	{
 		result = ExecuteCircuit( *it );
 		
-		if ( gExitOnError  &&  result != 0 )
+		if ( GetWhetherToExitOnBatchError()  &&  result != 0 )
 		{
 			break;
 		}
