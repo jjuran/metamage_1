@@ -25,6 +25,7 @@
 #include "SystemCalls.hh"
 
 // sh
+#include "Options.hh"
 #include "PositionalParameters.hh"
 #include "Execution.hh"
 #include "ReadExecuteLoop.hh"
@@ -276,6 +277,17 @@ static int Builtin_Set( int argc, char const* const argv[] )
 		else if ( argv[1] == std::string( "+e" ) )
 		{
 			SetWhetherToExitOnBatchError( false );
+		}
+	}
+	else if ( argc == 3 )
+	{
+		if ( argv[1] == std::string( "-o" ) )
+		{
+			SetOption( argv[2], true );
+		}
+		else if ( argv[1] == std::string( "+o" ) )
+		{
+			SetOption( argv[2], false );
 		}
 	}
 	
