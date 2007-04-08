@@ -31,14 +31,7 @@ int main( int argc, const char *const argv[] )
 		}
 		else if ( bytes_read == -1 )
 		{
-			if ( errno == EAGAIN )
-			{
-				sleep( 0 );
-			}
-			else
-			{
-				return 1;
-			}
+			return 1;
 		}
 		
 		std::replace( data, data + bytes_read, '\n', '\r' );
@@ -47,19 +40,7 @@ int main( int argc, const char *const argv[] )
 		
 		if ( bytes_written == -1 )
 		{
-			if ( errno == EAGAIN )
-			{
-				return 3;  // FIXME
-			}
-			else
-			{
-				return 2;
-			}
-		}
-		
-		if ( bytes_written < bytes_read )
-		{
-			return 4;
+			return 2;
 		}
 	}
 	
