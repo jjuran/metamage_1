@@ -78,7 +78,7 @@ sub report_call
 
 my %action_for =
 (
-	""      => sub { report_call() if %caller_data },
+	""      => sub {},
 	"OK"    => sub {},
 	"RING"  => sub {},
 	"ERROR" => sub {},
@@ -100,6 +100,8 @@ while ( <> )
 	if ( /^(....) = (.*)/ )
 	{
 		$caller_data{$1} = $2;
+		
+		report_call() if $1 eq 'NAME';
 		next LINE;
 	}
 	
