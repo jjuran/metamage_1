@@ -1,0 +1,110 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+my %caller_data;
+
+my $handler_program = shift;
+
+sub invoke_program
+{
+	local %ENV = %ENV;
+	
+	foreach my $key ( keys %caller_data )
+	{
+		$ENV{"CID_$key"} = $caller_data{$key};
+	}
+	
+	system $handler_program;
+}
+
+sub compute_cid_year_from_month
+{
+	my ( $cid_month ) = @_;
+	
+	my @time = localtime;
+	
+	my $real_month = $time[4];
+	my $real_year  = $time[5] + 1900;
+	
+	my $cid_year = $real_year;  # Most of the time
+	
+	if ( abs( $real_month - $cid_month ) == 11 )
+	{
+		# Jan and Dec are 11 months apart.
+		# The year changed in between the two time samples, but we shouldn't
+		# assume that our time is later than CID time because someone's clock could be off.
+		
+		# If the CID month exceeds our month (meaning the CID month is Dec and
+		# our month is Jan), then the comparison returns -1, and the CID year
+		# should be one year earlier than ours, so we add -1.
+		# Otherwise the comparison returns 1 and we need to add 1 to the year.
+		$cid_year += $real_month <=> $cid_month;
+	}
+	
+	return $cid_year;
+}
+
+sub builtin_report
+{
+	my ( $cid_month, $cid_day ) = $caller_data{DATE} =~ /^(\d\d)(\d\d)$/ or die;
+	my ( $cid_hour,  $cid_min ) = $caller_data{TIME} =~ /^(\d\d)(\d\d)$/ or die;
+	
+	my $cid_year = $caller_data{YEAR};
+	
+	my $cid_date = join '-', $cid_year, $cid_month, $cid_day;
+	my $cid_time = join ':', $cid_hour, $cid_min;
+	
+	( my $phone = $caller_data{NMBR} ) =~ s/^(\d\d\d)(\d\d\d)(\d\d\d\d)/($1) $2-$3/;
+	
+	my $name = $caller_data{NAME};
+	
+	print "Call at $cid_date $cid_time from $phone: $name\n";
+}
+
+my $handler = defined $handler_program ? \&invoke_program : \&builtin_report;
+
+sub report_call
+{
+	( my $cid_month ) = $caller_data{DATE} =~ /^(\d\d)\d\d$/ or die;
+	
+	$caller_data{YEAR} = compute_cid_year_from_month( $cid_month );
+	
+	$handler->();
+	
+	undef %caller_data;
+}
+
+my %action_for =
+(
+	""      => sub { report_call() if %caller_data },
+	"OK"    => sub {},
+	"RING"  => sub {},
+	"ERROR" => sub {},
+);
+
+LINE:
+while ( <> )
+{
+	chop;
+	
+	my $action = $action_for{$_};
+	
+	if ( defined $action )
+	{
+		$action->();
+		next LINE;
+	}
+	
+	if ( /^(....) = (.*)/ )
+	{
+		$caller_data{$1} = $2;
+		next LINE;
+	}
+	
+	/^AT#CID/ and next LINE;
+	
+	warn "Unexpected modem output: '$_'\n";
+}
+
