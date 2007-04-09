@@ -63,7 +63,7 @@ sub builtin_report
 	print "Call at $cid_date $cid_time from $phone: $name\n";
 }
 
-my $handler = defined $handler_program ? \&invoke_program : \&builtin_report;
+my $handler = $handler_program ? \&invoke_program : \&builtin_report;
 
 sub report_call
 {
