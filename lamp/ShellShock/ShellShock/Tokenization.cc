@@ -106,11 +106,6 @@ namespace ShellShock
 		switch ( q[ 0 ] )
 		{
 			case '<':
-				if ( fd == -1 )
-				{
-					fd = 0;
-				}
-				
 				len = 2;
 				
 				switch ( q[ 1 ] )
@@ -139,6 +134,12 @@ namespace ShellShock
 						len = 1;
 						op = kRedirectInput;
 				}
+				
+				if ( fd == -1  &&  op != kRedirectInputAndOutput )
+				{
+					fd = 0;
+				}
+				
 				break;
 			
 			case '>':
