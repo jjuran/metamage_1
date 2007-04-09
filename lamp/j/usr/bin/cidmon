@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sh < /dev/cu.modem -c 'mcmd "AT#CID=1"; striplf | cr2lf'
+
