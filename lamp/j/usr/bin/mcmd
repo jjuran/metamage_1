@@ -1,4 +1,4 @@
 #!/bin/sh
 
-echo "$1" | lf2cr > /dev/cu.modem
+echo "$1" | lf2cr 1<> /dev/cu.modem
 
