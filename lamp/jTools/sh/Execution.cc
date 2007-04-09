@@ -321,8 +321,12 @@ static void RedirectIO( Sh::Redirection redirection )
 				break;
 			
 			case Sh::kRedirectOutput:
-				Dup2( OpenNoClobber( param ), fd );
-				break;
+				if ( GetOption( "noclobber" ) )
+				{
+					Dup2( OpenNoClobber( param ), fd );
+					break;
+				}
+				// else fall through
 				
 			case Sh::kRedirectOutputClobbering:
 				Dup2( Open( param, O_WRONLY | O_CREAT | O_TRUNC ), fd );
