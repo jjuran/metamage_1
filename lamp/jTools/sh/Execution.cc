@@ -295,7 +295,9 @@ static void RedirectIO( Sh::Redirection redirection )
 		switch ( redirection.op )
 		{
 			case Sh::kRedirectInput:
-				Dup2( Open( param, O_RDONLY ), fd );
+				file = Open( param, O_RDONLY );
+				Dup2( file, fd );
+				close( file );
 				break;
 			
 			case Sh::kRedirectInputHere:
@@ -303,7 +305,9 @@ static void RedirectIO( Sh::Redirection redirection )
 				break;
 			
 			case Sh::kRedirectInputDuplicate:
-				Dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if param isn't an integer
+				file = std::atoi( param );  // FIXME:  Probably bad if param isn't an integer
+				Dup2( file, fd );
+				close( file );
 				break;
 			
 			case Sh::kRedirectInputAndOutput:
@@ -318,32 +322,43 @@ static void RedirectIO( Sh::Redirection redirection )
 				{
 					Dup2( file, fd );
 				}
+				
+				close( file );
 				break;
 			
 			case Sh::kRedirectOutput:
 				if ( GetOption( "noclobber" ) )
 				{
-					Dup2( OpenNoClobber( param ), fd );
-					break;
+					file = OpenNoClobber( param );
+					Dup2( file, fd );
+					close( file );
 				}
 				// else fall through
+				break;
 				
 			case Sh::kRedirectOutputClobbering:
-				Dup2( Open( param, O_WRONLY | O_CREAT | O_TRUNC ), fd );
+				file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
+				Dup2( file, fd );
+				close( file );
 				break;
 			
 			case Sh::kRedirectOutputAppending:
-				Dup2( Open( param, O_WRONLY | O_APPEND | O_CREAT ), fd );
+				file = Open( param, O_WRONLY | O_APPEND | O_CREAT );
+				Dup2( file, fd );
+				close( file );
 				break;
 			
 			case Sh::kRedirectOutputDuplicate:
-				Dup2( std::atoi( param ), fd );  // FIXME:  Probably bad if atoi returns 0
+				file = std::atoi( param );  // FIXME:  Probably bad if atoi returns 0
+				Dup2( file, fd );
+				close( file );
 				break;
 			
 			case Sh::kRedirectOutputAndError:
 				file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
 				Dup2( file, 1 );
 				Dup2( file, 2 );
+				close( file );
 				break;
 		}  // switch
 	}
