@@ -143,12 +143,12 @@ namespace Genie
 	}
 	
 	
-	boost::shared_ptr< IOHandle > FSTree_Device::Open( OpenFlags flags ) const
+	boost::shared_ptr< IOHandle > FSTree_Device::Open( OpenFlags /*flags*/ ) const
 	{
 		return GetSimpleDeviceHandle( deviceName );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_dev_tty::Open( OpenFlags flags ) const
+	boost::shared_ptr< IOHandle > FSTree_dev_tty::Open( OpenFlags /*flags*/ ) const
 	{
 		TTYHandle* tty = CurrentProcess().ControllingTerminal();
 		
@@ -160,7 +160,7 @@ namespace Genie
 		return tty->shared_from_this();
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_dev_modem::Open( OpenFlags flags ) const
+	boost::shared_ptr< IOHandle > FSTree_dev_modem::Open( OpenFlags /*flags*/ ) const
 	{
 		return OpenSerialDevice();
 	}

@@ -396,7 +396,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_FSSpec( target ) );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags, mode_t mode ) const
+	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags, mode_t /*mode*/ ) const
 	{
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
@@ -436,7 +436,7 @@ namespace Genie
 		CurrentProcess().Exec( fileSpec, argv, envp );
 	}
 	
-	void FSTree_FSSpec::CreateDirectory( mode_t mode ) const
+	void FSTree_FSSpec::CreateDirectory( mode_t /*mode*/ ) const
 	{
 		N::FSpDirCreate( fileSpec );
 	}

@@ -311,7 +311,7 @@ namespace Genie
 			
 			void Stat( struct ::stat& sb ) const  { itsHandle->GetFile()->Stat( sb ); }
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
+			boost::shared_ptr< IOHandle > Open( OpenFlags /*flags*/ ) const
 			{
 				return itsHandle;
 			}

@@ -80,7 +80,7 @@ namespace Genie
 		app->HandleAppleEvent( appleEvent, reply );
 	}
 	
-	void App::HandleAppleEvent(const AppleEvent& appleEvent, AppleEvent& reply)
+	void App::HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& /*reply*/ )
 	{
 		NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
 		                                                        N::keyDirectObject,
