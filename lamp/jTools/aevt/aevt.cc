@@ -117,6 +117,8 @@ namespace jTools
 			
 			return N::AECreateDesc< N::typeTargetID >( LocateTarget( app, machine, host ) );
 			
+			(void) url;
+			
 		#else
 			
 			return N::AECreateDesc< N::typeApplicationURL >( url );

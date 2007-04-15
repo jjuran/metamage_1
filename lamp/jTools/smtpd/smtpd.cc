@@ -372,7 +372,7 @@ static void DoLine( const string& line )
 	}
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int /*argc*/, char const *const /*argv*/[] )
 {
 	InetAddress peer;
 	socklen_t peerlen = sizeof peer;

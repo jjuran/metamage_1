@@ -244,7 +244,7 @@ static int Builtin_Export( int argc, char const* const argv[] )
 	return 0;
 }
 
-static int Builtin_PWD( int argc, char const* const argv[] )
+static int Builtin_PWD( int /*argc*/, char const* const /*argv*/[] )
 {
 	std::string cwd;
 	cwd.resize( 256 );

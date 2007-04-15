@@ -341,7 +341,7 @@ static void ReadInetdDotConf()
 	close( fd );
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int /*argc*/, char const *const /*argv*/[] )
 {
 	if ( false )
 	{

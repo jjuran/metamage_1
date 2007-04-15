@@ -91,6 +91,7 @@ static int NextJobNumber()
 	return 0;
 }
 
+/*
 static int NewJob( const Circuit& circuit )
 {
 	int job = NextJobNumber();
@@ -102,6 +103,7 @@ static int NewJob( const Circuit& circuit )
 	
 	
 }
+*/
 
 
 static StringMap gLocalVariables;
