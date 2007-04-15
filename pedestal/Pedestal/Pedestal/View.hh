@@ -23,22 +23,22 @@ namespace Pedestal
 		public:
 			struct Initializer {};
 			
-			void Idle     ( const EventRecord& event )  {}
-			void MouseDown( const EventRecord& event )  {}
-			bool KeyDown  ( const EventRecord& event )  { return false; }
+			void Idle     ( const EventRecord& /*event*/ )  {}
+			void MouseDown( const EventRecord& /*event*/ )  {}
+			bool KeyDown  ( const EventRecord& /*event*/ )  { return false; }
 			
-			void Resize( const Rect& newBounds )  {}
+			void Resize( const Rect& /*newBounds*/ )  {}
 			
 			void Update()  {}
 			
-			void Activate( bool activating )  {}
+			void Activate( bool /*activating*/ )  {}
 			
-			void UpdateScrollPosition( Point scrollPosition )  {}
+			void UpdateScrollPosition( Point /*scrollPosition*/ )  {}
 			
-			bool SetCursor( Point      location,
-			                RgnHandle  mouseRgn      )  { return false; }
+			bool SetCursor( Point      /*location*/,
+			                RgnHandle  /*mouseRgn*/  )  { return false; }
 			
-			bool UserCommand( MenuItemCode code      )  { return false; }
+			bool UserCommand( MenuItemCode /*code*/  )  { return false; }
 	};
 	
 }

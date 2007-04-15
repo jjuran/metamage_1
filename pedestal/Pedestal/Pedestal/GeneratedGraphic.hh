@@ -41,7 +41,7 @@ namespace Pedestal
 		public:
 			RGBConstant( const RGBColor& color ) : fColor( color )  {}
 			
-			const RGBColor& operator()( double x, double y ) const
+			const RGBColor& operator()( double /*x*/, double /*y*/ ) const
 			{
 				return fColor;
 			}

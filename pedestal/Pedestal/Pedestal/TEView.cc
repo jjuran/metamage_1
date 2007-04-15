@@ -321,7 +321,7 @@ namespace Pedestal
 		return true;
 	}
 	
-	bool TEView::SetCursor( Point location, RgnHandle mouseRgn )
+	bool TEView::SetCursor( Point location, RgnHandle /*mouseRgn*/ )
 	{
 		if ( N::PtInRect( location, Bounds() ) )
 		{

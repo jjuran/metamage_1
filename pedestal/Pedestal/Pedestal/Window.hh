@@ -255,7 +255,7 @@ namespace Pedestal
 			public:
 				Closure( WindowStorage& storage ) : storage( storage )  {}
 				
-				bool RequestWindowClosure( N::WindowRef window )
+				bool RequestWindowClosure( N::WindowRef /*window*/ )
 				{
 					// assert( storage.get() );
 					// assert( storage->Get() == window );

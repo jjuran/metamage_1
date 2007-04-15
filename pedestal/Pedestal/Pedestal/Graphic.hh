@@ -15,7 +15,7 @@ namespace Pedestal
 		public:
 			struct Initializer {};
 			
-			void Plot( const Rect& area )  {}
+			void Plot( const Rect& /*area*/ )  {}
 	};
 	
 }
