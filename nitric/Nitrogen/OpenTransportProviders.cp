@@ -66,6 +66,8 @@ namespace Nitrogen
 		                                              OTOpenFlags( 0 ),
 		                                              &err );
 		
+		(void) clientContext;
+		
 	#endif
 		
 		ThrowOSStatus( err );
@@ -90,6 +92,8 @@ namespace Nitrogen
 		InetSvcRef result = ::OTOpenInternetServices( Detail::kDefaultInternetServicesPath,
 		                                              OTOpenFlags( 0 ),
 		                                              &err );
+		
+		(void) clientContext;
 		
 	#endif
 		

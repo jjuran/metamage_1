@@ -778,12 +778,17 @@ namespace Nitrogen
 		namespace
 		{
 			
-			pascal OSErr AECoercerOfDescs_ProcPtr( const AEDesc* fromDesc, ::DescType toType, long refCon, AEDesc* result )
+			pascal OSErr AECoercerOfDescs_ProcPtr( const AEDesc*  /*fromDesc*/,
+			                                       ::DescType     /*toType*/,
+			                                       long           /*refCon*/,
+			                                       AEDesc*        /*result*/ )
 			{
 				return errAEEventNotHandled;
 			}
 			
-			Nucleus::Owned< AEDesc > AECoercerOfDescs_N( const AEDesc& fromDesc, DescType toType, RefCon refCon )
+			Nucleus::Owned< AEDesc > AECoercerOfDescs_N( const AEDesc&  fromDesc,
+			                                             DescType       /*toType*/,
+			                                             RefCon         /*refCon*/ )
 			{
 				return Nucleus::Owned< AEDesc >::Seize( fromDesc );
 			}

@@ -122,6 +122,8 @@ namespace Nitrogen
 		                                       info,
 		                                       &err );
 		
+		(void) clientContext;
+		
 	#endif
 		
 		ThrowOSStatus( err );
