@@ -198,10 +198,10 @@ namespace Nitrogen
 		                                ( ::OSLGetErrDescProcPtr   )NULL );
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   desiredClass,
+	Nucleus::Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   /*desiredClass*/,
 	                                                                   const AEToken&  containerToken,
 	                                                                   AEObjectClass   containerClass,
-	                                                                   AEEnumerated    keyForm,
+	                                                                   AEEnumerated    /*keyForm*/,
 	                                                                   const AEDesc&   keyData,
 	                                                                   RefCon )
 	{

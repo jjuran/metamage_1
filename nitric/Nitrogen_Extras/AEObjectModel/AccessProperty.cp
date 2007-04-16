@@ -147,7 +147,7 @@ namespace Nitrogen
 		return AECreateToken< typeType >( DescType( ::FourCharCode( containerClass ) ) );
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    propertyID,
+	Nucleus::Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    /*propertyID*/,
 	                                                                const AEToken&  containerToken,
 	                                                                AEObjectClass   containerClass )
 	{
