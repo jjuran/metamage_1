@@ -1567,6 +1567,8 @@ namespace Nitrogen
 	{
 		ASSERT( requiredType == typeWildCard || requiredType == desc.descriptorType );
 		
+		(void) requiredType;
+		
 		return DescType_Traits< type >().Get( AEGetDescData_Getter( desc ) );
 	}
 	
