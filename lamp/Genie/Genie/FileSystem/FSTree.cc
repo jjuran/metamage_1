@@ -136,7 +136,7 @@ namespace Genie
 		sb.st_ctime = now;
 	}
 	
-	void FSTree::ChangeMode( mode_t mode ) const
+	void FSTree::ChangeMode( mode_t /*mode*/ ) const
 	{
 		P7::ThrowErrno( EPERM );
 	}
@@ -153,7 +153,7 @@ namespace Genie
 		return 0;  // Not reached
 	}
 	
-	void FSTree::SetEOF( off_t length ) const
+	void FSTree::SetEOF( off_t /*length*/ ) const
 	{
 		P7::ThrowErrno( IsDirectory() ? EISDIR : EINVAL );
 	}
@@ -172,7 +172,7 @@ namespace Genie
 		return FSTreePtr();
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t mode ) const
+	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t /*mode*/ ) const
 	{
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
@@ -185,7 +185,7 @@ namespace Genie
 		return Open( flags );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags ) const
+	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags /*flags*/ ) const
 	{
 		P7::ThrowErrno( ENOENT );  // Assume read attempt if no mode
 		
@@ -193,18 +193,18 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >();
 	}
 	
-	void FSTree::Exec( const char* const argv[], const char* const envp[] ) const
+	void FSTree::Exec( const char* const /*argv*/[], const char* const /*envp*/[] ) const
 	{
 		P7::ThrowErrno( ENOEXEC );
 	}
 	
 	
-	void FSTree::CreateDirectory( mode_t mode ) const
+	void FSTree::CreateDirectory( mode_t /*mode*/ ) const
 	{
 		P7::ThrowErrno( EPERM );
 	}
 	
-	FSTreePtr FSTree::Lookup( const std::string& name ) const
+	FSTreePtr FSTree::Lookup( const std::string& /*name*/ ) const
 	{
 		P7::ThrowErrno( ENOENT );
 		

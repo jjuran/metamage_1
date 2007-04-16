@@ -53,7 +53,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( InternetServices );
 	
 	
-	static int socket( int domain, int type, int protocol )
+	static int socket( int /*domain*/, int /*type*/, int /*protocol*/ )
 	{
 		Check_InitOpenTransport();
 		

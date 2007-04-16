@@ -108,14 +108,14 @@ namespace Genie
 		return byteCount;
 	}
 	
-	int PipeInHandle::SysRead( char* data, std::size_t byteCount )
+	int PipeInHandle::SysRead( char* /*data*/, std::size_t /*byteCount*/ )
 	{
 		P7::ThrowErrno( EPERM );
 		
 		return -1;
 	}
 	
-	int PipeOutHandle::SysWrite( const char* data, std::size_t byteCount )
+	int PipeOutHandle::SysWrite( const char* /*data*/, std::size_t /*byteCount*/ )
 	{
 		P7::ThrowErrno( EPERM );
 		

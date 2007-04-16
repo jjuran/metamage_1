@@ -92,7 +92,7 @@ namespace Genie
 		return SysWrite( data, byteCount );
 	}
 	
-	void StreamHandle::IOCtl( unsigned long request, int* argp )
+	void StreamHandle::IOCtl( unsigned long /*request*/, int* /*argp*/ )
 	{
 		P7::ThrowErrno( EINVAL );
 	}
