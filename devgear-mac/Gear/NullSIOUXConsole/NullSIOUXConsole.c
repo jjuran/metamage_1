@@ -8,21 +8,21 @@
 #include <console.h>
 
 
-short InstallConsole(short fd)
+short InstallConsole( short /*fd*/ )
 {
 	return 0;
 }
 
-void RemoveConsole(void)
+void RemoveConsole( void )
 {
 }
 
-long WriteCharsToConsole(char *buffer, long n)
+long WriteCharsToConsole( char* /*buffer*/, long /*n*/ )
 {
 	return 0;
 }
 
-long ReadCharsFromConsole(char *buffer, long n)
+long ReadCharsFromConsole( char* /*buffer*/, long /*n*/ )
 {
 	return 0;
 }

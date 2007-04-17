@@ -13,7 +13,7 @@ extern pascal void TerminateFragment();
 
 #pragma export on
 	
-	pascal OSErr InitializeFragment( const CFragInitBlock* initBlock )
+	pascal OSErr InitializeFragment( const CFragInitBlock* /*initBlock*/ )
 	{
 		return noErr;
 	}
