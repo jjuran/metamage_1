@@ -57,12 +57,14 @@ PerlIO_tmpfile(void)
    get pulled in from libsfio.a
 */
 
+/*
 #undef PerlIO_tmpfile
 PerlIO *
 PerlIO_tmpfile(void)
 {
  return sftmp(0);
 }
+*/
 
 void
 PerlIO_init(void)
@@ -561,6 +563,7 @@ vfprintf(FILE *fd, char *pat, char *args)
 
 #endif
 
+/*
 #ifndef PerlIO_vsprintf
 int 
 PerlIO_vsprintf(char *s, int n, const char *fmt, va_list ap)
@@ -578,6 +581,7 @@ PerlIO_vsprintf(char *s, int n, const char *fmt, va_list ap)
  return val;
 }
 #endif
+*/
 
 #ifndef PerlIO_sprintf
 int      
