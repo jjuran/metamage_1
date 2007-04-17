@@ -668,12 +668,12 @@ namespace MacBinary
 		return zeroByte82;
 	}
 	
-	static bool VerifyMacBinaryII( const Header& h )
+	static bool VerifyMacBinaryII( const Header& )
 	{
 		return true;
 	}
 	
-	static bool VerifyMacBinaryIII( const Header& h )
+	static bool VerifyMacBinaryIII( const Header& )
 	{
 		return true;
 	}
