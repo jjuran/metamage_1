@@ -7,7 +7,7 @@ sfio:
 	sfexcept.c
 	sfexit.c
 	sfextern.c
-	sffcvt.c
+#	sffcvt.c
 	sffilbuf.c
 	sfflsbuf.c
 	sfgetd.c
@@ -74,11 +74,11 @@ sfio:
 	sfwr.c
 	sfwrite.c
 	Stdio_s:
-		stdgetc.c
+#		stdgetc.c
 		stdgets.c
 		stdopen.c
 		stdprintf.c
-		stdputc.c
+#		stdputc.c
 		stdscanf.c
 		stdsprintf.c
 		stdvbuf.c
