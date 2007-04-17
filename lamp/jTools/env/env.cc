@@ -22,7 +22,7 @@ static void DumpEnvironment()
 	}
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, char const *const /*argv*/[] )
 {
 	if ( argc == 1  &&  environ != NULL )
 	{

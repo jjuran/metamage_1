@@ -12,7 +12,7 @@
 
 #pragma export on
 
-int main( int argc, char const *const argv[] )
+int main( int /*argc*/, char const *const /*argv*/[] )
 {
 	const char* name = ttyname( STDIN_FILENO );
 	

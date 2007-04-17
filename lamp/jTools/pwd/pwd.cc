@@ -12,7 +12,7 @@
 
 #pragma export on
 
-int main( int argc, char const *const argv[] )
+int main( int /*argc*/, char const *const /*argv*/[] )
 {
 	std::string path;
 	

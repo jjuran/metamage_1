@@ -77,7 +77,7 @@ static void DumpMOTD()
 
 #pragma export on
 
-int main( int argc, char const *const argv[] )
+int main( int /*argc*/, char const *const /*argv*/[] )
 {
 	// Error output may be going to a log somewhere
 	dup2( STDOUT_FILENO, STDERR_FILENO );
