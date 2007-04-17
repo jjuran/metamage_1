@@ -31,7 +31,7 @@ enum
 };
 
 
-short InstallConsole( short fd )
+short InstallConsole( short /*fd*/ )
 {
 	return 0;
 }
