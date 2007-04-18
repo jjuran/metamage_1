@@ -12,6 +12,26 @@
 #include "io/slurp.hh"
 
 
+namespace Nucleus
+{
+	
+	template <>
+	struct Converter< Owned< Nitrogen::Ptr >, Nitrogen::Handle >: public std::unary_function< Nitrogen::Handle, Owned< Nitrogen::Ptr > >
+	{
+		Owned< Nitrogen::Ptr > operator()( const Nitrogen::Handle& h ) const
+		{
+			Nitrogen::Size size = Nitrogen::GetHandleSize( h );
+			
+			Owned< Nitrogen::Ptr > result = Nitrogen::NewPtr( size );
+			
+			std::copy( *h.Get(), *h.Get() + size, result.Get().Get() );
+			
+			return result;
+		}
+	};
+	
+}
+
 namespace Genie
 {
 	
@@ -90,6 +110,21 @@ namespace Genie
 		return BinaryFileMetadata( pb.hFileInfo );
 	}
 	
+	inline NN::Owned< N::Ptr > ReadImageFromResource( const FSSpec& file, N::ResType type, N::ResID id )
+	{
+		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+		
+		return NN::Convert< NN::Owned< N::Ptr > >( N::Get1Resource( type, id ) );
+	}
+	
+	inline NN::Owned< N::Ptr > ReadImageFromFile( const FSSpec& file )
+	{
+		const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
+		
+		return rsrc ? ReadImageFromResource( file, N::ResType( 'Wish' ), N::ResID( 0 ) )
+		            : io::slurp_file< N::PtrFlattener >( file );
+	}
+	
 	NN::Shared< N::Ptr > GetBinaryImage( const FSSpec& file )
 	{
 		BinaryFileMetadata metadata = GetFileMetadata( file );
@@ -117,7 +152,7 @@ namespace Genie
 		BinaryImageCacheEntry newEntry;
 		
 		newEntry.metadata = metadata;
-		newEntry.image    = io::slurp_file< N::PtrFlattener >( file );
+		newEntry.image    = ReadImageFromFile( file );
 		
 		// Install the new cache entry
 		*cacheEntry = newEntry;
