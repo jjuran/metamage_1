@@ -102,13 +102,46 @@ namespace Genie
 		
 		int result = -1;
 		
-		if ( context.externalMain != NULL )
+		MainProcPtr mainPtr = context.externalMain;
+		
+		if ( mainPtr != NULL )
 		{
-			context.processContext->Status( kProcessRunning );
+			context.processContext->SetSchedule( kProcessRunning );
 			
-			result = context.externalMain( Sh::CountStringArray( context.argv ),
-			                               context.argv,
-			                               context.envp );
+		#if 0 // TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+			
+			ProcInfoType mainProcInfo = kCStackBased
+			                          | RESULT_SIZE( SIZE_CODE( sizeof (int) ) )
+			                          | STACK_ROUTINE_PARAMETER( 1, SIZE_CODE( sizeof (int) ) )
+			                          | STACK_ROUTINE_PARAMETER( 2, SIZE_CODE( sizeof (char**) ) )
+			                          | STACK_ROUTINE_PARAMETER( 3, SIZE_CODE( sizeof (char**) ) );
+			
+			UniversalProcPtr upp = NewRoutineDescriptorTrap( (ProcPtr) mainPtr,
+			                                                 mainProcInfo,
+			                                                 kM68kISA | kCFM68kRTA );
+			
+			mainPtr = (MainProcPtr) upp;
+			
+		#endif
+			
+			if ( TARGET_CPU_68K && !TARGET_RT_MAC_CFM )
+			{
+				Rect r = { 1, 2, 3, 4 };
+				
+				LMSetToolScratch( &r );
+				
+				Ptr p = LMGetToolScratch();
+			}
+			
+			result = mainPtr( Sh::CountStringArray( context.argv ),
+			                  context.argv,
+			                  context.envp );
+			
+		#if 0 // TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+			
+			DisposeRoutineDescriptorTrap( upp );
+			
+		#endif
 		}
 		
 		context.processContext->Terminate( (result & 0xFF) << 8 );
@@ -272,7 +305,10 @@ namespace Genie
 		itsCWD                ( FSRoot() ),
 		itsControllingTerminal( NULL ),
 		itsFileDescriptors    ( FileDescriptorMap() ),
-		itsStatus             ( kProcessStateless ),
+		itsLifeStage          ( kProcessLive ),
+		itsInterdependence    ( kProcessIndependent ),
+		itsSchedule           ( kProcessSleeping ),
+		itsResult             ( 0 ),
 		itsEnvironStorage     ( new Sh::VarArray() ),
 		itsErrnoData          ( NULL ),
 		itsEnvironData        ( NULL )
@@ -292,7 +328,10 @@ namespace Genie
 		itsCWD                ( gProcessTable[ ppid ].GetCWD() ),
 		itsControllingTerminal( gProcessTable[ ppid ].itsControllingTerminal ),
 		itsFileDescriptors    ( gProcessTable[ ppid ].FileDescriptors() ),
-		itsStatus             ( kProcessForked ),
+		itsLifeStage          ( kProcessStarting ),
+		itsInterdependence    ( kProcessForked ),
+		itsSchedule           ( kProcessRunning ),
+		itsResult             ( 0 ),
 		itsEnvironStorage     ( new Sh::VarArray( gProcessTable[ ppid ].itsEnvironStorage->GetPointer() ) ),
 		itsErrnoData          ( gProcessTable[ ppid ].itsErrnoData ),
 		itsEnvironData        ( gProcessTable[ ppid ].itsEnvironData )
@@ -305,6 +344,13 @@ namespace Genie
 		{
 			*itsEnvironData = itsEnvironStorage->GetPointer();
 		}
+		
+		RegisterProcessContext( this );
+		
+		Process& parent( gProcessTable[ ppid ] );
+		
+		parent.itsInterdependence = kProcessForking;
+		parent.itsSchedule        = kProcessFrozen;
 	}
 	
 	Process::~Process()
@@ -429,8 +475,11 @@ namespace Genie
 		
 		itsFragmentImage = GetBinaryImage( itsProgramFile );
 		
-		itsFragmentConnection = N::GetMemFragment< N::kPrivateCFragCopy >( itsFragmentImage.Get(),
-		                                                                   N::GetPtrSize( itsFragmentImage ) );
+		if ( !TARGET_CPU_68K || TARGET_RT_MAC_CFM )
+		{
+			itsFragmentConnection = N::GetMemFragment< N::kPrivateCFragCopy >( itsFragmentImage.Get(),
+			                                                                   N::GetPtrSize( itsFragmentImage ) );
+		}
 		
 		K::Versions assumedVersions;
 		
@@ -441,17 +490,16 @@ namespace Genie
 		
 		MainProcPtr mainEntryPoint = NULL;
 		
-		try
+		if ( TARGET_CPU_68K && !TARGET_RT_MAC_CFM )
+		{
+			mainEntryPoint = (MainProcPtr) itsFragmentImage.Get().Get();
+		}
+		else
 		{
 			N::FindSymbol( itsFragmentConnection, "\p" "main", &mainEntryPoint );
 		}
-		catch ( ... )
-		{
-			//Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
-			
-			//Err << "Missing main() entry point.\n";
-			throw;
-		}
+		
+	#if 0
 		
 		try
 		{
@@ -517,6 +565,8 @@ namespace Genie
 				throw N::CFragImportTooNewErr();
 			}
 		}
+		
+	#endif
 		
 		itsArgvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
 		
@@ -587,7 +637,9 @@ namespace Genie
 		// Make the new thread belong to this process
 		itsThread = newThread;
 		
-		Status( kProcessSleeping );
+		itsLifeStage       = kProcessLive;
+		itsInterdependence = kProcessIndependent;
+		itsSchedule        = kProcessSleeping;
 		
 		return savedThreadID;
 	}
@@ -775,9 +827,19 @@ namespace Genie
 		itsCWD = newCWD;
 	}
 	
+	void Process::ResumeAfterFork()
+	{
+		//Status( kProcessRunning );
+		itsInterdependence = kProcessIndependent;
+		itsSchedule        = kProcessRunning;
+		
+		RegisterProcessContext( this );
+	}
+	
 	void Process::Terminate()
 	{
-		Status( kProcessTerminated );
+		itsLifeStage = kProcessTerminated;
+		itsSchedule = kProcessUnscheduled;
 		
 		itsFileDescriptors.clear();
 		
@@ -817,6 +879,13 @@ namespace Genie
 		itsPPID = 1;
 	}
 	
+	void Process::Release()
+	{
+		ASSERT( itsLifeStage == kProcessTerminated );
+		
+		itsLifeStage = kProcessReleased;
+	}
+	
 	sig_t Process::SetSignalAction( int signal, sig_t signalAction )
 	{
 		if ( signal == SIGKILL  ||  signal == SIGSTOP  ||  signalAction == SIG_ERR )
@@ -834,7 +903,7 @@ namespace Genie
 	
 	void Process::Raise( int signal )
 	{
-		if ( itsStatus == kProcessTerminated  ||  itsResult != 0 )
+		if ( itsLifeStage == kProcessTerminated  ||  itsResult != 0 )
 		{
 			return;
 		}
@@ -932,11 +1001,21 @@ namespace Genie
 		if ( itsResult != 0 )
 		{
 			// Fatal signal received.  Terminate.
+			
+			if ( itsInterdependence == kProcessForked )
+			{
+				Process& parent( gProcessTable[ GetPPID() ] );
+				
+				Orphan();
+				
+				parent.Terminate( itsResult );  // FIXME
+			}
+			
 			Terminate();
 			
 			while ( true )
 			{
-				N::YieldToAnyThread();
+				N::SetThreadState( itsThread->Get(), N::kStoppedThreadState );
 			}
 		}
 		
@@ -1036,10 +1115,7 @@ namespace Genie
 		{
 			Process& proc = *it->second;
 			
-			if ( proc.Status() != kProcessTerminated  &&  proc.GetPID() != 1 )
-			{
-				proc.Raise( SIGKILL );
-			}
+			proc.Raise( SIGKILL );
 		}
 		
 		N::YieldToAnyThread();
@@ -1055,8 +1131,8 @@ namespace Genie
 			
 			pid_t pid = proc.GetPID();
 			
-			if (    proc.Status() == kProcessReleased
-			     || proc.Status() == kProcessTerminated  &&  proc.GetPPID() == 1 )
+			if (    proc.GetLifeStage() == kProcessReleased
+			     || proc.GetLifeStage() == kProcessTerminated  &&  proc.GetPPID() == 1 )
 			{
 				hitlist.push_back( pid );
 			}
@@ -1085,7 +1161,7 @@ namespace Genie
 	
 	void Process::Stop()
 	{
-		Status( kProcessStopped );
+		SetSchedule( kProcessStopped );
 		
 		StopThread( itsThread->Get() );
 	}
@@ -1094,7 +1170,7 @@ namespace Genie
 	{
 		if ( N::GetThreadState( itsThread->Get() ) == N::kStoppedThreadState )
 		{
-			Status( kProcessSleeping );
+			SetSchedule( kProcessSleeping );
 			
 			N::SetThreadState( itsThread->Get(), N::kReadyThreadState );
 		}

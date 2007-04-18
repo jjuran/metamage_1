@@ -40,7 +40,7 @@ namespace Genie
 			
 			if ( proc.GetPPID() == ppid )
 			{
-				if ( proc.Status() == kProcessTerminated )
+				if ( proc.GetLifeStage() == kProcessTerminated )
 				{
 					return it;
 				}
@@ -70,10 +70,10 @@ namespace Genie
 		
 		if ( found->second->GetPPID() != ppid )
 		{
-			// complain
+			P7::ThrowErrno( EINVAL );
 		}
 		
-		if ( found->second->Status() != kProcessTerminated )
+		if ( found->second->GetLifeStage() != kProcessTerminated )
 		{
 			found = gProcessTable.end();
 		}
@@ -103,7 +103,7 @@ namespace Genie
 					
 					pid_t foundPID = found->first;
 					
-					found->second->Status( kProcessReleased );
+					found->second->Release();
 					
 					Yield();
 					

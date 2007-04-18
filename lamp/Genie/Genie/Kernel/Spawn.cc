@@ -22,11 +22,7 @@ namespace Genie
 	{
 		Process& parent = CurrentProcess();
 		
-		parent.Status( kProcessForking );
-		
 		Process* child = new Process( parent.GetPID() );
-		
-		RegisterProcessContext( child );
 		
 		return 0;
 	}

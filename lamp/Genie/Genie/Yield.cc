@@ -57,7 +57,7 @@ namespace Genie
 	{
 		Process* me = gCurrentProcess;
 		
-		me->Status( kProcessSleeping );
+		me->SetSchedule( kProcessSleeping );
 		
 		gCurrentProcess = NULL;
 		
@@ -65,7 +65,7 @@ namespace Genie
 		
 		gCurrentProcess = me;
 		
-		me->Status( kProcessRunning );
+		me->SetSchedule( kProcessRunning );
 		
 		// Yield() should only be called from the yielding process' thread.
 		HandlePendingSignals();
@@ -85,7 +85,7 @@ namespace Genie
 		if ( N::GetCurrentThread() == thread )
 		{
 			// This thread is the one that stopped (and just woke).
-			me->Status( kProcessRunning );
+			me->SetSchedule( kProcessRunning );
 			
 			HandlePendingSignals();
 		}

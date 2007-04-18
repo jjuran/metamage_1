@@ -207,19 +207,83 @@ namespace Genie
 		return FSNode( name, tree );
 	}
 	
+	// Process states
+	// --------------
 	
-	static char ProcessStateCode( ProcessState state )
+	/*
+		pid 1:  stateless, parentless
+		
+		other:
+			Lifetime:
+				starting --> live --> terminated --> released
+				
+				NEW --[spawned]--> starting
+				
+				starting --[thread entry]--> live
+				starting --[fatal signal]--> terminated
+				
+				live --[exited]--> terminated
+				live --[signal]--> terminated
+				
+				terminated --[wait]--> released
+				
+				released --[reaped]--> DESTROYED
+				
+			Interdependence:
+				independent --> forking/forked --> independent/independent
+			
+			Schedule:
+				NEW --[vfork]--> running
+				
+				running --[yield  ]--> sleeping
+				running --[exec   ]--> sleeping
+				running --[SIGSTOP]--> stopped
+				running --[vfork  ]--> frozen
+				
+				sleeping --[unyield]--> running
+				sleeping --[SIGSTOP]--> stopped
+				
+				stopped --[SIGCONT]--> sleeping
+				stopped --[SIGCONT]--> running
+				
+				frozen --[execve ]--> running
+				frozen --[_exit  ]--> running
+				
+			Notes:
+				A process begins as starting and forked, remaining so until it
+				exec's, at which point it's live and independent (and sleeping).
+				
+				Forking processes are frozen until the child exec's.
+				
+				Forks may not be nested; therefore starting/forked processes may not be frozen.
+				
+				Terminated and released processes are not scheduled.
+				
+				A forked thread may call _exit, which effectively undoes the fork.
+				The parent is then once again independent and running.
+				
+				Signals sent to a forking process are blocked while it's frozen.
+				Fatal signals sent to a forked process...
+				
+	*/
+	
+	static char ProcessStateCode( ProcessSchedule schedule )
 	{
-		switch ( state )
+		switch ( schedule )
 		{
-			case kProcessStateless:   return '-';
-			case kProcessForked:      return 'f';
-			case kProcessForking:     return 'F';
-			case kProcessRunning:     return 'R';
-			case kProcessSleeping:    return 'S';
-			case kProcessStopped:     return '.';
-			case kProcessTerminated:  return 'Z';
-			case kProcessReleased:    return 'X';
+			case kProcessRunning:      return 'R';  // [1]
+			case kProcessSleeping:     return 'S';  // [2]
+			case kProcessStopped:      return '.';  // set in Process::Stop()
+			case kProcessFrozen:       return 'F';  // set in SpawnVFork() prior to new Process()
+			case kProcessUnscheduled:  return 'Z';  // set in Process::Terminate()
+			
+			// [1] set on parent in execve() after child.Exec()
+			//     set on parent in _exit() if forked
+			//     set in Yield() after YieldToAnyThread() returns
+			//     set in StopThread() after SetThreadState() if same thread
+			// [2] set at end of Process::Exec() (after creating new thread for child)
+			//     set in Process::Continue() if thread was stopped
+			//     set in Yield() before YieldToAnyThread() is called
 			
 			default:
 				return '?';
@@ -244,7 +308,7 @@ namespace Genie
 				
 				return NN::Convert< std::string >( itsPID ) + " "
 				       "(" + process.ProgramName() + ")"      " " +
-				       ProcessStateCode( process.Status() ) + " " +
+				       ProcessStateCode( process.GetSchedule() ) + " " +
 				       NN::Convert< std::string >( ppid   ) + " " +
 				       NN::Convert< std::string >( pgid   ) + " " +
 				       NN::Convert< std::string >( sid    ) + " "

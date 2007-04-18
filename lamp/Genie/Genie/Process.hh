@@ -107,16 +107,28 @@ namespace Genie
 	
 	class TTYHandle;
 	
-	enum ProcessState
+	enum ProcessLifeStage
 	{
-		kProcessStateless,
-		kProcessForked,
+		kProcessStarting,
+		kProcessLive,
+		kProcessTerminated,
+		kProcessReleased
+	};
+	
+	enum ProcessInterdependence
+	{
+		kProcessIndependent,
 		kProcessForking,
+		kProcessForked
+	};
+	
+	enum ProcessSchedule
+	{
 		kProcessRunning,
 		kProcessSleeping,
 		kProcessStopped,
-		kProcessTerminated,
-		kProcessReleased
+		kProcessFrozen,
+		kProcessUnscheduled
 	};
 	
 	class Process
@@ -147,7 +159,10 @@ namespace Genie
 			
 			FileDescriptorMap itsFileDescriptors;
 			
-			ProcessState itsStatus;
+			//ProcessState itsStatus;
+			ProcessLifeStage        itsLifeStage;
+			ProcessInterdependence  itsInterdependence;
+			ProcessSchedule         itsSchedule;
 			
 			int itsResult;
 			
@@ -188,11 +203,16 @@ namespace Genie
 			void SetPGID( pid_t pgid )  { itsPGID = pgid; }
 			void SetSID ( pid_t sid  )  { itsSID  = sid;  }
 			
-			ProcessState Status() const  { return itsStatus; }
-			int Result()          const  { return itsResult; }
+			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
+			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }
 			
-			void Status( ProcessState status )  { itsStatus = status; }
-			void Result( int          result )  { itsResult = result; }
+			int Result() const  { return itsResult; }
+			
+			void Release();
+			
+			void SetSchedule( ProcessSchedule schedule )  { itsSchedule = schedule; }
+			
+			void Result( int result )  { itsResult = result; }
 			
 			TTYHandle* ControllingTerminal() const  { return itsControllingTerminal; }
 			
@@ -227,6 +247,8 @@ namespace Genie
 			sig_t SetSignalAction( int signal, sig_t signalAction );
 			
 			void Raise( int signal );
+			
+			void ResumeAfterFork();
 			
 			void Terminate();
 			void Terminate( int result );

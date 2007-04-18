@@ -301,13 +301,10 @@ namespace Genie
 			// Hope nothing bad happened while we thought we were still the child
 			
 			// Set this thread's process context back to the forker
-			Process* parent = &gProcessTable[ current.GetPPID() ];
-			
-			parent->Status( kProcessRunning );
-			
-			RegisterProcessContext( parent );
+			gProcessTable[ current.GetPPID() ].ResumeAfterFork();
 			
 			// Yes, in Genie a forked exec() DOES return on success.
+			// The longjmp() is done in statically-linked library code.
 			return 0;
 		}
 		catch ( const N::OSStatus& err )
@@ -344,7 +341,7 @@ namespace Genie
 		
 		if ( current.Forked() )
 		{
-			RegisterProcessContext( &gProcessTable[ current.GetPPID() ] );
+			gProcessTable[ current.GetPPID() ].ResumeAfterFork();
 			
 			return;
 		}
