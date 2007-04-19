@@ -122,7 +122,7 @@ extern "C" {
 	
 	int unlink( const char *pathname );
 	
-	#define vfork()  pid_t( Kerosene_vfork() )
+	#define vfork()  ( (pid_t) Kerosene_vfork() )
 	
 	ssize_t write( int fd, const void* buf, size_t count );
 	
