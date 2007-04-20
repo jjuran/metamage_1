@@ -2514,6 +2514,1066 @@ static int yylex_retry_letter_just_a_word( pTHX_ char* s, STRLEN len )
 }
 
 
+static int yylex_retry_letter_reserved_word( pTHX_ char* s, STRLEN len, I32 tmp )
+{
+    register char *d;
+    
+      reserved_word:
+	switch (tmp) {
+
+	case KEY___DATA__:
+	case KEY___END__:
+	    // Not reached
+	    Perl_croak( aTHX_ "Something's rotten in Perl_yylex()" );
+	    return 0;
+	    break;
+
+	default:			/* not a keyword */
+	  just_a_word:
+		return yylex_retry_letter_just_a_word( aTHX_ s, len );
+
+	case KEY___FILE__:
+	    yylval.opval = (OP*)newSVOP(OP_CONST, 0,
+					newSVpv(CopFILE(PL_curcop),0));
+	    TERM(THING);
+
+	case KEY___LINE__:
+            yylval.opval = (OP*)newSVOP(OP_CONST, 0,
+                                    Perl_newSVpvf(aTHX_ "%"IVdf, (IV)CopLINE(PL_curcop)));
+	    TERM(THING);
+
+	case KEY___PACKAGE__:
+	    yylval.opval = (OP*)newSVOP(OP_CONST, 0,
+					(PL_curstash
+					 ? newSVsv(PL_curstname)
+					 : &PL_sv_undef));
+	    TERM(THING);
+
+	case KEY_AUTOLOAD:
+	case KEY_DESTROY:
+	case KEY_BEGIN:
+	case KEY_CHECK:
+	case KEY_INIT:
+	case KEY_END:
+	    if (PL_expect == XSTATE) {
+		s = PL_bufptr;
+		goto really_sub;
+	    }
+	    goto just_a_word;
+
+	case KEY_CORE:
+	    if (*s == ':' && s[1] == ':') {
+		s += 2;
+		d = s;
+		s = scan_word(s, PL_tokenbuf, sizeof PL_tokenbuf, FALSE, &len);
+		if (!(tmp = keyword(PL_tokenbuf, len)))
+		    Perl_croak(aTHX_ "CORE::%s is not a keyword", PL_tokenbuf);
+		if (tmp < 0)
+		    tmp = -tmp;
+		goto reserved_word;
+	    }
+	    goto just_a_word;
+
+	case KEY_abs:
+	    UNI(OP_ABS);
+
+	case KEY_alarm:
+	    UNI(OP_ALARM);
+
+	case KEY_accept:
+	    LOP(OP_ACCEPT,XTERM);
+
+	case KEY_and:
+	    OPERATOR(ANDOP);
+
+	case KEY_atan2:
+	    LOP(OP_ATAN2,XTERM);
+
+	case KEY_bind:
+	    LOP(OP_BIND,XTERM);
+
+	case KEY_binmode:
+	    LOP(OP_BINMODE,XTERM);
+
+	case KEY_bless:
+	    LOP(OP_BLESS,XTERM);
+
+	case KEY_chop:
+	    UNI(OP_CHOP);
+
+	case KEY_continue:
+	    PREBLOCK(CONTINUE);
+
+	case KEY_chdir:
+	    (void)gv_fetchpv("ENV",TRUE, SVt_PVHV);	/* may use HOME */
+	    UNI(OP_CHDIR);
+
+	case KEY_close:
+	    UNI(OP_CLOSE);
+
+	case KEY_closedir:
+	    UNI(OP_CLOSEDIR);
+
+	case KEY_cmp:
+	    Eop(OP_SCMP);
+
+	case KEY_caller:
+	    UNI(OP_CALLER);
+
+	case KEY_crypt:
+#ifdef FCRYPT
+	    if (!PL_cryptseen) {
+		PL_cryptseen = TRUE;
+		init_des();
+	    }
+#endif
+	    LOP(OP_CRYPT,XTERM);
+
+	case KEY_chmod:
+	    if (ckWARN(WARN_CHMOD)) {
+		for (d = s; d < PL_bufend && (isSPACE(*d) || *d == '('); d++) ;
+		if (*d != '0' && isDIGIT(*d))
+		    Perl_warner(aTHX_ WARN_CHMOD,
+		    		"chmod() mode argument is missing initial 0");
+	    }
+	    LOP(OP_CHMOD,XTERM);
+
+	case KEY_chown:
+	    LOP(OP_CHOWN,XTERM);
+
+	case KEY_connect:
+	    LOP(OP_CONNECT,XTERM);
+
+	case KEY_chr:
+	    UNI(OP_CHR);
+
+	case KEY_cos:
+	    UNI(OP_COS);
+
+	case KEY_chroot:
+	    UNI(OP_CHROOT);
+
+	case KEY_do:
+	    s = skipspace(s);
+	    if (*s == '{')
+		PRETERMBLOCK(DO);
+	    if (*s != '\'')
+		s = force_word(s,WORD,FALSE,TRUE,FALSE);
+	    OPERATOR(DO);
+
+	case KEY_die:
+	    PL_hints |= HINT_BLOCK_SCOPE;
+	    LOP(OP_DIE,XTERM);
+
+	case KEY_defined:
+	    UNI(OP_DEFINED);
+
+	case KEY_delete:
+	    UNI(OP_DELETE);
+
+	case KEY_dbmopen:
+	    gv_fetchpv("AnyDBM_File::ISA", GV_ADDMULTI, SVt_PVAV);
+	    LOP(OP_DBMOPEN,XTERM);
+
+	case KEY_dbmclose:
+	    UNI(OP_DBMCLOSE);
+
+	case KEY_dump:
+	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
+	    LOOPX(OP_DUMP);
+
+	case KEY_else:
+	    PREBLOCK(ELSE);
+
+	case KEY_elsif:
+	    yylval.ival = CopLINE(PL_curcop);
+	    OPERATOR(ELSIF);
+
+	case KEY_eq:
+	    Eop(OP_SEQ);
+
+	case KEY_exists:
+	    UNI(OP_EXISTS);
+	
+	case KEY_exit:
+	    UNI(OP_EXIT);
+
+	case KEY_eval:
+	    s = skipspace(s);
+	    PL_expect = (*s == '{') ? XTERMBLOCK : XTERM;
+	    UNIBRACK(OP_ENTEREVAL);
+
+	case KEY_eof:
+	    UNI(OP_EOF);
+
+	case KEY_exp:
+	    UNI(OP_EXP);
+
+	case KEY_each:
+	    UNI(OP_EACH);
+
+	case KEY_exec:
+	    set_csh();
+	    LOP(OP_EXEC,XREF);
+
+	case KEY_endhostent:
+	    FUN0(OP_EHOSTENT);
+
+	case KEY_endnetent:
+	    FUN0(OP_ENETENT);
+
+	case KEY_endservent:
+	    FUN0(OP_ESERVENT);
+
+	case KEY_endprotoent:
+	    FUN0(OP_EPROTOENT);
+
+	case KEY_endpwent:
+	    FUN0(OP_EPWENT);
+
+	case KEY_endgrent:
+	    FUN0(OP_EGRENT);
+
+	case KEY_for:
+	case KEY_foreach:
+	    yylval.ival = CopLINE(PL_curcop);
+	    s = skipspace(s);
+	    if (PL_expect == XSTATE && isIDFIRST_lazy_if(s,UTF)) {
+		char *p = s;
+		if ((PL_bufend - p) >= 3 &&
+		    strnEQ(p, "my", 2) && isSPACE(*(p + 2)))
+		    p += 2;
+		else if ((PL_bufend - p) >= 4 &&
+		    strnEQ(p, "our", 3) && isSPACE(*(p + 3)))
+		    p += 3;
+		p = skipspace(p);
+		if (isIDFIRST_lazy_if(p,UTF)) {
+		    p = scan_ident(p, PL_bufend,
+			PL_tokenbuf, sizeof PL_tokenbuf, TRUE);
+		    p = skipspace(p);
+		}
+		if (*p != '$')
+		    Perl_croak(aTHX_ "Missing $ on loop variable");
+	    }
+	    OPERATOR(FOR);
+
+	case KEY_formline:
+	    LOP(OP_FORMLINE,XTERM);
+
+	case KEY_fork:
+	    FUN0(OP_FORK);
+
+	case KEY_fcntl:
+	    LOP(OP_FCNTL,XTERM);
+
+	case KEY_fileno:
+	    UNI(OP_FILENO);
+
+	case KEY_flock:
+	    LOP(OP_FLOCK,XTERM);
+
+	case KEY_gt:
+	    Rop(OP_SGT);
+
+	case KEY_ge:
+	    Rop(OP_SGE);
+
+	case KEY_grep:
+	    LOP(OP_GREPSTART, XREF);
+
+	case KEY_goto:
+	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
+	    LOOPX(OP_GOTO);
+
+	case KEY_gmtime:
+	    UNI(OP_GMTIME);
+
+	case KEY_getc:
+	    UNI(OP_GETC);
+
+	case KEY_getppid:
+	    FUN0(OP_GETPPID);
+
+	case KEY_getpgrp:
+	    UNI(OP_GETPGRP);
+
+	case KEY_getpriority:
+	    LOP(OP_GETPRIORITY,XTERM);
+
+	case KEY_getprotobyname:
+	    UNI(OP_GPBYNAME);
+
+	case KEY_getprotobynumber:
+	    LOP(OP_GPBYNUMBER,XTERM);
+
+	case KEY_getprotoent:
+	    FUN0(OP_GPROTOENT);
+
+	case KEY_getpwent:
+	    FUN0(OP_GPWENT);
+
+	case KEY_getpwnam:
+	    UNI(OP_GPWNAM);
+
+	case KEY_getpwuid:
+	    UNI(OP_GPWUID);
+
+	case KEY_getpeername:
+	    UNI(OP_GETPEERNAME);
+
+	case KEY_gethostbyname:
+	    UNI(OP_GHBYNAME);
+
+	case KEY_gethostbyaddr:
+	    LOP(OP_GHBYADDR,XTERM);
+
+	case KEY_gethostent:
+	    FUN0(OP_GHOSTENT);
+
+	case KEY_getnetbyname:
+	    UNI(OP_GNBYNAME);
+
+	case KEY_getnetbyaddr:
+	    LOP(OP_GNBYADDR,XTERM);
+
+	case KEY_getnetent:
+	    FUN0(OP_GNETENT);
+
+	case KEY_getservbyname:
+	    LOP(OP_GSBYNAME,XTERM);
+
+	case KEY_getservbyport:
+	    LOP(OP_GSBYPORT,XTERM);
+
+	case KEY_getservent:
+	    FUN0(OP_GSERVENT);
+
+	case KEY_getsockname:
+	    UNI(OP_GETSOCKNAME);
+
+	case KEY_getsockopt:
+	    LOP(OP_GSOCKOPT,XTERM);
+
+	case KEY_getgrent:
+	    FUN0(OP_GGRENT);
+
+	case KEY_getgrnam:
+	    UNI(OP_GGRNAM);
+
+	case KEY_getgrgid:
+	    UNI(OP_GGRGID);
+
+	case KEY_getlogin:
+	    FUN0(OP_GETLOGIN);
+
+	case KEY_glob:
+	    set_csh();
+	    LOP(OP_GLOB,XTERM);
+
+	case KEY_hex:
+	    UNI(OP_HEX);
+
+	case KEY_if:
+	    yylval.ival = CopLINE(PL_curcop);
+	    OPERATOR(IF);
+
+	case KEY_index:
+	    LOP(OP_INDEX,XTERM);
+
+	case KEY_int:
+	    UNI(OP_INT);
+
+	case KEY_ioctl:
+	    LOP(OP_IOCTL,XTERM);
+
+	case KEY_join:
+	    LOP(OP_JOIN,XTERM);
+
+	case KEY_keys:
+	    UNI(OP_KEYS);
+
+	case KEY_kill:
+	    LOP(OP_KILL,XTERM);
+
+	case KEY_last:
+	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
+	    LOOPX(OP_LAST);
+	
+	case KEY_lc:
+	    UNI(OP_LC);
+
+	case KEY_lcfirst:
+	    UNI(OP_LCFIRST);
+
+	case KEY_local:
+	    yylval.ival = 0;
+	    OPERATOR(LOCAL);
+
+	case KEY_length:
+	    UNI(OP_LENGTH);
+
+	case KEY_lt:
+	    Rop(OP_SLT);
+
+	case KEY_le:
+	    Rop(OP_SLE);
+
+	case KEY_localtime:
+	    UNI(OP_LOCALTIME);
+
+	case KEY_log:
+	    UNI(OP_LOG);
+
+	case KEY_link:
+	    LOP(OP_LINK,XTERM);
+
+	case KEY_listen:
+	    LOP(OP_LISTEN,XTERM);
+
+	case KEY_lock:
+	    UNI(OP_LOCK);
+
+	case KEY_lstat:
+	    UNI(OP_LSTAT);
+
+	case KEY_m:
+	    s = scan_pat(s,OP_MATCH);
+	    TERM(sublex_start());
+
+	case KEY_map:
+	    LOP(OP_MAPSTART, XREF);
+
+	case KEY_mkdir:
+	    LOP(OP_MKDIR,XTERM);
+
+	case KEY_msgctl:
+	    LOP(OP_MSGCTL,XTERM);
+
+	case KEY_msgget:
+	    LOP(OP_MSGGET,XTERM);
+
+	case KEY_msgrcv:
+	    LOP(OP_MSGRCV,XTERM);
+
+	case KEY_msgsnd:
+	    LOP(OP_MSGSND,XTERM);
+
+	case KEY_our:
+	case KEY_my:
+	    PL_in_my = tmp;
+	    s = skipspace(s);
+	    if (isIDFIRST_lazy_if(s,UTF)) {
+		s = scan_word(s, PL_tokenbuf, sizeof PL_tokenbuf, TRUE, &len);
+		if (len == 3 && strnEQ(PL_tokenbuf, "sub", 3))
+		    goto really_sub;
+		PL_in_my_stash = find_in_my_stash(PL_tokenbuf, len);
+		if (!PL_in_my_stash) {
+		    char tmpbuf[1024];
+		    PL_bufptr = s;
+		    sprintf(tmpbuf, "No such class %.1000s", PL_tokenbuf);
+		    yyerror(tmpbuf);
+		}
+	    }
+	    yylval.ival = 1;
+	    OPERATOR(MY);
+
+	case KEY_next:
+	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
+	    LOOPX(OP_NEXT);
+
+	case KEY_ne:
+	    Eop(OP_SNE);
+
+	case KEY_no:
+	    if (PL_expect != XSTATE)
+		yyerror("\"no\" not allowed in expression");
+	    s = force_word(s,WORD,FALSE,TRUE,FALSE);
+	    s = force_version(s);
+	    yylval.ival = 0;
+	    OPERATOR(USE);
+
+	case KEY_not:
+	    if (*s == '(' || (s = skipspace(s), *s == '('))
+		FUN1(OP_NOT);
+	    else
+		OPERATOR(NOTOP);
+
+	case KEY_open:
+	    s = skipspace(s);
+	    if (isIDFIRST_lazy_if(s,UTF)) {
+		char *t;
+		for (d = s; isALNUM_lazy_if(d,UTF); d++) ;
+		t = skipspace(d);
+		if (strchr("|&*+-=!?:.", *t) && ckWARN_d(WARN_PRECEDENCE))
+		    Perl_warner(aTHX_ WARN_PRECEDENCE,
+			   "Precedence problem: open %.*s should be open(%.*s)",
+			    d-s,s, d-s,s);
+	    }
+	    LOP(OP_OPEN,XTERM);
+
+	case KEY_or:
+	    yylval.ival = OP_OR;
+	    OPERATOR(OROP);
+
+	case KEY_ord:
+	    UNI(OP_ORD);
+
+	case KEY_oct:
+	    UNI(OP_OCT);
+
+	case KEY_opendir:
+	    LOP(OP_OPEN_DIR,XTERM);
+
+	case KEY_print:
+	    checkcomma(s,PL_tokenbuf,"filehandle");
+	    LOP(OP_PRINT,XREF);
+
+	case KEY_printf:
+	    checkcomma(s,PL_tokenbuf,"filehandle");
+	    LOP(OP_PRTF,XREF);
+
+	case KEY_prototype:
+	    UNI(OP_PROTOTYPE);
+
+	case KEY_push:
+	    LOP(OP_PUSH,XTERM);
+
+	case KEY_pop:
+	    UNI(OP_POP);
+
+	case KEY_pos:
+	    UNI(OP_POS);
+	
+	case KEY_pack:
+	    LOP(OP_PACK,XTERM);
+
+	case KEY_package:
+	    s = force_word(s,WORD,FALSE,TRUE,FALSE);
+	    OPERATOR(PACKAGE);
+
+	case KEY_pipe:
+	    LOP(OP_PIPE_OP,XTERM);
+
+	case KEY_q:
+	    s = scan_str(s,FALSE,FALSE);
+	    if (!s)
+		missingterm((char*)0);
+	    yylval.ival = OP_CONST;
+	    TERM(sublex_start());
+
+	case KEY_quotemeta:
+	    UNI(OP_QUOTEMETA);
+
+	case KEY_qw:
+	    s = scan_str(s,FALSE,FALSE);
+	    if (!s)
+		missingterm((char*)0);
+	    force_next(')');
+	    if (SvCUR(PL_lex_stuff)) {
+		OP *words = Nullop;
+		int warned = 0;
+		d = SvPV_force(PL_lex_stuff, len);
+		while (len) {
+		    SV *sv;
+		    for (; isSPACE(*d) && len; --len, ++d) ;
+		    if (len) {
+			char *b = d;
+			if (!warned && ckWARN(WARN_QW)) {
+			    for (; !isSPACE(*d) && len; --len, ++d) {
+				if (*d == ',') {
+				    Perl_warner(aTHX_ WARN_QW,
+					"Possible attempt to separate words with commas");
+				    ++warned;
+				}
+				else if (*d == '#') {
+				    Perl_warner(aTHX_ WARN_QW,
+					"Possible attempt to put comments in qw() list");
+				    ++warned;
+				}
+			    }
+			}
+			else {
+			    for (; !isSPACE(*d) && len; --len, ++d) ;
+			}
+			sv = newSVpvn(b, d-b);
+			if (DO_UTF8(PL_lex_stuff))
+			    SvUTF8_on(sv);
+			words = append_elem(OP_LIST, words,
+					    newSVOP(OP_CONST, 0, tokeq(sv)));
+		    }
+		}
+		if (words) {
+		    PL_nextval[PL_nexttoke].opval = words;
+		    force_next(THING);
+		}
+	    }
+	    if (PL_lex_stuff) {
+		SvREFCNT_dec(PL_lex_stuff);
+		PL_lex_stuff = Nullsv;
+	    }
+	    PL_expect = XTERM;
+	    TOKEN('(');
+
+	case KEY_qq:
+	    s = scan_str(s,FALSE,FALSE);
+	    if (!s)
+		missingterm((char*)0);
+	    yylval.ival = OP_STRINGIFY;
+	    if (SvIVX(PL_lex_stuff) == '\'')
+		SvIVX(PL_lex_stuff) = 0;	/* qq'$foo' should intepolate */
+	    TERM(sublex_start());
+
+	case KEY_qr:
+	    s = scan_pat(s,OP_QR);
+	    TERM(sublex_start());
+
+	case KEY_qx:
+	    s = scan_str(s,FALSE,FALSE);
+	    if (!s)
+		missingterm((char*)0);
+	    yylval.ival = OP_BACKTICK;
+	    set_csh();
+	    TERM(sublex_start());
+
+	case KEY_return:
+	    OLDLOP(OP_RETURN);
+
+	case KEY_require:
+	    s = skipspace(s);
+	    if (isDIGIT(*s) || (*s == 'v' && isDIGIT(s[1]))) {
+		s = force_version(s);
+	    }
+	    else {
+		*PL_tokenbuf = '\0';
+		s = force_word(s,WORD,TRUE,TRUE,FALSE);
+		if (isIDFIRST_lazy_if(PL_tokenbuf,UTF))
+		    gv_stashpvn(PL_tokenbuf, strlen(PL_tokenbuf), TRUE);
+		else if (*s == '<')
+		    yyerror("<> should be quotes");
+	    }
+	    UNI(OP_REQUIRE);
+
+	case KEY_reset:
+	    UNI(OP_RESET);
+
+	case KEY_redo:
+	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
+	    LOOPX(OP_REDO);
+
+	case KEY_rename:
+	    LOP(OP_RENAME,XTERM);
+
+	case KEY_rand:
+	    UNI(OP_RAND);
+
+	case KEY_rmdir:
+	    UNI(OP_RMDIR);
+
+	case KEY_rindex:
+	    LOP(OP_RINDEX,XTERM);
+
+	case KEY_read:
+	    LOP(OP_READ,XTERM);
+
+	case KEY_readdir:
+	    UNI(OP_READDIR);
+
+	case KEY_readline:
+	    set_csh();
+	    UNI(OP_READLINE);
+
+	case KEY_readpipe:
+	    set_csh();
+	    UNI(OP_BACKTICK);
+
+	case KEY_rewinddir:
+	    UNI(OP_REWINDDIR);
+
+	case KEY_recv:
+	    LOP(OP_RECV,XTERM);
+
+	case KEY_reverse:
+	    LOP(OP_REVERSE,XTERM);
+
+	case KEY_readlink:
+	    UNI(OP_READLINK);
+
+	case KEY_ref:
+	    UNI(OP_REF);
+
+	case KEY_s:
+	    s = scan_subst(s);
+	    if (yylval.opval)
+		TERM(sublex_start());
+	    else
+		TOKEN(1);	/* force error */
+
+	case KEY_chomp:
+	    UNI(OP_CHOMP);
+	
+	case KEY_scalar:
+	    UNI(OP_SCALAR);
+
+	case KEY_select:
+	    LOP(OP_SELECT,XTERM);
+
+	case KEY_seek:
+	    LOP(OP_SEEK,XTERM);
+
+	case KEY_semctl:
+	    LOP(OP_SEMCTL,XTERM);
+
+	case KEY_semget:
+	    LOP(OP_SEMGET,XTERM);
+
+	case KEY_semop:
+	    LOP(OP_SEMOP,XTERM);
+
+	case KEY_send:
+	    LOP(OP_SEND,XTERM);
+
+	case KEY_setpgrp:
+	    LOP(OP_SETPGRP,XTERM);
+
+	case KEY_setpriority:
+	    LOP(OP_SETPRIORITY,XTERM);
+
+	case KEY_sethostent:
+	    UNI(OP_SHOSTENT);
+
+	case KEY_setnetent:
+	    UNI(OP_SNETENT);
+
+	case KEY_setservent:
+	    UNI(OP_SSERVENT);
+
+	case KEY_setprotoent:
+	    UNI(OP_SPROTOENT);
+
+	case KEY_setpwent:
+	    FUN0(OP_SPWENT);
+
+	case KEY_setgrent:
+	    FUN0(OP_SGRENT);
+
+	case KEY_seekdir:
+	    LOP(OP_SEEKDIR,XTERM);
+
+	case KEY_setsockopt:
+	    LOP(OP_SSOCKOPT,XTERM);
+
+	case KEY_shift:
+	    UNI(OP_SHIFT);
+
+	case KEY_shmctl:
+	    LOP(OP_SHMCTL,XTERM);
+
+	case KEY_shmget:
+	    LOP(OP_SHMGET,XTERM);
+
+	case KEY_shmread:
+	    LOP(OP_SHMREAD,XTERM);
+
+	case KEY_shmwrite:
+	    LOP(OP_SHMWRITE,XTERM);
+
+	case KEY_shutdown:
+	    LOP(OP_SHUTDOWN,XTERM);
+
+	case KEY_sin:
+	    UNI(OP_SIN);
+
+	case KEY_sleep:
+	    UNI(OP_SLEEP);
+
+	case KEY_socket:
+	    LOP(OP_SOCKET,XTERM);
+
+	case KEY_socketpair:
+	    LOP(OP_SOCKPAIR,XTERM);
+
+	case KEY_sort:
+	    checkcomma(s,PL_tokenbuf,"subroutine name");
+	    s = skipspace(s);
+	    if (*s == ';' || *s == ')')		/* probably a close */
+		Perl_croak(aTHX_ "sort is now a reserved word");
+	    PL_expect = XTERM;
+	    s = force_word(s,WORD,TRUE,TRUE,FALSE);
+	    LOP(OP_SORT,XREF);
+
+	case KEY_split:
+	    LOP(OP_SPLIT,XTERM);
+
+	case KEY_sprintf:
+	    LOP(OP_SPRINTF,XTERM);
+
+	case KEY_splice:
+	    LOP(OP_SPLICE,XTERM);
+
+	case KEY_sqrt:
+	    UNI(OP_SQRT);
+
+	case KEY_srand:
+	    UNI(OP_SRAND);
+
+	case KEY_stat:
+	    UNI(OP_STAT);
+
+	case KEY_study:
+	    UNI(OP_STUDY);
+
+	case KEY_substr:
+	    LOP(OP_SUBSTR,XTERM);
+
+	case KEY_format:
+	case KEY_sub:
+	  really_sub:
+	    {
+		char tmpbuf[sizeof PL_tokenbuf];
+		SSize_t tboffset;
+		expectation attrful;
+		bool have_name, have_proto;
+		int key = tmp;
+
+		s = skipspace(s);
+
+		if (isIDFIRST_lazy_if(s,UTF) || *s == '\'' ||
+		    (*s == ':' && s[1] == ':'))
+		{
+		    PL_expect = XBLOCK;
+		    attrful = XATTRBLOCK;
+		    /* remember buffer pos'n for later force_word */
+		    tboffset = s - PL_oldbufptr;
+		    d = scan_word(s, tmpbuf, sizeof tmpbuf, TRUE, &len);
+		    if (strchr(tmpbuf, ':'))
+			sv_setpv(PL_subname, tmpbuf);
+		    else {
+			sv_setsv(PL_subname,PL_curstname);
+			sv_catpvn(PL_subname,"::",2);
+			sv_catpvn(PL_subname,tmpbuf,len);
+		    }
+		    s = skipspace(d);
+		    have_name = TRUE;
+		}
+		else {
+		    if (key == KEY_my)
+			Perl_croak(aTHX_ "Missing name in \"my sub\"");
+		    PL_expect = XTERMBLOCK;
+		    attrful = XATTRTERM;
+		    sv_setpv(PL_subname,"?");
+		    have_name = FALSE;
+		}
+
+		if (key == KEY_format) {
+		    if (*s == '=')
+			PL_lex_formbrack = PL_lex_brackets + 1;
+		    if (have_name)
+			(void) force_word(PL_oldbufptr + tboffset, WORD,
+					  FALSE, TRUE, TRUE);
+		    OPERATOR(FORMAT);
+		}
+
+		/* Look for a prototype */
+		if (*s == '(') {
+		    char *p;
+
+		    s = scan_str(s,FALSE,FALSE);
+		    if (!s)
+			Perl_croak(aTHX_ "Prototype not terminated");
+		    /* strip spaces */
+		    d = SvPVX(PL_lex_stuff);
+		    tmp = 0;
+		    for (p = d; *p; ++p) {
+			if (!isSPACE(*p))
+			    d[tmp++] = *p;
+		    }
+		    d[tmp] = '\0';
+		    SvCUR(PL_lex_stuff) = tmp;
+		    have_proto = TRUE;
+
+		    s = skipspace(s);
+		}
+		else
+		    have_proto = FALSE;
+
+		if (*s == ':' && s[1] != ':')
+		    PL_expect = attrful;
+
+		if (have_proto) {
+		    PL_nextval[PL_nexttoke].opval =
+			(OP*)newSVOP(OP_CONST, 0, PL_lex_stuff);
+		    PL_lex_stuff = Nullsv;
+		    force_next(THING);
+		}
+		if (!have_name) {
+		    sv_setpv(PL_subname,"__ANON__");
+		    TOKEN(ANONSUB);
+		}
+		(void) force_word(PL_oldbufptr + tboffset, WORD,
+				  FALSE, TRUE, TRUE);
+		if (key == KEY_my)
+		    TOKEN(MYSUB);
+		TOKEN(SUB);
+	    }
+
+	case KEY_system:
+	    set_csh();
+	    LOP(OP_SYSTEM,XREF);
+
+	case KEY_symlink:
+	    LOP(OP_SYMLINK,XTERM);
+
+	case KEY_syscall:
+	    LOP(OP_SYSCALL,XTERM);
+
+	case KEY_sysopen:
+	    LOP(OP_SYSOPEN,XTERM);
+
+	case KEY_sysseek:
+	    LOP(OP_SYSSEEK,XTERM);
+
+	case KEY_sysread:
+	    LOP(OP_SYSREAD,XTERM);
+
+	case KEY_syswrite:
+	    LOP(OP_SYSWRITE,XTERM);
+
+	case KEY_tr:
+	    s = scan_trans(s);
+	    TERM(sublex_start());
+
+	case KEY_tell:
+	    UNI(OP_TELL);
+
+	case KEY_telldir:
+	    UNI(OP_TELLDIR);
+
+	case KEY_tie:
+	    LOP(OP_TIE,XTERM);
+
+	case KEY_tied:
+	    UNI(OP_TIED);
+
+	case KEY_time:
+	    FUN0(OP_TIME);
+
+	case KEY_times:
+	    FUN0(OP_TMS);
+
+	case KEY_truncate:
+	    LOP(OP_TRUNCATE,XTERM);
+
+	case KEY_uc:
+	    UNI(OP_UC);
+
+	case KEY_ucfirst:
+	    UNI(OP_UCFIRST);
+
+	case KEY_untie:
+	    UNI(OP_UNTIE);
+
+	case KEY_until:
+	    yylval.ival = CopLINE(PL_curcop);
+	    OPERATOR(UNTIL);
+
+	case KEY_unless:
+	    yylval.ival = CopLINE(PL_curcop);
+	    OPERATOR(UNLESS);
+
+	case KEY_unlink:
+	    LOP(OP_UNLINK,XTERM);
+
+	case KEY_undef:
+	    UNI(OP_UNDEF);
+
+	case KEY_unpack:
+	    LOP(OP_UNPACK,XTERM);
+
+	case KEY_utime:
+	    LOP(OP_UTIME,XTERM);
+
+	case KEY_umask:
+	    if (ckWARN(WARN_UMASK)) {
+		for (d = s; d < PL_bufend && (isSPACE(*d) || *d == '('); d++) ;
+		if (*d != '0' && isDIGIT(*d))
+		    Perl_warner(aTHX_ WARN_UMASK,
+		    		"umask: argument is missing initial 0");
+	    }
+	    UNI(OP_UMASK);
+
+	case KEY_unshift:
+	    LOP(OP_UNSHIFT,XTERM);
+
+	case KEY_use:
+	    if (PL_expect != XSTATE)
+		yyerror("\"use\" not allowed in expression");
+	    s = skipspace(s);
+	    if (isDIGIT(*s) || (*s == 'v' && isDIGIT(s[1]))) {
+		s = force_version(s);
+		if (*s == ';' || (s = skipspace(s), *s == ';')) {
+		    PL_nextval[PL_nexttoke].opval = Nullop;
+		    force_next(WORD);
+		}
+	    }
+	    else {
+		s = force_word(s,WORD,FALSE,TRUE,FALSE);
+		s = force_version(s);
+	    }
+	    yylval.ival = 1;
+	    OPERATOR(USE);
+
+	case KEY_values:
+	    UNI(OP_VALUES);
+
+	case KEY_vec:
+	    LOP(OP_VEC,XTERM);
+
+	case KEY_while:
+	    yylval.ival = CopLINE(PL_curcop);
+	    OPERATOR(WHILE);
+
+	case KEY_warn:
+	    PL_hints |= HINT_BLOCK_SCOPE;
+	    LOP(OP_WARN,XTERM);
+
+	case KEY_wait:
+	    FUN0(OP_WAIT);
+
+	case KEY_waitpid:
+	    LOP(OP_WAITPID,XTERM);
+
+	case KEY_wantarray:
+	    FUN0(OP_WANTARRAY);
+
+	case KEY_write:
+#ifdef EBCDIC
+	{
+	    char ctl_l[2];
+	    ctl_l[0] = toCTRL('L');
+	    ctl_l[1] = '\0';
+	    gv_fetchpv(ctl_l,TRUE, SVt_PV);
+	}
+#else
+	    gv_fetchpv("\f",TRUE, SVt_PV);      /* Make sure $^L is defined */
+#endif
+	    UNI(OP_ENTERWRITE);
+
+	case KEY_x:
+	    if (PL_expect == XOPERATOR)
+		Mop(OP_REPEAT);
+	    check_uni();
+	    goto just_a_word;
+
+	case KEY_xor:
+	    yylval.ival = OP_XOR;
+	    OPERATOR(OROP);
+
+	case KEY_y:
+	    s = scan_trans(s);
+	    TERM(sublex_start());
+	}
+}
+
 int
 Perl_yylex(pTHX)
 {
@@ -4147,8 +5207,8 @@ Perl_yylex(pTHX)
 			 GvENAME(hgv), "qualify as such or use &");
 	    }
 	}
-
-      reserved_word:
+	
+      //reserved_word:
 	switch (tmp) {
 
 	case KEY___DATA__:
@@ -4160,1059 +5220,8 @@ Perl_yylex(pTHX)
 	    break;
 	}
 	
-	switch (tmp) {
-
-	case KEY___DATA__:
-	case KEY___END__:
-	    // Not reached
-	    Perl_croak( aTHX_ "Something's rotten in Perl_yylex()" );
-	    return 0;
-	    break;
-
-	default:			/* not a keyword */
-	  just_a_word:
-		return yylex_retry_letter_just_a_word( aTHX_ s, len );
-
-	case KEY___FILE__:
-	    yylval.opval = (OP*)newSVOP(OP_CONST, 0,
-					newSVpv(CopFILE(PL_curcop),0));
-	    TERM(THING);
-
-	case KEY___LINE__:
-            yylval.opval = (OP*)newSVOP(OP_CONST, 0,
-                                    Perl_newSVpvf(aTHX_ "%"IVdf, (IV)CopLINE(PL_curcop)));
-	    TERM(THING);
-
-	case KEY___PACKAGE__:
-	    yylval.opval = (OP*)newSVOP(OP_CONST, 0,
-					(PL_curstash
-					 ? newSVsv(PL_curstname)
-					 : &PL_sv_undef));
-	    TERM(THING);
-
-	case KEY_AUTOLOAD:
-	case KEY_DESTROY:
-	case KEY_BEGIN:
-	case KEY_CHECK:
-	case KEY_INIT:
-	case KEY_END:
-	    if (PL_expect == XSTATE) {
-		s = PL_bufptr;
-		goto really_sub;
-	    }
-	    goto just_a_word;
-
-	case KEY_CORE:
-	    if (*s == ':' && s[1] == ':') {
-		s += 2;
-		d = s;
-		s = scan_word(s, PL_tokenbuf, sizeof PL_tokenbuf, FALSE, &len);
-		if (!(tmp = keyword(PL_tokenbuf, len)))
-		    Perl_croak(aTHX_ "CORE::%s is not a keyword", PL_tokenbuf);
-		if (tmp < 0)
-		    tmp = -tmp;
-		goto reserved_word;
-	    }
-	    goto just_a_word;
-
-	case KEY_abs:
-	    UNI(OP_ABS);
-
-	case KEY_alarm:
-	    UNI(OP_ALARM);
-
-	case KEY_accept:
-	    LOP(OP_ACCEPT,XTERM);
-
-	case KEY_and:
-	    OPERATOR(ANDOP);
-
-	case KEY_atan2:
-	    LOP(OP_ATAN2,XTERM);
-
-	case KEY_bind:
-	    LOP(OP_BIND,XTERM);
-
-	case KEY_binmode:
-	    LOP(OP_BINMODE,XTERM);
-
-	case KEY_bless:
-	    LOP(OP_BLESS,XTERM);
-
-	case KEY_chop:
-	    UNI(OP_CHOP);
-
-	case KEY_continue:
-	    PREBLOCK(CONTINUE);
-
-	case KEY_chdir:
-	    (void)gv_fetchpv("ENV",TRUE, SVt_PVHV);	/* may use HOME */
-	    UNI(OP_CHDIR);
-
-	case KEY_close:
-	    UNI(OP_CLOSE);
-
-	case KEY_closedir:
-	    UNI(OP_CLOSEDIR);
-
-	case KEY_cmp:
-	    Eop(OP_SCMP);
-
-	case KEY_caller:
-	    UNI(OP_CALLER);
-
-	case KEY_crypt:
-#ifdef FCRYPT
-	    if (!PL_cryptseen) {
-		PL_cryptseen = TRUE;
-		init_des();
-	    }
-#endif
-	    LOP(OP_CRYPT,XTERM);
-
-	case KEY_chmod:
-	    if (ckWARN(WARN_CHMOD)) {
-		for (d = s; d < PL_bufend && (isSPACE(*d) || *d == '('); d++) ;
-		if (*d != '0' && isDIGIT(*d))
-		    Perl_warner(aTHX_ WARN_CHMOD,
-		    		"chmod() mode argument is missing initial 0");
-	    }
-	    LOP(OP_CHMOD,XTERM);
-
-	case KEY_chown:
-	    LOP(OP_CHOWN,XTERM);
-
-	case KEY_connect:
-	    LOP(OP_CONNECT,XTERM);
-
-	case KEY_chr:
-	    UNI(OP_CHR);
-
-	case KEY_cos:
-	    UNI(OP_COS);
-
-	case KEY_chroot:
-	    UNI(OP_CHROOT);
-
-	case KEY_do:
-	    s = skipspace(s);
-	    if (*s == '{')
-		PRETERMBLOCK(DO);
-	    if (*s != '\'')
-		s = force_word(s,WORD,FALSE,TRUE,FALSE);
-	    OPERATOR(DO);
-
-	case KEY_die:
-	    PL_hints |= HINT_BLOCK_SCOPE;
-	    LOP(OP_DIE,XTERM);
-
-	case KEY_defined:
-	    UNI(OP_DEFINED);
-
-	case KEY_delete:
-	    UNI(OP_DELETE);
-
-	case KEY_dbmopen:
-	    gv_fetchpv("AnyDBM_File::ISA", GV_ADDMULTI, SVt_PVAV);
-	    LOP(OP_DBMOPEN,XTERM);
-
-	case KEY_dbmclose:
-	    UNI(OP_DBMCLOSE);
-
-	case KEY_dump:
-	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
-	    LOOPX(OP_DUMP);
-
-	case KEY_else:
-	    PREBLOCK(ELSE);
-
-	case KEY_elsif:
-	    yylval.ival = CopLINE(PL_curcop);
-	    OPERATOR(ELSIF);
-
-	case KEY_eq:
-	    Eop(OP_SEQ);
-
-	case KEY_exists:
-	    UNI(OP_EXISTS);
+	return yylex_retry_letter_reserved_word( aTHX_ s, len, tmp );
 	
-	case KEY_exit:
-	    UNI(OP_EXIT);
-
-	case KEY_eval:
-	    s = skipspace(s);
-	    PL_expect = (*s == '{') ? XTERMBLOCK : XTERM;
-	    UNIBRACK(OP_ENTEREVAL);
-
-	case KEY_eof:
-	    UNI(OP_EOF);
-
-	case KEY_exp:
-	    UNI(OP_EXP);
-
-	case KEY_each:
-	    UNI(OP_EACH);
-
-	case KEY_exec:
-	    set_csh();
-	    LOP(OP_EXEC,XREF);
-
-	case KEY_endhostent:
-	    FUN0(OP_EHOSTENT);
-
-	case KEY_endnetent:
-	    FUN0(OP_ENETENT);
-
-	case KEY_endservent:
-	    FUN0(OP_ESERVENT);
-
-	case KEY_endprotoent:
-	    FUN0(OP_EPROTOENT);
-
-	case KEY_endpwent:
-	    FUN0(OP_EPWENT);
-
-	case KEY_endgrent:
-	    FUN0(OP_EGRENT);
-
-	case KEY_for:
-	case KEY_foreach:
-	    yylval.ival = CopLINE(PL_curcop);
-	    s = skipspace(s);
-	    if (PL_expect == XSTATE && isIDFIRST_lazy_if(s,UTF)) {
-		char *p = s;
-		if ((PL_bufend - p) >= 3 &&
-		    strnEQ(p, "my", 2) && isSPACE(*(p + 2)))
-		    p += 2;
-		else if ((PL_bufend - p) >= 4 &&
-		    strnEQ(p, "our", 3) && isSPACE(*(p + 3)))
-		    p += 3;
-		p = skipspace(p);
-		if (isIDFIRST_lazy_if(p,UTF)) {
-		    p = scan_ident(p, PL_bufend,
-			PL_tokenbuf, sizeof PL_tokenbuf, TRUE);
-		    p = skipspace(p);
-		}
-		if (*p != '$')
-		    Perl_croak(aTHX_ "Missing $ on loop variable");
-	    }
-	    OPERATOR(FOR);
-
-	case KEY_formline:
-	    LOP(OP_FORMLINE,XTERM);
-
-	case KEY_fork:
-	    FUN0(OP_FORK);
-
-	case KEY_fcntl:
-	    LOP(OP_FCNTL,XTERM);
-
-	case KEY_fileno:
-	    UNI(OP_FILENO);
-
-	case KEY_flock:
-	    LOP(OP_FLOCK,XTERM);
-
-	case KEY_gt:
-	    Rop(OP_SGT);
-
-	case KEY_ge:
-	    Rop(OP_SGE);
-
-	case KEY_grep:
-	    LOP(OP_GREPSTART, XREF);
-
-	case KEY_goto:
-	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
-	    LOOPX(OP_GOTO);
-
-	case KEY_gmtime:
-	    UNI(OP_GMTIME);
-
-	case KEY_getc:
-	    UNI(OP_GETC);
-
-	case KEY_getppid:
-	    FUN0(OP_GETPPID);
-
-	case KEY_getpgrp:
-	    UNI(OP_GETPGRP);
-
-	case KEY_getpriority:
-	    LOP(OP_GETPRIORITY,XTERM);
-
-	case KEY_getprotobyname:
-	    UNI(OP_GPBYNAME);
-
-	case KEY_getprotobynumber:
-	    LOP(OP_GPBYNUMBER,XTERM);
-
-	case KEY_getprotoent:
-	    FUN0(OP_GPROTOENT);
-
-	case KEY_getpwent:
-	    FUN0(OP_GPWENT);
-
-	case KEY_getpwnam:
-	    UNI(OP_GPWNAM);
-
-	case KEY_getpwuid:
-	    UNI(OP_GPWUID);
-
-	case KEY_getpeername:
-	    UNI(OP_GETPEERNAME);
-
-	case KEY_gethostbyname:
-	    UNI(OP_GHBYNAME);
-
-	case KEY_gethostbyaddr:
-	    LOP(OP_GHBYADDR,XTERM);
-
-	case KEY_gethostent:
-	    FUN0(OP_GHOSTENT);
-
-	case KEY_getnetbyname:
-	    UNI(OP_GNBYNAME);
-
-	case KEY_getnetbyaddr:
-	    LOP(OP_GNBYADDR,XTERM);
-
-	case KEY_getnetent:
-	    FUN0(OP_GNETENT);
-
-	case KEY_getservbyname:
-	    LOP(OP_GSBYNAME,XTERM);
-
-	case KEY_getservbyport:
-	    LOP(OP_GSBYPORT,XTERM);
-
-	case KEY_getservent:
-	    FUN0(OP_GSERVENT);
-
-	case KEY_getsockname:
-	    UNI(OP_GETSOCKNAME);
-
-	case KEY_getsockopt:
-	    LOP(OP_GSOCKOPT,XTERM);
-
-	case KEY_getgrent:
-	    FUN0(OP_GGRENT);
-
-	case KEY_getgrnam:
-	    UNI(OP_GGRNAM);
-
-	case KEY_getgrgid:
-	    UNI(OP_GGRGID);
-
-	case KEY_getlogin:
-	    FUN0(OP_GETLOGIN);
-
-	case KEY_glob:
-	    set_csh();
-	    LOP(OP_GLOB,XTERM);
-
-	case KEY_hex:
-	    UNI(OP_HEX);
-
-	case KEY_if:
-	    yylval.ival = CopLINE(PL_curcop);
-	    OPERATOR(IF);
-
-	case KEY_index:
-	    LOP(OP_INDEX,XTERM);
-
-	case KEY_int:
-	    UNI(OP_INT);
-
-	case KEY_ioctl:
-	    LOP(OP_IOCTL,XTERM);
-
-	case KEY_join:
-	    LOP(OP_JOIN,XTERM);
-
-	case KEY_keys:
-	    UNI(OP_KEYS);
-
-	case KEY_kill:
-	    LOP(OP_KILL,XTERM);
-
-	case KEY_last:
-	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
-	    LOOPX(OP_LAST);
-	
-	case KEY_lc:
-	    UNI(OP_LC);
-
-	case KEY_lcfirst:
-	    UNI(OP_LCFIRST);
-
-	case KEY_local:
-	    yylval.ival = 0;
-	    OPERATOR(LOCAL);
-
-	case KEY_length:
-	    UNI(OP_LENGTH);
-
-	case KEY_lt:
-	    Rop(OP_SLT);
-
-	case KEY_le:
-	    Rop(OP_SLE);
-
-	case KEY_localtime:
-	    UNI(OP_LOCALTIME);
-
-	case KEY_log:
-	    UNI(OP_LOG);
-
-	case KEY_link:
-	    LOP(OP_LINK,XTERM);
-
-	case KEY_listen:
-	    LOP(OP_LISTEN,XTERM);
-
-	case KEY_lock:
-	    UNI(OP_LOCK);
-
-	case KEY_lstat:
-	    UNI(OP_LSTAT);
-
-	case KEY_m:
-	    s = scan_pat(s,OP_MATCH);
-	    TERM(sublex_start());
-
-	case KEY_map:
-	    LOP(OP_MAPSTART, XREF);
-
-	case KEY_mkdir:
-	    LOP(OP_MKDIR,XTERM);
-
-	case KEY_msgctl:
-	    LOP(OP_MSGCTL,XTERM);
-
-	case KEY_msgget:
-	    LOP(OP_MSGGET,XTERM);
-
-	case KEY_msgrcv:
-	    LOP(OP_MSGRCV,XTERM);
-
-	case KEY_msgsnd:
-	    LOP(OP_MSGSND,XTERM);
-
-	case KEY_our:
-	case KEY_my:
-	    PL_in_my = tmp;
-	    s = skipspace(s);
-	    if (isIDFIRST_lazy_if(s,UTF)) {
-		s = scan_word(s, PL_tokenbuf, sizeof PL_tokenbuf, TRUE, &len);
-		if (len == 3 && strnEQ(PL_tokenbuf, "sub", 3))
-		    goto really_sub;
-		PL_in_my_stash = find_in_my_stash(PL_tokenbuf, len);
-		if (!PL_in_my_stash) {
-		    char tmpbuf[1024];
-		    PL_bufptr = s;
-		    sprintf(tmpbuf, "No such class %.1000s", PL_tokenbuf);
-		    yyerror(tmpbuf);
-		}
-	    }
-	    yylval.ival = 1;
-	    OPERATOR(MY);
-
-	case KEY_next:
-	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
-	    LOOPX(OP_NEXT);
-
-	case KEY_ne:
-	    Eop(OP_SNE);
-
-	case KEY_no:
-	    if (PL_expect != XSTATE)
-		yyerror("\"no\" not allowed in expression");
-	    s = force_word(s,WORD,FALSE,TRUE,FALSE);
-	    s = force_version(s);
-	    yylval.ival = 0;
-	    OPERATOR(USE);
-
-	case KEY_not:
-	    if (*s == '(' || (s = skipspace(s), *s == '('))
-		FUN1(OP_NOT);
-	    else
-		OPERATOR(NOTOP);
-
-	case KEY_open:
-	    s = skipspace(s);
-	    if (isIDFIRST_lazy_if(s,UTF)) {
-		char *t;
-		for (d = s; isALNUM_lazy_if(d,UTF); d++) ;
-		t = skipspace(d);
-		if (strchr("|&*+-=!?:.", *t) && ckWARN_d(WARN_PRECEDENCE))
-		    Perl_warner(aTHX_ WARN_PRECEDENCE,
-			   "Precedence problem: open %.*s should be open(%.*s)",
-			    d-s,s, d-s,s);
-	    }
-	    LOP(OP_OPEN,XTERM);
-
-	case KEY_or:
-	    yylval.ival = OP_OR;
-	    OPERATOR(OROP);
-
-	case KEY_ord:
-	    UNI(OP_ORD);
-
-	case KEY_oct:
-	    UNI(OP_OCT);
-
-	case KEY_opendir:
-	    LOP(OP_OPEN_DIR,XTERM);
-
-	case KEY_print:
-	    checkcomma(s,PL_tokenbuf,"filehandle");
-	    LOP(OP_PRINT,XREF);
-
-	case KEY_printf:
-	    checkcomma(s,PL_tokenbuf,"filehandle");
-	    LOP(OP_PRTF,XREF);
-
-	case KEY_prototype:
-	    UNI(OP_PROTOTYPE);
-
-	case KEY_push:
-	    LOP(OP_PUSH,XTERM);
-
-	case KEY_pop:
-	    UNI(OP_POP);
-
-	case KEY_pos:
-	    UNI(OP_POS);
-	
-	case KEY_pack:
-	    LOP(OP_PACK,XTERM);
-
-	case KEY_package:
-	    s = force_word(s,WORD,FALSE,TRUE,FALSE);
-	    OPERATOR(PACKAGE);
-
-	case KEY_pipe:
-	    LOP(OP_PIPE_OP,XTERM);
-
-	case KEY_q:
-	    s = scan_str(s,FALSE,FALSE);
-	    if (!s)
-		missingterm((char*)0);
-	    yylval.ival = OP_CONST;
-	    TERM(sublex_start());
-
-	case KEY_quotemeta:
-	    UNI(OP_QUOTEMETA);
-
-	case KEY_qw:
-	    s = scan_str(s,FALSE,FALSE);
-	    if (!s)
-		missingterm((char*)0);
-	    force_next(')');
-	    if (SvCUR(PL_lex_stuff)) {
-		OP *words = Nullop;
-		int warned = 0;
-		d = SvPV_force(PL_lex_stuff, len);
-		while (len) {
-		    SV *sv;
-		    for (; isSPACE(*d) && len; --len, ++d) ;
-		    if (len) {
-			char *b = d;
-			if (!warned && ckWARN(WARN_QW)) {
-			    for (; !isSPACE(*d) && len; --len, ++d) {
-				if (*d == ',') {
-				    Perl_warner(aTHX_ WARN_QW,
-					"Possible attempt to separate words with commas");
-				    ++warned;
-				}
-				else if (*d == '#') {
-				    Perl_warner(aTHX_ WARN_QW,
-					"Possible attempt to put comments in qw() list");
-				    ++warned;
-				}
-			    }
-			}
-			else {
-			    for (; !isSPACE(*d) && len; --len, ++d) ;
-			}
-			sv = newSVpvn(b, d-b);
-			if (DO_UTF8(PL_lex_stuff))
-			    SvUTF8_on(sv);
-			words = append_elem(OP_LIST, words,
-					    newSVOP(OP_CONST, 0, tokeq(sv)));
-		    }
-		}
-		if (words) {
-		    PL_nextval[PL_nexttoke].opval = words;
-		    force_next(THING);
-		}
-	    }
-	    if (PL_lex_stuff) {
-		SvREFCNT_dec(PL_lex_stuff);
-		PL_lex_stuff = Nullsv;
-	    }
-	    PL_expect = XTERM;
-	    TOKEN('(');
-
-	case KEY_qq:
-	    s = scan_str(s,FALSE,FALSE);
-	    if (!s)
-		missingterm((char*)0);
-	    yylval.ival = OP_STRINGIFY;
-	    if (SvIVX(PL_lex_stuff) == '\'')
-		SvIVX(PL_lex_stuff) = 0;	/* qq'$foo' should intepolate */
-	    TERM(sublex_start());
-
-	case KEY_qr:
-	    s = scan_pat(s,OP_QR);
-	    TERM(sublex_start());
-
-	case KEY_qx:
-	    s = scan_str(s,FALSE,FALSE);
-	    if (!s)
-		missingterm((char*)0);
-	    yylval.ival = OP_BACKTICK;
-	    set_csh();
-	    TERM(sublex_start());
-
-	case KEY_return:
-	    OLDLOP(OP_RETURN);
-
-	case KEY_require:
-	    s = skipspace(s);
-	    if (isDIGIT(*s) || (*s == 'v' && isDIGIT(s[1]))) {
-		s = force_version(s);
-	    }
-	    else {
-		*PL_tokenbuf = '\0';
-		s = force_word(s,WORD,TRUE,TRUE,FALSE);
-		if (isIDFIRST_lazy_if(PL_tokenbuf,UTF))
-		    gv_stashpvn(PL_tokenbuf, strlen(PL_tokenbuf), TRUE);
-		else if (*s == '<')
-		    yyerror("<> should be quotes");
-	    }
-	    UNI(OP_REQUIRE);
-
-	case KEY_reset:
-	    UNI(OP_RESET);
-
-	case KEY_redo:
-	    s = force_word(s,WORD,TRUE,FALSE,FALSE);
-	    LOOPX(OP_REDO);
-
-	case KEY_rename:
-	    LOP(OP_RENAME,XTERM);
-
-	case KEY_rand:
-	    UNI(OP_RAND);
-
-	case KEY_rmdir:
-	    UNI(OP_RMDIR);
-
-	case KEY_rindex:
-	    LOP(OP_RINDEX,XTERM);
-
-	case KEY_read:
-	    LOP(OP_READ,XTERM);
-
-	case KEY_readdir:
-	    UNI(OP_READDIR);
-
-	case KEY_readline:
-	    set_csh();
-	    UNI(OP_READLINE);
-
-	case KEY_readpipe:
-	    set_csh();
-	    UNI(OP_BACKTICK);
-
-	case KEY_rewinddir:
-	    UNI(OP_REWINDDIR);
-
-	case KEY_recv:
-	    LOP(OP_RECV,XTERM);
-
-	case KEY_reverse:
-	    LOP(OP_REVERSE,XTERM);
-
-	case KEY_readlink:
-	    UNI(OP_READLINK);
-
-	case KEY_ref:
-	    UNI(OP_REF);
-
-	case KEY_s:
-	    s = scan_subst(s);
-	    if (yylval.opval)
-		TERM(sublex_start());
-	    else
-		TOKEN(1);	/* force error */
-
-	case KEY_chomp:
-	    UNI(OP_CHOMP);
-	
-	case KEY_scalar:
-	    UNI(OP_SCALAR);
-
-	case KEY_select:
-	    LOP(OP_SELECT,XTERM);
-
-	case KEY_seek:
-	    LOP(OP_SEEK,XTERM);
-
-	case KEY_semctl:
-	    LOP(OP_SEMCTL,XTERM);
-
-	case KEY_semget:
-	    LOP(OP_SEMGET,XTERM);
-
-	case KEY_semop:
-	    LOP(OP_SEMOP,XTERM);
-
-	case KEY_send:
-	    LOP(OP_SEND,XTERM);
-
-	case KEY_setpgrp:
-	    LOP(OP_SETPGRP,XTERM);
-
-	case KEY_setpriority:
-	    LOP(OP_SETPRIORITY,XTERM);
-
-	case KEY_sethostent:
-	    UNI(OP_SHOSTENT);
-
-	case KEY_setnetent:
-	    UNI(OP_SNETENT);
-
-	case KEY_setservent:
-	    UNI(OP_SSERVENT);
-
-	case KEY_setprotoent:
-	    UNI(OP_SPROTOENT);
-
-	case KEY_setpwent:
-	    FUN0(OP_SPWENT);
-
-	case KEY_setgrent:
-	    FUN0(OP_SGRENT);
-
-	case KEY_seekdir:
-	    LOP(OP_SEEKDIR,XTERM);
-
-	case KEY_setsockopt:
-	    LOP(OP_SSOCKOPT,XTERM);
-
-	case KEY_shift:
-	    UNI(OP_SHIFT);
-
-	case KEY_shmctl:
-	    LOP(OP_SHMCTL,XTERM);
-
-	case KEY_shmget:
-	    LOP(OP_SHMGET,XTERM);
-
-	case KEY_shmread:
-	    LOP(OP_SHMREAD,XTERM);
-
-	case KEY_shmwrite:
-	    LOP(OP_SHMWRITE,XTERM);
-
-	case KEY_shutdown:
-	    LOP(OP_SHUTDOWN,XTERM);
-
-	case KEY_sin:
-	    UNI(OP_SIN);
-
-	case KEY_sleep:
-	    UNI(OP_SLEEP);
-
-	case KEY_socket:
-	    LOP(OP_SOCKET,XTERM);
-
-	case KEY_socketpair:
-	    LOP(OP_SOCKPAIR,XTERM);
-
-	case KEY_sort:
-	    checkcomma(s,PL_tokenbuf,"subroutine name");
-	    s = skipspace(s);
-	    if (*s == ';' || *s == ')')		/* probably a close */
-		Perl_croak(aTHX_ "sort is now a reserved word");
-	    PL_expect = XTERM;
-	    s = force_word(s,WORD,TRUE,TRUE,FALSE);
-	    LOP(OP_SORT,XREF);
-
-	case KEY_split:
-	    LOP(OP_SPLIT,XTERM);
-
-	case KEY_sprintf:
-	    LOP(OP_SPRINTF,XTERM);
-
-	case KEY_splice:
-	    LOP(OP_SPLICE,XTERM);
-
-	case KEY_sqrt:
-	    UNI(OP_SQRT);
-
-	case KEY_srand:
-	    UNI(OP_SRAND);
-
-	case KEY_stat:
-	    UNI(OP_STAT);
-
-	case KEY_study:
-	    UNI(OP_STUDY);
-
-	case KEY_substr:
-	    LOP(OP_SUBSTR,XTERM);
-
-	case KEY_format:
-	case KEY_sub:
-	  really_sub:
-	    {
-		char tmpbuf[sizeof PL_tokenbuf];
-		SSize_t tboffset;
-		expectation attrful;
-		bool have_name, have_proto;
-		int key = tmp;
-
-		s = skipspace(s);
-
-		if (isIDFIRST_lazy_if(s,UTF) || *s == '\'' ||
-		    (*s == ':' && s[1] == ':'))
-		{
-		    PL_expect = XBLOCK;
-		    attrful = XATTRBLOCK;
-		    /* remember buffer pos'n for later force_word */
-		    tboffset = s - PL_oldbufptr;
-		    d = scan_word(s, tmpbuf, sizeof tmpbuf, TRUE, &len);
-		    if (strchr(tmpbuf, ':'))
-			sv_setpv(PL_subname, tmpbuf);
-		    else {
-			sv_setsv(PL_subname,PL_curstname);
-			sv_catpvn(PL_subname,"::",2);
-			sv_catpvn(PL_subname,tmpbuf,len);
-		    }
-		    s = skipspace(d);
-		    have_name = TRUE;
-		}
-		else {
-		    if (key == KEY_my)
-			Perl_croak(aTHX_ "Missing name in \"my sub\"");
-		    PL_expect = XTERMBLOCK;
-		    attrful = XATTRTERM;
-		    sv_setpv(PL_subname,"?");
-		    have_name = FALSE;
-		}
-
-		if (key == KEY_format) {
-		    if (*s == '=')
-			PL_lex_formbrack = PL_lex_brackets + 1;
-		    if (have_name)
-			(void) force_word(PL_oldbufptr + tboffset, WORD,
-					  FALSE, TRUE, TRUE);
-		    OPERATOR(FORMAT);
-		}
-
-		/* Look for a prototype */
-		if (*s == '(') {
-		    char *p;
-
-		    s = scan_str(s,FALSE,FALSE);
-		    if (!s)
-			Perl_croak(aTHX_ "Prototype not terminated");
-		    /* strip spaces */
-		    d = SvPVX(PL_lex_stuff);
-		    tmp = 0;
-		    for (p = d; *p; ++p) {
-			if (!isSPACE(*p))
-			    d[tmp++] = *p;
-		    }
-		    d[tmp] = '\0';
-		    SvCUR(PL_lex_stuff) = tmp;
-		    have_proto = TRUE;
-
-		    s = skipspace(s);
-		}
-		else
-		    have_proto = FALSE;
-
-		if (*s == ':' && s[1] != ':')
-		    PL_expect = attrful;
-
-		if (have_proto) {
-		    PL_nextval[PL_nexttoke].opval =
-			(OP*)newSVOP(OP_CONST, 0, PL_lex_stuff);
-		    PL_lex_stuff = Nullsv;
-		    force_next(THING);
-		}
-		if (!have_name) {
-		    sv_setpv(PL_subname,"__ANON__");
-		    TOKEN(ANONSUB);
-		}
-		(void) force_word(PL_oldbufptr + tboffset, WORD,
-				  FALSE, TRUE, TRUE);
-		if (key == KEY_my)
-		    TOKEN(MYSUB);
-		TOKEN(SUB);
-	    }
-
-	case KEY_system:
-	    set_csh();
-	    LOP(OP_SYSTEM,XREF);
-
-	case KEY_symlink:
-	    LOP(OP_SYMLINK,XTERM);
-
-	case KEY_syscall:
-	    LOP(OP_SYSCALL,XTERM);
-
-	case KEY_sysopen:
-	    LOP(OP_SYSOPEN,XTERM);
-
-	case KEY_sysseek:
-	    LOP(OP_SYSSEEK,XTERM);
-
-	case KEY_sysread:
-	    LOP(OP_SYSREAD,XTERM);
-
-	case KEY_syswrite:
-	    LOP(OP_SYSWRITE,XTERM);
-
-	case KEY_tr:
-	    s = scan_trans(s);
-	    TERM(sublex_start());
-
-	case KEY_tell:
-	    UNI(OP_TELL);
-
-	case KEY_telldir:
-	    UNI(OP_TELLDIR);
-
-	case KEY_tie:
-	    LOP(OP_TIE,XTERM);
-
-	case KEY_tied:
-	    UNI(OP_TIED);
-
-	case KEY_time:
-	    FUN0(OP_TIME);
-
-	case KEY_times:
-	    FUN0(OP_TMS);
-
-	case KEY_truncate:
-	    LOP(OP_TRUNCATE,XTERM);
-
-	case KEY_uc:
-	    UNI(OP_UC);
-
-	case KEY_ucfirst:
-	    UNI(OP_UCFIRST);
-
-	case KEY_untie:
-	    UNI(OP_UNTIE);
-
-	case KEY_until:
-	    yylval.ival = CopLINE(PL_curcop);
-	    OPERATOR(UNTIL);
-
-	case KEY_unless:
-	    yylval.ival = CopLINE(PL_curcop);
-	    OPERATOR(UNLESS);
-
-	case KEY_unlink:
-	    LOP(OP_UNLINK,XTERM);
-
-	case KEY_undef:
-	    UNI(OP_UNDEF);
-
-	case KEY_unpack:
-	    LOP(OP_UNPACK,XTERM);
-
-	case KEY_utime:
-	    LOP(OP_UTIME,XTERM);
-
-	case KEY_umask:
-	    if (ckWARN(WARN_UMASK)) {
-		for (d = s; d < PL_bufend && (isSPACE(*d) || *d == '('); d++) ;
-		if (*d != '0' && isDIGIT(*d))
-		    Perl_warner(aTHX_ WARN_UMASK,
-		    		"umask: argument is missing initial 0");
-	    }
-	    UNI(OP_UMASK);
-
-	case KEY_unshift:
-	    LOP(OP_UNSHIFT,XTERM);
-
-	case KEY_use:
-	    if (PL_expect != XSTATE)
-		yyerror("\"use\" not allowed in expression");
-	    s = skipspace(s);
-	    if (isDIGIT(*s) || (*s == 'v' && isDIGIT(s[1]))) {
-		s = force_version(s);
-		if (*s == ';' || (s = skipspace(s), *s == ';')) {
-		    PL_nextval[PL_nexttoke].opval = Nullop;
-		    force_next(WORD);
-		}
-	    }
-	    else {
-		s = force_word(s,WORD,FALSE,TRUE,FALSE);
-		s = force_version(s);
-	    }
-	    yylval.ival = 1;
-	    OPERATOR(USE);
-
-	case KEY_values:
-	    UNI(OP_VALUES);
-
-	case KEY_vec:
-	    LOP(OP_VEC,XTERM);
-
-	case KEY_while:
-	    yylval.ival = CopLINE(PL_curcop);
-	    OPERATOR(WHILE);
-
-	case KEY_warn:
-	    PL_hints |= HINT_BLOCK_SCOPE;
-	    LOP(OP_WARN,XTERM);
-
-	case KEY_wait:
-	    FUN0(OP_WAIT);
-
-	case KEY_waitpid:
-	    LOP(OP_WAITPID,XTERM);
-
-	case KEY_wantarray:
-	    FUN0(OP_WANTARRAY);
-
-	case KEY_write:
-#ifdef EBCDIC
-	{
-	    char ctl_l[2];
-	    ctl_l[0] = toCTRL('L');
-	    ctl_l[1] = '\0';
-	    gv_fetchpv(ctl_l,TRUE, SVt_PV);
-	}
-#else
-	    gv_fetchpv("\f",TRUE, SVt_PV);      /* Make sure $^L is defined */
-#endif
-	    UNI(OP_ENTERWRITE);
-
-	case KEY_x:
-	    if (PL_expect == XOPERATOR)
-		Mop(OP_REPEAT);
-	    check_uni();
-	    goto just_a_word;
-
-	case KEY_xor:
-	    yylval.ival = OP_XOR;
-	    OPERATOR(OROP);
-
-	case KEY_y:
-	    s = scan_trans(s);
-	    TERM(sublex_start());
-	}
     }}
 }
 #ifdef __SC__
