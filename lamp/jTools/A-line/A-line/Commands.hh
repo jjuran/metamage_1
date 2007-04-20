@@ -375,16 +375,26 @@ namespace ALine
 		// CodeWarrior only
 		std::string MWTargetKeroseneShLib() const
 		{
-			return "-xm s -init InitializeFragment -term TerminateFragment -export pragma" + space + AppHeapSize();
+			return "-xm s -init InitializeFragment -term TerminateFragment -export pragma -name " + std::string( carbon ? "Carbon" : "classic" ) + space + AppHeapSize();
+		}
+		
+		// CodeWarrior only
+		std::string MWTargetKeroseneRsrc() const
+		{
+			return MWTargetCodeResource() + space + ResourceTypeAndID( "Wish", "0" );
+		}
+		
+		// CodeWarrior only
+		std::string MWTargetKerosene() const
+		{
+			return cfm ? MWTargetKeroseneShLib() : MWTargetKeroseneRsrc();
 		}
 		
 		std::string TargetCommandLineTool() const
 		{
 			return gnu ? ""
-			           : MWTargetKeroseneShLib() + " " + OutputType   ( "Wish" )
-			                                     + " " + OutputCreator( "Poof" )
-			                                     + " -name " + ( carbon ? "Carbon"
-			                                                            : "classic" );
+			           : MWTargetKerosene() + " " + OutputType   ( "Wish" )
+			                                + " " + OutputCreator( "Poof" );
 		}
 		
 		std::string MWLinkerOptions() const
