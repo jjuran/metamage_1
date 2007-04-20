@@ -836,7 +836,7 @@ S_force_version(pTHX_ char *s)
     if (*d == 'v')
 	d++;
     if (isDIGIT(*d)) {
-        for (; isDIGIT(*d) || *d == '_' || *d == '.'; d++);
+        for (; isDIGIT(*d) || *d == '_' || *d == '.'; d++) continue;
         if (*d == ';' || isSPACE(*d) || *d == '}' || !*d) {
 	    SV *ver;
             s = scan_num(s, &yylval);
@@ -2102,19 +2102,12 @@ Perl_yylex_r(pTHX_ YYSTYPE *lvalp, int *lcharp)
 #ifdef __SC__
 #pragma segment Perl_yylex
 #endif
-int
-Perl_yylex(pTHX)
+
+static int yylex_pending_indent(pTHX)
 {
-    register char *s;
     register char *d;
     register I32 tmp;
-    STRLEN len;
-    GV *gv = Nullgv;
-    GV **gvp = 0;
-    bool bof = FALSE;
-
-    /* check if there's an identifier for us to look at */
-    if (PL_pending_ident) {
+    {
         /* pit holds the identifier we read and pending_ident is reset */
 	char pit = PL_pending_ident;
 	PL_pending_ident = 0;
@@ -2239,6 +2232,23 @@ Perl_yylex(pTHX)
 		    : (PL_tokenbuf[0] == '@') ? SVt_PVAV
 		    : SVt_PVHV));
 	return WORD;
+    }
+}
+
+int
+Perl_yylex(pTHX)
+{
+    register char *s;
+    register char *d;
+    register I32 tmp;
+    STRLEN len;
+    GV *gv = Nullgv;
+    GV **gvp = 0;
+    bool bof = FALSE;
+
+    /* check if there's an identifier for us to look at */
+    if (PL_pending_ident) {
+        return yylex_pending_indent( my_perl );
     }
 
     /* no identifier pending identification */
