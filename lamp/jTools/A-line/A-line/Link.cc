@@ -160,17 +160,17 @@ namespace ALine
 				{
 					if ( targetInfo.platform.runtime == CD::runtimeA4CodeResource )
 					{
-						systemLibs << q( Pathname( mw68kLibs & "MSL C.68K (4i_8d).A4.Lib"     ) )
+						systemLibs << q( Pathname( mw68kLibs & "MSL C.68K Fa(4i_8d).A4.Lib"   ) )
 						           << q( Pathname( mw68kLibs & "MSL C++.68K Fa(4i_8d).A4.Lib" ) )
 						           << q( Pathname( mw68kLibs & "MSL Runtime68K.A4.Lib"        ) )
-						           << q( Pathname( mw68kLibs & "MathLib68K (4i_8d).A4.Lib"    ) );
+						           << q( Pathname( mw68kLibs & "MathLib68K Fa(4i_8d).A4.Lib"  ) );
 					}
 					else
 					{
-						systemLibs << q( Pathname( mw68kLibs & "MSL C.68K (4i_8d).Lib"     ) )
+						systemLibs << q( Pathname( mw68kLibs & "MSL C.68K Fa(4i_8d).Lib"   ) )
 						           << q( Pathname( mw68kLibs & "MSL C++.68K Fa(4i_8d).Lib" ) )
 						           << q( Pathname( mw68kLibs & "MSL Runtime68K.Lib"        ) )
-						           << q( Pathname( mw68kLibs & "MathLib68K (4i_8d).Lib"    ) );
+						           << q( Pathname( mw68kLibs & "MathLib68K Fa(4i_8d).Lib"  ) );
 					}
 					
 					systemLibs << q( Pathname( mw68kLibs & "MacOS.lib" ) );
