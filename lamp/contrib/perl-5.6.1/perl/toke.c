@@ -2292,6 +2292,227 @@ static void yylex_retry_letter_DATA_or_END( pTHX )
 }
 
 
+static int yylex_retry_letter_just_a_word( pTHX_ char* s, STRLEN len )
+{
+    register char *d;
+    register I32 tmp;
+    GV *gv = Nullgv;
+    GV **gvp = 0;
+    
+		SV *sv;
+		char lastchar = (PL_bufptr == PL_oldoldbufptr ? 0 : PL_bufptr[-1]);
+
+		/* Get the rest if it looks like a package qualifier */
+
+		if (*s == '\'' || (*s == ':' && s[1] == ':')) {
+		    STRLEN morelen;
+		    s = scan_word(s, PL_tokenbuf + len, sizeof PL_tokenbuf - len,
+				  TRUE, &morelen);
+		    if (!morelen)
+			Perl_croak(aTHX_ "Bad name after %s%s", PL_tokenbuf,
+				*s == '\'' ? "'" : "::");
+		    len += morelen;
+		}
+
+		if (PL_expect == XOPERATOR) {
+		    if (PL_bufptr == PL_linestart) {
+			CopLINE_dec(PL_curcop);
+			Perl_warner(aTHX_ WARN_SEMICOLON, PL_warn_nosemi);
+			CopLINE_inc(PL_curcop);
+		    }
+		    else
+			no_op("Bareword",s);
+		}
+
+		/* Look for a subroutine with this name in current package,
+		   unless name is "Foo::", in which case Foo is a bearword
+		   (and a package name). */
+
+		if (len > 2 &&
+		    PL_tokenbuf[len - 2] == ':' && PL_tokenbuf[len - 1] == ':')
+		{
+		    if (ckWARN(WARN_BAREWORD) && ! gv_fetchpv(PL_tokenbuf, FALSE, SVt_PVHV))
+			Perl_warner(aTHX_ WARN_BAREWORD,
+		  	    "Bareword \"%s\" refers to nonexistent package",
+			     PL_tokenbuf);
+		    len -= 2;
+		    PL_tokenbuf[len] = '\0';
+		    gv = Nullgv;
+		    gvp = 0;
+		}
+		else {
+		    len = 0;
+		    if (!gv)
+			gv = gv_fetchpv(PL_tokenbuf, FALSE, SVt_PVCV);
+		}
+
+		/* if we saw a global override before, get the right name */
+
+		if (gvp) {
+		    sv = newSVpvn("CORE::GLOBAL::",14);
+		    sv_catpv(sv,PL_tokenbuf);
+		}
+		else
+		    sv = newSVpv(PL_tokenbuf,0);
+
+		/* Presume this is going to be a bareword of some sort. */
+
+		CLINE;
+		yylval.opval = (OP*)newSVOP(OP_CONST, 0, sv);
+		yylval.opval->op_private = OPpCONST_BARE;
+
+		/* And if "Foo::", then that's what it certainly is. */
+
+		if (len)
+		    goto safe_bareword;
+
+		/* See if it's the indirect object for a list operator. */
+
+		if (PL_oldoldbufptr &&
+		    PL_oldoldbufptr < PL_bufptr &&
+		    (PL_oldoldbufptr == PL_last_lop
+		     || PL_oldoldbufptr == PL_last_uni) &&
+		    /* NO SKIPSPACE BEFORE HERE! */
+		    (PL_expect == XREF ||
+		     ((PL_opargs[PL_last_lop_op] >> OASHIFT)& 7) == OA_FILEREF))
+		{
+		    bool immediate_paren = *s == '(';
+
+		    /* (Now we can afford to cross potential line boundary.) */
+		    s = skipspace(s);
+
+		    /* Two barewords in a row may indicate method call. */
+
+		    if ((isIDFIRST_lazy_if(s,UTF) || *s == '$') && (tmp=intuit_method(s,gv)))
+			return tmp;
+
+		    /* If not a declared subroutine, it's an indirect object. */
+		    /* (But it's an indir obj regardless for sort.) */
+
+		    if ((PL_last_lop_op == OP_SORT ||
+                         (!immediate_paren && (!gv || !GvCVu(gv)))) &&
+                        (PL_last_lop_op != OP_MAPSTART &&
+			 PL_last_lop_op != OP_GREPSTART))
+		    {
+			PL_expect = (PL_last_lop == PL_oldoldbufptr) ? XTERM : XOPERATOR;
+			goto bareword;
+		    }
+		}
+
+
+		PL_expect = XOPERATOR;
+		s = skipspace(s);
+
+		/* Is this a word before a => operator? */
+		if (*s == '=' && s[1] == '>') {
+		    CLINE;
+		    sv_setpv(((SVOP*)yylval.opval)->op_sv, PL_tokenbuf);
+		    if (UTF && !IN_BYTE && is_utf8_string((U8*)PL_tokenbuf, len))
+		      SvUTF8_on(((SVOP*)yylval.opval)->op_sv);
+		    TERM(WORD);
+		}
+
+		/* If followed by a paren, it's certainly a subroutine. */
+		if (*s == '(') {
+		    CLINE;
+		    if (gv && GvCVu(gv)) {
+			for (d = s + 1; SPACE_OR_TAB(*d); d++) ;
+			if (*d == ')' && (sv = cv_const_sv(GvCV(gv)))) {
+			    s = d + 1;
+			    goto its_constant;
+			}
+		    }
+		    PL_nextval[PL_nexttoke].opval = yylval.opval;
+		    PL_expect = XOPERATOR;
+		    force_next(WORD);
+		    yylval.ival = 0;
+		    TOKEN('&');
+		}
+
+		/* If followed by var or block, call it a method (unless sub) */
+
+		if ((*s == '$' || *s == '{') && (!gv || !GvCVu(gv))) {
+		    PL_last_lop = PL_oldbufptr;
+		    PL_last_lop_op = OP_METHOD;
+		    PREBLOCK(METHOD);
+		}
+
+		/* If followed by a bareword, see if it looks like indir obj. */
+
+		if ((isIDFIRST_lazy_if(s,UTF) || *s == '$') && (tmp = intuit_method(s,gv)))
+		    return tmp;
+
+		/* Not a method, so call it a subroutine (if defined) */
+
+		if (gv && GvCVu(gv)) {
+		    CV* cv;
+		    if (lastchar == '-' && ckWARN_d(WARN_AMBIGUOUS))
+			Perl_warner(aTHX_ WARN_AMBIGUOUS,
+				"Ambiguous use of -%s resolved as -&%s()",
+				PL_tokenbuf, PL_tokenbuf);
+		    /* Check for a constant sub */
+		    cv = GvCV(gv);
+		    if ((sv = cv_const_sv(cv))) {
+		  its_constant:
+			SvREFCNT_dec(((SVOP*)yylval.opval)->op_sv);
+			((SVOP*)yylval.opval)->op_sv = SvREFCNT_inc(sv);
+			yylval.opval->op_private = 0;
+			TOKEN(WORD);
+		    }
+
+		    /* Resolve to GV now. */
+		    op_free(yylval.opval);
+		    yylval.opval = newCVREF(0, newGVOP(OP_GV, 0, gv));
+		    yylval.opval->op_private |= OPpENTERSUB_NOPAREN;
+		    PL_last_lop = PL_oldbufptr;
+		    PL_last_lop_op = OP_ENTERSUB;
+		    /* Is there a prototype? */
+		    if (SvPOK(cv)) {
+			STRLEN len;
+			char *proto = SvPV((SV*)cv, len);
+			if (!len)
+			    TERM(FUNC0SUB);
+			if (strEQ(proto, "$"))
+			    OPERATOR(UNIOPSUB);
+			if (*proto == '&' && *s == '{') {
+			    sv_setpv(PL_subname,"__ANON__");
+			    PREBLOCK(LSTOPSUB);
+			}
+		    }
+		    PL_nextval[PL_nexttoke].opval = yylval.opval;
+		    PL_expect = XTERM;
+		    force_next(WORD);
+		    TOKEN(NOAMP);
+		}
+
+		/* Call it a bare word */
+
+		if (PL_hints & HINT_STRICT_SUBS)
+		    yylval.opval->op_private |= OPpCONST_STRICT;
+		else {
+		bareword:
+		    if (ckWARN(WARN_RESERVED)) {
+			if (lastchar != '-') {
+			    for (d = PL_tokenbuf; *d && isLOWER(*d); d++) ;
+			    if (!*d)
+				Perl_warner(aTHX_ WARN_RESERVED, PL_warn_reserved,
+				       PL_tokenbuf);
+			}
+		    }
+		}
+
+	    safe_bareword:
+		if (lastchar && strchr("*%&", lastchar) && ckWARN_d(WARN_AMBIGUOUS)) {
+		    Perl_warner(aTHX_ WARN_AMBIGUOUS,
+		  	"Operator or semicolon missing before %c%s",
+			lastchar, PL_tokenbuf);
+		    Perl_warner(aTHX_ WARN_AMBIGUOUS,
+			"Ambiguous use of %c resolved as operator %c",
+			lastchar, lastchar);
+		}
+		TOKEN(WORD);
+}
+
 
 int
 Perl_yylex(pTHX)
@@ -3950,218 +4171,7 @@ Perl_yylex(pTHX)
 
 	default:			/* not a keyword */
 	  just_a_word: {
-		SV *sv;
-		char lastchar = (PL_bufptr == PL_oldoldbufptr ? 0 : PL_bufptr[-1]);
-
-		/* Get the rest if it looks like a package qualifier */
-
-		if (*s == '\'' || (*s == ':' && s[1] == ':')) {
-		    STRLEN morelen;
-		    s = scan_word(s, PL_tokenbuf + len, sizeof PL_tokenbuf - len,
-				  TRUE, &morelen);
-		    if (!morelen)
-			Perl_croak(aTHX_ "Bad name after %s%s", PL_tokenbuf,
-				*s == '\'' ? "'" : "::");
-		    len += morelen;
-		}
-
-		if (PL_expect == XOPERATOR) {
-		    if (PL_bufptr == PL_linestart) {
-			CopLINE_dec(PL_curcop);
-			Perl_warner(aTHX_ WARN_SEMICOLON, PL_warn_nosemi);
-			CopLINE_inc(PL_curcop);
-		    }
-		    else
-			no_op("Bareword",s);
-		}
-
-		/* Look for a subroutine with this name in current package,
-		   unless name is "Foo::", in which case Foo is a bearword
-		   (and a package name). */
-
-		if (len > 2 &&
-		    PL_tokenbuf[len - 2] == ':' && PL_tokenbuf[len - 1] == ':')
-		{
-		    if (ckWARN(WARN_BAREWORD) && ! gv_fetchpv(PL_tokenbuf, FALSE, SVt_PVHV))
-			Perl_warner(aTHX_ WARN_BAREWORD,
-		  	    "Bareword \"%s\" refers to nonexistent package",
-			     PL_tokenbuf);
-		    len -= 2;
-		    PL_tokenbuf[len] = '\0';
-		    gv = Nullgv;
-		    gvp = 0;
-		}
-		else {
-		    len = 0;
-		    if (!gv)
-			gv = gv_fetchpv(PL_tokenbuf, FALSE, SVt_PVCV);
-		}
-
-		/* if we saw a global override before, get the right name */
-
-		if (gvp) {
-		    sv = newSVpvn("CORE::GLOBAL::",14);
-		    sv_catpv(sv,PL_tokenbuf);
-		}
-		else
-		    sv = newSVpv(PL_tokenbuf,0);
-
-		/* Presume this is going to be a bareword of some sort. */
-
-		CLINE;
-		yylval.opval = (OP*)newSVOP(OP_CONST, 0, sv);
-		yylval.opval->op_private = OPpCONST_BARE;
-
-		/* And if "Foo::", then that's what it certainly is. */
-
-		if (len)
-		    goto safe_bareword;
-
-		/* See if it's the indirect object for a list operator. */
-
-		if (PL_oldoldbufptr &&
-		    PL_oldoldbufptr < PL_bufptr &&
-		    (PL_oldoldbufptr == PL_last_lop
-		     || PL_oldoldbufptr == PL_last_uni) &&
-		    /* NO SKIPSPACE BEFORE HERE! */
-		    (PL_expect == XREF ||
-		     ((PL_opargs[PL_last_lop_op] >> OASHIFT)& 7) == OA_FILEREF))
-		{
-		    bool immediate_paren = *s == '(';
-
-		    /* (Now we can afford to cross potential line boundary.) */
-		    s = skipspace(s);
-
-		    /* Two barewords in a row may indicate method call. */
-
-		    if ((isIDFIRST_lazy_if(s,UTF) || *s == '$') && (tmp=intuit_method(s,gv)))
-			return tmp;
-
-		    /* If not a declared subroutine, it's an indirect object. */
-		    /* (But it's an indir obj regardless for sort.) */
-
-		    if ((PL_last_lop_op == OP_SORT ||
-                         (!immediate_paren && (!gv || !GvCVu(gv)))) &&
-                        (PL_last_lop_op != OP_MAPSTART &&
-			 PL_last_lop_op != OP_GREPSTART))
-		    {
-			PL_expect = (PL_last_lop == PL_oldoldbufptr) ? XTERM : XOPERATOR;
-			goto bareword;
-		    }
-		}
-
-
-		PL_expect = XOPERATOR;
-		s = skipspace(s);
-
-		/* Is this a word before a => operator? */
-		if (*s == '=' && s[1] == '>') {
-		    CLINE;
-		    sv_setpv(((SVOP*)yylval.opval)->op_sv, PL_tokenbuf);
-		    if (UTF && !IN_BYTE && is_utf8_string((U8*)PL_tokenbuf, len))
-		      SvUTF8_on(((SVOP*)yylval.opval)->op_sv);
-		    TERM(WORD);
-		}
-
-		/* If followed by a paren, it's certainly a subroutine. */
-		if (*s == '(') {
-		    CLINE;
-		    if (gv && GvCVu(gv)) {
-			for (d = s + 1; SPACE_OR_TAB(*d); d++) ;
-			if (*d == ')' && (sv = cv_const_sv(GvCV(gv)))) {
-			    s = d + 1;
-			    goto its_constant;
-			}
-		    }
-		    PL_nextval[PL_nexttoke].opval = yylval.opval;
-		    PL_expect = XOPERATOR;
-		    force_next(WORD);
-		    yylval.ival = 0;
-		    TOKEN('&');
-		}
-
-		/* If followed by var or block, call it a method (unless sub) */
-
-		if ((*s == '$' || *s == '{') && (!gv || !GvCVu(gv))) {
-		    PL_last_lop = PL_oldbufptr;
-		    PL_last_lop_op = OP_METHOD;
-		    PREBLOCK(METHOD);
-		}
-
-		/* If followed by a bareword, see if it looks like indir obj. */
-
-		if ((isIDFIRST_lazy_if(s,UTF) || *s == '$') && (tmp = intuit_method(s,gv)))
-		    return tmp;
-
-		/* Not a method, so call it a subroutine (if defined) */
-
-		if (gv && GvCVu(gv)) {
-		    CV* cv;
-		    if (lastchar == '-' && ckWARN_d(WARN_AMBIGUOUS))
-			Perl_warner(aTHX_ WARN_AMBIGUOUS,
-				"Ambiguous use of -%s resolved as -&%s()",
-				PL_tokenbuf, PL_tokenbuf);
-		    /* Check for a constant sub */
-		    cv = GvCV(gv);
-		    if ((sv = cv_const_sv(cv))) {
-		  its_constant:
-			SvREFCNT_dec(((SVOP*)yylval.opval)->op_sv);
-			((SVOP*)yylval.opval)->op_sv = SvREFCNT_inc(sv);
-			yylval.opval->op_private = 0;
-			TOKEN(WORD);
-		    }
-
-		    /* Resolve to GV now. */
-		    op_free(yylval.opval);
-		    yylval.opval = newCVREF(0, newGVOP(OP_GV, 0, gv));
-		    yylval.opval->op_private |= OPpENTERSUB_NOPAREN;
-		    PL_last_lop = PL_oldbufptr;
-		    PL_last_lop_op = OP_ENTERSUB;
-		    /* Is there a prototype? */
-		    if (SvPOK(cv)) {
-			STRLEN len;
-			char *proto = SvPV((SV*)cv, len);
-			if (!len)
-			    TERM(FUNC0SUB);
-			if (strEQ(proto, "$"))
-			    OPERATOR(UNIOPSUB);
-			if (*proto == '&' && *s == '{') {
-			    sv_setpv(PL_subname,"__ANON__");
-			    PREBLOCK(LSTOPSUB);
-			}
-		    }
-		    PL_nextval[PL_nexttoke].opval = yylval.opval;
-		    PL_expect = XTERM;
-		    force_next(WORD);
-		    TOKEN(NOAMP);
-		}
-
-		/* Call it a bare word */
-
-		if (PL_hints & HINT_STRICT_SUBS)
-		    yylval.opval->op_private |= OPpCONST_STRICT;
-		else {
-		bareword:
-		    if (ckWARN(WARN_RESERVED)) {
-			if (lastchar != '-') {
-			    for (d = PL_tokenbuf; *d && isLOWER(*d); d++) ;
-			    if (!*d)
-				Perl_warner(aTHX_ WARN_RESERVED, PL_warn_reserved,
-				       PL_tokenbuf);
-			}
-		    }
-		}
-
-	    safe_bareword:
-		if (lastchar && strchr("*%&", lastchar) && ckWARN_d(WARN_AMBIGUOUS)) {
-		    Perl_warner(aTHX_ WARN_AMBIGUOUS,
-		  	"Operator or semicolon missing before %c%s",
-			lastchar, PL_tokenbuf);
-		    Perl_warner(aTHX_ WARN_AMBIGUOUS,
-			"Ambiguous use of %c resolved as operator %c",
-			lastchar, lastchar);
-		}
-		TOKEN(WORD);
+		return yylex_retry_letter_just_a_word( aTHX_ s, len );
 	    }
 
 	case KEY___FILE__:
