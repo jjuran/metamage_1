@@ -3930,6 +3930,24 @@ Perl_yylex(pTHX)
       reserved_word:
 	switch (tmp) {
 
+	case KEY___DATA__:
+	case KEY___END__:
+	    yylex_retry_letter_DATA_or_END( aTHX );
+	    goto fake_eof;
+
+	default:
+	    break;
+	}
+	
+	switch (tmp) {
+
+	case KEY___DATA__:
+	case KEY___END__:
+	    // Not reached
+	    Perl_croak( aTHX_ "Something's rotten in Perl_yylex()" );
+	    return 0;
+	    break;
+
 	default:			/* not a keyword */
 	  just_a_word: {
 		SV *sv;
@@ -4162,12 +4180,6 @@ Perl_yylex(pTHX)
 					 ? newSVsv(PL_curstname)
 					 : &PL_sv_undef));
 	    TERM(THING);
-
-	case KEY___DATA__:
-	case KEY___END__: {
-	    yylex_retry_letter_DATA_or_END( aTHX );
-	    goto fake_eof;
-	}
 
 	case KEY_AUTOLOAD:
 	case KEY_DESTROY:
