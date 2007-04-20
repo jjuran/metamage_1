@@ -3265,7 +3265,7 @@ Perl_yylex(pTHX)
     case ':':
 	if (s[1] == ':') {
 	    len = 0;
-	    goto just_a_word;
+	    return yylex_retry_letter_just_a_word( aTHX_ s, len );  // goto just_a_word;
 	}
 	s++;
 	switch (PL_expect) {
@@ -4077,7 +4077,7 @@ Perl_yylex(pTHX)
 
 	/* x::* is just a word, unless x is "CORE" */
 	if (!tmp && *s == ':' && s[1] == ':' && strNE(PL_tokenbuf, "CORE"))
-	    goto just_a_word;
+	    return yylex_retry_letter_just_a_word( aTHX_ s, len );  // goto just_a_word;
 
 	d = s;
 	while (d < PL_bufend && isSPACE(*d))
@@ -4170,9 +4170,8 @@ Perl_yylex(pTHX)
 	    break;
 
 	default:			/* not a keyword */
-	  just_a_word: {
+	  just_a_word:
 		return yylex_retry_letter_just_a_word( aTHX_ s, len );
-	    }
 
 	case KEY___FILE__:
 	    yylval.opval = (OP*)newSVOP(OP_CONST, 0,
