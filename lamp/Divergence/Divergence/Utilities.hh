@@ -34,7 +34,7 @@ namespace Divergence
 		
 	#else
 		
-		#error Unsupported runtime (not CFM or Mach-O)
+		#error Unsupported platform (not Lamp or Mach-O)
 		
 	#endif
 	}
