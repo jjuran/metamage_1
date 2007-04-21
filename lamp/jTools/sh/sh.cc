@@ -81,22 +81,6 @@ struct OnExit
 	}
 };
 
-static void WasteTime()
-{
-#if TARGET_API_MAC_CARBON
-	
-	::QDFlushPortBuffer( GetQDGlobalsThePort(), NULL );
-	
-#endif
-	
-	UInt32 then = TickCount();
-	
-	while ( TickCount() - then < 60 * 2 )
-	{
-		// do nothing
-	}
-}
-
 int O::Main( int argc, const char *const argv[] )
 {
 	setenv( "PS1", "$ ", 0 );
@@ -112,7 +96,6 @@ int O::Main( int argc, const char *const argv[] )
 	catch ( O::UndefinedOption& )
 	{
 		Io::Err << "Undefined option\n";
-		WasteTime();
 		
 		return 1;
 	}
