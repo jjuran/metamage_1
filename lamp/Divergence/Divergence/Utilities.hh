@@ -14,7 +14,7 @@
 #include "Nitrogen/Files.h"
 #endif
 
-#if TARGET_RT_MAC_CFM
+#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 #include "SystemCalls.hh"
 #endif
 
@@ -28,7 +28,7 @@ namespace Divergence
 		
 		return Nucleus::Convert< FSSpec >( Nitrogen::FSPathMakeRef( path ).ref );
 		
-	#elif TARGET_RT_MAC_CFM
+	#elif TARGET_OS_MAC
 		
 		return Path2FSS( path );
 		
@@ -52,7 +52,7 @@ namespace Divergence
 		                 NULL );
 	}
 	
-#elif TARGET_RT_MAC_CFM
+#elif TARGET_OS_MAC
 	
 	using ::AESendBlocking;
 	
