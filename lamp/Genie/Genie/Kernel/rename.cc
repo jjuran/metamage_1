@@ -38,6 +38,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_rename )
+	DEFINE_MODULE_INIT(  Kernel_rename )
+	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	

@@ -25,6 +25,9 @@ typedef __sig_handler sig_t;
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_signal )
+	DEFINE_MODULE_INIT(  Kernel_signal )
+	
 	static int kill( pid_t pid, int sig )
 	{
 		GenieProcessTable::ProcessMap::const_iterator found = gProcessTable.Map().find( pid );

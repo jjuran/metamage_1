@@ -25,6 +25,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_socket )
+	DEFINE_MODULE_INIT(  Kernel_socket )
+	
 	namespace NN = Nucleus;
 	
 	

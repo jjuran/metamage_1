@@ -26,6 +26,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_rmdir )
+	DEFINE_MODULE_INIT(  Kernel_rmdir )
+	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;

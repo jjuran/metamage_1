@@ -19,6 +19,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_uname )
+	DEFINE_MODULE_INIT(  Kernel_uname )
+	
 	#if TARGET_CPU_68K
 		
 		#define HARDWARE_CLASS "m68k"
@@ -29,7 +32,7 @@ namespace Genie
 		
 	#endif
 	
-	// Genie relies on CFM, so don't compile for Intel (below)
+	// Genie relies on CFM or classic 68K, so don't compile for Intel (below)
 	
 	
 #if defined(_UTSNAME_LENGTH)

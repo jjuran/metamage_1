@@ -23,6 +23,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_ioctl )
+	DEFINE_MODULE_INIT(  Kernel_ioctl )
+	
 	static int ioctl( int filedes, unsigned long request, int* argp )
 	{
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();

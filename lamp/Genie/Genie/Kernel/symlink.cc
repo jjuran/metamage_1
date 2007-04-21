@@ -35,6 +35,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_symlink )
+	DEFINE_MODULE_INIT(  Kernel_symlink )
+	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;

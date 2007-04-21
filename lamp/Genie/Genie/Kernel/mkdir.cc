@@ -17,6 +17,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_mkdir )
+	DEFINE_MODULE_INIT(  Kernel_mkdir )
+	
 	static int mkdir( const char* pathname, mode_t mode )
 	{
 		try

@@ -27,6 +27,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_copyfile )
+	DEFINE_MODULE_INIT(  Kernel_copyfile )
+	
 	namespace N = Nitrogen;
 	
 	static void FSpFileCopy( const FSSpec&         source,

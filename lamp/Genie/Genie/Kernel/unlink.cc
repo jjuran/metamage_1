@@ -24,6 +24,9 @@
 namespace Genie
 {
 	
+	DECLARE_MODULE_INIT( Kernel_unlink )
+	DEFINE_MODULE_INIT(  Kernel_unlink )
+	
 	static int unlink( const char* pathname )
 	{
 		try
