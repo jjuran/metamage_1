@@ -25,7 +25,7 @@
 #include "POSeven/FileDescriptor.hh"
 
 // Kerosene
-#if TARGET_RT_MAC_CFM
+#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 #include "SystemCalls.hh"
 #endif
 
@@ -41,7 +41,7 @@ namespace O = Orion;
 
 static N::InetHost ResolveHostname( const char* hostname )
 {
-#if TARGET_RT_MAC_CFM
+#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 	
 	return N::OTInetStringToAddress( InternetServices(),
 	                                 (char*) hostname ).addrs[ 0 ];
