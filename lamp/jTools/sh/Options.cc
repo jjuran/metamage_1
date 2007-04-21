@@ -5,7 +5,9 @@
 #include "Options.hh"
 
 // Standard C++
+#include <algorithm>
 #include <set>
+#include <string>
 
 
 struct OptionData
