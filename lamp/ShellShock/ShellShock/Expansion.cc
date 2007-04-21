@@ -17,11 +17,11 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen Extras / Templates
-#include "Templates/PointerToFunction.h"
-
 // Kerosene
 #include "SystemCalls.hh"
+
+// ShellShock
+#include "ShellShock/PointerToFunction.h"
 
 
 namespace ShellShock
