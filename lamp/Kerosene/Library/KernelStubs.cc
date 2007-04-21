@@ -20,6 +20,7 @@
 #include "unistd.h"
 
 // Mac OS
+#include <LowMem.h>
 #include <Threads.h>
 
 // Nitrogen
@@ -158,7 +159,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	int          (*peek_import_     )( int fd, const char** buffer, size_t minBytes );
 	int          (*pipe_import_     )( int filedes[ 2 ] );
 	ssize_t      (*read_import_     )( int filedes, void* buf, size_t nbyte );
-	int          (*readlink_import_ )( const char* path, char* buf, int len );
+	int          (*readlink_import_ )( const char* path, char* buf, size_t len );
 	int          (*rename_import_   )( const char* src, const char* dest );
 	int          (*setpgid_import_  )( pid_t pid, pid_t pgid );
 	pid_t        (*setsid_import_   )();
@@ -179,6 +180,48 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 #pragma export reset
 
+OSStatus Path2FSSpec( const char* pathname, FSSpec* outFSS );
+
+namespace
+{
+	
+	template < class SysProcPtr >
+	inline SysProcPtr SystemCall_Cast( SysProcPtr, void* proc )
+	{
+		return reinterpret_cast< SysProcPtr >( proc );
+	}
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	static void* GetSystemCallFunctionPtr( const char* name )
+	{
+		typedef void* (*Getter)( const char* );
+		
+		static Getter getPtr = *reinterpret_cast< Getter* >( LMGetApplScratch() );
+		
+		return getPtr( name );
+	}
+	
+	inline void LoadErrno()
+	{
+		*(void**)LMGetToolScratch() = &errno;
+	}
+	
+	#define LOAD_SYMBOL( syscall )  (syscall ## _import_ = SystemCall_Cast( syscall, GetSystemCallFunctionPtr( #syscall ) ))
+	
+	#define INVOKE( syscall, args )  ( LoadErrno(), LOAD_SYMBOL( syscall ), CHECK_IMPORT( syscall ), syscall ## _import_ args )
+	
+#else
+	
+	#define LOAD_SYMBOL( syscall )  (syscall ## _import_)
+	
+	#define INVOKE( syscall, args )  ( CHECK_IMPORT( syscall ), syscall ## _import_ args )
+	
+#endif
+
+	
+}
+
 #if 0
 #pragma export on
 #endif
@@ -188,51 +231,37 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	DIR* opendir( const char* pathname )
 	{
-		CHECK_IMPORT( opendir );
-		
-		return opendir_import_( pathname );
+		return INVOKE( opendir, ( pathname ) );
 	}
 	
 	int closedir( DIR* dir )
 	{
-		CHECK_IMPORT( closedir );
-		
-		return closedir_import_( dir );
+		return INVOKE( closedir, ( dir ) );
 	}
 	
 	struct dirent* readdir( DIR* dir )
 	{
-		CHECK_IMPORT( readdir );
-		
-		return readdir_import_( dir );
+		return INVOKE( readdir, ( dir ) );
 	}
 	
 	void rewinddir( DIR* dir )
 	{
-		CHECK_IMPORT( rewinddir );
-		
-		return rewinddir_import_( dir );
+		return INVOKE( rewinddir, ( dir ) );
 	}
 	
 	void seekdir( DIR* dir, off_t offset )
 	{
-		CHECK_IMPORT( seekdir );
-		
-		return seekdir_import_( dir, offset );
+		return INVOKE( seekdir, ( dir, offset ) );
 	}
 	
 	off_t telldir( DIR* dir )
 	{
-		CHECK_IMPORT( telldir );
-		
-		return telldir_import_( dir );
+		return INVOKE( telldir, ( dir ) );
 	}
 	
 	int dirfd( DIR* dir )
 	{
-		CHECK_IMPORT( dirfd );
-		
-		return dirfd_import_( dir );
+		return INVOKE( dirfd, ( dir ) );
 	}
 	
 	#pragma mark -
@@ -242,16 +271,12 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	int fcntl( int fd, int cmd, int param )
 	{
-		CHECK_IMPORT( fcntl );
-		
-		return fcntl_import_( fd, cmd, param );
+		return INVOKE( fcntl, ( fd, cmd, param ) );
 	}
 	
 	int open( const char* path, int oflags, mode_t mode )
 	{
-		CHECK_IMPORT( open );
-		
-		return open_import_( path, oflags, mode );
+		return INVOKE( open, ( path, oflags, mode ) );
 	}
 	
 #else
@@ -266,9 +291,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 		
 		va_end( va );
 		
-		CHECK_IMPORT( fcntl );
-		
-		return fcntl_import_( fd, cmd, param );
+		return INVOKE( fcntl, ( fd, cmd, param ) );
 	}
 	
 	int open( const char* path, int oflags, ... )
@@ -281,9 +304,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 		
 		va_end( va );
 		
-		CHECK_IMPORT( open );
-		
-		return open_import_( path, oflags, mode );
+		return INVOKE( open, ( path, oflags, mode ) );
 	}
 	
 #endif
@@ -293,46 +314,40 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	int kill( pid_t pid, int sig )
 	{
-		//CHECK_IMPORT( kill );
+		LOAD_SYMBOL( kill );
+		
 		CheckCriticalImport( kill_import_ );
 		
-		return kill_import_( pid, sig );
+		return INVOKE( kill, ( pid, sig ) );
 	}
 	
 	int sigaction( int signum, const struct sigaction* act, struct sigaction* oldact )
 	{
-		CHECK_IMPORT( sigaction );
-		
-		return sigaction_import_( signum, act, oldact );
+		return INVOKE( sigaction, ( signum, act, oldact ) );
 	}
 	
 	int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
 	{
-		CHECK_IMPORT( sigprocmask );
-		
-		return sigprocmask_import_( how, set, oldset );
+		return INVOKE( sigprocmask, ( how, set, oldset ) );
 	}
 	
 	int sigpending( sigset_t* set )
 	{
-		CHECK_IMPORT( sigpending );
-		
-		return sigpending_import_( set );
+		return INVOKE( sigpending, ( set ) );
 	}
 	
 	int sigsuspend( const sigset_t* mask )
 	{
-		CHECK_IMPORT( sigsuspend );
-		
-		return sigsuspend_import_( mask );
+		return INVOKE( sigsuspend, ( mask ) );
 	}
 	
 	__sig_handler signal( int sig, __sig_handler func )
 	{
-		//CHECK_IMPORT( signal );
+		LOAD_SYMBOL( signal );
+		
 		CheckCriticalImport( signal_import_ );
 		
-		return signal_import_( sig, func );
+		return INVOKE( signal, ( sig, func ) );
 	}
 	
 	#pragma mark -
@@ -340,37 +355,27 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	char* getenv( const char* name )
 	{
-		CHECK_IMPORT( getenv );
-		
-		return getenv_import_( name );
+		return INVOKE( getenv, ( name ) );
 	}
 	
 	int setenv( const char* name, const char* value, int overwrite )
 	{
-		CHECK_IMPORT( setenv );
-		
-		return setenv_import_( name, value, overwrite );
+		return INVOKE( setenv, ( name, value, overwrite ) );
 	}
 	
 	int putenv( const char* string )
 	{
-		CHECK_IMPORT( putenv );
-		
-		return putenv_import_( string );
+		return INVOKE( putenv, ( string ) );
 	}
 	
 	void unsetenv( const char* name )
 	{
-		CHECK_IMPORT( unsetenv );
-		
-		return unsetenv_import_( name );
+		return INVOKE( unsetenv, ( name ) );
 	}
 	
 	int clearenv()
 	{
-		CHECK_IMPORT( clearenv );
-		
-		return clearenv_import_();
+		return INVOKE( clearenv, () );
 	}
 	
 	#pragma mark -
@@ -378,9 +383,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	int ioctl( int fd, unsigned long cmd, int* argp )
 	{
-		CHECK_IMPORT( ioctl );
-		
-		return ioctl_import_( fd, cmd, argp );
+		return INVOKE( ioctl, ( fd, cmd, argp ) );
 	}
 	
 	#pragma mark -
@@ -390,9 +393,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	                   fd_set*  writefds,
 	                   fd_set*  exceptfds, struct timeval* timeout )
 	{
-		CHECK_IMPORT( select );
-		
-		return select_import_( n, readfds, writefds, exceptfds, timeout );
+		return INVOKE( select, ( n, readfds, writefds, exceptfds, timeout ) );
 	}
 	
 	#pragma mark -
@@ -400,100 +401,72 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	int socket( int domain, int type, int protocol )
 	{
-		CHECK_IMPORT( socket );
-		
-		return socket_import_( domain, type, protocol );
+		return INVOKE( socket, ( domain, type, protocol ) );
 	}
 	
 	int bind( int sockfd, const struct sockaddr* name, socklen_t namelen )
 	{
-		CHECK_IMPORT( bind );
-		
-		return bind_import_( sockfd, name, namelen );
+		return INVOKE( bind, ( sockfd, name, namelen ) );
 	}
 	
 	int listen( int sockfd, int backlog )
 	{
-		CHECK_IMPORT( listen );
-		
-		return listen_import_( sockfd, backlog );
+		return INVOKE( listen, ( sockfd, backlog ) );
 	}
 	
 	int accept( int sockfd, struct sockaddr* addr, socklen_t* addrlen )
 	{
-		CHECK_IMPORT( accept );
-		
-		return accept_import_( sockfd, addr, addrlen );
+		return INVOKE( accept, ( sockfd, addr, addrlen ) );
 	}
 	
 	int connect( int sockfd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	{
-		CHECK_IMPORT( connect );
-		
-		return connect_import_( sockfd, serv_addr, addrlen );
+		return INVOKE( connect, ( sockfd, serv_addr, addrlen ) );
 	}
 	
 	ssize_t send  ( int s, const void* buf, size_t len, int flags )
 	{
-		CHECK_IMPORT( send );
-		
-		return send_import_( s, buf, len, flags );
+		return INVOKE( send, ( s, buf, len, flags ) );
 	}
 	
 	ssize_t sendto( int s, const void* buf, size_t len, int flags, const struct sockaddr* to, socklen_t tolen )
 	{
-		CHECK_IMPORT( sendto );
-		
-		return sendto_import_( s, buf, len, flags, to, tolen );
+		return INVOKE( sendto, ( s, buf, len, flags, to, tolen ) );
 	}
 	
 	ssize_t recv( int s, void* buf, size_t len, int flags )
 	{
-		CHECK_IMPORT( recv );
-		
-		return recv_import_( s, buf, len, flags );
+		return INVOKE( recv, ( s, buf, len, flags ) );
 	}
 	
 	ssize_t recvfrom( int s, void* buf, size_t len, int flags, struct sockaddr* from, socklen_t* fromlen )
 	{
-		CHECK_IMPORT( recvfrom );
-		
-		return recvfrom_import_( s, buf, len, flags, from, fromlen );
+		return INVOKE( recvfrom, ( s, buf, len, flags, from, fromlen ) );
 	}
 	
 	int getsockname( int sockfd, struct sockaddr* name, socklen_t* namelen )
 	{
-		CHECK_IMPORT( getsockname );
-		
-		return getsockname_import_( sockfd, name, namelen );
+		return INVOKE( getsockname, ( sockfd, name, namelen ) );
 	}
 	
 	int getpeername( int sockfd, struct sockaddr* name, socklen_t* namelen )
 	{
-		CHECK_IMPORT( getpeername );
-		
-		return getpeername_import_( sockfd, name, namelen );
+		return INVOKE( getpeername, ( sockfd, name, namelen ) );
 	}
 	
 	int getsockopt( int s, int level, int optname, void* optval, socklen_t* optlen )
 	{
-		CHECK_IMPORT( getsockopt );
-		
-		return getsockopt_import_( s, level, optname, optval, optlen );
+		return INVOKE( getsockopt, ( s, level, optname, optval, optlen ) );
 	}
 	
 	int setsockopt( int s, int  level, int optname, const void* optval, socklen_t optlen )
 	{
-		CHECK_IMPORT( setsockopt );
-		
-		return setsockopt_import_( s, level, optname, optval, optlen );
+		return INVOKE( setsockopt, ( s, level, optname, optval, optlen ) );
 	}
 	
 	int shutdown( int s, int how )
 	{
-		CHECK_IMPORT( shutdown );
-		
-		return shutdown_import_( s, how );
+		return INVOKE( shutdown, ( s, how ) );
 	}
 	
 	#pragma mark -
@@ -501,49 +474,27 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	int chmod( const char *path, mode_t mode )
 	{
-		if ( chmod_import_ == NULL )
-		{
-			Errno() = EINVAL;
-			return -1;
-		}
-		
-		CHECK_IMPORT( chmod );
-		
-		return chmod_import_( path, mode );
+		return INVOKE( chmod, ( path, mode ) );
 	}
 	
 	int fchmod( int filedes, mode_t mode )
 	{
-		if ( fchmod_import_ == NULL )
-		{
-			Errno() = EINVAL;
-			return -1;
-		}
-		
-		CHECK_IMPORT( fchmod );
-		
-		return fchmod_import_( filedes, mode );
+		return INVOKE( fchmod, ( filedes, mode ) );
 	}
 	
 	int fstat( int filedes, struct stat* buf )
 	{
-		CHECK_IMPORT( fstat );
-		
-		return fstat_import_( filedes, buf );
+		return INVOKE( fstat, ( filedes, buf ) );
 	}
 	
-	int lstat( const char* file_name, struct stat* buf)
+	int lstat( const char* file_name, struct stat* buf )
 	{
-		CHECK_IMPORT( lstat );
-		
-		return lstat_import_( file_name, buf );
+		return INVOKE( lstat, ( file_name, buf ) );
 	}
 	
-	int stat( const char* file_name, struct stat* buf)
+	int stat( const char* file_name, struct stat* buf )
 	{
-		CHECK_IMPORT( stat );
-		
-		return stat_import_( file_name, buf );
+		return INVOKE( stat, ( file_name, buf ) );
 	}
 	
 	#pragma mark -
@@ -551,9 +502,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	int uname( struct utsname* uts )
 	{
-		CHECK_IMPORT( uname );
-		
-		return uname_import_( uts );
+		return INVOKE( uname, ( uts ) );
 	}
 	
 	#pragma mark -
@@ -579,9 +528,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		CHECK_IMPORT( waitpid );
-		
-		return waitpid_import_( pid, stat_loc, options );
+		return INVOKE( waitpid, ( pid, stat_loc, options ) );
 	}
 	
 	#pragma mark -
@@ -589,234 +536,177 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	unsigned int alarm( unsigned int seconds )
 	{
-		CHECK_IMPORT( alarm );
-		
-		return alarm_import_( seconds );
+		return INVOKE( alarm, ( seconds ) );
 	}
 	
 	int chdir( const char* path )
 	{
-		CHECK_IMPORT( chdir );
-		
-		return chdir_import_( path );
+		return INVOKE( chdir, ( path ) );
 	}
 	
 	int close( int filedes )
 	{
-		CHECK_IMPORT( close );
-		
-		return close_import_( filedes );
+		return INVOKE( close, ( filedes ) );
 	}
 	
 	int copyfile( const char* src, const char* dest )
 	{
-		CHECK_IMPORT( copyfile );
-		
-		return copyfile_import_( src, dest );
+		return INVOKE( copyfile, ( src, dest ) );
 	}
 	
 	int dup( int filedes )
 	{
-		CHECK_IMPORT( dup );
-		
-		return dup_import_( filedes );
+		return INVOKE( dup, ( filedes ) );
 	}
 	
 	int dup2( int filedes, int filedes2 )
 	{
-		CHECK_IMPORT( dup2 );
-		
-		return dup2_import_( filedes, filedes2 );
+		return INVOKE( dup2, ( filedes, filedes2 ) );
 	}
 	
 	int execve_Kernel( const char* path, const char* const argv[], const char* const* envp )
 	{
-		CHECK_IMPORT( execve );
-		
-		return execve_import_( path, argv, envp );
+		return INVOKE( execve, ( path, argv, envp ) );
 	}
 	
 	void _exit_Kernel( int status )
 	{
-		//CHECK_IMPORT( _exit );
+		LOAD_SYMBOL( _exit );
+		
 		CheckCriticalImport( _exit_import_ );
 		
-		_exit_import_( status );  // Terminates process but returns if forked
+		return INVOKE( _exit, ( status ) );  // Terminates process but returns if forked
 	}
 	
 	int SpawnVFork()
 	{
-		CHECK_IMPORT( SpawnVFork );
-		
-		return SpawnVFork_import_();
+		return INVOKE( SpawnVFork, () );
 	}
 	
 	char* getcwd( char* buf, size_t size )
 	{
-		CHECK_IMPORT( getcwd );
-		
-		return getcwd_import_( buf, size );
+		return INVOKE( getcwd, ( buf, size ) );
 	}
 	
 	pid_t getpid()
 	{
-		//CHECK_IMPORT( getpid );
-		
-		return getpid_import_();
+		return INVOKE( getpid, () );
 	}
 	
 	pid_t getpgid( pid_t pid )
 	{
-		CHECK_IMPORT( getpgid );
-		
-		return getpgid_import_( pid );
+		return INVOKE( getpgid, ( pid ) );
 	}
 	
 	pid_t getppid()
 	{
-		CHECK_IMPORT( getppid );
-		
-		return getppid_import_();
+		return INVOKE( getppid, () );
 	}
 	
 	off_t lseek( int fildes, off_t offset, int whence )
 	{
-		CHECK_IMPORT( lseek );
-		
-		return lseek_import_( fildes, offset, whence );
+		return INVOKE( lseek, ( fildes, offset, whence ) );
 	}
 	
 	int mkdir( const char* pathname, mode_t mode )
 	{
-		CHECK_IMPORT( mkdir );
-		
-		return mkdir_import_( pathname, mode );
+		return INVOKE( mkdir, ( pathname, mode ) );
 	}
 	
 	int rmdir( const char* pathname )
 	{
-		CHECK_IMPORT( rmdir );
-		
-		return rmdir_import_( pathname );
+		return INVOKE( rmdir, ( pathname ) );
 	}
 	
 	int pause()
 	{
-		CHECK_IMPORT( pause );
-		
-		return pause_import_();
+		return INVOKE( pause, () );
 	}
 	
 	int peek( int fd, const char** buffer, size_t minBytes )
 	{
-		CHECK_IMPORT( peek );
-		
-		return peek_import_( fd, buffer, minBytes );
+		return INVOKE( peek, ( fd, buffer, minBytes ) );
 	}
 	
 	int pipe( int filedes[ 2 ] )
 	{
-		CHECK_IMPORT( pipe );
-		
-		return pipe_import_( filedes );
+		return INVOKE( pipe, ( filedes ) );
 	}
 	
 	ssize_t read( int filedes, void* buf, size_t nbyte )
 	{
-		CHECK_IMPORT( read );
-		
-		return read_import_( filedes, buf, nbyte );
+		return INVOKE( read, ( filedes, buf, nbyte ) );
 	}
 	
 	int readlink( const char* path, char* buf, size_t len )
 	{
-		CHECK_IMPORT( readlink );
-		
-		return readlink_import_( path, buf, len );
+		return INVOKE( readlink, ( path, buf, len ) );
 	}
 	
 	int rename( const char* src, const char* dest )
 	{
-		CHECK_IMPORT( rename );
-		
-		return rename_import_( src, dest );
+		return INVOKE( rename, ( src, dest ) );
 	}
 	
 	int setpgid( pid_t pid, pid_t pgid )
 	{
-		CHECK_IMPORT( setpgid );
-		
-		return setpgid_import_( pid, pgid );
+		return INVOKE( setpgid, ( pid, pgid ) );
 	}
 	
 	pid_t setsid()
 	{
-		CHECK_IMPORT( setsid );
-		
-		return setsid_import_();
+		return INVOKE( setsid, () );
 	}
 	
 	unsigned int sleep( unsigned int seconds )
 	{
-		CHECK_IMPORT( sleep );
-		
-		return sleep_import_( seconds );
+		return INVOKE( sleep, ( seconds ) );
 	}
 	
 	int symlink( const char* target, const char* link )
 	{
-		CHECK_IMPORT( symlink );
-		
-		return symlink_import_( target, link );
+		return INVOKE( symlink, ( target, link ) );
 	}
 	
 	int truncate( const char* path, off_t length )
 	{
-		CHECK_IMPORT( truncate );
-		
-		return truncate_import_( path, length );
+		return INVOKE( truncate, ( path, length ) );
 	}
 	
 	int ftruncate( int fd, off_t length )
 	{
-		CHECK_IMPORT( ftruncate );
-		
-		return ftruncate_import_( fd, length );
+		return INVOKE( ftruncate, ( fd, length ) );
 	}
 	
 	const char* ttyname( int filedes )
 	{
-		CHECK_IMPORT( ttyname );
-		
-		return ttyname_import_( filedes );
+		return INVOKE( ttyname, ( filedes ) );
 	}
 	
 	int ttypair( int filedes[ 2 ] )
 	{
-		CHECK_IMPORT( ttypair );
-		
-		return ttypair_import_( filedes );
+		return INVOKE( ttypair, ( filedes ) );
 	}
 	
 	int unlink( const char* pathname )
 	{
-		CHECK_IMPORT( unlink );
-		
-		return unlink_import_( pathname );
+		return INVOKE( unlink, ( pathname ) );
 	}
 	
 	ssize_t write( int filedes, const void* buf, size_t nbyte )
 	{
+		LOAD_SYMBOL( write );
+		
 		if ( write_import_ == NULL )
 		{
 			// There's not much we can do.
 			// write() and _exit() are currently in the same module,
-			// and the chance that signal() is available is very slight.
+			// and the chance that kill() is available is very slight.
 			
 			EnterComa();
 		}
 		
-		return write_import_( filedes, buf, nbyte );
+		return INVOKE( write, ( filedes, buf, nbyte ) );
 	}
 	
 	#pragma mark -
@@ -824,9 +714,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	int* ErrnoPtr()
 	{
-		CHECK_IMPORT( ErrnoPtr );
-		
-		int* errnoPtr = ErrnoPtr_import_();
+		int* errnoPtr = INVOKE( ErrnoPtr, () );
 		
 		//ASSERT( errnoPtr != NULL );
 		
@@ -835,9 +723,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	char*** EnvironPtr()
 	{
-		CHECK_IMPORT( EnvironPtr );
-		
-		char*** environPtr = EnvironPtr_import_();
+		char*** environPtr = INVOKE( EnvironPtr, () );
 		
 		//ASSERT( environPtr != NULL );
 		
@@ -846,26 +732,20 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
-		CHECK_IMPORT( AESendBlocking );
-		
-		return AESendBlocking_import_( appleEvent, reply );
+		return INVOKE( AESendBlocking, ( appleEvent, reply ) );
 	}
 	
 	InetSvcRef InternetServices()
 	{
-		CHECK_IMPORT( InternetServices );
-		
-		return InternetServices_import_();
+		return INVOKE( InternetServices, () );
 	}
 	
 	FSSpec Path2FSS( const char* pathname )
 	{
-		CHECK_IMPORT( Path2FSSpec );
-	
 		FSSpec spec;	
 		//Nitrogen::ThrowOSStatus( stub( pathname, &spec ) );
 		
-		OSStatus err = Path2FSSpec_import_( pathname, &spec );
+		OSStatus err = INVOKE( Path2FSSpec, ( pathname, &spec ) );
 		
 		if ( err != noErr )
 		{
