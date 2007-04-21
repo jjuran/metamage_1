@@ -230,6 +230,8 @@ namespace Genie
 			
 			FileDescriptorMap& FileDescriptors()  { return itsFileDescriptors; }
 			
+			char** Environ() const  { return itsEnvironStorage->GetPointer(); }
+			
 			int const* ErrnoData()  const { return itsErrnoData; }
 			int      * ErrnoData()        { return itsErrnoData; }
 			
