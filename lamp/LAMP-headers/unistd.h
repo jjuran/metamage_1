@@ -6,11 +6,18 @@
 #ifndef KEROSENE_UNISTD_H
 #define KEROSENE_UNISTD_H
 
+// Mac OS Universal Interfaces
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
+#endif
+
+// Standard C
 #include <stddef.h>
 
-#include "sys/time.h"
-#include "sys/types.h"
-#include "vfork.h"
+// POSIX
+#include <sys/time.h>
+#include <sys/types.h>
+#include <vfork.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +27,25 @@ extern "C" {
 	#define STDOUT_FILENO   1       /* Standard output.  */
 	#define STDERR_FILENO   2       /* Standard error output.  */
 	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	// ToolScratch:  addr = 0x09CE, len = 8 bytes
+	
+# ifdef __cplusplus
+	
+	static char**& environ = *reinterpret_cast< char*** >(0x09CE + 4);
+	
+# else
+	
+	#define environ  (*(char***)(0x09CE + 4))
+	
+# endif
+	
+#else
+	
 	extern char** environ;
+	
+#endif
 	
 	unsigned int alarm( unsigned int seconds );
 	
