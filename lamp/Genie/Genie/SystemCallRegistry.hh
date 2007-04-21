@@ -29,14 +29,14 @@ namespace Genie
 	
 	// Register system calls
 	
-	#define REGISTER_SYSTEM_CALL(call)  SystemCall call##_syscall_(#call, (void*) call)
+	#define REGISTER_SYSTEM_CALL(call)  SystemCallRegistration call##_syscall_(#call, (void*) call)
 	
 	void RegisterSystemCall( const char* name, void* func );
 	
-	class SystemCall
+	class SystemCallRegistration
 	{
 		public:
-			SystemCall( const char* name, void* func )
+			SystemCallRegistration( const char* name, void* func )
 			{
 				RegisterSystemCall( name, func );
 			}
