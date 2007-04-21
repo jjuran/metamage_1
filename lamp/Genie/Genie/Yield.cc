@@ -53,6 +53,14 @@ namespace Genie
 		}
 	}
 	
+	struct ToolScratchGlobals
+	{
+		int*    err;
+		char**  env;
+	};
+	
+	static ToolScratchGlobals& gToolScratchGlobals = *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
+	
 	void Yield()
 	{
 		Process* me = gCurrentProcess;
@@ -64,6 +72,8 @@ namespace Genie
 		N::YieldToAnyThread();
 		
 		gCurrentProcess = me;
+		
+		gToolScratchGlobals.env = me->Environ();
 		
 		me->SetSchedule( kProcessRunning );
 		
