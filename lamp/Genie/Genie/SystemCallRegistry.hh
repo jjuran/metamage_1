@@ -6,6 +6,10 @@
 #ifndef GENIE_SYSTEMCALLREGISTRY_HH
 #define GENIE_SYSTEMCALLREGISTRY_HH
 
+// Standard C++
+#include <vector>
+
+
 namespace Genie
 {
 	
@@ -42,12 +46,24 @@ namespace Genie
 			}
 	};
 	
-	// Iterate over registered system calls
+	struct SystemCall
+	{
+		const char*  name;
+		void*        function;
+		
+		SystemCall()  {}
+		
+		SystemCall( const char* nom, void* f ) : name( nom ), function( f )  {}
+	};
 	
-	typedef std::map< const char*, void* > SystemCallRegistry;
+	typedef std::vector< SystemCall > SystemCallRegistry;
+	
+	// Iterate over registered system calls
 	
 	SystemCallRegistry::const_iterator SystemCallsBegin();
 	SystemCallRegistry::const_iterator SystemCallsEnd();
+	
+	unsigned LookUpSystemCallIndex( const char* name );
 	
 }
 
