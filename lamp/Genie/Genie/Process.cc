@@ -94,6 +94,69 @@ namespace Genie
 	
 	GenieProcessTable gProcessTable;
 	
+	
+	static void* GetSystemCallFunctionPtr( const char* name )
+	{
+		return ( SystemCallsBegin() + LookUpSystemCallIndex( name ) )->function;
+	}
+	
+	struct ToolScratchGlobals
+	{
+		int*    err;
+		char**  env;
+	};
+	
+	static ToolScratchGlobals& gToolScratchGlobals = *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
+	
+	static const char* FindSequenceInMemory( const char* mem_begin,
+	                                         const char* mem_end,
+	                                         const char* seq_begin,
+	                                         const char* seq_end )
+	{
+		std::ptrdiff_t sequence_length = seq_end - seq_begin;
+		
+		while ( sequence_length <= mem_end - mem_begin )
+		{
+			if ( std::equal( seq_begin, seq_end, mem_begin ) )
+			{
+				return mem_begin;
+			}
+			
+			++mem_begin;
+		}
+		
+		return mem_end;
+	}
+	
+	typedef long (*SetCurrentA4ProcPtr)();
+	
+	static SetCurrentA4ProcPtr GetCurrentA4Setter( void* mainPtr )
+	{
+		const char* codeBytes = (char*) mainPtr;
+		
+		const char* end = codeBytes + N::GetPtrSize( (Ptr) mainPtr );
+		
+		const std::ptrdiff_t patternOffset = 10;
+		
+		const UInt16 pattern[] = { 0x2008, 0xA055, 0xC18C, 0x4E75 };
+		
+		const char* pattern_location = FindSequenceInMemory( codeBytes,
+		                                                     end,
+		                                                     (const char*) pattern,
+		                                                     (const char*) pattern + sizeof pattern );
+		
+		if ( pattern_location == end )
+		{
+			throw N::ParamErr();  // FIXME
+		}
+		
+		const char* address_of_SetCurrentA4 = pattern_location - patternOffset;
+		
+		SetCurrentA4ProcPtr setCurrentA4 = (SetCurrentA4ProcPtr) address_of_SetCurrentA4;
+		
+		return setCurrentA4;
+	}
+	
 	int ExternalProcessExecutor::operator()( ThreadContext& context ) const
 	{
 		context.processContext->InitThread();
@@ -124,13 +187,18 @@ namespace Genie
 			
 		#endif
 			
+			gToolScratchGlobals.err = NULL;  // errno
+			gToolScratchGlobals.env = context.processContext->Environ();  // environ
+			
 			if ( TARGET_CPU_68K && !TARGET_RT_MAC_CFM )
 			{
-				Rect r = { 1, 2, 3, 4 };
+				void* outOfBandData[3] = { GetSystemCallFunctionPtr, NULL, NULL };
 				
-				LMSetToolScratch( &r );
+				LMSetApplScratch( outOfBandData );
 				
-				Ptr p = LMGetToolScratch();
+				SetCurrentA4ProcPtr setCurrentA4 = GetCurrentA4Setter( mainPtr );
+				
+				setCurrentA4();
 			}
 			
 			result = mainPtr( Sh::CountStringArray( context.argv ),
@@ -336,6 +404,11 @@ namespace Genie
 		itsErrnoData          ( gProcessTable[ ppid ].itsErrnoData ),
 		itsEnvironData        ( gProcessTable[ ppid ].itsEnvironData )
 	{
+		if ( itsEnvironData == NULL )
+		{
+			itsEnvironData = &gToolScratchGlobals.env;
+		}
+		
 		// The environment data and the pointer to the fragment's environ
 		// variable have been copied from the parent.
 		// The calling fragment is now associated with the new process.
@@ -410,8 +483,8 @@ namespace Genie
 			
 			bool operator()( SystemCallRegistry::value_type systemCall ) const
 			{
-				std::string name = systemCall.first;
-				void*       func = systemCall.second;
+				std::string name = systemCall.name;
+				void*       func = systemCall.function;
 				
 				name += "_import_";
 				
@@ -592,6 +665,8 @@ namespace Genie
 			itsEnvironStorage.reset( new Sh::VarArray( envp ) );
 		}
 		
+	#if TARGET_RT_MAC_CFM
+		
 		try
 		{
 			itsEnvironData = NULL;
@@ -611,6 +686,8 @@ namespace Genie
 		catch ( ... ) {}
 		
 		ImportSystemCalls( itsFragmentConnection );
+		
+	#endif
 		
 		Result( 0 );
 		
@@ -703,6 +780,11 @@ namespace Genie
 	
 	int Process::SetErrno( int errorNumber )
 	{
+		if ( itsErrnoData == NULL )
+		{
+			itsErrnoData = gToolScratchGlobals.err;
+		}
+		
 		if ( itsErrnoData != NULL )
 		{
 			*itsErrnoData = errorNumber;
