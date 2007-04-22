@@ -24,13 +24,9 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
-// Kerosene
-#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
-#include "SystemCalls.hh"
-#endif
-
 // Orion
 #include "Orion/Main.hh"
+#include "Orion/StandardIO.hh"
 
 
 namespace N = Nitrogen;
@@ -41,13 +37,6 @@ namespace O = Orion;
 
 static N::InetHost ResolveHostname( const char* hostname )
 {
-#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
-	
-	return N::OTInetStringToAddress( InternetServices(),
-	                                 (char*) hostname ).addrs[ 0 ];
-	
-#else
-	
 	hostent* hosts = gethostbyname( hostname );
 	
 	if ( !hosts || h_errno )
@@ -59,8 +48,6 @@ static N::InetHost ResolveHostname( const char* hostname )
 	in_addr addr = *(in_addr*) hosts->h_addr;
 	
 	return N::InetHost( addr.s_addr );
-	
-#endif
 }
 
 static P7::FileDescriptor Connect( const char* hostname, const char* port_str )
@@ -86,7 +73,7 @@ int O::Main( int argc, char const *const argv[] )
 {
 	if ( argc < 4 )
 	{
-		const char* usage = "tcpclient: Usage:  tcpclient <host> <port> <program argv>\n";
+		const char usage[] = "tcpclient: Usage:  tcpclient <host> <port> <program argv>\n";
 		
 		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
 		
