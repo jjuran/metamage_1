@@ -604,6 +604,8 @@ namespace ALine
 		
 		std::string link;
 		
+		std::string expeditedLib;
+		
 		if ( needLibs )
 		{
 			std::vector< FSSpec > usedLibFiles = GetUsedLibraries( project, targetName );
@@ -621,6 +623,20 @@ namespace ALine
 				                                     N::PtrFun( ModifiedDate ) ) );
 				
 				needToLink = found != usedLibFiles.end();
+			}
+			
+			for ( std::vector< FSSpec >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
+			{
+				if ( NN::Convert< std::string >( it->name ) == "Orion.lib" )
+				{
+					expeditedLib = q( GetPathname( *it ) );
+					
+					std::copy( it + 1, usedLibFiles.end(), it );
+					
+					usedLibFiles.resize( usedLibFiles.size() - 1 );
+					
+					break;
+				}
 			}
 			
 			// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
@@ -683,7 +699,7 @@ namespace ALine
 		
 		command << cmdgen.Output( outputPathname );
 		
-		command << objectFilePaths << link;
+		command << expeditedLib << objectFilePaths << link;
 		
 		if ( gnu )
 		{
