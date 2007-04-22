@@ -15,7 +15,7 @@
 #include "Utilities/Files.h"
 
 // Kerosene
-#if TARGET_RT_MAC_CFM
+#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 #include "SystemCalls.hh"
 #endif
 
