@@ -3708,7 +3708,7 @@ Perl_new_struct_thread(pTHX_ struct perl_thread *t)
 }
 #endif /* USE_THREADS */
 
-#if defined(HUGE_VAL) || (defined(USE_LONG_DOUBLE) && defined(HUGE_VALL))
+#if !defined(MACOS_LAMP) && ( defined(HUGE_VAL) || (defined(USE_LONG_DOUBLE) && defined(HUGE_VALL)) )
 /*
  * This hack is to force load of "huge" support from libm.a
  * So it is in perl for (say) POSIX to use. 
