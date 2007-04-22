@@ -11,6 +11,10 @@
 #include <ConditionalMacros.h>
 #endif
 
+#if TARGET_CPU_68K
+#include <LowMem.h>
+#endif
+
 // Standard C
 #include <stddef.h>
 
@@ -33,11 +37,11 @@ extern "C" {
 	
 # ifdef __cplusplus
 	
-	static char**& environ = *reinterpret_cast< char*** >(0x09CE + 4);
+	static char**& environ = *reinterpret_cast< char*** >(LMGetToolScratch() + 4);
 	
 # else
 	
-	#define environ  (*(char***)(0x09CE + 4))
+	#define        environ  (*                 (char***) (LMGetToolScratch() + 4) )
 	
 # endif
 	
