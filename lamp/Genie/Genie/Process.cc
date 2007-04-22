@@ -401,7 +401,7 @@ namespace Genie
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsEnvironStorage     ( new Sh::VarArray( gProcessTable[ ppid ].itsEnvironStorage->GetPointer() ) ),
-		itsErrnoData          ( gProcessTable[ ppid ].itsErrnoData ),
+		itsErrnoData          ( NULL ),
 		itsEnvironData        ( gProcessTable[ ppid ].itsEnvironData )
 	{
 		if ( itsEnvironData == NULL )
@@ -643,6 +643,8 @@ namespace Genie
 		
 		itsArgvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
 		
+		itsErrnoData = NULL;
+		
 		// We need to set the calling fragment's environ back to the parent
 		// process' environment storage.
 		if ( itsEnvironData != NULL )
@@ -679,8 +681,6 @@ namespace Genie
 		
 		try
 		{
-			itsErrnoData = NULL;
-			
 			N::FindSymbol( itsFragmentConnection, "\p" "errno", &itsErrnoData );
 		}
 		catch ( ... ) {}
