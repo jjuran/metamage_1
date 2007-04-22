@@ -3,6 +3,12 @@
  *	=======
  */
 
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
+#endif
+
+#if TARGET_RT_MAC_CFM
+
 // POSIX
 #include "errno.h"
 #include "unistd.h"
@@ -12,11 +18,9 @@
 	
 	int errno;
 	
-#if TARGET_RT_MAC_CFM
-	
 	char** environ;
 	
-#endif
-	
 #pragma export reset
+
+#endif
 
