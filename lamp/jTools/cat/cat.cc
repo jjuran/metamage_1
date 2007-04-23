@@ -3,6 +3,12 @@
  *	======
  */
 
+// Standard C/C++
+#include <cerrno>
+
+// Standard C/C++
+#include <stdio>
+
 // POSIX
 #include "fcntl.h"
 #include "unistd.h"
@@ -21,9 +27,10 @@ namespace O = Orion;
 
 static void DumpFile( P7::FileDescriptor in );
 
-static bool PathnameMeansStdIn( const std::string& pathname )
+static bool PathnameMeansStdIn( const char* pathname )
 {
-	return pathname == "-";
+	return    pathname[0] == '-'
+	       && pathname[1] == '\0';
 }
 
 int O::Main( int argc, const char *const argv[] )
@@ -48,8 +55,8 @@ int O::Main( int argc, const char *const argv[] )
 		
 		if ( fd == -1 )
 		{
-			//Io::Err << "Error " << errno << " opening file " << pathname << "\n";
-			Io::Err << "cat: " << pathname << ": No such file or directory\n";
+			std::fprintf( stderr, "%s: %s: %s\n", argv[0], pathname, std::strerror( errno ) );
+			
 			continue;
 		}
 		
