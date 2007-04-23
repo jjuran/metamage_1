@@ -3,18 +3,20 @@
  *	===========
  */
 
-// Standard C/C++
-#include <cctype>
-
 // Standard C++
 #include <algorithm>
 #include <string>
 #include <vector>
 
+// Standard C/C++
+#include <cctype>
+
 // POSIX
-#include "netinet/in.h"
-#include "sys/socket.h"
-#include "unistd.h"
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 // Io
 #include "io/slurp.hh"
@@ -117,7 +119,12 @@ static std::string ResolverLookup( const std::string& domain )
 
 static std::string OTLookup( const std::string& domain )
 {
-	std::vector< InetMailExchange > results;
+	if ( TARGET_CPU_68K )
+	{
+		return "";
+	}
+	
+	std::vector< InetMailExchange > results;	
 	
 	results.resize( 10 );  // Should be more than enough
 	
@@ -135,6 +142,21 @@ static std::string OTLookup( const std::string& domain )
 	           results.end() );
 	
 	return results.front().exchange;
+}
+
+static struct in_addr ResolveHostname( const char* hostname )
+{
+	hostent* hosts = gethostbyname( hostname );
+	
+	if ( !hosts || h_errno )
+	{
+		Io::Err << "Domain name lookup failed: " << h_errno << "\n";
+		O::ThrowExitStatus( 1 );
+	}
+	
+	in_addr addr = *(in_addr*) hosts->h_addr;
+	
+	return addr;
 }
 
 static void Relay( const std::string&  returnPath,
@@ -182,19 +204,9 @@ static void Relay( const std::string&  returnPath,
 	
 	int smtpPort = 25;
 	
-	// Get the IP address of the SMTP server.
-	//HW::IPAddress ip = HW::DNSResolve( smtpServer );
+	struct in_addr ip = ResolveHostname( smtpServer.c_str() );
 	
-	N::InetHost ip = N::OTInetStringToAddress( InternetServices(),
-	                                           (char*) smtpServer.c_str() ).addrs[ 0 ];
-	
-	/*
-	InetHostInfo hInfo;
-	N::ThrowOSStatus( O::OTInetStringToAddress( (char*)smtpServer.c_str(), &hInfo ) );
-	N::InetHost ip = hInfo.addrs[ 0 ];
-	*/
-	
-	Io::Out << "Address of " << smtpServer << " is " << ip << ".\n";
+	Io::Out << "Address of " << smtpServer << " is " << inet_ntoa( ip ) << ".\n";
 	
 	// Make a new socket
 	
@@ -207,8 +219,8 @@ static void Relay( const std::string&  returnPath,
 	struct sockaddr_in inetAddress;
 	
 	inetAddress.sin_family = AF_INET;
-	inetAddress.sin_port = smtpPort;
-	inetAddress.sin_addr.s_addr = ip;
+	inetAddress.sin_port   = smtpPort;
+	inetAddress.sin_addr   = ip;
 	
 	int result = connect( sock, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) );
 	
