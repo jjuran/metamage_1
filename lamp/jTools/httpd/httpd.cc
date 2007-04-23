@@ -3,29 +3,25 @@
  *	========
  */
 
-// Standard C/c++
-#include <cstdlib>
-#include <cstring>
-
 // Standard C++
 #include <numeric>
 #include <map>
 #include <string>
 #include <vector>
 
-// POSIX
-#include "sys/socket.h"
-#include "sys/stat.h"
-#include "sys/wait.h"
-#include "unistd.h"
+// Standard C/c++
+#include <cstdlib>
+#include <cstring>
 
-#if TARGET_RT_MAC_CFM
-#include "vfork.h"
-#endif
+// POSIX
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 // Nitrogen
 #include "Nitrogen/Folders.h"
-#include "Nitrogen/OpenTransportProviders.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
@@ -42,7 +38,7 @@
 #include "Orion/StandardIO.hh"
 
 // Kerosene
-#if TARGET_RT_MAC_CFM
+#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 #include "SystemCalls.hh"
 #endif
 
@@ -453,7 +449,7 @@ static void SendResponse( const HTTPRequestData& request )
 	{
 		OSType type = kUnknownType;
 		
-	#if TARGET_RT_MAC_CFM
+	#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 		
 		FSSpec file = Path2FSS( pathname );
 		
@@ -469,7 +465,7 @@ static void SendResponse( const HTTPRequestData& request )
 		
 		responseHeader += HTTPHeader( "Content-Type",  contentType                   );
 		
-	#if TARGET_RT_MAC_CFM
+	#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 		
 		responseHeader += HTTPHeader( "X-Mac-Type",    EncodeAsHex( info.fdType    ) );
 		responseHeader += HTTPHeader( "X-Mac-Creator", EncodeAsHex( info.fdCreator ) );
@@ -489,15 +485,15 @@ static void SendResponse( const HTTPRequestData& request )
 
 int O::Main( int /*argc*/, char const* const /*argv*/[] )
 {
-	InetAddress peer;
+	sockaddr_in peer;
 	socklen_t peerlen = sizeof peer;
 	
 	if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 	{
 		Io::Err << "Connection from "
-		        << N::OTInetHostToString( peer.fHost )
+		        << inet_ntoa( peer.sin_addr )
 		        << ", port "
-		        << peer.fPort
+		        << peer.sin_port
 		        << ".\n";
 	}
 	
