@@ -190,7 +190,8 @@ namespace Genie
 			gToolScratchGlobals.err = NULL;  // errno
 			gToolScratchGlobals.env = context.processContext->Environ();  // environ
 			
-			if ( TARGET_CPU_68K && !TARGET_RT_MAC_CFM )
+		#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+			
 			{
 				void* outOfBandData[3] = { GetSystemCallFunctionPtr, NULL, NULL };
 				
@@ -200,6 +201,8 @@ namespace Genie
 				
 				setCurrentA4();
 			}
+			
+		#endif
 			
 			result = mainPtr( Sh::CountStringArray( context.argv ),
 			                  context.argv,
