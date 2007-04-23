@@ -3,9 +3,6 @@
  *	========
  */
 
-// Standard C/C++
-#include <cstdlib>
-
 // Standard C++
 #include <algorithm>
 #include <functional>
@@ -14,16 +11,19 @@
 #include <string>
 #include <vector>
 
-// POSIX
-#include "sys/socket.h"
+// Standard C/C++
+#include <cstdlib>
 
-// Nitrogen
+// POSIX
+#include <arpa/inet.h>
+#include <sys/socket.h>
+
+// Nucleus
 #include "Nucleus/Shared.h"
 
 // Nitrogen
 #include "Nitrogen/DateTimeUtils.h"
 #include "Nitrogen/Folders.h"
-#include "Nitrogen/OpenTransportProviders.h"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
@@ -374,15 +374,15 @@ static void DoLine( const string& line )
 
 int O::Main( int /*argc*/, char const *const /*argv*/[] )
 {
-	InetAddress peer;
+	sockaddr_in peer;
 	socklen_t peerlen = sizeof peer;
 	
 	if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 	{
 		Io::Err << "Connection from "
-		        << N::OTInetHostToString( peer.fHost )
+		        << inet_ntoa( peer.sin_addr )
 		        << ", port "
-		        << peer.fPort
+		        << peer.sin_port
 		        << ".\n";
 	}
 	
