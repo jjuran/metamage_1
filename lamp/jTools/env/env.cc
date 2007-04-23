@@ -3,26 +3,29 @@
  *	======
  */
 
+// Standard C++
+#include <string>
+
 // POSIX
 #include <unistd.h>
-
-// Orion
-#include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
-
-
-namespace O = Orion;
 
 
 static void DumpEnvironment()
 {
+	std::string output;
+	
 	for ( const char* const* envp = environ;  *envp != NULL;  ++envp )
 	{
-		Io::Out << *envp << "\n";
+		output += *envp;
+		output += "\n";
 	}
+	
+	(void) write( STDOUT_FILENO, output.data(), output.size() );
 }
 
-int O::Main( int argc, char const *const /*argv*/[] )
+#pragma export on
+
+int main( int argc, char const *const argv[] )
 {
 	if ( argc == 1  &&  environ != NULL )
 	{
@@ -31,4 +34,6 @@ int O::Main( int argc, char const *const /*argv*/[] )
 	
 	return 0;
 }
+
+#pragma export reset
 
