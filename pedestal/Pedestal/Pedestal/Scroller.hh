@@ -255,7 +255,7 @@ namespace Pedestal
 	}
 	
 	template < ScrollbarAxis axis, class ScrollViewType >
-	inline void ScrollbarAction( ControlRef control, N::ControlPartCode part )
+	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
 	{
 		ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
 		
