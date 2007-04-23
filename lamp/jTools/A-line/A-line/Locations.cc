@@ -65,11 +65,21 @@ namespace ALine {
 	
 	N::FSDirSpec UserProjectsFolder()
 	{
+		if ( const char* projects = getenv( "ALINE_PROJECTS" ) )
+		{
+			return NN::Convert< N::FSDirSpec >( Path2FSS( projects ) );
+		}
+		
 		return UserDeveloperFolder() << "Projects";
 	}
 	
 	static N::FSDirSpec UserLabFolder()
 	{
+		if ( const char* builds = getenv( "ALINE_BUILDS" ) )
+		{
+			return NN::Convert< N::FSDirSpec >( Path2FSS( builds ) );
+		}
+		
 		return CreateFolder( UserDeveloperFolder() & "Lab" );
 	}
 	
