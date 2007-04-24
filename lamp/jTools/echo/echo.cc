@@ -6,9 +6,11 @@
 // Standard C++
 #include <string>
 
+// POSIX
+#include <unistd.h>
+
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace O = Orion;
@@ -54,11 +56,11 @@ std::string join( Iter begin, Iter end, const std::string& glue = "" )
 
 int O::Main( int argc, char const *const argv[] )
 {
-	Io::Out << join( argv + 1,
-	                 argv + argc,
-	                 " " )
-	        << "\n";
+	std::string output = join( argv + 1,
+	                           argv + argc,
+	                           " "          ) + "\n";
 	
+	(void) write( STDOUT_FILENO, output.data(), output.size() );
 	
 	return 0;
 }
