@@ -334,9 +334,10 @@ static void RedirectIO( Sh::Redirection redirection )
 					file = OpenNoClobber( param );
 					Dup2( file, fd );
 					close( file );
+					
+					break;
 				}
 				// else fall through
-				break;
 				
 			case Sh::kRedirectOutputClobbering:
 				file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
