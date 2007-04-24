@@ -127,6 +127,12 @@ namespace Genie
 	
 	NN::Shared< N::Ptr > GetBinaryImage( const FSSpec& file )
 	{
+		if ( TARGET_CPU_68K )
+		{
+			// Can't share code resources among threads, so don't bother caching it
+			return ReadImageFromFile( file );
+		}
+		
 		BinaryFileMetadata metadata = GetFileMetadata( file );
 		
 		BinaryImageCache::iterator it = gBinaryImageCache.find( file );
