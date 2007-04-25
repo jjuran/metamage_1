@@ -70,7 +70,7 @@ my @programs = qw
 	nohup
 	open osascript
 	perl pwd
-	readlink
+	readlink rm rmdir
 	sh sleep stripcr striplf superd
 	tcpcat tcpclient tlsrvr true tty
 	uncaught_exception
@@ -89,7 +89,7 @@ my %fsmap =
 	},
 	bin =>
 	[
-		qw( cat cp echo false kill login mkdir mv pwd readlink sh sleep true ),
+		qw( cat cp echo false kill login mkdir mv pwd readlink rm rmdir sh sleep true ),
 		qw( chmod date ls test ),
 	],
 	etc =>
