@@ -10,7 +10,7 @@ local $| = 1;  # piping hot output
 die "\$HOME must be defined\n" if !exists $ENV{HOME};
 
 my %arches   = qw( m68k 68K  powerpc PPC );
-my %runtimes = qw( cfm CFM );
+my %runtimes = qw( cfm CFM  rsrc Res);
 my %backends = qw( classic Toolbox  carbon Carbon );
 
 my $arch    = $ENV{HOSTTYPE}    or die "Missing HOSTTYPE\n";
@@ -19,8 +19,11 @@ my $backend = $ENV{MAC_BACKEND} or die "Missing MAC_BACKEND\n";
 
 my $build_config_name = join '-', $arches{$arch}, $runtimes{$runtime}, $backends{$backend}, 'Debug';
 
+$build_config_name = shift || $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
+
 my %supported_configs = qw
 (
+	68K-Res-Toolbox-Debug  68k
 	PPC-CFM-Toolbox-Debug  std
 	PPC-CFM-Carbon-Debug   osx
 );
@@ -30,7 +33,7 @@ my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
 # This avoids a bug that squelches error output
 print "Building for $build_config_name...\n";
 
-my $build_area = shift || $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
+my $build_area = $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
 
 my $should_copy_syms = $ENV{LAMP_SYMS};
 
@@ -53,7 +56,8 @@ my @programs = qw
 	A-line
 	abort aevt argv0
 	beep
-	cat cds cp cpres
+	cat cds cp cpres cr2lf
+	divide
 	echo err2text
 	false
 	gzip
@@ -61,14 +65,14 @@ my @programs = qw
 	inetd
 	jtest
 	keymods kill killall
-	login
+	lf2cr lf2crlf login
 	macbin md5sum mkdir mv
 	nohup
 	open osascript
 	perl pwd
 	readlink
-	sh sleep superd
-	tlsrvr true tty
+	sh sleep stripcr striplf superd
+	tcpcat tcpclient tlsrvr true tty
 	uncaught_exception
 );
 my %is_program = map { $_ => 1 } @programs;
@@ -103,7 +107,10 @@ my %fsmap =
 	{
 		bin =>
 		[
-			qw( argv0 beep cds err2text gzip htget keymods killall macbin md5sum nohup open osascript perl tty ),
+			qw( gzip htget killall md5sum nohup open osascript perl tty ),
+			qw( argv0 tcpcat tcpclient ),
+			qw( cidlistener cidmon mcmd ),
+			qw( beep cds cr2lf divide err2text keymods lf2cr lf2crlf macbin stripcr striplf ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
 		lib =>
@@ -154,9 +161,11 @@ sub unique_dir_name
 
 sub build_output
 {
-	my ( $project ) = @_;
+	my ( $project, $foreign_build_tree ) = @_;
 	
-	my $result = "$build_tree/$project/Output/$project";
+	$foreign_build_tree ||= $build_tree;
+	
+	my $result = "$foreign_build_tree/$project/Output/$project";
 	
 	-f $result or die "Missing build output for $project\n";
 	
@@ -199,16 +208,20 @@ sub install_script
 	
 	open( my $fh, '<', $file );
 	
-	read( $fh, my $shebang, 2 );
+	read( $fh, my $data, 1024 );
+	
+	$data =~ m{\r} and warn "Script /$path_from_root/$name contains CR characters\n";
+	
+	my $shebang = substr( $data, 0, 2 );
 	
 	chmod 0700, "$install_path/$name" if $shebang eq '#!';
 }
 
 sub install_program
 {
-	my ( $project, $install_path ) = @_;
+	my ( $project, $install_path, $foreign_build_tree ) = @_;
 	
-	my $output = build_output( $project );
+	my $output = build_output( $project, $foreign_build_tree );
 	
 	copy_file(  $output,       $install_path );
 	copy_file( "$output.xSYM", $install_path )  if $should_copy_syms;
@@ -298,7 +311,10 @@ mkdir $tmp_dir;
 my $lamp = "$tmp_dir/$root_name";
 mkdir $lamp;
 
-install_program( 'Genie', "$lamp/" );
+# Genie is a different config than its programs on 68K
+(my $genie_build_tree = $build_tree) =~ s/-Res-/-Code-/;
+
+install_program( 'Genie', "$lamp/", $genie_build_tree );
 
 create_node( $lamp, 'j' => \%fsmap );
 
