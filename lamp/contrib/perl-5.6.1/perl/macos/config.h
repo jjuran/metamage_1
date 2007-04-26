@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.4  2007-02-28 07:50:25  jax
+Revision 1.5  2007-04-26 15:59:22  jax
+Fixed byte-swapping breakage on 68K.  Apparently MWCPPC defines __BIG_ENDIAN__ but MWC68K does not.
+
+Revision 1.4  2007/02/28 07:50:25  jax
 Fixed broken signal names.
 
 Revision 1.3  2006/04/28 04:35:39  jax
@@ -1164,7 +1167,7 @@ First build released to public
  *	so the default case (for NeXT) is big endian to catch them. 
  *	This might matter for NeXT 3.0.
  */
-#if (defined(CROSSCOMPILE) || defined(MULTIARCH)) && !defined(MACOS_TRADITIONAL)
+#if (defined(CROSSCOMPILE) || defined(MULTIARCH)) && !defined(MACOS_TRADITIONAL) && !defined(MACOS_LAMP)
 #  ifdef __LITTLE_ENDIAN__
 #    if LONGSIZE == 4
 #      define BYTEORDER 0x1234
