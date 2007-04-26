@@ -8,6 +8,9 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Io
 #include "io/slurp.hh"
 
@@ -37,6 +40,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	
 	struct BinaryFileMetadata
 	{
@@ -70,7 +74,6 @@ namespace Genie
 	
 	struct BinaryImageCacheEntry
 	{
-		//BinaryImage         image;
 		NN::Shared< N::Ptr >  image;
 		BinaryFileMetadata   metadata;
 	};
@@ -110,19 +113,87 @@ namespace Genie
 		return BinaryFileMetadata( pb.hFileInfo );
 	}
 	
-	inline NN::Owned< N::Ptr > ReadImageFromResource( const FSSpec& file, N::ResType type, N::ResID id )
+	inline NN::Owned< N::Ptr > ReadProgramAsCodeResource()
 	{
-		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+		N::ResType  resType = N::ResType( 'Wish' );
+		N::ResID    resID   = N::ResID  ( 0      );
 		
-		return NN::Convert< NN::Owned< N::Ptr > >( N::Get1Resource( type, id ) );
+		return NN::Convert< NN::Owned< N::Ptr > >( N::Get1Resource( resType, resID ) );
+	}
+	
+	static bool CFragResourceMemberIsLoadable( const CFragResourceMember& member )
+	{
+		// We aren't using CFM-68K, but it's worth writing correct code anyway
+		if ( member.architecture != kCompiledCFragArch )
+		{
+			return false;
+		}
+		
+		if ( TARGET_CPU_68K )
+		{
+			return true;  // No Carbon on 68K
+		}
+		
+		// Check if fragment name is or ends with "Carbon"
+		N::Str255 name = member.name;
+		
+		const char carbonSuffix[] = "Carbon";
+		
+		const unsigned length = sizeof carbonSuffix - 1;
+		
+		const unsigned char* endOfName = name + 1 + name[0];
+		
+		bool forCarbon = (name[0] >= length) && std::equal( endOfName - length, endOfName, carbonSuffix );
+		
+		return forCarbon == TARGET_API_MAC_CARBON;
+	}
+	
+	static const CFragResourceMember* FindLoadableMemberInCFragResource( const CFragResource& cfrg )
+	{
+		unsigned memberCount = cfrg.memberCount;
+		
+		const CFragResourceMember* member = &cfrg.firstMember;
+		
+		while ( memberCount > 0 )
+		{
+			if ( CFragResourceMemberIsLoadable( *member ) )
+			{
+				return member;
+			}
+			
+			member += member->memberSize;
+			
+			--memberCount;
+		}
+		
+		return NULL;
+	}
+	
+	static NN::Owned< N::Ptr > ReadProgramAsCodeFragment( const FSSpec& file )
+	{
+		N::ResType  resType = N::ResType( kCFragResourceType );  // cfrg
+		N::ResID    resID   = N::ResID  ( kCFragResourceID   );  // 0
+		
+		const CFragResource* cfrg = *N::Handle_Cast< ::CFragResource >( N::Get1Resource( resType, resID ) );
+		
+		const CFragResourceMember* member = FindLoadableMemberInCFragResource( *cfrg );
+		
+		if ( member == NULL )
+		{
+			P7::ThrowErrno( ENOEXEC );
+		}
+		
+		return io::slurp_file< N::PtrFlattener >( file );
 	}
 	
 	inline NN::Owned< N::Ptr > ReadImageFromFile( const FSSpec& file )
 	{
+		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+		
 		const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
 		
-		return rsrc ? ReadImageFromResource( file, N::ResType( 'Wish' ), N::ResID( 0 ) )
-		            : io::slurp_file< N::PtrFlattener >( file );
+		return rsrc ? ReadProgramAsCodeResource(      )
+		            : ReadProgramAsCodeFragment( file );
 	}
 	
 	NN::Shared< N::Ptr > GetBinaryImage( const FSSpec& file )
