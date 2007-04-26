@@ -21,6 +21,7 @@
 
 // Mac OS
 #include <LowMem.h>
+#include <Sound.h>
 #include <Threads.h>
 
 // Nitrogen
@@ -33,6 +34,8 @@
 
 static void EnterComa()
 {
+	::SysBeep( 30 );
+	
 	while ( true )
 	{
 		::YieldToAnyThread();
@@ -43,6 +46,10 @@ static void CheckCriticalImport( void* symbol )
 {
 	if ( symbol == NULL )
 	{
+		const char* message = "Warning:  A critical system call is missing!\n";
+		
+		(void) write( STDERR_FILENO, message, sizeof message - 1 );
+		
 		EnterComa();
 	}
 }
