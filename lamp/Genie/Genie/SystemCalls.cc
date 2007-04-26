@@ -309,6 +309,11 @@ namespace Genie
 		}
 		catch ( const N::OSStatus& err )
 		{
+			if ( err.Get() == resNotFound )
+			{
+				return CurrentProcess().SetErrno( ENOEXEC );
+			}
+			
 			std::string errMsg = "\n";
 			
 			try
@@ -325,10 +330,16 @@ namespace Genie
 			{
 				std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
 			}
+			
+			return GetErrnoFromExceptionInSystemCall();
 		}
-		catch ( ... )  {}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
 		
-		return GetErrnoFromExceptionInSystemCall();
+		// Not reached
+		return 0;
 	}
 	
 	REGISTER_SYSTEM_CALL( execve );
