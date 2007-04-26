@@ -174,16 +174,43 @@ namespace Genie
 		N::ResType  resType = N::ResType( kCFragResourceType );  // cfrg
 		N::ResID    resID   = N::ResID  ( kCFragResourceID   );  // 0
 		
-		const CFragResource* cfrg = *N::Handle_Cast< ::CFragResource >( N::Get1Resource( resType, resID ) );
+		::CFragResource** cfrg = N::Handle_Cast< ::CFragResource >( N::Get1Resource( resType, resID ) );
 		
-		const CFragResourceMember* member = FindLoadableMemberInCFragResource( *cfrg );
+		// Handle dereferenced here
+		const ::CFragResourceMember* member = FindLoadableMemberInCFragResource( **cfrg );
 		
 		if ( member == NULL )
 		{
 			P7::ThrowErrno( ENOEXEC );
 		}
 		
-		return io::slurp_file< N::PtrFlattener >( file );
+		UInt32 offset = member->offset;
+		UInt32 length = member->length;
+		
+		// Handle no longer used here
+		NN::Owned< N::FSFileRefNum > refNum = io::open_for_reading( file );
+		
+		if ( length == kCFragGoesToEOF )
+		{
+			UInt32 eof = N::GetEOF( refNum );
+			
+			if ( offset >= eof )
+			{
+				P7::ThrowErrno( ENOEXEC );
+			}
+			
+			length = eof - offset;
+		}
+		
+		NN::Owned< N::Ptr > data = N::NewPtr( length );
+		
+		N::SetFPos( refNum, N::fsFromStart, offset );
+		
+		io::read( refNum, data.Get().Get(), length );
+		
+		//return io::slurp_file< N::PtrFlattener >( file );
+		
+		return data;
 	}
 	
 	inline NN::Owned< N::Ptr > ReadImageFromFile( const FSSpec& file )
