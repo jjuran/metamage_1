@@ -312,6 +312,7 @@ register struct op *Perl_op asm(stringify(OP_IN_REGISTER));
 #endif
 
 #ifndef BYTEORDER  /* Should never happen -- byteorder is in config.h */
+#   error Should never happen -- byteorder is in config.h
 #   define BYTEORDER 0x1234
 #endif
 
