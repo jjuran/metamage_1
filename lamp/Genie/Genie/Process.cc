@@ -404,7 +404,7 @@ namespace Genie
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsEnvironStorage     ( new Sh::VarArray( gProcessTable[ ppid ].itsEnvironStorage->GetPointer() ) ),
-		itsErrnoData          ( NULL ),
+		itsErrnoData          ( TARGET_RT_MAC_CFM ? gProcessTable[ ppid ].itsErrnoData : NULL ),
 		itsEnvironData        ( gProcessTable[ ppid ].itsEnvironData )
 	{
 		if ( itsEnvironData == NULL )
