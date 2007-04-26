@@ -379,16 +379,7 @@
 		// This is a hack
 		const char* tty_name = ttyname( fd );
 		
-		if ( tty_name == NULL )
-		{
-			return false;
-		}
-		
-		std::string name = tty_name;
-		
-		const char tty[] = "/dev/tty";
-		
-		return name.substr( 0, sizeof tty - 1 ) == tty;
+		return tty_name != NULL;
 	}
 	
 	int setpgrp()
