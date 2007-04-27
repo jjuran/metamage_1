@@ -118,6 +118,13 @@ namespace Genie
 	}
 	*/
 	
+	static void InitProc( CleanupHandlerProc cleanup )
+	{
+		CurrentProcess().SetCleanupHandler( cleanup );
+	}
+	
+	REGISTER_SYSTEM_CALL( InitProc );
+	
 	static int* ErrnoPtr()
 	{
 		return CurrentProcess().ErrnoData();

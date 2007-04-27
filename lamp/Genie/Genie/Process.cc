@@ -381,6 +381,7 @@ namespace Genie
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
 		itsEnvironStorage     ( new Sh::VarArray() ),
+		itsCleanupHandler     (),
 		itsErrnoData          ( NULL ),
 		itsEnvironData        ( NULL )
 	{
@@ -404,6 +405,7 @@ namespace Genie
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsEnvironStorage     ( new Sh::VarArray( gProcessTable[ ppid ].itsEnvironStorage->GetPointer() ) ),
+		itsCleanupHandler     (),
 		itsErrnoData          ( TARGET_RT_MAC_CFM ? gProcessTable[ ppid ].itsErrnoData : NULL ),
 		itsEnvironData        ( gProcessTable[ ppid ].itsEnvironData )
 	{
@@ -927,6 +929,11 @@ namespace Genie
 		itsSchedule = kProcessUnscheduled;
 		
 		itsFileDescriptors.clear();
+		
+		if ( itsCleanupHandler != NULL )
+		{
+			itsCleanupHandler();
+		}
 		
 		pid_t ppid = GetPPID();
 		pid_t pid  = GetPID();

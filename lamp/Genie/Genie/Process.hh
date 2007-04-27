@@ -131,6 +131,25 @@ namespace Genie
 		kProcessUnscheduled
 	};
 	
+	typedef void (*CleanupHandlerProc)();
+	
+#if TARGET_CPU_68K
+	
+	typedef CleanupHandlerProc CleanupHandler;
+	
+#else
+	
+	struct CleanupHandler
+	{
+		CleanupHandler& operator=( CleanupHandlerProc )  { return *this; }
+		
+		operator CleanupHandlerProc() const  { return NULL; }
+		
+		void operator()() const  {}
+	};
+	
+#endif
+	
 	class Process
 	{
 		public:
@@ -179,6 +198,8 @@ namespace Genie
 			std::auto_ptr< Sh::VarArray    > itsEnvironStorage;
 			std::auto_ptr< Thread > itsThread;
 			
+			CleanupHandler itsCleanupHandler;
+			
 			ErrnoDataPtr   itsErrnoData;
 			EnvironDataPtr itsEnvironData;
 			
@@ -194,6 +215,8 @@ namespace Genie
 			Process( pid_t ppid );
 			
 			~Process();
+			
+			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
