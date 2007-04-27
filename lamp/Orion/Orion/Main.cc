@@ -24,6 +24,13 @@
 #include "Orion/StandardIO.hh"
 
 
+#if TARGET_CPU_68K
+
+extern "C" far void __InitCode__();
+
+#endif
+
+
 namespace Orion
 {
 	
@@ -39,6 +46,12 @@ namespace Orion
 	{
 		try
 		{
+		#if TARGET_CPU_68K
+			
+			__InitCode__();
+			
+		#endif
+			
 			return Main( argc, argv );
 		}
 		catch ( const ExitStatus& exit )
