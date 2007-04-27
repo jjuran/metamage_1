@@ -24,13 +24,30 @@
 #include <Sound.h>
 #include <Threads.h>
 
-// Nitrogen
-//#include "Nitrogen/Assert.h"
-//#include "Nitrogen/OSStatus.h"
-
 // Kerosene
 #include "SystemCalls.hh"
+#include "FreeTheMallocPool.h"
 
+
+typedef void (*CleanupHandler)();
+
+#if TARGET_CPU_68K
+
+extern "C" void InitProc( CleanupHandler );
+
+static void SetCleanupHandler()
+{
+	static bool beenHere = false;
+	
+	if ( !beenHere )
+	{
+		beenHere = true;
+		
+		InitProc( FreeTheMallocPool );
+	}
+}
+
+#endif
 
 static void EnterComa()
 {
@@ -179,6 +196,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	int          (*unlink_import_   )( const char* pathname );
 	ssize_t      (*write_import_    )( int filedes, const void* buf, size_t nbyte );
 	
+	void       (*InitProc_import_        )( CleanupHandler );
 	int*       (*ErrnoPtr_import_        )();
 	char***    (*EnvironPtr_import_      )();
 	OSStatus   (*AESendBlocking_import_  )( const AppleEvent* appleEvent, AppleEvent* reply );
@@ -216,7 +234,7 @@ namespace
 	
 	#define LOAD_SYMBOL( syscall )  (syscall ## _import_ = SystemCall_Cast( syscall, GetSystemCallFunctionPtr( #syscall ) ))
 	
-	#define INVOKE( syscall, args )  ( LoadErrno(), LOAD_SYMBOL( syscall ), CHECK_IMPORT( syscall ), syscall ## _import_ args )
+	#define INVOKE( syscall, args )  ( SetCleanupHandler(), LoadErrno(), LOAD_SYMBOL( syscall ), CHECK_IMPORT( syscall ), syscall ## _import_ args )
 	
 #else
 	
@@ -719,6 +737,15 @@ namespace
 	#pragma mark -
 	#pragma mark ¥ Genie ¥
 	
+#if TARGET_CPU_68K
+	
+	void InitProc( CleanupHandler cleanup )
+	{
+		INVOKE( InitProc, ( cleanup ) );
+	}
+	
+#endif
+	
 	int* ErrnoPtr()
 	{
 		int* errnoPtr = INVOKE( ErrnoPtr, () );
@@ -750,7 +777,6 @@ namespace
 	FSSpec Path2FSS( const char* pathname )
 	{
 		FSSpec spec;	
-		//Nitrogen::ThrowOSStatus( stub( pathname, &spec ) );
 		
 		OSStatus err = INVOKE( Path2FSSpec, ( pathname, &spec ) );
 		
