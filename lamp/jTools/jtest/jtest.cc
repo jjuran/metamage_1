@@ -191,6 +191,26 @@ static Redirection GetRedirectionFromLine( const std::string& line, Io::TextInpu
 }
 
 
+static std::string PrefixLines( const std::string text, const char* prefix = "# " )
+{
+	std::string result;
+	
+	const char* p = text.c_str();
+	
+	while ( const char* q = std::strchr( p, '\n' ) )
+	{
+		result += prefix;
+		
+		result.append( p, ++q );
+		
+		p = q;
+	}
+	
+	// *p == '\0' unless there's an unterminated trailing line
+	
+	return result;
+}
+
 static bool DiscrepantOutput( const Redirection& redir )
 {
 	if ( redir.op != kOutput )  return false;
@@ -209,7 +229,7 @@ static bool DiscrepantOutput( const Redirection& redir )
 			return true;
 		}
 		
-		actual_output += std::string( data, bytes_read );
+		actual_output.append( data, bytes_read );
 	}
 	
 	
@@ -219,7 +239,9 @@ static bool DiscrepantOutput( const Redirection& redir )
 	
 	if ( !match )
 	{
-		std::fprintf( stderr, "EXPECTED: '%s'\n" "RECEIVED: '%s'\n", redir.data.c_str(), data );
+		std::fprintf( stdout, "# EXPECTED:\n%s"
+		                      "# RECEIVED:\n%s", PrefixLines( redir.data    ).c_str(),
+		                                         PrefixLines( actual_output ).c_str() );
 	}
 	
 	return !match;
@@ -335,6 +357,7 @@ void TestCase::Redirect( Redirection& redir )
 			dup2( fds[1], redir.fd );
 			close( fds[1] );
 			redir.fd = fds[0];
+			close( fds[0] );
 			itsWriteEnds.push_back( fds[1] );
 			itsPipes.pop_back();
 			break;
