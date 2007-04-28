@@ -84,7 +84,7 @@ static TestResults run_test( const char* test_file )
 	int wait_status = -1;
 	pid_t resultpid = waitpid( pid, &wait_status, 0 );
 	
-	Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input = NN::Owned< P7::FileDescriptor >::Seize( P7::FileDescriptor( pipe_ends[0] ) );
+	Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( NN::Owned< P7::FileDescriptor >::Seize( P7::FileDescriptor( pipe_ends[0] ) ) );
 	
 	std::string header = input.Read();
 	
