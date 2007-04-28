@@ -294,85 +294,6 @@ static int TestVectoria( int argc, const char *const argv[] )
 }
 
 
-static int TestSerial( int argc, const char *const argv[] )
-{
-#if TARGET_API_MAC_CARBON
-	
-	std::fprintf( stderr, "%s\n", "No serial I/O in Carbon." );
-	
-	return 1;
-	
-#else
-	
-	NN::Owned< N::SerialDeviceRef > port( N::Open_SerialDevice( (argc > 2) ? argv[ 2 ]
-	                                                                       : "A"       ) );
-	
-	using N::kSERDHandshake;
-	using N::baud19200;
-	using N::data8;
-	using N::noParity;
-	using N::stop10;
-	
-	N::Control< kSERDHandshake >( port.Get()->output, NN::Make< N::SerShk >() );
-	
-	N::SerReset( port, baud19200 | data8 | noParity | stop10 );
-	
-	const char* str = "AT\015";
-	
-	//Io::S( port ) << str;
-	N::Write( port, str, sizeof str - 1 );
-	
-	N::Delay( 8 );
-	
-	std::size_t count = N::SerGetBuf( port );
-	
-	if (count == 0)
-	{
-		Io::Err << "No data available"  "\n";
-		return 1;
-	}
-	
-	std::vector< char > block( count );
-	int read = N::Read( port, &block.front(), count );
-	
-	if (read < count)
-	{
-		Io::Err << "Read failed"  "\n";
-		return 1;
-	}
-	
-	char* p = &block.front();
-	int remaining = read;
-	int len = std::strlen(str);
-	
-	if (std::memcmp(str, &block.front(), len) == 0)
-	{
-		Io::Out << "The modem echoed the command."  "\n";
-		p += len;
-		remaining -= len;
-	}
-	
-	while (remaining > 0  &&  (*p == '\015' || *p == '\012'))
-	{
-		p++;
-		remaining--;
-	}
-	
-	if (remaining)
-	{
-		const char* ok = "OK\015\012";
-		if (std::memcmp(ok, p, std::strlen(ok)) == 0)
-		{
-			Io::Out << "The modem returned OK."  "\n";
-			
-		}
-	}
-	
-	return 0;
-	
-#endif
-}
-
 static std::string MinSec( unsigned int seconds )
 {
 	return EncodeDecimal2( seconds / 60 ) + ":" + 
@@ -1011,13 +932,13 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	
 	int* scratch;
 	
-	N::FindSymbol( one, "\p" "gScratch", &scratch );
+	N::FindSymbol( one, "\p" "errno", &scratch );
 	
 	*scratch = 42;
 	
 	NN::Owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.Get(), fragment.Len() );
 	
-	N::FindSymbol( two, "\p" "gScratch", &scratch );
+	N::FindSymbol( two, "\p" "errno", &scratch );
 	
 	std::printf( "Second connection scratch value: %d\n", *scratch );
 	
@@ -1135,7 +1056,6 @@ const SubMain gSubs[] =
 	
 #if !TARGET_API_MAC_CARBON
 	
-	{ "serial",    TestSerial     },
 	{ "afp",       TestAFP        },
 	
 #endif
@@ -1211,101 +1131,5 @@ int O::Main(int argc, const char *const argv[])
 	}
 	
 	return sub->proc( argc, argv );
-	
-	if (false)
-	{
-	}
-	else if (arg1 == "unit")
-	{
-		return TestUnit(argc, argv);
-	}
-	else if (arg1 == "assert")
-	{
-		return TestAssert(argc, argv);
-	}
-	else if (arg1 == "map")
-	{
-		return TestMap(argc, argv);
-	}
-	else if (arg1 == "serial")
-	{
-		return TestSerial(argc, argv);
-	}
-	else if (arg1 == "afp")
-	{
-		return TestAFP(argc, argv);
-	}
-	else if (arg1 == "date")
-	{
-		return TestDate(argc, argv);
-	}
-	else if (arg1 == "crc16")
-	{
-		return TestCRC16(argc, argv);
-	}
-	else if (arg1 == "crc32")
-	{
-		return TestCRC32(argc, argv);
-	}
-	else if (arg1 == "md5")
-	{
-		return TestMD5(argc, argv);
-	}
-	/*
-	else if (arg1 == "X")
-	{
-		return TestOSX(argc, argv);
-	}
-	*/
-	else if (arg1 == "OADC")
-	{
-		return TestOADC(argc, argv);
-	}
-	else if ( arg1 == "proc" )
-	{
-		return TestProcesses( argc, argv );
-	}
-	else if ( arg1 == "si" )
-	{
-		return TestSoundInput( argc, argv );
-	}
-	else if ( arg1 == "ae" )
-	{
-		return TestAE( argc, argv );
-	}
-	else if ( arg1 == "svcs" )
-	{
-		return TestServices( argc, argv );
-	}
-	else if ( arg1 == "thread" )
-	{
-		return TestThread( argc, argv );
-	}
-	else if ( arg1 == "null" )
-	{
-		return TestNull( argc, argv );
-	}
-	else if ( arg1 == "gmf" )
-	{
-		return TestGMFShared( argc, argv );
-	}
-	else if ( arg1 == "strerror" )
-	{
-		return TestStrError( argc, argv );
-	}
-	else if ( arg1 == "throw" )
-	{
-		return TestThrow( argc, argv );
-	}
-	else if ( arg1 == "loc" )
-	{
-		return TestReadLoc( argc, argv );
-	}
-	else
-	{
-		return 0;
-	}
-	
-	return 0;
 }
 
