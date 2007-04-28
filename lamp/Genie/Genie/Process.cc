@@ -287,7 +287,7 @@ namespace Genie
 				context.interpreterArg  = std::string( space ? space + 1 : nl, nl );
 			}
 			
-			const int newTokenCount = 2 + hasArg;
+			const int newTokenCount = 1 + hasArg;
 			
 			// E.g. "$ script foo bar baz"
 			// argv == { "script", "foo", "bar", "baz", NULL }
@@ -296,7 +296,7 @@ namespace Genie
 			
 			const char* const* const argv = &context.argVector.front();
 			
-			// argv == { "script", "foo", "bar", "baz", NULL, ??, ?? }
+			// argv == { "script", "foo", "bar", "baz", NULL, ?? }
 			
 			bool pathSearched = std::strchr( argv[0], '/' ) == NULL;
 			
@@ -306,21 +306,24 @@ namespace Genie
 			                    context.argVector.end() - newTokenCount,
 			                    context.argVector.end() );
 			
-			// argv == { "script", "foo", "script", "foo", "bar", "baz", NULL }
+			// argv == { "script", "script", "foo", "bar", "baz", NULL }
 			
 			context.argVector[ 0 ] = context.interpreterPath.c_str();
-			context.argVector[ 1 ] = context.interpreterArg.c_str();
-			context.argVector[ 1 + hasArg ] = "--";
+			
+			if ( hasArg )
+			{
+				context.argVector[ 1 ] = context.interpreterArg.c_str();
+			}
 			
 			if ( pathSearched )
 			{
 				// Overwrite with full pathname
 				context.scriptPath = N::FSpGetPOSIXPathname( context.executable );
 				
-				context.argVector[ 2 + hasArg ] = context.scriptPath.c_str();
+				context.argVector[ 1 + hasArg ] = context.scriptPath.c_str();
 			}
 			
-			// argv == { "sh", "--", "script", "foo", "bar", "baz", NULL }
+			// argv == { "sh", "script", "foo", "bar", "baz", NULL }
 			
 			context.executable = ResolvePathname( context.interpreterPath, cwd )->GetFSSpec();
 		}
