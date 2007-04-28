@@ -163,7 +163,7 @@ namespace ShellShock
 						op = kRedirectOutput;
 					}
 					
-					if ( fd == -1  &&  op != kRedirectOutputDuplicate )
+					if ( fd == -1 )
 					{
 						fd = 1;
 					}
