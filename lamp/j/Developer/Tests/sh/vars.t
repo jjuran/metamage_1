@@ -52,5 +52,5 @@ $ FOO=bar sh -c 'echo $FOO'
 # set multiple shell variables
 $ FOO=foo BAR=bar; echo $FOO $BAR
 
-1 >= foo bar
+1 >= "foo bar"
 
