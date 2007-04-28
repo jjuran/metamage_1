@@ -231,6 +231,15 @@ namespace Genie
 			return ReadImageFromFile( file );
 		}
 		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			// GetMemFragment / kPrivateCFragCopy is broken on OS X
+			// FIXME:  Found out which versions exactly,
+			// and still cache for the good ones and OS 9
+			// Or just test for it at runtime
+			return ReadImageFromFile( file );
+		}
+		
 		BinaryFileMetadata metadata = GetFileMetadata( file );
 		
 		BinaryImageCache::iterator it = gBinaryImageCache.find( file );
