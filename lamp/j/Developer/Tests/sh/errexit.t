@@ -1,4 +1,4 @@
-#!/usr/bin/jtest
+#!/usr/bin/env jtest
 
 $ sh -c 'set -e; echo pretty; false; echo bad'
 

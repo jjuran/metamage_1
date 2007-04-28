@@ -1,4 +1,4 @@
-#!/usr/bin/jtest
+#!/usr/bin/env jtest
 
 $ readlink /proc/$$/exe
 

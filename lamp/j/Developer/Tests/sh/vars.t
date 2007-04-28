@@ -1,4 +1,4 @@
-#!/usr/bin/jtest
+#!/usr/bin/env jtest
 
 # set shell variable only
 $ FOO=bar; echo $FOO
