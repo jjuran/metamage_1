@@ -58,7 +58,7 @@ static void PrintAlias( const StringMap::value_type& var )
 }
 
 
-static bool Unmark( const char* name )
+static bool UnmarkVariableForExport( const std::string& name )
 {
 	std::set< std::string >::iterator found = gVariablesToExport.find( name );
 	bool wasMarked = found != gVariablesToExport.end();
@@ -71,9 +71,9 @@ static bool Unmark( const char* name )
 	return wasMarked;
 }
 
-int Assign( const char* name, const char* value )
+int AssignShellVariable( const char* name, const char* value )
 {
-	if ( getenv( name ) || Unmark( name ) )
+	if ( getenv( name ) || UnmarkVariableForExport( name ) )
 	{
 		// Variable already exists in environment, or was marked for export
 		setenv( name, value, 1 );
@@ -85,6 +85,18 @@ int Assign( const char* name, const char* value )
 	}
 	
 	return 0;
+}
+
+const char* QueryShellVariable( const std::string& name )
+{
+	StringMap::const_iterator found = gLocalVariables.find( name );
+	
+	if ( found != gLocalVariables.end() )
+	{
+		return found->second.c_str();
+	}
+	
+	return NULL;
 }
 
 // Builtins.  argc is guaranteed to be positive.
@@ -205,12 +217,6 @@ static int Builtin_Export( int argc, char const* const argv[] )
 		if ( char* eq = std::strchr( arg1, '=' ) )
 		{
 			// $ export foo=bar
-			
-			//*eq = '\0';
-			
-			//char* name = argv[ 1 ];
-			
-			//setenv( name, eq + 1, 1 );
 			putenv( arg1 );
 			
 			//gLocalVariables.erase( name );

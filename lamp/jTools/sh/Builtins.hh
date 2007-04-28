@@ -11,7 +11,9 @@
 
 typedef int (*Builtin)( int argc, char const* const argv[] );
 
-int Assign( const char* name, const char* value );
+int AssignShellVariable( const char* name, const char* value );
+
+const char* QueryShellVariable( const std::string& name );
 
 Builtin FindBuiltin( const std::string& name );
 

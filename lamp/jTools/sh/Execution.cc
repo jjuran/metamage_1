@@ -106,9 +106,6 @@ static int NewJob( const Circuit& circuit )
 */
 
 
-static StringMap gLocalVariables;
-
-
 class AppendWithSpace
 {
 	public:
@@ -179,11 +176,9 @@ std::string ShellParameterDictionary::Lookup( const std::string& param ) const
 		//return gParameters[ 0 ];
 	}
 	
-	StringMap::const_iterator found = gLocalVariables.find( param );
-	
-	if ( found != gLocalVariables.end() )
+	if ( const char* value = QueryShellVariable( param ) )
 	{
-		return found->second;
+		return value;
 	}
 	else if ( const char* var = getenv( param.c_str() ) )
 	{
@@ -450,7 +445,7 @@ static int ExecuteCommand( const Command& command )
 			const char* name = argv[ 0 ];
 			const char* value = eq + 1;
 			
-			return Assign( name, value );
+			return AssignShellVariable( name, value );
 		}
 	}
 	
