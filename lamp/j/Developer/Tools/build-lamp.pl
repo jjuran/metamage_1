@@ -72,7 +72,7 @@ my @programs = qw
 	perl pwd
 	readlink rm rmdir
 	sh sleep stripcr striplf superd
-	tcpcat tcpclient tlsrvr true tty
+	tcpcat tcpclient th tlsrvr true tty
 	uncaught_exception
 );
 my %is_program = map { $_ => 1 } @programs;
@@ -83,7 +83,7 @@ my %fsmap =
 	{
 		Tools =>
 		[
-			qw( A-line abort activate aevt cpres keymods quit system File Line tlsrvr jtest ),
+			qw( A-line abort activate aevt cpres keymods quit system File Line tlsrvr ),
 			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl ),
 		],
 	},
@@ -110,7 +110,7 @@ my %fsmap =
 			qw( gzip htget killall md5sum nohup open osascript perl tty ),
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
-			qw( beep cds cr2lf divide err2text keymods lf2cr lf2crlf macbin stripcr striplf ),
+			qw( beep cds cr2lf divide err2text jtest keymods lf2cr lf2crlf macbin stripcr striplf th ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
 		lib =>
