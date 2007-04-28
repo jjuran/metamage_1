@@ -304,7 +304,6 @@ static void RedirectIO( Sh::Redirection redirection )
 			case Sh::kRedirectInputDuplicate:
 				file = std::atoi( param );  // FIXME:  Probably bad if param isn't an integer
 				Dup2( file, fd );
-				close( file );
 				break;
 			
 			case Sh::kRedirectInputAndOutput:
@@ -349,7 +348,6 @@ static void RedirectIO( Sh::Redirection redirection )
 			case Sh::kRedirectOutputDuplicate:
 				file = std::atoi( param );  // FIXME:  Probably bad if atoi returns 0
 				Dup2( file, fd );
-				close( file );
 				break;
 			
 			case Sh::kRedirectOutputAndError:
