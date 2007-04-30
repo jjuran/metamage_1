@@ -7,7 +7,7 @@
 #include <cerrno>
 
 // Standard C/C++
-#include <stdio>
+#include <cstdio>
 
 // POSIX
 #include "fcntl.h"
