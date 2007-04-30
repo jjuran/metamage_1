@@ -19,7 +19,7 @@
 #include "unistd.h"
 
 // Nitrogen
-#include "Nitrogen/OpenTransportProviders.h"
+#include "Nitrogen/Files.h"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
@@ -50,9 +50,6 @@ namespace Bits = BitsAndBytes;
 
 namespace htget
 {
-	
-	using N::fsWrPerm;
-	
 	
 	class HTTPClientTransaction
 	{
@@ -430,15 +427,8 @@ static O::Options DefineOptions()
 	return options;
 }
 
-static N::InetHost ResolveHostname( const char* hostname )
+static struct in_addr ResolveHostname( const char* hostname )
 {
-#if TARGET_RT_MAC_CFM
-	
-	return N::OTInetStringToAddress( InternetServices(),
-	                                 (char*) hostname ).addrs[ 0 ];
-	
-#else
-	
 	hostent* hosts = gethostbyname( hostname );
 	
 	if ( !hosts || h_errno )
@@ -449,9 +439,7 @@ static N::InetHost ResolveHostname( const char* hostname )
 	
 	in_addr addr = *(in_addr*) hosts->h_addr;
 	
-	return N::InetHost( addr.s_addr );
-	
-#endif
+	return addr;
 }
 
 static void WriteLine( P7::FileDescriptor stream, const std::string& text )
@@ -504,7 +492,7 @@ int O::Main( int argc, char const *const argv[] )
 	std::string urlPath;
 	std::string portStr;
 	
-	N::InetPort defaultPort = N::InetPort( 0 );
+	short defaultPort = 0;
 	
 	bool parsed = htget::ParseURL( params[ 0 ], scheme, hostname, portStr, urlPath );
 	
@@ -519,7 +507,7 @@ int O::Main( int argc, char const *const argv[] )
 	
 	if ( scheme == "http" )
 	{
-		defaultPort = N::InetPort( 80 );
+		defaultPort = 80;
 	}
 	/*
 	else if ( scheme == "https" )
@@ -534,16 +522,16 @@ int O::Main( int argc, char const *const argv[] )
 		return 2;
 	}
 	
-	N::InetPort port = ( !portStr.empty() ) ? N::InetPort( std::atoi( portStr.c_str() ) )
-	                                        : defaultPort;
+	short port = ( !portStr.empty() ) ? std::atoi( portStr.c_str() )
+	                                  : defaultPort;
 	
-	N::InetHost ip = ResolveHostname( hostname.c_str() );
+	struct in_addr ip = ResolveHostname( hostname.c_str() );
 	
 	struct sockaddr_in inetAddress = { 0 };
 	
 	inetAddress.sin_family = AF_INET;
-	inetAddress.sin_port = htons( port );
-	inetAddress.sin_addr.s_addr = ip;
+	inetAddress.sin_port   = htons( port );
+	inetAddress.sin_addr   = ip;
 	
 	if ( params.size() > 1 )
 	{

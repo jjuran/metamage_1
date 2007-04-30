@@ -18,9 +18,6 @@
 #include "sys/socket.h"
 #include "unistd.h"
 
-// Nitrogen
-#include "Nitrogen/OpenTransportProviders.h"
-
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
@@ -29,13 +26,11 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace N = Nitrogen;
-namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
 
 
-static N::InetHost ResolveHostname( const char* hostname )
+static struct in_addr ResolveHostname( const char* hostname )
 {
 	hostent* hosts = gethostbyname( hostname );
 	
@@ -47,22 +42,22 @@ static N::InetHost ResolveHostname( const char* hostname )
 	
 	in_addr addr = *(in_addr*) hosts->h_addr;
 	
-	return N::InetHost( addr.s_addr );
+	return addr;
 }
 
 static P7::FileDescriptor Connect( const char* hostname, const char* port_str )
 {
 	P7::FileDescriptor result = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, INET_TCP ) );
 	
-	N::InetPort port = N::InetPort( std::atoi( port_str ) );
+	short port = std::atoi( port_str );
 	
-	N::InetHost ip = ResolveHostname( hostname );
+	struct in_addr ip = ResolveHostname( hostname );
 	
 	struct sockaddr_in inetAddress = { 0 };
 	
 	inetAddress.sin_family = AF_INET;
-	inetAddress.sin_port = htons( port );
-	inetAddress.sin_addr.s_addr = ip;
+	inetAddress.sin_port   = htons( port );
+	inetAddress.sin_addr   = ip;
 	
 	P7::ThrowPOSIXResult( connect( result, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) ) );
 	

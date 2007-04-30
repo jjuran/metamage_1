@@ -3,17 +3,21 @@
  *	==========
  */
 
-// Standard C/C++
-#include <cstdlib>
-//#include <cstring>
-
 // Standard C++
 #include <numeric>
 #include <string>
 #include <vector>
 
-// POSIX
+// Standard C/C++
+#include <cstdlib>
+//#include <cstring>
+
+// Standard C
 #include <errno.h>
+
+// POSIX
+#include <arpa/inet.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -27,9 +31,6 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
-// Nitrogen
-#include "Nitrogen/OpenTransportProviders.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -42,7 +43,6 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace N = Nitrogen;
 namespace P7 = POSeven;
 namespace O = Orion;
 
@@ -116,7 +116,7 @@ static void Startup( const struct sockaddr_in& listener_addr )
 	SSLeay_add_ssl_algorithms();
 	SSL_load_error_strings();
 	
-	gListenerSocket = socket( PF_INET, SOCK_STREAM, INET_TCP );
+	gListenerSocket = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 	
 	if ( gListenerSocket == -1 )
 	{
@@ -254,7 +254,7 @@ static void WaitForClients()
 	
 	setnonblocking( server_socket );
 	
-	int client_socket = socket( PF_INET, SOCK_STREAM, INET_TCP );
+	int client_socket = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 	
 	int connected = connect( client_socket, (const sockaddr*)&gRemoteAddress, sizeof (sockaddr_in) );
 	int unblocked = setnonblocking( client_socket );
@@ -292,6 +292,21 @@ static O::Options DefineOptions()
 	return options;
 }
 
+static struct in_addr ResolveHostname( const char* hostname )
+{
+	hostent* hosts = gethostbyname( hostname );
+	
+	if ( !hosts || h_errno )
+	{
+		Io::Err << "Domain name lookup failed: " << h_errno << "\n";
+		O::ThrowExitStatus( 1 );
+	}
+	
+	in_addr addr = *(in_addr*) hosts->h_addr;
+	
+	return addr;
+}
+
 int O::Main(int argc, char const* const argv[])
 {
 	Options options = DefineOptions();
@@ -299,7 +314,7 @@ int O::Main(int argc, char const* const argv[])
 	
 	const std::vector< const char* >& params = options.GetFreeParams();
 	
-	N::InetPort listener_port = N::InetPort( options.GetInteger( optListenerPort ) );
+	unsigned short listener_port = options.GetInteger( optListenerPort );
 	
 	if ( listener_port == 0 )
 	{
@@ -309,21 +324,20 @@ int O::Main(int argc, char const* const argv[])
 	
 	std::string host = options.GetString ( optRemoteHost );
 	
-	N::InetPort remotePort = N::InetPort( options.GetInteger( optRemotePort ) );
+	unsigned short remotePort = options.GetInteger( optRemotePort );
 	
 	if ( remotePort == 0 )
 	{
 		remotePort = listener_port;
 	}
 	
-	N::InetHost ip = N::OTInetStringToAddress( InternetServices(),
-	                                           (char*)host.c_str() ).addrs[ 0 ];
+	struct in_addr ip = ResolveHostname( host.c_str() );
 	
 	struct sockaddr_in remoteAddr;
 	
 	remoteAddr.sin_family = AF_INET;
-	remoteAddr.sin_port = remotePort;
-	remoteAddr.sin_addr.s_addr = ip;
+	remoteAddr.sin_port   = remotePort;
+	remoteAddr.sin_addr   = ip;
 	
 	gRemoteAddress = remoteAddr;
 	
