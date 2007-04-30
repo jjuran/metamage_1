@@ -58,7 +58,7 @@ my @programs = qw
 	beep
 	cat cds cp cpres cr2lf
 	divide
-	echo err2text
+	echo env err2text
 	false
 	gzip
 	htget httpd
