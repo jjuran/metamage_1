@@ -52,6 +52,7 @@ struct TestResults
 {
 	int total;
 	int passed;
+	int failure;
 };
 
 static TestResults run_test( const char* test_file )
@@ -88,7 +89,7 @@ static TestResults run_test( const char* test_file )
 	
 	std::string header = input.Read();
 	
-	TestResults results = { -1, 0 };
+	TestResults results = { -1, 0, 0 };
 	
 	if ( header.substr( 0, 3 ) != "1.." )
 	{
@@ -120,6 +121,11 @@ static TestResults run_test( const char* test_file )
 		else if ( line.substr( 0, 7 ) == "not ok " )
 		{
 			number = line.c_str() + 7;
+			
+			if ( results.failure == 0 )
+			{
+				results.failure = next_test_number;
+			}
 		}
 		else
 		{
@@ -157,8 +163,10 @@ int O::Main( int argc, const char *const argv[] )
 			name_length -= 2;
 		}
 		
-		write( STDOUT_FILENO, test_name,                 name_length );
-		write( STDOUT_FILENO, "..................", 18 - name_length );
+		unsigned width = std::max( 18U, name_length );
+		
+		write( STDOUT_FILENO, test_name,                    name_length );
+		write( STDOUT_FILENO, "..................", width - name_length );
 		
 		TestResults results = run_test( *test_file );
 		
@@ -170,7 +178,7 @@ int O::Main( int argc, const char *const argv[] )
 		}
 		else
 		{
-			result = "FAILED";
+			result = "FAILED at test " + NN::Convert< std::string >( results.failure );
 		}
 		
 		result += "\n";
