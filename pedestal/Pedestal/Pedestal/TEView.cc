@@ -15,7 +15,7 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
 
-// Nitrogen / Carbon support
+// Nitrogen
 #include "Nitrogen/TextEdit.h"
 
 // Nitrogen Extras / ClassicToolbox
@@ -25,6 +25,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/Clipboard.hh"
+#include "Pedestal/Scroller.hh"
 
 
 namespace Pedestal
@@ -147,13 +148,9 @@ namespace Pedestal
 	}
 	
 	
-	static TEView* gCurrentTEView = NULL;
-	
 	static void CustomClickLoop()
 	{
-		if ( gCurrentTEView == NULL )  return;
-		
-		TEHandle hTE = gCurrentTEView->Get();
+		ClickableScroller::ClickLoop();
 	}
 	
 	// This gets set the first time we call TENew().
@@ -220,13 +217,9 @@ namespace Pedestal
 	
 	void TEView::MouseDown( const EventRecord& event )
 	{
-		gCurrentTEView = this;
-		
 		N::TEClick( N::GlobalToLocal( event.where ),
 		            event.modifiers & shiftKey,
 		            itsTE );
-		
-		gCurrentTEView = NULL;
 	}
 	
 	bool TEView::KeyDown( const EventRecord& event )

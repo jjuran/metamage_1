@@ -375,11 +375,23 @@ namespace Pedestal
 		}
 	}
 	
+	class ClickableScroller
+	{
+		protected:
+			static ClickableScroller* gCurrentScroller;
+		
+		public:
+			//static ClickableScroller& Current();
+			
+			static void ClickLoop()  { if ( gCurrentScroller )  gCurrentScroller->ClickInLoop(); }
+			
+			virtual void ClickInLoop() = 0;
+	};
 	
 	template < class            ScrollViewType,
 	           ScrollbarConfig  vertical,
 	           ScrollbarConfig  horizontal = kNoScrollbar >
-	class Scroller : public BoundedView
+	class Scroller : public BoundedView, public ClickableScroller
 	{
 		private:
 			typedef Scrollbar_Traits< vertical   > VerticalTraits;
@@ -425,6 +437,16 @@ namespace Pedestal
 				Pedestal::UpdateScrollbars( myScrollView, myScrollV.Get(), myScrollH.Get(), oldRange, oldPosition );
 			}
 			
+			void ClickInLoop()
+			{
+				Pedestal::UpdateScrollbars( myScrollV.Get(),
+				                            myScrollH.Get(),
+				                            ComputeScrollbarMaxima( ScrolledView() ),
+				                            ScrollPosition        ( ScrolledView() ) );
+				
+				return;
+			}
+			
 			void Idle( const EventRecord& event )
 			{
 				// Intersect the clip region with the scrollview bounds,
@@ -439,12 +461,11 @@ namespace Pedestal
 			{
 				if ( N::PtInRect( N::GlobalToLocal( event.where ), ScrolledView().Bounds() ) )
 				{
-					Point scrollableRange = ScrollableRange( ScrolledView() );
-					Point scrollPosition  = ScrollPosition ( ScrolledView() );
+					gCurrentScroller = this;
 					
 					ScrolledView().MouseDown( event );
 					
-					UpdateScrollbars( scrollableRange, scrollPosition );
+					gCurrentScroller = NULL;
 				}
 			}
 			

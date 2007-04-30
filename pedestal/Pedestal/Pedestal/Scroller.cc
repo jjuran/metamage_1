@@ -12,7 +12,10 @@
 #include "Nitrogen/ControlDefinitions.h"
 
 
-namespace Pedestal {
+namespace Pedestal
+{
+	
+	ClickableScroller* ClickableScroller::gCurrentScroller = NULL;
 	
 	short ActualScrollbarLength( short viewLength, bool shortened )
 	{
