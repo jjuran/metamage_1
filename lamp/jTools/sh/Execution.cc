@@ -419,6 +419,39 @@ static int CallBuiltin( Builtin builtin, char** argv )
 	return builtin( argc, argv );
 }
 
+static bool CommandIsOnlyAssignments( char** argv )
+{
+	//ASSERT( argv != NULL );
+	
+	while ( *argv != NULL  &&  std::strchr( *argv, '=' ) )
+	{
+		++argv;
+	}
+	
+	return *argv == NULL;
+}
+
+static int AssignShellVariablesFromArgV( char** argv )
+{
+	//ASSERT( argv != NULL );
+	
+	while ( *argv != NULL )
+	{
+		char* eq = std::strchr( *argv, '=' );
+		
+		//ASSERT( eq != NULL );
+		
+		const char* name = *argv++;
+		const char* value = eq + 1;
+		
+		*eq = '\0';
+		
+		AssignShellVariable( name, value );
+	}
+	
+	return 0;
+}
+
 static int ExecuteCommand( const Command& command )
 {
 	Command parsedCommand = Sh::ParseCommand( command, ShellParameterDictionary() );
@@ -432,19 +465,9 @@ static int ExecuteCommand( const Command& command )
 		return 0;
 	}
 	
-	if ( char* eq = std::strchr( argv[ 0 ], '=' ) )
+	if ( CommandIsOnlyAssignments( argv ) )
 	{
-		if ( argv[1] == NULL )
-		{
-			// The assignment is the only word in the command.  Set a shell variable.
-			
-			*eq = '\0';
-			
-			const char* name = argv[ 0 ];
-			const char* value = eq + 1;
-			
-			return AssignShellVariable( name, value );
-		}
+		return AssignShellVariablesFromArgV( argv );
 	}
 	
 	Builtin builtin = FindBuiltin( argv[ 0 ] );
