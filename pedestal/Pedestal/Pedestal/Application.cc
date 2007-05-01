@@ -320,17 +320,32 @@ namespace Pedestal
 		}
 	}
 	
+	inline bool CharIsArrowKey( char c )
+	{
+		return (c & 0xFC) == 0x1C;
+	}
+	
+	inline bool CharIsDelete( char c )
+	{
+		return c == kBackspaceCharCode  ||  c == kDeleteCharCode;
+	}
+	
+	inline bool CharMayBeCommand( char c )
+	{
+		return !CharIsArrowKey( c ) && !CharIsDelete( c );
+	}
+	
 	static void DispatchKey( const EventRecord& event )
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
 		
-		if ( event.modifiers & cmdKey )
+		char keyChar = event.message & charCodeMask;
+		
+		if ( (event.modifiers & cmdKey)  &&  CharMayBeCommand( keyChar ) )
 		{
 			// no commands on autoKey
 			if ( event.what == keyDown )
 			{
-				char keyChar = event.message & charCodeMask;
-				
 				TheApp().HandleMenuChoice( ::MenuKey( keyChar ) );
 			}
 		}
