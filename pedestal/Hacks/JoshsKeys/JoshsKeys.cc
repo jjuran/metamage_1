@@ -46,45 +46,61 @@ static pascal short PatchedGetNextEvent( EventMask eventMask, EventRecord* theEv
 	return result;
 }
 
-static bool IsHArrow( char c )
+static bool CharIsHorizontalArrow( char c )
 {
 	return c == kLeftArrowCharCode  ||  c == kRightArrowCharCode;
 }
 
-static bool DoSpecial( char c, TEHandle hTE )
+static bool CharIsVerticalArrow( char c )
 {
-	bool hArrow = IsHArrow( c );
+	return c == kUpArrowCharCode  ||  c == kDownArrowCharCode;
+}
+
+static bool CharIsArrow( char c )
+{
+	return CharIsHorizontalArrow( c ) || CharIsVerticalArrow( c );
+}
+
+static pascal void PatchedTEKey( short c, TEHandle hTE )
+{
+	bool hArrow = CharIsHorizontalArrow( c );
 	bool shift = ( gLastEvent.modifiers & shiftKey );
 	//bool option = (gLastEvent.modifiers & optionKey);
 	bool forward = ( c == kRightArrowCharCode );
 	
-	short selStart = (**hTE).selStart;
-	short selEnd   = (**hTE).selEnd;
+	short selStart = hTE[0]->selStart;
+	short selEnd   = hTE[0]->selEnd;
 	
 	if ( hArrow && shift )
 	{
+		// Shift-key behavior is only modified for horizontal arrows so far
+		
 		if ( !gExtendingSelection )
 		{
+			// We've just started using Shift to extend the selection.
+			// Set the selection anchor and extent.
 			gExtendingSelection = true;
 			gSelectionAnchor =  forward ? selStart : selEnd;
 			gSelectionExtent = !forward ? selStart : selEnd;
 		}
 		
+		// Modify the selection based on which arrow key was pressed.
 		gSelectionExtent += ( forward ? 1 : -1 );
 		gSelectionExtent = std::max< short >( 0, gSelectionExtent );
-		gSelectionExtent = std::min( (**hTE).teLength, gSelectionExtent );
+		gSelectionExtent = std::min( hTE[0]->teLength, gSelectionExtent );
 		
 		selStart = std::min( gSelectionAnchor, gSelectionExtent );
 		selEnd   = std::max( gSelectionAnchor, gSelectionExtent );
 		
 		::TESetSelect( selStart, selEnd, hTE );
 		
-		return true;
+		return;
 	}
 	else
 	{
 		gExtendingSelection = false;
 		
+		// Fix the case of hitting left- or right-arrow with a selection
 		if ( hArrow  &&  selStart != selEnd )
 		{
 			if ( forward )
@@ -98,11 +114,11 @@ static bool DoSpecial( char c, TEHandle hTE )
 			
 			::TESetSelect( selStart, selEnd, hTE );
 			
-			return true;
+			return;
 		}
 	}
 	
-	return false;
+	gTEKeyPatch.Original()( c, hTE );
 }
 
 static pascal void PatchedTEActivate( TEHandle hTE )
@@ -121,16 +137,6 @@ static pascal void PatchedTEClick( Point pt, short extend, TEHandle hTE )
 	gTEClickPatch.Original()( pt, extend, hTE );
 	
 	gExtendingSelection = false;
-}
-
-static pascal void PatchedTEKey( short c, TEHandle hTE )
-{
-	Ag::MyA4 a4;
-	
-	if ( !DoSpecial( c, hTE ) )
-	{
-		gTEKeyPatch.Original()( c, hTE );
-	}
 }
 
 
