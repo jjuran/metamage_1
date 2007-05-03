@@ -10,6 +10,9 @@
 #include "unistd.h"
 
 
+#pragma exceptions off
+
+
 #pragma export on
 
 int main( int /*argc*/, char const *const /*argv*/[] )
