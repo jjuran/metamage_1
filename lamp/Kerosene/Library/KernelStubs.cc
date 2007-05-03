@@ -29,6 +29,9 @@
 #include "FreeTheMallocPool.h"
 
 
+#pragma exceptions off
+
+
 typedef void (*CleanupHandler)();
 
 #if TARGET_CPU_68K
@@ -59,34 +62,31 @@ static void EnterComa()
 	}
 }
 
-static void CheckCriticalImport( void* symbol )
+#define STR_LEN( str )  " " str, (sizeof str - 1)
+
+static void CheckCriticalImport( void* symbol, const char* name, std::size_t len )
 {
 	if ( symbol == NULL )
 	{
-		const char* message = "Warning:  A critical system call is missing!\n";
+		write( STDERR_FILENO, name, len );
 		
-		(void) write( STDERR_FILENO, message, sizeof message - 1 );
+		write( STDERR_FILENO, STR_LEN( ": CRITICAL unimplemented system call!\n" ) );
 		
 		EnterComa();
 	}
 }
 
-class UnimplementedSystemCall {};
-
 inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len )
 {
 	if ( symbol == NULL )
 	{
-		const char unimplemented[] = ": unimplemented system call\n";
+		write( STDERR_FILENO, name, len );
 		
-		write( STDERR_FILENO, name,          len                      );
-		write( STDERR_FILENO, unimplemented, sizeof unimplemented - 1 );
+		write( STDERR_FILENO, STR_LEN( ": unimplemented system call\n" ) );
 		
-		throw UnimplementedSystemCall();
+		raise( SIGSYS );
 	}
 }
-
-#define CHECK_IMPORT(name)  CheckImportedSymbol( name##_import_, #name, sizeof #name - 1 )
 
 #pragma export on
 	
@@ -234,16 +234,23 @@ namespace
 	
 	#define LOAD_SYMBOL( syscall )  (syscall ## _import_ = SystemCall_Cast( syscall, GetSystemCallFunctionPtr( #syscall ) ))
 	
-	#define INVOKE( syscall, args )  ( SetCleanupHandler(), LoadErrno(), LOAD_SYMBOL( syscall ), CHECK_IMPORT( syscall ), syscall ## _import_ args )
+	#define INVOKE_COMMON( syscall, args )  ( SetCleanupHandler(), LoadErrno(), syscall ## _import_ args )
 	
 #else
 	
 	#define LOAD_SYMBOL( syscall )  (syscall ## _import_)
 	
-	#define INVOKE( syscall, args )  ( CHECK_IMPORT( syscall ), syscall ## _import_ args )
+	#define INVOKE_COMMON( syscall, args )  ( syscall ## _import_ args )
 	
 #endif
-
+	
+	#define CHECK_CRITICAL( syscall )  (LOAD_SYMBOL( syscall ), CheckCriticalImport( syscall##_import_, #syscall, sizeof #syscall - 1 ))
+	
+	#define CHECK_IMPORT( syscall )    (LOAD_SYMBOL( syscall ), CheckImportedSymbol( syscall##_import_, #syscall, sizeof #syscall - 1 ))
+	
+	#define INVOKE_CRITICAL( syscall, args )  ( CHECK_CRITICAL( syscall ), INVOKE_COMMON( syscall, args ) )
+	
+	#define INVOKE( syscall, args )  ( CHECK_IMPORT( syscall ), INVOKE_COMMON( syscall, args ) )
 	
 }
 
@@ -339,11 +346,7 @@ namespace
 	
 	int kill( pid_t pid, int sig )
 	{
-		LOAD_SYMBOL( kill );
-		
-		CheckCriticalImport( kill_import_ );
-		
-		return INVOKE( kill, ( pid, sig ) );
+		return INVOKE_CRITICAL( kill, ( pid, sig ) );
 	}
 	
 	int sigaction( int signum, const struct sigaction* act, struct sigaction* oldact )
@@ -368,11 +371,7 @@ namespace
 	
 	__sig_handler signal( int sig, __sig_handler func )
 	{
-		LOAD_SYMBOL( signal );
-		
-		CheckCriticalImport( signal_import_ );
-		
-		return INVOKE( signal, ( sig, func ) );
+		return INVOKE_CRITICAL( signal, ( sig, func ) );
 	}
 	
 	#pragma mark -
@@ -596,11 +595,7 @@ namespace
 	
 	void _exit_Kernel( int status )
 	{
-		LOAD_SYMBOL( _exit );
-		
-		CheckCriticalImport( _exit_import_ );
-		
-		return INVOKE( _exit, ( status ) );  // Terminates process but returns if forked
+		return INVOKE_CRITICAL( _exit, ( status ) );  // Terminates process but returns if forked
 	}
 	
 	int SpawnVFork()
@@ -615,7 +610,7 @@ namespace
 	
 	pid_t getpid()
 	{
-		return INVOKE( getpid, () );
+		return INVOKE_CRITICAL( getpid, () );
 	}
 	
 	pid_t getpgid( pid_t pid )
@@ -720,9 +715,7 @@ namespace
 	
 	ssize_t write( int filedes, const void* buf, size_t nbyte )
 	{
-		LOAD_SYMBOL( write );
-		
-		if ( write_import_ == NULL )
+		if ( LOAD_SYMBOL( write ) == NULL )
 		{
 			// There's not much we can do.
 			// write() and _exit() are currently in the same module,
@@ -731,7 +724,7 @@ namespace
 			EnterComa();
 		}
 		
-		return INVOKE( write, ( filedes, buf, nbyte ) );
+		return INVOKE_COMMON( write, ( filedes, buf, nbyte ) );
 	}
 	
 	#pragma mark -
