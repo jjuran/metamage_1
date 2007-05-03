@@ -11,6 +11,10 @@
 // POSIX
 #include "unistd.h"
 
+
+#pragma exceptions off
+
+
 // from file_struc.h
 typedef unsigned long	__file_handle;
 
