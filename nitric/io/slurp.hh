@@ -7,15 +7,13 @@
 #include "Nucleus/Owned.h"
 #endif
 
+#ifndef IO_IO_HH
+#include "io/io.hh"
+#endif
+
 
 namespace io
 {
-	
-	inline ptrdiff_t distance( const void* begin, const void* end )
-	{
-		return (uintptr_t) end - (uintptr_t) begin;
-	}
-	
 	
 	template < class details >
 	class slurp_getter
