@@ -3,7 +3,8 @@
  *	============
  */
 
-#pragma once
+#ifndef A_LINE_LOCATIONS_HH
+#define A_LINE_LOCATIONS_HH
 
 // Nitrogen
 #include "Nitrogen/Files.h"
@@ -14,22 +15,34 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	
-	using std::string;
-	
 	N::FSDirSpec UserProjectsFolder();
+	
+	std::string UserProjectsPath();
 	
 	bool ProjectHasSystemIncludes( const N::FSDirSpec& folder );
 	
 	N::FSDirSpec ProjectSourcesFolder ( const N::FSDirSpec& folder );
 	N::FSDirSpec ProjectIncludesFolder( const N::FSDirSpec& folder );
 	
-	FSSpec ProjectDotConfFile( const string& name );
+	std::string ProjectSourcesPath ( const std::string& projectPath );
+	std::string ProjectIncludesPath( const std::string& projectPath );
+	
+	//FSSpec ProjectDotConfFile( const std::string& name );
 	FSSpec SourceDotListFile ( const N::FSDirSpec& folder );
 	
-	N::FSDirSpec ProjectDiagnosticsFolder( const string& proj, const string& target );
-	N::FSDirSpec ProjectPrecompiledFolder( const string& proj, const string& target );
-	N::FSDirSpec ProjectObjectsFolder    ( const string& proj, const string& target );
-	N::FSDirSpec ProjectLibrariesFolder  ( const string& proj, const string& target );
+	std::string SourceDotListFile( const std::string& projectPath );
+	
+	N::FSDirSpec ProjectDiagnosticsFolder( const std::string& proj, const std::string& target );
+	N::FSDirSpec ProjectPrecompiledFolder( const std::string& proj, const std::string& target );
+	N::FSDirSpec ProjectObjectsFolder    ( const std::string& proj, const std::string& target );
+	N::FSDirSpec ProjectLibrariesFolder  ( const std::string& proj, const std::string& target );
+	
+	std::string ProjectDiagnosticsDirPath( const std::string& proj, const std::string& target );
+	std::string ProjectPrecompiledDirPath( const std::string& proj, const std::string& target );
+	std::string ProjectObjectsDirPath    ( const std::string& proj, const std::string& target );
+	std::string ProjectLibrariesDirPath  ( const std::string& proj, const std::string& target );
 	
 }
+
+#endif
 
