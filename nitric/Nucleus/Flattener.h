@@ -89,8 +89,7 @@ namespace Nucleus
       
       template < class Putter > void Put( Put_Parameter toPut, const Putter& put )
         {
-         const typename T::value_type *begin = toPut.empty() ? 0 : &*toPut.begin();
-         put( begin, begin + toPut.size() );
+         put( &*toPut.begin(), &*toPut.end() );
         }
       
       typedef T Get_Result;
@@ -100,8 +99,7 @@ namespace Nucleus
          Get_Result result;
          result.resize( get.size() );
          
-         typename T::value_type *begin = result.empty() ? 0 : &*result.begin();
-         get( begin, begin + result.size() );
+         get( &*result.begin(), &*result.end() );
          return result;
         }
       
