@@ -10,14 +10,18 @@
 #include <AERegistry.h>
 #endif
 
-// POSIX
-#include <unistd.h>
-
 // C++ Standard Library
 #include <string>
 
+// POSIX
+#include <unistd.h>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
+
+// Io
+#include "io/slurp.hh"
+#include "io/spray.hh"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
@@ -56,9 +60,6 @@ namespace RunToolServer
 	namespace P7 = POSeven;
 	namespace Div = Divergence;
 	namespace NX = NitrogenExtras;
-	
-	using N::fsRdPerm;
-	using N::fsWrPerm;
 	
 	using BitsAndBytes::q;
 	
@@ -103,15 +104,13 @@ namespace RunToolServer
 		script += DirectoryCommandForMPW();
 		script += command + "\r";
 		
-		N::FSWrite( N::FSpOpenDF( scriptFile, fsWrPerm ),
-		            script.size(),
-		            script.data() );
+		io::spray_file< NN::StringFlattener< std::string > >( scriptFile, script );
 	}
 	
-	static void WriteInputFile( const FSSpec& file )
+	inline void WriteInputFile( const FSSpec& file )
 	{
 		// Prepare stdin file
-		NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
+		//NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsWrPerm ) );
 		
 		// FIXME:  Needs to be implemented
 	}
@@ -168,25 +167,6 @@ namespace RunToolServer
 		       << N::keyDirectObject
 		          + N::AECreateDesc< N::typeChar >( script );
 	}
-	
-	/*
-	static AEReturnID SendScriptEvent( const AppleEvent& appleEvent )
-	{
-		// Build and send the event.
-		
-		const bool waitForReply = TARGET_RT_MAC_MACHO;
-		
-		NN::Owned< AppleEvent > reply = N::AESend
-		(
-			appleEvent, 
-			( waitForReply ? kAEWaitReply : kAEQueueReply ) | kAECanInteract, 
-			kAENormalPriority, 
-			5 * 60 * 60
-		);
-		
-		return N::AEGetAttributePtr< typeSInt32 >( appleEvent, keyReturnIDAttr );
-	}
-	*/
 	
 	static NN::Owned< N::AppleEvent > AESendBlocking( const N::AppleEvent& appleEvent )
 	{
@@ -285,24 +265,11 @@ namespace RunToolServer
 	
 	static void DumpFile( const FSSpec& file, P7::FileDescriptor fd )
 	{
-		NN::Owned< N::FSFileRefNum > fileH = N::FSpOpenDF( file, fsRdPerm );
+		std::string outputFromToolServer = io::slurp_file< NN::StringFlattener< std::string > >( file );
 		
-		std::size_t length = N::GetEOF( fileH );
+		std::replace( outputFromToolServer.begin(), outputFromToolServer.end(), '\r', '\n' );
 		
-		if ( length == 0 )
-		{
-			return;
-		}
-		
-		std::vector< char > v( length );
-		
-		int bytes = io::read( fileH, &v[ 0 ], v.size() );
-		
-		ASSERT( bytes == v.size() );
-		
-		std::replace( v.begin(), v.end(), '\r', '\n' );
-		
-		io::write( fd, &v[ 0 ], bytes );
+		io::write( fd, outputFromToolServer.data(), outputFromToolServer.size() );
 	}
 	
 	int RunCommandInToolServer( const std::string& command )
