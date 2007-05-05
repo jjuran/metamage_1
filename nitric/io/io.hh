@@ -3,6 +3,9 @@
 #ifndef IO_IO_HH
 #define IO_IO_HH
 
+// Standard C
+#include <stdint.h>
+
 namespace io
 {
 	
