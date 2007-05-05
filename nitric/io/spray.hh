@@ -44,7 +44,7 @@ namespace io
 	};
 	
 	template < class Flattener, class FileSpec >
-	inline void spray_file( const FileSpec& file, typename Flattener::Parameter param )
+	void spray_file( const FileSpec& file, typename Flattener::Parameter param )
 	{
 		spray_putter< io::filespec_traits< FileSpec > > putter( file );
 		
