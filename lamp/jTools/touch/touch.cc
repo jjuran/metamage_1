@@ -3,6 +3,9 @@
  *	========
  */
 
+// Standard C/C++
+#include <cstdio>
+
 // POSIX
 #include "errno.h"
 #include "fcntl.h"
