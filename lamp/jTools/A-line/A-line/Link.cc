@@ -119,107 +119,6 @@ namespace ALine
 		return N::FSpGetMacPathname( file );
 	}
 	
-	static std::string MacSystemLibs( TargetInfo targetInfo, bool extraLibs )
-	{
-		bool custom = false;  // FIXME
-		bool usesInterfaceLib =  ( targetInfo.platform.runtime == CD::runtimeCodeFragments )
-		                      && ( targetInfo.platform.api     == CD::apiMacToolbox );
-		
-		N::FSDirSpec libsFolder = InterfacesAndLibraries() << "Libraries";
-		N::FSDirSpec sharedLibs = libsFolder               << "SharedLibraries";
-		
-		std::string systemLibs;
-		
-		if ( targetInfo.platform.arch == CD::arch68K )
-		{
-			N::FSDirSpec mw68kLibs  = libsFolder << "MW68KLibraries";
-			N::FSDirSpec mpw68kLibs = libsFolder << "Libraries";
-			
-			/*
-			systemLibs << "-l" << q( N::FSpGetMacPathname( libsFolder & "MW68KLibraries" ) );
-			systemLibs << "-l" << q( N::FSpGetMacPathname( libsFolder & "Libraries" ) );
-			*/
-			
-			if ( custom )
-			{
-				systemLibs << q( Pathname( mw68kLibs & "MSL CustomCRStartup.Lib" ) );
-			}
-			else
-			{
-				if ( targetInfo.platform.runtime == CD::runtimeCodeFragments )
-				{
-					systemLibs << q( Pathname( mw68kLibs & "MSL C.CFM68K Fa(4i_8d).Lib"   ) )
-					           << q( Pathname( mw68kLibs & "MSL C++.CFM68k Fa(4i_8d).Lib" ) )
-					           << q( Pathname( mw68kLibs & "MSL MWCFM68KRuntime.Lib"      ) )
-					           << q( Pathname( mw68kLibs & "MathLibCFM68K (4i_8d).Lib"    ) )
-					           << q( Pathname( mw68kLibs & "PLStringFuncsCFM68K.lib"      ) )
-					           << q( Pathname( sharedLibs & "InterfaceLib"                ) )
-					           << q( Pathname( sharedLibs & "ThreadsLib"                  ) );
-				}
-				else
-				{
-					if ( targetInfo.platform.runtime == CD::runtimeA4CodeResource )
-					{
-						systemLibs << q( Pathname( mw68kLibs & "MSL C.68K Fa(4i_8d).A4.Lib"   ) )
-						           << q( Pathname( mw68kLibs & "MSL C++.68K Fa(4i_8d).A4.Lib" ) )
-						           << q( Pathname( mw68kLibs & "MSL Runtime68K.A4.Lib"        ) )
-						           << q( Pathname( mw68kLibs & "MathLib68K Fa(4i_8d).A4.Lib"  ) );
-					}
-					else
-					{
-						systemLibs << q( Pathname( mw68kLibs & "MSL C.68K Fa(4i_8d).Lib"   ) )
-						           << q( Pathname( mw68kLibs & "MSL C++.68K Fa(4i_8d).Lib" ) )
-						           << q( Pathname( mw68kLibs & "MSL Runtime68K.Lib"        ) )
-						           << q( Pathname( mw68kLibs & "MathLib68K Fa(4i_8d).Lib"  ) );
-					}
-					
-					systemLibs << q( Pathname( mw68kLibs & "MacOS.lib" ) );
-				}
-			}
-			
-		}
-		else
-		{
-			N::FSDirSpec mwppcLibs = libsFolder << "MWPPCLibraries";
-			N::FSDirSpec ppcLibs   = libsFolder << "PPCLibraries";
-			
-			/*
-			systemLibs << "-l" << q( N::FSpGetMacPathname( libsFolder & "MWPPCLibraries"  ) );
-			systemLibs << "-l" << q( N::FSpGetMacPathname( libsFolder & "PPCLibraries"    ) );
-			systemLibs << "-l" << q( N::FSpGetMacPathname( libsFolder & "SharedLibraries" ) );
-			*/
-			
-			if ( targetInfo.platform.api == CD::apiMacCarbon )
-			{
-				systemLibs << q( Pathname( mwppcLibs  & "MSL C.Carbon.Lib" ) )
-				           << q( Pathname( sharedLibs & "CarbonLib"        ) );
-			}
-			else
-			{
-				systemLibs << q( Pathname( mwppcLibs  & "MSL C.PPC.Lib"            ) )
-				           << q( Pathname( mwppcLibs  & "PLStringFuncsPPC.lib"     ) )
-				           << q( Pathname( sharedLibs & "MathLib"                  ) )
-				           << q( Pathname( sharedLibs & "ThreadsLib"               ) )
-				           << q( Pathname( ppcLibs    & "CarbonAccessors.o"        ) )
-				           << q( Pathname( ppcLibs    & "PascalPreCarbonUPPGlue.o" ) );
-				
-				systemLibs << "-wi" << q( Pathname( sharedLibs & "InterfaceLib" ) );
-				
-				if ( extraLibs )
-				{
-					systemLibs << "-wi" << q( Pathname( sharedLibs & "ControlsLib"      ) )
-					           << "-wi" << q( Pathname( sharedLibs & "WindowsLib"       ) )
-					           << "-wi" << q( Pathname( sharedLibs & "MenusLib"         ) );
-				}
-			}
-			
-			systemLibs << q( Pathname( mwppcLibs & "MSL C++.PPC.Lib"    ) )
-			           << q( Pathname( mwppcLibs & "MSL RuntimePPC.Lib" ) );
-		}
-		
-		return systemLibs;
-	}
-	
 	static FSSpec FindImportLibrary( const FileName& filename )
 	{
 		N::FSDirSpec libsFolder = InterfacesAndLibraries() << "Libraries";
@@ -663,10 +562,9 @@ namespace ALine
 		}
 		
 		
-		if ( needLibs )
+		if ( needLibs && gnu )
 		{
-			link << ( gnu ? GetFrameworks( project )
-			              : MacSystemLibs( targetInfo, project.Product() == productApplication ) );
+			link << GetFrameworks( project );
 		}
 		
 		if ( bundle )
