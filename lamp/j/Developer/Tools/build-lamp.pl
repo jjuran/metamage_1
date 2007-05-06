@@ -81,10 +81,16 @@ my %fsmap =
 (
 	Developer =>
 	{
+		Tests =>
+		{
+			perl => [ qw( print.t ) ],
+			proc => [ qw( exe.t   ) ],
+			sh   => [ qw( braces.t errexit.t exit.t io.t vars.t ) ],
+		},
 		Tools =>
 		[
 			qw( A-line abort activate aevt cpres keymods quit system File Line tlsrvr ),
-			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl ),
+			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl run-tests ),
 		],
 	},
 	bin =>
