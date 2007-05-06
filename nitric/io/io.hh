@@ -4,7 +4,9 @@
 #define IO_IO_HH
 
 // Standard C
+#include <stddef.h>
 #include <stdint.h>
+
 
 namespace io
 {
