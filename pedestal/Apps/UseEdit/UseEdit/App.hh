@@ -91,12 +91,21 @@ namespace UseEdit
 		private:
 			static App* theApp;
 			
+			typedef void (*AEEventHandlerProcPtr)( AppleEvent const&, AppleEvent&, App* );
+			
 			Ped::AboutHandler< App > itsAboutHandler;
 			Ped::NewHandler  < App > itsNewHandler;
 			NN::Owned< N::AEEventHandler > itsOpenDocsEventHandler;
 			NN::Owned< N::AEEventHandler > itsCloseHandler;
 			NN::Owned< N::AEEventHandler > itsCountHandler;
 			NN::Owned< N::AEEventHandler > itsGetDataHandler;
+			
+			template < AEEventHandlerProcPtr proc >
+			inline NN::Owned< N::AEEventHandler > InstallAppleEventHandler( N::AEEventClass  eventClass,
+			                                                                N::AEEventID     eventID )
+			{
+				return N::AEInstallEventHandler< App*, proc >( eventClass, eventID, this );
+			}
 		
 		public:
 			static App& Get();

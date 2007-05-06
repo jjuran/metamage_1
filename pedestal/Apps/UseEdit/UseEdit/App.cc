@@ -394,18 +394,10 @@ namespace UseEdit
 	: 
 		itsAboutHandler( *this ),
 		itsNewHandler  ( *this ),
-		itsOpenDocsEventHandler( N::AEInstallEventHandler< App*, HandleOpenDocumentsAppleEvent >( kCoreEventClass,
-		                                                                                          kAEOpenDocuments,
-		                                                                                          this ) ),
-		itsCloseHandler( N::AEInstallEventHandler< App*, HandleCloseAppleEvent >( kAECoreSuite,
-		                                                                          kAEClose,
-		                                                                          this ) ),
-		itsCountHandler( N::AEInstallEventHandler< App*, HandleCountAppleEvent >( kAECoreSuite,
-		                                                                          kAECountElements,
-		                                                                          this ) ),
-		itsGetDataHandler( N::AEInstallEventHandler< App*, HandleGetDataAppleEvent >( kAECoreSuite,
-		                                                                              kAEGetData,
-		                                                                              this ) )
+		itsOpenDocsEventHandler( InstallAppleEventHandler< HandleOpenDocumentsAppleEvent >( kCoreEventClass, kAEOpenDocuments ) ),
+		itsCloseHandler  ( InstallAppleEventHandler< HandleCloseAppleEvent   >( kAECoreSuite, kAEClose         ) ),
+		itsCountHandler  ( InstallAppleEventHandler< HandleCountAppleEvent   >( kAECoreSuite, kAECountElements ) ),
+		itsGetDataHandler( InstallAppleEventHandler< HandleGetDataAppleEvent >( kAECoreSuite, kAEGetData       ) )
 	{
 		ASSERT( theApp == NULL );
 		
