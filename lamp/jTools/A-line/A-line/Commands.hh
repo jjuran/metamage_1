@@ -281,7 +281,7 @@ namespace ALine
 		
 		std::string Optimization() const
 		{
-			return debug ? gnu ? "-O2"
+			return !debug ? gnu ? "-O2"
 			                   : "-O4"
 			             : "-O0";
 		}
