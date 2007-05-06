@@ -17,15 +17,15 @@
 #include <unistd.h>
 
 
+#define STR_LEN( str )  "" str, (sizeof str - 1)
+
 #pragma export on
 
 int main( int argc, char const *const argv[] )
 {
 	if ( argc < 2 )
 	{
-		const char usage[] = "Usage: nohup command [ arg1 ... argn ]\n";
-		
-		(void) write( STDERR_FILENO, usage, sizeof usage -1 );
+		(void) write( STDERR_FILENO, STR_LEN( "Usage: nohup command [ arg1 ... argn ]\n" ) );
 		
 		return 1;
 	}
