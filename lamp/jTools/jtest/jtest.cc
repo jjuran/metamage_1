@@ -458,7 +458,7 @@ int O::Main( int argc, const char *const argv[] )
 			return 1;
 		}
 		
-		int controlled = fcntl( fd, F_SETFD, 1 );
+		int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
 	}
 	
 	Io::TextInputAdapter< P7::FileDescriptor > input = P7::FileDescriptor( fd );
