@@ -116,6 +116,8 @@ int O::Main( int argc, const char *const argv[] )
 		
 		fd = P7::Open( gArgZero, O_RDONLY ).Release();
 		
+		int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
+		
 		SetInteractiveness( options.GetFlag( optInteractive ) );
 	}
 	else
