@@ -354,6 +354,8 @@ static int BuiltinDot( int argc, char const* const argv[] )
 	
 	NN::Owned< P7::FileDescriptor > fd = P7::Open( argv[ 1 ], 0 );
 	
+	int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
+	
 	ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 	
 	int result = ReadExecuteLoop( fd, false );
