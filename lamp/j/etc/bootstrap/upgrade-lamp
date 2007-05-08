@@ -1,0 +1,19 @@
+#!/bin/sh
+
+test -d $HOME/$1 && echo You already have $1. && exit
+
+cd /tmp
+
+echo Downloading $1.mbin.gz...
+htget --save http://lamp.sourceforge.net/experimental/$1.mbin.gz
+
+echo Decompressing...
+gzip -d $1.mbin.gz
+
+echo Decoding archive...
+macbin --decode $1.mbin
+
+mv $1 $HOME/$1
+
+echo Done.
+
