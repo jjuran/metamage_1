@@ -262,6 +262,7 @@ class TestCase
 {
 	private:
 		std::string itsCommand;
+		std::string itsToDoReason;
 		int itsExpectedExitStatus;
 		std::vector< Redirection > itsRedirections;
 		unsigned itsCountOfPipesNeeded;
@@ -272,6 +273,8 @@ class TestCase
 		TestCase() : itsExpectedExitStatus(), itsCountOfPipesNeeded()  {}
 		
 		void SetCommand( const std::string& command )  { itsCommand = command; }
+		const std::string& GetToDoReason() const  { return itsToDoReason; }
+		void SetToDoReason( const std::string& reason )  { itsToDoReason = reason; }
 		void SetExitStatus( int status )  { itsExpectedExitStatus = status; }
 		void AddRedirection( const Redirection& redir );
 		
@@ -436,6 +439,13 @@ static void RunTest( TestCase& test )
 	
 	result += " " + NN::Convert< std::string >( ++gLastNumber );
 	
+	const std::string& reason = test.GetToDoReason();
+	
+	if ( !reason.empty() )
+	{
+		result += " # TODO " + reason;
+	}
+	
 	result += "\n";
 	
 	(void) write( STDOUT_FILENO, result.data(), result.size() );
@@ -505,6 +515,12 @@ int O::Main( int argc, const char *const argv[] )
 		{
 			battery.push_back( test );
 			test = TestCase();
+			continue;
+		}
+		
+		if ( line.substr( 0, 4 ) == "TODO" )
+		{
+			test.SetToDoReason( line.substr( 5, line.npos ) );
 			continue;
 		}
 		
