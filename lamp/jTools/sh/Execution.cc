@@ -489,6 +489,13 @@ static int ExecuteCommand( const Command& command )
 		
 		int pid = vfork();
 		
+		if ( pid == -1 )
+		{
+			std::perror( "sh: vfork()" );
+			
+			return 127;
+		}
+		
 		if ( pid == 0 )
 		{
 			try
