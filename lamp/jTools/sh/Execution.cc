@@ -452,11 +452,14 @@ static int AssignShellVariablesFromArgV( char** argv )
 	return 0;
 }
 
+static Command ParseCommand( const Command& command )
+{
+	return Sh::ParseCommand( command, ShellParameterDictionary() );
+}
+
 static int ExecuteCommand( const Command& command )
 {
-	Command parsedCommand = Sh::ParseCommand( command, ShellParameterDictionary() );
-	
-	Sh::StringArray argvec( parsedCommand.args );
+	Sh::StringArray argvec( command.args );
 	
 	char** argv = argvec.GetPointer();
 	
@@ -496,10 +499,8 @@ static int ExecuteCommand( const Command& command )
 				{
 					try
 					{
-						CallBuiltin( builtin, argv );
-						
 						// Since we didn't actually exec anything, we have to exit manually
-						_exit( 0 );
+						_exit( CallBuiltin( builtin, argv ) );
 					}
 					catch ( const O::ExitStatus& status )
 					{
@@ -557,15 +558,13 @@ static int ExecuteCommand( const Command& command )
 		Io::Err << "wish: An exception occurred while running the command.\n";
 	}
 	
-	return 1;
+	return 127;
 }
 
 
 static int ExecuteCommandFromPipeline( const Command& command )
 {
-	Command parsedCommand = Sh::ParseCommand( command, ShellParameterDictionary() );
-	
-	Sh::StringArray argvec( parsedCommand.args );
+	Sh::StringArray argvec( command.args );
 	
 	char** argv = argvec.GetPointer();
 	
@@ -574,11 +573,9 @@ static int ExecuteCommandFromPipeline( const Command& command )
 		return 0;
 	}
 	
-	if ( std::strchr( argv[ 0 ], '=' ) )
+	if ( CommandIsOnlyAssignments( argv ) )
 	{
 		// An assignment as the sole command to a shell is pointless, so just exit
-		_exit( 0 );
-		
 		return 0;
 	}
 	
@@ -586,37 +583,47 @@ static int ExecuteCommandFromPipeline( const Command& command )
 	{
 		if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
 		{
-			int argc = Sh::CountStringArray( argv );
-			
 			// Don't exec a new shell, just call the builtin inside the forked child
-			_exit( builtin( argc, argv ) );
-			
-			return 0;
+			return CallBuiltin( builtin, argv );
 		}
 		
-		std::for_each( command.redirections.begin(),
-		               command.redirections.end(),
-		               std::ptr_fun( RedirectIO ) );
+		RedirectIOs( command.redirections );
+		
+		while ( std::strchr( argv[ 0 ], '=' ) )
+		{
+			putenv( argv[0] );
+			
+			++argv;
+		}
 		
 		return Exec( argv );
 		
 	}
 	catch ( const O::ExitStatus& status )
 	{
-		_exit( status );
+		return status;
 	}
 	catch ( ... )
 	{
 		Io::Err << "wish: An exception occurred while running the command.\n";
 	}
 	
-	return 1;
+	return 127;
 }
 
+static void ExecuteCommandAndExitFromPipeline( const Command& command )
+{
+	_exit( ExecuteCommandFromPipeline( command ) );
+}
 
 static int ExecutePipeline( const Pipeline& pipeline )
 {
-	const std::vector< Command >& commands = pipeline.commands;
+	std::vector< Command > commands( pipeline.commands.size() );
+	
+	std::transform( pipeline.commands.begin(),
+	                pipeline.commands.end(),
+	                commands.begin(),
+	                std::ptr_fun( ParseCommand ) );
 	
 	switch ( commands.size() )
 	{
@@ -656,7 +663,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		setpgrp();
 		
 		// exec or exit
-		ExecuteCommandFromPipeline( commands.front() );
+		ExecuteCommandAndExitFromPipeline( commands.front() );
 	}
 	
 	// previous pipe fd's are saved in 'reading' and 'writing'.
@@ -688,7 +695,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 			
 			setpgid( 0, first );
 			
-			ExecuteCommandFromPipeline( *command );
+			ExecuteCommandAndExitFromPipeline( *command );
 		}
 		
 		// Child is forked, so we're done reading
@@ -713,7 +720,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		
 		setpgid( 0, first );
 		
-		ExecuteCommandFromPipeline( *command );
+		ExecuteCommandAndExitFromPipeline( *command );
 	}
 	
 	// Child is forked, so we're done reading
