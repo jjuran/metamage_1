@@ -3,6 +3,9 @@
  *	==========
  */
 
+// Standard C++
+#include <list>
+
 // Standard C
 #include "errno.h"
 #include "signal.h"
@@ -23,7 +26,7 @@
 
 
 // Exceptions are off here
-#pragma exceptions off
+//#pragma exceptions off
 
 
 	const char* sys_errlist[] =
@@ -243,19 +246,39 @@
 	
 	jmp_buf gKerosene_vfork_jmp_buf;
 	
-	static bool gKerosene_vforking = false;
+	struct jmp_buf_struct
+	{
+		jmp_buf buf;
+		
+		jmp_buf_struct()  {}
+		
+		jmp_buf_struct( jmp_buf j )
+		{
+			::BlockMove( j, buf, sizeof (jmp_buf) );
+		}
+	};
+	
+	std::list< jmp_buf_struct > vfork_jmp_buf_stack;
 	
 	static void ExitFromFork( pid_t pid )
 	{
-		// ASSERT( gKerosene_vforking );
+		// ASSERT( !vfork_jmp_buf_stack.empty() );
 		
-		gKerosene_vforking = false;
-		longjmp( gKerosene_vfork_jmp_buf, pid );
+		if ( !vfork_jmp_buf_stack.empty() )
+		{
+			::BlockMoveData( &vfork_jmp_buf_stack.back(), &gKerosene_vfork_jmp_buf, sizeof (jmp_buf) );
+			
+			vfork_jmp_buf_stack.pop_back();
+			
+			longjmp( gKerosene_vfork_jmp_buf, pid );
+		}
 	}
 	
 	int Kerosene_SpawnVFork()
 	{
-		if ( gKerosene_vforking )
+		const bool nested_vforks = true;
+		
+		if ( !nested_vforks  &&  !vfork_jmp_buf_stack.empty() )
 		{
 			return -1;  // no nested vforking
 		}
@@ -264,7 +287,14 @@
 		
 		if ( result != -1 )
 		{
-			gKerosene_vforking = true;
+			try
+			{
+				vfork_jmp_buf_stack.push_back( jmp_buf_struct( gKerosene_vfork_jmp_buf ) );
+			}
+			catch ( ... )
+			{
+				return -1;
+			}
 		}
 		
 		return result;
@@ -276,7 +306,9 @@
 		
 		int result = execve_Kernel( path, argv, envp );
 		
-		if ( result != -1 && gKerosene_vforking )
+		// ASSERT( result == -1 || !vfork_jmp_buf_stack.empty() );
+		
+		if ( result != -1 && !vfork_jmp_buf_stack.empty() )
 		{
 			ExitFromFork( pid );
 		}
@@ -290,7 +322,9 @@
 		
 		_exit_Kernel( status );
 		
-		if ( gKerosene_vforking )
+		// ASSERT( !vfork_jmp_buf_stack.empty() );
+		
+		if ( !vfork_jmp_buf_stack.empty() )
 		{
 			ExitFromFork( pid );  // doesn't return -- jumps back to vfork()
 		}
