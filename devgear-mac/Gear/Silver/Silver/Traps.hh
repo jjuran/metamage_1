@@ -46,11 +46,6 @@ namespace Silver
 	
 	#undef DEFINE_TRAP
 	
-	#undef _Name
-	#undef ProcPtrName
-	#undef TrapName
-	#undef DefineTrap
-	
 }
 
 #endif

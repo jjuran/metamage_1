@@ -34,9 +34,6 @@ namespace Silver
 	DEFINE_PATCH( ExitToShell   );
 	
 	#undef DEFINE_PATCH
-	#undef TrapName
-	#undef PatchName
-	#undef DefinePatch
 }
 
 #endif
