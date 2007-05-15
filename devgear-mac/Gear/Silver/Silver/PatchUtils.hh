@@ -36,9 +36,7 @@ namespace Silver
 			THz oldZone;
 		
 		public:
-			TempZone( THz zone )
-			:
-				oldZone( ::GetZone() )
+			TempZone( THz zone ) : oldZone( ::GetZone() )
 			{
 				::SetZone( zone );
 			}
