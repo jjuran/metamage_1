@@ -22,8 +22,8 @@ namespace Silver
 {
 	
 	#define ProcName(      name )  name ## Proc
-	#define ProcPtrName(   name )  name ## ProcPtr
-	#define DefineProcPtr( n    )  typedef ProcName( n )::ProcPtr ProcPtrName( n )
+	
+	#define DEFINE_PROCPTR( name )  typedef name ## Proc::ProcPtr name ## ProcPtr
 	
 	// Traps
 	
@@ -39,31 +39,33 @@ namespace Silver
 	typedef ProcType1< void, TEHandle                  > ProcName( TEPaste       );
 	typedef ProcType2< void, MenuRef, ResType          > ProcName( AppendResMenu );
 	typedef ProcType3< void, short, short, TEHandle    > ProcName( TESetSelect   );
-	typedef ProcType1< void, long    > ProcName( SystemMenu   );
+	typedef ProcType1< void, long                      > ProcName( SystemMenu    );
+	typedef ProcType0< void                            > ProcName( ExitToShell   );
 	
-	DefineProcPtr( DrawText      );
-	DefineProcPtr( GetNextEvent  );
-	DefineProcPtr( InsertMenu    );
-	DefineProcPtr( MenuKey       );
-	DefineProcPtr( MenuSelect    );
-	DefineProcPtr( StillDown     );
-	DefineProcPtr( TEActivate    );
-	DefineProcPtr( TEClick       );
-	DefineProcPtr( TEKey         );
-	DefineProcPtr( TEPaste       );
-	DefineProcPtr( AppendResMenu );
-	DefineProcPtr( TESetSelect   );
-	DefineProcPtr( SystemMenu   );
+	DEFINE_PROCPTR( DrawText      );
+	DEFINE_PROCPTR( GetNextEvent  );
+	DEFINE_PROCPTR( InsertMenu    );
+	DEFINE_PROCPTR( MenuKey       );
+	DEFINE_PROCPTR( MenuSelect    );
+	DEFINE_PROCPTR( StillDown     );
+	DEFINE_PROCPTR( TEActivate    );
+	DEFINE_PROCPTR( TEClick       );
+	DEFINE_PROCPTR( TEKey         );
+	DEFINE_PROCPTR( TEPaste       );
+	DEFINE_PROCPTR( AppendResMenu );
+	DEFINE_PROCPTR( TESetSelect   );
+	DEFINE_PROCPTR( SystemMenu    );
+	DEFINE_PROCPTR( ExitToShell   );
 	
 	// Other
 	
 	typedef ProcType5< void, short, MenuHandle, Rect*, Point, short* >  ProcName( MDEF );
 	
-	DefineProcPtr( MDEF );
+	DEFINE_PROCPTR( MDEF );
+	
+	#undef DEFINE_PROCPTR
 	
 	#undef ProcName
-	#undef ProcPtrName
-	#undef DefineProcPtr
 	
 }
 

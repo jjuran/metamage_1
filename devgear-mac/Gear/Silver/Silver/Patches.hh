@@ -16,24 +16,24 @@
 namespace Silver
 {
 	
-	#define TrapName(name)  name ## Trap
-	#define PatchName(name)  name ## Patch
-	#define DefinePatch(n)  typedef Patch<TrapName(n)> PatchName(n)
+	#define DEFINE_PATCH( name )  typedef Patch< name ## Trap > name ## Patch
 	
-	DefinePatch(DrawText);
-	DefinePatch(GetNextEvent);
-	DefinePatch(InsertMenu);
-	DefinePatch(MenuKey);
-	DefinePatch(MenuSelect);
-	DefinePatch(StillDown);
-	DefinePatch(TEActivate);
-	DefinePatch(TEClick);
-	DefinePatch(TEKey);
-	DefinePatch(TEPaste);
-	DefinePatch(AppendResMenu);
-	DefinePatch(TESetSelect  );
-	DefinePatch(SystemMenu  );
+	DEFINE_PATCH( DrawText      );
+	DEFINE_PATCH( GetNextEvent  );
+	DEFINE_PATCH( InsertMenu    );
+	DEFINE_PATCH( MenuKey       );
+	DEFINE_PATCH( MenuSelect    );
+	DEFINE_PATCH( StillDown     );
+	DEFINE_PATCH( TEActivate    );
+	DEFINE_PATCH( TEClick       );
+	DEFINE_PATCH( TEKey         );
+	DEFINE_PATCH( TEPaste       );
+	DEFINE_PATCH( AppendResMenu );
+	DEFINE_PATCH( TESetSelect   );
+	DEFINE_PATCH( SystemMenu    );
+	DEFINE_PATCH( ExitToShell   );
 	
+	#undef DEFINE_PATCH
 	#undef TrapName
 	#undef PatchName
 	#undef DefinePatch

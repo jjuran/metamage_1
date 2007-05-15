@@ -27,24 +27,24 @@ namespace Silver
 		static short TrapWord()  { return trapNum; }
 	};
 	
-	#define _Name(       name )  _ ## name
-	#define ProcPtrName( name )  name ## ProcPtr
-	#define TrapName(    name )  name ## Trap
-	#define DefineTrap(  n    )  typedef Trap< _Name( n ), ProcPtrName( n ) > TrapName( n )
+	#define DEFINE_TRAP( name )  typedef Trap< _ ## name, name ## ProcPtr > name ## Trap
 	
-	DefineTrap( DrawText      );
-	DefineTrap( GetNextEvent  );
-	DefineTrap( InsertMenu    );
-	DefineTrap( MenuKey       );
-	DefineTrap( MenuSelect    );
-	DefineTrap( StillDown     );
-	DefineTrap( TEActivate    );
-	DefineTrap( TEClick       );
-	DefineTrap( TEKey         );
-	DefineTrap( TEPaste       );
-	DefineTrap( AppendResMenu );
-	DefineTrap( TESetSelect   );
-	DefineTrap( SystemMenu   );
+	DEFINE_TRAP( DrawText      );
+	DEFINE_TRAP( GetNextEvent  );
+	DEFINE_TRAP( InsertMenu    );
+	DEFINE_TRAP( MenuKey       );
+	DEFINE_TRAP( MenuSelect    );
+	DEFINE_TRAP( StillDown     );
+	DEFINE_TRAP( TEActivate    );
+	DEFINE_TRAP( TEClick       );
+	DEFINE_TRAP( TEKey         );
+	DEFINE_TRAP( TEPaste       );
+	DEFINE_TRAP( AppendResMenu );
+	DEFINE_TRAP( TESetSelect   );
+	DEFINE_TRAP( SystemMenu    );
+	DEFINE_TRAP( ExitToShell   );
+	
+	#undef DEFINE_TRAP
 	
 	#undef _Name
 	#undef ProcPtrName
