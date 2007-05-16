@@ -20,63 +20,65 @@
 #include "Silver/Patches.hh"
 
 
-using Silver::PatchApplied;
-using Silver::TEKeyPatch;
-
-static PatchApplied<TEKeyPatch> gTEKeyPatch;
+namespace Ag = Silver;
 
 
-extern long expression(const char* expr);
+extern long expression( const char* expr );
 
-static pascal void PatchedTEKey(short c, TEHandle hTE);
 
-static void Payload(TEHandle hTE)
+namespace
 {
-	long start = (**hTE).selStart;
-	long end   = (**hTE).selEnd;
-	long len = end - start;
 	
-	if ( len > 255 )
+	void PatchedTEKey( short c, TEHandle hTE, Ag::TEKeyProcPtr nextHandler )
 	{
-		SysBeep( 30 );
-		return;
+		int start = hTE[0]->selStart;
+		int end   = hTE[0]->selEnd;
+		
+		if ( c == '='  &&  start != end )
+		{
+			int len = end - start;
+			
+			if ( len > 255 )
+			{
+				::SysBeep( 30 );
+				
+				return;
+			}
+			
+			char buf[256];
+			
+			std::memcpy( buf, *hTE[0]->hText, len );
+			buf[ len ] = '\0';
+			
+			long value = expression( buf );
+			
+			::NumToString( (short) value, (unsigned char*) buf );
+			
+			::TEDelete( hTE );
+			::TEInsert( buf + 1, buf[0], hTE );
+			::TESetSelect( start, start + buf[0], hTE );
+		}
+		else
+		{
+			nextHandler( c, hTE );
+		}
 	}
 	
-	char buf[256];
-	
-	std::memcpy(buf, *(**hTE).hText, len);
-	buf[len] = '\0';
-	long value = expression(buf);
-	NumToString((short)value, (unsigned char*)buf);
-	
-	TEDelete(hTE);
-	TEInsert(buf + 1, buf[0], hTE);
-	TESetSelect(start, start + buf[0], hTE);
-}
-
-static pascal void PatchedTEKey(short c, TEHandle hTE)
-{
-	MyA4 a4;
-	
-	long start = (**hTE).selStart;
-	long end   = (**hTE).selEnd;
-	
-	if ((c == '=') && (start != end)) {
-		Payload(hTE);
-	} else {
-		gTEKeyPatch.Original()(c, hTE);
-	}
 }
 
 static bool Install()
 {
-	bool locked = LoadAndLock();
-	if (!locked)
+	bool locked = Ag::LoadAndLock();
+	
+	if ( !locked )
+	{
 		return false;
+	}
 	
-	MyA4 a4;
+	Ag::MyA4 a4;
 	
-	gTEKeyPatch = TEKeyPatch(PatchedTEKey);
+	//gTEKeyPatch = TEKeyPatch(PatchedTEKey);
+	Ag::TrapPatch< _TEKey, PatchedTEKey >::Install();
 	
 	return true;
 }
