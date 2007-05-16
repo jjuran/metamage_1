@@ -8,6 +8,7 @@
 
 // Universal Interfaces
 #include <Events.h>
+#include <LowMem.h>
 #include <MacWindows.h>
 #include <Menus.h>
 #include <Quickdraw.h>
@@ -15,108 +16,141 @@
 #include <Sound.h>
 #include <ToolUtils.h>
 
-// Standard C++
-#include <string>
-#include <vector>
-
 // Silver
-#include "Patches.hh"
-
-// ClassicService
-#include "FileIO.hh"
+#include "Silver/Patches.hh"
 
 
 namespace ClassicService
 {
 	
-	//namespace N = Nitrogen;
-	
 	using namespace Silver;
 	
-	using std::string;
 	
+	struct ServicesMenuItem
+	{
+		long     key;
+		MenuRef  parentMenu;  // Apple menu
+		short    index;    // index into parent menu
+	};
 	
-	MenuRef gAppleMenu;
-	short gServicesMenuItem;
+	enum
+	{
+		itemCount = 4
+	};
+	
+	ServicesMenuItem gServicesMenuItems[ itemCount ];
+	
 	short gLastCheckedMenuID;
-	short gServicesMenuID;
 	TEHandle gTE;
 	
 	static PatchApplied< AppendResMenuPatch > gAppendResMenuPatch;
 	static PatchApplied< MenuSelectPatch    > gMenuSelectPatch;
 	static PatchApplied< MenuKeyPatch       > gMenuKeyPatch;
 	static PatchApplied< TEActivatePatch    > gTEActivatePatch;
-	static PatchApplied< SystemMenuPatch    > gSystemMenuPatch;
+	static PatchApplied< ExitToShellPatch   > gExitToShellPatch;
+	
+	
+	static ServicesMenuItem* FindServicesMenuItem( long key )
+	{
+		ServicesMenuItem* end = gServicesMenuItems + itemCount;
+		
+		for ( ServicesMenuItem* result = gServicesMenuItems;  result != end;  ++result )
+		{
+			if ( result->key == key )  return result;
+		}
+		
+		return NULL;
+	}
+	
+	inline ServicesMenuItem* NewServicesMenuItem()
+	{
+		return FindServicesMenuItem( 0 );
+	}
 	
 	static char rot13( char c )
 	{
 		char lower = c | ' ';
-		if ( lower >= 'a'  ||  lower <= 'z' )
+		
+		if ( lower >= 'a'  &&  lower <= 'z' )
 		{
-			if ( lower >= 'n' )
-			{
-				c = c - 13;
-			}
-			else
-			{
-				c = c + 13;
-			}
+			char rotation = lower < 'n' ? 13 : -13;
+			
+			c += rotation;
 		}
+		
 		return c;
 	}
 	
-	static void Payload()
+	
+	inline long UniqueKey()
 	{
-		::FlashMenuBar( 0 );
-		::FlashMenuBar( 0 );
-		::FlashMenuBar( 0 );
-		::FlashMenuBar( 0 );
-		short start = (**gTE).selStart;
-		short end   = (**gTE).selEnd;
-		Handle text = (**gTE).hText;
+		return (long) LMGetApplZone();
+	}
+	
+	static void PerformService( short index )
+	{
+		if ( index != 1 )  return;
 		
-		long size = GetHandleSize( text );
-		Handle temp = NewHandle( end - start );
-		BlockMoveData( *text + start, *temp, end - start );
+		if ( gTE == NULL )  return;
 		
-		TEKey( 8, gTE );
-		HLock( temp );
+		::FlashMenuBar( 0 );
+		::FlashMenuBar( 0 );
+		::FlashMenuBar( 0 );
+		::FlashMenuBar( 0 );
 		
-		for ( short i = 0;  i < end - start;  ++i )
+		short start = gTE[0]->selStart;
+		short end   = gTE[0]->selEnd;
+		Handle text = gTE[0]->hText;
+		
+		short selectionLength = end - start;
+		
+		Ptr tempPtr = NewPtr( selectionLength );
+		
+		if ( tempPtr == NULL )
 		{
-			//char& c = (*text)[i];
-			TEKey( rot13( (*temp)[i] ), gTE );
+			return;
 		}
 		
-		DisposeHandle( temp );
+		BlockMoveData( *text + start, tempPtr, selectionLength );
+		
+		for ( unsigned i = 0;  i < selectionLength;  ++i )
+		{
+			tempPtr[i] = rot13( tempPtr[i] );
+		}
+		
+		TEDelete( gTE );
+		
+		TEInsert( tempPtr, selectionLength, gTE );
+		
+		DisposePtr( tempPtr );
 		
 	}
 	
-	static pascal void PatchedSystemMenu( long menuResult )
+	static void InstallServicesMenuItem( long key, MenuRef parentMenu )
 	{
-		MyA4 a4;
+		ServicesMenuItem* servicesMenuItem = NewServicesMenuItem();
 		
-		if ( HiWord( menuResult ) == gServicesMenuID )
-		{
-			if ( LoWord( menuResult ) == 1  &&  gTE != NULL )
-			{
-				Payload();
-			}
-		}
-		else
-		{
-			gSystemMenuPatch.Original()( menuResult );
-		}
+		if ( servicesMenuItem == NULL )  return;
 		
+		servicesMenuItem->key        = key;
+		servicesMenuItem->parentMenu = parentMenu;
+		servicesMenuItem->index      = ::CountMenuItems( parentMenu ) + 1;
+		
+		::AppendMenu( parentMenu, "\p  Services" );
+		
+		::AppendMenu( parentMenu, "\p  -" );
+		// set key to hierarchicalMenu
+		::SetItemCmd( parentMenu, servicesMenuItem->index, hMenuCmd );
 	}
 	
-	static pascal void PatchedTEActivate( TEHandle hTE )
+	static void RemoveServicesMenuItem( long key )
 	{
-		MyA4 a4;
+		ServicesMenuItem* it = FindServicesMenuItem( key );
 		
-		gTEActivatePatch.Original()( hTE );
-		
-		gTE = hTE;
+		if ( it != NULL )
+		{
+			it->key = 0;
+		}
 	}
 	
 	static short GetFreeMenuID()
@@ -124,6 +158,7 @@ namespace ClassicService
 		while ( gLastCheckedMenuID <= 255 )
 		{
 			++gLastCheckedMenuID;
+			
 			if ( ::GetMenuHandle( gLastCheckedMenuID ) == NULL )
 			{
 				return gLastCheckedMenuID;
@@ -131,6 +166,45 @@ namespace ClassicService
 		}
 		return 0;
 	}
+	
+	static MenuRef InstallServicesMenu()
+	{
+		gLastCheckedMenuID = 0;
+		
+		ServicesMenuItem* servicesMenuItem = FindServicesMenuItem( UniqueKey() );
+		
+		if ( servicesMenuItem == NULL )  return NULL;
+		
+		short servicesMenuID = GetFreeMenuID();
+		
+		MenuRef servicesMenu = ::NewMenu( servicesMenuID, "\pServices" );
+		
+		::InsertMenu( servicesMenu, kInsertHierarchicalMenu );
+		
+		MenuRef parentMenu = servicesMenuItem->parentMenu;
+		
+		short itemIndex = servicesMenuItem->index;
+		
+		// set key to hierarchicalMenu
+		::SetItemCmd( parentMenu, itemIndex, hMenuCmd );
+		
+		// set mark to the menu ID
+		::SetItemMark( parentMenu, itemIndex, servicesMenuID );
+		
+		::SetMenuItemText( parentMenu, itemIndex,     "\p" "Services" );
+		::SetMenuItemText( parentMenu, itemIndex + 1, "\p" "-"        );
+		
+		::AppendMenu( servicesMenu, "\pRot13" );
+		
+		return servicesMenu;
+	}
+	
+	static void RemoveServicesMenu( MenuRef servicesMenu )
+	{
+		::DeleteMenu ( servicesMenu[0]->menuID );
+		::DisposeMenu( servicesMenu            );
+	}
+	
 	
 	static pascal void PatchedAppendResMenu( MenuRef menu, ResType type )
 	{
@@ -140,210 +214,70 @@ namespace ClassicService
 		
 		if ( type == 'DRVR' )
 		{
-			::AppendMenu( menu, "\pServices" );
-			gAppleMenu = menu;
-			gServicesMenuItem = ::CountMenuItems( menu );
-			::AppendMenu( menu, "\p-" );
-			// set key to hierarchicalMenu
-			::SetItemCmd( menu, gServicesMenuItem, hMenuCmd );
-			
-			//GetServiceInfo();
-			
+			InstallServicesMenuItem( UniqueKey(), menu );
 		}
-		return original( menu, type );
+		
+		original( menu, type );
 	}
 	
-	static pascal long PatchedMenuKey(short c)
+	static pascal void PatchedExitToShell()
 	{
 		MyA4 a4;
 		
-		MenuKeyProcPtr original = gMenuKeyPatch.Original();
+		RemoveServicesMenuItem( UniqueKey() );
 		
-		return original(c);
+		gExitToShellPatch.Original()();
 	}
 	
-	static pascal long PatchedMenuSelect(Point startPt)
+	
+	static pascal long PatchedMenuSelect( Point startPt )
 	{
 		MyA4 a4;
 		
 		MenuSelectProcPtr original = gMenuSelectPatch.Original();
 		
-		gLastCheckedMenuID = 0;
-		
-		gServicesMenuID = GetFreeMenuID();
-		MenuRef servicesMenu = ::NewMenu( gServicesMenuID, "\pServices" );
-		::InsertMenu( servicesMenu, kInsertHierarchicalMenu );
-		
-		// set key to hierarchicalMenu
-		::SetItemCmd( gAppleMenu, gServicesMenuItem, hMenuCmd );
-		// set mark to the menu ID
-		::SetItemMark( gAppleMenu, gServicesMenuItem, gServicesMenuID );
-		
-		/*
-		for ( int i = 0;  i < gMenuItemNames->size();  ++i )
-		{
-			short menuID = GetFreeMenuID();
-			
-			const string& s = (*gMenuItemNames)[ i ];
-			
-			::AppendMenu( servicesMenu, N::Str255( s.substr( 0, 255 ) ) );
-		}
-		*/
-		
-		::AppendMenu( servicesMenu, "\pRot13" );
+		MenuRef servicesMenu = InstallServicesMenu();
 		
 		long result = original( startPt );
 		
-		if ( HiWord( result ) == gServicesMenuID )
+		if ( servicesMenu != NULL )
 		{
-			if ( LoWord( result ) == 1  &&  gTE != NULL )
+			if ( HiWord( result ) == servicesMenu[0]->menuID )
 			{
-				Payload();
+				PerformService( LoWord( result ) );
 			}
+			
+			RemoveServicesMenu( servicesMenu );
 		}
-		
-		::DeleteMenu( gServicesMenuID );
-		::DisposeMenu( servicesMenu );
-		
-		/*
-		if ( HiWord( result ) == gServicesMenuID )
-		{
-			if ( LoWord( result ) == 1  &&  gTE != NULL )
-			{
-				short start = (**gTE).selStart;
-				short end   = (**gTE).selEnd;
-				Handle text = (**gTE).hText;
-				for ( short i = start;  i < end;  ++i )
-				{
-					//char& c = (*text)[i];
-					(*text)[i] = rot13( (*text)[i] );
-				}
-				(*text)[2] = '¥';
-			}
-			result = 0;
-		}
-		*/
 		
 		return result;
-		
-		/*
-		
-		MenuHandle appMenu = GetAppMenuHandle();
-		short count = CountMenuItems(appMenu);
-		short iServicesItem = count + 1;
-		AppendMenu(appMenu, "\pServices");
-		MenuRef servicesMenu = ::NewMenu( kServicesMenuID, "\pServices" );
-		::InsertMenu( servicesMenu, kInsertHierarchicalMenu );
-		// set key to hierarchicalMenu
-		::SetItemCmd( appMenu, iServicesItem, hMenuCmd );
-		// set mark to kServicesMenuID
-		::SetItemMark( appMenu, iServicesItem, kServicesMenuID );
-		
-		::AppendMenu( servicesMenu, "\pDo Script");
-		
-		TemporaryPatchApplied<StillDownPatch> stillDownPatch(PatchedStillDown);
-		gOriginalStillDown = stillDownPatch.Original();
-		
-		long result = original( startPt );
-		
-		Handle menuProcH = (*appMenu)->menuProc;
-		short state = HGetState(menuProcH);
-		HLock(menuProcH);
-		
-		MDEFProcPtr mdefProc = reinterpret_cast<MDEFProcPtr>(*menuProcH);
-		GrafPtr wMgrPort;
-		GetWMgrPort(&wMgrPort);
-		Rect rect;
-		rect.top = 20;
-		rect.right = wMgrPort->portRect.right - 11;
-		rect.bottom = rect.top + (*appMenu)->menuHeight;
-		rect.left = rect.right - (*appMenu)->menuWidth;
-		short whichItem;
-		
-		{
-			ThingWhichPreventsMenuItemDrawing thing;
-			
-			mdefProc(mChooseMsg, appMenu, &rect, gLastMouseLoc, &whichItem);
-		}
-		
-		HSetState(menuProcH, state);
-		
-		::DeleteMenuItem( appMenu, iServicesItem );
-		::DisposeMenu( servicesMenu );
-		
-		*/
 		
 		return result;
 	}
 	
-	
-	static void StoreServiceMenuItem( const string& menuItemName )
+	static pascal void PatchedTEActivate( TEHandle hTE )
 	{
-		gMenuItemNames->push_back( menuItemName );
-	}
-	
-	/*
-	static string ReadFileData( const FSSpec& file )
-	{
-		N::Owned< V::FileHandle > fileH( V::OpenFileReadOnly( file ) );
-		unsigned fileSize = IO::GetEOF(fileH);
-		string data;
-		data.resize( fileSize );
-		int bytes = IO::Read(fileH, &data[0], fileSize);
-		//Assert_(bytes == fileSize);
-		return data;
-	}
-	
-	static void DoSomethingWithServiceFile( const FSSpec& file )
-	{
-		FSSpec infoPListFile = file + "Contents" + "Info.plist";
-		string infoPList = ReadFileData( infoPListFile );
-		string::size_type iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
-		if ( iNSMenuItem == string::npos )
-		{
-			return;
-		}
-		string::size_type iLast = iNSMenuItem;
-		while ( true )
-		{
-			string::size_type iDefault = infoPList.find( "<key>default</key>", iLast );
-			if ( iDefault == string::npos )
-			{
-				break;
-			}
-			string stringElement = "<string>";
-			string::size_type iString = infoPList.find( stringElement, iDefault );
-			string::size_type iValue = iString + stringElement.size();
-			string::size_type iEndString = infoPList.find( "</string>", iValue );
-			string value = infoPList.substr( iValue, iEndString - iValue );
-			
-			StoreServiceMenuItem( value );
-			
-			iLast = iEndString;
-		}
-	}
-	
-	static void GetServiceInfo()
-	{
-		gMenuItemNames = new std::vector< string >;
+		MyA4 a4;
 		
-		std::vector< FSSpec > services = V::GetContentsAsFSSpecs
-		(
-			V::DirSpec( V::SystemVolume(), fsRtDirID ) + "System" + "Library" + "Services"
-		);
+		gTE = hTE;
 		
-		std::for_each
-		(
-			services.begin(), 
-			services.end(), 
-			std::ptr_fun( DoSomethingWithServiceFile )
-		);
+		gTEActivatePatch.Original()( hTE );
 	}
-	*/
+	
+	static pascal long PatchedMenuKey( short c )
+	{
+		MyA4 a4;
+		
+		MenuKeyProcPtr original = gMenuKeyPatch.Original();
+		
+		return original( c );
+	}
+	
 	
 	static bool Install()
 	{
 		bool locked = LoadAndLock();
+		
 		if ( !locked )
 		{
 			return false;
@@ -351,16 +285,16 @@ namespace ClassicService
 		
 		MyA4 a4;
 		
-		//gMenuItemNames = new std::vector< string >;
+		gServicesMenuItems[0].key = 0;
+		gServicesMenuItems[1].key = 0;
 		
-		gServicesMenuItem = 0;
 		gTE = NULL;
 		
 		gAppendResMenuPatch = AppendResMenuPatch( PatchedAppendResMenu );
 		gMenuSelectPatch    = MenuSelectPatch   ( PatchedMenuSelect    );
-		gMenuKeyPatch       = MenuKeyPatch      ( PatchedMenuKey       );
+		//gMenuKeyPatch       = MenuKeyPatch      ( PatchedMenuKey       );
 		gTEActivatePatch    = TEActivatePatch   ( PatchedTEActivate    );
-		gSystemMenuPatch    = SystemMenuPatch   ( PatchedSystemMenu    );
+		gExitToShellPatch   = ExitToShellPatch  ( PatchedExitToShell   );
 		
 		return true;
 	}
