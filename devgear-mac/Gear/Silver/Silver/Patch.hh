@@ -10,10 +10,22 @@
 #define SILVER_PATCH_HH
 
 #include "Silver/PatchUtils.hh"
+#include "Silver/PatchStub.hh"
 
 
 namespace Silver
 {
+	
+	template < UInt16 trapWord, typename TrapTraits< trapWord >::PatchProcPtr patch >
+	class TrapPatch : private PatchStub< typename TrapTraits< trapWord >::PatchProcPtr, patch >
+	{
+		public:
+			static void Install()
+			{
+				NextHandler() = ApplyTrapPatch( trapWord, Function );
+			}
+	};
+	
 	
 	template < class Trap >
 	struct Patch
