@@ -19,6 +19,37 @@
 namespace Silver
 {
 	
+	template < UInt16 > struct TrapTraits;
+	
+	template <> struct TrapTraits< _GetNextEvent >
+	{
+		typedef pascal short (*ProcPtr)( EventMask, EventRecord* );
+		
+		typedef short (*PatchProcPtr)( EventMask, EventRecord*, ProcPtr );
+	};
+	
+	template <> struct TrapTraits< _TEActivate >
+	{
+		typedef pascal void (*ProcPtr)( TEHandle );
+		
+		typedef void (*PatchProcPtr)( TEHandle, ProcPtr );
+	};
+	
+	template <> struct TrapTraits< _TEClick >
+	{
+		typedef pascal void (*ProcPtr)( Point, short, TEHandle );
+		
+		typedef void (*PatchProcPtr)( Point, short, TEHandle, ProcPtr );
+	};
+	
+	template <> struct TrapTraits< _TEKey >
+	{
+		typedef pascal void (*ProcPtr)( short, TEHandle );
+		
+		typedef void (*PatchProcPtr)( short, TEHandle, ProcPtr );
+	};
+	
+	
 	template < short trapNum, class ProcType >
 	struct Trap
 	{
