@@ -23,6 +23,8 @@
 
 namespace Ag = Silver;
 
+using namespace Ag::Trap_ProcPtrs;
+
 
 static Point gLastMouseLoc;
 
@@ -227,7 +229,7 @@ namespace
 
 static bool Install()
 {
-	bool locked = LoadAndLock();
+	bool locked = Ag::LoadAndLock();
 	
 	if ( !locked )
 	{

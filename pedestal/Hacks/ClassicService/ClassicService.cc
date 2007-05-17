@@ -18,12 +18,15 @@
 
 // Silver
 #include "Silver/Patches.hh"
+#include "Silver/Procs.hh"
 
 
 namespace ClassicService
 {
 	
 	namespace Ag = Silver;
+	
+	using namespace Ag::Trap_ProcPtrs;
 	
 	
 	struct ServicesMenuItem
@@ -257,7 +260,7 @@ namespace ClassicService
 	
 	static bool Install()
 	{
-		bool locked = LoadAndLock();
+		bool locked = Ag::LoadAndLock();
 		
 		if ( !locked )
 		{
