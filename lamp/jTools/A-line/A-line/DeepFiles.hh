@@ -24,6 +24,16 @@ namespace ALine
 	namespace NN = Nucleus;
 	
 	
+#ifndef __MWERKS__
+	
+	typedef const FSSpec  ConstFSSpecParam;
+	
+#else
+	
+	typedef const FSSpec& ConstFSSpecParam;
+	
+#endif
+	
 	template < class Filter >
 	class DeepFileSearch
 	{
@@ -36,32 +46,13 @@ namespace ALine
 			
 			operator const std::vector< FSSpec >&() const  { return result; }
 			
-		#ifndef __MWERKS__
-			
-			DeepFileSearch< Filter >& SearchItem( const FSSpec  item );
-			
-		#else
-			
-			DeepFileSearch< Filter >& SearchItem( const FSSpec& item );
-			
-		#endif
+			DeepFileSearch< Filter >& SearchItem( ConstFSSpecParam item );
 			
 			DeepFileSearch< Filter >& SearchDir( const N::FSDirSpec& dir );
 	};
 	
 	template < class Filter >
-	DeepFileSearch< Filter >&
-	
-#ifndef __MWERKS__
-	
-	DeepFileSearch< Filter >::SearchItem( const FSSpec  item )
-	
-#else
-	
-	DeepFileSearch< Filter >::SearchItem( const FSSpec& item )
-	
-#endif
-	
+	DeepFileSearch< Filter >& DeepFileSearch< Filter >::SearchItem( ConstFSSpecParam item )
 	{
 		if ( N::FSpTestFileExists( item ) )
 		{
