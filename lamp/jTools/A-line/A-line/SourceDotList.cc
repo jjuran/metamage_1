@@ -5,6 +5,12 @@
 
 #include "A-line/SourceDotList.hh"
 
+// POSeven
+#include "POSeven/FileDescriptor.hh"
+
+// Nitrogen Extras / Utilities
+#include "Utilities/Files.h"
+
 // Io
 #include "Io/TextInput.hh"
 
@@ -17,13 +23,16 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	
 	using BitsAndBytes::eos;
 	
 	
 	std::vector< std::string > ReadSourceDotList( const FSSpec& sourceList )
 	{
-		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( sourceList ) );
+		std::string pathname = N::FSpGetPOSIXPathname( sourceList );
+		
+		Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( io::open_for_reading( pathname ) );
 		
 		std::vector< std::string > files;
 		

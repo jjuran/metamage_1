@@ -5,6 +5,12 @@
 
 #include "CompileDriver/ProjectDotConf.hh"
 
+// POSeven
+#include "POSeven/FileDescriptor.hh"
+
+// Nitrogen Extras / Utilities
+#include "Utilities/Files.h"
+
 // Io
 #include "Io/TextInput.hh"
 
@@ -19,6 +25,7 @@ namespace CompileDriver
 {
 	
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	
 	using BitsAndBytes::eos;
 	
@@ -77,8 +84,10 @@ namespace CompileDriver
 	
 	void ReadProjectDotConf( const FSSpec& confFile, DotConfData& data )
 	{
+		std::string pathname = N::FSpGetPOSIXPathname( confFile );
+		
 		// Open the config file, and read as a text input stream.
-		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( confFile ) );
+		Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( io::open_for_reading( pathname ) );
 		
 		std::size_t lineCount = 0;
 		
