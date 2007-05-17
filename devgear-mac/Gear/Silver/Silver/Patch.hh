@@ -11,6 +11,7 @@
 
 #include "Silver/PatchUtils.hh"
 #include "Silver/PatchStub.hh"
+#include "Silver/Traps.hh"
 
 
 namespace Silver
