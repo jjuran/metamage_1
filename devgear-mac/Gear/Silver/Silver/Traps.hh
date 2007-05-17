@@ -19,63 +19,61 @@
 namespace Silver
 {
 	
+	template < class ProcPtr > struct PatchProc_Traits;
+	
+	template < class R >
+	struct PatchProc_Traits< R (*)() >
+	{
+		typedef pascal R (*ProcPtr)();
+		
+		typedef R (*PatchProcPtr)( ProcPtr );
+	};
+	
+	template < class R, class P0 >
+	struct PatchProc_Traits< R (*)( P0 ) >
+	{
+		typedef pascal R (*ProcPtr)( P0 );
+		
+		typedef R (*PatchProcPtr)( P0, ProcPtr );
+	};
+	
+	template < class R, class P0, class P1 >
+	struct PatchProc_Traits< R (*)( P0, P1 ) >
+	{
+		typedef pascal R (*ProcPtr)( P0, P1 );
+		
+		typedef R (*PatchProcPtr)( P0, P1, ProcPtr );
+	};
+	
+	template < class R, class P0, class P1, class P2 >
+	struct PatchProc_Traits< R (*)( P0, P1, P2 ) >
+	{
+		typedef pascal R (*ProcPtr)( P0, P1, P2 );
+		
+		typedef R (*PatchProcPtr)( P0, P1, P2, ProcPtr );
+	};
+	
+	
 	template < UInt16 > struct TrapTraits;
 	
-	template <> struct TrapTraits< _GetNextEvent >
-	{
-		typedef pascal short (*ProcPtr)( EventMask, EventRecord* );
-		
-		typedef short (*PatchProcPtr)( EventMask, EventRecord*, ProcPtr );
-	};
+	#define DEFINE_TRAP_TRAITS( name )  template <> struct TrapTraits< _ ## name > : public PatchProc_Traits< name ## ProcPtr > {}
 	
-	template <> struct TrapTraits< _TEActivate >
-	{
-		typedef pascal void (*ProcPtr)( TEHandle );
-		
-		typedef void (*PatchProcPtr)( TEHandle, ProcPtr );
-	};
+	DEFINE_TRAP_TRAITS( DrawText      );
+	DEFINE_TRAP_TRAITS( GetNextEvent  );
+	DEFINE_TRAP_TRAITS( InsertMenu    );
+	DEFINE_TRAP_TRAITS( MenuKey       );
+	DEFINE_TRAP_TRAITS( MenuSelect    );
+	DEFINE_TRAP_TRAITS( StillDown     );
+	DEFINE_TRAP_TRAITS( TEActivate    );
+	DEFINE_TRAP_TRAITS( TEClick       );
+	DEFINE_TRAP_TRAITS( TEKey         );
+	DEFINE_TRAP_TRAITS( TEPaste       );
+	DEFINE_TRAP_TRAITS( AppendResMenu );
+	DEFINE_TRAP_TRAITS( TESetSelect   );
+	DEFINE_TRAP_TRAITS( SystemMenu    );
+	DEFINE_TRAP_TRAITS( ExitToShell   );
 	
-	template <> struct TrapTraits< _TEClick >
-	{
-		typedef pascal void (*ProcPtr)( Point, short, TEHandle );
-		
-		typedef void (*PatchProcPtr)( Point, short, TEHandle, ProcPtr );
-	};
-	
-	template <> struct TrapTraits< _TEKey >
-	{
-		typedef pascal void (*ProcPtr)( short, TEHandle );
-		
-		typedef void (*PatchProcPtr)( short, TEHandle, ProcPtr );
-	};
-	
-	
-	template < short trapNum, class ProcType >
-	struct Trap
-	{
-		typedef ProcType ProcPtr;
-		
-		static short TrapWord()  { return trapNum; }
-	};
-	
-	#define DEFINE_TRAP( name )  typedef Trap< _ ## name, name ## ProcPtr > name ## Trap
-	
-	DEFINE_TRAP( DrawText      );
-	DEFINE_TRAP( GetNextEvent  );
-	DEFINE_TRAP( InsertMenu    );
-	DEFINE_TRAP( MenuKey       );
-	DEFINE_TRAP( MenuSelect    );
-	DEFINE_TRAP( StillDown     );
-	DEFINE_TRAP( TEActivate    );
-	DEFINE_TRAP( TEClick       );
-	DEFINE_TRAP( TEKey         );
-	DEFINE_TRAP( TEPaste       );
-	DEFINE_TRAP( AppendResMenu );
-	DEFINE_TRAP( TESetSelect   );
-	DEFINE_TRAP( SystemMenu    );
-	DEFINE_TRAP( ExitToShell   );
-	
-	#undef DEFINE_TRAP
+	#undef DEFINE_TRAP_TRAITS
 	
 }
 

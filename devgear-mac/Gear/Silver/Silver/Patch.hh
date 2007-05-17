@@ -24,47 +24,13 @@ namespace Silver
 			{
 				NextHandler() = ApplyTrapPatch( trapWord, Function );
 			}
-	};
-	
-	
-	template < class Trap >
-	struct Patch
-	{
-		typedef Trap::ProcPtr ProcPtr;
-		static short TrapWord()  { return Trap::TrapWord(); }
-		
-		Patch( ProcPtr proc ) : proc( proc )  {}
-		
-		ProcPtr Apply()  { return ApplyTrapPatch( TrapWord(), proc ); }
-		
-		ProcPtr proc;
-	};
-	
-	template < class Patch >
-	class PatchApplied
-	{
-		typedef Patch::ProcPtr ProcPtr;
-		
-		private:
-			ProcPtr original;
-		
-		public:
-			static short TrapWord()  { return Patch::TrapWord(); }
 			
-			PatchApplied()  {}
-			PatchApplied( Patch patch ) : original( patch.Apply() )  {}
-			
-			void Remove()  { RemoveTrapPatch( TrapWord(), original ); }
-			
-			ProcPtr Original() const  { return original; }
-	};
-	
-	template < class Patch >
-	class TemporaryPatchApplied : public PatchApplied< Patch >
-	{
-		public:
-			TemporaryPatchApplied( Patch patch ) : PatchApplied( patch )  {}
-			~TemporaryPatchApplied()  { Remove(); }
+			static void Remove()
+			{
+				RemoveTrapPatch( trapWord, NextHandler() );
+				
+				NextHandler() = NULL;
+			}
 	};
 	
 }

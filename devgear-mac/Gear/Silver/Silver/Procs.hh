@@ -14,37 +14,30 @@
 #include <Resources.h>
 #include <TextEdit.h>
 
-// Silver
-#include "Silver/ProcTypes.hh"
-
 
 namespace Silver
 {
 	
-	#define PROCPTR_NAME( name )  name ## ProcPtr
+	#define DEFINE_PROCPTR( name, result, args )  typedef pascal result (*name ## ProcPtr) args
 	
 	// Traps
 	
-	typedef ProcType3< void, const void*, short, short >::ProcPtr PROCPTR_NAME( DrawText      );
-	typedef ProcType2< short, EventMask, EventRecord*  >::ProcPtr PROCPTR_NAME( GetNextEvent  );
-	typedef ProcType2< void, MenuHandle, short         >::ProcPtr PROCPTR_NAME( InsertMenu    );
-	typedef ProcType1< long, short                     >::ProcPtr PROCPTR_NAME( MenuKey       );
-	typedef ProcType1< long, Point                     >::ProcPtr PROCPTR_NAME( MenuSelect    );
-	typedef ProcType0< Boolean                         >::ProcPtr PROCPTR_NAME( StillDown     );
-	typedef ProcType1< void, TEHandle                  >::ProcPtr PROCPTR_NAME( TEActivate    );
-	typedef ProcType3< void, Point, short, TEHandle    >::ProcPtr PROCPTR_NAME( TEClick       );
-	typedef ProcType2< void, short, TEHandle           >::ProcPtr PROCPTR_NAME( TEKey         );
-	typedef ProcType1< void, TEHandle                  >::ProcPtr PROCPTR_NAME( TEPaste       );
-	typedef ProcType2< void, MenuRef, ResType          >::ProcPtr PROCPTR_NAME( AppendResMenu );
-	typedef ProcType3< void, short, short, TEHandle    >::ProcPtr PROCPTR_NAME( TESetSelect   );
-	typedef ProcType1< void, long                      >::ProcPtr PROCPTR_NAME( SystemMenu    );
-	typedef ProcType0< void                            >::ProcPtr PROCPTR_NAME( ExitToShell   );
+	DEFINE_PROCPTR( DrawText,      void,    (const void*, short,       short   ) );
+	DEFINE_PROCPTR( GetNextEvent,  short,   (EventMask,   EventRecord*         ) );
+	DEFINE_PROCPTR( InsertMenu,    void,    (MenuHandle,  short                ) );
+	DEFINE_PROCPTR( MenuKey,       long,    (short                             ) );
+	DEFINE_PROCPTR( MenuSelect,    long,    (Point                             ) );
+	DEFINE_PROCPTR( StillDown,     Boolean, (                                  ) );
+	DEFINE_PROCPTR( TEActivate,    void,    (TEHandle                          ) );
+	DEFINE_PROCPTR( TEClick,       void,    (Point,       short,       TEHandle) );
+	DEFINE_PROCPTR( TEKey,         void,    (short,       TEHandle             ) );
+	DEFINE_PROCPTR( TEPaste,       void,    (TEHandle                          ) );
+	DEFINE_PROCPTR( AppendResMenu, void,    (MenuRef,     ResType              ) );
+	DEFINE_PROCPTR( TESetSelect,   void,    (short,       short,       TEHandle) );
+	DEFINE_PROCPTR( SystemMenu,    void,    (long                              ) );
+	DEFINE_PROCPTR( ExitToShell,   void,    (                                  ) );
 	
-	// Other
-	
-	typedef ProcType5< void, short, MenuHandle, Rect*, Point, short* >::ProcPtr  PROCPTR_NAME( MDEF );
-	
-	#undef PROCPTR_NAME
+	#undef DEFINE_PROCPTR
 	
 }
 
