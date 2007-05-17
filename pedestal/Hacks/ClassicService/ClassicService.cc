@@ -23,7 +23,7 @@
 namespace ClassicService
 {
 	
-	using namespace Silver;
+	namespace Ag = Silver;
 	
 	
 	struct ServicesMenuItem
@@ -42,12 +42,6 @@ namespace ClassicService
 	
 	short gLastCheckedMenuID;
 	TEHandle gTE;
-	
-	static PatchApplied< AppendResMenuPatch > gAppendResMenuPatch;
-	static PatchApplied< MenuSelectPatch    > gMenuSelectPatch;
-	static PatchApplied< MenuKeyPatch       > gMenuKeyPatch;
-	static PatchApplied< TEActivatePatch    > gTEActivatePatch;
-	static PatchApplied< ExitToShellPatch   > gExitToShellPatch;
 	
 	
 	static ServicesMenuItem* FindServicesMenuItem( long key )
@@ -205,74 +199,61 @@ namespace ClassicService
 		::DisposeMenu( servicesMenu            );
 	}
 	
-	
-	static pascal void PatchedAppendResMenu( MenuRef menu, ResType type )
+	namespace
 	{
-		MyA4 a4;
 		
-		AppendResMenuProcPtr original = gAppendResMenuPatch.Original();
-		
-		if ( type == 'DRVR' )
+		void PatchedAppendResMenu( MenuRef menu, ResType type, AppendResMenuProcPtr nextHandler )
 		{
-			InstallServicesMenuItem( UniqueKey(), menu );
-		}
-		
-		original( menu, type );
-	}
-	
-	static pascal void PatchedExitToShell()
-	{
-		MyA4 a4;
-		
-		RemoveServicesMenuItem( UniqueKey() );
-		
-		gExitToShellPatch.Original()();
-	}
-	
-	
-	static pascal long PatchedMenuSelect( Point startPt )
-	{
-		MyA4 a4;
-		
-		MenuSelectProcPtr original = gMenuSelectPatch.Original();
-		
-		MenuRef servicesMenu = InstallServicesMenu();
-		
-		long result = original( startPt );
-		
-		if ( servicesMenu != NULL )
-		{
-			if ( HiWord( result ) == servicesMenu[0]->menuID )
+			if ( type == 'DRVR' )
 			{
-				PerformService( LoWord( result ) );
+				InstallServicesMenuItem( UniqueKey(), menu );
 			}
 			
-			RemoveServicesMenu( servicesMenu );
+			nextHandler( menu, type );
 		}
 		
-		return result;
+		void PatchedExitToShell( ExitToShellProcPtr nextHandler )
+		{
+			RemoveServicesMenuItem( UniqueKey() );
+			
+			nextHandler();
+		}
 		
-		return result;
+		
+		long PatchedMenuSelect( Point startPt, MenuSelectProcPtr nextHandler )
+		{
+			MenuRef servicesMenu = InstallServicesMenu();
+			
+			long result = nextHandler( startPt );
+			
+			if ( servicesMenu != NULL )
+			{
+				if ( HiWord( result ) == servicesMenu[0]->menuID )
+				{
+					PerformService( LoWord( result ) );
+				}
+				
+				RemoveServicesMenu( servicesMenu );
+			}
+			
+			return result;
+			
+			return result;
+		}
+		
+		void PatchedTEActivate( TEHandle hTE, TEActivateProcPtr nextHandler )
+		{
+			gTE = hTE;
+			
+			nextHandler( hTE );
+		}
+		
+		long PatchedMenuKey( short c, MenuKeyProcPtr nextHandler )
+		{
+			return nextHandler( c );
+		}
+		
 	}
-	
-	static pascal void PatchedTEActivate( TEHandle hTE )
-	{
-		MyA4 a4;
-		
-		gTE = hTE;
-		
-		gTEActivatePatch.Original()( hTE );
-	}
-	
-	static pascal long PatchedMenuKey( short c )
-	{
-		MyA4 a4;
-		
-		MenuKeyProcPtr original = gMenuKeyPatch.Original();
-		
-		return original( c );
-	}
-	
 	
 	static bool Install()
 	{
@@ -283,18 +264,18 @@ namespace ClassicService
 			return false;
 		}
 		
-		MyA4 a4;
+		Ag::MyA4 a4;
 		
 		gServicesMenuItems[0].key = 0;
 		gServicesMenuItems[1].key = 0;
 		
 		gTE = NULL;
 		
-		gAppendResMenuPatch = AppendResMenuPatch( PatchedAppendResMenu );
-		gMenuSelectPatch    = MenuSelectPatch   ( PatchedMenuSelect    );
-		//gMenuKeyPatch       = MenuKeyPatch      ( PatchedMenuKey       );
-		gTEActivatePatch    = TEActivatePatch   ( PatchedTEActivate    );
-		gExitToShellPatch   = ExitToShellPatch  ( PatchedExitToShell   );
+		Ag::TrapPatch< _AppendResMenu, PatchedAppendResMenu >::Install();
+		Ag::TrapPatch< _MenuSelect,    PatchedMenuSelect    >::Install();
+		//Ag::TrapPatch< _MenuKey,       PatchedMenuKey       >::Install();
+		Ag::TrapPatch< _TEActivate,    PatchedTEActivate    >::Install();
+		Ag::TrapPatch< _ExitToShell,   PatchedExitToShell   >::Install();
 		
 		return true;
 	}

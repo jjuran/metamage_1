@@ -21,14 +21,8 @@
 #include "UEOFUtils.hh"
 
 
-using namespace Silver;
+namespace Ag = Silver;
 
-
-static PatchApplied<MenuSelectPatch> gMenuSelectPatch;
-static PatchApplied<MenuKeyPatch>    gMenuKeyPatch;
-static PatchApplied<InsertMenuPatch> gInsertMenuPatch;
-
-static StillDownProcPtr gOriginalStillDown;
 
 static Point gLastMouseLoc;
 
@@ -44,7 +38,7 @@ static unsigned stashCount;
 static QuitInfo gStash[ stashSize ];
 
 
-static MenuHandle GetAppMenuHandle()
+inline MenuHandle GetAppMenuHandle()
 {
 	const UInt16 appMenuID = 0xbf97;
 	
@@ -53,14 +47,14 @@ static MenuHandle GetAppMenuHandle()
 	return appMenu;
 }
 
-static bool StashFull()
+inline bool StashIsFull()
 {
 	return stashCount >= stashSize;
 }
 
-static QuitInfo* NextStashSlot()
+inline QuitInfo* NextStashSlot()
 {
-	if ( StashFull() )
+	if ( StashIsFull() )
 	{
 		return NULL;
 	}
@@ -68,9 +62,9 @@ static QuitInfo* NextStashSlot()
 	return &gStash[ stashCount++ ];
 }
 
-static QuitInfo* FindPSNInStash(const ProcessSerialNumber& psn)
+static QuitInfo* FindPSNInStash( const ProcessSerialNumber& psn )
 {
-	for ( int i = 0; i < stashCount; ++i )
+	for ( unsigned i = 0; i < stashCount; ++i )
 	{
 		if ( gStash[i].psn == psn )
 		{
@@ -115,124 +109,119 @@ static unsigned GetQuitInfo()
 	return info->menuCode;
 }
 
-static pascal Boolean PatchedStillDown()
+namespace
 {
-	MyA4 a4;
 	
-	StillDownProcPtr original = gOriginalStillDown;
-	
-	bool stillDown = original();
-	
-	if ( !stillDown )
+	Boolean PatchedStillDown( StillDownProcPtr nextHandler )
 	{
-		GetMouse( &gLastMouseLoc );
-	}
-	
-	return stillDown;
-}
-
-
-static pascal long PatchedMenuKey( short c )
-{
-	MyA4 a4;
-	
-	MenuKeyProcPtr original = gMenuKeyPatch.Original();
-	
-	if ( (c | ' ') == 'q' )
-	{
-		return GetQuitInfo();
-	}
-	
-	return original( c );
-}
-
-static pascal long PatchedMenuSelect( Point startPt )
-{
-	MyA4 a4;
-	
-	MenuSelectProcPtr original = gMenuSelectPatch.Original();
-	
-	if ( IsFinderInForeground() )
-	{
-		return original( startPt );
-	}
-	
-	MenuHandle appMenu = GetAppMenuHandle();
-	
-	short count = CountMenuItems( appMenu );
-	
-	::AppendMenu( appMenu, "\p" "Quit/Q" );
-	
-	TemporaryPatchApplied< StillDownPatch > stillDownPatch( PatchedStillDown );
-	gOriginalStillDown = stillDownPatch.Original();
-	
-	long result = original( startPt );
-	
-	Handle menuProcH = appMenu[0]->menuProc;
-	short state = ::HGetState( menuProcH );
-	::HLock( menuProcH );
-	
-	MDEFProcPtr mdefProc = reinterpret_cast< MDEFProcPtr >( *menuProcH );
-	
-	GrafPtr wMgrPort;
-	GetWMgrPort( &wMgrPort );
-	
-	Rect rect;
-	rect.top = 20;
-	rect.right = wMgrPort->portRect.right - 11;
-	rect.bottom = rect.top + appMenu[0]->menuHeight;
-	rect.left = rect.right - appMenu[0]->menuWidth;
-	
-	short whichItem;
-	
-	{
-		ThingWhichPreventsMenuItemDrawing thing;
+		bool stillDown = nextHandler();
 		
-		mdefProc( mChooseMsg, appMenu, &rect, gLastMouseLoc, &whichItem );
-	}
-	
-	::HSetState( menuProcH, state );
-	
-	::DeleteMenuItem( appMenu, count + 1 );
-	
-	if ( whichItem > count )
-	{
-		return GetQuitInfo();
-	}
-	
-	return result;
-}
-
-static pascal void PatchedInsertMenu( MenuHandle menu, short beforeID )
-{
-	MyA4 a4;
-	
-	if ( EqualPstrings( menu[0]->menuData, "\p" "File" ) )
-	{
-		short count = CountMenuItems( menu );
-		
-		Str255 itemName;
-		::GetMenuItemText( menu, count, itemName );
-		
-		if ( EqualPstrings( itemName, "\p" "Quit" ) )
+		if ( !stillDown )
 		{
-			StoreQuitInfo( menu, count );
+			GetMouse( &gLastMouseLoc );
+		}
+		
+		return stillDown;
+	}
+	
+	
+	long PatchedMenuKey( short c, MenuKeyProcPtr nextHandler )
+	{
+		if ( (c | ' ') == 'q' )
+		{
+			return GetQuitInfo();
+		}
+		
+		return nextHandler( c );
+	}
+	
+	long PatchedMenuSelect( Point startPt, MenuSelectProcPtr nextHandler )
+	{
+		if ( IsFinderInForeground() )
+		{
+			return nextHandler( startPt );
+		}
+		
+		MenuHandle appMenu = GetAppMenuHandle();
+		
+		short count = CountMenuItems( appMenu );
+		
+		::AppendMenu( appMenu, "\p" "Quit/Q" );
+		
+		//TemporaryPatchApplied< StillDownPatch > stillDownPatch( PatchedStillDown );
+		//gOriginalStillDown = stillDownPatch.Original();
+		
+		typedef Ag::TrapPatch< _StillDown, PatchedStillDown > StillDownPatch;
+		
+		StillDownPatch::Install();
+		
+		long result = nextHandler( startPt );
+		
+		StillDownPatch::Remove();
+		
+		Handle menuProcH = appMenu[0]->menuProc;
+		short state = ::HGetState( menuProcH );
+		::HLock( menuProcH );
+		
+		MenuDefProcPtr mdefProc = reinterpret_cast< MenuDefProcPtr >( *menuProcH );
+		
+		GrafPtr wMgrPort;
+		GetWMgrPort( &wMgrPort );
+		
+		Rect rect;
+		rect.top = 20;
+		rect.right = wMgrPort->portRect.right - 11;
+		rect.bottom = rect.top + appMenu[0]->menuHeight;
+		rect.left = rect.right - appMenu[0]->menuWidth;
+		
+		short whichItem;
+		
+		{
+			ThingWhichPreventsMenuItemDrawing thing;
 			
-			::DeleteMenuItem( menu, count );
-			--count;
+			mdefProc( mChooseMsg, appMenu, &rect, gLastMouseLoc, &whichItem );
+		}
+		
+		::HSetState( menuProcH, state );
+		
+		::DeleteMenuItem( appMenu, count + 1 );
+		
+		if ( whichItem > count )
+		{
+			return GetQuitInfo();
+		}
+		
+		return result;
+	}
+	
+	void PatchedInsertMenu( MenuHandle menu, short beforeID, InsertMenuProcPtr nextHandler )
+	{
+		if ( EqualPstrings( menu[0]->menuData, "\p" "File" ) )
+		{
+			short count = CountMenuItems( menu );
 			
+			Str255 itemName;
 			::GetMenuItemText( menu, count, itemName );
 			
-			if ( itemName[1] == '-' )
+			if ( EqualPstrings( itemName, "\p" "Quit" ) )
 			{
+				StoreQuitInfo( menu, count );
+				
 				::DeleteMenuItem( menu, count );
+				--count;
+				
+				::GetMenuItemText( menu, count, itemName );
+				
+				if ( itemName[1] == '-' )
+				{
+					::DeleteMenuItem( menu, count );
+				}
 			}
 		}
+		
+		nextHandler( menu, beforeID );
 	}
 	
-	InsertMenuProcPtr original = gInsertMenuPatch.Original();
-	
-	original( menu, beforeID );
 }
 
 
@@ -245,13 +234,13 @@ static bool Install()
 		return false;
 	}
 	
-	MyA4 a4;
+	Ag::MyA4 a4;
 	
 	stashCount = 0;
 	
-	gMenuSelectPatch = MenuSelectPatch(PatchedMenuSelect);
-	gMenuKeyPatch    = MenuKeyPatch(PatchedMenuKey);
-	gInsertMenuPatch = InsertMenuPatch(PatchedInsertMenu);
+	Ag::TrapPatch< _MenuSelect, PatchedMenuSelect >::Install();
+	Ag::TrapPatch< _InsertMenu, PatchedInsertMenu >::Install();
+	Ag::TrapPatch< _MenuKey,    PatchedMenuKey    >::Install();
 	
 	return true;
 }
