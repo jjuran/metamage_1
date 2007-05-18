@@ -54,3 +54,17 @@ $ FOO=foo BAR=bar; echo $FOO $BAR
 
 1 >= "foo bar"
 
+%%
+
+# set multiple environment variables en passant
+$ FOO=foo BAR=bar sh -c 'echo $FOO $BAR'
+
+1 >= "foo bar"
+
+%%
+
+# set multiple environment variables en passant in a pipeline
+$ true | FOO=foo BAR=bar sh -c 'echo $FOO $BAR'
+
+1 >= "foo bar"
+
