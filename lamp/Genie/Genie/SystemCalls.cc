@@ -367,7 +367,7 @@ namespace Genie
 		while ( true )
 		{
 			// Stay awhile...  Stay forever!
-			N::YieldToAnyThread();
+			current.Stop();
 		}
 	}
 	
