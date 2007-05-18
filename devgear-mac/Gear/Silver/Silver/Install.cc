@@ -15,6 +15,9 @@
 #include "Silver/CurrentA4.hh"
 
 
+#pragma exceptions off
+
+
 namespace Silver
 {
 
