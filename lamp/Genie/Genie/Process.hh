@@ -178,7 +178,6 @@ namespace Genie
 			
 			FileDescriptorMap itsFileDescriptors;
 			
-			//ProcessState itsStatus;
 			ProcessLifeStage        itsLifeStage;
 			ProcessInterdependence  itsInterdependence;
 			ProcessSchedule         itsSchedule;
