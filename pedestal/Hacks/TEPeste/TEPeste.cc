@@ -16,13 +16,15 @@
 #include <cstring>
 
 // Silver
-#include "Silver/Patches.hh"
+#include "Silver/Install.hh"
+#include "Silver/Patch.hh"
+#include "Silver/Procs.hh"
+#include "Silver/Traps.hh"
 
 
-using Silver::PatchApplied;
-using Silver::TEPastePatch;
+namespace Ag = Silver;
 
-static PatchApplied<TEPastePatch> gTEPastePatch;
+using namespace Ag::Trap_ProcPtrs;
 
 
 static bool gLastTimeWasAGag;
@@ -33,71 +35,77 @@ static bool ShouldDoAGag()
 	return !gLastTimeWasAGag  &&  (TickCount() & 3) == 0;
 }
 
-static const char* PickAGag(short which)
+static const char* PickAGag( short which )
 {
-	switch (which) {
-	case 0:
-		return "Boo!";
-		break;
-	case 1:
-		return "Whazzuuup!";
-		break;
-	case 2:
-		return "Nobody expects the Spanish Inquisition!";
-		break;
-	case 3:
-		return "You REALLY ought to get some sleep...";
-		break;
-	case 4:
-		return "¥ Vote for Joshua Juran ¥";
-		break;
-	default:
-		return "";
+	switch ( which )
+	{
+		case 0:
+			return "Boo!";
+		
+		case 1:
+			return "Whazzuuup!";
+		
+		case 2:
+			return "Nobody expects the Spanish Inquisition!";
+		
+		case 3:
+			return "You REALLY ought to get some sleep...";
+		
+		case 4:
+			return "¥ Vote for Joshua Juran ¥";
+		
+		default:
+			return "";
 	}
 }
 
-static void Payload(TEHandle hTE)
+static void Payload( TEHandle hTE )
 {
-	const char* gag = PickAGag(TickCount() % 5);
-	long len = std::strlen(gag);
-	long start = (**hTE).selStart;
+	const char* gag = PickAGag( TickCount() % 5 );
+	
+	long len = std::strlen( gag );
+	long start = hTE[0]->selStart;
 	
 	SysBeep( 30 );
-	TEDelete(hTE);
-	TEInsert(gag, len, hTE);
-	TESetSelect(start, start + len, hTE);
 	
-	start = TickCount();
-	while (TickCount() < start + 30) {
+	TEDelete( hTE );
+	
+	TEInsert( gag, len, hTE );
+	
+	TESetSelect( start, start + len, hTE );
+	
+	UInt32 now = TickCount();
+	
+	while ( TickCount() < now + 30 )
+	{
+		//
+	}
+}
+
+namespace
+{
+	
+	void PatchedTEPaste( TEHandle hTE, TEPasteProcPtr nextHandler )
+	{
+		if ( (gLastTimeWasAGag = ShouldDoAGag()) )
+		{
+			Payload( hTE );
+		}
 		
+		nextHandler( hTE );
 	}
+	
 }
 
-static pascal void PatchedTEPaste(TEHandle hTE)
+static OSErr Installer()
 {
-	MyA4 a4;
+	Ag::TrapPatch< _TEPaste, PatchedTEPaste >::Install();
 	
-	if ( (gLastTimeWasAGag = ShouldDoAGag()) ) {
-		Payload(hTE);
-	}
-	gTEPastePatch.Original()(hTE);
-}
-
-static bool Install()
-{
-	bool locked = LoadAndLock();
-	if (!locked)
-		return false;
-	
-	MyA4 a4;
-	
-	gTEPastePatch = TEPastePatch(PatchedTEPaste);
-	
-	return true;
+	return noErr;
 }
 
 void main()
 {
-	bool installed = Install();
+	(void) Ag::Install( Installer );
 }
 

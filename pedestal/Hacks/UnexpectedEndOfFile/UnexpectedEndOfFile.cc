@@ -15,7 +15,10 @@
 #include <Sound.h>
 
 // Silver
-#include "Silver/Patches.hh"
+#include "Silver/Install.hh"
+#include "Silver/Patch.hh"
+#include "Silver/Procs.hh"
+#include "Silver/Traps.hh"
 
 // UnexpectedEndOfFile
 #include "UEOFUtils.hh"
@@ -227,28 +230,19 @@ namespace
 }
 
 
-static bool Install()
+static OSErr Installer()
 {
-	bool locked = Ag::LoadAndLock();
-	
-	if ( !locked )
-	{
-		return false;
-	}
-	
-	Ag::MyA4 a4;
-	
 	stashCount = 0;
 	
 	Ag::TrapPatch< _MenuSelect, PatchedMenuSelect >::Install();
 	Ag::TrapPatch< _InsertMenu, PatchedInsertMenu >::Install();
 	Ag::TrapPatch< _MenuKey,    PatchedMenuKey    >::Install();
 	
-	return true;
+	return noErr;
 }
 
 void main()
 {
-	bool installed = Install();
+	(void) Ag::Install( Installer );
 }
 

@@ -17,8 +17,10 @@
 #include <ToolUtils.h>
 
 // Silver
-#include "Silver/Patches.hh"
+#include "Silver/Install.hh"
+#include "Silver/Patch.hh"
 #include "Silver/Procs.hh"
+#include "Silver/Traps.hh"
 
 
 namespace ClassicService
@@ -258,17 +260,8 @@ namespace ClassicService
 		
 	}
 	
-	static bool Install()
+	static OSErr Installer()
 	{
-		bool locked = Ag::LoadAndLock();
-		
-		if ( !locked )
-		{
-			return false;
-		}
-		
-		Ag::MyA4 a4;
-		
 		gServicesMenuItems[0].key = 0;
 		gServicesMenuItems[1].key = 0;
 		
@@ -280,13 +273,13 @@ namespace ClassicService
 		Ag::TrapPatch< _TEActivate,    PatchedTEActivate    >::Install();
 		Ag::TrapPatch< _ExitToShell,   PatchedExitToShell   >::Install();
 		
-		return true;
+		return noErr;
 	}
 	
 }
 
 void main()
 {
-	bool installed = ClassicService::Install();
+	(void) Silver::Install( ClassicService::Installer );
 }
 

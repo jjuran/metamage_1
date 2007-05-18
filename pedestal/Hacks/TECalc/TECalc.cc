@@ -17,7 +17,10 @@
 #include <cstring>
 
 // Silver
-#include "Silver/Patches.hh"
+#include "Silver/Install.hh"
+#include "Silver/Patch.hh"
+#include "Silver/Procs.hh"
+#include "Silver/Traps.hh"
 
 
 namespace Ag = Silver;
@@ -66,25 +69,15 @@ namespace
 	
 }
 
-static bool Install()
+static OSErr Installer()
 {
-	bool locked = Ag::LoadAndLock();
-	
-	if ( !locked )
-	{
-		return false;
-	}
-	
-	Ag::MyA4 a4;
-	
-	//gTEKeyPatch = TEKeyPatch(PatchedTEKey);
 	Ag::TrapPatch< _TEKey, PatchedTEKey >::Install();
 	
-	return true;
+	return noErr;
 }
 
 void main()
 {
-	bool installed = Install();
+	(void) Ag::Install( Installer );
 }
 
