@@ -38,6 +38,9 @@ namespace P7 = POSeven;
 namespace O = Orion;
 
 
+#define STR_LEN( str )  "" str, (sizeof str - 1)
+
+
 static int exit_from_wait( int stat )
 {
 	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
@@ -50,9 +53,12 @@ static int exit_from_wait( int stat )
 
 struct TestResults
 {
-	int total;
-	int passed;
+	int planned;
 	int failure;
+	int passed;
+	int failed;
+	int todo;
+	int unexpected;
 };
 
 static TestResults run_test( const char* test_file )
@@ -87,16 +93,16 @@ static TestResults run_test( const char* test_file )
 	
 	Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( NN::Owned< P7::FileDescriptor >::Seize( P7::FileDescriptor( pipe_ends[0] ) ) );
 	
-	std::string header = input.Read();
+	std::string plan = input.Read();
 	
-	TestResults results = { -1, 0, 0 };
+	TestResults results = { -1, 0, 0, 0, 0, 0 };
 	
-	if ( header.substr( 0, 3 ) != "1.." )
+	if ( plan.substr( 0, 3 ) != "1.." )
 	{
 		return results;
 	}
 	
-	results.total = std::atoi( header.c_str() + 3 );
+	results.planned = std::atoi( plan.c_str() + 3 );
 	
 	unsigned next_test_number = 1;
 	
@@ -108,6 +114,10 @@ static TestResults run_test( const char* test_file )
 		{
 			continue;
 		}
+		
+		const char* comment = std::strchr( line.c_str(), '#' );
+		
+		bool todo = comment != NULL  &&  std::memcmp( comment, STR_LEN( "# TODO" ) ) == 0;
 		
 		const char* number = NULL;
 		
@@ -122,7 +132,7 @@ static TestResults run_test( const char* test_file )
 		{
 			number = line.c_str() + 7;
 			
-			if ( results.failure == 0 )
+			if ( !todo  &&  results.failure == 0 )
 			{
 				results.failure = next_test_number;
 			}
@@ -137,7 +147,12 @@ static TestResults run_test( const char* test_file )
 			return results;
 		}
 		
-		results.passed += passed;
+		int& result = passed ? todo ? results.unexpected
+		                            : results.passed
+		                     : todo ? results.todo
+		                            : results.failed;
+		
+		++result;
 	}
 	
 	return results;
@@ -172,7 +187,7 @@ int O::Main( int argc, const char *const argv[] )
 		
 		std::string result = "ok";
 		
-		if ( results.total == results.passed )
+		if ( results.failure == 0 )
 		{
 			
 		}
