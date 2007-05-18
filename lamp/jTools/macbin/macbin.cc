@@ -98,8 +98,6 @@ static void BlockWrite( int fd, const void* data, std::size_t byteCount )
 				decoder.Write( data, bytes );
 				
 				totalBytes += bytes;
-				
-				sleep( 0 );
 			}
 		}
 		catch ( const FS::EndOfFile& )
