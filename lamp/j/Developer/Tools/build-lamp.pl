@@ -83,9 +83,10 @@ my %fsmap =
 	{
 		Tests =>
 		{
-			perl => [ qw( print.t ) ],
-			proc => [ qw( exe.t   ) ],
-			sh   => [ qw( braces.t errexit.t exit.t io.t vars.t ) ],
+			jtest => [ qw( ok.t oknot.t todo.t ) ],
+			perl  => [ qw( print.t ) ],
+			proc  => [ qw( exe.t   ) ],
+			sh    => [ qw( braces.t errexit.t exit.t io.t vars.t ) ],
 		},
 		Tools =>
 		[
@@ -102,9 +103,10 @@ my %fsmap =
 	[
 		qw( inetd.conf motd profile ),
 		{
-			#build_date => sub { system "date > '$_[0]'" },
+			#build_date => sub { verbose_system( "date > '$_[0]'" ) },
+			build_date => sub { verbose_system( "date > $_[0]" ) },
 			#build_date => sub { open my $fh, '>', $_[0]; print $fh `date`; close $fh; },
-			bootstrap => [qw( check-perl-lib.pl install-usr-lib-perl usr-lib-perl.mbin.gz.md5 )],
+			bootstrap => [qw( upgrade upgrade-lamp check-perl-lib.pl install-usr-lib-perl usr-lib-perl.mbin.gz.md5 )],
 		},
 	],
 	sbin => [],
@@ -184,14 +186,14 @@ sub verbose_system
 	
 	my $wait_status = system @_;
 	
-	$wait_status == 0 or die "system() failed: $!\n";
+	$wait_status == 0 or die "### system() failed: $!\n";
 }
 
 sub copy_file
 {
 	my ( $src, $dest ) = @_;
 	
-	-f $src or die "Missing file $src for copy\n";
+	-f $src or die "### Missing file $src for copy\n";
 	
 	verbose_system( 'cp', $src, $dest );
 	
@@ -208,7 +210,7 @@ sub install_script
 	
 	my $file = "$source_tree/$path_from_root/$name";
 	
-	-f $file or die "Missing static file /$path_from_root/$name\n";
+	-f $file or die "### Missing static file /$path_from_root/$name\n";
 	
 	copy_file( $file, $install_path );
 	
@@ -216,7 +218,7 @@ sub install_script
 	
 	read( $fh, my $data, 1024 );
 	
-	$data =~ m{\r} and warn "Script /$path_from_root/$name contains CR characters\n";
+	$data =~ m{\r} and warn "### Script /$path_from_root/$name contains CR characters\n";
 	
 	my $shebang = substr( $data, 0, 2 );
 	
