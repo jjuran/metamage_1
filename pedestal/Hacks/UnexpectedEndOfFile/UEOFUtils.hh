@@ -12,6 +12,9 @@
 #include <cstring>
 
 
+#pragma exceptions off
+
+
 static bool operator==(const ProcessSerialNumber& a, const ProcessSerialNumber& b)
 {
 	return a.highLongOfPSN == b.highLongOfPSN  &&  a.lowLongOfPSN == b.lowLongOfPSN;
@@ -55,32 +58,38 @@ static short IsFinderInForeground()
 	return (procInfo.processSignature == 'MACS');
 }
 
-class ThingWhichPreventsMenuItemDrawing {
-public:
-	ThingWhichPreventsMenuItemDrawing();
-	~ThingWhichPreventsMenuItemDrawing();
-private:
-	GrafPtr savePort;
-	GrafPort myPort;
+class ThingWhichPreventsMenuItemDrawing
+{
+	private:
+		GrafPtr savePort;
+		GrafPort myPort;
+		
+		// Non-copyable
+		ThingWhichPreventsMenuItemDrawing           ( const ThingWhichPreventsMenuItemDrawing& );
+		ThingWhichPreventsMenuItemDrawing& operator=( const ThingWhichPreventsMenuItemDrawing& );
+	
+	public:
+		ThingWhichPreventsMenuItemDrawing()
+		{
+			GetPort( &savePort );
+			
+			OpenPort( &myPort );
+			SetPort ( &myPort );
+			
+			myPort.portRect.right = 0;
+		}
+		
+		~ThingWhichPreventsMenuItemDrawing()
+		{
+			ClosePort( &myPort );
+			
+			SetPort( savePort );
+		}
 };
 
-ThingWhichPreventsMenuItemDrawing::ThingWhichPreventsMenuItemDrawing()
-{
-	GetPort(&savePort);
-	OpenPort(&myPort);
-	SetPort(&myPort);
-	myPort.portRect.right = 0;
-}
 
-ThingWhichPreventsMenuItemDrawing::~ThingWhichPreventsMenuItemDrawing()
+inline bool EqualPstrings( const unsigned char* p, const unsigned char* q )
 {
-	ClosePort(&myPort);
-	SetPort(savePort);
-}
-
-
-static bool EqualPstrings(const unsigned char* p, const unsigned char* q)
-{
-	return (p[0] == q[0]) && (std::memcmp(p + 1, q + 1, p[0]) == 0);
+	return std::memcmp( p, q, 1 + p[0] ) == 0;
 }
 
