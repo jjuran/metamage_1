@@ -55,7 +55,7 @@ namespace Genie
 	
 	static DIR* opendir( const char* pathname )
 	{
-		Yield();
+		Breathe();
 		
 		try
 		{
@@ -97,6 +97,8 @@ namespace Genie
 	
 	static const dirent* readdir( DIR* dir )
 	{
+		Breathe();
+		
 		int fd = reinterpret_cast< int >( dir );
 		
 		try

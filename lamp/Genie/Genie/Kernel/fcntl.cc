@@ -32,6 +32,8 @@ namespace Genie
 	
 	static int open( const char* path, int oflag, mode_t mode )
 	{
+		Breathe();
+		
 		try
 		{
 			int fd = LowestUnusedFileDescriptor();

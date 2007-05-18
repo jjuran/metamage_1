@@ -50,6 +50,8 @@ namespace Genie
 	
 	static int stat_file( const char* path, struct stat* sb, bool resolveLinks )
 	{
+		Breathe();
+		
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		try
