@@ -166,7 +166,9 @@ namespace ALine
 		
 		if ( needToBuild || Options().verbose )
 		{
-			Io::Out << "Checking project " << q( project.Name() ) << ":\n";
+			std::string checking = "Checking project " + q( project.Name() ) + ":\n";
+			
+			(void) write( STDOUT_FILENO, checking.data(), checking.size() );
 		}
 		
 		if ( needToBuild )
