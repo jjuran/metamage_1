@@ -51,3 +51,43 @@ NIL
 sh: 3: Bad file descriptor
 END
 
+%%
+
+$ sh -c 'echo foo > "/dev/fd/1"' 2>&1
+
+TODO Redirection words must be expanded
+
+1 >= foo
+
+%%
+
+$ echo false | sh -c '. /dev/fd/0; echo $?'
+
+1 >= 1
+
+%%
+
+$ echo "FOO=bar; echo foo" | sh -c '. /dev/fd/0 > /dev/null; echo $FOO'
+
+1 >> 'END'
+bar
+END
+
+%%
+
+$ echo "FOO=bar; echo foo" | sh -c '. /dev/fd/0 | true; echo $FOO'
+
+TODO Subshell environ mods are leaking out
+
+1 >> 'END'
+
+END
+
+%%
+
+$ echo false | sh -c '. /dev/fd/0 2>&1; echo $?'
+
+TODO nested vfork() is unimplemented
+
+1 >= 1
+
