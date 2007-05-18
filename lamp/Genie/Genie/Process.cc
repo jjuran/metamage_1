@@ -1,6 +1,6 @@
-/*	===============
- *	GenieProcess.cc
- *	===============
+/*	==========
+ *	Process.cc
+ *	==========
  */
 
 #include "Genie/Process.hh"
