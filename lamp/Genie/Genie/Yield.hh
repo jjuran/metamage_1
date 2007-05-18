@@ -21,6 +21,7 @@ namespace Genie
 	
 	void RegisterProcessContext( Process* process );
 	
+	void Breathe();
 	void Yield();
 	
 	void StopThread( N::ThreadID thread );

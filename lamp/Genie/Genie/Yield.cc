@@ -61,6 +61,22 @@ namespace Genie
 	
 	static ToolScratchGlobals& gToolScratchGlobals = *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
 	
+	static UInt32 gTickCountOfLastSleep = 0;
+	
+	static const UInt32 gMinimumSleepIntervalTicks = 30;  // Sleep every half second
+	
+	void Breathe()
+	{
+		UInt32 now = ::TickCount();
+		
+		if ( now - gTickCountOfLastSleep > gMinimumSleepIntervalTicks )
+		{
+			Yield();
+			
+			gTickCountOfLastSleep = now;
+		}
+	}
+	
 	void Yield()
 	{
 		Process* me = gCurrentProcess;
@@ -79,6 +95,8 @@ namespace Genie
 		
 		// Yield() should only be called from the yielding process' thread.
 		HandlePendingSignals();
+		
+		gTickCountOfLastSleep = ::TickCount();
 	}
 	
 	void StopThread( N::ThreadID thread )
