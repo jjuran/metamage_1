@@ -27,9 +27,6 @@
 // Nitrogen Extras / Utilities
 #include "Utilities/Threads.h"
 
-// Silver
-#include "Silver/ProcTypes.hh"
-
 // ShellShock
 #include "ShellShock/VarArray.hh"
 
@@ -45,7 +42,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
-	namespace Ag = Silver;
 	namespace Sh = ShellShock;
 	
 	
@@ -56,7 +52,7 @@ namespace Genie
 	class NotExecutableError {};
 	
 	
-	typedef Ag::ProcType3< int, int, char const* const*, char const* const* >::CProcPtr  MainProcPtr;
+	typedef int (*MainProcPtr)( int, char const* const*, char const* const* );
 	
 	class Process;
 	
