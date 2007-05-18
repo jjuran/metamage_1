@@ -11,6 +11,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // Genie
 #include "Genie/Process.hh"
 
@@ -20,6 +23,8 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace P7 = POSeven;
+	namespace Ped = Pedestal;
+	
 	
 	static Process* gCurrentProcess;
 	
@@ -71,6 +76,8 @@ namespace Genie
 		
 		if ( now - gTickCountOfLastSleep > gMinimumSleepIntervalTicks )
 		{
+			Ped::AdjustSleepForActivity();
+			
 			Yield();
 			
 			gTickCountOfLastSleep = now;
