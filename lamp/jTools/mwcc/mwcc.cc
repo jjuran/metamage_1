@@ -10,6 +10,7 @@
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Str.h"
 
+// Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 
 // Divergence
@@ -27,7 +28,6 @@ namespace jTools
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace Div = Divergence;
 	
 	
@@ -59,6 +59,7 @@ namespace jTools
 		return "";
 	}
 	
+	/*
 	enum
 	{
 		optCompile, 
@@ -78,6 +79,19 @@ namespace jTools
 		options.DefineSetString( "-include", optIncludePrefix );
 		
 		return options;
+	}
+	*/
+	
+	static std::string MacPathFromPOSIXPath( const char* pathname )
+	{
+		FSSpec item = Div::ResolvePathToFSSpec( pathname );
+		
+		return N::FSpGetMacPathname( item );
+	}
+	
+	static std::string QuotedMacPathFromPOSIXPath( const char* pathname )
+	{
+		return "'" + MacPathFromPOSIXPath( pathname ) + "'";
 	}
 	
 	static int Main( int argc, const char *const argv[] )
@@ -116,6 +130,16 @@ namespace jTools
 						arg = TranslateCodeGenFlag( arg );
 						break;
 					
+					case 'o':
+						translatedPath = "-o " + QuotedMacPathFromPOSIXPath( *++argv );
+						arg = translatedPath.c_str();
+						break;
+					
+					case 'I':
+						translatedPath = "-I" + QuotedMacPathFromPOSIXPath( arg + 2 );
+						arg = translatedPath.c_str();
+						break;
+					
 					default:
 						break;
 				}
@@ -123,9 +147,7 @@ namespace jTools
 			else if ( std::strchr( arg, '/' ) )
 			{
 				// translate path
-				FSSpec item = Div::ResolvePathToFSSpec( arg );
-				
-				translatedPath = "'" + N::FSpGetMacPathname( item ) + "'";
+				translatedPath = QuotedMacPathFromPOSIXPath( arg );
 				
 				arg = translatedPath.c_str();
 			}
