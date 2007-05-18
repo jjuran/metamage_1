@@ -920,8 +920,10 @@ namespace Genie
 	void Process::ResumeAfterFork()
 	{
 		//Status( kProcessRunning );
-		itsInterdependence = kProcessIndependent;
-		itsSchedule        = kProcessRunning;
+		itsInterdependence = Forked() ? kProcessForked
+		                              : kProcessIndependent;
+		
+		itsSchedule        =            kProcessRunning;
 		
 		RegisterProcessContext( this );
 	}
