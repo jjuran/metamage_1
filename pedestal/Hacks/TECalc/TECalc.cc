@@ -23,6 +23,9 @@
 #include "Silver/Traps.hh"
 
 
+#pragma exceptions off
+
+
 namespace Ag = Silver;
 
 

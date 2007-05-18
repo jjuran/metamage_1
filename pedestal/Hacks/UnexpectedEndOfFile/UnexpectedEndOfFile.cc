@@ -24,6 +24,9 @@
 #include "UEOFUtils.hh"
 
 
+#pragma exceptions off
+
+
 namespace Ag = Silver;
 
 using namespace Ag::Trap_ProcPtrs;
