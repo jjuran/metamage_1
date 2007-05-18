@@ -17,9 +17,6 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// BSD
-#include "vfork.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -658,6 +655,13 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	// The first command in the pipline
 	int first = vfork();
 	
+	if ( first == -1 )
+	{
+		std::perror( "sh: vfork()" );
+		
+		return 127;
+	}
+	
 	if ( first == 0 )
 	{
 		// Redirect output to write-end of pipe
@@ -686,6 +690,13 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		
 		// Middle command in the pipeline (not first or last)
 		int middle = vfork();
+		
+		if ( middle == -1 )
+		{
+			std::perror( "sh: vfork()" );
+			
+			return 127;
+		}
 		
 		if ( middle == 0 )
 		{
@@ -717,6 +728,13 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	close( writing );
 	
 	int last = vfork();
+	
+	if ( last == -1 )
+	{
+		std::perror( "sh: vfork()" );
+		
+		return 127;
+	}
 	
 	if ( last == 0 )
 	{
