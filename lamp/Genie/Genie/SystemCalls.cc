@@ -357,18 +357,9 @@ namespace Genie
 		
 		current.Terminate( (status & 0xFF) << 8 );  // doesn't reap, won't terminate thread
 		
-		if ( current.Forked() )
-		{
-			GetProcess( current.GetPPID() ).ResumeAfterFork();
-			
-			return;
-		}
+		ASSERT( current.Forked() );
 		
-		while ( true )
-		{
-			// Stay awhile...  Stay forever!
-			current.Stop();
-		}
+		GetProcess( current.GetPPID() ).ResumeAfterFork();
 	}
 	
 	REGISTER_SYSTEM_CALL( _exit );
