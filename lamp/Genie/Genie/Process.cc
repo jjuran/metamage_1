@@ -979,9 +979,13 @@ namespace Genie
 		pid_t ppid = GetPPID();
 		pid_t pid  = GetPID();
 		
-		if ( ppid > 0 )
+		if ( ppid > 1 )
 		{
 			GetProcess( ppid ).Raise( SIGCHLD );
+		}
+		else
+		{
+			itsLifeStage = kProcessReleased;
 		}
 		
 		typedef GenieProcessTable::ProcessMap::const_iterator const_iterator;
@@ -1193,8 +1197,7 @@ namespace Genie
 			
 			pid_t pid = proc.GetPID();
 			
-			if (    proc.GetLifeStage() == kProcessReleased
-			     || proc.GetLifeStage() == kProcessTerminated  &&  proc.GetPPID() == 1 )
+			if ( proc.GetLifeStage() == kProcessReleased )
 			{
 				hitlist.push_back( pid );
 			}
@@ -1204,7 +1207,7 @@ namespace Genie
 		{
 			pid_t pid = *it;
 			
-			(void) gProcessTable.RemoveProcess( pid );
+			gProcessTable.RemoveProcess( pid );
 		}
 	}
 	
@@ -1232,27 +1235,18 @@ namespace Genie
 		return itsNextPID++;
 	}
 	
-	int GenieProcessTable::RemoveProcess( iterator it )
+	void GenieProcessTable::RemoveProcess( pid_t pid )
 	{
-		int result = it->second->Result();
+		iterator it = itsProcesses.find( pid );
 		
-		itsProcesses.erase( it );
-		
-		return result;
-	}
-	
-	int GenieProcessTable::RemoveProcess( pid_t pid )
-	{
-		iterator found = itsProcesses.find( pid );
-		
-		if ( found == itsProcesses.end() )
+		if ( it == itsProcesses.end() )
 		{
 			N::SysBeep();
-			
-			return -1;
 		}
-		
-		return RemoveProcess( found );
+		else
+		{
+			itsProcesses.erase( it );
+		}
 	}
 	
 	void GenieProcessTable::KillAll()

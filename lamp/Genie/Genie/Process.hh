@@ -313,8 +313,7 @@ namespace Genie
 			
 			pid_t NewProcess( Process* process );
 			
-			int RemoveProcess( iterator it );
-			int RemoveProcess( pid_t pid );
+			void RemoveProcess( pid_t pid );
 			
 			void KillAll();
 			
