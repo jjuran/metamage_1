@@ -305,6 +305,7 @@ namespace Genie
 		
 		public:
 			GenieProcessTable();
+			
 			~GenieProcessTable()
 			{
 				//ASSERT( itsProcesses.size() == 1 );
@@ -336,6 +337,10 @@ namespace Genie
 	};
 	
 	extern GenieProcessTable gProcessTable;
+	
+	Process& GetProcess( pid_t pid );
+	
+	Process* FindProcess( pid_t pid );
 	
 }
 

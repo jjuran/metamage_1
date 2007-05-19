@@ -95,6 +95,24 @@ namespace Genie
 	GenieProcessTable gProcessTable;
 	
 	
+	Process& GetProcess( pid_t pid )
+	{
+		return gProcessTable[ pid ];
+	}
+	
+	Process* FindProcess( pid_t pid )
+	{
+		try
+		{
+			return &GetProcess( pid );
+		}
+		catch ( ... )
+		{
+			return NULL;
+		}
+	}
+	
+	
 	static void* GetSystemCallFunctionPtr( const char* name )
 	{
 		return ( SystemCallsBegin() + LookUpSystemCallIndex( name ) )->function;
