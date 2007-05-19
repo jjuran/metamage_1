@@ -68,7 +68,7 @@ namespace Genie
 	
 	static UInt32 gTickCountOfLastSleep = 0;
 	
-	static const UInt32 gMinimumSleepIntervalTicks = 30;  // Sleep every half second
+	static const UInt32 gMinimumSleepIntervalTicks = 15;  // Sleep every quarter second
 	
 	void Breathe()
 	{
