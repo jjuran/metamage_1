@@ -97,9 +97,16 @@ namespace Genie
 						*stat_loc = process->Result();
 					}
 					
+					pid_t found_pid = process->GetPID();
+					
 					process->Release();
 					
-					return process->GetPID();  // Not affected by Release()
+					if ( TARGET_API_MAC_CARBON )
+					{
+						Yield();
+					}
+					
+					return found_pid;
 				}
 				
 				if ( options & 1 )
