@@ -320,8 +320,6 @@ namespace Genie
 			
 			void KillAll();
 			
-			void Reap();
-			
 			ProcessMap const& Map() const  { return itsProcesses; }
 			ProcessMap      & Map()        { return itsProcesses; }
 			

@@ -1190,6 +1190,31 @@ namespace Genie
 		return *it->second;
 	}
 	
+	static void ReapProcesses()
+	{
+		std::vector< pid_t > hitlist;
+		
+		for ( GenieProcessTable::iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
+		{
+			Process& proc = *it->second;
+			
+			pid_t pid = proc.GetPID();
+			
+			if (    proc.GetLifeStage() == kProcessReleased
+			     || proc.GetLifeStage() == kProcessTerminated  &&  proc.GetPPID() == 1 )
+			{
+				hitlist.push_back( pid );
+			}
+		}
+		
+		for ( std::vector< pid_t >::iterator it = hitlist.begin();  it != hitlist.end();  ++it )
+		{
+			pid_t pid = *it;
+			
+			(void) gProcessTable.RemoveProcess( pid );
+		}
+	}
+	
 	namespace
 	{
 		
@@ -1197,7 +1222,7 @@ namespace Genie
 		{
 			while ( true )
 			{
-				gProcessTable.Reap();
+				ReapProcesses();
 				
 				N::YieldToAnyThread();
 			}
@@ -1247,31 +1272,6 @@ namespace Genie
 		}
 		
 		N::YieldToAnyThread();
-	}
-	
-	void GenieProcessTable::Reap()
-	{
-		std::vector< pid_t > hitlist;
-		
-		for ( ProcessMap::iterator it = itsProcesses.begin();  it != itsProcesses.end();  ++it )
-		{
-			Process& proc = *it->second;
-			
-			pid_t pid = proc.GetPID();
-			
-			if (    proc.GetLifeStage() == kProcessReleased
-			     || proc.GetLifeStage() == kProcessTerminated  &&  proc.GetPPID() == 1 )
-			{
-				hitlist.push_back( pid );
-			}
-		}
-		
-		for ( std::vector< pid_t >::iterator it = hitlist.begin();  it != hitlist.end();  ++it )
-		{
-			pid_t pid = *it;
-			
-			(void) RemoveProcess( pid );
-		}
 	}
 	
 	void Process::Stop()
