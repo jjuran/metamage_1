@@ -311,8 +311,6 @@ namespace Genie
 				//ASSERT( itsProcesses.size() == 1 );
 			}
 			
-			Process& operator[]( pid_t pid );
-			
 			pid_t NewProcess( Process* process );
 			
 			int RemoveProcess( iterator it );

@@ -110,19 +110,24 @@ namespace Genie
 	
 	Process& GetProcess( pid_t pid )
 	{
-		return gProcessTable[ pid ];
+		if ( Process* process = FindProcess( pid ) )
+		{
+			return *process;
+		}
+		
+		throw NoSuchProcess();
 	}
 	
 	Process* FindProcess( pid_t pid )
 	{
-		try
-		{
-			return &GetProcess( pid );
-		}
-		catch ( ... )
+		GenieProcessTable::iterator it = gProcessTable.Map().find( pid );
+		
+		if ( it == gProcessTable.end() )
 		{
 			return NULL;
 		}
+		
+		return it->second.get();
 	}
 	
 	
@@ -425,23 +430,23 @@ namespace Genie
 	:
 		itsPPID               ( ppid ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
-		itsPGID               ( gProcessTable[ ppid ].GetPGID() ),
-		itsSID                ( gProcessTable[ ppid ].GetSID() ),
+		itsPGID               ( GetProcess( ppid ).GetPGID() ),
+		itsSID                ( GetProcess( ppid ).GetSID() ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
-		itsName               ( gProcessTable[ ppid ].ProgramName() ),
-		itsCWD                ( gProcessTable[ ppid ].GetCWD() ),
-		itsControllingTerminal( gProcessTable[ ppid ].itsControllingTerminal ),
-		itsFileDescriptors    ( gProcessTable[ ppid ].FileDescriptors() ),
+		itsName               ( GetProcess( ppid ).ProgramName() ),
+		itsCWD                ( GetProcess( ppid ).GetCWD() ),
+		itsControllingTerminal( GetProcess( ppid ).itsControllingTerminal ),
+		itsFileDescriptors    ( GetProcess( ppid ).FileDescriptors() ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessForked ),
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
-		itsEnvironStorage     ( new Sh::VarArray( gProcessTable[ ppid ].itsEnvironStorage->GetPointer() ) ),
+		itsEnvironStorage     ( new Sh::VarArray( GetProcess( ppid ).itsEnvironStorage->GetPointer() ) ),
 		itsCleanupHandler     (),
-		itsErrnoData          ( TARGET_RT_MAC_CFM ? gProcessTable[ ppid ].itsErrnoData : NULL ),
-		itsEnvironData        ( gProcessTable[ ppid ].itsEnvironData )
+		itsErrnoData          ( TARGET_RT_MAC_CFM ? GetProcess( ppid ).itsErrnoData : NULL ),
+		itsEnvironData        ( GetProcess( ppid ).itsEnvironData )
 	{
 		if ( itsEnvironData == NULL )
 		{
@@ -459,7 +464,7 @@ namespace Genie
 		
 		RegisterProcessContext( this );
 		
-		Process& parent( gProcessTable[ ppid ] );
+		Process& parent( GetProcess( ppid ) );
 		
 		parent.itsInterdependence = kProcessForking;
 		parent.itsSchedule        = kProcessFrozen;
@@ -688,7 +693,7 @@ namespace Genie
 		// process' environment storage.
 		if ( itsEnvironData != NULL )
 		{
-			*itsEnvironData = itsPPID > 0 ? gProcessTable[ itsPPID ].itsEnvironStorage->GetPointer()
+			*itsEnvironData = itsPPID > 0 ? GetProcess( itsPPID ).itsEnvironStorage->GetPointer()
 			                              : NULL;
 		}
 		
@@ -976,7 +981,7 @@ namespace Genie
 		
 		if ( ppid > 0 )
 		{
-			gProcessTable[ ppid ].Raise( SIGCHLD );
+			GetProcess( ppid ).Raise( SIGCHLD );
 		}
 		
 		typedef GenieProcessTable::ProcessMap::const_iterator const_iterator;
@@ -1132,7 +1137,7 @@ namespace Genie
 			
 			if ( itsInterdependence == kProcessForked )
 			{
-				Process& parent( gProcessTable[ GetPPID() ] );
+				Process& parent( GetProcess( itsPPID ) );
 				
 				Orphan();
 				
@@ -1176,18 +1181,6 @@ namespace Genie
 	GenieProcessTable::GenieProcessTable() : itsNextPID( 1 )
 	{
 		new Process( Process::RootProcess() );
-	}
-	
-	Process& GenieProcessTable::operator[]( pid_t pid )
-	{
-		ProcessMap::iterator it = itsProcesses.find( pid );
-		
-		if ( it == itsProcesses.end() )
-		{
-			throw NoSuchProcess();
-		}
-		
-		return *it->second;
 	}
 	
 	static void ReapProcesses()
