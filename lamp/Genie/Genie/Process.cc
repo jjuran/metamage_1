@@ -1036,7 +1036,7 @@ namespace Genie
 	
 	void Process::Raise( int signal )
 	{
-		if ( itsLifeStage == kProcessTerminated  ||  itsResult != 0 )
+		if ( itsLifeStage >= kProcessTerminated  ||  itsResult != 0 )
 		{
 			return;
 		}
