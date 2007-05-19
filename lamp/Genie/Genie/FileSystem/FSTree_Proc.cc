@@ -90,7 +90,7 @@ namespace Genie
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
-		const FileDescriptorMap& ItemSequence() const  { return gProcessTable[ itsPID ].FileDescriptors(); }
+		const FileDescriptorMap& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
 		
 		FSNode ConvertToFSNode( FileDescriptorMap::value_type file ) const;
 		
@@ -133,7 +133,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return gProcessTable[ itsPID ].GetCWD(); }
+			FSTreePtr ResolveLink() const  { return GetProcess( itsPID ).GetCWD(); }
 	};
 	
 	class FSTree_PID_exe : public FSTree
@@ -152,7 +152,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( gProcessTable[ itsPID ].ProgramFile() ); }
+			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( GetProcess( itsPID ).ProgramFile() ); }
 	};
 	
 	class FSTree_PID_root : public FSTree
@@ -171,7 +171,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			//FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( gProcessTable[ itsPID ].RootDirectory() ); }
+			//FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( GetProcess( itsPID ).RootDirectory() ); }
 			FSTreePtr ResolveLink() const  { return FSRoot(); }
 	};
 	
@@ -300,7 +300,7 @@ namespace Genie
 			
 			std::string operator()() const
 			{
-				const Process& process = gProcessTable[ itsPID ];
+				const Process& process = GetProcess( itsPID );
 				
 				pid_t ppid = process.GetPPID();
 				pid_t pgid = process.GetPGID();
@@ -338,7 +338,7 @@ namespace Genie
 	{
 		int fd = std::atoi( name.c_str() );
 		
-		const FileDescriptorMap& files = gProcessTable[ itsPID ].FileDescriptors();
+		const FileDescriptorMap& files = GetProcess( itsPID ).FileDescriptors();
 		
 		if ( files.find( fd ) == files.end() )
 		{
@@ -390,7 +390,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_PID_fd_N::ResolveLink() const
 	{
-		FileDescriptorMap& files = gProcessTable[ itsPID ].FileDescriptors();
+		FileDescriptorMap& files = GetProcess( itsPID ).FileDescriptors();
 		
 		if ( files.find( itsFD ) == files.end() )
 		{
