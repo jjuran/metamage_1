@@ -105,8 +105,6 @@ namespace Genie
 					
 					found->second->Release();
 					
-					Yield();
-					
 					return foundPID;
 				}
 				
