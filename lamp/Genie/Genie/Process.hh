@@ -311,8 +311,6 @@ namespace Genie
 				//ASSERT( itsProcesses.size() == 1 );
 			}
 			
-			bool Exists( pid_t pid ) const  { return itsProcesses.count( pid ) > 0; }
-			
 			Process& operator[]( pid_t pid );
 			
 			pid_t NewProcess( Process* process );
@@ -323,8 +321,6 @@ namespace Genie
 			void KillAll();
 			
 			void Reap();
-			
-			void SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal );
 			
 			ProcessMap const& Map() const  { return itsProcesses; }
 			ProcessMap      & Map()        { return itsProcesses; }
@@ -337,6 +333,8 @@ namespace Genie
 	};
 	
 	extern GenieProcessTable gProcessTable;
+	
+	void SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal );
 	
 	Process& GetProcess( pid_t pid );
 	

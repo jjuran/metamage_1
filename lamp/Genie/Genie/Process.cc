@@ -95,6 +95,19 @@ namespace Genie
 	GenieProcessTable gProcessTable;
 	
 	
+	void SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal )
+	{
+		for ( GenieProcessTable::iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
+		{
+			Process& proc = *it->second;
+			
+			if ( proc.ControllingTerminal() == terminal )
+			{
+				proc.Raise( sig );
+			}
+		}
+	}
+	
 	Process& GetProcess( pid_t pid )
 	{
 		return gProcessTable[ pid ];
@@ -1258,19 +1271,6 @@ namespace Genie
 			pid_t pid = *it;
 			
 			(void) RemoveProcess( pid );
-		}
-	}
-	
-	void GenieProcessTable::SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal )
-	{
-		for ( ProcessMap::iterator it = itsProcesses.begin();  it != itsProcesses.end();  ++it )
-		{
-			Process& proc = *it->second;
-			
-			if ( proc.ControllingTerminal() == terminal )
-			{
-				proc.Raise( sig );
-			}
 		}
 	}
 	
