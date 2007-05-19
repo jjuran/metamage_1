@@ -27,7 +27,7 @@ namespace Genie
 	
 	namespace P7 = POSeven;
 	
-	static GenieProcessTable::iterator CheckAnyPID( pid_t ppid )
+	static Process* CheckAnyPID( pid_t ppid )
 	{
 		bool hasAnyChildren = false;
 		
@@ -42,7 +42,7 @@ namespace Genie
 			{
 				if ( proc.GetLifeStage() == kProcessTerminated )
 				{
-					return it;
+					return &proc;
 				}
 				
 				hasAnyChildren = true;
@@ -54,31 +54,32 @@ namespace Genie
 			P7::ThrowErrno( ECHILD );
 		}
 		
-		return gProcessTable.end();
+		return NULL;
 	}
 	
-	static GenieProcessTable::iterator CheckPID( pid_t ppid, pid_t pid )
+	static Process* CheckPID( pid_t ppid, pid_t pid )
 	{
-		typedef GenieProcessTable::iterator iterator;
+		Process* process = FindProcess( pid );
 		
-		iterator found = gProcessTable.Map().find( pid );
-		
-		if ( found == gProcessTable.end() )
+		if ( process == NULL )
 		{
+			// No such process
 			P7::ThrowErrno( ECHILD );
 		}
 		
-		if ( found->second->GetPPID() != ppid )
+		if ( process->GetPPID() != ppid )
 		{
+			// Process exists but its not your child
 			P7::ThrowErrno( EINVAL );
 		}
 		
-		if ( found->second->GetLifeStage() != kProcessTerminated )
+		if ( process->GetLifeStage() != kProcessTerminated )
 		{
-			found = gProcessTable.end();
+			// Your child is still alive, please wait...
+			return NULL;
 		}
 		
-		return found;
+		return process;
 	}
 	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
@@ -89,23 +90,16 @@ namespace Genie
 		{
 			while ( true )
 			{
-				typedef GenieProcessTable::iterator iterator;
-				
-				iterator found = pid == -1 ? CheckAnyPID( ppid )
-				                           : CheckPID( ppid, pid );
-				
-				if ( found != gProcessTable.end() )
+				if ( Process* process = pid == -1 ? CheckAnyPID( ppid ) : CheckPID( ppid, pid ) )
 				{
 					if ( stat_loc != NULL )
 					{
-						*stat_loc = found->second->Result();
+						*stat_loc = process->Result();
 					}
 					
-					pid_t foundPID = found->first;
+					process->Release();
 					
-					found->second->Release();
-					
-					return foundPID;
+					return process->GetPID();  // Not affected by Release()
 				}
 				
 				if ( options & 1 )
