@@ -286,7 +286,7 @@ namespace Genie
 	
 	bool HangupWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
-		gProcessTable.SendSignalToProcessesControlledByTerminal( SIGHUP, fTerminal );
+		SendSignalToProcessesControlledByTerminal( SIGHUP, fTerminal );
 		
 		// Assuming the window does get shut, it hasn't happened yet
 		return false;
