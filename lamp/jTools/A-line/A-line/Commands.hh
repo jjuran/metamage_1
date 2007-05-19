@@ -258,9 +258,11 @@ namespace ALine
 		}
 		
 		
-		std::string DebugSymbols() const
+		// CodeWarrior only
+		std::string MWDebugSymbols() const
 		{
-			return debug ? "-g" : "";
+			return debug ? "-sym full"
+			             : "-sym off";
 		}
 		
 		// CodeWarrior only
@@ -281,20 +283,21 @@ namespace ALine
 		
 		std::string Optimization() const
 		{
-			return !debug ? gnu ? "-O2"
-			                   : "-O4"
-			             : "-O0";
+			return gnu ? debug ? "-O0"
+			                   : "-O2"
+			           : debug ? "-opt off"
+			                   : "-opt full";
 		}
 		
 		std::string CodeGenOptions() const
 		{
-			std::string dependent = gnu ? ""
-			                            : ( MWNoMacsBugSymbols()
-			                        + " " + CFMTracebackTables()
-			                        + " " + MWCodeModel()
-			                        + " " + MW68KGlobals() );
-			
-			return Optimization() + " " + DebugSymbols() + " " + dependent;
+			return Optimization() + " " + ( gnu ? debug ? "-g"
+			                                            : ""
+			                                    :         MWDebugSymbols()
+			                                      + " " + MWNoMacsBugSymbols()
+			                                      + " " + CFMTracebackTables()
+			                                      + " " + MWCodeModel()
+			                                      + " " + MW68KGlobals() );
 		}
 		
 		std::string AllCompilerOptions() const
@@ -396,7 +399,7 @@ namespace ALine
 		
 		std::string MWLinkerOptions() const
 		{
-			return DebugSymbols() + " " + MWCodeModel() + " " + CFMTracebackTables();
+			return MWDebugSymbols() + " " + MWCodeModel() + " " + CFMTracebackTables();
 		}
 		
 		std::string LinkerOptions() const
