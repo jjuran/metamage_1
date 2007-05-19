@@ -308,7 +308,7 @@ namespace Genie
 			// Hope nothing bad happened while we thought we were still the child
 			
 			// Set this thread's process context back to the forker
-			gProcessTable[ current.GetPPID() ].ResumeAfterFork();
+			GetProcess( current.GetPPID() ).ResumeAfterFork();
 			
 			// Yes, in Genie a forked exec() DOES return on success.
 			// The longjmp() is done in statically-linked library code.
@@ -359,7 +359,7 @@ namespace Genie
 		
 		if ( current.Forked() )
 		{
-			gProcessTable[ current.GetPPID() ].ResumeAfterFork();
+			GetProcess( current.GetPPID() ).ResumeAfterFork();
 			
 			return;
 		}
@@ -409,7 +409,7 @@ namespace Genie
 			return getpgrp();
 		}
 		
-		return gProcessTable[ pid ].GetPGID();
+		return GetProcess( pid ).GetPGID();
 	}
 	
 	REGISTER_SYSTEM_CALL( getpgid );
@@ -540,7 +540,7 @@ namespace Genie
 	{
 		try
 		{
-			Process& target( pid != 0 ? gProcessTable[ pid ]
+			Process& target( pid != 0 ? GetProcess( pid )
 			                          : CurrentProcess() );
 			
 			pid = target.GetPID();
