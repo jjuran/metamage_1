@@ -83,7 +83,10 @@ namespace Genie
 			return *process;
 		}
 		
-		throw NoSuchProcess();
+		P7::ThrowErrno( ESRCH );
+		
+		// Not reached;
+		throw;
 	}
 	
 	Process* FindProcess( pid_t pid )

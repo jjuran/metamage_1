@@ -290,8 +290,6 @@ namespace Genie
 			bool HandlePendingSignals();
 	};
 	
-	struct NoSuchProcess  {};
-	
 	class GenieProcessTable
 	{
 		public:

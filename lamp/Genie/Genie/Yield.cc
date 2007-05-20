@@ -32,7 +32,7 @@ namespace Genie
 	{
 		if ( gCurrentProcess == NULL )
 		{
-			throw NoSuchProcess();
+			P7::ThrowErrno( ESRCH );
 		}
 		
 		return *gCurrentProcess;
