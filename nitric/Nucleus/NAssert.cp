@@ -21,7 +21,7 @@ namespace Nucleus
 			              file,
 			              line );
 			
-			std::exit( EXIT_FAILURE );
+			std::abort();
 		}
 	}
 	
