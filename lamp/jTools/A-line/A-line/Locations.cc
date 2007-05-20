@@ -17,10 +17,8 @@
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 
-// Kerosene
-#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
-#include "SystemCalls.hh"
-#endif
+// Divergence
+#include "Divergence/Utilities.hh"
 
 // CompileDriver
 #include "CompileDriver/ProjectConfig.hh"
@@ -31,6 +29,7 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Div = Divergence;
 	namespace CD = CompileDriver;
 	
 	
@@ -61,7 +60,7 @@ namespace ALine
 		
 		if ( const char* home = getenv( "HOME" ) )
 		{
-			return NN::Convert< N::FSDirSpec >( Path2FSS( home ) );
+			return NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( home ) );
 		}
 		
 		return N::RootDirectory( N::BootVolume() ) << "Users" << "jjuran";
@@ -95,7 +94,7 @@ namespace ALine
 		
 		if ( const char* projects = getenv( "ALINE_PROJECTS" ) )
 		{
-			return NN::Convert< N::FSDirSpec >( Path2FSS( projects ) );
+			return NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( projects ) );
 		}
 		
 	#endif
@@ -119,7 +118,7 @@ namespace ALine
 		
 		if ( const char* builds = getenv( "ALINE_BUILDS" ) )
 		{
-			return NN::Convert< N::FSDirSpec >( Path2FSS( builds ) );
+			return NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( builds ) );
 		}
 		
 	#endif
