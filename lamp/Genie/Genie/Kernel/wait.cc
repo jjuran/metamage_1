@@ -120,7 +120,10 @@ namespace Genie
 					
 					pid_t found_pid = process->GetPID();
 					
-					process->Release();
+					if ( process->GetLifeStage() == kProcessTerminated )
+					{
+						process->Release();
+					}
 					
 					if ( TARGET_API_MAC_CARBON )
 					{
