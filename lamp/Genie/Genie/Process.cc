@@ -996,6 +996,11 @@ namespace Genie
 		ASSERT( itsPID != 1 );
 		
 		itsPPID = 1;
+		
+		if ( itsLifeStage == kProcessTerminated )
+		{
+			Release();
+		}
 	}
 	
 	void Process::Release()
