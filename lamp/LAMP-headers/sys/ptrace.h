@@ -21,6 +21,8 @@
 #define _SYS_PTRACE_H   1
 
 #include <features.h>
+#include <sys/types.h>
+
 
 __BEGIN_DECLS
 
@@ -122,7 +124,8 @@ enum __ptrace_request
    appear (those that are used for the particular request) as:
      pid_t PID, void *ADDR, int DATA, void *ADDR2
    after REQUEST.  */
-extern long int ptrace (enum __ptrace_request __request, ...) __THROW;
+//extern long int ptrace (enum __ptrace_request __request, ...) __THROW;
+int ptrace( int request, pid_t pid, void* addr, int data );
 
 __END_DECLS
 
