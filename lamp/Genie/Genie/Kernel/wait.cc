@@ -27,8 +27,18 @@ namespace Genie
 	
 	namespace P7 = POSeven;
 	
-	static Process* CheckAnyPID( pid_t ppid )
+	
+	static bool StoppedWhileTracing( const Process& process )
 	{
+		return process.IsBeingTraced()  ||  process.GetSchedule() == kProcessStopped;
+	}
+	
+	static Process* CheckAny( pid_t ppid, pid_t pid )
+	{
+		pid_t pgid = pid == -1 ? 0
+		           : pid ==  0 ? CurrentProcess().GetPGID()
+		           :             -pid;
+		
 		bool hasAnyChildren = false;
 		
 		typedef GenieProcessTable::iterator iterator;
@@ -38,9 +48,16 @@ namespace Genie
 		{
 			Process& proc = *it->second;
 			
-			if ( proc.GetPPID() == ppid )
+			bool is_child     =                proc.GetPPID() == ppid;
+			bool pgid_matches = pgid == 0  ||  proc.GetPGID() == pgid;
+			
+			bool terminated   = proc.GetLifeStage() == kProcessTerminated;
+			
+			bool traced       = StoppedWhileTracing( proc );
+			
+			if ( is_child && pgid_matches )
 			{
-				if ( proc.GetLifeStage() == kProcessTerminated )
+				if ( terminated || traced )
 				{
 					return &proc;
 				}
@@ -73,13 +90,17 @@ namespace Genie
 			P7::ThrowErrno( EINVAL );
 		}
 		
-		if ( process->GetLifeStage() != kProcessTerminated )
+		bool terminated = process->GetLifeStage() == kProcessTerminated;
+		
+		bool traced     = StoppedWhileTracing( *process );
+		
+		if ( terminated || traced )
 		{
-			// Your child is still alive, please wait...
-			return NULL;
+			return process;
 		}
 		
-		return process;
+		// Your child is still alive, please wait...
+		return NULL;
 	}
 	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
@@ -90,7 +111,7 @@ namespace Genie
 		{
 			while ( true )
 			{
-				if ( Process* process = pid == -1 ? CheckAnyPID( ppid ) : CheckPID( ppid, pid ) )
+				if ( Process* process = pid == -1 ? CheckAny( ppid, pid ) : CheckPID( ppid, pid ) )
 				{
 					if ( stat_loc != NULL )
 					{
