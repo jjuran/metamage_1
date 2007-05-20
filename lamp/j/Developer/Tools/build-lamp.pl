@@ -69,7 +69,7 @@ my @programs = qw
 	macbin md5sum mkdir mv mwcc
 	nohup
 	open osascript
-	perl pwd
+	perl ptrace pwd
 	readlink rm rmdir
 	sh sleep stripcr striplf superd
 	tcpcat tcpclient th tlsrvr true tty
@@ -118,7 +118,7 @@ my %fsmap =
 			qw( gzip htget killall md5sum nohup open osascript perl tty ),
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
-			qw( beep cds cr2lf divide err2text jtest keymods lf2cr lf2crlf macbin stripcr striplf th ),
+			qw( beep cds cr2lf divide err2text jtest keymods lf2cr lf2crlf macbin ptrace stripcr striplf th ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
 		lib =>
