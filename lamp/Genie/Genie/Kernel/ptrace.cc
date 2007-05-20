@@ -21,7 +21,7 @@ namespace Genie
 	DEFINE_MODULE_INIT(  Kernel_ptrace )
 	
 	
-	static long int ptrace( enum __ptrace_request request, pid_t pid, void* addr, int data )
+	static int ptrace( int request, pid_t pid, void* addr, int data )
 	{
 		Process& current = CurrentProcess();
 		
