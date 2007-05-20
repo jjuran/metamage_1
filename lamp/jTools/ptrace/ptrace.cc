@@ -14,6 +14,7 @@
 
 // POSIX
 #include <sys/ptrace.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 
@@ -31,15 +32,29 @@ int main( int argc, char const *const argv[] )
 		return 1;
 	}
 	
-	int traced = ptrace( PTRACE_TRACEME, 0, NULL, 0 );
+	pid_t pid = vfork();
 	
-	(void) execvp( argv[ 1 ], argv + 1 );
+	if ( pid == -1 )
+	{
+		std::perror( "vfork" );
+		
+		return 127;
+	}
 	
-	bool noSuchFile = errno == ENOENT;
+	if ( pid == 0 )
+	{
+		int traced = ptrace( PTRACE_TRACEME, 0, NULL, 0 );
+		
+		(void) execvp( argv[ 1 ], argv + 1 );
+		
+		_exit( 127 );
+	}
 	
-	std::fprintf( stderr, "%s: %s: %s\n", argv[0], argv[1], std::strerror( errno ) );
+	int stat = -1;
 	
-	return noSuchFile ? 127 : 126;
+	int waited = waitpid( pid, &stat, 0 );
+	
+	return 0;
 }
 
 #pragma export reset
