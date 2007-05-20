@@ -161,6 +161,8 @@ namespace Genie
 			pid_t itsPGID;
 			pid_t itsSID;
 			
+			pid_t itsTracingProcess;
+			
 			UInt64 itsAlarmClock;
 			
 			UInt32 itsPendingSignals;
@@ -220,6 +222,13 @@ namespace Genie
 			
 			void SetPGID( pid_t pgid )  { itsPGID = pgid; }
 			void SetSID ( pid_t sid  )  { itsSID  = sid;  }
+			
+			pid_t GetTracingProcess() const  { return itsTracingProcess; }
+			bool IsBeingTraced() const  { return itsTracingProcess != 0; }
+			
+			void StartTracing( pid_t tracingProcess )  { itsTracingProcess = tracingProcess; }
+			
+			void StopTracing()  { itsTracingProcess = 0; }
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }
