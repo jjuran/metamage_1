@@ -30,7 +30,7 @@ namespace Genie
 	
 	static bool StoppedWhileTracing( const Process& process )
 	{
-		return process.IsBeingTraced()  ||  process.GetSchedule() == kProcessStopped;
+		return process.IsBeingTraced()  &&  process.GetSchedule() == kProcessStopped;
 	}
 	
 	static Process* CheckAny( pid_t ppid, pid_t pid )
