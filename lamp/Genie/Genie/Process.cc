@@ -734,6 +734,11 @@ namespace Genie
 		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessSleeping;
 		
+		if ( IsBeingTraced() )
+		{
+			Raise( SIGSTOP );
+		}
+		
 		return savedThreadID;
 	}
 	
