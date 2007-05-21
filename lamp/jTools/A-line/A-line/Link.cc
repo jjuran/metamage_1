@@ -237,23 +237,16 @@ namespace ALine
 		           inserter );
 	}
 	
-	static std::vector< FileName > GetAllImports( const Project& project, const std::string& targetName )
+	static std::vector< FSSpec > GetAllImports( const Project& project, const std::string& targetName )
 	{
 		const std::vector< ProjName >& used = project.AllUsedProjects();
 		
-		std::vector< FileName > result;
+		std::vector< FileName > importNames;
 		
 		std::for_each( used.begin(),
 		               used.end(),
 		               std::bind2nd( N::PtrFun( CopyImports ),
-		                             std::back_inserter( result ) ) );
-		
-		return result;
-	}
-	
-	static std::string GetImports( const Project& project, const std::string& targetName )
-	{
-		std::vector< FileName > importNames( GetAllImports( project, targetName ) );
+		                             std::back_inserter( importNames ) ) );
 		
 		std::vector< FSSpec > importFiles( importNames.size() );
 		
@@ -262,6 +255,13 @@ namespace ALine
 		                importFiles.begin(),
 		                std::bind2nd( N::PtrFun( FindImport ),
 		                              targetName ) );
+		
+		return importFiles;
+	}
+	
+	static std::string GetImports( const Project& project, const std::string& targetName )
+	{
+		std::vector< FSSpec > importFiles( GetAllImports( project, targetName ) );
 		
 		std::string imports;
 		
