@@ -12,6 +12,7 @@
 #include "signal.h"
 #include "stdlib.h"
 #include "sys/ioctl.h"
+#include "sys/ptrace.h"
 #include "sys/select.h"
 #include "sys/socket.h"
 #include "sys/stat.h"
@@ -122,6 +123,9 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	// sys/ioctl
 	int (*ioctl_import_)( int fd, unsigned long cmd, int* argp );
+	
+	// sys/ptrace
+	int (*ptrace_import_)( int request, pid_t pid, void* addr, int data );
 	
 	// sys/select
 	int (*select_import_)( int n, fd_set*  readfds,
@@ -408,6 +412,14 @@ namespace
 	int ioctl( int fd, unsigned long cmd, int* argp )
 	{
 		return INVOKE( ioctl, ( fd, cmd, argp ) );
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ sys/ptrace ¥
+	
+	int ptrace( int request, pid_t pid, void* addr, int data )
+	{
+		return INVOKE( ptrace, ( request, pid, addr, data ) );
 	}
 	
 	#pragma mark -
