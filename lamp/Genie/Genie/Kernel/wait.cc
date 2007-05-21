@@ -125,11 +125,6 @@ namespace Genie
 						process->Release();
 					}
 					
-					if ( TARGET_API_MAC_CARBON )
-					{
-						Yield();
-					}
-					
 					return found_pid;
 				}
 				
