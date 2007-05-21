@@ -442,27 +442,6 @@ namespace ALine
 		bool isSystem = ProjectHasSystemIncludes( projFolder );
 		AddIncludeDir( projName, ProjectIncludesFolder( projFolder ), isSystem );
 		
-		FSSpec exportsDir = projFolder & "Exports";
-		if ( N::FSpTestItemExists( exportsDir ) )
-		{
-			std::vector< FSSpec > exports = DeepFiles( exportsDir );
-			std::for_each
-			(
-				exports.begin(), 
-				exports.end(), 
-				ext::compose2
-				(
-					N::PtrFun( AddSourceFile ), 
-					ext::compose1
-					(
-						NN::Converter< std::string, const unsigned char* >(), 
-						N::PtrFun( GetFileName )
-					), 
-					ext::identity< FSSpec >()
-				)
-			);
-		}
-		
 		if ( product == productNotBuilt )  return;
 		
 		typedef std::vector< N::FSDirSpec >::const_iterator vDS_ci;
