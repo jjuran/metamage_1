@@ -427,11 +427,13 @@ namespace ShellShock
 			return;
 		}
 		
+		bool match_dotfiles = pattern[0] == '.';
+		
 		while ( dirent* entry = readdir( dir ) )
 		{
 			const char* name = entry->d_name;
 			
-			bool matched = NameMatchesPattern( name, pattern );
+			bool matched = (match_dotfiles || name[0] != '.')  &&  NameMatchesPattern( name, pattern );
 			
 			if ( matched )
 			{
