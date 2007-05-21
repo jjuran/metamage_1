@@ -29,6 +29,7 @@
 #include <Errors.h>
 #include <Packages.h>
 #include <AppleEvents.h>
+#include <NumberFormatting.h>
 #include "AEPrint.h"
 
 
@@ -215,7 +216,7 @@ getOptionalParams( AppleEvent *event, AEKeyword** *keys )
 	if( err ) goto exit;
 	if( n<=0 )
 		goto exit;
-	*keys = (void*) NewHandle(n*sizeof(AEKeyword));
+	*keys = (AEKeyword**) NewHandle(n*sizeof(AEKeyword));
 	if( (err= MemError()) != noErr ) goto exit;
 	
 	for( ; n>0; n-- ) {
@@ -364,7 +365,7 @@ hexDumpDesc( Buf *buf, AEDesc *desc )
 	bufputOSType(buf, desc->descriptorType);
 	bufputs(buf, "(Ç");
 	
-	data = (void*)*desc->dataHandle;
+	data = (unsigned char *)*desc->dataHandle;
 	count = GetHandleSize(desc->dataHandle);
 
 	n = count;
