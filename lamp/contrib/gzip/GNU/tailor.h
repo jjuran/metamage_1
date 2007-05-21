@@ -14,10 +14,8 @@
 
 /* $Id$ */
 
-#if defined(THINK_C) || defined(__MWERKS__) || defined (MPW) || defined (applec) || defined (__powerc)
-#  define MACOS
-#  define MACGZIP
-#endif
+
+#define HAVE_UNISTD_H 1
 
 
 #if defined(__MSDOS__) && !defined(MSDOS)
