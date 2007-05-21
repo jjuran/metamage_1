@@ -119,7 +119,7 @@ namespace ALine
 		return N::FSpGetMacPathname( file );
 	}
 	
-	static FSSpec FindImportLibrary( const FileName& filename )
+	static FSSpec FindImportLibraryInSystem( const FileName& filename )
 	{
 		N::FSDirSpec libsFolder = InterfacesAndLibraries() << "Libraries";
 		
@@ -213,40 +213,47 @@ namespace ALine
 		throw N::FNFErr();
 	}
 	
-	static FSSpec FindImport( const std::string& name, const std::string& targetName )
+	static FSSpec FindImportLibraryInProject( const std::string& libName, const Project& project )
+	{
+		FSSpec lib = project.ProjectFolder() & libName;
+		
+		if ( !N::FSpTestItemExists( lib ) )
+		{
+			throw N::FNFErr();
+		}
+		
+		return lib;
+	}
+	
+	static FSSpec FindImport( const std::string& name, const Project& project )
 	{
 		try
 		{
-			return FindImportProject( name, targetName );
+			return FindImportLibraryInSystem( name );
 		}
-		catch ( N::FNFErr )
+		catch ( const N::FNFErr& )
 		{
-			return FindImportLibrary( name );
 		}
+		
+		try
+		{
+			return FindImportLibraryInProject( name, project );
+		}
+		catch ( const N::FNFErr& )
+		{
+		}
+		
+		std::fprintf( stderr, "### Missing import %s from project %s\n", name.c_str(), project.Name().c_str() );
+		
+		throw N::FNFErr();
 	}
 	
 	static void CopyImports( const ProjName& projName,
-	                         std::back_insert_iterator< std::vector< ProjName > > inserter )
+	                         std::back_insert_iterator< std::vector< FSSpec > > inserter )
 	{
 		Project& project = GetProject( projName );
 		
 		std::vector< FileName > importNames( project.LibImports() );
-		
-		std::copy( importNames.begin(),
-		           importNames.end(),
-		           inserter );
-	}
-	
-	static std::vector< FSSpec > GetAllImports( const Project& project, const std::string& targetName )
-	{
-		const std::vector< ProjName >& used = project.AllUsedProjects();
-		
-		std::vector< FileName > importNames;
-		
-		std::for_each( used.begin(),
-		               used.end(),
-		               std::bind2nd( N::PtrFun( CopyImports ),
-		                             std::back_inserter( importNames ) ) );
 		
 		std::vector< FSSpec > importFiles( importNames.size() );
 		
@@ -254,7 +261,23 @@ namespace ALine
 		                importNames.end(),
 		                importFiles.begin(),
 		                std::bind2nd( N::PtrFun( FindImport ),
-		                              targetName ) );
+		                              project ) );
+		
+		std::copy( importFiles.begin(),
+		           importFiles.end(),
+		           inserter );
+	}
+	
+	static std::vector< FSSpec > GetAllImports( const Project& project, const std::string& targetName )
+	{
+		const std::vector< ProjName >& used = project.AllUsedProjects();
+		
+		std::vector< FSSpec > importFiles;
+		
+		std::for_each( used.begin(),
+		               used.end(),
+		               std::bind2nd( N::PtrFun( CopyImports ),
+		                             std::back_inserter( importFiles ) ) );
 		
 		return importFiles;
 	}
