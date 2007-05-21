@@ -1262,6 +1262,8 @@ namespace Genie
 	
 	void Process::Continue()
 	{
+		ASSERT( itsThread.get() != NULL );
+		
 		if ( N::GetThreadState( itsThread->Get() ) == N::kStoppedThreadState )
 		{
 			SetSchedule( kProcessSleeping );
