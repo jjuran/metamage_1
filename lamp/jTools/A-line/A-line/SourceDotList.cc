@@ -42,6 +42,7 @@ namespace ALine
 			
 			if ( line.empty()             )  continue;
 			if ( line[ 0 ] == ';'         )  continue;
+			if ( line[ 0 ] == '#'         )  continue;
 			if ( !eos( line.find( ':' ) ) )  continue;
 			
 			files.push_back( line.substr( line.find_first_not_of( "\t" ),
