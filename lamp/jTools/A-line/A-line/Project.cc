@@ -436,6 +436,61 @@ namespace ALine
 		return ExceptionConverter< Exception, Function >( f );
 	}
 	
+	static FSSpec FindFileInDir( const std::string& filename, const N::FSDirSpec& dir )
+	{
+		FSSpec result = dir & filename;
+		
+		if ( N::FSpTestItemExists( result ) )
+		{
+			return result;
+		}
+		
+		throw N::FNFErr();
+	}
+	
+	static FSSpec FindFileInDirInDir( const std::string& filename, const std::string& dirname, const N::FSDirSpec& dir )
+	{
+		return FindFileInDir( filename, dir << dirname );
+	}
+	
+	static FSSpec FindSourceFileInDirs( const std::string& relative_path, const std::vector< N::FSDirSpec >& sourceDirs )
+	{
+		typedef std::vector< N::FSDirSpec >::const_iterator dir_iter;
+		
+		const char* path = relative_path.c_str();
+		
+		const char* filename = path;
+		
+		std::string subdir;
+		
+		const char* slash = std::strchr( path, '/' );
+		
+		if ( slash )
+		{
+			filename = slash + 1;
+			
+			subdir.assign( path, slash );
+		}
+		
+		for ( dir_iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
+		{
+			N::FSDirSpec dir = *it;
+			
+			try
+			{
+				return slash ? FindFileInDirInDir( filename, subdir, dir )
+				             : FindFileInDir     ( filename,         dir );
+			}
+			catch ( ... )
+			{
+			}
+		}
+		
+		std::fprintf( stderr, "Missing source file %s\n", path );
+		
+		throw N::FNFErr();
+	}
+	
 	void Project::Study()
 	{
 		// Add the includes directory, whichever kind it is
@@ -444,85 +499,59 @@ namespace ALine
 		
 		if ( product == productNotBuilt )  return;
 		
-		typedef std::vector< N::FSDirSpec >::const_iterator vDS_ci;
-		
-		// Enumerate our source files
-		std::vector< FSSpec > sources;
-		for ( vDS_ci it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
-		{
-			std::vector< FSSpec > deepSources = DeepFiles
-			(
-				*it, 
-				ext::compose1
-				(
-					std::ptr_fun( IsCompilableFilename ), 
-					ext::compose1
-					(
-						NN::Converter< std::string, const unsigned char* >(), 
-						N::PtrFun( GetFileName )
-					)
-				)
-			);
-			sources.resize( sources.size() + deepSources.size() );
-			std::copy( deepSources.begin(), deepSources.end(), sources.end() - deepSources.size() );
-		}
-		
+		// First try files explicitly specified on the command line
 		std::vector< std::string > sourceList = Options().files;
+		
+		// None?  Try a Source.list file
 		if ( sourceList.size() == 0 )
 		{
 			FSSpec sourceDotListfile = SourceDotListFile( projFolder );
+			
 			if ( N::FSpTestItemExists( sourceDotListfile ) )
 			{
 				sourceList = ReadSourceDotList( sourceDotListfile );
 			}
 		}
 		
+		// We have filenames -- now, find them
 		if ( sourceList.size() > 0 )
 		{
-			std::set< std::string > neededSources( sourceList.begin(), sourceList.end() );
+			typedef std::vector< std::string >::const_iterator str_iter;
 			
-			typedef std::vector< FSSpec >::const_iterator vFS_ci;
-			
-			for ( vFS_ci it = sources.begin();  it != sources.end();  ++it )
+			for ( str_iter it = sourceList.begin();  it != sourceList.end();  ++it )
 			{
-				std::string name = NN::Convert< std::string >( it->name );
+				const std::string& sourceName = *it;
 				
-				N::FSDirSpec parent = N::FSpGetParent( *it );
-				
-				FSSpec parentSpec = NN::Convert< FSSpec >( parent );
-				
-				std::string parentName = NN::Convert< std::string >( parentSpec.name );
-				
-				std::string twoLevelPathname = parentName + "/" + name;
-				
-				bool found = true;
-				
-				if ( Membership( neededSources )( twoLevelPathname ) )
-				{
-					name = twoLevelPathname;
-				}
-				else if ( Membership( neededSources )( name ) )
-				{
-				}
-				else
-				{
-					found = false;
-				}
-				
-				if ( found )
-				{
-					mySources.push_back( *it );
-					neededSources.erase( name );
-					
-					if ( neededSources.size() == 0 )
-					{
-						break;
-					}
-				}
+				mySources.push_back( FindSourceFileInDirs( sourceName, sourceDirs ) );
 			}
 		}
 		else
 		{
+			// Still nothing?  Just enumerate everything in the source directory.
+			
+			typedef std::vector< N::FSDirSpec >::const_iterator vDS_ci;
+			
+			// Enumerate our source files
+			std::vector< FSSpec > sources;
+			for ( vDS_ci it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
+			{
+				std::vector< FSSpec > deepSources = DeepFiles
+				(
+					*it, 
+					ext::compose1
+					(
+						std::ptr_fun( IsCompilableFilename ), 
+						ext::compose1
+						(
+							NN::Converter< std::string, const unsigned char* >(), 
+							N::PtrFun( GetFileName )
+						)
+					)
+				);
+				sources.resize( sources.size() + deepSources.size() );
+				std::copy( deepSources.begin(), deepSources.end(), sources.end() - deepSources.size() );
+			}
+			
 			// FIXME:  Doesn't deal with duplicates
 			std::swap( mySources, sources );
 		}
