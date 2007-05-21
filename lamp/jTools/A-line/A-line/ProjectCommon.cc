@@ -21,9 +21,6 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Threads.h"
 
-// Nitrogen Extras / Templates
-#include "Templates/Timing.h"
-
 // Nitrogen Extras / Utilities
 #include "Utilities/Files.h"
 
@@ -39,7 +36,6 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
 	
 	using BitsAndBytes::q;
 	
@@ -246,30 +242,8 @@ namespace ALine
 	#endif
 	}
 	
-	struct TickCounter
-	{
-		typedef UInt32 result_type;
-		
-		UInt32 operator()() const
-		{
-			return ::TickCount();
-		}
-	};
-	
-	struct AnyThreadYielder
-	{
-		void operator()() const
-		{
-			sleep( 0 );
-		}
-	};
-	
 	MacDate RecursivelyLatestDate( const IncludePath& includePath, const FSSpec& file )
 	{
-		static NX::Escapement< NX::Timer< NX::Clock< TickCounter > >,
-		                       AnyThreadYielder >
-		       escapement( 30 );
-		
 		FixNullFileType( file );
 		
 		std::vector< IncludePath > includes = ExtractIncludes( file );
@@ -283,8 +257,6 @@ namespace ALine
 		{
 			MacDate incDate = RecursivelyLatestDate( *it );
 			modDate = std::max( modDate, incDate );
-			
-			escapement();
 		}
 		
 		gDates[ includePath ] = modDate;
