@@ -61,7 +61,7 @@ namespace CompileDriver
 			"rsrc",
 			"runtime",
 			"search",
-			"sources",
+		//	"sources",
 			"subprojects",
 			"use",
 			"uses",
