@@ -93,7 +93,7 @@ namespace Genie
 	{
 		GenieProcessTable::iterator it = gProcessTable.Map().find( pid );
 		
-		if ( it == gProcessTable.end() )
+		if ( it == gProcessTable.end()  ||  it->second->GetLifeStage() == kProcessReleased )
 		{
 			return NULL;
 		}
@@ -737,6 +737,9 @@ namespace Genie
 		if ( IsBeingTraced() )
 		{
 			Raise( SIGSTOP );
+			
+			// We may have received a signal while stopped
+			HandlePendingSignals();
 		}
 		
 		return savedThreadID;
@@ -962,7 +965,7 @@ namespace Genie
 		}
 		else
 		{
-			itsLifeStage = kProcessReleased;
+			Release();
 		}
 		
 		typedef GenieProcessTable::ProcessMap::const_iterator const_iterator;
@@ -1007,6 +1010,7 @@ namespace Genie
 	{
 		ASSERT( itsLifeStage == kProcessTerminated );
 		
+		itsPPID = 0;  // Don't match PPID comparisons
 		itsLifeStage = kProcessReleased;
 	}
 	
