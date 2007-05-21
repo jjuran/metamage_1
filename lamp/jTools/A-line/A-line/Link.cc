@@ -166,52 +166,6 @@ namespace ALine
 		return FSSpec();  // Squelch warning
 	}
 	
-	static FSSpec FindImportProject( const ProjName& name, const std::string& targetName )
-	{
-		Project* proj = NULL;
-		
-		try
-		{
-			proj = &GetProject( name );
-		}
-		catch ( ... )
-		{
-			throw N::FNFErr();
-		}
-		
-		Project& project = *proj;
-		
-		using namespace NN::Operators;
-		
-		switch ( project.Product() )
-		{
-			case productNotBuilt:
-				// This will be the case for projects that provide a stub library
-				// but no source.
-				
-				// This doesn't compile -- CW says "Output" is an illegal operand.
-				//return NN::Convert< FSSpec >( project.ProjectFolder() << "Output" & name );
-				
-				{
-					N::FSDirSpec projectFolder = project.ProjectFolder();
-					N::FSDirSpec prebuiltOutput = projectFolder << "Output";
-					
-					return prebuiltOutput & name;
-				}
-				break;
-			
-			case productSharedLib:
-				// This will be the case for shared libraries built by A-line.
-				return ProjectLibrariesFolder( name, targetName ) & name;
-				break;
-			
-			default:
-				// Throw shortly
-				break;
-		}
-		
-		throw N::FNFErr();
-	}
 	
 	static FSSpec FindImportLibraryInProject( const std::string& libName, const Project& project )
 	{
