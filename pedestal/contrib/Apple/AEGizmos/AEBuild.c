@@ -21,6 +21,9 @@
 */
 
 
+#ifndef __POWERPC__
+#include <SANE.h>
+#endif
 #include <Errors.h>
 #include <stdarg.h>
 #include "AEStream.h"
@@ -96,7 +99,7 @@ typedef enum{							/* Parser tokens, mnemonic for help in debugging */
 static Token
 	peekToken( register const char **src ),
 	getToken( const char **src, long *val );
-static OSErr parseObj( AEStreamRef s, const char **src, va_list *args );
+static OSErr parseObj( AEGizmos_AEStreamRef s, const char **src, va_list *args );
 
 
 #ifdef THINK_C
@@ -111,13 +114,13 @@ static OSErr parseObj( AEStreamRef s, const char **src, va_list *args );
 /* AE_BUILD  Construct an AppleEvent structure based on the format in src and the
 			 following parameters (if any). */
 OSErr
-AEBuild( AEDesc *dst, const char *src, ... )
+AEGizmos_AEBuild( AEDesc *dst, const char *src, ... )
 {
 	va_list args;
 	OSErr err;
 	
 	va_start(args,src);
-	err= vAEBuild(dst,src,args);
+	err= AEGizmos_vAEBuild(dst,src,args);
 	va_end(args);
 	return err;
 }
@@ -126,7 +129,7 @@ AEBuild( AEDesc *dst, const char *src, ... )
 /* V_AE_BUILD  Same as AEBuild, but parameters are passed explicitly as a va_list.
 			   This is analogous to vprintf. */
 OSErr
-vAEBuild( AEDesc *dst, const char *src, const void *args )
+AEGizmos_vAEBuild( AEDesc *dst, const char *src, const void *args )
 {
 	OSErr err;
 	const char *pos = src;
@@ -166,7 +169,7 @@ vAEBuild( AEDesc *dst, const char *src, const void *args )
 
 /* WRITE_INT_DESC  Create a descriptor for a long or short integer */
 static OSErr
-writeIntDesc( AEStreamRef s, long n )
+writeIntDesc( AEGizmos_AEStreamRef s, long n )
 {
 	if( n>32767 || n<-32767 )					/* Pascal doesn't like 16-bit -32768 */
 		return AEStream_WriteDesc(s,'long',(Ptr)&n,4);
@@ -352,7 +355,7 @@ syntaxError( AEBuild_SyntaxErrType errCode )
 
 /* WRITE_STRING_DESCRIPTOR  Write a descriptor for a just-parsed string */
 static OSErr
-writeStringDescriptor( long tokenVal, const char *src, DescType type, AEStreamRef s )
+writeStringDescriptor( long tokenVal, const char *src, DescType type, AEGizmos_AEStreamRef s )
 {
 	return AEStream_WriteDesc(s, type,
 							  (void*)tokenVal,
@@ -362,7 +365,7 @@ writeStringDescriptor( long tokenVal, const char *src, DescType type, AEStreamRe
 
 /* WRITE_HEX_STRING_DESCRIPTOR  Write a descriptor for a just-parsed hex string */
 static OSErr
-writeHexStringDescriptor( long tokenVal, const char *src, DescType type, AEStreamRef s )
+writeHexStringDescriptor( long tokenVal, const char *src, DescType type, AEGizmos_AEStreamRef s )
 {
 	long size;
 	uchar **h, *dst, *start,*end, *cp, c;
@@ -376,7 +379,7 @@ writeHexStringDescriptor( long tokenVal, const char *src, DescType type, AEStrea
 	start = (uchar*)StripAddress((Ptr)tokenVal);
 	size = (end-1-start)/2;							/* Max possible len */
 	
-	h = (void*)NewHandle(size);						/* Create temp buffer for data */
+	h = (uchar **)NewHandle(size);						/* Create temp buffer for data */
 	if( MemError() ) return MemError();
 	
 	for( cp=(uchar*)tokenVal, hi=true, dst=*h; cp<end; cp++ ) {
@@ -405,7 +408,7 @@ writeHexStringDescriptor( long tokenVal, const char *src, DescType type, AEStrea
 	HLock((Handle)h);
 	
 	err= AEStream_WriteDesc(s, type, (Ptr)*h, size);	/* Build the descriptor */
-	DisposHandle((Handle)h);
+	DisposeHandle((Handle)h);
 	return err;
 }
 
@@ -416,7 +419,7 @@ writeHexStringDescriptor( long tokenVal, const char *src, DescType type, AEStrea
 /* PARSE_DATA  Parse a single data item, the data of an AEDesc. Usually an integer. */
 /*			   objType is the type to coerce to, or 0L */
 static OSErr
-parseData( AEStreamRef s, const char **src, va_list *args, DescType objType )
+parseData( AEGizmos_AEStreamRef s, const char **src, va_list *args, DescType objType )
 {
 	Token t;
 	long val;
@@ -527,7 +530,7 @@ done:		;
 
 /* PARSE_LIST  Parse an AEDescList specifier. objType is the type to coerce to, or 0L */
 static OSErr
-parseList( AEStreamRef s, const char **src, va_list *args )
+parseList( AEGizmos_AEStreamRef s, const char **src, va_list *args )
 {
 	Token t;
 	long val;
@@ -567,7 +570,7 @@ parseList( AEStreamRef s, const char **src, va_list *args )
 
 /* PARSE_KEY_LIST  Parse an AERecord specifier. objType is the type to coerce to, or 0L */
 static OSErr
-parseKeyList( AEStreamRef s, const char **src, va_list *args, DescType objType )
+parseKeyList( AEGizmos_AEStreamRef s, const char **src, va_list *args, DescType objType )
 {
 	Token t;
 	DescType val,key;
@@ -619,7 +622,7 @@ parseKeyList( AEStreamRef s, const char **src, va_list *args, DescType objType )
 
 /* PARSE_OBJ  Parse an object descriptor */
 static OSErr
-parseObj( AEStreamRef s, const char **src, va_list *args )
+parseObj( AEGizmos_AEStreamRef s, const char **src, va_list *args )
 {
 	Token t;
 	DescType val;
@@ -708,7 +711,7 @@ parseParam( AppleEvent *event, AEKeyword keyword, Boolean isAttribute, const cha
 
 /* AEBUILD_APPLE_EVENT  Construct an Apple Event and read params */
 OSErr
-AEBuildAppleEvent(	AEEventClass theClass, AEEventID theID,
+AEGizmos_AEBuildAppleEvent(	AEEventClass theClass, AEEventID theID,
 					DescType addressType, const void *addressData, long addressLength,
 					short returnID, long transactionID, AppleEvent *result,
 					const char *paramsFmt, ... )
@@ -717,7 +720,7 @@ AEBuildAppleEvent(	AEEventClass theClass, AEEventID theID,
 	OSErr err;
 	
 	va_start(args,paramsFmt);
-	err= vAEBuildAppleEvent(theClass,theID,
+	err= AEGizmos_vAEBuildAppleEvent(theClass,theID,
 							addressType,addressData,addressLength,
 							returnID,transactionID,result,
 							paramsFmt,
@@ -729,7 +732,7 @@ AEBuildAppleEvent(	AEEventClass theClass, AEEventID theID,
 
 /* V_AEBUILD_APPLE_EVENT  Construct an Apple Event and read params */
 OSErr
-vAEBuildAppleEvent(	AEEventClass theClass, AEEventID theID,
+AEGizmos_vAEBuildAppleEvent(	AEEventClass theClass, AEEventID theID,
 					DescType addressType, const void *addressData, long addressLength,
 					short returnID, long transactionID, AppleEvent *resultEvt,
 					const char *paramsFmt, const void *args )
@@ -748,7 +751,7 @@ vAEBuildAppleEvent(	AEEventClass theClass, AEEventID theID,
 	if( err ) goto exit;
 	
 	AEDisposeDesc(&addressDesc);
-	err= vAEBuildParameters(resultEvt,paramsFmt, args);
+	err= AEGizmos_vAEBuildParameters(resultEvt,paramsFmt, args);
 	
 exit:
 	AEDisposeDesc(&addressDesc);
@@ -759,20 +762,20 @@ exit:
 
 
 OSErr
-AEBuildParameters( AppleEvent *event, const char *format, ... )
+AEGizmos_AEBuildParameters( AppleEvent *event, const char *format, ... )
 {
 	va_list args;
 	OSErr err;
 	
 	va_start(args,format);
-	err= vAEBuildParameters(event,format, args);
+	err= AEGizmos_vAEBuildParameters(event,format, args);
 	va_end(args);
 	return err;
 }
 
 
 OSErr
-vAEBuildParameters( AppleEvent *event, const char *format, const void *args )
+AEGizmos_vAEBuildParameters( AppleEvent *event, const char *format, const void *args )
 {
 	const char *pos = format;
 	AEStream s;

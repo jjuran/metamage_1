@@ -33,35 +33,35 @@ typedef struct {				// A (write-only) stream on an AE descriptor
 	Size	headIndex;				// Offset of header [type field] of open descriptor
 	char	context;				// What context am I in? [enum]
 	char	isEvent;				// Is this an Apple Event? [Boolean]
-} AEStream, *AEStreamRef;
+} AEStream, *AEGizmos_AEStreamRef;
 
 
-OSErr	AEStream_Open		( AEStreamRef ),
-		AEStream_Close		( AEStreamRef, AEDesc *desc ),
+OSErr	AEStream_Open		( AEGizmos_AEStreamRef ),
+		AEStream_Close		( AEGizmos_AEStreamRef, AEDesc *desc ),
 
-		AEStream_OpenDesc	( AEStreamRef, DescType type ),
-		AEStream_WriteData	( AEStreamRef, const void *data, Size length ),
-		AEStream_CloseDesc	( AEStreamRef ),
+		AEStream_OpenDesc	( AEGizmos_AEStreamRef, DescType type ),
+		AEStream_WriteData	( AEGizmos_AEStreamRef, const void *data, Size length ),
+		AEStream_CloseDesc	( AEGizmos_AEStreamRef ),
 
-		AEStream_WriteDesc	( AEStreamRef, DescType type, const void *data, Size length ),
-		AEStream_WriteAEDesc( AEStreamRef, const AEDesc *desc ),
+		AEStream_WriteDesc	( AEGizmos_AEStreamRef, DescType type, const void *data, Size length ),
+		AEStream_WriteAEDesc( AEGizmos_AEStreamRef, const AEDesc *desc ),
 
-		AEStream_OpenList	( AEStreamRef ),
-		AEStream_CloseList	( AEStreamRef ),
+		AEStream_OpenList	( AEGizmos_AEStreamRef ),
+		AEStream_CloseList	( AEGizmos_AEStreamRef ),
 
-		AEStream_OpenRecord	( AEStreamRef, DescType type ),
-		AEStream_SetRecordType( AEStreamRef s, DescType type ),
-		AEStream_CloseRecord( AEStreamRef ),
+		AEStream_OpenRecord	( AEGizmos_AEStreamRef, DescType type ),
+		AEStream_SetRecordType( AEGizmos_AEStreamRef s, DescType type ),
+		AEStream_CloseRecord( AEGizmos_AEStreamRef ),
 
-		AEStream_WriteKeyDesc(AEStreamRef, AEKeyword key, DescType type, const void *data, Size length ),
-		AEStream_OpenKeyDesc( AEStreamRef, AEKeyword key, DescType type ),
-		AEStream_WriteKey	( AEStreamRef, AEKeyword key ),
+		AEStream_WriteKeyDesc(AEGizmos_AEStreamRef, AEKeyword key, DescType type, const void *data, Size length ),
+		AEStream_OpenKeyDesc( AEGizmos_AEStreamRef, AEKeyword key, DescType type ),
+		AEStream_WriteKey	( AEGizmos_AEStreamRef, AEKeyword key ),
 
-		AEStream_CreateEvent( AEStreamRef, AEEventClass, AEEventID,
+		AEStream_CreateEvent( AEGizmos_AEStreamRef, AEEventClass, AEEventID,
 								DescType targetType, const void *targetData, long targetLength,
 								short returnID, long transactionID ),
-		AEStream_OpenEvent	( AEStreamRef, AppleEvent* ),
-		AEStream_OptionalParam( AEStreamRef, AEKeyword key );
+		AEStream_OpenEvent	( AEGizmos_AEStreamRef, AppleEvent* ),
+		AEStream_OptionalParam( AEGizmos_AEStreamRef, AEKeyword key );
 
 #ifdef __cplusplus
 }
