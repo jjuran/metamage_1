@@ -237,7 +237,7 @@ namespace ALine
 		           inserter );
 	}
 	
-	static std::vector< FileName > GetAllImports( const Project& project )
+	static std::vector< FileName > GetAllImports( const Project& project, const std::string& targetName )
 	{
 		const std::vector< ProjName >& used = project.AllUsedProjects();
 		
@@ -251,40 +251,11 @@ namespace ALine
 		return result;
 	}
 	
-	static bool LibSubsumedByCarbonLib( const FileName& name )
-	{
-		std::string lib = name[ 0 ] == '-' ? name.substr( 1, name.npos )
-		                                   : name;
-		
-		if ( lib == "AppleScriptLib"         )  return true;
-		if ( lib == "OpenTransportLib"       )  return true;
-		if ( lib == "OpenTptInternetLib"     )  return true;
-		if ( lib == "OpenTransportAppPPC.o"  )  return true;
-		if ( lib == "OpenTransportExtnPPC.o" )  return true;
-		
-		return false;
-	}
-	
 	static std::string GetImports( const Project& project, const std::string& targetName )
 	{
-		//std::vector< FileName > importNames( project.LibImports() );
-		std::vector< FileName > importNames( GetAllImports( project ) );
+		std::vector< FileName > importNames( GetAllImports( project, targetName ) );
 		
-		std::string carbonTarget = "PPC-CFM-Carbon";
-		
-		bool carbon = std::equal( carbonTarget.begin(),
-		                          carbonTarget.end(),
-		                          targetName.begin() );
-		
-		if ( carbon )
-		{ 
-			importNames.resize( std::remove_if( importNames.begin(),
-			                                    importNames.end(),
-			                                    std::ptr_fun( LibSubsumedByCarbonLib ) )
-			                    - importNames.begin() );
-		}
-		
-		std::vector< FSSpec   > importFiles( importNames.size()   );
+		std::vector< FSSpec > importFiles( importNames.size() );
 		
 		std::transform( importNames.begin(),
 		                importNames.end(),
