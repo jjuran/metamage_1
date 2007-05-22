@@ -25,10 +25,8 @@
 #include "StringFilters.hh"
 #include "StringPredicates.hh"
 
-// Kerosene
-#if !TARGET_RT_MAC_MACHO
-#include "SystemCalls.hh"
-#endif
+// Divergence
+#include "Divergence/Utilities.hh"
 
 // Orion
 #include "Orion/StandardIO.hh"
@@ -52,6 +50,7 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Div = Divergence;
 	namespace CD = CompileDriver;
 	
 	namespace ext = N::STLExtensions;
@@ -131,15 +130,7 @@ namespace ALine
 		{
 			std::string dirPath = cwdPath + "/" + pathname;
 			
-		#if TARGET_RT_MAC_MACHO
-			
-			FSSpec dirFSS = NN::Convert< FSSpec >( FSRef( N::FSPathMakeRef( dirPath ) ) );
-			
-		#else
-			
-			FSSpec dirFSS = Path2FSS( dirPath );
-			
-		#endif
+			FSSpec dirFSS = Div::ResolvePathToFSSpec( dirPath.c_str() );
 			
 			dir = NN::Convert< N::FSDirSpec >( dirFSS );
 		}
