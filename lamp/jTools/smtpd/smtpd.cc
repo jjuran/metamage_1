@@ -21,6 +21,10 @@
 // Nucleus
 #include "Nucleus/Shared.h"
 
+// Io
+#include "io/io.hh"
+#include "io/spray.hh"
+
 // Nitrogen
 #include "Nitrogen/DateTimeUtils.h"
 #include "Nitrogen/Folders.h"
@@ -165,16 +169,14 @@ static string GetReversePath( const string& fromLine )
 
 static void CreateOneLiner( const FSSpec& file, const std::string& line )
 {
-	using N::fsWrPerm;
+	typedef NN::StringFlattener< std::string > Flattener;
 	
 	std::string output = line + "\n";
 	
-	io::write( N::FSpOpenDF( N::FSpCreate( file,
-	                                       N::OSType( 'R*ch' ),
-	                                       N::OSType( 'TEXT' ) ),
-	                         fsWrPerm ),
-	           output.data(),
-	           output.size() );
+	io::spray_file< Flattener >( N::FSpCreate( file,
+	                                           N::OSType( 'R*ch' ),
+	                                           N::OSType( 'TEXT' ) ),
+	                             output );
 }
 
 static void CreateDestinationFile( const N::FSDirSpec& destFolder, const std::string& dest )
@@ -214,10 +216,9 @@ class PartialMessage
 PartialMessage::PartialMessage( const FSSpec& dirLoc )
 :
 	dir( NN::Owned< N::FSDirSpec, N::RecursiveFSDeleter >::Seize( N::FSpDirCreate( dirLoc ) ) ), 
-	out( N::FSpOpenDF( N::FSpCreate( dir.Get() & "Message",
-	                                 N::OSType( 'R*ch' ),
-	                                 N::OSType( 'TEXT' ) ),
-	                   N::fsWrPerm ) )
+	out( io::open_for_writing( N::FSpCreate( dir.Get() & "Message",
+	                                         N::OSType( 'R*ch' ),
+	                                         N::OSType( 'TEXT' ) ) ) )
 {
 	//
 }
