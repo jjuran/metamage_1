@@ -196,7 +196,7 @@ namespace CompileDriver
 	
 	static void AddPendingConfigFile( const FSSpec& file )
 	{
-		std::string filename = NN::Convert< std::string >( N::FSpGetName( file ) );
+		std::string filename = io::get_filename_string( file );
 		std::string extension = ".conf";
 		
 		std::string::difference_type rootSize = filename.size() - extension.size();

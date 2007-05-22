@@ -76,7 +76,7 @@ namespace ALine
 			
 			result = "-wi ";
 		}
-		else if ( LibNeedsWeakImport( NN::Convert< std::string >( import.name ) ) )
+		else if ( LibNeedsWeakImport( io::get_filename_string( import ) ) )
 		{
 			result = "-wi ";
 		}
@@ -111,7 +111,7 @@ namespace ALine
 	
 	static std::string GetFileName( const FSSpec& file )
 	{
-		return NN::Convert< std::string >( file.name );
+		return io::get_filename_string( file );
 	}
 	
 	static std::string Pathname( const FSSpec& file )
@@ -432,7 +432,7 @@ namespace ALine
 		
 		for ( it = project.Sources().begin();  it != end;  ++it )
 		{
-			std::string sourceName = NN::Convert< std::string >( it->name );
+			std::string sourceName = io::get_filename_string( *it );
 			
 			FSSpec objectFile = objectsDir & ObjectFileName( sourceName );
 			
@@ -474,7 +474,7 @@ namespace ALine
 			
 			for ( std::vector< FSSpec >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
 			{
-				if ( NN::Convert< std::string >( it->name ) == "Orion.lib" )
+				if ( io::get_filename_string( *it ) == "Orion.lib" )
 				{
 					expeditedLib = q( GetPathname( *it ) );
 					
@@ -558,7 +558,7 @@ namespace ALine
 		
 		command = cmdgen.MakeNativeCommand( command );
 		
-		QueueCommand( "echo Linking:  " + NN::Convert< std::string >( outFile.name ) );
+		QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
 		QueueCommand( command );
 		
 		FSSpec rsrcFile = outFile;
@@ -607,7 +607,7 @@ namespace ALine
 			
 			rezCommand = cmdgen.MakeNativeCommand( rezCommand );
 			
-			QueueCommand( "echo Rezzing:  " + NN::Convert< std::string >( rsrcFile.name ) );
+			QueueCommand( "echo Rezzing:  " + io::get_filename_string( rsrcFile ) );
 			QueueCommand( rezCommand );
 		}
 		
@@ -642,7 +642,7 @@ namespace ALine
 			
 			cpresCommand << q( N::FSpGetPOSIXPathname( rsrcFile ) );
 			
-			QueueCommand( "echo Copying resources:  " + NN::Convert< std::string >( rsrcFile.name ) );
+			QueueCommand( "echo Copying resources:  " + io::get_filename_string( rsrcFile ) );
 			QueueCommand( cpresCommand );
 		}
 	}

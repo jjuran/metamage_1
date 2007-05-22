@@ -45,7 +45,7 @@ namespace ALine
 			
 			bool operator()( const FSSpec& file ) const
 			{
-				return NN::Convert< std::string >( file.name ) == nameToMatch;
+				return io::get_filename_string( file ) == nameToMatch;
 			}
 	};
 	

@@ -264,7 +264,7 @@ namespace ALine
 		
 		command << cmdgen.AllCompilerOptions();
 		
-		std::string filename = NN::Convert< std::string >( file.name );
+		std::string filename = io::get_filename_string( file );
 		
 		if ( !IsCFile( filename ) )
 		{
@@ -284,7 +284,7 @@ namespace ALine
 			if ( options.HasPrecompiledHeaderSource() )
 			{
 				// Specify by name only, so gcc will search for the .gch image.
-				std::string pchSourceName = NN::Convert< std::string >( options.PrecompiledHeaderSource().name );
+				std::string pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
 				
 				//command << "-include" << q( pchSourceName );
 				command << cmdgen.Prefix( pchSourceName );
@@ -360,7 +360,7 @@ namespace ALine
 				throw N::ParamErr();
 		}
 		
-		std::string filename = NN::Convert< std::string >( file.name );
+		std::string filename = io::get_filename_string( file );
 		
 		QueueCommand( "echo Compiling:  " + filename );
 		QueueCommand( command );
@@ -482,7 +482,7 @@ namespace ALine
 		
 		command << cmdgen.AllCompilerOptions();
 		
-		std::string filename = NN::Convert< std::string >( file.name );
+		std::string filename = io::get_filename_string( file );
 		
 		if ( !IsCFile( filename ) )
 		{
@@ -532,7 +532,7 @@ namespace ALine
 				throw N::ParamErr();
 		}
 		
-		QueueCommand( "echo Precompiling:  " + NN::Convert< std::string >( file.name ) );
+		QueueCommand( "echo Precompiling:  " + io::get_filename_string( file ) );
 		QueueCommand( command );
 	}
 	
@@ -576,7 +576,7 @@ namespace ALine
 			
 			// Locate the precompiled header image file.
 			pchSource = IncludeLocation( pchSourcePath );
-			std::string pchSourceName = NN::Convert< std::string >( pchSource.name );
+			std::string pchSourceName = io::get_filename_string( pchSource );
 			
 			pchImage = PrecompiledHeaderImageFile( project.Name(),
 			                                       pchSourceName,
@@ -607,7 +607,7 @@ namespace ALine
 			{
 				pchSourcePath = GetProject( *found ).PrecompiledHeaderSource();
 				pchSource = IncludeLocation( pchSourcePath );
-				std::string pchSourceName = NN::Convert< std::string >( pchSource.name );
+				std::string pchSourceName = io::get_filename_string( pchSource );
 				
 				pchImage = PrecompiledHeaderImageFile( *found,
 				                                       pchSourceName,
@@ -653,7 +653,7 @@ namespace ALine
 			}
 			
 			// The file's name
-			const std::string& sourceName = NN::Convert< std::string >( sourceFile.name );
+			std::string sourceName = io::get_filename_string( sourceFile );
 			
 			// The object file for this source file, which may or may not exist yet.
 			FSSpec objectFile = outDir & ObjectFileName( sourceName );
