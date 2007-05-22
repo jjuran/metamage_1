@@ -636,8 +636,6 @@ namespace ALine
 		{
 			using namespace NN::Operators;
 			
-			sleep( 0 );
-			
 			// What we do in this loop:
 			//  * We set the current source directory to the parent directory
 			//    of the current file if the project requires that information.
