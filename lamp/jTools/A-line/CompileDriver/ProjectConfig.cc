@@ -207,12 +207,12 @@ namespace CompileDriver
 		}
 		
 		N::FSDirSpec parent = N::FSpGetParent( file );
-		std::string name = NN::Convert< std::string >( N::FSDirGetName( parent ) );
+		std::string name = io::get_filename_string( parent );
 		
 		if ( name == "A-line.confd" )
 		{
 			parent = N::FSDirGetParent( parent );
-			name = NN::Convert< std::string >( N::FSDirGetName( parent ) );
+			name = io::get_filename_string( parent );
 		}
 		
 		DotConfData data;
