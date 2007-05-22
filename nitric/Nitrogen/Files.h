@@ -1708,6 +1708,22 @@ namespace io
 		return get_filename( Nucleus::Convert< FSSpec >( dir ) );
 	}
 	
+	inline Nitrogen::FSDirSpec get_preceding_directory( const FSSpec& file )
+	{
+		return Nucleus::Make< Nitrogen::FSDirSpec >( Nitrogen::FSVolumeRefNum( file.vRefNum ),
+		                                             Nitrogen::FSDirID       ( file.parID   ) );
+	}
+	
+	inline Nitrogen::FSDirSpec get_preceding_directory( const Nitrogen::FSDirSpec& dir )
+	{
+		return get_preceding_directory( Nucleus::Convert< FSSpec >( dir ) );
+	}
+	
+	inline Nitrogen::FSDirSpec get_parent_directory_of_directory( const Nitrogen::FSDirSpec& dir )
+	{
+		return get_preceding_directory( dir );
+	}
+	
 	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file )
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdPerm );
