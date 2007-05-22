@@ -18,11 +18,6 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
-	
-	using std::string;
-	
-	
 	typedef UInt32 MacDate;
 	
 	struct BuildFailure  {};
@@ -36,20 +31,18 @@ namespace ALine
 		                       info.build );
 	}
 	
-	void GetCatInfo( const FSSpec& item, CInfoPBRec& pb );
-	
 	inline MacDate ModifiedDate( const FSSpec& item )
 	{
 		CInfoPBRec pb;
 		
-		GetCatInfo( item, pb );
+		Nitrogen::FSpGetCatInfo( item, pb );
 		
 		return MacDate( pb.hFileInfo.ioFlMdDat );
 	}
 	
 	inline std::string ObjectFileName( const std::string& sourceName )
 	{
-		string::size_type dot = sourceName.find_last_of( '.' );
+		std::size_t dot = sourceName.find_last_of( '.' );
 		// If the filename has no dot, then dot == npos, 
 		// and substr() returns the whole string.  (And ".o" is appended.)
 		return sourceName.substr( 0, dot ) + ".o";
