@@ -14,6 +14,9 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Owned.h"
 
+// Io
+#include "io/slurp.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.h"
 #include "Nitrogen/OSA.h"
@@ -66,26 +69,14 @@ inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
 
 static std::string ReadFileData( const FSSpec& file )
 {
-	//return N::FSpSlurp< NN::StringFlattener< std::string > >( file );
+	std::string result = io::slurp_file< NN::StringFlattener< std::string > >( file );
 	
-	using N::fsRdPerm;
-	
-	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, fsRdPerm ) );
-	
-	std::size_t fileSize = N::GetEOF( fileH );
-	
-	std::vector< char > data( fileSize );
-	
-	std::size_t bytes = N::FSRead( fileH, fileSize, &data[ 0 ] );
-	
-	ASSERT( bytes == fileSize );
-	
-	if ( data.size() >= 2  &&  data[0] == '#'  &&  data[1] == '!' )
+	if ( result.size() >= 2  &&  result[0] == '#'  &&  result[1] == '!' )
 	{
-		data[0] = data[1] = '-';  // Turn she-bang line into comment 
+		result[0] = result[1] = '-';  // Turn she-bang line into comment 
 	}
 	
-	return std::string( &data[ 0 ], bytes );
+	return result;
 }
 
 static NN::Owned< N::OSASpec > MakeCWDContext()
