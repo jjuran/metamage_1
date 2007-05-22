@@ -206,13 +206,13 @@ namespace CompileDriver
 			return;
 		}
 		
-		N::FSDirSpec parent = io::get_preceding_directory( file );
-		std::string name = io::get_filename_string( parent );
+		N::FSDirSpec  parent = io::get_preceding_directory( file   );
+		std::string   name   = io::get_filename_string    ( parent );
 		
 		if ( name == "A-line.confd" )
 		{
 			parent = io::get_preceding_directory( parent );
-			name = io::get_filename_string( parent );
+			name   = io::get_filename_string    ( parent );
 		}
 		
 		DotConfData data;
