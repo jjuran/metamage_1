@@ -1703,6 +1703,11 @@ namespace io
 		return file.name;
 	}
 	
+	inline Nitrogen::Str63 get_filename( const Nitrogen::FSDirSpec& dir )
+	{
+		return get_filename( Nucleus::Convert< FSSpec >( dir ) );
+	}
+	
 	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file )
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdPerm );
