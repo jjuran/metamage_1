@@ -6,6 +6,9 @@
 #ifndef IO_IO_HH
 #include "io/io.hh"
 #endif
+#ifndef IO_FILES_HH
+#include "io/files.hh"
+#endif
 
 #ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
 #include "Nucleus/ArrayContainerFunctions.h"
@@ -1670,6 +1673,10 @@ namespace Nitrogen
 	{
 		typedef FSSpec file_spec;
 		
+		typedef ConstStr63Param filename_parameter;
+		
+		typedef Nitrogen::Str63 filename_result;
+		
 		typedef Nitrogen::FSFileRefNum stream;
 		
 		typedef SInt32 byte_count;
@@ -1690,6 +1697,11 @@ namespace io
 {
 	
 	template <> struct filespec_traits< FSSpec > : public Nitrogen::FSSpec_Io_Details {};
+	
+	inline Nitrogen::Str63 get_filename( const FSSpec& file )
+	{
+		return file.name;
+	}
 	
 	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file )
 	{
