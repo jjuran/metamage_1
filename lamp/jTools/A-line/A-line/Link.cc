@@ -104,9 +104,9 @@ namespace ALine
 		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
 		
 		FSSpec mpwShell = NX::DTGetAPPL( sigMPWShell );
-		N::FSDirSpec mpw = N::FSpGetParent( mpwShell );
+		N::FSDirSpec mpw = io::get_preceding_directory( mpwShell );
 		
-		return N::FSpGetParent( NN::Convert< FSSpec >( mpw ) ) << "Interfaces&Libraries";
+		return io::get_preceding_directory( mpw ) << "Interfaces&Libraries";
 	}
 	
 	static std::string GetFileName( const FSSpec& file )

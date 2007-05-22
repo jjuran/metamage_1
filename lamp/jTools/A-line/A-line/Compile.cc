@@ -308,7 +308,7 @@ namespace ALine
 		// Add the source file to the command line
 		command << cmdgen.Input( N::FSpGetPOSIXPathname( file ) );
 		
-		N::FSDirSpec diagnosticsFolder = CreateFolder( N::FSDirGetParent( options.Output() ) & "Diagnostics" );
+		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) & "Diagnostics" );
 		FSSpec diagnosticsFile = diagnosticsFolder & DiagnosticsFilenameFromSourceFilename( filename );
 		
 		command << "> " << q( N::FSpGetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
@@ -367,7 +367,7 @@ namespace ALine
 		
 		if ( options.Target().toolkit == toolkitGNU )
 		{
-			FSSpec diagnostics = N::FSDirGetParent( options.Output() )
+			FSSpec diagnostics = io::get_preceding_directory( options.Output() )
 			                     << "Diagnostics"
 			                     & DiagnosticsFilenameFromSourceFilename( filename );
 			
@@ -505,7 +505,7 @@ namespace ALine
 		
 		using namespace NN::Operators;
 		
-		N::FSDirSpec diagnosticsFolder = CreateFolder( N::FSDirGetParent( options.Output() ) & "Diagnostics" );
+		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) & "Diagnostics" );
 		FSSpec diagnosticsFile = diagnosticsFolder & DiagnosticsFilenameFromSourceFilename( filename );
 		
 		command << "> " << q( N::FSpGetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
@@ -649,7 +649,7 @@ namespace ALine
 			
 			if ( project.NeedsCwdSourceOption() )
 			{
-				SetCurrentSourceDir( N::FSpGetParent( sourceFile ) );
+				SetCurrentSourceDir( io::get_preceding_directory( sourceFile ) );
 			}
 			
 			// The file's name
@@ -766,7 +766,7 @@ namespace ALine
 			std::vector< N::FSDirSpec >& userOnlyIncludeDirs = options.UserOnlyIncludeDirs();
 			
 			userOnlyIncludeDirs.insert( userOnlyIncludeDirs.begin(),
-			                            N::FSpGetParent( pchImage ) );
+			                            io::get_preceding_directory( pchImage ) );
 		}
 		
 		std::for_each( dirtyFiles.begin(),
