@@ -37,6 +37,9 @@ namespace io
 		return Nucleus::Convert< std::string >( get_filename( file ) );
 	}
 	
+	dummy::file_spec get_preceding_directory          ( dummy::file_spec );
+	dummy::file_spec get_parent_directory_of_directory( dummy::file_spec );
+	
 }
 
 #endif
