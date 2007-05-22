@@ -12,6 +12,7 @@
 
 // Io
 #include "io/io.hh"
+#include "io/spray.hh"
 
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
@@ -532,13 +533,9 @@ namespace ALine
 			}
 			catch ( ... )  {}
 			
-			using N::fsWrPerm;
+			std::string info = "APPL" + project.CreatorCode();
 			
-			std::string info = std::string( "APPL" ) + project.CreatorCode();
-			
-			io::write( N::FSpOpenDF( pkgInfo, fsWrPerm ),
-			           info.data(),
-			           info.size() );
+			io::spray_file< NN::StringFlattener< std::string > >( pkgInfo, info );
 		}
 		
 		std::string outputPathname = GetPathname( outFile );
