@@ -364,7 +364,12 @@ namespace Nitrogen
 	{
 		FSSpec result;
 		
-		ThrowOSStatus( ::FSMakeFSSpec( vRefNum, dirID, name, &result ) );
+		OSErr err = ::FSMakeFSSpec( vRefNum, dirID, name, &result );
+		
+		if ( err != fnfErr )
+		{
+			ThrowOSStatus( err );
+		}
 		
 		return result;
 	}
