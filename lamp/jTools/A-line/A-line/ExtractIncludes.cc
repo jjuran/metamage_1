@@ -8,9 +8,6 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Io
 #include "Io/TextInput.hh"
 
@@ -24,7 +21,6 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
@@ -68,7 +64,7 @@ namespace ALine
 						return;
 					}
 					
-					pos++;
+					++pos;
 					std::size_t end = line.find( c, pos );
 					
 					if ( eos( end ) )  throw BadIncludeDirective();
@@ -87,10 +83,8 @@ namespace ALine
 		}
 	}
 	
-	std::vector< std::string > ExtractIncludes( const FSSpec& file )
+	std::vector< std::string > ExtractIncludes( const std::string& pathname )
 	{
-		std::string pathname = N::FSpGetPOSIXPathname( file );
-		
 		Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( io::open_for_reading( pathname ) );
 		
 		std::vector< std::string > includes;

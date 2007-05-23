@@ -246,7 +246,9 @@ namespace ALine
 	{
 		FixNullFileType( file );
 		
-		std::vector< IncludePath > includes = ExtractIncludes( file );
+		std::string pathname = N::FSpGetPOSIXPathname( file );
+		
+		std::vector< IncludePath > includes = ExtractIncludes( pathname );
 		
 		MacDate modDate = ModifiedDate( file );
 		

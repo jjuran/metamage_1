@@ -1,22 +1,22 @@
 /*	==================
  *	ExtractIncludes.hh
  *	==================
- *	
- *	Implemented by ExtractIncludes.cc
  */
 
-#pragma once
+#ifndef ALINE_EXTRACTINCLUDES_HH
+#define ALINE_EXTRACTINCLUDES_HH
 
 // C++
 #include <string>
 #include <vector>
 
 
-struct FSSpec;
-
-namespace ALine {
+namespace ALine
+{
 	
-	extern std::vector< std::string > ExtractIncludes( const FSSpec& file );
+	extern std::vector< std::string > ExtractIncludes( const std::string& pathname );
 	
 }
+
+#endif
 
