@@ -13,7 +13,6 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	
 	struct AllFilter
