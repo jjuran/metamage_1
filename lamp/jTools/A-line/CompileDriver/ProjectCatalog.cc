@@ -25,6 +25,9 @@ namespace CompileDriver
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	using namespace io::path_descent_operators;
+	
+	
 	static void ScanItemForProjects( const FSSpec&                                       item,
 	                                 std::back_insert_iterator< std::vector< FSSpec > >  output )
 	{
@@ -37,7 +40,7 @@ namespace CompileDriver
 	void ScanDirForProjects( const N::FSDirSpec&                                 dir,
 	                         std::back_insert_iterator< std::vector< FSSpec > >  output )
 	{
-		FSSpec conf = dir & "A-line.conf";
+		FSSpec conf = dir / "A-line.conf";
 		
 		if ( io::file_exists( conf ) )
 		{
@@ -45,7 +48,7 @@ namespace CompileDriver
 			return;
 		}
 		
-		FSSpec confd = dir & "A-line.confd";
+		FSSpec confd = dir / "A-line.confd";
 		
 		if ( io::directory_exists( confd ) )
 		{
