@@ -14,9 +14,6 @@
 // Nitrogen
 #include "Nitrogen/Folders.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Divergence
 #include "Divergence/Utilities.hh"
 
@@ -33,11 +30,14 @@ namespace ALine
 	namespace CD = CompileDriver;
 	
 	
+	using namespace io::path_descent_operators;
+	
+	
 	static N::FSDirSpec CreateFolder( const FSSpec& folder )
 	{
 		if ( io::item_exists( folder ) )
 		{
-			return NN::Convert< N::FSDirSpec >( folder );
+			return N::FSDirSpec( folder );
 		}
 		
 		return N::FSpDirCreate( folder );
@@ -60,10 +60,10 @@ namespace ALine
 		
 		if ( const char* home = getenv( "HOME" ) )
 		{
-			return NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( home ) );
+			return N::FSDirSpec( Div::ResolvePathToFSSpec( home ) );
 		}
 		
-		return N::RootDirectory( N::BootVolume() ) << "Users" << "jjuran";
+		return N::FSDirSpec( N::RootDirectory( N::BootVolume() ) / "Users" / "jjuran" );
 		
 	#endif
 	}
@@ -80,7 +80,7 @@ namespace ALine
 	
 	static N::FSDirSpec UserDeveloperFolder()
 	{
-		return CurrentUserHomeDir() << "Developer";
+		return N::FSDirSpec( CurrentUserHomeDir() / "Developer" );
 	}
 	
 	static std::string UserDeveloperPath()
@@ -94,12 +94,12 @@ namespace ALine
 		
 		if ( const char* projects = getenv( "ALINE_PROJECTS" ) )
 		{
-			return NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( projects ) );
+			return N::FSDirSpec( Div::ResolvePathToFSSpec( projects ) );
 		}
 		
 	#endif
 		
-		return UserDeveloperFolder() << "Projects";
+		return N::FSDirSpec( UserDeveloperFolder() / "Projects" );
 	}
 	
 	std::string UserProjectsPath()
@@ -118,12 +118,12 @@ namespace ALine
 		
 		if ( const char* builds = getenv( "ALINE_BUILDS" ) )
 		{
-			return NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( builds ) );
+			return N::FSDirSpec( Div::ResolvePathToFSSpec( builds ) );
 		}
 		
 	#endif
 		
-		return CreateFolder( UserDeveloperFolder() & "Lab" );
+		return CreateFolder( UserDeveloperFolder() / "Lab" );
 	}
 	
 	static std::string UserLabDirPath()
@@ -138,7 +138,7 @@ namespace ALine
 	
 	bool ProjectHasSystemIncludes( const N::FSDirSpec& folder )
 	{
-		return io::item_exists( folder & "SystemIncludes" );
+		return io::item_exists( folder / "SystemIncludes" );
 	}
 	
 	N::FSDirSpec ProjectSourcesFolder( const N::FSDirSpec& folder )
@@ -147,7 +147,7 @@ namespace ALine
 		
 		try
 		{
-			return source << "Sources";
+			source /= "Sources";
 		}
 		catch ( N::FNFErr )
 		{
@@ -174,10 +174,10 @@ namespace ALine
 	{
 		N::FSDirSpec source = folder;
 		
-		try { return source << "SystemIncludes"; } catch ( N::FNFErr ) {}
-		try { return source << "Includes";       } catch ( N::FNFErr ) {}
-		try { return source << "include";        } catch ( N::FNFErr ) {}
-		try { return source << "include";        } catch ( N::FNFErr ) {}
+		try { return source /= "SystemIncludes"; } catch ( N::FNFErr ) {}
+		try { return source /= "Includes";       } catch ( N::FNFErr ) {}
+		try { return source /= "include";        } catch ( N::FNFErr ) {}
+		try { return source /= "include";        } catch ( N::FNFErr ) {}
 		
 		return ProjectSourcesFolder( folder );
 	}
@@ -209,7 +209,7 @@ namespace ALine
 		
 		try
 		{
-			return source << "A-line.confd";
+			source /= "A-line.confd";
 		}
 		catch ( N::FNFErr )  {}
 		
@@ -232,7 +232,7 @@ namespace ALine
 	
 	FSSpec SourceDotListFile( const N::FSDirSpec& folder )
 	{
-		return ProjectControlFolder( folder ) & "Source.list";
+		return ProjectControlFolder( folder ) / "Source.list";
 	}
 	
 	std::string SourceDotListFile( const std::string& projectPath )
@@ -242,32 +242,32 @@ namespace ALine
 	
 	static N::FSDirSpec TargetFolder( const std::string& target )
 	{
-		return CreateFolder( UserLabFolder() & target );
+		return CreateFolder( UserLabFolder() / target );
 	}
 	
 	static N::FSDirSpec ProjectTargetFolder( const std::string& proj, const std::string& target )
 	{
-		return CreateFolder( TargetFolder( target ) & proj );
+		return CreateFolder( TargetFolder( target ) / proj );
 	}
 	
 	N::FSDirSpec ProjectDiagnosticsFolder( const std::string& proj, const std::string& target )
 	{
-		return CreateFolder( ProjectTargetFolder( proj, target ) & "Diagnostics" );
+		return CreateFolder( ProjectTargetFolder( proj, target ) / "Diagnostics" );
 	}
 	
 	N::FSDirSpec ProjectPrecompiledFolder( const std::string& proj, const std::string& target )
 	{
-		return CreateFolder( ProjectTargetFolder( proj, target ) & "Precompiled Header" );
+		return CreateFolder( ProjectTargetFolder( proj, target ) / "Precompiled Header" );
 	}
 	
 	N::FSDirSpec ProjectObjectsFolder( const std::string& proj, const std::string& target )
 	{
-		return CreateFolder( ProjectTargetFolder( proj, target ) & "(Objects)" );
+		return CreateFolder( ProjectTargetFolder( proj, target ) / "(Objects)" );
 	}
 	
 	N::FSDirSpec ProjectLibrariesFolder( const std::string& proj, const std::string& target )
 	{
-		return CreateFolder( ProjectTargetFolder( proj, target ) & "Output" );
+		return CreateFolder( ProjectTargetFolder( proj, target ) / "Output" );
 	}
 	
 	static std::string TargetDirPath( const std::string& target )

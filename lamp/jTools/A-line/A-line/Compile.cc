@@ -61,6 +61,8 @@ namespace ALine
 	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
+	using namespace io::path_descent_operators;
+	
 	using BitsAndBytes::q;
 	using BitsAndBytes::qq;
 	
@@ -217,7 +219,7 @@ namespace ALine
 	{
 		if ( io::item_exists( folder ) )
 		{
-			return NN::Convert< N::FSDirSpec >( folder );
+			return N::FSDirSpec( folder );
 		}
 		
 		return N::FSpDirCreate( folder );
@@ -303,15 +305,13 @@ namespace ALine
 		
 		command << inc;
 		
-		using namespace NN::Operators;
-		
-		command << cmdgen.Output( N::FSpGetPOSIXPathname( options.Output() & ObjectFileName( filename ) ) );
+		command << cmdgen.Output( N::FSpGetPOSIXPathname( options.Output() / ObjectFileName( filename ) ) );
 		
 		// Add the source file to the command line
 		command << cmdgen.Input( N::FSpGetPOSIXPathname( file ) );
 		
-		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) & "Diagnostics" );
-		FSSpec diagnosticsFile = diagnosticsFolder & DiagnosticsFilenameFromSourceFilename( filename );
+		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) / "Diagnostics" );
+		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
 		
 		command << "> " << q( N::FSpGetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
 		
@@ -369,9 +369,9 @@ namespace ALine
 		
 		if ( options.Target().toolkit == toolkitGNU )
 		{
-			FSSpec diagnostics = io::get_preceding_directory( options.Output() )
-			                     << "Diagnostics"
-			                     & DiagnosticsFilenameFromSourceFilename( filename );
+			FSSpec diagnostics =   io::get_preceding_directory( options.Output() )
+			                     / "Diagnostics"
+			                     / DiagnosticsFilenameFromSourceFilename( filename );
 			
 			if ( io::get_file_size( io::open_for_reading( diagnostics ) ) > 0 )
 			{
@@ -507,8 +507,9 @@ namespace ALine
 		
 		using namespace NN::Operators;
 		
-		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) & "Diagnostics" );
-		FSSpec diagnosticsFile = diagnosticsFolder & DiagnosticsFilenameFromSourceFilename( filename );
+		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) / "Diagnostics" );
+		
+		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
 		
 		command << "> " << q( N::FSpGetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
 		
@@ -551,7 +552,7 @@ namespace ALine
 		
 		using namespace NN::Operators;
 		
-		return folder & pchImageName;
+		return folder / pchImageName;
 	}
 	
 	static bool ProjectHasPrecompiledHeader( const ProjName& proj )
@@ -656,7 +657,7 @@ namespace ALine
 			std::string sourceName = io::get_filename_string( sourceFile );
 			
 			// The object file for this source file, which may or may not exist yet.
-			FSSpec objectFile = outDir & ObjectFileName( sourceName );
+			FSSpec objectFile = outDir / ObjectFileName( sourceName );
 			
 			// If object file is nonexistent or older than source,
 			// then it must be compiled, and we can skip the includes.

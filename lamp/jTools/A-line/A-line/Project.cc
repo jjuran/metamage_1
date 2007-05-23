@@ -21,9 +21,6 @@
 #include "Templates/FunctionalExtensions.h"
 #include "Templates/PointerToFunction.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // BitsAndBytes
 #include "StringFilters.hh"
 #include "StringPredicates.hh"
@@ -57,6 +54,8 @@ namespace ALine
 	
 	namespace ext = N::STLExtensions;
 	
+	using namespace io::path_descent_operators;
+	
 	using BitsAndBytes::eos;
 	using BitsAndBytes::q;
 	
@@ -74,12 +73,14 @@ namespace ALine
 		while ( !eos( stop = includePath.find( '/', start ) ) )
 		{
 			std::size_t len = stop - start;
-			dir = dir << includePath.substr( start, len );
+			
+			dir /= includePath.substr( start, len );
+			
 			start = stop + 1;
 		}
 		
 		// stop == npos
-		return dir & includePath.substr( start, stop );
+		return dir / includePath.substr( start, stop );
 	}
 	
 	static FSSpec FindIncludeInFolder( N::FSDirSpec folder, IncludePath includePath )
@@ -134,7 +135,7 @@ namespace ALine
 			
 			FSSpec dirFSS = Div::ResolvePathToFSSpec( dirPath.c_str() );
 			
-			dir = NN::Convert< N::FSDirSpec >( dirFSS );
+			dir = N::FSDirSpec( dirFSS );
 		}
 		catch ( N::FNFErr )
 		{
@@ -431,7 +432,7 @@ namespace ALine
 	
 	static FSSpec FindFileInDir( const std::string& filename, const N::FSDirSpec& dir )
 	{
-		FSSpec result = dir & filename;
+		FSSpec result = dir / filename;
 		
 		if ( io::item_exists( result ) )
 		{
@@ -455,7 +456,7 @@ namespace ALine
 				
 				while ( const char* slash = std::strchr( path, '/' ) )
 				{
-					dir = dir << std::string( path, slash );
+					dir = N::FSDirSpec( dir / std::string( path, slash ) );
 					
 					path = slash + 1;
 				}
