@@ -58,12 +58,14 @@ namespace ALine
 		
 	#else
 		
+		const char* path = "/";
+		
 		if ( const char* home = getenv( "HOME" ) )
 		{
-			return N::FSDirSpec( Div::ResolvePathToFSSpec( home ) );
+			path = home;
 		}
 		
-		return N::FSDirSpec( N::RootDirectory( N::BootVolume() ) / "Users" / "jjuran" );
+		return N::FSDirSpec( Div::ResolvePathToFSSpec( path ) );
 		
 	#endif
 	}
