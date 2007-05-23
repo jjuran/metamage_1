@@ -21,9 +21,6 @@
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Divergence
 #include "Divergence/Utilities.hh"
 
@@ -37,7 +34,6 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
-namespace FS = FileSystem;
 namespace Div = Divergence;
 namespace O = Orion;
 
@@ -100,7 +96,7 @@ static void BlockWrite( int fd, const void* data, std::size_t byteCount )
 				totalBytes += bytes;
 			}
 		}
-		catch ( const FS::EndOfFile& )
+		catch ( const io::end_of_input& )
 		{
 		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )

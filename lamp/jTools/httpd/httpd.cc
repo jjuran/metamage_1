@@ -23,9 +23,6 @@
 // Nitrogen
 #include "Nitrogen/Folders.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // BitsAndBytes
 #include "HexStrings.hh"
 
