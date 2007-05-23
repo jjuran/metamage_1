@@ -85,7 +85,7 @@ namespace ALine
 		// This will throw if folder or any subfolders are missing.
 		FSSpec file = ResolveIncludePath( folder, includePath );
 		
-		if ( !N::FSpTestItemExists( file ) )
+		if ( !io::item_exists( file ) )
 		{
 			throw N::FNFErr();
 		}
@@ -431,7 +431,7 @@ namespace ALine
 	{
 		FSSpec result = dir & filename;
 		
-		if ( N::FSpTestItemExists( result ) )
+		if ( io::item_exists( result ) )
 		{
 			return result;
 		}
@@ -486,7 +486,7 @@ namespace ALine
 		{
 			FSSpec sourceDotListfile = SourceDotListFile( projFolder );
 			
-			if ( N::FSpTestItemExists( sourceDotListfile ) )
+			if ( io::item_exists( sourceDotListfile ) )
 			{
 				sourceList = ReadSourceDotList( sourceDotListfile );
 			}

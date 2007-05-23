@@ -35,7 +35,7 @@ namespace ALine
 	
 	static N::FSDirSpec CreateFolder( const FSSpec& folder )
 	{
-		if ( N::FSpTestItemExists( folder ) )
+		if ( io::item_exists( folder ) )
 		{
 			return NN::Convert< N::FSDirSpec >( folder );
 		}
@@ -138,7 +138,7 @@ namespace ALine
 	
 	bool ProjectHasSystemIncludes( const N::FSDirSpec& folder )
 	{
-		return N::FSpTestItemExists( folder & "SystemIncludes" );
+		return io::item_exists( folder & "SystemIncludes" );
 	}
 	
 	N::FSDirSpec ProjectSourcesFolder( const N::FSDirSpec& folder )

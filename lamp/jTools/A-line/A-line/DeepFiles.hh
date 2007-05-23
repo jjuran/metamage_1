@@ -10,6 +10,9 @@
 #include <string>
 #include <vector>
 
+// Io
+#include "io/files.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.h"
 
@@ -54,14 +57,14 @@ namespace ALine
 	template < class Filter >
 	DeepFileSearch< Filter >& DeepFileSearch< Filter >::SearchItem( ConstFSSpecParam item )
 	{
-		if ( N::FSpTestFileExists( item ) )
+		if ( io::file_exists( item ) )
 		{
 			if ( filter( item ) )
 			{
 				result.push_back( item );
 			}
 		}
-		else if ( N::FSpTestDirectoryExists( item ) )
+		else if ( io::directory_exists( item ) )
 		{
 			SearchDir( NN::Convert< N::FSDirSpec >( item ) );
 		}

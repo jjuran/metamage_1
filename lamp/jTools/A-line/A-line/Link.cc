@@ -138,23 +138,23 @@ namespace ALine
 			actualName = filename.substr( 1, std::string::npos );
 		}
 		
-		if ( N::FSpTestItemExists( sharedLibs & actualName ) )
+		if ( io::item_exists( sharedLibs & actualName ) )
 		{
 			return sharedLibs & filename;
 		}
-		else if ( N::FSpTestItemExists( ppcLibs & actualName ) )
+		else if ( io::item_exists( ppcLibs & actualName ) )
 		{
 			return ppcLibs & filename;
 		}
-		else if ( N::FSpTestItemExists( libs68K & actualName ) )
+		else if ( io::item_exists( libs68K & actualName ) )
 		{
 			return libs68K & filename;
 		}
-		else if ( N::FSpTestItemExists( mwppcLibs & actualName ) )
+		else if ( io::item_exists( mwppcLibs & actualName ) )
 		{
 			return mwppcLibs & filename;
 		}
-		else if ( N::FSpTestItemExists( mw68kLibs & actualName ) )
+		else if ( io::item_exists( mw68kLibs & actualName ) )
 		{
 			return mw68kLibs & filename;
 		}
@@ -172,7 +172,7 @@ namespace ALine
 	{
 		FSSpec lib = project.ProjectFolder() & libName;
 		
-		if ( !N::FSpTestItemExists( lib ) )
+		if ( !io::item_exists( lib ) )
 		{
 			throw N::FNFErr();
 		}
@@ -285,7 +285,7 @@ namespace ALine
 			                         : project.ProjectFolder() << "Output" )
 			             & project.LibraryFilename();
 			
-			if ( N::FSpTestItemExists( lib ) )
+			if ( io::item_exists( lib ) )
 			{
 				outUsed->push_back( lib );
 			}
@@ -314,7 +314,7 @@ namespace ALine
 	
 	static N::FSDirSpec DirCreate_Idempotent( const FSSpec& dir )
 	{
-		if ( !N::FSpTestItemExists( dir ) )
+		if ( !io::item_exists( dir ) )
 		{
 			return N::FSpDirCreate( dir );
 		}
@@ -421,7 +421,7 @@ namespace ALine
 		using namespace NN::Operators;
 		
 		FSSpec outFile = libsDir & linkName;
-		bool outFileExists = N::FSpTestItemExists( outFile );
+		bool outFileExists = io::item_exists( outFile );
 		
 		MacDate outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
 		
@@ -438,7 +438,7 @@ namespace ALine
 			FSSpec objectFile = objectsDir & ObjectFileName( sourceName );
 			
 			needToLink =    needToLink
-			             || !N::FSpTestFileExists( objectFile )
+			             || !io::file_exists( objectFile )
 			             || ModifiedDate( objectFile ) >= outFileDate;
 			
 			objectFiles.push_back( objectFile );

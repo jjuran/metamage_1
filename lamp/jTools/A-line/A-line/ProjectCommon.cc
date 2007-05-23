@@ -163,7 +163,7 @@ namespace ALine
 		{
 			FSSpec file = N::FSDirSpec( gCurrentSourceDir ) & includePath;
 			
-			if ( N::FSpTestItemExists( file ) )
+			if ( io::item_exists( file ) )
 			{
 				AddInclude( includePath, file );
 				return true;

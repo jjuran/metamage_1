@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+// Io
+#include "io/files.hh"
+
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
 
@@ -25,7 +28,7 @@ namespace CompileDriver
 	static void ScanItemForProjects( const FSSpec&                                       item,
 	                                 std::back_insert_iterator< std::vector< FSSpec > >  output )
 	{
-		if ( N::FSpTestDirectoryExists( item ) )
+		if ( io::directory_exists( item ) )
 		{
 			ScanDirForProjects( NN::Convert< N::FSDirSpec >( item ), output );
 		}
@@ -36,7 +39,7 @@ namespace CompileDriver
 	{
 		FSSpec conf = dir & "A-line.conf";
 		
-		if ( N::FSpTestFileExists( conf ) )
+		if ( io::file_exists( conf ) )
 		{
 			*output++ = conf;
 			return;
@@ -44,7 +47,7 @@ namespace CompileDriver
 		
 		FSSpec confd = dir & "A-line.confd";
 		
-		if ( N::FSpTestDirectoryExists( confd ) )
+		if ( io::directory_exists( confd ) )
 		{
 			N::FSDirSpec confdir = NN::Convert< N::FSDirSpec >( confd );
 			

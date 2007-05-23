@@ -140,6 +140,7 @@ namespace ALine
 		           std::back_inserter( includes ) );
 	}
 	
+	
 	static std::string BuildSourceFileWithCodeWarrior( const CompilerOptions& options, const FSSpec& file )
 	{
 		std::vector< std::string > includeDirPathnames;
@@ -214,7 +215,7 @@ namespace ALine
 	
 	static N::FSDirSpec CreateFolder( const FSSpec& folder )
 	{
-		if ( N::FSpTestItemExists( folder ) )
+		if ( io::item_exists( folder ) )
 		{
 			return NN::Convert< N::FSDirSpec >( folder );
 		}
@@ -372,7 +373,7 @@ namespace ALine
 			                     << "Diagnostics"
 			                     & DiagnosticsFilenameFromSourceFilename( filename );
 			
-			if ( N::GetEOF( io::open_for_reading( diagnostics ) ) > 0 )
+			if ( io::get_file_size( io::open_for_reading( diagnostics ) ) > 0 )
 			{
 				N::AESend( N::AECreateAppleEvent( N::kCoreEventClass, 
 				                                  N::kAEOpenDocuments, 
@@ -386,9 +387,9 @@ namespace ALine
 			{
 				try
 				{
-					N::FSpDelete( diagnostics );
+					io::delete_file( diagnostics );
 				}
-				catch ( N::OSStatus )
+				catch ( const N::OSStatus& )
 				{
 				}
 			}
@@ -585,7 +586,7 @@ namespace ALine
 			
 			options.SetPrecompiledHeaderImage( pchImage );
 			
-			bool pchiExists = N::FSpTestFileExists( pchImage );
+			bool pchiExists = io::file_exists( pchImage );
 			
 			// If the image doesn't exist, use a date that will always be newer
 			// (for comparison to source files)
@@ -614,8 +615,8 @@ namespace ALine
 				                                       pchSourceName,
 				                                       targetInfo );
 				
-				pchImageDate = N::FSpTestFileExists( pchImage ) ? ModifiedDate( pchImage )
-				                                                : 0xFFFFFFFF;
+				pchImageDate = io::file_exists( pchImage ) ? ModifiedDate( pchImage )
+				                                           : 0xFFFFFFFF;
 				
 				options.SetPrecompiledHeaderImage( pchImage );
 			}
@@ -665,7 +666,7 @@ namespace ALine
 			
 			// If the object file doesn't exist, we definitely need to compile.
 			// But if it does...
-			if ( N::FSpTestItemExists( objectFile ) )
+			if ( io::item_exists( objectFile ) )
 			{
 				// The effective modification date of the file, considering only
 				// a precompiled header (if available).  If the precompiled header
