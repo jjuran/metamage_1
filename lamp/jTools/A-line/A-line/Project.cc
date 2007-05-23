@@ -39,7 +39,6 @@
 #include "A-line/A-line.hh"
 #include "A-line/Exceptions.hh"
 #include "A-line/DeepFiles.hh"
-#include "A-line/ExtractIncludes.hh"
 #include "A-line/Locations.hh"
 #include "A-line/ProjectCommon.hh"
 #include "A-line/SourceDotList.hh"
