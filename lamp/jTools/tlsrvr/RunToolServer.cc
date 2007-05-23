@@ -199,9 +199,9 @@ namespace RunToolServer
 	
 	static NN::Owned< FSSpec > NewTempFile( const FSSpec& item )
 	{
-		if ( N::FSpTestFileExists( item ) )
+		if ( io::file_exists( item ) )
 		{
-			N::FSpDelete( item );
+			io::delete_file( item );
 		}
 		
 		N::FSpCreate( item, N::OSType( 'R*ch' ), N::OSType( 'TEXT' ) );
