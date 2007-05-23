@@ -20,9 +20,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-// Nitrogen
-#include "Nitrogen/Folders.h"
-
 // BitsAndBytes
 #include "HexStrings.hh"
 
