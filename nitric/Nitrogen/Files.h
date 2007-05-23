@@ -1872,6 +1872,11 @@ namespace io
 		Nitrogen::FSpDelete( dir );
 	}
 	
+	inline void delete_empty_directory( const Nitrogen::FSDirSpec& dir )
+	{
+		delete_empty_directory( Nucleus::Convert< FSSpec >( dir ) );
+	}
+	
 	inline void delete_empty_directory_only( const FSSpec& dir )
 	{
 		if ( file_exists( dir ) )
@@ -1879,6 +1884,11 @@ namespace io
 			throw Nitrogen::DirNFErr();
 		}
 		
+		delete_empty_directory( dir );
+	}
+	
+	inline void delete_empty_directory_only( const Nitrogen::FSDirSpec& dir )
+	{
 		delete_empty_directory( dir );
 	}
 	
