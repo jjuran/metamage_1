@@ -308,11 +308,38 @@ namespace Nitrogen
 	
 	// GetVRefNum
 	
-	struct FSDirSpec
+	namespace Detail
 	{
-		FSVolumeRefNum vRefNum;
-		FSDirID dirID;
+		
+		struct FSDirSpec_Storage
+		{
+			FSVolumeRefNum  vRefNum;
+			FSDirID         dirID;
+			
+			FSDirSpec_Storage() : vRefNum(), dirID() {}
+		};
+		
+	}
+	
+	struct FSDirSpec : public Detail::FSDirSpec_Storage
+	{
+		FSDirSpec() : FSDirSpec_Storage() {}
+		
+		FSDirSpec( const Detail::FSDirSpec_Storage& storage ) : FSDirSpec_Storage( storage )  {}
+		
+		explicit FSDirSpec( const FSSpec& dir );
+		
+		FSDirSpec& operator/=( const unsigned char* name );
+		
+		FSDirSpec& operator/=( const std::string& name )
+		{
+			return *this /= Str63( name );
+		}
 	};
+	
+	inline FSDirSpec::FSDirSpec( const FSSpec& dir ) : FSDirSpec_Storage( Nucleus::Convert< FSDirSpec >( dir ) )
+	{
+	}
 	
 	inline bool operator==( const FSDirSpec& a, const FSDirSpec& b )
 	{
@@ -1728,6 +1755,33 @@ namespace io
 		return get_preceding_directory( dir );
 	}
 	
+	// Path descent
+	
+	namespace path_descent_operators
+	{
+		
+		inline FSSpec operator/( const Nitrogen::FSDirSpec& dir, const unsigned char* name )
+		{
+			return FSMakeFSSpec( dir, name );
+		}
+		
+		inline FSSpec operator/( const FSSpec& dir, const unsigned char* name )
+		{
+			return Nucleus::Convert< Nitrogen::FSDirSpec >( dir ) / name;
+		}
+		
+		inline FSSpec operator/( const Nitrogen::FSDirSpec& dir, const std::string& name )
+		{
+			return dir / Nitrogen::Str63( name );
+		}
+		
+		inline FSSpec operator/( const FSSpec& dir, const std::string& name )
+		{
+			return dir / Nitrogen::Str63( name );
+		}
+		
+	}
+	
 	// Existence
 	
 	inline bool item_exists( const FSSpec& item, CInfoPBRec& cInfo )
@@ -1887,6 +1941,18 @@ namespace io
 	inline ByteCount write( Nitrogen::FSForkRefNum output, const char* data, ByteCount byteCount )
 	{
 		return Nitrogen::FSWriteFork( output, byteCount, data );
+	}
+	
+}
+
+namespace Nitrogen
+{
+	
+	inline FSDirSpec& FSDirSpec::operator/=( const unsigned char* name )
+	{
+		using namespace io::path_descent_operators;
+		
+		return *this = FSDirSpec( *this / name );
 	}
 	
 }

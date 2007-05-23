@@ -202,26 +202,22 @@ namespace Nitrogen
 		
 	}
 	
-	inline bool TestIsDirectory( const CInfoPBRec& paramBlock )
-	{
-		return paramBlock.hFileInfo.ioFlAttrib & char( kioFlAttribDirMask );
-	}
   }
 
 namespace Nucleus
   {	
 	Nitrogen::FSDirSpec Converter< Nitrogen::FSDirSpec, Nitrogen::FSSpec >::operator()( const Nitrogen::FSSpec& dir ) const
 	{
-		Nitrogen::CInfoPBRec pb;
-		Nitrogen::FSpGetCatInfo( dir, pb );
+		Nitrogen::CInfoPBRec cInfo;
+		Nitrogen::FSpGetCatInfo( dir, cInfo );
 		
-		if ( !Nitrogen::TestIsDirectory( pb ) )
+		if ( io::item_is_file( cInfo ) )
 		{
 			// I wanted a dir but you gave me a file.  You creep.
 			throw Nitrogen::ErrFSNotAFolder();
 		}
 		
-		Nitrogen::FSDirID dirID = Nitrogen::FSDirID( pb.dirInfo.ioDrDirID );
+		Nitrogen::FSDirID dirID = Nitrogen::FSDirID( cInfo.dirInfo.ioDrDirID );
 		
 		return Make< Nitrogen::FSDirSpec >( Nitrogen::FSVolumeRefNum( dir.vRefNum ), dirID );
 	}
