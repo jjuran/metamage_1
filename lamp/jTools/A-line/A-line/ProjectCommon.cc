@@ -37,6 +37,8 @@ namespace ALine
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	using namespace io::path_descent_operators;
+	
 	using BitsAndBytes::q;
 	
 	
@@ -161,7 +163,7 @@ namespace ALine
 		
 		if ( gNeedsCwdSourceOption )
 		{
-			FSSpec file = N::FSDirSpec( gCurrentSourceDir ) & includePath;
+			FSSpec file = gCurrentSourceDir / includePath;
 			
 			if ( io::item_exists( file ) )
 			{
