@@ -1,0 +1,6 @@
+#!/bin/sh
+
+perl -e 'print "HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n";'
+
+cat /etc/motd
+
