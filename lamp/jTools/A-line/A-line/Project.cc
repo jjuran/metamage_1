@@ -439,29 +439,9 @@ namespace ALine
 		throw N::FNFErr();
 	}
 	
-	static FSSpec FindFileInDirInDir( const std::string& filename, const std::string& dirname, const N::FSDirSpec& dir )
-	{
-		return FindFileInDir( filename, dir << dirname );
-	}
-	
 	static FSSpec FindSourceFileInDirs( const std::string& relative_path, const std::vector< N::FSDirSpec >& sourceDirs )
 	{
 		typedef std::vector< N::FSDirSpec >::const_iterator dir_iter;
-		
-		const char* path = relative_path.c_str();
-		
-		const char* filename = path;
-		
-		std::string subdir;
-		
-		const char* slash = std::strchr( path, '/' );
-		
-		if ( slash )
-		{
-			filename = slash + 1;
-			
-			subdir.assign( path, slash );
-		}
 		
 		for ( dir_iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
 		{
@@ -469,15 +449,23 @@ namespace ALine
 			
 			try
 			{
-				return slash ? FindFileInDirInDir( filename, subdir, dir )
-				             : FindFileInDir     ( filename,         dir );
+				const char* path = relative_path.c_str();
+				
+				while ( const char* slash = std::strchr( path, '/' ) )
+				{
+					dir = dir << std::string( path, slash );
+					
+					path = slash + 1;
+				}
+				
+				return FindFileInDir( path, dir );
 			}
 			catch ( ... )
 			{
 			}
 		}
 		
-		std::fprintf( stderr, "Missing source file %s\n", path );
+		std::fprintf( stderr, "Missing source file %s\n", relative_path.c_str() );
 		
 		throw N::FNFErr();
 	}
