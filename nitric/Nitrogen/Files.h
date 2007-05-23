@@ -1840,7 +1840,7 @@ namespace io
 	
 	inline bool directory_exists( const FSSpec& dir, CInfoPBRec& cInfo )
 	{
-		return directory_exists( dir, cInfo ) && item_is_directory( cInfo );
+		return item_exists( dir, cInfo ) && item_is_directory( cInfo );
 	}
 	
 	inline bool directory_exists( const FSSpec& dir )
