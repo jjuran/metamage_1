@@ -778,28 +778,17 @@ static int TestThread( int argc, char const *const argv[] )
 	return 0;
 }
 
-static std::string ReadFileData( const FSSpec& file )
-{
-	NN::Owned< N::FSFileRefNum > fileH( N::FSpOpenDF( file, N::fsRdPerm ) );
-	
-	unsigned fileSize = N::GetEOF( fileH );
-	
-	std::string data;
-	data.resize( fileSize );
-	
-	int bytes = FS::Read( fileH, &data[ 0 ], fileSize );
-	
-	ASSERT( bytes == fileSize );
-	
-	return data;
-}
 
 static void DoSomethingWithServiceFile( const FSSpec& file )
 {
+	typedef NN::StringFlattener< std::string > Flattener;
+	
 	// Find Info.plist
 	FSSpec infoPListFile = NN::Convert< N::FSDirSpec >( file ) << "Contents" & "Info.plist";
+	
 	// Read the entire file contents
-	std::string infoPList = ReadFileData( NN::Convert< FSSpec >( infoPListFile ) );
+	std::string infoPList = io::slurp_file< Flattener >( infoPListFile );
+	
 	// Search for a menu item
 	std::size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
 	
