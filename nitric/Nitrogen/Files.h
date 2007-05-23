@@ -1677,6 +1677,8 @@ namespace Nitrogen
 		
 		typedef Nitrogen::Str63 filename_result;
 		
+		typedef CInfoPBRec file_catalog_record;
+		
 		typedef Nitrogen::FSFileRefNum stream;
 		
 		typedef SInt32 byte_count;
@@ -1697,6 +1699,8 @@ namespace io
 {
 	
 	template <> struct filespec_traits< FSSpec > : public Nitrogen::FSSpec_Io_Details {};
+	
+	// Get file info
 	
 	inline Nitrogen::Str63 get_filename( const FSSpec& file )
 	{
@@ -1724,6 +1728,108 @@ namespace io
 		return get_preceding_directory( dir );
 	}
 	
+	// Existence
+	
+	inline bool item_exists( const FSSpec& item, CInfoPBRec& cInfo )
+	{
+		try
+		{
+			Nitrogen::FSpGetCatInfo( item, cInfo );
+		}
+		catch ( const Nitrogen::FNFErr& err )
+		{
+		#ifdef __MWERKS__
+			
+			if ( err.Get() != fnfErr )  throw;
+			
+		#endif
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	inline bool item_exists( const FSSpec& item )
+	{
+		CInfoPBRec cInfo;
+		
+		return item_exists( item, cInfo );
+	}
+	
+	inline bool item_is_directory( const HFileInfo& hFileInfo )
+	{
+		return hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+	}
+	
+	inline bool item_is_directory( const CInfoPBRec& cInfo )
+	{
+		return item_is_directory( cInfo.hFileInfo );
+	}
+	
+	inline bool item_is_file( const CInfoPBRec& cInfo )
+	{
+		return !item_is_directory( cInfo );
+	}
+	
+	inline bool file_exists( const FSSpec& file, CInfoPBRec& cInfo )
+	{
+		return item_exists( file, cInfo ) && item_is_file( cInfo );
+	}
+	
+	inline bool file_exists( const FSSpec& file )
+	{
+		CInfoPBRec cInfo;
+		
+		return file_exists( file, cInfo );
+	}
+	
+	inline bool directory_exists( const FSSpec& dir, CInfoPBRec& cInfo )
+	{
+		return directory_exists( dir, cInfo ) && item_is_directory( cInfo );
+	}
+	
+	inline bool directory_exists( const FSSpec& dir )
+	{
+		CInfoPBRec cInfo;
+		
+		return directory_exists( dir, cInfo );
+	}
+	
+	// Delete
+	
+	inline void delete_file( const FSSpec& file )
+	{
+		Nitrogen::FSpDelete( file );
+	}
+	
+	inline void delete_file_only( const FSSpec& file )
+	{
+		if ( directory_exists( file ) )
+		{
+			throw Nitrogen::NotAFileErr();
+		}
+		
+		delete_file( file );
+	}
+	
+	inline void delete_empty_directory( const FSSpec& dir )
+	{
+		Nitrogen::FSpDelete( dir );
+	}
+	
+	inline void delete_empty_directory_only( const FSSpec& dir )
+	{
+		if ( file_exists( dir ) )
+		{
+			throw Nitrogen::DirNFErr();
+		}
+		
+		delete_empty_directory( dir );
+	}
+	
+	// Open
+	
 	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file )
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdPerm );
@@ -1733,6 +1839,8 @@ namespace io
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
 	}
+	
+	// Stream operations
 	
 	inline SInt32 get_file_size( Nitrogen::FSFileRefNum stream )
 	{
