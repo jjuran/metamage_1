@@ -65,6 +65,8 @@ namespace RunToolServer
 	
 	using namespace Nucleus::Operators;
 	
+	using namespace io::path_descent_operators;
+	
 	
 	static std::string& operator<<( std::string& str, const std::string& appendage )
 	{
@@ -192,9 +194,9 @@ namespace RunToolServer
 		kErrorFile
 	};
 	
-	static FSSpec DirLookup( const N::FSDirSpec& dir, const std::string& name )
+	inline FSSpec DirLookup( const N::FSDirSpec& dir, const std::string& name )
 	{
-		return dir & name;
+		return dir / name;
 	}
 	
 	static NN::Owned< FSSpec > NewTempFile( const FSSpec& item )
