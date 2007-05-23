@@ -30,14 +30,13 @@
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Arcana / SMTP
 #include "SMTP.hh"
 
 // Kerosene
+#if !TARGET_RT_MAC_MACHO
 #include "SystemCalls.hh"
+#endif
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -49,6 +48,8 @@ namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
+
+using namespace io::path_descent_operators;
 
 
 //using Resolver::MX;
@@ -119,6 +120,12 @@ static std::string ResolverLookup( const std::string& domain )
 
 static std::string OTLookup( const std::string& domain )
 {
+#if TARGET_RT_MAC_MACHO
+	
+	return "";
+	
+#else
+	
 	if ( TARGET_CPU_68K )
 	{
 		return "";
@@ -142,6 +149,8 @@ static std::string OTLookup( const std::string& domain )
 	           results.end() );
 	
 	return results.front().exchange;
+	
+#endif
 }
 
 static struct in_addr ResolveHostname( const char* hostname )
@@ -237,7 +246,7 @@ static void Relay( const std::string&  returnPath,
 	
 	while ( true )
 	{
-		enum { kDataSize = 4096 };
+		const std::size_t kDataSize = 4096;
 		
 		char data[ kDataSize ];
 		
@@ -324,24 +333,24 @@ void Transmitter::operator()( const FSSpec& destFile )
 
 static void ProcessMessage( const FSSpec& msgFolderItem )
 {
-	if ( !N::FSpTestDirectoryExists( msgFolderItem ) )  return;  // Icon files, et al
+	if ( !io::directory_exists( msgFolderItem ) )  return;  // Icon files, et al
 	
 	N::FSDirSpec msgFolder = NN::Convert< N::FSDirSpec >( msgFolderItem );
 	
-	FSSpec       message    = msgFolder & "Message";
-	FSSpec       returnPath = msgFolder & "Return-Path";
+	FSSpec       message    = msgFolder / "Message";
+	FSSpec       returnPath = msgFolder / "Return-Path";
 	
-	N::FSDirSpec destFolder = msgFolder << "Destinations";
+	N::FSDirSpec destFolder( msgFolder / "Destinations" );
 	
 	std::for_each( N::FSContents( destFolder ).begin(),
 	               N::FSContents( destFolder ).end(),
 	               Transmitter( ReadOneLiner( returnPath ),
 	                            message ) );
 	
-	N::FSpDelete( NN::Convert< FSSpec >( destFolder ) );  // this fails if destinations remain
-	N::FSpDelete( returnPath );
-	N::FSpDelete( message    );
-	N::FSpDelete( NN::Convert< FSSpec >( msgFolder )  );
+	io::delete_empty_directory( destFolder );  // this fails if destinations remain
+	io::delete_file           ( returnPath );
+	io::delete_file           ( message    );
+	io::delete_empty_directory( msgFolder  );
 }
 
 
