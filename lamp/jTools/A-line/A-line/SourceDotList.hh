@@ -1,23 +1,22 @@
 /*	================
  *	SourceDotList.hh
  *	================
- *	
- *	Implemented by SourceDotList.cc
  */
 
-#pragma once
+#ifndef ALINE_SOURCEDOTLIST_HH
+#define ALINE_SOURCEDOTLIST_HH
 
 // C++
 #include <string>
 #include <vector>
 
 
-struct FSSpec;
-
 namespace ALine
 {
 	
-	std::vector< std::string > ReadSourceDotList( const FSSpec& sourceList );
+	std::vector< std::string > ReadSourceDotList( const std::string& pathname );
 	
 }
+
+#endif
 

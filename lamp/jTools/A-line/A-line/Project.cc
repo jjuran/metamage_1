@@ -21,6 +21,9 @@
 #include "Templates/FunctionalExtensions.h"
 #include "Templates/PointerToFunction.h"
 
+// Nitrogen Extras / Utilities
+#include "Utilities/Files.h"
+
 // BitsAndBytes
 #include "StringFilters.hh"
 #include "StringPredicates.hh"
@@ -487,7 +490,9 @@ namespace ALine
 			
 			if ( io::item_exists( sourceDotListfile ) )
 			{
-				sourceList = ReadSourceDotList( sourceDotListfile );
+				std::string pathname = N::FSpGetPOSIXPathname( sourceDotListfile );
+				
+				sourceList = ReadSourceDotList( pathname );
 			}
 		}
 		
