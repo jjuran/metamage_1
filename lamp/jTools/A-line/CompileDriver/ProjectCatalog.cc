@@ -30,7 +30,7 @@ namespace CompileDriver
 	{
 		if ( io::directory_exists( item ) )
 		{
-			ScanDirForProjects( NN::Convert< N::FSDirSpec >( item ), output );
+			ScanDirForProjects( N::FSDirSpec( item ), output );
 		}
 	}
 	
@@ -49,7 +49,7 @@ namespace CompileDriver
 		
 		if ( io::directory_exists( confd ) )
 		{
-			N::FSDirSpec confdir = NN::Convert< N::FSDirSpec >( confd );
+			N::FSDirSpec confdir = N::FSDirSpec( confd );
 			
 			std::copy( N::FSContents( confdir ).begin(),
 			           N::FSContents( confdir ).end(),

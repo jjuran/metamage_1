@@ -319,7 +319,7 @@ namespace ALine
 			return N::FSpDirCreate( dir );
 		}
 		
-		return NN::Convert< N::FSDirSpec >( dir );
+		return N::FSDirSpec( dir );
 	}
 	
 	static void CreateAppBundle( const N::FSDirSpec& location, const std::string& name )

@@ -66,7 +66,7 @@ namespace ALine
 		}
 		else if ( io::directory_exists( item ) )
 		{
-			SearchDir( NN::Convert< N::FSDirSpec >( item ) );
+			SearchDir( N::FSDirSpec( item ) );
 		}
 		
 		return *this;
