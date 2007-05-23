@@ -34,6 +34,8 @@ namespace CompileDriver
 	
 	namespace ext = N::STLExtensions;
 	
+	using namespace io::path_descent_operators;
+	
 	
 	static bool c_string_less( const char* a, const char* b )
 	{
@@ -187,7 +189,9 @@ namespace CompileDriver
 		while ( start != npos )
 		{
 			size_type stop = path.find( '/', start );
-			result = result << path.substr( start, stop - start );
+			
+			result /= path.substr( start, stop - start );
+			
 			start = stop == npos ? npos : stop + 1;
 		}
 		
@@ -215,8 +219,10 @@ namespace CompileDriver
 			name   = io::get_filename_string    ( parent );
 		}
 		
+		std::string pathname = N::FSpGetPOSIXPathname( file );
+		
 		DotConfData data;
-		ReadProjectDotConf( file, data );
+		ReadProjectDotConf( pathname, data );
 		ConfData conf = MakeConfData( data );
 		
 		typedef ConfData::const_iterator const_iterator;

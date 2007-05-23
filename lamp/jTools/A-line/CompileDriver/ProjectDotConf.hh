@@ -26,7 +26,7 @@ namespace CompileDriver
 	
 	typedef std::vector< DotConfLine > DotConfData;
 	
-	void ReadProjectDotConf( const FSSpec& confFile, DotConfData& data );
+	void ReadProjectDotConf( const std::string& pathname, DotConfData& data );
 	
 }
 

@@ -8,9 +8,6 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Io
 #include "Io/TextInput.hh"
 
@@ -82,10 +79,8 @@ namespace CompileDriver
 		}
 	}
 	
-	void ReadProjectDotConf( const FSSpec& confFile, DotConfData& data )
+	void ReadProjectDotConf( const std::string& pathname, DotConfData& data )
 	{
-		std::string pathname = N::FSpGetPOSIXPathname( confFile );
-		
 		// Open the config file, and read as a text input stream.
 		Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( io::open_for_reading( pathname ) );
 		
