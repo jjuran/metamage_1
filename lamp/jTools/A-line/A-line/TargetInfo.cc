@@ -6,13 +6,14 @@
 #include "A-line/TargetInfo.hh"
 
 // Nitrogen
-#include "Nitrogen/MacErrors.h"
-#include "Nitrogen/OSStatus.h"
+//#include "Nitrogen/MacErrors.h"
+//#include "Nitrogen/OSStatus.h"
 
 
-namespace ALine {
+namespace ALine
+{
 	
-	namespace N = Nitrogen;
+	//namespace N = Nitrogen;
 	
 	/*
 	template < class Type >
