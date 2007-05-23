@@ -199,7 +199,7 @@ namespace ALine
 		std::string MWMiscCompilerOptions() const
 		{
 			return "-nosyspath "
-			       "-w all,noemptydecl,nopossible,noimplicit,nounusedarg,nonotinlined "
+			       "-w all,nounusedarg,noimplicit,nonotinlined "
 			       "-ext o "
 			       "-maxerrors 8";
 		}
