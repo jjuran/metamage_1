@@ -39,9 +39,6 @@
 #include "Templates/FunctionalExtensions.h"
 #include "Templates/PointerToFunction.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Io
 #include "Io/TextInput.hh"
 
@@ -61,8 +58,7 @@ namespace O = Orion;
 
 namespace ext = N::STLExtensions;
 
-using std::string;
-using std::vector;
+using namespace io::path_descent_operators;
 
 using BitsAndBytes::EncodeDecimal2;
 using BitsAndBytes::EncodeDecimal4;
@@ -111,7 +107,7 @@ namespace Nucleus
 
 
 // E.g. "19840124.183000"
-static string DateFormattedForFilename( unsigned long clock )
+static std::string DateFormattedForFilename( unsigned long clock )
 {
 	DateTimeRec date = N::SecondsToDate( clock );
 	
@@ -128,7 +124,7 @@ static string DateFormattedForFilename( unsigned long clock )
 	return stamp.str();
 }
 
-static string MakeMessageName()
+static std::string MakeMessageName()
 {
 	static unsigned long stamp = N::GetDateTime();
 	static int serial = 0;
@@ -157,14 +153,14 @@ inline unsigned int IP( unsigned char a,
 }
 
 
-static string GetForwardPath( const string& rcptLine )
+static std::string GetForwardPath( const std::string& rcptLine )
 {
-	return rcptLine.substr( std::strlen( "RCPT TO:" ), string::npos );
+	return rcptLine.substr( std::strlen( "RCPT TO:" ), rcptLine.npos );
 }
 
-static string GetReversePath( const string& fromLine )
+static std::string GetReversePath( const std::string& fromLine )
 {
-	return fromLine.substr( std::strlen( "MAIL FROM:" ), string::npos );
+	return fromLine.substr( std::strlen( "MAIL FROM:" ), fromLine.npos );
 }
 
 static void CreateOneLiner( const FSSpec& file, const std::string& line )
@@ -181,7 +177,7 @@ static void CreateOneLiner( const FSSpec& file, const std::string& line )
 
 static void CreateDestinationFile( const N::FSDirSpec& destFolder, const std::string& dest )
 {
-	CreateOneLiner( destFolder & dest.substr( 0, 31 ),
+	CreateOneLiner( destFolder / dest.substr( 0, 31 ),
 	                dest );
 }
 
@@ -208,7 +204,7 @@ class PartialMessage
 		
 		N::FSDirSpec Dir() const  { return dir; }
 		unsigned int Bytes() const  { return bytes; }
-		void WriteLine( const string& line );
+		void WriteLine( const std::string& line );
 		
 		void Finished();
 };
@@ -216,17 +212,17 @@ class PartialMessage
 PartialMessage::PartialMessage( const FSSpec& dirLoc )
 :
 	dir( NN::Owned< N::FSDirSpec, N::RecursiveFSDeleter >::Seize( N::FSpDirCreate( dirLoc ) ) ), 
-	out( io::open_for_writing( N::FSpCreate( dir.Get() & "Message",
+	out( io::open_for_writing( N::FSpCreate( dir.Get() / "Message",
 	                                         N::OSType( 'R*ch' ),
 	                                         N::OSType( 'TEXT' ) ) ) )
 {
 	//
 }
 
-void PartialMessage::WriteLine( const string& line )
+void PartialMessage::WriteLine( const std::string& line )
 {
 	//static unsigned int lastFlushKBytes = 0;
-	string terminatedLine = line + "\r\n";
+	std::string terminatedLine = line + "\r\n";
 	Io::S( out ) << terminatedLine;
 	bytes += terminatedLine.size();
 	
@@ -248,9 +244,9 @@ void PartialMessage::Finished()
 }
 
 
-string myHello;
-string myFrom;
-std::list< string > myTo;
+std::string myHello;
+std::string myFrom;
+std::list< std::string > myTo;
 PartialMessage myMessage;
 bool dataMode = false;
 
@@ -260,7 +256,7 @@ static void QueueMessage()
 	N::FSDirSpec dir = myMessage.Dir();
 	
 	// Create the Destinations subdirectory.
-	N::FSDirSpec destFolder = N::FSpDirCreate( dir & "Destinations" );
+	N::FSDirSpec destFolder = N::FSpDirCreate( dir / "Destinations" );
 	
 	// Create the destination files.
 	std::for_each( myTo.begin(),
@@ -271,14 +267,14 @@ static void QueueMessage()
 	
 	// Create the Return-Path file.
 	// Write this last so the sender won't delete the message prematurely.
-	CreateOneLiner( dir & "Return-Path", 
+	CreateOneLiner( dir / "Return-Path", 
 	                GetReversePath( myFrom ) );
 	
 }
 
-static void DoCommand( const string& command )
+static void DoCommand( const std::string& command )
 {
-	string word = command.substr( 0, command.find(' ') );
+	std::string word = command.substr( 0, command.find(' ') );
 	
 	if ( false )
 	{
@@ -296,7 +292,7 @@ static void DoCommand( const string& command )
 	}
 	else if ( word == "DATA" )
 	{
-		PartialMessage msg( QueueDirectory() & MakeMessageName() );
+		PartialMessage msg( QueueDirectory() / MakeMessageName() );
 		myMessage = msg;
 		dataMode = true;
 		Io::Out << "354 I'm listening"  "\r\n";
@@ -331,7 +327,7 @@ static void DoCommand( const string& command )
 	}
 }
 
-static void DoData( const string& data )
+static void DoData( const std::string& data )
 {
 	myMessage.WriteLine( data );
 	
@@ -361,7 +357,7 @@ static void DoData( const string& data )
 	}
 }
 
-static void DoLine( const string& line )
+static void DoLine( const std::string& line )
 {
 	if ( dataMode )
 	{
