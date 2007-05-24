@@ -14,6 +14,7 @@ namespace Genie
 {
 	
 	FSTreePtr GetProcFSTree();
+	FSTreePtr GetSysFSTree();
 	
 }
 

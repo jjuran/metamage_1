@@ -400,5 +400,45 @@ namespace Genie
 		return FSTreePtr( new FSTree_MagicFileReference( files[ itsFD ].handle ) );
 	}
 	
+	
+	class FSTree_sys : public FSTree_Virtual
+	{
+		public:
+			FSTree_sys();
+			
+			std::string Name() const  { return "sys"; }
+			
+			FSTreePtr Parent() const  { return FSRoot(); }
+	};
+	
+	
+	FSTreePtr GetSysFSTree()
+	{
+		static FSTreePtr proc = FSTreePtr( new FSTree_sys() );
+		
+		return proc;
+	}
+	
+	
+	class FSTree_sys_mac : public FSTree_Virtual
+	{
+		public:
+			FSTree_sys_mac();
+			
+			std::string Name() const  { return "mac"; }
+			
+			FSTreePtr Parent() const  { return GetSysFSTree(); }
+	};
+	
+	
+	FSTree_sys::FSTree_sys()
+	{
+		Map( "mac", FSTreePtr( GetSingleton< FSTree_sys_mac >() ) );
+	}
+	
+	FSTree_sys_mac::FSTree_sys_mac()
+	{
+	}
+	
 }
 
