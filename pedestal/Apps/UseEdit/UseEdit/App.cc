@@ -13,9 +13,6 @@
 // Iteration
 #include "Iteration/AEDescListItemDatas.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // AEObjectModel
 #include "AEObjectModel/AccessProperty.h"
 #include "AEObjectModel/AEObjectModel.h"
@@ -32,7 +29,6 @@ namespace UseEdit
 {
 	
 	namespace N = Nitrogen;
-	namespace FS = FileSystem;
 	
 	using N::keyDirectObject;
 	using N::keyAEObjectClass;
@@ -139,18 +135,18 @@ namespace UseEdit
 		{
 			ASSERT( app != NULL );
 			
-			typedef N::AEDescList_ItemDataValue_Container< FS::typeFileSpec > Container;
+			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
 			typedef Container::const_iterator const_iterator;
 			
 			NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
 			                                                        keyDirectObject,
 			                                                        typeAEList );
 			
-			Container listData = N::AEDescList_ItemDataValues< FS::typeFileSpec >( docList );
+			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
 			
 			for ( const_iterator it = listData.begin();  it != listData.end();  ++it )
 			{
-				FS::Spec fileSpec = *it;
+				Io_Details::file_spec fileSpec = *it;
 				
 				app->OpenDocument( fileSpec );
 			}
@@ -377,7 +373,7 @@ namespace UseEdit
 		itsDocuments.StoreNewElement( doc );
 	}
 	
-	void DocumentsOwner::OpenDocument( const FS::Spec& file )
+	void DocumentsOwner::OpenDocument( const Io_Details::file_spec& file )
 	{
 		Document* doc = new Document( *this, file );
 		itsDocuments.StoreNewElement( doc );
