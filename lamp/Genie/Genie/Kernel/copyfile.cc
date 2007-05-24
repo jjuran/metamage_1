@@ -4,7 +4,7 @@
  */
 
 // POSIX
-#include "unistd.h"
+#include <unistd.h>
 
 // MoreFiles
 #include "FileCopy.h"
@@ -12,9 +12,6 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 #include "Nitrogen/OSStatus.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -31,6 +28,9 @@ namespace Genie
 	DEFINE_MODULE_INIT(  Kernel_copyfile )
 	
 	namespace N = Nitrogen;
+	
+	using namespace io::path_descent_operators;
+	
 	
 	static void FSpFileCopy( const FSSpec&         source,
 	                         const FSSpec&         destDir,
@@ -58,7 +58,7 @@ namespace Genie
 			const FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec();
 			const FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec();
 			
-			N::FSDirSpec destDir = N::FSpGetParent( destFile );
+			N::FSDirSpec destDir = io::get_preceding_directory( destFile );
 			
 			bool renaming = !std::equal( srcFile.name,
 			                             srcFile.name + 1 + srcFile.name[0],
@@ -69,12 +69,12 @@ namespace Genie
 			// FIXME:  This logic should be worked into the file copy routine
 			// Maybe use ExchangeFiles() for safety?
 			
-			if ( N::FSpTestFileExists( destFile ) )
+			if ( io::file_exists( destFile ) )
 			{
-				N::FSpDelete( destFile );
+				io::delete_file( destFile );
 			}
 			
-			FSpFileCopy( srcFile, destDir & "", name );
+			FSpFileCopy( srcFile, destDir / "", name );
 		}
 		catch ( ... )
 		{

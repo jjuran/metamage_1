@@ -7,25 +7,22 @@
 #include <OSUtils.h>
 #include <TextUtils.h>
 
-// Standard C
-#include <errno.h>
-#include <string.h>
-
 // Standard C++
 #include <algorithm>
 #include <string>
 
+// Standard C
+#include <errno.h>
+#include <string.h>
+
 // POSIX
-#include "unistd.h"
+#include <unistd.h>
 
 // MoreFiles
 #include "MoreFilesExtras.h"
 
-// Nitrogen / Carbon
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -43,6 +40,9 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	
+	using namespace io::path_descent_operators;
+	
 	
 	static const char* Basename( const char* path )
 	{
@@ -86,23 +86,22 @@ namespace Genie
 			
 			try
 			{
-				CInfoPBRec paramBlock;
+				CInfoPBRec cInfo;
 				
-				N::FSpGetCatInfo( destFile, paramBlock );
+				N::FSpGetCatInfo( destFile, cInfo );
 				
-				bool isDir = N::PBTestIsDirectory( paramBlock );
+				bool isDir = io::item_is_directory( cInfo );
 				
 				if ( isDir )
 				{
 					// Directory specified -- look within
-					N::FSDirID dirID = N::FSDirID( paramBlock.dirInfo.ioDrDirID );
+					//N::FSDirID dirID = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 					//destFile = N::FSMakeFSSpec( vRefNum, dirID, srcFile.name );
-					destFile = NN::Convert< N::FSDirSpec >( destFile ) & srcFile.name;
+					destFile = destFile / srcFile.name;
 					
-					N::FSpGetCatInfo( destFile, paramBlock );
-					isDir = N::PBTestIsDirectory( paramBlock );
+					N::FSpGetCatInfo( destFile, cInfo );
 					
-					if ( isDir )
+					if ( io::item_is_directory( cInfo ) )
 					{
 						// Also a directory -- can't replace it.
 						return CurrentProcess().SetErrno( EISDIR );
