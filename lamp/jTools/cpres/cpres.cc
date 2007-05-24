@@ -10,9 +10,6 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Resources.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Orion
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
@@ -80,7 +77,7 @@ int O::Main( int argc, char const *const argv[] )
 
 int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
 {
-	if ( N::FSpTestDirectoryExists( source ) )
+	if ( io::directory_exists( source ) )
 	{
 		// Source item is a directory.
 		Io::Err << "cpres: " << source.name << ": omitting directory\n";
