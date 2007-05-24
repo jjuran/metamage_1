@@ -77,6 +77,15 @@ namespace io
 			delete_empty_directory( item );
 		}
 	}
+	
+	template < class FileSpec > struct system_root_getter;
+	
+	template < class FileSpec >
+	inline FileSpec system_root()
+	{
+		return system_root_getter< FileSpec >()();
+	}
+	
 }
 
 #endif
