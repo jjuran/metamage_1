@@ -65,45 +65,6 @@ using BitsAndBytes::EncodeDecimal4;
 using BitsAndBytes::q;
 
 
-namespace io
-{
-	template < class FileSpec > struct system_root_directory;
-	
-	template < class FileSpec >
-	inline FileSpec system_root()
-	{
-		return system_root_directory< FileSpec >()();
-	}
-	
-	template <> struct system_root_directory< Nitrogen::FSVolumeRefNum >
-	{
-		Nitrogen::FSVolumeRefNum operator()() const
-		{
-			return Nitrogen::FindFolder( Nitrogen::kOnSystemDisk,
-			                             Nitrogen::kSystemFolderType,
-			                             kDontCreateFolder ).vRefNum;
-		}
-	};
-	
-	template <> struct system_root_directory< Nitrogen::FSDirSpec >
-	{
-		Nitrogen::FSDirSpec operator()() const
-		{
-			return Nucleus::Make< Nitrogen::FSDirSpec >( system_root< Nitrogen::FSVolumeRefNum >(),
-			                                             Nitrogen::fsRtDirID );
-		}
-	};
-	
-	template <> struct system_root_directory< FSSpec >
-	{
-		FSSpec operator()() const
-		{
-			return Nucleus::Convert< FSSpec >( system_root< Nitrogen::FSDirSpec >() );
-		}
-	};
-	
-}
-
 namespace Nitrogen
 {
 	
