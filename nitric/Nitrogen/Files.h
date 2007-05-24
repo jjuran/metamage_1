@@ -433,31 +433,6 @@ namespace Nitrogen
 	
 	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum );
 	
-	template < class VolumeIter >
-	FSSpec DTGetAPPL( OSType signature, VolumeIter begin, VolumeIter end )
-	{
-		for ( ;  begin != end;  ++begin )
-		{
-			FSVolumeRefNum vRefNum = *begin;
-			
-			try
-			{
-				FSSpec appl = DTGetAPPL( signature, vRefNum );  // Succeeds or throws
-				
-				if ( io::file_exists( appl ) )
-				{
-					return appl;
-				}
-			}
-			catch ( ... )
-			{
-				
-			}
-		}
-		
-		throw AFPItemNotFound();
-	}
-	
 	void PBDTSetCommentSync( DTPBRec& pb );
 	
 	void DTSetComment( DTPBRec& pb, const std::string& comment );
@@ -1536,11 +1511,6 @@ namespace Nitrogen
       return Volume_Container();
      }
 
-	inline FSSpec DTGetAPPL( OSType signature )
-	{
-		return DTGetAPPL( signature, Volumes().begin(), Volumes().end() );
-	}
-	
    typedef Volume_Container FSVolumeRefNum_Container;
    
    inline FSVolumeRefNum_Container VolumeRefNums()
@@ -1987,6 +1957,36 @@ namespace io
 
 namespace Nitrogen
 {
+	
+	template < class VolumeIter >
+	FSSpec DTGetAPPL( OSType signature, VolumeIter begin, VolumeIter end )
+	{
+		for ( ;  begin != end;  ++begin )
+		{
+			FSVolumeRefNum vRefNum = *begin;
+			
+			try
+			{
+				FSSpec appl = DTGetAPPL( signature, vRefNum );  // Succeeds or throws
+				
+				if ( io::file_exists( appl ) )
+				{
+					return appl;
+				}
+			}
+			catch ( ... )
+			{
+				
+			}
+		}
+		
+		throw AFPItemNotFound();
+	}
+	
+	inline FSSpec DTGetAPPL( OSType signature )
+	{
+		return DTGetAPPL( signature, Volumes().begin(), Volumes().end() );
+	}
 	
 	inline FSDirSpec& FSDirSpec::operator/=( const unsigned char* name )
 	{
