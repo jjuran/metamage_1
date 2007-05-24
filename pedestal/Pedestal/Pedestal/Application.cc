@@ -423,7 +423,9 @@ namespace Pedestal
 		switch ( (event.message & osEvtMessageMask) >> 24 )
 		{
 			case suspendResumeMessage:
-				if ( gRunState.inForeground = event.message & resumeFlag )
+				gRunState.inForeground = event.message & resumeFlag;
+				
+				if ( gRunState.inForeground )
 				{
 				#if !TARGET_API_MAC_CARBON
 					
