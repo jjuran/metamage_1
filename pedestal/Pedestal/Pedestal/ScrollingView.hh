@@ -16,7 +16,6 @@
 #include "ClassicToolbox/MacWindows.h"
 
 // Nitrogen Extras / Utilities
-#include "Utilities/Quickdraw.h"
 #include "Utilities/RectangleMath.h"
 
 // Pedestal
