@@ -18,9 +18,6 @@
 // Nitrogen
 #include "Nitrogen/OSUtils.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Genie
 #include "Genie/FileSignature.hh"
 
