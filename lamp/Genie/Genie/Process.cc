@@ -19,14 +19,14 @@
 // Io
 #include "io/io.hh"
 
-// Nitrogen / Carbon support
+// Nitrogen
 #include "Nitrogen/Aliases.h"
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Sound.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
+// GetPathname
+#include "GetPathname.hh"
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -324,7 +324,7 @@ namespace Genie
 			if ( pathSearched )
 			{
 				// Overwrite with full pathname
-				context.scriptPath = N::FSpGetPOSIXPathname( context.executable );
+				context.scriptPath = GetPOSIXPathname( context.executable );
 				
 				context.argVector[ 1 + hasArg ] = context.scriptPath.c_str();
 			}
@@ -335,7 +335,7 @@ namespace Genie
 		}
 		else if ( type == 'MPST' )
 		{
-			context.scriptPath = N::FSpGetMacPathname( context.executable );
+			context.scriptPath = GetMacPathname( context.executable );
 			
 			const int newTokenCount = 3;
 			const int skipCount = 1;  // skip the script's name because we're overwriting it anyway
