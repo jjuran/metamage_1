@@ -51,7 +51,9 @@ namespace Nitrogen
 			
 			FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), position + 1, pb, name );  // one-based
 			
-			return Nucleus::Convert< value_type >( Nucleus::Convert< FSDirSpec >( dir ) & name );
+			using namespace io::path_descent_operators;
+			
+			return Nucleus::Convert< value_type >( Nucleus::Convert< FSDirSpec >( dir ) / name );
 		}
 		
 		typedef ContainerType ContainerState;
