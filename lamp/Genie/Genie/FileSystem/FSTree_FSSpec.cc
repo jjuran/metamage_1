@@ -284,17 +284,17 @@ namespace Genie
 	
 	bool FSTree_FSSpec::Exists() const
 	{
-		return N::FSpTestItemExists( fileSpec );
+		return io::item_exists( fileSpec );
 	}
 	
 	bool FSTree_FSSpec::IsFile() const
 	{
-		return N::FSpTestFileExists( fileSpec );
+		return io::file_exists( fileSpec );
 	}
 	
 	bool FSTree_FSSpec::IsDirectory() const
 	{
-		return N::FSpTestDirectoryExists( fileSpec );
+		return io::directory_exists( fileSpec );
 	}
 	
 	bool FSTree_FSSpec::IsLink() const
@@ -408,10 +408,10 @@ namespace Genie
 		
 		if ( creating )
 		{
-			if ( !N::FSpTestFileExists( fileSpec ) )
+			if ( !io::file_exists( fileSpec ) )
 			{
 				// No need to convert name -- for examination only
-				std::string name = NN::Convert< std::string >( fileSpec.name );
+				std::string name = io::get_filename_string( fileSpec );
 				
 				N::FileSignature sig = PickFileSignatureForName( name );
 				
@@ -450,7 +450,7 @@ namespace Genie
 	{
 		FSSpec target = N::ResolveAliasFile( fileSpec, true );
 		
-		if ( N::FSpTestFileExists( target )  &&  name == "rsrc" )
+		if ( io::file_exists( target )  &&  name == "rsrc" )
 		{
 			return GetRsrcForkFSTree( target );
 		}
