@@ -442,7 +442,12 @@ namespace Nitrogen
 			
 			try
 			{
-				return DTGetAPPL( signature, vRefNum );  // Succeeds or throws
+				FSSpec appl = DTGetAPPL( signature, vRefNum );  // Succeeds or throws
+				
+				if ( io::file_exists( appl ) )
+				{
+					return appl;
+				}
 			}
 			catch ( ... )
 			{
