@@ -1762,7 +1762,7 @@ namespace io
 		
 		inline FSSpec operator/( const Nitrogen::FSDirSpec& dir, const unsigned char* name )
 		{
-			return FSMakeFSSpec( dir, name );
+			return Nitrogen::FSMakeFSSpec( dir, name );
 		}
 		
 		inline FSSpec operator/( const FSSpec& dir, const unsigned char* name )
