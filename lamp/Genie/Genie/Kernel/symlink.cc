@@ -14,9 +14,6 @@
 #include "Nitrogen/Aliases.h"
 #include "Nitrogen/Resources.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -63,7 +60,7 @@ namespace Genie
 	{
 		FSSpec linkSpec = linkFile->GetFSSpec();
 		
-		N::FSDirSpec linkParent = N::FSpGetParent( linkSpec );
+		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
 		
 		FSSpec linkParentSpec = NN::Convert< FSSpec >( linkParent );
 		
