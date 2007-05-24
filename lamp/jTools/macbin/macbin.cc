@@ -15,7 +15,7 @@
 #include "fcntl.h"
 #include "unistd.h"
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
 
 // Nitrogen
