@@ -433,6 +433,26 @@ namespace Nitrogen
 	
 	FSSpec DTGetAPPL( OSType signature, FSVolumeRefNum vRefNum );
 	
+	template < class VolumeIter >
+	FSSpec DTGetAPPL( OSType signature, VolumeIter begin, VolumeIter end )
+	{
+		for ( ;  begin != end;  ++begin )
+		{
+			FSVolumeRefNum vRefNum = *begin;
+			
+			try
+			{
+				return DTGetAPPL( signature, vRefNum );  // Succeeds or throws
+			}
+			catch ( ... )
+			{
+				
+			}
+		}
+		
+		throw AFPItemNotFound();
+	}
+	
 	void PBDTSetCommentSync( DTPBRec& pb );
 	
 	void DTSetComment( DTPBRec& pb, const std::string& comment );
@@ -1511,6 +1531,11 @@ namespace Nitrogen
       return Volume_Container();
      }
 
+	inline FSSpec DTGetAPPL( OSType signature )
+	{
+		return DTGetAPPL( signature, Volumes().begin(), Volumes().end() );
+	}
+	
    typedef Volume_Container FSVolumeRefNum_Container;
    
    inline FSVolumeRefNum_Container VolumeRefNums()
