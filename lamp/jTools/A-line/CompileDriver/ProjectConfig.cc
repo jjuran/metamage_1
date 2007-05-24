@@ -10,15 +10,15 @@
 #include <string>
 #include <vector>
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/ResourceTransfer.h"
+
+// GetPathname
+#include "GetPathname.hh"
 
 // Nitrogen Extras / Templates
 #include "Templates/FunctionalExtensions.h"
 #include "Templates/PointerToFunction.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
 
 // CompileDriver
 #include "CompileDriver/Platform.hh"
@@ -219,7 +219,7 @@ namespace CompileDriver
 			name   = io::get_filename_string    ( parent );
 		}
 		
-		std::string pathname = N::FSpGetPOSIXPathname( file );
+		std::string pathname = GetPOSIXPathname( file );
 		
 		DotConfData data;
 		ReadProjectDotConf( pathname, data );

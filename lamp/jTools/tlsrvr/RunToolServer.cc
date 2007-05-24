@@ -30,6 +30,9 @@
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Folders.h"
 
+// GetPathname
+#include "GetPathname.hh"
+
 // Nitrogen Extras / Operators
 #include "Operators/AEDataModel.h"
 
@@ -37,7 +40,6 @@
 #include "Templates/PointerToFunction.h"
 
 // Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
 #include "Utilities/Processes.h"
 
 // BitsAndBytes
@@ -90,7 +92,7 @@ namespace RunToolServer
 		{
 			FSSpec cwd = Div::ResolvePathToFSSpec( "." );
 			
-			return "Directory " + q( N::FSpGetMacPathname( cwd ) ) + "\r";
+			return "Directory " + q( GetMacPathname( cwd ) ) + "\r";
 		}
 		catch ( ... )
 		{
@@ -126,11 +128,11 @@ namespace RunToolServer
 		
 		script << "Set Exit 0;";
 		
-		script << q( N::FSpGetMacPathname( scriptFile ) );
-		script << "<" << q( N::FSpGetMacPathname( inFile ) );
+		script << q( GetMacPathname( scriptFile ) );
+		script << "<" << q( GetMacPathname( inFile ) );
 		
-		std::string outPath = N::FSpGetMacPathname( outFile );
-		std::string errPath = N::FSpGetMacPathname( errFile );
+		std::string outPath = GetMacPathname( outFile );
+		std::string errPath = GetMacPathname( errFile );
 		// FIXME:  This is case-sensitive
 		//bool identicalOutputAndError = outPath == errPath;
 		bool identicalOutputAndError = false;

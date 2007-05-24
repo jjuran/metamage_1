@@ -18,6 +18,9 @@
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 
+// GetPathname
+#include "GetPathname.hh"
+
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
 
@@ -84,7 +87,7 @@ namespace ALine
 			result = "-wi ";
 		}
 		
-		result += q( N::FSpGetMacPathname( import ) );
+		result += q( GetMacPathname( import ) );
 		
 		return result;
 	}
@@ -94,7 +97,7 @@ namespace ALine
 		std::string include = "include ";
 		std::string echo    = "echo ";
 		
-		return echo + q( include + qq( N::FSpGetPOSIXPathname( file ) ) + ";" );
+		return echo + q( include + qq( GetPOSIXPathname( file ) ) + ";" );
 	}
 	
 	static std::string MakeFramework( const std::string& framework )
@@ -123,7 +126,7 @@ namespace ALine
 	
 	static std::string Pathname( const FSSpec& file )
 	{
-		return N::FSpGetMacPathname( file );
+		return GetMacPathname( file );
 	}
 	
 	static FSSpec FindImportLibraryInSystem( const FileName& filename )
@@ -338,8 +341,8 @@ namespace ALine
 		
 		typedef std::string (*GetPathnameProcPtr)( const FSSpec& );
 		
-		GetPathnameProcPtr GetPathname = gnu ? N::FSpGetPOSIXPathname
-		                                     : N::FSpGetMacPathname;
+		GetPathnameProcPtr GetPathname = gnu ? static_cast< GetPathnameProcPtr >( GetPOSIXPathname )
+		                                     : static_cast< GetPathnameProcPtr >( GetMacPathname   );
 		
 		CommandGenerator cmdgen( targetInfo );
 		
@@ -621,7 +624,7 @@ namespace ALine
 			                      rsrcFiles.end(),
 			                      " ",
 			                      ext::compose1( N::PtrFun( q ),
-			                                     N::PtrFun( N::FSpGetPOSIXPathname ) ) );
+			                                     N::PtrFun( static_cast< std::string (*)(const FSSpec&) >( GetPOSIXPathname ) ) ) );
 			
 			
 			if ( gnu )
@@ -634,7 +637,7 @@ namespace ALine
 				cpresCommand = paren( echoes ) + " | /Developer/Tools/Rez -append -useDF -o";
 			}
 			
-			cpresCommand << q( N::FSpGetPOSIXPathname( rsrcFile ) );
+			cpresCommand << q( GetPOSIXPathname( rsrcFile ) );
 			
 			QueueCommand( "echo Copying resources:  " + io::get_filename_string( rsrcFile ) );
 			QueueCommand( cpresCommand );

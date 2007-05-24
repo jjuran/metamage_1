@@ -17,12 +17,12 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Shared.h"
 
-// Nitrogen / Mac OS support
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Threads.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
+// GetPathname
+#include "GetPathname.hh"
 
 // BitsAndBytes
 #include "StringFilters.hh"
@@ -248,7 +248,7 @@ namespace ALine
 	{
 		FixNullFileType( file );
 		
-		std::string pathname = N::FSpGetPOSIXPathname( file );
+		std::string pathname = GetPOSIXPathname( file );
 		
 		std::vector< IncludePath > includes = ExtractIncludes( pathname );
 		

@@ -28,6 +28,9 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Str.h"
 
+// GetPathname
+#include "GetPathname.hh"
+
 // Nitrogen Extras / Operators
 #include "Operators/AEDataModel.h"
 
@@ -35,7 +38,6 @@
 #include "Templates/PointerToFunction.h"
 
 // Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
 #include "Utilities/Processes.h"
 
 // BitsAndBytes
@@ -152,7 +154,7 @@ namespace ALine
 		std::transform( options.UserOnlyIncludeDirs().begin(),
 		                options.UserOnlyIncludeDirs().end(),
 		                includeDirPathnames.begin(),
-		                std::ptr_fun( N::FSDirGetMacPathname ) );
+		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetMacPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
 		
@@ -167,7 +169,7 @@ namespace ALine
 			std::transform( options.UserAndSystemIncludeDirs().begin(),
 			                options.UserAndSystemIncludeDirs().end(),
 			                includeDirPathnames.begin(),
-			                std::ptr_fun( N::FSDirGetMacPathname ) );
+			                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetMacPathname ) ) );
 			
 			inc << MakeIncludeDirOptions( includeDirPathnames );
 		}
@@ -199,13 +201,13 @@ namespace ALine
 		
 		if ( options.HasPrecompiledHeaderImage() )
 		{
-			command << cmdgen.Prefix( N::FSpGetMacPathname( options.PrecompiledHeaderImage() ) );
+			command << cmdgen.Prefix( GetMacPathname( options.PrecompiledHeaderImage() ) );
 		}
 		
-		command << cmdgen.Output( N::FSDirGetMacPathname( options.Output() ) );
+		command << cmdgen.Output( GetMacPathname( options.Output() ) );
 		
 		// Add the source file to the command line
-		command << cmdgen.Input( N::FSpGetMacPathname( file ) );
+		command << cmdgen.Input( GetMacPathname( file ) );
 		
 		return EnvironmentTraits< kMPWEnvironment >::MakeNativeCommand( command );
 	}
@@ -240,7 +242,7 @@ namespace ALine
 		std::transform( options.UserOnlyIncludeDirs().begin(),
 		                options.UserOnlyIncludeDirs().end(),
 		                includeDirPathnames.begin(),
-		                std::ptr_fun( N::FSDirGetPOSIXPathname ) );
+		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
 		
@@ -255,7 +257,7 @@ namespace ALine
 			std::transform( options.UserAndSystemIncludeDirs().begin(),
 			                options.UserAndSystemIncludeDirs().end(),
 			                includeDirPathnames.begin(),
-			                std::ptr_fun( N::FSDirGetPOSIXPathname ) );
+			                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 			
 			inc << MakeIncludeDirOptions( includeDirPathnames );
 		}
@@ -298,22 +300,22 @@ namespace ALine
 		{
 			if ( options.HasPrecompiledHeaderImage() )
 			{
-				command << cmdgen.Prefix( N::FSpGetMacPathname( options.PrecompiledHeaderImage() ) );
+				command << cmdgen.Prefix( GetMacPathname( options.PrecompiledHeaderImage() ) );
 			}
 		}
 		
 		
 		command << inc;
 		
-		command << cmdgen.Output( N::FSpGetPOSIXPathname( options.Output() / ObjectFileName( filename ) ) );
+		command << cmdgen.Output( GetPOSIXPathname( options.Output() / ObjectFileName( filename ) ) );
 		
 		// Add the source file to the command line
-		command << cmdgen.Input( N::FSpGetPOSIXPathname( file ) );
+		command << cmdgen.Input( GetPOSIXPathname( file ) );
 		
 		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) / "Diagnostics" );
 		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
 		
-		command << "> " << q( N::FSpGetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
+		command << "> " << q( GetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
 		
 		command = EnvironmentTraits< kNativePOSIXEnvironment >::MakeNativeCommand( command );
 		
@@ -344,8 +346,8 @@ namespace ALine
 	
 	static void BuildSourceFile( CompilerOptions options, const FSSpec& file )
 	{
-		options.DefineMacro( "__ALINE_MAC_FILE__",  qq( N::FSpGetMacPathname  ( file ) ) );
-		options.DefineMacro( "__ALINE_UNIX_FILE__", qq( N::FSpGetPOSIXPathname( file ) ) );
+		options.DefineMacro( "__ALINE_MAC_FILE__",  qq( GetMacPathname  ( file ) ) );
+		options.DefineMacro( "__ALINE_UNIX_FILE__", qq( GetPOSIXPathname( file ) ) );
 		
 		std::string command;
 		
@@ -405,7 +407,7 @@ namespace ALine
 		std::transform( options.UserOnlyIncludeDirs().begin(),
 		                options.UserOnlyIncludeDirs().end(),
 		                includeDirPathnames.begin(),
-		                std::ptr_fun( N::FSDirGetMacPathname ) );
+		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetMacPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
 		
@@ -420,7 +422,7 @@ namespace ALine
 			std::transform( options.UserAndSystemIncludeDirs().begin(),
 			                options.UserAndSystemIncludeDirs().end(),
 			                includeDirPathnames.begin(),
-			                std::ptr_fun( N::FSDirGetMacPathname ) );
+			                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetMacPathname ) ) );
 			
 			inc << MakeIncludeDirOptions( includeDirPathnames );
 		}
@@ -439,10 +441,10 @@ namespace ALine
 		// Add the include directories
 		command << inc;
 		
-		command << cmdgen.PrecompiledOutput( N::FSpGetMacPathname( options.PrecompiledHeaderImage() ) );
+		command << cmdgen.PrecompiledOutput( GetMacPathname( options.PrecompiledHeaderImage() ) );
 		
 		// Add the source file to the command line
-		command << cmdgen.Input( N::FSpGetMacPathname( file ) );
+		command << cmdgen.Input( GetMacPathname( file ) );
 		
 		return EnvironmentTraits< kMPWEnvironment >::MakeNativeCommand( command );
 	}
@@ -456,7 +458,7 @@ namespace ALine
 		std::transform( options.UserOnlyIncludeDirs().begin(),
 		                options.UserOnlyIncludeDirs().end(),
 		                includeDirPathnames.begin(),
-		                std::ptr_fun( N::FSDirGetPOSIXPathname ) );
+		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
 		
@@ -471,7 +473,7 @@ namespace ALine
 			std::transform( options.UserAndSystemIncludeDirs().begin(),
 			                options.UserAndSystemIncludeDirs().end(),
 			                includeDirPathnames.begin(),
-			                std::ptr_fun( N::FSDirGetPOSIXPathname ) );
+			                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 			
 			inc << MakeIncludeDirOptions( includeDirPathnames );
 		}
@@ -501,9 +503,9 @@ namespace ALine
 		
 		command << inc;
 		
-		command << cmdgen.PrecompiledOutput( N::FSpGetPOSIXPathname( options.PrecompiledHeaderImage() ) );
+		command << cmdgen.PrecompiledOutput( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
 		
-		command << cmdgen.Input( N::FSpGetPOSIXPathname( file ) );
+		command << cmdgen.Input( GetPOSIXPathname( file ) );
 		
 		using namespace NN::Operators;
 		
@@ -511,7 +513,7 @@ namespace ALine
 		
 		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
 		
-		command << "> " << q( N::FSpGetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
+		command << "> " << q( GetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
 		
 		command = EnvironmentTraits< kNativePOSIXEnvironment >::MakeNativeCommand( command );
 		

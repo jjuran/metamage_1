@@ -10,8 +10,8 @@
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Str.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
+// GetPathname
+#include "GetPathname.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -27,7 +27,6 @@ namespace O = Orion;
 namespace jTools
 {
 	
-	namespace N = Nitrogen;
 	namespace Div = Divergence;
 	
 	
@@ -86,7 +85,7 @@ namespace jTools
 	{
 		FSSpec item = Div::ResolvePathToFSSpec( pathname );
 		
-		return N::FSpGetMacPathname( item );
+		return GetMacPathname( item );
 	}
 	
 	static std::string QuotedMacPathFromPOSIXPath( const char* pathname )
