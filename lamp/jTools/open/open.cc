@@ -27,7 +27,6 @@
 #include "Operators/AEDataModel.h"
 
 // Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
 #include "Utilities/Processes.h"
 
 // Divergence
@@ -223,7 +222,7 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items, const O::
 		catch ( const N::ProcNotFound& )
 		{
 			// No such process
-			appFile = NX::DTGetAPPL( signature );
+			appFile = N::DTGetAPPL( signature );
 		}
 	}
 	

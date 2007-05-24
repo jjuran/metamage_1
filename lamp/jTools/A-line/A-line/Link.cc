@@ -24,9 +24,6 @@
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // BitsAndBytes
 #include "StringFilters.hh"
 
@@ -47,7 +44,6 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
 	
 	using namespace io::path_descent_operators;
 	
@@ -109,7 +105,7 @@ namespace ALine
 	{
 		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
 		
-		FSSpec mpwShell = NX::DTGetAPPL( sigMPWShell );
+		FSSpec mpwShell = N::DTGetAPPL( sigMPWShell );
 		
 		N::FSDirSpec mpw  = io::get_preceding_directory( mpwShell );
 		N::FSDirSpec apps = io::get_preceding_directory( mpw      );

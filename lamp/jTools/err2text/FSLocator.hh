@@ -5,11 +5,8 @@
 
 #pragma once
 
-#ifndef __FILES__
-#include <Files.h>
-#endif
-
 // Nitrogen
+#include "Nitrogen/Files.h"
 #include "Nitrogen/Str.h"
 
 
@@ -26,7 +23,7 @@ namespace FSLocator
 		public:
 			FSLocatorAppBySignature( N::OSType sig ) : mySig( sig )  {}
 			
-			FSSpec Locate() const;
+			FSSpec Locate() const  { return N::DTGetAPPL( mySig ); }
 	};
 	
 	class FSLinkNewName
