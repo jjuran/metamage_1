@@ -107,9 +107,13 @@ namespace ALine
 		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
 		
 		FSSpec mpwShell = NX::DTGetAPPL( sigMPWShell );
-		N::FSDirSpec mpw = io::get_preceding_directory( mpwShell );
 		
-		return io::get_preceding_directory( mpw ) << "Interfaces&Libraries";
+		N::FSDirSpec mpw  = io::get_preceding_directory( mpwShell );
+		N::FSDirSpec apps = io::get_preceding_directory( mpw      );
+		
+		N::FSDirSpec intfsAndLibs( apps / "Interfaces&Libraries" );
+		
+		return intfsAndLibs;
 	}
 	
 	static std::string GetFileName( const FSSpec& file )
@@ -124,13 +128,13 @@ namespace ALine
 	
 	static FSSpec FindImportLibraryInSystem( const FileName& filename )
 	{
-		N::FSDirSpec libsFolder = InterfacesAndLibraries() << "Libraries";
+		N::FSDirSpec libsFolder( InterfacesAndLibraries() / "Libraries" );
 		
-		N::FSDirSpec sharedLibs = libsFolder << "SharedLibraries";
-		N::FSDirSpec ppcLibs    = libsFolder << "PPCLibraries";
-		N::FSDirSpec libs68K    = libsFolder << "Libraries";
-		N::FSDirSpec mwppcLibs  = libsFolder << "MWPPCLibraries";
-		N::FSDirSpec mw68kLibs  = libsFolder << "MW68KLibraries";
+		N::FSDirSpec sharedLibs( libsFolder / "SharedLibraries" );
+		N::FSDirSpec ppcLibs   ( libsFolder / "PPCLibraries"    );
+		N::FSDirSpec libs68K   ( libsFolder / "Libraries"       );
+		N::FSDirSpec mwppcLibs ( libsFolder / "MWPPCLibraries"  );
+		N::FSDirSpec mw68kLibs ( libsFolder / "MW68KLibraries"  );
 		
 		std::string actualName = filename;
 		

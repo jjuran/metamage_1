@@ -576,7 +576,7 @@ namespace ALine
 		// Locate resources
 		try
 		{
-			std::vector< FSSpec > rezFiles = DeepFiles( projFolder << "Resources" );
+			std::vector< FSSpec > rezFiles = DeepFiles( projFolder / "Resources" );
 			std::for_each
 			(
 				rezFiles.begin(), 
