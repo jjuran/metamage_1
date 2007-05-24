@@ -26,11 +26,6 @@
 #include "Templates/FunctionalExtensions.h"
 #include "Templates/PointerToFunction.h"
 
-// Nitrogen Extras / Utilities
-#ifndef UTILITIES_FILES_H
-#include "Utilities/Files.h"
-#endif
-
 
 namespace NitrogenExtras
 {
@@ -92,7 +87,7 @@ namespace NitrogenExtras
 		}
 		catch ( N::ProcNotFound )
 		{
-			return N::LaunchApplication( DTGetAPPL( signature ) );
+			return N::LaunchApplication( N::DTGetAPPL( signature ) );
 		}
 	}
 	
