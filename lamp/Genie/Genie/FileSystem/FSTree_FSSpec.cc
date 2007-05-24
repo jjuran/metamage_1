@@ -31,9 +31,6 @@
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FileSystem/FSTree_Dev.hh"
@@ -63,6 +60,8 @@ namespace Genie
 		
 		public:
 			FSTree_FSSpec( const FSSpec& file ) : fileSpec( file )  {}
+			
+			FSTree_FSSpec( const N::FSDirSpec& dir ) : fileSpec( NN::Convert< FSSpec >( dir ) )  {}
 			
 			bool Exists() const;
 			bool IsFile() const;
@@ -169,7 +168,7 @@ namespace Genie
 		}
 		
 		// Then root, or bust
-		result = N::RootDirectory( N::BootVolume() ) / "j";
+		result = io::system_root< N::FSDirSpec >() / "j";
 		
 		return N::FSDirSpec( result );
 	}
@@ -201,9 +200,9 @@ namespace Genie
 	{
 		FSTree_FSSpec* tree = NULL;
 		
-		FSTreePtr result( tree = new FSTree_FSSpec( FindJDirectory() / "" ) );
+		FSTreePtr result( tree = new FSTree_FSSpec( FindJDirectory() ) );
 		
-		FSTreePtr users( new FSTree_FSSpec( N::RootDirectory( N::BootVolume() ) / "Users" ) );
+		FSTreePtr users( new FSTree_FSSpec( io::system_root< N::FSDirSpec >() / "Users" ) );
 		
 		tree->Map( "Users",   users );
 		tree->Map( "Volumes", FSTreePtr( GetSingleton< FSTree_Volumes >() ) );
@@ -236,7 +235,7 @@ namespace Genie
 	{
 		FSSpec volume = N::FSMakeFSSpec( vRefNum, N::FSDirID( long( fsRtDirID ) ), "\p" );
 		
-		std::string name = UnixFromMacName( NN::Convert< std::string >( volume.name ) );
+		std::string name = UnixFromMacName( io::get_filename_string( volume ) );
 		
 		FSTreePtr tree( new FSTree_FSSpec( volume ) );
 		
@@ -345,7 +344,7 @@ namespace Genie
 			return "";
 		}
 		
-		return NN::Convert< std::string >( fileSpec.name );
+		return io::get_filename_string( fileSpec );
 	}
 	
 	FSTreePtr FSTree_FSSpec::Parent() const
@@ -360,7 +359,7 @@ namespace Genie
 			return GetSingleton< FSTree_Volumes >();
 		}
 		
-		return FSTreePtr( new FSTree_FSSpec( NN::Convert< FSSpec >( N::FSpGetParent( fileSpec ) ) ) );
+		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( fileSpec ) ) );
 	}
 	
 	FSSpec FSTree_FSSpec::GetFSSpec() const
@@ -455,9 +454,7 @@ namespace Genie
 			return GetRsrcForkFSTree( target );
 		}
 		
-		N::FSDirSpec dir = N::FSDirSpec( target );
-		
-		FSSpec item = dir / MacFromUnixName( name );
+		FSSpec item = target / MacFromUnixName( name );
 		
 		return FSTreePtr( new FSTree_FSSpec( item ) );
 	}
@@ -478,16 +475,18 @@ namespace Genie
 	
 	FSTreePtr Volumes_Details::Lookup( const std::string& name ) const
 	{
-		N::FSDirSpec rootDir( N::RootDirectory( DetermineVRefNum( MacFromUnixName( name ) + ":" ) ) );
+		N::FSVolumeRefNum vRefNum = DetermineVRefNum( MacFromUnixName( name ) + ":" );
 		
-		return FSTreePtr( new FSTree_FSSpec( rootDir / "" ) );
+		N::FSDirSpec rootDir( NN::Make< N::FSDirSpec >( vRefNum, N::fsRtDirID ) );
+		
+		return FSTreePtr( new FSTree_FSSpec( rootDir ) );
 	}
 	
 	FSNode Volumes_Details::ConvertToFSNode( N::FSVolumeRefNum vRefNum )
 	{
-		FSSpec volume = N::FSMakeFSSpec( vRefNum, N::FSDirID( long( fsRtDirID ) ), "\p" );
+		FSSpec volume = N::FSMakeFSSpec( vRefNum, N::fsRtDirID, "\p" );
 		
-		std::string name = UnixFromMacName( NN::Convert< std::string >( volume.name ) );
+		std::string name = UnixFromMacName( io::get_filename_string( volume ) );
 		
 		FSTreePtr tree( new FSTree_FSSpec( volume ) );
 		
