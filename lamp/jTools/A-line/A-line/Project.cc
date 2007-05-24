@@ -21,6 +21,9 @@
 #include "Templates/FunctionalExtensions.h"
 #include "Templates/PointerToFunction.h"
 
+// Nitrogen Extras / Utilities
+#include "Utilities/Files.h"
+
 // BitsAndBytes
 #include "StringFilters.hh"
 #include "StringPredicates.hh"
