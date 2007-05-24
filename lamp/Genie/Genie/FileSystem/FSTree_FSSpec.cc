@@ -53,6 +53,8 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
+	using namespace io::path_descent_operators;
+	
 	
 	class FSTree_FSSpec : public FSTree_Mappable
 	{
@@ -161,13 +163,15 @@ namespace Genie
 		FSSpec result;
 		
 		// Try current directory first
-		if ( N::FSpTestDirectoryExists( result = N::FSDirSpec() & "j" ) )
+		if ( io::directory_exists( result = N::FSDirSpec() / "j" ) )
 		{
-			return NN::Convert< N::FSDirSpec >( result );
+			return N::FSDirSpec( result );
 		}
 		
 		// Then root, or bust
-		return N::RootDirectory( N::BootVolume() ) << "j";
+		result = N::RootDirectory( N::BootVolume() ) / "j";
+		
+		return N::FSDirSpec( result );
 	}
 	
 	
@@ -197,14 +201,15 @@ namespace Genie
 	{
 		FSTree_FSSpec* tree = NULL;
 		
-		FSTreePtr result( tree = new FSTree_FSSpec( FindJDirectory() & "" ) );
+		FSTreePtr result( tree = new FSTree_FSSpec( FindJDirectory() / "" ) );
 		
-		FSTreePtr users( new FSTree_FSSpec( N::RootDirectory( N::BootVolume() ) & "Users" ) );
+		FSTreePtr users( new FSTree_FSSpec( N::RootDirectory( N::BootVolume() ) / "Users" ) );
 		
 		tree->Map( "Users",   users );
 		tree->Map( "Volumes", FSTreePtr( GetSingleton< FSTree_Volumes >() ) );
 		
 		tree->Map( "proc", GetProcFSTree() );
+		tree->Map( "sys",  GetSysFSTree () );
 		tree->Map( "dev",  GetDevFSTree () );
 		
 		return result;
@@ -323,7 +328,7 @@ namespace Genie
 	{
 		try
 		{
-			return NN::Convert< N::FSDirSpec >( fileSpec ) == FindJDirectory();
+			return N::FSDirSpec( fileSpec ) == FindJDirectory();
 		}
 		catch ( ... )
 		{
@@ -450,16 +455,16 @@ namespace Genie
 			return GetRsrcForkFSTree( target );
 		}
 		
-		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( target );
+		N::FSDirSpec dir = N::FSDirSpec( target );
 		
-		FSSpec item = dir & MacFromUnixName( name );
+		FSSpec item = dir / MacFromUnixName( name );
 		
 		return FSTreePtr( new FSTree_FSSpec( item ) );
 	}
 	
 	void FSTree_FSSpec::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		N::FSDirSpec dir( NN::Convert< N::FSDirSpec >( fileSpec ) );
+		N::FSDirSpec dir( fileSpec );
 		
 		N::FSSpecContents_Container contents = N::FSContents( dir );
 		
@@ -475,7 +480,7 @@ namespace Genie
 	{
 		N::FSDirSpec rootDir( N::RootDirectory( DetermineVRefNum( MacFromUnixName( name ) + ":" ) ) );
 		
-		return FSTreePtr( new FSTree_FSSpec( rootDir & "" ) );
+		return FSTreePtr( new FSTree_FSSpec( rootDir / "" ) );
 	}
 	
 	FSNode Volumes_Details::ConvertToFSNode( N::FSVolumeRefNum vRefNum )
