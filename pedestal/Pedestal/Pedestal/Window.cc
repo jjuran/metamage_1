@@ -11,9 +11,6 @@
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Quickdraw.h"
-
 
 namespace Pedestal
 {
