@@ -6,9 +6,6 @@
 #ifndef FSCONTENTS_H
 #define FSCONTENTS_H
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Nitrogen Extras / Iteration
 #include "Iteration/IndexedValueContainer.h"
 
