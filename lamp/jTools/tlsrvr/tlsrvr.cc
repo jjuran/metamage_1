@@ -17,7 +17,7 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen Carbon
+// Nitrogen
 #include "Nitrogen/Events.h"
 
 // Nitrogen Extras / Templates
@@ -37,6 +37,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace NX = NitrogenExtras;
 namespace O = Orion;
 
@@ -179,7 +180,7 @@ static void MyOSStatusLogger( N::OSStatus error, const char *file, int line )
 
 int O::Main( int argc, const char *const argv[] )
 {
-	//N::SetOSStatusLoggingProc( MyOSStatusLogger );
+	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	
 	O::Options options = DefineOptions();
 	options.GetOptions( argc, argv );
