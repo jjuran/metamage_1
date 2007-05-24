@@ -34,9 +34,6 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Convert.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
-
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
 
@@ -118,7 +115,7 @@ Offset	Type	Description
 namespace MacBinary
 {
 	
-	namespace FS = FileSystem;
+	using namespace io::path_descent_operators;
 	
 	using N::fsRdPerm;
 	using N::fsWrPerm;
@@ -548,7 +545,7 @@ namespace MacBinary
 	{
 		MakePartialHeaderForItem( pb, h );
 		
-		bool isDir = N::PBTestIsDirectory( pb );
+		bool isDir = io::item_is_directory( pb );
 		
 		if ( isDir )
 		{
@@ -649,7 +646,7 @@ namespace MacBinary
 		
 		cInfo.hFileInfo.ioNamePtr = const_cast< unsigned char* >( file.name );
 		
-		bool isDir = N::PBTestIsDirectory( cInfo );
+		bool isDir = io::item_is_directory( cInfo );
 		
 		if ( isDir )
 		{
@@ -764,7 +761,7 @@ namespace MacBinary
 		
 		ConstStr63Param name = h.Get< kFileName >();
 		
-		itsFrame.file = itsFrame.destDir & name;
+		itsFrame.file = itsFrame.destDir / name;
 		
 		if ( itIsFolder )
 		{
@@ -850,7 +847,7 @@ namespace MacBinary
 			
 			itsDataForkLength -= dataBytes;
 			
-			FS::Write( itsDataFork, data, dataBytes );
+			io::write( itsDataFork, data, dataBytes );
 			
 			data += PaddedLength( dataBytes, kMacBinaryBlockSize );
 		}
@@ -861,7 +858,7 @@ namespace MacBinary
 			
 			itsResourceForkLength -= resourceBytes;
 			
-			FS::Write( itsResourceFork, data, resourceBytes );
+			io::write( itsResourceFork, data, resourceBytes );
 			
 			data += PaddedLength( resourceBytes, kMacBinaryBlockSize );
 		}
@@ -907,8 +904,8 @@ namespace MacBinary
 				}
 				else
 				{
-					FS::Close( itsDataFork     );
-					FS::Close( itsResourceFork );
+					N::FSClose( itsDataFork     );
+					N::FSClose( itsResourceFork );
 				}
 				
 				if ( !itsFrame.comment.empty() )
