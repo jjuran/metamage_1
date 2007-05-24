@@ -17,12 +17,12 @@
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 
+// GetPathname
+#include "GetPathname.hh"
+
 // Nitrogen Extras / Templates
 #include "Templates/FunctionalExtensions.h"
 #include "Templates/PointerToFunction.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
 
 // BitsAndBytes
 #include "StringFilters.hh"
@@ -317,7 +317,7 @@ namespace ALine
 				                search.end(),
 				                sourceDirs.begin(),
 				                std::bind1st( N::PtrFun( FindSearchDir ),
-					                          N::FSpGetPOSIXPathname( NN::Convert< FSSpec >( projFolder ) ) ) );
+					                          GetPOSIXPathname( NN::Convert< FSSpec >( projFolder ) ) ) );
 			}
 			else
 			{
@@ -494,7 +494,7 @@ namespace ALine
 			
 			if ( io::item_exists( sourceDotListfile ) )
 			{
-				std::string pathname = N::FSpGetPOSIXPathname( sourceDotListfile );
+				std::string pathname = GetPOSIXPathname( sourceDotListfile );
 				
 				sourceList = ReadSourceDotList( pathname );
 			}
