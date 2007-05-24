@@ -46,6 +46,8 @@ namespace ALine
 	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
 	
+	using namespace io::path_descent_operators;
+	
 	using BitsAndBytes::q;
 	using BitsAndBytes::qq;
 	
@@ -138,25 +140,25 @@ namespace ALine
 			actualName = filename.substr( 1, std::string::npos );
 		}
 		
-		if ( io::item_exists( sharedLibs & actualName ) )
+		if ( io::item_exists( sharedLibs / actualName ) )
 		{
-			return sharedLibs & filename;
+			return sharedLibs / filename;
 		}
-		else if ( io::item_exists( ppcLibs & actualName ) )
+		else if ( io::item_exists( ppcLibs / actualName ) )
 		{
-			return ppcLibs & filename;
+			return ppcLibs / filename;
 		}
-		else if ( io::item_exists( libs68K & actualName ) )
+		else if ( io::item_exists( libs68K / actualName ) )
 		{
-			return libs68K & filename;
+			return libs68K / filename;
 		}
-		else if ( io::item_exists( mwppcLibs & actualName ) )
+		else if ( io::item_exists( mwppcLibs / actualName ) )
 		{
-			return mwppcLibs & filename;
+			return mwppcLibs / filename;
 		}
-		else if ( io::item_exists( mw68kLibs & actualName ) )
+		else if ( io::item_exists( mw68kLibs / actualName ) )
 		{
-			return mw68kLibs & filename;
+			return mw68kLibs / filename;
 		}
 		else
 		{
@@ -170,7 +172,7 @@ namespace ALine
 	
 	static FSSpec FindImportLibraryInProject( const std::string& libName, const Project& project )
 	{
-		FSSpec lib = project.ProjectFolder() & libName;
+		FSSpec lib = project.ProjectFolder() / libName;
 		
 		if ( !io::item_exists( lib ) )
 		{
@@ -274,25 +276,16 @@ namespace ALine
 	
 	static void GetProjectLib( const Project& project, std::vector< FSSpec >* const& outUsed )
 	{
-		using namespace NN::Operators;
-		
-		try
+		if ( project.Product() == productStaticLib )
 		{
-			bool staticLib = project.Product() == productStaticLib;
+			N::FSDirSpec libOutput = ProjectLibrariesFolder( project.Name(), gTargetName );
 			
-			FSSpec lib = ( staticLib ? ProjectLibrariesFolder( project.Name(),
-			                                                   gTargetName )
-			                         : project.ProjectFolder() << "Output" )
-			             & project.LibraryFilename();
+			FSSpec lib = libOutput / project.LibraryFilename();
 			
 			if ( io::item_exists( lib ) )
 			{
 				outUsed->push_back( lib );
 			}
-		}
-		catch ( ... )
-		{
-			
 		}
 	}
 	
@@ -324,10 +317,10 @@ namespace ALine
 	
 	static void CreateAppBundle( const N::FSDirSpec& location, const std::string& name )
 	{
-		N::FSDirSpec package   = DirCreate_Idempotent( location & name );
-		N::FSDirSpec contents  = DirCreate_Idempotent(   package  & "Contents" );
-		N::FSDirSpec macOS     = DirCreate_Idempotent(     contents & "MacOS" );
-		N::FSDirSpec resources = DirCreate_Idempotent(     contents & "Resources" );
+		N::FSDirSpec package   = DirCreate_Idempotent( location / name );
+		N::FSDirSpec contents  = DirCreate_Idempotent(   package  / "Contents" );
+		N::FSDirSpec macOS     = DirCreate_Idempotent(     contents / "MacOS" );
+		N::FSDirSpec resources = DirCreate_Idempotent(     contents / "Resources" );
 	}
 	
 	static std::string paren( const std::string& s )
@@ -420,7 +413,7 @@ namespace ALine
 		
 		using namespace NN::Operators;
 		
-		FSSpec outFile = libsDir & linkName;
+		FSSpec outFile = libsDir / linkName;
 		bool outFileExists = io::item_exists( outFile );
 		
 		MacDate outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
@@ -435,7 +428,7 @@ namespace ALine
 		{
 			std::string sourceName = io::get_filename_string( *it );
 			
-			FSSpec objectFile = objectsDir & ObjectFileName( sourceName );
+			FSSpec objectFile = objectsDir / ObjectFileName( sourceName );
 			
 			needToLink =    needToLink
 			             || !io::file_exists( objectFile )
@@ -519,13 +512,16 @@ namespace ALine
 		if ( bundle )
 		{
 			std::string bundleName = linkName + ".app";
+			
 			CreateAppBundle( libsDir, bundleName );
-			N::FSDirSpec contents = libsDir << bundleName << "Contents";
-			outFile = contents << "MacOS" & linkName;
+			
+			N::FSDirSpec contents( libsDir / bundleName / "Contents" );
+			
+			outFile = contents / "MacOS" / linkName;
 			
 			const N::OSType codeZero = N::OSType( 0 );
 			
-			FSSpec pkgInfo = contents & "PkgInfo";
+			FSSpec pkgInfo = contents / "PkgInfo";
 			
 			try
 			{
@@ -583,10 +579,7 @@ namespace ALine
 				std::string bundleName = linkName + ".app";
 				std::string rsrcFileName = linkName + ".rsrc";
 				
-				rsrcFile = libsDir << bundleName
-				                   << "Contents"
-				                   << "Resources"
-				           & rsrcFileName;
+				rsrcFile = libsDir / bundleName / "Contents" / "Resources" / rsrcFileName;
 				
 				//rezCommand = "/Developer/Tools/Rez -append -d __ALINE_REZ_OSX__ -useDF";
 				rezCommand = "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF";
