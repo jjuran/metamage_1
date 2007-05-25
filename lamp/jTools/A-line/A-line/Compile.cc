@@ -69,34 +69,6 @@ namespace ALine
 	using BitsAndBytes::qq;
 	
 	
-	// FIXME:  Way duplicate
-	/*
-	static FSSpec DescendPathToFile( N::FSDirSpec dir, const std::string& path )
-	{
-		typedef std::string::size_type size_type;
-		const size_type npos = std::string::npos;
-		
-		size_type start = 0;
-		
-		while ( true )
-		{
-			size_type stop = path.find( '/', start );
-			std::string unit = path.substr( start, stop - start );
-			
-			if ( stop == npos )
-			{
-				return dir & unit;
-			}
-			
-			dir = dir << unit;
-			start = stop + 1;
-		}
-		
-		// Not reached
-		return FSSpec();
-	}
-	*/
-	
 	static std::string MakeMacroDefinition( const std::pair< const std::string, std::string >& value )
 	{
 		return "-D" + value.first + "=" + q( value.second );
