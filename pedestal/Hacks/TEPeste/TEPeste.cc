@@ -11,6 +11,7 @@
 #include <Resources.h>
 #include <Sound.h>
 #include <TextEdit.h>
+#include <OSUtils.h>
 
 // Standard C/C++
 #include <cstring>
@@ -30,41 +31,34 @@ namespace Ag = Silver;
 using namespace Ag::Trap_ProcPtrs;
 
 
+static const char* gGags[] =
+{
+	"Boo!",
+	"Whazzuuup!",
+	"Nobody expects the Spanish Inquisition!",
+	"You REALLY ought to get some sleep...",
+	"¥ Vote for Joshua Juran ¥",
+	""
+};
+
+static const unsigned kCountOfGags = sizeof gGags / sizeof gGags[0] - 1;
+
 static bool gLastTimeWasAGag;
 
 
-static bool ShouldDoAGag()
+inline bool ShouldDoAGag()
 {
 	return !gLastTimeWasAGag  &&  (TickCount() & 3) == 0;
 }
 
-static const char* PickAGag( short which )
+inline const char* PickAGag( short which )
 {
-	switch ( which )
-	{
-		case 0:
-			return "Boo!";
-		
-		case 1:
-			return "Whazzuuup!";
-		
-		case 2:
-			return "Nobody expects the Spanish Inquisition!";
-		
-		case 3:
-			return "You REALLY ought to get some sleep...";
-		
-		case 4:
-			return "¥ Vote for Joshua Juran ¥";
-		
-		default:
-			return "";
-	}
+	return gGags[ which ];
 }
 
 static void Payload( TEHandle hTE )
 {
-	const char* gag = PickAGag( TickCount() % 5 );
+	const char* gag = PickAGag( TickCount() % kCountOfGags );
 	
 	long len = std::strlen( gag );
 	long start = hTE[0]->selStart;
@@ -77,12 +71,9 @@ static void Payload( TEHandle hTE )
 	
 	TESetSelect( start, start + len, hTE );
 	
-	UInt32 now = TickCount();
+	UInt32 finalTicks;
 	
-	while ( TickCount() < now + 30 )
-	{
-		//
-	}
+	::Delay( 30, &finalTicks );
 }
 
 namespace
