@@ -30,6 +30,13 @@ namespace jTools
 	namespace Div = Divergence;
 	
 	
+	static const char* kInvariantMWCOptions = "-nosyspath "
+			                                  "-w all,nounusedarg,noimplicit,nonotinlined "
+			                                  "-ext o "
+			                                  "-maxerrors 8 "
+			                                  "-convertpaths -nomapcr "
+			                                  "-proto strict";
+	
 	static std::string CommandFromArch( const std::string& arch )
 	{
 		if ( arch == "m68k" )
@@ -58,29 +65,6 @@ namespace jTools
 		return "";
 	}
 	
-	/*
-	enum
-	{
-		optCompile, 
-		optDebug, 
-		optOutput,
-		optIncludePrefix
-	};
-	
-	static O::Options DefineOptions()
-	{
-		O::Options options;
-		
-		options.DefineSetFlag( "-c", optCompile );
-		options.DefineSetFlag( "-g", optDebug );
-		options.DefineSetString( "-o", optOutput );
-		
-		options.DefineSetString( "-include", optIncludePrefix );
-		
-		return options;
-	}
-	*/
-	
 	static std::string MacPathFromPOSIXPath( const char* pathname )
 	{
 		FSSpec item = Div::ResolvePathToFSSpec( pathname );
@@ -93,23 +77,19 @@ namespace jTools
 		return "'" + MacPathFromPOSIXPath( pathname ) + "'";
 	}
 	
+	static std::string OutputFile( const char* pathname )
+	{
+		const char* dot = std::strrchr( pathname, '.' );
+		
+		bool header = dot[1] == 'h';
+		
+		return (header ? "-precompile " : "-o ") + QuotedMacPathFromPOSIXPath( pathname );
+	}
+	
 	static int Main( int argc, const char *const argv[] )
 	{
-		/*
-		O::Options options = DefineOptions();
-		options.GetOptions( argc, argv );
-		
-		const std::vector< const char* >& params = options.GetFreeParams();
-		
-		if ( params.size() == 0 )
-		{
-			Io::Err <<  "Usage:  ??\n";
-			return 0;
-		}
-		*/
-		
 		std::string command = TARGET_CPU_68K ? "MWC68K" : "MWCPPC";
-		std::string mwcArgs;
+		std::string mwcArgs = kInvariantMWCOptions;
 		std::string translatedPath;
 		
 		while ( const char* arg = *++argv )
@@ -122,21 +102,43 @@ namespace jTools
 						continue;
 					
 					case 'a':
-						command = CommandFromArch( *++argv );
-						continue;
+						if ( std::strcmp( arg + 1, "arch" ) == 0 )
+						{
+							command = CommandFromArch( *++argv );
+							continue;
+						}
+						break;
 					
 					case 'f':
 						arg = TranslateCodeGenFlag( arg );
 						break;
 					
+					case 'g':
+						arg = "-sym full";
+						break;
+					
+					case 'O':
+						arg = arg[1] == '0' ? "-opt off"
+						    : arg[1] == '4' ? "-opt full"
+						    :                 arg;
+						break;
+					
 					case 'o':
-						translatedPath = "-o " + QuotedMacPathFromPOSIXPath( *++argv );
+						translatedPath = OutputFile( *++argv );
 						arg = translatedPath.c_str();
 						break;
 					
 					case 'I':
 						translatedPath = "-I" + QuotedMacPathFromPOSIXPath( arg + 2 );
 						arg = translatedPath.c_str();
+						break;
+					
+					case 'i':
+						if ( std::strcmp( arg + 1, "include" ) == 0 )
+						{
+							translatedPath = "-prefix" + QuotedMacPathFromPOSIXPath( arg + 2 );
+							arg = translatedPath.c_str();
+						}
 						break;
 					
 					default:
