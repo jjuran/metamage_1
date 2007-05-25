@@ -157,6 +157,11 @@ namespace RunToolServer
 		if ( stat != 0 )
 		{
 			Io::Out << "Reply stat is '" << stat << "'.\n";
+			
+			if ( stat == -1 )
+			{
+				stat = 127;
+			}
 		}
 		
 		return stat;
