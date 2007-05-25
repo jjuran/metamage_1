@@ -24,18 +24,29 @@
 
 namespace O = Orion;
 
+
+static int exit_from_wait( int stat )
+{
+	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+	           :                       -1;
+	
+	return result;
+}
+
+
 namespace jTools
 {
 	
 	namespace Div = Divergence;
 	
 	
-	static const char* kInvariantMWCOptions = "-nosyspath "
-			                                  "-w all,nounusedarg,noimplicit,nonotinlined "
-			                                  "-ext o "
-			                                  "-maxerrors 8 "
-			                                  "-convertpaths -nomapcr "
-			                                  "-proto strict";
+	static const char* kInvariantMWCOptions = " -nosyspath"
+			                                  " -w all,nounusedarg,noimplicit,nonotinlined"
+			                                  " -ext o"
+			                                  " -maxerrors 8"
+			                                  " -convertpaths -nomapcr"
+			                                  " -proto strict";
 	
 	static std::string CommandFromArch( const std::string& arch )
 	{
@@ -92,13 +103,20 @@ namespace jTools
 		std::string mwcArgs = kInvariantMWCOptions;
 		std::string translatedPath;
 		
+		bool verbose = false;
+		
 		while ( const char* arg = *++argv )
 		{
 			if ( arg[0] == '-' )
 			{
 				switch ( arg[1] )
 				{
+					case 'v':
+						verbose = true;
+						continue;
+					
 					case 'c':
+						// 'gcc -c' means compile
 						continue;
 					
 					case 'a':
@@ -118,8 +136,8 @@ namespace jTools
 						break;
 					
 					case 'O':
-						arg = arg[1] == '0' ? "-opt off"
-						    : arg[1] == '4' ? "-opt full"
+						arg = arg[2] == '0' ? "-opt off"
+						    : arg[2] == '4' ? "-opt full"
 						    :                 arg;
 						break;
 					
@@ -162,9 +180,14 @@ namespace jTools
 		
 		std::string output = "tlsrvr -- " + command + mwcArgs + '\n';
 		
-		write( STDOUT_FILENO, output.data(), output.size() );
+		if ( verbose )
+		{
+			write( STDOUT_FILENO, output.data(), output.size() );
+		}
 		
-		return 0;
+		int wait_status = system( output.c_str() );
+		
+		return exit_from_wait( wait_status );
 	}
 	
 }
