@@ -140,7 +140,7 @@ namespace ALine
 	
 	bool ProjectHasSystemIncludes( const N::FSDirSpec& folder )
 	{
-		return io::item_exists( folder / "SystemIncludes" );
+		return false;
 	}
 	
 	N::FSDirSpec ProjectSourcesFolder( const N::FSDirSpec& folder )
@@ -176,9 +176,7 @@ namespace ALine
 	{
 		N::FSDirSpec source = folder;
 		
-		try { return source /= "SystemIncludes"; } catch ( N::FNFErr ) {}
 		try { return source /= "Includes";       } catch ( N::FNFErr ) {}
-		try { return source /= "include";        } catch ( N::FNFErr ) {}
 		try { return source /= "include";        } catch ( N::FNFErr ) {}
 		
 		return ProjectSourcesFolder( folder );
