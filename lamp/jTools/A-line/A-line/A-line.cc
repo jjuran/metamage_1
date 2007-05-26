@@ -65,9 +65,6 @@ namespace ALine
 	namespace NN = Nucleus;
 	namespace CD = CompileDriver;
 	
-	using std::string;
-	using std::vector;
-	
 	using BitsAndBytes::q;
 	
 	static OptionsRecord gOptions;
@@ -180,7 +177,7 @@ namespace ALine
 	
 	static void BuildTarget( const Project& project, TargetInfo targetInfo )
 	{
-		const vector< ProjName >& prereqs = project.AllUsedProjects();
+		const std::vector< ProjName >& prereqs = project.AllUsedProjects();
 		std::for_each
 		(
 			prereqs.begin(), 
@@ -302,7 +299,7 @@ int O::Main( int argc, char const* const argv[] )
 	O::Options options = DefineOptions();
 	options.GetOptions( argc, argv );
 	
-	const vector< const char* >& params = options.GetFreeParams();
+	const std::vector< const char* >& params = options.GetFreeParams();
 	
 	CD::Platform targetPlatform;
 	BuildVariety buildVariety = buildDefault;
@@ -343,7 +340,7 @@ int O::Main( int argc, char const* const argv[] )
 	
 	for ( int i = 0;  i < params.size();  ++i )
 	{
-		const string& proj = params[ i ];
+		const std::string& proj = params[ i ];
 		
 		gOptions.platform = targetPlatform;
 		
@@ -380,7 +377,7 @@ int O::Main( int argc, char const* const argv[] )
 		catch ( BadSourceAlias& ex )
 		{
 			Io::Err << argv[ 0 ] 
-				<< ": Unresolvable source alias " << q( NN::Convert< string >( ex.alias.name ) )
+				<< ": Unresolvable source alias " << q( NN::Convert< std::string >( ex.alias.name ) )
 				<< " in " << ex.proj.Name() << "\n";
 		}
 		catch ( N::OSStatus err )
