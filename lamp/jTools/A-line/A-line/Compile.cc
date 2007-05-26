@@ -126,25 +126,9 @@ namespace ALine
 		std::transform( options.UserOnlyIncludeDirs().begin(),
 		                options.UserOnlyIncludeDirs().end(),
 		                includeDirPathnames.begin(),
-		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetMacPathname ) ) );
+		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
-		inc << "-I-";
-		
-		if ( options.UserAndSystemIncludeDirs().size() > 0 )
-		{
-			includeDirPathnames.clear();
-			
-			includeDirPathnames.resize( options.UserAndSystemIncludeDirs().size() );
-			
-			std::transform( options.UserAndSystemIncludeDirs().begin(),
-			                options.UserAndSystemIncludeDirs().end(),
-			                includeDirPathnames.begin(),
-			                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetMacPathname ) ) );
-			
-			inc << MakeIncludeDirOptions( includeDirPathnames );
-		}
 		
 		CommandGenerator cmdgen( options.Target() );
 		
@@ -157,13 +141,6 @@ namespace ALine
 			command << "-cwd source";
 		}
 		
-		/*
-		for ( Map::const_iterator it = options.Macros().begin();  it != options.Macros().end();  ++it )
-		{
-			command << MakeMacroDefinition( *it );
-		}
-		*/
-		
 		command << join( options.Macros().begin(),
 		                 options.Macros().end(),
 		                 " ",
@@ -173,15 +150,15 @@ namespace ALine
 		
 		if ( options.HasPrecompiledHeaderImage() )
 		{
-			command << cmdgen.Prefix( GetMacPathname( options.PrecompiledHeaderImage() ) );
+			command << cmdgen.Prefix( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
 		}
 		
-		command << cmdgen.Output( GetMacPathname( options.Output() ) );
+		command << cmdgen.Output( GetPOSIXPathname( options.Output() ) );
 		
 		// Add the source file to the command line
-		command << cmdgen.Input( GetMacPathname( file ) );
+		command << cmdgen.Input( GetPOSIXPathname( file ) );
 		
-		return EnvironmentTraits< kMPWEnvironment >::MakeNativeCommand( command );
+		return command;
 	}
 	
 	static bool IsCFile( const std::string& name )
@@ -379,25 +356,9 @@ namespace ALine
 		std::transform( options.UserOnlyIncludeDirs().begin(),
 		                options.UserOnlyIncludeDirs().end(),
 		                includeDirPathnames.begin(),
-		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetMacPathname ) ) );
+		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
-		inc << "-I-";
-		
-		if ( options.UserAndSystemIncludeDirs().size() > 0 )
-		{
-			includeDirPathnames.clear();
-			
-			includeDirPathnames.resize( options.UserAndSystemIncludeDirs().size() );
-			
-			std::transform( options.UserAndSystemIncludeDirs().begin(),
-			                options.UserAndSystemIncludeDirs().end(),
-			                includeDirPathnames.begin(),
-			                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetMacPathname ) ) );
-			
-			inc << MakeIncludeDirOptions( includeDirPathnames );
-		}
 		
 		CommandGenerator cmdgen( options.Target() );
 		
@@ -413,12 +374,12 @@ namespace ALine
 		// Add the include directories
 		command << inc;
 		
-		command << cmdgen.PrecompiledOutput( GetMacPathname( options.PrecompiledHeaderImage() ) );
+		command << cmdgen.Output( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
 		
 		// Add the source file to the command line
-		command << cmdgen.Input( GetMacPathname( file ) );
+		command << cmdgen.Input( GetPOSIXPathname( file ) );
 		
-		return EnvironmentTraits< kMPWEnvironment >::MakeNativeCommand( command );
+		return command;
 	}
 	
 	static std::string PrecompileWithGCC( const CompilerOptions& options, const FSSpec& file )
@@ -433,22 +394,6 @@ namespace ALine
 		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
-		//inc << "-I-";  // This makes gcc pissy
-		
-		if ( options.UserAndSystemIncludeDirs().size() > 0 )
-		{
-			includeDirPathnames.clear();
-			
-			includeDirPathnames.resize( options.UserAndSystemIncludeDirs().size() );
-			
-			std::transform( options.UserAndSystemIncludeDirs().begin(),
-			                options.UserAndSystemIncludeDirs().end(),
-			                includeDirPathnames.begin(),
-			                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
-			
-			inc << MakeIncludeDirOptions( includeDirPathnames );
-		}
 		
 		inc << "-I/Developer/Headers/FlatCarbon";
 		
@@ -475,7 +420,7 @@ namespace ALine
 		
 		command << inc;
 		
-		command << cmdgen.PrecompiledOutput( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
+		command << cmdgen.Output( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
 		
 		command << cmdgen.Input( GetPOSIXPathname( file ) );
 		

@@ -170,10 +170,11 @@ namespace ALine
 		// CodeWarrior only
 		std::string MWLinkerName() const  { return "MWLink" + MWToolSuffix(); }
 		
+		std::string UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }
+		
 		std::string CompilerName() const
 		{
-			return gnu ? "gcc -c"
-			           : "MWC" + MWToolSuffix();
+			return UnixCompilerName() + " -c";
 		}
 		
 		std::string LinkerName() const
@@ -190,18 +191,9 @@ namespace ALine
 		
 		std::string TargetArchitecture() const
 		{
-			return gnu ? ppc ? "-arch ppc"
-			                 : "-arch i386"
-			           : "";
-		}
-		
-		// CodeWarrior only
-		std::string MWMiscCompilerOptions() const
-		{
-			return "-nosyspath "
-			       "-w all,nounusedarg,noimplicit,nonotinlined "
-			       "-ext o "
-			       "-maxerrors 8";
+			return   ppc  ? "-arch ppc"
+			       : m68k ? "-arch m68k"
+			       :        "-arch i386";
 		}
 		
 		// This means that we pass the precompiled output, not the header source.
@@ -219,42 +211,13 @@ namespace ALine
 		
 		std::string Prefix( const std::string& pathname ) const
 		{
-			return std::string( gnu ? "-include" : "-prefix" ) + " " + q( pathname );
+			return "-include " + q( pathname );
 		}
-		
-		std::string ConvertPaths() const { return gnu ? "" : "-convertpaths"; }
-		
-		std::string Newlines() const  { return gnu ? "" : "-nomapcr"; }
-		
-		std::string PreprocessorOptions() const
-		{
-			std::string result;
-			
-			result = ConvertPaths()
-			       + " " + Newlines();
-			
-			return result;
-		}
-		
-		
-		std::string PascalStrings() const  { return gnu ? "-fpascal-strings" : ""; }
-		
-		std::string StrictPrototypes() const  { return gnu ? "" : "-proto strict"; }
-		
-		std::string NoRTTI() const  { return gnu ? "-fno-rtti" : "-RTTI off"; }
 		
 		std::string LanguageOptions() const
 		{
-			std::string result;
-			
 			// gcc won't compile shared_ptr without RTTI
-			
-			result = PascalStrings()
-			       + " " + StrictPrototypes()
-			       + (gnu ? ""
-			              : " " + NoRTTI());
-			
-			return result;
+			return "-fpascal-strings" + std::string( gnu ? "" : " -fno-rtti" );
 		}
 		
 		
@@ -274,30 +237,37 @@ namespace ALine
 		// CodeWarrior only
 		std::string MWCodeModel() const
 		{
-			return m68k ? std::string() + "-model far" + " " + (cfm ? "-model CFMflatdf" : "")
-			            : "";
+			return m68k && cfm ? "-mCFM" : "";
 		}
 		
 		// CodeWarrior only
-		std::string MW68KGlobals() const  { return a4 ? "-a4" : ""; }
+		std::string MW68KGlobals() const  { return a4 ? "-mA4-globals" : ""; }
 		
 		std::string Optimization() const
 		{
-			return gnu ? debug ? "-O0"
-			                   : "-O2"
-			           : debug ? "-opt off"
-			                   : "-opt full";
+			return   debug ? "-O0"
+			       : gnu   ? "-O2"
+			       :         "-O4";
+		}
+		
+		std::string Debugging() const
+		{
+			return debug ? "-g" : "";
 		}
 		
 		std::string CodeGenOptions() const
 		{
-			return Optimization() + " " + ( gnu ? debug ? "-g"
-			                                            : ""
-			                                    :         MWDebugSymbols()
-			                                      + " " + MWNoMacsBugSymbols()
-			                                      + " " + CFMTracebackTables()
-			                                      + " " + MWCodeModel()
-			                                      + " " + MW68KGlobals() );
+			std::string result = Optimization() + " " + Debugging();
+			
+			if ( !gnu )
+			{
+				result += " " + MWDebugSymbols()
+			            + " " + CFMTracebackTables()
+			            + " " + MWCodeModel()
+			            + " " + MW68KGlobals();
+			}
+			
+			return result;
 		}
 		
 		std::string AllCompilerOptions() const
@@ -305,8 +275,6 @@ namespace ALine
 			std::string result;
 			
 			result =         TargetArchitecture()
-			         + " " + ( gnu ? "" : MWMiscCompilerOptions() )
-			         + " " + PreprocessorOptions()
 			         + " " + LanguageOptions()
 			         + " " + CodeGenOptions();
 			
@@ -316,11 +284,6 @@ namespace ALine
 		std::string Output( const std::string& pathname ) const
 		{
 			return "-o " + q( pathname );
-		}
-		
-		std::string PrecompiledOutput( const std::string& pathname ) const
-		{
-			return std::string( gnu ? "-o" : "-precompile" ) + " " + q( pathname );
 		}
 		
 		std::string Input( const std::string& pathname ) const
