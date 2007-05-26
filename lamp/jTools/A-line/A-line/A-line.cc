@@ -22,16 +22,19 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Shared.h"
 
-// Nitrogen / Carbon
+// Nitrogen
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Threads.h"
 
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
+
+// Nitrogen Extras / Utilities
+#include "Utilities/Processes.h"
 
 // BitsAndBytes
 #include "StringFilters.hh"
@@ -63,6 +66,7 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace NX = NitrogenExtras;
 	namespace CD = CompileDriver;
 	
 	using BitsAndBytes::q;
@@ -76,11 +80,54 @@ namespace ALine
 		return gOptions;
 	}
 	
+	static void SwapFrontProcess( const ProcessSerialNumber& from, const ProcessSerialNumber& to )
+	{
+		try
+		{
+			if ( N::SameProcess( from, N::GetFrontProcess() ) )
+			{
+				N::SetFrontProcess( to );
+			}
+		}
+		catch ( ... )
+		{
+		}
+	}
+	
+	class ApplicationLayerSwitch
+	{
+		private:
+			ProcessSerialNumber itsTargetApp;
+			
+			ApplicationLayerSwitch           ( const ApplicationLayerSwitch& );
+			ApplicationLayerSwitch& operator=( const ApplicationLayerSwitch& );
+		
+		public:
+			ApplicationLayerSwitch( N::OSType signature ) : itsTargetApp( NX::LaunchApplication( signature ) )
+			{
+				SwapFrontProcess( N::CurrentProcess(), itsTargetApp );
+			}
+			
+			~ApplicationLayerSwitch()
+			{
+				SwapFrontProcess( itsTargetApp, N::CurrentProcess() );
+			}
+	};
+	
+	
 	static void ExecuteCommand( const std::string& command )
 	{
 		if ( gOptions.verbose )
 		{
 			Io::Out << "  " << command << "\n";
+		}
+		
+		if      ( command.substr( 0, 6 ) != "tlsrvr" )  {}
+		else if ( command.substr( 0, 4 ) != "mwcc"   )  {}
+		{
+			const N::OSType sigToolServer = N::OSType( 'MPSX' );
+			
+			static ApplicationLayerSwitch activateToolServer( sigToolServer );
 		}
 		
 		int wait_result = system( command.c_str() );
