@@ -106,7 +106,7 @@ namespace ALine
 		static std::string MakeNativeCommand( const std::string& command )
 		{
 			// This works either within Genie or in native POSIX.
-			return "tlsrvr --switch --escape -- " + command;
+			return "tlsrvr --escape -- " + command;
 		}
 	};
 	
