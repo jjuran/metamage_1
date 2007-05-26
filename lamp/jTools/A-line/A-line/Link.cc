@@ -469,17 +469,20 @@ namespace ALine
 				needToLink = found != usedLibFiles.end();
 			}
 			
-			for ( std::vector< FSSpec >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
+			if ( !gnu )
 			{
-				if ( io::get_filename_string( *it ) == "Orion.lib" )
+				for ( std::vector< FSSpec >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
 				{
-					expeditedLib = q( GetPathname( *it ) );
-					
-					std::copy( it + 1, usedLibFiles.end(), it );
-					
-					usedLibFiles.resize( usedLibFiles.size() - 1 );
-					
-					break;
+					if ( io::get_filename_string( *it ) == "Orion.lib" )
+					{
+						expeditedLib = q( GetPathname( *it ) );
+						
+						std::copy( it + 1, usedLibFiles.end(), it );
+						
+						usedLibFiles.resize( usedLibFiles.size() - 1 );
+						
+						break;
+					}
 				}
 			}
 			
