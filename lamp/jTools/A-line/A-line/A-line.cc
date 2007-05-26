@@ -70,39 +70,6 @@ namespace ALine
 	
 	using BitsAndBytes::q;
 	
-	static void MyOSStatusLogger( N::OSStatus error, const char *file, int line )
-	{
-		static int level = 0;
-		
-		if ( error != -43 )
-		{
-			return;
-		}
-		
-		if ( std::string( file ) == "Files.cp"  &&  ( line == 114 || line == 282 ) )
-		{
-			return;
-		}
-		
-		++level;
-		
-		ASSERT( level < 5 );
-		
-		try
-		{
-			Io::Err << "# LOG: OSStatus " << error << ".  \n"
-					   "File '" << file << "'; Line " << line << "\n";
-			
-			sleep( 0 );
-		}
-		catch ( ... )
-		{
-			::SysBeep( 30 );
-		}
-		
-		--level;
-	}
-	
 	static OptionsRecord gOptions;
 	
 	static std::vector< std::string > gCommands;
