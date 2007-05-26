@@ -115,16 +115,6 @@ namespace ALine
 		return intfsAndLibs;
 	}
 	
-	static std::string GetFileName( const FSSpec& file )
-	{
-		return io::get_filename_string( file );
-	}
-	
-	static std::string Pathname( const FSSpec& file )
-	{
-		return GetMacPathname( file );
-	}
-	
 	static FSSpec FindImportLibraryInSystem( const FileName& filename )
 	{
 		N::FSDirSpec libsFolder( InterfacesAndLibraries() / "Libraries" );
