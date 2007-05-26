@@ -367,6 +367,7 @@ namespace ALine
 			
 			case productApplication:
 				command << cmdgen.TargetApplication();
+				if ( gnu )
 				command << cmdgen.TargetArchitecture();
 				
 				needCarbResource =    targetInfo.platform.api     == CD::apiMacCarbon
@@ -393,6 +394,7 @@ namespace ALine
 			case productWish:
 				gccSupported = true;
 				command << cmdgen.TargetCommandLineTool();
+				if ( gnu )
 				command << cmdgen.TargetArchitecture();
 				break;
 			
