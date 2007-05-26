@@ -189,8 +189,6 @@ namespace ALine
 		
 		if ( !needToBuild )  return;
 		
-		sleep( 0 );
-		
 		CompileSources( project, info );
 		LinkProduct   ( project, info );
 	}
