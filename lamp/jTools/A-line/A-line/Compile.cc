@@ -274,9 +274,6 @@ namespace ALine
 	
 	static void BuildSourceFile( CompilerOptions options, const FSSpec& file )
 	{
-		options.DefineMacro( "__ALINE_MAC_FILE__",  qq( GetMacPathname  ( file ) ) );
-		options.DefineMacro( "__ALINE_UNIX_FILE__", qq( GetPOSIXPathname( file ) ) );
-		
 		std::string command;
 		
 		switch ( options.Target().toolkit )
@@ -284,9 +281,11 @@ namespace ALine
 			case toolkitCodeWarrior:
 				command = BuildSourceFileWithCodeWarrior( options, file );
 				break;
+			
 			case toolkitGNU:
 				command = BuildSourceFileWithGCC( options, file );
 				break;
+			
 			default:
 				Io::Err << "Unsupported toolkit\n";
 				throw N::ParamErr();
