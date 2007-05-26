@@ -387,6 +387,11 @@ namespace ShellShock
 			r = SkipWhitespace( r );
 		}
 		
+		if ( resultList.back().pipelines.back().commands.back().args.empty() )
+		{
+			resultList.pop_back();
+		}
+		
 		return resultList;
 	}
 	
