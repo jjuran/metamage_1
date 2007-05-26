@@ -7,7 +7,9 @@
 #define DIVERGENCE_UTILITIES_HH
 
 // Universal Interfaces
+#ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
+#endif
 
 #if TARGET_RT_MAC_MACHO
 #include "Nucleus/Convert.h"
