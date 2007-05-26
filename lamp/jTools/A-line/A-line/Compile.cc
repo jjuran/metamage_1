@@ -95,14 +95,9 @@ namespace ALine
 	{
 		private:
 			std::vector< N::FSDirSpec >& includes;
-			std::vector< N::FSDirSpec >& systemIncludes;
 		
 		public:
-			IncludeDirGatherer( std::vector< N::FSDirSpec >& includes, std::vector< N::FSDirSpec >& systemIncludes )
-			:
-				includes      ( includes ), 
-				systemIncludes( systemIncludes )
-			{}
+			IncludeDirGatherer( std::vector< N::FSDirSpec >& includes ) : includes( includes )  {}
 				
 			void operator()( const ProjName& projName );
 	};
@@ -194,22 +189,6 @@ namespace ALine
 		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
-		//inc << "-I-";  // This makes gcc pissy
-		
-		if ( options.UserAndSystemIncludeDirs().size() > 0 )
-		{
-			includeDirPathnames.clear();
-			
-			includeDirPathnames.resize( options.UserAndSystemIncludeDirs().size() );
-			
-			std::transform( options.UserAndSystemIncludeDirs().begin(),
-			                options.UserAndSystemIncludeDirs().end(),
-			                includeDirPathnames.begin(),
-			                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
-			
-			inc << MakeIncludeDirOptions( includeDirPathnames );
-		}
 		
 		inc << "-I/Developer/Headers/FlatCarbon";
 		
@@ -617,7 +596,6 @@ namespace ALine
 		
 		options.DefineMacro( "__ALINE__" );
 		options.DefineMacro( "JOSHUA_JURAN_EXPERIMENTAL" );
-		options.DefineMacro( "IF_ITS_THAT_COMPLICATED_IT_MUST_BE_WRONG" );
 		
 		if ( targetInfo.platform.api == CD::apiMacCarbon )
 		{
@@ -641,12 +619,8 @@ namespace ALine
 			options.DefineMacro( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
 		}
 		
-		// Select the includes and system includes belonging to the projects we use
-		IncludeDirGatherer gatherer
-		(
-			options.UserOnlyIncludeDirs(), 
-			options.UserAndSystemIncludeDirs()
-		);
+		// Select the includes belonging to the projects we use
+		IncludeDirGatherer gatherer( options.UserOnlyIncludeDirs() );
 		
 		const std::vector< ProjName >& allUsedProjects = project.AllUsedProjects();
 		
