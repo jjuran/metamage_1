@@ -12,21 +12,7 @@
 namespace ALine
 {
 	
-	using std::string;
-	
-	/*
-	struct TargetLibrary        {};
-	struct TargetApplication    {};
-	struct TargetSharedLibrary  {};
-	struct TargetCodeResource   {};
-	
-	static TargetLibrary       targetLibrary;
-	static TargetApplication   targetApplication;
-	static TargetSharedLibrary targetSharedLibrary;
-	static TargetCodeResource  targetCodeResource;
-	*/
-	
-	string& operator<<( string& str, const string& appendage );
+	std::string& operator<<( std::string& str, const std::string& appendage );
 	
 }
 
