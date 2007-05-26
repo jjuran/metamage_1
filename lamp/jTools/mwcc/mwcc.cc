@@ -6,6 +6,12 @@
 // Standard C++
 #include <vector>
 
+// Standard C
+#include <stdlib.h>
+
+// POSIX
+#include <sys/wait.h>
+
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Str.h"
@@ -48,14 +54,21 @@ namespace jTools
 			                                  " -convertpaths -nomapcr"
 			                                  " -proto strict";
 	
+	static bool m68k = false;
+	static bool ppc  = false;
+	
 	static std::string CommandFromArch( const std::string& arch )
 	{
 		if ( arch == "m68k" )
 		{
-			return "MWC68K";
+			m68k = true;
+			
+			return "MWC68K -model far";
 		}
 		else if ( arch == "ppc" )
 		{
+			ppc = true;
+			
 			return "MWCPPC";
 		}
 		
@@ -71,6 +84,18 @@ namespace jTools
 		else if ( flag == "-fno-rtti" )
 		{
 			return "-RTTI off";
+		}
+		else if ( flag == "-mCFM"  &&  m68k )
+		{
+			return "-model CFMflatdf";
+		}
+		else if ( flag == "-mA4-globals" )
+		{
+			return "-a4";
+		}
+		else if ( flag == "-ftraceback" )
+		{
+			return "-tb on";
 		}
 		
 		return "";
@@ -90,11 +115,14 @@ namespace jTools
 	
 	static std::string OutputFile( const char* pathname )
 	{
-		const char* dot = std::strrchr( pathname, '.' );
+		const char* dot   = std::strrchr( pathname, '.' );
+		const char* slash = std::strrchr( pathname, '/' );
 		
-		bool header = dot[1] == 'h';
+		bool hasDot = dot > slash;  // Works even if slash or dot is NULL
 		
-		return (header ? "-precompile " : "-o ") + QuotedMacPathFromPOSIXPath( pathname );
+		bool objectCode = !hasDot || dot[1] == 'o';
+		
+		return (objectCode ? "-o " : "-precompile ") + QuotedMacPathFromPOSIXPath( pathname );
 	}
 	
 	static int Main( int argc, const char *const argv[] )
@@ -127,6 +155,12 @@ namespace jTools
 						}
 						break;
 					
+					case 'm':
+						if ( std::strcmp( arg + 1, "model" ) == 0 )
+						{
+							break;
+						}
+						// fall through
 					case 'f':
 						arg = TranslateCodeGenFlag( arg );
 						break;
@@ -142,8 +176,11 @@ namespace jTools
 						break;
 					
 					case 'o':
-						translatedPath = OutputFile( *++argv );
-						arg = translatedPath.c_str();
+						if ( arg[2] == '\0' )
+						{
+							translatedPath = OutputFile( *++argv );
+							arg = translatedPath.c_str();
+						}
 						break;
 					
 					case 'I':
@@ -154,7 +191,7 @@ namespace jTools
 					case 'i':
 						if ( std::strcmp( arg + 1, "include" ) == 0 )
 						{
-							translatedPath = "-prefix" + QuotedMacPathFromPOSIXPath( arg + 2 );
+							translatedPath = "-prefix " + QuotedMacPathFromPOSIXPath( *++argv );
 							arg = translatedPath.c_str();
 						}
 						break;
@@ -178,7 +215,7 @@ namespace jTools
 			}
 		}
 		
-		std::string output = "tlsrvr -- " + command + mwcArgs + '\n';
+		std::string output = "tlsrvr --escape -- " + command + mwcArgs + '\n';
 		
 		if ( verbose )
 		{
