@@ -103,6 +103,8 @@ namespace ALine
 			ApplicationLayerSwitch& operator=( const ApplicationLayerSwitch& );
 		
 		public:
+			ApplicationLayerSwitch() : itsTargetApp( N::CurrentProcess() )  {}
+			
 			ApplicationLayerSwitch( N::OSType signature ) : itsTargetApp( NX::LaunchApplication( signature ) )
 			{
 				SwapFrontProcess( N::CurrentProcess(), itsTargetApp );
@@ -111,6 +113,18 @@ namespace ALine
 			~ApplicationLayerSwitch()
 			{
 				SwapFrontProcess( itsTargetApp, N::CurrentProcess() );
+			}
+			
+			void Switch( const ProcessSerialNumber& newTarget )
+			{
+				SwapFrontProcess( itsTargetApp, newTarget );
+				
+				itsTargetApp = newTarget;
+			}
+			
+			void Switch( N::OSType newTarget )
+			{
+				Switch( NX::LaunchApplication( newTarget ) );
 			}
 	};
 	
@@ -122,12 +136,16 @@ namespace ALine
 			Io::Out << "  " << command << "\n";
 		}
 		
+		ApplicationLayerSwitch activateToolServerForCommand;
+		
 		if      ( command.substr( 0, 6 ) != "tlsrvr" )  {}
 		else if ( command.substr( 0, 4 ) != "mwcc"   )  {}
 		{
 			const N::OSType sigToolServer = N::OSType( 'MPSX' );
 			
-			static ApplicationLayerSwitch activateToolServer( sigToolServer );
+			//static ApplicationLayerSwitch activateToolServerForSession( sigToolServer );
+			
+			activateToolServerForCommand.Switch( sigToolServer );
 		}
 		
 		int wait_result = system( command.c_str() );
