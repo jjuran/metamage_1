@@ -1700,6 +1700,8 @@ namespace Nitrogen
 	{
 		typedef FSSpec file_spec;
 		
+		typedef FSDirSpec optimized_directory_spec;
+		
 		typedef ConstStr63Param filename_parameter;
 		
 		typedef Nitrogen::Str63 filename_result;
@@ -1715,6 +1717,8 @@ namespace Nitrogen
 	{
 		typedef FSRef file_spec;
 		
+		typedef FSRef optimized_directory_spec;
+		
 		typedef Nitrogen::FSForkRefNum stream;
 		
 		typedef SInt64 byte_count;
@@ -1725,7 +1729,8 @@ namespace Nitrogen
 namespace io
 {
 	
-	template <> struct filespec_traits< FSSpec > : public Nitrogen::FSSpec_Io_Details {};
+	template <> struct filespec_traits< FSSpec              > : public Nitrogen::FSSpec_Io_Details {};
+	template <> struct filespec_traits< Nitrogen::FSDirSpec > : public Nitrogen::FSSpec_Io_Details {};
 	
 	// Get file info
 	
@@ -1783,6 +1788,10 @@ namespace io
 	}
 	
 	// Existence
+	
+	inline bool item_exists     ( const Nitrogen::FSDirSpec& dir )  { return true; }
+	inline bool file_exists     ( const Nitrogen::FSDirSpec& dir )  { return false; }
+	inline bool directory_exists( const Nitrogen::FSDirSpec& dir )  { return true; }
 	
 	inline bool item_exists( const FSSpec& item, CInfoPBRec& cInfo )
 	{
