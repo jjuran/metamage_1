@@ -115,9 +115,12 @@ namespace Nucleus
 
          Owned<Resource,Disposer> Unshare();
          
+         void Reset()                                       { Body empty;  body.Swap( empty );  share = Share(); }
+         
          // For people who are used to the lowercase std::auto_ptr members:
             void swap( Shared& s )                          { Swap( s ); }
             const Resource& get() const                     { return Get(); }
+            void reset()                                    { Reset(); }
      };
 
    class Unshare_Failed {};

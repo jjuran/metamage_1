@@ -283,10 +283,13 @@ namespace Nucleus
 
          Resource Release()                           { return ReleaseWithDisposer().Get(); }
          
+         void Reset()                                 { Body empty;  body.Swap( empty ); }
+         
          // For people who are used to the lowercase std::auto_ptr members:
             void swap( Owned& s )                     { Swap( s ); }
             const Resource& get() const               { return Get(); }
             Resource release()                        { return Release(); }
+            void reset()                              { Reset(); }
      };
 
    template < class Resource, class Disposer >
