@@ -190,8 +190,6 @@ namespace ALine
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
 		
-		inc << "-I/Developer/Headers/FlatCarbon";
-		
 		CommandGenerator cmdgen( options.Target() );
 		
 		std::string command = cmdgen.CompilerName();
@@ -372,8 +370,6 @@ namespace ALine
 		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 		
 		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
-		inc << "-I/Developer/Headers/FlatCarbon";
 		
 		CommandGenerator cmdgen( options.Target() );
 		
