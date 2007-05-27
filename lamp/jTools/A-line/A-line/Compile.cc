@@ -206,7 +206,7 @@ namespace ALine
 			command << "-Wno-non-template-friend";
 		}
 		
-		command << "-Wno-long-double";
+		command << "-Wno-deprecated-declarations -Wno-long-double";
 		
 		command << join( options.Macros().begin(),
 		                 options.Macros().end(),
@@ -389,7 +389,7 @@ namespace ALine
 			command << "-Wno-non-template-friend";
 		}
 		
-		command << "-Wno-long-double";
+		command << "-Wno-deprecated-declarations -Wno-long-double";
 		
 		command << join( options.Macros().begin(),
 		                 options.Macros().end(),
