@@ -1,0 +1,89 @@
+#!/usr/bin/perl -w
+
+# Copyright 1999 Nathan Scott Thompson <quimby at city-net dot com>
+
+=head1 NAME
+
+strings - extract strings
+
+=head1 SYNOPSIS
+
+C<strings [-afo] [-n length] [-t {d|o|x}] [file ...]>
+
+=head1 DESCRIPTION
+
+C<strings> prints strings gleaned from the given files 
+(or from standard input.)  By default strings of less than 4 characters
+are ignored.  A string is considered to be any sequence of graphical ASCII 
+characters (plus space and tab).
+
+Options:
+
+  -f            Print the file name with each string.
+
+  -n length     Set the minimum length of strings to print; 4 by default.
+
+  -o            Print each string with the octal offset in the file.
+                (Same as -to).
+
+  -t {d|o|x}    Print each string with the offset in the file; 
+                specify decimal, octal or hexadecimal respectively.
+
+The -a option is included for compatibility with older versions but does
+nothing.
+
+=head1 BUGS
+
+  Things are seldom what they seem,
+  Skim milk masquerades as cream;
+  Highlows pass as patent leathers;
+  Jackdaws strut in peacock's feathers.
+
+=cut
+
+$usage = "usage: strings [-afo] [-n length] [-t {d|o|x}] [file ...]\n";
+
+use vars qw($opt_a $opt_f $opt_o $opt_n $opt_t);
+use Getopt::Std;
+getopts( 'afon:t:' ) or die $usage;
+
+$opt_n ||= 4;
+$opt_t ||= 'o' if $opt_o;
+if ( $opt_t )
+{
+    $opt_t =~ /[dox]/ or die $usage;
+    $offset_format = "\%07$opt_t ";
+}
+
+# Consider all graphic characters plus space and tab to be printable.
+# Escape all punctuation characters out of paranoia.
+
+$punctuation = join '\\', split //, q/`~!@#$%^&*()-+={}|[]\:";'<>?,.\//;
+$printable = '\w \t' . $punctuation;
+$chunksize = 4096; # whatever
+
+foreach $filename ( @ARGV )
+{
+    open( IN, $filename ) or die "Can't open $filename: $!\n";
+    binmode IN;
+    $offset = 0;
+
+    while ( $_ or read( IN, $_, $chunksize ) )
+    {
+        $offset += length($1) if s/^([^$printable]+)//o;
+        $string = '';
+
+	do {
+            $string .= $1 if s/^([$printable]+)//o;
+        } until ( $_ or ! read( IN, $_, $chunksize ) );
+
+        if ( length($string) >= $opt_n )
+        {
+            print $filename, ':' if $opt_f;
+            printf $offset_format, $offset if $opt_t;
+            print $string, "\n";
+        }
+        $offset += length($string);
+    }
+    close IN;
+}
