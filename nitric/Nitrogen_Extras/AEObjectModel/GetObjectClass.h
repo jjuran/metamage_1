@@ -8,7 +8,9 @@
 
 #include <map>
 
+#ifndef __AEREGISTRY__
 #include <AERegistry.h>
+#endif
 
 #ifndef NITROGEN_AEOBJECTS_H
 #include "Nitrogen/AEObjects.h"
