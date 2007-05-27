@@ -6,6 +6,9 @@
 #ifndef FSCONTENTS_H
 #define FSCONTENTS_H
 
+// Io
+#include "io/walk.hh"
+
 // Nitrogen Extras / Iteration
 #include "Iteration/IndexedValueContainer.h"
 
@@ -68,6 +71,42 @@ namespace Nitrogen
 	inline FSRefContents_Container FSContents( const FSRef& dir )
 	{
 		return FSRefContents_Container( dir );
+	}
+	
+}
+
+namespace io
+{
+	
+	template <> struct directory_contents_traits< Nitrogen::FSDirSpec >
+	{
+		typedef Nitrogen::FSSpecContents_Container container_type;
+	};
+	
+	template <> struct directory_contents_traits< FSSpec >
+	{
+		typedef Nitrogen::FSSpecContents_Container container_type;
+	};
+	
+	template <> struct directory_contents_traits< FSRef >
+	{
+		typedef Nitrogen::FSRefContents_Container container_type;
+	};
+	
+	
+	inline Nitrogen::FSSpecContents_Container directory_contents( const Nitrogen::FSDirSpec& dir )
+	{
+		return Nitrogen::FSSpecContents_Container( dir );
+	}
+	
+	inline Nitrogen::FSSpecContents_Container directory_contents( const FSSpec& dir )
+	{
+		return Nitrogen::FSSpecContents_Container( Nitrogen::FSDirSpec( dir ) );
+	}
+	
+	inline Nitrogen::FSRefContents_Container directory_contents( const FSRef& dir )
+	{
+		return Nitrogen::FSRefContents_Container( dir );
 	}
 	
 }
