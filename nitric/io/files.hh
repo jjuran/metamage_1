@@ -60,24 +60,6 @@ namespace io
 	void delete_empty_directory     ( dummy::file_spec );
 	void delete_empty_directory_only( dummy::file_spec );
 	
-	void recursively_delete                   ( dummy::file_spec );
-	void recursively_delete_directory_contents( dummy::file_spec );
-	
-	template < class FileSpec >
-	void recursively_delete( FileSpec item )
-	{
-		if ( file_exists( item ) )
-		{
-			delete_file( item );
-		}
-		else
-		{
-			recursively_delete_directory_contents( item );
-			
-			delete_empty_directory( item );
-		}
-	}
-	
 	template < class FileSpec > struct system_root_getter;
 	
 	template < class FileSpec >
