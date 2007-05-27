@@ -1,0 +1,6 @@
+#!/bin/sh
+
+#/usr/bin/filter-msl-link-warnings.pl $*
+
+filter-mwlink-warnings.pl
+
