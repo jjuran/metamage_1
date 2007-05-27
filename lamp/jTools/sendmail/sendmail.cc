@@ -265,11 +265,12 @@ static bool IsControlChar( char c )
 	return std::iscntrl( c );
 }
 
-static std::string ReadOneLiner( N::FSFileRefNum fileH )
+template < class Stream >
+static std::string ReadOneLinerFromStream( Stream fileH )
 {
 	std::string contents;
 	
-	contents.resize( N::GetEOF( fileH ) );
+	contents.resize( io::get_file_size( fileH ) );
 	
 	io::read( fileH, &contents[0], contents.size() );
 	
@@ -284,9 +285,10 @@ static std::string ReadOneLiner( N::FSFileRefNum fileH )
 	return contents;
 }
 
-static std::string ReadOneLiner( const FSSpec& file )
+template < class FileSpec >
+inline std::string ReadOneLinerFromFile( const FileSpec& file )
 {
-	return ReadOneLiner( io::open_for_reading( file ) );
+	return ReadOneLinerFromStream( io::open_for_reading( file ) );
 }
 
 
@@ -313,7 +315,7 @@ void Transmitter::operator()( const FSSpec& destFile )
 		
 		// destFile serves as a lock on this destination
 		Relay( itsReturnPath,
-		       ReadOneLiner( N::FSpOpenDF( destFile, fsRdWrPerm ) ),
+		       ReadOneLinerFromStream( N::FSpOpenDF( destFile, fsRdWrPerm ) ),
 		       itsMessageFile );
 		
 		N::FSpDelete( destFile );
@@ -329,16 +331,21 @@ static void ProcessMessage( const FSSpec& msgFolderItem )
 {
 	if ( !io::directory_exists( msgFolderItem ) )  return;  // Icon files, et al
 	
-	N::FSDirSpec msgFolder = NN::Convert< N::FSDirSpec >( msgFolderItem );
+	typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
+	
+	directory_spec msgFolder( msgFolderItem );
 	
 	FSSpec       message    = msgFolder / "Message";
 	FSSpec       returnPath = msgFolder / "Return-Path";
 	
-	N::FSDirSpec destFolder( msgFolder / "Destinations" );
+	directory_spec destFolder( msgFolder / "Destinations" );
 	
-	std::for_each( N::FSContents( destFolder ).begin(),
-	               N::FSContents( destFolder ).end(),
-	               Transmitter( ReadOneLiner( returnPath ),
+	typedef io::directory_contents_traits< directory_spec >::container_type directory_container;
+	directory_container contents = io::directory_contents( destFolder );
+	
+	std::for_each( contents.begin(),
+	               contents.end(),
+	               Transmitter( ReadOneLinerFromFile( returnPath ),
 	                            message ) );
 	
 	io::delete_empty_directory( destFolder );  // this fails if destinations remain
