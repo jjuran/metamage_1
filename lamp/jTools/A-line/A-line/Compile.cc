@@ -480,15 +480,22 @@ namespace ALine
 			
 			options.SetPrecompiledHeaderImage( pchImage );
 			
-			bool pchiExists = io::file_exists( pchImage );
+			needToPrecompile = true;
 			
 			// If the image doesn't exist, use a date that will always be newer
 			// (for comparison to source files)
-			pchImageDate = pchiExists ? ModifiedDate( pchImage )
-			                          : 0xFFFFFFFF;
+			pchImageDate = 0xFFFFFFFF;
 			
-			// Compare to the modification dates.
-			needToPrecompile = !pchiExists || pchImageDate <= pchSourceDate;
+			if ( io::file_exists( pchImage ) )
+			{
+				MacDate pchImageModifiedDate = ModifiedDate( pchImage );
+				
+				if ( pchImageModifiedDate > pchSourceDate )
+				{
+					needToPrecompile = false;
+					pchImageDate = pchImageModifiedDate;
+				}
+			}
 		}
 		else
 		{
