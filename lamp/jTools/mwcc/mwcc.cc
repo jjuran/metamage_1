@@ -63,7 +63,7 @@ namespace jTools
 		{
 			m68k = true;
 			
-			return "MWC68K -model far";
+			return "MWC68K -mbg off -model far";
 		}
 		else if ( arch == "ppc" )
 		{
@@ -166,7 +166,7 @@ namespace jTools
 						break;
 					
 					case 'g':
-						arg = "-sym full";
+						arg = ppc ? "-sym full" : "-sym full -mbg full";
 						break;
 					
 					case 'O':
