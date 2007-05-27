@@ -11,6 +11,7 @@
 
 // Io
 #include "io/files.hh"
+#include "io/walk.hh"
 
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
@@ -33,14 +34,18 @@ namespace CompileDriver
 	{
 		if ( io::directory_exists( item ) )
 		{
-			ScanDirForProjects( N::FSDirSpec( item ), output );
+			typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
+			
+			ScanDirForProjects( directory_spec( item ), output );
 		}
 	}
 	
 	void ScanDirForProjects( const N::FSDirSpec&                                 dir,
 	                         std::back_insert_iterator< std::vector< FSSpec > >  output )
 	{
-		FSSpec conf = dir / "A-line.conf";
+		typedef io::filespec_traits< N::FSDirSpec >::file_spec file_spec;
+		
+		file_spec conf = dir / "A-line.conf";
 		
 		if ( io::file_exists( conf ) )
 		{
@@ -48,20 +53,24 @@ namespace CompileDriver
 			return;
 		}
 		
-		FSSpec confd = dir / "A-line.confd";
+		typedef io::directory_contents_traits< N::FSDirSpec >::container_type directory_container;
+		
+		file_spec confd = dir / "A-line.confd";
 		
 		if ( io::directory_exists( confd ) )
 		{
-			N::FSDirSpec confdir = N::FSDirSpec( confd );
+			directory_container contents = io::directory_contents( confd );
 			
-			std::copy( N::FSContents( confdir ).begin(),
-			           N::FSContents( confdir ).end(),
+			std::copy( contents.begin(),
+			           contents.end(),
 			           output );
 			return;
 		}
 		
-		std::for_each( N::FSContents( dir ).begin(),
-		               N::FSContents( dir ).end(),
+		directory_container contents = io::directory_contents( dir );
+		
+		std::for_each( contents.begin(),
+		               contents.end(),
 		               std::bind2nd( N::PtrFun( ScanItemForProjects ),
 		                             output ) );
 		
