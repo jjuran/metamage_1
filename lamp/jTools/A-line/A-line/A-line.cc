@@ -138,10 +138,9 @@ namespace ALine
 		
 		ApplicationLayerSwitch activateToolServerForCommand;
 		
-		if ( TARGET_RT_MAC_MACHO ) {}
-		else if ( command.substr( 0, 6 ) != "tlsrvr" )  {}
-		else if ( command.substr( 0, 4 ) != "mwcc"   )  {}
-		else
+		bool shouldSwitchLayers = !TARGET_RT_MAC_MACHO  &&  (command.substr( 0, 6 ) == "tlsrvr"  ||  command.substr( 0, 4 ) == "mwcc" );
+		
+		if ( shouldSwitchLayers )
 		{
 			const N::OSType sigToolServer = N::OSType( 'MPSX' );
 			
