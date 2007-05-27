@@ -91,7 +91,7 @@ namespace Nitrogen
 	{
 		void operator()( const FSDirSpec& dir ) const
 		{
-			RecursivelyDelete( Nucleus::Convert< FSSpec >( dir ) );
+			io::recursively_delete_directory( dir );
 		}
 	};
 	
