@@ -126,28 +126,6 @@ namespace ALine
 		return GetFilenameBase( filename ) + ".txt";
 	}
 	
-	static N::OSType EditorSignature()
-	{
-		try
-		{
-			const char* envMacEditorSignature = getenv( "MAC_EDITOR_SIGNATURE" );
-			
-			if ( envMacEditorSignature )
-			{
-				N::OSType signature = NN::Convert< N::OSType, std::string >( envMacEditorSignature );
-				
-				return signature;
-			}
-		}
-		catch ( ... )
-		{
-		}
-		
-		const N::OSType sigTextWrangler = N::OSType( '!Rch' );
-		
-		return sigTextWrangler;
-	}
-	
 	static std::string DiagnosticsFilePathname( const N::FSDirSpec& outputDir, const std::string& filename )
 	{
 		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( outputDir ) / "Diagnostics" );
