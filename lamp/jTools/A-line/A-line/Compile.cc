@@ -392,8 +392,6 @@ namespace ALine
 		
 		command << cmdgen.Input( GetPOSIXPathname( file ) );
 		
-		using namespace NN::Operators;
-		
 		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) / "Diagnostics" );
 		
 		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
