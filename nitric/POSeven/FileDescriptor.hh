@@ -9,7 +9,6 @@
 #include <errno.h>
 
 // POSIX
-#include "fcntl.h"
 #include <unistd.h>
 
 // Nucleus
@@ -62,10 +61,10 @@ namespace Nucleus
 	
 }
 
+struct stat;
+
 namespace POSeven
 {
-	
-	Nucleus::Owned< FileDescriptor > Open( const char* name, int oflag, int mode = 0 );
 	
 	void Close( Nucleus::Owned< FileDescriptor > fd );
 	
@@ -76,6 +75,12 @@ namespace POSeven
 	struct POSIX_Io_Details
 	{
 		typedef std::string file_spec;
+		typedef std::string optimized_directory_spec;
+		
+		typedef const std::string& filename_parameter;
+		typedef       std::string  filename_result;
+		
+		typedef struct ::stat file_catalog_record;
 		
 		typedef FileDescriptor stream;
 		
@@ -88,16 +93,6 @@ namespace io
 {
 	
 	template <> struct filespec_traits< std::string > : public POSeven::POSIX_Io_Details {};
-	
-	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_reading( const char* pathname )
-	{
-		return POSeven::Open( pathname, O_RDONLY );
-	}
-	
-	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_reading( const std::string& pathname )
-	{
-		return open_for_reading( pathname.c_str() );
-	}
 	
 	template < class ByteCount >
 	inline ssize_t read( POSeven::FileDescriptor fd, char* buffer, ByteCount byteCount )
