@@ -143,9 +143,13 @@ namespace ALine
 		
 		command << inc;
 		
-		if ( options.HasPrecompiledHeaderImage() )
+		if ( options.HasPrecompiledHeaderSource() )
 		{
-			command << cmdgen.Prefix( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
+			// Specify by name only, so gcc will search for the .gch image.
+			std::string pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
+			
+			//command << "-include" << q( pchSourceName );
+			command << cmdgen.Prefix( pchSourceName );
 		}
 		
 		command << cmdgen.Output( GetPOSIXPathname( options.Output() ) );
@@ -211,23 +215,13 @@ namespace ALine
 		                 " ",
 		                 std::ptr_fun( MakeMacroDefinition ) );
 		
-		if ( cmdgen.PrecompiledHeaderIsSearched() )
+		if ( options.HasPrecompiledHeaderSource() )
 		{
-			if ( options.HasPrecompiledHeaderSource() )
-			{
-				// Specify by name only, so gcc will search for the .gch image.
-				std::string pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
-				
-				//command << "-include" << q( pchSourceName );
-				command << cmdgen.Prefix( pchSourceName );
-			}
-		}
-		else
-		{
-			if ( options.HasPrecompiledHeaderImage() )
-			{
-				command << cmdgen.Prefix( GetMacPathname( options.PrecompiledHeaderImage() ) );
-			}
+			// Specify by name only, so gcc will search for the .gch image.
+			std::string pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
+			
+			//command << "-include" << q( pchSourceName );
+			command << cmdgen.Prefix( pchSourceName );
 		}
 		
 		
@@ -440,10 +434,8 @@ namespace ALine
 		
 		bool gnu = targetInfo.toolkit == toolkitGNU;
 		
-		std::string pchImageName = gnu ? pchSourceName + ".gch"
-		                               : projName      + ".phi";
-		
-		using namespace NN::Operators;
+		std::string pchImageName = pchSourceName + (gnu ? ".gch"
+		                                                : ".mwch");
 		
 		return folder / pchImageName;
 	}
@@ -650,7 +642,7 @@ namespace ALine
 			Precompile( options, pchSource );
 		}
 		
-		if ( targetInfo.toolkit == toolkitGNU  &&  !pchSourcePath.empty() )
+		if ( !pchSourcePath.empty() )
 		{
 			options.SetPrecompiledHeaderSource( pchSource );
 			// Theory:
