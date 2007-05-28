@@ -8,6 +8,9 @@
 // Standard C++
 #include <string>
 
+// POSIX
+#include <unistd.h>
+
 // Io
 #include "io/files.hh"
 
@@ -88,7 +91,7 @@ namespace io
 	{
 		std::string result = pathname;
 		
-		if ( result.back() != '/' )
+		if ( *result.rbegin() != '/' )
 		{
 			result += '/';
 		}
