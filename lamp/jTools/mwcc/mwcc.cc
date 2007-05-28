@@ -12,6 +12,9 @@
 // POSIX
 #include <sys/wait.h>
 
+// POSeven
+#include "POSeven/Pathnames.hh"
+
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Str.h"
@@ -45,6 +48,8 @@ namespace jTools
 {
 	
 	namespace Div = Divergence;
+	
+	using namespace io::path_descent_operators;
 	
 	
 	static const char* kInvariantMWCOptions = " -nosyspath"
@@ -125,6 +130,63 @@ namespace jTools
 		return (objectCode ? "-o " : "-precompile ") + QuotedMacPathFromPOSIXPath( pathname );
 	}
 	
+	std::vector< const char* > gIncludeDirs;
+	
+	static void RememberIncludeDir( const char* pathname )
+	{
+		gIncludeDirs.push_back( pathname );
+	}
+	
+	static std::string PrecompiledHeader( const char* pathname )
+	{
+		const char* dot   = std::strrchr( pathname, '.' );
+		const char* slash = std::strrchr( pathname, '/' );
+		
+		bool hasDot = dot > slash;  // Works even if slash or dot is NULL
+		
+		bool headerIsSource = hasDot  &&  dot[1] == 'h';
+		
+		std::string precompiledHeaderImage;
+		
+		if ( headerIsSource )
+		{
+			bool pathSpecified = slash != NULL;
+			
+			if ( pathSpecified )
+			{
+				precompiledHeaderImage = pathname;
+				precompiledHeaderImage += ".mwch";
+			}
+			else
+			{
+				std::string filename = io::get_filename( pathname );
+				
+				filename += ".mwch";
+				
+				typedef std::vector< const char* >::const_iterator Iter;
+				
+				for ( Iter it = gIncludeDirs.begin();  it != gIncludeDirs.end();  ++it )
+				{
+					std::string location = *it / filename;
+					
+					if ( io::file_exists( location ) )
+					{
+						precompiledHeaderImage = location;
+						break;
+					}
+				}
+			}
+			
+			pathname = precompiledHeaderImage.c_str();
+		}
+		else
+		{
+			//precompiledHeaderImage = pathname;
+		}
+		
+		return "-prefix " + QuotedMacPathFromPOSIXPath( pathname );
+	}
+	
 	static int Main( int argc, const char *const argv[] )
 	{
 		std::string command = TARGET_CPU_68K ? "MWC68K" : "MWCPPC";
@@ -184,6 +246,7 @@ namespace jTools
 						break;
 					
 					case 'I':
+						RememberIncludeDir( arg + 2 );
 						translatedPath = "-I" + QuotedMacPathFromPOSIXPath( arg + 2 );
 						arg = translatedPath.c_str();
 						break;
@@ -191,7 +254,7 @@ namespace jTools
 					case 'i':
 						if ( std::strcmp( arg + 1, "include" ) == 0 )
 						{
-							translatedPath = "-prefix " + QuotedMacPathFromPOSIXPath( *++argv );
+							translatedPath = PrecompiledHeader( *++argv );
 							arg = translatedPath.c_str();
 						}
 						break;
