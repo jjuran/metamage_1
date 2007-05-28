@@ -22,24 +22,11 @@
 #include "io/io.hh"
 #include "io/files.hh"
 
-// Nitrogen
-#include "Nitrogen/AEInteraction.h"
-#include "Nitrogen/Aliases.h"
-#include "Nitrogen/AppleEvents.h"
-#include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Str.h"
-
 // GetPathname
 #include "GetPathname.hh"
 
-// Nitrogen Extras / Operators
-#include "Operators/AEDataModel.h"
-
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
-
-// Nitrogen Extras / Utilities
-#include "Utilities/Processes.h"
 
 // BitsAndBytes
 #include "StringFilters.hh"
@@ -62,7 +49,6 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
 	
 	using namespace io::path_descent_operators;
 	
@@ -256,16 +242,7 @@ namespace ALine
 			
 			if ( status == 0 && sb.st_size > 0 )
 			{
-				/*
-				N::AESend( N::AECreateAppleEvent( N::kCoreEventClass, 
-				                                  N::kAEOpenDocuments, 
-				                                  N::AECreateDesc< N::typeProcessSerialNumber >( NX::LaunchApplication( EditorSignature() ) ) ) 
-				           << N::keyDirectObject + ( N::AECreateList< false >() 
-				                                     << N::AECreateDesc< N::typeAlias >( N::NewAlias( diagnostics ) ) ), 
-				           N::kAENoReply | N::kAECanInteract );
-				*/
-				
-				system( ( "open -e " + q( diagnostics ) ).c_str() );
+				system( ( "edit " + q( diagnostics ) ).c_str() );
 			}
 			else if ( status == 0 )
 			{
@@ -408,8 +385,6 @@ namespace ALine
 		
 		for ( it = project.Sources().begin();  it != end;  ++it )
 		{
-			using namespace NN::Operators;
-			
 			// What we do in this loop:
 			//  * We set the current source directory to the parent directory
 			//    of the current file if the project requires that information.
