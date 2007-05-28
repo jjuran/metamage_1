@@ -199,7 +199,7 @@ namespace ALine
 		// This means that we pass the precompiled output, not the header source.
 		// Required for CodeWarrior (i.e. otherwise you lose precompile benefit).
 		// Not supported by gcc.
-		bool PrecompiledHeaderIsImage() const  { return !gnu; }
+		//bool PrecompiledHeaderIsImage() const  { return !gnu; }
 		
 		// This means that the prefix header is given by name only
 		// and the parent directory of the precompiled header image
@@ -207,7 +207,7 @@ namespace ALine
 		// Required for gcc unless the precompiled header image is in the same
 		// directory as the precompiled header source.
 		// Not supported by CodeWarrior.
-		bool PrecompiledHeaderIsSearched() const  { return gnu; }
+		//bool PrecompiledHeaderIsSearched() const  { return gnu; }
 		
 		std::string Prefix( const std::string& pathname ) const
 		{
@@ -261,8 +261,7 @@ namespace ALine
 			
 			if ( !gnu )
 			{
-				result += " " + MWDebugSymbols()
-			            + " " + CFMTracebackTables()
+				result += " " + CFMTracebackTables()
 			            + " " + MWCodeModel()
 			            + " " + MW68KGlobals();
 			}
