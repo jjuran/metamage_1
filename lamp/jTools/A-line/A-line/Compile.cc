@@ -15,6 +15,7 @@
 #include <stdlib.h>
 
 // POSIX
+#include <sys/stat.h>
 #include <unistd.h>
 
 // Io
@@ -112,54 +113,6 @@ namespace ALine
 	}
 	
 	
-	static std::string BuildSourceFileWithCodeWarrior( const CompilerOptions& options, const FSSpec& file )
-	{
-		std::vector< std::string > includeDirPathnames;
-		
-		includeDirPathnames.resize( options.UserOnlyIncludeDirs().size() );
-		
-		std::transform( options.UserOnlyIncludeDirs().begin(),
-		                options.UserOnlyIncludeDirs().end(),
-		                includeDirPathnames.begin(),
-		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
-		
-		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
-		CommandGenerator cmdgen( options.Target() );
-		
-		std::string command = cmdgen.CompilerName();
-		
-		command << cmdgen.AllCompilerOptions();
-		
-		if ( options.NeedsCwdSource() )
-		{
-			command << "-cwd source";
-		}
-		
-		command << join( options.Macros().begin(),
-		                 options.Macros().end(),
-		                 " ",
-		                 std::ptr_fun( MakeMacroDefinition ) );
-		
-		command << inc;
-		
-		if ( options.HasPrecompiledHeaderSource() )
-		{
-			// Specify by name only, so gcc will search for the .gch image.
-			std::string pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
-			
-			//command << "-include" << q( pchSourceName );
-			command << cmdgen.Prefix( pchSourceName );
-		}
-		
-		command << cmdgen.Output( GetPOSIXPathname( options.Output() ) );
-		
-		// Add the source file to the command line
-		command << cmdgen.Input( GetPOSIXPathname( file ) );
-		
-		return command;
-	}
-	
 	static bool IsCFile( const std::string& name )
 	{
 		return name.substr( name.size() - 2, name.size() ) == ".c";
@@ -175,71 +128,16 @@ namespace ALine
 		return N::FSpDirCreate( folder );
 	}
 	
-	static std::string DiagnosticsFilenameFromSourceFilename( const std::string& filename )
+	static std::string GetFilenameBase( const std::string& filename )
 	{
-		std::string::size_type dot = filename.find_last_of( "." );
-		return filename.substr( 0, dot ) + ".txt";
+		std::size_t dot = filename.find_last_of( "." );
+		
+		return filename.substr( 0, dot );
 	}
 	
-	static std::string BuildSourceFileWithGCC( const CompilerOptions& options, const FSSpec& file )
+	static std::string DiagnosticsFilenameFromSourceFilename( const std::string& filename )
 	{
-		std::vector< std::string > includeDirPathnames;
-		
-		includeDirPathnames.resize( options.UserOnlyIncludeDirs().size() );
-		
-		std::transform( options.UserOnlyIncludeDirs().begin(),
-		                options.UserOnlyIncludeDirs().end(),
-		                includeDirPathnames.begin(),
-		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
-		
-		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
-		CommandGenerator cmdgen( options.Target() );
-		
-		std::string command = cmdgen.CompilerName();
-		
-		command << cmdgen.AllCompilerOptions();
-		
-		std::string filename = io::get_filename_string( file );
-		
-		if ( !IsCFile( filename ) )
-		{
-			// We don't need this warning for C, and in fact GNU C complains about it
-			command << "-Wno-non-template-friend";
-		}
-		
-		command << "-Wno-deprecated-declarations -Wno-long-double";
-		
-		command << join( options.Macros().begin(),
-		                 options.Macros().end(),
-		                 " ",
-		                 std::ptr_fun( MakeMacroDefinition ) );
-		
-		if ( options.HasPrecompiledHeaderSource() )
-		{
-			// Specify by name only, so gcc will search for the .gch image.
-			std::string pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
-			
-			//command << "-include" << q( pchSourceName );
-			command << cmdgen.Prefix( pchSourceName );
-		}
-		
-		
-		command << inc;
-		
-		command << cmdgen.Output( GetPOSIXPathname( options.Output() / ObjectFileName( filename ) ) );
-		
-		// Add the source file to the command line
-		command << cmdgen.Input( GetPOSIXPathname( file ) );
-		
-		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) / "Diagnostics" );
-		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
-		
-		command << "> " << q( GetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
-		
-		command = EnvironmentTraits< kNativePOSIXEnvironment >::MakeNativeCommand( command );
-		
-		return command;
+		return GetFilenameBase( filename ) + ".txt";
 	}
 	
 	static N::OSType EditorSignature()
@@ -264,60 +162,15 @@ namespace ALine
 		return sigTextWrangler;
 	}
 	
-	static void BuildSourceFile( CompilerOptions options, const FSSpec& file )
+	static std::string DiagnosticsFilePathname( const N::FSDirSpec& outputDir, const std::string& filename )
 	{
-		std::string command;
+		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( outputDir ) / "Diagnostics" );
+		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
 		
-		switch ( options.Target().toolkit )
-		{
-			case toolkitCodeWarrior:
-				command = BuildSourceFileWithCodeWarrior( options, file );
-				break;
-			
-			case toolkitGNU:
-				command = BuildSourceFileWithGCC( options, file );
-				break;
-			
-			default:
-				Io::Err << "Unsupported toolkit\n";
-				throw N::ParamErr();
-		}
-		
-		std::string filename = io::get_filename_string( file );
-		
-		QueueCommand( "echo Compiling:  " + filename );
-		QueueCommand( command );
-		
-		if ( options.Target().toolkit == toolkitGNU )
-		{
-			FSSpec diagnostics =   io::get_preceding_directory( options.Output() )
-			                     / "Diagnostics"
-			                     / DiagnosticsFilenameFromSourceFilename( filename );
-			
-			if ( io::get_file_size( io::open_for_reading( diagnostics ) ) > 0 )
-			{
-				N::AESend( N::AECreateAppleEvent( N::kCoreEventClass, 
-				                                  N::kAEOpenDocuments, 
-				                                  N::AECreateDesc< N::typeProcessSerialNumber >( NX::LaunchApplication( EditorSignature() ) ) ) 
-				           << N::keyDirectObject + ( N::AECreateList< false >() 
-				                                     << N::AECreateDesc< N::typeAlias >( N::NewAlias( diagnostics ) ) ), 
-				           N::kAENoReply | N::kAECanInteract );
-				
-			}
-			else
-			{
-				try
-				{
-					io::delete_file( diagnostics );
-				}
-				catch ( const N::OSStatus& )
-				{
-				}
-			}
-		}
+		return GetPOSIXPathname( diagnosticsFile );
 	}
 	
-	static std::string PrecompileWithCodeWarrior( const CompilerOptions& options, const FSSpec& file )
+	static std::string IncludeDirString( const CompilerOptions& options )
 	{
 		std::vector< std::string > includeDirPathnames;
 		
@@ -328,55 +181,20 @@ namespace ALine
 		                includeDirPathnames.begin(),
 		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
 		
-		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
-		CommandGenerator cmdgen( options.Target() );
-		
-		std::string command = cmdgen.CompilerName();
-		
-		command << cmdgen.AllCompilerOptions();
-		
-		command << join( options.Macros().begin(),
-		                 options.Macros().end(),
-		                 " ",
-		                 std::ptr_fun( MakeMacroDefinition ) );
-		
-		// Add the include directories
-		command << inc;
-		
-		command << cmdgen.Output( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
-		
-		// Add the source file to the command line
-		command << cmdgen.Input( GetPOSIXPathname( file ) );
-		
-		return command;
+		return MakeIncludeDirOptions( includeDirPathnames );
 	}
 	
-	static std::string PrecompileWithGCC( const CompilerOptions& options, const FSSpec& file )
+	static std::string MakeCompileCommand( const CompilerOptions& options )
 	{
-		std::vector< std::string > includeDirPathnames;
-		
-		includeDirPathnames.resize( options.UserOnlyIncludeDirs().size() );
-		
-		std::transform( options.UserOnlyIncludeDirs().begin(),
-		                options.UserOnlyIncludeDirs().end(),
-		                includeDirPathnames.begin(),
-		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
-		
-		std::string inc = MakeIncludeDirOptions( includeDirPathnames );
-		
 		CommandGenerator cmdgen( options.Target() );
 		
 		std::string command = cmdgen.CompilerName();
 		
 		command << cmdgen.AllCompilerOptions();
 		
-		std::string filename = io::get_filename_string( file );
-		
-		if ( !IsCFile( filename ) )
+		if ( options.NeedsCwdSource() )
 		{
-			// We don't need this warning for C, and in fact GNU C complains about it
-			command << "-Wno-non-template-friend";
+			command << "-cwd source";
 		}
 		
 		command << "-Wno-deprecated-declarations -Wno-long-double";
@@ -386,41 +204,104 @@ namespace ALine
 		                 " ",
 		                 std::ptr_fun( MakeMacroDefinition ) );
 		
-		command << inc;
-		
-		command << cmdgen.Output( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
-		
-		command << cmdgen.Input( GetPOSIXPathname( file ) );
-		
-		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( options.Output() ) / "Diagnostics" );
-		
-		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
-		
-		command << "> " << q( GetPOSIXPathname( diagnosticsFile ) ) << " 2>&1";
-		
-		command = EnvironmentTraits< kNativePOSIXEnvironment >::MakeNativeCommand( command );
+		command << IncludeDirString( options );
 		
 		return command;
 	}
 	
-	static void Precompile( const CompilerOptions& options, const FSSpec& file )
+	static void BuildSourceFile( CompilerOptions options, const FSSpec& file )
 	{
-		std::string command;
+		bool gnu = options.Target().toolkit == toolkitGNU;
 		
-		switch ( options.Target().toolkit )
+		CommandGenerator cmdgen( options.Target() );
+		
+		std::string command = MakeCompileCommand( options );
+		
+		std::string filename = io::get_filename_string( file );
+		
+		if ( !IsCFile( filename ) )
 		{
-			case toolkitCodeWarrior:
-				command = PrecompileWithCodeWarrior( options, file );
-				break;
-			case toolkitGNU:
-				command = PrecompileWithGCC( options, file );
-				break;
-			default:
-				Io::Err << "Unsupported toolkit\n";
-				throw N::ParamErr();
+			// We don't need this warning for C, and in fact GNU C complains about it
+			command << "-Wno-non-template-friend";
 		}
 		
-		QueueCommand( "echo Precompiling:  " + io::get_filename_string( file ) );
+		if ( options.HasPrecompiledHeaderSource() )
+		{
+			// Specify by name only, so gcc will search for the .gch image.
+			std::string pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
+			
+			//command << "-include" << q( pchSourceName );
+			command << cmdgen.Prefix( pchSourceName );
+		}
+		
+		command << cmdgen.Output( GetPOSIXPathname( options.Output() / ObjectFileName( filename ) ) );
+		
+		command << cmdgen.Input( GetPOSIXPathname( file ) );
+		
+		if ( gnu )
+		{
+			command += " > " + q( DiagnosticsFilePathname( options.Output(), filename ) ) + " 2>&1";
+		}
+		
+		QueueCommand( "echo Compiling:  " + filename );
+		QueueCommand( command );
+		
+		if ( gnu )
+		{
+			std::string diagnostics = DiagnosticsFilePathname( options.Output(), filename );
+			
+			struct ::stat sb;
+			
+			int status = ::stat( diagnostics.c_str(), &sb );
+			
+			if ( status == 0 && sb.st_size > 0 )
+			{
+				/*
+				N::AESend( N::AECreateAppleEvent( N::kCoreEventClass, 
+				                                  N::kAEOpenDocuments, 
+				                                  N::AECreateDesc< N::typeProcessSerialNumber >( NX::LaunchApplication( EditorSignature() ) ) ) 
+				           << N::keyDirectObject + ( N::AECreateList< false >() 
+				                                     << N::AECreateDesc< N::typeAlias >( N::NewAlias( diagnostics ) ) ), 
+				           N::kAENoReply | N::kAECanInteract );
+				*/
+				
+				system( ( "open -e " + q( diagnostics ) ).c_str() );
+			}
+			else if ( status == 0 )
+			{
+				//try { io::delete_file( diagnostics ); } catch ( ... ) {}
+				unlink( diagnostics.c_str() );
+			}
+		}
+	}
+	
+	static void Precompile( const CompilerOptions& options, const FSSpec& file )
+	{
+		bool gnu = options.Target().toolkit == toolkitGNU;
+		
+		CommandGenerator cmdgen( options.Target() );
+		
+		std::string command = MakeCompileCommand( options );
+		
+		std::string filename = io::get_filename_string( file );
+		
+		if ( !IsCFile( filename ) )
+		{
+			// We don't need this warning for C, and in fact GNU C complains about it
+			command << "-Wno-non-template-friend";
+		}
+		
+		command << cmdgen.Output( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
+		
+		// Add the source file to the command line
+		command << cmdgen.Input( GetPOSIXPathname( file ) );
+		
+		if ( gnu )
+		{
+			command << "> " << q( DiagnosticsFilePathname( options.Output(), filename ) ) << " 2>&1";
+		}
+		
+		QueueCommand( "echo Precompiling:  " + filename );
 		QueueCommand( command );
 	}
 	
