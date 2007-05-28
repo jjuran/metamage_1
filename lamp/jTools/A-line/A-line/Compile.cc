@@ -31,9 +31,6 @@
 // BitsAndBytes
 #include "StringFilters.hh"
 
-// Orion
-#include "Orion/StandardIO.hh"
-
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/BuildCommon.hh"
@@ -48,12 +45,10 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	
 	using namespace io::path_descent_operators;
 	
 	using BitsAndBytes::q;
-	using BitsAndBytes::qq;
 	
 	
 	static std::string MakeMacroDefinition( const std::pair< const std::string, std::string >& value )
