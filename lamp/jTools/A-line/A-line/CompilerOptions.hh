@@ -37,7 +37,6 @@ namespace ALine
 			N::FSDirSpec myOutputDir;
 			std::vector< N::FSDirSpec > myUserOnlyIncludeDirs;
 			bool hasPrecompiledHeaderSource;
-			bool hasPrecompiledHeaderImage;
 			bool needsCwdSource;
 		
 		public:
@@ -56,7 +55,6 @@ namespace ALine
 			const Map&    Macros() const  { return myMacros; }
 			
 			bool HasPrecompiledHeaderSource() const  { return hasPrecompiledHeaderSource; }
-			bool HasPrecompiledHeaderImage () const  { return hasPrecompiledHeaderImage;  }
 			
 			const FSSpec& PrecompiledHeaderSource() const  { return myPrecompiledHeaderSource; }
 			const FSSpec& PrecompiledHeaderImage () const  { return myPrecompiledHeaderImage;  }

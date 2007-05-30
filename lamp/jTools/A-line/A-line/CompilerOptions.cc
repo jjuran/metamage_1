@@ -16,7 +16,6 @@ namespace ALine
 	:
 		targetInfo( targetInfo ),
 		hasPrecompiledHeaderSource( false ),
-		hasPrecompiledHeaderImage ( false ),
 		needsCwdSource( false )
 	{
 		
@@ -46,7 +45,6 @@ namespace ALine
 	void CompilerOptions::SetPrecompiledHeaderImage( const FSSpec& phi )
 	{
 		myPrecompiledHeaderImage = phi;
-		hasPrecompiledHeaderImage = true;
 	}
 	
 	void CompilerOptions::SetOutput( const N::FSDirSpec& output )
