@@ -209,6 +209,10 @@ namespace jTools
 						// 'gcc -c' means compile
 						continue;
 					
+					case 'W':
+						// ignore gcc warning options
+						continue;
+					
 					case 'a':
 						if ( std::strcmp( arg + 1, "arch" ) == 0 )
 						{
