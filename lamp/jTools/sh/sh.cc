@@ -19,7 +19,7 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/Open.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"

@@ -22,7 +22,7 @@
 #include "Nitrogen/Files.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/Open.hh"
 
 // Io
 #include "Io/TextInput.hh"

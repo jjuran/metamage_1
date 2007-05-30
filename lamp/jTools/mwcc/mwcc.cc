@@ -14,6 +14,7 @@
 
 // POSeven
 #include "POSeven/Pathnames.hh"
+#include "POSeven/Stat.hh"
 
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
