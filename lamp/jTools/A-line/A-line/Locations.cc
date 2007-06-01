@@ -11,6 +11,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// POSeven
+#include "POSeven/Pathnames.hh"
+
 // Nitrogen
 #include "Nitrogen/Folders.h"
 
@@ -225,14 +228,9 @@ namespace ALine
 		return projectPath;
 	}
 	
-	FSSpec SourceDotListFile( const N::FSDirSpec& folder )
-	{
-		return ProjectControlFolder( folder ) / "Source.list";
-	}
-	
 	std::string SourceDotListFile( const std::string& projectPath )
 	{
-		return ProjectConfigDirPath( projectPath ) + "/Source.list";
+		return ProjectConfigDirPath( projectPath ) / "Source.list";
 	}
 	
 	static N::FSDirSpec TargetFolder( const std::string& target )

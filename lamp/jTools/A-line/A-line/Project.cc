@@ -11,6 +11,9 @@
 #include <set>
 #include <vector>
 
+// POSeven
+#include "POSeven/Stat.hh"
+
 // Nitrogen
 #include "Nitrogen/Aliases.h"
 #include "Nitrogen/Files.h"
@@ -489,13 +492,11 @@ namespace ALine
 		// None?  Try a Source.list file
 		if ( sourceList.size() == 0 )
 		{
-			FSSpec sourceDotListfile = SourceDotListFile( projFolder );
+			std::string sourceDotListfile = SourceDotListFile( GetPOSIXPathname( projFolder ) );
 			
 			if ( io::item_exists( sourceDotListfile ) )
 			{
-				std::string pathname = GetPOSIXPathname( sourceDotListfile );
-				
-				sourceList = ReadSourceDotList( pathname );
+				sourceList = ReadSourceDotList( sourceDotListfile );
 			}
 		}
 		
