@@ -20,7 +20,7 @@ namespace POSeven
 	
 	using ::stat;
 	
-	inline bool Stat( const char* name, stat& sb )
+	inline bool Stat( const char* name, struct stat& sb )
 	{
 		int status = ::stat( name, &sb );
 		
@@ -37,9 +37,9 @@ namespace POSeven
 		return true;
 	}
 	
-	inline stat Stat( const char* name )
+	inline struct stat Stat( const char* name )
 	{
-		stat sb;
+		struct stat sb;
 		
 		if ( !Stat( name, sb ) )
 		{
@@ -49,12 +49,12 @@ namespace POSeven
 		return sb;
 	}
 	
-	inline void Stat( const std::string& name, stat& sb )
+	inline void Stat( const std::string& name, struct stat& sb )
 	{
-		return Stat( name.c_str(), sb );
+		Stat( name.c_str(), sb );
 	}
 	
-	inline stat Stat( const std::string& name )
+	inline struct stat Stat( const std::string& name )
 	{
 		return Stat( name.c_str() );
 	}
@@ -70,7 +70,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return Stat( item, sb );
+		return POSeven::Stat( item, sb );
 	}
 	
 	inline bool item_exists( const std::string& item )
@@ -94,7 +94,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return Stat( item, sb ) && item_is_file( sb );
+		return POSeven::Stat( item, sb ) && item_is_file( sb );
 	}
 	
 	inline bool file_exists( const std::string& item )
@@ -107,7 +107,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return Stat( item, sb ) && item_is_directory( sb );
+		return POSeven::Stat( item, sb ) && item_is_directory( sb );
 	}
 	
 	inline bool directory_exists( const std::string& item )

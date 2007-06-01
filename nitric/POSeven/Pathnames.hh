@@ -14,6 +14,9 @@
 // Io
 #include "io/files.hh"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 
 namespace POSeven
 {
@@ -62,6 +65,11 @@ namespace io
 		}
 		
 		return result.substr( last_slash + 1, result.npos );
+	}
+	
+	inline std::string get_filename_string( const std::string& pathname )
+	{
+		return get_filename( pathname );
 	}
 	
 	inline std::string get_preceding_directory( const std::string& pathname )
