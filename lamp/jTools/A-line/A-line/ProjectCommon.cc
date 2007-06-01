@@ -8,6 +8,7 @@
 // C++
 #include <algorithm>
 #include <map>
+#include <set>
 #include <vector>
 
 // POSIX
@@ -38,13 +39,13 @@ namespace ALine
 	
 	
 	typedef std::map< ProjName, NN::Shared< Project*, NN::DisposeWithDelete > > ProjectMap;
-	typedef std::map< ProjName, N::FSDirSpec > IncludeDirMap;
+	typedef std::set< ProjName > ProjectSet;
 	typedef std::map< FileName, FSSpec > FileMap;
 	typedef std::map< IncludePath, std::string > IncludeMap;
 	typedef std::map< IncludePath, time_t > DateMap;
 	
 	static ProjectMap gProjects;
-	static IncludeDirMap gIncludeDirs;
+	static ProjectSet gProjectsWithIncludeDirs;
 	static FileMap gRezzes;
 	static IncludeMap gIncludes;
 	static DateMap gDates;
@@ -72,9 +73,9 @@ namespace ALine
 		return project;
 	}
 	
-	void AddIncludeDir( const ProjName& projName, const N::FSDirSpec& dir )
+	void AddIncludeDir( const ProjName& projName )
 	{
-		gIncludeDirs[ projName ] = dir;
+		gProjectsWithIncludeDirs.insert( projName );
 	}
 	
 	
@@ -88,7 +89,7 @@ namespace ALine
 		gRezzes[ filename ] = file;
 	}
 	
-	
+	/*
 	void SetCurrentSourceDir( const N::FSDirSpec& dir )
 	{
 		gNeedsCwdSourceOption = true;
@@ -101,7 +102,7 @@ namespace ALine
 		
 		gNeedsCwdSourceOption = false;
 	}
-	
+	*/
 	
 	std::string IncludeLocation( const IncludePath& includePath )
 	{
@@ -132,12 +133,12 @@ namespace ALine
 		}
 		*/
 		
-		IncludeDirMap::const_iterator it, end = gIncludeDirs.end();
+		ProjectSet::const_iterator it, end = gProjectsWithIncludeDirs.end();
 		
 		// For each project with an include folder,
-		for ( it = gIncludeDirs.begin();  it != end;  ++it )
+		for ( it = gProjectsWithIncludeDirs.begin();  it != end;  ++it )
 		{
-			const ProjName& proj = it->first;
+			const ProjName& proj = *it;
 			
 			// Check to see if it has the include file.
 			if ( GetProject( proj ).FindInclude( includePath ) )

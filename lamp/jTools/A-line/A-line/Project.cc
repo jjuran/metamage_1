@@ -479,7 +479,7 @@ namespace ALine
 	void Project::Study()
 	{
 		// Add the includes directory
-		AddIncludeDir( projName, ProjectIncludesFolder( projFolder ) );
+		AddIncludeDir( projName );
 		
 		if ( product == productNotBuilt )  return;
 		

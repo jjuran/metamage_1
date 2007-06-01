@@ -359,7 +359,7 @@ namespace ALine
 		
 		options.SetOutput( outDir );
 		
-		SetCurrentSourceDir( false );
+		//SetCurrentSourceDir( false );
 		
 		std::vector< FSSpec > dirtyFiles;
 		
@@ -380,7 +380,7 @@ namespace ALine
 			
 			if ( project.NeedsCwdSourceOption() )
 			{
-				SetCurrentSourceDir( io::get_preceding_directory( sourceFile ) );
+				//SetCurrentSourceDir( io::get_preceding_directory( sourceFile ) );
 			}
 			
 			// The file's name
