@@ -76,8 +76,6 @@ namespace ALine
 			std::vector< N::FSDirSpec > sourceDirs;
 			// Include dirs from used projects.
 			std::vector< N::FSDirSpec > myUsedIncludeDirs;
-			// System include dirs from used projects.
-			std::vector< N::FSDirSpec > myUsedSystemIncludeDirs;
 			// Various things to link with.
 			std::vector< FileName > rezFiles, rsrcFiles, myImports, myFrameworks;
 			// Creator code / signature for output files.
