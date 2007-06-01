@@ -672,20 +672,20 @@ namespace Nitrogen
    FSCreateDirectoryUnicode_Result FSCreateDirectoryUnicode( const FSRef&     parentRef,
                                                              const UniString& name );
 
-   void FSDeleteObject( Nucleus::Owned<FSRef> );
+   void FSDeleteObject( const FSRef& ref );
 
-   void FSMoveObject( Nucleus::Owned<FSRef>&, const FSRef& destDirectory );
+   void FSMoveObject( FSRef& ref, const FSRef& destDirectory );
 
    void FSExchangeObjects( const FSRef& ref, const FSRef& destRef );
    
-   void FSRenameUnicode( Nucleus::Owned<FSRef>&  ref,
-                         UniCharCount            nameLength,
-                         const UniChar          *name,
-                         TextEncoding            textEncodingHint );
+   void FSRenameUnicode( FSRef&         ref,
+                         UniCharCount   nameLength,
+                         const UniChar *name,
+                         TextEncoding   textEncodingHint );
 
-   void FSRenameUnicode( Nucleus::Owned<FSRef>&    ref,
-                         const UniString&          name,
-                         TextEncoding              textEncodingHint );
+   void FSRenameUnicode( FSRef&            ref,
+                         const UniString&  name,
+                         TextEncoding      textEncodingHint );
 
    struct FSGetCatalogInfo_Result
      {
@@ -1124,14 +1124,14 @@ namespace Nucleus
 namespace Nitrogen
   {
 
-   Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&   ref,
-                                  UniCharCount   forkNameLength,
-                                  const UniChar *forkName );
+   FSForkRef FSCreateFork( const FSRef&   ref,
+                           UniCharCount   forkNameLength,
+                           const UniChar *forkName );
 
-   Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&     ref,
-                                  const UniString& forkName );
+   FSForkRef FSCreateFork( const FSRef&     ref,
+                           const UniString& forkName );
 
-   void FSDeleteFork( Nucleus::Owned<FSForkRef> );
+   void FSDeleteFork( const FSForkRef& fork );
    
    struct FSIterateForks_Result
      {
@@ -1711,6 +1711,8 @@ namespace Nitrogen
 		typedef Nitrogen::FSFileRefNum stream;
 		
 		typedef SInt32 byte_count;
+		
+		typedef SInt32 position_offset;
 	};
 	
 	struct FSRef_Io_Details
@@ -1721,7 +1723,9 @@ namespace Nitrogen
 		
 		typedef Nitrogen::FSForkRefNum stream;
 		
-		typedef SInt64 byte_count;
+		typedef ::ByteCount byte_count;
+		
+		typedef SInt64 position_offset;
 	};
 	
 }
