@@ -44,7 +44,6 @@ namespace ALine
 			
 			const std::vector< N::FSDirSpec >& SearchDirs() const  { return sourceDirs; }
 			
-			std::vector< FileName > ExtraSources()  const  { return myExtraSources; }
 			std::vector< FileName > LibImports()    const  { return myImports; }
 			std::vector< FileName > Frameworks()    const  { return myFrameworks; }
 			std::vector< FileName > UsedRezFiles()  const  { return rezFiles; }
@@ -80,7 +79,7 @@ namespace ALine
 			// System include dirs from used projects.
 			std::vector< N::FSDirSpec > myUsedSystemIncludeDirs;
 			// Various things to link with.
-			std::vector< FileName > rezFiles, rsrcFiles, myExtraSources, myImports, myFrameworks;
+			std::vector< FileName > rezFiles, rsrcFiles, myImports, myFrameworks;
 			// Creator code / signature for output files.
 			std::string creator;
 			// Source files to compile.

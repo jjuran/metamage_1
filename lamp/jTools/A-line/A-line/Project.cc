@@ -348,7 +348,7 @@ namespace ALine
 		// The creator code for linked output files.  Mac only.
 		creator = First( config[ "creator"    ] );
 		
-		myExtraSources = config[ "sources"    ];  // Extra sources to compile.  Deprecated.
+		//myExtraSources = config[ "sources"    ];  // Extra sources to compile.  Deprecated.
 		myImports      = config[ "imports"    ];  // Libraries to import.
 		myFrameworks   = config[ "frameworks" ];  // Frameworks to include when building for OS X.
 		rsrcFiles      = config[ "rsrc"       ];  // Resource files from which to copy resources.
@@ -564,14 +564,6 @@ namespace ALine
 		{
 			throw BadSourceAlias( *this, alias );
 		}
-		
-		std::transform
-		(
-			myExtraSources.begin(), 
-			myExtraSources.end(), 
-			std::back_inserter( mySources ), 
-			std::ptr_fun( SourceLocation )
-		);
 		
 		// Locate resources
 		try

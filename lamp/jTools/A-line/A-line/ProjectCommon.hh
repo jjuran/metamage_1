@@ -32,13 +32,11 @@ namespace ALine
 	
 	FSSpec IncludeLocation( const IncludePath& includePath );
 	
-	FSSpec SourceLocation( const FileName& filename );
-	FSSpec RezLocation   ( const FileName& filename );
+	FSSpec RezLocation( const FileName& filename );
 	
 	bool FindInclude( const IncludePath& includePath );
 	void AddInclude ( const IncludePath& includePath, const FSSpec& file );
 	
-	void AddSourceFile( const FileName& filename, const FSSpec& file );
 	void AddRezFile   ( const FileName& filename, const FSSpec& file );
 	
 	void SetCurrentSourceDir( const N::FSDirSpec& dir );

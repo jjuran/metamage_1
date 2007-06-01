@@ -19,13 +19,9 @@
 
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Threads.h"
 
 // GetPathname
 #include "GetPathname.hh"
-
-// BitsAndBytes
-#include "StringFilters.hh"
 
 // A-line
 #include "A-line/ExtractIncludes.hh"
@@ -39,8 +35,6 @@ namespace ALine
 	
 	using namespace io::path_descent_operators;
 	
-	using BitsAndBytes::q;
-	
 	
 	typedef std::map< ProjName, NN::Shared< Project*, NN::DisposeWithDelete > > ProjectMap;
 	typedef std::map< ProjName, N::FSDirSpec > IncludeDirMap;
@@ -50,7 +44,6 @@ namespace ALine
 	
 	static ProjectMap gProjects;
 	static IncludeDirMap gIncludeDirs, gSystemIncludeDirs;
-	static FileMap gSources;
 	static FileMap gRezzes;
 	static IncludeMap gIncludes;
 	static DateMap gDates;
@@ -97,17 +90,6 @@ namespace ALine
 		}
 		
 		return false;
-	}
-	
-	
-	FSSpec SourceLocation( const FileName& filename )
-	{
-		return gSources[ filename ];
-	}
-	
-	void AddSourceFile( const FileName& filename, const FSSpec& file )
-	{
-		gSources[ filename ] = file;
 	}
 	
 	
