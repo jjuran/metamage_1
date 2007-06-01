@@ -168,9 +168,9 @@ namespace CompileDriver
 	static ProjectDataList  gProjectDataList;
 	static ProjectMap       gProjectMap;
 	
-	void AddProjectConfig( const ProjName& projName,
-	                       const N::FSDirSpec& folder,
-	                       const ConfData& conf )
+	static void AddProjectConfig( const ProjName&      projName,
+	                              const N::FSDirSpec&  folder,
+	                              const ConfData&      conf )
 	{
 		gProjectDataList.push_back( ProjectData( folder, conf ) );
 		gProjectMap[ projName ].push_back( &gProjectDataList.back() );
@@ -178,21 +178,16 @@ namespace CompileDriver
 	
 	static N::FSDirSpec DescendPathToDir( const N::FSDirSpec& dir, const std::string& path )
 	{
-		using namespace NN::Operators;
-		
-		typedef std::string::size_type size_type;
-		const size_type npos = std::string::npos;
-		
 		N::FSDirSpec result = dir;
-		size_type start = 0;
+		std::size_t start = 0;
 		
-		while ( start != npos )
+		while ( start != path.npos )
 		{
-			size_type stop = path.find( '/', start );
+			std::size_t stop = path.find( '/', start );
 			
 			result /= path.substr( start, stop - start );
 			
-			start = stop == npos ? npos : stop + 1;
+			start = stop == path.npos ? path.npos : stop + 1;
 		}
 		
 		return result;

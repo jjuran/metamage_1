@@ -43,10 +43,6 @@ namespace CompileDriver
 		NoSuchProject( const ProjName& name ) : name( name )  {}
 	};
 	
-	void AddProjectConfig( const ProjName& projName,
-	                       const N::FSDirSpec& folder,
-	                       const ConfData& conf );
-	
 	void AddPendingSubproject( const N::FSDirSpec& dir );
 	
 	const ProjectData& GetProjectData( const ProjName& projName, const Platform& targetPlatform );
