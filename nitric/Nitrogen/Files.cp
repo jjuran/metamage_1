@@ -621,18 +621,16 @@ Return Value
       return FSCreateDirectoryUnicode( parentRef, name.size(), name.data() );
      }
 
-   void FSDeleteObject( Nucleus::Owned<FSRef> owned )
+   void FSDeleteObject( const FSRef& ref )
      {
-      FSRef unowned = owned.Release();
-      ThrowOSStatus( ::FSDeleteObject( &unowned ) );
+      ThrowOSStatus( ::FSDeleteObject( &ref ) );
      }
 
-   void FSMoveObject( Nucleus::Owned<FSRef>& ref, const FSRef& destDirectory )
+   void FSMoveObject( FSRef& ref, const FSRef& destDirectory )
      {
       FSRef newRef;
-      ThrowOSStatus( ::FSMoveObject( &ref.Get(), &destDirectory, &newRef ) );
-      ref.Release();
-      ref = Nucleus::Owned<FSRef>::Seize( newRef );
+      ThrowOSStatus( ::FSMoveObject( &ref, &destDirectory, &newRef ) );
+      ref = newRef;
      }
 
    void FSExchangeObjects( const FSRef& ref, const FSRef& destRef )
@@ -640,18 +638,17 @@ Return Value
       ThrowOSStatus( ::FSExchangeObjects( &ref, &destRef ) );
      }
 
-   void FSRenameUnicode( Nucleus::Owned<FSRef>&  ref,
+   void FSRenameUnicode( FSRef& ref,
                          UniCharCount            nameLength,
                          const UniChar          *name,
                          TextEncoding            textEncodingHint )
      {
       FSRef newRef;
-      ThrowOSStatus( ::FSRenameUnicode( &ref.Get(), nameLength, name, textEncodingHint, &newRef ) );
-      ref.Release();
-      ref = Nucleus::Owned<FSRef>::Seize( newRef );
+      ThrowOSStatus( ::FSRenameUnicode( &ref, nameLength, name, textEncodingHint, &newRef ) );
+      ref = newRef;
      }
 
-   void FSRenameUnicode( Nucleus::Owned<FSRef>&    ref,
+   void FSRenameUnicode( FSRef& ref,
                          const UniString&          name,
                          TextEncoding              textEncodingHint )
      {
@@ -854,26 +851,25 @@ Return Value
       return result;
      }
 
-   Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&   ref,
-                                           UniCharCount   forkNameLength,
-                                           const UniChar *forkName )
+   FSForkRef FSCreateFork( const FSRef&   ref,
+                           UniCharCount   forkNameLength,
+                           const UniChar *forkName )
      {
       ThrowOSStatus( ::FSCreateFork( &ref, forkNameLength, forkName ) );
-      return Nucleus::Owned<FSForkRef>::Seize( FSForkRef( ref, forkNameLength, forkName ) );
+      return FSForkRef( ref, forkNameLength, forkName );
      }
 
-   Nucleus::Owned<FSForkRef> FSCreateFork( const FSRef&     ref,
-                                           const UniString& forkName )
+   FSForkRef FSCreateFork( const FSRef&     ref,
+                           const UniString& forkName )
      {
       return FSCreateFork( ref, forkName.size(), forkName.data() );
      }
                                   
-   void FSDeleteFork( Nucleus::Owned<FSForkRef> fork )
+   void FSDeleteFork( const FSForkRef& fork )
      {
-      OSStatus error = ::FSDeleteFork( &fork.Get().File(),
-                                       fork.Get().Name().size(),
-                                       fork.Get().Name().data() );
-      fork.Release();
+      OSStatus error = ::FSDeleteFork( &fork.File(),
+                                       fork.Name().size(),
+                                       fork.Name().data() );
       ThrowOSStatus( error );
      }
 
