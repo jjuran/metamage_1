@@ -85,6 +85,8 @@ namespace POSeven
 		typedef FileDescriptor stream;
 		
 		typedef std::size_t byte_count;
+		
+		typedef off_t position_offset;
 	};
 	
 }
