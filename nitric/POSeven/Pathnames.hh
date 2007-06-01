@@ -21,7 +21,7 @@
 namespace POSeven
 {
 	
-	void Unlink( const char* pathname )
+	inline void Unlink( const char* pathname )
 	{
 		ThrowPOSIXResult( ::unlink( pathname ) );
 	}
@@ -31,7 +31,7 @@ namespace POSeven
 		Unlink( pathname.c_str() );
 	}
 	
-	void RemoveDir( const char* pathname )
+	inline void RemoveDir( const char* pathname )
 	{
 		ThrowPOSIXResult( ::rmdir( pathname ) );
 	}
