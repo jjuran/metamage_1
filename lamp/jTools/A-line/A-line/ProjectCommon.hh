@@ -35,7 +35,7 @@ namespace ALine
 	FSSpec RezLocation( const FileName& filename );
 	
 	bool FindInclude( const IncludePath& includePath );
-	void AddInclude ( const IncludePath& includePath, const FSSpec& file );
+	void AddInclude ( const IncludePath& includePath, const std::string& file );
 	
 	void AddRezFile( const FileName& filename, const FSSpec& file );
 	
@@ -43,7 +43,7 @@ namespace ALine
 	void SetCurrentSourceDir( int zero );
 	
 	time_t RecursivelyLatestDate( const IncludePath& includePath );
-	time_t RecursivelyLatestDate( const IncludePath& includePath, const FSSpec& file );
+	time_t RecursivelyLatestDate( const IncludePath& includePath, const std::string& pathname );
 	
 }
 

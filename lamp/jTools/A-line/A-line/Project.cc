@@ -111,7 +111,7 @@ namespace ALine
 			try
 			{
 				FSSpec file = FindIncludeInFolder( N::FSDirSpec( *it ), includePath );
-				AddInclude( includePath, file );
+				AddInclude( includePath, GetPOSIXPathname( file ) );
 				
 				return true;
 			}

@@ -40,7 +40,7 @@ namespace ALine
 	typedef std::map< ProjName, NN::Shared< Project*, NN::DisposeWithDelete > > ProjectMap;
 	typedef std::map< ProjName, N::FSDirSpec > IncludeDirMap;
 	typedef std::map< FileName, FSSpec > FileMap;
-	typedef std::map< IncludePath, FSSpec > IncludeMap;
+	typedef std::map< IncludePath, std::string > IncludeMap;
 	typedef std::map< IncludePath, time_t > DateMap;
 	
 	static ProjectMap gProjects;
@@ -105,10 +105,10 @@ namespace ALine
 	
 	std::string IncludeLocation( const IncludePath& includePath )
 	{
-		return GetPOSIXPathname( gIncludes[ includePath ] );
+		return gIncludes[ includePath ];
 	}
 	
-	void AddInclude( const IncludePath& includePath, const FSSpec& file )
+	void AddInclude( const IncludePath& includePath, const std::string& file )
 	{
 		// Store the found location of the include specified by the pathname.
 		gIncludes[ includePath ] = file;
@@ -119,6 +119,7 @@ namespace ALine
 		// This is a nasty hack.
 		// It would be nice if we didn't have to support this, but OpenSSL requires it.
 		
+		/*
 		if ( gNeedsCwdSourceOption )
 		{
 			FSSpec file = gCurrentSourceDir / includePath;
@@ -129,6 +130,7 @@ namespace ALine
 				return true;
 			}
 		}
+		*/
 		
 		IncludeDirMap::const_iterator it, end = gIncludeDirs.end();
 		
@@ -173,6 +175,7 @@ namespace ALine
 				
 				return 0;  // FIXME
 			}
+			
 			return RecursivelyLatestDate( includePath, gIncludes[ includePath ] );
 		}
 	}
@@ -204,15 +207,11 @@ namespace ALine
 	}
 	*/
 	
-	time_t RecursivelyLatestDate( const IncludePath& includePath, const FSSpec& file )
+	time_t RecursivelyLatestDate( const IncludePath& includePath, const std::string& pathname )
 	{
-		//FixNullFileType( file );
-		
-		std::string pathname = GetPOSIXPathname( file );
-		
 		std::vector< IncludePath > includes = ExtractIncludes( pathname );
 		
-		time_t modDate = ModifiedDate( file );
+		time_t modDate = ModifiedDate( pathname );
 		
 		// For each included file
 		std::vector< std::string >::const_iterator it, end = includes.end();

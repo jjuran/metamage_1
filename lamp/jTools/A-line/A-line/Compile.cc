@@ -412,7 +412,7 @@ namespace ALine
 				// then it's up to date.
 				
 				if (    objectDate > sourceDate
-				     && objectDate > RecursivelyLatestDate( sourceName, sourceFile ) )
+				     && objectDate > RecursivelyLatestDate( sourceName, GetPOSIXPathname( sourceFile ) ) )
 				{
 					needToCompile = false;
 				}
