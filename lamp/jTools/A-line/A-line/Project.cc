@@ -102,8 +102,6 @@ namespace ALine
 		return file;
 	}
 	
-	static N::FSDirSpec gCurrentSourceDir;
-	
 	bool Project::FindInclude( const std::string& includePath )
 	{
 		typedef std::vector< N::FSDirSpec >::const_iterator vDS_ci;

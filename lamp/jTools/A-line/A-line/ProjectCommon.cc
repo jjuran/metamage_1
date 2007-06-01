@@ -50,8 +50,8 @@ namespace ALine
 	static IncludeMap gIncludes;
 	static DateMap gDates;
 	
-	static bool gNeedsCwdSourceOption = false;
-	static N::FSDirSpec gCurrentSourceDir;
+	//static bool gNeedsCwdSourceOption = false;
+	//static N::FSDirSpec gCurrentSourceDir;
 	
 	
 	Project& GetProject( const ProjName& projName )

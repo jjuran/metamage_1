@@ -243,11 +243,6 @@ namespace ALine
 		return CreateFolder( TargetFolder( target ) / proj );
 	}
 	
-	N::FSDirSpec ProjectDiagnosticsFolder( const std::string& proj, const std::string& target )
-	{
-		return CreateFolder( ProjectTargetFolder( proj, target ) / "Diagnostics" );
-	}
-	
 	N::FSDirSpec ProjectPrecompiledFolder( const std::string& proj, const std::string& target )
 	{
 		return CreateFolder( ProjectTargetFolder( proj, target ) / "Precompiled Header" );
