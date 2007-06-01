@@ -290,7 +290,7 @@ namespace ALine
 	{
 		CompilerOptions options( targetInfo );
 		
-		MacDate pchImageDate = 0;
+		time_t pchImageDate = 0;
 		bool needToPrecompile = false;
 		IncludePath pchSourcePath = project.PrecompiledHeaderSource();
 		bool thisProjectProvidesPrecompiledHeader = !pchSourcePath.empty();
@@ -300,7 +300,7 @@ namespace ALine
 		if ( thisProjectProvidesPrecompiledHeader )
 		{
 			// Locate the file and return the latest modification date of any file referenced
-			MacDate pchSourceDate = RecursivelyLatestDate( pchSourcePath );
+			time_t pchSourceDate = RecursivelyLatestDate( pchSourcePath );
 			
 			// Locate the precompiled header image file.
 			pchSource = IncludeLocation( pchSourcePath );
@@ -320,7 +320,7 @@ namespace ALine
 			
 			if ( io::file_exists( pchImage ) )
 			{
-				MacDate pchImageModifiedDate = ModifiedDate( pchImage );
+				time_t pchImageModifiedDate = ModifiedDate( pchImage );
 				
 				if ( pchImageModifiedDate > pchSourceDate )
 				{
@@ -403,9 +403,9 @@ namespace ALine
 				// a precompiled header (if available).  If the precompiled header
 				// has been modified, it saves us extracting the includes.
 				// Premature optimization?  Maybe.
-				MacDate sourceDate = std::max( pchImageDate, ModifiedDate( sourceFile ) );
+				time_t sourceDate = std::max( pchImageDate, ModifiedDate( sourceFile ) );
 				
-				MacDate objectDate = ModifiedDate( objectFile );
+				time_t objectDate = ModifiedDate( objectFile );
 				
 				// If the object file is more recent than the source,
 				// (considering first the actual mod date and then the effectove mod date),

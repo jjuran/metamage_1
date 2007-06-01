@@ -411,7 +411,7 @@ namespace ALine
 		FSSpec outFile = libsDir / linkName;
 		bool outFileExists = io::item_exists( outFile );
 		
-		MacDate outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
+		time_t outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
 		
 		bool needToLink = !outFileExists;
 		
@@ -454,9 +454,9 @@ namespace ALine
 				
 				found = std::find_if( usedLibFiles.begin(),
 				                      usedLibFiles.end(),
-				                      ext::compose1( std::bind2nd( std::not2( std::less< MacDate >() ),
+				                      ext::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                   outFileDate ),
-				                                     N::PtrFun( ModifiedDate ) ) );
+				                                     N::PtrFun( static_cast< time_t (*)(const FSSpec&) >( ModifiedDate ) ) ) );
 				
 				needToLink = found != usedLibFiles.end();
 			}

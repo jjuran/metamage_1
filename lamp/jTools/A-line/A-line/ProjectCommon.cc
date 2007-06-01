@@ -24,6 +24,7 @@
 #include "GetPathname.hh"
 
 // A-line
+#include "A-line/BuildCommon.hh"
 #include "A-line/ExtractIncludes.hh"
 
 
@@ -40,7 +41,7 @@ namespace ALine
 	typedef std::map< ProjName, N::FSDirSpec > IncludeDirMap;
 	typedef std::map< FileName, FSSpec > FileMap;
 	typedef std::map< IncludePath, FSSpec > IncludeMap;
-	typedef std::map< IncludePath, MacDate > DateMap;
+	typedef std::map< IncludePath, time_t > DateMap;
 	
 	static ProjectMap gProjects;
 	static IncludeDirMap gIncludeDirs;
@@ -102,15 +103,6 @@ namespace ALine
 	}
 	
 	
-	static MacDate ModifiedDate( const FSSpec& item )
-	{
-		CInfoPBRec pb;
-		
-		N::FSpGetCatInfo( item, pb );
-		
-		return MacDate( pb.hFileInfo.ioFlMdDat );
-	}
-	
 	std::string IncludeLocation( const IncludePath& includePath )
 	{
 		return GetPOSIXPathname( gIncludes[ includePath ] );
@@ -156,7 +148,7 @@ namespace ALine
 		return false;
 	}
 	
-	MacDate RecursivelyLatestDate( const IncludePath& includePath )
+	time_t RecursivelyLatestDate( const IncludePath& includePath )
 	{
 		if ( gIncludes.find( includePath ) != gIncludes.end() )
 		{
@@ -212,7 +204,7 @@ namespace ALine
 	}
 	*/
 	
-	MacDate RecursivelyLatestDate( const IncludePath& includePath, const FSSpec& file )
+	time_t RecursivelyLatestDate( const IncludePath& includePath, const FSSpec& file )
 	{
 		//FixNullFileType( file );
 		
@@ -220,14 +212,14 @@ namespace ALine
 		
 		std::vector< IncludePath > includes = ExtractIncludes( pathname );
 		
-		MacDate modDate = ModifiedDate( file );
+		time_t modDate = ModifiedDate( file );
 		
 		// For each included file
 		std::vector< std::string >::const_iterator it, end = includes.end();
 		
 		for ( it = includes.begin();  it != end;  ++it )
 		{
-			MacDate incDate = RecursivelyLatestDate( *it );
+			time_t incDate = RecursivelyLatestDate( *it );
 			modDate = std::max( modDate, incDate );
 		}
 		

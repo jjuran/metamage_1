@@ -7,8 +7,14 @@
 
 #pragma once
 
-// Nitrogen
-#include "Nitrogen/Files.h"
+// Standard C
+#include <time.h>
+
+// POSeven
+#include "POSeven/Stat.hh"
+
+// GetPathname
+#include "GetPathname.hh"
 
 // A-line
 #include "A-line/TargetInfo.hh"
@@ -17,8 +23,6 @@
 
 namespace ALine
 {
-	
-	typedef UInt32 MacDate;
 	
 	struct BuildFailure  {};
 	
@@ -31,13 +35,14 @@ namespace ALine
 		                       info.build );
 	}
 	
-	inline MacDate ModifiedDate( const FSSpec& item )
+	inline time_t ModifiedDate( const std::string& pathname )
 	{
-		CInfoPBRec pb;
-		
-		Nitrogen::FSpGetCatInfo( item, pb );
-		
-		return MacDate( pb.hFileInfo.ioFlMdDat );
+		return POSeven::Stat( pathname ).st_mtime;
+	}
+	
+	inline time_t ModifiedDate( const FSSpec& item )
+	{
+		return ModifiedDate( GetPOSIXPathname( item ) );
 	}
 	
 	inline std::string ObjectFileName( const std::string& sourceName )

@@ -11,6 +11,9 @@
 #include <string>
 #include <vector>
 
+// Standard C
+#include <time.h>
+
 // Nitrogen
 #include "Nitrogen/Files.h"
 
@@ -22,8 +25,6 @@ namespace ALine
 {
 	
 	namespace N = Nitrogen;
-	
-	typedef UInt32 MacDate;
 	
 	Project& GetProject( const ProjName& projName );
 	
@@ -41,8 +42,8 @@ namespace ALine
 	void SetCurrentSourceDir( const N::FSDirSpec& dir );
 	void SetCurrentSourceDir( int zero );
 	
-	MacDate RecursivelyLatestDate( const IncludePath& includePath );
-	MacDate RecursivelyLatestDate( const IncludePath& includePath, const FSSpec& file );
+	time_t RecursivelyLatestDate( const IncludePath& includePath );
+	time_t RecursivelyLatestDate( const IncludePath& includePath, const FSSpec& file );
 	
 }
 
