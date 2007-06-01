@@ -27,17 +27,16 @@ namespace ALine
 	
 	Project& GetProject( const ProjName& projName );
 	
-	void AddIncludeDir( const ProjName& projName, const N::FSDirSpec& dir, bool isSystem );
-	bool GetIncludeDir( const ProjName& projName, N::FSDirSpec& dir, bool isSystem );
+	void AddIncludeDir( const ProjName& projName, const N::FSDirSpec& dir );
 	
-	FSSpec IncludeLocation( const IncludePath& includePath );
+	std::string IncludeLocation( const IncludePath& includePath );
 	
 	FSSpec RezLocation( const FileName& filename );
 	
 	bool FindInclude( const IncludePath& includePath );
 	void AddInclude ( const IncludePath& includePath, const FSSpec& file );
 	
-	void AddRezFile   ( const FileName& filename, const FSSpec& file );
+	void AddRezFile( const FileName& filename, const FSSpec& file );
 	
 	void SetCurrentSourceDir( const N::FSDirSpec& dir );
 	void SetCurrentSourceDir( int zero );

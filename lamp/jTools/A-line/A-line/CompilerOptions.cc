@@ -36,7 +36,7 @@ namespace ALine
 		DefineMacro( macro, value ? "1" : "0" );
 	}
 	
-	void CompilerOptions::SetPrecompiledHeaderSource( const FSSpec& pch )
+	void CompilerOptions::SetPrecompiledHeaderSource( const std::string& pch )
 	{
 		myPrecompiledHeaderSource = pch;
 		hasPrecompiledHeaderSource = true;

@@ -138,11 +138,6 @@ namespace ALine
 		return CreateDirPath( UserDeveloperPath() + "/Lab" );
 	}
 	
-	bool ProjectHasSystemIncludes( const N::FSDirSpec& folder )
-	{
-		return false;
-	}
-	
 	N::FSDirSpec ProjectSourcesFolder( const N::FSDirSpec& folder )
 	{
 		N::FSDirSpec source = folder;

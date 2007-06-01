@@ -43,7 +43,7 @@ namespace ALine
 	typedef std::map< IncludePath, MacDate > DateMap;
 	
 	static ProjectMap gProjects;
-	static IncludeDirMap gIncludeDirs, gSystemIncludeDirs;
+	static IncludeDirMap gIncludeDirs;
 	static FileMap gRezzes;
 	static IncludeMap gIncludes;
 	static DateMap gDates;
@@ -71,25 +71,9 @@ namespace ALine
 		return project;
 	}
 	
-	void AddIncludeDir( const ProjName& projName, const N::FSDirSpec& dir, bool isSystem )
+	void AddIncludeDir( const ProjName& projName, const N::FSDirSpec& dir )
 	{
-		( isSystem ? gSystemIncludeDirs : gIncludeDirs )[ projName ] = dir;
-	}
-	
-	bool GetIncludeDir( const ProjName& projName, N::FSDirSpec& dir, bool isSystem )
-	{
-		const IncludeDirMap& includeDirs( isSystem ? gSystemIncludeDirs : gIncludeDirs );
-		
-		IncludeDirMap::const_iterator it = includeDirs.find( projName );
-		
-		if ( it != includeDirs.end() )
-		{
-			dir = it->second;
-			
-			return true;
-		}
-		
-		return false;
+		gIncludeDirs[ projName ] = dir;
 	}
 	
 	
@@ -127,9 +111,9 @@ namespace ALine
 		return MacDate( pb.hFileInfo.ioFlMdDat );
 	}
 	
-	FSSpec IncludeLocation( const IncludePath& includePath )
+	std::string IncludeLocation( const IncludePath& includePath )
 	{
-		return gIncludes[ includePath ];
+		return GetPOSIXPathname( gIncludes[ includePath ] );
 	}
 	
 	void AddInclude( const IncludePath& includePath, const FSSpec& file )
@@ -201,6 +185,7 @@ namespace ALine
 		}
 	}
 	
+	/*
 	static void FixNullFileType( const FSSpec& file )
 	{
 	#if !TARGET_API_MAC_CARBON  // FIXME:  This is a hack -- check Gestalt
@@ -225,10 +210,11 @@ namespace ALine
 		
 	#endif
 	}
+	*/
 	
 	MacDate RecursivelyLatestDate( const IncludePath& includePath, const FSSpec& file )
 	{
-		FixNullFileType( file );
+		//FixNullFileType( file );
 		
 		std::string pathname = GetPOSIXPathname( file );
 		

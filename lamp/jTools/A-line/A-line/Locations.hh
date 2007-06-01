@@ -19,8 +19,6 @@ namespace ALine
 	
 	std::string UserProjectsPath();
 	
-	bool ProjectHasSystemIncludes( const N::FSDirSpec& folder );
-	
 	N::FSDirSpec ProjectSourcesFolder ( const N::FSDirSpec& folder );
 	N::FSDirSpec ProjectIncludesFolder( const N::FSDirSpec& folder );
 	

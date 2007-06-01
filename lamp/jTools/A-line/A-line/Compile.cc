@@ -22,6 +22,16 @@
 #include "io/io.hh"
 #include "io/files.hh"
 
+// POSeven
+#include "POSeven/Pathnames.hh"
+
+// Nitrogen
+#include "Nitrogen/AEInteraction.h"
+#include "Nitrogen/Aliases.h"
+#include "Nitrogen/AppleEvents.h"
+#include "Nitrogen/OSStatus.h"
+#include "Nitrogen/Str.h"
+
 // GetPathname
 #include "GetPathname.hh"
 
@@ -225,7 +235,8 @@ namespace ALine
 		}
 	}
 	
-	static void Precompile( const CompilerOptions& options, const FSSpec& file )
+	static void Precompile( const CompilerOptions&  options,
+	                        const std::string&      pathname_to_precompiled_header_source )
 	{
 		bool gnu = options.Target().toolkit == toolkitGNU;
 		
@@ -233,7 +244,7 @@ namespace ALine
 		
 		std::string command = MakeCompileCommand( options );
 		
-		std::string filename = io::get_filename_string( file );
+		std::string filename = io::get_filename_string( pathname_to_precompiled_header_source );
 		
 		if ( !IsCFile( filename ) )
 		{
@@ -244,7 +255,7 @@ namespace ALine
 		command << cmdgen.Output( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
 		
 		// Add the source file to the command line
-		command << cmdgen.Input( GetPOSIXPathname( file ) );
+		command << cmdgen.Input( pathname_to_precompiled_header_source );
 		
 		if ( gnu )
 		{
@@ -283,7 +294,7 @@ namespace ALine
 		bool needToPrecompile = false;
 		IncludePath pchSourcePath = project.PrecompiledHeaderSource();
 		bool thisProjectProvidesPrecompiledHeader = !pchSourcePath.empty();
-		FSSpec pchSource;
+		std::string pchSource;
 		FSSpec pchImage;
 		
 		if ( thisProjectProvidesPrecompiledHeader )

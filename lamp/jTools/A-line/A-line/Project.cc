@@ -478,9 +478,8 @@ namespace ALine
 	
 	void Project::Study()
 	{
-		// Add the includes directory, whichever kind it is
-		bool isSystem = ProjectHasSystemIncludes( projFolder );
-		AddIncludeDir( projName, ProjectIncludesFolder( projFolder ), isSystem );
+		// Add the includes directory
+		AddIncludeDir( projName, ProjectIncludesFolder( projFolder ) );
 		
 		if ( product == productNotBuilt )  return;
 		
