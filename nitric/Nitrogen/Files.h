@@ -1939,6 +1939,97 @@ namespace io
 	
 	template <> struct filespec_traits< FSRef  > : public Nitrogen::FSRef_Io_Details {};
 	
+	// Get file info
+	
+	inline HFSUniStr255 get_filename( const FSRef& file )
+	{
+		FSCatalogInfo info;
+		
+		HFSUniStr255 name;
+		
+		Nitrogen::FSGetCatalogInfo( file, kFSCatInfoNone, &info, &name, NULL, NULL );
+		
+		return name;
+	}
+	
+	inline FSRef get_preceding_directory( const FSRef& file )
+	{
+		FSCatalogInfo info;
+		
+		FSRef parent;
+		
+		Nitrogen::FSGetCatalogInfo( file, kFSCatInfoNone, &info, NULL, NULL, &parent );
+	}
+	
+	inline FSRef get_parent_directory_of_directory( const FSRef& dir )
+	{
+		return get_preceding_directory( dir );
+	}
+	
+	// Path descent
+	
+	namespace path_descent_operators
+	{
+		
+		inline FSRef operator/( const FSRef& dir, const HFSUniStr255& name )
+		{
+			return Nitrogen::FSMakeFSRefUnicode( dir, name, Nitrogen::TextEncoding( kTextEncodingUnknown ) );
+		}
+		
+	}
+	
+	// Existence
+	
+	inline bool item_exists( const FSRef& item )  { return true; }
+	
+	inline bool directory_exists( const FSRef& dir )
+	{
+		FSCatalogInfo info;
+		
+		Nitrogen::FSGetCatalogInfo( dir, kFSCatInfoNodeFlags, &info, NULL, NULL, NULL );
+		
+		return info.nodeFlags & kFSNodeIsDirectoryMask;
+	}
+	
+	inline bool file_exists( const FSRef& file )
+	{
+		return !directory_exists( file );
+	}
+	
+	// Delete
+	
+	inline void delete_file( const FSRef& file )
+	{
+		Nitrogen::FSDeleteObject( file );
+	}
+	
+	inline void delete_file_only( const FSRef& file )
+	{
+		if ( directory_exists( file ) )
+		{
+			throw Nitrogen::NotAFileErr();
+		}
+		
+		delete_file( file );
+	}
+	
+	inline void delete_empty_directory( const FSRef& dir )
+	{
+		Nitrogen::FSDeleteObject( dir );
+	}
+	
+	inline void delete_empty_directory_only( const FSRef& dir )
+	{
+		if ( file_exists( dir ) )
+		{
+			throw Nitrogen::DirNFErr();
+		}
+		
+		delete_empty_directory( dir );
+	}
+	
+	// Open
+	
 	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_reading( const FSRef& file )
 	{
 		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdPerm );
@@ -1948,6 +2039,8 @@ namespace io
 	{
 		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsWrPerm );
 	}
+	
+	// Stream operations
 	
 	inline SInt64 get_file_size( Nitrogen::FSForkRefNum stream )
 	{
