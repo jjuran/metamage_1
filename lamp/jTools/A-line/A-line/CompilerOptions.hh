@@ -35,7 +35,7 @@ namespace ALine
 			std::string myPrecompiledHeaderSource;
 			FSSpec myPrecompiledHeaderImage;
 			N::FSDirSpec myOutputDir;
-			std::vector< N::FSDirSpec > myUserOnlyIncludeDirs;
+			std::vector< std::string > myUserOnlyIncludeDirs;
 			bool hasPrecompiledHeaderSource;
 			bool needsCwdSource;
 		
@@ -61,8 +61,8 @@ namespace ALine
 			
 			const N::FSDirSpec& Output() const  { return myOutputDir; }
 			
-			std::vector< N::FSDirSpec > const& UserOnlyIncludeDirs() const       { return myUserOnlyIncludeDirs; }
-			std::vector< N::FSDirSpec >      & UserOnlyIncludeDirs()             { return myUserOnlyIncludeDirs; }
+			std::vector< std::string > const& UserOnlyIncludeDirs() const       { return myUserOnlyIncludeDirs; }
+			std::vector< std::string >      & UserOnlyIncludeDirs()             { return myUserOnlyIncludeDirs; }
 			
 			void SetCwdSource( bool needs = true )  { needsCwdSource = needs; }
 			bool NeedsCwdSource() const  { return needsCwdSource; }

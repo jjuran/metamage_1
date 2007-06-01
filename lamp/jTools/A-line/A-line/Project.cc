@@ -12,6 +12,7 @@
 #include <vector>
 
 // POSeven
+#include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
 // Nitrogen
@@ -71,28 +72,10 @@ namespace ALine
 		return file.name;
 	}
 	
-	static FSSpec ResolveIncludePath( const N::FSDirSpec& includeDir, const IncludePath& includePath )
-	{
-		N::FSDirSpec dir = includeDir;
-		std::size_t start = 0, stop;
-		
-		while ( !eos( stop = includePath.find( '/', start ) ) )
-		{
-			std::size_t len = stop - start;
-			
-			dir /= includePath.substr( start, len );
-			
-			start = stop + 1;
-		}
-		
-		// stop == npos
-		return dir / includePath.substr( start, stop );
-	}
-	
-	static FSSpec FindIncludeInFolder( N::FSDirSpec folder, IncludePath includePath )
+	static std::string FindIncludeInFolder( const std::string& folder, IncludePath includePath )
 	{
 		// This will throw if folder or any subfolders are missing.
-		FSSpec file = ResolveIncludePath( folder, includePath );
+		std::string file = folder / includePath;
 		
 		if ( !io::item_exists( file ) )
 		{
@@ -104,15 +87,16 @@ namespace ALine
 	
 	bool Project::FindInclude( const std::string& includePath )
 	{
-		typedef std::vector< N::FSDirSpec >::const_iterator vDS_ci;
+		typedef std::vector< std::string >::const_iterator Iter;
 		
-		for ( vDS_ci it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
+		for ( Iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
 		{
 			// FIXME:  Use a trapped function
 			try
 			{
-				FSSpec file = FindIncludeInFolder( N::FSDirSpec( *it ), includePath );
-				AddInclude( includePath, GetPOSIXPathname( file ) );
+				std::string file = FindIncludeInFolder( *it, includePath );
+				
+				AddInclude( includePath, file );
 				
 				return true;
 			}
@@ -129,20 +113,17 @@ namespace ALine
 		return ( v.size() > 0 ) ? v[ 0 ] : std::string();
 	}
 	
-	static N::FSDirSpec FindSearchDir( const std::string& cwdPath, const std::string& pathname )
+	static std::string FindSearchDir( const std::string& cwdPath, const std::string& pathname )
 	{
-		N::FSDirSpec dir;
-		
 		try
 		{
 			std::string dirPath = cwdPath + "/" + pathname;
 			
-			FSSpec dirFSS = Div::ResolvePathToFSSpec( dirPath.c_str() );
+			if ( io::directory_exists( dirPath ) )
+			{
+				return dirPath;
+			}
 			
-			dir = N::FSDirSpec( dirFSS );
-		}
-		catch ( N::FNFErr )
-		{
 			Io::Err << "Missing search directory " << q( pathname ) << "\n";
 			throw;
 		}
@@ -151,8 +132,6 @@ namespace ALine
 			Io::Err << "Unrecognized exception for " << q( pathname ) << "\n";
 			throw;
 		}
-		
-		return dir;
 	}
 	
 	
@@ -334,7 +313,7 @@ namespace ALine
 					sourceDir = projFolder;
 				}
 				
-				sourceDirs.push_back( sourceDir );
+				sourceDirs.push_back( GetPOSIXPathname( sourceDir ) );
 			}
 		}
 		
@@ -434,9 +413,9 @@ namespace ALine
 		return ExceptionConverter< Exception, Function >( f );
 	}
 	
-	static FSSpec FindFileInDir( const std::string& filename, const N::FSDirSpec& dir )
+	static std::string FindFileInDir( const std::string& filename, const std::string& dir )
 	{
-		FSSpec result = dir / filename;
+		std::string result = dir / filename;
 		
 		if ( io::item_exists( result ) )
 		{
@@ -446,13 +425,13 @@ namespace ALine
 		throw N::FNFErr();
 	}
 	
-	static FSSpec FindSourceFileInDirs( const std::string& relative_path, const std::vector< N::FSDirSpec >& sourceDirs )
+	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& sourceDirs )
 	{
-		typedef std::vector< N::FSDirSpec >::const_iterator dir_iter;
+		typedef std::vector< std::string >::const_iterator dir_iter;
 		
 		for ( dir_iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
 		{
-			N::FSDirSpec dir = *it;
+			std::string dir = *it;
 			
 			try
 			{
@@ -460,7 +439,7 @@ namespace ALine
 				
 				while ( const char* slash = std::strchr( path, '/' ) )
 				{
-					dir = N::FSDirSpec( dir / std::string( path, slash ) );
+					dir = dir / std::string( path, slash );
 					
 					path = slash + 1;
 				}
@@ -507,22 +486,22 @@ namespace ALine
 			{
 				const std::string& sourceName = *it;
 				
-				mySources.push_back( FindSourceFileInDirs( sourceName, sourceDirs ) );
+				mySources.push_back( Div::ResolvePathToFSSpec( FindSourceFileInDirs( sourceName, sourceDirs ).c_str() ) );
 			}
 		}
 		else
 		{
 			// Still nothing?  Just enumerate everything in the source directory.
 			
-			typedef std::vector< N::FSDirSpec >::const_iterator vDS_ci;
+			typedef std::vector< std::string >::const_iterator Iter;
 			
 			// Enumerate our source files
 			std::vector< FSSpec > sources;
-			for ( vDS_ci it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
+			for ( Iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
 			{
 				std::vector< FSSpec > deepSources = DeepFiles
 				(
-					*it, 
+					Div::ResolvePathToFSSpec( it->c_str() ), 
 					ext::compose1
 					(
 						std::ptr_fun( IsCompilableFilename ), 
@@ -533,6 +512,7 @@ namespace ALine
 						)
 					)
 				);
+				
 				sources.resize( sources.size() + deepSources.size() );
 				std::copy( deepSources.begin(), deepSources.end(), sources.end() - deepSources.size() );
 			}

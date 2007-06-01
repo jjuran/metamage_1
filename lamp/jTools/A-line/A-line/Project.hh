@@ -42,7 +42,7 @@ namespace ALine
 			
 			FSSpec PrecompiledHeaderImage() const;
 			
-			const std::vector< N::FSDirSpec >& SearchDirs() const  { return sourceDirs; }
+			const std::vector< std::string >& SearchDirs() const  { return sourceDirs; }
 			
 			std::vector< FileName > LibImports()    const  { return myImports; }
 			std::vector< FileName > Frameworks()    const  { return myFrameworks; }
@@ -73,7 +73,7 @@ namespace ALine
 			// The names of all projects used directly or indirectly by this one.
 			std::vector< ProjName > allUsedProjects;
 			// Directories to search for source files.
-			std::vector< N::FSDirSpec > sourceDirs;
+			std::vector< std::string > sourceDirs;
 			// Include dirs from used projects.
 			std::vector< N::FSDirSpec > myUsedIncludeDirs;
 			// Various things to link with.

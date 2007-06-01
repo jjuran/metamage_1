@@ -86,17 +86,17 @@ namespace ALine
 	class IncludeDirGatherer
 	{
 		private:
-			std::vector< N::FSDirSpec >& includes;
+			std::vector< std::string >& includes;
 		
 		public:
-			IncludeDirGatherer( std::vector< N::FSDirSpec >& includes ) : includes( includes )  {}
+			IncludeDirGatherer( std::vector< std::string >& includes ) : includes( includes )  {}
 				
 			void operator()( const ProjName& projName );
 	};
 	
 	void IncludeDirGatherer::operator()( const ProjName& projName )
 	{
-		const std::vector< N::FSDirSpec >& searchDirs( GetProject( projName ).SearchDirs() );
+		const std::vector< std::string >& searchDirs( GetProject( projName ).SearchDirs() );
 		
 		std::copy( searchDirs.begin(),
 		           searchDirs.end(),
@@ -141,16 +141,7 @@ namespace ALine
 	
 	static std::string IncludeDirString( const CompilerOptions& options )
 	{
-		std::vector< std::string > includeDirPathnames;
-		
-		includeDirPathnames.resize( options.UserOnlyIncludeDirs().size() );
-		
-		std::transform( options.UserOnlyIncludeDirs().begin(),
-		                options.UserOnlyIncludeDirs().end(),
-		                includeDirPathnames.begin(),
-		                std::ptr_fun( static_cast< std::string (*)(const N::FSDirSpec&) >( GetPOSIXPathname ) ) );
-		
-		return MakeIncludeDirOptions( includeDirPathnames );
+		return MakeIncludeDirOptions( options.UserOnlyIncludeDirs() );
 	}
 	
 	static std::string MakeCompileCommand( const CompilerOptions& options )
@@ -489,10 +480,10 @@ namespace ALine
 			// but that must already be so to have found it in the first place.
 			// We also need the parent of the image file, so gcc can find that.
 			
-			std::vector< N::FSDirSpec >& userOnlyIncludeDirs = options.UserOnlyIncludeDirs();
+			std::vector< std::string >& userOnlyIncludeDirs = options.UserOnlyIncludeDirs();
 			
 			userOnlyIncludeDirs.insert( userOnlyIncludeDirs.begin(),
-			                            io::get_preceding_directory( pchImage ) );
+			                            io::get_preceding_directory( GetPOSIXPathname( pchImage ) ) );
 		}
 		
 		std::for_each( dirtyFiles.begin(),
