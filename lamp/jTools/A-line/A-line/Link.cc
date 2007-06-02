@@ -570,7 +570,7 @@ namespace ALine
 			}
 			
 			FSSpec includeDir = NN::Convert< FSSpec >( ProjectIncludesFolder( project.ProjectFolder() ) );
-			std::string rezCommand = "Rez -append -d __ALINE_REZ_MPW__";
+			std::string rezCommand = "Rez -append";
 			
 			if ( gnu )
 			{
@@ -579,7 +579,7 @@ namespace ALine
 				
 				rsrcFile = libsDir / bundleName / "Contents" / "Resources" / rsrcFileName;
 				
-				//rezCommand = "/Developer/Tools/Rez -append -d __ALINE_REZ_OSX__ -useDF";
+				//rezCommand = "/Developer/Tools/Rez -append -useDF";
 				rezCommand = "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF";
 				
 			}
