@@ -72,61 +72,6 @@ namespace jTools
 	
 	std::vector< const char* > gIncludeDirs;
 	
-	static void RememberIncludeDir( const char* pathname )
-	{
-		gIncludeDirs.push_back( pathname );
-	}
-	
-	static std::string PrecompiledHeader( const char* pathname )
-	{
-		const char* dot   = std::strrchr( pathname, '.' );
-		const char* slash = std::strrchr( pathname, '/' );
-		
-		bool hasDot = dot > slash;  // Works even if slash or dot is NULL
-		
-		bool headerIsSource = hasDot  &&  dot[1] == 'h';
-		
-		std::string precompiledHeaderImage;
-		
-		if ( headerIsSource )
-		{
-			bool pathSpecified = slash != NULL;
-			
-			if ( pathSpecified )
-			{
-				precompiledHeaderImage = pathname;
-				precompiledHeaderImage += ".mwch";
-			}
-			else
-			{
-				std::string filename = io::get_filename( pathname );
-				
-				filename += ".mwch";
-				
-				typedef std::vector< const char* >::const_iterator Iter;
-				
-				for ( Iter it = gIncludeDirs.begin();  it != gIncludeDirs.end();  ++it )
-				{
-					std::string location = *it / filename;
-					
-					if ( io::file_exists( location ) )
-					{
-						precompiledHeaderImage = location;
-						break;
-					}
-				}
-			}
-			
-			pathname = precompiledHeaderImage.c_str();
-		}
-		else
-		{
-			//precompiledHeaderImage = pathname;
-		}
-		
-		return "-prefix " + QuotedMacPathFromPOSIXPath( pathname );
-	}
-	
 	static int Main( int argc, const char *const argv[] )
 	{
 		std::string command = "Rez";
