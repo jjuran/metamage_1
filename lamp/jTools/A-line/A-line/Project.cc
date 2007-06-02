@@ -301,19 +301,19 @@ namespace ALine
 			}
 			else
 			{
-				N::FSDirSpec sourceDir;
+				std::string sourceDir;
 				
 				// Otherwise, just use a default location.
 				try
 				{
-					sourceDir = ProjectSourcesFolder( projFolder );
+					sourceDir = ProjectSourcesPath( GetPOSIXPathname( projFolder ) );
 				}
 				catch ( ... )
 				{
-					sourceDir = projFolder;
+					sourceDir = GetPOSIXPathname( projFolder );
 				}
 				
-				sourceDirs.push_back( GetPOSIXPathname( sourceDir ) );
+				sourceDirs.push_back( sourceDir );
 			}
 		}
 		
