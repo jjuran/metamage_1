@@ -8,11 +8,9 @@
 // Standard C
 #include <stdlib.h>
 
-// POSIX
-#include <sys/stat.h>
-
 // POSeven
 #include "POSeven/Pathnames.hh"
+#include "POSeven/Stat.hh"
 
 // Nitrogen
 #include "Nitrogen/Folders.h"
@@ -158,11 +156,9 @@ namespace ALine
 	
 	std::string ProjectSourcesPath( const std::string& projectPath )
 	{
-		struct ::stat sb;
+		std::string sources = projectPath / "Sources";
 		
-		std::string sources = projectPath + "/Sources";
-		
-		if ( stat( sources.c_str(), &sb ) == 0 )
+		if ( io::directory_exists( sources ) )
 		{
 			return sources;
 		}
@@ -182,18 +178,16 @@ namespace ALine
 	
 	std::string ProjectIncludesPath( const std::string& projectPath )
 	{
-		struct ::stat sb;
-		
 		std::string includes = projectPath + "/Includes";
 		
-		if ( stat( includes.c_str(), &sb ) == 0 )
+		if ( io::directory_exists( includes ) )
 		{
 			return includes;
 		}
 		
 		includes = projectPath + "/include";
 		
-		if ( stat( includes.c_str(), &sb ) == 0 )
+		if ( io::directory_exists( includes ) )
 		{
 			return includes;
 		}
@@ -216,11 +210,9 @@ namespace ALine
 	
 	static std::string ProjectConfigDirPath( const std::string& projectPath )
 	{
-		struct ::stat sb;
-		
 		std::string confd = projectPath + "/A-line.confd";
 		
-		if ( stat( confd.c_str(), &sb ) == 0 )
+		if ( io::directory_exists( confd ) )
 		{
 			return confd;
 		}
