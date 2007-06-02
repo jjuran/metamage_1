@@ -66,7 +66,7 @@ my @programs = qw
 	jtest
 	keymods kill killall
 	lf2cr lf2crlf login
-	macbin md5sum mkdir mv mwcc
+	macbin md5sum mkdir mpwrez mv mwcc
 	nohup
 	open osascript
 	perl ptrace pwd
@@ -90,7 +90,7 @@ my %fsmap =
 		},
 		Tools =>
 		[
-			qw( A-line abort activate aevt cpres keymods quit system File Line mwcc tlsrvr ),
+			qw( A-line abort activate aevt cpres keymods quit system File Line mpwrez mwcc tlsrvr ),
 			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl run-tests ),
 		],
 	},
