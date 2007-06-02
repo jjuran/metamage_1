@@ -45,29 +45,6 @@ namespace ALine
 		kNativePOSIXEnvironment
 	};
 	
-	enum ToolChainType
-	{
-		kCodeWarriorTools,
-		kGNUTools
-	};
-	
-	enum OperationType
-	{
-		kPrecompile,
-		kCompile,
-		kLinkLibrary,
-		kLinkProgram
-	};
-	
-	#if 0
-	template < ArchitectureType  arch,
-	           RuntimeType       runtime,
-	           APIType           api,
-	           BuildType         build,
-	           ToolChainType     tools,
-	           OperationType     op >  struct CommandTraits;
-	#endif
-	
 	
 	// Environment refers to the environment of the tool we wish to run,
 	// not the environment A-line is running in.
@@ -227,9 +204,6 @@ namespace ALine
 			return debug ? "-sym full"
 			             : "-sym off";
 		}
-		
-		// CodeWarrior only
-		std::string MWNoMacsBugSymbols() const  { return m68k && !debug ? "-mbg off" : ""; }
 		
 		// CodeWarrior only
 		std::string CFMTracebackTables() const  { return carbon && cfm && debug ? "-tb on" : ""; }
