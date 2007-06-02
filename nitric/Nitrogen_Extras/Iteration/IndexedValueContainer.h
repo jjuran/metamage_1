@@ -64,6 +64,8 @@ namespace Nitrogen
 					}
 				
 				public:
+					const_iterator() : state(), position() {}
+					
 					const_iterator& operator++()                         { ++position;  return *this; }
 					const_iterator  operator++(int)                      { const_iterator old = *this; operator++(); return old; }
 					
