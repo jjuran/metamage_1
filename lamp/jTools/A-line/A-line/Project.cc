@@ -132,6 +132,9 @@ namespace ALine
 			Io::Err << "Unrecognized exception for " << q( pathname ) << "\n";
 			throw;
 		}
+		
+		// Not reached
+		return "";
 	}
 	
 	
