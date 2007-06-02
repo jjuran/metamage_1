@@ -12,9 +12,6 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	struct AllFilter
 	{
 		template < class Arg1 >  bool operator()( Arg1 ) const  { return true; }
@@ -22,18 +19,18 @@ namespace ALine
 	
 	static AllFilter All;
 	
-	
-	std::vector< FSSpec > DeepFiles( const N::FSDirSpec& dir )
-	{
-		return DeepFiles( dir, All );
-	}
-	
 	std::vector< FSSpec > DeepFiles( const FSSpec& item )
 	{
 		return DeepFiles( item, All );
 	}
 	
+	std::vector< std::string > DeepFiles( const std::string& item )
+	{
+		return DeepFiles( item, All );
+	}
 	
+	
+	/*
 	class NameFilter
 	{
 		private:
@@ -48,15 +45,11 @@ namespace ALine
 			}
 	};
 	
-	std::vector< FSSpec > DeepFiles( const N::FSDirSpec& dir, const std::string& name )
-	{
-		return DeepFiles( dir, NameFilter( name ) );
-	}
-	
 	std::vector< FSSpec > DeepFiles( const FSSpec& item, const std::string& name )
 	{
 		return DeepFiles( item, NameFilter( name ) );
 	}
+	*/
 	
 }
 
