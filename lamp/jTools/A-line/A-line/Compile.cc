@@ -109,14 +109,14 @@ namespace ALine
 		return name.substr( name.size() - 2, name.size() ) == ".c";
 	}
 	
-	static N::FSDirSpec CreateFolder( const FSSpec& folder )
+	static std::string CreateFolder( const std::string& folder )
 	{
-		if ( io::item_exists( folder ) )
+		if ( !io::item_exists( folder ) )
 		{
-			return N::FSDirSpec( folder );
+			int made = mkdir( folder.c_str(), 0700 );
 		}
 		
-		return N::FSpDirCreate( folder );
+		return folder;
 	}
 	
 	static std::string GetFilenameBase( const std::string& filename )
@@ -131,12 +131,12 @@ namespace ALine
 		return GetFilenameBase( filename ) + ".txt";
 	}
 	
-	static std::string DiagnosticsFilePathname( const N::FSDirSpec& outputDir, const std::string& filename )
+	static std::string DiagnosticsFilePathname( const std::string& outputDir, const std::string& filename )
 	{
-		N::FSDirSpec diagnosticsFolder = CreateFolder( io::get_preceding_directory( outputDir ) / "Diagnostics" );
-		FSSpec diagnosticsFile = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
+		std::string diagnosticsFolder = CreateFolder( io::get_preceding_directory( outputDir ) / "Diagnostics" );
+		std::string diagnosticsFile   = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
 		
-		return GetPOSIXPathname( diagnosticsFile );
+		return diagnosticsFile;
 	}
 	
 	static std::string IncludeDirString( const CompilerOptions& options )
@@ -194,7 +194,7 @@ namespace ALine
 			command << cmdgen.Prefix( pchSourceName );
 		}
 		
-		command << cmdgen.Output( GetPOSIXPathname( options.Output() / ObjectFileName( filename ) ) );
+		command << cmdgen.Output( options.Output() / ObjectFileName( filename ) );
 		
 		command << cmdgen.Input( GetPOSIXPathname( file ) );
 		
@@ -220,8 +220,7 @@ namespace ALine
 			}
 			else if ( status == 0 )
 			{
-				//try { io::delete_file( diagnostics ); } catch ( ... ) {}
-				unlink( diagnostics.c_str() );
+				try { io::delete_file( diagnostics ); } catch ( ... ) {}
 			}
 		}
 	}
@@ -346,7 +345,7 @@ namespace ALine
 			}
 		}
 		
-		N::FSDirSpec outDir = ProjectObjectsFolder( project.Name(), MakeTargetName( targetInfo ) );
+		std::string outDir = ProjectObjectsDirPath( project.Name(), MakeTargetName( targetInfo ) );
 		
 		options.SetOutput( outDir );
 		
@@ -378,7 +377,7 @@ namespace ALine
 			std::string sourceName = io::get_filename_string( sourceFile );
 			
 			// The object file for this source file, which may or may not exist yet.
-			FSSpec objectFile = outDir / ObjectFileName( sourceName );
+			std::string objectFile = outDir / ObjectFileName( sourceName );
 			
 			// If object file is nonexistent or older than source,
 			// then it must be compiled, and we can skip the includes.
