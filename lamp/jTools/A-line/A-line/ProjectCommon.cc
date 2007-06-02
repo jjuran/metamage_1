@@ -40,7 +40,7 @@ namespace ALine
 	
 	typedef std::map< ProjName, NN::Shared< Project*, NN::DisposeWithDelete > > ProjectMap;
 	typedef std::set< ProjName > ProjectSet;
-	typedef std::map< FileName, FSSpec > FileMap;
+	typedef std::map< FileName, std::string > FileMap;
 	typedef std::map< IncludePath, std::string > IncludeMap;
 	typedef std::map< IncludePath, time_t > DateMap;
 	
@@ -79,14 +79,14 @@ namespace ALine
 	}
 	
 	
-	FSSpec RezLocation( const FileName& filename )
+	std::string RezLocation( const FileName& filename )
 	{
 		return gRezzes[ filename ];
 	}
 	
 	void AddRezFile( const FSSpec& file )
 	{
-		gRezzes[ io::get_filename_string( file ) ] = file;
+		gRezzes[ io::get_filename_string( file ) ] = GetPOSIXPathname( file );
 	}
 	
 	/*

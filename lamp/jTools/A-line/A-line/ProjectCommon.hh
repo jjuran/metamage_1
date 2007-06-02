@@ -27,7 +27,7 @@ namespace ALine
 	
 	std::string IncludeLocation( const IncludePath& includePath );
 	
-	FSSpec RezLocation( const FileName& filename );
+	std::string RezLocation( const FileName& filename );
 	
 	bool FindInclude( const IncludePath& includePath );
 	void AddInclude ( const IncludePath& includePath, const std::string& file );

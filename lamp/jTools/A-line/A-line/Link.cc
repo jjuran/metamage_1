@@ -88,12 +88,12 @@ namespace ALine
 		return result;
 	}
 	
-	static std::string MakeEchoedIncludedPOSIXPathname( const FSSpec& file )
+	static std::string MakeEchoedIncludedPOSIXPathname( const std::string& file )
 	{
 		std::string include = "include ";
 		std::string echo    = "echo ";
 		
-		return echo + q( include + qq( GetPOSIXPathname( file ) ) + ";" );
+		return echo + q( include + qq( file ) + ";" );
 	}
 	
 	static std::string MakeFramework( const std::string& framework )
@@ -557,7 +557,7 @@ namespace ALine
 		if ( !project.UsedRezFiles().empty() )
 		{
 			const std::vector< FileName >& rez = project.UsedRezFiles();
-			std::vector< FSSpec > rezFiles( rez.size() );
+			std::vector< std::string > rezFiles( rez.size() );
 			
 			std::transform( rez.begin(),
 			                rez.end(),
@@ -589,8 +589,7 @@ namespace ALine
 			rezCommand << join( rezFiles.begin(),
 			                    rezFiles.end(),
 			                    " ",
-			                    ext::compose1( N::PtrFun( q ),
-			                                   N::PtrFun( static_cast< std::string (*)(const FSSpec&) >( GetPOSIXPathname ) ) ) );
+			                    N::PtrFun( q ) );
 			
 			QueueCommand( "echo Rezzing:  " + io::get_filename_string( rsrcFile ) );
 			QueueCommand( rezCommand );
@@ -599,7 +598,7 @@ namespace ALine
 		if ( !project.UsedRsrcFiles().empty() )
 		{
 			const std::vector< FileName >& rsrcs = project.UsedRsrcFiles();
-			std::vector< FSSpec > rsrcFiles( rsrcs.size() );
+			std::vector< std::string > rsrcFiles( rsrcs.size() );
 			
 			std::transform( rsrcs.begin(), 
 			                rsrcs.end(),
@@ -611,8 +610,7 @@ namespace ALine
 			cpresCommand << join( rsrcFiles.begin(),
 			                      rsrcFiles.end(),
 			                      " ",
-			                      ext::compose1( N::PtrFun( q ),
-			                                     N::PtrFun( static_cast< std::string (*)(const FSSpec&) >( GetPOSIXPathname ) ) ) );
+			                      N::PtrFun( q ) );
 			
 			
 			if ( gnu )
