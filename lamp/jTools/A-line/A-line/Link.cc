@@ -14,6 +14,9 @@
 #include "io/io.hh"
 #include "io/spray.hh"
 
+// POSeven
+#include "POSeven/Pathnames.hh"
+
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
@@ -552,7 +555,7 @@ namespace ALine
 		QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
 		QueueCommand( command );
 		
-		FSSpec rsrcFile = outFile;
+		std::string rsrcFile = GetPOSIXPathname( outFile );
 		
 		if ( !project.UsedRezFiles().empty() )
 		{
@@ -577,14 +580,14 @@ namespace ALine
 				std::string bundleName = linkName + ".app";
 				std::string rsrcFileName = linkName + ".rsrc";
 				
-				rsrcFile = libsDir / bundleName / "Contents" / "Resources" / rsrcFileName;
+				rsrcFile = GetPOSIXPathname( libsDir ) / bundleName / "Contents" / "Resources" / rsrcFileName;
 				
 				rezCommand = "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF";
 				
 			}
 			
 			rezCommand << "-i " + q( GetPOSIXPathname( includeDir ) );
-			rezCommand << cmdgen.Output( GetPOSIXPathname( rsrcFile ) );
+			rezCommand << cmdgen.Output( rsrcFile );
 			
 			rezCommand << join( rezFiles.begin(),
 			                    rezFiles.end(),
@@ -623,7 +626,7 @@ namespace ALine
 				cpresCommand = paren( echoes ) + " | /Developer/Tools/Rez -append -useDF -o";
 			}
 			
-			cpresCommand << q( GetPOSIXPathname( rsrcFile ) );
+			cpresCommand << q( rsrcFile );
 			
 			QueueCommand( "echo Copying resources:  " + io::get_filename_string( rsrcFile ) );
 			QueueCommand( cpresCommand );
