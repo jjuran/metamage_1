@@ -1959,6 +1959,8 @@ namespace io
 		FSRef parent;
 		
 		Nitrogen::FSGetCatalogInfo( file, kFSCatInfoNone, &info, NULL, NULL, &parent );
+		
+		return parent;
 	}
 	
 	inline FSRef get_parent_directory_of_directory( const FSRef& dir )
