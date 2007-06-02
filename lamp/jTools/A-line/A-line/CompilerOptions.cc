@@ -47,7 +47,7 @@ namespace ALine
 		myPrecompiledHeaderImage = phi;
 	}
 	
-	void CompilerOptions::SetOutput( const N::FSDirSpec& output )
+	void CompilerOptions::SetOutput( const std::string& output )
 	{
 		myOutputDir = output;
 	}

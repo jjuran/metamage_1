@@ -169,7 +169,7 @@ namespace ALine
 		return command;
 	}
 	
-	static void BuildSourceFile( CompilerOptions options, const FSSpec& file )
+	static void BuildSourceFile( CompilerOptions options, const std::string& file )
 	{
 		bool gnu = options.Target().toolkit == toolkitGNU;
 		
@@ -196,7 +196,7 @@ namespace ALine
 		
 		command << cmdgen.Output( options.Output() / ObjectFileName( filename ) );
 		
-		command << cmdgen.Input( GetPOSIXPathname( file ) );
+		command << cmdgen.Input( file );
 		
 		if ( gnu )
 		{
@@ -351,7 +351,7 @@ namespace ALine
 		
 		//SetCurrentSourceDir( false );
 		
-		std::vector< FSSpec > dirtyFiles;
+		std::vector< std::string > dirtyFiles;
 		
 		// See which source files need to be compiled,
 		// caching include information in the process.
@@ -366,7 +366,7 @@ namespace ALine
 			//  * Dependency information may be acquired and cached, in RecursivelyLatestDate().
 			
 			// The source file
-			const FSSpec& sourceFile( *it );
+			std::string sourceFile( GetPOSIXPathname( *it ) );
 			
 			if ( project.NeedsCwdSourceOption() )
 			{
@@ -402,7 +402,7 @@ namespace ALine
 				// then it's up to date.
 				
 				if (    objectDate > sourceDate
-				     && objectDate > RecursivelyLatestDate( sourceName, GetPOSIXPathname( sourceFile ) ) )
+				     && objectDate > RecursivelyLatestDate( sourceName, sourceFile ) )
 				{
 					needToCompile = false;
 				}
