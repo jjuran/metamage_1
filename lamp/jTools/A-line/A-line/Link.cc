@@ -570,7 +570,7 @@ namespace ALine
 			}
 			
 			FSSpec includeDir = NN::Convert< FSSpec >( ProjectIncludesFolder( project.ProjectFolder() ) );
-			std::string rezCommand = "Rez -append";
+			std::string rezCommand = "mpwrez -append";
 			
 			if ( gnu )
 			{
@@ -579,21 +579,18 @@ namespace ALine
 				
 				rsrcFile = libsDir / bundleName / "Contents" / "Resources" / rsrcFileName;
 				
-				//rezCommand = "/Developer/Tools/Rez -append -useDF";
 				rezCommand = "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF";
 				
 			}
 			
-			rezCommand << "-i " + q( GetPathname( includeDir ) );
-			rezCommand << cmdgen.Output( GetPathname( rsrcFile ) );
+			rezCommand << "-i " + q( GetPOSIXPathname( includeDir ) );
+			rezCommand << cmdgen.Output( GetPOSIXPathname( rsrcFile ) );
 			
 			rezCommand << join( rezFiles.begin(),
 			                    rezFiles.end(),
 			                    " ",
 			                    ext::compose1( N::PtrFun( q ),
-			                                   N::PtrFun( GetPathname ) ) );
-			
-			rezCommand = cmdgen.MakeNativeCommand( rezCommand );
+			                                   N::PtrFun( static_cast< std::string (*)(const FSSpec&) >( GetPOSIXPathname ) ) ) );
 			
 			QueueCommand( "echo Rezzing:  " + io::get_filename_string( rsrcFile ) );
 			QueueCommand( rezCommand );
