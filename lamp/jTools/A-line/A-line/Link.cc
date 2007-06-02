@@ -572,7 +572,7 @@ namespace ALine
 				rezFiles.push_back( RezLocation( "CarbonApp.r" ) );
 			}
 			
-			FSSpec includeDir = NN::Convert< FSSpec >( ProjectIncludesFolder( project.ProjectFolder() ) );
+			std::string includeDir = ProjectIncludesPath( GetPOSIXPathname( project.ProjectFolder() ) );
 			std::string rezCommand = "mpwrez -append";
 			
 			if ( gnu )
@@ -586,7 +586,7 @@ namespace ALine
 				
 			}
 			
-			rezCommand << "-i " + q( GetPOSIXPathname( includeDir ) );
+			rezCommand << "-i " + q( includeDir );
 			rezCommand << cmdgen.Output( rsrcFile );
 			
 			rezCommand << join( rezFiles.begin(),

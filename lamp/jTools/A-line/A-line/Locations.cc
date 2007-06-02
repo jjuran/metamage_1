@@ -139,21 +139,6 @@ namespace ALine
 		return CreateDirPath( UserDeveloperPath() + "/Lab" );
 	}
 	
-	N::FSDirSpec ProjectSourcesFolder( const N::FSDirSpec& folder )
-	{
-		N::FSDirSpec source = folder;
-		
-		try
-		{
-			source /= "Sources";
-		}
-		catch ( N::FNFErr )
-		{
-		}
-		
-		return source;
-	}
-	
 	std::string ProjectSourcesPath( const std::string& projectPath )
 	{
 		std::string sources = projectPath / "Sources";
@@ -166,26 +151,16 @@ namespace ALine
 		return projectPath;
 	}
 	
-	N::FSDirSpec ProjectIncludesFolder( const N::FSDirSpec& folder )
-	{
-		N::FSDirSpec source = folder;
-		
-		try { return source /= "Includes";       } catch ( N::FNFErr ) {}
-		try { return source /= "include";        } catch ( N::FNFErr ) {}
-		
-		return ProjectSourcesFolder( folder );
-	}
-	
 	std::string ProjectIncludesPath( const std::string& projectPath )
 	{
-		std::string includes = projectPath + "/Includes";
+		std::string includes = projectPath / "Includes";
 		
 		if ( io::directory_exists( includes ) )
 		{
 			return includes;
 		}
 		
-		includes = projectPath + "/include";
+		includes = projectPath / "include";
 		
 		if ( io::directory_exists( includes ) )
 		{
