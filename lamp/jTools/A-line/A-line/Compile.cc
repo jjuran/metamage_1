@@ -243,7 +243,7 @@ namespace ALine
 			command << "-Wno-non-template-friend";
 		}
 		
-		command << cmdgen.Output( GetPOSIXPathname( options.PrecompiledHeaderImage() ) );
+		command << cmdgen.Output( options.PrecompiledHeaderImage() );
 		
 		// Add the source file to the command line
 		command << cmdgen.Input( pathname_to_precompiled_header_source );
@@ -301,7 +301,7 @@ namespace ALine
 			                                       pchSourceName,
 			                                       targetInfo );
 			
-			options.SetPrecompiledHeaderImage( pchImage );
+			options.SetPrecompiledHeaderImage( GetPOSIXPathname( pchImage ) );
 			
 			needToPrecompile = true;
 			
@@ -342,7 +342,7 @@ namespace ALine
 				pchImageDate = io::file_exists( pchImage ) ? ModifiedDate( pchImage )
 				                                           : 0xFFFFFFFF;
 				
-				options.SetPrecompiledHeaderImage( pchImage );
+				options.SetPrecompiledHeaderImage( GetPOSIXPathname( pchImage ) );
 			}
 		}
 		
