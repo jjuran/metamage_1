@@ -257,11 +257,11 @@ namespace ALine
 		QueueCommand( command );
 	}
 	
-	static FSSpec PrecompiledHeaderImageFile( const ProjName&    projName,
-	                                          std::string        pchSourceName,
-	                                          const TargetInfo&  targetInfo )
+	static std::string PrecompiledHeaderImageFile( const ProjName&    projName,
+	                                               std::string        pchSourceName,
+	                                               const TargetInfo&  targetInfo )
 	{
-		N::FSDirSpec folder = ProjectPrecompiledFolder( projName, MakeTargetName( targetInfo ) );
+		std::string folder = ProjectPrecompiledDirPath( projName, MakeTargetName( targetInfo ) );
 		
 		bool gnu = targetInfo.toolkit == toolkitGNU;
 		
@@ -286,7 +286,7 @@ namespace ALine
 		IncludePath pchSourcePath = project.PrecompiledHeaderSource();
 		bool thisProjectProvidesPrecompiledHeader = !pchSourcePath.empty();
 		std::string pchSource;
-		FSSpec pchImage;
+		std::string pchImage;
 		
 		if ( thisProjectProvidesPrecompiledHeader )
 		{
@@ -301,7 +301,7 @@ namespace ALine
 			                                       pchSourceName,
 			                                       targetInfo );
 			
-			options.SetPrecompiledHeaderImage( GetPOSIXPathname( pchImage ) );
+			options.SetPrecompiledHeaderImage( pchImage );
 			
 			needToPrecompile = true;
 			
@@ -342,7 +342,7 @@ namespace ALine
 				pchImageDate = io::file_exists( pchImage ) ? ModifiedDate( pchImage )
 				                                           : 0xFFFFFFFF;
 				
-				options.SetPrecompiledHeaderImage( GetPOSIXPathname( pchImage ) );
+				options.SetPrecompiledHeaderImage( pchImage );
 			}
 		}
 		
@@ -483,7 +483,7 @@ namespace ALine
 			std::vector< std::string >& userOnlyIncludeDirs = options.UserOnlyIncludeDirs();
 			
 			userOnlyIncludeDirs.insert( userOnlyIncludeDirs.begin(),
-			                            io::get_preceding_directory( GetPOSIXPathname( pchImage ) ) );
+			                            io::get_preceding_directory( pchImage ) );
 		}
 		
 		std::for_each( dirtyFiles.begin(),

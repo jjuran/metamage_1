@@ -42,7 +42,7 @@ namespace ALine
 		hasPrecompiledHeaderSource = true;
 	}
 	
-	void CompilerOptions::SetPrecompiledHeaderImage( const FSSpec& phi )
+	void CompilerOptions::SetPrecompiledHeaderImage( const std::string& phi )
 	{
 		myPrecompiledHeaderImage = phi;
 	}

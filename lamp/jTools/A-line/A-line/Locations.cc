@@ -235,11 +235,6 @@ namespace ALine
 		return CreateFolder( TargetFolder( target ) / proj );
 	}
 	
-	N::FSDirSpec ProjectPrecompiledFolder( const std::string& proj, const std::string& target )
-	{
-		return CreateFolder( ProjectTargetFolder( proj, target ) / "Precompiled Header" );
-	}
-	
 	N::FSDirSpec ProjectObjectsFolder( const std::string& proj, const std::string& target )
 	{
 		return CreateFolder( ProjectTargetFolder( proj, target ) / "(Objects)" );
@@ -267,7 +262,7 @@ namespace ALine
 	
 	std::string ProjectPrecompiledDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( ProjectTargetDirPath( proj, target ) + "/Precompiled Header" );
+		return CreateDirPath( ProjectTargetDirPath( proj, target ) / "Precompiled Header" );
 	}
 	
 	std::string ProjectObjectsDirPath( const std::string& proj, const std::string& target )

@@ -33,7 +33,7 @@ namespace ALine
 			const TargetInfo& targetInfo;
 			Map myMacros;
 			std::string myPrecompiledHeaderSource;
-			FSSpec myPrecompiledHeaderImage;
+			std::string myPrecompiledHeaderImage;
 			N::FSDirSpec myOutputDir;
 			std::vector< std::string > myUserOnlyIncludeDirs;
 			bool hasPrecompiledHeaderSource;
@@ -49,7 +49,7 @@ namespace ALine
 			void DefineMacro( const std::string& macro, bool value = true );
 			
 			void SetPrecompiledHeaderSource( const std::string& pch );
-			void SetPrecompiledHeaderImage ( const FSSpec& phi );
+			void SetPrecompiledHeaderImage ( const std::string& phi );
 			void SetOutput( const N::FSDirSpec& output );
 			
 			const Map&    Macros() const  { return myMacros; }
@@ -57,7 +57,7 @@ namespace ALine
 			bool HasPrecompiledHeaderSource() const  { return hasPrecompiledHeaderSource; }
 			
 			const std::string& PrecompiledHeaderSource() const  { return myPrecompiledHeaderSource; }
-			const FSSpec& PrecompiledHeaderImage () const  { return myPrecompiledHeaderImage;  }
+			const std::string& PrecompiledHeaderImage () const  { return myPrecompiledHeaderImage;  }
 			
 			const N::FSDirSpec& Output() const  { return myOutputDir; }
 			
