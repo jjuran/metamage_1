@@ -84,9 +84,9 @@ namespace ALine
 		return gRezzes[ filename ];
 	}
 	
-	void AddRezFile( const FileName& filename, const FSSpec& file )
+	void AddRezFile( const FSSpec& file )
 	{
-		gRezzes[ filename ] = file;
+		gRezzes[ io::get_filename_string( file ) ] = file;
 	}
 	
 	/*

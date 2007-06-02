@@ -547,20 +547,12 @@ namespace ALine
 		try
 		{
 			std::vector< FSSpec > rezFiles = DeepFiles( projFolder / "Resources" );
+			
 			std::for_each
 			(
 				rezFiles.begin(), 
 				rezFiles.end(), 
-				ext::compose2
-				(
-					std::ptr_fun( AddRezFile ), 
-					ext::compose1
-					(
-						NN::Converter< std::string, const unsigned char* >(), 
-						N::PtrFun( GetFileName )
-					), 
-					ext::identity< FSSpec >()
-				)
+				std::ptr_fun( AddRezFile )
 			);
 		}
 		catch ( ... )
