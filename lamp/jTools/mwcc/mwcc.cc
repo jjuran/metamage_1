@@ -32,6 +32,8 @@
 #include "Orion/StandardIO.hh"
 
 
+namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace O = Orion;
 
 
@@ -190,6 +192,8 @@ namespace jTools
 	
 	static int Main( int argc, const char *const argv[] )
 	{
+		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+		
 		std::string command = TARGET_CPU_68K ? "MWC68K" : "MWCPPC";
 		std::string mwcArgs = kInvariantMWCOptions;
 		std::string translatedPath;
