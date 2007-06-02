@@ -175,7 +175,7 @@ namespace Genie
 		}
 		catch ( const N::OSStatus& err )
 		{
-			return CurrentProcess().SetErrno( err );
+			return err;
 		}
 		catch ( ... )
 		{
