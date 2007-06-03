@@ -37,11 +37,23 @@ namespace io
 	dummy::owned_stream open_for_reading( dummy::file_spec );
 	dummy::owned_stream open_for_writing( dummy::file_spec );
 	
+	template < class OwnedStream, class FileSpec >
+	inline OwnedStream open_for_writing( FileSpec file )
+	{
+		return open_for_writing( file );
+	}
+	
 	dummy::byte_count get_file_size( dummy::stream );
 	
 	dummy::byte_count read( dummy::stream, char*, dummy::byte_count );
 	
 	dummy::byte_count write( dummy::stream, const char*, dummy::byte_count );
+	
+	template < class ByteCountOut, class Stream, class ByteCountIn >
+	inline ByteCountOut write( Stream stream, const char* data, ByteCountIn byteCount )
+	{
+		return write( stream, data, byteCount );
+	}
 	
 }
 
