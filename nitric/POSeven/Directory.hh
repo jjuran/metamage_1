@@ -107,17 +107,9 @@ namespace POSeven
 					Nucleus::Shared< DirHandle > dirHandle;
 					value_type value;
 					bool done;
-					bool ended;
 					
 					void GetNextValue()
 					{
-						if ( done )
-						{
-							ended = true;
-							
-							return;
-						}
-						
 						try
 						{
 							value = ReadDir( dirHandle );
@@ -134,8 +126,7 @@ namespace POSeven
 					}
 					
 					const_iterator( const Nucleus::Shared< DirHandle >& dirHandle ) : dirHandle( dirHandle ),
-					                                                                  done ( false ),
-					                                                                  ended( false )
+					                                                                  done( false )
 					{
 						GetNextValue();
 						
@@ -145,8 +136,7 @@ namespace POSeven
 					}
 				
 				public:
-					const_iterator() : done ( true ),
-					                   ended( true )
+					const_iterator() : done( true )
 					{
 					}
 					
@@ -156,7 +146,7 @@ namespace POSeven
 					reference operator*() const               { return value; }
 					pointer operator->() const                { return &value; }
 					
-					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.ended == b.ended; }
+					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.done == b.done; }
 					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
 			};
 			
