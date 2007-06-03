@@ -1,6 +1,15 @@
-// =================
 // FileDescriptor.hh
-// =================
+// -----------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2006-2007 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef POSEVEN_FILEDESCRIPTOR_HH
 #define POSEVEN_FILEDESCRIPTOR_HH
