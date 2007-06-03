@@ -164,7 +164,7 @@ namespace ALine
 	Project::Project( const std::string& proj )
 	:
 		projName  ( proj ),
-		projFolderPath( GetPOSIXPathname( CD::GetProjectFolder( proj, Options().platform ) ) ),
+		projFolderPath( CD::GetProjectFolder( proj, Options().platform ) ),
 		product   ( productNotBuilt )
 	{
 		const CD::ProjectData* initialProjectData = &CD::GetProjectData( projName, Options().platform );

@@ -27,13 +27,13 @@ namespace CompileDriver
 	
 	struct ProjectData
 	{
-		N::FSDirSpec  folder;
-		ConfData      confData;
-		Platform      platform;
+		std::string  folder;
+		ConfData     confData;
+		Platform     platform;
 		
 		ProjectData()  {}
 		
-		ProjectData( const N::FSDirSpec& folder, const ConfData& conf );
+		ProjectData( const std::string& folder, const ConfData& conf );
 	};
 	
 	struct NoSuchProject
@@ -47,7 +47,7 @@ namespace CompileDriver
 	
 	const ProjectData& GetProjectData( const ProjName& projName, const Platform& targetPlatform );
 	
-	const N::FSDirSpec& GetProjectFolder( const ProjName& projName, const Platform& targetPlatform );
+	const std::string&  GetProjectFolder( const ProjName& projName, const Platform& targetPlatform );
 	const ConfData&     GetProjectConfig( const ProjName& projName, const Platform& targetPlatform );
 	
 	ConfData MakeConfData( const DotConfData& data );

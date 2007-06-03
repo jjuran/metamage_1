@@ -151,7 +151,7 @@ namespace CompileDriver
 		return result;
 	}
 	
-	ProjectData::ProjectData( const N::FSDirSpec& folder, const ConfData& conf )
+	ProjectData::ProjectData( const std::string& folder, const ConfData& conf )
 	:
 		folder  ( folder ),
 		confData( conf   ),
@@ -168,9 +168,9 @@ namespace CompileDriver
 	static ProjectDataList  gProjectDataList;
 	static ProjectMap       gProjectMap;
 	
-	static void AddProjectConfig( const ProjName&      projName,
-	                              const N::FSDirSpec&  folder,
-	                              const ConfData&      conf )
+	static void AddProjectConfig( const ProjName&     projName,
+	                              const std::string&  folder,
+	                              const ConfData&     conf )
 	{
 		gProjectDataList.push_back( ProjectData( folder, conf ) );
 		gProjectMap[ projName ].push_back( &gProjectDataList.back() );
@@ -192,6 +192,13 @@ namespace CompileDriver
 		
 		return result;
 	}
+	
+	/*
+	static std::string DescendPathToDir( const std::string& dir, const std::string& path )
+	{
+		return result / path;
+	}
+	*/
 	
 	static void AddPendingConfigFile( const FSSpec& file )
 	{
@@ -228,7 +235,7 @@ namespace CompileDriver
 			name = found->second[ 0 ];  // 'name' directive overrides folder name
 		}
 		
-		AddProjectConfig( name, parent, conf );
+		AddProjectConfig( name, GetPOSIXPathname( parent ), conf );
 		
 		std::for_each( conf[ "subprojects" ].begin(),
 		               conf[ "subprojects" ].end(),
@@ -335,7 +342,7 @@ namespace CompileDriver
 		return **foundProject;
 	}
 	
-	const N::FSDirSpec& GetProjectFolder( const ProjName& projName, const Platform& targetPlatform )
+	const std::string& GetProjectFolder( const ProjName& projName, const Platform& targetPlatform )
 	{
 		return GetProjectData( projName, targetPlatform ).folder;
 	}
