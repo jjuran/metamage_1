@@ -86,7 +86,7 @@ namespace ALine
 			result = "-wi ";
 		}
 		
-		result += q( GetMacPathname( import ) );
+		result += q( GetPOSIXPathname( import ) );
 		
 		return result;
 	}
@@ -330,8 +330,7 @@ namespace ALine
 		
 		typedef std::string (*GetPathnameProcPtr)( const FSSpec& );
 		
-		GetPathnameProcPtr GetPathname = gnu ? static_cast< GetPathnameProcPtr >( GetPOSIXPathname )
-		                                     : static_cast< GetPathnameProcPtr >( GetMacPathname   );
+		GetPathnameProcPtr GetPathname = static_cast< GetPathnameProcPtr >( GetPOSIXPathname );
 		
 		CommandGenerator cmdgen( targetInfo );
 		
@@ -343,6 +342,8 @@ namespace ALine
 		}
 		
 		std::string command = cmdgen.LinkerName();
+		
+		command << cmdgen.TargetArchitecture();
 		
 		bool needLibs = true;
 		bool needCarbResource = false;
@@ -360,8 +361,6 @@ namespace ALine
 			
 			case productApplication:
 				command << cmdgen.TargetApplication();
-				if ( gnu )
-				command << cmdgen.TargetArchitecture();
 				
 				needCarbResource =    targetInfo.platform.api     == CD::apiMacCarbon
 				                   && targetInfo.platform.runtime == CD::runtimeCodeFragments;
@@ -387,8 +386,6 @@ namespace ALine
 			case productWish:
 				gccSupported = true;
 				command << cmdgen.TargetCommandLineTool();
-				if ( gnu )
-				command << cmdgen.TargetArchitecture();
 				break;
 			
 			case productSharedLib:
@@ -549,8 +546,6 @@ namespace ALine
 		{
 			command << " 2>&1 | filter-mwlink-warnings";
 		}
-		
-		command = cmdgen.MakeNativeCommand( command );
 		
 		QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
 		QueueCommand( command );

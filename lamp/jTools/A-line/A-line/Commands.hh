@@ -141,12 +141,6 @@ namespace ALine
 			             : EnvironmentTraits< kMPWEnvironment         >::MakeNativeCommand )( command );
 		}
 		
-		// CodeWarrior only
-		std::string MWToolSuffix() const  { return m68k ? "68K" : "PPC"; }
-		
-		// CodeWarrior only
-		std::string MWLinkerName() const  { return "MWLink" + MWToolSuffix(); }
-		
 		std::string UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }
 		
 		std::string CompilerName() const
@@ -157,13 +151,13 @@ namespace ALine
 		std::string LinkerName() const
 		{
 			return gnu ? "g++"
-			           : MWLinkerName();
+			           : "ld";
 		}
 		
 		std::string LibraryMakerName() const
 		{
 			return gnu ? "libtool"
-			           : MWLinkerName() + " -xm l";
+			           : "ld -static";
 		}
 		
 		std::string TargetArchitecture() const
@@ -293,44 +287,34 @@ namespace ALine
 		
 		std::string TargetApplication() const
 		{
-			return gnu ? "" : "-xm a -dead " + std::string( m68k ? "code" : "off" ) + space + AppHeapSize();
+			//return gnu ? "" : "-xm a -dead " + std::string( m68k ? "code" : "off" ) + space + AppHeapSize();
+			return "-bundle";
 		}
 		
 		// CodeWarrior only
 		std::string MWTargetCodeResource() const
 		{
-			return "-xm c -rsrcfar -rsrcflags system";
+			return "-object";
 		}
 		
 		// CodeWarrior only
 		std::string MWTargetSharedLibrary() const
 		{
-			return "-xm s -init __initialize -term __terminate -export pragma";
+			//return "-xm s -init __initialize -term __terminate -export pragma";
+			return "-dynamic";
 		}
 		
 		// CodeWarrior only
 		std::string MWTargetKeroseneShLib() const
 		{
-			return "-xm s -init InitializeFragment -term TerminateFragment -export pragma -name " + std::string( carbon ? "Carbon" : "classic" ) + space + AppHeapSize();
-		}
-		
-		// CodeWarrior only
-		std::string MWTargetKeroseneRsrc() const
-		{
-			return MWTargetCodeResource() + space + ResourceTypeAndID( "Wish", "0" );
-		}
-		
-		// CodeWarrior only
-		std::string MWTargetKerosene() const
-		{
-			return cfm ? MWTargetKeroseneShLib() : MWTargetKeroseneRsrc();
+			//return "-xm s -init InitializeFragment -term TerminateFragment -export pragma -name " + std::string( carbon ? "Carbon" : "classic" ) + space + AppHeapSize();
+			return "-execute";
 		}
 		
 		std::string TargetCommandLineTool() const
 		{
 			return gnu ? ""
-			           : MWTargetKerosene() + " " + OutputType   ( "Wish" )
-			                                + " " + OutputCreator( "Poof" );
+			           : "-execute";
 		}
 		
 		std::string MWLinkerOptions() const
@@ -340,8 +324,7 @@ namespace ALine
 		
 		std::string LinkerOptions() const
 		{
-			return gnu ? ""
-			           : MWLinkerOptions();
+			return debug ? "" : "-s";
 		}
 		
 	};
