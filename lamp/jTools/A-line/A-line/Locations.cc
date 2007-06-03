@@ -34,16 +34,6 @@ namespace ALine
 	using namespace io::path_descent_operators;
 	
 	
-	static N::FSDirSpec CreateFolder( const FSSpec& folder )
-	{
-		if ( io::item_exists( folder ) )
-		{
-			return N::FSDirSpec( folder );
-		}
-		
-		return N::FSpDirCreate( folder );
-	}
-	
 	static std::string CreateDirPath( const std::string& path )
 	{
 		int made_dir = mkdir( path.c_str(), 0700 );
@@ -112,21 +102,7 @@ namespace ALine
 			return projects;
 		}
 		
-		return UserDeveloperPath() + "/Projects";
-	}
-	
-	static N::FSDirSpec UserLabFolder()
-	{
-	#if !TARGET_RT_MAC_MACHO
-		
-		if ( const char* builds = getenv( "ALINE_BUILDS" ) )
-		{
-			return N::FSDirSpec( Div::ResolvePathToFSSpec( builds ) );
-		}
-		
-	#endif
-		
-		return CreateFolder( UserDeveloperFolder() / "Lab" );
+		return UserDeveloperPath() / "Projects";
 	}
 	
 	static std::string UserLabDirPath()
@@ -136,7 +112,7 @@ namespace ALine
 			return builds;
 		}
 		
-		return CreateDirPath( UserDeveloperPath() + "/Lab" );
+		return CreateDirPath( UserDeveloperPath() / "Lab" );
 	}
 	
 	std::string ProjectSourcesPath( const std::string& projectPath )
@@ -200,21 +176,6 @@ namespace ALine
 		return ProjectConfigDirPath( projectPath ) / "Source.list";
 	}
 	
-	static N::FSDirSpec TargetFolder( const std::string& target )
-	{
-		return CreateFolder( UserLabFolder() / target );
-	}
-	
-	static N::FSDirSpec ProjectTargetFolder( const std::string& proj, const std::string& target )
-	{
-		return CreateFolder( TargetFolder( target ) / proj );
-	}
-	
-	N::FSDirSpec ProjectLibrariesFolder( const std::string& proj, const std::string& target )
-	{
-		return CreateFolder( ProjectTargetFolder( proj, target ) / "Output" );
-	}
-	
 	static std::string TargetDirPath( const std::string& target )
 	{
 		return CreateDirPath( UserLabDirPath() + '/' + target );
@@ -227,7 +188,7 @@ namespace ALine
 	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( ProjectTargetDirPath( proj, target ) + "/Diagnostics" );
+		return CreateDirPath( ProjectTargetDirPath( proj, target ) / "Diagnostics" );
 	}
 	
 	std::string ProjectPrecompiledDirPath( const std::string& proj, const std::string& target )

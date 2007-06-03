@@ -67,28 +67,24 @@ namespace ALine
 		return false;
 	}
 	
-	static std::string MakeImport( const FSSpec& file )
+	static std::string MakeImport( const std::string& file )
 	{
 		std::string result;
 		
-		FSSpec import = file;
+		std::string importName = io::get_filename_string( file );
 		
-		if ( import.name[ 1 ] == '-' )
+		if ( importName[ 0 ] == '-' )
 		{
-			std::copy( &import.name[ 2 ],
-			           &import.name[ 1 ] + import.name[ 0 ],
-			           &import.name[ 1 ] );
-			
-			--import.name[ 0 ];
+			importName = importName.substr( 1, importName.npos );
 			
 			result = "-wi ";
 		}
-		else if ( LibNeedsWeakImport( io::get_filename_string( import ) ) )
+		else if ( LibNeedsWeakImport( importName ) )
 		{
 			result = "-wi ";
 		}
 		
-		result += q( GetPOSIXPathname( import ) );
+		result += q( importName );
 		
 		return result;
 	}
@@ -168,9 +164,9 @@ namespace ALine
 	}
 	
 	
-	static FSSpec FindImportLibraryInProject( const std::string& libName, const Project& project )
+	static std::string FindImportLibraryInProject( const std::string& libName, const Project& project )
 	{
-		FSSpec lib = project.ProjectFolder() / libName;
+		std::string lib = project.ProjectFolder() / libName;
 		
 		if ( !io::item_exists( lib ) )
 		{
@@ -180,11 +176,11 @@ namespace ALine
 		return lib;
 	}
 	
-	static FSSpec FindImport( const std::string& name, const Project& project )
+	static std::string FindImport( const std::string& name, const Project& project )
 	{
 		try
 		{
-			return FindImportLibraryInSystem( name );
+			return GetPOSIXPathname( FindImportLibraryInSystem( name ) );
 		}
 		catch ( const N::FNFErr& )
 		{
@@ -204,13 +200,13 @@ namespace ALine
 	}
 	
 	static void CopyImports( const ProjName& projName,
-	                         std::back_insert_iterator< std::vector< FSSpec > > inserter )
+	                         std::back_insert_iterator< std::vector< std::string > > inserter )
 	{
 		Project& project = GetProject( projName );
 		
 		std::vector< FileName > importNames( project.LibImports() );
 		
-		std::vector< FSSpec > importFiles( importNames.size() );
+		std::vector< std::string > importFiles( importNames.size() );
 		
 		std::transform( importNames.begin(),
 		                importNames.end(),
@@ -223,11 +219,11 @@ namespace ALine
 		           inserter );
 	}
 	
-	static std::vector< FSSpec > GetAllImports( const Project& project, const std::string& targetName )
+	static std::vector< std::string > GetAllImports( const Project& project, const std::string& targetName )
 	{
 		const std::vector< ProjName >& used = project.AllUsedProjects();
 		
-		std::vector< FSSpec > importFiles;
+		std::vector< std::string > importFiles;
 		
 		std::for_each( used.begin(),
 		               used.end(),
@@ -239,7 +235,7 @@ namespace ALine
 	
 	static std::string GetImports( const Project& project, const std::string& targetName )
 	{
-		std::vector< FSSpec > importFiles( GetAllImports( project, targetName ) );
+		std::vector< std::string > importFiles( GetAllImports( project, targetName ) );
 		
 		std::string imports;
 		
@@ -272,13 +268,13 @@ namespace ALine
 	// This needs to be a function of target, not project.
 	static TargetName gTargetName;
 	
-	static void GetProjectLib( const Project& project, std::vector< FSSpec >* const& outUsed )
+	static void GetProjectLib( const Project& project, std::vector< std::string >* const& outUsed )
 	{
 		if ( project.Product() == productStaticLib )
 		{
-			N::FSDirSpec libOutput = ProjectLibrariesFolder( project.Name(), gTargetName );
+			std::string libOutput = ProjectLibrariesDirPath( project.Name(), gTargetName );
 			
-			FSSpec lib = libOutput / project.LibraryFilename();
+			std::string lib = libOutput / project.LibraryFilename();
 			
 			if ( io::item_exists( lib ) )
 			{
@@ -287,10 +283,10 @@ namespace ALine
 		}
 	}
 	
-	static std::vector< FSSpec > GetUsedLibraries( const Project& project, const TargetName& targetName )
+	static std::vector< std::string > GetUsedLibraries( const Project& project, const TargetName& targetName )
 	{
 		gTargetName = targetName;
-		std::vector< FSSpec > usedLibFiles;
+		std::vector< std::string > usedLibFiles;
 		
 		const std::vector< ProjName >& usedProjects = project.AllUsedProjects();
 		
@@ -329,10 +325,6 @@ namespace ALine
 	void LinkProduct( const Project& project, TargetInfo targetInfo )
 	{
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
-		
-		typedef std::string (*GetPathnameProcPtr)( const FSSpec& );
-		
-		GetPathnameProcPtr GetPathname = static_cast< GetPathnameProcPtr >( GetPOSIXPathname );
 		
 		CommandGenerator cmdgen( targetInfo );
 		
@@ -443,30 +435,30 @@ namespace ALine
 		
 		if ( needLibs )
 		{
-			std::vector< FSSpec > usedLibFiles = GetUsedLibraries( project, targetName );
+			std::vector< std::string > usedLibFiles = GetUsedLibraries( project, targetName );
 			
 			// As long as needToLink is false, continue checking dates.
 			// Stop as soon as we know we have to link (or we run out).
 			if ( !needToLink )
 			{
-				std::vector< FSSpec >::const_iterator found;
+				std::vector< std::string >::const_iterator found;
 				
 				found = std::find_if( usedLibFiles.begin(),
 				                      usedLibFiles.end(),
 				                      ext::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                   outFileDate ),
-				                                     N::PtrFun( static_cast< time_t (*)(const FSSpec&) >( ModifiedDate ) ) ) );
+				                                     N::PtrFun( static_cast< time_t (*)(const std::string&) >( ModifiedDate ) ) ) );
 				
 				needToLink = found != usedLibFiles.end();
 			}
 			
 			if ( !gnu )
 			{
-				for ( std::vector< FSSpec >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
+				for ( std::vector< std::string >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
 				{
 					if ( io::get_filename_string( *it ) == "Orion.lib" )
 					{
-						expeditedLib = q( GetPathname( *it ) );
+						expeditedLib = q( *it );
 						
 						std::copy( it + 1, usedLibFiles.end(), it );
 						
@@ -482,8 +474,7 @@ namespace ALine
 			link << join( usedLibFiles.rbegin(),
 			              usedLibFiles.rend(),
 			              " ",
-			              ext::compose1( N::PtrFun( q ),
-			                             N::PtrFun( GetPathname ) ) );
+			              N::PtrFun( q ) );
 			
 			// FIXME:  This is a hack
 			if ( !gnu )
@@ -565,7 +556,7 @@ namespace ALine
 				rezFiles.push_back( RezLocation( "CarbonApp.r" ) );
 			}
 			
-			std::string includeDir = ProjectIncludesPath( GetPOSIXPathname( project.ProjectFolder() ) );
+			std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
 			std::string rezCommand = "mpwrez -append";
 			
 			if ( gnu )

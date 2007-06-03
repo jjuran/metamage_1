@@ -32,7 +32,7 @@ namespace ALine
 			
 			ProjName Name() const  { return projName; }
 			FileName ProgramName() const  { return progName; }
-			N::FSDirSpec ProjectFolder() const  { return projFolder; }
+			std::string ProjectFolder() const  { return projFolderPath; }
 			FileName LibraryFilename() const  { return Name() + ".lib"; }
 			ProductType Product() const  { return product; }
 			const IncludePath& PrecompiledHeaderSource() const  { return precompiledHeaderSource; }
@@ -64,6 +64,7 @@ namespace ALine
 			FileName progName;
 			// The project's main folder.
 			N::FSDirSpec projFolder;
+			std::string projFolderPath;
 			// The include path to a header to precompile.
 			IncludePath precompiledHeaderSource;
 			// What kind of product this project creates.

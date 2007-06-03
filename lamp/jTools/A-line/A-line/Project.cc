@@ -172,6 +172,7 @@ namespace ALine
 	:
 		projName  ( proj ),
 		projFolder( CD::GetProjectFolder( proj, Options().platform ) ),
+		projFolderPath( GetPOSIXPathname( projFolder ) ),
 		product   ( productNotBuilt )
 	{
 		const CD::ProjectData* initialProjectData = &CD::GetProjectData( projName, Options().platform );
@@ -300,7 +301,7 @@ namespace ALine
 				                search.end(),
 				                sourceDirs.begin(),
 				                std::bind1st( N::PtrFun( FindSearchDir ),
-					                          GetPOSIXPathname( NN::Convert< FSSpec >( projFolder ) ) ) );
+					                          projFolderPath ) );
 			}
 			else
 			{
@@ -309,11 +310,11 @@ namespace ALine
 				// Otherwise, just use a default location.
 				try
 				{
-					sourceDir = ProjectSourcesPath( GetPOSIXPathname( projFolder ) );
+					sourceDir = ProjectSourcesPath( projFolderPath );
 				}
 				catch ( ... )
 				{
-					sourceDir = GetPOSIXPathname( projFolder );
+					sourceDir = projFolderPath;
 				}
 				
 				sourceDirs.push_back( sourceDir );
@@ -472,7 +473,7 @@ namespace ALine
 		// None?  Try a Source.list file
 		if ( sourceList.size() == 0 )
 		{
-			std::string sourceDotListfile = SourceDotListFile( GetPOSIXPathname( projFolder ) );
+			std::string sourceDotListfile = SourceDotListFile( projFolderPath );
 			
 			if ( io::item_exists( sourceDotListfile ) )
 			{
