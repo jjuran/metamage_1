@@ -84,20 +84,27 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
-	typedef Nucleus::Selector< class WindowDefProcID_Tag, ::SInt16 >::Type WindowDefProcID;
+	enum WindowDefProcID
+	{
+		documentProc    = ::documentProc,
+		dBoxProc        = ::dBoxProc,
+		plainDBox       = ::plainDBox,
+		altDBoxProc     = ::altDBoxProc,
+		noGrowDocProc   = ::noGrowDocProc,
+		movableDBoxProc = ::movableDBoxProc,
+		zoomDocProc     = ::zoomDocProc,
+		zoomNoGrow      = ::zoomNoGrow,
+		
+		kWindowDefProcID_Max = Nucleus::Enumeration_Traits< ::SInt16 >::max
+	};
 	
-	static const WindowDefProcID documentProc    = WindowDefProcID( ::documentProc    );
-	static const WindowDefProcID dBoxProc        = WindowDefProcID( ::dBoxProc        );
-	static const WindowDefProcID plainDBox       = WindowDefProcID( ::plainDBox       );
-	static const WindowDefProcID altDBoxProc     = WindowDefProcID( ::altDBoxProc     );
-	static const WindowDefProcID noGrowDocProc   = WindowDefProcID( ::noGrowDocProc   );
-	static const WindowDefProcID movableDBoxProc = WindowDefProcID( ::movableDBoxProc );
-	static const WindowDefProcID zoomDocProc     = WindowDefProcID( ::zoomDocProc     );
-	static const WindowDefProcID zoomNoGrow      = WindowDefProcID( ::zoomNoGrow      );
-	
-	typedef Nucleus::Selector< class WindowKind_Tag, ::SInt16 >::Type WindowKind;
-	
-	static const WindowKind kApplicationWindowKind = WindowKind( ::kApplicationWindowKind );
+	enum WindowKind
+	{
+		kDialogWindowKind      = ::kDialogWindowKind,
+		kApplicationWindowKind = ::kApplicationWindowKind,
+		
+		kWindowKind_Max = Nucleus::Enumeration_Traits< ::SInt16 >::max
+	};
 	
 	enum WindowPartCode
 	{
