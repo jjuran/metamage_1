@@ -70,12 +70,14 @@ namespace jTools
 		if ( arch == "m68k" )
 		{
 			m68k = true;
+			ppc = false;
 			
 			return "MWLink68K -model far";
 		}
 		else if ( arch == "ppc" )
 		{
 			ppc = true;
+			m68k = false;
 			
 			return "MWLinkPPC";
 		}
