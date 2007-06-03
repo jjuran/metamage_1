@@ -83,32 +83,6 @@ namespace jTools
 		return "MWLinkUnsupportedArchitecture";
 	}
 	
-	static const char* TranslateCodeGenFlag( const std::string& flag )
-	{
-		if ( flag == "-fpascal-strings" )
-		{
-			return "";
-		}
-		else if ( flag == "-fno-rtti" )
-		{
-			return "-RTTI off";
-		}
-		else if ( flag == "-mCFM"  &&  m68k )
-		{
-			return "-model CFMflatdf";
-		}
-		else if ( flag == "-mA4-globals" )
-		{
-			return "-a4";
-		}
-		else if ( flag == "-ftraceback" )
-		{
-			return "-tb on";
-		}
-		
-		return "";
-	}
-	
 	static std::string MacPathFromPOSIXPath( const char* pathname )
 	{
 		FSSpec item = Div::ResolvePathToFSSpec( pathname );
@@ -208,16 +182,6 @@ namespace jTools
 						}
 						break;
 					
-					case 'm':
-						if ( std::strcmp( arg + 1, "model" ) == 0 )
-						{
-							break;
-						}
-						// fall through
-					case 'f':
-						arg = TranslateCodeGenFlag( arg );
-						break;
-					
 					case 's':
 						if ( arg[2] == '\0' )
 						{
@@ -231,6 +195,15 @@ namespace jTools
 							continue;
 						}
 						
+						break;
+					
+					case 'c':
+					case 't':
+						if ( arg[2] == '\0' )
+						{
+							translatedPath = std::string( arg ) + " '" + *++argv + "'";
+							arg = translatedPath.c_str();
+						}
 						break;
 					
 					case 'o':
