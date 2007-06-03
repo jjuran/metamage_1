@@ -38,7 +38,6 @@
 
 // CompileDriver
 #include "CompileDriver/ProjectConfig.hh"
-#include "CompileDriver/Subprojects.hh"
 
 // A-line
 #include "A-line/A-line.hh"
