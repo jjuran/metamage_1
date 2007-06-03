@@ -35,6 +35,16 @@ namespace io
 		return open_for_reading( pathname.c_str() );
 	}
 	
+	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_writing( const char* pathname )
+	{
+		return POSeven::Open( pathname, O_WRONLY );
+	}
+	
+	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_writing( const std::string& pathname )
+	{
+		return open_for_writing( pathname.c_str() );
+	}
+	
 }
 
 #endif
