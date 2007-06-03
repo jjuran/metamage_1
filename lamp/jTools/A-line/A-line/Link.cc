@@ -447,7 +447,7 @@ namespace ALine
 				                      usedLibFiles.end(),
 				                      ext::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                   outFileDate ),
-				                                     N::PtrFun( static_cast< time_t (*)(const std::string&) >( ModifiedDate ) ) ) );
+				                                     N::PtrFun( ModifiedDate ) ) );
 				
 				needToLink = found != usedLibFiles.end();
 			}

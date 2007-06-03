@@ -13,9 +13,6 @@
 // POSeven
 #include "POSeven/Stat.hh"
 
-// GetPathname
-#include "GetPathname.hh"
-
 // A-line
 #include "A-line/TargetInfo.hh"
 #include "A-line/TargetNames.hh"
@@ -38,11 +35,6 @@ namespace ALine
 	inline time_t ModifiedDate( const std::string& pathname )
 	{
 		return POSeven::Stat( pathname ).st_mtime;
-	}
-	
-	inline time_t ModifiedDate( const FSSpec& item )
-	{
-		return ModifiedDate( GetPOSIXPathname( item ) );
 	}
 	
 	inline std::string ObjectFileName( const std::string& sourceName )
