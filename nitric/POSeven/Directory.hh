@@ -138,6 +138,10 @@ namespace POSeven
 					                                                                  ended( false )
 					{
 						GetNextValue();
+						
+						// skip . and ..
+						GetNextValue();
+						GetNextValue();
 					}
 				
 				public:
