@@ -287,7 +287,7 @@ namespace Pedestal
 		
 		N::FindWindow_Result found = N::FindWindow( event.where );
 		
-		if ( found.part == inMenuBar )
+		if ( found.part == N::inMenuBar )
 		{
 			TheApp().HandleMenuChoice( ::MenuSelect( event.where ) );
 			return;
