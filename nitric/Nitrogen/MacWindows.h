@@ -181,12 +181,12 @@ namespace Nitrogen
 	
 	// 1437
 	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
-	                              ConstStr255Param  title,
-	                              bool              visible,
-	                              WindowDefProcID   procID,
-	                              WindowRef         behind,
-	                              bool              goAwayFlag,
-	                              RefCon            refCon );
+	                                        ConstStr255Param  title,
+	                                        bool              visible,
+	                                        WindowDefProcID   procID,
+	                                        WindowRef         behind,
+	                                        bool              goAwayFlag,
+	                                        RefCon            refCon );
 	
 	// 1457
 	inline void DisposeWindow( Nucleus::Owned< WindowRef > )  {}
