@@ -7,7 +7,9 @@
 #define PEDESTAL_SCROLLINGVIEW_HH
 
 // Universal Interfaces
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
 
 // Nucleus
 #include "Nucleus/Saved.h"

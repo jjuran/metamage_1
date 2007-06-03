@@ -6,7 +6,9 @@
 #include "Pedestal/Console.hh"
 
 // Mac OS Universal Headers
+#ifndef __MENUS__
 #include <Menus.h>
+#endif
 
 // Standard C++
 #include <algorithm>

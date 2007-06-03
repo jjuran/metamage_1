@@ -10,7 +10,9 @@
 #include <map>
 
 // Mac OS Universal Interfaces
+#ifndef __AEREGISTRY__
 #include <AERegistry.h>
+#endif
 
 // Nitrogen
 #include "Nitrogen/AppleEvents.h"

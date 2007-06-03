@@ -6,8 +6,12 @@
 #include "Pedestal/Control.hh"
 
 // Universal Interfaces
+#ifndef __CONTROLDEFINITIONS__
 #include <ControlDefinitions.h>
+#endif
+#ifndef __FONTS__
 #include <Fonts.h>
+#endif
 
 
 namespace Pedestal {

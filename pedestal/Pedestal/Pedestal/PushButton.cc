@@ -6,7 +6,9 @@
 #include "Pedestal/PushButton.hh"
 
 // Universal Interfaces
+#ifndef __FONTS__
 #include <Fonts.h>
+#endif
 
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.h"

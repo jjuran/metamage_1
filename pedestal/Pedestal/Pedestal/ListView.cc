@@ -6,7 +6,9 @@
 #include "Pedestal/ListView.hh"
 
 // Universal Interfaces
+#ifndef __FONTS__
 #include <Fonts.h>
+#endif
 
 // Standard C++
 #include <algorithm>
