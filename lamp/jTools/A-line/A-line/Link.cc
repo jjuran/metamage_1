@@ -84,7 +84,7 @@ namespace ALine
 			result = "-wi ";
 		}
 		
-		result += q( importName );
+		result += q( io::get_preceding_directory( file ) / importName );
 		
 		return result;
 	}
