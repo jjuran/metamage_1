@@ -417,7 +417,7 @@ int O::Main( int argc, char const* const argv[] )
 			
 			std::for_each( gCommands.begin(),
 			               gCommands.end(),
-			               N::PtrFun( ExecuteCommand ) );
+			               std::ptr_fun( ExecuteCommand ) );
 			
 			gCommands.clear();
 		}

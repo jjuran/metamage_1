@@ -326,7 +326,7 @@ namespace ALine
 			
 			const_iterator found = std::find_if( project.AllUsedProjects().begin(),
 			                                     project.AllUsedProjects().end(),
-			                                     N::PtrFun( ProjectHasPrecompiledHeader ) );
+			                                     std::ptr_fun( ProjectHasPrecompiledHeader ) );
 			
 			if ( found != project.AllUsedProjects().end() )
 			{

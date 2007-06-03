@@ -242,7 +242,7 @@ namespace ALine
 		imports << join( importFiles.begin(),
 		                 importFiles.end(),
 		                 " ",
-		                 N::PtrFun( MakeImport ) );
+		                 std::ptr_fun( MakeImport ) );
 		
 		return imports;
 	}
@@ -259,7 +259,7 @@ namespace ALine
 		std::string frameworks = join( frameworkNames.begin(),
 		                               frameworkNames.end(),
 		                               " ",
-		                               N::PtrFun( MakeFramework ) );
+		                               std::ptr_fun( MakeFramework ) );
 		
 		return frameworks;
 	}
@@ -427,7 +427,7 @@ namespace ALine
 		std::string objectFilePaths = join( objectFiles.begin(),
 		                                    objectFiles.end(),
 		                                    " ",
-		                                    N::PtrFun( q ) );
+		                                    std::ptr_fun( q ) );
 		
 		std::string link;
 		
@@ -474,7 +474,7 @@ namespace ALine
 			link << join( usedLibFiles.rbegin(),
 			              usedLibFiles.rend(),
 			              " ",
-			              N::PtrFun( q ) );
+			              std::ptr_fun( q ) );
 			
 			// FIXME:  This is a hack
 			if ( !gnu )
@@ -549,7 +549,7 @@ namespace ALine
 			std::transform( rez.begin(),
 			                rez.end(),
 			                rezFiles.begin(),
-			                N::PtrFun( RezLocation ) );
+			                std::ptr_fun( RezLocation ) );
 			
 			if ( needCarbResource )
 			{
@@ -576,7 +576,7 @@ namespace ALine
 			rezCommand << join( rezFiles.begin(),
 			                    rezFiles.end(),
 			                    " ",
-			                    N::PtrFun( q ) );
+			                    std::ptr_fun( q ) );
 			
 			QueueCommand( "echo Rezzing:  " + io::get_filename_string( rsrcFile ) );
 			QueueCommand( rezCommand );
@@ -590,14 +590,14 @@ namespace ALine
 			std::transform( rsrcs.begin(), 
 			                rsrcs.end(),
 			                rsrcFiles.begin(),
-			                N::PtrFun( RezLocation ) );
+			                std::ptr_fun( RezLocation ) );
 			
 			std::string cpresCommand = "cpres";
 			
 			cpresCommand << join( rsrcFiles.begin(),
 			                      rsrcFiles.end(),
 			                      " ",
-			                      N::PtrFun( q ) );
+			                      std::ptr_fun( q ) );
 			
 			
 			if ( gnu )
@@ -605,7 +605,7 @@ namespace ALine
 				std::string echoes = join( rsrcFiles.begin(),
 				                           rsrcFiles.end(),
 				                           "; ",
-				                           N::PtrFun( MakeEchoedIncludedPOSIXPathname ) );
+				                           std::ptr_fun( MakeEchoedIncludedPOSIXPathname ) );
 				
 				cpresCommand = paren( echoes ) + " | /Developer/Tools/Rez -append -useDF -o";
 			}

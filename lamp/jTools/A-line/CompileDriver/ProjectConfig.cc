@@ -252,7 +252,7 @@ namespace CompileDriver
 		
 		std::for_each( configs.begin(),
 		               configs.end(),
-		               N::PtrFun( AddPendingConfigFile ) );
+		               std::ptr_fun( AddPendingConfigFile ) );
 		
 		
 	}
@@ -265,7 +265,7 @@ namespace CompileDriver
 		
 		std::for_each( subprojects.begin(),
 		               subprojects.end(),
-		               N::PtrFun( AddPendingSubproject ) );
+		               std::ptr_fun( AddPendingSubproject ) );
 		
 	}
 	
