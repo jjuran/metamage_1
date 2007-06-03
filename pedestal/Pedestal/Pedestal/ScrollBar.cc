@@ -5,9 +5,6 @@
 
 #include "Pedestal/Scrollbar.hh"
 
-// Universal Interfaces
-#include <ControlDefinitions.h>
-
 // Nitrogen
 #include "Nitrogen/ControlDefinitions.h"
 
