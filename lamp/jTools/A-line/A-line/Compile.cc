@@ -306,7 +306,7 @@ namespace ALine
 			
 			// If the image doesn't exist, use a date that will always be newer
 			// (for comparison to source files)
-			pchImageDate = 0xFFFFFFFF;
+			pchImageDate = 0xFFFFFFFFU;
 			
 			if ( io::file_exists( pchImage ) )
 			{
