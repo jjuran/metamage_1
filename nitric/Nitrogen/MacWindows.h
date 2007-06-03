@@ -3,6 +3,10 @@
 #ifndef NITROGEN_MACWINDOWS_H
 #define NITROGEN_MACWINDOWS_H
 
+#ifndef NUCLEUS_ENUMERATION_H
+#include "Nucleus/Enumeration.h"
+#endif
+
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
 #endif
@@ -95,7 +99,25 @@ namespace Nitrogen
 	
 	static const WindowKind kApplicationWindowKind = WindowKind( ::kApplicationWindowKind );
 	
-	typedef Nucleus::Selector< class WindowPartCode_Tag, ::WindowPartCode >::Type WindowPartCode;
+	enum WindowPartCode
+	{
+		inDesk          = ::inDesk,
+		inNoWindow      = ::inNoWindow,
+		inMenuBar       = ::inMenuBar,
+		inSysWindow     = ::inSysWindow,
+		inContent       = ::inContent,
+		inDrag          = ::inDrag,
+		inGrow          = ::inGrow,
+		inGoAway        = ::inGoAway,
+		inZoomIn        = ::inZoomIn,
+		inZoomOut       = ::inZoomOut,
+		inCollapseBox   = ::inCollapseBox,
+		inProxyIcon     = ::inProxyIcon,
+		inToolbarButton = ::inToolbarButton,
+		inStructure     = ::inStructure,
+		
+		kWindowPartCode_Max = Nucleus::Enumeration_Traits< ::WindowPartCode >::max
+	};
 	
    typedef Nucleus::Selector< class PropertyCreator_Tag, ::PropertyCreator >::Type PropertyCreator;
 
