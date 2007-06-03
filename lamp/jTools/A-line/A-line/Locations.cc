@@ -210,11 +210,6 @@ namespace ALine
 		return CreateFolder( TargetFolder( target ) / proj );
 	}
 	
-	N::FSDirSpec ProjectObjectsFolder( const std::string& proj, const std::string& target )
-	{
-		return CreateFolder( ProjectTargetFolder( proj, target ) / "(Objects)" );
-	}
-	
 	N::FSDirSpec ProjectLibrariesFolder( const std::string& proj, const std::string& target )
 	{
 		return CreateFolder( ProjectTargetFolder( proj, target ) / "Output" );
@@ -242,12 +237,12 @@ namespace ALine
 	
 	std::string ProjectObjectsDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( ProjectTargetDirPath( proj, target ) + "/(Objects)" );
+		return CreateDirPath( ProjectTargetDirPath( proj, target ) / "(Objects)" );
 	}
 	
 	std::string ProjectLibrariesDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( ProjectTargetDirPath( proj, target ) + "/Output" );
+		return CreateDirPath( ProjectTargetDirPath( proj, target ) / "Output" );
 	}
 	
 }

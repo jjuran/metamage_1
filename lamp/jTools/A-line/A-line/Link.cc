@@ -15,6 +15,7 @@
 #include "io/spray.hh"
 
 // POSeven
+#include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 
 // Nitrogen
@@ -47,6 +48,7 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	
 	using namespace io::path_descent_operators;
 	
@@ -301,22 +303,22 @@ namespace ALine
 		return usedLibFiles;
 	}
 	
-	static N::FSDirSpec DirCreate_Idempotent( const FSSpec& dir )
+	static std::string DirCreate_Idempotent( const std::string& dir )
 	{
 		if ( !io::item_exists( dir ) )
 		{
-			return N::FSpDirCreate( dir );
+			int made = mkdir( dir.c_str(), 0700 );
 		}
 		
-		return N::FSDirSpec( dir );
+		return dir;
 	}
 	
-	static void CreateAppBundle( const N::FSDirSpec& location, const std::string& name )
+	static void CreateAppBundle( const std::string& location, const std::string& name )
 	{
-		N::FSDirSpec package   = DirCreate_Idempotent( location / name );
-		N::FSDirSpec contents  = DirCreate_Idempotent(   package  / "Contents" );
-		N::FSDirSpec macOS     = DirCreate_Idempotent(     contents / "MacOS" );
-		N::FSDirSpec resources = DirCreate_Idempotent(     contents / "Resources" );
+		std::string package   = DirCreate_Idempotent( location / name );
+		std::string contents  = DirCreate_Idempotent(   package  / "Contents" );
+		std::string macOS     = DirCreate_Idempotent(     contents / "MacOS" );
+		std::string resources = DirCreate_Idempotent(     contents / "Resources" );
 	}
 	
 	static std::string paren( const std::string& s )
@@ -403,19 +405,17 @@ namespace ALine
 		
 		TargetName targetName = MakeTargetName( targetInfo );
 		
-		N::FSDirSpec objectsDir = ProjectObjectsFolder  ( project.Name(), targetName );
-		N::FSDirSpec libsDir    = ProjectLibrariesFolder( project.Name(), targetName );
+		std::string objectsDir = ProjectObjectsDirPath  ( project.Name(), targetName );
+		std::string libsDir    = ProjectLibrariesDirPath( project.Name(), targetName );
 		
-		using namespace NN::Operators;
-		
-		FSSpec outFile = libsDir / linkName;
+		std::string outFile = libsDir / linkName;
 		bool outFileExists = io::item_exists( outFile );
 		
 		time_t outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
 		
 		bool needToLink = !outFileExists;
 		
-		std::vector< FSSpec > objectFiles;
+		std::vector< std::string > objectFiles;
 		
 		std::vector< FSSpec >::const_iterator it, end = project.Sources().end();
 		
@@ -423,7 +423,7 @@ namespace ALine
 		{
 			std::string sourceName = io::get_filename_string( *it );
 			
-			FSSpec objectFile = objectsDir / ObjectFileName( sourceName );
+			std::string objectFile = objectsDir / ObjectFileName( sourceName );
 			
 			needToLink =    needToLink
 			             || !io::file_exists( objectFile )
@@ -435,8 +435,7 @@ namespace ALine
 		std::string objectFilePaths = join( objectFiles.begin(),
 		                                    objectFiles.end(),
 		                                    " ",
-		                                    ext::compose1( N::PtrFun( q ),
-		                                                   N::PtrFun( GetPathname ) ) );
+		                                    N::PtrFun( q ) );
 		
 		std::string link;
 		
@@ -513,17 +512,18 @@ namespace ALine
 			
 			CreateAppBundle( libsDir, bundleName );
 			
-			N::FSDirSpec contents( libsDir / bundleName / "Contents" );
+			std::string contents( libsDir / bundleName / "Contents" );
 			
 			outFile = contents / "MacOS" / linkName;
 			
 			const N::OSType codeZero = N::OSType( 0 );
 			
-			FSSpec pkgInfo = contents / "PkgInfo";
+			std::string pkgInfo = contents / "PkgInfo";
 			
 			try
 			{
-				N::FSpCreate( pkgInfo, codeZero, codeZero );
+				//N::FSpCreate( pkgInfo, codeZero, codeZero );
+				P7::Open( pkgInfo.c_str(), O_CREAT, 0600 );
 			}
 			catch ( ... )  {}
 			
@@ -532,9 +532,7 @@ namespace ALine
 			io::spray_file< NN::StringFlattener< std::string > >( pkgInfo, info );
 		}
 		
-		std::string outputPathname = GetPathname( outFile );
-		
-		command << cmdgen.Output( outputPathname );
+		command << cmdgen.Output( outFile );
 		
 		command << expeditedLib << objectFilePaths << link;
 		
@@ -550,7 +548,7 @@ namespace ALine
 		QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
 		QueueCommand( command );
 		
-		std::string rsrcFile = GetPOSIXPathname( outFile );
+		std::string rsrcFile = outFile;
 		
 		if ( !project.UsedRezFiles().empty() )
 		{
@@ -575,7 +573,7 @@ namespace ALine
 				std::string bundleName = linkName + ".app";
 				std::string rsrcFileName = linkName + ".rsrc";
 				
-				rsrcFile = GetPOSIXPathname( libsDir ) / bundleName / "Contents" / "Resources" / rsrcFileName;
+				rsrcFile = libsDir / bundleName / "Contents" / "Resources" / rsrcFileName;
 				
 				rezCommand = "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF";
 				
