@@ -28,13 +28,13 @@ namespace io
 			Nucleus::Owned< stream > itsOutput;
 		
 		public:
-			spray_putter( const file_spec& file ) : itsOutput( io::open_for_writing( file ) )  {}
+			spray_putter( const file_spec& file ) : itsOutput( io::open_for_writing< Nucleus::Owned< stream > >( file ) )  {}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
 				byte_count bytesToWrite = distance( begin, end );
 				
-				byte_count bytesRead = io::write( itsOutput, (const char*) begin, bytesToWrite );
+				byte_count bytesRead = io::write< byte_count, stream >( itsOutput, (const char*) begin, bytesToWrite );
 				
 				if ( bytesRead != bytesToWrite )
 				{
