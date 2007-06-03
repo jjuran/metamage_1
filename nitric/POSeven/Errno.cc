@@ -76,7 +76,7 @@ namespace POSeven
 	
 	void ThrowErrnoInternal( Errno number )
 	{
-		Nucleus::ThrowErrorCode< Errno >( errno );
+		Nucleus::ThrowErrorCode< Errno >( number );
 	}
 	
 	void RegisterPOSIXErrnos()
