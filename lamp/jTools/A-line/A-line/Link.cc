@@ -409,7 +409,7 @@ namespace ALine
 		
 		std::vector< std::string > objectFiles;
 		
-		std::vector< FSSpec >::const_iterator it, end = project.Sources().end();
+		std::vector< std::string >::const_iterator it, end = project.Sources().end();
 		
 		for ( it = project.Sources().begin();  it != end;  ++it )
 		{

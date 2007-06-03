@@ -51,7 +51,7 @@ namespace ALine
 			
 			std::string CreatorCode() const  { return creator; }
 			
-			const std::vector< FSSpec >& Sources() const  { return mySources; }
+			const std::vector< std::string >& Sources() const  { return mySources; }
 			
 			void Study();
 			
@@ -82,7 +82,7 @@ namespace ALine
 			// Creator code / signature for output files.
 			std::string creator;
 			// Source files to compile.
-			std::vector< FSSpec > mySources;
+			std::vector< std::string > mySources;
 	};
 	
 }

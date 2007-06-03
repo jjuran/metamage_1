@@ -490,7 +490,7 @@ namespace ALine
 			{
 				const std::string& sourceName = *it;
 				
-				mySources.push_back( Div::ResolvePathToFSSpec( FindSourceFileInDirs( sourceName, sourceDirs ).c_str() ) );
+				mySources.push_back( FindSourceFileInDirs( sourceName, sourceDirs ) );
 			}
 		}
 		else
@@ -500,7 +500,7 @@ namespace ALine
 			typedef std::vector< std::string >::const_iterator Iter;
 			
 			// Enumerate our source files
-			std::vector< FSSpec > sources;
+			std::vector< std::string > sources;
 			for ( Iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
 			{
 				std::vector< FSSpec > deepSources = DeepFiles
@@ -518,13 +518,18 @@ namespace ALine
 				);
 				
 				sources.resize( sources.size() + deepSources.size() );
-				std::copy( deepSources.begin(), deepSources.end(), sources.end() - deepSources.size() );
+				
+				std::transform( deepSources.begin(),
+				                deepSources.end(),
+				                sources.end() - deepSources.size(),
+				                std::ptr_fun( static_cast< std::string (*)(const FSSpec&) >( GetPOSIXPathname ) ) );
 			}
 			
 			// FIXME:  Doesn't deal with duplicates
 			std::swap( mySources, sources );
 		}
 		
+		/*
 		try
 		{
 			std::transform
@@ -546,6 +551,7 @@ namespace ALine
 		{
 			throw BadSourceAlias( *this, alias );
 		}
+		*/
 		
 		// Locate resources
 		try

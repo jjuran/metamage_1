@@ -355,7 +355,7 @@ namespace ALine
 		
 		// See which source files need to be compiled,
 		// caching include information in the process.
-		std::vector< FSSpec >::const_iterator it, end = project.Sources().end();
+		std::vector< std::string >::const_iterator it, end = project.Sources().end();
 		
 		for ( it = project.Sources().begin();  it != end;  ++it )
 		{
@@ -366,7 +366,7 @@ namespace ALine
 			//  * Dependency information may be acquired and cached, in RecursivelyLatestDate().
 			
 			// The source file
-			std::string sourceFile( GetPOSIXPathname( *it ) );
+			std::string sourceFile( *it );
 			
 			if ( project.NeedsCwdSourceOption() )
 			{
