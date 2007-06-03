@@ -1,9 +1,20 @@
-// TransferTraits.h
+// Nucleus/TransferTraits.h
+// ------------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2006 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NUCLEUS_TRANSFERTRAITS_H
 #define NUCLEUS_TRANSFERTRAITS_H
 
-// Nitrogen Core
+// Nucleus
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
