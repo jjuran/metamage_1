@@ -18,6 +18,9 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Shared.h"
 
+// POSeven
+#include "POSeven/Pathnames.hh"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 
@@ -84,9 +87,9 @@ namespace ALine
 		return gRezzes[ filename ];
 	}
 	
-	void AddRezFile( const FSSpec& file )
+	void AddRezFile( const std::string& file )
 	{
-		gRezzes[ io::get_filename_string( file ) ] = GetPOSIXPathname( file );
+		gRezzes[ io::get_filename_string( file ) ] = file;
 	}
 	
 	/*

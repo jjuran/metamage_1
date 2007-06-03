@@ -32,7 +32,7 @@ namespace ALine
 	bool FindInclude( const IncludePath& includePath );
 	void AddInclude ( const IncludePath& includePath, const std::string& file );
 	
-	void AddRezFile( const FSSpec& file );
+	void AddRezFile( const std::string& file );
 	
 	/*
 	void SetCurrentSourceDir( const N::FSDirSpec& dir );
