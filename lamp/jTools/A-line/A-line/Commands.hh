@@ -288,7 +288,7 @@ namespace ALine
 		std::string TargetApplication() const
 		{
 			//return gnu ? "" : "-xm a -dead " + std::string( m68k ? "code" : "off" ) + space + AppHeapSize();
-			return "-bundle";
+			return gnu ? "" : "-bundle";
 		}
 		
 		// CodeWarrior only
