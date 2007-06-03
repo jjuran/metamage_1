@@ -10,18 +10,12 @@
 #include <string>
 #include <vector>
 
-// Nitrogen
-#include "Nitrogen/Files.h"
-
 // A-line
 #include "A-line/TargetInfo.hh"
 
 
 namespace ALine
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	typedef std::string ProjName, FileName, IncludePath;
 	
@@ -63,7 +57,6 @@ namespace ALine
 			// The name of the output file, if different from the project name.
 			FileName progName;
 			// The project's main folder.
-			N::FSDirSpec projFolder;
 			std::string projFolderPath;
 			// The include path to a header to precompile.
 			IncludePath precompiledHeaderSource;
@@ -75,8 +68,6 @@ namespace ALine
 			std::vector< ProjName > allUsedProjects;
 			// Directories to search for source files.
 			std::vector< std::string > sourceDirs;
-			// Include dirs from used projects.
-			std::vector< N::FSDirSpec > myUsedIncludeDirs;
 			// Various things to link with.
 			std::vector< FileName > rezFiles, rsrcFiles, myImports, myFrameworks;
 			// Creator code / signature for output files.

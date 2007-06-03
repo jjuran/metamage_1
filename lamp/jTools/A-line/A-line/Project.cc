@@ -16,8 +16,6 @@
 #include "POSeven/Stat.hh"
 
 // Nitrogen
-#include "Nitrogen/Aliases.h"
-#include "Nitrogen/Files.h"
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 
@@ -66,11 +64,6 @@ namespace ALine
 	using BitsAndBytes::eos;
 	using BitsAndBytes::q;
 	
-	
-	inline N::Str255 GetFileName( const FSSpec& file )
-	{
-		return file.name;
-	}
 	
 	static std::string FindIncludeInFolder( const std::string& folder, IncludePath includePath )
 	{
@@ -171,8 +164,7 @@ namespace ALine
 	Project::Project( const std::string& proj )
 	:
 		projName  ( proj ),
-		projFolder( CD::GetProjectFolder( proj, Options().platform ) ),
-		projFolderPath( GetPOSIXPathname( projFolder ) ),
+		projFolderPath( GetPOSIXPathname( CD::GetProjectFolder( proj, Options().platform ) ) ),
 		product   ( productNotBuilt )
 	{
 		const CD::ProjectData* initialProjectData = &CD::GetProjectData( projName, Options().platform );
@@ -501,28 +493,20 @@ namespace ALine
 			
 			// Enumerate our source files
 			std::vector< std::string > sources;
+			
 			for ( Iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
 			{
-				std::vector< FSSpec > deepSources = DeepFiles
+				std::vector< std::string > deepSources = DeepFiles
 				(
-					Div::ResolvePathToFSSpec( it->c_str() ), 
-					ext::compose1
-					(
-						std::ptr_fun( IsCompilableFilename ), 
-						ext::compose1
-						(
-							NN::Converter< std::string, const unsigned char* >(), 
-							N::PtrFun( GetFileName )
-						)
-					)
+					*it, 
+					std::ptr_fun( IsCompilableFilename )
 				);
 				
 				sources.resize( sources.size() + deepSources.size() );
 				
-				std::transform( deepSources.begin(),
-				                deepSources.end(),
-				                sources.end() - deepSources.size(),
-				                std::ptr_fun( static_cast< std::string (*)(const FSSpec&) >( GetPOSIXPathname ) ) );
+				std::copy( deepSources.begin(),
+				           deepSources.end(),
+				           sources.end() - deepSources.size() );
 			}
 			
 			// FIXME:  Doesn't deal with duplicates
