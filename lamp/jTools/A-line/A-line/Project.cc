@@ -323,6 +323,11 @@ namespace ALine
 		// The creator code for linked output files.  Mac only.
 		creator = First( config[ "creator"    ] );
 		
+		if ( creator.size() == 6  &&  creator[0] == '\''  &&  creator[5] == '\'' )
+		{
+			creator = creator.substr( 1, 4 );
+		}
+		
 		//myExtraSources = config[ "sources"    ];  // Extra sources to compile.  Deprecated.
 		myImports      = config[ "imports"    ];  // Libraries to import.
 		myFrameworks   = config[ "frameworks" ];  // Frameworks to include when building for OS X.

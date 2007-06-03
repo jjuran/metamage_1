@@ -265,7 +265,7 @@ namespace ALine
 		
 		std::string OutputCreator( const std::string& creator ) const
 		{
-			return std::string( "-c " ) + creator;
+			return std::string( "-c " ) + q( creator );
 		}
 		
 		std::string ResourceTypeAndID( const std::string& type, const std::string& id ) const
