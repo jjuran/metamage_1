@@ -1,4 +1,13 @@
-// Overloaded_math.h
+// Nucleus/Overloaded_math.h
+// -------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2003 by Lisa Lippincott.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 /*
    The 1998 C++ standard specifies that <cmath> should contain versions of the

@@ -1,4 +1,13 @@
-// Operators.h
+// Nucleus/Operators.h
+// -------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2002-2004 by Lisa Lippincott and Marshall Clow.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 /*
    This file creates a namespace, Nucleus::Operators, into which every 

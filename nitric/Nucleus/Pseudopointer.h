@@ -1,4 +1,13 @@
-// Pseudopointer.h
+// Nucleus/Pseudopointer.h
+// -----------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2002-2004 by Lisa Lippincott.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NUCLEUS_PSEUDOPOINTER_H
 #define NUCLEUS_PSEUDOPOINTER_H

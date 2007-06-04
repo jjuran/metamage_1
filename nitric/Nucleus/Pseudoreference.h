@@ -1,4 +1,13 @@
-// Pseudoreference.h
+// Nucleus/Pseudoreference.h
+// -------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2002-2004 by Lisa Lippincott.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 /*
    A Pseudoreference binds a getter/setter pair of functions and
