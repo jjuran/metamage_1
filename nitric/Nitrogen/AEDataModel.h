@@ -1,4 +1,15 @@
-// AEDataModel.h
+// Nitrogen/AEDataModel.h
+// ----------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2002-2007 by Lisa Lippincott and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_AEDATAMODEL_H
 #define NITROGEN_AEDATAMODEL_H

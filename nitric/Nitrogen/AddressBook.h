@@ -1,5 +1,12 @@
-//  AddressBook.h
-//  AddressBook Framework
+// Nitrogen/AddressBook.h
+// ----------------------
+//
+// AddressBook Framework
+//
+// Maintained by Marshall Clow
+
+// Part of the Nitrogen project.
+
 
 #ifndef	NITROGEN_ADDRESSBOOK_H
 #define	NITROGEN_ADDRESSBOOK_H
