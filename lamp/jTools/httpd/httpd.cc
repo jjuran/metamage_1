@@ -20,12 +20,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
 // POSeven
+#include "POSeven/Directory.hh"
 #include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
+#include "POSeven/Pathnames.hh"
+#include "POSeven/Stat.hh"
+
+// BitsAndBytes
+#include "HexStrings.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -41,6 +44,8 @@ namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
+
+using namespace io::path_descent_operators;
 
 using BitsAndBytes::EncodeAsHex;
 
@@ -301,25 +306,7 @@ static std::string LocateResource( const std::string& resource )
 	
 	std::string pathname = documentRoot + resource;
 	
-	struct stat sb;
-	int status = stat( pathname.c_str(), &sb );
-	
-	P7::ThrowPOSIXResult( status );
-	
-	bool isDir = sb.st_mode & S_IFDIR;
-	
-	if ( isDir )
-	{
-		if ( *pathname.rbegin() == '/' )
-		{
-			pathname += "index.html";
-		}
-		else
-		{
-			// FIXME:  Throw redirect
-			throw N::FNFErr();
-		}
-	}
+	P7::Stat( pathname );  // Throw if nonexistent
 	
 	return pathname;
 }
@@ -368,14 +355,6 @@ static std::string GuessContentType( const std::string& filename, ::OSType type 
 	return "application/octet-stream";
 }
 
-static std::string GuessContentType( const FSSpec& file )
-{
-	std::string filename = NN::Convert< std::string >( file.name );
-	OSType type = N::FSpGetFInfo( file ).fdType;
-	
-	return GuessContentType( filename, type );
-}
-
 static std::string HTTPHeader( const std::string& field, const std::string& value )
 {
 	return field + ": " + value + "\r\n";
@@ -403,6 +382,37 @@ static void DumpFile( const std::string& pathname )
 	}
 }
 
+static void ListDir( const std::string& pathname )
+{
+	typedef io::directory_contents_traits< std::string >::container_type directory_container;
+	
+	directory_container contents = io::directory_contents( pathname );
+	
+	typedef directory_container::const_iterator Iter;
+	
+	for ( Iter it = contents.begin();  it != contents.end();  ++it )
+	{
+		std::string listing = it->d_name;
+		
+		listing += "\n";
+		
+		io::write( P7::kStdOut_FileNo, listing.data(), listing.size() );
+	}
+	
+}
+
+static void SendError( const std::string& error )
+{
+	std::string httpVersion = "HTTP/1.0";
+	
+	std::string message = httpVersion + " " + error +     "\r\n"
+	                      "Content-Type: text/html"       "\r\n"
+	                                                      "\r\n"
+	                      "<title>" + error + "</title>"  "\r\n"
+	                      "<p>"     + error + "</p>"      "\r\n";
+	
+		io::write( P7::kStdOut_FileNo, message.data(), message.size() );
+}
 
 static void SendResponse( const HTTPRequestData& request )
 {
@@ -441,19 +451,47 @@ static void SendResponse( const HTTPRequestData& request )
 	}
 	else
 	{
+		bool is_dir = false;
+		
 		OSType type = kUnknownType;
+		
+		if ( io::directory_exists( pathname ) )
+		{
+			if ( *pathname.rbegin() != '/' )
+			{
+				SendError( "404 Not Found" );
+				
+				return;
+			}
+			
+			std::string index_html = pathname / "index.html";
+			
+			if ( io::file_exists( index_html ) )
+			{
+				pathname = index_html;
+			}
+			else
+			{
+				is_dir = true;
+			}
+		}
+		
+		FInfo info = { 0 };
 		
 	#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 		
-		FSSpec file = Path2FSS( pathname );
-		
-		FInfo info = N::FSpGetFInfo( file );
-		
-		type = info.fdType;
+		if ( !is_dir )
+		{
+			FSSpec file = Path2FSS( pathname );
+			
+			info = N::FSpGetFInfo( file );
+			
+			type = info.fdType;
+		}
 		
 	#endif
 		
-		std::string contentType = GuessContentType( pathname, type );
+		std::string contentType = is_dir ? "text/plain" : GuessContentType( pathname, type );
 		
 		std::string responseHeader = httpVersion + " 200 OK\r\n";
 		
@@ -472,7 +510,7 @@ static void SendResponse( const HTTPRequestData& request )
 		
 		if ( parsed.method != "HEAD" )
 		{
-			DumpFile( pathname );
+			is_dir ? ListDir( pathname ) : DumpFile( pathname );
 		}
 	}
 }
