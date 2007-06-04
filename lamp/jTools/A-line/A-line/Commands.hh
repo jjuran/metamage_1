@@ -324,7 +324,7 @@ namespace ALine
 		
 		std::string LinkerOptions() const
 		{
-			return debug ? "" : "-s";
+			return TargetArchitecture() + ( debug ? "" : " -s" );
 		}
 		
 	};
