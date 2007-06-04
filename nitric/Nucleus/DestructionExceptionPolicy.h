@@ -1,4 +1,13 @@
-// DestructionExceptionPolicy.h
+// Nucleus/DestructionExceptionPolicy.h
+// ------------------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2002-2004 by Lisa Lippincott and Marshall Clow.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NUCLEUS_DESTRUCTIONEXCEPTIONPOLICY_H
 #define NUCLEUS_DESTRUCTIONEXCEPTIONPOLICY_H

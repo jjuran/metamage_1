@@ -1,4 +1,13 @@
-// ArrayContainerFunctions.h
+// Nucleus/ArrayContainerFunctions.h
+// ---------------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2004 by Lisa Lippincott and Marshall Clow.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NUCLEUS_ARRAYCONTAINERFUNCTIONS_H
 #define NUCLEUS_ARRAYCONTAINERFUNCTIONS_H

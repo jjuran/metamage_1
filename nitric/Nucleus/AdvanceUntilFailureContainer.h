@@ -1,4 +1,15 @@
-// AdvanceUntilFailureContainer.h
+// Nucleus/AdvanceUntilFailureContainer.h
+// --------------------------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2004 by Lisa Lippincott and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H
 #define NUCLEUS_ADVANCEUNTILFAILURECONTAINER_H

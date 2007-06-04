@@ -1,4 +1,13 @@
-// ArraySingleton.h
+// Nucleus/ArraySingleton.h
+// ------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2002-2003 by Lisa Lippincott.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NUCLEUS_ARRAYSINGLETON_H
 #define NUCLEUS_ARRAYSINGLETON_H

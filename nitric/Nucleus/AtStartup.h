@@ -1,4 +1,13 @@
-// AtStartup.h
+// Nucleus/AtStartup.h
+// -------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2003 by Lisa Lippincott.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NUCLEUS_ATSTARTUP_H
 #define NUCLEUS_ATSTARTUP_H

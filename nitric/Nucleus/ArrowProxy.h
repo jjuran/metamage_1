@@ -1,4 +1,13 @@
-// ArrowProxy.h
+// Nucleus/ArrowProxy.h
+// --------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2002 by Lisa Lippincott.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NUCLEUS_ARROWPROXY_H
 #define NUCLEUS_ARROWPROXY_H
