@@ -22,6 +22,7 @@
 
 // Io
 #include "io/files.hh"
+#include "io/walk.hh"
 
 // Nucleus
 #include "Nucleus/Owned.h"
