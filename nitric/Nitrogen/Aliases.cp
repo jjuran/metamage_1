@@ -1,4 +1,15 @@
-// Aliases.cp
+// Nitrogen/Aliases.cp
+// -------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2006 by Lisa Lippincott, Joshua Juran, and Marshall Clow.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_ALIASES_H
 #include "Nitrogen/Aliases.h"

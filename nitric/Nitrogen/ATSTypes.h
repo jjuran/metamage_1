@@ -1,4 +1,15 @@
-// ATSTypes.h
+// Nitrogen/ATSTypes.h
+// -------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2007 by Lisa Lippincott and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_ATSTYPES_H
 #define NITROGEN_ATSTYPES_H
