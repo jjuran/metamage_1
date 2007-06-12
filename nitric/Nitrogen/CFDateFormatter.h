@@ -15,10 +15,6 @@
 #include "Nitrogen/CFBase.h"
 #endif
 #ifndef NITROGEN_CFDATE_H
-#include "Nitrogen/CFDate.h"
-#endif
-
-#ifndef NITROGEN_CFDATE_H
 #include "Nitrogen/CFDate.h"	// We need this for the defs for Owned < CFDateRef >
 #endif
 
