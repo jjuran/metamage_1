@@ -1,4 +1,15 @@
-// CFLocale.h
+// Nitrogen/CFLocale.h
+// -------------------
+//
+// Maintained by Marshall Clow
+
+// Part of the Nitrogen project.
+//
+// Written 2004 by Marshall Clow.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NITROGEN_CFLOCALE_H
 #define NITROGEN_CFLOCALE_H

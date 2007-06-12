@@ -1,4 +1,13 @@
-// CFPreferences.cp
+// Nitrogen/CFPreferences.cp
+// -------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2003 by Lisa Lippincott.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NITROGEN_CFPREFERENCES_H
 #include "Nitrogen/CFPreferences.h"

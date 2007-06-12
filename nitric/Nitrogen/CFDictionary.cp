@@ -1,4 +1,13 @@
-// CFDictionary.cp
+// Nitrogen/CFDictionary.cp
+// ------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2004 by Lisa Lippincott and Marshall Clow.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_CFDICTIONARY_H
 #include "Nitrogen/CFDictionary.h"

@@ -1,4 +1,13 @@
-// CFPropertyList.h
+// Nitrogen/CFPropertyList.h
+// -------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2002-2004 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_CFPROPERTYLIST_H
 #define NITROGEN_CFPROPERTYLIST_H

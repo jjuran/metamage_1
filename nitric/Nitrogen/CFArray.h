@@ -1,4 +1,13 @@
-// CFArray.h
+// Nitrogen/CFArray.h
+// ------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2006 by Lisa Lippincott and Marshall Clow.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_CFARRAY_H
 #define NITROGEN_CFARRAY_H
