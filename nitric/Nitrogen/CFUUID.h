@@ -48,39 +48,39 @@ namespace Nitrogen
 
    class CFUUIDCreateWithBytes_Failed {};
    Nucleus::Owned< CFUUIDRef > CFUUIDCreateWithBytes( CFAllocatorRef alloc,
-                                             UInt8          byte0,
-                                             UInt8          byte1,
-                                             UInt8          byte2,
-                                             UInt8          byte3,
-                                             UInt8          byte4,
-                                             UInt8          byte5,
-                                             UInt8          byte6,
-                                             UInt8          byte7,
-                                             UInt8          byte8,
-                                             UInt8          byte9,
-                                             UInt8          byte10,
-                                             UInt8          byte11,
-                                             UInt8          byte12,
-                                             UInt8          byte13,
-                                             UInt8          byte14,
-                                             UInt8          byte15 );
+                                                      UInt8          byte0,
+                                                      UInt8          byte1,
+                                                      UInt8          byte2,
+                                                      UInt8          byte3,
+                                                      UInt8          byte4,
+                                                      UInt8          byte5,
+                                                      UInt8          byte6,
+                                                      UInt8          byte7,
+                                                      UInt8          byte8,
+                                                      UInt8          byte9,
+                                                      UInt8          byte10,
+                                                      UInt8          byte11,
+                                                      UInt8          byte12,
+                                                      UInt8          byte13,
+                                                      UInt8          byte14,
+                                                      UInt8          byte15 );
    
    inline Nucleus::Owned< CFUUIDRef > CFUUIDCreateWithBytes( UInt8 byte0,
-                                                    UInt8 byte1,
-                                                    UInt8 byte2,
-                                                    UInt8 byte3,
-                                                    UInt8 byte4,
-                                                    UInt8 byte5,
-                                                    UInt8 byte6,
-                                                    UInt8 byte7,
-                                                    UInt8 byte8,
-                                                    UInt8 byte9,
-                                                    UInt8 byte10,
-                                                    UInt8 byte11,
-                                                    UInt8 byte12,
-                                                    UInt8 byte13,
-                                                    UInt8 byte14,
-                                                    UInt8 byte15 )
+                                                             UInt8 byte1,
+                                                             UInt8 byte2,
+                                                             UInt8 byte3,
+                                                             UInt8 byte4,
+                                                             UInt8 byte5,
+                                                             UInt8 byte6,
+                                                             UInt8 byte7,
+                                                             UInt8 byte8,
+                                                             UInt8 byte9,
+                                                             UInt8 byte10,
+                                                             UInt8 byte11,
+                                                             UInt8 byte12,
+                                                             UInt8 byte13,
+                                                             UInt8 byte14,
+                                                             UInt8 byte15 )
      {
       return Nitrogen::CFUUIDCreateWithBytes( kCFAllocatorDefault,
                                               byte0,  byte1,  byte2,  byte3,
@@ -91,7 +91,7 @@ namespace Nitrogen
 
    class CFUUIDCreateFromString_Failed {};
    Nucleus::Owned< CFUUIDRef > CFUUIDCreateFromString( CFAllocatorRef alloc,
-                                              CFStringRef    uuidStr );
+                                                       CFStringRef    uuidStr );
    
    inline Nucleus::Owned< CFUUIDRef > CFUUIDCreateFromString( CFStringRef uuidStr )
      {
@@ -100,7 +100,7 @@ namespace Nitrogen
 
    class CFUUIDCreateString_Failed {};
    Nucleus::Owned< CFStringRef > CFUUIDCreateString( CFAllocatorRef alloc,
-                                            CFUUIDRef      uuid );
+                                                     CFUUIDRef      uuid );
 
    inline Nucleus::Owned< CFStringRef > CFUUIDCreateString( CFUUIDRef uuid )
      {
@@ -154,7 +154,7 @@ namespace Nitrogen
 
    class CFUUIDCreateFromUUIDBytes_Failed {};
    Nucleus::Owned<CFUUIDRef> CFUUIDCreateFromUUIDBytes( CFAllocatorRef alloc,
-                                               CFUUIDBytes    bytes );
+                                                        CFUUIDBytes    bytes );
    
    inline Nucleus::Owned< CFUUIDRef > CFUUIDCreateFromUUIDBytes( CFUUIDBytes bytes )
      {
