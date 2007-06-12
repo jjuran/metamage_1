@@ -1,4 +1,8 @@
-// CGAffineTransform.h
+// Nitrogen/CGAffineTransform.h
+// ----------------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_CGAFFINETRANSFORM_H
 #define NITROGEN_CGAFFINETRANSFORM_H

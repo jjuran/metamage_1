@@ -1,4 +1,8 @@
-// CGColorSpace.h
+// Nitrogen/CGColorSpace.h
+// -----------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_CGCOLORSPACE_H
 #define NITROGEN_CGCOLORSPACE_H

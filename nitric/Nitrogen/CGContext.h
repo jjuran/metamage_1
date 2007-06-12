@@ -1,4 +1,8 @@
-// CGContext.h
+// Nitrogen/CGContext.h
+// --------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_CGCONTEXT_H
 #define NITROGEN_CGCONTEXT_H

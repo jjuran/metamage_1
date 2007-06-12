@@ -1,4 +1,8 @@
-// CGBase.h
+// Nitrogen/CGBase.h
+// -----------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_CGBASE_H
 #define NITROGEN_CGBASE_H
