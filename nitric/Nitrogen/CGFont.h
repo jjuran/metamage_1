@@ -1,4 +1,8 @@
-// CGFont.h
+// Nitrogen/CGFont.cp
+// ------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_CGFONT_H
 #define NITROGEN_CGFONT_H

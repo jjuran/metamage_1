@@ -1,4 +1,8 @@
-// CGPDFDocument.h
+// Nitrogen/CGPDFDocument.h
+// ------------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_CGPDFDOCUMENT_H
 #define NITROGEN_CGPDFDOCUMENT_H

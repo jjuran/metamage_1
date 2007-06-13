@@ -1,7 +1,15 @@
-/*	=================
- *	CGDirectDisplay.h
- *	=================
- */
+// Nitrogen/CGDirectDisplay.h
+// --------------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2004-2006 by Joshua Juran and Marshall Clow.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_CGDIRECTDISPLAY_H
 #define NITROGEN_CGDIRECTDISPLAY_H

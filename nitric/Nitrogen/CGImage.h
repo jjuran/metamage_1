@@ -1,4 +1,13 @@
-// CGImage.h
+// Nitrogen/CGImage.h
+// ------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2004-2006 by Marshall Clow, Lisa Lippincott, and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_CGIMAGE_H
 #define NITROGEN_CGIMAGE_H

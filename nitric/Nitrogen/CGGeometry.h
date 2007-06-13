@@ -1,4 +1,8 @@
-// CGGeometry.h
+// Nitrogen/CGGeometry.cp
+// ----------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_CGGEOMETRY_H
 #define NITROGEN_CGGEOMETRY_H
