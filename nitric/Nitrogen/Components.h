@@ -1,4 +1,15 @@
-// Components.h
+// Nitrogen/Components.h
+// ---------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2004-2007 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NITROGEN_COMPONENTS_H
 #define NITROGEN_COMPONENTS_H

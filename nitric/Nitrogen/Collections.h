@@ -1,4 +1,8 @@
-// Collections.h
+// Nitrogen/Collections.h
+// ----------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_COLLECTIONS_H
 #define NITROGEN_COLLECTIONS_H
