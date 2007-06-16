@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2005 by Joshua Juran.
+// Written 2005-2007 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -16,19 +16,20 @@
 
 
 #ifdef NUCLEUS_DEBUG
-
-#define ASSERT( cond )  Nucleus::Assert( cond, #cond,  __FILE__, __LINE__ )
-
+	
+	#define ASSERT( cond )  if ( !cond ) Nucleus::ReportAssertionFailureAndAbort( #cond,  __FILE__, __LINE__ ); else
+	
 #else
-
-#define ASSERT( cond )  // nothing
-
+	
+	#define ASSERT( cond )  if ( 0 ) cond; else
+	
 #endif
+
 
 namespace Nucleus
 {
 	
-	void Assert( bool condition, const char* text, const char* file, int line );
+	void ReportAssertionFailureAndAbort( const char* text, const char* file, int line );
 	
 }
 

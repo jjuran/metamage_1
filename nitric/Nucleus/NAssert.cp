@@ -22,18 +22,15 @@
 namespace Nucleus
 {
 	
-	void Assert( bool condition, const char* text, const char* file, int line )
+	void ReportAssertionFailureAndAbort( const char* text, const char* file, int line )
 	{
-		if ( !condition )
-		{
-			std::fprintf( stderr,
-			              "Assertion '%s' failed in %s, line %d\n",
-			              text,
-			              file,
-			              line );
-			
-			std::abort();
-		}
+		std::fprintf( stderr,
+		              "Assertion '%s' failed in %s, line %d\n",
+		              text,
+		              file,
+		              line );
+		
+		std::abort();
 	}
 	
 }
