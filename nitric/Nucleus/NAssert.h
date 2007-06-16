@@ -21,7 +21,7 @@
 	
 #else
 	
-	#define ASSERT( cond )  if ( 0 ) (void) (cond); else 0
+	#define ASSERT( cond )  if ( 0 ) (void) !(cond); else 0
 	
 #endif
 
