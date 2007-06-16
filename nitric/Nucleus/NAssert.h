@@ -17,11 +17,11 @@
 
 #ifdef NUCLEUS_DEBUG
 	
-	#define ASSERT( cond )  if ( !cond ) Nucleus::ReportAssertionFailureAndAbort( #cond,  __FILE__, __LINE__ ); else
+	#define ASSERT( cond )  if ( !cond ) Nucleus::ReportAssertionFailureAndAbort( #cond,  __FILE__, __LINE__ ); else 0
 	
 #else
 	
-	#define ASSERT( cond )  if ( 0 ) cond; else
+	#define ASSERT( cond )  if ( 0 ) cond; else 0
 	
 #endif
 
