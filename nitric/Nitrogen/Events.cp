@@ -1,4 +1,15 @@
-// Events.cp
+// Nitrogen/Events.cp
+// ------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2006 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NITROGEN_EVENTS_H
 #include "Nitrogen/Events.h"

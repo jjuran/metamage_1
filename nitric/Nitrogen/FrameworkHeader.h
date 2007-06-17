@@ -1,4 +1,13 @@
-// FrameworkHeader.h
+// Nitrogen/FrameworkHeader.h
+// --------------------------
+
+// Part of the Nitrogen project.
+//
+// Written 2004 by Lisa Lippincott.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #define NITROGEN_FRAMEWORKHEADER_H

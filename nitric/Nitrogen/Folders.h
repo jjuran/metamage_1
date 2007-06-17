@@ -1,4 +1,15 @@
-// Folders.h
+// Nitrogen/Folders.h
+// ------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_FOLDERS_H
 #define NITROGEN_FOLDERS_H

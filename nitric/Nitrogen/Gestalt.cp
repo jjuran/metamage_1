@@ -1,4 +1,15 @@
-// Gestalt.cp
+// Nitrogen/Gestalt.cp
+// -------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2002-2007 by Lisa Lippincott and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_GESTALT_H
 #include "Nitrogen/Gestalt.h"
@@ -6,6 +17,7 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
+
 
 namespace Nitrogen
   {
