@@ -79,7 +79,6 @@
 #include "Nitrogen/Timer.h"
 #include "Nitrogen/UPP.h"
 #include "Nitrogen/UnicodeConverter.h"
-#include "Nitrogen/Windows.h"
 
 #if TARGET_RT_MAC_MACHO
 #include "Nitrogen/ABAddressBookC.h"
