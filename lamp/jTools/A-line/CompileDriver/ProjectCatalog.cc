@@ -13,77 +13,81 @@
 #include "io/files.hh"
 #include "io/walk.hh"
 
-// GetPathname
-#include "GetPathname.hh"
+// POSeven
+#include "POSeven/Directory.hh"
+#include "POSeven/Pathnames.hh"
+#include "POSeven/Stat.hh"
 
 // Nitrogen Extras / Templates
-#include "Templates/PointerToFunction.h"
-
-// Nitrogen Extras / Iteration
-#include "Iteration/FSContents.h"
-
-// Divergence
-#include "Divergence/Utilities.hh"
+//#include "Templates/PointerToFunction.h"
 
 
 namespace CompileDriver
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace Div = Divergence;
+	//namespace N = Nitrogen;
 	
 	using namespace io::path_descent_operators;
 	
 	
-	static void ScanItemForProjects( const FSSpec&                                            item,
+	static void ScanItemForProjects( const std::string&                                       item,
 	                                 std::back_insert_iterator< std::vector< std::string > >  output )
 	{
 		if ( io::directory_exists( item ) )
 		{
-			typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
-			
-			ScanDirForProjects( GetPOSIXPathname( directory_spec( item ) ), output );
+			ScanDirForProjects( item, output );
 		}
 	}
 	
-	void ScanDirForProjects( const std::string&                                       dirPath,
+	void ScanDirForProjects( const std::string&                                       dir,
 	                         std::back_insert_iterator< std::vector< std::string > >  output )
 	{
-		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( dirPath.c_str() ) );
-		
-		typedef io::filespec_traits< N::FSDirSpec >::file_spec file_spec;
-		
-		file_spec conf = dir / "A-line.conf";
+		std::string conf = dir / "A-line.conf";
 		
 		if ( io::file_exists( conf ) )
 		{
-			*output++ = GetPOSIXPathname( conf );
+			*output++ = conf;
+			
 			return;
 		}
 		
-		typedef io::directory_contents_traits< N::FSDirSpec >::container_type directory_container;
+		typedef io::directory_contents_traits< std::string >::container_type directory_container;
 		
-		file_spec confd = dir / "A-line.confd";
+		std::string confd = dir / "A-line.confd";
+		
+		typedef directory_container::const_iterator Iter;
 		
 		if ( io::directory_exists( confd ) )
 		{
-			directory_container contents = io::directory_contents( confd );
+			directory_container contents = io::directory_contents( ( confd ) );
 			
-			std::transform( contents.begin(),
-			                contents.end(),
-			                output,
-			                std::ptr_fun( static_cast< std::string (*)(const FSSpec&) >( GetPOSIXPathname ) ) );
+			/*
+			std::copy( contents.begin(),
+			           contents.end(),
+			           output );
+			*/
+			
+			for ( Iter it = contents.begin();  it != contents.end();  ++it )
+			{
+				output++ = confd / it->d_name;
+			}
+			
 			return;
 		}
 		
-		directory_container contents = io::directory_contents( dir );
+		directory_container contents = io::directory_contents( ( dir ) );
 		
+		/*
 		std::for_each( contents.begin(),
 		               contents.end(),
 		               std::bind2nd( N::PtrFun( ScanItemForProjects ),
 		                             output ) );
+		*/
 		
+		for ( Iter it = contents.begin();  it != contents.end();  ++it )
+		{
+			ScanItemForProjects( dir / it->d_name, output );
+		}
 	}
 	
 }
