@@ -34,8 +34,6 @@ namespace ALine
 			
 			const std::vector< ProjName >& AllUsedProjects() const  { return allUsedProjects; }
 			
-			FSSpec PrecompiledHeaderImage() const;
-			
 			const std::vector< std::string >& SearchDirs() const  { return sourceDirs; }
 			
 			std::vector< FileName > LibImports()    const  { return myImports; }

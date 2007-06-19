@@ -19,9 +19,6 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
-// Nitrogen Extras / Iteration
-#include "Iteration/FSContents.h"
-
 
 namespace ALine
 {
@@ -32,11 +29,6 @@ namespace ALine
 	inline std::string FileSpecFromEntry( const std::string& parent, const dirent& entry )
 	{
 		return parent / entry.d_name;
-	}
-	
-	inline FSSpec FileSpecFromEntry( const FSSpec& parent, const FSSpec& entry )
-	{
-		return entry;
 	}
 	
 	
@@ -102,18 +94,10 @@ namespace ALine
 	
 	
 	template < class Filter >
-	std::vector< FSSpec > DeepFiles( const FSSpec& item, const Filter& filter )
-	{
-		return DeepFileSearch< FSSpec, Filter >( filter ).SearchItem( item );
-	}
-	
-	template < class Filter >
 	std::vector< std::string > DeepFiles( const std::string& item, const Filter& filter )
 	{
 		return DeepFileSearch< std::string, Filter >( filter ).SearchItem( item );
 	}
-	
-	std::vector< FSSpec > DeepFiles( const FSSpec& item );
 	
 	std::vector< std::string > DeepFiles( const std::string& item );
 	

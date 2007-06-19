@@ -421,30 +421,32 @@ int O::Main( int argc, char const* const argv[] )
 			
 			gCommands.clear();
 		}
-		catch ( NoSuchProject )
+		catch ( const NoSuchProject& )
 		{
 			Io::Err << argv[ 0 ] << ": No such project " << q( proj ) << "\n";
 			fail++;
 		}
-		catch ( CD::NoSuchProject )
+		catch ( const CD::NoSuchProject& )
 		{
 			Io::Err << argv[ 0 ] << ": No such project " << q( proj ) << "\n";
 			fail++;
 		}
-		catch ( NoSuchUsedProject& ex )
+		catch ( const NoSuchUsedProject& ex )
 		{
 			Io::Err << argv[ 0 ] 
 				<< ": No such project " << q( ex.used ) 
 				<< " used by " << ex.projName << "\n";
 			fail++;
 		}
+		/*
 		catch ( BadSourceAlias& ex )
 		{
 			Io::Err << argv[ 0 ] 
 				<< ": Unresolvable source alias " << q( NN::Convert< std::string >( ex.alias.name ) )
 				<< " in " << ex.proj.Name() << "\n";
 		}
-		catch ( N::OSStatus err )
+		*/
+		catch ( const N::OSStatus& err )
 		{
 			Io::Err << argv[ 0 ] << ": Unrecognized error " << err << " in " << proj << "\n";
 		}

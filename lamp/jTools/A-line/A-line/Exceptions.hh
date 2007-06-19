@@ -26,6 +26,7 @@ namespace ALine
 		std::string used;
 	};
 	
+	/*
 	struct BadSourceAlias
 	{
 		BadSourceAlias( const Project& proj, const FSSpec& alias ) 
@@ -37,6 +38,7 @@ namespace ALine
 		const Project& proj;
 		FSSpec alias;
 	};
+	*/
 	
 }
 
