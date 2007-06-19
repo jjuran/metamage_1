@@ -23,7 +23,6 @@
 // CompileDriver
 #include "CompileDriver/Platform.hh"
 #include "CompileDriver/ProjectCatalog.hh"
-#include "CompileDriver/Subprojects.hh"
 
 
 namespace CompileDriver
