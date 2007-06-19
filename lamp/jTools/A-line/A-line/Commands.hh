@@ -154,17 +154,17 @@ namespace ALine
 			           : "ld";
 		}
 		
-		std::string LibraryMakerName() const
-		{
-			return gnu ? "libtool"
-			           : "ld -static";
-		}
-		
 		std::string TargetArchitecture() const
 		{
 			return   ppc  ? "-arch ppc"
 			       : m68k ? "-arch m68k"
 			       :        "-arch i386";
+		}
+		
+		std::string LibraryMakerName() const
+		{
+			return gnu ? "libtool"
+			           : "ld -static " + TargetArchitecture();
 		}
 		
 		// This means that we pass the precompiled output, not the header source.
@@ -324,7 +324,7 @@ namespace ALine
 		
 		std::string LinkerOptions() const
 		{
-			return TargetArchitecture() + ( debug ? "" : " -s" );
+			return debug ? "" : " -s";
 		}
 		
 	};
