@@ -9,6 +9,7 @@
 
 #include "Carbonate/AEDataModel.hh"
 #include "Carbonate/Controls.hh"
+#include "Carbonate/DateTimeUtils.hh"
 #include "Carbonate/Events.hh"
 #include "Carbonate/Menus.hh"
 #include "Carbonate/Quickdraw.hh"
