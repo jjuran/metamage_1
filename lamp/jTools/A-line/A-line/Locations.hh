@@ -6,16 +6,12 @@
 #ifndef A_LINE_LOCATIONS_HH
 #define A_LINE_LOCATIONS_HH
 
-// Nitrogen
-#include "Nitrogen/Files.h"
+// Standard C++
+#include <string>
 
 
 namespace ALine
 {
-	
-	namespace N = Nitrogen;
-	
-	N::FSDirSpec UserProjectsFolder();
 	
 	std::string UserProjectsPath();
 	

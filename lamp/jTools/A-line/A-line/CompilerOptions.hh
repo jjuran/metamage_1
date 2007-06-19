@@ -10,9 +10,6 @@
 #include <string>
 #include <vector>
 
-// Nitrogen
-#include "Nitrogen/Files.h"
-
 // A-line
 #include "A-line/TargetTypes.hh"
 
@@ -20,12 +17,10 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	typedef std::map< std::string, std::string > Map;
 	
 	struct TargetInfo;
+	
 	
 	class CompilerOptions
 	{

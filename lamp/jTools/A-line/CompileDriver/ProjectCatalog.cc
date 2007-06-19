@@ -13,11 +13,17 @@
 #include "io/files.hh"
 #include "io/walk.hh"
 
+// GetPathname
+#include "GetPathname.hh"
+
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
+
+// Divergence
+#include "Divergence/Utilities.hh"
 
 
 namespace CompileDriver
@@ -25,31 +31,34 @@ namespace CompileDriver
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Div = Divergence;
 	
 	using namespace io::path_descent_operators;
 	
 	
-	static void ScanItemForProjects( const FSSpec&                                       item,
-	                                 std::back_insert_iterator< std::vector< FSSpec > >  output )
+	static void ScanItemForProjects( const FSSpec&                                            item,
+	                                 std::back_insert_iterator< std::vector< std::string > >  output )
 	{
 		if ( io::directory_exists( item ) )
 		{
 			typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
 			
-			ScanDirForProjects( directory_spec( item ), output );
+			ScanDirForProjects( GetPOSIXPathname( directory_spec( item ) ), output );
 		}
 	}
 	
-	void ScanDirForProjects( const N::FSDirSpec&                                 dir,
-	                         std::back_insert_iterator< std::vector< FSSpec > >  output )
+	void ScanDirForProjects( const std::string&                                       dirPath,
+	                         std::back_insert_iterator< std::vector< std::string > >  output )
 	{
+		N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( dirPath.c_str() ) );
+		
 		typedef io::filespec_traits< N::FSDirSpec >::file_spec file_spec;
 		
 		file_spec conf = dir / "A-line.conf";
 		
 		if ( io::file_exists( conf ) )
 		{
-			*output++ = conf;
+			*output++ = GetPOSIXPathname( conf );
 			return;
 		}
 		
@@ -61,9 +70,10 @@ namespace CompileDriver
 		{
 			directory_container contents = io::directory_contents( confd );
 			
-			std::copy( contents.begin(),
-			           contents.end(),
-			           output );
+			std::transform( contents.begin(),
+			                contents.end(),
+			                output,
+			                std::ptr_fun( static_cast< std::string (*)(const FSSpec&) >( GetPOSIXPathname ) ) );
 			return;
 		}
 		

@@ -393,7 +393,7 @@ int O::Main( int argc, char const* const argv[] )
 	
 	gOptions.files = options.GetStringList( optFile );
 	
-	CD::AddPendingSubproject( UserProjectsFolder() );
+	CD::AddPendingSubproject( UserProjectsPath() );
 	
 	if ( gOptions.catalog )
 	{

@@ -6,8 +6,10 @@
 #ifndef COMPILEDRIVER_PROJECTCONFIG_HH
 #define COMPILEDRIVER_PROJECTCONFIG_HH
 
-// Nitrogen
-#include "Nitrogen/Files.h"
+// Standard C++
+#include <map>
+#include <string>
+#include <vector>
 
 // CompileDriver
 #include "CompileDriver/Platform.hh"
@@ -16,8 +18,6 @@
 
 namespace CompileDriver
 {
-	
-	namespace N = Nitrogen;
 	
 	typedef std::string ProjName;
 	
@@ -43,7 +43,7 @@ namespace CompileDriver
 		NoSuchProject( const ProjName& name ) : name( name )  {}
 	};
 	
-	void AddPendingSubproject( const N::FSDirSpec& dir );
+	void AddPendingSubproject( const std::string& dir );
 	
 	const ProjectData& GetProjectData( const ProjName& projName, const Platform& targetPlatform );
 	

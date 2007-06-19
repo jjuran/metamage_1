@@ -15,8 +15,8 @@ namespace CompileDriver
 	
 	namespace N = Nitrogen;
 	
-	void ScanDirForProjects( const N::FSDirSpec&                                 dir,
-	                         std::back_insert_iterator< std::vector< FSSpec > >  output );
+	void ScanDirForProjects( const std::string&                                       dirPath,
+	                         std::back_insert_iterator< std::vector< std::string > >  output );
 	
 }
 

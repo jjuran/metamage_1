@@ -21,9 +21,6 @@
 // POSeven
 #include "POSeven/Pathnames.hh"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.h"
-
 // GetPathname
 #include "GetPathname.hh"
 
@@ -35,7 +32,6 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
 	using namespace io::path_descent_operators;

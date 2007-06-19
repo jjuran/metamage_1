@@ -13,8 +13,8 @@
 // Nucleus
 #include "Nucleus/ResourceTransfer.h"
 
-// GetPathname
-#include "GetPathname.hh"
+// POSeven
+#include "POSeven/Pathnames.hh"
 
 // Nitrogen Extras / Templates
 #include "Templates/FunctionalExtensions.h"
@@ -168,6 +168,19 @@ namespace CompileDriver
 	static ProjectDataList  gProjectDataList;
 	static ProjectMap       gProjectMap;
 	
+	
+	static std::vector< std::string >& Subprojects()
+	{
+		static std::vector< std::string > gSubprojects;
+		
+		return gSubprojects;
+	}
+	
+	static void AddSubproject( const std::string& location )
+	{
+		Subprojects().push_back( location );
+	}
+	
 	static void AddProjectConfig( const ProjName&     projName,
 	                              const std::string&  folder,
 	                              const ConfData&     conf )
@@ -176,33 +189,14 @@ namespace CompileDriver
 		gProjectMap[ projName ].push_back( &gProjectDataList.back() );
 	}
 	
-	static N::FSDirSpec DescendPathToDir( const N::FSDirSpec& dir, const std::string& path )
-	{
-		N::FSDirSpec result = dir;
-		std::size_t start = 0;
-		
-		while ( start != path.npos )
-		{
-			std::size_t stop = path.find( '/', start );
-			
-			result /= path.substr( start, stop - start );
-			
-			start = stop == path.npos ? path.npos : stop + 1;
-		}
-		
-		return result;
-	}
-	
-	/*
 	static std::string DescendPathToDir( const std::string& dir, const std::string& path )
 	{
-		return result / path;
+		return dir / path;
 	}
-	*/
 	
-	static void AddPendingConfigFile( const FSSpec& file )
+	static void AddPendingConfigFile( const std::string& filePath )
 	{
-		std::string filename = io::get_filename_string( file );
+		std::string filename = io::get_filename_string( filePath );
 		std::string extension = ".conf";
 		
 		std::string::difference_type rootSize = filename.size() - extension.size();
@@ -212,8 +206,8 @@ namespace CompileDriver
 			return;
 		}
 		
-		N::FSDirSpec  parent = io::get_preceding_directory( file   );
-		std::string   name   = io::get_filename_string    ( parent );
+		std::string  parent = io::get_preceding_directory( filePath );
+		std::string  name   = io::get_filename_string    ( parent   );
 		
 		if ( name == "A-line.confd" )
 		{
@@ -221,10 +215,8 @@ namespace CompileDriver
 			name   = io::get_filename_string    ( parent );
 		}
 		
-		std::string pathname = GetPOSIXPathname( file );
-		
 		DotConfData data;
-		ReadProjectDotConf( pathname, data );
+		ReadProjectDotConf( filePath, data );
 		ConfData conf = MakeConfData( data );
 		
 		typedef ConfData::const_iterator const_iterator;
@@ -235,7 +227,7 @@ namespace CompileDriver
 			name = found->second[ 0 ];  // 'name' directive overrides folder name
 		}
 		
-		AddProjectConfig( name, GetPOSIXPathname( parent ), conf );
+		AddProjectConfig( name, parent, conf );
 		
 		std::for_each( conf[ "subprojects" ].begin(),
 		               conf[ "subprojects" ].end(),
@@ -245,9 +237,9 @@ namespace CompileDriver
 		
 	}
 	
-	void AddPendingSubproject( const N::FSDirSpec& dir )
+	void AddPendingSubproject( const std::string& dir )
 	{
-		std::vector< FSSpec > configs;
+		std::vector< std::string > configs;
 		ScanDirForProjects( dir, std::back_inserter( configs ) );
 		
 		std::for_each( configs.begin(),
@@ -259,7 +251,7 @@ namespace CompileDriver
 	
 	static void AddPendingSubprojects()
 	{
-		std::vector< N::FSDirSpec > subprojects;
+		std::vector< std::string > subprojects;
 		
 		std::swap( subprojects, Subprojects() );
 		

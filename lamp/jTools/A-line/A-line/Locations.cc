@@ -12,12 +12,6 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
-// Nitrogen
-#include "Nitrogen/Folders.h"
-
-// Divergence
-#include "Divergence/Utilities.hh"
-
 // CompileDriver
 #include "CompileDriver/ProjectConfig.hh"
 
@@ -25,9 +19,6 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace Div = Divergence;
 	namespace CD = CompileDriver;
 	
 	
@@ -41,26 +32,6 @@ namespace ALine
 		return path;
 	}
 	
-	static N::FSDirSpec CurrentUserHomeDir()
-	{
-	#if TARGET_RT_MAC_MACHO
-		
-		return N::FindFolder( N::kCurrentUserFolderType, kDontCreateFolder );
-		
-	#else
-		
-		const char* path = "/";
-		
-		if ( const char* home = getenv( "HOME" ) )
-		{
-			path = home;
-		}
-		
-		return N::FSDirSpec( Div::ResolvePathToFSSpec( path ) );
-		
-	#endif
-	}
-	
 	static std::string CurrentUserHomeDirPath()
 	{
 		if ( const char* home = getenv( "HOME" ) )
@@ -71,28 +42,9 @@ namespace ALine
 		return "/";
 	}
 	
-	static N::FSDirSpec UserDeveloperFolder()
-	{
-		return N::FSDirSpec( CurrentUserHomeDir() / "Developer" );
-	}
-	
 	static std::string UserDeveloperPath()
 	{
 		return CurrentUserHomeDirPath() + "/Developer";
-	}
-	
-	N::FSDirSpec UserProjectsFolder()
-	{
-	#if !TARGET_RT_MAC_MACHO
-		
-		if ( const char* projects = getenv( "ALINE_PROJECTS" ) )
-		{
-			return N::FSDirSpec( Div::ResolvePathToFSSpec( projects ) );
-		}
-		
-	#endif
-		
-		return N::FSDirSpec( UserDeveloperFolder() / "Projects" );
 	}
 	
 	std::string UserProjectsPath()
@@ -144,19 +96,6 @@ namespace ALine
 		}
 		
 		return ProjectSourcesPath( projectPath );
-	}
-	
-	static N::FSDirSpec ProjectControlFolder( const N::FSDirSpec& folder )
-	{
-		N::FSDirSpec source = folder;
-		
-		try
-		{
-			source /= "A-line.confd";
-		}
-		catch ( N::FNFErr )  {}
-		
-		return source;
 	}
 	
 	static std::string ProjectConfigDirPath( const std::string& projectPath )

@@ -25,13 +25,6 @@
 // POSeven
 #include "POSeven/Pathnames.hh"
 
-// Nitrogen
-#include "Nitrogen/AEInteraction.h"
-#include "Nitrogen/Aliases.h"
-#include "Nitrogen/AppleEvents.h"
-#include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Str.h"
-
 // GetPathname
 #include "GetPathname.hh"
 
