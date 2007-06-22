@@ -227,6 +227,10 @@ namespace jTools
 						
 						break;
 					
+					case 'l':
+					case 'L':
+						continue;
+					
 					default:
 						break;
 				}
