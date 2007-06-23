@@ -14,6 +14,9 @@
 #include "io/io.hh"
 #include "io/spray.hh"
 
+// Nucleus
+#include "Nucleus/Flattener.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
@@ -198,9 +201,9 @@ namespace ALine
 		
 		std::for_each( usedProjects.begin(),
 		               usedProjects.end() - 1,
-		               ext::compose1( std::bind2nd( more::ptr_fun( GetProjectLib ),
-		                                            &usedLibFiles ),
-		                              more::ptr_fun( GetProject ) ) );
+		               more::compose1( std::bind2nd( more::ptr_fun( GetProjectLib ),
+		                                             &usedLibFiles ),
+		                               more::ptr_fun( GetProject ) ) );
 		
 		return usedLibFiles;
 	}
@@ -351,9 +354,9 @@ namespace ALine
 				
 				found = std::find_if( usedLibFiles.begin(),
 				                      usedLibFiles.end(),
-				                      ext::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
-				                                                   outFileDate ),
-				                                     more::ptr_fun( ModifiedDate ) ) );
+				                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
+				                                                    outFileDate ),
+				                                      more::ptr_fun( ModifiedDate ) ) );
 				
 				needToLink = found != usedLibFiles.end();
 			}

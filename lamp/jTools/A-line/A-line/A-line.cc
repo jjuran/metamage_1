@@ -26,10 +26,6 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Shared.h"
 
-// Nitrogen
-#include "Nitrogen/OSStatus.h"
-#include "Nitrogen/Threads.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -37,7 +33,7 @@
 #include "PointerToFunction.hh"
 
 // Nitrogen Extras / Utilities
-#include "Utilities/Processes.h"
+//#include "Utilities/Processes.h"
 
 // BitsAndBytes
 #include "StringFilters.hh"
@@ -67,10 +63,10 @@ namespace O = Orion;
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
+	//namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
-	namespace NX = NitrogenExtras;
+	//namespace NX = NitrogenExtras;
 	namespace CD = CompileDriver;
 	
 	using BitsAndBytes::q;
@@ -84,6 +80,7 @@ namespace ALine
 		return gOptions;
 	}
 	
+	/*
 	static void SwapFrontProcess( const ProcessSerialNumber& from, const ProcessSerialNumber& to )
 	{
 		try
@@ -131,6 +128,7 @@ namespace ALine
 				Switch( NX::LaunchApplication( newTarget ) );
 			}
 	};
+	*/
 	
 	
 	static void ExecuteCommand( const std::string& command )
@@ -140,6 +138,7 @@ namespace ALine
 			Io::Out << "  " << command << "\n";
 		}
 		
+		/*
 		ApplicationLayerSwitch activateToolServerForCommand;
 		
 		bool shouldSwitchLayers = !TARGET_RT_MAC_MACHO  &&  (command.substr( 0, 6 ) == "tlsrvr"  ||  command.substr( 0, 4 ) == "mwcc" );
@@ -152,6 +151,7 @@ namespace ALine
 			
 			activateToolServerForCommand.Switch( sigToolServer );
 		}
+		*/
 		
 		int wait_result = system( command.c_str() );
 		
@@ -362,8 +362,6 @@ int O::Main( int argc, char const* const argv[] )
 	
 	int fail = 0;
 	
-	//N::SetOSStatusLoggingProc( MyOSStatusLogger );
-	
 	O::Options options = DefineOptions();
 	options.GetOptions( argc, argv );
 	
@@ -455,10 +453,6 @@ int O::Main( int argc, char const* const argv[] )
 			Io::Err << argv[ 0 ] << ": Error in " << proj << ":\n";
 			
 			throw;
-		}
-		catch ( const N::OSStatus& err )
-		{
-			Io::Err << argv[ 0 ] << ": Unrecognized error " << err << " in " << proj << "\n";
 		}
 	}
 	

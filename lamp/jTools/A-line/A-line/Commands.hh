@@ -8,8 +8,8 @@
 // Standard C++
 #include <string>
 
-// Nitrogen Extras / Templates
-#include "Templates/FunctionalExtensions.h"
+// MoreFunctional
+#include "FunctionalExtensions.hh"
 
 // BitsAndBytes
 #include "StringFilters.hh"
@@ -21,11 +21,7 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
 	namespace CD = CompileDriver;
-	
-	namespace ext = N::STLExtensions;
-	
 	
 	using BitsAndBytes::q;
 	using BitsAndBytes::qq;
@@ -83,7 +79,7 @@ namespace ALine
 		static std::string MakeNativeCommand( const std::string& command )
 		{
 			// This works either within Genie or in native POSIX.
-			return "tlsrvr --escape -- " + command;
+			return "tlsrvr --escape --switch -- " + command;
 		}
 	};
 	
@@ -352,7 +348,7 @@ namespace ALine
 	template < class Iter >
 	std::string join( Iter begin, Iter end, const std::string& glue = "" )
 	{
-		return join( begin, end, glue, ext::identity< std::string >() );
+		return join( begin, end, glue, more::identity< std::string >() );
 	}
 	
 }
