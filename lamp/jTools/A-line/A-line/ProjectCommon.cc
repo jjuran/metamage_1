@@ -21,9 +21,6 @@
 // POSeven
 #include "POSeven/Pathnames.hh"
 
-// GetPathname
-#include "GetPathname.hh"
-
 // A-line
 #include "A-line/BuildCommon.hh"
 #include "A-line/ExtractIncludes.hh"
