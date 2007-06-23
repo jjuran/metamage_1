@@ -12,8 +12,9 @@
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
 // Compile the Carbon accessors as extern pascal functions.
 #define CARBONATE_LINKAGE pascal
-#include "Carbonate/DateTimeUtils.hh"
 #endif
+
+#include "Carbonate/DateTimeUtils.hh"
 
 // These functions are always declared in the headers and are always extern.
 
