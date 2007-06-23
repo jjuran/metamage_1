@@ -102,11 +102,28 @@ namespace jTools
 		return "-o " + QuotedMacPathFromPOSIXPath( pathname );
 	}
 	
-	std::vector< const char* > gIncludeDirs;
+	std::vector< const char* > gLibraryDirs;
 	
-	static void RememberIncludeDir( const char* pathname )
+	static void RememberLibraryDir( const char* pathname )
 	{
-		gIncludeDirs.push_back( pathname );
+		gLibraryDirs.push_back( pathname );
+	}
+	
+	static std::string FindLibrary( const char* lib )
+	{
+		typedef std::vector< const char* >::const_iterator Iter;
+		
+		for ( Iter it = gLibraryDirs.begin();  it != gLibraryDirs.end();  ++it )
+		{
+			std::string pathname = std::string( *it ) / lib;
+			
+			if ( io::file_exists( pathname ) )
+			{
+				return pathname;
+			}
+		}
+		
+		return lib;
 	}
 	
 	enum ProductType
@@ -228,24 +245,41 @@ namespace jTools
 						break;
 					
 					case 'l':
+						continue;
+					
 					case 'L':
+						RememberLibraryDir( arg + 2 );
 						continue;
 					
 					default:
 						break;
 				}
 			}
-			else if ( std::strchr( arg, '/' ) )
+			else
 			{
 				if ( io::get_filename( arg ) == "CarbonLib" )
 				{
 					carbon = true;
 				}
 				
-				// translate path
-				translatedPath = QuotedMacPathFromPOSIXPath( arg );
+				bool pathname = std::strchr( arg, '/' ) != NULL;
 				
-				arg = translatedPath.c_str();
+				std::string foundLib;
+				
+				if ( !pathname )
+				{
+					foundLib = FindLibrary( arg );
+					
+					arg = foundLib.c_str();
+				}
+				
+				//if ( pathname )
+				{
+					// translate path
+					translatedPath = QuotedMacPathFromPOSIXPath( arg );
+					
+					arg = translatedPath.c_str();
+				}
 			}
 			
 			if ( arg[0] != '\0' )
