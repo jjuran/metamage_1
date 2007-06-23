@@ -56,17 +56,6 @@ namespace ALine
 	using BitsAndBytes::qq;
 	
 	
-	static bool LibNeedsWeakImport( const std::string& lib )
-	{
-		if ( lib == "InterfaceLib"    )  return true;
-		if ( lib == "ControlsLib"     )  return true;
-		if ( lib == "MenusLib"        )  return true;
-		if ( lib == "WindowsLib"      )  return true;
-		if ( lib == "ControlStripLib" )  return true;
-		
-		return false;
-	}
-	
 	static std::string MakeImport( const std::string& file )
 	{
 		std::string result;
@@ -77,10 +66,6 @@ namespace ALine
 		{
 			importName = importName.substr( 1, importName.npos );
 			
-			result = "-wi ";
-		}
-		else if ( LibNeedsWeakImport( importName ) )
-		{
 			result = "-wi ";
 		}
 		
