@@ -431,7 +431,7 @@ namespace jTools
 		
 		ldArgs = " " + product + debugging + deadstripping + fragmentName + " " + ldArgs;
 		
-		std::string output = "tlsrvr --escape -- " + command + ldArgs + '\n';
+		std::string output = "tlsrvr --switch --escape -- " + command + ldArgs + '\n';
 		
 		if ( verbose )
 		{

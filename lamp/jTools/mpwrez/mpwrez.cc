@@ -114,7 +114,7 @@ namespace jTools
 			}
 		}
 		
-		std::string output = "tlsrvr --escape -- " + command + rezArgs + '\n';
+		std::string output = "tlsrvr --switch --escape -- " + command + rezArgs + '\n';
 		
 		if ( verbose )
 		{
