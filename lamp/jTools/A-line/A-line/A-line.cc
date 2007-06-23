@@ -30,8 +30,11 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Threads.h"
 
-// Nitrogen Extras / Templates
-#include "Templates/PointerToFunction.h"
+// POSeven
+#include "POSeven/Errno.hh"
+
+// MoreFunctional
+#include "PointerToFunction.hh"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Processes.h"
@@ -66,6 +69,7 @@ namespace ALine
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	namespace NX = NitrogenExtras;
 	namespace CD = CompileDriver;
 	
@@ -248,7 +252,7 @@ namespace ALine
 			prereqs.end(), 
 			std::bind2nd
 			(
-				N::PtrFun( BuildJob ), 
+				more::ptr_fun( BuildJob ), 
 				targetInfo
 			)
 		);
@@ -446,6 +450,12 @@ int O::Main( int argc, char const* const argv[] )
 				<< " in " << ex.proj.Name() << "\n";
 		}
 		*/
+		catch ( const P7::Errno& err )
+		{
+			Io::Err << argv[ 0 ] << ": Error in " << proj << ":\n";
+			
+			throw;
+		}
 		catch ( const N::OSStatus& err )
 		{
 			Io::Err << argv[ 0 ] << ": Unrecognized error " << err << " in " << proj << "\n";

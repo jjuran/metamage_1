@@ -25,11 +25,8 @@
 // POSeven
 #include "POSeven/Pathnames.hh"
 
-// GetPathname
-#include "GetPathname.hh"
-
-// Nitrogen Extras / Templates
-#include "Templates/PointerToFunction.h"
+// MoreFunctional
+#include "PointerToFunction.hh"
 
 // BitsAndBytes
 #include "StringFilters.hh"
@@ -46,8 +43,6 @@
 
 namespace ALine
 {
-	
-	namespace N = Nitrogen;
 	
 	using namespace io::path_descent_operators;
 	
@@ -480,7 +475,7 @@ namespace ALine
 		
 		std::for_each( dirtyFiles.begin(),
 		               dirtyFiles.end(),
-		               std::bind1st( N::PtrFun( BuildSourceFile ),
+		               std::bind1st( more::ptr_fun( BuildSourceFile ),
 		                             options ) );
 	}
 	

@@ -16,9 +16,9 @@
 // POSeven
 #include "POSeven/Pathnames.hh"
 
-// Nitrogen Extras / Templates
-#include "Templates/FunctionalExtensions.h"
-#include "Templates/PointerToFunction.h"
+// MoreFunctional
+#include "FunctionalExtensions.hh"
+#include "PointerToFunction.hh"
 
 // CompileDriver
 #include "CompileDriver/Platform.hh"
@@ -28,10 +28,7 @@
 namespace CompileDriver
 {
 	
-	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	
-	namespace ext = N::STLExtensions;
 	
 	using namespace io::path_descent_operators;
 	
@@ -144,7 +141,7 @@ namespace CompileDriver
 		
 		std::for_each( infos.begin(),
 		               infos.end(),
-		               std::bind1st( N::PtrFun( SetPlatformInfo ),
+		               std::bind1st( more::ptr_fun( SetPlatformInfo ),
 		                             NN::ResourceTransfer< Platform >( result ) ) );
 		
 		return result;
@@ -230,9 +227,9 @@ namespace CompileDriver
 		
 		std::for_each( conf[ "subprojects" ].begin(),
 		               conf[ "subprojects" ].end(),
-		               ext::compose1( N::PtrFun( AddSubproject ),
-		                              std::bind1st( N::PtrFun( DescendPathToDir ),
-		                                            parent ) ) );
+		               more::compose1( more::ptr_fun( AddSubproject ),
+		                               std::bind1st( more::ptr_fun( DescendPathToDir ),
+		                                             parent ) ) );
 		
 	}
 	
@@ -320,7 +317,7 @@ namespace CompileDriver
 		
 		project_iterator foundProject = std::find_if( alternatives.begin(),
 		                                              alternatives.end(),
-		                                              std::bind2nd( N::PtrFun( ProjectPlatformIsCompatible ),
+		                                              std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
 		                                                            targetPlatform ) );
 		
 		if ( foundProject ==  alternatives.end() )

@@ -15,23 +15,11 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
-// Nitrogen
-#include "Nitrogen/MacErrors.h"
-#include "Nitrogen/OSStatus.h"
-
-// GetPathname
-#include "GetPathname.hh"
-
-// Nitrogen Extras / Templates
-#include "Templates/FunctionalExtensions.h"
-#include "Templates/PointerToFunction.h"
+// MoreFunctional
+#include "PointerToFunction.hh"
 
 // BitsAndBytes
 #include "StringFilters.hh"
-#include "StringPredicates.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
 
 // Orion
 #include "Orion/StandardIO.hh"
@@ -51,16 +39,11 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace Div = Divergence;
+	namespace P7 = POSeven;
 	namespace CD = CompileDriver;
-	
-	namespace ext = N::STLExtensions;
 	
 	using namespace io::path_descent_operators;
 	
-	using BitsAndBytes::eos;
 	using BitsAndBytes::q;
 	
 	
@@ -71,7 +54,7 @@ namespace ALine
 		
 		if ( !io::item_exists( file ) )
 		{
-			throw N::FNFErr();
+			throw P7::Errno( ENOENT );
 		}
 		
 		return file;
@@ -291,7 +274,7 @@ namespace ALine
 				std::transform( search.begin(),
 				                search.end(),
 				                sourceDirs.begin(),
-				                std::bind1st( N::PtrFun( FindSearchDir ),
+				                std::bind1st( more::ptr_fun( FindSearchDir ),
 					                          projFolderPath ) );
 			}
 			else
@@ -422,7 +405,7 @@ namespace ALine
 			return result;
 		}
 		
-		throw N::FNFErr();
+		throw P7::Errno( ENOENT );
 	}
 	
 	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& sourceDirs )
@@ -453,7 +436,7 @@ namespace ALine
 		
 		std::fprintf( stderr, "Missing source file %s\n", relative_path.c_str() );
 		
-		throw N::FNFErr();
+		throw P7::Errno( ENOENT );
 	}
 	
 	void Project::Study()
@@ -529,7 +512,7 @@ namespace ALine
 				(
 					std::bind2nd
 					(
-						N::PtrFun( N::ResolveAliasFile ), 
+						more::ptr_fun( N::ResolveAliasFile ), 
 						true
 					)
 				)

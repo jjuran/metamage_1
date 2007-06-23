@@ -19,8 +19,8 @@
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 
-// Nitrogen Extras / Templates
-#include "Templates/PointerToFunction.h"
+// MoreFunctional
+#include "PointerToFunction.hh"
 
 // BitsAndBytes
 #include "StringFilters.hh"
@@ -40,7 +40,6 @@
 namespace ALine
 {
 	
-	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
@@ -134,7 +133,7 @@ namespace ALine
 		
 		std::for_each( used.begin(),
 		               used.end(),
-		               std::bind2nd( N::PtrFun( CopyImports ),
+		               std::bind2nd( more::ptr_fun( CopyImports ),
 		                             std::back_inserter( importFiles ) ) );
 		
 		return importFiles;
@@ -199,9 +198,9 @@ namespace ALine
 		
 		std::for_each( usedProjects.begin(),
 		               usedProjects.end() - 1,
-		               ext::compose1( std::bind2nd( N::PtrFun( GetProjectLib ),
+		               ext::compose1( std::bind2nd( more::ptr_fun( GetProjectLib ),
 		                                            &usedLibFiles ),
-		                              N::PtrFun( GetProject ) ) );
+		                              more::ptr_fun( GetProject ) ) );
 		
 		return usedLibFiles;
 	}
@@ -354,7 +353,7 @@ namespace ALine
 				                      usedLibFiles.end(),
 				                      ext::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                   outFileDate ),
-				                                     N::PtrFun( ModifiedDate ) ) );
+				                                     more::ptr_fun( ModifiedDate ) ) );
 				
 				needToLink = found != usedLibFiles.end();
 			}
