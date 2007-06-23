@@ -18,14 +18,9 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
-// Nitrogen Extras / Templates
-//#include "Templates/PointerToFunction.h"
-
 
 namespace CompileDriver
 {
-	
-	//namespace N = Nitrogen;
 	
 	using namespace io::path_descent_operators;
 	
