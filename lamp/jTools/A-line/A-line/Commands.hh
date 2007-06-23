@@ -28,82 +28,6 @@ namespace ALine
 	
 	static const std::string space = " ";
 	
-	enum PathnameType
-	{
-		kMacPathnames,
-		kPOSIXPathnames
-	};
-	
-	enum EnvironmentType
-	{
-		kGenieEnvironment,
-		kMPWEnvironment,
-		kNativePOSIXEnvironment
-	};
-	
-	
-	// Environment refers to the environment of the tool we wish to run,
-	// not the environment A-line is running in.
-	
-	template < EnvironmentType type > struct EnvironmentTraits;
-	
-	template <>
-	struct EnvironmentTraits< kGenieEnvironment >
-	{
-		static const PathnameType pathnameType = kPOSIXPathnames;
-		
-		static std::string MakeNativeCommand( const std::string& command )
-		{
-		#if TARGET_RT_MAC_MACHO
-			
-			// A-line is a native Mach-O tool running in the Terminal.
-			// Not supported.
-			// Besides, any tool that runs in Genie should build as Mach-O anyway.
-			
-			// Missing return value warning
-			
-		#else
-			
-			// A-line is a CFM Genie plugin.
-			return command;
-			
-		#endif
-		}
-	};
-	
-	template <>
-	struct EnvironmentTraits< kMPWEnvironment >
-	{
-		static const PathnameType pathnameType = kMacPathnames;
-		
-		static std::string MakeNativeCommand( const std::string& command )
-		{
-			// This works either within Genie or in native POSIX.
-			return "tlsrvr --escape --switch -- " + command;
-		}
-	};
-	
-	template <>
-	struct EnvironmentTraits< kNativePOSIXEnvironment >
-	{
-		static const PathnameType pathnameType = kPOSIXPathnames;
-		
-		static std::string MakeNativeCommand( const std::string& command )
-		{
-		#if TARGET_RT_MAC_MACHO
-			
-			// A-line is a native Mach-O tool running in the Terminal.
-			return command;
-			
-		#else
-			
-			// A-line is a Carbon CFM Genie plugin.  This is a hack.
-			return std::string( "dss " ) + qq( command + " && true" );
-			
-		#endif
-		}
-	};
-	
 	
 	struct CommandGenerator
 	{
@@ -130,12 +54,6 @@ namespace ALine
 			debug( target.build == buildDebug ),
 			gnu( target.toolkit == toolkitGNU )
 		{}
-		
-		std::string MakeNativeCommand( const std::string& command )
-		{
-			return ( gnu ? EnvironmentTraits< kNativePOSIXEnvironment >::MakeNativeCommand
-			             : EnvironmentTraits< kMPWEnvironment         >::MakeNativeCommand )( command );
-		}
 		
 		std::string UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }
 		
