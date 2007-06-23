@@ -25,7 +25,7 @@
 #include "io/walk.hh"
 
 // Nucleus
-#include "Nucleus/Owned.h"
+#include "Nucleus/Shared.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -93,9 +93,9 @@ namespace POSeven
 	class DirectoryContents_Container
 	{
 		public:
-			typedef dirent value_type;
-			typedef UInt16 size_type;
-			typedef SInt16 difference_type;
+			typedef dirent    value_type;
+			typedef unsigned  size_type;
+			typedef int       difference_type;
 			
 			class const_iterator
 			{
