@@ -15,15 +15,9 @@
 #include "io/spray.hh"
 
 // POSeven
+#include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
-
-// Nitrogen
-#include "Nitrogen/MacErrors.h"
-#include "Nitrogen/OSStatus.h"
-
-// GetPathname
-#include "GetPathname.hh"
 
 // Nitrogen Extras / Templates
 #include "Templates/PointerToFunction.h"
@@ -60,16 +54,21 @@ namespace ALine
 	{
 		std::string result;
 		
+		std::string importPath = file;
+		
 		std::string importName = io::get_filename_string( file );
 		
 		if ( importName[ 0 ] == '-' )
 		{
 			importName = importName.substr( 1, importName.npos );
 			
+			importPath = std::strchr( file.c_str(), '/' ) ? io::get_preceding_directory( file ) / importName
+			                                              : importName;
+			
 			result = "-wi ";
 		}
 		
-		result += q( io::get_preceding_directory( file ) / importName );
+		result += q( importPath );
 		
 		return result;
 	}
@@ -87,101 +86,10 @@ namespace ALine
 		return std::string( "-framework " ) + framework;
 	}
 	
-	static N::FSDirSpec InterfacesAndLibraries()
-	{
-		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
-		
-		FSSpec mpwShell = N::DTGetAPPL( sigMPWShell );
-		
-		N::FSDirSpec mpw  = io::get_preceding_directory( mpwShell );
-		N::FSDirSpec apps = io::get_preceding_directory( mpw      );
-		
-		N::FSDirSpec intfsAndLibs( apps / "Interfaces&Libraries" );
-		
-		return intfsAndLibs;
-	}
-	
-	static FSSpec FindImportLibraryInSystem( const FileName& filename )
-	{
-		N::FSDirSpec libsFolder( InterfacesAndLibraries() / "Libraries" );
-		
-		N::FSDirSpec sharedLibs( libsFolder / "SharedLibraries" );
-		N::FSDirSpec ppcLibs   ( libsFolder / "PPCLibraries"    );
-		N::FSDirSpec libs68K   ( libsFolder / "Libraries"       );
-		N::FSDirSpec mwppcLibs ( libsFolder / "MWPPCLibraries"  );
-		N::FSDirSpec mw68kLibs ( libsFolder / "MW68KLibraries"  );
-		
-		std::string actualName = filename;
-		
-		// This is a hack.  A '-' prefix means to weak-import the library.
-		if ( filename[ 0 ] == '-' )
-		{
-			actualName = filename.substr( 1, std::string::npos );
-		}
-		
-		if ( io::item_exists( sharedLibs / actualName ) )
-		{
-			return sharedLibs / filename;
-		}
-		else if ( io::item_exists( ppcLibs / actualName ) )
-		{
-			return ppcLibs / filename;
-		}
-		else if ( io::item_exists( libs68K / actualName ) )
-		{
-			return libs68K / filename;
-		}
-		else if ( io::item_exists( mwppcLibs / actualName ) )
-		{
-			return mwppcLibs / filename;
-		}
-		else if ( io::item_exists( mw68kLibs / actualName ) )
-		{
-			return mw68kLibs / filename;
-		}
-		else
-		{
-			throw N::FNFErr();
-		}
-		
-		// Not reached
-		return FSSpec();  // Squelch warning
-	}
-	
-	
-	static std::string FindImportLibraryInProject( const std::string& libName, const Project& project )
-	{
-		std::string lib = project.ProjectFolder() / libName;
-		
-		if ( !io::item_exists( lib ) )
-		{
-			throw N::FNFErr();
-		}
-		
-		return lib;
-	}
 	
 	static std::string FindImport( const std::string& name, const Project& project )
 	{
-		try
-		{
-			return GetPOSIXPathname( FindImportLibraryInSystem( name ) );
-		}
-		catch ( const N::FNFErr& )
-		{
-		}
-		
-		try
-		{
-			return FindImportLibraryInProject( name, project );
-		}
-		catch ( const N::FNFErr& )
-		{
-		}
-		
-		std::fprintf( stderr, "### Missing import %s from project %s\n", name.c_str(), project.Name().c_str() );
-		
-		throw N::FNFErr();
+		return name;
 	}
 	
 	static void CopyImports( const ProjName& projName,
@@ -191,20 +99,34 @@ namespace ALine
 		
 		std::vector< FileName > importNames( project.LibImports() );
 		
-		std::vector< std::string > importFiles( importNames.size() );
-		
-		std::transform( importNames.begin(),
-		                importNames.end(),
-		                importFiles.begin(),
-		                std::bind2nd( N::PtrFun( FindImport ),
-		                              project ) );
-		
-		std::copy( importFiles.begin(),
-		           importFiles.end(),
+		std::copy( importNames.begin(),
+		           importNames.end(),
 		           inserter );
 	}
 	
-	static std::vector< std::string > GetAllImports( const Project& project, const std::string& targetName )
+	static std::string OptionToSearchProjectForLib( const std::string& projectName )
+	{
+		Project& project = GetProject( projectName );
+		
+		if ( project.LibImports().empty() )
+		{
+			return "";
+		}
+		
+		return "-L'" + project.ProjectFolder() + "'";
+	}
+	
+	static std::string GetImportLocationOptions( const Project& project )
+	{
+		const std::vector< ProjName >& used = project.AllUsedProjects();
+		
+		return join( used.begin(),
+		             used.end(),
+		             " ",
+		             std::ptr_fun( OptionToSearchProjectForLib ) );
+	}
+	
+	static std::vector< std::string > GetAllImports( const Project& project )
 	{
 		const std::vector< ProjName >& used = project.AllUsedProjects();
 		
@@ -218,9 +140,9 @@ namespace ALine
 		return importFiles;
 	}
 	
-	static std::string GetImports( const Project& project, const std::string& targetName )
+	static std::string GetImports( const Project& project )
 	{
-		std::vector< std::string > importFiles( GetAllImports( project, targetName ) );
+		std::vector< std::string > importFiles( GetAllImports( project ) );
 		
 		std::string imports;
 		
@@ -229,7 +151,7 @@ namespace ALine
 		                 " ",
 		                 std::ptr_fun( MakeImport ) );
 		
-		return imports;
+		return GetImportLocationOptions( project ) + " " + imports;
 	}
 	
 	static std::string GetFrameworks( const Project& project )
@@ -375,7 +297,7 @@ namespace ALine
 		if ( gnu  &&  !gccSupported )
 		{
 			Io::Err << "Sorry, GCC is not supported for this type of product.\n";
-			throw N::ParamErr();
+			throw P7::Errno( EINVAL );
 		}
 		
 		command << cmdgen.LinkerOptions();
@@ -464,7 +386,7 @@ namespace ALine
 			// FIXME:  This is a hack
 			if ( !gnu )
 			{
-				link << GetImports( project, targetName );
+				link << GetImports( project );
 			}
 		}
 		
@@ -492,12 +414,12 @@ namespace ALine
 			
 			outFile = contents / "MacOS" / linkName;
 			
-			const N::OSType codeZero = N::OSType( 0 );
-			
 			std::string pkgInfo = contents / "PkgInfo";
 			
 			try
 			{
+				//const N::OSType codeZero = N::OSType( 0 );
+				
 				//N::FSpCreate( pkgInfo, codeZero, codeZero );
 				P7::Open( pkgInfo.c_str(), O_CREAT, 0600 );
 			}
