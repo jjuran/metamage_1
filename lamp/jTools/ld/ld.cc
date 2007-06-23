@@ -100,7 +100,7 @@ namespace jTools
 		MWPPC_LIB( "MSL RuntimePPC.Lib"   ),
 		MWPPC_LIB( "PLStringFuncsPPC.lib" ),
 		
-		MW68K_LIB( "MacOS.Lib" ),
+		MW68K_LIB( "MacOS.lib" ),
 		
 		MW68K_LIB( "MathLib68K Fa(4i_8d).Lib"    ),
 		MW68K_LIB( "MathLib68K Fa(4i_8d).A4.Lib" ),
