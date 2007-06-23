@@ -50,9 +50,123 @@ static int exit_from_wait( int stat )
 namespace jTools
 {
 	
+	namespace N = Nitrogen;
 	namespace Div = Divergence;
 	
 	using namespace io::path_descent_operators;
+	
+	
+	static std::string InterfacesAndLibraries()
+	{
+		const N::OSType sigMPWShell = N::OSType( 'MPS ' );
+		
+		static std::string intfsAndLibs( GetPOSIXPathname( io::get_preceding_directory( io::get_preceding_directory( N::DTGetAPPL( sigMPWShell ) ) ) / "Interfaces&Libraries" / "Libraries" ) );
+		
+		return intfsAndLibs;
+	}
+	
+	
+	#define SHARED_LIB( lib )  { lib "", "SharedLibraries" }
+	
+	#define PPC_LIB( lib )  { lib "", "PPCLibraries" }
+	
+	#define MW68K_LIB( lib )  { lib "", "MW68KLibraries" }
+	#define MWPPC_LIB( lib )  { lib "", "MWPPCLibraries" }
+	
+	typedef const char* StringPair[2];
+	
+	static StringPair gSystemLibraries[] =
+	{
+		SHARED_LIB( "AppleScriptLib"     ),
+		SHARED_LIB( "CarbonLib"          ),
+		SHARED_LIB( "ControlsLib"        ),
+		SHARED_LIB( "InterfaceLib"       ),
+		SHARED_LIB( "MathLib"            ),
+		SHARED_LIB( "MenusLib"           ),
+		SHARED_LIB( "ObjectSupportLib"   ),
+		SHARED_LIB( "OpenTptInternetLib" ),
+		SHARED_LIB( "OpenTransportLib"   ),
+		SHARED_LIB( "ThreadsLib"         ),
+		SHARED_LIB( "WindowsLib"         ),
+		
+		PPC_LIB( "CarbonAccessors.o"        ),
+		PPC_LIB( "OpenTransportAppPPC.o"    ),
+		PPC_LIB( "OpenTptInetPPC.o"         ),
+		PPC_LIB( "PascalPreCarbonUPPGlue.o" ),
+		
+		MWPPC_LIB( "MSL C.Carbon.Lib"     ),
+		MWPPC_LIB( "MSL C.PPC.Lib"        ),
+		MWPPC_LIB( "MSL C++.PPC.Lib"      ),
+		MWPPC_LIB( "MSL RuntimePPC.Lib"   ),
+		MWPPC_LIB( "PLStringFuncsPPC.lib" ),
+		
+		MW68K_LIB( "MacOS.Lib" ),
+		
+		MW68K_LIB( "MathLib68K Fa(4i_8d).Lib"    ),
+		MW68K_LIB( "MathLib68K Fa(4i_8d).A4.Lib" ),
+		MW68K_LIB( "MathLibCFM68K (4i_8d).Lib"   ),
+		
+		MW68K_LIB( "MSL C.68K Fa(4i_8d).Lib"    ),
+		MW68K_LIB( "MSL C.68K Fa(4i_8d).A4.Lib" ),
+		MW68K_LIB( "MSL C.CFM68K Fa(4i_8d).Lib" ),
+		
+		MW68K_LIB( "MSL C++.68K Fa(4i_8d).Lib"    ),
+		MW68K_LIB( "MSL C++.68K Fa(4i_8d).A4.Lib" ),
+		MW68K_LIB( "MSL C++.CFM68K Fa(4i_8d).Lib" ),
+		
+		MW68K_LIB( "MSL MWCFM68KRuntime.Lib" ),
+		MW68K_LIB( "MSL Runtime68K.Lib"      ),
+		MW68K_LIB( "MSL Runtime68K.A4.Lib"   ),
+		
+		MW68K_LIB( "PLStringFuncs.glue"      ),
+		MW68K_LIB( "PLStringFuncsCFM68K.lib" ),
+		
+		{ NULL, NULL }
+	};
+	
+	typedef std::map< std::string, const char* > LibraryMap;
+	
+	static LibraryMap MakeLibraryMap()
+	{
+		LibraryMap map;
+		
+		for ( StringPair* it = gSystemLibraries;  it[0][0] != NULL;  ++it )
+		{
+			map[ it[0][0] ] = it[0][1];
+		}
+		
+		return map;
+	}
+	
+	static LibraryMap& TheLibraryMap()
+	{
+		static LibraryMap gLibraryMap = MakeLibraryMap();
+		
+		return gLibraryMap;
+	}
+	
+	static std::string FindSystemLibrary( const std::string& libName )
+	{
+		LibraryMap::const_iterator it = TheLibraryMap().find( libName );
+		
+		if ( it == TheLibraryMap().end() )
+		{
+			return libName;
+		}
+		
+		const char* subdir = it->second;
+		
+		std::string pathname = InterfacesAndLibraries() / subdir / libName;
+		
+		if ( !io::file_exists( pathname ) )
+		{
+			std::fprintf( stderr, "System library missing: %s\n", pathname.c_str() );
+			
+			O::ThrowExitStatus( 1 );
+		}
+		
+		return pathname;
+	}
 	
 	
 	static bool m68k = TARGET_CPU_68K;
@@ -123,7 +237,7 @@ namespace jTools
 			}
 		}
 		
-		return lib;
+		return FindSystemLibrary( lib );
 	}
 	
 	enum ProductType
