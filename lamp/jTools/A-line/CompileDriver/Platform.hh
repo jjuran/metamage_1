@@ -6,7 +6,9 @@
 #ifndef COMPILEDRIVER_PLATFORM_HH
 #define COMPILEDRIVER_PLATFORM_HH
 
+#if defined(__APPLE_CC__) || defined(__MWERKS__)
 #include <TargetConditionals.h>
+#endif
 
 /*
 
@@ -63,7 +65,8 @@ namespace CompileDriver
 		runtimeA4CodeResource,
 		runtimeA5CodeSegments,
 		runtimeCodeFragments,
-		runtimeMachO
+		runtimeMachO,
+		runtimeELF
 	};
 	
 	enum MacAPI
@@ -137,6 +140,8 @@ namespace CompileDriver
 	
 	static void ApplyPlatformDefaults( Platform& platform )
 	{
+	#if defined(__APPLE_CC__) || defined(__MWERKS__)
+		
 		// FIXME for 64-bit
 		if ( platform.arch == archUnspecified )
 		{
@@ -169,6 +174,14 @@ namespace CompileDriver
 		{
 			platform.api = TARGET_API_MAC_CARBON ? apiMacCarbon : apiMacToolbox;
 		}
+		
+	#else
+		
+		platform.arch    = archX86;  // assumed for Linux at the moment
+		platform.runtime = runtimeELF;
+		platform.api     = apiNotApplicable;
+		
+	#endif
 	}
 	
 }
