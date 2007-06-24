@@ -27,7 +27,7 @@ namespace ALine
 			ProjName Name() const  { return projName; }
 			FileName ProgramName() const  { return progName; }
 			std::string ProjectFolder() const  { return projFolderPath; }
-			FileName LibraryFilename() const  { return Name() + ".lib"; }
+			FileName LibraryFilename() const  { return Name() + ".a"; }
 			ProductType Product() const  { return product; }
 			const IncludePath& PrecompiledHeaderSource() const  { return precompiledHeaderSource; }
 			bool NeedsCwdSourceOption() const  { return needsCwdSourceOption; }
