@@ -63,7 +63,7 @@ namespace io
 	template < class ByteCountOut, class Stream, class ByteCountIn >
 	inline ByteCountOut write( Stream stream, const char* data, ByteCountIn byteCount )
 	{
-		return write( stream, data, byteCount );
+		return io::write< ByteCountIn >( stream, data, byteCount );
 	}
 	
 }
