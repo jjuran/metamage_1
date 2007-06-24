@@ -54,6 +54,11 @@ namespace io
 		return open_for_writing( pathname.c_str() );
 	}
 	
+	template < class Ignored > inline Nucleus::Owned< POSeven::FileDescriptor > open_for_writing( const std::string& pathname )
+	{
+		return open_for_writing( pathname.c_str() );
+	}
+	
 }
 
 #endif
