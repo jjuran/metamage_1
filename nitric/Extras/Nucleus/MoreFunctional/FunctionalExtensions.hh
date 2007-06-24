@@ -27,6 +27,7 @@ namespace more
 #endif
 	
 	using functional_extensions::compose1;
+	using functional_extensions::identity;
 }
 
 #endif
