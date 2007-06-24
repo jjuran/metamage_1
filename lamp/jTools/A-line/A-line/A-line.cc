@@ -267,7 +267,7 @@ namespace ALine
 			target.build = buildDebug;
 		}
 		
-		if ( target.platform.runtime == CD::runtimeMachO )
+		if ( target.platform.runtime == CD::runtimeMachO  ||  target.platform.runtime == CD::runtimeELF )
 		{
 			target.toolkit = toolkitGNU;
 		}

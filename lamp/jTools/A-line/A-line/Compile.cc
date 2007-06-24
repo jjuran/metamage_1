@@ -145,7 +145,10 @@ namespace ALine
 			command << "-cwd source";
 		}
 		
-		command << "-Wno-deprecated-declarations -Wno-long-double";
+		if ( options.Target().platform.runtime == CD::runtimeMachO )
+		{
+			command << "-Wno-deprecated-declarations -Wno-long-double";
+		}
 		
 		command << join( options.Macros().begin(),
 		                 options.Macros().end(),

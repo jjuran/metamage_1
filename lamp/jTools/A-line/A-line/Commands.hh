@@ -101,8 +101,17 @@ namespace ALine
 		
 		std::string LanguageOptions() const
 		{
+			std::string result = " ";
+			
+			// Pascal strings are Mac-only; always on before OS X
+			if ( machO )  result += "-fpascal-strings ";
+			
 			// gcc won't compile shared_ptr without RTTI
-			return "-fpascal-strings" + std::string( gnu ? "" : " -fno-rtti" );
+			if ( !gnu )  result += "-fno-rtti ";
+			
+			result.resize( result.size() - 1 );
+			
+			return result;
 		}
 		
 		
