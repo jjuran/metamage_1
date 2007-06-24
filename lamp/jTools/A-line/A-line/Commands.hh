@@ -34,7 +34,7 @@ namespace ALine
 		TargetInfo target;
 		
 		bool m68k, ppc, x86;
-		bool a4, a5, cfm, machO;
+		bool a4, a5, cfm, machO, elf;
 		bool classic, carbon;
 		bool debug;
 		bool gnu;
@@ -49,6 +49,7 @@ namespace ALine
 			a5( target.platform.runtime == CD::runtimeA5CodeSegments ),
 			cfm( target.platform.runtime == CD::runtimeCodeFragments ),
 			machO( target.platform.runtime == CD::runtimeMachO ),
+			elf( target.platform.runtime == CD::runtimeELF ),
 			classic( target.platform.api == CD::apiMacToolbox ),
 			carbon( target.platform.api == CD::apiMacCarbon ),
 			debug( target.build == buildDebug ),
@@ -70,6 +71,8 @@ namespace ALine
 		
 		std::string TargetArchitecture() const
 		{
+			if ( elf )  return "";
+			
 			return   ppc  ? "-arch ppc"
 			       : m68k ? "-arch m68k"
 			       :        "-arch i386";
