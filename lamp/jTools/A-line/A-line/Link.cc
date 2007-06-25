@@ -235,6 +235,8 @@ namespace ALine
 	{
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
 		
+		const bool machO = targetInfo.platform.runtime == CD::runtimeMachO;
+		
 		CommandGenerator cmdgen( targetInfo );
 		
 		std::string linkName = project.ProgramName();
@@ -401,7 +403,7 @@ namespace ALine
 		}
 		
 		
-		if ( needLibs && gnu )
+		if ( needLibs && machO )
 		{
 			link << GetFrameworks( project );
 		}
