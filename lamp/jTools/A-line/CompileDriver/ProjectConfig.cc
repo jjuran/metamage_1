@@ -124,6 +124,12 @@ namespace CompileDriver
 			// Only Carbon is supported for Mac OS X
 			platform->api  = MergeAttributes( platform->api,  apiMacCarbon );
 		}
+		else if ( info == "elf" )
+		{
+			platform->runtime = MergeAttributes( platform->runtime, runtimeELF       );
+			platform->arch    = MergeAttributes( platform->arch,    archX86          );
+			platform->api     = MergeAttributes( platform->api,     apiNotApplicable );
+		}
 		
 		if ( info == "classic" )
 		{
