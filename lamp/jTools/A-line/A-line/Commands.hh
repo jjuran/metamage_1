@@ -80,7 +80,7 @@ namespace ALine
 		
 		std::string LibraryMakerName() const
 		{
-			return gnu ? "libtool"
+			return gnu ? "ar rcs"
 			           : "ld -static " + TargetArchitecture();
 		}
 		

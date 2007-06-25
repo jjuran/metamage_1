@@ -304,7 +304,12 @@ namespace ALine
 			throw P7::Errno( EINVAL );
 		}
 		
-		command << cmdgen.LinkerOptions();
+		const bool useAr = gnu  &&  project.Product() == productStaticLib;
+		
+		if ( !useAr )
+		{
+			command << cmdgen.LinkerOptions();
+		}
 		
 		TargetName targetName = MakeTargetName( targetInfo );
 		
@@ -434,7 +439,12 @@ namespace ALine
 			io::spray_file< NN::StringFlattener< std::string > >( pkgInfo, info );
 		}
 		
-		command << cmdgen.Output( outFile );
+		if ( !useAr )
+		{
+			command << "-o";
+		}
+		
+		command << q( outFile );
 		
 		command << expeditedLib << objectFilePaths << link;
 		
