@@ -177,9 +177,20 @@ namespace CompileDriver
 		
 	#else
 		
-		platform.arch    = archX86;  // assumed for Linux at the moment
-		platform.runtime = runtimeELF;
-		platform.api     = apiNotApplicable;
+		if ( platform.arch == archUnspecified )
+		{
+			platform.arch = archX86;  // assumed for Linux at the moment
+		}
+		
+		if ( platform.runtime == runtimeUnspecified )
+		{
+			platform.runtime = runtimeELF;
+		}
+		
+		if ( platform.api == apiUnspecified )
+		{
+			platform.api = apiNotApplicable;
+		}
 		
 	#endif
 	}
