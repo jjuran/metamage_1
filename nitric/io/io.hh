@@ -45,25 +45,45 @@ namespace io
 		
 	}
 	
-	dummy::owned_stream open_for_reading( dummy::file_spec );
-	dummy::owned_stream open_for_writing( dummy::file_spec );
+	class overload {};
+	
+	dummy::owned_stream open_for_reading( dummy::file_spec, overload );
+	dummy::owned_stream open_for_writing( dummy::file_spec, overload );
+	
+	dummy::byte_count get_file_size( dummy::stream, overload );
+	
+	dummy::byte_count read( dummy::stream, char*, dummy::byte_count, overload );
+	
+	dummy::byte_count write( dummy::stream, const char*, dummy::byte_count, overload );
+	
+	template < class OwnedStream, class FileSpec >
+	inline OwnedStream open_for_reading( FileSpec file )
+	{
+		return open_for_reading( file, overload() );
+	}
 	
 	template < class OwnedStream, class FileSpec >
 	inline OwnedStream open_for_writing( FileSpec file )
 	{
-		return open_for_writing( file );
+		return open_for_writing( file, overload() );
 	}
 	
-	dummy::byte_count get_file_size( dummy::stream );
+	template < class ByteCount, class Stream >
+	inline ByteCount get_file_size( Stream stream )
+	{
+		return get_file_size( stream, overload() );
+	}
 	
-	dummy::byte_count read( dummy::stream, char*, dummy::byte_count );
-	
-	dummy::byte_count write( dummy::stream, const char*, dummy::byte_count );
+	template < class ByteCountOut, class Stream, class ByteCountIn >
+	inline ByteCountOut read( Stream stream, char* data, ByteCountIn byteCount )
+	{
+		return read( stream, data, byteCount, overload() );
+	}
 	
 	template < class ByteCountOut, class Stream, class ByteCountIn >
 	inline ByteCountOut write( Stream stream, const char* data, ByteCountIn byteCount )
 	{
-		return io::write< ByteCountIn >( stream, data, byteCount );
+		return write( stream, data, byteCount, overload() );
 	}
 	
 }
