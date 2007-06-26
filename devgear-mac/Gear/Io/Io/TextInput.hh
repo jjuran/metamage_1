@@ -105,7 +105,7 @@ namespace Io
 		
 		try
 		{
-			std::size_t bytes = io::read( itsInput, data, blockSize );  // result is always positive
+			std::size_t bytes = io::read( itsInput, data, blockSize, io::overload() );  // result is always positive
 			
 			itsBuffer.ReceiveBlock( data, bytes );
 			
