@@ -189,6 +189,8 @@ namespace CompileDriver
 			{
 				itsRequired   |= it.itsRequired;
 				itsProhibited |= it.itsProhibited;
+				
+				return *this;
 			}
 	};
 	
