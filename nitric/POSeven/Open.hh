@@ -34,29 +34,24 @@ namespace POSeven
 namespace io
 {
 	
-	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_reading( const char* pathname )
+	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_reading( const char* pathname, overload = overload() )
 	{
 		return POSeven::Open( pathname, O_RDONLY );
 	}
 	
-	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_reading( const std::string& pathname )
+	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_reading( const std::string& pathname, overload = overload() )
 	{
-		return open_for_reading( pathname.c_str() );
+		return open_for_reading( pathname.c_str(), overload() );
 	}
 	
-	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_writing( const char* pathname )
+	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_writing( const char* pathname, overload )
 	{
 		return POSeven::Open( pathname, O_WRONLY );
 	}
 	
-	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_writing( const std::string& pathname )
+	inline Nucleus::Owned< POSeven::FileDescriptor > open_for_writing( const std::string& pathname, overload )
 	{
-		return open_for_writing( pathname.c_str() );
-	}
-	
-	template < class Ignored > inline Nucleus::Owned< POSeven::FileDescriptor > open_for_writing( const std::string& pathname )
-	{
-		return open_for_writing( pathname.c_str() );
+		return open_for_writing( pathname.c_str(), overload() );
 	}
 	
 }

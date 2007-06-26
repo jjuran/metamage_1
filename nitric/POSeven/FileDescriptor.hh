@@ -106,13 +106,13 @@ namespace io
 	template <> struct filespec_traits< std::string > : public POSeven::POSIX_Io_Details {};
 	
 	template < class ByteCount >
-	inline ssize_t read( POSeven::FileDescriptor fd, char* buffer, ByteCount byteCount )
+	inline ssize_t read( POSeven::FileDescriptor fd, char* buffer, ByteCount byteCount, overload )
 	{
 		return POSeven::Read( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
 	}
 	
 	template < class ByteCount >
-	inline ssize_t write( POSeven::FileDescriptor fd, const char* buffer, ByteCount byteCount )
+	inline ssize_t write( POSeven::FileDescriptor fd, const char* buffer, ByteCount byteCount, overload )
 	{
 		return POSeven::Write( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
 	}
