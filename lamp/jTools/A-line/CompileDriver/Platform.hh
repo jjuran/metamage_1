@@ -192,75 +192,6 @@ namespace CompileDriver
 			}
 	};
 	
-	/*
-	template < class Attribute >
-	Attribute MergeAttributes( Attribute a, Attribute b, bool negated )
-	{
-		if ( negated )
-		{
-			if ( a == b )  throw IncompatiblePlatformAttributes();
-			
-			return a;
-		}
-		
-		if ( int( a ) == 0 )  return b;
-		if ( int( b ) == 0 )  return a;
-		
-		if ( a == b )  return a;
-		
-		throw IncompatiblePlatformAttributes();
-	}
-	*/
-	
-	/*
-	struct Platform
-	{
-		Architecture arch;
-		Runtime runtime;
-		MacAPI api;
-		
-		Platform() 
-		:
-			arch   ( archUnspecified    ),
-			runtime( runtimeUnspecified ),
-			api    ( apiUnspecified     )
-		{}
-		
-		Platform( Architecture arch, Runtime runtime, MacAPI api )
-		:
-			arch   ( arch    ),
-			runtime( runtime ),
-			api    ( api     )
-		{}
-		
-		friend Platform operator&( const Platform& a, const Platform& b )
-		{
-			return Platform( MergeAttributes( a.arch,    b.arch,    false ),
-			                 MergeAttributes( a.runtime, b.runtime, false ),
-			                 MergeAttributes( a.api,     b.api,     false ) );
-		}
-		
-		Platform& operator&=( const Platform& other )
-		{
-			Platform result = *this & other;
-			*this = result;
-			return *this;
-		}
-	};
-	
-	inline bool operator==( const Platform& a, const Platform& b )
-	{
-		return a.arch    == b.arch
-		    && a.runtime == b.runtime
-		    && a.api     == b.api;
-	}
-	
-	inline bool operator!=( const Platform& a, const Platform& b )
-	{
-		return !( a == b );
-	}
-	*/
-	
 	
 	static void ApplyPlatformDefaults( Platform& platform )
 	{
@@ -313,7 +244,7 @@ namespace CompileDriver
 		
 		if ( (platform & apiMask) == 0 )
 		{
-			platform |= apiNotApplicable;
+			//platform |= apiNotApplicable;
 		}
 		
 	#endif
