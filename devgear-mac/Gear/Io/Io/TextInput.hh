@@ -13,6 +13,9 @@
 // Io
 #include "io/io.hh"
 
+// Nucleus
+#include "Nucleus/Convert.h"
+
 
 namespace Io
 {
@@ -105,7 +108,9 @@ namespace Io
 		
 		try
 		{
-			std::size_t bytes = io::read( itsInput, data, blockSize, io::overload() );  // result is always positive
+			typedef typename Nucleus::ConvertInputTraits< Input >::ConverterInputType Stream;
+			
+			std::size_t bytes = io::read( Stream( itsInput ), data, blockSize );  // result is always positive
 			
 			itsBuffer.ReceiveBlock( data, bytes );
 			
