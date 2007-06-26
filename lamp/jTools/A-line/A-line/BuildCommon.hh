@@ -26,9 +26,9 @@ namespace ALine
 	
 	inline std::string MakeTargetName( TargetInfo info )
 	{
-		return MakeTargetName( info.platform.arch,
-		                       info.platform.runtime,
-		                       info.platform.api,
+		return MakeTargetName( info.platform & CD::archMask,
+		                       info.platform & CD::runtimeMask,
+		                       info.platform & CD::apiMask,
 		                       info.build );
 	}
 	

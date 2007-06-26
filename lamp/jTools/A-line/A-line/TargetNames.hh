@@ -22,9 +22,12 @@ namespace ALine
 	
 	typedef std::string TargetName;
 	
-	std::string ArchName( CD::Architecture arch );
+	std::string ArchName( CD::Platform arch );
 	
-	TargetName MakeTargetName( CD::Architecture, CD::Runtime, CD::MacAPI, BuildVariety );
+	TargetName MakeTargetName( CD::Platform  arch,
+	                           CD::Platform  runtime,
+	                           CD::Platform  api,
+	                           BuildVariety  build );
 	
 }
 

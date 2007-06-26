@@ -235,7 +235,7 @@ namespace ALine
 	{
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
 		
-		const bool machO = targetInfo.platform.runtime == CD::runtimeMachO;
+		const bool machO = targetInfo.platform & CD::runtimeMachO;
 		
 		CommandGenerator cmdgen( targetInfo );
 		
@@ -255,6 +255,8 @@ namespace ALine
 		bool gccSupported = false;
 		bool bundle = false;
 		
+		const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
+		
 		switch ( project.Product() )
 		{
 			case productStaticLib:
@@ -266,9 +268,7 @@ namespace ALine
 			
 			case productApplication:
 				command << cmdgen.TargetApplication();
-				
-				needCarbResource =    targetInfo.platform.api     == CD::apiMacCarbon
-				                   && targetInfo.platform.runtime == CD::runtimeCodeFragments;
+				needCarbResource = (targetInfo.platform & carbonCFM) == carbonCFM;
 				gccSupported = true;
 				bundle = gnu;
 				break;

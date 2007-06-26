@@ -35,25 +35,25 @@ namespace ALine
 		
 		bool m68k, ppc, x86;
 		bool a4, a5, cfm, machO, elf;
-		bool classic, carbon;
+		bool blue, carbon;
 		bool debug;
 		bool gnu;
 		
 		CommandGenerator( const TargetInfo& target )
 		:
 			target( target ),
-			m68k( target.platform.arch == CD::arch68K ),
-			ppc ( target.platform.arch == CD::archPPC ),
-			x86 ( target.platform.arch == CD::archX86 ),
-			a4( target.platform.runtime == CD::runtimeA4CodeResource ),
-			a5( target.platform.runtime == CD::runtimeA5CodeSegments ),
-			cfm( target.platform.runtime == CD::runtimeCodeFragments ),
-			machO( target.platform.runtime == CD::runtimeMachO ),
-			elf( target.platform.runtime == CD::runtimeELF ),
-			classic( target.platform.api == CD::apiMacToolbox ),
-			carbon( target.platform.api == CD::apiMacCarbon ),
-			debug( target.build == buildDebug ),
-			gnu( target.toolkit == toolkitGNU )
+			m68k  ( target.platform & CD::arch68K               ),
+			ppc   ( target.platform & CD::archPPC               ),
+			x86   ( target.platform & CD::archX86               ),
+			a4    ( target.platform & CD::runtimeA4CodeResource ),
+			a5    ( target.platform & CD::runtimeA5CodeSegments ),
+			cfm   ( target.platform & CD::runtimeCodeFragments  ),
+			machO ( target.platform & CD::runtimeMachO          ),
+			elf   ( target.platform & CD::runtimeELF            ),
+			blue  ( target.platform & CD::apiMacToolbox         ),
+			carbon( target.platform & CD::apiMacCarbon          ),
+			debug ( target.build   == buildDebug ),
+			gnu   ( target.toolkit == toolkitGNU )
 		{}
 		
 		std::string UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }

@@ -267,7 +267,8 @@ namespace ALine
 			target.build = buildDebug;
 		}
 		
-		if ( target.platform.runtime == CD::runtimeMachO  ||  target.platform.runtime == CD::runtimeELF )
+		// This is wrong for Metrowerks targeting Mach-O, but does anyone care?
+		if ( target.platform & (CD::runtimeMachO | CD::runtimeELF) )
 		{
 			target.toolkit = toolkitGNU;
 		}
@@ -367,22 +368,22 @@ int O::Main( int argc, char const* const argv[] )
 	
 	const std::vector< const char* >& params = options.GetFreeParams();
 	
-	CD::Platform targetPlatform;
+	CD::Platform targetPlatform = CD::platformUnspecified;
 	BuildVariety buildVariety = buildDefault;
 	
 	if ( options.GetEnum( optArch ) != 0 )
 	{
-		targetPlatform.arch = CD::Architecture( options.GetEnum( optArch ) );
+		targetPlatform |= CD::Platform( options.GetEnum( optArch ) );
 	}
 	
 	if ( options.GetEnum( optRuntime ) != 0 )
 	{
-		targetPlatform.runtime = CD::Runtime( options.GetEnum( optRuntime ) );
+		targetPlatform |= CD::Platform( options.GetEnum( optRuntime ) );
 	}
 	
 	if ( options.GetEnum( optMacAPI ) != 0 )
 	{
-		targetPlatform.api = CD::MacAPI( options.GetEnum( optMacAPI ) );
+		targetPlatform |= CD::Platform( options.GetEnum( optMacAPI ) );
 	}
 	
 	if ( options.GetEnum( optBuild ) != 0 )
@@ -402,7 +403,7 @@ int O::Main( int argc, char const* const argv[] )
 		//(void)GetProjectCatalog();
 	}
 	
-	targetPlatform;
+	CD::ApplyPlatformDefaults( targetPlatform );
 	
 	for ( int i = 0;  i < params.size();  ++i )
 	{

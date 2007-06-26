@@ -145,7 +145,7 @@ namespace ALine
 			command << "-cwd source";
 		}
 		
-		if ( options.Target().platform.runtime == CD::runtimeMachO )
+		if ( options.Target().platform & CD::runtimeMachO )
 		{
 			command << "-Wno-deprecated-declarations -Wno-long-double";
 		}
@@ -410,16 +410,16 @@ namespace ALine
 		options.DefineMacro( "__ALINE__" );
 		options.DefineMacro( "JOSHUA_JURAN_EXPERIMENTAL" );
 		
-		if ( targetInfo.platform.api == CD::apiMacCarbon )
+		if ( targetInfo.platform & CD::apiMacCarbon )
 		{
 			options.DefineMacro( "TARGET_API_MAC_CARBON" );
 		}
-		else
+		else if ( targetInfo.platform & CD::apiMacToolbox )
 		{
 			options.DefineMacro( "TARGET_API_MAC_CARBON", false );
 			options.DefineMacro( "TARGET_API_MAC_OS8" );
 			
-			if ( targetInfo.platform.arch == CD::archPPC )
+			if ( targetInfo.platform & CD::archPPC )
 			{
 				options.DefineMacro( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
 				options.DefineMacro( "OPAQUE_UPP_TYPES" );

@@ -27,9 +27,9 @@ namespace CompileDriver
 	
 	struct ProjectData
 	{
-		std::string  folder;
-		ConfData     confData;
-		Platform     platform;
+		std::string      folder;
+		ConfData         confData;
+		PlatformDemands  platformDemands;
 		
 		ProjectData()  {}
 		

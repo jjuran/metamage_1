@@ -79,76 +79,72 @@ namespace CompileDriver
 		return found;
 	}
 	
-	static void SetPlatformInfo( NN::ResourceTransfer< Platform > platform, const std::string& info )
+	static std::map< std::string, Platform > MakePlatformMap()
 	{
-		if ( info == "68k" )
-		{
-			platform->arch = MergeAttributes( platform->arch, arch68K );
-			
-			// Only classic Toolbox is supported on 68K
-			platform->api = MergeAttributes( platform->api, apiMacToolbox );
-		}
-		else if ( info == "ppc" )
-		{
-			platform->arch = MergeAttributes( platform->arch, archPPC );
-		}
-		else if ( info == "x86" )
-		{
-			platform->arch = MergeAttributes( platform->arch, archX86 );
-		}
+		std::map< std::string, Platform > map;
 		
-		if ( info == "a4" )
-		{
-			platform->runtime = MergeAttributes( platform->runtime, runtimeA4CodeResource );
-			
-			// Implies 68K (where only classic Toolbox is available)
-			platform->arch = MergeAttributes( platform->arch, arch68K       );
-			platform->api  = MergeAttributes( platform->api,  apiMacToolbox );
-		}
-		else if ( info == "a5" )
-		{
-			platform->runtime = MergeAttributes( platform->runtime, runtimeA5CodeSegments );
-			
-			// Implies 68K (where only classic Toolbox is available)
-			platform->arch = MergeAttributes( platform->arch, arch68K       );
-			platform->api  = MergeAttributes( platform->api,  apiMacToolbox );
-		}
-		else if ( info == "cfm" )
-		{
-			platform->runtime = MergeAttributes( platform->runtime, runtimeCodeFragments );
-		}
-		else if ( info == "mach-o" )
-		{
-			platform->runtime = MergeAttributes( platform->runtime, runtimeMachO );
-			
-			// Only Carbon is supported for Mac OS X
-			platform->api  = MergeAttributes( platform->api,  apiMacCarbon );
-		}
-		else if ( info == "elf" )
-		{
-			platform->runtime = MergeAttributes( platform->runtime, runtimeELF       );
-			platform->arch    = MergeAttributes( platform->arch,    archX86          );
-			platform->api     = MergeAttributes( platform->api,     apiNotApplicable );
-		}
+		map[ "68k" ] = arch68K;
+		map[ "ppc" ] = archPPC;
+		map[ "x86" ] = archX86;
 		
-		if ( info == "classic" )
-		{
-			platform->api = MergeAttributes( platform->api, apiMacToolbox );
-		}
-		else if ( info == "carbon" )
-		{
-			platform->api = MergeAttributes( platform->api, apiMacCarbon );
-		}
+		map[ "a4"     ] = runtimeA4CodeResource;
+		map[ "a5"     ] = runtimeA5CodeSegments;
+		map[ "cfm"    ] = runtimeCodeFragments;
+		map[ "mach-o" ] = runtimeMachO;
+		map[ "elf   " ] = runtimeELF;
+		
+		map[ "blue   " ] = apiMacToolbox;
+		map[ "classic" ] = apiMacToolbox;
+		map[ "carbon"  ] = apiMacCarbon;
+		
+		return map;
 	}
 	
-	static Platform MakePlatformInfo( const std::vector< std::string >& infos )
+	static void SetPlatformInfo( NN::ResourceTransfer< PlatformDemands > cumulativeDemands, std::string info )
 	{
-		Platform result;
+		static std::map< std::string, Platform > map = MakePlatformMap();
+		
+		bool inverted = false;
+		
+		if ( info.empty() )
+		{
+			return;
+		}
+		else if ( info[0] == '!' )
+		{
+			info = info.substr( 1, info.npos );
+			inverted = true;
+		}
+		
+		Platform platform = map[ info ];
+		
+		PlatformDemands infoDemands = PlatformDemands( platform, Platform() );
+		
+		if ( inverted )
+		{
+			infoDemands = -infoDemands;
+		}
+		
+		*cumulativeDemands |= infoDemands;
+		
+		cumulativeDemands->Verify();
+		
+		/*
+			// Only classic Toolbox is supported on 68K
+			// A4 implies 68K (where only classic Toolbox is available)
+			// A5 implies 68K (where only classic Toolbox is available)
+			// Only Carbon is supported for Mac OS X
+		*/
+	}
+	
+	static PlatformDemands MakePlatformInfo( const std::vector< std::string >& infos )
+	{
+		PlatformDemands result;
 		
 		std::for_each( infos.begin(),
 		               infos.end(),
 		               std::bind1st( more::ptr_fun( SetPlatformInfo ),
-		                             NN::ResourceTransfer< Platform >( result ) ) );
+		                             NN::ResourceTransfer< PlatformDemands >( result ) ) );
 		
 		return result;
 	}
@@ -157,7 +153,7 @@ namespace CompileDriver
 	:
 		folder  ( folder ),
 		confData( conf   ),
-		platform( MakePlatformInfo( confData[ "platform" ] ) )
+		platformDemands( MakePlatformInfo( confData[ "platform" ] ) )
 	{
 		
 	}
@@ -271,33 +267,12 @@ namespace CompileDriver
 		}
 	}
 	
-	static bool ProjectPlatformIsCompatible( const ProjectData* projectData,
-	                                         const Platform& target )
+	static bool ProjectPlatformIsCompatible( const ProjectData*  projectData,
+	                                         Platform            target )
 	{
-		const Platform& platform = projectData->platform;
+		const PlatformDemands& projectDemands = projectData->platformDemands;
 		
-		if (    platform.arch != archUnspecified
-		     && target.arch   != archUnspecified
-		     && platform.arch != target.arch )
-		{
-			return false;
-		}
-		
-		if (    platform.runtime != runtimeUnspecified
-		     && target.runtime   != runtimeUnspecified
-		     && platform.runtime != target.runtime )
-		{
-			return false;
-		}
-		
-		if (    platform.api != apiUnspecified
-		     && target.api   != apiUnspecified
-		     && platform.api != target.api )
-		{
-			return false;
-		}
-		
-		return true;
+		return projectDemands.Test( target );
 	}
 	
 	const ProjectData& GetProjectData( const ProjName& projName, const Platform& targetPlatform )

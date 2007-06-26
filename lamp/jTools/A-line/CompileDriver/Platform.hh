@@ -51,37 +51,158 @@ ppc-macho-carbon
 namespace CompileDriver
 {
 	
+	/*
 	enum Architecture
 	{
-		archUnspecified,
-		arch68K,
-		archPPC,
-		archX86
+		archUnspecified = 0,
+		
+		arch68K = 1 << 0,
+		archPPC = 1 << 1,
+		archX86 = 1 << 2
 	};
 	
 	enum Runtime
 	{
-		runtimeUnspecified,
-		runtimeA4CodeResource,
-		runtimeA5CodeSegments,
-		runtimeCodeFragments,
-		runtimeMachO,
-		runtimeELF
+		runtimeUnspecified = 0,
+		
+		runtimeA4CodeResource = 1 << 3,
+		runtimeA5CodeSegments = 1 << 4,
+		runtimeCodeFragments  = 1 << 5,
+		runtimeMachO          = 1 << 6,
+		runtimeELF            = 1 << 7
 	};
 	
 	enum MacAPI
 	{
-		apiUnspecified,
-		apiMacToolbox,
-		apiMacCarbon,
-		apiNotApplicable
+		apiUnspecified = 0,
+		apiMacToolbox  = 1 <<  8,
+		apiMacCarbon   = 1 <<  9,
+		apiNotAMac     = 1 << 10
 	};
+	*/
+	
+	enum Platform
+	{
+		platformUnspecified = 0,
+		
+		arch68K = 1 << 0,
+		archPPC = 1 << 1,
+		archX86 = 1 << 2,
+		
+		runtimeA4CodeResource = 1 << 3,
+		runtimeA5CodeSegments = 1 << 4,
+		runtimeCodeFragments  = 1 << 5,
+		runtimeMachO          = 1 << 6,
+		runtimeELF            = 1 << 7,
+		
+		apiMacToolbox  = 1 <<  8,
+		apiMacCarbon   = 1 <<  9,
+		//apiNotAMac     = 1 << 10,
+		
+		archMask    = 0x0007,
+		runtimeMask = 0x00F8,
+		apiMask     = 0x0300
+		
+		
+	};
+	
+	inline Platform operator&( Platform a, Platform b )
+	{
+		return Platform( int( a ) & int( b ) );
+	}
+	
+	inline Platform operator|( Platform a, Platform b )
+	{
+		return Platform( int( a ) | int( b ) );
+	}
+	
+	inline Platform& operator&=( Platform& a, Platform b )
+	{
+		return a = a & b;
+	}
+	
+	inline Platform& operator|=( Platform& a, Platform b )
+	{
+		return a = a | b;
+	}
+	
 	
 	class IncompatiblePlatformAttributes {};
 	
-	template < class Attribute >
-	Attribute MergeAttributes( Attribute a, Attribute b )
+	
+	class PlatformDemands
 	{
+		private:
+			Platform itsRequired;
+			Platform itsProhibited;
+		
+		public:
+			PlatformDemands() : itsRequired(), itsProhibited()  {}
+			
+			PlatformDemands( Platform required, Platform prohibited ) : itsRequired( required ), itsProhibited( prohibited )  {}
+			
+			Platform Required  () const  { return itsRequired;   }
+			Platform Prohibited() const  { return itsProhibited; }
+			
+			bool Test( Platform platform ) const
+			{
+				return     (platform & itsRequired  ) == itsRequired
+				       &&  (platform & itsProhibited) == 0;
+			}
+			
+			bool Contradicted() const
+			{
+				return itsRequired & itsProhibited;
+			}
+			
+			void Verify() const
+			{
+				if ( Contradicted() )
+				{
+					throw IncompatiblePlatformAttributes();
+				}
+			}
+			
+			friend bool operator==( const PlatformDemands& a, const PlatformDemands& b )
+			{
+				return    a.itsRequired   == b.itsRequired
+				       && a.itsProhibited == b.itsProhibited;
+			}
+			
+			friend bool operator!=( const PlatformDemands& a, const PlatformDemands& b )
+			{
+				return !( a == b );
+			}
+			
+			friend PlatformDemands operator-( const PlatformDemands& it )
+			{
+				return PlatformDemands( it.itsProhibited, it.itsRequired );
+			}
+			
+			friend PlatformDemands operator|( const PlatformDemands& a, const PlatformDemands& b )
+			{
+				return PlatformDemands( a.itsRequired   | b.itsRequired,
+				                        a.itsProhibited | b.itsProhibited );
+			}
+			
+			PlatformDemands& operator|=( const PlatformDemands& it )
+			{
+				itsRequired   |= it.itsRequired;
+				itsProhibited |= it.itsProhibited;
+			}
+	};
+	
+	/*
+	template < class Attribute >
+	Attribute MergeAttributes( Attribute a, Attribute b, bool negated )
+	{
+		if ( negated )
+		{
+			if ( a == b )  throw IncompatiblePlatformAttributes();
+			
+			return a;
+		}
+		
 		if ( int( a ) == 0 )  return b;
 		if ( int( b ) == 0 )  return a;
 		
@@ -89,7 +210,9 @@ namespace CompileDriver
 		
 		throw IncompatiblePlatformAttributes();
 	}
+	*/
 	
+	/*
 	struct Platform
 	{
 		Architecture arch;
@@ -112,9 +235,9 @@ namespace CompileDriver
 		
 		friend Platform operator&( const Platform& a, const Platform& b )
 		{
-			return Platform( MergeAttributes( a.arch,    b.arch    ),
-			                 MergeAttributes( a.runtime, b.runtime ),
-			                 MergeAttributes( a.api,     b.api     ) );
+			return Platform( MergeAttributes( a.arch,    b.arch,    false ),
+			                 MergeAttributes( a.runtime, b.runtime, false ),
+			                 MergeAttributes( a.api,     b.api,     false ) );
 		}
 		
 		Platform& operator&=( const Platform& other )
@@ -136,6 +259,7 @@ namespace CompileDriver
 	{
 		return !( a == b );
 	}
+	*/
 	
 	
 	static void ApplyPlatformDefaults( Platform& platform )
@@ -143,53 +267,53 @@ namespace CompileDriver
 	#if defined(__APPLE_CC__) || defined(__MWERKS__)
 		
 		// FIXME for 64-bit
-		if ( platform.arch == archUnspecified )
+		if ( (platform & archMask) == 0 )
 		{
 			if ( TARGET_CPU_68K )
 			{
-				platform.arch = arch68K;
-				platform.api  = apiMacToolbox;
+				platform |= arch68K;
+				platform |= apiMacToolbox;
 				
-				if ( platform.runtime == runtimeUnspecified )
+				if ( (platform & runtimeMask) == 0 )
 				{
-					platform.runtime = runtimeA5CodeSegments;
+					platform |= runtimeA5CodeSegments;
 				}
 			}
 			else if ( TARGET_CPU_PPC )
 			{
-				platform.arch = archPPC;
+				platform |= archPPC;
 			}
 			else
 			{
-				platform.arch = archX86;
+				platform |= archX86;
 			}
 		}
 		
-		if ( platform.runtime == runtimeUnspecified )
+		if ( (platform & runtimeMask) == 0 )
 		{
-			platform.runtime = TARGET_RT_MAC_MACHO ? runtimeMachO : runtimeCodeFragments;
+			platform |= TARGET_RT_MAC_MACHO ? runtimeMachO : runtimeCodeFragments;
 		}
 		
-		if ( platform.api == apiUnspecified )
+		if ( (platform & apiMask) == 0 )
 		{
-			platform.api = TARGET_API_MAC_CARBON ? apiMacCarbon : apiMacToolbox;
+			platform |= TARGET_API_MAC_CARBON ? apiMacCarbon : apiMacToolbox;
 		}
 		
 	#else
 		
-		if ( platform.arch == archUnspecified )
+		if ( (platform & archMask) == 0 )
 		{
-			platform.arch = archX86;  // assumed for Linux at the moment
+			platform |= archX86;  // assumed for Linux at the moment
 		}
 		
-		if ( platform.runtime == runtimeUnspecified )
+		if ( (platform & runtimeMask) == 0 )
 		{
-			platform.runtime = runtimeELF;
+			platform |= runtimeELF;
 		}
 		
-		if ( platform.api == apiUnspecified )
+		if ( (platform & apiMask) == 0 )
 		{
-			platform.api = apiNotApplicable;
+			platform |= apiNotApplicable;
 		}
 		
 	#endif

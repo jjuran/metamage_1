@@ -167,7 +167,7 @@ namespace ALine
 		// The defaults will only have effect (if at all) when first applied.
 		
 		// If this project has platform restrictions,
-		if ( initialProjectData->platform != CD::Platform() )
+		if ( initialProjectData->platformDemands != CD::PlatformDemands() )
 		{
 			// Apply the defaults first so we can select an appropriate project alternative.
 			CD::ApplyPlatformDefaults( Options().platform );
@@ -175,10 +175,6 @@ namespace ALine
 			// Now that we (potentially) have new platform restrictions,
 			// call GetProjectData() again to get the alternative that matches.
 			initialProjectData = &CD::GetProjectData( projName, Options().platform );
-			
-			// The platform restrictions are already known to be compatible or we
-			// wouldn't have gotten here.
-			Options().platform &= initialProjectData->platform;
 		}
 		
 		const CD::ProjectData& projectData = *initialProjectData;
@@ -194,9 +190,7 @@ namespace ALine
 			if (    product == productINIT
 			     || product == productDriver )
 			{
-				Options().platform &= CD::Platform( CD::arch68K,
-				                                    CD::runtimeA4CodeResource,
-				                                    CD::apiMacToolbox );
+				Options().platform |= CD::arch68K | CD::runtimeA4CodeResource | CD::apiMacToolbox;
 			}
 			
 			typedef std::vector< ProjName >::const_iterator vPN_ci;

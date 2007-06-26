@@ -3,13 +3,17 @@
  *	==============
  */
 
+#include <cstdio>
+
 #include "A-line/TargetNames.hh"
 
 
 namespace ALine
 {
 	
-	std::string ArchName( CD::Architecture arch )
+	class InvalidPlatform {};
+	
+	std::string ArchName( CD::Platform arch )
 	{
 		switch ( arch )
 		{
@@ -18,7 +22,9 @@ namespace ALine
 			case CD::archX86:  return "X86";
 		};
 		
-		return "";
+		std::fprintf( stderr, "Invalid arch: %x\n", arch );
+		
+		throw InvalidPlatform();
 	}
 	
 	static std::string ToolkitName( Toolkit tools )
@@ -32,7 +38,7 @@ namespace ALine
 		return "";
 	}
 	
-	static std::string RuntimeName( CD::Runtime rt )
+	static std::string RuntimeName( CD::Platform rt )
 	{
 		switch ( rt )
 		{
@@ -46,13 +52,13 @@ namespace ALine
 		return "";
 	}
 	
-	static std::string APIName( CD::MacAPI api )
+	static std::string APIName( CD::Platform api )
 	{
 		switch ( api )
 		{
-			case CD::apiNotApplicable:  return "NA";
 			case CD::apiMacToolbox:     return "Toolbox";
 			case CD::apiMacCarbon:      return "Carbon";
+			default:                    return "NA";
 		};
 		
 		return "";
@@ -70,10 +76,10 @@ namespace ALine
 		return "";
 	}
 	
-	TargetName MakeTargetName( CD::Architecture  arch,
-	                           CD::Runtime       runtime,
-	                           CD::MacAPI        api,
-	                           BuildVariety      build )
+	TargetName MakeTargetName( CD::Platform  arch,
+	                           CD::Platform  runtime,
+	                           CD::Platform  api,
+	                           BuildVariety  build )
 	{
 		return ArchName   ( arch    ) + "-" +
 		       RuntimeName( runtime ) + "-" +
