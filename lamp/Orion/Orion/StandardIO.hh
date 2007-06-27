@@ -44,7 +44,7 @@ namespace Io
 	template < class T >
 	void Put( const Stream< T >& s, const char* string, std::size_t size )
 	{
-		int written = io::write( s.Get(), string, size );
+		int written = io::write< int, T >( s.Get(), string, size );
 		// verify written against size
 	}
 	
