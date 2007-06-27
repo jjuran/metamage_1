@@ -55,7 +55,7 @@ namespace POSeven
 namespace io
 {
 	
-	inline std::string get_filename( const std::string& pathname )
+	inline std::string get_filename( const std::string& pathname, overload = overload() )
 	{
 		std::string result = pathname;
 		
@@ -76,12 +76,12 @@ namespace io
 		return result.substr( last_slash + 1, result.npos );
 	}
 	
-	inline std::string get_filename_string( const std::string& pathname )
+	inline std::string get_filename_string( const std::string& pathname, overload = overload() )
 	{
 		return get_filename( pathname );
 	}
 	
-	inline std::string get_preceding_directory( const std::string& pathname )
+	inline std::string get_preceding_directory( const std::string& pathname, overload = overload() )
 	{
 		std::string result = pathname;
 		
@@ -104,7 +104,7 @@ namespace io
 		return result;
 	}
 	
-	inline std::string get_parent_directory_of_directory( const std::string& pathname )
+	inline std::string get_parent_directory_of_directory( const std::string& pathname, overload = overload() )
 	{
 		std::string result = pathname;
 		
@@ -149,22 +149,22 @@ namespace io
 	
 	// Delete
 	
-	inline void delete_file( const std::string& file )
+	inline void delete_file( const std::string& file, overload = overload() )
 	{
 		POSeven::Unlink( file );
 	}
 	
-	inline void delete_file_only( const std::string& file )
+	inline void delete_file_only( const std::string& file, overload = overload() )
 	{
 		delete_file( file );
 	}
 	
-	inline void delete_empty_directory( const std::string& dir )
+	inline void delete_empty_directory( const std::string& dir, overload = overload() )
 	{
 		POSeven::RemoveDir( dir );
 	}
 	
-	inline void delete_empty_directory_only( const std::string& dir )
+	inline void delete_empty_directory_only( const std::string& dir, overload = overload() )
 	{
 		delete_empty_directory( dir );
 	}
