@@ -1750,28 +1750,28 @@ namespace io
 	
 	// Get file info
 	
-	inline Nitrogen::Str63 get_filename( const FSSpec& file )
+	inline Nitrogen::Str63 get_filename( const FSSpec& file, overload = overload() )
 	{
 		return file.name;
 	}
 	
-	inline Nitrogen::Str63 get_filename( const Nitrogen::FSDirSpec& dir )
+	inline Nitrogen::Str63 get_filename( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
 		return get_filename( Nucleus::Convert< FSSpec >( dir ) );
 	}
 	
-	inline Nitrogen::FSDirSpec get_preceding_directory( const FSSpec& file )
+	inline Nitrogen::FSDirSpec get_preceding_directory( const FSSpec& file, overload = overload() )
 	{
 		return Nucleus::Make< Nitrogen::FSDirSpec >( Nitrogen::FSVolumeRefNum( file.vRefNum ),
 		                                             Nitrogen::FSDirID       ( file.parID   ) );
 	}
 	
-	inline Nitrogen::FSDirSpec get_preceding_directory( const Nitrogen::FSDirSpec& dir )
+	inline Nitrogen::FSDirSpec get_preceding_directory( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
 		return get_preceding_directory( Nucleus::Convert< FSSpec >( dir ) );
 	}
 	
-	inline Nitrogen::FSDirSpec get_parent_directory_of_directory( const Nitrogen::FSDirSpec& dir )
+	inline Nitrogen::FSDirSpec get_parent_directory_of_directory( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
 		return get_preceding_directory( dir );
 	}
@@ -1805,11 +1805,11 @@ namespace io
 	
 	// Existence
 	
-	inline bool item_exists     ( const Nitrogen::FSDirSpec& dir )  { return true; }
-	inline bool file_exists     ( const Nitrogen::FSDirSpec& dir )  { return false; }
-	inline bool directory_exists( const Nitrogen::FSDirSpec& dir )  { return true; }
+	inline bool item_exists     ( const Nitrogen::FSDirSpec& dir, overload = overload() )  { return true; }
+	inline bool file_exists     ( const Nitrogen::FSDirSpec& dir, overload = overload() )  { return false; }
+	inline bool directory_exists( const Nitrogen::FSDirSpec& dir, overload = overload() )  { return true; }
 	
-	inline bool item_exists( const FSSpec& item, CInfoPBRec& cInfo )
+	inline bool item_exists( const FSSpec& item, CInfoPBRec& cInfo, overload = overload() )
 	{
 		try
 		{
@@ -1829,46 +1829,46 @@ namespace io
 		return true;
 	}
 	
-	inline bool item_exists( const FSSpec& item )
+	inline bool item_exists( const FSSpec& item, overload = overload() )
 	{
 		CInfoPBRec cInfo;
 		
 		return item_exists( item, cInfo );
 	}
 	
-	inline bool item_is_directory( const HFileInfo& hFileInfo )
+	inline bool item_is_directory( const HFileInfo& hFileInfo, overload = overload() )
 	{
 		return hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 	}
 	
-	inline bool item_is_directory( const CInfoPBRec& cInfo )
+	inline bool item_is_directory( const CInfoPBRec& cInfo, overload = overload() )
 	{
 		return item_is_directory( cInfo.hFileInfo );
 	}
 	
-	inline bool item_is_file( const CInfoPBRec& cInfo )
+	inline bool item_is_file( const CInfoPBRec& cInfo, overload = overload() )
 	{
 		return !item_is_directory( cInfo );
 	}
 	
-	inline bool file_exists( const FSSpec& file, CInfoPBRec& cInfo )
+	inline bool file_exists( const FSSpec& file, CInfoPBRec& cInfo, overload = overload() )
 	{
 		return item_exists( file, cInfo ) && item_is_file( cInfo );
 	}
 	
-	inline bool file_exists( const FSSpec& file )
+	inline bool file_exists( const FSSpec& file, overload = overload() )
 	{
 		CInfoPBRec cInfo;
 		
 		return file_exists( file, cInfo );
 	}
 	
-	inline bool directory_exists( const FSSpec& dir, CInfoPBRec& cInfo )
+	inline bool directory_exists( const FSSpec& dir, CInfoPBRec& cInfo, overload = overload() )
 	{
 		return item_exists( dir, cInfo ) && item_is_directory( cInfo );
 	}
 	
-	inline bool directory_exists( const FSSpec& dir )
+	inline bool directory_exists( const FSSpec& dir, overload = overload() )
 	{
 		CInfoPBRec cInfo;
 		
@@ -1877,12 +1877,12 @@ namespace io
 	
 	// Delete
 	
-	inline void delete_file( const FSSpec& file )
+	inline void delete_file( const FSSpec& file, overload = overload() )
 	{
 		Nitrogen::FSpDelete( file );
 	}
 	
-	inline void delete_file_only( const FSSpec& file )
+	inline void delete_file_only( const FSSpec& file, overload = overload() )
 	{
 		if ( directory_exists( file ) )
 		{
@@ -1892,17 +1892,17 @@ namespace io
 		delete_file( file );
 	}
 	
-	inline void delete_empty_directory( const FSSpec& dir )
+	inline void delete_empty_directory( const FSSpec& dir, overload = overload() )
 	{
 		Nitrogen::FSpDelete( dir );
 	}
 	
-	inline void delete_empty_directory( const Nitrogen::FSDirSpec& dir )
+	inline void delete_empty_directory( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
 		delete_empty_directory( Nucleus::Convert< FSSpec >( dir ) );
 	}
 	
-	inline void delete_empty_directory_only( const FSSpec& dir )
+	inline void delete_empty_directory_only( const FSSpec& dir, overload = overload() )
 	{
 		if ( file_exists( dir ) )
 		{
@@ -1912,38 +1912,38 @@ namespace io
 		delete_empty_directory( dir );
 	}
 	
-	inline void delete_empty_directory_only( const Nitrogen::FSDirSpec& dir )
+	inline void delete_empty_directory_only( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
 		delete_empty_directory( dir );
 	}
 	
 	// Open
 	
-	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file )
+	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file, overload = overload() )
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdPerm );
 	}
 	
-	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_writing( const FSSpec& file )
+	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_writing( const FSSpec& file, overload = overload() )
 	{
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
 	}
 	
 	// Stream operations
 	
-	inline SInt32 get_file_size( Nitrogen::FSFileRefNum stream )
+	inline SInt32 get_file_size( Nitrogen::FSFileRefNum stream, overload = overload() )
 	{
 		return Nitrogen::GetEOF( stream );
 	}
 	
 	template < class ByteCount >
-	inline SInt32 read( Nitrogen::FSFileRefNum input, char* data, ByteCount byteCount )
+	inline SInt32 read( Nitrogen::FSFileRefNum input, char* data, ByteCount byteCount, overload = overload() )
 	{
 		return Nitrogen::FSRead( input, byteCount, data );
 	}
 	
 	template < class ByteCount >
-	inline SInt32 write( Nitrogen::FSFileRefNum output, const char* data, ByteCount byteCount )
+	inline SInt32 write( Nitrogen::FSFileRefNum output, const char* data, ByteCount byteCount, overload = overload() )
 	{
 		return Nitrogen::FSWrite( output, byteCount, data );
 	}
@@ -1953,7 +1953,7 @@ namespace io
 	
 	// Get file info
 	
-	inline HFSUniStr255 get_filename( const FSRef& file )
+	inline HFSUniStr255 get_filename( const FSRef& file, overload = overload() )
 	{
 		FSCatalogInfo info;
 		
@@ -1964,7 +1964,7 @@ namespace io
 		return name;
 	}
 	
-	inline FSRef get_preceding_directory( const FSRef& file )
+	inline FSRef get_preceding_directory( const FSRef& file, overload = overload() )
 	{
 		FSCatalogInfo info;
 		
@@ -1975,7 +1975,7 @@ namespace io
 		return parent;
 	}
 	
-	inline FSRef get_parent_directory_of_directory( const FSRef& dir )
+	inline FSRef get_parent_directory_of_directory( const FSRef& dir, overload = overload() )
 	{
 		return get_preceding_directory( dir );
 	}
@@ -1994,9 +1994,9 @@ namespace io
 	
 	// Existence
 	
-	inline bool item_exists( const FSRef& item )  { return true; }
+	inline bool item_exists( const FSRef& item, overload = overload() )  { return true; }
 	
-	inline bool directory_exists( const FSRef& dir )
+	inline bool directory_exists( const FSRef& dir, overload = overload() )
 	{
 		FSCatalogInfo info;
 		
@@ -2005,19 +2005,19 @@ namespace io
 		return info.nodeFlags & kFSNodeIsDirectoryMask;
 	}
 	
-	inline bool file_exists( const FSRef& file )
+	inline bool file_exists( const FSRef& file, overload = overload() )
 	{
 		return !directory_exists( file );
 	}
 	
 	// Delete
 	
-	inline void delete_file( const FSRef& file )
+	inline void delete_file( const FSRef& file, overload = overload() )
 	{
 		Nitrogen::FSDeleteObject( file );
 	}
 	
-	inline void delete_file_only( const FSRef& file )
+	inline void delete_file_only( const FSRef& file, overload = overload() )
 	{
 		if ( directory_exists( file ) )
 		{
@@ -2027,12 +2027,12 @@ namespace io
 		delete_file( file );
 	}
 	
-	inline void delete_empty_directory( const FSRef& dir )
+	inline void delete_empty_directory( const FSRef& dir, overload = overload() )
 	{
 		Nitrogen::FSDeleteObject( dir );
 	}
 	
-	inline void delete_empty_directory_only( const FSRef& dir )
+	inline void delete_empty_directory_only( const FSRef& dir, overload = overload() )
 	{
 		if ( file_exists( dir ) )
 		{
@@ -2044,31 +2044,31 @@ namespace io
 	
 	// Open
 	
-	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_reading( const FSRef& file )
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_reading( const FSRef& file, overload = overload() )
 	{
 		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdPerm );
 	}
 	
-	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_writing( const FSRef& file )
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_writing( const FSRef& file, overload = overload() )
 	{
 		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsWrPerm );
 	}
 	
 	// Stream operations
 	
-	inline SInt64 get_file_size( Nitrogen::FSForkRefNum stream )
+	inline SInt64 get_file_size( Nitrogen::FSForkRefNum stream, overload = overload() )
 	{
 		return Nitrogen::FSGetForkSize( stream );
 	}
 	
 	template < class ByteCount >
-	inline ByteCount read( Nitrogen::FSForkRefNum input, char* data, ByteCount byteCount )
+	inline ByteCount read( Nitrogen::FSForkRefNum input, char* data, ByteCount byteCount, overload = overload() )
 	{
 		return Nitrogen::FSReadFork( input, byteCount, data );
 	}
 	
 	template < class ByteCount >
-	inline ByteCount write( Nitrogen::FSForkRefNum output, const char* data, ByteCount byteCount )
+	inline ByteCount write( Nitrogen::FSForkRefNum output, const char* data, ByteCount byteCount, overload = overload() )
 	{
 		return Nitrogen::FSWriteFork( output, byteCount, data );
 	}
