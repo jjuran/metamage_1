@@ -7,13 +7,6 @@
 #include "Utilities/Processes.h"
 #endif
 
-// STL extensions
-#ifdef __MWERKS__
-#include <functional_ext>
-#else
-#include <ext/functional>
-#endif
-
 // Nitrogen
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
@@ -22,16 +15,15 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
-// Nitrogen Extras / Templates
-#include "Templates/FunctionalExtensions.h"
-#include "Templates/PointerToFunction.h"
+// MoreFunctional
+#include "FunctionalExtensions.hh"
+#include "PointerToFunction.hh"
 
 
 namespace NitrogenExtras
 {
 	
 	namespace N = Nitrogen;
-	namespace ext = N::STLExtensions;
 	
 	static N::OSType GetProcessInfoSignature( const ProcessInfoRec& processInfo )
 	{
@@ -49,9 +41,9 @@ namespace NitrogenExtras
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    ext::compose1( std::bind2nd( std::equal_to< N::OSType >(),
-		                                                                 signature ),
-		                                                   std::ptr_fun( GetProcessSignature ) ) );
+		                                    more::compose1( std::bind2nd( std::equal_to< N::OSType >(),
+		                                                                  signature ),
+		                                                    std::ptr_fun( GetProcessSignature ) ) );
 		
 		if ( proc == N::Processes().end() )
 		{
@@ -67,9 +59,9 @@ namespace NitrogenExtras
 		
 		const_iterator proc = std::find_if( N::Processes().begin(),
 		                                    N::Processes().end(),
-		                                    ext::compose1( std::bind2nd( N::PtrFun( N::FSCompareFSSpecs ),
-		                                                                 appFile ),
-		                                                   N::PtrFun( N::GetProcessAppSpec ) ) );
+		                                    more::compose1( std::bind2nd( more::ptr_fun( N::FSCompareFSSpecs ),
+		                                                                  appFile ),
+		                                                    more::ptr_fun( N::GetProcessAppSpec ) ) );
 		
 		if ( proc == N::Processes().end() )
 		{
