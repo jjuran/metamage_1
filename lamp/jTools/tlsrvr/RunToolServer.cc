@@ -30,14 +30,14 @@
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Folders.h"
 
+// MoreFunctional
+#include "PointerToFunction.hh"
+
 // GetPathname
 #include "GetPathname.hh"
 
 // Nitrogen Extras / Operators
 #include "Operators/AEDataModel.h"
-
-// Nitrogen Extras / Templates
-#include "Templates/PointerToFunction.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Processes.h"
@@ -252,13 +252,13 @@ namespace RunToolServer
 		std::transform( filenames,
 		                filenames + 4,
 		                files,
-		                std::bind1st( N::PtrFun( DirLookup ),
+		                std::bind1st( more::ptr_fun( DirLookup ),
 		                              tempItems ) );
 		
 		std::transform( files,
 		                files + 4,
 		                gTempFiles,
-		                N::PtrFun( NewTempFile ) );
+		                more::ptr_fun( NewTempFile ) );
 		
 		WriteCommandFile( command, files[ kScriptFile ] );
 		

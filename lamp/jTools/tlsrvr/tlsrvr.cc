@@ -20,8 +20,8 @@
 // Nitrogen
 #include "Nitrogen/Events.h"
 
-// Nitrogen Extras / Templates
-#include "Templates/FunctionalExtensions.h"
+// MoreFunctional
+#include "FunctionalExtensions.hh"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Processes.h"
@@ -40,8 +40,6 @@ namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace NX = NitrogenExtras;
 namespace O = Orion;
-
-namespace ext = N::STLExtensions;
 
 using RunToolServer::sigToolServer;
 using RunToolServer::sEscapedQuote;
@@ -132,7 +130,7 @@ static std::string MakeCommand( const std::vector< const char* >& args, bool nee
 				args.begin() + 1, 
 				args.end(), 
 				std::string( args[ 0 ] ), 
-				Concat< ext::identity< const char* > >()
+				Concat< more::identity< const char* > >()
 			);
 		}
 	}

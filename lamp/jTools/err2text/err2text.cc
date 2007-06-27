@@ -22,11 +22,11 @@ enum { sigMPWShell = 'MPS ' };
 // Standard C/C++
 #include <cstdio>
 
-// Nitrogen Nucleus
+// Nucleus
 #include "Nucleus/NAssert.h"
 
-// Nitrogen Extras / Templates
-#include "Templates/FunctionalExtensions.h"
+// MoreFunctional
+#include "FunctionalExtensions.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -38,8 +38,6 @@ enum { sigMPWShell = 'MPS ' };
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace O = Orion;
-
-namespace ext = N::STLExtensions;
 
 using FSLocator::FSLocatorChainedT;
 using FSLocator::FSLocatorAppBySignature;
@@ -138,9 +136,9 @@ UInt16 SysErrsDotErrTOC::OffsetOf( OSErr err )
 	
 	const_iterator it = std::find_if( myTOCEntries.begin(),
 	                                  myTOCEntries.end(),
-	                                  ext::compose1( std::bind1st( std::equal_to< SInt16 >(),
-	                                                               err ),
-	                                                 std::ptr_fun( TOCEntry::GetError ) ) );
+	                                  more::compose1( std::bind1st( std::equal_to< SInt16 >(),
+	                                                                err ),
+	                                                  std::ptr_fun( TOCEntry::GetError ) ) );
 	
 	bool found = it != myTOCEntries.end();
 	

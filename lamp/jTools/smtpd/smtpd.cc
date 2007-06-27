@@ -32,12 +32,12 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
+// MoreFunctional
+#include "FunctionalExtensions.hh"
+#include "PointerToFunction.hh"
+
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
-
-// Nitrogen Extras / Templates
-#include "Templates/FunctionalExtensions.h"
-#include "Templates/PointerToFunction.h"
 
 // Io
 #include "Io/TextInput.hh"
@@ -55,8 +55,6 @@ namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
-
-namespace ext = N::STLExtensions;
 
 using namespace io::path_descent_operators;
 
@@ -257,9 +255,9 @@ static void QueueMessage()
 	// Create the destination files.
 	std::for_each( myTo.begin(),
 	               myTo.end(),
-	               ext::compose1( std::bind1st( N::PtrFun( CreateDestinationFile ),
-	                                            destFolder ),
-	                              N::PtrFun( GetForwardPath ) ) );
+	               more::compose1( std::bind1st( more::ptr_fun( CreateDestinationFile ),
+	                                             destFolder ),
+	                               more::ptr_fun( GetForwardPath ) ) );
 	
 	// Create the Return-Path file.
 	// Write this last so the sender won't delete the message prematurely.
