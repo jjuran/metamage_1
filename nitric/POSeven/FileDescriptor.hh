@@ -112,7 +112,7 @@ namespace io
 	}
 	
 	template < class ByteCount >
-	inline ssize_t write( POSeven::FileDescriptor fd, const char* buffer, ByteCount byteCount, overload )
+	inline ssize_t write( POSeven::FileDescriptor fd, const char* buffer, ByteCount byteCount, overload = overload() )
 	{
 		return POSeven::Write( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
 	}
