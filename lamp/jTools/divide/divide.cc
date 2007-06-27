@@ -20,45 +20,34 @@ namespace P7 = POSeven;
 namespace O = Orion;
 
 
-inline const char* find_byte( const char* begin, const char* end, char c )
+static const char* FindSequenceInMemory( const char* mem_begin,
+                                         const char* mem_end,
+                                         const char* seq_begin,
+                                         const char* seq_end )
 {
-	const char* p = std::find( begin, end, c );
+	std::ptrdiff_t sequence_length = seq_end - seq_begin;
 	
-	if ( p == end )
+	while ( sequence_length <= mem_end - mem_begin )
 	{
-		return NULL;
-	}
-	
-	return p;
-}
-
-	static const char* FindSequenceInMemory( const char* mem_begin,
-	                                         const char* mem_end,
-	                                         const char* seq_begin,
-	                                         const char* seq_end )
-	{
-		std::ptrdiff_t sequence_length = seq_end - seq_begin;
-		
-		while ( sequence_length <= mem_end - mem_begin )
+		if ( std::equal( seq_begin, seq_end, mem_begin ) )
 		{
-			if ( std::equal( seq_begin, seq_end, mem_begin ) )
-			{
-				return mem_begin;
-			}
-			
-			++mem_begin;
+			return mem_begin;
 		}
 		
-		return mem_end;
+		++mem_begin;
 	}
+	
+	return mem_end;
+}
 
-static char decode_octal_byte( const char* begin, const char* end )
+template < class Iter >
+char decode_octal_byte( Iter begin, Iter end )
 {
 	int result = 0;
 	
 	while ( begin < end )
 	{
-		result = (result * 8) + (*begin - '0');
+		result = (result * 8) + (*begin++ - '0');
 	}
 	
 	return result;
@@ -68,7 +57,7 @@ static std::string decode_escapes( const std::string& escaped_string )
 {
 	std::string decoded;
 	
-	for ( const char* p = escaped_string.c_str();  p < escaped_string.end();  ++p )
+	for ( std::string::const_iterator p = escaped_string.begin();  p < escaped_string.end();  ++p )
 	{
 		if ( *p != '\\' )
 		{
@@ -77,7 +66,7 @@ static std::string decode_escapes( const std::string& escaped_string )
 			continue;
 		}
 		
-		const char* q = p;
+		std::string::const_iterator q = p;
 		
 		while ( std::isdigit( *q )  &&  q - p < 3 )
 		{
@@ -142,7 +131,7 @@ int O::Main( int argc, const char *const argv[] )
 	
 	std::string first_blocks;
 	
-	enum { blockSize = 4096 };
+	const std::size_t blockSize = 4096;
 	
 	char data[ blockSize ];
 	
