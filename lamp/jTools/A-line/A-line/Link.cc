@@ -375,7 +375,7 @@ namespace ALine
 			{
 				for ( std::vector< std::string >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
 				{
-					if ( io::get_filename_string( *it ) == "Orion.a" )
+					if ( io::get_filename_string( *it ) == "Orion.lib" )
 					{
 						expeditedLib = q( *it );
 						
