@@ -7,14 +7,12 @@
 #include "AEObjectModel/DisposeToken.h"
 #endif
 
+// MoreFunctional
+#include "PointerToFunction.hh"
+
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_H
 #include "Iteration/AEDescListItems.h"
-#endif
-
-// Nitrogen Extras / Templates
-#ifndef TEMPLATES_POINTERTOFUNCTION_H
-#include "Templates/PointerToFunction.h"
 #endif
 
 
@@ -73,7 +71,7 @@ namespace Nitrogen
 		
 		std::for_each( tokens.begin(),
 		               tokens.end(),
-		               PtrFun( AEDisposeTokenFromList ) );
+		               more::ptr_fun( AEDisposeTokenFromList ) );
 		
 		// Optional
 		AEDisposeDesc( tokenList );

@@ -26,6 +26,9 @@
 #include "AEObjectModel/DisposeToken.h"
 #endif
 
+// MoreFunctional
+#include "PointerToFunction.hh"
+
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_H
 #include "Iteration/AEDescListItems.h"
@@ -265,13 +268,13 @@ namespace Nitrogen
 		std::transform( values.begin(),
 		                values.end(),
 		                AEDescList_Item_BackInserter( result ),
-		                Trap1( std::bind2nd( PtrFun( CallObjectAccessorWithContext ),
+		                Trap1( std::bind2nd( more::ptr_fun( CallObjectAccessorWithContext ),
 		                                     ObjectAccessContext( desiredClass,
 		                                                          containerClass,
 		                                                          keyForm,
 		                                                          keyData ) ),
 		                       TrapException( ErrAENoSuchObject(),
-		                                      PtrFun( MissingValue ) ) ) );
+		                                      more::ptr_fun( MissingValue ) ) ) );
 		
 		return result;
 	}
