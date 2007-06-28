@@ -26,12 +26,6 @@ namespace ALine
 	using namespace io::path_descent_operators;
 	
 	
-	inline std::string FileSpecFromEntry( const std::string& parent, const dirent& entry )
-	{
-		return parent / entry.d_name;
-	}
-	
-	
 	template < class FileSpec, class Filter >
 	class DeepFileSearch
 	{
@@ -74,20 +68,10 @@ namespace ALine
 		
 		directory_container contents = io::directory_contents( dir );
 		
-		/*
 		std::for_each( contents.begin(),
 		               contents.end(),
 		               std::bind1st( std::mem_fun( &DeepFileSearch< FileSpec, Filter >::SearchItem ),
 		                             this ) );
-		*/
-		
-		typename directory_container::const_iterator it;
-		
-		for ( it = contents.begin();  it != contents.end();  ++it )
-		{
-			
-			SearchItem( FileSpecFromEntry( dir, *it ) );
-		}
 		
 		return *this;
 	}

@@ -18,6 +18,9 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
+// MoreFunctional
+#include "PointerToFunction.hh"
+
 
 namespace CompileDriver
 {
@@ -56,33 +59,19 @@ namespace CompileDriver
 		{
 			directory_container contents = io::directory_contents( ( confd ) );
 			
-			/*
 			std::copy( contents.begin(),
 			           contents.end(),
 			           output );
-			*/
-			
-			for ( Iter it = contents.begin();  it != contents.end();  ++it )
-			{
-				output++ = confd / it->d_name;
-			}
 			
 			return;
 		}
 		
 		directory_container contents = io::directory_contents( ( dir ) );
 		
-		/*
 		std::for_each( contents.begin(),
 		               contents.end(),
-		               std::bind2nd( N::PtrFun( ScanItemForProjects ),
+		               std::bind2nd( more::ptr_fun( ScanItemForProjects ),
 		                             output ) );
-		*/
-		
-		for ( Iter it = contents.begin();  it != contents.end();  ++it )
-		{
-			ScanItemForProjects( dir / it->d_name, output );
-		}
 	}
 	
 }
