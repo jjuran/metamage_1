@@ -29,6 +29,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/Pathnames.hh"
 
 
 namespace POSeven
@@ -92,10 +93,17 @@ namespace POSeven
 	
 	class DirectoryContents_Container
 	{
+		private:
+			std::string                   itsDirPathname;
+			Nucleus::Shared< DirHandle >  itsDirHandle;
+			
+			// not implemented:
+			DirectoryContents_Container& operator=( const DirectoryContents_Container& );
+		
 		public:
-			typedef dirent    value_type;
-			typedef unsigned  size_type;
-			typedef int       difference_type;
+			typedef std::string  value_type;
+			typedef unsigned     size_type;
+			typedef int          difference_type;
 			
 			class const_iterator
 			{
@@ -106,7 +114,8 @@ namespace POSeven
 					typedef DirectoryContents_Container::difference_type difference_type;
 					typedef DirectoryContents_Container::value_type value_type;
 					
-					typedef const dirent& reference, const_reference;
+					typedef const value_type& reference;
+					typedef const value_type& const_reference;
 					
 					typedef const value_type *pointer;
 					typedef const value_type *const_pointer;
@@ -114,15 +123,20 @@ namespace POSeven
 					typedef std::forward_iterator_tag iterator_category;
 					
 				private:
-					Nucleus::Shared< DirHandle > dirHandle;
-					value_type value;
-					bool done;
+					std::string                   itsDirPathname;
+					Nucleus::Shared< DirHandle >  itsDirHandle;
+					value_type                    value;
+					bool                          done;
 					
 					void GetNextValue()
 					{
+						using namespace io::path_descent_operators;
+						
 						try
 						{
-							value = ReadDir( dirHandle );
+							const dirent entry = ReadDir( itsDirHandle );
+							
+							value = itsDirPathname / entry.d_name;
 						}
 						catch ( const Errno& error )
 						{
@@ -135,8 +149,10 @@ namespace POSeven
 						}
 					}
 					
-					const_iterator( const Nucleus::Shared< DirHandle >& dirHandle ) : dirHandle( dirHandle ),
-					                                                                  done( false )
+					const_iterator( const std::string&                   dirPathname,
+					                const Nucleus::Shared< DirHandle >&  dirHandle ) : itsDirPathname( dirPathname ),
+					                                                                   itsDirHandle( dirHandle ),
+					                                                                   done( false )
 					{
 						GetNextValue();
 						
@@ -160,30 +176,20 @@ namespace POSeven
 					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
 			};
 			
-			DirectoryContents_Container( Nucleus::Shared< DirHandle > dirHandle )
-			: 
-				dirHandle( dirHandle )
-			{}
+			DirectoryContents_Container( const std::string& dirPathname ) : itsDirPathname( dirPathname ),
+			                                                                itsDirHandle  ( POSeven::OpenDir( dirPathname ) )
+			{
+			}
 			
-			const_iterator begin() const                    { return const_iterator( dirHandle ); }
-			const_iterator end() const                      { return const_iterator(           ); }
+			const_iterator begin() const                    { return const_iterator( itsDirPathname, itsDirHandle ); }
+			const_iterator end() const                      { return const_iterator(                              ); }
 			
-		private:
-			Nucleus::Shared< DirHandle > dirHandle;
-			
-			// not implemented:
-			DirectoryContents_Container& operator=( const DirectoryContents_Container& );
-		
 	};
 	
-	inline DirectoryContents_Container DirectoryContents( const Nucleus::Shared< DirHandle >& dirHandle )
-	{
-		return DirectoryContents_Container( dirHandle );
-	}
 	
 	inline DirectoryContents_Container DirectoryContents( const std::string& dir )
 	{
-		return DirectoryContents( POSeven::OpenDir( dir ) );
+		return DirectoryContents_Container( dir );
 	}
 	
 }
