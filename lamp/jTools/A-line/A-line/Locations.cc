@@ -100,7 +100,7 @@ namespace ALine
 	
 	static std::string ProjectConfigDirPath( const std::string& projectPath )
 	{
-		std::string confd = projectPath + "/A-line.confd";
+		std::string confd = projectPath / "A-line.confd";
 		
 		if ( io::directory_exists( confd ) )
 		{
@@ -117,12 +117,12 @@ namespace ALine
 	
 	static std::string TargetDirPath( const std::string& target )
 	{
-		return CreateDirPath( UserLabDirPath() + '/' + target );
+		return CreateDirPath( UserLabDirPath() / target );
 	}
 	
 	static std::string ProjectTargetDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( TargetDirPath( target ) + '/' + proj );
+		return CreateDirPath( TargetDirPath( target ) / proj );
 	}
 	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj, const std::string& target )
