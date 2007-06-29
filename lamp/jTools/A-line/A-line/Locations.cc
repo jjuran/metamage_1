@@ -120,6 +120,11 @@ namespace ALine
 		return CreateDirPath( UserLabDirPath() / target );
 	}
 	
+	static std::string TargetSubdirPath( const std::string& target, const std::string& subdir )
+	{
+		return CreateDirPath( TargetDirPath( target ) / subdir );
+	}
+	
 	static std::string ProjectTargetDirPath( const std::string& proj, const std::string& target )
 	{
 		return CreateDirPath( TargetDirPath( target ) / proj );
@@ -127,22 +132,22 @@ namespace ALine
 	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( ProjectTargetDirPath( proj, target ) / "Diagnostics" );
+		return CreateDirPath( TargetSubdirPath( target, "Diagnostics" ) / proj );
 	}
 	
 	std::string ProjectPrecompiledDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( ProjectTargetDirPath( proj, target ) / "Precompiled Header" );
+		return CreateDirPath( TargetSubdirPath( target, "PrecompiledHeaders" ) / proj );
 	}
 	
 	std::string ProjectObjectsDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( ProjectTargetDirPath( proj, target ) / "(Objects)" );
+		return CreateDirPath( TargetSubdirPath( target, "Objects" ) / proj );
 	}
 	
 	std::string ProjectLibrariesDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( ProjectTargetDirPath( proj, target ) / "Output" );
+		return CreateDirPath( TargetSubdirPath( target, "Output" ) / proj );
 	}
 	
 }
