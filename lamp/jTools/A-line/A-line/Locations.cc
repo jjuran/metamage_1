@@ -64,7 +64,7 @@ namespace ALine
 			return builds;
 		}
 		
-		return CreateDirPath( UserDeveloperPath() / "Lab" );
+		return CreateDirPath( UserDeveloperPath() / "Builds" );
 	}
 	
 	std::string ProjectSourcesPath( const std::string& projectPath )
