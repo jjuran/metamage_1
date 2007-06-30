@@ -152,7 +152,7 @@ namespace ALine
 	
 	std::string ProjectLibrariesDirPath( const std::string& proj, const std::string& target )
 	{
-		return CreateDirPath( TargetSubdirPath( target, "Libraries" ) / proj );
+		return TargetSubdirPath( target, "Libraries" );
 	}
 	
 }
