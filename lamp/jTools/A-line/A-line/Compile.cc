@@ -119,10 +119,13 @@ namespace ALine
 		return GetFilenameBase( filename ) + ".txt";
 	}
 	
-	static std::string DiagnosticsFilePathname( const std::string& outputDir, const std::string& filename )
+	static std::string DiagnosticsFilePathname( const std::string&  proj,
+	                                            const std::string&  targetName,
+	                                            const std::string&  filename )
 	{
-		std::string diagnosticsFolder = CreateFolder( io::get_preceding_directory( outputDir ) / "Diagnostics" );
-		std::string diagnosticsFile   = diagnosticsFolder / DiagnosticsFilenameFromSourceFilename( filename );
+		std::string diagnosticsDir = ProjectDiagnosticsDirPath( proj, targetName );
+		
+		std::string diagnosticsFile = diagnosticsDir / DiagnosticsFilenameFromSourceFilename( filename );
 		
 		return diagnosticsFile;
 	}
@@ -189,9 +192,15 @@ namespace ALine
 		
 		command << cmdgen.Input( file );
 		
+		std::string diagnosticsFile;
+		
 		if ( gnu )
 		{
-			command += " > " + q( DiagnosticsFilePathname( options.Output(), filename ) ) + " 2>&1";
+			std::string targetName = MakeTargetName( options.Target() );
+			
+			diagnosticsFile = DiagnosticsFilePathname( options.Name(), targetName, filename );
+			
+			command += " > " + q( diagnosticsFile ) + " 2>&1";
 		}
 		
 		QueueCommand( "echo Compiling:  " + filename );
@@ -199,19 +208,17 @@ namespace ALine
 		
 		if ( gnu )
 		{
-			std::string diagnostics = DiagnosticsFilePathname( options.Output(), filename );
-			
 			struct ::stat sb;
 			
-			int status = ::stat( diagnostics.c_str(), &sb );
+			int status = ::stat( diagnosticsFile.c_str(), &sb );
 			
 			if ( status == 0 && sb.st_size > 0 )
 			{
-				system( ( "edit " + q( diagnostics ) ).c_str() );
+				system( ( "edit " + q( diagnosticsFile ) ).c_str() );
 			}
 			else if ( status == 0 )
 			{
-				try { io::delete_file( diagnostics ); } catch ( ... ) {}
+				try { io::delete_file( diagnosticsFile ); } catch ( ... ) {}
 			}
 		}
 	}
@@ -240,7 +247,9 @@ namespace ALine
 		
 		if ( gnu )
 		{
-			command << "> " << q( DiagnosticsFilePathname( options.Output(), filename ) ) << " 2>&1";
+			std::string targetName = MakeTargetName( options.Target() );
+			
+			command << "> " << q( DiagnosticsFilePathname( options.Name(), targetName, filename ) ) << " 2>&1";
 		}
 		
 		QueueCommand( "echo Precompiling:  " + filename );
@@ -269,7 +278,7 @@ namespace ALine
 	
 	void CompileSources( const Project& project, TargetInfo targetInfo )
 	{
-		CompilerOptions options( targetInfo );
+		CompilerOptions options( project.Name(), targetInfo );
 		
 		time_t pchImageDate = 0;
 		bool needToPrecompile = false;
@@ -336,7 +345,9 @@ namespace ALine
 			}
 		}
 		
-		std::string outDir = ProjectObjectsDirPath( project.Name(), MakeTargetName( targetInfo ) );
+		std::string targetName = MakeTargetName( targetInfo );
+		
+		std::string outDir = ProjectObjectsDirPath( project.Name(), targetName );
 		
 		options.SetOutput( outDir );
 		
