@@ -3,9 +3,10 @@
  *	========
  */
 
-// Standard C
-#include <errno.h>
-#include <stdio.h>
+// Standard C/C++
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
 
 // POSIX
 #include <unistd.h>
@@ -16,7 +17,7 @@
 
 #pragma export on
 
-int main( int argc, char const *const argv[] )
+int main( int argc, char *const argv[] )
 {
 	if ( argc < 3 )
 	{
