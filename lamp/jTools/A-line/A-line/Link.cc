@@ -234,6 +234,8 @@ namespace ALine
 	
 	void LinkProduct( const Project& project, TargetInfo targetInfo )
 	{
+		TargetName targetName = MakeTargetName( targetInfo );
+		
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
 		
 		gLibraryExtension = gnu ? ".a" : ".lib";
@@ -314,12 +316,12 @@ namespace ALine
 			command << cmdgen.LinkerOptions();
 		}
 		
-		TargetName targetName = MakeTargetName( targetInfo );
+		std::string objectsDir = ProjectObjectsDirPath( project.Name(), targetName );
 		
-		std::string objectsDir = ProjectObjectsDirPath  ( project.Name(), targetName );
-		std::string libsDir    = ProjectLibrariesDirPath( project.Name(), targetName );
+		std::string outputDir  = project.Product() == productStaticLib ? ProjectLibrariesDirPath( project.Name(), targetName )
+		                                                               : ProjectOutputDirPath   ( project.Name(), targetName );
 		
-		std::string outFile = libsDir / linkName;
+		std::string outFile = outputDir / linkName;
 		bool outFileExists = io::item_exists( outFile );
 		
 		time_t outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
@@ -420,9 +422,9 @@ namespace ALine
 		{
 			std::string bundleName = linkName + ".app";
 			
-			CreateAppBundle( libsDir, bundleName );
+			CreateAppBundle( outputDir, bundleName );
 			
-			std::string contents( libsDir / bundleName / "Contents" );
+			std::string contents( outputDir / bundleName / "Contents" );
 			
 			outFile = contents / "MacOS" / linkName;
 			
@@ -488,7 +490,7 @@ namespace ALine
 				std::string bundleName = linkName + ".app";
 				std::string rsrcFileName = linkName + ".rsrc";
 				
-				rsrcFile = libsDir / bundleName / "Contents" / "Resources" / rsrcFileName;
+				rsrcFile = outputDir / bundleName / "Contents" / "Resources" / rsrcFileName;
 				
 				rezCommand = "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF";
 				

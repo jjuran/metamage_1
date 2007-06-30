@@ -23,6 +23,7 @@ namespace ALine
 	std::string ProjectDiagnosticsDirPath( const std::string& proj, const std::string& target );
 	std::string ProjectPrecompiledDirPath( const std::string& proj, const std::string& target );
 	std::string ProjectObjectsDirPath    ( const std::string& proj, const std::string& target );
+	std::string ProjectOutputDirPath     ( const std::string& proj, const std::string& target );
 	std::string ProjectLibrariesDirPath  ( const std::string& proj, const std::string& target );
 	
 }

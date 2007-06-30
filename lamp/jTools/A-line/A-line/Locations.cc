@@ -145,9 +145,14 @@ namespace ALine
 		return CreateDirPath( TargetSubdirPath( target, "Objects" ) / proj );
 	}
 	
-	std::string ProjectLibrariesDirPath( const std::string& proj, const std::string& target )
+	std::string ProjectOutputDirPath( const std::string& proj, const std::string& target )
 	{
 		return CreateDirPath( TargetSubdirPath( target, "Output" ) / proj );
+	}
+	
+	std::string ProjectLibrariesDirPath( const std::string& proj, const std::string& target )
+	{
+		return CreateDirPath( TargetSubdirPath( target, "Libraries" ) / proj );
 	}
 	
 }
