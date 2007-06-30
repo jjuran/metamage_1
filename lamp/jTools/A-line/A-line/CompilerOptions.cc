@@ -12,8 +12,9 @@
 namespace ALine
 {
 	
-	CompilerOptions::CompilerOptions( const TargetInfo& targetInfo )
+	CompilerOptions::CompilerOptions( std::string name, const TargetInfo& targetInfo )
 	:
+		projectName( name ),
 		targetInfo( targetInfo ),
 		hasPrecompiledHeaderSource( false ),
 		needsCwdSource( false )

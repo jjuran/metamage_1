@@ -25,6 +25,7 @@ namespace ALine
 	class CompilerOptions
 	{
 		private:
+			std::string projectName;
 			const TargetInfo& targetInfo;
 			Map myMacros;
 			std::string myPrecompiledHeaderSource;
@@ -35,8 +36,9 @@ namespace ALine
 			bool needsCwdSource;
 		
 		public:
-			CompilerOptions( const TargetInfo& targetInfo );
+			CompilerOptions( std::string name, const TargetInfo& targetInfo );
 			
+			const std::string& Name() const  { return projectName; }
 			const TargetInfo& Target() const  { return targetInfo; }
 			
 			void DefineMacro( const std::string& macro, const std::string& value );
