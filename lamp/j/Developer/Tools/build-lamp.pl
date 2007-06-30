@@ -44,7 +44,7 @@ my $builds_dir_path      = "$lamp_dir_path/Builds";
 
 #my $native_tmp_dir_path;
 
-my $build_tree = "$ENV{HOME}/Developer/Lab/$build_area";
+my $build_tree = "$ENV{HOME}/Developer/Builds/$build_area";
 my $source_tree = "$ENV{HOME}/Developer/Projects/SourceForge/Lamp/j";
 
 -d $build_tree or die "Missing build tree at $build_tree\n";
@@ -173,7 +173,7 @@ sub build_output
 	
 	$foreign_build_tree ||= $build_tree;
 	
-	my $result = "$foreign_build_tree/$project/Output/$project";
+	my $result = "$foreign_build_tree/Output/$project/$project";
 	
 	-f $result or die "Missing build output for $project\n";
 	
@@ -298,7 +298,7 @@ sub make_macball
 {
 	my ( $tree_path ) = @_;
 	
-	my $macbin = "$tree_path.mbin";
+	my $macbin = "$tree_path.bin+";
 	
 	verbose_system 'macbin', '--encode', $tree_path, $macbin;
 	
