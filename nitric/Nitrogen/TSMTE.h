@@ -1,4 +1,8 @@
-// TSMTE.h
+// Nitrogen/TSMTE.h
+// ----------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_TSMTE_H
 #define NITROGEN_TSMTE_H

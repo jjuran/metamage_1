@@ -1,4 +1,10 @@
-// Script.h
+// Nitrogen/Script.h
+// -----------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_SCRIPT_H
 #define NITROGEN_SCRIPT_H
