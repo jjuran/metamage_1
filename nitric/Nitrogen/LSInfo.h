@@ -1,4 +1,15 @@
-// LSInfo.h
+// Nitrogen/LSInfo.h
+// -----------------
+//
+// Maintained by Marshall Clow
+
+// Part of the Nitrogen project.
+//
+// Written 2004 by Marshall Clow.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef	NITROGEN_LSINFO_H
 #define	NITROGEN_LSINFO_H
