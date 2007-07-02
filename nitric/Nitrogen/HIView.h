@@ -1,3 +1,16 @@
+// Nitrogen/HIView.h
+// -----------------
+//
+// Maintained by Marshall Clow
+
+// Part of the Nitrogen project.
+//
+// Written 2004-2007 by Marshall Clow and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
+
 #ifndef NITROGEN_HIVIEW_H
 #define NITROGEN_HIVIEW_H
 
