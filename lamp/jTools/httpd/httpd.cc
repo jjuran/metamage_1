@@ -392,7 +392,7 @@ static void ListDir( const std::string& pathname )
 	
 	for ( Iter it = contents.begin();  it != contents.end();  ++it )
 	{
-		std::string listing = it->d_name;
+		std::string listing = io::get_filename_string( *it );
 		
 		listing += "\n";
 		
