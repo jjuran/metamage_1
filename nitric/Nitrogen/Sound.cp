@@ -1,6 +1,17 @@
-// Sound.cp
+// Nitrogen/Sound.cp
+// -----------------
+//
+// Maintained by Joshua Juran
 
-// Nitrogen Carbon support
+// Part of the Nitrogen project.
+//
+// Written 2004-2007 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
+
+// Nitrogen
 #ifndef NITROGEN_SOUND_H
 #include "Nitrogen/Sound.h"
 #endif

@@ -1,4 +1,15 @@
-// OSA.cp
+// Nitrogen/OSA.cp
+// ---------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2004-2007 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NITROGEN_OSA_H
 #include "Nitrogen/OSA.h"
