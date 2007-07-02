@@ -64,8 +64,9 @@ namespace Genie
 		// UPDATE:  To avoid pain, we're going with .mbin / 'mBIN' for new archives.
 		
 		// Archive formats
-		{ "mbin", 'mBIN', "MacBinary III+" " archive" },
-		{ "mbi",  'mBIN', "MacBinary III+" " archive" },
+		{ "bin+", 'BIN+', "MacBinary III+" " archive" },
+		{ "mbin", 'mBIN', "MacBinary III"  " archive" },
+		{ "mbi",  'mBIN', "MacBinary III"  " archive" },
 		{ "zip",  'ZIP ', "zip"            " archive" },
 		{ "tar",  'TARF', "TAR"            " archive" },
 		{ "lha",  'LHA ', "LHA"            " archive" },
@@ -95,8 +96,15 @@ namespace Genie
 		{ "pict", 'PICT', "PICT" " image" },
 	};
 	
+	/*
+	const N::FileSignature gDefaultCreatorForTypeInput[] =
+	{
+		{ 'mBin', 'mBIN' },
+		{ 'mBin', 'BIN+' },
+	};
+	*/
 	
-	typedef std::map< std::string, N::OSType > ExtensionToTypeMapping;
+	typedef std::map< std::string, N::FileSignature > ExtensionToTypeMapping;
 	
 	
 	static ExtensionToTypeMapping BuildExtensionToTypeMapping()
@@ -109,7 +117,14 @@ namespace Genie
 		for ( const ExtensionToTypeRecord* p = gExtensionToTypeMappingInput;  p < gExtensionToTypeMappingInput + extensionCount;  ++p )
 		{
 			// ASSERT( p->extension != NULL );
-			result[ std::string( p->extension ) ] = N::OSType( p->type );
+			N::FileSignature signature( N::OSType( '\?\?\?\?' ), N::OSType( p->type ) );
+			
+			if ( signature.type == 'mBIN'  ||  signature.type == 'BIN+' )
+			{
+				signature.creator = N::OSType( 'mBin' );
+			}
+			
+			result[ std::string( p->extension ) ] = signature;
 		}
 		
 		return result;
@@ -136,7 +151,7 @@ namespace Genie
 			
 			if ( it != mapping.end() )
 			{
-				return N::FileSignature( N::OSType( '\?\?\?\?' ), it->second );
+				return it->second;
 			}
 		}
 		
