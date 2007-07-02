@@ -1,4 +1,15 @@
-// MacMemory.cp
+// Nitrogen/MacMemory.cp
+// ---------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2006 by Lisa Lippincott, Joshua Juran, and Marshall Clow.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_MACMEMORY_H
 #include "Nitrogen/MacMemory.h"

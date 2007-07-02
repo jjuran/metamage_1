@@ -1,4 +1,15 @@
-// Menus.cp
+// Nitrogen/Menus.cp
+// -----------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2003-2006 by Lisa Lippincott and Joshua Juran.
+//
+// This code was written entirely by the above contributors, who place it
+// in the public domain.
+
 
 #ifndef NITROGEN_MENUS_H
 #include "Nitrogen/Menus.h"

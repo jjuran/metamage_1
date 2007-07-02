@@ -1,4 +1,15 @@
-// Scrap.cp
+// Nitrogen/Scrap.cp
+// -----------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2004-2006 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NITROGEN_SCRAP_H
 #include "Nitrogen/Scrap.h"
