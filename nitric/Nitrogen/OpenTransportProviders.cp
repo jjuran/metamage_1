@@ -1,6 +1,15 @@
-// ================
-// OpenTransport.cp
-// ================
+// Nitrogen/OpenTransportProviders.cp
+// ----------------------------------
+//
+// Maintained by Joshua Juran
+
+// Part of the Nitrogen project.
+//
+// Written 2005-2007 by Joshua Juran.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
 
 #ifndef NITROGEN_OPENTRANSPORTPROVIDERS_H
 #include "Nitrogen/OpenTransportProviders.h"

@@ -1,4 +1,8 @@
-// MixedMode.h
+// Nitrogen/MixedMode.h
+// --------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_MIXEDMODE_H
 #define NITROGEN_MIXEDMODE_H

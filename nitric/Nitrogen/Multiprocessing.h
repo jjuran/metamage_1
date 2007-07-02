@@ -1,4 +1,8 @@
-// Multiprocessing.h
+// Nitrogen/Multiprocessing.h
+// --------------------------
+
+// Part of the Nitrogen project.
+
 
 #ifndef NITROGEN_MULTIPROCESSING_H
 #define NITROGEN_MULTIPROCESSING_H

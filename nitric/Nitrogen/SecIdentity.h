@@ -1,3 +1,16 @@
+// Nitrogen/SecIdentity.h
+// ----------------------
+//
+// Maintained by Marshall Clow
+
+// Part of the Nitrogen project.
+//
+// Written 2004-2006 by Marshall Clow.
+//
+// This code was written entirely by the above contributor, who places it
+// in the public domain.
+
+
 #ifndef NITROGEN_SECIDENTITY_H
 #define	NITROGEN_SECIDENTITY_H
 
