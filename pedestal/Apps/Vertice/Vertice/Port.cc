@@ -19,8 +19,8 @@
 // Nitrogen
 #include "Nitrogen/Sound.h"
 
-// Nitrogen Extras / Templates
-#include "Templates/PointerToFunction.h"
+// MoreFunctional
+//#include "PointerToFunction.hh"
 
 // Vectoria
 #include "Vectoria/LinearAlgebra3D.hh"
