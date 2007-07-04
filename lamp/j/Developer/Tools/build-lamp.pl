@@ -74,6 +74,7 @@ my @programs = qw
 	sh sleep stripcr striplf superd
 	tcpcat tcpclient th tlsrvr true tty
 	uncaught_exception
+	which
 );
 my %is_program = map { $_ => 1 } @programs;
 
@@ -115,7 +116,7 @@ my %fsmap =
 	{
 		bin =>
 		[
-			qw( gzip htget killall md5sum nohup open osascript perl tty ),
+			qw( gzip htget killall md5sum nohup open osascript perl tty which ),
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
 			qw( beep cds cr2lf divide err2text jtest keymods lf2cr lf2crlf macbin ptrace stripcr striplf th ),
