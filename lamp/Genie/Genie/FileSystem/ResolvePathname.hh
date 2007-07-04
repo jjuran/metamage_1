@@ -16,6 +16,9 @@
 namespace Genie
 {
 	
+	bool ResolveLink_InPlace ( FSTreePtr& link );
+	bool ResolveLinks_InPlace( FSTreePtr& link );
+	
 	FSTreePtr ResolvePathname( const std::string& pathname, const FSTreePtr& current );
 	
 }
