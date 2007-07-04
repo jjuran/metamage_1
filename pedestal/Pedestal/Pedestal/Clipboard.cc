@@ -9,7 +9,7 @@
 #include "Nitrogen/Scrap.h"
 #include "Nitrogen/TextEdit.h"
 
-// Nitrogen Extras / ClassicToolbox
+// ClassicToolbox
 #if !TARGET_API_MAC_CARBON
 #include "ClassicToolbox/Scrap.h"
 #endif

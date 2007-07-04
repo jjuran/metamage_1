@@ -14,7 +14,7 @@
 // Nucleus
 #include "Nucleus/Saved.h"
 
-// Nitrogen Extras / ClassicToolbox
+// ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 
 // Nitrogen Extras / Utilities

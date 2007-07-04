@@ -20,7 +20,7 @@
 // Nitrogen
 #include "Nitrogen/TextEdit.h"
 
-// Nitrogen Extras / ClassicToolbox
+// ClassicToolbox
 #include "ClassicToolbox/MacWindows.h"
 #include "ClassicToolbox/Scrap.h"
 
