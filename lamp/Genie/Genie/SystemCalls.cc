@@ -280,6 +280,8 @@ namespace Genie
 			{
 				FSTreePtr progFile = ResolvePathname( path, current.GetCWD() );
 				
+				ResolveLinks_InPlace( progFile );
+				
 				struct ::stat sb;
 				
 				progFile->Stat( sb );
