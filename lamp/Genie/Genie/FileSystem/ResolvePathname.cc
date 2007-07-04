@@ -11,9 +11,15 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 
 namespace Genie
 {
+	
+	namespace P7 = POSeven;
+	
 	
 	class PathnameComponentIterator
 	{
@@ -77,6 +83,35 @@ namespace Genie
 			}
 	};
 	
+	bool ResolveLink_InPlace( FSTreePtr& file )
+	{
+		if ( file->IsLink() )
+		{
+			file = file->ResolveLink();
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	bool ResolveLinks_InPlace( FSTreePtr& file )
+	{
+		unsigned link_count = 0;
+		
+		while ( ResolveLink_InPlace( file ) )
+		{
+			++link_count;
+			
+			if ( link_count > 10 )
+			{
+				P7::ThrowErrno( ELOOP );
+			}
+		}
+		
+		return link_count > 0;
+	}
+	
 	FSTreePtr ResolvePathname( const std::string& pathname, const FSTreePtr& current )
 	{
 		PathnameComponentIterator path( pathname );
@@ -92,10 +127,7 @@ namespace Genie
 		
 		while ( !path.Done() )
 		{
-			if ( result->IsLink() )
-			{
-				result = result->ResolveLink();
-			}
+			ResolveLinks_InPlace( result );
 			
 			result = result->Lookup( path.Get() );
 			
