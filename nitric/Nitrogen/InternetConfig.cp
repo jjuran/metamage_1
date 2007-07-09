@@ -19,6 +19,7 @@
 #include "Nitrogen/OSStatus.h"
 #endif
 
+
 namespace Nitrogen
 {
 	
@@ -41,18 +42,21 @@ namespace Nitrogen
 	
 	
 	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
-	                                  ConstStr255Param  key,
-	                                  ICAttr&           attr )
+	                                           ConstStr255Param  key,
+	                                           ICAttr&           attr )
 	{
 		Nucleus::Owned< Handle > prefh = NewHandle( 0 );
+		
 		ThrowOSStatus( ::ICFindPrefHandle( instance, key, &attr, prefh.Get() ) );
+		
 		return prefh;
 	}
 	
 	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
-	                                  ConstStr255Param  key )
+	                                           ConstStr255Param  key )
 	{
 		::ICAttr attr;
+		
 		return ICFindPrefHandle( instance, key, attr );
 	}
 	
