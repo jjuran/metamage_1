@@ -87,6 +87,9 @@ namespace Genie
 		{ "tgz", 'Gzip', "gzip" "-compressed " "tarball" },
 		{ "mbz", 'Gzip', "gzip" "-compressed " "MacBinary archive" },
 		
+		// PDF
+		{ "pdf", 'PDF ', "PDF" " document" },
+		
 		// Image formats
 		{ "gif",  'GIFf', "GIF"  " image" },
 		{ "png",  'PNGf', "PNG"  " image" },
@@ -94,18 +97,69 @@ namespace Genie
 		{ "jpg",  'JPEG', "JPEG" " image" },
 		{ "tiff", 'TIFF', "TIFF" " image" },
 		{ "pict", 'PICT', "PICT" " image" },
+		
+		{ "mov", 'MooV', "QuickTime" " movie" },
+		
+		{ "mp3", 'MPEG', "MP3" " audio" },
 	};
 	
-	/*
-	const N::FileSignature gDefaultCreatorForTypeInput[] =
+	struct FileSignature
+	{
+		::OSType creator;
+		::OSType type;
+	};
+	
+	const FileSignature gDefaultCreatorForTypeInput[] =
 	{
 		{ 'mBin', 'mBIN' },
 		{ 'mBin', 'BIN+' },
+		{ 'CARO', 'PDF ' },
+		{ 'ogle', 'PICT' },
+		{ 'ogle', 'PNGf' },
+		{ 'ogle', 'GIFf' },
+		{ 'ogle', 'TIFF' },
+		{ 'ogle', 'JPEG' },
+		{ 'TVOD', 'MPEG' },
+		{ 'TVOD', 'MooV' },
 	};
-	*/
 	
+	typedef std::map< N::OSType,   N::OSType        > TypeToCreatorMapping;
 	typedef std::map< std::string, N::FileSignature > ExtensionToTypeMapping;
 	
+	
+	static TypeToCreatorMapping BuildTypeToCreatorMapping()
+	{
+		TypeToCreatorMapping result;
+		
+		const std::size_t typeCount = sizeof gDefaultCreatorForTypeInput / sizeof (FileSignature);
+		
+		for ( const FileSignature* p = gDefaultCreatorForTypeInput;  p < gDefaultCreatorForTypeInput + typeCount;  ++p )
+		{
+			result[ N::OSType( p->type ) ] = N::OSType( p->creator );
+		}
+		
+		return result;
+	}
+	
+	static const TypeToCreatorMapping& GetTypeToCreatorMapping()
+	{
+		static TypeToCreatorMapping mapping( BuildTypeToCreatorMapping() );
+		
+		return mapping;
+	}
+	
+	
+	static N::OSType GetCreatorForType( N::OSType type )
+	{
+		TypeToCreatorMapping::const_iterator it = GetTypeToCreatorMapping().find( type );
+		
+		if ( it != GetTypeToCreatorMapping().end() )
+		{
+			return it->second;
+		}
+		
+		return N::OSType( '\?\?\?\?' );
+	}
 	
 	static ExtensionToTypeMapping BuildExtensionToTypeMapping()
 	{
@@ -117,12 +171,9 @@ namespace Genie
 		for ( const ExtensionToTypeRecord* p = gExtensionToTypeMappingInput;  p < gExtensionToTypeMappingInput + extensionCount;  ++p )
 		{
 			// ASSERT( p->extension != NULL );
-			N::FileSignature signature( N::OSType( '\?\?\?\?' ), N::OSType( p->type ) );
+			N::OSType type = N::OSType( p->type );
 			
-			if ( signature.type == 'mBIN'  ||  signature.type == 'BIN+' )
-			{
-				signature.creator = N::OSType( 'mBin' );
-			}
+			N::FileSignature signature( GetCreatorForType( type ), type );
 			
 			result[ std::string( p->extension ) ] = signature;
 		}
