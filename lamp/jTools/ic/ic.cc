@@ -21,11 +21,19 @@ int O::Main( int argc, const char *const argv[] )
 	
 	N::OSType signature = N::OSType( 'Poof' );
 	
-	N::ICInstance ic = N::ICStart( signature );
+	NN::Owned< N::ICInstance > ic = N::ICStart( signature );
+	
+#if !TARGET_API_MAC_CARBON
+	
+	N::ThrowOSStatus( ::ICFindConfigFile( ic, 0, NULL ) );
+	
+#endif
 	
 	N::ThrowOSStatus( ::ICBegin( ic, icReadWritePerm ) );
 	
-	//N::ICFindPrefHandle( ic, kICMapping );
+	NN::Owned< N::Handle > mappings = N::ICFindPrefHandle( ic, kICMapping );
+	
+	std::printf( "Mapping handle size: %d\n", N::GetHandleSize( mappings ) );
 	
 	::ICEnd( ic );
 	
