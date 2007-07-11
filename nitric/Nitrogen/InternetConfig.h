@@ -14,6 +14,10 @@
 #ifndef NITROGEN_INTERNETCONFIG_H
 #define NITROGEN_INTERNETCONFIG_H
 
+#ifndef NUCLEUS_OWNED_H
+#include "Nucleus/Owned.h"
+#endif
+
 #ifndef NITROGEN_FRAMEWORKHEADER_H
 #include "Nitrogen/FrameworkHeader.h"
 #endif
@@ -27,12 +31,60 @@
 
 
 namespace Nitrogen
-  {
+{
 	class InternetConfigErrorsRegistrationDependency
 	{
 		public:
 			InternetConfigErrorsRegistrationDependency();
 	};
+	
+	using ::ICInstance;
+	using ::ICDirSpec;
+	
+	enum ICAttr
+	{
+		kICAttrNoChange     = ::kICAttrNoChange,
+		kICAttrLockedMask   = ::kICAttrLockedMask,
+		kICAttrVolatileMask = ::kICAttrVolatileMask,
+		
+		kICAttr_Max = Nucleus::Enumeration_Traits< ::ICAttr >::max
+	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( ICAttr )
+	
+	enum ICPerm
+	{
+		icNoPerm        = ::icNoPerm,
+		icReadOnlyPerm  = ::icReadOnlyPerm,
+		icReadWritePerm = ::icReadWritePerm,
+		
+		kICPerm_Max = Nucleus::Enumeration_Traits< ::ICPerm >::max
+	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( ICPerm )
+	
+	enum ICProfileID
+	{
+		kICNilProfileID = ::kICNilProfileID,
+		
+		kICProfileID_Max = Nucleus::Enumeration_Traits< ::ICProfileID >::max
+	};
+	
+	static const OSType kICFileType = OSType( ::kICFileType );
+	static const OSType kICCreator  = OSType( ::kICCreator  );
+	
+	static const AEEventClass kInternetEventClass = AEEventClass( ::kInternetEventClass );
+	
+	static const AEEventID kAEGetURL   = AEEventID( ::kAEGetURL   );
+	static const AEEventID kAEFetchURL = AEEventID( ::kAEFetchURL );
+	
+	static const AEKeyword keyAEAttaching = AEKeyword( ::keyAEAttaching );
+	
+	static const AEEventClass kICEditPreferenceEventClass = AEEventClass( ::kICEditPreferenceEventClass );
+	
+	static const AEEventID kICEditPreferenceEvent = AEEventID( ::kICEditPreferenceEvent );
+	
+	static const AEKeyword keyICEditPreferenceDestination = AEKeyword( ::keyICEditPreferenceDestination );
 	
 	using ::ICFontRecordHandle;
 	using ::ICCharTableHandle;
@@ -42,10 +94,22 @@ namespace Nitrogen
 	using ::ICMapEntryHandle;
 	using ::ICServiceEntryHandle;
 	using ::ICServicesHandle;
-  }
+}
 
 namespace Nucleus
 {
+	
+	template <> struct Disposer< Nitrogen::ICInstance > : public std::unary_function< Nitrogen::ICInstance, void >,
+	                                                      private Nitrogen::DefaultDestructionOSStatusPolicy
+	{
+		void operator()( Nitrogen::ICInstance instance ) const
+		{
+			(void) Nitrogen::InternetConfigErrorsRegistrationDependency();
+			
+			HandleDestructionOSStatus( ::ICStop( instance ) );
+		}
+	};
+	
 	template <>  struct OwnedDefaults< Nitrogen::ICFontRecordHandle   > : OwnedDefaults< Nitrogen::Handle >  {};
 	template <>  struct OwnedDefaults< Nitrogen::ICCharTableHandle    > : OwnedDefaults< Nitrogen::Handle >  {};
 	template <>  struct OwnedDefaults< Nitrogen::ICAppSpecHandle      > : OwnedDefaults< Nitrogen::Handle >  {};
@@ -54,10 +118,29 @@ namespace Nucleus
 	template <>  struct OwnedDefaults< Nitrogen::ICMapEntryHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
 	template <>  struct OwnedDefaults< Nitrogen::ICServiceEntryHandle > : OwnedDefaults< Nitrogen::Handle >  {};
 	template <>  struct OwnedDefaults< Nitrogen::ICServicesHandle     > : OwnedDefaults< Nitrogen::Handle >  {};
+	
 }
 
 namespace Nitrogen
 {
+	
+	Nucleus::Owned< ICInstance > ICStart( OSType signature );
+	
+	void ICStop( Nucleus::Owned< ICInstance >& instance );
+	
+	UInt32 ICGetVersion( ICInstance  instance,
+	                     long        whichVersion );
+	
+	Str255 ICGetConfigName( ICInstance instance, bool longname );
+	
+	long ICGetSeed( ICInstance instance );
+	
+	ICPerm ICGetPerm( ICInstance instance );
+	
+	// ICBegin
+	// ICGetPref
+	// ICSetPref
+	
 	// 1179
 	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                           ConstStr255Param  key,
@@ -65,6 +148,43 @@ namespace Nitrogen
 	
 	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
 	                                           ConstStr255Param  key );
+	
+	// ICGetPrefHandle
+	// ICSetPrefHandle
+	
+	long ICCountPref( ICInstance instance );
+	
+	// ICGetIndPref
+	// ICDeletePref
+	// ICEnd
+	// ICGetDefaultPref
+	
+	// ICEditPreferences
+	// ICLaunchURL
+	// ICParseURL
+	// ICCreateGURLEvent
+	// ICSendGURLEvent
+	
+	// ICMapFilename
+	// ICMapTypeCreator
+	// ICMapEntriesFilename
+	// ICMapEntriesTypeCreator
+	
+	// ICCountMapEntries
+	// ICGetIndMapEntry
+	// ICGetMapEntry
+	// ICSetMapEntry
+	// ICDeleteMapEntry
+	// ICAddMapEntry
+	
+	// ICGetCurrentProfile
+	// ICSetCurrentProfile
+	// ICCountProfiles
+	// ICGetIndProfile
+	// ICGetProfileName
+	// ICSetProfileName
+	// ICAddProfile
+	// ICDeleteProfile
 	
 }
 

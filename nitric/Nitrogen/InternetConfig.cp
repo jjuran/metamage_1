@@ -41,13 +41,43 @@ namespace Nitrogen
 	static InternetConfigErrorsRegistration theRegistration;
 	
 	
-	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
-	                                           ConstStr255Param  key,
-	                                           ICAttr&           attr )
+	Nucleus::Owned< ICInstance > ICStart( OSType signature )
+	{
+		::ICInstance instance;
+		
+		ThrowOSStatus( ::ICStart( &instance, signature ) );
+		
+		return Nucleus::Owned< ICInstance >::Seize( ICInstance( instance ) );
+	}
+	
+	void ICStop( Nucleus::Owned< ICInstance >& instance )
+	{
+		ThrowOSStatus( ::ICStop( instance.Get() ) );
+		
+		instance.Release();
+	}
+	
+	
+	static Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	                                                  ConstStr255Param  key,
+	                                                  ::ICAttr&         attr )
 	{
 		Nucleus::Owned< Handle > prefh = NewHandle( 0 );
 		
 		ThrowOSStatus( ::ICFindPrefHandle( instance, key, &attr, prefh.Get() ) );
+		
+		return prefh;
+	}
+	
+	Nucleus::Owned< Handle > ICFindPrefHandle( ICInstance        instance,
+	                                           ConstStr255Param  key,
+	                                           ICAttr&           attr )
+	{
+		::ICAttr tempAttr;
+		
+		Nucleus::Owned< Handle > prefh = ICFindPrefHandle( instance, key, tempAttr );
+		
+		attr = ICAttr( tempAttr );
 		
 		return prefh;
 	}
