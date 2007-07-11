@@ -81,6 +81,7 @@ namespace jTools
 		SHARED_LIB( "CarbonLib"          ),
 		SHARED_LIB( "ControlsLib"        ),
 		SHARED_LIB( "InterfaceLib"       ),
+		SHARED_LIB( "InternetConfigLib"  ),
 		SHARED_LIB( "MathLib"            ),
 		SHARED_LIB( "MenusLib"           ),
 		SHARED_LIB( "ObjectSupportLib"   ),
