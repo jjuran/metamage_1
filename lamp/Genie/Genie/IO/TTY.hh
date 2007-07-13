@@ -19,16 +19,24 @@ namespace Genie
 	class TTYHandle : public DeviceHandle
 	{
 		private:
-			const std::string ttyName;
+			const std::string  ttyName;
+			int                itsProcessGroupID;
 		
 		public:
-			TTYHandle( const std::string& ttyName ) : ttyName( ttyName )  {}
+			TTYHandle( const std::string& ttyName ) : ttyName( ttyName ),
+			                                          itsProcessGroupID()
+			{
+			}
 			
 			static TypeCode Type()  { return kTTYType; }
 			
 			TypeCode ActualType() const  { return Type(); }
 			
 			FSTreePtr GetFile() const;
+			
+			int GetProcessGroup() const  { return itsProcessGroupID; }
+			
+			void SetProcessGroup( int pgrp )  { itsProcessGroupID = pgrp; }
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			

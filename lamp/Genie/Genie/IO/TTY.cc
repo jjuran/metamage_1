@@ -31,6 +31,16 @@ namespace Genie
 	{
 		switch ( request )
 		{
+			case TIOCGPGRP:
+				ASSERT( argp != NULL );
+				*argp = GetProcessGroup();
+				break;
+			
+			case TIOCSPGRP:
+				ASSERT( argp != NULL );
+				SetProcessGroup( *argp );
+				break;
+			
 			case TIOCSCTTY:
 				CurrentProcess().SetControllingTerminal( this );
 				break;
