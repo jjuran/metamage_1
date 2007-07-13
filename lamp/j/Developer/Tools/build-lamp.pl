@@ -62,7 +62,7 @@ my @programs = qw
 	false
 	gzip
 	htget httpd
-	inetd
+	ic inetd
 	jtest
 	keymods kill killall
 	ld lf2cr lf2crlf login
@@ -91,7 +91,7 @@ my %fsmap =
 		},
 		Tools =>
 		[
-			qw( A-line abort activate aevt cpres keymods quit system File Line ld mpwrez mwcc tlsrvr ),
+			qw( A-line abort activate aevt cpres ic keymods quit system File Line ld mpwrez mwcc tlsrvr ),
 			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl run-tests ),
 		],
 	},
