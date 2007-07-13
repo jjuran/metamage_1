@@ -495,6 +495,8 @@ static int ExecuteCommand( const Command& command )
 		
 		if ( pid == 0 )
 		{
+			setpgrp();
+			
 			try
 			{
 				RedirectIOs( command.redirections );
