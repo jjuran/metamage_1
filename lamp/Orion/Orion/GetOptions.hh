@@ -109,19 +109,23 @@ namespace Orion
 			void Set( const std::string& ) const  { itsData = itsValue; }
 	};
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( bool& flag );
-	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( int& i );
-	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( std::string& string );
-	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( std::vector< std::string >& strings );
 	
 	template < class Type >
 	boost::shared_ptr< OptionBinding > NewOptionBinding( Type& data, Type value )
 	{
 		return boost::shared_ptr< OptionBinding >( new SelectorOptionBinding< Type >( data, value ) );
 	}
+	
+	inline boost::shared_ptr< OptionBinding > NewOptionBinding( bool& flag )
+	{
+		return NewOptionBinding( flag, true );
+	}
+	
+	boost::shared_ptr< OptionBinding > NewOptionBinding( int& i );
+	
+	boost::shared_ptr< OptionBinding > NewOptionBinding( std::string& string );
+	
+	boost::shared_ptr< OptionBinding > NewOptionBinding( std::vector< std::string >& strings );
 	
 	
 	void AddBinding( OptionID optionID, const boost::shared_ptr< OptionBinding >& binding );

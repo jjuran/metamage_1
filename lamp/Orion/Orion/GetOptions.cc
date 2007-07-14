@@ -235,6 +235,20 @@ namespace Orion
 		}
 	}
 	
+	
+	class StringOptionBinding : public OptionBinding
+	{
+		private:
+			std::string& itsString;
+		
+		public:
+			StringOptionBinding( std::string& string ) : itsString( string )  {}
+			
+			bool ParameterExpected() const  { return true; }
+			
+			void Set( const std::string& param ) const  { itsString = param; }
+	};
+	
 	class StringListOptionBinding : public OptionBinding
 	{
 		private:
@@ -247,6 +261,7 @@ namespace Orion
 			
 			void Set( const std::string& param ) const  { itsStrings.push_back( param ); }
 	};
+	
 	
 	typedef std::map< std::string, OptionID > OptionMap;
 	
@@ -271,15 +286,23 @@ namespace Orion
 		gOptionMap[ to ] = gOptionMap[ from ];
 	}
 	
+	
+	boost::shared_ptr< OptionBinding > NewOptionBinding( std::string& string )
+	{
+		return boost::shared_ptr< OptionBinding >( new StringOptionBinding( string ) );
+	}
+	
 	boost::shared_ptr< OptionBinding > NewOptionBinding( std::vector< std::string >& strings )
 	{
 		return boost::shared_ptr< OptionBinding >( new StringListOptionBinding( strings ) );
 	}
 	
+	
 	void AddBinding( OptionID optionID, const boost::shared_ptr< OptionBinding >& binding )
 	{
 		gBindingMap[ optionID ] = binding;
 	}
+	
 	
 	static OptionID FindOptionID( const std::string& name )
 	{
@@ -306,6 +329,7 @@ namespace Orion
 	{
 		return *FindOptionBinding( FindOptionID( name ) );
 	}
+	
 	
 	static void SetOption( const std::string& name, char const* const*& argv )
 	{
