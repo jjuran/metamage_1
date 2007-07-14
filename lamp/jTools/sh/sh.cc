@@ -37,31 +37,6 @@ namespace P7 = POSeven;
 namespace O = Orion;
 
 
-enum
-{
-	optCommand, 
-	optRestricted, 
-	optInteractive, 
-	optStdin, 
-	optVerboseInput, 
-	optVerboseExecution
-};
-
-static O::Options DefineOptions()
-{
-	O::Options options;
-	
-	options.DefineSetString( "-c", optCommand );
-	
-	options.DefineSetFlag( "-r", optRestricted       );
-	options.DefineSetFlag( "-i", optInteractive      );
-	options.DefineSetFlag( "-s", optStdin            );
-	options.DefineSetFlag( "-v", optVerboseInput     );
-	options.DefineSetFlag( "-x", optVerboseExecution );
-	
-	return options;
-}
-
 bool gStandardIn  = false;
 bool gLoginShell  = false;
 
@@ -87,11 +62,25 @@ int O::Main( int argc, const char *const argv[] )
 	setenv( "PS2", "> ", 0 );
 	setenv( "PS4", "+ ", 0 );
 	
-	O::Options options = DefineOptions();
+	std::string command;
+	
+	bool restricted = false;
+	bool interactive = false;
+	bool readingFromStdin = false;
+	bool verboseInput = false;
+	bool verboseExecution = false;
+	
+	O::BindOption( "-c", command );
+	
+	O::BindOption( "-r", restricted );
+	O::BindOption( "-i", interactive );
+	O::BindOption( "-s", readingFromStdin );
+	O::BindOption( "-v", verboseInput );
+	O::BindOption( "-x", verboseExecution );
 	
 	try
 	{
-		options.GetOptions( argc, argv );
+		O::GetOptions( argc, argv );
 	}
 	catch ( O::UndefinedOption& )
 	{
@@ -100,10 +89,12 @@ int O::Main( int argc, const char *const argv[] )
 		return 1;
 	}
 	
+	const std::vector< const char* >& freeArgs = O::FreeArguments();
+	
 	gArgZero = argv[ 0 ];
 	
-	gParameters = options.Begin();
-	gParameterCount = options.GetFreeParams().size();
+	gParameters = &*freeArgs.begin();
+	gParameterCount = freeArgs.size();
 	
 	P7::FileDescriptor fd( P7::kStdIn_FileNo );
 	
@@ -118,7 +109,7 @@ int O::Main( int argc, const char *const argv[] )
 		
 		int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
 		
-		SetInteractiveness( options.GetFlag( optInteractive ) );
+		SetInteractiveness( interactive );
 	}
 	else
 	{
@@ -142,8 +133,6 @@ int O::Main( int argc, const char *const argv[] )
 			}
 		}
 	}
-	
-	std::string command = options.GetString( optCommand );
 	
 	if ( !command.empty() )
 	{
