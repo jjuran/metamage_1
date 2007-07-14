@@ -107,7 +107,7 @@ namespace jTools
 	                                          const std::string&  host,
 	                                          const std::string&  url )
 	{
-		if ( sig != kUnknownType )
+		if ( sig != N::OSType( kUnknownType ) )
 		{
 			return N::AECreateDesc< N::typeApplSignature >( sig );
 		}
@@ -116,8 +116,6 @@ namespace jTools
 		#if CALL_NOT_IN_CARBON
 			
 			return N::AECreateDesc< N::typeTargetID >( LocateTarget( app, machine, host ) );
-			
-			(void) url;
 			
 		#else
 			
