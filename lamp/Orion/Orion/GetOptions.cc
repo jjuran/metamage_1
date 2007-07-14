@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <cstring>
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Option vocabulary
 
 // Syntax
@@ -230,6 +233,180 @@ namespace Orion
 		{
 			return 0;  // FIXME
 		}
+	}
+	
+	class StringListOptionBinding : public OptionBinding
+	{
+		private:
+			std::vector< std::string >& itsStrings;
+		
+		public:
+			StringListOptionBinding( std::vector< std::string >& strings ) : itsStrings( strings )  {}
+			
+			bool ParameterExpected() const  { return true; }
+			
+			void Set( const std::string& param ) const  { itsStrings.push_back( param ); }
+	};
+	
+	typedef std::map< std::string, OptionID > OptionMap;
+	
+	typedef std::map< OptionID, boost::shared_ptr< OptionBinding > > BindingMap;
+	
+	
+	static OptionID gLastOptionID = 0;
+	
+	static OptionMap  gOptionMap;
+	static BindingMap gBindingMap;
+	
+	static std::vector< const char* > gFreeArguments;
+	
+	
+	OptionID NewOption( const char* optionSpec )
+	{
+		return gOptionMap[ optionSpec ] = ++gLastOptionID;
+	}
+	
+	void AliasOption( const char* from, const char* to )
+	{
+		gOptionMap[ to ] = gOptionMap[ from ];
+	}
+	
+	boost::shared_ptr< OptionBinding > NewOptionBinding( std::vector< std::string >& strings )
+	{
+		return boost::shared_ptr< OptionBinding >( new StringListOptionBinding( strings ) );
+	}
+	
+	void AddBinding( OptionID optionID, const boost::shared_ptr< OptionBinding >& binding )
+	{
+		gBindingMap[ optionID ] = binding;
+	}
+	
+	static OptionID FindOptionID( const std::string& name )
+	{
+		OptionMap::const_iterator it = gOptionMap.find( name );
+		
+		if ( it == gOptionMap.end() )
+		{
+			throw UndefinedOption( name );
+		}
+		
+		return it->second;
+	}
+	
+	static boost::shared_ptr< OptionBinding > FindOptionBinding( OptionID optionID )
+	{
+		BindingMap::const_iterator it = gBindingMap.find( optionID );
+		
+		ASSERT( it != gBindingMap.end() );
+		
+		return it->second;
+	}
+	
+	static const OptionBinding& FindOption( const std::string& name )
+	{
+		return *FindOptionBinding( FindOptionID( name ) );
+	}
+	
+	static void SetOption( const std::string& name, char const* const*& argv )
+	{
+		const OptionBinding& binding = FindOption( name );
+		
+		if ( binding.ParameterExpected() )
+		{
+			binding.Set( *++argv );
+		}
+		else
+		{
+			binding.Set();
+		}
+	}
+	
+	void GetOptions( int argc, char const *const *argv )
+	{
+		char const* const* begin = argv + 1;  // Skip the command
+		char const* const* end = argv + argc;
+		
+		for ( char const* const* it = begin;  it != end;  ++it )
+		{
+			const char* token = *it;
+			
+			if ( token[ 0 ] == '-' )
+			{
+				// Starts with "-"
+				
+				if ( token[ 1 ] == '\0' )
+				{
+					// "-" is considered a free argument, not an option
+				}
+				else if ( token[ 1 ] == '-' )
+				{
+					// Starts with "--"
+					
+					if ( token[ 2 ] == '\0' )
+					{
+						// End of option processing
+						std::copy( ++it, end, back_inserter( gFreeArguments ) );
+						
+						break;
+					}
+					else
+					{
+						// Long format option
+						std::size_t len = std::strlen( token );
+						
+						// Inline parameter?
+						const char* eq = std::find( token + 2, token + len, '=' );
+						
+						if ( eq == token + len )
+						{
+							// No inline parameter to option
+							SetOption( token, argv );
+						}
+						else
+						{
+							// Option has parameter
+							std::string opt( token, eq - token );
+							
+							const char* paramStart = eq + 1;
+							
+							unsigned int paramLen = token + len - paramStart;
+							
+							std::string param( paramStart, paramLen );
+							
+							FindOption( opt ).Set( param );
+						}
+					}
+					
+					continue;
+				}
+				else
+				{
+					// Short format option
+					
+					while ( *++token != '\0' )
+					{
+						std::string opt = "-";
+						
+						opt += *token;
+						
+						SetOption( opt, argv );
+					}
+					
+					continue;
+				}
+			}
+			
+			// Not an option
+			gFreeArguments.push_back( token );
+		}
+		
+		gOptionMap.clear();
+		gBindingMap.clear();
+	}
+	
+	const std::vector< const char* >& FreeArguments()
+	{
+		return gFreeArguments;
 	}
 	
 }
