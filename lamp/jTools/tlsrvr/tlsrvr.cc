@@ -137,22 +137,6 @@ static std::string MakeCommand( const std::vector< const char* >& args, bool nee
 	return command;
 }
 
-enum
-{
-	optEscapeForMPW, 
-	optSwitchLayers
-};
-
-static O::Options DefineOptions()
-{
-	O::Options options;
-	
-	options.DefineSetFlag( "--escape", optEscapeForMPW );
-	options.DefineSetFlag( "--switch", optSwitchLayers );
-	
-	return options;
-}
-
 static void MyOSStatusLogger( N::OSStatus error, const char *file, int line )
 {
 	static int level = 0;
@@ -180,27 +164,28 @@ int O::Main( int argc, const char *const argv[] )
 {
 	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	
-	O::Options options = DefineOptions();
-	options.GetOptions( argc, argv );
+	bool escapeForMPW = false;
+	bool switchLayers = false;
 	
-	const std::vector< const char* >& params = options.GetFreeParams();
+	O::BindOption( "--escape", escapeForMPW );
+	O::BindOption( "--switch", switchLayers );
 	
-	std::string command = MakeCommand( params, options.GetFlag( optEscapeForMPW ) );
+	const std::vector< const char* >& params = O::FreeArguments();
 	
-	bool gSwitchLayers = options.GetFlag( optSwitchLayers );
+	std::string command = MakeCommand( params, escapeForMPW );
 	
 	// This is a bit of a hack.  It really ought to happen just after we send the event,
-	// but gSwitchLayers is local to this file and I'm not dealing with that now.
-	if ( gSwitchLayers && N::SameProcess( N::CurrentProcess(),
-	                                      N::GetFrontProcess() ) )
+	// but switchLayers is local to this file and I'm not dealing with that now.
+	if ( switchLayers && N::SameProcess( N::CurrentProcess(),
+	                                     N::GetFrontProcess() ) )
 	{
 		N::SetFrontProcess( NX::LaunchApplication( sigToolServer ) );
 	}
 	
 	int result = RunCommandInToolServer( command );
 	
-	if ( gSwitchLayers && N::SameProcess( NX::LaunchApplication( sigToolServer ),
-	                                      N::GetFrontProcess() ) )
+	if ( switchLayers && N::SameProcess( NX::LaunchApplication( sigToolServer ),
+	                                     N::GetFrontProcess() ) )
 	{
 		N::SetFrontProcess( N::CurrentProcess() );
 	}
