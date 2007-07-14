@@ -99,35 +99,27 @@ static void LaunchApplicationWithDocsToOpen( const FSSpec& app, const std::vecto
 }
 
 
-enum
-{
-	optOpenInApp,
-	optOpenInAppWithSignature,
-	optInBackground,
-	optOpenInEditor,
-	optInterpretMacPathnames
-};
+static std::string gAppNameToOpenIn;
+static std::string gAppSigToOpenIn;
 
-static O::Options DefineOptions()
+static bool gOpenInEditor    = false;
+static bool gUseMacPathnames = false;
+
+static void DefineOptions()
 {
-	O::Options options;
+	O::BindOption( "--app",  gAppNameToOpenIn );
+	O::BindOption( "--sig",  gAppSigToOpenIn  );
+	O::BindOption( "--mac",  gUseMacPathnames );
+	O::BindOption( "--edit", gOpenInEditor    );
 	
-	options.DefineSetString( "--app", optOpenInApp );
-	options.DefineSetString( "-a",    optOpenInApp );
-	
-	options.DefineSetString( "--sig", optOpenInAppWithSignature );
-	
-	options.DefineSetFlag(   "-e",    optOpenInEditor );
-	options.DefineSetFlag(   "-t",    optOpenInEditor );
-	
-	options.DefineSetFlag(   "--mac", optInterpretMacPathnames );
-	
-	return options;
+	O::AliasOption( "--app",  "-a" );
+	O::AliasOption( "--edit", "-e" );
+	O::AliasOption( "--edit", "-t" );
 }
 
-static N::OSType SignatureOfAppForOpening( const O::Options& options )
+static N::OSType SignatureOfAppForOpening()
 {
-	if ( options.GetFlag( optOpenInEditor ) )
+	if ( gOpenInEditor )
 	{
 		// User has specified default text editor.
 		// Check MAC_EDITOR_SIGNATURE environment variable first.
@@ -144,12 +136,10 @@ static N::OSType SignatureOfAppForOpening( const O::Options& options )
 		return N::OSType( sigGoodTextEditor );
 	}
 	
-	const std::string appSignatureArg = options.GetString( optOpenInAppWithSignature );
-	
-	if ( !appSignatureArg.empty() )
+	if ( !gAppSigToOpenIn.empty() )
 	{
 		// User has specified an application by its signature
-		return NN::Convert< N::OSType >( appSignatureArg );
+		return NN::Convert< N::OSType >( gAppSigToOpenIn );
 	}
 	
 	// Otherwise, give everything to the Finder.
@@ -157,7 +147,7 @@ static N::OSType SignatureOfAppForOpening( const O::Options& options )
 	return N::OSType( sigFinder );
 }
 
-static void OpenItemsUsingOptions( const std::vector< FSSpec >& items, const O::Options& options )
+static void OpenItemsUsingOptions( const std::vector< FSSpec >& items )
 {
 	// we either have a pathname or signature for the app.
 	// if pathname, resolve to FSSpec and check if it's running.
@@ -173,16 +163,14 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items, const O::
 	// -e or -t: either?
 	// default: sig
 	
-	const std::string appPathname = options.GetString( optOpenInApp );
-	
 	FSSpec appFile;
 	
-	if ( !appPathname.empty() )
+	if ( !gAppNameToOpenIn.empty() )
 	{
 		// User has specified an application by its pathname
 		
 		// Resolve to FSSpec
-		appFile = Div::ResolvePathToFSSpec( appPathname.c_str() );
+		appFile = Div::ResolvePathToFSSpec( gAppNameToOpenIn.c_str() );
 		
 		try
 		{
@@ -206,7 +194,7 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items, const O::
 		// Look up by signature.
 		
 		// Pick a signature
-		N::OSType signature = SignatureOfAppForOpening( options );
+		N::OSType signature = SignatureOfAppForOpening();
 		
 		try
 		{
@@ -231,12 +219,11 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items, const O::
 
 int O::Main( int argc, char const *const argv[] )
 {
-	O::Options options = DefineOptions();
-	options.GetOptions( argc, argv );
+	DefineOptions();
 	
-	const std::vector< const char* >& params = options.GetFreeParams();
+	O::GetOptions( argc, argv );
 	
-	bool useMacPathnames = options.GetFlag( optInterpretMacPathnames );
+	const std::vector< const char* >& params = O::FreeArguments();
 	
 	std::vector< FSSpec > itemsToOpen;
 	
@@ -248,7 +235,7 @@ int O::Main( int argc, char const *const argv[] )
 		
 		try
 		{
-			FSSpec item = ResolvePathname( pathname, useMacPathnames );
+			FSSpec item = ResolvePathname( pathname, gUseMacPathnames );
 			
 			itemsToOpen.push_back( item );
 		}
@@ -258,7 +245,7 @@ int O::Main( int argc, char const *const argv[] )
 		}
 	}
 	
-	OpenItemsUsingOptions( itemsToOpen, options );
+	OpenItemsUsingOptions( itemsToOpen );
 	
 	return 0;
 }

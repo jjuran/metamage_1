@@ -154,36 +154,21 @@ static NN::Owned< N::OSASpec > LoadScriptFile( const FSSpec& scriptFile )
 	return NN::Owned< N::OSASpec >();
 }
 
-enum
-{
-	optInlineScript,
-	optResultFormat
-};
-
-enum
-{
-	resultsHumanReadable,
-	resultsRecompilableSource
-};
-
-static O::Options DefineOptions()
-{
-	O::Options options;
-	
-	options.DefineAppendToStringList( "-e", optInlineScript );
-	
-	options.DefineSelectEnum( "-h", optResultFormat, resultsHumanReadable      );
-	options.DefineSelectEnum( "-s", optResultFormat, resultsRecompilableSource );
-	
-	return options;
-}
-
 int O::Main( int argc, const char *const argv[] )
 {
-	O::Options options = DefineOptions();
-	options.GetOptions( argc, argv );
+	std::vector< std::string > inlineScriptPieces;
 	
-	const std::vector< const char* >& params = options.GetFreeParams();
+	// human-readable by default, like Apple osascript
+	bool humanReadable = true;
+	
+	O::BindOption( "-e", inlineScriptPieces );
+	
+	O::BindOption( "-h", humanReadable, true  );
+	O::BindOption( "-s", humanReadable, false );
+	
+	O::GetOptions( argc, argv );
+	
+	const std::vector< const char* >& params = O::FreeArguments();
 	
 	typedef std::vector< const char* >::const_iterator const_iterator;
 	
@@ -191,7 +176,6 @@ int O::Main( int argc, const char *const argv[] )
 	const_iterator params_end   = params.end  ();
 	
 	NN::Owned< N::OSASpec > script;
-	std::vector< std::string > inlineScriptPieces = options.GetStringList( optInlineScript );
 	
 	if ( !inlineScriptPieces.empty() )
 	{
@@ -229,9 +213,6 @@ int O::Main( int argc, const char *const argv[] )
 		
 		if ( result.Get().id != N::kOSANullScript )
 		{
-			// human-readable by default, like Apple osascript
-			bool humanReadable = options.GetEnum( optResultFormat ) != resultsRecompilableSource;
-			
 			N::OSAModeFlags displayFlags( humanReadable ? N::kOSAModeDisplayForHumans : N::kOSAModeNull );
 			
 			std::string output = N::AEGetDescData< N::typeChar >( N::OSADisplay( result,
