@@ -27,9 +27,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace O = Orion;
