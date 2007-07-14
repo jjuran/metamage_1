@@ -290,111 +290,77 @@ namespace ALine
 		return targetInfo;
 	}
 	
-	enum
-	{
-		optVerbose,
-		optCatalog,
-		optFile,
-		optArch, 
-		optRuntime, 
-		optMacAPI, 
-		optBuild
-	};
-	
 }
 
 namespace O = Orion;
 
 using namespace ALine;
 
-static O::Options DefineOptions()
-{
-	O::Options options;
-	
-	// General
-	
-	options.DefineSetFlag( "--verbose", optVerbose );
-	options.DefineSetFlag( "-v",        optVerbose );
-	
-	// Actions
-	
-	options.DefineSetFlag( "--catalog", optCatalog );
-	options.DefineSetFlag( "-t",        optCatalog );
-	
-	options.DefineAppendToStringList( "--file", optFile );
-	options.DefineAppendToStringList( "-f",     optFile );
-	
-	// Targeting
-	
-	options.DefineSelectEnum( "--68k", optArch, CD::arch68K );
-	options.DefineSelectEnum( "-6",    optArch, CD::arch68K );
-	options.DefineSelectEnum( "--ppc", optArch, CD::archPPC );
-	options.DefineSelectEnum( "-P",    optArch, CD::archPPC );
-	options.DefineSelectEnum( "--x86", optArch, CD::archX86 );
-	options.DefineSelectEnum( "-8",    optArch, CD::archX86 );
-	
-	options.DefineSelectEnum( "--a4",    optRuntime, CD::runtimeA4CodeResource );
-	options.DefineSelectEnum( "-4",      optRuntime, CD::runtimeA4CodeResource );
-	options.DefineSelectEnum( "--a5",    optRuntime, CD::runtimeA5CodeSegments );
-	options.DefineSelectEnum( "-5",      optRuntime, CD::runtimeA5CodeSegments );
-	options.DefineSelectEnum( "--cfm",   optRuntime, CD::runtimeCodeFragments  );
-	options.DefineSelectEnum( "-F",      optRuntime, CD::runtimeCodeFragments  );
-	options.DefineSelectEnum( "--macho", optRuntime, CD::runtimeMachO          );
-	options.DefineSelectEnum( "-O",      optRuntime, CD::runtimeMachO          );
-	
-	options.DefineSelectEnum( "--classic", optMacAPI, CD::apiMacToolbox );
-	options.DefineSelectEnum( "-B",        optMacAPI, CD::apiMacToolbox );
-	options.DefineSelectEnum( "--carbon",  optMacAPI, CD::apiMacCarbon  );
-	options.DefineSelectEnum( "-C",        optMacAPI, CD::apiMacCarbon  );
-	
-	options.DefineSelectEnum( "--debug",   optBuild, buildDebug   );
-	options.DefineSelectEnum( "-g",        optBuild, buildDebug   );
-	options.DefineSelectEnum( "--release", optBuild, buildRelease );
-	options.DefineSelectEnum( "-R",        optBuild, buildRelease );
-	options.DefineSelectEnum( "--demo",    optBuild, buildDemo    );
-	options.DefineSelectEnum( "-D",        optBuild, buildDemo    );
-	
-	return options;
-}
-
 int O::Main( int argc, char const* const argv[] )
 {
 	if ( argc <= 1 )  return 0;
 	
-	int fail = 0;
+	CD::Platform arch    = CD::platformUnspecified;
+	CD::Platform runtime = CD::platformUnspecified;
+	CD::Platform macAPI  = CD::platformUnspecified;
 	
-	O::Options options = DefineOptions();
-	options.GetOptions( argc, argv );
-	
-	const std::vector< const char* >& params = options.GetFreeParams();
-	
-	CD::Platform targetPlatform = CD::platformUnspecified;
 	BuildVariety buildVariety = buildDefault;
 	
-	if ( options.GetEnum( optArch ) != 0 )
-	{
-		targetPlatform |= CD::Platform( options.GetEnum( optArch ) );
-	}
+	// General
 	
-	if ( options.GetEnum( optRuntime ) != 0 )
-	{
-		targetPlatform |= CD::Platform( options.GetEnum( optRuntime ) );
-	}
+	O::BindOption( "-v", gOptions.verbose );
 	
-	if ( options.GetEnum( optMacAPI ) != 0 )
-	{
-		targetPlatform |= CD::Platform( options.GetEnum( optMacAPI ) );
-	}
+	O::AliasOption( "-v", "--verbose" );
 	
-	if ( options.GetEnum( optBuild ) != 0 )
-	{
-		buildVariety = BuildVariety( options.GetEnum( optBuild ) );
-	}
+	// Actions
 	
-	gOptions.verbose = options.GetFlag( optVerbose );
-	gOptions.catalog = options.GetFlag( optCatalog );
+	O::BindOption( "-t", gOptions.catalog );
 	
-	gOptions.files = options.GetStringList( optFile );
+	O::AliasOption( "-t", "--catalog" );
+	
+	O::BindOption( "-f", gOptions.files );
+	
+	O::AliasOption( "-f", "--file" );
+	
+	// Targeting
+	
+	O::BindOption( "-6", arch, CD::arch68K );
+	O::BindOption( "-P", arch, CD::archPPC );
+	O::BindOption( "-8", arch, CD::archX86 );
+	
+	O::BindOption( "-4", runtime, CD::runtimeA4CodeResource );
+	O::BindOption( "-5", runtime, CD::runtimeA5CodeSegments );
+	O::BindOption( "-F", runtime, CD::runtimeCodeFragments  );
+	O::BindOption( "-O", runtime, CD::runtimeMachO          );
+	
+	O::BindOption( "-B", macAPI, CD::apiMacToolbox );
+	O::BindOption( "-C", macAPI, CD::apiMacCarbon  );
+	
+	O::BindOption( "-g", buildVariety, buildDebug   );
+	O::BindOption( "-R", buildVariety, buildRelease );
+	O::BindOption( "-D", buildVariety, buildDemo    );
+	
+	O::AliasOption( "-6", "--68k" );
+	O::AliasOption( "-P", "--ppc" );
+	O::AliasOption( "-8", "--x86" );
+	
+	O::AliasOption( "-4", "--a4"    );
+	O::AliasOption( "-5", "--a5"    );
+	O::AliasOption( "-F", "--cfm"   );
+	O::AliasOption( "-O", "--macho" );
+	
+	O::AliasOption( "-B", "--blue"   );
+	O::AliasOption( "-C", "--carbon" );
+	
+	O::AliasOption( "-g", "--debug"   );
+	O::AliasOption( "-R", "--release" );
+	O::AliasOption( "-D", "--demo"    );
+	
+	O::GetOptions( argc, argv );
+	
+	const std::vector< const char* >& params = O::FreeArguments();
+	
+	CD::Platform targetPlatform = arch | runtime | macAPI;
 	
 	CD::AddPendingSubproject( UserProjectsPath() );
 	
@@ -404,6 +370,8 @@ int O::Main( int argc, char const* const argv[] )
 	}
 	
 	CD::ApplyPlatformDefaults( targetPlatform );
+	
+	int fail = 0;
 	
 	for ( int i = 0;  i < params.size();  ++i )
 	{
