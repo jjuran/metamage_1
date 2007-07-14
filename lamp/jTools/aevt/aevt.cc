@@ -160,7 +160,7 @@ namespace jTools
 				"Usage:  aevt [-m machine] {-a app | -s sign} class id [params]\n"
 				"Examples: aevt -s hhgg aevt quit\n"
 				"          aevt -m 'Headless Mac' -a Genie |gan Exec \"'----':[“shutdown -h”]\"\n"
-				"          aevt -s R*ch misc slct \"'----':obj{want:type(clin), form:indx, seld:42,\n"
+				"          aevt -s 'R*ch' misc slct \"'----':obj{want:type(clin), form:indx, seld:42,\n"
 				"               from:obj{want:type(cwin), form:indx, seld:1, from:null()}}\"\n";
 			return 0;
 		}
