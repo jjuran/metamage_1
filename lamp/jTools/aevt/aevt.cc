@@ -131,43 +131,26 @@ namespace jTools
 	// shell$ aevt -m Otter -a Genie |gan Exec '----':[“shutdown”,“-h”]
 	// shell$ aevt -s hhgg aevt quit
 	
-	enum
-	{
-		optURL, 
-		optHost, 
-		optMachine, 
-		optApplicationName, 
-		optApplicationSignature
-	};
-	
-	static O::Options DefineOptions()
-	{
-		O::Options options;
-		
-		options.DefineSetString( "-u", optURL );
-		options.DefineSetString( "-h", optHost );
-		options.DefineSetString( "-m", optMachine );
-		options.DefineSetString( "-a", optApplicationName );
-		options.DefineSetString( "-s", optApplicationSignature );
-		
-		options.DefineSetString( "--url", optURL );
-		options.DefineSetString( "--host", optHost );
-		options.DefineSetString( "--machine", optMachine );
-		options.DefineSetString( "--appname", optApplicationName );
-		options.DefineSetString( "--signature", optApplicationSignature );
-		
-		options.DefineSetString( "--app", optApplicationName );
-		options.DefineSetString( "--sig", optApplicationSignature );
-		
-		return options;
-	}
-	
 	static int Main( int argc, const char *const argv[] )
 	{
-		O::Options options = DefineOptions();
-		options.GetOptions( argc, argv );
+		std::string url, host, machine, app, sig;
 		
-		const std::vector< const char* >& params = options.GetFreeParams();
+		O::BindOption( "-u", url     );
+		O::BindOption( "-h", host    );
+		O::BindOption( "-m", machine );
+		O::BindOption( "-a", app     );
+		O::BindOption( "-s", sig     );
+		
+		O::AliasOption( "-u", "--url"       );
+		O::AliasOption( "-h", "--host"      );
+		O::AliasOption( "-m", "--machine"   );
+		O::AliasOption( "-a", "--app"       );
+		O::AliasOption( "-s", "--sig"       );
+		O::AliasOption( "-s", "--signature" );
+		
+		O::GetOptions( argc, argv );
+		
+		const std::vector< const char* >& params = O::FreeArguments();
 		
 		std::string argBuild, argEventClass, argEventID;
 		
@@ -204,12 +187,6 @@ namespace jTools
 			
 			return 1;
 		}
-		
-		std::string url     = options.GetString( optURL );
-		std::string host    = options.GetString( optHost );
-		std::string machine = options.GetString( optMachine );
-		std::string app     = options.GetString( optApplicationName );
-		std::string sig     = options.GetString( optApplicationSignature );
 		
 		N::OSType sigCode = (sig.size() == 4) ? NN::Convert< N::OSType >( sig ) : N::kUnknownType;
 		
