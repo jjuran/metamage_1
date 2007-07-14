@@ -170,6 +170,8 @@ int O::Main( int argc, const char *const argv[] )
 	O::BindOption( "--escape", escapeForMPW );
 	O::BindOption( "--switch", switchLayers );
 	
+	O::GetOptions( argc, argv );
+	
 	const std::vector< const char* >& params = O::FreeArguments();
 	
 	std::string command = MakeCommand( params, escapeForMPW );
