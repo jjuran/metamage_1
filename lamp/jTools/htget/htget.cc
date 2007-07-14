@@ -247,7 +247,7 @@ namespace htget
 	{
 		int open_flags = O_WRONLY;
 		
-	#if TARGET_RT_MAC_CFM
+	#if 0 && TARGET_RT_MAC_CFM
 		
 		N::FSpCreate( Path2FSS( pathname ),
 		              sig.creator,
@@ -409,24 +409,6 @@ static std::string DocName( const std::string& urlPath )
 
 using namespace htget::Globals;
 
-enum
-{
-	optDumpHeaders, 
-	optSendHEADRequest,
-	optSaveToFile
-};
-
-static O::Options DefineOptions()
-{
-	O::Options options;
-	
-	options.DefineSetFlag( "--headers", optDumpHeaders     );
-	options.DefineSetFlag( "--head",    optSendHEADRequest );
-	options.DefineSetFlag( "--save",    optSaveToFile      );
-	
-	return options;
-}
-
 static struct in_addr ResolveHostname( const char* hostname )
 {
 	hostent* hosts = gethostbyname( hostname );
@@ -451,10 +433,15 @@ static void WriteLine( P7::FileDescriptor stream, const std::string& text )
 
 int O::Main( int argc, char const *const argv[] )
 {
-	Options options = DefineOptions();
-	options.GetOptions(argc, argv);
+	bool sendHEADRequest = false;
 	
-	const std::vector< const char* >& params = options.GetFreeParams();
+	O::BindOption( "--headers", gDumpHeaders    );
+	O::BindOption( "--head",    sendHEADRequest );
+	O::BindOption( "--save",    gSaveToFile     );
+	
+	O::GetOptions( argc, argv );
+	
+	const std::vector< const char* >& params = O::FreeArguments();
 	
 	if ( params.empty() )
 	{
@@ -462,29 +449,19 @@ int O::Main( int argc, char const *const argv[] )
 		return 1;
 	}
 	
-	if ( options.GetFlag( optDumpHeaders ) )
-	{
-		gDumpHeaders = true;
-	}
-	
 	std::string method = "GET";
 	
-	if ( options.GetFlag( optSendHEADRequest ) )
+	if ( sendHEADRequest )
 	{
 		gDumpHeaders = true;
 		gExpectNoContent = true;
 		method = "HEAD";
 	}
 	
-	if ( options.GetFlag( optSaveToFile ) )
+	if ( gSaveToFile && gExpectNoContent )
 	{
-		if ( gExpectNoContent )
-		{
-			Io::Err << "htget: Can't save null document to file\n";
-			return 1;
-		}
-		
-		gSaveToFile = true;
+		Io::Err << "htget: Can't save null document to file\n";
+		return 1;
 	}
 	
 	std::string scheme;
