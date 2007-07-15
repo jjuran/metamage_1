@@ -46,6 +46,7 @@ qw
 	PascalPreCarbonUPPGlue.o
 	OTXTILib
 	sfio.lib
+	Abort.cc
 );
 
 my $warning_template = << '[END]';
