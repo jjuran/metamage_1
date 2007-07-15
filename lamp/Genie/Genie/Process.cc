@@ -7,6 +7,7 @@
 
 // Standard C/C++
 //#include <csignal>
+#include <errno.h>
 #include <signal.h>
 
 // POSIX
@@ -372,12 +373,71 @@ namespace Genie
 		return context;
 	}
 	
+	
+	static boost::shared_ptr< Session > NewSession( pid_t sid )
+	{
+		return boost::shared_ptr< Session >( new Session( sid ) );
+	}
+	
+	static boost::shared_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, const boost::shared_ptr< Session >& session )
+	{
+		return boost::shared_ptr< ProcessGroup >( new ProcessGroup( pgid, session ) );
+	}
+	
+	static boost::shared_ptr< ProcessGroup > NewProcessGroup( pid_t pgid )
+	{
+		return NewProcessGroup( pgid, NewSession( pgid ) );
+	}
+	
+	void SetNewSession( Process& process )
+	{
+		pid_t pid = process.GetPID();
+		
+		process.SetProcessGroup( NewProcessGroup( pid ) );
+	}
+	
+	class NoSuchProcessGroup {};
+	
+	static boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
+	{
+		for ( GenieProcessTable::iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
+		{
+			Process& proc = *it->second;
+			
+			if ( proc.GetPGID() == pgid )
+			{
+				return proc.GetProcessGroup();
+			}
+		}
+		
+		throw NoSuchProcessGroup();
+	}
+	
+	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session )
+	{
+		try
+		{
+			boost::shared_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
+			
+			if ( pgrp->GetSession() != session )
+			{
+				P7::ThrowErrno( EPERM );
+			}
+			
+			return pgrp;
+		}
+		catch ( const NoSuchProcessGroup& )
+		{
+			return NewProcessGroup( pgid, session );
+		}
+	}
+	
+	
 	Process::Process( RootProcess ) 
 	:
 		itsPPID               ( 0 ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
-		itsPGID               ( 0 ),
-		itsSID                ( 0 ),
+		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
@@ -401,8 +461,7 @@ namespace Genie
 	:
 		itsPPID               ( ppid ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
-		itsPGID               ( GetProcess( ppid ).GetPGID() ),
-		itsSID                ( GetProcess( ppid ).GetSID() ),
+		itsProcessGroup       ( GetProcess( ppid ).GetProcessGroup() ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),

@@ -34,6 +34,7 @@
 #include "Genie/BinaryImage.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileSystem/FSTree.hh"
+#include "Genie/ProcessGroup.hh"
 
 
 namespace Genie
@@ -158,8 +159,7 @@ namespace Genie
 		private:
 			pid_t itsPPID;
 			pid_t itsPID;
-			pid_t itsPGID;
-			pid_t itsSID;
+			boost::shared_ptr< ProcessGroup > itsProcessGroup;
 			
 			pid_t itsTracingProcess;
 			
@@ -217,11 +217,12 @@ namespace Genie
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
-			pid_t GetPGID() const  { return itsPGID; }
-			pid_t GetSID()  const  { return itsSID;  }
+			pid_t GetPGID() const  { return itsProcessGroup->ID();     }
+			pid_t GetSID()  const  { return itsProcessGroup->GetSID(); }
 			
-			void SetPGID( pid_t pgid )  { itsPGID = pgid; }
-			void SetSID ( pid_t sid  )  { itsSID  = sid;  }
+			const boost::shared_ptr< ProcessGroup > GetProcessGroup() const  { return itsProcessGroup; }
+			
+			void SetProcessGroup( const boost::shared_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
 			
 			pid_t GetTracingProcess() const  { return itsTracingProcess; }
 			bool IsBeingTraced() const  { return itsTracingProcess != 0; }
@@ -298,6 +299,10 @@ namespace Genie
 			
 			bool HandlePendingSignals();
 	};
+	
+	void SetNewSession( Process& process );
+	
+	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session );
 	
 	class GenieProcessTable
 	{

@@ -536,11 +536,16 @@ namespace Genie
 			Process& target( pid != 0 ? GetProcess( pid )
 			                          : CurrentProcess() );
 			
-			pid = target.GetPID();
+			if ( pgid == 0 )
+			{
+				pgid = target.GetPID();
+			}
 			
-			target.SetPGID( pgid != 0 ? pgid : pid );
+			const boost::shared_ptr< Session >& session = target.GetProcessGroup()->GetSession();
 			
-			return pid;
+			target.SetProcessGroup( GetProcessGroupInSession( pgid, session ) );
+			
+			return 0;
 		}
 		catch ( ... )
 		{
@@ -558,8 +563,7 @@ namespace Genie
 		
 		int pid = current.GetPID();
 		
-		current.SetPGID( pid );
-		current.SetSID ( pid );
+		SetNewSession( current );
 		
 		return pid;
 	}
