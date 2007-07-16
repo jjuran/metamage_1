@@ -582,15 +582,21 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( setpgid );
 	
+	static boost::shared_ptr< Session > NewSession( pid_t sid )
+	{
+		return boost::shared_ptr< Session >( new Session( sid ) );
+	}
+	
 	static pid_t setsid()
 	{
 		Process& current( CurrentProcess() );
 		
-		current.SetControllingTerminal( NULL );
-		
 		int pid = current.GetPID();
 		
-		SetNewSession( current );
+		// throws EPERM if pgid already exists
+		current.SetProcessGroup( GetProcessGroupInSession( pid, NewSession( pid ) ) );
+		
+		current.SetControllingTerminal( NULL );
 		
 		return pid;
 	}
