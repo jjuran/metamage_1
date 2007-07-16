@@ -533,6 +533,11 @@ namespace Genie
 	{
 		try
 		{
+			if ( pgid < 0 )
+			{
+				P7::ThrowErrno( EINVAL );
+			}
+			
 			Process& current = CurrentProcess();
 			
 			Process& target( pid != 0 ? GetProcess( pid )
