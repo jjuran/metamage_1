@@ -389,13 +389,6 @@ namespace Genie
 		return NewProcessGroup( pgid, NewSession( pgid ) );
 	}
 	
-	void SetNewSession( Process& process )
-	{
-		pid_t pid = process.GetPID();
-		
-		process.SetProcessGroup( NewProcessGroup( pid ) );
-	}
-	
 	class NoSuchProcessGroup {};
 	
 	static boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )

@@ -300,8 +300,6 @@ namespace Genie
 			bool HandlePendingSignals();
 	};
 	
-	void SetNewSession( Process& process );
-	
 	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session );
 	
 	class GenieProcessTable
