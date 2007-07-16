@@ -533,8 +533,30 @@ namespace Genie
 	{
 		try
 		{
+			Process& current = CurrentProcess();
+			
 			Process& target( pid != 0 ? GetProcess( pid )
-			                          : CurrentProcess() );
+			                          : current );
+			
+			if ( current.GetPID() != target.GetPID()  &&  current.GetPID() != target.GetPPID() )
+			{
+				P7::ThrowErrno( ESRCH );  // target is not self or a child
+			}
+			
+			if ( target.GetLifeStage() != kProcessStarting )
+			{
+				P7::ThrowErrno( EACCES );  // child already execve'd
+			}
+			
+			if ( current.GetSID() != target.GetSID() )
+			{
+				P7::ThrowErrno( EPERM );  // child in different session
+			}
+			
+			if ( current.GetSID() == current.GetPID() )
+			{
+				P7::ThrowErrno( EPERM );  // target is a session leader
+			}
 			
 			if ( pgid == 0 )
 			{
