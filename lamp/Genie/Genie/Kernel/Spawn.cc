@@ -37,5 +37,16 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( SpawnVFork );
 	
+	static int fork_and_exit( int exit_status )
+	{
+		SpawnVFork();
+		
+		CurrentProcess().UsurpParent( exit_status );
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( fork_and_exit );
+	
 }
 

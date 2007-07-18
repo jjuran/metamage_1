@@ -992,6 +992,28 @@ namespace Genie
 		RegisterProcessContext( this );
 	}
 	
+	void Process::UsurpParent( int exit_status )
+	{
+		Process& parent = GetProcess( GetPPID() );
+		
+		ASSERT( itsLifeStage == kProcessStarting );
+		
+		ASSERT( parent.itsInterdependence == kProcessForking );
+		ASSERT(        itsInterdependence == kProcessForked  );
+		
+		ASSERT( parent.itsSchedule == kProcessFrozen );
+		
+		itsLifeStage       = kProcessLive;
+		itsInterdependence = kProcessIndependent;
+		itsSchedule        = kProcessRunning;
+		
+		itsPPID = 1;  // temporary hack to avoid improper SIGHUP
+		
+		itsThread = parent.itsThread;
+		
+		parent.Terminate( exit_status << 8 );
+	}
+	
 	void Process::Terminate()
 	{
 		itsLifeStage = kProcessTerminated;

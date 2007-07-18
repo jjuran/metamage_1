@@ -276,6 +276,8 @@ namespace Genie
 			
 			void ResumeAfterFork();
 			
+			void UsurpParent( int exit_status );
+			
 			void Terminate();
 			void Terminate( int result );
 		
