@@ -134,13 +134,13 @@ namespace Orion
 	}
 	
 	
-	static void SetOption( const std::string& name, char const* const*& argv )
+	static void SetOption( const std::string& name, char const* const*& it )
 	{
 		const OptionBinding& binding = FindOption( name );
 		
 		if ( binding.ParameterExpected() )
 		{
-			binding.Set( *++argv );
+			binding.Set( *++it );
 		}
 		else
 		{
@@ -187,7 +187,7 @@ namespace Orion
 						if ( eq == token + len )
 						{
 							// No inline parameter to option
-							SetOption( token, argv );
+							SetOption( token, it );
 						}
 						else
 						{
@@ -216,7 +216,7 @@ namespace Orion
 						
 						opt += *token;
 						
-						SetOption( opt, argv );
+						SetOption( opt, it );
 					}
 					
 					continue;
