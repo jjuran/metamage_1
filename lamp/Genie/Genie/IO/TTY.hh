@@ -11,6 +11,7 @@
 
 // Genie
 #include "Genie/IO/Device.hh"
+#include "Genie/ProcessGroup.hh"
 
 
 namespace Genie
@@ -19,12 +20,11 @@ namespace Genie
 	class TTYHandle : public DeviceHandle
 	{
 		private:
-			const std::string  ttyName;
-			int                itsProcessGroupID;
+			const std::string                ttyName;
+			boost::weak_ptr< ProcessGroup >  itsForegroundProcessGroup;
 		
 		public:
-			TTYHandle( const std::string& ttyName ) : ttyName( ttyName ),
-			                                          itsProcessGroupID()
+			TTYHandle( const std::string& ttyName ) : ttyName( ttyName )
 			{
 			}
 			
@@ -34,9 +34,9 @@ namespace Genie
 			
 			FSTreePtr GetFile() const;
 			
-			int GetProcessGroup() const  { return itsProcessGroupID; }
+			const boost::weak_ptr< ProcessGroup >& GetProcessGroup() const  { return itsForegroundProcessGroup; }
 			
-			void SetProcessGroup( int pgrp )  { itsProcessGroupID = pgrp; }
+			void SetProcessGroup( const boost::weak_ptr< ProcessGroup >& pgrp )  { itsForegroundProcessGroup = pgrp; }
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			

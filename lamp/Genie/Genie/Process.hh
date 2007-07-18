@@ -172,8 +172,6 @@ namespace Genie
 			
 			FSTreePtr itsCWD;
 			
-			TTYHandle* itsControllingTerminal;
-			
 			FileDescriptorMap itsFileDescriptors;
 			
 			ProcessLifeStage        itsLifeStage;
@@ -220,7 +218,7 @@ namespace Genie
 			pid_t GetPGID() const  { return itsProcessGroup->ID();     }
 			pid_t GetSID()  const  { return itsProcessGroup->GetSID(); }
 			
-			const boost::shared_ptr< ProcessGroup > GetProcessGroup() const  { return itsProcessGroup; }
+			const boost::shared_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
 			void SetProcessGroup( const boost::shared_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
 			
@@ -242,9 +240,7 @@ namespace Genie
 			
 			void Result( int result )  { itsResult = result; }
 			
-			TTYHandle* ControllingTerminal() const  { return itsControllingTerminal; }
-			
-			void SetControllingTerminal( TTYHandle* terminal )  { itsControllingTerminal = terminal; }
+			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
 			
 			FSTreePtr GetCWD() const  { return itsCWD; }
 			
@@ -339,7 +335,7 @@ namespace Genie
 	
 	extern GenieProcessTable gProcessTable;
 	
-	void SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal );
+	void SendSignalToProcessGroup( int sig, const ProcessGroup& group );
 	
 	Process& GetProcess( pid_t pid );
 	

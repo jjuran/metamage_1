@@ -286,7 +286,7 @@ namespace Genie
 	
 	bool HangupWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
-		SendSignalToProcessesControlledByTerminal( SIGHUP, fTerminal );
+		SendSignalToProcessGroup( SIGHUP, *fTerminal->GetProcessGroup().lock().get() );
 		
 		// Assuming the window does get shut, it hasn't happened yet
 		return false;
@@ -419,8 +419,6 @@ namespace Genie
 			files[ 0 ] = terminal;
 			files[ 1 ] = terminal;
 			files[ 2 ] = terminal;
-			
-			external->SetControllingTerminal( tty );
 		}
 		
 		std::string programName = NN::Convert< std::string >( program.name );

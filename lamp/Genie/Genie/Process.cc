@@ -64,13 +64,13 @@ namespace Genie
 	GenieProcessTable gProcessTable;
 	
 	
-	void SendSignalToProcessesControlledByTerminal( int sig, TTYHandle* terminal )
+	void SendSignalToProcessGroup( int sig, const ProcessGroup& group )
 	{
 		for ( GenieProcessTable::iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
 		{
 			Process& proc = *it->second;
 			
-			if ( proc.ControllingTerminal() == terminal )
+			if ( proc.GetProcessGroup().get() == &group )
 			{
 				proc.Raise( sig );
 			}
@@ -437,7 +437,6 @@ namespace Genie
 		itsPreviousSignals    ( 0 ),
 		itsName               ( "init" ),
 		itsCWD                ( FSRoot() ),
-		itsControllingTerminal( NULL ),
 		itsFileDescriptors    ( FileDescriptorMap() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -461,7 +460,6 @@ namespace Genie
 		itsPreviousSignals    ( 0 ),
 		itsName               ( GetProcess( ppid ).ProgramName() ),
 		itsCWD                ( GetProcess( ppid ).GetCWD() ),
-		itsControllingTerminal( GetProcess( ppid ).itsControllingTerminal ),
 		itsFileDescriptors    ( GetProcess( ppid ).FileDescriptors() ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessForked ),

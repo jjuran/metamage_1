@@ -13,10 +13,13 @@
 namespace Genie
 {
 	
+	class IOHandle;
+	
 	class Session
 	{
 		private:
-			int itsID;
+			int                             itsID;
+			boost::shared_ptr< IOHandle >  itsControllingTerminal;
 		
 		public:
 			Session()  {}
@@ -24,6 +27,13 @@ namespace Genie
 			Session( int id ) : itsID( id )  {}
 			
 			int ID() const  { return itsID; }
+			
+			const boost::shared_ptr< IOHandle >& GetControllingTerminal() const  { return itsControllingTerminal; }
+			
+			void SetControllingTerminal( const boost::shared_ptr< IOHandle >& terminal )
+			{
+				itsControllingTerminal = terminal;
+			}
 	};
 	
 	class ProcessGroup

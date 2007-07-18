@@ -150,14 +150,14 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_tty::Open( OpenFlags /*flags*/ ) const
 	{
-		TTYHandle* tty = CurrentProcess().ControllingTerminal();
+		const boost::shared_ptr< IOHandle >& tty = CurrentProcess().ControllingTerminal();
 		
-		if ( tty == NULL )
+		if ( tty.get() == NULL )
 		{
 			P7::ThrowErrno( ENOENT );
 		}
 		
-		return tty->shared_from_this();
+		return tty;
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_modem::Open( OpenFlags /*flags*/ ) const
