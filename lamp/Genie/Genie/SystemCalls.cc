@@ -596,8 +596,6 @@ namespace Genie
 		// throws EPERM if pgid already exists
 		current.SetProcessGroup( GetProcessGroupInSession( pid, NewSession( pid ) ) );
 		
-		current.SetControllingTerminal( NULL );
-		
 		return pid;
 	}
 	
