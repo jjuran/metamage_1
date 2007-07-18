@@ -165,9 +165,10 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	pid_t (*waitpid_import_)( pid_t pid, int* stat_loc, int options );
 	
 	// unistd
-	int  (*execve_import_    )( const char* path, const char* const argv[], const char* const* envp );
-	void (*_exit_import_     )( int status );
-	int  (*SpawnVFork_import_)();
+	int  (*execve_import_       )( const char* path, const char* const argv[], const char* const* envp );
+	void (*_exit_import_        )( int status );
+	int  (*fork_and_exit_import_)( int status );
+	int  (*SpawnVFork_import_   )();
 	
 	// unistd
 	unsigned int (*alarm_import_    )( unsigned int seconds );
@@ -608,6 +609,11 @@ namespace
 	void _exit_Kernel( int status )
 	{
 		return INVOKE_CRITICAL( _exit, ( status ) );  // Terminates process but returns if forked
+	}
+	
+	int fork_and_exit( int status )
+	{
+		return INVOKE( fork_and_exit, ( status ) );
 	}
 	
 	int SpawnVFork()
