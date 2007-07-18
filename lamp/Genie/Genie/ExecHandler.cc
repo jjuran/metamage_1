@@ -133,9 +133,9 @@ namespace Genie
 		
 		FSSpec program = ResolvePathname( argv[0], FSTreePtr() )->GetFSSpec();
 		
-		const int ppid = 1;
+		Process& parent = GetProcess( 1 );
 		
-		Process* process = new Process( ppid );
+		Process* process = new Process( parent );
 		
 		try
 		{

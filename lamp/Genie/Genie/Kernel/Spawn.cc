@@ -9,6 +9,7 @@
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -20,9 +21,16 @@ namespace Genie
 	
 	static int SpawnVFork()
 	{
-		Process& parent = CurrentProcess();
-		
-		Process* child = new Process( parent.GetPID() );
+		try
+		{
+			Process& parent = CurrentProcess();
+			
+			Process* child = new Process( parent );
+		}
+		catch ( ... )
+		{
+			return GetErrnoFromExceptionInSystemCall();
+		}
 		
 		return 0;
 	}

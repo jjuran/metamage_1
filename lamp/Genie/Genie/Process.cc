@@ -449,26 +449,26 @@ namespace Genie
 	{
 	}
 	
-	Process::Process( pid_t ppid ) 
+	Process::Process( Process& parent ) 
 	:
-		itsPPID               ( ppid ),
+		itsPPID               ( parent.GetPID() ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
-		itsProcessGroup       ( GetProcess( ppid ).GetProcessGroup() ),
+		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
-		itsName               ( GetProcess( ppid ).ProgramName() ),
-		itsCWD                ( GetProcess( ppid ).GetCWD() ),
-		itsFileDescriptors    ( GetProcess( ppid ).FileDescriptors() ),
+		itsName               ( parent.ProgramName() ),
+		itsCWD                ( parent.GetCWD() ),
+		itsFileDescriptors    ( parent.FileDescriptors() ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessForked ),
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
-		itsEnvironStorage     ( new Sh::VarArray( GetProcess( ppid ).itsEnvironStorage->GetPointer() ) ),
+		itsEnvironStorage     ( new Sh::VarArray( parent.itsEnvironStorage->GetPointer() ) ),
 		itsCleanupHandler     (),
-		itsErrnoData          ( TARGET_RT_MAC_CFM ? GetProcess( ppid ).itsErrnoData : NULL ),
-		itsEnvironData        ( GetProcess( ppid ).itsEnvironData )
+		itsErrnoData          ( TARGET_RT_MAC_CFM ? parent.itsErrnoData : NULL ),
+		itsEnvironData        ( parent.itsEnvironData )
 	{
 		if ( itsEnvironData == NULL )
 		{
@@ -485,8 +485,6 @@ namespace Genie
 		}
 		
 		RegisterProcessContext( this );
-		
-		Process& parent( GetProcess( ppid ) );
 		
 		parent.itsInterdependence = kProcessForking;
 		parent.itsSchedule        = kProcessFrozen;

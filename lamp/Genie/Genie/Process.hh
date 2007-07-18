@@ -207,7 +207,7 @@ namespace Genie
 			struct RootProcess {};
 			
 			Process( RootProcess );
-			Process( pid_t ppid );
+			Process( Process& parent );
 			
 			~Process();
 			

@@ -403,9 +403,9 @@ namespace Genie
 		// Create new console/terminal device
 		// Spawn new process with file descriptors set
 		
-		const int ppid = 1;
+		Process& parent = GetProcess( 1 );
 		
-		Process* external = new Process( ppid );
+		Process* external = new Process( parent );
 		
 		FileDescriptorMap& files = external->FileDescriptors();
 		
