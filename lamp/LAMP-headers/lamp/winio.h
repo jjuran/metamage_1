@@ -10,10 +10,10 @@
 
 enum
 {
-	kLampSuppressCloseOnExitNever      = 0,
-	kLampSuppressCloseOnExitForFailure = 1,
-	kLampSuppressCloseOnExitForSignal  = 2,
-	kLampSuppressCloseOnExitAlways     = 0xFFFFFFFFU
+	kLampSalvageWindowOnExitNever      = 0,
+	kLampSalvageWindowOnExitForFailure = 1,
+	kLampSalvageWindowOnExitForSignal  = 2,
+	kLampSalvageWindowOnExitAlways     = 0xFFFFFFFFU
 };
 
 #define WIOCGEXIT  _IOR( 'w', 3, int )  // get close-on-exit behavior
