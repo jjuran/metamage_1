@@ -38,6 +38,8 @@ namespace Genie
 			
 			int SysWrite( const char* data, std::size_t byteCount );
 			
+			void IOCtl( unsigned long request, int* argp );
+			
 	};
 	
 }

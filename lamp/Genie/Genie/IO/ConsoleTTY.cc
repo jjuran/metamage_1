@@ -5,6 +5,9 @@
 
 #include "Genie/IO/ConsoleTTY.hh"
 
+// Lamp
+#include <lamp/winio.h>
+
 // Nucleus
 #include "Nucleus/Convert.h"
 
@@ -73,6 +76,54 @@ namespace Genie
 		CheckConsole();
 		
 		return console->Write( data, byteCount );
+	}
+	
+	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
+	{
+		Process& current = CurrentProcess();
+		
+		switch ( request )
+		{
+			case WIOCGTITLE:
+				ASSERT( argp != NULL );
+				
+				ASSERT( console != NULL );
+				
+				ASSERT( console->Window() != NULL );
+				
+				{
+					N::Str255 title = N::GetWTitle( console->Window()->Get() );
+					
+					std::copy( title + 1, title + 1 + title[0], (Byte*) argp );
+					
+					argp[ title[0] ] = '\0';
+				}
+				
+				break;
+			
+			case WIOCSTITLE:
+				ASSERT( argp != NULL );
+				
+				ASSERT( console != NULL );
+				
+				ASSERT( console->Window() != NULL );
+				
+				N::SetWTitle( console->Window()->Get(), N::Str255( (const char*) argp ) );
+				
+				break;
+			
+			case WIOCGEXIT:
+				*argp = kLampSuppressCloseOnExitNever;
+				break;
+			
+			case WIOCSEXIT:
+				
+				//break;
+			
+			default:
+				FileHandle::IOCtl( request, argp );
+				break;
+		};
 	}
 	
 }
