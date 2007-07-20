@@ -14,7 +14,9 @@
 // POSIX
 #include "dirent.h"
 #include "fcntl.h"
+#include "sys/ioctl.h"
 #include "sys/stat.h"
+#include "sys/ttycom.h"
 #include "sys/wait.h"
 #include "unistd.h"
 
@@ -225,6 +227,8 @@
 	uid_t getgid()   { return 0; }
 	uid_t getegid()  { return 0; }
 	
+	pid_t getpgrp()  { return getpgid( 0 ); }
+	
 	int isatty( int fd )
 	{
 		// This is a hack
@@ -236,6 +240,20 @@
 	int setpgrp()
 	{
 		return setpgid( 0, 0 );
+	}
+	
+	pid_t tcgetpgrp( int fd )
+	{
+		int pgrp = -1;
+		
+		int io = ioctl( fd, TIOCGPGRP, &pgrp );
+		
+		return pgrp;
+	}
+	
+	int tcsetpgrp( int fd, pid_t pgrp )
+	{
+		return ioctl( fd, TIOCSPGRP, (int*) &pgrp );
 	}
 	
 	#pragma mark -
