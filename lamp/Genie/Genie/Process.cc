@@ -37,6 +37,7 @@
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/IO/TTY.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Yield.hh"
 
@@ -1028,6 +1029,25 @@ namespace Genie
 		
 		pid_t ppid = GetPPID();
 		pid_t pid  = GetPID();
+		pid_t sid  = GetSID();
+		
+		if ( pid == sid )
+		{
+			try
+			{
+				const boost::shared_ptr< IOHandle >& ctty = ControllingTerminal();
+				
+				if ( ctty.get() != NULL )
+				{
+					TTYHandle& tty = IOHandle_Cast< TTYHandle >( *ctty );
+					
+					tty.SaveLeaderWaitStatus( itsResult );
+				}
+			}
+			catch ( ... )
+			{
+			}
+		}
 		
 		if ( ppid > 1 )
 		{
