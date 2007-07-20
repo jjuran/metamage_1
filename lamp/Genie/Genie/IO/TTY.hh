@@ -41,6 +41,8 @@ namespace Genie
 			virtual void IOCtl( unsigned long request, int* argp );
 			
 			const std::string& TTYName() const  { return ttyName; }
+			
+			virtual void SaveLeaderWaitStatus( int status )  {}
 	};
 	
 }
