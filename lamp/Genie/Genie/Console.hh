@@ -80,13 +80,23 @@ namespace Genie
 	{
 		private:
 			ConsoleTTYHandle* fTerminal;
+			bool itHasBeenRequested;
+			bool itHasDisassociated;
 		
 		public:
-			HangupWindowClosure( ConsoleTTYHandle* terminal ) : fTerminal( terminal )  {}
+			HangupWindowClosure( ConsoleTTYHandle* terminal ) : fTerminal( terminal ),
+			                                                    itHasBeenRequested(),
+			                                                    itHasDisassociated()
+			{
+			}
 			
 			const std::string& TTYName() const;
 			
 			bool RequestWindowClosure( N::WindowRef );
+			
+			bool HasBeenRequested() const  { return itHasBeenRequested; }
+			
+			ConsoleTTYHandle* DisassociateFromTerminal()  { itHasDisassociated = true;  return fTerminal; }
 	};
 	
 	class TerminalWindowOwner : private HangupWindowClosure
@@ -108,6 +118,10 @@ namespace Genie
 			{
 				fWindow.reset( new GenieWindow( *this, title ) );
 			}
+			
+			bool ClosureHasBeenRequested() const  { return HangupWindowClosure::HasBeenRequested(); }
+			
+			ConsoleTTYHandle* Salvage()  { return HangupWindowClosure::DisassociateFromTerminal(); }
 	};
 	
 	
@@ -118,7 +132,8 @@ namespace Genie
 			TerminalWindowOwner fWindow;
 			Io::StringPipe* myInput;
 			std::string currentInput;
-			//bool stayOpen;
+			int itsWindowSalvagePolicy;
+			int itsLeaderWaitStatus;
 			bool blockingMode;
 		
 		public:
@@ -137,6 +152,16 @@ namespace Genie
 			ConsolePane& Pane  ()  { return fWindow.Get()->SubView().ScrolledView(); }
 			
 			Io::StringPipe& Input()  { return Pane().Input(); }
+			
+			int GetWindowSalvagePolicy() const  { return itsWindowSalvagePolicy; }
+			
+			void SetWindowSalvagePolicy( int policy )  { itsWindowSalvagePolicy = policy; }
+			
+			void SetLeaderWaitStatus( int status )  { itsLeaderWaitStatus = status; }
+			
+			bool ShouldSalvageWindow() const;
+			
+			ConsoleTTYHandle* Salvage()  { return fWindow.Salvage(); }
 	};
 	
 	class ConsolesOwner

@@ -40,6 +40,7 @@ namespace Genie
 			
 			void IOCtl( unsigned long request, int* argp );
 			
+			void SaveLeaderWaitStatus( int status );
 	};
 	
 }

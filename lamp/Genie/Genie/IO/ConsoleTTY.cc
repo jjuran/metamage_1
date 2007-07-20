@@ -113,7 +113,7 @@ namespace Genie
 				break;
 			
 			case WIOCGEXIT:
-				*argp = kLampSuppressCloseOnExitNever;
+				*argp = kLampSalvageWindowOnExitNever;
 				break;
 			
 			case WIOCSEXIT:
@@ -121,9 +121,16 @@ namespace Genie
 				//break;
 			
 			default:
-				FileHandle::IOCtl( request, argp );
+				TTYHandle::IOCtl( request, argp );
 				break;
 		};
+	}
+	
+	void ConsoleTTYHandle::SaveLeaderWaitStatus( int status )
+	{
+		ASSERT( console != NULL );
+		
+		console->SetLeaderWaitStatus( status );
 	}
 	
 }

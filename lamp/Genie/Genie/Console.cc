@@ -12,6 +12,9 @@
 #include <string>
 #include <vector>
 
+// Lamp
+#include <lamp/winio.h>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -281,12 +284,25 @@ namespace Genie
 	
 	const std::string& HangupWindowClosure::TTYName() const
 	{
+		ASSERT( fTerminal != NULL );
+		
 		return fTerminal->TTYName();
 	}
 	
+	static void CloseSalvagedConsole( ConsoleTTYHandle* terminal );
+	
 	bool HangupWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
-		SendSignalToProcessGroup( SIGHUP, *fTerminal->GetProcessGroup().lock().get() );
+		itHasBeenRequested = true;
+		
+		if ( !itHasDisassociated )
+		{
+			SendSignalToProcessGroup( SIGHUP, *fTerminal->GetProcessGroup().lock().get() );
+		}
+		else
+		{
+			CloseSalvagedConsole( fTerminal );
+		}
 		
 		// Assuming the window does get shut, it hasn't happened yet
 		return false;
@@ -297,7 +313,8 @@ namespace Genie
 		fProgramName( name ),
 		fWindow( terminal ),
 		myInput( NULL ),
-		//stayOpen( true ),
+		itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
+		itsLeaderWaitStatus( 0 ),
 		blockingMode( false )
 	{
 	}
@@ -395,6 +412,11 @@ namespace Genie
 		return result;
 	}
 	
+	bool Console::ShouldSalvageWindow() const
+	{
+		return !fWindow.ClosureHasBeenRequested()  &&  itsLeaderWaitStatus != 0;  // FIXME
+	}
+	
 	
 	void SpawnNewConsole( const FSSpec& program )
 	{
@@ -447,8 +469,19 @@ namespace Genie
 		return console;
 	}
 	
+	std::map< ConsoleTTYHandle*, boost::shared_ptr< Console > > gSalvagedConsoles;
+	
 	void ConsolesOwner::CloseConsole( Console* console )
 	{
+		ASSERT( console != NULL );
+		
+		if ( console->ShouldSalvageWindow() )
+		{
+			boost::shared_ptr< Console > salvaged = map[ console ];
+			
+			gSalvagedConsoles[ console->Salvage() ] = salvaged;
+		}
+		
 		map.erase( console );
 	}
 	
@@ -467,6 +500,11 @@ namespace Genie
 	void CloseConsole( Console* console )
 	{
 		gConsolesOwner.CloseConsole( console );
+	}
+	
+	void CloseSalvagedConsole( ConsoleTTYHandle* terminal )
+	{
+		gSalvagedConsoles.erase( terminal );
 	}
 	
 }
