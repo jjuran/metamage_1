@@ -78,6 +78,7 @@ extern "C" {
 	void _exit_Kernel( int status );
 	
 	int fork();
+	int fork_and_exit( int status );
 	
 	int ftruncate(int fd, off_t length);
 	int truncate(const char *path, off_t length);
