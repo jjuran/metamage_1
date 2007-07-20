@@ -473,7 +473,10 @@ namespace Genie
 	
 	void ConsolesOwner::CloseConsole( Console* console )
 	{
-		ASSERT( console != NULL );
+		if ( console == NULL )
+		{
+			return;
+		}
 		
 		if ( console->ShouldSalvageWindow() )
 		{
