@@ -182,6 +182,10 @@ namespace Genie
 	
 	const ConsolesOwner::Map& GetConsoleMap();
 	
+	class IOHandle;
+	
+	boost::shared_ptr< IOHandle > NewConsoleDevice();
+	
 	void SpawnNewConsole( const FSSpec& program );
 	void SpawnNewConsole();
 	

@@ -417,11 +417,15 @@ namespace Genie
 		return !fWindow.ClosureHasBeenRequested()  &&  itsLeaderWaitStatus != 0;  // FIXME
 	}
 	
-	
-	void SpawnNewConsole( const FSSpec& program )
+	boost::shared_ptr< IOHandle > NewConsoleDevice()
 	{
 		static std::size_t gLastID = 0;
 		
+		return boost::shared_ptr< IOHandle >( new ConsoleTTYHandle( ++gLastID ) );
+	}
+	
+	void SpawnNewConsole( const FSSpec& program )
+	{
 		// Create new console/terminal device
 		// Spawn new process with file descriptors set
 		
@@ -434,9 +438,7 @@ namespace Genie
 		// Temporary IORef in nested block goes out of scope prior to Exec().
 		// This is necessary because an unforked exec() will lose temporaries.
 		{
-			ConsoleTTYHandle* tty = new ConsoleTTYHandle( ++gLastID );
-			
-			boost::shared_ptr< IOHandle > terminal( tty );
+			boost::shared_ptr< IOHandle > terminal = NewConsoleDevice();
 			
 			files[ 0 ] = terminal;
 			files[ 1 ] = terminal;
