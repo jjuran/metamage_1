@@ -53,9 +53,8 @@ namespace Genie
 				
 				CheckControllingTerminal( current, *this );
 				
-				ASSERT( !GetProcessGroup().expired() );
-				
-				*argp = GetProcessGroup().lock()->ID();
+				*argp = !GetProcessGroup().expired() ? GetProcessGroup().lock()->ID()
+				                                     : 0x7fffffff;
 				
 				break;
 			
@@ -65,7 +64,8 @@ namespace Genie
 				CheckControllingTerminal( current, *this );
 				
 				{
-					boost::shared_ptr< Session > terminal_session = GetProcessGroup().lock()->GetSession();
+					boost::shared_ptr< Session > terminal_session = !GetProcessGroup().expired() ? GetProcessGroup().lock()->GetSession()
+					                                                                             : process_session;
 					
 					// Since this is the process' controlling terminal, they should share a session
 					ASSERT( terminal_session.get() == process_session.get() );
