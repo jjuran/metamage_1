@@ -229,6 +229,8 @@ namespace Orion
 		
 		gOptionMap.clear();
 		gBindingMap.clear();
+		
+		gFreeArguments.push_back( NULL );
 	}
 	
 	const std::vector< const char* >& FreeArguments()
