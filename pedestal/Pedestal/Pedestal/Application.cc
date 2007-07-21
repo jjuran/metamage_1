@@ -293,7 +293,11 @@ namespace Pedestal
 			return;
 		}
 		
-		ASSERT( found.window != NULL );
+		if ( found.window == NULL )
+		{
+			// Sometimes happens, though I'm not sure under what circumstances.
+			return;
+		}
 		
 	#if CALL_NOT_IN_CARBON
 		
