@@ -247,9 +247,14 @@ namespace Orion
 		gFreeArguments.push_back( NULL );
 	}
 	
-	const std::vector< const char* >& FreeArguments()
+	char const* const* FreeArguments()
 	{
-		return gFreeArguments;
+		return &gFreeArguments[0];
+	}
+	
+	std::size_t FreeArgumentCount()
+	{
+		return gFreeArguments.size() - 1;  // ignore trailing NULL
 	}
 	
 }

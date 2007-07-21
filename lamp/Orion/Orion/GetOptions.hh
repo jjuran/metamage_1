@@ -106,7 +106,9 @@ namespace Orion
 	
 	void GetOptions( int argc, char const *const argv[] );
 	
-	const std::vector< const char* >& FreeArguments();
+	char const* const* FreeArguments();
+	
+	std::size_t FreeArgumentCount();
 	
 }
 
