@@ -441,6 +441,7 @@ namespace ShellShock
 			}
 		}
 		
+		closedir( dir );
 	}
 	
 	static void ExpandPathnames( const std::string& from_dir, const char* path, std::vector< std::string >& result )
