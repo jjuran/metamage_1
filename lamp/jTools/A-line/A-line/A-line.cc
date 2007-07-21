@@ -358,7 +358,7 @@ int O::Main( int argc, char const* const argv[] )
 	
 	O::GetOptions( argc, argv );
 	
-	const std::vector< const char* >& params = O::FreeArguments();
+	char const *const *freeArgs = O::FreeArguments();
 	
 	CD::Platform targetPlatform = arch | runtime | macAPI;
 	
@@ -373,9 +373,9 @@ int O::Main( int argc, char const* const argv[] )
 	
 	int fail = 0;
 	
-	for ( int i = 0;  i < params.size();  ++i )
+	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
 	{
-		const std::string& proj = params[ i ];
+		const std::string& proj = freeArgs[ i ];
 		
 		gOptions.platform = targetPlatform;
 		

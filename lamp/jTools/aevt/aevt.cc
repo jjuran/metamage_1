@@ -150,11 +150,11 @@ namespace jTools
 		
 		O::GetOptions( argc, argv );
 		
-		const std::vector< const char* >& params = O::FreeArguments();
+		char const *const *freeArgs = O::FreeArguments();
 		
 		std::string argBuild, argEventClass, argEventID;
 		
-		if ( params.size() == 0 )
+		if ( O::FreeArgumentCount() == 0 )
 		{
 			Io::Err << 
 				"Usage:  aevt [-m machine] {-a app | -s sign} class id [params]\n"
@@ -164,22 +164,22 @@ namespace jTools
 				"               from:obj{want:type(cwin), form:indx, seld:1, from:null()}}\"\n";
 			return 0;
 		}
-		else if ( params.size() < 2 )
+		else if ( O::FreeArgumentCount() < 2 )
 		{
 			Io::Err << "aevt: missing arguments" "\n";
 			return 1;
 		}
-		else if ( params.size() < 3 )
+		else if ( O::FreeArgumentCount() < 3 )
 		{
 			argBuild = "";
 		}
 		else
 		{
-			argBuild = params[2];
+			argBuild = freeArgs[2];
 		}
 		
-		argEventClass = params[0];
-		argEventID    = params[1];
+		argEventClass = freeArgs[0];
+		argEventID    = freeArgs[1];
 		
 		if ( argEventClass.size() != 4  ||  argEventID.size() != 4 )
 		{

@@ -107,19 +107,19 @@ static std::string QuoteForMPW( const std::string& str )
 }
 
 
-static std::string MakeCommand( const std::vector< const char* >& args, bool needToEscape )
+static std::string MakeCommand( char const *const *begin, char const *const *end, bool needToEscape )
 {
 	std::string command;
 	
-	if ( args.size() > 0 )
+	if ( end - begin > 0 )
 	{
 		if ( needToEscape )
 		{
 			command = std::accumulate
 			(
-				args.begin() + 1, 
-				args.end(), 
-				QuoteForMPW( args[ 0 ] ), 
+				begin + 1, 
+				end, 
+				QuoteForMPW( begin[ 0 ] ), 
 				MakeConcat( std::ptr_fun( QuoteForMPW ) )
 			);
 		}
@@ -127,13 +127,14 @@ static std::string MakeCommand( const std::vector< const char* >& args, bool nee
 		{
 			command = std::accumulate
 			(
-				args.begin() + 1, 
-				args.end(), 
-				std::string( args[ 0 ] ), 
+				begin + 1, 
+				end, 
+				std::string( begin[ 0 ] ), 
 				Concat< more::identity< const char* > >()
 			);
 		}
 	}
+	
 	return command;
 }
 
@@ -172,9 +173,11 @@ int O::Main( int argc, const char *const argv[] )
 	
 	O::GetOptions( argc, argv );
 	
-	const std::vector< const char* >& params = O::FreeArguments();
+	char const *const *freeArgs = O::FreeArguments();
 	
-	std::string command = MakeCommand( params, escapeForMPW );
+	std::string command = MakeCommand( freeArgs,
+	                                   freeArgs + O::FreeArgumentCount(),
+	                                   escapeForMPW );
 	
 	// This is a bit of a hack.  It really ought to happen just after we send the event,
 	// but switchLayers is local to this file and I'm not dealing with that now.

@@ -223,13 +223,11 @@ int O::Main( int argc, char const *const argv[] )
 	
 	O::GetOptions( argc, argv );
 	
-	const std::vector< const char* >& params = O::FreeArguments();
+	char const *const *freeArgs = O::FreeArguments();
 	
 	std::vector< FSSpec > itemsToOpen;
 	
-	typedef std::vector< const char* >::const_iterator const_iterator;
-	
-	for ( const_iterator it = params.begin();  it != params.end();  ++it )
+	for ( char const *const *it = freeArgs;  *it != NULL;  ++it )
 	{
 		const char* pathname = *it;
 		

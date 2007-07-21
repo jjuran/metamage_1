@@ -441,9 +441,11 @@ int O::Main( int argc, char const *const argv[] )
 	
 	O::GetOptions( argc, argv );
 	
-	const std::vector< const char* >& params = O::FreeArguments();
+	char const *const *freeArgs = O::FreeArguments();
 	
-	if ( params.empty() )
+	std::size_t argCount = O::FreeArgumentCount();
+	
+	if ( argCount == 0 )
 	{
 		Io::Err << "htget: Usage:  htget <url>\n";
 		return 1;
@@ -471,7 +473,7 @@ int O::Main( int argc, char const *const argv[] )
 	
 	short defaultPort = 0;
 	
-	bool parsed = htget::ParseURL( params[ 0 ], scheme, hostname, portStr, urlPath );
+	bool parsed = htget::ParseURL( freeArgs[ 0 ], scheme, hostname, portStr, urlPath );
 	
 	// FIXME:  Eliminate . and .. from urlPath
 	
@@ -510,9 +512,9 @@ int O::Main( int argc, char const *const argv[] )
 	inetAddress.sin_port   = htons( port );
 	inetAddress.sin_addr   = ip;
 	
-	if ( params.size() > 1 )
+	if ( argCount > 1 )
 	{
-		const char* pathname = params[ 1 ];
+		const char* pathname = freeArgs[ 1 ];
 		
 		gSaveLocation = pathname;
 	}

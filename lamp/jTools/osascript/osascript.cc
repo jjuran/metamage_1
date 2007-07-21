@@ -168,12 +168,12 @@ int O::Main( int argc, const char *const argv[] )
 	
 	O::GetOptions( argc, argv );
 	
-	const std::vector< const char* >& params = O::FreeArguments();
+	char const *const *freeArgs = O::FreeArguments();
 	
-	typedef std::vector< const char* >::const_iterator const_iterator;
+	typedef char const *const *const_iterator;
 	
-	const_iterator params_begin = params.begin();
-	const_iterator params_end   = params.end  ();
+	const_iterator params_begin = freeArgs;
+	const_iterator params_end   = freeArgs + O::FreeArgumentCount();
 	
 	NN::Owned< N::OSASpec > script;
 	
@@ -184,9 +184,9 @@ int O::Main( int argc, const char *const argv[] )
 	}
 	else
 	{
-		if ( !params.empty() )
+		if ( *freeArgs != NULL )
 		{
-			script = LoadScriptFile( Div::ResolvePathToFSSpec( params[ 0 ] ) );
+			script = LoadScriptFile( Div::ResolvePathToFSSpec( freeArgs[ 0 ] ) );
 			++params_begin;
 		}
 	}

@@ -47,22 +47,6 @@ std::size_t gParameterCount = 0;
 char const* const* gParameters = NULL;
 
 
-static unsigned CountParameters( char const *const *args )
-{
-	ASSERT( args != NULL );
-	
-	unsigned result = 0;
-	
-	while ( *args != NULL )
-	{
-		++result;
-		++args;
-	}
-	
-	return result;
-}
-
-
 struct OnExit
 {
 	~OnExit()
@@ -128,7 +112,7 @@ int O::Main( int argc, const char *const argv[] )
 	SetOption( kOptionMonitor,     monitor     );
 	
 	gParameters = freeArgs;
-	gParameterCount = CountParameters( freeArgs );
+	gParameterCount = O::FreeArgumentCount();
 	
 	P7::FileDescriptor input( P7::kStdIn_FileNo );
 	
