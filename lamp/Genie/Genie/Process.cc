@@ -1031,7 +1031,9 @@ namespace Genie
 		pid_t pid  = GetPID();
 		pid_t sid  = GetSID();
 		
-		if ( pid == sid )
+		bool isSessionLeader = pid == sid;
+		
+		if ( isSessionLeader )
 		{
 			try
 			{
@@ -1064,9 +1066,13 @@ namespace Genie
 		{
 			Process& proc = *( *it ).second;
 			
-			if ( proc.GetPPID() == pid )
+			if ( isSessionLeader  &&  proc.GetSID() == pid )
 			{
 				proc.Raise( SIGHUP );
+			}
+			
+			if ( proc.GetPPID() == pid )
+			{
 				proc.Orphan();
 			}
 		}
