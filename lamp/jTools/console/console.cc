@@ -16,15 +16,18 @@
 // Lamp
 #include "lamp/winio.h"
 
-
-#pragma exceptions off
+// Orion
+#include "Orion/GetOptions.hh"
+#include "Orion/Main.hh"
 
 
 #define STR_LEN( str )  "" str, (sizeof str - 1)
 
-#pragma export on
 
-int main( int argc, char const *const argv[] )
+namespace O = Orion;
+
+
+int O::Main( int argc, char const *const argv[] )
 {
 	if ( argc < 2 )
 	{
@@ -32,6 +35,16 @@ int main( int argc, char const *const argv[] )
 		
 		return 1;
 	}
+	
+	const char* title = NULL;
+	
+	O::BindOption( "-t", title );
+	
+	O::AliasOption( "-t", "--title" );
+	
+	O::GetOptions( argc, argv );
+	
+	const std::vector< const char* >& freeArgs = O::FreeArguments();
 	
 	int forked = vfork();
 	
@@ -45,13 +58,18 @@ int main( int argc, char const *const argv[] )
 		
 		int io = ioctl( console, TIOCSCTTY, NULL );
 		
+		if ( title != NULL )
+		{
+			io = ioctl( console, WIOCSTITLE, (int*) title );
+		}
+		
 		dup2( console, 0 );
 		dup2( console, 1 );
 		dup2( console, 2 );
 		
 		close( console );
 		
-		(void) execvp( argv[ 1 ], argv + 1 );
+		(void) execvp( freeArgs[ 0 ], &freeArgs[ 0 ] );
 		
 		_exit( 127 );
 	}
@@ -62,6 +80,4 @@ int main( int argc, char const *const argv[] )
 	
 	return 0;
 }
-
-#pragma export reset
 
