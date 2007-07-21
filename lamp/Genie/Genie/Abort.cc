@@ -24,13 +24,16 @@ void abort()
 	{
 		Genie::Process& current = Genie::CurrentProcess();
 		
-		current.SetSignalAction( SIGABRT, SIG_DFL );
-		
-		current.Raise( SIGABRT );
-		
-		current.HandlePendingSignals();
-		
-		// Probably not reached
+		if ( current.GetSchedule() != Genie::kProcessUnscheduled )
+		{
+			current.SetSignalAction( SIGABRT, SIG_DFL );
+			
+			current.Raise( SIGABRT );
+			
+			current.HandlePendingSignals();
+			
+			// Probably not reached
+		}
 		
 		N::SetThreadState( N::GetCurrentThread(), N::kStoppedThreadState );
 	}
