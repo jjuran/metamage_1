@@ -9,55 +9,68 @@
 #include <set>
 #include <string>
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 
 struct OptionData
 {
-	const char* name;
+	const char*  name;
+	ShellOption  selector;
 };
 
-static const char* const gOptionNames[] =
+static const OptionData gOptionNames[] =
 {
-	"braceexpand",
-	"errexit",
-	"interactive",
-	"interactive-comments",
-	"noclobber",
+	{ "braceexpand",          kOptionBraceExpansion           },
+	{ "errexit",              kOptionExitOnError              },
+	//{ "interactive",          kOptionInteractive              },
+	{ "interactive-comments", kOptionInteractiveComments      },
+	{ "monitor",              kOptionMonitor                  },
+	{ "noclobber",            kOptionNonClobberingRedirection },
 	
-	"~"
+	{ "~", kOptionCount }
 };
 
-static const unsigned gCountOfOptions = sizeof gOptionNames / sizeof (const char*) - 1;
+static const unsigned gCountOfOptions = sizeof gOptionNames / sizeof (OptionData) - 1;
 
-/*
-static bool operator==( const char* option, const char* name )
+static bool operator==( const OptionData& option, const char* name )
 {
-	return 
+	return std::strcmp( option.name, name ) == 0;
 }
-*/
 
 ShellOption LookupShellOption( const char* name )
 {
-	const char* const* end = gOptionNames + gCountOfOptions;
+	const OptionData* end = gOptionNames + gCountOfOptions;
 	
-	const char* const* it = std::find( gOptionNames, end, std::string( name ) );
+	const OptionData* it = std::find( gOptionNames, end, name );
 	
 	if ( it == end )
 	{
 		throw NotAnOption();
 	}
 	
-	return ShellOption( it - gOptionNames );
+	return it->selector;
 }
 
-bool gOptions[ gCountOfOptions ];
+static bool gOptions[ kOptionCount ];
+
+static void CheckOption( ShellOption option )
+{
+	ASSERT( option >=            0 );
+	ASSERT( option <  kOptionCount );
+}
 
 bool GetOption( ShellOption option )
 {
+	CheckOption( option );
+	
 	return gOptions[ option ];
 }
 
 void SetOption( ShellOption option, bool state )
 {
+	CheckOption( option );
+	
 	gOptions[ option ] = state;
 }
 

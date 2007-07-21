@@ -22,6 +22,7 @@
 
 // sh
 #include "Execution.hh"
+#include "Options.hh"
 
 
 static PromptLevel gPromptLevel = kPS1;
@@ -87,7 +88,7 @@ int ReadExecuteLoop( P7::FileDescriptor  fd,
 			
 			result = ExecuteCmdLine( command );
 			
-			if ( !GetInteractiveness()  &&  GetWhetherToExitOnBatchError()  &&  result != 0 )
+			if ( !GetOption( kOptionInteractive )  &&  GetOption( kOptionExitOnError )  &&  result != 0 )
 			{
 				break;
 			}

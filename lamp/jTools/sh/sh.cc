@@ -8,11 +8,12 @@
 #include <vector>
 
 // Standard C
-#include "stdlib.h"
+#include <signal.h>
+#include <stdlib.h>
 
 // POSIX
-#include "fcntl.h"
-#include "sys/stat.h"
+#include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 // Nucleus
@@ -29,6 +30,7 @@
 // sh
 #include "Builtins.hh"
 #include "Execution.hh"
+#include "Options.hh"
 #include "PositionalParameters.hh"
 #include "ReadExecuteLoop.hh"
 
@@ -45,11 +47,27 @@ std::size_t gParameterCount = 0;
 char const* const* gParameters = NULL;
 
 
+static unsigned CountParameters( char const *const *args )
+{
+	ASSERT( args != NULL );
+	
+	unsigned result = 0;
+	
+	while ( *args != NULL )
+	{
+		++result;
+		++args;
+	}
+	
+	return result;
+}
+
+
 struct OnExit
 {
 	~OnExit()
 	{
-		if ( GetInteractiveness() )
+		if ( GetOption( kOptionInteractive ) )
 		{
 			Io::Out << ( gLoginShell ? "logout\n" : "exit\n" );
 		}
@@ -62,21 +80,27 @@ int O::Main( int argc, const char *const argv[] )
 	setenv( "PS2", "> ", 0 );
 	setenv( "PS4", "+ ", 0 );
 	
-	std::string command;
+	const char* command = NULL;
 	
-	bool restricted = false;
 	bool interactive = false;
+	bool monitor = false;
+	bool restricted = false;
 	bool readingFromStdin = false;
 	bool verboseInput = false;
 	bool verboseExecution = false;
 	
 	O::BindOption( "-c", command );
 	
-	O::BindOption( "-r", restricted );
+	O::BindOption( "-l", gLoginShell );
 	O::BindOption( "-i", interactive );
+	O::BindOption( "-m", monitor );
+	O::BindOption( "-r", restricted );
 	O::BindOption( "-s", readingFromStdin );
 	O::BindOption( "-v", verboseInput );
 	O::BindOption( "-x", verboseExecution );
+	
+	O::AliasOption( "-l", "--login"   );
+	O::AliasOption( "-v", "--verbose" );
 	
 	try
 	{
@@ -89,37 +113,67 @@ int O::Main( int argc, const char *const argv[] )
 		return 1;
 	}
 	
-	const std::vector< const char* >& freeArgs = O::FreeArguments();
-	
 	gArgZero = argv[ 0 ];
 	
-	gParameters = &*freeArgs.begin();
-	gParameterCount = freeArgs.size();
+	char const *const *freeArgs = O::FreeArguments();
 	
-	P7::FileDescriptor fd( P7::kStdIn_FileNo );
+	// If first char of arg 0 is a hyphen (e.g. "-sh") it's a login shell
+	gLoginShell = gLoginShell  ||  argv[ 0 ][ 0 ] == '-';
 	
-	if ( gParameterCount > 0 )
+	interactive = interactive  ||  *freeArgs == NULL && command == NULL && isatty( 0 ) && isatty( 2 );
+	
+	monitor = monitor || interactive;
+	
+	SetOption( kOptionInteractive, interactive );
+	SetOption( kOptionMonitor,     monitor     );
+	
+	gParameters = freeArgs;
+	gParameterCount = CountParameters( freeArgs );
+	
+	P7::FileDescriptor input( P7::kStdIn_FileNo );
+	
+	if ( monitor )
+	{
+		pid_t shell_pgid = getpgrp();
+		
+		// stop until we're fg
+		while ( tcgetpgrp( STDIN_FILENO ) != shell_pgid )
+		{
+			kill( -shell_pgid, SIGTTIN );
+		}
+		
+		signal( SIGINT,  SIG_IGN );
+		signal( SIGQUIT, SIG_IGN );
+		signal( SIGTSTP, SIG_IGN );
+		signal( SIGTTIN, SIG_IGN );
+		signal( SIGTTOU, SIG_IGN );
+		signal( SIGCHLD, SIG_IGN );
+		
+		pid_t pid = getpid();
+		
+		setpgid( pid, pid );
+		
+		// set fg pg
+		tcsetpgrp( STDIN_FILENO, shell_pgid );
+		
+		// save terminal attrs
+	}
+	
+	if ( *freeArgs != NULL )
 	{
 		gArgZero = gParameters[ 0 ];
 		
 		++gParameters;
 		--gParameterCount;
 		
-		fd = P7::Open( gArgZero, O_RDONLY ).Release();
+		input = P7::Open( gArgZero, O_RDONLY ).Release();
 		
-		int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
-		
-		SetInteractiveness( interactive );
+		int controlled = fcntl( input, F_SETFD, FD_CLOEXEC );
 	}
 	else
 	{
 		// Read from stdin
 		gStandardIn = true;
-		
-		// If first char of arg 0 is a hyphen (e.g. "-sh") it's a login shell
-		gLoginShell = argv[ 0 ][ 0 ] == '-';
-		
-		SetInteractiveness( true );
 		
 		if ( gLoginShell )
 		{
@@ -134,7 +188,7 @@ int O::Main( int argc, const char *const argv[] )
 		}
 	}
 	
-	if ( !command.empty() )
+	if ( command != NULL )
 	{
 		// Run a single command
 		return ExecuteCmdLine( command );
@@ -142,6 +196,6 @@ int O::Main( int argc, const char *const argv[] )
 	
 	OnExit onExit;
 	
-	return ReadExecuteLoop( fd, GetInteractiveness() );
+	return ReadExecuteLoop( input, GetOption( kOptionInteractive ) );
 }
 

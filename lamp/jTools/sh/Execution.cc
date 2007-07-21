@@ -49,30 +49,6 @@ using Sh::List;
 int gLastResult = 0;
 
 
-static bool gInteractive = false;
-
-bool GetInteractiveness()
-{
-	return gInteractive;
-}
-
-void SetInteractiveness( bool interactive )
-{
-	gInteractive = interactive;
-}
-
-
-bool GetWhetherToExitOnBatchError()
-{
-	return GetOption( "errexit" );
-}
-
-void SetWhetherToExitOnBatchError( bool toExit )
-{
-	SetOption( "errexit", toExit );
-}
-
-
 struct Job
 {
 	Circuit circuit;
@@ -320,7 +296,7 @@ static void RedirectIO( Sh::Redirection redirection )
 				break;
 			
 			case Sh::kRedirectOutput:
-				if ( GetOption( "noclobber" ) )
+				if ( GetOption( kOptionNonClobberingRedirection ) )
 				{
 					file = OpenNoClobber( param );
 					Dup2( file, fd );
@@ -495,7 +471,12 @@ static int ExecuteCommand( const Command& command )
 		
 		if ( pid == 0 )
 		{
-			setpgrp();
+			if ( GetOption( kOptionMonitor ) )
+			{
+				setpgrp();
+				
+				tcsetpgrp( 0, getpgrp() );
+			}
 			
 			try
 			{
@@ -673,7 +654,12 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		close( writing );     // we duped this, close it
 		close( pipes[ 0 ] );  // we don't read from this pipe, close it
 		
-		setpgrp();
+		if ( GetOption( kOptionMonitor ) )
+		{
+			setpgrp();
+			
+			tcsetpgrp( 0, getpgrp() );
+		}
 		
 		// exec or exit
 		ExecuteCommandAndExitFromPipeline( commands.front() );
@@ -803,6 +789,11 @@ static int ExecuteCircuit( const Circuit& circuit )
 		}
 		
 		gLastResult = result = ExecutePipeline( *it );
+		
+		if ( GetOption( kOptionMonitor ) )
+		{
+			tcsetpgrp( 0, getpgrp() );
+		}
 	}
 	
 	return result;
@@ -818,7 +809,7 @@ static int ExecuteList( const List& list )
 	{
 		result = ExecuteCircuit( *it );
 		
-		if ( GetWhetherToExitOnBatchError()  &&  result != 0 )
+		if ( GetOption( kOptionExitOnError )  &&  result != 0 )
 		{
 			break;
 		}

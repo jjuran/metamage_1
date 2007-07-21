@@ -7,14 +7,7 @@
 
 // Standard C++
 #include <string>
-#include <vector>
 
-
-bool GetInteractiveness();
-void SetInteractiveness( bool interactive );
-
-bool GetWhetherToExitOnBatchError();
-void SetWhetherToExitOnBatchError( bool toExit );
 
 int ExecuteCmdLine( const std::string& cmd );
 

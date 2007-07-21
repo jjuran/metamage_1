@@ -278,22 +278,22 @@ static int Builtin_Set( int argc, char const* const argv[] )
 	{
 		if ( argv[1] == std::string( "-e" ) )
 		{
-			SetWhetherToExitOnBatchError( true );
+			SetOption( kOptionExitOnError, true );
 		}
 		else if ( argv[1] == std::string( "+e" ) )
 		{
-			SetWhetherToExitOnBatchError( false );
+			SetOption( kOptionExitOnError, false );
 		}
 	}
 	else if ( argc == 3 )
 	{
 		if ( argv[1] == std::string( "-o" ) )
 		{
-			SetOption( argv[2], true );
+			SetOptionByName( argv[2], true );
 		}
 		else if ( argv[1] == std::string( "+o" ) )
 		{
-			SetOption( argv[2], false );
+			SetOptionByName( argv[2], false );
 		}
 	}
 	
