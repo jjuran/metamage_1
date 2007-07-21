@@ -543,12 +543,14 @@ namespace Genie
 			Process& target( pid != 0 ? GetProcess( pid )
 			                          : current );
 			
-			if ( current.GetPID() != target.GetPID()  &&  current.GetPID() != target.GetPPID() )
+			bool target_is_child = current.GetPID() == target.GetPPID();
+			
+			if ( current.GetPID() != target.GetPID()  &&  !target_is_child )
 			{
 				P7::ThrowErrno( ESRCH );  // target is not self or a child
 			}
 			
-			if ( target.GetLifeStage() != kProcessStarting )
+			if ( target_is_child  &&  target.GetLifeStage() != kProcessStarting )
 			{
 				P7::ThrowErrno( EACCES );  // child already execve'd
 			}
