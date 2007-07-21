@@ -99,6 +99,29 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
+	class FSTree_dev_new : public FSTree_Virtual
+	{
+		public:
+			FSTree_dev_new();
+			
+			std::string Name() const  { return "new"; }
+			
+			FSTreePtr Parent() const  { return GetDevFSTree(); }
+	};
+	
+	class FSTree_dev_new_console : public FSTree
+	{
+		public:
+			std::string Name() const  { return "console"; }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_new  >(); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
 	
 	struct dev_term_Details;
 	
@@ -165,6 +188,10 @@ namespace Genie
 		return OpenSerialDevice();
 	}
 	
+	boost::shared_ptr< IOHandle > FSTree_dev_new_console::Open( OpenFlags flags ) const
+	{
+		return NewConsoleDevice();
+	}
 	
 	FSTree_dev::FSTree_dev()
 	{
@@ -176,8 +203,15 @@ namespace Genie
 		
 		Map( "cu.modem", FSTreePtr( GetSingleton< FSTree_dev_modem >() ) );
 		
+		Map( "new",  FSTreePtr( GetSingleton< FSTree_dev_new  >() ) );
 		Map( "term", FSTreePtr( GetSingleton< FSTree_dev_term >() ) );
 		Map( "fd",   FSTreePtr( GetSingleton< FSTree_dev_fd   >() ) );
+	}
+	
+	
+	FSTree_dev_new::FSTree_dev_new()
+	{
+		Map( "console", FSTreePtr( GetSingleton< FSTree_dev_new_console >() ) );
 	}
 	
 	
@@ -194,7 +228,7 @@ namespace Genie
 		
 		const std::string& pathname = console->TTYName();
 		
-		const std::string& name = pathname.substr( sizeof "/dev/term/" - 1, pathname.npos );
+		std::string name = pathname.substr( sizeof "/dev/term/" - 1, pathname.npos );
 		
 		unsigned index = std::atoi( name.c_str() );
 		
