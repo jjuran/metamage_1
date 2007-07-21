@@ -45,7 +45,7 @@ namespace Orion
 		public:
 			virtual bool ParameterExpected() const = 0;
 			
-			virtual void Set( const std::string& param = "" ) const = 0;
+			virtual void Set( const char* param = "" ) const = 0;
 	};
 	
 	template < class Type >
@@ -60,7 +60,7 @@ namespace Orion
 			
 			bool ParameterExpected() const  { return false; }
 			
-			void Set( const std::string& ) const  { itsData = itsValue; }
+			void Set( const char* ) const  { itsData = itsValue; }
 	};
 	
 	
@@ -75,7 +75,7 @@ namespace Orion
 		return NewOptionBinding( flag, true );
 	}
 	
-	boost::shared_ptr< OptionBinding > NewOptionBinding( int& i );
+	boost::shared_ptr< OptionBinding > NewOptionBinding( const char*& string );
 	
 	boost::shared_ptr< OptionBinding > NewOptionBinding( std::string& string );
 	

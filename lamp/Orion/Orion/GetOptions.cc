@@ -39,6 +39,19 @@
 namespace Orion
 {
 	
+	class CStringOptionBinding : public OptionBinding
+	{
+		private:
+			const char*& itsString;
+		
+		public:
+			CStringOptionBinding( const char*& string ) : itsString( string )  {}
+			
+			bool ParameterExpected() const  { return true; }
+			
+			void Set( const char* param ) const  { itsString = param; }
+	};
+	
 	class StringOptionBinding : public OptionBinding
 	{
 		private:
@@ -49,7 +62,7 @@ namespace Orion
 			
 			bool ParameterExpected() const  { return true; }
 			
-			void Set( const std::string& param ) const  { itsString = param; }
+			void Set( const char* param ) const  { itsString = param; }
 	};
 	
 	class StringListOptionBinding : public OptionBinding
@@ -62,7 +75,7 @@ namespace Orion
 			
 			bool ParameterExpected() const  { return true; }
 			
-			void Set( const std::string& param ) const  { itsStrings.push_back( param ); }
+			void Set( const char* param ) const  { itsStrings.push_back( param ); }
 	};
 	
 	
@@ -89,6 +102,11 @@ namespace Orion
 		gOptionMap[ to ] = gOptionMap[ from ];
 	}
 	
+	
+	boost::shared_ptr< OptionBinding > NewOptionBinding( const char*& string )
+	{
+		return boost::shared_ptr< OptionBinding >( new CStringOptionBinding( string ) );
+	}
 	
 	boost::shared_ptr< OptionBinding > NewOptionBinding( std::string& string )
 	{
@@ -194,11 +212,7 @@ namespace Orion
 							// Option has parameter
 							std::string opt( token, eq - token );
 							
-							const char* paramStart = eq + 1;
-							
-							unsigned int paramLen = token + len - paramStart;
-							
-							std::string param( paramStart, paramLen );
+							const char* param = eq + 1;
 							
 							FindOption( opt ).Set( param );
 						}
