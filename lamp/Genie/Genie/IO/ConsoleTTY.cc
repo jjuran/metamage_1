@@ -128,9 +128,10 @@ namespace Genie
 	
 	void ConsoleTTYHandle::SaveLeaderWaitStatus( int status )
 	{
-		ASSERT( console != NULL );
-		
-		console->SetLeaderWaitStatus( status );
+		if ( console != NULL )
+		{
+			console->SetLeaderWaitStatus( status );
+		}
 	}
 	
 }
