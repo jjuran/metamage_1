@@ -1346,7 +1346,10 @@ namespace Genie
 			proc.Raise( SIGKILL );
 		}
 		
-		N::YieldToAnyThread();
+		while ( itsProcesses.size() > 1 )
+		{
+			N::YieldToAnyThread();
+		}
 	}
 	
 	void Process::Stop()
