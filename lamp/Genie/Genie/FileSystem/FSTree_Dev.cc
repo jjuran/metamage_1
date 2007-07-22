@@ -135,11 +135,11 @@ namespace Genie
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
-		const ConsolesOwner::Map& ItemSequence() const  { return GetConsoleMap(); }
+		const ConsoleMap& ItemSequence() const  { return GetConsoleMap(); }
 		
-		static FSNode ConvertToFSNode( ConsolesOwner::Map::value_type console );
+		static FSNode ConvertToFSNode( ConsoleMap::value_type console );
 		
-		FSNode operator()( ConsolesOwner::Map::value_type console ) const  { return ConvertToFSNode( console ); }
+		FSNode operator()( ConsoleMap::value_type console ) const  { return ConvertToFSNode( console ); }
 	};
 	
 	
@@ -222,7 +222,7 @@ namespace Genie
 		return FSTreePtr( new FSTree_dev_con_N( index ) );
 	}
 	
-	FSNode dev_con_Details::ConvertToFSNode( ConsolesOwner::Map::value_type consoleMapping )
+	FSNode dev_con_Details::ConvertToFSNode( ConsoleMap::value_type consoleMapping )
 	{
 		Console* console = consoleMapping.first;
 		

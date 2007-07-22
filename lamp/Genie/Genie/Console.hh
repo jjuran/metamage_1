@@ -170,23 +170,9 @@ namespace Genie
 			ConsoleTTYHandle* Salvage();
 	};
 	
-	class ConsolesOwner
-	{
-		public:
-			typedef std::map< Console*, boost::shared_ptr< Console > > Map;
-		
-		private:
-			Map map;
-		
-		public:
-			const Map& GetMap() const  { return map; }
-			
-			Console* NewConsole( ConsoleTTYHandle* terminal );
-			
-			void CloseConsole( Console* console );
-	};
+	typedef std::map< Console*, boost::shared_ptr< Console > > ConsoleMap;
 	
-	const ConsolesOwner::Map& GetConsoleMap();
+	const ConsoleMap& GetConsoleMap();
 	
 	class IOHandle;
 	
