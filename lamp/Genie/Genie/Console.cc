@@ -282,26 +282,26 @@ namespace Genie
 	}
 	
 	
-	const std::string& HangupWindowClosure::TTYName() const
+	const std::string& ConsoleWindowClosure::TTYName() const
 	{
-		ASSERT( fTerminal != NULL );
+		ASSERT( itsTerminal != NULL );
 		
-		return fTerminal->TTYName();
+		return itsTerminal->TTYName();
 	}
 	
 	static void CloseSalvagedConsole( ConsoleTTYHandle* terminal );
 	
-	bool HangupWindowClosure::RequestWindowClosure( N::WindowRef )
+	bool ConsoleWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
 		itHasBeenRequested = true;
 		
 		if ( !itHasDisassociated )
 		{
-			SendSignalToProcessGroup( SIGHUP, *fTerminal->GetProcessGroup().lock().get() );
+			SendSignalToProcessGroup( SIGHUP, *itsTerminal->GetProcessGroup().lock().get() );
 		}
 		else
 		{
-			CloseSalvagedConsole( fTerminal );
+			CloseSalvagedConsole( itsTerminal );
 		}
 		
 		// Assuming the window does get shut, it hasn't happened yet

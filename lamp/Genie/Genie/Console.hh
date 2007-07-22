@@ -76,30 +76,36 @@ namespace Genie
 	
 	class ConsoleTTYHandle;
 	
-	class HangupWindowClosure : public Ped::WindowClosure
+	class ConsoleWindowClosure : public Ped::WindowClosure
 	{
 		private:
-			ConsoleTTYHandle* fTerminal;
+			ConsoleTTYHandle* itsTerminal;
 			bool itHasBeenRequested;
 			bool itHasDisassociated;
 		
+		protected:
+			// prevent slicing
+			~ConsoleWindowClosure()  {}
+		
 		public:
-			HangupWindowClosure( ConsoleTTYHandle* terminal ) : fTerminal( terminal ),
-			                                                    itHasBeenRequested(),
-			                                                    itHasDisassociated()
+			ConsoleWindowClosure( ConsoleTTYHandle* terminal ) : itsTerminal( terminal ),
+			                                                     itHasBeenRequested(),
+			                                                     itHasDisassociated()
 			{
 			}
+			
+			ConsoleTTYHandle* Terminal() const  { return itsTerminal; }
 			
 			const std::string& TTYName() const;
 			
 			bool RequestWindowClosure( N::WindowRef );
 			
-			bool HasBeenRequested() const  { return itHasBeenRequested; }
+			bool ClosureHasBeenRequested() const  { return itHasBeenRequested; }
 			
-			ConsoleTTYHandle* DisassociateFromTerminal()  { itHasDisassociated = true;  return fTerminal; }
+			void DisassociateFromTerminal()  { itHasDisassociated = true; }
 	};
 	
-	class TerminalWindowOwner : private HangupWindowClosure
+	class TerminalWindowOwner : public ConsoleWindowClosure
 	{
 		typedef std::auto_ptr< GenieWindow > WindowStorage;
 		
@@ -107,21 +113,17 @@ namespace Genie
 			WindowStorage         fWindow;
 		
 		public:
-			TerminalWindowOwner( ConsoleTTYHandle* terminal ) : HangupWindowClosure( terminal )  {}
+			TerminalWindowOwner( ConsoleTTYHandle* terminal ) : ConsoleWindowClosure( terminal )  {}
 			
 			GenieWindow const* Get() const  { return fWindow.get(); }
 			GenieWindow      * Get()        { return fWindow.get(); }
-			
-			const std::string& TTYName() const  { return HangupWindowClosure::TTYName(); }
 			
 			void Open( ConstStr255Param title )
 			{
 				fWindow.reset( new GenieWindow( *this, title ) );
 			}
 			
-			bool ClosureHasBeenRequested() const  { return HangupWindowClosure::HasBeenRequested(); }
-			
-			ConsoleTTYHandle* Salvage()  { return HangupWindowClosure::DisassociateFromTerminal(); }
+			ConsoleTTYHandle* Salvage()  { DisassociateFromTerminal();  return Terminal(); }
 	};
 	
 	
