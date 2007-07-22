@@ -358,7 +358,7 @@ namespace Genie
 		return itsTerminal->TTYName();
 	}
 	
-	static void CloseSalvagedConsole( ConsoleTTYHandle* terminal );
+	static void CloseSalvagedConsole( ConsoleID terminal );
 	
 	bool ConsoleWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
@@ -370,7 +370,7 @@ namespace Genie
 		}
 		else
 		{
-			CloseSalvagedConsole( itsTerminal );
+			CloseSalvagedConsole( itsConsoleID );
 		}
 		
 		// Assuming the window does get shut, it hasn't happened yet
@@ -502,13 +502,13 @@ namespace Genie
 		return result;
 	}
 	
-	ConsoleTTYHandle* Console::Salvage()
+	ConsoleID Console::Salvage()
 	{
 		SetTitle( N::Str255( "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")" ) );
 		
 		DisassociateFromTerminal();
 		
-		return Terminal();
+		return ID();
 	}
 	
 	bool Console::ShouldSalvageWindow() const
@@ -518,7 +518,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > NewConsoleDevice()
 	{
-		static std::size_t gLastID = 0;
+		static ConsoleID gLastID = 0;
 		
 		return boost::shared_ptr< IOHandle >( new ConsoleTTYHandle( ++gLastID ) );
 	}
@@ -585,7 +585,7 @@ namespace Genie
 		return console;
 	}
 	
-	std::map< ConsoleTTYHandle*, boost::shared_ptr< Console > > gSalvagedConsoles;
+	std::map< ConsoleID, boost::shared_ptr< Console > > gSalvagedConsoles;
 	
 	void ConsolesOwner::CloseConsole( const boost::shared_ptr< Console >& console )
 	{
@@ -619,7 +619,7 @@ namespace Genie
 		gConsolesOwner.CloseConsole( console );
 	}
 	
-	void CloseSalvagedConsole( ConsoleTTYHandle* terminal )
+	void CloseSalvagedConsole( ConsoleID terminal )
 	{
 		gSalvagedConsoles.erase( terminal );
 	}

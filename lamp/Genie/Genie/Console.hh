@@ -27,6 +27,9 @@
 #include "Pedestal/Window.hh"
 #include "Pedestal/View.hh"
 
+// Genie
+#include "Genie/IO/ConsoleTTY.hh"  // only for ID()
+
 
 namespace Genie
 {
@@ -35,12 +38,15 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class ConsoleTTYHandle;
+	//class ConsoleTTYHandle;
+	
+	typedef std::size_t ConsoleID;
 	
 	class ConsoleWindowClosure : public Ped::WindowClosure
 	{
 		private:
 			ConsoleTTYHandle* itsTerminal;
+			ConsoleID itsConsoleID;
 			bool itHasBeenRequested;
 			bool itHasDisassociated;
 		
@@ -50,12 +56,13 @@ namespace Genie
 		
 		public:
 			ConsoleWindowClosure( ConsoleTTYHandle* terminal ) : itsTerminal( terminal ),
+			                                                     itsConsoleID( terminal->ID() ),
 			                                                     itHasBeenRequested(),
 			                                                     itHasDisassociated()
 			{
 			}
 			
-			ConsoleTTYHandle* Terminal() const  { return itsTerminal; }
+			ConsoleID ID() const  { return itsConsoleID; }
 			
 			const std::string& TTYName() const;
 			
@@ -106,7 +113,7 @@ namespace Genie
 			
 			bool ShouldSalvageWindow() const;
 			
-			ConsoleTTYHandle* Salvage();
+			ConsoleID Salvage();
 	};
 	
 	

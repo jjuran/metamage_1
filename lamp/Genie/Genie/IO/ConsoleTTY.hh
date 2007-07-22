@@ -40,6 +40,8 @@ namespace Genie
 			
 			void IOCtl( unsigned long request, int* argp );
 			
+			std::size_t ID() const  { return id; }
+			
 			void SaveLeaderWaitStatus( int status );
 	};
 	
