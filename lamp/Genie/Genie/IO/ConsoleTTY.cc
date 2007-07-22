@@ -23,7 +23,7 @@ namespace Genie
 	
 	void ConsoleTTYHandle::CheckConsole()
 	{
-		if ( console == NULL )
+		if ( console.get() == NULL )
 		{
 			console = NewConsole( this );
 		}
@@ -31,8 +31,7 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( std::size_t id )
 	: TTYHandle( "/dev/con/" + NN::Convert< std::string >( id ) ),
-	  id( id ),
-	  console( NULL )
+	  id( id )
 	{
 	}
 	
@@ -43,8 +42,8 @@ namespace Genie
 	
 	unsigned int ConsoleTTYHandle::SysPoll() const
 	{
-		return (console && console->IsReadable() ? kPollRead
-		                                         : 0        ) | kPollWrite;
+		return (console.get() && console->IsReadable() ? kPollRead
+		                                               : 0        ) | kPollWrite;
 	}
 	
 	int ConsoleTTYHandle::SysRead( char* data, std::size_t byteCount )
@@ -128,7 +127,7 @@ namespace Genie
 	
 	void ConsoleTTYHandle::SaveLeaderWaitStatus( int status )
 	{
-		if ( console != NULL )
+		if ( console.get() != NULL )
 		{
 			console->SetLeaderWaitStatus( status );
 		}

@@ -19,7 +19,7 @@ namespace Genie
 	{
 		private:
 			std::size_t id;
-			Console* console;
+			boost::shared_ptr< Console > console;
 			
 			void CheckConsole();
 		

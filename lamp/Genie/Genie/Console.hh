@@ -146,7 +146,7 @@ namespace Genie
 		public:
 			Console( ConsoleTTYHandle* terminal );
 			
-			~Console()  {}
+			~Console();
 			
 			bool IsReadable() const;
 			
@@ -173,7 +173,7 @@ namespace Genie
 			ConsoleTTYHandle* Salvage();
 	};
 	
-	typedef std::map< Console*, boost::shared_ptr< Console > > ConsoleMap;
+	typedef std::map< Console*, boost::weak_ptr< Console > > ConsoleMap;
 	
 	const ConsoleMap& GetConsoleMap();
 	
@@ -184,9 +184,9 @@ namespace Genie
 	void SpawnNewConsole( const FSSpec& program );
 	void SpawnNewConsole();
 	
-	Console* NewConsole( ConsoleTTYHandle* terminal );
+	boost::shared_ptr< Console > NewConsole( ConsoleTTYHandle* terminal );
 	
-	void CloseConsole( Console* console );
+	void CloseConsole( const boost::shared_ptr< Console >& console );
 	
 }
 

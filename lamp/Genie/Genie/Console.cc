@@ -337,6 +337,11 @@ namespace Genie
 	{
 	}
 	
+	Console::~Console()
+	{
+		
+	}
+	
 	bool Console::IsReadable() const
 	{
 		return !currentInput.empty()  ||  itsInput.Ready();
@@ -504,37 +509,38 @@ namespace Genie
 		public:
 			const ConsoleMap& GetMap() const  { return map; }
 			
-			Console* NewConsole( ConsoleTTYHandle* terminal );
+			boost::shared_ptr< Console > NewConsole( ConsoleTTYHandle* terminal );
 			
-			void CloseConsole( Console* console );
+			void CloseConsole( const boost::shared_ptr< Console >& console );
 	};
 	
 	
-	Console* ConsolesOwner::NewConsole( ConsoleTTYHandle* terminal )
+	boost::shared_ptr< Console > ConsolesOwner::NewConsole( ConsoleTTYHandle* terminal )
 	{
-		Console* console = new Console( terminal );
-		map[ console ] = boost::shared_ptr< Console >( console );
+		boost::shared_ptr< Console > console( new Console( terminal ) );
+		
+		map[ console.get() ] = console;
 		
 		return console;
 	}
 	
 	std::map< ConsoleTTYHandle*, boost::shared_ptr< Console > > gSalvagedConsoles;
 	
-	void ConsolesOwner::CloseConsole( Console* console )
+	void ConsolesOwner::CloseConsole( const boost::shared_ptr< Console >& console )
 	{
-		if ( console == NULL )
+		if ( console.get() == NULL )
 		{
 			return;
 		}
 		
 		if ( console->ShouldSalvageWindow() )
 		{
-			boost::shared_ptr< Console > salvaged = map[ console ];
+			//boost::shared_ptr< Console > salvaged = map[ console ].lock();
 			
-			gSalvagedConsoles[ console->Salvage() ] = salvaged;
+			gSalvagedConsoles[ console->Salvage() ] = console;
 		}
 		
-		map.erase( console );
+		map.erase( console.get() );
 	}
 	
 	static ConsolesOwner gConsolesOwner;
@@ -544,12 +550,12 @@ namespace Genie
 		return gConsolesOwner.GetMap();
 	}
 	
-	Console* NewConsole( ConsoleTTYHandle* terminal )
+	boost::shared_ptr< Console > NewConsole( ConsoleTTYHandle* terminal )
 	{
 		return gConsolesOwner.NewConsole( terminal );
 	}
 	
-	void CloseConsole( Console* console )
+	void CloseConsole( const boost::shared_ptr< Console >& console )
 	{
 		gConsolesOwner.CloseConsole( console );
 	}
