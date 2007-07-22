@@ -324,15 +324,31 @@ namespace Genie
 		return !currentInput.empty()  ||  myInput != NULL && myInput->Ready();
 	}
 	
+	static N::Str255 DefaultConsoleTitle( const std::string& ttyName )
+	{
+		return N::Str255( ttyName );
+	}
+	
+	void Console::OpenWindow( ConstStr255Param title )
+	{
+		if ( fWindow.Get() == NULL )
+		{
+			fWindow.Open( title ? title : DefaultConsoleTitle( fWindow.TTYName() ) );
+			
+			myInput = &Input();
+		}
+	}
+	
 	void Console::SetTitle( ConstStr255Param title )
 	{
 		if ( fWindow.Get() == NULL )
 		{
-			fWindow.Open( fProgramName );
-			myInput = &Input();
+			OpenWindow( title );
 		}
-		
-		N::SetWTitle( Window()->Get(), title );
+		else
+		{
+			N::SetWTitle( Window()->Get(), title ? title : DefaultConsoleTitle( fWindow.TTYName() ) );
+		}
 	}
 	
 	int Console::Read( char* data, std::size_t byteCount )
@@ -343,11 +359,7 @@ namespace Genie
 			return 0;
 		}
 		
-		if ( fWindow.Get() == NULL )
-		{
-			fWindow.Open( fProgramName );
-			myInput = &Input();
-		}
+		OpenWindow();
 		
 		while ( true )
 		{
@@ -405,15 +417,7 @@ namespace Genie
 	
 	int Console::Write( const char* data, std::size_t byteCount )
 	{
-		if ( fWindow.Get() == NULL )
-		{
-			//const unsigned char* name = fProgramName;
-			const unsigned char* name = "\p" "gterm";
-			
-			fWindow.Open( name );
-			
-			myInput = &Input();
-		}
+		OpenWindow();
 		
 		int result = Pane().WriteChars( data, byteCount );
 		
