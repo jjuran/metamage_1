@@ -123,13 +123,13 @@ namespace Genie
 	};
 	
 	
-	struct dev_term_Details;
+	struct dev_con_Details;
 	
-	typedef FSTree_Special< dev_term_Details > FSTree_dev_term;
+	typedef FSTree_Special< dev_con_Details > FSTree_dev_con;
 	
-	struct dev_term_Details
+	struct dev_con_Details
 	{
-		static std::string Name()  { return "term"; }
+		static std::string Name()  { return "con"; }
 		
 		FSTreePtr Parent() const  { return FSTreePtr( GetSingleton< FSTree_dev >() ); }
 		
@@ -143,17 +143,17 @@ namespace Genie
 	};
 	
 	
-	class FSTree_dev_term_N : public FSTree
+	class FSTree_dev_con_N : public FSTree
 	{
 		private:
 			unsigned itsIndex;
 		
 		public:
-			FSTree_dev_term_N( unsigned index ) : itsIndex( index )  {}
+			FSTree_dev_con_N( unsigned index ) : itsIndex( index )  {}
 			
 			std::string Name() const;
 			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_term >(); }
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_con >(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -203,9 +203,9 @@ namespace Genie
 		
 		Map( "cu.modem", FSTreePtr( GetSingleton< FSTree_dev_modem >() ) );
 		
-		Map( "new",  FSTreePtr( GetSingleton< FSTree_dev_new  >() ) );
-		Map( "term", FSTreePtr( GetSingleton< FSTree_dev_term >() ) );
-		Map( "fd",   FSTreePtr( GetSingleton< FSTree_dev_fd   >() ) );
+		Map( "new", FSTreePtr( GetSingleton< FSTree_dev_new >() ) );
+		Map( "con", FSTreePtr( GetSingleton< FSTree_dev_con >() ) );
+		Map( "fd",  FSTreePtr( GetSingleton< FSTree_dev_fd  >() ) );
 	}
 	
 	
@@ -215,30 +215,30 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr dev_term_Details::Lookup( const std::string& name ) const
+	FSTreePtr dev_con_Details::Lookup( const std::string& name ) const
 	{
 		unsigned index = std::atoi( name.c_str() );
 		
-		return FSTreePtr( new FSTree_dev_term_N( index ) );
+		return FSTreePtr( new FSTree_dev_con_N( index ) );
 	}
 	
-	FSNode dev_term_Details::ConvertToFSNode( ConsolesOwner::Map::value_type consoleMapping )
+	FSNode dev_con_Details::ConvertToFSNode( ConsolesOwner::Map::value_type consoleMapping )
 	{
 		Console* console = consoleMapping.first;
 		
 		const std::string& pathname = console->TTYName();
 		
-		std::string name = pathname.substr( sizeof "/dev/term/" - 1, pathname.npos );
+		std::string name = pathname.substr( pathname.find_last_of( "/" ) + 1, pathname.npos );
 		
 		unsigned index = std::atoi( name.c_str() );
 		
-		FSTreePtr tree( new FSTree_dev_term_N( index ) );
+		FSTreePtr tree( new FSTree_dev_con_N( index ) );
 		
 		return FSNode( name, tree );
 	}
 	
 	
-	std::string FSTree_dev_term_N::Name() const
+	std::string FSTree_dev_con_N::Name() const
 	{
 		return NN::Convert< std::string >( itsIndex );
 	}
