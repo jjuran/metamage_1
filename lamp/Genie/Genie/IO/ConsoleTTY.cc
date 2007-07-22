@@ -98,11 +98,6 @@ namespace Genie
 				break;
 			
 			case WIOCSTITLE:
-				if ( argp == NULL )
-				{
-					argp = (int*) "gterm";
-				}
-				
 				CheckConsole();
 				
 				console->SetTitle( argp ? N::Str255( (const char*) argp ) : NULL );
