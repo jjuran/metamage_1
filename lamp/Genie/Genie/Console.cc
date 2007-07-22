@@ -324,6 +324,17 @@ namespace Genie
 		return !currentInput.empty()  ||  myInput != NULL && myInput->Ready();
 	}
 	
+	void Console::SetTitle( ConstStr255Param title )
+	{
+		if ( fWindow.Get() == NULL )
+		{
+			fWindow.Open( fProgramName );
+			myInput = &Input();
+		}
+		
+		N::SetWTitle( Window()->Get(), title );
+	}
+	
 	int Console::Read( char* data, std::size_t byteCount )
 	{
 		// Zero byteCount always begets zero result

@@ -143,6 +143,8 @@ namespace Genie
 			
 			bool IsReadable() const;
 			
+			void SetTitle( ConstStr255Param title );
+			
 			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );
 			
