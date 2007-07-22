@@ -73,10 +73,16 @@ namespace Genie
 	
 	class GenieWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >
 	{
+		private:
+			Io::StringPipe itsInput;
+		
 		public:
 			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
 			
-			GenieWindow( Ped::WindowClosure& closure, ConstStr255Param title, Io::StringPipe& input );
+			GenieWindow( Ped::WindowClosure& closure, ConstStr255Param title );
+			
+			Io::StringPipe const& Input() const  { return itsInput; }
+			Io::StringPipe      & Input()        { return itsInput; }
 	};
 	
 	
@@ -124,9 +130,9 @@ namespace Genie
 			GenieWindow const* Get() const  { return fWindow.get(); }
 			GenieWindow      * Get()        { return fWindow.get(); }
 			
-			void Open( ConstStr255Param title, Io::StringPipe& input )
+			void Open( ConstStr255Param title )
 			{
-				fWindow.reset( new GenieWindow( *this, title, input ) );
+				fWindow.reset( new GenieWindow( *this, title) );
 			}
 			
 			ConsoleTTYHandle* Salvage()  { DisassociateFromTerminal();  return Terminal(); }
@@ -159,8 +165,11 @@ namespace Genie
 			
 			const std::string& TTYName() const  { return fWindow.TTYName(); }
 			
-			GenieWindow* Window()  { return fWindow.Get(); }  // NULL if no window
-			ConsolePane& Pane  ()  { return fWindow.Get()->SubView().ScrolledView(); }
+			GenieWindow const* Window() const  { return fWindow.Get(); }  // NULL if no window
+			GenieWindow      * Window()        { return fWindow.Get(); }  // NULL if no window
+			
+			ConsolePane const& Pane  () const  { return fWindow.Get()->SubView().ScrolledView(); }
+			ConsolePane      & Pane  ()        { return fWindow.Get()->SubView().ScrolledView(); }
 			
 			int GetWindowSalvagePolicy() const  { return itsWindowSalvagePolicy; }
 			

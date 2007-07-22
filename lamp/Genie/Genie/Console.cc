@@ -292,13 +292,10 @@ namespace Genie
 	
 	
 	GenieWindow::GenieWindow( Ped::WindowClosure&  closure,
-	                          ConstStr255Param     title,
-	                          Io::StringPipe&      input )
-	: 
-		Base( Ped::NewWindowContext( MakeWindowRect(), title ),
-		      closure, input )
+	                          ConstStr255Param     title   ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
+	                                                                 closure,
+	                                                                 itsInput )
 	{
-		
 	}
 	
 	
@@ -342,9 +339,21 @@ namespace Genie
 		
 	}
 	
+	static bool ReadyForInputFromWindow( const GenieWindow* window )
+	{
+		return window != NULL  &&  window->Input().Ready();
+	}
+	
+	static std::string ReadInputFromWindow( GenieWindow* window )
+	{
+		ASSERT( window != NULL );
+		
+		return window->Input().Read();
+	}
+	
 	bool Console::IsReadable() const
 	{
-		return !currentInput.empty()  ||  itsInput.Ready();
+		return !currentInput.empty()  ||  ReadyForInputFromWindow( Window() );
 	}
 	
 	static N::Str255 DefaultConsoleTitle( const std::string& ttyName )
@@ -356,7 +365,7 @@ namespace Genie
 	{
 		if ( fWindow.Get() == NULL )
 		{
-			fWindow.Open( title ? title : DefaultConsoleTitle( fWindow.TTYName() ), itsInput );
+			fWindow.Open( title ? title : DefaultConsoleTitle( fWindow.TTYName() ) );
 		}
 	}
 	
@@ -386,9 +395,9 @@ namespace Genie
 		{
 			if ( currentInput.empty() )
 			{
-				if ( itsInput.Ready() )
+				if ( ReadyForInputFromWindow( Window() ) )
 				{
-					currentInput = itsInput.Read();
+					currentInput = ReadInputFromWindow( Window() );
 				}
 			}
 			
@@ -535,8 +544,6 @@ namespace Genie
 		
 		if ( console->ShouldSalvageWindow() )
 		{
-			//boost::shared_ptr< Console > salvaged = map[ console ].lock();
-			
 			gSalvagedConsoles[ console->Salvage() ] = console;
 		}
 		
