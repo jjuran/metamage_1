@@ -85,12 +85,11 @@ namespace Genie
 		switch ( request )
 		{
 			case WIOCGTITLE:
-				ASSERT( argp != NULL );
-				
-				ASSERT( console != NULL );
+				CheckConsole();
 				
 				ASSERT( console->Window() != NULL );
 				
+				if ( argp != NULL )
 				{
 					N::Str255 title = N::GetWTitle( console->Window()->Get() );
 					
@@ -102,13 +101,14 @@ namespace Genie
 				break;
 			
 			case WIOCSTITLE:
-				ASSERT( argp != NULL );
+				if ( argp == NULL )
+				{
+					argp = (int*) "gterm";
+				}
 				
-				ASSERT( console != NULL );
+				CheckConsole();
 				
-				ASSERT( console->Window() != NULL );
-				
-				N::SetWTitle( console->Window()->Get(), N::Str255( (const char*) argp ) );
+				console->SetTitle( N::Str255( (const char*) argp ) );
 				
 				break;
 			
