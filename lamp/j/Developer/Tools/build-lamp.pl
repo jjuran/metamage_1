@@ -56,7 +56,7 @@ my @programs = qw
 	A-line
 	abort aevt argv0
 	beep
-	cat cds cp cpres cr2lf
+	cat cds console cp cpres cr2lf
 	divide
 	echo env err2text
 	false
@@ -119,7 +119,7 @@ my %fsmap =
 			qw( gzip htget killall md5sum nohup open osascript perl tty which ),
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
-			qw( beep cds cr2lf divide err2text jtest keymods lf2cr lf2crlf macbin ptrace stripcr striplf th ),
+			qw( beep cds console cr2lf divide err2text jtest keymods lf2cr lf2crlf macbin ptrace stripcr striplf th ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
 		lib =>
