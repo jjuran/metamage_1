@@ -40,6 +40,43 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	class ConsolePane : public Ped::Console
+	{
+		private:
+			Io::StringPipe&  itsInput;
+			short            itsStartOfInput;
+			bool             itHasReceivedEOF;
+		
+		public:
+			struct Initializer : public Ped::Console::Initializer
+			{
+				Io::StringPipe& input;
+				
+				Initializer( Io::StringPipe& in ) : input( in )  {}
+			};
+		
+		public:
+			ConsolePane( const Rect&         bounds,
+			             const Initializer&  init   ) : Ped::Console    ( bounds, init ),
+			                                            itsInput        ( init.input   ),
+			                                            itsStartOfInput ( TextLength() ),
+			                                            itHasReceivedEOF( false        )
+			{
+			}
+			
+			void CheckEOF();
+			
+			int WriteChars( const char* data, unsigned int byteCount );
+			
+			void MouseDown( const EventRecord& event );
+			bool KeyDown  ( const EventRecord& event );
+			
+			bool UserCommand( Ped::MenuItemCode code );
+			
+			void Paste();
+	};
+	
+	
 	void ConsolePane::CheckEOF()
 	{
 		if ( itHasReceivedEOF )
@@ -291,10 +328,25 @@ namespace Genie
 	}
 	
 	
-	GenieWindow::GenieWindow( Ped::WindowClosure&  closure,
-	                          ConstStr255Param     title   ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
-	                                                                 closure,
-	                                                                 itsInput )
+	class ConsoleWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >
+	{
+		private:
+			Io::StringPipe itsInput;
+		
+		public:
+			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
+			
+			ConsoleWindow( Ped::WindowClosure& closure, ConstStr255Param title );
+			
+			Io::StringPipe const& Input() const  { return itsInput; }
+			Io::StringPipe      & Input()        { return itsInput; }
+	};
+	
+	
+	ConsoleWindow::ConsoleWindow( Ped::WindowClosure&  closure,
+	                              ConstStr255Param     title   ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
+	                                                                     closure,
+	                                                                     itsInput )
 	{
 	}
 	
@@ -326,18 +378,30 @@ namespace Genie
 	}
 	
 	
-	TerminalWindowOwner::TerminalWindowOwner( ConsoleTTYHandle* terminal ) : ConsoleWindowClosure( terminal       ),
-	                                                                         itsLatentTitle      ( DefaultTitle() ),
-	                                                                         itIsBlocking        ( false          )
+	Console::Console( ConsoleTTYHandle* terminal ) : ConsoleWindowClosure  ( terminal                      ),
+	                                                 itsLatentTitle        ( DefaultTitle()                ),
+	                                                 itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
+	                                                 itsLeaderWaitStatus   ( 0                             ),
+	                                                 itIsBlocking          ( false                         )
 	{
 	}
 	
-	N::Str255 TerminalWindowOwner::DefaultTitle() const
+	ConsolePane const& Console::Pane() const
+	{
+		return itsWindow->SubView().ScrolledView();
+	}
+	
+	ConsolePane& Console::Pane()
+	{
+		return itsWindow->SubView().ScrolledView();
+	}
+	
+	N::Str255 Console::DefaultTitle() const
 	{
 		return N::Str255( TTYName() );
 	}
 	
-	void TerminalWindowOwner::SetTitle( ConstStr255Param title )
+	void Console::SetTitle( ConstStr255Param title )
 	{
 		itsLatentTitle = title ? title : DefaultTitle();
 		
@@ -347,32 +411,32 @@ namespace Genie
 		}
 	}
 	
-	void TerminalWindowOwner::Open()
+	void Console::Open()
 	{
 		if ( !IsOpen() )
 		{
-			itsWindow.reset( new GenieWindow( *this, itsLatentTitle ) );
+			itsWindow.reset( new ConsoleWindow( *this, itsLatentTitle ) );
 		}
 	}
 	
-	static bool ReadyForInputFromWindow( const GenieWindow* window )
+	static bool ReadyForInputFromWindow( const ConsoleWindow* window )
 	{
 		return window != NULL  &&  window->Input().Ready();
 	}
 	
-	static std::string ReadInputFromWindow( GenieWindow* window )
+	static std::string ReadInputFromWindow( ConsoleWindow* window )
 	{
 		ASSERT( window != NULL );
 		
 		return window->Input().Read();
 	}
 	
-	bool TerminalWindowOwner::IsReadable() const
+	bool Console::IsReadable() const
 	{
-		return !itsCurrentInput.empty()  ||  ReadyForInputFromWindow( Get() );
+		return !itsCurrentInput.empty()  ||  ReadyForInputFromWindow( itsWindow.get() );
 	}
 	
-	int TerminalWindowOwner::Read( char* data, std::size_t byteCount )
+	int Console::Read( char* data, std::size_t byteCount )
 	{
 		// Zero byteCount always begets zero result
 		if ( byteCount == 0 )
@@ -386,9 +450,9 @@ namespace Genie
 		{
 			if ( itsCurrentInput.empty() )
 			{
-				if ( ReadyForInputFromWindow( Get() ) )
+				if ( ReadyForInputFromWindow( itsWindow.get() ) )
 				{
-					itsCurrentInput = ReadInputFromWindow( Get() );
+					itsCurrentInput = ReadInputFromWindow( itsWindow.get() );
 				}
 			}
 			
@@ -431,44 +495,31 @@ namespace Genie
 		return 0;
 	}
 	
-	int TerminalWindowOwner::Write( const char* data, std::size_t byteCount )
+	int Console::Write( const char* data, std::size_t byteCount )
 	{
 		Open();
 		
 		int result = Pane().WriteChars( data, byteCount );
 		
-		Get()->SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
-		                                   N::SetPt( 0, 0 ) );
+		itsWindow->SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
+		                                       N::SetPt( 0, 0 ) );
 		
 		return result;
 	}
 	
-	
-	Console::Console( ConsoleTTYHandle* terminal )
-	:
-		fWindow( terminal ),
-		itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
-		itsLeaderWaitStatus( 0 )
+	ConsoleTTYHandle* Console::Salvage()
 	{
-	}
-	
-	Console::~Console()
-	{
+		SetTitle( N::Str255( "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")" ) );
 		
+		DisassociateFromTerminal();
+		
+		return Terminal();
 	}
 	
 	bool Console::ShouldSalvageWindow() const
 	{
-		return !fWindow.ClosureHasBeenRequested()  &&  itsLeaderWaitStatus != 0;  // FIXME
+		return !ClosureHasBeenRequested()  &&  itsLeaderWaitStatus != 0;  // FIXME
 	}
-	
-	ConsoleTTYHandle* Console::Salvage()
-	{
-		fWindow.SetTitle( N::Str255( "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")" ) );
-		
-		return fWindow.Salvage();
-	}
-	
 	
 	boost::shared_ptr< IOHandle > NewConsoleDevice()
 	{

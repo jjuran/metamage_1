@@ -35,57 +35,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class ConsolePane : public Ped::Console
-	{
-		private:
-			Io::StringPipe&  itsInput;
-			short            itsStartOfInput;
-			bool             itHasReceivedEOF;
-		
-		public:
-			struct Initializer : public Ped::Console::Initializer
-			{
-				Io::StringPipe& input;
-				
-				Initializer( Io::StringPipe& in ) : input( in )  {}
-			};
-		
-		public:
-			ConsolePane( const Rect&         bounds,
-			             const Initializer&  init   ) : Ped::Console    ( bounds, init ),
-			                                            itsInput        ( init.input   ),
-			                                            itsStartOfInput ( TextLength() ),
-			                                            itHasReceivedEOF( false        )
-			{
-			}
-			
-			void CheckEOF();
-			
-			int WriteChars( const char* data, unsigned int byteCount );
-			
-			void MouseDown( const EventRecord& event );
-			bool KeyDown  ( const EventRecord& event );
-			
-			bool UserCommand( Ped::MenuItemCode code );
-			
-			void Paste();
-	};
-	
-	class GenieWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >
-	{
-		private:
-			Io::StringPipe itsInput;
-		
-		public:
-			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
-			
-			GenieWindow( Ped::WindowClosure& closure, ConstStr255Param title );
-			
-			Io::StringPipe const& Input() const  { return itsInput; }
-			Io::StringPipe      & Input()        { return itsInput; }
-	};
-	
-	
 	class ConsoleTTYHandle;
 	
 	class ConsoleWindowClosure : public Ped::WindowClosure
@@ -117,16 +66,25 @@ namespace Genie
 			void DisassociateFromTerminal()  { itHasDisassociated = true; }
 	};
 	
-	class TerminalWindowOwner : public ConsoleWindowClosure
+	
+	class ConsolePane;
+	class ConsoleWindow;
+	
+	class Console : public ConsoleWindowClosure
 	{
 		private:
-			std::auto_ptr< GenieWindow >  itsWindow;
-			N::Str255                     itsLatentTitle;
-			std::string                   itsCurrentInput;
-			bool                          itIsBlocking;
+			std::auto_ptr< ConsoleWindow >  itsWindow;
+			N::Str255                       itsLatentTitle;
+			std::string                     itsCurrentInput;
+			int                             itsWindowSalvagePolicy;
+			int                             itsLeaderWaitStatus;
+			bool                            itIsBlocking;
+			
+			ConsolePane const& Pane() const;
+			ConsolePane      & Pane();
 		
 		public:
-			TerminalWindowOwner( ConsoleTTYHandle* terminal );
+			Console( ConsoleTTYHandle* terminal );
 			
 			bool IsOpen() const  { return itsWindow.get() != NULL; }
 			
@@ -143,39 +101,6 @@ namespace Genie
 			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );
 			
-			GenieWindow const* Get() const  { return itsWindow.get(); }
-			GenieWindow      * Get()        { return itsWindow.get(); }
-			
-			ConsolePane const& Pane  () const  { return itsWindow->SubView().ScrolledView(); }
-			ConsolePane      & Pane  ()        { return itsWindow->SubView().ScrolledView(); }
-			
-			ConsoleTTYHandle* Salvage()  { DisassociateFromTerminal();  return Terminal(); }
-	};
-	
-	
-	class Console
-	{
-		private:
-			TerminalWindowOwner fWindow;
-			int itsWindowSalvagePolicy;
-			int itsLeaderWaitStatus;
-		
-		public:
-			Console( ConsoleTTYHandle* terminal );
-			
-			~Console();
-			
-			bool IsReadable() const  { return fWindow.IsReadable(); }
-			
-			N::Str255 GetTitle() const  { return fWindow.GetTitle(); }
-			
-			void SetTitle( ConstStr255Param title = NULL )  { fWindow.SetTitle( title ); }
-			
-			int Read (       char* data, std::size_t byteCount )  { return fWindow.Read( data, byteCount ); }
-			int Write( const char* data, std::size_t byteCount )  { return fWindow.Write( data, byteCount ); }
-			
-			const std::string& TTYName() const  { return fWindow.TTYName(); }
-			
 			int GetWindowSalvagePolicy() const  { return itsWindowSalvagePolicy; }
 			
 			void SetWindowSalvagePolicy( int policy )  { itsWindowSalvagePolicy = policy; }
@@ -186,6 +111,7 @@ namespace Genie
 			
 			ConsoleTTYHandle* Salvage();
 	};
+	
 	
 	typedef std::map< Console*, boost::weak_ptr< Console > > ConsoleMap;
 	
