@@ -119,21 +119,25 @@ namespace Genie
 	
 	class TerminalWindowOwner : public ConsoleWindowClosure
 	{
-		typedef std::auto_ptr< GenieWindow > WindowStorage;
-		
 		private:
-			WindowStorage itsWindow;
+			std::auto_ptr< GenieWindow >  itsWindow;
+			N::Str255                     itsLatentTitle;
 		
 		public:
-			TerminalWindowOwner( ConsoleTTYHandle* terminal ) : ConsoleWindowClosure( terminal )  {}
+			TerminalWindowOwner( ConsoleTTYHandle* terminal );
+			
+			bool IsOpen() const  { return itsWindow.get() != NULL; }
+			
+			N::Str255 DefaultTitle() const;
+			
+			N::Str255 GetTitle() const  { return itsLatentTitle; }
+			
+			void SetTitle( ConstStr255Param title );
+			
+			void Open();
 			
 			GenieWindow const* Get() const  { return itsWindow.get(); }
 			GenieWindow      * Get()        { return itsWindow.get(); }
-			
-			void Open( ConstStr255Param title )
-			{
-				itsWindow.reset( new GenieWindow( *this, title ) );
-			}
 			
 			ConsoleTTYHandle* Salvage()  { DisassociateFromTerminal();  return Terminal(); }
 	};
@@ -155,9 +159,9 @@ namespace Genie
 			
 			bool IsReadable() const;
 			
-			void OpenWindow( ConstStr255Param title = NULL );
+			N::Str255 GetTitle() const  { return fWindow.GetTitle(); }
 			
-			void SetTitle( ConstStr255Param title = NULL );
+			void SetTitle( ConstStr255Param title = NULL )  { fWindow.SetTitle( title ); }
 			
 			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );

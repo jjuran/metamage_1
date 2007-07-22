@@ -90,7 +90,7 @@ namespace Genie
 				
 				if ( argp != NULL )
 				{
-					N::Str255 title = N::GetWTitle( console->Window()->Get() );
+					N::Str255 title = console->GetTitle();
 					
 					std::copy( title + 1, title + 1 + title[0], (Byte*) argp );
 					
@@ -107,7 +107,7 @@ namespace Genie
 				
 				CheckConsole();
 				
-				console->SetTitle( N::Str255( (const char*) argp ) );
+				console->SetTitle( argp ? N::Str255( (const char*) argp ) : NULL );
 				
 				break;
 			

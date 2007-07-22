@@ -325,6 +325,36 @@ namespace Genie
 		return false;
 	}
 	
+	
+	TerminalWindowOwner::TerminalWindowOwner( ConsoleTTYHandle* terminal ) : ConsoleWindowClosure( terminal       ),
+	                                                                         itsLatentTitle      ( DefaultTitle() )
+	{
+	}
+	
+	N::Str255 TerminalWindowOwner::DefaultTitle() const
+	{
+		return N::Str255( TTYName() );
+	}
+	
+	void TerminalWindowOwner::SetTitle( ConstStr255Param title )
+	{
+		itsLatentTitle = title ? title : DefaultTitle();
+		
+		if ( IsOpen() )
+		{
+			N::SetWTitle( itsWindow->Get(), itsLatentTitle );
+		}
+	}
+	
+	void TerminalWindowOwner::Open()
+	{
+		if ( !IsOpen() )
+		{
+			itsWindow.reset( new GenieWindow( *this, itsLatentTitle ) );
+		}
+	}
+	
+	
 	Console::Console( ConsoleTTYHandle* terminal )
 	:
 		fWindow( terminal ),
@@ -356,31 +386,6 @@ namespace Genie
 		return !currentInput.empty()  ||  ReadyForInputFromWindow( Window() );
 	}
 	
-	static N::Str255 DefaultConsoleTitle( const std::string& ttyName )
-	{
-		return N::Str255( ttyName );
-	}
-	
-	void Console::OpenWindow( ConstStr255Param title )
-	{
-		if ( fWindow.Get() == NULL )
-		{
-			fWindow.Open( title ? title : DefaultConsoleTitle( fWindow.TTYName() ) );
-		}
-	}
-	
-	void Console::SetTitle( ConstStr255Param title )
-	{
-		if ( fWindow.Get() == NULL )
-		{
-			OpenWindow( title );
-		}
-		else
-		{
-			N::SetWTitle( Window()->Get(), title ? title : DefaultConsoleTitle( fWindow.TTYName() ) );
-		}
-	}
-	
 	int Console::Read( char* data, std::size_t byteCount )
 	{
 		// Zero byteCount always begets zero result
@@ -389,7 +394,7 @@ namespace Genie
 			return 0;
 		}
 		
-		OpenWindow();
+		fWindow.Open();
 		
 		while ( true )
 		{
@@ -442,7 +447,7 @@ namespace Genie
 	
 	int Console::Write( const char* data, std::size_t byteCount )
 	{
-		OpenWindow();
+		fWindow.Open();
 		
 		int result = Pane().WriteChars( data, byteCount );
 		
@@ -459,7 +464,7 @@ namespace Genie
 	
 	ConsoleTTYHandle* Console::Salvage()
 	{
-		SetTitle( N::Str255( "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")" ) );
+		fWindow.SetTitle( N::Str255( "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")" ) );
 		
 		return fWindow.Salvage();
 	}
