@@ -20,8 +20,6 @@ namespace Genie
 		private:
 			std::size_t id;
 			boost::shared_ptr< Console > console;
-			
-			void CheckConsole();
 		
 		public:
 			static TypeCode Type()  { return kConsoleTTYType; }

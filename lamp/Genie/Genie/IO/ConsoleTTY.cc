@@ -21,17 +21,15 @@ namespace Genie
 	
 	namespace NN = Nucleus;
 	
-	void ConsoleTTYHandle::CheckConsole()
+	
+	static std::string MakeConsoleName( std::size_t id )
 	{
-		if ( console.get() == NULL )
-		{
-			console = NewConsole( this );
-		}
+		return "/dev/con/" + NN::Convert< std::string >( id );
 	}
 	
-	ConsoleTTYHandle::ConsoleTTYHandle( std::size_t id )
-	: TTYHandle( "/dev/con/" + NN::Convert< std::string >( id ) ),
-	  id( id )
+	ConsoleTTYHandle::ConsoleTTYHandle( std::size_t id ) : TTYHandle( MakeConsoleName( id ) ),
+	                                                       id( id ),
+	                                                       console( NewConsole( this ) )
 	{
 	}
 	
@@ -48,8 +46,6 @@ namespace Genie
 	
 	int ConsoleTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		CheckConsole();
-		
 		while ( true )
 		{
 			try
@@ -72,8 +68,6 @@ namespace Genie
 	
 	int ConsoleTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		CheckConsole();
-		
 		return console->Write( data, byteCount );
 	}
 	
@@ -84,8 +78,6 @@ namespace Genie
 		switch ( request )
 		{
 			case WIOCGTITLE:
-				CheckConsole();
-				
 				if ( argp != NULL )
 				{
 					N::Str255 title = console->GetTitle();
@@ -98,8 +90,6 @@ namespace Genie
 				break;
 			
 			case WIOCSTITLE:
-				CheckConsole();
-				
 				console->SetTitle( argp ? N::Str255( (const char*) argp ) : NULL );
 				
 				break;
