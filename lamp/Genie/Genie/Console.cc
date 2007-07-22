@@ -40,20 +40,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class ConsolesOwner
-	{
-		private:
-			ConsoleMap map;
-		
-		public:
-			const ConsoleMap& GetMap() const  { return map; }
-			
-			Console* NewConsole( ConsoleTTYHandle* terminal );
-			
-			void CloseConsole( Console* console );
-	};
-	
-	
 	int ConsolePane::WriteChars( const char* data, unsigned int byteCount )
 	{
 		int written = Ped::Console::WriteChars( data, byteCount );
@@ -337,9 +323,8 @@ namespace Genie
 		return false;
 	}
 	
-	Console::Console( ConsoleTTYHandle* terminal, ConstStr255Param name )
+	Console::Console( ConsoleTTYHandle* terminal )
 	:
-		fProgramName( name ),
 		fWindow( terminal ),
 		myInput( NULL ),
 		itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
@@ -514,6 +499,20 @@ namespace Genie
 	{
 		return SpawnNewConsole( LoginExecutable() );
 	}
+	
+	
+	class ConsolesOwner
+	{
+		private:
+			ConsoleMap map;
+		
+		public:
+			const ConsoleMap& GetMap() const  { return map; }
+			
+			Console* NewConsole( ConsoleTTYHandle* terminal );
+			
+			void CloseConsole( Console* console );
+	};
 	
 	
 	Console* ConsolesOwner::NewConsole( ConsoleTTYHandle* terminal )

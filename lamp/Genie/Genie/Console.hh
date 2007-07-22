@@ -130,7 +130,6 @@ namespace Genie
 	class Console
 	{
 		private:
-			N::Str63 fProgramName;
 			TerminalWindowOwner fWindow;
 			Io::StringPipe* myInput;
 			std::string currentInput;
@@ -139,7 +138,7 @@ namespace Genie
 			bool blockingMode;
 		
 		public:
-			Console( ConsoleTTYHandle* terminal, ConstStr255Param name = "\p" "gterm" );
+			Console( ConsoleTTYHandle* terminal );
 			
 			~Console()  {}
 			
