@@ -143,7 +143,6 @@ namespace Genie
 	{
 		private:
 			TerminalWindowOwner fWindow;
-			Io::StringPipe itsInput;
 			std::string currentInput;
 			int itsWindowSalvagePolicy;
 			int itsLeaderWaitStatus;
