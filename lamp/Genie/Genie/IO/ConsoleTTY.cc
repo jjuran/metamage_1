@@ -40,8 +40,9 @@ namespace Genie
 	
 	unsigned int ConsoleTTYHandle::SysPoll() const
 	{
-		return (console.get() && console->IsReadable() ? kPollRead
-		                                               : 0        ) | kPollWrite;
+		int readability = console->IsReadable() ? kPollRead : 0;
+		
+		return readability | kPollWrite;
 	}
 	
 	int ConsoleTTYHandle::SysRead( char* data, std::size_t byteCount )
@@ -110,10 +111,7 @@ namespace Genie
 	
 	void ConsoleTTYHandle::SaveLeaderWaitStatus( int status )
 	{
-		if ( console.get() != NULL )
-		{
-			console->SetLeaderWaitStatus( status );
-		}
+		console->SetLeaderWaitStatus( status );
 	}
 	
 }
