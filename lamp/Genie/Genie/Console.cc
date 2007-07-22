@@ -327,7 +327,8 @@ namespace Genie
 	
 	
 	TerminalWindowOwner::TerminalWindowOwner( ConsoleTTYHandle* terminal ) : ConsoleWindowClosure( terminal       ),
-	                                                                         itsLatentTitle      ( DefaultTitle() )
+	                                                                         itsLatentTitle      ( DefaultTitle() ),
+	                                                                         itIsBlocking        ( false          )
 	{
 	}
 	
@@ -354,21 +355,6 @@ namespace Genie
 		}
 	}
 	
-	
-	Console::Console( ConsoleTTYHandle* terminal )
-	:
-		fWindow( terminal ),
-		itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
-		itsLeaderWaitStatus( 0 ),
-		blockingMode( false )
-	{
-	}
-	
-	Console::~Console()
-	{
-		
-	}
-	
 	static bool ReadyForInputFromWindow( const GenieWindow* window )
 	{
 		return window != NULL  &&  window->Input().Ready();
@@ -381,12 +367,12 @@ namespace Genie
 		return window->Input().Read();
 	}
 	
-	bool Console::IsReadable() const
+	bool TerminalWindowOwner::IsReadable() const
 	{
-		return !currentInput.empty()  ||  ReadyForInputFromWindow( Window() );
+		return !itsCurrentInput.empty()  ||  ReadyForInputFromWindow( Get() );
 	}
 	
-	int Console::Read( char* data, std::size_t byteCount )
+	int TerminalWindowOwner::Read( char* data, std::size_t byteCount )
 	{
 		// Zero byteCount always begets zero result
 		if ( byteCount == 0 )
@@ -394,35 +380,35 @@ namespace Genie
 			return 0;
 		}
 		
-		fWindow.Open();
+		Open();
 		
 		while ( true )
 		{
-			if ( currentInput.empty() )
+			if ( itsCurrentInput.empty() )
 			{
-				if ( ReadyForInputFromWindow( Window() ) )
+				if ( ReadyForInputFromWindow( Get() ) )
 				{
-					currentInput = ReadInputFromWindow( Window() );
+					itsCurrentInput = ReadInputFromWindow( Get() );
 				}
 			}
 			
-			if ( !currentInput.empty() )
+			if ( !itsCurrentInput.empty() )
 			{
 				// Actual byteCount is lesser of requested size and available size
-				std::size_t bytesCopied = std::min( byteCount, currentInput.size() );
+				std::size_t bytesCopied = std::min( byteCount, itsCurrentInput.size() );
 				
 				// Copy data from input to buffer
-				std::copy( currentInput.begin(),
-				           currentInput.begin() + bytesCopied,
+				std::copy( itsCurrentInput.begin(),
+				           itsCurrentInput.begin() + bytesCopied,
 				           data );
 				
 				// Slide remaining data to beginning
-				std::copy( currentInput.begin() + bytesCopied,
-				           currentInput.end(),
-				           currentInput.begin() );
+				std::copy( itsCurrentInput.begin() + bytesCopied,
+				           itsCurrentInput.end(),
+				           itsCurrentInput.begin() );
 				
 				// and take up the slack
-				currentInput.resize( currentInput.size() - bytesCopied );
+				itsCurrentInput.resize( itsCurrentInput.size() - bytesCopied );
 				
 				return bytesCopied;
 			}
@@ -430,7 +416,7 @@ namespace Genie
 			
 			Pane().CheckEOF();
 			
-			if ( blockingMode )
+			if ( itIsBlocking )
 			{
 				Yield();
 				continue;
@@ -445,16 +431,30 @@ namespace Genie
 		return 0;
 	}
 	
-	int Console::Write( const char* data, std::size_t byteCount )
+	int TerminalWindowOwner::Write( const char* data, std::size_t byteCount )
 	{
-		fWindow.Open();
+		Open();
 		
 		int result = Pane().WriteChars( data, byteCount );
 		
-		Window()->SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
-		                                      N::SetPt( 0, 0 ) );
+		Get()->SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
+		                                   N::SetPt( 0, 0 ) );
 		
 		return result;
+	}
+	
+	
+	Console::Console( ConsoleTTYHandle* terminal )
+	:
+		fWindow( terminal ),
+		itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
+		itsLeaderWaitStatus( 0 )
+	{
+	}
+	
+	Console::~Console()
+	{
+		
 	}
 	
 	bool Console::ShouldSalvageWindow() const
@@ -468,6 +468,7 @@ namespace Genie
 		
 		return fWindow.Salvage();
 	}
+	
 	
 	boost::shared_ptr< IOHandle > NewConsoleDevice()
 	{

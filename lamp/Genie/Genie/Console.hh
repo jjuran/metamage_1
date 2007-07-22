@@ -122,6 +122,8 @@ namespace Genie
 		private:
 			std::auto_ptr< GenieWindow >  itsWindow;
 			N::Str255                     itsLatentTitle;
+			std::string                   itsCurrentInput;
+			bool                          itIsBlocking;
 		
 		public:
 			TerminalWindowOwner( ConsoleTTYHandle* terminal );
@@ -136,8 +138,16 @@ namespace Genie
 			
 			void Open();
 			
+			bool IsReadable() const;
+			
+			int Read (       char* data, std::size_t byteCount );
+			int Write( const char* data, std::size_t byteCount );
+			
 			GenieWindow const* Get() const  { return itsWindow.get(); }
 			GenieWindow      * Get()        { return itsWindow.get(); }
+			
+			ConsolePane const& Pane  () const  { return itsWindow->SubView().ScrolledView(); }
+			ConsolePane      & Pane  ()        { return itsWindow->SubView().ScrolledView(); }
 			
 			ConsoleTTYHandle* Salvage()  { DisassociateFromTerminal();  return Terminal(); }
 	};
@@ -147,24 +157,22 @@ namespace Genie
 	{
 		private:
 			TerminalWindowOwner fWindow;
-			std::string currentInput;
 			int itsWindowSalvagePolicy;
 			int itsLeaderWaitStatus;
-			bool blockingMode;
 		
 		public:
 			Console( ConsoleTTYHandle* terminal );
 			
 			~Console();
 			
-			bool IsReadable() const;
+			bool IsReadable() const  { return fWindow.IsReadable(); }
 			
 			N::Str255 GetTitle() const  { return fWindow.GetTitle(); }
 			
 			void SetTitle( ConstStr255Param title = NULL )  { fWindow.SetTitle( title ); }
 			
-			int Read (       char* data, std::size_t byteCount );
-			int Write( const char* data, std::size_t byteCount );
+			int Read (       char* data, std::size_t byteCount )  { return fWindow.Read( data, byteCount ); }
+			int Write( const char* data, std::size_t byteCount )  { return fWindow.Write( data, byteCount ); }
 			
 			const std::string& TTYName() const  { return fWindow.TTYName(); }
 			
