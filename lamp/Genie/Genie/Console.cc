@@ -130,20 +130,35 @@ namespace Genie
 		bool textIsSelected = start != end;
 		bool atStartOfInput = start == myStartOfInput;
 		
-		if ( event.modifiers & controlKey )
+		if ( event.modifiers & controlKey  &&  c < 0x20 )
 		{
-			if ( c == Cntrl( 'D' ) )
+			char cntrl = c | 0x40;
+			
+			switch ( cntrl )
 			{
-				short cmdLen = std::max( TextLength() - myStartOfInput, 0 );
+				case 'A':
+					start = end = myStartOfInput;
+					
+					SetSelection( start, end );
+					break;
 				
-				if ( cmdLen == 0 )
-				{
-					eofReceived = true;
-				}
-				else
-				{
-					N::SysBeep();
-				}
+				case 'E':
+					start = end = TextLength();
+					
+					SetSelection( start, end );
+					break;
+				
+				case 'D':
+					if ( TextLength() - myStartOfInput <= 0 )
+					{
+						eofReceived = true;
+					}
+					else
+					{
+						N::SysBeep();
+					}
+					
+					break;
 			}
 			
 			return true;
