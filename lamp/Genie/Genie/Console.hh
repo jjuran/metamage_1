@@ -121,18 +121,18 @@ namespace Genie
 	{
 		typedef std::auto_ptr< GenieWindow > WindowStorage;
 		
-		protected:
-			WindowStorage         fWindow;
+		private:
+			WindowStorage itsWindow;
 		
 		public:
 			TerminalWindowOwner( ConsoleTTYHandle* terminal ) : ConsoleWindowClosure( terminal )  {}
 			
-			GenieWindow const* Get() const  { return fWindow.get(); }
-			GenieWindow      * Get()        { return fWindow.get(); }
+			GenieWindow const* Get() const  { return itsWindow.get(); }
+			GenieWindow      * Get()        { return itsWindow.get(); }
 			
 			void Open( ConstStr255Param title )
 			{
-				fWindow.reset( new GenieWindow( *this, title) );
+				itsWindow.reset( new GenieWindow( *this, title ) );
 			}
 			
 			ConsoleTTYHandle* Salvage()  { DisassociateFromTerminal();  return Terminal(); }
