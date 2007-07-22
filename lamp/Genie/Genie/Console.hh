@@ -38,21 +38,27 @@ namespace Genie
 	class ConsolePane : public Ped::Console
 	{
 		private:
-			Io::StringPipe myInput;
+			Io::StringPipe& itsInput;
 			short myStartOfInput;
 		
 		public:
+			struct Initializer : public Ped::Console::Initializer
+			{
+				Io::StringPipe& input;
+				
+				Initializer( Io::StringPipe& in ) : input( in )  {}
+			};
+			
 			bool eofReceived;
 		
 		public:
-			ConsolePane( const Rect& bounds, Initializer init ) 
+			ConsolePane( const Rect& bounds, const Initializer& init ) 
 			: 
-				Ped::Console( bounds, init ), 
+				Ped::Console( bounds, init ),
+				itsInput( init.input ),
 				myStartOfInput( TextLength() ),
 				eofReceived( false )
 			{}
-			
-			Io::StringPipe& Input()  { return myInput; }
 			
 			int WriteChars( const char* data, unsigned int byteCount );
 			
@@ -69,8 +75,7 @@ namespace Genie
 		public:
 			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
 			
-			GenieWindow( Ped::WindowClosure& closure );
-			GenieWindow( Ped::WindowClosure& closure, ConstStr255Param title );
+			GenieWindow( Ped::WindowClosure& closure, ConstStr255Param title, Io::StringPipe& input );
 	};
 	
 	
@@ -118,9 +123,9 @@ namespace Genie
 			GenieWindow const* Get() const  { return fWindow.get(); }
 			GenieWindow      * Get()        { return fWindow.get(); }
 			
-			void Open( ConstStr255Param title )
+			void Open( ConstStr255Param title, Io::StringPipe& input )
 			{
-				fWindow.reset( new GenieWindow( *this, title ) );
+				fWindow.reset( new GenieWindow( *this, title, input ) );
 			}
 			
 			ConsoleTTYHandle* Salvage()  { DisassociateFromTerminal();  return Terminal(); }
@@ -131,7 +136,7 @@ namespace Genie
 	{
 		private:
 			TerminalWindowOwner fWindow;
-			Io::StringPipe* myInput;
+			Io::StringPipe itsInput;
 			std::string currentInput;
 			int itsWindowSalvagePolicy;
 			int itsLeaderWaitStatus;
@@ -155,8 +160,6 @@ namespace Genie
 			
 			GenieWindow* Window()  { return fWindow.Get(); }  // NULL if no window
 			ConsolePane& Pane  ()  { return fWindow.Get()->SubView().ScrolledView(); }
-			
-			Io::StringPipe& Input()  { return Pane().Input(); }
 			
 			int GetWindowSalvagePolicy() const  { return itsWindowSalvagePolicy; }
 			

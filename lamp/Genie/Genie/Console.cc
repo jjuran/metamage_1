@@ -118,7 +118,7 @@ namespace Genie
 				
 				command += '\n';
 				
-				myInput.Write( command );
+				itsInput.Write( command );
 			}
 			
 			return true;
@@ -213,7 +213,7 @@ namespace Genie
 					              '\r',
 					              '\n' );
 					
-					myInput.Write( command );
+					itsInput.Write( command );
 				}
 				myStartOfInput = TextLength();
 				break;
@@ -280,18 +280,12 @@ namespace Genie
 	}
 	
 	
-	GenieWindow::GenieWindow( Ped::WindowClosure& closure )
-	: 
-		Base( Ped::NewWindowContext( MakeWindowRect(), "\p" "gterm" ),
-		      closure )
-	{
-		
-	}
-	
-	GenieWindow::GenieWindow( Ped::WindowClosure& closure, ConstStr255Param title )
+	GenieWindow::GenieWindow( Ped::WindowClosure&  closure,
+	                          ConstStr255Param     title,
+	                          Io::StringPipe&      input )
 	: 
 		Base( Ped::NewWindowContext( MakeWindowRect(), title ),
-		      closure )
+		      closure, input )
 	{
 		
 	}
@@ -326,7 +320,6 @@ namespace Genie
 	Console::Console( ConsoleTTYHandle* terminal )
 	:
 		fWindow( terminal ),
-		myInput( NULL ),
 		itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
 		itsLeaderWaitStatus( 0 ),
 		blockingMode( false )
@@ -335,7 +328,7 @@ namespace Genie
 	
 	bool Console::IsReadable() const
 	{
-		return !currentInput.empty()  ||  myInput != NULL && myInput->Ready();
+		return !currentInput.empty()  ||  itsInput.Ready();
 	}
 	
 	static N::Str255 DefaultConsoleTitle( const std::string& ttyName )
@@ -347,9 +340,7 @@ namespace Genie
 	{
 		if ( fWindow.Get() == NULL )
 		{
-			fWindow.Open( title ? title : DefaultConsoleTitle( fWindow.TTYName() ) );
-			
-			myInput = &Input();
+			fWindow.Open( title ? title : DefaultConsoleTitle( fWindow.TTYName() ), itsInput );
 		}
 	}
 	
@@ -379,9 +370,9 @@ namespace Genie
 		{
 			if ( currentInput.empty() )
 			{
-				if ( myInput != NULL  &&  myInput->Ready() )
+				if ( itsInput.Ready() )
 				{
-					currentInput = myInput->Read();
+					currentInput = itsInput.Read();
 				}
 			}
 			
