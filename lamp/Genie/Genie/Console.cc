@@ -358,7 +358,7 @@ namespace Genie
 		return itsTerminal->TTYName();
 	}
 	
-	static void CloseSalvagedConsole( ConsoleID terminal );
+	static void CloseSalvagedConsole( ConsoleID id );
 	
 	bool ConsoleWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
@@ -619,9 +619,9 @@ namespace Genie
 		gConsolesOwner.CloseConsole( console );
 	}
 	
-	void CloseSalvagedConsole( ConsoleID terminal )
+	void CloseSalvagedConsole( ConsoleID id )
 	{
-		gSalvagedConsoles.erase( terminal );
+		gSalvagedConsoles.erase( id );
 	}
 	
 }
