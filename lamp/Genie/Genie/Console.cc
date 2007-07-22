@@ -386,16 +386,6 @@ namespace Genie
 	{
 	}
 	
-	ConsolePane const& Console::Pane() const
-	{
-		return itsWindow->SubView().ScrolledView();
-	}
-	
-	ConsolePane& Console::Pane()
-	{
-		return itsWindow->SubView().ScrolledView();
-	}
-	
 	N::Str255 Console::DefaultTitle() const
 	{
 		return N::Str255( TTYName() );
@@ -434,6 +424,11 @@ namespace Genie
 	bool Console::IsReadable() const
 	{
 		return !itsCurrentInput.empty()  ||  ReadyForInputFromWindow( itsWindow.get() );
+	}
+	
+	static ConsolePane& GetConsolePane( const std::auto_ptr< ConsoleWindow >& window )
+	{
+		return window->SubView().ScrolledView();
 	}
 	
 	int Console::Read( char* data, std::size_t byteCount )
@@ -478,7 +473,7 @@ namespace Genie
 			}
 			
 			
-			Pane().CheckEOF();
+			GetConsolePane( itsWindow ).CheckEOF();
 			
 			if ( itIsBlocking )
 			{
@@ -499,7 +494,7 @@ namespace Genie
 	{
 		Open();
 		
-		int result = Pane().WriteChars( data, byteCount );
+		int result = GetConsolePane( itsWindow ).WriteChars( data, byteCount );
 		
 		itsWindow->SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
 		                                       N::SetPt( 0, 0 ) );

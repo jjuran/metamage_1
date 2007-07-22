@@ -79,9 +79,6 @@ namespace Genie
 			int                             itsWindowSalvagePolicy;
 			int                             itsLeaderWaitStatus;
 			bool                            itIsBlocking;
-			
-			ConsolePane const& Pane() const;
-			ConsolePane      & Pane();
 		
 		public:
 			Console( ConsoleTTYHandle* terminal );
