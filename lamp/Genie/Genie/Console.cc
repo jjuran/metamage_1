@@ -432,6 +432,13 @@ namespace Genie
 		return !fWindow.ClosureHasBeenRequested()  &&  itsLeaderWaitStatus != 0;  // FIXME
 	}
 	
+	ConsoleTTYHandle* Console::Salvage()
+	{
+		SetTitle( N::Str255( "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")" ) );
+		
+		return fWindow.Salvage();
+	}
+	
 	boost::shared_ptr< IOHandle > NewConsoleDevice()
 	{
 		static std::size_t gLastID = 0;

@@ -167,7 +167,7 @@ namespace Genie
 			
 			bool ShouldSalvageWindow() const;
 			
-			ConsoleTTYHandle* Salvage()  { return fWindow.Salvage(); }
+			ConsoleTTYHandle* Salvage();
 	};
 	
 	class ConsolesOwner
