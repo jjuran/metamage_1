@@ -473,30 +473,36 @@ namespace Pedestal
 				Point scrollableRange = ScrollableRange( ScrolledView() );
 				Point scrollPosition  = ScrollPosition ( ScrolledView() );
 				
-				char keyChar = event.message & charCodeMask;
+				char keyCode = (event.message & keyCodeMask) >> 8;
 				
-				switch ( keyChar )
+				// Only consider programmers' keys, not control characters
+				if ( keyCode >= 0x70 )
 				{
-					case kHomeCharCode:
-						Scroll( 0, -scrollPosition.v );
-						UpdateScrollbars( scrollableRange, scrollPosition );
-						return true;
+					char keyChar = event.message & charCodeMask;
 					
-					case kEndCharCode:
-						Scroll( 0, scrollableRange.v - scrollPosition.v );
-						UpdateScrollbars( scrollableRange, scrollPosition );
-						return true;
-					
-					case kPageUpCharCode:
-						ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), N::kControlPageUpPart );
-						return true;
-					
-					case kPageDownCharCode:
-						ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), N::kControlPageDownPart );
-						return true;
-					
-					default:
-						break;
+					switch ( keyChar )
+					{
+						case kHomeCharCode:
+							Scroll( 0, -scrollPosition.v );
+							UpdateScrollbars( scrollableRange, scrollPosition );
+							return true;
+						
+						case kEndCharCode:
+							Scroll( 0, scrollableRange.v - scrollPosition.v );
+							UpdateScrollbars( scrollableRange, scrollPosition );
+							return true;
+						
+						case kPageUpCharCode:
+							ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), N::kControlPageUpPart );
+							return true;
+						
+						case kPageDownCharCode:
+							ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), N::kControlPageDownPart );
+							return true;
+						
+						default:
+							break;
+					}
 				}
 				
 				if ( ScrolledView().KeyDown( event ) )
