@@ -395,6 +395,8 @@ namespace Genie
 			
 			if ( Pane().eofReceived )
 			{
+				Pane().eofReceived = false;
+				
 				throw io::end_of_input();
 			}
 			else
