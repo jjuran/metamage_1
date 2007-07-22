@@ -15,13 +15,12 @@
 #include "POSeven/Errno.hh"
 
 // Genie
-#include "Genie/Console.hh"
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
-#include "Genie/IO/TTY.hh"
+#include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -224,15 +223,19 @@ namespace Genie
 	
 	FSNode dev_con_Details::ConvertToFSNode( ConsoleMap::value_type consoleMapping )
 	{
-		Console* console = consoleMapping.first;
+		ConsoleID id = consoleMapping.first;
 		
-		const std::string& pathname = console->TTYName();
+		ASSERT( !consoleMapping.second.expired() );
+		
+		boost::shared_ptr< IOHandle > io = consoleMapping.second.lock();
+		
+		ConsoleTTYHandle& console = IOHandle_Cast< ConsoleTTYHandle >( *io );
+		
+		const std::string& pathname = console.TTYName();
 		
 		std::string name = pathname.substr( pathname.find_last_of( "/" ) + 1, pathname.npos );
 		
-		unsigned index = std::atoi( name.c_str() );
-		
-		FSTreePtr tree( new FSTree_dev_con_N( index ) );
+		FSTreePtr tree( new FSTree_dev_con_N( id ) );
 		
 		return FSNode( name, tree );
 	}

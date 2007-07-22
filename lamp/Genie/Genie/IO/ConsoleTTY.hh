@@ -6,8 +6,11 @@
 #ifndef GENIE_IO_CONSOLETTY_HH
 #define GENIE_IO_CONSOLETTY_HH
 
- // Genie
- #include "Genie/IO/TTY.hh"
+// Standard C++
+#include <map>
+
+// Genie
+#include "Genie/IO/TTY.hh"
 
 
 namespace Genie
@@ -15,10 +18,12 @@ namespace Genie
 	
 	class Console;
 	
+	typedef std::size_t ConsoleID;
+	
 	class ConsoleTTYHandle : public TTYHandle
 	{
 		private:
-			std::size_t id;
+			ConsoleID id;
 			boost::shared_ptr< Console > console;
 		
 		public:
@@ -26,7 +31,7 @@ namespace Genie
 			
 			TypeCode ActualType() const  { return Type(); }
 			
-			ConsoleTTYHandle( std::size_t id );
+			ConsoleTTYHandle( ConsoleID id );
 			
 			~ConsoleTTYHandle();
 			
@@ -38,10 +43,19 @@ namespace Genie
 			
 			void IOCtl( unsigned long request, int* argp );
 			
-			std::size_t ID() const  { return id; }
+			ConsoleID ID() const  { return id; }
 			
 			void SaveLeaderWaitStatus( int status );
 	};
+	
+	
+	boost::shared_ptr< IOHandle > NewConsoleDevice();
+	
+	const ConsoleTTYHandle& GetConsoleByID( ConsoleID id );
+	
+	typedef std::map< ConsoleID, boost::weak_ptr< IOHandle > > ConsoleMap;
+	
+	const ConsoleMap& GetConsoleMap();
 	
 }
 

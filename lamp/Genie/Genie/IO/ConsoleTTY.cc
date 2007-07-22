@@ -5,11 +5,17 @@
 
 #include "Genie/IO/ConsoleTTY.hh"
 
+// Standard C
+#include <errno.h>
+
 // Lamp
 #include <lamp/winio.h>
 
 // Nucleus
 #include "Nucleus/Convert.h"
+
+// POSeve
+#include "POSeven/Errno.hh"
 
 // Genie
 #include "Genie/Console.hh"
@@ -20,21 +26,57 @@ namespace Genie
 {
 	
 	namespace NN = Nucleus;
+	namespace P7 = POSeven;
 	
 	
-	static std::string MakeConsoleName( std::size_t id )
+	static ConsoleMap gConsoleMap;
+	
+	const ConsoleMap& GetConsoleMap()
+	{
+		return gConsoleMap;
+	}
+	
+	
+	boost::shared_ptr< IOHandle > NewConsoleDevice()
+	{
+		static ConsoleID gLastID = 0;
+		
+		boost::shared_ptr< IOHandle > consoleDevice( new ConsoleTTYHandle( ++gLastID ) );
+		
+		gConsoleMap[ gLastID ] = consoleDevice;
+		
+		return consoleDevice;
+	}
+	
+	const ConsoleTTYHandle& GetConsoleByID( ConsoleID id )
+	{
+		ConsoleMap::const_iterator it = gConsoleMap.find( id );
+		
+		if ( it == gConsoleMap.end() )
+		{
+			P7::ThrowErrno( ENOENT );
+		}
+		
+		ASSERT( !it->second.expired() );
+		
+		return IOHandle_Cast< ConsoleTTYHandle >( *it->second.lock() );
+	}
+	
+	static std::string MakeConsoleName( ConsoleID id )
 	{
 		return "/dev/con/" + NN::Convert< std::string >( id );
 	}
 	
-	ConsoleTTYHandle::ConsoleTTYHandle( std::size_t id ) : TTYHandle( MakeConsoleName( id ) ),
-	                                                       id( id ),
-	                                                       console( NewConsole( this ) )
+	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : TTYHandle( MakeConsoleName( id ) ),
+	                                                     id( id ),
+	                                                     console( NewConsole( id ) )
 	{
 	}
 	
 	ConsoleTTYHandle::~ConsoleTTYHandle()
 	{
+		gConsoleMap.erase( id );
+		
 		CloseConsole( console );
 	}
 	

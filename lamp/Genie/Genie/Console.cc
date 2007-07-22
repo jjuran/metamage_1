@@ -350,14 +350,6 @@ namespace Genie
 	{
 	}
 	
-	
-	const std::string& ConsoleWindowClosure::TTYName() const
-	{
-		ASSERT( itsTerminal != NULL );
-		
-		return itsTerminal->TTYName();
-	}
-	
 	static void CloseSalvagedConsole( ConsoleID id );
 	
 	bool ConsoleWindowClosure::RequestWindowClosure( N::WindowRef )
@@ -366,7 +358,7 @@ namespace Genie
 		
 		if ( !itHasDisassociated )
 		{
-			SendSignalToProcessGroup( SIGHUP, *itsTerminal->GetProcessGroup().lock().get() );
+			SendSignalToProcessGroup( SIGHUP, *GetConsoleByID( itsConsoleID ).GetProcessGroup().lock() );
 		}
 		else
 		{
@@ -378,17 +370,17 @@ namespace Genie
 	}
 	
 	
-	Console::Console( ConsoleTTYHandle* terminal ) : ConsoleWindowClosure  ( terminal                      ),
-	                                                 itsLatentTitle        ( DefaultTitle()                ),
-	                                                 itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
-	                                                 itsLeaderWaitStatus   ( 0                             ),
-	                                                 itIsBlocking          ( false                         )
+	Console::Console( ConsoleID id ) : ConsoleWindowClosure  ( id                            ),
+	                                   itsLatentTitle        ( DefaultTitle()                ),
+	                                   itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
+	                                   itsLeaderWaitStatus   ( 0                             ),
+	                                   itIsBlocking          ( false                         )
 	{
 	}
 	
 	N::Str255 Console::DefaultTitle() const
 	{
-		return N::Str255( TTYName() );
+		return N::Str255( "/dev/con/" + NN::Convert< std::string >( ID() ) );
 	}
 	
 	void Console::SetTitle( ConstStr255Param title )
@@ -516,12 +508,6 @@ namespace Genie
 		return !ClosureHasBeenRequested()  &&  itsLeaderWaitStatus != 0;  // FIXME
 	}
 	
-	boost::shared_ptr< IOHandle > NewConsoleDevice()
-	{
-		static ConsoleID gLastID = 0;
-		
-		return boost::shared_ptr< IOHandle >( new ConsoleTTYHandle( ++gLastID ) );
-	}
 	
 	void SpawnNewConsole( const FSSpec& program )
 	{
@@ -562,61 +548,24 @@ namespace Genie
 	}
 	
 	
-	class ConsolesOwner
-	{
-		private:
-			ConsoleMap map;
-		
-		public:
-			const ConsoleMap& GetMap() const  { return map; }
-			
-			boost::shared_ptr< Console > NewConsole( ConsoleTTYHandle* terminal );
-			
-			void CloseConsole( const boost::shared_ptr< Console >& console );
-	};
+	std::map< ConsoleID, boost::shared_ptr< Console > > gSalvagedConsoles;
 	
 	
-	boost::shared_ptr< Console > ConsolesOwner::NewConsole( ConsoleTTYHandle* terminal )
+	boost::shared_ptr< Console > NewConsole( ConsoleID id )
 	{
-		boost::shared_ptr< Console > console( new Console( terminal ) );
-		
-		map[ console.get() ] = console;
+		boost::shared_ptr< Console > console( new Console( id ) );
 		
 		return console;
 	}
 	
-	std::map< ConsoleID, boost::shared_ptr< Console > > gSalvagedConsoles;
-	
-	void ConsolesOwner::CloseConsole( const boost::shared_ptr< Console >& console )
+	void CloseConsole( const boost::shared_ptr< Console >& console )
 	{
-		if ( console.get() == NULL )
-		{
-			return;
-		}
+		ASSERT( console.get() != NULL );
 		
 		if ( console->ShouldSalvageWindow() )
 		{
 			gSalvagedConsoles[ console->Salvage() ] = console;
 		}
-		
-		map.erase( console.get() );
-	}
-	
-	static ConsolesOwner gConsolesOwner;
-	
-	const ConsoleMap& GetConsoleMap()
-	{
-		return gConsolesOwner.GetMap();
-	}
-	
-	boost::shared_ptr< Console > NewConsole( ConsoleTTYHandle* terminal )
-	{
-		return gConsolesOwner.NewConsole( terminal );
-	}
-	
-	void CloseConsole( const boost::shared_ptr< Console >& console )
-	{
-		gConsolesOwner.CloseConsole( console );
 	}
 	
 	void CloseSalvagedConsole( ConsoleID id )

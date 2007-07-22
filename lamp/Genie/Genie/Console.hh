@@ -28,7 +28,7 @@
 #include "Pedestal/View.hh"
 
 // Genie
-#include "Genie/IO/ConsoleTTY.hh"  // only for ID()
+#include "Genie/IO/ConsoleTTY.hh"
 
 
 namespace Genie
@@ -38,14 +38,9 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	//class ConsoleTTYHandle;
-	
-	typedef std::size_t ConsoleID;
-	
 	class ConsoleWindowClosure : public Ped::WindowClosure
 	{
 		private:
-			ConsoleTTYHandle* itsTerminal;
 			ConsoleID itsConsoleID;
 			bool itHasBeenRequested;
 			bool itHasDisassociated;
@@ -55,16 +50,13 @@ namespace Genie
 			~ConsoleWindowClosure()  {}
 		
 		public:
-			ConsoleWindowClosure( ConsoleTTYHandle* terminal ) : itsTerminal( terminal ),
-			                                                     itsConsoleID( terminal->ID() ),
-			                                                     itHasBeenRequested(),
-			                                                     itHasDisassociated()
+			ConsoleWindowClosure( ConsoleID id ) : itsConsoleID( id ),
+			                                       itHasBeenRequested(),
+			                                       itHasDisassociated()
 			{
 			}
 			
 			ConsoleID ID() const  { return itsConsoleID; }
-			
-			const std::string& TTYName() const;
 			
 			bool RequestWindowClosure( N::WindowRef );
 			
@@ -88,7 +80,7 @@ namespace Genie
 			bool                            itIsBlocking;
 		
 		public:
-			Console( ConsoleTTYHandle* terminal );
+			Console( ConsoleID id );
 			
 			bool IsOpen() const  { return itsWindow.get() != NULL; }
 			
@@ -117,18 +109,10 @@ namespace Genie
 	};
 	
 	
-	typedef std::map< Console*, boost::weak_ptr< Console > > ConsoleMap;
-	
-	const ConsoleMap& GetConsoleMap();
-	
-	class IOHandle;
-	
-	boost::shared_ptr< IOHandle > NewConsoleDevice();
-	
 	void SpawnNewConsole( const FSSpec& program );
 	void SpawnNewConsole();
 	
-	boost::shared_ptr< Console > NewConsole( ConsoleTTYHandle* terminal );
+	boost::shared_ptr< Console > NewConsole( ConsoleID id );
 	
 	void CloseConsole( const boost::shared_ptr< Console >& console );
 	
