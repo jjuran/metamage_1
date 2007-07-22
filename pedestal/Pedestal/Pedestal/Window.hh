@@ -162,7 +162,8 @@ namespace Pedestal
 			        WindowClosure&           closure,
 			        Initializer              init );
 			
-			Type& SubView()  { return mySubView; }
+			Type const& SubView() const  { return mySubView; }
+			Type      & SubView()        { return mySubView; }
 			
 			void Idle       ( const EventRecord& event )  { SubView().Idle( event );              }
 			bool KeyDown    ( const EventRecord& event )  { return SubView().KeyDown( event );    }

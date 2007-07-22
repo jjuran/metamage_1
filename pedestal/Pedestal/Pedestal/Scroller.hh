@@ -412,7 +412,8 @@ namespace Pedestal
 			static bool ScrollsVertically()    { return VerticalTraits  ::present; }
 			static bool ScrollsHorizontally()  { return HorizontalTraits::present; }
 			
-			ScrollViewType&          ScrolledView()         { return myScrollView; }
+			ScrollViewType const&          ScrolledView() const        { return myScrollView; }
+			ScrollViewType&                ScrolledView()              { return myScrollView; }
 			VerticalScrollbarType&   VerticalScrollbar()    { return myScrollV; }
 			HorizontalScrollbarType& HorizontalScrollbar()  { return myScrollH; }
 			
