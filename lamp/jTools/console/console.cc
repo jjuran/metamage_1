@@ -29,22 +29,26 @@ namespace O = Orion;
 
 int O::Main( int argc, char const *const argv[] )
 {
-	if ( argc < 2 )
+	bool detach = false;
+	
+	const char* title = NULL;
+	
+	O::BindOption( "-d", detach );
+	O::BindOption( "-t", title  );
+	
+	O::AliasOption( "-d", "--detach" );
+	O::AliasOption( "-t", "--title"  );
+	
+	O::GetOptions( argc, argv );
+	
+	char const *const *freeArgs = O::FreeArguments();
+	
+	if ( *freeArgs == NULL )
 	{
 		(void) write( STDERR_FILENO, STR_LEN( "Usage: console command [ arg1 ... argn ]\n" ) );
 		
 		return 1;
 	}
-	
-	const char* title = NULL;
-	
-	O::BindOption( "-t", title );
-	
-	O::AliasOption( "-t", "--title" );
-	
-	O::GetOptions( argc, argv );
-	
-	const std::vector< const char* >& freeArgs = O::FreeArguments();
 	
 	int forked = vfork();
 	
@@ -74,9 +78,12 @@ int O::Main( int argc, char const *const argv[] )
 		_exit( 127 );
 	}
 	
-	int stat = -1;
-	
-	int waited = waitpid( forked, &stat, 0 );
+	if ( !detach )
+	{
+		int stat = -1;
+		
+		int waited = waitpid( forked, &stat, 0 );
+	}
 	
 	return 0;
 }
