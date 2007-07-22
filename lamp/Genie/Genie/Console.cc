@@ -40,10 +40,20 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	void ConsolePane::CheckEOF()
+	{
+		if ( itHasReceivedEOF )
+		{
+			itHasReceivedEOF = false;
+			
+			throw io::end_of_input();
+		}
+	}
+	
 	int ConsolePane::WriteChars( const char* data, unsigned int byteCount )
 	{
 		int written = Ped::Console::WriteChars( data, byteCount );
-		myStartOfInput = TextLength();
+		itsStartOfInput = TextLength();
 		return written;
 	}
 	
@@ -124,11 +134,11 @@ namespace Genie
 			return true;
 		}
 		
-		start = std::max( myStartOfInput, start );
+		start = std::max( itsStartOfInput, start );
 		end   = std::max( start, end );
 		
 		bool textIsSelected = start != end;
-		bool atStartOfInput = start == myStartOfInput;
+		bool atStartOfInput = start == itsStartOfInput;
 		
 		if ( event.modifiers & controlKey  &&  c < 0x20 )
 		{
@@ -137,7 +147,7 @@ namespace Genie
 			switch ( cntrl )
 			{
 				case 'A':
-					start = end = myStartOfInput;
+					start = end = itsStartOfInput;
 					
 					SetSelection( start, end );
 					break;
@@ -149,9 +159,9 @@ namespace Genie
 					break;
 				
 				case 'D':
-					if ( TextLength() - myStartOfInput <= 0 )
+					if ( TextLength() - itsStartOfInput <= 0 )
 					{
-						eofReceived = true;
+						itHasReceivedEOF = true;
 					}
 					else
 					{
@@ -203,10 +213,10 @@ namespace Genie
 				
 				// No constructors directly in a switch block
 				{
-					short cmdLen = std::max( TextLength() - myStartOfInput, 0 );
+					short cmdLen = std::max( TextLength() - itsStartOfInput, 0 );
 					//ASSERT( cmdLen >= 0 );
 					
-					std::string command = GetHandleSubString( TextHandle(), myStartOfInput, cmdLen );
+					std::string command = GetHandleSubString( TextHandle(), itsStartOfInput, cmdLen );
 					
 					std::replace( command.begin(),
 					              command.end(),
@@ -215,7 +225,8 @@ namespace Genie
 					
 					itsInput.Write( command );
 				}
-				myStartOfInput = TextLength();
+				
+				itsStartOfInput = TextLength();
 				break;
 			
 			default:
@@ -256,7 +267,7 @@ namespace Genie
 		// copied from DoKey -- refactor
 		TESelection selection = GetTESelection( Get() );
 		
-		selection.start = std::max( myStartOfInput, selection.start );
+		selection.start = std::max( itsStartOfInput, selection.start );
 		selection.end   = std::max( selection.start, selection.end );
 		
 		SetSelection( selection.start, selection.end );
@@ -398,23 +409,16 @@ namespace Genie
 			}
 			
 			
-			if ( Pane().eofReceived )
+			Pane().CheckEOF();
+			
+			if ( blockingMode )
 			{
-				Pane().eofReceived = false;
-				
-				throw io::end_of_input();
+				Yield();
+				continue;
 			}
 			else
 			{
-				if ( blockingMode )
-				{
-					Yield();
-					continue;
-				}
-				else
-				{
-					throw io::no_input_pending();
-				}
+				throw io::no_input_pending();
 			}
 		}
 		

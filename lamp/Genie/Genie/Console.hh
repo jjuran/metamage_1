@@ -38,8 +38,9 @@ namespace Genie
 	class ConsolePane : public Ped::Console
 	{
 		private:
-			Io::StringPipe& itsInput;
-			short myStartOfInput;
+			Io::StringPipe&  itsInput;
+			short            itsStartOfInput;
+			bool             itHasReceivedEOF;
 		
 		public:
 			struct Initializer : public Ped::Console::Initializer
@@ -48,17 +49,17 @@ namespace Genie
 				
 				Initializer( Io::StringPipe& in ) : input( in )  {}
 			};
-			
-			bool eofReceived;
 		
 		public:
-			ConsolePane( const Rect& bounds, const Initializer& init ) 
-			: 
-				Ped::Console( bounds, init ),
-				itsInput( init.input ),
-				myStartOfInput( TextLength() ),
-				eofReceived( false )
-			{}
+			ConsolePane( const Rect&         bounds,
+			             const Initializer&  init   ) : Ped::Console    ( bounds, init ),
+			                                            itsInput        ( init.input   ),
+			                                            itsStartOfInput ( TextLength() ),
+			                                            itHasReceivedEOF( false        )
+			{
+			}
+			
+			void CheckEOF();
 			
 			int WriteChars( const char* data, unsigned int byteCount );
 			
