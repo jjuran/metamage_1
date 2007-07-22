@@ -86,8 +86,6 @@ namespace Genie
 			case WIOCGTITLE:
 				CheckConsole();
 				
-				ASSERT( console->Window() != NULL );
-				
 				if ( argp != NULL )
 				{
 					N::Str255 title = console->GetTitle();

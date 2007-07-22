@@ -176,12 +176,6 @@ namespace Genie
 			
 			const std::string& TTYName() const  { return fWindow.TTYName(); }
 			
-			GenieWindow const* Window() const  { return fWindow.Get(); }  // NULL if no window
-			GenieWindow      * Window()        { return fWindow.Get(); }  // NULL if no window
-			
-			ConsolePane const& Pane  () const  { return fWindow.Get()->SubView().ScrolledView(); }
-			ConsolePane      & Pane  ()        { return fWindow.Get()->SubView().ScrolledView(); }
-			
 			int GetWindowSalvagePolicy() const  { return itsWindowSalvagePolicy; }
 			
 			void SetWindowSalvagePolicy( int policy )  { itsWindowSalvagePolicy = policy; }
