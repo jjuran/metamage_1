@@ -12,6 +12,9 @@
 #include <string>
 #include <vector>
 
+// Standard C
+#include <signal.h>
+
 // Lamp
 #include <lamp/winio.h>
 
@@ -43,6 +46,7 @@ namespace Genie
 	class ConsolePane : public Ped::Console
 	{
 		private:
+			ConsoleID        itsConsoleID;
 			Io::StringPipe&  itsInput;
 			short            itsStartOfInput;
 			bool             itHasReceivedEOF;
@@ -50,14 +54,16 @@ namespace Genie
 		public:
 			struct Initializer : public Ped::Console::Initializer
 			{
-				Io::StringPipe& input;
+				ConsoleID        id;
+				Io::StringPipe&  input;
 				
-				Initializer( Io::StringPipe& in ) : input( in )  {}
+				Initializer( ConsoleID id, Io::StringPipe& in ) : id( id ), input( in )  {}
 			};
 		
 		public:
 			ConsolePane( const Rect&         bounds,
 			             const Initializer&  init   ) : Ped::Console    ( bounds, init ),
+			                                            itsConsoleID    ( init.id      ),
 			                                            itsInput        ( init.input   ),
 			                                            itsStartOfInput ( TextLength() ),
 			                                            itHasReceivedEOF( false        )
@@ -143,14 +149,15 @@ namespace Genie
 	
 	bool ConsolePane::KeyDown( const EventRecord& event )
 	{
-		char c = event.message & charCodeMask;
+		char c   =  event.message & charCodeMask;
+		char key = (event.message & keyCodeMask) >> 8;
 		
 		TESelection selection = GetTESelection( Get() );
 		
 		short& start = selection.start;
 		short& end   = selection.end;
 		
-		if ( c == kEnterCharCode )
+		if ( c == kEnterCharCode  &&  key == 0x4c )
 		{
 			short cmdLen = end - start;
 			
@@ -193,6 +200,10 @@ namespace Genie
 					start = end = TextLength();
 					
 					SetSelection( start, end );
+					break;
+				
+				case 'C':
+					SendSignalToProcessGroup( SIGINT, *GetConsoleByID( itsConsoleID ).GetProcessGroup().lock() );
 					break;
 				
 				case 'D':
@@ -336,7 +347,7 @@ namespace Genie
 		public:
 			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
 			
-			ConsoleWindow( Ped::WindowClosure& closure, ConstStr255Param title );
+			ConsoleWindow( Ped::WindowClosure& closure, ConstStr255Param title, ConsoleID id );
 			
 			Io::StringPipe const& Input() const  { return itsInput; }
 			Io::StringPipe      & Input()        { return itsInput; }
@@ -344,9 +355,10 @@ namespace Genie
 	
 	
 	ConsoleWindow::ConsoleWindow( Ped::WindowClosure&  closure,
-	                              ConstStr255Param     title   ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
+	                              ConstStr255Param     title,
+	                              ConsoleID            id      ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
 	                                                                     closure,
-	                                                                     itsInput )
+	                                                                     ConsolePane::Initializer( id, itsInput ) )
 	{
 	}
 	
@@ -401,7 +413,7 @@ namespace Genie
 	{
 		if ( !IsOpen() )
 		{
-			itsWindow.reset( new ConsoleWindow( *this, itsLatentTitle ) );
+			itsWindow.reset( new ConsoleWindow( *this, itsLatentTitle, ID() ) );
 		}
 	}
 	
