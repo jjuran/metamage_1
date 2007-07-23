@@ -16,9 +16,9 @@
 namespace Genie
 {
 	
-	class SimpleDeviceHandle;
+	class IOHandle;
 	
-	boost::shared_ptr< SimpleDeviceHandle > GetSimpleDeviceHandle( const std::string& path );
+	boost::shared_ptr< IOHandle > GetSimpleDeviceHandle( const std::string& path );
 	
 }
 

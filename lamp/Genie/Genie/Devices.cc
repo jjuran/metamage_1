@@ -91,7 +91,7 @@ namespace Genie
 		return gDeviceMap;
 	}
 	
-	boost::shared_ptr< SimpleDeviceHandle > GetSimpleDeviceHandle( const std::string& path )
+	boost::shared_ptr< IOHandle > GetSimpleDeviceHandle( const std::string& path )
 	{
 		DeviceIOMap::const_iterator found = DeviceMap().find( path );
 		
@@ -100,7 +100,7 @@ namespace Genie
 			throw N::FNFErr();
 		}
 		
-		return boost::shared_ptr< SimpleDeviceHandle >( new SimpleDeviceHandle( found->second ) );
+		return boost::shared_ptr< IOHandle >( new SimpleDeviceHandle( found->second ) );
 	}
 	
 }

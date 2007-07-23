@@ -29,6 +29,7 @@
 #include "Nitrogen/Sound.h"
 
 // Genie
+#include "Genie/Devices.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/Process.hh"
@@ -163,13 +164,9 @@ namespace Genie
 		
 		FileDescriptorMap& files = process->FileDescriptors();
 		
-		{
-			boost::shared_ptr< IOHandle > terminal = NewConsoleDevice();
-			
-			files[ 0 ] = terminal;
-			files[ 1 ] = terminal;
-			files[ 2 ] = terminal;
-		}
+		files[ 0 ] =
+		files[ 1 ] =
+		files[ 2 ] = GetSimpleDeviceHandle( "console" );
 		
 		try
 		{
