@@ -147,6 +147,40 @@ namespace Genie
 		return c & 0x1F;
 	}
 	
+	static void RunShellCommand( const std::string& command )
+	{
+		const char* argv[] = { "-sh", "-c", "", NULL };
+		
+		const char* envp[] = { "PATH=/bin:/sbin:/usr/bin:/usr/sbin", NULL };
+		
+		argv[2] = command.c_str();
+		
+		FSSpec program = ResolvePathname( "/bin/sh", FSTreePtr() )->GetFSSpec();
+		
+		Process& parent = GetProcess( 1 );
+		
+		Process* process = new Process( parent );
+		
+		FileDescriptorMap& files = process->FileDescriptors();
+		
+		{
+			boost::shared_ptr< IOHandle > terminal = NewConsoleDevice();
+			
+			files[ 0 ] = terminal;
+			files[ 1 ] = terminal;
+			files[ 2 ] = terminal;
+		}
+		
+		try
+		{
+			process->Exec( program, argv, envp );
+		}
+		catch ( ... )
+		{
+			process->Terminate();
+		}
+	}
+	
 	bool ConsolePane::KeyDown( const EventRecord& event )
 	{
 		char c   =  event.message & charCodeMask;
@@ -172,7 +206,14 @@ namespace Genie
 				
 				command += '\n';
 				
-				itsInput.Write( command );
+				// This causes the selected text to appear as input for the
+				// currently running command, be it shell or something else.
+				// It's like typing it in, except that the text doesn't appear.
+				// But the shell will prompt afterward and it waits until idle.
+				//itsInput.Write( command );
+				
+				// This runs the command in a new shell immediately.
+				RunShellCommand( command );
 			}
 			
 			return true;
