@@ -870,7 +870,7 @@ namespace Nitrogen
   }
 
 namespace Nucleus
-  {   
+{   
    template <> struct Converter< Nitrogen::FSSpec, Nitrogen::FSRef >: public std::unary_function< Nitrogen::FSRef, Nitrogen::FSSpec >
      {
       Nitrogen::FSSpec operator()( const Nitrogen::FSRef& ref ) const
@@ -880,7 +880,15 @@ namespace Nucleus
          return result;
         }
      };
-  }
+	
+	template <> struct Converter< Nitrogen::FSDirSpec, Nitrogen::FSRef > : public std::unary_function< Nitrogen::FSRef, Nitrogen::FSDirSpec >
+	{
+		Nitrogen::FSDirSpec operator()( const Nitrogen::FSRef& ref ) const
+		{
+			return Convert< Nitrogen::FSDirSpec >( Convert< Nitrogen::FSSpec >( ref ) );
+		}
+	};
+}
 
 namespace Nitrogen
   {
