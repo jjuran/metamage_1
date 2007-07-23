@@ -157,7 +157,7 @@ namespace Genie
 		short& start = selection.start;
 		short& end   = selection.end;
 		
-		if ( c == kEnterCharCode  &&  key == 0x4c )
+		if ( c == kEnterCharCode  &&  key >= 0x30 )
 		{
 			short cmdLen = end - start;
 			
