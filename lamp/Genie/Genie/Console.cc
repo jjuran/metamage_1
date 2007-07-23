@@ -358,7 +358,11 @@ namespace Genie
 		
 		if ( !itHasDisassociated )
 		{
-			SendSignalToProcessGroup( SIGHUP, *GetConsoleByID( itsConsoleID ).GetProcessGroup().lock() );
+			ConsoleTTYHandle& console = GetConsoleByID( itsConsoleID );
+			
+			console.Disconnect();
+			
+			SendSignalToProcessGroup( SIGHUP, *console.GetProcessGroup().lock() );
 		}
 		else
 		{

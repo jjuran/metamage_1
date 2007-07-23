@@ -22,9 +22,11 @@ namespace Genie
 		private:
 			const std::string                ttyName;
 			boost::weak_ptr< ProcessGroup >  itsForegroundProcessGroup;
+			bool                             itIsDisconnected;
 		
 		public:
-			TTYHandle( const std::string& ttyName ) : ttyName( ttyName )
+			TTYHandle( const std::string& ttyName ) : ttyName( ttyName ),
+			                                          itIsDisconnected( false )
 			{
 			}
 			
@@ -39,6 +41,10 @@ namespace Genie
 			void SetProcessGroup( const boost::weak_ptr< ProcessGroup >& pgrp )  { itsForegroundProcessGroup = pgrp; }
 			
 			virtual void IOCtl( unsigned long request, int* argp );
+			
+			bool IsDisconnected() const  { return itIsDisconnected; }
+			
+			void Disconnect()  { itIsDisconnected = true; }
 			
 			const std::string& TTYName() const  { return ttyName; }
 			

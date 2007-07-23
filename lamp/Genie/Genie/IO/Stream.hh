@@ -36,6 +36,8 @@ namespace Genie
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
+			virtual bool IsDisconnected() const  { return false; }
+			
 			virtual bool IsBlocking() const = 0;
 			
 			virtual void SetBlocking   () = 0;

@@ -26,6 +26,11 @@ namespace Genie
 	
 	const std::string& StreamHandle::Peek( ByteCount minBytes )
 	{
+		if ( IsDisconnected() )
+		{
+			P7::ThrowErrno( EIO );
+		}
+		
 		while ( peekBuffer.size() < minBytes )
 		{
 			const ByteCount kBufferLength = 512;
@@ -44,11 +49,21 @@ namespace Genie
 	
 	unsigned int StreamHandle::Poll() const
 	{
+		if ( IsDisconnected() )
+		{
+			P7::ThrowErrno( EIO );
+		}
+		
 		return SysPoll() | (peekBuffer.empty() ? 0 : kPollRead);
 	}
 	
 	int StreamHandle::Read( char* data, std::size_t byteCount )
 	{
+		if ( IsDisconnected() )
+		{
+			P7::ThrowErrno( EIO );
+		}
+		
 		ByteCount bytesRead = std::min( peekBuffer.size(), byteCount );
 		
 		if ( bytesRead > 0 )
@@ -89,6 +104,11 @@ namespace Genie
 	
 	int StreamHandle::Write( const char* data, std::size_t byteCount )
 	{
+		if ( IsDisconnected() )
+		{
+			P7::ThrowErrno( EIO );
+		}
+		
 		return SysWrite( data, byteCount );
 	}
 	
