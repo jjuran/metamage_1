@@ -156,6 +156,8 @@ namespace Genie
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
 	
@@ -190,6 +192,11 @@ namespace Genie
 	boost::shared_ptr< IOHandle > FSTree_dev_new_console::Open( OpenFlags flags ) const
 	{
 		return NewConsoleDevice();
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_dev_con_N::Open( OpenFlags flags ) const
+	{
+		return GetConsoleByID( itsIndex ).shared_from_this();
 	}
 	
 	FSTree_dev::FSTree_dev()

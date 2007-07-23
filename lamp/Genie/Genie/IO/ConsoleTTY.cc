@@ -48,7 +48,7 @@ namespace Genie
 		return consoleDevice;
 	}
 	
-	const ConsoleTTYHandle& GetConsoleByID( ConsoleID id )
+	ConsoleTTYHandle& GetConsoleByID( ConsoleID id )
 	{
 		ConsoleMap::const_iterator it = gConsoleMap.find( id );
 		
