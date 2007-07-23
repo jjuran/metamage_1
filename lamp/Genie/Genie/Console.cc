@@ -206,6 +206,10 @@ namespace Genie
 					SendSignalToProcessGroup( SIGINT, *GetConsoleByID( itsConsoleID ).GetProcessGroup().lock() );
 					break;
 				
+				case 'Z':
+					SendSignalToProcessGroup( SIGTSTP, *GetConsoleByID( itsConsoleID ).GetProcessGroup().lock() );
+					break;
+				
 				case 'D':
 					if ( TextLength() - itsStartOfInput <= 0 )
 					{
