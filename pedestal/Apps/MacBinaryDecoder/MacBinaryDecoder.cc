@@ -20,19 +20,6 @@
 #include "MacBinaryDecoder.hh"
 
 
-namespace Nucleus
-{
-	
-	template <> struct Converter< Nitrogen::FSDirSpec, Nitrogen::FSRef > : public std::unary_function< Nitrogen::FSRef, Nitrogen::FSDirSpec >
-	{
-		Nitrogen::FSDirSpec operator()( const Nitrogen::FSRef& dir ) const
-		{
-			return Convert< Nitrogen::FSDirSpec >( Convert< FSRef >( dir ) );
-		}
-	};
-	
-}
-
 namespace MacBinaryDecoder
 {
 	
