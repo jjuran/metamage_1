@@ -66,7 +66,6 @@ namespace Genie
 	};
 	
 	
-	class ConsolePane;
 	class ConsoleWindow;
 	
 	class Console : public ConsoleWindowClosure
