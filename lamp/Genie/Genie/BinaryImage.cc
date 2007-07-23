@@ -121,6 +121,11 @@ namespace Genie
 		return NN::Convert< NN::Owned< N::Ptr > >( N::Get1Resource( resType, resID ) );
 	}
 	
+	static bool SuffixMatches( const unsigned char* name, const unsigned char* endOfName, const char* pattern, std::size_t length )
+	{
+		return name[0] >= length  &&  std::equal( endOfName - length, endOfName, pattern );
+	}
+	
 	static bool CFragResourceMemberIsLoadable( const CFragResourceMember& member )
 	{
 		// We aren't using CFM-68K, but it's worth writing correct code anyway
@@ -137,13 +142,14 @@ namespace Genie
 		// Check if fragment name is or ends with "Carbon"
 		N::Str255 name = member.name;
 		
-		const char carbonSuffix[] = "Carbon";
-		
-		const unsigned length = sizeof carbonSuffix - 1;
-		
 		const unsigned char* endOfName = name + 1 + name[0];
 		
-		bool forCarbon = (name[0] >= length) && std::equal( endOfName - length, endOfName, carbonSuffix );
+		if ( SuffixMatches( name, endOfName, "(None)", 6 ) )
+		{
+			return true;
+		}
+		
+		bool forCarbon = SuffixMatches( name, endOfName, "Carbon", 6 );
 		
 		return forCarbon == TARGET_API_MAC_CARBON;
 	}
