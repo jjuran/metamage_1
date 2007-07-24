@@ -138,6 +138,10 @@ extern "C" {
 	
 	int symlink(const char *oldpath, const char *newpath);
 	
+	pid_t tcgetpgrp( int fd );
+	
+	int tcsetpgrp( int fd, pid_t pgrp );
+	
 	int truncate( const char* path, off_t length );
 	
 	int ftruncate( int fd, off_t length );
