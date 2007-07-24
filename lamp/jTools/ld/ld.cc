@@ -175,7 +175,21 @@ namespace jTools
 	
 	static bool debug = true;
 	
-	static bool carbon = false;
+	enum MacAPI
+	{
+		kMacAPINone,
+		kMacAPIBlue,
+		kMacAPICarbon
+	};
+	
+	const char* gMacAPINames[] =
+	{
+		"(None)",
+		"(Blue)",
+		"Carbon"
+	};
+	
+	static MacAPI gMacAPI = kMacAPINone;
 	
 	static std::string outputFilename;
 	
@@ -374,7 +388,11 @@ namespace jTools
 			{
 				if ( io::get_filename( arg ) == "CarbonLib" )
 				{
-					carbon = true;
+					gMacAPI = kMacAPICarbon;
+				}
+				else if ( io::get_filename( arg ) == "InterfaceLib" )
+				{
+					gMacAPI = kMacAPIBlue;
 				}
 				
 				bool pathname = std::strchr( arg, '/' ) != NULL;
@@ -425,9 +443,9 @@ namespace jTools
 		
 		std::string fragmentName;
 		
-		if ( gProductType == kProductTool )
+		if ( !m68k  &&  gProductType == kProductTool )
 		{
-			fragmentName = " -name '" + outputFilename + " " + ( carbon ? "Carbon" : "(Blue)" ) + "'";
+			fragmentName = " -name '" + outputFilename + " " + gMacAPINames[ gMacAPI ] + "'";
 		}
 		
 		ldArgs = " " + product + debugging + deadstripping + fragmentName + " " + ldArgs;
