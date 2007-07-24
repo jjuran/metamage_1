@@ -354,6 +354,14 @@ namespace jTools
 						}
 						break;
 					
+					case 'r':
+						if ( arg[2] == 't'  &&  arg[3] == '\0' )
+						{
+							translatedPath = std::string( arg ) + " '" + *++argv + "'";
+							arg = translatedPath.c_str();
+						}
+						break;
+					
 					case 'o':
 						if ( arg[2] == '\0' )
 						{
