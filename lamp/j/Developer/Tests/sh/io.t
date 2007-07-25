@@ -77,8 +77,6 @@ END
 
 $ echo "FOO=bar; echo foo" | sh -c '. /dev/fd/0 | true; echo $FOO'
 
-TODO Subshell environ mods are leaking out
-
 1 >> 'END'
 
 END
