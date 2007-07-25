@@ -59,7 +59,28 @@ struct TestResults
 	int failed;
 	int todo;
 	int unexpected;
+	
+	TestResults() : planned( -1 ),
+	                failure(),
+	                passed(),
+	                failed(),
+	                todo(),
+	                unexpected()
+	{
+	}
 };
+
+static TestResults operator+( const TestResults& a, const TestResults& b )
+{
+	TestResults sum;
+	
+	sum.passed     = a.passed     + b.passed;
+	sum.failed     = a.failed     + b.failed;
+	sum.todo       = a.todo       + b.todo;
+	sum.unexpected = a.unexpected + b.unexpected;
+	
+	return sum;
+}
 
 static TestResults run_test( const char* test_file )
 {
@@ -95,7 +116,7 @@ static TestResults run_test( const char* test_file )
 	
 	std::string plan = input.Read();
 	
-	TestResults results = { -1, 0, 0, 0, 0, 0 };
+	TestResults results;
 	
 	if ( plan.substr( 0, 3 ) != "1.." )
 	{
@@ -158,9 +179,19 @@ static TestResults run_test( const char* test_file )
 	return results;
 }
 
+static void Report( unsigned count, const char* status )
+{
+	if ( count > 0 )
+	{
+		std::printf( "%d test%s %s\n", count, count == 1 ? "" : "s", status );
+	}
+}
+
 int O::Main( int argc, const char *const argv[] )
 {
 	const char* const* test_file = argv;
+	
+	TestResults totals;
 	
 	while ( *++test_file != NULL )
 	{
@@ -189,7 +220,15 @@ int O::Main( int argc, const char *const argv[] )
 		
 		if ( results.failure == 0 )
 		{
+			if ( results.unexpected > 0 )
+			{
+				result += ", with " + NN::Convert< std::string >( results.unexpected ) + " tests unexpectedly passing";
+			}
 			
+			if ( results.todo > 0 )
+			{
+				result += ", but " + NN::Convert< std::string >( results.todo ) + " tests TODO failed";
+			}
 		}
 		else
 		{
@@ -199,8 +238,15 @@ int O::Main( int argc, const char *const argv[] )
 		result += "\n";
 		
 		write( STDOUT_FILENO, result.data(), result.size() );
+		
+		totals = totals + results;
 	}
 	
+	Report( totals.planned,    "total"                  );
+	Report( totals.passed,     "passed"                 );
+	Report( totals.failed,     "failed"                 );
+	Report( totals.todo,       "TODO failed"            );
+	Report( totals.unexpected, "UNEXPECTEDLY SUCCEEDED" );
 	
 	return 0;
 }
