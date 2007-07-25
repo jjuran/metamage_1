@@ -5,6 +5,7 @@
 #include "Execution.hh"
 
 // Standard C/C++
+#include <cctype>
 #include <cstring>
 
 // Standard C
@@ -392,6 +393,36 @@ static int CallBuiltin( Builtin builtin, char** argv )
 	return builtin( argc, argv );
 }
 
+static std::string EscapeForShell( const char* word )
+{
+	std::string result;
+	
+	for ( const char* p = word;  *p != '\0';  ++p )
+	{
+		if ( !std::isalnum( *p ) )
+		{
+			result += '\\';
+		}
+		
+		result += *p;
+	}
+	
+	return result;
+}
+
+static std::string MakeShellCommandFromBuiltin( char** argv )
+{
+	std::string command = *argv;
+	
+	while ( *++argv != NULL )
+	{
+		command += " ";
+		command += EscapeForShell( *argv );
+	}
+	
+	return command;
+}
+
 static bool CommandIsOnlyAssignments( char** argv )
 {
 	//ASSERT( argv != NULL );
@@ -568,12 +599,6 @@ static int ExecuteCommandFromPipeline( const Command& command )
 	
 	try
 	{
-		if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
-		{
-			// Don't exec a new shell, just call the builtin inside the forked child
-			return CallBuiltin( builtin, argv );
-		}
-		
 		RedirectIOs( command.redirections );
 		
 		while ( std::strchr( argv[ 0 ], '=' ) )
@@ -581,6 +606,15 @@ static int ExecuteCommandFromPipeline( const Command& command )
 			putenv( argv[0] );
 			
 			++argv;
+		}
+		
+		if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
+		{
+			std::string subshell = MakeShellCommandFromBuiltin( argv );
+			
+			const char* subshell_argv[] = { "/bin/sh", "-c", subshell.c_str(), NULL };
+			
+			return Exec( subshell_argv );
 		}
 		
 		return Exec( argv );
