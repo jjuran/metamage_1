@@ -434,6 +434,9 @@ namespace Genie
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
+		itsLastTimerCheckpoint( 0 ),
+		itsUserMicroseconds   ( 0 ),
+		itsSystemMicroseconds ( 0 ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( "init" ),
@@ -457,6 +460,9 @@ namespace Genie
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
+		itsLastTimerCheckpoint( N::Microseconds() ),
+		itsUserMicroseconds   ( 0 ),
+		itsSystemMicroseconds ( 0 ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -781,7 +787,8 @@ namespace Genie
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
-		itsSchedule        = kProcessSleeping;
+		
+		SetSchedule( kProcessSleeping );
 		
 		if ( IsBeingTraced() )
 		{
@@ -1108,6 +1115,22 @@ namespace Genie
 		
 		itsPPID = 0;  // Don't match PPID comparisons
 		itsLifeStage = kProcessReleased;
+	}
+	
+	void Process::SetSchedule( ProcessSchedule schedule )
+	{
+		UInt64 now = N::Microseconds();
+		
+		if ( schedule == kProcessRunning )
+		{
+			itsUserMicroseconds += now - itsLastTimerCheckpoint;
+		}
+		else
+		{
+			itsLastTimerCheckpoint = now;
+		}
+		
+		itsSchedule = schedule;
 	}
 	
 	sig_t Process::SetSignalAction( int signal, sig_t signalAction )

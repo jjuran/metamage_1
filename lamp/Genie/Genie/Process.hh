@@ -165,6 +165,10 @@ namespace Genie
 			
 			UInt64 itsAlarmClock;
 			
+			UInt64 itsLastTimerCheckpoint;
+			UInt64 itsUserMicroseconds;
+			UInt64 itsSystemMicroseconds;
+			
 			UInt32 itsPendingSignals;
 			UInt32 itsPreviousSignals;
 			
@@ -236,7 +240,7 @@ namespace Genie
 			
 			void Release();
 			
-			void SetSchedule( ProcessSchedule schedule )  { itsSchedule = schedule; }
+			void SetSchedule( ProcessSchedule schedule );
 			
 			void Result( int result )  { itsResult = result; }
 			
