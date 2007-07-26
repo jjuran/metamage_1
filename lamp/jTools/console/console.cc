@@ -27,17 +27,26 @@
 namespace O = Orion;
 
 
+static int exit_from_wait( int stat )
+{
+	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+	           :                       -1;
+	
+	return result;
+}
+
 int O::Main( int argc, char const *const argv[] )
 {
-	bool detach = false;
+	bool should_wait = false;
 	
 	const char* title = NULL;
 	
-	O::BindOption( "-d", detach );
-	O::BindOption( "-t", title  );
+	O::BindOption( "-t", title       );
+	O::BindOption( "-w", should_wait );
 	
-	O::AliasOption( "-d", "--detach" );
-	O::AliasOption( "-t", "--title"  );
+	O::AliasOption( "-t", "--title" );
+	O::AliasOption( "-w", "--wait"  );
 	
 	O::GetOptions( argc, argv );
 	
@@ -78,11 +87,20 @@ int O::Main( int argc, char const *const argv[] )
 		_exit( 127 );
 	}
 	
-	if ( !detach )
+	if ( should_wait )
 	{
 		int stat = -1;
 		
 		int waited = waitpid( forked, &stat, 0 );
+		
+		if ( waited == -1 )
+		{
+			std::perror( "console: waitpid" );
+			
+			return 127;
+		}
+		
+		return exit_from_wait( stat );
 	}
 	
 	return 0;
