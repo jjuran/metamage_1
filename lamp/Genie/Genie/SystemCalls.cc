@@ -91,6 +91,15 @@ namespace Genie
 		return CurrentProcess().SetErrno( errnum );
 	}
 	
+	SystemCallFrame::SystemCallFrame( const char* name ) : itsCaller( CurrentProcess() )
+	{
+		itsCaller.EnterSystemCall( name );
+	}
+	
+	SystemCallFrame::~SystemCallFrame()
+	{
+		itsCaller.LeaveSystemCall();
+	}
 	
 	#pragma mark -
 	#pragma mark ¥ Genie ¥
