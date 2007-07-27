@@ -34,7 +34,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;

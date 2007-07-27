@@ -67,11 +67,11 @@ namespace Genie
 				return frame.SetErrno( ENOTEMPTY );
 			}
 			
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;

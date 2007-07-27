@@ -69,7 +69,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			(void) frame.GetErrnoFromException();
+			(void) frame.SetErrnoFromException();
 		}
 		
 		return NULL;
@@ -91,7 +91,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;
@@ -122,12 +122,12 @@ namespace Genie
 			}
 			else
 			{
-				(void) frame.GetErrnoFromException();
+				(void) frame.SetErrnoFromException();
 			}
 		}
 		catch ( ... )
 		{
-			(void) frame.GetErrnoFromException();
+			(void) frame.SetErrnoFromException();
 		}
 		
 		return NULL;
@@ -149,7 +149,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			(void) frame.GetErrnoFromException();
+			(void) frame.SetErrnoFromException();
 		}
 	}
 	
@@ -169,7 +169,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			(void) frame.GetErrnoFromException();
+			(void) frame.SetErrnoFromException();
 		}
 	}
 	
@@ -189,7 +189,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	
@@ -209,7 +209,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	

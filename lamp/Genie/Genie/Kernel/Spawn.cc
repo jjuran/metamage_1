@@ -19,7 +19,7 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_Spawn )
 	DEFINE_MODULE_INIT( Kernel_Spawn )
 	
-	static int Spawn( const SystemCallFrame& frame )
+	static int Spawn( SystemCallFrame& frame )
 	{
 		try
 		{
@@ -29,7 +29,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;

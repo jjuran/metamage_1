@@ -9,14 +9,16 @@
 namespace Genie
 {
 	
-	int GetErrnoFromExceptionInSystemCall();
+	int SetErrnoFromExceptionInSystemCall();
 	
 	class Process;
 	
 	class SystemCallFrame
 	{
 		private:
-			Process& itsCaller;
+			Process&     itsCaller;
+			const char*  itsName;
+			int          itsErrno;
 			
 			// Non-copyable
 			SystemCallFrame           ( const SystemCallFrame& );
@@ -28,9 +30,9 @@ namespace Genie
 			
 			Process& Caller() const  { return itsCaller; }
 			
-			int SetErrno( int errorNumber ) const;
+			int SetErrno( int errorNumber );
 			
-			int GetErrnoFromException() const;
+			int SetErrnoFromException();
 	};
 	
 }

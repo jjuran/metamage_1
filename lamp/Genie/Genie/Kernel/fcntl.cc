@@ -53,7 +53,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	
@@ -89,7 +89,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return frame.SetErrno( EINVAL );

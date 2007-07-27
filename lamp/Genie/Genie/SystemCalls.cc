@@ -80,7 +80,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	static int GetErrnoFromExceptionInSystemCall( Process& process )
+	static P7::Errno GetErrnoFromException()
 	{
 		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus          >();
 		NN::RegisterExceptionConversion< P7::Errno, io::end_of_input     >();
@@ -88,16 +88,25 @@ namespace Genie
 		
 		P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled(), EINVAL );
 		
+		return errnum;
+	}
+	
+	static int SetErrnoFromExceptionInSystemCall( Process& process )
+	{
+		P7::Errno errnum = GetErrnoFromException();
+		
 		return process.SetErrno( errnum );
 	}
 	
-	int GetErrnoFromExceptionInSystemCall()
+	int SetErrnoFromExceptionInSystemCall()
 	{
-		return GetErrnoFromExceptionInSystemCall( CurrentProcess() );
+		return SetErrnoFromExceptionInSystemCall( CurrentProcess() );
 	}
 	
 	
-	SystemCallFrame::SystemCallFrame( const char* name ) : itsCaller( CurrentProcess() )
+	SystemCallFrame::SystemCallFrame( const char* name ) : itsCaller( CurrentProcess() ),
+	                                                       itsName  ( name ),
+	                                                       itsErrno ( 0 )
 	{
 		itsCaller.EnterSystemCall( name );
 	}
@@ -107,14 +116,16 @@ namespace Genie
 		itsCaller.LeaveSystemCall();
 	}
 	
-	int SystemCallFrame::SetErrno( int errorNumber ) const
+	int SystemCallFrame::SetErrno( int errorNumber )
 	{
+		itsErrno = errorNumber;
+		
 		return itsCaller.SetErrno( errorNumber );
 	}
 	
-	int SystemCallFrame::GetErrnoFromException() const
+	int SystemCallFrame::SetErrnoFromException()
 	{
-		return GetErrnoFromExceptionInSystemCall( itsCaller );
+		return SetErrno( GetErrnoFromException() );
 	}
 	
 	
@@ -231,7 +242,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	
@@ -248,7 +259,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;
@@ -275,7 +286,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	
@@ -357,11 +368,11 @@ namespace Genie
 				std::printf( "OSStatus %d%s", int( err.Get() ), errMsg.c_str() );
 			}
 			
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		// Not reached
@@ -469,7 +480,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return frame.SetErrno( ESPIPE );
@@ -541,7 +552,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	
@@ -564,7 +575,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	
@@ -621,7 +632,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	
@@ -683,7 +694,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;
@@ -703,7 +714,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;
@@ -723,7 +734,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;
@@ -792,7 +803,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return frame.GetErrnoFromException();
+			return frame.SetErrnoFromException();
 		}
 	}
 	
