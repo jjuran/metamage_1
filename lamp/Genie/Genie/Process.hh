@@ -15,9 +15,6 @@
 #include <map>
 #include <string>
 
-// POSIX
-#include <sys/times.h>
-
 // Boost
 #include <boost/shared_ptr.hpp>
 
@@ -150,6 +147,16 @@ namespace Genie
 	
 #endif
 	
+	struct Times
+	{
+		UInt64 user;
+		UInt64 system;
+		UInt64 child_user;
+		UInt64 child_system;
+		
+		Times() : user(), system(), child_user(), child_system()  {}
+	};
+	
 	class Process
 	{
 		public:
@@ -170,7 +177,7 @@ namespace Genie
 			
 			UInt64 itsLastTimerCheckpoint;
 			
-			struct tms itsTimes;
+			Times itsTimes;
 			
 			UInt32 itsPendingSignals;
 			UInt32 itsPreviousSignals;
@@ -225,9 +232,9 @@ namespace Genie
 			pid_t GetPGID() const  { return itsProcessGroup->ID();     }
 			pid_t GetSID()  const  { return itsProcessGroup->GetSID(); }
 			
-			const struct tms& GetTimes() const  { return itsTimes; }
+			const Times& GetTimes() const  { return itsTimes; }
 			
-			void AccumulateChildTimes( const struct tms& times );
+			void AccumulateChildTimes( const Times& times );
 			
 			const boost::shared_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
@@ -246,6 +253,13 @@ namespace Genie
 			int Result() const  { return itsResult; }
 			
 			void Release();
+			
+			void EnterSystemCall( const char* name );
+			
+			void LeaveSystemCall();
+			
+			void SuspendTimer();
+			void ResumeTimer();
 			
 			void SetSchedule( ProcessSchedule schedule );
 			

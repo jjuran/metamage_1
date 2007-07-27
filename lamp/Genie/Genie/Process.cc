@@ -426,8 +426,6 @@ namespace Genie
 		}
 	}
 	
-	static struct tms kZeroTimes;
-	
 	Process::Process( RootProcess ) 
 	:
 		itsPPID               ( 0 ),
@@ -436,7 +434,6 @@ namespace Genie
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsLastTimerCheckpoint( 0 ),
-		itsTimes              ( kZeroTimes ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( "init" ),
@@ -461,7 +458,6 @@ namespace Genie
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsLastTimerCheckpoint( N::Microseconds() ),
-		itsTimes              ( kZeroTimes ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -500,10 +496,10 @@ namespace Genie
 	{
 	}
 	
-	void Process::AccumulateChildTimes( const struct tms& times )
+	void Process::AccumulateChildTimes( const Times& times )
 	{
-		itsTimes.tms_cutime += times.tms_utime + times.tms_cutime;
-		itsTimes.tms_cstime += times.tms_stime + times.tms_cstime;
+		itsTimes.child_user   += times.user   + times.child_user;
+		itsTimes.child_system += times.system + times.child_system;
 	}
 	
 	unsigned int Process::SetAlarm( unsigned int seconds )
@@ -792,8 +788,7 @@ namespace Genie
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
-		
-		SetSchedule( kProcessSleeping );
+		itsSchedule        = kProcessSleeping;
 		
 		if ( IsBeingTraced() )
 		{
@@ -802,6 +797,8 @@ namespace Genie
 			// We may have received a signal while stopped
 			HandlePendingSignals();
 		}
+		
+		SuspendTimer();
 		
 		return savedThreadID;
 	}
@@ -1122,6 +1119,37 @@ namespace Genie
 		itsLifeStage = kProcessReleased;
 	}
 	
+	static void UpdateClock( UInt64& clock, UInt64& checkpoint )
+	{
+		UInt64 now = N::Microseconds();
+		
+		clock += now - checkpoint;
+		
+		checkpoint = now;
+	}
+	
+	void Process::EnterSystemCall( const char* name )
+	{
+		UpdateClock( itsTimes.user, itsLastTimerCheckpoint );
+	}
+	
+	void Process::LeaveSystemCall()
+	{
+		UpdateClock( itsTimes.system, itsLastTimerCheckpoint );
+	}
+	
+	void Process::SuspendTimer()
+	{
+		UpdateClock( itsTimes.system, itsLastTimerCheckpoint );
+	}
+	
+	void Process::ResumeTimer()
+	{
+		UInt64 now = N::Microseconds();
+		
+		itsLastTimerCheckpoint = now;
+	}
+	
 	void Process::SetSchedule( ProcessSchedule schedule )
 	{
 		UInt64 now = N::Microseconds();
@@ -1137,7 +1165,7 @@ namespace Genie
 		else if ( itsSchedule == kProcessRunning )
 		{
 			// stopping
-			itsTimes.tms_utime += (now - itsLastTimerCheckpoint) * (CLOCKS_PER_SEC / 1000000.0);
+			UpdateClock( itsTimes.system, itsLastTimerCheckpoint );
 		}
 		
 		itsSchedule = schedule;
@@ -1387,7 +1415,11 @@ namespace Genie
 	
 	void Process::Stop()
 	{
-		SetSchedule( kProcessStopped );
+		ASSERT( itsSchedule == kProcessRunning );
+		
+		itsSchedule = kProcessStopped;
+		
+		SuspendTimer();
 		
 		StopThread( itsThread->Get() );
 	}
@@ -1398,7 +1430,9 @@ namespace Genie
 		
 		if ( N::GetThreadState( itsThread->Get() ) == N::kStoppedThreadState )
 		{
-			SetSchedule( kProcessSleeping );
+			ASSERT( itsSchedule == kProcessStopped );
+			
+			itsSchedule = kProcessSleeping;
 			
 			N::SetThreadState( itsThread->Get(), N::kReadyThreadState );
 		}
