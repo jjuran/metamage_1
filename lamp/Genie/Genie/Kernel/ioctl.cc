@@ -17,7 +17,6 @@
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie
@@ -30,7 +29,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "ioctl" );
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		FileDescriptorMap& files = frame.Caller().FileDescriptors();
 		
 		try
 		{
@@ -52,7 +51,7 @@ namespace Genie
 				
 				case FIONREAD:
 					// not implemented
-					return CurrentProcess().SetErrno( EINVAL );
+					return frame.SetErrno( EINVAL );
 				
 				default:
 					stream.IOCtl( request, argp );

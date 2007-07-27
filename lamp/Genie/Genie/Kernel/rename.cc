@@ -79,7 +79,7 @@ namespace Genie
 			// Can't move across volumes
 			if ( srcFile.vRefNum != destFile.vRefNum )
 			{
-				return CurrentProcess().SetErrno( EXDEV );
+				return frame.SetErrno( EXDEV );
 			}
 			
 			N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFile.vRefNum );
@@ -106,7 +106,7 @@ namespace Genie
 					if ( io::item_is_directory( cInfo ) )
 					{
 						// Also a directory -- can't replace it.
-						return CurrentProcess().SetErrno( EISDIR );
+						return frame.SetErrno( EISDIR );
 					}
 				}
 				

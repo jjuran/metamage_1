@@ -92,7 +92,7 @@ namespace Genie
 			return GetErrnoFromExceptionInSystemCall();
 		}
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return frame.SetErrno( EINVAL );
 	}
 	
 	REGISTER_SYSTEM_CALL( fcntl );

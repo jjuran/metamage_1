@@ -52,7 +52,7 @@ namespace Genie
 			
 			if ( !isDir )
 			{
-				return CurrentProcess().SetErrno( ENOTDIR );
+				return frame.SetErrno( ENOTDIR );
 			}
 			
 			dir->Delete();
@@ -64,7 +64,7 @@ namespace Genie
 			
 			if ( err == fBsyErr )
 			{
-				return CurrentProcess().SetErrno( ENOTEMPTY );
+				return frame.SetErrno( ENOTEMPTY );
 			}
 			
 			return GetErrnoFromExceptionInSystemCall();

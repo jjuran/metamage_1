@@ -91,6 +91,7 @@ namespace Genie
 		return CurrentProcess().SetErrno( errnum );
 	}
 	
+	
 	SystemCallFrame::SystemCallFrame( const char* name ) : itsCaller( CurrentProcess() )
 	{
 		itsCaller.EnterSystemCall( name );
@@ -100,6 +101,12 @@ namespace Genie
 	{
 		itsCaller.LeaveSystemCall();
 	}
+	
+	int SystemCallFrame::SetErrno( int errorNumber ) const
+	{
+		return itsCaller.SetErrno( errorNumber );
+	}
+	
 	
 	#pragma mark -
 	#pragma mark ¥ Genie ¥
@@ -221,7 +228,7 @@ namespace Genie
 		{
 			if ( pathname == NULL )
 			{
-				return CurrentProcess().SetErrno( EINVAL );
+				return frame.SetErrno( EINVAL );
 			}
 			
 			FSTreePtr newCWD = ResolvePathname( pathname, CurrentProcess().GetCWD() );
@@ -311,7 +318,7 @@ namespace Genie
 				
 				if ( (sb.st_mode & S_IXUSR) == 0 )
 				{
-					return CurrentProcess().SetErrno( EACCES );
+					return frame.SetErrno( EACCES );
 				}
 				
 				// Start a new thread with the child's process context
@@ -343,7 +350,7 @@ namespace Genie
 		{
 			if ( err.Get() == resNotFound )
 			{
-				return CurrentProcess().SetErrno( ENOEXEC );
+				return frame.SetErrno( ENOEXEC );
 			}
 			
 			std::string errMsg = "\n";
@@ -478,7 +485,7 @@ namespace Genie
 			return GetErrnoFromExceptionInSystemCall();
 		}
 		
-		return CurrentProcess().SetErrno( ESPIPE );
+		return frame.SetErrno( ESPIPE );
 	}
 	
 	REGISTER_SYSTEM_CALL( lseek );
@@ -487,7 +494,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "mknod" );
 		
-		return CurrentProcess().SetErrno( EINVAL );
+		return frame.SetErrno( EINVAL );
 	}
 	
 	REGISTER_SYSTEM_CALL( mknod );
@@ -498,7 +505,7 @@ namespace Genie
 		
 		CurrentProcess().Stop();  // Sleep, until...
 		
-		return CurrentProcess().SetErrno( EINTR );
+		return frame.SetErrno( EINTR );
 	}
 	
 	REGISTER_SYSTEM_CALL( pause );

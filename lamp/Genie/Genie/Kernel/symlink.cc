@@ -108,7 +108,7 @@ namespace Genie
 				if ( !isDir )
 				{
 					// Can't create link because a file is in the way.
-					return CurrentProcess().SetErrno( EEXIST );
+					return frame.SetErrno( EEXIST );
 				}
 				
 				// Location is a dir; assume a filename.
@@ -118,7 +118,7 @@ namespace Genie
 				link->Stat( sb );
 				
 				// The new location also exists; bail.
-				return CurrentProcess().SetErrno( EEXIST );
+				return frame.SetErrno( EEXIST );
 			}
 			catch ( const P7::Errno& errnum )
 			{

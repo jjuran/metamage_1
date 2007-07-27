@@ -118,7 +118,7 @@ namespace Genie
 			if ( err == fnfErr )
 			{
 				// End of iteration -- not an error, so clear errno
-				CurrentProcess().SetErrno( 0 );
+				frame.SetErrno( 0 );
 			}
 			else
 			{

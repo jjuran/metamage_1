@@ -27,6 +27,8 @@ namespace Genie
 			~SystemCallFrame();
 			
 			Process& Caller() const  { return itsCaller; }
+			
+			int SetErrno( int errorNumber ) const;
 	};
 	
 }

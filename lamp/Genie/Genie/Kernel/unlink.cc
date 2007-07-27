@@ -45,7 +45,7 @@ namespace Genie
 			
 			if ( isDir )
 			{
-				return CurrentProcess().SetErrno( EISDIR );
+				return frame.SetErrno( EISDIR );
 			}
 			
 			file->Delete();

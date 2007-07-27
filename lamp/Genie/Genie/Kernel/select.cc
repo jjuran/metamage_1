@@ -68,7 +68,7 @@ namespace Genie
 					{
 						if ( !files.count( i ) )
 						{
-							return CurrentProcess().SetErrno( EBADF );
+							return frame.SetErrno( EBADF );
 						}
 						
 						StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ i ].handle );
