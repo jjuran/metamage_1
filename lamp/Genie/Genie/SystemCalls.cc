@@ -658,24 +658,34 @@ namespace Genie
 	{
 		SystemCallFrame frame( "sleep" );
 		
-		SInt32 remaining = seconds * 60;  // Close enough
+		SInt64 remaining_microseconds = seconds * 1000000;
 		
-		UInt32 startTicks = ::TickCount();
+		UInt64 start_microseconds = N::Microseconds();
 		
-		UInt32 endTicks = startTicks + remaining;
+		UInt64 end_microseconds = start_microseconds + remaining_microseconds;
 		
 		try
 		{
 			// Yield at least once, even for 0 seconds
 			do
 			{
-				Ped::AdjustSleepForTimer( remaining );
+				// Ticks are exactly 1/60 second in OS X, but not in OS 9.
+				// Here we pass the number of OS X ticks remaining.
+				// The number of OS 9 ticks remaining is slightly larger,
+				// since OS 9 ticks are slightly smaller and a few more of them are
+				// needed to fill a certain length of time.
+				// So our delay will be short-changed, but that's okay because
+				// we keep recomputing it, so as remaining_microseconds approaches
+				// zero, the error becomes insignificant.
+				// And we keep looping until remaining_microseconds becomes zero
+				// anyway.
+				Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
 				
 				Yield();
 				
-				remaining = endTicks - ::TickCount();
+				remaining_microseconds = end_microseconds - N::Microseconds();
 			}
-			while ( remaining > 0 );
+			while ( remaining_microseconds > 0 );
 		}
 		catch ( ... )
 		{
