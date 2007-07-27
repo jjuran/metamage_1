@@ -19,7 +19,7 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_Spawn )
 	DEFINE_MODULE_INIT( Kernel_Spawn )
 	
-	static int SpawnVFork()
+	static int Spawn()
 	{
 		try
 		{
@@ -35,11 +35,23 @@ namespace Genie
 		return 0;
 	}
 	
+	static int SpawnVFork()
+	{
+		SystemCallFrame frame( "SpawnVFork" );
+		
+		return Spawn();
+	}
+	
 	REGISTER_SYSTEM_CALL( SpawnVFork );
 	
 	static int fork_and_exit( int exit_status )
 	{
-		SpawnVFork();
+		SystemCallFrame frame( "fork_and_exit" );
+		
+		if ( Spawn() == -1 )
+		{
+			return -1;
+		}
 		
 		CurrentProcess().UsurpParent( exit_status );
 		
