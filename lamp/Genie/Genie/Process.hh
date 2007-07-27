@@ -15,6 +15,9 @@
 #include <map>
 #include <string>
 
+// POSIX
+#include <sys/times.h>
+
 // Boost
 #include <boost/shared_ptr.hpp>
 
@@ -166,8 +169,8 @@ namespace Genie
 			UInt64 itsAlarmClock;
 			
 			UInt64 itsLastTimerCheckpoint;
-			UInt64 itsUserMicroseconds;
-			UInt64 itsSystemMicroseconds;
+			
+			struct tms itsTimes;
 			
 			UInt32 itsPendingSignals;
 			UInt32 itsPreviousSignals;
@@ -221,6 +224,10 @@ namespace Genie
 			pid_t GetPID()  const  { return itsPID;  }
 			pid_t GetPGID() const  { return itsProcessGroup->ID();     }
 			pid_t GetSID()  const  { return itsProcessGroup->GetSID(); }
+			
+			const struct tms& GetTimes() const  { return itsTimes; }
+			
+			void AccumulateChildTimes( const struct tms& times );
 			
 			const boost::shared_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			

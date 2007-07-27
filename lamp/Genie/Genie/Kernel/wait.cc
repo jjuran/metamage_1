@@ -105,7 +105,9 @@ namespace Genie
 	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		pid_t ppid = CurrentProcess().GetPID();
+		Process& current = CurrentProcess();
+		
+		pid_t ppid = current.GetPID();
 		
 		try
 		{
@@ -122,6 +124,7 @@ namespace Genie
 					
 					if ( process->GetLifeStage() == kProcessTerminated )
 					{
+						current.AccumulateChildTimes( process->GetTimes() );
 						process->Release();
 					}
 					

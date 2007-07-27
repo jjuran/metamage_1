@@ -426,6 +426,7 @@ namespace Genie
 		}
 	}
 	
+	static struct tms kZeroTimes;
 	
 	Process::Process( RootProcess ) 
 	:
@@ -435,8 +436,7 @@ namespace Genie
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsLastTimerCheckpoint( 0 ),
-		itsUserMicroseconds   ( 0 ),
-		itsSystemMicroseconds ( 0 ),
+		itsTimes              ( kZeroTimes ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( "init" ),
@@ -461,8 +461,7 @@ namespace Genie
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsLastTimerCheckpoint( N::Microseconds() ),
-		itsUserMicroseconds   ( 0 ),
-		itsSystemMicroseconds ( 0 ),
+		itsTimes              ( kZeroTimes ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -499,6 +498,12 @@ namespace Genie
 	
 	Process::~Process()
 	{
+	}
+	
+	void Process::AccumulateChildTimes( const struct tms& times )
+	{
+		itsTimes.tms_cutime += times.tms_utime + times.tms_cutime;
+		itsTimes.tms_cstime += times.tms_stime + times.tms_cstime;
 	}
 	
 	unsigned int Process::SetAlarm( unsigned int seconds )
@@ -1123,11 +1128,16 @@ namespace Genie
 		
 		if ( schedule == kProcessRunning )
 		{
-			itsUserMicroseconds += now - itsLastTimerCheckpoint;
+			if ( itsSchedule != kProcessRunning )
+			{
+				// starting
+				itsLastTimerCheckpoint = now;
+			}
 		}
-		else
+		else if ( itsSchedule == kProcessRunning )
 		{
-			itsLastTimerCheckpoint = now;
+			// stopping
+			itsTimes.tms_utime += (now - itsLastTimerCheckpoint) * (CLOCKS_PER_SEC / 1000000.0);
 		}
 		
 		itsSchedule = schedule;
