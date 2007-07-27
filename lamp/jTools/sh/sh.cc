@@ -135,7 +135,10 @@ int O::Main( int argc, const char *const argv[] )
 		
 		pid_t pid = getpid();
 		
-		setpgid( pid, pid );
+		if ( shell_pgid != pid )
+		{
+			setpgid( pid, pid );
+		}
 		
 		// set fg pg
 		tcsetpgrp( STDIN_FILENO, shell_pgid );
