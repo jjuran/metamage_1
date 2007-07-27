@@ -3,6 +3,11 @@
 
 #include <time.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 struct tms
 {
 	clock_t tms_utime;
@@ -12,6 +17,11 @@ struct tms
 };
 
 clock_t times( struct tms* tp );
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !_SYS_TIMES_H_ */
 
