@@ -19,17 +19,17 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_Spawn )
 	DEFINE_MODULE_INIT( Kernel_Spawn )
 	
-	static int Spawn()
+	static int Spawn( const SystemCallFrame& frame )
 	{
 		try
 		{
-			Process& parent = CurrentProcess();
+			Process& parent = frame.Caller();
 			
 			Process* child = new Process( parent );
 		}
 		catch ( ... )
 		{
-			return GetErrnoFromExceptionInSystemCall();
+			return frame.GetErrnoFromException();
 		}
 		
 		return 0;
@@ -39,7 +39,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "SpawnVFork" );
 		
-		return Spawn();
+		return Spawn( frame );
 	}
 	
 	REGISTER_SYSTEM_CALL( SpawnVFork );
@@ -48,7 +48,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "fork_and_exit" );
 		
-		if ( Spawn() == -1 )
+		if ( Spawn( frame ) == -1 )
 		{
 			return -1;
 		}

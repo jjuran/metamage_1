@@ -60,7 +60,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return GetErrnoFromExceptionInSystemCall();
+			return frame.GetErrnoFromException();
 		}
 		
 		return 0;

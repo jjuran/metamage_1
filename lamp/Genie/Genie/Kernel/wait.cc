@@ -145,7 +145,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return GetErrnoFromExceptionInSystemCall();
+			return frame.GetErrnoFromException();
 		}
 		
 		// Not reached

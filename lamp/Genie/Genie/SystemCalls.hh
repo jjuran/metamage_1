@@ -29,6 +29,8 @@ namespace Genie
 			Process& Caller() const  { return itsCaller; }
 			
 			int SetErrno( int errorNumber ) const;
+			
+			int GetErrnoFromException() const;
 	};
 	
 }
