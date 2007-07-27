@@ -549,7 +549,8 @@ namespace Pedestal
 	
 	static bool ReadyToWaitForEvents()
 	{
-		UInt32 minTicksBetweenWNE = gRunState.inForeground ?  2 :  1;
+		//UInt32 minTicksBetweenWNE = gRunState.inForeground ?  2 :  1;
+		UInt32 minTicksBetweenWNE = gRunState.activelyBusy ?  2 :  1;
 		
 		UInt32 timetoWNE = gRunState.tickCountAtLastLayerSwitch + minTicksBetweenWNE;
 		
@@ -577,6 +578,11 @@ namespace Pedestal
 					
 					if ( ReadyToWaitForEvents() )
 					{
+						if ( gRunState.activelyBusy )
+						{
+							AdjustSleepForTimer( 6 );  // sleep only this long if busy
+						}
+						
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
 						gRunState.tickCountAtLastLayerSwitch = ::TickCount();
