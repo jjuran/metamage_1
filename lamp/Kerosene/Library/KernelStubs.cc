@@ -16,6 +16,7 @@
 #include "sys/select.h"
 #include "sys/socket.h"
 #include "sys/stat.h"
+#include "sys/times.h"
 #include "sys/utsname.h"
 #include "sys/wait.h"
 #include "unistd.h"
@@ -154,6 +155,9 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	int (*fstat_import_ )( int filedes, struct stat* buf );
 	int (*lstat_import_ )( const char* file_name, struct stat* buf);
 	int (*stat_import_  )( const char* file_name, struct stat* buf);
+	
+	// sys/times
+	clock_t (*times_import_)( struct tms* );
 	
 	// sys/utsname
 	int (*uname_import_)( struct utsname* );
@@ -535,6 +539,14 @@ namespace
 	}
 	
 	#pragma mark -
+	#pragma mark ¥ sys/times ¥
+	
+	clock_t times( struct tms* tp )
+	{
+		return INVOKE( times, ( tp ) );
+	}
+	
+	#pragma mark -
 	#pragma mark ¥ sys/utsname ¥
 	
 	int uname( struct utsname* uts )
@@ -547,15 +559,7 @@ namespace
 	
 	int gettimeofday( struct timeval* tv, struct timezone* tz )
 	{
-		if ( gettimeofday_import_ == NULL )
-		{
-			Errno() = EINVAL;
-			return -1;
-		}
-		
-		CHECK_IMPORT( gettimeofday );
-		
-		return gettimeofday_import_( tv, tz );
+		return INVOKE( gettimeofday, ( tv, tz ) );
 	}
 	
 	//int settimeofday(const struct timeval *tv , const struct timezone *tz);
