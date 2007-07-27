@@ -111,29 +111,6 @@ namespace Genie
 	#pragma mark -
 	#pragma mark ¥ Genie ¥
 	
-	/*
-	static void ListOneProcess( const Process* proc, const Io::Stream< IORef >& Out )
-	{
-		int pid  = proc->GetPID();
-		int ppid = proc->GetPPID();
-		int pgid = proc->GetPGID();
-		int sid  = proc->GetSID();
-		
-		TTYHandle* tty = proc->ControllingTerminal();
-		
-		const char* dev = tty ? tty->TTYName() : "?";
-		
-		const std::string& name = proc->ProgramName();
-		
-		Out << ppid << "  "
-		    << pid  << "  "
-		    << pgid << "  "
-		    << sid  << "  "
-		    << dev  << "  "
-		    << name << "\n";
-	}
-	*/
-	
 	static void InitProc( CleanupHandlerProc cleanup )
 	{
 		CurrentProcess().SetCleanupHandler( cleanup );
