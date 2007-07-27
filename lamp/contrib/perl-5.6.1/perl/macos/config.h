@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.5  2007-04-26 15:59:22  jax
+Revision 1.6  2007-07-27 06:43:01  jax
+Replaced MacPerl_times() with the real times().
+
+Revision 1.5  2007/04/26 15:59:22  jax
 Fixed byte-swapping breakage on 68K.  Apparently MWCPPC defines __BIG_ENDIAN__ but MWC68K does not.
 
 Revision 1.4  2007/02/28 07:50:25  jax
@@ -903,7 +906,7 @@ First build released to public
  *	This symbol, if defined, indicates to the C program that it should
  *	include <sys/times.h>.
  */
-#undef	I_SYS_TIMES		/**/
+#define	I_SYS_TIMES		/**/
 
 /* I_SYS_TYPES:
  *	This symbol, if defined, indicates to the C program that it should
@@ -915,7 +918,7 @@ First build released to public
  *	This symbol, if defined, indicates to the C program that it should
  *	include <sys/un.h> to get UNIX domain socket definitions.
  */
-#undef I_SYS_UN		/**/
+#define I_SYS_UN		/**/
 
 /* I_SYS_WAIT:
  *	This symbol, if defined, indicates to the C program that it should

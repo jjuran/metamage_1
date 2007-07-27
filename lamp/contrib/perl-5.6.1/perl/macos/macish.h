@@ -29,7 +29,6 @@ Author	:	Matthias Neeracher
 #  endif
 #endif
 
-void MacPerl_init();
 void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 
 #define Big_time_t	unsigned long
@@ -154,9 +153,7 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 #define Mkdir(path,mode)   mkdir((path),(mode))
 
 #ifndef PERL_SYS_INIT3
-#	define PERL_SYS_INIT3(c,v,e) \
-		MacPerl_init(); \
-		PL_opargs[OP_TIME] &= ~OA_RETINTEGER; MALLOC_INIT
+#	define PERL_SYS_INIT3(c,v,e)  PL_opargs[OP_TIME] &= ~OA_RETINTEGER; MALLOC_INIT
 #endif
 
 #ifndef PERL_SYS_TERM
@@ -171,15 +168,7 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 
 #define dXSUB_SYS
 
-struct tms {
-	clock_t tms_utime;	/* User CPU time */
-	clock_t tms_stime;	/* System CPU time */
-	clock_t tms_cutime;	/* User CPU time of terminated child procs */
-	clock_t tms_cstime;	/* System CPU time of terminated child procs */
-};
-
-clock_t	MacPerl_times(struct tms *);
-#define times(x) MacPerl_times(x)
+#define CLK_TCK  60
 
 /* MacOS 68K defines atan2 et al. as macros */
 

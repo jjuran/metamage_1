@@ -40,23 +40,6 @@ int
 }
 
 
-static clock_t gMacPerl_StartClock = 0;
-
-clock_t MacPerl_times(struct tms * t)
-{
-	t->tms_utime = clock() - gMacPerl_StartClock;
-	t->tms_stime = 0;
-	t->tms_cutime = 0;
-	t->tms_cstime = 0;
-	
-	return t->tms_utime;
-}
-
-void MacPerl_init()
-{
-	gMacPerl_StartClock = clock();
-}
-
 static const char * strnstr(const char * msg, const char * str, int len)
 {
 	char s1 = *str++;
