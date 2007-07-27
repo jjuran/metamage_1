@@ -65,6 +65,8 @@ namespace Genie
 	
 	static int rename( const char* src, const char* dest )
 	{
+		SystemCallFrame frame( "rename" );
+		
 		try
 		{
 			FSTreePtr cwd = CurrentProcess().GetCWD();

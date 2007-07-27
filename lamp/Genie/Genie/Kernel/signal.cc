@@ -12,6 +12,7 @@
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -83,6 +84,8 @@ namespace Genie
 	
 	static int kill( pid_t pid, int sig )
 	{
+		SystemCallFrame frame( "kill" );
+		
 		Process& current = CurrentProcess();
 		
 		int result = pid >   0 ? kill_pid ( pid,               sig )
@@ -100,6 +103,8 @@ namespace Genie
 	
 	static sig_t signal( int sig, sig_t func )
 	{
+		SystemCallFrame frame( "signal" );
+		
 		return CurrentProcess().SetSignalAction( sig, func );
 	}
 	

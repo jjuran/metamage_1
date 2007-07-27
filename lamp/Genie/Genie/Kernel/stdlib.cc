@@ -10,6 +10,7 @@
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -22,6 +23,8 @@ namespace Genie
 	
 	static char* getenv( const char* name )
 	{
+		SystemCallFrame frame( "getenv" );
+		
 		return CurrentProcess().GetEnv( name );
 	}
 	
@@ -29,6 +32,8 @@ namespace Genie
 	
 	static int setenv( const char* name, const char* value, int overwrite )
 	{
+		SystemCallFrame frame( "setenv" );
+		
 		CurrentProcess().SetEnv( name, value, overwrite );
 		
 		return 0;
@@ -38,6 +43,8 @@ namespace Genie
 	
 	static int putenv( const char* string )
 	{
+		SystemCallFrame frame( "putenv" );
+		
 		CurrentProcess().PutEnv( string );
 		
 		return 0;
@@ -47,6 +54,8 @@ namespace Genie
 	
 	static void unsetenv( const char* name )
 	{
+		SystemCallFrame frame( "unsetenv" );
+		
 		CurrentProcess().UnsetEnv( name );
 	}
 	
@@ -54,6 +63,8 @@ namespace Genie
 	
 	static int clearenv()
 	{
+		SystemCallFrame frame( "clearenv" );
+		
 		CurrentProcess().ClearEnv();
 		
 		return 0;

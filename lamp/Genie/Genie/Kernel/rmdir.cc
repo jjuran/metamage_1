@@ -36,6 +36,8 @@ namespace Genie
 	
 	static int rmdir( const char* pathname )
 	{
+		SystemCallFrame frame( "rmdir" );
+		
 		try
 		{
 			FSTreePtr current = CurrentProcess().GetCWD();

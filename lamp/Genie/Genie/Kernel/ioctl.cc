@@ -28,6 +28,8 @@ namespace Genie
 	
 	static int ioctl( int filedes, unsigned long request, int* argp )
 	{
+		SystemCallFrame frame( "ioctl" );
+		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		try

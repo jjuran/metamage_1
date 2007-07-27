@@ -55,6 +55,8 @@ namespace Genie
 	
 	static DIR* opendir( const char* pathname )
 	{
+		SystemCallFrame frame( "opendir" );
+		
 		Breathe();
 		
 		try
@@ -77,6 +79,8 @@ namespace Genie
 	
 	static int closedir( DIR* dir )
 	{
+		SystemCallFrame frame( "closedir" );
+		
 		int fd = reinterpret_cast< int >( dir );
 		
 		try
@@ -97,6 +101,8 @@ namespace Genie
 	
 	static const dirent* readdir( DIR* dir )
 	{
+		SystemCallFrame frame( "readdir" );
+		
 		Breathe();
 		
 		int fd = reinterpret_cast< int >( dir );
@@ -131,6 +137,8 @@ namespace Genie
 	
 	static void rewinddir( DIR* dir )
 	{
+		SystemCallFrame frame( "rewinddir" );
+		
 		int fd = reinterpret_cast< int >( dir );
 		
 		try
@@ -149,6 +157,8 @@ namespace Genie
 	
 	static void seekdir( DIR* dir, off_t offset )
 	{
+		SystemCallFrame frame( "seekdir" );
+		
 		int fd = reinterpret_cast< int >( dir );
 		
 		try
@@ -167,6 +177,8 @@ namespace Genie
 	
 	static off_t telldir( DIR* dir )
 	{
+		SystemCallFrame frame( "telldir" );
+		
 		int fd = reinterpret_cast< int >( dir );
 		
 		try
@@ -185,6 +197,8 @@ namespace Genie
 	
 	static int dirfd( DIR* dir )
 	{
+		SystemCallFrame frame( "dirfd" );
+		
 		int fd = reinterpret_cast< int >( dir );
 		
 		try

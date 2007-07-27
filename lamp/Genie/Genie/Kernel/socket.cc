@@ -45,6 +45,8 @@ namespace Genie
 	// Special guest appearance
 	static InetSvcRef InternetServices()
 	{
+		SystemCallFrame frame( "InternetServices" );
+		
 		Check_InitOpenTransport();
 		
 		static NN::Owned< InetSvcRef >
@@ -58,6 +60,8 @@ namespace Genie
 	
 	static int socket( int /*domain*/, int /*type*/, int /*protocol*/ )
 	{
+		SystemCallFrame frame( "socket" );
+		
 		Check_InitOpenTransport();
 		
 		int fd = LowestUnusedFileDescriptor();
@@ -80,6 +84,8 @@ namespace Genie
 	
 	static int bind( int fd, const struct sockaddr* name, socklen_t namelen )
 	{
+		SystemCallFrame frame( "bind" );
+		
 		const InetAddress* inetAddress = reinterpret_cast< const InetAddress* >( name );
 		
 		try
@@ -112,6 +118,8 @@ namespace Genie
 	
 	static int listen( int fd, int backlog )
 	{
+		SystemCallFrame frame( "listen" );
+		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -130,6 +138,8 @@ namespace Genie
 	
 	static int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 	{
+		SystemCallFrame frame( "accept" );
+		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( listener );
@@ -154,6 +164,8 @@ namespace Genie
 	
 	static int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	{
+		SystemCallFrame frame( "connect" );
+		
 		// Assume sin_family is AF_INET
 		
 		const InetAddress* inetAddress = reinterpret_cast< const InetAddress* >( serv_addr );
@@ -176,6 +188,8 @@ namespace Genie
 	
 	static int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 	{
+		SystemCallFrame frame( "getsockname" );
+		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -198,6 +212,8 @@ namespace Genie
 	
 	static int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 	{
+		SystemCallFrame frame( "getpeername" );
+		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
@@ -220,6 +236,8 @@ namespace Genie
 	
 	static int shutdown( int fd, int how )
 	{
+		SystemCallFrame frame( "shutdown" );
+		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );

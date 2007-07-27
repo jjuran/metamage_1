@@ -23,6 +23,8 @@ namespace Genie
 	
 	static int ptrace( int request, pid_t pid, void* addr, int data )
 	{
+		SystemCallFrame frame( "ptrace" );
+		
 		Process& current = CurrentProcess();
 		
 		try

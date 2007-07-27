@@ -14,6 +14,7 @@
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -56,6 +57,8 @@ namespace Genie
 	
 	static int uname( struct utsname *uts )
 	{
+		SystemCallFrame frame( "uname" );
+		
 		CopyString( "Genie", uts->sysname );
 		CopyString( "nodename", uts->nodename );
 		CopyString( "0.7something", uts->release );

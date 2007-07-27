@@ -152,6 +152,8 @@ namespace Genie
 	
 	static OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
+		SystemCallFrame frame( "AESendBlocking" );
+		
 		try
 		{
 			(void) N::AESend( *appleEvent, N::kAEQueueReply | N::kAECanInteract );
@@ -178,6 +180,8 @@ namespace Genie
 	static OSStatus Path2FSSpec( const char*  pathname,
 	                             FSSpec*      outFSS )
 	{
+		SystemCallFrame frame( "Path2FSSpec" );
+		
 		try
 		{
 			*outFSS = ResolvePathname( pathname, CurrentProcess().GetCWD() )->GetFSSpec();
@@ -202,6 +206,8 @@ namespace Genie
 	
 	static unsigned int alarm( unsigned int seconds )
 	{
+		SystemCallFrame frame( "alarm" );
+		
 		return CurrentProcess().SetAlarm( seconds );
 	}
 	
@@ -209,6 +215,8 @@ namespace Genie
 	
 	static int chdir( const char* pathname )
 	{
+		SystemCallFrame frame( "chdir" );
+		
 		try
 		{
 			if ( pathname == NULL )
@@ -238,6 +246,8 @@ namespace Genie
 	
 	static int close( int fd )
 	{
+		SystemCallFrame frame( "close" );
+		
 		try
 		{
 			CloseFileDescriptor( fd );
@@ -263,6 +273,8 @@ namespace Genie
 	
 	static int dup2( int oldfd, int newfd )
 	{
+		SystemCallFrame frame( "dup2" );
+		
 		try
 		{
 			return DuplicateFileDescriptor( oldfd, newfd );
@@ -277,6 +289,8 @@ namespace Genie
 	
 	static int execve( const char* path, const char* const argv[], const char* const envp[] )
 	{
+		SystemCallFrame frame( "execve" );
+		
 		try
 		{
 			Process& current( CurrentProcess() );
@@ -364,6 +378,8 @@ namespace Genie
 	
 	static void _exit( int status )
 	{
+		SystemCallFrame frame( "_exit" );
+		
 		Process& current( CurrentProcess() );
 		
 		current.Terminate( (status & 0xFF) << 8 );  // doesn't reap, won't terminate thread
@@ -377,6 +393,8 @@ namespace Genie
 	
 	static char* getcwd( char* buf, std::size_t size )
 	{
+		SystemCallFrame frame( "getcwd" );
+		
 		try
 		{
 			FSTreePtr cwd = CurrentProcess().GetCWD();
@@ -406,6 +424,8 @@ namespace Genie
 	
 	static pid_t getpgid( pid_t pid )
 	{
+		SystemCallFrame frame( "getpgid" );
+		
 		if ( pid == 0 )
 		{
 			return getpgrp();
@@ -418,6 +438,8 @@ namespace Genie
 	
 	static pid_t getpgrp()
 	{
+		SystemCallFrame frame( "getpgrp" );
+		
 		return CurrentProcess().GetPGID();
 	}
 	
@@ -425,6 +447,8 @@ namespace Genie
 	
 	static pid_t getpid()
 	{
+		SystemCallFrame frame( "getpid" );
+		
 		return CurrentProcess().GetPID();
 	}
 	
@@ -432,6 +456,8 @@ namespace Genie
 	
 	static pid_t getppid()
 	{
+		SystemCallFrame frame( "getppid" );
+		
 		return CurrentProcess().GetPPID();
 	}
 	
@@ -439,6 +465,8 @@ namespace Genie
 	
 	static off_t lseek( int fd, off_t offset, int whence )
 	{
+		SystemCallFrame frame( "lseek" );
+		
 		try
 		{
 			RegularFileHandle& fh = GetFileHandleWithCast< RegularFileHandle >( fd );
@@ -457,6 +485,8 @@ namespace Genie
 	
 	static int mknod( const char* /*path*/, mode_t /*mode*/, dev_t /*dev*/ )
 	{
+		SystemCallFrame frame( "mknod" );
+		
 		return CurrentProcess().SetErrno( EINVAL );
 	}
 	
@@ -464,6 +494,8 @@ namespace Genie
 	
 	static int pause()
 	{
+		SystemCallFrame frame( "pause" );
+		
 		CurrentProcess().Stop();  // Sleep, until...
 		
 		return CurrentProcess().SetErrno( EINTR );
@@ -473,6 +505,8 @@ namespace Genie
 	
 	static int pipe( int filedes[ 2 ] )
 	{
+		SystemCallFrame frame( "pipe" );
+		
 		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
 		
 		int reader = LowestUnusedFileDescriptor( 3 );
@@ -496,6 +530,8 @@ namespace Genie
 	
 	static int peek( int fd, const char** buffer, size_t minBytes )
 	{
+		SystemCallFrame frame( "peek" );
+		
 		try
 		{
 			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
@@ -519,6 +555,8 @@ namespace Genie
 	
 	static ssize_t read( int fd, void* buf, size_t count )
 	{
+		SystemCallFrame frame( "read" );
+		
 		Breathe();
 		
 		try
@@ -540,6 +578,8 @@ namespace Genie
 	
 	static int setpgid( pid_t pid, pid_t pgid )
 	{
+		SystemCallFrame frame( "setpgid" );
+		
 		try
 		{
 			if ( pgid < 0 )
@@ -600,6 +640,8 @@ namespace Genie
 	
 	static pid_t setsid()
 	{
+		SystemCallFrame frame( "setsid" );
+		
 		Process& current( CurrentProcess() );
 		
 		int pid = current.GetPID();
@@ -614,6 +656,8 @@ namespace Genie
 	
 	static unsigned int sleep( unsigned int seconds )
 	{
+		SystemCallFrame frame( "sleep" );
+		
 		SInt32 remaining = seconds * 60;  // Close enough
 		
 		UInt32 startTicks = ::TickCount();
@@ -645,6 +689,8 @@ namespace Genie
 	
 	static int truncate( const char* path, off_t length )
 	{
+		SystemCallFrame frame( "truncate" );
+		
 		try
 		{
 			FSTreePtr file = ResolvePathname( path, CurrentProcess().GetCWD() );
@@ -663,6 +709,8 @@ namespace Genie
 	
 	static int ftruncate( int fd, off_t length )
 	{
+		SystemCallFrame frame( "ftruncate" );
+		
 		try
 		{
 			RegularFileHandle& fh = GetFileHandleWithCast< RegularFileHandle >( fd );
@@ -681,6 +729,8 @@ namespace Genie
 	
 	static const char* ttyname( int fd )
 	{
+		SystemCallFrame frame( "ttyname" );
+		
 		try
 		{
 			TTYHandle& tty = GetFileHandleWithCast< TTYHandle >( fd );
@@ -722,6 +772,8 @@ namespace Genie
 	
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
+		SystemCallFrame frame( "write" );
+		
 		Breathe();
 		
 		try

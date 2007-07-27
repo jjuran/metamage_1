@@ -22,6 +22,8 @@ namespace Genie
 	
 	static int mkdir( const char* pathname, mode_t mode )
 	{
+		SystemCallFrame frame( "mkdir" );
+		
 		try
 		{
 			FSTreePtr current = CurrentProcess().GetCWD();

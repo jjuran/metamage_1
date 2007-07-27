@@ -29,6 +29,8 @@ namespace Genie
 	
 	static int unlink( const char* pathname )
 	{
+		SystemCallFrame frame( "unlink" );
+		
 		try
 		{
 			FSTreePtr current = CurrentProcess().GetCWD();

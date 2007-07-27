@@ -77,6 +77,8 @@ namespace Genie
 	
 	static int chmod( const char* path, mode_t mode )
 	{
+		SystemCallFrame frame( "chmod" );
+		
 		return chmod_file( path, mode );
 	}
 	
@@ -84,6 +86,8 @@ namespace Genie
 	
 	static int lstat( const char* path, struct stat* sb )
 	{
+		SystemCallFrame frame( "lstat" );
+		
 		return stat_file( path, sb, false );
 	}
 	
@@ -91,6 +95,8 @@ namespace Genie
 	
 	static int stat( const char* path, struct stat* sb )
 	{
+		SystemCallFrame frame( "stat" );
+		
 		return stat_file( path, sb, true );  // FIXME:  Resolve symlinks
 	}
 	
@@ -98,6 +104,8 @@ namespace Genie
 	
 	static int fstat( int fd, struct stat* sb )
 	{
+		SystemCallFrame frame( "fstat" );
+		
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		try

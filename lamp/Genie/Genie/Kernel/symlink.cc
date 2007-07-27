@@ -88,6 +88,8 @@ namespace Genie
 	
 	static int symlink( const char* target_path, const char* link_location )
 	{
+		SystemCallFrame frame( "symlink" );
+		
 		try
 		{
 			FSTreePtr current = CurrentProcess().GetCWD();
@@ -149,6 +151,8 @@ namespace Genie
 	
 	static int readlink( const char *path, char *buf, size_t bufsiz )
 	{
+		SystemCallFrame frame( "readlink" );
+		
 		try
 		{
 			FSTreePtr current = CurrentProcess().GetCWD();

@@ -51,6 +51,8 @@ namespace Genie
 	
 	static int copyfile( const char* src, const char* dest )
 	{
+		SystemCallFrame frame( "copyfile" );
+		
 		try
 		{
 			FSTreePtr cwd = CurrentProcess().GetCWD();

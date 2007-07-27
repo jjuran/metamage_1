@@ -17,6 +17,7 @@
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 
 
 namespace Genie
@@ -77,6 +78,8 @@ namespace Genie
 	
 	static int gettimeofday( struct timeval* tv, struct timezone* tz )
 	{
+		SystemCallFrame frame( "gettimeofday" );
+		
 		long gmtDelta = N::ReadLocation().u.gmtDelta;
 		
 		gmtDelta = MacLocalTimeDelta( gmtDelta );

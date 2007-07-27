@@ -31,6 +31,8 @@ namespace Genie
 	                          fd_set*  writefds,
 	                          fd_set*  exceptfds, struct timeval* timeout )
 	{
+		SystemCallFrame frame( "select" );
+		
 		UInt64 timeToBail = timeout == NULL ? UInt64( -1 )
 		                                    : N::Microseconds() + timeout->tv_sec * 1000000
 		                                                        + timeout->tv_usec;

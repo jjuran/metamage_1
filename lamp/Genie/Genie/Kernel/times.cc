@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
 
 
@@ -27,6 +28,8 @@ namespace Genie
 	
 	static clock_t times( struct tms* tp )
 	{
+		SystemCallFrame frame( "times" );
+		
 		if ( tp != NULL )
 		{
 			const Times& clocks = CurrentProcess().GetTimes();

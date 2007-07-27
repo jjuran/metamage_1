@@ -32,6 +32,8 @@ namespace Genie
 	
 	static int open( const char* path, int oflag, mode_t mode )
 	{
+		SystemCallFrame frame( "open" );
+		
 		Breathe();
 		
 		try
@@ -59,6 +61,8 @@ namespace Genie
 	
 	static int fcntl( int filedes, int cmd, int param )
 	{
+		SystemCallFrame frame( "fcntl" );
+		
 		try
 		{
 			switch ( cmd )
