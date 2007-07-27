@@ -105,27 +105,30 @@ namespace Genie
 	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		Process& current = CurrentProcess();
+		SystemCallFrame frame( "waitpid" );
 		
-		pid_t ppid = current.GetPID();
+		Process& caller = frame.Caller();
+		
+		pid_t ppid = caller.GetPID();
 		
 		try
 		{
 			while ( true )
 			{
-				if ( Process* process = pid == -1 ? CheckAny( ppid, pid ) : CheckPID( ppid, pid ) )
+				if ( Process* child = pid == -1 ? CheckAny( ppid, pid ) : CheckPID( ppid, pid ) )
 				{
 					if ( stat_loc != NULL )
 					{
-						*stat_loc = process->Result();
+						*stat_loc = child->Result();
 					}
 					
-					pid_t found_pid = process->GetPID();
+					pid_t found_pid = child->GetPID();
 					
-					if ( process->GetLifeStage() == kProcessTerminated )
+					if ( child->GetLifeStage() == kProcessTerminated )
 					{
-						current.AccumulateChildTimes( process->GetTimes() );
-						process->Release();
+						caller.AccumulateChildTimes( child->GetTimes() );
+						
+						child->Release();
 					}
 					
 					return found_pid;
