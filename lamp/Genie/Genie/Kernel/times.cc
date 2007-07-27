@@ -29,7 +29,12 @@ namespace Genie
 	{
 		if ( tp != NULL )
 		{
-			*tp = CurrentProcess().GetTimes();
+			const Times& clocks = CurrentProcess().GetTimes();
+			
+			tp->tms_utime  = clocks.user         * (CLOCKS_PER_SEC / 1000000.0);
+			tp->tms_stime  = clocks.system       * (CLOCKS_PER_SEC / 1000000.0);
+			tp->tms_cutime = clocks.child_user   * (CLOCKS_PER_SEC / 1000000.0);
+			tp->tms_cstime = clocks.child_system * (CLOCKS_PER_SEC / 1000000.0);
 		}
 		
 		return 0;
