@@ -3,14 +3,13 @@
  *	========
  */
 
-// BSD
+// POSIX
 #include "unistd.h"
 
 // Genie
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie
@@ -53,7 +52,7 @@ namespace Genie
 			return -1;
 		}
 		
-		CurrentProcess().UsurpParent( exit_status );
+		frame.Caller().UsurpParent( exit_status );
 		
 		return 0;
 	}
