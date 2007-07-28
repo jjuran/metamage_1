@@ -72,6 +72,18 @@ namespace Genie
 		The value of each child node equals its tag times the parent's value.
 		The root's first child node has value 2 and children of value 6 and 34,
 		and the second root child has value 7 and children of value 21 and 119.
+		
+		Root = 1
+		
+			1	2	3	4		5		6
+			-	-	-	-		-		-
+		1	2	3	5	11		31		127
+		2	7	17	59	277		1787	15299
+		3	13	41	179	1063	8527
+		4	19	67	331	2221	19577
+		5	23	83	431	3001	27457
+		6	29	109	599	4397
+		
 	*/
 	
 	enum TypeCode
@@ -80,15 +92,16 @@ namespace Genie
 			kStreamType    = 2,
 				kFileType   = kStreamType * 3,  // 6
 					kRegularFileType = kFileType * 5,  // 30
-						kMacFileType     = kRegularFileType * 11,  // 330
+						kMacFileType   = kRegularFileType * 11,  // 330
 							kMacDataForkType = kMacFileType * 31,  // 10230
-							kMacRsrcForkType = kMacFileType * 127,  // 41910
+							kMacRsrcForkType = kMacFileType * 1787,  // 589710
 						kQueryFileType = kRegularFileType * 277,  // 8310
 					kDeviceFileType  = kFileType * 59,  // 295
 						kSimpleDeviceType = kDeviceFileType * 11,  // 649
-						kTTYType          = kDeviceFileType * 277,  // 16343
-							kConsoleTTYType = kTTYType * 31,  // 506633
-							kPseudoTTYType  = kTTYType * 127,  // 2075561
+						kSerialDeviceType = kDeviceFileType * 277,  // 16343
+						kTTYType          = kDeviceFileType * 1063,  // 313585
+							kConsoleTTYType = kTTYType * 31,  // 9721135
+							kPseudoTTYType  = kTTYType * 1787,  // 560376395
 				kPipeType   = kStreamType * 17,  // 34
 				kSocketType = kStreamType * 41,  // 82
 			kResFileType   = 7,
