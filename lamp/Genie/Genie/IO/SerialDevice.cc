@@ -35,7 +35,7 @@ namespace Genie
 		public:
 			SerialDeviceHandle( const std::string& portName = "A" );
 			
-			static TypeCode Type()  { return kDeviceFileType; }  // FIXME:  Need a new type
+			static TypeCode Type()  { return kSerialDeviceType; }
 			
 			TypeCode ActualType() const  { return Type(); }
 			
