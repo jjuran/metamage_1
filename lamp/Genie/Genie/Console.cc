@@ -54,8 +54,6 @@ namespace Genie
 			{
 			}
 			
-			//ConsoleID ID() const  { return itsConsoleID; }
-			
 			void operator()( N::WindowRef ) const;
 	};
 	
@@ -79,7 +77,9 @@ namespace Genie
 	int ConsolePane::WriteChars( const char* data, unsigned int byteCount )
 	{
 		int written = Ped::Console::WriteChars( data, byteCount );
+		
 		itsStartOfInput = TextLength();
+		
 		return written;
 	}
 	
@@ -397,13 +397,6 @@ namespace Genie
 		return result;
 	}
 	
-	void ConsoleWindow::Salvage()
-	{
-		boost::shared_ptr< Ped::WindowCloseHandler > handler( new SalvagedWindowCloseHandler() );
-		
-		SetCloseHandler( handler );
-	}
-	
 	
 	static void CloseSalvagedConsole( N::WindowRef window );
 	
@@ -468,7 +461,9 @@ namespace Genie
 	{
 		ASSERT( console.get() != NULL );
 		
-		console->Salvage();
+		boost::shared_ptr< Ped::WindowCloseHandler > handler( new SalvagedWindowCloseHandler() );
+		
+		console->SetCloseHandler( handler );
 		
 		gSalvagedConsoles[ console->Get() ] = console;
 	}

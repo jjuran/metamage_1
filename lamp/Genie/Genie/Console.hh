@@ -93,8 +93,6 @@ namespace Genie
 			std::string ReadInput()  { return itsInput.Read(); }
 			
 			int Write( const char* data, std::size_t byteCount );
-			
-			void Salvage();
 	};
 	
 	
