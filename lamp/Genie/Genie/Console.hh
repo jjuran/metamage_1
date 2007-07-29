@@ -76,7 +76,6 @@ namespace Genie
 			std::string                     itsCurrentInput;
 			int                             itsWindowSalvagePolicy;
 			int                             itsLeaderWaitStatus;
-			bool                            itIsBlocking;
 		
 		public:
 			Console( ConsoleID id );

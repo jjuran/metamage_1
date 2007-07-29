@@ -431,8 +431,7 @@ namespace Genie
 	Console::Console( ConsoleID id ) : ConsoleWindowClosure  ( id                            ),
 	                                   itsLatentTitle        ( DefaultTitle()                ),
 	                                   itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
-	                                   itsLeaderWaitStatus   ( 0                             ),
-	                                   itIsBlocking          ( false                         )
+	                                   itsLeaderWaitStatus   ( 0                             )
 	{
 	}
 	
@@ -525,7 +524,7 @@ namespace Genie
 			
 			GetConsolePane( itsWindow ).CheckEOF();
 			
-			if ( itIsBlocking )
+			if ( false )
 			{
 				Yield();
 				continue;
