@@ -10,6 +10,7 @@
 #include <map>
 
 // Boost
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 
 // Nucleus
@@ -98,7 +99,7 @@ namespace Pedestal
 	template <>  struct DefProcID_Traits< N::zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
 	template <>  struct DefProcID_Traits< N::zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
 	
-	class WindowClosure
+	class WindowClosure : public boost::enable_shared_from_this< WindowClosure >
 	{
 		public:
 			virtual bool RequestWindowClosure( N::WindowRef window ) = 0;
@@ -135,12 +136,12 @@ namespace Pedestal
 	class ClosableWindow
 	{
 		private:
-			WindowClosure& closure;
+			boost::weak_ptr< WindowClosure > itsClosure;
 		
 		public:
-			ClosableWindow( WindowClosure& closure ) : closure( closure )  {}
+			ClosableWindow( WindowClosure& closure ) : itsClosure( closure.shared_from_this() )  {}
 			
-			WindowClosure& Closure()  { return closure; }
+			WindowClosure& Closure()  { return *boost::shared_ptr< WindowClosure >( itsClosure ); }
 	};
 	
 	template < class Type, N::WindowDefProcID defProcID = N::documentProc >
