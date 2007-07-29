@@ -116,8 +116,6 @@ namespace Genie
 	
 	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
 	{
-		Process& current = CurrentProcess();
-		
 		switch ( request )
 		{
 			case WIOCGTITLE:
