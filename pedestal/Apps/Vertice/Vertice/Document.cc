@@ -68,11 +68,11 @@ namespace Vertice
 		return N::InsetRect( rect, 4, 4 );
 	}
 	
-	Window::Window( Ped::WindowClosure& closure, ConstStr255Param title )
+	Window::Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, ConstStr255Param title )
 	: 
 		Ped::Window< PortView >( Ped::NewWindowContext( MakeWindowRect(),
 		                                                title ),
-		                         closure )
+		                         handler )
 	{
 	}
 	

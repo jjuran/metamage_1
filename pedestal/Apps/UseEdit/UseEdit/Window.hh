@@ -29,8 +29,8 @@ namespace UseEdit
 			                                    Ped::kLiveFeedbackVariant,
 			                                    Ped::kNoScrollbar > > Base;
 			
-			Window( Ped::WindowClosure&  closure,
-			        ConstStr255Param     title = "\p" "PedEdit" );
+			Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler,
+			        ConstStr255Param                                     title = "\p" "UseEdit" );
 			
 			std::string GetName() const;
 			

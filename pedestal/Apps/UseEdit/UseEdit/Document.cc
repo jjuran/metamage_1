@@ -48,9 +48,9 @@ namespace UseEdit
 		return N::Str255( string );
 	}
 	
-	Document::Document( Ped::WindowClosure& closure )
+	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler )
 	: 
-		itsWindow( closure ),
+		itsWindow( handler ),
 		itHasFile( false   ),
 		itIsDirty( false   )   // A new document is never dirty, even if not saved
 	{
@@ -67,9 +67,9 @@ namespace UseEdit
 		scroller.Calibrate();
 	}
 	
-	Document::Document( Ped::WindowClosure& closure, const FSSpec& file )
+	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSSpec& file )
 	: 
-		itsWindow( closure ),
+		itsWindow( handler ),
 		itHasFile( true    ),
 		itIsDirty( false   )
 	{
@@ -78,9 +78,9 @@ namespace UseEdit
 		LoadText( itsWindow.Get().SubView(), ReadFileData( file ) );
 	}
 	
-	Document::Document( Ped::WindowClosure& closure, const FSRef& file )
+	Document::Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSRef& file )
 	: 
-		itsWindow( closure ),
+		itsWindow( handler ),
 		itHasFile( true    ),
 		itIsDirty( false   )
 	{

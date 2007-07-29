@@ -27,9 +27,10 @@ namespace UseEdit
 		return N::OffsetRect(rect, hMargin / 2, mbarHeight + vMargin / 3);
 	}
 	
-	Window::Window( Ped::WindowClosure& closure, ConstStr255Param title )
+	Window::Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler,
+			        ConstStr255Param                                     title )
 	: 
-		Base( Ped::NewWindowContext( MakeWindowRect(), title ), closure )
+		Base( Ped::NewWindowContext( MakeWindowRect(), title ), handler )
 	{
 	}
 	

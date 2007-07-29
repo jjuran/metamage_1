@@ -26,9 +26,9 @@ namespace UseEdit
 			bool                              itIsDirty;
 		
 		public:
-			Document( Ped::WindowClosure& closure );
-			Document( Ped::WindowClosure& closure, const FSSpec& file );
-			Document( Ped::WindowClosure& closure, const FSRef & file );
+			Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler );
+			Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSSpec& file );
+			Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSRef & file );
 			
 			Window const& GetWindow() const  { return itsWindow.Get(); }
 			Window      & GetWindow()        { return itsWindow.Get(); }

@@ -22,7 +22,7 @@ namespace Vertice
 	class Window : public Ped::Window< PortView >
 	{
 		public:
-			Window( Ped::WindowClosure& closure, ConstStr255Param title );
+			Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, ConstStr255Param title );
 			
 			Model& ItsModel()  { return SubView().ItsModel(); }
 			

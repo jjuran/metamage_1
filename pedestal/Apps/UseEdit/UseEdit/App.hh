@@ -84,15 +84,17 @@ namespace UseEdit
 			void DeleteElementByID( UInt32 id );
 	};
 	
-	class DocumentsOwner : private Ped::WindowClosure
+	class DocumentsOwner
 	{
 		private:
-			DocumentContainer itsDocuments;
+			DocumentContainer                             itsDocuments;
+			boost::shared_ptr< Ped::WindowCloseHandler >  itsCloseHandler;
 		
 		public:
+			DocumentsOwner();
 			~DocumentsOwner();
 			
-			bool RequestWindowClosure( N::WindowRef window );
+			void CloseDocument( N::WindowRef window );
 			
 			DocumentContainer& Documents()  { return itsDocuments; }
 			

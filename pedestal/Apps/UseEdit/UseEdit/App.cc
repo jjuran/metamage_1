@@ -79,7 +79,7 @@ namespace UseEdit
 					{
 						if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
 						{
-							base->Closure().RequestWindowClosure( window );
+							base->Close( window );
 						}
 					}
 					break;
@@ -356,26 +356,41 @@ namespace UseEdit
 	}
 	
 	
+	class DocumentCloseHandler : public Ped::WindowCloseHandler
+	{
+		public:
+			void operator()( N::WindowRef window ) const
+			{
+				App::Get().CloseDocument( window );
+			}
+	};
+	
+	
+	
+	DocumentsOwner::DocumentsOwner() : itsCloseHandler( new DocumentCloseHandler() )
+	{
+	}
+	
 	DocumentsOwner::~DocumentsOwner()
 	{
 	}
 	
-	bool DocumentsOwner::RequestWindowClosure( N::WindowRef window )
+	void DocumentsOwner::CloseDocument( N::WindowRef window )
 	{
 		itsDocuments.DeleteElementByID( reinterpret_cast< UInt32 >( ::WindowRef( window ) ) );
-		
-		return true;
 	}
 	
 	void DocumentsOwner::NewWindow()
 	{
-		Document* doc = new Document( *this );
+		Document* doc = new Document( itsCloseHandler );
+		
 		itsDocuments.StoreNewElement( doc );
 	}
 	
 	void DocumentsOwner::OpenDocument( const Io_Details::file_spec& file )
 	{
-		Document* doc = new Document( *this, file );
+		Document* doc = new Document( itsCloseHandler, file );
+		
 		itsDocuments.StoreNewElement( doc );
 	}
 	
