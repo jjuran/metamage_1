@@ -136,12 +136,17 @@ namespace Pedestal
 	class ClosableWindow
 	{
 		private:
-			boost::weak_ptr< WindowClosure > itsClosure;
+			boost::shared_ptr< WindowClosure > itsClosure;
 		
 		public:
 			ClosableWindow( WindowClosure& closure ) : itsClosure( closure.shared_from_this() )  {}
 			
-			WindowClosure& Closure()  { return *boost::shared_ptr< WindowClosure >( itsClosure ); }
+			WindowClosure& Closure()  { return *itsClosure; }
+			
+			void SetCloseHandler( const boost::shared_ptr< WindowClosure >& handler )
+			{
+				itsClosure = handler;
+			}
 	};
 	
 	template < class Type, N::WindowDefProcID defProcID = N::documentProc >
