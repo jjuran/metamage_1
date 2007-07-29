@@ -315,6 +315,7 @@ namespace Genie
 				{
 					Ped::TEView::KeyDown( event );
 				}
+				
 				break;
 		}
 		
