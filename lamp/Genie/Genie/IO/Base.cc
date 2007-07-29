@@ -54,7 +54,7 @@ namespace Genie
 			return this;
 		}
 		
-		if ( IOHandle* next = itsNext.get() )
+		if ( IOHandle* next = Next() )
 		{
 			return next->GetBaseForCast( desiredType );
 		}
@@ -69,7 +69,7 @@ namespace Genie
 	
 	void IOHandle::IOCtl( unsigned long request, int* argp )
 	{
-		if ( IOHandle* next = itsNext.get() )
+		if ( IOHandle* next = Next() )
 		{
 			return next->IOCtl( request, argp );
 		}
