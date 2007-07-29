@@ -37,13 +37,13 @@ namespace Pedestal
 		return result;
 	}
 	
-	AboutBox::AboutBox( WindowClosure& closure )
+	AboutBox::AboutBox( const boost::shared_ptr< WindowCloseHandler >& handler )
 	: 
 		Base( NewWindowContext( N::OffsetRect( N::SetRect( 0, 0, 64, 64 ),
 		                                       300,
 		                                       200 ),
 		                        "\pPedestal" ),
-		      closure,
+		      handler,
 		      #if 0
 		      MakePair( N::DetachResource( N::GetResource< kLarge1BitMask >( N::ResID( 128 ) ) ),
 		                NN::Make< RGBColor >( 0xDDDD ) )

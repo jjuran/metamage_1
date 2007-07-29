@@ -276,7 +276,7 @@ namespace Pedestal
 		{
 			if ( WindowBase* base = N::GetWRefCon( window ) )
 			{
-				base->Closure().RequestWindowClosure( window );
+				base->Close( window );
 			}
 		}
 	}
@@ -683,7 +683,7 @@ namespace Pedestal
 				{
 					if ( WindowBase* base = N::GetWRefCon( window ) )
 					{
-						base->Closure().RequestWindowClosure( window );
+						base->Close( window );
 					}
 				}
 				break;

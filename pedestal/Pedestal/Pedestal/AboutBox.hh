@@ -47,7 +47,7 @@ namespace Pedestal
 		public:
 			typedef AboutBoxBase Base;
 			
-			AboutBox( WindowClosure& closure );
+			AboutBox( const boost::shared_ptr< WindowCloseHandler >& handler );
 			~AboutBox();
 	};
 	

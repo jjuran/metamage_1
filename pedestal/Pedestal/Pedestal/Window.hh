@@ -99,10 +99,10 @@ namespace Pedestal
 	template <>  struct DefProcID_Traits< N::zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
 	template <>  struct DefProcID_Traits< N::zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
 	
-	class WindowClosure : public boost::enable_shared_from_this< WindowClosure >
+	class WindowCloseHandler : public boost::enable_shared_from_this< WindowCloseHandler >
 	{
 		public:
-			virtual bool RequestWindowClosure( N::WindowRef window ) = 0;
+			virtual void operator()( N::WindowRef window ) const = 0;
 	};
 	
 	class WindowRefOwner
@@ -121,7 +121,9 @@ namespace Pedestal
 	class WindowBase
 	{
 		public:
-			virtual WindowClosure& Closure() = 0;
+			virtual WindowCloseHandler& GetCloseHandler() = 0;
+			
+			void Close( N::WindowRef window )  { return GetCloseHandler()( window ); }
 			
 			virtual void Idle       ( const EventRecord& event           ) = 0;
 			virtual void MouseDown  ( const EventRecord& event           ) = 0;
@@ -136,16 +138,16 @@ namespace Pedestal
 	class ClosableWindow
 	{
 		private:
-			boost::shared_ptr< WindowClosure > itsClosure;
+			boost::shared_ptr< WindowCloseHandler > itsCloseHandler;
 		
 		public:
-			ClosableWindow( WindowClosure& closure ) : itsClosure( closure.shared_from_this() )  {}
+			ClosableWindow( const boost::shared_ptr< WindowCloseHandler >& handler ) : itsCloseHandler( handler )  {}
 			
-			WindowClosure& Closure()  { return *itsClosure; }
+			WindowCloseHandler& GetCloseHandler()  { return *itsCloseHandler; }
 			
-			void SetCloseHandler( const boost::shared_ptr< WindowClosure >& handler )
+			void SetCloseHandler( const boost::shared_ptr< WindowCloseHandler >& handler )
 			{
-				itsClosure = handler;
+				itsCloseHandler = handler;
 			}
 	};
 	
@@ -162,11 +164,11 @@ namespace Pedestal
 			typedef Type SubViewType;
 			typedef typename Type::Initializer Initializer;
 			
-			WindowClosure& Closure()  { return ClosableWindow::Closure(); }
+			WindowCloseHandler& GetCloseHandler()  { return ClosableWindow::GetCloseHandler(); }
 			
-			Window( const NewWindowContext&  context,
-			        WindowClosure&           closure,
-			        Initializer              init );
+			Window( const NewWindowContext&                         context,
+			        const boost::shared_ptr< WindowCloseHandler >&  handler,
+			        Initializer                                     init );
 			
 			Type const& SubView() const  { return mySubView; }
 			Type      & SubView()        { return mySubView; }
@@ -190,11 +192,11 @@ namespace Pedestal
 	};
 	
 	template < class Type, N::WindowDefProcID defProcID >
-	inline Window< Type, defProcID >::Window( const NewWindowContext&  context,
-	                                          WindowClosure&           closure,
-	                                          Initializer              init = Initializer() )
+	inline Window< Type, defProcID >::Window( const NewWindowContext&                         context,
+	                                          const boost::shared_ptr< WindowCloseHandler >&  handler,
+	                                          Initializer                                     init = Initializer() )
 	:
-		ClosableWindow( closure ),
+		ClosableWindow( handler ),
 		WindowRefOwner( CreateWindow( context,
 		                              defProcID,
 		                              static_cast< WindowBase* >( this ) ) ),
@@ -236,16 +238,15 @@ namespace Pedestal
 		typedef std::auto_ptr< Window > WindowStorage;
 		
 		protected:
-			WindowStorage         fWindow;
+			WindowStorage         itsWindow;
 		
 		public:
-			SingleWindowOwner( WindowClosure& closure )
-			:
-				fWindow( new Window( closure ) )
-			{}
+			SingleWindowOwner( const boost::shared_ptr< WindowCloseHandler >& handler ) : itsWindow( new Window( handler ) )
+			{
+			}
 			
-			Window const& Get() const  { return *fWindow.get(); }
-			Window      & Get()        { return *fWindow.get(); }
+			Window const& Get() const  { return *itsWindow.get(); }
+			Window      & Get()        { return *itsWindow.get(); }
 	};
 	
 	// A unique window such as a modeless about box that's sometimes open and sometimes not.
@@ -254,33 +255,31 @@ namespace Pedestal
 	{
 		typedef std::auto_ptr< Window > WindowStorage;
 		
-		class Closure : public WindowClosure
+		class CloseHandler : public WindowCloseHandler
 		{
 			private:
 				WindowStorage& storage;
 			
 			public:
-				Closure( WindowStorage& storage ) : storage( storage )  {}
+				CloseHandler( WindowStorage& storage ) : storage( storage )  {}
 				
-				bool RequestWindowClosure( N::WindowRef /*window*/ )
+				void operator()( N::WindowRef /*window*/ ) const
 				{
 					// assert( storage.get() );
 					// assert( storage->Get() == window );
 					
 					storage.reset( NULL );
-					
-					return true;
 				}
 		};
 		
 		protected:
-			WindowStorage  fWindow;
-			Closure        fClosure;
+			WindowStorage                            itsWindow;
+			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
 		
 		public:
-			UniqueWindowOwner() : fClosure( fWindow )  {}
+			UniqueWindowOwner() : itsCloseHandler( new CloseHandler( itsWindow ) )  {}
 			
-			Window& Get()  { return *fWindow.get(); }
+			Window& Get()  { return *itsWindow.get(); }
 			
 			void Show();
 	};
@@ -288,13 +287,13 @@ namespace Pedestal
 	template < class Window >
 	inline void UniqueWindowOwner< Window >::Show()
 	{
-		if ( fWindow.get() )
+		if ( itsWindow.get() )
 		{
-			N::SelectWindow( fWindow->Get() );
+			N::SelectWindow( itsWindow->Get() );
 		}
 		else
 		{
-			fWindow.reset( new Window( fClosure ) );
+			itsWindow.reset( new Window( itsCloseHandler ) );
 		}
 	}
 	
@@ -304,42 +303,39 @@ namespace Pedestal
 	{
 		typedef std::map< ::WindowRef, boost::shared_ptr< Window > > WindowStorage;
 		
-		class Closure : public WindowClosure
+		class CloseHandler : public WindowCloseHandler
 		{
 			private:
-				WindowStorage& windows;
+				WindowStorage& itsWindows;
 			
 			public:
-				Closure( WindowStorage& windows )
-				:
-					windows( windows  )
-				{}
+				CloseHandler( WindowStorage& windows ) : itsWindows( windows  )  {}
 				
-				bool RequestWindowClosure( N::WindowRef window )
+				void operator()( N::WindowRef window ) const
 				{
-					typename WindowStorage::iterator found = windows.find( window );
+					typename WindowStorage::iterator found = itsWindows.find( window );
 					
-					if ( found != windows.end() )
+					if ( found != itsWindows.end() )
 					{
-						windows.erase( found );
+						itsWindows.erase( found );
 					}
-					
-					return true;
 				}
 		};
 		
 		protected:
-			WindowStorage  fWindows;
-			Closure        fClosure;
+			WindowStorage                            itsWindows;
+			boost::shared_ptr< WindowCloseHandler >  itsCloseHandler;
 		
 		public:
-			WindowsOwner() : fClosure( fWindows )  {}
+			WindowsOwner() : itsCloseHandler( new CloseHandler( itsWindows ) )  {}
 			
 			void NewWindow()
 			{
-				Window* window = new Window( fClosure );
+				Window* w = new Window( itsCloseHandler );
 				
-				fWindows[ window->Get() ] = boost::shared_ptr< Window >( window );
+				boost::shared_ptr< Window > window( w );
+				
+				itsWindows[ w->Get() ] = window;
 			}
 	};
 	
