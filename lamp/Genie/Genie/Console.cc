@@ -61,17 +61,8 @@ namespace Genie
 	
 	class SalvagedWindowClosure : public Ped::WindowClosure
 	{
-		private:
-			ConsoleID itsConsoleID;
-		
 		public:
-			SalvagedWindowClosure( ConsoleID id ) : itsConsoleID( id )
-			{
-			}
-			
-			ConsoleID ID() const  { return itsConsoleID; }
-			
-			bool RequestWindowClosure( N::WindowRef );
+			bool RequestWindowClosure( N::WindowRef window );
 	};
 	
 	
@@ -380,7 +371,7 @@ namespace Genie
 	{
 	}
 	
-	static void CloseSalvagedConsole( ConsoleID id );
+	static void CloseSalvagedConsole( N::WindowRef window );
 	
 	bool ConsoleWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
@@ -394,9 +385,9 @@ namespace Genie
 		return false;
 	}
 	
-	bool SalvagedWindowClosure::RequestWindowClosure( N::WindowRef )
+	bool SalvagedWindowClosure::RequestWindowClosure( N::WindowRef window )
 	{
-		CloseSalvagedConsole( itsConsoleID );
+		CloseSalvagedConsole( window );
 		
 		return true;
 	}
@@ -416,71 +407,21 @@ namespace Genie
 	{
 	}
 	
-	bool Console::IsReadable() const
-	{
-		return !itsCurrentInput.empty()  ||  ReadyForInput();
-	}
-	
 	static ConsolePane& GetConsolePane( ConsoleWindow& window )
 	{
 		return window.SubView().ScrolledView();
 	}
 	
-	int Console::Read( char* data, std::size_t byteCount )
+	bool Console::IsReadyForInput()
 	{
-		// Zero byteCount always begets zero result
-		if ( byteCount == 0 )
-		{
-			return 0;
-		}
+		bool ready = itsWindow.Input().Ready();
 		
-		while ( true )
+		if ( !ready )
 		{
-			if ( itsCurrentInput.empty() )
-			{
-				if ( ReadyForInput() )
-				{
-					itsCurrentInput = ReadInput();
-				}
-			}
-			
-			if ( !itsCurrentInput.empty() )
-			{
-				// Actual byteCount is lesser of requested size and available size
-				std::size_t bytesCopied = std::min( byteCount, itsCurrentInput.size() );
-				
-				// Copy data from input to buffer
-				std::copy( itsCurrentInput.begin(),
-				           itsCurrentInput.begin() + bytesCopied,
-				           data );
-				
-				// Slide remaining data to beginning
-				std::copy( itsCurrentInput.begin() + bytesCopied,
-				           itsCurrentInput.end(),
-				           itsCurrentInput.begin() );
-				
-				// and take up the slack
-				itsCurrentInput.resize( itsCurrentInput.size() - bytesCopied );
-				
-				return bytesCopied;
-			}
-			
-			
 			GetConsolePane( itsWindow ).CheckEOF();
-			
-			if ( false )
-			{
-				Yield();
-				continue;
-			}
-			else
-			{
-				throw io::no_input_pending();
-			}
 		}
 		
-		// Not reached?  After a throw?  Who'd have guessed?
-		return 0;
+		return ready;
 	}
 	
 	int Console::Write( const char* data, std::size_t byteCount )
@@ -533,7 +474,7 @@ namespace Genie
 	}
 	
 	
-	std::map< ConsoleID, boost::shared_ptr< Console > > gSalvagedConsoles;
+	std::map< ::WindowRef, boost::shared_ptr< Console > > gSalvagedConsoles;
 	
 	
 	N::WindowRef Console::GetWindowRef() const
@@ -543,7 +484,7 @@ namespace Genie
 	
 	void Console::Salvage()
 	{
-		boost::shared_ptr< Ped::WindowClosure > handler( new SalvagedWindowClosure( ID() ) );
+		boost::shared_ptr< Ped::WindowClosure > handler( new SalvagedWindowClosure() );
 		
 		itsWindow.SetCloseHandler( handler );
 	}
@@ -554,12 +495,12 @@ namespace Genie
 		
 		console->Salvage();
 		
-		gSalvagedConsoles[ console->ID() ] = console;
+		gSalvagedConsoles[ console->GetWindowRef() ] = console;
 	}
 	
-	void CloseSalvagedConsole( ConsoleID id )
+	void CloseSalvagedConsole( N::WindowRef window )
 	{
-		gSalvagedConsoles.erase( id );
+		gSalvagedConsoles.erase( window );
 	}
 	
 }

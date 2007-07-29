@@ -25,6 +25,7 @@ namespace Genie
 		private:
 			ConsoleID id;
 			boost::shared_ptr< Console > console;
+			std::string itsCurrentInput;
 			int itsWindowSalvagePolicy;
 			int itsLeaderWaitStatus;
 		

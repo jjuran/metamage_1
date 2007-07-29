@@ -109,7 +109,9 @@ namespace Genie
 	
 	unsigned int ConsoleTTYHandle::SysPoll() const
 	{
-		int readability = (console.get() && console->IsReadable()) ? kPollRead : 0;
+		bool readable = !itsCurrentInput.empty()  ||  console.get() && console->IsReadyForInput();
+		
+		int readability = readable ? kPollRead : 0;
 		
 		return readability | kPollWrite;
 	}
@@ -118,22 +120,51 @@ namespace Genie
 	{
 		Open();
 		
+		// Zero byteCount always begets zero result
+		if ( byteCount == 0 )
+		{
+			return 0;
+		}
+		
 		while ( true )
 		{
-			try
+			if ( itsCurrentInput.empty() )
 			{
-				return console->Read( data, byteCount );
+				if ( console->IsReadyForInput() )
+				{
+					itsCurrentInput = console->ReadInput();
+				}
 			}
-			catch ( const io::no_input_pending& )
+			
+			if ( !itsCurrentInput.empty() )
 			{
-				if ( IsBlocking() )
-				{
-					Yield();
-				}
-				else
-				{
-					throw;
-				}
+				// Actual byteCount is lesser of requested size and available size
+				std::size_t bytesCopied = std::min( byteCount, itsCurrentInput.size() );
+				
+				// Copy data from input to buffer
+				std::copy( itsCurrentInput.begin(),
+				           itsCurrentInput.begin() + bytesCopied,
+				           data );
+				
+				// Slide remaining data to beginning
+				std::copy( itsCurrentInput.begin() + bytesCopied,
+				           itsCurrentInput.end(),
+				           itsCurrentInput.begin() );
+				
+				// and take up the slack
+				itsCurrentInput.resize( itsCurrentInput.size() - bytesCopied );
+				
+				return bytesCopied;
+			}
+			
+			if ( IsBlocking() )
+			{
+				Yield();
+				continue;
+			}
+			else
+			{
+				throw io::no_input_pending();
 			}
 		}
 	}

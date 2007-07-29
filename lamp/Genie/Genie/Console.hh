@@ -98,20 +98,16 @@ namespace Genie
 		private:
 			ConsoleID      itsConsoleID;
 			ConsoleWindow  itsWindow;
-			std::string    itsCurrentInput;
 		
 		public:
 			Console( ConsoleID id, ConstStr255Param title );
 			
 			~Console();
 			
-			bool ReadyForInput() const  { return itsWindow.Input().Ready(); }
+			bool IsReadyForInput();
 			
 			std::string ReadInput()  { return itsWindow.Input().Read(); }
 			
-			bool IsReadable() const;
-			
-			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );
 			
 			ConsoleID ID() const  { return itsConsoleID; }
