@@ -10,7 +10,6 @@
 #include <map>
 
 // Boost
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 
 // Nucleus
@@ -99,7 +98,7 @@ namespace Pedestal
 	template <>  struct DefProcID_Traits< N::zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
 	template <>  struct DefProcID_Traits< N::zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
 	
-	class WindowCloseHandler : public boost::enable_shared_from_this< WindowCloseHandler >
+	class WindowCloseHandler
 	{
 		public:
 			virtual void operator()( N::WindowRef window ) const = 0;
