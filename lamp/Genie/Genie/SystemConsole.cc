@@ -23,7 +23,7 @@ namespace Genie
 		public:
 			typedef SystemConsoleBase Base;
 			
-			SystemConsole( Ped::WindowClosure& closure );
+			SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler );
 	};
 	
 	class SystemConsoleOwner : public Ped::UniqueWindowOwner< SystemConsole >
@@ -49,10 +49,10 @@ namespace Genie
 		                      mbarHeight + vMargin / 3 );
 	}
 	
-	SystemConsole::SystemConsole( Ped::WindowClosure& closure )
+	SystemConsole::SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler )
 	:
 		Base( Ped::NewWindowContext( MakeWindowRect(), "\p" "System Console" ),
-		      closure )
+		      handler )
 	{
 		
 	}
@@ -63,7 +63,7 @@ namespace Genie
 		
 		gSystemConsoleOwner.Show();
 		
-		gSystemConsoleOwner.fWindow->SubView().ScrolledView().WriteChars( data, byteCount );
+		gSystemConsoleOwner.itsWindow->SubView().ScrolledView().WriteChars( data, byteCount );
 		
 		return byteCount;
 	}
