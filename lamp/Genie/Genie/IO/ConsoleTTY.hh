@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	class Console;
+	class ConsoleWindow;
 	
 	typedef std::size_t ConsoleID;
 	
@@ -24,7 +24,7 @@ namespace Genie
 	{
 		private:
 			ConsoleID id;
-			boost::shared_ptr< Console > console;
+			boost::shared_ptr< ConsoleWindow > console;
 			std::string itsCurrentInput;
 			int itsWindowSalvagePolicy;
 			int itsLeaderWaitStatus;

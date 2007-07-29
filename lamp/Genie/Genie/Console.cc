@@ -44,25 +44,25 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class ConsoleWindowClosure : public Ped::WindowClosure
+	class ConsoleCloseHandler : public Ped::WindowCloseHandler
 	{
 		private:
 			ConsoleID itsConsoleID;
 		
 		public:
-			ConsoleWindowClosure( ConsoleID id ) : itsConsoleID( id )
+			ConsoleCloseHandler( ConsoleID id ) : itsConsoleID( id )
 			{
 			}
 			
-			ConsoleID ID() const  { return itsConsoleID; }
+			//ConsoleID ID() const  { return itsConsoleID; }
 			
-			bool RequestWindowClosure( N::WindowRef );
+			void operator()( N::WindowRef ) const;
 	};
 	
-	class SalvagedWindowClosure : public Ped::WindowClosure
+	class SalvagedWindowCloseHandler : public Ped::WindowCloseHandler
 	{
 		public:
-			bool RequestWindowClosure( N::WindowRef window );
+			void operator()( N::WindowRef window ) const;
 	};
 	
 	
@@ -363,75 +363,62 @@ namespace Genie
 	}
 	
 	
-	ConsoleWindow::ConsoleWindow( Ped::WindowClosure&  closure,
-	                              ConstStr255Param     title,
-	                              ConsoleID            id      ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
-	                                                                     closure,
-	                                                                     ConsolePane::Initializer( id, itsInput ) )
+	static boost::shared_ptr< Ped::WindowCloseHandler > NewConsoleCloseHandler( ConsoleID id )
+	{
+		return boost::shared_ptr< Ped::WindowCloseHandler >( new ConsoleCloseHandler( id ) );
+	}
+	
+	ConsoleWindow::ConsoleWindow( ConsoleID         id,
+	                              ConstStr255Param  title ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
+	                                                                NewConsoleCloseHandler( id ),
+	                                                                ConsolePane::Initializer( id, itsInput ) )
 	{
 	}
 	
+	bool ConsoleWindow::IsReadyForInput()
+	{
+		bool ready = itsInput.Ready();
+		
+		if ( !ready )
+		{
+			SubView().ScrolledView().CheckEOF();
+		}
+		
+		return ready;
+	}
+	
+	int ConsoleWindow::Write( const char* data, std::size_t byteCount )
+	{
+		int result = SubView().ScrolledView().WriteChars( data, byteCount );
+		
+		SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
+		                            N::SetPt( 0, 0 ) );
+		
+		return result;
+	}
+	
+	void ConsoleWindow::Salvage()
+	{
+		boost::shared_ptr< Ped::WindowCloseHandler > handler( new SalvagedWindowCloseHandler() );
+		
+		SetCloseHandler( handler );
+	}
+	
+	
 	static void CloseSalvagedConsole( N::WindowRef window );
 	
-	bool ConsoleWindowClosure::RequestWindowClosure( N::WindowRef )
+	void ConsoleCloseHandler::operator()( N::WindowRef ) const
 	{
 		ConsoleTTYHandle& console = GetConsoleByID( itsConsoleID );
 		
 		console.Disconnect();
 		
 		SendSignalToProcessGroup( SIGHUP, *console.GetProcessGroup().lock() );
-		
-		// Assuming the window does get shut, it hasn't happened yet
-		return false;
 	}
 	
-	bool SalvagedWindowClosure::RequestWindowClosure( N::WindowRef window )
+	void SalvagedWindowCloseHandler::operator()( N::WindowRef window ) const
 	{
 		CloseSalvagedConsole( window );
-		
-		return true;
-	}
-	
-	
-	static boost::shared_ptr< Ped::WindowClosure > NewConsoleCloseHandler( ConsoleID id )
-	{
-		return boost::shared_ptr< Ped::WindowClosure >( new ConsoleWindowClosure( id ) );
-	}
-	
-	Console::Console( ConsoleID id, ConstStr255Param title ) : itsConsoleID( id ),
-	                                                           itsWindow( *NewConsoleCloseHandler( id ), title, id )
-	{
-	}
-	
-	Console::~Console()
-	{
-	}
-	
-	static ConsolePane& GetConsolePane( ConsoleWindow& window )
-	{
-		return window.SubView().ScrolledView();
-	}
-	
-	bool Console::IsReadyForInput()
-	{
-		bool ready = itsWindow.Input().Ready();
-		
-		if ( !ready )
-		{
-			GetConsolePane( itsWindow ).CheckEOF();
-		}
-		
-		return ready;
-	}
-	
-	int Console::Write( const char* data, std::size_t byteCount )
-	{
-		int result = GetConsolePane( itsWindow ).WriteChars( data, byteCount );
-		
-		itsWindow.SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
-		                                      N::SetPt( 0, 0 ) );
-		
-		return result;
 	}
 	
 	
@@ -474,28 +461,16 @@ namespace Genie
 	}
 	
 	
-	std::map< ::WindowRef, boost::shared_ptr< Console > > gSalvagedConsoles;
+	std::map< ::WindowRef, boost::shared_ptr< ConsoleWindow > > gSalvagedConsoles;
 	
 	
-	N::WindowRef Console::GetWindowRef() const
-	{
-		return itsWindow.Get();
-	}
-	
-	void Console::Salvage()
-	{
-		boost::shared_ptr< Ped::WindowClosure > handler( new SalvagedWindowClosure() );
-		
-		itsWindow.SetCloseHandler( handler );
-	}
-	
-	void SalvageConsole( const boost::shared_ptr< Console >& console )
+	void SalvageConsole( const boost::shared_ptr< ConsoleWindow >& console )
 	{
 		ASSERT( console.get() != NULL );
 		
 		console->Salvage();
 		
-		gSalvagedConsoles[ console->GetWindowRef() ] = console;
+		gSalvagedConsoles[ console->Get() ] = console;
 	}
 	
 	void CloseSalvagedConsole( N::WindowRef window )

@@ -99,7 +99,7 @@ namespace Genie
 		{
 			std::string exCon = "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")";
 			
-			N::SetWTitle( console->GetWindowRef(), N::Str255( exCon ) );
+			N::SetWTitle( console->Get(), N::Str255( exCon ) );
 			
 			SalvageConsole( console );
 		}
@@ -185,7 +185,7 @@ namespace Genie
 			case WIOCGTITLE:
 				if ( argp != NULL )
 				{
-					N::Str255 title = N::GetWTitle( console->GetWindowRef() );
+					N::Str255 title = N::GetWTitle( console->Get() );
 					
 					std::copy( title + 1, title + 1 + title[0], (Byte*) argp );
 					
@@ -195,7 +195,7 @@ namespace Genie
 				break;
 			
 			case WIOCSTITLE:
-				N::SetWTitle( console->GetWindowRef(), argp ? N::Str255( (const char*) argp ) : NULL );
+				N::SetWTitle( console->Get(), argp ? N::Str255( (const char*) argp ) : NULL );
 				
 				break;
 			
@@ -227,9 +227,9 @@ namespace Genie
 		return N::Str255( "/dev/con/" + NN::Convert< std::string >( id ) );
 	}
 	
-	static boost::shared_ptr< Console > NewConsole( ConsoleID id, ConstStr255Param title )
+	static boost::shared_ptr< ConsoleWindow > NewConsole( ConsoleID id, ConstStr255Param title )
 	{
-		boost::shared_ptr< Console > console( new Console( id, title ) );
+		boost::shared_ptr< ConsoleWindow > console( new ConsoleWindow( id, title ) );
 		
 		return console;
 	}

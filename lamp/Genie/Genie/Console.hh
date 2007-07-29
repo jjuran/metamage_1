@@ -86,33 +86,13 @@ namespace Genie
 		public:
 			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
 			
-			ConsoleWindow( Ped::WindowClosure& closure, ConstStr255Param title, ConsoleID id );
-			
-			Io::StringPipe const& Input() const  { return itsInput; }
-			Io::StringPipe      & Input()        { return itsInput; }
-	};
-	
-	
-	class Console
-	{
-		private:
-			ConsoleID      itsConsoleID;
-			ConsoleWindow  itsWindow;
-		
-		public:
-			Console( ConsoleID id, ConstStr255Param title );
-			
-			~Console();
+			ConsoleWindow( ConsoleID id, ConstStr255Param title );
 			
 			bool IsReadyForInput();
 			
-			std::string ReadInput()  { return itsWindow.Input().Read(); }
+			std::string ReadInput()  { return itsInput.Read(); }
 			
 			int Write( const char* data, std::size_t byteCount );
-			
-			ConsoleID ID() const  { return itsConsoleID; }
-			
-			N::WindowRef GetWindowRef() const;
 			
 			void Salvage();
 	};
@@ -121,9 +101,9 @@ namespace Genie
 	void SpawnNewConsole( const FSSpec& program );
 	void SpawnNewConsole();
 	
-	void CloseConsole( const boost::shared_ptr< Console >& console );
+	void CloseConsole( const boost::shared_ptr< ConsoleWindow >& console );
 	
-	void SalvageConsole( const boost::shared_ptr< Console >& console );
+	void SalvageConsole( const boost::shared_ptr< ConsoleWindow >& console );
 	
 }
 
