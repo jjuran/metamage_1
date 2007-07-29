@@ -13,7 +13,7 @@
 #include "OSErrno/OSErrno.hh"
 
 // Genie
-#include "Genie/IO/Stream.hh"
+#include "Genie/IO/Base.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -33,30 +33,9 @@ namespace Genie
 		
 		try
 		{
-			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files[ filedes ].handle );
+			IOHandle& io = *files[ filedes ].handle;
 			
-			switch ( request )
-			{
-				case FIONBIO:
-					if ( *argp )
-					{
-						stream.SetNonBlocking();
-					}
-					else
-					{
-						stream.SetBlocking();
-					}
-					
-					break;
-				
-				case FIONREAD:
-					// not implemented
-					return frame.SetErrno( EINVAL );
-				
-				default:
-					stream.IOCtl( request, argp );
-					break;
-			}
+			io.IOCtl( request, argp );
 		}
 		catch ( ... )
 		{
