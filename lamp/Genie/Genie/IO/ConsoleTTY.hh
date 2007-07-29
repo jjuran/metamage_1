@@ -38,6 +38,8 @@ namespace Genie
 			
 			~ConsoleTTYHandle();
 			
+			IOHandle* Next() const;
+			
 			unsigned int SysPoll() const;
 			
 			int SysRead( char* data, std::size_t byteCount );

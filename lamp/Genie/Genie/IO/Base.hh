@@ -114,7 +114,7 @@ namespace Genie
 	class IOHandle : public boost::enable_shared_from_this< IOHandle >
 	{
 		private:
-			virtual IOHandle* Next()  { return NULL; }
+			virtual IOHandle* Next() const  { return NULL; }
 		
 		public:
 			virtual ~IOHandle()  {}

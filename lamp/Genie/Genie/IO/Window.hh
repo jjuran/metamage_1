@@ -31,7 +31,7 @@ namespace Genie
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
-			virtual Nitrogen::WindowRef GetWindowRef() const;
+			virtual Nitrogen::WindowRef GetWindowRef() const = 0;
 			
 			Nitrogen::Str255 GetTitle() const;
 			

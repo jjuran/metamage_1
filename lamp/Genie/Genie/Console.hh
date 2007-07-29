@@ -29,6 +29,7 @@
 
 // Genie
 #include "Genie/IO/ConsoleTTY.hh"
+#include "Genie/IO/Window.hh"
 
 
 namespace Genie
@@ -78,7 +79,8 @@ namespace Genie
 	};
 	
 	
-	class ConsoleWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >
+	class ConsoleWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >,
+	                      public WindowHandle
 	{
 		private:
 			Io::StringPipe itsInput;
@@ -87,6 +89,8 @@ namespace Genie
 			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
 			
 			ConsoleWindow( ConsoleID id, ConstStr255Param title );
+			
+			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 			
 			bool IsReadyForInput();
 			

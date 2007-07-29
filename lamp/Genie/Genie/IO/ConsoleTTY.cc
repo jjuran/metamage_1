@@ -107,6 +107,11 @@ namespace Genie
 		gConsoleMap.erase( id );
 	}
 	
+	IOHandle* ConsoleTTYHandle::Next() const
+	{
+		return console.get();
+	}
+	
 	unsigned int ConsoleTTYHandle::SysPoll() const
 	{
 		bool readable = !itsCurrentInput.empty()  ||  console.get() && console->IsReadyForInput();
@@ -178,27 +183,8 @@ namespace Genie
 	
 	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
 	{
-		Open();
-		
 		switch ( request )
 		{
-			case WIOCGTITLE:
-				if ( argp != NULL )
-				{
-					N::Str255 title = N::GetWTitle( console->Get() );
-					
-					std::copy( title + 1, title + 1 + title[0], (Byte*) argp );
-					
-					argp[ title[0] ] = '\0';
-				}
-				
-				break;
-			
-			case WIOCSTITLE:
-				N::SetWTitle( console->Get(), argp ? N::Str255( (const char*) argp ) : NULL );
-				
-				break;
-			
 			case WIOCGEXIT:
 				if ( argp != NULL )
 				{
@@ -214,7 +200,13 @@ namespace Genie
 				}
 				
 				itsWindowSalvagePolicy = *argp;
-				//break;
+				break;
+			
+			case WIOCGTITLE:
+			case WIOCSTITLE:
+				Open();
+				
+				// fall through
 			
 			default:
 				TTYHandle::IOCtl( request, argp );
