@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// POSIX
+#include "sys/ioctl.h"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -112,9 +115,30 @@ namespace Genie
 		return SysWrite( data, byteCount );
 	}
 	
-	void StreamHandle::IOCtl( unsigned long /*request*/, int* /*argp*/ )
+	void StreamHandle::IOCtl( unsigned long request, int* argp )
 	{
-		P7::ThrowErrno( EINVAL );
+		switch ( request )
+		{
+			case FIONBIO:
+				if ( *argp )
+				{
+					SetNonBlocking();
+				}
+				else
+				{
+					SetBlocking();
+				}
+				
+				break;
+			
+			case FIONREAD:
+				// not implemented
+				return P7::ThrowErrno( EINVAL );
+			
+			default:
+				IOHandle::IOCtl( request, argp );
+				break;
+		}
 	}
 	
 }
