@@ -47,6 +47,8 @@ namespace Genie
 			
 			ConsoleID ID() const  { return id; }
 			
+			void Open();
+			
 			void SaveLeaderWaitStatus( int status );
 	};
 	

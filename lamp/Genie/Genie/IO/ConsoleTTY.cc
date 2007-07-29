@@ -69,7 +69,6 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : TTYHandle( MakeConsoleName( id ) ),
 	                                                     id( id ),
-	                                                     console( NewConsole( id ) ),
 	                                                     itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
 	                                                     itsLeaderWaitStatus()
 	{
@@ -96,27 +95,29 @@ namespace Genie
 	
 	ConsoleTTYHandle::~ConsoleTTYHandle()
 	{
-		gConsoleMap.erase( id );
-		
-		if ( ShouldSalvageConsoleWindow( itsWindowSalvagePolicy, itsLeaderWaitStatus ) )
+		if ( console.get()  &&  !IsDisconnected()  &&  ShouldSalvageConsoleWindow( itsWindowSalvagePolicy, itsLeaderWaitStatus ) )
 		{
 			std::string exCon = "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")";
 			
-			console->SetTitle( N::Str255( exCon ) );
+			N::SetWTitle( console->GetWindowRef(), N::Str255( exCon ) );
 			
 			SalvageConsole( console );
 		}
+		
+		gConsoleMap.erase( id );
 	}
 	
 	unsigned int ConsoleTTYHandle::SysPoll() const
 	{
-		int readability = console->IsReadable() ? kPollRead : 0;
+		int readability = (console.get() && console->IsReadable()) ? kPollRead : 0;
 		
 		return readability | kPollWrite;
 	}
 	
 	int ConsoleTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
+		Open();
+		
 		while ( true )
 		{
 			try
@@ -139,17 +140,21 @@ namespace Genie
 	
 	int ConsoleTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
+		Open();
+		
 		return console->Write( data, byteCount );
 	}
 	
 	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
 	{
+		Open();
+		
 		switch ( request )
 		{
 			case WIOCGTITLE:
 				if ( argp != NULL )
 				{
-					N::Str255 title = console->GetTitle();
+					N::Str255 title = N::GetWTitle( console->GetWindowRef() );
 					
 					std::copy( title + 1, title + 1 + title[0], (Byte*) argp );
 					
@@ -159,7 +164,7 @@ namespace Genie
 				break;
 			
 			case WIOCSTITLE:
-				console->SetTitle( argp ? N::Str255( (const char*) argp ) : NULL );
+				N::SetWTitle( console->GetWindowRef(), argp ? N::Str255( (const char*) argp ) : NULL );
 				
 				break;
 			
@@ -184,6 +189,26 @@ namespace Genie
 				TTYHandle::IOCtl( request, argp );
 				break;
 		};
+	}
+	
+	static N::Str255 DefaultConsoleTitle( ConsoleID id )
+	{
+		return N::Str255( "/dev/con/" + NN::Convert< std::string >( id ) );
+	}
+	
+	static boost::shared_ptr< Console > NewConsole( ConsoleID id, ConstStr255Param title )
+	{
+		boost::shared_ptr< Console > console( new Console( id, title ) );
+		
+		return console;
+	}
+	
+	void ConsoleTTYHandle::Open()
+	{
+		if ( console.get() == NULL )
+		{
+			console = NewConsole( id, DefaultConsoleTitle( id ) );
+		}
 	}
 	
 	void ConsoleTTYHandle::SaveLeaderWaitStatus( int status )

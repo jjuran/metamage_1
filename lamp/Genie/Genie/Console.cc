@@ -44,43 +44,34 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class ConsolePane : public Ped::Console
+	class ConsoleWindowClosure : public Ped::WindowClosure
 	{
 		private:
-			ConsoleID        itsConsoleID;
-			Io::StringPipe&  itsInput;
-			short            itsStartOfInput;
-			bool             itHasReceivedEOF;
+			ConsoleID itsConsoleID;
 		
 		public:
-			struct Initializer : public Ped::Console::Initializer
-			{
-				ConsoleID        id;
-				Io::StringPipe&  input;
-				
-				Initializer( ConsoleID id, Io::StringPipe& in ) : id( id ), input( in )  {}
-			};
-		
-		public:
-			ConsolePane( const Rect&         bounds,
-			             const Initializer&  init   ) : Ped::Console    ( bounds, init ),
-			                                            itsConsoleID    ( init.id      ),
-			                                            itsInput        ( init.input   ),
-			                                            itsStartOfInput ( TextLength() ),
-			                                            itHasReceivedEOF( false        )
+			ConsoleWindowClosure( ConsoleID id ) : itsConsoleID( id )
 			{
 			}
 			
-			void CheckEOF();
+			ConsoleID ID() const  { return itsConsoleID; }
 			
-			int WriteChars( const char* data, unsigned int byteCount );
+			bool RequestWindowClosure( N::WindowRef );
+	};
+	
+	class SalvagedWindowClosure : public Ped::WindowClosure
+	{
+		private:
+			ConsoleID itsConsoleID;
+		
+		public:
+			SalvagedWindowClosure( ConsoleID id ) : itsConsoleID( id )
+			{
+			}
 			
-			void MouseDown( const EventRecord& event );
-			bool KeyDown  ( const EventRecord& event );
+			ConsoleID ID() const  { return itsConsoleID; }
 			
-			bool UserCommand( Ped::MenuItemCode code );
-			
-			void Paste();
+			bool RequestWindowClosure( N::WindowRef );
 	};
 	
 	
@@ -381,21 +372,6 @@ namespace Genie
 	}
 	
 	
-	class ConsoleWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >
-	{
-		private:
-			Io::StringPipe itsInput;
-		
-		public:
-			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
-			
-			ConsoleWindow( Ped::WindowClosure& closure, ConstStr255Param title, ConsoleID id );
-			
-			Io::StringPipe const& Input() const  { return itsInput; }
-			Io::StringPipe      & Input()        { return itsInput; }
-	};
-	
-	
 	ConsoleWindow::ConsoleWindow( Ped::WindowClosure&  closure,
 	                              ConstStr255Param     title,
 	                              ConsoleID            id      ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
@@ -408,74 +384,46 @@ namespace Genie
 	
 	bool ConsoleWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
-		itHasBeenRequested = true;
+		ConsoleTTYHandle& console = GetConsoleByID( itsConsoleID );
 		
-		if ( !itHasDisassociated )
-		{
-			ConsoleTTYHandle& console = GetConsoleByID( itsConsoleID );
-			
-			console.Disconnect();
-			
-			SendSignalToProcessGroup( SIGHUP, *console.GetProcessGroup().lock() );
-		}
-		else
-		{
-			CloseSalvagedConsole( itsConsoleID );
-		}
+		console.Disconnect();
+		
+		SendSignalToProcessGroup( SIGHUP, *console.GetProcessGroup().lock() );
 		
 		// Assuming the window does get shut, it hasn't happened yet
 		return false;
 	}
 	
-	
-	Console::Console( ConsoleID id ) : ConsoleWindowClosure  ( id             ),
-	                                   itsLatentTitle        ( DefaultTitle() )
+	bool SalvagedWindowClosure::RequestWindowClosure( N::WindowRef )
 	{
-	}
-	
-	N::Str255 Console::DefaultTitle() const
-	{
-		return N::Str255( "/dev/con/" + NN::Convert< std::string >( ID() ) );
-	}
-	
-	void Console::SetTitle( ConstStr255Param title )
-	{
-		itsLatentTitle = title ? title : DefaultTitle();
+		CloseSalvagedConsole( itsConsoleID );
 		
-		if ( IsOpen() )
-		{
-			N::SetWTitle( itsWindow->Get(), itsLatentTitle );
-		}
+		return true;
 	}
 	
-	void Console::Open()
+	
+	static boost::shared_ptr< Ped::WindowClosure > NewConsoleCloseHandler( ConsoleID id )
 	{
-		if ( !IsOpen() )
-		{
-			itsWindow.reset( new ConsoleWindow( *this, itsLatentTitle, ID() ) );
-		}
+		return boost::shared_ptr< Ped::WindowClosure >( new ConsoleWindowClosure( id ) );
 	}
 	
-	static bool ReadyForInputFromWindow( const ConsoleWindow* window )
+	Console::Console( ConsoleID id, ConstStr255Param title ) : itsConsoleID( id ),
+	                                                           itsWindow( *NewConsoleCloseHandler( id ), title, id )
 	{
-		return window != NULL  &&  window->Input().Ready();
 	}
 	
-	static std::string ReadInputFromWindow( ConsoleWindow* window )
+	Console::~Console()
 	{
-		ASSERT( window != NULL );
-		
-		return window->Input().Read();
 	}
 	
 	bool Console::IsReadable() const
 	{
-		return !itsCurrentInput.empty()  ||  ReadyForInputFromWindow( itsWindow.get() );
+		return !itsCurrentInput.empty()  ||  ReadyForInput();
 	}
 	
-	static ConsolePane& GetConsolePane( const std::auto_ptr< ConsoleWindow >& window )
+	static ConsolePane& GetConsolePane( ConsoleWindow& window )
 	{
-		return window->SubView().ScrolledView();
+		return window.SubView().ScrolledView();
 	}
 	
 	int Console::Read( char* data, std::size_t byteCount )
@@ -486,15 +434,13 @@ namespace Genie
 			return 0;
 		}
 		
-		Open();
-		
 		while ( true )
 		{
 			if ( itsCurrentInput.empty() )
 			{
-				if ( ReadyForInputFromWindow( itsWindow.get() ) )
+				if ( ReadyForInput() )
 				{
-					itsCurrentInput = ReadInputFromWindow( itsWindow.get() );
+					itsCurrentInput = ReadInput();
 				}
 			}
 			
@@ -539,12 +485,10 @@ namespace Genie
 	
 	int Console::Write( const char* data, std::size_t byteCount )
 	{
-		Open();
-		
 		int result = GetConsolePane( itsWindow ).WriteChars( data, byteCount );
 		
-		itsWindow->SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
-		                                       N::SetPt( 0, 0 ) );
+		itsWindow.SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
+		                                      N::SetPt( 0, 0 ) );
 		
 		return result;
 	}
@@ -592,23 +536,25 @@ namespace Genie
 	std::map< ConsoleID, boost::shared_ptr< Console > > gSalvagedConsoles;
 	
 	
-	boost::shared_ptr< Console > NewConsole( ConsoleID id )
+	N::WindowRef Console::GetWindowRef() const
 	{
-		boost::shared_ptr< Console > console( new Console( id ) );
+		return itsWindow.Get();
+	}
+	
+	void Console::Salvage()
+	{
+		boost::shared_ptr< Ped::WindowClosure > handler( new SalvagedWindowClosure( ID() ) );
 		
-		return console;
+		itsWindow.SetCloseHandler( handler );
 	}
 	
 	void SalvageConsole( const boost::shared_ptr< Console >& console )
 	{
 		ASSERT( console.get() != NULL );
 		
-		if ( !console->ClosureHasBeenRequested() )
-		{
-			console->DisassociateFromTerminal();
-			
-			gSalvagedConsoles[ console->ID() ] = console;
-		}
+		console->Salvage();
+		
+		gSalvagedConsoles[ console->ID() ] = console;
 	}
 	
 	void CloseSalvagedConsole( ConsoleID id )

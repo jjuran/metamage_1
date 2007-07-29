@@ -38,67 +38,92 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class ConsoleWindowClosure : public Ped::WindowClosure
+	class ConsolePane : public Ped::Console
 	{
 		private:
-			ConsoleID itsConsoleID;
-			bool itHasBeenRequested;
-			bool itHasDisassociated;
-		
-		protected:
-			// prevent slicing
-			~ConsoleWindowClosure()  {}
+			ConsoleID        itsConsoleID;
+			Io::StringPipe&  itsInput;
+			short            itsStartOfInput;
+			bool             itHasReceivedEOF;
 		
 		public:
-			ConsoleWindowClosure( ConsoleID id ) : itsConsoleID( id ),
-			                                       itHasBeenRequested(),
-			                                       itHasDisassociated()
+			struct Initializer : public Ped::Console::Initializer
+			{
+				ConsoleID        id;
+				Io::StringPipe&  input;
+				
+				Initializer( ConsoleID id, Io::StringPipe& in ) : id( id ), input( in )  {}
+			};
+		
+		public:
+			ConsolePane( const Rect&         bounds,
+			             const Initializer&  init   ) : Ped::Console    ( bounds, init ),
+			                                            itsConsoleID    ( init.id      ),
+			                                            itsInput        ( init.input   ),
+			                                            itsStartOfInput ( TextLength() ),
+			                                            itHasReceivedEOF( false        )
 			{
 			}
 			
-			ConsoleID ID() const  { return itsConsoleID; }
+			void CheckEOF();
 			
-			bool RequestWindowClosure( N::WindowRef );
+			int WriteChars( const char* data, unsigned int byteCount );
 			
-			bool ClosureHasBeenRequested() const  { return itHasBeenRequested; }
+			void MouseDown( const EventRecord& event );
+			bool KeyDown  ( const EventRecord& event );
 			
-			void DisassociateFromTerminal()  { itHasDisassociated = true; }
+			bool UserCommand( Ped::MenuItemCode code );
+			
+			void Paste();
 	};
 	
 	
-	class ConsoleWindow;
-	
-	class Console : public ConsoleWindowClosure
+	class ConsoleWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >
 	{
 		private:
-			std::auto_ptr< ConsoleWindow >  itsWindow;
-			N::Str255                       itsLatentTitle;
-			std::string                     itsCurrentInput;
+			Io::StringPipe itsInput;
 		
 		public:
-			Console( ConsoleID id );
+			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
 			
-			bool IsOpen() const  { return itsWindow.get() != NULL; }
+			ConsoleWindow( Ped::WindowClosure& closure, ConstStr255Param title, ConsoleID id );
 			
-			N::Str255 DefaultTitle() const;
+			Io::StringPipe const& Input() const  { return itsInput; }
+			Io::StringPipe      & Input()        { return itsInput; }
+	};
+	
+	
+	class Console
+	{
+		private:
+			ConsoleID      itsConsoleID;
+			ConsoleWindow  itsWindow;
+			std::string    itsCurrentInput;
+		
+		public:
+			Console( ConsoleID id, ConstStr255Param title );
 			
-			N::Str255 GetTitle() const  { return itsLatentTitle; }
+			~Console();
 			
-			void SetTitle( ConstStr255Param title );
+			bool ReadyForInput() const  { return itsWindow.Input().Ready(); }
 			
-			void Open();
+			std::string ReadInput()  { return itsWindow.Input().Read(); }
 			
 			bool IsReadable() const;
 			
 			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );
+			
+			ConsoleID ID() const  { return itsConsoleID; }
+			
+			N::WindowRef GetWindowRef() const;
+			
+			void Salvage();
 	};
 	
 	
 	void SpawnNewConsole( const FSSpec& program );
 	void SpawnNewConsole();
-	
-	boost::shared_ptr< Console > NewConsole( ConsoleID id );
 	
 	void CloseConsole( const boost::shared_ptr< Console >& console );
 	
