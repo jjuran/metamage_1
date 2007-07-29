@@ -428,10 +428,8 @@ namespace Genie
 	}
 	
 	
-	Console::Console( ConsoleID id ) : ConsoleWindowClosure  ( id                            ),
-	                                   itsLatentTitle        ( DefaultTitle()                ),
-	                                   itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
-	                                   itsLeaderWaitStatus   ( 0                             )
+	Console::Console( ConsoleID id ) : ConsoleWindowClosure  ( id             ),
+	                                   itsLatentTitle        ( DefaultTitle() )
 	{
 	}
 	
@@ -551,20 +549,6 @@ namespace Genie
 		return result;
 	}
 	
-	ConsoleID Console::Salvage()
-	{
-		SetTitle( N::Str255( "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")" ) );
-		
-		DisassociateFromTerminal();
-		
-		return ID();
-	}
-	
-	bool Console::ShouldSalvageWindow() const
-	{
-		return !ClosureHasBeenRequested()  &&  itsLeaderWaitStatus != 0;  // FIXME
-	}
-	
 	
 	void SpawnNewConsole( const FSSpec& program )
 	{
@@ -615,13 +599,15 @@ namespace Genie
 		return console;
 	}
 	
-	void CloseConsole( const boost::shared_ptr< Console >& console )
+	void SalvageConsole( const boost::shared_ptr< Console >& console )
 	{
 		ASSERT( console.get() != NULL );
 		
-		if ( console->ShouldSalvageWindow() )
+		if ( !console->ClosureHasBeenRequested() )
 		{
-			gSalvagedConsoles[ console->Salvage() ] = console;
+			console->DisassociateFromTerminal();
+			
+			gSalvagedConsoles[ console->ID() ] = console;
 		}
 	}
 	

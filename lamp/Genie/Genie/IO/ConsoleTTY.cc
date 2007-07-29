@@ -69,15 +69,43 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : TTYHandle( MakeConsoleName( id ) ),
 	                                                     id( id ),
-	                                                     console( NewConsole( id ) )
+	                                                     console( NewConsole( id ) ),
+	                                                     itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
+	                                                     itsLeaderWaitStatus()
 	{
+	}
+	
+	static bool ShouldSalvageConsoleWindow( int salvagePolicy, int leaderWaitStatus )
+	{
+		switch ( salvagePolicy )
+		{
+			default:
+			case kLampSalvageWindowOnExitNever:
+				//return false;
+			
+			case kLampSalvageWindowOnExitForSignal:
+				// FIXME
+			
+			case kLampSalvageWindowOnExitForFailure:
+				return leaderWaitStatus != 0;
+			
+			case kLampSalvageWindowOnExitAlways:
+				return true;
+		}
 	}
 	
 	ConsoleTTYHandle::~ConsoleTTYHandle()
 	{
 		gConsoleMap.erase( id );
 		
-		CloseConsole( console );
+		if ( ShouldSalvageConsoleWindow( itsWindowSalvagePolicy, itsLeaderWaitStatus ) )
+		{
+			std::string exCon = "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")";
+			
+			console->SetTitle( N::Str255( exCon ) );
+			
+			SalvageConsole( console );
+		}
 	}
 	
 	unsigned int ConsoleTTYHandle::SysPoll() const
@@ -136,11 +164,20 @@ namespace Genie
 				break;
 			
 			case WIOCGEXIT:
-				*argp = kLampSalvageWindowOnExitNever;
+				if ( argp != NULL )
+				{
+					*argp = itsWindowSalvagePolicy;
+				}
+				
 				break;
 			
 			case WIOCSEXIT:
+				if ( argp == NULL )
+				{
+					P7::ThrowErrno( EFAULT );
+				}
 				
+				itsWindowSalvagePolicy = *argp;
 				//break;
 			
 			default:
@@ -151,7 +188,7 @@ namespace Genie
 	
 	void ConsoleTTYHandle::SaveLeaderWaitStatus( int status )
 	{
-		console->SetLeaderWaitStatus( status );
+		itsLeaderWaitStatus = status;
 	}
 	
 }

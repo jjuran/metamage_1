@@ -25,6 +25,8 @@ namespace Genie
 		private:
 			ConsoleID id;
 			boost::shared_ptr< Console > console;
+			int itsWindowSalvagePolicy;
+			int itsLeaderWaitStatus;
 		
 		public:
 			static TypeCode Type()  { return kConsoleTTYType; }

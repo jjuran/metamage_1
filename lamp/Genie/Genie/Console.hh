@@ -74,8 +74,6 @@ namespace Genie
 			std::auto_ptr< ConsoleWindow >  itsWindow;
 			N::Str255                       itsLatentTitle;
 			std::string                     itsCurrentInput;
-			int                             itsWindowSalvagePolicy;
-			int                             itsLeaderWaitStatus;
 		
 		public:
 			Console( ConsoleID id );
@@ -94,16 +92,6 @@ namespace Genie
 			
 			int Read (       char* data, std::size_t byteCount );
 			int Write( const char* data, std::size_t byteCount );
-			
-			int GetWindowSalvagePolicy() const  { return itsWindowSalvagePolicy; }
-			
-			void SetWindowSalvagePolicy( int policy )  { itsWindowSalvagePolicy = policy; }
-			
-			void SetLeaderWaitStatus( int status )  { itsLeaderWaitStatus = status; }
-			
-			bool ShouldSalvageWindow() const;
-			
-			ConsoleID Salvage();
 	};
 	
 	
@@ -113,6 +101,8 @@ namespace Genie
 	boost::shared_ptr< Console > NewConsole( ConsoleID id );
 	
 	void CloseConsole( const boost::shared_ptr< Console >& console );
+	
+	void SalvageConsole( const boost::shared_ptr< Console >& console );
 	
 }
 
