@@ -47,16 +47,39 @@ namespace Genie
 	};
 	
 	
+	IOHandle* IOHandle::GetBaseForCast( TypeCode desiredType )
+	{
+		if ( ActualType() % desiredType == 0 )
+		{
+			return this;
+		}
+		
+		if ( IOHandle* next = itsNext.get() )
+		{
+			return next->GetBaseForCast( desiredType );
+		}
+		
+		return NULL;
+	}
+	
 	FSTreePtr IOHandle::GetFile() const
 	{
 		return FSTreePtr( new FSTree_IOHandle( this ) );
 	}
 	
-	void Check_IOHandle_Cast( IOHandle& handle, TypeCode desiredType )
+	void IOHandle::IOCtl( unsigned long request, int* argp )
 	{
-		TypeCode actual = handle.ActualType();
+		if ( IOHandle* next = itsNext.get() )
+		{
+			return next->IOCtl( request, argp );
+		}
 		
-		if ( actual % desiredType != 0 )
+		P7::ThrowErrno( EINVAL );
+	}
+	
+	void Check_IOHandle_Cast_Result( IOHandle* cast )
+	{
+		if ( cast == NULL )
 		{
 			P7::ThrowErrno( EOPNOTSUPP );
 		}

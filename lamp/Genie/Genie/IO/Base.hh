@@ -113,6 +113,8 @@ namespace Genie
 	
 	class IOHandle : public boost::enable_shared_from_this< IOHandle >
 	{
+		boost::shared_ptr< IOHandle > itsNext;
+		
 		public:
 			virtual ~IOHandle()  {}
 			
@@ -120,17 +122,37 @@ namespace Genie
 			
 			virtual TypeCode ActualType() const  { return Type(); }
 			
+			IOHandle* GetBaseForCast( TypeCode desiredType );
+			
 			virtual FSTreePtr GetFile() const;
+			
+			virtual void IOCtl( unsigned long request, int* argp );
+			
 	};
 	
-	void Check_IOHandle_Cast( IOHandle& handle, TypeCode desiredType );
+	void Check_IOHandle_Cast_Result( IOHandle* cast );
+	
+	template < class Handle >
+	Handle* IOHandle_Cast( IOHandle* handle )
+	{
+		if ( handle == NULL )
+		{
+			return NULL;
+		}
+		
+		IOHandle* base = handle->GetBaseForCast( Handle::Type() );
+		
+		return static_cast< Handle* >( base );
+	}
 	
 	template < class Handle >
 	Handle& IOHandle_Cast( IOHandle& handle )
 	{
-		Check_IOHandle_Cast( handle, Handle::Type() );
+		Handle* cast = IOHandle_Cast< Handle >( &handle );
 		
-		return static_cast< Handle& >( handle );
+		Check_IOHandle_Cast_Result( cast );
+		
+		return *cast;
 	}
 	
 }
