@@ -17,6 +17,10 @@ namespace Genie
 	
 	namespace P7 = POSeven;
 	
+	QueryFileHandle::~QueryFileHandle()
+	{
+	}
+	
 	int QueryFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		if ( itsMark >= itsData.size() )

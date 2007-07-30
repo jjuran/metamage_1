@@ -1,5 +1,5 @@
 /*	============
- *	DirHandle.cc
+ *	Directory.cc
  *	============
  */
 
@@ -16,6 +16,10 @@ namespace Genie
 {
 	
 	DirHandle::DirHandle( const FSTreePtr& tree ) : itsDir( tree ), iterator( tree->Iterate() )
+	{
+	}
+	
+	DirHandle::~DirHandle()
 	{
 	}
 	

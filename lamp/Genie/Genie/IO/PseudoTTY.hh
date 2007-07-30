@@ -31,6 +31,8 @@ namespace Genie
 			                 boost::shared_ptr< Io::StringBuffer >  input,
 			                 boost::shared_ptr< Io::StringBuffer >  output );
 			
+			~PseudoTTYHandle();
+			
 			static TypeCode Type()  { return kPseudoTTYType; }
 			
 			TypeCode ActualType() const  { return Type(); }

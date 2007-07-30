@@ -24,6 +24,10 @@ namespace Genie
 	{
 	}
 	
+	PseudoTTYHandle::~PseudoTTYHandle()
+	{
+	}
+	
 	unsigned int PseudoTTYHandle::SysPoll() const
 	{
 		return (input->Empty() ? 0 : kPollRead) | kPollWrite;

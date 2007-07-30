@@ -34,6 +34,8 @@ namespace Genie
 			                                              itsData( data ),
 			                                              itsMark(      )  {}
 			
+			~QueryFileHandle();
+			
 			TypeCode ActualType() const  { return Type(); }
 			
 			FSTreePtr GetFile() const  { return itsFile; }

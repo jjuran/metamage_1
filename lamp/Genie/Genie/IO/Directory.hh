@@ -29,6 +29,8 @@ namespace Genie
 			
 			DirHandle( const FSTreePtr& tree );
 			
+			~DirHandle();
+			
 			TypeCode ActualType() const  { return Type(); }
 			
 			FSTreePtr GetFile() const  { return itsDir; }
