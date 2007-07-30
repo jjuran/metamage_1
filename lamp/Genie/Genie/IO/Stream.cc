@@ -23,6 +23,10 @@ namespace Genie
 	
 	namespace P7 = POSeven;
 	
+	StreamHandle::~StreamHandle()
+	{
+	}
+	
 	// Return a reference to the peek buffer with at least minBytes of data in it.
 	// We Read() until we have enough data.  If there're not enough data available,
 	// then we either block, or throw EWOULDBLOCK if the stream is non-blocking.

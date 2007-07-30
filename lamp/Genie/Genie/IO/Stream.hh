@@ -22,7 +22,7 @@ namespace Genie
 			std::string peekBuffer;
 		
 		public:
-			virtual ~StreamHandle()  {}
+			virtual ~StreamHandle();
 			
 			static TypeCode Type()  { return kStreamType; }
 			
