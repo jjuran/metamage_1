@@ -56,7 +56,7 @@ namespace Genie
 			
 			PipeInHandle( boost::shared_ptr< PipeState > state ) : state( state )  {}
 			
-			~PipeInHandle()  { state->CloseInput(); }
+			~PipeInHandle();
 			
 			unsigned int SysPoll() const  { return kPollWrite; }
 			
@@ -87,7 +87,7 @@ namespace Genie
 			
 			PipeOutHandle( boost::shared_ptr< PipeState > state ) : state( state )  {}
 			
-			~PipeOutHandle()  { state->CloseOutput(); }
+			~PipeOutHandle();
 			
 			unsigned int SysPoll() const  { return kPollRead; }  // FIXME
 			

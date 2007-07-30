@@ -108,11 +108,23 @@ namespace Genie
 		return byteCount;
 	}
 	
+	
+	PipeInHandle::~PipeInHandle()
+	{
+		state->CloseInput();
+	}
+	
 	int PipeInHandle::SysRead( char* /*data*/, std::size_t /*byteCount*/ )
 	{
 		P7::ThrowErrno( EPERM );
 		
 		return -1;
+	}
+	
+	
+	PipeOutHandle::~PipeOutHandle()
+	{
+		state->CloseOutput();
 	}
 	
 	int PipeOutHandle::SysWrite( const char* /*data*/, std::size_t /*byteCount*/ )
