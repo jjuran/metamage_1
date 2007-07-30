@@ -30,6 +30,8 @@ namespace Genie
 			{
 			}
 			
+			virtual ~TTYHandle();
+			
 			static TypeCode Type()  { return kTTYType; }
 			
 			TypeCode ActualType() const  { return Type(); }
