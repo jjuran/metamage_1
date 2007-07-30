@@ -43,6 +43,10 @@ namespace Genie
 	{
 	}
 	
+	MacFileHandle::~MacFileHandle()
+	{
+	}
+	
 	int MacFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
 		return N::FSRead( refNum, byteCount, data );
