@@ -9,6 +9,10 @@
 namespace Genie
 {
 	
+	RegularFileHandle::~RegularFileHandle()
+	{
+	}
+	
 	off_t RegularFileHandle::GetEOF() const
 	{
 		return GetFile()->GetEOF();

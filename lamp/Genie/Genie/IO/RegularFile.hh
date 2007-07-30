@@ -20,6 +20,8 @@ namespace Genie
 			
 			//TypeCode ActualType() const  { return Type(); }
 			
+			virtual ~RegularFileHandle();
+			
 			unsigned int SysPoll() const  { return kPollRead | kPollWrite | kPollExcept; }
 			
 			virtual off_t Seek( off_t offset, int whence ) = 0;
