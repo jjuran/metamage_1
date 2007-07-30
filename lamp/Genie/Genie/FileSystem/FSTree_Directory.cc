@@ -63,6 +63,10 @@ namespace Genie
 	}
 	
 	
+	FSTree_Directory::~FSTree_Directory()
+	{
+	}
+	
 	FSIteratorPtr FSTree_Directory::Iterate() const
 	{
 		FSTreeCache cache( 2 );

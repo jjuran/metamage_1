@@ -39,7 +39,7 @@ namespace Genie
 	class FSTree_Directory : public FSTree
 	{
 		public:
-			virtual ~FSTree_Directory()  {}
+			virtual ~FSTree_Directory();
 			
 			bool IsFile     () const  { return false; }
 			bool IsDirectory() const  { return true;  }
