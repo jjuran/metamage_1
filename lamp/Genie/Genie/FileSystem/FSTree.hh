@@ -54,7 +54,7 @@ namespace Genie
 	class FSIterator
 	{
 		public:
-			virtual ~FSIterator()  {}
+			virtual ~FSIterator();
 			
 			virtual FSNode Get() const = 0;
 			

@@ -26,6 +26,10 @@ namespace Genie
 	{
 	}
 	
+	FSIterator::~FSIterator()
+	{
+	}
+	
 	FSTree::~FSTree()
 	{
 	}
