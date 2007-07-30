@@ -46,6 +46,9 @@ namespace Genie
 			}
 	};
 	
+	IOHandle::~IOHandle()
+	{
+	}
 	
 	IOHandle* IOHandle::GetBaseForCast( TypeCode desiredType )
 	{

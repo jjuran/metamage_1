@@ -117,7 +117,7 @@ namespace Genie
 			virtual IOHandle* Next() const  { return NULL; }
 		
 		public:
-			virtual ~IOHandle()  {}
+			virtual ~IOHandle();
 			
 			static TypeCode Type()  { return kBaseType; }
 			
