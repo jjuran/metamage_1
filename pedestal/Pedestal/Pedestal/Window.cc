@@ -53,6 +53,12 @@ namespace Pedestal
 		N::DrawGrowIcon( window );
 	}
 	
+	
+	ClosableWindow::~ClosableWindow()
+	{
+	}
+	
+	
 	#if 0
 	
 	static Rect CalcWindowStructureDiff()

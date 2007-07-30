@@ -139,6 +139,10 @@ namespace Pedestal
 		private:
 			boost::shared_ptr< WindowCloseHandler > itsCloseHandler;
 		
+		protected:
+			// Non-sliceable
+			~ClosableWindow();
+		
 		public:
 			ClosableWindow( const boost::shared_ptr< WindowCloseHandler >& handler ) : itsCloseHandler( handler )  {}
 			
