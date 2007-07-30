@@ -52,7 +52,7 @@ namespace Genie
 			
 			void Open();
 			
-			void SaveLeaderWaitStatus( int status );
+			void SaveLeaderWaitStatus( int status )  { itsLeaderWaitStatus = status; }
 	};
 	
 	

@@ -18,7 +18,7 @@
 #include "POSeven/Errno.hh"
 
 // Genie
-#include "Genie/Console.hh"
+#include "Genie/IO/ConsoleWindow.hh"
 #include "Genie/Yield.hh"
 
 
@@ -67,13 +67,6 @@ namespace Genie
 		return "/dev/con/" + NN::Convert< std::string >( id );
 	}
 	
-	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : TTYHandle( MakeConsoleName( id ) ),
-	                                                     id( id ),
-	                                                     itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
-	                                                     itsLeaderWaitStatus()
-	{
-	}
-	
 	static bool ShouldSalvageConsoleWindow( int salvagePolicy, int leaderWaitStatus )
 	{
 		switch ( salvagePolicy )
@@ -91,6 +84,40 @@ namespace Genie
 			case kLampSalvageWindowOnExitAlways:
 				return true;
 		}
+	}
+	
+	
+	std::map< ::WindowRef, boost::shared_ptr< ConsoleWindow > > gSalvagedConsoles;
+	
+	
+	class SalvagedWindowCloseHandler : public Ped::WindowCloseHandler
+	{
+		public:
+			void operator()( N::WindowRef window ) const;
+	};
+	
+	static void SalvageConsole( const boost::shared_ptr< ConsoleWindow >& console )
+	{
+		ASSERT( console.get() != NULL );
+		
+		boost::shared_ptr< Ped::WindowCloseHandler > handler( new SalvagedWindowCloseHandler() );
+		
+		console->SetCloseHandler( handler );
+		
+		gSalvagedConsoles[ console->Get() ] = console;
+	}
+	
+	void SalvagedWindowCloseHandler::operator()( N::WindowRef window ) const
+	{
+		gSalvagedConsoles.erase( window );
+	}
+	
+	
+	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : TTYHandle( MakeConsoleName( id ) ),
+	                                                     id( id ),
+	                                                     itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
+	                                                     itsLeaderWaitStatus()
+	{
 	}
 	
 	ConsoleTTYHandle::~ConsoleTTYHandle()
@@ -232,11 +259,6 @@ namespace Genie
 		{
 			console = NewConsole( id, DefaultConsoleTitle( id ) );
 		}
-	}
-	
-	void ConsoleTTYHandle::SaveLeaderWaitStatus( int status )
-	{
-		itsLeaderWaitStatus = status;
 	}
 	
 }
