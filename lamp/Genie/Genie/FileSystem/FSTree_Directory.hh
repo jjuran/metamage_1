@@ -110,7 +110,7 @@ namespace Genie
 			Mappings mappings;
 		
 		public:
-			virtual ~FSTree_Mappable()  {}
+			virtual ~FSTree_Mappable();
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			

@@ -100,6 +100,10 @@ namespace Genie
 	}
 	
 	
+	FSTree_Mappable::~FSTree_Mappable()
+	{
+	}
+	
 	void FSTree_Mappable::Map( const std::string& name, FSTreePtr tree )
 	{
 		mappings[ name ] = tree;
