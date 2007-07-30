@@ -47,6 +47,8 @@ namespace Genie
 		FSNode()  {}
 		
 		FSNode( const std::string& name, const FSTreePtr& tree ) : name( name ), tree( tree )  {}
+		
+		~FSNode();
 	};
 	
 	class FSIterator

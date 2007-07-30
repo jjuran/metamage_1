@@ -22,6 +22,10 @@ namespace Genie
 	namespace P7 = POSeven;
 	
 	
+	FSNode::~FSNode()
+	{
+	}
+	
 	std::string FSTree::Pathname() const
 	{
 		std::string name = Name();
