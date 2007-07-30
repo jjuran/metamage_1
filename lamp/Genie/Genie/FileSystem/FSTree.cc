@@ -26,6 +26,10 @@ namespace Genie
 	{
 	}
 	
+	FSTree::~FSTree()
+	{
+	}
+	
 	std::string FSTree::Pathname() const
 	{
 		std::string name = Name();

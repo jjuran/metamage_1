@@ -71,7 +71,7 @@ namespace Genie
 	class FSTree : public boost::enable_shared_from_this< FSTree >
 	{
 		public:
-			virtual ~FSTree()  {}
+			virtual ~FSTree();
 			
 			// General methods
 			
