@@ -9,6 +9,7 @@
 // POSIX
 #include "dirent.h"
 #include "fcntl.h"
+#include "netdb.h"
 #include "signal.h"
 #include "stdlib.h"
 #include "sys/ioctl.h"
@@ -64,7 +65,7 @@ static void EnterComa()
 	}
 }
 
-#define STR_LEN( str )  " " str, (sizeof str - 1)
+#define STR_LEN( str )  "" str, (sizeof str - 1)
 
 static void CheckCriticalImport( void* symbol, const char* name, std::size_t len )
 {
@@ -106,6 +107,9 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	// fcntl
 	int (*fcntl_import_)( int fd, int cmd, int param );
 	int (*open_import_ )( const char* path, int oflags, mode_t mode );
+	
+	// netdb
+	struct hostent* (*gethostbyname_import_)( const char* name );
 	
 	// signal
 	int           (*kill_import_       )( pid_t pid, int sig );
@@ -349,6 +353,14 @@ namespace
 	}
 	
 #endif
+	
+	#pragma mark -
+	#pragma mark ¥ netdb ¥
+	
+	struct hostent* gethostbyname( const char* name )
+	{
+		return INVOKE( gethostbyname, ( name ) );
+	}
 	
 	#pragma mark -
 	#pragma mark ¥ signal ¥
