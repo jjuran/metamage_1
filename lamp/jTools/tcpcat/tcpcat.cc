@@ -59,7 +59,7 @@ int O::Main( int argc, char const *const argv[] )
 	const char* hostname = argv[1];
 	const char* port_str = argv[2];
 	
-	P7::FileDescriptor sock = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, INET_TCP ) );
+	P7::FileDescriptor sock = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 	
 	short port = std::atoi( port_str );
 	

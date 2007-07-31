@@ -1,5 +1,5 @@
 /*	============
- *	tclclient.cc
+ *	tcpclient.cc
  *	============
  */
 
@@ -47,7 +47,7 @@ static struct in_addr ResolveHostname( const char* hostname )
 
 static P7::FileDescriptor Connect( const char* hostname, const char* port_str )
 {
-	P7::FileDescriptor result = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, INET_TCP ) );
+	P7::FileDescriptor result = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 	
 	short port = std::atoi( port_str );
 	
