@@ -58,6 +58,8 @@
 #ifndef _NETDB_H_
 #define _NETDB_H_
 
+#include <sys/types.h>
+
 #define	_PATH_HEQUIV	"/etc/hosts.equiv"
 #define	_PATH_HOSTS	"/etc/hosts"
 #define	_PATH_NETWORKS	"/etc/networks"
