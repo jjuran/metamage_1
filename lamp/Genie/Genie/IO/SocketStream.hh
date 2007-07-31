@@ -21,6 +21,7 @@
 
 // Genie
 #include "Genie/IO/Stream.hh"
+#include "Genie/Utilities/ShareOpenTransport.hh"
 
 
 namespace Genie
@@ -75,6 +76,7 @@ namespace Genie
 	class SocketHandle : public StreamHandle
 	{
 		private:
+			OpenTransportShare itsOpenTransport;
 			NN::Owned< N::EndpointRef > endpoint;
 			SocketAddress socketAddress;
 			SocketAddress peerAddress;

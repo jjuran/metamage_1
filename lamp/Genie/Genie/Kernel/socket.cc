@@ -31,38 +31,9 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	struct OTInitialization
-	{
-		OTInitialization()   { N::InitOpenTransport();  }
-		~OTInitialization()  { N::CloseOpenTransport(); }
-	};
-	
-	static void Check_InitOpenTransport()
-	{
-		static OTInitialization init;
-	}
-	
-	// Special guest appearance
-	static InetSvcRef InternetServices()
-	{
-		SystemCallFrame frame( "InternetServices" );
-		
-		Check_InitOpenTransport();
-		
-		static NN::Owned< InetSvcRef >
-		       gInetSvcRef = N::OTOpenInternetServices( kDefaultInternetServicesPath );
-		
-		return gInetSvcRef;
-	}
-	
-	REGISTER_SYSTEM_CALL( InternetServices );
-	
-	
 	static int socket( int /*domain*/, int /*type*/, int /*protocol*/ )
 	{
 		SystemCallFrame frame( "socket" );
-		
-		Check_InitOpenTransport();
 		
 		int fd = LowestUnusedFileDescriptor();
 		
