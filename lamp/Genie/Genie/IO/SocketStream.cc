@@ -55,9 +55,8 @@ namespace Genie
 		}
 	}
 	
-	SocketHandle::SocketHandle( bool isBlocking )
-	: endpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
-	  isBound( false )
+	SocketHandle::SocketHandle( bool isBlocking ) : endpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
+	                                                isBound( false )
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
 		
