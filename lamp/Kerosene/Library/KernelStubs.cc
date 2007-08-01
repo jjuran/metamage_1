@@ -111,7 +111,12 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	// netdb
 	struct hostent* (*gethostbyname_import_)( const char* name );
+	
+#if !TARGET_API_MAC_CARBON
+	
 	OSStatus (*OTInetMailExchange_import_)( char*, UInt16*, InetMailExchange* );
+	
+#endif
 	
 	// signal
 	int           (*kill_import_       )( pid_t pid, int sig );
@@ -363,6 +368,8 @@ namespace
 		return INVOKE( gethostbyname, ( name ) );
 	}
 	
+#if !TARGET_API_MAC_CARBON
+	
 	namespace C
 	{
 		
@@ -377,6 +384,8 @@ namespace
 	{
 		return C::OTInetMailExchange( domain, count, result );
 	}
+	
+#endif
 	
 	#pragma mark -
 	#pragma mark ¥ signal ¥
