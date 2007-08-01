@@ -28,16 +28,12 @@ namespace Genie
 	// Special guest appearance
 	static NN::Owned< InetSvcRef > InternetServices()
 	{
-		//SystemCallFrame frame( "InternetServices" );
-		
 		//static 
 		       NN::Owned< InetSvcRef >
 		       gInetSvcRef = N::OTOpenInternetServices( kDefaultInternetServicesPath );
 		
 		return gInetSvcRef;
 	}
-	
-	//REGISTER_SYSTEM_CALL( InternetServices );
 	
 	
 	static struct hostent* gethostbyname( const char* name )
@@ -72,6 +68,17 @@ namespace Genie
 	}
 	
 	REGISTER_SYSTEM_CALL( gethostbyname );
+	
+	static OSStatus OTInetMailExchange( char* domain, UInt16* count, InetMailExchange* result )
+	{
+		SystemCallFrame frame( "OTInetMailExchange" );
+		
+		OpenTransportShare sharedOpenTransport;
+		
+		return ::OTInetMailExchange( InternetServices(), domain, count, result );
+	}
+	
+	REGISTER_SYSTEM_CALL( OTInetMailExchange );
 	
 }
 
