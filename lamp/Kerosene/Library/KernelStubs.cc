@@ -111,7 +111,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	// netdb
 	struct hostent* (*gethostbyname_import_)( const char* name );
-	OSStatus (*OTInetMailExchange_import_)( InetSvcRef, char*, UInt16*, InetMailExchange* );
+	OSStatus (*OTInetMailExchange_import_)( char*, UInt16*, InetMailExchange* );
 	
 	// signal
 	int           (*kill_import_       )( pid_t pid, int sig );
@@ -363,9 +363,19 @@ namespace
 		return INVOKE( gethostbyname, ( name ) );
 	}
 	
+	namespace C
+	{
+		
+		static OSStatus OTInetMailExchange( char* domain, UInt16* count, InetMailExchange* result )
+		{
+			return INVOKE( OTInetMailExchange, ( domain, count, result ) );
+		}
+		
+	}
+	
 	pascal OSStatus OTInetMailExchange( InetSvcRef, char* domain, UInt16* count, InetMailExchange* result )
 	{
-		return INVOKE( OTInetMailExchange, ( NULL, domain, count, result ) );
+		return C::OTInetMailExchange( domain, count, result );
 	}
 	
 	#pragma mark -
