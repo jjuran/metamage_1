@@ -7,13 +7,17 @@
 #include <algorithm>
 #include <vector>
 
+// OpenTransportProviders.h has evil, blind dependency on FSSpec.
+#ifndef __FILES__
+#include <Files.h>
+#endif
+
 // Nitrogen
 #include "Nitrogen/OpenTransportProviders.h"
 
 // Orion
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
-#include "SystemCalls.hh"
 
 
 namespace N = Nitrogen;
@@ -29,9 +33,9 @@ static void PrintMX( const InetMailExchange& mx )
 {
 	Io::Out << "(missing)" << " MX " << mx.preference << " " << mx.exchange << "\n";
 	
-	N::InetHost ip = N::OTInetStringToAddress( InternetServices(), (char*) mx.exchange ).addrs[ 0 ];
+	//N::InetHost ip = N::OTInetStringToAddress( InternetServices(), (char*) mx.exchange ).addrs[ 0 ];
 	
-	Io::Out << mx.exchange << " A " << ip << "\n";
+	//Io::Out << mx.exchange << " A " << ip << "\n";
 }
 
 int O::Main(int argc, const char *const argv[])
@@ -44,7 +48,7 @@ int O::Main(int argc, const char *const argv[])
 	
 	results.resize( 10 );  // Should be more than enough
 	
-	N::OTInetMailExchange( InternetServices(),
+	N::OTInetMailExchange( NULL,
 	                       (char*) domain,
 	                       results );
 	
