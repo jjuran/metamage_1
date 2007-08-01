@@ -78,7 +78,11 @@ namespace Genie
 		return ::OTInetMailExchange( InternetServices(), domain, count, result );
 	}
 	
+#if !TARGET_API_MAC_CARBON
+	
 	REGISTER_SYSTEM_CALL( OTInetMailExchange );
+	
+#endif
 	
 }
 
