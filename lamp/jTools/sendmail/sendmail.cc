@@ -34,11 +34,6 @@
 // Arcana / SMTP
 #include "SMTP.hh"
 
-// Kerosene
-#if !TARGET_RT_MAC_MACHO
-#include "SystemCalls.hh"
-#endif
-
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
@@ -120,24 +115,13 @@ static std::string OTLookup( const std::string& domain )
 	
 #else
 	
-	if ( TARGET_CPU_68K )
-	{
-		return "";
-	}
-	
 	std::vector< InetMailExchange > results;	
 	
 	results.resize( 10 );  // Should be more than enough
 	
-	N::OTInetMailExchange( InternetServices(),
+	N::OTInetMailExchange( NULL,
 	                       (char*) domain.c_str(),
 	                       results );
-	
-	/*
-	UInt16 num = 10;
-	N::ThrowOSStatus( O::OTInetMailExchange( (char*)domain.c_str(), &num, &results.front() ) );
-	results.resize( num );
-	*/
 	
 	std::sort( results.begin(),
 	           results.end() );
