@@ -24,6 +24,7 @@
 
 // Mac OS
 #include <LowMem.h>
+#include <OpenTransportProviders.h>
 #include <Sound.h>
 #include <Threads.h>
 
@@ -110,6 +111,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	// netdb
 	struct hostent* (*gethostbyname_import_)( const char* name );
+	OSStatus (*OTInetMailExchange_import_)( InetSvcRef, char*, UInt16*, InetMailExchange* );
 	
 	// signal
 	int           (*kill_import_       )( pid_t pid, int sig );
@@ -213,7 +215,6 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	int*       (*ErrnoPtr_import_        )();
 	char***    (*EnvironPtr_import_      )();
 	OSStatus   (*AESendBlocking_import_  )( const AppleEvent* appleEvent, AppleEvent* reply );
-	InetSvcRef (*InternetServices_import_)();
 	OSStatus   (*Path2FSSpec_import_     )( const char* pathname, FSSpec* outFSS );
 	
 #pragma export reset
@@ -360,6 +361,11 @@ namespace
 	struct hostent* gethostbyname( const char* name )
 	{
 		return INVOKE( gethostbyname, ( name ) );
+	}
+	
+	pascal OSStatus OTInetMailExchange( InetSvcRef, char* domain, UInt16* count, InetMailExchange* result )
+	{
+		return INVOKE( OTInetMailExchange, ( NULL, domain, count, result ) );
 	}
 	
 	#pragma mark -
@@ -794,11 +800,6 @@ namespace
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
 		return INVOKE( AESendBlocking, ( appleEvent, reply ) );
-	}
-	
-	InetSvcRef InternetServices()
-	{
-		return INVOKE( InternetServices, () );
 	}
 	
 	FSSpec Path2FSS( const char* pathname )
