@@ -4,13 +4,8 @@
  */
 
 // Mac OS
-#include <TargetConditionals.h>
-#if TARGET_RT_MAC_MACHO
-	#include <Carbon/Carbon.h>
-#else
-	#include <AEHelpers.h>
-	#include <Processes.h>
-	#include <Script.h>
+#ifndef  __AEHELPERS__
+#include <AEHelpers.h>
 #endif
 
 // Standard C++
