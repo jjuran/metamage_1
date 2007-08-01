@@ -4,14 +4,14 @@
  */
 
 // Standard C
-#include "errno.h"
+#include <errno.h>
 
 // Standard C/C++
 #include <cstring>
 
 // POSIX
-#include "dirent.h"
-#include "sys/stat.h"
+#include <dirent.h>
+#include <sys/stat.h>
 
 // Orion
 #include "Orion/Main.hh"

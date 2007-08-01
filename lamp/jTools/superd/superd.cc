@@ -10,14 +10,12 @@
 #include <cstring>
 
 // POSIX
-#include "netinet/in.h"
-#include "sys/socket.h"
-#include "sys/wait.h"
-#include "unistd.h"
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
-#include "vfork.h"
-
-// Nitrogen / Carbon support
+// Nitrogen
 #include "Nitrogen/OpenTransportProviders.h"
 
 // Orion

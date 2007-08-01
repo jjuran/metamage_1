@@ -3,15 +3,15 @@
  *	========
  */
 
-// Standard C
-#include "errno.h"
-
 // Standard C/C++
 #include <cstdio>
 #include <cstring>
 
+// Standard C
+#include <errno.h>
+
 // POSIX
-#include "sys/stat.h"
+#include <sys/stat.h>
 
 // Orion
 #include "Orion/Main.hh"

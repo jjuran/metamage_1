@@ -3,26 +3,23 @@
  *	========
  */
 
-// Standard C
-#include <errno.h>
-#include <string.h>
+// Standard C++
+#include <map>
 
 // Standard C/C++
 #include <cstring>
 
-// Standard C++
-#include <map>
+// Standard C
+#include <errno.h>
 
 // POSIX
-#include "fcntl.h"
-#include "netinet/in.h"
-#include "signal.h"
-#include "sys/select.h"
-#include "sys/socket.h"
-#include "sys/wait.h"
-#include "unistd.h"
-
-#include "vfork.h"
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <signal.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 // Nucleus
 #include "Nucleus/NAssert.h"

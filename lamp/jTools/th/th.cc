@@ -4,8 +4,8 @@
  */
 
 // Standard C
-#include "errno.h"
-#include "stdlib.h"
+#include <errno.h>
+#include <stdlib.h>
 
 // Standard C/C++
 #include <cctype>
@@ -16,9 +16,9 @@
 #include <vector>
 
 // POSIX
-#include "fcntl.h"
-#include "sys/wait.h"
-#include "unistd.h"
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 // Nucleus
 #include "Nucleus/Convert.h"

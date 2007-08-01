@@ -9,14 +9,14 @@
 #include <cstring>
 
 // Standard C
-#include "errno.h"
-#include "stdlib.h"
+#include <errno.h>
+#include <stdlib.h>
 
 // POSIX
-#include "fcntl.h"
-#include "sys/stat.h"
-#include "sys/wait.h"
-#include "unistd.h"
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 // POSeven
 #include "POSeven/Errno.hh"

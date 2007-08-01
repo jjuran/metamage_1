@@ -11,11 +11,11 @@
 #include <cstring>
 
 // Standard C
-#include "stdlib.h"
+#include <stdlib.h>
 
 // POSIX
-#include "fcntl.h"
-#include "unistd.h"
+#include <fcntl.h>
+#include <unistd.h>
 
 // POSeven
 #include "POSeven/Open.hh"

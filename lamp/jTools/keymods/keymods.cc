@@ -4,7 +4,9 @@
  */
 
 // Universal Interfaces
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
 
 // Standard C/C++
 #include <cstdio>
