@@ -36,6 +36,10 @@ namespace Genie
 			Nitrogen::Str255 GetTitle() const;
 			
 			void SetTitle( ConstStr255Param title );
+			
+			Point GetPosition() const;
+			
+			void SetPosition( Point position );
 	};
 	
 }
