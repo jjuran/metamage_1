@@ -183,7 +183,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	int  (*execve_import_       )( const char* path, const char* const argv[], const char* const* envp );
 	void (*_exit_import_        )( int status );
 	int  (*fork_and_exit_import_)( int status );
-	int  (*SpawnVFork_import_   )();
+	int  (*SpawnVFork_import_   )( void (*LongJmp)( int ) );
 	
 	// unistd
 	unsigned int (*alarm_import_    )( unsigned int seconds );
@@ -657,9 +657,9 @@ namespace
 		return INVOKE( fork_and_exit, ( status ) );
 	}
 	
-	int SpawnVFork()
+	int SpawnVFork( void (*LongJmp)( int ) )
 	{
-		return INVOKE( SpawnVFork, () );
+		return INVOKE( SpawnVFork, ( LongJmp ) );
 	}
 	
 	char* getcwd( char* buf, size_t size )

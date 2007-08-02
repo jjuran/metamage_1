@@ -4,6 +4,7 @@
  */
 
 // Standard C
+#include <assert.h>
 #include "errno.h"
 #include "signal.h"
 #include <stdarg.h>
@@ -259,7 +260,85 @@
 	#pragma mark -
 	#pragma mark ¥ vfork ¥
 	
-	jmp_buf gKerosene_vfork_jmp_buf;
+	static struct JmpBufNode* gJmpBufStack = NULL;
+	
+	struct JmpBufNode
+	{
+		JmpBufNode*  next;
+		bool         done;
+		jmp_buf      buf;
+		
+		JmpBufNode() : next( gJmpBufStack ), done( false )  {}
+	};
+	
+	static JmpBufNode* GetJmpBufTopTrimmed()
+	{
+		JmpBufNode* top = gJmpBufStack;
+		
+		while ( top && top->done )
+		{
+			top = top->next;
+			
+			delete gJmpBufStack;
+			
+			gJmpBufStack = top;
+		}
+		
+		return gJmpBufStack;
+	}
+	
+	static JmpBufNode* GetJmpBufTopLeavingOneFree()
+	{
+		if ( gJmpBufStack == NULL )
+		{
+			return NULL;
+		}
+		
+		if ( !gJmpBufStack->done )
+		{
+			return gJmpBufStack;
+		}
+		
+		for ( JmpBufNode* top = gJmpBufStack->next;  top && top->done;  top = top->next )
+		{
+			delete gJmpBufStack;
+			
+			gJmpBufStack = top;
+		}
+		
+		return gJmpBufStack;
+	}
+	
+	jmp_buf* NewJmpBuf()
+	{
+		JmpBufNode* node = GetJmpBufTopLeavingOneFree();
+		
+		if ( node == NULL  ||  !node->done  )
+		{
+			node = new JmpBufNode();
+			
+			gJmpBufStack = node;
+		}
+		else
+		{
+			node->done = false;
+		}
+		
+		return &node->buf;
+	}
+	
+	static void LongJmp( int result )
+	{
+		JmpBufNode* top = GetJmpBufTopTrimmed();
+		
+		assert( top != NULL );
+		
+		assert( !top->done );
+		
+		top->done = true;
+		
+		longjmp( top->buf, result );
+	}
 	
 	static bool gKerosene_vforking = false;
 	
@@ -268,17 +347,17 @@
 		// ASSERT( gKerosene_vforking );
 		
 		gKerosene_vforking = false;
-		longjmp( gKerosene_vfork_jmp_buf, pid );
+		LongJmp( pid );
 	}
 	
 	int Kerosene_SpawnVFork()
 	{
 		if ( gKerosene_vforking )
 		{
-			return -1;  // no nested vforking
+			//return -1;  // no nested vforking
 		}
 		
-		int result = SpawnVFork();
+		int result = SpawnVFork( LongJmp );
 		
 		if ( result != -1 )
 		{
