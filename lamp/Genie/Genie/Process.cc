@@ -430,6 +430,8 @@ namespace Genie
 	:
 		itsPPID               ( 0 ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
+		itsForkedChildPID     ( 0 ),
+		itsLongJmp            ( NULL ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
@@ -454,6 +456,8 @@ namespace Genie
 	:
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
+		itsForkedChildPID     ( 0 ),
+		itsLongJmp            ( NULL ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
@@ -472,6 +476,8 @@ namespace Genie
 		itsErrnoData          ( TARGET_RT_MAC_CFM ? parent.itsErrnoData : NULL ),
 		itsEnvironData        ( parent.itsEnvironData )
 	{
+		parent.itsForkedChildPID = itsPID;
+		
 		if ( itsEnvironData == NULL )
 		{
 			itsEnvironData = &gToolScratchGlobals.env;
@@ -1000,6 +1006,15 @@ namespace Genie
 		itsSchedule        =            kProcessRunning;
 		
 		RegisterProcessContext( this );
+		
+		pid_t child = itsForkedChildPID;
+		
+		itsForkedChildPID = 0;
+		
+		if ( itsLongJmp != NULL  &&  child != 0 )
+		{
+			itsLongJmp( child );
+		}
 	}
 	
 	void Process::UsurpParent( int exit_status )

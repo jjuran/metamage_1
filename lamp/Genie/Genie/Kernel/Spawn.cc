@@ -34,9 +34,11 @@ namespace Genie
 		return 0;
 	}
 	
-	static int SpawnVFork()
+	static int SpawnVFork( void (*LongJmp)(int), void* jmpBuf )
 	{
 		SystemCallFrame frame( "SpawnVFork" );
+		
+		frame.Caller().SetLongJmp( LongJmp );
 		
 		return Spawn( frame );
 	}
