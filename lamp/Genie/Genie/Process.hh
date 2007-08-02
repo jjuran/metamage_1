@@ -169,6 +169,10 @@ namespace Genie
 		private:
 			pid_t itsPPID;
 			pid_t itsPID;
+			pid_t itsForkedChildPID;
+			
+			void (*itsLongJmp)(int);
+			
 			boost::shared_ptr< ProcessGroup > itsProcessGroup;
 			
 			pid_t itsTracingProcess;
@@ -226,6 +230,8 @@ namespace Genie
 			~Process();
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
+			
+			void SetLongJmp( void (*LongJmp)(int) )  { itsLongJmp = LongJmp; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
@@ -308,6 +314,8 @@ namespace Genie
 		
 		public:
 			bool Forked() const  { return itsThread.get() == NULL; }
+			
+			bool Forking() const  { return itsForkedChildPID != 0; }
 			
 			NN::Owned< N::ThreadID > Exec( const FSSpec&       progFile,
 			                               const char* const   argv[],
