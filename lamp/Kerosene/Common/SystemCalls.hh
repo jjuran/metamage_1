@@ -9,23 +9,9 @@
 // Universal Interfaces
 //#include <AEDataModel.h>
 #include <Files.h>
-//#include <OpenTransportProviders.h>
 
 struct AEDesc;
 typedef AEDesc AppleEvent;
-
-/*
-   Define the InetSvcRef type.  This type needs special
-   processing because in C++ it's a subclass of TProvider.
-   See the definition of TEndpointRef in "OpenTransport.h"
-   for the logic behind this definition.
-*/
-
-#ifdef __cplusplus
- typedef class TInternetServices*   InetSvcRef;
-#else
- typedef void*                      InetSvcRef;
-#endif
 
 
 #ifdef __cplusplus
@@ -42,8 +28,6 @@ extern "C" {
 	char*** EnvironPtr();
 	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply );
-	
-	InetSvcRef InternetServices();
 	
 	FSSpec Path2FSS( const char* pathname );
 	
