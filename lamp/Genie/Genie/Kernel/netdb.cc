@@ -25,14 +25,9 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	// Special guest appearance
 	static NN::Owned< InetSvcRef > InternetServices()
 	{
-		//static 
-		       NN::Owned< InetSvcRef >
-		       gInetSvcRef = N::OTOpenInternetServices( kDefaultInternetServicesPath );
-		
-		return gInetSvcRef;
+		return N::OTOpenInternetServices( kDefaultInternetServicesPath );
 	}
 	
 	
