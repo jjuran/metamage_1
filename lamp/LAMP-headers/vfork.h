@@ -13,12 +13,13 @@
 extern "C" {
 #endif
 	
+	void Kerosene_LongJmp( int result );
+	
 	int SpawnVFork( void (*LongJmp)( int ) );  // Only returns 0 or -1
-	int Kerosene_SpawnVFork();
 	
 	jmp_buf* NewJmpBuf();
 	
-	#define Kerosene_vfork() ( Kerosene_SpawnVFork() ? -1 : setjmp( *NewJmpBuf() ) )
+	#define Kerosene_vfork() ( SpawnVFork( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) )
 	
 #ifdef __cplusplus
 }

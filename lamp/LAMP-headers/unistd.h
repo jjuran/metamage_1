@@ -72,10 +72,7 @@ extern "C" {
 	int execve( const char* path, const char* const argv[], const char* const envp[] );
 	int execvp( const char* file, const char* const argv[] );
 	
-	int execve_Kernel( const char* path, const char* const argv[], const char* const envp[] );
-	
 	void _exit( int status );
-	void _exit_Kernel( int status );
 	
 	int fork();
 	int fork_and_exit( int status );
