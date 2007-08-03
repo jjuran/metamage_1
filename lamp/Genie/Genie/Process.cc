@@ -36,6 +36,7 @@
 #include "KEnvironment.hh"
 
 // Genie
+#include "Genie/Devices.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/TTY.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -450,6 +451,9 @@ namespace Genie
 		itsErrnoData          ( NULL ),
 		itsEnvironData        ( NULL )
 	{
+		itsFileDescriptors[ 0 ] =
+		itsFileDescriptors[ 1 ] =
+		itsFileDescriptors[ 2 ] = GetSimpleDeviceHandle( "null" );
 	}
 	
 	Process::Process( Process& parent ) 
