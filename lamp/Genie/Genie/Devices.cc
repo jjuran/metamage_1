@@ -70,7 +70,7 @@ namespace Genie
 		{ NULL,      NULL,     NULL         }
 	};
 	
-	typedef std::map< std::string, DeviceIOSpec > DeviceIOMap;
+	typedef std::map< std::string, const DeviceIOSpec* > DeviceIOMap;
 	
 	static DeviceIOMap BuildDeviceMap()
 	{
@@ -78,7 +78,7 @@ namespace Genie
 		
 		for ( DeviceIOSpec* dev = gDeviceIOSpecs;  dev->name != NULL;  ++dev )
 		{
-			result[ dev->name ] = *dev;
+			result[ dev->name ] = dev;
 		}
 		
 		return result;
@@ -100,7 +100,7 @@ namespace Genie
 			throw N::FNFErr();
 		}
 		
-		return boost::shared_ptr< IOHandle >( new SimpleDeviceHandle( found->second ) );
+		return boost::shared_ptr< IOHandle >( new SimpleDeviceHandle( *found->second ) );
 	}
 	
 }
