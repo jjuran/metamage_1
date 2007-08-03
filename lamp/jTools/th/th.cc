@@ -60,7 +60,7 @@ struct TestResults
 	int todo;
 	int unexpected;
 	
-	TestResults() : planned( -1 ),
+	TestResults() : planned(),
 	                failure(),
 	                passed(),
 	                failed(),
@@ -74,6 +74,7 @@ static TestResults operator+( const TestResults& a, const TestResults& b )
 {
 	TestResults sum;
 	
+	sum.planned    = a.planned    + b.planned;
 	sum.passed     = a.passed     + b.passed;
 	sum.failed     = a.failed     + b.failed;
 	sum.todo       = a.todo       + b.todo;
