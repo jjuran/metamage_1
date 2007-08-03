@@ -642,12 +642,12 @@ namespace
 		return INVOKE( dup2, ( filedes, filedes2 ) );
 	}
 	
-	int execve_Kernel( const char* path, const char* const argv[], const char* const* envp )
+	int execve( const char* path, const char* const argv[], const char* const* envp )
 	{
 		return INVOKE( execve, ( path, argv, envp ) );
 	}
 	
-	void _exit_Kernel( int status )
+	void _exit( int status )
 	{
 		return INVOKE_CRITICAL( _exit, ( status ) );  // Terminates process but returns if forked
 	}

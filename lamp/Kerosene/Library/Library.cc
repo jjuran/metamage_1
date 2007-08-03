@@ -327,7 +327,7 @@
 		return &node->buf;
 	}
 	
-	static void LongJmp( int result )
+	void Kerosene_LongJmp( int result )
 	{
 		JmpBufNode* top = GetJmpBufTopTrimmed();
 		
@@ -338,58 +338,5 @@
 		top->done = true;
 		
 		longjmp( top->buf, result );
-	}
-	
-	static bool gKerosene_vforking = false;
-	
-	static void ExitFromFork( pid_t pid )
-	{
-		// ASSERT( gKerosene_vforking );
-		
-		gKerosene_vforking = false;
-		LongJmp( pid );
-	}
-	
-	int Kerosene_SpawnVFork()
-	{
-		if ( gKerosene_vforking )
-		{
-			//return -1;  // no nested vforking
-		}
-		
-		int result = SpawnVFork( LongJmp );
-		
-		if ( result != -1 )
-		{
-			gKerosene_vforking = true;
-		}
-		
-		return result;
-	}
-	
-	int execve( const char* path, const char* const argv[], const char* const* envp )
-	{
-		pid_t pid = getpid();
-		
-		int result = execve_Kernel( path, argv, envp );
-		
-		if ( result != -1 && gKerosene_vforking )
-		{
-			ExitFromFork( pid );
-		}
-		
-		return result;
-	}
-	
-	void _exit( int status )
-	{
-		pid_t pid = getpid();
-		
-		_exit_Kernel( status );
-		
-		if ( gKerosene_vforking )
-		{
-			ExitFromFork( pid );  // doesn't return -- jumps back to vfork()
-		}
 	}
 	
