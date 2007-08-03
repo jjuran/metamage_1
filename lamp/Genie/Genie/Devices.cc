@@ -11,9 +11,6 @@
 // Io
 #include "io/io.hh"
 
-// Nitrogen
-#include "Nitrogen/MacErrors.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -25,7 +22,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace P7 = POSeven;
 	
 	// General
@@ -97,7 +93,7 @@ namespace Genie
 		
 		if ( found == DeviceMap().end() )
 		{
-			throw N::FNFErr();
+			P7::ThrowErrno( ENOENT );
 		}
 		
 		return boost::shared_ptr< IOHandle >( new SimpleDeviceHandle( *found->second ) );
