@@ -63,7 +63,7 @@ my @programs = qw
 	gzip
 	htget httpd
 	ic inetd
-	jtest
+	jgetty jtest
 	keymods kill killall
 	ld lf2cr lf2crlf login
 	macbin md5sum mkdir mpwrez mv mwcc
@@ -98,6 +98,7 @@ my %fsmap =
 	bin =>
 	[
 		qw( cat cp echo false kill login mkdir mv pwd readlink rm rmdir sh sleep true ),
+		qw( jgetty ),
 		qw( chmod date ls test ),
 	],
 	etc =>
