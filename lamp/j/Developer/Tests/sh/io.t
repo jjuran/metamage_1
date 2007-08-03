@@ -85,7 +85,5 @@ END
 
 $ echo false | sh -c '. /dev/fd/0 2>&1; echo $?'
 
-TODO nested vfork() is unimplemented
-
 1 >= 1
 
