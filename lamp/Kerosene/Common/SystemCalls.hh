@@ -13,6 +13,8 @@
 struct AEDesc;
 typedef AEDesc AppleEvent;
 
+struct InetMailExchange;
+
 
 #ifdef __cplusplus
 #include <string>
@@ -28,6 +30,8 @@ extern "C" {
 	char*** EnvironPtr();
 	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply );
+	
+	OSStatus OTInetMailExchange_Kernel( char* domain, UInt16* count, InetMailExchange* result );
 	
 	FSSpec Path2FSS( const char* pathname );
 	

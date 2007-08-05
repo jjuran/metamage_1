@@ -112,11 +112,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	// netdb
 	struct hostent* (*gethostbyname_import_)( const char* name );
 	
-#if !TARGET_API_MAC_CARBON
-	
-	OSStatus (*OTInetMailExchange_import_)( char*, UInt16*, InetMailExchange* );
-	
-#endif
+	OSStatus (*OTInetMailExchange_Kernel_import_)( char*, UInt16*, InetMailExchange* );
 	
 	// signal
 	int           (*kill_import_       )( pid_t pid, int sig );
@@ -368,24 +364,17 @@ namespace
 		return INVOKE( gethostbyname, ( name ) );
 	}
 	
-#if !TARGET_API_MAC_CARBON
-	
-	namespace C
+	OSStatus OTInetMailExchange_Kernel( char* domain, UInt16* count, InetMailExchange* result )
 	{
-		
-		static OSStatus OTInetMailExchange( char* domain, UInt16* count, InetMailExchange* result )
-		{
-			return INVOKE( OTInetMailExchange, ( domain, count, result ) );
-		}
-		
+		return INVOKE( OTInetMailExchange_Kernel, ( domain, count, result ) );
 	}
 	
+	// Override ::OTInetMailExchange() to call into the kernel, so we can use
+	// our own SharedOpenTransport and InetSvcRef.
 	pascal OSStatus OTInetMailExchange( InetSvcRef, char* domain, UInt16* count, InetMailExchange* result )
 	{
-		return C::OTInetMailExchange( domain, count, result );
+		return OTInetMailExchange_Kernel( domain, count, result );
 	}
-	
-#endif
 	
 	#pragma mark -
 	#pragma mark ¥ signal ¥
