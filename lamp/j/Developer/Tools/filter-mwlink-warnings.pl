@@ -28,6 +28,8 @@ qw
 	DisposeControlColorUPP
 	NewControlColorUPP
 	InvokeControlColorUPP
+	
+	OTInetMailExchange
 );
 
 my @ignored_data = qw( errno );
@@ -36,7 +38,13 @@ my @ignored_symbols = ( @ignored_routines, @ignored_data );
 
 my @symbol_types = qw( code descriptor data );
 
-my @loser_libs = ('MSL C.PPC.Lib', 'MSL C.Carbon.Lib', 'ControlsLib' );
+my @loser_libs =
+(
+	'MSL C.PPC.Lib',
+	'MSL C.Carbon.Lib',
+	'ControlsLib',
+	'Apple;Carbon;Networking',
+);
 my @winner_libs =
 qw
 (
