@@ -37,13 +37,13 @@ namespace io
 			Nucleus::Owned< stream > itsInput;
 		
 		public:
-			slurp_getter( const file_spec& file ) : itsInput( io::open_for_reading( file ) )  {}
+			slurp_getter( const file_spec& file ) : itsInput( open_for_reading( file, overload() ) )  {}
 			
-			byte_count size() const  { return io::get_file_size( itsInput ); }
+			byte_count size() const  { return get_file_size( itsInput ); }
 			
 			void operator()( void *begin, void *end ) const
 			{
-				(void) io::read( itsInput, (char*) begin, distance( begin, end ) );
+				(void) read( itsInput, (char*) begin, distance( begin, end ) );
 			}
 	};
 	
