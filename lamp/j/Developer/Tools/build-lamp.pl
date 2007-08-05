@@ -37,19 +37,31 @@ my $build_area = $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
 
 my $should_copy_syms = $ENV{LAMP_SYMS};
 
-my $lamp_dir_path = "$ENV{HOME}/Developer/Lamp";
+my $timestamp = timestamp();
 
-my $builds_dir_path      = "$lamp_dir_path/Builds";
-#my $native_root_dir_path = "$lamp_dir_path/j";
+my $lamp_source_dir = "$ENV{HOME}/Developer/Projects/SourceForge/Lamp";
+my $user_builds_dir = "$ENV{HOME}/Developer/Builds";
+my $user_lamp_dir   = "$ENV{HOME}/Developer/Lamp";
 
-#my $native_tmp_dir_path;
+my $unique_dir_name = "$timestamp.$$";
+my $tmp_subdir = "/tmp/$unique_dir_name";
 
-my $build_tree = "$ENV{HOME}/Developer/Builds/$build_area";
-my $source_tree = "$ENV{HOME}/Developer/Projects/SourceForge/Lamp/j";
+my $source_tree     = "$lamp_source_dir/j";
+my $build_tree      = "$user_builds_dir/$build_area";
+my $build_output    = "$build_tree/Output";
+my $lamp_builds_dir = "$user_lamp_dir/Builds";
 
 -d $build_tree or die "Missing build tree at $build_tree\n";
 
-my $root_name = "lamp-${config_short_name}_";
+my $root_name = "lamp-${config_short_name}_$timestamp";
+
+my $lamp_dist = "$tmp_subdir/$root_name";
+
+print "\$LAMP   = $lamp_source_dir\n";
+print "\$BUILDS = $user_builds_dir\n";
+print "\$OUTPUT = $build_output\n";
+#print "\$TMP    = $tmp_subdir\n";
+print "\$DIST   = $lamp_dist\n";
 
 my @programs = qw
 (
@@ -162,13 +174,6 @@ sub want_dir
 	return;
 }
 
-sub unique_dir_name
-{
-	my $stamp = timestamp();
-	
-	return "$stamp.$$";
-}
-
 sub build_output
 {
 	my ( $project, $foreign_build_tree ) = @_;
@@ -184,7 +189,26 @@ sub build_output
 
 sub verbose_system
 {
-	print join( " ", @_ ), "\n";
+	my $command = join( " ", @_ );
+	
+	$command =~ s{$build_output}{\$OUTPUT}o;
+	
+	$command =~ s{$lamp_source_dir}{\$LAMP}o;
+	$command =~ s{$user_builds_dir}{\$BUILDS}o;
+	
+	$command =~ s{$lamp_dist}{\$DIST}og;
+	#$command =~ s{$tmp_subdir}{\$TMP}og;
+	
+	if ( $command =~ m/^cp / )
+	{
+		my $space = " " x 55;
+		
+		$command =~ s{ \$DIST}{$space \$DIST}o;
+		
+		$command =~ s[^ (.{55}) \s*][$1]x;
+	}
+	
+	print "$command\n";
 	
 	my $wait_status = system @_;
 	
@@ -308,35 +332,28 @@ sub make_macball
 }
 
 
-$root_name .= timestamp();
-
 want_dir( "/tmp" );
 
-my $dir_name = unique_dir_name();
-my $tmp_dir = "/tmp/$dir_name";
-mkdir $tmp_dir;
+mkdir $tmp_subdir;
 
-#$native_tmp_dir_path = $native_root_dir_path . $tmp_dir;
-
-my $lamp = "$tmp_dir/$root_name";
-mkdir $lamp;
+mkdir $lamp_dist;
 
 # Genie is a different config than its programs on 68K
 (my $genie_build_tree = $build_tree) =~ s/-Res-/-Code-/;
 
-install_program( 'Genie', "$lamp/", $genie_build_tree );
+install_program( 'Genie', "$lamp_dist/", $genie_build_tree );
 
-create_node( $lamp, 'j' => \%fsmap );
+create_node( $lamp_dist, 'j' => \%fsmap );
 
 print "Archiving...\n";
 
-my $macball = make_macball( "$tmp_dir/$root_name" );
+my $macball = make_macball( "$tmp_subdir/$root_name" );
 
-my $build_area_path = "$builds_dir_path/$build_area";
+my $build_area_path = "$lamp_builds_dir/$build_area";
 
 mkdir $build_area_path  if ! -d $build_area_path;
 
-rename "$tmp_dir", "$build_area_path/$dir_name" or die "rename $tmp_dir $build_area_path/$dir_name failed: $!\n";
+rename "$tmp_subdir", "$build_area_path/$unique_dir_name" or die "rename $tmp_subdir $build_area_path/$unique_dir_name failed: $!\n";
 
 print "Done.\n";
 
