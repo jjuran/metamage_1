@@ -8,6 +8,9 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 
+// Nitrogen
+#include "Nitrogen/Gestalt.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -15,6 +18,7 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/IO/Base.hh"
+#include "Genie/IO/Device.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -22,6 +26,7 @@
 namespace Genie
 {
 	
+	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
@@ -430,6 +435,21 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSysFSTree(); }
 	};
 	
+	class FSTree_sys_mac_gestalt : public FSTree
+	{
+		public:
+			FSTree_sys_mac_gestalt()  {}
+			
+			std::string Name() const  { return "gestalt"; }
+			
+			FSTreePtr Parent() const  { return FSTreePtr( GetSingleton< FSTree_sys_mac >() ); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
 	
 	FSTree_sys::FSTree_sys()
 	{
@@ -438,6 +458,40 @@ namespace Genie
 	
 	FSTree_sys_mac::FSTree_sys_mac()
 	{
+		Map( "gestalt", FSTreePtr( GetSingleton< FSTree_sys_mac_gestalt >() ) );
+	}
+	
+	
+	class GestaltDeviceHandle : public DeviceHandle
+	{
+		public:
+			FSTreePtr GetFile() const  { return FSTreePtr( GetSingleton< FSTree_sys_mac_gestalt >() ); }
+			
+			unsigned int SysPoll() const  { return 0; }
+			
+			int SysRead( char* data, std::size_t byteCount )  { return 0; }
+			
+			int SysWrite( const char* data, std::size_t byteCount )  { return byteCount; }
+			
+			void IOCtl( unsigned long request, int* argp );
+	};
+	
+	void GestaltDeviceHandle::IOCtl( unsigned long request, int* argp )
+	{
+		N::GestaltSelector selector = N::GestaltSelector( request );
+		
+		long value = N::Gestalt( selector );
+		
+		if ( argp != NULL )
+		{
+			*argp = value;
+		}
+	}
+	
+	
+	boost::shared_ptr< IOHandle > FSTree_sys_mac_gestalt::Open( OpenFlags flags ) const
+	{
+		return boost::shared_ptr< IOHandle >( new GestaltDeviceHandle() );
 	}
 	
 }
