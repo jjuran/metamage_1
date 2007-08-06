@@ -324,7 +324,7 @@ sub make_macball
 {
 	my ( $tree_path ) = @_;
 	
-	my $macbin = "$tree_path.bin+";
+	my $macbin = "$tree_path.jbin";
 	
 	verbose_system 'macbin', '--encode', $tree_path, $macbin;
 	
