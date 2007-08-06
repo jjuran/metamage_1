@@ -90,7 +90,10 @@ namespace Pedestal
 	};
 	
 	
-	RunState gRunState;
+	static RunState gRunState;
+	
+	static bool gShiftKeyIsDownFromKeyStroke = false;
+	static bool gInHumaneMode = false;
 	
 	
 	inline void DebugBeep()
@@ -339,11 +342,31 @@ namespace Pedestal
 		return !CharIsArrowKey( c ) && !CharIsDelete( c );
 	}
 	
+	inline bool ShouldEnterHumaneMode( const EventRecord& event )
+	{
+		if ( gInHumaneMode                )  return false;
+		if ( gShiftKeyIsDownFromKeyStroke )  return false;
+		
+		const char keyChar = event.message & charCodeMask;
+		
+		return keyChar == ' '  &&  (event.modifiers & shiftKey);
+	}
+	
+	static void EnterHumaneMode()
+	{
+		gInHumaneMode = true;
+	}
+	
+	static void ExitHumaneMode()
+	{
+		gInHumaneMode = false;
+	}
+	
 	static void DispatchKey( const EventRecord& event )
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
 		
-		char keyChar = event.message & charCodeMask;
+		const char keyChar = event.message & charCodeMask;
 		
 		if ( (event.modifiers & cmdKey)  &&  CharMayBeCommand( keyChar ) )
 		{
@@ -352,6 +375,10 @@ namespace Pedestal
 			{
 				TheApp().HandleMenuChoice( ::MenuKey( keyChar ) );
 			}
+		}
+		else if ( ShouldEnterHumaneMode( event ) )
+		{
+			EnterHumaneMode();
 		}
 		else if ( N::WindowRef window = N::FrontWindow() )
 		{
@@ -363,6 +390,8 @@ namespace Pedestal
 				}
 			}
 		}
+		
+		gShiftKeyIsDownFromKeyStroke = event.modifiers & shiftKey;
 	}
 	
 	static void DispatchActivate( const EventRecord& event )
@@ -385,7 +414,9 @@ namespace Pedestal
 	static void DispatchUpdate( const EventRecord& event )
 	{
 		N::WindowRef window = reinterpret_cast< ::WindowRef >( event.message );
+		
 		ASSERT( window != NULL );
+		
 		N::SetPortWindowPort( window );
 		
 		N::Update_Scope update( window );
@@ -586,6 +617,16 @@ namespace Pedestal
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
 						gRunState.tickCountAtLastLayerSwitch = ::TickCount();
+						
+						if ( !(event.modifiers & shiftKey) )
+						{
+							gShiftKeyIsDownFromKeyStroke = false;
+							
+							if ( gInHumaneMode )
+							{
+								ExitHumaneMode();
+							}
+						}
 						
 						(void)DispatchCursor( event );
 						
