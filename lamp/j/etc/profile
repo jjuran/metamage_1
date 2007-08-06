@@ -4,9 +4,9 @@
 export HOME=/Users/jjuran
 
 # Change to your preference
-export MAC_EDITOR_SIGNATURE='!Rch'  # TextWrangler
+export MAC_EDITOR_SIGNATURE='R*ch'  # BBEdit
 
-#export MAC_EDITOR_SIGNATURE='R*ch'  # BBEdit
+#export MAC_EDITOR_SIGNATURE='!Rch'  # TextWrangler
 #export MAC_EDITOR_SIGNATURE='CWIE'  # CodeWarrior IDE
 #export MAC_EDITOR_SIGNATURE='ttxt'  # SimpleText
 
