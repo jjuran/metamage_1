@@ -4,5 +4,5 @@ list=http://lamp.sourceforge.net/experimental/
 
 echo Checking lamp.sourceforge.net for latest version...
 
-htget $list | grep lamp-std | perl -we 'while (<>) { $last = $_; }; $last =~ s{^ .* (lamp-std_[\d-]+) \.bin\+\.gz .* $}{$1}xs; exec "/etc/bootstrap/upgrade-lamp", $last;'
+htget $list | grep lamp-std | perl -we 'while (<>) { $last = $_; }; $last =~ s{^ .* (lamp-std_[\d-]+) \.jbin\.gz .* $}{$1}xs; exec "/etc/bootstrap/upgrade-lamp", $last;'
 
