@@ -225,6 +225,9 @@ namespace Genie
 		#endif
 		}
 		
+		// Accumulate any user time between last system call (if any) and return from main()
+		context.processContext->EnterSystemCall( "*RETURN*" );
+		
 		context.processContext->Terminate( (result & 0xFF) << 8 );
 		
 		// Not reached
