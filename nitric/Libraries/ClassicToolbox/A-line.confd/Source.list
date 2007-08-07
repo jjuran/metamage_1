@@ -3,6 +3,7 @@ ClassicToolbox/AEDataModel.cp
 ClassicToolbox/AppleTalk.cp
 ClassicToolbox/CommResources.cp
 ClassicToolbox/CRMSerialDevices.cp
+ClassicToolbox/DeskBus.cp
 ClassicToolbox/Devices.cp
 ClassicToolbox/EPPC.cp
 ClassicToolbox/PPCToolbox.cp
