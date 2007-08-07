@@ -93,7 +93,7 @@ namespace Pedestal
 	static RunState gRunState;
 	
 	static bool gShiftKeyIsDownFromKeyStroke = false;
-	static bool gInHumaneMode = false;
+	static bool gInShiftSpaceQuasiMode = false;
 	
 	
 	inline void DebugBeep()
@@ -342,9 +342,9 @@ namespace Pedestal
 		return !CharIsArrowKey( c ) && !CharIsDelete( c );
 	}
 	
-	inline bool ShouldEnterHumaneMode( const EventRecord& event )
+	inline bool ShouldEnterShiftSpaceQuasiMode( const EventRecord& event )
 	{
-		if ( gInHumaneMode                )  return false;
+		if ( gInShiftSpaceQuasiMode       )  return false;
 		if ( gShiftKeyIsDownFromKeyStroke )  return false;
 		
 		const char keyChar = event.message & charCodeMask;
@@ -352,14 +352,14 @@ namespace Pedestal
 		return keyChar == ' '  &&  (event.modifiers & shiftKey);
 	}
 	
-	static void EnterHumaneMode()
+	static void EnterShiftSpaceQuasiMode()
 	{
-		gInHumaneMode = true;
+		gInShiftSpaceQuasiMode = true;
 	}
 	
-	static void ExitHumaneMode()
+	static void ExitShiftSpaceQuasiMode()
 	{
-		gInHumaneMode = false;
+		gInShiftSpaceQuasiMode = false;
 	}
 	
 	static void DispatchKey( const EventRecord& event )
@@ -376,9 +376,9 @@ namespace Pedestal
 				TheApp().HandleMenuChoice( ::MenuKey( keyChar ) );
 			}
 		}
-		else if ( ShouldEnterHumaneMode( event ) )
+		else if ( ShouldEnterShiftSpaceQuasiMode( event ) )
 		{
-			EnterHumaneMode();
+			EnterShiftSpaceQuasiMode();
 		}
 		else if ( N::WindowRef window = N::FrontWindow() )
 		{
@@ -622,9 +622,9 @@ namespace Pedestal
 						{
 							gShiftKeyIsDownFromKeyStroke = false;
 							
-							if ( gInHumaneMode )
+							if ( gInShiftSpaceQuasiMode )
 							{
-								ExitHumaneMode();
+								ExitShiftSpaceQuasiMode();
 							}
 						}
 						
