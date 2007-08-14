@@ -494,30 +494,6 @@ namespace ALine
 			std::swap( mySources, sources );
 		}
 		
-		/*
-		try
-		{
-			std::transform
-			(
-				mySources.begin(), 
-				mySources.end(), 
-				mySources.begin(), 
-				ConvertException< FSSpec >
-				(
-					std::bind2nd
-					(
-						more::ptr_fun( N::ResolveAliasFile ), 
-						true
-					)
-				)
-			);
-		}
-		catch ( FSSpec& alias )
-		{
-			throw BadSourceAlias( *this, alias );
-		}
-		*/
-		
 		// Locate resources
 		try
 		{
