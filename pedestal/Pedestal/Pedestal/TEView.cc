@@ -224,9 +224,33 @@ namespace Pedestal
 		            itsTE );
 	}
 	
+	static bool KeyIsAllowed( char c, TEHandle aTE )
+	{
+		// Allow control keys always (backspace, arrows)
+		// Allow content keys only when selection is empty (insertion point)
+		return c < 0x20  ||  aTE[0]->selStart == aTE[0]->selEnd;
+	}
+	
 	bool TEView::KeyDown( const EventRecord& event )
 	{
-		N::TEKey( event.message & charCodeMask, itsTE );
+		char c = event.message & charCodeMask;
+		
+		if ( KeyIsAllowed( c, itsTE ) )
+		{
+			N::TEKey( c, itsTE );
+		}
+		else
+		{
+			static UInt32 lastBeep = 0;
+			
+			if ( event.when - lastBeep > 45 )
+			{
+				lastBeep = event.when;
+				
+				N::SysBeep();
+			}
+		}
+		
 		return true;
 	}
 	
