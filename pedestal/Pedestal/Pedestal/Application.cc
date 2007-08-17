@@ -92,6 +92,10 @@ namespace Pedestal
 	
 	static RunState gRunState;
 	
+	static EventRecord gLastKeyDownEvent;
+	
+	static unsigned gKeyCount = 0;
+	
 	static bool gShiftKeyIsDownFromKeyStroke = false;
 	static bool gInShiftSpaceQuasiMode = false;
 	
@@ -362,9 +366,21 @@ namespace Pedestal
 		gInShiftSpaceQuasiMode = false;
 	}
 	
+	inline bool AutoKeyRequiresThreeStrikes()
+	{
+		// False in Mac HIG
+		return true;
+	}
+	
 	static void DispatchKey( const EventRecord& event )
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
+		
+		if ( AutoKeyRequiresThreeStrikes()  &&  event.what == autoKey  &&  gKeyCount < 3 )
+		{
+			// Suppress auto-key until after three consecutive key-downs
+			return;
+		}
 		
 		const char keyChar = event.message & charCodeMask;
 		
@@ -382,6 +398,19 @@ namespace Pedestal
 		}
 		else if ( N::WindowRef window = N::FrontWindow() )
 		{
+			if ( event.what == keyDown )
+			{
+				if (    event.message   == gLastKeyDownEvent.message
+				     && event.modifiers == gLastKeyDownEvent.modifiers )
+				{
+					++gKeyCount;
+				}
+				else
+				{
+					gKeyCount = 1;
+				}
+			}
+			
 			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
 				if ( WindowBase* base = N::GetWRefCon( window ) )
@@ -389,6 +418,8 @@ namespace Pedestal
 					base->KeyDown( event );
 				}
 			}
+			
+			gLastKeyDownEvent = event;
 		}
 		
 		gShiftKeyIsDownFromKeyStroke = event.modifiers & shiftKey;
