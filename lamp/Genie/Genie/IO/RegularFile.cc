@@ -18,7 +18,7 @@ namespace Genie
 		return GetFile()->GetEOF();
 	}
 	
-	void RegularFileHandle::SetEOF( off_t length ) const
+	void RegularFileHandle::SetEOF( off_t length )
 	{
 		GetFile()->SetEOF( length );
 	}

@@ -28,7 +28,7 @@ namespace Genie
 			
 			virtual off_t GetEOF() const;
 			
-			virtual void SetEOF( off_t length ) const;
+			virtual void SetEOF( off_t length );
 	};
 	
 }

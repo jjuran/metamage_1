@@ -51,7 +51,7 @@ namespace Genie
 			
 			off_t GetEOF() const  { return N::GetEOF( refNum ); }
 			
-			void SetEOF( off_t length ) const  { N::SetEOF( refNum, length ); }
+			void SetEOF( off_t length )  { N::SetEOF( refNum, length ); }
 			
 			FSSpec GetFSSpec() const;
 	};
