@@ -107,7 +107,7 @@ namespace Pedestal
 	static int VScrollOffset( TEHandle hTE )
 	{
 		int dv =   N::GetTEViewRect( hTE ).top
-		           - N::GetTEDestRect( hTE ).top;
+		         - N::GetTEDestRect( hTE ).top;
 		
 		return dv;
 	}
