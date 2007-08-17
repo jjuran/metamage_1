@@ -64,7 +64,7 @@ namespace ALine
 	{
 		typedef std::vector< std::string >::const_iterator Iter;
 		
-		for ( Iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
+		for ( Iter it = itsSearchDirs.begin();  it != itsSearchDirs.end();  ++it )
 		{
 			// FIXME:  Use a trapped function
 			try
@@ -262,12 +262,12 @@ namespace ALine
 			// If search folders are specified,
 			if ( search.size() > 0 )
 			{
-				sourceDirs.resize( search.size() );
+				itsSearchDirs.resize( search.size() );
 				
 				// Find and record them.
 				std::transform( search.begin(),
 				                search.end(),
-				                sourceDirs.begin(),
+				                itsSearchDirs.begin(),
 				                std::bind1st( more::ptr_fun( FindSearchDir ),
 					                          projFolderPath ) );
 			}
@@ -285,7 +285,7 @@ namespace ALine
 					sourceDir = projFolderPath;
 				}
 				
-				sourceDirs.push_back( sourceDir );
+				itsSearchDirs.push_back( sourceDir );
 			}
 		}
 		
@@ -305,7 +305,7 @@ namespace ALine
 			creator = creator.substr( 1, 4 );
 		}
 		
-		//myExtraSources = config[ "sources"    ];  // Extra sources to compile.  Deprecated.
+		itsSourceFileSpecs = config[ "sources"    ];  // Sources to compile.
 		myImports      = config[ "imports"    ];  // Libraries to import.
 		myFrameworks   = config[ "frameworks" ];  // Frameworks to include when building for OS X.
 		rsrcFiles      = config[ "rsrc"       ];  // Resource files from which to copy resources.
@@ -402,11 +402,11 @@ namespace ALine
 		throw P7::Errno( ENOENT );
 	}
 	
-	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& sourceDirs )
+	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& itsSearchDirs )
 	{
 		typedef std::vector< std::string >::const_iterator dir_iter;
 		
-		for ( dir_iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
+		for ( dir_iter it = itsSearchDirs.begin();  it != itsSearchDirs.end();  ++it )
 		{
 			std::string dir = *it;
 			
@@ -454,6 +454,45 @@ namespace ALine
 			}
 		}
 		
+		std::vector< std::string > sourceFileSearchDirs;
+		
+		if ( !itsSourceFileSpecs.empty() )
+		{
+			// 'sources' directive specifies source files or source list files.
+			typedef std::vector< std::string >::const_iterator str_iter;
+			
+			for ( str_iter it = itsSourceFileSpecs.begin();  it != itsSourceFileSpecs.end();  ++it )
+			{
+				const std::string& project_relative_path = *it;
+				
+				std::string absolute_path = ProjectFolder() / project_relative_path;
+				
+				if ( io::directory_exists( absolute_path ) )
+				{
+					sourceFileSearchDirs.push_back( absolute_path );
+					
+					continue;
+				}
+				
+				if ( io::file_exists( absolute_path ) )
+				{
+					mySources.push_back( absolute_path );
+					
+					continue;
+				}
+				
+				if ( *absolute_path.rbegin() == '*' )
+				{
+					
+				}
+			}
+		}
+		
+		if ( sourceFileSearchDirs.empty() )
+		{
+			sourceFileSearchDirs = itsSearchDirs;
+		}
+		
 		// We have filenames -- now, find them
 		if ( sourceList.size() > 0 )
 		{
@@ -463,7 +502,7 @@ namespace ALine
 			{
 				const std::string& sourceName = *it;
 				
-				mySources.push_back( FindSourceFileInDirs( sourceName, sourceDirs ) );
+				mySources.push_back( FindSourceFileInDirs( sourceName, itsSearchDirs ) );
 			}
 		}
 		else
@@ -475,7 +514,7 @@ namespace ALine
 			// Enumerate our source files
 			std::vector< std::string > sources;
 			
-			for ( Iter it = sourceDirs.begin();  it != sourceDirs.end();  ++it )
+			for ( Iter it = sourceFileSearchDirs.begin();  it != sourceFileSearchDirs.end();  ++it )
 			{
 				std::vector< std::string > deepSources = DeepFiles
 				(

@@ -33,7 +33,8 @@ namespace ALine
 			
 			const std::vector< ProjName >& AllUsedProjects() const  { return allUsedProjects; }
 			
-			const std::vector< std::string >& SearchDirs() const  { return sourceDirs; }
+			const std::vector< std::string >& SearchDirs()      const  { return itsSearchDirs;      }
+			const std::vector< std::string >& SourceFileSpecs() const  { return itsSourceFileSpecs; }
 			
 			std::vector< FileName > LibImports()    const  { return myImports; }
 			std::vector< FileName > Frameworks()    const  { return myFrameworks; }
@@ -63,8 +64,10 @@ namespace ALine
 			bool needsCwdSourceOption;
 			// The names of all projects used directly or indirectly by this one.
 			std::vector< ProjName > allUsedProjects;
-			// Directories to search for source files.
-			std::vector< std::string > sourceDirs;
+			// Directories to search for headers and unenumerated source files.
+			std::vector< std::string > itsSearchDirs;
+			// Source files to compile, by pathname
+			std::vector< std::string > itsSourceFileSpecs;
 			// Various things to link with.
 			std::vector< FileName > rezFiles, rsrcFiles, myImports, myFrameworks;
 			// Creator code / signature for output files.
