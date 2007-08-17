@@ -18,9 +18,10 @@
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/IO/BufferFile.hh"
+#include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
-#include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -108,6 +109,19 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetDevFSTree(); }
 	};
 	
+	class FSTree_dev_new_buffer : public FSTree
+	{
+		public:
+			std::string Name() const  { return "buffer"; }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_new  >(); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
 	class FSTree_dev_new_console : public FSTree
 	{
 		public:
@@ -189,6 +203,11 @@ namespace Genie
 		return OpenSerialDevice();
 	}
 	
+	boost::shared_ptr< IOHandle > FSTree_dev_new_buffer::Open( OpenFlags flags ) const
+	{
+		return NewBufferFile();
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_console::Open( OpenFlags flags ) const
 	{
 		return NewConsoleDevice();
@@ -217,6 +236,7 @@ namespace Genie
 	
 	FSTree_dev_new::FSTree_dev_new()
 	{
+		Map( "buffer",  FSTreePtr( GetSingleton< FSTree_dev_new_buffer  >() ) );
 		Map( "console", FSTreePtr( GetSingleton< FSTree_dev_new_console >() ) );
 	}
 	
