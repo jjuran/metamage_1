@@ -15,14 +15,14 @@ namespace Pedestal
 	class Console : public TEView
 	{
 		private:
-			bool pendingCR;
+			bool itHasPendingCR;
 		
 		public:
-			Console( const Rect& bounds, const Initializer& init )
-			:
-				TEView( bounds, init ),
-				pendingCR( false )
-			{}
+			Console( const Rect&         bounds,
+			         const Initializer&  init ) : TEView        ( bounds, init ),
+			                                      itHasPendingCR( false        )
+			{
+			}
 			
 			int WriteChars( const char* data, unsigned int byteCount );
 	};
