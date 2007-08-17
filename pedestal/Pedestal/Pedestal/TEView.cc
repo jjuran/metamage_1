@@ -381,7 +381,14 @@ namespace Pedestal
 		byteCount = std::min< unsigned int >( byteCount, 32000 - len );
 		
 		N::SetHandleSize( hText, len + byteCount );
+		
 		std::copy( data, data + byteCount, *hText + len );
+		
+		std::replace( *hText + len,
+		              *hText + len + byteCount,
+		              '\n',
+		              '\r' );
+		
 		N::SetTELength( itsTE, len + byteCount );
 		N::TECalText( itsTE );
 		N::TESetSelect( 32767, 32767, itsTE );
