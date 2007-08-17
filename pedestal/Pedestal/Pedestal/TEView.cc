@@ -224,8 +224,19 @@ namespace Pedestal
 		            itsTE );
 	}
 	
-	static bool KeyIsAllowed( char c, TEHandle aTE )
+	inline bool NewContentReplacesSelection()
 	{
+		// True in Mac HIG, false in The Humane Interface
+		return false;
+	}
+	
+	inline bool KeyIsAllowedAgainstSelection( char c, TEHandle aTE )
+	{
+		if ( NewContentReplacesSelection() )
+		{
+			return true;
+		}
+		
 		// Allow control keys always (backspace, arrows)
 		// Allow content keys only when selection is empty (insertion point)
 		return c < 0x20  ||  aTE[0]->selStart == aTE[0]->selEnd;
@@ -235,7 +246,7 @@ namespace Pedestal
 	{
 		char c = event.message & charCodeMask;
 		
-		if ( KeyIsAllowed( c, itsTE ) )
+		if ( KeyIsAllowedAgainstSelection( c, itsTE ) )
 		{
 			N::TEKey( c, itsTE );
 		}
