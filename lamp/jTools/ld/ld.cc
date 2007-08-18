@@ -87,6 +87,7 @@ namespace jTools
 		SHARED_LIB( "ObjectSupportLib"   ),
 		SHARED_LIB( "OpenTptInternetLib" ),
 		SHARED_LIB( "OpenTransportLib"   ),
+		SHARED_LIB( "QuickTimeLib"       ),
 		SHARED_LIB( "ThreadsLib"         ),
 		SHARED_LIB( "WindowsLib"         ),
 		
