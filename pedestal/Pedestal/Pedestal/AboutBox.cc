@@ -39,7 +39,7 @@ namespace Pedestal
 	
 	AboutBox::AboutBox( const boost::shared_ptr< WindowCloseHandler >& handler )
 	: 
-		Base( NewWindowContext( N::OffsetRect( N::SetRect( 0, 0, 64, 64 ),
+		Base( NewWindowContext( N::OffsetRect( N::SetRect( 0, 0, 128, 128 ),
 		                                       300,
 		                                       200 ),
 		                        "\pPedestal" ),
