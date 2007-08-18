@@ -148,6 +148,9 @@ namespace Genie
 		
 		std::copy( marked, marked + byteCount, data );
 		
+		// CR -> LF
+		std::replace( data, data + byteCount, '\r', '\n' );
+		
 		itsMark += byteCount;
 		
 		return byteCount;
