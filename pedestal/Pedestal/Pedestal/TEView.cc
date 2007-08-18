@@ -265,6 +265,32 @@ namespace Pedestal
 		return true;
 	}
 	
+	static void DrawQuasiModeFrame( Rect frame )
+	{
+		N::InsetRect( frame, 1, 1 );
+		
+		N::FrameRect( frame );
+	}
+	
+	bool TEView::EnterShiftSpaceQuasiMode()
+	{
+		DrawQuasiModeFrame( Bounds() );
+		
+		return true;
+	}
+	
+	static const RGBColor gRGBBlack = {     0,     0,     0 };
+	static const RGBColor gRGBWhite = { 65535, 65535, 65535 };
+	
+	void TEView::ExitShiftSpaceQuasiMode()
+	{
+		N::RGBForeColor( gRGBWhite );
+		
+		DrawQuasiModeFrame( Bounds() );
+		
+		N::RGBForeColor( gRGBBlack );
+	}
+	
 	void TEView::Activate( bool activating )
 	{
 		if ( activating )
