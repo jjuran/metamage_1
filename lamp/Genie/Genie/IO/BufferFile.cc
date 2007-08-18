@@ -157,7 +157,11 @@ namespace Genie
 	{
 		Ped::TEView& editor = SubView().ScrolledView();
 		
+		SetEOF( itsMark );
+		
 		int result = editor.AppendChars( data, byteCount, true );
+		
+		itsMark += result;
 		
 		SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
 		                            N::SetPt( 0, 0 ) );
