@@ -72,7 +72,7 @@ namespace Genie
 			
 		
 		public:
-			//static TypeCode Type()  { return kQueryFileType; }
+			static TypeCode Type()  { return kBufferFileType; }
 			
 			BufferFileHandle( const boost::shared_ptr< BufferWindow >&  window ) : itsWindow( window )
 			{

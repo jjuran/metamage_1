@@ -92,10 +92,11 @@ namespace Genie
 			kStreamType    = 2,
 				kFileType   = kStreamType * 3,  // 6
 					kRegularFileType = kFileType * 5,  // 30
-						kMacFileType   = kRegularFileType * 11,  // 330
-							kMacDataForkType = kMacFileType * 31,  // 10230
+						kMacFileType    = kRegularFileType * 11,    // 330
+							kMacDataForkType = kMacFileType * 31,    // 10230
 							kMacRsrcForkType = kMacFileType * 1787,  // 589710
-						kQueryFileType = kRegularFileType * 277,  // 8310
+						kQueryFileType  = kRegularFileType * 277,   // 8310
+						kBufferFileType = kRegularFileType * 1063,  // 31890
 					kDeviceFileType  = kFileType * 59,  // 295
 						kSimpleDeviceType = kDeviceFileType * 11,  // 649
 						kSerialDeviceType = kDeviceFileType * 277,  // 16343
