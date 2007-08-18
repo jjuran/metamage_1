@@ -692,7 +692,9 @@ namespace Pedestal
 						{
 							DispatchEvent( event );
 							
-							gRunState.maxTicksToSleep = 0;  // Always idle after an event
+							// Always idle after an event, but wait a tick so we
+							// don't idle between auto-key events.
+							gRunState.maxTicksToSleep = 1;
 						}
 						else if ( gRunState.quitRequested )
 						{
