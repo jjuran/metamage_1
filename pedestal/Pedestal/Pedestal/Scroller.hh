@@ -515,6 +515,16 @@ namespace Pedestal
 				return false;
 			}
 			
+			bool EnterShiftSpaceQuasiMode()
+			{
+				return ScrolledView().EnterShiftSpaceQuasiMode();
+			}
+			
+			void ExitShiftSpaceQuasiMode()
+			{
+				ScrolledView().ExitShiftSpaceQuasiMode();
+			}
+			
 			void Update()
 			{
 				// Intersect the clip region with the scrollview bounds,

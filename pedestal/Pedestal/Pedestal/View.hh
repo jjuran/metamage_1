@@ -27,6 +27,10 @@ namespace Pedestal
 			void MouseDown( const EventRecord& /*event*/ )  {}
 			bool KeyDown  ( const EventRecord& /*event*/ )  { return false; }
 			
+			bool EnterShiftSpaceQuasiMode()  { return false; }
+			
+			void ExitShiftSpaceQuasiMode()  {}
+			
 			void Resize( const Rect& /*newBounds*/ )  {}
 			
 			void Update()  {}

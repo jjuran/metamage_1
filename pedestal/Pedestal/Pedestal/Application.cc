@@ -358,11 +358,38 @@ namespace Pedestal
 	
 	static void EnterShiftSpaceQuasiMode()
 	{
-		gInShiftSpaceQuasiMode = true;
+		if ( N::WindowRef window = N::FrontWindow() )
+		{
+			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+			{
+				if ( WindowBase* base = N::GetWRefCon( window ) )
+				{
+					if ( base->EnterShiftSpaceQuasiMode() )
+					{
+						gInShiftSpaceQuasiMode = true;
+						
+						return;
+					}
+				}
+			}
+		}
+		
+		N::SysBeep();
 	}
 	
 	static void ExitShiftSpaceQuasiMode()
 	{
+		if ( N::WindowRef window = N::FrontWindow() )
+		{
+			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+			{
+				if ( WindowBase* base = N::GetWRefCon( window ) )
+				{
+					base->ExitShiftSpaceQuasiMode();
+				}
+			}
+		}
+		
 		gInShiftSpaceQuasiMode = false;
 	}
 	

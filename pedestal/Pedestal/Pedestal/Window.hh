@@ -132,6 +132,9 @@ namespace Pedestal
 			virtual bool SetCursor  ( Point location, RgnHandle mouseRgn ) = 0;
 			virtual void Resized    ( const Rect& newBounds              ) = 0;
 			virtual bool UserCommand( MenuItemCode code                  ) = 0;
+			
+			virtual bool EnterShiftSpaceQuasiMode() = 0;
+			virtual void ExitShiftSpaceQuasiMode() = 0;
 	};
 	
 	class ClosableWindow
@@ -181,6 +184,10 @@ namespace Pedestal
 			void Activate   ( bool activating          )  { SubView().Activate( activating );     }
 			void Resized    ( const Rect& newBounds    )  { SubView().Resize( newBounds );        }
 			bool UserCommand( MenuItemCode code        )  { return SubView().UserCommand( code ); }
+			
+			bool EnterShiftSpaceQuasiMode()  { return SubView().EnterShiftSpaceQuasiMode(); }
+			
+			void ExitShiftSpaceQuasiMode()  { SubView().ExitShiftSpaceQuasiMode(); }
 			
 			bool SetCursor( Point      location,
 			                RgnHandle  mouseRgn )
