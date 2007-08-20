@@ -27,6 +27,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/Clipboard.hh"
+#include "Pedestal/Quasimode.hh"
 #include "Pedestal/Scroller.hh"
 
 
@@ -265,30 +266,181 @@ namespace Pedestal
 		return true;
 	}
 	
-	static void DrawQuasiModeFrame( Rect frame )
+	static void DrawQuasimodeFrame( Rect frame )
 	{
 		N::InsetRect( frame, 1, 1 );
 		
 		N::FrameRect( frame );
 	}
 	
-	bool TEView::EnterShiftSpaceQuasiMode()
+	struct TESelection
 	{
-		DrawQuasiModeFrame( Bounds() );
+		short start;
+		short end;
+	};
+	
+	static TESelection GetTESelection( TEHandle hTE )
+	{
+		struct TESelection result;
 		
-		return true;
+		const TERec& te = **hTE;
+		
+		result.start = te.selStart;
+		result.end   = te.selEnd;
+		
+		return result;
+	}
+	
+	class TESearchQuasimode : public Quasimode
+	{
+		private:
+			TEView&               itsView;
+			bool                  itSearchesBackward;
+			TESelection           itsSavedSelection;
+			std::vector< short >  itsMatches;
+			std::string           itsPattern;
+		
+		public:
+			TESearchQuasimode( TEView& view, bool backward );
+			
+			~TESearchQuasimode();
+			
+			bool KeyDown( const EventRecord& event );
+	};
+	
+	TESearchQuasimode::TESearchQuasimode( TEView&  view,
+	                                      bool     backward ) : itsView           ( view     ),
+	                                                            itSearchesBackward( backward ),
+	                                                            itsSavedSelection ( GetTESelection( view.Get() ) )
+	{
+		DrawQuasimodeFrame( itsView.Bounds() );
 	}
 	
 	static const RGBColor gRGBBlack = {     0,     0,     0 };
 	static const RGBColor gRGBWhite = { 65535, 65535, 65535 };
 	
-	void TEView::ExitShiftSpaceQuasiMode()
+	TESearchQuasimode::~TESearchQuasimode()
 	{
 		N::RGBForeColor( gRGBWhite );
 		
-		DrawQuasiModeFrame( Bounds() );
+		DrawQuasimodeFrame( itsView.Bounds() );
 		
 		N::RGBForeColor( gRGBBlack );
+		
+		//view.SetSelection( itsSavedSelection.start, itsSavedSelection.end );
+	}
+	
+	static short TESearch( TEHandle hTE, short position, const std::string& pattern, bool backward )
+	{
+		short teLength = hTE[0]->teLength;
+		
+		Handle hText = hTE[0]->hText;
+		
+		short hLength = GetHandleSize( hText );
+		
+		short maxPosition = hLength - pattern.size();
+		
+		bool couldFitAtPosition = position <= maxPosition;
+		
+		short limit = backward ? -1 : maxPosition + 1;
+		
+		short increment = backward ? -1 : 1;
+		
+		if ( pattern.size() <= 1 )
+		{
+			position += increment;
+		}
+		
+		while ( position != limit )
+		{
+			if ( std::memcmp( hText[0] + position, pattern.data(), pattern.size() ) == 0 )
+			{
+				return position;
+			}
+			
+			position += increment;
+		}
+		
+		return -1;
+	}
+	
+	static char GetTranslatedKeyFromEvent( const EventRecord& event, UInt16 ignoredModifierMask )
+	{
+		static UInt32 state = 0;
+		
+		Handle kchr = GetResource( 'KCHR', 0 );
+		
+		N::ResError();
+		
+		ASSERT(  kchr != NULL );
+		ASSERT( *kchr != NULL );
+		
+		UInt16 keyCode = (event.message & keyCodeMask) >> 8;
+		
+		keyCode |= event.modifiers & (0xff00 - ignoredModifierMask);
+		
+		UInt32 key = KeyTranslate( *kchr, keyCode, &state );
+		
+		const char c = key & 0xff;
+		
+		return c;
+	}
+	
+	bool TESearchQuasimode::KeyDown( const EventRecord& event )
+	{
+		UInt16 ignoredModifierMask = itSearchesBackward ? shiftKey : rightShiftKey;
+		
+		const char c = GetTranslatedKeyFromEvent( event, ignoredModifierMask );
+		
+		if ( c == 0x08 )
+		{
+			if ( itsPattern.empty() )
+			{
+				N::SysBeep();
+			}
+			else
+			{
+				short match = itsMatches.back();
+				
+				itsMatches.pop_back();
+				
+				itsPattern.pop_back();
+				
+				itsView.SetSelection( match, match );
+			}
+		}
+		else
+		{
+			itsPattern += c;
+			
+			short position = itsView.Get()[0]->selStart;
+			
+			itsMatches.push_back( position );
+			
+			short match = TESearch( itsView.Get(), position, itsPattern, itSearchesBackward );
+			
+			if ( match == -1 )
+			{
+				itsView.SetSelection( itsSavedSelection.start, itsSavedSelection.end );
+				
+				N::SysBeep();
+			}
+			else
+			{
+				itsView.SetSelection( match, match );
+			}
+		}
+		
+		return true;
+	}
+	
+	boost::shared_ptr< Quasimode > TEView::EnterShiftSpaceQuasimode( const EventRecord& event )
+	{
+		bool backward = event.modifiers & shiftKey;
+		
+		boost::shared_ptr< Quasimode > mode( new TESearchQuasimode( *this, backward ) );
+		
+		return mode;
 	}
 	
 	void TEView::Activate( bool activating )
