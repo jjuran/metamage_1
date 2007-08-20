@@ -9,26 +9,31 @@
 namespace N = Nitrogen;
 
 
-const UInt8 kLEDRegisterIndex = 2;
+const UInt8 kLEDRegisterOffset = 2;
+const UInt8 kLEDByteIndex      = 2;
 
 const UInt8 kLEDValueMask = 7;
 
 
 UInt8 GetLEDs( N::ADBAddress address )
 {
-	UInt8 leds = GetADBRegister( address, kLEDRegisterIndex ).buffer[2] & kLEDValueMask;
+	UInt8 ledByte = GetADBRegister( address, kLEDRegisterOffset ).buffer[ kLEDByteIndex ];
+	
+	UInt8 leds = ~ledByte & kLEDValueMask;
 	
 	return leds;
 }
 
 void SetLEDs( N::ADBAddress address, UInt8 leds )
 {
-	ADBRegister reg2 = GetADBRegister( address, kLEDRegisterIndex );
+	ADBRegister reg = GetADBRegister( address, kLEDRegisterOffset );
 	
-	reg2.buffer[2] &= ~kLEDValueMask;
+	UInt8 ledByte = reg.buffer[ kLEDByteIndex ] & ~kLEDValueMask;
 	
-	reg2.buffer[2] |= leds & kLEDValueMask;
+	ledByte |= ~leds & kLEDValueMask;
+	
+	reg.buffer[ kLEDByteIndex ] = ledByte;
 
-	SetADBRegister( address, kLEDRegisterIndex, reg2 );
+	SetADBRegister( address, kLEDRegisterOffset, reg );
 }
 
