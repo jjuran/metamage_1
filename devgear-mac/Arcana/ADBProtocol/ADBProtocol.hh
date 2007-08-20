@@ -3,13 +3,16 @@
  *	==============
  */
 
+#ifndef ADBPROTOCOL_HH
+#define ADBPROTOCOL_HH
+
 // ClassicToolbox
 #include "ClassicToolbox/DeskBus.h"
 
 
-const std::size_t kMaxADBRegisterLength = 8;
+static const std::size_t kMaxADBRegisterLength = 8;
 
-const std::size_t kADBRegisterBufferSize = 1 + kMaxADBRegisterLength;
+static const std::size_t kADBRegisterBufferSize = 1 + kMaxADBRegisterLength;
 
 
 struct ADBRegister
@@ -19,7 +22,15 @@ struct ADBRegister
 	ADBRegister()  { buffer[0] = 0; }
 };
 
+
 ADBRegister GetADBRegister( Nitrogen::ADBAddress address, UInt8 index );
 
 void SetADBRegister( Nitrogen::ADBAddress address, UInt8 index, const ADBRegister& value );
+
+
+UInt8 GetDeviceHandlerID( Nitrogen::ADBAddress address );
+
+void SetDeviceHandlerID( Nitrogen::ADBAddress address, UInt8 id );
+
+#endif
 

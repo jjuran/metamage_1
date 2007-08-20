@@ -10,10 +10,13 @@ namespace N = Nitrogen;
 namespace NN = Nucleus;
 
 
-const UInt8 kMaxRegisterIndex = 3;
-
 const UInt8 kADBListenCommand =  8;
 const UInt8 kADBTalkCommand   = 12;
+
+const UInt8 kMaxRegisterOffset = 3;
+
+const UInt8 kDeviceHandlerIDRegisterOffset = 3;
+const UInt8 kDeviceHandlerIDByteIndex      = 2;
 
 
 static pascal void ADBCompletion( ::Ptr buffer, ::Ptr refCon, long command )
@@ -42,7 +45,7 @@ static void SendADBCommandSync( char* buffer, UInt8 command )
 
 ADBRegister GetADBRegister( N::ADBAddress address, UInt8 index )
 {
-	ASSERT( index <= kMaxRegisterIndex );
+	ASSERT( index <= kMaxRegisterOffset );
 	
 	ADBRegister result;
 	
@@ -55,7 +58,7 @@ ADBRegister GetADBRegister( N::ADBAddress address, UInt8 index )
 
 void SetADBRegister( N::ADBAddress address, UInt8 index, const ADBRegister& value )
 {
-	ASSERT( index <= kMaxRegisterIndex );
+	ASSERT( index <= kMaxRegisterOffset );
 	
 	UInt8 command = address << 4 | kADBListenCommand | index;
 	
@@ -63,5 +66,22 @@ void SetADBRegister( N::ADBAddress address, UInt8 index, const ADBRegister& valu
 	ADBRegister reg = value;
 	
 	SendADBCommandSync( reg.buffer, command );
+}
+
+
+UInt8 GetDeviceHandlerID( N::ADBAddress address )
+{
+	UInt8 id = GetADBRegister( address, kDeviceHandlerIDRegisterOffset ).buffer[ kDeviceHandlerIDByteIndex ];
+	
+	return id;
+}
+
+void SetDeviceHandlerID( N::ADBAddress address, UInt8 id )
+{
+	ADBRegister reg = GetADBRegister( address, kDeviceHandlerIDRegisterOffset );
+	
+	reg.buffer[ kDeviceHandlerIDByteIndex ] = id;
+
+	SetADBRegister( address, kDeviceHandlerIDRegisterOffset, reg );
 }
 
