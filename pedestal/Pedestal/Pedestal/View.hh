@@ -11,12 +11,17 @@
 	#include <Events.h>
 #endif
 
+// Boost
+#include <boost/shared_ptr.hpp>
+
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
 
 
 namespace Pedestal
 {
+	
+	class Quasimode;
 	
 	class View
 	{
@@ -27,9 +32,7 @@ namespace Pedestal
 			void MouseDown( const EventRecord& /*event*/ )  {}
 			bool KeyDown  ( const EventRecord& /*event*/ )  { return false; }
 			
-			bool EnterShiftSpaceQuasiMode()  { return false; }
-			
-			void ExitShiftSpaceQuasiMode()  {}
+			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& )  { return boost::shared_ptr< Quasimode >(); }
 			
 			void Resize( const Rect& /*newBounds*/ )  {}
 			

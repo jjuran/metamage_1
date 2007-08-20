@@ -117,6 +117,8 @@ namespace Pedestal
 			
 	};
 	
+	class Quasimode;
+	
 	class WindowBase
 	{
 		public:
@@ -133,8 +135,7 @@ namespace Pedestal
 			virtual void Resized    ( const Rect& newBounds              ) = 0;
 			virtual bool UserCommand( MenuItemCode code                  ) = 0;
 			
-			virtual bool EnterShiftSpaceQuasiMode() = 0;
-			virtual void ExitShiftSpaceQuasiMode() = 0;
+			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event ) = 0;
 	};
 	
 	class ClosableWindow
@@ -185,9 +186,10 @@ namespace Pedestal
 			void Resized    ( const Rect& newBounds    )  { SubView().Resize( newBounds );        }
 			bool UserCommand( MenuItemCode code        )  { return SubView().UserCommand( code ); }
 			
-			bool EnterShiftSpaceQuasiMode()  { return SubView().EnterShiftSpaceQuasiMode(); }
-			
-			void ExitShiftSpaceQuasiMode()  { SubView().ExitShiftSpaceQuasiMode(); }
+			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
+			{
+				return SubView().EnterShiftSpaceQuasimode( event );
+			}
 			
 			bool SetCursor( Point      location,
 			                RgnHandle  mouseRgn )

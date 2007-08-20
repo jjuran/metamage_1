@@ -66,9 +66,7 @@ namespace Pedestal
 			void MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
-			bool EnterShiftSpaceQuasiMode();
-			
-			void ExitShiftSpaceQuasiMode();
+			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event );
 			
 			void Activate( bool activating );
 			

@@ -515,14 +515,9 @@ namespace Pedestal
 				return false;
 			}
 			
-			bool EnterShiftSpaceQuasiMode()
+			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
 			{
-				return ScrolledView().EnterShiftSpaceQuasiMode();
-			}
-			
-			void ExitShiftSpaceQuasiMode()
-			{
-				ScrolledView().ExitShiftSpaceQuasiMode();
+				return ScrolledView().EnterShiftSpaceQuasimode( event );
 			}
 			
 			void Update()

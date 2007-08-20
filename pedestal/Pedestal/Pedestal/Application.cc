@@ -32,6 +32,7 @@
 #include "Pedestal/ApplicationContext.hh"
 #include "Pedestal/Clipboard.hh"
 #include "Pedestal/Control.hh"
+#include "Pedestal/Quasimode.hh"
 #include "Pedestal/Window.hh"
 
 
@@ -113,14 +114,9 @@ namespace Pedestal
 	
 	static bool gShiftKeyIsDownFromKeyStroke = false;
 	
-	enum ShiftSpaceQuasiModeState
-	{
-		kLeftShiftSpaceQuasiMode  = shiftKey,
-		kShiftSpaceQuasiModeOff   = 0,
-		kRightShiftSpaceQuasiMode = rightShiftKey
-	};
+	static UInt32 gShiftSpaceQuasimodeMask = 0;
 	
-	static ShiftSpaceQuasiModeState gShiftSpaceQuasiModeState = kShiftSpaceQuasiModeOff;
+	static boost::shared_ptr< Quasimode > gQuasimode;
 	
 	
 	inline void DebugBeep()
@@ -391,7 +387,7 @@ namespace Pedestal
 	
 	inline bool ShouldEnterShiftSpaceQuasiMode( const EventRecord& event )
 	{
-		if ( gShiftSpaceQuasiModeState    )  return false;
+		if ( gQuasimode                   )  return false;
 		if ( gShiftKeyIsDownFromKeyStroke )  return false;
 		
 		const char c = event.message & charCodeMask;
@@ -404,7 +400,7 @@ namespace Pedestal
 		return leftShift != rightShift;
 	}
 	
-	static void EnterShiftSpaceQuasiMode( const EventRecord& event )
+	static void EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
 		if ( N::WindowRef window = N::FrontWindow() )
 		{
@@ -412,9 +408,9 @@ namespace Pedestal
 			{
 				if ( WindowBase* base = N::GetWRefCon( window ) )
 				{
-					if ( base->EnterShiftSpaceQuasiMode() )
+					if ( gQuasimode = base->EnterShiftSpaceQuasimode( event ) )
 					{
-						gShiftSpaceQuasiModeState = ShiftSpaceQuasiModeState( event.modifiers );
+						gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 						
 						return;
 					}
@@ -423,22 +419,6 @@ namespace Pedestal
 		}
 		
 		N::SysBeep();
-	}
-	
-	static void ExitShiftSpaceQuasiMode( const EventRecord& event )
-	{
-		if ( N::WindowRef window = N::FrontWindow() )
-		{
-			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
-			{
-				if ( WindowBase* base = N::GetWRefCon( window ) )
-				{
-					base->ExitShiftSpaceQuasiMode();
-				}
-			}
-		}
-		
-		gShiftSpaceQuasiModeState = kShiftSpaceQuasiModeOff;
 	}
 	
 	inline bool AutoKeyRequiresThreeStrikes()
@@ -459,19 +439,26 @@ namespace Pedestal
 			return;
 		}
 		
-		const char keyChar = event.message & charCodeMask;
+		const char c = event.message & charCodeMask;
 		
-		if ( (event.modifiers & cmdKey)  &&  CharMayBeCommand( keyChar ) )
+		if ( (event.modifiers & cmdKey)  &&  CharMayBeCommand( c ) )
 		{
 			// no commands on autoKey
 			if ( event.what == keyDown )
 			{
-				TheApp().HandleMenuChoice( ::MenuKey( keyChar ) );
+				// Commands cancel Shift-Space quasimode
+				gQuasimode.reset();
+				
+				TheApp().HandleMenuChoice( ::MenuKey( c ) );
 			}
+		}
+		else if ( gQuasimode && gQuasimode->KeyDown( event ) )
+		{
+			// done
 		}
 		else if ( ShouldEnterShiftSpaceQuasiMode( event ) )
 		{
-			EnterShiftSpaceQuasiMode( event );
+			EnterShiftSpaceQuasimode( event );
 		}
 		else if ( N::WindowRef window = N::FrontWindow() )
 		{
@@ -728,9 +715,9 @@ namespace Pedestal
 			gShiftKeyIsDownFromKeyStroke = false;
 		}
 		
-		if ( (event.modifiers & gShiftSpaceQuasiModeState) != gShiftSpaceQuasiModeState )
+		if ( (event.modifiers & gShiftSpaceQuasimodeMask) != gShiftSpaceQuasimodeMask )
 		{
-			ExitShiftSpaceQuasiMode( event );
+			gQuasimode.reset();
 		}
 	}
 	
