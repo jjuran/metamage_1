@@ -24,6 +24,10 @@
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Threads.h"
 
+// Arcana
+#include "ADBKeyboardLEDs.hh"
+#include "ADBKeyboardModifiers.hh"
+
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
 #include "Pedestal/Clipboard.hh"
@@ -65,6 +69,10 @@ namespace Pedestal
 	using N::kCoreEventClass;
 	using N::kAEQuitApplication;
 	
+	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
+	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
+	static const UInt32 kEitherControlKey = controlKey | rightControlKey;
+	
 	struct RunState
 	{
 		AppleEventSignature signatureOfFirstAppleEvent;
@@ -92,12 +100,27 @@ namespace Pedestal
 	
 	static RunState gRunState;
 	
-	static EventRecord gLastKeyDownEvent;
+	// ADB address of the keyboard from the last key-down event.
+	static N::ADBAddress gLastKeyboard;
+	
+	static bool gKeyboardConfigured      = false;
+	static bool gNeedToConfigureKeyboard = false;
+	
+	// The last key-down event presumed to be content.
+	static EventRecord gLastContentKeyDownEvent;
 	
 	static unsigned gKeyCount = 0;
 	
 	static bool gShiftKeyIsDownFromKeyStroke = false;
-	static bool gInShiftSpaceQuasiMode = false;
+	
+	enum ShiftSpaceQuasiModeState
+	{
+		kLeftShiftSpaceQuasiMode  = shiftKey,
+		kShiftSpaceQuasiModeOff   = 0,
+		kRightShiftSpaceQuasiMode = rightShiftKey
+	};
+	
+	static ShiftSpaceQuasiModeState gShiftSpaceQuasiModeState = kShiftSpaceQuasiModeOff;
 	
 	
 	inline void DebugBeep()
@@ -145,8 +168,26 @@ namespace Pedestal
 		return handled;
 	}
 	
+	inline N::ADBAddress GetKeyboardFromEvent( const EventRecord& event )
+	{
+		return N::ADBAddress( (event.message & adbAddrMask) >> 16 );
+	}
+	
+	static void ConfigureKeyboard( N::ADBAddress keyboard, bool active )
+	{
+		UInt8 capsLED = ::GetCurrentKeyModifiers() & alphaLock ? 2 : 0;
+		
+		SetLEDs( keyboard, (active ? 1 : 0) | capsLED );
+		
+		SetKeyboardModifiersDistinctness( keyboard, active );
+		
+		gKeyboardConfigured = active;
+	}
+	
 	static void Suspend()
 	{
+		gNeedToConfigureKeyboard = true;
+		
 		N::WindowRef window = N::FrontWindow();
 		
 		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
@@ -161,6 +202,8 @@ namespace Pedestal
 	
 	static void Resume()
 	{
+		gNeedToConfigureKeyboard = true;
+		
 		N::WindowRef window = N::FrontWindow();
 		
 		if ( window  &&  N::GetWindowKind( window ) == N::kApplicationWindowKind )
@@ -348,15 +391,20 @@ namespace Pedestal
 	
 	inline bool ShouldEnterShiftSpaceQuasiMode( const EventRecord& event )
 	{
-		if ( gInShiftSpaceQuasiMode       )  return false;
+		if ( gShiftSpaceQuasiModeState    )  return false;
 		if ( gShiftKeyIsDownFromKeyStroke )  return false;
 		
-		const char keyChar = event.message & charCodeMask;
+		const char c = event.message & charCodeMask;
 		
-		return keyChar == ' '  &&  (event.modifiers & shiftKey);
+		if ( c != ' ' )  return false;
+		
+		bool leftShift  = event.modifiers & shiftKey;
+		bool rightShift = event.modifiers & rightShiftKey;
+		
+		return leftShift != rightShift;
 	}
 	
-	static void EnterShiftSpaceQuasiMode()
+	static void EnterShiftSpaceQuasiMode( const EventRecord& event )
 	{
 		if ( N::WindowRef window = N::FrontWindow() )
 		{
@@ -366,7 +414,7 @@ namespace Pedestal
 				{
 					if ( base->EnterShiftSpaceQuasiMode() )
 					{
-						gInShiftSpaceQuasiMode = true;
+						gShiftSpaceQuasiModeState = ShiftSpaceQuasiModeState( event.modifiers );
 						
 						return;
 					}
@@ -377,7 +425,7 @@ namespace Pedestal
 		N::SysBeep();
 	}
 	
-	static void ExitShiftSpaceQuasiMode()
+	static void ExitShiftSpaceQuasiMode( const EventRecord& event )
 	{
 		if ( N::WindowRef window = N::FrontWindow() )
 		{
@@ -390,7 +438,7 @@ namespace Pedestal
 			}
 		}
 		
-		gInShiftSpaceQuasiMode = false;
+		gShiftSpaceQuasiModeState = kShiftSpaceQuasiModeOff;
 	}
 	
 	inline bool AutoKeyRequiresThreeStrikes()
@@ -402,6 +450,8 @@ namespace Pedestal
 	static void DispatchKey( const EventRecord& event )
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
+		
+		gLastKeyboard = GetKeyboardFromEvent( event );
 		
 		if ( AutoKeyRequiresThreeStrikes()  &&  event.what == autoKey  &&  gKeyCount < 3 )
 		{
@@ -421,14 +471,14 @@ namespace Pedestal
 		}
 		else if ( ShouldEnterShiftSpaceQuasiMode( event ) )
 		{
-			EnterShiftSpaceQuasiMode();
+			EnterShiftSpaceQuasiMode( event );
 		}
 		else if ( N::WindowRef window = N::FrontWindow() )
 		{
 			if ( event.what == keyDown )
 			{
-				if (    event.message   == gLastKeyDownEvent.message
-				     && event.modifiers == gLastKeyDownEvent.modifiers )
+				if (    event.message   == gLastContentKeyDownEvent.message
+				     && event.modifiers == gLastContentKeyDownEvent.modifiers )
 				{
 					++gKeyCount;
 				}
@@ -446,10 +496,10 @@ namespace Pedestal
 				}
 			}
 			
-			gLastKeyDownEvent = event;
+			gLastContentKeyDownEvent = event;
 		}
 		
-		gShiftKeyIsDownFromKeyStroke = event.modifiers & shiftKey;
+		gShiftKeyIsDownFromKeyStroke = event.modifiers & kEitherShiftKey;
 	}
 	
 	static void DispatchActivate( const EventRecord& event )
@@ -650,18 +700,54 @@ namespace Pedestal
 		return readyToWait;
 	}
 	
+	static void CheckKeyboard()
+	{
+		if ( gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
+		{
+			// Don't reconfigure the keyboard if certain modifiers are down,
+			// since that confuses the OS
+			UInt32 confusingModifiers =   kEitherShiftKey
+			                            | kEitherOptionKey
+			                            | kEitherControlKey;
+			
+			if ( (::GetCurrentKeyModifiers() & confusingModifiers) == 0 )
+			{
+				bool active = gRunState.inForeground && !gRunState.endOfEventLoop;
+				
+				ConfigureKeyboard( gLastKeyboard, active );
+				
+				gNeedToConfigureKeyboard = false;
+			}
+		}
+	}
+	
+	static void CheckShiftSpaceQuasiMode( const EventRecord& event )
+	{
+		if ( !(event.modifiers & kEitherShiftKey) )
+		{
+			gShiftKeyIsDownFromKeyStroke = false;
+		}
+		
+		if ( (event.modifiers & gShiftSpaceQuasiModeState) != gShiftSpaceQuasiModeState )
+		{
+			ExitShiftSpaceQuasiMode( event );
+		}
+	}
+	
 	void Application::EventLoop()
 	{
 		// Use two levels of looping.
 		// This lets us loop inside the try block without entering and leaving,
 		// and will continue looping if an exception is thrown.
-		while ( !gRunState.endOfEventLoop )
+		while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
 		{
 			try
 			{
-				while ( !gRunState.endOfEventLoop )
+				while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
 				{
 					gRunState.activelyBusy = false;
+					
+					CheckKeyboard();
 					
 					N::YieldToAnyThread();
 					
@@ -676,17 +762,9 @@ namespace Pedestal
 						
 						gRunState.tickCountAtLastLayerSwitch = ::TickCount();
 						
-						if ( !(event.modifiers & shiftKey) )
-						{
-							gShiftKeyIsDownFromKeyStroke = false;
-							
-							if ( gInShiftSpaceQuasiMode )
-							{
-								ExitShiftSpaceQuasiMode();
-							}
-						}
+						CheckShiftSpaceQuasiMode( event );
 						
-						(void)DispatchCursor( event );
+						(void) DispatchCursor( event );
 						
 						if ( event.what != nullEvent )
 						{
@@ -699,6 +777,8 @@ namespace Pedestal
 						else if ( gRunState.quitRequested )
 						{
 							gRunState.endOfEventLoop = true;
+							
+							gNeedToConfigureKeyboard = gKeyboardConfigured;
 						}
 						else
 						{
@@ -721,6 +801,8 @@ namespace Pedestal
 		Clipboard myClipboard;
 		
 		gRunState.inForeground = N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
+		
+		gNeedToConfigureKeyboard = gRunState.inForeground;
 		
 		EventLoop();
 		
