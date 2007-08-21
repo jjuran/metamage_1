@@ -382,7 +382,11 @@ namespace Pedestal
 	
 	inline bool CharMayBeCommand( char c )
 	{
-		return !CharIsArrowKey( c ) && !CharIsDelete( c );
+		// Command-Space is passed as a key-down, never a menu command.
+		// Command-arrow is an editing gesture, not a command.
+		// Command-Delete is also an editing gesture.
+		
+		return c != ' '  &&  !CharIsArrowKey( c )  &&  !CharIsDelete( c );
 	}
 	
 	inline bool ShouldEnterShiftSpaceQuasiMode( const EventRecord& event )
@@ -393,6 +397,8 @@ namespace Pedestal
 		const char c = event.message & charCodeMask;
 		
 		if ( c != ' ' )  return false;
+		
+		if ( event.modifiers & cmdKey )  return false;
 		
 		bool leftShift  = event.modifiers & shiftKey;
 		bool rightShift = event.modifiers & rightShiftKey;
@@ -431,26 +437,33 @@ namespace Pedestal
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
 		
-		gLastKeyboard = GetKeyboardFromEvent( event );
-		
 		if ( AutoKeyRequiresThreeStrikes()  &&  event.what == autoKey  &&  gKeyCount < 3 )
 		{
 			// Suppress auto-key until after three consecutive key-downs
 			return;
 		}
 		
+		gLastKeyboard = GetKeyboardFromEvent( event );
+		
 		const char c = event.message & charCodeMask;
 		
-		if ( (event.modifiers & cmdKey)  &&  CharMayBeCommand( c ) )
+		bool command = event.modifiers & cmdKey;
+		
+		if ( command )
 		{
 			// no commands on autoKey
-			if ( event.what == keyDown )
+			if ( event.what != keyDown )
 			{
-				// Commands cancel Shift-Space quasimode
-				gQuasimode.reset();
-				
-				TheApp().HandleMenuChoice( ::MenuKey( c ) );
+				return;
 			}
+			
+			// Commands cancel Shift-Space quasimode
+			gQuasimode.reset();
+		}
+		
+		if ( command  &&  CharMayBeCommand( c ) )
+		{
+			TheApp().HandleMenuChoice( ::MenuKey( c ) );
 		}
 		else if ( gQuasimode && gQuasimode->KeyDown( event ) )
 		{
