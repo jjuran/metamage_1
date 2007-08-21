@@ -37,6 +37,73 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static std::string gLastSearchPattern;
+	
+	
+	struct TESelection
+	{
+		short start;
+		short end;
+	};
+	
+	inline bool operator==( const TESelection& a, const TESelection& b )
+	{
+		return a.start == b.start  &&  a.end == b.end;
+	}
+	
+	inline bool operator!=( const TESelection& a, const TESelection& b )
+	{
+		return !( a == b );
+	}
+	
+	static TESelection GetTESelection( TEHandle hTE )
+	{
+		struct TESelection result;
+		
+		const TERec& te = **hTE;
+		
+		result.start = te.selStart;
+		result.end   = te.selEnd;
+		
+		return result;
+	}
+	
+	
+	static short TESearch( TEHandle hTE, short position, const std::string& pattern, bool backward, bool matchAtPosition )
+	{
+		short teLength = hTE[0]->teLength;
+		
+		Handle hText = hTE[0]->hText;
+		
+		short hLength = GetHandleSize( hText );
+		
+		short maxPosition = hLength - pattern.size();
+		
+		bool couldFitAtPosition = position <= maxPosition;
+		
+		short limit = backward ? -1 : maxPosition + 1;
+		
+		short increment = backward ? -1 : 1;
+		
+		if ( !matchAtPosition )
+		{
+			position += increment;
+		}
+		
+		while ( position != limit )
+		{
+			if ( std::memcmp( hText[0] + position, pattern.data(), pattern.size() ) == 0 )
+			{
+				return position;
+			}
+			
+			position += increment;
+		}
+		
+		return -1;
+	}
+	
+	
 	static Rect ViewRectFromBounds( const Rect& bounds )
 	{
 		return N::InsetRect( bounds, 4, 4 );
@@ -247,6 +314,37 @@ namespace Pedestal
 	{
 		char c = event.message & charCodeMask;
 		
+		const UInt16 bothShiftKeys = shiftKey | rightShiftKey;
+		
+		UInt16 shifted = event.modifiers & bothShiftKeys;
+		
+		if ( c == ' '  &&  shifted  &&  (event.modifiers & cmdKey) )
+		{
+			if ( shifted == bothShiftKeys )
+			{
+				N::SysBeep();
+				
+				return true;
+			}
+			
+			bool backward = shifted == shiftKey;
+			
+			TESelection selection = GetTESelection( Get() );
+			
+			short match = TESearch( Get(), selection.start, gLastSearchPattern, backward, false );
+			
+			if ( match == -1 )
+			{
+				N::SysBeep();
+			}
+			else
+			{
+				SetSelection( match, match + gLastSearchPattern.size() );
+			}
+			
+			return true;
+		}
+		
 		if ( KeyIsAllowedAgainstSelection( c, itsTE ) )
 		{
 			N::TEKey( c, itsTE );
@@ -273,24 +371,6 @@ namespace Pedestal
 		N::FrameRect( frame );
 	}
 	
-	struct TESelection
-	{
-		short start;
-		short end;
-	};
-	
-	static TESelection GetTESelection( TEHandle hTE )
-	{
-		struct TESelection result;
-		
-		const TERec& te = **hTE;
-		
-		result.start = te.selStart;
-		result.end   = te.selEnd;
-		
-		return result;
-	}
-	
 	class TESearchQuasimode : public Quasimode
 	{
 		private:
@@ -307,6 +387,7 @@ namespace Pedestal
 			
 			bool KeyDown( const EventRecord& event );
 	};
+	
 	
 	TESearchQuasimode::TESearchQuasimode( TEView&  view,
 	                                      bool     backward ) : itsView           ( view     ),
@@ -327,41 +408,10 @@ namespace Pedestal
 		
 		N::RGBForeColor( gRGBBlack );
 		
-		//view.SetSelection( itsSavedSelection.start, itsSavedSelection.end );
-	}
-	
-	static short TESearch( TEHandle hTE, short position, const std::string& pattern, bool backward )
-	{
-		short teLength = hTE[0]->teLength;
-		
-		Handle hText = hTE[0]->hText;
-		
-		short hLength = GetHandleSize( hText );
-		
-		short maxPosition = hLength - pattern.size();
-		
-		bool couldFitAtPosition = position <= maxPosition;
-		
-		short limit = backward ? -1 : maxPosition + 1;
-		
-		short increment = backward ? -1 : 1;
-		
-		if ( pattern.size() <= 1 )
+		if ( GetTESelection( itsView.Get() ) != itsSavedSelection )
 		{
-			position += increment;
+			gLastSearchPattern = itsPattern;
 		}
-		
-		while ( position != limit )
-		{
-			if ( std::memcmp( hText[0] + position, pattern.data(), pattern.size() ) == 0 )
-			{
-				return position;
-			}
-			
-			position += increment;
-		}
-		
-		return -1;
 	}
 	
 	static char GetTranslatedKeyFromEvent( const EventRecord& event, UInt16 ignoredModifierMask )
@@ -388,6 +438,11 @@ namespace Pedestal
 	
 	bool TESearchQuasimode::KeyDown( const EventRecord& event )
 	{
+		if ( event.what == autoKey )
+		{
+			return true;  // eat auto-repeat keys
+		}
+		
 		UInt16 ignoredModifierMask = itSearchesBackward ? shiftKey : rightShiftKey;
 		
 		const char c = GetTranslatedKeyFromEvent( event, ignoredModifierMask );
@@ -419,7 +474,7 @@ namespace Pedestal
 			
 			itsMatches.push_back( selection );
 			
-			short match = TESearch( itsView.Get(), selection.start, itsPattern, itSearchesBackward );
+			short match = TESearch( itsView.Get(), selection.start, itsPattern, itSearchesBackward, itsPattern.size() > 1 );
 			
 			if ( match == -1 )
 			{
