@@ -294,11 +294,11 @@ namespace Pedestal
 	class TESearchQuasimode : public Quasimode
 	{
 		private:
-			TEView&               itsView;
-			bool                  itSearchesBackward;
-			TESelection           itsSavedSelection;
-			std::vector< short >  itsMatches;
-			std::string           itsPattern;
+			TEView&                     itsView;
+			bool                        itSearchesBackward;
+			TESelection                 itsSavedSelection;
+			std::vector< TESelection >  itsMatches;
+			std::string                 itsPattern;
 		
 		public:
 			TESearchQuasimode( TEView& view, bool backward );
@@ -400,13 +400,13 @@ namespace Pedestal
 			}
 			else
 			{
-				short match = itsMatches.back();
+				TESelection match = itsMatches.back();
 				
 				itsMatches.pop_back();
 				
 				itsPattern.pop_back();
 				
-				itsView.SetSelection( match, match );
+				itsView.SetSelection( match.start, match.end );
 			}
 		}
 		else
@@ -415,9 +415,11 @@ namespace Pedestal
 			
 			short position = itsView.Get()[0]->selStart;
 			
-			itsMatches.push_back( position );
+			TESelection selection = GetTESelection( itsView.Get() );
 			
-			short match = TESearch( itsView.Get(), position, itsPattern, itSearchesBackward );
+			itsMatches.push_back( selection );
+			
+			short match = TESearch( itsView.Get(), selection.start, itsPattern, itSearchesBackward );
 			
 			if ( match == -1 )
 			{
@@ -427,7 +429,7 @@ namespace Pedestal
 			}
 			else
 			{
-				itsView.SetSelection( match, match );
+				itsView.SetSelection( match, match + itsPattern.size() );
 			}
 		}
 		
