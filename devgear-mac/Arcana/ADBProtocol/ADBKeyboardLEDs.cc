@@ -3,6 +3,8 @@
  *	==================
  */
 
+#if !TARGET_API_MAC_CARBON
+
 #include "ADBKeyboardLEDs.hh"
 
 
@@ -36,4 +38,6 @@ void SetLEDs( N::ADBAddress address, UInt8 leds )
 
 	SetADBRegister( address, kLEDRegisterOffset, reg );
 }
+
+#endif
 

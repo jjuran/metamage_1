@@ -3,6 +3,8 @@
  *	==============
  */
 
+#if !TARGET_API_MAC_CARBON
+
 #include "ADBProtocol.hh"
 
 
@@ -84,4 +86,6 @@ void SetDeviceHandlerID( N::ADBAddress address, UInt8 id )
 
 	SetADBRegister( address, kDeviceHandlerIDRegisterOffset, reg );
 }
+
+#endif
 

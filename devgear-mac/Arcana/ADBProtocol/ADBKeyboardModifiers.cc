@@ -3,6 +3,8 @@
  *	=======================
  */
 
+#if !TARGET_API_MAC_CARBON
+
 #include "ADBKeyboardModifiers.hh"
 
 
@@ -26,4 +28,6 @@ void SetKeyboardModifiersDistinctness( Nitrogen::ADBAddress address, bool distin
 	
 	SetDeviceHandlerID( address, id );
 }
+
+#endif
 
