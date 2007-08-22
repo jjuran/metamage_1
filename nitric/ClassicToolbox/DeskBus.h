@@ -63,7 +63,26 @@ namespace Nitrogen
 	
 	class GetIndADB_Failed {};
 	
+	struct GetIndADB_Result
+	{
+		ADBAddress    address;
+		ADBDataBlock  data;
+		
+		operator ADBAddress() const  { return address; }
+		
+		operator const ADBDataBlock&() const  { return data; }
+	};
+	
 	ADBAddress GetIndADB( ADBDataBlock& data, short index );
+	
+	inline GetIndADB_Result GetIndADB( short index )
+	{
+		GetIndADB_Result result;
+		
+		result.address = GetIndADB( result.data, index );
+		
+		return result;
+	}
 	
 	ADBDataBlock GetADBInfo( ADBAddress adbAttr );
 	
@@ -76,7 +95,70 @@ namespace Nitrogen
 		return NewUPP< ADBCompletionUPP >( p );
 	}
 	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	namespace Detail
+	{
+		
+		#pragma parameter __D0 GetA0
+		
+		inline ::Ptr GetA0() = { 0x2008 };
+		
+		#pragma parameter __D0 GetA2
+		
+		inline ::Ptr GetA2() = { 0x200a };
+		
+		#pragma parameter __D0 GetD0
+		
+		inline long GetD0() = { 0x4e71 };
+		
+		
+		typedef pascal void (*StackBased_ADBCompletionProcPtr)( ::Ptr buffer, ::Ptr refCon, long command );
+		
+		template < StackBased_ADBCompletionProcPtr proc >
+		pascal void CallStackBasedADBCompletionProcPtr()
+		{
+			/*
+			asm
+			{
+				MOVE.L   A0, -(SP) ;  // buffer
+				MOVE.L   A2, -(SP) ;  // refCon
+				MOVE.L   D0, -(SP) ;  // command
+			}
+			
+			// I would have made the whole function asm,
+			// but I didn't figure out how to get proc into a register.
+			*/
+			
+			proc( GetA0(), GetA2(), GetD0() );
+		}
+	}
+	
+	template < Detail::StackBased_ADBCompletionProcPtr proc >
+	struct ADBCompletionProcPtr_Traits
+	{
+		static ADBCompletionProcPtr GetProcPtr()
+		{
+			return &Detail::CallStackBasedADBCompletionProcPtr< proc >;
+		}
+	};
+	
+#else
+	
+	template < ADBCompletionProcPtr proc >
+	struct ADBCompletionProcPtr_Traits
+	{
+		static ADBCompletionProcPtr GetProcPtr()
+		{
+			return proc;
+		}
+	};
+	
+#endif
+	
 	inline void DisposeADBCompletionUPP( Nucleus::Owned< ADBCompletionUPP > )  {}
+	
+#if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
 	
 	inline void InvokeADBCompletionUPP( Ptr               buffer,
 	                                    Ptr               refCon,
@@ -85,6 +167,8 @@ namespace Nitrogen
 	{
 		userUPP( buffer, refCon, command );
 	}
+	
+#endif
 	
 }
 
