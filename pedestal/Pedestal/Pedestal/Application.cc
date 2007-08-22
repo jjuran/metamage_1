@@ -24,9 +24,13 @@
 #include "Nitrogen/Sound.h"
 #include "Nitrogen/Threads.h"
 
+#if !TARGET_API_MAC_CARBON
+
 // Arcana
 #include "ADBKeyboardLEDs.hh"
 #include "ADBKeyboardModifiers.hh"
+
+#endif
 
 // Pedestal
 #include "Pedestal/ApplicationContext.hh"
@@ -101,8 +105,12 @@ namespace Pedestal
 	
 	static RunState gRunState;
 	
+#if !TARGET_API_MAC_CARBON
+	
 	// ADB address of the keyboard from the last key-down event.
 	static N::ADBAddress gLastKeyboard;
+	
+#endif
 	
 	static bool gKeyboardConfigured      = false;
 	static bool gNeedToConfigureKeyboard = false;
@@ -164,6 +172,8 @@ namespace Pedestal
 		return handled;
 	}
 	
+#if !TARGET_API_MAC_CARBON
+	
 	inline N::ADBAddress GetKeyboardFromEvent( const EventRecord& event )
 	{
 		return N::ADBAddress( (event.message & adbAddrMask) >> 16 );
@@ -179,6 +189,8 @@ namespace Pedestal
 		
 		gKeyboardConfigured = active;
 	}
+	
+#endif
 	
 	static void Suspend()
 	{
@@ -443,7 +455,11 @@ namespace Pedestal
 			return;
 		}
 		
+	#if !TARGET_API_MAC_CARBON
+		
 		gLastKeyboard = GetKeyboardFromEvent( event );
+		
+	#endif
 		
 		const char c = event.message & charCodeMask;
 		
@@ -702,6 +718,8 @@ namespace Pedestal
 	
 	static void CheckKeyboard()
 	{
+	#if !TARGET_API_MAC_CARBON
+		
 		if ( gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
 		{
 			// Don't reconfigure the keyboard if certain modifiers are down,
@@ -719,6 +737,8 @@ namespace Pedestal
 				gNeedToConfigureKeyboard = false;
 			}
 		}
+		
+	#endif
 	}
 	
 	static void CheckShiftSpaceQuasiMode( const EventRecord& event )
