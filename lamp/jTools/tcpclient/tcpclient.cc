@@ -78,7 +78,7 @@ int O::Main( int argc, char const *const argv[] )
 	const char* hostname = argv[1];
 	const char* port_str = argv[2];
 	
-	char const *const *program_argv = argv + 3;
+	char *const *program_argv = (char**) argv + 3;
 	
 	P7::FileDescriptor sock = Connect( hostname, port_str );
 	
