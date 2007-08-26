@@ -64,7 +64,7 @@ static P7::FileDescriptor Connect( const char* hostname, const char* port_str )
 	return result;
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	if ( argc < 4 )
 	{
@@ -78,7 +78,7 @@ int O::Main( int argc, char const *const argv[] )
 	const char* hostname = argv[1];
 	const char* port_str = argv[2];
 	
-	char *const *program_argv = (char**) argv + 3;
+	char *const *program_argv = argv + 3;
 	
 	P7::FileDescriptor sock = Connect( hostname, port_str );
 	
