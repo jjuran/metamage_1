@@ -38,11 +38,11 @@ namespace Orion
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
-	extern "C" int main( int argc, const char* const argv[] );
+	extern "C" int main( int argc, argv_t argv );
 	
 #pragma export on
 	
-	int main( int argc, const char* const argv[] )
+	int main( int argc, argv_t argv )
 	{
 		try
 		{

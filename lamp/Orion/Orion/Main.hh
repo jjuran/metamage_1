@@ -25,7 +25,17 @@ namespace Orion
 	
 	inline void ThrowExitStatus( int status )  { throw ExitStatus( status ); }
 	
-	int Main( int argc, const char *const argv[] );
+#if defined( __GNUC__ ) || defined( __MACH__ )
+	
+	typedef char       *const argv_t[];
+	
+#else
+	
+	typedef char const *const argv_t[];
+	
+#endif
+	
+	int Main( int argc, argv_t argv );
 	
 }
 
