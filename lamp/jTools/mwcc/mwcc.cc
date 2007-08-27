@@ -190,7 +190,7 @@ namespace jTools
 		return "-prefix " + QuotedMacPathFromPOSIXPath( pathname );
 	}
 	
-	static int Main( int argc, argv_t argv )
+	static int Main( int argc, iota::argv_t argv )
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		

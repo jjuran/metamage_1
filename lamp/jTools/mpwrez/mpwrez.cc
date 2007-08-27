@@ -70,7 +70,7 @@ namespace jTools
 	
 	std::vector< const char* > gIncludeDirs;
 	
-	static int Main( int argc, argv_t argv )
+	static int Main( int argc, iota::argv_t argv )
 	{
 		std::string command = "Rez";
 		std::string rezArgs;
