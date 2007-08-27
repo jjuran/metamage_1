@@ -15,19 +15,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-// Nitrogen
-#include "Nitrogen/OpenTransportProviders.h"
-
 // Orion
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
 
 
-namespace N = Nitrogen;
 namespace O = Orion;
 
 
-static int ForkCommand( int client, char *const argv[] )
+static int ForkCommand( int client, iota::argv_t argv )
 {
 	int pid = vfork();
 	
@@ -52,7 +48,7 @@ static int ForkCommand( int client, char *const argv[] )
 	return pid;
 }
 
-static void ServiceClient( int client, char *const argv[] )
+static void ServiceClient( int client, iota::argv_t argv )
 {
 	int pid = ForkCommand( client, argv );
 	
@@ -63,7 +59,7 @@ static void ServiceClient( int client, char *const argv[] )
 	pid = waitpid( pid, &stat, 0 );
 }
 
-static void WaitForClients( int listener, char *const argv[] )
+static void WaitForClients( int listener, iota::argv_t argv )
 {
 	struct sockaddr_in from;
 	socklen_t len = sizeof from;
@@ -91,7 +87,7 @@ static void WaitForClients( int listener, char *const argv[] )
 	}
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	if ( argc <= 2 )
 	{
@@ -103,12 +99,11 @@ int O::Main( int argc, char const *const argv[] )
 	
 	const char* command = argv[ 2 ];
 	
-	N::InetHost ip( kOTAnyInetAddress );
+	struct in_addr ip = { 0 };
 	
 	Io::Out << "Daemon starting up...";
-	//ForceUpdate();
 	
-	int listener = socket( PF_INET, SOCK_STREAM, INET_TCP );
+	int listener = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 	
 	if ( listener == -1 )
 	{
@@ -119,8 +114,8 @@ int O::Main( int argc, char const *const argv[] )
 	struct sockaddr_in inetAddress;
 	
 	inetAddress.sin_family = AF_INET;
-	inetAddress.sin_port = port;
-	inetAddress.sin_addr.s_addr = ip;
+	inetAddress.sin_port = htons( port );
+	inetAddress.sin_addr = ip;
 	
 	int result = bind( listener, (const sockaddr*)&inetAddress, sizeof (sockaddr_in) );
 	
@@ -140,7 +135,7 @@ int O::Main( int argc, char const *const argv[] )
 	
 	Io::Out << " done.\n";
 	
-	WaitForClients( listener, const_cast< char* const* >( argv ) + 2 );
+	WaitForClients( listener, argv + 2 );
 	
 	result = close( listener );
 	
