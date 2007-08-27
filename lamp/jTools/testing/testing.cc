@@ -90,7 +90,6 @@
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace P7 = POSeven;
-namespace FS = FileSystem;
 namespace NX = NitrogenExtras;
 namespace O = Orion;
 
@@ -1085,7 +1084,7 @@ static void MakeMap()
 	}
 }
 
-int O::Main(int argc, const char *const argv[])
+int O::Main( int argc, argv_t argv )
 {
 	//Assert_(argc > 0);
 	
