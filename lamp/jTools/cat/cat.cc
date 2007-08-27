@@ -33,7 +33,7 @@ static bool PathnameMeansStdIn( const char* pathname )
 	       && pathname[1] == '\0';
 }
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	// Check for sufficient number of args
 	if ( argc < 2 )

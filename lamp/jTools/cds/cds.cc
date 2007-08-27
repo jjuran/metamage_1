@@ -239,7 +239,7 @@ namespace CDS
 #endif
 
 
-int Orion::Main( int argc, const char *const argv[] )
+int Orion::Main( int argc, argv_t argv )
 {
 	ASSERT( argc > 0 );
 	

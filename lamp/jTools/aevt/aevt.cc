@@ -126,7 +126,7 @@ namespace jTools
 	// shell$ aevt -m Otter -a Genie |gan Exec '----':[“shutdown”,“-h”]
 	// shell$ aevt -s hhgg aevt quit
 	
-	static int Main( int argc, const char *const argv[] )
+	static int Main( int argc, argv_t argv )
 	{
 		std::string url, host, machine, app, sig;
 		
@@ -203,7 +203,7 @@ namespace jTools
 	
 }
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	return jTools::Main( argc, argv );
 }

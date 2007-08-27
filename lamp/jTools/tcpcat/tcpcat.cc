@@ -1,6 +1,6 @@
-/*	========
- *	htget.cc
- *	========
+/*	=========
+ *	tcpcat.cc
+ *	=========
  */
 
 // Standard C++
@@ -45,7 +45,7 @@ static struct in_addr ResolveHostname( const char* hostname )
 	return addr;
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	if ( argc != 3 )
 	{
