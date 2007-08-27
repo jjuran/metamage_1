@@ -224,13 +224,26 @@ namespace Orion
 				{
 					// Short format option
 					
-					while ( *++token != '\0' )
+					++token;
+					
+					while ( *token != '\0' )
 					{
 						std::string opt = "-";
 						
-						opt += *token;
+						opt += *token++;
 						
-						SetOption( opt, it );
+						const OptionBinding& binding = FindOption( opt );
+						
+						if ( binding.ParameterExpected() )
+						{
+							binding.Set( *token != '\0' ? token : *++it );
+							
+							break;
+						}
+						else
+						{
+							binding.Set();
+						}
 					}
 					
 					continue;
