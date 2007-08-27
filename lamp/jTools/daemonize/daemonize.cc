@@ -5,6 +5,7 @@
 
 // Standard C/C++
 #include <cstdio>
+#include <cstring>
 
 // Standard C
 #include <errno.h>
@@ -14,12 +15,17 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// iota
+#include "iota/argv.hh"
+#include "iota/strings.hh"
 
-#define STR_LEN( str )  "" str, (sizeof str - 1)
+// kernelramp
+#include "fork_and_exit.hh"
+
 
 #pragma export on
 
-int main( int argc, char const *const argv[] )
+int main( int argc, iota::argv_t argv )
 {
 	if ( argc < 2 )
 	{
