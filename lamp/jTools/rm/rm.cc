@@ -5,6 +5,9 @@
 
 // Standard C/C++
 #include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 // POSIX
 #include <unistd.h>
@@ -19,7 +22,7 @@ namespace O = Orion;
 #define STR_LEN( string )  "" string, (sizeof string - 1)
 
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	// Check for sufficient number of args
 	if ( argc < 2 )
@@ -29,8 +32,7 @@ int O::Main( int argc, const char *const argv[] )
 		return 1;
 	}
 	
-	// Print each file in turn.  Return whether any errors occurred.
-	int fail = 0;
+	int exit_status = EXIT_SUCCESS;
 	
 	for ( int index = 1;  index < argc;  ++index )
 	{
@@ -38,9 +40,14 @@ int O::Main( int argc, const char *const argv[] )
 		
 		int unlinked = unlink( pathname );
 		
-		fail += unlinked != 0;
+		if ( unlinked == -1 )
+		{
+			exit_status = EXIT_FAILURE;
+			
+			std::fprintf( stderr, "rm: %s: %s\n", pathname, std::strerror( errno ) );
+		}
 	}
 	
-	return (fail == 0) ? 0 : 1;
+	return exit_status;
 }
 
