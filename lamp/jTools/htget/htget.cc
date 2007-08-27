@@ -431,7 +431,7 @@ static void WriteLine( P7::FileDescriptor stream, const std::string& text )
 	io::write( stream, line.data(), line.size() );
 }
 
-int O::Main( int argc, argv_t argv )
+int O::Main( int argc, char const *const argv[] )
 {
 	bool sendHEADRequest = false;
 	
