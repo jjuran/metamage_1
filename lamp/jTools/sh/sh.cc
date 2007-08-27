@@ -58,7 +58,7 @@ struct OnExit
 	}
 };
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	setenv( "PS1", "$ ", 0 );
 	setenv( "PS2", "> ", 0 );

@@ -38,7 +38,7 @@ static void PrintMX( const InetMailExchange& mx )
 	//Io::Out << mx.exchange << " A " << ip << "\n";
 }
 
-int O::Main(int argc, const char *const argv[])
+int O::Main( int argc, argv_t argv )
 {
 	if ( argc < 2 )  return 1;
 	

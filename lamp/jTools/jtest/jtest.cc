@@ -451,7 +451,7 @@ static void RunTest( TestCase& test )
 	(void) write( STDOUT_FILENO, result.data(), result.size() );
 }
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	const char* jtest = argv[0];
 	

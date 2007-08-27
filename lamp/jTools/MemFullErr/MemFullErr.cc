@@ -13,7 +13,7 @@
 namespace O = Orion;
 
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	throw Nitrogen::MemFullErr();
 }

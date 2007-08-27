@@ -135,7 +135,7 @@ static void ReportMapping( const ICMapEntry* entry )
 	std::printf( "v%d: %s - %s: %s\n", version, extension, creatorAppName, MIMEType );
 }
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	

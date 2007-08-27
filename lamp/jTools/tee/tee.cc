@@ -20,7 +20,7 @@ namespace P7 = POSeven;
 namespace O = Orion;
 
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	// Check for correct number of args
 	if ( argc != 2 )

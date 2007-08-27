@@ -34,7 +34,7 @@ static void iterate_dir( const char* pathname )
 	closedir( iter );
 }
 
-int O::Main(int argc, const char *const argv[])
+int O::Main( int argc, argv_t argv )
 {
 	if ( argc > 1 )
 	{

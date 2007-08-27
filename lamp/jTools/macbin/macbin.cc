@@ -106,7 +106,7 @@ static void BlockWrite( int fd, const void* data, std::size_t byteCount )
 		}
 	}
 	
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	if ( argc < 3 )
 	{

@@ -161,7 +161,7 @@ static void MyOSStatusLogger( N::OSStatus error, const char *file, int line )
 	--level;
 }
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	
