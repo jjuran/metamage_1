@@ -4,6 +4,8 @@
  */
 
 // Standard C++
+#include <functional>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -154,7 +156,47 @@ static NN::Owned< N::OSASpec > LoadScriptFile( const FSSpec& scriptFile )
 	return NN::Owned< N::OSASpec >();
 }
 
-int O::Main( int argc, const char *const argv[] )
+
+inline std::size_t total_string_size( std::size_t total, const std::string& string )
+{
+	return total + string.size();
+}
+
+static std::string JoinScriptPieces( const std::vector< std::string >& pieces )
+{
+	ASSERT( !pieces.empty() );
+	
+	std::size_t total_length = std::accumulate( pieces.begin(),
+	                                            pieces.end(),
+	                                            pieces.size(),  // add 1 byte for each CR
+	                                            std::ptr_fun( total_string_size ) );
+	
+	std::string result;
+	
+	result.resize( total_length );
+	
+	std::string::iterator there = result.begin();
+	
+	typedef std::vector< std::string >::const_iterator Iter;
+	
+	std::vector< std::string >::const_iterator it = pieces.begin();
+	
+	for ( Iter it  = pieces.begin();  it != pieces.end();  ++it )
+	{
+		const std::string& string = *it;
+		
+		std::copy( string.begin(), string.end(), there );
+		
+		there += string.size();
+		
+		*there++ = '\r';
+	}
+	
+	return result;
+}
+
+
+int O::Main( int argc, argv_t argv )
 {
 	std::vector< std::string > inlineScriptPieces;
 	
@@ -179,8 +221,7 @@ int O::Main( int argc, const char *const argv[] )
 	
 	if ( !inlineScriptPieces.empty() )
 	{
-		// FIXME:  accumulate -e
-		script = CompileSource( N::AECreateDesc< N::typeChar >( inlineScriptPieces[ 0 ] ) );
+		script = CompileSource( N::AECreateDesc< N::typeChar >( JoinScriptPieces( inlineScriptPieces ) ) );
 	}
 	else
 	{
