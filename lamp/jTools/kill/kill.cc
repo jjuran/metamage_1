@@ -54,7 +54,7 @@ int Orion::Main( int argc, char const *const argv[] )
 	
 	if ( killed == -1 )
 	{
-		std::fprintf( stderr, "%s: %s: %s\n", argv[0], argp[1], std::strerror( errno ) );
+		std::fprintf( stderr, "kill: %s: %s\n", argp[1], std::strerror( errno ) );
 		
 		return 1;
 	}
