@@ -15,6 +15,7 @@
 
 // POSIX
 #include <arpa/inet.h>
+#include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -31,6 +32,7 @@
 #include "HexStrings.hh"
 
 // Orion
+#include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
 
@@ -50,7 +52,10 @@ using namespace io::path_descent_operators;
 using BitsAndBytes::EncodeAsHex;
 
 
-static int ForkExecWait( const char* path, char const* const argv[] )
+static const char* gDocumentRoot = "/var/www";
+
+
+static int ForkExecWait( const char* path, char const* const argv[], const std::string& partialData )
 {
 	int pid = vfork();
 	
@@ -62,6 +67,44 @@ static int ForkExecWait( const char* path, char const* const argv[] )
 	
 	if ( pid == 0 )
 	{
+		if ( !partialData.empty() )
+		{
+			int pipe_ends[2];
+			
+			pipe( pipe_ends );
+			
+			int reader = pipe_ends[0];
+			int writer = pipe_ends[1];
+			
+			write( writer, partialData.data(), partialData.size() );
+			
+			enum { size = 4096 };
+			
+			char data[ size ];
+			
+			int bytes = 0;
+			
+			int off = 0;
+			
+			ioctl( 0, FIONBIO, &off );
+			
+			while ( (bytes = read( 0, data, size )) > 0 )
+			{
+				write( writer, data, bytes );
+			}
+			
+			if ( bytes == -1 )
+			{
+				std::perror( "read" );
+			}
+			
+			close( writer );
+			
+			dup2( reader, 0 );  // read from pipe instead of socket
+			
+			close( reader );
+		}
+		
 		int exec_result = execv( path, const_cast< char* const* >( argv ) );
 		
 		if ( exec_result == -1 )
@@ -151,6 +194,11 @@ void HTTPRequestData::Read()
 					partialData = partialData.substr( cr + 2, partialData.npos );
 					cr = partialData.find( '\r' );
 				}
+			}
+			
+			if ( partialData.size() >= 2 )
+			{
+				partialData = partialData.substr( 2, partialData.npos );
 			}
 		}
 	}
@@ -287,8 +335,6 @@ class ResourceParser
 
 static std::string LocateResource( const std::string& resource )
 {
-	std::string documentRoot = "/var/www";
-	
 	ResourceParser parser( resource );
 	
 	// FIXME:  This can be an algorithm
@@ -304,7 +350,7 @@ static std::string LocateResource( const std::string& resource )
 		}
 	}
 	
-	std::string pathname = documentRoot + resource;
+	std::string pathname = gDocumentRoot + resource;
 	
 	P7::Stat( pathname );  // Throw if nonexistent
 	
@@ -447,7 +493,7 @@ static void SendResponse( const HTTPRequestData& request )
 		
 		char const* const argv[] = { path, NULL };
 		
-		int stat = ForkExecWait( path, argv );
+		int stat = ForkExecWait( path, argv, request.partialData );
 	}
 	else
 	{
@@ -515,8 +561,12 @@ static void SendResponse( const HTTPRequestData& request )
 	}
 }
 
-int O::Main( int /*argc*/, char const* const /*argv*/[] )
+int O::Main( int argc, argv_t argv )
 {
+	O:BindOption( "--doc-root", gDocumentRoot );
+	
+	O::GetOptions( argc, argv );
+	
 	sockaddr_in peer;
 	socklen_t peerlen = sizeof peer;
 	
