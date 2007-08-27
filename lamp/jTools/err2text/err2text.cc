@@ -210,7 +210,7 @@ std::string Errortable::Lookup( OSErr err )
 }
 
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	Errortable table;
 	

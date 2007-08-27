@@ -431,7 +431,7 @@ static void WriteLine( P7::FileDescriptor stream, const std::string& text )
 	io::write( stream, line.data(), line.size() );
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	bool sendHEADRequest = false;
 	
@@ -525,7 +525,11 @@ int O::Main( int argc, char const *const argv[] )
 	WriteLine( sock, "Host: " + hostname );
 	WriteLine( sock, "" );
 	
+	shutdown( sock, SHUT_WR );
+	
 	gTransaction.Get()->Download();
+	
+	shutdown( sock, SHUT_RD );
 	
 	return 0;
 }

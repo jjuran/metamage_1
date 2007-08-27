@@ -43,7 +43,7 @@ static const char* Basename( const char* pathname )
 }
 
 
-int O::Main(int argc, const char *const argv[])
+int O::Main( int argc, argv_t argv )
 {
 	int fail = 0;
 	
