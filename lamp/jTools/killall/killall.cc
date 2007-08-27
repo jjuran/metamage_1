@@ -121,7 +121,7 @@ int Orion::Main( int argc, char const *const argv[] )
 		
 		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
 		
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	int kills = killall( argp[ 1 ], sig_number );
@@ -129,9 +129,10 @@ int Orion::Main( int argc, char const *const argv[] )
 	if ( kills == 0 )
 	{
 		std::fprintf( stderr, "%s: %s\n", argp[1], "no process killed" );
-		return 1;
+		
+		return EXIT_FAILURE;
 	}
 	
-	return kills > 0 ? 0 : 1;
+	return kills > 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
