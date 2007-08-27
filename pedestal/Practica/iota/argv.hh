@@ -12,13 +12,16 @@ namespace iota
 	
 #if defined( __GNUC__ ) || defined( __MACH__ )
 	
-	typedef char       *const argv_t[];
+	typedef char       *arg_t;
 	
 #else
 	
-	typedef char const *const argv_t[];
+	typedef char const *arg_t;
 	
 #endif
+	
+	typedef arg_t const *argp_t;
+	typedef arg_t const  argv_t[];
 	
 }
 
