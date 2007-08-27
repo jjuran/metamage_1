@@ -459,7 +459,7 @@ namespace Pedestal
 				
 				itsMatches.pop_back();
 				
-				itsPattern.pop_back();
+				itsPattern.resize( itsPattern.size() - 1 );  // pop_back() isn't standard
 				
 				itsView.SetSelection( match.start, match.end );
 			}
