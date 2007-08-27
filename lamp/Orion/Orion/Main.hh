@@ -6,6 +6,8 @@
 #ifndef ORION_MAIN_HH
 #define ORION_MAIN_HH
 
+#include "iota/argv.hh"
+
 
 namespace Orion
 {
@@ -25,15 +27,7 @@ namespace Orion
 	
 	inline void ThrowExitStatus( int status )  { throw ExitStatus( status ); }
 	
-#if defined( __GNUC__ ) || defined( __MACH__ )
-	
-	typedef char       *const argv_t[];
-	
-#else
-	
-	typedef char const *const argv_t[];
-	
-#endif
+	using iota::argv_t;
 	
 	int Main( int argc, argv_t argv );
 	
