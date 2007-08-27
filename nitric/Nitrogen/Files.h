@@ -1741,6 +1741,10 @@ namespace Nitrogen
 		
 		typedef FSRef optimized_directory_spec;
 		
+		typedef const HFSUniStr255& filename_parameter;
+		
+		typedef HFSUniStr255 filename_result;
+		
 		typedef Nitrogen::FSForkRefNum stream;
 		
 		typedef ::ByteCount byte_count;
