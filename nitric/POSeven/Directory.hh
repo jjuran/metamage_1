@@ -194,6 +194,33 @@ namespace POSeven
 	
 }
 
+namespace poseven
+{
+	
+	typedef POSeven::DirHandle dir_t;
+	
+	inline Nucleus::Owned< dir_t > opendir( const char* pathname )
+	{
+		return POSeven::OpenDir( pathname );
+	}
+	
+	inline Nucleus::Owned< dir_t > opendir( const std::string& pathname )
+	{
+		return POSeven::OpenDir( pathname );
+	}
+	
+	inline void closedir( Nucleus::Owned< dir_t > dir )
+	{
+		return POSeven::CloseDir( dir );
+	}
+	
+	inline const dirent& readdir( dir_t dir )
+	{
+		return POSeven::ReadDir( dir );
+	}
+	
+}
+
 namespace io
 {
 	

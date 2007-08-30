@@ -70,6 +70,31 @@ namespace POSeven
 	
 }
 
+namespace poseven
+{
+	
+	inline bool stat( const char* name, struct stat& sb )
+	{
+		return POSeven::Stat( name, sb );
+	}
+	
+	inline struct stat stat( const char* name )
+	{
+		return POSeven::Stat( name );
+	}
+	
+	inline bool stat( const std::string& name, struct stat& sb )
+	{
+		return POSeven::Stat( name, sb );
+	}
+	
+	inline struct stat stat( const std::string& name )
+	{
+		return POSeven::Stat( name );
+	}
+	
+}
+
 namespace io
 {
 	

@@ -31,6 +31,16 @@ namespace POSeven
 	
 }
 
+namespace poseven
+{
+	
+	inline Nucleus::Owned< fd_t > open( const char* name, int oflag, int mode = 0 )
+	{
+		return POSeven::Open( name, oflag, mode );
+	}
+	
+}
+
 namespace io
 {
 	

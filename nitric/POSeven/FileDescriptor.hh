@@ -100,6 +100,39 @@ namespace POSeven
 	
 }
 
+namespace poseven
+{
+	
+	typedef POSeven::FileDescriptor fd_t;
+	
+	namespace constants
+	{
+		const static fd_t stdin_fileno  = POSeven::kStdIn_FileNo;
+		const static fd_t stdout_fileno = POSeven::kStdOut_FileNo;
+		const static fd_t stderr_fileno = POSeven::kStdErr_FileNo;
+	}
+	
+	using namespace constants;
+	
+	inline void close( Nucleus::Owned< fd_t > fd )
+	{
+		POSeven::Close( fd );
+	}
+	
+	inline ssize_t read( fd_t fd, char* buffer, std::size_t bytes_requested )
+	{
+		return POSeven::Read( fd, buffer, bytes_requested );
+	}
+	
+	inline ssize_t write( fd_t fd, const char* buffer, std::size_t bytes_requested )
+	{
+		return POSeven::Write( fd, buffer, bytes_requested );
+	}
+	
+	typedef POSeven::POSIX_Io_Details posix_io_details;
+	
+}
+
 namespace io
 {
 	

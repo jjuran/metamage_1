@@ -52,6 +52,31 @@ namespace POSeven
 	
 }
 
+namespace poseven
+{
+	
+	inline void unlink( const char* pathname )
+	{
+		POSeven::Unlink( pathname );
+	}
+	
+	inline void unlink( const std::string& pathname )
+	{
+		POSeven::Unlink( pathname );
+	}
+	
+	inline void rmdir( const char* pathname )
+	{
+		POSeven::RemoveDir( pathname );
+	}
+	
+	inline void rmdir( const std::string& pathname )
+	{
+		POSeven::RemoveDir( pathname );
+	}
+	
+}
+
 namespace io
 {
 	
