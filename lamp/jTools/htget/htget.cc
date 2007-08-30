@@ -35,6 +35,7 @@
 
 namespace NN = Nucleus;
 namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -44,8 +45,8 @@ namespace htget
 	class HTTPClientTransaction
 	{
 		private:
-			P7::FileDescriptor itsReceiver;
-			P7::FileDescriptor itsSocket;
+			p7::fd_t itsReceiver;
+			p7::fd_t itsSocket;
 			std::string itsReceivedData;
 			std::size_t itsContentLength;
 			std::size_t itsContentBytesReceived;
@@ -57,10 +58,10 @@ namespace htget
 			bool IsComplete();
 		
 		public:
-			HTTPClientTransaction( P7::FileDescriptor  sock,
+			HTTPClientTransaction( p7::fd_t            sock,
 			                       const sockaddr_in&  serverAddr )
 			:
-				itsReceiver            ( P7::kStdOut_FileNo ),
+				itsReceiver            ( p7::stdout_fileno ),
 				itsSocket              ( sock ),
 				itsContentLength       ( 0 ),
 				itsContentBytesReceived( 0 ),
@@ -253,7 +254,7 @@ namespace htget
 				
 				if ( gSaveToFile )
 				{
-					itsReceiver = P7::Open( gSaveLocation.c_str(), O_WRONLY | O_CREAT | O_EXCL, 0644 ).Release();
+					itsReceiver = p7::open( gSaveLocation.c_str(), O_WRONLY | O_CREAT | O_EXCL, 0644 ).Release();
 				}
 				
 				// Anything left over is content
@@ -325,7 +326,7 @@ namespace htget
 	
 	
 	static NN::Owned< HTTPClientTransaction* >
-	NewTransaction( P7::FileDescriptor  socket,
+	NewTransaction( p7::fd_t            socket,
 	                const sockaddr_in&  addr )
 	{
 		return NN::Owned< HTTPClientTransaction* >::Seize
@@ -366,7 +367,7 @@ static struct in_addr ResolveHostname( const char* hostname )
 	return addr;
 }
 
-static void WriteLine( P7::FileDescriptor stream, const std::string& text )
+static void WriteLine( p7::fd_t stream, const std::string& text )
 {
 	std::string line = text + "\r\n";
 	
@@ -432,7 +433,7 @@ int O::Main( int argc, argv_t argv )
 		gSaveLocation = DocName( urlPath );
 	}
 	
-	P7::FileDescriptor sock = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
+	p7::fd_t sock = p7::fd_t( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 	
 	if ( scheme == "http" )
 	{
