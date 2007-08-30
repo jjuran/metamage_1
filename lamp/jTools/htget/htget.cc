@@ -377,9 +377,17 @@ int O::Main( int argc, argv_t argv )
 {
 	bool sendHEADRequest = false;
 	
-	O::BindOption( "--headers", gDumpHeaders    );
-	O::BindOption( "--head",    sendHEADRequest );
-	O::BindOption( "--save",    gSaveToFile     );
+	O::BindOption( "-i", gDumpHeaders    );
+	O::BindOption( "-I", sendHEADRequest );
+	O::BindOption( "-O", gSaveToFile     );
+	
+	O::AliasOption( "-i", "--headers" );
+	O::AliasOption( "-i", "--include" );
+	
+	O::AliasOption( "-I", "--head" );
+	
+	O::AliasOption( "-O", "--remote-name" );
+	O::AliasOption( "-O", "--save"        );
 	
 	O::GetOptions( argc, argv );
 	
