@@ -18,8 +18,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-// Nitrogen
-#include "Nitrogen/Files.h"
+// Nucleus
+#include "Nucleus/NAssert.h"
 
 // POSeven
 #include "POSeven/Open.hh"
@@ -27,25 +27,15 @@
 // Io
 #include "Io/TextInput.hh"
 
-// BitsAndBytes
-#include "HexStrings.hh"
-
-// Kerosene
-#if TARGET_RT_MAC_CFM
-#include "SystemCalls.hh"
-#endif
-
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 #include "Orion/StandardIO.hh"
 
 
-namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace P7 = POSeven;
 namespace O = Orion;
-namespace Bits = BitsAndBytes;
 
 
 namespace htget
@@ -187,18 +177,6 @@ namespace htget
 		(void) IsComplete();
 	}
 	
-	struct TypeAndCreator
-	{
-		N::OSType type;
-		N::OSType creator;
-		
-		TypeAndCreator( N::OSType type, N::OSType creator )
-		:
-			type   ( type    ),
-			creator( creator )
-		{}
-	};
-	
 	static std::string GetHTTPHeader( const std::string&  headerName,
 	                                  const std::string&  allHeaders )
 	{
@@ -238,30 +216,6 @@ namespace htget
 		return header.substr( valuePos, header.npos );
 	}
 	
-	static N::OSType MakeOSType( const std::string& hexCodes )
-	{
-		return NN::Convert< N::OSType >( Bits::DecodeHex( hexCodes ) );
-	}
-	
-	static NN::Owned< P7::FileDescriptor > CreateAndOpenFileWithSignature( const std::string& pathname, const TypeAndCreator& sig )
-	{
-		int open_flags = O_WRONLY;
-		
-	#if 0 && TARGET_RT_MAC_CFM
-		
-		N::FSpCreate( Path2FSS( pathname ),
-		              sig.creator,
-		              sig.type );
-		
-	#else
-		
-		open_flags |= O_CREAT | O_EXCL;
-		
-	#endif
-		
-		return P7::Open( pathname.c_str(), open_flags, 0644 );
-	}
-	
 	void HTTPClientTransaction::ReceiveData( const char* data, std::size_t byteCount )
 	{
 		// Are we receiving headers or content?
@@ -299,19 +253,7 @@ namespace htget
 				
 				if ( gSaveToFile )
 				{
-					TypeAndCreator signature( N::kUnknownType, N::kUnknownType );
-					
-					try
-					{
-						signature.type    = MakeOSType( GetHTTPHeaderValue( "X-Mac-Type",
-						                                                    allHeaders ) );
-						
-						signature.creator = MakeOSType( GetHTTPHeaderValue( "X-Mac-Creator",
-						                                                    allHeaders ) );
-					}
-					catch ( ... ) {}
-					
-					itsReceiver = CreateAndOpenFileWithSignature( gSaveLocation, signature ).Release();
+					itsReceiver = P7::Open( gSaveLocation.c_str(), O_WRONLY | O_CREAT | O_EXCL, 0644 ).Release();
 				}
 				
 				// Anything left over is content
@@ -431,7 +373,7 @@ static void WriteLine( P7::FileDescriptor stream, const std::string& text )
 	io::write( stream, line.data(), line.size() );
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	bool sendHEADRequest = false;
 	
@@ -482,19 +424,12 @@ int O::Main( int argc, char const *const argv[] )
 		gSaveLocation = DocName( urlPath );
 	}
 	
-	P7::FileDescriptor sock = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, INET_TCP ) );
+	P7::FileDescriptor sock = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 	
 	if ( scheme == "http" )
 	{
 		defaultPort = 80;
 	}
-	/*
-	else if ( scheme == "https" )
-	{
-		sock = HW::MakeHandleFromCopy< Lox::SecureSocket_Details >( Lox::Socket::New() );
-		defaultPort = 443;
-	}
-	*/
 	else
 	{
 		Io::Err << "Unsupported scheme '" << scheme << "'.\n";
