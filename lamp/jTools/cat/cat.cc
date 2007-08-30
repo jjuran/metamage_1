@@ -14,18 +14,18 @@
 #include <unistd.h>
 
 // POSeven
+#include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/Open.hh"
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
-namespace P7 = POSeven;
+namespace NN = Nucleus;
+namespace p7 = poseven;
 namespace O = Orion;
 
-
-static void DumpFile( P7::FileDescriptor in );
 
 static bool PathnameMeansStdIn( const char* pathname )
 {
@@ -33,53 +33,17 @@ static bool PathnameMeansStdIn( const char* pathname )
 	       && pathname[1] == '\0';
 }
 
-int O::Main( int argc, argv_t argv )
+static const char* EvaluateMetaFilename( const char* pathname )
 {
-	// Check for sufficient number of args
-	if ( argc < 2 )
+	if ( PathnameMeansStdIn( pathname ) )
 	{
-		Io::Err << "cat: missing arguments\n";
-		
-		return 1;
+		return "/dev/fd/0";
 	}
 	
-	// Print each file in turn.  Return whether any errors occurred.
-	int fail = 0;
-	
-	for ( int index = 1; index < argc; index++ )
-	{
-		const char* pathname = argv[ index ];
-		
-		int fd = PathnameMeansStdIn( pathname ) ? 0
-		                                        : open( pathname, 0 );
-		
-		if ( fd == -1 )
-		{
-			std::fprintf( stderr, "%s: %s: %s\n", argv[0], pathname, std::strerror( errno ) );
-			
-			continue;
-		}
-		
-		try
-		{
-			DumpFile( P7::FileDescriptor( fd ) );
-		}
-		catch ( ... )
-		{
-			Io::Err << "cat: " << pathname << ": DumpFile() failed\n";
-			++fail;
-		}
-		
-		if ( fd != 0 )
-		{
-			(void) close( fd );
-		}
-	}
-	
-	return (fail == 0) ? 0 : 1;
+	return pathname;
 }
 
-void DumpFile( P7::FileDescriptor in )
+static void DumpFile( p7::fd_t in )
 {
 	while ( true )
 	{
@@ -89,9 +53,9 @@ void DumpFile( P7::FileDescriptor in )
 			
 			char data[ blockSize ];
 			
-			int bytes = io::read( in, data, blockSize );
+			int bytes = p7::read( in, data, blockSize );
 			
-			write( STDOUT_FILENO, data, bytes );
+			p7::write( p7::stdout_fileno, data, bytes );
 		}
 		catch ( const io::end_of_input& err )
 		{
@@ -102,5 +66,43 @@ void DumpFile( P7::FileDescriptor in )
 			sleep( 0 );
 		}
 	}
+}
+
+int O::Main( int argc, argv_t argv )
+{
+	// Check for sufficient number of args
+	if ( argc < 2 )
+	{
+		static const char* default_argv[] = { "cat", "-", NULL };
+		
+		argv = default_argv;
+		
+		argc = 2;
+	}
+	
+	// Print each file in turn.  Return whether any errors occurred.
+	int exit_status = EXIT_SUCCESS;
+	
+	for ( int index = 1;  index < argc;  ++index )
+	{
+		const char* pathname = EvaluateMetaFilename( argv[ index ] );
+		
+		try
+		{
+			NN::Owned< p7::fd_t > fd = p7::open( pathname, O_RDONLY );
+			
+			DumpFile( fd );
+		}
+		catch ( const p7::errno_t& error )
+		{
+			std::fprintf( stderr, "%s: %s: %s\n", argv[0], pathname, std::strerror( error ) );
+			
+			exit_status = EXIT_FAILURE;
+			
+			continue;
+		}
+	}
+	
+	return exit_status;
 }
 
