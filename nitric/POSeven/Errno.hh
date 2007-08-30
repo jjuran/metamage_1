@@ -123,6 +123,13 @@ namespace POSeven
 	
 }
 
+namespace poseven
+{
+	
+	typedef POSeven::Errno errno_t;
+	
+}
+
 namespace Nucleus
 {
 	
