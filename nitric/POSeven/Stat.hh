@@ -58,9 +58,9 @@ namespace POSeven
 		return sb;
 	}
 	
-	inline void Stat( const std::string& name, struct stat& sb )
+	inline bool Stat( const std::string& name, struct stat& sb )
 	{
-		Stat( name.c_str(), sb );
+		return Stat( name.c_str(), sb );
 	}
 	
 	inline struct stat Stat( const std::string& name )
