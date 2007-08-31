@@ -231,6 +231,11 @@ namespace HTTP
 		return Header( "Content-Length", NN::Convert< std::string >( GetContentLength( message_body ) ) );
 	}
 	
+	static void ReceiveMessage( p7::fd_t in, p7::fd_t header_out, p7::fd_t body_out )
+	{
+		
+	}
+	
 }
 
 namespace poseven
@@ -262,7 +267,6 @@ namespace htget
 			
 			void ReceiveContent( const char* data, std::size_t byteCount );
 			void ReceiveData( const char* data, std::size_t byteCount );
-			bool IsComplete();
 		
 		public:
 			HTTPClientTransaction( p7::fd_t header_out, p7::fd_t body_out )
@@ -283,26 +287,7 @@ namespace htget
 	};
 	
 	
-	bool HTTPClientTransaction::IsComplete()
-	{
-		if ( itHasReachedEndOfInput && itsContentLengthIsKnown )
-		{
-			Io::Err << "Error: remote socket closed, "
-			        << itsContentBytesReceived
-			        << " out of "
-			        << itsContentLength
-			        << " bytes received.\n";
-		}
-		
-		if ( itHasReachedEndOfInput )  return true;
-		
-		if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
-		{
-			return ( itsContentBytesReceived == itsContentLength );
-		}
-		
-		return false;
-	}
+	class IncompleteMessageBody {};
 	
 	void HTTPClientTransaction::Download( p7::fd_t socket )
 	{
@@ -331,9 +316,12 @@ namespace htget
 		catch ( const io::end_of_input& )
 		{
 			itHasReachedEndOfInput = true;
+			
+			if ( itsContentLengthIsKnown  &&  itsContentBytesReceived != itsContentLength )
+			{
+				throw IncompleteMessageBody();
+			}
 		}
-		
-		(void) IsComplete();
 	}
 	
 	void HTTPClientTransaction::ReceiveContent( const char* data, std::size_t byteCount )
