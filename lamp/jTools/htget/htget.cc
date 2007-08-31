@@ -249,7 +249,8 @@ namespace htget
 	class HTTPClientTransaction
 	{
 		private:
-			p7::fd_t itsReceiver;
+			p7::fd_t itsHeaderOutput;
+			p7::fd_t itsBodyOutput;
 			std::string itsReceivedData;
 			std::size_t itsStartOfHeaders;
 			std::size_t itsPlaceToLookForEndOfHeaders;
@@ -264,9 +265,10 @@ namespace htget
 			bool IsComplete();
 		
 		public:
-			HTTPClientTransaction()
+			HTTPClientTransaction( p7::fd_t header_out, p7::fd_t body_out )
 			:
-				itsReceiver            ( p7::stdout_fileno ),
+				itsHeaderOutput        ( header_out ),
+				itsBodyOutput          ( body_out   ),
 				itsStartOfHeaders      ( 0 ),
 				itsPlaceToLookForEndOfHeaders(),
 				itsContentLength       ( 0 ),
@@ -277,38 +279,12 @@ namespace htget
 			{
 			}
 			
-			~HTTPClientTransaction()  {}
-			
 			void Download( p7::fd_t socket );
 	};
-	
-	namespace Globals
-	{
-		
-		bool gDumpHeaders     = false;
-		bool gExpectNoContent = false;
-		bool gSaveToFile      = false;
-		
-		std::string gSaveLocation;
-		
-	}
-	
-	using namespace Globals;
 	
 	
 	bool HTTPClientTransaction::IsComplete()
 	{
-		if ( itsContentLengthIsKnown  &&  itsContentBytesReceived > itsContentLength )
-		{
-			Io::Err << "Error:  Received more data (" 
-			        << itsContentBytesReceived
-			        << " bytes) than was specified ("
-			        << itsContentLength
-			        << " bytes).\n";
-			
-			return true;
-		}
-		
 		if ( itHasReachedEndOfInput && itsContentLengthIsKnown )
 		{
 			Io::Err << "Error: remote socket closed, "
@@ -330,36 +306,31 @@ namespace htget
 	
 	void HTTPClientTransaction::Download( p7::fd_t socket )
 	{
-		while ( true )
+		try
 		{
-			enum { blockSize = 1024 };
-			char data[ blockSize ];
-			std::size_t bytesToRead = blockSize;
-			
-			if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
+			while ( true )
 			{
-				std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
+				enum { blockSize = 1024 };
+				char data[ blockSize ];
+				std::size_t bytesToRead = blockSize;
 				
-				if ( bytesToGo == 0 )  break;
+				if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
+				{
+					std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
+					
+					if ( bytesToGo == 0 )  break;
+					
+					bytesToRead = std::min( bytesToRead, bytesToGo );
+				}
 				
-				bytesToRead = std::min( bytesToRead, bytesToGo );
-			}
-			
-			int received = read( socket, data, bytesToRead );
-			
-			if ( received == 0 )
-			{
-				itHasReachedEndOfInput = true;
-				break;
-			}
-			else if ( received == -1 )
-			{
-				Io::Err << "Errno " << errno << " on read()\n";
+				int received = p7::read( socket, data, bytesToRead );
 				
-				O::ThrowExitStatus( 1 );
+				ReceiveData( data, received );
 			}
-			
-			ReceiveData( data, received );
+		}
+		catch ( const io::end_of_input& )
+		{
+			itHasReachedEndOfInput = true;
 		}
 		
 		(void) IsComplete();
@@ -369,7 +340,7 @@ namespace htget
 	{
 		itsContentBytesReceived += byteCount;
 		
-		io::write( itsReceiver, data, byteCount );
+		io::write( itsBodyOutput, data, byteCount );
 	}
 	
 	void HTTPClientTransaction::ReceiveData( const char* data, std::size_t byteCount )
@@ -419,21 +390,18 @@ namespace htget
 			// The content starts after the second
 			std::size_t startOfContent = endOfHeaders + 2;
 			
-			if ( gDumpHeaders )
+			if ( itsHeaderOutput != -1 )
 			{
-				io::write( itsReceiver, itsReceivedData.data(), startOfContent );
+				io::write( itsHeaderOutput, itsReceivedData.data(), startOfContent );
 			}
 			
-			if ( gExpectNoContent )
+			if ( itsBodyOutput == -1 )
 			{
+				// -1 means we're not expecting a message body, e.g. HEAD
 				// itsContentLength and itsContentBytesReceived are already 0
 				itsContentLengthIsKnown = true;
+				
 				return;
-			}
-			
-			if ( gSaveToFile )
-			{
-				itsReceiver = p7::open( gSaveLocation.c_str(), O_WRONLY | O_CREAT | O_EXCL, 0644 ).Release();
 			}
 			
 			// Anything left over is content
@@ -511,7 +479,7 @@ namespace htget
 }
 
 
-static std::string DocName( const std::string& urlPath )
+static const char* DocName( const std::string& urlPath )
 {
 	std::size_t lastSlash = urlPath.find_last_of( "/" );
 	
@@ -519,11 +487,9 @@ static std::string DocName( const std::string& urlPath )
 	// If there wasn't one, then lastSlash == string::npos == 0xFFFFFFFF == -1.
 	// Adding one then yields zero, which is exactly what we want.
 	
-	return urlPath.substr( lastSlash + 1, urlPath.npos );
+	return urlPath.c_str() + lastSlash + 1;
 }
 
-
-using namespace htget::Globals;
 
 static struct in_addr ResolveHostname( const char* hostname )
 {
@@ -540,22 +506,20 @@ static struct in_addr ResolveHostname( const char* hostname )
 	return addr;
 }
 
-/*
-static void WriteLine( p7::fd_t stream, const std::string& text )
-{
-	std::string line = text + "\r\n";
-	
-	io::write( stream, line.data(), line.size() );
-}
-*/
-
 int O::Main( int argc, argv_t argv )
 {
 	bool sendHEADRequest = false;
+	bool dumpHeaders     = false;
+	bool saveToFile      = false;
 	
-	O::BindOption( "-i", gDumpHeaders    );
+	const char* defaultOutput = "/dev/fd/1";
+	
+	const char* outputFile = defaultOutput;
+	
+	O::BindOption( "-i", dumpHeaders     );
 	O::BindOption( "-I", sendHEADRequest );
-	O::BindOption( "-O", gSaveToFile     );
+	O::BindOption( "-o", outputFile      );
+	O::BindOption( "-O", saveToFile      );
 	
 	O::AliasOption( "-i", "--headers" );
 	O::AliasOption( "-i", "--include" );
@@ -577,16 +541,18 @@ int O::Main( int argc, argv_t argv )
 		return 1;
 	}
 	
+	bool expectNoContent = false;
+	
 	std::string method = "GET";
 	
 	if ( sendHEADRequest )
 	{
-		gDumpHeaders = true;
-		gExpectNoContent = true;
+		dumpHeaders = true;
+		expectNoContent = true;
 		method = "HEAD";
 	}
 	
-	if ( gSaveToFile && gExpectNoContent )
+	if ( expectNoContent  &&  (saveToFile  ||  outputFile != defaultOutput) )
 	{
 		Io::Err << "htget: Can't save null document to file\n";
 		return 1;
@@ -603,10 +569,12 @@ int O::Main( int argc, argv_t argv )
 	
 	// FIXME:  Eliminate . and .. from urlPath
 	
-	if ( gSaveToFile )
+	if ( saveToFile )
 	{
-		gSaveLocation = DocName( urlPath );
+		outputFile = DocName( urlPath );
 	}
+	
+	bool outputIsToFile = outputFile != defaultOutput;
 	
 	p7::fd_t sock = p7::fd_t( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 	
@@ -631,13 +599,6 @@ int O::Main( int argc, argv_t argv )
 	inetAddress.sin_port   = htons( port );
 	inetAddress.sin_addr   = ip;
 	
-	if ( argCount > 1 )
-	{
-		const char* pathname = freeArgs[ 1 ];
-		
-		gSaveLocation = pathname;
-	}
-	
 	p7::connect( sock, inetAddress );
 	
 	std::string message_header =   HTTP::RequestLine( method, urlPath )
@@ -648,7 +609,15 @@ int O::Main( int argc, argv_t argv )
 	
 	shutdown( sock, SHUT_WR );
 	
-	htget::HTTPClientTransaction transaction;
+	const p7::fd_t nil_fd = p7::fd_t( -1 );
+	
+	p7::fd_t headerOutput = dumpHeaders ? p7::stdout_fileno : nil_fd;
+	
+	int create_flags = outputIsToFile ? O_CREAT | O_EXCL : 0;
+	
+	NN::Owned< p7::fd_t > bodyOutput = p7::open( outputFile, O_WRONLY | create_flags, 0644 );
+	
+	htget::HTTPClientTransaction transaction( headerOutput, expectNoContent ? nil_fd : bodyOutput.Get() );
 	
 	transaction.Download( sock );
 	
