@@ -47,12 +47,20 @@ namespace O = Orion;
 namespace HTTP
 {
 	
-	static std::string RequestLine( const std::string& method, const std::string& urlPath )
-	{
-		return method + " " + urlPath + " HTTP/1.0" "\r\n";
-	}
-	
 	class MalformedHeader {};
+	
+	class IncompleteMessageBody {};
+	
+	
+	struct Header
+	{
+		std::string name;
+		std::string value;
+		
+		Header()  {}
+		
+		Header( const std::string& n, const std::string& v ) : name( n ), value( v )  {}
+	};
 	
 	struct HeaderIndexTuple
 	{
@@ -61,6 +69,50 @@ namespace HTTP
 		std::size_t value_offset;
 		std::size_t crlf_offset;
 	};
+	
+	typedef std::vector< HeaderIndexTuple > HeaderIndex;
+	
+	
+	class MessageReceiver
+	{
+		private:
+			p7::fd_t itsHeaderOutput;
+			p7::fd_t itsBodyOutput;
+			std::string itsReceivedData;
+			std::size_t itsStartOfHeaders;
+			std::size_t itsPlaceToLookForEndOfHeaders;
+			std::size_t itsContentLength;
+			std::size_t itsContentBytesReceived;
+			bool itHasReceivedAllHeaders;
+			bool itsContentLengthIsKnown;
+			bool itHasReachedEndOfInput;
+			
+			void ReceiveContent( const char* data, std::size_t byteCount );
+			void ReceiveData( const char* data, std::size_t byteCount );
+		
+		public:
+			MessageReceiver( p7::fd_t header_out,
+			                 p7::fd_t body_out ) : itsHeaderOutput              ( header_out ),
+			                                       itsBodyOutput                ( body_out   ),
+			                                       itsStartOfHeaders            ( 0 ),
+			                                       itsPlaceToLookForEndOfHeaders( 0 ),
+			                                       itsContentLength             ( 0 ),
+			                                       itsContentBytesReceived      ( 0 ),
+			                                       itHasReceivedAllHeaders      ( false ),
+			                                       itsContentLengthIsKnown      ( false ),
+			                                       itHasReachedEndOfInput       ( false )
+			{
+			}
+			
+			void Receive( p7::fd_t socket );
+	};
+	
+	
+	static std::string RequestLine( const std::string& method, const std::string& urlPath )
+	{
+		return method + " " + urlPath + " HTTP/1.0" "\r\n";
+	}
+	
 	
 	inline HeaderIndexTuple MakeHeaderIndexTuple( std::size_t header,
 	                                              std::size_t colon,
@@ -77,7 +129,6 @@ namespace HTTP
 		return result;
 	}
 	
-	typedef std::vector< HeaderIndexTuple > HeaderIndex;
 	
 	static HeaderIndex MakeHeaderIndex( const char* header_stream, const char* end )
 	{
@@ -161,16 +212,6 @@ namespace HTTP
 	}
 	
 	
-	struct Header
-	{
-		std::string name;
-		std::string value;
-		
-		Header()  {}
-		
-		Header( const std::string& n, const std::string& v ) : name( n ), value( v )  {}
-	};
-	
 	static std::string HeaderLine( const std::string& name, const std::string& value )
 	{
 		return name + ": " + value + "\r\n";
@@ -231,107 +272,14 @@ namespace HTTP
 		return Header( "Content-Length", NN::Convert< std::string >( GetContentLength( message_body ) ) );
 	}
 	
-	static void ReceiveMessage( p7::fd_t in, p7::fd_t header_out, p7::fd_t body_out )
-	{
-		
-	}
-	
-}
-
-namespace poseven
-{
-	
-	static void connect( fd_t sock, const sockaddr_in& serverAddr )
-	{
-		P7::ThrowPOSIXResult( ::connect( sock, (const sockaddr*) &serverAddr, sizeof (sockaddr_in) ) );
-	}
-	
-}
-
-namespace htget
-{
-	
-	class HTTPClientTransaction
-	{
-		private:
-			p7::fd_t itsHeaderOutput;
-			p7::fd_t itsBodyOutput;
-			std::string itsReceivedData;
-			std::size_t itsStartOfHeaders;
-			std::size_t itsPlaceToLookForEndOfHeaders;
-			std::size_t itsContentLength;
-			std::size_t itsContentBytesReceived;
-			bool itHasReceivedAllHeaders;
-			bool itsContentLengthIsKnown;
-			bool itHasReachedEndOfInput;
-			
-			void ReceiveContent( const char* data, std::size_t byteCount );
-			void ReceiveData( const char* data, std::size_t byteCount );
-		
-		public:
-			HTTPClientTransaction( p7::fd_t header_out, p7::fd_t body_out )
-			:
-				itsHeaderOutput        ( header_out ),
-				itsBodyOutput          ( body_out   ),
-				itsStartOfHeaders      ( 0 ),
-				itsPlaceToLookForEndOfHeaders(),
-				itsContentLength       ( 0 ),
-				itsContentBytesReceived( 0 ),
-				itHasReceivedAllHeaders( false ),
-				itsContentLengthIsKnown( false ),
-				itHasReachedEndOfInput ( false )
-			{
-			}
-			
-			void Download( p7::fd_t socket );
-	};
-	
-	
-	class IncompleteMessageBody {};
-	
-	void HTTPClientTransaction::Download( p7::fd_t socket )
-	{
-		try
-		{
-			while ( true )
-			{
-				enum { blockSize = 1024 };
-				char data[ blockSize ];
-				std::size_t bytesToRead = blockSize;
-				
-				if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
-				{
-					std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
-					
-					if ( bytesToGo == 0 )  break;
-					
-					bytesToRead = std::min( bytesToRead, bytesToGo );
-				}
-				
-				int received = p7::read( socket, data, bytesToRead );
-				
-				ReceiveData( data, received );
-			}
-		}
-		catch ( const io::end_of_input& )
-		{
-			itHasReachedEndOfInput = true;
-			
-			if ( itsContentLengthIsKnown  &&  itsContentBytesReceived != itsContentLength )
-			{
-				throw IncompleteMessageBody();
-			}
-		}
-	}
-	
-	void HTTPClientTransaction::ReceiveContent( const char* data, std::size_t byteCount )
+	void MessageReceiver::ReceiveContent( const char* data, std::size_t byteCount )
 	{
 		itsContentBytesReceived += byteCount;
 		
 		io::write( itsBodyOutput, data, byteCount );
 	}
 	
-	void HTTPClientTransaction::ReceiveData( const char* data, std::size_t byteCount )
+	void MessageReceiver::ReceiveData( const char* data, std::size_t byteCount )
 	{
 		// Are we receiving headers or content?
 		if ( !itHasReceivedAllHeaders )
@@ -431,6 +379,62 @@ namespace htget
 		}
 	}
 	
+	void MessageReceiver::Receive( p7::fd_t socket )
+	{
+		try
+		{
+			while ( true )
+			{
+				enum { blockSize = 1024 };
+				char data[ blockSize ];
+				std::size_t bytesToRead = blockSize;
+				
+				if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
+				{
+					std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
+					
+					if ( bytesToGo == 0 )  break;
+					
+					bytesToRead = std::min( bytesToRead, bytesToGo );
+				}
+				
+				int received = p7::read( socket, data, bytesToRead );
+				
+				ReceiveData( data, received );
+			}
+		}
+		catch ( const io::end_of_input& )
+		{
+			itHasReachedEndOfInput = true;
+			
+			if ( itsContentLengthIsKnown  &&  itsContentBytesReceived != itsContentLength )
+			{
+				throw IncompleteMessageBody();
+			}
+		}
+	}
+	
+	static void ReceiveMessage( p7::fd_t in, p7::fd_t header_out, p7::fd_t body_out )
+	{
+		MessageReceiver receiver( header_out, body_out );
+		
+		receiver.Receive( in );
+	}
+	
+}
+
+namespace poseven
+{
+	
+	static void connect( fd_t sock, const sockaddr_in& serverAddr )
+	{
+		P7::ThrowPOSIXResult( ::connect( sock, (const sockaddr*) &serverAddr, sizeof (sockaddr_in) ) );
+	}
+	
+}
+
+namespace htget
+{
 	
 	static bool ParseURL( const std::string& url,
 	                      std::string& outURLScheme, 
@@ -605,9 +609,7 @@ int O::Main( int argc, argv_t argv )
 	
 	NN::Owned< p7::fd_t > bodyOutput = p7::open( outputFile, O_WRONLY | create_flags, 0644 );
 	
-	htget::HTTPClientTransaction transaction( headerOutput, expectNoContent ? nil_fd : bodyOutput.Get() );
-	
-	transaction.Download( sock );
+	HTTP::ReceiveMessage( sock, headerOutput, expectNoContent ? nil_fd : bodyOutput.Get() );
 	
 	shutdown( sock, SHUT_RD );
 	
