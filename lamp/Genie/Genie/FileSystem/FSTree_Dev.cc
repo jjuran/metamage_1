@@ -157,7 +157,7 @@ namespace Genie
 	{
 		static std::string Name()  { return "con"; }
 		
-		FSTreePtr Parent() const  { return FSTreePtr( GetSingleton< FSTree_dev >() ); }
+		FSTreePtr Parent() const  { return GetSingleton< FSTree_dev >(); }
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
