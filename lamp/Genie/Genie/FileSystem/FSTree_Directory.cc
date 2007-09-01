@@ -5,22 +5,14 @@
 
 #include "Genie/FileSystem/FSTree_Directory.hh"
 
-// POSIX
-#include "sys/stat.h"
-
-// Nucleus
-//#include "Nucleus/NAssert.h"
-
-// POSeven
-#include "POSeven/Errno.hh"
+// Standard C++
+#include <algorithm>
+#include <functional>
+#include <iterator>
 
 
 namespace Genie
 {
-	
-	namespace P7 = POSeven;
-	
-	
 	
 	typedef boost::shared_ptr< const FSTreeCache > FSTreeCachePtr;
 	

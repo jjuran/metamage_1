@@ -8,11 +8,12 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
+#include <iterator>
+#include <string>
 #include <vector>
 
 // POSIX
-#include "sys/stat.h"
+#include <sys/stat.h>
 
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
