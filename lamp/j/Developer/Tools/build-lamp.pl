@@ -77,7 +77,7 @@ my @programs = qw
 	ic inetd
 	jgetty jtest
 	keymods kill killall
-	ld lf2cr lf2crlf login
+	ld lf2cr lf2crlf local-edit-client login
 	macbin md5sum mkdir mpwrez mv mwcc
 	nohup
 	open osascript
@@ -132,7 +132,9 @@ my %fsmap =
 			qw( gzip htget killall md5sum nohup open osascript perl tty which ),
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
-			qw( beep cds console cr2lf divide err2text jtest keymods lf2cr lf2crlf macbin ptrace stripcr striplf th ),
+			qw( local-edit-client ),
+			qw( console cr2lf divide jtest lf2cr lf2crlf ptrace stripcr striplf th ),
+			qw( beep cds err2text keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
 		lib =>
