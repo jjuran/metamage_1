@@ -37,6 +37,7 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Proc.hh"
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
+#include "Genie/FileSystem/FSTree_sys.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Process.hh"
@@ -209,7 +210,7 @@ namespace Genie
 		tree->MapSingleton< FSTree_Volumes >();
 		
 		tree->Map( "proc", GetProcFSTree() );
-		tree->Map( "sys",  GetSysFSTree () );
+		tree->Map( "sys",  GetSingleton< FSTree_sys >() );
 		tree->Map( "dev",  GetDevFSTree () );
 		
 		return result;
