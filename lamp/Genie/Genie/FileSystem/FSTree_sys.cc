@@ -20,6 +20,18 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
+	class FSTree_sys_kernel : public FSTree_Virtual
+	{
+		public:
+			FSTree_sys_kernel();
+			
+			static std::string OnlyName()  { return "kernel"; }
+			
+			std::string Name() const  { return OnlyName(); }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
+	};
+	
 	class FSTree_sys_mac : public FSTree_Virtual
 	{
 		public:
@@ -52,7 +64,13 @@ namespace Genie
 	
 	FSTree_sys::FSTree_sys()
 	{
-		MapSingleton< FSTree_sys_mac >();
+		MapSingleton< FSTree_sys_kernel >();
+		MapSingleton< FSTree_sys_mac    >();
+	}
+	
+	FSTree_sys_kernel::FSTree_sys_kernel()
+	{
+		
 	}
 	
 	FSTree_sys_mac::FSTree_sys_mac()
