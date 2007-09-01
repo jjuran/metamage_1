@@ -3,14 +3,11 @@
  *	========
  */
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include "sys/times.h"
 
-// Nucleus
-#include "Nucleus/NAssert.h"
+// Nitrogen
+#include "Nitrogen/Timer.hh"
 
 // Genie
 #include "Genie/Process.hh"
@@ -24,6 +21,16 @@ namespace Genie
 	
 	DECLARE_MODULE_INIT( Kernel_times )
 	DEFINE_MODULE_INIT(  Kernel_times )
+	
+	
+	struct StartTime
+	{
+		UInt64 microseconds;
+		
+		StartTime() : microseconds( N::Microseconds() )  {}
+	};
+	
+	static StartTime gStartTime;
 	
 	
 	static clock_t times( struct tms* tp )
@@ -40,7 +47,7 @@ namespace Genie
 			tp->tms_cstime = clocks.child_system * (CLOCKS_PER_SEC / 1000000.0);
 		}
 		
-		return 0;
+		return (N::Microseconds() - gStartTime.microseconds) * (CLOCKS_PER_SEC / 1000000.0);
 	}
 	
 	REGISTER_SYSTEM_CALL( times );
