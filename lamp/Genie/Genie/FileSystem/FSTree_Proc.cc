@@ -183,9 +183,7 @@ namespace Genie
 	
 	FSTreePtr GetProcFSTree()
 	{
-		static FSTreePtr proc = FSTreePtr( new FSTree_proc() );
-		
-		return proc;
+		return GetSingleton< FSTree_proc >();
 	}
 	
 	
@@ -419,9 +417,7 @@ namespace Genie
 	
 	FSTreePtr GetSysFSTree()
 	{
-		static FSTreePtr proc = FSTreePtr( new FSTree_sys() );
-		
-		return proc;
+		return GetSingleton< FSTree_sys >();
 	}
 	
 	
@@ -430,7 +426,9 @@ namespace Genie
 		public:
 			FSTree_sys_mac();
 			
-			std::string Name() const  { return "mac"; }
+			static std::string OnlyName()  { return "mac"; }
+			
+			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Parent() const  { return GetSysFSTree(); }
 	};
@@ -440,7 +438,9 @@ namespace Genie
 		public:
 			FSTree_sys_mac_gestalt()  {}
 			
-			std::string Name() const  { return "gestalt"; }
+			static std::string OnlyName()  { return "gestalt"; }
+			
+			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Parent() const  { return FSTreePtr( GetSingleton< FSTree_sys_mac >() ); }
 			
@@ -453,12 +453,12 @@ namespace Genie
 	
 	FSTree_sys::FSTree_sys()
 	{
-		Map( "mac", FSTreePtr( GetSingleton< FSTree_sys_mac >() ) );
+		MapSingleton< FSTree_sys_mac >();
 	}
 	
 	FSTree_sys_mac::FSTree_sys_mac()
 	{
-		Map( "gestalt", FSTreePtr( GetSingleton< FSTree_sys_mac_gestalt >() ) );
+		MapSingleton< FSTree_sys_mac_gestalt >();
 	}
 	
 	

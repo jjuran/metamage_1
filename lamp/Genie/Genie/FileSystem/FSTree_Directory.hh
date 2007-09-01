@@ -70,7 +70,9 @@ namespace Genie
 			
 			FSTree_Special( const Details& details ) : itsDetails( details )  {}
 			
-			std::string Name() const  { return itsDetails.Name(); }
+			static std::string OnlyName()  { return Details::Name(); }
+			
+			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Parent() const  { return itsDetails.Parent(); }
 			
@@ -115,6 +117,12 @@ namespace Genie
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
 			void Map( const std::string& name, FSTreePtr tree );
+			
+			template < class FSTree_Type >
+			void MapSingleton()
+			{
+				Map( FSTree_Type::OnlyName(), FSTreePtr( GetSingleton< FSTree_Type >() ) );
+			}
 			
 			FSTreePtr Lookup_Mapping( const std::string& name ) const;
 			

@@ -44,15 +44,18 @@ namespace Genie
 	
 	class FSTree_dev_fd : public FSTree
 	{
-		bool IsLink() const { return true; }
-		
-		std::string Name() const  { return "fd"; }
-		
-		FSTreePtr Parent() const  { return GetDevFSTree(); }
-		
-		std::string ReadLink() const  { return "/proc/self/fd"; }
-		
-		FSTreePtr ResolveLink() const  { return ResolvePathname( ReadLink(), FSRoot() ); }
+		public:
+			bool IsLink() const { return true; }
+			
+			static const char* OnlyName()  { return "fd"; }
+			
+			std::string Name() const  { return OnlyName(); }
+			
+			FSTreePtr Parent() const  { return GetDevFSTree(); }
+			
+			std::string ReadLink() const  { return "/proc/self/fd"; }
+			
+			FSTreePtr ResolveLink() const  { return ResolvePathname( ReadLink(), FSRoot() ); }
 	};
 	
 	class FSTree_Device : public FSTree
@@ -76,7 +79,9 @@ namespace Genie
 	class FSTree_dev_tty : public FSTree
 	{
 		public:
-			std::string Name() const  { return "tty"; }
+			static std::string OnlyName()  { return "tty"; }
+			
+			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Parent() const  { return GetDevFSTree(); }
 			
@@ -89,7 +94,9 @@ namespace Genie
 	class FSTree_dev_modem : public FSTree
 	{
 		public:
-			std::string Name() const  { return "cu.modem"; }
+			static std::string OnlyName()  { return "cu.modem"; }
+			
+			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Parent() const  { return GetDevFSTree(); }
 			
@@ -104,7 +111,9 @@ namespace Genie
 		public:
 			FSTree_dev_new();
 			
-			std::string Name() const  { return "new"; }
+			static std::string OnlyName()  { return "new"; }
+			
+			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Parent() const  { return GetDevFSTree(); }
 	};
@@ -112,7 +121,9 @@ namespace Genie
 	class FSTree_dev_new_buffer : public FSTree
 	{
 		public:
-			std::string Name() const  { return "buffer"; }
+			static std::string OnlyName()  { return "buffer"; }
+			
+			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_new  >(); }
 			
@@ -125,7 +136,9 @@ namespace Genie
 	class FSTree_dev_new_console : public FSTree
 	{
 		public:
-			std::string Name() const  { return "console"; }
+			static std::string OnlyName()  { return "console"; }
+			
+			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_new  >(); }
 			
@@ -224,20 +237,19 @@ namespace Genie
 		Map( "zero",    FSTreePtr( new FSTree_Device( "zero"    ) ) );
 		Map( "console", FSTreePtr( new FSTree_Device( "console" ) ) );
 		
-		Map( "tty", FSTreePtr( GetSingleton< FSTree_dev_tty >() ) );
+		MapSingleton< FSTree_dev_tty   >();
+		MapSingleton< FSTree_dev_modem >();
 		
-		Map( "cu.modem", FSTreePtr( GetSingleton< FSTree_dev_modem >() ) );
-		
-		Map( "new", FSTreePtr( GetSingleton< FSTree_dev_new >() ) );
-		Map( "con", FSTreePtr( GetSingleton< FSTree_dev_con >() ) );
-		Map( "fd",  FSTreePtr( GetSingleton< FSTree_dev_fd  >() ) );
+		MapSingleton< FSTree_dev_new >();
+		MapSingleton< FSTree_dev_con >();
+		MapSingleton< FSTree_dev_fd  >();
 	}
 	
 	
 	FSTree_dev_new::FSTree_dev_new()
 	{
-		Map( "buffer",  FSTreePtr( GetSingleton< FSTree_dev_new_buffer  >() ) );
-		Map( "console", FSTreePtr( GetSingleton< FSTree_dev_new_console >() ) );
+		MapSingleton< FSTree_dev_new_buffer  >();
+		MapSingleton< FSTree_dev_new_console >();
 	}
 	
 	

@@ -103,7 +103,7 @@ namespace Genie
 	
 	struct Volumes_Details
 	{
-		std::string Name() const  { return "Volumes"; }
+		static std::string Name()  { return "Volumes"; }
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
@@ -205,7 +205,8 @@ namespace Genie
 		FSTreePtr users( new FSTree_FSSpec( io::system_root< N::FSDirSpec >() / "Users" ) );
 		
 		tree->Map( "Users",   users );
-		tree->Map( "Volumes", FSTreePtr( GetSingleton< FSTree_Volumes >() ) );
+		
+		tree->MapSingleton< FSTree_Volumes >();
 		
 		tree->Map( "proc", GetProcFSTree() );
 		tree->Map( "sys",  GetSysFSTree () );
