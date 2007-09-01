@@ -14,7 +14,7 @@ namespace Pedestal
 	
 	namespace NN = Nucleus;
 	
-	GWorldView::GWorldView( const Rect& bounds )
+	GWorldView::GWorldView( const Rect& bounds, Initializer )
 	:
 		bounds        ( bounds ),
 	  	myGWorld      ( N::NewGWorld( 0, N::LocalToGlobal( bounds ) ) )
