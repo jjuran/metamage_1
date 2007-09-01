@@ -570,10 +570,12 @@ namespace Pedestal
 				Copy();
 				break;
 			
+			case 'past':  // kHICommandPaste
 			case 'pste':
 				Paste();
 				break;
 			
+			case 'sall':  // kHICommandSelectAll
 			case 'slct':
 				SelectAll();
 				break;
