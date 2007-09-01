@@ -45,24 +45,6 @@ namespace Genie
 	};
 	
 	
-	class FSTree_Null : public FSTree
-	{
-		public:
-			bool Exists() const  { return false; }
-			bool IsFile() const  { return false; }
-			
-			FSTreePtr Parent() const  { P7::ThrowErrno( ENOENT );  return FSTreePtr(); }
-	};
-	
-	
-	FSTreePtr FSNull()
-	{
-		static FSTreePtr null = FSTreePtr( new FSTree_Null() );
-		
-		return null;
-	}
-	
-	
 	FSTree_Directory::~FSTree_Directory()
 	{
 	}

@@ -16,22 +16,12 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
+#include "Genie/FileSystem/FSTree_Null.hh"
+#include "Genie/FileSystem/FSTree_Singleton.hh"
 
 
 namespace Genie
 {
-	
-	FSTreePtr FSNull();
-	
-	
-	template < class FSTree_Type >
-	FSTreePtr GetSingleton()
-	{
-		static FSTreePtr singleton = FSTreePtr( new FSTree_Type() );
-		
-		return singleton;
-	}
-	
 	
 	typedef std::vector< FSNode > FSTreeCache;
 	
