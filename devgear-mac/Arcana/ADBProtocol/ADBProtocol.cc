@@ -21,17 +21,22 @@ const UInt8 kDeviceHandlerIDRegisterOffset = 3;
 const UInt8 kDeviceHandlerIDByteIndex      = 2;
 
 
-static pascal void ADBCompletion( ::Ptr buffer, ::Ptr refCon, long command )
+namespace
 {
-	if ( refCon != NULL )
+	
+	pascal void ADBCompletion( ::Ptr buffer, ::Ptr refCon, long command )
 	{
-		*refCon = true;
+		if ( refCon != NULL )
+		{
+			*refCon = true;
+		}
 	}
+	
 }
 
 static void SendADBCommandSync( char* buffer, UInt8 command )
 {
-	static NN::Owned< N::ADBCompletionUPP > upp( N::NewADBCompletionUPP( ADBCompletion ) );
+	static NN::Owned< N::ADBCompletionUPP > upp( N::NewADBCompletionUPP( N::ADBCompletionProcPtr_Traits< ADBCompletion >::GetProcPtr() ) );
 	
 	char refCon = false;
 	
