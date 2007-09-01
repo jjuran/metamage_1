@@ -5,6 +5,9 @@
 
 #include "Genie/IO/Pipe.hh"
 
+// Standard C
+#include <signal.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -15,6 +18,7 @@
 #include "POSeven/Errno.hh"
 
 // Genie
+#include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
 
@@ -23,7 +27,17 @@ namespace Genie
 	
 	namespace P7 = POSeven;
 	
-	int PipeState::Read( char* data, std::size_t byteCount )
+	bool PipeState::IsReadable() const
+	{
+		return itsInputHasClosed || !itsStrings.empty();
+	}
+	
+	bool PipeState::IsWritable() const
+	{
+		return itsOutputHasClosed || itsStrings.size() < 20;
+	}
+	
+	int PipeState::Read( char* data, std::size_t byteCount, bool blocking )
 	{
 		if ( byteCount == 0 )
 		{
@@ -38,7 +52,7 @@ namespace Genie
 			{
 				// Still open, maybe we'll get something later
 				
-				if ( !itIsBlocking )
+				if ( !blocking )
 				{
 					// But we're not going to wait
 					throw io::no_input_pending();
@@ -98,10 +112,31 @@ namespace Genie
 		return bytesCopied;
 	}
 	
-	int PipeState::Write( const char* data, std::size_t byteCount )
+	int PipeState::Write( const char* data, std::size_t byteCount, bool blocking )
 	{
 		if ( byteCount != 0 )
 		{
+			while ( !IsWritable() )
+			{
+				if ( !blocking )
+				{
+					throw io::no_input_pending();
+				}
+				
+				Yield();
+			}
+			
+			if ( itsOutputHasClosed )
+			{
+				Process& current = CurrentProcess();
+				
+				current.Raise( SIGPIPE );
+				
+				current.HandlePendingSignals();
+				
+				P7::ThrowErrno( EPIPE );
+			}
+			
 			itsStrings.push_back( std::string( data, byteCount ) );
 		}
 		
