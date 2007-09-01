@@ -7,7 +7,7 @@
 #include "sys/times.h"
 
 // Nitrogen
-#include "Nitrogen/Timer.hh"
+#include "Nitrogen/Timer.h"
 
 // Genie
 #include "Genie/Process.hh"
