@@ -31,16 +31,6 @@ namespace POSeven
 	static POSIXErrnosRegistration theRegistration;
 	
 	
-	static ErrnoLoggingProc gErrnoLoggingProc = NULL;
-	
-	ErrnoLoggingProc SetErrnoLoggingProc( ErrnoLoggingProc newProc )
-	{
-		ErrnoLoggingProc retVal = gErrnoLoggingProc;
-		gErrnoLoggingProc = newProc;
-		
-		return retVal;
-	}
-	
 	void ThrowPOSIXResultInternalDebug( POSIXResult  result,
 	                                    const char*  text,
 	                                    const char*  file,
@@ -54,15 +44,6 @@ namespace POSeven
 	
 	void ThrowErrnoInternalDebug( Errno number, const char* text, const char *file, int line )
 	{
-		if ( gErrnoLoggingProc != NULL )
-		{
-			try
-			{
-				gErrnoLoggingProc( number, text, file, line );
-			}
-			catch ( ... ) {}
-		}
-		
 		Nucleus::ThrowErrorCode< Errno >( number );
 	}
 	

@@ -88,9 +88,6 @@ namespace POSeven
 		Nucleus::RegisterErrorCode< Errno, number >();
 	}
 	
-	typedef void (*ErrnoLoggingProc) ( int, const char *, const char *, int );
-	ErrnoLoggingProc SetErrnoLoggingProc( ErrnoLoggingProc newProc );
-	
 	void ThrowPOSIXResultInternalDebug( POSIXResult error, const char* text, const char * file, int line );
 	
 	void ThrowErrnoInternalDebug( Errno number, const char* text, const char * file, int line );
