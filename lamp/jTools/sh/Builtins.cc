@@ -17,6 +17,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// Iota
+#include "iota/environ.hh"
+
 // POSeven
 #include "POSeven/Open.hh"
 
@@ -32,7 +35,7 @@
 
 
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -101,7 +104,7 @@ const char* QueryShellVariable( const std::string& name )
 
 // Builtins.  argc is guaranteed to be positive.
 
-static int Builtin_CD( int argc, char const* const argv[] )
+static int Builtin_CD( int argc, iota::argv_t argv )
 {
 	const char* dir = argv[1];
 	
@@ -128,7 +131,7 @@ static int Builtin_CD( int argc, char const* const argv[] )
 	return 0;
 }
 
-static int Builtin_Alias( int argc, char const* const argv[] )
+static int Builtin_Alias( int argc, iota::argv_t argv )
 {
 	if ( argc == 1 )
 	{
@@ -165,7 +168,7 @@ static int Builtin_Alias( int argc, char const* const argv[] )
 	return 0;
 }
 
-static int Builtin_Echo( int argc, char const* const argv[] )
+static int Builtin_Echo( int argc, iota::argv_t argv )
 {
 	if ( argc > 1 )
 	{
@@ -182,7 +185,7 @@ static int Builtin_Echo( int argc, char const* const argv[] )
 	return 0;
 }
 
-static int Builtin_Exit( int argc, char const* const argv[] )
+static int Builtin_Exit( int argc, iota::argv_t argv )
 {
 	int exitStatus = 0;
 	
@@ -197,12 +200,12 @@ static int Builtin_Exit( int argc, char const* const argv[] )
 	return -1;
 }
 
-static int Builtin_Export( int argc, char const* const argv[] )
+static int Builtin_Export( int argc, iota::argv_t argv )
 {
 	if ( argc == 1 )
 	{
 		// $ export
-		char** envp = environ;
+		iota::envp_t envp = environ;
 		
 		while ( *envp != NULL )
 		{
@@ -212,7 +215,7 @@ static int Builtin_Export( int argc, char const* const argv[] )
 	}
 	else if ( argc == 2 )
 	{
-		const char* const arg1 = argv[ 1 ];
+		iota::arg_t const arg1 = argv[ 1 ];
 		
 		if ( char* eq = std::strchr( arg1, '=' ) )
 		{
@@ -250,7 +253,7 @@ static int Builtin_Export( int argc, char const* const argv[] )
 	return 0;
 }
 
-static int Builtin_PWD( int /*argc*/, char const* const /*argv*/[] )
+static int Builtin_PWD( int /*argc*/, iota::argv_t /*argv*/ )
 {
 	std::string cwd;
 	cwd.resize( 256 );
@@ -265,7 +268,7 @@ static int Builtin_PWD( int /*argc*/, char const* const /*argv*/[] )
 	return 0;
 }
 
-static int Builtin_Set( int argc, char const* const argv[] )
+static int Builtin_Set( int argc, iota::argv_t argv )
 {
 	if ( argc == 1 )
 	{
@@ -300,7 +303,7 @@ static int Builtin_Set( int argc, char const* const argv[] )
 	return 0;
 }
 
-static int Builtin_Unalias( int argc, char const* const argv[] )
+static int Builtin_Unalias( int argc, iota::argv_t argv )
 {
 	while ( --argc )
 	{
@@ -310,7 +313,7 @@ static int Builtin_Unalias( int argc, char const* const argv[] )
 	return 0;
 }
 
-static int Builtin_Unset( int argc, char const* const argv[] )
+static int Builtin_Unset( int argc, iota::argv_t argv )
 {
 	while ( --argc )
 	{
@@ -344,7 +347,7 @@ class ReplacedParametersScope
 		}
 };
 
-static int BuiltinDot( int argc, char const* const argv[] )
+static int BuiltinDot( int argc, iota::argv_t argv )
 {
 	if ( argc < 2 )
 	{
@@ -352,7 +355,7 @@ static int BuiltinDot( int argc, char const* const argv[] )
 		return 2;
 	}
 	
-	NN::Owned< P7::FileDescriptor > fd = P7::Open( argv[ 1 ], 0 );
+	NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], 0 );
 	
 	int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
 	
