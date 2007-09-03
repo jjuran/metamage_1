@@ -12,6 +12,7 @@
 
 // POSIX
 #include "sys/stat.h"
+#include "sys/wait.h"
 #include "unistd.h"
 
 // Nucleus
@@ -25,6 +26,11 @@
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Sound.h"
+
+// Backtrace
+#include "Backtrace/StackCrawl.hh"
+#include "Backtrace/MacsbugSymbols.hh"
+#include "Backtrace/TracebackTables.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -52,6 +58,82 @@
 	#undef SIGTERM
 #endif
 
+
+namespace Backtrace
+{
+	
+	static std::string FindSymbolString( ReturnAddr68K addr )
+	{
+		MacsbugSymbolPtr symbolName = FindSymbolName( addr );
+		
+		return symbolName != NULL ? GetSymbolString( symbolName ) : "???";
+	}
+	
+	static std::string FindSymbolString( ReturnAddrPPC addr )
+	{
+		TracebackTablePtr symbolName = FindSymbolName( addr );
+		
+		return symbolName != NULL ? GetSymbolString( symbolName ) : "???";
+	}
+	
+	static void PrintTrace( unsigned offset, const void* addr, const char* arch, const char* name )
+	{
+		std::fprintf( stderr, "%d: 0x%.8x (%s) %s\n", offset, addr, arch, name );
+	}
+	
+	
+	static void Trace68K( unsigned offset, ReturnAddr68K addr )
+	{
+		std::string name = FindSymbolString( addr );
+		
+		PrintTrace( offset++, addr, "68K", name.c_str() );
+	}
+	
+	static void TracePPC( unsigned offset, ReturnAddrPPC addr )
+	{
+		const ReturnAddrPPC mixedModeSwitch = (ReturnAddrPPC) 0xffcec400;
+		
+		std::string name = addr == mixedModeSwitch ? "MixedMode" : FindSymbolString( addr );
+		
+		PrintTrace( offset++, addr, "PPC", name.c_str() );
+	}
+	
+}
+
+
+static void DumpBacktrace( unsigned levelsToSkip = 0, const char* lastSymbol = "" )
+{
+	using Backtrace::CallRecord;
+	
+	const std::vector< CallRecord > trace = Backtrace::GetStackCrawl();
+	
+	typedef std::vector< CallRecord >::const_iterator Iter;
+	
+	const Iter begin = trace.begin() + levelsToSkip;
+	
+	unsigned offset = 0;
+	
+	// It's important to use < instead of != if we might skip past the end
+	for ( Iter it = begin;  it < trace.end();  ++it, ++offset )
+	{
+		const CallRecord& call = *it;
+		
+		switch ( call.arch )
+		{
+			case Backtrace::kArchClassic68K:
+				Backtrace::Trace68K( offset, call.addr68K );
+				break;
+			
+			case Backtrace::kArchPowerPCCFM:
+				Backtrace::TracePPC( offset, call.addrPPC );
+				break;
+			
+			default:
+				std::fprintf( stderr, "Trace: architecture %x for addres %.8x is unknown.\n", call.arch, call.addr68K );
+				break;
+		}
+	}
+}
 
 namespace Genie
 {
@@ -1241,7 +1323,8 @@ namespace Genie
 				case SIGSEGV:
 				case SIGSYS:
 					// create core image
-					// for now, fall through
+					signal |= 0x80;
+					// fall through
 					//break;
 				case SIGHUP:
 				case SIGINT:
@@ -1308,6 +1391,10 @@ namespace Genie
 		if ( itsResult != 0 )
 		{
 			// Fatal signal received.  Terminate.
+			if ( WCOREDUMP( itsResult ) )
+			{
+				DumpBacktrace( 1, "main" );
+			}
 			
 			if ( itsInterdependence == kProcessForked )
 			{
