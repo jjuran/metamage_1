@@ -108,6 +108,8 @@ static void BlockWrite( int fd, const void* data, std::size_t byteCount )
 	
 int O::Main( int argc, argv_t argv )
 {
+	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+	
 	if ( argc < 3 )
 	{
 		return Usage();
