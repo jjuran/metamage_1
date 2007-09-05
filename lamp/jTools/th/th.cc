@@ -34,7 +34,7 @@
 
 
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -113,7 +113,7 @@ static TestResults run_test( const char* test_file )
 	int wait_status = -1;
 	pid_t resultpid = waitpid( pid, &wait_status, 0 );
 	
-	Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( NN::Owned< P7::FileDescriptor >::Seize( P7::FileDescriptor( pipe_ends[0] ) ) );
+	Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( NN::Owned< p7::fd_t >::Seize( p7::fd_t( pipe_ends[0] ) ) );
 	
 	std::string plan = input.Read();
 	
@@ -188,7 +188,7 @@ static void Report( unsigned count, const char* status )
 	}
 }
 
-int O::Main( int argc, const char *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	const char* const* test_file = argv;
 	

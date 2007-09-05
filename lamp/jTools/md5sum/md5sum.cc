@@ -20,12 +20,12 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 namespace Bits = BitsAndBytes;
 
 
-static std::string MD5Sum( P7::FileDescriptor input )
+static std::string MD5Sum( p7::fd_t input )
 {
 	const std::size_t blockSize = 64;
 	
@@ -54,7 +54,7 @@ static std::string MD5Sum( P7::FileDescriptor input )
 	return digest;
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	int fail = 0;
 	
@@ -62,7 +62,7 @@ int O::Main( int argc, char const *const argv[] )
 	{
 		try
 		{
-			Io::Out << MD5Sum( P7::Open( argv[ i ], 0 ) )
+			Io::Out << MD5Sum( p7::open( argv[ i ], 0 ) )
 			        << "  "
 			        << argv[ i ]
 			        << "\n";

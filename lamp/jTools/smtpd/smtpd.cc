@@ -53,7 +53,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 using namespace io::path_descent_operators;
@@ -363,7 +363,7 @@ static void DoLine( const std::string& line )
 	}
 }
 
-int O::Main( int /*argc*/, char const *const /*argv*/[] )
+int O::Main( int /*argc*/, argv_t /*argv*/ )
 {
 	sockaddr_in peer;
 	socklen_t peerlen = sizeof peer;
@@ -377,7 +377,7 @@ int O::Main( int /*argc*/, char const *const /*argv*/[] )
 		        << ".\n";
 	}
 	
-	Io::TextInputAdapter< P7::FileDescriptor > input( P7::kStdIn_FileNo );
+	Io::TextInputAdapter< p7::fd_t > input( p7::stdin_fileno );
 	
 	const char* hostname = "temporarily.out.of.order";
 	
