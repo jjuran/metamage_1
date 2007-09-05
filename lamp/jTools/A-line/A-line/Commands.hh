@@ -128,7 +128,7 @@ namespace ALine
 		}
 		
 		// CodeWarrior only
-		std::string CFMTracebackTables() const  { return carbon && cfm && debug ? "-tb on" : ""; }
+		std::string CFMTracebackTables() const  { return cfm && debug ? "-tb on" : ""; }
 		
 		// CodeWarrior only
 		std::string MWCodeModel() const
