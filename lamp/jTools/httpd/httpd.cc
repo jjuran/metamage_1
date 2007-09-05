@@ -135,21 +135,6 @@ struct HTTPRequestData
 	void Read();
 };
 
-class HTTPRequest
-{
-	private:
-		HTTPRequestData data;
-	
-	public:
-		HTTPRequest()  { data.lines.push_back( std::string() ); }
-		HTTPRequest( const HTTPRequestData& data ) : data( data )  {}
-		
-		std::string Command() const  { return data.lines.front(); }
-		std::string Method() const;
-		std::string Resource() const;
-		std::string HTTPVersion() const;
-};
-
 void HTTPRequestData::Read()
 {
 	try
