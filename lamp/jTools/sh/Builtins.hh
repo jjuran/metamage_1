@@ -9,7 +9,11 @@
 #include <map>
 #include <string>
 
-typedef int (*Builtin)( int argc, char const* const argv[] );
+// Iota
+#include "iota/argv.hh"
+
+
+typedef int (*Builtin)( int argc, iota::argv_t argv );
 
 int AssignShellVariable( const char* name, const char* value );
 
