@@ -453,6 +453,8 @@ namespace ALine
 		               allUsedProjects.rend(),
 		               gatherer );
 		
+		options.DefineMacro( "TARGET_CONFIG_DEBUGGING", targetInfo.build == buildDebug );
+		
 		if ( targetInfo.build == buildDebug )
 		{
 			options.DefineMacro( "ALINE_DEBUG", true );
