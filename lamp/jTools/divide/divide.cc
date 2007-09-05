@@ -16,7 +16,7 @@
 
 
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -124,8 +124,8 @@ int O::Main( int argc, argv_t argv )
 	const char* outfile1 = argv[2];
 	const char* outfile2 = argv[3];
 	
-	NN::Owned< P7::FileDescriptor > out1 = P7::Open( outfile1, O_WRONLY | O_TRUNC | O_CREAT, 0644 );
-	NN::Owned< P7::FileDescriptor > out2 = P7::Open( outfile2, O_WRONLY | O_TRUNC | O_CREAT, 0644 );
+	NN::Owned< p7::fd_t > out1 = p7::open( outfile1, O_WRONLY | O_TRUNC | O_CREAT, 0644 );
+	NN::Owned< p7::fd_t > out2 = p7::open( outfile2, O_WRONLY | O_TRUNC | O_CREAT, 0644 );
 	
 	bool divided = false;
 	
@@ -139,7 +139,7 @@ int O::Main( int argc, argv_t argv )
 	{
 		try
 		{
-			int bytes = io::read( P7::kStdIn_FileNo, data, blockSize );
+			int bytes = io::read( p7::stdin_fileno, data, blockSize );
 			
 			first_blocks.append( data, data + bytes );
 			
@@ -171,7 +171,7 @@ int O::Main( int argc, argv_t argv )
 	{
 		try
 		{
-			int bytes = io::read( P7::kStdIn_FileNo, data, blockSize );
+			int bytes = io::read( p7::stdin_fileno, data, blockSize );
 			
 			io::write( out2, data, bytes );
 		}

@@ -34,7 +34,7 @@
 
 
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -108,7 +108,7 @@ struct Redirection
 };
 
 
-static Redirection GetRedirectionFromLine( const std::string& line, Io::TextInputAdapter< P7::FileDescriptor >& input )
+static Redirection GetRedirectionFromLine( const std::string& line, Io::TextInputAdapter< p7::fd_t >& input )
 {
 	std::size_t end_of_fd = line.find_first_not_of( "0123456789" );
 	
@@ -471,7 +471,7 @@ int O::Main( int argc, argv_t argv )
 		int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
 	}
 	
-	Io::TextInputAdapter< P7::FileDescriptor > input = P7::FileDescriptor( fd );
+	Io::TextInputAdapter< p7::fd_t > input = p7::fd_t( fd );
 	
 	std::vector< TestCase > battery;
 	TestCase test;

@@ -12,8 +12,6 @@
 #include "POSeven/FileDescriptor.hh"
 
 
-namespace P7 = POSeven;
-
 extern int gLastResult;
 
 enum PromptLevel
@@ -26,8 +24,8 @@ enum PromptLevel
 
 void SetPromptLevel( PromptLevel level );
 
-int ReadExecuteLoop( P7::FileDescriptor  fd,
-                     bool                prompts );
+int ReadExecuteLoop( poseven::fd_t  fd,
+                     bool           prompts );
 
 #endif
 

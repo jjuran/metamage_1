@@ -27,6 +27,7 @@
 
 
 namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -59,7 +60,7 @@ int O::Main( int argc, argv_t argv )
 	const char* hostname = argv[1];
 	const char* port_str = argv[2];
 	
-	P7::FileDescriptor sock = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
+	p7::fd_t sock = p7::fd_t( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 	
 	short port = std::atoi( port_str );
 	

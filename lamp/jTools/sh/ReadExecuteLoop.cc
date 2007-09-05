@@ -25,6 +25,9 @@
 #include "Options.hh"
 
 
+namespace p7 = poseven;
+
+
 static PromptLevel gPromptLevel = kPS1;
 
 void SetPromptLevel( PromptLevel level )
@@ -61,10 +64,10 @@ static void SendPrompt()
 	Io::Out << prompt_string;
 }
 
-int ReadExecuteLoop( P7::FileDescriptor  fd,
-                     bool                prompts )
+int ReadExecuteLoop( p7::fd_t  fd,
+                     bool      prompts )
 {
-	Io::TextInputAdapter< P7::FileDescriptor > input( fd );
+	Io::TextInputAdapter< p7::fd_t > input( fd );
 	
 	int result = 0;
 	

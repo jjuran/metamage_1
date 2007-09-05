@@ -42,7 +42,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 using namespace io::path_descent_operators;
@@ -199,7 +199,7 @@ static void Relay( const std::string&  returnPath,
 	
 	int sock = socket( PF_INET, SOCK_STREAM, INET_TCP );
 	
-	P7::FileDescriptor serverStream = P7::FileDescriptor( sock );
+	p7::fd_t serverStream = p7::fd_t( sock );
 	
 	// and connect to the server.  This could fail, thanks to a bunch of Cox.
 	
@@ -211,7 +211,7 @@ static void Relay( const std::string&  returnPath,
 	
 	int result = connect( sock, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) );
 	
-	SMTP::Client::Session< P7::FileDescriptor > smtpSession( serverStream );
+	SMTP::Client::Session< p7::fd_t > smtpSession( serverStream );
 	
 	NN::Owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
 	

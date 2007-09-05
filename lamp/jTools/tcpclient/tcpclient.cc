@@ -27,6 +27,7 @@
 
 
 namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -45,9 +46,9 @@ static struct in_addr ResolveHostname( const char* hostname )
 	return addr;
 }
 
-static P7::FileDescriptor Connect( const char* hostname, const char* port_str )
+static p7::fd_t Connect( const char* hostname, const char* port_str )
 {
-	P7::FileDescriptor result = P7::FileDescriptor( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
+	p7::fd_t result = p7::fd_t( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 	
 	short port = std::atoi( port_str );
 	
@@ -80,7 +81,7 @@ int O::Main( int argc, argv_t argv )
 	
 	iota::argp_t program_argv = argv + 3;
 	
-	P7::FileDescriptor sock = Connect( hostname, port_str );
+	p7::fd_t sock = Connect( hostname, port_str );
 	
 	dup2( sock, 6 );
 	dup2( sock, 7 );

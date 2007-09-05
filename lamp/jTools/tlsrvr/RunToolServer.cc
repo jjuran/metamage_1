@@ -59,7 +59,7 @@ namespace RunToolServer
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	namespace Div = Divergence;
 	namespace NX = NitrogenExtras;
 	
@@ -272,7 +272,7 @@ namespace RunToolServer
 		return script;
 	}
 	
-	static void DumpFile( const FSSpec& file, P7::FileDescriptor fd )
+	static void DumpFile( const FSSpec& file, p7::fd_t fd )
 	{
 		std::string outputFromToolServer = io::slurp_file< NN::StringFlattener< std::string > >( file );
 		
@@ -285,8 +285,8 @@ namespace RunToolServer
 	{
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		DumpFile( gTempFiles[ kErrorFile  ], P7::kStdErr_FileNo );
-		DumpFile( gTempFiles[ kOutputFile ], P7::kStdOut_FileNo );
+		DumpFile( gTempFiles[ kErrorFile  ], p7::stderr_fileno );
+		DumpFile( gTempFiles[ kOutputFile ], p7::stdout_fileno );
 		
 		// Delete temp files
 		std::fill( gTempFiles,

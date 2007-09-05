@@ -19,14 +19,14 @@ namespace ALine
 {
 	
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	using BitsAndBytes::eos;
 	
 	
 	std::vector< std::string > ReadSourceDotList( const std::string& pathname )
 	{
-		Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( io::open_for_reading( pathname ) );
+		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( pathname ) );
 		
 		std::vector< std::string > files;
 		

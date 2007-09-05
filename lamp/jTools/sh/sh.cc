@@ -35,7 +35,7 @@
 #include "ReadExecuteLoop.hh"
 
 
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -114,7 +114,7 @@ int O::Main( int argc, argv_t argv )
 	gParameters = freeArgs;
 	gParameterCount = O::FreeArgumentCount();
 	
-	P7::FileDescriptor input( P7::kStdIn_FileNo );
+	p7::fd_t input( p7::stdin_fileno );
 	
 	if ( monitor )
 	{
@@ -153,7 +153,7 @@ int O::Main( int argc, argv_t argv )
 		++gParameters;
 		--gParameterCount;
 		
-		input = P7::Open( gArgZero, O_RDONLY ).Release();
+		input = p7::open( gArgZero, O_RDONLY ).Release();
 		
 		int controlled = fcntl( input, F_SETFD, FD_CLOEXEC );
 	}

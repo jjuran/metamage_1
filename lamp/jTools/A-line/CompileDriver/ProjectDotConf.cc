@@ -22,7 +22,7 @@ namespace CompileDriver
 {
 	
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	using BitsAndBytes::eos;
 	
@@ -82,7 +82,7 @@ namespace CompileDriver
 	void ReadProjectDotConf( const std::string& pathname, DotConfData& data )
 	{
 		// Open the config file, and read as a text input stream.
-		Io::TextInputAdapter< NN::Owned< P7::FileDescriptor > > input( io::open_for_reading( pathname ) );
+		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( pathname ) );
 		
 		std::size_t lineCount = 0;
 		

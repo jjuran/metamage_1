@@ -44,7 +44,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 using namespace io::path_descent_operators;
@@ -158,7 +158,7 @@ void HTTPRequestData::Read()
 		{
 			char buf[ 1024 ];
 			
-			int received = io::read( P7::kStdIn_FileNo, buf, 1024 );
+			int received = io::read( p7::stdin_fileno, buf, 1024 );
 			
 			partialData += std::string( buf, received );
 			
@@ -202,7 +202,7 @@ void HTTPRequestData::Read()
 			}
 		}
 	}
-	catch ( const P7::Errno& error )
+	catch ( const p7::errno_t& error )
 	{
 		Io::Err << "Read error: " << error.Get() << "\n";
 	}
@@ -352,7 +352,7 @@ static std::string LocateResource( const std::string& resource )
 	
 	std::string pathname = gDocumentRoot + resource;
 	
-	P7::Stat( pathname );  // Throw if nonexistent
+	p7::stat( pathname );  // Throw if nonexistent
 	
 	return pathname;
 }
@@ -408,7 +408,7 @@ static std::string HTTPHeader( const std::string& field, const std::string& valu
 
 static void DumpFile( const std::string& pathname )
 {
-	NN::Owned< P7::FileDescriptor > input( io::open_for_reading( pathname ) );
+	NN::Owned< p7::fd_t > input( io::open_for_reading( pathname ) );
 	
 	const std::size_t dataSize = 4096;
 	char data[ dataSize ];
@@ -419,7 +419,7 @@ static void DumpFile( const std::string& pathname )
 		{
 			std::size_t bytes = io::read( input, data, dataSize );
 			
-			io::write( P7::kStdOut_FileNo, data, bytes);
+			io::write( p7::stdout_fileno, data, bytes);
 		}
 	}
 	catch ( const io::end_of_input& )
@@ -442,7 +442,7 @@ static void ListDir( const std::string& pathname )
 		
 		listing += "\n";
 		
-		io::write( P7::kStdOut_FileNo, listing.data(), listing.size() );
+		io::write( p7::stdout_fileno, listing.data(), listing.size() );
 	}
 	
 }
@@ -457,7 +457,7 @@ static void SendError( const std::string& error )
 	                      "<title>" + error + "</title>"  "\r\n"
 	                      "<p>"     + error + "</p>"      "\r\n";
 	
-		io::write( P7::kStdOut_FileNo, message.data(), message.size() );
+		io::write( p7::stdout_fileno, message.data(), message.size() );
 }
 
 static void SendResponse( const HTTPRequestData& request )
