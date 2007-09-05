@@ -37,7 +37,7 @@ namespace Backtrace
 	
 	static asm char *GetSP( void )
 	{
-			mr		r3,SP
+			mr		r3,r1
 		#if !defined(__MWERKS__)	
 			blr
 		#endif
