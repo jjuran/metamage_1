@@ -112,6 +112,8 @@ namespace ALine
 			// gcc won't compile shared_ptr without RTTI
 			if ( !gnu )  result += "-fno-rtti ";
 			
+			if ( gnu )  result += "-fasm-blocks ";
+			
 			result.resize( result.size() - 1 );
 			
 			return result;
