@@ -9,6 +9,7 @@
 #include "errno.h"
 
 // Nucleus
+#include "Nucleus/ErrorCode.h"
 #include "Nucleus/Exception.h"
 
 // Nitrogen
@@ -39,6 +40,30 @@ namespace Orion
 	namespace P7 = POSeven;
 	
 	extern "C" int main( int argc, argv_t argv );
+	
+	
+	static void ShowDebuggingContext()
+	{
+		// NullDebuggingContext::Show() correctly does nothing,
+		// but there's no sense in throwing needlessly
+		if ( TARGET_CONFIG_DEBUGGING )
+		{
+			try
+			{
+				throw;
+			}
+			catch ( const NN::DebuggingContext& debugging )
+			{
+				debugging.Show();
+				
+				return;
+			}
+			catch ( ... )
+			{
+			}
+		}
+	}
+	
 	
 #pragma export on
 	
@@ -77,6 +102,8 @@ namespace Orion
 		*/
 		catch ( const P7::Errno& err )
 		{
+			ShowDebuggingContext();
+			
 			Io::Err << "Orion: Main() threw errno " << err.Get() << ": " << std::strerror( err ) << ".\n";
 			return 1;
 		}
@@ -88,6 +115,8 @@ namespace Orion
 		catch ( ... )
 		{
 			//NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+			
+			ShowDebuggingContext();
 			
 			try
 			{
