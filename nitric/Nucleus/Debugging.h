@@ -63,7 +63,17 @@ namespace Nucleus
 	#if TARGET_CONFIG_DEBUGGING
 	
 		#define NUCLEUS_DEBUGGING_CONTEXT Nucleus::DefaultDebuggingContext
-	
+		
+		#ifdef __GNUC__
+		
+			#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext( __PRETTY_FUNCTION__, __FILE__, __LINE__ )
+		
+		#else
+		
+			#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext( "", __FILE__, __LINE__ )
+		
+		#endif
+		
 	#else
 	
 		#define NUCLEUS_DEBUGGING_CONTEXT Nucleus::NullDebuggingContext
@@ -76,23 +86,7 @@ namespace Nucleus
 	
 #ifndef NUCLEUS_CREATE_DEBUGGING_CONTEXT
 	
-	#if TARGET_CONFIG_DEBUGGING
-	
-		#ifdef __GNUC__
-		
-			#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext( __PRETTY_FUNCTION__, __FILE__, __LINE__ )
-		
-		#else
-		
-			#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext( "", __FILE__, __LINE__ )
-		
-		#endif
-	
-	#else
-	
-		#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext()
-	
-	#endif
+	#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext()
 	
 #endif
 	
