@@ -5,9 +5,9 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2002 by Lisa Lippincott.
+// Written 2002-2007 by Lisa Lippincott and Joshua Juran.
 //
-// This code was written entirely by the above contributor, who places it
+// This code was written entirely by the above contributors, who place it
 // in the public domain.
 
 
@@ -97,10 +97,16 @@
 #include "Nucleus/Convert.h"
 #endif
 
+#ifndef NUCLEUS_DEBUGGING_H
+#include "Nucleus/Debugging.h"
+#endif
+
 #include <map>
+
 
 namespace Nucleus
   {   
+   
    template < class ErrorClass >
    struct ErrorClassTraits
      {
@@ -108,20 +114,25 @@ namespace Nucleus
      };   
    
    template < class ErrorClass, typename ErrorClassTraits<ErrorClass>::ErrorNumber number >
-   class ErrorCode: public ErrorClass
+   class ErrorCode: public ErrorClass, public DebuggingContext
      {
       public:
          ErrorCode()
-           : ErrorClass( Convert<ErrorClass>( number ) )
+           : ErrorClass( Convert<ErrorClass>( number ) ),
+             DebuggingContext()
+           {}
+         
+         ErrorCode( const DebuggingContext& debugging )
+           : ErrorClass( Convert<ErrorClass>( number ) ),
+             DebuggingContext( debugging )
            {}
      };
-
-
-   template < class Exception >
-   void Throw()
-     {
-      throw Exception();
-     }
+	
+	template < class Exception >
+	void Throw( const DebuggingContext& debugging )
+	{
+		throw Exception( debugging );
+	}
 
    
    template < class ErrorClass >
@@ -130,7 +141,7 @@ namespace Nucleus
       private:
          typedef typename ErrorClassTraits< ErrorClass >::ErrorNumber ErrorNumber;
          
-         typedef std::map< ErrorNumber, void(*)() > Map;
+         typedef std::map< ErrorNumber, void(*)( const DebuggingContext& ) > Map;
       
          Map map;
 
@@ -148,11 +159,11 @@ namespace Nucleus
             map[ number ] = Nucleus::Throw< ErrorCode< ErrorClass, number > >;
            }
          
-         void Throw( ErrorClass error ) const
+         void Throw( ErrorClass error, const DebuggingContext& debugging ) const
            {
             typename Map::const_iterator found = map.find( Convert<ErrorNumber>( error ) );
             if ( found != map.end() )
-               return found->second();
+               return found->second( debugging );
             throw error;
            }
      };
@@ -172,9 +183,9 @@ namespace Nucleus
      }
    
    template < class ErrorClass >
-   void ThrowErrorCode( ErrorClass error )
+   void ThrowErrorCode( ErrorClass error, const DebuggingContext& debugging )
      {
-      TheGlobalErrorCodeThrower<ErrorClass>().Throw( error );
+      TheGlobalErrorCodeThrower<ErrorClass>().Throw( error, debugging );
      }
   }
 
