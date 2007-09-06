@@ -12,14 +12,8 @@
 #include "Nucleus/ErrorCode.h"
 #include "Nucleus/Exception.h"
 
-// Nitrogen
-//#include "Nitrogen/OSStatus.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
-
-// OSErrno
-//#include "OSErrno/OSErrno.hh"
 
 // Orion
 #include "Orion/StandardIO.hh"
@@ -35,7 +29,6 @@ extern "C" far void __InitCode__();
 namespace Orion
 {
 	
-	//namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace P7 = POSeven;
 	
@@ -83,23 +76,6 @@ namespace Orion
 		{
 			return exit.Get();
 		}
-		/*
-		catch ( const N::OSStatus& err )
-		{
-			Io::Err << "Orion: Main() threw OSStatus " << err.Get() << ".\n";
-			
-			NN::RegisterExceptionConversion< P7::Errno, N::OSStatus >();
-			
-			P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled() );
-			
-			if ( errnum != -1 )
-			{
-				Io::Err << "That converts to errno " << errnum << ": " << std::strerror( errnum ) << "\n";
-			}
-			
-			return 1;
-		}
-		*/
 		catch ( const P7::Errno& err )
 		{
 			ShowDebuggingContext();
@@ -114,8 +90,6 @@ namespace Orion
 		}
 		catch ( ... )
 		{
-			//NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-			
 			ShowDebuggingContext();
 			
 			try
