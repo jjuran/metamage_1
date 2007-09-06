@@ -54,7 +54,7 @@ inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 }
 
 
-static std::string gRelay;
+static std::string gRelayServer;
 
 struct BadEmailAddress : N::ParamErr {};
 
@@ -164,11 +164,11 @@ static void Relay( const std::string&  returnPath,
 	        << forwardPath
 	        << "\n";
 	
-	std::string smtpServer = gRelay;
+	std::string smtpServer = gRelayServer;
 	
-	if ( !gRelay.empty() )
+	if ( !gRelayServer.empty() )
 	{
-		Io::Out << "Using relay " << gRelay << ".\n";
+		Io::Out << "Using relay " << gRelayServer << ".\n";
 	}
 	else
 	{
@@ -339,15 +339,11 @@ static void ProcessMessage( const FSSpec& msgFolderItem )
 }
 
 
-int O::Main(int argc, const char *const argv[])
+int O::Main( int argc, argv_t argv )
 {
-	if ( argc >= 3 )
-	{
-		if ( argv[ 1 ] == std::string( "--relay" ) )
-		{
-			gRelay = argv[ 2 ];
-		}
-	}
+	O::BindOption( "--relay", gRelayServer );
+	
+	O::GetOptions( argc, argv );
 	
 	N::FSDirSpec queue = QueueDirectory();
 	
