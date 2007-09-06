@@ -31,26 +31,6 @@ extern "C" {
 	#define STDOUT_FILENO   1       /* Standard output.  */
 	#define STDERR_FILENO   2       /* Standard error output.  */
 	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	// ToolScratch:  addr = 0x09CE, len = 8 bytes
-	
-# ifdef __cplusplus
-	
-	static char**& environ = *reinterpret_cast< char*** >(LMGetToolScratch() + 4);
-	
-# else
-	
-	#define        environ  (*                 (char***) (LMGetToolScratch() + 4) )
-	
-# endif
-	
-#else
-	
-	extern char** environ;
-	
-#endif
-	
 	unsigned int alarm( unsigned int seconds );
 	
 	int chdir( const char* path );
