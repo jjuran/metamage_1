@@ -23,6 +23,7 @@
 #ifndef __MACERRORS__
 #include FRAMEWORK_HEADER(CarbonCore,MacErrors.h)
 #endif
+
 #ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
 #endif
@@ -39,11 +40,8 @@
 #include "io/io.hh"
 #endif
 
-#ifdef NITROGEN_DEBUG
-#define	ThrowOSStatus(err)	ThrowOSStatusInternal(err, __FILE__, __LINE__)
-#else
-#define	ThrowOSStatus(err)	ThrowOSStatusInternal(err)
-#endif
+
+#define	ThrowOSStatus( err )  ThrowOSStatus_Inline( err, NUCLEUS_CREATE_DEBUGGING_CONTEXT() )
 
 
 namespace Nitrogen
@@ -84,16 +82,15 @@ namespace Nitrogen
       Nucleus::RegisterErrorCode<OSStatus, error>();
      }
    
-#ifdef NITROGEN_DEBUG
-// Log non-noErr calls to OSStatus
-// SetOSStatusLoggingProc returns the old proc to you.
-   typedef void (*OSStatusLoggingProc) ( OSStatus, const char *, int );
-   OSStatusLoggingProc SetOSStatusLoggingProc ( OSStatusLoggingProc newProc );
+   void ThrowOSStatus_Internal( OSStatus, const Nucleus::DebuggingContext& debugging );
    
-   void ThrowOSStatusInternal( OSStatus, const char *, int );
-#else
-   void ThrowOSStatusInternal( OSStatus );
-#endif
+	inline void ThrowOSStatus_Inline( OSStatus err, const Nucleus::DebuggingContext& debugging )
+	{
+		if ( err != noErr )
+		{
+			ThrowOSStatus_Internal( err, debugging );
+		}
+	}
    
    template < class DestructionExceptionPolicy >
    struct DestructionOSStatusPolicy: public DestructionExceptionPolicy
@@ -119,30 +116,40 @@ namespace Nucleus
   {
    template <>
    class ErrorCode< Nitrogen::OSStatus, ::memFullErr >: public Nitrogen::OSStatus,
-										                public std::bad_alloc
+										                public std::bad_alloc,
+										                public DebuggingContext
      {
       public:
-         ErrorCode()
-           : OSStatus( memFullErr )
-           {}
+         ErrorCode() : OSStatus( memFullErr )  {}
+         ErrorCode( const DebuggingContext& debugging ) : OSStatus( memFullErr ),
+                                                          DebuggingContext( debugging )
+         {}
          
          const char* what() const throw()  { return "OSStatus -108 (memFullErr)"; }
      };
 	
 	template <>
 	class ErrorCode< Nitrogen::OSStatus, ::eofErr > : public Nitrogen::OSStatus,
-	                                                  public io::end_of_input
+	                                                  public io::end_of_input,
+	                                                  public DebuggingContext
 	{
 		public:
 			ErrorCode() : OSStatus( eofErr )  {}
+			ErrorCode( const DebuggingContext& debugging ) : OSStatus( eofErr ),
+                                                             DebuggingContext( debugging )
+         {}
 	};
 	
 	template <>
 	class ErrorCode< Nitrogen::OSStatus, ::kOTNoDataErr > : public Nitrogen::OSStatus,
-	                                                        public io::no_input_pending
+	                                                        public io::no_input_pending,
+	                                                        public DebuggingContext
 	{
 		public:
 			ErrorCode() : OSStatus( kOTNoDataErr )  {}
+			ErrorCode( const DebuggingContext& debugging ) : OSStatus( kOTNoDataErr ),
+                                                             DebuggingContext( debugging )
+         {}
 	};
 	
 	
