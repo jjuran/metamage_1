@@ -13,8 +13,10 @@
 #include <unistd.h>
 
 // Nucleus
+#include "Nucleus/Exception.h"
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Owned.h"
+#include "Nucleus/TheExceptionBeingHandled.h"
 
 // Io
 #include "io/slurp.hh"
@@ -198,6 +200,8 @@ static std::string JoinScriptPieces( const std::vector< std::string >& pieces )
 
 int O::Main( int argc, argv_t argv )
 {
+	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+	
 	std::vector< std::string > inlineScriptPieces;
 	
 	// human-readable by default, like Apple osascript
