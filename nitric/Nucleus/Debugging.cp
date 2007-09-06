@@ -11,7 +11,7 @@
 // in the public domain.
 
 
-#ifndef NUCLEUS_EXCEPTION_H
+#ifndef NUCLEUS_DEBUGGING_H
 #include "Nucleus/Debugging.h"
 #endif
 
