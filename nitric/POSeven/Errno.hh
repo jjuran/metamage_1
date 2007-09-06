@@ -14,8 +14,8 @@
 #ifndef POSEVEN_ERRNO_HH
 #define POSEVEN_ERRNO_HH
 
-// POSIX
-#include "errno.h"
+// Standard C
+#include <errno.h>
 
 #ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
@@ -32,19 +32,8 @@
 #endif
 
 
-#ifdef NUCLEUS_DEBUG
-#define ThrowPOSIXResult(result)  ThrowPOSIXResultInternalDebug( result, #result, __FILE__, __LINE__ )
-#else
-#define ThrowPOSIXResult(result)  ThrowPOSIXResultInternal( result )
-#endif
-
-#ifdef NUCLEUS_DEBUG
-#define	ThrowErrno(error)  ThrowErrnoInternalDebug(error, "", __FILE__, __LINE__)
-#else
-#define	ThrowErrno(error)	ThrowErrnoInternal(error)
-#endif
-
-#define ThrowNegativeOne(result)  if ( (result) == -1 )  { ThrowErrno( errno ); } else
+#define	ThrowErrno(       error  )  ThrowErrno_Inline      ( error,  NUCLEUS_CREATE_DEBUGGING_CONTEXT() )
+#define	ThrowPOSIXResult( result )  ThrowPOSIXResult_Inline( result, NUCLEUS_CREATE_DEBUGGING_CONTEXT() )
 
 
 namespace POSeven
@@ -88,13 +77,25 @@ namespace POSeven
 		Nucleus::RegisterErrorCode< Errno, number >();
 	}
 	
-	void ThrowPOSIXResultInternalDebug( POSIXResult error, const char* text, const char * file, int line );
+	void ThrowErrno_Internal( Errno number, const Nucleus::DebuggingContext& debugging );
 	
-	void ThrowErrnoInternalDebug( Errno number, const char* text, const char * file, int line );
+	inline void ThrowErrno_Inline( int error, const Nucleus::DebuggingContext& debugging )
+	{
+		if ( error != 0 )
+		{
+			ThrowErrno_Internal( error, debugging );
+		}
+	}
 	
-	void ThrowPOSIXResultInternal( POSIXResult error );
-	
-	void ThrowErrnoInternal( Errno number );
+	inline int ThrowPOSIXResult_Inline( int result, const Nucleus::DebuggingContext& debugging )
+	{
+		if ( result < 0 )
+		{
+			ThrowErrno_Internal( errno, debugging );
+		}
+		
+		return result;
+	}
 	
 	template < class DestructionExceptionPolicy >
 	struct DestructionErrnoPolicy: public DestructionExceptionPolicy
@@ -131,17 +132,29 @@ namespace Nucleus
 {
 	
 	template <>
-	class ErrorCode< POSeven::Errno, ENOMEM > : public POSeven::Errno, std::bad_alloc
+	class ErrorCode< POSeven::Errno, ENOMEM > : public POSeven::Errno,
+	                                            public std::bad_alloc,
+	                                            public DebuggingContext
 	{
 		public:
 			ErrorCode() : Errno( ENOMEM )  {}
+			ErrorCode( const DebuggingContext& debugging ) : Errno( ENOMEM ),
+			                                                 DebuggingContext( debugging )
+			{
+			}
 	};
 	
 	template <>
-	class ErrorCode< POSeven::Errno, EAGAIN > : public POSeven::Errno, io::no_input_pending
+	class ErrorCode< POSeven::Errno, EAGAIN > : public POSeven::Errno,
+	                                            public io::no_input_pending,
+	                                            public DebuggingContext
 	{
 		public:
 			ErrorCode() : Errno( EAGAIN )  {}
+			ErrorCode( const DebuggingContext& debugging ) : Errno( EAGAIN ),
+			                                                 DebuggingContext( debugging )
+			{
+			}
 	};
 	
 	template <> struct Converter< POSeven::Errno, std::bad_alloc >: public std::unary_function< std::bad_alloc, POSeven::Errno >

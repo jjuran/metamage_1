@@ -13,9 +13,6 @@
 
 #include "POSeven/Errno.hh"
 
-// Standard C
-#include <errno.h>
-
 
 namespace POSeven
 {
@@ -31,33 +28,10 @@ namespace POSeven
 	static POSIXErrnosRegistration theRegistration;
 	
 	
-	void ThrowPOSIXResultInternalDebug( POSIXResult  result,
-	                                    const char*  text,
-	                                    const char*  file,
-	                                    int          line )
+	void ThrowErrno_Internal( Errno                             number,
+	                          const Nucleus::DebuggingContext&  debugging )
 	{
-		if ( result == -1 )
-		{
-			ThrowErrnoInternalDebug( errno, text, file, line );
-		}
-	}
-	
-	void ThrowErrnoInternalDebug( Errno number, const char* text, const char *file, int line )
-	{
-		Nucleus::ThrowErrorCode< Errno >( number );
-	}
-	
-	void ThrowPOSIXResultInternal( POSIXResult result )
-	{
-		if ( result == -1 )
-		{
-			ThrowErrnoInternal( errno );
-		}
-	}
-	
-	void ThrowErrnoInternal( Errno number )
-	{
-		Nucleus::ThrowErrorCode< Errno >( number );
+		Nucleus::ThrowErrorCode< Errno >( number, debugging );
 	}
 	
 	void RegisterPOSIXErrnos()
