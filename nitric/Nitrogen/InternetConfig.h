@@ -29,6 +29,10 @@
 #include "Nitrogen/MacMemory.h"
 #endif
 
+#ifndef NITROGEN_STR_H
+#include "Nitrogen/Str.h"
+#endif
+
 
 namespace Nitrogen
 {
