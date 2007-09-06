@@ -14,8 +14,12 @@
 #ifndef NUCLEUS_NASSERT_H
 #define NUCLEUS_NASSERT_H
 
+#ifndef NUCLEUS_DEBUGGING_H
+#include "Nucleus/Debugging.h"
+#endif
 
-#ifdef NUCLEUS_DEBUG
+
+#if TARGET_CONFIG_DEBUGGING
 	
 	#define ASSERT( cond )  if ( !(cond) ) Nucleus::ReportAssertionFailureAndAbort( #cond,  __FILE__, __LINE__ ); else 0
 	
