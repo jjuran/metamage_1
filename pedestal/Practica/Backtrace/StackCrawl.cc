@@ -98,6 +98,8 @@ namespace Backtrace
 			return;
 		}
 		
+	#ifndef __MACH__
+		
 		if ( (long) frame & 0x00000001 )
 		{
 			const StackFrame68K* switchFrame = SwitchBackTo68KFromPPC( frame );
@@ -106,6 +108,8 @@ namespace Backtrace
 			
 			return;
 		}
+		
+	#endif
 		
 		ReturnAddrPPC addr = frame->returnAddr;
 		
