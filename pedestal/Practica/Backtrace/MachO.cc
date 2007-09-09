@@ -112,7 +112,7 @@ namespace Backtrace
 				{
 					*offset = pc - base;
 					*publicSymbol = true;
-					return strdup(name);
+					return name;
 				}
 			}
 			
@@ -134,7 +134,7 @@ namespace Backtrace
 			
 			*offset = pc - base;
 			*publicSymbol = false;
-			return (name != NULL) ? strdup(name) : NULL;
+			return name;
 		}
 		
 		*offset = 0;
