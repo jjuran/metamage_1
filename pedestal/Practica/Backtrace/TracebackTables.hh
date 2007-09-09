@@ -28,7 +28,7 @@ namespace Backtrace
 	
 	typedef const TracebackTable* TracebackTablePtr;
 	
-	TracebackTablePtr FindSymbolName( ReturnAddrPPC addr );
+	TracebackTablePtr FindSymbolName( ReturnAddrPPCFrag addr );
 	
 	inline std::string GetSymbolString( TracebackTablePtr table )
 	{

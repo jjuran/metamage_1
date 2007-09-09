@@ -11,7 +11,7 @@ namespace Backtrace
 	
 	typedef unsigned long UInt32;
 	
-	TracebackTablePtr FindSymbolName( ReturnAddrPPC addr )
+	TracebackTablePtr FindSymbolName( ReturnAddrPPCFrag addr )
 	{
 		if ( addr == NULL )
 		{
