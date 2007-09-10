@@ -98,9 +98,13 @@ namespace Backtrace
 					Backtrace::TraceAddress( offset, call.addrPPCFrag, "PPC" );
 					break;
 				
+			#ifdef __MACH__
+				
 				case Backtrace::kArchMachO:
 					Backtrace::TraceAddress( offset, call.addrMachO, TARGET_CPU_PPC ? "PPC" : "X86" );
 					break;
+				
+			#endif
 				
 				default:
 					std::fprintf( stderr, "Trace: architecture %x for addres %.8x is unknown.\n", call.arch, call.addr68K );
