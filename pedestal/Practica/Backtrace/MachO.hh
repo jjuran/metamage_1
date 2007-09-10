@@ -16,7 +16,7 @@
 namespace Backtrace
 {
 	
-	const char* FindSymbolName( ReturnAddrPPCMachO addr );
+	const char* FindSymbolName( ReturnAddrMachO addr );
 	
 	inline std::string GetSymbolString( const char* name )
 	{

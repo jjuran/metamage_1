@@ -141,7 +141,7 @@ namespace Backtrace
 		return NULL;
 	}
 	
-	const char* FindSymbolName( ReturnAddrPPCMachO addr )
+	const char* FindSymbolName( ReturnAddrMachO addr )
 	{
 		unsigned int  offset       = 0;
 		bool          publicSymbol = false;
