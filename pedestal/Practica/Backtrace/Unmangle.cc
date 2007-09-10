@@ -450,21 +450,14 @@ namespace Backtrace
 		throw Unmangle_Failed();
 	}
 	
-	static std::string ReadEntityName( const char*& p )
+	static std::string ReadEntityName( const char*& p, const char* end )
 	{
 		if ( *p == '_' )
 		{
 			return ReadSpecialName( p );
 		}
 		
-		const char* underscore = std::strchr( p, '_' );
-		
-		if ( underscore == NULL )
-		{
-			throw Unmangle_Failed();
-		}
-		
-		return ReadIdentifier( p, underscore );
+		return ReadIdentifier( p, end );
 	}
 	
 	static std::string LastName( const std::string& qualified_name )
@@ -481,12 +474,14 @@ namespace Backtrace
 			++p;
 		}
 		
-		if ( std::strstr( p, "__" ) == NULL )
+		const char* double_underscore = std::strstr( p, "__" );
+		
+		if ( double_underscore == NULL )
 		{
 			return p;
 		}
 		
-		std::string function_name = ReadEntityName( p );
+		std::string function_name = ReadEntityName( p, double_underscore );
 		
 		std::string class_name;
 		
@@ -515,19 +510,33 @@ namespace Backtrace
 		return function_name + ReadType( p, end );
 	}
 	
-	std::string UnmangleName68K( const char* name, const char* end )
+	std::string UnmangleMWC68K( const std::string& name )
 	{
-		return ReadSymbol( name, end );
+		const char* p = name.data();
+		
+		return ReadSymbol( p, p + name.size() );
 	}
 	
-	std::string UnmangleNamePPC( const char* name, const char* end )
+	std::string UnmangleMWCPPC( const std::string& name )
 	{
 		if ( name[0] != '.' )
 		{
 			return name;
 		}
 		
-		return ReadSymbol( name, end );
+		const char* p = name.data();
+		
+		return ReadSymbol( p, p + name.size() );
+	}
+	
+	std::string UnmangleGCC( const std::string& name )
+	{
+		if ( name[0] != '_' )
+		{
+			return name;
+		}
+		
+		return name;
 	}
 	
 }
