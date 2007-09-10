@@ -15,8 +15,9 @@ namespace Backtrace
 	
 	class Unmangle_Failed {};
 	
-	std::string UnmangleName68K( const char* name, const char* end );
-	std::string UnmangleNamePPC( const char* name, const char* end );
+	std::string UnmangleMWC68K( const std::string& name );
+	std::string UnmangleMWCPPC( const std::string& name );
+	std::string UnmangleGCC   ( const std::string& name );
 	
 }
 
