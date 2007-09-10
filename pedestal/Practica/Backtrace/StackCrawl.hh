@@ -37,7 +37,7 @@ namespace Backtrace
 		
 	#ifdef __POWERPC__
 		
-		kArchMachO        = 1 | (1 << 4),
+		kArchMachO        = 1 | (1 << 4)
 		
 	#else
 		
