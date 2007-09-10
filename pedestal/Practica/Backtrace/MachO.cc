@@ -18,6 +18,8 @@
 namespace Backtrace
 {
 	
+#ifdef __MACH__
+	
 	// The following code was taken from MoreAddrToSym.c in Apple's MoreIsBetter sample code.
 	
 	// FindOwnerOfPC and GetFunctionName countesy of Ed Wynne.
@@ -150,6 +152,8 @@ namespace Backtrace
 		
 		return name;
 	}
+	
+#endif
 	
 }
 
