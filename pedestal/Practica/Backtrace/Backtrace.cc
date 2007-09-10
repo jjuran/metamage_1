@@ -105,7 +105,7 @@ namespace Backtrace
 	
 	void DebuggingContext::Show() const
 	{
-		unsigned levelsToSkip = 0;
+		unsigned levelsToSkip = 1;
 		
 		typedef std::vector< CallRecord >::const_iterator Iter;
 		
