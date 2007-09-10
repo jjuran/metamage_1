@@ -17,11 +17,11 @@ namespace Backtrace
 	
 	typedef const struct OpaqueCodePPCFrag* ReturnAddrPPCFrag;
 	
-	typedef const struct OpaqueCodePowerPCMachO* ReturnAddrPPCMachO;
+	typedef const struct OpaqueCodeMachO* ReturnAddrMachO;
 	
 #ifdef __MACH__
 	
-	typedef ReturnAddrPPCMachO ReturnAddrPPC;
+	typedef ReturnAddrMachO ReturnAddrPPC;
 	
 #else
 	
@@ -34,15 +34,14 @@ namespace Backtrace
 		kArchClassic68K   = 0,
 		kArchPowerPCFrag  = 1,
 		kArchCFM68K       = 0 | (1 << 4),  // not supported
-		kArchPowerPCMachO = 1 | (1 << 4),
 		
-	#ifdef __MACH__
+	#ifdef __POWERPC__
 		
-		kArchPowerPCNative = kArchPowerPCMachO
+		kArchMachO        = 1 | (1 << 4),
 		
 	#else
 		
-		kArchPowerPCNative = kArchPowerPCFrag
+		kArchMachO        = 2
 		
 	#endif
 	};
@@ -51,20 +50,18 @@ namespace Backtrace
 	{
 		union
 		{
-			ReturnAddr68K addr68K;
-			
-			ReturnAddrPPCFrag addrPPCFrag;
-			
-			ReturnAddrPPCMachO addrPPCMachO;
+			ReturnAddr68K      addr68K;
+			ReturnAddrPPCFrag  addrPPCFrag;
+			ReturnAddrMachO    addrMachO;
 		};
 		
 		Architecture arch;
 		
 		CallRecord()  {}
 		
-		CallRecord( ReturnAddr68K      addr ) : addr68K     ( addr ), arch( kArchClassic68K   )  {}
-		CallRecord( ReturnAddrPPCFrag  addr ) : addrPPCFrag ( addr ), arch( kArchPowerPCFrag  )  {}
-		CallRecord( ReturnAddrPPCMachO addr ) : addrPPCMachO( addr ), arch( kArchPowerPCMachO )  {}
+		CallRecord( ReturnAddr68K      addr ) : addr68K    ( addr ), arch( kArchClassic68K  )  {}
+		CallRecord( ReturnAddrPPCFrag  addr ) : addrPPCFrag( addr ), arch( kArchPowerPCFrag )  {}
+		CallRecord( ReturnAddrMachO    addr ) : addrMachO  ( addr ), arch( kArchMachO       )  {}
 	};
 	
 	

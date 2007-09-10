@@ -22,6 +22,12 @@ namespace Backtrace
 		ReturnAddrPPC   returnAddr;
 	};
 	
+	struct StackFrameX86
+	{
+		StackFrameX86*   next;
+		ReturnAddrMachO  returnAddr;
+	};
+	
 	
 #ifdef __MC68K__
 	
@@ -44,6 +50,17 @@ namespace Backtrace
 	}
 	
 	inline const StackFramePPC* GetTopFrame()  { return ( (const StackFramePPC*) GetSP() )->next; }
+	
+#endif
+	
+#ifdef __i386__
+	
+	static asm char *GetEBP( void )
+	{
+		mov  eax,ebp
+	}
+	
+	inline const StackFrameX86* GetTopFrame()  { return (const StackFrameX86*) GetEBP(); }
 	
 #endif
 	
@@ -123,6 +140,25 @@ namespace Backtrace
 		CrawlStackPPC( frame->next, result );
 	}
 	
+	static void CrawlStackX86( const StackFrameX86* frame, std::vector< CallRecord >& result )
+	{
+		if ( frame == NULL )
+		{
+			return;
+		}
+		
+		ReturnAddrMachO addr = frame->returnAddr;
+		
+		result.push_back( CallRecord( addr ) );
+		
+		if ( frame->next < frame )
+		{
+			return;
+		}
+		
+		CrawlStackX86( frame->next, result );
+	}
+	
 	inline void CrawlStack( const StackFrame68K* frame, std::vector< CallRecord >& result )
 	{
 		CrawlStack68K( frame, result );
@@ -131,6 +167,11 @@ namespace Backtrace
 	inline void CrawlStack( const StackFramePPC* frame, std::vector< CallRecord >& result )
 	{
 		CrawlStackPPC( frame, result );
+	}
+	
+	inline void CrawlStack( const StackFrameX86* frame, std::vector< CallRecord >& result )
+	{
+		CrawlStackX86( frame, result );
 	}
 	
 	std::vector< CallRecord > GetStackCrawl()
