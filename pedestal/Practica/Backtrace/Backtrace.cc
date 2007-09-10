@@ -30,6 +30,23 @@
 namespace Backtrace
 {
 	
+	template < class ReturnAddr > struct UnmanglingForReturnAddr_Traits;
+	
+	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddr68K >
+	{
+		static std::string Unmangle( const std::string& name )  { return UnmangleMWC68K( name ); }
+	};
+	
+	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrPPCFrag >
+	{
+		static std::string Unmangle( const std::string& name )  { return UnmangleMWCPPC( name ); }
+	};
+	
+	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrMachO >
+	{
+		static std::string Unmangle( const std::string& name )  { return UnmangleGCC( name ); }
+	};
+	
 	template < class SymbolPtr >
 	inline std::string GetNameFromSymbolPtr( SymbolPtr symbol )
 	{
@@ -56,6 +73,21 @@ namespace Backtrace
 		return addr == mixedModeSwitch ? "MixedMode" : FindSymbolString( addr );
 	}
 	
+	template < class ReturnAddr >
+	inline std::string GetUnmangledSymbolName( ReturnAddr addr )
+	{
+		std::string name = GetSymbolName( addr );
+		
+		try
+		{
+			return UnmanglingForReturnAddr_Traits< ReturnAddr >::Unmangle( name );
+		}
+		catch ( ... )
+		{
+			return name;
+		}
+	}
+	
 	static void PrintTrace( unsigned offset, const void* addr, const char* arch, const char* name )
 	{
 		std::fprintf( stderr, "%d: 0x%.8x (%s) %s\n", offset, addr, arch, name );
@@ -64,7 +96,7 @@ namespace Backtrace
 	template < class ReturnAddr >
 	inline void TraceAddress( unsigned offset, ReturnAddr addr, const char* arch )
 	{
-		PrintTrace( offset, addr, arch, GetSymbolName( addr ).c_str() );
+		PrintTrace( offset, addr, arch, GetUnmangledSymbolName( addr ).c_str() );
 	}
 	
 	DebuggingContext::DebuggingContext() : itsStackCrawl( GetStackCrawl() )
