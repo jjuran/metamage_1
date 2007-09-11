@@ -421,6 +421,8 @@ namespace ALine
 		options.DefineMacro( "__ALINE__" );
 		options.DefineMacro( "JOSHUA_JURAN_EXPERIMENTAL" );
 		
+		options.DefineMacro( "NUCLEUS_USES_BACKTRACE" );
+		
 		if ( targetInfo.platform & CD::apiMacCarbon )
 		{
 			options.DefineMacro( "TARGET_API_MAC_CARBON" );
