@@ -15,21 +15,8 @@
 #include "Nucleus/Debugging.h"
 #endif
 
-#include <cstdio>
-
 
 namespace Nucleus
 {
-	
-	void DefaultDebuggingContext::Show() const
-	{
-		if ( file == NULL  ||  text == NULL )
-		{
-			return;
-		}
-		
-		std::fprintf( stderr, "%s:%d: %s\n", file, line, text );
-	}
-	
 }
 
