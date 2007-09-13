@@ -32,10 +32,6 @@
 #endif
 
 
-#define	ThrowErrno(       error  )  ThrowErrno_Inline      ( error,  NUCLEUS_CREATE_DEBUGGING_CONTEXT() )
-#define	ThrowPOSIXResult( result )  ThrowPOSIXResult_Inline( result, NUCLEUS_CREATE_DEBUGGING_CONTEXT() )
-
-
 namespace POSeven
 {
 	
@@ -77,21 +73,21 @@ namespace POSeven
 		Nucleus::RegisterErrorCode< Errno, number >();
 	}
 	
-	void ThrowErrno_Internal( Errno number, const Nucleus::DebuggingContext& debugging );
+	void ThrowErrno_Internal( Errno number );
 	
-	inline void ThrowErrno_Inline( int error, const Nucleus::DebuggingContext& debugging )
+	inline void ThrowErrno( int error )
 	{
 		if ( error != 0 )
 		{
-			ThrowErrno_Internal( error, debugging );
+			ThrowErrno_Internal( error );
 		}
 	}
 	
-	inline int ThrowPOSIXResult_Inline( int result, const Nucleus::DebuggingContext& debugging )
+	inline int ThrowPOSIXResult( int result )
 	{
 		if ( result < 0 )
 		{
-			ThrowErrno_Internal( errno, debugging );
+			ThrowErrno_Internal( errno );
 		}
 		
 		return result;

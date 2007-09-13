@@ -28,10 +28,9 @@ namespace POSeven
 	static POSIXErrnosRegistration theRegistration;
 	
 	
-	void ThrowErrno_Internal( Errno                             number,
-	                          const Nucleus::DebuggingContext&  debugging )
+	void ThrowErrno_Internal( Errno number )
 	{
-		Nucleus::ThrowErrorCode< Errno >( number, debugging );
+		Nucleus::ThrowErrorCode< Errno >( number, Nucleus::DebuggingContext() );
 	}
 	
 	void RegisterPOSIXErrnos()
