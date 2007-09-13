@@ -1670,7 +1670,7 @@ Perl_pregcomp(pTHX_ char *exp, char *xend, PMOP *pm)
 	/* Starting-point info. */
       again:
 	if (PL_regkind[(U8)OP(first)] == EXACT) {
-	    if (OP(first) == EXACT);	/* Empty, get anchored substr later. */
+	    if (OP(first) == EXACT) (void) 0;	/* Empty, get anchored substr later. */
 	    else if ((OP(first) == EXACTF || OP(first) == EXACTFL)
 		     && !UTF)
 		r->regstclass = first;

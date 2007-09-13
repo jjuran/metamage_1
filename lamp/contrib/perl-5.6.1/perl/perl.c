@@ -3286,7 +3286,6 @@ STATIC void
 S_init_postdump_symbols(pTHX_ register int argc, register char **argv, register char **env)
 {
     char *s;
-    SV *sv;
     GV* tmpgv;
     char **dup_env_base = 0;
     int dup_env_count = 0;
@@ -3385,6 +3384,7 @@ S_init_postdump_symbols(pTHX_ register int argc, register char **argv, register 
 	}
 #endif /* NEED_ENVIRON_DUP_FOR_MODIFY */
 	for (; *env; env++) {
+	    SV *sv;
 	    if (!(s = strchr(*env,'=')))
 		continue;
 	    *s++ = '\0';
