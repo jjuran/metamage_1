@@ -29,6 +29,17 @@
 
 #endif
 
+
+#if TARGET_CONFIG_DEBUGGING && defined( NUCLEUS_USES_BACKTRACE )
+	
+	// Backtrace
+	#include "Backtrace/Backtrace.hh"
+	
+	#define NUCLEUS_DEBUGGING_CONTEXT Backtrace::DebuggingContext
+	
+#endif
+
+
 namespace Nucleus
 {
 	
@@ -37,58 +48,13 @@ namespace Nucleus
 		void Show() const  {}
 	};
 	
-	struct DefaultDebuggingContext
-	{
-		const char*  text;
-		const char*  file;
-		int          line;
-		
-		DefaultDebuggingContext() : text(), file(), line()  {}
-		
-		DefaultDebuggingContext( const char*  t,
-		                         const char*  f,
-		                         int          l ) : text( t ),
-		                                            file( f ),
-		                                            line( l )
-		{
-		}
-		
-		void Show() const;
-	};
-	
-	
-	
 #ifndef NUCLEUS_DEBUGGING_CONTEXT
 	
-	#if TARGET_CONFIG_DEBUGGING
-	
-		#define NUCLEUS_DEBUGGING_CONTEXT Nucleus::DefaultDebuggingContext
-		
-		#ifdef __GNUC__
-		
-			#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext( __PRETTY_FUNCTION__, __FILE__, __LINE__ )
-		
-		#else
-		
-			#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext( "", __FILE__, __LINE__ )
-		
-		#endif
-		
-	#else
-	
-		#define NUCLEUS_DEBUGGING_CONTEXT Nucleus::NullDebuggingContext
-	
-	#endif
+	#define NUCLEUS_DEBUGGING_CONTEXT Nucleus::NullDebuggingContext
 	
 #endif
 	
 	typedef NUCLEUS_DEBUGGING_CONTEXT DebuggingContext;
-	
-#ifndef NUCLEUS_CREATE_DEBUGGING_CONTEXT
-	
-	#define NUCLEUS_CREATE_DEBUGGING_CONTEXT()  Nucleus::DebuggingContext()
-	
-#endif
 	
 }
 
