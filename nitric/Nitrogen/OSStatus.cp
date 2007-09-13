@@ -17,10 +17,9 @@
 namespace Nitrogen
 {
 	
-	void ThrowOSStatus_Internal( OSStatus                          error,
-	                             const Nucleus::DebuggingContext&  debugging )
+	void ThrowOSStatus_Internal( OSStatus error )
 	{
-		Nucleus::ThrowErrorCode< OSStatus >( error, debugging );
+		Nucleus::ThrowErrorCode< OSStatus >( error, Nucleus::DebuggingContext() );
 	}
 	
 }

@@ -41,9 +41,6 @@
 #endif
 
 
-#define	ThrowOSStatus( err )  ThrowOSStatus_Inline( err, NUCLEUS_CREATE_DEBUGGING_CONTEXT() )
-
-
 namespace Nitrogen
   {
    class OSStatus
@@ -82,13 +79,13 @@ namespace Nitrogen
       Nucleus::RegisterErrorCode<OSStatus, error>();
      }
    
-   void ThrowOSStatus_Internal( OSStatus, const Nucleus::DebuggingContext& debugging );
+   void ThrowOSStatus_Internal( OSStatus );
    
-	inline void ThrowOSStatus_Inline( OSStatus err, const Nucleus::DebuggingContext& debugging )
+	inline void ThrowOSStatus( OSStatus err )
 	{
 		if ( err != noErr )
 		{
-			ThrowOSStatus_Internal( err, debugging );
+			ThrowOSStatus_Internal( err );
 		}
 	}
    
