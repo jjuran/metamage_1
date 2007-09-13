@@ -6,7 +6,10 @@
 #include "Orion/Main.hh"
 
 // Standard C
-#include "errno.h"
+#include <errno.h>
+
+// Standard C/C++
+#include <cstdio>
 
 // Nucleus
 #include "Nucleus/ErrorCode.h"
@@ -14,9 +17,6 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
-
-// Orion
-#include "Orion/StandardIO.hh"
 
 
 #if TARGET_CPU_68K
@@ -78,34 +78,33 @@ namespace Orion
 		}
 		catch ( const P7::Errno& err )
 		{
-			ShowDebuggingContext();
+			std::fprintf( stderr, "%s: exception: %s\n", argv[0], std::strerror( err ) );
 			
-			Io::Err << "Orion: Main() threw errno " << err.Get() << ": " << std::strerror( err ) << ".\n";
-			return 1;
+			ShowDebuggingContext();
 		}
 		catch ( const std::exception& e )
 		{
-			Io::Err << "Exception: " << e.what() << "\n";
-			return 1;
+			std::fprintf( stderr, "%s: exception: %s\n", argv[0], e.what() );
+			
+			ShowDebuggingContext();
 		}
 		catch ( ... )
 		{
-			ShowDebuggingContext();
-			
 			try
 			{
 				NN::Exception e = NN::Convert< NN::Exception >( NN::TheExceptionBeingHandled() );
 				
-				Io::Err << "Exception: " << e.what() << "\n";
+				std::fprintf( stderr, "%s: exception: %s\n", argv[0], e.what() );
 			}
 			catch ( ... )
 			{
-				Io::Err << "Kerosene: Uncaught exception.\n";
+				std::fprintf( stderr, "%s: uncaught exception\n", argv[0] );
 			}
 			
-			
-			return 1;
+			ShowDebuggingContext();
 		}
+		
+		return EXIT_FAILURE;
 	}
 	
 #pragma export reset
