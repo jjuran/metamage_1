@@ -69,7 +69,7 @@ static void WriteMsg(PerlIO * io, const char * msg, size_t len, Boolean start)
 {
 	const char * nl;
 	
-	while (nl = (const char *)memchr(msg, '\n', len)) {
+	while ((nl = (const char *)memchr(msg, '\n', len))) {
 		WriteMsgLn(io, msg, nl-msg+1, start);
 		start 	= true;
 		len		= msg+len-nl-1;
@@ -92,7 +92,7 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len)
 	}
 
 	/* Look for " line \d" */
-	while (line = strnstr(line+1, " line ", msg+len-line-1)) {
+	while ((line = strnstr(line+1, " line ", msg+len-line-1))) {
 		/* Invariants:
 		 * To process: [msg, msg+len[
 		 * msg < line < msg+len
@@ -123,7 +123,7 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len)
 				/* Look for intervening "at". This part gives misleading results if the filename
 				 * itself contains an at.
 				 */
-				while (anotherat = strnstr(at+4, " at ", line-at-5))
+				while ((anotherat = strnstr(at+4, " at ", line-at-5)))
 					at = anotherat;
 					
 				/* OK, we got them both, write the original message prefixed with # */
