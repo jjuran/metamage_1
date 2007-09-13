@@ -139,6 +139,47 @@ namespace Nitrogen
 	
 	void VRemove( Nucleus::Owned< VBLTaskPtr > vblTask );
 	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	namespace Detail
+	{
+		
+		#pragma parameter __D0 GetA0
+		
+		inline ::Ptr GetA0() = { 0x2008 };
+		
+		typedef pascal void (*StackBased_VBLProcPtr)( VBLTaskPtr task );
+		
+		template < StackBased_VBLProcPtr proc >
+		pascal void CallStackBasedVBLProcPtr()
+		{
+			proc( (VBLTaskPtr) GetA0() );
+		}
+		
+	}
+	
+	template < Detail::StackBased_VBLProcPtr proc >
+	struct VBLProcPtr_Traits
+	{
+		static VBLProcPtr GetProcPtr()
+		{
+			return &Detail::CallStackBasedVBLProcPtr< proc >;
+		}
+	};
+	
+#else
+	
+	template < VBLProcPtr proc >
+	struct VBLProcPtr_Traits
+	{
+		static VBLProcPtr GetProcPtr()
+		{
+			return proc;
+		}
+	};
+	
+#endif  // TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
 #endif  // CALL_NOT_IN_CARBON
 	
 }
