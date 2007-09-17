@@ -12,12 +12,16 @@
 // POSIX
 #include <unistd.h>
 
+// Iota
+#include "iota/argv.hh"
+#include "iota/environ.hh"
+
 
 static void DumpEnvironment()
 {
 	std::string output;
 	
-	for ( const char* const* envp = environ;  *envp != NULL;  ++envp )
+	for ( iota::envp_t envp = environ;  *envp != NULL;  ++envp )
 	{
 		output += *envp;
 		output += "\n";
@@ -28,7 +32,7 @@ static void DumpEnvironment()
 
 #pragma export on
 
-int main( int argc, char const *const argv[] )
+int main( int argc, iota::argv_t argv )
 {
 	while ( *++argv != NULL  &&  std::strchr( *argv, '=' ) )
 	{
