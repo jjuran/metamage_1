@@ -5108,7 +5108,7 @@ Perl_sv_reset(pTHX_ register char *s, HV *stash)
 		}
 		if (GvHV(gv) && !HvNAME(GvHV(gv))) {
 		    hv_clear(GvHV(gv));
-#ifdef USE_ENVIRON_ARRAY
+#if defined( USE_ENVIRON_ARRAY ) && !defined( MACOS_LAMP )
 		    if (gv == PL_envgv
 #  ifdef USE_ITHREADS
 			&& PL_curinterp == aTHX

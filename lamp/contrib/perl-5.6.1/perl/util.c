@@ -808,7 +808,7 @@ Perl_init_i18nl10n(pTHX_ int printwarn)
 
 #if defined(USE_ENVIRON_ARRAY)
 	    {
-	      char **e;
+	      environ_t e;
 	      for (e = environ; *e; e++) {
 		  if (strnEQ(*e, "LC_", 3)
 			&& strnNE(*e, "LC_ALL=", 7)
