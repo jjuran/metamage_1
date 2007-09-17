@@ -439,7 +439,7 @@ perl_destruct(pTHXx)
 
     /* jettison our possibly duplicated environment */
 
-#ifdef USE_ENVIRON_ARRAY
+#if defined( USE_ENVIRON_ARRAY ) && !defined( MACOS_LAMP )
     if (environ != PL_origenviron
 #ifdef USE_ITHREADS
 	/* only main thread can free environ[0] contents */
@@ -862,7 +862,7 @@ setuid perl scripts securely.\n");
     PL_origargv = argv;
     PL_origargc = argc;
 #ifdef  USE_ENVIRON_ARRAY
-    PL_origenviron = environ;
+    PL_origenviron = (char**) environ;
 #endif
 
     if (PL_do_undump) {
@@ -3354,7 +3354,8 @@ S_init_postdump_symbols(pTHX_ register int argc, register char **argv, register 
 	   problem we treat env==NULL as meaning 'use the default'
 	*/
 	if (!env)
-	    env = environ;
+	    env = (char**) environ;
+	#ifndef MACOS_LAMP
 	if (env != environ
 #  ifdef USE_ITHREADS
 	    && PL_curinterp == aTHX
@@ -3363,6 +3364,7 @@ S_init_postdump_symbols(pTHX_ register int argc, register char **argv, register 
 	{
 	    environ[0] = Nullch;
 	}
+	#endif
 #ifdef NEED_ENVIRON_DUP_FOR_MODIFY
 	{
 	    char **env_base;
