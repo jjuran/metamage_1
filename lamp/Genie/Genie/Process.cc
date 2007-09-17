@@ -31,6 +31,7 @@
 #include "Backtrace/StackCrawl.hh"
 #include "Backtrace/MacsbugSymbols.hh"
 #include "Backtrace/TracebackTables.hh"
+#include "Backtrace/Unmangle.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -86,6 +87,14 @@ namespace Backtrace
 	{
 		std::string name = FindSymbolString( addr );
 		
+		try
+		{
+			name = UnmangleMWC68K( name );
+		}
+		catch ( ... )
+		{
+		}
+		
 		PrintTrace( offset++, addr, "68K", name.c_str() );
 	}
 	
@@ -94,6 +103,14 @@ namespace Backtrace
 		const ReturnAddrPPC mixedModeSwitch = (ReturnAddrPPC) 0xffcec400;
 		
 		std::string name = addr == mixedModeSwitch ? "MixedMode" : FindSymbolString( addr );
+		
+		try
+		{
+			name = UnmangleMWCPPC( name );
+		}
+		catch ( ... )
+		{
+		}
 		
 		PrintTrace( offset++, addr, "PPC", name.c_str() );
 	}
@@ -124,8 +141,8 @@ static void DumpBacktrace( unsigned levelsToSkip = 0, const char* lastSymbol = "
 				Backtrace::Trace68K( offset, call.addr68K );
 				break;
 			
-			case Backtrace::kArchPowerPCCFM:
-				Backtrace::TracePPC( offset, call.addrPPC );
+			case Backtrace::kArchPowerPCFrag:
+				Backtrace::TracePPC( offset, call.addrPPCFrag );
 				break;
 			
 			default:
