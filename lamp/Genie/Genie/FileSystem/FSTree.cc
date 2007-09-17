@@ -160,14 +160,32 @@ namespace Genie
 	
 	off_t FSTree::GetEOF() const
 	{
-		P7::ThrowErrno( IsDirectory() ? EISDIR : EINVAL );
+		// This confuses MWCPPC when optimizing:
+		//P7::ThrowErrno( IsDirectory() ? EISDIR : EINVAL );
+		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
+		
+		if ( IsDirectory() )
+		{
+			P7::ThrowErrno( EISDIR );
+		}
+		else
+		{
+			P7::ThrowErrno( EINVAL );
+		}
 		
 		return 0;  // Not reached
 	}
 	
 	void FSTree::SetEOF( off_t /*length*/ ) const
 	{
-		P7::ThrowErrno( IsDirectory() ? EISDIR : EINVAL );
+		if ( IsDirectory() )
+		{
+			P7::ThrowErrno( EISDIR );
+		}
+		else
+		{
+			P7::ThrowErrno( EINVAL );
+		}
 	}
 	
 	std::string FSTree::ReadLink() const
