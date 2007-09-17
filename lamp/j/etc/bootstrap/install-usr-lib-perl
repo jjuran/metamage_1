@@ -1,13 +1,15 @@
 #!/bin/sh
 
+cd /tmp
+
 echo "Downloading /usr/lib/perl archive..."
-htget http://lamp.sourceforge.net/experimental/usr-lib-perl.jbin.gz --save /tmp/usr-lib-perl.jbin.gz
+htget -O http://lamp.sourceforge.net/experimental/usr-lib-perl.jbin.gz
 
 echo "Decompressing archive..."
-gzip -d /tmp/usr-lib-perl.jbin.gz
+gzip -d usr-lib-perl.jbin.gz
 
 echo "Decoding archive..."
-macbin --decode /tmp/usr-lib-perl.jbin /usr/lib/
+macbin --decode usr-lib-perl.jbin /usr/lib/
 
 echo "Done."
 
