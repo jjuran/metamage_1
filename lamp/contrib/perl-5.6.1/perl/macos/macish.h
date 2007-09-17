@@ -7,6 +7,8 @@ Author	:	Matthias Neeracher
 
 #include <ConditionalMacros.h>
 
+#include "iota/environ.hh"
+
 /* For now we get compiler this way, until we can
    find a better way */
 #if TARGET_CPU_PPC
