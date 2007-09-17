@@ -21,32 +21,41 @@
 
 static const EventRecord gNullEvent = { 0 };
 
-struct EventRefObject
+struct OpaqueEventLoopRef
+{
+	bool quitting;
+	
+	OpaqueEventLoopRef() : quitting( true )  {}
+};
+
+struct OpaqueEventRef
 {
 	UInt32       retainCount;
 	EventRecord  event;
 	
-	EventRefObject() : retainCount( 1 ), event( gNullEvent )  {}
+	OpaqueEventRef() : retainCount( 1 ), event( gNullEvent )  {}
 	
-	EventRefObject( const EventRefObject& other ) : retainCount( 1           ),
+	OpaqueEventRef( const OpaqueEventRef& other ) : retainCount( 1           ),
 	                                                event      ( other.event )
 	{
 	}
 	
 	private:
-		EventRefObject& operator=( const EventRefObject& other );
+		OpaqueEventRef& operator=( const OpaqueEventRef& other );
 };
+
+static OpaqueEventLoopRef gMainEventLoop;
 
 // These functions are always declared in the headers and are always extern.
 
 pascal EventLoopRef GetCurrentEventLoop()
 {
-	return NULL;
+	return &gMainEventLoop;
 }
 
 pascal EventLoopRef GetMainEventLoop()
 {
-	return NULL;
+	return &gMainEventLoop;
 }
 
 pascal OSStatus RunCurrentEventLoop( EventTimeout timeout )
@@ -58,7 +67,14 @@ pascal OSStatus RunCurrentEventLoop( EventTimeout timeout )
 
 pascal OSStatus QuitEventLoop( EventLoopRef eventLoop )
 {
-	return paramErr;
+	if ( eventLoop != &gMainEventLoop )
+	{
+		return paramErr;
+	}
+	
+	eventLoop->quitting = true;
+	
+	return noErr;
 }
 
 pascal OSStatus ReceiveNextEvent( UInt32                 numTypes,
@@ -79,7 +95,7 @@ pascal OSStatus MacCreateEvent( CFAllocatorRef    inAllocator,
 {
 	try
 	{
-		*outEvent = (EventRef) new EventRefObject();
+		*outEvent = new OpaqueEventRef();
 	}
 	catch ( ... )
 	{
@@ -93,7 +109,7 @@ pascal EventRef CopyEvent( EventRef other )
 {
 	try
 	{
-		return (EventRef) new EventRefObject( *(EventRefObject*) other );
+		return new OpaqueEventRef( *other );
 	}
 	catch ( ... )
 	{
@@ -103,23 +119,21 @@ pascal EventRef CopyEvent( EventRef other )
 
 pascal EventRef RetainEvent( EventRef event )
 {
-	++reinterpret_cast< EventRefObject* >( event )->retainCount;
+	++event->retainCount;
 	
 	return event;
 }
 
 pascal UInt32 GetEventRetainCount( EventRef event )
 {
-	return reinterpret_cast< EventRefObject* >( event )->retainCount;
+	return event->retainCount;
 }
 
 pascal void ReleaseEvent( EventRef event )
 {
-	EventRefObject* object = reinterpret_cast< EventRefObject* >( event );
-	
-	if ( --object->retainCount == 0 )
+	if ( --event->retainCount == 0 )
 	{
-		delete object;
+		delete event;
 	}
 }
 
@@ -171,14 +185,14 @@ pascal EventTime GetCurrentEventTime()
 
 pascal Boolean ConvertEventRefToEventRecord( EventRef event, EventRecord* outEvent )
 {
-	*outEvent = reinterpret_cast< EventRefObject* >( event )->event;
+	*outEvent = event->event;
 	
 	return true;
 }
 
 pascal Boolean IsEventInMask( EventRef event, EventMask mask )
 {
-	return (reinterpret_cast< EventRefObject* >( event )->event.what & mask) != 0;
+	return (event->event.what & mask) != 0;
 }
 
 // GetLastUserEventTime
