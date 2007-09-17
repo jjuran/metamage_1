@@ -7,18 +7,19 @@
 #include <ConditionalMacros.h>
 #endif
 
-#if TARGET_RT_MAC_CFM
-
 // POSIX
 #include "errno.h"
-#include "unistd.h"
 
+// Iota
+#include "iota/environ.hh"
+
+#if TARGET_RT_MAC_CFM
 
 #pragma export on
 	
 	int errno;
 	
-	char** environ;
+	iota::environ_t environ;
 	
 #pragma export reset
 
