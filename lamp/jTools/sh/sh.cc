@@ -22,10 +22,12 @@
 // POSeven
 #include "POSeven/Open.hh"
 
+// Iota
+#include "iota/strings.hh"
+
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 // sh
 #include "Builtins.hh"
@@ -53,7 +55,14 @@ struct OnExit
 	{
 		if ( GetOption( kOptionInteractive ) )
 		{
-			Io::Out << ( gLoginShell ? "logout\n" : "exit\n" );
+			if ( gLoginShell )
+			{
+				(void) write( STDOUT_FILENO, STR_LEN( "logout\n" ) );
+			}
+			else
+			{
+				(void) write( STDOUT_FILENO, STR_LEN( "exit\n" ) );
+			}
 		}
 	}
 };
@@ -86,16 +95,7 @@ int O::Main( int argc, argv_t argv )
 	O::AliasOption( "-l", "--login"   );
 	O::AliasOption( "-v", "--verbose" );
 	
-	try
-	{
-		O::GetOptions( argc, argv );
-	}
-	catch ( O::UndefinedOption& )
-	{
-		Io::Err << "Undefined option\n";
-		
-		return 1;
-	}
+	O::GetOptions( argc, argv );
 	
 	gArgZero = argv[ 0 ];
 	
