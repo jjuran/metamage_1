@@ -22,15 +22,15 @@ namespace Pedestal
 	class GWorldView : public View
 	{
 		private:
-			Rect bounds;
-			NN::Owned< N::GWorldPtr > myGWorld;
+			Rect                       itsBounds;
+			NN::Owned< N::GWorldPtr >  itsGWorld;
 		
 		public:
 			GWorldView( const Rect& bounds, Initializer );
 			
-			N::GWorldPtr Get() const  { return myGWorld.Get(); }
+			N::GWorldPtr Get() const  { return itsGWorld.Get(); }
 			
-			const Rect& Bounds() const  { return bounds; }
+			const Rect& Bounds() const  { return itsBounds; }
 			
 			void Update();
 	};

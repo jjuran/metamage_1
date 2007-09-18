@@ -16,24 +16,24 @@ namespace Pedestal
 	
 	GWorldView::GWorldView( const Rect& bounds, Initializer )
 	:
-		bounds        ( bounds ),
-	  	myGWorld      ( N::NewGWorld( 0, N::LocalToGlobal( bounds ) ) )
+		itsBounds( bounds ),
+	  	itsGWorld( N::NewGWorld( 0, N::LocalToGlobal( bounds ) ) )
 	{
 	}
 	
 	void GWorldView::Update()
 	{
 		// Lock pixels
-		PixMapHandle pix = N::GetGWorldPixMap( myGWorld );
+		PixMapHandle pix = N::GetGWorldPixMap( itsGWorld );
 		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
 		
 		N::LockPixels( pix );
 		
 		// Copy to dest
-		N::CopyBits( N::GetPortBitMapForCopyBits( myGWorld                 ),
+		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld                 ),
 		             N::GetPortBitMapForCopyBits( N::GetQDGlobalsThePort() ),
-		             N::GetPortBounds( myGWorld ),
-		             bounds,
+		             N::GetPortBounds( itsGWorld ),
+		             itsBounds,
 		             N::srcCopy );
 		
 		// Unlock pixels
