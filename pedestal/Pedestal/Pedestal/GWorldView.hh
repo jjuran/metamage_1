@@ -32,6 +32,8 @@ namespace Pedestal
 			
 			const Rect& Bounds() const  { return itsBounds; }
 			
+			void Resize( const Rect& bounds );
+			
 			void Update();
 	};
 	

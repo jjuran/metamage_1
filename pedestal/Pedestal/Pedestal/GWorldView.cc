@@ -21,6 +21,15 @@ namespace Pedestal
 	{
 	}
 	
+	void GWorldView::Resize( const Rect& bounds )
+	{
+		itsBounds = bounds;
+		
+		N::UpdateGWorld( itsGWorld, 0, bounds );
+		
+		Update();
+	}
+	
 	void GWorldView::Update()
 	{
 		// Lock pixels
