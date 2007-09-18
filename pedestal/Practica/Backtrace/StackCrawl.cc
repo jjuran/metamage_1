@@ -43,10 +43,8 @@ namespace Backtrace
 	
 	static asm char *GetSP( void )
 	{
-			mr		r3,r1
-		#if !defined(__MWERKS__)	
-			blr
-		#endif
+		mr		r3,r1
+		blr
 	}
 	
 	inline const StackFramePPC* GetTopFrame()  { return ( (const StackFramePPC*) GetSP() )->next; }
