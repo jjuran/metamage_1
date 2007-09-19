@@ -60,7 +60,9 @@ namespace Genie
 	}
 	
 	
-	BufferWindow::BufferWindow( ConstStr255Param title ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
+	BufferWindow::BufferWindow( ConstStr255Param title ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                                    title,
+	                                                                                    false ),
 	                                                             NewBufferCloseHandler() ),
 	                                                       itsMark(),
 	                                                       itHasReceivedEOF()
@@ -158,6 +160,8 @@ namespace Genie
 	
 	int BufferWindow::SysWrite( const char* data, std::size_t byteCount )
 	{
+		Show();
+		
 		Ped::TEView& editor = SubView().ScrolledView();
 		
 		SetEOF( itsMark );
@@ -240,6 +244,8 @@ namespace Genie
 		{
 			return 0;
 		}
+		
+		itsWindow->Show();
 		
 		while ( !itsWindow->ReceivedEOF() )
 		{
