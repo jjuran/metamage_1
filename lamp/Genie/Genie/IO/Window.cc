@@ -17,12 +17,39 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Pedestal
+#include "Pedestal/Window.hh"
+
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
 	namespace P7 = POSeven;
+	namespace Ped = Pedestal;
+	
+	
+	static Point GetWindowSize( N::WindowRef window )
+	{
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		
+		Point result;
+		
+		result.h = bounds.right - bounds.left;
+		result.v = bounds.bottom - bounds.top;
+		
+		return result;
+	}
+	
+	static void SetWindowSize( N::WindowRef window, Point size )
+	{
+		::SizeWindow( window, size.h, size.v, true );
+		
+		if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
+		{
+			base->Resized( N::GetPortBounds( N::GetWindowPort( window ) ) );
+		}
+	}
 	
 	
 	void WindowHandle::IOCtl( unsigned long request, int* argp )
@@ -65,6 +92,58 @@ namespace Genie
 				SetPosition( *(Point*) argp );
 				break;
 			
+			case WIOCGSIZE:
+				if ( argp != NULL )
+				{
+					Point size = GetWindowSize( GetWindowRef() );
+					
+					*(Point*) argp = size;
+				}
+				
+				break;
+			
+			case WIOCSSIZE:
+				if ( argp == NULL )
+				{
+					P7::ThrowErrno( EFAULT );
+				}
+				
+				SetWindowSize( GetWindowRef(), *(Point*) argp );
+				
+				break;
+			
+			/*
+			case WIOCGDIM:
+			case WIOCSDIM:
+			*/
+			
+			case WIOCGVIS:
+				if ( argp != NULL )
+				{
+					bool visible = IsVisible();
+					
+					*argp = visible;
+				}
+				
+				break;
+			
+			case WIOCSVIS:
+				if ( argp == NULL )
+				{
+					P7::ThrowErrno( EFAULT );
+				}
+				
+				if ( *argp )
+				{
+					Show();
+				}
+				else
+				{
+					Hide();
+				}
+				
+				break;
+			
 			default:
 				IOHandle::IOCtl( request, argp );
 				break;
@@ -98,6 +177,21 @@ namespace Genie
 	void WindowHandle::SetPosition( Point position )
 	{
 		::MoveWindow( GetWindowRef(), position.h, position.v, false );
+	}
+	
+	bool WindowHandle::IsVisible() const
+	{
+		return ::IsWindowVisible( GetWindowRef() );
+	}
+	
+	void WindowHandle::Show() const
+	{
+		::ShowWindow( GetWindowRef() );
+	}
+	
+	void WindowHandle::Hide() const
+	{
+		::HideWindow( GetWindowRef() );
 	}
 	
 }

@@ -40,6 +40,11 @@ namespace Genie
 			Point GetPosition() const;
 			
 			void SetPosition( Point position );
+			
+			bool IsVisible() const;
+			
+			void Show() const;
+			void Hide() const;
 	};
 	
 }
