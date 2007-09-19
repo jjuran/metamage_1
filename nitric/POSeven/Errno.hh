@@ -138,6 +138,8 @@ namespace Nucleus
 			                                                 DebuggingContext( debugging )
 			{
 			}
+			
+			~ErrorCode() throw ()  {}
 	};
 	
 	template <>
