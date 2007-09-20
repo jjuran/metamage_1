@@ -124,14 +124,6 @@ namespace Nitrogen
 		return title;
 	}
 	
-	void SizeWindow( WindowRef  window,
-	                 short      width,
-	                 short      height,
-	                 bool       updateFlag )
-	{
-		::SizeWindow( window, width, height, updateFlag );
-	}
-	
 	namespace Detail
 	{
 	
@@ -176,16 +168,6 @@ namespace Nitrogen
 		::DragWindow( window, point, &dragRect );
 	}
 	
-	void SetWRefCon( WindowRef window, RefCon refCon )
-	{
-		::SetWRefCon( window, refCon );
-	}
-	
-	RefCon GetWRefCon( WindowRef window )
-	{
-		return ::GetWRefCon( window );
-	}
-	
 	void InvalWindowRect( WindowRef window, const Rect& bounds )
 	{
 		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC && ::InvalWindowRect != NULL )
@@ -204,16 +186,6 @@ namespace Nitrogen
 		}
 		
 	#endif
-	}
-	
-	WindowKind GetWindowKind( WindowRef window )
-	{
-		return WindowKind( ::GetWindowKind( window ) );
-	}
-	
-	void SetWindowKind( WindowRef window, WindowKind windowKind )
-	{
-		::SetWindowKind( window, windowKind );
 	}
 	
    WindowAttributes GetWindowAttributes( WindowRef window )

@@ -84,6 +84,11 @@ static const WindowRef kFirstWindowOfClass = reinterpret_cast< WindowRef >( -1 )
 static const WindowRef kLastWindowOfClass  = reinterpret_cast< WindowRef >( 0 );
 #endif
 
+#ifdef IsValidWindowRef
+#undef IsValidWindowRef
+inline pascal Boolean IsValidWindowRef( WindowRef w )  { return IsValidWindowPtr( w ); }
+#endif
+
 namespace Nitrogen
   {
 	class WindowManagerErrorsRegistrationDependency
@@ -137,22 +142,113 @@ namespace Nitrogen
 		kWindowPartCode_Max = Nucleus::Enumeration_Traits< ::WindowPartCode >::max
 	};
 	
-   typedef Nucleus::Selector< class PropertyCreator_Tag, ::PropertyCreator >::Type PropertyCreator;
-
-   typedef Nucleus::Selector< class PropertyTag_Tag, ::PropertyTag >::Type PropertyTag;
-
-   typedef Nucleus::Selector< class WindowClass_Tag, ::WindowClass >::Type WindowClass;
-
-   typedef Nucleus::Flag< class WindowAttributes_Tag, ::WindowAttributes >::Type WindowAttributes;
-   
-   NUCLEUS_DEFINE_FLAG_OPS( WindowAttributes )
-   
-   static const WindowAttributes kWindowNoAttributes = WindowAttributes( ::kWindowNoAttributes );
-
-    typedef Nucleus::Selector< class WindowPositionMethod_Tag, ::WindowPositionMethod >::Type WindowPositionMethod;
-
-   typedef Nucleus::Selector< class WindowRegionCode_Tag, ::WindowRegionCode >::Type WindowRegionCode;
-  
+	typedef Nucleus::Selector< class PropertyCreator_Tag, ::PropertyCreator >::Type PropertyCreator;
+	
+	typedef Nucleus::Selector< class PropertyTag_Tag, ::PropertyTag >::Type PropertyTag;
+	
+	enum WindowClass
+	{
+		kAlertWindowClass        = ::kAlertWindowClass,
+		kMovableAlertWindowClass = ::kMovableAlertWindowClass,
+		kModalWindowClass        = ::kModalWindowClass,
+		kMovableModalWindowClass = ::kMovableModalWindowClass,
+		kFloatingWindowClass     = ::kFloatingWindowClass,
+		kDocumentWindowClass     = ::kDocumentWindowClass,
+		kUtilityWindowClass      = ::kUtilityWindowClass,
+		kHelpWindowClass         = ::kHelpWindowClass,
+		kSheetWindowClass        = ::kSheetWindowClass,
+		kToolbarWindowClass      = ::kToolbarWindowClass,
+		kPlainWindowClass        = ::kPlainWindowClass,
+		kOverlayWindowClass      = ::kOverlayWindowClass,
+		kSheetAlertWindowClass   = ::kSheetAlertWindowClass,
+		kAltPlainWindowClass     = ::kAltPlainWindowClass,
+		kDrawerWindowClass       = ::kDrawerWindowClass,
+		kAllWindowClasses        = ::kAllWindowClasses,
+		
+		kWindowClass_Max = Nucleus::Enumeration_Traits< ::WindowClass >::max
+	};
+	
+	enum WindowAttributes
+	{
+		kWindowNoAttributes               = ::kWindowNoAttributes,
+		kWindowCloseBoxAttribute          = ::kWindowCloseBoxAttribute,
+		kWindowHorizontalZoomAttribute    = ::kWindowHorizontalZoomAttribute,
+		kWindowVerticalZoomAttribute      = ::kWindowVerticalZoomAttribute,
+		kWindowFullZoomAttribute          = ::kWindowFullZoomAttribute,
+		kWindowCollapseBoxAttribute       = ::kWindowCollapseBoxAttribute,
+		kWindowResizableAttribute         = ::kWindowResizableAttribute,
+		kWindowSideTitlebarAttribute      = ::kWindowSideTitlebarAttribute,
+		kWindowToolbarButtonAttribute     = ::kWindowToolbarButtonAttribute,
+		kWindowNoUpdatesAttribute         = ::kWindowNoUpdatesAttribute,
+		kWindowNoActivatesAttribute       = ::kWindowNoActivatesAttribute,
+		kWindowOpaqueForEventsAttribute   = ::kWindowOpaqueForEventsAttribute,
+		kWindowNoShadowAttribute          = ::kWindowNoShadowAttribute,
+		kWindowHideOnSuspendAttribute     = ::kWindowHideOnSuspendAttribute,
+		kWindowStandardHandlerAttribute   = ::kWindowStandardHandlerAttribute,
+		kWindowHideOnFullScreenAttribute  = ::kWindowHideOnFullScreenAttribute,
+		kWindowInWindowMenuAttribute      = ::kWindowInWindowMenuAttribute,
+		kWindowLiveResizeAttribute        = ::kWindowLiveResizeAttribute,
+		kWindowNoConstrainAttribute       = ::kWindowNoConstrainAttribute,
+		kWindowStandardDocumentAttributes = ::kWindowStandardDocumentAttributes,
+		kWindowStandardFloatingAttributes = ::kWindowStandardFloatingAttributes,
+		
+		kWindowAttributes_Max = Nucleus::Enumeration_Traits< ::WindowAttributes >::max
+	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( WindowAttributes )
+	
+	enum WindowPosition
+	{
+		kWindowNoPosition                      = ::kWindowNoPosition,
+		kWindowDefaultPosition                 = ::kWindowDefaultPosition,
+		kWindowCenterMainScreen                = ::kWindowCenterMainScreen,
+		kWindowAlertPositionMainScreen         = ::kWindowAlertPositionMainScreen,
+		kWindowStaggerMainScreen               = ::kWindowStaggerMainScreen,
+		kWindowCenterParentWindow              = ::kWindowCenterParentWindow,
+		kWindowAlertPositionParentWindow       = ::kWindowAlertPositionParentWindow,
+		kWindowStaggerParentWindow             = ::kWindowStaggerParentWindow,
+		kWindowCenterParentWindowScreen        = ::kWindowCenterParentWindowScreen,
+		kWindowAlertPositionParentWindowScreen = ::kWindowAlertPositionParentWindowScreen,
+		kWindowStaggerParentWindowScreen       = ::kWindowStaggerParentWindowScreen,
+		
+		kWindowPosition_Max = Nucleus::Enumeration_Traits< ::UInt16 >::max
+	};
+	
+	enum WindowPositionMethod
+	{
+		kWindowCenterOnMainScreen                = ::kWindowCenterOnMainScreen,
+		kWindowCenterOnParentWindow              = ::kWindowCenterOnParentWindow,
+		kWindowCenterOnParentWindowScreen        = ::kWindowCenterOnParentWindowScreen,
+		kWindowCascadeOnMainScreen               = ::kWindowCascadeOnMainScreen,
+		kWindowCascadeOnParentWindow             = ::kWindowCascadeOnParentWindow,
+		kWindowCascadeOnParentWindowScreen       = ::kWindowCascadeOnParentWindowScreen,
+		kWindowCascadeStartAtParentWindowScreen  = ::kWindowCascadeStartAtParentWindowScreen,
+		kWindowAlertPositionOnMainScreen         = ::kWindowAlertPositionOnMainScreen,
+		kWindowAlertPositionOnParentWindow       = ::kWindowAlertPositionOnParentWindow,
+		kWindowAlertPositionOnParentWindowScreen = ::kWindowAlertPositionOnParentWindowScreen,
+		
+		kWindowPositionMethod_Max = Nucleus::Enumeration_Traits< ::WindowPositionMethod >::max
+	};
+	
+	enum WindowRegionCode
+	{
+		kWindowTitleBarRgn       = ::kWindowTitleBarRgn,
+		kWindowTitleTextRgn      = ::kWindowTitleTextRgn,
+		kWindowCloseBoxRgn       = ::kWindowCloseBoxRgn,
+		kWindowZoomBoxRgn        = ::kWindowZoomBoxRgn,
+		kWindowDragRgn           = ::kWindowDragRgn,
+		kWindowGrowRgn           = ::kWindowGrowRgn,
+		kWindowCollapseBoxRgn    = ::kWindowCollapseBoxRgn,
+		kWindowTitleProxyIconRgn = ::kWindowTitleProxyIconRgn,
+		kWindowStructureRgn      = ::kWindowStructureRgn,
+		kWindowContentRgn        = ::kWindowContentRgn,
+		kWindowUpdateRgn         = ::kWindowUpdateRgn,
+		kWindowOpaqueRgn         = ::kWindowOpaqueRgn,
+		kWindowGlobalPortRgn     = ::kWindowGlobalPortRgn,
+		
+		kWindowRegionCode_Max = Nucleus::Enumeration_Traits< ::WindowRegionCode >::max
+	};
+	
    using ::GetWindowRegionRec;
    using ::GetWindowRegionPtr;
    using ::GetWindowRegionRecPtr;
@@ -188,6 +284,8 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ Routines ¥
 	
+	// GetNewCWindow
+	
 	// 1402
 	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
 	                                       ConstStr255Param  title,
@@ -196,6 +294,8 @@ namespace Nitrogen
 	                                       WindowRef         behind,
 	                                       bool              goAwayFlag,
 	                                       RefCon            refCon );
+	
+	// GetNewWindow
 	
 	// 1437
 	Nucleus::Owned< WindowRef > NewCWindow( const Rect&       bounds,
@@ -208,6 +308,105 @@ namespace Nitrogen
 	
 	// 1457
 	inline void DisposeWindow( Nucleus::Owned< WindowRef > )  {}
+	
+	// CreateNewWindow
+	// CreateWindowFromResource
+	// StoreWindowIntoCollection
+	// CreateWindowFromCollection
+	// GetWindowOwnerCount
+	// CloneWindow
+	
+	using ::GetWindowRetainCount;
+	
+	// RetainWindow
+	// ReleaseWindow
+	// CreateCustomWindow
+	// ReshapeCustomWindow
+	// RegisterWindowDefinition
+	// GetWindowWidgetHilite
+	
+	inline bool IsValidWindowClass( WindowClass windowClass )  { return ::IsValidWindowClass( windowClass ); }
+	
+	inline WindowAttributes GetAvailableWindowAttributes( WindowClass windowClass )  { return WindowAttributes( ::GetAvailableWindowAttributes( windowClass ) ); }
+	
+	// GetWindowClass
+	
+	WindowAttributes GetWindowAttributes( WindowRef window );
+	
+	void ChangeWindowAttributes ( WindowRef         window,
+	                              WindowAttributes  setTheseAttributes,
+	                              WindowAttributes  clearTheseAttributes );
+	
+	// SetWindowClass (deprecated)
+	// SetWindowModality
+	// GetWindowModality
+	// ShowFloatingWindows
+	// HideFloatingWindows
+	
+	inline bool AreFloatingWindowsVisible()  { return ::AreFloatingWindowsVisible(); }
+	
+	// CreateWindowGroup
+	// RetainWindowGroup
+	// ReleaseWindowGroup
+	
+	using ::GetWindowGroupRetainCount;
+	
+	inline WindowGroupRef GetWindowGroupOfClass( WindowClass windowClass )  { return ::GetWindowGroupOfClass( windowClass ); }
+	
+	// SetWindowGroupName
+	// CopyWindowGroupName
+	// GetWindowGroupAttributes
+	// ChangeWindowGroupAttributes
+	// SetWindowGroupLevel
+	// GetWindowGroupLevel
+	// SendWindowGroupBehind
+	
+	using ::GetWindowGroup;
+	
+	// SetWindowGroup
+	
+	inline bool IsWindowContainedInGroup( WindowRef window, WindowGroupRef group )  { return ::IsWindowContainedInGroup( window, group ); }
+	
+	using ::GetWindowGroupParent;
+	
+	// SetWindowGroupParent
+	
+	inline WindowGroupRef GetWindowGroupSibling( WindowGroupRef group, bool isNext )  { return ::GetWindowGroupSibling( group, isNext ); }
+	
+	using ::GetWindowGroupOwner;
+	
+	// SetWindowGroupOwner
+	// CountWindowGroupContents
+	// GetWindowGroupContents
+	// GetIndexedWindow
+	// GetWindowIndex
+	
+	using ::ActiveNonFloatingWindow;
+	
+	inline bool IsWindowActive( WindowRef window )  { return ::IsWindowActive( window ); }
+	
+	// ActivateWindow
+	// GetWindowActivationScope
+	// SetWindowActivationScope
+	
+	using ::DebugPrintWindowGroup;
+	using ::DebugPrintAllWindowGroups;
+	
+	// SetWindowContentColor
+	// GetWindowContentColor
+	// GetWindowContentPattern
+	// SetWindowContentPattern
+	// InstallWindowContentPaintProc
+	// ScrollWindowRect
+	// ScrollWindowRegion
+	
+	using ::ClipAbove;
+	using ::PaintOne;
+	using ::PaintBehind;
+	using ::CalcVis;
+	using ::CalcVisBehind;
+	
+	// CheckUpdate
 	
 	struct FindWindow_Result
 	{
@@ -222,14 +421,45 @@ namespace Nitrogen
 	// 3426
 	FindWindow_Result MacFindWindow( Point point );
 	
-	// 3777
-	void SetWRefCon( WindowRef window, RefCon refCon );
+	using ::FrontWindow;
+	using ::BringToFront;
+	using ::SendBehind;
+	using ::SelectWindow;
+	using ::FrontNonFloatingWindow;
 	
-	// 3791
-	RefCon GetWRefCon( WindowRef window );
+	// GetNextWindowOfClass
+	// GetFrontWindowOfClass
+	// FindWindowOfClass
+	// CreateStandardWindowMenu
+	// SetWindowAlternateTitle
+	// CopyWindowAlternateTitle
+	
+	inline bool IsValidWindowPtr( WindowRef window )  { return ::IsValidWindowPtr( window ); }
+	inline bool IsValidWindowRef( WindowRef window )  { return ::IsValidWindowRef( window ); }
+	
+	inline void HiliteWindow( WindowRef window, bool hilite )  { ::HiliteWindow( window, hilite ); }
+	
+	inline void SetWRefCon( WindowRef window, RefCon refCon )  { ::SetWRefCon( window, refCon ); }
+	
+	inline RefCon GetWRefCon( WindowRef window )  { return ::GetWRefCon( window ); }
+	
+	// SetWindowPic
+	// GetWindowPic
+	// GetWVariant
+	// GetWindowFeatures
+	// GetWindowRegion
+	// GetWindowStructureWidths
+	// BeginUpdate
+	// EndUpdate
+	// InvalWindowRgn
 	
 	// 3987
 	void InvalWindowRect( WindowRef window, const Rect& bounds );
+	
+	// ValidWindowRgn
+	// ValidWindowRect
+	
+	using ::DrawGrowIcon;
 	
 	// 4051
 	void SetWTitle( WindowRef window, ConstStr255Param title );
@@ -237,11 +467,73 @@ namespace Nitrogen
 	// 4065
 	Str255 GetWTitle( WindowRef window );
 	
-	// 4580
-	void SizeWindow( WindowRef  window,
-	                 short      width,
-	                 short      height,
-	                 bool       updateFlag );
+	inline void SetWindowTitleWithCFString( WindowRef inWindow, CFStringRef inString )
+	{
+		(void) WindowManagerErrorsRegistrationDependency();
+		
+		ThrowOSStatus( ::SetWindowTitleWithCFString( inWindow, inString ) );
+	}
+	
+	inline Nucleus::Owned< CFStringRef > CopyWindowTitleAsCFString( WindowRef inWindow )
+	{
+		(void) WindowManagerErrorsRegistrationDependency();
+		
+		CFStringRef result;
+		ThrowOSStatus( ::CopyWindowTitleAsCFString( inWindow, &result ) );
+		
+		return Nucleus::Owned< CFStringRef >::Seize( result );
+	}
+	
+	// SetWindowProxyFSSpec
+	// GetWindowProxyFSSpec
+	// SetWindowProxyAlias
+	// GetWindowProxyAlias
+	// SetWindowProxyCreatorAndType
+	// GetWindowProxyIcon
+	// SetWindowProxyIcon
+	// RemoveWindowProxy
+	// BeginWindowProxyDrag
+	// EndWindowProxyDrag
+	// TrackWindowProxyFromExistingDrag
+	// TrackWindowProxyDrag
+	// IsWindowModified
+	// SetWindowModified
+	// IsWindowPathSelectClick
+	// WindowPathSelect
+	// IsWindowPathSelectEvent
+	// HiliteWindowFrameForDrag
+	// TransitionWindow
+	// TransitionWindowAndParent
+	
+	inline void MacMoveWindow( WindowRef  window,
+	                           short      h,
+	                           short      v,
+	                           bool       front = false )
+	{
+		::MacMoveWindow( window, h, v, front );
+	}
+	
+	inline void MacMoveWindow( WindowRef  window,
+	                           Point      loc,
+	                           bool       front = false )
+	{
+		::MacMoveWindow( window, loc.h, loc.v, front );
+	}
+	
+	inline void SizeWindow( WindowRef  window,
+	                        short      width,
+	                        short      height,
+	                        bool       updateFlag )
+	{
+		::SizeWindow( window, width, height, updateFlag );
+	}
+	
+	inline void SizeWindow( WindowRef  window,
+	                        Point      size,
+	                        bool       updateFlag )
+	{
+		::SizeWindow( window, size.h, size.v, updateFlag );
+	}
 	
 	union GrowWindow_Result
 	{
@@ -260,70 +552,115 @@ namespace Nitrogen
 	// 4614
 	void DragWindow( WindowRef window, Point point, const Rect& dragRect );
 	
-	// 6333
-	WindowKind GetWindowKind( WindowRef window );
+	// ZoomWindow
 	
-	// 6484
-	void SetWindowKind( WindowRef window, WindowKind windowKind );
+	inline bool IsWindowCollapsable( WindowRef window )  { return ::IsWindowCollapsable( window ); }
 	
-	// 3443
-	using ::FrontWindow;
+	inline bool IsWindowCollapsed( WindowRef window )  { return ::IsWindowCollapsed( window ); }
 	
-	// 3481
-	using ::SelectWindow;
+	// CollapseWindow
+	// CollapseAllWindows
+	// CreateQDContextForCollapsedWindowDockTile
+	// ReleaseQDContextForCollapsedWindowDockTile
+	// UpdateCollapsedWindowDockTile
 	
-	// 4036
-	using ::DrawGrowIcon;
-	
-	inline Nucleus::Owned<CFStringRef> CopyWindowTitleAsCFString ( WindowRef inWindow ) {
+	inline Rect GetWindowBounds( WindowRef inWindow, WindowRegionCode regionCode )
+	{
 		(void) WindowManagerErrorsRegistrationDependency();
-		CFStringRef result;
-		ThrowOSStatus ( ::CopyWindowTitleAsCFString ( inWindow, &result ));
-		return Nucleus::Owned<CFStringRef>::Seize ( result );
-		}
+		
+		Rect result;
+		ThrowOSStatus( ::GetWindowBounds( inWindow, regionCode, &result ) );
+		
+		return result;
+	}
 	
-	inline void SetWindowTitleWithCFString ( WindowRef inWindow, CFStringRef inString ) {
+	// ResizeWindow
+	
+	inline void SetWindowBounds( WindowRef         inWindow,
+	                             WindowRegionCode  regionCode,
+	                             const Rect &      globalBounds )
+	{
 		(void) WindowManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::SetWindowTitleWithCFString ( inWindow, inString ));
-		}
+		
+		ThrowOSStatus( ::SetWindowBounds( inWindow, regionCode, &globalBounds ) );
+	}
 	
-	// 5978
+	// RepositionWindow
+	// MoveWindowStructure
+	// IsWindowInStandardState
+	// ZoomWindowIdeal
+	// GetWindowIdealUserState
+	// SetWindowIdealUserState
+	// GetWindowGreatestAreaDevice
+	// ConstrainWindowToScreen
+	// GetAvailableWindowPositioningBounds
+	// GetAvailableWindowPositioningRegion
+	
+	using ::HideWindow;
+	using ::MacShowWindow;
+	
+	inline void ShowHide( WindowRef window, bool showFlag )  { ::ShowHide( window, showFlag ); }
+	
+	inline bool MacIsWindowVisible( WindowRef window )  { return ::MacIsWindowVisible( window ); }
+	
+	// IsWindowLatentVisible
+	// ShowSheetWindow
+	// HideSheetWindow
+	// GetSheetWindowParent
+	// DisableScreenUpdates
+	// EnableScreenUpdates
+	// SetWindowAlpha
+	// GetWindowAlpha
+	// GetWindowProperty
+	// GetWindowPropertySize
+	// SetWindowProperty
+	// RemoveWindowProperty
+	// GetWindowPropertyAttributes
+	// ChangeWindowPropertyAttributes
+	// PinRect
+	// GetGrayRgn
+	// TrackBox
+	
 	using ::TrackGoAway;
 	
-	// 6301
-	using ::GetWindowPort;
+	// DragGrayRgn
+	// DragTheRgn
 	
-	inline void SetWindowBounds ( WindowRef inWindow, WindowRegionCode regionCode, const Rect &globalBounds ) {
-		(void) WindowManagerErrorsRegistrationDependency();
-		ThrowOSStatus ( ::SetWindowBounds ( inWindow, regionCode, &globalBounds ));
-		}
-
-	inline Rect GetWindowBounds ( WindowRef inWindow, WindowRegionCode regionCode ) {
-		(void) WindowManagerErrorsRegistrationDependency();
-		Rect retVal;
-		ThrowOSStatus ( ::GetWindowBounds ( inWindow, regionCode, &retVal ));
-		return retVal;
-		}
-
-	// 6551
+	using ::GetWindowList;
+	using ::GetWindowPort;
+	using ::GetWindowStructurePort;
+	
+	inline WindowKind GetWindowKind( WindowRef window )  { return WindowKind( ::GetWindowKind( window ) ); }
+	
+	// IsWindowHilited
+	// IsWindowUpdatePending
+	
+	using ::MacGetNextWindow;
+	using ::GetPreviousWindow;
+	
+	// GetWindowStandardState
+	// GetWindowUserState
+	
+	inline void SetWindowKind( WindowRef window, WindowKind windowKind )  { ::SetWindowKind( window, windowKind ); }
+	
+	// SetWindowStandardState
+	// SetWindowUserState
+	
 	using ::SetPortWindowPort;
 	
-	// 6598
+	// GetWindowPortBounds
+	
 	using ::GetWindowFromPort;
 	
-   WindowAttributes GetWindowAttributes( WindowRef window );
+	inline void SetWindowAttributes( WindowRef window, WindowAttributes setTheseAttributes )
+	{
+		Nitrogen::ChangeWindowAttributes( window, setTheseAttributes, kWindowNoAttributes );
+	}
 
-   void ChangeWindowAttributes ( WindowRef        window,
-                                 WindowAttributes setTheseAttributes,
-                                 WindowAttributes clearTheseAttributes );
-   
-	inline void SetWindowAttributes ( WindowRef window, WindowAttributes setTheseAttributes ) {
-		Nitrogen::ChangeWindowAttributes ( window, setTheseAttributes, kWindowNoAttributes );
-		}
-
-	inline void ClearWindowAttributes ( WindowRef window, WindowAttributes clearTheseAttributes ) {
-		Nitrogen::ChangeWindowAttributes ( window, kWindowNoAttributes, clearTheseAttributes );
-		}
+	inline void ClearWindowAttributes( WindowRef window, WindowAttributes clearTheseAttributes )
+	{
+		Nitrogen::ChangeWindowAttributes( window, kWindowNoAttributes, clearTheseAttributes );
+	}
    
    /* ... */
    
