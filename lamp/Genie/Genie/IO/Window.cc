@@ -43,7 +43,7 @@ namespace Genie
 	
 	static void SetWindowSize( N::WindowRef window, Point size )
 	{
-		::SizeWindow( window, size.h, size.v, true );
+		N::SizeWindow( window, size.h, size.v, true );
 		
 		if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
 		{
@@ -176,22 +176,22 @@ namespace Genie
 	
 	void WindowHandle::SetPosition( Point position )
 	{
-		::MoveWindow( GetWindowRef(), position.h, position.v, false );
+		N::MoveWindow( GetWindowRef(), position );
 	}
 	
 	bool WindowHandle::IsVisible() const
 	{
-		return ::IsWindowVisible( GetWindowRef() );
+		return N::IsWindowVisible( GetWindowRef() );
 	}
 	
 	void WindowHandle::Show() const
 	{
-		::ShowWindow( GetWindowRef() );
+		N::ShowWindow( GetWindowRef() );
 	}
 	
 	void WindowHandle::Hide() const
 	{
-		::HideWindow( GetWindowRef() );
+		N::HideWindow( GetWindowRef() );
 	}
 	
 }
