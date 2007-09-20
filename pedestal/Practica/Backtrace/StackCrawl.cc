@@ -5,6 +5,8 @@
 
 #include "Backtrace/StackCrawl.hh"
 
+#include "Backtrace/MemoryLimit.hh"
+
 
 namespace Backtrace
 {
@@ -109,6 +111,11 @@ namespace Backtrace
 	static void CrawlStackPPC( const StackFramePPC* frame, std::vector< CallRecord >& result )
 	{
 		if ( frame == NULL )
+		{
+			return;
+		}
+		
+		if ( frame >= MemoryLimit() )
 		{
 			return;
 		}
