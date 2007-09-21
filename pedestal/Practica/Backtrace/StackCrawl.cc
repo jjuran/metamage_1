@@ -183,7 +183,13 @@ namespace Backtrace
 	{
 		std::vector< CallRecord > result;
 		
-		CrawlStack( GetTopFrame(), result );
+		try
+		{
+			CrawlStack( GetTopFrame(), result );
+		}
+		catch ( const std::bad_alloc& )
+		{
+		}
 		
 		return result;
 	}
