@@ -78,11 +78,16 @@ namespace Backtrace
 		return switchFrame;
 	}
 	
-	static void CrawlStackPPC( const StackFramePPC* frame, std::vector< CallRecord >& result );
+	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< CallRecord >& result );
 	
-	static void CrawlStack68K( const StackFrame68K* frame, std::vector< CallRecord >& result )
+	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, std::vector< CallRecord >& result )
 	{
 		if ( frame == NULL )
+		{
+			return;
+		}
+		
+		if ( frame >= MemoryLimit() )
 		{
 			return;
 		}
@@ -91,7 +96,7 @@ namespace Backtrace
 		{
 			const StackFramePPC* switchFrame = SwitchBackToPPCFrom68K( frame );
 			
-			CrawlStackPPC( switchFrame, result );
+			CrawlStackPPC( level, switchFrame, result );
 			
 			return;
 		}
@@ -105,10 +110,10 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStack68K( frame->next, result );
+		CrawlStack68K( level + 1, frame->next, result );
 	}
 	
-	static void CrawlStackPPC( const StackFramePPC* frame, std::vector< CallRecord >& result )
+	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< CallRecord >& result )
 	{
 		if ( frame == NULL )
 		{
@@ -120,13 +125,18 @@ namespace Backtrace
 			return;
 		}
 		
+		if ( level > 100 )
+		{
+			return;
+		}
+		
 	#ifndef __MACH__
 		
 		if ( (long) frame & 0x00000001 )
 		{
 			const StackFrame68K* switchFrame = SwitchBackTo68KFromPPC( frame );
 			
-			CrawlStack68K( switchFrame, result );
+			CrawlStack68K( level, switchFrame, result );
 			
 			return;
 		}
@@ -142,10 +152,10 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStackPPC( frame->next, result );
+		CrawlStackPPC( level + 1, frame->next, result );
 	}
 	
-	static void CrawlStackX86( const StackFrameX86* frame, std::vector< CallRecord >& result )
+	static void CrawlStackX86( unsigned level, const StackFrameX86* frame, std::vector< CallRecord >& result )
 	{
 		if ( frame == NULL )
 		{
@@ -161,22 +171,22 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStackX86( frame->next, result );
+		CrawlStackX86( level, frame->next, result );
 	}
 	
 	inline void CrawlStack( const StackFrame68K* frame, std::vector< CallRecord >& result )
 	{
-		CrawlStack68K( frame, result );
+		CrawlStack68K( 0, frame, result );
 	}
 	
 	inline void CrawlStack( const StackFramePPC* frame, std::vector< CallRecord >& result )
 	{
-		CrawlStackPPC( frame, result );
+		CrawlStackPPC( 0, frame, result );
 	}
 	
 	inline void CrawlStack( const StackFrameX86* frame, std::vector< CallRecord >& result )
 	{
-		CrawlStackX86( frame, result );
+		CrawlStackX86( 0, frame, result );
 	}
 	
 	std::vector< CallRecord > GetStackCrawl()
