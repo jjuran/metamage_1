@@ -100,37 +100,19 @@ namespace Nitrogen
 	namespace Detail
 	{
 		
-		#pragma parameter __D0 GetA0
-		
-		inline ::Ptr GetA0() = { 0x2008 };
-		
-		#pragma parameter __D0 GetA2
-		
-		inline ::Ptr GetA2() = { 0x200a };
-		
-		#pragma parameter __D0 GetD0
-		
-		inline long GetD0() = { 0x4e71 };
-		
-		
 		typedef pascal void (*StackBased_ADBCompletionProcPtr)( ::Ptr buffer, ::Ptr refCon, long command );
 		
 		template < StackBased_ADBCompletionProcPtr proc >
 		pascal void CallStackBasedADBCompletionProcPtr()
 		{
-			/*
 			asm
 			{
 				MOVE.L   A0, -(SP) ;  // buffer
 				MOVE.L   A2, -(SP) ;  // refCon
 				MOVE.L   D0, -(SP) ;  // command
+				
+				JSR      proc      ;
 			}
-			
-			// I would have made the whole function asm,
-			// but I didn't figure out how to get proc into a register.
-			*/
-			
-			proc( GetA0(), GetA2(), GetD0() );
 		}
 	}
 	

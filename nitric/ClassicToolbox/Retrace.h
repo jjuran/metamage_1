@@ -144,16 +144,17 @@ namespace Nitrogen
 	namespace Detail
 	{
 		
-		#pragma parameter __D0 GetA0
-		
-		inline ::Ptr GetA0() = { 0x2008 };
-		
 		typedef pascal void (*StackBased_VBLProcPtr)( VBLTaskPtr task );
 		
 		template < StackBased_VBLProcPtr proc >
 		pascal void CallStackBasedVBLProcPtr()
 		{
-			proc( (VBLTaskPtr) GetA0() );
+			asm
+			{
+				MOVE.L   A0, -(SP) ;  // taskPtr
+				
+				JSR      proc      ;
+			}
 		}
 		
 	}
