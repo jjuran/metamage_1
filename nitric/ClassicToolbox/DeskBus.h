@@ -39,6 +39,32 @@ namespace Nitrogen
 	
 	// ProcPtrs and UPPs
 	
+	namespace Glue
+	{
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		
+		typedef pascal void (*ADBCompletionProcPtr)( ::Ptr buffer, ::Ptr refCon, long command );
+		
+		template < ADBCompletionProcPtr proc >
+		pascal void ADBCompletionProcPtr_Glue()
+		{
+			asm
+			{
+				MOVE.L   A0, -(SP) ;  // buffer
+				MOVE.L   A2, -(SP) ;  // refCon
+				MOVE.L   D0, -(SP) ;  // command
+				
+				JSR      proc      ;
+			}
+		}
+		
+	#else
+		
+		using ::ADBCompletionProcPtr;
+		
+	#endif
+	}
+	
 	struct ADBCompletionUPP_Details : Basic_UPP_Details< ::ADBCompletionUPP,
 	                                                     ::ADBCompletionProcPtr,
 	                                                     ::NewADBCompletionUPP,
@@ -58,6 +84,24 @@ namespace Nitrogen
 	using ::ADBReInit;
 	
 	void ADBOp( ::Ptr refCon, ADBCompletionUPP completion, ::Ptr buffer, short commandNum );
+	
+	template < Glue::ADBCompletionProcPtr proc >
+	inline void ADBOp( ::Ptr refCon, ::Ptr buffer, short commandNum )
+	{
+		ADBCompletionUPP upp =
+		
+		#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+			
+			Glue::ADBCompletionProcPtr_Glue< proc >;
+			
+		#else
+			
+			StaticUPP< ADBCompletionUPP, proc >();
+			
+		#endif
+		
+		Nitrogen::ADBOp( refCon, upp, buffer, commandNum );
+	}
 	
 	using ::CountADBs;
 	
@@ -95,62 +139,30 @@ namespace Nitrogen
 		return NewUPP< ADBCompletionUPP >( p );
 	}
 	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	namespace Detail
-	{
-		
-		typedef pascal void (*StackBased_ADBCompletionProcPtr)( ::Ptr buffer, ::Ptr refCon, long command );
-		
-		template < StackBased_ADBCompletionProcPtr proc >
-		pascal void CallStackBasedADBCompletionProcPtr()
-		{
-			asm
-			{
-				MOVE.L   A0, -(SP) ;  // buffer
-				MOVE.L   A2, -(SP) ;  // refCon
-				MOVE.L   D0, -(SP) ;  // command
-				
-				JSR      proc      ;
-			}
-		}
-	}
-	
-	template < Detail::StackBased_ADBCompletionProcPtr proc >
-	struct ADBCompletionProcPtr_Traits
-	{
-		static ADBCompletionProcPtr GetProcPtr()
-		{
-			return &Detail::CallStackBasedADBCompletionProcPtr< proc >;
-		}
-	};
-	
-#else
-	
-	template < ADBCompletionProcPtr proc >
-	struct ADBCompletionProcPtr_Traits
-	{
-		static ADBCompletionProcPtr GetProcPtr()
-		{
-			return proc;
-		}
-	};
-	
-#endif
-	
 	inline void DisposeADBCompletionUPP( Nucleus::Owned< ADBCompletionUPP > )  {}
-	
-#if !TARGET_CPU_68K || TARGET_RT_MAC_CFM
 	
 	inline void InvokeADBCompletionUPP( Ptr               buffer,
 	                                    Ptr               refCon,
 	                                    long              command,
 	                                    ADBCompletionUPP  userUPP )
 	{
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		
+		asm
+		{
+			MOVE.L   buffer,  A0 ;
+			MOVE.L   refCon,  A2 ;
+			MOVE.L   command, D0 ;
+		}
+		
+		userUPP();
+		
+	#else
+		
 		userUPP( buffer, refCon, command );
+		
+	#endif
 	}
-	
-#endif
 	
 }
 
