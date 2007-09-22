@@ -36,11 +36,9 @@ namespace
 
 static void SendADBCommandSync( char* buffer, UInt8 command )
 {
-	static NN::Owned< N::ADBCompletionUPP > upp( N::NewADBCompletionUPP( N::ADBCompletionProcPtr_Traits< ADBCompletion >::GetProcPtr() ) );
-	
 	char refCon = false;
 	
-	N::ADBOp( &refCon, upp, buffer, command );
+	N::ADBOp< ADBCompletion >( &refCon, buffer, command );
 	
 	volatile const char& done = refCon;
 	
