@@ -139,13 +139,6 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( InitProc );
 	
-	static int* ErrnoPtr()
-	{
-		return CurrentProcess().ErrnoData();
-	}
-	
-	REGISTER_SYSTEM_CALL( ErrnoPtr );
-	
 	static int pause();
 	
 	static OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
