@@ -786,15 +786,6 @@ namespace
 	
 #endif
 	
-	int* ErrnoPtr()
-	{
-		int* errnoPtr = INVOKE( ErrnoPtr, () );
-		
-		//ASSERT( errnoPtr != NULL );
-		
-		return errnoPtr;
-	}
-	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
 		return INVOKE( AESendBlocking, ( appleEvent, reply ) );
