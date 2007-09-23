@@ -829,14 +829,6 @@ namespace Genie
 		
 		itsErrnoData = NULL;
 		
-		// We need to set the calling fragment's environ back to the parent
-		// process' environment storage.
-		if ( itsEnvironData != NULL )
-		{
-			*itsEnvironData = itsPPID > 0 ? GetProcess( itsPPID ).itsEnvironStorage->GetPointer()
-			                              : NULL;
-		}
-		
 		// Reset the environment storage as a copy of envp (or empty).
 		// As an optimization, if the pointers match, then envp must be the
 		// current environ, and the data are already there.
@@ -1110,6 +1102,12 @@ namespace Genie
 		                              : kProcessIndependent;
 		
 		itsSchedule        =            kProcessRunning;
+		
+		// Restore environ (which was pointing into the child's environ storage)
+		if ( itsEnvironData != NULL )
+		{
+			*itsEnvironData = itsEnvironStorage->GetPointer();
+		}
 		
 		RegisterProcessContext( this );
 		
