@@ -214,7 +214,6 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	void       (*InitProc_import_        )( CleanupHandler );
 	int*       (*ErrnoPtr_import_        )();
-	char***    (*EnvironPtr_import_      )();
 	OSStatus   (*AESendBlocking_import_  )( const AppleEvent* appleEvent, AppleEvent* reply );
 	OSStatus   (*Path2FSSpec_import_     )( const char* pathname, FSSpec* outFSS );
 	
@@ -794,15 +793,6 @@ namespace
 		//ASSERT( errnoPtr != NULL );
 		
 		return errnoPtr;
-	}
-	
-	char*** EnvironPtr()
-	{
-		char*** environPtr = INVOKE( EnvironPtr, () );
-		
-		//ASSERT( environPtr != NULL );
-		
-		return environPtr;
 	}
 	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
