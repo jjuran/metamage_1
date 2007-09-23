@@ -16,9 +16,6 @@
 #include "sys/stat.h"
 #include "unistd.h"
 
-// Kerosene
-#include "SystemCalls.hh"
-
 
 	static std::string LookupPath( const char* filename )
 	{
@@ -159,7 +156,8 @@
 			
 			if ( path == "" )
 			{
-				Errno() = ENOENT;
+				errno = ENOENT;
+				
 				return -1;
 			}
 			

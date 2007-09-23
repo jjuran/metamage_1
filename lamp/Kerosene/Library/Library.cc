@@ -24,9 +24,6 @@
 // Iota
 #include "iota/environ.hh"
 
-// Kerosene
-#include "SystemCalls.hh"
-
 
 // Exceptions are off here
 #pragma exceptions off
@@ -124,13 +121,13 @@
 	{
 		if ( errnum < 0 )
 		{
-			Errno() = EINVAL;
+			errno = EINVAL;
 			return "strerror: errnum is negative";
 		}
 		
 		if ( errnum >= sys_nerr )
 		{
-			Errno() = EINVAL;
+			errno = EINVAL;
 			return "strerror: errnum exceeds sys_nerr";
 		}
 		
@@ -221,7 +218,7 @@
 	
 	int fork()
 	{
-		Errno() = EINVAL;
+		errno = EINVAL;
 		return -1;
 	}
 	
