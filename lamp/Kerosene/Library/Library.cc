@@ -21,6 +21,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// Iota
+#include "iota/environ.hh"
+
 // Kerosene
 #include "SystemCalls.hh"
 
@@ -213,7 +216,7 @@
 	
 	int execv( const char* path, const char* const argv[] )
 	{
-		return execve( path, argv, Environ() );
+		return execve( path, argv, environ );
 	}
 	
 	int fork()
