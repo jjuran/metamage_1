@@ -25,10 +25,6 @@ struct InetMailExchange;
 extern "C" {
 #endif
 	
-	int* ErrnoPtr();
-	
-	char*** EnvironPtr();
-	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply );
 	
 	OSStatus OTInetMailExchange_Kernel( char* domain, UInt16* count, InetMailExchange* result );
@@ -40,10 +36,6 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
-	
-	inline int& Errno()  { return *ErrnoPtr(); }
-	
-	inline char**& Environ()  { return *EnvironPtr(); }
 	
 	inline FSSpec Path2FSS( const std::string& pathname )
 	{
