@@ -907,63 +907,6 @@ namespace Genie
 		return savedThreadID;
 	}
 	
-	/*
-	int Process::TryExec( const FSSpec&        executable,
-	                      const char* const    argv[],
-	                      const char* const*   envp )
-	{
-		try
-		{
-			return Exec( executable, argv, envp );
-		}
-		catch ( N::OSStatusErrMessage< N::CFragNoLibraryErr >& err )
-		{
-			Io::S( FileDescriptors()[ 2 ].handle ) << "cFragNoLibraryErr: "
-			                                       << err.errMessage
-			                                       << "\n";
-			throw;
-		}
-		catch ( N::OSStatusErrMessage< N::CFragUnresolvedErr >& err )
-		{
-			Io::S( FileDescriptors()[ 2 ].handle ) << "cFragUnresolvedErr: "
-			                                       << err.errMessage
-			                                       << "\n";
-			throw;
-		}
-		catch ( N::ErrMessage& err )
-		{
-			try
-			{
-				throw;
-			}
-			catch ( N::OSStatus status )
-			{
-				Io::S( FileDescriptors()[ 2 ].handle ) << "Caught OSStatus "
-				                                       << status
-				                                       << " with errMessage "
-				                                       << err.errMessage
-				                                       << ".\n";
-			}
-			catch ( ... )
-			{
-				Io::S( FileDescriptors()[ 2 ].handle ) << "Caught exception with errMessage "
-				                                       << err.errMessage
-				                                       << " which isn't an OSStatus.  This shouldn't happen.\n";
-			}
-			
-			throw;
-		}
-		catch ( N::OSStatus err )
-		{
-			Io::S( FileDescriptors()[ 2 ].handle ) << "Couldn't load plugin:  " << err << "\n";
-			throw;
-		}
-		
-		// Not reached...
-		return -1;
-	}
-	*/
-	
 	int Process::SetErrno( int errorNumber )
 	{
 		if ( itsErrnoData == NULL )
