@@ -146,13 +146,6 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( ErrnoPtr );
 	
-	static char*** EnvironPtr()
-	{
-		return CurrentProcess().EnvironData();
-	}
-	
-	REGISTER_SYSTEM_CALL( EnvironPtr );
-	
 	static int pause();
 	
 	static OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
