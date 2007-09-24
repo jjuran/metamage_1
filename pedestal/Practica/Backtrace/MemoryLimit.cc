@@ -43,7 +43,7 @@ namespace Backtrace
 			
 			if ( inOSX )
 			{
-				return 0xffffffff;
+				return reinterpret_cast< const void* >( 0xffffffff );
 			}
 		}
 		
