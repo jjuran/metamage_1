@@ -1115,11 +1115,9 @@ namespace Genie
 			{
 				Process& parent( GetProcess( itsPPID ) );
 				
-				Orphan();
-				
 				Terminate();
 				
-				parent.Terminate( itsResult );  // FIXME
+				parent.ResumeAfterFork();
 				
 				// Not reached
 			}
