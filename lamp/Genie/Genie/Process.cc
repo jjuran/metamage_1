@@ -227,8 +227,6 @@ namespace Genie
 		
 		if ( mainPtr != NULL )
 		{
-			context.processContext->SetSchedule( kProcessRunning );
-			
 		#if 0 // TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 			
 			ProcInfoType mainProcInfo = kCStackBased
@@ -556,6 +554,10 @@ namespace Genie
 	
 	void Process::InitThread()
 	{
+		ResumeTimer();
+		
+		SetSchedule( kProcessRunning );
+		
 		N::CloseConnection( itsOldFragmentConnection );
 		
 		itsOldFragmentImage = BinaryImage();
@@ -984,22 +986,6 @@ namespace Genie
 	
 	void Process::SetSchedule( ProcessSchedule schedule )
 	{
-		UInt64 now = N::Microseconds();
-		
-		if ( schedule == kProcessRunning )
-		{
-			if ( itsSchedule != kProcessRunning )
-			{
-				// starting
-				ResumeTimer();
-			}
-		}
-		else if ( itsSchedule == kProcessRunning )
-		{
-			// stopping
-			SuspendTimer();
-		}
-		
 		itsSchedule = schedule;
 	}
 	
@@ -1332,6 +1318,8 @@ namespace Genie
 		
 		me->SetSchedule( kProcessSleeping );
 		
+		me->SuspendTimer();
+		
 		gCurrentProcess = NULL;
 		
 		N::YieldToAnyThread();
@@ -1341,6 +1329,8 @@ namespace Genie
 		SwapInEnvironValue( me->GetEnviron() );
 		
 		me->SetSchedule( kProcessRunning );
+		
+		me->ResumeTimer();
 		
 		// Yield() should only be called from the yielding process' thread.
 		HandlePendingSignals();
