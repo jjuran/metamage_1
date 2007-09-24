@@ -39,6 +39,7 @@
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileSystem/FSTree.hh"
 #include "Genie/Process/Environ.hh"
+#include "Genie/Process/TimeKeeper.hh"
 #include "Genie/ProcessGroup.hh"
 
 
@@ -151,17 +152,8 @@ namespace Genie
 	
 #endif
 	
-	struct Times
-	{
-		UInt64 user;
-		UInt64 system;
-		UInt64 child_user;
-		UInt64 child_system;
-		
-		Times() : user(), system(), child_user(), child_system()  {}
-	};
-	
-	class Process : public Environ
+	class Process : public Environ,
+	                public TimeKeeper
 	{
 		public:
 			enum
@@ -182,10 +174,6 @@ namespace Genie
 			pid_t itsTracingProcess;
 			
 			UInt64 itsAlarmClock;
-			
-			UInt64 itsLastTimerCheckpoint;
-			
-			Times itsTimes;
 			
 			UInt32 itsPendingSignals;
 			UInt32 itsPreviousSignals;
@@ -240,10 +228,6 @@ namespace Genie
 			pid_t GetPGID() const  { return itsProcessGroup->ID();     }
 			pid_t GetSID()  const  { return itsProcessGroup->GetSID(); }
 			
-			const Times& GetTimes() const  { return itsTimes; }
-			
-			void AccumulateChildTimes( const Times& times );
-			
 			const boost::shared_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
 			void SetProcessGroup( const boost::shared_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
@@ -261,13 +245,6 @@ namespace Genie
 			int Result() const  { return itsResult; }
 			
 			void Release();
-			
-			void EnterSystemCall( const char* name );
-			
-			void LeaveSystemCall();
-			
-			void SuspendTimer();
-			void ResumeTimer();
 			
 			void SetSchedule( ProcessSchedule schedule );
 			

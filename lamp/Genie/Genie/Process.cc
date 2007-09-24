@@ -577,7 +577,6 @@ namespace Genie
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
-		itsLastTimerCheckpoint( 0 ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( "init" ),
@@ -605,7 +604,6 @@ namespace Genie
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
-		itsLastTimerCheckpoint( N::Microseconds() ),
 		itsPendingSignals     ( 0 ),
 		itsPreviousSignals    ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -628,12 +626,6 @@ namespace Genie
 	
 	Process::~Process()
 	{
-	}
-	
-	void Process::AccumulateChildTimes( const Times& times )
-	{
-		itsTimes.child_user   += times.user   + times.child_user;
-		itsTimes.child_system += times.system + times.child_system;
 	}
 	
 	unsigned int Process::SetAlarm( unsigned int seconds )
@@ -1080,37 +1072,6 @@ namespace Genie
 		itsLifeStage = kProcessReleased;
 	}
 	
-	static void UpdateClock( UInt64& clock, UInt64& checkpoint )
-	{
-		UInt64 now = N::Microseconds();
-		
-		clock += now - checkpoint;
-		
-		checkpoint = now;
-	}
-	
-	void Process::EnterSystemCall( const char* name )
-	{
-		UpdateClock( itsTimes.user, itsLastTimerCheckpoint );
-	}
-	
-	void Process::LeaveSystemCall()
-	{
-		UpdateClock( itsTimes.system, itsLastTimerCheckpoint );
-	}
-	
-	void Process::SuspendTimer()
-	{
-		UpdateClock( itsTimes.system, itsLastTimerCheckpoint );
-	}
-	
-	void Process::ResumeTimer()
-	{
-		UInt64 now = N::Microseconds();
-		
-		itsLastTimerCheckpoint = now;
-	}
-	
 	void Process::SetSchedule( ProcessSchedule schedule )
 	{
 		UInt64 now = N::Microseconds();
@@ -1120,13 +1081,13 @@ namespace Genie
 			if ( itsSchedule != kProcessRunning )
 			{
 				// starting
-				itsLastTimerCheckpoint = now;
+				ResumeTimer();
 			}
 		}
 		else if ( itsSchedule == kProcessRunning )
 		{
 			// stopping
-			UpdateClock( itsTimes.system, itsLastTimerCheckpoint );
+			SuspendTimer();
 		}
 		
 		itsSchedule = schedule;
