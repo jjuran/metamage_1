@@ -29,10 +29,7 @@
 #include "Nitrogen/Threads.h"
 
 // Backtrace
-#include "Backtrace/StackCrawl.hh"
-#include "Backtrace/MacsbugSymbols.hh"
-#include "Backtrace/TracebackTables.hh"
-#include "Backtrace/Unmangle.hh"
+#include "Backtrace/Backtrace.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -67,96 +64,9 @@
 #define ENVIRON_IS_SHARED  (TARGET_CPU_68K && !TARGET_RT_MAC_CFM)
 
 
-namespace Backtrace
-{
-	
-	static std::string FindSymbolString( ReturnAddr68K addr )
-	{
-		MacsbugSymbolPtr symbolName = FindSymbolName( addr );
-		
-		return symbolName != NULL ? GetSymbolString( symbolName ) : "???";
-	}
-	
-	static std::string FindSymbolString( ReturnAddrPPC addr )
-	{
-		TracebackTablePtr symbolName = FindSymbolName( addr );
-		
-		return symbolName != NULL ? GetSymbolString( symbolName ) : "???";
-	}
-	
-	static void PrintTrace( unsigned offset, const void* addr, const char* arch, const char* name )
-	{
-		std::fprintf( stderr, "%d: 0x%.8x (%s) %s\n", offset, addr, arch, name );
-	}
-	
-	
-	static void Trace68K( unsigned offset, ReturnAddr68K addr )
-	{
-		std::string name = FindSymbolString( addr );
-		
-		try
-		{
-			name = UnmangleMWC68K( name );
-		}
-		catch ( ... )
-		{
-		}
-		
-		PrintTrace( offset++, addr, "68K", name.c_str() );
-	}
-	
-	static void TracePPC( unsigned offset, ReturnAddrPPC addr )
-	{
-		const ReturnAddrPPC mixedModeSwitch = (ReturnAddrPPC) 0xffcec400;
-		
-		std::string name = addr == mixedModeSwitch ? "MixedMode" : FindSymbolString( addr );
-		
-		try
-		{
-			name = UnmangleMWCPPC( name );
-		}
-		catch ( ... )
-		{
-		}
-		
-		PrintTrace( offset++, addr, "PPC", name.c_str() );
-	}
-	
-}
-
-
 static void DumpBacktrace( unsigned levelsToSkip = 0, const char* lastSymbol = "" )
 {
-	using Backtrace::CallRecord;
-	
-	const std::vector< CallRecord > trace = Backtrace::GetStackCrawl();
-	
-	typedef std::vector< CallRecord >::const_iterator Iter;
-	
-	const Iter begin = trace.begin() + levelsToSkip;
-	
-	unsigned offset = 0;
-	
-	// It's important to use < instead of != if we might skip past the end
-	for ( Iter it = begin;  it < trace.end();  ++it, ++offset )
-	{
-		const CallRecord& call = *it;
-		
-		switch ( call.arch )
-		{
-			case Backtrace::kArchClassic68K:
-				Backtrace::Trace68K( offset, call.addr68K );
-				break;
-			
-			case Backtrace::kArchPowerPCFrag:
-				Backtrace::TracePPC( offset, call.addrPPCFrag );
-				break;
-			
-			default:
-				std::fprintf( stderr, "Trace: architecture %x for addres %.8x is unknown.\n", call.arch, call.addr68K );
-				break;
-		}
-	}
+	Backtrace::DebuggingContext().Show();
 }
 
 namespace Genie
