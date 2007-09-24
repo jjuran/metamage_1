@@ -120,6 +120,8 @@ namespace Backtrace
 			return;
 		}
 		
+	#ifndef __MACH__
+		
 		if ( frame >= MemoryLimit() )
 		{
 			return;
@@ -129,8 +131,6 @@ namespace Backtrace
 		{
 			return;
 		}
-		
-	#ifndef __MACH__
 		
 		if ( (long) frame & 0x00000001 )
 		{
