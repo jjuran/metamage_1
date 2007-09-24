@@ -227,22 +227,6 @@ namespace Genie
 		
 		if ( mainPtr != NULL )
 		{
-		#if 0 // TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-			
-			ProcInfoType mainProcInfo = kCStackBased
-			                          | RESULT_SIZE( SIZE_CODE( sizeof (int) ) )
-			                          | STACK_ROUTINE_PARAMETER( 1, SIZE_CODE( sizeof (int) ) )
-			                          | STACK_ROUTINE_PARAMETER( 2, SIZE_CODE( sizeof (char**) ) )
-			                          | STACK_ROUTINE_PARAMETER( 3, SIZE_CODE( sizeof (char**) ) );
-			
-			UniversalProcPtr upp = NewRoutineDescriptorTrap( (ProcPtr) mainPtr,
-			                                                 mainProcInfo,
-			                                                 kM68kISA | kCFM68kRTA );
-			
-			mainPtr = (MainProcPtr) upp;
-			
-		#endif
-			
 			gToolScratchGlobals.err = NULL;  // errno
 			
 		#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
@@ -262,12 +246,6 @@ namespace Genie
 			result = mainPtr( Sh::CountStringArray( context.argv ),
 			                  context.argv,
 			                  context.envp );
-			
-		#if 0 // TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-			
-			DisposeRoutineDescriptorTrap( upp );
-			
-		#endif
 		}
 		
 		// Accumulate any user time between last system call (if any) and return from main()
