@@ -244,7 +244,6 @@ namespace Genie
 		#endif
 			
 			gToolScratchGlobals.err = NULL;  // errno
-			gToolScratchGlobals.env = context.processContext->GetEnviron();  // environ
 			
 		#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 			
@@ -554,9 +553,7 @@ namespace Genie
 	
 	void Process::InitThread()
 	{
-		ResumeTimer();
-		
-		SetSchedule( kProcessRunning );
+		Resume();
 		
 		N::CloseConnection( itsOldFragmentConnection );
 		
@@ -984,9 +981,13 @@ namespace Genie
 		itsLifeStage = kProcessReleased;
 	}
 	
-	void Process::SetSchedule( ProcessSchedule schedule )
+	void Process::Resume()
 	{
-		itsSchedule = schedule;
+		SwapInEnvironValue( GetEnviron() );
+		
+		itsSchedule = kProcessRunning;
+		
+		ResumeTimer();
 	}
 	
 	sig_t Process::SetSignalAction( int signal, sig_t signalAction )
@@ -1259,11 +1260,7 @@ namespace Genie
 		{
 			gCurrentProcess = this;
 			
-			SwapInEnvironValue( GetEnviron() );
-			
-			SetSchedule( kProcessRunning );
-			
-			ResumeTimer();
+			Resume();
 			
 			HandlePendingSignals();
 		}
@@ -1312,30 +1309,36 @@ namespace Genie
 		}
 	}
 	
-	void Yield()
+	void Process::Yield()
 	{
-		Process* me = gCurrentProcess;
+		itsSchedule = kProcessSleeping;
 		
-		me->SetSchedule( kProcessSleeping );
-		
-		me->SuspendTimer();
+		SuspendTimer();
 		
 		gCurrentProcess = NULL;
 		
 		N::YieldToAnyThread();
 		
-		gCurrentProcess = me;
+		gCurrentProcess = this;
 		
-		SwapInEnvironValue( me->GetEnviron() );
-		
-		me->SetSchedule( kProcessRunning );
-		
-		me->ResumeTimer();
-		
-		// Yield() should only be called from the yielding process' thread.
-		HandlePendingSignals();
+		Resume();
 		
 		gTickCountOfLastSleep = ::TickCount();
+		
+		// Yield() should only be called from the yielding process' thread.
+		bool signalled = HandlePendingSignals();
+		
+		if ( signalled )
+		{
+			P7::ThrowErrno( EINTR );
+		}
+	}
+	
+	void Yield()
+	{
+		ASSERT( gCurrentProcess != NULL );
+		
+		gCurrentProcess->Yield();
 	}
 	
 }

@@ -209,7 +209,10 @@ namespace Genie
 			std::string itsLastEnv;
 		
 		private:
+			void Resume();
+			
 			void Orphan();
+			
 		
 		public:
 			struct RootProcess {};
@@ -246,7 +249,7 @@ namespace Genie
 			
 			void Release();
 			
-			void SetSchedule( ProcessSchedule schedule );
+			void Yield();
 			
 			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
 			
