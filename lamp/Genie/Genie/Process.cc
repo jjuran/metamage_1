@@ -26,6 +26,7 @@
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Sound.h"
+#include "Nitrogen/Threads.h"
 
 // Backtrace
 #include "Backtrace/StackCrawl.hh"
@@ -41,6 +42,9 @@
 
 // Kerosene/Common
 #include "KEnvironment.hh"
+
+// Pedestal
+#include "Pedestal/Application.hh"
 
 // Genie
 #include "Genie/Devices.hh"
@@ -58,6 +62,9 @@
 	#undef SIGSEGV
 	#undef SIGTERM
 #endif
+
+
+#define ENVIRON_IS_SHARED  (TARGET_CPU_68K && !TARGET_RT_MAC_CFM)
 
 
 namespace Backtrace
@@ -160,6 +167,30 @@ namespace Genie
 	namespace P7 = POSeven;
 	namespace Sh = ShellShock;
 	namespace K = Kerosene;
+	namespace Ped = Pedestal;
+	
+	
+	static Process* gCurrentProcess;
+	
+	Process& CurrentProcess()
+	{
+		if ( gCurrentProcess == NULL )
+		{
+			P7::ThrowErrno( ESRCH );
+		}
+		
+		return *gCurrentProcess;
+	}
+	
+	Process* CurrentProcessContext()
+	{
+		return gCurrentProcess;
+	}
+	
+	void RegisterProcessContext( Process* process )
+	{
+		gCurrentProcess = process;
+	}
 	
 	
 	GenieProcessTable gProcessTable;
@@ -211,11 +242,19 @@ namespace Genie
 	
 	struct ToolScratchGlobals
 	{
-		int*    err;
-		char**  env;
+		int*             err;
+		iota::environ_t  env;
 	};
 	
 	static ToolScratchGlobals& gToolScratchGlobals = *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
+	
+	inline void SwapInEnvironValue( iota::environ_t envp )
+	{
+		if ( ENVIRON_IS_SHARED )
+		{
+			gToolScratchGlobals.env = envp;
+		}
+	}
 	
 	static const char* FindSequenceInMemory( const char* mem_begin,
 	                                         const char* mem_end,
@@ -297,7 +336,7 @@ namespace Genie
 		#endif
 			
 			gToolScratchGlobals.err = NULL;  // errno
-			gToolScratchGlobals.env = context.processContext->Environ();  // environ
+			gToolScratchGlobals.env = context.processContext->GetEnviron();  // environ
 			
 		#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 			
@@ -548,10 +587,8 @@ namespace Genie
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
-		itsEnvironStorage     ( new Sh::VarArray() ),
 		itsCleanupHandler     (),
-		itsErrnoData          ( NULL ),
-		itsEnvironData        ( NULL )
+		itsErrnoData          ( NULL )
 	{
 		itsFileDescriptors[ 0 ] =
 		itsFileDescriptors[ 1 ] =
@@ -560,6 +597,7 @@ namespace Genie
 	
 	Process::Process( Process& parent ) 
 	:
+		Environ( parent ),
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
 		itsForkedChildPID     ( 0 ),
@@ -577,26 +615,10 @@ namespace Genie
 		itsInterdependence    ( kProcessForked ),
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
-		itsEnvironStorage     ( new Sh::VarArray( parent.itsEnvironStorage->GetPointer() ) ),
 		itsCleanupHandler     (),
-		itsErrnoData          ( TARGET_RT_MAC_CFM ? parent.itsErrnoData : NULL ),
-		itsEnvironData        ( parent.itsEnvironData )
+		itsErrnoData          ( TARGET_RT_MAC_CFM ? parent.itsErrnoData : NULL )
 	{
 		parent.itsForkedChildPID = itsPID;
-		
-		if ( itsEnvironData == NULL )
-		{
-			itsEnvironData = &gToolScratchGlobals.env;
-		}
-		
-		// The environment data and the pointer to the fragment's environ
-		// variable have been copied from the parent.
-		// The calling fragment is now associated with the new process.
-		// Update its environ to point to our storage.
-		if ( itsEnvironData != NULL )
-		{
-			*itsEnvironData = itsEnvironStorage->GetPointer();
-		}
 		
 		RegisterProcessContext( this );
 		
@@ -829,29 +851,13 @@ namespace Genie
 		
 		itsErrnoData = NULL;
 		
-		// Reset the environment storage as a copy of envp (or empty).
-		// As an optimization, if the pointers match, then envp must be the
-		// current environ, and the data are already there.
-		// In that case, we just update the new fragment's environ to point to us.
-		
-		if ( envp == NULL )
-		{
-			itsEnvironStorage.reset( new Sh::VarArray );
-		}
-		else if ( envp != itsEnvironStorage->GetPointer() )
-		{
-			itsEnvironStorage.reset( new Sh::VarArray( envp ) );
-		}
+		iota::environ_t* environ_address = ENVIRON_IS_SHARED ? &gToolScratchGlobals.env : NULL;
 		
 	#if TARGET_RT_MAC_CFM
 		
 		try
 		{
-			itsEnvironData = NULL;
-			
-			N::FindSymbol( itsFragmentConnection, "\p" "environ", &itsEnvironData );
-			
-			*itsEnvironData = itsEnvironStorage->GetPointer();
+			N::FindSymbol( itsFragmentConnection, "\p" "environ", &environ_address );
 		}
 		catch ( ... ) {}
 		
@@ -865,12 +871,14 @@ namespace Genie
 		
 	#endif
 		
+		ResetEnviron( envp, environ_address );
+		
 		Result( 0 );
 		
 		ThreadContext threadContext( this,
 		                             mainEntryPoint,
 		                             itsArgvStorage->GetPointer(),
-		                             itsEnvironStorage->GetPointer() );
+		                             GetEnviron() );
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -922,112 +930,6 @@ namespace Genie
 		return errorNumber == 0 ? 0 : -1;
 	}
 	
-	char* Process::GetEnv( const char* name )
-	{
-		char* result = NULL;
-		
-		Sh::SVector::const_iterator it = itsEnvironStorage->Find( name );
-		
-		const char* var = *it;
-		
-		const char* end = Sh::EndOfVarName( var );
-		
-		// Did we find the right environment variable?
-		if ( end != NULL  &&  *end == '='  &&  Sh::VarMatchesName( var, end, name ) )
-		{
-			itsLastEnv = var;
-			itsLastEnv += "\0";  // make sure we have a trailing null
-			
-			std::size_t offset = end + 1 - var;
-			
-			result = &itsLastEnv[ offset ];
-		}
-		
-		return result;
-	}
-	
-	void Process::SetEnv( const char* name, const char* value, bool overwrite )
-	{
-		Sh::SVector::iterator it = itsEnvironStorage->Find( name );
-		
-		const char* var = *it;
-		
-		// Did we find the right environment variable?
-		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
-		
-		// If it doesn't match, we insert (otherwise, we possibly overwrite)
-		bool inserting = !match;
-		
-		if ( inserting )
-		{
-			itsEnvironStorage->Insert( it, Sh::MakeVar( name, value ) );
-			
-			if ( itsEnvironData )
-			{
-				*itsEnvironData = itsEnvironStorage->GetPointer();
-			}
-		}
-		else if ( overwrite )
-		{
-			itsEnvironStorage->Overwrite( it, Sh::MakeVar( name, value ) );
-		}
-	}
-	
-	void Process::PutEnv( const char* string )
-	{
-		std::string name = string;
-		name.resize( name.find( '=' ) );
-		
-		Sh::SVector::iterator it = itsEnvironStorage->Find( name.c_str() );
-		
-		const char* var = *it;
-		
-		// Did we find the right environment variable?
-		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name.c_str() );
-		
-		// If it doesn't match, we insert (otherwise, we possibly overwrite)
-		bool inserting = !match;
-		
-		if ( inserting )
-		{
-			itsEnvironStorage->Insert( it, string );
-			
-			if ( itsEnvironData )
-			{
-				*itsEnvironData = itsEnvironStorage->GetPointer();
-			}
-		}
-		else
-		{
-			itsEnvironStorage->Overwrite( it, string );
-		}
-	}
-	
-	void Process::UnsetEnv( const char* name )
-	{
-		Sh::SVector::iterator it = itsEnvironStorage->Find( name );
-		
-		const char* var = *it;
-		
-		// Did we find the right environment variable?
-		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
-		
-		if ( match )
-		{
-			itsEnvironStorage->Remove( it );
-		}
-	}
-	
-	void Process::ClearEnv()
-	{
-		itsEnvironStorage->Clear();
-		
-		if ( itsEnvironData )
-		{
-			*itsEnvironData = NULL;
-		}
-	}
-	
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
 		if ( !newCWD->IsDirectory() )
@@ -1047,10 +949,7 @@ namespace Genie
 		itsSchedule        =            kProcessRunning;
 		
 		// Restore environ (which was pointing into the child's environ storage)
-		if ( itsEnvironData != NULL )
-		{
-			*itsEnvironData = itsEnvironStorage->GetPointer();
-		}
+		UpdateEnvironValue();
 		
 		RegisterProcessContext( this );
 		
@@ -1482,13 +1381,35 @@ namespace Genie
 	
 	void Process::Stop()
 	{
-		ASSERT( itsSchedule == kProcessRunning );
+		ASSERT( itsThread.get() != NULL );
+		
+		if ( gCurrentProcess == this )
+		{
+			ASSERT( itsSchedule == kProcessRunning );
+			
+			ASSERT( N::GetCurrentThread() == itsThread->Get() );
+			
+			SuspendTimer();
+			
+			gCurrentProcess = NULL;
+		}
 		
 		itsSchedule = kProcessStopped;
 		
-		SuspendTimer();
+		N::SetThreadState( itsThread->Get(), N::kStoppedThreadState );
 		
-		StopThread( itsThread->Get() );
+		if ( N::GetCurrentThread() == itsThread->Get() )
+		{
+			gCurrentProcess = this;
+			
+			SwapInEnvironValue( GetEnviron() );
+			
+			SetSchedule( kProcessRunning );
+			
+			ResumeTimer();
+			
+			HandlePendingSignals();
+		}
 	}
 	
 	void Process::Continue()
@@ -1503,6 +1424,57 @@ namespace Genie
 			
 			N::SetThreadState( itsThread->Get(), N::kReadyThreadState );
 		}
+	}
+	
+	
+	static void HandlePendingSignals()
+	{
+		bool signalled = gCurrentProcess->HandlePendingSignals();
+		
+		if ( signalled )
+		{
+			P7::ThrowErrno( EINTR );
+		}
+	}
+	
+	static UInt32 gTickCountOfLastSleep = 0;
+	
+	static const UInt32 gMinimumSleepIntervalTicks = 15;  // Sleep every quarter second
+	
+	void Breathe()
+	{
+		UInt32 now = ::TickCount();
+		
+		if ( now - gTickCountOfLastSleep > gMinimumSleepIntervalTicks )
+		{
+			Ped::AdjustSleepForActivity();
+			
+			Yield();
+			
+			gTickCountOfLastSleep = now;
+		}
+	}
+	
+	void Yield()
+	{
+		Process* me = gCurrentProcess;
+		
+		me->SetSchedule( kProcessSleeping );
+		
+		gCurrentProcess = NULL;
+		
+		N::YieldToAnyThread();
+		
+		gCurrentProcess = me;
+		
+		SwapInEnvironValue( me->GetEnviron() );
+		
+		me->SetSchedule( kProcessRunning );
+		
+		// Yield() should only be called from the yielding process' thread.
+		HandlePendingSignals();
+		
+		gTickCountOfLastSleep = ::TickCount();
 	}
 	
 }

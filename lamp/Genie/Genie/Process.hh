@@ -15,6 +15,10 @@
 #include <map>
 #include <string>
 
+// Iota
+#include "iota/argv.hh"
+#include "iota/environ.hh"
+
 // Boost
 #include <boost/shared_ptr.hpp>
 
@@ -34,6 +38,7 @@
 #include "Genie/BinaryImage.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileSystem/FSTree.hh"
+#include "Genie/Process/Environ.hh"
 #include "Genie/ProcessGroup.hh"
 
 
@@ -59,10 +64,10 @@ namespace Genie
 	
 	struct ThreadContext
 	{
-		Process* processContext;
-		MainProcPtr externalMain;
-		const char* const* argv;
-		const char* const* envp;
+		Process*      processContext;
+		MainProcPtr   externalMain;
+		iota::argp_t  argv;
+		iota::envp_t  envp;
 		
 		ThreadContext()
 		:
@@ -72,10 +77,10 @@ namespace Genie
 			envp          ()
 		{}
 		
-		ThreadContext( Process*            process,
-		               MainProcPtr         externalMain,
-		               const char* const*  argv,
-		               const char* const*  envp )
+		ThreadContext( Process*      process,
+		               MainProcPtr   externalMain,
+		               iota::argp_t  argv,
+		               iota::envp_t  envp )
 		:
 			processContext( process       ),
 			externalMain  ( externalMain  ),
@@ -99,8 +104,7 @@ namespace Genie
 	
 	typedef NX::Thread< Thread_Details > Thread;
 	
-	typedef int*     ErrnoDataPtr;
-	typedef char***  EnvironDataPtr;
+	typedef int* ErrnoDataPtr;
 	
 	class TTYHandle;
 	
@@ -157,7 +161,7 @@ namespace Genie
 		Times() : user(), system(), child_user(), child_system()  {}
 	};
 	
-	class Process
+	class Process : public Environ
 	{
 		public:
 			enum
@@ -208,13 +212,11 @@ namespace Genie
 			NN::Owned< CFragConnectionID > itsOldFragmentConnection;
 			
 			std::auto_ptr< Sh::StringArray > itsArgvStorage;
-			std::auto_ptr< Sh::VarArray    > itsEnvironStorage;
 			std::auto_ptr< Thread > itsThread;
 			
 			CleanupHandler itsCleanupHandler;
 			
 			ErrnoDataPtr   itsErrnoData;
-			EnvironDataPtr itsEnvironData;
 			
 			std::string itsLastEnv;
 		
@@ -284,20 +286,6 @@ namespace Genie
 			FSSpec ProgramFile() const  { return itsProgramFile; }
 			
 			FileDescriptorMap& FileDescriptors()  { return itsFileDescriptors; }
-			
-			char** Environ() const  { return itsEnvironStorage->GetPointer(); }
-			
-			int const* ErrnoData()  const { return itsErrnoData; }
-			int      * ErrnoData()        { return itsErrnoData; }
-			
-			char** const* EnvironData()  const { return itsEnvironData; }
-			char**      * EnvironData()        { return itsEnvironData; }
-			
-			char* GetEnv( const char* name );
-			void SetEnv( const char* name, const char* value, bool overwrite );
-			void PutEnv( const char* string );
-			void UnsetEnv( const char* name );
-			void ClearEnv();
 			
 			unsigned int SetAlarm( unsigned int seconds );
 			

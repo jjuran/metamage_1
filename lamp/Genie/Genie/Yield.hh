@@ -24,10 +24,6 @@ namespace Genie
 	void Breathe();
 	void Yield();
 	
-	void StopThread( N::ThreadID thread );
-	
-	void ReadyThread( N::ThreadID thread );
-	
 }
 
 #endif
