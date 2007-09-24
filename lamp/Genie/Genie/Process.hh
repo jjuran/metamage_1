@@ -248,8 +248,6 @@ namespace Genie
 			
 			void SetSchedule( ProcessSchedule schedule );
 			
-			void Result( int result )  { itsResult = result; }
-			
 			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
 			
 			FSTreePtr GetCWD() const  { return itsCWD; }
@@ -257,8 +255,6 @@ namespace Genie
 			void ChangeDirectory( const FSTreePtr& newCWD );
 			
 			std::string ProgramName()  const  { return itsName;   }
-			
-			void ProgramName( const std::string& name )  { itsName = name; }
 			
 			FSSpec ProgramFile() const  { return itsProgramFile; }
 			

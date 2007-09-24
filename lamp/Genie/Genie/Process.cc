@@ -639,7 +639,7 @@ namespace Genie
 		CloseMarkedFileDescriptors( itsFileDescriptors );
 		
 		// Do we take the name before or after normalization?
-		ProgramName( NN::Convert< std::string >( executable.name ) );
+		itsName = NN::Convert< std::string >( executable.name );
 		
 		ExecContext context( executable, argv );
 		
@@ -777,7 +777,7 @@ namespace Genie
 		
 		ResetEnviron( envp, environ_address );
 		
-		Result( 0 );
+		itsResult = 0;
 		
 		ThreadContext threadContext( this,
 		                             mainEntryPoint,
