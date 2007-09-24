@@ -5,6 +5,7 @@
 
 // Standard C
 #include <errno.h>
+#include <signal.h>
 #include <string.h>
 
 // POSIX
@@ -487,7 +488,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "pause" );
 		
-		CurrentProcess().Stop();  // Sleep, until...
+		CurrentProcess().Raise( SIGSTOP );  // Sleep, until...
 		
 		return frame.SetErrno( EINTR );
 	}
