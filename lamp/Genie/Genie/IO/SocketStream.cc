@@ -168,7 +168,40 @@ namespace Genie
 	
 	int SocketHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		return N::OTSnd( endpoint, data, byteCount );
+		retry:
+		
+		try
+		{
+			return N::OTSnd( endpoint, data, byteCount );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err == kOTLookErr )
+			{
+				OTResult look = N::OTLook( endpoint );
+				
+				switch ( look )
+				{
+					case T_ORDREL:
+						N::OTRcvOrderlyDisconnect( endpoint );
+						
+						goto retry;
+					
+					default:
+						break;
+				}
+				
+				std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
+			}
+			else
+			{
+				std::fprintf( stderr, "OSStatus %d from OTSnd()\n", err.Get() );
+			}
+			
+			throw;
+		}
+		
+		return -1;  // Not reached
 	}
 	
 	void SocketHandle::Bind( ConstSockAddrParam local, socklen_t len )
