@@ -107,8 +107,6 @@ namespace Genie
 	
 	typedef int* ErrnoDataPtr;
 	
-	class TTYHandle;
-	
 	enum ProcessLifeStage
 	{
 		kProcessStarting,
