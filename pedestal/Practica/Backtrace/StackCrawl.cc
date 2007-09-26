@@ -43,11 +43,24 @@ namespace Backtrace
 
 #ifdef __POWERPC__
 	
-	static asm char *GetSP( void )
-	{
-		mr		r3,r1
-		blr
-	}
+	#ifdef __MWERKS__
+		
+		static asm char *GetSP( void )
+		{
+			mr		r3,r1
+			blr
+		}
+		
+	#endif
+	
+	#ifdef __GNUC__
+		
+		static char *GetSP( void )
+		{
+			__asm__( "mr r3,r1; blr" );
+		}
+		
+	#endif
 	
 	inline const StackFramePPC* GetTopFrame()  { return ( (const StackFramePPC*) GetSP() )->next; }
 	
@@ -55,9 +68,9 @@ namespace Backtrace
 	
 #ifdef __i386__
 	
-	static asm char *GetEBP( void )
+	static char *GetEBP( void )
 	{
-		mov  eax,ebp
+		__asm__( "mov  %ebp,%eax" );
 	}
 	
 	inline const StackFrameX86* GetTopFrame()  { return (const StackFrameX86*) GetEBP(); }
