@@ -281,6 +281,9 @@ namespace Genie
 	
 	static int execve( const char* path, const char* const argv[], const char* const envp[] )
 	{
+		// On a successful exec, the frame doesn't get destructed, but we compensate.
+		// Exec() calls Suspend(), which is equivalent to LeaveSystemCall().
+		// ResumeAfterFork() calls Resume() and LeaveSystemCall().
 		SystemCallFrame frame( "execve" );
 		
 		try
@@ -324,12 +327,10 @@ namespace Genie
 			
 			// Hope nothing bad happened while we thought we were still the child
 			
-			// Set this thread's process context back to the forker
+			// Have the parent longjmp() back into vfork() and resume
 			GetProcess( current.GetPPID() ).ResumeAfterFork();
 			
-			// Yes, in Genie a forked exec() DOES return on success.
-			// The longjmp() is done in statically-linked library code.
-			return 0;
+			// Not reached
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -370,15 +371,17 @@ namespace Genie
 	
 	static void _exit( int status )
 	{
+		// The frame doesn't get destructed, but we compensate.
+		// ResumeAfterFork() calls Resume() and LeaveSystemCall().
 		SystemCallFrame frame( "_exit" );
 		
 		Process& current( CurrentProcess() );
 		
-		current.Terminate( (status & 0xFF) << 8 );  // doesn't reap, won't terminate thread
+		current.Exit( status );  // doesn't return unless forked
 		
 		ASSERT( current.Forked() );
 		
-		GetProcess( current.GetPPID() ).ResumeAfterFork();
+		GetProcess( current.GetPPID() ).ResumeAfterFork();  // doesn't return
 	}
 	
 	REGISTER_SYSTEM_CALL( _exit );
