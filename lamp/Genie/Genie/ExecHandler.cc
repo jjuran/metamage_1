@@ -143,7 +143,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			process->Terminate();
+			process->Exit( 127 );
 		}
 		
 		//int pid = gProcessTable[Process::kRootProcessPID].ForkExec(inArgVec);

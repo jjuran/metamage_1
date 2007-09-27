@@ -150,7 +150,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			process->Terminate();
+			process->Exit( 127 );
 		}
 	}
 	
@@ -364,7 +364,9 @@ namespace Genie
 	}
 	
 	ConsoleWindow::ConsoleWindow( ConsoleID         id,
-	                              ConstStr255Param  title ) : Base( Ped::NewWindowContext( MakeWindowRect(), title ),
+	                              ConstStr255Param  title ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                                       title,
+	                                                                                       true ),
 	                                                                NewConsoleCloseHandler( id ),
 	                                                                ConsolePane::Initializer( id, itsInput ) )
 	{
