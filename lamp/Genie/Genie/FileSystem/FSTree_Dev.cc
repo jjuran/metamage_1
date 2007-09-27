@@ -20,6 +20,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/BufferFile.hh"
 #include "Genie/IO/ConsoleTTY.hh"
+#include "Genie/IO/GraphicsPort.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
 #include "Genie/Process.hh"
@@ -148,6 +149,21 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
+	class FSTree_dev_new_port : public FSTree
+	{
+		public:
+			static std::string OnlyName()  { return "port"; }
+			
+			std::string Name() const  { return OnlyName(); }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_new  >(); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
 	
 	struct dev_con_Details;
 	
@@ -226,6 +242,11 @@ namespace Genie
 		return NewConsoleDevice();
 	}
 	
+	boost::shared_ptr< IOHandle > FSTree_dev_new_port::Open( OpenFlags flags ) const
+	{
+		return NewGraphicsPort();
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree_dev_con_N::Open( OpenFlags flags ) const
 	{
 		return GetConsoleByID( itsIndex ).shared_from_this();
@@ -250,6 +271,7 @@ namespace Genie
 	{
 		MapSingleton< FSTree_dev_new_buffer  >();
 		MapSingleton< FSTree_dev_new_console >();
+		MapSingleton< FSTree_dev_new_port    >();
 	}
 	
 	
