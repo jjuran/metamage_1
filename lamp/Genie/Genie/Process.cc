@@ -92,16 +92,6 @@ namespace Genie
 		return *gCurrentProcess;
 	}
 	
-	Process* CurrentProcessContext()
-	{
-		return gCurrentProcess;
-	}
-	
-	void RegisterProcessContext( Process* process )
-	{
-		gCurrentProcess = process;
-	}
-	
 	
 	GenieProcessTable gProcessTable;
 	
@@ -219,9 +209,7 @@ namespace Genie
 	{
 		context.processContext->InitThread();
 		
-		RegisterProcessContext( context.processContext );
-		
-		int result = -1;
+		int exit_status = -1;
 		
 		MainProcPtr mainPtr = context.externalMain;
 		
@@ -243,18 +231,18 @@ namespace Genie
 			
 		#endif
 			
-			result = mainPtr( Sh::CountStringArray( context.argv ),
-			                  context.argv,
-			                  context.envp );
+			exit_status = mainPtr( Sh::CountStringArray( context.argv ),
+			                       context.argv,
+			                       context.envp );
 		}
 		
 		// Accumulate any user time between last system call (if any) and return from main()
 		context.processContext->EnterSystemCall( "*RETURN*" );
 		
-		context.processContext->Terminate( (result & 0xFF) << 8 );
+		context.processContext->Exit( exit_status );
 		
 		// Not reached
-		return result;
+		return exit_status;
 	}
 	
 	struct ExecContext
@@ -503,7 +491,7 @@ namespace Genie
 	{
 		parent.itsForkedChildPID = itsPID;
 		
-		RegisterProcessContext( this );
+		gCurrentProcess = this;
 		
 		parent.itsInterdependence = kProcessForking;
 		parent.itsSchedule        = kProcessFrozen;
@@ -783,13 +771,12 @@ namespace Genie
 		
 		if ( IsBeingTraced() )
 		{
+			// This stops the thread immediately.
+			// If we receive a fatal signal while stopped, the thread dies.
 			Raise( SIGSTOP );
-			
-			// We may have received a signal while stopped
-			HandlePendingSignals();
 		}
 		
-		SuspendTimer();
+		Suspend();
 		
 		return savedThreadID;
 	}
@@ -821,7 +808,8 @@ namespace Genie
 	
 	void Process::ResumeAfterFork()
 	{
-		//Status( kProcessRunning );
+		Resume();
+		
 		itsInterdependence = Forked() ? kProcessForked
 		                              : kProcessIndependent;
 		
@@ -830,14 +818,14 @@ namespace Genie
 		// Restore environ (which was pointing into the child's environ storage)
 		UpdateEnvironValue();
 		
-		RegisterProcessContext( this );
-		
 		pid_t child = itsForkedChildPID;
 		
 		itsForkedChildPID = 0;
 		
 		if ( itsLongJmp != NULL  &&  child != 0 )
 		{
+			LeaveSystemCall();
+			
 			itsLongJmp( child );
 		}
 	}
@@ -861,9 +849,10 @@ namespace Genie
 		
 		itsThread = parent.itsThread;
 		
-		parent.Terminate( exit_status << 8 );
+		parent.Exit( exit_status );
 	}
 	
+	// This function doesn't return if the process is current and not forked.
 	void Process::Terminate()
 	{
 		itsLifeStage = kProcessTerminated;
@@ -929,14 +918,23 @@ namespace Genie
 		if ( !Forked()  &&  itsThread.get() != NULL )
 		{
 			NN::Owned< N::ThreadID > savedThreadID = itsThread->HandOff();
+			
+			// Unforked process' thread dies here
 		}
 	}
 	
-	void Process::Terminate( int result )
+	// This function doesn't return if the process is current and not forked.
+	void Process::Terminate( int wait_status )
 	{
-		itsResult = result;
+		itsResult = wait_status;
 		
 		Terminate();
+	}
+	
+	// This function doesn't return if the process is current and not forked.
+	void Process::Exit( int exit_status )
+	{
+		Terminate( (exit_status & 0xFF) << 8 );
 	}
 	
 	void Process::Orphan()
@@ -959,8 +957,17 @@ namespace Genie
 		itsLifeStage = kProcessReleased;
 	}
 	
+	void Process::Suspend()
+	{
+		SuspendTimer();
+		
+		gCurrentProcess = NULL;
+	}
+	
 	void Process::Resume()
 	{
+		gCurrentProcess = this;
+		
 		SwapInEnvironValue( GetEnviron() );
 		
 		itsSchedule = kProcessRunning;
@@ -983,6 +990,8 @@ namespace Genie
 		return result;
 	}
 	
+	// Doesn't return if the process was current and receives a fatal signal while stopped.
+	// But always returns when *raising* a fatal signal.
 	void Process::Raise( int signal )
 	{
 		if ( itsLifeStage >= kProcessTerminated  ||  itsResult != 0 )
@@ -1069,6 +1078,7 @@ namespace Genie
 		}
 	}
 	
+	// This function doesn't return if the process receives a fatal signal.
 	bool Process::HandlePendingSignals()
 	{
 		if ( itsAlarmClock )
@@ -1095,12 +1105,12 @@ namespace Genie
 				
 				Terminate();
 				
-				parent.ResumeAfterFork();
+				parent.ResumeAfterFork();  // Calls longjmp()
 				
 				// Not reached
 			}
 			
-			Terminate();
+			Terminate();  // Kills the thread
 			
 			// Not reached
 		}
@@ -1213,6 +1223,7 @@ namespace Genie
 		}
 	}
 	
+	// Doesn't return if the process was current and receives a fatal signal while stopped.
 	void Process::Stop()
 	{
 		ASSERT( itsThread.get() != NULL );
@@ -1223,21 +1234,19 @@ namespace Genie
 			
 			ASSERT( N::GetCurrentThread() == itsThread->Get() );
 			
-			SuspendTimer();
-			
-			gCurrentProcess = NULL;
+			Suspend();
 		}
 		
 		itsSchedule = kProcessStopped;
 		
+		// Yields if this is the current thread
 		N::SetThreadState( itsThread->Get(), N::kStoppedThreadState );
 		
 		if ( N::GetCurrentThread() == itsThread->Get() )
 		{
-			gCurrentProcess = this;
-			
 			Resume();
 			
+			// Doesn't return if we received a fatal signal.
 			HandlePendingSignals();
 		}
 	}
@@ -1257,9 +1266,25 @@ namespace Genie
 	}
 	
 	
-	static void HandlePendingSignals()
+	static UInt32 gTickCountOfLastSleep = 0;
+	
+	static const UInt32 gMinimumSleepIntervalTicks = 15;  // Sleep every quarter second
+	
+	// This function doesn't return if we received a fatal signal.
+	void Process::Yield()
 	{
-		bool signalled = gCurrentProcess->HandlePendingSignals();
+		itsSchedule = kProcessSleeping;
+		
+		Suspend();
+		
+		N::YieldToAnyThread();
+		
+		Resume();
+		
+		gTickCountOfLastSleep = ::TickCount();
+		
+		// Doesn't return if we received a fatal signal.
+		bool signalled = HandlePendingSignals();
 		
 		if ( signalled )
 		{
@@ -1267,10 +1292,15 @@ namespace Genie
 		}
 	}
 	
-	static UInt32 gTickCountOfLastSleep = 0;
+	// This function doesn't return if we received a fatal signal.
+	void Yield()
+	{
+		ASSERT( gCurrentProcess != NULL );
+		
+		gCurrentProcess->Yield();
+	}
 	
-	static const UInt32 gMinimumSleepIntervalTicks = 15;  // Sleep every quarter second
-	
+	// This function doesn't return if we received a fatal signal.
 	void Breathe()
 	{
 		UInt32 now = ::TickCount();
@@ -1283,38 +1313,6 @@ namespace Genie
 			
 			gTickCountOfLastSleep = now;
 		}
-	}
-	
-	void Process::Yield()
-	{
-		itsSchedule = kProcessSleeping;
-		
-		SuspendTimer();
-		
-		gCurrentProcess = NULL;
-		
-		N::YieldToAnyThread();
-		
-		gCurrentProcess = this;
-		
-		Resume();
-		
-		gTickCountOfLastSleep = ::TickCount();
-		
-		// Yield() should only be called from the yielding process' thread.
-		bool signalled = HandlePendingSignals();
-		
-		if ( signalled )
-		{
-			P7::ThrowErrno( EINTR );
-		}
-	}
-	
-	void Yield()
-	{
-		ASSERT( gCurrentProcess != NULL );
-		
-		gCurrentProcess->Yield();
 	}
 	
 }

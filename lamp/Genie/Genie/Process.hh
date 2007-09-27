@@ -207,10 +207,13 @@ namespace Genie
 			std::string itsLastEnv;
 		
 		private:
+			void Suspend();
 			void Resume();
 			
-			void Orphan();
+			void Terminate();
+			void Terminate( int wait_status );
 			
+			void Orphan();
 		
 		public:
 			struct RootProcess {};
@@ -271,8 +274,7 @@ namespace Genie
 			
 			void UsurpParent( int exit_status );
 			
-			void Terminate();
-			void Terminate( int result );
+			void Exit( int exit_status );
 		
 		public:
 			bool Forked() const  { return itsThread.get() == NULL; }
@@ -333,6 +335,8 @@ namespace Genie
 	extern GenieProcessTable gProcessTable;
 	
 	void SendSignalToProcessGroup( int sig, const ProcessGroup& group );
+	
+	Process& CurrentProcess();
 	
 	Process& GetProcess( pid_t pid );
 	
