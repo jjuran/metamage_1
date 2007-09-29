@@ -214,15 +214,32 @@ int O::Main( int argc, argv_t argv )
 	
 	shutdown( sock, SHUT_WR );
 	
-	const p7::fd_t nil_fd = p7::fd_t( -1 );
-	
-	p7::fd_t headerOutput = dumpHeaders ? p7::stdout_fileno : nil_fd;
-	
 	int create_flags = outputIsToFile ? O_CREAT | O_EXCL : 0;
 	
 	NN::Owned< p7::fd_t > bodyOutput = p7::open( outputFile, O_WRONLY | create_flags, 0644 );
 	
-	HTTP::ReceiveMessage( sock, headerOutput, expectNoContent ? nil_fd : bodyOutput.Get() );
+	HTTP::ResponseReceiver response;
+	
+	response.ReceiveHeaders( sock );
+	
+	if ( dumpHeaders )
+	{
+		const std::string& message = response.GetMessageStream();
+		
+		p7::write( p7::stdout_fileno, message.data(), message.size() );
+	}
+	
+	if ( !expectNoContent )
+	{
+		const std::string& partial_content = response.GetPartialContent();
+		
+		if ( !partial_content.empty() )
+		{
+			p7::write( bodyOutput, partial_content.data(), partial_content.size() );
+		}
+		
+		HTTP::SendMessageBody( bodyOutput, sock );
+	}
 	
 	shutdown( sock, SHUT_RD );
 	
