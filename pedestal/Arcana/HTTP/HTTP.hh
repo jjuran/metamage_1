@@ -75,6 +75,14 @@ namespace HTTP
 			const std::string& GetPartialContent() const  { return itsPartialContent; }
 	};
 	
+	class ResponseReceiver : public MessageReceiver
+	{
+		public:
+			std::string GetResult() const;
+			
+			unsigned GetResultCode() const;
+	};
+	
 	
 	inline std::string RequestLine( const std::string& method, const std::string& urlPath )
 	{

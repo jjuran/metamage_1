@@ -338,5 +338,29 @@ namespace HTTP
 		}
 	}
 	
+	std::string ResponseReceiver::GetResult() const
+	{
+		const std::string& message = GetMessageStream();
+		
+		if ( const char* p = std::strchr( message.data(), ' ' ) )
+		{
+			return std::string( p + 1, GetHeaderStream() - 2 );
+		}
+		
+		return "";
+	}
+	
+	unsigned ResponseReceiver::GetResultCode() const
+	{
+		const std::string& message = GetMessageStream();
+		
+		if ( const char* p = std::strchr( message.data(), ' ' ) )
+		{
+			return std::atoi( p + 1 );
+		}
+		
+		return 0;
+	}
+	
 }
 
