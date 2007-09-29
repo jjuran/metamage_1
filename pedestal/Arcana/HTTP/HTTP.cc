@@ -43,52 +43,6 @@ namespace HTTP
 		Header( const std::string& n, const std::string& v ) : name( n ), value( v )  {}
 	};
 	
-	// Used to process an incoming message header
-	struct HeaderIndexTuple
-	{
-		std::size_t header_offset;
-		std::size_t colon_offset;
-		std::size_t value_offset;
-		std::size_t crlf_offset;
-	};
-	
-	typedef std::vector< HeaderIndexTuple > HeaderIndex;
-	
-	
-	class MessageReceiver
-	{
-		private:
-			p7::fd_t itsHeaderOutput;
-			p7::fd_t itsBodyOutput;
-			std::string itsReceivedData;
-			std::size_t itsStartOfHeaders;
-			std::size_t itsPlaceToLookForEndOfHeaders;
-			std::size_t itsContentLength;
-			std::size_t itsContentBytesReceived;
-			bool itHasReceivedAllHeaders;
-			bool itsContentLengthIsKnown;
-			bool itHasReachedEndOfInput;
-			
-			void ReceiveContent( const char* data, std::size_t byteCount );
-			void ReceiveData   ( const char* data, std::size_t byteCount );
-		
-		public:
-			MessageReceiver( p7::fd_t header_out,
-			                 p7::fd_t body_out ) : itsHeaderOutput              ( header_out ),
-			                                       itsBodyOutput                ( body_out   ),
-			                                       itsStartOfHeaders            ( 0 ),
-			                                       itsPlaceToLookForEndOfHeaders( 0 ),
-			                                       itsContentLength             ( 0 ),
-			                                       itsContentBytesReceived      ( 0 ),
-			                                       itHasReceivedAllHeaders      ( false ),
-			                                       itsContentLengthIsKnown      ( false ),
-			                                       itHasReachedEndOfInput       ( false )
-			{
-			}
-			
-			const std::string& Receive( p7::fd_t socket );
-	};
-	
 	
 	static std::string HeaderLine( const Header& header )
 	{
@@ -122,11 +76,13 @@ namespace HTTP
 	void SendMessageBody( p7::fd_t  out,
 	                      p7::fd_t  message_body )
 	{
-		char buffer[ 4096 ];
+		const std::size_t data_size = 4096;
+		
+		char buffer[ data_size ];
 		
 		try
 		{
-			while ( int bytes_read = p7::read( message_body, buffer, 4096 ) )
+			while ( int bytes_read = p7::read( message_body, buffer, data_size ) )
 			{
 				p7::write( out, buffer, bytes_read );
 			}
@@ -180,7 +136,9 @@ namespace HTTP
 				throw MalformedHeader();
 			}
 			
-			while ( *++p != ' ' )  continue;
+			p = colon;
+			
+			while ( *++p == ' ' )  continue;
 			
 			const char* value = p;
 			
@@ -239,7 +197,7 @@ namespace HTTP
 	{
 		itsContentBytesReceived += byteCount;
 		
-		io::write( itsBodyOutput, data, byteCount );
+		itsPartialContent.append( data, byteCount );
 	}
 	
 	void MessageReceiver::ReceiveData( const char* data, std::size_t byteCount )
@@ -286,20 +244,6 @@ namespace HTTP
 			// The content starts after the two CRLF
 			std::size_t startOfContent = eohMarker + STRLEN( "\r\n" "\r\n" );
 			
-			if ( itsHeaderOutput != -1 )
-			{
-				io::write( itsHeaderOutput, itsReceivedData.data(), startOfContent );
-			}
-			
-			if ( itsBodyOutput == -1 )
-			{
-				// -1 means we're not expecting a message body, e.g. HEAD
-				// itsContentLength and itsContentBytesReceived are already 0
-				itsContentLengthIsKnown = true;
-				
-				return;
-			}
-			
 			// Anything left over is content
 			std::size_t leftOver = itsReceivedData.size() - startOfContent;
 			
@@ -311,12 +255,12 @@ namespace HTTP
 				itsReceivedData.resize( startOfContent );
 			}
 			
-			const char* header_stream = itsReceivedData.data() + itsStartOfHeaders;
+			const char* header_stream = GetHeaderStream();
 			
-			HeaderIndex index = MakeHeaderIndex( header_stream, &*itsReceivedData.end() );
+			itsHeaderIndex = MakeHeaderIndex( header_stream, &*itsReceivedData.end() );
 			
 			if ( const HeaderIndexTuple* contentLengthTuple = FindHeaderInStream( header_stream,
-			                                                                      index,
+			                                                                      itsHeaderIndex,
 			                                                                      STR_LEN( "Content-Length" ) ) )
 			{
 				std::string contentLength( header_stream + contentLengthTuple->value_offset,
@@ -339,29 +283,29 @@ namespace HTTP
 		}
 	}
 	
-	const std::string& MessageReceiver::Receive( p7::fd_t socket )
+	bool MessageReceiver::ReceiveBlock( p7::fd_t socket )
 	{
 		try
 		{
-			while ( true )
+			enum { blockSize = 1024 };
+			char data[ blockSize ];
+			std::size_t bytesToRead = blockSize;
+			
+			if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
 			{
-				enum { blockSize = 1024 };
-				char data[ blockSize ];
-				std::size_t bytesToRead = blockSize;
+				std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
 				
-				if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
+				if ( bytesToGo == 0 )
 				{
-					std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
-					
-					if ( bytesToGo == 0 )  break;
-					
-					bytesToRead = std::min( bytesToRead, bytesToGo );
+					return false;
 				}
 				
-				int received = p7::read( socket, data, bytesToRead );
-				
-				ReceiveData( data, received );
+				bytesToRead = std::min( bytesToRead, bytesToGo );
 			}
+			
+			int received = p7::read( socket, data, bytesToRead );
+			
+			ReceiveData( data, received );
 		}
 		catch ( const io::end_of_input& )
 		{
@@ -371,9 +315,27 @@ namespace HTTP
 			{
 				throw IncompleteMessageBody();
 			}
+			
+			return false;
 		}
 		
-		return itsReceivedData;
+		return true;
+	}
+	
+	void MessageReceiver::ReceiveHeaders( p7::fd_t socket )
+	{
+		while ( !itHasReceivedAllHeaders && ReceiveBlock( socket ) )
+		{
+			continue;
+		}
+	}
+	
+	void MessageReceiver::Receive( p7::fd_t socket )
+	{
+		while ( ReceiveBlock( socket ) )
+		{
+			continue;
+		}
 	}
 	
 	std::string ReceiveMessage( p7::fd_t in,
@@ -382,7 +344,9 @@ namespace HTTP
 	{
 		MessageReceiver receiver( header_out, body_out );
 		
-		return receiver.Receive( in );
+		receiver.Receive( in );
+		
+		return receiver.GetMessageStream();
 	}
 	
 }

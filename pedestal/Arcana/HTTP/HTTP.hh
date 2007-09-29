@@ -18,6 +18,64 @@ namespace HTTP
 	class IncompleteMessageBody {};
 	
 	
+	// Used to process an incoming message header
+	struct HeaderIndexTuple
+	{
+		std::size_t header_offset;
+		std::size_t colon_offset;
+		std::size_t value_offset;
+		std::size_t crlf_offset;
+	};
+	
+	typedef std::vector< HeaderIndexTuple > HeaderIndex;
+	
+	
+	class MessageReceiver
+	{
+		private:
+			HeaderIndex itsHeaderIndex;
+			std::string itsReceivedData;
+			std::string itsPartialContent;
+			std::size_t itsStartOfHeaders;
+			std::size_t itsPlaceToLookForEndOfHeaders;
+			std::size_t itsContentLength;
+			std::size_t itsContentBytesReceived;
+			bool itHasReceivedAllHeaders;
+			bool itsContentLengthIsKnown;
+			bool itHasReachedEndOfInput;
+			
+			void ReceiveContent( const char* data, std::size_t byteCount );
+			void ReceiveData   ( const char* data, std::size_t byteCount );
+		
+		public:
+			MessageReceiver() : itsStartOfHeaders            ( 0 ),
+			                    itsPlaceToLookForEndOfHeaders( 0 ),
+			                    itsContentLength             ( 0 ),
+			                    itsContentBytesReceived      ( 0 ),
+			                    itHasReceivedAllHeaders      ( false ),
+			                    itsContentLengthIsKnown      ( false ),
+			                    itHasReachedEndOfInput       ( false )
+			{
+			}
+			
+			bool ReceiveBlock( poseven::fd_t socket );
+			
+			void ReceiveHeaders( poseven::fd_t socket );
+			
+			void Receive( poseven::fd_t socket );
+			
+			const std::string& GetMessageStream() const  { return itsReceivedData; }
+			
+			std::string GetStatusLine() const  { return itsReceivedData.substr( 0, itsStartOfHeaders - 2 ); }
+			
+			const HeaderIndex& GetHeaderIndex() const  { return itsHeaderIndex; }
+			
+			const char* GetHeaderStream() const  { return itsReceivedData.data() + itsStartOfHeaders; }
+			
+			const std::string& GetPartialContent() const  { return itsPartialContent; }
+	};
+	
+	
 	inline std::string RequestLine( const std::string& method, const std::string& urlPath )
 	{
 		return method + " " + urlPath + " HTTP/1.0" "\r\n";
