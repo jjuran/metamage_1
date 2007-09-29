@@ -165,8 +165,18 @@ int O::Main( int argc, argv_t argv )
 	
 	shutdown( socket_out, SHUT_WR );
 	
-	//std::string header_stream = HTTP::ReceiveMessage( socket_in, p7::fd_t( -1 ), p7::stdout_fileno );
-	std::string header_stream = HTTP::ReceiveMessage( socket_in, p7::stderr_fileno, p7::stdout_fileno );
+	HTTP::MessageReceiver response;
+	
+	response.ReceiveHeaders( socket_in );
+	
+	const std::string& partial_content = response.GetPartialContent();
+	
+	if ( !partial_content.empty() )
+	{
+		p7::write( p7::stdout_fileno, partial_content.data(), partial_content.size() );
+	}
+	
+	HTTP::SendMessageBody( p7::stdout_fileno, socket_in );
 	
 	shutdown( socket_in, SHUT_RD );
 	
