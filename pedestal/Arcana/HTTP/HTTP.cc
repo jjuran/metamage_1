@@ -257,7 +257,7 @@ namespace HTTP
 				{
 					itsStartOfHeaders = crlf + STRLEN( "\r\n" );
 					
-					itsPlaceToLookForEndOfHeaders = itsStartOfHeaders;
+					itsPlaceToLookForEndOfHeaders = crlf;
 				}
 			}
 			
