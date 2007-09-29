@@ -9,7 +9,8 @@
 #include <string>
 #include <vector>
 
-// Standard C/c++
+// Standard C/C++
+#include <cctype>
 #include <cstdlib>
 #include <cstring>
 
@@ -21,6 +22,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // POSeven
 #include "POSeven/Directory.hh"
 #include "POSeven/Errno.hh"
@@ -28,8 +32,14 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
+// Nitrogen
+#include "Nitrogen/Files.h"
+
 // BitsAndBytes
 #include "HexStrings.hh"
+
+// Arcana
+#include "HTTP.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -41,9 +51,9 @@
 #include "SystemCalls.hh"
 #endif
 
-
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace P7 = POSeven;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -55,8 +65,60 @@ using BitsAndBytes::EncodeAsHex;
 static const char* gDocumentRoot = "/var/www";
 
 
-static int ForkExecWait( const char* path, char const* const argv[], const std::string& partialData )
+char ToCGI( char c )
 {
+	return c == '-' ? '_' : std::toupper( c );
+}
+
+static void SetCGIVariables( const HTTP::MessageReceiver& request )
+{
+	const HTTP::HeaderIndex& index = request.GetHeaderIndex();
+	
+	const char* stream = request.GetHeaderStream();
+	
+	for ( HTTP::HeaderIndex::const_iterator it = index.begin();  it != index.end();  ++it )
+	{
+		std::string header( stream + it->header_offset,
+		                    stream + it->colon_offset );
+		
+		std::string value( stream + it->value_offset,
+		                   stream + it->crlf_offset );
+		
+		std::transform( header.begin(),
+		                header.end(),
+		                header.begin(),
+		                std::ptr_fun( ToCGI ) );
+		
+		if ( header == "CONTENT_TYPE"  ||  header == "CONTENT_LENGTH" )
+		{
+		}
+		else
+		{
+			header = "HTTP_" + header;
+		}
+		
+		setenv( header.c_str(), value.c_str(), 1 );
+	}
+}
+
+static int ForkExecWait( const char*                   path,
+                         char const* const             argv[],
+                         const HTTP::MessageReceiver&  request )
+{
+	const std::string& partialData = request.GetPartialContent();
+	
+	bool partial_data_exist = !partialData.empty();
+	
+	int pipe_ends[2];
+	
+	if ( partial_data_exist )
+	{
+		pipe( pipe_ends );
+	}
+	
+	int reader = pipe_ends[0];
+	int writer = pipe_ends[1];
+	
 	int pid = vfork();
 	
 	if ( pid == -1 )
@@ -67,43 +129,20 @@ static int ForkExecWait( const char* path, char const* const argv[], const std::
 	
 	if ( pid == 0 )
 	{
-		if ( !partialData.empty() )
+		if ( partial_data_exist )
 		{
-			int pipe_ends[2];
-			
-			pipe( pipe_ends );
-			
-			int reader = pipe_ends[0];
-			int writer = pipe_ends[1];
-			
-			write( writer, partialData.data(), partialData.size() );
-			
-			enum { size = 4096 };
-			
-			char data[ size ];
-			
-			int bytes = 0;
-			
-			int off = 0;
-			
-			ioctl( 0, FIONBIO, &off );
-			
-			while ( (bytes = read( 0, data, size )) > 0 )
-			{
-				write( writer, data, bytes );
-			}
-			
-			if ( bytes == -1 )
-			{
-				std::perror( "read" );
-			}
-			
 			close( writer );
 			
-			dup2( reader, 0 );  // read from pipe instead of socket
+			dup2( reader, p7::stdin_fileno );  // read from pipe instead of socket
 			
 			close( reader );
 		}
+		
+		// This eliminates LOCAL_EDITOR, PATH, and SECURITYSESSIONID.
+		// We'll have to consider other approaches.
+		//clearenv();
+		
+		SetCGIVariables( request );
 		
 		int exec_result = execv( path, const_cast< char* const* >( argv ) );
 		
@@ -112,6 +151,31 @@ static int ForkExecWait( const char* path, char const* const argv[], const std::
 			Io::Err << "execv( " << path << " ) failed\n";
 			_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
 		}
+	}
+	
+	if ( partial_data_exist )
+	{
+		close( reader );
+		
+		write( writer, partialData.data(), partialData.size() );
+		
+		enum { size = 4096 };
+		
+		char data[ size ];
+		
+		int bytes;
+		
+		while ( (bytes = read( p7::stdin_fileno, data, size )) > 0 )
+		{
+			write( writer, data, bytes );
+		}
+		
+		if ( bytes == -1 )
+		{
+			std::perror( "read" );
+		}
+		
+		close( writer );
 	}
 	
 	int stat = -1;
@@ -125,89 +189,6 @@ static int ForkExecWait( const char* path, char const* const argv[], const std::
 	return stat;
 }
 
-
-struct HTTPRequestData
-{
-	std::vector< std::string > lines;
-	
-	std::string partialData;
-	
-	void Read();
-};
-
-void HTTPRequestData::Read()
-{
-	try
-	{
-		while ( true )
-		{
-			char buf[ 1024 ];
-			
-			int received = io::read( p7::stdin_fileno, buf, 1024 );
-			
-			partialData += std::string( buf, received );
-			
-			// search for \r\n
-			std::string::size_type cr = partialData.find( '\r' );
-			
-			while ( cr < partialData.npos  &&  partialData.size() >= cr + 2 )
-			{
-				if ( partialData[ cr + 1 ] != '\n' )
-				{
-					// CR not followed by LF -- bad input
-					O::ThrowExitStatus( 1 );
-				}
-				
-				if ( cr == 0 )
-				{
-					if ( lines.empty() )
-					{
-						// Double newline with no preceding request
-						O::ThrowExitStatus( 1 );
-					}
-					
-					//for_each( lines.begin() + 1, lines.end(), ParseHeader( myHeaders ) );
-					
-					//return lines.front();
-					return;
-				}
-				else
-				{
-					std::string line = partialData.substr( 0, cr );
-					Io::Err << line << "\n";
-					lines.push_back( line );
-					partialData = partialData.substr( cr + 2, partialData.npos );
-					cr = partialData.find( '\r' );
-				}
-			}
-			
-			if ( partialData.size() >= 2 )
-			{
-				partialData = partialData.substr( 2, partialData.npos );
-			}
-		}
-	}
-	catch ( const p7::errno_t& error )
-	{
-		Io::Err << "Read error: " << error.Get() << "\n";
-	}
-	catch ( const io::end_of_input& )
-	{
-		Io::Err << "Connection dropped by peer\n";
-	}
-	catch ( ... )
-	{
-		Io::Err << "Unrecognized exception caught\n";
-	}
-	
-	O::ThrowExitStatus( 1 );
-}
-
-static std::string RequestType( const std::string& request )
-{
-	std::string::size_type end = request.find( ' ' );
-	return request.substr( 0, end );
-}
 
 struct ParsedRequest
 {
@@ -331,7 +312,7 @@ static std::string LocateResource( const std::string& resource )
 		if ( !component.empty() && component[0] == '.' )
 		{
 			// No screwing around with the pathname, please.
-			throw N::FNFErr();
+			P7::ThrowErrno( ENOENT );
 		}
 	}
 	
@@ -386,31 +367,9 @@ static std::string GuessContentType( const std::string& filename, ::OSType type 
 	return "application/octet-stream";
 }
 
-static std::string HTTPHeader( const std::string& field, const std::string& value )
-{
-	return field + ": " + value + "\r\n";
-}
-
 static void DumpFile( const std::string& pathname )
 {
-	NN::Owned< p7::fd_t > input( io::open_for_reading( pathname ) );
-	
-	const std::size_t dataSize = 4096;
-	char data[ dataSize ];
-	
-	try
-	{
-		while ( true )
-		{
-			std::size_t bytes = io::read( input, data, dataSize );
-			
-			io::write( p7::stdout_fileno, data, bytes);
-		}
-	}
-	catch ( const io::end_of_input& )
-	{
-		// end of file reached -- we're done
-	}
+	HTTP::SendMessageBody( p7::stdout_fileno, io::open_for_reading( pathname ) );
 }
 
 static void ListDir( const std::string& pathname )
@@ -445,9 +404,9 @@ static void SendError( const std::string& error )
 		io::write( p7::stdout_fileno, message.data(), message.size() );
 }
 
-static void SendResponse( const HTTPRequestData& request )
+static void SendResponse( const HTTP::MessageReceiver& request )
 {
-	ParsedRequest parsed = ParseRequest( request.lines.front() );
+	ParsedRequest parsed = ParseRequest( request.GetStatusLine() );
 	
 	std::string httpVersion = "HTTP/1.0";
 	
@@ -478,7 +437,7 @@ static void SendResponse( const HTTPRequestData& request )
 		
 		char const* const argv[] = { path, NULL };
 		
-		int stat = ForkExecWait( path, argv, request.partialData );
+		int stat = ForkExecWait( path, argv, request );
 	}
 	else
 	{
@@ -526,12 +485,12 @@ static void SendResponse( const HTTPRequestData& request )
 		
 		std::string responseHeader = httpVersion + " 200 OK\r\n";
 		
-		responseHeader += HTTPHeader( "Content-Type",  contentType                   );
+		responseHeader += HTTP::HeaderLine( "Content-Type",  contentType                   );
 		
 	#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 		
-		responseHeader += HTTPHeader( "X-Mac-Type",    EncodeAsHex( info.fdType    ) );
-		responseHeader += HTTPHeader( "X-Mac-Creator", EncodeAsHex( info.fdCreator ) );
+		responseHeader += HTTP::HeaderLine( "X-Mac-Type",    EncodeAsHex( info.fdType    ) );
+		responseHeader += HTTP::HeaderLine( "X-Mac-Creator", EncodeAsHex( info.fdCreator ) );
 		
 	#endif
 		
@@ -564,9 +523,9 @@ int O::Main( int argc, argv_t argv )
 		        << ".\n";
 	}
 	
-	HTTPRequestData request;
+	HTTP::MessageReceiver request;
 	
-	request.Read();
+	request.ReceiveHeaders( p7::stdin_fileno );
 	
 	SendResponse( request );
 	
