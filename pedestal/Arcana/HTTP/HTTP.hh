@@ -105,9 +105,5 @@ namespace HTTP
 		SendMessageBody  ( out, message_body   );
 	}
 	
-	std::string ReceiveMessage( poseven::fd_t in,
-	                            poseven::fd_t header_out,
-	                            poseven::fd_t body_out );
-	
 }
 

@@ -338,16 +338,5 @@ namespace HTTP
 		}
 	}
 	
-	std::string ReceiveMessage( p7::fd_t in,
-	                            p7::fd_t header_out,
-	                            p7::fd_t body_out )
-	{
-		MessageReceiver receiver( header_out, body_out );
-		
-		receiver.Receive( in );
-		
-		return receiver.GetMessageStream();
-	}
-	
 }
 
