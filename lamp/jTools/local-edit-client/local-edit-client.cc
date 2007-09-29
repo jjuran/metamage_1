@@ -165,18 +165,33 @@ int O::Main( int argc, argv_t argv )
 	
 	shutdown( socket_out, SHUT_WR );
 	
-	HTTP::MessageReceiver response;
+	HTTP::ResponseReceiver response;
 	
 	response.ReceiveHeaders( socket_in );
 	
-	const std::string& partial_content = response.GetPartialContent();
+	unsigned result_code = response.GetResultCode();
 	
-	if ( !partial_content.empty() )
+	if ( result_code == 200 )
 	{
-		p7::write( p7::stdout_fileno, partial_content.data(), partial_content.size() );
+		const std::string& partial_content = response.GetPartialContent();
+		
+		if ( !partial_content.empty() )
+		{
+			p7::write( p7::stdout_fileno, partial_content.data(), partial_content.size() );
+		}
+		
+		HTTP::SendMessageBody( p7::stdout_fileno, socket_in );
 	}
-	
-	HTTP::SendMessageBody( p7::stdout_fileno, socket_in );
+	else if ( result_code == 304 )
+	{
+		// Not modified
+	}
+	else
+	{
+		std::fprintf( stderr, "%s\n", response.GetResult().c_str() );
+		
+		return EXIT_FAILURE;
+	}
 	
 	shutdown( socket_in, SHUT_RD );
 	
