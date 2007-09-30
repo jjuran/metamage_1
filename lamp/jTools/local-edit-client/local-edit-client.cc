@@ -127,13 +127,28 @@ static std::string EncodeBase64( const unsigned char* begin, const unsigned char
 
 int O::Main( int argc, argv_t argv )
 {
-	const char* filename = argc > 1 ? argv[1] : "/dev/null";
+	bool dumpHeaders = false;
+	
+	const char* defaultOutput = "/dev/fd/1";
+	
+	const char* outputFile = defaultOutput;
+	
+	O::BindOption( "-i", dumpHeaders );
+	O::BindOption( "-o", outputFile  );
+	
+	O::GetOptions( argc, argv );
+	
+	char const *const *freeArgs = O::FreeArguments();
+	
+	std::size_t argCount = O::FreeArgumentCount();
+	
+	const char* filename = argCount > 0 ? freeArgs[0] : "/dev/null";
 	
 	NN::Owned< p7::fd_t > message_body = p7::open( filename, O_RDONLY );
 	
 	MD5::Result digest = MD5DigestFile( message_body );
 	
-	std::string digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
+	std::string old_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 	
 	//p7::lseek( message_body, 0, 0 );
 	lseek( message_body, 0, 0 );
@@ -157,7 +172,7 @@ int O::Main( int argc, argv_t argv )
 	
 	std::string message_header =   HTTP::RequestLine( method, urlPath )
 	                             //+ HTTP::HeaderLine( "Host", hostname )
-	                             + HTTP::HeaderLine( "Content-MD5", digest_b64 )
+	                             + HTTP::HeaderLine( "Content-MD5", old_digest_b64 )
 	                             + contentLengthHeader
 	                             + "\r\n";
 	
@@ -169,18 +184,44 @@ int O::Main( int argc, argv_t argv )
 	
 	response.ReceiveHeaders( socket_in );
 	
+	if ( dumpHeaders )
+	{
+		const std::string& message = response.GetMessageStream();
+		
+		p7::write( p7::stdout_fileno, message.data(), message.size() );
+	}
+	
 	unsigned result_code = response.GetResultCode();
 	
 	if ( result_code == 200 )
 	{
+		NN::Owned< p7::fd_t > output = p7::open( outputFile, O_WRONLY | O_TRUNC | O_CREAT );
+		
 		const std::string& partial_content = response.GetPartialContent();
 		
 		if ( !partial_content.empty() )
 		{
-			p7::write( p7::stdout_fileno, partial_content.data(), partial_content.size() );
+			p7::write( output, partial_content.data(), partial_content.size() );
 		}
 		
-		HTTP::SendMessageBody( p7::stdout_fileno, socket_in );
+		HTTP::SendMessageBody( output, socket_in );
+		
+		output = p7::open( outputFile, O_RDONLY );
+		
+		digest = MD5DigestFile( output );
+		
+		std::string new_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
+		
+		std::string received_digest_b64 = response.GetHeader( "Content-MD5", "" );
+		
+		if ( new_digest_b64 != received_digest_b64 )
+		{
+			std::fprintf( stderr, "MD5 digest mismatch\n" );
+			
+			unlink( outputFile );
+			
+			return EXIT_FAILURE;
+		}
 	}
 	else if ( result_code == 304 )
 	{
