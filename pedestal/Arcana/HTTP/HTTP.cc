@@ -338,6 +338,30 @@ namespace HTTP
 		}
 	}
 	
+	std::string MessageReceiver::GetHeader( const std::string& name, const char* nullValue )
+	{
+		const char* stream = GetHeaderStream();
+		
+		const HeaderIndexTuple* it = FindHeaderInStream( stream,
+		                                                 itsHeaderIndex,
+		                                                 name.data(),
+		                                                 name.size() );
+		
+		if ( it != NULL )
+		{
+			return std::string( stream + it->value_offset,
+				                stream + it->crlf_offset );
+		}
+		
+		if ( nullValue == NULL )
+		{
+			throw NoSuchHeader();
+		}
+		
+		return nullValue;
+	}
+	
+	
 	std::string ResponseReceiver::GetResult() const
 	{
 		const std::string& message = GetMessageStream();

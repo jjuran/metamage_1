@@ -17,6 +17,8 @@ namespace HTTP
 	
 	class IncompleteMessageBody {};
 	
+	class NoSuchHeader {};
+	
 	
 	// Used to process an incoming message header
 	struct HeaderIndexTuple
@@ -68,9 +70,11 @@ namespace HTTP
 			
 			std::string GetStatusLine() const  { return itsReceivedData.substr( 0, itsStartOfHeaders - 2 ); }
 			
+			const char* GetHeaderStream() const  { return itsReceivedData.data() + itsStartOfHeaders; }
+			
 			const HeaderIndex& GetHeaderIndex() const  { return itsHeaderIndex; }
 			
-			const char* GetHeaderStream() const  { return itsReceivedData.data() + itsStartOfHeaders; }
+			std::string GetHeader( const std::string& name, const char* nullValue = NULL );
 			
 			const std::string& GetPartialContent() const  { return itsPartialContent; }
 	};
