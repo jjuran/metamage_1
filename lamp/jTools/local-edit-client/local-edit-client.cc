@@ -60,6 +60,8 @@ static MD5::Result MD5DigestFile( p7::fd_t input )
 				}
 				
 				md5.Finish( end_of_blocks, bytes_read % 64 * 8 );
+				
+				return md5.GetResult();
 			}
 		}
 	}
