@@ -19,14 +19,35 @@ namespace MD5
 	
 	typedef unsigned int Word;
 	
+	static void DumpBuffer( const Buffer& buffer )
+	{
+		std::fprintf( stderr, "%.8x %.8x %.8x %.8x\n", buffer.a, buffer.b, buffer.c, buffer.d );
+	}
+	
 	inline unsigned int byteswap4( unsigned int word )
 	{
-	#ifdef __BIG_ENDIAN__
-		
-		word = (word &  0xFF)        << 24
+		return (word &  0xFF)        << 24
 			 | (word & (0xFF <<  8)) <<  8
 			 | (word & (0xFF << 16)) >>  8
 			 | (word & (0xFF << 24)) >> 24;
+	}
+	
+	inline unsigned int HostFromLittle32( unsigned int word )
+	{
+	#ifdef __BIG_ENDIAN__
+		
+		word = byteswap4( word );
+		
+	#endif
+		
+		return word;
+	}
+	
+	inline unsigned int LittleFromHost32( unsigned int word )
+	{
+	#ifdef __BIG_ENDIAN__
+		
+		word = byteswap4( word );
 		
 	#endif
 		
@@ -62,6 +83,7 @@ namespace MD5
 	                   c( byteswap4( 0xfedcba98 ) ),
 	                   d( byteswap4( 0x76543210 ) )
 	{
+		DumpBuffer( *this );
 	}
 	
 	inline unsigned int rotate_left( unsigned int x, unsigned char bits )
@@ -185,7 +207,7 @@ namespace MD5
 		// Fill the block, swapping into big-endian.
 		for ( int j = 0;  j < 16;  ++j )
 		{
-			block[ j ] = byteswap4( leBlock[ j ] );
+			block[ j ] = HostFromLittle32( leBlock[ j ] );
 		}
 		
 		Buffer oldState = state;
@@ -252,8 +274,8 @@ namespace MD5
 		firstPadByte = (partialByte & extraMask) | (0x80 >> extraBits);
 		
 		// Append the bit length
-		bitLengthLoc[ 0 ] = byteswap4(  totalBits        & 0xFFFFFFFF );
-		bitLengthLoc[ 1 ] = byteswap4( (totalBits >> 32) & 0xFFFFFFFF );
+		bitLengthLoc[ 0 ] = HostFromLittle32(  totalBits        & 0xFFFFFFFF );
+		bitLengthLoc[ 1 ] = HostFromLittle32( (totalBits >> 32) & 0xFFFFFFFF );
 		
 		std::copy( inputAsBytes,
 		           inputAsBytes + inputBytes,
@@ -270,10 +292,10 @@ namespace MD5
 		std::fill( block1.words, block1.words + 16, 0 );
 		std::fill( block2.words, block2.words + 16, 0 );
 		
-		state.a = byteswap4( state.a );
-		state.b = byteswap4( state.b );
-		state.c = byteswap4( state.c );
-		state.d = byteswap4( state.d );
+		state.a = LittleFromHost32( state.a );
+		state.b = LittleFromHost32( state.b );
+		state.c = LittleFromHost32( state.c );
+		state.d = LittleFromHost32( state.d );
 	}
 	
 	const Result& Engine::GetResult()
