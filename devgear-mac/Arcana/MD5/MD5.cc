@@ -21,10 +21,16 @@ namespace MD5
 	
 	inline unsigned int byteswap4( unsigned int word )
 	{
-		return (word &  0xFF)        << 24
+	#ifdef __BIG_ENDIAN__
+		
+		word = (word &  0xFF)        << 24
 			 | (word & (0xFF <<  8)) <<  8
 			 | (word & (0xFF << 16)) >>  8
 			 | (word & (0xFF << 24)) >> 24;
+		
+	#endif
+		
+		return word;
 	}
 	
 	class Table
