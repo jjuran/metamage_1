@@ -196,7 +196,7 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( result_code == 200 )
 	{
-		NN::Owned< p7::fd_t > output = p7::open( outputFile, O_WRONLY | O_TRUNC | O_CREAT );
+		NN::Owned< p7::fd_t > output = p7::open( outputFile, O_WRONLY | O_TRUNC | O_CREAT, 0400 );
 		
 		const std::string& partial_content = response.GetPartialContent();
 		
