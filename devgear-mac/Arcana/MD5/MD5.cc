@@ -19,11 +19,6 @@ namespace MD5
 	
 	typedef unsigned int Word;
 	
-	static void DumpBuffer( const Buffer& buffer )
-	{
-		std::fprintf( stderr, "%.8x %.8x %.8x %.8x\n", buffer.a, buffer.b, buffer.c, buffer.d );
-	}
-	
 	inline unsigned int byteswap4( unsigned int word )
 	{
 		return (word &  0xFF)        << 24
@@ -83,7 +78,6 @@ namespace MD5
 	                   c( byteswap4( 0xfedcba98 ) ),
 	                   d( byteswap4( 0x76543210 ) )
 	{
-		DumpBuffer( *this );
 	}
 	
 	inline unsigned int rotate_left( unsigned int x, unsigned char bits )
