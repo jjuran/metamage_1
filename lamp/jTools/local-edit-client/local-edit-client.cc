@@ -65,6 +65,7 @@ static MD5::Result MD5DigestFile( p7::fd_t input )
 	}
 	catch ( const io::end_of_input& )
 	{
+		md5.Finish( NULL, 0 );
 	}
 	
 	return md5.GetResult();
