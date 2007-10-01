@@ -73,14 +73,16 @@ static MD5::Result MD5DigestFile( p7::fd_t input )
 	return md5.GetResult();
 }
 
-static void EncodeBase64Triplet( unsigned triplet, unsigned char buffer[4] )
+static void EncodeBase64Triplet( const unsigned char* triplet, unsigned char* buffer )
 {
 	const char* code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	
-	buffer[0] = code[ (triplet >> 18)            ];
-	buffer[1] = code[ (triplet >> 12) & 0x00003f ];
-	buffer[2] = code[ (triplet >>  6) & 0x00003f ];
-	buffer[3] = code[ (triplet >>  0) & 0x00003f ];
+	const unsigned char mask = 0x3f;
+	
+	buffer[0] = code[                            (triplet[0] >> 2) ];
+	buffer[1] = code[ mask & (triplet[0] << 4) | (triplet[1] >> 4) ];
+	buffer[2] = code[ mask & (triplet[1] << 2) | (triplet[2] >> 6) ];
+	buffer[3] = code[ mask & (triplet[2] << 0)                     ];
 }
 
 static std::string EncodeBase64( const unsigned char* begin, const unsigned char* end )
@@ -93,11 +95,7 @@ static std::string EncodeBase64( const unsigned char* begin, const unsigned char
 	
 	while ( begin < end - 2 )
 	{
-		unsigned triplet = (begin[0] << 16 )
-		                 | (begin[1] <<  8 )
-		                 | (begin[2] <<  0 );
-		
-		EncodeBase64Triplet( triplet, buffer );
+		EncodeBase64Triplet( begin, buffer );
 		
 		result.append( (char*) buffer, 4 );
 		
@@ -106,14 +104,11 @@ static std::string EncodeBase64( const unsigned char* begin, const unsigned char
 	
 	if ( begin < end )
 	{
-		unsigned triplet = begin[0] << 16;
+		unsigned char final[3] = { 0, 0, 0 };
 		
-		if ( end - begin == 2 )
-		{
-			triplet |= begin[1] << 8;
-		}
+		std::copy( begin, end, final );
 		
-		EncodeBase64Triplet( triplet, buffer );
+		EncodeBase64Triplet( final, buffer );
 		
 		if ( end - begin == 1 )
 		{
