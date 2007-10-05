@@ -15,7 +15,11 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
+#include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
 
@@ -29,6 +33,7 @@
 
 
 namespace NN = Nucleus;
+namespace P7 = POSeven;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -123,11 +128,19 @@ static std::string EncodeBase64( const unsigned char* begin, const unsigned char
 	return result;
 }
 
+static void CommitFileChangesWithBackup( const char*  changed,
+                                         const char*  original,
+                                         const char*  backup )
+{
+	P7::ThrowPOSIXResult( rename( changed, original ) );  // FIXME
+}
+
+
 int O::Main( int argc, argv_t argv )
 {
 	bool dumpHeaders = false;
 	
-	const char* defaultOutput = "/dev/fd/1";
+	char const *const defaultOutput = "/dev/fd/1";
 	
 	const char* outputFile = defaultOutput;
 	
@@ -176,6 +189,8 @@ int O::Main( int argc, argv_t argv )
 	
 	HTTP::SendMessage( socket_out, message_header, message_body );
 	
+	p7::close( message_body );
+	
 	shutdown( socket_out, SHUT_WR );
 	
 	HTTP::ResponseReceiver response;
@@ -208,6 +223,8 @@ int O::Main( int argc, argv_t argv )
 		
 		digest = MD5DigestFile( output );
 		
+		p7::close( output );
+		
 		std::string new_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 		
 		std::string received_digest_b64 = response.GetHeader( "Content-MD5", "" );
@@ -220,6 +237,46 @@ int O::Main( int argc, argv_t argv )
 			
 			return EXIT_FAILURE;
 		}
+		
+		// FIXME:  test for a regular file
+		if ( outputFile != defaultOutput )
+		{
+			p7::write( p7::stdout_fileno, STR_LEN( "Hit return to confirm or Control-D to cancel: " ) );
+			
+			while ( true )
+			{
+				char c;
+				
+				int bytes_read = read( p7::stdin_fileno, &c, sizeof c );
+				
+				if ( bytes_read == -1 )
+				{
+					std::perror( "local-edit-client: read" );
+					
+					// I'm not sure what the scenario is here.
+					// (EINTR on handled signal?  EIO on disconnected terminal?)
+					// Leave tmp file for recovery.
+					return EXIT_FAILURE;
+				}
+				
+				if ( bytes_read == 0 )
+				{
+					p7::write( p7::stdout_fileno, STR_LEN( "\n" "canceled\n" ) );
+					
+					unlink( outputFile );
+					
+					break;
+				}
+				
+				if ( c == '\n' )
+				{
+					CommitFileChangesWithBackup( outputFile, filename, NULL );
+					
+					break;
+				}
+			}
+		}
+		
 	}
 	else if ( result_code == 304 )
 	{
