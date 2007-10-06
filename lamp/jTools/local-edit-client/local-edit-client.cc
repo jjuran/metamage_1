@@ -152,6 +152,8 @@ static void CopyFileContents( p7::fd_t in, p7::fd_t out )
 	P7::ThrowPOSIXResult( lseek( in,  0, 0 ) );
 	P7::ThrowPOSIXResult( lseek( out, 0, 0 ) );
 	
+	P7::ThrowPOSIXResult( ftruncate( out, 0 ) );
+	
 	Splice( in, out );
 }
 
