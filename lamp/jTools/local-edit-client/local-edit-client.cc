@@ -128,11 +128,49 @@ static std::string EncodeBase64( const unsigned char* begin, const unsigned char
 	return result;
 }
 
-static void CommitFileChangesWithBackup( const char*  changed,
-                                         const char*  original,
-                                         const char*  backup )
+static void Splice( p7::fd_t in, p7::fd_t out )
 {
-	P7::ThrowPOSIXResult( rename( changed, original ) );  // FIXME
+	const std::size_t block_size = 4096;
+	
+	char buffer[ block_size ];
+	
+	while ( int bytes_read = read( in, buffer, block_size ) )
+	{
+		if ( bytes_read == -1 )
+		{
+			std::perror( "local-edit-client: read" );
+			
+			P7::ThrowErrno( errno );
+		}
+		
+		p7::write( out, buffer, bytes_read );
+	}
+}
+
+static void CopyFileContents( p7::fd_t in, p7::fd_t out )
+{
+	P7::ThrowPOSIXResult( lseek( in,  0, 0 ) );
+	P7::ThrowPOSIXResult( lseek( out, 0, 0 ) );
+	
+	Splice( in, out );
+}
+
+static void CommitFileEdits( p7::fd_t  edited_file_stream,
+                             p7::fd_t  target_file_stream )
+{
+	CopyFileContents( edited_file_stream, target_file_stream );
+}
+
+static void CommitFileEditsWithBackup( p7::fd_t  edited_file_stream,
+                                       p7::fd_t  target_file_stream,
+                                       p7::fd_t  backup_file_stream )
+{
+	if ( backup_file_stream != -1 )
+	{
+		CopyFileContents( target_file_stream, backup_file_stream );
+	}
+	
+	CommitFileEdits( edited_file_stream, target_file_stream );
 }
 
 
@@ -155,14 +193,14 @@ int O::Main( int argc, argv_t argv )
 	
 	const char* filename = argCount > 0 ? freeArgs[0] : "/dev/null";
 	
-	NN::Owned< p7::fd_t > message_body = p7::open( filename, O_RDONLY );
+	NN::Owned< p7::fd_t > target_file_stream = p7::open( filename, O_RDWR | O_CREAT );
 	
-	MD5::Result digest = MD5DigestFile( message_body );
+	MD5::Result digest = MD5DigestFile( target_file_stream );
 	
 	std::string old_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 	
-	//p7::lseek( message_body, 0, 0 );
-	lseek( message_body, 0, 0 );
+	//p7::lseek( target_file_stream, 0, 0 );
+	lseek( target_file_stream, 0, 0 );
 	
 	const p7::fd_t socket_in  = p7::fd_t( 6 );
 	const p7::fd_t socket_out = p7::fd_t( 7 );
@@ -175,7 +213,7 @@ int O::Main( int argc, argv_t argv )
 	
 	try
 	{
-		contentLengthHeader = HTTP::GetContentLengthHeaderLine( message_body );
+		contentLengthHeader = HTTP::GetContentLengthHeaderLine( target_file_stream );
 	}
 	catch ( ... )
 	{
@@ -187,9 +225,7 @@ int O::Main( int argc, argv_t argv )
 	                             + contentLengthHeader
 	                             + "\r\n";
 	
-	HTTP::SendMessage( socket_out, message_header, message_body );
-	
-	p7::close( message_body );
+	HTTP::SendMessage( socket_out, message_header, target_file_stream );
 	
 	shutdown( socket_out, SHUT_WR );
 	
@@ -208,22 +244,20 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( result_code == 200 )
 	{
-		NN::Owned< p7::fd_t > output = p7::open( outputFile, O_WRONLY | O_TRUNC | O_CREAT, 0400 );
+		NN::Owned< p7::fd_t > edited_file_stream = p7::open( outputFile, O_RDWR | O_TRUNC | O_CREAT, 0400 );
 		
 		const std::string& partial_content = response.GetPartialContent();
 		
 		if ( !partial_content.empty() )
 		{
-			p7::write( output, partial_content.data(), partial_content.size() );
+			p7::write( edited_file_stream, partial_content.data(), partial_content.size() );
 		}
 		
-		HTTP::SendMessageBody( output, socket_in );
+		HTTP::SendMessageBody( edited_file_stream, socket_in );
 		
-		output = p7::open( outputFile, O_RDONLY );
+		lseek( edited_file_stream, 0, 0 );
 		
-		digest = MD5DigestFile( output );
-		
-		p7::close( output );
+		digest = MD5DigestFile( edited_file_stream );
 		
 		std::string new_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 		
@@ -263,18 +297,20 @@ int O::Main( int argc, argv_t argv )
 				{
 					p7::write( p7::stdout_fileno, STR_LEN( "\n" "canceled\n" ) );
 					
-					unlink( outputFile );
-					
 					break;
 				}
 				
 				if ( c == '\n' )
 				{
-					CommitFileChangesWithBackup( outputFile, filename, NULL );
+					CommitFileEdits( edited_file_stream, target_file_stream );
 					
 					break;
 				}
 			}
+			
+			p7::close( edited_file_stream );
+			
+			unlink( outputFile );
 		}
 		
 	}
