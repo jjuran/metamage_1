@@ -122,6 +122,10 @@ namespace poseven
 	
 	typedef POSeven::Errno errno_t;
 	
+	inline void throw_errno( int error )  { POSeven::ThrowErrno( error ); }
+	
+	inline int throw_posix_result( int result )  { return POSeven::ThrowPOSIXResult( result ); }
+	
 }
 
 namespace Nucleus
