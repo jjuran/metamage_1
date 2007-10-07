@@ -65,7 +65,7 @@ namespace ALine
 	
 	//namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	//namespace NX = NitrogenExtras;
 	namespace CD = CompileDriver;
 	
@@ -417,7 +417,7 @@ int O::Main( int argc, argv_t argv )
 				<< " in " << ex.proj.Name() << "\n";
 		}
 		*/
-		catch ( const P7::Errno& err )
+		catch ( const p7::errno_t& err )
 		{
 			Io::Err << argv[ 0 ] << ": Error in " << proj << ":\n";
 			

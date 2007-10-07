@@ -31,7 +31,6 @@
 
 
 namespace NN = Nucleus;
-namespace P7 = POSeven;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -41,7 +40,7 @@ namespace poseven
 	
 	static void connect( fd_t sock, const sockaddr_in& serverAddr )
 	{
-		P7::ThrowPOSIXResult( ::connect( sock, (const sockaddr*) &serverAddr, sizeof (sockaddr_in) ) );
+		p7::throw_posix_result( ::connect( sock, (const sockaddr*) &serverAddr, sizeof (sockaddr_in) ) );
 	}
 	
 }

@@ -36,7 +36,7 @@
 
 
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 namespace Sh = ShellShock;
 
@@ -166,7 +166,7 @@ static int Open( const char* path, mode_t mode )
 {
 	int opened = open( path, mode );
 	
-	P7::ThrowPOSIXResult( opened );
+	p7::throw_posix_result( opened );
 	
 	return opened;
 }
@@ -180,7 +180,7 @@ static int OpenNoClobber( const char* path )
 	{
 		if ( errno != ENOENT )
 		{
-			P7::ThrowErrno( errno );
+			p7::throw_errno( errno );
 		}
 		
 		// No such file, exclusively create it, or bust.
@@ -202,7 +202,7 @@ static int OpenNoClobber( const char* path )
 		// Close the file.
 		int closed = close( opened );
 		
-		P7::ThrowErrno( error );
+		p7::throw_errno( error );
 	}
 	
 	// Return non-regular file -- maybe a device/pipe/socket, etc.
@@ -223,7 +223,7 @@ static int OpenNoClobber( const char* path )
 	
 	if ( errno != EEXIST )
 	{
-		P7::ThrowErrno( errno );  // Some error occurred (besides an existing file)
+		p7::throw_errno( errno );  // Some error occurred (besides an existing file)
 	}
 	
 	// File exists.  Try again without creating.
@@ -241,7 +241,7 @@ static int OpenNoClobber( const char* path )
 		// Close the file.
 		int closed = close( opened );
 		
-		P7::ThrowErrno( error );
+		p7::throw_errno( error );
 	}
 	
 	// Return existing non-regular file -- maybe a device/pipe/socket, etc.
@@ -251,7 +251,7 @@ static int OpenNoClobber( const char* path )
 
 static void Dup2( int oldfd, int newfd )
 {
-	P7::ThrowPOSIXResult( dup2( oldfd, newfd ) );
+	p7::throw_posix_result( dup2( oldfd, newfd ) );
 }
 
 static void RedirectIO( Sh::Redirection redirection )
@@ -332,7 +332,7 @@ static void RedirectIO( Sh::Redirection redirection )
 				break;
 		}  // switch
 	}
-	catch ( const P7::Errno& errnum )
+	catch ( const p7::errno_t& errnum )
 	{
 		std::fprintf( stderr, "sh: %s: %s\n", param, strerror( errnum ) );
 		

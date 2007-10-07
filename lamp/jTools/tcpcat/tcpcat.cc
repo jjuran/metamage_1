@@ -26,7 +26,6 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace P7 = POSeven;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -72,7 +71,7 @@ int O::Main( int argc, argv_t argv )
 	inetAddress.sin_port   = htons( port );
 	inetAddress.sin_addr   = ip;
 	
-	P7::ThrowPOSIXResult( connect( sock, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) ) );
+	p7::throw_posix_result( connect( sock, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) ) );
 	
 	while ( true )
 	{
@@ -94,7 +93,7 @@ int O::Main( int argc, argv_t argv )
 			return 1;
 		}
 		
-		(void) io::write( P7::kStdOut_FileNo, data, received );
+		(void) io::write( p7::stdout_fileno, data, received );
 	}
 	
 	return 0;

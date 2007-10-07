@@ -43,7 +43,7 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -83,7 +83,7 @@ static int SSLRead( SSL* session, char* data, std::size_t byteCount )
 			}
 			else if ( received == -1 )
 			{
-				P7::ThrowErrno( errno );
+				p7::throw_errno( errno );
 			}
 			break;
 		
@@ -92,7 +92,7 @@ static int SSLRead( SSL* session, char* data, std::size_t byteCount )
 			break;
 	}
 	
-	P7::ThrowErrno( errno );
+	p7::throw_errno( errno );
 	
 	// Not reached
 	return 0;
@@ -104,7 +104,7 @@ static int SSLWrite( SSL* session, const char* data, std::size_t byteCount )
 	
 	if ( sent < 0 )
 	{
-		P7::ThrowErrno( errno );
+		p7::throw_errno( errno );
 	}
 	
 	return sent;
@@ -164,7 +164,7 @@ static void Poll( SSL* client_session, int server_socket )
 		Io::Err << "EOF received in violation of SSL protocol\n";
 		isComplete = true;
 	}
-	catch ( P7::Errno& error )
+	catch ( p7::errno_t& error )
 	{
 		Io::Err << "Remote read error: " << error.Get() << "\n";
 		isComplete = true;
@@ -202,7 +202,7 @@ static void Poll( SSL* client_session, int server_socket )
 		Io::Err << "Local peer closed socket\n";
 		isComplete = true;
 	}
-	catch ( P7::Errno& error )
+	catch ( p7::errno_t& error )
 	{
 		Io::Err << "Local read error: " << error.Get() << "\n";
 		isComplete = true;

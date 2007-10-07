@@ -33,7 +33,6 @@
 
 
 namespace NN = Nucleus;
-namespace P7 = POSeven;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -140,7 +139,7 @@ static void Splice( p7::fd_t in, p7::fd_t out )
 		{
 			std::perror( "local-edit-client: read" );
 			
-			P7::ThrowErrno( errno );
+			p7::throw_errno( errno );
 		}
 		
 		p7::write( out, buffer, bytes_read );
@@ -149,10 +148,10 @@ static void Splice( p7::fd_t in, p7::fd_t out )
 
 static void CopyFileContents( p7::fd_t in, p7::fd_t out )
 {
-	P7::ThrowPOSIXResult( lseek( in,  0, 0 ) );
-	P7::ThrowPOSIXResult( lseek( out, 0, 0 ) );
+	p7::throw_posix_result( lseek( in,  0, 0 ) );
+	p7::throw_posix_result( lseek( out, 0, 0 ) );
 	
-	P7::ThrowPOSIXResult( ftruncate( out, 0 ) );
+	p7::throw_posix_result( ftruncate( out, 0 ) );
 	
 	Splice( in, out );
 }

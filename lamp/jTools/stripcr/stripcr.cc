@@ -16,7 +16,7 @@
 #include "POSeven/FileDescriptor.hh"
 
 
-namespace P7 = POSeven;
+namespace p7 = poseven;
 
 
 #pragma export on
@@ -48,12 +48,12 @@ int main( int argc, const char *const argv[] )
 		
 		while ( (lf = std::find( p, end, '\r' )) != end )
 		{
-			(void) io::write( P7::kStdOut_FileNo, p, lf - p );
+			(void) io::write( p7::stdout_fileno, p, lf - p );
 			
 			p = lf + 1;
 		}
 		
-		(void) io::write( P7::kStdOut_FileNo, p, end - p );
+		(void) io::write( p7::stdout_fileno, p, end - p );
 	}
 	
 	return 0;

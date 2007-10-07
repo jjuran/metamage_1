@@ -16,7 +16,7 @@
 #include "Orion/StandardIO.hh"
 
 
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -43,7 +43,7 @@ int O::Main( int argc, argv_t argv )
 			
 			char data[ kDataSize ];
 			
-			int bytes = io::read( P7::kStdIn_FileNo, data, kDataSize );
+			int bytes = io::read( p7::stdin_fileno, data, kDataSize );
 			
 			(void) write( output, data, bytes );  // FIXME:  check for errors
 			(void) write( stdOut, data, bytes );
@@ -53,7 +53,7 @@ int O::Main( int argc, argv_t argv )
 	{
 		// We're done
 	}
-	catch ( const P7::Errno& err )
+	catch ( const p7::errno_t& err )
 	{
 		return err.Get() != 0;
 	}

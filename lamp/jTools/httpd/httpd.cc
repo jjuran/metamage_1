@@ -56,7 +56,6 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
-namespace P7 = POSeven;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -315,7 +314,7 @@ static std::string LocateResource( const std::string& resource )
 		if ( !component.empty() && component[0] == '.' )
 		{
 			// No screwing around with the pathname, please.
-			P7::ThrowErrno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 	}
 	

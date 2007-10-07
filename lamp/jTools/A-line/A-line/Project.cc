@@ -39,7 +39,7 @@
 namespace ALine
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	namespace CD = CompileDriver;
 	
 	using namespace io::path_descent_operators;
@@ -54,7 +54,7 @@ namespace ALine
 		
 		if ( !io::item_exists( file ) )
 		{
-			throw P7::Errno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		return file;
@@ -394,12 +394,12 @@ namespace ALine
 	{
 		std::string result = dir / filename;
 		
-		if ( io::item_exists( result ) )
+		if ( !io::item_exists( result ) )
 		{
-			return result;
+			p7::throw_errno( ENOENT );
 		}
 		
-		throw P7::Errno( ENOENT );
+		return result;
 	}
 	
 	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& itsSearchDirs )
@@ -430,7 +430,9 @@ namespace ALine
 		
 		std::fprintf( stderr, "Missing source file %s\n", relative_path.c_str() );
 		
-		throw P7::Errno( ENOENT );
+		p7::throw_errno( ENOENT );
+		
+		throw;  // Not reached
 	}
 	
 	void Project::Study()

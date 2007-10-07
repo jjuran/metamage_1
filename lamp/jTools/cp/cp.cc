@@ -21,7 +21,7 @@
 #include "SystemCalls.hh"
 
 
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -63,7 +63,7 @@ int O::Main( int argc, argv_t argv )
 		// Last arg should be the destination directory.
 		const char* destDir = argv[ argc - 1 ];
 		
-		P7::ThrowPOSIXResult( stat( destDir, &sb ) );
+		p7::throw_posix_result( stat( destDir, &sb ) );
 		
 		bool isDir = sb.st_mode & S_IFDIR;
 		
@@ -132,10 +132,10 @@ int O::Main( int argc, argv_t argv )
 		}
 		else if ( errno != ENOENT )
 		{
-			P7::ThrowErrno( errno );
+			p7::throw_errno( errno );
 		}
 		
-		P7::ThrowPOSIXResult( copyfile( sourcePath, destPath ) );
+		p7::throw_posix_result( copyfile( sourcePath, destPath ) );
 	}
 	
 	return fail;

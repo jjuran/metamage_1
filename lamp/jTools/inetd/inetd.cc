@@ -36,7 +36,7 @@
 
 
 namespace N = Nitrogen;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -181,7 +181,7 @@ static std::string ReadLine( int fd )
 		const char* p;
 		int peeked = peek( fd, &p, minBytes );
 		
-		P7::ThrowPOSIXResult( peeked );
+		p7::throw_posix_result( peeked );
 		
 		if ( peeked == 0 )
 		{

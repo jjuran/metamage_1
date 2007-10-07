@@ -44,7 +44,7 @@ namespace ALine
 {
 	
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
 	
@@ -306,7 +306,8 @@ namespace ALine
 		if ( gnu  &&  !gccSupported )
 		{
 			Io::Err << "Sorry, GCC is not supported for this type of product.\n";
-			throw P7::Errno( EINVAL );
+			
+			p7::throw_errno( EINVAL );
 		}
 		
 		const bool useAr = gnu  &&  project.Product() == productStaticLib;
@@ -435,7 +436,7 @@ namespace ALine
 				//const N::OSType codeZero = N::OSType( 0 );
 				
 				//N::FSpCreate( pkgInfo, codeZero, codeZero );
-				P7::Open( pkgInfo.c_str(), O_CREAT, 0600 );
+				p7::open( pkgInfo.c_str(), O_CREAT, 0600 );
 			}
 			catch ( ... )  {}
 			
