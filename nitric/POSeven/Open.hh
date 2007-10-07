@@ -40,13 +40,14 @@ namespace poseven
 		o_creat  = O_CREAT,
 		o_trunc  = O_TRUNC,
 		o_append = O_APPEND,
+		o_excl   = O_EXCL,
 		
 		oflag_t_max = Nucleus::Enumeration_Traits< int >::max
 	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( oflag_t )
 	
-	Nucleus::Owned< fd_t > open( const char* name, int oflag, int mode = 0 );
+	Nucleus::Owned< fd_t > open( const char* name, oflag_t oflag, int mode = 0 );
 	
 }
 

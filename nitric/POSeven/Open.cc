@@ -17,7 +17,7 @@
 namespace poseven
 {
 	
-	Nucleus::Owned< fd_t > open( const char* name, int oflag, int mode )
+	Nucleus::Owned< fd_t > open( const char* name, oflag_t oflag, int mode )
 	{
 		// register errnos
 		
