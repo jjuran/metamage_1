@@ -14,6 +14,9 @@
 #include <cstdlib>
 #include <cstring>
 
+// Standard C
+#include <stdlib.h>
+
 // POSIX
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
@@ -65,7 +68,7 @@ using BitsAndBytes::EncodeAsHex;
 static const char* gDocumentRoot = "/var/www";
 
 
-char ToCGI( char c )
+static char ToCGI( char c )
 {
 	return c == '-' ? '_' : std::toupper( c );
 }
