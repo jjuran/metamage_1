@@ -13,9 +13,6 @@
 
 #include "POSeven/Open.hh"
 
-// POSIX
-#include <fcntl.h>
-
 
 namespace poseven
 {
@@ -37,7 +34,7 @@ namespace poseven
 		
 		static void Foo()
 		{
-			fd_t foo = open( "/etc/motd", O_RDONLY, 0 );
+			fd_t foo = open( "/etc/motd", o_rdonly, 0 );
 			
 			//Read( foo );
 			
