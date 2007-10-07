@@ -194,7 +194,7 @@ int O::Main( int argc, argv_t argv )
 	
 	const char* filename = argCount > 0 ? freeArgs[0] : "/dev/null";
 	
-	NN::Owned< p7::fd_t > target_file_stream = p7::open( filename, O_RDWR | O_CREAT );
+	NN::Owned< p7::fd_t > target_file_stream = p7::open( filename, p7::o_rdwr | p7::o_creat );
 	
 	MD5::Result digest = MD5DigestFile( target_file_stream );
 	
@@ -245,7 +245,7 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( result_code == 200 )
 	{
-		NN::Owned< p7::fd_t > edited_file_stream = p7::open( outputFile, O_RDWR | O_TRUNC | O_CREAT, 0400 );
+		NN::Owned< p7::fd_t > edited_file_stream = p7::open( outputFile, p7::o_rdwr | p7::o_trunc | p7::o_creat, 0400 );
 		
 		const std::string& partial_content = response.GetPartialContent();
 		
