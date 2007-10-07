@@ -28,52 +28,6 @@
 #include "POSeven/FileDescriptor.hh"
 
 
-namespace POSeven
-{
-	
-	using ::stat;
-	
-	inline bool Stat( const char* name, struct stat& sb )
-	{
-		int status = ::stat( name, &sb );
-		
-		if ( status == -1 )
-		{
-			if ( errno == ENOENT )
-			{
-				return false;
-			}
-			
-			ThrowErrno( errno );
-		}
-		
-		return true;
-	}
-	
-	inline struct stat Stat( const char* name )
-	{
-		struct stat sb;
-		
-		if ( !Stat( name, sb ) )
-		{
-			ThrowErrno( ENOENT );
-		}
-		
-		return sb;
-	}
-	
-	inline bool Stat( const std::string& name, struct stat& sb )
-	{
-		return Stat( name.c_str(), sb );
-	}
-	
-	inline struct stat Stat( const std::string& name )
-	{
-		return Stat( name.c_str() );
-	}
-	
-}
-
 namespace poseven
 {
 	
@@ -123,22 +77,38 @@ namespace poseven
 	
 	inline bool stat( const char* pathname, struct stat& sb )
 	{
-		return POSeven::Stat( pathname, sb );
+		int status = ::stat( pathname, &sb );
+		
+		if ( status == -1 )
+		{
+			if ( errno == ENOENT )
+			{
+				return false;
+			}
+			
+			throw_errno( errno );
+		}
+		
+		return true;
 	}
 	
 	inline struct stat stat( const char* pathname )
 	{
-		return POSeven::Stat( pathname );
+		struct stat sb;
+		
+		throw_posix_result( ::stat( pathname, &sb ) );
+		
+		return sb;
 	}
 	
 	inline bool stat( const std::string& pathname, struct stat& sb )
 	{
-		return POSeven::Stat( pathname, sb );
+		return stat( pathname.c_str(), sb );
 	}
 	
 	inline struct stat stat( const std::string& pathname )
 	{
-		return POSeven::Stat( pathname );
+		return stat( pathname.c_str() );
 	}
 	
 	inline bool lstat( const char* pathname, struct stat& sb )
@@ -188,7 +158,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return POSeven::Stat( item, sb );
+		return poseven::stat( item, sb );
 	}
 	
 	inline bool item_exists( const std::string& item )
@@ -212,7 +182,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return POSeven::Stat( item, sb ) && item_is_file( sb );
+		return poseven::stat( item, sb ) && item_is_file( sb );
 	}
 	
 	inline bool file_exists( const std::string& item )
@@ -225,7 +195,7 @@ namespace io
 	{
 		struct ::stat sb;
 		
-		return POSeven::Stat( item, sb ) && item_is_directory( sb );
+		return poseven::stat( item, sb ) && item_is_directory( sb );
 	}
 	
 	inline bool directory_exists( const std::string& item )
