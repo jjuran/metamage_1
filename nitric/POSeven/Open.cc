@@ -17,18 +17,18 @@
 #include <fcntl.h>
 
 
-namespace POSeven
+namespace poseven
 {
 	
-	Nucleus::Owned< FileDescriptor > Open( const char* name, int oflag, int mode )
+	Nucleus::Owned< fd_t > open( const char* name, int oflag, int mode )
 	{
 		// register errnos
 		
 		int fd;
 		
-		ThrowPOSIXResult( fd = ::open( name, oflag, mode ) );
+		throw_posix_result( fd = ::open( name, oflag, mode ) );
 		
-		return Nucleus::Owned< FileDescriptor >::Seize( FileDescriptor( fd ) );
+		return Nucleus::Owned< fd_t >::Seize( fd_t( fd ) );
 	}
 	
 	
@@ -37,7 +37,7 @@ namespace POSeven
 		
 		static void Foo()
 		{
-			FileDescriptor foo = Open( "/etc/motd", O_RDONLY, 0 );
+			fd_t foo = open( "/etc/motd", O_RDONLY, 0 );
 			
 			//Read( foo );
 			
