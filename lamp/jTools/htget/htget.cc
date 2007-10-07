@@ -213,9 +213,9 @@ int O::Main( int argc, argv_t argv )
 	
 	shutdown( sock, SHUT_WR );
 	
-	int create_flags = outputIsToFile ? O_CREAT | O_EXCL : 0;
+	p7::oflag_t create_flags = outputIsToFile ? p7::o_creat | p7::o_excl : p7::oflag_t();
 	
-	NN::Owned< p7::fd_t > bodyOutput = p7::open( outputFile, O_WRONLY | create_flags, 0644 );
+	NN::Owned< p7::fd_t > bodyOutput = p7::open( outputFile, p7::o_wronly | create_flags, 0644 );
 	
 	HTTP::ResponseReceiver response;
 	

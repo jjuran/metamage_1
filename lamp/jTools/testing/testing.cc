@@ -3,11 +3,21 @@
  *	==========
  */
 
-// Universal Interfaces
-#ifndef __MACH__
+// Mac OS Universal Interfaces
+#ifndef __EVENTS__
 #include <Events.h>
+#endif
+#ifndef __FOLDERS__
 #include <Folders.h>
+#endif
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
+
+#if !TARGET_API_MAC_CARBON
+#ifndef __DESKBUS__
+#include <DeskBus.h>
+#endif
 #endif
 
 // Standard C
@@ -15,6 +25,7 @@
 
 // Standard C/C++
 #include <cstdio>
+#include <cstdlib>
 
 // Standard C++
 #include <functional>
@@ -24,15 +35,27 @@
 
 // POSIX
 #include "fcntl.h"
+#include "sys/ioctl.h"
 #include "sys/stat.h"
 #include "unistd.h"
+
+// Lamp
+#include "lamp/winio.h"
+
+// Divergence
+#include "Divergence/Utilities.hh"
 
 // MoreFiles
 #include "MoreFilesExtras.h"
 
 // Nucleus
 #include "Nucleus/Convert.h"
+#include "Nucleus/Exception.h"
 #include "Nucleus/NAssert.h"
+#include "Nucleus/TheExceptionBeingHandled.h"
+
+// Io
+#include "io/slurp.hh"
 
 // Nitrogen
 #include "Nitrogen/CodeFragments.h"
@@ -46,6 +69,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/Open.hh"
 
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON
@@ -62,7 +86,6 @@
 #include "Templates/DataPointer.h"
 
 // Nitrogen Extras / Utilities
-#include "Utilities/Files.h"
 #include "Utilities/Processes.h"
 #include "Utilities/Threads.h"
 
@@ -73,7 +96,8 @@
 #include "DecimalStrings.hh"
 #include "HexStrings.hh"
 
-// Misc
+// Arcana
+#include "ADBProtocol.hh"
 #include "CRC32.hh"
 #include "MD5.hh"
 
@@ -89,8 +113,9 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
-namespace P7 = POSeven;
+namespace p7 = poseven;
 namespace NX = NitrogenExtras;
+namespace Div = Divergence;
 namespace O = Orion;
 
 using BitsAndBytes::EncodeAsHex;
@@ -555,20 +580,61 @@ static int TestMD5(int argc, const char *const argv[])
 	return 0;
 }
 
-/*
-static int TestOSX(int argc, const char *const argv[])
+
+static void PrintADBRegister( const ADBRegister& reg )
+{
+	unsigned count = reg.buffer[0];
+	
+	for ( unsigned i = 1;  i <= count;  ++i )
+	{
+		using namespace BitsAndBytes;
+		
+		Byte c = reg.buffer[i];
+		
+		std::putc( ' ', stdout );
+		
+		std::putc( NibbleAsHex( HighNibble( c ) ), stdout );
+		std::putc( NibbleAsHex( LowNibble ( c ) ), stdout );
+	}
+	
+	std::putc( '\n', stdout );
+}
+
+static int TestADB( int argc, const char *const argv[] )
 {
 	//if (argc < 3)  return 1;
 	
-	bool classic = V::IsRunningInClassic();
+	int count = ::CountADBs();
 	
-	const char* maybe = classic ? "" : "not ";
+	std::printf( "ADB count: %d\n", count );
 	
-	Io::Out << "We are " << maybe << "running in Classic.\n";
+	ADBDataBlock adbData;
+	
+	for ( unsigned i = 1;  i <= count;  ++i )
+	{
+		N::ADBAddress address = N::GetIndADB( adbData, i );
+		
+		std::printf( "ADB address[%d]: %d\n", i, int( address ) );
+		
+		std::printf( "\t" "Device type: %d\n",   int( adbData.devType     ) );
+		std::printf( "\t" "Original addr: %d\n", int( adbData.origADBAddr ) );
+		
+		std::printf( "\t" "Registers:\n" );
+		
+		for ( unsigned j = 0; j <= 3;  ++j )
+		{
+			ADBRegister reg = GetADBRegister( address, j );
+			
+			std::printf( "\t\t" "%d:", j );
+			
+			PrintADBRegister( reg );
+		}
+		
+		std::putc( '\n', stdout );
+	}
 	
 	return 0;
 }
-*/
 
 static int TestOADC(int argc, const char *const argv[])
 {
@@ -782,8 +848,10 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 {
 	typedef NN::StringFlattener< std::string > Flattener;
 	
+	using namespace io::path_descent_operators;
+	
 	// Find Info.plist
-	FSSpec infoPListFile = NN::Convert< N::FSDirSpec >( file ) << "Contents" & "Info.plist";
+	FSSpec infoPListFile = NN::Convert< N::FSDirSpec >( file ) / "Contents" / "Info.plist";
 	
 	// Read the entire file contents
 	std::string infoPList = io::slurp_file< Flattener >( infoPListFile );
@@ -830,6 +898,7 @@ static int TestServices( int argc, char const *const argv[] )
 {
 	//if (argc < 3)  return 1;
 	
+	/*
 	N::FSDirSpec systemLibraryServices = N::RootDirectory( N::BootVolume() ) << "System"
 	                                                                         << "Library"
 	                                                                         << "Services";
@@ -837,6 +906,7 @@ static int TestServices( int argc, char const *const argv[] )
 	std::for_each( N::FSContents( systemLibraryServices ).begin(),
 	               N::FSContents( systemLibraryServices ).end(),
 	               std::ptr_fun( DoSomethingWithServiceFile ) );
+	*/
 	
 	return 0;
 }
@@ -885,7 +955,7 @@ static int TestNull( int argc, char const *const argv[] )
 	
 	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const char* pathname )
 	{
-		NN::Owned< P7::FileDescriptor > filehandle = P7::Open( pathname, O_RDONLY );
+		NN::Owned< p7::fd_t > filehandle = p7::open( pathname, O_RDONLY );
 		
 		struct ::stat stat_buffer;
 		
@@ -1026,6 +1096,647 @@ static int TestReadLoc( int argc, char const *const argv[] )
 	return 0;
 }
 
+static int TestKeys( int argc, char const *const argv[] )
+{
+	KeyMap keys;
+	
+	::GetKeys( keys );
+	
+	for ( unsigned i = 0;  i < 16;  ++i )
+	{
+		const UInt8 byte = reinterpret_cast< const UInt8* >( keys )[i];
+		
+		for ( unsigned j = 0;  j < 8;  ++j )
+		{
+			bool down = byte & (1 << j);
+			
+			if ( down )
+			{
+				UInt8 keyCode = i * 8 + j;
+				
+				std::printf( "0x%x %d\n", keyCode, keyCode );
+			}
+		}
+	}
+	
+	return 0;
+}
+
+inline double get_scaled_linear_motion( double elapsed_time )
+{
+	return elapsed_time;
+}
+
+inline double get_scaled_parabolic_motion( double elapsed_time )
+{
+	return elapsed_time * elapsed_time;
+}
+
+inline double get_scaled_simple_harmonic_motion( double elapsed_time )
+{
+	return (1.0 - cos( elapsed_time * pi )) / 2.0;
+}
+
+template < class TimeSpan >
+class path_generator
+{
+	private:
+		TimeSpan its_timespan;
+	
+	public:
+		path_generator( TimeSpan timespan ) : its_timespan( timespan )  {}
+		
+		double sample( TimeSpan elapsed_time ) const
+		{
+			return get_scaled_simple_harmonic_motion( 1.0 * elapsed_time / its_timespan );
+		}
+};
+
+static int TestPath( int argc, char const *const argv[] )
+{
+	if ( argc < 3 )
+	{
+		return 1;
+	}
+	
+	int pix = std::atoi( argv[2] );
+	
+	Point location = { 0, 0 };
+	
+	int fd = 0;
+	
+	ioctl( fd, WIOCGPOS, (int*) &location );
+	
+	int start_pos = location.h;
+	
+	int stop_pos = start_pos + pix;
+	
+	UInt64 time_length = 250000;  // quarter second
+	
+	if ( ::GetCurrentKeyModifiers() & (shiftKey | rightShiftKey) )
+	{
+		time_length *= 4;
+	}
+	
+	UInt64 start_time = N::Microseconds();
+	
+	//UInt64 stop_time = start_time + time_length;
+	
+	path_generator< UInt64 > path( time_length );
+	
+	UInt64 elapsed_time;
+	
+	while ( (elapsed_time = N::Microseconds() - start_time) < time_length )
+	{
+		location.h = start_pos + path.sample( elapsed_time ) * pix;
+		
+		ioctl( fd, WIOCSPOS, (int*) &location );
+	}
+	
+	location.h = stop_pos;
+	
+	ioctl( fd, WIOCSPOS, (int*) &location );
+	
+	return 0;
+}
+
+
+static std::string join( const char* space, const std::string& a, const std::string& b )
+{
+	if ( a.empty() || b.empty() )
+	{
+		space = "";
+	}
+	
+	return a + space + b;
+}
+
+#if TARGET_CPU_68K
+
+#pragma parameter __D0 GetA6
+
+inline ::Ptr GetA6() = { 0x200e };
+
+#endif
+
+static const char* gBuiltinTypes[] =
+{
+	NULL,
+	"bool",
+	"char",
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	"int",
+	NULL,
+	NULL,
+	"long",
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	"void",
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+static const char* GetBuiltinType( char c )
+{
+	if ( c < 'a'  ||  c > 'z' )  return NULL;
+	
+	return gBuiltinTypes[ c - 'a' ];
+}
+
+static int ReadLength( const char*& p )
+{
+	int length = std::atoi( p );
+	
+	while ( std::isdigit( *++p ) )  continue;
+	
+	return length;
+}
+
+static std::string ReadQ( const char*& p );
+
+class Demangle_Failed {};
+
+static std::string ReadParam( const char*& p, const char* end )
+{
+	if ( const char* builtin = GetBuiltinType( *p ) )
+	{
+		++p;
+		
+		return builtin;
+	}
+	
+	if ( *p == 'Q' )
+	{
+		return ReadQ( ++p );
+	}
+	
+	std::string result( p, end );
+	
+	p = end;
+	
+	return result;
+}
+
+static bool IsEscape( char c )
+{
+	return c == 'Q'  ||  GetBuiltinType( c ) != NULL;
+}
+
+static std::string ReadLengthPrefixedName( const char*& p )
+{
+	int length = ReadLength( p );
+	
+	const char* end = p + length;
+	
+	std::string result;
+	
+	std::string params;
+	
+	const char* q = p;
+	
+	while (( q = std::strchr( q, '_' ) ))
+	{
+		if ( q >= end )
+		{
+			break;
+		}
+		
+		if ( q + 1 == end  &&  !params.empty() )
+		{
+			p = end;
+			
+			break;
+		}
+		
+		if ( !IsEscape( q[1] ) )
+		{
+			++q;
+			
+			continue;
+		}
+		
+		result.append( p, q );
+		
+		p = ++q;
+		
+		if ( p >= end )
+		{
+			break;
+		}
+		
+		if ( *p == '_' )
+		{
+			++p;
+			
+			break;
+		}
+		
+		std::string param = ReadParam( p, end );
+		
+		q = p;
+		
+		params = join( ", ", params, param );
+	}
+	
+	if ( !params.empty() )
+	{
+		result += "< " + params + " >";
+	}
+	
+	result.append( p, end );
+	
+	p = end;
+	
+	return result;
+}
+
+static std::string ReadQ( const char*& p )
+{
+	int count = *p++ - '0';
+	
+	std::string result;
+	
+	while ( count-- )
+	{
+		result = join( "::", result, ReadLengthPrefixedName( p ) );
+	}
+	
+	return result;
+}
+
+static const char* ReadOperator( const char*& p )
+{
+	if ( p[2] == '_'  &&  p[3] == '_' )
+	{
+		if ( p[0] == 'c'  &&  p[1] == 'l' )
+		{
+			p += 4;
+			
+			return "operator()";
+		}
+	}
+	
+	return NULL;
+}
+
+static std::string ReadType( const char*& p )
+{
+	std::string type;
+	
+	while ( *p != '\0' )
+	{
+		if ( std::isdigit( *p ) )
+		{
+			type = join(  " ", ReadLengthPrefixedName( p ), type );
+			
+			return type;
+		}
+		
+		if ( const char* builtin = GetBuiltinType( *p ) )
+		{
+			++p;
+			
+			type = join(  " ", builtin,  type );
+			
+			return type;
+		}
+		
+		switch ( *p++ )
+		{
+			case 'P':
+				type = '*' + type;
+				break;
+			
+			case 'R':
+				type = '&' + type;
+				break;
+			
+			case 'C':
+				type = "const " + type;
+				break;
+			
+			case 'U':
+				type = "unsigned " + type;
+				break;
+			
+			case 'Q':
+				type = join(  " ", ReadQ( p ), type );
+				return type;
+		}
+	}
+	
+	throw Demangle_Failed();
+}
+
+static std::string ReadTypes( const char*& p )
+{
+	std::string result;
+	std::string type;
+	
+	while ( *p != '\0' )
+	{
+		type = ReadType( p );
+		
+		result = join( ", ", result, type );
+	}
+	
+	return result;
+}
+
+static std::string ReadPrototype( const char*& p )
+{
+	std::string const_method;
+	
+	bool function = false;
+	
+	if ( *p == 'C' )
+	{
+		const_method = " const";
+		
+		++p;
+	}
+	
+	if ( *p == 'F' )
+	{
+		function = true;
+		
+		++p;
+	}
+	
+	std::string args = ReadTypes( p );
+	
+	return "( " + args + " )" + const_method;
+}
+
+
+static std::string Demangle( const char* name )
+{
+	const char* separator = std::strstr( name, "__" );
+	
+	if ( separator == NULL )
+	{
+		return name;
+	}
+	
+	const char* p = separator + 2;
+	
+	std::string function_name( name, separator );
+	
+	std::string result;
+	
+	if ( const char* op = ReadOperator( p ) )
+	{
+		function_name = op;
+	}
+	
+	if ( std::isdigit( *p ) )
+	{
+		result += ReadLengthPrefixedName( p );
+	}
+	else if ( p[0] == 'Q' )
+	{
+		result += ReadQ( ++p );
+	}
+	
+	return result + "::" + function_name + ReadPrototype( p );
+}
+
+namespace Foo
+{
+	template < class T > class Bar {};
+	
+	class Bar_i_ {};
+}
+
+void TestMangling( Foo::Bar< int > );
+
+void TestMangling( Foo::Bar< int > )
+{
+	std::abort();
+}
+
+void TestMangling( Foo::Bar_i_ );
+
+void TestMangling( Foo::Bar_i_ )
+{
+	Foo::Bar< int > bar;
+	
+	TestMangling( bar );
+}
+
+static int TestMangling( int argc, char const *const argv[] )
+{
+	Foo::Bar_i_ bar_i_;
+	
+	TestMangling( bar_i_ );
+	
+	return 0;
+}
+
+typedef pascal void (*CallbackProcPtr)();
+
+typedef DragGrayRgnUPP CallbackUPP;
+
+static pascal void MyCallback()
+{
+	std::abort();
+}
+
+typedef pascal unsigned char (*InitMainProcPtr)( RGBColor* );
+
+static int TestCallback( int argc, char const *const argv[] )
+{
+	if ( argc <= 2 )
+	{
+		std::fputs( "Missing argument", stderr );
+		
+		return 1;
+	}
+	
+	const char* pathname = argv[2];
+	
+	FSSpec file = Div::ResolvePathToFSSpec( pathname );
+	
+	NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+	
+	NN::Owned< N::Handle > init = N::DetachResource( N::Get1Resource( N::ResType( 'INIT' ), N::ResID( 0 ) ) );
+	
+	N::HLock( init );
+	
+	ColorComplementUPP initMain = (ColorComplementUPP) *init.Get();
+	
+	CallbackUPP callback = NewDragGrayRgnUPP( MyCallback );
+	
+	InvokeColorComplementUPP( (RGBColor*) callback, initMain );
+	
+	return 0;
+}
+
+
+static int TestBacktrace( int argc, char const *const argv[] )
+{
+#if TARGET_CPU_68K
+	
+	int count = (argc > 2) ? std::atoi( argv[2] ) : 1;
+	
+	::Ptr a6 = GetA6();
+	
+	for ( unsigned i = 0;  i < count  &&  a6 != NULL;  ++i, a6 = *(::Ptr*) a6 )
+	{
+		std::printf( "%d: A6 = %.8x\n", i, a6 );
+		
+		::Ptr returnAddr = *(::Ptr*)(a6 + 4);
+		
+		if ( returnAddr != NULL )
+		{
+			const UInt16* word = (UInt16*) returnAddr;
+			
+			const UInt16* begin  = word - 0x10000;
+			
+			while ( word > begin )
+			{
+				if ( *word == 0x4e56 )
+				{
+					std::printf( "    LINK at       %.8x\n", word );
+					
+					break;
+				}
+				
+				--word;
+			}
+			
+			if ( word <= begin )
+			{
+				std::fputs( "    Function too long, skipping...\n", stdout );
+			}
+		}
+		
+		std::printf( "    return addr = %.8x\n", returnAddr );
+		
+		if ( returnAddr != NULL )
+		{
+			const UInt16* word = (UInt16*) returnAddr;
+			
+			const UInt16* end  = word + 0x10000;
+			
+			while ( word < end )
+			{
+				if ( *word == 0x4e75 )
+				{
+					std::printf( "    RTS at        %.8x\n", word );
+					
+					const UInt8* p = (const UInt8*) ++word;
+					
+					if ( (*p & 0x80) != 0x80 )
+					{
+						break;
+					}
+					
+					while ( (*++p & 0x80) == 0x80 )
+					{
+						continue;
+					}
+					
+					const char* name = (const char*) p;
+					
+					std::printf( "    %s\n", name );
+					
+					try
+					{
+						std::string unmangled = Demangle( name );
+						
+						std::printf( "    Name: %s\n", unmangled.c_str() );
+					}
+					catch ( ... )
+					{
+					}
+					
+					break;
+				}
+				
+				++word;
+			}
+			
+			if ( word >= end )
+			{
+				std::fputs( "    Function too long, skipping...\n", stdout );
+			}
+		}
+	}
+	
+	if ( a6 == NULL )
+	{
+		std::fputs( "-- End of stack frames --\n", stdout );
+	}
+	
+#endif
+	
+	return 0;
+}
+
+
+static int TestUnmangle( int argc, char const *const argv[] )
+{
+	if ( argc <= 2 )
+	{
+		std::puts( "Missing argument" );
+		
+		return 1;
+	}
+	
+	std::string unmangled = Demangle( argv[2] );
+	
+	std::puts( unmangled.c_str() );
+	
+	return 0;
+}
+
+
+static int TestFSpMakeFSRef( int argc, char const *const argv[] )
+{
+	std::printf( "FSpMakeFSRef() == 0x%.8x\n", FSpMakeFSRef );
+	
+	/*
+	if ( FSpMakeFSRef == NULL  &&  argc > 2 )
+	{
+		const char* pathname = argv[2];
+		
+		FSSpec file = Div::ResolvePathToFSSpec( pathname );
+		
+		//NN::Owned< N::CFragConnectionID > connID = N::GetDiskFragment< kFindCFrag >( file );
+		N::CFragConnectionID connID = N::GetDiskFragment< N::kFindCFrag >( file, 0, 0, NULL );
+		
+		OSStatus err = CFMLateImporter::ImportLibrary( "\p" "InterfaceLib", connID );
+		
+		if ( err == noErr )
+		{
+			//connID.Release();
+			
+			std::printf( "FSpMakeFSRef() == 0x%.8x\n", FSpMakeFSRef );
+		}
+		else
+		{
+			std::printf( "OSStatus %d\n", err );
+		}
+	}
+	*/
+	
+	return 0;
+}
+
 
 typedef int (*MainProcPtr)(int argc, const char *const argv[]);
 
@@ -1052,7 +1763,7 @@ const SubMain gSubs[] =
 	{ "crc16",     TestCRC16      },
 	{ "crc32",     TestCRC32      },
 	{ "md5",       TestMD5        },
-//	{ "X",         TestOSX        },
+	{ "adb",       TestADB        },
 	{ "OADC",      TestOADC       },
 	{ "proc",      TestProcesses  },
 	{ "si",        TestSoundInput },
@@ -1060,6 +1771,13 @@ const SubMain gSubs[] =
 	{ "svcs",      TestServices   },
 	{ "thread",    TestThread     },
 	{ "null",      TestNull       },
+	{ "keys",      TestKeys       },
+	{ "path",      TestPath       },
+	{ "back",      TestBacktrace  },
+	{ "unmangle",  TestUnmangle   },
+	{ "mangling",  TestMangling   },
+	{ "callback",  TestCallback   },
+	{ "fsref",     TestFSpMakeFSRef },
 	
 #if TARGET_RT_MAC_CFM
 	
@@ -1086,6 +1804,8 @@ static void MakeMap()
 
 int O::Main( int argc, argv_t argv )
 {
+	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+	
 	//Assert_(argc > 0);
 	
 	MakeMap();

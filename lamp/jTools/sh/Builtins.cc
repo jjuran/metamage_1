@@ -355,7 +355,7 @@ static int BuiltinDot( int argc, iota::argv_t argv )
 		return 2;
 	}
 	
-	NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], 0 );
+	NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], p7::o_rdonly );
 	
 	int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
 	

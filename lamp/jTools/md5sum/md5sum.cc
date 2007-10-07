@@ -62,7 +62,7 @@ int O::Main( int argc, argv_t argv )
 	{
 		try
 		{
-			Io::Out << MD5Sum( p7::open( argv[ i ], 0 ) )
+			Io::Out << MD5Sum( p7::open( argv[ i ], p7::o_rdonly ) )
 			        << "  "
 			        << argv[ i ]
 			        << "\n";

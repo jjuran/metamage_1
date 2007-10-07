@@ -124,8 +124,8 @@ int O::Main( int argc, argv_t argv )
 	const char* outfile1 = argv[2];
 	const char* outfile2 = argv[3];
 	
-	NN::Owned< p7::fd_t > out1 = p7::open( outfile1, O_WRONLY | O_TRUNC | O_CREAT, 0644 );
-	NN::Owned< p7::fd_t > out2 = p7::open( outfile2, O_WRONLY | O_TRUNC | O_CREAT, 0644 );
+	NN::Owned< p7::fd_t > out1 = p7::open( outfile1, p7::o_wronly | p7::o_trunc | p7::o_creat, 0644 );
+	NN::Owned< p7::fd_t > out2 = p7::open( outfile2, p7::o_wronly | p7::o_trunc | p7::o_creat, 0644 );
 	
 	bool divided = false;
 	

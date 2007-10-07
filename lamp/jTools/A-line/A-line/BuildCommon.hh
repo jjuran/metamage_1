@@ -34,7 +34,7 @@ namespace ALine
 	
 	inline time_t ModifiedDate( const std::string& pathname )
 	{
-		return POSeven::Stat( pathname ).st_mtime;
+		return poseven::stat( pathname ).st_mtime;
 	}
 	
 	inline std::string ObjectFileName( const std::string& sourceName )

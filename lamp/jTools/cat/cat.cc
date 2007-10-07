@@ -89,7 +89,7 @@ int O::Main( int argc, argv_t argv )
 		
 		try
 		{
-			NN::Owned< p7::fd_t > fd = p7::open( pathname, O_RDONLY );
+			NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
 			
 			DumpFile( fd );
 		}
