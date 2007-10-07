@@ -27,7 +27,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	static ConsoleMap gConsoleMap;
@@ -55,7 +55,7 @@ namespace Genie
 		
 		if ( it == gConsoleMap.end() )
 		{
-			P7::ThrowErrno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		ASSERT( !it->second.expired() );
@@ -224,7 +224,7 @@ namespace Genie
 			case WIOCSEXIT:
 				if ( argp == NULL )
 				{
-					P7::ThrowErrno( EFAULT );
+					p7::throw_errno( EFAULT );
 				}
 				
 				itsWindowSalvagePolicy = *argp;

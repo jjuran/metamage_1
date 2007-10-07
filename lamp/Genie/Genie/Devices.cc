@@ -22,7 +22,7 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	// General
 	
@@ -93,7 +93,7 @@ namespace Genie
 		
 		if ( found == DeviceMap().end() )
 		{
-			P7::ThrowErrno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		return boost::shared_ptr< IOHandle >( new SimpleDeviceHandle( *found->second ) );

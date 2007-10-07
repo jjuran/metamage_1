@@ -15,11 +15,11 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	FSTreePtr FSTree_Null::Parent() const
 	{
-		P7::ThrowErrno( ENOENT );
+		p7::throw_errno( ENOENT );
 		
 		throw;
 	}

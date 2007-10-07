@@ -21,7 +21,7 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	StreamHandle::~StreamHandle()
 	{
@@ -35,7 +35,7 @@ namespace Genie
 	{
 		if ( IsDisconnected() )
 		{
-			P7::ThrowErrno( EIO );
+			p7::throw_errno( EIO );
 		}
 		
 		while ( peekBuffer.size() < minBytes )
@@ -58,7 +58,7 @@ namespace Genie
 	{
 		if ( IsDisconnected() )
 		{
-			P7::ThrowErrno( EIO );
+			p7::throw_errno( EIO );
 		}
 		
 		return SysPoll() | (peekBuffer.empty() ? 0 : kPollRead);
@@ -68,7 +68,7 @@ namespace Genie
 	{
 		if ( IsDisconnected() )
 		{
-			P7::ThrowErrno( EIO );
+			p7::throw_errno( EIO );
 		}
 		
 		ByteCount bytesRead = std::min( peekBuffer.size(), byteCount );
@@ -113,7 +113,7 @@ namespace Genie
 	{
 		if ( IsDisconnected() )
 		{
-			P7::ThrowErrno( EIO );
+			p7::throw_errno( EIO );
 		}
 		
 		return SysWrite( data, byteCount );
@@ -137,7 +137,7 @@ namespace Genie
 			
 			case FIONREAD:
 				// not implemented
-				return P7::ThrowErrno( EINVAL );
+				return p7::throw_errno( EINVAL );
 			
 			default:
 				IOHandle::IOCtl( request, argp );

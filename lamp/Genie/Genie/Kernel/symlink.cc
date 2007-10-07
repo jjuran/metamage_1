@@ -37,7 +37,8 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
+	
 	
 	static const char* Basename( const char* pathname )
 	{
@@ -120,7 +121,7 @@ namespace Genie
 				// The new location also exists; bail.
 				return frame.SetErrno( EEXIST );
 			}
-			catch ( const P7::Errno& errnum )
+			catch ( const p7::errno_t& errnum )
 			{
 				if ( errnum != ENOENT )  throw;
 			}

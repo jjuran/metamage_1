@@ -76,25 +76,25 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	namespace Ped = Pedestal;
 	
 	
-	static P7::Errno GetErrnoFromException()
+	static p7::errno_t GetErrnoFromException()
 	{
-		NN::RegisterExceptionConversion< P7::Errno, N::OSStatus          >();
-		NN::RegisterExceptionConversion< P7::Errno, io::end_of_input     >();
-		NN::RegisterExceptionConversion< P7::Errno, io::no_input_pending >();
+		NN::RegisterExceptionConversion< p7::errno_t, N::OSStatus          >();
+		NN::RegisterExceptionConversion< p7::errno_t, io::end_of_input     >();
+		NN::RegisterExceptionConversion< p7::errno_t, io::no_input_pending >();
 		
-		P7::Errno errnum = NN::Convert< P7::Errno >( NN::TheExceptionBeingHandled(), EINVAL );
+		p7::errno_t errnum = NN::Convert< p7::errno_t >( NN::TheExceptionBeingHandled(), EINVAL );
 		
 		return errnum;
 	}
 	
 	static int SetErrnoFromExceptionInSystemCall( Process& process )
 	{
-		P7::Errno errnum = GetErrnoFromException();
+		p7::errno_t errnum = GetErrnoFromException();
 		
 		return process.SetErrno( errnum );
 	}
@@ -579,7 +579,7 @@ namespace Genie
 		{
 			if ( pgid < 0 )
 			{
-				P7::ThrowErrno( EINVAL );
+				p7::throw_errno( EINVAL );
 			}
 			
 			Process& current = CurrentProcess();
@@ -591,22 +591,22 @@ namespace Genie
 			
 			if ( current.GetPID() != target.GetPID()  &&  !target_is_child )
 			{
-				P7::ThrowErrno( ESRCH );  // target is not self or a child
+				p7::throw_errno( ESRCH );  // target is not self or a child
 			}
 			
 			if ( target_is_child  &&  target.GetLifeStage() != kProcessStarting )
 			{
-				P7::ThrowErrno( EACCES );  // child already execve'd
+				p7::throw_errno( EACCES );  // child already execve'd
 			}
 			
 			if ( current.GetSID() != target.GetSID() )
 			{
-				P7::ThrowErrno( EPERM );  // child in different session
+				p7::throw_errno( EPERM );  // child in different session
 			}
 			
 			if ( current.GetSID() == current.GetPID() )
 			{
-				P7::ThrowErrno( EPERM );  // target is a session leader
+				p7::throw_errno( EPERM );  // target is a session leader
 			}
 			
 			if ( pgid == 0 )

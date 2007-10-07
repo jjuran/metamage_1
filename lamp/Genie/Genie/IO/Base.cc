@@ -16,7 +16,7 @@ namespace Genie
 {
 	
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	static std::string IOName( unsigned long id )
 	{
@@ -40,7 +40,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const
 			{
-				P7::ThrowErrno( ENOENT );
+				p7::throw_errno( ENOENT );
 				
 				return FSTreePtr();
 			}
@@ -77,14 +77,14 @@ namespace Genie
 			return next->IOCtl( request, argp );
 		}
 		
-		P7::ThrowErrno( EINVAL );
+		p7::throw_errno( EINVAL );
 	}
 	
 	void Check_IOHandle_Cast_Result( IOHandle* cast )
 	{
 		if ( cast == NULL )
 		{
-			P7::ThrowErrno( EOPNOTSUPP );
+			p7::throw_errno( EOPNOTSUPP );
 		}
 	}
 	

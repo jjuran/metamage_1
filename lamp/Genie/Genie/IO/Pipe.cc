@@ -25,7 +25,7 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	bool PipeState::IsReadable() const
 	{
@@ -134,7 +134,7 @@ namespace Genie
 				
 				current.HandlePendingSignals();
 				
-				P7::ThrowErrno( EPIPE );
+				p7::throw_errno( EPIPE );
 			}
 			
 			itsStrings.push_back( std::string( data, byteCount ) );
@@ -151,7 +151,7 @@ namespace Genie
 	
 	int PipeInHandle::SysRead( char* /*data*/, std::size_t /*byteCount*/ )
 	{
-		P7::ThrowErrno( EPERM );
+		p7::throw_errno( EPERM );
 		
 		return -1;
 	}
@@ -164,7 +164,7 @@ namespace Genie
 	
 	int PipeOutHandle::SysWrite( const char* /*data*/, std::size_t /*byteCount*/ )
 	{
-		P7::ThrowErrno( EPERM );
+		p7::throw_errno( EPERM );
 		
 		return -1;
 	}

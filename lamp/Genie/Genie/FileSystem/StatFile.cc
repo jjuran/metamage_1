@@ -26,7 +26,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	inline unsigned long MacUnixEpochOffset()
@@ -209,7 +209,7 @@ namespace Genie
 		if ( isDir )
 		{
 			// Can't change permissions on directories
-			P7::ThrowErrno( EPERM );
+			p7::throw_errno( EPERM );
 		}
 		
 		mode_t current_mode = GetItemMode( hFileInfo );
@@ -219,7 +219,7 @@ namespace Genie
 		if ( changed_bits & S_IRUSR )
 		{
 			// Can't make anything unreadable
-			throw P7::Errno( EPERM );
+			p7::throw_errno( EPERM );
 		}
 		
 		if ( changed_bits & S_IXUSR )
@@ -230,7 +230,7 @@ namespace Genie
 			{
 				// Can't change executability of non-scripts
 				// (e.g. don't remove Shared bit on apps)
-				throw P7::Errno( EPERM );
+				p7::throw_errno( EPERM );
 			}
 			
 			bool x_bit = new_mode & S_IXUSR;

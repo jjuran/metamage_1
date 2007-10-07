@@ -25,7 +25,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	
@@ -86,7 +86,7 @@ namespace Genie
 			case WIOCSPOS:
 				if ( argp == NULL )
 				{
-					P7::ThrowErrno( EFAULT );
+					p7::throw_errno( EFAULT );
 				}
 				
 				SetPosition( *(Point*) argp );
@@ -105,7 +105,7 @@ namespace Genie
 			case WIOCSSIZE:
 				if ( argp == NULL )
 				{
-					P7::ThrowErrno( EFAULT );
+					p7::throw_errno( EFAULT );
 				}
 				
 				SetWindowSize( GetWindowRef(), *(Point*) argp );
@@ -130,7 +130,7 @@ namespace Genie
 			case WIOCSVIS:
 				if ( argp == NULL )
 				{
-					P7::ThrowErrno( EFAULT );
+					p7::throw_errno( EFAULT );
 				}
 				
 				if ( *argp )

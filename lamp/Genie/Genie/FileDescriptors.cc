@@ -19,7 +19,7 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	int LowestUnusedFileDescriptor( int fd )
@@ -42,7 +42,7 @@ namespace Genie
 		
 		if ( it == files.end() )
 		{
-			P7::ThrowErrno( EBADF );
+			p7::throw_errno( EBADF );
 		}
 		
 		return it;

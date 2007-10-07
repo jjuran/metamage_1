@@ -74,7 +74,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	namespace Sh = ShellShock;
 	namespace K = Kerosene;
 	namespace Ped = Pedestal;
@@ -86,7 +86,7 @@ namespace Genie
 	{
 		if ( gCurrentProcess == NULL )
 		{
-			P7::ThrowErrno( ESRCH );
+			p7::throw_errno( ESRCH );
 		}
 		
 		return *gCurrentProcess;
@@ -116,7 +116,7 @@ namespace Genie
 			return *process;
 		}
 		
-		P7::ThrowErrno( ESRCH );
+		p7::throw_errno( ESRCH );
 		
 		// Not reached;
 		throw;
@@ -263,7 +263,7 @@ namespace Genie
 		{}
 	};
 	
-	inline P7::Errno NotExecutable()  { return P7::Errno( EPERM ); }
+	inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
 	
 	static ExecContext& Normalize( ExecContext& context, const FSTreePtr& cwd )
 	{
@@ -430,7 +430,7 @@ namespace Genie
 			
 			if ( pgrp->GetSession() != session )
 			{
-				P7::ThrowErrno( EPERM );
+				p7::throw_errno( EPERM );
 			}
 			
 			return pgrp;
@@ -800,7 +800,7 @@ namespace Genie
 	{
 		if ( !newCWD->IsDirectory() )
 		{
-			P7::ThrowErrno( ENOTDIR );
+			p7::throw_errno( ENOTDIR );
 		}
 		
 		itsCWD = newCWD;
@@ -1288,7 +1288,7 @@ namespace Genie
 		
 		if ( signalled )
 		{
-			P7::ThrowErrno( EINTR );
+			p7::throw_errno( EINTR );
 		}
 	}
 	

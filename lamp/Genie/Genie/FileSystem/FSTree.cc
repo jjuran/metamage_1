@@ -19,7 +19,7 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	FSNode::~FSNode()
@@ -90,14 +90,14 @@ namespace Genie
 	
 	std::string FSTree::Name() const
 	{
-		P7::ThrowErrno( ENOENT );
+		p7::throw_errno( ENOENT );
 		
 		return "";  // Not reached
 	}
 	
 	FSSpec FSTree::GetFSSpec() const
 	{
-		P7::ThrowErrno( EXDEV );
+		p7::throw_errno( EXDEV );
 		
 		return FSSpec();  // Not reached
 	}
@@ -126,7 +126,7 @@ namespace Genie
 	{
 		if ( ! Exists() )
 		{
-			P7::ThrowErrno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		time_t now = time( NULL );
@@ -150,27 +150,27 @@ namespace Genie
 	
 	void FSTree::ChangeMode( mode_t /*mode*/ ) const
 	{
-		P7::ThrowErrno( EPERM );
+		p7::throw_errno( EPERM );
 	}
 	
 	void FSTree::Delete() const
 	{
-		P7::ThrowErrno( EPERM );
+		p7::throw_errno( EPERM );
 	}
 	
 	off_t FSTree::GetEOF() const
 	{
 		// This confuses MWCPPC when optimizing:
-		//P7::ThrowErrno( IsDirectory() ? EISDIR : EINVAL );
+		//p7::throw_errno( IsDirectory() ? EISDIR : EINVAL );
 		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
 		
 		if ( IsDirectory() )
 		{
-			P7::ThrowErrno( EISDIR );
+			p7::throw_errno( EISDIR );
 		}
 		else
 		{
-			P7::ThrowErrno( EINVAL );
+			p7::throw_errno( EINVAL );
 		}
 		
 		return 0;  // Not reached
@@ -180,24 +180,24 @@ namespace Genie
 	{
 		if ( IsDirectory() )
 		{
-			P7::ThrowErrno( EISDIR );
+			p7::throw_errno( EISDIR );
 		}
 		else
 		{
-			P7::ThrowErrno( EINVAL );
+			p7::throw_errno( EINVAL );
 		}
 	}
 	
 	std::string FSTree::ReadLink() const
 	{
-		P7::ThrowErrno( EINVAL );
+		p7::throw_errno( EINVAL );
 		
 		return std::string();
 	}
 	
 	FSTreePtr FSTree::ResolveLink() const
 	{
-		P7::ThrowErrno( EINVAL );
+		p7::throw_errno( EINVAL );
 		
 		return FSTreePtr();
 	}
@@ -209,7 +209,7 @@ namespace Genie
 		
 		if ( creating && excluding )
 		{
-			P7::ThrowErrno( EPERM );
+			p7::throw_errno( EPERM );
 		}
 		
 		return Open( flags );
@@ -217,7 +217,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags /*flags*/ ) const
 	{
-		P7::ThrowErrno( ENOENT );  // Assume read attempt if no mode
+		p7::throw_errno( ENOENT );  // Assume read attempt if no mode
 		
 		// Not reached
 		return boost::shared_ptr< IOHandle >();
@@ -225,18 +225,18 @@ namespace Genie
 	
 	void FSTree::Exec( const char* const /*argv*/[], const char* const /*envp*/[] ) const
 	{
-		P7::ThrowErrno( ENOEXEC );
+		p7::throw_errno( ENOEXEC );
 	}
 	
 	
 	void FSTree::CreateDirectory( mode_t /*mode*/ ) const
 	{
-		P7::ThrowErrno( EPERM );
+		p7::throw_errno( EPERM );
 	}
 	
 	FSTreePtr FSTree::Lookup( const std::string& /*name*/ ) const
 	{
-		P7::ThrowErrno( ENOENT );
+		p7::throw_errno( ENOENT );
 		
 		// Not reached
 		return FSTreePtr();
@@ -244,7 +244,7 @@ namespace Genie
 	
 	FSIteratorPtr FSTree::Iterate() const
 	{
-		P7::ThrowErrno( ENOENT );
+		p7::throw_errno( ENOENT );
 		
 		// Not reached
 		return FSIteratorPtr();

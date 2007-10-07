@@ -31,7 +31,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
 	
 	
 	static int rmdir( const char* pathname )

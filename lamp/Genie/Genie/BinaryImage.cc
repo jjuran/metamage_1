@@ -40,7 +40,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	struct BinaryFileMetadata
 	{
@@ -187,7 +187,7 @@ namespace Genie
 		
 		if ( member == NULL )
 		{
-			P7::ThrowErrno( ENOEXEC );
+			p7::throw_errno( ENOEXEC );
 		}
 		
 		UInt32 offset = member->offset;
@@ -202,7 +202,7 @@ namespace Genie
 			
 			if ( offset >= eof )
 			{
-				P7::ThrowErrno( ENOEXEC );
+				p7::throw_errno( ENOEXEC );
 			}
 			
 			length = eof - offset;

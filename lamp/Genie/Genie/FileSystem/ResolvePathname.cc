@@ -18,7 +18,7 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	class PathnameComponentIterator
@@ -105,7 +105,7 @@ namespace Genie
 			
 			if ( link_count > 10 )
 			{
-				P7::ThrowErrno( ELOOP );
+				p7::throw_errno( ELOOP );
 			}
 		}
 		

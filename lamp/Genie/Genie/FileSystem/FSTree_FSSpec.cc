@@ -49,7 +49,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
 	
@@ -389,7 +389,7 @@ namespace Genie
 	{
 		if ( !IsLink() )
 		{
-			P7::ThrowErrno( EINVAL );
+			p7::throw_errno( EINVAL );
 		}
 		
 		return ResolveLink()->Pathname();
@@ -421,7 +421,7 @@ namespace Genie
 			else if ( excluding )
 			{
 				//throw N::DupFNErr();
-				P7::ThrowErrno( EEXIST );
+				p7::throw_errno( EEXIST );
 			}
 		}
 		

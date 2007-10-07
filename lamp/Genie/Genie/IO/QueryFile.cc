@@ -15,7 +15,7 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	QueryFileHandle::~QueryFileHandle()
 	{
@@ -72,7 +72,7 @@ namespace Genie
 				break;
 			
 			default:
-				P7::ThrowErrno( EINVAL );
+				p7::throw_errno( EINVAL );
 		}
 		
 		return itsMark;

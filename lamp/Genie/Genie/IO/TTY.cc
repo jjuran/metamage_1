@@ -23,7 +23,7 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	TTYHandle::~TTYHandle()
 	{
@@ -40,7 +40,7 @@ namespace Genie
 		
 		if ( process_ctty.get() != &tty )
 		{
-			P7::ThrowErrno( ENOTTY );
+			p7::throw_errno( ENOTTY );
 		}
 	}
 	
@@ -76,7 +76,7 @@ namespace Genie
 					
 					if ( process_session->GetControllingTerminal().get() != this )
 					{
-						P7::ThrowErrno( ENOTTY );
+						p7::throw_errno( ENOTTY );
 					}
 					
 					SetProcessGroup( GetProcessGroupInSession( *argp, terminal_session ) );
@@ -88,13 +88,13 @@ namespace Genie
 				if ( process_session->ID() != current.GetPID() )
 				{
 					// not a session leader
-					P7::ThrowErrno( EPERM );
+					p7::throw_errno( EPERM );
 				}
 				
 				if ( process_session->GetControllingTerminal().get() != NULL )
 				{
 					// already has a controlling terminal
-					P7::ThrowErrno( EPERM );
+					p7::throw_errno( EPERM );
 				}
 				
 				// Check that we're not the controlling tty of another session

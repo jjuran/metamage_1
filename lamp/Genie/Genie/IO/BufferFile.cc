@@ -19,7 +19,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	boost::shared_ptr< IOHandle > NewBufferFile()
@@ -194,7 +194,7 @@ namespace Genie
 				break;
 			
 			default:
-				P7::ThrowErrno( EINVAL );
+				p7::throw_errno( EINVAL );
 		}
 		
 		return itsMark;
@@ -214,7 +214,7 @@ namespace Genie
 		
 		if ( length > te.teLength )
 		{
-			P7::ThrowErrno( EINVAL );
+			p7::throw_errno( EINVAL );
 		}
 		else if ( length == te.teLength )
 		{

@@ -25,7 +25,7 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_wait )
 	DEFINE_MODULE_INIT( Kernel_wait )
 	
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	static bool StoppedWhileTracing( const Process& process )
@@ -68,7 +68,7 @@ namespace Genie
 		
 		if ( !hasAnyChildren )
 		{
-			P7::ThrowErrno( ECHILD );
+			p7::throw_errno( ECHILD );
 		}
 		
 		return NULL;
@@ -81,13 +81,13 @@ namespace Genie
 		if ( process == NULL )
 		{
 			// No such process
-			P7::ThrowErrno( ECHILD );
+			p7::throw_errno( ECHILD );
 		}
 		
 		if ( process->GetPPID() != ppid )
 		{
 			// Process exists but its not your child
-			P7::ThrowErrno( EINVAL );
+			p7::throw_errno( EINVAL );
 		}
 		
 		bool terminated = process->GetLifeStage() == kProcessTerminated;

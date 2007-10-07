@@ -21,9 +21,6 @@
 namespace Genie
 {
 	
-	namespace P7 = POSeven;
-	
-	
 	static pascal void YieldingNotifier( void* contextPtr,
 	                                     OTEventCode code,
 	                                     OTResult result,

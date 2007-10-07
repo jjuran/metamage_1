@@ -31,7 +31,7 @@ namespace Genie
 {
 	
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	class FSTree_dev : public FSTree_Virtual
 	{
@@ -221,7 +221,7 @@ namespace Genie
 		
 		if ( tty.get() == NULL )
 		{
-			P7::ThrowErrno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		return tty;

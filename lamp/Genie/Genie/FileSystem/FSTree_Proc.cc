@@ -24,7 +24,7 @@ namespace Genie
 {
 	
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	struct proc_Details
@@ -341,7 +341,7 @@ namespace Genie
 		
 		if ( files.find( fd ) == files.end() )
 		{
-			P7::ThrowErrno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		return FSTreePtr( new FSTree_PID_fd_N( itsPID, fd ) );
@@ -393,7 +393,7 @@ namespace Genie
 		
 		if ( files.find( itsFD ) == files.end() )
 		{
-			P7::ThrowErrno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		return FSTreePtr( new FSTree_MagicFileReference( files[ itsFD ].handle ) );

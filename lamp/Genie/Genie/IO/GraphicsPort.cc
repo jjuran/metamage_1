@@ -19,7 +19,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace P7 = POSeven;
 	
 	
 	boost::shared_ptr< IOHandle > NewGraphicsPort()

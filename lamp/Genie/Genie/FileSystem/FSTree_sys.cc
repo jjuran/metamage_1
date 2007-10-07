@@ -29,7 +29,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	
 	class FSTree_sys_kernel : public FSTree_Virtual
@@ -131,7 +131,7 @@ namespace Genie
 		
 		if ( decoded.size() != sizeof (UInt32) )
 		{
-			P7::ThrowErrno( ENOENT );
+			p7::throw_errno( ENOENT );
 		}
 		
 		return *(UInt32*) decoded.data();
