@@ -436,7 +436,7 @@ namespace ALine
 				//const N::OSType codeZero = N::OSType( 0 );
 				
 				//N::FSpCreate( pkgInfo, codeZero, codeZero );
-				p7::open( pkgInfo.c_str(), p7::o_creat, 0644 );
+				p7::open( pkgInfo, p7::o_creat, 0644 );
 			}
 			catch ( ... )  {}
 			
