@@ -54,22 +54,33 @@ namespace Nitrogen
 		ThrowOSStatus( ::FSClose( fileRefNum.Release() ) );
 	}
 	
+	SInt32 FSRead( FSFileRefNum     file,
+	               SInt32           requestCount,
+	               void *           buffer,
+	               ReturnZeroOnEOF  /* policy */ )
+	{
+		SInt32 actualCount = requestCount;
+		
+		OSStatus err = ::FSRead( file, &actualCount, buffer );
+		
+		if ( err != eofErr )
+		{
+			ThrowOSStatus( err );
+		}
+		
+		return actualCount;
+	}
+	
 	SInt32 FSRead( FSFileRefNum file,
 	               SInt32       requestCount,
 	               void *       buffer )
 	{
-		SInt32 actualCount = requestCount;
+		SInt32 actualCount = FSRead( file, requestCount, buffer, ReturnZeroOnEOF() );
 		
-		OSStatus err = ::FSRead( file,
-	                             &actualCount,
-	                             buffer );
-		
-		if ( err == eofErr  &&  actualCount > 0 )
+		if ( actualCount == 0 )
 		{
-			err = noErr;
+			ThrowOSStatus( eofErr );
 		}
-		
-		ThrowOSStatus( err );
 		
 		return actualCount;
 	}
@@ -920,31 +931,52 @@ Return Value
      {
       return FSOpenFork( fork.File(), fork.Name(), permissions );
      }
-
-   ByteCount FSReadFork( FSForkRefNum fork,
-                         FSIOPosMode  positionMode,
-                         SInt64       positionOffset,
-                         ByteCount    requestCount,
-                         void *       buffer )
-     {
-      ByteCount actualCount;
-      OSStatus err = ::FSReadFork( fork,
-                                   positionMode,
-                                   positionOffset,
-                                   requestCount,
-                                   buffer,
-                                   &actualCount );
-      
-      if ( err == eofErr  &&  actualCount > 0 )
-      {
-         err = noErr;
-      }
-      
-      ThrowOSStatus( err );
-      
-      return actualCount;
-     }
-
+	
+	ByteCount FSReadFork( FSForkRefNum     fork,
+	                      FSIOPosMode      positionMode,
+	                      SInt64           positionOffset,
+	                      ByteCount        requestCount,
+	                      void *           buffer,
+	                      ReturnZeroOnEOF  /* policy */ )
+	{
+		ByteCount actualCount;
+		
+		OSStatus err = ::FSReadFork( fork,
+		                             positionMode,
+		                             positionOffset,
+		                             requestCount,
+		                             buffer,
+		                             &actualCount );
+		      
+		if ( err != eofErr )
+		{
+			ThrowOSStatus( err );
+		}
+		
+		return actualCount;
+	}
+	
+	ByteCount FSReadFork( FSForkRefNum  fork,
+	                      FSIOPosMode   positionMode,
+	                      SInt64        positionOffset,
+	                      ByteCount     requestCount,
+	                      void *        buffer )
+	{
+		ByteCount actualCount = FSReadFork( fork,
+		                                    positionMode,
+		                                    positionOffset,
+		                                    requestCount,
+		                                    buffer,
+		                                    ReturnZeroOnEOF() );
+		
+		if ( actualCount == 0 )
+		{
+			ThrowOSStatus( eofErr );
+		}
+		
+		return actualCount;
+	}
+	
    ByteCount FSWriteFork( FSForkRefNum fork,
                           FSIOPosMode  positionMode,
                           SInt64       positionOffset,

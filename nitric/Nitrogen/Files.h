@@ -282,6 +282,14 @@ namespace Nitrogen
 	
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum );
 	
+	struct ThrowOnEOF       {};  // type not used, semantics implied by default
+	struct ReturnZeroOnEOF  {};
+	
+	SInt32 FSRead( FSFileRefNum     file,
+	               SInt32           requestCount,
+	               void *           buffer,
+	               ReturnZeroOnEOF  /* policy */ );
+	
 	SInt32 FSRead( FSFileRefNum  file,
 	               SInt32        requestCount,
 	               void *        buffer );
@@ -1192,20 +1200,35 @@ namespace Nitrogen
 
    Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
                                             FSIOPermssn      permissions );
-   
-   ByteCount FSReadFork( FSForkRefNum fork,
-                         FSIOPosMode  positionMode,
-                         SInt64       positionOffset,
-                         ByteCount    requestCount,
-                         void *       buffer );
-
-   inline ByteCount FSReadFork( FSForkRefNum fork,
-                                ByteCount    requestCount,
-                                void *       buffer )
-     {
-      return FSReadFork( fork, fsAtMark, 0, requestCount, buffer );
-     }
-
+	
+	ByteCount FSReadFork( FSForkRefNum     fork,
+	                      FSIOPosMode      positionMode,
+	                      SInt64           positionOffset,
+	                      ByteCount        requestCount,
+	                      void *           buffer,
+	                      ReturnZeroOnEOF  /* policy */ );
+	
+	ByteCount FSReadFork( FSForkRefNum fork,
+	                      FSIOPosMode  positionMode,
+	                      SInt64       positionOffset,
+	                      ByteCount    requestCount,
+	                      void *       buffer );
+	
+	inline ByteCount FSReadFork( FSForkRefNum     fork,
+	                             ByteCount        requestCount,
+	                             void *           buffer,
+	                             ReturnZeroOnEOF  policy )
+	{
+		return FSReadFork( fork, fsAtMark, 0, requestCount, buffer, policy );
+	}
+	
+	inline ByteCount FSReadFork( FSForkRefNum  fork,
+	                             ByteCount     requestCount,
+	                             void *        buffer )
+	{
+		return FSReadFork( fork, fsAtMark, 0, requestCount, buffer );
+	}
+	
    template < class Element, std::size_t count >
    inline ByteCount FSReadFork( FSForkRefNum fork,
                                 FSIOPosMode  positionMode,
