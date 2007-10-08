@@ -14,6 +14,9 @@
 #ifndef POSEVEN_OPEN_HH
 #define POSEVEN_OPEN_HH
 
+// Standard C++
+#include <string>
+
 // POSIX
 #include <fcntl.h>
 
@@ -48,6 +51,11 @@ namespace poseven
 	NUCLEUS_DEFINE_FLAG_OPS( oflag_t )
 	
 	Nucleus::Owned< fd_t > open( const char* name, oflag_t oflag, int mode = 0 );
+	
+	inline Nucleus::Owned< fd_t > open( const std::string& name, oflag_t oflag, int mode = 0 )
+	{
+		return open( name.c_str(), oflag, mode );
+	}
 	
 }
 
