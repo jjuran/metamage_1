@@ -84,21 +84,20 @@ int ReadExecuteLoop( p7::fd_t  fd,
 		{
 			std::string command = input.Read();
 			
-			if ( command.find_first_not_of( " \t" ) == command.npos )
+			// Only process non-blank lines
+			if ( command.find_first_not_of( " \t" ) != command.npos )
 			{
-				continue;
-			}
-			
-			if ( command == "exit" )
-			{
-				return 0;
-			}
-			
-			result = ExecuteCmdLine( command );
-			
-			if ( !GetOption( kOptionInteractive )  &&  GetOption( kOptionExitOnError )  &&  result != 0 )
-			{
-				break;
+				if ( command == "exit" )
+				{
+					return 0;
+				}
+				
+				result = ExecuteCmdLine( command );
+				
+				if ( !GetOption( kOptionInteractive )  &&  GetOption( kOptionExitOnError )  &&  result != 0 )
+				{
+					break;
+				}
 			}
 			
 			if ( prompts )
