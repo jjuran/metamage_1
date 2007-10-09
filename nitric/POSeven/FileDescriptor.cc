@@ -26,14 +26,7 @@ namespace POSeven
 	
 	ssize_t Read( FileDescriptor fd, char* buffer, std::size_t byteCount )
 	{
-		ssize_t bytesRead;
-		
-		ThrowPOSIXResult( bytesRead = ::read( fd, buffer, byteCount ) );
-		
-		if ( bytesRead == 0 )
-		{
-			throw io::end_of_input();
-		}
+		ssize_t bytesRead = ThrowPOSIXResult( ::read( fd, buffer, byteCount ) );
 		
 		return bytesRead;
 	}
