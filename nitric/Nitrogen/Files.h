@@ -1974,7 +1974,7 @@ namespace io
 	template < class ByteCount >
 	inline SInt32 read( Nitrogen::FSFileRefNum input, char* data, ByteCount byteCount, overload = overload() )
 	{
-		return Nitrogen::FSRead( input, byteCount, data );
+		return Nitrogen::FSRead( input, byteCount, data, Nitrogen::ReturnZeroOnEOF() );
 	}
 	
 	template < class ByteCount >
@@ -2099,7 +2099,7 @@ namespace io
 	template < class ByteCount >
 	inline ByteCount read( Nitrogen::FSForkRefNum input, char* data, ByteCount byteCount, overload = overload() )
 	{
-		return Nitrogen::FSReadFork( input, byteCount, data );
+		return Nitrogen::FSReadFork( input, byteCount, data, Nitrogen::ReturnZeroOnEOF() );
 	}
 	
 	template < class ByteCount >
