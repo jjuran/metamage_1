@@ -66,7 +66,7 @@ static std::string decode_escapes( const std::string& escaped_string )
 			continue;
 		}
 		
-		std::string::const_iterator q = p;
+		std::string::const_iterator q = ++p;
 		
 		while ( std::isdigit( *q )  &&  q - p < 3 )
 		{
@@ -84,7 +84,7 @@ static std::string decode_escapes( const std::string& escaped_string )
 			continue;
 		}
 		
-		char c = *++p;
+		char c = *p;
 		
 		switch ( c )
 		{
