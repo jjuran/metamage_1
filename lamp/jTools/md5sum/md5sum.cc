@@ -30,12 +30,12 @@ static std::string MD5Sum( p7::fd_t input )
 	const std::size_t blockSize = 64;
 	
 	char data[ blockSize ];
-	int bytes;
+	std::size_t bytes;
 	MD5::Engine engine;
 	
 	try
 	{
-		while ( ( bytes = io::read( input, data, blockSize ) ) == blockSize )
+		while ( ( bytes = p7::read( input, data, blockSize ) ) == blockSize )
 		{
 			engine.DoBlock( data );
 		}
