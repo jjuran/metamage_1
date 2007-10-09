@@ -31,21 +31,10 @@
 #include "POSeven/Errno.hh"
 
 
-namespace POSeven
+namespace poseven
 {
 	
-	typedef Nucleus::ID< class FileDescriptor_Tag, int >::Type FileDescriptor;
-	
-	namespace Constants
-	{
-		
-		const static FileDescriptor kStdIn_FileNo  = FileDescriptor( STDIN_FILENO  );
-		const static FileDescriptor kStdOut_FileNo = FileDescriptor( STDOUT_FILENO );
-		const static FileDescriptor kStdErr_FileNo = FileDescriptor( STDERR_FILENO );
-		
-	}
-	
-	using namespace Constants;
+	typedef Nucleus::ID< class fd_t_tag, int >::Type fd_t;
 	
 }
 
@@ -53,10 +42,10 @@ namespace Nucleus
 {
 	
 	template <>
-	struct Disposer< POSeven::FileDescriptor > : std::unary_function< POSeven::FileDescriptor, void >,
-	                                             POSeven::DefaultDestructionErrnoPolicy
+	struct Disposer< poseven::fd_t > : std::unary_function< poseven::fd_t, void >,
+	                                   POSeven::DefaultDestructionErrnoPolicy
 	{
-		void operator()( POSeven::FileDescriptor fd ) const
+		void operator()( poseven::fd_t fd ) const
 		{
 			// FIXME
 			// HandleDestructionPOSIXError( ::close( fd ) );
@@ -70,18 +59,43 @@ namespace Nucleus
 	
 }
 
-struct stat;
-
-namespace POSeven
+namespace poseven
 {
 	
-	void Close( Nucleus::Owned< FileDescriptor > fd );
+	namespace constants
+	{
+		
+		const static fd_t stdin_fileno  = fd_t( STDIN_FILENO  );
+		const static fd_t stdout_fileno = fd_t( STDOUT_FILENO );
+		const static fd_t stderr_fileno = fd_t( STDERR_FILENO );
+		
+	}
 	
-	ssize_t Read( FileDescriptor fd, char* buffer, std::size_t byteCount );
+	using namespace constants;
 	
-	ssize_t Write( FileDescriptor fd, const char* buffer, std::size_t byteCount );
+	inline void close( Nucleus::Owned< fd_t > fd )
+	{
+		throw_posix_result( ::close( fd.Release() ) );
+	}
 	
-	struct POSIX_Io_Details
+	inline ssize_t read( fd_t fd, char* buffer, std::size_t bytes_requested )
+	{
+		return throw_posix_result( ::read( fd, buffer, bytes_requested ) );
+	}
+	
+	inline ssize_t write( fd_t fd, const char* buffer, std::size_t bytes_requested )
+	{
+		return throw_posix_result( ::write( fd, buffer, bytes_requested ) );
+	}
+	
+}
+
+struct stat;
+
+namespace poseven
+{
+	
+	struct posix_io_details
 	{
 		typedef std::string file_spec;
 		typedef std::string optimized_directory_spec;
@@ -91,7 +105,7 @@ namespace POSeven
 		
 		typedef struct ::stat file_catalog_record;
 		
-		typedef FileDescriptor stream;
+		typedef fd_t stream;
 		
 		typedef std::size_t byte_count;
 		
@@ -100,54 +114,21 @@ namespace POSeven
 	
 }
 
-namespace poseven
-{
-	
-	typedef POSeven::FileDescriptor fd_t;
-	
-	namespace constants
-	{
-		const static fd_t stdin_fileno  = POSeven::kStdIn_FileNo;
-		const static fd_t stdout_fileno = POSeven::kStdOut_FileNo;
-		const static fd_t stderr_fileno = POSeven::kStdErr_FileNo;
-	}
-	
-	using namespace constants;
-	
-	inline void close( Nucleus::Owned< fd_t > fd )
-	{
-		POSeven::Close( fd );
-	}
-	
-	inline ssize_t read( fd_t fd, char* buffer, std::size_t bytes_requested )
-	{
-		return POSeven::Read( fd, buffer, bytes_requested );
-	}
-	
-	inline ssize_t write( fd_t fd, const char* buffer, std::size_t bytes_requested )
-	{
-		return POSeven::Write( fd, buffer, bytes_requested );
-	}
-	
-	typedef POSeven::POSIX_Io_Details posix_io_details;
-	
-}
-
 namespace io
 {
 	
-	template <> struct filespec_traits< std::string > : public POSeven::POSIX_Io_Details {};
+	template <> struct filespec_traits< std::string > : public poseven::posix_io_details {};
 	
 	template < class ByteCount >
-	inline ssize_t read( POSeven::FileDescriptor fd, char* buffer, ByteCount byteCount, overload = overload() )
+	inline ssize_t read( poseven::fd_t fd, char* buffer, ByteCount byteCount, overload = overload() )
 	{
-		return POSeven::Read( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
+		return poseven::read( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
 	}
 	
 	template < class ByteCount >
-	inline ssize_t write( POSeven::FileDescriptor fd, const char* buffer, ByteCount byteCount, overload = overload() )
+	inline ssize_t write( poseven::fd_t fd, const char* buffer, ByteCount byteCount, overload = overload() )
 	{
-		return POSeven::Write( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
+		return poseven::write( fd, buffer, Nucleus::Convert< std::size_t >( byteCount ) );
 	}
 	
 }
