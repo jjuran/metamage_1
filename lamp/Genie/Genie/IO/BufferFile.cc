@@ -137,12 +137,7 @@ namespace Genie
 		const char* begin = *hText;
 		const char* end   = begin + hLength;
 		
-		std::size_t readableBytes = end - begin - itsMark;
-		
-		if ( readableBytes == 0 )
-		{
-			throw io::end_of_input();
-		}
+		std::size_t readableBytes = end - begin - itsMark;  // may be zero
 		
 		byteCount = std::min( byteCount, readableBytes );
 		

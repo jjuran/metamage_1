@@ -142,7 +142,16 @@ namespace Genie
 	
 	unsigned int ConsoleTTYHandle::SysPoll() const
 	{
-		bool readable = !itsCurrentInput.empty()  ||  console.get() && console->IsReadyForInput();
+		bool readable = true;
+		
+		try
+		{
+			readable = !itsCurrentInput.empty()  ||  console.get() && console->IsReadyForInput();
+		}
+		catch ( const io::end_of_input& )
+		{
+			// IsReadyForInput() throws on EOF, in which case readable is true
+		}
 		
 		int readability = readable ? kPollRead : 0;
 		
@@ -163,9 +172,16 @@ namespace Genie
 		{
 			if ( itsCurrentInput.empty() )
 			{
-				if ( console->IsReadyForInput() )
+				try
 				{
-					itsCurrentInput = console->ReadInput();
+					if ( console->IsReadyForInput() )
+					{
+						itsCurrentInput = console->ReadInput();
+					}
+				}
+				catch ( const io::end_of_input& )
+				{
+					return 0;
 				}
 			}
 			

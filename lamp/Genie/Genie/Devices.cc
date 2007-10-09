@@ -28,7 +28,7 @@ namespace Genie
 	
 	static int ReadNull( char*, std::size_t )
 	{
-		throw io::end_of_input();
+		return 0;
 	}
 	
 	static int WriteVoid( const char*, std::size_t byteCount )

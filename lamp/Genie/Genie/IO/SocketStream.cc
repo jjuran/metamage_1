@@ -123,7 +123,7 @@ namespace Genie
 						case T_ORDREL:
 							N::OTRcvOrderlyDisconnect( endpoint );
 							
-							throw io::end_of_input();
+							return 0;
 						
 						default:
 							break;

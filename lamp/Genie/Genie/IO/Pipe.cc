@@ -73,7 +73,7 @@ namespace Genie
 			// If the string queue is still empty then input must have closed.
 			if ( itsStrings.empty() )
 			{
-				throw io::end_of_input();
+				return 0;
 			}
 		}
 		

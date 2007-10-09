@@ -5,6 +5,9 @@
 
 #include "Genie/IO/QueryFile.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Io
 #include "io/io.hh"
 
@@ -23,10 +26,7 @@ namespace Genie
 	
 	int QueryFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		if ( itsMark >= itsData.size() )
-		{
-			throw io::end_of_input();
-		}
+		ASSERT( itsMark <= itsData.size() );
 		
 		byteCount = std::min( byteCount, itsData.size() - itsMark );
 		
