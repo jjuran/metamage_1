@@ -49,7 +49,7 @@ namespace Genie
 	
 	int MacFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return N::FSRead( refNum, byteCount, data );
+		return N::FSRead( refNum, byteCount, data, N::ReturnZeroOnEOF() );
 	}
 	
 	int MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
