@@ -32,20 +32,20 @@
 #include "POSeven/Pathnames.hh"
 
 
-namespace POSeven
+namespace poseven
 {
 	
-	typedef DIR* DirHandle;
+	typedef DIR* dir_t;
 	
 }
 
 namespace Nucleus
 {
 	
-	template <> struct Disposer< POSeven::DirHandle > : public std::unary_function< POSeven::DirHandle, void >//,
-	                                                    //private POSeven::DefaultDestructionPOSIXResultPolicy
+	template <> struct Disposer< poseven::dir_t > : public std::unary_function< poseven::dir_t, void >//,
+	                                                //private POSeven::DefaultDestructionPOSIXResultPolicy
 	{
-		void operator()( POSeven::DirHandle dir ) const
+		void operator()( poseven::dir_t dir ) const
 		{
 			//(void) Nitrogen::FileManagerErrorsRegistrationDependency();
 			//HandleDestructionPOSIXResult( ::closedir( dir ) );
@@ -54,51 +54,51 @@ namespace Nucleus
 	};
 }
 
-namespace POSeven
+namespace poseven
 {
 	
-	inline Nucleus::Owned< DirHandle > OpenDir( const char* pathname )
+	inline Nucleus::Owned< dir_t > opendir( const char* pathname )
 	{
 		DIR* handle = ::opendir( pathname );
 		
 		if ( handle == NULL )
 		{
-			ThrowErrno( errno );
+			throw_errno( errno );
 		}
 		
-		return Nucleus::Owned< DirHandle >::Seize( handle );
+		return Nucleus::Owned< dir_t >::Seize( handle );
 	}
 	
-	inline Nucleus::Owned< DirHandle > OpenDir( const std::string& pathname )
+	inline Nucleus::Owned< dir_t > opendir( const std::string& pathname )
 	{
-		return OpenDir( pathname.c_str() );
+		return opendir( pathname.c_str() );
 	}
 	
 	
-	inline void CloseDir( Nucleus::Owned< DirHandle > )  {}
+	inline void closedir( Nucleus::Owned< dir_t > )  {}
 	
 	
-	inline const dirent& ReadDir( DirHandle dir )
+	inline const dirent& readdir( dir_t dir )
 	{
 		const dirent* entry = ::readdir( dir );
 		
 		if ( entry == NULL )
 		{
-			ThrowErrno( errno );
+			throw_errno( errno );
 		}
 		
 		return *entry;
 	}
 	
 	
-	class DirectoryContents_Container
+	class directory_contents_container
 	{
 		private:
-			std::string                   itsDirPathname;
-			Nucleus::Shared< DirHandle >  itsDirHandle;
+			std::string               itsDirPathname;
+			Nucleus::Shared< dir_t >  itsDirHandle;
 			
 			// not implemented:
-			DirectoryContents_Container& operator=( const DirectoryContents_Container& );
+			directory_contents_container& operator=( const directory_contents_container& );
 		
 		public:
 			typedef std::string  value_type;
@@ -107,12 +107,12 @@ namespace POSeven
 			
 			class const_iterator
 			{
-				friend class DirectoryContents_Container;
+				friend class directory_contents_container;
 				
 				public:
-					typedef DirectoryContents_Container::size_type size_type;
-					typedef DirectoryContents_Container::difference_type difference_type;
-					typedef DirectoryContents_Container::value_type value_type;
+					typedef directory_contents_container::size_type size_type;
+					typedef directory_contents_container::difference_type difference_type;
+					typedef directory_contents_container::value_type value_type;
 					
 					typedef const value_type& reference;
 					typedef const value_type& const_reference;
@@ -123,10 +123,10 @@ namespace POSeven
 					typedef std::forward_iterator_tag iterator_category;
 					
 				private:
-					std::string                   itsDirPathname;
-					Nucleus::Shared< DirHandle >  itsDirHandle;
-					value_type                    value;
-					bool                          done;
+					std::string               itsDirPathname;
+					Nucleus::Shared< dir_t >  itsDirHandle;
+					value_type                value;
+					bool                      done;
 					
 					void GetNextValue()
 					{
@@ -134,11 +134,11 @@ namespace POSeven
 						
 						try
 						{
-							const dirent entry = ReadDir( itsDirHandle );
+							const dirent entry = readdir( itsDirHandle );
 							
 							value = itsDirPathname / entry.d_name;
 						}
-						catch ( const Errno& error )
+						catch ( const errno_t& error )
 						{
 							if ( error != ENOENT )
 							{
@@ -149,10 +149,10 @@ namespace POSeven
 						}
 					}
 					
-					const_iterator( const std::string&                   dirPathname,
-					                const Nucleus::Shared< DirHandle >&  dirHandle ) : itsDirPathname( dirPathname ),
-					                                                                   itsDirHandle( dirHandle ),
-					                                                                   done( false )
+					const_iterator( const std::string&               dirPathname,
+					                const Nucleus::Shared< dir_t >&  dirHandle ) : itsDirPathname( dirPathname ),
+					                                                               itsDirHandle( dirHandle ),
+					                                                               done( false )
 					{
 						GetNextValue();
 						
@@ -176,8 +176,8 @@ namespace POSeven
 					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
 			};
 			
-			DirectoryContents_Container( const std::string& dirPathname ) : itsDirPathname( dirPathname ),
-			                                                                itsDirHandle  ( POSeven::OpenDir( dirPathname ) )
+			directory_contents_container( const std::string& dirPathname ) : itsDirPathname( dirPathname ),
+			                                                                 itsDirHandle  ( poseven::opendir( dirPathname ) )
 			{
 			}
 			
@@ -187,36 +187,9 @@ namespace POSeven
 	};
 	
 	
-	inline DirectoryContents_Container DirectoryContents( const std::string& dir )
+	inline directory_contents_container directory_contents( const std::string& dir )
 	{
-		return DirectoryContents_Container( dir );
-	}
-	
-}
-
-namespace poseven
-{
-	
-	typedef POSeven::DirHandle dir_t;
-	
-	inline Nucleus::Owned< dir_t > opendir( const char* pathname )
-	{
-		return POSeven::OpenDir( pathname );
-	}
-	
-	inline Nucleus::Owned< dir_t > opendir( const std::string& pathname )
-	{
-		return POSeven::OpenDir( pathname );
-	}
-	
-	inline void closedir( Nucleus::Owned< dir_t > dir )
-	{
-		return POSeven::CloseDir( dir );
-	}
-	
-	inline const dirent& readdir( dir_t dir )
-	{
-		return POSeven::ReadDir( dir );
+		return directory_contents_container( dir );
 	}
 	
 }
@@ -226,13 +199,10 @@ namespace io
 	
 	template <> struct directory_contents_traits< std::string >
 	{
-		typedef POSeven::DirectoryContents_Container container_type;
+		typedef poseven::directory_contents_container container_type;
 	};
 	
-	inline POSeven::DirectoryContents_Container directory_contents( const std::string& dir )
-	{
-		return POSeven::DirectoryContents( dir );
-	}
+	using poseven::directory_contents;
 	
 }
 

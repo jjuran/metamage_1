@@ -27,52 +27,27 @@
 #include "POSeven/Errno.hh"
 
 
-namespace POSeven
-{
-	
-	inline void Unlink( const char* pathname )
-	{
-		ThrowPOSIXResult( ::unlink( pathname ) );
-	}
-	
-	inline void Unlink( const std::string& pathname )
-	{
-		Unlink( pathname.c_str() );
-	}
-	
-	inline void RemoveDir( const char* pathname )
-	{
-		ThrowPOSIXResult( ::rmdir( pathname ) );
-	}
-	
-	inline void RemoveDir( const std::string& pathname )
-	{
-		RemoveDir( pathname.c_str() );
-	}
-	
-}
-
 namespace poseven
 {
 	
 	inline void unlink( const char* pathname )
 	{
-		POSeven::Unlink( pathname );
+		throw_posix_result( ::unlink( pathname ) );
 	}
 	
 	inline void unlink( const std::string& pathname )
 	{
-		POSeven::Unlink( pathname );
+		unlink( pathname.c_str() );
 	}
 	
 	inline void rmdir( const char* pathname )
 	{
-		POSeven::RemoveDir( pathname );
+		throw_posix_result( ::rmdir( pathname ) );
 	}
 	
 	inline void rmdir( const std::string& pathname )
 	{
-		POSeven::RemoveDir( pathname );
+		rmdir( pathname.c_str() );
 	}
 	
 }
@@ -176,7 +151,7 @@ namespace io
 	
 	inline void delete_file( const std::string& file, overload = overload() )
 	{
-		POSeven::Unlink( file );
+		poseven::unlink( file );
 	}
 	
 	inline void delete_file_only( const std::string& file, overload = overload() )
@@ -186,7 +161,7 @@ namespace io
 	
 	inline void delete_empty_directory( const std::string& dir, overload = overload() )
 	{
-		POSeven::RemoveDir( dir );
+		poseven::rmdir( dir );
 	}
 	
 	inline void delete_empty_directory_only( const std::string& dir, overload = overload() )
