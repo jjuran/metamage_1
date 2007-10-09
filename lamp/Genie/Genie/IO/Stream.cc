@@ -44,9 +44,12 @@ namespace Genie
 			
 			char data[ kBufferLength ];
 			
-			int bytes = SysRead( data, kBufferLength );  // will block, throw, or return positive
+			int bytes = SysRead( data, kBufferLength );  // will block, throw, or return non-negative
 			
-			ASSERT( bytes > 0 );
+			if ( bytes == 0 )
+			{
+				throw io::end_of_input();
+			}
 			
 			peekBuffer.append( data, bytes );
 		}
