@@ -45,26 +45,13 @@ static const char* EvaluateMetaFilename( const char* pathname )
 
 static void DumpFile( p7::fd_t in )
 {
-	while ( true )
+	const std::size_t blockSize = 4096;
+	
+	char data[ blockSize ];
+	
+	while ( int bytes = p7::read( in, data, blockSize ) )
 	{
-		try
-		{
-			enum { blockSize = 4096 };
-			
-			char data[ blockSize ];
-			
-			int bytes = p7::read( in, data, blockSize );
-			
-			p7::write( p7::stdout_fileno, data, bytes );
-		}
-		catch ( const io::end_of_input& err )
-		{
-			break;
-		}
-		catch ( const io::no_input_pending& )
-		{
-			sleep( 0 );
-		}
+		p7::write( p7::stdout_fileno, data, bytes );
 	}
 }
 
@@ -92,6 +79,10 @@ int O::Main( int argc, argv_t argv )
 			NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
 			
 			DumpFile( fd );
+		}
+		catch ( const io::end_of_input& )
+		{
+			continue;
 		}
 		catch ( const p7::errno_t& error )
 		{

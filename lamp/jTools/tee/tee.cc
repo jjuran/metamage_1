@@ -7,13 +7,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/Open.hh"
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace p7 = poseven;
@@ -25,28 +27,25 @@ int O::Main( int argc, argv_t argv )
 	// Check for correct number of args
 	if ( argc != 2 )
 	{
-		Io::Err << "tee: needs one argument\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "tee: needs one argument\n" ) );
 		
 		return 1;
 	}
 	
 	const char* const outFile = argv[ 1 ];
 	
-	const int output = open( outFile, O_WRONLY );  // Will be closed when we exit
-	const int stdOut = 1;
+	const p7::fd_t output = open( outFile, p7::o_wronly ).release();  // Will be closed when we exit
+	
+	const std::size_t blockSize = 4096;
+	
+	char data[ blockSize ];
 	
 	try
 	{
-		while ( true )
+		while ( std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize ) )
 		{
-			enum { kDataSize = 4096 };
-			
-			char data[ kDataSize ];
-			
-			int bytes = io::read( p7::stdin_fileno, data, kDataSize );
-			
-			(void) write( output, data, bytes );  // FIXME:  check for errors
-			(void) write( stdOut, data, bytes );
+			(void) p7::write( output,            data, bytes );
+			(void) p7::write( p7::stdout_fileno, data, bytes );
 		}
 	}
 	catch ( const io::end_of_input& )

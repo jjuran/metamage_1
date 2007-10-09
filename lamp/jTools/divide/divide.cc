@@ -139,7 +139,12 @@ int O::Main( int argc, argv_t argv )
 	{
 		try
 		{
-			int bytes = io::read( p7::stdin_fileno, data, blockSize );
+			std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize );
+			
+			if ( bytes == 0 )
+			{
+				throw io::end_of_input();
+			}
 			
 			first_blocks.append( data, data + bytes );
 			
@@ -157,8 +162,8 @@ int O::Main( int argc, argv_t argv )
 				unsigned part_one_size = stop - first_blocks.data();
 				unsigned part_two_size = first_blocks.size() - part_one_size;
 				
-				io::write( out1, first_blocks.data(), part_one_size );
-				io::write( out2, stop,                part_two_size );
+				p7::write( out1, first_blocks.data(), part_one_size );
+				p7::write( out2, stop,                part_two_size );
 			}
 		}
 		catch ( const io::end_of_input& err )
@@ -171,9 +176,14 @@ int O::Main( int argc, argv_t argv )
 	{
 		try
 		{
-			int bytes = io::read( p7::stdin_fileno, data, blockSize );
+			std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize );
 			
-			io::write( out2, data, bytes );
+			if ( bytes == 0 )
+			{
+				throw io::end_of_input();
+			}
+			
+			p7::write( out2, data, bytes );
 		}
 		catch ( const io::end_of_input& err )
 		{

@@ -222,22 +222,19 @@ static void Relay( const std::string&  returnPath,
 	
 	smtpSession.BeginData();
 	
-	while ( true )
+	const std::size_t blockSize = 4096;
+	
+	char data[ blockSize ];
+	
+	try
 	{
-		const std::size_t kDataSize = 4096;
-		
-		char data[ kDataSize ];
-		
-		try
+		while ( std::size_t bytes = io::read( messageStream, data, blockSize ) )
 		{
-			int bytes = io::read( messageStream, data, kDataSize );
-			
-			io::write( serverStream, data, bytes );
+			p7::write( serverStream, data, bytes );
 		}
-		catch ( const io::end_of_input& )
-		{
-			break;
-		}
+	}
+	catch ( const io::end_of_input& )
+	{
 	}
 	
 	smtpSession.EndData();

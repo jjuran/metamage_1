@@ -21,6 +21,9 @@
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
 
+// POSeven
+#include "POSeven/Open.hh"
+
 // Divergence
 #include "Divergence/Utilities.hh"
 
@@ -34,6 +37,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace p7 = poseven;
 namespace Div = Divergence;
 namespace O = Orion;
 
@@ -67,30 +71,20 @@ static void BlockWrite( int fd, const void* data, std::size_t byteCount )
 	}
 }
 
-	static void Decode( int input, const N::FSDirSpec& destDir )
+	static void Decode( p7::fd_t input, const N::FSDirSpec& destDir )
 	{
 		MacBinary::Decoder decoder( destDir );
 		
-		char data[ 4096 ];
+		const std::size_t blockSize = 4096;
+		
+		char data[ blockSize ];
 		
 		std::size_t totalBytes = 0;
 		
 		try
 		{
-			while ( true )
+			while ( std::size_t bytes = p7::read( input, data, blockSize ) )
 			{
-				std::size_t bytes = read( input, data, 4096 );
-				
-				if ( bytes == 0 )
-				{
-					break;
-				}
-				else if ( bytes < 0 )
-				{
-					std::fprintf( stderr, "macbin: Read failure: %s\n", strerror( errno ) );
-					O::ThrowExitStatus( 1 );
-				}
-				
 				decoder.Write( data, bytes );
 				
 				totalBytes += bytes;
@@ -155,24 +149,13 @@ int O::Main( int argc, argv_t argv )
 		
 		try
 		{
-			bool use_stdin = target[0] == '-'  &&  target[1] == '\0';
-			
-			int input = use_stdin ? 0 : open( target, O_RDONLY );
-			
-			if ( input < 0 )
+			if ( bool use_stdin = target[0] == '-'  &&  target[1] == '\0' )
 			{
-				std::fprintf( stderr, "macbin: Couldn't open %s: %s\n", target, strerror( errno ) );
-				
-				O::ThrowExitStatus( 1 );
+				target = "/dev/fd/0";
 			}
 			
-			Decode( input,
+			Decode( io::open_for_reading( target ),
 			        NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( destDirPath ) ) );
-			
-			if ( !use_stdin )
-			{
-				close( input );
-			}
 		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
