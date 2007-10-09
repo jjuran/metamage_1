@@ -80,10 +80,6 @@ int O::Main( int argc, argv_t argv )
 			
 			DumpFile( fd );
 		}
-		catch ( const io::end_of_input& )
-		{
-			continue;
-		}
 		catch ( const p7::errno_t& error )
 		{
 			std::fprintf( stderr, "%s: %s: %s\n", argv[0], pathname, std::strerror( error ) );

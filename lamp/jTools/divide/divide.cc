@@ -137,58 +137,38 @@ int O::Main( int argc, argv_t argv )
 	
 	while ( !divided )
 	{
-		try
+		std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize );
+		
+		if ( bytes == 0 )
 		{
-			std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize );
-			
-			if ( bytes == 0 )
-			{
-				throw io::end_of_input();
-			}
-			
-			first_blocks.append( data, data + bytes );
-			
-			const char* div = FindSequenceInMemory( &*first_blocks.begin(),
-			                                        &*first_blocks.end(),
-			                                        &*divider_string.begin(),
-			                                        &*divider_string.end() );
-			
-			if ( div != data + bytes )
-			{
-				const char* stop = div + divider_string.size();
-				
-				divided = true;
-				
-				unsigned part_one_size = stop - first_blocks.data();
-				unsigned part_two_size = first_blocks.size() - part_one_size;
-				
-				p7::write( out1, first_blocks.data(), part_one_size );
-				p7::write( out2, stop,                part_two_size );
-			}
-		}
-		catch ( const io::end_of_input& err )
-		{
+			// Divider token not found
 			return 2;
+		}
+		
+		first_blocks.append( data, data + bytes );
+		
+		const char* div = FindSequenceInMemory( &*first_blocks.begin(),
+		                                        &*first_blocks.end(),
+		                                        &*divider_string.begin(),
+		                                        &*divider_string.end() );
+		
+		if ( div != data + bytes )
+		{
+			const char* stop = div + divider_string.size();
+			
+			divided = true;
+			
+			unsigned part_one_size = stop - first_blocks.data();
+			unsigned part_two_size = first_blocks.size() - part_one_size;
+			
+			p7::write( out1, first_blocks.data(), part_one_size );
+			p7::write( out2, stop,                part_two_size );
 		}
 	}
 	
-	while ( true )
+	while ( std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize ) )
 	{
-		try
-		{
-			std::size_t bytes = p7::read( p7::stdin_fileno, data, blockSize );
-			
-			if ( bytes == 0 )
-			{
-				throw io::end_of_input();
-			}
-			
-			p7::write( out2, data, bytes );
-		}
-		catch ( const io::end_of_input& err )
-		{
-			break;
-		}
+		p7::write( out2, data, bytes );
 	}
 	
 	return 0;

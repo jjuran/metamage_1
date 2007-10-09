@@ -41,36 +41,32 @@ static MD5::Result MD5DigestFile( p7::fd_t input )
 {
 	MD5::Engine md5;
 	
-	char buffer[ 4096 ];
+	const std::size_t blockSize = 4096;
 	
-	try
+	char buffer[ blockSize ];
+	
+	while ( std::size_t bytes_read = p7::read( input, buffer, blockSize ) )
 	{
-		while ( std::size_t bytes_read = p7::read( input, buffer, 4096 ) )
+		if ( bytes_read == blockSize )
 		{
-			if ( bytes_read == 4096 )
+			for ( const char* p = buffer;  p < buffer + blockSize;  p += 64 )
 			{
-				for ( const char* p = buffer;  p < buffer + 4096;  p += 64 )
-				{
-					md5.DoBlock( p );
-				}
-			}
-			else
-			{
-				const char* end_of_blocks = buffer + bytes_read - bytes_read % 64;
-				
-				for ( const char* p = buffer;  p < end_of_blocks;  p += 64 )
-				{
-					md5.DoBlock( p );
-				}
-				
-				md5.Finish( end_of_blocks, bytes_read % 64 * 8 );
-				
-				return md5.GetResult();
+				md5.DoBlock( p );
 			}
 		}
-	}
-	catch ( const io::end_of_input& )
-	{
+		else
+		{
+			const char* end_of_blocks = buffer + bytes_read - bytes_read % 64;
+			
+			for ( const char* p = buffer;  p < end_of_blocks;  p += 64 )
+			{
+				md5.DoBlock( p );
+			}
+			
+			md5.Finish( end_of_blocks, bytes_read % 64 * 8 );
+			
+			return md5.GetResult();
+		}
 	}
 	
 	md5.Finish( buffer, 0 );

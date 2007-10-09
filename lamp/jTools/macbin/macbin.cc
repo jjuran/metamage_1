@@ -90,12 +90,10 @@ static void BlockWrite( int fd, const void* data, std::size_t byteCount )
 				totalBytes += bytes;
 			}
 		}
-		catch ( const io::end_of_input& )
-		{
-		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
 			std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
+			
 			O::ThrowExitStatus( 1 );
 		}
 	}

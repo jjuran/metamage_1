@@ -33,18 +33,10 @@ static std::string MD5Sum( p7::fd_t input )
 	std::size_t bytes;
 	MD5::Engine engine;
 	
-	try
+	// loop exits on a partial block or at EOF
+	while ( ( bytes = p7::read( input, data, blockSize ) ) == blockSize )
 	{
-		while ( ( bytes = p7::read( input, data, blockSize ) ) == blockSize )
-		{
-			engine.DoBlock( data );
-		}
-		// loop exits on a partial block
-	}
-	catch ( const io::end_of_input& )
-	{
-		// We get here if there's no partial block following the last full block.
-		bytes = 0;
+		engine.DoBlock( data );
 	}
 	
 	engine.Finish( data, bytes * 8 );
