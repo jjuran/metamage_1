@@ -305,6 +305,11 @@ namespace HTTP
 			
 			int received = p7::read( socket, data, bytesToRead );
 			
+			if ( received == 0 )
+			{
+				throw io::end_of_input();
+			}
+			
 			ReceiveData( data, received );
 		}
 		catch ( const io::end_of_input& )
