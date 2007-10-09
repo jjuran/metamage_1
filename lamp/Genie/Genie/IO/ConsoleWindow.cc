@@ -58,14 +58,16 @@ namespace Genie
 	};
 	
 	
-	void ConsolePane::CheckEOF()
+	bool ConsolePane::CheckEOF()
 	{
 		if ( itHasReceivedEOF )
 		{
 			itHasReceivedEOF = false;
 			
-			throw io::end_of_input();
+			return true;
 		}
+		
+		return false;
 	}
 	
 	int ConsolePane::WriteChars( const char* data, unsigned int byteCount )
@@ -380,9 +382,9 @@ namespace Genie
 	{
 		bool ready = itsInput.Ready();
 		
-		if ( !ready )
+		if ( !ready && SubView().ScrolledView().CheckEOF() )
 		{
-			SubView().ScrolledView().CheckEOF();
+			throw io::end_of_input();
 		}
 		
 		return ready;

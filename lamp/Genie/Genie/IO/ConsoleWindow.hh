@@ -60,7 +60,7 @@ namespace Genie
 			{
 			}
 			
-			void CheckEOF();
+			bool CheckEOF();
 			
 			int WriteChars( const char* data, unsigned int byteCount );
 			
