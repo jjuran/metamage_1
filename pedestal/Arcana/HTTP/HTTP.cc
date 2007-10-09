@@ -13,9 +13,6 @@
 // Standard C++
 #include <vector>
 
-// POSIX
-#include <sys/stat.h>
-
 // Iota
 #include "iota/strings.hh"
 
@@ -23,9 +20,11 @@
 #include "Nucleus/Convert.h"
 #include "Nucleus/NAssert.h"
 
+// POSeven
+#include "POSeven/Stat.hh"
+
 
 namespace NN = Nucleus;
-namespace P7 = POSeven;
 namespace p7 = poseven;
 
 
@@ -51,13 +50,11 @@ namespace HTTP
 	
 	static std::size_t GetContentLength( p7::fd_t message_body )
 	{
-		struct stat sb;
-		
-		P7::ThrowPOSIXResult( fstat( message_body, &sb ) );
+		struct stat sb = p7::fstat( message_body );
 		
 		if ( !S_ISREG( sb.st_mode ) )
 		{
-			P7::ThrowErrno( ESPIPE );
+			p7::throw_errno( ESPIPE );
 		}
 		
 		return sb.st_size;
