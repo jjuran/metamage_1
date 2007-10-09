@@ -14,30 +14,30 @@
 #include "POSeven/Errno.hh"
 
 
-namespace POSeven
+namespace poseven
 {
 	
-	static void RegisterPOSIXErrnos();
+	static void register_posix_errnos();
 	
-	class POSIXErrnosRegistration
+	class posix_errnos_registration
 	{
 		public:
-			POSIXErrnosRegistration()  { RegisterPOSIXErrnos(); }
+			posix_errnos_registration()  { register_posix_errnos(); }
 	};
 	
-	static POSIXErrnosRegistration theRegistration;
+	static posix_errnos_registration the_registration;
 	
 	
-	void ThrowErrno_Internal( Errno number )
+	void throw_errno_internal( errno_t number )
 	{
-		Nucleus::ThrowErrorCode< Errno >( number, Nucleus::DebuggingContext() );
+		Nucleus::ThrowErrorCode< errno_t >( number, Nucleus::DebuggingContext() );
 	}
 	
-	void RegisterPOSIXErrnos()
+	void register_posix_errnos()
 	{
-		RegisterErrno< ENOENT >();
-		RegisterErrno< ENOMEM >();
-		RegisterErrno< EAGAIN >();
+		register_errno< ENOENT >();
+		register_errno< ENOMEM >();
+		register_errno< EAGAIN >();
 	}
 	
 }

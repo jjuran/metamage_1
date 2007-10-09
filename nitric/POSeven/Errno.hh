@@ -17,6 +17,7 @@
 // Standard C
 #include <errno.h>
 
+// Nucleus
 #ifndef NUCLEUS_ERRORCODE_H
 #include "Nucleus/ErrorCode.h"
 #endif
@@ -27,30 +28,16 @@
 #include "Nucleus/TheExceptionBeingHandled.h"
 #endif
 
+// Io
 #ifndef IO_IO_HH
 #include "io/io.hh"
 #endif
 
 
-namespace POSeven
+namespace poseven
 {
 	
-	class POSIXResult
-	{
-		private:
-			int result;
-		
-		public:
-			POSIXResult(       ) : result( 0 )  {}
-			POSIXResult( int x ) : result( x )  {}
-			
-			static POSIXResult Make( int x )    { return POSIXResult( x ); }
-			
-			int Get() const               { return result; }
-			operator int() const          { return result; }
-	};
-	
-	class Errno
+	class errno_t
 	{
 		private:
 			int itsNumber;
@@ -58,36 +45,36 @@ namespace POSeven
 		public:
 			typedef int ErrorNumber;
 			
-			Errno(       ) : itsNumber( 0 )  {}
-			Errno( int n ) : itsNumber( n )  {}
+			errno_t(       ) : itsNumber( 0 )  {}
+			errno_t( int n ) : itsNumber( n )  {}
 			
-			static Errno Make( int n )    { return Errno( n ); }
+			static errno_t Make( int n )    { return errno_t( n ); }
 			
 			int Get() const               { return itsNumber; }
 			operator int() const          { return itsNumber; }
 	};
 	
 	template < int number >
-	void RegisterErrno()
+	void register_errno()
 	{
-		Nucleus::RegisterErrorCode< Errno, number >();
+		Nucleus::RegisterErrorCode< errno_t, number >();
 	}
 	
-	void ThrowErrno_Internal( Errno number );
+	void throw_errno_internal( errno_t number );
 	
-	inline void ThrowErrno( int error )
+	inline void throw_errno( int error )
 	{
 		if ( error != 0 )
 		{
-			ThrowErrno_Internal( error );
+			throw_errno_internal( error );
 		}
 	}
 	
-	inline int ThrowPOSIXResult( int result )
+	inline int throw_posix_result( int result )
 	{
 		if ( result < 0 )
 		{
-			ThrowErrno_Internal( errno );
+			throw_errno_internal( errno );
 		}
 		
 		return result;
@@ -100,7 +87,8 @@ namespace POSeven
 		{
 			try
 			{
-				ThrowErrno( error );
+				throw_errno( error );
+				
 				DestructionExceptionPolicy::WarnOfDestructionExceptionRisk();
 			}
 			catch( ... )
@@ -112,19 +100,8 @@ namespace POSeven
 	
 	typedef DestructionErrnoPolicy< Nucleus::DefaultDestructionExceptionPolicy > DefaultDestructionErrnoPolicy;
 	
-	typedef Nucleus::ErrorCode< Errno, ENOENT > ENoEnt;
-	typedef Nucleus::ErrorCode< Errno, EEXIST > EExist;
-	
-}
-
-namespace poseven
-{
-	
-	typedef POSeven::Errno errno_t;
-	
-	inline void throw_errno( int error )  { POSeven::ThrowErrno( error ); }
-	
-	inline int throw_posix_result( int result )  { return POSeven::ThrowPOSIXResult( result ); }
+	typedef Nucleus::ErrorCode< errno_t, ENOENT > enoent;
+	typedef Nucleus::ErrorCode< errno_t, EEXIST > eexist;
 	
 }
 
@@ -132,13 +109,13 @@ namespace Nucleus
 {
 	
 	template <>
-	class ErrorCode< POSeven::Errno, ENOMEM > : public POSeven::Errno,
-	                                            public std::bad_alloc,
-	                                            public DebuggingContext
+	class ErrorCode< poseven::errno_t, ENOMEM > : public poseven::errno_t,
+	                                              public std::bad_alloc,
+	                                              public DebuggingContext
 	{
 		public:
-			ErrorCode() : Errno( ENOMEM )  {}
-			ErrorCode( const DebuggingContext& debugging ) : Errno( ENOMEM ),
+			ErrorCode() : errno_t( ENOMEM )  {}
+			ErrorCode( const DebuggingContext& debugging ) : errno_t( ENOMEM ),
 			                                                 DebuggingContext( debugging )
 			{
 			}
@@ -147,31 +124,31 @@ namespace Nucleus
 	};
 	
 	template <>
-	class ErrorCode< POSeven::Errno, EAGAIN > : public POSeven::Errno,
-	                                            public io::no_input_pending,
-	                                            public DebuggingContext
+	class ErrorCode< poseven::errno_t, EAGAIN > : public poseven::errno_t,
+	                                              public io::no_input_pending,
+	                                              public DebuggingContext
 	{
 		public:
-			ErrorCode() : Errno( EAGAIN )  {}
-			ErrorCode( const DebuggingContext& debugging ) : Errno( EAGAIN ),
+			ErrorCode() : errno_t( EAGAIN )  {}
+			ErrorCode( const DebuggingContext& debugging ) : errno_t( EAGAIN ),
 			                                                 DebuggingContext( debugging )
 			{
 			}
 	};
 	
-	template <> struct Converter< POSeven::Errno, std::bad_alloc >: public std::unary_function< std::bad_alloc, POSeven::Errno >
+	template <> struct Converter< poseven::errno_t, std::bad_alloc > : public std::unary_function< std::bad_alloc, poseven::errno_t >
 	{
-		POSeven::Errno operator()( const std::bad_alloc& ) const
+		poseven::errno_t operator()( const std::bad_alloc& ) const
 		{
-			return POSeven::Errno( ENOMEM );
+			return poseven::errno_t( ENOMEM );
 		}
 	};
 	
-	template <> struct Converter< POSeven::Errno, io::no_input_pending >: public std::unary_function< io::no_input_pending, POSeven::Errno >
+	template <> struct Converter< poseven::errno_t, io::no_input_pending > : public std::unary_function< io::no_input_pending, poseven::errno_t >
 	{
-		POSeven::Errno operator()( const io::no_input_pending& ) const
+		poseven::errno_t operator()( const io::no_input_pending& ) const
 		{
-			return POSeven::Errno( EAGAIN );
+			return poseven::errno_t( EAGAIN );
 		}
 	};
 	

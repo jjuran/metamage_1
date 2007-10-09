@@ -43,7 +43,7 @@ namespace Nucleus
 	
 	template <>
 	struct Disposer< poseven::fd_t > : std::unary_function< poseven::fd_t, void >,
-	                                   POSeven::DefaultDestructionErrnoPolicy
+	                                   poseven::DefaultDestructionErrnoPolicy
 	{
 		void operator()( poseven::fd_t fd ) const
 		{
