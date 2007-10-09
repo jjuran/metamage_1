@@ -74,9 +74,9 @@ namespace Io
 namespace Io
 {
 	
-	static Stream< POSeven::FileDescriptor > In ( POSeven::kStdIn_FileNo  ),
-	                                         Out( POSeven::kStdOut_FileNo ),
-	                                         Err( POSeven::kStdErr_FileNo );
+	static Stream< poseven::fd_t > In ( poseven::stdin_fileno  ),
+	                               Out( poseven::stdout_fileno ),
+	                               Err( poseven::stderr_fileno );
 	
 }
 

@@ -30,7 +30,7 @@ namespace Orion
 {
 	
 	namespace NN = Nucleus;
-	namespace P7 = POSeven;
+	namespace p7 = poseven;
 	
 	extern "C" int main( int argc, argv_t argv );
 	
@@ -76,7 +76,7 @@ namespace Orion
 		{
 			return exit.Get();
 		}
-		catch ( const P7::Errno& err )
+		catch ( const p7::errno_t& err )
 		{
 			std::fprintf( stderr, "%s: exception: %s\n", argv[0], std::strerror( err ) );
 			
