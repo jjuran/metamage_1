@@ -134,7 +134,7 @@ namespace poseven
 						
 						try
 						{
-							const dirent entry = readdir( itsDirHandle );
+							const dirent entry = poseven::readdir( itsDirHandle );
 							
 							value = itsDirPathname / entry.d_name;
 						}
