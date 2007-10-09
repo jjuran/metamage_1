@@ -110,7 +110,12 @@ namespace Io
 		{
 			typedef typename Nucleus::ConvertInputTraits< Input >::ConverterInputType Stream;
 			
-			std::size_t bytes = io::read( Stream( itsInput ), data, blockSize );  // result is always positive
+			std::size_t bytes = io::read( Stream( itsInput ), data, blockSize );
+			
+			if ( bytes == 0 )
+			{
+				return itsBuffer.ReceiveEndOfInput();
+			}
 			
 			itsBuffer.ReceiveBlock( data, bytes );
 			
