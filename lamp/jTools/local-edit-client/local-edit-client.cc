@@ -22,6 +22,7 @@
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
+#include "POSeven/Pathnames.hh"
 
 // Arcana
 #include "HTTP.hh"
@@ -189,9 +190,9 @@ int O::Main( int argc, argv_t argv )
 	
 	std::size_t argCount = O::FreeArgumentCount();
 	
-	const char* filename = argCount > 0 ? freeArgs[0] : "/dev/null";
+	const char* target_pathname = argCount > 0 ? freeArgs[0] : "/dev/null";
 	
-	NN::Owned< p7::fd_t > target_file_stream = p7::open( filename, p7::o_rdwr | p7::o_creat );
+	NN::Owned< p7::fd_t > target_file_stream = p7::open( target_pathname, p7::o_rdwr | p7::o_creat );
 	
 	MD5::Result digest = MD5DigestFile( target_file_stream );
 	
@@ -219,6 +220,7 @@ int O::Main( int argc, argv_t argv )
 	
 	std::string message_header =   HTTP::RequestLine( method, urlPath )
 	                             //+ HTTP::HeaderLine( "Host", hostname )
+	                             + HTTP::HeaderLine( "X-Edit-Title", io::get_filename( target_pathname ) )
 	                             + HTTP::HeaderLine( "Content-MD5", old_digest_b64 )
 	                             + contentLengthHeader
 	                             + "\r\n";
