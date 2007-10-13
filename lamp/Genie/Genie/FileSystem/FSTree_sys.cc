@@ -7,9 +7,11 @@
 
 // Nucleus
 #include "Nucleus/Convert.h"
+#include "Nucleus/LinkedListContainer.h"
 
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
+#include "Nitrogen/MacWindows.h"
 #include "Nitrogen/Processes.h"
 
 // POSeven
@@ -32,6 +34,20 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static UInt32 DecodeHex32( const char* begin, const char* end )
+	{
+		using BitsAndBytes::DecodeHex;
+		
+		std::string decoded = DecodeHex( std::string( begin, end ) );
+		
+		if ( decoded.size() != sizeof (UInt32) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return *(UInt32*) decoded.data();
+	}
+	
 	class FSTree_sys_kernel : public FSTree_Virtual
 	{
 		public:
@@ -43,6 +59,65 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
+	
+	struct sys_window_Details
+	{
+		static std::string Name()  { return "window"; }
+		
+		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys >(); }
+		
+		static FSTreePtr Lookup( const std::string& name );
+		
+		static const N::WindowList_Container& ItemSequence()  { return N::WindowList(); }
+		
+		static FSNode ConvertToFSNode( const N::WindowRef& window );
+		
+		FSNode operator()( const N::WindowRef& window ) const  { return ConvertToFSNode( window ); }
+	};
+	
+	typedef FSTree_Special< sys_window_Details > FSTree_sys_window;
+	
+	class FSTree_sys_window_REF : public FSTree_Virtual
+	{
+		private:
+			N::WindowRef itsWindow;
+		
+		public:
+			FSTree_sys_window_REF( const N::WindowRef& window ) : itsWindow( window )  {}
+			
+			std::string Name() const;
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_window >(); }
+	};
+	
+	static std::string NameFromWindow( const N::WindowRef& window )
+	{
+		using BitsAndBytes::EncodeAsHex;
+		
+		std::string name = EncodeAsHex( window );
+		
+		return name;
+	}
+	
+	FSTreePtr sys_window_Details::Lookup( const std::string& name )
+	{
+		N::WindowRef window = reinterpret_cast< N::WindowRef >( DecodeHex32( &*name.begin(), &*name.end() ) );
+		
+		return FSTreePtr( new FSTree_sys_window_REF( window ) );
+	}
+	
+	FSNode sys_window_Details::ConvertToFSNode( const N::WindowRef& window )
+	{
+		FSTreePtr tree( new FSTree_sys_window_REF( window ) );
+		
+		return FSNode( NameFromWindow( window ), tree );
+	}
+	
+	std::string FSTree_sys_window_REF::Name() const
+	{
+		return NameFromWindow( itsWindow );
+	}
+	
 	
 	class FSTree_sys_mac : public FSTree_Virtual
 	{
@@ -108,6 +183,7 @@ namespace Genie
 	FSTree_sys::FSTree_sys()
 	{
 		MapSingleton< FSTree_sys_kernel >();
+		MapSingleton< FSTree_sys_window >();
 		MapSingleton< FSTree_sys_mac    >();
 	}
 	
@@ -122,20 +198,6 @@ namespace Genie
 		MapSingleton< FSTree_sys_mac_gestalt >();
 	}
 	
-	
-	static UInt32 DecodeHex32( const char* begin, const char* end )
-	{
-		using BitsAndBytes::DecodeHex;
-		
-		std::string decoded = DecodeHex( std::string( begin, end ) );
-		
-		if ( decoded.size() != sizeof (UInt32) )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return *(UInt32*) decoded.data();
-	}
 	
 	FSTreePtr sys_mac_proc_Details::Lookup( const std::string& name_string )
 	{
