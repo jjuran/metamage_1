@@ -32,6 +32,8 @@ namespace Backtrace
 	
 	template < class ReturnAddr > struct UnmanglingForReturnAddr_Traits;
 	
+#if defined( __MACOS__ ) && !defined( __MACH__ )
+	
 	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddr68K >
 	{
 		static std::string Unmangle( const std::string& name )  { return UnmangleMWC68K( name ); }
@@ -42,10 +44,16 @@ namespace Backtrace
 		static std::string Unmangle( const std::string& name )  { return UnmangleMWCPPC( name ); }
 	};
 	
-	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrMachO >
+#endif
+	
+#ifdef __MACH__
+	
+	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrNative >
 	{
 		static std::string Unmangle( const std::string& name )  { return UnmangleGCC( name ); }
 	};
+	
+#endif
 	
 	template < class SymbolPtr >
 	inline std::string GetNameFromSymbolPtr( SymbolPtr symbol )
@@ -65,13 +73,17 @@ namespace Backtrace
 		return FindSymbolString( addr );
 	}
 	
+#if defined( __MACOS__ ) && !defined( __MACH__ )
+	
 	template <>
-	inline std::string GetSymbolName< ReturnAddrPPCFrag >( ReturnAddrPPCFrag addr )
+	inline std::string GetSymbolName< ReturnAddrPPC >( ReturnAddrPPC addr )
 	{
-		const ReturnAddrPPCFrag mixedModeSwitch = (ReturnAddrPPCFrag) 0xffcec400;
+		const ReturnAddrPPC mixedModeSwitch = (ReturnAddrPPC) 0xffcec400;
 		
 		return addr == mixedModeSwitch ? "MixedMode" : FindSymbolString( addr );
 	}
+	
+#endif
 	
 	template < class ReturnAddr >
 	inline std::string GetUnmangledSymbolName( ReturnAddr addr )
@@ -92,35 +104,20 @@ namespace Backtrace
 	{
 		TraceRecord result;
 		
-		switch ( call.arch )
-		{
-			case Backtrace::kArchClassic68K:
-				result.itsArch          = "68K";
-				result.itsReturnAddr    = call.addr68K;
-				result.itsUnmangledName = GetUnmangledSymbolName( call.addr68K );
-				break;
-			
-			case Backtrace::kArchPowerPCFrag:
-				result.itsArch          = "PPC";
-				result.itsReturnAddr    = call.addrPPCFrag;
-				result.itsUnmangledName = GetUnmangledSymbolName( call.addrPPCFrag );
-				break;
-			
-		#ifdef __MACH__
-			
-			case Backtrace::kArchMachO:
-				result.itsArch          = TARGET_CPU_PPC ? "PPC" : "X86";
-				result.itsReturnAddr    = call.addrMachO;
-				result.itsUnmangledName = GetUnmangledSymbolName( call.addrMachO );
-				break;
-			
-		#endif
-			
-			default:
-				result.itsArch       = "---";
-				result.itsReturnAddr = NULL;
-				break;
-		}
+		result.itsReturnAddr = call.addrNative;
+		
+	#if defined( __MACOS__ ) && !defined( __MACH__ )
+		
+		result.itsArch          = call.isCFM ? "PPC" : "68K";
+		result.itsUnmangledName = call.isCFM ? GetUnmangledSymbolName( call.addrPPCFrag )
+		                                     : GetUnmangledSymbolName( call.addrNative  );
+		
+	#else
+		
+		result.itsArch          = TARGET_CPU_PPC ? "PPC" : "X86";
+		result.itsUnmangledName = GetUnmangledSymbolName( call.addrNative );
+		
+	#endif
 		
 		return result;
 	}
@@ -128,12 +125,6 @@ namespace Backtrace
 	static void PrintTrace( unsigned offset, const void* addr, const char* arch, const char* name )
 	{
 		std::fprintf( stderr, "%d: 0x%.8x (%s) %s\n", offset, addr, arch, name );
-	}
-	
-	template < class ReturnAddr >
-	inline void TraceAddress( unsigned offset, ReturnAddr addr, const char* arch )
-	{
-		PrintTrace( offset, addr, arch, GetUnmangledSymbolName( addr ).c_str() );
 	}
 	
 	DebuggingContext::DebuggingContext() : itsStackCrawl( GetStackCrawl() )
@@ -157,28 +148,11 @@ namespace Backtrace
 		{
 			const CallRecord& call = *it;
 			
-			switch ( call.arch )
-			{
-				case Backtrace::kArchClassic68K:
-					Backtrace::TraceAddress( offset, call.addr68K, "68K" );
-					break;
-				
-				case Backtrace::kArchPowerPCFrag:
-					Backtrace::TraceAddress( offset, call.addrPPCFrag, "PPC" );
-					break;
-				
-			#ifdef __MACH__
-				
-				case Backtrace::kArchMachO:
-					Backtrace::TraceAddress( offset, call.addrMachO, TARGET_CPU_PPC ? "PPC" : "X86" );
-					break;
-				
-			#endif
-				
-				default:
-					std::fprintf( stderr, "Trace: architecture %x for address %.8x is unknown.\n", call.arch, call.addr68K );
-					break;
-			}
+			TraceRecord trace = TraceCall( call );
+			
+			PrintTrace( offset, trace.itsReturnAddr,
+			                    trace.itsArch,
+			                    trace.itsUnmangledName.c_str() );
 		}
 	}
 	

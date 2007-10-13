@@ -105,12 +105,16 @@ namespace Backtrace
 	
 	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< CallRecord >& result );
 	
+#if defined( __MC68K__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
+	
 	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, std::vector< CallRecord >& result )
 	{
 		if ( frame == NULL )
 		{
 			return;
 		}
+		
+	#if defined( __MACOS__ ) && !defined( __MACH__ )
 		
 		if ( frame >= MemoryLimit() )
 		{
@@ -126,6 +130,8 @@ namespace Backtrace
 			return;
 		}
 		
+	#endif
+		
 		ReturnAddr68K addr = frame->returnAddr;
 		
 		result.push_back( CallRecord( addr ) );
@@ -138,6 +144,15 @@ namespace Backtrace
 		CrawlStack68K( level + 1, frame->next, result );
 	}
 	
+	inline void CrawlStack( const StackFrame68K* frame, std::vector< CallRecord >& result )
+	{
+		CrawlStack68K( 0, frame, result );
+	}
+	
+#endif
+	
+#ifdef __POWERPC__
+	
 	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< CallRecord >& result )
 	{
 		if ( frame == NULL )
@@ -145,7 +160,7 @@ namespace Backtrace
 			return;
 		}
 		
-	#ifndef __MACH__
+	#if defined( __MACOS__ ) && !defined( __MACH__ )
 		
 		if ( frame >= MemoryLimit() )
 		{
@@ -180,6 +195,15 @@ namespace Backtrace
 		CrawlStackPPC( level + 1, frame->next, result );
 	}
 	
+	inline void CrawlStack( const StackFramePPC* frame, std::vector< CallRecord >& result )
+	{
+		CrawlStackPPC( 0, frame, result );
+	}
+	
+#endif
+	
+#ifdef __i386__
+	
 	static void CrawlStackX86( unsigned level, const StackFrameX86* frame, std::vector< CallRecord >& result )
 	{
 		if ( frame == NULL )
@@ -187,7 +211,7 @@ namespace Backtrace
 			return;
 		}
 		
-		ReturnAddrMachO addr = frame->returnAddr;
+		ReturnAddrX86 addr = frame->returnAddr;
 		
 		result.push_back( CallRecord( addr ) );
 		
@@ -199,20 +223,12 @@ namespace Backtrace
 		CrawlStackX86( level, frame->next, result );
 	}
 	
-	inline void CrawlStack( const StackFrame68K* frame, std::vector< CallRecord >& result )
-	{
-		CrawlStack68K( 0, frame, result );
-	}
-	
-	inline void CrawlStack( const StackFramePPC* frame, std::vector< CallRecord >& result )
-	{
-		CrawlStackPPC( 0, frame, result );
-	}
-	
 	inline void CrawlStack( const StackFrameX86* frame, std::vector< CallRecord >& result )
 	{
 		CrawlStackX86( 0, frame, result );
 	}
+	
+#endif
 	
 	static std::vector< CallRecord > GetStackCrawl( const StackFrame* top )
 	{

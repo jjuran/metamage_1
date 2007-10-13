@@ -13,57 +13,109 @@
 namespace Backtrace
 {
 	
-	typedef const struct OpaqueCode68K* ReturnAddr68K;
+	// The 'native' code type, whatever that is.
+	// Most platforms have just one, but Mac OS is special:
+	// It's either classic 68K or Mach-O -- never CFM.
+	typedef const struct OpaqueCodeNative*  ReturnAddrNative;
 	
-	typedef const struct OpaqueCodePPCFrag* ReturnAddrPPCFrag;
+#if defined( __MACOS__ ) && !defined( __MACH__ )
 	
-	typedef const struct OpaqueCodeMachO* ReturnAddrMachO;
-	
-#ifdef __MACH__
-	
-	typedef ReturnAddrMachO ReturnAddrPPC;
-	
-#else
-	
-	typedef ReturnAddrPPCFrag ReturnAddrPPC;
+	typedef const struct OpaqueCodeCFM*  ReturnAddrCFM;
 	
 #endif
 	
-	typedef const struct OpaqueStackFrame* StackFramePtr;
 	
-	enum Architecture
-	{
-		kArchClassic68K   = 0,
-		kArchPowerPCFrag  = 1,
-		kArchCFM68K       = 0 | (1 << 4),  // not supported
+#if defined( __MC68K__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
+	
+	// 68K is considered native for traditional Mac OS
+	// Even Carbon CFM binaries may run on OS 9 and can intermingle with 68K
+	typedef ReturnAddrNative ReturnAddr68K;
+	
+#else
+	
+	typedef const struct OpaqueCodeAlien68K* ReturnAddr68K;
+	
+#endif
+	
+	
+#ifdef __POWERPC__
+	
+	#if defined( __MACOS__ ) && !defined( __MACH__ )
 		
-	#ifdef __POWERPC__
-		
-		kArchMachO        = 1 | (1 << 4)
+		typedef ReturnAddrCFM ReturnAddrPPC;
 		
 	#else
 		
-		kArchMachO        = 2
+		typedef ReturnAddrNative ReturnAddrPPC;
 		
 	#endif
-	};
+	
+#else
+	
+	typedef const struct OpaqueCodeAlienPPC* ReturnAddrPPC;
+	
+#endif
+	
+	
+#ifdef __i386__
+	
+	typedef ReturnAddrNative ReturnAddrX86;
+	
+#else
+	
+	typedef const struct OpaqueCodeAlienX86* ReturnAddrX86;
+	
+#endif
+	
+	
+#ifdef __MACH__
+	
+	typedef ReturnAddrNative ReturnAddrMachO;
+	
+#else
+	
+	typedef const struct OpaqueCodeAlienMachO* ReturnAddrMachO;
+	
+#endif
+
+
+#if defined( __POWERPC__ ) && !defined( __MACH__ )
+	
+	typedef ReturnAddrNative ReturnAddrWithTraceback;
+	
+#else
+	
+	typedef const struct OpaqueCodeAlienTraceback* ReturnAddrWithTraceback;
+	
+#endif
+	
+	
+	typedef const struct OpaqueStackFrame* StackFramePtr;
 	
 	struct CallRecord
 	{
 		union
 		{
-			ReturnAddr68K      addr68K;
-			ReturnAddrPPCFrag  addrPPCFrag;
-			ReturnAddrMachO    addrMachO;
+			ReturnAddrNative  addrNative;
+			
+		#if defined( __MACOS__ ) && !defined( __MACH__ )
+			
+			ReturnAddrCFM     addrCFM;
+			
+		#endif
 		};
 		
-		Architecture arch;
+		bool isCFM;
 		
-		CallRecord()  {}
+		CallRecord() : addrNative(), isCFM()  {}
 		
-		CallRecord( ReturnAddr68K      addr ) : addr68K    ( addr ), arch( kArchClassic68K  )  {}
-		CallRecord( ReturnAddrPPCFrag  addr ) : addrPPCFrag( addr ), arch( kArchPowerPCFrag )  {}
-		CallRecord( ReturnAddrMachO    addr ) : addrMachO  ( addr ), arch( kArchMachO       )  {}
+		CallRecord( ReturnAddrNative  addr ) : addrNative( addr ), isCFM( false  )  {}
+		
+	#if defined( __MACOS__ ) && !defined( __MACH__ )
+		
+		CallRecord( ReturnAddrCFM     addr ) : addrCFM   ( addr ), isCFM( true  )  {}
+		
+	#endif
 	};
 	
 	
