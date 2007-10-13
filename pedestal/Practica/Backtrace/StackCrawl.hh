@@ -38,17 +38,13 @@ namespace Backtrace
 #endif
 	
 	
-#ifdef __POWERPC__
+#if defined( __MACOS__ ) && !defined( __MACH__ )
 	
-	#if defined( __MACOS__ ) && !defined( __MACH__ )
-		
-		typedef ReturnAddrCFM ReturnAddrPPC;
-		
-	#else
-		
-		typedef ReturnAddrNative ReturnAddrPPC;
-		
-	#endif
+	typedef ReturnAddrCFM ReturnAddrPPC;
+	
+#elif defined( __POWERPC__ )
+	
+	typedef ReturnAddrNative ReturnAddrPPC;
 	
 #else
 	
@@ -79,9 +75,9 @@ namespace Backtrace
 #endif
 
 
-#if defined( __POWERPC__ ) && !defined( __MACH__ )
+#if ( defined( __POWERPC__ ) || defined( __MACOS__ ) )  &&  !defined( __MACH__ )
 	
-	typedef ReturnAddrNative ReturnAddrWithTraceback;
+	typedef ReturnAddrPPC ReturnAddrWithTraceback;
 	
 #else
 	

@@ -39,7 +39,7 @@ namespace Backtrace
 		static std::string Unmangle( const std::string& name )  { return UnmangleMWC68K( name ); }
 	};
 	
-	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrPPCFrag >
+	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrCFM >
 	{
 		static std::string Unmangle( const std::string& name )  { return UnmangleMWCPPC( name ); }
 	};
@@ -109,8 +109,8 @@ namespace Backtrace
 	#if defined( __MACOS__ ) && !defined( __MACH__ )
 		
 		result.itsArch          = call.isCFM ? "PPC" : "68K";
-		result.itsUnmangledName = call.isCFM ? GetUnmangledSymbolName( call.addrPPCFrag )
-		                                     : GetUnmangledSymbolName( call.addrNative  );
+		result.itsUnmangledName = call.isCFM ? GetUnmangledSymbolName( call.addrCFM    )
+		                                     : GetUnmangledSymbolName( call.addrNative );
 		
 	#else
 		
