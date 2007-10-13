@@ -22,6 +22,9 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
+// Backtrace
+#include "Backtrace/StackCrawl.hh"
+
 // Nucleus
 #include "Nucleus/Owned.h"
 
@@ -169,6 +172,8 @@ namespace Genie
 			
 			boost::shared_ptr< ProcessGroup > itsProcessGroup;
 			
+			Backtrace::StackFramePtr itsStackFramePtr;
+			
 			pid_t itsTracingProcess;
 			
 			UInt64 itsAlarmClock;
@@ -235,6 +240,8 @@ namespace Genie
 			const boost::shared_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
 			void SetProcessGroup( const boost::shared_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
+			
+			Backtrace::StackFramePtr GetStackFramePointer() const  { return itsStackFramePtr; }
 			
 			pid_t GetTracingProcess() const  { return itsTracingProcess; }
 			bool IsBeingTraced() const  { return itsTracingProcess != 0; }

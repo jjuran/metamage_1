@@ -448,6 +448,7 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsLongJmp            ( NULL ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
+		itsStackFramePtr      ( NULL ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
@@ -475,6 +476,7 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsLongJmp            ( NULL ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
+		itsStackFramePtr      ( NULL ),
 		itsTracingProcess     ( 0 ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
@@ -968,6 +970,8 @@ namespace Genie
 	{
 		gCurrentProcess = this;
 		
+		itsStackFramePtr = NULL;  // We don't track this while running
+		
 		SwapInEnvironValue( GetEnviron() );
 		
 		itsSchedule = kProcessRunning;
@@ -1234,6 +1238,8 @@ namespace Genie
 			
 			ASSERT( N::GetCurrentThread() == itsThread->Get() );
 			
+			itsStackFramePtr = Backtrace::GetStackFramePointer();
+			
 			Suspend();
 		}
 		
@@ -1274,6 +1280,8 @@ namespace Genie
 	void Process::Yield()
 	{
 		itsSchedule = kProcessSleeping;
+		
+		itsStackFramePtr = Backtrace::GetStackFramePointer();
 		
 		Suspend();
 		
