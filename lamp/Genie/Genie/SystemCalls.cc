@@ -60,11 +60,11 @@ namespace Nucleus
 {
 	
 	template <>
-	struct Converter< POSeven::Errno, io::end_of_input > : public std::unary_function< io::end_of_input, POSeven::Errno >
+	struct Converter< poseven::errno_t, io::end_of_input > : public std::unary_function< io::end_of_input, poseven::errno_t >
 	{
-		POSeven::Errno operator()( io::end_of_input ) const
+		poseven::errno_t operator()( io::end_of_input ) const
 		{
-			return POSeven::Errno( 0 );
+			return poseven::errno_t( 0 );
 		}
 	};
 	
