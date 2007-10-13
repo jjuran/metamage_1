@@ -24,12 +24,17 @@
 #ifndef __MACWINDOWS__
 #include FRAMEWORK_HEADER(HIToolbox,MacWindows.h)
 #endif
-#ifndef NUCLEUS_SELECTOR_H
-#include "Nucleus/Selector.h"
+
+#ifndef NUCLEUS_LINKEDLISTCONTAINER_H
+#include "Nucleus/LinkedListContainer.h"
 #endif
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
+#ifndef NUCLEUS_SELECTOR_H
+#include "Nucleus/Selector.h"
+#endif
+
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
@@ -723,7 +728,39 @@ namespace Nitrogen
 		ThrowOSStatus ( ::GetWindowProxyIcon ( inWindow, &result ));
 		return Nucleus::Owned<IconRef>::Seize ( result );
 		}
-
-  }
+	
+	
+	class WindowList_ContainerSpecifics
+	{
+		public:
+			typedef WindowRef value_type;
+			typedef UInt32 size_type;
+			typedef SInt32 difference_type;
+			
+			value_type GetNextValue( value_type value )
+			{
+				return GetNextWindow( value );
+			}
+			
+			static value_type begin_value()  { return GetWindowList(); }
+	};
+	
+	class WindowList_Container: public Nucleus::LinkedListContainer< ::Nitrogen::WindowList_ContainerSpecifics >
+	{
+		friend WindowList_Container WindowList();
+		
+		private:
+			WindowList_Container()
+			: Nucleus::LinkedListContainer< ::Nitrogen::WindowList_ContainerSpecifics >( ::Nitrogen::WindowList_ContainerSpecifics() )
+			{
+			}
+	};
+	
+	inline WindowList_Container WindowList()
+	{
+		return WindowList_Container();
+	}
+	
+}
 
 #endif
