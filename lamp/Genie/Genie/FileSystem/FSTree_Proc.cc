@@ -11,6 +11,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// BitsAndBytes
+#include "HexStrings.hh"
+
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
@@ -315,6 +318,60 @@ namespace Genie
 			}
 	};
 	
+	class proc_PID_backtrace_Query
+	{
+		private:
+			pid_t itsPID;
+		
+		public:
+			proc_PID_backtrace_Query( pid_t pid ) : itsPID( pid )  {}
+			
+			std::string operator()() const;
+	};
+	
+	std::string proc_PID_backtrace_Query::operator()() const
+	{
+		const Process& process = GetProcess( itsPID );
+		
+		Backtrace::StackFramePtr top = process.GetStackFramePointer();
+		
+		std::vector< Backtrace::CallRecord > calls = GetStackCrawl( top );
+		
+		std::vector< Backtrace::TraceRecord > traces( calls.size() );
+		
+		std::transform( calls.begin(),
+		                calls.end(),
+		                traces.begin(),
+		                std::ptr_fun( Backtrace::TraceCall ) );
+		
+		std::string result;
+		
+		unsigned offset = 0;
+		
+		typedef std::vector< Backtrace::TraceRecord >::const_iterator Iter;
+		
+		for ( Iter it = traces.begin();  it != traces.end();  ++it, ++offset )
+		{
+			using BitsAndBytes::EncodeAsHex;
+			
+			result += NN::Convert< std::string >( offset );
+			result += ": 0x";
+			result += EncodeAsHex( it->itsReturnAddr );
+			result += " (";
+			result += it->itsArch;
+			result += ") ";
+			result += it->itsUnmangledName;
+			result += "\n";
+			
+			if ( it->itsUnmangledName == "main" )
+			{
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
 	
 	FSTree_PID::FSTree_PID( pid_t pid ) : itsPID( pid )
 	{
@@ -326,6 +383,10 @@ namespace Genie
 		Map( "stat", FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( Pathname(),
 		                                                                     "stat",
 		                                                                     proc_PID_stat_Query( pid ) ) ) );
+		
+		Map( "backtrace", FSTreePtr( new FSTree_QueryFile< proc_PID_backtrace_Query >( Pathname(),
+		                                                                               "backtrace",
+		                                                                               proc_PID_backtrace_Query( pid ) ) ) );
 	}
 	
 	std::string FSTree_PID::Name() const
