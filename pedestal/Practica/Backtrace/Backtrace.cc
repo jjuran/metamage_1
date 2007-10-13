@@ -88,6 +88,43 @@ namespace Backtrace
 		}
 	}
 	
+	TraceRecord TraceCall( const CallRecord& call )
+	{
+		TraceRecord result;
+		
+		switch ( call.arch )
+		{
+			case Backtrace::kArchClassic68K:
+				result.itsArch          = "68K";
+				result.itsReturnAddr    = call.addr68K;
+				result.itsUnmangledName = GetUnmangledSymbolName( call.addr68K );
+				break;
+			
+			case Backtrace::kArchPowerPCFrag:
+				result.itsArch          = "PPC";
+				result.itsReturnAddr    = call.addrPPCFrag;
+				result.itsUnmangledName = GetUnmangledSymbolName( call.addrPPCFrag );
+				break;
+			
+		#ifdef __MACH__
+			
+			case Backtrace::kArchMachO:
+				result.itsArch          = TARGET_CPU_PPC ? "PPC" : "X86";
+				result.itsReturnAddr    = call.addrMachO;
+				result.itsUnmangledName = GetUnmangledSymbolName( call.addrMachO );
+				break;
+			
+		#endif
+			
+			default:
+				result.itsArch       = "---";
+				result.itsReturnAddr = NULL;
+				break;
+		}
+		
+		return result;
+	}
+	
 	static void PrintTrace( unsigned offset, const void* addr, const char* arch, const char* name )
 	{
 		std::fprintf( stderr, "%d: 0x%.8x (%s) %s\n", offset, addr, arch, name );
@@ -139,7 +176,7 @@ namespace Backtrace
 			#endif
 				
 				default:
-					std::fprintf( stderr, "Trace: architecture %x for addres %.8x is unknown.\n", call.arch, call.addr68K );
+					std::fprintf( stderr, "Trace: architecture %x for address %.8x is unknown.\n", call.arch, call.addr68K );
 					break;
 			}
 		}

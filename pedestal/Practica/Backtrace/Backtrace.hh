@@ -7,6 +7,7 @@
 #define BACKTRACE_BACKTRACE_HH
 
 // Standard C++
+#include <string>
 #include <vector>
 
 // Backtrace
@@ -15,6 +16,15 @@
 
 namespace Backtrace
 {
+	
+	struct TraceRecord
+	{
+		const void* itsReturnAddr;
+		const char* itsArch;
+		std::string itsUnmangledName;
+	};
+	
+	TraceRecord TraceCall( const CallRecord& call );
 	
 	struct DebuggingContext
 	{

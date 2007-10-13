@@ -29,6 +29,8 @@ namespace Backtrace
 	
 #endif
 	
+	typedef const struct OpaqueStackFrame* StackFramePtr;
+	
 	enum Architecture
 	{
 		kArchClassic68K   = 0,
@@ -64,6 +66,10 @@ namespace Backtrace
 		CallRecord( ReturnAddrMachO    addr ) : addrMachO  ( addr ), arch( kArchMachO       )  {}
 	};
 	
+	
+	StackFramePtr GetStackFramePointer();
+	
+	std::vector< CallRecord > GetStackCrawl( StackFramePtr frame );
 	
 	std::vector< CallRecord > GetStackCrawl();
 	

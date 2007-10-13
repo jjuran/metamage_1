@@ -33,6 +33,8 @@ namespace Backtrace
 	
 #ifdef __MC68K__
 	
+	typedef StackFrame68K StackFrame;
+	
 	#pragma parameter __D0 GetA6
 	
 	inline char* GetA6() = { 0x200e };
@@ -42,6 +44,8 @@ namespace Backtrace
 #endif
 
 #ifdef __POWERPC__
+	
+	typedef StackFramePPC StackFrame;
 	
 	#ifdef __MWERKS__
 		
@@ -68,6 +72,8 @@ namespace Backtrace
 	
 #ifdef __i386__
 	
+	typedef StackFrameX86 StackFrame;
+	
 	static char *GetEBP( void )
 	{
 		__asm__( "mov  %ebp,%eax" );
@@ -76,6 +82,12 @@ namespace Backtrace
 	inline const StackFrameX86* GetTopFrame()  { return (const StackFrameX86*) GetEBP(); }
 	
 #endif
+	
+	StackFramePtr GetStackFramePointer()
+	{
+		return reinterpret_cast< StackFramePtr >( GetTopFrame() );
+	}
+	
 	
 	static const StackFramePPC* SwitchBackToPPCFrom68K( const StackFrame68K* frame )
 	{
@@ -202,19 +214,31 @@ namespace Backtrace
 		CrawlStackX86( 0, frame, result );
 	}
 	
-	std::vector< CallRecord > GetStackCrawl()
+	static std::vector< CallRecord > GetStackCrawl( const StackFrame* top )
 	{
 		std::vector< CallRecord > result;
 		
 		try
 		{
-			CrawlStack( GetTopFrame(), result );
+			CrawlStack( top, result );
 		}
 		catch ( const std::bad_alloc& )
 		{
 		}
 		
 		return result;
+	}
+	
+	std::vector< CallRecord > GetStackCrawl( StackFramePtr top )
+	{
+		const StackFrame* frame = reinterpret_cast< const StackFrame* >( top );
+		
+		return GetStackCrawl( frame );
+	}
+	
+	std::vector< CallRecord > GetStackCrawl()
+	{
+		return GetStackCrawl( GetTopFrame() );
 	}
 	
 }
