@@ -42,6 +42,7 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/Pipe.hh"
+#include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/TTY.hh"
 #include "Genie/Process.hh"
@@ -507,10 +508,10 @@ namespace Genie
 		int reader = LowestUnusedFileDescriptor( 3 );
 		int writer = LowestUnusedFileDescriptor( reader + 1 );
 		
-		boost::shared_ptr< PipeState > pipeState( new PipeState );
+		boost::shared_ptr< Conduit > conduit( new Conduit );
 		
-		boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( pipeState ) );
-		boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( pipeState ) );
+		boost::shared_ptr< IOHandle > pipeIn ( new PipeInHandle ( conduit ) );
+		boost::shared_ptr< IOHandle > pipeOut( new PipeOutHandle( conduit ) );
 		
 		AssignFileDescriptor( reader, pipeOut );
 		AssignFileDescriptor( writer, pipeIn );
@@ -749,31 +750,44 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( ttyname );
 	
-	/*
 	// ttypair() is analogous to socketpair(), and creates a pseudo-tty device.
 	// File descriptors refering to the master and slave respectively are returned
 	// in filedes.
 	// I made this up too.
-	static int ttypair( int filedes[ 2 ] )
+	static int ttypair( int fds[ 2 ] )
 	{
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		SystemCallFrame frame( "ttypair" );
 		
-		NewPseudoTerminal_Result fds = NewPseudoTerminal();
+		static unsigned index = 0;
 		
-		int fd0 = LowestUnusedFrom( files, 0 );
-		int fd1 = LowestUnusedFrom( files, fd0 + 1 );
-		
-		files[ fd0 ] = fds.first;
-		files[ fd1 ] = fds.second;
-		
-		filedes[ 0 ] = fd0;
-		filedes[ 1 ] = fd1;
+		try
+		{
+			boost::shared_ptr< Conduit > incoming( new Conduit );
+			boost::shared_ptr< Conduit > outgoing( new Conduit );
+			
+			boost::shared_ptr< IOHandle > master_handle( new PseudoTTYHandle( index, outgoing, incoming ) );
+			boost::shared_ptr< IOHandle > slave_handle ( new PseudoTTYHandle( index, incoming, outgoing ) );
+			
+			++index;
+			
+			int master_fd = LowestUnusedFileDescriptor( 3 );
+			int slave_fd  = LowestUnusedFileDescriptor( master_fd + 1 );
+			
+			AssignFileDescriptor( master_fd, master_handle );
+			AssignFileDescriptor( slave_fd,  slave_handle  );
+			
+			fds[ 0 ] = master_fd;
+			fds[ 1 ] = slave_fd;
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 		
 		return 0;
 	}
 	
 	REGISTER_SYSTEM_CALL( ttypair );
-	*/
 	
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
