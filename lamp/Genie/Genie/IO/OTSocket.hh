@@ -27,11 +27,11 @@ namespace Genie
 	class OTSocket : public SocketHandle
 	{
 		private:
-			OpenTransportShare itsOpenTransport;
-			Nucleus::Owned< Nitrogen::EndpointRef > endpoint;
-			SocketAddress socketAddress;
-			SocketAddress peerAddress;
-			bool isBound;
+			OpenTransportShare                       itsOpenTransport;
+			Nucleus::Owned< Nitrogen::EndpointRef >  itsEndpoint;
+			SocketAddress                            itsSocketAddress;
+			SocketAddress                            itsPeerAddress;
+			bool                                     itIsBound;
 		
 		public:
 			OTSocket( bool isBlocking = true );
@@ -42,7 +42,7 @@ namespace Genie
 			
 			TypeCode ActualType() const  { return Type(); }
 			
-			bool IsBlocking() const  { return Nitrogen::OTIsBlocking( endpoint ); }
+			bool IsBlocking() const  { return Nitrogen::OTIsBlocking( itsEndpoint ); }
 			
 			unsigned int SysPoll() const;
 			
@@ -52,8 +52,8 @@ namespace Genie
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			void SetBlocking   ()  { Nitrogen::OTSetBlocking   ( endpoint ); }
-			void SetNonBlocking()  { Nitrogen::OTSetNonBlocking( endpoint ); }
+			void SetBlocking   ()  { Nitrogen::OTSetBlocking   ( itsEndpoint ); }
+			void SetNonBlocking()  { Nitrogen::OTSetNonBlocking( itsEndpoint ); }
 			
 			void Bind( const sockaddr& local, socklen_t len );
 			
@@ -63,8 +63,8 @@ namespace Genie
 			
 			void Connect( const sockaddr& server, socklen_t len );
 			
-			const SocketAddress& GetSockName() const  { return socketAddress; }
-			const SocketAddress& GetPeerName() const  { return peerAddress;   }
+			const SocketAddress& GetSockName() const  { return itsSocketAddress; }
+			const SocketAddress& GetPeerName() const  { return itsPeerAddress;   }
 			
 			void ShutdownReading()  {}
 			void ShutdownWriting();

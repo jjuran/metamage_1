@@ -58,8 +58,8 @@ namespace Genie
 		}
 	}
 	
-	OTSocket::OTSocket( bool isBlocking ) : endpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
-	                                        isBound( false )
+	OTSocket::OTSocket( bool isBlocking ) : itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
+	                                        itIsBound( false )
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
 		
@@ -68,25 +68,25 @@ namespace Genie
 		
 		if ( isBlocking )
 		{
-			N::OTSetBlocking( endpoint );
+			N::OTSetBlocking( itsEndpoint );
 		}
 		
-		N::OTInstallNotifier( endpoint, gNotifyUPP, NULL );
+		N::OTInstallNotifier( itsEndpoint, gNotifyUPP, NULL );
 		
-		N::OTUseSyncIdleEvents( endpoint, true );
+		N::OTUseSyncIdleEvents( itsEndpoint, true );
 	}
 	
 	OTSocket::~OTSocket()
 	{
-		if ( isBound )
+		if ( itIsBound )
 		{
-			(void) ::OTUnbind( endpoint );
+			(void) ::OTUnbind( itsEndpoint );
 		}
 	}
 	
 	unsigned int OTSocket::SysPoll() const
 	{
-		::OTResult state = ::OTGetEndpointState( endpoint );
+		::OTResult state = ::OTGetEndpointState( itsEndpoint );
 		
 		bool canRead = true;
 		
@@ -98,7 +98,7 @@ namespace Genie
 		{
 			::OTByteCount count;
 			
-			canRead = ::OTCountDataBytes( endpoint, &count ) == noErr;
+			canRead = ::OTCountDataBytes( itsEndpoint, &count ) == noErr;
 		}
 		
 		return (canRead ? kPollRead : 0) | kPollWrite;
@@ -116,18 +116,18 @@ namespace Genie
 			try
 			{
 				// Always 1 byte (unless there's an error); may block
-				bytes = N::OTRcv( endpoint, data, 1 );
+				bytes = N::OTRcv( itsEndpoint, data, 1 );
 			}
 			catch ( const N::OSStatus& err )
 			{
 				if ( err == kOTLookErr )
 				{
-					OTResult look = N::OTLook( endpoint );
+					OTResult look = N::OTLook( itsEndpoint );
 					
 					switch ( look )
 					{
 						case T_ORDREL:
-							N::OTRcvOrderlyDisconnect( endpoint );
+							N::OTRcvOrderlyDisconnect( itsEndpoint );
 							
 							return 0;
 						
@@ -150,7 +150,7 @@ namespace Genie
 			try
 			{
 				// Read whatever's left, nonblocking
-				bytes += N::OTRcv( endpoint, data + 1, byteCount - 1 );
+				bytes += N::OTRcv( itsEndpoint, data + 1, byteCount - 1 );
 			}
 			catch ( const io::no_input_pending& ) {}  // There was only one byte
 			catch ( ... )
@@ -166,7 +166,7 @@ namespace Genie
 			return bytes;
 		}
 		
-		return N::OTRcv( endpoint, data, byteCount );
+		return N::OTRcv( itsEndpoint, data, byteCount );
 	}
 	
 	int OTSocket::SysWrite( const char* data, std::size_t byteCount )
@@ -175,18 +175,18 @@ namespace Genie
 		
 		try
 		{
-			return N::OTSnd( endpoint, data, byteCount );
+			return N::OTSnd( itsEndpoint, data, byteCount );
 		}
 		catch ( const N::OSStatus& err )
 		{
 			if ( err == kOTLookErr )
 			{
-				OTResult look = N::OTLook( endpoint );
+				OTResult look = N::OTLook( itsEndpoint );
 				
 				switch ( look )
 				{
 					case T_ORDREL:
-						N::OTRcvOrderlyDisconnect( endpoint );
+						N::OTRcvOrderlyDisconnect( itsEndpoint );
 						
 						goto retry;
 					
@@ -214,12 +214,12 @@ namespace Genie
 			// Fail
 		}
 		
-		socketAddress.Assign( local, len );
+		itsSocketAddress.Assign( local, len );
 	}
 	
 	void OTSocket::Listen( int backlog )
 	{
-		if ( socketAddress.Get() == NULL )
+		if ( itsSocketAddress.Get() == NULL )
 		{
 			// Fail
 		}
@@ -228,13 +228,13 @@ namespace Genie
 		
 		::OTMemzero( &reqAddr, sizeof (TBind) );
 		
-		reqAddr.addr.buf = reinterpret_cast< unsigned char* >( socketAddress.Get() );
-		reqAddr.addr.len = socketAddress.Len();
+		reqAddr.addr.buf = reinterpret_cast< unsigned char* >( itsSocketAddress.Get() );
+		reqAddr.addr.len = itsSocketAddress.Len();
 		reqAddr.qlen = backlog;
 		
-		N::OTBind( endpoint, &reqAddr, NULL );
+		N::OTBind( itsEndpoint, &reqAddr, NULL );
 		
-		isBound = true;
+		itIsBound = true;
 	}
 	
 	std::auto_ptr< IOHandle > OTSocket::Accept( sockaddr& client, socklen_t& len )
@@ -246,7 +246,7 @@ namespace Genie
 		call.addr.buf = reinterpret_cast< unsigned char* >( &client );
 		call.addr.maxlen = len;
 		
-		N::OTListen( endpoint, &call );
+		N::OTListen( itsEndpoint, &call );
 		
 		len = call.addr.len;
 		
@@ -254,19 +254,20 @@ namespace Genie
 		
 		std::auto_ptr< IOHandle > newSocket( handle );
 		
-		handle->peerAddress.Assign( client, len );
+		handle->itsPeerAddress.Assign( client, len );
 		
-		N::OTAccept( endpoint, handle->endpoint, &call );
+		N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
 		
 		return newSocket;
 	}
 	
 	void OTSocket::Connect( const sockaddr& server, socklen_t len )
 	{
-		if ( !isBound )
+		if ( !itIsBound )
 		{
-			N::OTBind( endpoint );
-			isBound = true;
+			N::OTBind( itsEndpoint );
+			
+			itIsBound = true;
 		}
 		
 		TCall sndCall;
@@ -276,12 +277,12 @@ namespace Genie
 		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( &server ) );
 		sndCall.addr.len = len;
 		
-		N::OTConnect( endpoint, sndCall );
+		N::OTConnect( itsEndpoint, sndCall );
 	}
 	
 	void OTSocket::ShutdownWriting()
 	{
-		N::OTSndOrderlyDisconnect( endpoint );
+		N::OTSndOrderlyDisconnect( itsEndpoint );
 	}
 	
 }
