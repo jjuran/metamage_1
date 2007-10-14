@@ -63,6 +63,20 @@ namespace Orion
 			void Set( const char* ) const  { itsData = itsValue; }
 	};
 	
+	template < class Trigger >
+	class TriggerOptionBinding : public OptionBinding
+	{
+		private:
+			Trigger itsTrigger;
+		
+		public:
+			TriggerOptionBinding( Trigger trigger ) : itsTrigger( trigger )  {}
+			
+			bool ParameterExpected() const  { return false; }
+			
+			void Set( const char* param ) const  { itsTrigger( param ); }
+	};
+	
 	
 	template < class Type >
 	boost::shared_ptr< OptionBinding > NewOptionBinding( Type& data, Type value )
@@ -81,6 +95,12 @@ namespace Orion
 	
 	boost::shared_ptr< OptionBinding > NewOptionBinding( std::vector< std::string >& strings );
 	
+	template < class Trigger >
+	boost::shared_ptr< OptionBinding > NewOptionBinding( Trigger trigger )
+	{
+		return boost::shared_ptr< OptionBinding >( new TriggerOptionBinding< Trigger >( trigger ) );
+	}
+	
 	
 	void AddBinding( OptionID optionID, const boost::shared_ptr< OptionBinding >& binding );
 	
@@ -90,6 +110,16 @@ namespace Orion
 		OptionID optionID = NewOption( optionSpec );
 		
 		boost::shared_ptr< OptionBinding > binding = NewOptionBinding( data );
+		
+		AddBinding( optionID, binding );
+	}
+	
+	template < class Trigger >
+	void BindOption( const char* optionSpec, Trigger trigger )
+	{
+		OptionID optionID = NewOption( optionSpec );
+		
+		boost::shared_ptr< OptionBinding > binding = NewOptionBinding( trigger );
 		
 		AddBinding( optionID, binding );
 	}

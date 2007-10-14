@@ -7,6 +7,7 @@
 
 // Standard C++
 #include <algorithm>
+#include <functional>
 #include <map>
 
 // Standard C/C++
@@ -166,8 +167,25 @@ namespace Orion
 		}
 	}
 	
+	static void DefaultHelp( const char* )
+	{
+		typedef OptionMap::const_iterator Iter;
+		
+		for ( Iter it = gOptionMap.begin();  it != gOptionMap.end();  ++it )
+		{
+			std::printf( "%s\n", it->first.c_str() );
+		}
+		
+		std::exit( EXIT_SUCCESS );
+	}
+	
 	void GetOptions( int argc, char const *const *argv )
 	{
+		if ( gOptionMap.find( "--help" ) == gOptionMap.end() )
+		{
+			BindOption( "--help", std::ptr_fun( DefaultHelp ) );
+		}
+		
 		char const* const* begin = argv + 1;  // Skip the command
 		char const* const* end = argv + argc;
 		
