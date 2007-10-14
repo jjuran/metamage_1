@@ -60,13 +60,13 @@ namespace Genie
 	
 	struct Accept_Result
 	{
-		boost::shared_ptr< SocketHandle >  socket;
-		SocketAddress                      address;
+		boost::shared_ptr< IOHandle >  socket;
+		SocketAddress                  address;
 		
 		Accept_Result()  {};
 		
-		Accept_Result( boost::shared_ptr< SocketHandle >  socket,
-		               SocketAddress                      address )
+		Accept_Result( boost::shared_ptr< IOHandle >  socket,
+		               SocketAddress                  address )
 		:
 			socket ( socket  ),
 			address( address )
@@ -108,7 +108,7 @@ namespace Genie
 			
 			void Listen( int backlog );
 			
-			std::auto_ptr< SocketHandle > Accept( SockAddrParam client, socklen_t& len );
+			std::auto_ptr< IOHandle > Accept( SockAddrParam client, socklen_t& len );
 			
 			Accept_Result Accept();
 			

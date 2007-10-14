@@ -231,7 +231,7 @@ namespace Genie
 		isBound = true;
 	}
 	
-	std::auto_ptr< SocketHandle > SocketHandle::Accept( SockAddrParam client, socklen_t& len )
+	std::auto_ptr< IOHandle > SocketHandle::Accept( SockAddrParam client, socklen_t& len )
 	{
 		TCall call;
 		
@@ -246,11 +246,11 @@ namespace Genie
 		
 		SocketHandle* handle = new SocketHandle;
 		
-		std::auto_ptr< SocketHandle > newSocket( handle );
+		std::auto_ptr< IOHandle > newSocket( handle );
 		
-		newSocket->peerAddress.Assign( client, len );
+		handle->peerAddress.Assign( client, len );
 		
-		N::OTAccept( endpoint, newSocket->endpoint, &call );
+		N::OTAccept( endpoint, handle->endpoint, &call );
 		
 		return newSocket;
 	}
@@ -260,9 +260,9 @@ namespace Genie
 		InetAddress address;
 		socklen_t len = sizeof address;
 		
-		std::auto_ptr< SocketHandle > newSocket = Accept( &address, len );
+		std::auto_ptr< IOHandle > newSocket = Accept( &address, len );
 		
-		return Accept_Result( boost::shared_ptr< SocketHandle >( newSocket ),
+		return Accept_Result( boost::shared_ptr< IOHandle >( newSocket ),
 		                      SocketAddress( &address, len ) );
 	}
 	

@@ -115,7 +115,7 @@ namespace Genie
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( listener );
 			
-			std::auto_ptr< SocketHandle > incoming( sock.Accept( (InetAddress*) addr, *addrlen ) );
+			std::auto_ptr< IOHandle > incoming( sock.Accept( (InetAddress*) addr, *addrlen ) );
 			
 			int fd = LowestUnusedFileDescriptor();
 			
