@@ -114,22 +114,22 @@ namespace Orion
 		AddBinding( optionID, binding );
 	}
 	
-	template < class Trigger >
-	void BindOption( const char* optionSpec, Trigger trigger )
-	{
-		OptionID optionID = NewOption( optionSpec );
-		
-		boost::shared_ptr< OptionBinding > binding = NewOptionBinding( trigger );
-		
-		AddBinding( optionID, binding );
-	}
-	
 	template < class Type >
 	void BindOption( const char* optionSpec, Type& data, Type value )
 	{
 		OptionID optionID = NewOption( optionSpec );
 		
 		boost::shared_ptr< OptionBinding > binding = NewOptionBinding( data, value );
+		
+		AddBinding( optionID, binding );
+	}
+	
+	template < class Trigger >
+	void BindOptionTrigger( const char* optionSpec, Trigger trigger )
+	{
+		OptionID optionID = NewOption( optionSpec );
+		
+		boost::shared_ptr< OptionBinding > binding = NewOptionBinding( trigger );
 		
 		AddBinding( optionID, binding );
 	}

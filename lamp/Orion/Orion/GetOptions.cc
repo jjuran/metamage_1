@@ -183,7 +183,7 @@ namespace Orion
 	{
 		if ( gOptionMap.find( "--help" ) == gOptionMap.end() )
 		{
-			BindOption( "--help", std::ptr_fun( DefaultHelp ) );
+			BindOptionTrigger( "--help", std::ptr_fun( DefaultHelp ) );
 		}
 		
 		char const* const* begin = argv + 1;  // Skip the command
