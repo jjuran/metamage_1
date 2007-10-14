@@ -290,7 +290,7 @@ namespace Genie
 		
 		boost::shared_ptr< IOHandle > io = consoleMapping.second.lock();
 		
-		ConsoleTTYHandle& console = IOHandle_Cast< ConsoleTTYHandle >( *io );
+		TTYHandle& console = IOHandle_Cast< TTYHandle >( *io );
 		
 		const std::string& pathname = console.TTYName();
 		

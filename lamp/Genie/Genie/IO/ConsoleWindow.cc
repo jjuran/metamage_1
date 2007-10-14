@@ -403,7 +403,7 @@ namespace Genie
 	
 	void ConsoleCloseHandler::operator()( N::WindowRef ) const
 	{
-		ConsoleTTYHandle& console = GetConsoleByID( itsConsoleID );
+		TTYHandle& console = GetConsoleByID( itsConsoleID );
 		
 		console.Disconnect();
 		
