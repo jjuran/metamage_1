@@ -34,6 +34,8 @@ namespace Genie
 	
 	PairedSocket::~PairedSocket()
 	{
+		ShutdownReading();
+		ShutdownWriting();
 	}
 	
 	void PairedSocket::Bind( const sockaddr& local, socklen_t len )
