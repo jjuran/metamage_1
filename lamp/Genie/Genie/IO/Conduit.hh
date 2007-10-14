@@ -18,23 +18,23 @@ namespace Genie
 	{
 		private:
 			std::list< std::string > itsStrings;
-			bool itsInputHasClosed;
-			bool itsOutputHasClosed;
+			bool itsIngressHasClosed;
+			bool itsEgressHasClosed;
 		
 		public:
-			Conduit() : itsInputHasClosed ( false ),
-			            itsOutputHasClosed( false )
+			Conduit() : itsIngressHasClosed ( false ),
+			            itsEgressHasClosed( false )
 			{
 			}
 			
 			bool IsReadable() const;
 			bool IsWritable() const;
 			
-			bool InputHasClosed()  const  { return itsInputHasClosed;  }
-			bool OutputHasClosed() const  { return itsOutputHasClosed; }
+			bool IngressHasClosed() const  { return itsIngressHasClosed; }
+			bool EgressHasClosed()  const  { return itsEgressHasClosed;  }
 			
-			bool CloseInput()   { itsInputHasClosed  = true;  return itsOutputHasClosed; }
-			bool CloseOutput()  { itsOutputHasClosed = true;  return itsInputHasClosed;  }
+			bool CloseIngress()  { itsIngressHasClosed = true;  return itsEgressHasClosed;  }
+			bool CloseEgress()   { itsEgressHasClosed  = true;  return itsIngressHasClosed; }
 			
 			int Read (       char* data, std::size_t byteCount, bool blocking );
 			int Write( const char* data, std::size_t byteCount, bool blocking );

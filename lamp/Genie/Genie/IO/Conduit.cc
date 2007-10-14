@@ -30,12 +30,12 @@ namespace Genie
 	
 	bool Conduit::IsReadable() const
 	{
-		return itsInputHasClosed || !itsStrings.empty();
+		return itsIngressHasClosed || !itsStrings.empty();
 	}
 	
 	bool Conduit::IsWritable() const
 	{
-		return itsOutputHasClosed || itsStrings.size() < 20;
+		return itsEgressHasClosed || itsStrings.size() < 20;
 	}
 	
 	int Conduit::Read( char* data, std::size_t byteCount, bool blocking )
@@ -49,7 +49,7 @@ namespace Genie
 		{
 			// Oops, nothing queued right now
 			
-			if ( !itsInputHasClosed )
+			if ( !itsIngressHasClosed )
 			{
 				// Still open, maybe we'll get something later
 				
@@ -60,7 +60,7 @@ namespace Genie
 				}
 				
 				// Input or bust
-				while ( itsStrings.empty() && !itsInputHasClosed )
+				while ( itsStrings.empty() && !itsIngressHasClosed )
 				{
 					// I can wait forever...
 					Yield();
@@ -68,7 +68,7 @@ namespace Genie
 			}
 			
 			// Either a string was written, or input was closed,
-			// or possibly both, so check itsStrings rather than itsInputHasClosed
+			// or possibly both, so check itsStrings rather than itsIngressHasClosed
 			// so we don't miss data.
 			
 			// If the string queue is still empty then input must have closed.
@@ -127,7 +127,7 @@ namespace Genie
 				Yield();
 			}
 			
-			if ( itsOutputHasClosed )
+			if ( itsEgressHasClosed )
 			{
 				Process& current = CurrentProcess();
 				

@@ -19,7 +19,7 @@ namespace Genie
 	
 	PipeInHandle::~PipeInHandle()
 	{
-		itsConduit->CloseInput();
+		itsConduit->CloseIngress();
 	}
 	
 	int PipeInHandle::SysRead( char* data, std::size_t byteCount )
@@ -32,7 +32,7 @@ namespace Genie
 	
 	PipeOutHandle::~PipeOutHandle()
 	{
-		itsConduit->CloseOutput();
+		itsConduit->CloseEgress();
 	}
 	
 	int PipeOutHandle::SysWrite( const char* data, std::size_t byteCount )
