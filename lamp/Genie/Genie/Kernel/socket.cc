@@ -17,7 +17,7 @@
 
 // Genie
 #include "Genie/FileDescriptors.hh"
-#include "Genie/IO/SocketStream.hh"
+#include "Genie/IO/OTSocket.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -41,7 +41,7 @@ namespace Genie
 		
 		try
 		{
-			AssignFileDescriptor( fd, boost::shared_ptr< IOHandle >( new SocketHandle ) );
+			AssignFileDescriptor( fd, boost::shared_ptr< IOHandle >( new OTSocket ) );
 		}
 		catch ( ... )
 		{
