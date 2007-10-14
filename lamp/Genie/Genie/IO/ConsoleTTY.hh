@@ -58,7 +58,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > NewConsoleDevice();
 	
-	ConsoleTTYHandle& GetConsoleByID( ConsoleID id );
+	TTYHandle& GetConsoleByID( ConsoleID id );
 	
 	typedef std::map< ConsoleID, boost::weak_ptr< IOHandle > > ConsoleMap;
 	

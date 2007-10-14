@@ -49,7 +49,7 @@ namespace Genie
 		return consoleDevice;
 	}
 	
-	ConsoleTTYHandle& GetConsoleByID( ConsoleID id )
+	TTYHandle& GetConsoleByID( ConsoleID id )
 	{
 		ConsoleMap::const_iterator it = gConsoleMap.find( id );
 		
@@ -60,7 +60,7 @@ namespace Genie
 		
 		ASSERT( !it->second.expired() );
 		
-		return IOHandle_Cast< ConsoleTTYHandle >( *it->second.lock() );
+		return IOHandle_Cast< TTYHandle >( *it->second.lock() );
 	}
 	
 	static std::string MakeConsoleName( ConsoleID id )
