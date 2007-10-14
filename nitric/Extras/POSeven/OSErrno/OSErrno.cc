@@ -9,7 +9,7 @@
 namespace OSErrno
 {
 	
-	POSeven::Errno ErrnoFromOSStatus( const Nitrogen::OSStatus& error )
+	poseven::errno_t ErrnoFromOSStatus( const Nitrogen::OSStatus& error )
 	{
 		int result = 0;
 		
@@ -17,7 +17,7 @@ namespace OSErrno
 		
 		if ( ::IsEError( error ) )
 		{
-			return POSeven::Errno( ::OSStatus2E( error ) );
+			return poseven::errno_t( ::OSStatus2E( error ) );
 		}
 		
 	#endif
@@ -45,7 +45,7 @@ namespace OSErrno
 				throw error;
 		}
 		
-		return POSeven::Errno( result );
+		return poseven::errno_t( result );
 	}
 	
 }

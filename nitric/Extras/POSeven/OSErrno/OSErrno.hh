@@ -13,7 +13,7 @@
 namespace OSErrno
 {
 	
-	POSeven::Errno ErrnoFromOSStatus( const Nitrogen::OSStatus& error );
+	poseven::errno_t ErrnoFromOSStatus( const Nitrogen::OSStatus& error );
 	
 }
 
@@ -21,13 +21,13 @@ namespace Nucleus
 {
 	
 	template <>
-	struct Converter< POSeven::Errno, Nitrogen::OSStatus > : public std::unary_function< Nitrogen::OSStatus, POSeven::Errno >
+	struct Converter< poseven::errno_t, Nitrogen::OSStatus > : public std::unary_function< Nitrogen::OSStatus, poseven::errno_t >
 	{
-		POSeven::Errno operator()( Nitrogen::OSStatus error ) const
+		poseven::errno_t operator()( Nitrogen::OSStatus error ) const
 		{
 			int result = OSErrno::ErrnoFromOSStatus( error );
 			
-			return POSeven::Errno( result );
+			return poseven::errno_t( result );
 		}
 	};
 	
