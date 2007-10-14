@@ -1003,6 +1003,11 @@ namespace Genie
 			return;
 		}
 		
+		if ( IsBeingTraced()  &&  signal != SIGKILL )
+		{
+			Stop();
+		}
+		
 		sig_t action = itsSignalMap[ signal ];
 		
 		if ( action == SIG_IGN )
