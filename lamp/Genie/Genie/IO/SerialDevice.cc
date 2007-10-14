@@ -35,10 +35,6 @@ namespace Genie
 		public:
 			SerialDeviceHandle( const std::string& portName = "A" );
 			
-			static TypeCode Type()  { return kSerialDeviceType; }
-			
-			TypeCode ActualType() const  { return Type(); }
-			
 			unsigned int SysPoll() const;
 			
 			int SysRead( char* data, std::size_t byteCount );

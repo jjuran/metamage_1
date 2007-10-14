@@ -16,8 +16,6 @@
 #include "Genie/IO/Stream.hh"
 
 
-struct InetAddress;  // FIXME
-
 namespace Genie
 {
 	
@@ -46,9 +44,7 @@ namespace Genie
 		public:
 			virtual ~SocketHandle()  {}
 			
-			static TypeCode Type()  { return kSocketType; }
-			
-			TypeCode ActualType() const  { return Type(); }
+			bool IsSocket() const  { return true; }
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
@@ -65,6 +61,11 @@ namespace Genie
 			
 			virtual void ShutdownReading() = 0;
 			virtual void ShutdownWriting() = 0;
+	};
+	
+	template <> struct IOHandle_Downcast_Traits< SocketHandle >
+	{
+		static IOHandle::Test GetTest()  { return &IOHandle::IsSocket; }
 	};
 	
 }

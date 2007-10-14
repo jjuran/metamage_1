@@ -25,10 +25,6 @@ namespace Genie
 		public:
 			virtual ~WindowHandle()  {}
 			
-			static TypeCode Type()  { return kWindowType; }
-			
-			virtual TypeCode ActualType() const  { return Type(); }
-			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
 			virtual Nitrogen::WindowRef GetWindowRef() const = 0;

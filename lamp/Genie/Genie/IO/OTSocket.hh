@@ -38,10 +38,6 @@ namespace Genie
 			
 			~OTSocket();
 			
-			static TypeCode Type()  { return kSocketType; }
-			
-			TypeCode ActualType() const  { return Type(); }
-			
 			bool IsBlocking() const  { return Nitrogen::OTIsBlocking( itsEndpoint ); }
 			
 			unsigned int SysPoll() const;

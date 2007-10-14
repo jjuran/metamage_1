@@ -30,10 +30,6 @@ namespace Genie
 			int itsLeaderWaitStatus;
 		
 		public:
-			static TypeCode Type()  { return kConsoleTTYType; }
-			
-			TypeCode ActualType() const  { return Type(); }
-			
 			ConsoleTTYHandle( ConsoleID id );
 			
 			~ConsoleTTYHandle();

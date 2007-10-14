@@ -34,10 +34,6 @@ namespace Genie
 		public:
 			SimpleDeviceHandle( const DeviceIOSpec& io ) : io( io )  {}
 			
-			static TypeCode Type()  { return kSimpleDeviceType; }
-			
-			TypeCode ActualType() const  { return Type(); }
-			
 			FSTreePtr GetFile() const;
 			
 			unsigned int SysPoll() const  { return kPollRead | kPollWrite | kPollExcept; }

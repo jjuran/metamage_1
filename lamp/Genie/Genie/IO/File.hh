@@ -22,10 +22,6 @@ namespace Genie
 			bool isBlocking;
 		
 		public:
-			static TypeCode Type()  { return kFileType; }
-			
-			virtual TypeCode ActualType() const  { return Type(); }
-			
 			FileHandle() : isBlocking( true )  {}
 			
 			virtual ~FileHandle()  {}

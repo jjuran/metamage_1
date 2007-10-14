@@ -27,16 +27,12 @@ namespace Genie
 			std::size_t  itsMark;
 		
 		public:
-			static TypeCode Type()  { return kQueryFileType; }
-			
 			QueryFileHandle( const FSTreePtr&    file,
 			                 const std::string&  data ) : itsFile( file ),
 			                                              itsData( data ),
 			                                              itsMark(      )  {}
 			
 			~QueryFileHandle();
-			
-			TypeCode ActualType() const  { return Type(); }
 			
 			FSTreePtr GetFile() const  { return itsFile; }
 			

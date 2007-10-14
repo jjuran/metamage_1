@@ -24,9 +24,7 @@ namespace Genie
 		public:
 			virtual ~StreamHandle();
 			
-			static TypeCode Type()  { return kStreamType; }
-			
-			virtual TypeCode ActualType() const  { return Type(); }
+			bool IsStream() const  { return true; }
 			
 			virtual unsigned int SysPoll() const = 0;
 			
@@ -50,6 +48,11 @@ namespace Genie
 			int Read( char* data, std::size_t byteCount );
 			
 			int Write( const char* data, std::size_t byteCount );
+	};
+	
+	template <> struct IOHandle_Downcast_Traits< StreamHandle >
+	{
+		static IOHandle::Test GetTest()  { return &IOHandle::IsStream; }
 	};
 	
 }

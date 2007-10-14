@@ -32,9 +32,7 @@ namespace Genie
 			
 			virtual ~TTYHandle();
 			
-			static TypeCode Type()  { return kTTYType; }
-			
-			TypeCode ActualType() const  { return Type(); }
+			bool IsTerminal() const  { return true; }
 			
 			FSTreePtr GetFile() const;
 			
@@ -51,6 +49,11 @@ namespace Genie
 			const std::string& TTYName() const  { return ttyName; }
 			
 			virtual void SaveLeaderWaitStatus( int status )  {}
+	};
+	
+	template <> struct IOHandle_Downcast_Traits< TTYHandle >
+	{
+		static IOHandle::Test GetTest()  { return &IOHandle::IsTerminal; }
 	};
 	
 }

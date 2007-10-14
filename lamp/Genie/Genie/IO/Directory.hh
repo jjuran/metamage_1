@@ -25,13 +25,11 @@ namespace Genie
 			FSIteratorPtr iterator;
 		
 		public:
-			static TypeCode Type()  { return kDirectoryType; }
-			
 			DirHandle( const FSTreePtr& tree );
 			
 			~DirHandle();
 			
-			TypeCode ActualType() const  { return Type(); }
+			bool IsDirectory() const  { return true; }
 			
 			FSTreePtr GetFile() const  { return itsDir; }
 			
@@ -40,6 +38,11 @@ namespace Genie
 			void RewindDir();
 			void SeekDir( off_t index );
 			off_t TellDir() const;
+	};
+	
+	template <> struct IOHandle_Downcast_Traits< DirHandle >
+	{
+		static IOHandle::Test GetTest()  { return &IOHandle::IsDirectory; }
 	};
 	
 }

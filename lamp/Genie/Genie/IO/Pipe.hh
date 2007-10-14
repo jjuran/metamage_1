@@ -63,10 +63,6 @@ namespace Genie
 			bool itIsBlocking;
 		
 		public:
-			static TypeCode Type()  { return kPipeType; }
-			
-			virtual TypeCode ActualType() const  { return Type(); }
-			
 			PipeOutHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit  ( conduit ),
 			                                                        itIsBlocking( true    )
 			{

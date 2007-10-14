@@ -19,10 +19,6 @@ namespace Genie
 	class DeviceHandle : public FileHandle
 	{
 		public:
-			static TypeCode Type()  { return kDeviceFileType; }
-			
-			virtual TypeCode ActualType() const  { return Type(); }
-			
 			virtual ~DeviceHandle()  {}
 	};
 	

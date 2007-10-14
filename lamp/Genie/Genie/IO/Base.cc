@@ -50,16 +50,16 @@ namespace Genie
 	{
 	}
 	
-	IOHandle* IOHandle::GetBaseForCast( TypeCode desiredType )
+	IOHandle* IOHandle::GetBaseForCast( Test test )
 	{
-		if ( ActualType() % desiredType == 0 )
+		if ( (this->*test)() )
 		{
 			return this;
 		}
 		
 		if ( IOHandle* next = Next() )
 		{
-			return next->GetBaseForCast( desiredType );
+			return next->GetBaseForCast( test );
 		}
 		
 		return NULL;

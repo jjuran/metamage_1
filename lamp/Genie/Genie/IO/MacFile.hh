@@ -31,10 +31,6 @@ namespace Genie
 			NN::Owned< N::FSFileRefNum > refNum;
 		
 		public:
-			static TypeCode Type()  { return kMacFileType; }
-			
-			TypeCode ActualType() const  { return Type(); }
-			
 			MacFileHandle( NN::Owned< N::FSFileRefNum > refNum );
 			
 			~MacFileHandle();
@@ -59,10 +55,6 @@ namespace Genie
 	class MacDataForkHandle : public MacFileHandle
 	{
 		public:
-			static TypeCode Type()  { return kMacDataForkType; }
-			
-			TypeCode ActualType() const  { return Type(); }
-			
 			MacDataForkHandle( NN::Owned< N::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
 			
 			FSTreePtr GetFile() const;
@@ -71,10 +63,6 @@ namespace Genie
 	class MacRsrcForkHandle : public MacFileHandle
 	{
 		public:
-			static TypeCode Type()  { return kMacRsrcForkType; }
-			
-			TypeCode ActualType() const  { return Type(); }
-			
 			MacRsrcForkHandle( NN::Owned< N::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
 			
 			FSTreePtr GetFile() const;

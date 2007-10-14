@@ -16,11 +16,9 @@ namespace Genie
 	class RegularFileHandle : public FileHandle
 	{
 		public:
-			static TypeCode Type()  { return kRegularFileType; }
-			
-			//TypeCode ActualType() const  { return Type(); }
-			
 			virtual ~RegularFileHandle();
+			
+			bool IsRegularFile() const  { return true; }
 			
 			unsigned int SysPoll() const  { return kPollRead | kPollWrite | kPollExcept; }
 			
@@ -29,6 +27,11 @@ namespace Genie
 			virtual off_t GetEOF() const;
 			
 			virtual void SetEOF( off_t length );
+	};
+	
+	template <> struct IOHandle_Downcast_Traits< RegularFileHandle >
+	{
+		static IOHandle::Test GetTest()  { return &IOHandle::IsRegularFile; }
 	};
 	
 }

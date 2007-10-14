@@ -35,10 +35,6 @@ namespace Genie
 			
 			~PseudoTTYHandle();
 			
-			static TypeCode Type()  { return kPseudoTTYType; }
-			
-			TypeCode ActualType() const  { return Type(); }
-			
 			unsigned int SysPoll() const;
 			
 			int SysRead( char* data, std::size_t byteCount );
