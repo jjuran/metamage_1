@@ -10,42 +10,17 @@
 #include <boost/shared_ptr.hpp>
 
 // Genie
+#include "Genie/IO/Conduit.hh"
 #include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	class PipeState
-	{
-		private:
-			std::list< std::string > itsStrings;
-			bool itsInputHasClosed;
-			bool itsOutputHasClosed;
-		
-		public:
-			PipeState() : itsInputHasClosed ( false ),
-			              itsOutputHasClosed( false )
-			{
-			}
-			
-			bool IsReadable() const;
-			bool IsWritable() const;
-			
-			bool InputHasClosed()  const  { return itsInputHasClosed;  }
-			bool OutputHasClosed() const  { return itsOutputHasClosed; }
-			
-			bool CloseInput()   { itsInputHasClosed  = true;  return itsOutputHasClosed; }
-			bool CloseOutput()  { itsOutputHasClosed = true;  return itsInputHasClosed;  }
-			
-			int Read (       char* data, std::size_t byteCount, bool blocking );
-			int Write( const char* data, std::size_t byteCount, bool blocking );
-	};
-	
 	class PipeInHandle : public StreamHandle
 	{
 		private:
-			boost::shared_ptr< PipeState > state;
+			boost::shared_ptr< Conduit > itsConduit;
 			bool itIsBlocking;
 		
 		public:
@@ -53,8 +28,8 @@ namespace Genie
 			
 			virtual TypeCode ActualType() const  { return Type(); }
 			
-			PipeInHandle( boost::shared_ptr< PipeState > state ) : state       ( state ),
-			                                                       itIsBlocking( true  )
+			PipeInHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit  ( conduit ),
+			                                                       itIsBlocking( true    )
 			{
 			}
 			
@@ -62,15 +37,15 @@ namespace Genie
 			
 			unsigned int SysPoll() const
 			{
-				return   kPollWrite  * state->IsWritable()
-				       | kPollExcept * state->OutputHasClosed();
+				return   kPollWrite  * itsConduit->IsWritable()
+				       | kPollExcept * itsConduit->OutputHasClosed();
 			}
 			
 			int SysRead( char* data, std::size_t byteCount );
 			
 			int SysWrite( const char* data, std::size_t byteCount )
 			{
-				return state->Write( data, byteCount, itIsBlocking );
+				return itsConduit->Write( data, byteCount, itIsBlocking );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
@@ -84,7 +59,7 @@ namespace Genie
 	class PipeOutHandle : public StreamHandle
 	{
 		private:
-			boost::shared_ptr< PipeState > state;
+			boost::shared_ptr< Conduit > itsConduit;
 			bool itIsBlocking;
 		
 		public:
@@ -92,8 +67,8 @@ namespace Genie
 			
 			virtual TypeCode ActualType() const  { return Type(); }
 			
-			PipeOutHandle( boost::shared_ptr< PipeState > state ) : state       ( state ),
-			                                                        itIsBlocking( true  )
+			PipeOutHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit  ( conduit ),
+			                                                        itIsBlocking( true    )
 			{
 			}
 			
@@ -101,13 +76,13 @@ namespace Genie
 			
 			unsigned int SysPoll() const
 			{
-				return   kPollRead   * state->IsReadable()
-				       | kPollExcept * state->InputHasClosed();
+				return   kPollRead   * itsConduit->IsReadable()
+				       | kPollExcept * itsConduit->InputHasClosed();
 			}
 			
 			int SysRead( char* data, std::size_t byteCount )
 			{
-				return state->Read( data, byteCount, itIsBlocking );
+				return itsConduit->Read( data, byteCount, itIsBlocking );
 			}
 			
 			int SysWrite( const char* data, std::size_t byteCount );
