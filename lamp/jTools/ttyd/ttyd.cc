@@ -1,0 +1,116 @@
+/*	=======
+ *	ttyd.cc
+ *	=======
+ */
+
+// POSIX
+#include <signal.h>
+#include <unistd.h>
+
+// POSeven
+#include "POSeven/FileDescriptor.hh"
+
+// Orion
+#include "Orion/Main.hh"
+
+
+namespace p7 = poseven;
+namespace O = Orion;
+
+
+static void sigchld_handler( int )
+{
+	_exit( 0 );
+}
+
+static int Spawn()
+{
+	int fds[2];
+	
+	int paired = ttypair( fds );
+	
+	int master = fds[0];
+	int slave  = fds[1];
+	
+	pid_t pid = vfork();
+	
+	if ( pid == 0 )
+	{
+		close( master );
+		
+		dup2( slave, STDIN_FILENO  );
+		dup2( slave, STDOUT_FILENO );
+		dup2( slave, STDERR_FILENO );
+		
+		close( slave );
+		
+		const char* login_argv[] = { "/bin/login", NULL };
+		
+		execv( login_argv[0], login_argv );
+		
+		_exit( 127 );
+	}
+	
+	close( slave );
+	
+	return master;
+}
+
+static void Serve( p7::fd_t master )
+{
+	const std::size_t block_size = 4096;
+	
+	char buffer[ block_size ];
+	
+	fd_set fds;
+	
+	FD_ZERO( &fds );
+	
+	FD_SET( STDIN_FILENO, &fds );
+	FD_SET( master,       &fds );
+	
+	const int max_fd = master;
+	
+	while ( true )
+	{
+		fd_set readfds = fds;
+		
+		int selected = select( max_fd + 1, &readfds, NULL, NULL, NULL );
+		
+		if ( FD_ISSET( STDIN_FILENO, &readfds ) )
+		{
+			if ( int bytes = p7::read( p7::stdin_fileno, buffer, block_size ) )
+			{
+				p7::write( master, buffer, bytes );
+			}
+			else
+			{
+				break;
+			}
+		}
+		
+		if ( FD_ISSET( master, &readfds ) )
+		{
+			if ( int bytes = p7::read( master, buffer, block_size ) )
+			{
+				p7::write( p7::stdout_fileno, buffer, bytes );
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+}
+
+int O::Main( int argc, argv_t argv )
+{
+	signal( SIGCHLD, sigchld_handler );
+	
+	int master = Spawn();
+	
+	Serve( p7::fd_t( master ) );
+	
+	return 0;
+}
+
