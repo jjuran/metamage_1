@@ -13,6 +13,7 @@
 #include "Io/StringBuffer.hh"
 
 // Genie
+#include "Genie/IO/Conduit.hh"
 #include "Genie/IO/TTY.hh"
 
 
@@ -22,14 +23,15 @@ namespace Genie
 	class PseudoTTYHandle : public TTYHandle
 	{
 		private:
-			std::size_t id;
-			boost::shared_ptr< Io::StringBuffer > input;
-			boost::shared_ptr< Io::StringBuffer > output;
+			std::size_t                   itsID;
+			boost::shared_ptr< Conduit >  itsInput;
+			boost::shared_ptr< Conduit >  itsOutput;
+			bool                          itIsBlocking;
 		
 		public:
-			PseudoTTYHandle( std::size_t                            id,
-			                 boost::shared_ptr< Io::StringBuffer >  input,
-			                 boost::shared_ptr< Io::StringBuffer >  output );
+			PseudoTTYHandle( std::size_t                   id,
+			                 boost::shared_ptr< Conduit >  input,
+			                 boost::shared_ptr< Conduit >  output );
 			
 			~PseudoTTYHandle();
 			
