@@ -28,10 +28,8 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_socket )
 	DEFINE_MODULE_INIT(  Kernel_socket )
 	
-	namespace NN = Nucleus;
 	
-	
-	static int socket( int /*domain*/, int /*type*/, int /*protocol*/ )
+	static int socket( int domain, int type, int protocol )
 	{
 		SystemCallFrame frame( "socket" );
 		
@@ -57,13 +55,11 @@ namespace Genie
 	{
 		SystemCallFrame frame( "bind" );
 		
-		const InetAddress* inetAddress = reinterpret_cast< const InetAddress* >( name );
-		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
 			
-			sock.Bind( inetAddress, namelen );
+			sock.Bind( *name, namelen );
 			
 			/*
 			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
@@ -115,7 +111,7 @@ namespace Genie
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( listener );
 			
-			std::auto_ptr< IOHandle > incoming( sock.Accept( (InetAddress*) addr, *addrlen ) );
+			std::auto_ptr< IOHandle > incoming( sock.Accept( *addr, *addrlen ) );
 			
 			int fd = LowestUnusedFileDescriptor();
 			
@@ -139,13 +135,11 @@ namespace Genie
 		
 		// Assume sin_family is AF_INET
 		
-		const InetAddress* inetAddress = reinterpret_cast< const InetAddress* >( serv_addr );
-		
 		try
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
 			
-			sock.Connect( inetAddress, addrlen );
+			sock.Connect( *serv_addr, addrlen );
 		}
 		catch ( ... )
 		{

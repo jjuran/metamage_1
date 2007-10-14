@@ -21,10 +21,25 @@ struct InetAddress;  // FIXME
 namespace Genie
 {
 	
-	typedef const InetAddress* ConstSockAddrParam;
-	typedef       InetAddress*      SockAddrParam;
-	
-	struct SocketAddress;
+	struct SocketAddress
+	{
+		sockaddr   address;
+		socklen_t  length;
+		
+		SocketAddress()  {}
+		SocketAddress( const sockaddr& addr, socklen_t len ) : address( addr ), length( len )  {}
+		
+		sockaddr const* Get() const  { return &address; }
+		sockaddr      * Get()        { return &address; }
+		
+		socklen_t Len() const  { return length; }
+		
+		void Assign( const sockaddr& addr, socklen_t len )
+		{
+			address = addr;
+			length  = len;
+		}
+	};
 	
 	class SocketHandle : public StreamHandle
 	{
@@ -37,13 +52,13 @@ namespace Genie
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			virtual void Bind( ConstSockAddrParam local, socklen_t len ) = 0;
+			virtual void Bind( const sockaddr& local, socklen_t len ) = 0;
 			
 			virtual void Listen( int backlog ) = 0;
 			
-			virtual std::auto_ptr< IOHandle > Accept( SockAddrParam client, socklen_t& len ) = 0;
+			virtual std::auto_ptr< IOHandle > Accept( sockaddr& client, socklen_t& len ) = 0;
 			
-			virtual void Connect( ConstSockAddrParam server, socklen_t len ) = 0;
+			virtual void Connect( const sockaddr& server, socklen_t len ) = 0;
 			
 			virtual const SocketAddress& GetSockName() const = 0;
 			virtual const SocketAddress& GetPeerName() const = 0;

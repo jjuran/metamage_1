@@ -21,6 +21,9 @@
 namespace Genie
 {
 	
+	namespace N = Nitrogen;
+	
+	
 	static pascal void YieldingNotifier( void* contextPtr,
 	                                     OTEventCode code,
 	                                     OTResult result,
@@ -204,7 +207,7 @@ namespace Genie
 		return -1;  // Not reached
 	}
 	
-	void OTSocket::Bind( ConstSockAddrParam local, socklen_t len )
+	void OTSocket::Bind( const sockaddr& local, socklen_t len )
 	{
 		if ( len != sizeof (InetAddress) )
 		{
@@ -234,13 +237,13 @@ namespace Genie
 		isBound = true;
 	}
 	
-	std::auto_ptr< IOHandle > OTSocket::Accept( SockAddrParam client, socklen_t& len )
+	std::auto_ptr< IOHandle > OTSocket::Accept( sockaddr& client, socklen_t& len )
 	{
 		TCall call;
 		
 		::OTMemzero( &call, sizeof (TCall) );
 		
-		call.addr.buf = reinterpret_cast< unsigned char* >( client );
+		call.addr.buf = reinterpret_cast< unsigned char* >( &client );
 		call.addr.maxlen = len;
 		
 		N::OTListen( endpoint, &call );
@@ -258,7 +261,7 @@ namespace Genie
 		return newSocket;
 	}
 	
-	void OTSocket::Connect( ConstSockAddrParam server, socklen_t len )
+	void OTSocket::Connect( const sockaddr& server, socklen_t len )
 	{
 		if ( !isBound )
 		{
@@ -270,7 +273,7 @@ namespace Genie
 		
 		::OTMemzero( &sndCall, sizeof (TCall) );
 		
-		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< InetAddress* >( server ) );
+		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( &server ) );
 		sndCall.addr.len = len;
 		
 		N::OTConnect( endpoint, sndCall );

@@ -24,39 +24,11 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	/*
-	typedef const InetAddress* ConstSockAddrParam;
-	typedef       InetAddress*      SockAddrParam;
-	*/
-	
-	struct SocketAddress
-	{
-		InetAddress  address;
-		socklen_t    length;
-		
-		SocketAddress()  {}
-		SocketAddress( const InetAddress* addr, socklen_t len ) : address( *addr ), length( len )  {}
-		
-		InetAddress const* Get() const  { return &address; }
-		InetAddress      * Get()        { return &address; }
-		
-		socklen_t Len() const  { return length; }
-		
-		void Assign( const InetAddress* addr, socklen_t len )
-		{
-			address = *addr;
-			length  = len;
-		}
-	};
-	
 	class OTSocket : public SocketHandle
 	{
 		private:
 			OpenTransportShare itsOpenTransport;
-			NN::Owned< N::EndpointRef > endpoint;
+			Nucleus::Owned< Nitrogen::EndpointRef > endpoint;
 			SocketAddress socketAddress;
 			SocketAddress peerAddress;
 			bool isBound;
@@ -70,7 +42,7 @@ namespace Genie
 			
 			TypeCode ActualType() const  { return Type(); }
 			
-			bool IsBlocking() const  { return N::OTIsBlocking( endpoint ); }
+			bool IsBlocking() const  { return Nitrogen::OTIsBlocking( endpoint ); }
 			
 			unsigned int SysPoll() const;
 			
@@ -80,16 +52,16 @@ namespace Genie
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			void SetBlocking   ()  { N::OTSetBlocking   ( endpoint ); }
-			void SetNonBlocking()  { N::OTSetNonBlocking( endpoint ); }
+			void SetBlocking   ()  { Nitrogen::OTSetBlocking   ( endpoint ); }
+			void SetNonBlocking()  { Nitrogen::OTSetNonBlocking( endpoint ); }
 			
-			void Bind( ConstSockAddrParam local, socklen_t len );
+			void Bind( const sockaddr& local, socklen_t len );
 			
 			void Listen( int backlog );
 			
-			std::auto_ptr< IOHandle > Accept( SockAddrParam client, socklen_t& len );
+			std::auto_ptr< IOHandle > Accept( sockaddr& client, socklen_t& len );
 			
-			void Connect( ConstSockAddrParam server, socklen_t len );
+			void Connect( const sockaddr& server, socklen_t len );
 			
 			const SocketAddress& GetSockName() const  { return socketAddress; }
 			const SocketAddress& GetPeerName() const  { return peerAddress;   }
