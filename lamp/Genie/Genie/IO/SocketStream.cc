@@ -255,17 +255,6 @@ namespace Genie
 		return newSocket;
 	}
 	
-	Accept_Result SocketHandle::Accept()
-	{
-		InetAddress address;
-		socklen_t len = sizeof address;
-		
-		std::auto_ptr< IOHandle > newSocket = Accept( &address, len );
-		
-		return Accept_Result( boost::shared_ptr< IOHandle >( newSocket ),
-		                      SocketAddress( &address, len ) );
-	}
-	
 	void SocketHandle::Connect( ConstSockAddrParam server, socklen_t len )
 	{
 		if ( !isBound )

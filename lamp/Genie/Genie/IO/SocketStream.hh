@@ -56,23 +56,6 @@ namespace Genie
 		}
 	};
 	
-	class SocketHandle;
-	
-	struct Accept_Result
-	{
-		boost::shared_ptr< IOHandle >  socket;
-		SocketAddress                  address;
-		
-		Accept_Result()  {};
-		
-		Accept_Result( boost::shared_ptr< IOHandle >  socket,
-		               SocketAddress                  address )
-		:
-			socket ( socket  ),
-			address( address )
-		{}
-	};
-	
 	class SocketHandle : public StreamHandle
 	{
 		private:
@@ -109,8 +92,6 @@ namespace Genie
 			void Listen( int backlog );
 			
 			std::auto_ptr< IOHandle > Accept( SockAddrParam client, socklen_t& len );
-			
-			Accept_Result Accept();
 			
 			void Connect( ConstSockAddrParam server, socklen_t len );
 			
