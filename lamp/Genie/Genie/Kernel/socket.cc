@@ -17,7 +17,9 @@
 
 // Genie
 #include "Genie/FileDescriptors.hh"
+#include "Genie/IO/Conduit.hh"
 #include "Genie/IO/OTSocket.hh"
+#include "Genie/IO/PairedSocket.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -28,6 +30,37 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_socket )
 	DEFINE_MODULE_INIT(  Kernel_socket )
 	
+	
+	static int socketpair( int domain, int type, int protocol, int fds[2] )
+	{
+		SystemCallFrame frame( "socketpair" );
+		
+		try
+		{
+			boost::shared_ptr< Conduit > east( new Conduit );
+			boost::shared_ptr< Conduit > west( new Conduit );
+			
+			boost::shared_ptr< IOHandle > san_jose( new PairedSocket( west, east ) );
+			boost::shared_ptr< IOHandle > new_york( new PairedSocket( east, west ) );
+			
+			int a = LowestUnusedFileDescriptor( 3 );
+			int b = LowestUnusedFileDescriptor( a + 1 );
+			
+			AssignFileDescriptor( a, san_jose );
+			AssignFileDescriptor( b, new_york );
+			
+			fds[ 0 ] = a;
+			fds[ 1 ] = b;
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( socketpair );
 	
 	static int socket( int domain, int type, int protocol )
 	{
