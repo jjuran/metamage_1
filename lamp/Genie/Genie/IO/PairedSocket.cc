@@ -27,7 +27,8 @@ namespace Genie
 	
 	PairedSocket::PairedSocket( boost::shared_ptr< Conduit >  input,
 			                    boost::shared_ptr< Conduit >  output ) : itsInput ( input  ),
-	                                                                     itsOutput( output )
+	                                                                     itsOutput( output ),
+	                                                                     itIsBlocking( true )
 	{
 	}
 	
