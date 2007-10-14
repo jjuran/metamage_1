@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_Proc.hh"
 
+// Backtrace
+#include "Backtrace/Backtrace.hh"
+
 // Nucleus
 #include "Nucleus/Convert.h"
 
