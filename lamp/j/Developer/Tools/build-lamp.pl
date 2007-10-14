@@ -84,7 +84,7 @@ my @programs = qw
 	perl ptrace pwd
 	readlink rm rmdir
 	sh sleep stripcr striplf superd
-	tcpcat tcpclient th tlsrvr true tty
+	tcpcat tcpclient th tlsrvr true tty ttyd
 	uncaught_exception
 	which
 );
@@ -141,7 +141,7 @@ my %fsmap =
 		{
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
-		sbin => [qw( superd inetd httpd )],
+		sbin => [qw( superd inetd httpd ttyd )],
 	},
 	var =>
 	{
