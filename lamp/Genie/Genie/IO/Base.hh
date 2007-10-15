@@ -43,8 +43,6 @@ namespace Genie
 			
 			virtual ~IOHandle();
 			
-			IOHandle* GetBaseForCast( TypeCode desiredType );
-			
 			virtual bool IsStream     () const  { return false; }
 			virtual bool IsRegularFile() const  { return false; }
 			virtual bool IsSocket     () const  { return false; }
