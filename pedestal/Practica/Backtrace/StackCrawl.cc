@@ -151,7 +151,7 @@ namespace Backtrace
 	
 #endif
 	
-#ifdef __POWERPC__
+#if defined( __POWERPC__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
 	
 	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< CallRecord >& result )
 	{
