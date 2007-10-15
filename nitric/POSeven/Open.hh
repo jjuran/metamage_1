@@ -82,6 +82,16 @@ namespace io
 		return open_for_writing( pathname.c_str(), overload() );
 	}
 	
+	inline Nucleus::Owned< poseven::fd_t > open_for_io( const char* pathname, overload = overload() )
+	{
+		return poseven::open( pathname, poseven::o_rdwr );
+	}
+	
+	inline Nucleus::Owned< poseven::fd_t > open_for_io( const std::string& pathname, overload = overload() )
+	{
+		return open_for_io( pathname.c_str(), overload() );
+	}
+	
 }
 
 #endif
