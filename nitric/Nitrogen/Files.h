@@ -1964,6 +1964,11 @@ namespace io
 		return Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
 	}
 	
+	inline Nucleus::Owned< Nitrogen::FSFileRefNum > open_for_io( const FSSpec& file, overload = overload() )
+	{
+		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdWrPerm );
+	}
+	
 	// Stream operations
 	
 	inline SInt32 get_file_size( Nitrogen::FSFileRefNum stream, overload = overload() )
@@ -2087,6 +2092,11 @@ namespace io
 	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_writing( const FSRef& file, overload = overload() )
 	{
 		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsWrPerm );
+	}
+	
+	inline Nucleus::Owned< Nitrogen::FSForkRefNum > open_for_io( const FSRef& file, overload = overload() )
+	{
+		return Nitrogen::FSOpenFork( file, Nitrogen::UniString(), Nitrogen::fsRdWrPerm );
 	}
 	
 	// Stream operations
