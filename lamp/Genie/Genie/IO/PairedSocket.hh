@@ -12,10 +12,6 @@
 // POSIX
 #include <sys/socket.h>
 
-// Nitrogen
-#include "Nitrogen/OpenTransport.h"
-#include "Nitrogen/OpenTransportProviders.h"
-
 // Genie
 #include "Genie/IO/Conduit.hh"
 #include "Genie/IO/SocketStream.hh"
@@ -36,10 +32,6 @@ namespace Genie
 			              boost::shared_ptr< Conduit >  output );
 			
 			~PairedSocket();
-			
-			static TypeCode Type()  { return kSocketType; }
-			
-			TypeCode ActualType() const  { return Type(); }
 			
 			unsigned int SysPoll() const
 			{
