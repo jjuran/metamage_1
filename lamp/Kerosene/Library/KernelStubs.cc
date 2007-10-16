@@ -141,6 +141,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	                              fd_set*  exceptfds, struct timeval* timeout );
 	
 	// sys/socket
+	int     (*socketpair_import_ )( int domain, int type, int protocol, int fds[2] );
 	int     (*socket_import_     )( int domain, int type, int protocol );
 	int     (*bind_import_       )( int sockfd, const struct sockaddr* name, socklen_t namelen );
 	int     (*listen_import_     )( int sockfd, int backlog );
@@ -464,6 +465,11 @@ namespace
 	
 	#pragma mark -
 	#pragma mark ¥ sys/socket ¥
+	
+	int socketpair( int domain, int type, int protocol, int fds[2] )
+	{
+		return INVOKE( socketpair, ( domain, type, protocol, fds ) );
+	}
 	
 	int socket( int domain, int type, int protocol )
 	{
