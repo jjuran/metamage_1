@@ -192,7 +192,6 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 #undef HAS_GETHOSTBYADDR
 #undef HAS_GETHOSTBYNAME
 #undef HOST_NOT_FOUND
-#undef HAS_SOCKETPAIR
 // truncate() exists now, but the guarded perl code doesn't compile
 #undef HAS_TRUNCATE
 
