@@ -81,11 +81,19 @@ namespace ALine
 	                           CD::Platform  api,
 	                           BuildVariety  build )
 	{
-		return ArchName   ( arch    ) + "-" +
-		       RuntimeName( runtime ) + "-" +
-		       APIName    ( api     ) + "-" +
-		       BuildName  ( build   );
-			
+		TargetName name;
+		
+	#ifdef __MACOS__
+		
+		name += ArchName( arch    ) + "-";
+		name += ArchName( runtime ) + "-";
+		name += ArchName( api     ) + "-";
+		
+	#endif
+		
+		name += ArchName( build   );
+		
+		return name;
 	}
 	
 }
