@@ -28,6 +28,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/FileDescriptor.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
@@ -70,6 +71,9 @@ namespace ALine
 	namespace CD = CompileDriver;
 	
 	using BitsAndBytes::q;
+	
+	
+	static bool gDryRun = false;
 	
 	static OptionsRecord gOptions;
 	
@@ -133,9 +137,16 @@ namespace ALine
 	
 	static void ExecuteCommand( const std::string& command )
 	{
-		if ( gOptions.verbose )
+		if ( gOptions.verbose || gDryRun )
 		{
-			Io::Out << "  " << command << "\n";
+			std::string command_line = command + "\n";
+			
+			p7::write( p7::stdout_fileno, command_line.data(), command_line.size() );
+		}
+		
+		if ( gDryRun )
+		{
+			return;
 		}
 		
 		/*
@@ -200,9 +211,9 @@ namespace ALine
 		
 		if ( needToBuild || Options().verbose )
 		{
-			std::string checking = "Checking project " + q( project.Name() ) + ":\n";
+			std::string checking = "# Checking project " + q( project.Name() ) + ":\n";
 			
-			(void) write( STDOUT_FILENO, checking.data(), checking.size() );
+			(void) p7::write( p7::stdout_fileno, checking.data(), checking.size() );
 		}
 		
 		if ( needToBuild )
@@ -313,6 +324,10 @@ int O::Main( int argc, argv_t argv )
 	O::AliasOption( "-v", "--verbose" );
 	
 	// Actions
+	
+	O::BindOption( "-n", gDryRun );
+	
+	O::AliasOption( "-n", "--dry-run" );
 	
 	O::BindOption( "-t", gOptions.catalog );
 	
