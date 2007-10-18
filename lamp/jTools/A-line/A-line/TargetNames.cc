@@ -85,13 +85,13 @@ namespace ALine
 		
 	#ifdef __MACOS__
 		
-		name += ArchName( arch    ) + "-";
-		name += ArchName( runtime ) + "-";
-		name += ArchName( api     ) + "-";
+		name += ArchName   ( arch    ) + "-";
+		name += RuntimeName( runtime ) + "-";
+		name += APIName    ( api     ) + "-";
 		
 	#endif
 		
-		name += ArchName( build   );
+		name += BuildName( build   );
 		
 		return name;
 	}
