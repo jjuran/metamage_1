@@ -182,16 +182,6 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 #define sind_amg    sin_amg
 #define sqrtd_amg   sqrt_amg
 
-// Not yet implemented
-#undef HAS_ENDSERVENT
-#undef HAS_GETSERVENT
-#undef HAS_GETSERVBYPORT
-#undef HAS_GETSERVBYNAME
-#undef HAS_GETPROTOBYNUMBER
-#undef HAS_GETPROTOBYNAME
-#undef HAS_GETHOSTBYADDR
-#undef HAS_GETHOSTBYNAME
-#undef HOST_NOT_FOUND
 // truncate() exists now, but the guarded perl code doesn't compile
 #undef HAS_TRUNCATE
 
