@@ -182,6 +182,3 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 #define sind_amg    sin_amg
 #define sqrtd_amg   sqrt_amg
 
-// truncate() exists now, but the guarded perl code doesn't compile
-#undef HAS_TRUNCATE
-
