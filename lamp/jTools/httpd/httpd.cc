@@ -25,9 +25,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-// Convergence
-#include "pump.hh"
-
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -36,6 +33,7 @@
 #include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
+#include "POSeven/IOPump.hh"
 #include "POSeven/Stat.hh"
 
 // Nitrogen
@@ -121,8 +119,8 @@ static int ForkExecWait( const char*                   path,
 		pipe( pipe_ends );
 	}
 	
-	int reader = pipe_ends[0];
-	int writer = pipe_ends[1];
+	p7::fd_t reader = p7::fd_t( pipe_ends[0] );
+	p7::fd_t writer = p7::fd_t( pipe_ends[1] );
 	
 	int pid = vfork();
 	
@@ -162,9 +160,9 @@ static int ForkExecWait( const char*                   path,
 	{
 		close( reader );
 		
-		write( writer, partialData.data(), partialData.size() );
+		p7::write( writer, partialData.data(), partialData.size() );
 		
-		p7::throw_posix_result( pump( p7::stdin_fileno, NULL, writer, NULL, 0 ) );
+		p7::pump( p7::stdin_fileno, writer );
 		
 		close( writer );
 	}
