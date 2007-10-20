@@ -60,7 +60,7 @@ int O::Main( int argc, argv_t argv )
 	// Check for sufficient number of args
 	if ( argc < 2 )
 	{
-		static const char* default_argv[] = { "cat", "-", NULL };
+		static argv_t default_argv = { "cat", "-", NULL };
 		
 		argv = default_argv;
 		
