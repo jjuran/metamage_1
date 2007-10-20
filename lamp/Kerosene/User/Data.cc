@@ -13,15 +13,18 @@
 // Iota
 #include "iota/environ.hh"
 
-#if TARGET_RT_MAC_CFM
 
 #pragma export on
-	
-	int errno;
+
+int errno;
+
+int h_errno;
+
+#if TARGET_RT_MAC_CFM
 	
 	iota::environ_t environ;
 	
-#pragma export reset
-
 #endif
+
+#pragma export reset
 
