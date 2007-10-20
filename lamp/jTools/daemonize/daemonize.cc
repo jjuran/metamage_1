@@ -19,7 +19,7 @@
 #include "iota/argv.hh"
 #include "iota/strings.hh"
 
-// kernelramp
+// Convergence
 #include "fork_and_exit.hh"
 
 
