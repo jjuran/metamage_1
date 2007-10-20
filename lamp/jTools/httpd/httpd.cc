@@ -25,6 +25,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// Convergence
+#include "pump.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -161,21 +164,7 @@ static int ForkExecWait( const char*                   path,
 		
 		write( writer, partialData.data(), partialData.size() );
 		
-		enum { size = 4096 };
-		
-		char data[ size ];
-		
-		int bytes;
-		
-		while ( (bytes = read( p7::stdin_fileno, data, size )) > 0 )
-		{
-			write( writer, data, bytes );
-		}
-		
-		if ( bytes == -1 )
-		{
-			std::perror( "read" );
-		}
+		p7::throw_posix_result( pump( p7::stdin_fileno, NULL, writer, NULL, 0 ) );
 		
 		close( writer );
 	}
