@@ -83,7 +83,7 @@ namespace ALine
 	{
 		TargetName name;
 		
-	#ifdef __MACOS__
+	#if defined( __MACOS__ ) || defined( __APPLE__ )
 		
 		name += ArchName   ( arch    ) + "-";
 		name += RuntimeName( runtime ) + "-";
