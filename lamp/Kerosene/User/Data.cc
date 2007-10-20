@@ -18,8 +18,6 @@
 
 int errno;
 
-int h_errno;
-
 #if TARGET_RT_MAC_CFM
 	
 	iota::environ_t environ;
