@@ -301,24 +301,63 @@ class ResourceParser
 		const_iterator end()   const  { return const_iterator( resource, const_iterator::kEnd ); }
 };
 
+inline char check_xdigit( char c )
+{
+	if ( !std::isxdigit( c ) )
+	{
+		p7::throw_errno( ENOENT );  // FIXME
+	}
+	
+	return c;
+}
+
+static std::string expand_percent_escapes( const std::string& escaped )
+{
+	using BitsAndBytes::DecodeHexNibbles;
+	
+	std::string result;
+	
+	//const char* p = &*escaped.begin();
+	const char* end = &*escaped.end();
+	
+	for ( const char* p = &*escaped.begin();  p < end;  ++p )
+	{
+		char c = *p;
+		
+		if ( c == '%' )
+		{
+			char high = check_xdigit( *++p );
+			char low  = check_xdigit( *++p );
+			
+			c = DecodeHexNibbles( high, low );
+		}
+		
+		result += c;
+	}
+	
+	return result;
+}
+
 static std::string LocateResource( const std::string& resource )
 {
 	ResourceParser parser( resource );
+	
+	std::string pathname = gDocumentRoot;
 	
 	// FIXME:  This can be an algorithm
 	typedef ResourceParser::const_iterator const_iterator;
 	for ( const_iterator it = parser.begin();  it != parser.end();  ++it )
 	{
-		std::string component = *it;
+		std::string component = expand_percent_escapes( *it );
 		
 		if ( !component.empty() && component[0] == '.' )
 		{
 			// No screwing around with the pathname, please.
 			p7::throw_errno( ENOENT );
 		}
+		
+		pathname = pathname / component;
 	}
-	
-	std::string pathname = gDocumentRoot + resource;
 	
 	p7::stat( pathname );  // Throw if nonexistent
 	
