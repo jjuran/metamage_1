@@ -359,9 +359,78 @@ namespace
 	#pragma mark -
 	#pragma mark ¥ netdb ¥
 	
+	void endhostent()
+	{
+	}
+	
+	void endprotoent()
+	{
+	}
+	
+	void endservent()
+	{
+	}
+	
+	struct hostent* gethostbyaddr( const void*, size_t, int )
+	{
+		return NULL;
+	}
+	
 	struct hostent* gethostbyname( const char* name )
 	{
 		return INVOKE( gethostbyname, ( name ) );
+	}
+	
+	struct hostent* gethostent()
+	{
+		return NULL;
+	}
+	
+	struct protoent* getprotobyname( const char* name )
+	{
+		return NULL;
+	}
+	
+	struct protoent* getprotobynumber( int )
+	{
+		return NULL;
+	}
+	
+	struct protoent* getprotoent()
+	{
+		return NULL;
+	}
+	
+	struct servent* getservbyname( const char*, const char* )
+	{
+		return NULL;
+	}
+	
+	struct servent* getservbyport( int, const char* )
+	{
+		return NULL;
+	}
+	
+	struct servent* getservent()
+	{
+		return NULL;
+	}
+	
+	void herror( const char* )
+	{
+	}
+	
+	char* hstrerror( int )
+	{
+		return "";
+	}
+	
+	void setprotoent( int )
+	{
+	}
+	
+	void setservent( int )
+	{
 	}
 	
 	OSStatus OTInetMailExchange_Kernel( char* domain, UInt16* count, InetMailExchange* result )
