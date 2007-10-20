@@ -1860,6 +1860,9 @@ PP(pp_truncate)
     Off_t len;
     int result = 1;
 
+    GV *tmpgv = NULL;
+    STRLEN n_a;
+    
 #if Size_t_size > IVSIZE
     len = (Off_t)POPn;
 #else
@@ -1869,9 +1872,10 @@ PP(pp_truncate)
      * might not be signed: if it is not, clever compilers will moan. */
     /* XXX Configure probe for the signedness of the length type of *truncate() needed? XXX */
     SETERRNO(0,0);
+    
 #if defined(HAS_TRUNCATE) || defined(HAS_CHSIZE) || defined(F_FREESP)
     if (PL_op->op_flags & OPf_SPECIAL) {
-	GV *tmpgv = gv_fetchpv(POPpx, FALSE, SVt_PVIO);
+	tmpgv = gv_fetchpv(POPpx, FALSE, SVt_PVIO);
     do_ftruncate:
 	TAINT_PROPER("truncate");
 	if (!GvIO(tmpgv) || !IoIFP(GvIOp(tmpgv)))
@@ -1889,7 +1893,6 @@ PP(pp_truncate)
     else {
 	SV *sv = POPs;
 	char *name;
-	STRLEN n_a;
 
 	if (SvTYPE(sv) == SVt_PVGV) {
 	    tmpgv = (GV*)sv;		/* *main::FRED for example */
