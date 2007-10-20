@@ -21,6 +21,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/IOPump.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 
@@ -125,33 +126,17 @@ static std::string EncodeBase64( const unsigned char* begin, const unsigned char
 	return result;
 }
 
-static void Splice( p7::fd_t in, p7::fd_t out )
-{
-	const std::size_t block_size = 4096;
-	
-	char buffer[ block_size ];
-	
-	while ( int bytes_read = read( in, buffer, block_size ) )
-	{
-		if ( bytes_read == -1 )
-		{
-			std::perror( "local-edit-client: read" );
-			
-			p7::throw_errno( errno );
-		}
-		
-		p7::write( out, buffer, bytes_read );
-	}
-}
-
 static void CopyFileContents( p7::fd_t in, p7::fd_t out )
 {
+	// Start at the beginning of each file
 	p7::throw_posix_result( lseek( in,  0, 0 ) );
 	p7::throw_posix_result( lseek( out, 0, 0 ) );
 	
+	// Truncate the destinaton so we don't get leftover garbage
 	p7::throw_posix_result( ftruncate( out, 0 ) );
 	
-	Splice( in, out );
+	// Read/write until EOF
+	p7::pump( in, out );
 }
 
 static void CommitFileEdits( p7::fd_t  edited_file_stream,
