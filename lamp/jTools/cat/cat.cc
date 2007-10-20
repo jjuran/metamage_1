@@ -13,6 +13,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// Convergence
+#include "pump.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
@@ -43,18 +46,6 @@ static const char* EvaluateMetaFilename( const char* pathname )
 	return pathname;
 }
 
-static void DumpFile( p7::fd_t in )
-{
-	const std::size_t blockSize = 4096;
-	
-	char data[ blockSize ];
-	
-	while ( int bytes = p7::read( in, data, blockSize ) )
-	{
-		p7::write( p7::stdout_fileno, data, bytes );
-	}
-}
-
 int O::Main( int argc, argv_t argv )
 {
 	// Check for sufficient number of args
@@ -78,7 +69,7 @@ int O::Main( int argc, argv_t argv )
 		{
 			NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
 			
-			DumpFile( fd );
+			p7::throw_posix_result( pump( fd, NULL, p7::stdout_fileno, NULL, 0 ) );
 		}
 		catch ( const p7::errno_t& error )
 		{
