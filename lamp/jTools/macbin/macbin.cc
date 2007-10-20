@@ -15,6 +15,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -23,6 +26,7 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/Stat.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -31,8 +35,8 @@
 #include "MacBinary.hh"
 
 // Orion
+#include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace N = Nitrogen;
@@ -53,116 +57,114 @@ namespace O = Orion;
 
 static int Usage()
 {
-	Io::Err << "Usage: macbin --encode Source dest.bin\n"
-	           "       macbin --decode source.bin [dest-dir]\n";
+	p7::write( p7::stderr_fileno, STR_LEN( "Usage: macbin --encode Source [dest.mbin]\n"
+	                                       "       macbin --decode source.bin [dest-dir]\n" ) );
 	
 	return 1;
 }
 
 static void BlockWrite( int fd, const void* data, std::size_t byteCount )
 {
-	int written = write( fd, data, byteCount );
+	p7::write( p7::fd_t( fd ), (const char*) data, byteCount );
+}
+
+static void Decode( p7::fd_t input, const N::FSDirSpec& destDir )
+{
+	MacBinary::Decoder decoder( destDir );
 	
-	if ( written < 0 )
+	const std::size_t blockSize = 4096;
+	
+	char data[ blockSize ];
+	
+	std::size_t totalBytes = 0;
+	
+	try
 	{
-		std::fprintf( stderr, "macbin: Write error: %s\n", strerror( errno ) );
-		
+		while ( std::size_t bytes = p7::read( input, data, blockSize ) )
+		{
+			decoder.Write( data, bytes );
+			
+			totalBytes += bytes;
+		}
+	}
+	catch ( const MacBinary::InvalidMacBinaryHeader& )
+	{
+		std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
 		O::ThrowExitStatus( 1 );
 	}
 }
 
-	static void Decode( p7::fd_t input, const N::FSDirSpec& destDir )
+static std::string make_archive_name( std::string name )
+{
+	const char* extension = ".jbin";
+	
+	if ( *name.rbegin() == '/' )
 	{
-		MacBinary::Decoder decoder( destDir );
-		
-		const std::size_t blockSize = 4096;
-		
-		char data[ blockSize ];
-		
-		std::size_t totalBytes = 0;
-		
-		try
-		{
-			while ( std::size_t bytes = p7::read( input, data, blockSize ) )
-			{
-				decoder.Write( data, bytes );
-				
-				totalBytes += bytes;
-			}
-		}
-		catch ( const MacBinary::InvalidMacBinaryHeader& )
-		{
-			std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
-			
-			O::ThrowExitStatus( 1 );
-		}
+		name.resize( name.size() - 1 );
+	}
+	else if ( io::file_exists( name ) )
+	{
+		extension = ".mbin";
 	}
 	
+	return name + extension;
+}
+
 int O::Main( int argc, argv_t argv )
 {
 	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	
-	if ( argc < 3 )
+	const char* encode_target = NULL;
+	const char* decode_target = NULL;
+	
+	O::BindOption( "--encode", encode_target );
+	O::BindOption( "--decode", decode_target );
+	
+	O::GetOptions( argc, argv );
+	
+	char const *const *freeArgs = O::FreeArguments();
+	
+	std::size_t argCount = O::FreeArgumentCount();
+	
+	if ( bool both_or_neither = (encode_target == NULL) == (decode_target == NULL) )
 	{
+		// There can be only one!
 		return Usage();
 	}
 	
-	std::string op     = argv[ 1 ];
-	const char* target = argv[ 2 ];
-	
-	FSSpec targetFile = Div::ResolvePathToFSSpec( target );
-	
-	if (false)
+	if ( encode_target )
 	{
+		// FIXME:  Can't encode to a non-file stream, including stdout
+		FSSpec targetFile = Div::ResolvePathToFSSpec( encode_target );
+		
+		MacBinary::Encode( targetFile,
+		                   &BlockWrite,
+		                   p7::open( argCount > 0 ? freeArgs[ 0 ] : make_archive_name( encode_target ).c_str(),
+		                             p7::o_wronly | p7::o_excl | p7::o_creat,
+		                             0644 ) );
 	}
-	else if ( op == "--encode" )
+	else if ( decode_target )
 	{
-		// FIXME:  Can't encode to a stream
-		if ( argv[ 3 ] == NULL )
-		{
-			return Usage();
-		}
-		
-		const char* dest = argv[3];
-		
-		bool use_stdout = dest[0] == '-'  &&  dest[1] == '\0';
-		
-		int output = use_stdout ? 1 : open( dest, O_WRONLY | O_EXCL | O_CREAT, 0644 );
-		
-		if ( output < 0 )
-		{
-			std::fprintf( stderr, "macbin: Couldn't open %s: %s\n", dest, strerror( errno ) );
-			
-			O::ThrowExitStatus( 1 );
-		}
-		
-		MacBinary::Encode( targetFile, &BlockWrite, output );
-		
-		close( output );
-	}
-	else if ( op == "--decode" )
-	{
-		// FIXME:  Can't decode from a stream
-		const char* destDirPath = argv[ 3 ] ? argv[ 3 ] : ".";
+		const char* destDirPath = argCount > 0 ? freeArgs[ 0 ] : ".";
 		
 		try
 		{
-			if ( bool use_stdin = target[0] == '-'  &&  target[1] == '\0' )
+			if ( bool use_stdin = decode_target[0] == '-'  &&  decode_target[1] == '\0' )
 			{
-				target = "/dev/fd/0";
+				decode_target = "/dev/fd/0";
 			}
 			
-			Decode( io::open_for_reading( target ),
+			Decode( io::open_for_reading( decode_target ),
 			        NN::Convert< N::FSDirSpec >( Div::ResolvePathToFSSpec( destDirPath ) ) );
 		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
-			std::fprintf( stderr, "%s\n", "Invalid MacBinary header" );
+			std::fprintf( stderr, "macbin: %s: invalid MacBinary header\n", decode_target );
 			return 1;
 		}
 		catch ( const MacBinary::IncompatibleMacBinaryHeader& )
 		{
-			std::fprintf( stderr, "%s\n", "Incompatible (newer) MacBinary format." );
+			std::fprintf( stderr, "macbin: %s: incompatible (newer) MacBinary header\n", decode_target );
 			return 2;
 		}
 	}
