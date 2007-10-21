@@ -134,7 +134,13 @@ namespace poseven
 						
 						try
 						{
-							const dirent entry = poseven::readdir( itsDirHandle );
+							dirent entry;
+							
+							do
+							{
+								entry = poseven::readdir( itsDirHandle );
+							}
+							while ( entry.d_name[0] == '.'  &&  ( entry.d_name[ 1 + (entry.d_name[1] == '.') ] == '\0' ) );
 							
 							value = itsDirPathname / entry.d_name;
 						}
@@ -154,10 +160,6 @@ namespace poseven
 					                                                               itsDirHandle( dirHandle ),
 					                                                               done( false )
 					{
-						GetNextValue();
-						
-						// skip . and ..
-						GetNextValue();
 						GetNextValue();
 					}
 				
