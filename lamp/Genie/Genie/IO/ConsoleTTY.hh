@@ -18,7 +18,7 @@ namespace Genie
 	
 	class ConsoleWindow;
 	
-	typedef std::size_t ConsoleID;
+	typedef TerminalID ConsoleID;
 	
 	class ConsoleTTYHandle : public TTYHandle
 	{

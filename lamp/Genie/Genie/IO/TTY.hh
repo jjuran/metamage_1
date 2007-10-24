@@ -17,6 +17,8 @@
 namespace Genie
 {
 	
+	typedef std::size_t TerminalID;
+	
 	class TTYHandle : public DeviceHandle
 	{
 		private:
