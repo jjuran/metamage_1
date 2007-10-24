@@ -161,6 +161,25 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_proc >(); }
 	};
 	
+	class FSTree_sys_mac_proc_PSN_exe : public FSTree
+	{
+		private:
+			ProcessSerialNumber itsPSN;
+		
+		public:
+			FSTree_sys_mac_proc_PSN_exe( const ProcessSerialNumber& psn ) : itsPSN( psn )  {}
+			
+			bool IsLink() const  { return true; }
+			
+			std::string Name() const  { return "exe"; }
+			
+			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_proc_PSN( itsPSN ) ); }
+			
+			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
+			
+			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::GetProcessAppSpec( itsPSN ) ); }
+	};
+	
 	
 	class FSTree_sys_mac_gestalt : public FSTree
 	{
@@ -241,7 +260,7 @@ namespace Genie
 	
 	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const ProcessSerialNumber& psn ) : itsPSN( psn )
 	{
-		
+		Map( "exe", FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( psn ) ) );
 	}
 	
 	std::string FSTree_sys_mac_proc_PSN::Name() const
