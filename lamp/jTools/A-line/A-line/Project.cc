@@ -246,16 +246,6 @@ namespace ALine
 				}
 			}
 			
-			// Check for special options.
-			// Currently, there's cwd-source, which indicates that we should
-			// pass '-cwd source' to CodeWarrior.  OpenSSL needs it.
-			const std::vector< std::string >& options = config[ "options" ];
-			
-			needsCwdSourceOption = std::find( options.begin(),
-			                                  options.end(),
-			                                  std::string( "cwd-source" ) )
-			                       != options.end();
-			
 			// Locate source files
 			const std::vector< std::string >& search = config[ "search" ];
 			

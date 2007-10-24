@@ -143,11 +143,6 @@ namespace ALine
 		
 		command << cmdgen.AllCompilerOptions();
 		
-		if ( options.NeedsCwdSource() )
-		{
-			command << "-cwd source";
-		}
-		
 		if ( options.Target().platform & CD::runtimeMachO )
 		{
 			command << "-Wno-deprecated-declarations -Wno-long-double";
@@ -351,8 +346,6 @@ namespace ALine
 		
 		options.SetOutput( outDir );
 		
-		//SetCurrentSourceDir( false );
-		
 		std::vector< std::string > dirtyFiles;
 		
 		// See which source files need to be compiled,
@@ -369,11 +362,6 @@ namespace ALine
 			
 			// The source file
 			std::string sourceFile( *it );
-			
-			if ( project.NeedsCwdSourceOption() )
-			{
-				//SetCurrentSourceDir( io::get_preceding_directory( sourceFile ) );
-			}
 			
 			// The file's name
 			std::string sourceName = io::get_filename_string( sourceFile );
@@ -464,11 +452,6 @@ namespace ALine
 		else if ( targetInfo.build == buildDemo )
 		{
 			options.DefineMacro( "BUILD_DEMO", true );
-		}
-		
-		if ( project.NeedsCwdSourceOption() )
-		{
-			options.SetCwdSource();
 		}
 		
 		if ( needToPrecompile )

@@ -33,7 +33,6 @@ namespace ALine
 			std::string myOutputDir;
 			std::vector< std::string > myUserOnlyIncludeDirs;
 			bool hasPrecompiledHeaderSource;
-			bool needsCwdSource;
 		
 		public:
 			CompilerOptions( std::string name, const TargetInfo& targetInfo );
@@ -60,9 +59,6 @@ namespace ALine
 			
 			std::vector< std::string > const& UserOnlyIncludeDirs() const       { return myUserOnlyIncludeDirs; }
 			std::vector< std::string >      & UserOnlyIncludeDirs()             { return myUserOnlyIncludeDirs; }
-			
-			void SetCwdSource( bool needs = true )  { needsCwdSource = needs; }
-			bool NeedsCwdSource() const  { return needsCwdSource; }
 			
 	};
 	

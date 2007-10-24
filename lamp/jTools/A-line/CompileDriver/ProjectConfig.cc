@@ -50,7 +50,6 @@ namespace CompileDriver
 			"frameworks",
 			"imports",
 			"name",
-			"options",
 			"platform",
 			"precompile",
 			"product",

@@ -29,7 +29,6 @@ namespace ALine
 			std::string ProjectFolder() const  { return projFolderPath; }
 			ProductType Product() const  { return product; }
 			const IncludePath& PrecompiledHeaderSource() const  { return precompiledHeaderSource; }
-			bool NeedsCwdSourceOption() const  { return needsCwdSourceOption; }
 			
 			const std::vector< ProjName >& AllUsedProjects() const  { return allUsedProjects; }
 			
@@ -60,8 +59,6 @@ namespace ALine
 			IncludePath precompiledHeaderSource;
 			// What kind of product this project creates.
 			ProductType product;
-			// Ugly hack used for OpenSSL.
-			bool needsCwdSourceOption;
 			// The names of all projects used directly or indirectly by this one.
 			std::vector< ProjName > allUsedProjects;
 			// Directories to search for headers and unenumerated source files.

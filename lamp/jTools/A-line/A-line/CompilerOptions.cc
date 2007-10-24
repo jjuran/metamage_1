@@ -16,8 +16,7 @@ namespace ALine
 	:
 		projectName( name ),
 		targetInfo( targetInfo ),
-		hasPrecompiledHeaderSource( false ),
-		needsCwdSource( false )
+		hasPrecompiledHeaderSource( false )
 	{
 		
 	}
