@@ -9,9 +9,6 @@
 // Genie
 #include "Genie/IO/Stream.hh"
 
-// <sys/stat.h>
-struct stat;
-
 
 namespace Genie
 {
@@ -19,17 +16,17 @@ namespace Genie
 	class FileHandle : public StreamHandle
 	{
 		private:
-			bool isBlocking;
+			bool itIsBlocking;
 		
 		public:
-			FileHandle() : isBlocking( true )  {}
+			FileHandle() : itIsBlocking( true )  {}
 			
 			virtual ~FileHandle()  {}
 			
-			bool IsBlocking() const  { return isBlocking; }
+			bool IsBlocking() const  { return itIsBlocking; }
 			
-			void SetBlocking   ()  { isBlocking = true;  }
-			void SetNonBlocking()  { isBlocking = false; }
+			void SetBlocking   ()  { itIsBlocking = true;  }
+			void SetNonBlocking()  { itIsBlocking = false; }
 	};
 	
 }
