@@ -6,6 +6,9 @@
 #ifndef GENIE_IO_PSEUDOTTY_HH
 #define GENIE_IO_PSEUDOTTY_HH
 
+// Standard C++
+#include <map>
+
 // Boost
 #include <boost/shared_ptr.hpp>
 
@@ -42,6 +45,15 @@ namespace Genie
 			int SysWrite( const char* data, std::size_t byteCount );
 			
 	};
+	
+	void GetNewPseudoTTYPair( boost::shared_ptr< IOHandle >& master,
+	                          boost::shared_ptr< IOHandle >& slave );
+	
+	TTYHandle& GetPseudoTTYByID( TerminalID id );
+	
+	typedef std::map< TerminalID, boost::weak_ptr< IOHandle > > PseudoTTYMap;
+	
+	const PseudoTTYMap& GetPseudoTTYMap();
 	
 }
 

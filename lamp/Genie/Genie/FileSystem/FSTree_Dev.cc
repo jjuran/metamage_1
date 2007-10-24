@@ -21,6 +21,7 @@
 #include "Genie/IO/BufferFile.hh"
 #include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/IO/GraphicsPort.hh"
+#include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
 #include "Genie/Process.hh"
@@ -165,10 +166,6 @@ namespace Genie
 	};
 	
 	
-	struct dev_con_Details;
-	
-	typedef FSTree_Special< dev_con_Details > FSTree_dev_con;
-	
 	struct dev_con_Details
 	{
 		static std::string Name()  { return "con"; }
@@ -184,6 +181,26 @@ namespace Genie
 		FSNode operator()( ConsoleMap::value_type console ) const  { return ConvertToFSNode( console ); }
 	};
 	
+	typedef FSTree_Special< dev_con_Details > FSTree_dev_con;
+	
+	
+	struct dev_pts_Details
+	{
+		static std::string Name()  { return "pts"; }
+		
+		FSTreePtr Parent() const  { return GetSingleton< FSTree_dev >(); }
+		
+		FSTreePtr Lookup( const std::string& name ) const;
+		
+		const PseudoTTYMap& ItemSequence() const  { return GetPseudoTTYMap(); }
+		
+		static FSNode ConvertToFSNode( PseudoTTYMap::value_type tty );
+		
+		FSNode operator()( PseudoTTYMap::value_type tty ) const  { return ConvertToFSNode( tty ); }
+	};
+	
+	typedef FSTree_Special< dev_pts_Details > FSTree_dev_pts;
+	
 	
 	class FSTree_dev_con_N : public FSTree
 	{
@@ -196,6 +213,25 @@ namespace Genie
 			std::string Name() const;
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_con >(); }
+			
+			mode_t FileTypeMode() const  { return S_IFCHR; }
+			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	
+	class FSTree_dev_pts_N : public FSTree
+	{
+		private:
+			unsigned itsIndex;
+		
+		public:
+			FSTree_dev_pts_N( unsigned index ) : itsIndex( index )  {}
+			
+			std::string Name() const;
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_pts >(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -252,6 +288,11 @@ namespace Genie
 		return GetConsoleByID( itsIndex ).shared_from_this();
 	}
 	
+	boost::shared_ptr< IOHandle > FSTree_dev_pts_N::Open( OpenFlags flags ) const
+	{
+		return GetPseudoTTYByID( itsIndex ).shared_from_this();
+	}
+	
 	FSTree_dev::FSTree_dev()
 	{
 		Map( "null",    FSTreePtr( new FSTree_Device( "null"    ) ) );
@@ -263,6 +304,7 @@ namespace Genie
 		
 		MapSingleton< FSTree_dev_new >();
 		MapSingleton< FSTree_dev_con >();
+		MapSingleton< FSTree_dev_pts >();
 		MapSingleton< FSTree_dev_fd  >();
 	}
 	
@@ -280,6 +322,13 @@ namespace Genie
 		unsigned index = std::atoi( name.c_str() );
 		
 		return FSTreePtr( new FSTree_dev_con_N( index ) );
+	}
+	
+	FSTreePtr dev_pts_Details::Lookup( const std::string& name ) const
+	{
+		unsigned index = std::atoi( name.c_str() );
+		
+		return FSTreePtr( new FSTree_dev_pts_N( index ) );
 	}
 	
 	FSNode dev_con_Details::ConvertToFSNode( ConsoleMap::value_type consoleMapping )
@@ -301,8 +350,32 @@ namespace Genie
 		return FSNode( name, tree );
 	}
 	
+	FSNode dev_pts_Details::ConvertToFSNode( PseudoTTYMap::value_type ttyMapping )
+	{
+		TerminalID id = ttyMapping.first;
+		
+		ASSERT( !ttyMapping.second.expired() );
+		
+		boost::shared_ptr< IOHandle > io = ttyMapping.second.lock();
+		
+		TTYHandle& tty = IOHandle_Cast< TTYHandle >( *io );
+		
+		const std::string& pathname = tty.TTYName();
+		
+		std::string name = pathname.substr( pathname.find_last_of( "/" ) + 1, pathname.npos );
+		
+		FSTreePtr tree( new FSTree_dev_pts_N( id ) );
+		
+		return FSNode( name, tree );
+	}
+	
 	
 	std::string FSTree_dev_con_N::Name() const
+	{
+		return NN::Convert< std::string >( itsIndex );
+	}
+	
+	std::string FSTree_dev_pts_N::Name() const
 	{
 		return NN::Convert< std::string >( itsIndex );
 	}

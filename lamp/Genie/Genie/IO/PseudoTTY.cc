@@ -8,11 +8,56 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 
 namespace Genie
 {
 	
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
+	
+	
+	static PseudoTTYMap gPseudoTTYMap;
+	
+	const PseudoTTYMap& GetPseudoTTYMap()
+	{
+		return gPseudoTTYMap;
+	}
+	
+	void GetNewPseudoTTYPair( boost::shared_ptr< IOHandle >& master,
+	                          boost::shared_ptr< IOHandle >& slave )
+	{
+		static TerminalID index = 0;
+		
+		boost::shared_ptr< Conduit > incoming( new Conduit );
+		boost::shared_ptr< Conduit > outgoing( new Conduit );
+		
+		boost::shared_ptr< IOHandle > master_handle( new PseudoTTYHandle( index, outgoing, incoming ) );
+		boost::shared_ptr< IOHandle > slave_handle ( new PseudoTTYHandle( index, incoming, outgoing ) );
+		
+		gPseudoTTYMap[ index ] = slave_handle;
+		
+		++index;
+		
+		master.swap( master_handle );
+		slave .swap( slave_handle  );
+	}
+	
+	TTYHandle& GetPseudoTTYByID( TerminalID id )
+	{
+		PseudoTTYMap::const_iterator it = gPseudoTTYMap.find( id );
+		
+		if ( it == gPseudoTTYMap.end() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		ASSERT( !it->second.expired() );
+		
+		return IOHandle_Cast< TTYHandle >( *it->second.lock() );
+	}
 	
 	
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                   id,
@@ -30,6 +75,8 @@ namespace Genie
 	{
 		itsInput->CloseEgress();
 		itsOutput->CloseIngress();
+		
+		gPseudoTTYMap.erase( itsID );
 	}
 	
 	unsigned int PseudoTTYHandle::SysPoll() const

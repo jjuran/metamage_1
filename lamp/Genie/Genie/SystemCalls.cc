@@ -758,23 +758,17 @@ namespace Genie
 	{
 		SystemCallFrame frame( "ttypair" );
 		
-		static unsigned index = 0;
-		
 		try
 		{
-			boost::shared_ptr< Conduit > incoming( new Conduit );
-			boost::shared_ptr< Conduit > outgoing( new Conduit );
+			boost::shared_ptr< IOHandle > master, slave;
 			
-			boost::shared_ptr< IOHandle > master_handle( new PseudoTTYHandle( index, outgoing, incoming ) );
-			boost::shared_ptr< IOHandle > slave_handle ( new PseudoTTYHandle( index, incoming, outgoing ) );
-			
-			++index;
+			GetNewPseudoTTYPair( master, slave );
 			
 			int master_fd = LowestUnusedFileDescriptor( 3 );
 			int slave_fd  = LowestUnusedFileDescriptor( master_fd + 1 );
 			
-			AssignFileDescriptor( master_fd, master_handle );
-			AssignFileDescriptor( slave_fd,  slave_handle  );
+			AssignFileDescriptor( master_fd, master );
+			AssignFileDescriptor( slave_fd,  slave  );
 			
 			fds[ 0 ] = master_fd;
 			fds[ 1 ] = slave_fd;
