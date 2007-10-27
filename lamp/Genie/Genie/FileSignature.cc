@@ -64,6 +64,7 @@ namespace Genie
 		// UPDATE:  To avoid pain, we're going with .mbin / 'mBIN' for new archives.
 		
 		// Archive formats
+		{ "mBin", 'BIN+', "MacBinary III+" " archive" },
 		{ "jbin", 'BIN+', "MacBinary III+" " archive" },
 		{ "bin+", 'BIN+', "MacBinary III+" " archive" },
 		{ "mbin", 'mBIN', "MacBinary III"  " archive" },
