@@ -10,6 +10,9 @@
 #include <MachineExceptions.h>
 #endif
 
+// Standard C/C++
+//#include <cstdio>
+
 // Standard C
 #include <setjmp.h>
 
@@ -306,7 +309,7 @@ namespace Backtrace
 			
 			ScopeToTrapUnmappedMemoryExceptions trappingUnmappedMemoryExceptions;
 			
-			if ( setjmp( gStackCrawlJmpBuf ) == 0 )
+			if ( setjmp( gStackCrawlJmpBuf ) )
 			{
 				// exception handler invoked
 				
