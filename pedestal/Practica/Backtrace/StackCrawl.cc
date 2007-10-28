@@ -5,11 +5,75 @@
 
 #include "Backtrace/StackCrawl.hh"
 
+// Mac OS Universal Interfaces
+#if defined( __MACOS__ ) && defined( __POWERPC__ )
+#include <MachineExceptions.h>
+#endif
+
+// Standard C
+#include <setjmp.h>
+
+// Backtrace
 #include "Backtrace/MemoryLimit.hh"
 
 
 namespace Backtrace
 {
+	
+#if defined( __MACOS__ ) && defined( __POWERPC__ )
+	
+	static jmp_buf gStackCrawlJmpBuf;
+	
+	class ScopedExceptionHandler
+	{
+		private:
+			ExceptionHandlerTPP itsSavedHandler;
+		
+		public:
+			static ExceptionHandlerTPP Install( ExceptionHandlerTPP handler );
+			
+			ScopedExceptionHandler( ExceptionHandlerTPP handler ) : itsSavedHandler( Install( handler ) )  {}
+			
+			~ScopedExceptionHandler()  { Install( itsSavedHandler ); }
+	};
+	
+	ExceptionHandlerTPP ScopedExceptionHandler::Install( ExceptionHandlerTPP handler )
+	{
+		return ::InstallExceptionHandler( handler );
+	}
+	
+	static OSStatus UnmappedMemoryExceptionTrappingHandler( ExceptionInformation* exception )
+	{
+		if ( exception->theKind == kTraceException )
+		{
+			return -1;  // handled by debugger
+		}
+		
+		if ( exception->theKind == kUnmappedMemoryException )
+		{
+			longjmp( gStackCrawlJmpBuf, 1 );
+		}
+		
+		return -1;
+	}
+	
+	class ScopeToTrapUnmappedMemoryExceptions : public ScopedExceptionHandler
+	{
+		private:
+			ExceptionHandlerUPP itsUPP;
+		
+		public:
+			ScopeToTrapUnmappedMemoryExceptions() : ScopedExceptionHandler( itsUPP = ::NewExceptionHandlerUPP( UnmappedMemoryExceptionTrappingHandler ) )
+			{
+			}
+			
+			~ScopeToTrapUnmappedMemoryExceptions()
+			{
+				::DisposeExceptionHandlerUPP( itsUPP );
+			}
+	};
+	
+#endif
 	
 	struct StackFrame68K
 	{
@@ -230,13 +294,32 @@ namespace Backtrace
 	
 #endif
 	
+	class UnmappedMemoryException {};
+	
 	static std::vector< CallRecord > GetStackCrawl( const StackFrame* top )
 	{
 		std::vector< CallRecord > result;
 		
 		try
 		{
+		#if defined( __MACOS__ ) && defined( __POWERPC__ )
+			
+			ScopeToTrapUnmappedMemoryExceptions trappingUnmappedMemoryExceptions;
+			
+			if ( setjmp( gStackCrawlJmpBuf ) == 0 )
+			{
+				// exception handler invoked
+				
+				throw UnmappedMemoryException();
+			}
+			
+		#endif
+			
 			CrawlStack( top, result );
+		}
+		catch ( const UnmappedMemoryException& )
+		{
+			//std::fprintf( stderr, "Unmapped memory exception caught during stack crawl\n" );
 		}
 		catch ( const std::bad_alloc& )
 		{
