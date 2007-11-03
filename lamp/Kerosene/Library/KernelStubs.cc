@@ -21,6 +21,11 @@
 #include "sys/utsname.h"
 #include "sys/wait.h"
 #include "unistd.h"
+#include "vfork.h"
+
+// Convergence
+#include "copyfile.hh"
+#include "fork_and_exit.hh"
 
 // Mac OS
 #include <LowMem.h>
@@ -31,6 +36,11 @@
 // Kerosene
 #include "SystemCalls.hh"
 #include "FreeTheMallocPool.h"
+
+
+extern "C" int rename( const char* from, const char* to );
+
+extern "C" int ttypair( int filedes[ 2 ] );
 
 
 #pragma exceptions off
@@ -705,7 +715,7 @@ namespace
 		return INVOKE( dup2, ( filedes, filedes2 ) );
 	}
 	
-	int execve( const char* path, const char* const argv[], const char* const* envp )
+	int execve( const char* path, const char* const* argv, const char* const* envp )
 	{
 		return INVOKE( execve, ( path, argv, envp ) );
 	}
@@ -715,7 +725,7 @@ namespace
 		return INVOKE_CRITICAL( _exit, ( status ) );  // Terminates process but returns if forked
 	}
 	
-	int fork_and_exit( int status )
+	pid_t fork_and_exit( int status )
 	{
 		return INVOKE( fork_and_exit, ( status ) );
 	}
@@ -765,10 +775,12 @@ namespace
 		return INVOKE( pause, () );
 	}
 	
+	/*
 	int peek( int fd, const char** buffer, size_t minBytes )
 	{
 		return INVOKE( peek, ( fd, buffer, minBytes ) );
 	}
+	*/
 	
 	int pipe( int filedes[ 2 ] )
 	{
