@@ -72,9 +72,9 @@ int	 execl(const char *, const char *, ...)
 int	 execle(const char *, const char *, ...);
 int	 execlp(const char *, const char *, ...) 
 	    __attribute__((sentinel));
-int	 execv(const char *, char * const *);
-int	 execve(const char *, char * const *, char * const *);
-int	 execvp(const char *, char * const *);
+int	 execv(const char *, const char * const *);
+int	 execve(const char *, const char * const *, const char * const *);
+int	 execvp(const char *, const char * const *);
 pid_t	 fork(void);
 long	 fpathconf(int, int);
 char	*getcwd(char *, size_t)
@@ -104,7 +104,7 @@ unsigned int sleep(unsigned int);
 long	 sysconf(int);
 pid_t	 tcgetpgrp(int);
 int	 tcsetpgrp(int, pid_t);
-char	*ttyname(int);
+const char	*ttyname(int);
 int	 unlink(const char *);
 ssize_t	 write(int, const void *, size_t)
 		__attribute__((__bounded__(__buffer__,2,3)));
@@ -159,7 +159,7 @@ void	 sync(void);
 int	 truncate(const char *, off_t);
 unsigned int	 ualarm(unsigned int, unsigned int);
 int	 usleep(useconds_t);
-pid_t	 vfork(void);
+//pid_t	 vfork(void);
 #endif
 
 #if __XPG_VISIBLE >= 420
@@ -239,7 +239,7 @@ int	 ruserok(const char *, int, const char *, const char *);
 #ifndef _SELECT_DEFINED_
 #define _SELECT_DECLARED
 struct timeval;
-int	 select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
+int	 select(int, struct fd_set *, struct fd_set *, struct fd_set *, struct timeval *);
 #endif
 int	 setdomainname(const char *, size_t);
 int	 setgroups(int, const gid_t *);
