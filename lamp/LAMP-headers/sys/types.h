@@ -1,3 +1,6 @@
+/*	$OpenBSD: types.h,v 1.30 2006/10/03 19:49:06 pedro Exp $	*/
+/*	$NetBSD: types.h,v 1.29 1996/11/15 22:48:25 jtc Exp $	*/
+
 /*-
  * Copyright (c) 1982, 1986, 1991, 1993
  *	The Regents of the University of California.  All rights reserved.
@@ -15,10 +18,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * [¤3 Deleted as of 22Jul99, see
- *     ftp://ftp.cs.berkeley.edu/pub/4bsd/README.Impt.License.Change
- *	   for details]
- * 4. Neither the name of the University nor the names of its contributors
+ * 3. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -37,55 +37,205 @@
  *	@(#)types.h	8.4 (Berkeley) 1/21/94
  */
 
-/* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
-
 #ifndef _SYS_TYPES_H_
 #define	_SYS_TYPES_H_
 
-/* Machine type dependent parameters. */
+#include <sys/cdefs.h>
+#include <sys/_types.h>
 #include <machine/endian.h>
 
-#ifndef _POSIX_SOURCE
+#if __BSD_VISIBLE
 typedef	unsigned char	u_char;
 typedef	unsigned short	u_short;
 typedef	unsigned int	u_int;
 typedef	unsigned long	u_long;
-typedef	char *			caddr_t;	/* core address */
-#endif
 
-typedef	unsigned long	dev_t;		/* device number */
-typedef	unsigned long	gid_t;		/* group id */
-typedef	unsigned long	ino_t;		/* inode number */
-typedef	unsigned short	mode_t;		/* permissions */
-typedef	unsigned short	nlink_t;	/* link count */
-typedef	long			off_t;		/* file offset */
-typedef	long			pid_t;		/* process id */
-typedef	unsigned long	uid_t;		/* user id */
-typedef long			suseconds_t;/* Microseconds */
-typedef unsigned long	useconds_t;/* Microseconds */
+typedef unsigned char	unchar;		/* Sys V compatibility */
+typedef	unsigned short	ushort;		/* Sys V compatibility */
+typedef	unsigned int	uint;		/* Sys V compatibility */
+typedef unsigned long	ulong;		/* Sys V compatibility */
+
+typedef	__cpuid_t	cpuid_t;	/* CPU id */
+typedef	__register_t	register_t;	/* register-sized type */
+#endif /* __BSD_VISIBLE */
 
 /*
- * This belongs in unistd.h, but is placed here to ensure that programs
- * casting the second parameter of lseek to off_t will get the correct
- * version of lseek.
+ * XXX The exact-width bit types should only be exposed if __BSD_VISIBLE
+ *     but the rest of the includes are not ready for that yet.
  */
-#include <sys/cdefs.h>
+#ifndef	__BIT_TYPES_DEFINED__
+#define	__BIT_TYPES_DEFINED__
+#endif
+
+#ifndef	_INT8_T_DEFINED_
+#define	_INT8_T_DEFINED_
+typedef	__int8_t		int8_t;
+#endif
+
+#ifndef	_UINT8_T_DEFINED_
+#define	_UINT8_T_DEFINED_
+typedef	__uint8_t		uint8_t;
+#endif
+
+#ifndef	_INT16_T_DEFINED_
+#define	_INT16_T_DEFINED_
+typedef	__int16_t		int16_t;
+#endif
+
+#ifndef	_UINT16_T_DEFINED_
+#define	_UINT16_T_DEFINED_
+typedef	__uint16_t		uint16_t;
+#endif
+
+#ifndef	_INT32_T_DEFINED_
+#define	_INT32_T_DEFINED_
+typedef	__int32_t		int32_t;
+#endif
+
+#ifndef	_UINT32_T_DEFINED_
+#define	_UINT32_T_DEFINED_
+typedef	__uint32_t		uint32_t;
+#endif
+
+#ifndef	_INT64_T_DEFINED_
+#define	_INT64_T_DEFINED_
+typedef	__int64_t		int64_t;
+#endif
+
+#ifndef	_UINT64_T_DEFINED_
+#define	_UINT64_T_DEFINED_
+typedef	__uint64_t		uint64_t;
+#endif
+
+/* BSD-style unsigned bits types */
+typedef	__uint8_t	u_int8_t;
+typedef	__uint16_t	u_int16_t;
+typedef	__uint32_t	u_int32_t;
+typedef	__uint64_t	u_int64_t;
+
+/* quads, deprecated in favor of 64 bit int types */
+typedef	__int64_t	quad_t;
+typedef	__uint64_t	u_quad_t;
+typedef	quad_t *	qaddr_t;
+
+#if __BSD_VISIBLE
+/* VM system types */
+typedef __vaddr_t	vaddr_t;
+typedef __paddr_t	paddr_t;
+typedef __vsize_t	vsize_t;
+typedef __psize_t	psize_t;
+#endif /* __BSD_VISIBLE */
+
+/* Standard system types */
+typedef	char *		caddr_t;	/* core address */
+typedef	__int32_t	daddr_t;	/* 32-bit disk address */
+typedef	__int32_t	daddr32_t;	/* 32-bit disk address */
+typedef	__int64_t	daddr64_t;	/* 64-bit disk address */
+typedef	__dev_t		dev_t;		/* device number */
+typedef	__fixpt_t	fixpt_t;	/* fixed point number */
+typedef	__gid_t		gid_t;		/* group id */
+typedef	__id_t		id_t;		/* may contain pid, uid or gid */
+typedef	__ino_t		ino_t;		/* inode number */
+typedef	__key_t		key_t;		/* IPC key (for Sys V IPC) */
+typedef	__mode_t	mode_t;		/* permissions */
+typedef	__nlink_t	nlink_t;	/* link count */
+typedef	__pid_t		pid_t;		/* process id */
+typedef __rlim_t	rlim_t;		/* resource limit */
+typedef	__segsz_t	segsz_t;	/* segment size */
+typedef	__swblk_t	swblk_t;	/* swap offset */
+typedef	__uid_t		uid_t;		/* user id */
+typedef	__useconds_t	useconds_t;	/* microseconds */
+typedef	__suseconds_t	suseconds_t;	/* microseconds (signed) */
+
+/*
+ * XPG4.2 states that inclusion of <netinet/in.h> must pull these
+ * in and that inclusion of <sys/socket.h> must pull in sa_family_t.
+ * We put these here because there are other headers that require
+ * these types and <sys/socket.h> and <netinet/in.h> will indirectly
+ * include <sys/types.h>.
+ * XXX - now that we have protected versions these should move.
+ */
+typedef __in_addr_t	in_addr_t;	/* base type for internet address */
+typedef __in_port_t	in_port_t;	/* IP port type */
+typedef __sa_family_t	sa_family_t;	/* sockaddr address family type */
+typedef __socklen_t	socklen_t;	/* length type for network syscalls */
+
+/*
+ * The following types may be defined in multiple header files.
+ */
+#ifndef	_CLOCK_T_DEFINED_
+#define	_CLOCK_T_DEFINED_
+typedef	__clock_t	clock_t;
+#endif
+
+#ifndef	_CLOCKID_T_DEFINED_
+#define	_CLOCKID_T_DEFINED_
+typedef	__clockid_t	clockid_t;
+#endif
+
+#ifndef	_SIZE_T_DEFINED_
+#define	_SIZE_T_DEFINED_
+typedef	__size_t	size_t;
+#endif
+
+#ifndef	_SSIZE_T_DEFINED_
+#define	_SSIZE_T_DEFINED_
+typedef	__ssize_t	ssize_t;
+#endif
+
+#ifndef	_TIME_T_DEFINED_
+#define	_TIME_T_DEFINED_
+typedef	__time_t	time_t;
+#endif
+
+#ifndef	_TIMER_T_DEFINED_
+#define	_TIMER_T_DEFINED_
+typedef	__timer_t	timer_t;
+#endif
+
+#ifndef	_OFF_T_DEFINED_
+#define	_OFF_T_DEFINED_
+typedef	__off_t		off_t;
+#endif
+
+/*
+ * These belong in unistd.h, but are placed here too to ensure that
+ * long arguments will be promoted to off_t if the program fails to
+ * include that header or explicitly cast them to off_t.
+ */
+#if __BSD_VISIBLE && !defined(_KERNEL)
 __BEGIN_DECLS
-off_t	 lseek __P((int, off_t, int));
+off_t	 lseek(int, off_t, int);
+int	 ftruncate(int, off_t);
+int	 truncate(const char *, off_t);
 __END_DECLS
+#endif /* __BSD_VISIBLE && !_KERNEL */
 
-#include <machine/ansi.h>
+#if __BSD_VISIBLE
+/* Major, minor numbers, dev_t's. */
+#define	major(x)	((int32_t)(((u_int32_t)(x) >> 8) & 0xff))
+#define	minor(x)	((int32_t)((x) & 0xff) | (((x) & 0xffff0000) >> 8))
+#define	makedev(x,y)	((dev_t)((((x) & 0xff) << 8) | ((y) & 0xff) | (((y) & 0xffff00) << 8)))
+#endif
 
-/* To avoid ugly namespace issues, we borrow all ANSI C defined types
-   from ANSI headers 
-*/
+#if __BSD_VISIBLE
+#include <sys/select.h>	/* must be after type declarations */
+#endif
 
-/* size_t */
-#include <stddef.h>
-
-#ifdef	_BSD_SSIZE_T_
-typedef	_BSD_SSIZE_T_	ssize_t;
-#undef	_BSD_SSIZE_T_
+#if defined(__STDC__) && defined(_KERNEL)
+/*
+ * Forward structure declarations for function prototypes.  We include the
+ * common structures that cross subsystem boundaries here; others are mostly
+ * used in the same place that the structure is defined.
+ */
+struct	proc;
+struct	pgrp;
+struct	ucred;
+struct	rusage;
+struct	file;
+struct	buf;
+struct	tty;
+struct	uio;
 #endif
 
 #endif /* !_SYS_TYPES_H_ */
