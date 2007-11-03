@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <vfork.h>
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -504,7 +505,7 @@ static int ExecuteCommand( const Command& command )
 		{
 			if ( GetOption( kOptionMonitor ) )
 			{
-				setpgrp();
+				setpgid( 0, 0 );
 				
 				tcsetpgrp( 0, getpgrp() );
 			}
@@ -690,7 +691,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		
 		if ( GetOption( kOptionMonitor ) )
 		{
-			setpgrp();
+			setpgid( 0, 0 );
 			
 			tcsetpgrp( 0, getpgrp() );
 		}
