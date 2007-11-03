@@ -20,6 +20,7 @@
 #include "sys/ttycom.h"
 #include "sys/wait.h"
 #include "unistd.h"
+#include "vfork.h"
 
 // Iota
 #include "iota/environ.hh"
@@ -211,12 +212,12 @@
 		return 0;
 	}
 	
-	int execv( const char* path, const char* const argv[] )
+	int execv( const char* path, const char* const* argv )
 	{
 		return execve( path, argv, environ );
 	}
 	
-	int fork()
+	pid_t fork()
 	{
 		errno = EINVAL;
 		return -1;
@@ -236,11 +237,6 @@
 		const char* tty_name = ttyname( fd );
 		
 		return tty_name != NULL;
-	}
-	
-	int setpgrp()
-	{
-		return setpgid( 0, 0 );
 	}
 	
 	pid_t tcgetpgrp( int fd )
