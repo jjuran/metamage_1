@@ -29,6 +29,10 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/Open.hh"
+
+// Io
+#include "Io/TextInput.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -36,6 +40,7 @@
 
 
 namespace N = Nitrogen;
+namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -169,61 +174,6 @@ static void WaitForClients()
 	}
 }
 
-static std::string ReadLine( int fd )
-{
-	ByteCount minBytes = 1;
-	
-	const char* nl = NULL;
-	std::size_t size = 0;
-	
-	do
-	{
-		const char* p;
-		int peeked = peek( fd, &p, minBytes );
-		
-		p7::throw_posix_result( peeked );
-		
-		if ( peeked == 0 )
-		{
-			throw io::end_of_input();
-		}
-		
-		const char* cr = std::strchr( p, '\r' );
-		const char* lf = std::strchr( p, '\n' );
-		
-		nl = std::min( cr, lf );
-		
-		if ( nl == NULL )
-		{
-			// One or both chars are absent
-			nl = std::max( cr, lf );
-		}
-		
-		if ( nl == NULL )
-		{
-			// Both chars are absent
-			minBytes = std::strlen( p ) + 1;
-		}
-		else
-		{
-			// nl is the first newline char
-			size = nl - p;
-		}
-	}
-	while ( nl == NULL );
-	
-	std::string result;
-	
-	result.resize( size + 1 );
-	
-	int bytes = read( fd, const_cast< char* >( result.data() ), size + 1 );
-	
-	ASSERT( bytes == size + 1 );
-	
-	result.resize( size );
-	
-	return result;
-}
 
 static std::vector< std::string > Split( const std::string& text )
 {
@@ -322,20 +272,14 @@ static void ProcessLine( const std::string& line )
 
 static void ReadInetdDotConf()
 {
-	int fd = open( "/etc/inetd.conf", O_RDONLY );
+	Io::TextInputAdapter< NN::Owned< p7::fd_t > > input = io::open_for_reading( "/etc/inetd.conf" );
 	
-	if ( fd == -1 )  return;
-	
-	try
+	while ( !input.Ended() )
 	{
-		while ( true )
-		{
-			ProcessLine( ReadLine( fd ) );
-		}
+		std::string line = input.Read();
+		
+		ProcessLine( line );
 	}
-	catch ( const io::end_of_input& ) {}
-	
-	close( fd );
 }
 
 int O::Main( int /*argc*/, char const *const /*argv*/[] )
