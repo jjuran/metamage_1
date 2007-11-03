@@ -6,15 +6,6 @@
 #ifndef KEROSENE_UNISTD_H
 #define KEROSENE_UNISTD_H
 
-// Mac OS Universal Interfaces
-#ifndef __CONDITIONALMACROS__
-#include <ConditionalMacros.h>
-#endif
-
-#if TARGET_CPU_68K
-#include <LowMem.h>
-#endif
-
 // Standard C
 #include <stddef.h>
 
