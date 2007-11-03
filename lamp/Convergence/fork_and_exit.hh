@@ -9,11 +9,13 @@
 // POSIX
 #include <unistd.h>
 
+pid_t fork_and_exit( int status );
+
 #ifdef __GNUC__
 
-inline int fork_and_exit( int status )
+inline pid_t fork_and_exit( int status )
 {
-	int forked = fork();
+	pid_t forked = fork();
 	
 	if ( forked > 0 )
 	{
