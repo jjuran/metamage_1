@@ -274,24 +274,6 @@ static void WaitForClients()
 }
 
 
-enum
-{
-	optListenerPort, 
-	optRemoteHost, 
-	optRemotePort
-};
-
-static O::Options DefineOptions()
-{
-	O::Options options;
-	
-	options.DefineSetInteger( "--lport",  optListenerPort );
-	options.DefineSetString ( "--remote", optRemoteHost   );
-	options.DefineSetInteger( "--rport",  optRemotePort   );
-	
-	return options;
-}
-
 static struct in_addr ResolveHostname( const char* hostname )
 {
 	hostent* hosts = gethostbyname( hostname );
@@ -309,12 +291,20 @@ static struct in_addr ResolveHostname( const char* hostname )
 
 int O::Main(int argc, char const* const argv[])
 {
-	Options options = DefineOptions();
-	options.GetOptions(argc, argv);
+	const char* remote_host;
 	
-	const std::vector< const char* >& params = options.GetFreeParams();
+	short remote_port;
+	short listener_port;
 	
-	unsigned short listener_port = options.GetInteger( optListenerPort );
+	O::BindOption( "--lport",  listener_port );
+	O::BindOption( "--remote", remote_host   );
+	O::BindOption( "--rport",  remote_port   );
+	
+	O::GetOptions( argc, argv );
+	
+	char const *const *freeArgs = O::FreeArguments();
+	
+	std::size_t argCount = O::FreeArgumentCount();
 	
 	if ( listener_port == 0 )
 	{
@@ -322,21 +312,17 @@ int O::Main(int argc, char const* const argv[])
 		return 1;
 	}
 	
-	std::string host = options.GetString ( optRemoteHost );
-	
-	unsigned short remotePort = options.GetInteger( optRemotePort );
-	
-	if ( remotePort == 0 )
+	if ( remote_port == 0 )
 	{
-		remotePort = listener_port;
+		remote_port = listener_port;
 	}
 	
-	struct in_addr ip = ResolveHostname( host.c_str() );
+	struct in_addr ip = ResolveHostname( remote_host );
 	
 	struct sockaddr_in remoteAddr;
 	
 	remoteAddr.sin_family = AF_INET;
-	remoteAddr.sin_port   = remotePort;
+	remoteAddr.sin_port   = remote_port;
 	remoteAddr.sin_addr   = ip;
 	
 	gRemoteAddress = remoteAddr;
