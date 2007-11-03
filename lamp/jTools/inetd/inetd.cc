@@ -20,6 +20,7 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <vfork.h>
 
 // Nucleus
 #include "Nucleus/NAssert.h"
