@@ -48,15 +48,8 @@
 #define _QUAD_LOWWORD 1
 
 #ifndef _POSIX_SOURCE
-/*
- * Definitions for byte order, according to byte significance from low
- * address to high.
- */
-#define	LITTLE_ENDIAN	1234	/* LSB first: i386, vax */
-#define	BIG_ENDIAN	4321	/* MSB first: 68000, ibm, net */
-#define	PDP_ENDIAN	3412	/* LSB first in word, MSW first in long */
 
-#define	BYTE_ORDER	BIG_ENDIAN
+#define	_BYTE_ORDER	_BIG_ENDIAN
 
 #include <sys/cdefs.h>
 
@@ -74,11 +67,6 @@ __END_DECLS
 #define	ntohs(x)	(x)
 #define	htonl(x)	(x)
 #define	htons(x)	(x)
-
-#define	NTOHL(x)	(x)
-#define	NTOHS(x)	(x)
-#define	HTONL(x)	(x)
-#define	HTONS(x)	(x)
 
 #endif /* !_POSIX_SOURCE */
 #endif /* !_ENDIAN_H_ */
