@@ -44,6 +44,44 @@
 #include <sys/_types.h>
 #include <machine/endian.h>
 
+#ifdef __MWERKS__
+	
+	#include <CGBase.h>
+	
+	#if CALL_NOT_IN_CARBON
+		
+		#define OTUNIXERRORS 1
+		#include <OpenTransportProtocol.h>
+		
+	#else
+		
+		typedef	char *		caddr_t;	/* core address */
+		typedef	__dev_t		dev_t;		/* device number */
+		typedef	__gid_t		gid_t;		/* group id */
+		typedef	__uid_t		uid_t;		/* user id */
+		
+	#endif
+	
+	#include <stdint.h>
+	
+	#define _INT8_T_DEFINED_
+	#define	_INT16_T_DEFINED_
+	#define	_INT32_T_DEFINED_
+	#define	_INT64_T_DEFINED_
+	#define _UINT8_T_DEFINED_
+	#define	_UINT16_T_DEFINED_
+	#define	_UINT32_T_DEFINED_
+	#define	_UINT64_T_DEFINED_
+	
+	#define _WCHAR_T_DEFINED_
+	#define	_TIMER_T_DEFINED_
+	
+	#ifdef __cplusplus
+	using std::size_t;
+	#endif
+		
+#endif
+
 #if __BSD_VISIBLE
 typedef	unsigned char	u_char;
 typedef	unsigned short	u_short;
@@ -56,7 +94,7 @@ typedef	unsigned int	uint;		/* Sys V compatibility */
 typedef unsigned long	ulong;		/* Sys V compatibility */
 
 typedef	__cpuid_t	cpuid_t;	/* CPU id */
-typedef	__register_t	register_t;	/* register-sized type */
+//typedef	__register_t	register_t;	/* register-sized type */
 #endif /* __BSD_VISIBLE */
 
 /*
@@ -108,9 +146,11 @@ typedef	__uint64_t		uint64_t;
 #endif
 
 /* BSD-style unsigned bits types */
+/*
 typedef	__uint8_t	u_int8_t;
 typedef	__uint16_t	u_int16_t;
 typedef	__uint32_t	u_int32_t;
+*/
 typedef	__uint64_t	u_int64_t;
 
 /* quads, deprecated in favor of 64 bit int types */
@@ -118,7 +158,7 @@ typedef	__int64_t	quad_t;
 typedef	__uint64_t	u_quad_t;
 typedef	quad_t *	qaddr_t;
 
-#if __BSD_VISIBLE
+#if __BSD_VISIBLE && !defined( __MWERKS__ )
 /* VM system types */
 typedef __vaddr_t	vaddr_t;
 typedef __paddr_t	paddr_t;
@@ -127,13 +167,10 @@ typedef __psize_t	psize_t;
 #endif /* __BSD_VISIBLE */
 
 /* Standard system types */
-typedef	char *		caddr_t;	/* core address */
 typedef	__int32_t	daddr_t;	/* 32-bit disk address */
 typedef	__int32_t	daddr32_t;	/* 32-bit disk address */
 typedef	__int64_t	daddr64_t;	/* 64-bit disk address */
-typedef	__dev_t		dev_t;		/* device number */
 typedef	__fixpt_t	fixpt_t;	/* fixed point number */
-typedef	__gid_t		gid_t;		/* group id */
 typedef	__id_t		id_t;		/* may contain pid, uid or gid */
 typedef	__ino_t		ino_t;		/* inode number */
 typedef	__key_t		key_t;		/* IPC key (for Sys V IPC) */
@@ -143,7 +180,6 @@ typedef	__pid_t		pid_t;		/* process id */
 typedef __rlim_t	rlim_t;		/* resource limit */
 typedef	__segsz_t	segsz_t;	/* segment size */
 typedef	__swblk_t	swblk_t;	/* swap offset */
-typedef	__uid_t		uid_t;		/* user id */
 typedef	__useconds_t	useconds_t;	/* microseconds */
 typedef	__suseconds_t	suseconds_t;	/* microseconds (signed) */
 
