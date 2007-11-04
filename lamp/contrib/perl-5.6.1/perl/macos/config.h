@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.6  2007-07-27 06:43:01  jax
+Revision 1.7  2007-11-04 14:14:59  jax
+Check for an existing definition before defining away __attribute__.
+
+Revision 1.6  2007/07/27 06:43:01  jax
 Replaced MacPerl_times() with the real times().
 
 Revision 1.5  2007/04/26 15:59:22  jax
@@ -97,7 +100,9 @@ First build released to public
  */
 #undef HASATTRIBUTE 	/**/
 #ifndef HASATTRIBUTE
+#ifndef __attribute__
 #define __attribute__(_arg_)
+#endif
 #endif
 
 /* HAS_BCMP:
