@@ -78,8 +78,6 @@
 #endif
 #define	NCCS		20
 
-#define _POSIX_VDISABLE	(0377)
-
 #if __BSD_VISIBLE
 #define CCEQ(val, c)	(c == val ? val != _POSIX_VDISABLE : 0)
 #endif
