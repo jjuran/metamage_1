@@ -45,22 +45,9 @@
 #define	SIZE_T_MAX	UINT_MAX
 #endif
 
-#define	index(a, b)			strchr(a, b)
-#define	rindex(a, b)		strrchr(a, b)
-#define	bzero(a, b)			memset(a, 0, b)
-#define	bcmp(a, b, n)		memcmp(a, b, n)
-#define	bcopy(a, b, n)		memmove(b, a, n)
-
 /* POSIX 1003.2 RE limit. */
 #ifndef	_POSIX2_RE_DUP_MAX
 #define	_POSIX2_RE_DUP_MAX	255
-#endif
-
-#ifndef	MAX
-#define	MAX(_a,_b)	((_a)<(_b)?(_b):(_a))
-#endif
-#ifndef	MIN
-#define	MIN(_a,_b)	((_a)<(_b)?(_a):(_b))
 #endif
 
 #endif /* !_COMPAT_H_ */
