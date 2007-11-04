@@ -19,11 +19,13 @@
 
 // POSIX
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <vfork.h>
 
 // Nucleus
 #include "Nucleus/NAssert.h"
