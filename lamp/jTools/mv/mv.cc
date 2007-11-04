@@ -8,6 +8,7 @@
 
 // Standard C/C++
 #include <cstdio>
+#include <cstring>
 
 // POSIX
 #include <sys/stat.h>
@@ -59,7 +60,7 @@ int main( int argc, char const *const argv[] )
 		
 		for ( int index = 1;  index < argc - 1;  ++index )
 		{
-			fail += rename( argv[ index ], destDir ) == -1;
+			fail += std::rename( argv[ index ], destDir ) == -1;
 		}
 	}
 	else
@@ -69,7 +70,7 @@ int main( int argc, char const *const argv[] )
 		const char* srcPath  = argv[ 1 ];
 		const char* destPath = argv[ 2 ];
 		
-		int renamed = rename( srcPath, destPath );
+		int renamed = std::rename( srcPath, destPath );
 		
 		if ( renamed == -1 )
 		{
