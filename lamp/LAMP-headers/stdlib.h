@@ -52,6 +52,13 @@ typedef	__size_t	size_t;
 typedef	__wchar_t	wchar_t;
 #endif
 
+#ifdef __MWERKS__
+#include <div_t.h>
+#ifdef __cplusplus
+using std::div_t;
+using std::ldiv_t;
+#endif
+#else
 typedef struct {
 	int quot;		/* quotient */
 	int rem;		/* remainder */
@@ -61,6 +68,7 @@ typedef struct {
 	long quot;		/* quotient */
 	long rem;		/* remainder */
 } ldiv_t;
+#endif
 
 #if __ISO_C_VISIBLE >= 1999
 typedef struct {
@@ -88,11 +96,6 @@ typedef struct {
 #define	EXIT_FAILURE	1
 #define	EXIT_SUCCESS	0
 
-#define	RAND_MAX	0x7fffffff
-
-extern size_t	__mb_cur_max;
-#define	MB_CUR_MAX	__mb_cur_max
-
 #include <sys/cdefs.h>
 
 /*
@@ -101,7 +104,7 @@ extern size_t	__mb_cur_max;
  */
 #ifdef abs
 #undef abs
-#warning abs macro collides with abs() prototype, undefining
+//#warning abs macro collides with abs() prototype, undefining
 #endif
 
 __BEGIN_DECLS
