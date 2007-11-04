@@ -1,3 +1,6 @@
+/*	$OpenBSD: un.h,v 1.8 2003/06/02 23:28:22 millert Exp $	*/
+/*	$NetBSD: un.h,v 1.11 1996/02/04 02:12:47 christos Exp $	*/
+
 /*
  * Copyright (c) 1982, 1986, 1993
  *	The Regents of the University of California.  All rights reserved.
@@ -10,10 +13,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * [¤3 Deleted as of 22Jul99, see
- *     ftp://ftp.cs.berkeley.edu/pub/4bsd/README.Impt.License.Change
- *	   for details]
- * 4. Neither the name of the University nor the names of its contributors
+ * 3. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -32,21 +32,41 @@
  *	@(#)un.h	8.1 (Berkeley) 6/2/93
  */
 
-/* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
-
 #ifndef _SYS_UN_H_
-#define _SYS_UN_H_
+#define	_SYS_UN_H_
 
 /*
  * Definitions for UNIX IPC domain.
  */
 struct	sockaddr_un {
-	sa_family_t	sun_family;		/* AF_UNIX */
-	char		sun_path[104];	/* path name (gag) */
+	unsigned char	sun_len;	/* sockaddr len including null */
+	unsigned char	sun_family;	/* AF_UNIX */
+	char	sun_path[104];		/* path name (gag) */
 };
+
+#ifdef _KERNEL
+struct unpcb;
+struct socket;
+
+int	unp_attach(struct socket *so);
+int	unp_bind(struct unpcb *unp, struct mbuf *nam, struct proc *p);
+int	unp_connect(struct socket *so, struct mbuf *nam, struct proc *p);
+int	unp_connect2(struct socket *so, struct socket *so2);
+void	unp_detach(struct unpcb *unp);
+void	unp_discard(struct file *fp);
+void	unp_disconnect(struct unpcb *unp);
+void	unp_drop(struct unpcb *unp, int errno);
+void	unp_gc(void);
+void	unp_mark(struct file *fp);
+void	unp_scan(struct mbuf *m0, void (*op)(struct file *), int);
+void	unp_shutdown(struct unpcb *unp);
+int 	unp_externalize(struct mbuf *);
+int	unp_internalize(struct mbuf *, struct proc *);
+void 	unp_dispose(struct mbuf *);
+#else /* !_KERNEL */
 
 /* actual length of an initialized sockaddr_un */
 #define SUN_LEN(su) \
 	(sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
-
-#endif /* _SYS_UN_H_ */
+#endif /* _KERNEL */
+#endif /* !_SYS_UN_H_ */
