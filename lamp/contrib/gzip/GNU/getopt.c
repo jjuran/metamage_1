@@ -156,7 +156,6 @@ static enum
   REQUIRE_ORDER, PERMUTE, RETURN_IN_ORDER
 } ordering;
 
-#ifdef	__GNU_LIBRARY__
 /* We want to avoid inclusion of string.h with non-GNU libraries
    because there are many ways it can cause trouble.
    On some systems, it contains special magic macros that don't work
@@ -164,47 +163,6 @@ static enum
 #include <string.h>
 #define	my_index	strchr
 #define	my_strlen	strlen
-#else
-
-/* Avoid depending on library functions or files
-   whose names are inconsistent.  */
-
-#if __STDC__ || defined(PROTO)
-extern char *getenv(const char *name);
-extern int  strcmp (const char *s1, const char *s2);
-extern int  strncmp(const char *s1, const char *s2, int n);
-
-static int my_strlen(const char *s);
-static char *my_index (const char *str, int chr);
-#else
-extern char *getenv ();
-#endif
-
-static int
-my_strlen (str)
-     const char *str;
-{
-  int n = 0;
-  while (*str++)
-    n++;
-  return n;
-}
-
-static char *
-my_index (str, chr)
-     const char *str;
-     int chr;
-{
-  while (*str)
-    {
-      if (*str == chr)
-	return (char *) str;
-      str++;
-    }
-  return 0;
-}
-
-#endif				/* GNU C library.  */
 
 /* Handle permutation of arguments.  */
 
