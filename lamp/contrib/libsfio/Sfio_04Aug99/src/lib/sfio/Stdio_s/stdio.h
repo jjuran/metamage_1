@@ -10,6 +10,11 @@
 #endif
 #endif
 
+#ifdef __cplusplus
+extern "C"
+#endif
+int rename( const char* from, const char* to );
+
 #define stdin		sfstdin
 #define stdout		sfstdout
 #define stderr		sfstderr
