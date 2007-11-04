@@ -16,6 +16,7 @@
 #include <sys/ptrace.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <vfork.h>
 
 
 #define STR_LEN( str )  "" str, (sizeof str - 1)
