@@ -11,4 +11,3 @@
 #define _lib_waitpid 1
 #define _lib_atexit  1
 
-#define access( pathname, mode )  ( (errno = EACCES), -1 )

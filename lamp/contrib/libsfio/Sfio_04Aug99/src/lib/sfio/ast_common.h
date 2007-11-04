@@ -139,9 +139,4 @@ typedef int ssize_t;
 
 #endif
 
-#ifdef macintosh
-typedef unsigned short	ushort;
-typedef unsigned long	ulong;
-#endif
-
 #endif
