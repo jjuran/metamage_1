@@ -5,9 +5,14 @@ Author	:	Matthias Neeracher
 
 *********************************************************************/
 
+// For some reason, NSIG is already defined, so perl thinks signal.h has been included.
+#include <signal.h>
+
 #include <ConditionalMacros.h>
 
 #include "iota/environ.hh"
+
+#include "clearenv.h"
 
 /* For now we get compiler this way, until we can
    find a better way */
@@ -181,4 +186,8 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 #define powd_amg    pow_amg
 #define sind_amg    sin_amg
 #define sqrtd_amg   sqrt_amg
+
+// Casualties of the libc upgrade
+#undef HAS_ACCESS
+#undef HAS_GETHOSTBYADDR
 
