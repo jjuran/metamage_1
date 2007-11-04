@@ -24,6 +24,7 @@
 #include "vfork.h"
 
 // Convergence
+#include "clearenv.h"
 #include "copyfile.hh"
 #include "fork_and_exit.hh"
 
@@ -381,10 +382,12 @@ namespace
 	{
 	}
 	
+	/*
 	struct hostent* gethostbyaddr( const void*, size_t, int )
 	{
 		return NULL;
 	}
+	*/
 	
 	struct hostent* gethostbyname( const char* name )
 	{
@@ -430,10 +433,12 @@ namespace
 	{
 	}
 	
+	/*
 	char* hstrerror( int )
 	{
 		return "";
 	}
+	*/
 	
 	void setprotoent( int )
 	{
