@@ -14,9 +14,6 @@ extern "C" {
 	
 	//#define CLOCKS_PER_SEC 1000000
 	
-	typedef unsigned long time_t;
-	typedef unsigned long long clock_t;
-	
 	struct tm
 	{
 		int tm_sec;
@@ -30,16 +27,6 @@ extern "C" {
 		int tm_isdst;
 		long tm_gmtoff;
 		char* tm_zone;
-	};
-	
-	/*
-	 * Structure returned by gettimeofday(2) system call,
-	 * and used in other calls.
-	 */
-	struct timeval
-	{
-		time_t		tv_sec;		/* seconds */
-		suseconds_t	tv_usec;	/* and microseconds */
 	};
 	
 	char* ctime( const time_t* time );
