@@ -32,6 +32,9 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
+// Nucleus
+#include "Nucleus/Convert.h"
+
 
 namespace Orion
 {
@@ -81,6 +84,20 @@ namespace Orion
 			void Set( const char* ) const  { itsData = itsValue; }
 	};
 	
+	template < class Type >
+	class ConverterOptionBinding : public OptionBinding
+	{
+		private:
+			Type& itsData;
+		
+		public:
+			ConverterOptionBinding( Type& data ) : itsData( data )  {}
+			
+			bool ParameterExpected() const  { return true; }
+			
+			void Set( const char* value ) const  { itsData = Nucleus::Convert< Type >( value ); }
+	};
+	
 	template < class Trigger >
 	class TriggerOptionBinding : public OptionBinding
 	{
@@ -102,6 +119,12 @@ namespace Orion
 		return boost::shared_ptr< OptionBinding >( new SelectorOptionBinding< Type >( data, value ) );
 	}
 	
+	template < class Type >
+	boost::shared_ptr< OptionBinding > NewOptionBinding( Type& data )
+	{
+		return boost::shared_ptr< OptionBinding >( new ConverterOptionBinding< Type >( data ) );
+	}
+	
 	inline boost::shared_ptr< OptionBinding > NewOptionBinding( bool& flag )
 	{
 		return NewOptionBinding( flag, true );
@@ -114,7 +137,7 @@ namespace Orion
 	boost::shared_ptr< OptionBinding > NewOptionBinding( std::vector< std::string >& strings );
 	
 	template < class Trigger >
-	boost::shared_ptr< OptionBinding > NewOptionBinding( Trigger trigger )
+	boost::shared_ptr< OptionBinding > NewTriggerOptionBinding( Trigger trigger )
 	{
 		return boost::shared_ptr< OptionBinding >( new TriggerOptionBinding< Trigger >( trigger ) );
 	}
@@ -147,7 +170,7 @@ namespace Orion
 	{
 		OptionID optionID = NewOption( optionSpec );
 		
-		boost::shared_ptr< OptionBinding > binding = NewOptionBinding( trigger );
+		boost::shared_ptr< OptionBinding > binding = NewTriggerOptionBinding( trigger );
 		
 		AddBinding( optionID, binding );
 	}
