@@ -11,6 +11,7 @@
 
 // Standard C/C++
 #include <cctype>
+#include <string>
 
 // POSIX
 #include <unistd.h>
