@@ -102,14 +102,20 @@ struct stat {
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
-int	chmod __P((const char *, mode_t));
-int fchmod( int filedes, mode_t mode );
-int	fstat __P((int, struct stat *));
-//int	mkdir __P((const char *, ...));
-int	mkdir __P((const char *, mode_t));
-int	mkfifo __P((const char *, mode_t));
-int	stat __P((const char *, struct stat *));
-int	lstat __P((const char *, struct stat *));
+int	chmod(const char *, mode_t);
+int	fstat(int, struct stat *);
+int	mknod(const char *, mode_t, dev_t);
+int	mkdir(const char *, mode_t);
+int	mkfifo(const char *, mode_t);
+int	stat(const char *, struct stat *);
+mode_t	umask(mode_t);
+#if __BSD_VISIBLE
+int	chflags(const char *, unsigned int);
+int	fchflags(int, unsigned int);
+int	fchmod(int, mode_t);
+int	lstat(const char *, struct stat *);
+int	isfdtype(int, int);
+#endif
 __END_DECLS
 
 #endif /* !_SYS_STAT_H_ */
