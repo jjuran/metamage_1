@@ -21,6 +21,8 @@ extern "C" {
 	
 	#define Kerosene_vfork() ( SpawnVFork( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) )
 	
+	#define vfork()  ( (pid_t) Kerosene_vfork() )
+	
 #ifdef __cplusplus
 }
 #endif
