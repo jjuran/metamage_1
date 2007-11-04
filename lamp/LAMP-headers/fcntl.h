@@ -90,8 +90,6 @@ extern "C" {
 	
 	int creat( const char* pathname, mode_t mode );
 	
-	int mknod( const char* path, mode_t mode, dev_t dev );
-	
 #ifdef __cplusplus
 }
 #endif
