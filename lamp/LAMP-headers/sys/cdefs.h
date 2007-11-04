@@ -50,4 +50,16 @@
 
 #define __P(x) x
 
+#define __const const
+
+#define __dead  /* nothing */
+
+#ifndef __attribute__
+#define __attribute__(x)  /* nothing */
+#endif
+
+#define __BSD_VISIBLE  1
+#define __POSIX_VISIBLE  1
+#define __XPG_VISIBLE  500
+
 #endif /* !_CDEFS_H_ */
