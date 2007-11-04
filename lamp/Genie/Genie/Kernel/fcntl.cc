@@ -9,9 +9,6 @@
 // POSIX
 #include "fcntl.h"
 
-// POSeven
-#include "Errno.hh"
-
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
