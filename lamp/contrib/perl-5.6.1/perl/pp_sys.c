@@ -98,6 +98,10 @@ extern int h_errno;
 #  endif
 #endif
 
+#ifdef I_VFORK
+#  include <vfork.h>
+#endif
+
 /* Put this after #includes because fork and vfork prototypes may conflict. */
 #ifndef HAS_VFORK
 #   define vfork fork
