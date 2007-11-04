@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.7  2007-11-04 14:14:59  jax
+Revision 1.8  2007-11-04 15:17:55  jax
+Include Quickdraw.h early so the Move macro doesn't break it.
+
+Revision 1.7  2007/11/04 14:14:59  jax
 Check for an existing definition before defining away __attribute__.
 
 Revision 1.6  2007/07/27 06:43:01  jax
@@ -81,6 +84,11 @@ First build released to public
 #define _config_h_
 
 #define MACOS_LAMP
+
+// Get this out of the way so the Move macro doesn't break it
+#include <Quickdraw.h>
+
+
 #define PERL_USE_SAFE_PUTENV
 
 /* LOC_SED:
