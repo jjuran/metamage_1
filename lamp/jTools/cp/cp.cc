@@ -12,6 +12,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+// Convergence
+#include "copyfile.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
