@@ -37,6 +37,8 @@
 #include <sys/cdefs.h>
 #include <sys/time.h>		/* for types and struct timeval */
 
+#include <string.h>
+
 /*
  * Select uses bit masks of file descriptors in longs.  These macros
  * manipulate such bit fields (the filesystem macros use chars).
