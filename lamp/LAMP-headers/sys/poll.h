@@ -28,23 +28,6 @@
 #ifndef	_SYS_POLL_H_
 #define	_SYS_POLL_H_
 
-#ifndef __OPENTRANSPORTPROTOCOL__
-#include <OpenTransportProtocol.h>
-#endif
-
-#undef POLLIN
-#undef POLLPRI
-#undef POLLOUT
-#undef POLLERR
-#undef POLLHUP
-#undef POLLNVAL
-#undef POLLRDNORM
-#undef POLLRDBAND
-#undef POLLWRNORM
-#undef POLLWRBAND
-#undef POLLMSG
-
-
 typedef struct pollfd {
 	int 	fd;
 	short	events;
