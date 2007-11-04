@@ -3,6 +3,10 @@
  *	==========
  */
 
+// Standard C/C++
+#include <cstdio>
+#include <cstring>
+
 // Standard C
 #include <assert.h>
 #include "errno.h"
