@@ -83,6 +83,7 @@
 
 #include <sys/cdefs.h>
 #include <sys/param.h>
+#include <sys/endian.h>
 
 /*
  * revision information.  this is the release date in YYYYMMDD format.
