@@ -35,6 +35,8 @@
 #ifndef _NETINET_IP_H_
 #define _NETINET_IP_H_
 
+#include <sys/endian.h>
+
 /*
  * Definitions for internet protocol version 4.
  * Per RFC 791, September 1981.
