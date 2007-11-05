@@ -92,7 +92,7 @@ namespace ALine
 	{
 		try
 		{
-			std::string dirPath = cwdPath + "/" + pathname;
+			std::string dirPath = cwdPath / pathname;
 			
 			if ( io::directory_exists( dirPath ) )
 			{
