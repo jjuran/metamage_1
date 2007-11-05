@@ -55,25 +55,11 @@ namespace poseven
 namespace io
 {
 	
-	inline std::string get_filename( const std::string& pathname, overload = overload() )
+	std::string get_filename( const std::string& pathname );
+	
+	inline std::string get_filename( const std::string& pathname, overload )
 	{
-		std::string result = pathname;
-		
-		std::size_t last_slash = result.find_last_of( "/" );
-		
-		if ( last_slash == result.npos )
-		{
-			return result;
-		}
-		
-		if ( last_slash == result.size() - 1 )
-		{
-			result.resize( last_slash );
-			
-			last_slash = result.find_last_of( "/" );
-		}
-		
-		return result.substr( last_slash + 1, result.npos );
+		return get_filename( pathname );
 	}
 	
 	inline std::string get_filename_string( const std::string& pathname, overload = overload() )
@@ -81,27 +67,11 @@ namespace io
 		return get_filename( pathname );
 	}
 	
-	inline std::string get_preceding_directory( const std::string& pathname, overload = overload() )
+	std::string get_preceding_directory( const std::string& pathname );
+	
+	inline std::string get_preceding_directory( const std::string& pathname, overload )
 	{
-		std::string result = pathname;
-		
-		std::size_t last_slash = result.find_last_of( "/" );
-		
-		if ( last_slash == result.npos )
-		{
-			return ".";
-		}
-		
-		if ( last_slash == result.size() - 1 )
-		{
-			result.resize( last_slash );
-			
-			last_slash = result.find_last_of( "/" );
-		}
-		
-		result.resize( last_slash + 1 );
-		
-		return result;
+		return get_preceding_directory( pathname );
 	}
 	
 	inline std::string get_parent_directory_of_directory( const std::string& pathname, overload = overload() )
