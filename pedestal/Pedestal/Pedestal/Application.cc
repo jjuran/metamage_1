@@ -115,11 +115,6 @@ namespace Pedestal
 	static bool gKeyboardConfigured      = false;
 	static bool gNeedToConfigureKeyboard = false;
 	
-	// The last key-down event presumed to be content.
-	static EventRecord gLastContentKeyDownEvent;
-	
-	static unsigned gKeyCount = 0;
-	
 	static bool gShiftKeyIsDownFromKeyStroke = false;
 	
 	static UInt32 gShiftSpaceQuasimodeMask = 0;
@@ -439,21 +434,9 @@ namespace Pedestal
 		N::SysBeep();
 	}
 	
-	inline bool AutoKeyRequiresThreeStrikes()
-	{
-		// False in Mac HIG
-		return true;
-	}
-	
 	static void DispatchKey( const EventRecord& event )
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
-		
-		if ( AutoKeyRequiresThreeStrikes()  &&  event.what == autoKey  &&  gKeyCount < 3 )
-		{
-			// Suppress auto-key until after three consecutive key-downs
-			return;
-		}
 		
 	#if !TARGET_API_MAC_CARBON
 		
@@ -491,19 +474,6 @@ namespace Pedestal
 		}
 		else if ( N::WindowRef window = N::FrontWindow() )
 		{
-			if ( event.what == keyDown )
-			{
-				if (    event.message   == gLastContentKeyDownEvent.message
-				     && event.modifiers == gLastContentKeyDownEvent.modifiers )
-				{
-					++gKeyCount;
-				}
-				else
-				{
-					gKeyCount = 1;
-				}
-			}
-			
 			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
 				if ( WindowBase* base = N::GetWRefCon( window ) )
@@ -511,8 +481,6 @@ namespace Pedestal
 					base->KeyDown( event );
 				}
 			}
-			
-			gLastContentKeyDownEvent = event;
 		}
 		
 		gShiftKeyIsDownFromKeyStroke = event.modifiers & kEitherShiftKey;

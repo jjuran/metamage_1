@@ -310,8 +310,39 @@ namespace Pedestal
 		return c < 0x20  ||  aTE[0]->selStart == aTE[0]->selEnd;
 	}
 	
+	static EventRecord gLastTextEditKeyDownEvent;
+	
+	static unsigned gTextEditKeyCount = 0;
+	
+	inline bool AutoKeyRequiresThreeStrikes()
+	{
+		// False in Mac HIG
+		return true;
+	}
+	
 	bool TEView::KeyDown( const EventRecord& event )
 	{
+		if ( AutoKeyRequiresThreeStrikes()  &&  event.what == autoKey  &&  gTextEditKeyCount < 3 )
+		{
+			// Suppress auto-key until after three consecutive key-downs
+			return true;
+		}
+		
+		if ( event.what == keyDown )
+		{
+			if (    event.message   == gLastTextEditKeyDownEvent.message
+			     && event.modifiers == gLastTextEditKeyDownEvent.modifiers )
+			{
+				++gTextEditKeyCount;
+			}
+			else
+			{
+				gTextEditKeyCount = 1;
+			}
+		}
+		
+		gLastTextEditKeyDownEvent = event;
+		
 		char c = event.message & charCodeMask;
 		
 		const UInt16 bothShiftKeys = shiftKey | rightShiftKey;
