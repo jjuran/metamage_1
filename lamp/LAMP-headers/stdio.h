@@ -97,7 +97,6 @@ extern const char *sys_errlist[];
 __BEGIN_DECLS
 char	*ctermid(char *);
 char	*cuserid(char *);
-int	 fileno(FILE *);
 
 #if __POSIX_VISIBLE >= 199209
 int	 pclose(FILE *);
@@ -118,10 +117,6 @@ int	 getchar_unlocked(void);
 int	 putc_unlocked(int, FILE *);
 int	 putchar_unlocked(int);
 #endif /* __POSIX_VISIBLE >= 199506 */
-
-#if __XPG_VISIBLE
-char	*tempnam(const char *, const char *);
-#endif
 __END_DECLS
 
 #ifndef _POSIX_THREADS
@@ -140,29 +135,10 @@ __BEGIN_DECLS
 int	 asprintf(char **, const char *, ...)
 		__attribute__((__format__ (printf, 2, 3)))
 		__attribute__((__nonnull__ (2)));
-char	*fgetln(FILE *, size_t *);
-int	 fpurge(FILE *);
-int	 getw(FILE *);
-int	 putw(int, FILE *);
-void	 setbuffer(FILE *, char *, int);
-int	 setlinebuf(FILE *);
 int	 vasprintf(char **, const char *, __va_list)
 		__attribute__((__format__ (printf, 2, 0)))
 		__attribute__((__nonnull__ (2)));
 __END_DECLS
-
-/*
- * Stdio function-access interface.
- */
-__BEGIN_DECLS
-FILE	*funopen(const void *,
-		int (*)(void *, char *, int),
-		int (*)(void *, const char *, int),
-		fpos_t (*)(void *, fpos_t, int),
-		int (*)(void *));
-__END_DECLS
-#define	fropen(cookie, fn) funopen(cookie, fn, 0, 0, 0)
-#define	fwopen(cookie, fn) funopen(cookie, 0, fn, 0, 0)
 #endif /* __BSD_VISIBLE */
 
 #endif /* _STDIO_H_ */
