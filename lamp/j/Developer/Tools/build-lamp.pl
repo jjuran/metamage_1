@@ -66,6 +66,7 @@ print "\$DIST   = $lamp_dist\n";
 my @programs = qw
 (
 	A-line
+	SetFile
 	abort aevt argv0
 	beep
 	cat cds console cp cpres cr2lf
@@ -103,7 +104,10 @@ my %fsmap =
 		},
 		Tools =>
 		[
-			qw( A-line abort activate aevt cpres ic keymods quit system File Line ld mpwrez mwcc tlsrvr ),
+			qw( cpres ld mpwrez mwcc ),
+			qw( A-line abort ),
+			qw( SetFile aevt ic keymods system tlsrvr ),
+			qw( File Line activate quit ),
 			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl run-tests ),
 		],
 	},
