@@ -34,23 +34,18 @@
 
 // Nucleus
 #include "Nucleus/Convert.h"
+#include "Nucleus/Exception.h"
 
 
 namespace Orion
 {
 	
-	class UndefinedOption : public std::exception
+	class UndefinedOption : public Nucleus::Exception
 	{
-		private:
-			std::string message;
-		
 		public:
-			UndefinedOption( const std::string& option )
-			: message( std::string() + "Undefined option " + option )  {}
+			UndefinedOption( const std::string& option ) : Nucleus::Exception( "Undefined option " + option )  {}
 			
 			~UndefinedOption() throw ()  {}
-			
-			const char* what() const throw ()  { return message.c_str(); }
 	};
 	
 	
