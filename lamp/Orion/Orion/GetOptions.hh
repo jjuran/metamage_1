@@ -112,6 +112,25 @@ namespace Orion
 			void Set( const char* param ) const  { itsTrigger( param ); }
 	};
 	
+	template < class Trigger, class ParamType >
+	class TriggerWithParameterOptionBinding : public OptionBinding
+	{
+		private:
+			Trigger itsTrigger;
+		
+		public:
+			TriggerWithParameterOptionBinding( Trigger trigger ) : itsTrigger( trigger )  {}
+			
+			bool ParameterExpected() const  { return true; }
+			
+			void Set( const char* param ) const
+			{
+				ParamType converted = NN::Convert< ParamType >( std::string( param ) );
+				
+				itsTrigger( converted );
+			}
+	};
+	
 	
 	template < class Type >
 	boost::shared_ptr< OptionBinding > NewOptionBinding( Type& data, Type value )
@@ -140,6 +159,12 @@ namespace Orion
 	boost::shared_ptr< OptionBinding > NewTriggerOptionBinding( Trigger trigger )
 	{
 		return boost::shared_ptr< OptionBinding >( new TriggerOptionBinding< Trigger >( trigger ) );
+	}
+	
+	template < class ParamType, class Trigger >
+	boost::shared_ptr< OptionBinding > NewTriggerWithParameterOptionBinding( Trigger trigger )
+	{
+		return boost::shared_ptr< OptionBinding >( new TriggerWithParameterOptionBinding< Trigger, ParamType >( trigger ) );
 	}
 	
 	
@@ -171,6 +196,16 @@ namespace Orion
 		OptionID optionID = NewOption( optionSpec );
 		
 		boost::shared_ptr< OptionBinding > binding = NewTriggerOptionBinding( trigger );
+		
+		AddBinding( optionID, binding );
+	}
+	
+	template < class ParamType, class Trigger >
+	void BindOptionTrigger( const char* optionSpec, Trigger trigger )
+	{
+		OptionID optionID = NewOption( optionSpec );
+		
+		boost::shared_ptr< OptionBinding > binding = NewTriggerWithParameterOptionBinding< ParamType >( trigger );
 		
 		AddBinding( optionID, binding );
 	}
