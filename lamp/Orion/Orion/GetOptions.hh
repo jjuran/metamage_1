@@ -120,7 +120,7 @@ namespace Orion
 			
 			void Set( const char* param ) const
 			{
-				ParamType converted = NN::Convert< ParamType >( std::string( param ) );
+				ParamType converted = Nucleus::Convert< ParamType >( std::string( param ) );
 				
 				itsTrigger( converted );
 			}
