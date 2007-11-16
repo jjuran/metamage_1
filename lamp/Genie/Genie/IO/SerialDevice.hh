@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	boost::shared_ptr< IOHandle > OpenSerialDevice();
+	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string& portName = "A" );
 	
 }
 

@@ -33,7 +33,7 @@ namespace Genie
 			NN::Owned< N::DriverRefNum > itsInputRefNum;
 		
 		public:
-			SerialDeviceHandle( const std::string& portName = "A" );
+			SerialDeviceHandle( const std::string& portName );
 			
 			unsigned int SysPoll() const;
 			
@@ -45,7 +45,7 @@ namespace Genie
 #endif
 	
 	
-	boost::shared_ptr< IOHandle > OpenSerialDevice()
+	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string& portName )
 	{
 	#if TARGET_API_MAC_CARBON
 		
@@ -59,7 +59,7 @@ namespace Genie
 		
 		if ( gSerialDevice.expired() )
 		{
-			boost::shared_ptr< IOHandle > result( new SerialDeviceHandle() );
+			boost::shared_ptr< IOHandle > result( new SerialDeviceHandle( portName ) );
 			
 			gSerialDevice = result;
 			
