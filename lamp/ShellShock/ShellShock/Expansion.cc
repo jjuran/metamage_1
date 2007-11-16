@@ -703,6 +703,30 @@ namespace ShellShock
 		std::copy( words.begin(), words.end(), inserter );
 	}
 	
+	inline std::string Join( const std::string& word )
+	{
+		return word;
+	}
+	
+	static std::string Join( const std::vector< std::string >& words )
+	{
+		if ( words.empty() )
+		{
+			return "";
+		}
+		
+		std::string result = words[0];
+		
+		typedef std::vector< std::string >::const_iterator Iter;
+		
+		for ( Iter it = words.begin() + 1;  it < words.end();  ++it )
+		{
+			result += " " + *it;
+		}
+		
+		return result;
+	}
+	
 	
 	template < class Algorithm >
 	class ApplyCommand
@@ -720,12 +744,20 @@ namespace ShellShock
 	Command ApplyCommand< Algorithm >::operator()( const Command& command ) const
 	{
 		Command result;
-		result.redirections = command.redirections;
-		typedef std::vector< std::string >::const_iterator vs_ci;
 		
-		for ( vs_ci iArg = command.args.begin();  iArg < command.args.end();  ++iArg )
+		typedef std::vector< std::string >::const_iterator StrIter;
+		typedef std::vector< Redirection >::const_iterator RedirIter;
+		
+		for ( StrIter iArg = command.args.begin();  iArg < command.args.end();  ++iArg )
 		{
 			Copy( algorithm( *iArg ), back_inserter( result.args ) );
+		}
+		
+		for ( RedirIter itRedir = command.redirections.begin();  itRedir < command.redirections.end();  ++itRedir )
+		{
+			std::string param = Join( algorithm( itRedir->param ) );
+			
+			result.redirections.push_back( Redirection( RedirectInfo( *itRedir ), param ) );
 		}
 		
 		return result;
