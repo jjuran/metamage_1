@@ -93,12 +93,20 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	class FSTree_dev_modem : public FSTree
+	class FSTree_dev_Serial : public FSTree
 	{
+		private:
+			const char* itsDeviceName;
+			const char* itsPortName;
+		
 		public:
-			static std::string OnlyName()  { return "cu.modem"; }
+			FSTree_dev_Serial( const char* device,
+			                   const char* port ) : itsDeviceName( device ),
+			                                        itsPortName  ( port   )
+			{
+			}
 			
-			std::string Name() const  { return OnlyName(); }
+			std::string Name() const  { return itsDeviceName; }
 			
 			FSTreePtr Parent() const  { return GetDevFSTree(); }
 			
@@ -106,6 +114,22 @@ namespace Genie
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	class FSTree_dev_modem : public FSTree_dev_Serial
+	{
+		public:
+			FSTree_dev_modem() : FSTree_dev_Serial( OnlyName(), "A" )  {}
+			
+			static const char* OnlyName()  { return "cu.modem"; }
+	};
+	
+	class FSTree_dev_printer : public FSTree_dev_Serial
+	{
+		public:
+			FSTree_dev_printer() : FSTree_dev_Serial( OnlyName(), "B" )  {}
+			
+			static const char* OnlyName()  { return "cu.printer"; }
 	};
 	
 	class FSTree_dev_new : public FSTree_Virtual
@@ -263,9 +287,9 @@ namespace Genie
 		return tty;
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_dev_modem::Open( OpenFlags /*flags*/ ) const
+	boost::shared_ptr< IOHandle > FSTree_dev_Serial::Open( OpenFlags /*flags*/ ) const
 	{
-		return OpenSerialDevice();
+		return OpenSerialDevice( itsPortName );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_buffer::Open( OpenFlags flags ) const
@@ -299,8 +323,9 @@ namespace Genie
 		Map( "zero",    FSTreePtr( new FSTree_Device( "zero"    ) ) );
 		Map( "console", FSTreePtr( new FSTree_Device( "console" ) ) );
 		
-		MapSingleton< FSTree_dev_tty   >();
-		MapSingleton< FSTree_dev_modem >();
+		MapSingleton< FSTree_dev_tty     >();
+		MapSingleton< FSTree_dev_modem   >();
+		MapSingleton< FSTree_dev_printer >();
 		
 		MapSingleton< FSTree_dev_new >();
 		MapSingleton< FSTree_dev_con >();
