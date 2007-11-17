@@ -116,20 +116,36 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	class FSTree_dev_modem : public FSTree_dev_Serial
+	class FSTree_dev_cumodem : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_modem() : FSTree_dev_Serial( OnlyName(), "A" )  {}
+			FSTree_dev_cumodem() : FSTree_dev_Serial( OnlyName(), "A" )  {}
 			
 			static const char* OnlyName()  { return "cu.modem"; }
 	};
 	
-	class FSTree_dev_printer : public FSTree_dev_Serial
+	class FSTree_dev_cuprinter : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_printer() : FSTree_dev_Serial( OnlyName(), "B" )  {}
+			FSTree_dev_cuprinter() : FSTree_dev_Serial( OnlyName(), "B" )  {}
 			
 			static const char* OnlyName()  { return "cu.printer"; }
+	};
+	
+	class FSTree_dev_ttymodem : public FSTree_dev_Serial
+	{
+		public:
+			FSTree_dev_ttymodem() : FSTree_dev_Serial( OnlyName(), "A" )  {}
+			
+			static const char* OnlyName()  { return "tty.modem"; }
+	};
+	
+	class FSTree_dev_ttyprinter : public FSTree_dev_Serial
+	{
+		public:
+			FSTree_dev_ttyprinter() : FSTree_dev_Serial( OnlyName(), "B" )  {}
+			
+			static const char* OnlyName()  { return "tty.printer"; }
 	};
 	
 	class FSTree_dev_new : public FSTree_Virtual
@@ -323,9 +339,12 @@ namespace Genie
 		Map( "zero",    FSTreePtr( new FSTree_Device( "zero"    ) ) );
 		Map( "console", FSTreePtr( new FSTree_Device( "console" ) ) );
 		
-		MapSingleton< FSTree_dev_tty     >();
-		MapSingleton< FSTree_dev_modem   >();
-		MapSingleton< FSTree_dev_printer >();
+		MapSingleton< FSTree_dev_tty >();
+		
+		MapSingleton< FSTree_dev_cumodem    >();
+		MapSingleton< FSTree_dev_cuprinter  >();
+		MapSingleton< FSTree_dev_ttymodem   >();
+		MapSingleton< FSTree_dev_ttyprinter >();
 		
 		MapSingleton< FSTree_dev_new >();
 		MapSingleton< FSTree_dev_con >();
