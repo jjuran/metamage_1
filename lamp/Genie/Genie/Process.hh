@@ -349,6 +349,10 @@ namespace Genie
 	
 	Process* FindProcess( pid_t pid );
 	
+	void Yield();
+	
+	void TryAgainLater( bool isBlocking );
+	
 }
 
 #endif
