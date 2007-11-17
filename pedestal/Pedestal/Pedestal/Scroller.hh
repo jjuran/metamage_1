@@ -167,7 +167,7 @@ namespace Pedestal
 	
 	using N::SetControlMaximum;
 	
-	static void SetControlViewSize( ControlRef control, long size )
+	inline void SetControlViewSize( ControlRef control, long size )
 	{
 	#if TARGET_CPU_PPC
 		
@@ -179,13 +179,13 @@ namespace Pedestal
 	#endif
 	}
 	
-	static void InvalidateControl( ControlRef control )  { N::InvalRect( N::GetControlBounds( control ) ); }
+	inline void InvalidateControl( ControlRef control )  { N::InvalRect( N::GetControlBounds( control ) ); }
 	
-	static void SetBounds         ( ScrollbarPresence_Traits< false >::Type, Rect  )  {}
-	static void SetControlMaximum ( ScrollbarPresence_Traits< false >::Type, short )  {}
-	static void SetValueStretch   ( ScrollbarPresence_Traits< false >::Type, short )  {}
-	static void SetControlViewSize( ScrollbarPresence_Traits< false >::Type, long  )  {}
-	static void InvalidateControl ( ScrollbarPresence_Traits< false >::Type        )  {}
+	inline void SetBounds         ( ScrollbarPresence_Traits< false >::Type, Rect  )  {}
+	inline void SetControlMaximum ( ScrollbarPresence_Traits< false >::Type, short )  {}
+	inline void SetValueStretch   ( ScrollbarPresence_Traits< false >::Type, short )  {}
+	inline void SetControlViewSize( ScrollbarPresence_Traits< false >::Type, long  )  {}
+	inline void InvalidateControl ( ScrollbarPresence_Traits< false >::Type        )  {}
 	
 	
 	template < ScrollbarAxis axis >
