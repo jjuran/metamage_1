@@ -41,6 +41,8 @@ namespace Genie
 			virtual void SetBlocking   () = 0;
 			virtual void SetNonBlocking() = 0;
 			
+			void TryAgainLater() const;
+			
 			const std::string& Peek( ByteCount minBytes );
 			
 			unsigned int Poll() const;

@@ -17,6 +17,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Genie
+#include "Genie/Process.hh"
+
 
 namespace Genie
 {
@@ -25,6 +28,11 @@ namespace Genie
 	
 	StreamHandle::~StreamHandle()
 	{
+	}
+	
+	void StreamHandle::TryAgainLater() const
+	{
+		Genie::TryAgainLater( IsBlocking() );
 	}
 	
 	// Return a reference to the peek buffer with at least minBytes of data in it.
