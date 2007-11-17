@@ -1,4 +1,6 @@
 #!/bin/sh
 
-echo "$1" | lf2cr 1<> /dev/cu.modem
+test -z "$MODEM" && MODEM=modem
+
+echo "$1" | lf2cr 1<> /dev/cu.$MODEM
 
