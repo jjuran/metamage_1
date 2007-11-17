@@ -14,6 +14,9 @@
 // Nucleus
 #include "Nucleus/Shared.h"
 
+// POSeven
+#include "poseven/errno.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/Serial.h"
 
@@ -28,6 +31,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	
 	
 #if !TARGET_API_MAC_CARBON
@@ -38,8 +42,13 @@ namespace Genie
 			NN::Shared< N::DriverRefNum > itsOutputRefNum;
 			NN::Shared< N::DriverRefNum > itsInputRefNum;
 		
+		protected:
+			bool IsShared() const  { return !itsOutputRefNum.Sole(); }
+		
 		public:
 			SerialDeviceHandle( const std::string& portName );
+			
+			virtual bool Preempted() const  { return false; }
 			
 			unsigned int SysPoll() const;
 			
@@ -62,6 +71,8 @@ namespace Genie
 			PassiveSerialDeviceHandle( const std::string& portName ) : SerialDeviceHandle( portName )  {}
 			
 			PassiveSerialDeviceHandle( const SerialDeviceHandle& h ) : SerialDeviceHandle( h )  {}
+			
+			bool Preempted() const  { return IsShared(); }
 	};
 	
 	struct SerialDevicePair
@@ -105,10 +116,11 @@ namespace Genie
 		boost::weak_ptr< IOHandle >& same  = isPassive ? pair.passive : pair.active;
 		boost::weak_ptr< IOHandle >& other = isPassive ? pair.active : pair.passive;
 		
-		if ( !same.expired() )
+		while ( !same.expired() )
 		{
-			// FIXME:  throw EGAIN or block
-			return boost::shared_ptr< IOHandle >( same );
+			// FIXME:  allow non-blocking opens
+			//p7::throw_errno( EAGAIN );
+			Yield();
 		}
 		
 		boost::shared_ptr< IOHandle > result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )
@@ -146,11 +158,15 @@ namespace Genie
 	
 	unsigned int SerialDeviceHandle::SysPoll() const
 	{
-		bool readable = N::SerGetBuf( itsInputRefNum ) > 0;
+		bool unblocked = !Preempted();
 		
-		unsigned readability = readable ? kPollRead : 0;
+		bool readable = unblocked  &&  N::SerGetBuf( itsInputRefNum ) > 0;
+		bool writable = unblocked;
 		
-		return readability | kPollWrite | kPollExcept;
+		unsigned readability = readable * kPollRead;
+		unsigned writability = writable * kPollWrite;
+		
+		return readability | writability | kPollExcept;
 	}
 	
 	int SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )
@@ -160,21 +176,21 @@ namespace Genie
 			return 0;
 		}
 		
-		std::size_t bytesAvailable = N::SerGetBuf( itsInputRefNum );
-		
-		// Assume blocking I/O for now
-		do
+		while ( true )
 		{
+			if ( !Preempted() )
+			{
+				if ( std::size_t bytesAvailable = N::SerGetBuf( itsInputRefNum ) )
+				{
+					byteCount = std::min( byteCount, bytesAvailable );
+					
+					break;
+				}
+			}
+			
+			// FIXME:  support non-blocking I/O
 			Yield();
-			bytesAvailable = N::SerGetBuf( itsInputRefNum );
-		}
-		while ( bytesAvailable == 0 );
-		
-		byteCount = std::min( byteCount, bytesAvailable );
-		
-		if ( byteCount == 0 )
-		{
-			throw io::no_input_pending();
+			//throw io::no_input_pending();
 		}
 		
 		return N::Read( itsInputRefNum, data, byteCount );
@@ -182,6 +198,11 @@ namespace Genie
 	
 	int SerialDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
+		while ( Preempted() )
+		{
+			Yield();
+		}
+		
 		return N::Write( itsOutputRefNum, data, byteCount );
 	}
 	
