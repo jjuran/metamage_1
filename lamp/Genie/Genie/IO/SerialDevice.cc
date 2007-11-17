@@ -5,6 +5,9 @@
 
 #include "Genie/IO/SerialDevice.hh"
 
+// Standard C++
+#include <map>
+
 // Boost
 #include "boost/shared_ptr.hpp"
 
@@ -55,18 +58,20 @@ namespace Genie
 		
 	#else
 		
-		static boost::weak_ptr< IOHandle > gSerialDevice;
+		static std::map< std::string, boost::weak_ptr< IOHandle > > gSerialDevices;
 		
-		if ( gSerialDevice.expired() )
+		boost::weak_ptr< IOHandle >& device = gSerialDevices[ portName ];
+		
+		if ( device.expired() )
 		{
 			boost::shared_ptr< IOHandle > result( new SerialDeviceHandle( portName ) );
 			
-			gSerialDevice = result;
+			device = result;
 			
 			return result;
 		}
 		
-		return boost::shared_ptr< IOHandle >( gSerialDevice );
+		return boost::shared_ptr< IOHandle >( device );
 		
 	#endif
 	}
