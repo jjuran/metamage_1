@@ -11,6 +11,9 @@
 // Boost
 #include "boost/shared_ptr.hpp"
 
+// Nucleus
+#include "Nucleus/Shared.h"
+
 // ClassicToolbox
 #include "ClassicToolbox/Serial.h"
 
@@ -32,8 +35,8 @@ namespace Genie
 	class SerialDeviceHandle : public DeviceHandle
 	{
 		private:
-			NN::Owned< N::DriverRefNum > itsOutputRefNum;
-			NN::Owned< N::DriverRefNum > itsInputRefNum;
+			NN::Shared< N::DriverRefNum > itsOutputRefNum;
+			NN::Shared< N::DriverRefNum > itsInputRefNum;
 		
 		public:
 			SerialDeviceHandle( const std::string& portName );
@@ -45,10 +48,49 @@ namespace Genie
 			int SysWrite( const char* data, std::size_t byteCount );
 	};
 	
+	class ActiveSerialDeviceHandle : public SerialDeviceHandle
+	{
+		public:
+			ActiveSerialDeviceHandle( const std::string& portName ) : SerialDeviceHandle( portName )  {}
+			
+			ActiveSerialDeviceHandle( const SerialDeviceHandle& h ) : SerialDeviceHandle( h )  {}
+	};
+	
+	class PassiveSerialDeviceHandle : public SerialDeviceHandle
+	{
+		public:
+			PassiveSerialDeviceHandle( const std::string& portName ) : SerialDeviceHandle( portName )  {}
+			
+			PassiveSerialDeviceHandle( const SerialDeviceHandle& h ) : SerialDeviceHandle( h )  {}
+	};
+	
+	struct SerialDevicePair
+	{
+		boost::weak_ptr< IOHandle > passive, active;
+	};
+	
+	static SerialDevicePair& GetSerialDevicePair( const std::string& portName )
+	{
+		static std::map< std::string, SerialDevicePair > gSerialDevices;
+		
+		SerialDevicePair& pair = gSerialDevices[ portName ];
+		
+		return pair;
+	}
+	
+	template < class Type >
+	inline boost::shared_ptr< IOHandle > NewSerialDeviceHandle( Type param, bool isPassive )
+	{
+		SerialDeviceHandle* h = isPassive ? static_cast< SerialDeviceHandle* >( new PassiveSerialDeviceHandle( param ) )
+		                                  : static_cast< SerialDeviceHandle* >( new ActiveSerialDeviceHandle ( param ) );
+		
+		return boost::shared_ptr< IOHandle >( h );
+	}
+	
 #endif
 	
 	
-	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string& portName )
+	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string& portName, bool isPassive )
 	{
 	#if TARGET_API_MAC_CARBON
 		
@@ -58,20 +100,23 @@ namespace Genie
 		
 	#else
 		
-		static std::map< std::string, boost::weak_ptr< IOHandle > > gSerialDevices;
+		SerialDevicePair& pair = GetSerialDevicePair( portName );
 		
-		boost::weak_ptr< IOHandle >& device = gSerialDevices[ portName ];
+		boost::weak_ptr< IOHandle >& same  = isPassive ? pair.passive : pair.active;
+		boost::weak_ptr< IOHandle >& other = isPassive ? pair.active : pair.passive;
 		
-		if ( device.expired() )
+		if ( !same.expired() )
 		{
-			boost::shared_ptr< IOHandle > result( new SerialDeviceHandle( portName ) );
-			
-			device = result;
-			
-			return result;
+			// FIXME:  throw EGAIN or block
+			return boost::shared_ptr< IOHandle >( same );
 		}
 		
-		return boost::shared_ptr< IOHandle >( device );
+		boost::shared_ptr< IOHandle > result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )
+		                                                       : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other.lock() ), isPassive );
+		
+		same = result;
+		
+		return result;
 		
 	#endif
 	}

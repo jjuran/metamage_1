@@ -96,13 +96,16 @@ namespace Genie
 	class FSTree_dev_Serial : public FSTree
 	{
 		private:
-			const char* itsDeviceName;
-			const char* itsPortName;
+			const char*  itsDeviceName;
+			const char*  itsPortName;
+			bool         itIsPassive;
 		
 		public:
-			FSTree_dev_Serial( const char* device,
-			                   const char* port ) : itsDeviceName( device ),
-			                                        itsPortName  ( port   )
+			FSTree_dev_Serial( const char*  device,
+			                   const char*  port,
+			                   bool         passive ) : itsDeviceName( device  ),
+			                                            itsPortName  ( port    ),
+			                                            itIsPassive  ( passive )
 			{
 			}
 			
@@ -119,7 +122,7 @@ namespace Genie
 	class FSTree_dev_cumodem : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_cumodem() : FSTree_dev_Serial( OnlyName(), "A" )  {}
+			FSTree_dev_cumodem() : FSTree_dev_Serial( OnlyName(), "A", false )  {}
 			
 			static const char* OnlyName()  { return "cu.modem"; }
 	};
@@ -127,7 +130,7 @@ namespace Genie
 	class FSTree_dev_cuprinter : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_cuprinter() : FSTree_dev_Serial( OnlyName(), "B" )  {}
+			FSTree_dev_cuprinter() : FSTree_dev_Serial( OnlyName(), "B", false )  {}
 			
 			static const char* OnlyName()  { return "cu.printer"; }
 	};
@@ -135,7 +138,7 @@ namespace Genie
 	class FSTree_dev_ttymodem : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_ttymodem() : FSTree_dev_Serial( OnlyName(), "A" )  {}
+			FSTree_dev_ttymodem() : FSTree_dev_Serial( OnlyName(), "A", true )  {}
 			
 			static const char* OnlyName()  { return "tty.modem"; }
 	};
@@ -143,7 +146,7 @@ namespace Genie
 	class FSTree_dev_ttyprinter : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_ttyprinter() : FSTree_dev_Serial( OnlyName(), "B" )  {}
+			FSTree_dev_ttyprinter() : FSTree_dev_Serial( OnlyName(), "B", true )  {}
 			
 			static const char* OnlyName()  { return "tty.printer"; }
 	};
@@ -305,7 +308,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_Serial::Open( OpenFlags /*flags*/ ) const
 	{
-		return OpenSerialDevice( itsPortName );
+		return OpenSerialDevice( itsPortName, itIsPassive );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_buffer::Open( OpenFlags flags ) const
