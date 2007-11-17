@@ -20,7 +20,6 @@
 
 // Genie
 #include "Genie/Process.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie
@@ -45,37 +44,20 @@ namespace Genie
 			return 0;
 		}
 		
+		// Wait until we have some data or the stream is closed
+		while ( itsStrings.empty() && !itsIngressHasClosed )
+		{
+			TryAgainLater( blocking );
+		}
+		
+		// Either a string was written, or input was closed,
+		// or possibly both, so check itsStrings rather than itsIngressHasClosed
+		// so we don't miss data.
+		
+		// If the string queue is still empty then input must have closed.
 		if ( itsStrings.empty() )
 		{
-			// Oops, nothing queued right now
-			
-			if ( !itsIngressHasClosed )
-			{
-				// Still open, maybe we'll get something later
-				
-				if ( !blocking )
-				{
-					// But we're not going to wait
-					throw io::no_input_pending();
-				}
-				
-				// Input or bust
-				while ( itsStrings.empty() && !itsIngressHasClosed )
-				{
-					// I can wait forever...
-					Yield();
-				}
-			}
-			
-			// Either a string was written, or input was closed,
-			// or possibly both, so check itsStrings rather than itsIngressHasClosed
-			// so we don't miss data.
-			
-			// If the string queue is still empty then input must have closed.
-			if ( itsStrings.empty() )
-			{
-				return 0;
-			}
+			return 0;
 		}
 		
 		// Only reached if a string is available.
@@ -119,12 +101,7 @@ namespace Genie
 		{
 			while ( !IsWritable() )
 			{
-				if ( !blocking )
-				{
-					throw io::no_input_pending();
-				}
-				
-				Yield();
+				TryAgainLater( blocking );
 			}
 			
 			if ( itsEgressHasClosed )
