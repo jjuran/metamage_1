@@ -1,4 +1,6 @@
 #!/bin/sh
 
-sh < /dev/cu.modem -c 'mcmd "AT#CID=1"; striplf | cr2lf'
+test -z "$MODEM" && MODEM=modem
+
+sh < /dev/tty.$MODEM -c 'mcmd "AT#CID=1"; striplf | cr2lf'
 
