@@ -14,16 +14,11 @@
 // Nucleus
 #include "Nucleus/Shared.h"
 
-// POSeven
-#include "poseven/errno.hh"
-
 // ClassicToolbox
 #include "ClassicToolbox/Serial.h"
 
 // Genie
-#include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/FileSystem/StatFile.hh"
-#include "Genie/Yield.hh"
+#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -31,7 +26,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace p7 = poseven;
 	
 	
 #if !TARGET_API_MAC_CARBON
@@ -119,7 +113,6 @@ namespace Genie
 		while ( !same.expired() )
 		{
 			// FIXME:  allow non-blocking opens
-			//p7::throw_errno( EAGAIN );
 			Yield();
 		}
 		
@@ -188,9 +181,7 @@ namespace Genie
 				}
 			}
 			
-			// FIXME:  support non-blocking I/O
-			Yield();
-			//throw io::no_input_pending();
+			TryAgainLater();
 		}
 		
 		return N::Read( itsInputRefNum, data, byteCount );
@@ -200,7 +191,7 @@ namespace Genie
 	{
 		while ( Preempted() )
 		{
-			Yield();
+			TryAgainLater();
 		}
 		
 		return N::Write( itsOutputRefNum, data, byteCount );

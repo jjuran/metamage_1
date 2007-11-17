@@ -206,15 +206,7 @@ namespace Genie
 				return bytesCopied;
 			}
 			
-			if ( IsBlocking() )
-			{
-				Yield();
-				continue;
-			}
-			else
-			{
-				throw io::no_input_pending();
-			}
+			TryAgainLater();
 		}
 	}
 	

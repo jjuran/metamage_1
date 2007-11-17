@@ -244,14 +244,7 @@ namespace Genie
 		
 		while ( !itsWindow->ReceivedEOF() )
 		{
-			if ( IsBlocking() )
-			{
-				Yield();
-			}
-			else
-			{
-				throw io::no_input_pending();
-			}
+			TryAgainLater();
 		}
 		
 		return itsWindow->SysRead( data, byteCount );
