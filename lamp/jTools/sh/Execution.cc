@@ -14,6 +14,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/signal.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -90,6 +91,53 @@ static int NewJob( const Circuit& circuit )
 }
 */
 
+
+static const char* global_signal_names[] =
+{
+	"Signal 0",
+	"Hangup",
+	"",  // INT
+	"Quit",
+	"Illegal instruction",
+	"Trace/breakpoint trap",
+	"Aborted",
+	"Bus error",
+	"Floating point exception",
+	"Killed",
+	"User defined signal 1",
+	"Segmentation fault",
+	"User defined signal 2",
+	"Broken pipe",
+	"Alarm clock",
+	"Terminated",
+	"Stack fault",
+	"Child exited",
+	"Continued",
+	"Stopped (signal)",
+	"Stopped",
+	"Stopped (tty input)",
+	"Stopped (tty output)",
+	"Urgent I/O condition",
+	"CPU time limit exceeded",
+	"File size limit exceeded",
+	"Virtual timer expired",
+	"Profiling timer expired",
+	"Window changed",
+	"I/O possible",
+	"Power failure",
+	"Bad system call",
+	NULL
+};
+
+const char* strsignal( int signo )
+{
+	if ( signo < 0  ||  signo > NSIG )
+	{
+		return "BAD SIGNAL NUMBER";
+	}
+	
+	return global_signal_names[ signo ];
+}
 
 static int exit_from_wait( int stat )
 {
@@ -850,6 +898,14 @@ int ExecuteCmdLine( const std::string& cmd )
 	List list = Sh::Tokenization( cmd );
 	
 	int result = ExecuteList( list );
+	
+	// notify user of fatal signal, e.g. "Alarm clock"
+	if ( WIFSIGNALED( result ) )
+	{
+		int signo = WTERMSIG( result );
+		
+		std::fprintf( stderr, "%s\n", strsignal( signo ) );
+	}
 	
 	return result;
 }
