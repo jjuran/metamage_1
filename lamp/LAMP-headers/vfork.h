@@ -9,6 +9,9 @@
 // Standard C
 #include <setjmp.h>
 
+// POSIX
+#include <sys/types.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,9 +22,17 @@ extern "C" {
 	
 	jmp_buf* NewJmpBuf();
 	
-	#define Kerosene_vfork() ( SpawnVFork( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) )
+	#define VFORK() ( SpawnVFork( Kerosene_LongJmp ) ? -1 : setjmp( *NewJmpBuf() ) )
 	
-	#define vfork()  ( (pid_t) Kerosene_vfork() )
+	#ifdef __cplusplus
+		
+		inline pid_t vfork()  { return VFORK(); }
+		
+	#else
+		
+		#define vfork()  ( (pid_t) Kerosene_vfork() )
+		
+	#endif
 	
 #ifdef __cplusplus
 }
