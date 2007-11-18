@@ -43,9 +43,6 @@ pascal OSErr Initialize_SavedCFragInitBlock( const CFragInitBlock* initBlock )
 	gSavedInitBlock = *initBlock;
 	gSavedFileSpec  = *initBlock->fragLocator.u.onDisk.fileSpec;
 	
-	BlockMoveData( initBlock,                                &gSavedInitBlock, sizeof gSavedInitBlock );
-	BlockMoveData( initBlock->fragLocator.u.onDisk.fileSpec, &gSavedFileSpec,  sizeof gSavedFileSpec );
-	
 	if ( where == kDataForkCFragLocator  ||  where == kResourceCFragLocator )
 	{
 		gSavedInitBlock.fragLocator.u.onDisk.fileSpec = &gSavedFileSpec;
