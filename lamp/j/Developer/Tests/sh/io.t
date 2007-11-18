@@ -55,8 +55,6 @@ END
 
 $ sh -c 'echo foo > "/dev/fd/1"' 2>&1
 
-TODO Redirection words must be expanded
-
 1 >= foo
 
 %%
