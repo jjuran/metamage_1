@@ -326,7 +326,17 @@ namespace jTools
 						if ( std::strcmp( arg + 1, "bundle" ) == 0 )
 						{
 							gProductType = kProductApp;
+							
 							product = "-xm a -sizemin 4096 -sizemax 8192";
+							
+							if ( ppc )
+							{
+								// 	For CFMLateImport support
+								product += " -b"                                          // don't pack the data segment
+								           " -export sym=Initialize_SavedCFragInitBlock"  // we need to export something
+								           " -init Initialize_SavedCFragInitBlock";       // save fragment data for later
+							}
+							
 							continue;
 						}
 						break;
