@@ -36,6 +36,16 @@
 #include "PositionalParameters.hh"
 
 
+namespace poseven
+{
+	
+	inline pid_t vfork()
+	{
+		return pid_t( throw_posix_result( ::vfork() ) );
+	}
+	
+}
+
 namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace O = Orion;
@@ -501,14 +511,7 @@ static int ExecuteCommand( const Command& command )
 		// and subsequently clobbered.
 		volatile bool exiting = false;
 		
-		int pid = vfork();
-		
-		if ( pid == -1 )
-		{
-			std::perror( "sh: vfork()" );
-			
-			return exec_failure_wait_status;
-		}
+		pid_t pid = p7::vfork();
 		
 		if ( pid == 0 )
 		{
@@ -672,14 +675,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	int writing = pipes[ 1 ];
 	
 	// The first command in the pipline
-	int first = vfork();
-	
-	if ( first == -1 )
-	{
-		std::perror( "sh: vfork()" );
-		
-		return exec_failure_wait_status;
-	}
+	pid_t first = p7::vfork();
 	
 	if ( first == 0 )
 	{
@@ -713,14 +709,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		writing = pipes[ 1 ];  // write-end of next pipe
 		
 		// Middle command in the pipeline (not first or last)
-		int middle = vfork();
-		
-		if ( middle == -1 )
-		{
-			std::perror( "sh: vfork()" );
-			
-			return exec_failure_wait_status;
-		}
+		pid_t middle = p7::vfork();
 		
 		if ( middle == 0 )
 		{
@@ -751,14 +740,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	// Close previous write-end
 	close( writing );
 	
-	int last = vfork();
-	
-	if ( last == -1 )
-	{
-		std::perror( "sh: vfork()" );
-		
-		return exec_failure_wait_status;
-	}
+	pid_t last = p7::vfork();
 	
 	if ( last == 0 )
 	{
@@ -824,7 +806,16 @@ static int ExecuteCircuit( const Circuit& circuit )
 			continue;
 		}
 		
-		gLastResult = result = ExecutePipeline( *it );
+		try
+		{
+			result = ExecutePipeline( *it );
+		}
+		catch ( const p7::errno_t& )
+		{
+			result = exec_failure_wait_status;
+		}
+		
+		gLastResult = result;
 		
 		if ( GetOption( kOptionMonitor ) )
 		{
