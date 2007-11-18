@@ -81,6 +81,16 @@ static int NewJob( const Circuit& circuit )
 */
 
 
+static int exit_from_wait( int stat )
+{
+	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+	           :                       -1;
+	
+	return result;
+}
+
+
 class AppendWithSpace
 {
 	public:
@@ -112,7 +122,7 @@ std::string ShellParameterDictionary::Lookup( const std::string& param ) const
 	}
 	else if ( param == "?" )
 	{
-		return NN::Convert< std::string >( gLastResult );
+		return NN::Convert< std::string >( exit_from_wait( gLastResult ) );
 	}
 	
 	std::size_t paramCount = gParameterCount;
@@ -348,7 +358,10 @@ static void RedirectIOs( const std::vector< Sh::Redirection >& redirections )
 				   std::ptr_fun( RedirectIO ) );
 }
 
-static int Exec( char const* const argv[] )
+static const int exec_failure_exit_status = 127;
+static const int exec_failure_wait_status = exec_failure_exit_status << 8;
+
+static void Exec( char const* const argv[] )
 {
 	const char* file = argv[ 0 ];
 	
@@ -358,9 +371,7 @@ static int Exec( char const* const argv[] )
 	
 	std::fprintf( stderr, "%s: %s: %s\n", "sh", file, error_msg );
 	
-	_exit( 127 );  // Use _exit() to exit a forked but not exec'ed process.
-	
-	return -1;
+	_exit( exec_failure_exit_status );  // Use _exit() to exit a forked but not exec'ed process.
 }
 
 static int Wait( pid_t pid )
@@ -375,15 +386,6 @@ static int Wait( pid_t pid )
 	}
 	
 	return stat;
-}
-
-static int exit_from_wait( int stat )
-{
-	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-	           :                       -1;
-	
-	return result;
 }
 
 
@@ -505,7 +507,7 @@ static int ExecuteCommand( const Command& command )
 		{
 			std::perror( "sh: vfork()" );
 			
-			return 127;
+			return exec_failure_wait_status;
 		}
 		
 		if ( pid == 0 )
@@ -526,7 +528,7 @@ static int ExecuteCommand( const Command& command )
 					try
 					{
 						// Since we didn't actually exec anything, we have to exit manually
-						_exit( CallBuiltin( builtin, argv ) );
+						_exit( exit_from_wait( CallBuiltin( builtin, argv ) ) );
 					}
 					catch ( const O::ExitStatus& status )
 					{
@@ -559,15 +561,15 @@ static int ExecuteCommand( const Command& command )
 		}
 		
 		// Wait for the child process to exit
-		int exit_status = exit_from_wait( Wait( pid ) );
+		int wait_status = Wait( pid );
 		
 		if ( exiting )
 		{
 			// The 'child' was the 'exit' builtin, meaning we should exit
-			O::ThrowExitStatus( exit_status );
+			O::ThrowExitStatus( exit_from_wait( wait_status ) );
 		}
 		
-		return exit_status;
+		return wait_status;
 	}
 	catch ( const O::ExitStatus& )
 	{
@@ -579,7 +581,7 @@ static int ExecuteCommand( const Command& command )
 		Io::Err << "wish: An exception occurred while running the command.\n";
 	}
 	
-	return 127;
+	return exec_failure_wait_status;
 }
 
 
@@ -607,27 +609,34 @@ static int ExecuteCommandFromPipeline( const Command& command )
 			
 			const char* subshell_argv[] = { "/bin/sh", "-c", subshell.c_str(), NULL };
 			
-			return Exec( subshell_argv );
+			Exec( subshell_argv );
 		}
 		
-		return Exec( argv );
+		Exec( argv );
 		
 	}
 	catch ( const O::ExitStatus& status )
 	{
-		return status;
+		throw;
 	}
 	catch ( ... )
 	{
 		Io::Err << "wish: An exception occurred while running the command.\n";
 	}
 	
-	return 127;
+	return exec_failure_wait_status;
 }
 
 static void ExecuteCommandAndExitFromPipeline( const Command& command )
 {
-	_exit( ExecuteCommandFromPipeline( command ) );
+	try
+	{
+		_exit( exit_from_wait( ExecuteCommandFromPipeline( command ) ) );
+	}
+	catch ( const O::ExitStatus& status )
+	{
+		_exit( status );
+	}
 }
 
 static int ExecutePipeline( const Pipeline& pipeline )
@@ -669,7 +678,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	{
 		std::perror( "sh: vfork()" );
 		
-		return 127;
+		return exec_failure_wait_status;
 	}
 	
 	if ( first == 0 )
@@ -710,7 +719,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		{
 			std::perror( "sh: vfork()" );
 			
-			return 127;
+			return exec_failure_wait_status;
 		}
 		
 		if ( middle == 0 )
@@ -748,7 +757,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	{
 		std::perror( "sh: vfork()" );
 		
-		return 127;
+		return exec_failure_wait_status;
 	}
 	
 	if ( last == 0 )
@@ -768,7 +777,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	
 	int processes = commands.size();
 	
-	int result = -1;
+	int wait_status = -1;
 	
 	while ( processes )
 	{
@@ -782,11 +791,11 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		if ( pid == last )
 		{
 			// And keep the result from the last one
-			result = exit_from_wait( stat );
+			wait_status = stat;
 		}
 	}
 	
-	return result;
+	return wait_status;
 }
 
 static bool ShortCircuit( Sh::ControlOperator op, int result )
@@ -801,7 +810,7 @@ static int ExecuteCircuit( const Circuit& circuit )
 	{
 		Io::Err << "Background jobs are not supported.  Sorry.\n";
 		
-		return 127;
+		return exec_failure_wait_status;
 	}
 	
 	int result = 0;

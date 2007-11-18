@@ -14,6 +14,7 @@
 // POSIX
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 // Nucleus
@@ -47,6 +48,16 @@ bool gLoginShell  = false;
 const char* gArgZero = NULL;
 std::size_t gParameterCount = 0;
 char const* const* gParameters = NULL;
+
+
+static int exit_from_wait( int stat )
+{
+	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+	           :                       -1;
+	
+	return result;
+}
 
 
 struct OnExit
@@ -178,11 +189,11 @@ int O::Main( int argc, argv_t argv )
 	if ( command != NULL )
 	{
 		// Run a single command
-		return ExecuteCmdLine( command );
+		return exit_from_wait( ExecuteCmdLine( command ) );
 	}
 	
 	OnExit onExit;
 	
-	return ReadExecuteLoop( input, GetOption( kOptionInteractive ) );
+	return exit_from_wait( ReadExecuteLoop( input, GetOption( kOptionInteractive ) ) );
 }
 
