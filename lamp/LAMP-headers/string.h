@@ -118,7 +118,7 @@ size_t	 strlcpy(char *, const char *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 void	 strmode(int, char *);
 char	*strsep(char **, const char *);
-char	*strsignal(int);
+const char	*strsignal(int);
 #endif 
 __END_DECLS
 
