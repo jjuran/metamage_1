@@ -457,6 +457,18 @@ static int AssignShellVariablesFromArgV( char** argv )
 	return 0;
 }
 
+static void ShiftEnvironmentVariables( char**& argv )
+{
+	//ASSERT( argv != NULL );
+	
+	while ( std::strchr( argv[ 0 ], '=' ) )
+	{
+		putenv( argv[0] );
+		
+		++argv;
+	}
+}
+
 static Command ParseCommand( const Command& command )
 {
 	return Sh::ParseCommand( command, ShellParameterDictionary() );
@@ -467,11 +479,6 @@ static int ExecuteCommand( const Command& command )
 	Sh::StringArray argvec( command.args );
 	
 	char** argv = argvec.GetPointer();
-	
-	if ( argv[ 0 ] == NULL )
-	{
-		return 0;
-	}
 	
 	if ( CommandIsOnlyAssignments( argv ) )
 	{
@@ -535,12 +542,7 @@ static int ExecuteCommand( const Command& command )
 				}
 				else
 				{
-					while ( std::strchr( argv[ 0 ], '=' ) )
-					{
-						putenv( argv[0] );
-						
-						++argv;
-					}
+					ShiftEnvironmentVariables( argv );
 					
 					Exec( argv );
 				}
@@ -587,11 +589,6 @@ static int ExecuteCommandFromPipeline( const Command& command )
 	
 	char** argv = argvec.GetPointer();
 	
-	if ( argv[ 0 ] == NULL )
-	{
-		return 0;
-	}
-	
 	if ( CommandIsOnlyAssignments( argv ) )
 	{
 		// An assignment as the sole command to a shell is pointless, so just exit
@@ -602,12 +599,7 @@ static int ExecuteCommandFromPipeline( const Command& command )
 	{
 		RedirectIOs( command.redirections );
 		
-		while ( std::strchr( argv[ 0 ], '=' ) )
-		{
-			putenv( argv[0] );
-			
-			++argv;
-		}
+		ShiftEnvironmentVariables( argv );
 		
 		if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
 		{
