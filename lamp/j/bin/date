@@ -9,6 +9,9 @@ $format = "%a %b %e %T %Z %Y";
 ($sec, $min, $hour, $m_day, $mon, $year, $w_day, $y_day, $isdst) =
 	localtime($time);
 
+# Temporary hack for MSL's broken localtime()
+$isdst = 0 if $isdst == -1;
+
 if (@ARGV) {
 	foreach $arg(@ARGV) {
 	if($arg =~ /^\-u/) {
