@@ -8,6 +8,9 @@
 
 #if defined(__APPLE_CC__) || defined(__MWERKS__)
 #include <TargetConditionals.h>
+#define ALINE_CROSS_DEVELOPMENT 1
+#else
+#define ALINE_CROSS_DEVELOPMENT 0
 #endif
 
 /*
@@ -51,36 +54,6 @@ ppc-macho-carbon
 namespace CompileDriver
 {
 	
-	/*
-	enum Architecture
-	{
-		archUnspecified = 0,
-		
-		arch68K = 1 << 0,
-		archPPC = 1 << 1,
-		archX86 = 1 << 2
-	};
-	
-	enum Runtime
-	{
-		runtimeUnspecified = 0,
-		
-		runtimeA4CodeResource = 1 << 3,
-		runtimeA5CodeSegments = 1 << 4,
-		runtimeCodeFragments  = 1 << 5,
-		runtimeMachO          = 1 << 6,
-		runtimeELF            = 1 << 7
-	};
-	
-	enum MacAPI
-	{
-		apiUnspecified = 0,
-		apiMacToolbox  = 1 <<  8,
-		apiMacCarbon   = 1 <<  9,
-		apiNotAMac     = 1 << 10
-	};
-	*/
-	
 	enum Platform
 	{
 		platformUnspecified = 0,
@@ -95,13 +68,16 @@ namespace CompileDriver
 		runtimeMachO          = 1 << 6,
 		runtimeELF            = 1 << 7,
 		
-		apiMacToolbox  = 1 <<  8,
-		apiMacCarbon   = 1 <<  9,
-		//apiNotAMac     = 1 << 10,
+		apiMacToolbox = 1 <<  8,
+		apiMacCarbon  = 1 <<  9,
 		
-		archMask    = 0x0007,
-		runtimeMask = 0x00F8,
-		apiMask     = 0x0300
+		platformMac  = 1 << 10,
+		platformUnix = 1 << 11,
+		
+		archMask     = 0x0007,
+		runtimeMask  = 0x00F8,
+		apiMask      = 0x0300,
+		platformMask = 0x0C00
 		
 		
 	};
@@ -195,9 +171,29 @@ namespace CompileDriver
 	};
 	
 	
+	static void ApplyPlatformImplications( Platform& platform )
+	{
+		
+		if ( platform & (runtimeA4CodeResource | runtimeA5CodeSegments) )
+		{
+			platform |= arch68K;
+		}
+		
+		if ( platform & arch68K )
+		{
+			platform |= apiMacToolbox;
+		}
+		
+		if ( platform & runtimeMachO )
+		{
+			platform |= apiMacCarbon;
+			platform |= platformUnix;
+		}
+	}
+	
 	static void ApplyPlatformDefaults( Platform& platform )
 	{
-	#if defined(__APPLE_CC__) || defined(__MWERKS__)
+	#if ALINE_CROSS_DEVELOPMENT
 		
 		// FIXME for 64-bit
 		if ( (platform & archMask) == 0 )
@@ -232,6 +228,10 @@ namespace CompileDriver
 			platform |= TARGET_API_MAC_CARBON ? apiMacCarbon : apiMacToolbox;
 		}
 		
+		platform |= platformMac;
+		
+		ApplyPlatformImplications( platform );
+		
 	#else
 		
 		if ( (platform & archMask) == 0 )
@@ -244,10 +244,7 @@ namespace CompileDriver
 			platform |= runtimeELF;
 		}
 		
-		if ( (platform & apiMask) == 0 )
-		{
-			//platform |= apiNotApplicable;
-		}
+		platform |= platformUnix;
 		
 	#endif
 	}
