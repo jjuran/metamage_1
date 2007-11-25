@@ -96,6 +96,9 @@ namespace CompileDriver
 		map[ "classic" ] = apiMacToolbox;
 		map[ "carbon"  ] = apiMacCarbon;
 		
+		map[ "mac"  ] = platformMac;
+		map[ "unix" ] = platformUnix;
+		
 		return map;
 	}
 	
