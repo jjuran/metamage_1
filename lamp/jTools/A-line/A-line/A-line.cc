@@ -279,7 +279,7 @@ namespace ALine
 		}
 		
 		// This is wrong for Metrowerks targeting Mach-O, but does anyone care?
-		if ( target.platform & (CD::runtimeMachO | CD::runtimeELF) )
+		if ( ALINE_CROSS_DEVELOPMENT  ||  target.platform & CD::runtimeMachO )
 		{
 			target.toolkit = toolkitGNU;
 		}
