@@ -75,8 +75,6 @@ int main( int argc, const char *const argv[] )
 	
 	while ( true )
 	{
-		alarm( 3 );  // three second timeout resets on each line
-		
 		char const* buffer  = get_buffer();
 		char      * newline = get_next_cr();
 		
