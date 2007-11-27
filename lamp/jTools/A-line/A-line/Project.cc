@@ -217,10 +217,6 @@ namespace ALine
 				{
 					GetProject( *it );  // Recursively creates projects
 				}
-				catch ( NoSuchProject )
-				{
-					throw NoSuchUsedProject( projName, *it );
-				}
 				catch ( CD::NoSuchProject )
 				{
 					throw NoSuchUsedProject( projName, *it );

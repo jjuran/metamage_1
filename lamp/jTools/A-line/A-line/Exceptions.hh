@@ -12,8 +12,6 @@
 namespace ALine
 {
 	
-	struct NoSuchProject  {};
-	
 	struct NoSuchUsedProject
 	{
 		NoSuchUsedProject( const ProjName& projName, const std::string& used )

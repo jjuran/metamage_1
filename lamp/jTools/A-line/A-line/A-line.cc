@@ -407,11 +407,6 @@ int O::Main( int argc, argv_t argv )
 			
 			gCommands.clear();
 		}
-		catch ( const NoSuchProject& )
-		{
-			Io::Err << argv[ 0 ] << ": No such project " << q( proj ) << "\n";
-			fail++;
-		}
 		catch ( const CD::NoSuchProject& )
 		{
 			Io::Err << argv[ 0 ] << ": No such project " << q( proj ) << "\n";
