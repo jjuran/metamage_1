@@ -20,6 +20,9 @@
 #include "FunctionalExtensions.hh"
 #include "PointerToFunction.hh"
 
+// Orion
+#include "Orion/Main.hh"
+
 // CompileDriver
 #include "CompileDriver/Platform.hh"
 #include "CompileDriver/ProjectCatalog.hh"
@@ -90,9 +93,9 @@ namespace CompileDriver
 		map[ "a5"     ] = runtimeA5CodeSegments;
 		map[ "cfm"    ] = runtimeCodeFragments;
 		map[ "mach-o" ] = runtimeMachO;
-		map[ "elf   " ] = runtimeELF;
+		map[ "elf"    ] = runtimeELF;
 		
-		map[ "blue   " ] = apiMacToolbox;
+		map[ "blue"    ] = apiMacToolbox;
 		map[ "classic" ] = apiMacToolbox;
 		map[ "carbon"  ] = apiMacCarbon;
 		
@@ -119,6 +122,11 @@ namespace CompileDriver
 		}
 		
 		Platform platform = map[ info ];
+		
+		if ( platform == Platform() )
+		{
+			throw NoSuchPlatform( info );
+		}
 		
 		PlatformDemands infoDemands = PlatformDemands( platform, Platform() );
 		
@@ -227,7 +235,16 @@ namespace CompileDriver
 			name = found->second[ 0 ];  // 'name' directive overrides folder name
 		}
 		
-		AddProjectConfig( name, parent, conf );
+		try
+		{
+			AddProjectConfig( name, parent, conf );
+		}
+		catch ( const NoSuchPlatform& e )
+		{
+			std::fprintf( stderr, "No such platform '%s' in %s\n", e.name.c_str(), filePath.c_str() );
+			
+			Orion::ThrowExitStatus( EXIT_FAILURE );
+		}
 		
 		std::for_each( conf[ "subprojects" ].begin(),
 		               conf[ "subprojects" ].end(),

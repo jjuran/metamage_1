@@ -43,6 +43,13 @@ namespace CompileDriver
 		NoSuchProject( const ProjName& name ) : name( name )  {}
 	};
 	
+	struct NoSuchPlatform
+	{
+		std::string name;
+		
+		NoSuchPlatform( const std::string& name ) : name( name )  {}
+	};
+	
 	void AddPendingSubproject( const std::string& dir );
 	
 	const ProjectData& GetProjectData( const ProjName& projName, const Platform& targetPlatform );
