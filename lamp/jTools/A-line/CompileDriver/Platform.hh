@@ -139,6 +139,12 @@ namespace CompileDriver
 				}
 			}
 			
+			friend bool operator<( const PlatformDemands& a, const PlatformDemands& b )
+			{
+				return                                      a.itsRequired   < b.itsRequired
+				       || a.itsRequired == b.itsRequired && a.itsProhibited < b.itsProhibited;
+			}
+			
 			friend bool operator==( const PlatformDemands& a, const PlatformDemands& b )
 			{
 				return    a.itsRequired   == b.itsRequired
