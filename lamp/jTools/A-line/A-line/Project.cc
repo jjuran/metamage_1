@@ -34,6 +34,7 @@
 #include "A-line/Locations.hh"
 #include "A-line/ProjectCommon.hh"
 #include "A-line/SourceDotList.hh"
+#include "CompileDriver/ProjectCatalog.hh"
 
 
 namespace ALine
@@ -146,42 +147,12 @@ namespace ALine
 	Project::Project( const std::string& proj )
 	:
 		projName  ( proj ),
-		projFolderPath( CD::GetProjectFolder( proj, Options().platform ) ),
+		projFolderPath( CD::GetProjectConfig( proj, Options().platform ).itsProjectFolder ),
 		product   ( productNotBuilt )
 	{
-		const CD::ProjectData* initialProjectData = &CD::GetProjectData( projName, Options().platform );
+		CD::ConfData config = CD::GetProjectConfig( projName, Options().platform ).itsConfigData;
 		
-		// We need to merge both the project's platform requirements (unconditionally)
-		// and the default platform settings (conditionally) with the settings
-		// already determined by the command-line options.
-		// The order we do this in is important.
-		// We don't want building a code resource to fail because 68K/A4 conflicts
-		// with the default settings, so the special-case options set for code
-		// resources have to be applied before the defaults.  However,
-		// if a project has multiple implementations (as evidenced by the presence
-		// of the 'platform' directive or a non-default platform value), then we
-		// need to apply the platform defaults first, so A-line doesn't just grab
-		// the first implementation it finds.  For example, "A-line OpenSSL" should
-		// include OpenSSL-include and import OpenSSLLib when run from Genie, and
-		// do nothing when run from the A-line Mach-O tool.
-		// The defaults will only have effect (if at all) when first applied.
-		
-		// If this project has platform restrictions,
-		if ( initialProjectData->platformDemands != CD::PlatformDemands() )
-		{
-			// Apply the defaults first so we can select an appropriate project alternative.
-			CD::ApplyPlatformDefaults( Options().platform );
-			
-			// Now that we (potentially) have new platform restrictions,
-			// call GetProjectData() again to get the alternative that matches.
-			initialProjectData = &CD::GetProjectData( projName, Options().platform );
-		}
-		
-		const CD::ProjectData& projectData = *initialProjectData;
-		
-		CD::ConfData config( projectData.confData );
-		
-		if ( config.size() > 0 )
+		//if ( config.size() > 0 )
 		{
 			progName = First( config[ "program" ] );
 			

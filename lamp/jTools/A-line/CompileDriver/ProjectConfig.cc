@@ -159,23 +159,6 @@ namespace CompileDriver
 		return result;
 	}
 	
-	ProjectData::ProjectData( const std::string& folder, const ConfData& conf )
-	:
-		folder  ( folder ),
-		confData( conf   ),
-		platformDemands( MakePlatformInfo( confData[ "platform" ] ) )
-	{
-		
-	}
-	
-	typedef std::list< ProjectData > ProjectDataList;
-	
-	typedef std::vector< ProjectData* > ProjectAlternatives;
-	typedef std::map< ProjName, ProjectAlternatives > ProjectMap;
-	
-	static ProjectDataList  gProjectDataList;
-	static ProjectMap       gProjectMap;
-	
 	
 	static std::vector< std::string >& Subprojects()
 	{
@@ -187,14 +170,6 @@ namespace CompileDriver
 	static void AddSubproject( const std::string& location )
 	{
 		Subprojects().push_back( location );
-	}
-	
-	static void AddProjectConfig( const ProjName&     projName,
-	                              const std::string&  folder,
-	                              const ConfData&     conf )
-	{
-		gProjectDataList.push_back( ProjectData( folder, conf ) );
-		gProjectMap[ projName ].push_back( &gProjectDataList.back() );
 	}
 	
 	static std::string DescendPathToDir( const std::string& dir, const std::string& path )
@@ -237,7 +212,9 @@ namespace CompileDriver
 		
 		try
 		{
-			AddProjectConfig( name, parent, conf );
+			AddProjectConfigFile( name,
+			                      MakePlatformInfo( conf[ "platform" ] ),
+			                      ProjectConfig( filePath, parent, conf ) );
 		}
 		catch ( const NoSuchPlatform& e )
 		{
@@ -284,55 +261,6 @@ namespace CompileDriver
 		{
 			AddPendingSubprojects();
 		}
-	}
-	
-	static bool ProjectPlatformIsCompatible( const ProjectData*  projectData,
-	                                         Platform            target )
-	{
-		const PlatformDemands& projectDemands = projectData->platformDemands;
-		
-		return projectDemands.Test( target );
-	}
-	
-	const ProjectData& GetProjectData( const ProjName& projName, const Platform& targetPlatform )
-	{
-		typedef ProjectMap::const_iterator name_iterator;
-		
-		name_iterator foundName = gProjectMap.find( projName );
-		
-		if ( foundName == gProjectMap.end() )
-		{
-			RecursivelyAddPendingSubprojects();
-			foundName = gProjectMap.find( projName );
-			
-			if ( foundName == gProjectMap.end() )
-			{
-				throw NoSuchProject( projName );
-			}
-		}
-		
-		const ProjectAlternatives& alternatives = foundName->second;
-		
-		typedef ProjectAlternatives::const_iterator project_iterator;
-		
-		project_iterator foundProject = std::find_if( alternatives.begin(),
-		                                              alternatives.end(),
-		                                              std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
-		                                                            targetPlatform ) );
-		
-		if ( foundProject ==  alternatives.end() )
-		{
-			// FIXME:  Indicate that there are projects with this name,
-			// but that they're not compatible with the current target
-			throw NoSuchProject( projName );
-		}
-		
-		return **foundProject;
-	}
-	
-	const std::string& GetProjectFolder( const ProjName& projName, const Platform& targetPlatform )
-	{
-		return GetProjectData( projName, targetPlatform ).folder;
 	}
 	
 	class ConfDataMaker

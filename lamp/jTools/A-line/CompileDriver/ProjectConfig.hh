@@ -25,17 +25,6 @@ namespace CompileDriver
 	typedef std::vector< std::string > ConfigValue;
 	typedef std::map< ConfigKey, ConfigValue > ConfData;
 	
-	struct ProjectData
-	{
-		std::string      folder;
-		ConfData         confData;
-		PlatformDemands  platformDemands;
-		
-		ProjectData()  {}
-		
-		ProjectData( const std::string& folder, const ConfData& conf );
-	};
-	
 	struct NoSuchProject
 	{
 		ProjName name;
@@ -51,10 +40,6 @@ namespace CompileDriver
 	};
 	
 	void AddPendingSubproject( const std::string& dir );
-	
-	const ProjectData& GetProjectData( const ProjName& projName, const Platform& targetPlatform );
-	
-	const std::string&  GetProjectFolder( const ProjName& projName, const Platform& targetPlatform );
 	
 	ConfData MakeConfData( const DotConfData& data );
 	
