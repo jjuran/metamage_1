@@ -335,11 +335,6 @@ namespace CompileDriver
 		return GetProjectData( projName, targetPlatform ).folder;
 	}
 	
-	const ConfData& GetProjectConfig( const ProjName& projName, const Platform& targetPlatform )
-	{
-		return GetProjectData( projName, targetPlatform ).confData;
-	}
-	
 	class ConfDataMaker
 	{
 		private:

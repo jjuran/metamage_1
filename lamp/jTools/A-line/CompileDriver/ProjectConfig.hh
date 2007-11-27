@@ -55,7 +55,6 @@ namespace CompileDriver
 	const ProjectData& GetProjectData( const ProjName& projName, const Platform& targetPlatform );
 	
 	const std::string&  GetProjectFolder( const ProjName& projName, const Platform& targetPlatform );
-	const ConfData&     GetProjectConfig( const ProjName& projName, const Platform& targetPlatform );
 	
 	ConfData MakeConfData( const DotConfData& data );
 	
