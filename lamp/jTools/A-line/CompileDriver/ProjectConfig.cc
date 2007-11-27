@@ -278,7 +278,7 @@ namespace CompileDriver
 		
 	}
 	
-	static void RecursivelyAddPendingSubprojects()
+	void RecursivelyAddPendingSubprojects()
 	{
 		while ( Subprojects().size() > 0 )
 		{
