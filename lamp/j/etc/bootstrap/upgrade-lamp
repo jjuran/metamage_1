@@ -4,14 +4,14 @@ test -d $HOME/$1 && echo You already have $1. && exit
 
 cd /tmp
 
-echo Downloading $1.jbin.gz...
-htget --save http://lamp.sourceforge.net/experimental/$1.jbin.gz
+echo Downloading $1.$MBIN.gz...
+htget -O http://lamp.sourceforge.net/experimental/$1.$MBIN.gz
 
 echo Decompressing...
-gzip -d $1.jbin.gz
+gzip -d $1.$MBIN.gz
 
 echo Decoding archive...
-macbin --decode $1.jbin
+macbin --decode $1.$MBIN
 
 mv $1 $HOME/$1
 
