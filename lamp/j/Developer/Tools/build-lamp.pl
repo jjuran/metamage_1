@@ -30,6 +30,15 @@ my %supported_configs = qw
 
 my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
 
+if ( length $build_config_name == 3 )
+{
+	$config_short_name = $build_config_name;
+	
+	my %reverse_configs = ( map { $supported_configs{$_}, $_ } keys %supported_configs );
+	
+	$build_config_name = $reverse_configs{$build_config_name} || die "No such config '$build_config_name'\n";
+}
+
 # This avoids a bug that squelches error output
 print "Building for $build_config_name...\n";
 
