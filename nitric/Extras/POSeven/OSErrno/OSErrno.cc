@@ -30,6 +30,7 @@ namespace OSErrno
 			case fnOpnErr       :  // fall through
 			case rfNumErr       :  result = EBADF;      break;
 			case memFullErr     :  result = ENOMEM;     break;
+			case portInUse      :  result = EACCES;     break;
 			case userCanceledErr:  result = ECANCELED;  break;
 			case fBsyErr        :  result = EBUSY;      break;
 			case dupFNErr       :  result = EEXIST;     break;
