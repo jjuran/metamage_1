@@ -4,7 +4,7 @@ host=lamp.sourceforge.net
 
 list=http://$host/experimental/
 
-export MBIN=jbin
+export MBIN=mBin
 
 echo Checking $host for latest version...
 
