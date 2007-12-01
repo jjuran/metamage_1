@@ -14,12 +14,31 @@
 // Nucleus
 #include "Nucleus/Shared.h"
 
+// Nitrogen
+#include "Nitrogen/MacErrors.h"
+
 // ClassicToolbox
 #include "ClassicToolbox/Serial.h"
 
 // Genie
 #include "Genie/Process.hh"
 
+
+enum
+{
+	gestaltSerialPortArbitratorAttr = 'arb ',
+	
+	gestaltSerialPortArbitratorExists = 0
+};
+
+namespace Nitrogen
+{
+	
+	static const GestaltSelector gestaltSerialPortArbitratorAttr = GestaltSelector( ::gestaltSerialPortArbitratorAttr );
+	
+	template <> struct GestaltDefault< gestaltSerialPortArbitratorAttr > : GestaltAttrDefaults {};
+	
+}
 
 namespace Genie
 {
@@ -134,8 +153,55 @@ namespace Genie
 		return "." + portName + directionName;
 	}
 	
-	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName ) : itsOutputRefNum( N::OpenDriver( MakeDriverName( portName, "Out" ) ) ),
-	                                                                        itsInputRefNum ( N::OpenDriver( MakeDriverName( portName, "In"  ) ) )
+	inline bool SerialPortsAreArbitrated()
+	{
+		return N::Gestalt_Bit< N::gestaltSerialPortArbitratorAttr, ::gestaltSerialPortArbitratorExists >();
+	}
+	
+	static bool DriverIsOpen( const std::string& driverNameString )
+	{
+		N::Str255 driverName = driverNameString;
+		
+		for ( int unit = 0;  unit < LMGetUnitTableEntryCount();  ++unit )
+		{
+			DCtlHandle dceHandle = GetDCtlEntry( -unit );
+			
+			if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
+			{
+				const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
+				
+				DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
+				                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
+				
+				ConstStr255Param name = header->drvrName;
+				
+				if ( ::EqualString( name, driverName, false, true ) )
+				{
+					return dceHandle[0]->dCtlFlags & dOpenedMask;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	static bool SerialDriverMayBeOpened( const std::string& driverName )
+	{
+		return SerialPortsAreArbitrated() || !DriverIsOpen( driverName );
+	}
+	
+	static NN::Owned< N::DriverRefNum > OpenSerialDriver( const std::string& driverName )
+	{
+		if ( !SerialDriverMayBeOpened( driverName ) )
+		{
+			throw N::PortInUse();
+		}
+		
+		return N::OpenDriver( driverName );
+	}
+	
+	SerialDeviceHandle::SerialDeviceHandle( const std::string& portName ) : itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, "Out" ) ) ),
+	                                                                        itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, "In"  ) ) )
 	{
 		
 		using N::kSERDHandshake;
