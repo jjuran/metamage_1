@@ -211,8 +211,6 @@ int O::Main( int argc, argv_t argv )
 	
 	HTTP::SendMessageHeader( sock, message_header );
 	
-	shutdown( sock, SHUT_WR );
-	
 	p7::oflag_t create_flags = outputIsToFile ? p7::o_creat | p7::o_excl : p7::oflag_t();
 	
 	NN::Owned< p7::fd_t > bodyOutput = p7::open( outputFile, p7::o_wronly | create_flags, 0644 );
@@ -239,8 +237,6 @@ int O::Main( int argc, argv_t argv )
 		
 		HTTP::SendMessageBody( bodyOutput, sock );
 	}
-	
-	shutdown( sock, SHUT_RD );
 	
 	return 0;
 }
