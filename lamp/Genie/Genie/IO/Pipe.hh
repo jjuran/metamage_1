@@ -33,8 +33,8 @@ namespace Genie
 			
 			unsigned int SysPoll() const
 			{
-				return   kPollWrite  * itsConduit->IsWritable()
-				       | kPollExcept * itsConduit->EgressHasClosed();
+				return   kPollRead
+				       | kPollWrite * itsConduit->IsWritable();
 			}
 			
 			int SysRead( char* data, std::size_t byteCount );
@@ -68,8 +68,8 @@ namespace Genie
 			
 			unsigned int SysPoll() const
 			{
-				return   kPollRead   * itsConduit->IsReadable()
-				       | kPollExcept * itsConduit->IngressHasClosed();
+				return   kPollRead * itsConduit->IsReadable()
+				       | kPollWrite;
 			}
 			
 			int SysRead( char* data, std::size_t byteCount )
