@@ -20,7 +20,7 @@ namespace Genie
 			
 			bool IsRegularFile() const  { return true; }
 			
-			unsigned int SysPoll() const  { return kPollRead | kPollWrite | kPollExcept; }
+			virtual unsigned int SysPoll() const  { return kPollRead | kPollWrite; }
 			
 			virtual off_t Seek( off_t offset, int whence ) = 0;
 			
