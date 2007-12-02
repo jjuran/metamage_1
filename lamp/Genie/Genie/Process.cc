@@ -857,9 +857,10 @@ namespace Genie
 	// This function doesn't return if the process is current and not forked.
 	void Process::Terminate()
 	{
-		itsLifeStage = kProcessTerminated;
+		itsLifeStage = kProcessTerminating;
 		itsSchedule = kProcessUnscheduled;
 		
+		// This could yield, e.g. in OTCloseProvider() with sync idle events
 		itsFileDescriptors.clear();
 		
 		if ( itsCleanupHandler != NULL )
@@ -890,6 +891,8 @@ namespace Genie
 			{
 			}
 		}
+		
+		itsLifeStage = kProcessZombie;
 		
 		if ( ppid > 1 )
 		{
@@ -945,7 +948,7 @@ namespace Genie
 		
 		itsPPID = 1;
 		
-		if ( itsLifeStage == kProcessTerminated )
+		if ( itsLifeStage == kProcessZombie )
 		{
 			Release();
 		}
@@ -953,7 +956,7 @@ namespace Genie
 	
 	void Process::Release()
 	{
-		ASSERT( itsLifeStage == kProcessTerminated );
+		ASSERT( itsLifeStage == kProcessZombie );
 		
 		itsPPID = 0;  // Don't match PPID comparisons
 		itsLifeStage = kProcessReleased;
@@ -998,7 +1001,7 @@ namespace Genie
 	// But always returns when *raising* a fatal signal.
 	void Process::Raise( int signal )
 	{
-		if ( itsLifeStage >= kProcessTerminated  ||  itsResult != 0 )
+		if ( itsLifeStage >= kProcessTerminating  ||  itsResult != 0 )
 		{
 			return;
 		}

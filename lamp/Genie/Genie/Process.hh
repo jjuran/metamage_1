@@ -114,7 +114,8 @@ namespace Genie
 	{
 		kProcessStarting,
 		kProcessLive,
-		kProcessTerminated,
+		kProcessTerminating,
+		kProcessZombie,
 		kProcessReleased
 	};
 	

@@ -51,7 +51,7 @@ namespace Genie
 			bool is_child     =                proc.GetPPID() == ppid;
 			bool pgid_matches = pgid == 0  ||  proc.GetPGID() == pgid;
 			
-			bool terminated   = proc.GetLifeStage() == kProcessTerminated;
+			bool terminated   = proc.GetLifeStage() == kProcessZombie;
 			
 			bool traced       = StoppedWhileTracing( proc );
 			
@@ -90,7 +90,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		bool terminated = process->GetLifeStage() == kProcessTerminated;
+		bool terminated = process->GetLifeStage() == kProcessZombie;
 		
 		bool traced     = StoppedWhileTracing( *process );
 		
@@ -124,7 +124,7 @@ namespace Genie
 					
 					pid_t found_pid = child->GetPID();
 					
-					if ( child->GetLifeStage() == kProcessTerminated )
+					if ( child->GetLifeStage() == kProcessZombie )
 					{
 						caller.AccumulateChildTimes( child->GetTimes() );
 						
