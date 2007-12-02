@@ -35,9 +35,8 @@ namespace Genie
 			
 			unsigned int SysPoll() const
 			{
-				return   kPollRead   * itsInput->IsReadable()
-				       | kPollWrite  * itsOutput->IsWritable()
-				       | kPollExcept * ( itsInput->IngressHasClosed() || itsOutput->EgressHasClosed() );
+				return   kPollRead  * itsInput->IsReadable()
+				       | kPollWrite * itsOutput->IsWritable();
 			}
 			
 			int SysRead( char* data, std::size_t byteCount )

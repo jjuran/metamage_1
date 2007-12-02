@@ -225,7 +225,7 @@ namespace Genie
 		unsigned readability = readable * kPollRead;
 		unsigned writability = writable * kPollWrite;
 		
-		return readability | writability | kPollExcept;
+		return readability | writability;
 	}
 	
 	int SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )

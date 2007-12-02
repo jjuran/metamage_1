@@ -66,7 +66,6 @@ namespace Genie
 	class BufferFileHandle : public RegularFileHandle
 	{
 		private:
-			//FSTreePtr                          itsFile;
 			boost::shared_ptr< BufferWindow >  itsWindow;
 			std::string  itsData;
 			
@@ -84,7 +83,7 @@ namespace Genie
 			{
 				unsigned readability = itsWindow->ReceivedEOF() ? kPollRead : 0;
 				
-				return readability | kPollWrite | kPollExcept;
+				return readability | kPollWrite;
 			}
 			
 			int SysRead( char* data, std::size_t byteCount );
