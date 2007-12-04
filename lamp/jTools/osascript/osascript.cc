@@ -12,6 +12,9 @@
 // POSIX
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/Exception.h"
 #include "Nucleus/NAssert.h"
@@ -20,6 +23,9 @@
 
 // Io
 #include "io/slurp.hh"
+
+// POSeven
+#include "POSeven/FileDescriptor.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.h"
@@ -32,11 +38,11 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace p7 = poseven;
 namespace Div = Divergence;
 namespace O = Orion;
 
@@ -57,10 +63,12 @@ static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* st
 	
 	if ( errorNumber < 0 )
 	{
-		Io::Err << "OSA script error " << errorNumber << " during " << step << ":" << "\n";
+		std::fprintf( stderr, "OSA script error %d during %s:\n", errorNumber, step );
 	}
 	
-	Io::Err << errorMessage << "\n";
+	errorMessage += "\n";
+	
+	p7::write( p7::stderr_fileno, errorMessage.data(), errorMessage.size() );
 	
 	O::ThrowExitStatus( errorNumber > 0 ? errorNumber : 1 );
 }
@@ -90,7 +98,7 @@ static NN::Owned< N::OSASpec > MakeCWDContext()
 	
 	if ( gotcwd == NULL )
 	{
-		Io::Err << "getcwd() returned NULL, sorry\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "getcwd() returned NULL, sorry\n" ) );
 		
 		O::ThrowExitStatus( 1 );
 	}
@@ -269,7 +277,7 @@ int O::Main( int argc, argv_t argv )
 				output += "\n";
 			}
 			
-			Io::Out << output;
+			p7::write( p7::stdout_fileno, output.data(), output.size() );
 		}
 	}
 	catch ( const N::ErrOSAScriptError& )

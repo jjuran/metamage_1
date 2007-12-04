@@ -17,7 +17,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace p7 = poseven;
@@ -54,10 +53,9 @@ int O::Main( int argc, argv_t argv )
 	{
 		try
 		{
-			Io::Out << MD5Sum( p7::open( argv[ i ], p7::o_rdonly ) )
-			        << "  "
-			        << argv[ i ]
-			        << "\n";
+			std::printf( "%s  %s\n",
+			              MD5Sum( p7::open( argv[ i ], p7::o_rdonly ) ),
+			                  argv[ i ] );
 		}
 		catch ( ... )
 		{
