@@ -14,6 +14,9 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/Convert.h"
 #include "Nucleus/NAssert.h"
@@ -27,7 +30,6 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace NN = Nucleus;
@@ -101,7 +103,10 @@ static struct in_addr ResolveHostname( const char* hostname )
 	
 	if ( !hosts || h_errno )
 	{
-		Io::Err << "Domain name lookup failed: " << h_errno << "\n";
+		std::string message = "Domain name lookup failed: " + NN::Convert< std::string >( h_errno ) + "\n";
+		
+		p7::write( p7::stderr_fileno, message.data(), message.size() );
+		
 		O::ThrowExitStatus( 1 );
 	}
 	
@@ -141,8 +146,9 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( argCount == 0 )
 	{
-		Io::Err << "htget: Usage:  htget <url>\n";
-		return 1;
+		p7::write( p7::stderr_fileno, STR_LEN( "htget: Usage:  htget <url>\n" ) );
+		
+		return EXIT_FAILURE;
 	}
 	
 	bool expectNoContent = false;
@@ -158,8 +164,9 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( expectNoContent  &&  (saveToFile  ||  outputFile != defaultOutput) )
 	{
-		Io::Err << "htget: Can't save null document to file\n";
-		return 1;
+		p7::write( p7::stderr_fileno, STR_LEN( "htget: Can't save null document to file\n" ) );
+		
+		return EXIT_FAILURE;
 	}
 	
 	std::string scheme;
@@ -188,7 +195,10 @@ int O::Main( int argc, argv_t argv )
 	}
 	else
 	{
-		Io::Err << "Unsupported scheme '" << scheme << "'.\n";
+		std::string message = "Unsupported scheme '" + scheme + "'.\n";
+		
+		p7::write( p7::stderr_fileno, message.data(), message.size() );
+		
 		return 2;
 	}
 	
