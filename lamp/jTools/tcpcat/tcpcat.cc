@@ -18,14 +18,20 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
+// Nucleus
+#include "Nucleus/Convert.h"
+
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
+namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -36,7 +42,13 @@ static struct in_addr ResolveHostname( const char* hostname )
 	
 	if ( !hosts || h_errno )
 	{
-		Io::Err << "Domain name lookup failed: " << h_errno << "\n";
+		std::string message = "Domain name lookup failed: ";
+		
+		message += NN::Convert< std::string >( h_errno );
+		message += "\n";
+		
+		p7::write( p7::stderr_fileno, message.data(), message.size() );
+		
 		O::ThrowExitStatus( 1 );
 	}
 	
@@ -49,9 +61,7 @@ int O::Main( int argc, argv_t argv )
 {
 	if ( argc != 3 )
 	{
-		const char usage[] = "tcpcat: Usage:  tcpcat <host> <port>\n";
-		
-		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
+		p7::write( p7::stderr_fileno, STR_LEN( "Usage:  tcpcat <host> <port>\n" ) );
 		
 		return 1;
 	}
