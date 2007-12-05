@@ -22,11 +22,11 @@
 #include <unistd.h>
 #include <vfork.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
-
-// Nitrogen
-#include "Nitrogen/OpenTransportProviders.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -37,10 +37,8 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
-namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace O = Orion;
@@ -48,9 +46,9 @@ namespace O = Orion;
 
 struct Record
 {
-	N::InetPort port;
-	std::string path;
-	std::vector< std::string > argv;
+	short                       port;
+	std::string                 path;
+	std::vector< std::string >  argv;
 };
 
 static std::vector< Record > gRecords;
@@ -62,7 +60,8 @@ static bool gChildSignalled = false;
 
 static void FailedCall( const std::string& name, int error = errno )
 {
-	Io::Err << name << "() failed:  " << error << "\n";
+	std::perror( ("inetd: " + name).c_str() );
+	
 	O::ThrowExitStatus( 1 );
 }
 
@@ -85,11 +84,14 @@ static int ForkCommand( int client, const char* path, char *const argv[] )
 		
 		result = execv( path, argv );
 		
-		if ( result == -1 )
-		{
-			Io::Err << "execv( " << path << " ) failed\n";
-			_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
-		}
+		std::string message = "inetd: execv( ";
+		
+		message += argv[ 0 ];
+		message += " ) failed";
+		
+		std::perror( message.c_str() );
+		
+		_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
 	}
 	
 	return pid;
@@ -133,8 +135,8 @@ static void WaitForClients()
 		
 		if ( selected == -1 && errno != EINTR )
 		{
-			int error = errno;
-			Io::Err << "select() failed:  " << error << "\n";
+			std::perror( "inetd: select()" );
+			
 			return;
 		}
 		else
@@ -214,13 +216,14 @@ static Record MakeRecord( const std::vector< std::string >& tokens )
 	
 	if ( tokens.size() < 7 )
 	{
-		Io::Err << "Too few tokens in record\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "Too few tokens in record\n" ) );
+		
 		O::ThrowExitStatus( 1 );
 	}
 	
 	Record result;
 	
-	result.port = N::InetPort( std::atoi( tokens[ kPort ].c_str() ) );
+	result.port = std::atoi( tokens[ kPort ].c_str() );
 	result.path = tokens[ kPath ];
 	
 	std::size_t argc = tokens.size() - kArgv;
@@ -287,17 +290,18 @@ int O::Main( int /*argc*/, char const *const /*argv*/[] )
 {
 	if ( false )
 	{
-		Io::Err << "Usage: daemon port command\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "Usage: daemon port command\n" ) );
+		
 		return 1;
 	}
 	
-	Io::Out << "Starting internet superserver: inetd";
+	p7::write( p7::stdout_fileno, STR_LEN( "Starting internet superserver: inetd" ) );
 	
 	(void)signal( 20, HandleSIGCHLD );
 	
 	ReadInetdDotConf();
 	
-	Io::Out << ".\n";
+	p7::write( p7::stdout_fileno, STR_LEN( ".\n" ) );
 	
 	if ( gServers.size() > 0 )
 	{
