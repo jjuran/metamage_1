@@ -53,12 +53,12 @@ namespace CDS
 		
 		switch ( gStatus.status )
 		{
-			case 0:  state = "playing";    break;
-			case 1:  state = "paused";     break;
-			case 2:  state = "muting-on";  break;
-			case 3:  state = "done";       break;
-			case 4:  state = "error";      break;
-			case 5:  state = "nil";        break;
+			case kAudioStatusPlaying:  state = "playing";    break;
+			case kAudioStatusPaused :  state = "paused";     break;
+			case kAudioStatusMuteOn :  state = "muting-on";  break;
+			case kAudioStatusDone   :  state = "done";       break;
+			case kAudioStatusError  :  state = "error";      break;
+			case kAudioStatusNil    :  state = "nil";        break;
 		}
 		
 		Io::Out << "Audio status: " << state << "\n";
@@ -140,10 +140,10 @@ namespace CDS
 	{
 		switch ( gStatus.status )
 		{
-			case 0:  NX::AudioPause( gDrive, true  );  break;
-			case 1:  NX::AudioPause( gDrive, false );  break;
+			case kAudioStatusPlaying:  NX::AudioPause( gDrive, true  );  break;
+			case kAudioStatusPaused :  NX::AudioPause( gDrive, false );  break;
 			
-			case 5:
+			case kAudioStatusNil:
 				PlayAllTracks();
 				break;
 			
@@ -170,7 +170,7 @@ namespace CDS
 		
 		switch ( gStatus.status )
 		{
-			case 5:
+			case kAudioStatusNil:
 				NX::AudioTrackSearch( gDrive,
 				                      q.track,
 				                      false,
