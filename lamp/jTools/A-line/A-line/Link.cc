@@ -10,6 +10,9 @@
 #include <functional>
 #include <vector>
 
+// Iota
+#include "iota/strings.hh"
+
 // Io
 #include "io/io.hh"
 #include "io/spray.hh"
@@ -27,9 +30,6 @@
 
 // BitsAndBytes
 #include "StringFilters.hh"
-
-// Orion
-#include "Orion/StandardIO.hh"
 
 // A-line
 #include "A-line/A-line.hh"
@@ -305,7 +305,7 @@ namespace ALine
 		
 		if ( gnu  &&  !gccSupported )
 		{
-			Io::Err << "Sorry, GCC is not supported for this type of product.\n";
+			p7::write( p7::stderr_fileno, STR_LEN( "Sorry, GCC is not supported for this type of product.\n" ) );
 			
 			p7::throw_errno( EINVAL );
 		}

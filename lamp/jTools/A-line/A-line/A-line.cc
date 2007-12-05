@@ -42,7 +42,6 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 // CompileDriver
 #include "CompileDriver/ProjectCatalog.hh"
@@ -386,8 +385,6 @@ int O::Main( int argc, argv_t argv )
 	
 	CD::ApplyPlatformDefaults( targetPlatform );
 	
-	int fail = 0;
-	
 	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
 	{
 		const std::string& proj = freeArgs[ i ];
@@ -409,15 +406,17 @@ int O::Main( int argc, argv_t argv )
 		}
 		catch ( const CD::NoSuchProject& )
 		{
-			Io::Err << argv[ 0 ] << ": No such project " << q( proj ) << "\n";
-			fail++;
+			std::fprintf( stderr, "A-line: No such project '%s'\n", proj.c_str() );
+			
+			return EXIT_FAILURE;
 		}
 		catch ( const NoSuchUsedProject& ex )
 		{
-			Io::Err << argv[ 0 ] 
-				<< ": No such project " << q( ex.used ) 
-				<< " used by " << ex.projName << "\n";
-			fail++;
+			std::fprintf( stderr, "A-line: No such project '%s' used by %s\n",
+			                                                ex.used.c_str(),
+			                                                            ex.projName.c_str() );
+			
+			return EXIT_FAILURE;
 		}
 		/*
 		catch ( BadSourceAlias& ex )
@@ -429,12 +428,12 @@ int O::Main( int argc, argv_t argv )
 		*/
 		catch ( const p7::errno_t& err )
 		{
-			Io::Err << argv[ 0 ] << ": Error in " << proj << ":\n";
+			std::fprintf( stderr, "A-line: %s: %s\n", proj.c_str(), std::strerror( err ) );
 			
 			throw;
 		}
 	}
 	
-	return fail != 0;
+	return EXIT_SUCCESS;
 }
 

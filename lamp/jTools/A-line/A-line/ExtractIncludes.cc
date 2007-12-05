@@ -5,6 +5,9 @@
 
 #include "A-line/ExtractIncludes.hh"
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Open.hh"
 
@@ -13,9 +16,6 @@
 
 // BitsAndBytes
 #include "StringPredicates.hh"
-
-// Orion
-#include "Orion/StandardIO.hh"
 
 
 namespace ALine
@@ -71,13 +71,13 @@ namespace ALine
 					
 					includes.push_back( line.substr( pos, end - pos ) );
 				}
-				catch ( BadIncludeDirective )
+				catch ( const BadIncludeDirective& )
 				{
-					Io::Err << "Bad include!\n";
+					p7::write( p7::stderr_fileno, STR_LEN( "Bad include!\n" ) );
 				}
 				catch ( ... )
 				{
-					Io::Err << "Bad compiler!\n";
+					p7::write( p7::stderr_fileno, STR_LEN( "Bad compiler!\n" ) );
 				}
 			}
 		}

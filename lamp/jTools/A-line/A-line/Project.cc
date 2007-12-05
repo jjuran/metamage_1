@@ -21,9 +21,6 @@
 // BitsAndBytes
 #include "StringFilters.hh"
 
-// Orion
-#include "Orion/StandardIO.hh"
-
 // CompileDriver
 #include "CompileDriver/ProjectConfig.hh"
 
@@ -100,12 +97,14 @@ namespace ALine
 				return dirPath;
 			}
 			
-			Io::Err << "Missing search directory " << q( pathname ) << "\n";
+			std::fprintf( stderr, "Missing search directory '%s'\n", pathname.c_str() );
+			
 			throw;
 		}
 		catch ( ... )
 		{
-			Io::Err << "Unrecognized exception for " << q( pathname ) << "\n";
+			std::fprintf( stderr, "Unrecognized exception for '%s'\n", pathname.c_str() );
+			
 			throw;
 		}
 		
