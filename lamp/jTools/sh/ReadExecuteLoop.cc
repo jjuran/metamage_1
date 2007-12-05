@@ -18,7 +18,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 // sh
 #include "Execution.hh"
@@ -61,7 +60,7 @@ static void SendPrompt()
 		prompt_string = prompt.defaultValue;
 	}
 	
-	Io::Out << prompt_string;
+	p7::write( p7::stdout_fileno, prompt_string, std::strlen( prompt_string ) );
 }
 
 int ReadExecuteLoop( p7::fd_t  fd,
@@ -73,7 +72,7 @@ int ReadExecuteLoop( p7::fd_t  fd,
 	
 	if ( prompts )
 	{
-		Io::Out << "Shell spawned with pid " << getpid() << "\n";
+		std::printf( "Shell spawned with pid %d\n", getpid() );
 		
 		SendPrompt();
 	}

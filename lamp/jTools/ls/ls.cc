@@ -3,11 +3,15 @@
  *	=====
  */
 
-// Standard C
-#include <errno.h>
+// Standard C++
+#include <string>
 
 // Standard C/C++
+#include <cstdio>
 #include <cstring>
+
+// Standard C
+#include <errno.h>
 
 // POSIX
 #include <dirent.h>
@@ -15,8 +19,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
-#include "SystemCalls.hh"
 
 
 namespace O = Orion;
@@ -28,7 +30,7 @@ static void iterate_dir( const char* pathname )
 	
 	while ( const dirent* ent = readdir( iter ) )
 	{
-		Io::Out << ent->d_name << "\n";
+		std::printf( "%s\n", ent->d_name );
 	}
 	
 	closedir( iter );
@@ -49,8 +51,13 @@ int O::Main( int argc, argv_t argv )
 			if ( result == -1 )
 			{
 				++fail;
-				int errnum = errno;
-				Io::Err << "failed to stat( " << argv[ i ] << " ), " << std::strerror( errnum ) << "\n";
+				
+				std::string message = "ls: ";
+				
+				message += argv[ i ];
+				
+				std::perror( message.c_str() );
+				
 				continue;
 			}
 			
@@ -60,7 +67,7 @@ int O::Main( int argc, argv_t argv )
 			}
 			else
 			{
-				Io::Out << argv[ i ] << "\n";
+				std::printf( "%s\n", argv[ i ] );
 			}
 		}
 		return fail;

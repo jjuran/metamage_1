@@ -16,11 +16,17 @@
 #include <unistd.h>
 #include <vfork.h>
 
+// Iota
+#include "iota/strings.hh"
+
+// POSeven
+#include "POSeven/FileDescriptor.hh"
+
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -39,11 +45,14 @@ static int ForkCommand( int client, iota::argv_t argv )
 		
 		result = execv( argv[ 0 ], argv );
 		
-		if ( result == -1 )
-		{
-			_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
-			Io::Err << "execv( " << argv[ 0 ] << " ) failed\n";
-		}
+		std::string message = "superd: execv( ";
+		
+		message += argv[ 0 ];
+		message += " ) failed";
+		
+		std::perror( message.c_str() );
+		
+		_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
 	}
 	
 	return pid;
@@ -74,7 +83,7 @@ static void WaitForClients( int listener, iota::argv_t argv )
 		
 		if ( client == -1 )
 		{
-			Io::Err << "accept() failed:  " << errno << "\n";
+			std::perror( "superd: accept()" );
 			
 			if ( ++failures >= 3 )
 			{
@@ -92,7 +101,7 @@ int O::Main( int argc, argv_t argv )
 {
 	if ( argc <= 2 )
 	{
-		Io::Err << "Usage: superd port command\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "Usage: superd port command\n" ) );
 		return 1;
 	}
 	
@@ -102,13 +111,13 @@ int O::Main( int argc, argv_t argv )
 	
 	struct in_addr ip = { 0 };
 	
-	Io::Out << "Daemon starting up...";
+	p7::write( p7::stdout_fileno, STR_LEN( "Daemon starting up..." ) );
 	
 	int listener = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 	
 	if ( listener == -1 )
 	{
-		Io::Err << "socket() failed:  " << errno << "\n";
+		std::perror( "superd: socket()" );
 		return 1;
 	}
 	
@@ -122,7 +131,7 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( result == -1 )
 	{
-		Io::Err << "bind() failed:  " << errno << "\n";
+		std::perror( "superd: bind()" );
 		return 1;
 	}
 	
@@ -130,11 +139,11 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( result == -1 )
 	{
-		Io::Err << "listen() failed:  " << errno << "\n";
+		std::perror( "superd: listen()" );
 		return 1;
 	}
 	
-	Io::Out << " done.\n";
+	p7::write( p7::stdout_fileno, STR_LEN( " done.\n" ) );
 	
 	WaitForClients( listener, argv + 2 );
 	

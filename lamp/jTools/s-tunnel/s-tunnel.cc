@@ -31,16 +31,19 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/FileDescriptor.hh"
 
 // Kerosene
-#include "SystemCalls.hh"
+//#include "SystemCalls.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace p7 = poseven;
@@ -156,17 +159,22 @@ static void Poll( SSL* client_session, int server_socket )
 	}
 	catch ( PeerClosedSocket& )
 	{
-		Io::Err << "Remote peer closed socket\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "Remote peer closed socket\n" ) );
 		isComplete = true;
 	}
 	catch ( InvalidEOF& )
 	{
-		Io::Err << "EOF received in violation of SSL protocol\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "EOF received in violation of SSL protocol\n" ) );
 		isComplete = true;
 	}
 	catch ( p7::errno_t& error )
 	{
-		Io::Err << "Remote read error: " << error.Get() << "\n";
+		std::string message = "Remote read error: ";
+		
+		message += NN::Convert< std::string >( error.Get() );
+		message += "\n";
+		
+		p7::write( p7::stderr_fileno, message.data(), message.size() );
 		isComplete = true;
 	}
 	/*
@@ -183,7 +191,7 @@ static void Poll( SSL* client_session, int server_socket )
 		{
 			if ( SSLWrite( client_session, data, bytes ) != bytes )
 			{
-				Io::Err << "Remote underwrite\n";
+				p7::write( p7::stderr_fileno, STR_LEN( "Remote underwrite\n" ) );
 				isComplete = true;
 				break;
 			}
@@ -199,12 +207,18 @@ static void Poll( SSL* client_session, int server_socket )
 	}
 	catch ( PeerClosedSocket& )
 	{
-		Io::Err << "Local peer closed socket\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "Local peer closed socket\n" ) );
 		isComplete = true;
 	}
 	catch ( p7::errno_t& error )
 	{
-		Io::Err << "Local read error: " << error.Get() << "\n";
+		std::string message = "Local read error: ";
+		
+		message += NN::Convert< std::string >( error.Get() );
+		message += "\n";
+		
+		p7::write( p7::stderr_fileno, message.data(), message.size() );
+		
 		isComplete = true;
 	}
 	/*
@@ -280,7 +294,13 @@ static struct in_addr ResolveHostname( const char* hostname )
 	
 	if ( !hosts || h_errno )
 	{
-		Io::Err << "Domain name lookup failed: " << h_errno << "\n";
+		std::string message = "Domain name lookup failed: ";
+		
+		message += NN::Convert< std::string >( h_errno );
+		message += "\n";
+		
+		p7::write( p7::stderr_fileno, message.data(), message.size() );
+		
 		O::ThrowExitStatus( 1 );
 	}
 	
@@ -308,7 +328,7 @@ int O::Main(int argc, char const* const argv[])
 	
 	if ( listener_port == 0 )
 	{
-		Io::Err << "Invalid listener port\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "Invalid listener port\n" ) );
 		return 1;
 	}
 	
@@ -327,7 +347,7 @@ int O::Main(int argc, char const* const argv[])
 	
 	gRemoteAddress = remoteAddr;
 	
-	Io::Out << "Secure tunnel daemon starting up...";
+	p7::write( p7::stdout_fileno, STR_LEN( "Secure tunnel daemon starting up..." ) );
 	
 	unsigned int listen_ip = INADDR_ANY;
 	
@@ -339,7 +359,7 @@ int O::Main(int argc, char const* const argv[])
 	
 	Startup( listenAddr );
 	
-	Io::Out << " done.\n";
+	p7::write( p7::stdout_fileno, STR_LEN( " done.\n" ) );
 	
 	WaitForClients();
 	

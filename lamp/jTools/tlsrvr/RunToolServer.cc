@@ -48,9 +48,7 @@
 // Divergence
 #include "Divergence/Utilities.hh"
 
-// Orion
-#include "Orion/StandardIO.hh"
-
+// tlsrvr
 #include "ToolServer.hh"
 
 
@@ -156,7 +154,7 @@ namespace RunToolServer
 		
 		if ( stat != 0 )
 		{
-			Io::Out << "Reply stat is '" << stat << "'.\n";
+			std::printf( "Reply stat is '%d'.\n", stat );
 			
 			if ( stat == -1 )
 			{
