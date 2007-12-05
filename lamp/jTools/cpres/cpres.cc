@@ -12,7 +12,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 #include "SystemCalls.hh"
 
 
@@ -30,10 +29,8 @@ int O::Main( int argc, char const *const argv[] )
 	// Check for sufficient number of args
 	if ( argc < 3 )
 	{
-		Io::Err << "cpres: missing "
-		        << ( argc == 1 ? "file arguments"
-		                       : "destination file")
-		        << "\n";
+		std::fprintf( stderr, "cpres: missing %s\n", (argc == 1) ? "file arguments"
+		                                                         : "destination file" );
 		
 		return 1;
 	}
@@ -47,7 +44,8 @@ int O::Main( int argc, char const *const argv[] )
 	}
 	catch ( ... )
 	{
-		Io::Err << "cpres: last argument (" << argv[ argc - 1 ] << ") is not a file.\n";
+		std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", argv[ argc - 1 ] );
+		
 		return 1;
 	}
 	
@@ -65,10 +63,15 @@ int O::Main( int argc, char const *const argv[] )
 			FSSpec source = Path2FSS( argv[ index ] );
 			fail += TryResCopy( source, resFileH );
 		}
-		catch ( N::OSStatus err )
+		catch ( const N::OSStatus& err )
 		{
-			fail++;
-			Io::Err << "OSStatus " << err << " copying from " << argv[ index ] << " to " << dest.name << ".\n";
+			++fail;
+			
+			std::string destName = NN::Convert< std::string >( dest.name );
+			
+			std::fprintf( stderr, "OSStatus %d copying from %s to %s.\n",
+			                                err,            argv[ index ],
+			                                                      destName.c_str() );
 		}
 	}
 	
@@ -79,8 +82,11 @@ int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
 {
 	if ( io::directory_exists( source ) )
 	{
+		std::string name = NN::Convert< std::string >( source.name );
+		
 		// Source item is a directory.
-		Io::Err << "cpres: " << source.name << ": omitting directory\n";
+		std::fprintf( stderr, "cpres: %s: omitting directory\n", name.c_str() );
+		
 		return 1;
 	}
 	

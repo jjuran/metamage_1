@@ -11,6 +11,12 @@
 // Standard C++
 #include <vector>
 
+// Iota
+#include "iota/strings.hh"
+
+// POSeven
+#include "POSeven/FileDescriptor.hh"
+
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/MacErrors.h"
@@ -29,7 +35,6 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace O = Orion;
@@ -39,6 +44,7 @@ namespace jTools
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	
 	
 	static NN::Owned< AEDesc > BuildAppleEvent( AEEventClass          eventClass,
@@ -151,18 +157,20 @@ namespace jTools
 		
 		if ( O::FreeArgumentCount() == 0 )
 		{
-			Io::Err << 
+			p7::write( p7::stderr_fileno, STR_LEN(
 				"Usage:  aevt [-m machine] {-a app | -s sign} class id [params]\n"
 				"Examples: aevt -s hhgg aevt quit\n"
 				"          aevt -m 'Headless Mac' -a Genie |gan Exec \"'----':[Òshutdown -hÓ]\"\n"
 				"          aevt -s 'R*ch' misc slct \"'----':obj{want:type(clin), form:indx, seld:42,\n"
-				"               from:obj{want:type(cwin), form:indx, seld:1, from:null()}}\"\n";
-			return 0;
+				"               from:obj{want:type(cwin), form:indx, seld:1, from:null()}}\"\n" ) );
+			
+			return 2;
 		}
 		else if ( O::FreeArgumentCount() < 2 )
 		{
-			Io::Err << "aevt: missing arguments" "\n";
-			return 1;
+			p7::write( p7::stderr_fileno, STR_LEN( "aevt: missing arguments" "\n" ) );
+			
+			return 2;
 		}
 		else if ( O::FreeArgumentCount() < 3 )
 		{
@@ -178,7 +186,7 @@ namespace jTools
 		
 		if ( argEventClass.size() != 4  ||  argEventID.size() != 4 )
 		{
-			Io::Err << "aevt: invalid parameter" "\n";
+			p7::write( p7::stderr_fileno, STR_LEN( "aevt: invalid parameter" "\n" ) );
 			
 			return 1;
 		}

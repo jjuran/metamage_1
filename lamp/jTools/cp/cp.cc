@@ -20,7 +20,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 #include "SystemCalls.hh"
 
 
@@ -53,7 +52,9 @@ int O::Main( int argc, argv_t argv )
 	// Check for sufficient number of args
 	if ( argc < 3 )
 	{
-		Io::Err << "cp: missing " << ((argc == 1) ? "file arguments" : "destination file") << "\n";
+		std::fprintf( stderr, "cp: missing %s\n", (argc == 1) ? "file arguments"
+		                                                      : "destination file" );
+		
 		return 1;
 	}
 	
@@ -68,12 +69,12 @@ int O::Main( int argc, argv_t argv )
 		
 		p7::throw_posix_result( stat( destDir, &sb ) );
 		
-		bool isDir = sb.st_mode & S_IFDIR;
-		
-		if ( !isDir )
+		if ( bool not_a_dir = sb.st_mode & S_IFDIR == 0 )
 		{
-			Io::Err << "cp: copying multiple files, but last argument (" << destDir << ") is not a directory.\n";
-			return 1;
+			std::fprintf( stderr, "cp: copying multiple files, but last argument (%s) is not a directory.\n",
+			                                                                      destDir );
+			
+			return EXIT_FAILURE;
 		}
 		
 		// Try to copy each file.  Return whether any errors occurred.
