@@ -29,7 +29,6 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 // tlsrvr
 #include "ToolServer.hh"
@@ -136,29 +135,6 @@ static std::string MakeCommand( char const *const *begin, char const *const *end
 	}
 	
 	return command;
-}
-
-static void MyOSStatusLogger( N::OSStatus error, const char *file, int line )
-{
-	static int level = 0;
-	
-	if ( error == -43 )  return;
-	
-	++level;
-	
-	ASSERT( level < 5 );
-	
-	try
-	{
-		Io::Err << "# LOG: OSStatus " << error << ".  \n"
-		           "File '" << file << "'; Line " << line << "\n";
-	}
-	catch ( ... )
-	{
-		::SysBeep( 30 );
-	}
-	
-	--level;
 }
 
 int O::Main( int argc, argv_t argv )
