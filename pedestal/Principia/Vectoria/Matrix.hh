@@ -144,7 +144,7 @@ namespace Vectoria
 	
 	
 	template < class T, unsigned R, unsigned C >
-	inline Matrix< T, C, R > Transpose( const Matrix< T, R, C >& matrix )
+	Matrix< T, C, R > Transpose( const Matrix< T, R, C >& matrix )
 	{
 		Matrix< T, C, R > transpose;
 		
@@ -224,8 +224,8 @@ namespace Vectoria
 	}
 	
 	template < class T, unsigned R1, unsigned R2C1, unsigned C2 >
-	inline Matrix< T, R1, C2 > operator*( const Matrix< T, R1, R2C1 >&  a,
-	                                      const Matrix< T, R2C1, C2 >&  b )
+	Matrix< T, R1, C2 > operator*( const Matrix< T, R1, R2C1 >&  a,
+	                               const Matrix< T, R2C1, C2 >&  b )
 	{
 		Matrix< T, R1, C2 > result;
 		
