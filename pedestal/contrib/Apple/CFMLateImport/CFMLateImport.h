@@ -36,7 +36,7 @@
 
 // MoreIsBetter Setup
 
-#include "MoreSetup.h"
+//#include "MoreSetup.h"
 
 // Mac OS Interfaces
 

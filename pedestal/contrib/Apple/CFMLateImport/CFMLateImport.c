@@ -59,7 +59,7 @@
 
 // MoreIsBetter Setup
 
-#include "MoreSetup.h"
+//#include "MoreSetup.h"
 
 // Mac OS Interfaces
 
@@ -74,7 +74,9 @@
 
 // MIB Prototypes
 
-#include "MoreInterfaceLib.h"
+//#include "MoreInterfaceLib.h"
+#define MoreAssertQ( x )  /**/
+#define MoreBlockZero BlockZero
 
 // Our Prototypes
 
