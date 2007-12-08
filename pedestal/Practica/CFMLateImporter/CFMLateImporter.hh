@@ -17,8 +17,7 @@
 namespace CFMLateImporter
 {
 	
-	OSStatus ImportLibrary( ConstStr255Param   fragToFixExportedRoutineName,
-	                        ConstStr255Param   weakLinkedLibraryName,
+	OSStatus ImportLibrary( ConstStr255Param   weakLinkedLibraryName,
 	                        CFragConnectionID  connIDToImport );
 	
 }

@@ -9,21 +9,20 @@
 #include "CFMLateImport.h"
 
 // CFMLateImporter
-#include "SaveCFragInitBlock.h"
+#include "SavedCFragInitBlock.h"
 
 
 namespace CFMLateImporter
 {
 	
-	OSStatus ImportLibrary( ConstStr255Param   fragToFixExportedRoutineName,
-	                        ConstStr255Param   weakLinkedLibraryName,
+	OSStatus ImportLibrary( ConstStr255Param   weakLinkedLibraryName,
 	                        CFragConnectionID  connIDToImport )
 	{
 		const CFragSystem7InitBlock* initBlock = SavedCFragInitBlock();
 		
 		return CFMLateImportLibrary( &initBlock->fragLocator.u.onDisk,
 		                             (CFragConnectionID) initBlock->closureID,
-		                             fragToFixExportedRoutineName,
+		                             Initialize_SavedCFragInitBlock,
 		                             weakLinkedLibraryName,
 		                             connIDToImport );
 	}

@@ -24,8 +24,6 @@ static pascal OSErr SaveInitBlock_Initialize( const CFragInitBlock* initBlock );
 
 */
 
-pascal OSErr Initialize_SavedCFragInitBlock( const CFragInitBlock* initBlock );
-
 
 static CFragInitBlock  gSavedInitBlock;
 static FSSpec          gSavedFileSpec;
@@ -36,7 +34,7 @@ const CFragInitBlock* SavedCFragInitBlock()
 }
 
 
-pascal OSErr Initialize_SavedCFragInitBlock( const CFragInitBlock* initBlock )
+OSErr Initialize_SavedCFragInitBlock( const CFragInitBlock* initBlock )
 {
 	SInt32 where = initBlock->fragLocator.where;
 	
