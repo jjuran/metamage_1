@@ -20,12 +20,15 @@
 #include <unistd.h>
 #include <vfork.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/FileDescriptor.hh"
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 // ShellShock
 #include "ShellShock/Expansion.hh"
@@ -629,7 +632,7 @@ static int ExecuteCommand( const Command& command )
 	}
 	catch ( ... )
 	{
-		Io::Err << "wish: An exception occurred while running the command.\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "sh: exception occurred running command\n" ) );
 	}
 	
 	return exec_failure_wait_status;
@@ -672,7 +675,7 @@ static int ExecuteCommandFromPipeline( const Command& command )
 	}
 	catch ( ... )
 	{
-		Io::Err << "wish: An exception occurred while running the command.\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "sh: exception occurred running command\n" ) );
 	}
 	
 	return exec_failure_wait_status;
@@ -838,7 +841,7 @@ static int ExecuteCircuit( const Circuit& circuit )
 {
 	if ( circuit.op == Sh::kControlBackground )
 	{
-		Io::Err << "Background jobs are not supported.  Sorry.\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "Background jobs are not supported.  Sorry.\n" ) );
 		
 		return exec_failure_wait_status;
 	}
