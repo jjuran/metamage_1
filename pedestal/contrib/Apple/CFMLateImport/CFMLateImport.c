@@ -17,6 +17,23 @@
 
 	Change History (most recent first):
 
+        <13>     24/9/01    Quinn   Fixes to compile with C++ activated.
+        <12>     21/9/01    Quinn   [2710489] Fix typo in the comments for FragmentLookup.
+        <11>     21/9/01    Quinn   Changes for CWPro7 Mach-O build.
+        <10>     19/9/01    Quinn   Corrected implementation of kPEFRelocSmBySection. Added
+                                    implementations of kPEFRelocSetPosition and kPEFRelocLgByImport
+                                    (from code contributed by Eric Grant, Ned Holbrook, and Steve
+                                    Kalkwarf), although I can't test them yet.
+         <9>     19/9/01    Quinn   We now handle unpacked data sections, courtesy of some code from
+                                    Ned Holbrook.
+         <8>     19/9/01    Quinn   Minor fixes for the previous checkin. Updated some comments and
+                                    killed some dead code.
+         <7>     19/9/01    Quinn   Simplified API and implementation after a suggestion by Eric
+                                    Grant. You no longer have to CFM export a dummy function; you
+                                    can just pass in the address of your fragment's init routine.
+         <6>     15/2/01    Quinn   Modify compile-time warnings to complain if you try to build
+                                    this module into a Mach-O binary.
+         <5>      5/2/01    Quinn   Removed redundant assignment in CFMLateImportCore.
          <4>    30/11/00    Quinn   Added comment about future of data symbols in CF.
          <3>    16/11/00    Quinn   Allow symbol finding via a callback and use that to implement
                                     CFBundle support.
@@ -46,8 +63,10 @@
 
 // Mac OS Interfaces
 
-#include <CodeFragments.h>
-#include <PEFBinaryFormat.h>
+#if ! MORE_FRAMEWORK_INCLUDES
+	#include <CodeFragments.h>
+	#include <PEFBinaryFormat.h>
+#endif
 
 // Standard C Interfaces
 
@@ -63,7 +82,9 @@
 
 /////////////////////////////////////////////////////////////////
 
-#if !TARGET_RT_MAC_CFM || !TARGET_CPU_PPC
+#if TARGET_RT_MAC_MACHO
+	#error CFMLateImport is not suitable for use in a Mach-O project.
+#elif !TARGET_RT_MAC_CFM || !TARGET_CPU_PPC
 	#error CFMLateImport has not been qualified for 68K or CFM-68K use.
 #endif
 
@@ -82,40 +103,12 @@ static OSStatus FSReadAtOffset(SInt16 refNum, SInt32 offset, SInt32 count, void 
 	ParamBlockRec pb;
 	
 	pb.ioParam.ioRefNum     = refNum;
-	pb.ioParam.ioBuffer     = buffer;
+	pb.ioParam.ioBuffer     = (Ptr) buffer;
 	pb.ioParam.ioReqCount   = count;
 	pb.ioParam.ioPosMode    = fsFromStart;
 	pb.ioParam.ioPosOffset  = offset;
 	
 	return PBReadSync(&pb);
-}
-
-static UInt32	PEFComputeHashWord	( const UInt8 *	nameText,
-									  UInt32		nameLength )
-	// PEFComputeHashWord was stolen directly from "PEFBinaryFormat.h",
-	// with the odd change to work with "const" data.
-{																							
-	const UInt8 *	charPtr		= nameText;															
-	SInt32			hashValue	= 0;		// ! Signed to match old published algorithm.			
-	UInt32			length		= 0;																
-	UInt32			limit;																			
-	UInt32			result;																			
-	UInt8			currChar;																		
- 																									
-	#define PseudoRotate(x)  ( ( (x) << 1 ) - ( (x) >> 16 ) )								
- 																									
-	for ( limit = nameLength; limit > 0; limit -= 1 ) {										
-		currChar = *charPtr++;																
-		if ( currChar == NULL ) break;														
-		length += 1;																		
-		hashValue = PseudoRotate ( hashValue ) ^ currChar;									
-	}																						
- 																									
-	result	= (length << kPEFHashLengthShift) |												
-			  ((UInt16) ((hashValue ^ (hashValue >> 16)) & kPEFHashValueMask));				
- 																									
-	return result;																			
- 																									
 }
 
 /////////////////////////////////////////////////////////////////
@@ -130,7 +123,7 @@ static UInt32	PEFComputeHashWord	( const UInt8 *	nameText,
 struct FragToFixInfo {
 	CFragSystem7DiskFlatLocator	locator;				// How to find the fragment's container.
 	CFragConnectionID 			connID;					// CFM connection to the fragment.
-	ConstStr255Param 			exportedRoutineName;	// An exported routine from the fragment.
+	CFragInitFunction 			initRoutine;			// The CFM init routine for the fragment.
 	PEFContainerHeader 			containerHeader;		// The CFM header, read in from the container.
 	PEFSectionHeader			*sectionHeaders;		// The CFM section headers.  A pointer block containing an array of containerHeader.sectionCount elements.
 	PEFLoaderInfoHeader			*loaderSection;			// The entire CFM loader section in a pointer block.
@@ -245,6 +238,188 @@ static OSStatus ReadContainerBasics(FragToFixInfo *fragToFix)
 	return err;
 }
 
+static UInt32 DecodeVCountValue(const UInt8 *start, UInt32 *outCount)
+	// Given a pointer to the start of a variable length PEF value, 
+	// work out the value (in *outCount).  Returns the number of bytes 
+	// consumed by the value.
+{
+	UInt8 *			bytePtr;
+	UInt8			byte;
+	UInt32			count;
+	
+	bytePtr = (UInt8 *)start;
+	
+	// Code taken from "PEFBinaryFormat.h".
+	count = 0;
+	do {
+		byte = *bytePtr++;
+		count = (count << kPEFPkDataVCountShift) | (byte & kPEFPkDataVCountMask);
+	} while ((byte & kPEFPkDataVCountEndMask) != 0);
+	
+	*outCount = count;
+	return bytePtr - start;
+}
+
+static UInt32 DecodeInstrCountValue(const UInt8 *inOpStart, UInt32 *outCount)
+	// Given a pointer to the start of an opcode (inOpStart), work out the 
+	// count argument for that opcode (*outCount).  Returns the number of 
+	// bytes consumed by the opcode and count combination.
+{
+	MoreAssertQ(inOpStart != nil);
+	MoreAssertQ(outCount  != nil);
+	
+	if (PEFPkDataCount5(*inOpStart) != 0)
+	{
+		// Simple case, count encoded in opcode.
+		*outCount = PEFPkDataCount5(*inOpStart);
+		return 1;
+	}
+	else
+	{
+		// Variable-length case.
+		return 1 + DecodeVCountValue(inOpStart + 1, outCount);
+	}
+}
+
+static OSStatus UnpackPEFDataSection(const UInt8 * const packedData,   UInt32 packedSize,
+								           UInt8 * const unpackedData, UInt32 unpackedSize)
+{
+	OSErr			err;
+	UInt32			offset;
+	UInt8			opCode;
+	UInt8 *			unpackCursor;
+	
+	MoreAssertQ(packedData != nil);
+	MoreAssertQ(unpackedData != nil);
+	MoreAssertQ(unpackedSize >= packedSize);
+
+	// The following asserts assume that the client allocated the memory with NewPtr, 
+	// which may not always be true.  However, the asserts' value in preventing accidental 
+	// memory block overruns outweighs the possible maintenance effort.
+	
+	MoreAssertQ( packedSize   == GetPtrSize( (Ptr) packedData  ) );
+	MoreAssertQ( unpackedSize == GetPtrSize( (Ptr) unpackedData) );
+	
+	err          = noErr;
+	offset       = 0;
+	unpackCursor = unpackedData;
+	while (offset < packedSize) {
+		MoreAssertQ(unpackCursor < &unpackedData[unpackedSize]);
+		
+		opCode = packedData[offset];
+		
+		switch (PEFPkDataOpcode(opCode)) {
+			case kPEFPkDataZero:
+				{
+					UInt32	count;
+					
+					offset += DecodeInstrCountValue(&packedData[offset], &count);
+					
+					MoreBlockZero(unpackCursor, count);
+					unpackCursor += count;
+				}
+				break;
+			
+			case kPEFPkDataBlock:
+				{
+					UInt32	blockSize;
+					
+					offset += DecodeInstrCountValue(&packedData[offset], &blockSize);
+					
+					BlockMoveData(&packedData[offset], unpackCursor, blockSize);
+					unpackCursor += blockSize;
+					offset += blockSize;
+				}
+				break;
+			
+			case kPEFPkDataRepeat:
+				{
+					UInt32	blockSize;
+					UInt32	repeatCount;
+					UInt32  loopCounter;
+					
+					offset += DecodeInstrCountValue(&packedData[offset], &blockSize);
+					offset += DecodeVCountValue(&packedData[offset], &repeatCount);
+					repeatCount += 1;	// stored value is (repeatCount - 1)
+					
+					for (loopCounter = 0; loopCounter < repeatCount; loopCounter++) {
+						BlockMoveData(&packedData[offset], unpackCursor, blockSize);
+						unpackCursor += blockSize;
+					}
+					offset += blockSize;
+				}
+				break;
+			
+			case kPEFPkDataRepeatBlock:
+				{
+					UInt32	commonSize;
+					UInt32	customSize;
+					UInt32	repeatCount;
+					const UInt8 *commonData;
+					const UInt8 *customData;
+					UInt32 loopCounter;
+					
+					offset += DecodeInstrCountValue(&packedData[offset], &commonSize);
+					offset += DecodeVCountValue(&packedData[offset], &customSize);
+					offset += DecodeVCountValue(&packedData[offset], &repeatCount);
+					
+					commonData = &packedData[offset];
+					customData = &packedData[offset + commonSize];
+					
+					for (loopCounter = 0; loopCounter < repeatCount; loopCounter++) {
+						BlockMoveData(commonData, unpackCursor, commonSize);
+						unpackCursor += commonSize;
+						BlockMoveData(customData, unpackCursor, customSize);
+						unpackCursor += customSize;
+						customData += customSize;
+					}
+					BlockMoveData(commonData, unpackCursor, commonSize);
+					unpackCursor += commonSize;
+					offset += (repeatCount * (commonSize + customSize)) + commonSize;
+				}
+				break;
+			
+			case kPEFPkDataRepeatZero:
+				{
+					UInt32	commonSize;
+					UInt32	customSize;
+					UInt32	repeatCount;
+					const UInt8 *customData;
+					UInt32 loopCounter;
+					
+					offset += DecodeInstrCountValue(&packedData[offset], &commonSize);
+					offset += DecodeVCountValue(&packedData[offset], &customSize);
+					offset += DecodeVCountValue(&packedData[offset], &repeatCount);
+					
+					customData = &packedData[offset];
+					
+					for (loopCounter = 0; loopCounter < repeatCount; loopCounter++) {
+						MoreBlockZero(unpackCursor, commonSize);
+						unpackCursor += commonSize;
+						BlockMoveData(customData, unpackCursor, customSize);
+						unpackCursor += customSize;
+						customData += customSize;
+					}
+					MoreBlockZero(unpackCursor, commonSize);
+					unpackCursor += commonSize;
+					offset += repeatCount * customSize;
+				}
+				break;
+			
+			default:
+				#if MORE_DEBUG
+					DebugStr("\pUnpackPEFDataSection: Unexpected data opcode");
+				#endif
+				err = cfragFragmentCorruptErr;
+				goto leaveNow;
+				break;
+		}
+	}
+	
+leaveNow:
+	return err;
+}
+
 /*	SetupSectionBaseAddresses Rationale
 	-----------------------------------
 	
@@ -271,11 +446,12 @@ static OSStatus ReadContainerBasics(FragToFixInfo *fragToFix)
 	 If I had a nice API for doing that, none of this code would exist.
 	]
 
-	My technique is actually pretty sneaky.  I require that the fragment
-	to fix export at least one routine.  This means that the fragment to fix
-	must have a TVector in its data section.  TVectors are interesting
-	because they're made up of two words.  The first is a pointer to the
-	code that implements the routine; the second is a pointer to the TOC
+	The technique is very sneaky (thanks to Eric Grant).  The fragment to 
+	fix necessarily has a CFM init routine (because it needs that routine 
+	in order to capture the fragment location and connection ID).  Thus the 
+	fragment to fix must have a TVector in its data section.  TVectors are 
+	interesting because they're made up of two words.  The first is a pointer 
+	to the code that implements the routine; the second is a pointer to the TOC
 	for the fragment that's exporting the TVector.  How TVectors are
 	created is interesting too.  On disk, a TVector consists of two words,
 	the first being the offset from the start of the code section to the
@@ -295,19 +471,16 @@ static OSStatus ReadContainerBasics(FragToFixInfo *fragToFix)
 	find the original offsets that made up the TVector, you can then
 	calculate the base address of both the code and data sections.
 	
-	Finding the relocated contents of the TVector is easy.  You can
-	just call FindSymbol on the name, which returns the address of
-	the TVector, and then look at that address as a pair of words.
+	Finding the relocated contents of the TVector is easy; I simply 
+	require the client to pass in a pointer to its init routine. 
+	A routine pointer is a TVector pointer, so you can just cast it 
+	and extract the pair of words.
 
 	Finding the original offsets is a trickier.  My technique is to
-	look up the symbol in the export table in the CFM container.  This
-	yields the offset into the data section where the unrelocated TVector
-	exists.  Once I have that, I can just read the unrelocated TVector
+	look up the init routine in the fragment's loader info header.  This
+	yields the section number and offset where the init routine's unrelocated 
+	TVector exists.  Once I have that, I can just read the unrelocated TVector
 	out of the file and extract the offsets.
-	
-	The complex part is looking up the symbol in the export table.
-	The structure of the table is quite complex and it requires some work
-	to parse through it looking for the symbol.
 */
 
 struct TVector {
@@ -319,132 +492,127 @@ typedef struct TVector TVector;
 static OSStatus SetupSectionBaseAddresses(FragToFixInfo *fragToFix)
 	// This routine initialises the section0Base and section1Base
 	// base fields of fragToFix to the base addresses of the
-	// instantiated fragment of represented by the other fields
+	// instantiated fragment represented by the other fields
 	// of fragToFix.  The process works in three states:
 	//
-	// 1. 	Find the contents of the relocated TVector exported
-	//		from fragToFix under the name exportedRoutineName.
+	// 1. 	Find the contents of the relocated TVector of the 
+	//      fragment's initialisation routine, provided to us by 
+	//      the caller.
 	//
-	// 2.	Find the contents of the contents of the non-relocated
-	//		TVector (which are offsets from the section bases)
-	//		for the same symbol.
+	// 2.	Find the contents of the non-relocated TVector by 
+	//      looking it up in the PEF loader info header and then 
+	//      using that to read the TVector contents from disk.
+	//      This yields the offsets from the section bases for 
+	//      the init routine.
 	//
 	// 3.	Subtract 2 from 3.
 {
-	OSStatus err;
-	TVector 					*relocatedExport;
-	CFragSymbolClass 			relocatedExportClass;
-	PEFExportedSymbolHashSlot 	*exportHashSlotTable;
-	UInt32 						*exportSymbolKeyTable;
-	PEFExportedSymbol 			*exportSymbolTable;
-	const char 					*stringTable;
-	UInt32 						hashWord;
-	PEFExportedSymbolHashSlot 	exportHashSlot;
-	UInt32 						thisKeyIndex;
-	UInt32 						keysRemaining;
-	PEFExportedSymbol 			foundSymbol;
-	Boolean 					found;
-	TVector 					originalOffsets;
+	OSStatus 			err;
+	TVector *			relocatedExport;
+	SInt32				initSection;
+	UInt32				initOffset;
+	PEFSectionHeader *	initSectionHeader;
+	Ptr					packedDataSection;
+	Ptr					unpackedDataSection;
+	TVector 			originalOffsets;
 
+	packedDataSection   = nil;
+	unpackedDataSection = nil;
+	
 	// Step 1.
 
-	// First find the exported routine name, which gives us the address
-	// of the TVector, which gives us the relocated offsets into the data
-	// and code sections.
+	// First find the init routine's TVector, which gives us the relocated 
+	// offsets of the init routine into the data and code sections.
+
+	relocatedExport = (TVector *) fragToFix->initRoutine;
+		
+	// Step 2.
 	
-	err = FindSymbol(fragToFix->connID, fragToFix->exportedRoutineName, (Ptr *) &relocatedExport, &relocatedExportClass);
-	if (err == noErr) {
-		MoreAssertQ(relocatedExportClass == kTVectorCFragSymbol);
-
-		// Step 2.
-				
-		// Now look up the symbol in the CFM export table, find the
-		// offset into the data section, and read the original TVector
-		// in from that offset.  The original TVector contains the
-		// offset that CFM added to the section base addresses to
-		// relocate the symbol.  To derive the section base addresses,
-		// we just subtract away the offsets.
-		
-		// Start by finding each of the three export tables in the fragment,
-		// and the general string table.
-		
-		exportHashSlotTable  = (PEFExportedSymbolHashSlot *) (((char *) fragToFix->loaderSection) + fragToFix->loaderSection->exportHashOffset);
-		exportSymbolKeyTable = (UInt32 *) (((char *) exportHashSlotTable) + (1 << fragToFix->loaderSection->exportHashTablePower) * sizeof(PEFExportedSymbolHashSlot));
-		exportSymbolTable    = (PEFExportedSymbol *) (((char *) exportSymbolKeyTable) + fragToFix->loaderSection->exportedSymbolCount * sizeof(UInt32));
-		stringTable          = ((char *)fragToFix->loaderSection) + fragToFix->loaderSection->loaderStringsOffset;
-
-		// Then calculate the hash of the symbol we're looking for and from
-		// the hash word, work out which hash slot to look at.
-		
-		hashWord       = PEFComputeHashWord(fragToFix->exportedRoutineName + 1, fragToFix->exportedRoutineName[0]);
-		exportHashSlot = exportHashSlotTable[PEFHashTableIndex(hashWord, fragToFix->loaderSection->exportHashTablePower)];
-
-		// The hash slot tells us the start and length of the hash chain in the 
-		// symbol key table.
-				
-		thisKeyIndex  = PEFHashSlotFirstKey(exportHashSlot.countAndStart);
-		keysRemaining = PEFHashSlotSymbolCount(exportHashSlot.countAndStart);
-		
-		// Now go looking through the hash chain for a definite match.
-		// We have a match if a) the hash word matches, b) the name lengths
-		// match, and c) the symbols compare identically.
-		
-		found = false;
-		while (keysRemaining > 0 && ! found) {
-			if ( exportSymbolKeyTable[thisKeyIndex] == hashWord ) {
-				if ( PEFHashNameLength(hashWord) == fragToFix->exportedRoutineName[0] ) {
-					foundSymbol = exportSymbolTable[thisKeyIndex];
-					if ( strncmp(stringTable + PEFExportedSymbolNameOffset(foundSymbol.classAndName), 
-								 (char *) (fragToFix->exportedRoutineName + 1), 
-								 fragToFix->exportedRoutineName[0]) == 0) {
-						found = true;
-					}
-				}
-			}
-			if ( ! found ) {
-				thisKeyIndex += 1;
-				keysRemaining -= 1;
-			}
-		}
-		if ( ! found ) {
-			err = cfragNoSymbolErr;
-		}
+	// Now find the init routine's TVector's offsets in the data section on 
+	// disk.  This gives us the raw offsets from the data and code section 
+	// of the beginning of the init routine.
+	
+	err = noErr;
+	initSection = fragToFix->loaderSection->initSection;
+	initOffset  = fragToFix->loaderSection->initOffset;
+	if (initSection == -1) {
+		err = cfragFragmentUsageErr;
 	}
 	if (err == noErr) {
-		
-		// We've found the symbol in the export symbol table.  Use it
-		// to check some stuff.
-	
-		MoreAssertQ( PEFExportedSymbolClass(foundSymbol.classAndName) == kTVectorCFragSymbol );
-		MoreAssertQ( foundSymbol.sectionIndex >= 0 );		// Negative indexes are pseudo-sections which are just not allowed!
-		MoreAssertQ( foundSymbol.sectionIndex < fragToFix->containerHeader.sectionCount );
+		MoreAssertQ( initSection >= 0 );		// Negative indexes are pseudo-sections which are just not allowed!
+		MoreAssertQ( initSection < fragToFix->containerHeader.sectionCount );
 
-		// We don't support packed data sections at this point in time.
+		initSectionHeader = &fragToFix->sectionHeaders[initSection];
 		
-		if ( fragToFix->sectionHeaders[foundSymbol.sectionIndex].sectionKind == kPEFPackedDataSection ) {
-			err = cfragFragmentUsageErr;
-		}
-	}
-	if (err == noErr) {
-	
-		// Now read the unrelocated TVector from the data section on disk.
+		// If the data section is packed, unpack it to a temporary buffer and then get the 
+		// original offsets from that buffer.  If the data section is unpacked, just read 
+		// the original offsets directly off the disk.
 		
-		err = FSReadAtOffset(fragToFix->fileRef, 
-								fragToFix->locator.offset
-								+ fragToFix->sectionHeaders[foundSymbol.sectionIndex].containerOffset
-								+ foundSymbol.symbolValue,
-								sizeof(TVector), 
-								&originalOffsets);
-	}
-	if (err == noErr) {
+		if ( initSectionHeader->sectionKind == kPEFPackedDataSection ) {
 
-		// Step 3.
+			// Allocate space for packed and unpacked copies of the section.
 			
-		// Finally, do the maths to subtract the unrelocated offsets from
-		// the current address to get the base address.
+			packedDataSection = NewPtr(initSectionHeader->containerLength);
+			err = MemError();
+
+			if (err == noErr) {
+				unpackedDataSection = NewPtr(initSectionHeader->unpackedLength);
+				err = MemError();
+			}
+
+			// Read the contents of the packed section.
+			
+			if (err == noErr) {
+				err = FSReadAtOffset(	fragToFix->fileRef,
+										fragToFix->locator.offset
+										+ initSectionHeader->containerOffset,
+										initSectionHeader->containerLength,
+										packedDataSection);
+			}
+			
+			// Unpack the data into the unpacked section.
+			
+			if (err == noErr) {
+				err = UnpackPEFDataSection( (UInt8 *) packedDataSection,   initSectionHeader->containerLength,
+								            (UInt8 *) unpackedDataSection, initSectionHeader->unpackedLength);
+			}
+			
+			// Extract the init routine's TVector from the unpacked section.
+			
+			if (err == noErr) {
+				BlockMoveData(unpackedDataSection + initOffset, &originalOffsets, sizeof(TVector));
+			}
+			
+		} else {
+			MoreAssertQ(fragToFix->sectionHeaders[initSection].sectionKind == kPEFUnpackedDataSection);
+			err = FSReadAtOffset(fragToFix->fileRef, 
+									fragToFix->locator.offset
+									+ fragToFix->sectionHeaders[initSection].containerOffset
+									+ initOffset,
+									sizeof(TVector), 
+									&originalOffsets);
+		}
+	}
+
+	// Step 3.
 		
+	// Do the maths to subtract the unrelocated offsets from the current address 
+	// to get the base address.
+	
+	if (err == noErr) {
 		fragToFix->section0Base = ((char *) relocatedExport->codePtr) - (UInt32) originalOffsets.codePtr;
 		fragToFix->section1Base = ((char *) relocatedExport->tocPtr)  - (UInt32) originalOffsets.tocPtr;
+	}
+	
+	// Clean up.
+	
+	if (packedDataSection != nil) {
+		DisposePtr(packedDataSection);
+		MoreAssertQ( MemError() == noErr );
+	}
+	if (unpackedDataSection != nil) {
+		DisposePtr(unpackedDataSection);
+		MoreAssertQ( MemError() == noErr );
 	}
 	return err;
 }
@@ -530,7 +698,8 @@ static OSStatus LookupSymbol(CFMLateImportLookupProc lookup, void *refCon,
 							UInt32 symbolIndex,
 							UInt32 *symbolValue)
 	// This routine is used to look up a symbol during relocation.
-	// connIDToImport is the CFM connection to the library that is
+	// "lookup" is a client callback and refCon is its argument.
+	// Typically refCon is the CFM connection to the library that is
 	// substituting for the weak linked library.  loaderSection
 	// is a pointer to the loader section of the fragment to fix up.
 	// symbolIndex is the index of the imported symbol in the loader section.
@@ -539,9 +708,8 @@ static OSStatus LookupSymbol(CFMLateImportLookupProc lookup, void *refCon,
 	//
 	// The routine works by using symbolIndex to index into the imported
 	// symbol table to find the offset of the symbol's name in the string
-	// table.  It then looks up the symbol in connIDToImport using the
-	// standard CFM API FindSymbol and passes the resulting symbol address
-	// back in symbolValue.
+	// table.  It then looks up the symbol by calling the client's "lookup"
+	// function and passes the resulting symbol address back in symbolValue.
 {
 	OSStatus 			err;
 	UInt32 				*importSymbolTable;
@@ -602,6 +770,7 @@ static OSStatus LookupSymbol(CFMLateImportLookupProc lookup, void *refCon,
 struct EngineState {
 	UInt32 currentReloc;		// Index of current relocation opcodes
 	UInt32 terminatingReloc;	// Index of relocation opcodes which terminates relocation
+	UInt32 *sectionBase;		// Start of the section
 	UInt32 *relocAddress;		// Address within the section where the relocations are to be performed
 	UInt32 importIndex;			// Symbol index, which is used to access an imported symbol's address
 	void  *sectionC;			// Memory address of an instantiated section within the PEF container; this variable is used by relocation opcodes that relocate section addresses
@@ -650,7 +819,8 @@ static OSStatus InitEngineState(const FragToFixInfo *fragToFix,
 	
 	state->currentReloc = relocHeader->firstRelocOffset;
 	state->terminatingReloc = relocHeader->firstRelocOffset + relocHeader->relocCount;
-	state->relocAddress = GetSectionBaseAddress(fragToFix, relocHeader->sectionIndex);
+	state->sectionBase = (UInt32 *) GetSectionBaseAddress(fragToFix, relocHeader->sectionIndex);
+	state->relocAddress = state->sectionBase;
 	state->importIndex = 0;
 
 	// From "Mac OS Runtime Architectures":
@@ -891,7 +1061,7 @@ static OSStatus RunRelocationEngine(const FragToFixInfo *fragToFix,
 					}
 					break;
 				case kPEFRelocSmBySection:
-					state.importIndex += 1;
+					state.relocAddress += 1;
 					break;
 				case kPEFRelocIncrPosition:
 					{
@@ -909,18 +1079,48 @@ static OSStatus RunRelocationEngine(const FragToFixInfo *fragToFix,
 					goto leaveNow;
 					break;
 				case kPEFRelocSetPosition:
-					#if MORE_DEBUG
-						DebugStr("\pRunRelocationEngine: kPEFRelocSetPosition not yet implemented");
-					#endif
-					err = unimpErr;
-					goto leaveNow;
+					{
+						UInt32 offset;
+
+						// Lot's of folks have tried various interpretations of the description of 
+						// this opCode in "Mac OS Runtime Architectures" (which states "This instruction 
+						// sets relocAddress to the address of the section offset offset."  *smile*).
+						// I eventually dug into the CFM source code to find my interpretation, which 
+						// I believe is correct.  The key point is tht the offset is relative to 
+						// the start of the section for which these relocations are being performed.
+						
+						// Skip to next reloc word, which is the second chunk of the offset.
+						
+						state.currentReloc += 1;
+						
+						// Extract offset based on the most significant 10 bits in opCode and 
+						// the next significant 16 bits in the next reloc word.
+						
+						offset = PEFRelocSetPosFullOffset(opCode, relocInstrTable[state.currentReloc]);
+
+						state.relocAddress = (UInt32 *) ( ((char *) state.sectionBase) + offset);
+					}
 					break;
 				case kPEFRelocLgByImport:
-					#if MORE_DEBUG
-						DebugStr("\pRunRelocationEngine: kPEFRelocLgByImport not yet implemented");
-					#endif
-					err = unimpErr;
-					goto leaveNow;
+					{
+						UInt32 symbolValue;
+						UInt32 index;
+
+						// Get the 26 bit symbol index from the current and next reloc words.
+						
+						state.currentReloc += 1;
+						index = PEFRelocLgByImportFullIndex(opCode, relocInstrTable[state.currentReloc]);
+						
+						if ( index >= importLibrary->firstImportedSymbol && index < (importLibrary->firstImportedSymbol + importLibrary->importedSymbolCount) ) {
+							err = LookupSymbol(lookup, refCon, fragToFix->loaderSection, index, &symbolValue);
+							if (err != noErr) {
+								goto leaveNow;
+							}
+							*(state.relocAddress) += symbolValue;
+						}
+						state.importIndex = index + 1;
+						state.relocAddress += 1;
+					}
 					break;
 				case kPEFRelocLgRepeat:
 					#if MORE_DEBUG
@@ -958,7 +1158,7 @@ leaveNow:
 
 extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *fragToFixLocator,
 										CFragConnectionID fragToFixConnID,
-										ConstStr255Param fragToFixExportedRoutineName,
+										CFragInitFunction fragToFixInitRoutine,
 										ConstStr255Param weakLinkedLibraryName,
 										CFMLateImportLookupProc lookup,
 										void *refCon)
@@ -972,7 +1172,7 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 
 	MoreAssertQ(fragToFixLocator != nil);	
 	MoreAssertQ(fragToFixConnID != nil);
-	MoreAssertQ(fragToFixExportedRoutineName != nil);
+	MoreAssertQ(fragToFixInitRoutine != nil);
 	MoreAssertQ(weakLinkedLibraryName != nil);	
 	MoreAssertQ(lookup != nil);	
 	
@@ -982,8 +1182,7 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 	MoreBlockZero(&fragToFix, sizeof(fragToFix));
 	fragToFix.locator = *fragToFixLocator;
 	fragToFix.connID  = fragToFixConnID;
-	fragToFix.connID  = fragToFixConnID;
-	fragToFix.exportedRoutineName = fragToFixExportedRoutineName;
+	fragToFix.initRoutine = fragToFixInitRoutine;
 	
 	// Make a C string from weakLinkedLibraryName.
 	
@@ -997,7 +1196,7 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 	err = ReadContainerBasics(&fragToFix);
 
 	// Set up the base address fields in fragToFix (ie section0Base and section1Base)
-	// by looking up a symbol we export (fragToFix.exportedRoutineName) and subtracting
+	// by looking up our init routine (fragToFix.initRoutine) and subtracting
 	// away the section offsets (which we get from the disk copy of the section)
 	// to derive the bases of the sections themselves.
 	
@@ -1051,7 +1250,7 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 static pascal OSStatus FragmentLookup(ConstStr255Param symName, CFragSymbolClass symClass,
 									void **symAddr, void *refCon)
 	// This is the CFMLateImportLookupProc callback used when 
-	// late importing from a CFBundle.
+	// late importing from a CFM shared library.
 {
 	OSStatus err;
 	CFragConnectionID connIDToImport;
@@ -1081,13 +1280,13 @@ static pascal OSStatus FragmentLookup(ConstStr255Param symName, CFragSymbolClass
 
 extern pascal OSStatus CFMLateImportLibrary(const CFragSystem7DiskFlatLocator *fragToFixLocator,
 										CFragConnectionID fragToFixConnID,
-										ConstStr255Param fragToFixExportedRoutineName,
+										CFragInitFunction fragToFixInitRoutine,
 										ConstStr255Param weakLinkedLibraryName,
 										CFragConnectionID connIDToImport)
 	// See comments in interface part.
 {
 	MoreAssertQ(connIDToImport != nil);
-	return CFMLateImportCore(fragToFixLocator, fragToFixConnID, fragToFixExportedRoutineName,
+	return CFMLateImportCore(fragToFixLocator, fragToFixConnID, fragToFixInitRoutine,
 										weakLinkedLibraryName, FragmentLookup, connIDToImport);
 }
 
@@ -1147,12 +1346,12 @@ static pascal OSStatus BundleLookup(ConstStr255Param symName, CFragSymbolClass s
 
 extern pascal OSStatus CFMLateImportBundle(const CFragSystem7DiskFlatLocator *fragToFixLocator,
 										CFragConnectionID fragToFixConnID,
-										ConstStr255Param fragToFixExportedRoutineName,
+										CFragInitFunction fragToFixInitRoutine,
 										ConstStr255Param weakLinkedLibraryName,
 										CFBundleRef bundleToImport)
 	// See comments in interface part.
 {
 	MoreAssertQ(bundleToImport != nil);
-	return CFMLateImportCore(fragToFixLocator, fragToFixConnID, fragToFixExportedRoutineName,
+	return CFMLateImportCore(fragToFixLocator, fragToFixConnID, fragToFixInitRoutine,
 										weakLinkedLibraryName, BundleLookup, bundleToImport);
 }

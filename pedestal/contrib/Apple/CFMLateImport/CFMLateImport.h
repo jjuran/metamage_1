@@ -17,6 +17,12 @@
 
 	Change History (most recent first):
 
+         <6>     21/9/01    Quinn   Changes for CWPro7 Mach-O build.
+         <5>     19/9/01    Quinn   Change comments to reflect the fact that an unpacked data
+                                    section is no longer required.
+         <4>     19/9/01    Quinn   Simplified API and implementation after a suggestion by Eric
+                                    Grant. You no longer have to CFM export a dummy function; you
+                                    can just pass in the address of your fragment's init routine.
          <3>    16/11/00    Quinn   Allow symbol finding via a callback and use that to implement
                                     CFBundle support.
          <2>    18/10/99    Quinn   Renamed CFMLateImport to CFMLateImportLibrary to allow for
@@ -34,16 +40,14 @@
 
 // Mac OS Interfaces
 
-#ifdef __MRC__
-#include <CodeFragments.h>
-#include <CFBundle.h>
+#if ! MORE_FRAMEWORK_INCLUDES
+	#include <MacTypes.h>
+	#include <CodeFragments.h>
+	#include <Devices.h>
+	#include <CFBundle.h>
 #endif
 
 /////////////////////////////////////////////////////////////////
-
-//#include <MacTypes.h>
-//#include <Devices.h>
-//#include <CFBundle.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -129,7 +133,7 @@ typedef pascal OSStatus (*CFMLateImportLookupProc)(ConstStr255Param symName, CFr
 	
 extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *fragToFixLocator,
 										CFragConnectionID fragToFixConnID,
-										ConstStr255Param fragToFixExportedRoutineName,
+										CFragInitFunction fragToFixInitRoutine,
 										ConstStr255Param weakLinkedLibraryName,
 										CFMLateImportLookupProc lookup,
 										void *refCon);
@@ -157,16 +161,18 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 	//    common case.
 	//
 	//    IMPORTANT:
-	//    The fragment to fix must not have a packed data section.
-	//    In CodeWarrior, check the "Expand Uninitialized Data" checkbox
-	//    in the "PPC PEF" settings panel.  In MPW, specified the
-	//    "-packdata off" option to PPCLink.
+	//    The fragment to fix may have a packed data section.  Packing the 
+	//    data section will reduce the size of your fragment on disk, but it 
+	//    will significantly increase the memory needed by this routine 
+	//    (it increases memory usage by the sum of the sizes of the packed 
+	//    and unpacked data section).  See below for instructions on how to 
+	//    create an unpacked data section.
 	//
-	// 2. fragToFixExportedRoutineName:  The name of a routine (any routine,
-	//    it doesn't matter what it does, we're not going ta call it)
-	//    which you export from your fragment.  Even if your fragment
-	//    doesn't need to export any routines, it must do so for this
-	//    functionality to work.
+	// 2. fragToFixInitRoutine:  A pointer to your own code fragment's
+	//    fragment initialiser routine.  You necessarily have one of these 
+	//    because you need it to get values for the fragToFixLocator and 
+	//    fragToFixConnID parameters.  Just pass its address in as a parameter 
+	//    as well. 
 	//
 	// 3. weakLinkedLibraryName:  The name of the weak linked library which
 	//    failed to link.  You must have weak linked to this library.
@@ -180,9 +186,9 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 	//    for that callback routine.
 	//
 	// Note:
-	// The fragToFixLocator and fragToFixExportedRoutineName parameters
+	// The fragToFixLocator and fragToFixInitRoutine parameters
 	// are artifacts of the way in which this functionality is implemented.
-	// In an ideal world, where CFM export decent introspection APIs
+	// In an ideal world, where CFM exported decent introspection APIs
 	// to third party developers, these parameters would not be necessary.
 	// If you're using this code inside Apple, you probably should investigate
 	// using the CFM private APIs for getting at the information these
@@ -190,12 +196,13 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 	// for more details.
 	//
 	// Note:
-	// The requirement for unpacked data is also an artifact of my workaround
-	// for the lack of CFM introspection APIs.  I could have worked around it,
-	// but the workaround would probably have required me to allocate a memory
-	// block as big as the fragment to fix's data section, which could be
-	// very big indeed.  I decided that unpacked data was better.  Packed
-	// data only really saves disk space, which isn't at a premium.
+	// The extra memory taken when you use a packed data section is also an 
+	// artifact of my workaround for the lack of CFM introspection APIs.  In 
+	// my opinion it's better to use an unpacked data section and consume more 
+	// space on disk while saving memory.  In CodeWarrior you can switch to an 
+	// unpacked data section by checking the "Expand Uninitialized Data" 
+	// checkbox in the "PPC PEF" settings panel.  In MPW, specified the
+	// "-packdata off" option to PPCLink.
 	//
 	// When the routine returns, any symbols that you imported from the
 	// library named weakLinkedLibraryName will be resolved to the address
@@ -213,12 +220,10 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 	//
 	// cfragFragmentFormatErr  -- The fragment to fix is is an unknown format.
 	// cfragNoSectionErr       -- Could not find the loader section in the fragment to fix.
-	// cfragNoSymbolErr        -- The fragToFixExportedRoutineName is not exported from the
-	//                            fragment to fix.
 	// cfragNoLibraryErr       -- The fragment to fix is not weak linked to weakLinkedLibraryName.
 	// cfragFragmentUsageErr   -- The fragment to fix doesn't have a data section.
 	//                         -- The fragment to fix is strong linked to weakLinkedLibraryName.
-	//                         -- The fragment to fix has a packed data section.
+	//                         -- The fragment doesn't have an init routine.
 	// cfragFragmentCorruptErr -- Encountered an undefined relocation opcode.
 	// unimpErr                -- Encountered an unimplement relocation opcode.  The
 	//                            relocation engine only implements a subset of the CFM
@@ -227,6 +232,9 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 	//                            this error, you'll probably have to add the weird
 	//                            relocation opcode to the engine, which shouldn't be
 	//                            be too hard.
+	// memFullErr			   -- It's likely that this error is triggered by the memory 
+	//                            needed to unpack your data section.  Either make your 
+	//                            data section smaller, or unpack it (see above).
 	// errors returned by FindSymbol
 	// errors returned by Memory Manager
 	//
@@ -237,7 +245,7 @@ extern pascal OSStatus CFMLateImportCore(const CFragSystem7DiskFlatLocator *frag
 
 extern pascal OSStatus CFMLateImportLibrary(const CFragSystem7DiskFlatLocator *fragToFixLocator,
 										CFragConnectionID fragToFixConnID,
-										ConstStr255Param fragToFixExportedRoutineName,
+										CFragInitFunction fragToFixInitRoutine,
 										ConstStr255Param weakLinkedLibraryName,
 										CFragConnectionID connIDToImport);
 	// A wrapper around CFMLateImportCore that looks up symbols by calling 
@@ -251,7 +259,7 @@ extern pascal OSStatus CFMLateImportLibrary(const CFragSystem7DiskFlatLocator *f
 
 extern pascal OSStatus CFMLateImportBundle(const CFragSystem7DiskFlatLocator *fragToFixLocator,
 										CFragConnectionID fragToFixConnID,
-										ConstStr255Param fragToFixExportedRoutineName,
+										CFragInitFunction fragToFixInitRoutine,
 										ConstStr255Param weakLinkedLibraryName,
 										CFBundleRef bundleToImport);
 	// A wrapper around CFMLateImportCore that looks up symbols by calling 
