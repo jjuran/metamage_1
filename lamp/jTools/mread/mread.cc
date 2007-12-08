@@ -71,8 +71,6 @@ static bool equal_strings( const char* begin1,
 
 int main( int argc, const char *const argv[] )
 {
-	int exit_status = EXIT_FAILURE;
-	
 	while ( true )
 	{
 		char const* buffer  = get_buffer();
@@ -84,17 +82,20 @@ int main( int argc, const char *const argv[] )
 		{
 			if ( equal_strings( buffer, newline, STR_LEN( "OK" ) ) )
 			{
-				exit_status = EXIT_SUCCESS;
-				
-				break;
+				return EXIT_SUCCESS;
 			}
 			
 			*newline = '\n';
 			
 			write( STDOUT_FILENO, buffer, newline + 1 - buffer );
 			
-			if ( equal_strings( buffer, newline, STR_LEN( "ERROR"        ) ) )  break;
+			if ( equal_strings( buffer, newline, STR_LEN( "ERROR" ) ) )
+			{
+				return EXIT_FAILURE;
+			}
+			
 			if ( equal_strings( buffer, newline, STR_LEN( "BUSY"         ) ) )  break;
+			if ( equal_strings( buffer, newline, STR_LEN( "NO ANSWER"    ) ) )  break;
 			if ( equal_strings( buffer, newline, STR_LEN( "NO CARRIER"   ) ) )  break;
 			if ( equal_strings( buffer, newline, STR_LEN( "NO DIAL TONE" ) ) )  break;
 		}
@@ -102,7 +103,7 @@ int main( int argc, const char *const argv[] )
 		advance_buffer( newline + 1 + hasLF );
 	}
 	
-	return exit_status;
+	return 2;  // Status message is last line of output
 }
 
 #pragma export reset
