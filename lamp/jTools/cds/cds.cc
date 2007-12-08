@@ -3,20 +3,24 @@
  *	======
  */
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
+#include "Nucleus/Convert.h"
 #include "Nucleus/NAssert.h"
+
+// POSeven
+#include "POSeven/FileDescriptor.hh"
 
 // Nitrogen Extras / ClassicExtras
 #include "ClassicExtras/CDROMAudio.h"
 
-// BitsAndBytes
-#include "DecimalStrings.hh"
-#include "HexStrings.hh"
-
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
+
+namespace p7 = poseven;
 
 #if !TARGET_API_MAC_CARBON
 
@@ -24,8 +28,8 @@ namespace CDS
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace NX = NitrogenExtras;
-	namespace Bits = BitsAndBytes;
 	
 	using namespace NX::Constants;
 	
@@ -36,11 +40,6 @@ namespace CDS
 	static NX::AudioStatus_Result    gStatus;
 	static NX::AudioPlayMode         gPlayMode = kAudioPlayModeStereo;
 	
-	static std::string MinSec( unsigned int seconds )
-	{
-		return Bits::EncodeDecimal2( seconds / 60 ) + ":" + 
-		       Bits::EncodeDecimal2( seconds % 60 );
-	}
 	
 	static void PrintHelp()
 	{
@@ -61,12 +60,12 @@ namespace CDS
 			case kAudioStatusNil    :  state = "nil";        break;
 		}
 		
-		Io::Out << "Audio status: " << state << "\n";
+		std::printf( "Audio status: %s\n", state );
 		
-		Io::Out << "Audio play mode: " << (gStatus.playMode & 0x0F) << "\n";
-		Io::Out << "Track format: "    << (gStatus.control  & 0x0F) << "\n";
+		std::printf( "Audio play mode: %d\n", gStatus.playMode & 0x0f );
+		std::printf( "Track format:    %d\n", gStatus.control  & 0x0f );
 		
-		std::string time = "mm:ss";
+		char time[] = "mm:ss";
 		
 		time[ 0 ] = '0' | gStatus.minutes >> 4;
 		time[ 1 ] = '0' | gStatus.minutes & 0x0F;
@@ -74,7 +73,7 @@ namespace CDS
 		time[ 3 ] = '0' | gStatus.seconds >> 4;
 		time[ 4 ] = '0' | gStatus.seconds & 0x0F;
 		
-		Io::Out << "Time: " << time << "\n";
+		std::printf( "Time: %s\n", time );
 	}
 	
 	static void PrintInfo()
@@ -88,10 +87,14 @@ namespace CDS
 		
 		for ( int track = 1;  track <= tracks;  ++track )
 		{
-			int frames = NX::TrackLength( gTOC, track );
+			int frames  = NX::TrackLength( gTOC, track );
 			int seconds = frames / 75;
 			
-			Io::Out << "Track " << track << ": " << MinSec( seconds ) << "\n";
+			int minutes = seconds / 60;
+			
+			seconds %= 60;
+			
+			std::printf( "Track %d: %.2d:%.2d\n", track, minutes, seconds );
 		}
 	}
 	
@@ -99,20 +102,27 @@ namespace CDS
 	{
 		unsigned int discID = NX::CDDBDiscID( gTOC );
 		
-		Io::Out << "Disc ID is " << Bits::EncodeAsHex( discID ) << "\n";
+		std::printf( "Disc ID is %.8x\n", discID );
 		
 		NX::TrackCount tracks = NX::CountTracks( gTOC );
 		
-		Io::Out << "discid " << tracks;
+		std::string command = "discid ";
+		
+		command += NN::Convert< std::string >( tracks );
 		
 		for ( int track = 1;  track <= tracks;  ++track )
 		{
 			int offset = NX::TrackStart( gTOC, track );
 			
-			Io::Out << " " << offset;
+			command += " ";
+			command += NN::Convert< std::string >( offset );
 		}
 		
-		Io::Out << " " << NX::DiscLength( gTOC ) / 75 << "\n";
+		command += " ";
+		command += NN::Convert< std::string >( NX::DiscLength( gTOC ) / 75 );
+		command += "\n";
+		
+		p7::write( p7::stdout_fileno, command.data(), command.size() );
 	}
 	
 	
@@ -226,9 +236,9 @@ namespace CDS
 			case 'b':  GoBack   ();  break;  // Skip to previous track, or track boundary?
 			
 			default:
-				Io::Err << "Unrecognized command " << argv1 << "\n";
-				return 1;
-				break;
+				std::fprintf( stderr, "Unrecognized command '%s'\n", argv1 );
+				
+				return EXIT_FAILURE;
 		}
 		
 		return 0;
@@ -245,16 +255,17 @@ int Orion::Main( int argc, argv_t argv )
 	
 #if TARGET_API_MAC_CARBON
 	
-	Io::Err << "cds: Sorry, no Carbon support!\n";
+	p7::write( p7::stderr_fileno, STR_LEN( "cds: Sorry, no Carbon support!\n" ) );
 	
-	return 1;
+	return EXIT_FAILURE;
 	
 #else
 	
 	if ( argc <= 1 )
 	{
-		Io::Err << "cds: (usage missing)\n";
-		return 1;
+		p7::write( p7::stderr_fileno, STR_LEN( "cds: (usage missing)\n" ) );
+		
+		return EXIT_FAILURE;
 	}
 	
 	return CDS::Main( argv[ 1 ] );
