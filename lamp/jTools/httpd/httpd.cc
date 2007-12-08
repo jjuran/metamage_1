@@ -27,6 +27,9 @@
 #include <unistd.h>
 #include <vfork.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -50,12 +53,15 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 // Kerosene
 #if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
 #include "SystemCalls.hh"
 #endif
+
+
+#define HTTP_VERSION  "HTTP/1.0"
+
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
@@ -128,7 +134,8 @@ static int ForkExecWait( const char*                   path,
 	
 	if ( pid == -1 )
 	{
-		Io::Err << "vfork() failed\n";
+		std::perror( "httpd: vfork()" );
+		
 		return -1;
 	}
 	
@@ -149,13 +156,15 @@ static int ForkExecWait( const char*                   path,
 		
 		SetCGIVariables( request );
 		
-		int exec_result = execv( path, const_cast< char* const* >( argv ) );
+		execv( path, const_cast< char* const* >( argv ) );
 		
-		if ( exec_result == -1 )
-		{
-			Io::Err << "execv( " << path << " ) failed\n";
-			_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
-		}
+		std::string message = "httpd: ";
+		
+		message += path;
+		
+		std::perror( message.c_str() );
+		
+		_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
 	}
 	
 	if ( partial_data_exist )
@@ -174,7 +183,7 @@ static int ForkExecWait( const char*                   path,
 	
 	if ( resultpid == -1 )
 	{
-		Io::Err << "waitpid() failed\n";
+		std::perror( "httpd: waitpid()" );
 	}
 	
 	return stat;
@@ -423,9 +432,7 @@ static void ListDir( const std::string& pathname )
 
 static void SendError( const std::string& error )
 {
-	std::string httpVersion = "HTTP/1.0";
-	
-	std::string message = httpVersion + " " + error +     "\r\n"
+	std::string message = HTTP_VERSION " " + error +      "\r\n"
 	                      "Content-Type: text/html"       "\r\n"
 	                                                      "\r\n"
 	                      "<title>" + error + "</title>"  "\r\n"
@@ -438,8 +445,6 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 {
 	ParsedRequest parsed = ParseRequest( request.GetStatusLine() );
 	
-	std::string httpVersion = "HTTP/1.0";
-	
 	std::string pathname;
 	
 	try
@@ -448,11 +453,12 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 	}
 	catch ( ... )
 	{
-		Io::Out << httpVersion + " 404 Not Found"                "\r\n"
-		                         "Content-Type: text/html"       "\r\n"
-		                                                         "\r\n"
-		                         "<title>404 Not Found</title>"  "\r\n"
-		                         "<p>404 Not Found</p>"          "\r\n";
+		p7::write( p7::stdout_fileno,
+		           STR_LEN( HTTP_VERSION " 404 Not Found"                "\r\n"
+		                                 "Content-Type: text/html"       "\r\n"
+		                                                                 "\r\n"
+		                                 "<title>404 Not Found</title>"  "\r\n"
+		                                 "<p>404 Not Found</p>"          "\r\n" ) );
 		
 		return;
 	}
@@ -461,8 +467,6 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 	
 	if ( parsed.resource.substr( 0, cgiBin.size() ) == cgiBin )
 	{
-		//Io::Out << httpVersion + " 200 OK\r\n";
-		
 		const char* path = pathname.c_str();
 		
 		char const* const argv[] = { path, NULL };
@@ -513,7 +517,7 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 		
 		std::string contentType = is_dir ? "text/plain" : GuessContentType( pathname, type );
 		
-		std::string responseHeader = httpVersion + " 200 OK\r\n";
+		std::string responseHeader = HTTP_VERSION " 200 OK\r\n";
 		
 		responseHeader += HTTP::HeaderLine( "Content-Type",  contentType                   );
 		
@@ -526,7 +530,7 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 		
 		responseHeader += "\r\n";
 		
-		Io::Out << responseHeader;
+		p7::write( p7::stdout_fileno, responseHeader.data(), responseHeader.size() );
 		
 		if ( parsed.method != "HEAD" )
 		{
@@ -546,11 +550,9 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 	{
-		Io::Err << "Connection from "
-		        << inet_ntoa( peer.sin_addr )
-		        << ", port "
-		        << peer.sin_port
-		        << ".\n";
+		std::fprintf( stderr, "Connection from %s, port %d\n",
+		                                       inet_ntoa( peer.sin_addr ),
+		                                                peer.sin_port );
 	}
 	
 	HTTP::MessageReceiver request;
