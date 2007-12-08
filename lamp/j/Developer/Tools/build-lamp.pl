@@ -96,7 +96,7 @@ my @programs = qw
 	sh sleep stripcr striplf superd
 	tcpcat tcpclient th tlsrvr true tty ttyd
 	uncaught_exception
-	which
+	which window
 );
 my %is_program = map { $_ => 1 } @programs;
 
@@ -147,7 +147,7 @@ my %fsmap =
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
-			qw( console cr2lf divide jtest lf2cr lf2crlf mread ptrace stripcr striplf th ),
+			qw( console cr2lf divide jtest lf2cr lf2crlf mread ptrace stripcr striplf th window ),
 			qw( beep cds err2text keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
