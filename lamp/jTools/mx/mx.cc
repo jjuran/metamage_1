@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <vector>
 
+// Standard C/C++
+#include <cstdio>
+
 // OpenTransportProviders.h has evil, blind dependency on FSSpec.
 #ifndef __FILES__
 #include <Files.h>
@@ -17,7 +20,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace N = Nitrogen;
@@ -31,7 +33,7 @@ inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 
 static void PrintMX( const InetMailExchange& mx )
 {
-	Io::Out << "(missing)" << " MX " << mx.preference << " " << mx.exchange << "\n";
+	std::printf( "(missing) MX %d %s\n", mx.preference, mx.exchange );
 	
 	//N::InetHost ip = N::OTInetStringToAddress( InternetServices(), (char*) mx.exchange ).addrs[ 0 ];
 	
