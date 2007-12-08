@@ -56,11 +56,19 @@ namespace Genie
 		return slash + 1;
 	}
 	
-	static std::string UntweakMacFilename( std::string name )
+	inline std::string UntweakMacFilename( std::string name )
 	{
 		std::replace( name.begin(), name.end(), ':', '/' );
 		
 		return name;
+	}
+	
+	static bool NamesAreSame( ConstStr63Param a, ConstStr63Param b )
+	{
+		// b may be a null string to indicate a will be reused, so they're the same
+		return b[0] == 0  ||  std::equal( a,
+		                                  a + 1 + a[0],
+		                                  b );
 	}
 	
 	static int rename( const char* src, const char* dest )
@@ -101,6 +109,8 @@ namespace Genie
 					//destFile = N::FSMakeFSSpec( vRefNum, dirID, srcFile.name );
 					destFile = destFile / srcFile.name;
 					
+					requestedDestName[0] = 0;  // signal that source name will be used
+					
 					N::FSpGetCatInfo( destFile, cInfo );
 					
 					if ( io::item_is_directory( cInfo ) )
@@ -113,14 +123,15 @@ namespace Genie
 				// destFile is now the item we're going to replace
 				destExists = true;
 			}
-			catch ( const N::FNFErr& )
+			catch ( const N::OSStatus& err )
 			{
+				if ( err.Get() != fnfErr )
+				{
+					throw;
+				}
+				
 				// destFile is absent
 			}
-			
-			bool srcAndDestNamesEqual = std::equal( srcFile.name,
-			                                        srcFile.name + 1 + srcFile.name[0],
-			                                        ConstStr63Param( requestedDestName ) );
 			
 			if ( srcFile.parID == destFile.parID )
 			{
@@ -130,18 +141,14 @@ namespace Genie
 				
 				if ( sameFile )
 				{
-					// Could be a case change.
-					bool caseChanged = !std::equal( destFile.name,
-					                                destFile.name + 1 + destFile.name[0],
-					                                ConstStr63Param( requestedDestName ) );
-					
-					if ( !caseChanged )
+					// Could be a case change, or not
+					if ( NamesAreSame( destFile.name, requestedDestName ) )
 					{
 						// Source and dest are the same file, and we're not changing case
 						return 0;
 					}
 					
-					// sameFile now implies caseChanged
+					// sameFile now implies case has changed
 				}
 				
 				// Don't delete the dest file if it's really the same file!
@@ -166,7 +173,7 @@ namespace Genie
 				N::FSpDelete( destFile );
 			}
 			
-			if ( srcAndDestNamesEqual )
+			if ( NamesAreSame( srcFile.name, requestedDestName ) )
 			{
 				// Same name, different dir.
 				
