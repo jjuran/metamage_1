@@ -57,13 +57,15 @@ namespace Genie
 		switch ( request )
 		{
 			case WIOCGTITLE:
-				if ( argp != NULL )
+				if ( Byte* buffer = (Byte*) argp )
 				{
 					N::Str255 title = GetTitle();
 					
-					std::copy( title + 1, title + 1 + title[0], (Byte*) argp );
+					std::copy( title + 1,
+					           title + 1 + title[0],
+					           buffer );
 					
-					argp[ title[0] ] = '\0';
+					buffer[ title[0] ] = '\0';
 				}
 				
 				break;
