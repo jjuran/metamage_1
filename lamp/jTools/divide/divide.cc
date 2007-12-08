@@ -7,12 +7,14 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Open.hh"
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace NN = Nucleus;
@@ -112,9 +114,9 @@ int O::Main( int argc, argv_t argv )
 	// Check for sufficient number of args
 	if ( argc < 4 )
 	{
-		Io::Err << "divide: Usage: divide <token> <outfile1> <outfile2>\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "Usage: divide <token> <outfile1> <outfile2>\n" ) );
 		
-		return 1;
+		return 2;
 	}
 	
 	std::string divider_text = argv[1];
