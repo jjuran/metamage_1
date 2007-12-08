@@ -290,12 +290,14 @@ namespace Genie
 			
 			if ( bytes > 2 && data[0] == '#' && data[1] == '!' )
 			{
-				char* cr = std::strchr( data, '\r' );
-				char* lf = std::strchr( data, '\n' );
+				char* end = data + bytes;
 				
-				char* nl = (cr && lf) ? std::min( cr, lf ) : (cr ? cr : lf);
+				char* cr = std::find( data, end, '\r' );
+				char* lf = std::find( data, end, '\n' );
 				
-				if ( nl == NULL )
+				char* nl = std::min( cr, lf );
+				
+				if ( nl == end )
 				{
 					throw NotExecutable();  // #! line too long
 				}
