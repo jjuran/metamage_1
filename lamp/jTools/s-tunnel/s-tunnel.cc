@@ -177,13 +177,6 @@ static void Poll( SSL* client_session, int server_socket )
 		p7::write( p7::stderr_fileno, message.data(), message.size() );
 		isComplete = true;
 	}
-	/*
-	catch ( IO::PutFailed& )
-	{
-		Io::Err << "Local underwrite\n";
-		isComplete = true;
-	}
-	*/
 	
 	try
 	{
@@ -221,13 +214,6 @@ static void Poll( SSL* client_session, int server_socket )
 		
 		isComplete = true;
 	}
-	/*
-	catch ( IO::PutFailed& )
-	{
-		Io::Err << "Remote underwrite\n";
-		isComplete = true;
-	}
-	*/
 	
 	if ( isComplete )
 	{

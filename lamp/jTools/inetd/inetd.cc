@@ -139,10 +139,6 @@ static void WaitForClients()
 			
 			return;
 		}
-		else
-		{
-			//Io::Err << "select() returned " << selected << "\n";
-		}
 		
 		if ( gChildSignalled )
 		{
