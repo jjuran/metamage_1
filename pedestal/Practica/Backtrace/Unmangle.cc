@@ -141,15 +141,6 @@ namespace Backtrace
 		return gBasicTypes[ c - 'a' ];
 	}
 	
-	static std::string ReadIdentifier( const char*& p, const char* end )
-	{
-		std::string result( p, end );
-		
-		p = end;
-		
-		return result;
-	}
-	
 	static std::string ReadBasicType( const char*& p )
 	{
 		std::string sign;
@@ -211,6 +202,18 @@ namespace Backtrace
 		if ( *p == '&' )
 		{
 			return ReadSymbol( ++p, end );
+		}
+		
+		if ( *p == '-'  ||  std::isdigit( *p ) )
+		{
+			const char* integer = p;
+			
+			while ( std::isdigit( *++p ) )
+			{
+				continue;
+			}
+			
+			return std::string( integer, p );
 		}
 		
 		return ReadType( p, end );
@@ -448,6 +451,15 @@ namespace Backtrace
 		}
 		
 		throw Unmangle_Failed();
+	}
+	
+	static std::string ReadIdentifier( const char*& p, const char* end )
+	{
+		std::string result( p, end );
+		
+		p = end;
+		
+		return ExpandTemplates( result );
 	}
 	
 	static std::string ReadEntityName( const char*& p, const char* end )
