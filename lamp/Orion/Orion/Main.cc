@@ -17,6 +17,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/FileDescriptor.hh"
 
 
 #if TARGET_CPU_68K
@@ -47,7 +48,9 @@ namespace Orion
 			}
 			catch ( const NN::DebuggingContext& debugging )
 			{
-				debugging.Show();
+				std::string text = debugging.GetText();
+				
+				p7::write( p7::stderr_fileno, text.data(), text.size() );
 				
 				return;
 			}
