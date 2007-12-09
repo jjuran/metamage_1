@@ -137,6 +137,13 @@ int O::Main( int argc, argv_t argv )
 		// FIXME:  Can't encode to a non-file stream, including stdout
 		FSSpec targetFile = Div::ResolvePathToFSSpec( encode_target );
 		
+		if ( !io::item_exists( targetFile ) )
+		{
+			std::fprintf( stderr, "macbin: %s: %s\n", encode_target, std::strerror( ENOENT ) );
+			
+			return EXIT_FAILURE;
+		}
+		
 		MacBinary::Encode( targetFile,
 		                   &BlockWrite,
 		                   p7::open( argCount > 0 ? freeArgs[ 0 ] : make_archive_name( encode_target ).c_str(),
