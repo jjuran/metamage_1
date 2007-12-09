@@ -16,6 +16,10 @@
 #include <string>
 #include <vector>
 
+// Nucleus
+#include "Nucleus/Exception.h"
+#include "Nucleus/TheExceptionBeingHandled.h"
+
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Str.h"
@@ -219,6 +223,8 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items )
 
 int O::Main( int argc, char const *const argv[] )
 {
+	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+	
 	DefineOptions();
 	
 	O::GetOptions( argc, argv );
