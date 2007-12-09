@@ -122,9 +122,52 @@ namespace Backtrace
 		return result;
 	}
 	
+	static std::string MakeTrace( unsigned offset, const void* addr, const char* arch, const std::string& name )
+	{
+		char buffer[ sizeof "1234567890: 0x12345678 (XYZ) \0" ];
+		
+		std::sprintf( buffer, "%d: 0x%.8x (%s) \0", offset, addr, arch );
+		
+		std::string result = buffer;
+		
+		result += name;
+		result += "\n";
+		
+		return result;
+	}
+	
 	static void PrintTrace( unsigned offset, const void* addr, const char* arch, const char* name )
 	{
 		std::fprintf( stderr, "%d: 0x%.8x (%s) %s\n", offset, addr, arch, name );
+	}
+	
+	std::string GetBacktrace( const std::vector< CallRecord >& stackCrawl )
+	{
+		unsigned levelsToSkip = 1;
+		
+		typedef std::vector< CallRecord >::const_iterator Iter;
+		
+		const std::vector< CallRecord >& trace = stackCrawl;
+		
+		const Iter begin = trace.begin() + levelsToSkip;
+		
+		unsigned offset = 0;
+		
+		std::string log;
+		
+		// It's important to use < instead of != if we might skip past the end
+		for ( Iter it = begin;  it < trace.end();  ++it, ++offset )
+		{
+			const CallRecord& call = *it;
+			
+			TraceRecord trace = TraceCall( call );
+			
+			log += MakeTrace( offset, trace.itsReturnAddr,
+			                          trace.itsArch,
+			                          trace.itsUnmangledName );
+		}
+		
+		return log;
 	}
 	
 	DebuggingContext::DebuggingContext() : itsStackCrawl( GetStackCrawl() )

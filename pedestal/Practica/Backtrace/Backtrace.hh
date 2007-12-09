@@ -26,11 +26,15 @@ namespace Backtrace
 	
 	TraceRecord TraceCall( const CallRecord& call );
 	
+	std::string GetBacktrace( const std::vector< CallRecord >& stackCrawl );
+	
 	struct DebuggingContext
 	{
 		std::vector< CallRecord > itsStackCrawl;
 		
 		DebuggingContext();
+		
+		std::string GetText() const  { return GetBacktrace( itsStackCrawl ); }
 		
 		void Show() const;
 	};
