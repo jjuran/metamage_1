@@ -19,6 +19,9 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/Shared.h"
 
@@ -49,7 +52,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace N = Nitrogen;
@@ -218,7 +220,9 @@ void PartialMessage::WriteLine( const std::string& line )
 {
 	//static unsigned int lastFlushKBytes = 0;
 	std::string terminatedLine = line + "\r\n";
-	Io::S( out ) << terminatedLine;
+	
+	io::write( out, terminatedLine.data(), terminatedLine.size() );
+	
 	bytes += terminatedLine.size();
 	
 	/*
@@ -278,36 +282,42 @@ static void DoCommand( const std::string& command )
 	else if ( word == "MAIL" )
 	{
 		myFrom = command;
-		Io::Out << "250 Sender ok, probably"  "\r\n";
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "250 Sender ok, probably"  "\r\n" ) );
 	}
 	else if ( word == "RCPT" )
 	{
 		myTo.push_back( command );
-		Io::Out << "250 Recipient ok, I guess"  "\r\n";
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "250 Recipient ok, I guess"  "\r\n" ) );
 	}
 	else if ( word == "DATA" )
 	{
 		PartialMessage msg( QueueDirectory() / MakeMessageName() );
+		
 		myMessage = msg;
-		dataMode = true;
-		Io::Out << "354 I'm listening"  "\r\n";
+		dataMode  = true;
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "354 I'm listening"  "\r\n" ) );
 	}
 	else if ( word == "HELO" )
 	{
 		myHello = command;
-		Io::Out << "250 Hello there"  "\r\n";
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "250 Hello there"  "\r\n" ) );
 	}
 	else if ( word == "RSET" )
 	{
 		myFrom = "";
 		myTo.clear();
 		//myData.clear();
-		Io::Out << "250 Reset"  "\r\n";
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "250 Reset"  "\r\n" ) );
 	}
 	else if ( word == "QUIT" )
 	{
 		//isComplete = true;
-		Io::Out << "221 Closing connection"  "\r\n";
+		p7::write( p7::stdout_fileno, STR_LEN( "221 Closing connection"  "\r\n" ) );
 		
 		O::ThrowExitStatus( 0 );
 	}
@@ -315,10 +325,10 @@ static void DoCommand( const std::string& command )
 	{
 		if ( word != "EHLO" )
 		{
-			Io::Err << "Unrecognized command " << q( word ) << "\n";
+			std::fprintf( stderr, "Unrecognized command '%s'\n", word.c_str() );
 		}
 		
-		Io::Out << "500 Unrecognized command"  "\r\n";
+		p7::write( p7::stdout_fileno, STR_LEN( "500 Unrecognized command"  "\r\n" ) );
 	}
 }
 
@@ -328,8 +338,10 @@ static void DoData( const std::string& data )
 	
 	if ( data == "." )
 	{
-		Io::Err << "done\n";
+		p7::write( p7::stderr_fileno, STR_LEN( "done\n" ) );
+		
 		dataMode = false;
+		
 		bool queued = false;
 		
 		try
@@ -343,8 +355,10 @@ static void DoData( const std::string& data )
 			
 		}
 		
-		Io::Out << ( queued ? "250 Message accepted"      "\r\n" 
-		                    : "554 Can't accept message"  "\r\n" );
+		const char* message = queued ? "250 Message accepted"      "\r\n"
+		                             : "554 Can't accept message"  "\r\n";
+		
+		p7::write( p7::stdout_fileno, message, std::strlen( message ) );
 	}
 	else
 	{
@@ -371,18 +385,16 @@ int O::Main( int /*argc*/, argv_t /*argv*/ )
 	
 	if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 	{
-		Io::Err << "Connection from "
-		        << inet_ntoa( peer.sin_addr )
-		        << ", port "
-		        << peer.sin_port
-		        << ".\n";
+		std::fprintf( stderr, "Connection from %s, port %d\n",
+		                                       inet_ntoa( peer.sin_addr ),
+		                                                peer.sin_port );
 	}
 	
 	Io::TextInputAdapter< p7::fd_t > input( p7::stdin_fileno );
 	
 	const char* hostname = "temporarily.out.of.order";
 	
-	Io::Out << "220 " << hostname << " ready"  "\r\n";
+	std::printf( "220 %s ready"  "\r\n", hostname );
 	
 	while ( input.Ready() )
 	{

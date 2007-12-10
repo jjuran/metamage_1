@@ -37,7 +37,6 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace N = Nitrogen;
@@ -137,7 +136,10 @@ static struct in_addr ResolveHostname( const char* hostname )
 	
 	if ( !hosts || h_errno )
 	{
-		Io::Err << "Domain name lookup failed: " << h_errno << "\n";
+		std::string message = "Domain name lookup failed: " + NN::Convert< std::string >( h_errno ) + "\n";
+		
+		p7::write( p7::stderr_fileno, message.data(), message.size() );
+		
 		O::ThrowExitStatus( 1 );
 	}
 	
@@ -158,17 +160,13 @@ static void Relay( const std::string&  returnPath,
 		return;
 	}
 	
-	Io::Out << "Relaying from "
-	        << returnPath
-	        << " to "
-	        << forwardPath
-	        << "\n";
+	std::printf( "Relaying from %s to %s\n", returnPath.c_str(), forwardPath.c_str() );
 	
 	std::string smtpServer = gRelayServer;
 	
 	if ( !gRelayServer.empty() )
 	{
-		Io::Out << "Using relay " << gRelayServer << ".\n";
+		std::printf( "Using relay %s\n", gRelayServer.c_str() );
 	}
 	else
 	{
@@ -179,25 +177,26 @@ static void Relay( const std::string&  returnPath,
 		
 		if ( !smtpServer.empty() )
 		{
-			Io::Out << "MX for " << rcptDomain << " is " << smtpServer << ".\n";
+			std::printf( "MX for %s is %s\n", rcptDomain.c_str(), smtpServer.c_str() );
 		}
 		else
 		{
 			smtpServer = rcptDomain;
-			Io::Out << "Using domain " << rcptDomain << " as server.\n";
+			
+			std::printf( "Using domain %s as server\n", rcptDomain.c_str() );
 		}
 		
 	}
 	
-	int smtpPort = 25;
+	short smtpPort = 25;
 	
 	struct in_addr ip = ResolveHostname( smtpServer.c_str() );
 	
-	Io::Out << "Address of " << smtpServer << " is " << inet_ntoa( ip ) << ".\n";
+	std::printf( "Address of %s is %s\n", smtpServer.c_str(), inet_ntoa( ip ) );
 	
 	// Make a new socket
 	
-	int sock = socket( PF_INET, SOCK_STREAM, INET_TCP );
+	int sock = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 	
 	p7::fd_t serverStream = p7::fd_t( sock );
 	
@@ -206,7 +205,7 @@ static void Relay( const std::string&  returnPath,
 	struct sockaddr_in inetAddress;
 	
 	inetAddress.sin_family = AF_INET;
-	inetAddress.sin_port   = smtpPort;
+	inetAddress.sin_port   = htons( smtpPort );
 	inetAddress.sin_addr   = ip;
 	
 	int result = connect( sock, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) );
