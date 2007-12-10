@@ -30,7 +30,7 @@ namespace poseven
 	
 	void throw_errno_internal( errno_t number )
 	{
-		Nucleus::ThrowErrorCode< errno_t >( number, Nucleus::DebuggingContext() );
+		Nucleus::ThrowErrorCode< errno_t >( number );
 	}
 	
 	void register_posix_errnos()

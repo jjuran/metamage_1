@@ -115,10 +115,6 @@ namespace Nucleus
 	{
 		public:
 			ErrorCode() : errno_t( ENOMEM )  {}
-			ErrorCode( const DebuggingContext& debugging ) : errno_t( ENOMEM ),
-			                                                 DebuggingContext( debugging )
-			{
-			}
 			
 			~ErrorCode() throw ()  {}
 	};
@@ -130,10 +126,6 @@ namespace Nucleus
 	{
 		public:
 			ErrorCode() : errno_t( EAGAIN )  {}
-			ErrorCode( const DebuggingContext& debugging ) : errno_t( EAGAIN ),
-			                                                 DebuggingContext( debugging )
-			{
-			}
 	};
 	
 	template <> struct Converter< poseven::errno_t, std::bad_alloc > : public std::unary_function< std::bad_alloc, poseven::errno_t >
