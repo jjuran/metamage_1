@@ -121,17 +121,12 @@ namespace Nucleus
            : ErrorClass( Convert<ErrorClass>( number ) ),
              DebuggingContext()
            {}
-         
-         ErrorCode( const DebuggingContext& debugging )
-           : ErrorClass( Convert<ErrorClass>( number ) ),
-             DebuggingContext( debugging )
-           {}
      };
 	
 	template < class Exception >
-	void Throw( const DebuggingContext& debugging )
+	void Throw()
 	{
-		throw Exception( debugging );
+		throw Exception();
 	}
 
    
@@ -141,7 +136,7 @@ namespace Nucleus
       private:
          typedef typename ErrorClassTraits< ErrorClass >::ErrorNumber ErrorNumber;
          
-         typedef std::map< ErrorNumber, void(*)( const DebuggingContext& ) > Map;
+         typedef std::map< ErrorNumber, void(*)() > Map;
       
          Map map;
 
@@ -159,11 +154,11 @@ namespace Nucleus
             map[ number ] = Nucleus::Throw< ErrorCode< ErrorClass, number > >;
            }
          
-         void Throw( ErrorClass error, const DebuggingContext& debugging ) const
+         void Throw( ErrorClass error ) const
            {
             typename Map::const_iterator found = map.find( Convert<ErrorNumber>( error ) );
             if ( found != map.end() )
-               return found->second( debugging );
+               return found->second();
             throw error;
            }
      };
@@ -183,9 +178,9 @@ namespace Nucleus
      }
    
    template < class ErrorClass >
-   void ThrowErrorCode( ErrorClass error, const DebuggingContext& debugging )
+   void ThrowErrorCode( ErrorClass error )
      {
-      TheGlobalErrorCodeThrower<ErrorClass>().Throw( error, debugging );
+      TheGlobalErrorCodeThrower<ErrorClass>().Throw( error );
      }
   }
 
