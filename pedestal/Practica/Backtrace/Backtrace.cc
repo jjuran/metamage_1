@@ -6,6 +6,8 @@
 #include "Backtrace/Backtrace.hh"
 
 // Standard C++
+#include <algorithm>
+#include <functional>
 #include <string>
 
 // Standard C/C++
@@ -100,9 +102,9 @@ namespace Backtrace
 		}
 	}
 	
-	TraceRecord TraceCall( const CallRecord& call )
+	CallInfo GetCallInfoFromReturnAddress( const ReturnAddress& call )
 	{
-		TraceRecord result;
+		CallInfo result;
 		
 		result.itsReturnAddr = call.addrNative;
 		
@@ -122,7 +124,10 @@ namespace Backtrace
 		return result;
 	}
 	
-	static std::string MakeTrace( unsigned offset, const void* addr, const char* arch, const std::string& name )
+	static std::string MakeReportForCall( unsigned            offset,
+	                                      const void*         addr,
+	                                      const char*         arch,
+	                                      const std::string&  name )
 	{
 		char buffer[ sizeof "1234567890: 0x12345678 (XYZ) \0" ];
 		
@@ -136,67 +141,40 @@ namespace Backtrace
 		return result;
 	}
 	
-	static void PrintTrace( unsigned offset, const void* addr, const char* arch, const char* name )
+	std::string MakeReportFromCallChain( std::vector< CallInfo >::const_iterator  begin,
+	                                     std::vector< CallInfo >::const_iterator  end )
 	{
-		std::fprintf( stderr, "%d: 0x%.8x (%s) %s\n", offset, addr, arch, name );
-	}
-	
-	std::string GetBacktrace( const std::vector< CallRecord >& stackCrawl )
-	{
-		unsigned levelsToSkip = 1;
-		
-		typedef std::vector< CallRecord >::const_iterator Iter;
-		
-		const std::vector< CallRecord >& trace = stackCrawl;
-		
-		const Iter begin = trace.begin() + levelsToSkip;
-		
 		unsigned offset = 0;
 		
-		std::string log;
+		std::string result;
 		
 		// It's important to use < instead of != if we might skip past the end
-		for ( Iter it = begin;  it < trace.end();  ++it, ++offset )
+		for ( std::vector< CallInfo >::const_iterator it = begin;  it < end;  ++it, ++offset )
 		{
-			const CallRecord& call = *it;
+			const CallInfo& info = *it;
 			
-			TraceRecord trace = TraceCall( call );
-			
-			log += MakeTrace( offset, trace.itsReturnAddr,
-			                          trace.itsArch,
-			                          trace.itsUnmangledName );
+			result += MakeReportForCall( offset, info.itsReturnAddr,
+			                                     info.itsArch,
+			                                     info.itsUnmangledName );
 		}
 		
-		return log;
+		return result;
 	}
 	
-	DebuggingContext::DebuggingContext() : itsStackCrawl( GetStackCrawl() )
+	std::string MakeReportFromStackCrawl( std::vector< ReturnAddress >::const_iterator  begin,
+	                                      std::vector< ReturnAddress >::const_iterator  end )
 	{
+		std::vector< CallInfo > callChain;
+		
+		callChain.resize( end - begin );
+		
+		std::transform( begin, end, callChain.begin(), std::ptr_fun( GetCallInfoFromReturnAddress ) );
+		
+		return MakeReportFromCallChain( callChain.begin(), callChain.end() );
 	}
 	
-	void DebuggingContext::Show() const
+	DebuggingContext::DebuggingContext() : itsStackCrawl( MakeStackCrawl() )
 	{
-		unsigned levelsToSkip = 1;
-		
-		typedef std::vector< CallRecord >::const_iterator Iter;
-		
-		const std::vector< CallRecord >& trace = itsStackCrawl;
-		
-		const Iter begin = trace.begin() + levelsToSkip;
-		
-		unsigned offset = 0;
-		
-		// It's important to use < instead of != if we might skip past the end
-		for ( Iter it = begin;  it < trace.end();  ++it, ++offset )
-		{
-			const CallRecord& call = *it;
-			
-			TraceRecord trace = TraceCall( call );
-			
-			PrintTrace( offset, trace.itsReturnAddr,
-			                    trace.itsArch,
-			                    trace.itsUnmangledName.c_str() );
-		}
 	}
 	
 }

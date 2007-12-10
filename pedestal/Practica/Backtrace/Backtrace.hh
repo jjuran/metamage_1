@@ -17,26 +17,30 @@
 namespace Backtrace
 {
 	
-	struct TraceRecord
+	struct CallInfo
 	{
-		const void* itsReturnAddr;
-		const char* itsArch;
-		std::string itsUnmangledName;
+		const void*  itsReturnAddr;
+		const char*  itsArch;
+		std::string  itsUnmangledName;
 	};
 	
-	TraceRecord TraceCall( const CallRecord& call );
+	CallInfo GetCallInfoFromReturnAddress( const ReturnAddress& call );
 	
-	std::string GetBacktrace( const std::vector< CallRecord >& stackCrawl );
+	std::string MakeReportFromCallChain( std::vector< CallInfo >::const_iterator  begin,
+	                                     std::vector< CallInfo >::const_iterator  end );
 	
-	struct DebuggingContext
+	std::string MakeReportFromStackCrawl( std::vector< ReturnAddress >::const_iterator  begin,
+	                                      std::vector< ReturnAddress >::const_iterator  end );
+	
+	class DebuggingContext
 	{
-		std::vector< CallRecord > itsStackCrawl;
+		private:
+			std::vector< ReturnAddress > itsStackCrawl;
 		
-		DebuggingContext();
-		
-		std::string GetText() const  { return GetBacktrace( itsStackCrawl ); }
-		
-		void Show() const;
+		public:
+			DebuggingContext();
+			
+			const std::vector< ReturnAddress >& GetStackCrawl() const  { return itsStackCrawl; }
 	};
 	
 }
