@@ -203,6 +203,18 @@ namespace io
 		return directory_exists( item.c_str() );
 	}
 	
+	inline std::size_t get_file_size( poseven::fd_t stream, overload = overload() )
+	{
+		struct stat status = poseven::fstat( stream );
+		
+		if ( !S_ISREG( status.st_mode ) )
+		{
+			poseven::throw_errno( ESPIPE );
+		}
+		
+		return status.st_size;
+	}
+	
 }
 
 #endif
