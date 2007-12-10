@@ -6,6 +6,8 @@
 #ifndef ORION_STANDARDIO_HH
 #define ORION_STANDARDIO_HH
 
+#warning Please don't use this
+
 // Standard C/C++
 #include <cstring>
 
