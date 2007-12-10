@@ -48,6 +48,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/TTY.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/SystemConsole.hh"
 #include "Genie/Yield.hh"
 
 
@@ -64,9 +65,35 @@
 #define ENVIRON_IS_SHARED  (TARGET_CPU_68K && !TARGET_RT_MAC_CFM)
 
 
-static void DumpBacktrace( unsigned levelsToSkip = 0, const char* lastSymbol = "" )
+static void DumpBacktrace()
 {
-	Backtrace::DebuggingContext().Show();
+	using namespace Backtrace;
+	
+	std::vector< ReturnAddress > stackCrawl = MakeStackCrawl();
+	
+	std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
+	std::vector< ReturnAddress >::const_iterator end   = stackCrawl.end();
+	
+	++begin;  // skip DumpBacktrace( void )
+	
+	std::vector< CallInfo > callChain;
+	
+	callChain.reserve( end - begin );
+	
+	for ( ;  begin < end;  ++begin )
+	{
+		callChain.push_back( GetCallInfoFromReturnAddress( *begin ) );
+		
+		if ( callChain.back().itsUnmangledName == "main" )
+		{
+			break;
+		}
+	}
+	
+	std::string report = MakeReportFromCallChain( callChain.begin(),
+	                                              callChain.end() );
+	
+	(void) Genie::WriteToSystemConsole( report.data(), report.size() );
 }
 
 namespace Genie
@@ -1110,7 +1137,7 @@ namespace Genie
 			// Fatal signal received.  Terminate.
 			if ( WCOREDUMP( itsResult ) )
 			{
-				DumpBacktrace( 1, "main" );
+				DumpBacktrace();
 			}
 			
 			if ( itsInterdependence == kProcessForked )
