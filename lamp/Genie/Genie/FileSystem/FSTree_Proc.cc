@@ -338,22 +338,22 @@ namespace Genie
 		
 		Backtrace::StackFramePtr top = process.GetStackFramePointer();
 		
-		std::vector< Backtrace::CallRecord > calls = GetStackCrawl( top );
+		std::vector< Backtrace::ReturnAddress > stackCrawl = MakeStackCrawl( top );
 		
-		std::vector< Backtrace::TraceRecord > traces( calls.size() );
+		std::vector< Backtrace::CallInfo > callChain( stackCrawl.size() );
 		
-		std::transform( calls.begin(),
-		                calls.end(),
-		                traces.begin(),
-		                std::ptr_fun( Backtrace::TraceCall ) );
+		std::transform( stackCrawl.begin(),
+		                stackCrawl.end(),
+		                callChain.begin(),
+		                std::ptr_fun( Backtrace::GetCallInfoFromReturnAddress ) );
 		
 		std::string result;
 		
 		unsigned offset = 0;
 		
-		typedef std::vector< Backtrace::TraceRecord >::const_iterator Iter;
+		typedef std::vector< Backtrace::CallInfo >::const_iterator Iter;
 		
-		for ( Iter it = traces.begin();  it != traces.end();  ++it, ++offset )
+		for ( Iter it = callChain.begin();  it != callChain.end();  ++it, ++offset )
 		{
 			using BitsAndBytes::EncodeAsHex;
 			
