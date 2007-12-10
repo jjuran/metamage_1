@@ -118,9 +118,6 @@ namespace Nucleus
      {
       public:
          ErrorCode() : OSStatus( memFullErr )  {}
-         ErrorCode( const DebuggingContext& debugging ) : OSStatus( memFullErr ),
-                                                          DebuggingContext( debugging )
-         {}
          
          const char* what() const throw()  { return "OSStatus -108 (memFullErr)"; }
      };
@@ -132,9 +129,6 @@ namespace Nucleus
 	{
 		public:
 			ErrorCode() : OSStatus( eofErr )  {}
-			ErrorCode( const DebuggingContext& debugging ) : OSStatus( eofErr ),
-                                                             DebuggingContext( debugging )
-         {}
 	};
 	
 	template <>
@@ -144,9 +138,6 @@ namespace Nucleus
 	{
 		public:
 			ErrorCode() : OSStatus( kOTNoDataErr )  {}
-			ErrorCode( const DebuggingContext& debugging ) : OSStatus( kOTNoDataErr ),
-                                                             DebuggingContext( debugging )
-         {}
 	};
 	
 	
@@ -162,3 +153,4 @@ namespace Nucleus
   }
 
 #endif
+
