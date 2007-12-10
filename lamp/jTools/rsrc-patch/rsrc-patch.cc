@@ -148,7 +148,7 @@ static void WriteHexOptor( const char* param )
 	Write( Bits::DecodeHex( param ) );
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	
