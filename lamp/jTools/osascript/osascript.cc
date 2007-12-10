@@ -25,7 +25,8 @@
 #include "io/slurp.hh"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/Open.hh"
+#include "POSeven/Stat.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.h"
@@ -79,9 +80,39 @@ inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
 	                                N::kOSAGenericScriptingComponentSubtype );
 }
 
-static std::string ReadFileData( const FSSpec& file )
+static std::string ReadUntilEOF( p7::fd_t stream )
 {
-	std::string result = io::slurp_file< NN::StringFlattener< std::string > >( file );
+	std::string result;
+	
+	const std::size_t block_size = 4096;
+	
+	char buffer[ block_size ];
+	
+	while ( std::size_t bytes = p7::read( stream, buffer, block_size ) )
+	{
+		result.append( buffer, bytes );
+	}
+	
+	return result;
+}
+
+static std::string ReadFileData( const std::string& file )
+{
+	std::string result;
+	
+	try
+	{
+		result = io::slurp_file< NN::StringFlattener< std::string > >( file );
+	}
+	catch ( const p7::errno_t& err )
+	{
+		if ( err != ESPIPE )
+		{
+			throw;	
+		}
+		
+		result = ReadUntilEOF( io::open_for_reading( file ) );
+	}
 	
 	if ( result.size() >= 2  &&  result[0] == '#'  &&  result[1] == '!' )
 	{
@@ -91,7 +122,7 @@ static std::string ReadFileData( const FSSpec& file )
 	return result;
 }
 
-static NN::Owned< N::OSASpec > MakeCWDContext()
+static NN::Owned< N::OSASpec > MakeCWDContext( const NN::Shared< N::ComponentInstance >& scriptingComponent )
 {
 	char stupid_buffer[ 1024 ];
 	char* gotcwd = getcwd( stupid_buffer, 1024 );
@@ -109,27 +140,37 @@ static NN::Owned< N::OSASpec > MakeCWDContext()
 	
 	
 	return
-	N::OSACompile( OpenGenericScriptingComponent(),
+	N::OSACompile( scriptingComponent,
 	               N::AECreateDesc< N::typeChar >( cwdProperty ),
 	               N::OSAModeFlags( kOSAModeCompileIntoContext ) );
 }
 
 static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 {
-	NN::Owned< N::OSASpec > cwdContext = MakeCWDContext();
+	NN::Shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
 	
-	NN::Shared< N::ComponentInstance > scriptingComponent = cwdContext.Get().component;
+	const char* step = "context compilation";
 	
 	try
 	{
+		NN::Owned< N::OSASpec > cwdContext = MakeCWDContext( scriptingComponent );
+		
+		step = "compilation";
+		
 		return N::OSACompile( scriptingComponent,
 							  source,
 							  N::OSAModeFlags( kOSAModeAugmentContext ),
 							  cwdContext );
 	}
-	catch ( const N::ErrOSAScriptError& )  {}
+	catch ( const N::ErrOSAScriptError& err )
+	{
+		if ( err.Get() != errOSAScriptError )
+		{
+			throw;
+		}
+	}
 	
-	ReportAndThrowScriptError( scriptingComponent, "compilation" );
+	ReportAndThrowScriptError( scriptingComponent, step );
 	
 	// Not reached
 	return NN::Owned< N::OSASpec >();
@@ -148,22 +189,24 @@ static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 	                                                     N::ResID( 128 ) ) ) );
 }
 
-static NN::Owned< N::OSASpec > LoadScriptFile( const FSSpec& scriptFile )
+static NN::Owned< N::OSASpec > LoadScriptFile( const char* pathname )
 {
-	OSType type = N::FSpGetFInfo( scriptFile ).fdType;
-	
-	switch ( type )
+	try
 	{
-		case kOSAFileType:
-			return LoadCompiledScript( scriptFile );
-			break;
+		FSSpec scriptFile = Div::ResolvePathToFSSpec( pathname );
 		
-		case 'TEXT':
-			return CompileSource( N::AECreateDesc< N::typeChar >( ReadFileData( scriptFile ) ) );
-			break;
+		OSType type = N::FSpGetFInfo( scriptFile ).fdType;
+		
+		if ( type == kOSAFileType )
+		{
+			return LoadCompiledScript( scriptFile );
+		}
+	}
+	catch ( ... )
+	{
 	}
 	
-	return NN::Owned< N::OSASpec >();
+	return CompileSource( N::AECreateDesc< N::typeChar >( ReadFileData( pathname ) ) );
 }
 
 
@@ -237,11 +280,16 @@ int O::Main( int argc, argv_t argv )
 	}
 	else
 	{
+		const char* pathname = "/dev/fd/0";
+		
 		if ( *freeArgs != NULL )
 		{
-			script = LoadScriptFile( Div::ResolvePathToFSSpec( freeArgs[ 0 ] ) );
+			pathname = freeArgs[ 0 ];
+			
 			++params_begin;
 		}
+		
+		script = LoadScriptFile( pathname );
 	}
 	
 	NN::Owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( N::kCoreEventClass,
