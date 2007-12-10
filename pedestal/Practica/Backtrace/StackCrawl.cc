@@ -170,11 +170,11 @@ namespace Backtrace
 		return switchFrame;
 	}
 	
-	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< CallRecord >& result );
+	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< ReturnAddress >& result );
 	
 #if defined( __MC68K__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
 	
-	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, std::vector< CallRecord >& result )
+	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, std::vector< ReturnAddress >& result )
 	{
 		if ( frame == NULL )
 		{
@@ -201,7 +201,7 @@ namespace Backtrace
 		
 		ReturnAddr68K addr = frame->returnAddr;
 		
-		result.push_back( CallRecord( addr ) );
+		result.push_back( ReturnAddress( addr ) );
 		
 		if ( frame->next < frame )
 		{
@@ -211,7 +211,7 @@ namespace Backtrace
 		CrawlStack68K( level + 1, frame->next, result );
 	}
 	
-	inline void CrawlStack( const StackFrame68K* frame, std::vector< CallRecord >& result )
+	inline void CrawlStack( const StackFrame68K* frame, std::vector< ReturnAddress >& result )
 	{
 		CrawlStack68K( 0, frame, result );
 	}
@@ -220,7 +220,7 @@ namespace Backtrace
 	
 #if defined( __POWERPC__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
 	
-	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< CallRecord >& result )
+	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< ReturnAddress >& result )
 	{
 		if ( frame == NULL )
 		{
@@ -252,7 +252,7 @@ namespace Backtrace
 		
 		ReturnAddrPPC addr = frame->returnAddr;
 		
-		result.push_back( CallRecord( addr ) );
+		result.push_back( ReturnAddress( addr ) );
 		
 		if ( frame->next < frame )
 		{
@@ -262,7 +262,7 @@ namespace Backtrace
 		CrawlStackPPC( level + 1, frame->next, result );
 	}
 	
-	inline void CrawlStack( const StackFramePPC* frame, std::vector< CallRecord >& result )
+	inline void CrawlStack( const StackFramePPC* frame, std::vector< ReturnAddress >& result )
 	{
 		CrawlStackPPC( 0, frame, result );
 	}
@@ -271,7 +271,7 @@ namespace Backtrace
 	
 #ifdef __i386__
 	
-	static void CrawlStackX86( unsigned level, const StackFrameX86* frame, std::vector< CallRecord >& result )
+	static void CrawlStackX86( unsigned level, const StackFrameX86* frame, std::vector< ReturnAddress >& result )
 	{
 		if ( frame == NULL )
 		{
@@ -280,7 +280,7 @@ namespace Backtrace
 		
 		ReturnAddrX86 addr = frame->returnAddr;
 		
-		result.push_back( CallRecord( addr ) );
+		result.push_back( ReturnAddress( addr ) );
 		
 		if ( frame->next < frame )
 		{
@@ -290,7 +290,7 @@ namespace Backtrace
 		CrawlStackX86( level, frame->next, result );
 	}
 	
-	inline void CrawlStack( const StackFrameX86* frame, std::vector< CallRecord >& result )
+	inline void CrawlStack( const StackFrameX86* frame, std::vector< ReturnAddress >& result )
 	{
 		CrawlStackX86( 0, frame, result );
 	}
@@ -299,9 +299,9 @@ namespace Backtrace
 	
 	class UnmappedMemoryException {};
 	
-	static std::vector< CallRecord > GetStackCrawl( const StackFrame* top )
+	static std::vector< ReturnAddress > MakeStackCrawl( const StackFrame* top )
 	{
-		std::vector< CallRecord > result;
+		std::vector< ReturnAddress > result;
 		
 		try
 		{
@@ -331,16 +331,16 @@ namespace Backtrace
 		return result;
 	}
 	
-	std::vector< CallRecord > GetStackCrawl( StackFramePtr top )
+	std::vector< ReturnAddress > MakeStackCrawl( StackFramePtr top )
 	{
 		const StackFrame* frame = reinterpret_cast< const StackFrame* >( top );
 		
-		return GetStackCrawl( frame );
+		return MakeStackCrawl( frame );
 	}
 	
-	std::vector< CallRecord > GetStackCrawl()
+	std::vector< ReturnAddress > MakeStackCrawl()
 	{
-		return GetStackCrawl( GetTopFrame() );
+		return MakeStackCrawl( GetTopFrame() );
 	}
 	
 }

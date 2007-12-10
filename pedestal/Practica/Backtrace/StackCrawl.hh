@@ -88,7 +88,7 @@ namespace Backtrace
 	
 	typedef const struct OpaqueStackFrame* StackFramePtr;
 	
-	struct CallRecord
+	struct ReturnAddress
 	{
 		union
 		{
@@ -103,13 +103,13 @@ namespace Backtrace
 		
 		bool isCFM;
 		
-		CallRecord() : addrNative(), isCFM()  {}
+		ReturnAddress() : addrNative(), isCFM()  {}
 		
-		CallRecord( ReturnAddrNative  addr ) : addrNative( addr ), isCFM( false  )  {}
+		ReturnAddress( ReturnAddrNative  addr ) : addrNative( addr ), isCFM( false  )  {}
 		
 	#if defined( __MACOS__ ) && !defined( __MACH__ )
 		
-		CallRecord( ReturnAddrCFM     addr ) : addrCFM   ( addr ), isCFM( true  )  {}
+		ReturnAddress( ReturnAddrCFM     addr ) : addrCFM   ( addr ), isCFM( true  )  {}
 		
 	#endif
 	};
@@ -117,9 +117,9 @@ namespace Backtrace
 	
 	StackFramePtr GetStackFramePointer();
 	
-	std::vector< CallRecord > GetStackCrawl( StackFramePtr frame );
+	std::vector< ReturnAddress > MakeStackCrawl( StackFramePtr frame );
 	
-	std::vector< CallRecord > GetStackCrawl();
+	std::vector< ReturnAddress > MakeStackCrawl();
 	
 }
 
