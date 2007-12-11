@@ -10,6 +10,7 @@
 #include "Nitrogen/OpenTransportProviders.h"
 
 // Genie
+#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 #include "Genie/Utilities/ShareOpenTransport.hh"
@@ -25,9 +26,47 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
+	static pascal void YieldingNotifier( void*        context,
+	                                     OTEventCode  code,
+	                                     OTResult     result,
+	                                     void*        cookie )
+	{
+		switch ( code )
+		{
+			case kOTSyncIdleEvent:
+				try
+				{
+					Yield();
+				}
+				catch ( ... )
+				{
+				}
+				
+				break;
+			
+			case kOTProviderWillClose:
+				break;
+			
+			case kOTProviderIsClosed:
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	
 	static NN::Owned< InetSvcRef > InternetServices()
 	{
-		return N::OTOpenInternetServices( kDefaultInternetServicesPath );
+		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
+		
+		NN::Owned< N::InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
+		
+		N::OTInstallNotifier( provider, gNotifyUPP, NULL );
+		
+		N::OTUseSyncIdleEvents( provider, true );
+		
+		return provider;
 	}
 	
 	
