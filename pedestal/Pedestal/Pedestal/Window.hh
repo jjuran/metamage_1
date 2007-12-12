@@ -129,12 +129,12 @@ namespace Pedestal
 		public:
 			ClosableWindow( const boost::shared_ptr< WindowCloseHandler >& handler ) : itsCloseHandler( handler )  {}
 			
-			WindowCloseHandler& GetCloseHandler()  { return *itsCloseHandler; }
-			
 			void SetCloseHandler( const boost::shared_ptr< WindowCloseHandler >& handler )
 			{
 				itsCloseHandler = handler;
 			}
+			
+			void Close( N::WindowRef window )  { return (*itsCloseHandler)( window ); }
 	};
 	
 	class Quasimode;
@@ -143,8 +143,6 @@ namespace Pedestal
 	{
 		public:
 			WindowBase( const boost::shared_ptr< WindowCloseHandler >& handler ) : ClosableWindow( handler )  {}
-			
-			void Close( N::WindowRef window )  { return GetCloseHandler()( window ); }
 			
 			virtual void Idle       ( const EventRecord& event           ) = 0;
 			virtual void MouseDown  ( const EventRecord& event           ) = 0;
