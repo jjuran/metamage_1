@@ -117,27 +117,6 @@ namespace Pedestal
 			
 	};
 	
-	class Quasimode;
-	
-	class WindowBase
-	{
-		public:
-			virtual WindowCloseHandler& GetCloseHandler() = 0;
-			
-			void Close( N::WindowRef window )  { return GetCloseHandler()( window ); }
-			
-			virtual void Idle       ( const EventRecord& event           ) = 0;
-			virtual void MouseDown  ( const EventRecord& event           ) = 0;
-			virtual bool KeyDown    ( const EventRecord& event           ) = 0;
-			virtual void Update     (                                    ) = 0;
-			virtual void Activate   ( bool activating                    ) = 0;
-			virtual bool SetCursor  ( Point location, RgnHandle mouseRgn ) = 0;
-			virtual void Resized    ( const Rect& newBounds              ) = 0;
-			virtual bool UserCommand( MenuItemCode code                  ) = 0;
-			
-			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event ) = 0;
-	};
-	
 	class ClosableWindow
 	{
 		private:
@@ -158,10 +137,30 @@ namespace Pedestal
 			}
 	};
 	
+	class Quasimode;
+	
+	class WindowBase : public ClosableWindow
+	{
+		public:
+			WindowBase( const boost::shared_ptr< WindowCloseHandler >& handler ) : ClosableWindow( handler )  {}
+			
+			void Close( N::WindowRef window )  { return GetCloseHandler()( window ); }
+			
+			virtual void Idle       ( const EventRecord& event           ) = 0;
+			virtual void MouseDown  ( const EventRecord& event           ) = 0;
+			virtual bool KeyDown    ( const EventRecord& event           ) = 0;
+			virtual void Update     (                                    ) = 0;
+			virtual void Activate   ( bool activating                    ) = 0;
+			virtual bool SetCursor  ( Point location, RgnHandle mouseRgn ) = 0;
+			virtual void Resized    ( const Rect& newBounds              ) = 0;
+			virtual bool UserCommand( MenuItemCode code                  ) = 0;
+			
+			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event ) = 0;
+	};
+	
 	template < class Type, N::WindowDefProcID defProcID = N::documentProc >
 	class Window : private DefProcID_Traits< defProcID >,
 	               public  WindowBase,
-	               public  ClosableWindow,
 	               public  WindowRefOwner
 	{
 		private:
@@ -170,8 +169,6 @@ namespace Pedestal
 		public:
 			typedef Type SubViewType;
 			typedef typename Type::Initializer Initializer;
-			
-			WindowCloseHandler& GetCloseHandler()  { return ClosableWindow::GetCloseHandler(); }
 			
 			Window( const NewWindowContext&                         context,
 			        const boost::shared_ptr< WindowCloseHandler >&  handler,
@@ -208,7 +205,7 @@ namespace Pedestal
 	                                          const boost::shared_ptr< WindowCloseHandler >&  handler,
 	                                          Initializer                                     init = Initializer() )
 	:
-		ClosableWindow( handler ),
+		WindowBase( handler ),
 		WindowRefOwner( CreateWindow( context,
 		                              defProcID,
 		                              static_cast< WindowBase* >( this ) ) ),
