@@ -127,7 +127,7 @@ namespace Genie
 		{
 			std::string exCon = "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")";
 			
-			N::SetWTitle( console->Get(), N::Str255( exCon ) );
+			console->SetTitle( N::Str255( exCon ) );
 			
 			SalvageConsole( console );
 		}
