@@ -19,6 +19,7 @@
 
 // Genie
 #include "Genie/IO/ConsoleWindow.hh"
+#include "Genie/IO/WindowLiberty.hh"
 #include "Genie/Yield.hh"
 
 
@@ -88,31 +89,12 @@ namespace Genie
 	}
 	
 	
-	std::map< ::WindowRef, boost::shared_ptr< ConsoleWindow > > gSalvagedConsoles;
-	
-	
-	class SalvagedWindowCloseHandler : public Ped::WindowCloseHandler
+	inline void LiberateConsole( const boost::shared_ptr< ConsoleWindow >& window )
 	{
-		public:
-			void operator()( N::WindowRef window ) const;
-	};
-	
-	static void SalvageConsole( const boost::shared_ptr< ConsoleWindow >& console )
-	{
-		ASSERT( console.get() != NULL );
+		ASSERT( window.get() != NULL );
 		
-		boost::shared_ptr< Ped::WindowCloseHandler > handler( new SalvagedWindowCloseHandler() );
-		
-		console->SetCloseHandler( handler );
-		
-		gSalvagedConsoles[ console->Get() ] = console;
+		LiberateWindow( *window, window->Get(), window );
 	}
-	
-	void SalvagedWindowCloseHandler::operator()( N::WindowRef window ) const
-	{
-		gSalvagedConsoles.erase( window );
-	}
-	
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : TTYHandle( MakeConsoleName( id ) ),
 	                                                     id( id ),
@@ -129,7 +111,7 @@ namespace Genie
 			
 			console->SetTitle( N::Str255( exCon ) );
 			
-			SalvageConsole( console );
+			LiberateConsole( console );
 		}
 		
 		gConsoleMap.erase( id );
