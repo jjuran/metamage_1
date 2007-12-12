@@ -333,7 +333,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_pts_N::Open( OpenFlags flags ) const
 	{
-		return GetPseudoTTYByID( itsIndex ).shared_from_this();
+		return GetPseudoTTYByID( itsIndex );
 	}
 	
 	FSTree_dev::FSTree_dev()

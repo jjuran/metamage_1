@@ -45,7 +45,7 @@ namespace Genie
 		slave .swap( slave_handle  );
 	}
 	
-	TTYHandle& GetPseudoTTYByID( TerminalID id )
+	const boost::shared_ptr< IOHandle >& GetPseudoTTYByID( TerminalID id )
 	{
 		PseudoTTYMap::const_iterator it = gPseudoTTYMap.find( id );
 		
@@ -56,7 +56,7 @@ namespace Genie
 		
 		ASSERT( !it->second.expired() );
 		
-		return IOHandle_Cast< TTYHandle >( *it->second.lock() );
+		return it->second.lock();
 	}
 	
 	

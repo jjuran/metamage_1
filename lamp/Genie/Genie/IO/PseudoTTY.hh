@@ -49,7 +49,7 @@ namespace Genie
 	void GetNewPseudoTTYPair( boost::shared_ptr< IOHandle >& master,
 	                          boost::shared_ptr< IOHandle >& slave );
 	
-	TTYHandle& GetPseudoTTYByID( TerminalID id );
+	const boost::shared_ptr< IOHandle >& GetPseudoTTYByID( TerminalID id );
 	
 	typedef std::map< TerminalID, boost::weak_ptr< IOHandle > > PseudoTTYMap;
 	
