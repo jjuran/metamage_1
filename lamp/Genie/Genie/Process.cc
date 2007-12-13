@@ -46,7 +46,7 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/IO/TTY.hh"
+#include "Genie/IO/Terminal.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 #include "Genie/Yield.hh"
@@ -887,15 +887,7 @@ namespace Genie
 	void Process::Terminate()
 	{
 		itsLifeStage = kProcessTerminating;
-		itsSchedule = kProcessUnscheduled;
-		
-		// This could yield, e.g. in OTCloseProvider() with sync idle events
-		itsFileDescriptors.clear();
-		
-		if ( itsCleanupHandler != NULL )
-		{
-			itsCleanupHandler();
-		}
+		itsSchedule  = kProcessUnscheduled;
 		
 		pid_t ppid = GetPPID();
 		pid_t pid  = GetPID();
@@ -911,14 +903,22 @@ namespace Genie
 				
 				if ( ctty.get() != NULL )
 				{
-					TTYHandle& tty = IOHandle_Cast< TTYHandle >( *ctty );
+					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *ctty );
 					
-					tty.SaveLeaderWaitStatus( itsResult );
+					terminal.SaveLeaderWaitStatus( itsResult );
 				}
 			}
 			catch ( ... )
 			{
 			}
+		}
+		
+		// This could yield, e.g. in OTCloseProvider() with sync idle events
+		itsFileDescriptors.clear();
+		
+		if ( itsCleanupHandler != NULL )
+		{
+			itsCleanupHandler();
 		}
 		
 		itsLifeStage = kProcessZombie;
