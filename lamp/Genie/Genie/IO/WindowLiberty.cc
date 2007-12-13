@@ -33,17 +33,16 @@ namespace Genie
 		gFreeWindows.erase( window );
 	}
 	
-	void LiberateWindow( Ped::ClosableWindow&                  closable,
-	                     ::WindowRef                           windowRef,
-	                     const boost::shared_ptr< IOHandle >&  window )
+	void LiberateWindow( Pedestal::WindowCore&                 window,
+	                     const boost::shared_ptr< IOHandle >&  handle )
 	{
-		ASSERT( window.get() != NULL );
+		ASSERT( handle.get() != NULL );
 		
 		boost::shared_ptr< Ped::WindowCloseHandler > handler( new FreeWindowCloseHandler() );
 		
-		closable.SetCloseHandler( handler );
+		window.SetCloseHandler( handler );
 		
-		gFreeWindows[ windowRef ] = window;
+		gFreeWindows[ window.Get() ] = handle;
 	}
 	
 }

@@ -9,18 +9,21 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Pedestal
-#include "Pedestal/Window.hh"
 
+namespace Pedestal
+{
+	
+	class WindowCore;
+	
+}
 
 namespace Genie
 {
 	
 	class IOHandle;
 	
-	void LiberateWindow( Pedestal::ClosableWindow&             closable,
-	                     ::WindowRef                           windowRef,
-	                     const boost::shared_ptr< IOHandle >&  window );
+	void LiberateWindow( Pedestal::WindowCore&                 window,
+	                     const boost::shared_ptr< IOHandle >&  handle );
 	
 }
 
