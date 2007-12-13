@@ -93,7 +93,7 @@ my @programs = qw
 	open osascript
 	perl ptrace pwd
 	readlink rm rmdir
-	sh sleep stripcr striplf superd
+	setleds setwindow sh sleep stripcr striplf superd
 	tcpcat tcpclient th tlsrvr true tty ttyd
 	uncaught_exception
 	which window
@@ -143,11 +143,11 @@ my %fsmap =
 	{
 		bin =>
 		[
-			qw( gzip htget killall md5sum nohup open osascript perl tty which ),
+			qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
-			qw( console cr2lf divide jtest lf2cr lf2crlf mread ptrace stripcr striplf th window ),
+			qw( console cr2lf divide jtest lf2cr lf2crlf mread ptrace setwindow stripcr striplf th window ),
 			qw( beep cds err2text keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
