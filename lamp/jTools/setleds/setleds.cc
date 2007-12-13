@@ -6,8 +6,13 @@
 // Standard C/C++
 #include <cstdio>
 
+// Iota
+#include "iota/strings.hh"
+
 // Arcana
+#if !TARGET_API_MAC_CARBON
 #include "ADBKeyboardLEDs.hh"
+#endif
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
@@ -16,6 +21,13 @@
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 
+
+namespace N = Nitrogen;
+namespace p7 = poseven;
+namespace O = Orion;
+
+
+#if !TARGET_API_MAC_CARBON
 
 #include "Nucleus/IndexedContainer.h"
 
@@ -60,26 +72,8 @@ namespace Nitrogen
 	
 }
 
-namespace N = Nitrogen;
-namespace p7 = poseven;
-namespace O = Orion;
-
 
 const UInt8 kLEDValueMask = 7;
-
-char const *const gNameOfLEDWhenOff[] =
-{
-	"num",
-	"caps",
-	"scroll"
-};
-
-char const *const gNameOfLEDWhenOn[] =
-{
-	"NUM",
-	"CAPS",
-	"SCROLL"
-};
 
 static int gChangedBits     = 0;
 static int gChangedBitsMask = 0;
@@ -146,8 +140,19 @@ static void DoLEDs( N::GetIndADB_Result adbDevice, int leds )
 
 static const char* gOptionNames[] = { "num", "caps", "scroll", NULL };
 
+#endif
+
+
 int O::Main( int argc, char const *const argv[] )
 {
+#if TARGET_API_MAC_CARBON
+	
+	p7::write( p7::stderr_fileno, STR_LEN( "setleds: ADB unsupported in Carbon\n" ) );
+	
+	return EXIT_FAILURE;
+	
+#else
+	
 	int count = N::CountADBs();
 	
 	for ( iota::argp_t argp = argv + 1;  *argp != NULL;  ++argp )
@@ -201,5 +206,7 @@ int O::Main( int argc, char const *const argv[] )
 	                             leds ) );
 	
 	return 0;
+	
+#endif
 }
 
