@@ -156,10 +156,20 @@ namespace Pedestal
 			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event ) = 0;
 	};
 	
+	class WindowCore : public WindowBase,
+	                   public WindowRefOwner
+	{
+		public:
+			WindowCore( const boost::shared_ptr< WindowCloseHandler >&  handler,
+			            NN::Owned< N::WindowRef >                       window ) : WindowBase    ( handler ),
+			                                                                       WindowRefOwner( window  )
+			{
+			}
+	};
+	
 	template < class Type, N::WindowDefProcID defProcID = N::documentProc >
 	class Window : private DefProcID_Traits< defProcID >,
-	               public  WindowBase,
-	               public  WindowRefOwner
+	               public  WindowCore
 	{
 		private:
 			Type mySubView;
@@ -203,11 +213,11 @@ namespace Pedestal
 	                                          const boost::shared_ptr< WindowCloseHandler >&  handler,
 	                                          Initializer                                     init = Initializer() )
 	:
-		WindowBase( handler ),
-		WindowRefOwner( CreateWindow( context,
-		                              defProcID,
-		                              static_cast< WindowBase* >( this ) ) ),
-		mySubView     ( N::GlobalToLocal( context.bounds ), init )
+		WindowCore( handler,
+		            CreateWindow( context,
+		                          defProcID,
+		                          static_cast< WindowBase* >( this ) ) ),
+		mySubView ( N::GlobalToLocal( context.bounds ), init )
 	{
 	}
 	
