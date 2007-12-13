@@ -77,15 +77,9 @@ namespace HTTP
 		
 		char buffer[ data_size ];
 		
-		try
+		while ( int bytes_read = p7::read( message_body, buffer, data_size ) )
 		{
-			while ( int bytes_read = p7::read( message_body, buffer, data_size ) )
-			{
-				p7::write( out, buffer, bytes_read );
-			}
-		}
-		catch ( const io::end_of_input& )
-		{
+			p7::write( out, buffer, bytes_read );
 		}
 	}
 	
@@ -282,34 +276,29 @@ namespace HTTP
 	
 	bool MessageReceiver::ReceiveBlock( p7::fd_t socket )
 	{
-		try
+		const std::size_t blockSize = 4096;
+		
+		char data[ blockSize ];
+		
+		std::size_t bytesToRead = blockSize;
+		
+		if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
 		{
-			enum { blockSize = 1024 };
-			char data[ blockSize ];
-			std::size_t bytesToRead = blockSize;
+			std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
 			
-			if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
+			if ( bytesToGo == 0 )
 			{
-				std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
-				
-				if ( bytesToGo == 0 )
-				{
-					return false;
-				}
-				
-				bytesToRead = std::min( bytesToRead, bytesToGo );
+				return false;
 			}
 			
-			int received = p7::read( socket, data, bytesToRead );
-			
-			if ( received == 0 )
-			{
-				throw io::end_of_input();
-			}
-			
+			bytesToRead = std::min( bytesToRead, bytesToGo );
+		}
+		
+		if ( int received = p7::read( socket, data, bytesToRead ) )
+		{
 			ReceiveData( data, received );
 		}
-		catch ( const io::end_of_input& )
+		else
 		{
 			itHasReachedEndOfInput = true;
 			
