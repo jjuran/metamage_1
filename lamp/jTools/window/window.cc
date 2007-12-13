@@ -11,7 +11,11 @@
 #include <cstdio>
 
 // POSIX
+#include <fcntl.h>
 #include <sys/ioctl.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <vfork.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -21,7 +25,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/Open.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -38,6 +42,7 @@ namespace poseven
 	
 }
 
+namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace O = Orion;
 
@@ -80,27 +85,9 @@ inline Point read_size( const char* string )
 
 // ioctl() wrappers
 
-inline std::string get_window_title( p7::fd_t window )
-{
-	char title[ 256 ];
-	
-	p7::ioctl( window, WIOCGTITLE, (int*) title );
-	
-	return title;
-}
-
 inline void set_window_title( p7::fd_t window, const char* title )
 {
 	p7::ioctl( window, WIOCSTITLE, (int*) title );
-}
-
-inline Point get_window_position( p7::fd_t window )
-{
-	Point position;
-	
-	p7::ioctl( window, WIOCGPOS, (int*) &position );
-	
-	return position;
 }
 
 inline void set_window_position( p7::fd_t window, Point position )
@@ -108,27 +95,9 @@ inline void set_window_position( p7::fd_t window, Point position )
 	p7::ioctl( window, WIOCSPOS, (int*) &position );
 }
 
-inline Point get_window_size( p7::fd_t window )
-{
-	Point size;
-	
-	p7::ioctl( window, WIOCGSIZE, (int*) &size );
-	
-	return size;
-}
-
 inline void set_window_size( p7::fd_t window, Point size )
 {
 	p7::ioctl( window, WIOCSSIZE, (int*) &size );
-}
-
-inline bool get_window_visibility( p7::fd_t window )
-{
-	int visibility;
-	
-	p7::ioctl( window, WIOCGVIS, &visibility );
-	
-	return visibility;
 }
 
 inline void set_window_visibility( p7::fd_t window, int visibility )
@@ -139,27 +108,6 @@ inline void set_window_visibility( p7::fd_t window, int visibility )
 
 // option handlers
 
-static void get_title( const char* )
-{
-	std::string result = get_window_title( global_window_fd );
-	
-	result += "\n";
-	
-	p7::write( p7::stdout_fileno, result.data(), result.size() );
-}
-
-static void set_title( const char* title )
-{
-	set_window_title( global_window_fd, title );
-}
-
-static void get_position( const char* )
-{
-	Point position = get_window_position( global_window_fd );
-	
-	std::printf( "%d,%d\n", position.h, position.v );
-}
-
 static void set_position( const char* position_string )
 {
 	Point position = read_position( position_string );
@@ -167,42 +115,11 @@ static void set_position( const char* position_string )
 	set_window_position( global_window_fd, position );
 }
 
-static void move( const char* movement_string )
-{
-	int dx, dy;
-	
-	int scanned = std::sscanf( movement_string, "%d,%d", &dx, &dy );
-	
-	if ( scanned == 2 )
-	{
-		Point position = get_window_position( global_window_fd );
-		
-		position.h += dx;
-		position.v += dy;
-		
-		set_window_position( global_window_fd, position );
-	}
-}
-
-static void get_size( const char* )
-{
-	Point size = get_window_size( global_window_fd );
-	
-	std::printf( "%dx%d\n", size.h, size.v );
-}
-
 static void set_size( const char* size_string )
 {
 	Point size = read_size( size_string );
 	
 	set_window_size( global_window_fd, size );
-}
-
-static void get_visibility( const char* )
-{
-	int visibility = get_window_visibility( global_window_fd );
-	
-	std::printf( "%d\n", visibility );
 }
 
 static void set_visibility( const char* visibility_string )
@@ -223,35 +140,95 @@ static void hide( const char* )
 }
 
 
+static int exit_from_wait( int stat )
+{
+	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+	           :                       -1;
+	
+	return result;
+}
+
 int O::Main( int argc, char const *const argv[] )
 {
-	O::BindOptionTrigger( "--get-title", std::ptr_fun( get_title ) );
-	O::BindOptionTrigger( "--set-title", std::ptr_fun( set_title ) );
+	/*
+	O::BindOptionTrigger( "--pos", std::ptr_fun( set_position ) );
 	
-	O::BindOptionTrigger( "--get-pos", std::ptr_fun( get_position ) );
-	O::BindOptionTrigger( "--set-pos", std::ptr_fun( set_position ) );
+	O::BindOptionTrigger( "--size", std::ptr_fun( set_size ) );
 	
-	O::BindOptionTrigger( "--move", std::ptr_fun( move ) );
-	
-	O::BindOptionTrigger( "--get-size", std::ptr_fun( get_size ) );
-	O::BindOptionTrigger( "--set-size", std::ptr_fun( set_size ) );
-	
-	//O::BindOptionTrigger( "--get-dim", std::ptr_fun( get_dimensions ) );
-	//O::BindOptionTrigger( "--set-dim", std::ptr_fun( set_dimensions ) );
-	
-	O::BindOptionTrigger( "--get-vis", std::ptr_fun( get_visibility ) );
-	O::BindOptionTrigger( "--set-vis", std::ptr_fun( set_visibility ) );
+	O::BindOptionTrigger( "--vis", std::ptr_fun( set_visibility ) );
 	
 	O::BindOptionTrigger( "--show", std::ptr_fun( show ) );
 	O::BindOptionTrigger( "--hide", std::ptr_fun( hide ) );
+	*/
+	
+	bool should_wait = false;
+	
+	const char* title = NULL;
+	
+	const char* device = "/dev/new/console";
+	
+	O::BindOption( "-d", device      );
+	O::BindOption( "-t", title       );
+	O::BindOption( "-w", should_wait );
+	
+	O::AliasOption( "-d", "--dev"   );
+	O::AliasOption( "-t", "--title" );
+	O::AliasOption( "-w", "--wait"  );
 	
 	O::GetOptions( argc, argv );
 	
 	char const *const *freeArgs = O::FreeArguments();
 	
-	if ( *freeArgs != NULL )
+	if ( *freeArgs == NULL )
 	{
-		p7::write( p7::stderr_fileno, STR_LEN( "window: extra arguments ignored\n" ) );
+		p7::write( p7::stderr_fileno, STR_LEN( "Usage: window command [ arg1 ... argn ]\n" ) );
+		
+		return 1;
+	}
+	
+	int forked = vfork();
+	
+	if ( forked == 0 )
+	{
+		// New child, so we're not a process group leader
+		
+		setsid();
+		
+		NN::Owned< p7::fd_t > window = p7::open( device, p7::o_rdwr );
+		
+		p7::ioctl( window, TIOCSCTTY, NULL );
+		
+		if ( title != NULL )
+		{
+			set_window_title( window, title );
+		}
+		
+		dup2( window, 0 );
+		dup2( window, 1 );
+		dup2( window, 2 );
+		
+		p7::close( window );
+		
+		(void) execvp( freeArgs[ 0 ], &freeArgs[ 0 ] );
+		
+		_exit( 127 );
+	}
+	
+	if ( should_wait )
+	{
+		int stat = -1;
+		
+		int waited = waitpid( forked, &stat, 0 );
+		
+		if ( waited == -1 )
+		{
+			std::perror( "window: waitpid" );
+			
+			return 127;
+		}
+		
+		return exit_from_wait( stat );
 	}
 	
 	return 0;
