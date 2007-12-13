@@ -26,10 +26,11 @@ namespace Genie
 	class PseudoTTYHandle : public TTYHandle
 	{
 		private:
-			std::size_t                   itsID;
-			boost::shared_ptr< Conduit >  itsInput;
-			boost::shared_ptr< Conduit >  itsOutput;
-			bool                          itIsBlocking;
+			TerminalID                     itsID;
+			boost::shared_ptr< IOHandle >  itsTerminal;
+			boost::shared_ptr< Conduit >   itsInput;
+			boost::shared_ptr< Conduit >   itsOutput;
+			bool                           itIsBlocking;
 		
 		public:
 			PseudoTTYHandle( std::size_t                   id,
@@ -37,6 +38,8 @@ namespace Genie
 			                 boost::shared_ptr< Conduit >  output );
 			
 			~PseudoTTYHandle();
+			
+			IOHandle* Next() const;
 			
 			unsigned int SysPoll() const;
 			

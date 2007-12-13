@@ -44,7 +44,7 @@
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/TTY.hh"
+#include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -739,9 +739,9 @@ namespace Genie
 		
 		try
 		{
-			TTYHandle& tty = GetFileHandleWithCast< TTYHandle >( fd );
+			TerminalHandle& terminal = GetFileHandleWithCast< TerminalHandle >( fd );
 			
-			return tty.TTYName().c_str();
+			return terminal.TTYName().c_str();
 		}
 		catch ( ... ) {}
 		

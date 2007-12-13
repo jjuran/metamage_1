@@ -82,9 +82,11 @@ namespace Genie
 		public:
 			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
 			
-			ConsoleWindow( ConsoleID id, ConstStr255Param title );
+			ConsoleWindow( ConsoleID id, const std::string& name );
 			
 			~ConsoleWindow();
+			
+			Pedestal::WindowCore& GetWindowCore() { return *this; }
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 			

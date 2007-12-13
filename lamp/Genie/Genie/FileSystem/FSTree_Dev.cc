@@ -386,9 +386,9 @@ namespace Genie
 		
 		boost::shared_ptr< IOHandle > io = consoleMapping.second.lock();
 		
-		TTYHandle& console = IOHandle_Cast< TTYHandle >( *io );
+		TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *io );
 		
-		const std::string& pathname = console.TTYName();
+		const std::string& pathname = terminal.TTYName();
 		
 		std::string name = pathname.substr( pathname.find_last_of( "/" ) + 1, pathname.npos );
 		
@@ -405,9 +405,9 @@ namespace Genie
 		
 		boost::shared_ptr< IOHandle > io = ttyMapping.second.lock();
 		
-		TTYHandle& tty = IOHandle_Cast< TTYHandle >( *io );
+		TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *io );
 		
-		const std::string& pathname = tty.TTYName();
+		const std::string& pathname = terminal.TTYName();
 		
 		std::string name = pathname.substr( pathname.find_last_of( "/" ) + 1, pathname.npos );
 		

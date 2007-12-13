@@ -60,11 +60,18 @@ namespace Genie
 	}
 	
 	
+	static boost::shared_ptr< IOHandle > NewTerminal( const std::string& name )
+	{
+		boost::shared_ptr< IOHandle > result( new TerminalHandle( name ) );
+		
+		return result;
+	}
+	
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                   id,
 			                          boost::shared_ptr< Conduit >  input,
 			                          boost::shared_ptr< Conduit >  output )
-	: TTYHandle( "/dev/pts/" + NN::Convert< std::string >( id ) ),
-	  itsID( id ),
+	: itsID( id ),
+	  itsTerminal( NewTerminal( "/dev/pts/" + NN::Convert< std::string >( id ) ) ),
 	  itsInput( input ),
 	  itsOutput( output ),
 	  itIsBlocking( true )
@@ -77,6 +84,11 @@ namespace Genie
 		itsOutput->CloseIngress();
 		
 		gPseudoTTYMap.erase( itsID );
+	}
+	
+	IOHandle* PseudoTTYHandle::Next() const
+	{
+		return itsTerminal.get();
 	}
 	
 	unsigned int PseudoTTYHandle::SysPoll() const

@@ -14,7 +14,6 @@
 #include "Pedestal/Window.hh"
 
 // Genie
-//#include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Window.hh"
 
 
@@ -33,9 +32,11 @@ namespace Genie
 		public:
 			typedef Ped::Window< Ped::GWorldView > Base;
 			
-			GraphicsWindow( ConstStr255Param title );
+			GraphicsWindow( const std::string& name );
 			
 			~GraphicsWindow();
+			
+			Pedestal::WindowCore& GetWindowCore() { return *this; }
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 	};

@@ -365,12 +365,13 @@ namespace Genie
 		return boost::shared_ptr< Ped::WindowCloseHandler >( new ConsoleCloseHandler( id ) );
 	}
 	
-	ConsoleWindow::ConsoleWindow( ConsoleID         id,
-	                              ConstStr255Param  title ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                                       title,
-	                                                                                       true ),
-	                                                                NewConsoleCloseHandler( id ),
-	                                                                ConsolePane::Initializer( id, itsInput ) )
+	ConsoleWindow::ConsoleWindow( ConsoleID           id,
+	                              const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                                        N::Str255( name ),
+	                                                                                        true ),
+	                                                                 NewConsoleCloseHandler( id ),
+	                                                                 ConsolePane::Initializer( id, itsInput ) ),
+	                                                           WindowHandle( name )
 	{
 	}
 	
@@ -403,11 +404,11 @@ namespace Genie
 	
 	void ConsoleCloseHandler::operator()( N::WindowRef ) const
 	{
-		TTYHandle& console = GetConsoleByID( itsConsoleID );
+		TerminalHandle& terminal = GetConsoleByID( itsConsoleID );
 		
-		console.Disconnect();
+		terminal.Disconnect();
 		
-		SendSignalToProcessGroup( SIGHUP, *console.GetProcessGroup().lock() );
+		SendSignalToProcessGroup( SIGHUP, *terminal.GetProcessGroup().lock() );
 	}
 	
 }

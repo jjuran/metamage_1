@@ -41,9 +41,11 @@ namespace Genie
 		public:
 			typedef Ped::Window< Ped::Scroller< Ped::TEView, Ped::kLiveFeedbackVariant > > Base;
 			
-			BufferWindow( ConstStr255Param title );
+			BufferWindow( const std::string& name );
 			
 			~BufferWindow();
+			
+			Pedestal::WindowCore& GetWindowCore()  { return *this; }
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 			

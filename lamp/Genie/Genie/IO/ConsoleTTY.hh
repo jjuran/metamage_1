@@ -23,11 +23,10 @@ namespace Genie
 	class ConsoleTTYHandle : public TTYHandle
 	{
 		private:
-			ConsoleID id;
-			boost::shared_ptr< ConsoleWindow > console;
-			std::string itsCurrentInput;
-			int itsWindowSalvagePolicy;
-			int itsLeaderWaitStatus;
+			ConsoleID                           itsID;
+			boost::shared_ptr< ConsoleWindow >  itsWindow;
+			std::string                         itsCurrentInput;
+			int                                 itsWindowSalvagePolicy;
 		
 		public:
 			ConsoleTTYHandle( ConsoleID id );
@@ -35,6 +34,8 @@ namespace Genie
 			~ConsoleTTYHandle();
 			
 			IOHandle* Next() const;
+			
+			bool IsDisconnected() const;
 			
 			unsigned int SysPoll() const;
 			
@@ -44,17 +45,15 @@ namespace Genie
 			
 			void IOCtl( unsigned long request, int* argp );
 			
-			ConsoleID ID() const  { return id; }
+			ConsoleID ID() const  { return itsID; }
 			
 			void Open();
-			
-			void SaveLeaderWaitStatus( int status )  { itsLeaderWaitStatus = status; }
 	};
 	
 	
 	boost::shared_ptr< IOHandle > NewConsoleDevice();
 	
-	TTYHandle& GetConsoleByID( ConsoleID id );
+	TerminalHandle& GetConsoleByID( ConsoleID id );
 	
 	typedef std::map< ConsoleID, boost::weak_ptr< IOHandle > > ConsoleMap;
 	

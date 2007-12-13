@@ -50,7 +50,7 @@ namespace Genie
 		return consoleDevice;
 	}
 	
-	TTYHandle& GetConsoleByID( ConsoleID id )
+	TerminalHandle& GetConsoleByID( ConsoleID id )
 	{
 		ConsoleMap::const_iterator it = gConsoleMap.find( id );
 		
@@ -61,31 +61,7 @@ namespace Genie
 		
 		ASSERT( !it->second.expired() );
 		
-		return IOHandle_Cast< TTYHandle >( *it->second.lock() );
-	}
-	
-	static std::string MakeConsoleName( ConsoleID id )
-	{
-		return "/dev/con/" + NN::Convert< std::string >( id );
-	}
-	
-	static bool ShouldSalvageConsoleWindow( int salvagePolicy, int leaderWaitStatus )
-	{
-		switch ( salvagePolicy )
-		{
-			default:
-			case kLampSalvageWindowOnExitNever:
-				//return false;
-			
-			case kLampSalvageWindowOnExitForSignal:
-				// FIXME
-			
-			case kLampSalvageWindowOnExitForFailure:
-				return leaderWaitStatus != 0;
-			
-			case kLampSalvageWindowOnExitAlways:
-				return true;
-		}
+		return IOHandle_Cast< TerminalHandle >( *it->second.lock() );
 	}
 	
 	
@@ -93,33 +69,35 @@ namespace Genie
 	{
 		ASSERT( window.get() != NULL );
 		
-		LiberateWindow( *window, window->Get(), window );
+		LiberateWindow( *window, window );
 	}
 	
-	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : TTYHandle( MakeConsoleName( id ) ),
-	                                                     id( id ),
-	                                                     itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever ),
-	                                                     itsLeaderWaitStatus()
+	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : itsID( id )
 	{
 	}
 	
 	ConsoleTTYHandle::~ConsoleTTYHandle()
 	{
-		if ( console.get()  &&  !IsDisconnected()  &&  ShouldSalvageConsoleWindow( itsWindowSalvagePolicy, itsLeaderWaitStatus ) )
+		if ( itsWindow.get()  &&  itsWindow->ShouldBeSalvaged() )
 		{
-			std::string exCon = "(" + NN::Convert< std::string >( itsLeaderWaitStatus ) + ")";
+			std::string exCon = "(" + NN::Convert< std::string >( itsWindow->GetLeaderWaitStatus() ) + ")";
 			
-			console->SetTitle( N::Str255( exCon ) );
+			itsWindow->SetTitle( N::Str255( exCon ) );
 			
-			LiberateConsole( console );
+			LiberateConsole( itsWindow );
 		}
 		
-		gConsoleMap.erase( id );
+		gConsoleMap.erase( itsID );
 	}
 	
 	IOHandle* ConsoleTTYHandle::Next() const
 	{
-		return console.get();
+		return itsWindow.get();
+	}
+	
+	bool ConsoleTTYHandle::IsDisconnected() const
+	{
+		return itsWindow.get() && itsWindow->IsDisconnected();
 	}
 	
 	unsigned int ConsoleTTYHandle::SysPoll() const
@@ -128,7 +106,7 @@ namespace Genie
 		
 		try
 		{
-			readable = !itsCurrentInput.empty()  ||  console.get() && console->IsReadyForInput();
+			readable = !itsCurrentInput.empty()  ||  itsWindow.get() && itsWindow->IsReadyForInput();
 		}
 		catch ( const io::end_of_input& )
 		{
@@ -156,9 +134,9 @@ namespace Genie
 			{
 				try
 				{
-					if ( console->IsReadyForInput() )
+					if ( itsWindow->IsReadyForInput() )
 					{
-						itsCurrentInput = console->ReadInput();
+						itsCurrentInput = itsWindow->ReadInput();
 					}
 				}
 				catch ( const io::end_of_input& )
@@ -196,59 +174,38 @@ namespace Genie
 	{
 		Open();
 		
-		return console->Write( data, byteCount );
+		return itsWindow->Write( data, byteCount );
 	}
 	
 	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
 	{
+		Open();
+		
 		switch ( request )
 		{
-			case WIOCGEXIT:
-				if ( argp != NULL )
-				{
-					*argp = itsWindowSalvagePolicy;
-				}
-				
-				break;
-			
-			case WIOCSEXIT:
-				if ( argp == NULL )
-				{
-					p7::throw_errno( EFAULT );
-				}
-				
-				itsWindowSalvagePolicy = *argp;
-				break;
-			
-			case WIOCGTITLE:
-			case WIOCSTITLE:
-				Open();
-				
-				// fall through
-			
 			default:
 				TTYHandle::IOCtl( request, argp );
 				break;
 		};
 	}
 	
-	static N::Str255 DefaultConsoleTitle( ConsoleID id )
+	static std::string MakeConsoleName( ConsoleID id )
 	{
-		return N::Str255( "/dev/con/" + NN::Convert< std::string >( id ) );
+		return "/dev/con/" + NN::Convert< std::string >( id );
 	}
 	
-	static boost::shared_ptr< ConsoleWindow > NewConsole( ConsoleID id, ConstStr255Param title )
+	static boost::shared_ptr< ConsoleWindow > NewConsole( ConsoleID id, const std::string& name )
 	{
-		boost::shared_ptr< ConsoleWindow > console( new ConsoleWindow( id, title ) );
+		boost::shared_ptr< ConsoleWindow > console( new ConsoleWindow( id, name ) );
 		
 		return console;
 	}
 	
 	void ConsoleTTYHandle::Open()
 	{
-		if ( console.get() == NULL )
+		if ( itsWindow.get() == NULL )
 		{
-			console = NewConsole( id, DefaultConsoleTitle( id ) );
+			itsWindow = NewConsole( itsID, MakeConsoleName( itsID ) );
 		}
 	}
 	

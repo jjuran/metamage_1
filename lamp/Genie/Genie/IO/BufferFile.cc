@@ -24,9 +24,13 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > NewBufferFile()
 	{
-		boost::shared_ptr< BufferWindow > window( new BufferWindow( "\p" "Edit" ) );
+		BufferWindow* w = new BufferWindow( "Edit" );
+		
+		boost::shared_ptr< BufferWindow > window( w );
 		
 		boost::shared_ptr< IOHandle > bufferFile( new BufferFileHandle( window ) );
+		
+		AddWindowToMap( w->Get(), bufferFile );
 		
 		return bufferFile;
 	}
@@ -46,26 +50,14 @@ namespace Genie
 		                      mbarHeight + vMargin / 3 );
 	}
 	
-	class NullCloseHandler : public Ped::WindowCloseHandler
-	{
-		public:
-			void operator()( N::WindowRef window ) const
-			{
-			}
-	};
 	
-	static boost::shared_ptr< Ped::WindowCloseHandler > NewBufferCloseHandler()
-	{
-		return boost::shared_ptr< Ped::WindowCloseHandler >( new NullCloseHandler() );
-	}
-	
-	
-	BufferWindow::BufferWindow( ConstStr255Param title ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                                    title,
-	                                                                                    false ),
-	                                                             NewBufferCloseHandler() ),
-	                                                       itsMark(),
-	                                                       itHasReceivedEOF()
+	BufferWindow::BufferWindow( const std::string& name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                                     N::Str255( name ),
+	                                                                                     false ),
+	                                                              GetTerminalCloseHandler() ),
+	                                                        WindowHandle( name ),
+	                                                        itsMark(),
+	                                                        itHasReceivedEOF()
 	{
 	}
 	
