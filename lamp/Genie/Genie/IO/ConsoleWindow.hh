@@ -22,12 +22,13 @@
 #include "Pedestal/Window.hh"
 
 // Genie
-#include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/IO/Window.hh"
 
 
 namespace Genie
 {
+	
+	typedef std::size_t ConsoleID;
 	
 	class ConsolePane : public Pedestal::Console
 	{
