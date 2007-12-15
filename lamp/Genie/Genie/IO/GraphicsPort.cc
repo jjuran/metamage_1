@@ -19,6 +19,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace Ped = Pedestal;
 	
 	
 	boost::shared_ptr< IOHandle > NewGraphicsPort()

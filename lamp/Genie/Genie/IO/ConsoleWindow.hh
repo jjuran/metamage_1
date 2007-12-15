@@ -20,7 +20,6 @@
 #include "Pedestal/Console.hh"
 #include "Pedestal/Scroller.hh"
 #include "Pedestal/Window.hh"
-#include "Pedestal/View.hh"
 
 // Genie
 #include "Genie/IO/ConsoleTTY.hh"
@@ -30,10 +29,7 @@
 namespace Genie
 {
 	
-	namespace Ped = Pedestal;
-	
-	
-	class ConsolePane : public Ped::Console
+	class ConsolePane : public Pedestal::Console
 	{
 		private:
 			ConsoleID        itsConsoleID;
@@ -42,7 +38,7 @@ namespace Genie
 			bool             itHasReceivedEOF;
 		
 		public:
-			struct Initializer : public Ped::Console::Initializer
+			struct Initializer : public Pedestal::Console::Initializer
 			{
 				ConsoleID        id;
 				Io::StringPipe&  input;
@@ -52,11 +48,11 @@ namespace Genie
 		
 		public:
 			ConsolePane( const Rect&         bounds,
-			             const Initializer&  init   ) : Ped::Console    ( bounds, init ),
-			                                            itsConsoleID    ( init.id      ),
-			                                            itsInput        ( init.input   ),
-			                                            itsStartOfInput ( TextLength() ),
-			                                            itHasReceivedEOF( false        )
+			             const Initializer&  init   ) : Pedestal::Console( bounds, init ),
+			                                            itsConsoleID     ( init.id      ),
+			                                            itsInput         ( init.input   ),
+			                                            itsStartOfInput  ( TextLength() ),
+			                                            itHasReceivedEOF ( false        )
 			{
 			}
 			
@@ -67,20 +63,20 @@ namespace Genie
 			void MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
-			bool UserCommand( Ped::MenuItemCode code );
+			bool UserCommand( Pedestal::MenuItemCode code );
 			
 			void Paste();
 	};
 	
 	
-	class ConsoleWindow : public Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > >,
+	class ConsoleWindow : public Pedestal::Window< Pedestal::Scroller< ConsolePane, Pedestal::kLiveFeedbackVariant > >,
 	                      public WindowHandle
 	{
 		private:
 			Io::StringPipe itsInput;
 		
 		public:
-			typedef Ped::Window< Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > > Base;
+			typedef Pedestal::Window< Pedestal::Scroller< ConsolePane, Pedestal::kLiveFeedbackVariant > > Base;
 			
 			ConsoleWindow( ConsoleID id, const std::string& name );
 			

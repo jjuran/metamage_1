@@ -20,17 +20,14 @@
 namespace Genie
 {
 	
-	namespace Ped = Pedestal;
-	
-	
-	class GraphicsWindow : public Ped::Window< Ped::GWorldView >,
+	class GraphicsWindow : public Pedestal::Window< Pedestal::GWorldView >,
 	                       public WindowHandle
 	{
 		private:
 			
 		
 		public:
-			typedef Ped::Window< Ped::GWorldView > Base;
+			typedef Pedestal::Window< Pedestal::GWorldView > Base;
 			
 			GraphicsWindow( const std::string& name );
 			
