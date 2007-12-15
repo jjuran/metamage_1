@@ -65,26 +65,21 @@ namespace Genie
 	}
 	
 	
-	inline void LiberateConsole( const boost::shared_ptr< ConsoleWindow >& window )
-	{
-		ASSERT( window.get() != NULL );
-		
-		LiberateWindow( *window, window );
-	}
-	
 	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : itsID( id )
 	{
 	}
 	
 	ConsoleTTYHandle::~ConsoleTTYHandle()
 	{
-		if ( itsWindow.get()  &&  itsWindow->ShouldBeSalvaged() )
+		ConsoleWindow* window = static_cast< ConsoleWindow* >( itsWindow.get() );
+		
+		if ( window != NULL  &&  window->ShouldBeSalvaged() )
 		{
-			std::string exCon = "(" + NN::Convert< std::string >( itsWindow->GetLeaderWaitStatus() ) + ")";
+			std::string exCon = "(" + NN::Convert< std::string >( window->GetLeaderWaitStatus() ) + ")";
 			
-			itsWindow->SetTitle( N::Str255( exCon ) );
+			window->SetTitle( N::Str255( exCon ) );
 			
-			LiberateConsole( itsWindow );
+			LiberateWindow( *window, itsWindow );
 		}
 		
 		gConsoleMap.erase( itsID );
@@ -95,14 +90,9 @@ namespace Genie
 		return itsWindow.get();
 	}
 	
-	FSTreePtr ConsoleTTYHandle::GetFile() const
-	{
-		return itsWindow->GetFile();
-	}
-	
 	bool ConsoleTTYHandle::IsDisconnected() const
 	{
-		return itsWindow.get() && itsWindow->IsDisconnected();
+		return itsWindow.get() && static_cast< ConsoleWindow* >( itsWindow.get() )->IsDisconnected();
 	}
 	
 	unsigned int ConsoleTTYHandle::SysPoll() const
@@ -111,7 +101,7 @@ namespace Genie
 		
 		try
 		{
-			readable = !itsCurrentInput.empty()  ||  itsWindow.get() && itsWindow->IsReadyForInput();
+			readable = !itsCurrentInput.empty()  ||  itsWindow.get() && static_cast< ConsoleWindow* >( itsWindow.get() )->IsReadyForInput();
 		}
 		catch ( const io::end_of_input& )
 		{
@@ -139,9 +129,13 @@ namespace Genie
 			{
 				try
 				{
-					if ( itsWindow->IsReadyForInput() )
+					ConsoleWindow* window = static_cast< ConsoleWindow* >( itsWindow.get() );
+					
+					ASSERT( window != NULL );
+					
+					if ( window->IsReadyForInput() )
 					{
-						itsCurrentInput = itsWindow->ReadInput();
+						itsCurrentInput = window->ReadInput();
 					}
 				}
 				catch ( const io::end_of_input& )
@@ -179,7 +173,7 @@ namespace Genie
 	{
 		Open();
 		
-		return itsWindow->Write( data, byteCount );
+		return static_cast< ConsoleWindow* >( itsWindow.get() )->Write( data, byteCount );
 	}
 	
 	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
@@ -199,9 +193,9 @@ namespace Genie
 		return "/dev/con/" + NN::Convert< std::string >( id );
 	}
 	
-	static boost::shared_ptr< ConsoleWindow > NewConsole( ConsoleID id, const std::string& name )
+	static boost::shared_ptr< IOHandle > NewConsole( ConsoleID id, const std::string& name )
 	{
-		boost::shared_ptr< ConsoleWindow > console( new ConsoleWindow( id, name ) );
+		boost::shared_ptr< IOHandle > console( new ConsoleWindow( id, name ) );
 		
 		return console;
 	}

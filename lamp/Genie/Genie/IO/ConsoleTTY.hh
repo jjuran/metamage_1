@@ -16,17 +16,15 @@
 namespace Genie
 {
 	
-	class ConsoleWindow;
-	
 	typedef TerminalID ConsoleID;
 	
 	class ConsoleTTYHandle : public TTYHandle
 	{
 		private:
-			ConsoleID                           itsID;
-			boost::shared_ptr< ConsoleWindow >  itsWindow;
-			std::string                         itsCurrentInput;
-			int                                 itsWindowSalvagePolicy;
+			ConsoleID                      itsID;
+			boost::shared_ptr< IOHandle >  itsWindow;
+			std::string                    itsCurrentInput;
+			int                            itsWindowSalvagePolicy;
 			
 			IOHandle* Next() const;
 		
@@ -35,7 +33,7 @@ namespace Genie
 			
 			~ConsoleTTYHandle();
 			
-			FSTreePtr GetFile() const;
+			FSTreePtr GetFile() const  { return itsWindow->GetFile(); }
 			
 			bool IsDisconnected() const;
 			
