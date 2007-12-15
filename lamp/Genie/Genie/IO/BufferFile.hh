@@ -68,8 +68,8 @@ namespace Genie
 	class BufferFileHandle : public RegularFileHandle
 	{
 		private:
-			boost::shared_ptr< BufferWindow >  itsWindow;
-			std::string  itsData;
+			boost::shared_ptr< IOHandle >  itsWindow;
+			std::string                    itsData;
 			
 		
 		public:
@@ -83,20 +83,20 @@ namespace Genie
 			
 			unsigned int SysPoll() const
 			{
-				unsigned readability = itsWindow->ReceivedEOF() ? kPollRead : 0;
+				unsigned readability = static_cast< BufferWindow* >( itsWindow.get() )->ReceivedEOF() ? kPollRead : 0;
 				
 				return readability | kPollWrite;
 			}
 			
 			int SysRead( char* data, std::size_t byteCount );
 			
-			int SysWrite( const char* data, std::size_t byteCount )  { return itsWindow->SysWrite( data, byteCount ); }
+			int SysWrite( const char* data, std::size_t byteCount )  { return static_cast< BufferWindow* >( itsWindow.get() )->SysWrite( data, byteCount ); }
 			
-			off_t Seek( off_t offset, int whence )  { return itsWindow->Seek( offset, whence ); }
+			off_t Seek( off_t offset, int whence )  { return static_cast< BufferWindow* >( itsWindow.get() )->Seek( offset, whence ); }
 			
-			off_t GetEOF() const  { return itsWindow->GetEOF(); }
+			off_t GetEOF() const  { return static_cast< BufferWindow* >( itsWindow.get() )->GetEOF(); }
 			
-			void SetEOF( off_t length )  { itsWindow->SetEOF( length ); }
+			void SetEOF( off_t length )  { static_cast< BufferWindow* >( itsWindow.get() )->SetEOF( length ); }
 	};
 	
 	boost::shared_ptr< IOHandle > NewBufferFile();

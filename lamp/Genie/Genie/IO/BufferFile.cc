@@ -232,14 +232,16 @@ namespace Genie
 			return 0;
 		}
 		
-		itsWindow->Show();
+		BufferWindow* window = static_cast< BufferWindow* >( itsWindow.get() );
 		
-		while ( !itsWindow->ReceivedEOF() )
+		window->Show();
+		
+		while ( !window->ReceivedEOF() )
 		{
 			TryAgainLater();
 		}
 		
-		return itsWindow->SysRead( data, byteCount );
+		return window->SysRead( data, byteCount );
 	}
 	
 }
