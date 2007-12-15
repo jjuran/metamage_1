@@ -39,6 +39,18 @@ namespace Genie
 	}
 	
 	
+	static std::string MakeConsoleName( ConsoleID id )
+	{
+		return "/dev/con/" + NN::Convert< std::string >( id );
+	}
+	
+	static boost::shared_ptr< IOHandle > NewConsoleWindow( ConsoleID id, const std::string& name )
+	{
+		boost::shared_ptr< IOHandle > console( new ConsoleWindow( id, name ) );
+		
+		return console;
+	}
+	
 	boost::shared_ptr< IOHandle > NewConsoleDevice()
 	{
 		static ConsoleID gLastID = 0;
@@ -65,7 +77,8 @@ namespace Genie
 	}
 	
 	
-	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : itsID( id )
+	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : itsID( id ),
+	                                                     itsWindow( NewConsoleWindow( id, MakeConsoleName( id ) ) )
 	{
 	}
 	
@@ -115,8 +128,6 @@ namespace Genie
 	
 	int ConsoleTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		Open();
-		
 		// Zero byteCount always begets zero result
 		if ( byteCount == 0 )
 		{
@@ -171,41 +182,17 @@ namespace Genie
 	
 	int ConsoleTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		Open();
-		
 		return static_cast< ConsoleWindow* >( itsWindow.get() )->Write( data, byteCount );
 	}
 	
 	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
 	{
-		Open();
-		
 		switch ( request )
 		{
 			default:
 				TTYHandle::IOCtl( request, argp );
 				break;
 		};
-	}
-	
-	static std::string MakeConsoleName( ConsoleID id )
-	{
-		return "/dev/con/" + NN::Convert< std::string >( id );
-	}
-	
-	static boost::shared_ptr< IOHandle > NewConsole( ConsoleID id, const std::string& name )
-	{
-		boost::shared_ptr< IOHandle > console( new ConsoleWindow( id, name ) );
-		
-		return console;
-	}
-	
-	void ConsoleTTYHandle::Open()
-	{
-		if ( itsWindow.get() == NULL )
-		{
-			itsWindow = NewConsole( itsID, MakeConsoleName( itsID ) );
-		}
 	}
 	
 }

@@ -46,8 +46,6 @@ namespace Genie
 			void IOCtl( unsigned long request, int* argp );
 			
 			ConsoleID ID() const  { return itsID; }
-			
-			void Open();
 	};
 	
 	
