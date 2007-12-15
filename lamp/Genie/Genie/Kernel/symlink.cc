@@ -57,6 +57,25 @@ namespace Genie
 		return pathname;
 	}
 	
+	static N::FileSignature GetFileSignatureForAlias( const FSSpec& item )
+	{
+		try
+		{
+			FInfo fInfo = N::FSpGetFInfo( item );
+			
+			return N::FileSignature( fInfo );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err.Get() != fnfErr )
+			{
+				throw;
+			}
+		}
+		
+		return N::FileSignature( N::OSType( 'MACS' ), N::OSType( kContainerFolderAliasType ) );
+	}
+	
 	static void CreateSymLink( const FSTreePtr& linkFile, const std::string& targetPath )
 	{
 		FSSpec linkSpec = linkFile->GetFSSpec();
@@ -70,17 +89,17 @@ namespace Genie
 		
 		FSSpec targetSpec = target->GetFSSpec();
 		
-		FInfo fInfo = N::FSpGetFInfo( targetSpec );
-		
 		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
 		
-		N::FSpCreateResFile( linkSpec, N::FileSignature( fInfo ) );
+		N::FileSignature signature = GetFileSignatureForAlias( targetSpec );
 		
-		fInfo = N::FSpGetFInfo( linkSpec );
+		N::FSpCreateResFile( linkSpec, signature );
 		
-		fInfo.fdFlags |= kIsAlias;
+		FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
 		
-		N::FSpSetFInfo( linkSpec, fInfo );
+		linkFInfo.fdFlags |= kIsAlias;
+		
+		N::FSpSetFInfo( linkSpec, linkFInfo );
 		
 		NN::Owned< N::ResFileRefNum > aliasResFile = N::FSpOpenResFile( linkSpec, N::fsRdWrPerm );
 		
@@ -97,26 +116,12 @@ namespace Genie
 			
 			FSTreePtr link = ResolvePathname( link_location, current );
 			
-			struct ::stat sb;
+			struct ::stat location_status;
 			
 			try
 			{
 				// Stat the location.  Throws ENOENT if nonexistent.
-				link->Stat( sb );
-				
-				bool isDir = sb.st_mode & S_IFDIR;
-				
-				if ( !isDir )
-				{
-					// Can't create link because a file is in the way.
-					return frame.SetErrno( EEXIST );
-				}
-				
-				// Location is a dir; assume a filename.
-				link = link->Lookup( Basename( target_path ) );
-				
-				// Stat the new location.  Throws ENOENT if nonexistent.
-				link->Stat( sb );
+				link->Stat( location_status );
 				
 				// The new location also exists; bail.
 				return frame.SetErrno( EEXIST );
@@ -124,9 +129,6 @@ namespace Genie
 			catch ( const p7::errno_t& errnum )
 			{
 				if ( errnum != ENOENT )  throw;
-			}
-			catch ( const N::FNFErr& fnf )
-			{
 			}
 			catch ( const N::OSStatus& err )
 			{
