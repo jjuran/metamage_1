@@ -853,6 +853,8 @@ namespace Genie
 		
 		itsForkedChildPID = 0;
 		
+		ASSERT( itsLongJmp != NULL  ||  child == 0 );
+		
 		if ( itsLongJmp != NULL  &&  child != 0 )
 		{
 			LeaveSystemCall();
