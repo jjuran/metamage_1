@@ -95,6 +95,11 @@ namespace Genie
 		return itsWindow.get();
 	}
 	
+	FSTreePtr ConsoleTTYHandle::GetFile() const
+	{
+		return itsWindow->GetFile();
+	}
+	
 	bool ConsoleTTYHandle::IsDisconnected() const
 	{
 		return itsWindow.get() && itsWindow->IsDisconnected();

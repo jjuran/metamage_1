@@ -27,13 +27,15 @@ namespace Genie
 			boost::shared_ptr< ConsoleWindow >  itsWindow;
 			std::string                         itsCurrentInput;
 			int                                 itsWindowSalvagePolicy;
+			
+			IOHandle* Next() const;
 		
 		public:
 			ConsoleTTYHandle( ConsoleID id );
 			
 			~ConsoleTTYHandle();
 			
-			IOHandle* Next() const;
+			FSTreePtr GetFile() const;
 			
 			bool IsDisconnected() const;
 			

@@ -28,6 +28,8 @@ namespace Genie
 			boost::shared_ptr< Conduit >   itsInput;
 			boost::shared_ptr< Conduit >   itsOutput;
 			bool                           itIsBlocking;
+			
+			IOHandle* Next() const;
 		
 		public:
 			PseudoTTYHandle( std::size_t                   id,
@@ -36,7 +38,7 @@ namespace Genie
 			
 			~PseudoTTYHandle();
 			
-			IOHandle* Next() const;
+			FSTreePtr GetFile() const  { return itsTerminal->GetFile(); }
 			
 			unsigned int SysPoll() const;
 			
