@@ -638,14 +638,21 @@ namespace Genie
 	{
 		SystemCallFrame frame( "setsid" );
 		
-		Process& current( CurrentProcess() );
-		
-		int pid = current.GetPID();
-		
-		// throws EPERM if pgid already exists
-		current.SetProcessGroup( GetProcessGroupInSession( pid, NewSession( pid ) ) );
-		
-		return pid;
+		try
+		{
+			Process& current( frame.Caller() );
+			
+			int pid = current.GetPID();
+			
+			// throws EPERM if pgid already exists
+			current.SetProcessGroup( GetProcessGroupInSession( pid, NewSession( pid ) ) );
+			
+			return pid;
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 	}
 	
 	REGISTER_SYSTEM_CALL( setsid );
