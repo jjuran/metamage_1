@@ -13,12 +13,17 @@
 #include "Nitrogen/MacWindows.h"
 #include "Nitrogen/Str.h"
 
-// Pedestal
-#include "Pedestal/Window.hh"
-
 // Genie
 #include "Genie/IO/Terminal.hh"
 
+
+namespace Pedestal
+{
+	
+	class WindowCore;
+	class WindowCloseHandler;
+	
+}
 
 namespace Genie
 {
