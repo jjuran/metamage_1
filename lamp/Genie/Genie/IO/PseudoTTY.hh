@@ -12,9 +12,6 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Io
-#include "Io/StringBuffer.hh"
-
 // Genie
 #include "Genie/IO/Conduit.hh"
 #include "Genie/IO/TTY.hh"
