@@ -223,7 +223,8 @@
 	
 	pid_t fork()
 	{
-		errno = EINVAL;
+		errno = ENOSYS;
+		
 		return -1;
 	}
 	
@@ -241,6 +242,13 @@
 		const char* tty_name = ttyname( fd );
 		
 		return tty_name != NULL;
+	}
+	
+	int link( const char* target_path, const char* link_location )
+	{
+		errno = ENOSYS;
+		
+		return -1;
 	}
 	
 	pid_t tcgetpgrp( int fd )
