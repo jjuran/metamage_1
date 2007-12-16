@@ -308,13 +308,14 @@ namespace Genie
 	class GenieProcessTable
 	{
 		public:
-			typedef std::map< pid_t, boost::shared_ptr< Process > > ProcessMap;
-			typedef ProcessMap::const_iterator const_iterator;
-			typedef ProcessMap::iterator iterator;
+			typedef std::map< pid_t, boost::shared_ptr< Process > >  ProcessMap;
+			typedef ProcessMap::value_type                           value_type;
+			typedef ProcessMap::const_iterator                       const_iterator;
+			typedef ProcessMap::iterator                             iterator;
 		
 		private:
-			ProcessMap itsProcesses;
-			pid_t itsNextPID;
+			ProcessMap  itsProcesses;
+			pid_t       itsNextPID;
 		
 		public:
 			GenieProcessTable();
