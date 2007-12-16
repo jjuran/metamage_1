@@ -48,6 +48,30 @@ namespace Genie
 		return *(UInt32*) decoded.data();
 	}
 	
+	static std::string NameFromWindow( N::WindowRef window )
+	{
+		using BitsAndBytes::EncodeAsHex;
+		
+		std::string name = EncodeAsHex( window );
+		
+		return name;
+	}
+	
+	static std::string NameFromPSN( const ProcessSerialNumber& psn )
+	{
+		using BitsAndBytes::EncodeAsHex;
+		
+		std::string name = EncodeAsHex( psn.lowLongOfPSN );
+		
+		if ( psn.highLongOfPSN != 0 )
+		{
+			name = EncodeAsHex( psn.highLongOfPSN ) + "-" + name;
+		}
+		
+		return name;
+	}
+	
+	
 	class FSTree_sys_kernel : public FSTree_Virtual
 	{
 		public:
@@ -89,15 +113,6 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_window >(); }
 	};
-	
-	static std::string NameFromWindow( const N::WindowRef& window )
-	{
-		using BitsAndBytes::EncodeAsHex;
-		
-		std::string name = EncodeAsHex( window );
-		
-		return name;
-	}
 	
 	FSTreePtr sys_window_Details::Lookup( const std::string& name )
 	{
@@ -301,20 +316,6 @@ namespace Genie
 		psn.lowLongOfPSN = DecodeHex32( name, &*name_string.end() );
 		
 		return FSTreePtr( new FSTree_sys_mac_proc_PSN( psn ) );
-	}
-	
-	static std::string NameFromPSN( const ProcessSerialNumber& psn )
-	{
-		using BitsAndBytes::EncodeAsHex;
-		
-		std::string name = EncodeAsHex( psn.lowLongOfPSN );
-		
-		if ( psn.highLongOfPSN != 0 )
-		{
-			name = EncodeAsHex( psn.highLongOfPSN ) + "-" + name;
-		}
-		
-		return name;
 	}
 	
 	FSNode sys_mac_vol_Details::ConvertToFSNode( N::FSVolumeRefNum vRefNum )
