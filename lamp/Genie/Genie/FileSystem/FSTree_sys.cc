@@ -131,6 +131,56 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
 	
+	struct sys_mac_vol_Details
+	{
+		static std::string Name()  { return "vol"; }
+		
+		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys_mac >(); }
+		
+		static FSTreePtr Lookup( const std::string& name );
+		
+		static const N::Volume_Container& ItemSequence()  { return N::Volumes(); }
+		
+		static FSNode ConvertToFSNode( N::FSVolumeRefNum vRefNum );
+		
+		FSNode operator()( N::FSVolumeRefNum vRefNum ) const  { return ConvertToFSNode( vRefNum ); }
+	};
+	
+	typedef FSTree_Special< sys_mac_vol_Details > FSTree_sys_mac_vol;
+	
+	class FSTree_sys_mac_vol_N : public FSTree_Virtual
+	{
+		private:
+			N::FSVolumeRefNum itsVRefNum;
+		
+		public:
+			FSTree_sys_mac_vol_N( N::FSVolumeRefNum vRefNum );
+			
+			std::string Name() const  { return NN::Convert< std::string >( -itsVRefNum ); }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_vol >(); }
+	};
+	
+	class FSTree_sys_mac_vol_N_root : public FSTree
+	{
+		private:
+			N::FSVolumeRefNum itsVRefNum;
+		
+		public:
+			FSTree_sys_mac_vol_N_root( N::FSVolumeRefNum vRefNum ) : itsVRefNum( vRefNum )  {}
+			
+			bool IsLink() const  { return true; }
+			
+			std::string Name() const  { return "root"; }
+			
+			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_vol_N( itsVRefNum ) ); }
+			
+			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
+			
+			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::FSMakeFSSpec( itsVRefNum, N::fsRtDirID, NULL ) ); }
+	};
+	
+	
 	struct sys_mac_proc_Details
 	{
 		static std::string Name()  { return "proc"; }
@@ -213,10 +263,27 @@ namespace Genie
 	
 	FSTree_sys_mac::FSTree_sys_mac()
 	{
+		MapSingleton< FSTree_sys_mac_vol     >();
 		MapSingleton< FSTree_sys_mac_proc    >();
 		MapSingleton< FSTree_sys_mac_gestalt >();
 	}
 	
+	
+	FSTreePtr sys_mac_vol_Details::Lookup( const std::string& name_string )
+	{
+		int n = std::atoi( name_string.c_str() );
+		
+		if ( n <= 0  ||  SInt16( n ) != n )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -n );
+		
+		N::FSMakeFSSpec( vRefNum, N::fsRtDirID, NULL );
+		
+		return FSTreePtr( new FSTree_sys_mac_vol_N( vRefNum ) );
+	}
 	
 	FSTreePtr sys_mac_proc_Details::Lookup( const std::string& name_string )
 	{
@@ -250,6 +317,13 @@ namespace Genie
 		return name;
 	}
 	
+	FSNode sys_mac_vol_Details::ConvertToFSNode( N::FSVolumeRefNum vRefNum )
+	{
+		FSTreePtr tree( new FSTree_sys_mac_vol_N( vRefNum ) );
+		
+		return FSNode( NN::Convert< std::string >( -vRefNum ), tree );
+	}
+	
 	FSNode sys_mac_proc_Details::ConvertToFSNode( const N::ProcessSerialNumber& psn )
 	{
 		FSTreePtr tree( new FSTree_sys_mac_proc_PSN( psn ) );
@@ -257,6 +331,11 @@ namespace Genie
 		return FSNode( NameFromPSN( psn ), tree );
 	}
 	
+	
+	FSTree_sys_mac_vol_N::FSTree_sys_mac_vol_N( N::FSVolumeRefNum vRefNum ) : itsVRefNum( vRefNum )
+	{
+		Map( "root", FSTreePtr( new FSTree_sys_mac_vol_N_root( vRefNum ) ) );
+	}
 	
 	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const ProcessSerialNumber& psn ) : itsPSN( psn )
 	{
