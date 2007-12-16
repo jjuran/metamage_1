@@ -18,13 +18,22 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_Spawn )
 	DEFINE_MODULE_INIT( Kernel_Spawn )
 	
-	static int Spawn( SystemCallFrame& frame )
+	inline Process& SpawnFrom( Process& parent )
 	{
+		Process* child = new Process( parent );
+		
+		return *child;
+	}
+	
+	static int SpawnVFork( void (*LongJmp)(int), void* jmpBuf )
+	{
+		SystemCallFrame frame( "SpawnVFork" );
+		
+		frame.Caller().SetLongJmp( LongJmp );
+		
 		try
 		{
-			Process& parent = frame.Caller();
-			
-			Process* child = new Process( parent );
+			Process& child = SpawnFrom( frame.Caller() );
 		}
 		catch ( ... )
 		{
@@ -34,27 +43,22 @@ namespace Genie
 		return 0;
 	}
 	
-	static int SpawnVFork( void (*LongJmp)(int), void* jmpBuf )
-	{
-		SystemCallFrame frame( "SpawnVFork" );
-		
-		frame.Caller().SetLongJmp( LongJmp );
-		
-		return Spawn( frame );
-	}
-	
 	REGISTER_SYSTEM_CALL( SpawnVFork );
 	
 	static int fork_and_exit( int exit_status )
 	{
 		SystemCallFrame frame( "fork_and_exit" );
 		
-		if ( Spawn( frame ) == -1 )
+		try
 		{
-			return -1;
+			Process& child = SpawnFrom( frame.Caller() );
+			
+			child.UsurpParent( exit_status );
 		}
-		
-		frame.Caller().UsurpParent( exit_status );
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
 		
 		return 0;
 	}
