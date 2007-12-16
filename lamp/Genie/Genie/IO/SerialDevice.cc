@@ -231,15 +231,15 @@ namespace Genie
 	
 	int SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		if ( byteCount == 0 )
-		{
-			return 0;
-		}
-		
 		while ( true )
 		{
 			if ( !Preempted() )
 			{
+				if ( byteCount == 0 )
+				{
+					return 0;
+				}
+				
 				if ( std::size_t bytesAvailable = N::SerGetBuf( itsInputRefNum ) )
 				{
 					byteCount = std::min( byteCount, bytesAvailable );
