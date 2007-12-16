@@ -227,11 +227,6 @@ namespace Genie
 	
 	int BufferFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		if ( byteCount == 0 )
-		{
-			return 0;
-		}
-		
 		BufferWindow* window = static_cast< BufferWindow* >( itsWindow.get() );
 		
 		window->Show();
@@ -240,6 +235,8 @@ namespace Genie
 		{
 			TryAgainLater();
 		}
+		
+		// Zero-byte read handled by window
 		
 		return window->SysRead( data, byteCount );
 	}
