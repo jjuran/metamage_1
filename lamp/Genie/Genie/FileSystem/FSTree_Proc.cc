@@ -35,15 +35,20 @@ namespace Genie
 	
 	struct proc_Details
 	{
+		typedef GenieProcessTable Sequence;
+		
 		static std::string Name()  { return "proc"; }
 		
 		static FSTreePtr Lookup( const std::string& name );
 		
-		static const GenieProcessTable& ItemSequence()  { return gProcessTable; }
+		static const Sequence& ItemSequence()  { return gProcessTable; }
 		
-		static FSNode ConvertToFSNode( GenieProcessTable::ProcessMap::value_type proc );
+		static std::string ChildName( const Sequence::value_type& child )
+		{
+			return NN::Convert< std::string >( child.first );
+		}
 		
-		FSNode operator()( GenieProcessTable::ProcessMap::value_type proc ) const  { return ConvertToFSNode( proc ); }
+		static FSTreePtr ChildNode( const Sequence::value_type& child );
 	};
 	
 	typedef FSTree_Special_Unique< proc_Details > FSTree_proc;
@@ -52,12 +57,14 @@ namespace Genie
 	class FSTree_PID : public FSTree_Virtual
 	{
 		private:
-			pid_t itsPID;
+			typedef pid_t Key;
+			
+			Key itsPID;
 		
 		public:
-			FSTree_PID( pid_t pid );
+			FSTree_PID( Key pid );
 			
-			std::string Name() const;
+			std::string Name() const  { return NN::Convert< std::string >( itsPID ); }
 			
 			FSTreePtr Parent() const  { return GetProcFSTree(); }
 	};
@@ -87,9 +94,12 @@ namespace Genie
 	
 	struct PID_fd_Details
 	{
-		pid_t itsPID;
+		typedef pid_t              Key;
+		typedef FileDescriptorMap  Sequence;
 		
-		PID_fd_Details( pid_t pid ) : itsPID( pid )  {}
+		Key itsPID;
+		
+		PID_fd_Details( Key pid ) : itsPID( pid )  {}
 		
 		static std::string Name()  { return "fd"; }
 		
@@ -97,11 +107,14 @@ namespace Genie
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
-		const FileDescriptorMap& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
+		const Sequence& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
 		
-		FSNode ConvertToFSNode( FileDescriptorMap::value_type file ) const;
+		static std::string ChildName( const Sequence::value_type& child )
+		{
+			return NN::Convert< std::string >( child.first );
+		}
 		
-		FSNode operator()( FileDescriptorMap::value_type file ) const  { return ConvertToFSNode( file ); }
+		FSTreePtr ChildNode( const Sequence::value_type& child ) const;
 	};
 	
 	class FSTree_PID_fd_N : public FSTree
@@ -201,15 +214,9 @@ namespace Genie
 		return FSTreePtr( new FSTree_PID( pid ) );
 	}
 	
-	FSNode proc_Details::ConvertToFSNode( GenieProcessTable::ProcessMap::value_type proc )
+	FSTreePtr proc_Details::ChildNode( const Sequence::value_type& child )
 	{
-		pid_t pid = proc.first;
-		
-		std::string name = NN::Convert< std::string >( pid );
-		
-		FSTreePtr tree( new FSTree_PID( pid ) );
-		
-		return FSNode( name, tree );
+		return FSTreePtr( new FSTree_PID( child.first ) );
 	}
 	
 	// Process states
@@ -392,11 +399,6 @@ namespace Genie
 		                                                                               proc_PID_backtrace_Query( pid ) ) ) );
 	}
 	
-	std::string FSTree_PID::Name() const
-	{
-		return NN::Convert< std::string >( itsPID );
-	}
-	
 	FSTreePtr PID_fd_Details::Lookup( const std::string& name ) const
 	{
 		int fd = std::atoi( name.c_str() );
@@ -411,25 +413,23 @@ namespace Genie
 		return FSTreePtr( new FSTree_PID_fd_N( itsPID, fd ) );
 	}
 	
-	FSNode PID_fd_Details::ConvertToFSNode( FileDescriptorMap::value_type file ) const
+	FSTreePtr PID_fd_Details::ChildNode( const Sequence::value_type& child ) const
 	{
-		int fd = file.first;
+		int fd = child.first;
 		
-		std::string name = NN::Convert< std::string >( fd );
-		
-		FSTreePtr tree( new FSTree_PID_fd_N( itsPID, fd ) );
-		
-		return FSNode( name, tree );
+		return FSTreePtr( new FSTree_PID_fd_N( itsPID, fd ) );
 	}
 	
 	
 	class FSTree_MagicFileReference : public FSTree
 	{
 		private:
-			boost::shared_ptr< IOHandle > itsHandle;
+			typedef boost::shared_ptr< IOHandle > Key;
+			
+			Key itsHandle;
 		
 		public:
-			FSTree_MagicFileReference( const boost::shared_ptr< IOHandle >& io ) : itsHandle( io )  {}
+			FSTree_MagicFileReference( const Key& io ) : itsHandle( io )  {}
 			
 			std::string Name    () const  { return itsHandle->GetFile()->Name    (); }
 			std::string Pathname() const  { return itsHandle->GetFile()->Pathname(); }

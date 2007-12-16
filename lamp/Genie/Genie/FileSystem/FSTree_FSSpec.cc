@@ -54,6 +54,40 @@ namespace Genie
 	using namespace io::path_descent_operators;
 	
 	
+	static std::string MacFromUnixName( const std::string& name )
+	{
+		//ASSERT( name != "."  );
+		//ASSERT( name != ".." );
+		
+		std::string result;
+		
+		result.resize( name.size() );
+		
+		std::replace_copy( name.begin(),
+		                   name.end(),
+		                   result.begin(),
+		                   ':',
+		                   '/' );
+		
+		return result;
+	}
+	
+	static std::string UnixFromMacName( const std::string& name )
+	{
+		std::string result;
+		
+		result.resize( name.size() );
+		
+		std::replace_copy( name.begin(),
+		                   name.end(),
+		                   result.begin(),
+		                   '/',
+		                   ':' );
+		
+		return result;
+	}
+	
+	
 	class FSTree_FSSpec : public FSTree_Mappable
 	{
 		private:
@@ -104,15 +138,27 @@ namespace Genie
 	
 	struct Volumes_Details
 	{
+		typedef N::Volume_Container Sequence;
+		
 		static std::string Name()  { return "Volumes"; }
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
-		N::Volume_Container ItemSequence() const  { return N::Volumes(); }
+		Sequence ItemSequence() const  { return N::Volumes(); }
 		
-		static FSNode ConvertToFSNode( N::FSVolumeRefNum vRefNum );
+		static std::string ChildName( const Sequence::value_type& child )
+		{
+			FSSpec volume = N::FSMakeFSSpec( child, N::fsRtDirID, "\p" );
+			
+			return UnixFromMacName( io::get_filename_string( volume ) );
+		}
 		
-		FSNode operator()( N::FSVolumeRefNum vRefNum ) const  { return ConvertToFSNode( vRefNum ); }
+		static FSTreePtr ChildNode( const Sequence::value_type& child )
+		{
+			FSSpec volume = N::FSMakeFSSpec( child, N::fsRtDirID, "\p" );
+			
+			return FSTreePtr( new FSTree_FSSpec( volume ) );
+		}
 	};
 	
 	class FSTree_Volumes : public FSTree_Special_Unique< Volumes_Details >
@@ -124,39 +170,6 @@ namespace Genie
 			void Stat( struct ::stat& sb ) const;
 	};
 	
-	
-	static std::string MacFromUnixName( const std::string& name )
-	{
-		//ASSERT( name != "."  );
-		//ASSERT( name != ".." );
-		
-		std::string result;
-		
-		result.resize( name.size() );
-		
-		std::replace_copy( name.begin(),
-		                   name.end(),
-		                   result.begin(),
-		                   ':',
-		                   '/' );
-		
-		return result;
-	}
-	
-	static std::string UnixFromMacName( const std::string& name )
-	{
-		std::string result;
-		
-		result.resize( name.size() );
-		
-		std::replace_copy( name.begin(),
-		                   name.end(),
-		                   result.begin(),
-		                   '/',
-		                   ':' );
-		
-		return result;
-	}
 	
 	static N::FSDirSpec FindJDirectory()
 	{
@@ -482,17 +495,6 @@ namespace Genie
 		N::FSDirSpec rootDir( NN::Make< N::FSDirSpec >( vRefNum, N::fsRtDirID ) );
 		
 		return FSTreePtr( new FSTree_FSSpec( rootDir ) );
-	}
-	
-	FSNode Volumes_Details::ConvertToFSNode( N::FSVolumeRefNum vRefNum )
-	{
-		FSSpec volume = N::FSMakeFSSpec( vRefNum, N::fsRtDirID, "\p" );
-		
-		std::string name = UnixFromMacName( io::get_filename_string( volume ) );
-		
-		FSTreePtr tree( new FSTree_FSSpec( volume ) );
-		
-		return FSNode( name, tree );
 	}
 	
 	void FSTree_Volumes::Stat( struct ::stat& sb ) const

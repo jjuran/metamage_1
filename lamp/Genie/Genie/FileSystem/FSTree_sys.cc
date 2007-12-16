@@ -96,9 +96,12 @@ namespace Genie
 		
 		static const Sequence& ItemSequence()  { return N::WindowList(); }
 		
-		static FSNode ConvertToFSNode( const Sequence::value_type& window );
+		static std::string ChildName( const Sequence::value_type& child )
+		{
+			return NameFromWindow( child );
+		}
 		
-		FSNode operator()( const Sequence::value_type& value ) const  { return ConvertToFSNode( value ); }
+		static FSTreePtr ChildNode( const Sequence::value_type& child );
 	};
 	
 	typedef FSTree_Special< sys_window_Details > FSTree_sys_window;
@@ -108,12 +111,12 @@ namespace Genie
 		private:
 			typedef N::WindowRef Key;
 			
-			Key itsWindow;
+			Key itsKey;
 		
 		public:
-			FSTree_sys_window_REF( const Key& window ) : itsWindow( window )  {}
+			FSTree_sys_window_REF( const Key& key ) : itsKey( key )  {}
 			
-			std::string Name() const;
+			std::string Name() const  { return sys_window_Details::ChildName( itsKey ); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_window >(); }
 	};
@@ -125,16 +128,9 @@ namespace Genie
 		return FSTreePtr( new FSTree_sys_window_REF( window ) );
 	}
 	
-	FSNode sys_window_Details::ConvertToFSNode( const Sequence::value_type& window )
+	FSTreePtr sys_window_Details::ChildNode( const Sequence::value_type& child )
 	{
-		FSTreePtr tree( new FSTree_sys_window_REF( window ) );
-		
-		return FSNode( NameFromWindow( window ), tree );
-	}
-	
-	std::string FSTree_sys_window_REF::Name() const
-	{
-		return NameFromWindow( itsWindow );
+		return FSTreePtr( new FSTree_sys_window_REF( child ) );
 	}
 	
 	
@@ -162,9 +158,12 @@ namespace Genie
 		
 		static const Sequence& ItemSequence()  { return N::Volumes(); }
 		
-		static FSNode ConvertToFSNode( const Sequence::value_type& vRefNum );
+		static std::string ChildName( const Sequence::value_type& child )
+		{
+			return NN::Convert< std::string >( -child );
+		}
 		
-		FSNode operator()( const Sequence::value_type& value ) const  { return ConvertToFSNode( value ); }
+		static FSTreePtr ChildNode( const Sequence::value_type& child );
 	};
 	
 	typedef FSTree_Special< sys_mac_vol_Details > FSTree_sys_mac_vol;
@@ -174,12 +173,12 @@ namespace Genie
 		private:
 			typedef N::FSVolumeRefNum Key;
 			
-			Key itsVRefNum;
+			Key itsKey;
 		
 		public:
-			FSTree_sys_mac_vol_N( const Key& vRefNum );
+			FSTree_sys_mac_vol_N( const Key& key );
 			
-			std::string Name() const  { return NN::Convert< std::string >( -itsVRefNum ); }
+			std::string Name() const  { return sys_mac_vol_Details::ChildName( itsKey ); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_vol >(); }
 	};
@@ -189,20 +188,20 @@ namespace Genie
 		private:
 			typedef N::FSVolumeRefNum Key;
 			
-			Key itsVRefNum;
+			Key itsKey;
 		
 		public:
-			FSTree_sys_mac_vol_N_root( const Key& vRefNum ) : itsVRefNum( vRefNum )  {}
+			FSTree_sys_mac_vol_N_root( const Key& key ) : itsKey( key )  {}
 			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "root"; }
 			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_vol_N( itsVRefNum ) ); }
+			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_vol_N( itsKey ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::FSMakeFSSpec( itsVRefNum, N::fsRtDirID, NULL ) ); }
+			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::FSMakeFSSpec( itsKey, N::fsRtDirID, NULL ) ); }
 	};
 	
 	
@@ -218,9 +217,12 @@ namespace Genie
 		
 		static const Sequence& ItemSequence()  { return N::Processes(); }
 		
-		static FSNode ConvertToFSNode( const Sequence::value_type& proc );
+		static std::string ChildName( const Sequence::value_type& child )
+		{
+			return NameFromPSN( child );
+		}
 		
-		FSNode operator()( const Sequence::value_type& value ) const  { return ConvertToFSNode( value ); }
+		static FSTreePtr ChildNode( const Sequence::value_type& child );
 	};
 	
 	typedef FSTree_Special< sys_mac_proc_Details > FSTree_sys_mac_proc;
@@ -230,12 +232,12 @@ namespace Genie
 		private:
 			typedef ProcessSerialNumber Key;
 			
-			Key itsPSN;
+			Key itsKey;
 		
 		public:
-			FSTree_sys_mac_proc_PSN( const Key& psn );
+			FSTree_sys_mac_proc_PSN( const Key& key );
 			
-			std::string Name() const;
+			std::string Name() const  { return sys_mac_proc_Details::ChildName( itsKey ); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_proc >(); }
 	};
@@ -245,20 +247,20 @@ namespace Genie
 		private:
 			typedef ProcessSerialNumber Key;
 			
-			Key itsPSN;
+			Key itsKey;
 		
 		public:
-			FSTree_sys_mac_proc_PSN_exe( const Key& psn ) : itsPSN( psn )  {}
+			FSTree_sys_mac_proc_PSN_exe( const Key& key ) : itsKey( key )  {}
 			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "exe"; }
 			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_proc_PSN( itsPSN ) ); }
+			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_proc_PSN( itsKey ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::GetProcessAppSpec( itsPSN ) ); }
+			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::GetProcessAppSpec( itsKey ) ); }
 	};
 	
 	
@@ -334,34 +336,25 @@ namespace Genie
 		return FSTreePtr( new FSTree_sys_mac_proc_PSN( psn ) );
 	}
 	
-	FSNode sys_mac_vol_Details::ConvertToFSNode( const Sequence::value_type& vRefNum )
+	FSTreePtr sys_mac_vol_Details::ChildNode( const Sequence::value_type& child )
 	{
-		FSTreePtr tree( new FSTree_sys_mac_vol_N( vRefNum ) );
-		
-		return FSNode( NN::Convert< std::string >( -vRefNum ), tree );
+		return FSTreePtr( new FSTree_sys_mac_vol_N( child ) );
 	}
 	
-	FSNode sys_mac_proc_Details::ConvertToFSNode( const Sequence::value_type& psn )
+	FSTreePtr sys_mac_proc_Details::ChildNode( const Sequence::value_type& child )
 	{
-		FSTreePtr tree( new FSTree_sys_mac_proc_PSN( psn ) );
-		
-		return FSNode( NameFromPSN( psn ), tree );
+		return FSTreePtr( new FSTree_sys_mac_proc_PSN( child ) );
 	}
 	
 	
-	FSTree_sys_mac_vol_N::FSTree_sys_mac_vol_N( const Key& vRefNum ) : itsVRefNum( vRefNum )
+	FSTree_sys_mac_vol_N::FSTree_sys_mac_vol_N( const Key& key ) : itsKey( key )
 	{
-		Map( "root", FSTreePtr( new FSTree_sys_mac_vol_N_root( vRefNum ) ) );
+		Map( "root", FSTreePtr( new FSTree_sys_mac_vol_N_root( key ) ) );
 	}
 	
-	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const Key& psn ) : itsPSN( psn )
+	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const Key& key ) : itsKey( key )
 	{
-		Map( "exe", FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( psn ) ) );
-	}
-	
-	std::string FSTree_sys_mac_proc_PSN::Name() const
-	{
-		return NameFromPSN( itsPSN );
+		Map( "exe", FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( key ) ) );
 	}
 	
 	

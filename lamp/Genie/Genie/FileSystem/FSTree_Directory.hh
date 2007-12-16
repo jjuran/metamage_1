@@ -73,12 +73,30 @@ namespace Genie
 	};
 	
 	template < class Details >
+	class IteratorConverter
+	{
+		private:
+			Details itsDetails;
+		
+		public:
+			IteratorConverter( const Details& details ) : itsDetails( details )  {}
+			
+			FSNode operator()( const Details::Sequence::value_type& child ) const
+			{
+				return FSNode( itsDetails.ChildName( child ),
+				               itsDetails.ChildNode( child ) );
+			}
+	};
+	
+	template < class Details >
 	void FSTree_Special< Details >::IterateIntoCache( FSTreeCache& cache ) const
 	{
+		IteratorConverter< Details > converter( itsDetails );
+		
 		std::transform( itsDetails.ItemSequence().begin(),
 		                itsDetails.ItemSequence().end(),
 		                std::back_inserter( cache ),
-		                itsDetails );
+		                converter );
 	}
 	
 	template < class Details > struct FSTree_Special_Unique;

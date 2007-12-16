@@ -213,15 +213,27 @@ namespace Genie
 	template < class Metadetails >
 	struct dev_TTY_Details : public Metadetails
 	{
-		typedef typename Metadetails::Map Map;
+		typedef typename Metadetails::Sequence Sequence;
 		
 		FSTreePtr Parent() const  { return GetSingleton< FSTree_dev >(); }
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
-		static FSNode ConvertToFSNode( const typename Map::value_type& mapping );
+		static std::string ChildName( const Sequence::value_type& child )
+		{
+			ASSERT( !child.second.expired() );
+			
+			boost::shared_ptr< IOHandle > io = child.second.lock();
+			
+			TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *io );
+			
+			return io::get_filename( terminal.TTYName() );
+		}
 		
-		FSNode operator()( typename Map::value_type mapping ) const  { return ConvertToFSNode( mapping ); }
+		FSTreePtr ChildNode( const Sequence::value_type& child ) const
+		{
+			return FSTreePtr( new FSTree_N( child.first ) );
+		}
 	};
 	
 	class FSTree_dev_con_N;
@@ -229,22 +241,22 @@ namespace Genie
 	
 	struct dev_con_Metadetails
 	{
-		typedef ConsoleMap        Map;
+		typedef ConsoleMap        Sequence;
 		typedef FSTree_dev_con_N  FSTree_N;
 		
 		static std::string Name()  { return "con"; }
 		
-		const Map& ItemSequence() const  { return GetConsoleMap(); }
+		const Sequence& ItemSequence() const  { return GetConsoleMap(); }
 	};
 	
 	struct dev_pts_Metadetails
 	{
-		typedef PseudoTTYMap      Map;
+		typedef PseudoTTYMap      Sequence;
 		typedef FSTree_dev_pts_N  FSTree_N;
 		
 		static std::string Name()  { return "pts"; }
 		
-		const Map& ItemSequence() const  { return GetPseudoTTYMap(); }
+		const Sequence& ItemSequence() const  { return GetPseudoTTYMap(); }
 	};
 	
 	typedef FSTree_Special< dev_TTY_Details< dev_con_Metadetails > > FSTree_dev_con;
@@ -382,22 +394,6 @@ namespace Genie
 		unsigned id = std::atoi( name.c_str() );
 		
 		return FSTreePtr( new FSTree_N( id ) );
-	}
-	
-	template < class Metadetails >
-	FSNode dev_TTY_Details< Metadetails >::ConvertToFSNode( const typename Map::value_type& mapping )
-	{
-		TerminalID id = mapping.first;
-		
-		ASSERT( !mapping.second.expired() );
-		
-		boost::shared_ptr< IOHandle > io = mapping.second.lock();
-		
-		TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *io );
-		
-		FSTreePtr tree( new FSTree_N( id ) );
-		
-		return FSNode( io::get_filename( terminal.TTYName() ), tree );
 	}
 	
 }
