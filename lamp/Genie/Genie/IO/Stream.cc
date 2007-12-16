@@ -100,20 +100,17 @@ namespace Genie
 			byteCount -= bytesRead;
 		}
 		
-		if ( byteCount > 0 )
+		try
 		{
-			try
+			int result = SysRead( data, byteCount );
+			
+			bytesRead += result;
+		}
+		catch ( ... )
+		{
+			if ( bytesRead == 0 )
 			{
-				int result = SysRead( data, byteCount );
-				
-				bytesRead += result;
-			}
-			catch ( ... )
-			{
-				if ( bytesRead == 0 )
-				{
-					throw;
-				}
+				throw;
 			}
 		}
 		
