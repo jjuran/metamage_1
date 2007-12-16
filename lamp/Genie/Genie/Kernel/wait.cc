@@ -115,7 +115,8 @@ namespace Genie
 		{
 			while ( true )
 			{
-				if ( Process* child = pid == -1 ? CheckAny( ppid, pid ) : CheckPID( ppid, pid ) )
+				if ( Process* child = pid == -1 ? CheckAny( ppid, pid )
+				                                : CheckPID( ppid, pid ) )
 				{
 					if ( stat_loc != NULL )
 					{
