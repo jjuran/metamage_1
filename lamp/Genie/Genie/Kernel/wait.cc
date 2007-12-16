@@ -140,7 +140,7 @@ namespace Genie
 					return 0;
 				}
 				
-				Yield();
+				caller.Yield();
 			}
 		}
 		catch ( ... )
