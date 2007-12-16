@@ -19,16 +19,17 @@
 #include "Genie/Yield.hh"
 
 
-namespace N = Nitrogen;
-
-
-void abort()
+namespace Genie
 {
-	try
+	
+	namespace N = Nitrogen;
+	
+	
+	static void Abort()
 	{
-		Genie::Process& current = Genie::CurrentProcess();
+		Process& current = CurrentProcess();
 		
-		if ( current.GetSchedule() != Genie::kProcessUnscheduled )
+		if ( current.GetSchedule() != kProcessUnscheduled )
 		{
 			current.SetSignalAction( SIGABRT, SIG_DFL );
 			
@@ -37,10 +38,19 @@ void abort()
 			current.HandlePendingSignals();
 			
 			// Probably not reached
-			Genie::WriteToSystemConsole( STR_LEN( "Genie: abort(): process failed to terminate, stopping its thread\n" ) );
+			WriteToSystemConsole( STR_LEN( "Genie: abort(): process failed to terminate, stopping its thread\n" ) );
 		}
 		
 		N::SetThreadState( N::GetCurrentThread(), N::kStoppedThreadState );
+	}
+	
+}
+
+void abort()
+{
+	try
+	{
+		Genie::Abort();
 	}
 	catch ( ... )
 	{
