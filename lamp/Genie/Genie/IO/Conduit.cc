@@ -97,24 +97,24 @@ namespace Genie
 	
 	int Conduit::Write( const char* data, std::size_t byteCount, bool blocking )
 	{
+		while ( !IsWritable() )
+		{
+			TryAgainLater( blocking );
+		}
+		
+		if ( itsEgressHasClosed )
+		{
+			Process& current = CurrentProcess();
+			
+			current.Raise( SIGPIPE );
+			
+			current.HandlePendingSignals();
+			
+			p7::throw_errno( EPIPE );
+		}
+		
 		if ( byteCount != 0 )
 		{
-			while ( !IsWritable() )
-			{
-				TryAgainLater( blocking );
-			}
-			
-			if ( itsEgressHasClosed )
-			{
-				Process& current = CurrentProcess();
-				
-				current.Raise( SIGPIPE );
-				
-				current.HandlePendingSignals();
-				
-				p7::throw_errno( EPIPE );
-			}
-			
 			itsStrings.push_back( std::string( data, byteCount ) );
 		}
 		
