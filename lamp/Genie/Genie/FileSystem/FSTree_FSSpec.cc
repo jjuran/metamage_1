@@ -359,6 +359,11 @@ namespace Genie
 			return "";
 		}
 		
+		if ( fileSpec.parID == fsRtParID )
+		{
+			return "mnt";
+		}
+		
 		return io::get_filename_string( fileSpec );
 	}
 	
@@ -371,7 +376,7 @@ namespace Genie
 		
 		if ( fileSpec.parID == fsRtParID )
 		{
-			return GetSingleton< FSTree_Volumes >();
+			return Get_sys_mac_vol_N( N::FSVolumeRefNum( fileSpec.vRefNum ) );
 		}
 		
 		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( fileSpec ) ) );
@@ -488,13 +493,32 @@ namespace Genie
 	}
 	
 	
+	class FSTree_Volumes_Link : public FSTree
+	{
+		private:
+			typedef N::FSVolumeRefNum Key;
+			
+			Key itsKey;
+		
+		public:
+			FSTree_Volumes_Link( const Key& key ) : itsKey( key )  {}
+			
+			bool IsLink() const  { return true; }
+			
+			std::string Name() const  { return NN::Convert< std::string >( N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" ).name ); }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_Volumes >(); }
+			
+			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
+			
+			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_FSSpec( NN::Make< N::FSDirSpec >( itsKey, N::fsRtDirID ) ) ); }
+	};
+	
 	FSTreePtr Volumes_Details::Lookup( const std::string& name ) const
 	{
 		N::FSVolumeRefNum vRefNum = DetermineVRefNum( MacFromUnixName( name ) + ":" );
 		
-		N::FSDirSpec rootDir( NN::Make< N::FSDirSpec >( vRefNum, N::fsRtDirID ) );
-		
-		return FSTreePtr( new FSTree_FSSpec( rootDir ) );
+		return FSTreePtr( new FSTree_Volumes_Link( vRefNum ) );
 	}
 	
 	void FSTree_Volumes::Stat( struct ::stat& sb ) const

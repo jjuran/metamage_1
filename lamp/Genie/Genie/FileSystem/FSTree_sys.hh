@@ -6,6 +6,9 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_SYS_HH
 #define GENIE_FILESYSTEM_FSTREE_SYS_HH
 
+// Nitrogen
+#include "Nitrogen/Files.h"
+
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 
@@ -23,6 +26,7 @@ namespace Genie
 			FSTreePtr Parent() const  { return FSRoot(); }
 	};
 	
+	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum );
 }
 
 #endif

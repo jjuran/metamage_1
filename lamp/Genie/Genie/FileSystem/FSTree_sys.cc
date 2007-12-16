@@ -183,27 +183,6 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_vol >(); }
 	};
 	
-	class FSTree_sys_mac_vol_N_root : public FSTree
-	{
-		private:
-			typedef N::FSVolumeRefNum Key;
-			
-			Key itsKey;
-		
-		public:
-			FSTree_sys_mac_vol_N_root( const Key& key ) : itsKey( key )  {}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return "root"; }
-			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_vol_N( itsKey ) ); }
-			
-			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
-			
-			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::FSMakeFSSpec( itsKey, N::fsRtDirID, NULL ) ); }
-	};
-	
 	
 	struct sys_mac_proc_Details
 	{
@@ -349,7 +328,9 @@ namespace Genie
 	
 	FSTree_sys_mac_vol_N::FSTree_sys_mac_vol_N( const Key& key ) : itsKey( key )
 	{
-		Map( "root", FSTreePtr( new FSTree_sys_mac_vol_N_root( key ) ) );
+		FSSpec volume = N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
+		
+		Map( "mnt", FSTreeFromFSSpec( volume ) );
 	}
 	
 	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const Key& key ) : itsKey( key )
@@ -388,6 +369,11 @@ namespace Genie
 	boost::shared_ptr< IOHandle > FSTree_sys_mac_gestalt::Open( OpenFlags flags ) const
 	{
 		return boost::shared_ptr< IOHandle >( new GestaltDeviceHandle() );
+	}
+	
+	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
+	{
+		return FSTreePtr( new FSTree_sys_mac_vol_N( vRefNum ) );
 	}
 	
 }
