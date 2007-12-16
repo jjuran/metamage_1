@@ -14,18 +14,18 @@
 
 // Genie
 #include "Genie/IO/Conduit.hh"
+#include "Genie/IO/InternallyNonblocking.hh"
 #include "Genie/IO/SocketStream.hh"
 
 
 namespace Genie
 {
 	
-	class PairedSocket : public SocketHandle
+	class PairedSocket : public InternallyNonblocking< SocketHandle >
 	{
 		private:
 			boost::shared_ptr< Conduit >  itsInput;
 			boost::shared_ptr< Conduit >  itsOutput;
-			bool                          itIsNonblocking;
 		
 		public:
 			PairedSocket( boost::shared_ptr< Conduit >  input,
@@ -41,20 +41,15 @@ namespace Genie
 			
 			int SysRead( char* data, std::size_t byteCount )
 			{
-				return itsInput->Read( data, byteCount, itIsNonblocking );
+				return itsInput->Read( data, byteCount, IsNonblocking() );
 			}
 			
 			int SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsOutput->Write( data, byteCount, itIsNonblocking );
+				return itsOutput->Write( data, byteCount, IsNonblocking() );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
-			
-			bool IsNonblocking() const  { return itIsNonblocking; }
-			
-			void SetNonblocking  ()  { itIsNonblocking = true;  }
-			void ClearNonblocking()  { itIsNonblocking = false; }
 			
 			void Bind( const sockaddr& local, socklen_t len );
 			

@@ -11,21 +11,20 @@
 
 // Genie
 #include "Genie/IO/Conduit.hh"
+#include "Genie/IO/InternallyNonblocking.hh"
 #include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	class PipeInHandle : public StreamHandle
+	class PipeInHandle : public InternallyNonblocking< StreamHandle >
 	{
 		private:
-			boost::shared_ptr< Conduit >  itsConduit;
-			bool                          itIsNonblocking;
+			boost::shared_ptr< Conduit > itsConduit;
 		
 		public:
-			PipeInHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit     ( conduit ),
-			                                                       itIsNonblocking( false   )
+			PipeInHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit( conduit )
 			{
 			}
 			
@@ -41,26 +40,19 @@ namespace Genie
 			
 			int SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsConduit->Write( data, byteCount, itIsNonblocking );
+				return itsConduit->Write( data, byteCount, IsNonblocking() );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
-			
-			bool IsNonblocking() const  { return itIsNonblocking; }
-			
-			void SetNonblocking  ()  { itIsNonblocking = true;  }
-			void ClearNonblocking()  { itIsNonblocking = false; }
 	};
 	
-	class PipeOutHandle : public StreamHandle
+	class PipeOutHandle : public InternallyNonblocking< StreamHandle >
 	{
 		private:
-			boost::shared_ptr< Conduit >  itsConduit;
-			bool                          itIsNonblocking;
+			boost::shared_ptr< Conduit > itsConduit;
 		
 		public:
-			PipeOutHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit     ( conduit ),
-			                                                        itIsNonblocking( false   )
+			PipeOutHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit( conduit )
 			{
 			}
 			
@@ -74,17 +66,12 @@ namespace Genie
 			
 			int SysRead( char* data, std::size_t byteCount )
 			{
-				return itsConduit->Read( data, byteCount, itIsNonblocking );
+				return itsConduit->Read( data, byteCount, IsNonblocking() );
 			}
 			
 			int SysWrite( const char* data, std::size_t byteCount );
 			
 			//void IOCtl( unsigned long request, int* argp );
-			
-			bool IsNonblocking() const  { return itIsNonblocking; }
-			
-			void SetNonblocking  ()  { itIsNonblocking = true;  }
-			void ClearNonblocking()  { itIsNonblocking = false; }
 	};
 	
 }

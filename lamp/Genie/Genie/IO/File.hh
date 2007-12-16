@@ -7,26 +7,17 @@
 #define GENIE_IO_FILE_HH
 
 // Genie
+#include "Genie/IO/InternallyNonblocking.hh"
 #include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	class FileHandle : public StreamHandle
+	class FileHandle : public InternallyNonblocking< StreamHandle >
 	{
-		private:
-			bool itIsNonblocking;
-		
 		public:
-			FileHandle() : itIsNonblocking( false )  {}
-			
 			virtual ~FileHandle()  {}
-			
-			bool IsNonblocking() const  { return itIsNonblocking; }
-			
-			void SetNonblocking  ()  { itIsNonblocking = true;  }
-			void ClearNonblocking()  { itIsNonblocking = false; }
 	};
 	
 }
