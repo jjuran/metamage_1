@@ -15,6 +15,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -1298,7 +1301,12 @@ namespace Genie
 	
 	void Process::Continue()
 	{
-		ASSERT( itsThread.get() != NULL );
+		if ( itsThread.get() == NULL )
+		{
+			WriteToSystemConsole( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
+			
+			return;
+		}
 		
 		if ( N::GetThreadState( itsThread->Get() ) == N::kStoppedThreadState )
 		{
