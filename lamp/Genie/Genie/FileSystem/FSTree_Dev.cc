@@ -325,9 +325,11 @@ namespace Genie
 		return tty;
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_dev_Serial::Open( OpenFlags /*flags*/ ) const
+	boost::shared_ptr< IOHandle > FSTree_dev_Serial::Open( OpenFlags flags ) const
 	{
-		return OpenSerialDevice( itsPortName, itIsPassive );
+		bool nonblocking = flags & O_NONBLOCK;
+		
+		return OpenSerialDevice( itsPortName, itIsPassive, nonblocking );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_buffer::Open( OpenFlags flags ) const

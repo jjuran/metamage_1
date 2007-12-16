@@ -13,7 +13,9 @@
 namespace Genie
 {
 	
-	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string& portName, bool isPassive );
+	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string&  portName,
+	                                                bool                isPassive,
+	                                                bool                nonblocking );
 	
 }
 

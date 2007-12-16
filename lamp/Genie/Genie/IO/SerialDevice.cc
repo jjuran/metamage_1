@@ -114,7 +114,9 @@ namespace Genie
 #endif
 	
 	
-	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string& portName, bool isPassive )
+	boost::shared_ptr< IOHandle > OpenSerialDevice( const std::string&  portName,
+	                                                bool                isPassive,
+	                                                bool                nonblocking )
 	{
 	#if TARGET_API_MAC_CARBON
 		
@@ -131,8 +133,7 @@ namespace Genie
 		
 		while ( !same.expired() )
 		{
-			// FIXME:  allow non-blocking opens
-			Yield();
+			TryAgainLater( !nonblocking );
 		}
 		
 		boost::shared_ptr< IOHandle > result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )
