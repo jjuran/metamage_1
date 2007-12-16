@@ -36,10 +36,10 @@ namespace Genie
 			
 			virtual bool IsDisconnected() const  { return false; }
 			
-			virtual bool IsBlocking() const = 0;
+			virtual bool IsNonblocking() const = 0;
 			
-			virtual void SetBlocking   () = 0;
-			virtual void SetNonBlocking() = 0;
+			virtual void SetNonblocking  () = 0;
+			virtual void ClearNonblocking() = 0;
 			
 			void TryAgainLater() const;
 			

@@ -32,7 +32,7 @@ namespace Genie
 	
 	void StreamHandle::TryAgainLater() const
 	{
-		Genie::TryAgainLater( IsBlocking() );
+		Genie::TryAgainLater( IsNonblocking() );
 	}
 	
 	// Return a reference to the peek buffer with at least minBytes of data in it.
@@ -134,11 +134,11 @@ namespace Genie
 			case FIONBIO:
 				if ( *argp )
 				{
-					SetNonBlocking();
+					SetNonblocking();
 				}
 				else
 				{
-					SetBlocking();
+					ClearNonblocking();
 				}
 				
 				break;

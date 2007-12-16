@@ -37,7 +37,7 @@ namespace Genie
 		return itsEgressHasClosed || itsStrings.size() < 20;
 	}
 	
-	int Conduit::Read( char* data, std::size_t byteCount, bool blocking )
+	int Conduit::Read( char* data, std::size_t byteCount, bool nonblocking )
 	{
 		if ( byteCount == 0 )
 		{
@@ -47,7 +47,7 @@ namespace Genie
 		// Wait until we have some data or the stream is closed
 		while ( itsStrings.empty() && !itsIngressHasClosed )
 		{
-			TryAgainLater( blocking );
+			TryAgainLater( nonblocking );
 		}
 		
 		// Either a string was written, or input was closed,
@@ -95,11 +95,11 @@ namespace Genie
 		return bytesCopied;
 	}
 	
-	int Conduit::Write( const char* data, std::size_t byteCount, bool blocking )
+	int Conduit::Write( const char* data, std::size_t byteCount, bool nonblocking )
 	{
 		while ( !IsWritable() )
 		{
-			TryAgainLater( blocking );
+			TryAgainLater( nonblocking );
 		}
 		
 		if ( itsEgressHasClosed )

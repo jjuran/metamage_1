@@ -16,17 +16,17 @@ namespace Genie
 	class FileHandle : public StreamHandle
 	{
 		private:
-			bool itIsBlocking;
+			bool itIsNonblocking;
 		
 		public:
-			FileHandle() : itIsBlocking( true )  {}
+			FileHandle() : itIsNonblocking( false )  {}
 			
 			virtual ~FileHandle()  {}
 			
-			bool IsBlocking() const  { return itIsBlocking; }
+			bool IsNonblocking() const  { return itIsNonblocking; }
 			
-			void SetBlocking   ()  { itIsBlocking = true;  }
-			void SetNonBlocking()  { itIsBlocking = false; }
+			void SetNonblocking  ()  { itIsNonblocking = true;  }
+			void ClearNonblocking()  { itIsNonblocking = false; }
 	};
 	
 }

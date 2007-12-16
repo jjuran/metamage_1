@@ -20,12 +20,12 @@ namespace Genie
 	class PipeInHandle : public StreamHandle
 	{
 		private:
-			boost::shared_ptr< Conduit > itsConduit;
-			bool itIsBlocking;
+			boost::shared_ptr< Conduit >  itsConduit;
+			bool                          itIsNonblocking;
 		
 		public:
-			PipeInHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit  ( conduit ),
-			                                                       itIsBlocking( true    )
+			PipeInHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit     ( conduit ),
+			                                                       itIsNonblocking( false   )
 			{
 			}
 			
@@ -41,26 +41,26 @@ namespace Genie
 			
 			int SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsConduit->Write( data, byteCount, itIsBlocking );
+				return itsConduit->Write( data, byteCount, itIsNonblocking );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			bool IsBlocking() const  { return itIsBlocking; }
+			bool IsNonblocking() const  { return itIsNonblocking; }
 			
-			void SetBlocking   ()  { itIsBlocking = true;  }
-			void SetNonBlocking()  { itIsBlocking = false; }
+			void SetNonblocking  ()  { itIsNonblocking = true;  }
+			void ClearNonblocking()  { itIsNonblocking = false; }
 	};
 	
 	class PipeOutHandle : public StreamHandle
 	{
 		private:
-			boost::shared_ptr< Conduit > itsConduit;
-			bool itIsBlocking;
+			boost::shared_ptr< Conduit >  itsConduit;
+			bool                          itIsNonblocking;
 		
 		public:
-			PipeOutHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit  ( conduit ),
-			                                                        itIsBlocking( true    )
+			PipeOutHandle( boost::shared_ptr< Conduit > conduit ) : itsConduit     ( conduit ),
+			                                                        itIsNonblocking( false   )
 			{
 			}
 			
@@ -74,17 +74,17 @@ namespace Genie
 			
 			int SysRead( char* data, std::size_t byteCount )
 			{
-				return itsConduit->Read( data, byteCount, itIsBlocking );
+				return itsConduit->Read( data, byteCount, itIsNonblocking );
 			}
 			
 			int SysWrite( const char* data, std::size_t byteCount );
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			bool IsBlocking() const  { return itIsBlocking; }
+			bool IsNonblocking() const  { return itIsNonblocking; }
 			
-			void SetBlocking   ()  { itIsBlocking = true;  }
-			void SetNonBlocking()  { itIsBlocking = false; }
+			void SetNonblocking  ()  { itIsNonblocking = true;  }
+			void ClearNonblocking()  { itIsNonblocking = false; }
 	};
 	
 }

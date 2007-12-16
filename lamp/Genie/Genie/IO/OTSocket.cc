@@ -106,7 +106,7 @@ namespace Genie
 	
 	int OTSocket::SysRead( char* data, std::size_t byteCount )
 	{
-		if ( IsBlocking() )
+		if ( !IsNonblocking() )
 		{
 			// OTRcv() will block until ALL bytes requested are received
 			// (unlike read()), so we block only while reading the first byte.
@@ -145,7 +145,7 @@ namespace Genie
 				throw;
 			}
 			
-			SetNonBlocking();
+			SetNonblocking();
 			
 			try
 			{
@@ -156,11 +156,11 @@ namespace Genie
 			catch ( ... )
 			{
 				// FIXME:  This smells
-				SetBlocking();
+				ClearNonblocking();
 				throw;
 			}
 			
-			SetBlocking();
+			ClearNonblocking();
 			
 			// And return one or more bytes.  Yay, POSIX semantics!
 			return bytes;

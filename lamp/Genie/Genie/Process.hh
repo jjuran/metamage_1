@@ -352,7 +352,7 @@ namespace Genie
 	
 	void Yield();
 	
-	void TryAgainLater( bool isBlocking );
+	void TryAgainLater( bool isNonblocking );
 	
 }
 

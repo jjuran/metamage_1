@@ -36,8 +36,8 @@ namespace Genie
 			bool CloseIngress()  { itsIngressHasClosed = true;  return itsEgressHasClosed;  }
 			bool CloseEgress()   { itsEgressHasClosed  = true;  return itsIngressHasClosed; }
 			
-			int Read (       char* data, std::size_t byteCount, bool blocking );
-			int Write( const char* data, std::size_t byteCount, bool blocking );
+			int Read (       char* data, std::size_t byteCount, bool nonblocking );
+			int Write( const char* data, std::size_t byteCount, bool nonblocking );
 	};
 	
 }

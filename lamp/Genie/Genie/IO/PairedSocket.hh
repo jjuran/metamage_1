@@ -23,9 +23,9 @@ namespace Genie
 	class PairedSocket : public SocketHandle
 	{
 		private:
-			boost::shared_ptr< Conduit > itsInput;
-			boost::shared_ptr< Conduit > itsOutput;
-			bool itIsBlocking;
+			boost::shared_ptr< Conduit >  itsInput;
+			boost::shared_ptr< Conduit >  itsOutput;
+			bool                          itIsNonblocking;
 		
 		public:
 			PairedSocket( boost::shared_ptr< Conduit >  input,
@@ -41,20 +41,20 @@ namespace Genie
 			
 			int SysRead( char* data, std::size_t byteCount )
 			{
-				return itsInput->Read( data, byteCount, itIsBlocking );
+				return itsInput->Read( data, byteCount, itIsNonblocking );
 			}
 			
 			int SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsOutput->Write( data, byteCount, itIsBlocking );
+				return itsOutput->Write( data, byteCount, itIsNonblocking );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			bool IsBlocking() const  { return itIsBlocking; }
+			bool IsNonblocking() const  { return itIsNonblocking; }
 			
-			void SetBlocking   ()  { itIsBlocking = true;  }
-			void SetNonBlocking()  { itIsBlocking = false; }
+			void SetNonblocking  ()  { itIsNonblocking = true;  }
+			void ClearNonblocking()  { itIsNonblocking = false; }
 			
 			void Bind( const sockaddr& local, socklen_t len );
 			

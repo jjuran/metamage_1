@@ -38,7 +38,7 @@ namespace Genie
 			
 			~OTSocket();
 			
-			bool IsBlocking() const  { return Nitrogen::OTIsBlocking( itsEndpoint ); }
+			bool IsNonblocking() const  { return !Nitrogen::OTIsBlocking( itsEndpoint ); }
 			
 			unsigned int SysPoll() const;
 			
@@ -48,8 +48,8 @@ namespace Genie
 			
 			//void IOCtl( unsigned long request, int* argp );
 			
-			void SetBlocking   ()  { Nitrogen::OTSetBlocking   ( itsEndpoint ); }
-			void SetNonBlocking()  { Nitrogen::OTSetNonBlocking( itsEndpoint ); }
+			void SetNonblocking  ()  { Nitrogen::OTSetNonBlocking( itsEndpoint ); }
+			void ClearNonblocking()  { Nitrogen::OTSetBlocking   ( itsEndpoint ); }
 			
 			void Bind( const sockaddr& local, socklen_t len );
 			

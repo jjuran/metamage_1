@@ -1370,16 +1370,14 @@ namespace Genie
 		}
 	}
 	
-	void TryAgainLater( bool isBlocking )
+	void TryAgainLater( bool isNonblocking )
 	{
-		if ( isBlocking )
-		{
-			Yield();
-		}
-		else
+		if ( isNonblocking )
 		{
 			throw io::no_input_pending();
 		}
+		
+		Yield();
 	}
 	
 }

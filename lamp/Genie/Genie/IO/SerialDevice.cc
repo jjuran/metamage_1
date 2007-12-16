@@ -133,7 +133,7 @@ namespace Genie
 		
 		while ( !same.expired() )
 		{
-			TryAgainLater( !nonblocking );
+			TryAgainLater( nonblocking );
 		}
 		
 		boost::shared_ptr< IOHandle > result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )
