@@ -219,7 +219,7 @@ namespace Genie
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
-		static FSNode ConvertToFSNode( typename Map::value_type mapping );
+		static FSNode ConvertToFSNode( const typename Map::value_type& mapping );
 		
 		FSNode operator()( typename Map::value_type mapping ) const  { return ConvertToFSNode( mapping ); }
 	};
@@ -385,7 +385,7 @@ namespace Genie
 	}
 	
 	template < class Metadetails >
-	FSNode dev_TTY_Details< Metadetails >::ConvertToFSNode( typename Map::value_type mapping )
+	FSNode dev_TTY_Details< Metadetails >::ConvertToFSNode( const typename Map::value_type& mapping )
 	{
 		TerminalID id = mapping.first;
 		
