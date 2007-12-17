@@ -7,7 +7,6 @@
 
 // Nucleus
 #include "Nucleus/Convert.h"
-#include "Nucleus/LinkedListContainer.h"
 
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
