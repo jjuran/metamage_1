@@ -10,14 +10,8 @@
 #include <MachineExceptions.h>
 #endif
 
-// Standard C/C++
-//#include <cstdio>
-
 // Standard C
 #include <setjmp.h>
-
-// Backtrace
-#include "Backtrace/MemoryLimit.hh"
 
 
 namespace Backtrace
@@ -183,11 +177,6 @@ namespace Backtrace
 		
 	#if defined( __MACOS__ ) && !defined( __MACH__ )
 		
-		if ( frame >= MemoryLimit() )
-		{
-			return;
-		}
-		
 		if ( *((unsigned long*) frame - 1) == 0xffffffff )
 		{
 			const StackFramePPC* switchFrame = SwitchBackToPPCFrom68K( frame );
@@ -228,11 +217,6 @@ namespace Backtrace
 		}
 		
 	#if defined( __MACOS__ ) && !defined( __MACH__ )
-		
-		if ( frame >= MemoryLimit() )
-		{
-			return;
-		}
 		
 		if ( level > 100 )
 		{
