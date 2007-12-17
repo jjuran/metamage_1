@@ -34,7 +34,14 @@
 namespace poseven
 {
 	
-	typedef Nucleus::ID< class fd_t_tag, int >::Type fd_t;
+	enum fd_t
+	{
+		stdin_fileno  = STDIN_FILENO,
+		stdout_fileno = STDOUT_FILENO,
+		stderr_fileno = STDERR_FILENO,
+		
+		fd_t_max = Nucleus::Enumeration_Traits< int >::max
+	};
 	
 }
 
@@ -61,17 +68,6 @@ namespace Nucleus
 
 namespace poseven
 {
-	
-	namespace constants
-	{
-		
-		const static fd_t stdin_fileno  = fd_t( STDIN_FILENO  );
-		const static fd_t stdout_fileno = fd_t( STDOUT_FILENO );
-		const static fd_t stderr_fileno = fd_t( STDERR_FILENO );
-		
-	}
-	
-	using namespace constants;
 	
 	inline void close( Nucleus::Owned< fd_t > fd )
 	{
