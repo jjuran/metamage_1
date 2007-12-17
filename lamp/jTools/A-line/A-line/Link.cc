@@ -184,11 +184,13 @@ namespace ALine
 		{
 			std::string libOutput = ProjectLibrariesDirPath( project.Name(), gTargetName );
 			
-			std::string lib = libOutput / project.Name() + gLibraryExtension;
+			std::string libFilename = project.Name() + gLibraryExtension;
+			
+			std::string lib = libOutput / libFilename;
 			
 			if ( io::item_exists( lib ) )
 			{
-				outUsed->push_back( lib );
+				outUsed->push_back( libFilename );
 			}
 		}
 	}
@@ -319,8 +321,10 @@ namespace ALine
 		
 		std::string objectsDir = ProjectObjectsDirPath( project.Name(), targetName );
 		
-		std::string outputDir  = project.Product() == productStaticLib ? ProjectLibrariesDirPath( project.Name(), targetName )
-		                                                               : ProjectOutputDirPath   ( project.Name(), targetName );
+		std::string libsDir = ProjectLibrariesDirPath( "", targetName );
+		
+		std::string outputDir  = project.Product() == productStaticLib ? libsDir
+		                                                               : ProjectOutputDirPath( project.Name(), targetName );
 		
 		std::string outFile = outputDir / linkName;
 		bool outFileExists = io::item_exists( outFile );
@@ -355,8 +359,12 @@ namespace ALine
 		
 		std::string expeditedLib;
 		
+		std::string libSearch;
+		
 		if ( needLibs )
 		{
+			libSearch = "-L'" + libsDir + "'";
+			
 			std::vector< std::string > usedLibFiles = GetUsedLibraries( project, targetName );
 			
 			// As long as needToLink is false, continue checking dates.
@@ -369,7 +377,9 @@ namespace ALine
 				                      usedLibFiles.end(),
 				                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                    outFileDate ),
-				                                      more::ptr_fun( ModifiedDate ) ) );
+				                                      more::compose1( more::ptr_fun( ModifiedDate ),
+				                                                      std::bind1st( std::ptr_fun( io::path_descent_operators::operator/ ),
+				                                                                    libsDir ) ) ) );
 				
 				needToLink = found != usedLibFiles.end();
 			}
@@ -378,7 +388,7 @@ namespace ALine
 			{
 				for ( std::vector< std::string >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
 				{
-					if ( io::get_filename_string( *it ) == "Orion.lib" )
+					if ( *it == "Orion.lib" )
 					{
 						expeditedLib = q( *it );
 						
@@ -452,7 +462,7 @@ namespace ALine
 		
 		command << q( outFile );
 		
-		command << expeditedLib << objectFilePaths << link;
+		command << libSearch << expeditedLib << objectFilePaths << link;
 		
 		if ( gnu )
 		{
