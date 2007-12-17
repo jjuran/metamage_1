@@ -150,18 +150,16 @@ namespace Backtrace
 	}
 	
 	
-	static const StackFramePPC* SwitchBackToPPCFrom68K( const StackFrame68K* frame )
+	inline const StackFramePPC* MixedModeSwitchFrame( const StackFrame68K* frame )
 	{
-		const StackFramePPC* switchFrame = (const StackFramePPC*) frame;
-		
-		return switchFrame;
+		return *((unsigned long*) frame - 1) == 0xffffffff ? (const StackFramePPC*) frame
+		                                                   : NULL;
 	}
 	
-	static const StackFrame68K* SwitchBackTo68KFromPPC( const StackFramePPC* frame )
+	inline const StackFrame68K* MixedModeSwitchFrame( const StackFramePPC* frame )
 	{
-		const StackFrame68K* switchFrame = (const StackFrame68K*) ((long) frame - 1);
-		
-		return switchFrame;
+		return (long) frame & 0x00000001 ? (const StackFrame68K*) ((long) frame - 1)
+		                                 : NULL;
 	}
 	
 	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< ReturnAddress >& result );
@@ -177,10 +175,8 @@ namespace Backtrace
 		
 	#if defined( __MACOS__ ) && !defined( __MACH__ )
 		
-		if ( *((unsigned long*) frame - 1) == 0xffffffff )
+		if ( const StackFramePPC* switchFrame = MixedModeSwitchFrame( frame ) )
 		{
-			const StackFramePPC* switchFrame = SwitchBackToPPCFrom68K( frame );
-			
 			CrawlStackPPC( level, switchFrame, result );
 			
 			return;
@@ -223,10 +219,8 @@ namespace Backtrace
 			return;
 		}
 		
-		if ( (long) frame & 0x00000001 )
+		if ( const StackFrame68K* switchFrame = MixedModeSwitchFrame( frame ) )
 		{
-			const StackFrame68K* switchFrame = SwitchBackTo68KFromPPC( frame );
-			
 			CrawlStack68K( level, switchFrame, result );
 			
 			return;
