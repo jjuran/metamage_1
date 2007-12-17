@@ -187,8 +187,17 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items )
 			// We're done
 			return;
 		}
-		catch ( const N::ProcNotFound& )
+		catch ( const N::ProcNotFound& err )
 		{
+		#ifdef __MWERKS__
+			
+			if ( err != N::ProcNotFound() )
+			{
+				throw;
+			}
+			
+		#endif
+			
 			// No such process
 			// appFile is already set
 		}
@@ -211,8 +220,17 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items )
 			// We're done
 			return;
 		}
-		catch ( const N::ProcNotFound& )
+		catch ( const N::ProcNotFound& err )
 		{
+		#ifdef __MWERKS__
+			
+			if ( err != N::ProcNotFound() )
+			{
+				throw;
+			}
+			
+		#endif
+			
 			// No such process
 			appFile = N::DTGetAPPL( signature );
 		}
