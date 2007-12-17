@@ -176,6 +176,7 @@ namespace ALine
 	// FIXME:  Prebuilt libraries do not work for multiple targets.
 	// This needs to be a function of target, not project.
 	static TargetName gTargetName;
+	static std::string gLibraryPrefix;
 	static std::string gLibraryExtension;
 	
 	static void GetProjectLib( const Project& project, std::vector< std::string >* const& outUsed )
@@ -184,7 +185,7 @@ namespace ALine
 		{
 			std::string libOutput = ProjectLibrariesDirPath( project.Name(), gTargetName );
 			
-			std::string libFilename = project.Name() + gLibraryExtension;
+			std::string libFilename = gLibraryPrefix + project.Name() + gLibraryExtension;
 			
 			std::string lib = libOutput / libFilename;
 			
@@ -240,6 +241,7 @@ namespace ALine
 		
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
 		
+		gLibraryPrefix    = gnu ? "lib" : "";
 		gLibraryExtension = gnu ? ".a" : ".lib";
 		
 		const bool machO = targetInfo.platform & CD::runtimeMachO;
@@ -268,7 +270,7 @@ namespace ALine
 		{
 			case productStaticLib:
 				command = cmdgen.LibraryMakerName();
-				linkName = project.Name() + gLibraryExtension;
+				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
 				needLibs = false;
 				gccSupported = true;
 				break;
