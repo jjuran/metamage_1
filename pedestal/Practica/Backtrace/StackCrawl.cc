@@ -13,6 +13,9 @@
 // Standard C
 #include <setjmp.h>
 
+// Backtrace
+#include "Backtrace/MemoryLimit.hh"
+
 
 namespace Backtrace
 {
@@ -213,6 +216,11 @@ namespace Backtrace
 		}
 		
 	#if defined( __MACOS__ ) && !defined( __MACH__ )
+		
+		if ( frame >= MemoryLimit() )
+		{
+			return;
+		}
 		
 		if ( level > 100 )
 		{
