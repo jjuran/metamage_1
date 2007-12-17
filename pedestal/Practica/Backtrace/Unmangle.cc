@@ -197,6 +197,33 @@ namespace Backtrace
 	
 	static std::string ReadSymbol( const char*& p, const char* end );
 	
+	static std::string ReadInteger( const char* begin, const char* end )
+	{
+		if ( *begin != '-' )
+		{
+			unsigned x = std::atoi( begin );  // *end is either ',' or '>'
+			
+			char code[] = "'code'";
+			
+			code[4] =  x        & 0xff;
+			code[3] = (x >>= 8) & 0xff;
+			code[2] = (x >>= 8) & 0xff;
+			code[1] = (x >>= 8) & 0xff;
+			
+			bool isCode =    std::isprint( code[1] )
+			              && std::isprint( code[2] )
+			              && std::isprint( code[3] )
+			              && std::isprint( code[4] );
+			
+			if ( isCode )
+			{
+				return code;
+			}
+		}
+		
+		return std::string( begin, end );
+	}
+	
 	static std::string ReadTemplateParameter( const char*& p, const char* end )
 	{
 		if ( *p == '&' )
@@ -215,7 +242,7 @@ namespace Backtrace
 			
 			if ( *p == ','  ||  *p == '>' )
 			{
-				return std::string( integer, p );
+				return ReadInteger( integer, p );
 			}
 			
 			p = integer;  // backtrack
