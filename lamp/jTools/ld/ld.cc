@@ -331,9 +331,8 @@ namespace jTools
 							if ( ppc )
 							{
 								// 	For CFMLateImport support
-								product += " -b"                                          // don't pack the data segment
-								           " -export sym=Initialize_SavedCFragInitBlock"  // we need to export something
-								           " -init Initialize_SavedCFragInitBlock";       // save fragment data for later
+								product += " -b"                                     // don't pack the data segment
+								           " -init Initialize_SavedCFragInitBlock";  // save fragment data for later
 							}
 							
 							continue;
