@@ -378,7 +378,7 @@ namespace ALine
 				                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                    outFileDate ),
 				                                      more::compose1( more::ptr_fun( ModifiedDate ),
-				                                                      std::bind1st( std::ptr_fun( io::path_descent_operators::operator/ ),
+				                                                      std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( io::path_descent_operators::operator/ ) ),
 				                                                                    libsDir ) ) ) );
 				
 				needToLink = found != usedLibFiles.end();
