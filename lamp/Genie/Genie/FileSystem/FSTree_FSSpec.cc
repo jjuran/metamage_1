@@ -204,8 +204,35 @@ namespace Genie
 	}
 	
 	
+	class FSTree_J_Symlink : public FSTree
+	{
+		public:
+			bool IsLink() const  { return true; }
+			
+			std::string Name() const  { return NN::Convert< std::string >( NN::Convert< FSSpec >( FindJDirectory() ).name ); }
+			
+			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( FindJDirectory() ) ) ); }
+			
+			std::string ReadLink() const  { return "/"; }
+			
+			FSTreePtr ResolveLink() const  { return FSRoot(); }
+	};
+	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
+		try
+		{
+			N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( item );
+			
+			if ( dir == FindJDirectory() )
+			{
+				return GetSingleton< FSTree_J_Symlink >();
+			}
+		}
+		catch ( ... )
+		{
+		}
+		
 		return FSTreePtr( new FSTree_FSSpec( item ) );
 	}
 	
@@ -239,20 +266,9 @@ namespace Genie
 	
 	static FSNode MakeFSNode_FSSpec( const FSSpec& item )
 	{
-		std::string name = UnixFromMacName( NN::Convert< std::string >( item.name ) );
+		std::string name = UnixFromMacName( io::get_filename_string( item ) );
 		
 		FSTreePtr tree( new FSTree_FSSpec( item ) );
-		
-		return FSNode( name, tree );
-	}
-	
-	static FSNode MakeFSNode_Volume( N::FSVolumeRefNum vRefNum )
-	{
-		FSSpec volume = N::FSMakeFSSpec( vRefNum, N::FSDirID( long( fsRtDirID ) ), "\p" );
-		
-		std::string name = UnixFromMacName( io::get_filename_string( volume ) );
-		
-		FSTreePtr tree( new FSTree_FSSpec( volume ) );
 		
 		return FSNode( name, tree );
 	}
@@ -476,7 +492,7 @@ namespace Genie
 		
 		FSSpec item = target / MacFromUnixName( name );
 		
-		return FSTreePtr( new FSTree_FSSpec( item ) );
+		return FSTreeFromFSSpec( item );
 	}
 	
 	void FSTree_FSSpec::IterateIntoCache( FSTreeCache& cache ) const
@@ -505,7 +521,7 @@ namespace Genie
 			
 			bool IsLink() const  { return true; }
 			
-			std::string Name() const  { return NN::Convert< std::string >( N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" ).name ); }
+			std::string Name() const  { return io::get_filename_string( N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" ) ); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_Volumes >(); }
 			
