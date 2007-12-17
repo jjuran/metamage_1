@@ -24,6 +24,9 @@
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Str.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Nitrogen Extras / Iteration
 #include "Iteration/AEDescListItems.h"
 
@@ -43,6 +46,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace p7 = poseven;
 namespace NX = NitrogenExtras;
 namespace Div = Divergence;
 namespace O = Orion;
@@ -259,11 +263,20 @@ int O::Main( int argc, char const *const argv[] )
 		{
 			FSSpec item = ResolvePathname( pathname, gUseMacPathnames );
 			
+			if ( !io::item_exists( item ) )
+			{
+				throw p7::enoent();
+			}
+			
 			itemsToOpen.push_back( item );
 		}
-		catch ( ... )
+		catch ( const N::OSStatus& err )
 		{
-			// do nothing at the moment
+			std::fprintf( stderr, "open: %s: OSStatus %d\n", pathname, err.Get() );
+		}
+		catch ( const p7::errno_t& errnum )
+		{
+			std::fprintf( stderr, "open: %s: %s\n", pathname, std::strerror( errnum ) );
 		}
 	}
 	
