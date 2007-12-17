@@ -242,9 +242,13 @@ namespace jTools
 	{
 		typedef std::vector< const char* >::const_iterator Iter;
 		
+		std::string filename = lib;
+		
+		filename += ".lib";
+		
 		for ( Iter it = gLibraryDirs.begin();  it != gLibraryDirs.end();  ++it )
 		{
-			std::string pathname = std::string( *it ) / lib;
+			std::string pathname = std::string( *it ) / filename;
 			
 			if ( io::file_exists( pathname ) )
 			{
@@ -391,7 +395,13 @@ namespace jTools
 						break;
 					
 					case 'l':
-						continue;
+						translatedPath = FindLibrary( arg + 2 );
+						
+						translatedPath = QuotedMacPathFromPOSIXPath( translatedPath.c_str() );
+						
+						arg = translatedPath.c_str();
+						
+						break;
 					
 					case 'L':
 						RememberLibraryDir( arg + 2 );
