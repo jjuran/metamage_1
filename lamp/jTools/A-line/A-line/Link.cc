@@ -179,6 +179,21 @@ namespace ALine
 	static std::string gLibraryPrefix;
 	static std::string gLibraryExtension;
 	
+	static std::string GetPathnameOfBuiltLibrary( const std::string& name )
+	{
+		return ProjectLibrariesDirPath( "", gTargetName ) / gLibraryPrefix + name + gLibraryExtension;
+	}
+	
+	static std::string GetLibraryLinkOption( const std::string& name )
+	{
+		return "-l" + name;
+	}
+	
+	static bool ProjectHasLib( const Project& project )
+	{
+		return project.Product() == productStaticLib  &&  io::item_exists( GetPathnameOfBuiltLibrary( project.Name() ) );
+	}
+	
 	static void GetProjectLib( const Project& project, std::vector< std::string >* const& outUsed )
 	{
 		if ( project.Product() == productStaticLib )
@@ -191,17 +206,25 @@ namespace ALine
 			
 			if ( io::item_exists( lib ) )
 			{
-				outUsed->push_back( libFilename );
+				outUsed->push_back( lib );
 			}
 		}
 	}
 	
-	static std::vector< std::string > GetUsedLibraries( const Project& project, const TargetName& targetName )
+	static void RemoveNonLibs( std::vector< ProjName >& usedProjects, const TargetName& targetName )
+	{
+		gTargetName = targetName;
+		
+		usedProjects.resize( std::remove_if( usedProjects.begin(),
+		                                     usedProjects.end(),
+		                                     more::compose1( std::not1( more::ptr_fun( ProjectHasLib ) ),
+		                                                     more::ptr_fun( GetProject ) ) ) - usedProjects.begin() );
+	}
+	
+	static std::vector< std::string > GetUsedLibraries( const std::vector< ProjName >& usedProjects, const TargetName& targetName )
 	{
 		gTargetName = targetName;
 		std::vector< std::string > usedLibFiles;
-		
-		const std::vector< ProjName >& usedProjects = project.AllUsedProjects();
 		
 		std::for_each( usedProjects.begin(),
 		               usedProjects.end() - 1,
@@ -367,7 +390,13 @@ namespace ALine
 		{
 			libSearch = "-L'" + libsDir + "'";
 			
-			std::vector< std::string > usedLibFiles = GetUsedLibraries( project, targetName );
+			std::vector< ProjName > usedProjects = project.AllUsedProjects();
+			
+			usedProjects.pop_back();  // we're last; drop us
+			
+			RemoveNonLibs( usedProjects, targetName );
+			
+			std::vector< std::string > usedLibFiles = GetUsedLibraries( usedProjects, targetName );
 			
 			// As long as needToLink is false, continue checking dates.
 			// Stop as soon as we know we have to link (or we run out).
@@ -375,22 +404,21 @@ namespace ALine
 			{
 				std::vector< std::string >::const_iterator found;
 				
-				found = std::find_if( usedLibFiles.begin(),
-				                      usedLibFiles.end(),
+				found = std::find_if( usedProjects.begin(),
+				                      usedProjects.end(),
 				                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                    outFileDate ),
 				                                      more::compose1( more::ptr_fun( ModifiedDate ),
-				                                                      std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( io::path_descent_operators::operator/ ) ),
-				                                                                    libsDir ) ) ) );
+				                                                      more::ptr_fun( GetPathnameOfBuiltLibrary ) ) ) );
 				
-				needToLink = found != usedLibFiles.end();
+				needToLink = found != usedProjects.end();
 			}
 			
 			if ( !gnu )
 			{
 				for ( std::vector< std::string >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
 				{
-					if ( *it == "Orion.lib" )
+					if ( io::get_filename_string( *it ) == "Orion.lib" )
 					{
 						expeditedLib = q( *it );
 						
@@ -405,10 +433,10 @@ namespace ALine
 			
 			// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
 			// Somehow, this is actually required to actually link anything with Mach-O.
-			link << join( usedLibFiles.rbegin(),
-			              usedLibFiles.rend(),
+			link << join( usedProjects.rbegin(),
+			              usedProjects.rend(),
 			              " ",
-			              std::ptr_fun( q ) );
+			              std::ptr_fun( GetLibraryLinkOption ) );
 			
 			// FIXME:  This is a hack
 			if ( !gnu )
