@@ -164,10 +164,14 @@ static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 	}
 	catch ( const N::ErrOSAScriptError& err )
 	{
-		if ( err.Get() != errOSAScriptError )
+	#ifdef __MWERKS__
+		
+		if ( err != N::ErrOSAScriptError() )
 		{
 			throw;
 		}
+		
+	#endif
 	}
 	
 	ReportAndThrowScriptError( scriptingComponent, step );
@@ -328,8 +332,17 @@ int O::Main( int argc, argv_t argv )
 			p7::write( p7::stdout_fileno, output.data(), output.size() );
 		}
 	}
-	catch ( const N::ErrOSAScriptError& )
+	catch ( const N::ErrOSAScriptError& err )
 	{
+	#ifdef __MWERKS__
+		
+		if ( err != N::ErrOSAScriptError() )
+		{
+			throw;
+		}
+		
+	#endif
+		
 		ReportAndThrowScriptError( script.Get().component, "execution" );
 	}
 	
