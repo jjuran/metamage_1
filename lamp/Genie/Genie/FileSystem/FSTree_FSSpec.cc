@@ -91,12 +91,12 @@ namespace Genie
 	class FSTree_FSSpec : public FSTree_Mappable
 	{
 		private:
-			FSSpec fileSpec;
+			FSSpec itsFileSpec;
 		
 		public:
-			FSTree_FSSpec( const FSSpec& file ) : fileSpec( file )  {}
+			FSTree_FSSpec( const FSSpec& file ) : itsFileSpec( file )  {}
 			
-			FSTree_FSSpec( const N::FSDirSpec& dir ) : fileSpec( NN::Convert< FSSpec >( dir ) )  {}
+			FSTree_FSSpec( const N::FSDirSpec& dir ) : itsFileSpec( NN::Convert< FSSpec >( dir ) )  {}
 			
 			bool Exists() const;
 			bool IsFile() const;
@@ -314,17 +314,17 @@ namespace Genie
 	
 	bool FSTree_FSSpec::Exists() const
 	{
-		return io::item_exists( fileSpec );
+		return io::item_exists( itsFileSpec );
 	}
 	
 	bool FSTree_FSSpec::IsFile() const
 	{
-		return io::file_exists( fileSpec );
+		return io::file_exists( itsFileSpec );
 	}
 	
 	bool FSTree_FSSpec::IsDirectory() const
 	{
-		return io::directory_exists( fileSpec );
+		return io::directory_exists( itsFileSpec );
 	}
 	
 	bool FSTree_FSSpec::IsLink() const
@@ -333,7 +333,7 @@ namespace Genie
 		
 		try
 		{
-			N::FSpGetCatInfo( fileSpec, paramBlock );
+			N::FSpGetCatInfo( itsFileSpec, paramBlock );
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -358,7 +358,7 @@ namespace Genie
 	{
 		try
 		{
-			return N::FSDirSpec( fileSpec ) == FindJDirectory();
+			return N::FSDirSpec( itsFileSpec ) == FindJDirectory();
 		}
 		catch ( ... )
 		{
@@ -375,12 +375,12 @@ namespace Genie
 			return "";
 		}
 		
-		if ( fileSpec.parID == fsRtParID )
+		if ( itsFileSpec.parID == fsRtParID )
 		{
 			return "mnt";
 		}
 		
-		return io::get_filename_string( fileSpec );
+		return io::get_filename_string( itsFileSpec );
 	}
 	
 	FSTreePtr FSTree_FSSpec::Parent() const
@@ -390,32 +390,32 @@ namespace Genie
 			return FSRoot();
 		}
 		
-		if ( fileSpec.parID == fsRtParID )
+		if ( itsFileSpec.parID == fsRtParID )
 		{
-			return Get_sys_mac_vol_N( N::FSVolumeRefNum( fileSpec.vRefNum ) );
+			return Get_sys_mac_vol_N( N::FSVolumeRefNum( itsFileSpec.vRefNum ) );
 		}
 		
-		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( fileSpec ) ) );
+		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( itsFileSpec ) ) );
 	}
 	
 	FSSpec FSTree_FSSpec::GetFSSpec() const
 	{
-		return fileSpec;
+		return itsFileSpec;
 	}
 	
 	void FSTree_FSSpec::Stat( struct ::stat& sb ) const
 	{
-		StatFile( fileSpec, &sb, false );
+		StatFile( itsFileSpec, &sb, false );
 	}
 	
 	void FSTree_FSSpec::ChangeMode( mode_t mode ) const
 	{
-		ChangeFileMode( fileSpec, mode );
+		ChangeFileMode( itsFileSpec, mode );
 	}
 	
 	void FSTree_FSSpec::Delete() const
 	{
-		N::FSpDelete( fileSpec );
+		N::FSpDelete( itsFileSpec );
 	}
 	
 	
@@ -431,7 +431,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_FSSpec::ResolveLink() const
 	{
-		FSSpec target = N::ResolveAliasFile( fileSpec, true );
+		FSSpec target = N::ResolveAliasFile( itsFileSpec, true );
 		
 		return FSTreePtr( new FSTree_FSSpec( target ) );
 	}
@@ -443,14 +443,14 @@ namespace Genie
 		
 		if ( creating )
 		{
-			if ( !io::file_exists( fileSpec ) )
+			if ( !io::file_exists( itsFileSpec ) )
 			{
 				// No need to convert name -- for examination only
-				std::string name = io::get_filename_string( fileSpec );
+				std::string name = io::get_filename_string( itsFileSpec );
 				
 				N::FileSignature sig = PickFileSignatureForName( name );
 				
-				N::FSpCreate( fileSpec, sig );
+				N::FSpCreate( itsFileSpec, sig );
 			}
 			else if ( excluding )
 			{
@@ -466,24 +466,24 @@ namespace Genie
 	{
 		const bool notRsrcFork = false;
 		
-		FSSpec target = N::ResolveAliasFile( fileSpec, true );
+		FSSpec target = N::ResolveAliasFile( itsFileSpec, true );
 		
 		return OpenFSSpec( target, flags, notRsrcFork );
 	}
 	
 	void FSTree_FSSpec::Exec( const char* const argv[], const char* const envp[] ) const
 	{
-		CurrentProcess().Exec( fileSpec, argv, envp );
+		CurrentProcess().Exec( itsFileSpec, argv, envp );
 	}
 	
 	void FSTree_FSSpec::CreateDirectory( mode_t /*mode*/ ) const
 	{
-		N::FSpDirCreate( fileSpec );
+		N::FSpDirCreate( itsFileSpec );
 	}
 	
 	FSTreePtr FSTree_FSSpec::Lookup_Regular( const std::string& name ) const
 	{
-		FSSpec target = N::ResolveAliasFile( fileSpec, true );
+		FSSpec target = N::ResolveAliasFile( itsFileSpec, true );
 		
 		if ( io::file_exists( target )  &&  name == "rsrc" )
 		{
@@ -497,7 +497,7 @@ namespace Genie
 	
 	void FSTree_FSSpec::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		N::FSDirSpec dir( fileSpec );
+		N::FSDirSpec dir( itsFileSpec );
 		
 		N::FSSpecContents_Container contents = N::FSContents( dir );
 		
