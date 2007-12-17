@@ -213,7 +213,12 @@ namespace Backtrace
 				continue;
 			}
 			
-			return std::string( integer, p );
+			if ( *p == ','  ||  *p == '>' )
+			{
+				return std::string( integer, p );
+			}
+			
+			p = integer;  // backtrack
 		}
 		
 		return ReadType( p, end );
