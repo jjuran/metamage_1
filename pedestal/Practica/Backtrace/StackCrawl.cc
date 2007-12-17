@@ -206,6 +206,33 @@ namespace Backtrace
 	
 #endif
 	
+	
+#if defined( __MACOS__ ) && !defined( __MACH__ )
+	
+	static bool AddressExceedsMemoryLimit( const StackFramePPC* frame )
+	{
+		static bool visited     = false;
+		static bool shouldCheck = true;
+		
+		bool failed = shouldCheck  &&  frame >= MemoryLimit();
+		
+		if ( !visited )
+		{
+			visited = true;
+			
+			// If the first return address fails the memory limit check,
+			// then the check is worthless.
+			// Only continue checking if the first check passes.
+			shouldCheck = !failed;
+			
+			return false;
+		}
+		
+		return failed;
+	}
+	
+#endif
+	
 #if defined( __POWERPC__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
 	
 	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< ReturnAddress >& result )
@@ -217,7 +244,7 @@ namespace Backtrace
 		
 	#if defined( __MACOS__ ) && !defined( __MACH__ )
 		
-		if ( frame >= MemoryLimit() )
+		if ( AddressExceedsMemoryLimit( frame ) )
 		{
 			return;
 		}
