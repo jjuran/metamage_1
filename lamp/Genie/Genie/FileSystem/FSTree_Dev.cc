@@ -8,6 +8,9 @@
 // Standard C
 #include "errno.h"
 
+// POSIX
+#include "fcntl.h"
+
 // Nucleus
 #include "Nucleus/Convert.h"
 
