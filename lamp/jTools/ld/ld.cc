@@ -256,7 +256,7 @@ namespace jTools
 			}
 		}
 		
-		std::fprintf( stderr, "ld: can't find library: %s\n", lib.c_str() );
+		std::fprintf( stderr, "ld: can't find library: %s\n", lib );
 		
 		O::ThrowExitStatus( 1 );
 		
