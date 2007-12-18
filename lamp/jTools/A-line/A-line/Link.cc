@@ -89,9 +89,16 @@ namespace ALine
 	}
 	
 	
-	static std::string FindImport( const std::string& name, const Project& project )
+	static std::string MakeLibraryPathname( const std::string& projectFolder, const std::string& libName )
 	{
-		return name;
+		if ( libName[0] == '-' )
+		{
+			return libName;
+		}
+		
+		std::string pathname = projectFolder / libName;
+		
+		return io::file_exists( pathname ) ? pathname : libName;
 	}
 	
 	static void CopyImports( const ProjName& projName,
@@ -101,31 +108,11 @@ namespace ALine
 		
 		std::vector< FileName > importNames( project.LibImports() );
 		
-		std::copy( importNames.begin(),
-		           importNames.end(),
-		           inserter );
-	}
-	
-	static std::string OptionToSearchProjectForLib( const std::string& projectName )
-	{
-		Project& project = GetProject( projectName );
-		
-		if ( project.LibImports().empty() )
-		{
-			return "";
-		}
-		
-		return "-L'" + project.ProjectFolder() + "'";
-	}
-	
-	static std::string GetImportLocationOptions( const Project& project )
-	{
-		const std::vector< ProjName >& used = project.AllUsedProjects();
-		
-		return join( used.begin(),
-		             used.end(),
-		             " ",
-		             std::ptr_fun( OptionToSearchProjectForLib ) );
+		std::transform( importNames.begin(),
+		                importNames.end(),
+		                inserter,
+		                std::bind1st( more::ptr_fun( MakeLibraryPathname ),
+		                              project.ProjectFolder() ) );
 	}
 	
 	static std::vector< std::string > GetAllImports( const Project& project )
@@ -153,7 +140,7 @@ namespace ALine
 		                 " ",
 		                 std::ptr_fun( MakeImport ) );
 		
-		return GetImportLocationOptions( project ) + " " + imports;
+		return imports;
 	}
 	
 	static std::string GetFrameworks( const Project& project )
@@ -173,66 +160,30 @@ namespace ALine
 		return frameworks;
 	}
 	
-	// FIXME:  Prebuilt libraries do not work for multiple targets.
-	// This needs to be a function of target, not project.
-	static TargetName gTargetName;
-	static std::string gLibraryPrefix;
-	static std::string gLibraryExtension;
-	
-	static std::string GetPathnameOfBuiltLibrary( const std::string& name )
-	{
-		return ProjectLibrariesDirPath( "", gTargetName ) / gLibraryPrefix + name + gLibraryExtension;
-	}
-	
 	static std::string GetLibraryLinkOption( const std::string& name )
 	{
 		return "-l" + name;
 	}
 	
-	static bool ProjectHasLib( const Project& project )
+	static std::string gLibraryPrefix;
+	static std::string gLibraryExtension;
+	
+	static std::string GetPathnameOfBuiltLibrary( const std::string& name, const std::string& targetName )
 	{
-		return project.Product() == productStaticLib  &&  io::item_exists( GetPathnameOfBuiltLibrary( project.Name() ) );
+		return ProjectLibrariesDirPath( "", targetName ) / gLibraryPrefix + name + gLibraryExtension;
 	}
 	
-	static void GetProjectLib( const Project& project, std::vector< std::string >* const& outUsed )
+	static bool ProjectBuildsLib( const Project& project )
 	{
-		if ( project.Product() == productStaticLib )
-		{
-			std::string libOutput = ProjectLibrariesDirPath( project.Name(), gTargetName );
-			
-			std::string libFilename = gLibraryPrefix + project.Name() + gLibraryExtension;
-			
-			std::string lib = libOutput / libFilename;
-			
-			if ( io::item_exists( lib ) )
-			{
-				outUsed->push_back( lib );
-			}
-		}
+		return project.Product() == productStaticLib;
 	}
 	
-	static void RemoveNonLibs( std::vector< ProjName >& usedProjects, const TargetName& targetName )
+	static void RemoveNonLibs( std::vector< ProjName >& usedProjects )
 	{
-		gTargetName = targetName;
-		
 		usedProjects.resize( std::remove_if( usedProjects.begin(),
 		                                     usedProjects.end(),
-		                                     more::compose1( std::not1( more::ptr_fun( ProjectHasLib ) ),
+		                                     more::compose1( std::not1( more::ptr_fun( ProjectBuildsLib ) ),
 		                                                     more::ptr_fun( GetProject ) ) ) - usedProjects.begin() );
-	}
-	
-	static std::vector< std::string > GetUsedLibraries( const std::vector< ProjName >& usedProjects, const TargetName& targetName )
-	{
-		gTargetName = targetName;
-		std::vector< std::string > usedLibFiles;
-		
-		std::for_each( usedProjects.begin(),
-		               usedProjects.end() - 1,
-		               more::compose1( std::bind2nd( more::ptr_fun( GetProjectLib ),
-		                                             &usedLibFiles ),
-		                               more::ptr_fun( GetProject ) ) );
-		
-		return usedLibFiles;
 	}
 	
 	static std::string DirCreate_Idempotent( const std::string& dir )
@@ -394,9 +345,7 @@ namespace ALine
 			
 			usedProjects.pop_back();  // we're last; drop us
 			
-			RemoveNonLibs( usedProjects, targetName );
-			
-			std::vector< std::string > usedLibFiles = GetUsedLibraries( usedProjects, targetName );
+			RemoveNonLibs( usedProjects );
 			
 			// As long as needToLink is false, continue checking dates.
 			// Stop as soon as we know we have to link (or we run out).
@@ -409,22 +358,23 @@ namespace ALine
 				                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                    outFileDate ),
 				                                      more::compose1( more::ptr_fun( ModifiedDate ),
-				                                                      more::ptr_fun( GetPathnameOfBuiltLibrary ) ) ) );
+				                                                      std::bind2nd( more::ptr_fun( GetPathnameOfBuiltLibrary ),
+				                                                                    targetName ) ) ) );
 				
 				needToLink = found != usedProjects.end();
 			}
 			
 			if ( !gnu )
 			{
-				for ( std::vector< std::string >::iterator it = usedLibFiles.begin();  it != usedLibFiles.end();  ++it )
+				for ( std::vector< std::string >::iterator it = usedProjects.begin();  it != usedProjects.end();  ++it )
 				{
-					if ( io::get_filename_string( *it ) == "Orion.lib" )
+					if ( *it == "Orion" )
 					{
-						expeditedLib = q( *it );
+						expeditedLib = GetLibraryLinkOption( *it );
 						
-						std::copy( it + 1, usedLibFiles.end(), it );
+						std::copy( it + 1, usedProjects.end(), it );
 						
-						usedLibFiles.resize( usedLibFiles.size() - 1 );
+						usedProjects.resize( usedProjects.size() - 1 );
 						
 						break;
 					}
