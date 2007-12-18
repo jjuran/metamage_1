@@ -256,7 +256,12 @@ namespace jTools
 			}
 		}
 		
-		return FindSystemLibrary( lib );
+		std::fprintf( stderr, "ld: can't find library: %s\n", lib.c_str() );
+		
+		O::ThrowExitStatus( 1 );
+		
+		// Not reached
+		return filename;
 	}
 	
 	enum ProductType
@@ -428,18 +433,15 @@ namespace jTools
 				
 				if ( !pathname )
 				{
-					foundLib = FindLibrary( arg );
+					foundLib = FindSystemLibrary( arg );
 					
 					arg = foundLib.c_str();
 				}
 				
-				//if ( pathname )
-				{
-					// translate path
-					translatedPath = QuotedMacPathFromPOSIXPath( arg );
-					
-					arg = translatedPath.c_str();
-				}
+				// translate path
+				translatedPath = QuotedMacPathFromPOSIXPath( arg );
+				
+				arg = translatedPath.c_str();
 			}
 			
 			if ( arg[0] != '\0' )
