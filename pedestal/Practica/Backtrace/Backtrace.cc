@@ -14,6 +14,7 @@
 #include <cstdio>
 
 // Backtrace
+#include "Backtrace/Filter.hh"
 #include "Backtrace/MachO.hh"
 #include "Backtrace/MacsbugSymbols.hh"
 #include "Backtrace/TracebackTables.hh"
@@ -120,6 +121,8 @@ namespace Backtrace
 		result.itsUnmangledName = GetUnmangledSymbolName( call.addrNative );
 		
 	#endif
+		
+		result.itsUnmangledName = FilterSymbol( result.itsUnmangledName );
 		
 		return result;
 	}
