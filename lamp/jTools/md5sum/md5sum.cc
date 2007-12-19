@@ -54,7 +54,7 @@ int O::Main( int argc, argv_t argv )
 		try
 		{
 			std::printf( "%s  %s\n",
-			              MD5Sum( p7::open( argv[ i ], p7::o_rdonly ) ),
+			              MD5Sum( p7::open( argv[ i ], p7::o_rdonly ) ).c_str(),
 			                  argv[ i ] );
 		}
 		catch ( ... )
