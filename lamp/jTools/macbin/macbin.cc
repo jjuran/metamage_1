@@ -96,7 +96,7 @@ static void Decode( p7::fd_t input, const N::FSDirSpec& destDir )
 
 static std::string make_archive_name( std::string name )
 {
-	const char* extension = ".jbin";
+	const char* extension = ".mBin";
 	
 	if ( *name.rbegin() == '/' )
 	{
