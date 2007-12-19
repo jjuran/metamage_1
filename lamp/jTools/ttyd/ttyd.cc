@@ -6,12 +6,16 @@
 // POSIX
 #include <signal.h>
 #include <unistd.h>
+#include <vfork.h>
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 
 // Orion
 #include "Orion/Main.hh"
+
+
+extern "C" int ttypair( int filedes[ 2 ] );
 
 
 namespace p7 = poseven;
