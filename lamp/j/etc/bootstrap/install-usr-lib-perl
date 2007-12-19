@@ -1,15 +1,22 @@
 #!/bin/sh
 
+set -e
+
 cd /tmp
 
-echo "Downloading /usr/lib/perl archive..."
-htget -O http://lamp.sourceforge.net/experimental/usr-lib-perl.jbin.gz
+experimental="http://lamp.sourceforge.net/experimental/"
 
-echo "Decompressing archive..."
-gzip -d usr-lib-perl.jbin.gz
+archive=usr-lib-perl.mBin
+gzarchive=$archive.gz
 
-echo "Decoding archive..."
-macbin --decode usr-lib-perl.jbin /usr/lib/
+url=$experimental$gzarchive
 
-echo "Done."
+echo "htget -O $url"
+htget -O $url
+
+echo "gzip -d $gzarchive"
+gzip -d $gzarchive
+
+echo "macbin --decode $archive /usr/lib/"
+macbin --decode $archive /usr/lib/
 
