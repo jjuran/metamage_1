@@ -220,7 +220,7 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
-		try
+		if ( io::directory_exists( item ) )
 		{
 			N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( item );
 			
@@ -228,9 +228,6 @@ namespace Genie
 			{
 				return GetSingleton< FSTree_J_Symlink >();
 			}
-		}
-		catch ( ... )
-		{
 		}
 		
 		return FSTreePtr( new FSTree_FSSpec( item ) );
