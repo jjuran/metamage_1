@@ -14,20 +14,20 @@
 
 // Genie
 #include "Genie/IO/Conduit.hh"
+#include "Genie/IO/InternallyNonblocking.hh"
 #include "Genie/IO/TTY.hh"
 
 
 namespace Genie
 {
 	
-	class PseudoTTYHandle : public TTYHandle
+	class PseudoTTYHandle : public InternallyNonblocking< TTYHandle >
 	{
 		private:
 			TerminalID                     itsID;
 			boost::shared_ptr< IOHandle >  itsTerminal;
 			boost::shared_ptr< Conduit >   itsInput;
 			boost::shared_ptr< Conduit >   itsOutput;
-			bool                           itIsBlocking;
 			
 			IOHandle* Next() const;
 		

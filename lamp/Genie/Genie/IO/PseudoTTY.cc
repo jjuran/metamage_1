@@ -73,8 +73,7 @@ namespace Genie
 	: itsID( id ),
 	  itsTerminal( NewTerminal( "/dev/pts/" + NN::Convert< std::string >( id ) ) ),
 	  itsInput( input ),
-	  itsOutput( output ),
-	  itIsBlocking( true )
+	  itsOutput( output )
 	{
 	}
 	
@@ -98,12 +97,12 @@ namespace Genie
 	
 	int PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return itsInput->Read( data, byteCount, itIsBlocking );
+		return itsInput->Read( data, byteCount, IsNonblocking() );
 	}
 	
 	int PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		return itsOutput->Write( data, byteCount, itIsBlocking );
+		return itsOutput->Write( data, byteCount, IsNonblocking() );
 	}
 	
 }
