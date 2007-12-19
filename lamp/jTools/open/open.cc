@@ -243,7 +243,7 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items )
 	LaunchApplicationWithDocsToOpen( appFile, items );
 }
 
-int O::Main( int argc, char const *const argv[] )
+int O::Main( int argc, argv_t argv )
 {
 	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	
