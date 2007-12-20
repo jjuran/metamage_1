@@ -554,7 +554,7 @@ static int ExecuteCommand( const Command& command )
 	{
 		if ( builtin != NULL  &&  command.redirections.empty() )
 		{
-			return CallBuiltin( builtin, argv );
+			return CallBuiltin( builtin, argv ) << 8;  // wait from exit
 		}
 		
 		// This variable is set before and examined after a longjmp(), so it
@@ -582,7 +582,7 @@ static int ExecuteCommand( const Command& command )
 					try
 					{
 						// Since we didn't actually exec anything, we have to exit manually
-						_exit( exit_from_wait( CallBuiltin( builtin, argv ) ) );
+						_exit( CallBuiltin( builtin, argv ) );
 					}
 					catch ( const O::ExitStatus& status )
 					{
