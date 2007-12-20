@@ -47,28 +47,88 @@ namespace Genie
 		return *(UInt32*) decoded.data();
 	}
 	
-	static std::string NameFromWindow( N::WindowRef window )
-	{
-		using BitsAndBytes::EncodeAsHex;
-		
-		std::string name = EncodeAsHex( window );
-		
-		return name;
-	}
 	
-	static std::string NameFromPSN( const ProcessSerialNumber& psn )
+	template < class Key > struct KeyName_Traits;
+	
+	template <> struct KeyName_Traits< N::WindowRef >
 	{
-		using BitsAndBytes::EncodeAsHex;
+		typedef N::WindowRef Key;
 		
-		std::string name = EncodeAsHex( psn.lowLongOfPSN );
-		
-		if ( psn.highLongOfPSN != 0 )
+		static std::string NameFromKey( const Key& key )
 		{
-			name = EncodeAsHex( psn.highLongOfPSN ) + "-" + name;
+			return BitsAndBytes::EncodeAsHex( key );
 		}
 		
-		return name;
-	}
+		static Key KeyFromName( const std::string& name )
+		{
+			return reinterpret_cast< Key >( DecodeHex32( &*name.begin(), &*name.end() ) );
+		}
+	};
+	
+	template <> struct KeyName_Traits< N::FSVolumeRefNum >
+	{
+		typedef N::FSVolumeRefNum Key;
+		
+		static std::string NameFromKey( const Key& key )
+		{
+			return NN::Convert< std::string >( -key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			int n = std::atoi( name.c_str() );
+			
+			if ( n <= 0  ||  SInt16( n ) != n )
+			{
+				p7::throw_errno( ENOENT );
+			}
+			
+			N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -n );
+			
+			// Verify it exists
+			(void) N::FSMakeFSSpec( vRefNum, N::fsRtDirID, NULL );
+			
+			return vRefNum;
+		}
+	};
+	
+	template <> struct KeyName_Traits< N::ProcessSerialNumber >
+	{
+		typedef N::ProcessSerialNumber Key;
+		
+		static std::string NameFromKey( const Key& psn )
+		{
+			using BitsAndBytes::EncodeAsHex;
+			
+			std::string name = EncodeAsHex( psn.lowLongOfPSN );
+			
+			if ( psn.highLongOfPSN != 0 )
+			{
+				name = EncodeAsHex( psn.highLongOfPSN ) + "-" + name;
+			}
+			
+			return name;
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			ProcessSerialNumber psn = { 0, 0 };
+			
+			const char* begin = name.c_str();
+			const char* end   = name.c_str() + name.size();
+			
+			if ( const char* hyphen = std::strchr( begin, '-' ) )
+			{
+				psn.highLongOfPSN = DecodeHex32( begin, hyphen );
+				
+				begin = hyphen + 1;
+			}
+			
+			psn.lowLongOfPSN = DecodeHex32( begin, end );
+			
+			return psn;
+		}
+	};
 	
 	
 	class FSTree_sys_kernel : public FSTree_Virtual
@@ -83,7 +143,7 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
 	
-	struct sys_window_Details
+	struct sys_window_Details : public KeyName_Traits< N::WindowRef >
 	{
 		typedef N::WindowList_Container Sequence;
 		
@@ -97,7 +157,7 @@ namespace Genie
 		
 		static std::string ChildName( const Sequence::value_type& child )
 		{
-			return NameFromWindow( child );
+			return NameFromKey( child );
 		}
 		
 		static FSTreePtr ChildNode( const Sequence::value_type& child );
@@ -105,24 +165,23 @@ namespace Genie
 	
 	typedef FSTree_Special< sys_window_Details > FSTree_sys_window;
 	
-	class FSTree_sys_window_REF : public FSTree_Virtual
+	class FSTree_sys_window_REF : public FSTree_Virtual,
+	                              public KeyName_Traits< N::WindowRef >
 	{
 		private:
-			typedef N::WindowRef Key;
-			
 			Key itsKey;
 		
 		public:
 			FSTree_sys_window_REF( const Key& key ) : itsKey( key )  {}
 			
-			std::string Name() const  { return sys_window_Details::ChildName( itsKey ); }
+			std::string Name() const  { return NameFromKey( itsKey ); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_window >(); }
 	};
 	
 	FSTreePtr sys_window_Details::Lookup( const std::string& name )
 	{
-		N::WindowRef window = reinterpret_cast< N::WindowRef >( DecodeHex32( &*name.begin(), &*name.end() ) );
+		N::WindowRef window = KeyFromName( name );
 		
 		return FSTreePtr( new FSTree_sys_window_REF( window ) );
 	}
@@ -145,7 +204,7 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
 	
-	struct sys_mac_vol_Details
+	struct sys_mac_vol_Details : public KeyName_Traits< N::FSVolumeRefNum >
 	{
 		typedef N::Volume_Container Sequence;
 		
@@ -159,7 +218,7 @@ namespace Genie
 		
 		static std::string ChildName( const Sequence::value_type& child )
 		{
-			return NN::Convert< std::string >( -child );
+			return NameFromKey( child );
 		}
 		
 		static FSTreePtr ChildNode( const Sequence::value_type& child );
@@ -167,23 +226,22 @@ namespace Genie
 	
 	typedef FSTree_Special< sys_mac_vol_Details > FSTree_sys_mac_vol;
 	
-	class FSTree_sys_mac_vol_N : public FSTree_Virtual
+	class FSTree_sys_mac_vol_N : public FSTree_Virtual,
+	                             public KeyName_Traits< N::FSVolumeRefNum >
 	{
 		private:
-			typedef N::FSVolumeRefNum Key;
-			
 			Key itsKey;
 		
 		public:
 			FSTree_sys_mac_vol_N( const Key& key );
 			
-			std::string Name() const  { return sys_mac_vol_Details::ChildName( itsKey ); }
+			std::string Name() const  { return NameFromKey( itsKey ); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_vol >(); }
 	};
 	
 	
-	struct sys_mac_proc_Details
+	struct sys_mac_proc_Details : public KeyName_Traits< N::ProcessSerialNumber >
 	{
 		typedef N::Process_Container Sequence;
 		
@@ -197,7 +255,7 @@ namespace Genie
 		
 		static std::string ChildName( const Sequence::value_type& child )
 		{
-			return NameFromPSN( child );
+			return NameFromKey( child );
 		}
 		
 		static FSTreePtr ChildNode( const Sequence::value_type& child );
@@ -205,17 +263,16 @@ namespace Genie
 	
 	typedef FSTree_Special< sys_mac_proc_Details > FSTree_sys_mac_proc;
 	
-	class FSTree_sys_mac_proc_PSN : public FSTree_Virtual
+	class FSTree_sys_mac_proc_PSN : public FSTree_Virtual,
+	                                public KeyName_Traits< N::ProcessSerialNumber >
 	{
 		private:
-			typedef ProcessSerialNumber Key;
-			
 			Key itsKey;
 		
 		public:
 			FSTree_sys_mac_proc_PSN( const Key& key );
 			
-			std::string Name() const  { return sys_mac_proc_Details::ChildName( itsKey ); }
+			std::string Name() const  { return NameFromKey( itsKey ); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_proc >(); }
 	};
@@ -280,36 +337,16 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr sys_mac_vol_Details::Lookup( const std::string& name_string )
+	FSTreePtr sys_mac_vol_Details::Lookup( const std::string& name )
 	{
-		int n = std::atoi( name_string.c_str() );
-		
-		if ( n <= 0  ||  SInt16( n ) != n )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -n );
-		
-		N::FSMakeFSSpec( vRefNum, N::fsRtDirID, NULL );
+		Key vRefNum = KeyFromName( name );
 		
 		return FSTreePtr( new FSTree_sys_mac_vol_N( vRefNum ) );
 	}
 	
-	FSTreePtr sys_mac_proc_Details::Lookup( const std::string& name_string )
+	FSTreePtr sys_mac_proc_Details::Lookup( const std::string& name )
 	{
-		ProcessSerialNumber psn = { 0, 0 };
-		
-		const char* name = name_string.c_str();
-		
-		if ( const char* hyphen = std::strchr( name, '-' ) )
-		{
-			psn.highLongOfPSN = DecodeHex32( name, hyphen );
-			
-			name = hyphen + 1;
-		}
-		
-		psn.lowLongOfPSN = DecodeHex32( name, &*name_string.end() );
+		Key psn = KeyFromName( name );
 		
 		return FSTreePtr( new FSTree_sys_mac_proc_PSN( psn ) );
 	}
