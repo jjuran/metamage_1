@@ -832,7 +832,7 @@ namespace Genie
 	{
 		if ( !newCWD->IsDirectory() )
 		{
-			p7::throw_errno( ENOTDIR );
+			p7::throw_errno( newCWD->Exists() ? ENOTDIR : ENOENT );
 		}
 		
 		itsCWD = newCWD;
