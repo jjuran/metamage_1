@@ -478,7 +478,6 @@ namespace Genie
 		itsPPID               ( 0 ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
 		itsForkedChildPID     ( 0 ),
-		itsLongJmp            ( NULL ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsStackFramePtr      ( NULL ),
 		itsTracingProcess     ( 0 ),
@@ -506,7 +505,6 @@ namespace Genie
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( gProcessTable.NewProcess( this ) ),
 		itsForkedChildPID     ( 0 ),
-		itsLongJmp            ( NULL ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsStackFramePtr      ( NULL ),
 		itsTracingProcess     ( 0 ),
@@ -856,13 +854,15 @@ namespace Genie
 		
 		itsForkedChildPID = 0;
 		
-		ASSERT( itsLongJmp != NULL  ||  child == 0 );
+		LongJmp jump = GetLongJmp();
 		
-		if ( itsLongJmp != NULL  &&  child != 0 )
+		ASSERT( jump != NULL  ||  child == 0 );
+		
+		if ( jump != NULL  &&  child != 0 )
 		{
 			LeaveSystemCall();
 			
-			itsLongJmp( child );
+			jump( child );
 		}
 	}
 	

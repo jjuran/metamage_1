@@ -42,6 +42,7 @@
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileSystem/FSTree.hh"
 #include "Genie/Process/Environ.hh"
+#include "Genie/Process/LongJumper.hh"
 #include "Genie/Process/TimeKeeper.hh"
 #include "Genie/ProcessGroup.hh"
 
@@ -155,7 +156,8 @@ namespace Genie
 #endif
 	
 	class Process : public Environ,
-	                public TimeKeeper
+	                public TimeKeeper,
+	                public LongJumper
 	{
 		public:
 			enum
@@ -168,8 +170,6 @@ namespace Genie
 			pid_t itsPPID;
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
-			
-			void (*itsLongJmp)(int);
 			
 			boost::shared_ptr< ProcessGroup > itsProcessGroup;
 			
@@ -230,8 +230,6 @@ namespace Genie
 			~Process();
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
-			
-			void SetLongJmp( void (*LongJmp)(int) )  { itsLongJmp = LongJmp; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
