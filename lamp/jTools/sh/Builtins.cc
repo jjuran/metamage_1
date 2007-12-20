@@ -120,7 +120,14 @@ static int Builtin_CD( int argc, iota::argv_t argv )
 		}
 	}
 	
-	chdir( dir );
+	int changed = chdir( dir );
+	
+	if ( changed < 0 )
+	{
+		std::fprintf( stderr, "cd: %s: %s\n", dir, std::strerror( errno ) );
+		
+		return 1;
+	}
 	
 	// Apparently setenv() breaks something.
 	//setenv( "OLDPWD", getenv( "PWD" ), 1 );
