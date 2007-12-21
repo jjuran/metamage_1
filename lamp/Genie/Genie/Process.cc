@@ -585,20 +585,22 @@ namespace Genie
 		}
 	}
 	
-	NN::Owned< N::ThreadID >  Process::Exec( const FSSpec&        executable,
-	                                         const char* const    argv[],
-	                                         const char* const*   envp )
+	NN::Owned< N::ThreadID >  Process::Exec( const FSTreePtr&    executable,
+	                                         const char* const   argv[],
+	                                         const char* const*  envp )
 	{
 		CloseMarkedFileDescriptors( itsFileDescriptors );
 		
 		// Do we take the name before or after normalization?
-		itsName = NN::Convert< std::string >( executable.name );
+		itsName = executable->Name();
 		
-		ExecContext context( executable, argv );
+		FSSpec fileSpec = executable->GetFSSpec();
+		
+		ExecContext context( fileSpec, argv );
 		
 		Normalize( context, GetCWD() );
 		
-		itsProgramFile = context.executable;
+		itsProgramFile = FSTreeFromFSSpec( context.executable );
 		
 		// Save the binary image that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.

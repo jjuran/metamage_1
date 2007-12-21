@@ -194,7 +194,7 @@ namespace Genie
 			std::map< int, sig_t > itsSignalMap;
 		
 		private:
-			FSSpec itsProgramFile;
+			FSTreePtr itsProgramFile;
 			MainEntry itsMainEntry;
 			MainEntry itsOldMainEntry;
 			
@@ -261,7 +261,7 @@ namespace Genie
 			
 			std::string ProgramName()  const  { return itsName;   }
 			
-			FSSpec ProgramFile() const  { return itsProgramFile; }
+			const FSTreePtr& ProgramFile() const  { return itsProgramFile; }
 			
 			FileDescriptorMap& FileDescriptors()  { return itsFileDescriptors; }
 			
@@ -282,7 +282,7 @@ namespace Genie
 			
 			bool Forking() const  { return itsForkedChildPID != 0; }
 			
-			NN::Owned< N::ThreadID > Exec( const FSSpec&       progFile,
+			NN::Owned< N::ThreadID > Exec( const FSTreePtr&    executable,
 			                               const char* const   argv[],
 			                               const char* const*  envp );
 			

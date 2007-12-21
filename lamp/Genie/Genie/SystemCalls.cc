@@ -311,10 +311,7 @@ namespace Genie
 				}
 				
 				// Start a new thread with the child's process context
-				
-				//progFile->Exec( argv, envp );
-				
-				savedThread = current.Exec( progFile->GetFSSpec(), argv, envp );
+				savedThread = current.Exec( progFile, argv, envp );
 			}
 			
 			// If this thread is us (i.e. we didn't fork), we're now toast.

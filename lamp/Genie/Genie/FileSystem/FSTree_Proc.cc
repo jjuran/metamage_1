@@ -172,7 +172,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( GetProcess( itsPID ).ProgramFile() ); }
+			FSTreePtr ResolveLink() const  { return GetProcess( itsPID ).ProgramFile(); }
 	};
 	
 	class FSTree_PID_root : public FSTree

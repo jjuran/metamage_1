@@ -134,7 +134,7 @@ namespace Genie
 		
 		argv[2] = command.c_str();
 		
-		FSSpec program = ResolvePathname( "/bin/sh", FSTreePtr() )->GetFSSpec();
+		FSTreePtr program = ResolvePathname( "/bin/sh", FSTreePtr() );
 		
 		Process& parent = GetProcess( 1 );
 		

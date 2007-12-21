@@ -131,7 +131,7 @@ namespace Genie
 		}
 	#endif
 		
-		FSSpec program = ResolvePathname( argv[0], FSTreePtr() )->GetFSSpec();
+		FSTreePtr program = ResolvePathname( argv[0], FSTreePtr() );
 		
 		Process& parent = GetProcess( 1 );
 		

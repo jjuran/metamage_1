@@ -16,7 +16,7 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	void SpawnNewConsole( const FSSpec& program )
+	static void SpawnNewConsole( const FSTreePtr& program )
 	{
 		// Create new console/terminal device
 		// Spawn new process with file descriptors set
@@ -25,16 +25,21 @@ namespace Genie
 		
 		Process* external = new Process( parent );
 		
-		std::string programName = NN::Convert< std::string >( program.name );
+		std::string programName = program->Name();
 		
 		char const *const argv[] = { programName.c_str(), NULL };
 		
 		(void) external->Exec( program, argv, NULL );
 	}
 	
-	static FSSpec LoginExecutable()
+	void SpawnNewConsole( const FSSpec& program )
 	{
-		return ResolvePathname( "/bin/jgetty", FSTreePtr() )->GetFSSpec();
+		return SpawnNewConsole( FSTreeFromFSSpec( program ) );
+	}
+	
+	static FSTreePtr LoginExecutable()
+	{
+		return ResolvePathname( "/bin/jgetty", FSTreePtr() );
 	}
 	
 	void SpawnNewConsole()
