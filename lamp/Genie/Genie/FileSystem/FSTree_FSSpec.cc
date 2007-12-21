@@ -40,8 +40,6 @@
 #include "Genie/FileSystem/FSTree_sys.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
-#include "Genie/Process.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie
@@ -125,8 +123,6 @@ namespace Genie
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
-			
-			void Exec( const char* const argv[], const char* const envp[] ) const;
 			
 			void CreateDirectory( mode_t mode ) const;
 			
@@ -466,11 +462,6 @@ namespace Genie
 		FSSpec target = N::ResolveAliasFile( itsFileSpec, true );
 		
 		return OpenFSSpec( target, flags, notRsrcFork );
-	}
-	
-	void FSTree_FSSpec::Exec( const char* const argv[], const char* const envp[] ) const
-	{
-		CurrentProcess().Exec( itsFileSpec, argv, envp );
 	}
 	
 	void FSTree_FSSpec::CreateDirectory( mode_t /*mode*/ ) const
