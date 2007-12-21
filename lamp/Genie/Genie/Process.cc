@@ -553,6 +553,13 @@ namespace Genie
 		Resume();
 		
 		itsOldMainEntry.reset();
+		
+		if ( IsBeingTraced() )
+		{
+			// This stops the thread immediately.
+			// If we receive a fatal signal while stopped, the thread dies.
+			Raise( SIGSTOP );
+		}
 	}
 	
 	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors )
@@ -713,13 +720,6 @@ namespace Genie
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessSleeping;
-		
-		if ( IsBeingTraced() )
-		{
-			// This stops the thread immediately.
-			// If we receive a fatal signal while stopped, the thread dies.
-			Raise( SIGSTOP );
-		}
 		
 		Suspend();
 		
