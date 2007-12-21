@@ -28,9 +28,6 @@
 // Nucleus
 #include "Nucleus/Owned.h"
 
-// Nitrogen
-#include "Nitrogen/CodeFragments.h"
-
 // Nitrogen Extras / Utilities
 #include "Utilities/Threads.h"
 
@@ -38,7 +35,7 @@
 #include "ShellShock/VarArray.hh"
 
 // Genie
-#include "Genie/BinaryImage.hh"
+#include "Genie/Exec/MainEntry.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileSystem/FSTree.hh"
 #include "Genie/Process/Environ.hh"
@@ -198,10 +195,8 @@ namespace Genie
 		
 		private:
 			FSSpec itsProgramFile;
-			BinaryImage itsFragmentImage;
-			BinaryImage itsOldFragmentImage;
-			NN::Owned< CFragConnectionID > itsFragmentConnection;
-			NN::Owned< CFragConnectionID > itsOldFragmentConnection;
+			MainEntry itsMainEntry;
+			MainEntry itsOldMainEntry;
 			
 			std::auto_ptr< Sh::StringArray > itsArgvStorage;
 			std::auto_ptr< Thread > itsThread;

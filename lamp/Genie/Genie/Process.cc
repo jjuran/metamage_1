@@ -553,55 +553,7 @@ namespace Genie
 	{
 		Resume();
 		
-		N::CloseConnection( itsOldFragmentConnection );
-		
-		itsOldFragmentImage = BinaryImage();
-	}
-	
-	template < class Type >
-	bool LoadSymbol( N::CFragConnectionID fragment, ConstStr255Param symName, const Type& init )
-	{
-		
-		try
-		{
-			Type* symbol = NULL;
-			
-			N::FindSymbol( fragment, symName, &symbol );
-			
-			*symbol = init;
-		}
-		catch ( ... )
-		{
-			return false;
-		}
-		
-		return true;
-	}
-	
-	class SymbolImporter
-	{
-		private:
-			N::CFragConnectionID itsFragmentConnection;
-		
-		public:
-			SymbolImporter( N::CFragConnectionID conn ) : itsFragmentConnection( conn )  {}
-			
-			bool operator()( SystemCallRegistry::value_type systemCall ) const
-			{
-				std::string name = systemCall.name;
-				void*       func = systemCall.function;
-				
-				name += "_import_";
-				
-				return LoadSymbol( itsFragmentConnection, N::Str255( name ), func );
-			}
-	};
-	
-	static void ImportSystemCalls( N::CFragConnectionID fragmentConnection )
-	{
-		std::for_each( SystemCallsBegin(),
-		               SystemCallsEnd(),
-		               SymbolImporter( fragmentConnection ) );
+		itsOldMainEntry.reset();
 	}
 	
 	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors )
@@ -642,22 +594,11 @@ namespace Genie
 		
 		itsProgramFile = context.executable;
 		
-		// Save the fragment image and the connection that we're running from.
+		// Save the binary image that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.
-		itsOldFragmentImage      = itsFragmentImage;
-		itsOldFragmentConnection = itsFragmentConnection;
+		itsOldMainEntry = itsMainEntry;
 		
-		{
-			BinaryImage binary = GetBinaryImage( itsProgramFile );
-		}
-		
-		itsFragmentImage = GetBinaryImage( itsProgramFile );
-		
-		if ( !TARGET_CPU_68K || TARGET_RT_MAC_CFM )
-		{
-			itsFragmentConnection = N::GetMemFragment< N::kPrivateCFragCopy >( itsFragmentImage.Get(),
-			                                                                   N::GetPtrSize( itsFragmentImage ) );
-		}
+		itsMainEntry = GetMainEntryFromFile( itsProgramFile );
 		
 		K::Versions assumedVersions;
 		
@@ -665,17 +606,6 @@ namespace Genie
 		assumedVersions.lastCompatible = 2;
 		
 		K::Versions* versions = &assumedVersions;
-		
-		MainProcPtr mainEntryPoint = NULL;
-		
-		if ( TARGET_CPU_68K && !TARGET_RT_MAC_CFM )
-		{
-			mainEntryPoint = (MainProcPtr) itsFragmentImage.Get().Get();
-		}
-		else
-		{
-			N::FindSymbol( itsFragmentConnection, "\p" "main", &mainEntryPoint );
-		}
 		
 	#if 0
 		
@@ -746,29 +676,13 @@ namespace Genie
 		
 	#endif
 		
+		MainProcPtr mainEntryPoint = itsMainEntry->GetMainPtr();
+		
 		itsArgvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
 		
-		itsErrnoData = NULL;
+		itsErrnoData = itsMainEntry->GetErrnoPtr();
 		
-		iota::environ_t* environ_address = ENVIRON_IS_SHARED ? &gToolScratchGlobals.env : NULL;
-		
-	#if TARGET_RT_MAC_CFM
-		
-		try
-		{
-			N::FindSymbol( itsFragmentConnection, "\p" "environ", &environ_address );
-		}
-		catch ( ... ) {}
-		
-		try
-		{
-			N::FindSymbol( itsFragmentConnection, "\p" "errno", &itsErrnoData );
-		}
-		catch ( ... ) {}
-		
-		ImportSystemCalls( itsFragmentConnection );
-		
-	#endif
+		iota::environ_t* environ_address = ENVIRON_IS_SHARED ? &gToolScratchGlobals.env : itsMainEntry->GetEnvironPtr();
 		
 		ResetEnviron( envp, environ_address );
 		
