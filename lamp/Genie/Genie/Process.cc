@@ -296,9 +296,20 @@ namespace Genie
 	
 	static ExecContext& Normalize( ExecContext& context, const FSTreePtr& cwd )
 	{
-		FSSpec fileSpec = context.executable->GetFSSpec();
+		FSSpec fileSpec;
 		
-		const OSType type = N::FSpGetFInfo( fileSpec ).fdType;
+		OSType type = 'Wish';
+		
+		try
+		{
+			fileSpec = context.executable->GetFSSpec();
+			
+			type = N::FSpGetFInfo( fileSpec ).fdType;
+		}
+		catch ( ... )
+		{
+			// Assume that non-FSSpec executables are binaries, not scripts
+		}
 		
 		if ( type == 'Wish' )
 		{
@@ -606,7 +617,7 @@ namespace Genie
 		// We can't use stack storage because we run the risk of the thread terminating.
 		itsOldMainEntry = itsMainEntry;
 		
-		itsMainEntry = GetMainEntryFromFile( itsProgramFile );
+		itsMainEntry = itsProgramFile->GetMainEntry();
 		
 		K::Versions assumedVersions;
 		

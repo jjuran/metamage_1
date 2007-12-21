@@ -68,19 +68,9 @@ namespace Genie
 	}
 	
 	
-	typedef MainEntryPoint::Main Main;
-	
-	
 	MainEntryPoint::~MainEntryPoint()
 	{
 	}
-	
-	
-	class InternalMain : public MainEntryPoint
-	{
-		public:
-			InternalMain( Main main ) : MainEntryPoint( main, NULL, NULL )  {}
-	};
 	
 	
 	inline NN::Owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
@@ -96,7 +86,7 @@ namespace Genie
 			BinaryImage itsBinaryImage;
 		
 		public:
-			CodeResourceMain( const BinaryImage& image ) : MainEntryPoint( reinterpret_cast< Main >( image.Get().Get() ),
+			CodeResourceMain( const BinaryImage& image ) : MainEntryPoint( reinterpret_cast< Main3 >( image.Get().Get() ),
 			                                                               NULL,
 			                                                               NULL ),
 			                                               itsBinaryImage( image )
@@ -111,16 +101,14 @@ namespace Genie
 			Nucleus::Owned< N::CFragConnectionID > itsFragmentConnection;
 		
 		public:
-			typedef MainEntryPoint::Environ Environ;
-			
 			ConnectedFragment( const BinaryImage& image ) : itsFragmentConnection( ConnectToFragment( image ) )
 			{
 				ImportSystemCalls( itsFragmentConnection );
 			}
 			
-			Main GetMain() const
+			Main3 GetMain() const
 			{
-				Main mainEntry = NULL;
+				Main3 mainEntry = NULL;
 				
 				N::FindSymbol( itsFragmentConnection, "\p" "main", &mainEntry );
 				
@@ -142,9 +130,9 @@ namespace Genie
 				return errnoPtr;
 			}
 			
-			Environ* GetEnviron() const
+			iota::environ_t* GetEnviron() const
 			{
-				Environ* environPtr = NULL;
+				iota::environ_t* environPtr = NULL;
 				
 				try
 				{
@@ -187,21 +175,16 @@ namespace Genie
 	
 #endif
 	
+	MainEntry GetMainEntryFromAddress( Main3 address )
+	{
+		return MainEntry( new MainEntryPoint( address ) );
+	}
 	
 	MainEntry GetMainEntryFromFile( const FSSpec& file )
 	{
 		BinaryImage binary = GetBinaryImage( file );
 		
 		return MainEntry( new ExternalBinaryMain( binary ) );
-	}
-	
-	MainEntry GetMainEntryFromFile( const FSTreePtr& file )
-	{
-		// check for internally mapped programs, e.g. true, false, pwd, echo
-		
-		FSSpec programFile = file->GetFSSpec();
-		
-		return GetMainEntryFromFile( programFile );
 	}
 	
 }

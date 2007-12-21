@@ -12,49 +12,61 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Genie
-#include "Genie/FileSystem/FSTree.hh"
+// Iota
+#include "iota/argv.hh"
+#include "iota/environ.hh"
+
+
+struct FSSpec;
 
 
 namespace Genie
 {
 	
+	typedef int (*Main0)();
+	typedef int (*Main2)( int argc, iota::argv_t argv );
+	typedef int (*Main3)( int argc, iota::argv_t argv, iota::environ_t envp );
+	
 	class MainEntryPoint
 	{
-		public:
-			typedef char const *const *Environ;
-			
-			typedef int (*Main)( int argc, char const *const *argv, Environ envp );
-			
 		private:
-			Main      itsMain;
-			int*      itsErrno;
-			Environ*  itsEnviron;
+			Main3             itsMain;
+			int*              itsErrno;
+			iota::environ_t*  itsEnviron;
 		
-		protected:
-			MainEntryPoint( Main      main,
-			                int*      err,
-			                Environ*  env ) : itsMain   ( main ),
-			                                  itsErrno  ( err  ),
-			                                  itsEnviron( env  )
+		public:
+			MainEntryPoint( Main3             main,
+			                int*              err = NULL,
+			                iota::environ_t*  env = NULL) : itsMain   ( main ),
+			                                                itsErrno  ( err  ),
+			                                                itsEnviron( env  )
 			{
 			}
 			
 			virtual ~MainEntryPoint();
-		
-		public:
-			Main GetMainPtr() const  { return itsMain; }
+			
+			Main3 GetMainPtr() const  { return itsMain; }
 			
 			int* GetErrnoPtr() const  { return itsErrno; }
 			
-			Environ* GetEnvironPtr() const  { return itsEnviron; }
+			iota::environ_t* GetEnvironPtr() const  { return itsEnviron; }
 	};
 	
 	typedef boost::shared_ptr< MainEntryPoint > MainEntry;
 	
-	MainEntry GetMainEntryFromFile( const FSSpec& file );
+	MainEntry GetMainEntryFromAddress( Main3 address );
 	
-	MainEntry GetMainEntryFromFile( const FSTreePtr& file );
+	inline MainEntry GetMainEntryFromAddress( Main2 address )
+	{
+		return GetMainEntryFromAddress( reinterpret_cast< Main3 >( address ) );
+	}
+	
+	inline MainEntry GetMainEntryFromAddress( Main0 address )
+	{
+		return GetMainEntryFromAddress( reinterpret_cast< Main3 >( address ) );
+	}
+	
+	MainEntry GetMainEntryFromFile( const FSSpec& file );
 	
 }
 

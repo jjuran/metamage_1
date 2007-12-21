@@ -223,9 +223,12 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >();
 	}
 	
-	void FSTree::Exec( const char* const /*argv*/[], const char* const /*envp*/[] ) const
+	MainEntry FSTree::GetMainEntry() const
 	{
 		p7::throw_errno( ENOEXEC );
+		
+		// Not reached
+		return MainEntry();
 	}
 	
 	

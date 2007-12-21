@@ -124,6 +124,8 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			
+			MainEntry GetMainEntry() const;
+			
 			void CreateDirectory( mode_t mode ) const;
 			
 			FSTreePtr Lookup_Regular( const std::string& name ) const;
@@ -462,6 +464,11 @@ namespace Genie
 		FSSpec target = N::ResolveAliasFile( itsFileSpec, true );
 		
 		return OpenFSSpec( target, flags, notRsrcFork );
+	}
+	
+	MainEntry FSTree_FSSpec::GetMainEntry() const
+	{
+		return GetMainEntryFromFile( itsFileSpec );
 	}
 	
 	void FSTree_FSSpec::CreateDirectory( mode_t /*mode*/ ) const

@@ -13,6 +13,9 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 
+// Genie
+#include "Genie/Exec/MainEntry.hh"
+
 // Files.h
 struct FSSpec;
 
@@ -111,7 +114,7 @@ namespace Genie
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
 			
-			virtual void Exec( const char* const argv[], const char* const envp[] ) const;
+			virtual MainEntry GetMainEntry() const;
 			
 			// Directory methods
 			
