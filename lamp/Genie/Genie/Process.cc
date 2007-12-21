@@ -276,7 +276,7 @@ namespace Genie
 	
 	struct ExecContext
 	{
-		FSSpec                      executable;
+		FSTreePtr                   executable;
 		std::vector< const char* >  argVector;
 		std::string                 scriptPath;
 		std::string                 interpreterPath;
@@ -284,7 +284,7 @@ namespace Genie
 		
 		ExecContext()  {}
 		
-		ExecContext( const FSSpec&       executable,
+		ExecContext( const FSTreePtr&    executable,
 		             char const* const*  argv )
 		:
 			executable( executable ),
@@ -296,7 +296,9 @@ namespace Genie
 	
 	static ExecContext& Normalize( ExecContext& context, const FSTreePtr& cwd )
 	{
-		const OSType type = N::FSpGetFInfo( context.executable ).fdType;
+		FSSpec fileSpec = context.executable->GetFSSpec();
+		
+		const OSType type = N::FSpGetFInfo( fileSpec ).fdType;
 		
 		if ( type == 'Wish' )
 		{
@@ -308,7 +310,7 @@ namespace Genie
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
 			
-			NN::Owned< N::FSFileRefNum > script = io::open_for_reading( context.executable );
+			NN::Owned< N::FSFileRefNum > script = io::open_for_reading( fileSpec );
 			
 			char data[ 1024 + 1 ];
 			data[1024] = '\0';
@@ -372,18 +374,18 @@ namespace Genie
 			if ( pathSearched )
 			{
 				// Overwrite with full pathname
-				context.scriptPath = GetPOSIXPathname( context.executable );
+				context.scriptPath = GetPOSIXPathname( fileSpec );
 				
 				context.argVector[ 1 + hasArg ] = context.scriptPath.c_str();
 			}
 			
 			// argv == { "sh", "script", "foo", "bar", "baz", NULL }
 			
-			context.executable = ResolvePathname( context.interpreterPath, cwd )->GetFSSpec();
+			context.executable = ResolvePathname( context.interpreterPath, cwd );
 		}
 		else if ( type == 'MPST' )
 		{
-			context.scriptPath = GetMacPathname( context.executable );
+			context.scriptPath = GetMacPathname( fileSpec );
 			
 			const int newTokenCount = 3;
 			const int skipCount = 1;  // skip the script's name because we're overwriting it anyway
@@ -410,7 +412,7 @@ namespace Genie
 			
 			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
 			
-			context.executable = ResolvePathname( "/usr/bin/tlsrvr", cwd )->GetFSSpec();
+			context.executable = ResolvePathname( "/usr/bin/tlsrvr", cwd );
 		}
 		else
 		{
@@ -594,13 +596,11 @@ namespace Genie
 		// Do we take the name before or after normalization?
 		itsName = executable->Name();
 		
-		FSSpec fileSpec = executable->GetFSSpec();
-		
-		ExecContext context( fileSpec, argv );
+		ExecContext context( executable, argv );
 		
 		Normalize( context, GetCWD() );
 		
-		itsProgramFile = FSTreeFromFSSpec( context.executable );
+		itsProgramFile = context.executable;
 		
 		// Save the binary image that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.
