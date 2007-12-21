@@ -16,6 +16,7 @@
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 // Iota
 #include "iota/environ.hh"
@@ -354,6 +355,15 @@ class ReplacedParametersScope
 		}
 };
 
+static int exit_from_wait( int stat )
+{
+	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+	           :                       -1;
+	
+	return result;
+}
+
 static int BuiltinDot( int argc, iota::argv_t argv )
 {
 	if ( argc < 2 )
@@ -368,7 +378,7 @@ static int BuiltinDot( int argc, iota::argv_t argv )
 	
 	ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 	
-	int result = ReadExecuteLoop( fd, false );
+	int result = exit_from_wait( ReadExecuteLoop( fd, false ) );
 	
 	return result;
 }
