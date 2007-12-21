@@ -143,6 +143,58 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
 	
+	class FSTree_sys_kernel_bin : public FSTree_Virtual
+	{
+		public:
+			FSTree_sys_kernel_bin();
+			
+			static std::string OnlyName()  { return "bin"; }
+			
+			std::string Name() const  { return OnlyName(); }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_kernel >(); }
+	};
+	
+	class FSTree_sys_kernel_bin_EXE : public FSTree
+	{
+		private:
+			typedef int (*Main0)();
+			typedef int (*Main2)( int argc, char const *const *argv );
+			typedef int (*Main3)( int argc, char const *const *argv, char const *const *envp );
+			
+			std::string itsName;
+			
+			MainEntry itsMainEntry;
+		
+		public:
+			FSTree_sys_kernel_bin_EXE( const std::string&  name,
+			                           Main3               main ) : itsName( name ),
+			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
+			{
+			}
+			
+			FSTree_sys_kernel_bin_EXE( const std::string&  name,
+			                           Main2               main ) : itsName( name ),
+			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
+			{
+			}
+			
+			FSTree_sys_kernel_bin_EXE( const std::string&  name,
+			                           Main0               main ) : itsName( name ),
+			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
+			{
+			}
+			
+			std::string Name() const  { return itsName; }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_kernel_bin >(); }
+			
+			mode_t FilePermMode() const  { return S_IRUSR | S_IXUSR; }
+			
+			MainEntry GetMainEntry() const  { return itsMainEntry; }
+	};
+	
+	
 	struct sys_window_Details : public KeyName_Traits< N::WindowRef >
 	{
 		typedef N::WindowList_Container Sequence;
@@ -326,7 +378,32 @@ namespace Genie
 	
 	FSTree_sys_kernel::FSTree_sys_kernel()
 	{
+		MapSingleton< FSTree_sys_kernel_bin >();
+	}
+	
+	static int main_true()
+	{
+		return 0;
+	}
+	
+	static int main_false()
+	{
+		return 1;
+	}
+	
+	static int main_beep()
+	{
+		N::SysBeep();
 		
+		return 0;
+	}
+	
+	FSTree_sys_kernel_bin::FSTree_sys_kernel_bin()
+	{
+		Map( "true",  FSTreePtr( new FSTree_sys_kernel_bin_EXE( "true",  main_true  ) ) );
+		Map( "false", FSTreePtr( new FSTree_sys_kernel_bin_EXE( "false", main_false ) ) );
+		
+		Map( "beep", FSTreePtr( new FSTree_sys_kernel_bin_EXE( "beep", main_beep ) ) );
 	}
 	
 	FSTree_sys_mac::FSTree_sys_mac()
