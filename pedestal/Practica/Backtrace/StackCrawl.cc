@@ -149,7 +149,7 @@ namespace Backtrace
 	
 	StackFramePtr GetStackFramePointer()
 	{
-		return reinterpret_cast< StackFramePtr >( GetTopFrame() );
+		return reinterpret_cast< StackFramePtr >( GetTopFrame()->next );
 	}
 	
 	
