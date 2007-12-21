@@ -155,6 +155,9 @@ namespace Backtrace
 	
 	inline const StackFramePPC* MixedModeSwitchFrame( const StackFrame68K* frame )
 	{
+		// FIXME:  This logic must be broken because we get spurious indications
+		return NULL;
+		
 		return *((unsigned long*) frame - 1) == 0xffffffff ? (const StackFramePPC*) frame
 		                                                   : NULL;
 	}
