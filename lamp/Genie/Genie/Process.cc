@@ -243,28 +243,27 @@ namespace Genie
 		
 		MainProcPtr mainPtr = context.externalMain;
 		
-		if ( mainPtr != NULL )
+		ASSERT( mainPtr != NULL );
+		
+		gToolScratchGlobals.err = NULL;  // errno
+		
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		
 		{
-			gToolScratchGlobals.err = NULL;  // errno
+			void* outOfBandData[3] = { GetSystemCallFunctionPtr, NULL, NULL };
 			
-		#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+			LMSetApplScratch( outOfBandData );
 			
-			{
-				void* outOfBandData[3] = { GetSystemCallFunctionPtr, NULL, NULL };
-				
-				LMSetApplScratch( outOfBandData );
-				
-				SetCurrentA4ProcPtr setCurrentA4 = GetCurrentA4Setter( mainPtr );
-				
-				setCurrentA4();
-			}
+			SetCurrentA4ProcPtr setCurrentA4 = GetCurrentA4Setter( mainPtr );
 			
-		#endif
-			
-			exit_status = mainPtr( Sh::CountStringArray( context.argv ),
-			                       context.argv,
-			                       context.envp );
+			setCurrentA4();
 		}
+		
+	#endif
+		
+		exit_status = mainPtr( Sh::CountStringArray( context.argv ),
+		                       context.argv,
+		                       context.envp );
 		
 		// Accumulate any user time between last system call (if any) and return from main()
 		context.processContext->EnterSystemCall( "*RETURN*" );
