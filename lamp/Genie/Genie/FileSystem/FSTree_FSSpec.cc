@@ -218,14 +218,9 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
-		if ( io::directory_exists( item ) )
+		if ( io::directory_exists( item )  &&  N::FSDirSpec( item ) == FindJDirectory() )
 		{
-			N::FSDirSpec dir = NN::Convert< N::FSDirSpec >( item );
-			
-			if ( dir == FindJDirectory() )
-			{
-				return GetSingleton< FSTree_J_Symlink >();
-			}
+			return GetSingleton< FSTree_J_Symlink >();
 		}
 		
 		return FSTreePtr( new FSTree_FSSpec( item ) );
@@ -351,16 +346,7 @@ namespace Genie
 	
 	bool FSTree_FSSpec::IsRootDirectory() const
 	{
-		try
-		{
-			return N::FSDirSpec( itsFileSpec ) == FindJDirectory();
-		}
-		catch ( ... )
-		{
-			// Not a directory
-		}
-		
-		return false;
+		return io::directory_exists( itsFileSpec )  &&  N::FSDirSpec( itsFileSpec ) == FindJDirectory();
 	}
 	
 	std::string FSTree_FSSpec::Name() const
