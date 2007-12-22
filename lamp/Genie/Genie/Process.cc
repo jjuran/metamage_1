@@ -178,6 +178,51 @@ namespace Genie
 	
 	static ToolScratchGlobals& gToolScratchGlobals = *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
 	
+#if TARGET_CPU_68K
+	
+	static int DispatchSystemCallByName( const char* name, int* error )
+	{
+		gToolScratchGlobals.err = error;
+		
+		void* addr = GetSystemCallFunctionPtr( name );
+		
+		// user code:
+		// system call arguments
+		// return address (from JSR)
+		// stub:
+		// saved A6 for user code (from LINK)
+		// &errno
+		// system call number
+		// return address (from JSR)
+		// syscall:
+		// saved A6 for stub (from LINK)
+		// local variable (system call address)
+		
+		
+		asm
+		{
+			MOVEA.L		addr,A0		;  // move system call address into A0
+			MOVEA.L		(A6),A6		;  // skip a stack frame
+			UNLK		A6			;  // deallocate stack frames
+			JMP			(A0)		;  // jump to system call
+		}
+		
+		
+		// End result:
+		// user code:
+		// system call arguments
+		// return address (from JSR)
+		// system call:
+		// saved A6 for user code (from LINK)
+		// local variables
+		// stack ends here
+		// Profit!
+		
+		return -1;
+	}
+	
+#endif
+	
 	inline void SwapInEnvironValue( iota::environ_t envp )
 	{
 		if ( ENVIRON_IS_SHARED )
@@ -250,7 +295,7 @@ namespace Genie
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
 		{
-			void* outOfBandData[3] = { GetSystemCallFunctionPtr, NULL, NULL };
+			void* outOfBandData[3] = { GetSystemCallFunctionPtr, DispatchSystemCallByName, NULL };
 			
 			LMSetApplScratch( outOfBandData );
 			
