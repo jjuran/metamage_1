@@ -325,14 +325,18 @@ namespace Genie
 		{
 			N::FSpGetCatInfo( itsFileSpec, paramBlock );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const N::FNFErr& err )
 		{
-			if ( err == fnfErr )
+		#ifdef __MWERKS__
+			
+			if ( err != N::FNFErr )
 			{
-				return false;
+				throw;
 			}
 			
-			throw;
+		#endif
+			
+			return false;
 		}
 		
 		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
