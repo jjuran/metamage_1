@@ -59,21 +59,15 @@ namespace Genie
 	
 	static N::FileSignature GetFileSignatureForAlias( const FSSpec& item )
 	{
-		try
+		if ( io::directory_exists( item ) )
 		{
-			FInfo fInfo = N::FSpGetFInfo( item );
-			
-			return N::FileSignature( fInfo );
-		}
-		catch ( const N::OSStatus& err )
-		{
-			if ( err.Get() != fnfErr )
-			{
-				throw;
-			}
+			return N::FileSignature( N::OSType( 'MACS'                    ),
+			                         N::OSType( kContainerFolderAliasType ) );
 		}
 		
-		return N::FileSignature( N::OSType( 'MACS' ), N::OSType( kContainerFolderAliasType ) );
+		FInfo fInfo = N::FSpGetFInfo( item );
+		
+		return N::FileSignature( fInfo );
 	}
 	
 	static void CreateSymLink( const FSTreePtr& linkFile, const std::string& targetPath )
@@ -130,12 +124,16 @@ namespace Genie
 			{
 				if ( errnum != ENOENT )  throw;
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const N::FNFErr& err )
 			{
-				if ( err.Get() != fnfErr )
+			#ifdef __MWERKS__
+				
+				if ( err != N::FNFErr() )
 				{
 					throw;
 				}
+				
+			#endif
 			}
 			
 			// If we got here, link is a valid location.
