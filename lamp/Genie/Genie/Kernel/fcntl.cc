@@ -60,16 +60,20 @@ namespace Genie
 		
 		try
 		{
+			if ( cmd == F_DUPFD )
+			{
+				return DuplicateFileDescriptor( filedes );
+			}
+			
+			FileDescriptor& descriptor = GetFileDescriptor( filedes );
+			
 			switch ( cmd )
 			{
-				case F_DUPFD:
-					return DuplicateFileDescriptor( filedes );
-				
 				case F_GETFD:
-					return GetFileDescriptor( filedes ).closeOnExec;
+					return descriptor.closeOnExec;
 				
 				case F_SETFD:
-					GetFileDescriptor( filedes ).closeOnExec = param;
+					descriptor.closeOnExec = param;
 					return 0;
 				
 				/*
