@@ -125,12 +125,12 @@ namespace Genie
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
-			void Map( const std::string& name, FSTreePtr tree );
+			void Map( FSTreePtr tree );
 			
 			template < class FSTree_Type >
 			void MapSingleton()
 			{
-				Map( FSTree_Type::OnlyName(), GetSingleton< FSTree_Type >() );
+				Map( GetSingleton< FSTree_Type >() );
 			}
 			
 			FSTreePtr Lookup_Mapping( const std::string& name ) const;

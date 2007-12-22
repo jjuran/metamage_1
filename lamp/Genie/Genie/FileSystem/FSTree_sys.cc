@@ -136,9 +136,7 @@ namespace Genie
 		public:
 			FSTree_sys_kernel();
 			
-			static std::string OnlyName()  { return "kernel"; }
-			
-			std::string Name() const  { return OnlyName(); }
+			std::string Name() const  { return "kernel"; }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
@@ -148,9 +146,7 @@ namespace Genie
 		public:
 			FSTree_sys_kernel_bin();
 			
-			static std::string OnlyName()  { return "bin"; }
-			
-			std::string Name() const  { return OnlyName(); }
+			std::string Name() const  { return "bin"; }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_kernel >(); }
 	};
@@ -356,9 +352,7 @@ namespace Genie
 		public:
 			FSTree_sys_mac_gestalt()  {}
 			
-			static std::string OnlyName()  { return "gestalt"; }
-			
-			std::string Name() const  { return OnlyName(); }
+			std::string Name() const  { return "gestalt"; }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac >(); }
 			
@@ -400,10 +394,10 @@ namespace Genie
 	
 	FSTree_sys_kernel_bin::FSTree_sys_kernel_bin()
 	{
-		Map( "true",  FSTreePtr( new FSTree_sys_kernel_bin_EXE( "true",  main_true  ) ) );
-		Map( "false", FSTreePtr( new FSTree_sys_kernel_bin_EXE( "false", main_false ) ) );
+		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "true",  main_true  ) ) );
+		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "false", main_false ) ) );
 		
-		Map( "beep", FSTreePtr( new FSTree_sys_kernel_bin_EXE( "beep", main_beep ) ) );
+		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "beep", main_beep ) ) );
 	}
 	
 	FSTree_sys_mac::FSTree_sys_mac()
@@ -443,12 +437,12 @@ namespace Genie
 	{
 		FSSpec volume = N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
 		
-		Map( "mnt", FSTreeFromFSSpec( volume ) );
+		Map( FSTreeFromFSSpec( volume ) );  // volume roots are named "mnt", not the volume name
 	}
 	
 	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const Key& key ) : itsKey( key )
 	{
-		Map( "exe", FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( key ) ) );
+		Map( FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( key ) ) );
 	}
 	
 	

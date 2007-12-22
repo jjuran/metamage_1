@@ -385,18 +385,18 @@ namespace Genie
 	
 	FSTree_PID::FSTree_PID( pid_t pid ) : itsPID( pid )
 	{
-		Map( "fd",   FSTreePtr( new FSTree_PID_fd  ( pid ) ) );
-		Map( "cwd",  FSTreePtr( new FSTree_PID_cwd ( pid ) ) );
-		Map( "exe",  FSTreePtr( new FSTree_PID_exe ( pid ) ) );
-		Map( "root", FSTreePtr( new FSTree_PID_root( pid ) ) );
+		Map( FSTreePtr( new FSTree_PID_fd  ( pid ) ) );
+		Map( FSTreePtr( new FSTree_PID_cwd ( pid ) ) );
+		Map( FSTreePtr( new FSTree_PID_exe ( pid ) ) );
+		Map( FSTreePtr( new FSTree_PID_root( pid ) ) );
 		
-		Map( "stat", FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( Pathname(),
-		                                                                     "stat",
-		                                                                     proc_PID_stat_Query( pid ) ) ) );
+		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( Pathname(),
+		                                                             "stat",
+		                                                             proc_PID_stat_Query( pid ) ) ) );
 		
-		Map( "backtrace", FSTreePtr( new FSTree_QueryFile< proc_PID_backtrace_Query >( Pathname(),
-		                                                                               "backtrace",
-		                                                                               proc_PID_backtrace_Query( pid ) ) ) );
+		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_backtrace_Query >( Pathname(),
+		                                                                  "backtrace",
+		                                                                  proc_PID_backtrace_Query( pid ) ) ) );
 	}
 	
 	FSTreePtr PID_fd_Details::Lookup( const std::string& name ) const

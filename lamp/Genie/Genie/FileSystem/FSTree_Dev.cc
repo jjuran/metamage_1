@@ -365,9 +365,9 @@ namespace Genie
 	
 	FSTree_dev::FSTree_dev()
 	{
-		Map( "null",    FSTreePtr( new FSTree_Device( "null"    ) ) );
-		Map( "zero",    FSTreePtr( new FSTree_Device( "zero"    ) ) );
-		Map( "console", FSTreePtr( new FSTree_Device( "console" ) ) );
+		Map( FSTreePtr( new FSTree_Device( "null"    ) ) );
+		Map( FSTreePtr( new FSTree_Device( "zero"    ) ) );
+		Map( FSTreePtr( new FSTree_Device( "console" ) ) );
 		
 		MapSingleton< FSTree_dev_tty >();
 		

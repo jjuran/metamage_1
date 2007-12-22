@@ -235,13 +235,13 @@ namespace Genie
 		
 		FSTreePtr users( new FSTree_FSSpec( io::system_root< N::FSDirSpec >() / "Users" ) );
 		
-		tree->Map( "Users",   users );
+		tree->Map( users );
 		
 		tree->MapSingleton< FSTree_Volumes >();
 		
-		tree->Map( "proc", GetProcFSTree() );
-		tree->Map( "sys",  GetSingleton< FSTree_sys >() );
-		tree->Map( "dev",  GetDevFSTree () );
+		tree->Map( GetDevFSTree () );
+		tree->Map( GetProcFSTree() );
+		tree->Map( GetSingleton< FSTree_sys >() );
 		
 		return result;
 	}

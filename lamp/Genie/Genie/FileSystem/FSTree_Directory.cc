@@ -78,9 +78,9 @@ namespace Genie
 	{
 	}
 	
-	void FSTree_Mappable::Map( const std::string& name, FSTreePtr tree )
+	void FSTree_Mappable::Map( FSTreePtr tree )
 	{
-		mappings[ name ] = tree;
+		mappings[ tree->Name() ] = tree;
 	}
 	
 	FSTreePtr FSTree_Mappable::Lookup_Child( const std::string& name ) const
