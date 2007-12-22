@@ -123,12 +123,16 @@ namespace Genie
 				// destFile is now the item we're going to replace
 				destExists = true;
 			}
-			catch ( const N::OSStatus& err )
+			catch ( const N::FNFErr& err )
 			{
-				if ( err.Get() != fnfErr )
+			#ifdef __MWERKS__
+				
+				if ( err != N::FNFErr() )
 				{
 					throw;
 				}
+				
+			#endif
 				
 				// destFile is absent
 			}
