@@ -82,15 +82,6 @@ namespace CompileDriver
 		return itCandidate->second;
 	}
 	
-	static void ScanItemForProjects( const std::string&                                       item,
-	                                 std::back_insert_iterator< std::vector< std::string > >  output )
-	{
-		if ( io::directory_exists( item ) )
-		{
-			ScanDirForProjects( item, output );
-		}
-	}
-	
 	void ScanDirForProjects( const std::string&                                       dirPath,
 	                         std::back_insert_iterator< std::vector< std::string > >  configs,
 	                         std::back_insert_iterator< std::vector< std::string > >  folders )
@@ -120,20 +111,6 @@ namespace CompileDriver
 		std::copy( contents.begin(),
 		           contents.end(),
 		           has_confd ? configs : folders );
-	}
-	
-	void ScanDirForProjects( const std::string&                                       dir,
-	                         std::back_insert_iterator< std::vector< std::string > >  output )
-	{
-		std::vector< std::string > folders;
-		
-		ScanDirForProjects( dir, output, std::back_inserter( folders ) );
-		
-		std::for_each( folders.begin(),
-		               folders.end(),
-		               std::bind2nd( more::ptr_fun( ScanItemForProjects ),
-		                             output ) );
-		
 	}
 	
 }

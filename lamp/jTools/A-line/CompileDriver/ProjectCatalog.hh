@@ -54,9 +54,6 @@ namespace CompileDriver
 	                         std::back_insert_iterator< std::vector< std::string > >  configs,
 	                         std::back_insert_iterator< std::vector< std::string > >  folders );
 	
-	void ScanDirForProjects( const std::string&                                       dirPath,
-	                         std::back_insert_iterator< std::vector< std::string > >  output );
-	
 }
 
 #endif
