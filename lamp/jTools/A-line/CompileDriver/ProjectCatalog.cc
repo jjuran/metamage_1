@@ -91,41 +91,49 @@ namespace CompileDriver
 		}
 	}
 	
-	void ScanDirForProjects( const std::string&                                       dir,
-	                         std::back_insert_iterator< std::vector< std::string > >  output )
+	void ScanDirForProjects( const std::string&                                       dirPath,
+	                         std::back_insert_iterator< std::vector< std::string > >  configs,
+	                         std::back_insert_iterator< std::vector< std::string > >  folders )
 	{
-		std::string conf = dir / "A-line.conf";
+		if ( !io::directory_exists( dirPath ) )
+		{
+			return;
+		}
+		
+		std::string conf = dirPath / "A-line.conf";
 		
 		if ( io::file_exists( conf ) )
 		{
-			*output++ = conf;
+			*configs++ = conf;
 			
 			return;
 		}
 		
 		typedef io::directory_contents_traits< std::string >::container_type directory_container;
 		
-		std::string confd = dir / "A-line.confd";
+		std::string confd = dirPath / "A-line.confd";
 		
-		typedef directory_container::const_iterator Iter;
+		bool has_confd = io::directory_exists( confd );
 		
-		if ( io::directory_exists( confd ) )
-		{
-			directory_container contents = io::directory_contents( ( confd ) );
-			
-			std::copy( contents.begin(),
-			           contents.end(),
-			           output );
-			
-			return;
-		}
+		directory_container contents = io::directory_contents( has_confd ? confd : dirPath );
 		
-		directory_container contents = io::directory_contents( ( dir ) );
+		std::copy( contents.begin(),
+		           contents.end(),
+		           has_confd ? configs : folders );
+	}
+	
+	void ScanDirForProjects( const std::string&                                       dir,
+	                         std::back_insert_iterator< std::vector< std::string > >  output )
+	{
+		std::vector< std::string > folders;
 		
-		std::for_each( contents.begin(),
-		               contents.end(),
+		ScanDirForProjects( dir, output, std::back_inserter( folders ) );
+		
+		std::for_each( folders.begin(),
+		               folders.end(),
 		               std::bind2nd( more::ptr_fun( ScanItemForProjects ),
 		                             output ) );
+		
 	}
 	
 }
