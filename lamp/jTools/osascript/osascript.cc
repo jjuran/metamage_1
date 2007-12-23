@@ -119,6 +119,12 @@ static std::string ReadFileData( const std::string& file )
 		result[0] = result[1] = '-';  // Turn she-bang line into comment 
 	}
 	
+	// AppleScript in 8.6 hates linefeeds (9.2 is ok)
+	std::replace( result.begin(),
+	              result.end(),
+	              '\n',
+	              '\r' );
+	
 	return result;
 }
 
