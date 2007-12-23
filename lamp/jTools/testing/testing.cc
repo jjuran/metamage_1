@@ -955,7 +955,7 @@ static int TestNull( int argc, char const *const argv[] )
 	
 	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const char* pathname )
 	{
-		NN::Owned< p7::fd_t > filehandle = p7::open( pathname, O_RDONLY );
+		NN::Owned< p7::fd_t > filehandle = io::open_for_reading( pathname );
 		
 		struct ::stat stat_buffer;
 		
@@ -1586,107 +1586,6 @@ static int TestCallback( int argc, char const *const argv[] )
 }
 
 
-static int TestBacktrace( int argc, char const *const argv[] )
-{
-#if TARGET_CPU_68K
-	
-	int count = (argc > 2) ? std::atoi( argv[2] ) : 1;
-	
-	::Ptr a6 = GetA6();
-	
-	for ( unsigned i = 0;  i < count  &&  a6 != NULL;  ++i, a6 = *(::Ptr*) a6 )
-	{
-		std::printf( "%d: A6 = %.8x\n", i, a6 );
-		
-		::Ptr returnAddr = *(::Ptr*)(a6 + 4);
-		
-		if ( returnAddr != NULL )
-		{
-			const UInt16* word = (UInt16*) returnAddr;
-			
-			const UInt16* begin  = word - 0x10000;
-			
-			while ( word > begin )
-			{
-				if ( *word == 0x4e56 )
-				{
-					std::printf( "    LINK at       %.8x\n", word );
-					
-					break;
-				}
-				
-				--word;
-			}
-			
-			if ( word <= begin )
-			{
-				std::fputs( "    Function too long, skipping...\n", stdout );
-			}
-		}
-		
-		std::printf( "    return addr = %.8x\n", returnAddr );
-		
-		if ( returnAddr != NULL )
-		{
-			const UInt16* word = (UInt16*) returnAddr;
-			
-			const UInt16* end  = word + 0x10000;
-			
-			while ( word < end )
-			{
-				if ( *word == 0x4e75 )
-				{
-					std::printf( "    RTS at        %.8x\n", word );
-					
-					const UInt8* p = (const UInt8*) ++word;
-					
-					if ( (*p & 0x80) != 0x80 )
-					{
-						break;
-					}
-					
-					while ( (*++p & 0x80) == 0x80 )
-					{
-						continue;
-					}
-					
-					const char* name = (const char*) p;
-					
-					std::printf( "    %s\n", name );
-					
-					try
-					{
-						std::string unmangled = Demangle( name );
-						
-						std::printf( "    Name: %s\n", unmangled.c_str() );
-					}
-					catch ( ... )
-					{
-					}
-					
-					break;
-				}
-				
-				++word;
-			}
-			
-			if ( word >= end )
-			{
-				std::fputs( "    Function too long, skipping...\n", stdout );
-			}
-		}
-	}
-	
-	if ( a6 == NULL )
-	{
-		std::fputs( "-- End of stack frames --\n", stdout );
-	}
-	
-#endif
-	
-	return 0;
-}
-
 
 static int TestUnmangle( int argc, char const *const argv[] )
 {
@@ -1700,39 +1599,6 @@ static int TestUnmangle( int argc, char const *const argv[] )
 	std::string unmangled = Demangle( argv[2] );
 	
 	std::puts( unmangled.c_str() );
-	
-	return 0;
-}
-
-
-static int TestFSpMakeFSRef( int argc, char const *const argv[] )
-{
-	std::printf( "FSpMakeFSRef() == 0x%.8x\n", FSpMakeFSRef );
-	
-	/*
-	if ( FSpMakeFSRef == NULL  &&  argc > 2 )
-	{
-		const char* pathname = argv[2];
-		
-		FSSpec file = Div::ResolvePathToFSSpec( pathname );
-		
-		//NN::Owned< N::CFragConnectionID > connID = N::GetDiskFragment< kFindCFrag >( file );
-		N::CFragConnectionID connID = N::GetDiskFragment< N::kFindCFrag >( file, 0, 0, NULL );
-		
-		OSStatus err = CFMLateImporter::ImportLibrary( "\p" "InterfaceLib", connID );
-		
-		if ( err == noErr )
-		{
-			//connID.Release();
-			
-			std::printf( "FSpMakeFSRef() == 0x%.8x\n", FSpMakeFSRef );
-		}
-		else
-		{
-			std::printf( "OSStatus %d\n", err );
-		}
-	}
-	*/
 	
 	return 0;
 }
@@ -1773,11 +1639,9 @@ const SubMain gSubs[] =
 	{ "null",      TestNull       },
 	{ "keys",      TestKeys       },
 	{ "path",      TestPath       },
-	{ "back",      TestBacktrace  },
 	{ "unmangle",  TestUnmangle   },
 	{ "mangling",  TestMangling   },
 	{ "callback",  TestCallback   },
-	{ "fsref",     TestFSpMakeFSRef },
 	
 #if TARGET_RT_MAC_CFM
 	
@@ -1810,19 +1674,21 @@ int O::Main( int argc, argv_t argv )
 	
 	MakeMap();
 	
+	std::string message;
+	
 	if (argc <= 1)
 	{
-		//Io::Err << "testing: I'd like to have an argument, please.\n";
-		//return 1;
-		
 		typedef std::map< std::string, const SubMain* >::const_iterator const_iterator;
 		
 		for ( const_iterator it = gMapping.begin();  it != gMapping.end();  ++it )
 		{
 			const char* name = it->second->name;
 			
-			Io::Out << name << "\n";
+			message += name;
+			message += "\n";
 		}
+		
+		p7::write( p7::stdout_fileno, message.data(), message.size() );
 		
 		return 0;
 	}
@@ -1833,7 +1699,9 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( sub == NULL )
 	{
-		Io::Err << "No such test '" << arg1 << "'.\n";
+		message = "No such test '" + arg1 + "'.\n";
+		
+		p7::write( p7::stderr_fileno, message.data(), message.size() );
 		
 		return 1;
 	}
