@@ -87,7 +87,7 @@ my @programs = qw
 	ic inetd
 	jgetty jtest
 	keymods kill killall
-	ld lf2cr lf2crlf local-edit-client login
+	ld lf2cr lf2crlf ln local-edit-client login
 	macbin md5sum mkdir mpwrez mread mv mwcc
 	nohup
 	open osascript
@@ -122,7 +122,7 @@ my %fsmap =
 	},
 	bin =>
 	[
-		qw( cat cp echo false kill login mkdir mv pwd readlink rm rmdir sh sleep true ),
+		qw( cat cp echo false kill ln login mkdir mv pwd readlink rm rmdir sh sleep true ),
 		qw( jgetty ),
 		qw( chmod date ls test ),
 	],
