@@ -305,9 +305,15 @@ namespace Genie
 	
 	static int RunFromContext( ThreadContext& context )
 	{
-		MainProcPtr mainPtr = context.externalMain;
+		MainProcPtr mainPtr = context.processContext->GetMain();
 		
 		ASSERT( mainPtr != NULL );
+		
+		iota::argp_t argv = context.processContext->GetArgv();
+		
+		int argc = Sh::CountStringArray( argv );
+		
+		iota::environ_t envp = context.processContext->GetEnviron();
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
@@ -324,9 +330,7 @@ namespace Genie
 	#endif
 		
 		// This is a separate function so registers get saved and restored
-		int exit_status = mainPtr( Sh::CountStringArray( context.argv ),
-		                           context.argv,
-		                           context.envp );
+		int exit_status = mainPtr( argc, argv, envp );
 		
 		return exit_status;
 	}
@@ -772,7 +776,7 @@ namespace Genie
 		
 	#endif
 		
-		MainProcPtr mainEntryPoint = itsMainEntry->GetMainPtr();
+		MainProcPtr mainEntryPoint = GetMain();
 		
 		itsArgvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
 		
@@ -786,7 +790,7 @@ namespace Genie
 		
 		ThreadContext threadContext( this,
 		                             mainEntryPoint,
-		                             itsArgvStorage->GetPointer(),
+		                             GetArgv(),
 		                             GetEnviron() );
 		
 		// We always spawn a new thread for the exec'ed process.

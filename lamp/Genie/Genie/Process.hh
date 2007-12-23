@@ -224,6 +224,10 @@ namespace Genie
 			
 			~Process();
 			
+			Main3 GetMain() const  { return itsMainEntry->GetMainPtr(); }
+			
+			iota::argp_t GetArgv() const  { return itsArgvStorage->GetPointer(); }
+			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
