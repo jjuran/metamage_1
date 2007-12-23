@@ -11,7 +11,7 @@ die "\$HOME must be defined\n" if !exists $ENV{HOME};
 
 my %arches   = qw( m68k 68K  powerpc PPC );
 my %runtimes = qw( cfm CFM  rsrc Res);
-my %backends = qw( classic Toolbox  carbon Carbon );
+my %backends = qw( blue Toolbox  carbon Carbon );
 
 my $arch    = $ENV{HOSTTYPE}    or die "Missing HOSTTYPE\n";
 my $runtime = $ENV{MAC_RUNTIME} or die "Missing MAC_RUNTIME\n";
