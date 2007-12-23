@@ -180,11 +180,33 @@ namespace Genie
 	
 #if TARGET_CPU_68K
 	
+	static void Die()
+	{
+		Process& current = CurrentProcess();
+		
+		current.Raise( SIGSYS );
+		
+		current.HandlePendingSignals();
+		
+		current.Raise( SIGKILL );
+		
+		current.HandlePendingSignals();
+		
+		N::SysBeep();
+		
+		::ExitToShell();  // not messing around
+	}
+	
 	static int DispatchSystemCallByName( const char* name, int* error )
 	{
 		gToolScratchGlobals.err = error;
 		
 		void* addr = GetSystemCallFunctionPtr( name );
+		
+		if ( addr == NULL )
+		{
+			addr = Die;
+		}
 		
 		// user code:
 		// system call arguments
@@ -280,17 +302,12 @@ namespace Genie
 		return setCurrentA4;
 	}
 	
-	int ExternalProcessExecutor::operator()( ThreadContext& context ) const
+	
+	static int RunFromContext( ThreadContext& context )
 	{
-		context.processContext->InitThread();
-		
-		int exit_status = -1;
-		
 		MainProcPtr mainPtr = context.externalMain;
 		
 		ASSERT( mainPtr != NULL );
-		
-		gToolScratchGlobals.err = NULL;  // errno
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
@@ -306,9 +323,24 @@ namespace Genie
 		
 	#endif
 		
-		exit_status = mainPtr( Sh::CountStringArray( context.argv ),
-		                       context.argv,
-		                       context.envp );
+		// This is a separate function so registers get saved and restored
+		int exit_status = mainPtr( Sh::CountStringArray( context.argv ),
+		                           context.argv,
+		                           context.envp );
+		
+		return exit_status;
+	}
+	
+	
+	int ExternalProcessExecutor::operator()( ThreadContext& context ) const
+	{
+		context.processContext->InitThread();
+		
+		int exit_status = -1;
+		
+		gToolScratchGlobals.err = NULL;  // errno
+		
+		exit_status = RunFromContext( context );
 		
 		// Accumulate any user time between last system call (if any) and return from main()
 		context.processContext->EnterSystemCall( "*RETURN*" );
