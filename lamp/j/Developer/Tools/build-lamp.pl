@@ -87,12 +87,12 @@ my @programs = qw
 	ic inetd
 	jgetty jtest
 	keymods kill killall
-	ld lf2cr lf2crlf ln local-edit-client login
+	ld lf2cr lf2crlf ln load-init local-edit-client login
 	macbin md5sum mkdir mpwrez mread mv mwcc
 	nohup
 	open osascript
 	perl ptrace pwd
-	readlink rm rmdir
+	readlink rm rmdir rsrc-patch
 	setleds setwindow sh sleep stripcr striplf superd
 	tcpcat tcpclient th tlsrvr true tty ttyd
 	uncaught_exception
@@ -115,7 +115,7 @@ my %fsmap =
 		[
 			qw( cpres ld mpwrez mwcc ),
 			qw( A-line abort ),
-			qw( SetFile aevt ic keymods system tlsrvr ),
+			qw( SetFile aevt ic keymods load-init rsrc-patch system tlsrvr ),
 			qw( File Line activate quit ),
 			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl run-tests ),
 		],
