@@ -3,6 +3,11 @@
  *	============
  */
 
+// Mac OS Universal Interfaces
+#ifndef __MIXEDMODE__
+#include <MixedMode.h>
+#endif
+
 // Standard C++
 #include <functional>
 #include <vector>
@@ -62,14 +67,32 @@ static void LoadInit( const char* type, const char* id, iota::argv_t args )
 	
 	Code code = reinterpret_cast< Code >( *handle.Get() );
 	
-	if ( TARGET_CPU_68K )
+	ProcInfoType procInfo = kCStackBased
+	                      | RESULT_SIZE( SIZE_CODE( sizeof (int) ) );
+	
+	RoutineDescriptor universalCode = BUILD_ROUTINE_DESCRIPTOR( procInfo, code );
+	
+	universalCode.routineRecords[0].ISA = kM68kISA | kOld68kRTA;
+	
+#if TARGET_RT_MAC_CFM
+	
+	typedef UniversalProcPtr CodeUPP;
+	
+	CodeUPP upp = &universalCode;
+	
+#else
+	
+	typedef Code CodeUPP;
+	
+	CodeUPP upp = code;
+	
+#endif
+	
+	int result = CALL_ZERO_PARAMETER_UPP( upp, procInfo );
+	
+	if ( result != 0 )
 	{
-		int result = code();
-		
-		if ( result != 0 )
-		{
-			std::fprintf( stderr, "load-init: %s: returned %d\n", file, result );
-		}
+		std::fprintf( stderr, "load-init: %s: returned %d\n", file, result );
 	}
 }
 
