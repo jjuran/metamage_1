@@ -244,30 +244,6 @@ namespace Genie
 		
 		switch ( c )
 		{
-			case kLeftArrowCharCode:
-			case kRightArrowCharCode:
-				
-				if ( textIsSelected )
-				{
-					// Put the insertion point at the beginning or end of the selection.
-					( c == kLeftArrowCharCode ) ? ( end = start )
-					                            : ( start = end );
-				}
-				else
-				{
-					// The position delta is 1 for right arrow and -1 for left arrow,
-					// except that it's zero if we're at the start of the input area 
-					// going left.  We don't have to detect end of buffer going right,
-					// because TE already handles this.
-					short delta = ( c == kRightArrowCharCode ) ? 1
-					                                           : ( atStartOfInput ? 0
-					                                                              : -1 );
-					start = end += delta;
-				}
-				
-				SetSelection( start, end );
-				break;
-			
 			case kUpArrowCharCode:
 			case kDownArrowCharCode:
 				break;
@@ -303,9 +279,12 @@ namespace Genie
 				// Backspace or left arrow on a selection doesn't modify start --
 				// only if there's an insertion point are we really going left.
 				// If so, and we're at the start of input, ignore the event.
-				bool goingLeft = ( c == kBackspaceCharCode )  ||  ( c == kLeftArrowCharCode );
-				bool reallyGoingLeft = goingLeft && !textIsSelected;
-				bool ignoring = reallyGoingLeft && atStartOfInput;
+				bool deletingLeft = ( c == kBackspaceCharCode ) &&   !textIsSelected;
+				bool movingLeft   = ( c == kLeftArrowCharCode ) && ( !textIsSelected || event.modifiers & shiftKey );
+				
+				bool goingLeft = deletingLeft || movingLeft;
+				
+				bool ignoring = goingLeft && atStartOfInput;
 				
 				if ( !ignoring )
 				{
