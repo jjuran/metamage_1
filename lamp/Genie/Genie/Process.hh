@@ -28,8 +28,8 @@
 // Nucleus
 #include "Nucleus/Owned.h"
 
-// Nitrogen Extras / Utilities
-#include "Utilities/Threads.h"
+// Nitrogen
+#include "Nitrogen/Threads.h"
 
 // ShellShock
 #include "ShellShock/VarArray.hh"
@@ -49,7 +49,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
 	namespace Sh = ShellShock;
 	
 	
@@ -59,23 +58,6 @@ namespace Genie
 	
 	class NotExecutableError {};
 	
-	
-	class Process;
-	
-	struct ExternalProcessExecutor
-	{
-		int operator()( Process* context ) const;
-	};
-	
-	struct Thread_Details
-	{
-		typedef Process*  Parameter;
-		typedef int       Result;
-		
-		typedef ExternalProcessExecutor Function;
-	};
-	
-	typedef NX::Thread< Thread_Details > Thread;
 	
 	typedef int* ErrnoDataPtr;
 	
@@ -170,7 +152,7 @@ namespace Genie
 			MainEntry itsOldMainEntry;
 			
 			std::auto_ptr< Sh::StringArray > itsArgvStorage;
-			std::auto_ptr< Thread > itsThread;
+			Nucleus::Owned< Nitrogen::ThreadID > itsThread;
 			
 			CleanupHandler itsCleanupHandler;
 			
@@ -253,7 +235,7 @@ namespace Genie
 			void Exit( int exit_status );
 		
 		public:
-			bool Forked() const  { return itsThread.get() == NULL; }
+			bool Forked() const  { return itsThread.Get() == Nitrogen::kNoThreadID; }
 			
 			bool Forking() const  { return itsForkedChildPID != 0; }
 			

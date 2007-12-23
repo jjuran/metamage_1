@@ -305,15 +305,16 @@ namespace Genie
 	
 	static int RunFromContext( Process* process )
 	{
-		Main3 mainPtr = process->GetMain();
+		// Local variables need to be volatile so they don't get assigned to A4
+		volatile Main3 mainPtr = process->GetMain();
 		
 		ASSERT( mainPtr != NULL );
 		
-		iota::argp_t argv = process->GetArgv();
+		volatile iota::argp_t argv = process->GetArgv();
 		
-		int argc = Sh::CountStringArray( argv );
+		volatile int argc = Sh::CountStringArray( argv );
 		
-		iota::environ_t envp = process->GetEnviron();
+		volatile iota::environ_t envp = process->GetEnviron();
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
@@ -335,24 +336,25 @@ namespace Genie
 		return exit_status;
 	}
 	
-	
-	int ExternalProcessExecutor::operator()( Process* process ) const
+	namespace
 	{
-		process->InitThread();
 		
-		int exit_status = -1;
+		void ProcessThreadEntry( Process* process )
+		{
+			process->InitThread();
+			
+			gToolScratchGlobals.err = NULL;  // errno
+			
+			int exit_status = RunFromContext( process );
+			
+			// Accumulate any user time between last system call (if any) and return from main()
+			process->EnterSystemCall( "*RETURN*" );
+			
+			process->Exit( exit_status );
+			
+			// Not reached
+		}
 		
-		gToolScratchGlobals.err = NULL;  // errno
-		
-		exit_status = RunFromContext( process );
-		
-		// Accumulate any user time between last system call (if any) and return from main()
-		process->EnterSystemCall( "*RETURN*" );
-		
-		process->Exit( exit_status );
-		
-		// Not reached
-		return exit_status;
 	}
 	
 	struct ExecContext
@@ -791,15 +793,12 @@ namespace Genie
 		// current thread -- be careful!
 		
 		// Create the new thread
-		std::auto_ptr< Thread > newThread( new Thread( this ) );
+		NN::Owned< N::ThreadID > newThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
+		                                                                                   this,
+		                                                                                   Size( 0 ) );
 		
 		// Save the old thread
-		NN::Owned< N::ThreadID > savedThreadID;
-		
-		if ( itsThread.get() )
-		{
-			savedThreadID = itsThread->HandOff();
-		}
+		NN::Owned< N::ThreadID > savedThreadID = itsThread;
 		
 		// Make the new thread belong to this process
 		itsThread = newThread;
@@ -954,9 +953,9 @@ namespace Genie
 			}
 		}
 		
-		if ( !Forked()  &&  itsThread.get() != NULL )
+		if ( !Forked() )
 		{
-			NN::Owned< N::ThreadID > savedThreadID = itsThread->HandOff();
+			NN::Owned< N::ThreadID > savedThreadID = itsThread;
 			
 			// Unforked process' thread dies here
 		}
@@ -1272,13 +1271,13 @@ namespace Genie
 	// Doesn't return if the process was current and receives a fatal signal while stopped.
 	void Process::Stop()
 	{
-		ASSERT( itsThread.get() != NULL );
+		ASSERT( itsThread.Get() != N::kNoThreadID );
 		
 		if ( gCurrentProcess == this )
 		{
 			ASSERT( itsSchedule == kProcessRunning );
 			
-			ASSERT( N::GetCurrentThread() == itsThread->Get() );
+			ASSERT( N::GetCurrentThread() == itsThread.Get() );
 			
 			itsStackFramePtr = Backtrace::GetStackFramePointer();
 			
@@ -1288,9 +1287,9 @@ namespace Genie
 		itsSchedule = kProcessStopped;
 		
 		// Yields if this is the current thread
-		N::SetThreadState( itsThread->Get(), N::kStoppedThreadState );
+		N::SetThreadState( itsThread.Get(), N::kStoppedThreadState );
 		
-		if ( N::GetCurrentThread() == itsThread->Get() )
+		if ( N::GetCurrentThread() == itsThread.Get() )
 		{
 			Resume();
 			
@@ -1301,20 +1300,20 @@ namespace Genie
 	
 	void Process::Continue()
 	{
-		if ( itsThread.get() == NULL )
+		if ( itsThread.Get() == N::kNoThreadID )
 		{
 			WriteToSystemConsole( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
 			
 			return;
 		}
 		
-		if ( N::GetThreadState( itsThread->Get() ) == N::kStoppedThreadState )
+		if ( N::GetThreadState( itsThread.Get() ) == N::kStoppedThreadState )
 		{
 			ASSERT( itsSchedule == kProcessStopped );
 			
 			itsSchedule = kProcessSleeping;
 			
-			N::SetThreadState( itsThread->Get(), N::kReadyThreadState );
+			N::SetThreadState( itsThread.Get(), N::kReadyThreadState );
 		}
 	}
 	
