@@ -73,26 +73,34 @@ namespace Genie
 	}
 	
 	
-	inline NN::Owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
-	{
-		return N::GetMemFragment< N::kPrivateCFragCopy >( image.Get(),
-		                                                  N::GetPtrSize( image ) );
-	}
-	
-	
-	class CodeResourceMain : public MainEntryPoint
+	class BinaryImageClient
 	{
 		private:
 			BinaryImage itsBinaryImage;
 		
 		public:
-			CodeResourceMain( const BinaryImage& image ) : MainEntryPoint( reinterpret_cast< Main3 >( image.Get().Get() ),
-			                                                               NULL,
-			                                                               NULL ),
-			                                               itsBinaryImage( image )
+			BinaryImageClient( const BinaryImage& image ) : itsBinaryImage( image )
 			{
 			}
 	};
+	
+	class CodeResourceMain : public BinaryImageClient, public MainEntryPoint
+	{
+		public:
+			CodeResourceMain( const BinaryImage& image ) : BinaryImageClient( image ),
+			                                               MainEntryPoint( reinterpret_cast< Main3 >( image.Get().Get() ),
+			                                                               NULL,
+			                                                               NULL )
+			{
+			}
+	};
+	
+	
+	inline NN::Owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
+	{
+		return N::GetMemFragment< N::kPrivateCFragCopy >( image.Get(),
+		                                                  N::GetPtrSize( image ) );
+	}
 	
 	
 	class ConnectedFragment
@@ -146,21 +154,18 @@ namespace Genie
 			}
 	};
 	
-	class CFMPluginMain : public ConnectedFragment, public MainEntryPoint
+	class CFMPluginMain : public BinaryImageClient, public ConnectedFragment, public MainEntryPoint
 	{
-		private:
-			BinaryImage itsBinaryImage;
-		
 		public:
 			CFMPluginMain( const BinaryImage& image );
 	};
 	
 	
-	CFMPluginMain::CFMPluginMain( const BinaryImage& image ) : ConnectedFragment( image        ),
+	CFMPluginMain::CFMPluginMain( const BinaryImage& image ) : BinaryImageClient( image        ),
+	                                                           ConnectedFragment( image        ),
 	                                                           MainEntryPoint   ( GetMain   (),
 	                                                                              GetErrno  (),
-	                                                                              GetEnviron() ),
-			                                                   itsBinaryImage   ( image        )
+	                                                                              GetEnviron() )
 	{
 	}
 	
