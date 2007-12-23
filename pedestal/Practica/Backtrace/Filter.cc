@@ -9,26 +9,55 @@
 #include <algorithm>
 
 
+#define STR_LEN( string )  "" string, (sizeof string - 1)
+
+#define ARRAY_LEN( array )  ( sizeof array / sizeof array[0] )
+
 namespace Backtrace
 {
 	
+	struct Replacement
+	{
+		const char*  pattern;
+		std::size_t  patternLength;
+		const char*  newText;
+		std::size_t  newTextLength;
+	};
+	
+	#define REPLACE( newtext, pattern )  { STR_LEN( pattern ), STR_LEN( newtext ) }
+	
+	const Replacement gReplacements[] =
+	{
+		REPLACE( "std::string",  "std::basic_string< char, std::char_traits< char >, std::allocator< char > >" ),
+		
+		REPLACE( "std::vector< std::string >",  "std::vector< std::string, std::allocator< std::string > >" )
+	};
+	
 	std::string FilterSymbol( const std::string& name )
 	{
-		std::string pattern = "std::basic_string< char, std::char_traits< char >, std::allocator< char > >";
-		std::string newText = "std::string";
+		const Replacement* end = gReplacements + ARRAY_LEN( gReplacements );
 		
 		std::string result = name;
 		
-		while ( true )
+		for ( const Replacement* it = gReplacements;  it < end;  ++it )
 		{
-			std::string::iterator found = std::search( result.begin(), result.end(), pattern.begin(), pattern.end() );
+			const char* pattern = it->pattern;
+			const char* pattern_end = pattern + it->patternLength;
 			
-			if ( found == result.end() )
+			while ( true )
 			{
-				break;
+				std::string::iterator found = std::search( result.begin(),
+				                                           result.end(),
+				                                           pattern,
+				                                           pattern_end );
+				
+				if ( found == result.end() )
+				{
+					break;
+				}
+				
+				result.replace( found, found + it->patternLength, it->newText, it->newTextLength );
 			}
-			
-			result.replace( found, found + pattern.size(), newText );
 		}
 		
 		return result;
