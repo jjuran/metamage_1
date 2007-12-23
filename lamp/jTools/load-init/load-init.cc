@@ -48,7 +48,7 @@ namespace Div = Divergence;
 namespace O = Orion;
 
 
-static void LoadInit( const char* type, const char* id, iota::argv_t args )
+static int LoadInit( const char* type, const char* id, iota::argv_t args )
 {
 	N::ResType resType = NN::Convert< N::ResType >( std::string( type ) );
 	
@@ -62,6 +62,14 @@ static void LoadInit( const char* type, const char* id, iota::argv_t args )
 	
 	//N::HNoPurge( handle );  // not taking chances
 	N::HLock   ( handle );
+	
+#if TARGET_API_MAC_CARBON
+	
+	p7::write( p7::stderr_fileno, STR_LEN( "load-init: Can't run INITs in Carbon\n" ) );
+	
+	return 1;
+	
+#else
 	
 	typedef int (*Code)();
 	
@@ -94,6 +102,10 @@ static void LoadInit( const char* type, const char* id, iota::argv_t args )
 	{
 		std::fprintf( stderr, "load-init: %s: returned %d\n", file, result );
 	}
+	
+#endif
+	
+	return EXIT_SUCCESS;
 }
 
 int O::Main( int argc, argv_t argv )
@@ -119,8 +131,6 @@ int O::Main( int argc, argv_t argv )
 		return 2;
 	}
 	
-	LoadInit( type, id, freeArgs );
-	
-	return EXIT_SUCCESS;
+	return LoadInit( type, id, freeArgs );
 }
 
