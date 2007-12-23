@@ -234,13 +234,19 @@ namespace CompileDriver
 	void AddPendingSubproject( const std::string& dir )
 	{
 		std::vector< std::string > configs;
-		ScanDirForProjects( dir, std::back_inserter( configs ) );
+		std::vector< std::string > folders;
+		
+		ScanDirForProjects( dir,
+		                    std::back_inserter( configs ),
+		                    std::back_inserter( folders ) );
 		
 		std::for_each( configs.begin(),
 		               configs.end(),
 		               std::ptr_fun( AddPendingConfigFile ) );
 		
-		
+		std::for_each( folders.begin(),
+		               folders.end(),
+		               std::ptr_fun( AddPendingSubproject ) );
 	}
 	
 	static void AddPendingSubprojects()
