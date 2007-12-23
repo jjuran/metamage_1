@@ -240,13 +240,13 @@ namespace CompileDriver
 		                    std::back_inserter( configs ),
 		                    std::back_inserter( folders ) );
 		
+		std::copy( folders.begin(),
+		           folders.end(),
+		           std::back_inserter( Subprojects() ) );
+		
 		std::for_each( configs.begin(),
 		               configs.end(),
 		               std::ptr_fun( AddPendingConfigFile ) );
-		
-		std::for_each( folders.begin(),
-		               folders.end(),
-		               std::ptr_fun( AddPendingSubproject ) );
 	}
 	
 	static void AddPendingSubprojects()
