@@ -276,8 +276,8 @@ static OSErr Installer()
 	return noErr;
 }
 
-void main()
+int main()
 {
-	(void) Ag::Install( Installer );
+	return Ag::Install( Installer );
 }
 

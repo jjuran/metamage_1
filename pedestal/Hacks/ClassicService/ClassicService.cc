@@ -281,8 +281,8 @@ namespace ClassicService
 	
 }
 
-void main()
+int main()
 {
-	(void) Silver::Install( ClassicService::Installer );
+	return Silver::Install( ClassicService::Installer );
 }
 
