@@ -60,46 +60,17 @@ namespace Genie
 	class NotExecutableError {};
 	
 	
-	typedef int (*MainProcPtr)( int, char const* const*, char const* const* );
-	
 	class Process;
-	
-	struct ThreadContext
-	{
-		Process*      processContext;
-		MainProcPtr   externalMain;
-		iota::argp_t  argv;
-		iota::envp_t  envp;
-		
-		ThreadContext()
-		:
-			processContext(),
-			externalMain  (),
-			argv          (),
-			envp          ()
-		{}
-		
-		ThreadContext( Process*      process,
-		               MainProcPtr   externalMain,
-		               iota::argp_t  argv,
-		               iota::envp_t  envp )
-		:
-			processContext( process       ),
-			externalMain  ( externalMain  ),
-			argv          ( argv          ),
-			envp          ( envp          )
-		{}
-	};
 	
 	struct ExternalProcessExecutor
 	{
-		int operator()( ThreadContext& context ) const;
+		int operator()( Process* context ) const;
 	};
 	
 	struct Thread_Details
 	{
-		typedef ThreadContext  Parameter;
-		typedef int            Result;
+		typedef Process*  Parameter;
+		typedef int       Result;
 		
 		typedef ExternalProcessExecutor Function;
 	};

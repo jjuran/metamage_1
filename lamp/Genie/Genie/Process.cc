@@ -303,17 +303,17 @@ namespace Genie
 	}
 	
 	
-	static int RunFromContext( ThreadContext& context )
+	static int RunFromContext( Process* process )
 	{
-		MainProcPtr mainPtr = context.processContext->GetMain();
+		Main3 mainPtr = process->GetMain();
 		
 		ASSERT( mainPtr != NULL );
 		
-		iota::argp_t argv = context.processContext->GetArgv();
+		iota::argp_t argv = process->GetArgv();
 		
 		int argc = Sh::CountStringArray( argv );
 		
-		iota::environ_t envp = context.processContext->GetEnviron();
+		iota::environ_t envp = process->GetEnviron();
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
@@ -336,20 +336,20 @@ namespace Genie
 	}
 	
 	
-	int ExternalProcessExecutor::operator()( ThreadContext& context ) const
+	int ExternalProcessExecutor::operator()( Process* process ) const
 	{
-		context.processContext->InitThread();
+		process->InitThread();
 		
 		int exit_status = -1;
 		
 		gToolScratchGlobals.err = NULL;  // errno
 		
-		exit_status = RunFromContext( context );
+		exit_status = RunFromContext( process );
 		
 		// Accumulate any user time between last system call (if any) and return from main()
-		context.processContext->EnterSystemCall( "*RETURN*" );
+		process->EnterSystemCall( "*RETURN*" );
 		
-		context.processContext->Exit( exit_status );
+		process->Exit( exit_status );
 		
 		// Not reached
 		return exit_status;
@@ -776,8 +776,6 @@ namespace Genie
 		
 	#endif
 		
-		MainProcPtr mainEntryPoint = GetMain();
-		
 		itsArgvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
 		
 		itsErrnoData = itsMainEntry->GetErrnoPtr();
@@ -788,17 +786,12 @@ namespace Genie
 		
 		itsResult = 0;
 		
-		ThreadContext threadContext( this,
-		                             mainEntryPoint,
-		                             GetArgv(),
-		                             GetEnviron() );
-		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
 		// Create the new thread
-		std::auto_ptr< Thread > newThread( new Thread( threadContext ) );
+		std::auto_ptr< Thread > newThread( new Thread( this ) );
 		
 		// Save the old thread
 		NN::Owned< N::ThreadID > savedThreadID;
