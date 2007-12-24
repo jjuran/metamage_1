@@ -632,6 +632,10 @@ namespace Genie
 		itsCleanupHandler     (),
 		itsErrnoData          ( NULL )
 	{
+		char const *const argv[] = { "init", NULL };
+		
+		itsCmdLine.Assign( argv );
+		
 		itsFileDescriptors[ 0 ] =
 		itsFileDescriptors[ 1 ] =
 		itsFileDescriptors[ 2 ] = GetSimpleDeviceHandle( "null" );
