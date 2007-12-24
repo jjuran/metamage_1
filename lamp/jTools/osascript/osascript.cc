@@ -148,7 +148,7 @@ static NN::Owned< N::OSASpec > MakeCWDContext( const NN::Shared< N::ComponentIns
 	return
 	N::OSACompile( scriptingComponent,
 	               N::AECreateDesc< N::typeChar >( cwdProperty ),
-	               N::OSAModeFlags( kOSAModeCompileIntoContext ) );
+	               N::kOSAModeCompileIntoContext );
 }
 
 static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
@@ -165,7 +165,7 @@ static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
 		
 		return N::OSACompile( scriptingComponent,
 							  source,
-							  N::OSAModeFlags( kOSAModeAugmentContext ),
+							  N::kOSAModeAugmentContext,
 							  cwdContext );
 	}
 	catch ( const N::ErrOSAScriptError& err )
