@@ -616,12 +616,9 @@ namespace Genie
 		itsCleanupHandler     (),
 		itsErrnoData          ( TARGET_RT_MAC_CFM ? parent.itsErrnoData : NULL )
 	{
-		parent.itsForkedChildPID = itsPID;
+		parent.SuspendForFork( itsPID );
 		
 		gCurrentProcess = this;
-		
-		parent.itsInterdependence = kProcessForking;
-		parent.itsSchedule        = kProcessFrozen;
 	}
 	
 	Process::~Process()
@@ -839,6 +836,18 @@ namespace Genie
 		}
 		
 		itsCWD = newCWD;
+	}
+	
+	void Process::SuspendForFork( pid_t childPID )
+	{
+		itsForkedChildPID = childPID;
+		
+		itsInterdependence = kProcessForking;
+		itsSchedule        = kProcessFrozen;
+		
+		itsStackFramePtr = Backtrace::GetStackFramePointer();
+		
+		Suspend();
 	}
 	
 	void Process::ResumeAfterFork()

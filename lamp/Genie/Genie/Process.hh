@@ -228,6 +228,7 @@ namespace Genie
 			
 			void Raise( int signal );
 			
+			void SuspendForFork( pid_t childPID );
 			void ResumeAfterFork();
 			
 			void UsurpParent( int exit_status );
