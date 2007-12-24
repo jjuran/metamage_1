@@ -1604,6 +1604,25 @@ static int TestUnmangle( int argc, char const *const argv[] )
 }
 
 
+static int TestDefaultThreadStackSize( int argc, iota::argv_t argv )
+{
+	Size size = 0;
+	
+	OSErr err = GetDefaultThreadStackSize( kCooperativeThread, &size );
+	
+	if ( err != noErr )
+	{
+		std::fprintf( stderr, "GetDefaultThreadStackSize() returned OSErr %d\n", err );
+		
+		return 1;
+	}
+	
+	std::fprintf( stdout, "Default thread stack size:  %d\n", size );
+	
+	return 0;
+}
+
+
 typedef int (*MainProcPtr)(int argc, const char *const argv[]);
 
 struct SubMain
@@ -1642,6 +1661,7 @@ const SubMain gSubs[] =
 	{ "unmangle",  TestUnmangle   },
 	{ "mangling",  TestMangling   },
 	{ "callback",  TestCallback   },
+	{ "stack",     TestDefaultThreadStackSize },
 	
 #if TARGET_RT_MAC_CFM
 	
