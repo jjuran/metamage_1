@@ -115,7 +115,7 @@ namespace Backtrace
 	};
 	
 	
-	StackFramePtr GetStackFramePointer();
+	StackFramePtr GetStackFramePointer( int levelsToSkip = 0 );
 	
 	std::vector< ReturnAddress > MakeStackCrawl( StackFramePtr frame );
 	

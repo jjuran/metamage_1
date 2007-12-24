@@ -147,9 +147,16 @@ namespace Backtrace
 	
 #endif
 	
-	StackFramePtr GetStackFramePointer()
+	StackFramePtr GetStackFramePointer( int levelsToSkip )
 	{
-		return reinterpret_cast< StackFramePtr >( GetTopFrame()->next );
+		StackFrame* frame = GetTopFrame()->next;
+		
+		while ( frame != NULL  &&  --levelsToSkip >= 0 )
+		{
+			frame = frame->next;  // FIXME:  This needs to perform the usual checks
+		}
+		
+		return reinterpret_cast< StackFramePtr >( frame );
 	}
 	
 	
