@@ -101,8 +101,6 @@ namespace Genie
 			bool IsDirectory() const;
 			bool IsLink() const;
 			
-			bool IsRootDirectory() const;
-			
 			std::string Name() const;
 			
 			FSTreePtr Parent() const;
@@ -183,6 +181,15 @@ namespace Genie
 		result = io::system_root< N::FSDirSpec >() / "j";
 		
 		return N::FSDirSpec( result );
+	}
+	
+	static N::FSDirSpec UsersDirectory()
+	{
+		N::FSDirSpec root = io::system_root< N::FSDirSpec >();
+		
+		FSSpec users = root / "Users";
+		
+		return N::FSDirSpec( users );
 	}
 	
 	
@@ -348,21 +355,21 @@ namespace Genie
 		return isAlias;
 	}
 	
-	bool FSTree_FSSpec::IsRootDirectory() const
+	static bool IsRootDirectory( const FSSpec& fileSpec )
 	{
-		return io::directory_exists( itsFileSpec )  &&  N::FSDirSpec( itsFileSpec ) == FindJDirectory();
+		return io::directory_exists( fileSpec )  &&  N::FSDirSpec( fileSpec ) == FindJDirectory();
 	}
 	
 	std::string FSTree_FSSpec::Name() const
 	{
-		if ( IsRootDirectory() )
-		{
-			return "";
-		}
-		
 		if ( itsFileSpec.parID == fsRtParID )
 		{
 			return "mnt";
+		}
+		
+		if ( IsRootDirectory( itsFileSpec ) )
+		{
+			return "";
 		}
 		
 		return io::get_filename_string( itsFileSpec );
@@ -370,14 +377,30 @@ namespace Genie
 	
 	FSTreePtr FSTree_FSSpec::Parent() const
 	{
-		if ( IsRootDirectory() )
-		{
-			return FSRoot();
-		}
-		
 		if ( itsFileSpec.parID == fsRtParID )
 		{
 			return Get_sys_mac_vol_N( N::FSVolumeRefNum( itsFileSpec.vRefNum ) );
+		}
+		
+		if ( io::directory_exists( itsFileSpec ) )
+		{
+			N::FSDirSpec dir( itsFileSpec );
+			
+			if ( dir == FindJDirectory() )
+			{
+				return FSRoot();
+			}
+			
+			try
+			{
+				if ( dir == UsersDirectory() )
+				{
+					return FSRoot();
+				}
+			}
+			catch ( ... )
+			{
+			}
 		}
 		
 		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( itsFileSpec ) ) );
