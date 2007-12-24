@@ -864,7 +864,7 @@ namespace Genie
 		itsInterdependence = kProcessForking;
 		itsSchedule        = kProcessFrozen;
 		
-		itsStackFramePtr = Backtrace::GetStackFramePointer();
+		itsStackFramePtr = Backtrace::GetStackFramePointer( 3 );
 		
 		Suspend();
 	}
