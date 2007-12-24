@@ -1343,6 +1343,11 @@ namespace Genie
 			return;
 		}
 		
+		if ( itsSchedule == kProcessFrozen )
+		{
+			return;
+		}
+		
 		if ( N::GetThreadState( thread ) == N::kStoppedThreadState )
 		{
 			ASSERT( itsSchedule == kProcessStopped );
