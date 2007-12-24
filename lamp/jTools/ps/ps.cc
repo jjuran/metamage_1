@@ -76,12 +76,10 @@ static void report_process( const std::string& pid_name )
 	
 	std::string pid_dir = "/proc" / pid_name;
 	
-	std::string pid_stat = pid_dir / "stat";
+	char buffer[ 4096 ];
 	
-	char stat_buffer[ 4096 ];
-	
-	const char* begin = stat_buffer;
-	const char* end   = stat_buffer + p7::read( io::open_for_reading( pid_stat ), stat_buffer, 4096 );
+	const char* begin = buffer;
+	const char* end   = buffer + p7::read( io::open_for_reading( pid_dir / "stat" ), buffer, 4096 );
 	
 	const char* close_paren = std::find( begin, end, ')' );
 	
@@ -117,6 +115,26 @@ static void report_process( const std::string& pid_name )
 	
 	report += left_padded( sid, space, 5 );
 	
+	report += "  ";
+	
+	char* cmdline_end = buffer + p7::read( io::open_for_reading( pid_dir / "cmdline" ), buffer, 4096 );
+	
+	if ( cmdline_end > buffer )
+	{
+		std::replace( buffer, cmdline_end - 1, '\0', ' ' );  // replace NUL with space except last
+		
+		report.append( buffer, cmdline_end - 1 );
+	}
+	else
+	{
+		report += "init";
+	}
+	
+	if ( report.size() > 80 )
+	{
+		report.resize( 80 );
+	}
+	
 	report += "\n";
 	
 	p7::write( p7::stdout_fileno, report.data(), report.size() );
@@ -124,7 +142,7 @@ static void report_process( const std::string& pid_name )
 
 static void ps()
 {
-	p7::write( p7::stdout_fileno, STR_LEN( "  PID  STAT   PPID   PGID    SID\n" ) );
+	p7::write( p7::stdout_fileno, STR_LEN( "  PID  STAT   PPID   PGID    SID  COMMAND\n" ) );
 	
 	DIR* iter = opendir( "/proc" );
 	
