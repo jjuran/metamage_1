@@ -792,10 +792,14 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
+		N::Size stackSize = N::GetDefaultThreadStackSize( N::kCooperativeThread );
+		
+		stackSize = std::max( stackSize, 32768ul );  // at least 32K of stack
+		
 		// Create the new thread
 		NN::Owned< N::ThreadID > newThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
 		                                                                                   this,
-		                                                                                   Size( 0 ) );
+		                                                                                   stackSize );
 		
 		// Save the old thread
 		NN::Owned< N::ThreadID > savedThreadID = itsThread;
