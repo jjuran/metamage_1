@@ -655,6 +655,25 @@ namespace Genie
 		}
 	}
 	
+	Nitrogen::ThreadID Process::GetThread() const
+	{
+		const Process* process = this;
+		
+		while ( process->itsThread.Get() == N::kNoThreadID )
+		{
+			pid_t ppid = process->GetPPID();
+			
+			if ( ppid == 1 )
+			{
+				return N::kNoThreadID;
+			}
+			
+			process = &GetProcess( ppid );
+		}
+		
+		return process->itsThread.Get();
+	}
+	
 	static void CloseMarkedFileDescriptors( FileDescriptorMap& fileDescriptors )
 	{
 		// Close file descriptors with close-on-exec flag.
@@ -1284,13 +1303,15 @@ namespace Genie
 	// Doesn't return if the process was current and receives a fatal signal while stopped.
 	void Process::Stop()
 	{
-		ASSERT( itsThread.Get() != N::kNoThreadID );
+		N::ThreadID thread = GetThread();
+		
+		ASSERT( thread != N::kNoThreadID );
 		
 		if ( gCurrentProcess == this )
 		{
 			ASSERT( itsSchedule == kProcessRunning );
 			
-			ASSERT( N::GetCurrentThread() == itsThread.Get() );
+			ASSERT( N::GetCurrentThread() == thread );
 			
 			itsStackFramePtr = Backtrace::GetStackFramePointer();
 			
@@ -1300,9 +1321,9 @@ namespace Genie
 		itsSchedule = kProcessStopped;
 		
 		// Yields if this is the current thread
-		N::SetThreadState( itsThread.Get(), N::kStoppedThreadState );
+		N::SetThreadState( thread, N::kStoppedThreadState );
 		
-		if ( N::GetCurrentThread() == itsThread.Get() )
+		if ( N::GetCurrentThread() == thread )
 		{
 			Resume();
 			
@@ -1313,20 +1334,22 @@ namespace Genie
 	
 	void Process::Continue()
 	{
-		if ( itsThread.Get() == N::kNoThreadID )
+		N::ThreadID thread = GetThread();
+		
+		if ( thread == N::kNoThreadID )
 		{
 			WriteToSystemConsole( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
 			
 			return;
 		}
 		
-		if ( N::GetThreadState( itsThread.Get() ) == N::kStoppedThreadState )
+		if ( N::GetThreadState( thread ) == N::kStoppedThreadState )
 		{
 			ASSERT( itsSchedule == kProcessStopped );
 			
 			itsSchedule = kProcessSleeping;
 			
-			N::SetThreadState( itsThread.Get(), N::kReadyThreadState );
+			N::SetThreadState( thread, N::kReadyThreadState );
 		}
 	}
 	

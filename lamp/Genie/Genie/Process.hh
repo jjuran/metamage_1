@@ -240,6 +240,8 @@ namespace Genie
 			
 			bool Forking() const  { return itsForkedChildPID != 0; }
 			
+			Nitrogen::ThreadID GetThread() const;
+			
 			NN::Owned< N::ThreadID > Exec( const FSTreePtr&    executable,
 			                               const char* const   argv[],
 			                               const char* const*  envp );
