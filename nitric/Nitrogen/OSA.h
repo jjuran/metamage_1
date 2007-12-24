@@ -62,15 +62,34 @@ namespace Nitrogen
 	
 	static const DescType typeOSAGenericStorage = DescType( ::typeOSAGenericStorage );
 	
-	typedef Nucleus::ID< class OSAID_Tag, ::OSAID >::Type OSAID;
+	enum OSAID
+	{
+		kOSANullScript = ::kOSANullScript,
+		
+		kOSAID_Max = Nucleus::Enumeration_Traits< ::OSAID >::max
+	};
 	
-	static const OSAID kOSANullScript = OSAID( ::kOSANullScript );
+	enum OSAModeFlags
+	{
+		kOSAModeNull                    = ::kOSAModeNull,
+		kOSAModePreventGetSource        = ::kOSAModePreventGetSource,
+		kOSAModeNeverInteract           = ::kOSAModeNeverInteract,
+		kOSAModeCanInteract             = ::kOSAModeCanInteract,
+		kOSAModeAlwaysInteract          = ::kOSAModeAlwaysInteract,
+		kOSAModeDontReconnect           = ::kOSAModeDontReconnect,
+		kOSAModeCantSwitchLayer         = ::kOSAModeCantSwitchLayer,
+		kOSAModeDoRecord                = ::kOSAModeDoRecord,
+		kOSAModeCompileIntoContext      = ::kOSAModeCompileIntoContext,
+		kOSAModeAugmentContext          = ::kOSAModeAugmentContext,
+		kOSAModeDisplayForHumans        = ::kOSAModeDisplayForHumans,
+		kOSAModeDontStoreParent         = ::kOSAModeDontStoreParent,
+		kOSAModeDispatchToDirectObject  = ::kOSAModeDispatchToDirectObject,
+		kOSAModeDontGetDataForArguments = ::kOSAModeDontGetDataForArguments,
+		
+		kOSAModeFlags_Max = Nucleus::Enumeration_Traits< long >::max  // FIXME:  review for 64-bit
+	};
 	
-	typedef Nucleus::Flag< class OSAModeFlagsTag, long >::Type OSAModeFlags;
-	
-	static const OSAModeFlags kOSAModeNull = OSAModeFlags( ::kOSAModeNull );
-	
-	static const OSAModeFlags kOSAModeDisplayForHumans = OSAModeFlags( ::kOSAModeDisplayForHumans );
+	NUCLEUS_DEFINE_FLAG_OPS( OSAModeFlags )
 	
 	struct OSASpec 
 	{
@@ -120,16 +139,16 @@ namespace Nitrogen
 	
 	Nucleus::Owned< OSASpec > OSALoad( Nucleus::Shared< ComponentInstance >  scriptingComponent,
 	                                   const AEDesc&                         scriptData,
-	                                   OSAModeFlags                          modeFlags = OSAModeFlags ());
+	                                   OSAModeFlags                          modeFlags = OSAModeFlags() );
 	
 	Nucleus::Owned< AEDesc > OSAStore( ComponentInstance  scriptingComponent,
 	                                   OSAID              scriptID,
 	                                   DescType           desiredType = typeOSAGenericStorage,
-	                                   OSAModeFlags       modeFlags   = OSAModeFlags( kOSAModeNull ) );
+	                                   OSAModeFlags       modeFlags   = kOSAModeNull );
 	
 	inline Nucleus::Owned< AEDesc > OSAStore( const OSASpec&  script,
 	                                          DescType        desiredType = typeOSAGenericStorage,
-	                                          OSAModeFlags    modeFlags   = OSAModeFlags ())
+	                                          OSAModeFlags    modeFlags   = OSAModeFlags() )
 	{
 		return OSAStore( script.component, script.id, desiredType, modeFlags );
 	}
@@ -137,11 +156,11 @@ namespace Nitrogen
 	Nucleus::Owned< OSASpec > OSAExecute( Nucleus::Shared< ComponentInstance >  scriptingComponent,
 	                                      OSAID                                 compiledScriptID,
 	                                      OSAID                                 contextID = OSAID(),
-	                                      OSAModeFlags                          modeFlags = OSAModeFlags( kOSAModeNull ) );
+	                                      OSAModeFlags                          modeFlags = kOSAModeNull );
 	
 	inline Nucleus::Owned< OSASpec > OSAExecute( const OSASpec&  script,
 	                                             OSAID           contextID = OSAID(),
-	                                             OSAModeFlags    modeFlags = OSAModeFlags ())
+	                                             OSAModeFlags    modeFlags = OSAModeFlags() )
 	{
 		return OSAExecute( script.component, script.id, contextID, modeFlags );
 	}
@@ -149,11 +168,11 @@ namespace Nitrogen
 	Nucleus::Owned< AEDesc > OSADisplay( ComponentInstance  scriptingComponent,
 	                                     OSAID              scriptValueID,
 	                                     DescType           desiredType = typeChar,
-	                                     OSAModeFlags       modeFlags   = OSAModeFlags ());
+	                                     OSAModeFlags       modeFlags   = OSAModeFlags() );
 	
 	inline Nucleus::Owned< AEDesc > OSADisplay( const OSASpec&  scriptValue,
 	                                            DescType        desiredType = typeChar,
-	                                            OSAModeFlags    modeFlags   = OSAModeFlags ())
+	                                            OSAModeFlags    modeFlags   = OSAModeFlags() )
 	{
 		return OSADisplay( scriptValue.component,
 		                   scriptValue.id,
@@ -176,7 +195,7 @@ namespace Nitrogen
 	
 	Nucleus::Owned< OSASpec > OSACompile( Nucleus::Shared< ComponentInstance >  scriptingComponent, 
 	                                      const AEDesc&                         sourceData, 
-	                                      OSAModeFlags                          modeFlags = OSAModeFlags ());
+	                                      OSAModeFlags                          modeFlags = OSAModeFlags() );
 	
 	Nucleus::Owned< OSASpec > OSACompile( Nucleus::Shared< ComponentInstance >  scriptingComponent, 
 	                                      const AEDesc&                         sourceData, 
