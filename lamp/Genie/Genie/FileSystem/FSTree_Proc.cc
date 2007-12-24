@@ -302,6 +302,22 @@ namespace Genie
 		}
 	}
 	
+	class proc_PID_cmdline_Query
+	{
+		private:
+			pid_t itsPID;
+		
+		public:
+			proc_PID_cmdline_Query( pid_t pid ) : itsPID( pid )  {}
+			
+			std::string operator()() const
+			{
+				const Process& process = GetProcess( itsPID );
+				
+				return process.GetCmdLine();
+			}
+	};
+	
 	class proc_PID_stat_Query
 	{
 		private:
@@ -389,6 +405,10 @@ namespace Genie
 		Map( FSTreePtr( new FSTree_PID_cwd ( pid ) ) );
 		Map( FSTreePtr( new FSTree_PID_exe ( pid ) ) );
 		Map( FSTreePtr( new FSTree_PID_root( pid ) ) );
+		
+		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_cmdline_Query >( Pathname(),
+		                                                                "cmdline",
+		                                                                proc_PID_cmdline_Query( pid ) ) ) );
 		
 		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( Pathname(),
 		                                                             "stat",
