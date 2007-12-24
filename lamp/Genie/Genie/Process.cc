@@ -46,6 +46,9 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 
+// ShellShock
+#include "ShellShock/VarArray.hh"
+
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -124,6 +127,21 @@ namespace Genie
 	
 	
 	GenieProcessTable gProcessTable;
+	
+	
+	void CmdLine::Assign( char const *const *argv )
+	{
+		itsStorage.clear();
+		
+		while ( *argv )
+		{
+			//itsStorage += *argv++;  // This fails to copy **argv using MSL
+			
+			itsStorage += std::string( *argv++ );
+			
+			itsStorage += '\0';
+		}
+	}
 	
 	
 	void SendSignalToProcessGroup( int sig, const ProcessGroup& group )
@@ -303,6 +321,29 @@ namespace Genie
 	}
 	
 	
+	static std::vector< const char* > ArgVectorFromCmdLine( const std::string& cmdLine )
+	{
+		std::vector< const char* > result;
+		
+		const char* begin = &*cmdLine.begin();
+		const char* end   = &*cmdLine.end();
+		
+		while ( begin < end )
+		{
+			const char* null = std::find( begin, end, '\0' );
+			
+			ASSERT( null != end );
+			
+			result.push_back( begin );
+			
+			begin = null + 1;
+		}
+		
+		result.push_back( NULL );
+		
+		return result;
+	}
+	
 	static int RunFromContext( Process* process )
 	{
 		// Local variables need to be volatile so they don't get assigned to A4
@@ -310,9 +351,11 @@ namespace Genie
 		
 		ASSERT( mainPtr != NULL );
 		
-		volatile iota::argp_t argv = process->GetArgv();
+		std::vector< const char* > argVector = ArgVectorFromCmdLine( process->GetCmdLine() );
 		
-		volatile int argc = Sh::CountStringArray( argv );
+		volatile int argc = argVector.size() - 1;  // don't count trailing NULL
+		
+		volatile iota::argp_t argv = &argVector.front();
 		
 		volatile iota::environ_t envp = process->GetEnviron();
 		
@@ -794,7 +837,7 @@ namespace Genie
 		
 	#endif
 		
-		itsArgvStorage.reset( new Sh::StringArray( &context.argVector[ 0 ] ) );
+		itsCmdLine.Assign( &context.argVector.front() );
 		
 		itsErrnoData = itsMainEntry->GetErrnoPtr();
 		

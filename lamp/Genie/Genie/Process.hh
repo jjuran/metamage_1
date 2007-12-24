@@ -31,9 +31,6 @@
 // Nitrogen
 #include "Nitrogen/Threads.h"
 
-// ShellShock
-#include "ShellShock/VarArray.hh"
-
 // Genie
 #include "Genie/Exec/MainEntry.hh"
 #include "Genie/FileDescriptor.hh"
@@ -49,7 +46,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace Sh = ShellShock;
 	
 	
 	typedef void ( *sig_t )( int );
@@ -105,6 +101,17 @@ namespace Genie
 	
 #endif
 	
+	class CmdLine
+	{
+		private:
+			std::string itsStorage;
+		
+		public:
+			void Assign( char const *const *argv );
+			
+			const std::string& Data() const  { return itsStorage; }
+	};
+	
 	class Process : public Environ,
 	                public TimeKeeper,
 	                public LongJumper
@@ -151,7 +158,8 @@ namespace Genie
 			MainEntry itsMainEntry;
 			MainEntry itsOldMainEntry;
 			
-			std::auto_ptr< Sh::StringArray > itsArgvStorage;
+			CmdLine itsCmdLine;
+			
 			Nucleus::Owned< Nitrogen::ThreadID > itsThread;
 			
 			CleanupHandler itsCleanupHandler;
@@ -179,7 +187,7 @@ namespace Genie
 			
 			Main3 GetMain() const  { return itsMainEntry->GetMainPtr(); }
 			
-			iota::argp_t GetArgv() const  { return itsArgvStorage->GetPointer(); }
+			const std::string& GetCmdLine() const  { return itsCmdLine.Data(); }
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
