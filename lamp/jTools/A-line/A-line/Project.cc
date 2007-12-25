@@ -119,6 +119,10 @@ namespace ALine
 		{
 			return productApplication;
 		}
+		else if ( productName == "source" )
+		{
+			return productSource;
+		}
 		else if ( productName == "lib" )
 		{
 			return productStaticLib;
@@ -393,10 +397,18 @@ namespace ALine
 	
 	void Project::Study()
 	{
+		if ( product == productNotBuilt )
+		{
+			return;
+		}
+		
 		// Add the includes directory
 		AddIncludeDir( projName );
 		
-		if ( product == productNotBuilt )  return;
+		if ( !ProductGetsBuilt( product ) )
+		{
+			return;
+		}
 		
 		// First try files explicitly specified on the command line
 		std::vector< std::string > sourceList = Options().files;

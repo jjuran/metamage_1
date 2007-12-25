@@ -206,7 +206,7 @@ namespace ALine
 	
 	void Job::Build()
 	{
-		bool needToBuild = project.Product() != productNotBuilt;
+		bool needToBuild = ProductGetsBuilt( project.Product() );
 		
 		if ( needToBuild || Options().verbose )
 		{

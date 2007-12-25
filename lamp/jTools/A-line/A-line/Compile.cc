@@ -84,7 +84,14 @@ namespace ALine
 	
 	void IncludeDirGatherer::operator()( const ProjName& projName )
 	{
-		const std::vector< std::string >& searchDirs( GetProject( projName ).SearchDirs() );
+		const Project& project = GetProject( projName );
+		
+		if ( project.Product() == productNotBuilt )
+		{
+			return;
+		}
+		
+		const std::vector< std::string >& searchDirs( project.SearchDirs() );
 		
 		std::copy( searchDirs.begin(),
 		           searchDirs.end(),

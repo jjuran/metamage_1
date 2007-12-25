@@ -13,6 +13,7 @@ namespace ALine
 	enum ProductType
 	{
 		productNotBuilt = 0,
+		productSource,
 		productApplication,
 		productStaticLib,
 		productSharedLib,
@@ -20,6 +21,11 @@ namespace ALine
 		productINIT,
 		productDriver
 	};
+	
+	inline bool ProductGetsBuilt( ProductType product )
+	{
+		return product > productSource;
+	}
 	
 	enum Toolkit
 	{
