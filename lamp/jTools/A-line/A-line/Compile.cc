@@ -213,7 +213,15 @@ namespace ALine
 			}
 			else if ( status == 0 )
 			{
-				try { io::delete_file( diagnosticsFile ); } catch ( ... ) {}
+				try
+				{
+					io::delete_file( diagnosticsFile );
+					
+					io::delete_empty_directory( io::get_preceding_directory( diagnosticsFile ) );
+				}
+				catch ( ... )
+				{
+				}
 			}
 		}
 	}
