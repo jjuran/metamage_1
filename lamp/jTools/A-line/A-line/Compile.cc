@@ -453,11 +453,7 @@ namespace ALine
 		
 		options.DefineMacro( "TARGET_CONFIG_DEBUGGING", targetInfo.build == buildDebug );
 		
-		if ( targetInfo.build == buildDebug )
-		{
-			options.DefineMacro( "ALINE_DEBUG", true );
-		}
-		else if ( targetInfo.build == buildDemo )
+		if ( targetInfo.build == buildDemo )
 		{
 			options.DefineMacro( "BUILD_DEMO", true );
 		}
