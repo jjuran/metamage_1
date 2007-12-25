@@ -20,7 +20,6 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <vfork.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -240,7 +239,7 @@ static void ProcessLine( const std::string& line )
 		return;  // It's blank or a comment
 	}
 	
-	int listener = socket( PF_INET, SOCK_STREAM, INET_TCP );
+	int listener = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 	
 	if ( listener == -1 )
 	{
@@ -253,7 +252,7 @@ static void ProcessLine( const std::string& line )
 	
 	inetAddress.sin_family = AF_INET;
 	inetAddress.sin_port = gServers[ listener ].port;
-	inetAddress.sin_addr.s_addr = kOTAnyInetAddress;
+	inetAddress.sin_addr.s_addr = INADDR_ANY;
 	
 	int result = bind( listener, (const sockaddr*)&inetAddress, sizeof (sockaddr_in) );
 	
@@ -272,7 +271,7 @@ static void ProcessLine( const std::string& line )
 
 static void ReadInetdDotConf()
 {
-	Io::TextInputAdapter< NN::Owned< p7::fd_t > > input = io::open_for_reading( "/etc/inetd.conf" );
+	Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( "/etc/inetd.conf" ) );
 	
 	while ( !input.Ended() )
 	{
@@ -282,7 +281,7 @@ static void ReadInetdDotConf()
 	}
 }
 
-int O::Main( int /*argc*/, char const *const /*argv*/[] )
+int O::Main( int argc, argv_t argv )
 {
 	if ( false )
 	{
