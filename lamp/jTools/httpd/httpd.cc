@@ -25,7 +25,6 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <vfork.h>
 
 // Iota
 #include "iota/strings.hh"
