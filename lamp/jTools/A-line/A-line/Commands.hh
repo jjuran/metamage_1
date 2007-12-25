@@ -119,13 +119,6 @@ namespace ALine
 		
 		
 		// CodeWarrior only
-		std::string MWDebugSymbols() const
-		{
-			return debug ? "-sym full"
-			             : "-sym off";
-		}
-		
-		// CodeWarrior only
 		std::string CFMTracebackTables() const  { return cfm && debug ? "-tb on" : ""; }
 		
 		// CodeWarrior only
@@ -206,14 +199,8 @@ namespace ALine
 		
 		std::string CustomDriverHeader() const  { return "-custom"; }
 		
-		std::string AppHeapSize() const
-		{
-			return "-sizemin 4096 -sizemax 8192";
-		}
-		
 		std::string TargetApplication() const
 		{
-			//return gnu ? "" : "-xm a -dead " + std::string( m68k ? "code" : "off" ) + space + AppHeapSize();
 			return gnu ? "" : "-bundle";
 		}
 		
@@ -226,26 +213,13 @@ namespace ALine
 		// CodeWarrior only
 		std::string MWTargetSharedLibrary() const
 		{
-			//return "-xm s -init __initialize -term __terminate -export pragma";
 			return "-dynamic";
-		}
-		
-		// CodeWarrior only
-		std::string MWTargetKeroseneShLib() const
-		{
-			//return "-xm s -init InitializeFragment -term TerminateFragment -export pragma -name " + std::string( carbon ? "Carbon" : "classic" ) + space + AppHeapSize();
-			return "-execute";
 		}
 		
 		std::string TargetCommandLineTool() const
 		{
 			return gnu ? ""
 			           : "-execute";
-		}
-		
-		std::string MWLinkerOptions() const
-		{
-			return MWDebugSymbols() + " " + MWCodeModel() + " " + CFMTracebackTables();
 		}
 		
 		std::string LinkerOptions() const
