@@ -18,7 +18,6 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <vfork.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -132,6 +131,8 @@ static const char* global_signal_names[] =
 	NULL
 };
 
+#ifdef __MWERKS__
+
 const char* strsignal( int signo )
 {
 	if ( signo < 0  ||  signo > NSIG )
@@ -141,6 +142,8 @@ const char* strsignal( int signo )
 	
 	return global_signal_names[ signo ];
 }
+
+#endif
 
 static int exit_from_wait( int stat )
 {
