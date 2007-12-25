@@ -293,7 +293,7 @@ int O::Main( int /*argc*/, char const *const /*argv*/[] )
 	
 	p7::write( p7::stdout_fileno, STR_LEN( "Starting internet superserver: inetd" ) );
 	
-	(void)signal( 20, HandleSIGCHLD );
+	(void)signal( SIGCHLD, HandleSIGCHLD );
 	
 	ReadInetdDotConf();
 	
