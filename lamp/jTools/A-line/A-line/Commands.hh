@@ -119,9 +119,6 @@ namespace ALine
 		
 		
 		// CodeWarrior only
-		std::string CFMTracebackTables() const  { return cfm && debug ? "-tb on" : ""; }
-		
-		// CodeWarrior only
 		std::string MWCodeModel() const
 		{
 			return m68k && cfm ? "-mCFM" : "";
@@ -148,8 +145,7 @@ namespace ALine
 			
 			if ( !gnu )
 			{
-				result += " " + CFMTracebackTables()
-			            + " " + MWCodeModel()
+				result += " " + MWCodeModel()
 			            + " " + MW68KGlobals();
 			}
 			
