@@ -100,7 +100,7 @@ namespace jTools
 		{
 			return "-a4";
 		}
-		else if ( flag == "-ftraceback" )
+		else if ( flag == "-mtraceback" )
 		{
 			return "-tb on";
 		}
@@ -236,7 +236,7 @@ namespace jTools
 						break;
 					
 					case 'g':
-						arg = ppc ? "-sym full" : "-sym full -mbg full";
+						arg = ppc ? "-sym full -tb on" : "-sym full -mbg full";
 						break;
 					
 					case 'O':
