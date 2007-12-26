@@ -22,6 +22,7 @@
 
 // Standard C
 #include "errno.h"
+#include "signal.h"
 
 // Standard C/C++
 #include <cstdio>
@@ -37,7 +38,9 @@
 #include "fcntl.h"
 #include "sys/ioctl.h"
 #include "sys/stat.h"
+#include "sys/wait.h"
 #include "unistd.h"
+#include "vfork.h"
 
 // Lamp
 #include "lamp/winio.h"
@@ -1604,6 +1607,29 @@ static int TestUnmangle( int argc, char const *const argv[] )
 }
 
 
+static int TestForkAndStop( int argc, iota::argv_t argv )
+{
+	pid_t pid = vfork();
+	
+	if ( pid == -1 )
+	{
+		return 1;
+	}
+	
+	if ( pid == 0 )
+	{
+		raise( SIGSTOP );
+		
+		_exit( 0 );
+	}
+	
+	int stat = -1;
+	
+	waitpid( pid, &stat, 0 );
+	
+	return 0;
+}
+
 static int TestDefaultThreadStackSize( int argc, iota::argv_t argv )
 {
 	Size size = 0;
@@ -1661,6 +1687,7 @@ const SubMain gSubs[] =
 	{ "unmangle",  TestUnmangle   },
 	{ "mangling",  TestMangling   },
 	{ "callback",  TestCallback   },
+	{ "forkstop",  TestForkAndStop },
 	{ "stack",     TestDefaultThreadStackSize },
 	
 #if TARGET_RT_MAC_CFM
