@@ -26,17 +26,6 @@ static std::string join( const char* space, const std::string& a, const std::str
 namespace Backtrace
 {
 	
-	enum mangling_style
-	{
-		mangling_unspecified,
-		
-		mangled_by_MWC68K,
-		mangled_by_MWCPPC,
-		mangled_by_gcc
-	};
-	
-	static mangling_style global_mangling_style;
-	
 	static const char* gBasicTypes[] =
 	{
 		NULL,
@@ -145,6 +134,29 @@ namespace Backtrace
 		return result;
 	}
 	
+	static const char* ReadOperator( const char*& p, const char* end )
+	{
+		static OperatorMap map = MakeOperatorMap();
+		
+		OperatorMap::const_iterator it = map.find( std::string( p, end ) );
+		
+		if ( it == map.end() )
+		{
+			throw Unmangle_Failed();
+		}
+		
+		p = end;
+		
+		return it->second;
+	}
+	
+	static std::string LastName( const std::string& qualified_name )
+	{
+		std::size_t colon = qualified_name.find_last_of( ":" );
+		
+		return qualified_name.substr( colon + 1, qualified_name.npos );
+	}
+	
 	static const char* GetBuiltinType( char c )
 	{
 		if ( c < 'a'  ||  c > 'z' )  return NULL;
@@ -204,10 +216,6 @@ namespace Backtrace
 		return result;
 	}
 	
-	static std::string ReadType( const char*& p );
-	
-	static std::string ReadSymbol( const char*& p );
-	
 	static std::string ReadInteger( const char* begin, const char* end )
 	{
 		if ( *begin != '-' )
@@ -235,7 +243,68 @@ namespace Backtrace
 		return std::string( begin, end );
 	}
 	
-	static bool IsMWC68KTemplateParameter( const char* p )
+	
+	class Unmangler
+	{
+		public:
+			virtual const char* FindTemplateParameters( const char* p ) = 0;
+			
+			virtual bool TemplateParameterFollows( const char* p ) = 0;
+			
+			virtual bool TemplateParameterListEndsHere( const char* p ) = 0;
+			
+			
+			std::string ReadTemplateParameter( const char*& p );
+			
+			std::string ReadTemplateParameters( const char*&p );
+			
+			std::string ExpandTemplates( const std::string& name );
+			
+			std::string ReadQualName( const char*& p );
+			
+			std::string ReadQualifiedName( const char*& p );
+			
+			std::string ReadFunctionType( const char*& p );
+			
+			std::string ReadIndirectType( const char*& p );
+			
+			std::string ReadQualifiedType( const char*& p );
+			
+			std::string ReadType( const char*& p );
+			
+			std::string ReadConversion( const char*& p )  { return "operator " + ReadType( p ); }
+			
+			std::string ReadSpecialName( const char*& p );
+			
+			std::string ReadIdentifier( const char*& p );
+			
+			std::string ReadEntityName( const char*& p );
+			
+			std::string ReadSymbol( const char*& p );
+	};
+	
+	class MWC68K_Unmangler : public Unmangler
+	{
+		public:
+			const char* FindTemplateParameters( const char* name );
+			
+			bool TemplateParameterFollows( const char* p );
+			
+			bool TemplateParameterListEndsHere( const char* p );
+	};
+	
+	class MWCPPC_Unmangler : public Unmangler
+	{
+		public:
+			const char* FindTemplateParameters( const char* p )  { return std::strchr( p, '<' ); }
+			
+			bool TemplateParameterFollows( const char* p )  { return *p == ','; }
+			
+			bool TemplateParameterListEndsHere( const char* p )  { return *p == '>'; }
+	};
+	
+	
+	bool MWC68K_Unmangler::TemplateParameterFollows( const char* p )
 	{
 		if ( p[0] != '_' )  return false;
 		
@@ -248,27 +317,28 @@ namespace Backtrace
 		return false;
 	}
 	
-	static bool IsTemplateParameter( const char* p )
+	bool MWC68K_Unmangler::TemplateParameterListEndsHere( const char* p )
 	{
-		if ( global_mangling_style == mangled_by_MWC68K )
-		{
-			return IsMWC68KTemplateParameter( p );
-		}
-		
-		return p[0] == ',';
+		return p[0] == '_'  &&  ( p[1] == '_'  ||  p[1] == '\0' );
 	}
 	
-	static bool IsEndOfTemplateParameters( const char* p )
+	const char* MWC68K_Unmangler::FindTemplateParameters( const char* name )
 	{
-		if ( global_mangling_style == mangled_by_MWC68K )
+		while ( const char* underscore = std::strchr( name, '_' ) )
 		{
-			return p[0] == '_'  &&  ( p[1] == '_'  ||  p[1] == '\0' );
+			if ( TemplateParameterFollows( underscore ) )
+			{
+				return underscore;
+			}
+			
+			name = underscore + 1;
 		}
 		
-		return p[0] == '>';
+		return NULL;
 	}
 	
-	static std::string ReadTemplateParameter( const char*& p )
+	
+	std::string Unmangler::ReadTemplateParameter( const char*& p )
 	{
 		if ( *p == '&' )
 		{
@@ -284,7 +354,7 @@ namespace Backtrace
 				continue;
 			}
 			
-			if ( IsEndOfTemplateParameters( p ) || IsTemplateParameter( p ) )
+			if ( TemplateParameterListEndsHere( p ) || TemplateParameterFollows( p ) )
 			{
 				return ReadInteger( integer, p );
 			}
@@ -295,27 +365,7 @@ namespace Backtrace
 		return ReadType( p );
 	}
 	
-	static const char* FindTemplateParameters( const char* name )
-	{
-		if ( global_mangling_style == mangled_by_MWC68K )
-		{
-			while ( const char* underscore = std::strchr( name, '_' ) )
-			{
-				if ( IsMWC68KTemplateParameter( underscore ) )
-				{
-					return underscore;
-				}
-				
-				name = underscore + 1;
-			}
-			
-			return NULL;
-		}
-		
-		return std::strchr( name, '<' );
-	}
-	
-	static std::string ReadTemplateParameters( const char*&p )
+	std::string Unmangler::ReadTemplateParameters( const char*&p )
 	{
 		std::string result;
 		
@@ -323,13 +373,13 @@ namespace Backtrace
 		{
 			result = join( ", ", result, ReadTemplateParameter( ++p ) );
 			
-			if ( IsEndOfTemplateParameters( p ) )
+			if ( TemplateParameterListEndsHere( p ) )
 			{
 				++p;
 				break;
 			}
 			
-			if ( !IsTemplateParameter( p ) )
+			if ( !TemplateParameterFollows( p ) )
 			{
 				throw Unmangle_Failed();
 			}
@@ -340,7 +390,7 @@ namespace Backtrace
 		return result;
 	}
 	
-	static std::string ExpandTemplates( const std::string& name )
+	std::string Unmangler::ExpandTemplates( const std::string& name )
 	{
 		const char* params = FindTemplateParameters( name.c_str() );
 		
@@ -358,12 +408,12 @@ namespace Backtrace
 		return result;
 	}
 	
-	static std::string ReadQualName( const char*& p )
+	std::string Unmangler::ReadQualName( const char*& p )
 	{
 		return ExpandTemplates( ReadLName( p ) );
 	}
 	
-	static std::string ReadQualifiedName( const char*& p )
+	std::string Unmangler::ReadQualifiedName( const char*& p )
 	{
 		int count = *p++ - '0';
 		
@@ -377,7 +427,7 @@ namespace Backtrace
 		return result;
 	}
 	
-	static std::string ReadFunctionType( const char*& p )
+	std::string Unmangler::ReadFunctionType( const char*& p )
 	{
 		std::string params;
 		std::string return_type;
@@ -402,7 +452,7 @@ namespace Backtrace
 		return return_type + "( " + params + " )";
 	}
 	
-	static std::string ReadIndirectType( const char*& p )
+	std::string Unmangler::ReadIndirectType( const char*& p )
 	{
 		std::string result;
 		
@@ -432,7 +482,7 @@ namespace Backtrace
 		return ReadType( p ) + result;
 	}
 	
-	static std::string ReadQualifiedType( const char*& p )
+	std::string Unmangler::ReadQualifiedType( const char*& p )
 	{
 		std::string result;
 		
@@ -453,7 +503,7 @@ namespace Backtrace
 		return ReadType( p ) + result;
 	}
 	
-	static std::string ReadType( const char*& p )
+	std::string Unmangler::ReadType( const char*& p )
 	{
 		if ( *p >= 'a'  &&  *p <= 'z'  ||  *p == 'S'  ||  *p == 'U' )
 		{
@@ -493,28 +543,7 @@ namespace Backtrace
 		throw Unmangle_Failed();
 	}
 	
-	static std::string ReadConversion( const char*& p )
-	{
-		return "operator " + ReadType( p );
-	}
-	
-	static const char* ReadOperator( const char*& p, const char* end )
-	{
-		static OperatorMap map = MakeOperatorMap();
-		
-		OperatorMap::const_iterator it = map.find( std::string( p, end ) );
-		
-		if ( it == map.end() )
-		{
-			throw Unmangle_Failed();
-		}
-		
-		p = end;
-		
-		return it->second;
-	}
-	
-	static std::string ReadSpecialName( const char*& p )
+	std::string Unmangler::ReadSpecialName( const char*& p )
 	{
 		const char* q = p;
 		
@@ -559,7 +588,7 @@ namespace Backtrace
 		throw Unmangle_Failed();
 	}
 	
-	static std::string ReadIdentifier( const char*& p )
+	std::string Unmangler::ReadIdentifier( const char*& p )
 	{
 		const char* params = FindTemplateParameters( p );
 		
@@ -586,7 +615,7 @@ namespace Backtrace
 		return result;
 	}
 	
-	static std::string ReadEntityName( const char*& p )
+	std::string Unmangler::ReadEntityName( const char*& p )
 	{
 		if ( *p == '_' )
 		{
@@ -596,14 +625,7 @@ namespace Backtrace
 		return ReadIdentifier( p );
 	}
 	
-	static std::string LastName( const std::string& qualified_name )
-	{
-		std::size_t colon = qualified_name.find_last_of( ":" );
-		
-		return qualified_name.substr( colon + 1, qualified_name.npos );
-	}
-	
-	static std::string ReadSymbol( const char*& p )
+	std::string Unmangler::ReadSymbol( const char*& p )
 	{
 		if ( p[0] == '.' )
 		{
@@ -644,13 +666,12 @@ namespace Backtrace
 		return function_name + ReadType( p );
 	}
 	
+	
 	std::string UnmangleMWC68K( const std::string& name )
 	{
-		global_mangling_style = mangled_by_MWC68K;
-		
 		const char* p = name.c_str();
 		
-		return ReadSymbol( p );
+		return MWC68K_Unmangler().ReadSymbol( p );
 	}
 	
 	std::string UnmangleMWCPPC( const std::string& name )
@@ -660,11 +681,9 @@ namespace Backtrace
 			return name;
 		}
 		
-		global_mangling_style = mangled_by_MWCPPC;
-		
 		const char* p = name.c_str();
 		
-		return ReadSymbol( p );
+		return MWCPPC_Unmangler().ReadSymbol( p );
 	}
 	
 	std::string UnmangleGCC( const std::string& name )
@@ -673,8 +692,6 @@ namespace Backtrace
 		{
 			return name;
 		}
-		
-		global_mangling_style = mangled_by_gcc;
 		
 		return name;
 	}
