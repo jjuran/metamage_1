@@ -14,12 +14,11 @@
 #ifndef NITROGEN_NAVIGATION_H
 #define NITROGEN_NAVIGATION_H
 
-#ifndef __NAVIGATION__
-#ifdef JOSHUA_JURAN_EXPERIMENTAL
-#include <Navigation.h>
-#else
-#include <NavigationServices/Navigation.h>
+#ifndef NITROGEN_FRAMEWORKHEADER_H
+#include "Nitrogen/FrameworkHeader.h"
 #endif
+#ifndef __NAVIGATION__
+#include FRAMEWORK_HEADER(NavigationServices,Navigation.h)
 #endif
 
 #ifndef NUCLEUS_OWNED_H
