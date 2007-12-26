@@ -26,6 +26,17 @@ static std::string join( const char* space, const std::string& a, const std::str
 namespace Backtrace
 {
 	
+	enum mangling_style
+	{
+		mangling_unspecified,
+		
+		mangled_by_MWC68K,
+		mangled_by_MWCPPC,
+		mangled_by_gcc
+	};
+	
+	static mangling_style global_mangling_style;
+	
 	static const char* gBasicTypes[] =
 	{
 		NULL,
@@ -224,6 +235,37 @@ namespace Backtrace
 		return std::string( begin, end );
 	}
 	
+	static bool IsEscape( char c )
+	{
+		return c == 'Q'  ||  c == '_'  ||  GetBuiltinType( c ) != NULL;
+	}
+	
+	static bool IsEndOfTemplateParameters( const char* p )
+	{
+		if ( global_mangling_style == mangled_by_MWC68K )
+		{
+			return p[0] == '_'  &&  p[1] == '\0';
+		}
+		
+		return p[0] == '>';
+	}
+	
+	static bool IsTemplateEscape( const char* p )
+	{
+		if ( global_mangling_style == mangled_by_MWC68K )
+		{
+			if ( p[0] != '_' )  return false;
+			
+			if ( p[1] == '_' )  return true;  // means '>'
+			
+			if ( p[1] == 'Q'  &&  std::isdigit( p[2] ) )  return true;
+			
+			if ( GetBuiltinType( p[1] ) != NULL  &&  p[2] == '_' )  return true;
+		}
+		
+		return p[0] == '<'  ||  p[0] == ','  ||  p[0] == '>';
+	}
+	
 	static std::string ReadTemplateParameter( const char*& p, const char* end )
 	{
 		if ( *p == '&' )
@@ -240,7 +282,7 @@ namespace Backtrace
 				continue;
 			}
 			
-			if ( *p == ','  ||  *p == '>' )
+			if ( IsTemplateEscape( p ) )
 			{
 				return ReadInteger( integer, p );
 			}
@@ -251,9 +293,29 @@ namespace Backtrace
 		return ReadType( p, end );
 	}
 	
+	static const char* FindTemplateParameters( const char* name )
+	{
+		if ( global_mangling_style == mangled_by_MWC68K )
+		{
+			while ( const char* underscore = std::strchr( name, '_' ) )
+			{
+				if ( IsTemplateEscape( underscore ) )
+				{
+					return underscore;
+				}
+				
+				name = underscore + 1;
+			}
+			
+			return NULL;
+		}
+		
+		return std::strchr( name, '<' );
+	}
+	
 	static std::string ExpandTemplates( const std::string& name )
 	{
-		const char* params = std::strchr( name.c_str(), '<' );
+		const char* params = FindTemplateParameters( name.c_str() );
 		
 		if ( params == NULL )
 		{
@@ -268,13 +330,23 @@ namespace Backtrace
 		{
 			result = join( ", ", result, ReadTemplateParameter( ++p, &*name.end() ) );
 			
-			if ( *p == '>' )
+			if ( IsEndOfTemplateParameters( p ) )
+			{
+				break;
+			}
+			
+			if ( global_mangling_style == mangled_by_MWC68K  &&  p[0] == '_'  && p[1] == '_' )
 			{
 				break;
 			}
 			
 			if ( *p != ',' )
 			{
+				if ( global_mangling_style == mangled_by_MWC68K  &&  p[0] == '_'  && IsEscape( p[1] ) )
+				{
+					continue;
+				}
+				
 				throw Unmangle_Failed();
 			}
 		}
@@ -556,6 +628,8 @@ namespace Backtrace
 	
 	std::string UnmangleMWC68K( const std::string& name )
 	{
+		global_mangling_style = mangled_by_MWC68K;
+		
 		const char* p = name.data();
 		
 		return ReadSymbol( p, p + name.size() );
@@ -568,6 +642,8 @@ namespace Backtrace
 			return name;
 		}
 		
+		global_mangling_style = mangled_by_MWCPPC;
+		
 		const char* p = name.data();
 		
 		return ReadSymbol( p, p + name.size() );
@@ -579,6 +655,8 @@ namespace Backtrace
 		{
 			return name;
 		}
+		
+		global_mangling_style = mangled_by_gcc;
 		
 		return name;
 	}
