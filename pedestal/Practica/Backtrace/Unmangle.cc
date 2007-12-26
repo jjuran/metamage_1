@@ -204,9 +204,9 @@ namespace Backtrace
 		return result;
 	}
 	
-	static std::string ReadType( const char*& p, const char* end );
+	static std::string ReadType( const char*& p );
 	
-	static std::string ReadSymbol( const char*& p, const char* end );
+	static std::string ReadSymbol( const char*& p );
 	
 	static std::string ReadInteger( const char* begin, const char* end )
 	{
@@ -268,11 +268,11 @@ namespace Backtrace
 		return p[0] == '>';
 	}
 	
-	static std::string ReadTemplateParameter( const char*& p, const char* end )
+	static std::string ReadTemplateParameter( const char*& p )
 	{
 		if ( *p == '&' )
 		{
-			return ReadSymbol( ++p, end );
+			return ReadSymbol( ++p );
 		}
 		
 		if ( *p == '-'  ||  std::isdigit( *p ) )
@@ -292,7 +292,7 @@ namespace Backtrace
 			p = integer;  // backtrack
 		}
 		
-		return ReadType( p, end );
+		return ReadType( p );
 	}
 	
 	static const char* FindTemplateParameters( const char* name )
@@ -330,7 +330,7 @@ namespace Backtrace
 		
 		while ( true )
 		{
-			result = join( ", ", result, ReadTemplateParameter( ++p, &*name.end() ) );
+			result = join( ", ", result, ReadTemplateParameter( ++p ) );
 			
 			if ( IsEndOfTemplateParameters( p ) )
 			{
@@ -367,12 +367,12 @@ namespace Backtrace
 		return result;
 	}
 	
-	static std::string ReadFunctionType( const char*& p, const char* end )
+	static std::string ReadFunctionType( const char*& p )
 	{
 		std::string params;
 		std::string return_type;
 		
-		while ( p < end )
+		while ( *p != '\0' )
 		{
 			if ( *p == '>' )
 			{
@@ -381,18 +381,18 @@ namespace Backtrace
 			
 			if ( *p == '_' )
 			{
-				return_type = ReadType( ++p, end ) + " ";
+				return_type = ReadType( ++p ) + " ";
 				
 				break;
 			}
 			
-			params = join( ", ", params, ReadType( p, end ) );
+			params = join( ", ", params, ReadType( p ) );
 		}
 		
 		return return_type + "( " + params + " )";
 	}
 	
-	static std::string ReadIndirectType( const char*& p, const char* end )
+	static std::string ReadIndirectType( const char*& p )
 	{
 		std::string result;
 		
@@ -411,7 +411,7 @@ namespace Backtrace
 				break;
 			
 			case 'M':
-				result = "::(" + ReadType( ++p, end ) + ")*" + result;
+				result = "::(" + ReadType( ++p ) + ")*" + result;
 				
 				break;
 			
@@ -419,10 +419,10 @@ namespace Backtrace
 				break;
 		}
 		
-		return ReadType( p, end ) + result;
+		return ReadType( p ) + result;
 	}
 	
-	static std::string ReadQualifiedType( const char*& p, const char* end )
+	static std::string ReadQualifiedType( const char*& p )
 	{
 		std::string result;
 		
@@ -440,10 +440,10 @@ namespace Backtrace
 			++p;
 		}
 		
-		return ReadType( p, end ) + result;
+		return ReadType( p ) + result;
 	}
 	
-	static std::string ReadType( const char*& p, const char* end )
+	static std::string ReadType( const char*& p )
 	{
 		if ( *p >= 'a'  &&  *p <= 'z'  ||  *p == 'S'  ||  *p == 'U' )
 		{
@@ -452,12 +452,12 @@ namespace Backtrace
 		
 		if ( *p == 'C'  ||  *p == 'V' )
 		{
-			return ReadQualifiedType( p, end );
+			return ReadQualifiedType( p );
 		}
 		
 		if ( *p == 'R'  ||  *p == 'P'  ||  *p == 'M' )
 		{
-			return ReadIndirectType( p, end );
+			return ReadIndirectType( p );
 		}
 		
 		if ( std::isdigit( *p ) )
@@ -477,15 +477,15 @@ namespace Backtrace
 		
 		if ( *p == 'F' )
 		{
-			return ReadFunctionType( ++p, end );
+			return ReadFunctionType( ++p );
 		}
 		
 		throw Unmangle_Failed();
 	}
 	
-	static std::string ReadConversion( const char*& p, const char* end )
+	static std::string ReadConversion( const char*& p )
 	{
-		return "operator " + ReadType( p, end );
+		return "operator " + ReadType( p );
 	}
 	
 	static const char* ReadOperator( const char*& p, const char* end )
@@ -540,7 +540,7 @@ namespace Backtrace
 			{
 				p += 2;
 				
-				return ReadConversion( p, double_underscore );
+				return ReadConversion( p );
 			}
 			
 			return ReadOperator( p, double_underscore );
@@ -595,7 +595,7 @@ namespace Backtrace
 		return NULL;
 	}
 	
-	static std::string ReadSymbol( const char*& p, const char* end )
+	static std::string ReadSymbol( const char*& p )
 	{
 		if ( p[0] == '.' )
 		{
@@ -635,16 +635,16 @@ namespace Backtrace
 			function_name = class_name + "::" + function_name;
 		}
 		
-		return function_name + ReadType( p, end );
+		return function_name + ReadType( p );
 	}
 	
 	std::string UnmangleMWC68K( const std::string& name )
 	{
 		global_mangling_style = mangled_by_MWC68K;
 		
-		const char* p = name.data();
+		const char* p = name.c_str();
 		
-		return ReadSymbol( p, p + name.size() );
+		return ReadSymbol( p );
 	}
 	
 	std::string UnmangleMWCPPC( const std::string& name )
@@ -656,9 +656,9 @@ namespace Backtrace
 		
 		global_mangling_style = mangled_by_MWCPPC;
 		
-		const char* p = name.data();
+		const char* p = name.c_str();
 		
-		return ReadSymbol( p, p + name.size() );
+		return ReadSymbol( p );
 	}
 	
 	std::string UnmangleGCC( const std::string& name )
