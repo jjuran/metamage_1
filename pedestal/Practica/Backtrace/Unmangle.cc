@@ -262,7 +262,7 @@ namespace Backtrace
 	{
 		if ( global_mangling_style == mangled_by_MWC68K )
 		{
-			return p[0] == '_'  &&  p[1] == '\0';
+			return p[0] == '_'  &&  ( p[1] == '_'  ||  p[1] == '\0' );
 		}
 		
 		return p[0] == '>';
@@ -315,6 +315,31 @@ namespace Backtrace
 		return std::strchr( name, '<' );
 	}
 	
+	static std::string ReadTemplateParameters( const char*&p )
+	{
+		std::string result;
+		
+		while ( true )
+		{
+			result = join( ", ", result, ReadTemplateParameter( ++p ) );
+			
+			if ( IsEndOfTemplateParameters( p ) )
+			{
+				++p;
+				break;
+			}
+			
+			if ( !IsTemplateParameter( p ) )
+			{
+				throw Unmangle_Failed();
+			}
+		}
+		
+		result = "< " + result + " >";
+		
+		return result;
+	}
+	
 	static std::string ExpandTemplates( const std::string& name )
 	{
 		const char* params = FindTemplateParameters( name.c_str() );
@@ -326,24 +351,9 @@ namespace Backtrace
 		
 		const char* p = params;
 		
-		std::string result;
+		std::string result = ReadTemplateParameters( p );
 		
-		while ( true )
-		{
-			result = join( ", ", result, ReadTemplateParameter( ++p ) );
-			
-			if ( IsEndOfTemplateParameters( p ) )
-			{
-				break;
-			}
-			
-			if ( !IsTemplateParameter( p ) )
-			{
-				throw Unmangle_Failed();
-			}
-		}
-		
-		result = std::string( name.data(), params ) + "< " + result + " >";
+		result = std::string( name.data(), params ) + result;
 		
 		return result;
 	}
@@ -549,23 +559,41 @@ namespace Backtrace
 		throw Unmangle_Failed();
 	}
 	
-	static std::string ReadIdentifier( const char*& p, const char* end )
+	static std::string ReadIdentifier( const char*& p )
 	{
-		std::string result( p, end );
+		const char* params = FindTemplateParameters( p );
 		
-		p = end;
+		const char* double_underscore = std::strstr( p, "__" );
 		
-		return ExpandTemplates( result );
+		if ( double_underscore == NULL )
+		{
+			double_underscore = p + std::strlen( p );
+		}
+		
+		if ( params != NULL  &&  params < double_underscore )
+		{
+			std::string identifier( p, params );
+			
+			p = params;
+			
+			return identifier + ReadTemplateParameters( p );
+		}
+		
+		std::string result( p, double_underscore );
+		
+		p = double_underscore;
+		
+		return result;
 	}
 	
-	static std::string ReadEntityName( const char*& p, const char* end )
+	static std::string ReadEntityName( const char*& p )
 	{
 		if ( *p == '_' )
 		{
 			return ReadSpecialName( p );
 		}
 		
-		return ReadIdentifier( p, end );
+		return ReadIdentifier( p );
 	}
 	
 	static std::string LastName( const std::string& qualified_name )
@@ -609,7 +637,7 @@ namespace Backtrace
 			return p;
 		}
 		
-		std::string function_name = ReadEntityName( p, double_underscore );
+		std::string function_name = ReadEntityName( p );
 		
 		std::string class_name;
 		
