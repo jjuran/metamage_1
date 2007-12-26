@@ -603,26 +603,6 @@ namespace Backtrace
 		return qualified_name.substr( colon + 1, qualified_name.npos );
 	}
 	
-	static const char* FindDoubleUnderscore( const char* p )
-	{
-		if ( const char* double_underscore = std::strstr( p, "__" ) )
-		{
-			if ( global_mangling_style == mangled_by_MWC68K )
-			{
-				// MWC68K uses an underscore to terminate template parameters,
-				// which could be followed by the real double underscore.
-				while ( double_underscore[2] == '_' )
-				{
-					++double_underscore;
-				}
-			}
-			
-			return double_underscore;
-		}
-		
-		return NULL;
-	}
-	
 	static std::string ReadSymbol( const char*& p )
 	{
 		if ( p[0] == '.' )
@@ -630,14 +610,12 @@ namespace Backtrace
 			++p;
 		}
 		
-		const char* double_underscore = FindDoubleUnderscore( p );
-		
-		if ( double_underscore == NULL )
-		{
-			return p;
-		}
-		
 		std::string function_name = ReadEntityName( p );
+		
+		if ( *p == '\0' )
+		{
+			return function_name;
+		}
 		
 		std::string class_name;
 		
