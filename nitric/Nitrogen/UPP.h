@@ -141,19 +141,6 @@ namespace Nitrogen
       
          operator UPPType() const     { return upp; }
          UPPType Get() const          { return upp; }
-         
-      #ifndef JOSHUA_JURAN_EXPERIMENTAL
-         
-         friend bool operator==( const BasicUPP& a, const BasicUPP& b )    { return a.Get() == b.Get(); }
-         friend bool operator!=( const BasicUPP& a, const BasicUPP& b )    { return a.Get() != b.Get(); }
-
-         friend bool operator==( const BasicUPP& a, const UPPType& b )     { return a.Get() == b; }
-         friend bool operator!=( const BasicUPP& a, const UPPType& b )     { return a.Get() != b; }
-         
-         friend bool operator==( const UPPType& a, const BasicUPP& b )     { return a == b.Get(); }
-         friend bool operator!=( const UPPType& a, const BasicUPP& b )     { return a != b.Get(); }
-         
-      #endif
      };
 
    

@@ -96,16 +96,6 @@ namespace Nitrogen
          friend bool operator!=( const ::CFPropertyListRef& a, const CFPropertyListRef& b )     { return a != b.Get(); }
      };
 
-#ifndef JOSHUA_JURAN_EXPERIMENTAL
-
-   template < class T > bool operator==( const CFPropertyListRef& a, T const& b )               { return a.GetCFTypeRef() == CFTypeRef( b ); }
-   template < class T > bool operator!=( const CFPropertyListRef& a, T const& b )               { return a.GetCFTypeRef() != CFTypeRef( b ); }
- 
-   template < class T > bool operator==( T const& a, const CFPropertyListRef& b )               { return CFTypeRef( a ) == b.GetCFTypeRef(); }
-   template < class T > bool operator!=( T const& a, const CFPropertyListRef& b )               { return CFTypeRef( a ) != b.GetCFTypeRef(); }
-
-#endif
-
   }
 
 namespace Nucleus
