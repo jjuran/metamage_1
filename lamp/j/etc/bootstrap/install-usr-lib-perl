@@ -11,12 +11,12 @@ gzarchive=$archive.gz
 
 url=$experimental$gzarchive
 
-echo "htget -O $url"
+echo "-> htget -O $url"
 htget -O $url
 
-echo "gzip -d $gzarchive"
+echo "-> gzip -d $gzarchive"
 gzip -d $gzarchive
 
-echo "macbin --decode $archive /usr/lib/"
+echo "-> macbin --decode $archive /usr/lib/"
 macbin --decode $archive /usr/lib/
 
