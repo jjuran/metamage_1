@@ -7,8 +7,12 @@
 #define KEROSENE_SYSTEMCALLS_HH
 
 // Universal Interfaces
-//#include <AEDataModel.h>
+#include <TargetConditionals.h>
+#if TARGET_RT_MAC_MACHO
+#include <Carbon/Carbon.h>
+#else
 #include <Files.h>
+#endif
 
 struct AEDesc;
 typedef AEDesc AppleEvent;
