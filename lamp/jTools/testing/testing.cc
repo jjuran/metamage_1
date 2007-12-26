@@ -43,7 +43,9 @@
 #include "vfork.h"
 
 // Lamp
+#ifdef __MWERKS__
 #include "lamp/winio.h"
+#endif
 
 // Backtrace
 #include "Backtrace/Unmangle.hh"
@@ -52,7 +54,7 @@
 #include "Divergence/Utilities.hh"
 
 // MoreFiles
-#include "MoreFilesExtras.h"
+//#include "MoreFilesExtras.h"
 
 // Nucleus
 #include "Nucleus/Convert.h"
@@ -95,6 +97,12 @@
 #include "Utilities/Processes.h"
 #include "Utilities/Threads.h"
 
+// Backtrace
+#include "Backtrace/StackCrawl.hh"
+#include "Backtrace/MacsbugSymbols.hh"
+#include "Backtrace/TracebackTables.hh"
+#include "Backtrace/MachO.hh"
+
 // Scaffold
 #include "Tests.hh"
 
@@ -103,7 +111,9 @@
 #include "HexStrings.hh"
 
 // Arcana
+#if !TARGET_API_MAC_CARBON
 #include "ADBProtocol.hh"
+#endif
 #include "CRC32.hh"
 #include "MD5.hh"
 
@@ -586,6 +596,7 @@ static int TestMD5(int argc, const char *const argv[])
 	return 0;
 }
 
+#if !TARGET_API_MAC_CARBON
 
 static void PrintADBRegister( const ADBRegister& reg )
 {
@@ -641,6 +652,8 @@ static int TestADB( int argc, const char *const argv[] )
 	
 	return 0;
 }
+
+#endif
 
 static int TestOADC(int argc, const char *const argv[])
 {
@@ -1165,6 +1178,8 @@ static int TestPath( int argc, char const *const argv[] )
 		return 1;
 	}
 	
+#ifdef __MWERKS__
+	
 	int pix = std::atoi( argv[2] );
 	
 	Point location = { 0, 0 };
@@ -1202,6 +1217,8 @@ static int TestPath( int argc, char const *const argv[] )
 	location.h = stop_pos;
 	
 	ioctl( fd, WIOCSPOS, (int*) &location );
+	
+#endif
 	
 	return 0;
 }
@@ -1344,7 +1361,6 @@ static int TestDefaultThreadStackSize( int argc, iota::argv_t argv )
 	return 0;
 }
 
-
 typedef int (*MainProcPtr)(int argc, const char *const argv[]);
 
 struct SubMain
@@ -1363,6 +1379,7 @@ const SubMain gSubs[] =
 #if !TARGET_API_MAC_CARBON
 	
 	{ "afp",       TestAFP        },
+	{ "adb",       TestADB        },
 	
 #endif
 	
@@ -1370,12 +1387,11 @@ const SubMain gSubs[] =
 	{ "crc16",     TestCRC16      },
 	{ "crc32",     TestCRC32      },
 	{ "md5",       TestMD5        },
-	{ "adb",       TestADB        },
 	{ "OADC",      TestOADC       },
 	{ "proc",      TestProcesses  },
 	{ "si",        TestSoundInput },
 	{ "ae",        TestAE         },
-	{ "svcs",      TestServices   },
+//	{ "svcs",      TestServices   },
 	{ "thread",    TestThread     },
 	{ "null",      TestNull       },
 	{ "keys",      TestKeys       },
