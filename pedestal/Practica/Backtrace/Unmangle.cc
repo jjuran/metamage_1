@@ -235,9 +235,27 @@ namespace Backtrace
 		return std::string( begin, end );
 	}
 	
-	static bool IsEscape( char c )
+	static bool IsMWC68KTemplateParameter( const char* p )
 	{
-		return c == 'Q'  ||  c == '_'  ||  GetBuiltinType( c ) != NULL;
+		if ( p[0] != '_' )  return false;
+		
+		if ( std::isdigit( p[1] ) )  return true;
+		
+		if ( p[1] == 'Q'  &&  std::isdigit( p[2] ) )  return true;
+		
+		if ( GetBuiltinType( p[1] ) != NULL  &&  p[2] == '_' )  return true;
+		
+		return false;
+	}
+	
+	static bool IsTemplateParameter( const char* p )
+	{
+		if ( global_mangling_style == mangled_by_MWC68K )
+		{
+			return IsMWC68KTemplateParameter( p );
+		}
+		
+		return p[0] == ',';
 	}
 	
 	static bool IsEndOfTemplateParameters( const char* p )
@@ -248,22 +266,6 @@ namespace Backtrace
 		}
 		
 		return p[0] == '>';
-	}
-	
-	static bool IsTemplateEscape( const char* p )
-	{
-		if ( global_mangling_style == mangled_by_MWC68K )
-		{
-			if ( p[0] != '_' )  return false;
-			
-			if ( p[1] == '_' )  return true;  // means '>'
-			
-			if ( p[1] == 'Q'  &&  std::isdigit( p[2] ) )  return true;
-			
-			if ( GetBuiltinType( p[1] ) != NULL  &&  p[2] == '_' )  return true;
-		}
-		
-		return p[0] == '<'  ||  p[0] == ','  ||  p[0] == '>';
 	}
 	
 	static std::string ReadTemplateParameter( const char*& p, const char* end )
@@ -282,7 +284,7 @@ namespace Backtrace
 				continue;
 			}
 			
-			if ( IsTemplateEscape( p ) )
+			if ( IsEndOfTemplateParameters( p ) || IsTemplateParameter( p ) )
 			{
 				return ReadInteger( integer, p );
 			}
@@ -299,7 +301,7 @@ namespace Backtrace
 		{
 			while ( const char* underscore = std::strchr( name, '_' ) )
 			{
-				if ( IsTemplateEscape( underscore ) )
+				if ( IsMWC68KTemplateParameter( underscore ) )
 				{
 					return underscore;
 				}
@@ -335,18 +337,8 @@ namespace Backtrace
 				break;
 			}
 			
-			if ( global_mangling_style == mangled_by_MWC68K  &&  p[0] == '_'  && p[1] == '_' )
+			if ( !IsTemplateParameter( p ) )
 			{
-				break;
-			}
-			
-			if ( *p != ',' )
-			{
-				if ( global_mangling_style == mangled_by_MWC68K  &&  p[0] == '_'  && IsEscape( p[1] ) )
-				{
-					continue;
-				}
-				
 				throw Unmangle_Failed();
 			}
 		}
