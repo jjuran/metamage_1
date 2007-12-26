@@ -17,7 +17,6 @@ namespace Backtrace
 	
 	std::string UnmangleMWC68K( const std::string& name );
 	std::string UnmangleMWCPPC( const std::string& name );
-	std::string UnmangleGCC   ( const std::string& name );
 	
 }
 

@@ -13,6 +13,10 @@
 // Standard C/C++
 #include <cstdio>
 
+#ifdef __GNUC__
+#include <cxxabi.h>
+#endif
+
 // Backtrace
 #include "Backtrace/Filter.hh"
 #include "Backtrace/MachO.hh"
@@ -49,11 +53,35 @@ namespace Backtrace
 	
 #endif
 	
-#ifdef __MACH__
+#ifdef __GNUC__
 	
 	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddrNative >
 	{
-		static std::string Unmangle( const std::string& name )  { return UnmangleGCC( name ); }
+		static std::string Unmangle( const std::string& name )
+		{
+			std::string result = name;
+			
+			// s/:.*//;
+			result.resize( std::find( result.begin(), result.end(), ':' ) - result.begin() );
+			
+			const char* mangled_name = result.c_str();
+			
+			if ( std::equal( mangled_name, mangled_name + 3, "__Z" ) )
+			{
+				++mangled_name;
+			}
+			
+			if ( char* unmangled = abi::__cxa_demangle( mangled_name, NULL, NULL, NULL ) )
+			{
+				result = unmangled;
+				
+				free( unmangled );
+				
+				return result;
+			}
+			
+			return result;
+		}
 	};
 	
 #endif
@@ -115,14 +143,14 @@ namespace Backtrace
 		result.itsUnmangledName = call.isCFM ? GetUnmangledSymbolName( call.addrCFM    )
 		                                     : GetUnmangledSymbolName( call.addrNative );
 		
+		result.itsUnmangledName = FilterSymbol( result.itsUnmangledName );
+		
 	#else
 		
 		result.itsArch          = TARGET_CPU_PPC ? "PPC" : "X86";
 		result.itsUnmangledName = GetUnmangledSymbolName( call.addrNative );
 		
 	#endif
-		
-		result.itsUnmangledName = FilterSymbol( result.itsUnmangledName );
 		
 		return result;
 	}

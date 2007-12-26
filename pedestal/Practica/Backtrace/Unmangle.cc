@@ -12,10 +12,6 @@
 // Standard C++
 #include <map>
 
-#ifdef __GNUC__
-#include <cxxabi.h>
-#endif
-
 
 static std::string join( const char* space, const std::string& a, const std::string& b )
 {
@@ -688,36 +684,6 @@ namespace Backtrace
 		const char* p = name.c_str();
 		
 		return MWCPPC_Unmangler().ReadSymbol( p );
-	}
-	
-	std::string UnmangleGCC( const std::string& name )
-	{
-		std::string result = name;
-		
-		// s/:.*//;
-		result.resize( std::find( result.begin(), result.end(), ':' ) - result.begin() );
-		
-		const char* mangled_name = result.c_str();
-		
-		if ( std::equal( mangled_name, mangled_name + 3, "__Z" ) )
-		{
-			++mangled_name;
-		}
-		
-		#ifdef __GNUC__
-		
-		if ( char* unmangled = abi::__cxa_demangle( mangled_name, NULL, NULL, NULL ) )
-		{
-			result = unmangled;
-			
-			free( unmangled );
-			
-			return result;
-		}
-		
-		#endif
-		
-		return result;
 	}
 	
 }
