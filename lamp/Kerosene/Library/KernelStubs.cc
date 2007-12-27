@@ -51,9 +51,9 @@ typedef void (*CleanupHandler)();
 
 #if TARGET_CPU_68K
 
-extern "C" void InitProc( CleanupHandler );
+extern "C" void InitProc( CleanupHandler, int* );
 
-static void SetCleanupHandler()
+static void InitializeProcess()
 {
 	static bool beenHere = false;
 	
@@ -61,7 +61,7 @@ static void SetCleanupHandler()
 	{
 		beenHere = true;
 		
-		InitProc( FreeTheMallocPool );
+		InitProc( FreeTheMallocPool, &errno );
 	}
 }
 
@@ -224,7 +224,7 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	int          (*unlink_import_   )( const char* pathname );
 	ssize_t      (*write_import_    )( int filedes, const void* buf, size_t nbyte );
 	
-	void       (*InitProc_import_        )( CleanupHandler );
+	void       (*InitProc_import_        )( CleanupHandler, int* );
 	int*       (*ErrnoPtr_import_        )();
 	OSStatus   (*AESendBlocking_import_  )( const AppleEvent* appleEvent, AppleEvent* reply );
 	OSStatus   (*Path2FSSpec_import_     )( const char* pathname, FSSpec* outFSS );
@@ -252,11 +252,6 @@ namespace
 	
 	enum { kDispatcherAddr = (long) LMGetApplScratch() + 4 };
 	
-	inline void LoadErrno()
-	{
-		*(void**)LMGetToolScratch() = &errno;
-	}
-	
 	inline void PushAddress( const void* ptr )
 	{
 		asm
@@ -269,16 +264,13 @@ namespace
 	inline asm void SystemCall()
 	{
 		MOVEA.L		kDispatcherAddr,A0	;  // load the dispatcher's address
-										;  // arg 2:  function name C string already on stack
-		PEA			errno				;  // arg 1:  pointer to errno
+										;  // arg 1:  function name C string already on stack
 		JSR			(A0)				;  // jump to dispatcher -- doesn't return
 		
 		// Not reached
 	}
 	
-	//#define LOAD_SYMBOL( syscall )  (syscall ## _import_ = SystemCall_Cast( syscall, GetSystemCallFunctionPtr( #syscall ) ))
-	
-	#define INVOKE_COMMON( syscall, args )  ( SetCleanupHandler(),      \
+	#define INVOKE_COMMON( syscall, args )  ( InitializeProcess(),      \
 	                                          PushAddress( #syscall ),  \
 	                                          SystemCall(),             \
 	                                          syscall ## _import_ args )  // not reached
@@ -898,9 +890,9 @@ namespace
 	
 #if TARGET_CPU_68K
 	
-	void InitProc( CleanupHandler cleanup )
+	void InitProc( CleanupHandler cleanup, int* errno_addr )
 	{
-		INVOKE( InitProc, ( cleanup ) );
+		INVOKE( InitProc, ( cleanup, errno_addr ) );
 	}
 	
 #endif
