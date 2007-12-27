@@ -55,8 +55,6 @@ namespace Genie
 	class NotExecutableError {};
 	
 	
-	typedef int* ErrnoDataPtr;
-	
 	enum ProcessLifeStage
 	{
 		kProcessStarting,
@@ -164,8 +162,6 @@ namespace Genie
 			
 			CleanupHandler itsCleanupHandler;
 			
-			ErrnoDataPtr   itsErrnoData;
-			
 			std::string itsLastEnv;
 		
 		private:
@@ -190,6 +186,8 @@ namespace Genie
 			const std::string& GetCmdLine() const  { return itsCmdLine.Data(); }
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
+			
+			void SetErrnoPtr( int* address )  { itsMainEntry->SetErrnoPtr( address ); }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }

@@ -134,9 +134,13 @@ namespace Genie
 	#pragma mark -
 	#pragma mark ¥ Genie ¥
 	
-	static void InitProc( CleanupHandlerProc cleanup )
+	static void InitProc( CleanupHandlerProc cleanup, int* errno_addr )
 	{
-		CurrentProcess().SetCleanupHandler( cleanup );
+		Process& current = CurrentProcess();
+		
+		current.SetCleanupHandler( cleanup );
+		
+		current.SetErrnoPtr( errno_addr );
 	}
 	
 	REGISTER_SYSTEM_CALL( InitProc );

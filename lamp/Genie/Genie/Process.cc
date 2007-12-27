@@ -190,7 +190,7 @@ namespace Genie
 	
 	struct ToolScratchGlobals
 	{
-		int*             err;
+		int*             err;  // obsolete
 		iota::environ_t  env;
 	};
 	
@@ -215,10 +215,8 @@ namespace Genie
 		::ExitToShell();  // not messing around
 	}
 	
-	static int DispatchSystemCallByName( int* error, const char* name )
+	static int DispatchSystemCallByName( const char* name )
 	{
-		gToolScratchGlobals.err = error;
-		
 		void* addr = GetSystemCallFunctionPtr( name );
 		
 		if ( addr == NULL )
@@ -385,8 +383,6 @@ namespace Genie
 		void ProcessThreadEntry( Process* process )
 		{
 			process->InitThread();
-			
-			gToolScratchGlobals.err = NULL;  // errno
 			
 			int exit_status = RunFromContext( process );
 			
@@ -629,8 +625,7 @@ namespace Genie
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
-		itsCleanupHandler     (),
-		itsErrnoData          ( NULL )
+		itsCleanupHandler     ()
 	{
 		char const *const argv[] = { "init", NULL };
 		
@@ -660,8 +655,8 @@ namespace Genie
 		itsInterdependence    ( kProcessForked ),
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
-		itsCleanupHandler     (),
-		itsErrnoData          ( TARGET_RT_MAC_CFM ? parent.itsErrnoData : NULL )
+		itsMainEntry          ( parent.itsMainEntry ),
+		itsCleanupHandler     ()
 	{
 		parent.SuspendForFork( itsPID );
 		
@@ -843,7 +838,7 @@ namespace Genie
 		
 		itsCmdLine.Assign( &context.argVector.front() );
 		
-		itsErrnoData = itsMainEntry->GetErrnoPtr();
+		//itsErrnoData = itsMainEntry->GetErrnoPtr();
 		
 		iota::environ_t* environ_address = ENVIRON_IS_SHARED ? &gToolScratchGlobals.env : itsMainEntry->GetEnvironPtr();
 		
@@ -881,14 +876,9 @@ namespace Genie
 	
 	int Process::SetErrno( int errorNumber )
 	{
-		if ( itsErrnoData == NULL )
+		if ( int* p_errno = itsMainEntry->GetErrnoPtr() )
 		{
-			itsErrnoData = gToolScratchGlobals.err;
-		}
-		
-		if ( itsErrnoData != NULL )
-		{
-			*itsErrnoData = errorNumber;
+			*p_errno = errorNumber;
 		}
 		
 		return errorNumber == 0 ? 0 : -1;
