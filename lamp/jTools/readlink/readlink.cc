@@ -6,6 +6,9 @@
 // POSIX
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -20,9 +23,7 @@ int main( int argc, char const *const argv[] )
 	// Check for correct number of args
 	if ( argc != 2 )
 	{
-		const char usage[] = "usage: readlink <file>\n";
-		
-		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
+		(void) write( STDERR_FILENO, STR_LEN( "Usage: readlink <file>\n" ) );
 		
 		return 1;
 	}
