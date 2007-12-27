@@ -231,8 +231,6 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 #pragma export reset
 
-OSStatus Path2FSSpec( const char* pathname, FSSpec* outFSS );
-
 namespace
 {
 	
@@ -244,23 +242,50 @@ namespace
 	
 #if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 	
-	static void* GetSystemCallFunctionPtr( const char* name )
+	typedef int (*Dispatcher)( int*, const char* );
+	
+	struct ApplScratchGlobals
 	{
-		typedef void* (*Getter)( const char* );
-		
-		static Getter getPtr = *reinterpret_cast< Getter* >( LMGetApplScratch() );
-		
-		return getPtr( name );
-	}
+		void*       getter;      // obsolete
+		Dispatcher  dispatcher;
+	};
+	
+	enum { kDispatcherAddr = (long) LMGetApplScratch() + 4 };
 	
 	inline void LoadErrno()
 	{
 		*(void**)LMGetToolScratch() = &errno;
 	}
 	
-	#define LOAD_SYMBOL( syscall )  (syscall ## _import_ = SystemCall_Cast( syscall, GetSystemCallFunctionPtr( #syscall ) ))
+	inline void PushAddress( const void* ptr )
+	{
+		asm
+		{
+			MOVEA.L		ptr,A0	;
+			PEA			(A0)	;
+		}
+	}
 	
-	#define INVOKE_COMMON( syscall, args )  ( SetCleanupHandler(), LoadErrno(), syscall ## _import_ args )
+	inline asm void SystemCall()
+	{
+		MOVEA.L		kDispatcherAddr,A0	;  // load the dispatcher's address
+										;  // arg 2:  function name C string already on stack
+		PEA			errno				;  // arg 1:  pointer to errno
+		JSR			(A0)				;  // jump to dispatcher -- doesn't return
+		
+		// Not reached
+	}
+	
+	//#define LOAD_SYMBOL( syscall )  (syscall ## _import_ = SystemCall_Cast( syscall, GetSystemCallFunctionPtr( #syscall ) ))
+	
+	#define INVOKE_COMMON( syscall, args )  ( SetCleanupHandler(),      \
+	                                          PushAddress( #syscall ),  \
+	                                          SystemCall(),             \
+	                                          syscall ## _import_ args )  // not reached
+	
+	#define CHECK_CRITICAL( syscall )  NULL
+	
+	#define CHECK_IMPORT( syscall )    NULL
 	
 #else
 	
@@ -268,11 +293,11 @@ namespace
 	
 	#define INVOKE_COMMON( syscall, args )  ( syscall ## _import_ args )
 	
-#endif
-	
 	#define CHECK_CRITICAL( syscall )  (LOAD_SYMBOL( syscall ), CheckCriticalImport( syscall##_import_, #syscall, sizeof #syscall - 1 ))
 	
 	#define CHECK_IMPORT( syscall )    (LOAD_SYMBOL( syscall ), CheckImportedSymbol( syscall##_import_, #syscall, sizeof #syscall - 1 ))
+	
+#endif
 	
 	#define INVOKE_CRITICAL( syscall, args )  ( CHECK_CRITICAL( syscall ), INVOKE_COMMON( syscall, args ) )
 	
@@ -854,6 +879,7 @@ namespace
 	
 	ssize_t write( int filedes, const void* buf, size_t nbyte )
 	{
+		/*
 		if ( LOAD_SYMBOL( write ) == NULL )
 		{
 			// There's not much we can do.
@@ -862,6 +888,7 @@ namespace
 			
 			EnterComa();
 		}
+		*/
 		
 		return INVOKE_COMMON( write, ( filedes, buf, nbyte ) );
 	}
@@ -883,11 +910,16 @@ namespace
 		return INVOKE( AESendBlocking, ( appleEvent, reply ) );
 	}
 	
+	static OSStatus Path2FSSpec( const char* pathname, FSSpec* outFSS )
+	{
+		return INVOKE( Path2FSSpec, ( pathname, outFSS ) );
+	}
+	
 	FSSpec Path2FSS( const char* pathname )
 	{
 		FSSpec spec;	
 		
-		OSStatus err = INVOKE( Path2FSSpec, ( pathname, &spec ) );
+		OSStatus err = Path2FSSpec( pathname, &spec );
 		
 		if ( err != noErr )
 		{
