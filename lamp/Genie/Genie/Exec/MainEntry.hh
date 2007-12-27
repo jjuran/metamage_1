@@ -50,6 +50,8 @@ namespace Genie
 			int* GetErrnoPtr() const  { return itsErrno; }
 			
 			iota::environ_t* GetEnvironPtr() const  { return itsEnviron; }
+			
+			void SetErrnoPtr( int* address )  { itsErrno = address; }  // for 68K
 	};
 	
 	typedef boost::shared_ptr< MainEntryPoint > MainEntry;
