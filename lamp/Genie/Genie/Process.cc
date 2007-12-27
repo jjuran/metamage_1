@@ -215,7 +215,7 @@ namespace Genie
 		::ExitToShell();  // not messing around
 	}
 	
-	static int DispatchSystemCallByName( const char* name, int* error )
+	static int DispatchSystemCallByName( int* error, const char* name )
 	{
 		gToolScratchGlobals.err = error;
 		
