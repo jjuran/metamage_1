@@ -230,7 +230,9 @@ namespace Genie
 		::ExitToShell();  // not messing around
 	}
 	
-	static int DispatchSystemCallByName( const char* name )
+#if TARGET_CPU_68K
+	
+	static void DispatchSystemCallByName( const char* name )
 	{
 		void* addr = GetSystemCallFunctionPtr( name );
 		
@@ -238,8 +240,6 @@ namespace Genie
 		{
 			addr = Die;
 		}
-		
-	#if TARGET_CPU_68K
 		
 		// user code:
 		// system call arguments
@@ -272,42 +272,57 @@ namespace Genie
 		// local variables
 		// stack ends here
 		// Profit!
-		
-	#endif
-		
-	#if TARGET_CPU_PPC
-		
-		asm
-		{
-			// restore previous frame's parameters
-			lwz		r31,0(SP)
-			lwz		r31,0(r31)
-			lwz		r3,24(r31)
-			lwz		r4,28(r31)
-			lwz		r5,32(r31)
-			lwz		r6,36(r31)
-			lwz		r7,40(r31)
-			lwz		r8,44(r31)
-			lwz		r9,48(r31)
-			lwz		r10,52(r31)
-			// load system call address
-			lwz		r12,addr
-			lwz		r0,0(r12)
-			// jump to system call
-			mtctr	r0
-			bctrl
-			// deallocate stack frame
-			lwz		SP,0(SP)
-			// return
-			lwz		r0,8(SP)
-			mtlr	r0
-			blr
-		}
-		
-	#endif
-		
-		return -1;
 	}
+	
+#endif
+	
+#if TARGET_CPU_PPC
+	
+	static asm void DispatchSystemCallByName()
+	{
+		// save caller's return address
+		mflr	r0
+		stw		r0,8(SP)
+		
+		// allocate our own stack frame
+		stwu	SP,-32(SP)
+		
+		// get system call address (from its name) or die
+		mr		r3,r11
+		bl		GetSystemCallFunctionPtr
+		cmpwi	cr0,r3,0
+		beq		cr0,Die
+		
+		// load system call address
+		mr		r12,r3
+		lwz		r0,0(r12)
+		
+		// restore previous frame's parameters
+		lwz		r31,0(SP)
+		lwz		r3,24(r31)
+		lwz		r4,28(r31)
+		lwz		r5,32(r31)
+		lwz		r6,36(r31)
+		lwz		r7,40(r31)
+		lwz		r8,44(r31)
+		lwz		r9,48(r31)
+		lwz		r10,52(r31)
+		
+		// jump to system call
+		mtctr	r0
+		bctrl
+		
+		// deallocate stack frame
+		//lwz		SP,0(SP)
+		addi	SP,SP,32
+		
+		// return
+		lwz		r0,8(SP)
+		mtlr	r0
+		blr
+	}
+	
+#endif
 	
 	inline void SwapInEnvironValue( iota::environ_t envp )
 	{
