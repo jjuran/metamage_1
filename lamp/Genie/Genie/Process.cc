@@ -188,15 +188,30 @@ namespace Genie
 		return ( SystemCallsBegin() + LookUpSystemCallIndex( name ) )->function;
 	}
 	
+	typedef void (*Dispatcher)( const char* );
+	
 	struct ToolScratchGlobals
 	{
-		int*             err;  // obsolete
-		iota::environ_t  env;
+		Dispatcher       dispatcher;
+		void*            reserved;
 	};
+	
+	struct ApplScratchGlobals
+	{
+		iota::environ_t  env;
+		void*            reserved1;
+		void*            reserved2;
+	};
+	
+#if TARGET_API_MAC_CARBON
+	
+	#define LMGetApplScratch() NULL
+	
+#endif
 	
 	static ToolScratchGlobals& gToolScratchGlobals = *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
 	
-#if TARGET_CPU_68K
+	static ApplScratchGlobals& gApplScratchGlobals = *reinterpret_cast< ApplScratchGlobals* >( LMGetApplScratch() );
 	
 	static void Die()
 	{
@@ -223,6 +238,8 @@ namespace Genie
 		{
 			addr = Die;
 		}
+		
+	#if TARGET_CPU_68K
 		
 		// user code:
 		// system call arguments
@@ -256,16 +273,47 @@ namespace Genie
 		// stack ends here
 		// Profit!
 		
+	#endif
+		
+	#if TARGET_CPU_PPC
+		
+		asm
+		{
+			// restore previous frame's parameters
+			lwz		r31,0(SP)
+			lwz		r31,0(r31)
+			lwz		r3,24(r31)
+			lwz		r4,28(r31)
+			lwz		r5,32(r31)
+			lwz		r6,36(r31)
+			lwz		r7,40(r31)
+			lwz		r8,44(r31)
+			lwz		r9,48(r31)
+			lwz		r10,52(r31)
+			// load system call address
+			lwz		r12,addr
+			lwz		r0,0(r12)
+			// jump to system call
+			mtctr	r0
+			bctrl
+			// deallocate stack frame
+			lwz		SP,0(SP)
+			// return
+			lwz		r0,8(SP)
+			mtlr	r0
+			blr
+		}
+		
+	#endif
+		
 		return -1;
 	}
-	
-#endif
 	
 	inline void SwapInEnvironValue( iota::environ_t envp )
 	{
 		if ( ENVIRON_IS_SHARED )
 		{
-			gToolScratchGlobals.env = envp;
+			gApplScratchGlobals.env = envp;
 		}
 	}
 	
@@ -357,17 +405,19 @@ namespace Genie
 		
 		volatile iota::environ_t envp = process->GetEnviron();
 		
+		void* toolScratch[2] = { DispatchSystemCallByName, NULL };
+		
+		LMSetToolScratch( toolScratch );
+		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
-		{
-			void* outOfBandData[3] = { GetSystemCallFunctionPtr, DispatchSystemCallByName, NULL };
-			
-			LMSetApplScratch( outOfBandData );
-			
-			SetCurrentA4ProcPtr setCurrentA4 = GetCurrentA4Setter( mainPtr );
-			
-			setCurrentA4();
-		}
+		const void* applScratch[3] = { envp, NULL, NULL };
+		
+		LMSetApplScratch( applScratch );
+		
+		SetCurrentA4ProcPtr setCurrentA4 = GetCurrentA4Setter( mainPtr );
+		
+		setCurrentA4();
 		
 	#endif
 		
@@ -840,7 +890,7 @@ namespace Genie
 		
 		//itsErrnoData = itsMainEntry->GetErrnoPtr();
 		
-		iota::environ_t* environ_address = ENVIRON_IS_SHARED ? &gToolScratchGlobals.env : itsMainEntry->GetEnvironPtr();
+		iota::environ_t* environ_address = ENVIRON_IS_SHARED ? &gApplScratchGlobals.env : itsMainEntry->GetEnvironPtr();
 		
 		ResetEnviron( envp, environ_address );
 		
