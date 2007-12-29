@@ -240,17 +240,19 @@ namespace
 		return reinterpret_cast< SysProcPtr >( proc );
 	}
 	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 	
-	typedef int (*Dispatcher)( int*, const char* );
+	typedef int (*Dispatcher)( const char* );
 	
-	struct ApplScratchGlobals
+	struct ToolScratchGlobals
 	{
-		void*       getter;      // obsolete
-		Dispatcher  dispatcher;
+		Dispatcher       dispatcher;
+		void*            reserved;
 	};
 	
-	enum { kDispatcherAddr = (long) LMGetApplScratch() + 4 };
+	
+#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+	
+	enum { kDispatcherAddr = (long) LMGetToolScratch() };
 	
 	inline void PushAddress( const void* ptr )
 	{
@@ -280,6 +282,21 @@ namespace
 	#define CHECK_IMPORT( syscall )    NULL
 	
 #else
+	
+	inline void SystemCall( const void* name )
+	{
+		asm
+		{
+			lwz		r4,name
+			lwz		r12,0x09CE		// ToolScratch
+			stw		RTOC,20(SP)
+			lwz		r0,0(r12)
+			lwz		RTOC,4(r12)
+			mtctr	r0
+			bctrl
+			lwz		RTOC,20(SP)
+		}
+	}
 	
 	#define LOAD_SYMBOL( syscall )  (syscall ## _import_)
 	
