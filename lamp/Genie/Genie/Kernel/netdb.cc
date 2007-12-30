@@ -103,7 +103,7 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( gethostbyname );
 	
-	static OSStatus OTInetMailExchange( char* domain, UInt16* count, InetMailExchange* result )
+	static OSStatus OTInetMailExchange_k( char* domain, UInt16* count, InetMailExchange* result )
 	{
 		SystemCallFrame frame( "OTInetMailExchange" );
 		
@@ -114,7 +114,7 @@ namespace Genie
 	
 #if !TARGET_API_MAC_CARBON
 	
-	REGISTER_SYSTEM_CALL( OTInetMailExchange );
+	REGISTER_SYSTEM_CALL( OTInetMailExchange_k );
 	
 #endif
 	
