@@ -347,32 +347,30 @@ namespace Genie
 		mr		r3,r11
 		bl		GetSystemCallFunctionPtrByIndex
 		
+		// deallocate stack frame
+		addi	SP,SP,32
+		
+		// prepare for hyperspace jump (restore caller's return address to link register)
+		lwz		r0,8(SP)
+		mtlr	r0
+		
 		// load system call address
 		mr		r12,r3
 		lwz		r0,0(r12)
 		
 		// restore previous frame's parameters
-		lwz		r13,0(SP)
-		lwz		r3,24(r13)
-		lwz		r4,28(r13)
-		lwz		r5,32(r13)
-		lwz		r6,36(r13)
-		lwz		r7,40(r13)
-		lwz		r8,44(r13)
-		lwz		r9,48(r13)
-		lwz		r10,52(r13)
+		lwz		r3,24(SP)
+		lwz		r4,28(SP)
+		lwz		r5,32(SP)
+		lwz		r6,36(SP)
+		lwz		r7,40(SP)
+		lwz		r8,44(SP)
+		lwz		r9,48(SP)
+		lwz		r10,52(SP)
 		
 		// jump to system call
 		mtctr	r0
-		bctrl
-		
-		// deallocate stack frame
-		addi	SP,SP,32
-		
-		// return
-		lwz		r0,8(SP)
-		mtlr	r0
-		blr
+		bctr
 	}
 	
 #endif
