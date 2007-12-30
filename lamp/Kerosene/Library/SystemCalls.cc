@@ -192,6 +192,4 @@ DEFINE_STUB( AESendBlocking )
 DEFINE_STUB( OTInetMailExchange_k )
 
 DEFINE_STUB( sleep )
-DEFINE_STUB( readlink )
-DEFINE_STUB( getcwd )
 
