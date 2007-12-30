@@ -215,67 +215,6 @@ namespace Genie
 		return result;
 	}
 	
-	static void* GetSystemCallFunctionPtrByIndex( unsigned index )
-	{
-		const char* name = "";
-		
-		switch ( index )
-		{
-			case __NR_Exit:
-				name = "_exit";
-				break;
-			
-			case __NR_read:
-				name = "read";
-				break;
-			
-			case __NR_write:
-				name = "write";
-				break;
-			
-			case __NR_open:
-				name = "open";
-				break;
-			
-			case __NR_close:
-				name = "close";
-				break;
-			
-			case __NR_waitpid:
-				name = "waitpid";
-				break;
-		}
-		
-		return GetSystemCallFunctionPtr( name );
-	}
-	
-	typedef void (*Dispatcher)( const char* );
-	
-	typedef void (*DispatcherByIndex)( unsigned );
-	
-	struct ToolScratchGlobals
-	{
-		Dispatcher       dispatcher;
-		DispatcherByIndex  dispatcherByIndex;
-	};
-	
-	struct ApplScratchGlobals
-	{
-		iota::environ_t  env;
-		void*            reserved1;
-		void*            reserved2;
-	};
-	
-#if TARGET_API_MAC_CARBON
-	
-	#define LMGetApplScratch() NULL
-	
-#endif
-	
-	static ToolScratchGlobals& gToolScratchGlobals = *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
-	
-	static ApplScratchGlobals& gApplScratchGlobals = *reinterpret_cast< ApplScratchGlobals* >( LMGetApplScratch() );
-	
 #if TARGET_CPU_68K
 	
 	static void DispatchSystemCallByName( const char* name )
@@ -317,11 +256,23 @@ namespace Genie
 	
 #endif
 	
+	static void* GetSystemCallAddress( unsigned index )
+	{
+		const SystemCall* syscall = GetSystemCall( index );
+		
+		if ( syscall == NULL  ||  syscall->function == NULL )
+		{
+			Die();
+		}
+		
+		return syscall->function;
+	}
+	
 #if TARGET_CPU_68K
 	
 	static asm void DispatchSystemCallByNumber( unsigned index )
 	{
-		JSR		GetSystemCallFunctionPtrByIndex  // index is already on the stack
+		JSR		GetSystemCallAddress  // index is already on the stack
 		
 		ADDQ	#4,SP  // pop the stack
 		
@@ -345,7 +296,7 @@ namespace Genie
 		
 		// get system call address (from its index) or die
 		mr		r3,r11
-		bl		GetSystemCallFunctionPtrByIndex
+		bl		GetSystemCallAddress
 		
 		// deallocate stack frame
 		addi	SP,SP,32
@@ -374,6 +325,31 @@ namespace Genie
 	}
 	
 #endif
+	
+	typedef void (*Dispatcher)( const char* );
+	
+	typedef void (*DispatcherByIndex)( unsigned );
+	
+	struct ToolScratchGlobals
+	{
+		Dispatcher       dispatcher;
+		DispatcherByIndex  dispatcherByIndex;
+	};
+	
+	struct ApplScratchGlobals
+	{
+		iota::environ_t  env;
+		void*            reserved1;
+		void*            reserved2;
+	};
+	
+#if TARGET_API_MAC_CARBON
+	
+	#define LMGetApplScratch() NULL
+	
+#endif
+	
+	static ApplScratchGlobals& gApplScratchGlobals = *reinterpret_cast< ApplScratchGlobals* >( LMGetApplScratch() );
 	
 	inline void SwapInEnvironValue( iota::environ_t envp )
 	{

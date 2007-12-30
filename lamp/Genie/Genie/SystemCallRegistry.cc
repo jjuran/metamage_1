@@ -76,9 +76,32 @@ namespace Genie
 		return theSystemCallRegistry;
 	}
 	
-	void RegisterSystemCall( const char* name, void* func )
+	void RegisterSystemCall( unsigned index, const char* name, void* func )
 	{
-		TheSystemCallRegistry().push_back( SystemCall( name, func ) );
+		const unsigned required_size = index + 1;
+		
+		SystemCallRegistry& registry = TheSystemCallRegistry();
+		
+		if ( registry.size() < required_size )
+		{
+			registry.resize( required_size );
+		}
+		
+		registry[ index ] = SystemCall( name, func );
+	}
+	
+	const SystemCall* GetSystemCall( unsigned index )
+	{
+		const unsigned required_size = index + 1;
+		
+		SystemCallRegistry& registry = TheSystemCallRegistry();
+		
+		if ( registry.size() < required_size )
+		{
+			return NULL;
+		}
+		
+		return &registry[ index ];
 	}
 	
 	SystemCallRegistry::const_iterator SystemCallsBegin()
@@ -95,8 +118,6 @@ namespace Genie
 	{
 		static SystemCallRegistry::iterator begin = TheSystemCallRegistry().begin();
 		static SystemCallRegistry::iterator end   = TheSystemCallRegistry().end  ();
-		
-		static const bool sorted = ( std::sort( begin, end ), true );
 		
 		SystemCallRegistry::const_iterator it = std::find( begin, end, name );
 		

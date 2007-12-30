@@ -9,6 +9,9 @@
 // Standard C++
 #include <vector>
 
+// Lamp
+#include "lamp/syscalls.h"
+
 
 namespace Genie
 {
@@ -33,16 +36,16 @@ namespace Genie
 	
 	// Register system calls
 	
-	#define REGISTER_SYSTEM_CALL(call)  SystemCallRegistration call##_syscall_(#call, (void*) call)
+	#define REGISTER_SYSTEM_CALL(call)  SystemCallRegistration call##_syscall_( __NR_##call, #call, (void*) call )
 	
-	void RegisterSystemCall( const char* name, void* func );
+	void RegisterSystemCall( unsigned index, const char* name, void* func );
 	
 	class SystemCallRegistration
 	{
 		public:
-			SystemCallRegistration( const char* name, void* func )
+			SystemCallRegistration( unsigned index, const char* name, void* func )
 			{
-				RegisterSystemCall( name, func );
+				RegisterSystemCall( index, name, func );
 			}
 	};
 	
@@ -57,6 +60,8 @@ namespace Genie
 	};
 	
 	typedef std::vector< SystemCall > SystemCallRegistry;
+	
+	const SystemCall* GetSystemCall( unsigned index );
 	
 	// Iterate over registered system calls
 	
