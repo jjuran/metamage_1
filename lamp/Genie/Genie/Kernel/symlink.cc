@@ -150,6 +150,34 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( symlink );
 	
+	static int readlink_k( const char *path, char *buffer, size_t buffer_size )
+	{
+		SystemCallFrame frame( "readlink_k" );
+		
+		try
+		{
+			FSTreePtr current = CurrentProcess().GetCWD();
+			
+			FSTreePtr link = ResolvePathname( path, current );
+			
+			std::string linkPath = link->ReadLink();
+			
+			buffer_size = std::min( buffer_size, linkPath.size() );
+			
+			std::copy( linkPath.begin(),
+			           linkPath.begin() + buffer_size,
+			           buffer );
+			
+			return linkPath.size();
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+	}
+	
+	REGISTER_SYSTEM_CALL( readlink_k );
+	
 	static int readlink( const char *path, char *buf, size_t bufsiz )
 	{
 		SystemCallFrame frame( "readlink" );
