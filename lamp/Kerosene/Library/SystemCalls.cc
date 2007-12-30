@@ -6,39 +6,26 @@
 // Mac OS
 #include <LowMem.h>
 
+// Lamp
+#include "lamp/syscalls.h"
+
 
 #pragma exceptions off
-
-
-typedef int (*Dispatcher)( const char* );
-
-struct ToolScratchGlobals
-{
-	Dispatcher       dispatcher;
-	void*            reserved;
-};
 
 
 #if TARGET_CPU_68K
 	
 	extern "C" void InitializeProcess();
 	
-	enum { kDispatcherAddr = (long) LMGetToolScratch() };
+	enum { kDispatcherAddr = (long) LMGetToolScratch() + 4 };
 	
-	inline void PushAddress( const void* ptr )
+	static asm void SystemCall()
 	{
-		asm
-		{
-			MOVEA.L		ptr,A0	;
-			PEA			(A0)	;
-		}
-	}
-	
-	inline asm void SystemCall()
-	{
+		JSR			InitializeProcess	;
+		
 		MOVEA.L		kDispatcherAddr,A0	;  // load the dispatcher's address
-										;  // arg 1:  function name C string already on stack
-		JSR			(A0)				;  // jump to dispatcher -- doesn't return
+										;  // arg 1:  syscall index already on stack
+		JMP			(A0)				;  // jump to dispatcher -- doesn't return
 		
 		// Not reached
 	}
@@ -47,7 +34,13 @@ struct ToolScratchGlobals
 
 #if TARGET_CPU_PPC
 	
-	static asm void PPCSystemCall()
+	#pragma export on
+		
+		void    (*gDispatcher)();
+		
+	#pragma export reset
+	
+	static asm void SystemCall()
 	{
 		mflr	r0				// get caller's return address
 		stw		r0,8(SP)		// store return address in caller's stack frame
@@ -65,7 +58,8 @@ struct ToolScratchGlobals
 		stw		r9,48(SP)
 		stw		r10,52(SP)
 		
-		lwz		r12,0x09CE		// retrieve dispatcher T-vector from ToolScratch
+		lwz		r12,gDispatcher	// load address of export
+		lwz		r12,0(r12)		// load dispatcher T-vector
 		lwz		r0,0(r12)		// load function address
 		lwz		RTOC,4(r12)		// load foreign RTOC
 		mtctr	r0				// ready, aim...
@@ -84,15 +78,12 @@ struct ToolScratchGlobals
 
 extern "C" void write();
 
-static const char* name_write = "write";
-
 #if TARGET_CPU_68K
 	
-	void write()
+	asm void write()
 	{
-		InitializeProcess();
-		PushAddress( name_write );
-		SystemCall();
+		MOVE.L		#__NR_write,-(SP)	;
+		JMP			SystemCall			;
 	}
 	
 #endif
@@ -101,8 +92,8 @@ static const char* name_write = "write";
 	
 	asm void write()
 	{
-		lwz		r11,name_write
-		b		PPCSystemCall
+		addi	r11,0,__NR_write
+		b		SystemCall
 	}
 	
 #endif
