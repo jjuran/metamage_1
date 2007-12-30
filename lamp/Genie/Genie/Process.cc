@@ -15,6 +15,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// Lamp
+#include "lamp/syscalls.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -216,9 +219,31 @@ namespace Genie
 	{
 		const char* name = "";
 		
-		if ( index == 4 )
+		switch ( index )
 		{
-			name = "write";
+			case __NR_Exit:
+				name = "_exit";
+				break;
+			
+			case __NR_read:
+				name = "read";
+				break;
+			
+			case __NR_write:
+				name = "write";
+				break;
+			
+			case __NR_open:
+				name = "open";
+				break;
+			
+			case __NR_close:
+				name = "close";
+				break;
+			
+			case __NR_waitpid:
+				name = "waitpid";
+				break;
 		}
 		
 		return GetSystemCallFunctionPtr( name );
