@@ -203,59 +203,6 @@ namespace Genie
 		::ExitToShell();  // not messing around
 	}
 	
-	static void* GetSystemCallFunctionPtr( const char* name )
-	{
-		void* result = ( SystemCallsBegin() + LookUpSystemCallIndex( name ) )->function;
-		
-		if ( result == NULL )
-		{
-			result = Die;
-		}
-		
-		return result;
-	}
-	
-#if TARGET_CPU_68K
-	
-	static void DispatchSystemCallByName( const char* name )
-	{
-		void* addr = GetSystemCallFunctionPtr( name );
-		
-		// user code:
-		// system call arguments
-		// return address (from JSR)
-		// stub:
-		// saved A6 for user code (from LINK)
-		// &errno
-		// system call number
-		// return address (from JSR)
-		// syscall:
-		// saved A6 for stub (from LINK)
-		// local variable (system call address)
-		
-		
-		asm
-		{
-			MOVEA.L		addr,A0		;  // move system call address into A0
-			MOVEA.L		(A6),A6		;  // skip a stack frame
-			UNLK		A6			;  // deallocate stack frames
-			JMP			(A0)		;  // jump to system call
-		}
-		
-		
-		// End result:
-		// user code:
-		// system call arguments
-		// return address (from JSR)
-		// system call:
-		// saved A6 for user code (from LINK)
-		// local variables
-		// stack ends here
-		// Profit!
-	}
-	
-#endif
-	
 	static void* GetSystemCallAddress( unsigned index )
 	{
 		const SystemCall* syscall = GetSystemCall( index );
@@ -270,7 +217,7 @@ namespace Genie
 	
 #if TARGET_CPU_68K
 	
-	static asm void DispatchSystemCallByNumber( unsigned index )
+	static asm void DispatchSystemCall( unsigned index )
 	{
 		JSR		GetSystemCallAddress  // index is already on the stack
 		
@@ -449,7 +396,7 @@ namespace Genie
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
-		const void* toolScratch[2] = { DispatchSystemCallByName, DispatchSystemCallByNumber };
+		const void* toolScratch[2] = { DispatchSystemCall, DispatchSystemCall };
 		
 		LMSetToolScratch( toolScratch );
 		
