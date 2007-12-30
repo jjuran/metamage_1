@@ -120,7 +120,6 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	
 	// fcntl
 	int (*fcntl_import_)( int fd, int cmd, int param );
-	int (*open_import_ )( const char* path, int oflags, mode_t mode );
 	
 	// netdb
 	struct hostent* (*gethostbyname_import_)( const char* name );
@@ -198,7 +197,6 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	// unistd
 	unsigned int (*alarm_import_    )( unsigned int seconds );
 	int          (*chdir_import_    )( const char* path );
-	int          (*close_import_    )( int filedes );
 	int          (*copyfile_import_ )( const char* src, const char* dest );
 	int          (*dup_import_      )( int filedes );
 	int          (*dup2_import_     )( int filedes, int filedes2 );
@@ -212,7 +210,6 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	int          (*pause_import_    )();
 	int          (*peek_import_     )( int fd, const char** buffer, size_t minBytes );
 	int          (*pipe_import_     )( int filedes[ 2 ] );
-	ssize_t      (*read_import_     )( int filedes, void* buf, size_t nbyte );
 	int          (*readlink_import_ )( const char* path, char* buf, size_t len );
 	int          (*rename_import_   )( const char* src, const char* dest );
 	int          (*setpgid_import_  )( pid_t pid, pid_t pgid );
@@ -352,11 +349,6 @@ namespace
 		return INVOKE( fcntl, ( fd, cmd, param ) );
 	}
 	
-	int open( const char* path, int oflags, mode_t mode )
-	{
-		return INVOKE( open, ( path, oflags, mode ) );
-	}
-	
 #else
 	
 	int fcntl( int fd, int cmd, ... )
@@ -370,19 +362,6 @@ namespace
 		va_end( va );
 		
 		return INVOKE( fcntl, ( fd, cmd, param ) );
-	}
-	
-	int open( const char* path, int oflags, ... )
-	{
-		va_list va;
-		
-		va_start( va, oflags );
-		
-		mode_t mode = va_arg( va, mode_t );
-		
-		va_end( va );
-		
-		return INVOKE( open, ( path, oflags, mode ) );
 	}
 	
 #endif
@@ -720,11 +699,6 @@ namespace
 		return INVOKE( chdir, ( path ) );
 	}
 	
-	int close( int filedes )
-	{
-		return INVOKE( close, ( filedes ) );
-	}
-	
 	int copyfile( const char* src, const char* dest )
 	{
 		return INVOKE( copyfile, ( src, dest ) );
@@ -810,11 +784,6 @@ namespace
 	int pipe( int filedes[ 2 ] )
 	{
 		return INVOKE( pipe, ( filedes ) );
-	}
-	
-	ssize_t read( int filedes, void* buf, size_t nbyte )
-	{
-		return INVOKE( read, ( filedes, buf, nbyte ) );
 	}
 	
 	int readlink( const char* path, char* buf, size_t len )
