@@ -60,8 +60,12 @@ namespace Genie
 			}
 	};
 	
+	extern "C" void DispatchSystemCall();
+	
 	static void ImportSystemCalls( N::CFragConnectionID fragmentConnection )
 	{
+		LoadSymbol( fragmentConnection, "\p" "gDispatcher", (void*) DispatchSystemCall );
+		
 		std::for_each( SystemCallsBegin(),
 		               SystemCallsEnd(),
 		               SymbolImporter( fragmentConnection ) );
