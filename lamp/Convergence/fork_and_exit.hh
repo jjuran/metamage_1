@@ -9,7 +9,16 @@
 // POSIX
 #include <unistd.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 pid_t fork_and_exit( int status );
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #ifdef __GNUC__
 
