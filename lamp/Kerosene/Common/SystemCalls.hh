@@ -31,7 +31,7 @@ extern "C" {
 	
 	OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply );
 	
-	OSStatus OTInetMailExchange_Kernel( char* domain, UInt16* count, InetMailExchange* result );
+	OSStatus OTInetMailExchange_k( char* domain, UInt16* count, InetMailExchange* result );
 	
 	FSSpec Path2FSS( const char* pathname );
 	
