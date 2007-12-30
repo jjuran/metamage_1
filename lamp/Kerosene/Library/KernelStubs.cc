@@ -53,7 +53,9 @@ typedef void (*CleanupHandler)();
 
 extern "C" void InitProc( CleanupHandler, int* );
 
-static void InitializeProcess()
+extern "C" void InitializeProcess();
+
+void InitializeProcess()
 {
 	static bool beenHere = false;
 	
@@ -222,7 +224,6 @@ inline void CheckImportedSymbol( void* symbol, const char* name, std::size_t len
 	const char*  (*ttyname_import_  )( int filedes );
 	int          (*ttypair_import_  )( int filedes[ 2 ] );
 	int          (*unlink_import_   )( const char* pathname );
-	ssize_t      (*write_import_    )( int filedes, const void* buf, size_t nbyte );
 	
 	void       (*InitProc_import_        )( CleanupHandler, int* );
 	int*       (*ErrnoPtr_import_        )();
@@ -282,21 +283,6 @@ namespace
 	#define CHECK_IMPORT( syscall )    NULL
 	
 #else
-	
-	inline void SystemCall( const void* name )
-	{
-		asm
-		{
-			lwz		r4,name
-			lwz		r12,0x09CE		// ToolScratch
-			stw		RTOC,20(SP)
-			lwz		r0,0(r12)
-			lwz		RTOC,4(r12)
-			mtctr	r0
-			bctrl
-			lwz		RTOC,20(SP)
-		}
-	}
 	
 	#define LOAD_SYMBOL( syscall )  (syscall ## _import_)
 	
@@ -884,22 +870,6 @@ namespace
 	int unlink( const char* pathname )
 	{
 		return INVOKE( unlink, ( pathname ) );
-	}
-	
-	ssize_t write( int filedes, const void* buf, size_t nbyte )
-	{
-		/*
-		if ( LOAD_SYMBOL( write ) == NULL )
-		{
-			// There's not much we can do.
-			// write() and _exit() are currently in the same module,
-			// and the chance that kill() is available is very slight.
-			
-			EnterComa();
-		}
-		*/
-		
-		return INVOKE_COMMON( write, ( filedes, buf, nbyte ) );
 	}
 	
 	#pragma mark -
