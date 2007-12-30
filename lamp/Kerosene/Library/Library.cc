@@ -238,10 +238,7 @@
 	
 	int isatty( int fd )
 	{
-		// This is a hack
-		const char* tty_name = ttyname( fd );
-		
-		return tty_name != NULL;
+		return tcgetpgrp( fd ) >= 0;
 	}
 	
 	int link( const char* target_path, const char* link_location )
