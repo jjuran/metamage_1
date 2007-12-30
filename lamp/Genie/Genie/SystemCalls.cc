@@ -388,6 +388,32 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( _exit );
 	
+	static ssize_t getcwd_k( char* buffer, std::size_t buffer_size )
+	{
+		SystemCallFrame frame( "getcwd_k" );
+		
+		try
+		{
+			FSTreePtr cwd = CurrentProcess().GetCWD();
+			
+			std::string result = cwd->Pathname();
+			
+			buffer_size = std::min( buffer_size, result.size() );
+			
+			std::copy( result.c_str(),
+			           result.c_str() + result.size(),
+			           buffer );
+			
+			return result.size();
+		}
+		catch ( ... )
+		{
+			return NULL;
+		}
+	}
+	
+	REGISTER_SYSTEM_CALL( getcwd_k );
+	
 	static char* getcwd( char* buf, std::size_t size )
 	{
 		SystemCallFrame frame( "getcwd" );
@@ -548,7 +574,7 @@ namespace Genie
 		}
 	}
 	
-	REGISTER_SYSTEM_CALL( peek );
+	//REGISTER_SYSTEM_CALL( peek );
 	
 	static ssize_t read( int fd, void* buf, size_t count )
 	{
