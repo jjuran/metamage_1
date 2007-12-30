@@ -30,6 +30,8 @@
 		// Not reached
 	}
 	
+	#define DEFINE_STUB( name ) extern "C" void name(); asm void name() { MOVE.L #__NR_##write,-(SP) ;  JMP SystemCall }
+	
 #endif
 
 #if TARGET_CPU_PPC
@@ -73,28 +75,9 @@
 		blr						// return
 	}
 	
-#endif
-
-
-extern "C" void write();
-
-#if TARGET_CPU_68K
-	
-	asm void write()
-	{
-		MOVE.L		#__NR_write,-(SP)	;
-		JMP			SystemCall			;
-	}
+	#define DEFINE_STUB( name ) extern "C" void name(); asm void name() { addi r11,0,__NR_##write ;  b SystemCall }
 	
 #endif
 
-#if TARGET_CPU_PPC
-	
-	asm void write()
-	{
-		addi	r11,0,__NR_write
-		b		SystemCall
-	}
-	
-#endif
+DEFINE_STUB( write )
 
