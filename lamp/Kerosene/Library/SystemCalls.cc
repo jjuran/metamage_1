@@ -17,7 +17,7 @@
 	
 	extern "C" void InitializeProcess();
 	
-	enum { kDispatcherAddr = (long) LMGetToolScratch() + 4 };
+	enum { kDispatcherAddr = (long) LMGetToolScratch() };
 	
 	static asm void SystemCall()
 	{
@@ -184,7 +184,6 @@ DEFINE_STUB( seekdir )
 DEFINE_STUB( telldir )
 DEFINE_STUB( dirfd )
 
-DEFINE_STUB( ttyname )
 DEFINE_STUB( ttypair )
 
 DEFINE_STUB( gethostbyname )
