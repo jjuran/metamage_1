@@ -767,23 +767,6 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( ftruncate );
 	
-	static const char* ttyname( int fd )
-	{
-		SystemCallFrame frame( "ttyname" );
-		
-		try
-		{
-			TerminalHandle& terminal = GetFileHandleWithCast< TerminalHandle >( fd );
-			
-			return terminal.TTYName().c_str();
-		}
-		catch ( ... ) {}
-		
-		return NULL;
-	}
-	
-	REGISTER_SYSTEM_CALL( ttyname );
-	
 	// ttypair() is analogous to socketpair(), and creates a pseudo-tty device.
 	// File descriptors refering to the master and slave respectively are returned
 	// in filedes.
