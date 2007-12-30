@@ -79,8 +79,120 @@
 	
 #endif
 
+#if TARGET_CPU_68K
+	
+	DEFINE_STUB( InitProc )
+	
+#endif
+
+DEFINE_STUB( _exit )
+DEFINE_STUB( SpawnVFork )
 DEFINE_STUB( read  )
 DEFINE_STUB( write )
 DEFINE_STUB( open  )
 DEFINE_STUB( close )
+DEFINE_STUB( waitpid )
+
+DEFINE_STUB( unlink )
+DEFINE_STUB( execve )
+DEFINE_STUB( chdir  )
+
+DEFINE_STUB( mknod )
+DEFINE_STUB( chmod )
+
+DEFINE_STUB( fchdir )
+DEFINE_STUB( getcwd_k )
+DEFINE_STUB( lseek )
+DEFINE_STUB( getpid )
+
+DEFINE_STUB( ptrace )
+DEFINE_STUB( alarm )
+DEFINE_STUB( fork_and_exit )
+DEFINE_STUB( pause )
+
+DEFINE_STUB( copyfile )
+
+DEFINE_STUB( kill )
+DEFINE_STUB( rename )
+DEFINE_STUB( mkdir )
+DEFINE_STUB( rmdir )
+DEFINE_STUB( dup )
+DEFINE_STUB( pipe )
+DEFINE_STUB( times )
+
+DEFINE_STUB( signal )
+DEFINE_STUB( flock )
+DEFINE_STUB( ioctl )
+DEFINE_STUB( fcntl )
+DEFINE_STUB( getpgid )
+DEFINE_STUB( setpgid )
+DEFINE_STUB( getsid )
+DEFINE_STUB( uname )
+
+DEFINE_STUB( dup2 )
+DEFINE_STUB( getppid )
+
+DEFINE_STUB( setsid )
+
+DEFINE_STUB( sigaction )
+
+DEFINE_STUB( sigsuspend )
+DEFINE_STUB( sigpending )
+
+DEFINE_STUB( gettimeofday )
+
+DEFINE_STUB( select )
+DEFINE_STUB( symlink )
+
+DEFINE_STUB( readlink_k )
+
+DEFINE_STUB( truncate )
+DEFINE_STUB( ftruncate )
+DEFINE_STUB( fchmod )
+
+DEFINE_STUB( stat )
+DEFINE_STUB( lstat )
+DEFINE_STUB( fstat )
+
+DEFINE_STUB( socketpair )
+DEFINE_STUB( socket )
+DEFINE_STUB( bind )
+DEFINE_STUB( listen )
+DEFINE_STUB( accept )
+DEFINE_STUB( connect )
+DEFINE_STUB( shutdown )
+DEFINE_STUB( getsockname )
+DEFINE_STUB( getpeername )
+DEFINE_STUB( getsockopt )
+DEFINE_STUB( setsockopt )
+DEFINE_STUB( send )
+DEFINE_STUB( recv )
+DEFINE_STUB( sendto )
+DEFINE_STUB( recvfrom )
+
+DEFINE_STUB( getenv )
+DEFINE_STUB( setenv )
+DEFINE_STUB( unsetenv )
+DEFINE_STUB( putenv )
+DEFINE_STUB( clearenv )
+
+DEFINE_STUB( opendir )
+DEFINE_STUB( closedir )
+DEFINE_STUB( readdir )
+DEFINE_STUB( rewinddir )
+DEFINE_STUB( seekdir )
+DEFINE_STUB( telldir )
+DEFINE_STUB( dirfd )
+
+DEFINE_STUB( ttyname )
+DEFINE_STUB( ttypair )
+
+DEFINE_STUB( gethostbyname )
+DEFINE_STUB( Path2FSSpec )
+DEFINE_STUB( AESendBlocking )
+DEFINE_STUB( OTInetMailExchange_k )
+
+DEFINE_STUB( sleep )
+DEFINE_STUB( readlink )
+DEFINE_STUB( getcwd )
 
