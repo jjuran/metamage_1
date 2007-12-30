@@ -51,6 +51,11 @@ namespace Genie
 			
 			bool operator()( SystemCallRegistry::value_type systemCall ) const
 			{
+				if ( systemCall.function == NULL )
+				{
+					return false;
+				}
+				
 				std::string name = systemCall.name;
 				void*       func = systemCall.function;
 				
