@@ -30,7 +30,7 @@
 		// Not reached
 	}
 	
-	#define DEFINE_STUB( name ) extern "C" void name(); asm void name() { MOVE.L #__NR_##write,-(SP) ;  JMP SystemCall }
+	#define DEFINE_STUB( name ) extern "C" void name(); asm void name() { MOVE.L #__NR_##name,-(SP) ;  JMP SystemCall }
 	
 #endif
 
@@ -75,9 +75,12 @@
 		blr						// return
 	}
 	
-	#define DEFINE_STUB( name ) extern "C" void name(); asm void name() { addi r11,0,__NR_##write ;  b SystemCall }
+	#define DEFINE_STUB( name ) extern "C" void name(); asm void name() { addi r11,0,__NR_##name ;  b SystemCall }
 	
 #endif
 
+DEFINE_STUB( read  )
 DEFINE_STUB( write )
+DEFINE_STUB( open  )
+DEFINE_STUB( close )
 
