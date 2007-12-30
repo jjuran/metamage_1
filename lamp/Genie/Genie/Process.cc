@@ -183,17 +183,55 @@ namespace Genie
 	}
 	
 	
+	static void Die()
+	{
+		Process& current = CurrentProcess();
+		
+		current.Raise( SIGSYS );
+		
+		current.HandlePendingSignals();
+		
+		current.Raise( SIGKILL );
+		
+		current.HandlePendingSignals();
+		
+		N::SysBeep();
+		
+		::ExitToShell();  // not messing around
+	}
+	
 	static void* GetSystemCallFunctionPtr( const char* name )
 	{
-		return ( SystemCallsBegin() + LookUpSystemCallIndex( name ) )->function;
+		void* result = ( SystemCallsBegin() + LookUpSystemCallIndex( name ) )->function;
+		
+		if ( result == NULL )
+		{
+			result = Die;
+		}
+		
+		return result;
+	}
+	
+	static void* GetSystemCallFunctionPtrByIndex( unsigned index )
+	{
+		const char* name = "";
+		
+		if ( index == 4 )
+		{
+			name = "write";
+		}
+		
+		return GetSystemCallFunctionPtr( name );
 	}
 	
 	typedef void (*Dispatcher)( const char* );
 	
+	typedef void (*DispatcherByIndex)( unsigned );
+	
 	struct ToolScratchGlobals
 	{
 		Dispatcher       dispatcher;
-		void*            reserved;
+		DispatcherByIndex  dispatcherByIndex;
 	};
 	
 	struct ApplScratchGlobals
@@ -213,33 +251,11 @@ namespace Genie
 	
 	static ApplScratchGlobals& gApplScratchGlobals = *reinterpret_cast< ApplScratchGlobals* >( LMGetApplScratch() );
 	
-	static void Die()
-	{
-		Process& current = CurrentProcess();
-		
-		current.Raise( SIGSYS );
-		
-		current.HandlePendingSignals();
-		
-		current.Raise( SIGKILL );
-		
-		current.HandlePendingSignals();
-		
-		N::SysBeep();
-		
-		::ExitToShell();  // not messing around
-	}
-	
 #if TARGET_CPU_68K
 	
 	static void DispatchSystemCallByName( const char* name )
 	{
 		void* addr = GetSystemCallFunctionPtr( name );
-		
-		if ( addr == NULL )
-		{
-			addr = Die;
-		}
 		
 		// user code:
 		// system call arguments
@@ -276,9 +292,24 @@ namespace Genie
 	
 #endif
 	
+#if TARGET_CPU_68K
+	
+	static asm void DispatchSystemCallByNumber( unsigned index )
+	{
+		JSR		GetSystemCallFunctionPtrByIndex  // index is already on the stack
+		
+		ADDQ	#4,SP  // pop the stack
+		
+		JMP		(A0)  // system call address is already in A0
+	}
+	
+#endif
+	
 #if TARGET_CPU_PPC
 	
-	static asm void DispatchSystemCallByName()
+	extern "C" void DispatchSystemCall();
+	
+	asm void DispatchSystemCall()
 	{
 		// save caller's return address
 		mflr	r0
@@ -287,33 +318,30 @@ namespace Genie
 		// allocate our own stack frame
 		stwu	SP,-32(SP)
 		
-		// get system call address (from its name) or die
+		// get system call address (from its index) or die
 		mr		r3,r11
-		bl		GetSystemCallFunctionPtr
-		cmpwi	cr0,r3,0
-		beq		cr0,Die
+		bl		GetSystemCallFunctionPtrByIndex
 		
 		// load system call address
 		mr		r12,r3
 		lwz		r0,0(r12)
 		
 		// restore previous frame's parameters
-		lwz		r31,0(SP)
-		lwz		r3,24(r31)
-		lwz		r4,28(r31)
-		lwz		r5,32(r31)
-		lwz		r6,36(r31)
-		lwz		r7,40(r31)
-		lwz		r8,44(r31)
-		lwz		r9,48(r31)
-		lwz		r10,52(r31)
+		lwz		r13,0(SP)
+		lwz		r3,24(r13)
+		lwz		r4,28(r13)
+		lwz		r5,32(r13)
+		lwz		r6,36(r13)
+		lwz		r7,40(r13)
+		lwz		r8,44(r13)
+		lwz		r9,48(r13)
+		lwz		r10,52(r13)
 		
 		// jump to system call
 		mtctr	r0
 		bctrl
 		
 		// deallocate stack frame
-		//lwz		SP,0(SP)
 		addi	SP,SP,32
 		
 		// return
@@ -420,11 +448,11 @@ namespace Genie
 		
 		volatile iota::environ_t envp = process->GetEnviron();
 		
-		void* toolScratch[2] = { DispatchSystemCallByName, NULL };
+	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+		
+		const void* toolScratch[2] = { DispatchSystemCallByName, DispatchSystemCallByNumber };
 		
 		LMSetToolScratch( toolScratch );
-		
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
 		const void* applScratch[3] = { envp, NULL, NULL };
 		
