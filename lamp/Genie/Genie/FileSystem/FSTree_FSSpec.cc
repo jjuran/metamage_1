@@ -33,6 +33,7 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
+#include "Genie/FileSystem/FSSpecForkUser.hh"
 #include "Genie/FileSystem/FSTree_Dev.hh"
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_Proc.hh"
@@ -271,44 +272,6 @@ namespace Genie
 	}
 	
 	
-	static boost::shared_ptr< IOHandle > OpenFile( NN::Owned< N::FSFileRefNum > refNum )
-	{
-		return boost::shared_ptr< IOHandle >( new MacDataForkHandle( refNum ) );
-	}
-	
-	static boost::shared_ptr< IOHandle > OpenFSSpec( const FSSpec& fileSpec, OpenFlags flags, bool rsrcFork )
-	{
-		N::FSIOPermissions rdPerm = N::FSIOPermissions( flags + 1  &  FREAD  );
-		N::FSIOPermissions wrPerm = N::FSIOPermissions( flags + 1  &  FWRITE );
-		
-		bool nonblocking = flags & O_NONBLOCK;
-		bool appending   = flags & O_APPEND;
-		// ...
-		bool creating    = flags & O_CREAT;
-		bool truncating  = flags & O_TRUNC;
-		bool excluding   = flags & O_EXCL;
-		// ...
-		
-		#if 0
-		bool resFork     = flags & O_ResFork;
-		bool resMap      = flags & O_ResMap;
-		#endif
-		
-		NN::Owned< N::FSFileRefNum > fileH = rsrcFork ? N::FSpOpenRF( fileSpec, rdPerm | wrPerm )
-		                                              : N::FSpOpenDF( fileSpec, rdPerm | wrPerm );
-		
-		if ( truncating )
-		{
-			N::SetEOF( fileH, 0 );
-		}
-		else if ( appending )
-		{
-			N::SetFPos( fileH, N::fsFromLEOF, 0 );
-		}
-		
-		return OpenFile( fileH );
-	}
-	
 	bool FSTree_FSSpec::Exists() const
 	{
 		return io::item_exists( itsFileSpec );
@@ -472,11 +435,9 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags ) const
 	{
-		const bool notRsrcFork = false;
-		
 		FSSpec target = N::ResolveAliasFile( itsFileSpec, true );
 		
-		return OpenFSSpec( target, flags, notRsrcFork );
+		return DataForkUser().OpenFileHandle( target, flags );
 	}
 	
 	MainEntry FSTree_FSSpec::GetMainEntry() const
