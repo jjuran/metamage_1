@@ -252,6 +252,15 @@
 		return -1;
 	}
 	
+	unsigned int sleep( unsigned int seconds )
+	{
+		struct timespec nanoseconds = { seconds, 0 };
+		
+		nanosleep( &nanoseconds, &nanoseconds );
+		
+		return nanoseconds.tv_sec + ( nanoseconds.tv_nsec > 0 );
+	}
+	
 	pid_t tcgetpgrp( int fd )
 	{
 		int pgrp = -1;
