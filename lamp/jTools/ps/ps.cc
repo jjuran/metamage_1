@@ -64,14 +64,13 @@ inline std::string left_padded( const std::string& word, unsigned length )
 	return left_padded( &*word.begin(), &*word.end(), length );
 }
 
+inline std::string right_padded( const std::string& word, unsigned length )
+{
+	return right_padded( &*word.begin(), &*word.end(), length );
+}
+
 static void report_process( const std::string& pid_name )
 {
-	std::string report;
-	
-	report += left_padded( pid_name, 5 );
-	
-	report += "  ";
-	
 	using namespace io::path_descent_operators;
 	
 	std::string pid_dir = "/proc" / pid_name;
@@ -85,35 +84,60 @@ static void report_process( const std::string& pid_name )
 	
 	ASSERT( close_paren != end );
 	
-	const char* stat = close_paren + 2;
+	const char* p_stat = close_paren + 2;
 	
-	const char* space = std::find( stat, end, ' ' );
+	const char* space = std::find( p_stat, end, ' ' );
 	
-	report += right_padded( stat, space, 4 );
+	std::string stat_string( p_stat, space );
+	
+	const char* p_ppid = space + 1;
+	
+	space = std::find( p_ppid, end, ' ' );
+	
+	std::string ppid_string( p_ppid, space );
+	
+	const char* p_pgid = space + 1;
+	
+	space = std::find( p_pgid, end, ' ' );
+	
+	std::string pgid_string( p_pgid, space );
+	
+	const char* p_sid = space + 1;
+	
+	space = std::find( p_sid, end, ' ' );
+	
+	std::string sid_string( p_sid, space );
+	
+	pid_t pid = std::atoi( pid_name.c_str() );
+	
+	pid_t ppid = std::atoi( p_ppid );
+	pid_t pgid = std::atoi( p_pgid );
+	pid_t sid  = std::atoi( p_sid  );
+	
+	if ( pid == sid )
+	{
+		stat_string += 's';
+	}
+	
+	std::string report;
+	
+	report += left_padded( pid_name, 5 );
 	
 	report += "  ";
 	
-	const char* ppid = space + 1;
-	
-	space = std::find( ppid, end, ' ' );
-	
-	report += left_padded( ppid, space, 5 );
+	report += right_padded( stat_string, 4 );
 	
 	report += "  ";
 	
-	const char* pgid = space + 1;
-	
-	space = std::find( pgid, end, ' ' );
-	
-	report += left_padded( pgid, space, 5 );
+	report += left_padded( ppid_string, 5 );
 	
 	report += "  ";
 	
-	const char* sid = space + 1;
+	report += left_padded( pgid_string, 5 );
 	
-	space = std::find( sid, end, ' ' );
+	report += "  ";
 	
-	report += left_padded( sid, space, 5 );
+	report += left_padded( sid_string, 5 );
 	
 	report += "  ";
 	
@@ -145,7 +169,14 @@ static void ps()
 	{
 		if ( pid_t pid = std::atoi( ent->d_name ) )
 		{
-			report_process( ent->d_name );
+			// A process could exit while we're examining it
+			try
+			{
+				report_process( ent->d_name );
+			}
+			catch ( ... )
+			{
+			}
 		}
 	}
 	
