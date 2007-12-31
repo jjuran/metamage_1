@@ -42,65 +42,64 @@ namespace Orion
 	
 	static void ShowDebuggingContext()
 	{
-		// NullDebuggingContext::Show() correctly does nothing,
-		// but there's no sense in throwing needlessly
-		if ( TARGET_CONFIG_DEBUGGING )
+	#if TARGET_CONFIG_DEBUGGING
+		
+		try
 		{
-			try
+			throw;
+		}
+		catch ( const NN::DebuggingContext& debugging )
+		{
+			using namespace Backtrace;
+			
+			const std::vector< ReturnAddress >& stackCrawl = debugging.GetStackCrawl();
+			
+			if ( stackCrawl.size() < 2 )
 			{
-				throw;
-			}
-			catch ( const NN::DebuggingContext& debugging )
-			{
-				using namespace Backtrace;
-				
-				const std::vector< ReturnAddress >& stackCrawl = debugging.GetStackCrawl();
-				
-				if ( stackCrawl.size() < 2 )
-				{
-					return;
-				}
-				
-				std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
-				std::vector< ReturnAddress >::const_iterator end   = stackCrawl.end();
-				
-				++begin;  // skip Backtrace::DebuggingContext::DebuggingContext( void )
-				
-				std::vector< CallInfo > callChain;
-				
-				callChain.reserve( end - begin );
-				
-				std::string prefix = "Nucleus::Throw< Nucleus::ErrorCode< ";
-				
-				callChain.push_back( GetCallInfoFromReturnAddress( *begin ) );
-				
-				if ( std::equal( prefix.begin(),
-				                 prefix.end(),
-				                 callChain[0].itsUnmangledName.begin() ) )
-				{
-					// Skip Nucleus::Throw< Nucleus::ErrorCode< T, i > >( void )
-					// Skip Nucleus::ThrowErrorCode< T >( T )
-					begin += 2;
-					
-					callChain[0] = GetCallInfoFromReturnAddress( *begin );
-				}
-				
-				while ( callChain.back().itsUnmangledName != "main"  &&  ++begin < end )
-				{
-					callChain.push_back( GetCallInfoFromReturnAddress( *begin ) );
-				}
-				
-				std::string report = MakeReportFromCallChain( callChain.begin(),
-				                                              callChain.end() );
-				
-				p7::write( p7::stderr_fileno, report.data(), report.size() );
-				
 				return;
 			}
-			catch ( ... )
+			
+			std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
+			std::vector< ReturnAddress >::const_iterator end   = stackCrawl.end();
+			
+			++begin;  // skip Backtrace::DebuggingContext::DebuggingContext( void )
+			
+			std::vector< CallInfo > callChain;
+			
+			callChain.reserve( end - begin );
+			
+			std::string prefix = "Nucleus::Throw< Nucleus::ErrorCode< ";
+			
+			callChain.push_back( GetCallInfoFromReturnAddress( *begin ) );
+			
+			if ( std::equal( prefix.begin(),
+			                 prefix.end(),
+			                 callChain[0].itsUnmangledName.begin() ) )
 			{
+				// Skip Nucleus::Throw< Nucleus::ErrorCode< T, i > >( void )
+				// Skip Nucleus::ThrowErrorCode< T >( T )
+				begin += 2;
+				
+				callChain[0] = GetCallInfoFromReturnAddress( *begin );
 			}
+			
+			while ( callChain.back().itsUnmangledName != "main"  &&  ++begin < end )
+			{
+				callChain.push_back( GetCallInfoFromReturnAddress( *begin ) );
+			}
+			
+			std::string report = MakeReportFromCallChain( callChain.begin(),
+			                                              callChain.end() );
+			
+			p7::write( p7::stderr_fileno, report.data(), report.size() );
+			
+			return;
 		}
+		catch ( ... )
+		{
+		}
+		
+	#endif
 	}
 	
 	
