@@ -21,60 +21,7 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	template < class Type >
-	bool LoadSymbol( N::CFragConnectionID fragment, ConstStr255Param symName, const Type& init )
-	{
-		
-		try
-		{
-			Type* symbol = NULL;
-			
-			N::FindSymbol( fragment, symName, &symbol );
-			
-			*symbol = init;
-		}
-		catch ( ... )
-		{
-			return false;
-		}
-		
-		return true;
-	}
-	
-	class SymbolImporter
-	{
-		private:
-			N::CFragConnectionID itsFragmentConnection;
-		
-		public:
-			SymbolImporter( N::CFragConnectionID conn ) : itsFragmentConnection( conn )  {}
-			
-			bool operator()( SystemCallRegistry::value_type systemCall ) const
-			{
-				if ( systemCall.function == NULL )
-				{
-					return false;
-				}
-				
-				std::string name = systemCall.name;
-				void*       func = systemCall.function;
-				
-				name += "_import_";
-				
-				return LoadSymbol( itsFragmentConnection, N::Str255( name ), func );
-			}
-	};
-	
 	extern "C" void DispatchSystemCall();
-	
-	static void ImportSystemCalls( N::CFragConnectionID fragmentConnection )
-	{
-		LoadSymbol( fragmentConnection, "\p" "gDispatcher", (void*) DispatchSystemCall );
-		
-		std::for_each( SystemCallsBegin(),
-		               SystemCallsEnd(),
-		               SymbolImporter( fragmentConnection ) );
-	}
 	
 	
 	MainEntryPoint::~MainEntryPoint()
@@ -112,6 +59,15 @@ namespace Genie
 	}
 	
 	
+	static void LoadSymbol( N::CFragConnectionID fragment, ConstStr255Param symName, void* value )
+	{
+		void** symbol = NULL;
+		
+		N::FindSymbol( fragment, symName, &symbol );
+		
+		*symbol = value;
+	}
+	
 	class ConnectedFragment
 	{
 		private:
@@ -120,7 +76,16 @@ namespace Genie
 		public:
 			ConnectedFragment( const BinaryImage& image ) : itsFragmentConnection( ConnectToFragment( image ) )
 			{
-				ImportSystemCalls( itsFragmentConnection );
+				try
+				{
+					LoadSymbol( itsFragmentConnection,
+					            "\p" "gDispatcher",
+					            DispatchSystemCall );
+				}
+				catch ( ... )
+				{
+					// dispatcher optional if you don't make system calls
+				}
 			}
 			
 			Main3 GetMain() const
