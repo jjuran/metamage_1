@@ -32,7 +32,7 @@ int main( int argc, char const *const argv[] )
 	
 	signal( SIGHUP, SIG_IGN );
 	
-	if ( ttyname( STDOUT_FILENO ) != NULL )
+	if ( isatty( STDOUT_FILENO ) )
 	{
 		std::string nohup_out = "nohup.out";
 		
@@ -64,7 +64,7 @@ int main( int argc, char const *const argv[] )
 		close( output );
 	}
 	
-	if ( ttyname( STDERR_FILENO ) != NULL )
+	if ( isatty( STDERR_FILENO ) )
 	{
 		dup2( STDOUT_FILENO, STDERR_FILENO );
 	}
