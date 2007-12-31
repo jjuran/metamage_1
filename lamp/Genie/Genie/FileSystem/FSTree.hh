@@ -118,6 +118,8 @@ namespace Genie
 			
 			// Directory methods
 			
+			boost::shared_ptr< IOHandle > OpenDirectory() const;
+			
 			virtual void CreateDirectory( mode_t mode ) const;
 			
 			virtual FSTreePtr Lookup( const std::string& name ) const;

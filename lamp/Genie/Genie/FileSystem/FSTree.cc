@@ -10,10 +10,13 @@
 #include "sys/stat.h"
 
 // Nucleus
-//#include "Nucleus/NAssert.h"
+#include "Nucleus/NAssert.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
+
+// Genie
+#include "Genie/IO/Directory.hh"
 
 
 namespace Genie
@@ -231,6 +234,13 @@ namespace Genie
 		return MainEntry();
 	}
 	
+	
+	boost::shared_ptr< IOHandle > FSTree::OpenDirectory() const
+	{
+		ASSERT( IsDirectory() );  // already checked in open()
+		
+		return boost::shared_ptr< IOHandle >( new DirHandle( shared_from_this() ) );
+	}
 	
 	void FSTree::CreateDirectory( mode_t /*mode*/ ) const
 	{
