@@ -80,5 +80,13 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
+	void Check_IOHandle_Cast( const void* cast, int errorToThrow )
+	{
+		if ( cast == NULL )
+		{
+			p7::throw_errno( errorToThrow );
+		}
+	}
+	
 }
 

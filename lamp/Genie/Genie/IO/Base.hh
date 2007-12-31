@@ -9,9 +9,6 @@
 // boost
 #include <boost/enable_shared_from_this.hpp>
 
-// POSeven
-#include "POSeven/Errno.hh"
-
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
 
@@ -76,15 +73,14 @@ namespace Genie
 		return static_cast< Handle* >( base );
 	}
 	
+	void Check_IOHandle_Cast( const void* cast, int errorToThrow );
+	
 	template < class Handle >
-	Handle& IOHandle_Cast( IOHandle& handle )
+	inline Handle& IOHandle_Cast( IOHandle& handle )
 	{
 		Handle* cast = IOHandle_Cast< Handle >( &handle );
 		
-		if ( cast == NULL )
-		{
-			poseven::throw_errno( IOHandle_Downcast_Traits< Handle >::GetError( handle ) );
-		}
+		Check_IOHandle_Cast( cast, IOHandle_Downcast_Traits< Handle >::GetError( handle ) );
 		
 		return *cast;
 	}
