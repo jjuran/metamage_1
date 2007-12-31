@@ -103,7 +103,7 @@ sub DirEntries {
 		if (-e $_[0]) {
 			closedir(DH) if (defined(DH));
 			push(@Entries, $_[0]);
-			$Attributes{$_[0]} = stat($_[0]);
+			$Attributes{$_[0]} = lstat($_[0]);
 			push(@Entries, \%Attributes);
 			return @Entries;
 		}
@@ -114,7 +114,7 @@ sub DirEntries {
 		next if (!exists($Options->{'a'}) &&
 		 $Name =~ m/^\./o);
 		push(@Entries, $Name);
-		$Attributes{$Name} = stat("$_[0]$PathSep$Name");
+		$Attributes{$Name} = lstat("$_[0]$PathSep$Name");
 	}
 	closedir(DH);
 
@@ -473,7 +473,7 @@ if ($#ARGV < 0) {
 		}
 	}
 	foreach $Arg (@Files) {
-		$Attributes{$Arg} = stat($Arg);
+		$Attributes{$Arg} = lstat($Arg);
 	}
 	foreach $Arg (Order(\%Options, \%Attributes, @Files)) {
 		$First = 0;
@@ -481,7 +481,7 @@ if ($#ARGV < 0) {
 		 DirEntries(\%Options, $Arg));
 	}
 	foreach $Arg (@Dirs) {
-		$Attributes{$Arg} = stat($Arg);
+		$Attributes{$Arg} = lstat($Arg);
 	}
 	foreach $Arg (Order(\%Options, \%Attributes, @Dirs)) {
 		if (!exists($Options{'R'})) {
@@ -596,7 +596,7 @@ Sort by decending last access time.
 
 =head1 BUGS
 
-The file metadata from stat() is used, which may not necessarily
+The file metadata from lstat() is used, which may not necessarily
 mean much on non-Unix systems.  Specifically, the uid, gid, inode,
 and block numbers may be meaningless (or less than meaningful
 at least).
