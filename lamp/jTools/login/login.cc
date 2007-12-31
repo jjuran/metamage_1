@@ -31,7 +31,7 @@ static void SetVariables()
 	#if TARGET_API_MAC_CARBON
 	#define ENV_MAC_BACKEND "carbon"
 	#else
-	#define ENV_MAC_BACKEND "classic"
+	#define ENV_MAC_BACKEND "blue"
 	#endif
 	
 	setenv( "HOSTTYPE", ENV_HOSTTYPE               , 0 );
@@ -91,9 +91,9 @@ int main( int /*argc*/, char const *const /*argv*/[] )
 	
 	char* exec_argv[] = { "-sh", NULL };
 	
-	int result = execv( "/bin/sh", exec_argv );
+	execv( "/bin/sh", exec_argv );
 	
-	_exit( result );
+	_exit( 127 );
 	
 	return 0;  // Not reached
 }
