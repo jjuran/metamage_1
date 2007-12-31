@@ -33,7 +33,7 @@
 #define __NR_stime                      25
 #define __NR_ptrace                     26
 #define __NR_alarm                      27
-#define __NR_fork_and_exit              28
+#define __NR_nanosleep                  28
 #define __NR_pause                      29
 #define __NR_utime                      30
 // 31
@@ -129,6 +129,8 @@
 #define __NR_sendto                    122
 #define __NR_recvfrom                  123
 
+#define __NR_sigprocmask               126
+
 #define __NR_getenv                    128
 #define __NR_setenv                    129
 #define __NR_unsetenv                  130
@@ -143,7 +145,6 @@
 #define __NR_telldir                   138
 #define __NR_dirfd                     139
 
-#define __NR_ttyname                   140
 #define __NR_ttypair                   141
 
 #define __NR_gethostbyname             142
@@ -151,9 +152,7 @@
 #define __NR_AESendBlocking            144
 #define __NR_OTInetMailExchange_k      145
 
-#define __NR_sleep                     146
-#define __NR_readlink                  147
-#define __NR_getcwd                    148
+#define __NR_fork_and_exit             146
 
 #endif
 
