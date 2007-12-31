@@ -12,16 +12,23 @@
 
 #pragma export on
 
-int main( int /*argc*/, char const *const /*argv*/[] )
+int main( int argc, char const *const argv[] )
 {
 	std::string path;
 	
-	path.resize( 1024 );
+	ssize_t size = 256;  // reasonable default
 	
-	while ( getcwd( &path[ 0 ], path.size() ) == 0 )
+	// Even though we know the size after one iteration, it's theoretically possible
+	// that the cwd has moved and now has a longer pathname.
+	do
 	{
-		path.resize( path.size() * 2 );
+		path.resize( size );
+		
+		size = getcwd_k( &path[ 0 ], path.size() );
 	}
+	while ( size > path.size() );
+	
+	path.resize( size );
 	
 	path += "\n";
 	
