@@ -107,7 +107,7 @@ DEFINE_STUB( getpid )
 
 DEFINE_STUB( ptrace )
 DEFINE_STUB( alarm )
-DEFINE_STUB( fork_and_exit )
+DEFINE_STUB( nanosleep )
 DEFINE_STUB( pause )
 
 DEFINE_STUB( copyfile )
@@ -170,6 +170,8 @@ DEFINE_STUB( recv )
 DEFINE_STUB( sendto )
 DEFINE_STUB( recvfrom )
 
+DEFINE_STUB( sigprocmask )
+
 DEFINE_STUB( getenv )
 DEFINE_STUB( setenv )
 DEFINE_STUB( unsetenv )
@@ -191,5 +193,5 @@ DEFINE_STUB( Path2FSSpec )
 DEFINE_STUB( AESendBlocking )
 DEFINE_STUB( OTInetMailExchange_k )
 
-DEFINE_STUB( sleep )
+DEFINE_STUB( fork_and_exit )
 
