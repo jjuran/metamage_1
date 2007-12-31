@@ -35,9 +35,6 @@
 #include "KEnvironment.hh"
 #include "SystemCalls.hh"
 
-// Pedestal
-#include "Pedestal/Application.hh"
-
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -78,8 +75,6 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	namespace p7 = poseven;
-	
-	namespace Ped = Pedestal;
 	
 	
 	static p7::errno_t GetErrnoFromException()
@@ -414,35 +409,6 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( getcwd_k );
 	
-	static char* getcwd( char* buf, std::size_t size )
-	{
-		SystemCallFrame frame( "getcwd" );
-		
-		try
-		{
-			FSTreePtr cwd = CurrentProcess().GetCWD();
-			
-			std::string result = cwd->Pathname();
-			
-			if ( result.size() + 1 > size )
-			{
-				return NULL;
-			}
-			
-			std::copy( result.c_str(),
-			           result.c_str() + result.size() + 1,
-			           buf );
-			
-			return buf;
-		}
-		catch ( ... )
-		{
-			return NULL;
-		}
-	}
-	
-	REGISTER_SYSTEM_CALL( getcwd );
-	
 	static pid_t getpgrp();
 	
 	static pid_t getpgid( pid_t pid )
@@ -683,49 +649,6 @@ namespace Genie
 	}
 	
 	REGISTER_SYSTEM_CALL( setsid );
-	
-	static unsigned int sleep( unsigned int seconds )
-	{
-		SystemCallFrame frame( "sleep" );
-		
-		SInt64 remaining_microseconds = seconds * 1000000;
-		
-		UInt64 start_microseconds = N::Microseconds();
-		
-		UInt64 end_microseconds = start_microseconds + remaining_microseconds;
-		
-		try
-		{
-			// Yield at least once, even for 0 seconds
-			do
-			{
-				// Ticks are exactly 1/60 second in OS X, but not in OS 9.
-				// Here we pass the number of OS X ticks remaining.
-				// The number of OS 9 ticks remaining is slightly larger,
-				// since OS 9 ticks are slightly smaller and a few more of them are
-				// needed to fill a certain length of time.
-				// So our delay will be short-changed, but that's okay because
-				// we keep recomputing it, so as remaining_microseconds approaches
-				// zero, the error becomes insignificant.
-				// And we keep looping until remaining_microseconds becomes zero
-				// anyway.
-				Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
-				
-				Yield();
-				
-				remaining_microseconds = end_microseconds - N::Microseconds();
-			}
-			while ( remaining_microseconds > 0 );
-		}
-		catch ( ... )
-		{
-			return frame.SetErrnoFromException();
-		}
-		
-		return 0;
-	}
-	
-	REGISTER_SYSTEM_CALL( sleep );
 	
 	static int truncate( const char* path, off_t length )
 	{
