@@ -42,7 +42,15 @@ namespace Genie
 				file = file->ResolveLink();
 			}
 			
-			AssignFileDescriptor( fd, file->Open( oflag, mode ) );
+			bool is_dir = file->IsDirectory();
+			
+			if ( is_dir  &&  oflag != O_RDONLY )
+			{
+				return frame.SetErrno( EISDIR );
+			}
+			
+			AssignFileDescriptor( fd, is_dir ? file->OpenDirectory()
+			                                 : file->Open( oflag, mode ) );
 			
 			return fd;
 		}
