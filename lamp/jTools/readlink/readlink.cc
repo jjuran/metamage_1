@@ -3,14 +3,14 @@
  *	===========
  */
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
-
-// Nucleus
-#include "Nucleus/NAssert.h"
 
 
 #pragma exceptions off
@@ -28,24 +28,34 @@ int main( int argc, char const *const argv[] )
 		return 1;
 	}
 	
-	const std::size_t path_len = 1024;
+	int exit_status = EXIT_SUCCESS;
 	
-	char target_path[ path_len + 1];  // leave room for "\n"
+	char buffer[ 1024 ];
 	
-	int result = readlink( argv[1], target_path, path_len );
+	ssize_t size = readlink_k( argv[1], buffer, sizeof buffer );
 	
-	if ( result == -1 )
+	if ( size < 0 )
 	{
 		return 1;  // No error output
 	}
+	else if ( size + 1 > sizeof buffer )
+	{
+		size = sizeof buffer;
+		
+		const char* tail = "...\n";
+		
+		std::copy_backward( tail, tail + STRLEN( "...\n" ), buffer + size );
+		
+		exit_status = EXIT_FAILURE;
+	}
+	else
+	{
+		buffer[ size++ ] = '\n';
+	}
 	
-	ASSERT( result > 0 );
+	(void) write( STDOUT_FILENO, buffer, size );
 	
-	target_path[ result++ ] = '\n';
-	
-	(void) write( STDOUT_FILENO, target_path, result );
-	
-	return 0;
+	return exit_status;
 }
 
 #pragma export reset
