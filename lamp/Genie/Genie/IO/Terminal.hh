@@ -9,6 +9,9 @@
 // Standard C++
 #include <string>
 
+// POSIX
+#include "errno.h"
+
 // Genie
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessGroup.hh"
@@ -60,6 +63,8 @@ namespace Genie
 	template <> struct IOHandle_Downcast_Traits< TerminalHandle >
 	{
 		static IOHandle::Test GetTest()  { return &IOHandle::IsTerminal; }
+		
+		static int GetError( IOHandle& )  { return ENOTTY; }
 	};
 	
 }

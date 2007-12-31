@@ -8,6 +8,7 @@
 
 // POSIX
 #include "dirent.h"
+#include "errno.h"
 
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
@@ -43,6 +44,8 @@ namespace Genie
 	template <> struct IOHandle_Downcast_Traits< DirHandle >
 	{
 		static IOHandle::Test GetTest()  { return &IOHandle::IsDirectory; }
+		
+		static int GetError( IOHandle& )  { return ENOTDIR; }
 	};
 	
 }

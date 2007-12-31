@@ -10,6 +10,7 @@
 #include <memory>
 
 // POSIX
+#include "errno.h"
 #include <sys/socket.h>
 
 // Genie
@@ -66,6 +67,8 @@ namespace Genie
 	template <> struct IOHandle_Downcast_Traits< SocketHandle >
 	{
 		static IOHandle::Test GetTest()  { return &IOHandle::IsSocket; }
+		
+		static int GetError( IOHandle& )  { return ENOTSOCK; }
 	};
 	
 }

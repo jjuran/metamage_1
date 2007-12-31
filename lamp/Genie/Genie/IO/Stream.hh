@@ -9,6 +9,9 @@
 // Standard C++
 #include <string>
 
+// POSIX
+#include "errno.h"
+
 // Genie
 #include "Genie/IO/Base.hh"
 
@@ -55,6 +58,8 @@ namespace Genie
 	template <> struct IOHandle_Downcast_Traits< StreamHandle >
 	{
 		static IOHandle::Test GetTest()  { return &IOHandle::IsStream; }
+		
+		static int GetError( IOHandle& handle )  { return handle.IsDirectory() ? EISDIR : EINVAL; }
 	};
 	
 }

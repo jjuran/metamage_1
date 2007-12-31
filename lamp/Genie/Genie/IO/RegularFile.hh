@@ -32,6 +32,11 @@ namespace Genie
 	template <> struct IOHandle_Downcast_Traits< RegularFileHandle >
 	{
 		static IOHandle::Test GetTest()  { return &IOHandle::IsRegularFile; }
+		
+		static int GetError( IOHandle& handle )
+		{
+			return IOHandle_Downcast_Traits< StreamHandle >::GetError( handle );
+		}
 	};
 	
 }

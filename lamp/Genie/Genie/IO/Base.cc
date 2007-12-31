@@ -80,13 +80,5 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
-	void Check_IOHandle_Cast_Result( IOHandle* cast )
-	{
-		if ( cast == NULL )
-		{
-			p7::throw_errno( EOPNOTSUPP );
-		}
-	}
-	
 }
 
