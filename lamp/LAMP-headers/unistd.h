@@ -82,6 +82,7 @@ long	 fpathconf(int, int);
 char	*getcwd(char *, size_t)
 		__attribute__((__bounded__(__string__,1,2)))
 		__attribute__((__bounded__(__minbytes__,1,1024)));
+ssize_t getcwd_k( char*, size_t );  // jjuran
 gid_t	 getegid(void);
 uid_t	 geteuid(void);
 gid_t	 getgid(void);
@@ -107,6 +108,7 @@ long	 sysconf(int);
 pid_t	 tcgetpgrp(int);
 int	 tcsetpgrp(int, pid_t);
 const char	*ttyname(int);
+ssize_t ttyname_k( int, char*, size_t );  // jjuran
 int	 unlink(const char *);
 ssize_t	 write(int, const void *, size_t)
 		__attribute__((__bounded__(__buffer__,2,3)));
@@ -152,6 +154,7 @@ char	*mktemp(char *);
 int	 nice(int);
 int	 readlink(const char *, char *, size_t)
 		__attribute__ ((__bounded__(__string__,2,3)));
+ssize_t readlink_k( const char*, char*, size_t );  // jjuran
 int	 setkey(const char *);
 int	 setpgrp(pid_t pid, pid_t pgrp);	/* obsoleted by setpgid() */
 int	 setregid(gid_t, gid_t);
