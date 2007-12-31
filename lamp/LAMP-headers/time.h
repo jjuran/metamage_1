@@ -29,6 +29,17 @@ extern "C" {
 		char* tm_zone;
 	};
 	
+#ifndef _TIMESPEC_DECLARED
+#define _TIMESPEC_DECLARED
+	
+	struct timespec
+	{
+		time_t	tv_sec;		/* seconds */
+		long	tv_nsec;	/* and nanoseconds */
+	};
+	
+#endif
+	
 	char* ctime( const time_t* time );
 	
 	clock_t clock( void );
@@ -39,6 +50,8 @@ extern "C" {
 	int settimeofday( const struct timeval *tv , const struct timezone *tz );
 	
 	time_t time( time_t* t );
+	
+	int nanosleep( const struct timespec* requested, struct timespec* remaining );
 	
 #ifdef __cplusplus
 }
