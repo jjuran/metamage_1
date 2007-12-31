@@ -140,8 +140,6 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( InitProc );
 	
-	static int pause();
-	
 	static OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
 	{
 		SystemCallFrame frame( "AESendBlocking" );
@@ -157,7 +155,7 @@ namespace Genie
 			N::ExpectReply( returnID, reply );
 			
 			// Sleep until the reply is delivered
-			pause();
+			frame.Caller().Raise( SIGSTOP );
 		}
 		catch ( const N::OSStatus& err )
 		{
