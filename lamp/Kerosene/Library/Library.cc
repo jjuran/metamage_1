@@ -299,8 +299,6 @@
 		return p;
 	}
 	
-	extern "C" ssize_t getcwd_k( char* buffer, size_t buffer_size );
-	
 	char* getcwd( char* buffer, size_t buffer_size )
 	{
 		ssize_t length = getcwd_k( buffer, buffer_size );
@@ -322,14 +320,12 @@
 		return buffer;
 	}
 	
-	extern "C" ssize_t readlink_k( const char* pathname, char* buffer, size_t buffer_size );
-	
 	int readlink( const char *path, char *buffer, size_t buffer_size )
 	{
 		return std::min< ssize_t >( readlink_k( path, buffer, buffer_size ), buffer_size );
 	}
 	
-	static int ttyname_k( int fd, char* buffer, size_t buffer_size )
+	ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 	{
 		if ( !isatty( fd ) )
 		{
