@@ -22,6 +22,7 @@
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -463,8 +464,13 @@ namespace Genie
 				return itsHandle;
 			}
 			
-			off_t GetEOF() const  { return IOHandle_Cast< RegularFileHandle >( *itsHandle.get() ).GetEOF(); }
+			off_t GetEOF() const;
 	};
+	
+	off_t FSTree_MagicFileReference::GetEOF() const
+	{
+		return IOHandle_Cast< RegularFileHandle >( *itsHandle.get() ).GetEOF();
+	}
 	
 	std::string FSTree_PID_fd_N::Name() const
 	{
