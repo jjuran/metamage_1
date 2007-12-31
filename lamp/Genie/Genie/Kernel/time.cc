@@ -19,7 +19,11 @@
 // TimeOff
 #include "TimeOff.hh"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // Genie
+#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -31,6 +35,8 @@ namespace Genie
 	DEFINE_MODULE_INIT(  Kernel_time )
 	
 	namespace N = Nitrogen;
+	namespace Ped = Pedestal;
+	
 	
 	struct StartTime
 	{
@@ -69,6 +75,66 @@ namespace Genie
 	}
 	
 	REGISTER_SYSTEM_CALL( gettimeofday );
+	
+	static int nanosleep( const struct timespec* requested, struct timespec* remaining )
+	{
+		SystemCallFrame frame( "nanosleep" );
+		
+		if ( requested == NULL )
+		{
+			return frame.SetErrno( EFAULT );
+		}
+		
+		UInt64 start_microseconds = N::Microseconds();
+		
+		SInt64 remaining_microseconds = requested->tv_sec * 1000000LL + requested->tv_nsec / 1000;
+		
+		UInt64 end_microseconds = start_microseconds + remaining_microseconds;
+		
+		try
+		{
+			// Yield at least once, even for 0 seconds
+			do
+			{
+				// Ticks are exactly 1/60 second in OS X, but not in OS 9.
+				// Here we pass the number of OS X ticks remaining.
+				// The number of OS 9 ticks remaining is slightly larger,
+				// since OS 9 ticks are slightly smaller and a few more of them are
+				// needed to fill a certain length of time.
+				// So our delay will be short-changed, but that's okay because
+				// we keep recomputing it, so as remaining_microseconds approaches
+				// zero, the error becomes insignificant.
+				// And we keep looping until remaining_microseconds becomes zero
+				// anyway.
+				Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
+				
+				Yield();
+				
+				remaining_microseconds = end_microseconds - N::Microseconds();
+			}
+			while ( remaining_microseconds > 0 );
+		}
+		catch ( ... )
+		{
+			if ( remaining != NULL )
+			{
+				remaining->tv_sec  = remaining_microseconds / 1000000;
+				remaining->tv_nsec = remaining_microseconds % 1000000 * 1000;
+			}
+			
+			return frame.SetErrnoFromException();
+		}
+		
+		if ( remaining != NULL )
+		{
+			remaining->tv_sec  =
+			remaining->tv_nsec = 0;
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( nanosleep );
 	
 }
 
