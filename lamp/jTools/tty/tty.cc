@@ -3,11 +3,11 @@
  *	======
  */
 
-// Standard C/C++
-#include <cstring>
-
 // POSIX
 #include <unistd.h>
+
+// Iota
+#include "iota/strings.hh"
 
 
 #pragma exceptions off
@@ -15,20 +15,27 @@
 
 #pragma export on
 
-int main( int /*argc*/, char const *const /*argv*/[] )
+int main( int argc, char const *const argv[] )
 {
-	const char* name = ttyname( STDIN_FILENO );
+	char buffer[ 256 ];
 	
-	if ( name != NULL )
+	ssize_t size = ttyname_k( STDIN_FILENO, buffer, sizeof buffer );
+	
+	if ( size < 0 )
 	{
-		write( STDOUT_FILENO, name, std::strlen( name ) );
-		write( STDOUT_FILENO, "\n", 1                   );
+		write( STDOUT_FILENO, STR_LEN( "not a tty\n" ) );
+	}
+	else if ( size + 1 <= sizeof buffer )
+	{
+		buffer[ size++ ] = '\n';
+		
+		write( STDOUT_FILENO, buffer, size );
 	}
 	else
 	{
-		const char noTTY[] = "not a tty\n";
+		write( STDERR_FILENO, STR_LEN( "tty: terminal name too long\n" ) );
 		
-		write( STDOUT_FILENO, noTTY, sizeof noTTY - 1 );
+		return 1;
 	}
 	
 	return 0;
