@@ -456,9 +456,12 @@ namespace Genie
 		
 		try
 		{
-			RegularFileHandle& fh = GetFileHandleWithCast< RegularFileHandle >( fd );
+			if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( GetFileHandle( fd ).get() ) )
+			{
+				return fh->Seek( offset, whence );
+			}
 			
-			return fh.Seek( offset, whence );
+			// downcast failed
 		}
 		catch ( ... )
 		{
