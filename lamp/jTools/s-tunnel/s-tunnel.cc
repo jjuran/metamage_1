@@ -38,14 +38,12 @@
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
 
-// Kerosene
-//#include "SystemCalls.hh"
-
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 
 
+namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace O = Orion;
 
