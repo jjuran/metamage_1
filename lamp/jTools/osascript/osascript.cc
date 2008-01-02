@@ -151,22 +151,33 @@ static NN::Owned< N::OSASpec > MakeCWDContext( const NN::Shared< N::ComponentIns
 	               N::kOSAModeCompileIntoContext );
 }
 
-static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source )
+static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source, bool useCWD )
 {
 	NN::Shared< N::ComponentInstance > scriptingComponent = OpenGenericScriptingComponent();
 	
-	const char* step = "context compilation";
+	const char* step;
 	
 	try
 	{
-		NN::Owned< N::OSASpec > cwdContext = MakeCWDContext( scriptingComponent );
+		N::OSAModeFlags mode = N::kOSAModeCompileIntoContext;
+		
+		NN::Owned< N::OSASpec > scriptContext;
+		
+		if ( useCWD )
+		{
+			step = "context compilation";
+			
+			scriptContext = MakeCWDContext( scriptingComponent );
+			
+			mode = N::kOSAModeAugmentContext;
+		}
 		
 		step = "compilation";
 		
 		return N::OSACompile( scriptingComponent,
-							  source,
-							  N::kOSAModeAugmentContext,
-							  cwdContext );
+		                      source,
+		                      mode,
+		                      scriptContext );
 	}
 	catch ( const N::ErrOSAScriptError& err )
 	{
@@ -199,7 +210,7 @@ static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 	                                                     N::ResID( 128 ) ) ) );
 }
 
-static NN::Owned< N::OSASpec > LoadScriptFile( const char* pathname )
+static NN::Owned< N::OSASpec > LoadScriptFile( const char* pathname, bool useCWD )
 {
 	try
 	{
@@ -216,7 +227,7 @@ static NN::Owned< N::OSASpec > LoadScriptFile( const char* pathname )
 	{
 	}
 	
-	return CompileSource( N::AECreateDesc< N::typeChar >( ReadFileData( pathname ) ) );
+	return CompileSource( N::AECreateDesc< N::typeChar >( ReadFileData( pathname ) ), useCWD );
 }
 
 
@@ -267,11 +278,14 @@ int O::Main( int argc, argv_t argv )
 	
 	// human-readable by default, like Apple osascript
 	bool humanReadable = true;
+	bool getsCWDProperty = false;
 	
 	O::BindOption( "-e", inlineScriptPieces );
 	
 	O::BindOption( "-h", humanReadable, true  );
 	O::BindOption( "-s", humanReadable, false );
+	
+	O::BindOption( "--cwd", getsCWDProperty );
 	
 	O::GetOptions( argc, argv );
 	
@@ -286,7 +300,7 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( !inlineScriptPieces.empty() )
 	{
-		script = CompileSource( N::AECreateDesc< N::typeChar >( JoinScriptPieces( inlineScriptPieces ) ) );
+		script = CompileSource( N::AECreateDesc< N::typeChar >( JoinScriptPieces( inlineScriptPieces ) ), getsCWDProperty );
 	}
 	else
 	{
@@ -299,7 +313,7 @@ int O::Main( int argc, argv_t argv )
 			++params_begin;
 		}
 		
-		script = LoadScriptFile( pathname );
+		script = LoadScriptFile( pathname, getsCWDProperty );
 	}
 	
 	NN::Owned< N::AppleEvent > runEvent = N::AECreateAppleEvent( N::kCoreEventClass,
