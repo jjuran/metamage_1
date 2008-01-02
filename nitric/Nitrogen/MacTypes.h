@@ -163,22 +163,36 @@ namespace Nitrogen
    using ::Float96;
    
    typedef ::std::size_t  Size;
-
-   typedef Nucleus::Flag< class OptionBits_Tag, ::OptionBits >::Type OptionBits;
-   
-   static const OptionBits kNilOptions = OptionBits( ::kNilOptions );
-   
-   NUCLEUS_DEFINE_FLAG_OPS( OptionBits )
 	
-	typedef Nucleus::Selector< class ScriptCode_Tag, ::ScriptCode >::Type ScriptCode;
-	typedef Nucleus::Selector< class LangCode_Tag,   ::LangCode   >::Type LangCode;
-	typedef Nucleus::Selector< class RegionCode_Tag, ::RegionCode >::Type RegionCode;
+	enum OptionBits
+	{
+		kNilOptions = ::kNilOptions,
+		
+		kOptionBits_Max = Nucleus::Enumeration_Traits< ::OptionBits >::max
+	};
 	
-	static const ScriptCode smSystemScript = ScriptCode( ::smSystemScript );
+	NUCLEUS_DEFINE_FLAG_OPS( OptionBits )
 	
-	static const LangCode langUnspecified = LangCode( ::langUnspecified );
+	enum ScriptCode
+	{
+		smSystemScript = ::smSystemScript,
+		
+		kScriptCode_Max = Nucleus::Enumeration_Traits< ::ScriptCode >::max
+	};
 	
-	static const RegionCode verUS = RegionCode( ::verUS );
+	enum LangCode
+	{
+		langUnspecified = ::langUnspecified,
+		
+		kLangCode_Max = Nucleus::Enumeration_Traits< ::LangCode >::max
+	};
+	
+	enum RegionCode
+	{
+		verUS = ::verUS,
+		
+		kRegionCode_Max = Nucleus::Enumeration_Traits< ::RegionCode >::max
+	};
 	
 	class FourCharCode
 	{
@@ -197,21 +211,30 @@ namespace Nitrogen
 			operator ::FourCharCode() const  { return Get(); }
 	};
 	
-   typedef Nucleus::Selector< class OSType_Tag, ::OSType >::Type OSType;
-   
-   static const OSType kUnknownType = OSType( ::kUnknownType );
-   
-   typedef Nucleus::Selector< class ResType_Tag, ::ResType >::Type ResType;
-   
-   static const ResType kVersionResType = ResType( 'vers' );
-
-   typedef bool Boolean;
-   
-   typedef Nucleus::ConvertingPODFlattener< bool, ::Boolean > BooleanFlattener;
-
-   typedef Nucleus::Flag< class Style_Tag, ::Style >::Type Style;
-   NUCLEUS_DEFINE_FLAG_OPS( Style )
-      //Style may need a conversion to short...
+	enum OSType
+	{
+		kUnknownType = ::kUnknownType,
+		
+		kOSType_Max = Nucleus::Enumeration_Traits< ::OSType >::max
+	};
+	
+	enum ResType
+	{
+		kVersionResType = 'vers',
+		
+		kResType_Max = Nucleus::Enumeration_Traits< ::ResType >::max
+	};
+	
+	typedef bool Boolean;
+	
+	typedef Nucleus::ConvertingPODFlattener< bool, ::Boolean > BooleanFlattener;
+	
+	enum Style
+	{
+		kStyle_Max = Nucleus::Enumeration_Traits< ::Style >::max
+	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( Style )
 
    using ::UnicodeScalarValue;
    using ::UTF32Char;
