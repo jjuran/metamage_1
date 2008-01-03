@@ -90,7 +90,7 @@ DEFINE_STUB( write )
 DEFINE_STUB( open  )
 DEFINE_STUB( close )
 DEFINE_STUB( waitpid )
-
+DEFINE_STUB( realpath_k )
 DEFINE_STUB( unlink )
 DEFINE_STUB( execve )
 DEFINE_STUB( chdir  )
