@@ -127,7 +127,7 @@ namespace Genie
 			{
 			#ifdef __MWERKS__
 				
-				if ( err != N::FNFErr() )
+				if ( err.Get() != fnfErr )
 				{
 					throw;
 				}

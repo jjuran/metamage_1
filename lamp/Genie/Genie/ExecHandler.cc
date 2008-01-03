@@ -64,7 +64,7 @@ namespace Genie
 		{
 		#ifdef __MWERKS__
 			
-			if ( err != N::ErrAEDescNotFound() )
+			if ( err.Get() != errAEDescNotFound )
 			{
 				throw;
 			}
