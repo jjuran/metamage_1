@@ -12,6 +12,7 @@
 #include <vector>
 
 // POSeven
+#include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
@@ -32,6 +33,34 @@
 #include "A-line/ProjectCommon.hh"
 #include "A-line/SourceDotList.hh"
 #include "CompileDriver/ProjectCatalog.hh"
+
+
+namespace poseven
+{
+	
+	static std::string realpath( const char* pathname )
+	{
+		std::string result;
+		
+		ssize_t size = 128;
+		
+		while ( size > result.size() )
+		{
+			result.resize( size );
+			
+			size = throw_posix_result( realpath_k( pathname, &result[0], result.size() ) );
+		}
+		
+		result.resize( size );
+		
+		return result;
+	}
+	
+	inline std::string realpath( const std::string& pathname )
+	{
+		return realpath( pathname.c_str() );
+	}
+}
 
 
 namespace ALine
@@ -90,7 +119,7 @@ namespace ALine
 	{
 		try
 		{
-			std::string dirPath = cwdPath / pathname;
+			std::string dirPath = p7::realpath( cwdPath / pathname );
 			
 			if ( io::directory_exists( dirPath ) )
 			{
