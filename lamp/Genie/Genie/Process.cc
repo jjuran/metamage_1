@@ -664,6 +664,7 @@ namespace Genie
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
+		itsProgramFile        ( FSRoot() ),
 		itsCleanupHandler     ()
 	{
 		char const *const argv[] = { "init", NULL };
