@@ -42,14 +42,14 @@
 		
 	#pragma export reset
 	
+	extern "C" void __ptr_glue();
+	
 	static asm void SystemCall()
 	{
 		mflr	r0				// get caller's return address
 		stw		r0,8(SP)		// store return address in caller's stack frame
 		
 		stwu	SP,-64(SP)		// allocate our own stack frame
-		
-		stw		RTOC,20(SP)		// save RTOC into stack
 		
 		stw		r3,24(SP)		// save system call arguments into stack
 		stw		r4,28(SP)
@@ -62,10 +62,8 @@
 		
 		lwz		r12,gDispatcher	// load address of export
 		lwz		r12,0(r12)		// load dispatcher T-vector
-		lwz		r0,0(r12)		// load function address
-		lwz		RTOC,4(r12)		// load foreign RTOC
-		mtctr	r0				// ready, aim...
-		bctrl					// branch to dispatcher (with return link)
+		
+		bl		__ptr_glue		// cross-TOC call
 		lwz		RTOC,20(SP)		// restore our RTOC
 		
 		addi	SP,SP,64		// deallocate our stack frame
