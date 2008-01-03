@@ -4,10 +4,14 @@
  */
 
 // Standard C/C++
-#include <cstdlib>
+#include <cstdio>
 
 // POSIX
+#include <time.h>
 #include <unistd.h>
+
+// Iota
+#include "iota/strings.hh"
 
 
 #pragma export on
@@ -17,18 +21,30 @@ int main( int argc, char const *const argv[] )
 	// Check for correct number of args
 	if ( argc != 2 )
 	{
-		const char usage[] = "usage: sleep seconds\n";
+		write( STDERR_FILENO, STR_LEN( "Usage: sleep seconds\n" ) );
 		
-		write( STDERR_FILENO, usage, sizeof usage - 1 );
-		
-		return 1;
+		return 2;
 	}
 	
-	unsigned int seconds = std::atoi( argv[ 1 ] );
+	float sleep_time = 0.0;
 	
-	sleep( seconds );
+	if ( int scanned = std::sscanf( argv[1], "%f", &sleep_time ) )
+	{
+		unsigned long seconds     = sleep_time;
+		unsigned long nanoseconds = (sleep_time - seconds) * 1000 * 1000 * 1000;
+		
+		timespec time = { seconds, nanoseconds };
+		
+		nanosleep( &time, NULL );
+	}
+	else
+	{
+		std::fprintf( stderr, "sleep: bad argument '%s'\n", argv[1] );
+		
+		return EXIT_FAILURE;
+	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 #pragma export reset
