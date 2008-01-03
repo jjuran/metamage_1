@@ -38,6 +38,8 @@
 namespace poseven
 {
 	
+#ifdef __MWERKS__
+	
 	static std::string realpath( const char* pathname )
 	{
 		std::string result;
@@ -60,6 +62,18 @@ namespace poseven
 	{
 		return realpath( pathname.c_str() );
 	}
+	
+#else
+	
+	inline const std::string& realpath( const std::string& pathname )
+	{
+		return pathname;
+	}
+	
+	
+	
+#endif
+	
 }
 
 
