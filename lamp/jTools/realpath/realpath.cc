@@ -21,7 +21,7 @@ namespace poseven
 	{
 		std::string result;
 		
-		size_t size = 128;
+		ssize_t size = 128;
 		
 		while ( size > result.size() )
 		{
