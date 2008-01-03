@@ -30,6 +30,8 @@ namespace Genie
 		char const *const argv[] = { programName.c_str(), NULL };
 		
 		(void) external->Exec( program, argv, NULL );
+		
+		parent.ResumeAfterFork();
 	}
 	
 	void SpawnNewConsole( const FSSpec& program )

@@ -972,6 +972,11 @@ namespace Genie
 		
 		itsForkedChildPID = 0;
 		
+		if ( itsPID == 1 )
+		{
+			return;
+		}
+		
 		LongJmp jump = GetLongJmp();
 		
 		ASSERT( jump != NULL  ||  child == 0 );
