@@ -50,7 +50,7 @@ namespace Genie
 			static void AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, App* app );
 			
 			App();
-			~App()  { gProcessTable.KillAll(); }
+			~App()  { GetProcessList().KillAll(); }
 			
 			void HandleAppleEvent(const AppleEvent& appleEvent, AppleEvent& reply);
 			void CreateSystemConsole();

@@ -44,7 +44,7 @@ namespace Genie
 		typedef GenieProcessTable::iterator iterator;
 		
 		// FIXME:  Replace with find_if
-		for ( iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
+		for ( iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{
 			Process& proc = *it->second;
 			

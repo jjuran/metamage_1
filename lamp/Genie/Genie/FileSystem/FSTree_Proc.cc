@@ -42,7 +42,7 @@ namespace Genie
 		
 		static FSTreePtr Lookup( const std::string& name );
 		
-		static const Sequence& ItemSequence()  { return gProcessTable; }
+		static const Sequence& ItemSequence()  { return GetProcessList(); }
 		
 		static std::string ChildName( const Sequence::value_type& child )
 		{
