@@ -54,7 +54,6 @@ namespace Genie
 			
 			void HandleAppleEvent(const AppleEvent& appleEvent, AppleEvent& reply);
 			void CreateSystemConsole();
-			GenieProcessTable& ProcessTable()  { return gProcessTable; }
 	};
 	
 	
