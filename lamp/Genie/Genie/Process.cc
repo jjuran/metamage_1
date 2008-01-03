@@ -974,6 +974,8 @@ namespace Genie
 		
 		if ( itsPID == 1 )
 		{
+			itsSchedule = kProcessSleeping;
+			
 			return;
 		}
 		
