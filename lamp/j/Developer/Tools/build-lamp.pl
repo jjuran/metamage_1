@@ -92,7 +92,7 @@ my @programs = qw
 	nohup
 	open osascript
 	perl ps ptrace pwd
-	readlink rm rmdir rsrc-patch
+	readlink realpath rm rmdir rsrc-patch
 	setleds setwindow sh sleep stripcr striplf superd
 	tcpcat tcpclient th tlsrvr true tty ttyd
 	uncaught_exception
@@ -122,7 +122,7 @@ my %fsmap =
 	},
 	bin =>
 	[
-		qw( cat cp echo false kill ln login mkdir mv ps pwd readlink rm rmdir sh sleep true ),
+		qw( cat cp echo false kill ln login mkdir mv ps pwd readlink realpath rm rmdir sh sleep true ),
 		qw( jgetty ),
 		qw( chmod date ls test ),
 	],
