@@ -165,6 +165,13 @@ namespace Genie
 		}
 	}
 	
+	Process& GetInitProcess()
+	{
+		static Process* init = new Process( Process::RootProcess() );
+		
+		return *init;
+	}
+	
 	Process& GetProcess( pid_t pid )
 	{
 		if ( Process* process = FindProcess( pid ) )
@@ -958,8 +965,6 @@ namespace Genie
 		itsInterdependence = Forked() ? kProcessForked
 		                              : kProcessIndependent;
 		
-		itsSchedule        =            kProcessRunning;
-		
 		// Restore environ (which was pointing into the child's environ storage)
 		UpdateEnvironValue();
 		
@@ -1346,8 +1351,6 @@ namespace Genie
 	pid_t ProcessList::NewProcess( Process* process )
 	{
 		static NN::Owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
-		
-		static Process* init = new Process( Process::RootProcess() );
 		
 		itsMap[ itsNextPID ] = boost::shared_ptr< Process >( process );
 		

@@ -310,6 +310,8 @@ namespace Genie
 	
 	Process& CurrentProcess();
 	
+	Process& GetInitProcess();
+	
 	Process& GetProcess( pid_t pid );
 	
 	Process* FindProcess( pid_t pid );

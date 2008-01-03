@@ -21,7 +21,7 @@ namespace Genie
 		// Create new console/terminal device
 		// Spawn new process with file descriptors set
 		
-		Process& parent = GetProcess( 1 );
+		Process& parent = GetInitProcess();
 		
 		Process* external = new Process( parent );
 		
