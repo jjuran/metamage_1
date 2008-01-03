@@ -264,24 +264,24 @@ namespace Genie
 	
 	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session );
 	
-	class GenieProcessTable
+	class ProcessList
 	{
 		public:
-			typedef std::map< pid_t, boost::shared_ptr< Process > >  ProcessMap;
-			typedef ProcessMap::value_type                           value_type;
-			typedef ProcessMap::const_iterator                       const_iterator;
-			typedef ProcessMap::iterator                             iterator;
+			typedef std::map< pid_t, boost::shared_ptr< Process > >  Map;
+			typedef Map::value_type                                  value_type;
+			typedef Map::const_iterator                              const_iterator;
+			typedef Map::iterator                                    iterator;
 		
 		private:
-			ProcessMap  itsProcesses;
-			pid_t       itsNextPID;
+			Map    itsMap;
+			pid_t  itsNextPID;
 		
 		public:
-			GenieProcessTable();
+			ProcessList();
 			
-			~GenieProcessTable()
+			~ProcessList()
 			{
-				//ASSERT( itsProcesses.size() == 1 );
+				//ASSERT( itsMap.size() == 1 );
 			}
 			
 			pid_t NewProcess( Process* process );
@@ -290,17 +290,21 @@ namespace Genie
 			
 			void KillAll();
 			
-			ProcessMap const& Map() const  { return itsProcesses; }
-			ProcessMap      & Map()        { return itsProcesses; }
+			Map const& GetMap() const  { return itsMap; }
+			Map      & GetMap()        { return itsMap; }
 			
-			const_iterator begin() const  { return itsProcesses.begin(); }
-			const_iterator end  () const  { return itsProcesses.end  (); }
+			const_iterator begin() const  { return itsMap.begin(); }
+			const_iterator end  () const  { return itsMap.end  (); }
 			
-			iterator begin()  { return itsProcesses.begin(); }
-			iterator end  ()  { return itsProcesses.end  (); }
+			iterator begin()  { return itsMap.begin(); }
+			iterator end  ()  { return itsMap.end  (); }
 	};
 	
-	extern GenieProcessTable gProcessTable;
+	typedef ProcessList GenieProcessTable;
+	
+	extern ProcessList gProcessTable;
+	
+	ProcessList& GetProcessList();
 	
 	void SendSignalToProcessGroup( int sig, const ProcessGroup& group );
 	

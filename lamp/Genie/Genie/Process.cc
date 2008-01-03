@@ -129,7 +129,12 @@ namespace Genie
 	}
 	
 	
-	GenieProcessTable gProcessTable;
+	ProcessList& GetProcessList()
+	{
+		static ProcessList theProcessList;
+		
+		return theProcessList;
+	}
 	
 	
 	void CmdLine::Assign( char const *const *argv )
@@ -149,7 +154,7 @@ namespace Genie
 	
 	void SendSignalToProcessGroup( int sig, const ProcessGroup& group )
 	{
-		for ( GenieProcessTable::iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
+		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{
 			Process& proc = *it->second;
 			
@@ -175,9 +180,9 @@ namespace Genie
 	
 	Process* FindProcess( pid_t pid )
 	{
-		GenieProcessTable::iterator it = gProcessTable.Map().find( pid );
+		ProcessList::iterator it = GetProcessList().GetMap().find( pid );
 		
-		if ( it == gProcessTable.end()  ||  it->second->GetLifeStage() == kProcessReleased )
+		if ( it == GetProcessList().end()  ||  it->second->GetLifeStage() == kProcessReleased )
 		{
 			return NULL;
 		}
@@ -614,7 +619,7 @@ namespace Genie
 	
 	static boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
 	{
-		for ( GenieProcessTable::iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
+		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{
 			Process& proc = *it->second;
 			
@@ -649,7 +654,7 @@ namespace Genie
 	Process::Process( RootProcess ) 
 	:
 		itsPPID               ( 0 ),
-		itsPID                ( gProcessTable.NewProcess( this ) ),
+		itsPID                ( GetProcessList().NewProcess( this ) ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsStackFramePtr      ( NULL ),
@@ -680,7 +685,7 @@ namespace Genie
 	:
 		Environ( parent ),
 		itsPPID               ( parent.GetPID() ),
-		itsPID                ( gProcessTable.NewProcess( this ) ),
+		itsPID                ( GetProcessList().NewProcess( this ) ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsStackFramePtr      ( NULL ),
@@ -1045,9 +1050,9 @@ namespace Genie
 			Release();
 		}
 		
-		typedef GenieProcessTable::ProcessMap::const_iterator const_iterator;
+		typedef ProcessList::Map::const_iterator const_iterator;
 		
-		for ( const_iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
+		for ( const_iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{
 			Process& proc = *( *it ).second;
 			
@@ -1295,16 +1300,15 @@ namespace Genie
 		return itsPreviousSignals;
 	}
 	
-	GenieProcessTable::GenieProcessTable() : itsNextPID( 1 )
+	ProcessList::ProcessList() : itsNextPID( 1 )
 	{
-		new Process( Process::RootProcess() );
 	}
 	
 	static void ReapProcesses()
 	{
 		std::vector< pid_t > hitlist;
 		
-		for ( GenieProcessTable::iterator it = gProcessTable.begin();  it != gProcessTable.end();  ++it )
+		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
 		{
 			Process& proc = *it->second;
 			
@@ -1320,7 +1324,7 @@ namespace Genie
 		{
 			pid_t pid = *it;
 			
-			gProcessTable.RemoveProcess( pid );
+			GetProcessList().RemoveProcess( pid );
 		}
 	}
 	
@@ -1339,39 +1343,41 @@ namespace Genie
 		
 	}
 	
-	pid_t GenieProcessTable::NewProcess( Process* process )
+	pid_t ProcessList::NewProcess( Process* process )
 	{
 		static NN::Owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
 		
-		itsProcesses[ itsNextPID ] = boost::shared_ptr< Process >( process );
+		static Process* init = new Process( Process::RootProcess() );
+		
+		itsMap[ itsNextPID ] = boost::shared_ptr< Process >( process );
 		
 		return itsNextPID++;
 	}
 	
-	void GenieProcessTable::RemoveProcess( pid_t pid )
+	void ProcessList::RemoveProcess( pid_t pid )
 	{
-		iterator it = itsProcesses.find( pid );
+		iterator it = itsMap.find( pid );
 		
-		if ( it == itsProcesses.end() )
+		if ( it == itsMap.end() )
 		{
 			N::SysBeep();
 		}
 		else
 		{
-			itsProcesses.erase( it );
+			itsMap.erase( it );
 		}
 	}
 	
-	void GenieProcessTable::KillAll()
+	void ProcessList::KillAll()
 	{
-		for ( ProcessMap::iterator it = itsProcesses.begin();  it != itsProcesses.end();  ++it )
+		for ( Map::iterator it = itsMap.begin();  it != itsMap.end();  ++it )
 		{
 			Process& proc = *it->second;
 			
 			proc.Raise( SIGKILL );
 		}
 		
-		while ( itsProcesses.size() > 1 )
+		while ( itsMap.size() > 1 )
 		{
 			N::YieldToAnyThread();
 		}
