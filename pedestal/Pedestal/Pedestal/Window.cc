@@ -40,17 +40,28 @@ namespace Pedestal
 		return window;
 	}
 	
+	static Rect GrowBoxBounds( N::WindowRef window )
+	{
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		
+		bounds.left = bounds.right - 15;
+		bounds.top = bounds.bottom - 15;
+		
+		return bounds;
+	}
+	
 	void DrawWindow( N::WindowRef window )
 	{
 		NN::Saved< N::Clip_Value > savedClip;
 		
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-		
-		N::ClipRect( N::OffsetRect( N::SetRect( -15, -15, 0, 0 ),
-		                            bounds.right,
-		                            bounds.bottom ) );
+		N::ClipRect( GrowBoxBounds( window ) );
 		
 		N::DrawGrowIcon( window );
+	}
+	
+	void InvalidateGrowBox( N::WindowRef window )
+	{
+		N::InvalRect( GrowBoxBounds( window ) );
 	}
 	
 	

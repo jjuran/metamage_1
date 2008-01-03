@@ -74,6 +74,8 @@ namespace Pedestal
 	
 	void DrawWindow( N::WindowRef window );
 	
+	void InvalidateGrowBox( N::WindowRef window );
+	
 	
 	enum
 	{
@@ -188,7 +190,7 @@ namespace Pedestal
 			void Idle       ( const EventRecord& event )  { SubView().Idle( event );              }
 			bool KeyDown    ( const EventRecord& event )  { return SubView().KeyDown( event );    }
 			void Activate   ( bool activating          )  { SubView().Activate( activating );     }
-			void Resized    ( const Rect& newBounds    )  { SubView().Resize( newBounds );        }
+			void Resized    ( const Rect& newBounds    )  { SubView().Resize( newBounds );   InvalidateGrowBox( Get() ); }
 			bool UserCommand( MenuItemCode code        )  { return SubView().UserCommand( code ); }
 			
 			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
