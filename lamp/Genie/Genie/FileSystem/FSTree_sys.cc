@@ -23,6 +23,7 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
+#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
@@ -50,9 +51,9 @@ namespace Genie
 	
 	template < class Key > struct KeyName_Traits;
 	
-	template <> struct KeyName_Traits< N::WindowRef >
+	template < class Pointer > struct Pointer_KeyName_Traits
 	{
-		typedef N::WindowRef Key;
+		typedef Pointer Key;
 		
 		static std::string NameFromKey( const Key& key )
 		{
@@ -64,6 +65,33 @@ namespace Genie
 			return reinterpret_cast< Key >( DecodeHex32( &*name.begin(), &*name.end() ) );
 		}
 	};
+	
+	typedef const SystemCall* SystemCallPtr;
+	
+	template <> struct KeyName_Traits< SystemCallPtr >
+	{
+		typedef SystemCallPtr Key;
+		
+		static std::string NameFromKey( const Key& key )
+		{
+			return key->name ? key->name
+			                 : "." + Pointer_KeyName_Traits< SystemCallPtr >::NameFromKey( key );
+		}
+		
+		static Key CheckKey( Key key )
+		{
+			if ( key == NULL )  p7::throw_errno( ENOENT );
+			
+			return key;
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return CheckKey( LookUpSystemCallByName( name.c_str() ) );
+		}
+	};
+	
+	template <> struct KeyName_Traits< N::WindowRef > : public Pointer_KeyName_Traits< N::WindowRef >  {};
 	
 	template <> struct KeyName_Traits< N::FSVolumeRefNum >
 	{
@@ -189,6 +217,54 @@ namespace Genie
 			
 			MainEntry GetMainEntry() const  { return itsMainEntry; }
 	};
+	
+	struct sys_kernel_syscall_Details : public KeyName_Traits< SystemCallPtr >
+	{
+		typedef SystemCallRegistry Sequence;
+		
+		static std::string Name()  { return "syscall"; }
+		
+		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys_kernel >(); }
+		
+		static FSTreePtr Lookup( const std::string& name );
+		
+		static const Sequence& ItemSequence()  { return GetSystemCallRegistry(); }
+		
+		static std::string ChildName( const Sequence::value_type& child )
+		{
+			return NameFromKey( &child );
+		}
+		
+		static FSTreePtr ChildNode( const Sequence::value_type& child );
+	};
+	
+	typedef FSTree_Special< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
+	
+	class FSTree_sys_kernel_syscall_PTR : public FSTree_Virtual,
+	                                      public KeyName_Traits< SystemCallPtr >
+	{
+		private:
+			Key itsKey;
+		
+		public:
+			FSTree_sys_kernel_syscall_PTR( const Key& key ) : itsKey( key )  {}
+			
+			std::string Name() const  { return NameFromKey( itsKey ); }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_kernel_syscall >(); }
+	};
+	
+	FSTreePtr sys_kernel_syscall_Details::Lookup( const std::string& name )
+	{
+		Key key = KeyFromName( name );
+		
+		return FSTreePtr( new FSTree_sys_kernel_syscall_PTR( key ) );
+	}
+	
+	FSTreePtr sys_kernel_syscall_Details::ChildNode( const Sequence::value_type& child )
+	{
+		return FSTreePtr( new FSTree_sys_kernel_syscall_PTR( &child ) );
+	}
 	
 	
 	struct sys_window_Details : public KeyName_Traits< N::WindowRef >
@@ -372,7 +448,8 @@ namespace Genie
 	
 	FSTree_sys_kernel::FSTree_sys_kernel()
 	{
-		MapSingleton< FSTree_sys_kernel_bin >();
+		MapSingleton< FSTree_sys_kernel_bin     >();
+		MapSingleton< FSTree_sys_kernel_syscall >();
 	}
 	
 	static int main_true()
