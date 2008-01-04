@@ -10,9 +10,30 @@
 #include <functional>
 #include <iterator>
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 
 namespace Genie
 {
+	
+	namespace p7 = poseven;
+	
+	
+	UInt32 DecodeHex32( const char* begin, const char* end )
+	{
+		using BitsAndBytes::DecodeHex;
+		
+		std::string decoded = DecodeHex( std::string( begin, end ) );
+		
+		if ( decoded.size() != sizeof (UInt32) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return *(UInt32*) decoded.data();
+	}
+	
 	
 	typedef boost::shared_ptr< const FSTreeCache > FSTreeCachePtr;
 	

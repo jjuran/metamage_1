@@ -5,9 +5,6 @@
 
 #include "Genie/FileSystem/FSTree_sys.hh"
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/MacWindows.h"
@@ -15,9 +12,6 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
-
-// BitsAndBytes
-#include "HexStrings.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
@@ -34,41 +28,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static UInt32 DecodeHex32( const char* begin, const char* end )
-	{
-		using BitsAndBytes::DecodeHex;
-		
-		std::string decoded = DecodeHex( std::string( begin, end ) );
-		
-		if ( decoded.size() != sizeof (UInt32) )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return *(UInt32*) decoded.data();
-	}
-	
-	
-	template < class Key > struct KeyName_Traits;
-	
-	template < class Pointer > struct Pointer_KeyName_Traits
-	{
-		typedef Pointer Key;
-		
-		static std::string NameFromKey( const Key& key )
-		{
-			return BitsAndBytes::EncodeAsHex( key );
-		}
-		
-		static Key KeyFromName( const std::string& name )
-		{
-			return reinterpret_cast< Key >( DecodeHex32( &*name.begin(), &*name.end() ) );
-		}
-	};
-	
 	typedef const SystemCall* SystemCallPtr;
 	
-	template <> struct KeyName_Traits< SystemCallPtr >
+	struct SystemCall_KeyName_Traits
 	{
 		typedef SystemCallPtr Key;
 		
@@ -91,9 +53,9 @@ namespace Genie
 		}
 	};
 	
-	template <> struct KeyName_Traits< N::WindowRef > : public Pointer_KeyName_Traits< N::WindowRef >  {};
+	struct WindowRef_KeyName_Traits : public Pointer_KeyName_Traits< N::WindowRef >  {};
 	
-	template <> struct KeyName_Traits< N::FSVolumeRefNum >
+	struct VRefNum_KeyName_Traits
 	{
 		typedef N::FSVolumeRefNum Key;
 		
@@ -113,14 +75,34 @@ namespace Genie
 			
 			N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -n );
 			
-			// Verify it exists
-			(void) N::FSMakeFSSpec( vRefNum, N::fsRtDirID, NULL );
-			
 			return vRefNum;
+		}
+		
+		static bool KeyIsValid( const Key& key )
+		{
+			try
+			{
+				(void) N::FSMakeFSSpec( key, N::fsRtDirID, NULL );
+			}
+			catch ( const N::NSVErr& err )
+			{
+			#ifdef __MWERKS__
+				
+				if ( err.Get() != nsvErr )
+				{
+					throw;
+				}
+				
+			#endif
+				
+				return false;
+			}
+			
+			return true;
 		}
 	};
 	
-	template <> struct KeyName_Traits< N::ProcessSerialNumber >
+	struct ProcessSerialNumber_KeyName_Traits
 	{
 		typedef N::ProcessSerialNumber Key;
 		
@@ -218,30 +200,34 @@ namespace Genie
 			MainEntry GetMainEntry() const  { return itsMainEntry; }
 	};
 	
-	struct sys_kernel_syscall_Details : public KeyName_Traits< SystemCallPtr >
+	
+	class FSTree_sys_kernel_syscall_PTR;
+	
+	
+	struct sys_kernel_syscall_Details : public SystemCall_KeyName_Traits
 	{
 		typedef SystemCallRegistry Sequence;
+		
+		typedef FSTree_sys_kernel_syscall_PTR ChildNode;
 		
 		static std::string Name()  { return "syscall"; }
 		
 		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys_kernel >(); }
 		
-		static FSTreePtr Lookup( const std::string& name );
-		
 		static const Sequence& ItemSequence()  { return GetSystemCallRegistry(); }
 		
-		static std::string ChildName( const Sequence::value_type& child )
-		{
-			return NameFromKey( &child );
-		}
+		static Key KeyFromValue( const Sequence::value_type& value )  { return &value; }
 		
-		static FSTreePtr ChildNode( const Sequence::value_type& child );
+		static bool KeyIsValid( const Key& key )
+		{
+			return key != NULL;
+		}
 	};
 	
-	typedef FSTree_Special< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
+	typedef FSTree_Sequence< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
 	
 	class FSTree_sys_kernel_syscall_PTR : public FSTree_Virtual,
-	                                      public KeyName_Traits< SystemCallPtr >
+	                                      public SystemCall_KeyName_Traits
 	{
 		private:
 			Key itsKey;
@@ -254,43 +240,36 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_kernel_syscall >(); }
 	};
 	
-	FSTreePtr sys_kernel_syscall_Details::Lookup( const std::string& name )
-	{
-		Key key = KeyFromName( name );
-		
-		return FSTreePtr( new FSTree_sys_kernel_syscall_PTR( key ) );
-	}
 	
-	FSTreePtr sys_kernel_syscall_Details::ChildNode( const Sequence::value_type& child )
-	{
-		return FSTreePtr( new FSTree_sys_kernel_syscall_PTR( &child ) );
-	}
+	class FSTree_sys_window_REF;
 	
 	
-	struct sys_window_Details : public KeyName_Traits< N::WindowRef >
+	struct sys_window_Details : public WindowRef_KeyName_Traits
 	{
 		typedef N::WindowList_Container Sequence;
+		
+		typedef FSTree_sys_window_REF ChildNode;
 		
 		static std::string Name()  { return "window"; }
 		
 		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys >(); }
 		
-		static FSTreePtr Lookup( const std::string& name );
-		
 		static const Sequence& ItemSequence()  { return N::WindowList(); }
 		
-		static std::string ChildName( const Sequence::value_type& child )
-		{
-			return NameFromKey( child );
-		}
+		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
-		static FSTreePtr ChildNode( const Sequence::value_type& child );
+		static bool KeyIsValid( const Key& key )
+		{
+			const Sequence& sequence = ItemSequence();
+			
+			return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
+		}
 	};
 	
-	typedef FSTree_Special< sys_window_Details > FSTree_sys_window;
+	typedef FSTree_Sequence< sys_window_Details > FSTree_sys_window;
 	
 	class FSTree_sys_window_REF : public FSTree_Virtual,
-	                              public KeyName_Traits< N::WindowRef >
+	                              public WindowRef_KeyName_Traits
 	{
 		private:
 			Key itsKey;
@@ -302,18 +281,6 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_window >(); }
 	};
-	
-	FSTreePtr sys_window_Details::Lookup( const std::string& name )
-	{
-		N::WindowRef window = KeyFromName( name );
-		
-		return FSTreePtr( new FSTree_sys_window_REF( window ) );
-	}
-	
-	FSTreePtr sys_window_Details::ChildNode( const Sequence::value_type& child )
-	{
-		return FSTreePtr( new FSTree_sys_window_REF( child ) );
-	}
 	
 	
 	class FSTree_sys_mac : public FSTree_Virtual
@@ -328,30 +295,29 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
 	
-	struct sys_mac_vol_Details : public KeyName_Traits< N::FSVolumeRefNum >
+	
+	class FSTree_sys_mac_vol_N;
+	
+	
+	struct sys_mac_vol_Details : public VRefNum_KeyName_Traits
 	{
 		typedef N::Volume_Container Sequence;
+		
+		typedef FSTree_sys_mac_vol_N ChildNode;
 		
 		static std::string Name()  { return "vol"; }
 		
 		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys_mac >(); }
 		
-		static FSTreePtr Lookup( const std::string& name );
-		
 		static const Sequence& ItemSequence()  { return N::Volumes(); }
 		
-		static std::string ChildName( const Sequence::value_type& child )
-		{
-			return NameFromKey( child );
-		}
-		
-		static FSTreePtr ChildNode( const Sequence::value_type& child );
+		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 	};
 	
-	typedef FSTree_Special< sys_mac_vol_Details > FSTree_sys_mac_vol;
+	typedef FSTree_Sequence< sys_mac_vol_Details > FSTree_sys_mac_vol;
 	
 	class FSTree_sys_mac_vol_N : public FSTree_Virtual,
-	                             public KeyName_Traits< N::FSVolumeRefNum >
+	                             public VRefNum_KeyName_Traits
 	{
 		private:
 			Key itsKey;
@@ -365,30 +331,50 @@ namespace Genie
 	};
 	
 	
-	struct sys_mac_proc_Details : public KeyName_Traits< N::ProcessSerialNumber >
+	class FSTree_sys_mac_proc_PSN;
+	
+	struct sys_mac_proc_Details : public ProcessSerialNumber_KeyName_Traits
 	{
 		typedef N::Process_Container Sequence;
+		
+		typedef FSTree_sys_mac_proc_PSN ChildNode;
 		
 		static std::string Name()  { return "proc"; }
 		
 		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys_mac >(); }
 		
-		static FSTreePtr Lookup( const std::string& name );
-		
 		static const Sequence& ItemSequence()  { return N::Processes(); }
 		
-		static std::string ChildName( const Sequence::value_type& child )
-		{
-			return NameFromKey( child );
-		}
+		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
-		static FSTreePtr ChildNode( const Sequence::value_type& child );
+		static bool KeyIsValid( const Key& key )
+		{
+			try
+			{
+				(void) N::GetNextProcess( key );
+			}
+			catch ( const N::ProcNotFound& err )
+			{
+			#ifdef __MWERKS__
+				
+				if ( err.Get() != procNotFound )
+				{
+					throw;
+				}
+				
+			#endif
+				
+				return false;
+			}
+			
+			return true;
+		}
 	};
 	
-	typedef FSTree_Special< sys_mac_proc_Details > FSTree_sys_mac_proc;
+	typedef FSTree_Sequence< sys_mac_proc_Details > FSTree_sys_mac_proc;
 	
 	class FSTree_sys_mac_proc_PSN : public FSTree_Virtual,
-	                                public KeyName_Traits< N::ProcessSerialNumber >
+	                                public ProcessSerialNumber_KeyName_Traits
 	{
 		private:
 			Key itsKey;
@@ -482,31 +468,6 @@ namespace Genie
 		MapSingleton< FSTree_sys_mac_vol     >();
 		MapSingleton< FSTree_sys_mac_proc    >();
 		MapSingleton< FSTree_sys_mac_gestalt >();
-	}
-	
-	
-	FSTreePtr sys_mac_vol_Details::Lookup( const std::string& name )
-	{
-		Key vRefNum = KeyFromName( name );
-		
-		return FSTreePtr( new FSTree_sys_mac_vol_N( vRefNum ) );
-	}
-	
-	FSTreePtr sys_mac_proc_Details::Lookup( const std::string& name )
-	{
-		Key psn = KeyFromName( name );
-		
-		return FSTreePtr( new FSTree_sys_mac_proc_PSN( psn ) );
-	}
-	
-	FSTreePtr sys_mac_vol_Details::ChildNode( const Sequence::value_type& child )
-	{
-		return FSTreePtr( new FSTree_sys_mac_vol_N( child ) );
-	}
-	
-	FSTreePtr sys_mac_proc_Details::ChildNode( const Sequence::value_type& child )
-	{
-		return FSTreePtr( new FSTree_sys_mac_proc_PSN( child ) );
 	}
 	
 	

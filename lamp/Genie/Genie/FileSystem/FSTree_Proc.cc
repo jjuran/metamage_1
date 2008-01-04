@@ -34,22 +34,31 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct proc_Details
+	struct proc_Details : public Integer_KeyName_Traits< pid_t >
 	{
-		typedef GenieProcessTable Sequence;
+		typedef ProcessList::Map Sequence;
 		
 		static std::string Name()  { return "proc"; }
 		
 		static FSTreePtr Lookup( const std::string& name );
 		
-		static const Sequence& ItemSequence()  { return GetProcessList(); }
+		static const Sequence& ItemSequence()  { return GetProcessList().GetMap(); }
 		
-		static std::string ChildName( const Sequence::value_type& child )
+		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
+		
+		static bool KeyIsValid( const Key& key )
 		{
-			return NN::Convert< std::string >( child.first );
+			const Sequence& sequence = ItemSequence();
+			
+			return sequence.find( key ) != sequence.end();
 		}
 		
-		static FSTreePtr ChildNode( const Sequence::value_type& child );
+		static std::string GetChildName( const Sequence::value_type& value )
+		{
+			return NameFromKey( KeyFromValue( value ) );
+		}
+		
+		static FSTreePtr GetChildNode( const Key& key );
 	};
 	
 	typedef FSTree_Special_Unique< proc_Details > FSTree_proc;
@@ -89,18 +98,14 @@ namespace Genie
 	};
 	
 	
-	struct PID_fd_Details;
-	
-	typedef FSTree_Special< PID_fd_Details > FSTree_PID_fd;
-	
-	struct PID_fd_Details
+	struct PID_fd_Details : public Integer_KeyName_Traits< int >
 	{
-		typedef pid_t              Key;
+		typedef pid_t              ParentKey;
 		typedef FileDescriptorMap  Sequence;
 		
-		Key itsPID;
+		ParentKey itsPID;
 		
-		PID_fd_Details( Key pid ) : itsPID( pid )  {}
+		PID_fd_Details( ParentKey pid ) : itsPID( pid )  {}
 		
 		static std::string Name()  { return "fd"; }
 		
@@ -110,13 +115,24 @@ namespace Genie
 		
 		const Sequence& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
 		
-		static std::string ChildName( const Sequence::value_type& child )
+		static int KeyFromValue( const Sequence::value_type& value )  { return value.first; }
+		
+		bool KeyIsValid( const Key& key ) const
 		{
-			return NN::Convert< std::string >( child.first );
+			const Sequence& sequence = ItemSequence();
+			
+			return sequence.find( key ) != sequence.end();
 		}
 		
-		FSTreePtr ChildNode( const Sequence::value_type& child ) const;
+		static std::string GetChildName( const Sequence::value_type& value )
+		{
+			return NameFromKey( KeyFromValue( value ) );
+		}
+		
+		FSTreePtr GetChildNode( const Key& key ) const;
 	};
+	
+	typedef FSTree_Special< PID_fd_Details > FSTree_PID_fd;
 	
 	class FSTree_PID_fd_N : public FSTree
 	{
@@ -210,14 +226,19 @@ namespace Genie
 			return FSTreePtr( new FSTree_proc_self() );
 		}
 		
-		pid_t pid = std::atoi( name.c_str() );
+		Key key = KeyFromName( name );
 		
-		return FSTreePtr( new FSTree_PID( pid ) );
+		if ( !KeyIsValid( key ) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return FSTreePtr( new FSTree_PID( key ) );
 	}
 	
-	FSTreePtr proc_Details::ChildNode( const Sequence::value_type& child )
+	FSTreePtr proc_Details::GetChildNode( const Key& key )
 	{
-		return FSTreePtr( new FSTree_PID( child.first ) );
+		return FSTreePtr( new FSTree_PID( key ) );
 	}
 	
 	// Process states
@@ -422,23 +443,19 @@ namespace Genie
 	
 	FSTreePtr PID_fd_Details::Lookup( const std::string& name ) const
 	{
-		int fd = std::atoi( name.c_str() );
+		Key key = KeyFromName( name );
 		
-		const FileDescriptorMap& files = GetProcess( itsPID ).FileDescriptors();
-		
-		if ( files.find( fd ) == files.end() )
+		if ( !KeyIsValid( key ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		return FSTreePtr( new FSTree_PID_fd_N( itsPID, fd ) );
+		return FSTreePtr( new FSTree_PID_fd_N( itsPID, key ) );
 	}
 	
-	FSTreePtr PID_fd_Details::ChildNode( const Sequence::value_type& child ) const
+	FSTreePtr PID_fd_Details::GetChildNode( const Key& key ) const
 	{
-		int fd = child.first;
-		
-		return FSTreePtr( new FSTree_PID_fd_N( itsPID, fd ) );
+		return FSTreePtr( new FSTree_PID_fd_N( itsPID, key ) );
 	}
 	
 	

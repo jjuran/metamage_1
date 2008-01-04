@@ -87,6 +87,45 @@ namespace Genie
 	}
 	
 	
+	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
+	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
+	{
+		::FSVolumeRefNum actualVRefNum;
+		N::ThrowOSStatus( ::DetermineVRefNum( name, vRefNum, &actualVRefNum ) );
+		
+		return N::FSVolumeRefNum( actualVRefNum );
+	}
+	
+	static N::FSVolumeRefNum DetermineVRefNum( const std::string&  name,
+	                                           N::FSVolumeRefNum   vRefNum = N::FSVolumeRefNum() )
+	{
+		return DetermineVRefNum( N::Str27( name ), vRefNum );
+	}
+	
+	
+	struct Volume_KeyName_Traits
+	{
+		typedef N::FSVolumeRefNum Key;
+		
+		static FSSpec FSSpecFromKey( const Key& key )
+		{
+			return N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
+		}
+		
+		static std::string NameFromKey( const Key& key )
+		{
+			return UnixFromMacName( io::get_filename_string( FSSpecFromKey( key ) ) );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			Key key = DetermineVRefNum( MacFromUnixName( name ) + ":" );
+			
+			return key;
+		}
+	};
+	
+	
 	class FSTree_FSSpec : public FSTree_Mappable
 	{
 		private:
@@ -133,35 +172,31 @@ namespace Genie
 	};
 	
 	
-	struct Volumes_Details
+	class FSTree_Volumes_Link;
+	
+	
+	struct Volumes_Details : public Volume_KeyName_Traits
 	{
 		typedef N::Volume_Container Sequence;
 		
-		static std::string Name()  { return "Volumes"; }
+		typedef FSTree_Volumes_Link ChildNode;
 		
-		FSTreePtr Lookup( const std::string& name ) const;
+		static std::string Name()  { return "Volumes"; }
 		
 		Sequence ItemSequence() const  { return N::Volumes(); }
 		
-		static std::string ChildName( const Sequence::value_type& child )
-		{
-			FSSpec volume = N::FSMakeFSSpec( child, N::fsRtDirID, "\p" );
-			
-			return UnixFromMacName( io::get_filename_string( volume ) );
-		}
+		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
-		static FSTreePtr ChildNode( const Sequence::value_type& child )
+		static bool KeyIsValid( const Key& key )
 		{
-			FSSpec volume = N::FSMakeFSSpec( child, N::fsRtDirID, "\p" );
-			
-			return FSTreePtr( new FSTree_FSSpec( volume ) );
+			return true;  // DetermineVRefNum() only returns valid keys
 		}
 	};
 	
-	class FSTree_Volumes : public FSTree_Special_Unique< Volumes_Details >
+	class FSTree_Volumes : public FSTree_Sequence< UniqueDetails< Volumes_Details > >
 	{
 		private:
-			typedef FSTree_Special_Unique< Volumes_Details > Base;
+			typedef FSTree_Sequence< UniqueDetails< Volumes_Details > > Base;
 		
 		public:
 			void Stat( struct ::stat& sb ) const;
@@ -191,22 +226,6 @@ namespace Genie
 		FSSpec users = root / "Users";
 		
 		return N::FSDirSpec( users );
-	}
-	
-	
-	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
-	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
-	{
-		::FSVolumeRefNum actualVRefNum;
-		N::ThrowOSStatus( ::DetermineVRefNum( name, vRefNum, &actualVRefNum ) );
-		
-		return N::FSVolumeRefNum( actualVRefNum );
-	}
-	
-	static N::FSVolumeRefNum DetermineVRefNum( const std::string&  name,
-	                                           N::FSVolumeRefNum   vRefNum = N::FSVolumeRefNum() )
-	{
-		return DetermineVRefNum( N::Str27( name ), vRefNum );
 	}
 	
 	
@@ -498,13 +517,6 @@ namespace Genie
 			
 			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_FSSpec( NN::Make< N::FSDirSpec >( itsKey, N::fsRtDirID ) ) ); }
 	};
-	
-	FSTreePtr Volumes_Details::Lookup( const std::string& name ) const
-	{
-		N::FSVolumeRefNum vRefNum = DetermineVRefNum( MacFromUnixName( name ) + ":" );
-		
-		return FSTreePtr( new FSTree_Volumes_Link( vRefNum ) );
-	}
 	
 	void FSTree_Volumes::Stat( struct ::stat& sb ) const
 	{

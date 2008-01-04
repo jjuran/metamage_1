@@ -15,6 +15,12 @@
 // POSIX
 #include <sys/stat.h>
 
+// Nucleus
+#include "Nucleus/Convert.h"
+
+// BitsAndBytes
+#include "HexStrings.hh"
+
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
 #include "Genie/FileSystem/FSTree_Null.hh"
@@ -23,6 +29,38 @@
 
 namespace Genie
 {
+	
+	template < class Pointer > struct Pointer_KeyName_Traits
+	{
+		typedef Pointer Key;
+		
+		static std::string NameFromKey( const Key& key )
+		{
+			return BitsAndBytes::EncodeAsHex( key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return reinterpret_cast< Key >( DecodeHex32( &*name.begin(), &*name.end() ) );
+		}
+	};
+	
+	template < class Integer > struct Integer_KeyName_Traits
+	{
+		typedef Integer Key;
+		
+		static std::string NameFromKey( const Key& key )
+		{
+			return Nucleus::Convert< std::string >( key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			//return Nucleus::Convert< Integer >( name );
+			return std::atoi( name.c_str() );
+		}
+	};
+	
 	
 	typedef std::vector< FSNode > FSTreeCache;
 	
@@ -51,6 +89,73 @@ namespace Genie
 	
 	
 	template < class Details >
+	class FSTree_Sequence : public FSTree_Directory
+	{
+		private:
+			Details itsDetails;
+			
+			typedef typename Details::Key Key;
+		
+		public:
+			FSTree_Sequence() : itsDetails()  {}
+			
+			FSTree_Sequence( const Details& details ) : itsDetails( details )  {}
+			
+			static std::string OnlyName()  { return Details::Name(); }
+			
+			std::string Name() const  { return OnlyName(); }
+			
+			FSTreePtr Parent() const  { return itsDetails.Parent(); }
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const
+			{
+				Key key = itsDetails.KeyFromName( name );
+				
+				if ( !itsDetails.KeyIsValid( key ) )
+				{
+					poseven::throw_errno( ENOENT );
+				}
+				
+				return FSTreePtr( new typename Details::ChildNode( key ) );
+			}
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+	};
+	
+	template < class Details >
+	class SequenceIteratorConverter
+	{
+		private:
+			Details itsDetails;
+		
+		public:
+			SequenceIteratorConverter( const Details& details ) : itsDetails( details )  {}
+			
+			FSNode operator()( const Details::Sequence::value_type& value ) const
+			{
+				typename Details::Key key = itsDetails.KeyFromValue( value );
+				
+				std::string name = itsDetails.NameFromKey( key );
+				
+				FSTreePtr node( new Details::ChildNode( key ) );
+				
+				return FSNode( name, node );
+			}
+	};
+	
+	template < class Details >
+	void FSTree_Sequence< Details >::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		SequenceIteratorConverter< Details > converter( itsDetails );
+		
+		std::transform( itsDetails.ItemSequence().begin(),
+		                itsDetails.ItemSequence().end(),
+		                std::back_inserter( cache ),
+		                converter );
+	}
+	
+	
+	template < class Details >
 	class FSTree_Special : public FSTree_Directory
 	{
 		private:
@@ -67,7 +172,10 @@ namespace Genie
 			
 			FSTreePtr Parent() const  { return itsDetails.Parent(); }
 			
-			FSTreePtr Lookup_Child( const std::string& name ) const  { return itsDetails.Lookup( name ); }
+			FSTreePtr Lookup_Child( const std::string& name ) const
+			{
+				return itsDetails.Lookup( name );
+			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
@@ -81,10 +189,12 @@ namespace Genie
 		public:
 			IteratorConverter( const Details& details ) : itsDetails( details )  {}
 			
-			FSNode operator()( const Details::Sequence::value_type& child ) const
+			FSNode operator()( const Details::Sequence::value_type& value ) const
 			{
-				return FSNode( itsDetails.ChildName( child ),
-				               itsDetails.ChildNode( child ) );
+				typename Details::Key key = itsDetails.KeyFromValue( value );
+				
+				return FSNode( itsDetails.GetChildName( value ),
+				               itsDetails.GetChildNode( key   ) );
 			}
 	};
 	
@@ -146,6 +256,9 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
+	
+	
+	UInt32 DecodeHex32( const char* begin, const char* end );
 	
 }
 

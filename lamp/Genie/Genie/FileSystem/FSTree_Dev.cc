@@ -214,15 +214,26 @@ namespace Genie
 	
 	
 	template < class Metadetails >
-	struct dev_TTY_Details : public Metadetails
+	struct dev_TTY_Details : public Metadetails, public Integer_KeyName_Traits< unsigned >
 	{
 		typedef typename Metadetails::Sequence Sequence;
+		
+		typedef typename Metadetails::FSTree_N ChildNode;
 		
 		FSTreePtr Parent() const  { return GetSingleton< FSTree_dev >(); }
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
-		static std::string ChildName( const Sequence::value_type& child )
+		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
+		
+		static bool KeyIsValid( const Key& key )
+		{
+			const Sequence& sequence = ItemSequence();
+			
+			return sequence.find( key ) != sequence.end();
+		}
+		
+		static std::string GetChildName( const Sequence::value_type& child )
 		{
 			ASSERT( !child.second.expired() );
 			
@@ -233,9 +244,9 @@ namespace Genie
 			return io::get_filename( terminal.TTYName() );
 		}
 		
-		FSTreePtr ChildNode( const Sequence::value_type& child ) const
+		FSTreePtr GetChildNode( const Key& key ) const
 		{
-			return FSTreePtr( new FSTree_N( child.first ) );
+			return FSTreePtr( new ChildNode( key ) );
 		}
 	};
 	
@@ -394,9 +405,9 @@ namespace Genie
 	template < class Metadetails >
 	FSTreePtr dev_TTY_Details< Metadetails >::Lookup( const std::string& name ) const
 	{
-		unsigned id = std::atoi( name.c_str() );
+		Key key = KeyFromName( name );
 		
-		return FSTreePtr( new FSTree_N( id ) );
+		return FSTreePtr( new ChildNode( key ) );
 	}
 	
 }
