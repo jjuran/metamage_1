@@ -92,6 +92,11 @@ namespace Genie
 		registry[ index ] = SystemCall( name, func );
 	}
 	
+	const SystemCallRegistry& GetSystemCallRegistry()
+	{
+		return TheSystemCallRegistry();
+	}
+	
 	const SystemCall* GetSystemCall( unsigned index )
 	{
 		const unsigned required_size = index + 1;
@@ -106,17 +111,7 @@ namespace Genie
 		return &registry[ index ];
 	}
 	
-	SystemCallRegistry::const_iterator SystemCallsBegin()
-	{
-		return TheSystemCallRegistry().begin();
-	}
-	
-	SystemCallRegistry::const_iterator SystemCallsEnd()
-	{
-		return TheSystemCallRegistry().end();
-	}
-	
-	unsigned LookUpSystemCallIndex( const char* name )
+	const SystemCall* LookUpSystemCallByName( const char* name )
 	{
 		static SystemCallRegistry::iterator begin = TheSystemCallRegistry().begin();
 		static SystemCallRegistry::iterator end   = TheSystemCallRegistry().end  ();
@@ -128,7 +123,7 @@ namespace Genie
 			return 0;
 		}
 		
-		return it - begin;
+		return &*it;
 	}
 	
 }

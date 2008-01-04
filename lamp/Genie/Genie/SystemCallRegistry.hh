@@ -54,21 +54,18 @@ namespace Genie
 		const char*  name;
 		void*        function;
 		
-		SystemCall()  {}
+		SystemCall() : name(), function()  {}
 		
 		SystemCall( const char* nom, void* f ) : name( nom ), function( f )  {}
 	};
 	
 	typedef std::vector< SystemCall > SystemCallRegistry;
 	
+	const SystemCallRegistry& GetSystemCallRegistry();
+	
 	const SystemCall* GetSystemCall( unsigned index );
 	
-	// Iterate over registered system calls
-	
-	SystemCallRegistry::const_iterator SystemCallsBegin();
-	SystemCallRegistry::const_iterator SystemCallsEnd();
-	
-	unsigned LookUpSystemCallIndex( const char* name );
+	const SystemCall* LookUpSystemCallByName( const char* name );
 	
 }
 
