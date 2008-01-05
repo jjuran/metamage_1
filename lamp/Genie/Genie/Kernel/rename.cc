@@ -77,7 +77,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr cwd = CurrentProcess().GetCWD();
+			FSTreePtr cwd = frame.Caller().GetCWD();
 			
 			FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec();
 			FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec();

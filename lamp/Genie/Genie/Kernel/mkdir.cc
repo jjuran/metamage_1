@@ -26,7 +26,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr current = CurrentProcess().GetCWD();
+			FSTreePtr current = frame.Caller().GetCWD();
 			
 			FSTreePtr location = ResolvePathname( pathname, current );
 			

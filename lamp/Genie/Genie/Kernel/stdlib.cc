@@ -25,7 +25,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getenv" );
 		
-		return CurrentProcess().GetEnv( name );
+		return frame.Caller().GetEnv( name );
 	}
 	
 	REGISTER_SYSTEM_CALL( getenv );
@@ -34,7 +34,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "setenv" );
 		
-		CurrentProcess().SetEnv( name, value, overwrite );
+		frame.Caller().SetEnv( name, value, overwrite );
 		
 		return 0;
 	}
@@ -45,7 +45,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "putenv" );
 		
-		CurrentProcess().PutEnv( string );
+		frame.Caller().PutEnv( string );
 		
 		return 0;
 	}
@@ -56,7 +56,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "unsetenv" );
 		
-		CurrentProcess().UnsetEnv( name );
+		frame.Caller().UnsetEnv( name );
 	}
 	
 	REGISTER_SYSTEM_CALL( unsetenv );
@@ -65,7 +65,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "clearenv" );
 		
-		CurrentProcess().ClearEnv();
+		frame.Caller().ClearEnv();
 		
 		return 0;
 	}

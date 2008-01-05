@@ -25,7 +25,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "ptrace" );
 		
-		Process& current = CurrentProcess();
+		Process& current = frame.Caller();
 		
 		try
 		{

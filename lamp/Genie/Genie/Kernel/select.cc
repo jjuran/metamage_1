@@ -39,7 +39,7 @@ namespace Genie
 		
 		try
 		{
-			FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+			FileDescriptorMap& files = frame.Caller().FileDescriptors();
 			
 			// Output fd sets
 			fd_set rd, wr, ex;

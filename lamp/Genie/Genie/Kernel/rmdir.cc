@@ -39,7 +39,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr current = CurrentProcess().GetCWD();
+			FSTreePtr current = frame.Caller().GetCWD();
 			
 			FSTreePtr dir = ResolvePathname( pathname, current );
 			

@@ -108,7 +108,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr current = CurrentProcess().GetCWD();
+			FSTreePtr current = frame.Caller().GetCWD();
 			
 			FSTreePtr link = ResolvePathname( link_location, current );
 			
@@ -160,7 +160,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr current = CurrentProcess().GetCWD();
+			FSTreePtr current = frame.Caller().GetCWD();
 			
 			FSTreePtr link = ResolvePathname( path, current );
 			
