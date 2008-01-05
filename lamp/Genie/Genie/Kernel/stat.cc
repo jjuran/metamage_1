@@ -30,11 +30,11 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_stat )
 	DEFINE_MODULE_INIT(Kernel_stat)
 	
-	static int chmod_file( const char* path, mode_t mode )
+	static int chmod_file( SystemCallFrame& frame, const char* path, mode_t mode )
 	{
 		try
 		{
-			FSTreePtr current = CurrentProcess().GetCWD();
+			FSTreePtr current = frame.Caller().GetCWD();
 			
 			FSTreePtr file = ResolvePathname( path, current );
 			
@@ -44,13 +44,13 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return SetErrnoFromExceptionInSystemCall();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;
 	}
 	
-	static int stat_file( const char* path, struct stat* sb, bool resolveLinks )
+	static int stat_file( SystemCallFrame& frame, const char* path, struct stat* sb, bool resolveLinks )
 	{
 		Breathe();
 		
@@ -58,7 +58,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr current = CurrentProcess().GetCWD();
+			FSTreePtr current = frame.Caller().GetCWD();
 			
 			FSTreePtr file = ResolvePathname( path, current );
 			
@@ -71,7 +71,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return SetErrnoFromExceptionInSystemCall();
+			return frame.SetErrnoFromException();
 		}
 		
 		return 0;
@@ -81,7 +81,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "chmod" );
 		
-		return chmod_file( path, mode );
+		return chmod_file( frame, path, mode );
 	}
 	
 	REGISTER_SYSTEM_CALL( chmod );
@@ -90,7 +90,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "lstat" );
 		
-		return stat_file( path, sb, false );
+		return stat_file( frame, path, sb, false );
 	}
 	
 	REGISTER_SYSTEM_CALL( lstat );
@@ -99,7 +99,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "stat" );
 		
-		return stat_file( path, sb, true );  // FIXME:  Resolve symlinks
+		return stat_file( frame, path, sb, true );  // FIXME:  Resolve symlinks
 	}
 	
 	REGISTER_SYSTEM_CALL( stat );
