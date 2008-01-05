@@ -427,6 +427,18 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( getppid );
 	
+	static pid_t getsid( pid_t pid )
+	{
+		SystemCallFrame frame( "getsid" );
+		
+		Process& proc = pid == 0 ? frame.Caller()
+		                         : GetProcess( pid );
+		
+		return proc.GetSID();
+	}
+	
+	REGISTER_SYSTEM_CALL( getsid );
+	
 	static off_t lseek( int fd, off_t offset, int whence )
 	{
 		SystemCallFrame frame( "lseek" );
