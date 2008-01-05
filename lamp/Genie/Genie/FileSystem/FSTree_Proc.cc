@@ -23,6 +23,7 @@
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/Yield.hh"
 
@@ -356,12 +357,36 @@ namespace Genie
 				pid_t pgid = process.GetPGID();
 				pid_t sid = process.GetSID();
 				
+				const boost::shared_ptr< IOHandle >& term = process.ControllingTerminal();
+				
+				std::string terminal_name = "?";
+				
+				pid_t tpgid = 0;
+				
+				if ( term.get() )
+				{
+					terminal_name = term->GetFile()->Pathname();
+					
+					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *term );
+					
+					const boost::weak_ptr< ProcessGroup >& group = terminal.GetProcessGroup();
+					
+					tpgid = 0x7fffffff;
+					
+					if ( !group.expired() )
+					{
+						tpgid = group.lock()->ID();
+					}
+				}
+				
 				return NN::Convert< std::string >( itsPID ) + " "
 				       "(" + process.ProgramName() + ")"      " " +
 				       ProcessStateCode( process.GetSchedule() ) + " " +
 				       NN::Convert< std::string >( ppid   ) + " " +
 				       NN::Convert< std::string >( pgid   ) + " " +
-				       NN::Convert< std::string >( sid    ) + " "
+				       NN::Convert< std::string >( sid    ) + " " +
+				       terminal_name                        + " " +
+				       NN::Convert< std::string >( tpgid  ) +
 				       "\n";
 			}
 	};
