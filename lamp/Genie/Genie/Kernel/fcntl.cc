@@ -37,10 +37,7 @@ namespace Genie
 			
 			FSTreePtr file = ResolvePathname( path, CurrentProcess().GetCWD() );
 			
-			if ( file->IsLink() )
-			{
-				file = file->ResolveLink();
-			}
+			ResolveLinks_InPlace( file );
 			
 			bool is_dir = file->IsDirectory();
 			

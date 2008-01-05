@@ -38,6 +38,8 @@ namespace Genie
 			
 			FSTreePtr file = ResolvePathname( path, current );
 			
+			ResolveLinks_InPlace( file );
+			
 			file->ChangeMode( mode );
 		}
 		catch ( ... )
@@ -60,9 +62,9 @@ namespace Genie
 			
 			FSTreePtr file = ResolvePathname( path, current );
 			
-			if ( resolveLinks && file->IsLink() )
+			if ( resolveLinks )
 			{
-				file = file->ResolveLink();
+				ResolveLinks_InPlace( file );
 			}
 			
 			file->Stat( *sb );

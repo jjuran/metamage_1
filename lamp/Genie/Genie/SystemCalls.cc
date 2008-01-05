@@ -216,10 +216,7 @@ namespace Genie
 			
 			FSTreePtr newCWD = ResolvePathname( pathname, CurrentProcess().GetCWD() );
 			
-			if ( newCWD->IsLink() )
-			{
-				newCWD = newCWD->ResolveLink();
-			}
+			ResolveLinks_InPlace( newCWD );
 			
 			CurrentProcess().ChangeDirectory( newCWD );
 			
@@ -658,6 +655,8 @@ namespace Genie
 		try
 		{
 			FSTreePtr file = ResolvePathname( path, CurrentProcess().GetCWD() );
+			
+			ResolveLinks_InPlace( file );
 			
 			file->SetEOF( length );
 		}

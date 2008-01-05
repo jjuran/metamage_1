@@ -37,10 +37,7 @@ namespace Genie
 		
 		FSTreePtr dir = ResolvePathname( pathname, current );
 		
-		if ( dir->IsLink() )
-		{
-			dir = dir->ResolveLink();
-		}
+		ResolveLinks_InPlace( dir );
 		
 		return boost::shared_ptr< IOHandle >( new DirHandle( dir ) );
 	}
