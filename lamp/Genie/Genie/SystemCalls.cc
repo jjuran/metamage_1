@@ -571,27 +571,37 @@ namespace Genie
 			Process& target( pid != 0 ? GetProcess( pid )
 			                          : current );
 			
-			bool target_is_child = current.GetPID() == target.GetPPID();
+			bool target_is_self = pid == 0  ||  target.GetPID() != current.GetPID();
 			
-			if ( current.GetPID() != target.GetPID()  &&  !target_is_child )
+			if ( target_is_self )
 			{
-				p7::throw_errno( ESRCH );  // target is not self or a child
+				// A session-leading child is in a different session, which we test for
+				
+				if ( target.GetSID() == target.GetPID() )
+				{
+					p7::throw_errno( EPERM );  // target is a session leader
+				}
+			}
+			else
+			{
+				bool target_is_child = current.GetPID() == target.GetPPID();
+				
+				if ( !target_is_child )
+				{
+					p7::throw_errno( ESRCH );  // target is not self or a child
+				}
+				
+				if ( target.GetLifeStage() != kProcessStarting )
+				{
+					p7::throw_errno( EACCES );  // child already execve'd
+				}
+				
+				if ( current.GetSID() != target.GetSID() )
+				{
+					p7::throw_errno( EPERM );  // child in different session
+				}
 			}
 			
-			if ( target_is_child  &&  target.GetLifeStage() != kProcessStarting )
-			{
-				p7::throw_errno( EACCES );  // child already execve'd
-			}
-			
-			if ( current.GetSID() != target.GetSID() )
-			{
-				p7::throw_errno( EPERM );  // child in different session
-			}
-			
-			if ( current.GetSID() == current.GetPID() )
-			{
-				p7::throw_errno( EPERM );  // target is a session leader
-			}
 			
 			if ( pgid == 0 )
 			{
