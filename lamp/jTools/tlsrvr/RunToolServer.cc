@@ -16,6 +16,9 @@
 // POSIX
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -29,6 +32,7 @@
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
 #include "Nitrogen/Folders.h"
+#include "Nitrogen/MacErrors.h"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
@@ -47,6 +51,9 @@
 
 // Divergence
 #include "Divergence/Utilities.hh"
+
+// Orion
+#include "Orion/Main.hh"
 
 // tlsrvr
 #include "ToolServer.hh"
@@ -168,9 +175,31 @@ namespace RunToolServer
 	
 	static NN::Owned< AppleEvent > CreateScriptEvent( const std::string& script )
 	{
+		ProcessSerialNumber psnToolServer;
+		
+		try
+		{
+			psnToolServer = NX::LaunchApplication( sigToolServer );
+		}
+		catch ( const N::AFPItemNotFound& err )
+		{
+		#ifdef __MWERKS__
+			
+			if ( err.Get() != afpItemNotFound )
+			{
+				throw;
+			}
+			
+		#endif
+			
+			p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not found\n" ) );
+			
+			Orion::ThrowExitStatus( EXIT_FAILURE );
+		}
+		
 		return N::AECreateAppleEvent( N::kAEMiscStandards,
 		                              N::kAEDoScript,
-		                              N::AECreateDesc< N::typeProcessSerialNumber >( NX::LaunchApplication( sigToolServer ) ) )
+		                              N::AECreateDesc< N::typeProcessSerialNumber >( psnToolServer ) )
 		       << N::keyDirectObject
 		          + N::AECreateDesc< N::typeChar >( script );
 	}
