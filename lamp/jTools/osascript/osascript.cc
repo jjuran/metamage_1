@@ -183,7 +183,7 @@ static NN::Owned< N::OSASpec > CompileSource( const AEDesc& source, bool useCWD 
 	{
 	#ifdef __MWERKS__
 		
-		if ( err != N::ErrOSAScriptError() )
+		if ( err.Get() != errOSAScriptError )
 		{
 			throw;
 		}
@@ -356,7 +356,7 @@ int O::Main( int argc, argv_t argv )
 	{
 	#ifdef __MWERKS__
 		
-		if ( err != N::ErrOSAScriptError() )
+		if ( err.Get() != errOSAScriptError )
 		{
 			throw;
 		}

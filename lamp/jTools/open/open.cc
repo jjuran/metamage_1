@@ -195,7 +195,7 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items )
 		{
 		#ifdef __MWERKS__
 			
-			if ( err != N::ProcNotFound() )
+			if ( err.Get() != procNotFound )
 			{
 				throw;
 			}
@@ -228,7 +228,7 @@ static void OpenItemsUsingOptions( const std::vector< FSSpec >& items )
 		{
 		#ifdef __MWERKS__
 			
-			if ( err != N::ProcNotFound() )
+			if ( err.Get() != procNotFound )
 			{
 				throw;
 			}
