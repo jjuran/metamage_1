@@ -404,30 +404,17 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( getcwd_k );
 	
-	static pid_t getpgrp();
-	
 	static pid_t getpgid( pid_t pid )
 	{
 		SystemCallFrame frame( "getpgid" );
 		
-		if ( pid == 0 )
-		{
-			return getpgrp();
-		}
+		Process& proc = pid == 0 ? frame.Caller()
+		                         : GetProcess( pid );
 		
-		return GetProcess( pid ).GetPGID();
+		return proc.GetPGID();
 	}
 	
 	REGISTER_SYSTEM_CALL( getpgid );
-	
-	static pid_t getpgrp()
-	{
-		SystemCallFrame frame( "getpgrp" );
-		
-		return CurrentProcess().GetPGID();
-	}
-	
-	REGISTER_SYSTEM_CALL( getpgrp );
 	
 	static pid_t getpid()
 	{
