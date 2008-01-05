@@ -18,9 +18,11 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
-	static std::string IOName( unsigned long id )
+	static std::string IOName( const void* address, bool is_pipe )
 	{
-		return "io:[" + NN::Convert< std::string >( id ) + "]";
+		std::string prefix = is_pipe ? "pipe" : "socket";
+		
+		return prefix + ":[" + NN::Convert< std::string >( (unsigned long) address ) + "]";
 	}
 	
 	class FSTree_IOHandle : public FSTree
@@ -29,7 +31,9 @@ namespace Genie
 			std::string itsName;
 		
 		public:
-			FSTree_IOHandle( const void* address ) : itsName( IOName( (unsigned long) address ) )  {}
+			FSTree_IOHandle( const void* address ) : itsName( IOName( address, IsPipe() ) )
+			{
+			}
 			
 			bool IsPipe()      const  { return true; }
 			bool IsAnonymous() const  { return true; }
