@@ -308,7 +308,7 @@ namespace Genie
 		{
 			case kProcessRunning:      return 'R';  // [1]
 			case kProcessSleeping:     return 'S';  // [2]
-			case kProcessStopped:      return '.';  // set in Process::Stop()
+			case kProcessStopped:      return 'T';  // set in Process::Stop()
 			case kProcessFrozen:       return 'F';  // set in SpawnVFork() prior to new Process()
 			case kProcessUnscheduled:  return 'Z';  // set in Process::Terminate()
 			
@@ -353,9 +353,16 @@ namespace Genie
 			{
 				const Process& process = GetProcess( itsPID );
 				
+				char state_code = ProcessStateCode( process.GetSchedule() );
+				
+				if ( process.GetLifeStage() == kProcessReleased )
+				{
+					state_code = 'X';
+				}
+				
 				pid_t ppid = process.GetPPID();
 				pid_t pgid = process.GetPGID();
-				pid_t sid = process.GetSID();
+				pid_t sid  = process.GetSID();
 				
 				const boost::shared_ptr< IOHandle >& term = process.ControllingTerminal();
 				
@@ -381,7 +388,7 @@ namespace Genie
 				
 				return NN::Convert< std::string >( itsPID ) + " "
 				       "(" + process.ProgramName() + ")"      " " +
-				       ProcessStateCode( process.GetSchedule() ) + " " +
+				       state_code                           + " " +
 				       NN::Convert< std::string >( ppid   ) + " " +
 				       NN::Convert< std::string >( pgid   ) + " " +
 				       NN::Convert< std::string >( sid    ) + " " +
