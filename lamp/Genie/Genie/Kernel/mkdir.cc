@@ -30,6 +30,8 @@ namespace Genie
 			
 			FSTreePtr location = ResolvePathname( pathname, current );
 			
+			// Do not resolve links
+			
 			location->CreateDirectory( mode );
 		}
 		catch ( ... )

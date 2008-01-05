@@ -82,6 +82,8 @@ namespace Genie
 			FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec();
 			FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec();
 			
+			// Do not resolve links
+			
 			N::Str63 requestedDestName = UntweakMacFilename( Basename( dest ) );
 			
 			// Can't move across volumes

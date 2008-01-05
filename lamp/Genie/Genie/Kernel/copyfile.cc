@@ -60,6 +60,8 @@ namespace Genie
 			const FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec();
 			const FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec();
 			
+			// Do not resolve links
+			
 			N::FSDirSpec destDir = io::get_preceding_directory( destFile );
 			
 			bool renaming = !std::equal( srcFile.name,

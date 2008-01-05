@@ -81,6 +81,8 @@ namespace Genie
 		// Target pathname is resolved relative to the location of the link file
 		FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSSpec( linkParentSpec ) );
 		
+		// Do not resolve links -- if the target of this link is another symlink, so be it
+		
 		FSSpec targetSpec = target->GetFSSpec();
 		
 		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
@@ -109,6 +111,8 @@ namespace Genie
 			FSTreePtr current = CurrentProcess().GetCWD();
 			
 			FSTreePtr link = ResolvePathname( link_location, current );
+			
+			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
 			struct ::stat location_status;
 			
@@ -159,6 +163,8 @@ namespace Genie
 			FSTreePtr current = CurrentProcess().GetCWD();
 			
 			FSTreePtr link = ResolvePathname( path, current );
+			
+			// Do not resolve links -- we want the target even if it's another symlink
 			
 			std::string linkPath = link->ReadLink();
 			

@@ -37,6 +37,8 @@ namespace Genie
 			
 			FSTreePtr file = ResolvePathname( pathname, current );
 			
+			// Do not resolve links -- delete the symlink
+			
 			struct ::stat sb;
 			
 			file->Stat( sb );

@@ -43,6 +43,8 @@ namespace Genie
 			
 			FSTreePtr dir = ResolvePathname( pathname, current );
 			
+			// Do not resolve links
+			
 			struct ::stat sb;
 			
 			dir->Stat( sb );
