@@ -93,18 +93,6 @@ namespace Genie
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
 			
 			sock.Bind( *name, namelen );
-			
-			/*
-			if ( files[ sockfd ].handle.IsType( kSocketDescriptor ) )
-			{
-				SocketHandle& sock = IORef_Cast< SocketHandle >( files[ sockfd ].handle );
-				sock.Bind( inetAddress, namelen );
-			}
-			else
-			{
-				return CurrentProcess().SetErrno( ENOTSOCK );
-			}
-			*/
 		}
 		catch ( ... )
 		{
