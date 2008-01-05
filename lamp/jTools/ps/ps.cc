@@ -108,22 +108,46 @@ static void report_process( const std::string& pid_name )
 	
 	std::string sid_string( p_sid, space );
 	
+	const char* p_termname = space + 1;
+	
+	space = std::find( p_termname, end, ' ' );
+	
+	std::string term_string( p_termname, space );
+	
+	const char* p_tpgid = space + 1;
+	
+	space = std::find( p_tpgid, end, ' ' );
+	
+	std::string tpgid_string( p_tpgid, space );
+	
 	pid_t pid = std::atoi( pid_name.c_str() );
 	
-	pid_t ppid = std::atoi( p_ppid );
-	pid_t pgid = std::atoi( p_pgid );
-	pid_t sid  = std::atoi( p_sid  );
+	pid_t ppid  = std::atoi( p_ppid  );
+	pid_t pgid  = std::atoi( p_pgid  );
+	pid_t sid   = std::atoi( p_sid   );
+	pid_t tpgid = std::atoi( p_tpgid );
+	
+	term_string.erase( 0, STRLEN( "/dev/" ) );
 	
 	if ( pid == sid )
 	{
 		stat_string += 's';
 	}
 	
+	if ( pgid == tpgid )
+	{
+		stat_string += '+';
+	}
+	
 	std::string report;
 	
 	report += left_padded( pid_name, 5 );
 	
-	report += "  ";
+	report += " ";
+	
+	report += right_padded( term_string, 7 );
+	
+	report += " ";
 	
 	report += right_padded( stat_string, 4 );
 	
@@ -161,7 +185,7 @@ static void report_process( const std::string& pid_name )
 
 static void ps()
 {
-	p7::write( p7::stdout_fileno, STR_LEN( "  PID  STAT   PPID   PGID    SID  COMMAND\n" ) );
+	p7::write( p7::stdout_fileno, STR_LEN( "  PID TERM    STAT   PPID   PGID    SID  COMMAND\n" ) );
 	
 	DIR* iter = opendir( "/proc" );
 	
