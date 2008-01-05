@@ -88,18 +88,6 @@ namespace Genie
 		return errnum;
 	}
 	
-	static int SetErrnoFromExceptionInSystemCall( Process& process )
-	{
-		p7::errno_t errnum = GetErrnoFromException();
-		
-		return process.SetErrno( errnum );
-	}
-	
-	int SetErrnoFromExceptionInSystemCall()
-	{
-		return SetErrnoFromExceptionInSystemCall( CurrentProcess() );
-	}
-	
 	
 	SystemCallFrame::SystemCallFrame( const char* name ) : itsCaller( CurrentProcess() ),
 	                                                       itsName  ( name ),
@@ -174,7 +162,7 @@ namespace Genie
 		
 		try
 		{
-			*outFSS = ResolvePathname( pathname, CurrentProcess().GetCWD() )->GetFSSpec();
+			*outFSS = ResolvePathname( pathname, frame.Caller().GetCWD() )->GetFSSpec();
 		}
 		catch ( const N::OSStatus& err )
 		{
@@ -198,7 +186,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "alarm" );
 		
-		return CurrentProcess().SetAlarm( seconds );
+		return frame.Caller().SetAlarm( seconds );
 	}
 	
 	REGISTER_SYSTEM_CALL( alarm );
@@ -214,11 +202,11 @@ namespace Genie
 				return frame.SetErrno( EINVAL );
 			}
 			
-			FSTreePtr newCWD = ResolvePathname( pathname, CurrentProcess().GetCWD() );
+			FSTreePtr newCWD = ResolvePathname( pathname, frame.Caller().GetCWD() );
 			
 			ResolveLinks_InPlace( newCWD );
 			
-			CurrentProcess().ChangeDirectory( newCWD );
+			frame.Caller().ChangeDirectory( newCWD );
 			
 			return 0;
 		}
@@ -288,7 +276,7 @@ namespace Genie
 		
 		try
 		{
-			Process& current( CurrentProcess() );
+			Process& current( frame.Caller() );
 			
 			bool forked = current.Forked();
 			
@@ -372,7 +360,7 @@ namespace Genie
 		// ResumeAfterFork() calls Resume() and LeaveSystemCall().
 		SystemCallFrame frame( "_exit" );
 		
-		Process& current( CurrentProcess() );
+		Process& current( frame.Caller() );
 		
 		current.Exit( status );  // doesn't return unless forked
 		
@@ -389,7 +377,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr cwd = CurrentProcess().GetCWD();
+			FSTreePtr cwd = frame.Caller().GetCWD();
 			
 			std::string result = cwd->Pathname();
 			
@@ -425,7 +413,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getpid" );
 		
-		return CurrentProcess().GetPID();
+		return frame.Caller().GetPID();
 	}
 	
 	REGISTER_SYSTEM_CALL( getpid );
@@ -434,7 +422,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "getppid" );
 		
-		return CurrentProcess().GetPPID();
+		return frame.Caller().GetPPID();
 	}
 	
 	REGISTER_SYSTEM_CALL( getppid );
@@ -475,7 +463,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "pause" );
 		
-		CurrentProcess().Raise( SIGSTOP );  // Sleep, until...
+		frame.Caller().Raise( SIGSTOP );  // Sleep, until...
 		
 		return frame.SetErrno( EINTR );
 	}
@@ -486,7 +474,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "pipe" );
 		
-		FileDescriptorMap& files = CurrentProcess().FileDescriptors();
+		FileDescriptorMap& files = frame.Caller().FileDescriptors();
 		
 		int reader = LowestUnusedFileDescriptor( 3 );
 		int writer = LowestUnusedFileDescriptor( reader + 1 );
@@ -566,7 +554,7 @@ namespace Genie
 				p7::throw_errno( EINVAL );
 			}
 			
-			Process& current = CurrentProcess();
+			Process& current = frame.Caller();
 			
 			Process& target( pid != 0 ? GetProcess( pid )
 			                          : current );
@@ -646,7 +634,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr file = ResolvePathname( path, CurrentProcess().GetCWD() );
+			FSTreePtr file = ResolvePathname( path, frame.Caller().GetCWD() );
 			
 			ResolveLinks_InPlace( file );
 			

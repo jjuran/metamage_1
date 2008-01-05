@@ -9,8 +9,6 @@
 namespace Genie
 {
 	
-	int SetErrnoFromExceptionInSystemCall();
-	
 	class Process;
 	
 	class SystemCallFrame
