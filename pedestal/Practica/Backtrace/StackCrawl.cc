@@ -10,6 +10,9 @@
 #include <MachineExceptions.h>
 #endif
 
+// Standard C/C++
+#include <cstdio>
+
 // Standard C
 #include <setjmp.h>
 
@@ -49,9 +52,15 @@ namespace Backtrace
 			return -1;  // handled by debugger
 		}
 		
-		if ( exception->theKind == kUnmappedMemoryException )
+		switch ( exception->theKind )
 		{
-			longjmp( gStackCrawlJmpBuf, 1 );
+			case kAccessException:
+			case kUnmappedMemoryException:
+				longjmp( gStackCrawlJmpBuf, exception->theKind );
+				// not reached
+			
+			default:
+				break;
 		}
 		
 		return -1;
@@ -320,7 +329,22 @@ namespace Backtrace
 	
 #endif
 	
-	class UnmappedMemoryException {};
+#if defined( __MACOS__ ) && defined( __POWERPC__ )
+	
+	class MachineException
+	{
+		private:
+			::ExceptionKind itsKind;
+		
+		public:
+			MachineException() : itsKind()  {}
+			
+			MachineException( ::ExceptionKind kind ) : itsKind( kind )  {}
+			
+			::ExceptionKind Get() const  { return itsKind; }
+	};
+	
+#endif
 	
 	static std::vector< ReturnAddress > MakeStackCrawl( const StackFrame* top )
 	{
@@ -332,21 +356,27 @@ namespace Backtrace
 			
 			ScopeToTrapUnmappedMemoryExceptions trappingUnmappedMemoryExceptions;
 			
-			if ( setjmp( gStackCrawlJmpBuf ) )
+			if ( ::ExceptionKind kind = setjmp( gStackCrawlJmpBuf ) )
 			{
 				// exception handler invoked
 				
-				throw UnmappedMemoryException();
+				throw MachineException( kind );
 			}
 			
 		#endif
 			
 			CrawlStack( top, result );
 		}
-		catch ( const UnmappedMemoryException& )
+		
+	#if defined( __MACOS__ ) && defined( __POWERPC__ )
+		
+		catch ( const MachineException& e )
 		{
-			//std::fprintf( stderr, "Unmapped memory exception caught during stack crawl\n" );
+			std::fprintf( stderr, "Machine exception type %d caught during stack crawl\n", e.Get() );
 		}
+		
+	#endif
+		
 		catch ( const std::bad_alloc& )
 		{
 		}
