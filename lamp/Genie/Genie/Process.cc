@@ -745,7 +745,7 @@ namespace Genie
 		{
 			// This stops the thread immediately.
 			// If we receive a fatal signal while stopped, the thread dies.
-			Raise( SIGSTOP );
+			Stop();
 		}
 	}
 	
