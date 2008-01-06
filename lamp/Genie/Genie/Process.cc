@@ -408,7 +408,7 @@ namespace Genie
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
-		const void* toolScratch[2] = { DispatchSystemCall, DispatchSystemCall };
+		const void* toolScratch[2] = { DispatchSystemCall, NULL };
 		
 		LMSetToolScratch( toolScratch );
 		
