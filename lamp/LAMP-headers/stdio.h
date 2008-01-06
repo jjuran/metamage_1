@@ -38,7 +38,12 @@
 #ifndef	_STDIO_H_
 #define	_STDIO_H_
 
+#undef _POSIX
+
+// declares a bad fdopen() if _POSIX is defined
 #include <CWANSIIncludes/stdio.h>
+
+FILE* fdopen( int fd, const char *type );
 
 #include <sys/cdefs.h>
 #include <sys/_types.h>
