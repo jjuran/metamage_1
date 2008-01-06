@@ -27,6 +27,11 @@ namespace Genie
 		
 		Process& current = frame.Caller();
 		
+		if ( pid == 1 )
+		{
+			return current.SetErrno( EPERM );
+		}
+		
 		try
 		{
 			switch ( request )
@@ -38,6 +43,25 @@ namespace Genie
 					}
 					
 					current.StartTracing( current.GetPPID() );
+					
+					return 0;
+				
+				default:
+					break;
+			}
+			
+			Process& target = GetProcess( pid );
+			
+			if ( target.GetTracingProcess() != current.GetPID() )
+			{
+				return current.SetErrno( ESRCH );
+			}
+			
+			switch ( request )
+			{
+				case PTRACE_CONT:
+					
+					target.Continue();
 					
 					return 0;
 				
