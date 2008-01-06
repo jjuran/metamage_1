@@ -1156,20 +1156,8 @@ namespace Genie
 		return result;
 	}
 	
-	// Doesn't return if the process was current and receives a fatal signal while stopped.
-	// But always returns when *raising* a fatal signal.
-	void Process::Raise( int signal )
+	void Process::DeliverSignal( int signal )
 	{
-		if ( itsLifeStage >= kProcessTerminating  ||  itsResult != 0 )
-		{
-			return;
-		}
-		
-		if ( IsBeingTraced()  &&  signal != SIGKILL )
-		{
-			Stop();
-		}
-		
 		sig_t action = itsSignalMap[ signal ];
 		
 		if ( action == SIG_IGN )
@@ -1246,6 +1234,25 @@ namespace Genie
 			itsPendingSignals |= 1 << signal - 1;
 			
 			Continue();
+		}
+	}
+	
+	// Doesn't return if the process was current and receives a fatal signal while stopped.
+	// But always returns when *raising* a fatal signal.
+	void Process::Raise( int signal )
+	{
+		if ( itsLifeStage >= kProcessTerminating  ||  itsResult != 0 )
+		{
+			return;
+		}
+		
+		if ( IsBeingTraced()  &&  signal != SIGKILL )
+		{
+			Stop();
+		}
+		else
+		{
+			DeliverSignal( signal );
 		}
 	}
 	

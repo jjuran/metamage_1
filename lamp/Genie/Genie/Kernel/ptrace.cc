@@ -4,6 +4,7 @@
  */
 
 // POSIX
+#include "signal.h"
 #include "sys/ptrace.h"
 #include "unistd.h"
 
@@ -61,7 +62,14 @@ namespace Genie
 			{
 				case PTRACE_CONT:
 					
-					target.Continue();
+					if ( data > 0  &&  data < NSIG  &&  data != SIGSTOP )
+					{
+						target.DeliverSignal( data );
+					}
+					else
+					{
+						target.Continue();
+					}
 					
 					return 0;
 				

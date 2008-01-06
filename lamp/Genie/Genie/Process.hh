@@ -232,6 +232,8 @@ namespace Genie
 			
 			sig_t SetSignalAction( int signal, sig_t signalAction );
 			
+			void DeliverSignal( int signal );
+			
 			void Raise( int signal );
 			
 			void SuspendForFork( pid_t childPID );
