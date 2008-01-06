@@ -1053,9 +1053,11 @@ namespace Genie
 		
 		itsLifeStage = kProcessZombie;
 		
-		if ( ppid > 1 )
+		Process& parent = GetProcess( ppid );
+		
+		if ( ppid > 1  &&  parent.itsSignalMap[ SIGCHLD ] != SIG_IGN )
 		{
-			GetProcess( ppid ).Raise( SIGCHLD );
+			parent.Raise( SIGCHLD );
 		}
 		else
 		{
