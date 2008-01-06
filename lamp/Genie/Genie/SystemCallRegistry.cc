@@ -18,6 +18,7 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_ioctl    )
 	DECLARE_MODULE_INIT( Kernel_mkdir    )
 	DECLARE_MODULE_INIT( Kernel_netdb    )
+	DECLARE_MODULE_INIT( Kernel_pump     )
 	DECLARE_MODULE_INIT( Kernel_realpath )
 	DECLARE_MODULE_INIT( Kernel_rename   )
 	DECLARE_MODULE_INIT( Kernel_rmdir    )
@@ -42,6 +43,7 @@ namespace Genie
 		CALL_MODULE_INIT( Kernel_ioctl    );
 		CALL_MODULE_INIT( Kernel_mkdir    );
 		CALL_MODULE_INIT( Kernel_netdb    );
+		CALL_MODULE_INIT( Kernel_pump     );
 		CALL_MODULE_INIT( Kernel_realpath );
 		CALL_MODULE_INIT( Kernel_rename   );
 		CALL_MODULE_INIT( Kernel_rmdir    );
