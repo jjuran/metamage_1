@@ -28,59 +28,95 @@ namespace Genie
 		
 		Process& current = frame.Caller();
 		
-		if ( pid == 1 )
-		{
-			return frame.SetErrno( EPERM );
-		}
-		
 		try
 		{
-			switch ( request )
+			if ( request == PTRACE_TRACEME )
 			{
-				case PTRACE_TRACEME:
-					if ( current.IsBeingTraced() )
-					{
-						return frame.SetErrno( EPERM );
-					}
-					
-					current.StartTracing( current.GetPPID() );
-					
-					return 0;
+				if ( current.IsBeingTraced() )
+				{
+					return frame.SetErrno( EPERM );
+				}
 				
-				default:
-					break;
+				current.StartTracing( current.GetPPID() );
+				
+				return 0;
+			}
+			
+			// Remaining requests specify target by pid
+			
+			if ( pid == 1 )
+			{
+				// Can't trace init
+				return frame.SetErrno( EPERM );
 			}
 			
 			Process& target = GetProcess( pid );
+			
+			if ( request == PTRACE_ATTACH )
+			{
+				if ( target.IsBeingTraced() )
+				{
+					return frame.SetErrno( EPERM );
+				}
+				
+				target.StartTracing( current.GetPID() );
+				
+				return 0;
+			}
+			
+			// Remaining requests require that the caller is tracing the target
 			
 			if ( target.GetTracingProcess() != current.GetPID() )
 			{
 				return frame.SetErrno( ESRCH );
 			}
 			
+			if ( request == PTRACE_KILL )
+			{
+				target.DeliverSignal( SIGKILL );
+				
+				return 0;
+			}
+			
+			// Remaining requests require tha the target be stoped
+			
+			if ( current.GetSchedule() != kProcessStopped )
+			{
+				return frame.SetErrno( ESRCH );
+			}
+			
 			switch ( request )
 			{
-				case PTRACE_CONT:
-					if ( current.GetSchedule() != kProcessStopped )
+				case PTRACE_GETREGS:
+					if ( addr == NULL )
 					{
-						return frame.SetErrno( ESRCH );
+						return frame.SetErrno( EFAULT );
 					}
 					
+					*((const void**) addr) = target.GetStackFramePointer();
+					
+					break;
+				
+				case PTRACE_CONT:
 					if ( data > 0  &&  data < NSIG  &&  data != SIGSTOP )
 					{
 						target.DeliverSignal( data );
 					}
-					else
+					else if ( data == 0 )
 					{
 						target.Continue();
 					}
+					else
+					{
+						return frame.SetErrno( EIO );
+					}
 					
-					return 0;
+					break;
 				
-				case PTRACE_KILL:
-					current.DeliverSignal( SIGKILL );
+				case PTRACE_DETACH:
+					target.StopTracing();
 					
-					return 0;
+					break;
 				
 				default:
 					return frame.SetErrno( EINVAL );
@@ -90,6 +126,8 @@ namespace Genie
 		{
 			return frame.SetErrnoFromException();
 		}
+		
+		return 0;
 	}
 	
 	REGISTER_SYSTEM_CALL( ptrace );
