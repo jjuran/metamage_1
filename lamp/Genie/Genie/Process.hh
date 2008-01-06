@@ -38,6 +38,7 @@
 #include "Genie/Process/Environ.hh"
 #include "Genie/Process/LongJumper.hh"
 #include "Genie/Process/TimeKeeper.hh"
+#include "Genie/Process/TraceTarget.hh"
 #include "Genie/ProcessGroup.hh"
 
 
@@ -112,7 +113,8 @@ namespace Genie
 	
 	class Process : public Environ,
 	                public TimeKeeper,
-	                public LongJumper
+	                public LongJumper,
+	                public TraceTarget
 	{
 		public:
 			enum
@@ -129,8 +131,6 @@ namespace Genie
 			boost::shared_ptr< ProcessGroup > itsProcessGroup;
 			
 			Backtrace::StackFramePtr itsStackFramePtr;
-			
-			pid_t itsTracingProcess;
 			
 			UInt64 itsAlarmClock;
 			
@@ -199,13 +199,6 @@ namespace Genie
 			void SetProcessGroup( const boost::shared_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
 			
 			Backtrace::StackFramePtr GetStackFramePointer() const  { return itsStackFramePtr; }
-			
-			pid_t GetTracingProcess() const  { return itsTracingProcess; }
-			bool IsBeingTraced() const  { return itsTracingProcess != 0; }
-			
-			void StartTracing( pid_t tracingProcess )  { itsTracingProcess = tracingProcess; }
-			
-			void StopTracing()  { itsTracingProcess = 0; }
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }
