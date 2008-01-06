@@ -515,14 +515,17 @@ namespace Genie
 		{
 			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
 			
-			const std::string& peekBuffer = stream.Peek( minBytes );
-			
-			if ( buffer != NULL )
+			if ( const std::string* peekBuffer = stream.Peek( minBytes ) )
 			{
-				*buffer = peekBuffer.c_str();
+				if ( buffer != NULL )
+				{
+					*buffer = peekBuffer->c_str();
+				}
+				
+				return peekBuffer->size();
 			}
 			
-			return peekBuffer.size();
+			return 0;
 		}
 		catch ( ... )
 		{

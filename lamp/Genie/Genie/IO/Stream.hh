@@ -22,7 +22,7 @@ namespace Genie
 	class StreamHandle : public IOHandle
 	{
 		private:
-			std::string peekBuffer;
+			std::string itsPeekBuffer;
 		
 		public:
 			virtual ~StreamHandle();
@@ -46,7 +46,7 @@ namespace Genie
 			
 			void TryAgainLater() const;
 			
-			const std::string& Peek( ByteCount minBytes );
+			const std::string* Peek( ByteCount minBytes );
 			
 			unsigned int Poll() const;
 			

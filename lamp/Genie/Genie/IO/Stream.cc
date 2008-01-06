@@ -39,16 +39,16 @@ namespace Genie
 	// We Read() until we have enough data.  If there're not enough data available,
 	// then we either block, or throw EWOULDBLOCK if the stream is non-blocking.
 	
-	const std::string& StreamHandle::Peek( ByteCount minBytes )
+	const std::string* StreamHandle::Peek( ByteCount minBytes )
 	{
 		if ( IsDisconnected() )
 		{
 			p7::throw_errno( EIO );
 		}
 		
-		while ( peekBuffer.size() < minBytes )
+		while ( itsPeekBuffer.size() < minBytes )
 		{
-			const ByteCount kBufferLength = 512;
+			const ByteCount kBufferLength = 4096;
 			
 			char data[ kBufferLength ];
 			
@@ -56,13 +56,13 @@ namespace Genie
 			
 			if ( bytes == 0 )
 			{
-				throw io::end_of_input();
+				return NULL;
 			}
 			
-			peekBuffer.append( data, bytes );
+			itsPeekBuffer.append( data, bytes );
 		}
 		
-		return peekBuffer;
+		return &itsPeekBuffer;
 	}
 	
 	unsigned int StreamHandle::Poll() const
@@ -72,7 +72,7 @@ namespace Genie
 			p7::throw_errno( EIO );
 		}
 		
-		return SysPoll() | (peekBuffer.empty() ? 0 : kPollRead);
+		return SysPoll() | (itsPeekBuffer.empty() ? 0 : kPollRead);
 	}
 	
 	int StreamHandle::Read( char* data, std::size_t byteCount )
@@ -82,22 +82,40 @@ namespace Genie
 			p7::throw_errno( EIO );
 		}
 		
-		ByteCount bytesRead = std::min( peekBuffer.size(), byteCount );
+		ByteCount bytesRead = std::min( itsPeekBuffer.size(), byteCount );
+		
+		if ( data != NULL )
+		{
+			// copy data out of peek buffer
+			std::copy( itsPeekBuffer.begin(),
+			           itsPeekBuffer.begin() + bytesRead,
+			           data );
+			
+			// advance dest mark for further reads
+			data += bytesRead;
+		}
 		
 		if ( bytesRead > 0 )
 		{
-			std::copy( peekBuffer.begin(),
-			           peekBuffer.begin() + bytesRead,
-			           data );
+			// slide unread data in peek buffer to beginning
+			std::copy( itsPeekBuffer.begin() + bytesRead,
+			           itsPeekBuffer.end(),
+			           itsPeekBuffer.begin() );
 			
-			std::copy( peekBuffer.begin() + bytesRead,
-			           peekBuffer.end(),
-			           peekBuffer.begin() );
+			itsPeekBuffer.resize( itsPeekBuffer.size() - bytesRead );
 			
-			peekBuffer.resize( peekBuffer.size() - bytesRead );
-			
-			data += bytesRead;
+			// adjust request size
 			byteCount -= bytesRead;
+		}
+		
+		if ( data == NULL )
+		{
+			if ( bytesRead == 0 )
+			{
+				p7::throw_errno( EFAULT );
+			}
+			
+			return bytesRead;
 		}
 		
 		try
