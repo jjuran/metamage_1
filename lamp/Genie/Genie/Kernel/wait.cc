@@ -28,12 +28,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static bool StoppedWhileTracing( const Process& process )
-	{
-		return process.IsBeingTraced()  &&  process.GetSchedule() == kProcessStopped;
-	}
-	
-	static Process* CheckAny( pid_t ppid, pid_t pid )
+	static Process* CheckAny( pid_t ppid, pid_t pid, bool match_untraced )
 	{
 		pid_t pgid = pid == -1 ? 0
 		           : pid ==  0 ? CurrentProcess().GetPGID()
@@ -53,11 +48,13 @@ namespace Genie
 			
 			bool terminated   = proc.GetLifeStage() == kProcessZombie;
 			
-			bool traced       = StoppedWhileTracing( proc );
+			bool stopped      = proc.GetSchedule() == kProcessStopped;
+			
+			bool traced       = proc.IsBeingTraced();
 			
 			if ( is_child && pgid_matches )
 			{
-				if ( terminated || traced )
+				if ( terminated  ||  stopped && (traced || match_untraced) )
 				{
 					return &proc;
 				}
@@ -74,7 +71,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static Process* CheckPID( pid_t ppid, pid_t pid )
+	static Process* CheckPID( pid_t ppid, pid_t pid, bool match_untraced )
 	{
 		Process* process = FindProcess( pid );
 		
@@ -92,9 +89,11 @@ namespace Genie
 		
 		bool terminated = process->GetLifeStage() == kProcessZombie;
 		
-		bool traced     = StoppedWhileTracing( *process );
+		bool stopped    = process->GetSchedule() == kProcessStopped;
 		
-		if ( terminated || traced )
+		bool traced     = process->IsBeingTraced();
+		
+		if ( terminated  ||  stopped && (traced || match_untraced) )
 		{
 			return process;
 		}
@@ -111,16 +110,18 @@ namespace Genie
 		
 		pid_t ppid = caller.GetPID();
 		
+		bool untraced = options & WUNTRACED;
+		
 		try
 		{
 			while ( true )
 			{
-				if ( Process* child = pid == -1 ? CheckAny( ppid, pid )
-				                                : CheckPID( ppid, pid ) )
+				if ( Process* child = pid == -1 ? CheckAny( ppid, pid, untraced )
+				                                : CheckPID( ppid, pid, untraced ) )
 				{
 					if ( stat_loc != NULL )
 					{
-						*stat_loc = child->Result();
+						*stat_loc = child->GetSchedule() == kProcessStopped ? 0x7f : child->Result();
 					}
 					
 					pid_t found_pid = child->GetPID();
@@ -135,7 +136,7 @@ namespace Genie
 					return found_pid;
 				}
 				
-				if ( options & 1 )
+				if ( options & WNOHANG )
 				{
 					// no hang
 					return 0;
