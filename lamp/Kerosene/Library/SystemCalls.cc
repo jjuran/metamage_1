@@ -129,9 +129,8 @@ DEFINE_STUB( uname )
 
 DEFINE_STUB( dup2 )
 DEFINE_STUB( getppid )
-
+DEFINE_STUB( sigprocmask )
 DEFINE_STUB( setsid )
-
 DEFINE_STUB( sigaction )
 
 DEFINE_STUB( sigsuspend )
@@ -168,7 +167,7 @@ DEFINE_STUB( recv )
 DEFINE_STUB( sendto )
 DEFINE_STUB( recvfrom )
 
-DEFINE_STUB( sigprocmask )
+DEFINE_STUB( pump )
 
 DEFINE_STUB( getenv )
 DEFINE_STUB( setenv )
