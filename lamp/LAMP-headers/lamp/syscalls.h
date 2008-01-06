@@ -70,7 +70,7 @@
 #define __NR_ustat                      62
 #define __NR_dup2                       63
 #define __NR_getppid                    64
-#define __NR_getpgrp                    65
+#define __NR_sigprocmask                65
 #define __NR_setsid                     66
 #define __NR_sigaction                  67
 #define __NR_sgetmask                   68
@@ -128,8 +128,10 @@
 #define __NR_recv                      121
 #define __NR_sendto                    122
 #define __NR_recvfrom                  123
-
-#define __NR_sigprocmask               126
+// 124
+// 125
+// 126
+#define __NR_pump                      127
 
 #define __NR_getenv                    128
 #define __NR_setenv                    129
