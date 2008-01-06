@@ -30,7 +30,7 @@ namespace Genie
 		
 		if ( pid == 1 )
 		{
-			return current.SetErrno( EPERM );
+			return frame.SetErrno( EPERM );
 		}
 		
 		try
@@ -40,7 +40,7 @@ namespace Genie
 				case PTRACE_TRACEME:
 					if ( current.IsBeingTraced() )
 					{
-						return current.SetErrno( EPERM );
+						return frame.SetErrno( EPERM );
 					}
 					
 					current.StartTracing( current.GetPPID() );
@@ -55,12 +55,16 @@ namespace Genie
 			
 			if ( target.GetTracingProcess() != current.GetPID() )
 			{
-				return current.SetErrno( ESRCH );
+				return frame.SetErrno( ESRCH );
 			}
 			
 			switch ( request )
 			{
 				case PTRACE_CONT:
+					if ( current.GetSchedule() != kProcessStopped )
+					{
+						return frame.SetErrno( ESRCH );
+					}
 					
 					if ( data > 0  &&  data < NSIG  &&  data != SIGSTOP )
 					{
@@ -73,8 +77,13 @@ namespace Genie
 					
 					return 0;
 				
+				case PTRACE_KILL:
+					current.DeliverSignal( SIGKILL );
+					
+					return 0;
+				
 				default:
-					return current.SetErrno( EINVAL );
+					return frame.SetErrno( EINVAL );
 			}
 		}
 		catch ( ... )
