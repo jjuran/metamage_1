@@ -80,7 +80,7 @@ namespace Genie
 			
 			// Remaining requests require tha the target be stoped
 			
-			if ( current.GetSchedule() != kProcessStopped )
+			if ( target.GetSchedule() != kProcessStopped )
 			{
 				return frame.SetErrno( ESRCH );
 			}
