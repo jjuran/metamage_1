@@ -255,6 +255,12 @@ namespace ALine
 	
 	static void BuildTarget( const Project& project, TargetInfo targetInfo )
 	{
+		std::string targetName = MakeTargetName( targetInfo );
+		
+		std::string targetDir = TargetDirPath( targetName );
+		
+		chdir( targetDir.c_str() );
+		
 		const std::vector< ProjName >& prereqs = project.AllUsedProjects();
 		std::for_each
 		(
