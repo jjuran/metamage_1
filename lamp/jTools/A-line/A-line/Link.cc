@@ -307,7 +307,7 @@ namespace ALine
 		
 		time_t outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
 		
-		bool needToLink = !outFileExists;
+		bool needToLink = Options().all || !outFileExists;
 		
 		std::vector< std::string > objectFiles;
 		

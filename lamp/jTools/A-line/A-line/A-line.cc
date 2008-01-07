@@ -324,6 +324,10 @@ int O::Main( int argc, argv_t argv )
 	
 	// Actions
 	
+	O::BindOption( "-a", gOptions.all );
+	
+	O::AliasOption( "-a", "--all" );
+	
 	O::BindOption( "-n", gDryRun );
 	
 	O::AliasOption( "-n", "--dry-run" );

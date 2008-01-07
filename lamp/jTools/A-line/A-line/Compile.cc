@@ -318,7 +318,7 @@ namespace ALine
 			// (for comparison to source files)
 			pchImageDate = 0xFFFFFFFFU;
 			
-			if ( io::file_exists( pchImage ) )
+			if ( !Options().all && io::file_exists( pchImage ) )
 			{
 				time_t pchImageModifiedDate = ModifiedDate( pchImage );
 				
@@ -392,7 +392,7 @@ namespace ALine
 			
 			// If the object file doesn't exist, we definitely need to compile.
 			// But if it does...
-			if ( io::item_exists( objectFile ) )
+			if ( !Options().all && io::item_exists( objectFile ) )
 			{
 				// The effective modification date of the file, considering only
 				// a precompiled header (if available).  If the precompiled header

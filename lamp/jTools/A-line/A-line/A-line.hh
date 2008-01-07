@@ -25,6 +25,7 @@ namespace ALine
 	
 	struct OptionsRecord
 	{
+		bool all;
 		bool verbose;
 		bool catalog;
 		CD::Platform platform;
