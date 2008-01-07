@@ -170,6 +170,7 @@ namespace Genie
 		private:
 			void Suspend();
 			void Resume();
+			bool Pause( ProcessSchedule newSchedule );
 			
 			void Terminate();
 			void Terminate( int wait_status );

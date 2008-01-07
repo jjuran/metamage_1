@@ -1212,6 +1212,30 @@ namespace Genie
 		ResumeTimer();
 	}
 	
+	bool Process::Pause( ProcessSchedule newSchedule )
+	{
+		itsSchedule = newSchedule;
+		
+		Suspend();
+		
+		itsStackFramePtr = Backtrace::GetStackFramePointer();
+		
+		SaveRegisters( &itsSavedRegisters );
+		
+		if ( newSchedule == kProcessStopped )
+		{
+			N::SetThreadState( GetThread(), N::kStoppedThreadState );
+		}
+		else
+		{
+			N::YieldToAnyThread();
+		}
+		
+		Resume();
+		
+		return HandlePendingSignals();
+	}
+	
 	sig_t Process::SetSignalAction( int signal, sig_t signalAction )
 	{
 		if ( signal == SIGKILL  ||  signal == SIGSTOP  ||  signalAction == SIG_ERR )
@@ -1484,24 +1508,13 @@ namespace Genie
 			
 			ASSERT( N::GetCurrentThread() == thread );
 			
-			itsStackFramePtr = Backtrace::GetStackFramePointer();
-			
-			SaveRegisters( &itsSavedRegisters );
-			
-			Suspend();
+			Pause( kProcessStopped );
 		}
-		
-		itsSchedule = kProcessStopped;
-		
-		// Yields if this is the current thread
-		N::SetThreadState( thread, N::kStoppedThreadState );
-		
-		if ( N::GetCurrentThread() == thread )
+		else
 		{
-			Resume();
+			itsSchedule = kProcessStopped;
 			
-			// Doesn't return if we received a fatal signal.
-			HandlePendingSignals();
+			N::SetThreadState( thread, N::kStoppedThreadState );
 		}
 	}
 	
@@ -1539,22 +1552,10 @@ namespace Genie
 	// This function doesn't return if we received a fatal signal.
 	void Process::Yield()
 	{
-		itsSchedule = kProcessSleeping;
-		
-		itsStackFramePtr = Backtrace::GetStackFramePointer();
-		
-		SaveRegisters( &itsSavedRegisters );
-		
-		Suspend();
-		
-		N::YieldToAnyThread();
-		
-		Resume();
+		// Doesn't return if we received a fatal signal.
+		bool signalled = Pause( kProcessSleeping );
 		
 		gTickCountOfLastSleep = ::TickCount();
-		
-		// Doesn't return if we received a fatal signal.
-		bool signalled = HandlePendingSignals();
 		
 		if ( signalled )
 		{
