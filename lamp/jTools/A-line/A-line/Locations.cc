@@ -115,7 +115,7 @@ namespace ALine
 		return ProjectConfigDirPath( projectPath ) / "Source.list";
 	}
 	
-	static std::string TargetDirPath( const std::string& target )
+	std::string TargetDirPath( const std::string& target )
 	{
 		return CreateDirPath( UserLabDirPath() / target );
 	}
@@ -125,9 +125,9 @@ namespace ALine
 		return CreateDirPath( TargetDirPath( target ) / subdir );
 	}
 	
-	static std::string ProjectTargetDirPath( const std::string& proj, const std::string& target )
+	std::string TargetLibrariesDirPath( const std::string& target )
 	{
-		return CreateDirPath( TargetDirPath( target ) / proj );
+		return TargetSubdirPath( target, "Libraries" );
 	}
 	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj, const std::string& target )
@@ -148,11 +148,6 @@ namespace ALine
 	std::string ProjectOutputDirPath( const std::string& proj, const std::string& target )
 	{
 		return CreateDirPath( TargetSubdirPath( target, "Output" ) / proj );
-	}
-	
-	std::string ProjectLibrariesDirPath( const std::string& proj, const std::string& target )
-	{
-		return TargetSubdirPath( target, "Libraries" );
 	}
 	
 }

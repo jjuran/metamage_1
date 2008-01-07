@@ -20,6 +20,9 @@ namespace ALine
 	
 	std::string SourceDotListFile( const std::string& projectPath );
 	
+	std::string TargetDirPath         ( const std::string& target );
+	std::string TargetLibrariesDirPath( const std::string& target );
+	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj, const std::string& target );
 	std::string ProjectPrecompiledDirPath( const std::string& proj, const std::string& target );
 	std::string ProjectObjectsDirPath    ( const std::string& proj, const std::string& target );
