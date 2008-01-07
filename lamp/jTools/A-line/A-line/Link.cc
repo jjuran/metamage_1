@@ -168,10 +168,9 @@ namespace ALine
 	static std::string gLibraryPrefix;
 	static std::string gLibraryExtension;
 	
-	static std::string GetPathnameOfBuiltLibrary( const std::string& name, const std::string& targetName )
+	static std::string GetPathnameOfBuiltLibrary( const std::string& name )
 	{
-		//return TargetLibrariesDirPath( targetName ) / gLibraryPrefix + name + gLibraryExtension;
-		return "Libraries" / gLibraryPrefix + name + gLibraryExtension;
+		return LibrariesDirPath() / gLibraryPrefix + name + gLibraryExtension;
 	}
 	
 	static bool ProjectBuildsLib( const Project& project )
@@ -212,8 +211,6 @@ namespace ALine
 	
 	void LinkProduct( const Project& project, TargetInfo targetInfo )
 	{
-		TargetName targetName = MakeTargetName( targetInfo );
-		
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
 		
 		gLibraryPrefix    = gnu ? "lib" : "";
@@ -296,15 +293,12 @@ namespace ALine
 			command << cmdgen.LinkerOptions();
 		}
 		
-		//std::string objectsDir = ProjectObjectsDirPath( project.Name(), targetName );
-		std::string objectsDir = "Objects" / project.Name();
+		std::string objectsDir = ProjectObjectsDirPath( project.Name() );
 		
-		//std::string libsDir = TargetLibrariesDirPath( targetName );
-		std::string libsDir = "Libraries";
+		std::string libsDir = LibrariesDirPath();
 		
 		std::string outputDir  = project.Product() == productStaticLib ? libsDir
-		                                                               : //ProjectOutputDirPath( project.Name(), targetName );
-		                                                                 "Output" / project.Name();
+		                                                               : ProjectOutputDirPath( project.Name() );
 		
 		std::string outFile = outputDir / linkName;
 		bool outFileExists = io::item_exists( outFile );
@@ -362,8 +356,7 @@ namespace ALine
 				                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
 				                                                    outFileDate ),
 				                                      more::compose1( more::ptr_fun( ModifiedDate ),
-				                                                      std::bind2nd( more::ptr_fun( GetPathnameOfBuiltLibrary ),
-				                                                                    targetName ) ) ) );
+				                                                      more::ptr_fun( GetPathnameOfBuiltLibrary ) ) ) );
 				
 				needToLink = found != usedProjects.end();
 			}

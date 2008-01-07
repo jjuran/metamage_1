@@ -127,11 +127,9 @@ namespace ALine
 	}
 	
 	static std::string DiagnosticsFilePathname( const std::string&  proj,
-	                                            const std::string&  targetName,
 	                                            const std::string&  filename )
 	{
-		//std::string diagnosticsDir = ProjectDiagnosticsDirPath( proj, targetName );
-		std::string diagnosticsDir = "Diagnostics" / proj;
+		std::string diagnosticsDir = ProjectDiagnosticsDirPath( proj );
 		
 		std::string diagnosticsFile = diagnosticsDir / DiagnosticsFilenameFromSourceFilename( filename );
 		
@@ -199,9 +197,7 @@ namespace ALine
 		
 		if ( gnu )
 		{
-			std::string targetName = MakeTargetName( options.Target() );
-			
-			diagnosticsFile = DiagnosticsFilePathname( options.Name(), targetName, filename );
+			diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
 			
 			command += " > " + q( diagnosticsFile ) + " 2>&1";
 		}
@@ -258,9 +254,7 @@ namespace ALine
 		
 		if ( gnu )
 		{
-			std::string targetName = MakeTargetName( options.Target() );
-			
-			command << "> " << q( DiagnosticsFilePathname( options.Name(), targetName, filename ) ) << " 2>&1";
+			command << "> " << q( DiagnosticsFilePathname( options.Name(), filename ) ) << " 2>&1";
 		}
 		
 		QueueCommand( "echo Precompiling:  " + filename );
@@ -271,8 +265,7 @@ namespace ALine
 	                                               std::string        pchSourceName,
 	                                               const TargetInfo&  targetInfo )
 	{
-		//std::string folder = ProjectPrecompiledDirPath( projName, MakeTargetName( targetInfo ) );
-		std::string folder = "PrecompiledHeaders" / projName;
+		std::string folder = ProjectPrecompiledDirPath( projName );
 		
 		bool gnu = targetInfo.toolkit == toolkitGNU;
 		
@@ -357,10 +350,7 @@ namespace ALine
 			}
 		}
 		
-		std::string targetName = MakeTargetName( targetInfo );
-		
-		//std::string outDir = ProjectObjectsDirPath( project.Name(), targetName );
-		std::string outDir = "Objects" / project.Name();
+		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
 		options.SetOutput( outDir );
 		
