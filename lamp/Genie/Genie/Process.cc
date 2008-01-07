@@ -198,6 +198,75 @@ namespace Genie
 	}
 	
 	
+#if TARGET_CPU_68K
+
+	static asm void SaveRegisters( SavedRegisters* saved )
+	{
+		MOVE.W		SR,-(SP)
+		MOVE.L		A0,-(SP)
+		MOVEA.L		10(SP),A0
+		ADD.L		#64,A0
+		MOVEM.L		D0-D7/A0-A7,-(A0)
+		MOVE.L		(SP),32(A0)
+		MOVE.W		4(SP),68(A0)
+		MOVE.L		6(SP),64(A0)
+		MOVEA.L		(SP)+,A0
+		MOVE.W		(SP)+,CCR
+		RTS
+	}
+
+#endif
+
+#if TARGET_CPU_PPC
+
+	static asm void SaveRegisters( SavedRegisters* saved )
+	{
+		stw		r0,0(r3)
+		stw		r1,4(r3)
+		stw		r2,8(r3)
+		stw		r3,12(r3)
+		stw		r4,16(r3)
+		stw		r5,20(r3)
+		stw		r6,24(r3)
+		stw		r7,28(r3)
+		stw		r8,32(r3)
+		stw		r9,36(r3)
+		stw		r10,40(r3)
+		stw		r11,44(r3)
+		stw		r12,48(r3)
+		stw		r13,52(r3)
+		stw		r14,56(r3)
+		stw		r15,60(r3)
+		stw		r16,64(r3)
+		stw		r17,68(r3)
+		stw		r18,72(r3)
+		stw		r19,76(r3)
+		stw		r20,80(r3)
+		stw		r21,84(r3)
+		stw		r22,88(r3)
+		stw		r23,92(r3)
+		stw		r24,96(r3)
+		stw		r25,100(r3)
+		stw		r26,104(r3)
+		stw		r27,108(r3)
+		stw		r28,112(r3)
+		stw		r29,116(r3)
+		stw		r30,120(r3)
+		stw		r31,124(r3)
+		
+		mflr	r0
+		stw		r0,128(r3)
+		
+		mfctr	r0
+		stw		r0,132(r3)
+		
+		lwz		r0,0(r3)
+		
+		blr
+	}
+
+#endif
+	
 	static void Die()
 	{
 		Process& current = CurrentProcess();
@@ -953,6 +1022,8 @@ namespace Genie
 		
 		itsStackFramePtr = Backtrace::GetStackFramePointer( 3 );
 		
+		SaveRegisters( &itsSavedRegisters );
+		
 		Suspend();
 	}
 	
@@ -1415,6 +1486,8 @@ namespace Genie
 			
 			itsStackFramePtr = Backtrace::GetStackFramePointer();
 			
+			SaveRegisters( &itsSavedRegisters );
+			
 			Suspend();
 		}
 		
@@ -1469,6 +1542,8 @@ namespace Genie
 		itsSchedule = kProcessSleeping;
 		
 		itsStackFramePtr = Backtrace::GetStackFramePointer();
+		
+		SaveRegisters( &itsSavedRegisters );
 		
 		Suspend();
 		

@@ -10,6 +10,7 @@
 
 // Genie
 #include "Genie/Process.hh"
+#include "Genie/Process/SavedRegisters.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 #include "Genie/Yield.hh"
@@ -93,7 +94,7 @@ namespace Genie
 						return frame.SetErrno( EFAULT );
 					}
 					
-					*((const void**) addr) = target.GetStackFramePointer();
+					*(SavedRegisters*) addr = target.GetSavedRegisters();
 					
 					break;
 				

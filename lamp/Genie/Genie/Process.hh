@@ -37,6 +37,7 @@
 #include "Genie/FileSystem/FSTree.hh"
 #include "Genie/Process/Environ.hh"
 #include "Genie/Process/LongJumper.hh"
+#include "Genie/Process/SavedRegisters.hh"
 #include "Genie/Process/TimeKeeper.hh"
 #include "Genie/Process/TraceTarget.hh"
 #include "Genie/ProcessGroup.hh"
@@ -132,6 +133,8 @@ namespace Genie
 			
 			Backtrace::StackFramePtr itsStackFramePtr;
 			
+			SavedRegisters itsSavedRegisters;
+			
 			UInt64 itsAlarmClock;
 			
 			UInt32 itsPendingSignals;
@@ -197,6 +200,8 @@ namespace Genie
 			const boost::shared_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
 			void SetProcessGroup( const boost::shared_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
+			
+			SavedRegisters& GetSavedRegisters()  { return itsSavedRegisters; }
 			
 			Backtrace::StackFramePtr GetStackFramePointer() const  { return itsStackFramePtr; }
 			
