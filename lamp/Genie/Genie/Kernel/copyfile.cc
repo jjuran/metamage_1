@@ -18,7 +18,6 @@
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie

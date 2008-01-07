@@ -25,7 +25,6 @@
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie

@@ -20,7 +20,6 @@
 // Genie
 #include "Genie/IO/ConsoleWindow.hh"
 #include "Genie/IO/WindowLiberty.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie

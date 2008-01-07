@@ -29,7 +29,6 @@
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
 #include "Genie/Process.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie

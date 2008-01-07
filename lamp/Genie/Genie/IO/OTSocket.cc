@@ -15,7 +15,7 @@
 #include "Nitrogen/OSUtils.h"
 
 // Genie
-#include "Genie/Yield.hh"
+#include "Genie/Process.hh"
 
 
 namespace Genie

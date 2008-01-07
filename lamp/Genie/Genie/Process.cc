@@ -58,7 +58,6 @@
 #include "Genie/IO/Terminal.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
-#include "Genie/Yield.hh"
 
 
 #if defined(__MWERKS__) && defined(__csignal__)

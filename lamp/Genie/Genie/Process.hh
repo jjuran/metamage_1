@@ -318,6 +318,7 @@ namespace Genie
 	Process* FindProcess( pid_t pid );
 	
 	void Yield();
+	void Breathe();
 	
 	void TryAgainLater( bool isNonblocking );
 	

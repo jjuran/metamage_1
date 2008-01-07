@@ -11,9 +11,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// Genie
-#include "Genie/Yield.hh"
-
 
 namespace Genie
 {

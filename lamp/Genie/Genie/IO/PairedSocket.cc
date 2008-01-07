@@ -14,9 +14,6 @@
 // Nitrogen
 #include "Nitrogen/OSUtils.h"
 
-// Genie
-#include "Genie/Yield.hh"
-
 
 namespace Genie
 {

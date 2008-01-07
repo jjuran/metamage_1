@@ -13,7 +13,6 @@
 
 // Genie
 #include "Genie/Process.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie

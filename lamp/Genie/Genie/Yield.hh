@@ -7,11 +7,10 @@
 #define GENIE_YIELD_HH
 
 
+#warning Obsolete header
+
 namespace Genie
 {
-	
-	void Breathe();
-	void Yield();
 	
 }
 

@@ -33,7 +33,6 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/Process.hh"
-#include "Genie/Yield.hh"
 
 
 namespace Genie
