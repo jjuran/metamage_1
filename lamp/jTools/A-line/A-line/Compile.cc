@@ -130,7 +130,8 @@ namespace ALine
 	                                            const std::string&  targetName,
 	                                            const std::string&  filename )
 	{
-		std::string diagnosticsDir = ProjectDiagnosticsDirPath( proj, targetName );
+		//std::string diagnosticsDir = ProjectDiagnosticsDirPath( proj, targetName );
+		std::string diagnosticsDir = "Diagnostics" / proj;
 		
 		std::string diagnosticsFile = diagnosticsDir / DiagnosticsFilenameFromSourceFilename( filename );
 		
@@ -270,7 +271,8 @@ namespace ALine
 	                                               std::string        pchSourceName,
 	                                               const TargetInfo&  targetInfo )
 	{
-		std::string folder = ProjectPrecompiledDirPath( projName, MakeTargetName( targetInfo ) );
+		//std::string folder = ProjectPrecompiledDirPath( projName, MakeTargetName( targetInfo ) );
+		std::string folder = "PrecompiledHeaders" / projName;
 		
 		bool gnu = targetInfo.toolkit == toolkitGNU;
 		
@@ -357,7 +359,8 @@ namespace ALine
 		
 		std::string targetName = MakeTargetName( targetInfo );
 		
-		std::string outDir = ProjectObjectsDirPath( project.Name(), targetName );
+		//std::string outDir = ProjectObjectsDirPath( project.Name(), targetName );
+		std::string outDir = "Objects" / project.Name();
 		
 		options.SetOutput( outDir );
 		

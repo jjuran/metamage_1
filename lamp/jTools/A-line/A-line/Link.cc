@@ -170,7 +170,8 @@ namespace ALine
 	
 	static std::string GetPathnameOfBuiltLibrary( const std::string& name, const std::string& targetName )
 	{
-		return TargetLibrariesDirPath( targetName ) / gLibraryPrefix + name + gLibraryExtension;
+		//return TargetLibrariesDirPath( targetName ) / gLibraryPrefix + name + gLibraryExtension;
+		return "Libraries" / gLibraryPrefix + name + gLibraryExtension;
 	}
 	
 	static bool ProjectBuildsLib( const Project& project )
@@ -295,12 +296,15 @@ namespace ALine
 			command << cmdgen.LinkerOptions();
 		}
 		
-		std::string objectsDir = ProjectObjectsDirPath( project.Name(), targetName );
+		//std::string objectsDir = ProjectObjectsDirPath( project.Name(), targetName );
+		std::string objectsDir = "Objects" / project.Name();
 		
-		std::string libsDir = TargetLibrariesDirPath( targetName );
+		//std::string libsDir = TargetLibrariesDirPath( targetName );
+		std::string libsDir = "Libraries";
 		
 		std::string outputDir  = project.Product() == productStaticLib ? libsDir
-		                                                               : ProjectOutputDirPath( project.Name(), targetName );
+		                                                               : //ProjectOutputDirPath( project.Name(), targetName );
+		                                                                 "Output" / project.Name();
 		
 		std::string outFile = outputDir / linkName;
 		bool outFileExists = io::item_exists( outFile );
