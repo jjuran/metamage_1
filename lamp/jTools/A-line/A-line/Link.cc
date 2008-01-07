@@ -170,7 +170,7 @@ namespace ALine
 	
 	static std::string GetPathnameOfBuiltLibrary( const std::string& name, const std::string& targetName )
 	{
-		return ProjectLibrariesDirPath( "", targetName ) / gLibraryPrefix + name + gLibraryExtension;
+		return TargetLibrariesDirPath( targetName ) / gLibraryPrefix + name + gLibraryExtension;
 	}
 	
 	static bool ProjectBuildsLib( const Project& project )
@@ -297,7 +297,7 @@ namespace ALine
 		
 		std::string objectsDir = ProjectObjectsDirPath( project.Name(), targetName );
 		
-		std::string libsDir = ProjectLibrariesDirPath( "", targetName );
+		std::string libsDir = TargetLibrariesDirPath( targetName );
 		
 		std::string outputDir  = project.Product() == productStaticLib ? libsDir
 		                                                               : ProjectOutputDirPath( project.Name(), targetName );
