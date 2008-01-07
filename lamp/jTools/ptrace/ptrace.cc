@@ -16,10 +16,9 @@
 #include <sys/ptrace.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <vfork.h>
 
-
-#define STR_LEN( str )  "" str, (sizeof str - 1)
+// Iota
+#include "iota/strings.hh"
 
 
 #pragma export on
@@ -53,7 +52,32 @@ int main( int argc, char const *const argv[] )
 	
 	int stat = -1;
 	
-	int waited = waitpid( pid, &stat, 0 );
+	while ( true )
+	{
+		int waited = waitpid( pid, &stat, 0 );
+		
+		if ( waited < 0 )
+		{
+			std::perror( "ptrace: waitpid" );
+			
+			return EXIT_FAILURE;
+		}
+		
+		if ( WIFSTOPPED( stat ) )
+		{
+			write( STDOUT_FILENO, STR_LEN( "ptrace: target stopped (hit return to continue)\n" ) );
+			
+			char c;
+			
+			ssize_t bytes = read( STDIN_FILENO, &c, sizeof c );
+			
+			ptrace( PTRACE_CONT, pid, NULL, 0 );
+		}
+		else
+		{
+			break;
+		}
+	}
 	
 	return 0;
 }
