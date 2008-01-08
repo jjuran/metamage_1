@@ -57,15 +57,6 @@
 		
 		stwu	SP,-64(SP)		// allocate our own stack frame
 		
-		stw		r3,24(SP)		// save system call arguments into stack
-		stw		r4,28(SP)
-		stw		r5,32(SP)
-		stw		r6,36(SP)
-		stw		r7,40(SP)
-		stw		r8,44(SP)
-		stw		r9,48(SP)
-		stw		r10,52(SP)
-		
 		lwz		r12,gDispatcher	// load address of export
 		lwz		r12,0(r12)		// load dispatcher T-vector
 		
