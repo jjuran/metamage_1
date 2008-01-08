@@ -318,25 +318,28 @@ namespace Genie
 		mflr	r0
 		stw		r0,8(SP)
 		
-		// allocate our own stack frame
+		// save system call arguments into stack
+		stw		r3,24(SP)
+		stw		r4,28(SP)
+		stw		r5,32(SP)
+		stw		r6,36(SP)
+		stw		r7,40(SP)
+		stw		r8,44(SP)
+		stw		r9,48(SP)
+		stw		r10,52(SP)
+		
+		// allocate stack frame
 		stwu	SP,-32(SP)
 		
 		// get system call address (from its index) or die
 		mr		r3,r11
 		bl		GetSystemCallAddress
+		mr		r12,r3
 		
 		// deallocate stack frame
 		addi	SP,SP,32
 		
-		// prepare for hyperspace jump (restore caller's return address to link register)
-		lwz		r0,8(SP)
-		mtlr	r0
-		
-		// load system call address
-		mr		r12,r3
-		lwz		r0,0(r12)
-		
-		// restore previous frame's parameters
+		// restore system call arguments
 		lwz		r3,24(SP)
 		lwz		r4,28(SP)
 		lwz		r5,32(SP)
@@ -345,6 +348,13 @@ namespace Genie
 		lwz		r8,44(SP)
 		lwz		r9,48(SP)
 		lwz		r10,52(SP)
+		
+		// prepare for hyperspace jump (restore caller's return address to link register)
+		lwz		r0,8(SP)
+		mtlr	r0
+		
+		// load system call address
+		lwz		r0,0(r12)
 		
 		// jump to system call
 		mtctr	r0
