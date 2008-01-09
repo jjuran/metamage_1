@@ -30,16 +30,16 @@ namespace Vectoria
 			typedef Point3D::Type Point;
 		
 		private:
-			std::vector< Point > myPoints;
+			std::vector< Point > itsPoints;
 		
 		public:
 			Polygon3D()  {}
 			
-			Polygon3D( const std::vector< Point >& points ) : myPoints( points )  {}
+			Polygon3D( const std::vector< Point >& points ) : itsPoints( points )  {}
 			
 			Polygon3D( const Polygon2D& poly2d );
 			
-			const std::vector< Point >& Points() const  { return myPoints; }
+			const std::vector< Point >& Points() const  { return itsPoints; }
 	};
 	
 	
@@ -48,13 +48,13 @@ namespace Vectoria
 		return Point3D::Make( point[X], point[Y], 0.0 );
 	}
 	
-	inline Polygon3D::Polygon3D( const Polygon2D& poly2d ) : myPoints( poly2d.Points().size() )
+	inline Polygon3D::Polygon3D( const Polygon2D& poly2d ) : itsPoints( poly2d.Points().size() )
 	{
 		const std::vector< Point2D::Type >& pts2d = poly2d.Points();
 		
 		std::transform( pts2d.begin(),
 		                pts2d.end(),
-		                myPoints.begin(),
+		                itsPoints.begin(),
 		                std::ptr_fun( Point3DFrom2D ) );
 	}
 	

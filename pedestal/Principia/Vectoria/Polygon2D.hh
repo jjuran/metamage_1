@@ -27,21 +27,21 @@ namespace Vectoria
 			typedef PairOfPoints2D edge_type;
 			
 		private:
-			std::vector< Point > myPoints;
+			std::vector< Point > itsPoints;
 		
 		public:
 			Polygon2D() {}
 			
 			Polygon2D( const Rect2D< double >& r )
 			{
-				myPoints.push_back( Point2D::Make( r.left,  r.bottom ) );
-				myPoints.push_back( Point2D::Make( r.left,  r.top    ) );
-				myPoints.push_back( Point2D::Make( r.right, r.top    ) );
-				myPoints.push_back( Point2D::Make( r.right, r.bottom ) );
+				itsPoints.push_back( Point2D::Make( r.left,  r.bottom ) );
+				itsPoints.push_back( Point2D::Make( r.left,  r.top    ) );
+				itsPoints.push_back( Point2D::Make( r.right, r.top    ) );
+				itsPoints.push_back( Point2D::Make( r.right, r.bottom ) );
 			}
 			
-			const std::vector< Point >& Points() const  { return myPoints; }
-			      std::vector< Point >& Points()        { return myPoints; }
+			const std::vector< Point >& Points() const  { return itsPoints; }
+			      std::vector< Point >& Points()        { return itsPoints; }
 			
 			static edge_type MakeEdge( const Point& ptA, const Point& ptB )
 			{
@@ -77,7 +77,7 @@ namespace Vectoria
 	
 	inline Rect2D< double > Polygon2D::BoundingRect() const
 	{
-		std::vector< Point >::const_iterator it = myPoints.begin(), done = myPoints.end();
+		std::vector< Point >::const_iterator it = itsPoints.begin(), done = itsPoints.end();
 		
 		const Point& first( *it );
 		
@@ -148,7 +148,7 @@ namespace Vectoria
 		{
 			if ( LineSegmentsIntersect( anchor, *it ) )
 			{
-				crossings++;
+				++crossings;
 			}
 		}
 		
