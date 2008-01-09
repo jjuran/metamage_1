@@ -35,6 +35,20 @@ namespace Vectoria
 		return Pt;
 	}
 	
+	/*
+	             A  <-- starting point
+	            /|
+	           / |
+	          /  |
+	distance /   |
+	        /    | altitude
+	       B     |
+	      /      |
+	     /       |
+	____/________|_________ + positive side of plane
+	                plane   - negative side of plane
+	*/
+	
 	class RayPlaneIntersection
 	{
 		public:
