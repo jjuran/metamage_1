@@ -82,7 +82,8 @@ namespace Vectoria
 		}
 		
 		Point firstPt = points.front();
-		short firstIsPositive = ClipPointAgainstPlane( firstPt, plane );
+		
+		bool firstIsPositive = ClipPointAgainstPlane( firstPt, plane );
 		
 		if ( firstIsPositive != previousIsPositive )
 		{
@@ -91,7 +92,9 @@ namespace Vectoria
 			// Then that vertex is clipped and added.
 			// Otherwise, the first vertex is clipped and added.
 			Point pt = points.back();
+			
 			pt = LinePlaneIntersection( firstPt - pt, pt, plane );
+			
 			newPoints.push_back( pt );
 		}
 		
