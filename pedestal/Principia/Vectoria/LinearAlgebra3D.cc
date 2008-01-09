@@ -71,7 +71,8 @@ namespace Vectoria
 		
 		if ( distance <= 0 )
 		{
-			// The intersection is behind the ray's starting point.
+			// The intersection is behind the ray's starting point,
+			// so the plane is behind the camera and offscreen.
 			// Return z == 0 to indicate no intersection.
 			return RayPlaneIntersection();
 		}
