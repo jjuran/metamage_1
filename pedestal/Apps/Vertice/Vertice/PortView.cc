@@ -888,7 +888,6 @@ namespace Vertice
 		return true;
 	}
 	
-	//std::pair<string, int>
 	MeshPoly* PortView::HitTest( double x, double y )
 	{
 		V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
@@ -898,18 +897,6 @@ namespace Vertice
 		{
 		//	pt1 = UnFishEye(pt1);
 		}
-		
-		/*
-		if (itsScene.Cameras().empty())  return;
-		
-		Camera& camera = itsScene.Cameras().front();
-		const XMatrix& port2eye = camera.PortToEyeTransform();
-		const XMatrix& eye2world = camera.EyeToWorldTransform(itsScene);
-		const XMatrix& port2world = Compose(port2eye, eye2world);
-		
-		pt0 = Transformation(pt0, port2world);
-		pt1 = Transformation(pt1, port2world);
-		*/
 		
 		// The ray is inverted to face the same way as the face normal.
 		V::Vector3D::Type ray = UnitLength( pt0 - pt1 );
