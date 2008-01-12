@@ -10,11 +10,11 @@
 #include <string>
 #include <vector>
 
-//#include "Vectoria/TriColor.hh"
-#include "Vectoria/Transform.hh"
-#include "Vectoria/Polygon2D.hh"
-#include "Vectoria/Vector3D.hh"
+#include "Vectoria/Plane3D.hh"
 #include "Vectoria/Point3D.hh"
+#include "Vectoria/Polygon2D.hh"
+#include "Vectoria/Transform.hh"
+#include "Vectoria/Vector3D.hh"
 
 
 namespace Vertice
@@ -75,6 +75,8 @@ namespace Vertice
 		
 		public:
 			typedef Point point_type;
+			
+			const std::vector< Point >& Points() const  { return itsPoints; }
 			
 			std::size_t AddPoint( const Point& pt )
 			{
@@ -141,6 +143,14 @@ namespace Vertice
 			{
 				itsPolygons.push_back( MeshPoly( offsets, color ) );
 			}
+			
+			template < class Transformer >
+			void Transform( const Transformer& transformer )
+			{
+				itsMesh.Transform( transformer );
+			}
+			
+			void ClipAgainstPlane( const V::Plane3D::Type& plane );
 	};
 	
 	class Context : public Moveable, public MeshModel

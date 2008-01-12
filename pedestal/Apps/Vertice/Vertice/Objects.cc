@@ -7,6 +7,7 @@
 
 // Vectoria
 #include "Vectoria/Coordinates.hh"
+#include "Vectoria/LinearAlgebra3D.hh"
 #include "Vectoria/Transform.hh"
 
 
@@ -113,6 +114,116 @@ namespace Vertice
 		
 		itsTransform = Compose( itsTransform,           scale.Make() );
 		itsInverse   = Compose( scale.Inverse().Make(), itsInverse   );
+	}
+	
+	
+	void MeshModel::ClipAgainstPlane( const V::Plane3D::Type& plane )
+	{
+		const std::vector< V::Point3D::Type >& points = itsMesh.Points();
+		
+		std::vector< bool > positive_mask( points.size() );
+		std::vector< bool > zero_mask    ( points.size() );
+		std::vector< bool > negative_mask( points.size() );
+		
+		typedef std::vector< V::Point3D::Type >::const_iterator PointIter;
+		
+		unsigned i = 0;
+		
+		for ( PointIter it = points.begin();  it != points.end();  ++it, ++i )
+		{
+			double product = DotProduct( plane, *it );
+			
+			if ( product > 0 )
+			{
+				positive_mask[ i ] = true;
+			}
+			else if ( product < 0 )
+			{
+				negative_mask[ i ] = true;
+			}
+			else
+			{
+				zero_mask[ i ] = true;
+			}
+		}
+		
+		typedef MeshPoly::Offset Offset;
+		
+		typedef std::vector< MeshPoly >::iterator PolygonIter;
+		
+		typedef std::vector< Offset >::const_iterator OffsetIter;
+		
+		for ( PolygonIter it = itsPolygons.begin();  it != itsPolygons.end();  ++it )
+		{
+			MeshPoly& polygon = *it;
+			
+			std::vector< Offset >& offsets = polygon.Vertices();
+			
+			std::vector< Offset > new_offsets;
+			
+			bool have_previous = false;
+			
+			bool previous_is_positive;
+			
+			for ( OffsetIter it2 = offsets.begin();  it2 != offsets.end();  ++it2 )
+			{
+				Offset offset = *it2;
+				
+				bool is_positive = positive_mask[ offset ];
+				
+				bool crossed = have_previous  &&  ( previous_is_positive != is_positive );
+				
+				if ( is_positive )
+				{
+					if ( crossed )
+					{
+						const V::Point3D::Type& this_point = points[ it2[  0 ] ];
+						const V::Point3D::Type& prev_point = points[ it2[ -1 ] ];
+						
+						V::Point3D::Type clipped_point = LinePlaneIntersection( this_point - prev_point,
+						                                                        this_point,
+						                                                        plane );
+						
+						new_offsets.push_back( itsMesh.AddPoint( clipped_point ) );
+					}
+					
+					new_offsets.push_back( *it2 );
+				}
+				else if ( crossed )
+				{
+					const V::Point3D::Type& this_point = points[ it2[  0 ] ];
+					const V::Point3D::Type& prev_point = points[ it2[ -1 ] ];
+					
+					V::Point3D::Type clipped_point = LinePlaneIntersection( this_point - prev_point,
+					                                                        this_point,
+					                                                        plane );
+					
+					new_offsets.push_back( itsMesh.AddPoint( clipped_point ) );
+				}
+				
+				previous_is_positive = is_positive;
+				
+				have_previous = true;
+			}
+			
+			Offset first_offset = offsets.front();
+			
+			bool first_is_positive = positive_mask[ first_offset ];
+			
+			if ( first_is_positive != previous_is_positive )
+			{
+				const V::Point3D::Type& first_point = points[ offsets.front() ];
+				const V::Point3D::Type& last_point  = points[ offsets.back () ];
+				
+				V::Point3D::Type clipped_point = LinePlaneIntersection( first_point - last_point,
+				                                                        first_point,
+				                                                        plane );
+				
+				new_offsets.push_back( itsMesh.AddPoint( clipped_point ) );
+			}
+			
+			std::swap( offsets, new_offsets );
+		}
 	}
 	
 }
