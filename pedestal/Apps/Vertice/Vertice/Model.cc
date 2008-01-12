@@ -18,69 +18,35 @@
 namespace Vertice
 {
 	
-	template < class Key, class Value >
-	const Value& Get( const std::map< Key, Value >& aMap, const Key& key )
+	V::XMatrix Camera::WorldToEyeTransform( const Scene& scene ) const
 	{
-		typename std::map< Key, Value >::const_iterator it = aMap.find( key );
+		V::XMatrix inverse = scene.GetSubcontext( itsContextIndex ).itsInverse;
 		
-		if ( it == aMap.end() )
+		std::size_t index = scene.GetSuperContext( itsContextIndex );
+		
+		while ( scene.SuperContextExists( index ) )
 		{
-			static Value val = Value();
-			
-			return val;  // FIXME:  Probably should throw or assert
-		}
-		
-		return it->second;
-	}
-	
-	template < class Key, class Value >
-	class MapWrapper
-	{
-		private:
-			const std::map< Key, Value >& myMap;
-		
-		public:
-			MapWrapper(const std::map< Key, Value >& aMap ) : myMap( aMap )  {}
-			
-			const Value& operator[]( const Key& key ) const  { return ( *myMap.find( key ) ).second; }
-	};
-	
-	template < class Key, class Value >
-	MapWrapper< Key, Value > MAP( const std::map< Key, Value >& aMap )
-	{
-		return MapWrapper< Key, Value >( aMap );
-	}
-	
-	
-	V::XMatrix Camera::WorldToEyeTransform( const Scene& model ) const
-	{
-		V::XMatrix inverse = model.GetSubcontext( itsContextIndex ).itsInverse;
-		
-		std::size_t index = model.GetSuperContext( itsContextIndex );
-		
-		while ( model.SuperContextExists( index ) )
-		{
-			inverse = Compose( model.GetSubcontext( index ).itsInverse,
+			inverse = Compose( scene.GetSubcontext( index ).itsInverse,
 			                   inverse );
 			
-			index = model.GetSuperContext( index );
+			index = scene.GetSuperContext( index );
 		}
 		
 		return inverse;
 	}
 	
-	V::XMatrix Camera::EyeToWorldTransform( const Scene& model ) const
+	V::XMatrix Camera::EyeToWorldTransform( const Scene& scene ) const
 	{
-		V::XMatrix xform = model.GetSubcontext( itsContextIndex ).itsTransform;
+		V::XMatrix xform = scene.GetSubcontext( itsContextIndex ).itsTransform;
 		
-		std::size_t index = model.GetSuperContext( itsContextIndex );
+		std::size_t index = scene.GetSuperContext( itsContextIndex );
 		
-		while ( model.SuperContextExists( index ) )
+		while ( scene.SuperContextExists( index ) )
 		{
 			xform = Compose( xform,
-			                 model.GetSubcontext( index ).itsTransform );
+			                 scene.GetSubcontext( index ).itsTransform );
 			
-			index = model.GetSuperContext( index );
+			index = scene.GetSuperContext( index );
 		}
 		
 		return xform;
@@ -96,9 +62,7 @@ namespace Vertice
 		return V::XMatrix( V::Pitch( V::Degrees( 90 ) ) );
 	}
 	
-	Scene::Scene()
-	:
-		itsContexts( 1 )
+	Scene::Scene() : itsContexts( 1 )
 	{
 		itsNameIndex[ " " ] = 0;
 	}
