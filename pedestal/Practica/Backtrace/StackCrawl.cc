@@ -372,7 +372,17 @@ namespace Backtrace
 		
 		catch ( const MachineException& e )
 		{
-			std::fprintf( stderr, "Machine exception type %d caught during stack crawl\n", e.Get() );
+			switch ( e.Get() )
+			{
+				case kAccessException:
+				case kUnmappedMemoryException:
+					// nothing
+					break;
+				
+				default:
+					//std::fprintf( stderr, "Machine exception type %d caught during stack crawl\n", e.Get() );
+					break;
+			}
 		}
 		
 	#endif
