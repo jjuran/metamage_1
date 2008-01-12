@@ -66,7 +66,7 @@ namespace Vertice
 			return;
 		}
 		
-		Moveable& target = itsScene.GetSubcontext( contextIndex );
+		Moveable& target = itsScene.GetContext( contextIndex );
 		
 		switch ( cmd )
 		{

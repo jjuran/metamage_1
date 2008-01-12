@@ -59,12 +59,15 @@ namespace Vertice
 			Context const& GetContext( std::size_t index ) const;
 			Context      & GetContext( std::size_t index );
 			
-			Moveable const& GetSubcontext( std::size_t index ) const;
-			Moveable      & GetSubcontext( std::size_t index );
+			std::size_t GetSuperContext( size_t index ) const
+			{
+				return GetContext( index ).ParentIndex();
+			}
 			
-			std::size_t GetSuperContext( size_t index ) const;
-			
-			bool SuperContextExists( std::size_t index ) const;
+			bool SuperContextExists( std::size_t index ) const
+			{
+				return GetSuperContext( index ) < index;  // False for root context
+			}
 			
 			std::size_t AddSubcontext( std::size_t         super,
 			                           const std::string&  name,

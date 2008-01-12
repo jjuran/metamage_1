@@ -20,13 +20,13 @@ namespace Vertice
 	
 	V::XMatrix Camera::WorldToEyeTransform( const Scene& scene ) const
 	{
-		V::XMatrix inverse = scene.GetSubcontext( itsContextIndex ).itsInverse;
+		V::XMatrix inverse = scene.GetContext( itsContextIndex ).itsInverse;
 		
 		std::size_t index = scene.GetSuperContext( itsContextIndex );
 		
 		while ( scene.SuperContextExists( index ) )
 		{
-			inverse = Compose( scene.GetSubcontext( index ).itsInverse,
+			inverse = Compose( scene.GetContext( index ).itsInverse,
 			                   inverse );
 			
 			index = scene.GetSuperContext( index );
@@ -37,14 +37,14 @@ namespace Vertice
 	
 	V::XMatrix Camera::EyeToWorldTransform( const Scene& scene ) const
 	{
-		V::XMatrix xform = scene.GetSubcontext( itsContextIndex ).itsTransform;
+		V::XMatrix xform = scene.GetContext( itsContextIndex ).itsTransform;
 		
 		std::size_t index = scene.GetSuperContext( itsContextIndex );
 		
 		while ( scene.SuperContextExists( index ) )
 		{
 			xform = Compose( xform,
-			                 scene.GetSubcontext( index ).itsTransform );
+			                 scene.GetContext( index ).itsTransform );
 			
 			index = scene.GetSuperContext( index );
 		}
@@ -77,16 +77,6 @@ namespace Vertice
 		return itsContexts[ index ];
 	}
 	
-	Moveable const& Scene::GetSubcontext( std::size_t index ) const
-	{
-		return GetContext( index );
-	}
-	
-	Moveable& Scene::GetSubcontext( std::size_t index )
-	{
-		return GetContext( index );
-	}
-	
 	std::size_t Scene::AddSubcontext( std::size_t         super,
 	                                  const std::string&  name,
 	                                  const V::XMatrix&   offset,
@@ -101,16 +91,6 @@ namespace Vertice
 		GetContext( super ).AddSubcontext( result );
 		
 		return result;
-	}
-	
-	std::size_t Scene::GetSuperContext( size_t index ) const
-	{
-		return itsContexts[ index ].ParentIndex();
-	}
-	
-	bool Scene::SuperContextExists( std::size_t index ) const
-	{
-		return itsContexts[ index ].ParentIndex() < index;  // False for root context
 	}
 	
 }
