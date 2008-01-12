@@ -923,16 +923,6 @@ namespace Vertice
 		N::SetCPixel( x, y, NN::Convert< N::RGBColor >( TracePixel( x, y ) ) );
 	}
 	
-	static ColorMatrix TextureTweak( ColorMatrix color, double x, double y )
-	{
-		if ( int( x * 20 ) & 1  ^  int( y * 20 ) & 1 )
-		{
-			//color = color * 0.9;
-		}
-		
-		return color;
-	}
-	
 	struct TickCounter
 	{
 		typedef UInt32 Time;
@@ -1100,7 +1090,7 @@ namespace Vertice
 						// For each row
 						for ( unsigned iY = rect.bottom;  iY < rect.top;  ++iY )
 						{
-							escapement();
+							//escapement();
 							
 							// For each pixel in the row
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
