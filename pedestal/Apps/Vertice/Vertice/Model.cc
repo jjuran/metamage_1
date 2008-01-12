@@ -52,15 +52,15 @@ namespace Vertice
 	}
 	
 	
-	V::XMatrix Camera::WorldToEyeTransform( const Model& model ) const
+	V::XMatrix Camera::WorldToEyeTransform( const Scene& model ) const
 	{
-		V::XMatrix inverse = model.GetSubcontext( fContextIndex ).inverse;
+		V::XMatrix inverse = model.GetSubcontext( itsContextIndex ).itsInverse;
 		
-		std::size_t index = model.GetSuperContext( fContextIndex );
+		std::size_t index = model.GetSuperContext( itsContextIndex );
 		
 		while ( model.SuperContextExists( index ) )
 		{
-			inverse = Compose( model.GetSubcontext( index ).inverse,
+			inverse = Compose( model.GetSubcontext( index ).itsInverse,
 			                   inverse );
 			
 			index = model.GetSuperContext( index );
@@ -69,16 +69,16 @@ namespace Vertice
 		return inverse;
 	}
 	
-	V::XMatrix Camera::EyeToWorldTransform( const Model& model ) const
+	V::XMatrix Camera::EyeToWorldTransform( const Scene& model ) const
 	{
-		V::XMatrix xform = model.GetSubcontext( fContextIndex ).xform;
+		V::XMatrix xform = model.GetSubcontext( itsContextIndex ).itsTransform;
 		
-		std::size_t index = model.GetSuperContext( fContextIndex );
+		std::size_t index = model.GetSuperContext( itsContextIndex );
 		
 		while ( model.SuperContextExists( index ) )
 		{
 			xform = Compose( xform,
-			                 model.GetSubcontext( index ).xform );
+			                 model.GetSubcontext( index ).itsTransform );
 			
 			index = model.GetSuperContext( index );
 		}
@@ -96,57 +96,57 @@ namespace Vertice
 		return V::XMatrix( V::Pitch( V::Degrees( 90 ) ) );
 	}
 	
-	Model::Model()
+	Scene::Scene()
 	:
-		fContexts( 1 )
+		itsContexts( 1 )
 	{
-		fNameIndex[ " " ] = 0;
+		itsNameIndex[ " " ] = 0;
 	}
 	
-	Context const& Model::GetContext( std::size_t index ) const
+	Context const& Scene::GetContext( std::size_t index ) const
 	{
-		return fContexts[ index ];
+		return itsContexts[ index ];
 	}
 	
-	Context& Model::GetContext( std::size_t index )
+	Context& Scene::GetContext( std::size_t index )
 	{
-		return fContexts[ index ];
+		return itsContexts[ index ];
 	}
 	
-	Moveable const& Model::GetSubcontext( std::size_t index ) const
-	{
-		return GetContext( index );
-	}
-	
-	Moveable& Model::GetSubcontext( std::size_t index )
+	Moveable const& Scene::GetSubcontext( std::size_t index ) const
 	{
 		return GetContext( index );
 	}
 	
-	std::size_t Model::AddSubcontext( std::size_t         super,
+	Moveable& Scene::GetSubcontext( std::size_t index )
+	{
+		return GetContext( index );
+	}
+	
+	std::size_t Scene::AddSubcontext( std::size_t         super,
 	                                  const std::string&  name,
 	                                  const V::XMatrix&   offset,
 	                                  const V::XMatrix&   inv )
 	{
-		std::size_t result = fContexts.size();  // size == index of next element
+		std::size_t result = itsContexts.size();  // size == index of next element
 		
-		fNameIndex[ name ] = result;
+		itsNameIndex[ name ] = result;
 		
-		fContexts.push_back( Context( super, name, offset, inv ) );
+		itsContexts.push_back( Context( super, name, offset, inv ) );
 		
 		GetContext( super ).AddSubcontext( result );
 		
 		return result;
 	}
 	
-	std::size_t Model::GetSuperContext( size_t index ) const
+	std::size_t Scene::GetSuperContext( size_t index ) const
 	{
-		return fContexts[ index ].ParentIndex();
+		return itsContexts[ index ].ParentIndex();
 	}
 	
-	bool Model::SuperContextExists( std::size_t index ) const
+	bool Scene::SuperContextExists( std::size_t index ) const
 	{
-		return fContexts[ index ].ParentIndex() < index;  // False for root context
+		return itsContexts[ index ].ParentIndex() < index;  // False for root context
 	}
 	
 }

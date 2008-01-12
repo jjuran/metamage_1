@@ -127,35 +127,36 @@ namespace Vertice
 	class DeepVertex
 	{
 		public:
-			V::Point3D::Type point;
-			ColorMatrix color;
+			V::Point3D::Type  itsPoint;
+			ColorMatrix       itsColor;
 			
 			DeepVertex() {}
 			
-			DeepVertex( const V::Point3D::Type& point, const ColorMatrix& color ) 
-			:
-				point( point ), color( color )
-			{}
+			DeepVertex( const V::Point3D::Type&  point,
+			            const ColorMatrix&       color ) : itsPoint( point ),
+			                                               itsColor( color )
+			{
+			}
 			
 			template < class Index >
-			double operator[]( Index index ) const  { return point[ index ]; }
+			double operator[]( Index index ) const  { return itsPoint[ index ]; }
 	};
 	
 	template < class ZSpectrum, class ColorSpectrum, class Device >
-	void DrawDeepScanLine( int y,
-	                       int farLeft,
-	                       double left,
-	                       double right,
-	                       const ZSpectrum& invZ,
-	                       const ColorSpectrum& colors,
-	                       ::Ptr rowAddr,
-	                       Device& deepPixelDevice )
+	void DrawDeepScanLine( int                   y,
+	                       int                   farLeft,
+	                       double                left,
+	                       double                right,
+	                       const ZSpectrum&      inverseZ,
+	                       const ColorSpectrum&  colors,
+	                       ::Ptr                 rowAddr,
+	                       Device&               deepPixelDevice )
 	{
 		for ( int x = int( std::ceil( left ) );  x < right;  ++x )
 		{
 			double tX = (x - left) / (right - left);
 			
-			double z = 1 / invZ[ tX ];
+			double z = 1 / inverseZ[ tX ];
 			
 			if ( deepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
@@ -192,11 +193,11 @@ namespace Vertice
 	}
 	
 	template < class Vertex, class Device >
-	void DrawDeepTrapezoid( Vertex topLeft,
-	                        Vertex topRight,
-	                        Vertex bottomLeft,
-	                        Vertex bottomRight,
-	                        Device& deepPixelDevice )
+	void DrawDeepTrapezoid( Vertex   topLeft,
+	                        Vertex   topRight,
+	                        Vertex   bottomLeft,
+	                        Vertex   bottomRight,
+	                        Device&  deepPixelDevice )
 	{
 		double top    = topLeft   [ Y ];
 		double bottom = bottomLeft[ Y ];
@@ -204,17 +205,19 @@ namespace Vertice
 		double vdist = bottom - top;
 		
 		::CGrafPtr port = N::GetQDGlobalsThePort();
-		//::CGrafPtr port = myGWorld.Get();
+		//::CGrafPtr port = itsGWorld.Get();
 		// Verify that it's a color port
 		if ( !::IsPortColor( port ) )  return;
+		
 		PixMapHandle pix = ::GetPortPixMap( port );
 		
 		if ( !CheckPixMap( pix ) ) return;
 		
 		const Rect& portRect = N::GetPortBounds( port );
-		const Rect& bounds = ( *pix )->bounds;
-		::Ptr base = ( *pix )->baseAddr;
-		unsigned rowBytes = ( ( *pix )->rowBytes & 0x3FFF );
+		
+		const Rect& bounds   = ( *pix )->bounds;
+		::Ptr       base     = ( *pix )->baseAddr;
+		unsigned    rowBytes = ( *pix )->rowBytes & 0x3fff;
 		
 		short start = short( std::ceil( top    ) );
 		short stop  = short( std::ceil( bottom ) );
@@ -234,11 +237,11 @@ namespace Vertice
 			double leftZ  = 1 / MakeLinearSpectrum( 1 / topLeft [ Z ], 1 / bottomLeft [ Z ] )[ tY ];
 			double rightZ = 1 / MakeLinearSpectrum( 1 / topRight[ Z ], 1 / bottomRight[ Z ] )[ tY ];
 			
-			ColorMatrix leftColor = leftZ * MakeLinearSpectrum( topLeft.color    / topLeft   [ Z ],
-			                                                    bottomLeft.color / bottomLeft[ Z ] )[ tY ];
+			ColorMatrix leftColor = leftZ * MakeLinearSpectrum( topLeft.itsColor    / topLeft   [ Z ],
+			                                                    bottomLeft.itsColor / bottomLeft[ Z ] )[ tY ];
 			
-			ColorMatrix rightColor = rightZ * MakeLinearSpectrum( topRight.color    / topRight   [ Z ],
-			                                                      bottomRight.color / bottomRight[ Z ] )[ tY ];
+			ColorMatrix rightColor = rightZ * MakeLinearSpectrum( topRight.itsColor    / topRight   [ Z ],
+			                                                      bottomRight.itsColor / bottomRight[ Z ] )[ tY ];
 			
 			DrawDeepScanLine( y,
 			                  bounds.left,
@@ -273,10 +276,10 @@ namespace Vertice
 		double midLeftZ  = ( B[X] <= choppedAC ) ? B[Z] : z;
 		double midRightZ = ( B[X] >  choppedAC ) ? B[Z] : z;
 		
-		ColorMatrix choppedACColor = z * MakeLinearSpectrum( A.color / A[Z], C.color / C[Z] )[t];
+		ColorMatrix choppedACColor = z * MakeLinearSpectrum( A.itsColor / A[Z], C.itsColor / C[Z] )[t];
 		
-		ColorMatrix midLeftColor  = ( B[X] <= choppedAC ) ? B.color : choppedACColor;
-		ColorMatrix midRightColor = ( B[X] >  choppedAC ) ? B.color : choppedACColor;
+		ColorMatrix midLeftColor  = ( B[X] <= choppedAC ) ? B.itsColor : choppedACColor;
+		ColorMatrix midRightColor = ( B[X] >  choppedAC ) ? B.itsColor : choppedACColor;
 		
 		
 		if ( top < middle )
@@ -359,19 +362,18 @@ namespace Vertice
 		gPort2Clip = MakePortToClipTransform( n, f, e, a );
 	}
 	
-	PortView::PortView( const Rect& bounds, Initializer )
-	:
-		myPort           ( myModel                    ),
-		mySelectedContext(                            ),
-		myGWorld         ( N::NewGWorld( 32, bounds ) )
+	PortView::PortView( const Rect& bounds, Initializer ) : itsPort           ( itsScene                   ),
+	                                                        itsSelectedContext(                            ),
+	                                                        itsGWorld         ( N::NewGWorld( 32, bounds ) )
 	{
 		SetBounds( bounds );
-		N::LockPixels( N::GetGWorldPixMap( myGWorld ) );
+		N::LockPixels( N::GetGWorldPixMap( itsGWorld ) );
 	}
 	
 	static const V::XMatrix& ScreenToPortTransform( short width, short height )
 	{
 		static V::XMatrix screen2port;
+		
 		static short oldWidth = 0, oldHeight = 0;
 		
 		if ( width == oldWidth  &&  height == oldHeight )
@@ -397,14 +399,14 @@ namespace Vertice
 	
 	void PortView::SetBounds( const Rect& bounds )
 	{
-		myBounds = bounds;
+		itsBounds = bounds;
 		
 		N::InvalRect( bounds );  // Invalidate the entire window, not just the new area
 		
-		short width = NX::RectWidth( bounds );
+		short width  = NX::RectWidth ( bounds );
 		short height = NX::RectHeight( bounds );
 		
-		myScreen2Port = ScreenToPortTransform( width, height );
+		itsScreen2Port = ScreenToPortTransform( width, height );
 		
 		sAspectRatio = AspectRatio( width, height );
 		
@@ -414,6 +416,7 @@ namespace Vertice
 	static const V::XMatrix& PortToScreenTransform( short width, short height )
 	{
 		static V::XMatrix port2screen;
+		
 		static short oldWidth = 0, oldHeight = 0;
 		
 		if ( width == oldWidth  &&  height == oldHeight )
@@ -431,6 +434,7 @@ namespace Vertice
 		scale.Cell( 0, 0 ) = e * width / 2;
 		//scale.Cell(1, 1) = -height / 2;
 		scale.Cell( 1, 1 ) = e * -width / 2;
+		
 		V::Translation translate( width / 2, height / 2, 0 );
 		
 		return port2screen = Compose( scale, translate.Make() );
@@ -527,22 +531,18 @@ namespace Vertice
 					}
 			};
 			
-			AdHocTriangle()  {}
+			AdHocTriangle()
+			{
+			}
 			
-			AdHocTriangle( const Vertex& A, const Vertex& B, const Vertex& C )
-			:
-				a( A ),
-				b( B ),
-				c( C )
-			{}
+			AdHocTriangle( const Vertex& A,
+			               const Vertex& B,
+			               const Vertex& C ) : a( A ),
+			                                   b( B ),
+			                                   c( C )
+			{
+			}
 	};
-	
-	template < class Vertex >
-	AdHocTriangle< Vertex >
-	MakeAdHocTriangle( const Vertex& A, const Vertex& B, const Vertex& C )
-	{
-		return AdHocTriangle< Vertex >( A, B, C );
-	}
 	
 	template < class Triangle >
 	struct SortTriangleVertices
@@ -591,16 +591,18 @@ namespace Vertice
 	class DeepTriangleDrawer
 	{
 		private:
-			DeepPixelDevice& device;
+			DeepPixelDevice& itsDevice;
 		
 		public:
 			typedef AdHocTriangle< DeepVertex > Triangle;
 			
-			DeepTriangleDrawer( DeepPixelDevice& dev ) : device(dev)  {}
+			DeepTriangleDrawer( DeepPixelDevice& device ) : itsDevice( device )
+			{
+			}
 			
 			void operator()( const Triangle& triangle ) const
 			{
-				DrawDeepTriangle( triangle.a, triangle.b, triangle.c, device );
+				DrawDeepTriangle( triangle.a, triangle.b, triangle.c, itsDevice );
 			}
 	};
 	
@@ -718,11 +720,11 @@ namespace Vertice
 	
 	void PortView::Draw()
 	{
-		unsigned width  = NX::RectWidth ( myBounds );
-		unsigned height = NX::RectHeight( myBounds );
+		unsigned width  = NX::RectWidth ( itsBounds );
+		unsigned height = NX::RectHeight( itsBounds );
 		
 		NN::Saved< N::GWorld_Value > savedGWorld;
-		N::SetGWorld( myGWorld );
+		N::SetGWorld( itsGWorld );
 		
 		N::RGBBackColor( NN::Make< RGBColor >( 0 ) );
 		
@@ -730,17 +732,17 @@ namespace Vertice
 		
 		const V::XMatrix& port2screen = PortToScreenTransform( width, height );
 		
-		//fishEye = myPort.mCamera.fishEyeMode;
+		//fishEye = itsPort.mCamera.fishEyeMode;
 		
-		myPort.MakeFrame( myFrame );
+		itsPort.MakeFrame( itsFrame );
 		
-		N::EraseRect( myBounds );
+		N::EraseRect( itsBounds );
 		
 		gDeepPixelDevice.Resize( width, height );
 		
 		V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
 		
-		const std::vector< PointMesh< V::Point3D::Type > >& meshes = myFrame.Meshes();
+		const std::vector< PointMesh< V::Point3D::Type > >& meshes = itsFrame.Meshes();
 		typedef std::vector< PointMesh< V::Point3D::Type > >::const_iterator vM_ci;
 		
 		// For each mesh model...
@@ -753,7 +755,7 @@ namespace Vertice
 			
 			typedef std::vector< V::Point3D::Type >::const_iterator vP3D_ci;
 			
-			const std::vector< MeshPoly >& polies = myModel.GetContext( it - meshes.begin() ).Polygons();
+			const std::vector< MeshPoly >& polies = itsScene.GetContext( it - meshes.begin() ).Polygons();
 			typedef std::vector< MeshPoly >::const_iterator vMP_ci;
 			
 			// For each polygon in the mesh...
@@ -810,7 +812,7 @@ namespace Vertice
 					DeepVertex& pt = vertices[ i ];
 					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -1 );
 					
-					pt1 = Transformation( pt1, myScreen2Port );
+					pt1 = Transformation( pt1, itsScreen2Port );
 					
 					if ( fishEye )
 					{
@@ -836,7 +838,7 @@ namespace Vertice
 					double cosAlpha = ray * faceNormal;
 					double incidenceRatio = cosAlpha;
 					
-					pt.color = TweakColor( poly.Color(), dist, incidenceRatio );
+					pt.itsColor = TweakColor( poly.Color(), dist, incidenceRatio );
 				}
 				
 				std::vector< AdHocTriangle< DeepVertex > > triangles( vertices.size() - 2 );
@@ -866,15 +868,15 @@ namespace Vertice
 		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
-		N::CopyBits( N::GetPortBitMapForCopyBits( myGWorld ),
+		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
 		             N::GetPortBitMapForCopyBits( thePort ),
-		             myBounds,
-		             myBounds,
+		             itsBounds,
+		             itsBounds,
 		             N::srcCopy );
 		
 		if ( TARGET_API_MAC_CARBON )
 		{
-			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( myBounds ) );
+			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
 		}
 	}
 	
@@ -898,11 +900,11 @@ namespace Vertice
 		}
 		
 		/*
-		if (myModel.Cameras().empty())  return;
+		if (itsScene.Cameras().empty())  return;
 		
-		Camera& camera = myModel.Cameras().front();
+		Camera& camera = itsScene.Cameras().front();
 		const XMatrix& port2eye = camera.PortToEyeTransform();
-		const XMatrix& eye2world = camera.EyeToWorldTransform(myModel);
+		const XMatrix& eye2world = camera.EyeToWorldTransform(itsScene);
 		const XMatrix& port2world = Compose(port2eye, eye2world);
 		
 		pt0 = Transformation(pt0, port2world);
@@ -912,7 +914,7 @@ namespace Vertice
 		// The ray is inverted to face the same way as the face normal.
 		V::Vector3D::Type ray = UnitLength( pt0 - pt1 );
 		
-		//return myFrame.HitTest( pt0, ray );
+		//return itsFrame.HitTest( pt0, ray );
 		
 		return NULL;
 	}
@@ -921,7 +923,7 @@ namespace Vertice
 	{
 		V::Point3D::Type pt1 = V::Point3D::Make( x + 0.5, y + 0.5, 1 );
 		
-		pt1 = Transformation( pt1, myScreen2Port );
+		pt1 = Transformation( pt1, itsScreen2Port );
 		
 		//std::pair<string, int> index = HitTest(pt1[X], pt1[Y]);
 		MeshPoly* poly = HitTest( pt1[ X ], pt1[ Y ] );
@@ -942,13 +944,6 @@ namespace Vertice
 		}
 		
 		return color;
-	}
-	
-	Nothing BetterDrawer::operator()( ThreadContext& context ) const
-	{
-		context.pane->DrawBetter();
-		
-		return Nothing();
 	}
 	
 	struct TickCounter
@@ -1001,7 +996,7 @@ namespace Vertice
 				depthRect.bottom = vp * height;
 				depthRect.top    = (vp + 1) * height;
 				
-				const std::vector< PointMesh< V::Point3D::Type > >& meshes = myFrame.Meshes();
+				const std::vector< PointMesh< V::Point3D::Type > >& meshes = itsFrame.Meshes();
 				typedef std::vector< PointMesh< V::Point3D::Type > >::const_iterator vM_ci;
 				
 				// For each mesh model...
@@ -1018,7 +1013,7 @@ namespace Vertice
 					//	transform(points.begin(), points.end(), points.begin(), FishEye);
 					}
 					
-					const std::vector< MeshPoly >& polies = myModel.GetContext( it - meshes.begin() ).Polygons();
+					const std::vector< MeshPoly >& polies = itsScene.GetContext( it - meshes.begin() ).Polygons();
 					typedef std::vector< MeshPoly >::const_iterator vMP_ci;
 					
 					// For each polygon in the mesh...
@@ -1124,7 +1119,7 @@ namespace Vertice
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
 							{
 								V::Point3D::Type pt1 = V::Point3D::Make( iX + 0.5, iY + 0.5, -1 );
-								pt1 = Transformation( pt1, myScreen2Port );
+								pt1 = Transformation( pt1, itsScreen2Port );
 								
 								if ( fishEye )
 								{
@@ -1185,7 +1180,7 @@ namespace Vertice
 		
 		if ( TARGET_API_MAC_CARBON )
 		{
-			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( myBounds ) );
+			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
 		}
 	}
 	
@@ -1195,7 +1190,7 @@ namespace Vertice
 		
 		V::Point3D::Type pt1 = V::Point3D::Make( macPt.h, macPt.v, 1 );
 		
-		pt1 = Transformation( pt1, myScreen2Port );
+		pt1 = Transformation( pt1, itsScreen2Port );
 		
 		//std::pair<string, int> index = HitTest(pt1[X], pt1[Y]);
 		MeshPoly* poly = HitTest( pt1[X], pt1[Y] );
@@ -1206,7 +1201,7 @@ namespace Vertice
 			
 			if ( TARGET_API_MAC_CARBON )
 			{
-				::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( myBounds ) );
+				::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
 			}
 		}
 	}
@@ -1230,11 +1225,8 @@ namespace Vertice
 	{
 		//mSuperView.Focus();
 		
-		drawBetterThread.reset( NULL );
-		
 		if ( c == '~' )
 		{
-			//drawBetterThread.reset( new Thread( this ) );
 			DrawBetter();
 			return true;
 		}
@@ -1355,12 +1347,13 @@ namespace Vertice
 				break;
 		}
 		
-		if ( mySelectedContext == 0 )
+		if ( itsSelectedContext == 0 )
 		{
-			mySelectedContext = myModel.Cameras().front().ContextIndex();
+			itsSelectedContext = itsScene.Cameras().front().ContextIndex();
 		}
 		
-		myPort.SendCameraCommand( mySelectedContext, cmd );
+		itsPort.SendCameraCommand( itsSelectedContext, cmd );
+		
 		Draw();
 		
 		return true;
@@ -1375,13 +1368,13 @@ namespace Vertice
 	{
 		using namespace Nucleus::Operators;
 		
-		//if ( newBounds == myBounds )  return;
+		//if ( newBounds == itsBounds )  return;
 		
 		SetBounds( NX::NormalRect( newBounds ) );
 		
-		myGWorld = N::NewGWorld( 32, myBounds );
+		itsGWorld = N::NewGWorld( 32, itsBounds );
 		
-		N::LockPixels( N::GetGWorldPixMap( myGWorld ) );
+		N::LockPixels( N::GetGWorldPixMap( itsGWorld ) );
 	}
 	
 }

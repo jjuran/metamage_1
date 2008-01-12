@@ -35,6 +35,7 @@ namespace Vertice
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	using V::X;
 	using V::Y;
@@ -83,7 +84,7 @@ namespace Vertice
 			Parser();
 			~Parser()  {}
 			
-			void ParseLine( Model& model, const std::string& line );
+			void ParseLine( Scene& scene, const std::string& line );
 			
 			ColorMatrix myColor;
 			V::Point3D::Type myOrigin;
@@ -94,11 +95,11 @@ namespace Vertice
 	};
 	
 	
-	static void SetContext( Parser& parser, Model& model, const std::string& commandLine )
+	static void SetContext( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
 		std::string contextName = commandLine.substr( 8, std::string::npos );
 		
-		parser.myContext = model.AddSubcontext( parser.myContext,
+		parser.myContext = scene.AddSubcontext( parser.myContext,
 		                                        contextName,
 		                                        MakeTranslation(  parser.myOrigin ).Make(),
 		                                        MakeTranslation( -parser.myOrigin ).Make() );
@@ -106,12 +107,12 @@ namespace Vertice
 		parser.myOrigin = V::Point3D::Make( 0, 0, 0 );
 	}
 	
-	static void MakeCamera( Parser& parser, Model& model, const std::string& commandLine )
+	static void MakeCamera( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
-		model.Cameras().push_back( Camera( parser.myContext ) );
+		scene.Cameras().push_back( Camera( parser.myContext ) );
 	}
 	
-	static void SetColor( Parser& parser, Model& model, const std::string& commandLine )
+	static void SetColor( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
 		const char* str = commandLine.c_str();
 		str += 5;
@@ -124,7 +125,7 @@ namespace Vertice
 		}
 	}
 	
-	static void SetOrigin( Parser& parser, Model& model, const std::string& commandLine )
+	static void SetOrigin( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
 		const char* str = commandLine.c_str();
 		str += commandLine.find( ' ' );
@@ -137,7 +138,7 @@ namespace Vertice
 		}
 	}
 	
-	static void Translate( Parser& parser, Model& model, const std::string& commandLine )
+	static void Translate( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
 		const char* str = commandLine.c_str();
 		str += commandLine.find( ' ' );
@@ -150,7 +151,7 @@ namespace Vertice
 		}
 	}
 	
-	static void SetTheta( Parser& parser, Model& model, const std::string& commandLine )
+	static void SetTheta( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
 		const char* str = commandLine.c_str();
 		str += commandLine.find( ' ' );
@@ -163,7 +164,7 @@ namespace Vertice
 		}
 	}
 	
-	static void SetPhi( Parser& parser, Model& model, const std::string& commandLine )
+	static void SetPhi( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
 		const char* str = commandLine.c_str();
 		str += commandLine.find( ' ' );
@@ -176,7 +177,7 @@ namespace Vertice
 		}
 	}
 	
-	static void AddMeshPoint( Parser& parser, Model& model, const std::string& commandLine )
+	static void AddMeshPoint( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
 		std::string::size_type firstSpace = commandLine.find( ' ' );
 		std::string::size_type firstArg = firstSpace + 1;
@@ -193,7 +194,7 @@ namespace Vertice
 		}
 	}
 	
-	static void AddMeshPoly( Parser& parser, Model& model, const std::string& commandLine )
+	static void AddMeshPoly( Parser& parser, Scene& scene, const std::string& commandLine )
 	{
 		std::size_t space = commandLine.find( ' ' );
 		if ( space == std::string::npos )  return;
@@ -201,7 +202,7 @@ namespace Vertice
 		std::size_t arg = space + 1;
 		
 		std::vector< unsigned > offsets;
-		Context& context = model.GetContext( parser.myContext );
+		Context& context = scene.GetContext( parser.myContext );
 		
 		while ( arg < std::string::npos )
 		{
@@ -218,7 +219,7 @@ namespace Vertice
 		}
 	}
 	
-	typedef void ( *Handler )( Parser&, Model&, const std::string& );
+	typedef void ( *Handler )( Parser&, Scene&, const std::string& );
 	
 	static std::map< std::string, Handler > MakeHandlers()
 	{
@@ -259,7 +260,7 @@ namespace Vertice
 	{
 	}
 	
-	void Parser::ParseLine( Model& model, const std::string& line )
+	void Parser::ParseLine( Scene& scene, const std::string& line )
 	{
 		std::string::size_type iCmdStart = line.find_first_not_of( " \t" );
 		
@@ -273,7 +274,7 @@ namespace Vertice
 		
 		if ( Handler handler = GetHandler( cmdname ) )
 		{
-			handler( *this, model, line.substr( iCmdStart, line.npos ) );
+			handler( *this, scene, line.substr( iCmdStart, line.npos ) );
 		}
 	}
 	
@@ -301,7 +302,7 @@ namespace Vertice
 			}
 			else
 			{
-				parser.ParseLine( ItsModel(), line );
+				parser.ParseLine( ItsScene(), line );
 			}
 		}
 	}

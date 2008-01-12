@@ -26,59 +26,79 @@ namespace Vertice
 	typedef Vectoria::Matrix< double, 3, 1 > ColorMatrix;
 	
 	
+	// A Moveable object maintains a transform describing its movements relative to some context.
+	// For convenience, it also stores the inverse transform.
+	
 	class Moveable
 	{
 		public:
-			V::XMatrix xform;
-			V::XMatrix inverse;
+			V::XMatrix itsTransform;
+			V::XMatrix itsInverse;
 		
 		public:
 			Moveable()  {}
-			Moveable( const V::XMatrix& xf, const V::XMatrix& inv ) : xform( xf ), inverse( inv )  {}
 			
-			void ContextTranslate(double dx, double dy, double dz);
-			void ContextTranslate(const V::Vector3D::Type& inVector);
-			void ContextYaw(double dtheta);
-			void ContextPitch(double dphi);
-			void ContextRoll(double dpsi);
-			void ContextScale(double factor);
-			void LocalTranslate(double dx, double dy, double dz);
-			void LocalTranslate(const V::Vector3D::Type& inVector);
-			void LocalYaw(double dtheta);
-			void LocalPitch(double dphi);
-			void LocalRoll(double dpsi);
-			void LocalScale(double factor);
+			Moveable( const V::XMatrix& xform,
+			          const V::XMatrix& inverse ) : itsTransform( xform   ),
+			                                        itsInverse  ( inverse )
+			{
+			}
+			
+			void ContextTranslate( double dx, double dy, double dz );
+			
+			void ContextTranslate( const V::Vector3D::Type& v );
+			
+			void ContextYaw  ( double dtheta );
+			void ContextPitch( double dphi   );
+			void ContextRoll ( double dpsi   );
+			
+			void ContextScale( double factor );
+			
+			void LocalTranslate( double dx, double dy, double dz );
+			
+			void LocalTranslate( const V::Vector3D::Type& v );
+			
+			void LocalYaw  ( double dtheta );
+			void LocalPitch( double dphi   );
+			void LocalRoll ( double dpsi   );
+			
+			void LocalScale( double factor );
 	};
+	
+	// PointMesh stores an ordered collection of points that can be transformed all at once.
 	
 	template < class Point >
 	class PointMesh
 	{
 		private:
-			std::vector< Point > points;
+			std::vector< Point > itsPoints;
 		
 		public:
 			typedef Point point_type;
 			
 			std::size_t AddPoint( const Point& pt )
 			{
-				points.push_back( pt );
+				itsPoints.push_back( pt );
 				
-				return points.size() - 1;
+				return itsPoints.size() - 1;
 			}
 			
-			bool Empty() const  { return points.empty(); }
+			bool Empty() const  { return itsPoints.empty(); }
 			
 			template < class Transformer >
 			void Transform( const Transformer& transformer )
 			{
-				std::transform( points.begin(),
-				                points.end(),
-				                points.begin(),
+				std::transform( itsPoints.begin(),
+				                itsPoints.end(),
+				                itsPoints.begin(),
 				                transformer );
 			}
 			
-			Point operator()( std::size_t offset ) const  { return points[ offset ]; }
+			Point operator()( std::size_t offset ) const  { return itsPoints[ offset ]; }
 	};
+	
+	// MeshPoly models a polygon as a sequence of indices into a PointMesh, plus a color.
+	// The user must keep track of which PointMesh stores the points, as it's not specified here.
 	
 	class MeshPoly
 	{
@@ -86,87 +106,74 @@ namespace Vertice
 			typedef unsigned Offset;
 			
 		private:
-			std::vector< Offset > myVertices;
-			ColorMatrix color;
+			std::vector< Offset >  itsVertices;
+			ColorMatrix            itsColor;
 		
 		public:
 			MeshPoly()  {}
 			MeshPoly( const std::vector< Offset >&  offsets,
-			          const ColorMatrix&            color ) 
-			:
-				myVertices( offsets ), color( color )
+			          const ColorMatrix&            color ) : itsVertices( offsets ),
+			                                                  itsColor   ( color   )
 			{}
 			
-			const std::vector< Offset >& Vertices() const  { return myVertices; }
-			      std::vector< Offset >& Vertices()        { return myVertices; }
+			const std::vector< Offset >& Vertices() const  { return itsVertices; }
+			      std::vector< Offset >& Vertices()        { return itsVertices; }
 			
-			const ColorMatrix& Color() const  { return color; }
+			const ColorMatrix& Color() const  { return itsColor; }
 	};
+	
+	// MeshModel combines a PointMesh and the polygons defined in terms of it.
 	
 	class MeshModel
 	{
 		private:
-			PointMesh< V::Point3D::Type > myMesh;
-			std::vector< MeshPoly > myPolygons;
+			PointMesh< V::Point3D::Type >  itsMesh;
+			std::vector< MeshPoly >        itsPolygons;
 		
 		public:
-			PointMesh< V::Point3D::Type > const& Points() const  { return myMesh; }
-			PointMesh< V::Point3D::Type >      & Points()        { return myMesh; }
+			PointMesh< V::Point3D::Type > const& Mesh() const  { return itsMesh; }
 			
-			std::vector< MeshPoly > const& Polies() const  { return myPolygons; }
-			std::vector< MeshPoly >      & Polies()        { return myPolygons; }
+			const std::vector< MeshPoly >& Polygons() const  { return itsPolygons; }
 			
-			std::size_t AddPointToMesh( const V::Point3D::Type& pt )  { return myMesh.AddPoint( pt ); }
+			std::size_t AddPointToMesh( const V::Point3D::Type& pt )  { return itsMesh.AddPoint( pt ); }
 			
 			void AddMeshPoly( const std::vector< unsigned >& offsets, const ColorMatrix& color )
 			{
-				myPolygons.push_back( MeshPoly( offsets, color ) );
+				itsPolygons.push_back( MeshPoly( offsets, color ) );
 			}
 	};
 	
-	class Context : public Moveable
+	class Context : public Moveable, public MeshModel
 	{
 		private:
-			std::size_t parentIndex;
-			std::string name;
+			std::size_t itsParentIndex;
+			std::string itsName;
 			
-			PointMesh< V::Point3D::Type > fMesh;
-			std::vector< MeshPoly > fPolygons;
-			std::vector< std::size_t > mySubcontexts;
+			std::vector< std::size_t > itsSubcontexts;
 		
 		public:
-			Context() : parentIndex( 0 ), name( " " )  {}
+			Context() : itsParentIndex( 0 ), itsName( " " )
+			{
+			}
 			
 			Context( std::size_t         parentIndex,
 			         const std::string&  name,
-			         const V::XMatrix&   offset,
-	                 const V::XMatrix&   inv )
-			:
-				Moveable( offset, inv ),
-				parentIndex( parentIndex ),
-				name( name )
-			{}
-			
-			std::size_t ParentIndex() const  { return parentIndex; }
-			
-			const std::string& Name() const  { return name; }
-			
-			int AddPointToMesh( const V::Point3D::Type& pt )  { return fMesh.AddPoint( pt ); }
-			
-			void AddMeshPoly( const std::vector< unsigned >& offsets, const ColorMatrix& color )
+			         const V::XMatrix&   transform,
+	                 const V::XMatrix&   inverse ) : Moveable( transform, inverse ),
+	                                                 itsParentIndex( parentIndex ),
+	                                                 itsName       ( name        )
 			{
-				fPolygons.push_back( MeshPoly( offsets, color ) );
 			}
 			
-			PointMesh< V::Point3D::Type > const& Mesh() const  { return fMesh; }
+			std::size_t ParentIndex() const  { return itsParentIndex; }
 			
-			const std::vector< MeshPoly >& Polygons() const  { return fPolygons; }
+			const std::string& Name() const  { return itsName; }
 			
-			std::vector< std::size_t > const& Subcontexts() const  { return mySubcontexts; }
+			std::vector< std::size_t > const& Subcontexts() const  { return itsSubcontexts; }
 			
 			void AddSubcontext( std::size_t index )
 			{
-				mySubcontexts.push_back( index );
+				itsSubcontexts.push_back( index );
 			}
 	};
 	

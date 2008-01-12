@@ -26,15 +26,20 @@ namespace Vertice
 	{
 		private:
 			typedef std::vector< PointMesh< V::Point3D::Type > > MeshContainer;
-			MeshContainer myMeshes;
+			
+			MeshContainer itsMeshes;
 		
 		public:
-			MeshContainer const& Meshes() const  { return myMeshes; }
-			MeshContainer      & Meshes()        { return myMeshes; }
+			MeshContainer const& Meshes() const  { return itsMeshes; }
 			
-			void AddMesh( const PointMesh< V::Point3D::Type >& mesh )  { myMeshes.push_back( mesh ); }
+			void AddMesh( const PointMesh< V::Point3D::Type >& mesh )  { itsMeshes.push_back( mesh ); }
 			
 			//MeshPoly* HitTest( const Point3D::Type& pt0, const Vector3D& ray );
+			
+			void Swap( Frame& other )
+			{
+				std::swap( itsMeshes, other.itsMeshes );
+			}
 	};
 	
 	
@@ -82,19 +87,21 @@ namespace Vertice
 	class Port
 	{
 		public:
-			Model& myModel;
-			Frame myFrame;
+			Scene&  itsScene;
+			Frame   itsFrame;
 		
 		public:
-			Port( Model& inModel ) : myModel( inModel )  {}
+			Port( Scene& scene ) : itsScene( scene )
+			{
+			}
 			
-			Frame& Contents()  { return myFrame; }
+			Frame& Contents()  { return itsFrame; }
 			
-			void SendCameraCommand( std::size_t contextIndex, short inCmd );
+			void SendCameraCommand( std::size_t contextIndex, short cmd );
 			
 			void MakeFrame( Frame& outFrame ) const;
 			
-			std::pair< int, int > HitTest( double inX, double inY ) const;
+			std::pair< int, int > HitTest( double x, double y ) const;
 	};
 	
 	inline V::Point3D::Type FisheyeLens::Bend( const V::Point3D::Type& pt ) const

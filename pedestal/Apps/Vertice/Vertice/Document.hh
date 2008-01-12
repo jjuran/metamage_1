@@ -24,7 +24,7 @@ namespace Vertice
 		public:
 			Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, ConstStr255Param title );
 			
-			Model& ItsModel()  { return SubView().ItsModel(); }
+			Scene& ItsScene()  { return SubView().ItsScene(); }
 			
 			void Load( const FSSpec& file );
 			void Store();

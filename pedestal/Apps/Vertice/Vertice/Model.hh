@@ -18,25 +18,25 @@ namespace Vertice
 	
 	namespace V = Vectoria;
 	
-	class Model;
+	class Scene;
 	
 	class Camera
 	{
 		private:
-			std::size_t fContextIndex;
+			std::size_t itsContextIndex;
 		
 		public:
-			Camera() : fContextIndex( 0 )  {}
+			Camera() : itsContextIndex( 0 )  {}
 			
-			Camera( std::size_t index ) : fContextIndex( index )  {}
+			Camera( std::size_t index ) : itsContextIndex( index )  {}
 			
-			V::XMatrix WorldToEyeTransform( const Model& model ) const;
-			V::XMatrix EyeToWorldTransform( const Model& model ) const;
+			V::XMatrix WorldToEyeTransform( const Scene& model ) const;
+			V::XMatrix EyeToWorldTransform( const Scene& model ) const;
 			
 			V::XMatrix EyeToPortTransform() const;
 			V::XMatrix PortToEyeTransform() const;
 			
-			std::size_t ContextIndex() const  { return fContextIndex; }
+			std::size_t ContextIndex() const  { return itsContextIndex; }
 	};
 	
 	class PointLight
@@ -44,17 +44,17 @@ namespace Vertice
 		
 	};
 	
-	class Model
+	class Scene
 	{
 		private:
-			std::vector< Context >                fContexts;
-			std::map< std::string, std::size_t >  fNameIndex;
+			std::vector< Context >                itsContexts;
+			std::map< std::string, std::size_t >  itsNameIndex;
 			
-			std::vector< Camera >                 myCameras;
-			std::vector< PointLight >             fPointLights;
+			std::vector< Camera >                 itsCameras;
+			std::vector< PointLight >             itsPointLights;
 			
 		public:
-			Model();
+			Scene();
 			
 			Context const& GetContext( std::size_t index ) const;
 			Context      & GetContext( std::size_t index );
@@ -71,8 +71,8 @@ namespace Vertice
 			                           const V::XMatrix&   offset,
 			                           const V::XMatrix&   inv );
 			
-			const std::vector< Camera >& Cameras() const  { return myCameras; }
-			      std::vector< Camera >& Cameras()        { return myCameras; }
+			const std::vector< Camera >& Cameras() const  { return itsCameras; }
+			      std::vector< Camera >& Cameras()        { return itsCameras; }
 	};
 	
 }

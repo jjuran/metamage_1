@@ -55,7 +55,7 @@ namespace Vertice
 	}
 	*/
 	
-	void Port::SendCameraCommand( std::size_t contextIndex, short inCmd )
+	void Port::SendCameraCommand( std::size_t contextIndex, short cmd )
 	{
 		double incrMove = 0.5;
 		double incrRotate = 5.0 * 3.14159 / 180;
@@ -66,9 +66,9 @@ namespace Vertice
 			return;
 		}
 		
-		Moveable& target = myModel.GetSubcontext( contextIndex );
+		Moveable& target = itsScene.GetSubcontext( contextIndex );
 		
-		switch ( inCmd )
+		switch ( cmd )
 		{
 			case cmdMoveLeft:
 				target.ContextTranslate(-incrMove, 0, 0);
@@ -120,8 +120,10 @@ namespace Vertice
 				break;
 			case cmdGroundHeight:
 				{
-					V::Point3D::Type loc = Transformation( V::Point3D::Make( 0, 0, 0 ), target.xform );
+					V::Point3D::Type loc = Transformation( V::Point3D::Make( 0, 0, 0 ), target.itsTransform );
+					
 					V::Vector3D::Type vec = V::Vector3D::Make( 0, 0, -loc[ Z ] /* + target.groundHeight*/ );
+					
 					target.LocalTranslate( vec );
 				}
 				break;
@@ -136,75 +138,78 @@ namespace Vertice
 	class PolygonToTile
 	{
 		private:
-			V::XMatrix fWorld2Port;
+			V::XMatrix itsWorld2Port;
 		
 		public:
 			typedef V::Point3D::Type point_type;
 			
-			PolygonToTile( const V::XMatrix& world2Port ) : fWorld2Port( world2Port )  {}
+			PolygonToTile( const V::XMatrix& world2Port ) : itsWorld2Port( world2Port )
+			{
+			}
 			
 			V::Point3D::Type operator()( const V::Point3D::Type& point ) const;
 	};
 	
 	V::Point3D::Type PolygonToTile::operator()( const V::Point3D::Type& point ) const
 	{
-		return Transformation( point, fWorld2Port );
+		return Transformation( point, itsWorld2Port );
 	}
-	
-	static Model* sModel;
 	
 	class ConvertPolygons
 	{
 		private:
-			Frame& myOutFrame;
-			const V::Transformer< V::Point3D::Type >& fConverter;
+			typedef V::Transformer< V::Point3D::Type > Transformer;
+			
+			Scene&              itsScene;
+			Frame&              itsResultFrame;
+			const Transformer&  itsConverter;
 		
 		public:
-			ConvertPolygons( Frame& outFrame, const V::Transformer< V::Point3D::Type >& inConverter )
-			:
-				myOutFrame ( outFrame    ),
-				fConverter( inConverter )
-			{}
+			ConvertPolygons( Scene&              scene,
+			                 Frame&              outFrame,
+			                 const Transformer&  converter ) : itsScene      ( scene     ),
+			                                                   itsResultFrame( outFrame  ),
+			                                                   itsConverter  ( converter )
+			{
+			}
 			
-			void operator()( const Context& context );
 			void operator()( std::size_t index );
 	};
 	
 	
-	void ConvertPolygons::operator()( const Context& context )
+	void ConvertPolygons::operator()( std::size_t index )
 	{
+		const Context& context = itsScene.GetContext( index );
+		
 		PointMesh< V::Point3D::Type > mesh = context.Mesh();
 		
-		mesh.Transform( fConverter );
+		mesh.Transform( itsConverter );
 		
-		myOutFrame.AddMesh( mesh );
+		itsResultFrame.AddMesh( mesh );
 		
 		const std::vector< std::size_t >& subs = context.Subcontexts();
 		
 		std::for_each( subs.begin(), subs.end(), *this );
 	}
 	
-	void ConvertPolygons::operator()( std::size_t index )
-	{
-		operator()( sModel->GetContext( index ) );
-	}
 	
 	void Port::MakeFrame( Frame& outFrame ) const
 	{
-		if ( myModel.Cameras().empty() )  return;
+		if ( itsScene.Cameras().empty() )  return;
 		
-		Camera& camera = myModel.Cameras().front();
+		Camera& camera = itsScene.Cameras().front();
 		
-		const V::XMatrix& world2eye  = camera.WorldToEyeTransform( myModel );
+		const V::XMatrix& world2eye  = camera.WorldToEyeTransform( itsScene );
 		const V::XMatrix& eye2port   = camera.EyeToPortTransform();
 		const V::XMatrix& world2port = Compose( world2eye, eye2port );
 		
-		outFrame.Meshes().clear();
-		sModel = &myModel;
+		Frame newFrame;
 		
-		ConvertPolygons( outFrame,
-		                 V::Transformer< V::Point3D::Type >( world2port ) )( myModel.GetContext( 0 ) );
+		ConvertPolygons( itsScene,
+		                 newFrame,
+		                 V::Transformer< V::Point3D::Type >( world2port ) )( 0 );
 		
+		outFrame.Swap( newFrame );
 	}
 	
 	
@@ -234,13 +239,13 @@ namespace Vertice
 	Frame::HitTest( const V::Point3D::Type& pt0, const Vector3D::Type& ray )
 	{
 		double minZ = 0;
-		MeshModel* closestMesh = NULL;
+		MeshModel* closestModel = NULL;
 		MeshPoly* closestPoly = NULL;
 		
 		for ( std::vector< MeshModel >::iterator it = myMeshes.begin();  it != myMeshes.end();  ++it )
 		{
-			MeshModel& mesh = *it;
-			std::vector< MeshPoly >& polies = mesh.Polies();
+			MeshModel& model = *it;
+			std::vector< MeshPoly >& polies = model.Polygons();
 			
 			for ( std::vector< MeshPoly >::iterator it = polies.begin();  it != polies.end();  ++it )
 			{
@@ -252,7 +257,7 @@ namespace Vertice
 				std::transform( offsets.begin(),
 				                offsets.end(),
 				                points.begin(),
-				                mesh.Points() );
+				                model.Mesh() );
 				
 				Plane3D plane = PlaneVector( points );
 				
@@ -289,7 +294,7 @@ namespace Vertice
 				
 				minZ = dist;
 				closestPoly = &*it;
-				closestMesh = &mesh;
+				closestModel = &model;
 				
 			}
 		}

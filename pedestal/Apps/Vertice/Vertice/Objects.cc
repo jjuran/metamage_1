@@ -21,8 +21,8 @@ namespace Vertice
 	{
 		V::Translation trans( dx, dy, dz );
 		
-		xform   = Compose( trans.Make(),   xform           );
-		inverse = Compose( inverse, trans.Inverse().Make() );
+		itsTransform = Compose( trans.Make(), itsTransform           );
+		itsInverse   = Compose( itsInverse,   trans.Inverse().Make() );
 	}
 	
 	void Moveable::ContextTranslate( const V::Vector3D::Type& vec )
@@ -42,40 +42,40 @@ namespace Vertice
 		
 		V::Yaw yaw = V::Radians( dtheta );
 		
-		xform   = Compose( yaw,     xform );
-		inverse = Compose( inverse, -yaw  );
+		itsTransform = Compose( yaw,        itsTransform );
+		itsInverse   = Compose( itsInverse, -yaw         );
 	}
 	
 	void Moveable::ContextPitch( double dphi )
 	{
 		V::Pitch pitch = V::Radians( dphi );
 		
-		xform   = Compose( pitch,   xform  );
-		inverse = Compose( inverse, -pitch );
+		itsTransform = Compose( pitch,      itsTransform  );
+		itsInverse   = Compose( itsInverse, -pitch        );
 	}
 	
 	void Moveable::ContextRoll( double dpsi )
 	{
 		V::Roll roll = V::Radians( dpsi );
 		
-		xform   = Compose( roll,    xform );
-		inverse = Compose( inverse, -roll );
+		itsTransform = Compose( roll,       itsTransform );
+		itsInverse   = Compose( itsInverse, -roll        );
 	}
 	
 	void Moveable::ContextScale( double factor )
 	{
 		V::Scale scale( factor );
 		
-		xform   = Compose( scale.Make(),   xform           );
-		inverse = Compose( inverse, scale.Inverse().Make() );
+		itsTransform = Compose( scale.Make(), itsTransform           );
+		itsInverse   = Compose( itsInverse,   scale.Inverse().Make() );
 	}
 	
 	void Moveable::LocalTranslate( double dx, double dy, double dz )
 	{
 		V::Translation trans( dx, dy, dz );
 		
-		xform   = Compose( xform,           trans.Make()   );
-		inverse = Compose( trans.Inverse().Make(), inverse );
+		itsTransform = Compose( itsTransform,           trans.Make() );
+		itsInverse   = Compose( trans.Inverse().Make(), itsInverse   );
 	}
 	
 	void Moveable::LocalTranslate( const V::Vector3D::Type& vec )
@@ -87,32 +87,32 @@ namespace Vertice
 	{
 		V::Yaw yaw = V::Radians( dtheta );
 		
-		xform   = Compose( xform, yaw     );
-		inverse = Compose( -yaw,  inverse );
+		itsTransform = Compose( itsTransform, yaw        );
+		itsInverse   = Compose( -yaw,         itsInverse );
 	}
 	
 	void Moveable::LocalPitch( double dphi )
 	{
 		V::Pitch pitch = V::Radians( dphi );
 		
-		xform   = Compose( xform,  pitch   );
-		inverse = Compose( -pitch, inverse );
+		itsTransform = Compose( itsTransform, pitch      );
+		itsInverse   = Compose( -pitch,       itsInverse );
 	}
 	
 	void Moveable::LocalRoll( double dpsi )
 	{
 		V::Roll roll = V::Radians( dpsi );
 		
-		xform   = Compose( xform, roll    );
-		inverse = Compose( -roll, inverse );
+		itsTransform = Compose( itsTransform, roll       );
+		itsInverse   = Compose( -roll,        itsInverse );
 	}
 	
 	void Moveable::LocalScale( double factor )
 	{
 		V::Scale scale( factor );
 		
-		xform   = Compose( xform,           scale.Make()   );
-		inverse = Compose( scale.Inverse().Make(), inverse );
+		itsTransform = Compose( itsTransform,           scale.Make() );
+		itsInverse   = Compose( scale.Inverse().Make(), itsInverse   );
 	}
 	
 }
