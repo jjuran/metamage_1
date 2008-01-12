@@ -720,15 +720,6 @@ namespace Vertice
 	
 	void PortView::Draw()
 	{
-		V::Plane3D::Type nearPlane = V::NearPlane(   0.01 );
-		V::Plane3D::Type farPlane  = V::FarPlane ( 100    );
-		
-		V::Plane3D::Type leftPlane  = V::LeftPlane (  sFocalLength );
-		V::Plane3D::Type rightPlane = V::RightPlane(  sFocalLength );
-		
-		V::Plane3D::Type bottomPlane = V::BottomPlane( sFocalLength, sAspectRatio );
-		V::Plane3D::Type topPlane    = V::TopPlane   ( sFocalLength, sAspectRatio );
-		
 		unsigned width  = NX::RectWidth ( itsBounds );
 		unsigned height = NX::RectHeight( itsBounds );
 		
@@ -774,6 +765,12 @@ namespace Vertice
 			{
 				MeshPoly poly = *it;
 				const std::vector< unsigned >& offsets = poly.Vertices();
+				
+				if ( offsets.empty() )
+				{
+					continue;
+				}
+				
 				std::vector< V::Point3D::Type > points( offsets.size() );
 				
 				// Lookup the vertices of this polygon
@@ -792,21 +789,6 @@ namespace Vertice
 				}
 				
 				V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
-				
-				// Clip against a 1cm near plane
-				ClipPolygonAgainstPlane( points, nearPlane );
-				// Clip against a 100m far plane
-				ClipPolygonAgainstPlane( points, farPlane );
-				
-				ClipPolygonAgainstPlane( points, leftPlane   );
-				ClipPolygonAgainstPlane( points, rightPlane  );
-				ClipPolygonAgainstPlane( points, bottomPlane );
-				ClipPolygonAgainstPlane( points, topPlane    );
-				
-				if ( points.size() < 3 )
-				{
-					continue;
-				}
 				
 				points = Port2ScreenPolygon( points, port2screen );
 				
@@ -1012,7 +994,14 @@ namespace Vertice
 					for ( PolygonIter it = polygons.begin(), end = polygons.end();  it != end;  ++it )
 					{
 						MeshPoly poly = *it;
+						
 						std::vector< unsigned > offsets = poly.Vertices();
+						
+						if ( offsets.empty() )
+						{
+							continue;
+						}
+						
 						std::vector< V::Point3D::Type > points( offsets.size() );
 						
 						// Lookup the vertices of this polygon
@@ -1021,27 +1010,13 @@ namespace Vertice
 						                offsets.end(),
 						                points.begin(),
 						                mesh );
-							
-						// Clip against a 1cm near plane
-						ClipPolygonAgainstPlane( points, V::NearPlane( 0.01 ) );
-						// Clip against a 100m far plane
-						ClipPolygonAgainstPlane( points, V::FarPlane( 100 ) );
-						
-						ClipPolygonAgainstPlane( points, V::LeftPlane  ( sFocalLength               ) );
-						ClipPolygonAgainstPlane( points, V::RightPlane ( sFocalLength               ) );
-						ClipPolygonAgainstPlane( points, V::BottomPlane( sFocalLength, sAspectRatio ) );
-						ClipPolygonAgainstPlane( points, V::TopPlane   ( sFocalLength, sAspectRatio ) );
-						
-						if ( points.size() < 3 )
-						{
-							continue;
-						}
 						
 						V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
 						V::Plane3D::Type plane = V::PlaneVector( points );
 						
 						if ( !ClipPointAgainstPlane( pt0, plane ) )
 						{
+							// cull backface
 							continue;
 						}
 						

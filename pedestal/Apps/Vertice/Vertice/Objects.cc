@@ -159,6 +159,11 @@ namespace Vertice
 			
 			std::vector< Offset >& offsets = polygon.Vertices();
 			
+			if ( offsets.empty() )
+			{
+				continue;
+			}
+			
 			std::vector< Offset > new_offsets;
 			
 			bool have_previous = false;

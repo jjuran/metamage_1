@@ -23,9 +23,10 @@
 //#include "PointerToFunction.hh"
 
 // Vectoria
+#include "Vectoria/Clipping3D.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
 #include "Vectoria/Polygon3D.hh"
-#include "Vectoria/Clipping3D.hh"
+#include "Vectoria/ViewFrustum.hh"
 
 // Vertice
 #include "Vertice/Objects.hh"
@@ -167,15 +168,40 @@ namespace Vertice
 	}
 	
 	
+	static double FocalLength( V::Radians alpha )
+	{
+		double e = 1 / std::tan( alpha / 2.0 );
+		return e;
+	}
+	
+	static double sAspectRatio = 1;
+	
+	static V::Radians sHorizontalFieldOfViewAngle = V::Degrees( 60 );
+	
+	static double sFocalLength = FocalLength( sHorizontalFieldOfViewAngle );
+	
+	
 	void Port::MakeFrame( Frame& outFrame ) const
 	{
 		if ( itsScene.Cameras().empty() )  return;
 		
 		Camera& camera = itsScene.Cameras().front();
 		
-		const V::XMatrix& world2eye  = camera.WorldToEyeTransform( itsScene );
-		const V::XMatrix& eye2port   = camera.EyeToPortTransform();
-		const V::XMatrix& world2port = Compose( world2eye, eye2port );
+		const V::XMatrix& world2eye = camera.WorldToEyeTransform( itsScene );
+		const V::XMatrix& eye2port  = camera.EyeToPortTransform();
+		
+		V::XMatrix world2port = Compose( world2eye, eye2port );
+		
+		V::XMatrix port2worldInverseTranspose = Transpose( world2port );
+		
+		V::Plane3D::Type nearPlane = port2worldInverseTranspose * V::NearPlane(   0.01 );
+		V::Plane3D::Type farPlane  = port2worldInverseTranspose * V::FarPlane ( 100    );
+		
+		V::Plane3D::Type leftPlane  = port2worldInverseTranspose * V::LeftPlane (  sFocalLength );
+		V::Plane3D::Type rightPlane = port2worldInverseTranspose * V::RightPlane(  sFocalLength );
+		
+		V::Plane3D::Type bottomPlane = port2worldInverseTranspose * V::BottomPlane( sFocalLength, sAspectRatio );
+		V::Plane3D::Type topPlane    = port2worldInverseTranspose * V::TopPlane   ( sFocalLength, sAspectRatio );
 		
 		Frame newFrame;
 		
@@ -189,6 +215,13 @@ namespace Vertice
 		
 		for ( ModelIter it = models.begin();  it != models.end();  ++it )
 		{
+			it->ClipAgainstPlane( nearPlane   );
+			it->ClipAgainstPlane( farPlane    );
+			it->ClipAgainstPlane( leftPlane   );
+			it->ClipAgainstPlane( rightPlane  );
+			it->ClipAgainstPlane( bottomPlane );
+			it->ClipAgainstPlane( topPlane    );
+			
 			it->Transform( transformer );
 		}
 		
