@@ -935,7 +935,18 @@ namespace Vertice
 		
 		Escapement escapement( 10 );
 		
-		Rect portRect = Bounds();
+		NN::Saved< N::GWorld_Value > savedGWorld;
+		N::SetGWorld( itsGWorld );
+		
+		PixMapHandle pix = ::GetPortPixMap( itsGWorld );
+		
+		if ( !CheckPixMap( pix ) ) return;
+		
+		const Rect& portRect = N::GetPortBounds( itsGWorld );
+		
+		const Rect& pixBounds = ( *pix )->bounds;
+		::Ptr       baseAddr  = ( *pix )->baseAddr;
+		unsigned    rowBytes  = ( *pix )->rowBytes & 0x3fff;
 		
 		N::RGBForeColor( NN::Make< RGBColor >( 0 ) );
 		N::PaintRect( portRect );
@@ -1082,6 +1093,8 @@ namespace Vertice
 						{
 							//escapement();
 							
+							::Ptr rowAddr = baseAddr + ( iY - pixBounds.top ) * rowBytes;
+							
 							// For each pixel in the row
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
 							{
@@ -1135,15 +1148,31 @@ namespace Vertice
 								
 								N::RGBColor rgb = NN::Convert< N::RGBColor >( tweaked );
 								
-								N::SetCPixel( iX,
-								              iY,
-								              rgb );
+								::Ptr pixelAddr = rowAddr + (iX - pixBounds.left) * 32/8;
+								
+								GrafX::Pixel32& pixel = *(GrafX::Pixel32*) pixelAddr;
+								
+								pixel = rgb;
 							}
 						}
 					}
 				}
 			}
 		}
+		
+		savedGWorld.Restore();
+		
+		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
+		
+		PixMapHandle thePortPix = N::GetGWorldPixMap( thePort );
+		NN::Saved< N::PixelsState_Value > savedPixelsState( thePortPix );
+		N::LockPixels( thePortPix );
+		
+		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
+		             N::GetPortBitMapForCopyBits( thePort ),
+		             itsBounds,
+		             itsBounds,
+		             N::srcCopy );
 		
 		if ( TARGET_API_MAC_CARBON )
 		{
