@@ -720,6 +720,15 @@ namespace Vertice
 	
 	void PortView::Draw()
 	{
+		V::Plane3D::Type nearPlane = V::NearPlane(   0.01 );
+		V::Plane3D::Type farPlane  = V::FarPlane ( 100    );
+		
+		V::Plane3D::Type leftPlane  = V::LeftPlane (  sFocalLength );
+		V::Plane3D::Type rightPlane = V::RightPlane(  sFocalLength );
+		
+		V::Plane3D::Type bottomPlane = V::BottomPlane( sFocalLength, sAspectRatio );
+		V::Plane3D::Type topPlane    = V::TopPlane   ( sFocalLength, sAspectRatio );
+		
 		unsigned width  = NX::RectWidth ( itsBounds );
 		unsigned height = NX::RectHeight( itsBounds );
 		
@@ -742,24 +751,26 @@ namespace Vertice
 		
 		V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
 		
-		const std::vector< PointMesh< V::Point3D::Type > >& meshes = itsFrame.Meshes();
-		typedef std::vector< PointMesh< V::Point3D::Type > >::const_iterator vM_ci;
+		const std::vector< MeshModel >& models = itsFrame.Models();
+		
+		typedef std::vector< MeshModel >::const_iterator ModelIter;
 		
 		// For each mesh model...
-		for ( vM_ci it = meshes.begin(), end = meshes.end();  it != end;  ++it )
+		for ( ModelIter it = models.begin(), end = models.end();  it != end;  ++it )
 		{
-			PointMesh< V::Point3D::Type > mesh = *it;
+			const MeshModel& model = *it;
+			
+			const PointMesh< V::Point3D::Type >& mesh = model.Mesh();
 			
 			// Sanity check:  Must have some points to work with.
 			if ( mesh.Empty() )  continue;
 			
-			typedef std::vector< V::Point3D::Type >::const_iterator vP3D_ci;
+			const std::vector< MeshPoly >& polygons = model.Polygons();
 			
-			const std::vector< MeshPoly >& polies = itsScene.GetContext( it - meshes.begin() ).Polygons();
-			typedef std::vector< MeshPoly >::const_iterator vMP_ci;
+			typedef std::vector< MeshPoly >::const_iterator PolygonIter;
 			
 			// For each polygon in the mesh...
-			for ( vMP_ci it = polies.begin(), end = polies.end();  it != end;  ++it )
+			for ( PolygonIter it = polygons.begin(), end = polygons.end();  it != end;  ++it )
 			{
 				MeshPoly poly = *it;
 				const std::vector< unsigned >& offsets = poly.Vertices();
@@ -783,14 +794,14 @@ namespace Vertice
 				V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 				
 				// Clip against a 1cm near plane
-				ClipPolygonAgainstPlane( points, V::NearPlane( 0.01 ) );
+				ClipPolygonAgainstPlane( points, nearPlane );
 				// Clip against a 100m far plane
-				ClipPolygonAgainstPlane( points, V::FarPlane( 100 ) );
+				ClipPolygonAgainstPlane( points, farPlane );
 				
-				ClipPolygonAgainstPlane( points, V::LeftPlane(   sFocalLength ) );
-				ClipPolygonAgainstPlane( points, V::RightPlane(  sFocalLength ) );
-				ClipPolygonAgainstPlane( points, V::BottomPlane( sFocalLength, sAspectRatio ) );
-				ClipPolygonAgainstPlane( points, V::TopPlane(    sFocalLength, sAspectRatio ) );
+				ClipPolygonAgainstPlane( points, leftPlane   );
+				ClipPolygonAgainstPlane( points, rightPlane  );
+				ClipPolygonAgainstPlane( points, bottomPlane );
+				ClipPolygonAgainstPlane( points, topPlane    );
 				
 				if ( points.size() < 3 )
 				{
@@ -973,13 +984,16 @@ namespace Vertice
 				depthRect.bottom = vp * height;
 				depthRect.top    = (vp + 1) * height;
 				
-				const std::vector< PointMesh< V::Point3D::Type > >& meshes = itsFrame.Meshes();
-				typedef std::vector< PointMesh< V::Point3D::Type > >::const_iterator vM_ci;
+				const std::vector< MeshModel >& models = itsFrame.Models();
+				
+				typedef std::vector< MeshModel >::const_iterator ModelIter;
 				
 				// For each mesh model...
-				for ( vM_ci it = meshes.begin(), end = meshes.end();  it != end;  ++it )
+				for ( ModelIter it = models.begin(), end = models.end();  it != end;  ++it )
 				{
-					PointMesh< V::Point3D::Type > mesh = *it;
+					const MeshModel& model = *it;
+					
+					const PointMesh< V::Point3D::Type >& mesh = model.Mesh();
 					
 					// Sanity check:  Must have some points to work with.
 					if ( mesh.Empty() )  continue;
@@ -990,11 +1004,12 @@ namespace Vertice
 					//	transform(points.begin(), points.end(), points.begin(), FishEye);
 					}
 					
-					const std::vector< MeshPoly >& polies = itsScene.GetContext( it - meshes.begin() ).Polygons();
-					typedef std::vector< MeshPoly >::const_iterator vMP_ci;
+					const std::vector< MeshPoly >& polygons = model.Polygons();
+					
+					typedef std::vector< MeshPoly >::const_iterator PolygonIter;
 					
 					// For each polygon in the mesh...
-					for ( vMP_ci it = polies.begin(), end = polies.end();  it != end;  ++it )
+					for ( PolygonIter it = polygons.begin(), end = polygons.end();  it != end;  ++it )
 					{
 						MeshPoly poly = *it;
 						std::vector< unsigned > offsets = poly.Vertices();

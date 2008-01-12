@@ -135,41 +135,17 @@ namespace Vertice
 		}
 	}
 	
-	class PolygonToTile
+	
+	class GetMeshModels
 	{
 		private:
-			V::XMatrix itsWorld2Port;
+			Scene&  itsScene;
+			Frame&  itsResultFrame;
 		
 		public:
-			typedef V::Point3D::Type point_type;
-			
-			PolygonToTile( const V::XMatrix& world2Port ) : itsWorld2Port( world2Port )
-			{
-			}
-			
-			V::Point3D::Type operator()( const V::Point3D::Type& point ) const;
-	};
-	
-	V::Point3D::Type PolygonToTile::operator()( const V::Point3D::Type& point ) const
-	{
-		return Transformation( point, itsWorld2Port );
-	}
-	
-	class ConvertPolygons
-	{
-		private:
-			typedef V::Transformer< V::Point3D::Type > Transformer;
-			
-			Scene&              itsScene;
-			Frame&              itsResultFrame;
-			const Transformer&  itsConverter;
-		
-		public:
-			ConvertPolygons( Scene&              scene,
-			                 Frame&              outFrame,
-			                 const Transformer&  converter ) : itsScene      ( scene     ),
-			                                                   itsResultFrame( outFrame  ),
-			                                                   itsConverter  ( converter )
+			GetMeshModels( Scene&  scene,
+			               Frame&  outFrame ) : itsScene      ( scene    ),
+			                                    itsResultFrame( outFrame )
 			{
 			}
 			
@@ -177,15 +153,13 @@ namespace Vertice
 	};
 	
 	
-	void ConvertPolygons::operator()( std::size_t index )
+	void GetMeshModels::operator()( std::size_t index )
 	{
 		const Context& context = itsScene.GetContext( index );
 		
-		PointMesh< V::Point3D::Type > mesh = context.Mesh();
+		MeshModel model = context;
 		
-		mesh.Transform( itsConverter );
-		
-		itsResultFrame.AddMesh( mesh );
+		itsResultFrame.AddModel( model );
 		
 		const std::vector< std::size_t >& subs = context.Subcontexts();
 		
@@ -205,9 +179,18 @@ namespace Vertice
 		
 		Frame newFrame;
 		
-		ConvertPolygons( itsScene,
-		                 newFrame,
-		                 V::Transformer< V::Point3D::Type >( world2port ) )( 0 );
+		GetMeshModels( itsScene, newFrame )( 0 );
+		
+		typedef std::vector< MeshModel >::iterator ModelIter;
+		
+		std::vector< MeshModel >& models = newFrame.Models();
+		
+		V::Transformer< V::Point3D::Type > transformer( world2port );
+		
+		for ( ModelIter it = models.begin();  it != models.end();  ++it )
+		{
+			it->Transform( transformer );
+		}
 		
 		outFrame.Swap( newFrame );
 	}

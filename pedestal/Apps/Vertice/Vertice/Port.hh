@@ -25,20 +25,19 @@ namespace Vertice
 	class Frame
 	{
 		private:
-			typedef std::vector< PointMesh< V::Point3D::Type > > MeshContainer;
-			
-			MeshContainer itsMeshes;
+			std::vector< MeshModel > itsModels;
 		
 		public:
-			MeshContainer const& Meshes() const  { return itsMeshes; }
+			std::vector< MeshModel > const& Models() const  { return itsModels; }
+			std::vector< MeshModel >      & Models()        { return itsModels; }
 			
-			void AddMesh( const PointMesh< V::Point3D::Type >& mesh )  { itsMeshes.push_back( mesh ); }
+			void AddModel( const MeshModel& model )  { itsModels.push_back( model ); }
 			
 			//MeshPoly* HitTest( const Point3D::Type& pt0, const Vector3D& ray );
 			
 			void Swap( Frame& other )
 			{
-				std::swap( itsMeshes, other.itsMeshes );
+				std::swap( itsModels, other.itsModels );
 			}
 	};
 	
