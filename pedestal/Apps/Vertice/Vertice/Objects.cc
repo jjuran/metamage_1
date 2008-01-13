@@ -119,6 +119,11 @@ namespace Vertice
 	
 	void MeshModel::ClipAgainstPlane( const V::Plane3D::Type& plane )
 	{
+		if ( itsPolygons.empty() )
+		{
+			return;
+		}
+		
 		const std::vector< V::Point3D::Type >& points = itsMesh.Points();
 		
 		std::vector< bool > positive_mask( points.size() );
