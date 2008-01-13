@@ -936,7 +936,11 @@ namespace Vertice
 		Escapement escapement( 10 );
 		
 		NN::Saved< N::GWorld_Value > savedGWorld;
-		N::SetGWorld( itsGWorld );
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			N::SetGWorld( itsGWorld );
+		}
 		
 		PixMapHandle pix = ::GetPortPixMap( itsGWorld );
 		
@@ -1153,6 +1157,11 @@ namespace Vertice
 								GrafX::Pixel32& pixel = *(GrafX::Pixel32*) pixelAddr;
 								
 								pixel = rgb;
+								
+								if ( !TARGET_API_MAC_CARBON )
+								{
+									N::SetCPixel( iX, iY, rgb );
+								}
 							}
 						}
 					}
@@ -1160,22 +1169,22 @@ namespace Vertice
 			}
 		}
 		
-		savedGWorld.Restore();
-		
-		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
-		
-		PixMapHandle thePortPix = N::GetGWorldPixMap( thePort );
-		NN::Saved< N::PixelsState_Value > savedPixelsState( thePortPix );
-		N::LockPixels( thePortPix );
-		
-		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
-		             N::GetPortBitMapForCopyBits( thePort ),
-		             itsBounds,
-		             itsBounds,
-		             N::srcCopy );
-		
 		if ( TARGET_API_MAC_CARBON )
 		{
+			savedGWorld.Restore();
+			
+			N::CGrafPtr thePort = N::GetQDGlobalsThePort();
+			
+			PixMapHandle thePortPix = N::GetGWorldPixMap( thePort );
+			NN::Saved< N::PixelsState_Value > savedPixelsState( thePortPix );
+			N::LockPixels( thePortPix );
+			
+			N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
+			             N::GetPortBitMapForCopyBits( thePort ),
+			             itsBounds,
+			             itsBounds,
+			             N::srcCopy );
+			
 			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
 		}
 	}
