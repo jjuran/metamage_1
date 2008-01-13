@@ -16,13 +16,11 @@
 namespace Vertice
 {
 	
-	namespace Ped = Pedestal;
-	
-	
-	class Window : public Ped::Window< PortView >
+	class Window : public Pedestal::Window< PortView >
 	{
 		public:
-			Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, ConstStr255Param title );
+			Window( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler,
+			        ConstStr255Param                                          title );
 			
 			Scene& ItsScene()  { return SubView().ItsScene(); }
 			

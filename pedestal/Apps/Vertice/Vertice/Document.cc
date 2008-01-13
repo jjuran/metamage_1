@@ -36,6 +36,7 @@ namespace Vertice
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Ped = Pedestal;
 	
 	using V::X;
 	using V::Y;
@@ -81,120 +82,163 @@ namespace Vertice
 	class Parser
 	{
 		public:
+			typedef std::map< std::string, V::Point3D::Type > Map;
+			
 			Parser();
+			
 			~Parser()  {}
 			
 			void ParseLine( Scene& scene, const std::string& line );
 			
-			ColorMatrix myColor;
-			V::Point3D::Type myOrigin;
-			V::Degrees myTheta;
-			V::Degrees myPhi;
-			std::size_t myContext;
-			std::map< std::string, V::Point3D::Type > myPoints;
+			ColorMatrix       itsColor;
+			V::Point3D::Type  itsOrigin;
+			V::Degrees        itsTheta;
+			V::Degrees        itsPhi;
+			std::size_t       itsContextID;
+			Map               itsPoints;
 	};
 	
 	
-	static void SetContext( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void SetContext( Parser&             parser,
+	                        Scene&              scene,
+	                        const std::string&  commandLine )
 	{
 		std::string contextName = commandLine.substr( 8, std::string::npos );
 		
-		parser.myContext = scene.AddSubcontext( parser.myContext,
-		                                        contextName,
-		                                        MakeTranslation(  parser.myOrigin ).Make(),
-		                                        MakeTranslation( -parser.myOrigin ).Make() );
+		parser.itsContextID = scene.AddSubcontext( parser.itsContextID,
+		                                           contextName,
+		                                           MakeTranslation(  parser.itsOrigin ).Make(),
+		                                           MakeTranslation( -parser.itsOrigin ).Make() );
 		
-		parser.myOrigin = V::Point3D::Make( 0, 0, 0 );
+		parser.itsOrigin = V::Point3D::Make( 0, 0, 0 );
 	}
 	
-	static void MakeCamera( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void MakeCamera( Parser&             parser,
+	                        Scene&              scene,
+	                        const std::string&  commandLine )
 	{
-		scene.Cameras().push_back( Camera( parser.myContext ) );
+		scene.Cameras().push_back( Camera( parser.itsContextID ) );
 	}
 	
-	static void SetColor( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void SetColor( Parser&             parser,
+	                      Scene&              scene,
+	                      const std::string&  commandLine )
 	{
 		const char* str = commandLine.c_str();
+		
 		str += 5;
+		
 		double red, green, blue;
+		
 		int scanned = std::sscanf( str, "%lf %lf %lf", &red, &green, &blue );
 		
 		if ( scanned == 3 )
 		{
-			parser.myColor = V::MakeRGB( red, green, blue );
+			parser.itsColor = V::MakeRGB( red, green, blue );
 		}
 	}
 	
-	static void SetOrigin( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void SetOrigin( Parser&             parser,
+	                       Scene&              scene,
+	                       const std::string&  commandLine )
 	{
 		const char* str = commandLine.c_str();
+		
 		str += commandLine.find( ' ' );
+		
 		double x, y, z;
+		
 		int scanned = std::sscanf( str, "%lf %lf %lf", &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{
-			parser.myOrigin = V::Point3D::Make( x, y, z );
+			parser.itsOrigin = V::Point3D::Make( x, y, z );
 		}
 	}
 	
-	static void Translate( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void Translate( Parser&             parser,
+	                       Scene&              scene,
+	                       const std::string&  commandLine )
 	{
 		const char* str = commandLine.c_str();
+		
 		str += commandLine.find( ' ' );
+		
 		double x, y, z;
+		
 		int scanned = std::sscanf( str, "%lf %lf %lf", &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{
-			parser.myOrigin += V::Vector3D::Make( x, y, z );
+			parser.itsOrigin += V::Vector3D::Make( x, y, z );
 		}
 	}
 	
-	static void SetTheta( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void SetTheta( Parser&             parser,
+	                      Scene&              scene,
+	                      const std::string&  commandLine )
 	{
 		const char* str = commandLine.c_str();
+		
 		str += commandLine.find( ' ' );
+		
 		double theta;
+		
 		int scanned = std::sscanf( str, "%lf", &theta );
 		
 		if ( scanned == 1 )
 		{
-			parser.myTheta = V::Degrees( theta );
+			parser.itsTheta = V::Degrees( theta );
 		}
 	}
 	
-	static void SetPhi( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void SetPhi( Parser&             parser,
+	                    Scene&              scene,
+	                    const std::string&  commandLine )
 	{
 		const char* str = commandLine.c_str();
+		
 		str += commandLine.find( ' ' );
+		
 		double phi;
+		
 		int scanned = std::sscanf( str, "%lf", &phi );
 		
 		if ( scanned == 1 )
 		{
-			parser.myPhi = V::Degrees( phi );
+			parser.itsPhi = V::Degrees( phi );
 		}
 	}
 	
-	static void AddMeshPoint( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void AddMeshPoint( Parser&             parser,
+	                          Scene&              scene,
+	                          const std::string&  commandLine )
 	{
-		std::string::size_type firstSpace = commandLine.find( ' ' );
-		std::string::size_type firstArg = firstSpace + 1;
-		std::string::size_type secondSpace = commandLine.find( ' ', firstArg );
+		std::size_t firstSpace = commandLine.find( ' ' );
+		
+		std::size_t firstArg = firstSpace + 1;
+		
+		std::size_t secondSpace = commandLine.find( ' ', firstArg );
+		
 		std::string name = commandLine.substr( firstArg, secondSpace - firstArg );
+		
 		const char* str = commandLine.c_str();
+		
 		str += secondSpace;
+		
 		double x, y, z;
+		
 		int scanned = std::sscanf( str, "%lf %lf %lf", &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{
-			parser.myPoints[ name ] = parser.myOrigin + V::Vector3D::Make( x, y, z );
+			parser.itsPoints[ name ] = parser.itsOrigin + V::Vector3D::Make( x, y, z );
 		}
 	}
 	
-	static void AddMeshPoly( Parser& parser, Scene& scene, const std::string& commandLine )
+	static void AddMeshPoly( Parser&             parser,
+	                         Scene&              scene,
+	                         const std::string&  commandLine )
 	{
 		std::size_t space = commandLine.find( ' ' );
 		if ( space == std::string::npos )  return;
@@ -202,20 +246,24 @@ namespace Vertice
 		std::size_t arg = space + 1;
 		
 		std::vector< unsigned > offsets;
-		Context& context = scene.GetContext( parser.myContext );
+		Context& context = scene.GetContext( parser.itsContextID );
 		
 		while ( arg < std::string::npos )
 		{
 			space = commandLine.find( ' ', arg );
+			
 			std::string ptName = commandLine.substr( arg, space - arg );
-			V::Point3D::Type pt = parser.myPoints[ ptName ];
+			
+			V::Point3D::Type pt = parser.itsPoints[ ptName ];
+			
 			offsets.push_back( context.AddPointToMesh( pt ) );
+			
 			arg = ( space == std::string::npos ) ? space : space + 1;
 		}
 		
 		if ( !offsets.empty() )
 		{
-			context.AddMeshPoly( offsets, parser.myColor );
+			context.AddMeshPoly( offsets, parser.itsColor );
 		}
 	}
 	
@@ -251,25 +299,23 @@ namespace Vertice
 		return it->second;
 	}
 	
-	Parser::Parser()
-	: 
-		myOrigin( V::Point3D::Make( 0, 0, 0 ) ),
-		myTheta( 0 ),
-		myPhi( 0 ),
-		myContext( 0 )
+	Parser::Parser() : itsOrigin( V::Point3D::Make( 0, 0, 0 ) ),
+	                   itsTheta    ( 0 ),
+	                   itsPhi      ( 0 ),
+	                   itsContextID( 0 )
 	{
 	}
 	
 	void Parser::ParseLine( Scene& scene, const std::string& line )
 	{
-		std::string::size_type iCmdStart = line.find_first_not_of( " \t" );
+		std::size_t iCmdStart = line.find_first_not_of( " \t" );
 		
 		if ( iCmdStart == std::string::npos )
 		{
 			iCmdStart = 0;
 		}
 		
-		std::string::size_type iCmdEnd = line.find( ' ', iCmdStart );
+		std::size_t iCmdEnd = line.find( ' ', iCmdStart );
 		std::string cmdname = line.substr( iCmdStart, iCmdEnd - iCmdStart );
 		
 		if ( Handler handler = GetHandler( cmdname ) )
