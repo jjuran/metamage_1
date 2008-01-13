@@ -122,6 +122,12 @@ namespace Vertice
 			      std::vector< Offset >& Vertices()        { return itsVertices; }
 			
 			const ColorMatrix& Color() const  { return itsColor; }
+			
+			void Swap( MeshPoly& other )
+			{
+				std::swap( itsVertices, other.itsVertices );
+				std::swap( itsColor,    other.itsColor    );
+			}
 	};
 	
 	// MeshModel combines a PointMesh and the polygons defined in terms of it.
