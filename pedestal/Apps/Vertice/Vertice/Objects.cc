@@ -227,7 +227,18 @@ namespace Vertice
 				new_offsets.push_back( itsMesh.AddPoint( clipped_point ) );
 			}
 			
-			std::swap( offsets, new_offsets );
+			if ( new_offsets.empty() )
+			{
+				it->Swap( itsPolygons.back() );
+				
+				itsPolygons.pop_back();
+				
+				--it;
+			}
+			else
+			{
+				std::swap( offsets, new_offsets );
+			}
 		}
 	}
 	
