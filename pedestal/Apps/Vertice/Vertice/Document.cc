@@ -99,11 +99,12 @@ namespace Vertice
 	};
 	
 	
-	static void SetContext( Parser&             parser,
-	                        Scene&              scene,
-	                        const std::string&  commandLine )
+	static void SetContext( Parser&      parser,
+	                        Scene&       scene,
+	                        const char*  begin,
+	                        const char*  end )
 	{
-		std::string contextName = commandLine.substr( 8, std::string::npos );
+		std::string contextName( begin, end );
 		
 		parser.itsContextID = scene.AddSubcontext( parser.itsContextID,
 		                                           contextName,
@@ -113,24 +114,22 @@ namespace Vertice
 		parser.itsOrigin = V::Point3D::Make( 0, 0, 0 );
 	}
 	
-	static void MakeCamera( Parser&             parser,
-	                        Scene&              scene,
-	                        const std::string&  commandLine )
+	static void MakeCamera( Parser&      parser,
+	                        Scene&       scene,
+	                        const char*  begin,
+	                        const char*  end )
 	{
 		scene.Cameras().push_back( Camera( parser.itsContextID ) );
 	}
 	
-	static void SetColor( Parser&             parser,
-	                      Scene&              scene,
-	                      const std::string&  commandLine )
+	static void SetColor( Parser&      parser,
+	                      Scene&       scene,
+	                      const char*  begin,
+	                      const char*  end )
 	{
-		const char* str = commandLine.c_str();
-		
-		str += 5;
-		
 		double red, green, blue;
 		
-		int scanned = std::sscanf( str, "%lf %lf %lf", &red, &green, &blue );
+		int scanned = std::sscanf( begin, "%lf %lf %lf", &red, &green, &blue );
 		
 		if ( scanned == 3 )
 		{
@@ -138,17 +137,14 @@ namespace Vertice
 		}
 	}
 	
-	static void SetOrigin( Parser&             parser,
-	                       Scene&              scene,
-	                       const std::string&  commandLine )
+	static void SetOrigin( Parser&      parser,
+	                       Scene&       scene,
+	                       const char*  begin,
+	                       const char*  end )
 	{
-		const char* str = commandLine.c_str();
-		
-		str += commandLine.find( ' ' );
-		
 		double x, y, z;
 		
-		int scanned = std::sscanf( str, "%lf %lf %lf", &x, &y, &z );
+		int scanned = std::sscanf( begin, "%lf %lf %lf", &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{
@@ -156,17 +152,14 @@ namespace Vertice
 		}
 	}
 	
-	static void Translate( Parser&             parser,
-	                       Scene&              scene,
-	                       const std::string&  commandLine )
+	static void Translate( Parser&      parser,
+	                       Scene&       scene,
+	                       const char*  begin,
+	                       const char*  end )
 	{
-		const char* str = commandLine.c_str();
-		
-		str += commandLine.find( ' ' );
-		
 		double x, y, z;
 		
-		int scanned = std::sscanf( str, "%lf %lf %lf", &x, &y, &z );
+		int scanned = std::sscanf( begin, "%lf %lf %lf", &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{
@@ -174,17 +167,14 @@ namespace Vertice
 		}
 	}
 	
-	static void SetTheta( Parser&             parser,
-	                      Scene&              scene,
-	                      const std::string&  commandLine )
+	static void SetTheta( Parser&      parser,
+	                      Scene&       scene,
+	                      const char*  begin,
+	                      const char*  end )
 	{
-		const char* str = commandLine.c_str();
-		
-		str += commandLine.find( ' ' );
-		
 		double theta;
 		
-		int scanned = std::sscanf( str, "%lf", &theta );
+		int scanned = std::sscanf( begin, "%lf", &theta );
 		
 		if ( scanned == 1 )
 		{
@@ -192,17 +182,14 @@ namespace Vertice
 		}
 	}
 	
-	static void SetPhi( Parser&             parser,
-	                    Scene&              scene,
-	                    const std::string&  commandLine )
+	static void SetPhi( Parser&      parser,
+	                    Scene&       scene,
+	                    const char*  begin,
+	                    const char*  end )
 	{
-		const char* str = commandLine.c_str();
-		
-		str += commandLine.find( ' ' );
-		
 		double phi;
 		
-		int scanned = std::sscanf( str, "%lf", &phi );
+		int scanned = std::sscanf( begin, "%lf", &phi );
 		
 		if ( scanned == 1 )
 		{
@@ -210,25 +197,25 @@ namespace Vertice
 		}
 	}
 	
-	static void AddMeshPoint( Parser&             parser,
-	                          Scene&              scene,
-	                          const std::string&  commandLine )
+	static void AddMeshPoint( Parser&      parser,
+	                          Scene&       scene,
+	                          const char*  begin,
+	                          const char*  end )
 	{
-		std::size_t firstSpace = commandLine.find( ' ' );
+		const char* space = std::find( begin, end, ' ' );
 		
-		std::size_t firstArg = firstSpace + 1;
+		std::string name( begin, space );
 		
-		std::size_t secondSpace = commandLine.find( ' ', firstArg );
+		begin = space;
 		
-		std::string name = commandLine.substr( firstArg, secondSpace - firstArg );
-		
-		const char* str = commandLine.c_str();
-		
-		str += secondSpace;
+		while ( *begin == ' ' )
+		{
+			++begin;
+		}
 		
 		double x, y, z;
 		
-		int scanned = std::sscanf( str, "%lf %lf %lf", &x, &y, &z );
+		int scanned = std::sscanf( begin, "%lf %lf %lf", &x, &y, &z );
 		
 		if ( scanned == 3 )
 		{
@@ -236,29 +223,31 @@ namespace Vertice
 		}
 	}
 	
-	static void AddMeshPoly( Parser&             parser,
-	                         Scene&              scene,
-	                         const std::string&  commandLine )
+	static void AddMeshPoly( Parser&      parser,
+	                         Scene&       scene,
+	                         const char*  begin,
+	                         const char*  end )
 	{
-		std::size_t space = commandLine.find( ' ' );
-		if ( space == std::string::npos )  return;
-		
-		std::size_t arg = space + 1;
-		
 		std::vector< unsigned > offsets;
+		
 		Context& context = scene.GetContext( parser.itsContextID );
 		
-		while ( arg < std::string::npos )
+		while ( begin < end )
 		{
-			space = commandLine.find( ' ', arg );
+			const char* space = std::find( begin, end, ' ' );
 			
-			std::string ptName = commandLine.substr( arg, space - arg );
+			std::string ptName( begin, space );
 			
 			V::Point3D::Type pt = parser.itsPoints[ ptName ];
 			
 			offsets.push_back( context.AddPointToMesh( pt ) );
 			
-			arg = ( space == std::string::npos ) ? space : space + 1;
+			begin = space;
+			
+			while ( *begin == ' ' )
+			{
+				++begin;
+			}
 		}
 		
 		if ( !offsets.empty() )
@@ -267,7 +256,7 @@ namespace Vertice
 		}
 	}
 	
-	typedef void ( *Handler )( Parser&, Scene&, const std::string& );
+	typedef void ( *Handler )( Parser&, Scene&, const char*, const char* );
 	
 	static std::map< std::string, Handler > MakeHandlers()
 	{
@@ -312,15 +301,32 @@ namespace Vertice
 		
 		if ( iCmdStart == std::string::npos )
 		{
-			iCmdStart = 0;
+			return;
 		}
 		
-		std::size_t iCmdEnd = line.find( ' ', iCmdStart );
-		std::string cmdname = line.substr( iCmdStart, iCmdEnd - iCmdStart );
+		const char* end = &*line.end();
+		
+		const char* start = line.c_str() + iCmdStart;
+		
+		const char* stop = std::find( start, end, ' ' );
+		
+		std::string cmdname( start, stop );
 		
 		if ( Handler handler = GetHandler( cmdname ) )
 		{
-			handler( *this, scene, line.substr( iCmdStart, line.npos ) );
+			for ( start = stop;  *start == ' ';  ++start )
+			{
+				
+			}
+			
+			start = stop;
+			
+			while ( *start == ' ' )
+			{
+				++start;
+			}
+			
+			handler( *this, scene, start, end );
 		}
 	}
 	
@@ -337,11 +343,11 @@ namespace Vertice
 		{
 			std::string line = input.Read();
 			
-			if ( line.find( '{' ) != std::string::npos )
+			if ( std::strchr( line.c_str(), '{' ) )
 			{
 				savedParsers.push_back( parser );
 			}
-			else if ( line.find( '}' ) != std::string::npos )
+			else if ( std::strchr( line.c_str(), '}' ) )
 			{
 				parser = savedParsers.back();
 				savedParsers.pop_back();
