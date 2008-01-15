@@ -97,6 +97,11 @@ namespace Vertice
 			}
 			
 			Point operator()( std::size_t offset ) const  { return itsPoints[ offset ]; }
+			
+			void Swap( PointMesh& other )
+			{
+				std::swap( itsPoints, other.itsPoints );
+			}
 	};
 	
 	// MeshPoly models a polygon as a sequence of indices into a PointMesh, plus a color.
@@ -157,6 +162,13 @@ namespace Vertice
 			}
 			
 			void ClipAgainstPlane( const V::Plane3D::Type& plane );
+			
+			void Swap( MeshModel& other )
+			{
+				itsMesh.Swap( other.itsMesh );
+				
+				std::swap( itsPolygons, other.itsPolygons );
+			}
 	};
 	
 	class Context : public Moveable, public MeshModel
@@ -168,7 +180,10 @@ namespace Vertice
 			std::vector< std::size_t > itsSubcontexts;
 		
 		public:
-			Context() : itsParentIndex( 0 ), itsName( " " )
+			Context() : Moveable( V::XMatrix( V::IdentityMatrix() ),
+			                      V::XMatrix( V::IdentityMatrix() ) ),
+			            itsParentIndex( 0 ),
+			            itsName( " " )
 			{
 			}
 			
