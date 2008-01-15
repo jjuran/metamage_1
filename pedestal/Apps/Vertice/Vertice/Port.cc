@@ -153,7 +153,7 @@ namespace Vertice
 				itsTransformStack.push_back( V::XMatrix( V::IdentityMatrix() ) );
 			}
 			
-			void operator()( std::size_t index );
+			void operator()( std::size_t index = 0 );
 	};
 	
 	
@@ -214,7 +214,7 @@ namespace Vertice
 		
 		Frame newFrame;
 		
-		GetMeshModels( itsScene, newFrame )( 0 );
+		GetMeshModels( itsScene, newFrame )();
 		
 		typedef std::vector< MeshModel >::iterator ModelIter;
 		
