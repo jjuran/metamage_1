@@ -140,14 +140,17 @@ namespace Vertice
 	class GetMeshModels
 	{
 		private:
-			Scene&  itsScene;
-			Frame&  itsResultFrame;
+			const Scene&  itsScene;
+			Frame&        itsResultFrame;
+			
+			std::vector< V::XMatrix > itsTransformStack;
 		
 		public:
-			GetMeshModels( Scene&  scene,
-			               Frame&  outFrame ) : itsScene      ( scene    ),
-			                                    itsResultFrame( outFrame )
+			GetMeshModels( const Scene&  scene,
+			               Frame&        outFrame ) : itsScene      ( scene    ),
+			                                          itsResultFrame( outFrame )
 			{
+				itsTransformStack.push_back( V::XMatrix( V::IdentityMatrix() ) );
 			}
 			
 			void operator()( std::size_t index );
@@ -158,13 +161,19 @@ namespace Vertice
 	{
 		const Context& context = itsScene.GetContext( index );
 		
+		itsTransformStack.push_back( Compose( itsTransformStack.back(), context.itsTransform ) );
+		
 		MeshModel model = context;
+		
+		model.Transform( V::Transformer< V::Point3D::Type >( itsTransformStack.back() ) );
 		
 		itsResultFrame.AddModel( model );
 		
 		const std::vector< std::size_t >& subs = context.Subcontexts();
 		
 		std::for_each( subs.begin(), subs.end(), *this );
+		
+		itsTransformStack.pop_back();
 	}
 	
 	
