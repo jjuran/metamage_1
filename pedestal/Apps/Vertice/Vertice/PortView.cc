@@ -1092,16 +1092,24 @@ namespace Vertice
 						// Intersect the polygon bounds with the depth buffer bounds
 						V::Rect2D< int > rect = depthRect * bounds;
 						
+						V::Point2D::Type current_pixel;
+						
+						current_pixel[ W ] = 1.0;
+						
 						// For each row
 						for ( unsigned iY = rect.bottom;  iY < rect.top;  ++iY )
 						{
 							//escapement();
+							
+							current_pixel[ Y ] = iY + 0.5;
 							
 							::Ptr rowAddr = baseAddr + ( iY - pixBounds.top ) * rowBytes;
 							
 							// For each pixel in the row
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
 							{
+								current_pixel[ X ] = iX + 0.5;
+								
 								V::Point3D::Type pt1 = V::Point3D::Make( iX + 0.5, iY + 0.5, -1 );
 								pt1 = Transformation( pt1, itsScreen2Port );
 								
@@ -1124,7 +1132,7 @@ namespace Vertice
 								
 								if (    dist > 0
 								     && gDeepPixelDevice.Nearer( iX % width, iY % height, dist ) 
-								     && poly2d.ContainsPoint( V::Point2D::Make( iX + 0.5, iY + 0.5 ) ) )
+								     && poly2d.ContainsPoint( current_pixel ) )
 								{
 									// set the pixel, below
 								}
