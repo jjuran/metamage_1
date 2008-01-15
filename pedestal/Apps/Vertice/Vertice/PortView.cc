@@ -822,9 +822,11 @@ namespace Vertice
 				for ( unsigned int i = 0;  i < vertices.size();  ++i )
 				{
 					DeepVertex& pt = vertices[ i ];
-					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -1 );
 					
-					pt1 = Transformation( pt1, itsScreen2Port );
+					V::Point3D::Type pt1 = PortFromScreen_Point( V::Point3D::Make( pt[X], pt[Y], -1 ),
+								                                 width,
+								                                 height,
+								                                 sFocalLength );
 					
 					if ( fishEye )
 					{
