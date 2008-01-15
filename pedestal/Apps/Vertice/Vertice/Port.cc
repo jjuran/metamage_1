@@ -231,6 +231,18 @@ namespace Vertice
 			it->ClipAgainstPlane( bottomPlane );
 			it->ClipAgainstPlane( topPlane    );
 			
+			if ( it->Polygons().empty() )
+			{
+				it->Swap( models.back() );
+				
+				models.pop_back();
+				
+				--it;
+			}
+		}
+		
+		for ( ModelIter it = models.begin();  it != models.end();  ++it )
+		{
 			it->Transform( transformer );
 		}
 		
