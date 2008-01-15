@@ -801,12 +801,6 @@ namespace Vertice
 				
 				V::Plane3D::Type plane = V::PlaneVector( points );
 				
-				// Skip backfaces
-				if ( !ClipPointAgainstPlane( pt0, plane ) )
-				{
-					continue;
-				}
-				
 				V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 				
 				points = Port2ScreenPolygon( points, port2screen );
@@ -1043,12 +1037,6 @@ namespace Vertice
 						
 						V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
 						V::Plane3D::Type plane = V::PlaneVector( points );
-						
-						if ( !ClipPointAgainstPlane( pt0, plane ) )
-						{
-							// cull backface
-							continue;
-						}
 						
 						V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 						
