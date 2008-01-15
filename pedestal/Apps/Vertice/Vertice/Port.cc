@@ -222,8 +222,14 @@ namespace Vertice
 		
 		V::Transformer< V::Point3D::Type > transformer( world2port );
 		
+		V::Point3D::Type eye = V::Point3D::Make( 0, 0, 0 );
+		
+		eye = camera.EyeToWorldTransform( itsScene ) * eye;
+		
 		for ( ModelIter it = models.begin();  it != models.end();  ++it )
 		{
+			it->CullBackfaces( eye );
+			
 			it->ClipAgainstPlane( nearPlane   );
 			it->ClipAgainstPlane( farPlane    );
 			it->ClipAgainstPlane( leftPlane   );
