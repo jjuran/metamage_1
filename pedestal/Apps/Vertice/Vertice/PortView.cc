@@ -834,12 +834,6 @@ namespace Vertice
 					// The ray is inverted to face the same way as the face normal.
 					V::Vector3D::Type ray = UnitLength( pt0 - pt1 );
 					
-					if ( !LineIntersectsPlane( ray, plane ) )
-					{
-						// Viewing ray doesn't intersect plane.  Probably parallel.
-						continue;
-					}
-					
 					V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
 					
 					double dist = Magnitude( V::Vector3D::Type( sectPt - pt0 ) );
@@ -1147,13 +1141,8 @@ namespace Vertice
 								// The ray is inverted to face the same way as the face normal.
 								V::Vector3D::Type ray = UnitLength( pt0 - pt1 );
 								
-								if ( !LineIntersectsPlane( ray, plane ) )
-								{
-									// Viewing ray parallel to polygon plane
-									continue;
-								}
-								
 								V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
+								
 								double dist = Magnitude( sectPt - pt0 );
 								
 								if (    dist > 0
