@@ -161,6 +161,8 @@ namespace Vertice
 				itsMesh.Transform( transformer );
 			}
 			
+			void CullBackfaces( const V::Point3D::Type& eye );
+			
 			void ClipAgainstPlane( const V::Plane3D::Type& plane );
 			
 			void Swap( MeshModel& other )

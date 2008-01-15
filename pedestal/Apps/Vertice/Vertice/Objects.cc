@@ -8,6 +8,7 @@
 // Vectoria
 #include "Vectoria/Coordinates.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
+#include "Vectoria/Polygon3D.hh"
 #include "Vectoria/Transform.hh"
 
 
@@ -116,6 +117,45 @@ namespace Vertice
 		itsInverse   = Compose( scale.Inverse().Make(), itsInverse   );
 	}
 	
+	
+	void MeshModel::CullBackfaces( const V::Point3D::Type& eye )
+	{
+		V::Point3D::Type points[3];
+		
+		typedef std::vector< MeshPoly >::iterator PolygonIter;
+		
+		typedef MeshPoly::Offset Offset;
+		
+		for ( PolygonIter it = itsPolygons.begin();  it != itsPolygons.end();  ++it )
+		{
+			MeshPoly& polygon = *it;
+			
+			std::vector< Offset >& offsets = polygon.Vertices();
+			
+			if ( offsets.size() < 3 )
+			{
+				continue;
+			}
+			
+			std::transform( offsets.begin(),
+			                offsets.begin() + 3,
+			                points,
+			                itsMesh );
+			
+			V::Plane3D::Type plane = V::PlaneVector( points );
+			
+			bool visible = DotProduct( plane, eye ) > 0.0;
+			
+			if ( !visible )
+			{
+				it->Swap( itsPolygons.back() );
+				
+				itsPolygons.pop_back();
+				
+				--it;
+			}
+		}
+	}
 	
 	void MeshModel::ClipAgainstPlane( const V::Plane3D::Type& plane )
 	{
