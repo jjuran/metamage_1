@@ -370,6 +370,25 @@ namespace Vertice
 		N::LockPixels( N::GetGWorldPixMap( itsGWorld ) );
 	}
 	
+	static V::Point3D::Type PortFromScreen_Point( const V::Point3D::Type&  point,
+	                                              short                    width,
+	                                              short                    height,
+	                                              double                   e )
+	{
+		V::Point3D::Type result;
+		
+		double half_width  = width  / 2.0;
+		double half_height = height / 2.0;
+		
+		result[ X ] = ( point[ X ] - half_width  ) / ( e *  half_width );
+		result[ Y ] = ( point[ Y ] - half_height ) / ( e * -half_width );
+		
+		result[ Z ] = point[ Z ];
+		result[ W ] = point[ W ];
+		
+		return result;
+	}
+	
 	static const V::XMatrix& ScreenToPortTransform( short width, short height )
 	{
 		static V::XMatrix screen2port;
@@ -1115,8 +1134,10 @@ namespace Vertice
 								current_pixel_3d[ X ] = iX + 0.5;
 								current_pixel_2d[ X ] = iX + 0.5;
 								
-								V::Point3D::Type pt1 = Transformation( current_pixel_3d,
-								                                       itsScreen2Port );
+								V::Point3D::Type pt1 = PortFromScreen_Point( current_pixel_3d,
+								                                             width,
+								                                             height,
+								                                             sFocalLength );
 								
 								if ( fishEye )
 								{
