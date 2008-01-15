@@ -386,7 +386,7 @@ namespace Vertice
 		
 		double e = sFocalLength;
 		
-		V::Translation translate( -width / 2, -height / 2, 0 );
+		V::Translation translate( -width / 2.0, -height / 2.0, 0 );
 		
 		V::XMatrix scale = V::IdentityMatrix();
 		
