@@ -61,11 +61,17 @@ namespace Portage
 				return ( Cell( x, y ) == 0  ||  z < Cell( x, y ) );
 			}
 			
+			void Set( unsigned x, unsigned y, Scalar z )
+			{
+				Cell( x, y ) = z;
+			}
+			
 			bool SetIfNearer( unsigned x, unsigned y, Scalar z )
 			{
 				if ( Nearer( x, y, z ) )
 				{
-					Cell( x, y ) = z;
+					Set( x, y, z );
+					
 					return true;
 				}
 				
