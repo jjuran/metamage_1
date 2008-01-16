@@ -1146,7 +1146,7 @@ namespace Vertice
 									continue;
 								}
 								
-								gDeepPixelDevice.SetIfNearer( iX % width, iY % height, dist );
+								gDeepPixelDevice.Set( iX % width, iY % height, dist );
 								
 								// P . Q = mag(P)*mag(Q)*cos(a)
 								// cos(a) = P.Q / mag(P) / mag(Q)
