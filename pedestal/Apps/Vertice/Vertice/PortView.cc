@@ -745,9 +745,9 @@ namespace Vertice
 				                points.begin(),
 				                mesh );
 				
-				V::Plane3D::Type plane = V::PlaneVector( points );
-				
 				V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
+				
+				V::Plane3D::Type plane = V::PlaneVector( faceNormal, points[ 0 ] );
 				
 				std::transform( points.begin(),
 				                points.end(),
