@@ -987,9 +987,10 @@ namespace Vertice
 						                mesh );
 						
 						V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
-						V::Plane3D::Type plane = V::PlaneVector( points );
 						
 						V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
+						
+						V::Plane3D::Type plane = V::PlaneVector( faceNormal, points[ 0 ] );
 						
 						#if 0
 						// Port to clip coordinates
