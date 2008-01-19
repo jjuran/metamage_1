@@ -77,6 +77,14 @@ namespace Vectoria
 		return DotProduct( -normal, pt );
 	}
 	
+	inline Plane3D::Type PlaneVector( const Vector3D::Type&  normal,
+	                                  const Point3D::Type&   pointInPlane )
+	{
+		double D = ProportionalDistanceFromOrigin( normal, pointInPlane );
+		
+		return Plane3D::Make( normal, D );
+	}
+	
 	template < class Points >
 	inline Plane3D::Type PlaneVector( const Points& points )
 	{
