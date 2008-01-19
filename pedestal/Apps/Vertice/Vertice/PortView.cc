@@ -30,6 +30,7 @@
 // Vectoria
 #include "Vectoria/Units.hh"
 #include "Vectoria/Clipping3D.hh"
+#include "Vectoria/HomogeneousClipping.hh"
 #include "Vectoria/ViewFrustum.hh"
 #include "Vectoria/Polygon3D.hh"
 #include "Vectoria/Plane3D.hh"
@@ -213,10 +214,8 @@ namespace Vertice
 		short width  = portRect.right  - portRect.left;
 		short height = portRect.bottom - portRect.top;
 		
-		double e = sFocalLength;
-		
-		double top    = topLeft   [ Y ] * e * -width / 2.0 + height / 2.0;
-		double bottom = bottomLeft[ Y ] * e * -width / 2.0 + height / 2.0;
+		double top    = topLeft   [ Y ] * -width / 2.0 + height / 2.0;
+		double bottom = bottomLeft[ Y ] * -width / 2.0 + height / 2.0;
 		
 		double vdist = bottom - top;
 		
@@ -236,8 +235,8 @@ namespace Vertice
 			
 			double tY = (y - top) / vdist;
 			
-			double left  = MakeLinearSpectrum( topLeft [ X ], bottomLeft [ X ] )[ tY ] * e * width / 2.0 + width / 2.0;
-			double right = MakeLinearSpectrum( topRight[ X ], bottomRight[ X ] )[ tY ] * e * width / 2.0 + width / 2.0;
+			double left  = MakeLinearSpectrum( topLeft [ X ], bottomLeft [ X ] )[ tY ] * width / 2.0 + width / 2.0;
+			double right = MakeLinearSpectrum( topRight[ X ], bottomRight[ X ] )[ tY ] * width / 2.0 + width / 2.0;
 			
 			double leftW  = MakeLinearSpectrum( topLeft [ W ], bottomLeft [ W ] )[ tY ];
 			double rightW = MakeLinearSpectrum( topRight[ W ], bottomRight[ W ] )[ tY ];
@@ -324,67 +323,15 @@ namespace Vertice
 		}
 	}
 	
-	/*
-	static V::XMatrix MakePortToClipTransform( double  near,
-	                                           double  far,
-	                                           double  focalLength,
-	                                           double  aspectRatio )
-	{
-		V::XMatrix xform = V::ZeroMatrix();
-		
-		double n = near;
-		double f = far;
-		double e = focalLength;
-		double a = aspectRatio;
-		
-		double l = -n / e;
-		double r = -l;
-		double b = a * l;
-		double t = -b;
-		
-		xform.Cell( 0, 0 ) =    2*n   / (r - l);
-		// 0
-		xform.Cell( 0, 2 ) =  (r + l) / (r - l);
-		// 0
-		
-		// 0
-		xform.Cell( 1, 1 ) =    2*n   / (t - b);
-		xform.Cell( 1, 2 ) =  (t + b) / (t - b);
-		// 0
-		
-		// 0
-		// 0
-		
-		#if 0
-		
-		xform.Cell( 2, 2 ) = -(f + n) / (f - n);
-		xform.Cell( 2, 3 ) =  -2*n*f  / (f - n);
-		
-		#else
-		
-		xform.Cell( 2, 2 ) =  (f + n) / (f - n);
-		xform.Cell( 2, 3 ) =   2*n*f  / (f - n);
-		
-		#endif
-		
-		// 0
-		// 0
-		xform.Cell( 3, 2 ) =         -1;
-		// 0
-		
-		return xform;
-	}
-	
 	static void SetPortToClipTransform()
 	{
-		double n = -0.01;  // Think 1cm
-		double f = -100;  // Think 100m
+		double n = 0.01;  // Think 1cm
+		double f = 100;  // Think 100m
 		double e = sFocalLength;
 		double a = sAspectRatio;
 		
-		gPort2Clip = MakePortToClipTransform( n, f, e, a );
+		gPort2Clip = V::MakePortToClipTransform( n, f, e, a );
 	}
-	*/
 	
 	PortView::PortView( const Rect& bounds, Initializer ) : itsPort           ( itsScene                   ),
 	                                                        itsSelectedContext(                            ),
@@ -453,7 +400,7 @@ namespace Vertice
 		
 		sAspectRatio = AspectRatio( width, height );
 		
-		//SetPortToClipTransform();
+		SetPortToClipTransform();
 	}
 	
 	static const V::XMatrix& PortToScreenTransform( short width, short height )
@@ -518,17 +465,15 @@ namespace Vertice
 	
 	static V::Point3D::Type PerspectiveDivision( const V::Point3D::Type& pt )
 	{
-		return pt / -pt[ Z ];
+		return pt / -pt[ Z ] * sFocalLength;
 	}
 	
-	/*
 	static V::Point3D::Type HomogeneousPerspectiveDivision( const V::Point3D::Type& pt )
 	{
 		return V::Point3D::Make( pt[ X ] / pt[ W ],
 		                         pt[ Y ] / pt[ W ],
 		                         pt[ Z ] / pt[ W ] );
 	}
-	*/
 	
 	static V::Point2D::Type Point3DTo2D( const V::Point3D::Type& pt )
 	{
@@ -821,7 +766,7 @@ namespace Vertice
 				{
 					DeepVertex& pt = vertices[ i ];
 					
-					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -1 );
+					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -sFocalLength );
 					
 					if ( fishEye )
 					{
@@ -974,8 +919,6 @@ namespace Vertice
 		short width  = NX::RectWidth ( portRect );
 		short height = NX::RectHeight( portRect );
 		
-		double e = sFocalLength;
-		
 		//DeepPixelDevice device( width, height );
 		gDeepPixelDevice.Resize( width, height );
 		
@@ -1034,6 +977,7 @@ namespace Vertice
 						}
 						
 						std::vector< V::Point3D::Type > points( offsets.size() );
+						//std::vector< V::Point3D::Type > points2( offsets.size() );
 						
 						// Lookup the vertices of this polygon
 						// in port coordinates
@@ -1048,28 +992,40 @@ namespace Vertice
 						V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 						
 						#if 0
-						
 						// Port to clip coordinates
 						std::transform( points.begin(),
 						                points.end(),
-						                points.begin(),
+						                points2.begin(),
 						                V::Transformer< V::Point3D::Type >( gPort2Clip ) );
+						#endif
 						
+						#if 0
 						// Perspective division
-						std::transform( points.begin(),
-						                points.end(),
-						                points.begin(),
+						std::transform( points2.begin(),
+						                points2.end(),
+						                points2.begin(),
 						                std::ptr_fun( HomogeneousPerspectiveDivision ) );
+						#endif
 						
-						#else
-						
+						#if 1
 						// Perspective division
 						std::transform( points.begin(),
 						                points.end(),
 						                points.begin(),
 						                std::ptr_fun( PerspectiveDivision ) );
-						
 						#endif
+						
+						/*
+						for ( int i = 0;  i < points.size();  ++i )
+						{
+							const V::Point3D::Type& pt  = points [ i ];
+							const V::Point3D::Type& pt2 = points2[ i ];
+							
+							std::printf( "[ %f, %f, -1, %f ]  [ %f, %f, %f, 1 ]\n",
+							             pt [ X ], pt [ Y ],           pt [ W ],
+							             pt2[ X ], pt2[ Y ], pt2[ Z ] );
+						}
+						*/
 						
 						V::Polygon2D poly2d;
 						
@@ -1084,11 +1040,11 @@ namespace Vertice
 						
 						V::Rect2D< double > bounding_rect = poly2d.BoundingRect();
 						
-						bounding_rect.left  = bounding_rect.left  * e * width / 2.0 + width / 2.0;
-						bounding_rect.right = bounding_rect.right * e * width / 2.0 + width / 2.0;
+						bounding_rect.left  = bounding_rect.left  * width / 2.0 + width / 2.0;
+						bounding_rect.right = bounding_rect.right * width / 2.0 + width / 2.0;
 						
-						bounding_rect.top    = bounding_rect.top    * e * -width / 2.0 + height / 2.0;
-						bounding_rect.bottom = bounding_rect.bottom * e * -width / 2.0 + height / 2.0;
+						bounding_rect.top    = bounding_rect.top    * -width / 2.0 + height / 2.0;
+						bounding_rect.bottom = bounding_rect.bottom * -width / 2.0 + height / 2.0;
 						
 						V::Rect2D< int > bounds;
 						bounds = bounding_rect;
@@ -1103,7 +1059,7 @@ namespace Vertice
 						V::Point3D::Type current_pixel_3d;
 						V::Point2D::Type current_pixel_2d;
 						
-						current_pixel_3d[ Z ] = -1.0;
+						current_pixel_3d[ Z ] = -sFocalLength;
 						current_pixel_3d[ W ] =  1.0;
 						current_pixel_2d[ W ] =  1.0;
 						
@@ -1113,7 +1069,7 @@ namespace Vertice
 							//escapement();
 							
 							current_pixel_3d[ Y ] =
-							current_pixel_2d[ Y ] = (iY + 0.5 - height / 2.0) / (e * -width / 2.0);
+							current_pixel_2d[ Y ] = (iY + 0.5 - height / 2.0) / (-width / 2.0);
 							
 							::Ptr rowAddr = baseAddr + ( iY - pixBounds.top ) * rowBytes;
 							
@@ -1121,7 +1077,7 @@ namespace Vertice
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
 							{
 								current_pixel_3d[ X ] =
-								current_pixel_2d[ X ] = (iX + 0.5 - width / 2.0) / (e * width / 2.0);
+								current_pixel_2d[ X ] = (iX + 0.5 - width / 2.0) / (width / 2.0);
 								
 								const V::Point3D::Type& pt1 = current_pixel_3d;
 								
