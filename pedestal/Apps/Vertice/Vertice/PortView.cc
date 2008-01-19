@@ -142,12 +142,12 @@ namespace Vertice
 			double operator[]( Index index ) const  { return itsPoint[ index ]; }
 	};
 	
-	template < class ZSpectrum, class ColorSpectrum, class Device >
+	template < class WSpectrum, class ColorSpectrum, class Device >
 	void DrawDeepScanLine( int                   y,
 	                       int                   farLeft,
 	                       double                left,
 	                       double                right,
-	                       const ZSpectrum&      inverseZ,
+	                       const WSpectrum&      w,
 	                       const ColorSpectrum&  colors,
 	                       ::Ptr                 rowAddr,
 	                       Device&               deepPixelDevice )
@@ -156,11 +156,11 @@ namespace Vertice
 		{
 			double tX = (x - left) / (right - left);
 			
-			double z = 1 / inverseZ[ tX ];
+			double z = -1.0 / w[ tX ];
 			
 			if ( deepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
-				ColorMatrix color = z * colors[ tX ];
+				ColorMatrix color = colors[ tX ] / w[ tX ];
 				
 				N::RGBColor rgb = NN::Convert< N::RGBColor >( color );
 				
@@ -199,11 +199,6 @@ namespace Vertice
 	                        Vertex   bottomRight,
 	                        Device&  deepPixelDevice )
 	{
-		double top    = topLeft   [ Y ];
-		double bottom = bottomLeft[ Y ];
-		
-		double vdist = bottom - top;
-		
 		::CGrafPtr port = N::GetQDGlobalsThePort();
 		//::CGrafPtr port = itsGWorld.Get();
 		// Verify that it's a color port
@@ -214,6 +209,16 @@ namespace Vertice
 		if ( !CheckPixMap( pix ) ) return;
 		
 		const Rect& portRect = N::GetPortBounds( port );
+		
+		short width  = portRect.right  - portRect.left;
+		short height = portRect.bottom - portRect.top;
+		
+		double e = sFocalLength;
+		
+		double top    = topLeft   [ Y ] * e * -width / 2.0 + height / 2.0;
+		double bottom = bottomLeft[ Y ] * e * -width / 2.0 + height / 2.0;
+		
+		double vdist = bottom - top;
 		
 		const Rect& bounds   = ( *pix )->bounds;
 		::Ptr       base     = ( *pix )->baseAddr;
@@ -231,77 +236,95 @@ namespace Vertice
 			
 			double tY = (y - top) / vdist;
 			
-			double left  = MakeLinearSpectrum( topLeft [ X ], bottomLeft [ X ] )[ tY ];
-			double right = MakeLinearSpectrum( topRight[ X ], bottomRight[ X ] )[ tY ];
+			double left  = MakeLinearSpectrum( topLeft [ X ], bottomLeft [ X ] )[ tY ] * e * width / 2.0 + width / 2.0;
+			double right = MakeLinearSpectrum( topRight[ X ], bottomRight[ X ] )[ tY ] * e * width / 2.0 + width / 2.0;
 			
-			double leftZ  = 1 / MakeLinearSpectrum( 1 / topLeft [ Z ], 1 / bottomLeft [ Z ] )[ tY ];
-			double rightZ = 1 / MakeLinearSpectrum( 1 / topRight[ Z ], 1 / bottomRight[ Z ] )[ tY ];
+			double leftW  = MakeLinearSpectrum( topLeft [ W ], bottomLeft [ W ] )[ tY ];
+			double rightW = MakeLinearSpectrum( topRight[ W ], bottomRight[ W ] )[ tY ];
 			
-			ColorMatrix leftColor = leftZ * MakeLinearSpectrum( topLeft.itsColor    / topLeft   [ Z ],
-			                                                    bottomLeft.itsColor / bottomLeft[ Z ] )[ tY ];
+			ColorMatrix leftColorW = MakeLinearSpectrum( topLeft.itsColor    * topLeft   [ W ],
+			                                             bottomLeft.itsColor * bottomLeft[ W ] )[ tY ];
 			
-			ColorMatrix rightColor = rightZ * MakeLinearSpectrum( topRight.itsColor    / topRight   [ Z ],
-			                                                      bottomRight.itsColor / bottomRight[ Z ] )[ tY ];
+			ColorMatrix rightColorW = MakeLinearSpectrum( topRight.itsColor    * topRight   [ W ],
+			                                              bottomRight.itsColor * bottomRight[ W ] )[ tY ];
 			
 			DrawDeepScanLine( y,
 			                  bounds.left,
 			                  left,
 			                  right,
-			                  MakeLinearSpectrum(         1 / leftZ,          1 / rightZ ),
-			                  MakeLinearSpectrum( leftColor / leftZ, rightColor / rightZ ),
+			                  MakeLinearSpectrum( leftW,      rightW      ),
+			                  MakeLinearSpectrum( leftColorW, rightColorW ),
 			                  rowAddr,
 			                  deepPixelDevice );
 		}
 	}
+	
+	/*
+		C
+		
+		|\
+		| \
+		|  \
+		|   \
+		|    \
+		|     \
+	  D *- - - > B
+		|     /
+		|    /
+		|   /
+		|  /
+		| /
+		|/
+		
+		A
+	*/
 	
 	template < class Vertex, class Device >
 	void DrawDeepTriangle( const Vertex& A,
 	                       const Vertex& B,
 	                       const Vertex& C, Device& device )
 	{
-		// Assume that the vertices are in device coordinates, and top to bottom.
-		double top    = A[ Y ];
+		// Assume that the vertices are in port coordinates, and bottom to top.
+		double top    = C[ Y ];
 		double middle = B[ Y ];
-		double bottom = C[ Y ];
+		double bottom = A[ Y ];
 		
-		double t = (middle - top) / (bottom - top);
+		double t = (middle - bottom) / (top - bottom);
 		
-		double choppedAC = MakeLinearSpectrum( A[X], C[X] )[t];
+		V::Point3D::Type ptD;
 		
-		double midLeft  = std::min( B[X], choppedAC );
-		double midRight = std::max( B[X], choppedAC );
+		ptD[ X ] = MakeLinearSpectrum( A[X], C[X] )[t];
+		ptD[ Y ] = MakeLinearSpectrum( A[Y], C[Y] )[t];
+		ptD[ Z ] = MakeLinearSpectrum( A[Z], C[Z] )[t];  // -1
+		ptD[ W ] = MakeLinearSpectrum( A[W], C[W] )[t];
 		
-		double z = 1 / MakeLinearSpectrum( 1 / A[Z], 1 / C[Z] )[t];
+		ColorMatrix colorD = MakeLinearSpectrum( A.itsColor * A[W], C.itsColor * C[W] )[t] / ptD[ W ];
 		
-		double midLeftZ  = ( B[X] <= choppedAC ) ? B[Z] : z;
-		double midRightZ = ( B[X] >  choppedAC ) ? B[Z] : z;
+		Vertex D( ptD, colorD );
 		
-		ColorMatrix choppedACColor = z * MakeLinearSpectrum( A.itsColor / A[Z], C.itsColor / C[Z] )[t];
+		const Vertex& midLeft  = B[X] < D[X] ? B : D;
+		const Vertex& midRight = B[X] < D[X] ? D : B;
 		
-		ColorMatrix midLeftColor  = ( B[X] <= choppedAC ) ? B.itsColor : choppedACColor;
-		ColorMatrix midRightColor = ( B[X] >  choppedAC ) ? B.itsColor : choppedACColor;
-		
-		
-		if ( top < middle )
+		if ( top > middle )
 		{
-			DrawDeepTrapezoid( A,
-			                   A,
-			                   Vertex( V::Point3D::Make( midLeft,  B[Y], midLeftZ  ), midLeftColor  ),
-			                   Vertex( V::Point3D::Make( midRight, B[Y], midRightZ ), midRightColor ),
+			DrawDeepTrapezoid( C,
+			                   C,
+			                   midLeft,
+			                   midRight,
 			                   device );
 		}
 		
-		if ( middle < bottom )
+		if ( middle > bottom )
 		{
-			DrawDeepTrapezoid( Vertex( V::Point3D::Make( midLeft,  B[Y], midLeftZ  ), midLeftColor  ),
-			                   Vertex( V::Point3D::Make( midRight, B[Y], midRightZ ), midRightColor ),
-			                   C,
-			                   C,
+			DrawDeepTrapezoid( midLeft,
+			                   midRight,
+			                   A,
+			                   A,
 			                   device );
 		}
 	}
 	
-	
+	/*
 	static V::XMatrix MakePortToClipTransform( double  near,
 	                                           double  far,
 	                                           double  focalLength,
@@ -361,6 +384,7 @@ namespace Vertice
 		
 		gPort2Clip = MakePortToClipTransform( n, f, e, a );
 	}
+	*/
 	
 	PortView::PortView( const Rect& bounds, Initializer ) : itsPort           ( itsScene                   ),
 	                                                        itsSelectedContext(                            ),
@@ -429,7 +453,7 @@ namespace Vertice
 		
 		sAspectRatio = AspectRatio( width, height );
 		
-		SetPortToClipTransform();
+		//SetPortToClipTransform();
 	}
 	
 	static const V::XMatrix& PortToScreenTransform( short width, short height )
@@ -461,7 +485,7 @@ namespace Vertice
 	
 	static bool fishEye = false;
 	
-	
+	/*
 	static V::Point3D::Type FishEye( const V::Point3D::Type& pt )
 	{
 		double x = pt[ X ];
@@ -490,20 +514,21 @@ namespace Vertice
 		
 		return V::Point3D::Make( x, y, z );
 	}
+	*/
 	
 	static V::Point3D::Type PerspectiveDivision( const V::Point3D::Type& pt )
 	{
-		return V::Point3D::Make( -pt[ X ] / pt[ Z ],
-		                         -pt[ Y ] / pt[ Z ],
-		                          pt[ Z ] );
+		return pt / -pt[ Z ];
 	}
 	
+	/*
 	static V::Point3D::Type HomogeneousPerspectiveDivision( const V::Point3D::Type& pt )
 	{
 		return V::Point3D::Make( pt[ X ] / pt[ W ],
 		                         pt[ Y ] / pt[ W ],
 		                         pt[ Z ] / pt[ W ] );
 	}
+	*/
 	
 	static V::Point2D::Type Point3DTo2D( const V::Point3D::Type& pt )
 	{
@@ -625,6 +650,7 @@ namespace Vertice
 			}
 	};
 	
+	/*
 	class ClippingPlane
 	{
 		private:
@@ -639,36 +665,15 @@ namespace Vertice
 				ClipPolygonAgainstPlane( points, plane );
 			}
 	};
+	*/
 	
-	static std::vector< V::Point3D::Type > Port2ScreenPolygon( const std::vector< V::Point3D::Type >&  poly,
-	                                                           const V::XMatrix&                       port2Screen )
-	{
-		std::vector< V::Point3D::Type > points = poly;
-		
-		if ( fishEye )
-		{
-		//	transform(points.begin(), points.end(), points.begin(), FishEye);
-		}
-		
-		std::transform( points.begin(),
-		                points.end(),
-		                points.begin(),
-		                std::ptr_fun( PerspectiveDivision ) );
-		
-		std::transform( points.begin(),
-		                points.end(),
-		                points.begin(),
-		                V::Transformer< V::Point3D::Type >( port2Screen ) );
-		
-		return points;
-	}
-	
-	
+	/*
 	template < class Container, class Filter >
 	void Trim( Container& cont, const Filter& filter )
 	{
 		cont.resize( std::remove_if( cont.begin(), cont.end(), filter ) - cont.begin() );
 	}
+	*/
 	
 	static double ProximityQuotient( double distance )
 	{
@@ -747,10 +752,6 @@ namespace Vertice
 		
 		N::RGBBackColor( NN::Make< RGBColor >( 0 ) );
 		
-		// Plot the images in screen coordinates
-		
-		const V::XMatrix& port2screen = PortToScreenTransform( width, height );
-		
 		//fishEye = itsPort.mCamera.fishEyeMode;
 		
 		itsPort.MakeFrame( itsFrame );
@@ -803,7 +804,10 @@ namespace Vertice
 				
 				V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 				
-				points = Port2ScreenPolygon( points, port2screen );
+				std::transform( points.begin(),
+				                points.end(),
+				                points.begin(),
+				                std::ptr_fun( PerspectiveDivision ) );
 				
 				std::vector< DeepVertex > vertices( points.size() );
 				
@@ -817,10 +821,7 @@ namespace Vertice
 				{
 					DeepVertex& pt = vertices[ i ];
 					
-					V::Point3D::Type pt1 = PortFromScreen_Point( V::Point3D::Make( pt[X], pt[Y], -1 ),
-								                                 width,
-								                                 height,
-								                                 sFocalLength );
+					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -1 );
 					
 					if ( fishEye )
 					{
@@ -925,6 +926,7 @@ namespace Vertice
 		N::SetCPixel( x, y, NN::Convert< N::RGBColor >( TracePixel( x, y ) ) );
 	}
 	
+	/*
 	struct TickCounter
 	{
 		typedef UInt32 Time;
@@ -936,17 +938,22 @@ namespace Vertice
 	{
 		void operator()() const  { N::YieldToAnyThread(); }
 	};
+	*/
+	
+	static const bool gBlitting = false;
 	
 	void PortView::DrawBetter() const
 	{
+		/*
 		typedef NX::Escapement< NX::Timer< TickCounter >,
 		                        AnyThreadYielder > Escapement;
 		
 		Escapement escapement( 10 );
+		*/
 		
 		NN::Saved< N::GWorld_Value > savedGWorld;
 		
-		if ( TARGET_API_MAC_CARBON )
+		if ( gBlitting )
 		{
 			N::SetGWorld( itsGWorld );
 		}
@@ -964,10 +971,12 @@ namespace Vertice
 		N::RGBForeColor( NN::Make< RGBColor >( 0 ) );
 		N::PaintRect( portRect );
 		
-		unsigned width  = NX::RectWidth ( portRect );
-		unsigned height = NX::RectHeight( portRect );
+		short width  = NX::RectWidth ( portRect );
+		short height = NX::RectHeight( portRect );
 		
-		V::XMatrix port2Screen = PortToScreenTransform( width, height );
+		//V::XMatrix port2Screen = PortToScreenTransform( width, height );
+		
+		double e = sFocalLength;
 		
 		//DeepPixelDevice device( width, height );
 		gDeepPixelDevice.Resize( width, height );
@@ -1070,14 +1079,18 @@ namespace Vertice
 						
 						#endif
 						
+						/*
 						// Port to screen coordinates
 						std::transform( points.begin(),
 						                points.end(),
 						                points.begin(),
 						                V::Transformer< V::Point3D::Type >( port2Screen ) );
+						*/
 						
 						V::Polygon2D poly2d;
+						
 						std::vector< V::Point2D::Type >& screenPts( poly2d.Points() );
+						
 						screenPts.resize( points.size() );
 						
 						std::transform( points.begin(),
@@ -1085,12 +1098,20 @@ namespace Vertice
 						                screenPts.begin(),
 						                std::ptr_fun( Point3DTo2D ) );
 						
+						V::Rect2D< double > bounding_rect = poly2d.BoundingRect();
+						
+						bounding_rect.left  = bounding_rect.left  * e * width / 2.0 + width / 2.0;
+						bounding_rect.right = bounding_rect.right * e * width / 2.0 + width / 2.0;
+						
+						bounding_rect.top    = bounding_rect.top    * e * -width / 2.0 + height / 2.0;
+						bounding_rect.bottom = bounding_rect.bottom * e * -width / 2.0 + height / 2.0;
+						
 						V::Rect2D< int > bounds;
-						bounds = poly2d.BoundingRect();
+						bounds = bounding_rect;
 						
 						// Extend the rect to account for truncation error
-						bounds.right += 1;
-						bounds.top += 1;
+						bounds.right  += 1;
+						bounds.bottom += 1;
 						
 						// Intersect the polygon bounds with the depth buffer bounds
 						V::Rect2D< int > rect = depthRect * bounds;
@@ -1103,12 +1124,12 @@ namespace Vertice
 						current_pixel_2d[ W ] =  1.0;
 						
 						// For each row
-						for ( unsigned iY = rect.bottom;  iY < rect.top;  ++iY )
+						for ( unsigned iY = rect.top;  iY < rect.bottom;  ++iY )
 						{
 							//escapement();
 							
 							current_pixel_3d[ Y ] = iY + 0.5;
-							current_pixel_2d[ Y ] = iY + 0.5;
+							current_pixel_2d[ Y ] = (iY + 0.5 - height / 2.0) / (e * -width / 2.0);
 							
 							::Ptr rowAddr = baseAddr + ( iY - pixBounds.top ) * rowBytes;
 							
@@ -1116,7 +1137,7 @@ namespace Vertice
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
 							{
 								current_pixel_3d[ X ] = iX + 0.5;
-								current_pixel_2d[ X ] = iX + 0.5;
+								current_pixel_2d[ X ] = (iX + 0.5 - width / 2.0) / (e * width / 2.0);
 								
 								V::Point3D::Type pt1 = PortFromScreen_Point( current_pixel_3d,
 								                                             width,
@@ -1171,18 +1192,23 @@ namespace Vertice
 								
 								pixel = rgb;
 								
-								if ( !TARGET_API_MAC_CARBON )
+								if ( !gBlitting )
 								{
 									N::SetCPixel( iX, iY, rgb );
 								}
 							}
+						}
+						
+						if ( TARGET_API_MAC_CARBON && !gBlitting )
+						{
+							::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
 						}
 					}
 				}
 			}
 		}
 		
-		if ( TARGET_API_MAC_CARBON )
+		if ( gBlitting )
 		{
 			savedGWorld.Restore();
 			
