@@ -974,8 +974,6 @@ namespace Vertice
 		short width  = NX::RectWidth ( portRect );
 		short height = NX::RectHeight( portRect );
 		
-		//V::XMatrix port2Screen = PortToScreenTransform( width, height );
-		
 		double e = sFocalLength;
 		
 		//DeepPixelDevice device( width, height );
@@ -1049,12 +1047,6 @@ namespace Vertice
 						
 						V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 						
-						/*
-						V::Point3D::Type polygonOrigin = points[ 0 ];
-						V::Vector3D::Type polygonLeadingEdge = points[ 1 ] - points[ 0 ];
-						V::Vector3D::Type polygonSecondEdge  = points[ 2 ] - points[ 1 ];
-						*/
-						
 						#if 0
 						
 						// Port to clip coordinates
@@ -1078,14 +1070,6 @@ namespace Vertice
 						                std::ptr_fun( PerspectiveDivision ) );
 						
 						#endif
-						
-						/*
-						// Port to screen coordinates
-						std::transform( points.begin(),
-						                points.end(),
-						                points.begin(),
-						                V::Transformer< V::Point3D::Type >( port2Screen ) );
-						*/
 						
 						V::Polygon2D poly2d;
 						
