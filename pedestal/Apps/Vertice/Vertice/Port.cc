@@ -190,6 +190,12 @@ namespace Vertice
 	static double sFocalLength = FocalLength( sHorizontalFieldOfViewAngle );
 	
 	
+	static V::Point3D::Type PerspectiveDivision( const V::Point3D::Type& pt )
+	{
+		return pt / -pt[ Z ] * sFocalLength;
+	}
+	
+	
 	void Port::MakeFrame( Frame& outFrame ) const
 	{
 		if ( itsScene.Cameras().empty() )  return;
@@ -254,6 +260,11 @@ namespace Vertice
 		for ( ModelIter it = models.begin();  it != models.end();  ++it )
 		{
 			it->Transform( transformer );
+		}
+		
+		for ( ModelIter it = models.begin();  it != models.end();  ++it )
+		{
+			it->Transform( std::ptr_fun( PerspectiveDivision ) );
 		}
 		
 		outFrame.Swap( newFrame );
