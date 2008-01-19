@@ -76,7 +76,8 @@ namespace Vertice
 		public:
 			typedef Point point_type;
 			
-			const std::vector< Point >& Points() const  { return itsPoints; }
+			std::vector< Point > const& Points() const  { return itsPoints; }
+			std::vector< Point >      & Points()        { return itsPoints; }
 			
 			std::size_t AddPoint( const Point& pt )
 			{
@@ -162,6 +163,8 @@ namespace Vertice
 			}
 			
 			void CullBackfaces( const V::Point3D::Type& eye );
+			
+			void CullDeadPoints();
 			
 			void ClipAgainstPlane( const V::Plane3D::Type& plane );
 			
