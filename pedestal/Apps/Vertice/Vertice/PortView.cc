@@ -1131,7 +1131,7 @@ namespace Vertice
 								}
 								
 								// The ray is inverted to face the same way as the face normal.
-								V::Vector3D::Type ray = UnitLength( pt0 - pt1 );
+								V::Vector3D::Type ray = pt0 - pt1;
 								
 								V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
 								
@@ -1150,15 +1150,14 @@ namespace Vertice
 								
 								gDeepPixelDevice.Set( iX % width, iY % height, dist );
 								
-								// P . Q = mag(P)*mag(Q)*cos(a)
+								// P . Q = mag(P) * mag(Q) * cos(a)
 								// cos(a) = P.Q / mag(P) / mag(Q)
-								// The ray and the normal are already unit length,
-								// so their magnitudes are 1.
+								// The normal is already unit length, so its magnitude is 1.
 								/*
-								double cosTheta = DotProduct(ray, faceNormal) 
-									/ Magnitude(ray) / Magnitude(faceNormal);
+								double cosTheta = DotProduct( ray, faceNormal ) 
+									/ Magnitude( ray ) / Magnitude( faceNormal );
 								*/
-								double cosAlpha = ray * faceNormal;
+								double cosAlpha = ray * faceNormal / Magnitude( ray );
 								double incidenceRatio = cosAlpha;
 								
 								ColorMatrix tweaked = TweakColor( poly.Color(),
