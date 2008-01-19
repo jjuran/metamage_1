@@ -1112,7 +1112,7 @@ namespace Vertice
 						{
 							//escapement();
 							
-							current_pixel_3d[ Y ] = iY + 0.5;
+							current_pixel_3d[ Y ] =
 							current_pixel_2d[ Y ] = (iY + 0.5 - height / 2.0) / (e * -width / 2.0);
 							
 							::Ptr rowAddr = baseAddr + ( iY - pixBounds.top ) * rowBytes;
@@ -1120,13 +1120,10 @@ namespace Vertice
 							// For each pixel in the row
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
 							{
-								current_pixel_3d[ X ] = iX + 0.5;
+								current_pixel_3d[ X ] =
 								current_pixel_2d[ X ] = (iX + 0.5 - width / 2.0) / (e * width / 2.0);
 								
-								V::Point3D::Type pt1 = PortFromScreen_Point( current_pixel_3d,
-								                                             width,
-								                                             height,
-								                                             sFocalLength );
+								const V::Point3D::Type& pt1 = current_pixel_3d;
 								
 								if ( fishEye )
 								{
