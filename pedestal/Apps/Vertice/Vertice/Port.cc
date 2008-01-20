@@ -274,7 +274,7 @@ namespace Vertice
 	
 	using V::W;
 	
-	V::Point3D::Type DivideByW( const V::Point3D::Type& point )
+	static V::Point3D::Type DivideByW( const V::Point3D::Type& point )
 	{
 		return point / point[ W ];
 	}
