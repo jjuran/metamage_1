@@ -87,29 +87,8 @@ namespace Vertice
 			
 			bool Empty() const  { return itsPoints.empty(); }
 			
-			// Not called MinumumZ because Z is negative.
-			double MinimumDepth() const
-			{
-				double result = -INFINITY;
-				
-				typedef std::vector< V::Point3D::Type >::const_iterator PointIter;
-				
-				for ( PointIter it = itsPoints.begin();  it != itsPoints.end();  ++it )
-				{
-					const V::Point3D::Type& point = *it;
-					
-					// Z is negative, so the least deep is the greatest.
-					
-					double z = point[ V::Z ] / point[ V::W ];
-					
-					if ( z > result )
-					{
-						result = z;
-					}
-				}
-				
-				return -result;
-			}
+			// Not called MinumumZ(), because Z is negative.
+			double MinimumDepth() const;
 			
 			template < class Transformer >
 			void Transform( const Transformer& transformer )

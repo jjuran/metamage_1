@@ -18,6 +18,7 @@ namespace Vertice
 	using Vectoria::X;
 	using Vectoria::Y;
 	using Vectoria::Z;
+	using Vectoria::W;
 	
 	void Moveable::ContextTranslate( double dx, double dy, double dz )
 	{
@@ -115,6 +116,30 @@ namespace Vertice
 		
 		itsTransform = Compose( itsTransform,           scale.Make() );
 		itsInverse   = Compose( scale.Inverse().Make(), itsInverse   );
+	}
+	
+	
+	double PointMesh::MinimumDepth() const
+	{
+		double result = -INFINITY;
+		
+		typedef std::vector< V::Point3D::Type >::const_iterator PointIter;
+		
+		for ( PointIter it = itsPoints.begin();  it != itsPoints.end();  ++it )
+		{
+			const V::Point3D::Type& point = *it;
+			
+			double z = point[ Z ] / point[ W ];
+			
+			// Z is negative, so the least deep is the greatest.
+			
+			if ( z > result )
+			{
+				result = z;
+			}
+		}
+		
+		return -result;
 	}
 	
 	
