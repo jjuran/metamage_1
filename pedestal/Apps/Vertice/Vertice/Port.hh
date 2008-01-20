@@ -33,6 +33,8 @@ namespace Vertice
 			
 			void AddModel( const MeshModel& model )  { itsModels.push_back( model ); }
 			
+			void SortByDepth();
+			
 			MeshModel* HitTest( const Vectoria::Point3D::Type& pt1 );
 			
 			void Swap( Frame& other )

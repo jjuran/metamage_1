@@ -263,7 +263,15 @@ namespace Vertice
 			it->Transform( std::ptr_fun( PerspectiveDivision ) );
 		}
 		
+		newFrame.SortByDepth();
+		
 		outFrame.Swap( newFrame );
+	}
+	
+	
+	void Frame::SortByDepth()
+	{
+		std::sort( itsModels.begin(), itsModels.end() );
 	}
 	
 	
