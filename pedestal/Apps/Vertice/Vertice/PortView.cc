@@ -730,7 +730,7 @@ namespace Vertice
 			
 			bool selected = model.Selected();
 			
-			const PointMesh< V::Point3D::Type >& mesh = model.Mesh();
+			const PointMesh& mesh = model.Mesh();
 			
 			// Sanity check:  Must have some points to work with.
 			if ( mesh.Empty() )  continue;
@@ -965,7 +965,7 @@ namespace Vertice
 					
 					bool selected = model.Selected();
 					
-					const PointMesh< V::Point3D::Type >& mesh = model.Mesh();
+					const PointMesh& mesh = model.Mesh();
 					
 					// Sanity check:  Must have some points to work with.
 					if ( mesh.Empty() )  continue;

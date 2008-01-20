@@ -67,19 +67,18 @@ namespace Vertice
 	
 	// PointMesh stores an ordered collection of points that can be transformed all at once.
 	
-	template < class Point >
 	class PointMesh
 	{
 		private:
-			std::vector< Point > itsPoints;
+			std::vector< V::Point3D::Type > itsPoints;
 		
 		public:
-			typedef Point point_type;
+			typedef V::Point3D::Type point_type;
 			
-			std::vector< Point > const& Points() const  { return itsPoints; }
-			std::vector< Point >      & Points()        { return itsPoints; }
+			std::vector< V::Point3D::Type > const& Points() const  { return itsPoints; }
+			std::vector< V::Point3D::Type >      & Points()        { return itsPoints; }
 			
-			std::size_t AddPoint( const Point& pt )
+			std::size_t AddPoint( const V::Point3D::Type& pt )
 			{
 				itsPoints.push_back( pt );
 				
@@ -93,11 +92,11 @@ namespace Vertice
 			{
 				double result = -INFINITY;
 				
-				typedef std::vector< Point >::const_iterator PointIter;
+				typedef std::vector< V::Point3D::Type >::const_iterator PointIter;
 				
 				for ( PointIter it = itsPoints.begin();  it != itsPoints.end();  ++it )
 				{
-					const Point& point = *it;
+					const V::Point3D::Type& point = *it;
 					
 					// Z is negative, so the least deep is the greatest.
 					
@@ -121,7 +120,7 @@ namespace Vertice
 				                transformer );
 			}
 			
-			Point operator()( std::size_t offset ) const  { return itsPoints[ offset ]; }
+			const V::Point3D::Type& operator()( std::size_t offset ) const  { return itsPoints[ offset ]; }
 			
 			void Swap( PointMesh& other )
 			{
@@ -165,14 +164,14 @@ namespace Vertice
 	class MeshModel
 	{
 		private:
-			PointMesh< V::Point3D::Type >  itsMesh;
-			std::vector< MeshPolygon >     itsPolygons;
-			bool                           itIsSelected;
+			PointMesh                   itsMesh;
+			std::vector< MeshPolygon >  itsPolygons;
+			bool                        itIsSelected;
 		
 		public:
 			MeshModel() : itIsSelected()  {}
 			
-			PointMesh< V::Point3D::Type > const& Mesh() const  { return itsMesh; }
+			PointMesh const& Mesh() const  { return itsMesh; }
 			
 			const std::vector< MeshPolygon >& Polygons() const  { return itsPolygons; }
 			
