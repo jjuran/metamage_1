@@ -33,7 +33,7 @@ namespace Vertice
 			
 			void AddModel( const MeshModel& model )  { itsModels.push_back( model ); }
 			
-			//MeshPoly* HitTest( const Point3D::Type& pt0, const Vector3D& ray );
+			MeshModel* HitTest( const Vectoria::Point3D::Type& pt1 );
 			
 			void Swap( Frame& other )
 			{

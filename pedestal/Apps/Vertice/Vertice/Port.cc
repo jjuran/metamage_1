@@ -12,15 +12,11 @@
 #include <cmath>
 
 // Standard C++
-#include <numeric>
+#include <functional>
 #include <string>
-#include <utility>
 
 // Nitrogen
 #include "Nitrogen/Sound.h"
-
-// MoreFunctional
-//#include "PointerToFunction.hh"
 
 // Vectoria
 #include "Vectoria/Clipping3D.hh"
@@ -271,45 +267,40 @@ namespace Vertice
 	}
 	
 	
-	#if 0
-	static V::Point2D::Type ProjectionOfPointOntoPolygonForPtrFun( const std::vector< V::Point3D::Type >& v,
-	                                                               const V::Point3D::Type& pt )
+	static V::Point2D::Type Point3DTo2D( const V::Point3D::Type& pt )
 	{
-		return V::ProjectionOfPointOntoPolygon< std::vector< V::Point3D::Type > >( v, pt );
+		return V::Point2D::Make( pt[ X ], pt[ Y ] );
 	}
 	
-	static bool PolygonContainsPoint( const std::vector< V::Point3D::Type >& polygon,
-	                                  const V::Point3D::Type& pt )
+	using V::W;
+	
+	V::Point3D::Type DivideByW( const V::Point3D::Type& point )
 	{
-		V::Polygon2D poly2d;
-		poly2d.Points().resize( polygon.size() );
-		
-		std::transform( polygon.begin(),
-		                polygon.end(),
-		                poly2d.Points().begin(),
-		                std::bind1st( N::PtrFun( ProjectionOfPointOntoPolygonForPtrFun ),
-		                              polygon ) );
-		
-		return poly2d.ContainsPoint( V::ProjectionOfPointOntoPolygon( polygon, pt ) );
+		return point / point[ W ];
 	}
 	
-	MeshPoly*
-	Frame::HitTest( const V::Point3D::Type& pt0, const Vector3D::Type& ray )
+	MeshModel* Frame::HitTest( const V::Point3D::Type& pt1 )
 	{
+		V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
+		
+		// The ray is inverted to face the same way as the face normal.
+		V::Vector3D::Type ray = UnitLength( pt0 - pt1 );
+		
 		double minZ = 0;
 		MeshModel* closestModel = NULL;
-		MeshPoly* closestPoly = NULL;
+		const MeshPoly* closestPoly = NULL;
 		
-		for ( std::vector< MeshModel >::iterator it = myMeshes.begin();  it != myMeshes.end();  ++it )
+		for ( std::vector< MeshModel >::iterator it = itsModels.begin();  it != itsModels.end();  ++it )
 		{
 			MeshModel& model = *it;
-			std::vector< MeshPoly >& polies = model.Polygons();
+			const std::vector< MeshPoly >& polies = model.Polygons();
 			
-			for ( std::vector< MeshPoly >::iterator it = polies.begin();  it != polies.end();  ++it )
+			for ( std::vector< MeshPoly >::const_iterator it = polies.begin();  it != polies.end();  ++it )
 			{
-				MeshPoly& poly = *it;
+				const MeshPoly& poly = *it;
 				
-				const std::vector< int >& offsets = poly.Vertices();
+				const std::vector< unsigned >& offsets = poly.Vertices();
+				
 				std::vector< V::Point3D::Type > points( offsets.size() );
 				
 				std::transform( offsets.begin(),
@@ -317,7 +308,23 @@ namespace Vertice
 				                points.begin(),
 				                model.Mesh() );
 				
-				Plane3D plane = PlaneVector( points );
+				V::Polygon2D poly2d;
+				
+				std::vector< V::Point2D::Type >& points2d( poly2d.Points() );
+				
+				points2d.resize( points.size() );
+				
+				std::transform( points.begin(),
+				                points.end(),
+				                points2d.begin(),
+				                std::ptr_fun( Point3DTo2D ) );
+				
+				std::transform( points.begin(),
+				                points.end(),
+				                points.begin(),
+				                std::ptr_fun( DivideByW ) );
+				
+				V::Plane3D::Type plane = PlaneVector( points );
 				
 				if ( !ClipPointAgainstPlane( pt0, plane ) )
 				{
@@ -337,65 +344,24 @@ namespace Vertice
 				}
 				*/
 				
-				double dist = Magnitude( Vector3D::Type( sectPt - pt0 ) );
+				double dist = Magnitude( sectPt - pt0 );
+				
+				V::Point2D::Type current_pixel_2d = Point3DTo2D( pt1 );
 				
 				if (    dist > 0
 				     && (dist < minZ  ||  minZ == 0)
-				     && PolygonContainsPoint( points, sectPt ) )
+				     && poly2d.ContainsPoint( current_pixel_2d ) )
 				{
-					//
+					minZ = dist;
+					
+					closestPoly  = &*it;
+					closestModel = &model;
 				}
-				else
-				{
-					continue;
-				}
-				
-				minZ = dist;
-				closestPoly = &*it;
-				closestModel = &model;
-				
 			}
 		}
 		
-		return closestPoly;
-		
-		/*
-		Trim(intersections, ZIsZero);
-		
-		if (intersections.empty()) {
-			//return make_pair(std::string(""), -1);
-			return NULL;
-		}
-		
-		double minZ = 0;
-		Point2D ptInPolygon;
-		const Tile* theTile = NULL;
-		
-		std::vector<Intersection>::const_iterator it, closest, done = intersections.end();
-		
-		for (it = intersections.begin(), closest = done; it != done; ++it) {
-			const Intersection& intersection = *it;
-			double z = intersection.first.distanceSquared;
-			if (z > minZ  &&  closest != done) {
-				// There's already a closer match
-				continue;
-			}
-			Point2D pt = intersection.first.pointOnPlane;
-			const Polygon2D& polygon = intersection.second->Polygon();
-			if (polygon.ContainsPoint(pt)) {
-				minZ = z;
-				closest = it;
-				ptInPolygon = pt;
-				theTile = intersection.second;
-			}
-		}
-		
-		return (closest == done) 
-			? std::make_pair(std::string(""), -1) 
-			: std::make_pair(theTile->ContextIndex(), theTile->PolyIndex());
-		*/
+		return closestModel;
 	}
-	#endif
 	
 }
 

@@ -22,8 +22,10 @@ namespace Vertice
 	class PortView : public Pedestal::View
 	{
 		private:
-			MeshPoly* HitTest( double x, double y );
+			MeshModel* HitTest( double x, double y );
+			
 			Vertice::ColorMatrix TracePixel( int x, int y );
+			
 			void DrawPixel( int x, int y );
 			
 			Rect                                   itsBounds;  // port coordinates
@@ -52,6 +54,7 @@ namespace Vertice
 			bool DoCommand( Pedestal::MenuItemCode code )  { return false; }
 			void Resize( const Rect& newBounds );
 			void Draw();
+			void Redraw();
 			void DrawBetter() const;
 			
 			void Update()  { Draw(); }

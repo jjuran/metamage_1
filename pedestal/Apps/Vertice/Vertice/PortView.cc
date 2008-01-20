@@ -642,7 +642,8 @@ namespace Vertice
 	
 	static ColorMatrix TweakColor( ColorMatrix  color,
 	                               double       distance,
-	                               double       incidenceRatio )
+	                               double       incidenceRatio,
+	                               bool         selected )
 	{
 		bool considerColor     = true;
 		bool considerAmbience  = true;
@@ -653,8 +654,9 @@ namespace Vertice
 		
 		double proximity = ProximityQuotient( distance / 2 );
 		
-		ColorMatrix ambientLight = V::MakeRGB( 0.8, 0.8, 1.0 );
-		ColorMatrix cameraLight  = V::MakeRGB( 1.0, 1.0, 0.6 );
+		ColorMatrix ambientLight   = V::MakeRGB( 0.8, 0.8, 1.0 );
+		ColorMatrix cameraLight    = V::MakeRGB( 1.0, 1.0, 0.6 );
+		ColorMatrix selectionLight = V::MakeRGB( 1.0, 0.8, 0.8 );
 		
 		if ( !considerColor )
 		{
@@ -680,7 +682,8 @@ namespace Vertice
 		// then no color clipping ('overexposure') can occur.
 		
 		ColorMatrix totalLight =   ( 0.3 * ambientLight                             )
-		                         + ( 0.9 * cameraLight * proximity * incidenceRatio );
+		                         + ( 0.9 * cameraLight * proximity * incidenceRatio )
+		                         + ( 0.3 * selected * selectionLight );
 		
 		//return color * totalLight;
 		return ModulateColor( color, totalLight );
@@ -693,6 +696,13 @@ namespace Vertice
 	
 	void PortView::Draw()
 	{
+		itsPort.MakeFrame( itsFrame );
+		
+		Redraw();
+	}
+	
+	void PortView::Redraw()
+	{
 		unsigned width  = NX::RectWidth ( itsBounds );
 		unsigned height = NX::RectHeight( itsBounds );
 		
@@ -702,8 +712,6 @@ namespace Vertice
 		N::RGBBackColor( NN::Make< RGBColor >( 0 ) );
 		
 		//fishEye = itsPort.mCamera.fishEyeMode;
-		
-		itsPort.MakeFrame( itsFrame );
 		
 		N::EraseRect( itsBounds );
 		
@@ -719,6 +727,8 @@ namespace Vertice
 		for ( ModelIter it = models.begin(), end = models.end();  it != end;  ++it )
 		{
 			const MeshModel& model = *it;
+			
+			bool selected = model.Selected();
 			
 			const PointMesh< V::Point3D::Type >& mesh = model.Mesh();
 			
@@ -791,7 +801,7 @@ namespace Vertice
 					double cosAlpha = ray * faceNormal;
 					double incidenceRatio = cosAlpha;
 					
-					pt.itsColor = TweakColor( poly.Color(), dist, incidenceRatio );
+					pt.itsColor = TweakColor( poly.Color(), dist, incidenceRatio, selected );
 				}
 				
 				std::vector< AdHocTriangle< DeepVertex > > triangles( vertices.size() - 2 );
@@ -841,34 +851,33 @@ namespace Vertice
 		return true;
 	}
 	
-	MeshPoly* PortView::HitTest( double x, double y )
+	MeshModel* PortView::HitTest( double x, double y )
 	{
-		V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
-		V::Point3D::Type pt1 = V::Point3D::Make( x, y, -1 );
+		int width  = NX::RectWidth ( itsBounds );
+		int height = NX::RectHeight( itsBounds );
+		
+		x = (x + 0.5 - width  / 2.0) / ( width / 2.0);
+		y = (y + 0.5 - height / 2.0) / (-width / 2.0);
+		
+		V::Point3D::Type pt1 = V::Point3D::Make( x, y, -sFocalLength );
 		
 		if ( fishEye )
 		{
 		//	pt1 = UnFishEye(pt1);
 		}
 		
-		// The ray is inverted to face the same way as the face normal.
-		V::Vector3D::Type ray = UnitLength( pt0 - pt1 );
-		
-		//return itsFrame.HitTest( pt0, ray );
-		
-		return NULL;
+		return itsFrame.HitTest( pt1 );
 	}
 	
 	ColorMatrix PortView::TracePixel( int x, int y )
 	{
-		V::Point3D::Type pt1 = V::Point3D::Make( x + 0.5, y + 0.5, 1 );
-		
-		pt1 = Transformation( pt1, itsScreen2Port );
-		
-		//std::pair<string, int> index = HitTest(pt1[X], pt1[Y]);
-		MeshPoly* poly = HitTest( pt1[ X ], pt1[ Y ] );
+		/*
+		MeshPoly* poly = HitTest( x, y );
 		
 		return poly ? poly->Color() : V::Black();
+		*/
+		
+		return V::Black();
 	}
 	
 	void PortView::DrawPixel( int x, int y )
@@ -953,6 +962,8 @@ namespace Vertice
 				for ( ModelIter it = models.begin(), end = models.end();  it != end;  ++it )
 				{
 					const MeshModel& model = *it;
+					
+					bool selected = model.Selected();
 					
 					const PointMesh< V::Point3D::Type >& mesh = model.Mesh();
 					
@@ -1130,7 +1141,8 @@ namespace Vertice
 								
 								ColorMatrix tweaked = TweakColor( poly.Color(),
 								                                  dist,
-								                                  incidenceRatio );
+								                                  incidenceRatio,
+								                                  selected );
 								
 								N::RGBColor rgb = NN::Convert< N::RGBColor >( tweaked );
 								
@@ -1180,16 +1192,24 @@ namespace Vertice
 	{
 		Point macPt = N::GlobalToLocal( event.where );
 		
-		V::Point3D::Type pt1 = V::Point3D::Make( macPt.h, macPt.v, 1 );
+		itsPort.MakeFrame( itsFrame );
 		
-		pt1 = Transformation( pt1, itsScreen2Port );
+		MeshModel* model = HitTest( macPt.h, macPt.v );
 		
-		//std::pair<string, int> index = HitTest(pt1[X], pt1[Y]);
-		MeshPoly* poly = HitTest( pt1[X], pt1[Y] );
-		
-		if ( poly != NULL )
+		if ( model != NULL )
 		{
-			N::SetCPixel( macPt.h, macPt.v, NN::Convert< N::RGBColor >( poly->Color() ) );
+			model->Select();
+		}
+		
+		Redraw();
+		
+		if ( event.modifiers & shiftKey )
+		for ( int y = itsBounds.top;  y < itsBounds.bottom;  ++y )
+		{
+			for ( int x = itsBounds.left;  x < itsBounds.right;  ++x )
+			{
+				DrawPixel( x, y );
+			}
 			
 			if ( TARGET_API_MAC_CARBON )
 			{
@@ -1220,23 +1240,6 @@ namespace Vertice
 		if ( c == '~' )
 		{
 			DrawBetter();
-			return true;
-		}
-		else if ( c == '!' )
-		{
-			for ( int i = 0;  i < NX::RectWidth( Bounds() );  ++i )
-			{
-				for ( int j = 0;  j < NX::RectHeight( Bounds() );  ++j )
-				{
-					DrawPixel( i, j );
-					
-					if ( ::Button() )
-					{
-						// Bail out
-						return true;
-					}
-				}
-			}
 			return true;
 		}
 		
