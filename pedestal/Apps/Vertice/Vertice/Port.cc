@@ -326,23 +326,7 @@ namespace Vertice
 				
 				V::Plane3D::Type plane = V::PlaneVector( points );
 				
-				if ( !ClipPointAgainstPlane( pt0, plane ) )
-				{
-					continue;
-				}
-				
-				if ( !LineIntersectsPlane( ray, plane ) )
-				{
-					continue;
-				}
-				
 				V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
-				
-				/*
-				if (!ClipPointAgainstPlane(sectPt, NearPlane(0.01))) {
-					continue;
-				}
-				*/
 				
 				double dist = Magnitude( sectPt - pt0 );
 				
