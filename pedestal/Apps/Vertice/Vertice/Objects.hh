@@ -143,8 +143,11 @@ namespace Vertice
 		private:
 			PointMesh< V::Point3D::Type >  itsMesh;
 			std::vector< MeshPoly >        itsPolygons;
+			bool                           itIsSelected;
 		
 		public:
+			MeshModel::MeshModel() : itIsSelected()  {}
+			
 			PointMesh< V::Point3D::Type > const& Mesh() const  { return itsMesh; }
 			
 			const std::vector< MeshPoly >& Polygons() const  { return itsPolygons; }
@@ -155,6 +158,10 @@ namespace Vertice
 			{
 				itsPolygons.push_back( MeshPoly( offsets, color ) );
 			}
+			
+			bool Selected() const  { return itIsSelected; }
+			
+			void Select()  { itIsSelected = true; }
 			
 			template < class Transformer >
 			void Transform( const Transformer& transformer )
