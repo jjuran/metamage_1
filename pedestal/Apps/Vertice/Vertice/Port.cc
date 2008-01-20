@@ -288,18 +288,20 @@ namespace Vertice
 		
 		double minZ = 0;
 		MeshModel* closestModel = NULL;
-		const MeshPoly* closestPoly = NULL;
+		const MeshPolygon* closestPoly = NULL;
 		
 		for ( std::vector< MeshModel >::iterator it = itsModels.begin();  it != itsModels.end();  ++it )
 		{
 			MeshModel& model = *it;
-			const std::vector< MeshPoly >& polies = model.Polygons();
+			const std::vector< MeshPolygon >& polygons = model.Polygons();
 			
-			for ( std::vector< MeshPoly >::const_iterator it = polies.begin();  it != polies.end();  ++it )
+			typedef std::vector< MeshPolygon >::const_iterator PolygonIter;
+			
+			for ( PolygonIter it = polygons.begin();  it != polygons.end();  ++it )
 			{
-				const MeshPoly& poly = *it;
+				const MeshPolygon& polygon = *it;
 				
-				const std::vector< unsigned >& offsets = poly.Vertices();
+				const std::vector< unsigned >& offsets = polygon.Vertices();
 				
 				std::vector< V::Point3D::Type > points( offsets.size() );
 				

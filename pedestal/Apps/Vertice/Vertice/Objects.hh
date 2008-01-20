@@ -105,10 +105,10 @@ namespace Vertice
 			}
 	};
 	
-	// MeshPoly models a polygon as a sequence of indices into a PointMesh, plus a color.
+	// MeshPolygon models a polygon as a sequence of indices into a PointMesh, plus a color.
 	// The user must keep track of which PointMesh stores the points, as it's not specified here.
 	
-	class MeshPoly
+	class MeshPolygon
 	{
 		public:
 			typedef unsigned Offset;
@@ -118,10 +118,10 @@ namespace Vertice
 			ColorMatrix            itsColor;
 		
 		public:
-			MeshPoly()  {}
-			MeshPoly( const std::vector< Offset >&  offsets,
-			          const ColorMatrix&            color ) : itsVertices( offsets ),
-			                                                  itsColor   ( color   )
+			MeshPolygon()  {}
+			MeshPolygon( const std::vector< Offset >&  offsets,
+			             const ColorMatrix&            color ) : itsVertices( offsets ),
+			                                                     itsColor   ( color   )
 			{}
 			
 			const std::vector< Offset >& Vertices() const  { return itsVertices; }
@@ -129,7 +129,7 @@ namespace Vertice
 			
 			const ColorMatrix& Color() const  { return itsColor; }
 			
-			void Swap( MeshPoly& other )
+			void Swap( MeshPolygon& other )
 			{
 				std::swap( itsVertices, other.itsVertices );
 				std::swap( itsColor,    other.itsColor    );
@@ -142,7 +142,7 @@ namespace Vertice
 	{
 		private:
 			PointMesh< V::Point3D::Type >  itsMesh;
-			std::vector< MeshPoly >        itsPolygons;
+			std::vector< MeshPolygon >     itsPolygons;
 			bool                           itIsSelected;
 		
 		public:
@@ -150,13 +150,13 @@ namespace Vertice
 			
 			PointMesh< V::Point3D::Type > const& Mesh() const  { return itsMesh; }
 			
-			const std::vector< MeshPoly >& Polygons() const  { return itsPolygons; }
+			const std::vector< MeshPolygon >& Polygons() const  { return itsPolygons; }
 			
 			std::size_t AddPointToMesh( const V::Point3D::Type& pt )  { return itsMesh.AddPoint( pt ); }
 			
-			void AddMeshPoly( const std::vector< unsigned >& offsets, const ColorMatrix& color )
+			void AddMeshPolygon( const std::vector< unsigned >& offsets, const ColorMatrix& color )
 			{
-				itsPolygons.push_back( MeshPoly( offsets, color ) );
+				itsPolygons.push_back( MeshPolygon( offsets, color ) );
 			}
 			
 			bool Selected() const  { return itIsSelected; }

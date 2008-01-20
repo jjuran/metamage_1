@@ -223,10 +223,10 @@ namespace Vertice
 		}
 	}
 	
-	static void AddMeshPoly( Parser&      parser,
-	                         Scene&       scene,
-	                         const char*  begin,
-	                         const char*  end )
+	static void AddMeshPolygon( Parser&      parser,
+	                            Scene&       scene,
+	                            const char*  begin,
+	                            const char*  end )
 	{
 		std::vector< unsigned > offsets;
 		
@@ -252,7 +252,7 @@ namespace Vertice
 		
 		if ( !offsets.empty() )
 		{
-			context.AddMeshPoly( offsets, parser.itsColor );
+			context.AddMeshPolygon( offsets, parser.itsColor );
 		}
 	}
 	
@@ -270,7 +270,8 @@ namespace Vertice
 		handlers[ "theta"     ] = SetTheta;
 		handlers[ "phi"       ] = SetPhi;
 		handlers[ "pt"        ] = AddMeshPoint;
-		handlers[ "poly"      ] = AddMeshPoly;
+		handlers[ "poly"      ] = AddMeshPolygon;
+		handlers[ "polygon"   ] = AddMeshPolygon;
 		
 		return handlers;
 	}

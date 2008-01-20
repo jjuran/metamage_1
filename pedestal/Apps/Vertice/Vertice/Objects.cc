@@ -122,13 +122,13 @@ namespace Vertice
 	{
 		V::Point3D::Type points[3];
 		
-		typedef std::vector< MeshPoly >::iterator PolygonIter;
+		typedef std::vector< MeshPolygon >::iterator PolygonIter;
 		
-		typedef MeshPoly::Offset Offset;
+		typedef MeshPolygon::Offset Offset;
 		
 		for ( PolygonIter it = itsPolygons.begin();  it != itsPolygons.end();  ++it )
 		{
-			MeshPoly& polygon = *it;
+			MeshPolygon& polygon = *it;
 			
 			std::vector< Offset >& offsets = polygon.Vertices();
 			
@@ -163,13 +163,13 @@ namespace Vertice
 		
 		std::vector< bool > used( points.size() );
 		
-		typedef std::vector< MeshPoly >::iterator PolygonIter;
+		typedef std::vector< MeshPolygon >::iterator PolygonIter;
 		
-		typedef MeshPoly::Offset Offset;
+		typedef MeshPolygon::Offset Offset;
 		
 		for ( PolygonIter it = itsPolygons.begin();  it != itsPolygons.end();  ++it )
 		{
-			const MeshPoly& polygon = *it;
+			const MeshPolygon& polygon = *it;
 			
 			const std::vector< Offset >& offsets = polygon.Vertices();
 			
@@ -268,15 +268,15 @@ namespace Vertice
 			}
 		}
 		
-		typedef MeshPoly::Offset Offset;
+		typedef MeshPolygon::Offset Offset;
 		
-		typedef std::vector< MeshPoly >::iterator PolygonIter;
+		typedef std::vector< MeshPolygon >::iterator PolygonIter;
 		
 		typedef std::vector< Offset >::const_iterator OffsetIter;
 		
 		for ( PolygonIter it = itsPolygons.begin();  it != itsPolygons.end();  ++it )
 		{
-			MeshPoly& polygon = *it;
+			MeshPolygon& polygon = *it;
 			
 			std::vector< Offset >& offsets = polygon.Vertices();
 			

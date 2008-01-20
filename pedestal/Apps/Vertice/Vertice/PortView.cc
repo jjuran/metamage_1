@@ -735,15 +735,15 @@ namespace Vertice
 			// Sanity check:  Must have some points to work with.
 			if ( mesh.Empty() )  continue;
 			
-			const std::vector< MeshPoly >& polygons = model.Polygons();
+			const std::vector< MeshPolygon >& polygons = model.Polygons();
 			
-			typedef std::vector< MeshPoly >::const_iterator PolygonIter;
+			typedef std::vector< MeshPolygon >::const_iterator PolygonIter;
 			
 			// For each polygon in the mesh...
 			for ( PolygonIter it = polygons.begin(), end = polygons.end();  it != end;  ++it )
 			{
-				MeshPoly poly = *it;
-				const std::vector< unsigned >& offsets = poly.Vertices();
+				MeshPolygon polygon = *it;
+				const std::vector< unsigned >& offsets = polygon.Vertices();
 				
 				if ( offsets.empty() )
 				{
@@ -801,7 +801,7 @@ namespace Vertice
 					double cosAlpha = ray * faceNormal;
 					double incidenceRatio = cosAlpha;
 					
-					pt.itsColor = TweakColor( poly.Color(), dist, incidenceRatio, selected );
+					pt.itsColor = TweakColor( polygon.Color(), dist, incidenceRatio, selected );
 				}
 				
 				std::vector< AdHocTriangle< DeepVertex > > triangles( vertices.size() - 2 );
@@ -872,9 +872,9 @@ namespace Vertice
 	ColorMatrix PortView::TracePixel( int x, int y )
 	{
 		/*
-		MeshPoly* poly = HitTest( x, y );
+		MeshPolygon* polygon = HitTest( x, y );
 		
-		return poly ? poly->Color() : V::Black();
+		return polygon ? polygon->Color() : V::Black();
 		*/
 		
 		return V::Black();
@@ -976,16 +976,16 @@ namespace Vertice
 					//	transform(points.begin(), points.end(), points.begin(), FishEye);
 					}
 					
-					const std::vector< MeshPoly >& polygons = model.Polygons();
+					const std::vector< MeshPolygon >& polygons = model.Polygons();
 					
-					typedef std::vector< MeshPoly >::const_iterator PolygonIter;
+					typedef std::vector< MeshPolygon >::const_iterator PolygonIter;
 					
 					// For each polygon in the mesh...
 					for ( PolygonIter it = polygons.begin(), end = polygons.end();  it != end;  ++it )
 					{
-						MeshPoly poly = *it;
+						MeshPolygon polygon = *it;
 						
-						std::vector< unsigned > offsets = poly.Vertices();
+						std::vector< unsigned > offsets = polygon.Vertices();
 						
 						if ( offsets.empty() )
 						{
@@ -1139,7 +1139,7 @@ namespace Vertice
 								double cosAlpha = ray * faceNormal / Magnitude( ray );
 								double incidenceRatio = cosAlpha;
 								
-								ColorMatrix tweaked = TweakColor( poly.Color(),
+								ColorMatrix tweaked = TweakColor( polygon.Color(),
 								                                  dist,
 								                                  incidenceRatio,
 								                                  selected );
