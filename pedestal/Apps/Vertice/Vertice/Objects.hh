@@ -146,7 +146,7 @@ namespace Vertice
 			bool                           itIsSelected;
 		
 		public:
-			MeshModel::MeshModel() : itIsSelected()  {}
+			MeshModel() : itIsSelected()  {}
 			
 			PointMesh< V::Point3D::Type > const& Mesh() const  { return itsMesh; }
 			
