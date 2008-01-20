@@ -88,6 +88,30 @@ namespace Vertice
 			
 			bool Empty() const  { return itsPoints.empty(); }
 			
+			// Not called MinumumZ because Z is negative.
+			double MinimumDepth() const
+			{
+				double result = -INFINITY;
+				
+				typedef std::vector< Point >::const_iterator PointIter;
+				
+				for ( PointIter it = itsPoints.begin();  it != itsPoints.end();  ++it )
+				{
+					const Point& point = *it;
+					
+					// Z is negative, so the least deep is the greatest.
+					
+					double z = point[ V::Z ] / point[ V::W ];
+					
+					if ( z > result )
+					{
+						result = z;
+					}
+				}
+				
+				return -result;
+			}
+			
 			template < class Transformer >
 			void Transform( const Transformer& transformer )
 			{
@@ -169,6 +193,8 @@ namespace Vertice
 				itsMesh.Transform( transformer );
 			}
 			
+			double MinimumDepth() const  { return itsMesh.MinimumDepth(); }
+			
 			void CullBackfaces( const V::Point3D::Type& eye );
 			
 			void CullDeadPoints();
@@ -182,6 +208,11 @@ namespace Vertice
 				std::swap( itsPolygons, other.itsPolygons );
 			}
 	};
+	
+	inline bool operator<( const MeshModel& a, const MeshModel& b )
+	{
+		return a.MinimumDepth() < b.MinimumDepth();
+	}
 	
 	class Context : public Moveable, public MeshModel
 	{
