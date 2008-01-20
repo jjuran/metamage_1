@@ -324,7 +324,7 @@ namespace Vertice
 				                points.begin(),
 				                std::ptr_fun( DivideByW ) );
 				
-				V::Plane3D::Type plane = PlaneVector( points );
+				V::Plane3D::Type plane = V::PlaneVector( points );
 				
 				if ( !ClipPointAgainstPlane( pt0, plane ) )
 				{
