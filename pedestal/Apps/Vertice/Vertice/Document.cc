@@ -13,6 +13,7 @@
 #include <cstdlib>
 
 // Standard C++
+#include <algorithm>
 #include <list>
 #include <map>
 #include <string>
@@ -82,7 +83,8 @@ namespace Vertice
 	class Parser
 	{
 		public:
-			typedef std::map< std::string, V::Point3D::Type > Map;
+			typedef std::map< std::string, V::Point3D::Type > PointMap;
+			typedef std::map< std::string, ColorMatrix      > ColorMap;
 			
 			Parser();
 			
@@ -95,9 +97,40 @@ namespace Vertice
 			V::Degrees        itsTheta;
 			V::Degrees        itsPhi;
 			std::size_t       itsContextID;
-			Map               itsPoints;
+			PointMap          itsPoints;
+			ColorMap          itsColors;
 	};
 	
+	
+	static void Define( Parser&      parser,
+	                    Scene&       scene,
+	                    const char*  begin,
+	                    const char*  end )
+	{
+		const char* space = std::find( begin, end, ' ' );
+		
+		std::string type( begin, space );
+		
+		begin = space + (space != end);
+		
+		space = std::find( begin, end, ' ' );
+		
+		std::string name( begin, space );
+		
+		begin = space + (space != end);
+		
+		if ( type == "color" )
+		{
+			double red, green, blue;
+			
+			int scanned = std::sscanf( begin, "%lf %lf %lf", &red, &green, &blue );
+			
+			if ( scanned == 3 )
+			{
+				parser.itsColors[ name ] = V::MakeRGB( red, green, blue );
+			}
+		}
+	}
 	
 	static void SetContext( Parser&      parser,
 	                        Scene&       scene,
@@ -134,6 +167,15 @@ namespace Vertice
 		if ( scanned == 3 )
 		{
 			parser.itsColor = V::MakeRGB( red, green, blue );
+		}
+		else
+		{
+			Parser::ColorMap::const_iterator it = parser.itsColors.find( std::string( begin, end ) );
+			
+			if ( it != parser.itsColors.end() )
+			{
+				parser.itsColor = it->second;
+			}
 		}
 	}
 	
@@ -265,6 +307,7 @@ namespace Vertice
 		handlers[ "camera"    ] = MakeCamera;
 		handlers[ "context"   ] = SetContext;
 		handlers[ "color"     ] = SetColor;
+		handlers[ "define"    ] = Define;
 		handlers[ "origin"    ] = SetOrigin;
 		handlers[ "translate" ] = Translate;
 		handlers[ "theta"     ] = SetTheta;
