@@ -343,9 +343,7 @@ namespace Vertice
 			
 			std::string ptName( begin, space );
 			
-			V::Point3D::Type pt = itsPoints[ ptName ];
-			
-			offsets.push_back( context.AddPointToMesh( pt ) );
+			offsets.push_back( context.AddPointToMesh( itsPoints[ ptName ] ) );
 			
 			begin = space;
 			
