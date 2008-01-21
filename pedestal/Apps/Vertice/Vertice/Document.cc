@@ -89,13 +89,8 @@ namespace Vertice
 		public:
 			typedef std::map< std::string, V::Point3D::Type > PointMap;
 			typedef std::map< std::string, ColorMatrix      > ColorMap;
-			
-			Parser();
-			
-			~Parser()  {}
-			
-			void ParseLine( Scene& scene, const std::string& line );
-			
+		
+		private:
 			ColorMatrix       itsColor;
 			V::Point3D::Type  itsOrigin;
 			V::Degrees        itsTheta;
@@ -103,8 +98,65 @@ namespace Vertice
 			std::size_t       itsContextID;
 			PointMap          itsPoints;
 			ColorMap          itsColors;
+		
+		public:
+			Parser();
+			
+			~Parser()  {}
+			
+			void ParseLine( Scene& scene, const std::string& line );
 			
 			ColorMatrix ReadColor( const char* begin, const char* end ) const;
+			
+			static void Define( Parser&      parser,
+	                            Scene&       scene,
+	                            const char*  begin,
+	                            const char*  end );
+			
+			static void SetContext( Parser&      parser,
+	                                Scene&       scene,
+	                                const char*  begin,
+	                                const char*  end );
+			
+			static void MakeCamera( Parser&      parser,
+	                                Scene&       scene,
+	                                const char*  begin,
+	                                const char*  end );
+			
+			static void SetColor( Parser&      parser,
+	                              Scene&       scene,
+	                              const char*  begin,
+	                              const char*  end );
+			
+			static void SetOrigin( Parser&      parser,
+	                               Scene&       scene,
+	                               const char*  begin,
+	                               const char*  end );
+			
+			static void Translate( Parser&      parser,
+	                               Scene&       scene,
+	                               const char*  begin,
+	                               const char*  end );
+			
+			static void SetTheta( Parser&      parser,
+	                              Scene&       scene,
+	                              const char*  begin,
+	                              const char*  end );
+			
+			static void SetPhi( Parser&      parser,
+	                            Scene&       scene,
+	                            const char*  begin,
+	                            const char*  end );
+			
+			static void AddMeshPoint( Parser&      parser,
+	                                  Scene&       scene,
+	                                  const char*  begin,
+	                                  const char*  end );
+			
+			static void AddMeshPolygon( Parser&      parser,
+	                                    Scene&       scene,
+	                                    const char*  begin,
+	                                    const char*  end );
 	};
 	
 	
@@ -131,10 +183,10 @@ namespace Vertice
 		throw ParseError();
 	}
 	
-	static void Define( Parser&      parser,
-	                    Scene&       scene,
-	                    const char*  begin,
-	                    const char*  end )
+	void Parser::Define( Parser&      parser,
+	                     Scene&       scene,
+	                     const char*  begin,
+	                     const char*  end )
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
@@ -154,10 +206,10 @@ namespace Vertice
 		}
 	}
 	
-	static void SetContext( Parser&      parser,
-	                        Scene&       scene,
-	                        const char*  begin,
-	                        const char*  end )
+	void Parser::SetContext( Parser&      parser,
+	                         Scene&       scene,
+	                         const char*  begin,
+	                         const char*  end )
 	{
 		std::string contextName( begin, end );
 		
@@ -169,26 +221,26 @@ namespace Vertice
 		parser.itsOrigin = V::Point3D::Make( 0, 0, 0 );
 	}
 	
-	static void MakeCamera( Parser&      parser,
-	                        Scene&       scene,
-	                        const char*  begin,
-	                        const char*  end )
+	void Parser::MakeCamera( Parser&      parser,
+	                         Scene&       scene,
+	                         const char*  begin,
+	                         const char*  end )
 	{
 		scene.Cameras().push_back( Camera( parser.itsContextID ) );
 	}
 	
-	static void SetColor( Parser&      parser,
-	                      Scene&       scene,
-	                      const char*  begin,
-	                      const char*  end )
+	void Parser::SetColor( Parser&      parser,
+	                       Scene&       scene,
+	                       const char*  begin,
+	                       const char*  end )
 	{
 		parser.itsColor = parser.ReadColor( begin, end );
 	}
 	
-	static void SetOrigin( Parser&      parser,
-	                       Scene&       scene,
-	                       const char*  begin,
-	                       const char*  end )
+	void Parser::SetOrigin( Parser&      parser,
+	                        Scene&       scene,
+	                        const char*  begin,
+	                        const char*  end )
 	{
 		double x, y, z;
 		
@@ -200,10 +252,10 @@ namespace Vertice
 		}
 	}
 	
-	static void Translate( Parser&      parser,
-	                       Scene&       scene,
-	                       const char*  begin,
-	                       const char*  end )
+	void Parser::Translate( Parser&      parser,
+	                        Scene&       scene,
+	                        const char*  begin,
+	                        const char*  end )
 	{
 		double x, y, z;
 		
@@ -215,10 +267,10 @@ namespace Vertice
 		}
 	}
 	
-	static void SetTheta( Parser&      parser,
-	                      Scene&       scene,
-	                      const char*  begin,
-	                      const char*  end )
+	void Parser::SetTheta( Parser&      parser,
+	                       Scene&       scene,
+	                       const char*  begin,
+	                       const char*  end )
 	{
 		double theta;
 		
@@ -230,10 +282,10 @@ namespace Vertice
 		}
 	}
 	
-	static void SetPhi( Parser&      parser,
-	                    Scene&       scene,
-	                    const char*  begin,
-	                    const char*  end )
+	void Parser::SetPhi( Parser&      parser,
+	                     Scene&       scene,
+	                     const char*  begin,
+	                     const char*  end )
 	{
 		double phi;
 		
@@ -245,10 +297,10 @@ namespace Vertice
 		}
 	}
 	
-	static void AddMeshPoint( Parser&      parser,
-	                          Scene&       scene,
-	                          const char*  begin,
-	                          const char*  end )
+	void Parser::AddMeshPoint( Parser&      parser,
+	                           Scene&       scene,
+	                           const char*  begin,
+	                           const char*  end )
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
@@ -271,10 +323,10 @@ namespace Vertice
 		}
 	}
 	
-	static void AddMeshPolygon( Parser&      parser,
-	                            Scene&       scene,
-	                            const char*  begin,
-	                            const char*  end )
+	void Parser::AddMeshPolygon( Parser&      parser,
+	                             Scene&       scene,
+	                             const char*  begin,
+	                             const char*  end )
 	{
 		std::vector< unsigned > offsets;
 		
@@ -310,17 +362,17 @@ namespace Vertice
 	{
 		std::map< std::string, Handler > handlers;
 		
-		handlers[ "camera"    ] = MakeCamera;
-		handlers[ "context"   ] = SetContext;
-		handlers[ "color"     ] = SetColor;
-		handlers[ "define"    ] = Define;
-		handlers[ "origin"    ] = SetOrigin;
-		handlers[ "translate" ] = Translate;
-		handlers[ "theta"     ] = SetTheta;
-		handlers[ "phi"       ] = SetPhi;
-		handlers[ "pt"        ] = AddMeshPoint;
-		handlers[ "poly"      ] = AddMeshPolygon;
-		handlers[ "polygon"   ] = AddMeshPolygon;
+		handlers[ "camera"    ] = Parser::MakeCamera;
+		handlers[ "context"   ] = Parser::SetContext;
+		handlers[ "color"     ] = Parser::SetColor;
+		handlers[ "define"    ] = Parser::Define;
+		handlers[ "origin"    ] = Parser::SetOrigin;
+		handlers[ "translate" ] = Parser::Translate;
+		handlers[ "theta"     ] = Parser::SetTheta;
+		handlers[ "phi"       ] = Parser::SetPhi;
+		handlers[ "pt"        ] = Parser::AddMeshPoint;
+		handlers[ "poly"      ] = Parser::AddMeshPolygon;
+		handlers[ "polygon"   ] = Parser::AddMeshPolygon;
 		
 		return handlers;
 	}
