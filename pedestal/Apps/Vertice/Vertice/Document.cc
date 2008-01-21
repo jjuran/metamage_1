@@ -185,7 +185,7 @@ namespace Vertice
 		
 		std::size_t size = values.size();
 		
-		bool size_is_even_power_of_2 = size & (size - 1) == 0  &&  size & 0x55555555 != 0;
+		bool size_is_even_power_of_2 = (size & (size - 1)) == 0  &&  (size & 0x55555555) != 0;
 		
 		if ( !size_is_even_power_of_2 )
 		{
