@@ -83,12 +83,24 @@ namespace Vertice
 	{
 	}
 	
+	class IntensityMap
+	{
+		private:
+			unsigned               itsWidth;
+			std::vector< double >  itsValues;
+		
+		public:
+			IntensityMap()  {}
+			
+			IntensityMap( unsigned width, const std::vector< double >& values ) : itsWidth( width ), itsValues( values )  {}
+	};
 	
 	class Parser
 	{
 		public:
 			typedef std::map< std::string, V::Point3D::Type > PointMap;
 			typedef std::map< std::string, ColorMatrix      > ColorMap;
+			typedef std::map< std::string, IntensityMap     > IntensityMapMap;
 		
 		private:
 			Scene*            itsScene;
@@ -99,6 +111,7 @@ namespace Vertice
 			std::size_t       itsContextID;
 			PointMap          itsPoints;
 			ColorMap          itsColors;
+			IntensityMapMap   itsIntensityMaps;
 		
 		public:
 			Parser()  {}
@@ -147,6 +160,51 @@ namespace Vertice
 		throw ParseError();
 	}
 	
+	IntensityMap ReadMap( const char* begin, const char* end )
+	{
+		std::vector< double > values;
+		
+		errno = 0;
+		
+		while ( begin < end )
+		{
+			char* p = NULL;
+			
+			double value = std::strtod( begin, &p );
+			
+			if ( errno != 0 )
+			{
+				break;
+			}
+			
+			begin = p;
+			
+			values.push_back( value );
+		}
+		
+		std::size_t size = values.size();
+		
+		bool size_is_even_power_of_2 = size & (size - 1) == 0  &&  size & 0x55555555 != 0;
+		
+		if ( !size_is_even_power_of_2 )
+		{
+			throw ParseError();
+		}
+		
+		// Look, ma!  No branches!
+		unsigned width = size >> 0 &   1
+		               | size >> 1 &   2
+		               | size >> 2 &   4
+		               | size >> 3 &   8
+		               | size >> 4 &  16
+		               | size >> 5 &  32
+		               | size >> 6 &  64
+		               | size >> 7 & 128
+		               | size >> 8 & 256;
+		
+		return IntensityMap( width, values );
+	}
+	
 	void Parser::Define( const char* begin, const char* end )
 	{
 		const char* space = std::find( begin, end, ' ' );
@@ -164,6 +222,10 @@ namespace Vertice
 		if ( type == "color" )
 		{
 			itsColors[ name ] = ReadColor( begin, end );
+		}
+		else if ( type == "map" )
+		{
+			itsIntensityMaps[ name ] = ReadMap( begin, end );
 		}
 	}
 	
