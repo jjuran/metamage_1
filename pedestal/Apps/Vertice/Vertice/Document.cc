@@ -91,6 +91,7 @@ namespace Vertice
 			typedef std::map< std::string, ColorMatrix      > ColorMap;
 		
 		private:
+			Scene*            itsScene;
 			ColorMatrix       itsColor;
 			V::Point3D::Type  itsOrigin;
 			V::Degrees        itsTheta;
@@ -100,61 +101,53 @@ namespace Vertice
 			ColorMap          itsColors;
 		
 		public:
-			Parser();
+			Parser()  {}
+			
+			Parser( Scene& scene );
 			
 			~Parser()  {}
 			
-			void ParseLine( Scene& scene, const std::string& line );
+			void ParseLine( const std::string& line );
 			
 			ColorMatrix ReadColor( const char* begin, const char* end ) const;
 			
 			static void Define( Parser&      parser,
-	                            Scene&       scene,
 	                            const char*  begin,
 	                            const char*  end );
 			
 			static void SetContext( Parser&      parser,
-	                                Scene&       scene,
 	                                const char*  begin,
 	                                const char*  end );
 			
 			static void MakeCamera( Parser&      parser,
-	                                Scene&       scene,
 	                                const char*  begin,
 	                                const char*  end );
 			
 			static void SetColor( Parser&      parser,
-	                              Scene&       scene,
 	                              const char*  begin,
 	                              const char*  end );
 			
 			static void SetOrigin( Parser&      parser,
-	                               Scene&       scene,
 	                               const char*  begin,
 	                               const char*  end );
 			
 			static void Translate( Parser&      parser,
-	                               Scene&       scene,
 	                               const char*  begin,
 	                               const char*  end );
 			
 			static void SetTheta( Parser&      parser,
-	                              Scene&       scene,
 	                              const char*  begin,
 	                              const char*  end );
 			
 			static void SetPhi( Parser&      parser,
-	                            Scene&       scene,
 	                            const char*  begin,
 	                            const char*  end );
 			
 			static void AddMeshPoint( Parser&      parser,
-	                                  Scene&       scene,
 	                                  const char*  begin,
 	                                  const char*  end );
 			
 			static void AddMeshPolygon( Parser&      parser,
-	                                    Scene&       scene,
 	                                    const char*  begin,
 	                                    const char*  end );
 	};
@@ -184,7 +177,6 @@ namespace Vertice
 	}
 	
 	void Parser::Define( Parser&      parser,
-	                     Scene&       scene,
 	                     const char*  begin,
 	                     const char*  end )
 	{
@@ -207,30 +199,27 @@ namespace Vertice
 	}
 	
 	void Parser::SetContext( Parser&      parser,
-	                         Scene&       scene,
 	                         const char*  begin,
 	                         const char*  end )
 	{
 		std::string contextName( begin, end );
 		
-		parser.itsContextID = scene.AddSubcontext( parser.itsContextID,
-		                                           contextName,
-		                                           MakeTranslation(  parser.itsOrigin ).Make(),
-		                                           MakeTranslation( -parser.itsOrigin ).Make() );
+		parser.itsContextID = parser.itsScene->AddSubcontext( parser.itsContextID,
+		                                                      contextName,
+		                                                      MakeTranslation(  parser.itsOrigin ).Make(),
+		                                                      MakeTranslation( -parser.itsOrigin ).Make() );
 		
 		parser.itsOrigin = V::Point3D::Make( 0, 0, 0 );
 	}
 	
 	void Parser::MakeCamera( Parser&      parser,
-	                         Scene&       scene,
 	                         const char*  begin,
 	                         const char*  end )
 	{
-		scene.Cameras().push_back( Camera( parser.itsContextID ) );
+		parser.itsScene->Cameras().push_back( Camera( parser.itsContextID ) );
 	}
 	
 	void Parser::SetColor( Parser&      parser,
-	                       Scene&       scene,
 	                       const char*  begin,
 	                       const char*  end )
 	{
@@ -238,7 +227,6 @@ namespace Vertice
 	}
 	
 	void Parser::SetOrigin( Parser&      parser,
-	                        Scene&       scene,
 	                        const char*  begin,
 	                        const char*  end )
 	{
@@ -253,7 +241,6 @@ namespace Vertice
 	}
 	
 	void Parser::Translate( Parser&      parser,
-	                        Scene&       scene,
 	                        const char*  begin,
 	                        const char*  end )
 	{
@@ -268,7 +255,6 @@ namespace Vertice
 	}
 	
 	void Parser::SetTheta( Parser&      parser,
-	                       Scene&       scene,
 	                       const char*  begin,
 	                       const char*  end )
 	{
@@ -283,7 +269,6 @@ namespace Vertice
 	}
 	
 	void Parser::SetPhi( Parser&      parser,
-	                     Scene&       scene,
 	                     const char*  begin,
 	                     const char*  end )
 	{
@@ -298,7 +283,6 @@ namespace Vertice
 	}
 	
 	void Parser::AddMeshPoint( Parser&      parser,
-	                           Scene&       scene,
 	                           const char*  begin,
 	                           const char*  end )
 	{
@@ -324,13 +308,12 @@ namespace Vertice
 	}
 	
 	void Parser::AddMeshPolygon( Parser&      parser,
-	                             Scene&       scene,
 	                             const char*  begin,
 	                             const char*  end )
 	{
 		std::vector< unsigned > offsets;
 		
-		Context& context = scene.GetContext( parser.itsContextID );
+		Context& context = parser.itsScene->GetContext( parser.itsContextID );
 		
 		while ( begin < end )
 		{
@@ -356,7 +339,7 @@ namespace Vertice
 		}
 	}
 	
-	typedef void ( *Handler )( Parser&, Scene&, const char*, const char* );
+	typedef void ( *Handler )( Parser&, const char*, const char* );
 	
 	static std::map< std::string, Handler > MakeHandlers()
 	{
@@ -390,14 +373,15 @@ namespace Vertice
 		return it->second;
 	}
 	
-	Parser::Parser() : itsOrigin( V::Point3D::Make( 0, 0, 0 ) ),
-	                   itsTheta    ( 0 ),
-	                   itsPhi      ( 0 ),
-	                   itsContextID( 0 )
+	Parser::Parser( Scene& scene ) : itsScene( &scene ),
+	                                 itsOrigin( V::Point3D::Make( 0, 0, 0 ) ),
+	                                 itsTheta    ( 0 ),
+	                                 itsPhi      ( 0 ),
+	                                 itsContextID( 0 )
 	{
 	}
 	
-	void Parser::ParseLine( Scene& scene, const std::string& line )
+	void Parser::ParseLine( const std::string& line )
 	{
 		std::size_t iCmdStart = line.find_first_not_of( " \t" );
 		
@@ -428,7 +412,7 @@ namespace Vertice
 				++start;
 			}
 			
-			handler( *this, scene, start, end );
+			handler( *this, start, end );
 		}
 	}
 	
@@ -438,7 +422,8 @@ namespace Vertice
 		
 		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( file ) );
 		
-		Parser parser;
+		Parser parser( ItsScene() );
+		
 		std::list< Parser > savedParsers;
 		
 		while ( input.Ready() )
@@ -456,7 +441,7 @@ namespace Vertice
 			}
 			else
 			{
-				parser.ParseLine( ItsScene(), line );
+				parser.ParseLine( line );
 			}
 		}
 	}
