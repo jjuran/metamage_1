@@ -84,18 +84,6 @@ namespace Vertice
 	{
 	}
 	
-	class IntensityMap
-	{
-		private:
-			unsigned               itsWidth;
-			std::vector< double >  itsValues;
-		
-		public:
-			IntensityMap()  {}
-			
-			IntensityMap( unsigned width, const std::vector< double >& values ) : itsWidth( width ), itsValues( values )  {}
-	};
-	
 	class Parser
 	{
 		public:
@@ -104,15 +92,16 @@ namespace Vertice
 			typedef std::map< std::string, IntensityMap     > IntensityMapMap;
 		
 		private:
-			Scene*            itsScene;
-			ColorMatrix       itsColor;
-			V::Point3D::Type  itsOrigin;
-			V::Degrees        itsTheta;
-			V::Degrees        itsPhi;
-			std::size_t       itsContextID;
-			PointMap          itsPoints;
-			ColorMap          itsColors;
-			IntensityMapMap   itsIntensityMaps;
+			Scene*               itsScene;
+			ColorMatrix          itsColor;
+			V::Point3D::Type     itsOrigin;
+			V::Degrees           itsTheta;
+			V::Degrees           itsPhi;
+			std::size_t          itsContextID;
+			PointMap             itsPoints;
+			ColorMap             itsColors;
+			IntensityMapMap      itsIntensityMaps;
+			const IntensityMap*  itsIntensityMap;
 		
 		public:
 			Parser()  {}
@@ -129,6 +118,7 @@ namespace Vertice
 			void SetContext    ( const char* begin, const char* end );
 			void MakeCamera    ( const char* begin, const char* end );
 			void SetColor      ( const char* begin, const char* end );
+			void SetMap        ( const char* begin, const char* end );
 			void SetOrigin     ( const char* begin, const char* end );
 			void Translate     ( const char* begin, const char* end );
 			void SetTheta      ( const char* begin, const char* end );
@@ -250,6 +240,24 @@ namespace Vertice
 	void Parser::SetColor( const char* begin, const char* end )
 	{
 		itsColor = ReadColor( begin, end );
+		
+		itsIntensityMap = NULL;
+	}
+	
+	void Parser::SetMap( const char* begin, const char* end )
+	{
+		const char* space = std::find( begin, end, ' ' );
+		
+		std::string name( begin, space );
+		
+		IntensityMapMap::const_iterator it = itsIntensityMaps.find( name );
+		
+		if ( it == itsIntensityMaps.end() )
+		{
+			throw ParseError();
+		}
+		
+		itsIntensityMap = &it->second;
 	}
 	
 	void Parser::SetOrigin( const char* begin, const char* end )
@@ -349,7 +357,14 @@ namespace Vertice
 		
 		if ( !offsets.empty() )
 		{
-			context.AddMeshPolygon( offsets, itsColor );
+			if ( itsIntensityMap != NULL )
+			{
+				context.AddMeshPolygon( offsets, *itsIntensityMap );
+			}
+			else
+			{
+				context.AddMeshPolygon( offsets, itsColor );
+			}
 		}
 	}
 	
@@ -363,6 +378,7 @@ namespace Vertice
 		handlers[ "context"   ] = &Parser::SetContext;
 		handlers[ "color"     ] = &Parser::SetColor;
 		handlers[ "define"    ] = &Parser::Define;
+		handlers[ "map"       ] = &Parser::SetMap;
 		handlers[ "origin"    ] = &Parser::SetOrigin;
 		handlers[ "translate" ] = &Parser::Translate;
 		handlers[ "theta"     ] = &Parser::SetTheta;
@@ -391,7 +407,8 @@ namespace Vertice
 	                                 itsOrigin( V::Point3D::Make( 0, 0, 0 ) ),
 	                                 itsTheta    ( 0 ),
 	                                 itsPhi      ( 0 ),
-	                                 itsContextID( 0 )
+	                                 itsContextID( 0 ),
+	                                 itsIntensityMap()
 	{
 	}
 	

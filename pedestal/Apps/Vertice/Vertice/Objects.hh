@@ -25,6 +25,20 @@ namespace Vertice
 	
 	typedef Vectoria::Matrix< double, 3, 1 > ColorMatrix;
 	
+	class IntensityMap
+	{
+		private:
+			unsigned               itsWidth;
+			std::vector< double >  itsValues;
+		
+		public:
+			IntensityMap()  {}
+			
+			bool Empty() const  { return itsValues.empty(); }
+			
+			IntensityMap( unsigned width, const std::vector< double >& values ) : itsWidth( width ), itsValues( values )  {}
+	};
+	
 	
 	// A Moveable object maintains a transform describing its movements relative to some context.
 	// For convenience, it also stores the inverse transform.
@@ -118,18 +132,24 @@ namespace Vertice
 		private:
 			std::vector< Offset >  itsVertices;
 			ColorMatrix            itsColor;
+			IntensityMap           itsMap;
 		
 		public:
 			MeshPolygon()  {}
 			MeshPolygon( const std::vector< Offset >&  offsets,
-			             const ColorMatrix&            color ) : itsVertices( offsets ),
-			                                                     itsColor   ( color   )
-			{}
+			             const ColorMatrix&            color,
+			             const IntensityMap&           map ) : itsVertices( offsets ),
+			                                                   itsColor   ( color   ),
+			                                                   itsMap     ( map     )
+			{
+			}
 			
 			const std::vector< Offset >& Vertices() const  { return itsVertices; }
 			      std::vector< Offset >& Vertices()        { return itsVertices; }
 			
 			const ColorMatrix& Color() const  { return itsColor; }
+			
+			const IntensityMap& Map() const  { return itsMap; }
 			
 			void Swap( MeshPolygon& other )
 			{
@@ -158,7 +178,12 @@ namespace Vertice
 			
 			void AddMeshPolygon( const std::vector< unsigned >& offsets, const ColorMatrix& color )
 			{
-				itsPolygons.push_back( MeshPolygon( offsets, color ) );
+				itsPolygons.push_back( MeshPolygon( offsets, color, IntensityMap() ) );
+			}
+			
+			void AddMeshPolygon( const std::vector< unsigned >& offsets, const IntensityMap& map )
+			{
+				itsPolygons.push_back( MeshPolygon( offsets, ColorMatrix(), map ) );
 			}
 			
 			bool Selected() const  { return itIsSelected; }
