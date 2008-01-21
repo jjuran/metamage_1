@@ -790,7 +790,7 @@ namespace Vertice
 					
 					V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
 					
-					double dist = Magnitude( V::Vector3D::Type( sectPt - pt0 ) );
+					double dist = V::Magnitude( V::Vector3D::Type( sectPt - pt0 ) );
 					// P . Q = mag(P)*mag(Q)*cos(a)
 					// cos(a) = P.Q / mag(P) / mag(Q)
 					// The ray and the normal are already unit length,
@@ -1110,7 +1110,7 @@ namespace Vertice
 								
 								V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
 								
-								double dist = Magnitude( sectPt - pt0 );
+								double dist = V::Magnitude( sectPt - pt0 );
 								
 								if (    dist > 0
 								     && gDeepPixelDevice.Nearer( iX % width, iY % height, dist ) 
@@ -1132,7 +1132,7 @@ namespace Vertice
 								double cosTheta = DotProduct( ray, faceNormal ) 
 									/ Magnitude( ray ) / Magnitude( faceNormal );
 								*/
-								double cosAlpha = ray * faceNormal / Magnitude( ray );
+								double cosAlpha = ray * faceNormal / V::Magnitude( ray );
 								double incidenceRatio = cosAlpha;
 								
 								ColorMatrix tweaked = TweakColor( polygon.Color(),

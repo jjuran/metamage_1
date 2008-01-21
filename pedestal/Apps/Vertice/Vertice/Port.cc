@@ -327,7 +327,7 @@ namespace Vertice
 				
 				V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
 				
-				double dist = Magnitude( sectPt - pt0 );
+				double dist = V::Magnitude( sectPt - pt0 );
 				
 				V::Point2D::Type current_pixel_2d = Point3DTo2D( pt1 );
 				
