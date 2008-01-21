@@ -43,6 +43,10 @@ namespace Vertice
 	using V::Y;
 	using V::Z;
 	
+	
+	class ParseError {};
+	
+	
 	template < class Point >
 	inline V::Translation MakeTranslation( const Point& pt )
 	{
@@ -99,8 +103,33 @@ namespace Vertice
 			std::size_t       itsContextID;
 			PointMap          itsPoints;
 			ColorMap          itsColors;
+			
+			ColorMatrix ReadColor( const char* begin, const char* end ) const;
 	};
 	
+	
+	ColorMatrix Parser::ReadColor( const char* begin, const char* end ) const
+	{
+		double red, green, blue;
+		
+		int scanned = std::sscanf( begin, "%lf %lf %lf", &red, &green, &blue );
+		
+		if ( scanned == 3 )
+		{
+			return V::MakeRGB( red, green, blue );
+		}
+		else
+		{
+			ColorMap::const_iterator it = itsColors.find( std::string( begin, end ) );
+			
+			if ( it != itsColors.end() )
+			{
+				return it->second;
+			}
+		}
+		
+		throw ParseError();
+	}
 	
 	static void Define( Parser&      parser,
 	                    Scene&       scene,
@@ -121,14 +150,7 @@ namespace Vertice
 		
 		if ( type == "color" )
 		{
-			double red, green, blue;
-			
-			int scanned = std::sscanf( begin, "%lf %lf %lf", &red, &green, &blue );
-			
-			if ( scanned == 3 )
-			{
-				parser.itsColors[ name ] = V::MakeRGB( red, green, blue );
-			}
+			parser.itsColors[ name ] = parser.ReadColor( begin, end );
 		}
 	}
 	
@@ -160,23 +182,7 @@ namespace Vertice
 	                      const char*  begin,
 	                      const char*  end )
 	{
-		double red, green, blue;
-		
-		int scanned = std::sscanf( begin, "%lf %lf %lf", &red, &green, &blue );
-		
-		if ( scanned == 3 )
-		{
-			parser.itsColor = V::MakeRGB( red, green, blue );
-		}
-		else
-		{
-			Parser::ColorMap::const_iterator it = parser.itsColors.find( std::string( begin, end ) );
-			
-			if ( it != parser.itsColors.end() )
-			{
-				parser.itsColor = it->second;
-			}
-		}
+		parser.itsColor = parser.ReadColor( begin, end );
 	}
 	
 	static void SetOrigin( Parser&      parser,
