@@ -901,7 +901,7 @@ namespace Vertice
 	
 	static const bool gBlitting = false;
 	
-	void PortView::DrawBetter() const
+	void PortView::DrawBetter( bool per_scanline ) const
 	{
 		/*
 		typedef NX::Escapement< NX::Timer< TickCounter >,
@@ -929,6 +929,11 @@ namespace Vertice
 		
 		N::RGBForeColor( NN::Make< RGBColor >( 0 ) );
 		N::PaintRect( portRect );
+		
+		if ( TARGET_API_MAC_CARBON && !gBlitting )
+		{
+			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
+		}
 		
 		short width  = NX::RectWidth ( portRect );
 		short height = NX::RectHeight( portRect );
@@ -1157,11 +1162,32 @@ namespace Vertice
 									N::SetCPixel( iX, iY, rgb );
 								}
 							}
+							
+							if ( TARGET_API_MAC_CARBON && !gBlitting && per_scanline )
+							{
+								Rect scanline;
+								
+								scanline.top    = iY;
+								scanline.bottom = iY + 1;
+								
+								scanline.left  = rect.left;
+								scanline.right = rect.right;
+								
+								::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( scanline ) );
+							}
 						}
 						
-						if ( TARGET_API_MAC_CARBON && !gBlitting )
+						if ( TARGET_API_MAC_CARBON && !gBlitting && !per_scanline )
 						{
-							::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
+							Rect box;
+							
+							box.top    = rect.top;
+							box.bottom = rect.bottom;
+							
+							box.left  = rect.left;
+							box.right = rect.right;
+							
+							::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( box ) );
 						}
 					}
 				}
@@ -1235,11 +1261,17 @@ namespace Vertice
 	
 	bool PortView::KeyDown(char c)
 	{
-		//mSuperView.Focus();
-		
 		if ( c == '~' )
 		{
-			DrawBetter();
+			DrawBetter( false );
+			
+			return true;
+		}
+		
+		if ( c == '!' )
+		{
+			DrawBetter( true );
+			
 			return true;
 		}
 		

@@ -55,7 +55,7 @@ namespace Vertice
 			void Resize( const Rect& newBounds );
 			void Draw();
 			void Redraw();
-			void DrawBetter() const;
+			void DrawBetter( bool per_scanline ) const;
 			
 			void Update()  { Draw(); }
 	};
