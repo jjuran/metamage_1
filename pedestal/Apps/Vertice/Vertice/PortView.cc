@@ -715,7 +715,7 @@ namespace Vertice
 		
 		gDeepPixelDevice.Resize( width, height );
 		
-		V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
+		const V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
 		
 		const std::vector< MeshModel >& models = itsFrame.Models();
 		
@@ -942,6 +942,8 @@ namespace Vertice
 		unsigned hPasses = (width - 1) / width + 1;
 		unsigned vPasses = (height - 1) / height + 1;
 		
+		const V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
+		
 		// For each vertical pass
 		for ( unsigned vp = 0;  vp < vPasses;  ++vp )
 		{
@@ -1007,8 +1009,6 @@ namespace Vertice
 						V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 						
 						V::Plane3D::Type plane = V::PlaneVector( faceNormal, points[ 0 ] );
-						
-						V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
 						
 						#if 0
 						// Port to clip coordinates
