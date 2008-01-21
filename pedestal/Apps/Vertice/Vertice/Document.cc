@@ -160,7 +160,7 @@ namespace Vertice
 		throw ParseError();
 	}
 	
-	IntensityMap ReadMap( const char* begin, const char* end )
+	static IntensityMap ReadMap( const char* begin, const char* end )
 	{
 		std::vector< double > values;
 		
