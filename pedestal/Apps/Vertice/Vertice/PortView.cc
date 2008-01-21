@@ -463,12 +463,10 @@ namespace Vertice
 	}
 	*/
 	
-	/*
 	static V::Point3D::Type PerspectiveDivision( const V::Point3D::Type& pt )
 	{
 		return pt / -pt[ Z ] * sFocalLength;
 	}
-	*/
 	
 	/*
 	static V::Point3D::Type HomogeneousPerspectiveDivision( const V::Point3D::Type& pt )
@@ -759,15 +757,14 @@ namespace Vertice
 				                points.begin(),
 				                mesh );
 				
-				std::vector< V::Point3D::Type > facePoints( 3 );
+				V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 				
-				facePoints[0] = points[0] / points[0][ W ];
-				facePoints[1] = points[1] / points[1][ W ];
-				facePoints[2] = points[2] / points[2][ W ];
+				V::Plane3D::Type plane = V::PlaneVector( faceNormal, points[ 0 ] );
 				
-				V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( facePoints ) );
-				
-				V::Plane3D::Type plane = V::PlaneVector( faceNormal, facePoints[ 0 ] );
+				std::transform( points.begin(),
+				                points.end(),
+				                points.begin(),
+				                std::ptr_fun( PerspectiveDivision ) );
 				
 				std::vector< DeepVertex > vertices( points.size() );
 				
@@ -1007,6 +1004,10 @@ namespace Vertice
 						                points.begin(),
 						                mesh );
 						
+						V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
+						
+						V::Plane3D::Type plane = V::PlaneVector( faceNormal, points[ 0 ] );
+						
 						V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
 						
 						#if 0
@@ -1025,23 +1026,13 @@ namespace Vertice
 						                std::ptr_fun( HomogeneousPerspectiveDivision ) );
 						#endif
 						
-						#if 0
+						#if 1
 						// Perspective division
 						std::transform( points.begin(),
 						                points.end(),
 						                points.begin(),
 						                std::ptr_fun( PerspectiveDivision ) );
 						#endif
-						
-						std::vector< V::Point3D::Type > facePoints( 3 );
-						
-						facePoints[0] = points[0] / points[0][ W ];
-						facePoints[1] = points[1] / points[1][ W ];
-						facePoints[2] = points[2] / points[2][ W ];
-						
-						V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( facePoints ) );
-						
-						V::Plane3D::Type plane = V::PlaneVector( faceNormal, facePoints[ 0 ] );
 						
 						/*
 						for ( int i = 0;  i < points.size();  ++i )

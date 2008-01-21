@@ -258,11 +258,6 @@ namespace Vertice
 			it->Transform( transformer );
 		}
 		
-		for ( ModelIter it = models.begin();  it != models.end();  ++it )
-		{
-			it->Transform( std::ptr_fun( PerspectiveDivision ) );
-		}
-		
 		newFrame.SortByDepth();
 		
 		outFrame.Swap( newFrame );
@@ -280,12 +275,6 @@ namespace Vertice
 		return V::Point2D::Make( pt[ X ], pt[ Y ] );
 	}
 	
-	using V::W;
-	
-	static V::Point3D::Type DivideByW( const V::Point3D::Type& point )
-	{
-		return point / point[ W ];
-	}
 	
 	MeshModel* Frame::HitTest( const V::Point3D::Type& pt1 )
 	{
@@ -318,6 +307,13 @@ namespace Vertice
 				                points.begin(),
 				                model.Mesh() );
 				
+				V::Plane3D::Type plane = V::PlaneVector( points );
+				
+				std::transform( points.begin(),
+				                points.end(),
+				                points.begin(),
+				                std::ptr_fun( PerspectiveDivision ) );
+				
 				V::Polygon2D poly2d;
 				
 				std::vector< V::Point2D::Type >& points2d( poly2d.Points() );
@@ -328,13 +324,6 @@ namespace Vertice
 				                points.end(),
 				                points2d.begin(),
 				                std::ptr_fun( Point3DTo2D ) );
-				
-				std::transform( points.begin(),
-				                points.end(),
-				                points.begin(),
-				                std::ptr_fun( DivideByW ) );
-				
-				V::Plane3D::Type plane = V::PlaneVector( points );
 				
 				V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
 				
