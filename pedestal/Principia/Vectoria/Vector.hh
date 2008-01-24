@@ -60,10 +60,17 @@ namespace Vectoria
 	}
 	
 	template < class Component, unsigned Length >
+	inline Component ProjectionProfile( const Matrix< Component, Length, 1 >&  P,
+	                                    const Matrix< Component, Length, 1 >&  Q )
+	{
+		return DotProduct( P, Q ) / MagnitudeSquared( Q );
+	}
+	
+	template < class Component, unsigned Length >
 	inline Matrix< Component, Length, 1 > Projection( const Matrix< Component, Length, 1 >&  P,
 	                                                  const Matrix< Component, Length, 1 >&  Q )
 	{
-		return DotProduct( P, Q ) / MagnitudeSquared( Q ) * Q;
+		return ProjectionProfile( P, Q ) * Q;
 	}
 	
 	template < class Component, unsigned Length >
