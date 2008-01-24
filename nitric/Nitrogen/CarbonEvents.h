@@ -244,12 +244,8 @@ namespace Nitrogen
 
    typedef Nucleus::Selector< class CarbonEventKind_Tag, ::UInt32 >::Type CarbonEventKind;
    
-#ifndef JOSHUA_JURAN_EXPERIMENTAL
-   
    // This conflicts with Events.h
-   typedef CarbonEventKind     EventKind;
-   
-#endif
+   //typedef CarbonEventKind     EventKind;
    
    using ::EventTypeSpec;
 

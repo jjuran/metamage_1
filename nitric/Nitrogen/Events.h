@@ -36,8 +36,6 @@
 namespace Nitrogen
 {
 	
-#ifdef JOSHUA_JURAN_EXPERIMENTAL
-	
 	typedef Nucleus::Selector< class EventKind_Tag, ::EventKind >::Type EventKind;
 	
 	static const EventKind nullEvent       = EventKind( ::nullEvent       );
@@ -52,8 +50,6 @@ namespace Nitrogen
 	static const EventKind osEvt           = EventKind( ::osEvt           );
 	static const EventKind kHighLevelEvent = EventKind( ::kHighLevelEvent );
 	
-	
-#endif
 	
 	typedef Nucleus::Flag< class EventMask_Tag, ::EventMask >::Type EventMask;
 	
