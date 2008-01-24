@@ -36,45 +36,72 @@
 namespace Nitrogen
 {
 	
-	typedef Nucleus::Selector< class EventKind_Tag, ::EventKind >::Type EventKind;
+	enum EventKind
+	{
+		nullEvent       = ::nullEvent,
+		mouseDown       = ::mouseDown,
+		mouseUp         = ::mouseUp,
+		keyDown         = ::keyDown,
+		keyUp           = ::keyUp,
+		autoKey         = ::autoKey,
+		updateEvt       = ::updateEvt,
+		diskEvt         = ::diskEvt,
+		activateEvt     = ::activateEvt,
+		osEvt           = ::osEvt,
+		kHighLevelEvent = ::kHighLevelEvent,
+		
+		kEventKind_Max = Nucleus::Enumeration_Traits< ::EventKind >::max
+	};
 	
-	static const EventKind nullEvent       = EventKind( ::nullEvent       );
-	static const EventKind mouseDown       = EventKind( ::mouseDown       );
-	static const EventKind mouseUp         = EventKind( ::mouseUp         );
-	static const EventKind keyDown         = EventKind( ::keyDown         );
-	static const EventKind keyUp           = EventKind( ::keyUp           );
-	static const EventKind autoKey         = EventKind( ::autoKey         );
-	static const EventKind updateEvt       = EventKind( ::updateEvt       );
-	static const EventKind diskEvt         = EventKind( ::diskEvt         );
-	static const EventKind activateEvt     = EventKind( ::activateEvt     );
-	static const EventKind osEvt           = EventKind( ::osEvt           );
-	static const EventKind kHighLevelEvent = EventKind( ::kHighLevelEvent );
 	
-	
-	typedef Nucleus::Flag< class EventMask_Tag, ::EventMask >::Type EventMask;
+	enum EventMask
+	{
+		mDownMask          = ::mDownMask,
+		mUpMask            = ::mUpMask,
+		keyDownMask        = ::keyDownMask,
+		keyUpMask          = ::keyUpMask,
+		autoKeyMask        = ::autoKeyMask,
+		updateMask         = ::updateMask,
+		diskMask           = ::diskMask,
+		activMask          = ::activMask,
+		highLevelEventMask = ::highLevelEventMask,
+		osMask             = ::osMask,
+		everyEvent         = ::everyEvent,
+		
+		kEventMask_Max = Nucleus::Enumeration_Traits< ::EventMask >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( EventMask )
 	
-	static const EventMask mDownMask          = EventMask( ::mDownMask          );
-	static const EventMask mUpMask            = EventMask( ::mUpMask            );
-	static const EventMask keyDownMask        = EventMask( ::keyDownMask        );
-	static const EventMask keyUpMask          = EventMask( ::keyUpMask          );
-	static const EventMask autoKeyMask        = EventMask( ::autoKeyMask        );
-	static const EventMask updateMask         = EventMask( ::updateMask         );
-	static const EventMask diskMask           = EventMask( ::diskMask           );
-	static const EventMask activMask          = EventMask( ::activMask          );
-	static const EventMask highLevelEventMask = EventMask( ::highLevelEventMask );
-	static const EventMask osMask             = EventMask( ::osMask             );
-	static const EventMask everyEvent         = EventMask( ::everyEvent         );
 	
-	
-	typedef Nucleus::Flag< class EventModifiers_Tag, ::EventModifiers >::Type EventModifiers;
+	enum EventModifiers
+	{
+		activeFlag      = ::activeFlag,
+		btnState        = ::btnState,
+		cmdKey          = ::cmdKey,
+		shiftKey        = ::shiftKey,
+		alphaLock       = ::alphaLock,
+		optionKey       = ::optionKey,
+		controlKey      = ::controlKey,
+		rightShiftKey   = ::rightShiftKey,
+		rightOptionKey  = ::rightOptionKey,
+		rightControlKey = ::rightControlKey,
+		
+		kEventModifiers_Max = Nucleus::Enumeration_Traits< ::EventModifiers >::max
+	};
 	
 	NUCLEUS_DEFINE_FLAG_OPS( EventModifiers )
 	
-	typedef Nucleus::Flag< class KeyModifiers_Tag, UInt32 >::Type KeyModifiers;
 	
-	NUCLEUS_DEFINE_FLAG_OPS( KeyModifiers )
+	// KeyModifiers must be distinct from EventModifiers since it's a different size.
+	
+	enum KeyModifiers
+	{
+		kKeyModifiers_Max = Nucleus::Enumeration_Traits< ::UInt32 >::max
+	};
+	
+	// There's no point defining operators if there are no constants.
+	//NUCLEUS_DEFINE_FLAG_OPS( KeyModifiers )
 	
 	// ...
 	
