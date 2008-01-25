@@ -200,8 +200,6 @@ namespace Vertice
 			
 			void CullBackfaces( const V::Point3D::Type& eye );
 			
-			void CullDeadPoints();
-			
 			void ClipAgainstPlane( const V::Plane3D::Type& plane );
 			
 			void Swap( MeshModel& other )

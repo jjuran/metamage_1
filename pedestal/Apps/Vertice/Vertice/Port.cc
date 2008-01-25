@@ -247,10 +247,6 @@ namespace Vertice
 				
 				--it;
 			}
-			else
-			{
-				it->CullDeadPoints();
-			}
 		}
 		
 		for ( ModelIter it = models.begin();  it != models.end();  ++it )
