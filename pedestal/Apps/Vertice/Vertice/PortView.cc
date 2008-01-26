@@ -125,19 +125,43 @@ namespace Vertice
 	*/
 	
 	
+	static ColorMatrix GetSampleFromMap( const IntensityMap& map, const V::Point2D::Type& point )
+	{
+		const unsigned width = map.Width();
+		
+		int u = int( std::floor( point[ X ] * width ) ) % width;
+		int v = int( std::floor( point[ Y ] * width ) ) % width;
+		
+		unsigned index = v * width + u;
+		
+		return V::MakeGray( map.Values()[ index ] );
+	}
+	
+	
 	class DeepVertex
 	{
 		public:
-			V::Point3D::Type  itsPoint;
-			ColorMatrix       itsColor;
+			const MeshPolygon*  itsPolygon;
+			V::Point3D::Type    itsPoint;
+			V::Point2D::Type    itsTexturePoint;
+			ColorMatrix         itsColor;
+			double              itsDistance;
+			double              itsIncidenceRatio;
+			bool                itIsSelected;
 			
-			DeepVertex() {}
+			DeepVertex()  {}
 			
-			DeepVertex( const V::Point3D::Type&  point,
-			            const ColorMatrix&       color ) : itsPoint( point ),
-			                                               itsColor( color )
+			DeepVertex( const MeshPolygon&       polygon,
+			            const V::Point3D::Type&  point,
+			            const V::Point2D::Type&  uv    = V::Point2D::Make( 0, 0 ),
+			            const ColorMatrix&       color = V::White() ) : itsPolygon( &polygon ),
+			                                                            itsPoint( point ),
+			                                                            itsTexturePoint( uv ),
+			                                                            itsColor( color )
 			{
 			}
+			
+			const MeshPolygon& Polygon() const  { return *itsPolygon; }
 			
 			template < class Index >
 			double operator[]( Index index ) const  { return itsPoint[ index ]; }
@@ -168,17 +192,18 @@ namespace Vertice
 		                    color[ V::Blue  ] );
 	}
 	
-	template < class WSpectrum,
+	
+	template < class DoubleSpectrum,
 	           class ColorSpectrum,
 	           class Device >
-	void DrawDeepScanLine( int                   y,
-	                       int                   farLeft,
-	                       double                left,
-	                       double                right,
-	                       const WSpectrum&      w_spectrum,
-	                       const ColorSpectrum&  colors,
-	                       ::Ptr                 rowAddr,
-	                       Device&               deepPixelDevice )
+	void DrawDeepScanLine( int                    y,
+	                       int                    farLeft,
+	                       double                 left,
+	                       double                 right,
+	                       const DoubleSpectrum&  w_spectrum,
+	                       const ColorSpectrum&   colors,
+	                       ::Ptr                  rowAddr,
+	                       Device&                deepPixelDevice )
 	{
 		for ( int x = int( std::ceil( left ) );  x < right;  ++x )
 		{
@@ -199,6 +224,45 @@ namespace Vertice
 				double blue  = color[ V::Blue  ] / w;
 				
 				*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( red, green, blue );
+			}
+		}
+	}
+	
+	template < class DoubleSpectrum,
+	           class UVSpectrum,
+	           class Device >
+	void DrawDeepScanLine( int                    y,
+	                       int                    farLeft,
+	                       double                 left,
+	                       double                 right,
+	                       const DoubleSpectrum&  w_spectrum,
+	                       const UVSpectrum&      uv_spectrum,
+	                       const DoubleSpectrum&  distances,
+	                       const DoubleSpectrum&  incidences,
+	                       bool                   selected,
+	                       const MeshPolygon&     polygon,
+	                       ::Ptr                  rowAddr,
+	                       Device&                deepPixelDevice )
+	{
+		for ( int x = int( std::ceil( left ) );  x < right;  ++x )
+		{
+			double tX = (x - left) / (right - left);
+			
+			double w = w_spectrum[ tX ];
+			
+			double z = -1.0 / w;
+			
+			if ( deepPixelDevice.SetIfNearer( x, y, -z ) )
+			{
+				::Ptr pixelAddr = rowAddr + (x - farLeft) * 32/8;
+				
+				ColorMatrix color = TweakColor( GetSampleFromMap( polygon.Map(),
+				                                                  uv_spectrum[ tX ] / w ),
+				                                distances [ tX ] / w,
+				                                incidences[ tX ] / w,
+				                                selected );
+				
+				*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( color );
 			}
 		}
 	}
@@ -240,6 +304,10 @@ namespace Vertice
 		
 		if ( !CheckPixMap( pix ) ) return;
 		
+		const MeshPolygon& polygon = topLeft.Polygon();
+		
+		bool using_texture_map = !polygon.Map().Empty();
+		
 		const Rect& portRect = N::GetPortBounds( port );
 		
 		short width  = portRect.right  - portRect.left;
@@ -272,20 +340,58 @@ namespace Vertice
 			double leftW  = MakeLinearSpectrum( topLeft [ W ], bottomLeft [ W ] )[ tY ];
 			double rightW = MakeLinearSpectrum( topRight[ W ], bottomRight[ W ] )[ tY ];
 			
-			ColorMatrix leftColorW = MakeLinearSpectrum( topLeft.itsColor    * topLeft   [ W ],
-			                                             bottomLeft.itsColor * bottomLeft[ W ] )[ tY ];
+			LinearSpectrum< double > w_spectrum = MakeLinearSpectrum( leftW, rightW );
 			
-			ColorMatrix rightColorW = MakeLinearSpectrum( topRight.itsColor    * topRight   [ W ],
-			                                              bottomRight.itsColor * bottomRight[ W ] )[ tY ];
-			
-			DrawDeepScanLine( y,
-			                  bounds.left,
-			                  left,
-			                  right,
-			                  MakeLinearSpectrum( leftW,      rightW      ),
-			                  MakeLinearSpectrum( leftColorW, rightColorW ),
-			                  rowAddr,
-			                  deepPixelDevice );
+			if ( !using_texture_map )
+			{
+				ColorMatrix leftColorW = MakeLinearSpectrum( topLeft.itsColor    * topLeft   [ W ],
+				                                             bottomLeft.itsColor * bottomLeft[ W ] )[ tY ];
+				
+				ColorMatrix rightColorW = MakeLinearSpectrum( topRight.itsColor    * topRight   [ W ],
+				                                              bottomRight.itsColor * bottomRight[ W ] )[ tY ];
+				
+				DrawDeepScanLine( y,
+				                  bounds.left,
+				                  left,
+				                  right,
+				                  w_spectrum,
+				                  MakeLinearSpectrum( leftColorW,     rightColorW ),
+				                  rowAddr,
+				                  deepPixelDevice );
+			}
+			else
+			{
+				V::Point2D::Type leftUV_W = MakeLinearSpectrum( topLeft.itsTexturePoint    * topLeft   [ W ],
+				                                                bottomLeft.itsTexturePoint * bottomLeft[ W ] )[ tY ];
+				
+				V::Point2D::Type rightUV_W = MakeLinearSpectrum( topRight.itsTexturePoint    * topRight   [ W ],
+				                                                 bottomRight.itsTexturePoint * bottomRight[ W ] )[ tY ];
+				
+				double leftDistanceW = MakeLinearSpectrum( topLeft.itsDistance    * topLeft   [ W ],
+				                                           bottomLeft.itsDistance * bottomLeft[ W ] )[ tY ];
+				
+				double rightDistanceW = MakeLinearSpectrum( topRight.itsDistance    * topRight   [ W ],
+				                                            bottomRight.itsDistance * bottomRight[ W ] )[ tY ];
+				
+				double leftIncidenceW = MakeLinearSpectrum( topLeft.itsIncidenceRatio    * topLeft   [ W ],
+				                                            bottomLeft.itsIncidenceRatio * bottomLeft[ W ] )[ tY ];
+				
+				double rightIncidenceW = MakeLinearSpectrum( topRight.itsIncidenceRatio    * topRight   [ W ],
+				                                             bottomRight.itsIncidenceRatio * bottomRight[ W ] )[ tY ];
+				
+				DrawDeepScanLine( y,
+				                  bounds.left,
+				                  left,
+				                  right,
+				                  w_spectrum,
+				                  MakeLinearSpectrum( leftUV_W,       rightUV_W   ),
+				                  MakeLinearSpectrum( leftDistanceW,  rightDistanceW ),
+				                  MakeLinearSpectrum( leftIncidenceW, rightIncidenceW ),
+				                  topLeft.itIsSelected,
+				                  topLeft.Polygon(),
+				                  rowAddr,
+				                  deepPixelDevice );
+			}
 		}
 	}
 	
@@ -328,9 +434,19 @@ namespace Vertice
 		ptD[ Z ] = MakeLinearSpectrum( A[Z], C[Z] )[t];  // -1
 		ptD[ W ] = MakeLinearSpectrum( A[W], C[W] )[t];
 		
+		V::Point2D::Type uvD;
+		
+		uvD[ X ] = MakeLinearSpectrum( A.itsTexturePoint[X] * A[ W ], C.itsTexturePoint[X] * C[ W ] )[t] / ptD[ W ];
+		uvD[ Y ] = MakeLinearSpectrum( A.itsTexturePoint[Y] * A[ W ], C.itsTexturePoint[Y] * C[ W ] )[t] / ptD[ W ];
+		
 		ColorMatrix colorD = MakeLinearSpectrum( A.itsColor * A[W], C.itsColor * C[W] )[t] / ptD[ W ];
 		
-		Vertex D( ptD, colorD );
+		Vertex D( A.Polygon(), ptD, uvD, colorD );
+		
+		D.itsDistance       = MakeLinearSpectrum( A.itsDistance       * A[W], C.itsDistance       * C[W] )[t] / ptD[ W ];
+		D.itsIncidenceRatio = MakeLinearSpectrum( A.itsIncidenceRatio * A[W], C.itsIncidenceRatio * C[W] )[t] / ptD[ W ];
+		
+		D.itIsSelected = A.itIsSelected;
 		
 		const Vertex& midLeft  = B[X] < D[X] ? B : D;
 		const Vertex& midRight = B[X] < D[X] ? D : B;
@@ -513,11 +629,6 @@ namespace Vertice
 		return V::Point2D::Make( pt[ X ], pt[ Y ] );
 	}
 	
-	static DeepVertex Point3DToDeepVertex( const V::Point3D::Type& pt )
-	{
-		return DeepVertex( pt, V::White() );
-	}
-	
 	template < class PtIter, class TriIter, class TriMaker >
 	void PolygonToTriangles( PtIter    ptsBegin,
 	                         PtIter    ptsEnd,
@@ -653,6 +764,25 @@ namespace Vertice
 	}
 	*/
 	
+	static V::Point2D::Type InterpolatedUV( const V::Point3D::Type& intersection,
+	                                        const V::Point3D::Type* savedPoints,
+	                                        const V::Point2D::Type* uv_points )
+	{
+		V::Vector3D::Type edgeU = savedPoints[ 1 ] - savedPoints[ 0 ];
+		V::Vector3D::Type edgeV = savedPoints[ 2 ] - savedPoints[ 1 ];
+		
+		V::Vector3D::Type vector = intersection - savedPoints[ 0 ];
+		
+		double tU = V::ProjectionProfile( vector, edgeU );
+		double tV = V::ProjectionProfile( vector, edgeV );
+		
+		V::Point2D::Type u = ( uv_points[ 1 ] - uv_points[ 0 ] ) * tU;
+		V::Point2D::Type v = ( uv_points[ 2 ] - uv_points[ 0 ] ) * tV;
+		
+		return u + v + uv_points[ 0 ];
+	}
+	
+	
 	static double ProximityQuotient( double distance )
 	{
 		return 1 / (1 + distance * distance);
@@ -780,6 +910,14 @@ namespace Vertice
 					continue;
 				}
 				
+				V::Point3D::Type savedPoints[3];
+				
+				unsigned const *const savedOffsets = polygon.SavedOffsets();
+				
+				savedPoints[0] = mesh.Points()[ savedOffsets[ 0 ] ];
+				savedPoints[1] = mesh.Points()[ savedOffsets[ 1 ] ];
+				savedPoints[2] = mesh.Points()[ savedOffsets[ 2 ] ];
+				
 				std::vector< V::Point3D::Type > points( offsets.size() );
 				
 				// Lookup the vertices of this polygon
@@ -803,7 +941,9 @@ namespace Vertice
 				// For each vertex in the polygon
 				for ( unsigned int i = 0;  i < vertices.size();  ++i )
 				{
-					DeepVertex& pt = vertices[ i ] = Point3DToDeepVertex( points[ i ] );
+					DeepVertex& pt = vertices[ i ] = DeepVertex( polygon, points[ i ] );
+					
+					pt.itIsSelected = model.Selected();
 					
 					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -sFocalLength );
 					
@@ -825,7 +965,12 @@ namespace Vertice
 					double cosAlpha = ray * faceNormal;
 					double incidenceRatio = cosAlpha;
 					
+					pt.itsDistance = dist;
+					pt.itsIncidenceRatio = incidenceRatio;
+					
 					pt.itsColor = TweakColor( polygon.Color(), dist, incidenceRatio, selected );
+					
+					pt.itsTexturePoint = InterpolatedUV( sectPt, savedPoints, polygon.MapPoints() );
 				}
 				
 				std::vector< AdHocTriangle< DeepVertex > > triangles( vertices.size() - 2 );
@@ -1018,10 +1163,20 @@ namespace Vertice
 						
 						const std::vector< unsigned >& offsets = polygon.Vertices();
 						
+						unsigned const *const savedOffsets = polygon.SavedOffsets();
+						
 						if ( offsets.empty() )
 						{
 							continue;
 						}
+						
+						const IntensityMap& texture = polygon.Map();
+						
+						V::Point3D::Type savedPoints[3];
+						
+						savedPoints[0] = mesh.Points()[ savedOffsets[ 0 ] ];
+						savedPoints[1] = mesh.Points()[ savedOffsets[ 1 ] ];
+						savedPoints[2] = mesh.Points()[ savedOffsets[ 2 ] ];
 						
 						std::vector< V::Point3D::Type > points( offsets.size() );
 						//std::vector< V::Point3D::Type > points2( offsets.size() );
@@ -1162,7 +1317,8 @@ namespace Vertice
 								double cosAlpha = ray * faceNormal / V::Magnitude( ray );
 								double incidenceRatio = cosAlpha;
 								
-								const ColorMatrix& color = polygon.Color();
+								ColorMatrix color = texture.Empty() ? polygon.Color()
+								                                    : GetSampleFromMap( texture, InterpolatedUV( sectPt, savedPoints, polygon.MapPoints() ) );
 								
 								ColorMatrix tweaked = TweakColor( color,
 								                                  dist,

@@ -39,6 +39,10 @@ namespace Vertice
 			void Swap( IntensityMap& other );
 			
 			bool Empty() const  { return itsValues.empty(); }
+			
+			unsigned Width() const  { return itsWidth; }
+			
+			const std::vector< double >& Values() const  { return itsValues; }
 	};
 	
 	
@@ -133,24 +137,31 @@ namespace Vertice
 			
 		private:
 			std::vector< Offset >  itsVertices;
+			V::Point2D::Type       itsMapPoints[ 3 ];
+			Offset                 itsSavedOffsets[ 3 ];
 			ColorMatrix            itsColor;
 			IntensityMap           itsMap;
 		
 		public:
 			MeshPolygon()  {}
+			
 			MeshPolygon( const std::vector< Offset >&  offsets,
-			             const ColorMatrix&            color,
-			             const IntensityMap&           map ) : itsVertices( offsets ),
-			                                                   itsColor   ( color   ),
-			                                                   itsMap     ( map     )
-			{
-			}
+			             const ColorMatrix&            color );
+			
+			MeshPolygon( const std::vector< Offset >&  offsets,
+			             const IntensityMap&           map,
+			             const V::Point2D::Type&       ptA,
+			             const V::Point2D::Type&       ptB );
 			
 			void Swap( MeshPolygon& other );
 			
 			const std::vector< Offset >& Vertices() const  { return itsVertices; }
 			
 			void SwapVertexOffsets( std::vector< Offset >& vertexOffsets );
+			
+			const V::Point2D::Type* MapPoints() const  { return itsMapPoints; }
+			
+			const Offset* SavedOffsets() const  { return itsSavedOffsets; }
 			
 			const ColorMatrix& Color() const  { return itsColor; }
 			
@@ -180,16 +191,22 @@ namespace Vertice
 			
 			const std::vector< MeshPolygon >& Polygons() const  { return itsPolygons; }
 			
-			std::size_t AddPointToMesh( const V::Point3D::Type& pt )  { return itsMesh.AddPoint( pt ); }
+			std::size_t AddPointToMesh( const V::Point3D::Type& pt )
+			{
+				return itsMesh.AddPoint( pt );
+			}
 			
 			void AddMeshPolygon( const std::vector< unsigned >& offsets, const ColorMatrix& color )
 			{
-				itsPolygons.push_back( MeshPolygon( offsets, color, IntensityMap() ) );
+				itsPolygons.push_back( MeshPolygon( offsets, color ) );
 			}
 			
-			void AddMeshPolygon( const std::vector< unsigned >& offsets, const IntensityMap& map )
+			void AddMeshPolygon( const std::vector< unsigned >&  offsets,
+			                     const IntensityMap&             map,
+			                     const V::Point2D::Type&         ptA,
+			                     const V::Point2D::Type&         ptB )
 			{
-				itsPolygons.push_back( MeshPolygon( offsets, ColorMatrix(), map ) );
+				itsPolygons.push_back( MeshPolygon( offsets, map, ptA, ptB ) );
 			}
 			
 			bool Selected() const  { return itIsSelected; }

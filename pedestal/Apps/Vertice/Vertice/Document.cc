@@ -102,6 +102,10 @@ namespace Vertice
 			ColorMap             itsColors;
 			IntensityMapMap      itsIntensityMaps;
 			const IntensityMap*  itsIntensityMap;
+			double               its1U;
+			double               its1V;
+			double               its2U;
+			double               its2V;
 		
 		public:
 			Parser()  {}
@@ -257,7 +261,27 @@ namespace Vertice
 			throw ParseError();
 		}
 		
+		begin = space + (space != end);
+		
 		itsIntensityMap = &it->second;
+		
+		its1U = 1.0;
+		
+		its1V =
+		its2U =
+		its2V = 0.0;
+		
+		int scanned = std::sscanf( begin, "%lf %lf %lf %lf", &its1U, &its1V, &its2U, &its2V );
+		
+		if ( scanned < 3 )
+		{
+			std::swap( its1U, its2U );
+			
+			if ( scanned == 2 )
+			{
+				std::swap( its1V, its2V );
+			}
+		}
 	}
 	
 	void Parser::SetOrigin( const char* begin, const char* end )
@@ -357,7 +381,10 @@ namespace Vertice
 		{
 			if ( itsIntensityMap != NULL )
 			{
-				context.AddMeshPolygon( offsets, *itsIntensityMap );
+				context.AddMeshPolygon( offsets,
+				                        *itsIntensityMap,
+				                        V::Point2D::Make( its1U, its1V ),
+				                        V::Point2D::Make( its2U, its2V ) );
 			}
 			else
 			{

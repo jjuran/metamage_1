@@ -151,10 +151,43 @@ namespace Vertice
 	}
 	
 	
+	MeshPolygon::MeshPolygon( const std::vector< Offset >&  offsets,
+			                  const ColorMatrix&            color ) : itsVertices( offsets ),
+			                                                          itsColor   ( color   )
+	{
+		std::copy( offsets.begin(), offsets.begin() + 3, itsSavedOffsets );
+	}
+	
+	MeshPolygon::MeshPolygon( const std::vector< Offset >&  offsets,
+			                  const IntensityMap&           map,
+			                  const V::Point2D::Type&       ptA,
+			                  const V::Point2D::Type&       ptB ) : itsVertices( offsets ),
+			                                                        itsMap     ( map     )
+	{
+		itsSavedOffsets[ 0 ] = offsets[ 0 ];
+		itsSavedOffsets[ 1 ] = offsets[ 1 ];
+		itsSavedOffsets[ 2 ] = offsets[ 2 ];
+		
+		V::Point2D::Type diff = ptB - ptA;
+		
+		diff = V::Point2D::Make( -diff[ Y ], diff[ X ] );
+		
+		itsMapPoints[ 0 ] = ptA;
+		itsMapPoints[ 1 ] = ptB;
+		itsMapPoints[ 2 ] = ptA + diff;
+	}
+	
 	void MeshPolygon::Swap( MeshPolygon& other )
 	{
-		std::swap( itsVertices, other.itsVertices );
-		std::swap( itsColor,    other.itsColor    );
+		std::swap( itsVertices,        other.itsVertices        );
+		std::swap( itsMapPoints   [0], other.itsMapPoints   [0] );
+		std::swap( itsMapPoints   [1], other.itsMapPoints   [1] );
+		std::swap( itsMapPoints   [2], other.itsMapPoints   [2] );
+		std::swap( itsSavedOffsets[0], other.itsSavedOffsets[0] );
+		std::swap( itsSavedOffsets[1], other.itsSavedOffsets[1] );
+		std::swap( itsSavedOffsets[2], other.itsSavedOffsets[2] );
+		std::swap( itsColor,           other.itsColor           );
+		std::swap( itsMap,             other.itsMap             );
 	}
 	
 	void MeshPolygon::SwapVertexOffsets( std::vector< Offset >& vertexOffsets )
