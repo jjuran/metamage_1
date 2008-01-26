@@ -943,8 +943,6 @@ namespace Vertice
 				{
 					DeepVertex& pt = vertices[ i ] = DeepVertex( polygon, points[ i ] );
 					
-					pt.itIsSelected = model.Selected();
-					
 					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -sFocalLength );
 					
 					if ( fishEye )
@@ -965,12 +963,19 @@ namespace Vertice
 					double cosAlpha = ray * faceNormal;
 					double incidenceRatio = cosAlpha;
 					
-					pt.itsDistance = dist;
-					pt.itsIncidenceRatio = incidenceRatio;
-					
-					pt.itsColor = TweakColor( polygon.Color(), dist, incidenceRatio, selected );
-					
-					pt.itsTexturePoint = InterpolatedUV( sectPt, savedPoints, polygon.MapPoints() );
+					if ( polygon.Map().Empty() )
+					{
+						pt.itsColor = TweakColor( polygon.Color(), dist, incidenceRatio, selected );
+					}
+					else
+					{
+						pt.itIsSelected = model.Selected();
+						
+						pt.itsDistance = dist;
+						pt.itsIncidenceRatio = incidenceRatio;
+						
+						pt.itsTexturePoint = InterpolatedUV( sectPt, savedPoints, polygon.MapPoints() );
+					}
 				}
 				
 				std::vector< AdHocTriangle< DeepVertex > > triangles( vertices.size() - 2 );
