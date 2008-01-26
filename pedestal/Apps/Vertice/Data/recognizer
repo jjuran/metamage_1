@@ -1,0 +1,453 @@
+# Start
+
+origin 0 0 0
+theta 0
+phi 0
+
+define color grey .5 .5 .5
+
+{
+	translate 0 0 .5
+	
+	context Orbit
+	color .5 .5 .5
+	rect -.2 -.2  .2 .2
+	
+	translate 0 -10 1.5
+	
+	context Camera
+	
+	camera Default
+	
+}
+
+# Arena
+{
+	context Arena
+	
+	define map grid  1 1 1 1 1 1 1 1  1 .2 .2 .2 .2 .2 .2 .2  1 .2 .2 .2 .2 .2 .2 .2  1 .2 .2 .2 .2 .2 .2 .2  1 .2 .2 .2 .2 .2 .2 .2  1 .2 .2 .2 .2 .2 .2 .2  1 .2 .2 .2 .2 .2 .2 .2  1 .2 .2 .2 .2 .2 .2 .2
+	
+	pt A -20 -20 0
+	pt B  20 -20 0
+	pt C  20  20 0
+	pt D -20  20 0
+	
+	pt a -20 -20 8
+	pt b  20 -20 8
+	pt c  20  20 8
+	pt d -20  20 8
+	
+	#map grid 64
+	
+	color .3 .3 .3
+	
+	polygon A B C D
+	
+	color grey
+	
+	polygon B A a b
+	polygon C B b c
+	polygon D C c d
+	polygon A D d a
+}
+
+# Pieces
+# ------
+{	
+	context Pieces
+	
+	translate 0 0 .5
+	
+	{
+		context Recognizer
+		
+		color 0.9 0.9 0.9
+		
+		{
+			context Head
+			
+			pt AD_ -.1 -.0 3.6
+			pt AE_ -.9 -.4 3.1
+			
+			pt _AD  .1 -.0 3.6
+			pt _AE  .9 -.4 3.1
+			
+			pt ad_ -.1  .5 3.6
+			pt ae_ -.9  .5 3.1
+			
+			pt _ad  .1  .5 3.6
+			pt _ae  .9  .5 3.1
+			
+			polygon AD_ AE_ _AE _AD
+			polygon _ad _ae ae_ ad_
+			
+			polygon ad_ ae_ AE_ AD_
+			polygon _AD _AE _ae _ad
+			
+			polygon ad_ AD_ _AD _ad
+			polygon AE_ ae_ _ae _AE
+			
+			{
+				# Cockpit
+				
+				color .8 .8 .8
+				
+				pt AF_ -.2 -.4 3.25
+				pt AG_ -.1 -.3 3.1
+				pt _AF  .2 -.4 3.25
+				pt _AG  .1 -.3 3.1
+				
+				polygon AD_ AF_ _AF _AD
+				polygon AF_ AG_ _AG _AF
+				
+				polygon AD_ AG_ AF_
+				polygon _AD _AF _AG
+			}
+			
+			context Upper plate left
+			
+			pt A_ -2   -.5 3
+			pt B_ -2   -.5 2.9
+			
+			pt T_ -.05 -.5 2.9
+			pt U_ -.05 -.5 3
+			
+			pt a_ -2    .5 3
+			pt b_ -2    .5 2.9
+			
+			pt t_ -.05  .5 2.9
+			pt u_ -.05  .5 3
+			
+			polygon A_ B_ T_ U_
+			polygon u_ t_ b_ a_
+			polygon a_ b_ B_ A_
+			polygon U_ T_ t_ u_
+			polygon a_ A_ U_ u_
+			polygon B_ b_ t_ T_
+			
+			
+			context Upper plate right
+			
+			pt _A  2   -.5 3
+			pt _B  2   -.5 2.9
+			
+			pt _T  .05 -.5 2.9
+			pt _U  .05 -.5 3
+			
+			pt _a  2    .5 3
+			pt _b  2    .5 2.9
+			
+			pt _t  .05  .5 2.9
+			pt _u  .05  .5 3
+			
+			polygon _U _T _B _A
+			polygon _a _b _t _u
+			polygon _A _B _b _a
+			polygon _u _t _T _U
+			polygon _u _U _A _a
+			polygon _T _t _b _B
+			
+			
+			context Rib left
+			
+			pt V_ -1.2  -.5 2.9
+			pt W_  -.8  -.5 2.5
+			pt X_  -.05 -.5 2.5
+			pt Y_  -.05 -.5 2.6
+			pt Z_  -.4  -.5 2.6
+			pt AA_ -.7  -.5 2.9
+			
+			pt v_ -1.2   .5 2.9
+			pt w_  -.8   .5 2.5
+			pt x_  -.05  .5 2.5
+			pt y_  -.05  .5 2.6
+			pt z_  -.4   .5 2.6
+			pt aa_ -.7   .5 2.9
+			
+			polygon Z_ AA_ V_ W_ X_ Y_
+			polygon z_ y_ x_ w_ v_ aa_
+			
+			polygon v_ w_ W_ V_
+			polygon W_ w_ x_ X_
+			polygon Y_ X_ x_ y_
+			polygon z_ Z_ Y_ y_
+			polygon AA_ Z_ z_ aa_
+			
+			
+			context Rib right
+			
+			pt _V  1.2  -.5 2.9
+			pt _W   .8  -.5 2.5
+			pt _X   .05 -.5 2.5
+			pt _Y   .05 -.5 2.6
+			pt _Z   .4  -.5 2.6
+			pt _AA  .7  -.5 2.9
+			
+			pt _v  1.2   .5 2.9
+			pt _w   .8   .5 2.5
+			pt _x   .05  .5 2.5
+			pt _y   .05  .5 2.6
+			pt _z   .4   .5 2.6
+			pt _aa  .7   .5 2.9
+			
+			polygon _Z _Y _X _W _V _AA
+			polygon _z _aa _v _w _x _y
+			
+			polygon _V _W _w _v
+			polygon _X _x _w _W
+			polygon _y _x _X _Y
+			polygon _y _Y _Z _z
+			polygon _aa _z _Z _AA
+			
+			
+			context Heart
+			
+			pt AB_ -.55  -.5 2.85
+			pt AC_ -.35  -.5 2.65
+			
+			pt _AB  .55  -.5 2.85
+			pt _AC  .35  -.5 2.65
+			
+			polygon AB_ AC_ _AC _AB
+			
+			pt ab_ -.55   .5 2.85
+			pt ac_ -.35   .5 2.65
+			
+			pt _ab  .55   .5 2.85
+			pt _ac  .35   .5 2.65
+			
+			polygon _ab _ac ac_ ab_
+			
+			polygon ab_ ac_ AC_ AB_
+			polygon _AB _AC _ac _ab
+			
+			polygon ab_ AB_ _AB _ab
+			polygon AC_ ac_ _ac _AC
+			
+			
+			context Outer wing left
+			
+			pt J_ -1.5 -.2 2.4
+			pt K_ -1.5 -.2 2.8
+			
+			pt L_ -1.9 -.2 2.8
+			pt M_ -1.9 -.2 2.4
+			
+			pt j_ -1.5  .5 2.4
+			pt k_ -1.5  .5 2.8
+			
+			pt l_ -1.9  .5 2.8
+			pt m_ -1.9  .5 2.4
+			
+			polygon J_ K_ L_ M_
+			polygon m_ l_ k_ j_
+			
+			polygon j_ k_ K_ J_
+			polygon M_ L_ l_ m_
+			
+			polygon j_ J_ M_ m_
+			polygon K_ k_ l_ L_
+			
+			
+			context Outer wing right
+			
+			pt _J  1.5 -.2 2.4
+			pt _K  1.5 -.2 2.8
+			
+			pt _L  1.9 -.2 2.8
+			pt _M  1.9 -.2 2.4
+			
+			polygon _M _L _K _J
+			
+			pt _j  1.5  .5 2.4
+			pt _k  1.5  .5 2.8
+			
+			pt _l  1.9  .5 2.8
+			pt _m  1.9  .5 2.4
+			
+			polygon _j _k _l _m
+			
+			polygon _m _l _L _M
+			polygon _J _K _k _j
+			
+			polygon _m _M _J _j
+			polygon _L _l _k _K
+			
+			
+			context Inner wing left
+			
+			pt P_ -1.45 -.2 2.65
+			pt Q_ -1.45 -.2 2.55
+			pt R_ -1.2  -.2 2.55
+			pt S_ -1.2  -.2 2.65
+			
+			pt p_ -1.45  .5 2.65
+			pt q_ -1.45  .5 2.55
+			pt r_ -1.2   .5 2.55
+			pt s_ -1.2   .5 2.65
+			
+			polygon P_ Q_ R_ S_
+			polygon s_ r_ q_ p_
+			
+			polygon p_ q_ Q_ P_
+			polygon S_ R_ r_ s_
+			
+			polygon p_ P_ S_ s_
+			polygon Q_ q_ r_ R_
+			
+			context Inner wing right
+			
+			pt _P  1.45 -.2 2.65
+			pt _Q  1.45 -.2 2.55
+			pt _R  1.2  -.2 2.55
+			pt _S  1.2  -.2 2.65
+			
+			pt _p  1.45  .5 2.65
+			pt _q  1.45  .5 2.55
+			pt _r  1.2   .5 2.55
+			pt _s  1.2   .5 2.65
+			
+			polygon _S _R _Q _P
+			polygon _p _q _r _s
+			
+			polygon _s _r _R _S
+			polygon _P _Q _q _p
+			
+			polygon _s _S _P _p
+			polygon _R _r _q _Q
+			
+			
+			context Sternum
+			
+			pt AH_ -.5 -.6 2.45
+			pt AI_ -.5 -.5 2.35
+			
+			pt _AH  .5 -.6 2.45
+			pt _AI  .5 -.5 2.35
+			
+			pt ah_ -.5  .5 2.45
+			pt ai_ -.5  .5 2.35
+			
+			pt _ah  .5  .5 2.45
+			pt _ai  .5  .5 2.35
+			
+			polygon AH_ AI_ _AI _AH
+			polygon _ah _ai ai_ ah_
+			
+			polygon ah_ ai_ AI_ AH_
+			polygon _AH _AI _ai _ah
+			
+			polygon ah_ AH_ _AH _ah
+			polygon AI_ ai_ _ai _AI
+			
+			context Lower plate
+			
+			pt C_ -1.9 -.5 2.3
+			pt D_ -1.9 -.4 2.2
+			
+			pt _C  1.9 -.5 2.3
+			pt _D  1.9 -.4 2.2
+			
+			polygon C_ D_ _D _C
+			
+			pt c_ -1.9 .5 2.3
+			pt d_ -1.9 .5 2.2
+			
+			pt _c  1.9 .5 2.3
+			pt _d  1.9 .5 2.2
+			
+			polygon _c _d d_ c_
+			
+			polygon c_ d_ D_ C_
+			polygon _C _D _d _c
+			
+			polygon c_ C_ _C _c
+			polygon D_ d_ _d _D
+			
+			
+			context Underplate
+			
+			pt N_ -.5 -.4 2.15
+			pt O_ -.4 -.4 2.05
+			
+			pt _N .5 -.4 2.15
+			pt _O .4 -.4 2.05
+			
+			polygon N_ O_ _O _N
+			
+			pt n_ -.5 .5 2.25
+			pt o_ -.4 .5 2.15
+			
+			pt _n .5 .5 2.25
+			pt _o .4 .5 2.15
+			
+			polygon _n _o o_ n_
+			
+			polygon n_ o_ O_ N_
+			polygon _N _O _o _n
+			
+			polygon n_ N_ _N _n
+			polygon O_ o_ _o _O
+			
+			
+			context Leg left
+			
+			pt E_ -1.9 -.2 2.05
+			pt F_ -1.9 -.2 0
+			
+			pt G_  -.8 -.2 0
+			pt H_ -1.5 -.2  .4
+			pt I_ -1.5 -.2 2.05
+			
+			polygon H_ I_ E_ F_ G_
+			
+			pt e_ -1.9  .5 2.05
+			pt f_ -1.9  .5 0
+			
+			pt g_  -.8  .5 0
+			pt h_ -1.5  .5  .4
+			pt i_ -1.5  .5 2.05
+			
+			polygon h_ g_ f_ e_ i_
+			
+			polygon e_ f_ F_ E_
+			polygon I_ H_ h_ i_
+			polygon H_ G_ g_ h_
+			polygon e_ E_ I_ i_
+			polygon F_ f_ g_ G_
+			
+			
+			context Leg right
+			
+			pt _E  1.9 -.2 2.05
+			pt _F  1.9 -.2 0
+			
+			pt _G   .8 -.2 0
+			pt _H  1.5 -.2  .4
+			pt _I  1.5 -.2 2.05
+			
+			polygon _H _G _F _E _I
+			
+			pt _e  1.9  .5 2.05
+			pt _f  1.9  .5 0
+			
+			pt _g   .8  .5 0
+			pt _h  1.5  .5  .4
+			pt _i  1.5  .5 2.05
+			
+			polygon _h _i _e _f _g
+			
+			polygon _E _F _f _e
+			polygon _i _h _H _I
+			polygon _h _g _G _H
+			polygon _i _I _E _e
+			polygon _G _g _f _F
+			
+		}
+		
+	}
+	
+}
+
+# End
+

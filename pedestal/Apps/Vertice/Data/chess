@@ -1,0 +1,411 @@
+# Start
+
+origin 0 0 0
+theta 0
+phi 0
+
+define color grey .5 .5 .5
+
+{
+	translate 0 0 .5
+	
+	context Orbit
+	color .5 .5 .5
+	rect -.2 -.2  .2 .2
+	
+	translate 0 -10 1.5
+	
+	context Camera
+	
+	camera Default
+	
+}
+
+# Board frame
+{
+	context Frame
+	
+	translate 0 0 .5
+	
+	pt -x-y-z -4 -4 -0.1
+	pt -x-y   -4 -4  0
+	pt -x+y-z -4  4 -0.1
+	pt -x+y   -4  4  0
+	pt +x-y-z  4 -4 -0.1
+	pt +x-y    4 -4  0
+	pt +x+y-z  4  4 -0.1
+	pt +x+y    4  4  0
+	
+	pt -X-Y-Z -4.5 -4.5 -0.5
+	pt -X-Y   -4.5 -4.5  0
+	pt -X+Y-Z -4.5  4.5 -0.5
+	pt -X+Y   -4.5  4.5  0
+	pt +X-Y-Z  4.5 -4.5 -0.5
+	pt +X-Y    4.5 -4.5  0
+	pt +X+Y-Z  4.5  4.5 -0.5
+	pt +X+Y    4.5  4.5  0
+	
+	color grey
+	
+	# Grey inner walls
+	
+	poly -x-y-z -x+y-z -x+y -x-y
+	poly -x+y-z +x+y-z +x+y -x+y
+	poly +x+y-z +x-y-z +x-y +x+y
+	poly +x-y-z -x-y-z -x-y +x-y
+	
+
+	# Grey border
+	
+	poly -X-Y -x-y -x+y -X+Y
+	poly -X+Y -x+y +x+y +X+Y
+	poly +X+Y +x+y +x-y +X-Y
+	poly +X-Y +x-y -x-y -X-Y
+	
+	# Grey side walls
+	
+	poly -X-Y-Z +X-Y-Z +X-Y -X-Y
+	poly +X-Y-Z +X+Y-Z +X+Y +X-Y
+	poly +X+Y-Z -X+Y-Z -X+Y +X+Y
+	poly -X+Y-Z -X-Y-Z -X-Y -X+Y
+	
+}
+
+# Chess board
+{
+	define map checkers .2 .8 .8 .2
+	
+	define map test .2 .3 .4 .3  .4 .5 .6 .5  .6 .7 .8 .7  .4 .5 .6 .5
+	
+	context Board
+	
+	translate 0 0 .4
+	
+	pt a1 -4 -4 0  0 0
+	pt h1  4 -4 0  4 0
+	
+	pt a8 -4  4 0  0 4
+	pt h8  4  4 0  4 4
+	
+	map checkers 4
+	
+	polygon a1 h1 h8 a8
+	
+}
+
+# Pieces
+# ------
+{	
+	context Pieces
+	
+	translate 0 0 .5
+	
+	{
+		# White pieces
+		
+		color 0.9 0.9 0.9
+		
+		{
+			context White Rook
+			
+			translate 3.5 -3.5 0
+			
+			# Simple rook
+			
+			pt A -.25 -.25 0
+			pt B  .25 -.25 0
+			pt C  .25  .25 0
+			pt D -.25  .25 0
+			
+			pt E -.25 -.25 1
+			pt F  .25 -.25 1
+			pt G  .25  .25 1
+			pt H -.25  .25 1
+			
+			poly D C B A
+			
+			poly A B F E
+			poly B C G F
+			poly C D H G
+			poly D A E H
+			
+			poly E F G H
+		}
+		
+		{
+			context White Knight
+			
+			translate 2.5 -3.5 0
+			
+			# Knight
+			
+			pt A -.25 -.25 0
+			pt B  .25 -.25 0
+			pt C  .25  .25 0
+			pt D -.25  .25 0
+			
+			pt K 0 0 1
+			
+			poly D C B A
+			
+			poly A B K
+			poly B C K
+			poly C D K
+			poly D A K
+		}
+		
+		{
+			context White Bishop
+			
+			translate 1.5 -3.5 0
+			
+			# Bishop
+			
+			pt A  0   -.25 0
+			pt B  .25  0   0
+			pt C  0    .25 0
+			pt D -.25  0   0
+			
+			pt E  0   -.25 1
+			pt F  .25  0   1
+			pt G  0    .25 1
+			pt H -.25  0   1
+			
+			poly D C B A
+			
+			poly A B F E
+			poly B C G F
+			poly C D H G
+			poly D A E H
+			
+			poly E F G H
+		}
+		
+		{
+			context White King
+			
+			translate 0.5 -3.5 0
+			
+			# King
+			
+			pt A -.25 -.25 0
+			pt B  .25 -.25 0
+			pt C  .25  .25 0
+			pt D -.25  .25 0
+			
+			pt E  0   -.25 1
+			pt F  .25  0   1
+			pt G  0    .25 1
+			pt H -.25  0   1
+			
+			poly D C B A
+			
+			poly A B E
+			poly B C F
+			poly C D G
+			poly D A H
+			
+			poly B F E
+			poly C G F
+			poly D H G
+			poly A E H
+			
+			poly E F G H
+		}
+		
+		{
+			context White Queen
+			
+			translate -0.5 -3.5 0
+			
+			# Queen
+			
+			pt Z 0 0 0
+			
+			pt P -.25 -.25 0.5
+			pt Q  .25 -.25 0.5
+			pt R  .25  .25 0.5
+			pt S -.25  .25 0.5
+			
+			pt A 0 0 1
+			
+			poly Z Q P
+			poly Z R Q
+			poly Z S R
+			poly Z P S
+			
+			poly P Q A
+			poly Q R A
+			poly R S A
+			poly S P A
+		}
+		
+		{
+			context White Pawn
+			
+			translate 3.5 -2.5 0
+			
+			# Pawn
+			
+			pt A  .25 -.25 0
+			pt B -.25 -.25 0
+			pt N  0    .25 0
+			pt C  0   -.25 0.5
+			
+			poly A B N
+			poly A N C
+			poly N B C
+			poly B A C
+		}
+		
+		# Black pieces
+		
+		color 0.3 0.3 0.3
+		
+		{
+			translate 3.5 3.5 0
+			
+			# Simple rook
+			
+			pt A -.25 -.25 0
+			pt B  .25 -.25 0
+			pt C  .25  .25 0
+			pt D -.25  .25 0
+			
+			pt E -.25 -.25 1
+			pt F  .25 -.25 1
+			pt G  .25  .25 1
+			pt H -.25  .25 1
+			
+			poly D C B A
+			
+			poly A B F E
+			poly B C G F
+			poly C D H G
+			poly D A E H
+			
+			poly E F G H
+		}
+		
+		{
+			translate 2.5 3.5 0
+			
+			# Knight
+			
+			pt A -.25 -.25 0
+			pt B  .25 -.25 0
+			pt C  .25  .25 0
+			pt D -.25  .25 0
+			
+			pt K 0 0 1
+			
+			poly D C B A
+			
+			poly A B K
+			poly B C K
+			poly C D K
+			poly D A K
+		}
+		
+		{
+			translate 1.5 3.5 0
+			
+			# Bishop
+			
+			pt A  0   -.25 0
+			pt B  .25  0   0
+			pt C  0    .25 0
+			pt D -.25  0   0
+			
+			pt E  0   -.25 1
+			pt F  .25  0   1
+			pt G  0    .25 1
+			pt H -.25  0   1
+			
+			poly D C B A
+			
+			poly A B F E
+			poly B C G F
+			poly C D H G
+			poly D A E H
+			
+			poly E F G H
+		}
+		
+		{
+			translate 0.5 3.5 0
+			
+			# King
+			
+			pt A -.25 -.25 0
+			pt B  .25 -.25 0
+			pt C  .25  .25 0
+			pt D -.25  .25 0
+			
+			pt E  0   -.25 1
+			pt F  .25  0   1
+			pt G  0    .25 1
+			pt H -.25  0   1
+			
+			poly D C B A
+			
+			poly A B E
+			poly B C F
+			poly C D G
+			poly D A H
+			
+			poly B F E
+			poly C G F
+			poly D H G
+			poly A E H
+			
+			poly E F G H
+		}
+		
+		{
+			translate -0.5 3.5 0
+			
+			# Queen
+			
+			pt Z 0 0 0
+			
+			pt P -.25 -.25 0.5
+			pt Q  .25 -.25 0.5
+			pt R  .25  .25 0.5
+			pt S -.25  .25 0.5
+			
+			pt A 0 0 1
+			
+			poly Z Q P
+			poly Z R Q
+			poly Z S R
+			poly Z P S
+			
+			poly P Q A
+			poly Q R A
+			poly R S A
+			poly S P A
+		}
+		
+		{
+			translate 3.5 2.5 0
+			
+			# Pawn
+			
+			pt A -.25  .25 0
+			pt B  .25  .25 0
+			pt N  0   -.25 0
+			pt C  0    .25 0.5
+			
+			poly A B N
+			poly A N C
+			poly N B C
+			poly B A C
+		}
+		
+	}
+	
+}
+
+# End
+
