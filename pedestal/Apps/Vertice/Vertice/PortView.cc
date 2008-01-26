@@ -788,7 +788,7 @@ namespace Vertice
 		return 1 / (1 + distance * distance);
 	}
 	
-	static ColorMatrix ModulateColor( ColorMatrix color, ColorMatrix light )
+	inline ColorMatrix ModulateColor( const ColorMatrix& color, ColorMatrix light )
 	{
 		using V::Red;
 		using V::Green;
@@ -799,23 +799,25 @@ namespace Vertice
 		                   color[ Blue  ] * light[ Blue  ] );
 	}
 	
-	static ColorMatrix TweakColor( ColorMatrix  color,
-	                               double       distance,
-	                               double       incidenceRatio,
-	                               bool         selected )
+	
+	//static const ColorMatrix gWhite = V::MakeGray( 1.0 );
+	
+	static const ColorMatrix gAmbientLight   = 0.3 * V::MakeRGB( 0.8, 0.8, 1.0 );
+	static const ColorMatrix gCameraLight    = 0.9 * V::MakeRGB( 1.0, 1.0, 0.6 );
+	static const ColorMatrix gSelectionLight = 0.3 * V::MakeRGB( 1.0, 0.8, 0.8 );
+	
+	static ColorMatrix TweakColor( const ColorMatrix&  color,
+	                               double              distance,
+	                               double              incidenceRatio,
+	                               bool                selected )
 	{
-		bool considerColor     = true;
-		bool considerAmbience  = true;
-		bool considerProximity = true;
-		bool considerIncidence = true;
-		
-		ColorMatrix white = V::MakeGray( 1.0 );
-		
 		double proximity = ProximityQuotient( distance / 2 );
 		
-		ColorMatrix ambientLight   = V::MakeRGB( 0.8, 0.8, 1.0 );
-		ColorMatrix cameraLight    = V::MakeRGB( 1.0, 1.0, 0.6 );
-		ColorMatrix selectionLight = V::MakeRGB( 1.0, 0.8, 0.8 );
+		/*
+		const bool considerColor     = true;
+		const bool considerAmbience  = true;
+		const bool considerProximity = true;
+		const bool considerIncidence = true;
 		
 		if ( !considerColor )
 		{
@@ -836,15 +838,19 @@ namespace Vertice
 		{
 			incidenceRatio = 1.0;
 		}
+		*/
 		
 		// If the sum of the coefficients below <= 1.0, 
 		// then no color clipping ('overexposure') can occur.
 		
-		ColorMatrix totalLight =   ( 0.3 * ambientLight                             )
-		                         + ( 0.9 * cameraLight * proximity * incidenceRatio )
-		                         + ( 0.3 * selected * selectionLight );
+		ColorMatrix totalLight =   gAmbientLight                            
+		                         + gCameraLight * proximity * incidenceRatio;
 		
-		//return color * totalLight;
+		if ( selected )
+		{
+			totalLight += gSelectionLight;
+		}
+		
 		return ModulateColor( color, totalLight );
 	}
 	
