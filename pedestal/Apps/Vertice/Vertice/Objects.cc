@@ -177,19 +177,19 @@ namespace Vertice
 			
 			const std::vector< Offset >& offsets = polygon.Vertices();
 			
-			if ( offsets.size() < 3 )
+			bool visible = offsets.size() >= 3;
+			
+			if ( visible )
 			{
-				continue;
+				std::transform( offsets.begin(),
+				                offsets.begin() + 3,
+				                points,
+				                itsMesh );
+				
+				V::Plane3D::Type plane = V::PlaneVector( points );
+				
+				visible = DotProduct( plane, eye ) > 0.0;
 			}
-			
-			std::transform( offsets.begin(),
-			                offsets.begin() + 3,
-			                points,
-			                itsMesh );
-			
-			V::Plane3D::Type plane = V::PlaneVector( points );
-			
-			bool visible = DotProduct( plane, eye ) > 0.0;
 			
 			if ( !visible )
 			{
