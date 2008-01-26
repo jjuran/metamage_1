@@ -157,6 +157,12 @@ namespace Vertice
 		std::swap( itsColor,    other.itsColor    );
 	}
 	
+	void MeshPolygon::SwapVertexOffsets( std::vector< Offset >& vertexOffsets )
+	{
+		std::swap( itsVertices, vertexOffsets );
+	}
+	
+	
 	void MeshModel::CullBackfaces( const V::Point3D::Type& eye )
 	{
 		V::Point3D::Type points[3];
@@ -169,7 +175,7 @@ namespace Vertice
 		{
 			MeshPolygon& polygon = *it;
 			
-			std::vector< Offset >& offsets = polygon.Vertices();
+			const std::vector< Offset >& offsets = polygon.Vertices();
 			
 			if ( offsets.size() < 3 )
 			{
@@ -241,7 +247,7 @@ namespace Vertice
 		{
 			MeshPolygon& polygon = *it;
 			
-			std::vector< Offset >& offsets = polygon.Vertices();
+			const std::vector< Offset >& offsets = polygon.Vertices();
 			
 			if ( offsets.empty() )
 			{
@@ -321,7 +327,7 @@ namespace Vertice
 			}
 			else
 			{
-				std::swap( offsets, new_offsets );
+				polygon.SwapVertexOffsets( new_offsets );
 			}
 		}
 	}
