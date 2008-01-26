@@ -208,16 +208,14 @@ namespace Vertice
 	
 	
 	template < class DoubleSpectrum,
-	           class ColorSpectrum,
-	           class Device >
+	           class ColorSpectrum >
 	void DrawDeepScanLine( int                    y,
 	                       int                    farLeft,
 	                       double                 left,
 	                       double                 right,
 	                       const DoubleSpectrum&  w_spectrum,
 	                       const ColorSpectrum&   colors,
-	                       ::Ptr                  rowAddr,
-	                       Device&                deepPixelDevice )
+	                       ::Ptr                  rowAddr )
 	{
 		for ( int x = int( std::ceil( left ) );  x < right;  ++x )
 		{
@@ -227,7 +225,7 @@ namespace Vertice
 			
 			double z = -1.0 / w;
 			
-			if ( deepPixelDevice.SetIfNearer( x, y, -z ) )
+			if ( gDeepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
 				::Ptr pixelAddr = rowAddr + (x - farLeft) * 32/8;
 				
@@ -244,8 +242,7 @@ namespace Vertice
 	
 	template < class DoubleSpectrum,
 	           class ColorSpectrum,
-	           class UVSpectrum,
-	           class Device >
+	           class UVSpectrum >
 	void DrawDeepScanLine( int                    y,
 	                       int                    farLeft,
 	                       double                 left,
@@ -254,8 +251,7 @@ namespace Vertice
 	                       const ColorSpectrum&   colors,
 	                       const UVSpectrum&      uv_spectrum,
 	                       const MeshPolygon&     polygon,
-	                       ::Ptr                  rowAddr,
-	                       Device&                deepPixelDevice )
+	                       ::Ptr                  rowAddr )
 	{
 		for ( int x = int( std::ceil( left ) );  x < right;  ++x )
 		{
@@ -265,7 +261,7 @@ namespace Vertice
 			
 			double z = -1.0 / w;
 			
-			if ( deepPixelDevice.SetIfNearer( x, y, -z ) )
+			if ( gDeepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
 				::Ptr pixelAddr = rowAddr + (x - farLeft) * 32/8;
 				
@@ -301,12 +297,11 @@ namespace Vertice
 		return true;
 	}
 	
-	template < class Vertex, class Device >
-	void DrawDeepTrapezoid( Vertex   topLeft,
-	                        Vertex   topRight,
-	                        Vertex   bottomLeft,
-	                        Vertex   bottomRight,
-	                        Device&  deepPixelDevice )
+	template < class Vertex >
+	void DrawDeepTrapezoid( Vertex  topLeft,
+	                        Vertex  topRight,
+	                        Vertex  bottomLeft,
+	                        Vertex  bottomRight )
 	{
 		::CGrafPtr port = N::GetQDGlobalsThePort();
 		//::CGrafPtr port = itsGWorld.Get();
@@ -371,8 +366,7 @@ namespace Vertice
 				                  right,
 				                  w_spectrum,
 				                  color_spectrum,
-				                  rowAddr,
-				                  deepPixelDevice );
+				                  rowAddr );
 			}
 			else
 			{
@@ -390,8 +384,7 @@ namespace Vertice
 				                  color_spectrum,
 				                  MakeLinearSpectrum( leftUV_W, rightUV_W ),
 				                  topLeft.Polygon(),
-				                  rowAddr,
-				                  deepPixelDevice );
+				                  rowAddr );
 			}
 		}
 	}
@@ -416,10 +409,10 @@ namespace Vertice
 		A
 	*/
 	
-	template < class Vertex, class Device >
+	template < class Vertex >
 	void DrawDeepTriangle( const Vertex& A,
 	                       const Vertex& B,
-	                       const Vertex& C, Device& device )
+	                       const Vertex& C )
 	{
 		// Assume that the vertices are in port coordinates, and bottom to top.
 		double top    = C[ Y ];
@@ -452,8 +445,7 @@ namespace Vertice
 			DrawDeepTrapezoid( C,
 			                   C,
 			                   midLeft,
-			                   midRight,
-			                   device );
+			                   midRight );
 		}
 		
 		if ( middle > bottom )
@@ -461,8 +453,7 @@ namespace Vertice
 			DrawDeepTrapezoid( midLeft,
 			                   midRight,
 			                   A,
-			                   A,
-			                   device );
+			                   A );
 		}
 	}
 	
@@ -719,19 +710,12 @@ namespace Vertice
 	
 	class DeepTriangleDrawer
 	{
-		private:
-			DeepPixelDevice& itsDevice;
-		
 		public:
 			typedef AdHocTriangle< DeepVertex > Triangle;
 			
-			DeepTriangleDrawer( DeepPixelDevice& device ) : itsDevice( device )
-			{
-			}
-			
 			void operator()( const Triangle& triangle ) const
 			{
-				DrawDeepTriangle( triangle.a, triangle.b, triangle.c, itsDevice );
+				DrawDeepTriangle( triangle.a, triangle.b, triangle.c );
 			}
 	};
 	
@@ -987,7 +971,7 @@ namespace Vertice
 				
 				std::for_each( triangles.begin(),
 				               triangles.end(),
-				               DeepTriangleDrawer( gDeepPixelDevice ) );
+				               DeepTriangleDrawer() );
 				
 			}
 		}
