@@ -985,7 +985,7 @@ namespace Vertice
 					{
 						const MeshPolygon& polygon = *it;
 						
-						const std::vector< unsigned > offsets = polygon.Vertices();
+						const std::vector< unsigned >& offsets = polygon.Vertices();
 						
 						if ( offsets.empty() )
 						{
