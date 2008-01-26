@@ -740,7 +740,8 @@ namespace Vertice
 			// For each polygon in the mesh...
 			for ( PolygonIter it = polygons.begin(), end = polygons.end();  it != end;  ++it )
 			{
-				MeshPolygon polygon = *it;
+				const MeshPolygon& polygon = *it;
+				
 				const std::vector< unsigned >& offsets = polygon.Vertices();
 				
 				if ( offsets.empty() )
@@ -768,15 +769,10 @@ namespace Vertice
 				
 				std::vector< DeepVertex > vertices( points.size() );
 				
-				std::transform( points.begin(),
-				                points.end(),
-				                vertices.begin(),
-				                std::ptr_fun( Point3DToDeepVertex ) );
-				
 				// For each vertex in the polygon
 				for ( unsigned int i = 0;  i < vertices.size();  ++i )
 				{
-					DeepVertex& pt = vertices[ i ];
+					DeepVertex& pt = vertices[ i ] = Point3DToDeepVertex( points[ i ] );
 					
 					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -sFocalLength );
 					
@@ -987,9 +983,9 @@ namespace Vertice
 					// For each polygon in the mesh...
 					for ( PolygonIter it = polygons.begin(), end = polygons.end();  it != end;  ++it )
 					{
-						MeshPolygon polygon = *it;
+						const MeshPolygon& polygon = *it;
 						
-						std::vector< unsigned > offsets = polygon.Vertices();
+						const std::vector< unsigned > offsets = polygon.Vertices();
 						
 						if ( offsets.empty() )
 						{
@@ -1135,7 +1131,9 @@ namespace Vertice
 								double cosAlpha = ray * faceNormal / V::Magnitude( ray );
 								double incidenceRatio = cosAlpha;
 								
-								ColorMatrix tweaked = TweakColor( polygon.Color(),
+								const ColorMatrix& color = polygon.Color();
+								
+								ColorMatrix tweaked = TweakColor( color,
 								                                  dist,
 								                                  incidenceRatio,
 								                                  selected );
