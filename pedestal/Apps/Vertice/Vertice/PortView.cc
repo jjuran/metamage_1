@@ -143,12 +143,39 @@ namespace Vertice
 			double operator[]( Index index ) const  { return itsPoint[ index ]; }
 	};
 	
-	template < class WSpectrum, class ColorSpectrum, class Device >
+	
+	inline UInt32 MakePixel32( UInt32 r, UInt32 g, UInt32 b )
+	{
+		const UInt32 a = 0;
+		
+		return TARGET_RT_BIG_ENDIAN ? a << 24 | r << 16 | g << 8 | b << 0
+		                            : b << 24 | g << 16 | r << 8 | a << 0;
+	}
+	
+	inline UInt32 MakePixel32( double red, double green, double blue )
+	{
+		UInt32 r = UInt32( red   < 1.0  ?  red   * 255  :  255 );
+		UInt32 g = UInt32( green < 1.0  ?  green * 255  :  255 );
+		UInt32 b = UInt32( blue  < 1.0  ?  blue  * 255  :  255 );
+		
+		return MakePixel32( r, g, b );
+	}
+	
+	inline UInt32 MakePixel32( const ColorMatrix& color )
+	{
+		return MakePixel32( color[ V::Red   ],
+		                    color[ V::Green ],
+		                    color[ V::Blue  ] );
+	}
+	
+	template < class WSpectrum,
+	           class ColorSpectrum,
+	           class Device >
 	void DrawDeepScanLine( int                   y,
 	                       int                   farLeft,
 	                       double                left,
 	                       double                right,
-	                       const WSpectrum&      w,
+	                       const WSpectrum&      w_spectrum,
 	                       const ColorSpectrum&  colors,
 	                       ::Ptr                 rowAddr,
 	                       Device&               deepPixelDevice )
@@ -157,17 +184,21 @@ namespace Vertice
 		{
 			double tX = (x - left) / (right - left);
 			
-			double z = -1.0 / w[ tX ];
+			double w = w_spectrum[ tX ];
+			
+			double z = -1.0 / w;
 			
 			if ( deepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
-				ColorMatrix color = colors[ tX ] / w[ tX ];
-				
-				N::RGBColor rgb = NN::Convert< N::RGBColor >( color );
-				
 				::Ptr pixelAddr = rowAddr + (x - farLeft) * 32/8;
 				
-				*reinterpret_cast< GX::Pixel32* >( pixelAddr ) = GX::Pixel32( rgb );
+				ColorMatrix color = colors[ tX ];
+				
+				double red   = color[ V::Red   ] / w;
+				double green = color[ V::Green ] / w;
+				double blue  = color[ V::Blue  ] / w;
+				
+				*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( red, green, blue );
 			}
 		}
 	}
@@ -1138,16 +1169,14 @@ namespace Vertice
 								                                  incidenceRatio,
 								                                  selected );
 								
-								N::RGBColor rgb = NN::Convert< N::RGBColor >( tweaked );
-								
 								::Ptr pixelAddr = rowAddr + (iX - pixBounds.left) * 32/8;
 								
-								GrafX::Pixel32& pixel = *(GrafX::Pixel32*) pixelAddr;
-								
-								pixel = rgb;
+								*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( tweaked );
 								
 								if ( !gBlitting )
 								{
+									N::RGBColor rgb = NN::Convert< N::RGBColor >( tweaked );
+									
 									N::SetCPixel( iX, iY, rgb );
 								}
 							}
