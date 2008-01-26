@@ -145,9 +145,6 @@ namespace Vertice
 			V::Point3D::Type    itsPoint;
 			V::Point2D::Type    itsTexturePoint;
 			ColorMatrix         itsColor;
-			double              itsDistance;
-			double              itsIncidenceRatio;
-			bool                itIsSelected;
 			
 			DeepVertex()  {}
 			
@@ -229,6 +226,7 @@ namespace Vertice
 	}
 	
 	template < class DoubleSpectrum,
+	           class ColorSpectrum,
 	           class UVSpectrum,
 	           class Device >
 	void DrawDeepScanLine( int                    y,
@@ -236,10 +234,8 @@ namespace Vertice
 	                       double                 left,
 	                       double                 right,
 	                       const DoubleSpectrum&  w_spectrum,
+	                       const ColorSpectrum&   colors,
 	                       const UVSpectrum&      uv_spectrum,
-	                       const DoubleSpectrum&  distances,
-	                       const DoubleSpectrum&  incidences,
-	                       bool                   selected,
 	                       const MeshPolygon&     polygon,
 	                       ::Ptr                  rowAddr,
 	                       Device&                deepPixelDevice )
@@ -256,11 +252,11 @@ namespace Vertice
 			{
 				::Ptr pixelAddr = rowAddr + (x - farLeft) * 32/8;
 				
-				ColorMatrix color = TweakColor( GetSampleFromMap( polygon.Map(),
-				                                                  uv_spectrum[ tX ] / w ),
-				                                distances [ tX ] / w,
-				                                incidences[ tX ] / w,
-				                                selected );
+				ColorMatrix lightColor = colors[ tX ] / w;
+				
+				ColorMatrix color = ModulateColor( GetSampleFromMap( polygon.Map(),
+				                                                     uv_spectrum[ tX ] / w ),
+				                                   lightColor );
 				
 				*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( color );
 			}
@@ -342,20 +338,22 @@ namespace Vertice
 			
 			LinearSpectrum< double > w_spectrum = MakeLinearSpectrum( leftW, rightW );
 			
+			ColorMatrix leftColorW = MakeLinearSpectrum( topLeft.itsColor    * topLeft   [ W ],
+			                                             bottomLeft.itsColor * bottomLeft[ W ] )[ tY ];
+			
+			ColorMatrix rightColorW = MakeLinearSpectrum( topRight.itsColor    * topRight   [ W ],
+			                                              bottomRight.itsColor * bottomRight[ W ] )[ tY ];
+			
+			LinearSpectrum< ColorMatrix > color_spectrum = MakeLinearSpectrum( leftColorW, rightColorW );
+			
 			if ( !using_texture_map )
 			{
-				ColorMatrix leftColorW = MakeLinearSpectrum( topLeft.itsColor    * topLeft   [ W ],
-				                                             bottomLeft.itsColor * bottomLeft[ W ] )[ tY ];
-				
-				ColorMatrix rightColorW = MakeLinearSpectrum( topRight.itsColor    * topRight   [ W ],
-				                                              bottomRight.itsColor * bottomRight[ W ] )[ tY ];
-				
 				DrawDeepScanLine( y,
 				                  bounds.left,
 				                  left,
 				                  right,
 				                  w_spectrum,
-				                  MakeLinearSpectrum( leftColorW,     rightColorW ),
+				                  color_spectrum,
 				                  rowAddr,
 				                  deepPixelDevice );
 			}
@@ -367,27 +365,13 @@ namespace Vertice
 				V::Point2D::Type rightUV_W = MakeLinearSpectrum( topRight.itsTexturePoint    * topRight   [ W ],
 				                                                 bottomRight.itsTexturePoint * bottomRight[ W ] )[ tY ];
 				
-				double leftDistanceW = MakeLinearSpectrum( topLeft.itsDistance    * topLeft   [ W ],
-				                                           bottomLeft.itsDistance * bottomLeft[ W ] )[ tY ];
-				
-				double rightDistanceW = MakeLinearSpectrum( topRight.itsDistance    * topRight   [ W ],
-				                                            bottomRight.itsDistance * bottomRight[ W ] )[ tY ];
-				
-				double leftIncidenceW = MakeLinearSpectrum( topLeft.itsIncidenceRatio    * topLeft   [ W ],
-				                                            bottomLeft.itsIncidenceRatio * bottomLeft[ W ] )[ tY ];
-				
-				double rightIncidenceW = MakeLinearSpectrum( topRight.itsIncidenceRatio    * topRight   [ W ],
-				                                             bottomRight.itsIncidenceRatio * bottomRight[ W ] )[ tY ];
-				
 				DrawDeepScanLine( y,
 				                  bounds.left,
 				                  left,
 				                  right,
 				                  w_spectrum,
-				                  MakeLinearSpectrum( leftUV_W,       rightUV_W   ),
-				                  MakeLinearSpectrum( leftDistanceW,  rightDistanceW ),
-				                  MakeLinearSpectrum( leftIncidenceW, rightIncidenceW ),
-				                  topLeft.itIsSelected,
+				                  color_spectrum,
+				                  MakeLinearSpectrum( leftUV_W, rightUV_W ),
 				                  topLeft.Polygon(),
 				                  rowAddr,
 				                  deepPixelDevice );
@@ -442,11 +426,6 @@ namespace Vertice
 		ColorMatrix colorD = MakeLinearSpectrum( A.itsColor * A[W], C.itsColor * C[W] )[t] / ptD[ W ];
 		
 		Vertex D( A.Polygon(), ptD, uvD, colorD );
-		
-		D.itsDistance       = MakeLinearSpectrum( A.itsDistance       * A[W], C.itsDistance       * C[W] )[t] / ptD[ W ];
-		D.itsIncidenceRatio = MakeLinearSpectrum( A.itsIncidenceRatio * A[W], C.itsIncidenceRatio * C[W] )[t] / ptD[ W ];
-		
-		D.itIsSelected = A.itIsSelected;
 		
 		const Vertex& midLeft  = B[X] < D[X] ? B : D;
 		const Vertex& midRight = B[X] < D[X] ? D : B;
@@ -806,10 +785,9 @@ namespace Vertice
 	static const ColorMatrix gCameraLight    = 0.9 * V::MakeRGB( 1.0, 1.0, 0.6 );
 	static const ColorMatrix gSelectionLight = 0.3 * V::MakeRGB( 1.0, 0.8, 0.8 );
 	
-	static ColorMatrix TweakColor( const ColorMatrix&  color,
-	                               double              distance,
-	                               double              incidenceRatio,
-	                               bool                selected )
+	static ColorMatrix LightColor( double  distance,
+	                               double  incidenceRatio,
+	                               bool    selected )
 	{
 		double proximity = ProximityQuotient( distance / 2 );
 		
@@ -851,7 +829,15 @@ namespace Vertice
 			totalLight += gSelectionLight;
 		}
 		
-		return ModulateColor( color, totalLight );
+		return totalLight;
+	}
+	
+	inline ColorMatrix TweakColor( const ColorMatrix&  color,
+	                               double              distance,
+	                               double              incidenceRatio,
+	                               bool                selected )
+	{
+		return ModulateColor( color, LightColor( distance, incidenceRatio, selected ) );
 	}
 	
 	static double operator*( const V::Vector3D::Type& a, const V::Vector3D::Type& b )
@@ -969,17 +955,14 @@ namespace Vertice
 					double cosAlpha = ray * faceNormal;
 					double incidenceRatio = cosAlpha;
 					
+					pt.itsColor = LightColor( dist, incidenceRatio, selected );
+					
 					if ( polygon.Map().Empty() )
 					{
-						pt.itsColor = TweakColor( polygon.Color(), dist, incidenceRatio, selected );
+						pt.itsColor = ModulateColor( polygon.Color(), pt.itsColor );
 					}
 					else
 					{
-						pt.itIsSelected = model.Selected();
-						
-						pt.itsDistance = dist;
-						pt.itsIncidenceRatio = incidenceRatio;
-						
 						pt.itsTexturePoint = InterpolatedUV( sectPt, savedPoints, polygon.MapPoints() );
 					}
 				}
