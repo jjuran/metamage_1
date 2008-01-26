@@ -34,9 +34,11 @@ namespace Vertice
 		public:
 			IntensityMap()  {}
 			
-			bool Empty() const  { return itsValues.empty(); }
-			
 			IntensityMap( unsigned width, const std::vector< double >& values ) : itsWidth( width ), itsValues( values )  {}
+			
+			void Swap( IntensityMap& other );
+			
+			bool Empty() const  { return itsValues.empty(); }
 	};
 	
 	
@@ -87,6 +89,11 @@ namespace Vertice
 			std::vector< V::Point3D::Type > itsPoints;
 		
 		public:
+			void Swap( PointMesh& other )
+			{
+				std::swap( itsPoints, other.itsPoints );
+			}
+			
 			typedef V::Point3D::Type point_type;
 			
 			std::vector< V::Point3D::Type > const& Points() const  { return itsPoints; }
@@ -114,11 +121,6 @@ namespace Vertice
 			}
 			
 			const V::Point3D::Type& operator()( std::size_t offset ) const  { return itsPoints[ offset ]; }
-			
-			void Swap( PointMesh& other )
-			{
-				std::swap( itsPoints, other.itsPoints );
-			}
 	};
 	
 	// MeshPolygon models a polygon as a sequence of indices into a PointMesh, plus a color.
@@ -144,18 +146,18 @@ namespace Vertice
 			{
 			}
 			
+			void Swap( MeshPolygon& other )
+			{
+				std::swap( itsVertices, other.itsVertices );
+				std::swap( itsColor,    other.itsColor    );
+			}
+			
 			const std::vector< Offset >& Vertices() const  { return itsVertices; }
 			      std::vector< Offset >& Vertices()        { return itsVertices; }
 			
 			const ColorMatrix& Color() const  { return itsColor; }
 			
 			const IntensityMap& Map() const  { return itsMap; }
-			
-			void Swap( MeshPolygon& other )
-			{
-				std::swap( itsVertices, other.itsVertices );
-				std::swap( itsColor,    other.itsColor    );
-			}
 	};
 	
 	// MeshModel combines a PointMesh and the polygons defined in terms of it.
@@ -169,6 +171,13 @@ namespace Vertice
 		
 		public:
 			MeshModel() : itIsSelected()  {}
+			
+			void Swap( MeshModel& other )
+			{
+				itsMesh.Swap( other.itsMesh );
+				
+				std::swap( itsPolygons, other.itsPolygons );
+			}
 			
 			PointMesh const& Mesh() const  { return itsMesh; }
 			
@@ -201,13 +210,6 @@ namespace Vertice
 			void CullBackfaces( const V::Point3D::Type& eye );
 			
 			void ClipAgainstPlane( const V::Plane3D::Type& plane );
-			
-			void Swap( MeshModel& other )
-			{
-				itsMesh.Swap( other.itsMesh );
-				
-				std::swap( itsPolygons, other.itsPolygons );
-			}
 	};
 	
 	inline bool operator<( const MeshModel& a, const MeshModel& b )
@@ -251,6 +253,29 @@ namespace Vertice
 				itsSubcontexts.push_back( index );
 			}
 	};
+	
+}
+
+namespace std
+{
+	
+	template <>
+	inline void swap( Vertice::IntensityMap& a, Vertice::IntensityMap& b )
+	{
+		a.Swap( b );
+	}
+	
+	template <>
+	inline void swap( Vertice::PointMesh& a, Vertice::PointMesh& b )
+	{
+		a.Swap( b );
+	}
+	
+	template <>
+	inline void swap( Vertice::MeshPolygon& a, Vertice::MeshPolygon& b )
+	{
+		a.Swap( b );
+	}
 	
 }
 

@@ -20,6 +20,14 @@ namespace Vertice
 	using Vectoria::Z;
 	using Vectoria::W;
 	
+	
+	void IntensityMap::Swap( IntensityMap& other )
+	{
+		std::swap( itsWidth,  other.itsWidth  );
+		std::swap( itsValues, other.itsValues );
+	}
+	
+	
 	void Moveable::ContextTranslate( double dx, double dy, double dz )
 	{
 		V::Translation trans( dx, dy, dz );
