@@ -125,16 +125,33 @@ namespace Vertice
 	*/
 	
 	
-	static ColorMatrix GetSampleFromMap( const IntensityMap& map, const V::Point2D::Type& point )
+	inline ColorMatrix ModulateGray( double gray, const ColorMatrix& light )
+	{
+		return gray * light;
+	}
+	
+	inline ColorMatrix ModulateColor( const ColorMatrix& color, const ColorMatrix& light )
+	{
+		using V::Red;
+		using V::Green;
+		using V::Blue;
+		
+		return V::MakeRGB( color[ Red   ] * light[ Red   ],
+		                   color[ Green ] * light[ Green ],
+		                   color[ Blue  ] * light[ Blue  ] );
+	}
+	
+	
+	static double GetSampleFromMap( const IntensityMap& map, const V::Point2D::Type& point )
 	{
 		const unsigned width = map.Width();
 		
-		int u = int( std::floor( point[ X ] * width ) ) % width;
-		int v = int( std::floor( point[ Y ] * width ) ) % width;
+		const int u = int( std::floor( point[ X ] * width ) ) % width;
+		const int v = int( std::floor( point[ Y ] * width ) ) % width;
 		
-		unsigned index = v * width + u;
+		const unsigned index = v * width + u;
 		
-		return V::MakeGray( map.Values()[ index ] );
+		return map.Values()[ index ];
 	}
 	
 	
@@ -254,9 +271,9 @@ namespace Vertice
 				
 				ColorMatrix lightColor = colors[ tX ] / w;
 				
-				ColorMatrix color = ModulateColor( GetSampleFromMap( polygon.Map(),
-				                                                     uv_spectrum[ tX ] / w ),
-				                                   lightColor );
+				ColorMatrix color = ModulateGray( GetSampleFromMap( polygon.Map(),
+				                                                    uv_spectrum[ tX ] / w ),
+				                                  lightColor );
 				
 				*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( color );
 			}
@@ -765,17 +782,6 @@ namespace Vertice
 	static double ProximityQuotient( double distance )
 	{
 		return 1 / (1 + distance * distance);
-	}
-	
-	inline ColorMatrix ModulateColor( const ColorMatrix& color, ColorMatrix light )
-	{
-		using V::Red;
-		using V::Green;
-		using V::Blue;
-		
-		return V::MakeRGB( color[ Red   ] * light[ Red   ],
-		                   color[ Green ] * light[ Green ],
-		                   color[ Blue  ] * light[ Blue  ] );
 	}
 	
 	
@@ -1311,13 +1317,14 @@ namespace Vertice
 								double cosAlpha = ray * faceNormal / V::Magnitude( ray );
 								double incidenceRatio = cosAlpha;
 								
-								ColorMatrix color = texture.Empty() ? polygon.Color()
-								                                    : GetSampleFromMap( texture, InterpolatedUV( sectPt, savedPoints, polygon.MapPoints() ) );
+								ColorMatrix lightColor = LightColor( dist, incidenceRatio, selected );
 								
-								ColorMatrix tweaked = TweakColor( color,
-								                                  dist,
-								                                  incidenceRatio,
-								                                  selected );
+								ColorMatrix tweaked = texture.Empty() ? ModulateColor( polygon.Color(), lightColor )
+								                                      : ModulateGray( GetSampleFromMap( texture,
+								                                                                        InterpolatedUV( sectPt,
+								                                                                                        savedPoints,
+								                                                                                        polygon.MapPoints() ) ),
+								                                                      lightColor );
 								
 								::Ptr pixelAddr = rowAddr + (iX - pixBounds.left) * 32/8;
 								
