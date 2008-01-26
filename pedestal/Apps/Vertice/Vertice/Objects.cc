@@ -151,6 +151,12 @@ namespace Vertice
 	}
 	
 	
+	void MeshPolygon::Swap( MeshPolygon& other )
+	{
+		std::swap( itsVertices, other.itsVertices );
+		std::swap( itsColor,    other.itsColor    );
+	}
+	
 	void MeshModel::CullBackfaces( const V::Point3D::Type& eye )
 	{
 		V::Point3D::Type points[3];

@@ -146,11 +146,7 @@ namespace Vertice
 			{
 			}
 			
-			void Swap( MeshPolygon& other )
-			{
-				std::swap( itsVertices, other.itsVertices );
-				std::swap( itsColor,    other.itsColor    );
-			}
+			void Swap( MeshPolygon& other );
 			
 			const std::vector< Offset >& Vertices() const  { return itsVertices; }
 			      std::vector< Offset >& Vertices()        { return itsVertices; }
