@@ -158,6 +158,7 @@ namespace Vertice
 	class DeepVertex
 	{
 		public:
+			unsigned            itsIndex;
 			const MeshPolygon*  itsPolygon;
 			V::Point3D::Type    itsPoint;
 			V::Point2D::Type    itsTexturePoint;
@@ -409,6 +410,7 @@ namespace Vertice
 		A
 	*/
 	
+	/*
 	template < class Vertex >
 	void DrawDeepTriangle( const Vertex& A,
 	                       const Vertex& B,
@@ -456,6 +458,112 @@ namespace Vertice
 			                   A );
 		}
 	}
+	*/
+	
+	inline bool VerticallyGreater( const DeepVertex& a, const DeepVertex& b )
+	{
+		return a[ Y ] > b[ Y ];
+	}
+	
+	inline void AdvanceVertexIterator( std::vector< DeepVertex >::const_iterator& it, unsigned top_index, unsigned bottom_index, bool on_right )
+	{
+		bool seam_is_on_right = top_index < bottom_index;
+		
+		while ( it->itsIndex != bottom_index  &&  (( it->itsIndex < top_index ) == ( it->itsIndex < bottom_index )) != (seam_is_on_right == on_right) )
+		{
+			++it;
+		}
+	}
+	
+	static DeepVertex InterpolateDeepVertex( const DeepVertex& a, const DeepVertex& b, double t )
+	{
+		V::Point3D::Type point;
+		
+		point[ X ] = MakeLinearSpectrum( a[X], b[X] )[t];
+		point[ Y ] = MakeLinearSpectrum( a[Y], b[Y] )[t];
+		point[ Z ] = MakeLinearSpectrum( a[Z], b[Z] )[t];  // -1
+		point[ W ] = MakeLinearSpectrum( a[W], b[W] )[t];
+		
+		V::Point2D::Type uv;
+		
+		uv[ X ] = MakeLinearSpectrum( a.itsTexturePoint[X] * a[ W ], b.itsTexturePoint[X] * b[ W ] )[t] / point[ W ];
+		uv[ Y ] = MakeLinearSpectrum( a.itsTexturePoint[Y] * a[ W ], b.itsTexturePoint[Y] * b[ W ] )[t] / point[ W ];
+		
+		ColorMatrix color = MakeLinearSpectrum( a.itsColor * a[ W ], b.itsColor * b[ W ] )[t] / point[ W ];
+		
+		DeepVertex result( a.Polygon(), point, uv, color );
+		
+		return result;
+	}
+	
+	static void DrawDeepPolygon( const std::vector< DeepVertex >& vertices )
+	{
+		std::vector< DeepVertex > sorted_vertices = vertices;
+		
+		// sort by Y
+		std::sort( sorted_vertices.begin(),
+		           sorted_vertices.end(),
+		           std::ptr_fun( VerticallyGreater ) );
+		
+		double top    = sorted_vertices.front()[ Y ];
+		double bottom = sorted_vertices.back ()[ Y ];
+		
+		unsigned top_index    = sorted_vertices.front().itsIndex;
+		unsigned bottom_index = sorted_vertices.back ().itsIndex;
+		
+		typedef std::vector< DeepVertex >::const_iterator Iter;
+		
+		DeepVertex prev_left  = sorted_vertices.front();
+		DeepVertex prev_right = sorted_vertices.front();
+		
+		Iter prev_left_it  = sorted_vertices.begin();
+		Iter prev_right_it = sorted_vertices.begin();
+		
+		Iter left_it  = sorted_vertices.begin() + 1;
+		Iter right_it = sorted_vertices.begin() + 1;
+		
+		Iter last = sorted_vertices.end() - 1;
+		
+		AdvanceVertexIterator( left_it, top_index, bottom_index, false );
+		AdvanceVertexIterator( right_it, top_index, bottom_index, true );
+		
+		while ( left_it < last  ||  right_it < last )
+		{
+			if ( left_it < right_it )
+			{
+				prev_left_it = left_it;
+				
+				double t = ( (*left_it)[ Y ] - (*prev_right_it)[ Y ] )  /  ( (*right_it)[ Y ] - (*prev_right_it)[ Y ] );
+				
+				DeepVertex interpolated = InterpolateDeepVertex( *prev_right_it, *right_it, t );
+				
+				DrawDeepTrapezoid( prev_left, prev_right, *left_it, interpolated );
+				
+				prev_left  = *left_it;
+				prev_right = interpolated;
+				
+				AdvanceVertexIterator( ++left_it, top_index, bottom_index, false );
+			}
+			else
+			{
+				prev_right_it = right_it;
+				
+				double t = ( (*right_it)[ Y ] - (*prev_left_it)[ Y ] )  /  ( (*left_it)[ Y ] - (*prev_left_it)[ Y ] );
+				
+				DeepVertex interpolated = InterpolateDeepVertex( *prev_left_it, *left_it, t );
+				
+				DrawDeepTrapezoid( prev_left, prev_right, interpolated, *right_it );
+				
+				prev_left  = interpolated;
+				prev_right = *right_it;
+				
+				AdvanceVertexIterator( ++right_it, top_index, bottom_index, true );
+			}
+		}
+		
+		DrawDeepTrapezoid( prev_left, prev_right, sorted_vertices.back(), sorted_vertices.back() );
+	}
+	
 	
 	static void SetPortToClipTransform()
 	{
@@ -615,109 +723,6 @@ namespace Vertice
 	{
 		return V::Point2D::Make( pt[ X ], pt[ Y ] );
 	}
-	
-	template < class PtIter, class TriIter, class TriMaker >
-	void PolygonToTriangles( PtIter    ptsBegin,
-	                         PtIter    ptsEnd,
-	                         TriIter   triBegin,
-	                         TriMaker  MakeTriangle )
-	{
-		if ( ptsEnd - ptsBegin < 3 ) return;
-		
-		PtIter commonVertex = ptsBegin;
-		
-		for ( PtIter it = ptsBegin + 1;  it + 1 < ptsEnd;  ++it )
-		{
-			*triBegin++ = MakeTriangle( *commonVertex, *it, *( it + 1 ) );
-		}
-	}
-	
-	template < class Vertex >
-	class AdHocTriangle
-	{
-		public:
-			typedef Vertex vertex_type;
-		
-		//private:
-			Vertex a, b, c;
-		
-		public:
-			class Maker
-			{
-				public:
-					AdHocTriangle< Vertex > operator()( const Vertex& A, const Vertex& B, const Vertex& C )
-					{
-						return AdHocTriangle< Vertex >( A, B, C );
-					}
-			};
-			
-			AdHocTriangle()
-			{
-			}
-			
-			AdHocTriangle( const Vertex& A,
-			               const Vertex& B,
-			               const Vertex& C ) : a( A ),
-			                                   b( B ),
-			                                   c( C )
-			{
-			}
-	};
-	
-	template < class Triangle >
-	struct SortTriangleVertices
-	{
-		Triangle operator()( const Triangle& triangle )
-		{
-			typedef typename Triangle::vertex_type Vertex;
-			typedef Vertex const *VertexPtr;
-			
-			const Vertex& A = triangle.a;
-			const Vertex& B = triangle.b;
-			const Vertex& C = triangle.c;
-			
-			VertexPtr top = &A, middle = &B, bottom = &C;
-			
-			if ( A[Y] <= B[Y]  &&  A[Y] <= C[Y] )
-			{
-				if ( B[Y] > C[Y] )
-				{
-					std::swap( middle, bottom );
-				}
-			}
-			else if ( B[Y] <= C[Y] )
-			{
-				std::swap( top, middle );
-				
-				if ( A[Y] > C[Y] )
-				{
-					std::swap( middle, bottom );
-				}
-			}
-			else
-			{
-				std::swap( top, bottom );
-				
-				if ( B[Y] > A[Y] )
-				{
-					std::swap( middle, bottom );
-				}
-			}
-			
-			return Triangle( *top, *middle, *bottom );
-		}
-	};
-	
-	class DeepTriangleDrawer
-	{
-		public:
-			typedef AdHocTriangle< DeepVertex > Triangle;
-			
-			void operator()( const Triangle& triangle ) const
-			{
-				DrawDeepTriangle( triangle.a, triangle.b, triangle.c );
-			}
-	};
 	
 	/*
 	class ClippingPlane
@@ -925,6 +930,8 @@ namespace Vertice
 				{
 					DeepVertex& pt = vertices[ i ] = DeepVertex( polygon, points[ i ] );
 					
+					pt.itsIndex = i;
+					
 					V::Point3D::Type pt1 = V::Point3D::Make( pt[X], pt[Y], -sFocalLength );
 					
 					if ( fishEye )
@@ -957,22 +964,7 @@ namespace Vertice
 					}
 				}
 				
-				std::vector< AdHocTriangle< DeepVertex > > triangles( vertices.size() - 2 );
-				
-				PolygonToTriangles( vertices.begin(),
-				                    vertices.end(),
-				                    triangles.begin(),
-				                    AdHocTriangle< DeepVertex >::Maker() );
-				
-				std::transform( triangles.begin(),
-				                triangles.end(),
-				                triangles.begin(),
-				                SortTriangleVertices< AdHocTriangle< DeepVertex > >() );
-				
-				std::for_each( triangles.begin(),
-				               triangles.end(),
-				               DeepTriangleDrawer() );
-				
+				DrawDeepPolygon( vertices );
 			}
 		}
 		
