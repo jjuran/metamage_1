@@ -196,6 +196,178 @@ namespace Vertice
 	}
 	
 	
+	// This is not suitable for general use, but works for the case below
+	inline bool close_enough( double a, double b )
+	{
+		return std::abs( (a - b) / b ) < 0.001;
+	}
+	
+	static double MeasureAngularDeviation( const V::Vector3D::Type& normal,
+	                                       const V::Vector3D::Type& a,
+	                                       const V::Vector3D::Type& b )
+	{
+		V::Vector3D::Type cross_a = V::CrossProduct( normal, a );
+		
+		double cosine = V::DotProduct( b, a ) / V::Magnitude( a ) / V::Magnitude( b );
+		
+		double angle = std::acos( cosine );
+		
+		double tilt = V::DotProduct( b, cross_a );
+		
+		if ( tilt < 0.0 )
+		{
+			angle = -angle;
+		}
+		
+		return angle;
+	}
+	
+	class Geometry_Error {};
+	
+	template < class Inserter >
+	static void Convexify( const std::vector< unsigned >&  offsets,
+	                       const PointMesh&                mesh,
+	                       Inserter                        output )
+	{
+		std::size_t size = offsets.size();
+		
+		std::vector< V::Point3D::Type > points( size );
+		
+		transform( offsets.begin(),
+		           offsets.end(),
+		           points.begin(),
+		           mesh );
+		
+		V::Vector3D::Type A = points[1] - points[0];
+		V::Vector3D::Type B = points[2] - points[1];
+		
+		V::Vector3D::Type normal = V::CrossProduct( A, B );
+		
+		points.push_back( points[0] );
+		points.push_back( points[1] );
+		
+		double total_deviation = 0.0;
+		
+		unsigned concave_vertices = 0;
+		
+		std::vector< bool > concave( size );
+		
+		for ( unsigned i = 0;  i < points.size() - 2;  ++i )
+		{
+			unsigned prev = (i + size - 1) % size;
+			unsigned next = (i        + 1) % size;
+			
+			double deviation = MeasureAngularDeviation( normal,
+			                                            points[ i    ] - points[ prev ],
+			                                            points[ next ] - points[ i    ] );
+			
+			if ( deviation < 0.0 )
+			{
+				++concave_vertices;
+				
+				concave[i] = true;
+			}
+			
+			total_deviation += deviation;
+		}
+		
+		if ( !close_enough( total_deviation, 2 * 3.14159 ) )
+		{
+			//throw Geometry_Error();
+			std::fprintf( stderr, "Angular deviation: %f\n", total_deviation );
+			
+			return;
+		}
+		
+		if ( concave_vertices == 0 )
+		{
+			output++ = offsets;
+			
+			return;
+		}
+		
+		points.resize( points.size() - 2 );
+		
+		std::vector< unsigned > remaining_offsets = offsets;
+		
+		std::vector< unsigned > triangle( 3 );
+		
+		std::size_t i = 0;
+		
+		while ( concave_vertices )
+		{
+			unsigned next = (i + 1) % size;
+			
+			if ( concave[ i ]  &&  !concave[ next ] )
+			{
+				unsigned next2 = (i + 2) % size;
+				
+				triangle[ 0 ] = remaining_offsets[ i     ];
+				triangle[ 1 ] = remaining_offsets[ next  ];
+				triangle[ 2 ] = remaining_offsets[ next2 ];
+				
+				output++ = triangle;
+				
+				remaining_offsets.erase( remaining_offsets.begin() + next );
+				points           .erase( points           .begin() + next );
+				concave          .erase( concave          .begin() + next );
+				
+				--size;
+				
+				if ( next == 0 )
+				{
+					--i;
+				}
+				else
+				{
+					next = (i + 1) % size;
+				}
+				
+				unsigned prev = (i + size - 1) % size;
+				
+				double deviation = MeasureAngularDeviation( normal,
+		                                                    points[ i    ] - points[ prev ],
+		                                                    points[ next ] - points[ i    ] );
+				
+				concave[ i ] = deviation < 0.0;
+				
+				if ( !concave[ i ] )
+				{
+					--concave_vertices;
+				}
+			}
+			else
+			{
+				i = next;
+			}
+		}
+		
+		output++ = remaining_offsets;
+	}
+	
+	void MeshModel::AddMeshPolygon( const std::vector< unsigned >&  offsets,
+	                                const ColorMatrix&              color )
+	{
+		std::vector< std::vector< unsigned > > offset_groups;
+		
+		Convexify( offsets, itsMesh, std::back_inserter( offset_groups ) );
+		
+		typedef std::vector< std::vector< unsigned > >::const_iterator Iter;
+		
+		for ( Iter it = offset_groups.begin();  it != offset_groups.end();  ++it )
+		{
+			itsPolygons.push_back( MeshPolygon( *it, color ) );
+		}
+	}
+	
+	void MeshModel::AddMeshPolygon( const std::vector< unsigned >&  offsets,
+	                                const IntensityMap&             map,
+	                                const V::Point2D::Type&         ptA,
+	                                const V::Point2D::Type&         ptB )
+	{
+		itsPolygons.push_back( MeshPolygon( offsets, map, ptA, ptB ) );
+	}
+	
 	void MeshModel::CullBackfaces( const V::Point3D::Type& eye )
 	{
 		V::Point3D::Type points[3];

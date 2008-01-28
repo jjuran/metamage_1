@@ -196,18 +196,13 @@ namespace Vertice
 				return itsMesh.AddPoint( pt );
 			}
 			
-			void AddMeshPolygon( const std::vector< unsigned >& offsets, const ColorMatrix& color )
-			{
-				itsPolygons.push_back( MeshPolygon( offsets, color ) );
-			}
+			void AddMeshPolygon( const std::vector< unsigned >&  offsets,
+			                     const ColorMatrix&              color );
 			
 			void AddMeshPolygon( const std::vector< unsigned >&  offsets,
 			                     const IntensityMap&             map,
 			                     const V::Point2D::Type&         ptA,
-			                     const V::Point2D::Type&         ptB )
-			{
-				itsPolygons.push_back( MeshPolygon( offsets, map, ptA, ptB ) );
-			}
+			                     const V::Point2D::Type&         ptB );
 			
 			bool Selected() const  { return itIsSelected; }
 			
