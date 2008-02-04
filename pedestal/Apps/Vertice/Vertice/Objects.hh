@@ -25,24 +25,28 @@ namespace Vertice
 	
 	typedef Vectoria::Matrix< double, 3, 1 > ColorMatrix;
 	
-	class IntensityMap
+	class ImageTile
 	{
 		private:
-			unsigned               itsWidth;
-			std::vector< double >  itsValues;
+			unsigned                    itsWidth;
+			std::vector< ColorMatrix >  itsValues;
 		
 		public:
-			IntensityMap()  {}
+			ImageTile()  {}
 			
-			IntensityMap( unsigned width, const std::vector< double >& values ) : itsWidth( width ), itsValues( values )  {}
+			ImageTile( unsigned width,
+			           const std::vector< ColorMatrix >& values ) : itsWidth ( width  ),
+			                                                        itsValues( values )
+			{
+			}
 			
-			void Swap( IntensityMap& other );
+			void Swap( ImageTile& other );
 			
 			bool Empty() const  { return itsValues.empty(); }
 			
 			unsigned Width() const  { return itsWidth; }
 			
-			const std::vector< double >& Values() const  { return itsValues; }
+			const std::vector< ColorMatrix >& Values() const  { return itsValues; }
 	};
 	
 	
@@ -140,7 +144,7 @@ namespace Vertice
 			V::Point2D::Type       itsMapPoints[ 3 ];
 			Offset                 itsSavedOffsets[ 3 ];
 			ColorMatrix            itsColor;
-			IntensityMap           itsMap;
+			ImageTile              itsImageTile;
 		
 		public:
 			MeshPolygon()  {}
@@ -149,7 +153,7 @@ namespace Vertice
 			             const ColorMatrix&            color );
 			
 			MeshPolygon( const std::vector< Offset >&  offsets,
-			             const IntensityMap&           map,
+			             const ImageTile&              tile,
 			             const V::Point2D::Type&       ptA,
 			             const V::Point2D::Type&       ptB );
 			
@@ -165,7 +169,7 @@ namespace Vertice
 			
 			const ColorMatrix& Color() const  { return itsColor; }
 			
-			const IntensityMap& Map() const  { return itsMap; }
+			const ImageTile& Tile() const  { return itsImageTile; }
 	};
 	
 	// MeshModel combines a PointMesh and the polygons defined in terms of it.
@@ -200,7 +204,7 @@ namespace Vertice
 			                     const ColorMatrix&              color );
 			
 			void AddMeshPolygon( const std::vector< unsigned >&  offsets,
-			                     const IntensityMap&             map,
+			                     const ImageTile&                tile,
 			                     const V::Point2D::Type&         ptA,
 			                     const V::Point2D::Type&         ptB );
 			
@@ -269,7 +273,7 @@ namespace std
 {
 	
 	template <>
-	inline void swap( Vertice::IntensityMap& a, Vertice::IntensityMap& b )
+	inline void swap( Vertice::ImageTile& a, Vertice::ImageTile& b )
 	{
 		a.Swap( b );
 	}

@@ -10,6 +10,7 @@
 #include "Vectoria/LinearAlgebra3D.hh"
 #include "Vectoria/Polygon3D.hh"
 #include "Vectoria/Transform.hh"
+#include "Vectoria/TriColor.hh"
 
 
 namespace Vertice
@@ -21,7 +22,7 @@ namespace Vertice
 	using Vectoria::W;
 	
 	
-	void IntensityMap::Swap( IntensityMap& other )
+	void ImageTile::Swap( ImageTile& other )
 	{
 		std::swap( itsWidth,  other.itsWidth  );
 		std::swap( itsValues, other.itsValues );
@@ -159,10 +160,10 @@ namespace Vertice
 	}
 	
 	MeshPolygon::MeshPolygon( const std::vector< Offset >&  offsets,
-			                  const IntensityMap&           map,
-			                  const V::Point2D::Type&       ptA,
-			                  const V::Point2D::Type&       ptB ) : itsVertices( offsets ),
-			                                                        itsMap     ( map     )
+	                          const ImageTile&              tile,
+	                          const V::Point2D::Type&       ptA,
+	                          const V::Point2D::Type&       ptB ) : itsVertices ( offsets ),
+	                                                                itsImageTile( tile    )
 	{
 		itsSavedOffsets[ 0 ] = offsets[ 0 ];
 		itsSavedOffsets[ 1 ] = offsets[ 1 ];
@@ -187,7 +188,7 @@ namespace Vertice
 		std::swap( itsSavedOffsets[1], other.itsSavedOffsets[1] );
 		std::swap( itsSavedOffsets[2], other.itsSavedOffsets[2] );
 		std::swap( itsColor,           other.itsColor           );
-		std::swap( itsMap,             other.itsMap             );
+		std::swap( itsImageTile,       other.itsImageTile       );
 	}
 	
 	void MeshPolygon::SwapVertexOffsets( std::vector< Offset >& vertexOffsets )
@@ -361,11 +362,11 @@ namespace Vertice
 	}
 	
 	void MeshModel::AddMeshPolygon( const std::vector< unsigned >&  offsets,
-	                                const IntensityMap&             map,
+	                                const ImageTile&                tile,
 	                                const V::Point2D::Type&         ptA,
 	                                const V::Point2D::Type&         ptB )
 	{
-		itsPolygons.push_back( MeshPolygon( offsets, map, ptA, ptB ) );
+		itsPolygons.push_back( MeshPolygon( offsets, tile, ptA, ptB ) );
 	}
 	
 	void MeshModel::CullBackfaces( const V::Point3D::Type& eye )

@@ -15,6 +15,7 @@
 
 // Standard C++
 #include <algorithm>
+#include <functional>
 #include <list>
 #include <map>
 #include <string>
@@ -89,7 +90,7 @@ namespace Vertice
 		public:
 			typedef std::map< std::string, V::Point3D::Type > PointMap;
 			typedef std::map< std::string, ColorMatrix      > ColorMap;
-			typedef std::map< std::string, IntensityMap     > IntensityMapMap;
+			typedef std::map< std::string, ImageTile        > ImageTileMap;
 		
 		private:
 			Scene*               itsScene;
@@ -100,8 +101,8 @@ namespace Vertice
 			std::size_t          itsContextID;
 			PointMap             itsPoints;
 			ColorMap             itsColors;
-			IntensityMapMap      itsIntensityMaps;
-			const IntensityMap*  itsIntensityMap;
+			ImageTileMap         itsImageTileMaps;
+			const ImageTile*     itsImageTile;
 			double               its1U;
 			double               its1V;
 			double               its2U;
@@ -155,7 +156,7 @@ namespace Vertice
 		throw ParseError();
 	}
 	
-	static IntensityMap ReadMap( const char* begin, const char* end )
+	static std::vector< double > ReadMapValues( const char* begin, const char* end )
 	{
 		std::vector< double > values;
 		
@@ -177,8 +178,11 @@ namespace Vertice
 			values.push_back( value );
 		}
 		
-		std::size_t size = values.size();
-		
+		return values;
+	}
+	
+	static unsigned WidthFromTileSize( std::size_t size )
+	{
 		bool size_is_even_power_of_2 = (size & (size - 1)) == 0  &&  (size & 0x55555555) != 0;
 		
 		if ( !size_is_even_power_of_2 )
@@ -197,7 +201,37 @@ namespace Vertice
 		               | size >> 7 & 128
 		               | size >> 8 & 256;
 		
-		return IntensityMap( width, values );
+		return width;
+	}
+	
+	static ImageTile MakeImageTile( const std::vector< double >& values )
+	{
+		std::vector< ColorMatrix > colors;
+		
+		std::size_t size = values.size();
+		
+		if ( size % 3 != 0 )
+		{
+			colors.resize( size );
+			
+			std::transform( values.begin(),
+			                values.end(),
+			                colors.begin(),
+			                std::ptr_fun( V::MakeGray< double > ) );
+		}
+		else
+		{
+			colors.resize( size / 3 );
+			
+			for ( unsigned i = 0;  i < colors.size();  ++i )
+			{
+				colors[ i ] = V::MakeRGB( values[ 3 * i     ],
+				                          values[ 3 * i + 1 ],
+				                          values[ 3 * i + 2 ] );
+			}
+		}
+		
+		return ImageTile( WidthFromTileSize( colors.size() ), colors );
 	}
 	
 	void Parser::Define( const char* begin, const char* end )
@@ -220,7 +254,9 @@ namespace Vertice
 		}
 		else if ( type == "map" )
 		{
-			itsIntensityMaps[ name ] = ReadMap( begin, end );
+			ImageTile tile = MakeImageTile( ReadMapValues( begin, end ) );
+			
+			itsImageTileMaps[ name ] = tile;
 		}
 	}
 	
@@ -245,7 +281,7 @@ namespace Vertice
 	{
 		itsColor = ReadColor( begin, end );
 		
-		itsIntensityMap = NULL;
+		itsImageTile = NULL;
 	}
 	
 	void Parser::SetMap( const char* begin, const char* end )
@@ -254,16 +290,16 @@ namespace Vertice
 		
 		std::string name( begin, space );
 		
-		IntensityMapMap::const_iterator it = itsIntensityMaps.find( name );
+		ImageTileMap::const_iterator it = itsImageTileMaps.find( name );
 		
-		if ( it == itsIntensityMaps.end() )
+		if ( it == itsImageTileMaps.end() )
 		{
 			throw ParseError();
 		}
 		
 		begin = space + (space != end);
 		
-		itsIntensityMap = &it->second;
+		itsImageTile = &it->second;
 		
 		its1U = 1.0;
 		
@@ -379,10 +415,10 @@ namespace Vertice
 		
 		if ( !offsets.empty() )
 		{
-			if ( itsIntensityMap != NULL )
+			if ( itsImageTile != NULL )
 			{
 				context.AddMeshPolygon( offsets,
-				                        *itsIntensityMap,
+				                        *itsImageTile,
 				                        V::Point2D::Make( its1U, its1V ),
 				                        V::Point2D::Make( its2U, its2V ) );
 			}
@@ -433,7 +469,7 @@ namespace Vertice
 	                                 itsTheta    ( 0 ),
 	                                 itsPhi      ( 0 ),
 	                                 itsContextID( 0 ),
-	                                 itsIntensityMap()
+	                                 itsImageTile()
 	{
 	}
 	

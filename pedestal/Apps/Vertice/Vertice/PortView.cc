@@ -142,16 +142,16 @@ namespace Vertice
 	}
 	
 	
-	static double GetSampleFromMap( const IntensityMap& map, const V::Point2D::Type& point )
+	static ColorMatrix GetSampleFromMap( const ImageTile& tile, const V::Point2D::Type& point )
 	{
-		const unsigned width = map.Width();
+		const unsigned width = tile.Width();
 		
 		const int u = int( std::floor( point[ X ] * width ) ) % width;
 		const int v = int( std::floor( point[ Y ] * width ) ) % width;
 		
 		const unsigned index = v * width + u;
 		
-		return map.Values()[ index ];
+		return tile.Values()[ index ];
 	}
 	
 	
@@ -268,9 +268,9 @@ namespace Vertice
 				
 				ColorMatrix lightColor = colors[ tX ] / w;
 				
-				ColorMatrix color = ModulateGray( GetSampleFromMap( polygon.Map(),
-				                                                    uv_spectrum[ tX ] / w ),
-				                                  lightColor );
+				ColorMatrix color = ModulateColor( GetSampleFromMap( polygon.Tile(),
+				                                                     uv_spectrum[ tX ] / w ),
+				                                   lightColor );
 				
 				*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( color );
 			}
@@ -315,7 +315,7 @@ namespace Vertice
 		
 		const MeshPolygon& polygon = topLeft.Polygon();
 		
-		bool using_texture_map = !polygon.Map().Empty();
+		bool using_texture_map = !polygon.Tile().Empty();
 		
 		const Rect& portRect = N::GetPortBounds( port );
 		
@@ -954,7 +954,7 @@ namespace Vertice
 					
 					pt.itsColor = LightColor( dist, incidenceRatio, selected );
 					
-					if ( polygon.Map().Empty() )
+					if ( polygon.Tile().Empty() )
 					{
 						pt.itsColor = ModulateColor( polygon.Color(), pt.itsColor );
 					}
@@ -1146,7 +1146,7 @@ namespace Vertice
 							continue;
 						}
 						
-						const IntensityMap& texture = polygon.Map();
+						const ImageTile& tile = polygon.Tile();
 						
 						V::Point3D::Type savedPoints[3];
 						
@@ -1295,12 +1295,13 @@ namespace Vertice
 								
 								ColorMatrix lightColor = LightColor( dist, incidenceRatio, selected );
 								
-								ColorMatrix tweaked = texture.Empty() ? ModulateColor( polygon.Color(), lightColor )
-								                                      : ModulateGray( GetSampleFromMap( texture,
-								                                                                        InterpolatedUV( sectPt,
-								                                                                                        savedPoints,
-								                                                                                        polygon.MapPoints() ) ),
-								                                                      lightColor );
+								ColorMatrix sample = tile.Empty() ? polygon.Color()
+								                                  : GetSampleFromMap( tile,
+								                                                      InterpolatedUV( sectPt,
+								                                                                      savedPoints,
+								                                                                      polygon.MapPoints() ) );
+								
+								ColorMatrix tweaked = ModulateColor( sample, lightColor );
 								
 								::Ptr pixelAddr = rowAddr + (iX - pixBounds.left) * 32/8;
 								
