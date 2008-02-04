@@ -156,7 +156,7 @@ namespace Vertice
 		throw ParseError();
 	}
 	
-	static std::vector< double > ReadMapValues( const char* begin, const char* end )
+	static std::vector< double > ReadValues( const char* begin, const char* end )
 	{
 		std::vector< double > values;
 		
@@ -254,7 +254,7 @@ namespace Vertice
 		}
 		else if ( type == "tile" )
 		{
-			ImageTile tile = MakeImageTile( ReadMapValues( begin, end ) );
+			ImageTile tile = MakeImageTile( ReadValues( begin, end ) );
 			
 			itsImageTiles[ name ] = tile;
 		}
