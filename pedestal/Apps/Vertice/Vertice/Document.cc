@@ -101,7 +101,7 @@ namespace Vertice
 			std::size_t          itsContextID;
 			PointMap             itsPoints;
 			ColorMap             itsColors;
-			ImageTileMap         itsImageTileMaps;
+			ImageTileMap         itsImageTiles;
 			const ImageTile*     itsImageTile;
 			double               its1U;
 			double               its1V;
@@ -123,7 +123,7 @@ namespace Vertice
 			void SetContext    ( const char* begin, const char* end );
 			void MakeCamera    ( const char* begin, const char* end );
 			void SetColor      ( const char* begin, const char* end );
-			void SetMap        ( const char* begin, const char* end );
+			void SetTile       ( const char* begin, const char* end );
 			void SetOrigin     ( const char* begin, const char* end );
 			void Translate     ( const char* begin, const char* end );
 			void SetTheta      ( const char* begin, const char* end );
@@ -252,11 +252,11 @@ namespace Vertice
 		{
 			itsColors[ name ] = ReadColor( begin, end );
 		}
-		else if ( type == "map" )
+		else if ( type == "tile" )
 		{
 			ImageTile tile = MakeImageTile( ReadMapValues( begin, end ) );
 			
-			itsImageTileMaps[ name ] = tile;
+			itsImageTiles[ name ] = tile;
 		}
 	}
 	
@@ -284,15 +284,15 @@ namespace Vertice
 		itsImageTile = NULL;
 	}
 	
-	void Parser::SetMap( const char* begin, const char* end )
+	void Parser::SetTile( const char* begin, const char* end )
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
 		std::string name( begin, space );
 		
-		ImageTileMap::const_iterator it = itsImageTileMaps.find( name );
+		ImageTileMap::const_iterator it = itsImageTiles.find( name );
 		
-		if ( it == itsImageTileMaps.end() )
+		if ( it == itsImageTiles.end() )
 		{
 			throw ParseError();
 		}
@@ -439,7 +439,6 @@ namespace Vertice
 		handlers[ "context"   ] = &Parser::SetContext;
 		handlers[ "color"     ] = &Parser::SetColor;
 		handlers[ "define"    ] = &Parser::Define;
-		handlers[ "map"       ] = &Parser::SetMap;
 		handlers[ "origin"    ] = &Parser::SetOrigin;
 		handlers[ "translate" ] = &Parser::Translate;
 		handlers[ "theta"     ] = &Parser::SetTheta;
@@ -447,6 +446,7 @@ namespace Vertice
 		handlers[ "pt"        ] = &Parser::AddMeshPoint;
 		handlers[ "poly"      ] = &Parser::AddMeshPolygon;
 		handlers[ "polygon"   ] = &Parser::AddMeshPolygon;
+		handlers[ "tile"      ] = &Parser::SetTile;
 		
 		return handlers;
 	}
