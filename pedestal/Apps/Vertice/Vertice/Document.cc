@@ -436,17 +436,17 @@ namespace Vertice
 		std::map< std::string, Handler > handlers;
 		
 		handlers[ "camera"    ] = &Parser::MakeCamera;
-		handlers[ "context"   ] = &Parser::SetContext;
 		handlers[ "color"     ] = &Parser::SetColor;
+		handlers[ "context"   ] = &Parser::SetContext;
 		handlers[ "define"    ] = &Parser::Define;
 		handlers[ "origin"    ] = &Parser::SetOrigin;
-		handlers[ "translate" ] = &Parser::Translate;
-		handlers[ "theta"     ] = &Parser::SetTheta;
 		handlers[ "phi"       ] = &Parser::SetPhi;
-		handlers[ "pt"        ] = &Parser::AddMeshPoint;
 		handlers[ "poly"      ] = &Parser::AddMeshPolygon;
 		handlers[ "polygon"   ] = &Parser::AddMeshPolygon;
+		handlers[ "pt"        ] = &Parser::AddMeshPoint;
+		handlers[ "theta"     ] = &Parser::SetTheta;
 		handlers[ "tile"      ] = &Parser::SetTile;
+		handlers[ "translate" ] = &Parser::Translate;
 		
 		return handlers;
 	}
