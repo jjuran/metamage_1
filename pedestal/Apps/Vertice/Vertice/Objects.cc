@@ -234,10 +234,10 @@ namespace Vertice
 		
 		std::vector< V::Point3D::Type > points( size );
 		
-		transform( offsets.begin(),
-		           offsets.end(),
-		           points.begin(),
-		           mesh );
+		std::transform( offsets.begin(),
+		                offsets.end(),
+		                points.begin(),
+		                mesh );
 		
 		V::Vector3D::Type A = points[1] - points[0];
 		V::Vector3D::Type B = points[2] - points[1];
