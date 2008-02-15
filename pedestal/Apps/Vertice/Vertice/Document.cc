@@ -217,7 +217,7 @@ namespace Vertice
 			std::transform( values.begin(),
 			                values.end(),
 			                colors.begin(),
-			                std::ptr_fun( V::MakeGray< double > ) );
+			                std::ptr_fun( static_cast< ColorMatrix (*)( double ) >( V::MakeGray ) ) );
 		}
 		else
 		{
