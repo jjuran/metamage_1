@@ -61,6 +61,7 @@
 		lwz		r12,0(r12)		// load dispatcher T-vector
 		
 		bl		__ptr_glue		// cross-TOC call
+		nop						// synchronize pipeline
 		lwz		RTOC,20(SP)		// restore our RTOC
 		
 		addi	SP,SP,64		// deallocate our stack frame
