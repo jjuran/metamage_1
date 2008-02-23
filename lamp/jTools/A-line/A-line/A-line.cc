@@ -134,14 +134,24 @@ namespace ALine
 	*/
 	
 	
-	static void ExecuteCommand( const std::string& command )
+	static void PrintCommand( const std::string& command )
+	{
+		std::string command_line = command + "\n";
+		
+		p7::write( p7::stdout_fileno, command_line.data(), command_line.size() );
+	}
+	
+	static void PrintCommandForShell( const std::string& command )
 	{
 		if ( gOptions.verbose || gDryRun )
 		{
-			std::string command_line = command + "\n";
-			
-			p7::write( p7::stdout_fileno, command_line.data(), command_line.size() );
+			PrintCommand( command );
 		}
+	}
+	
+	static void ExecuteCommand( const std::string& command )
+	{
+		PrintCommandForShell( command );
 		
 		if ( gDryRun )
 		{
@@ -258,6 +268,8 @@ namespace ALine
 		std::string targetName = MakeTargetName( targetInfo );
 		
 		std::string targetDir = TargetDirPath( targetName );
+		
+		PrintCommandForShell( "cd " + targetDir );
 		
 		chdir( targetDir.c_str() );
 		
