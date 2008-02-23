@@ -396,21 +396,6 @@ namespace Genie
 		}
 	}
 	
-	static void Patch68KStartupToNotRestoreRegisters( void* codePtr )
-	{
-		const UInt32 nopnop = 0x4e714e71;
-		
-		char* code = (char*) codePtr;
-		
-		UInt32* saveRegisters = reinterpret_cast< unsigned long* >( code + 12 );
-		
-		*saveRegisters = nopnop;
-		
-		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( code + 32 );
-		
-		*restoreRegisters = nopnop;
-	}
-	
 	
 	static std::vector< const char* > ArgVectorFromCmdLine( const std::string& cmdLine )
 	{
@@ -458,8 +443,6 @@ namespace Genie
 		const void* applScratch[3] = { envp, NULL, NULL };
 		
 		LMSetApplScratch( applScratch );
-		
-		Patch68KStartupToNotRestoreRegisters( mainPtr );
 		
 	#endif
 		

@@ -113,12 +113,30 @@ namespace Genie
 		return BinaryFileMetadata( pb.hFileInfo );
 	}
 	
-	inline NN::Owned< N::Ptr > ReadProgramAsCodeResource()
+	
+	static void Patch68KStartupToNotRestoreRegisters( ::Ptr code )
+	{
+		const UInt32 nopnop = 0x4e714e71;
+		
+		UInt32* saveRegisters = reinterpret_cast< unsigned long* >( code + 12 );
+		
+		*saveRegisters = nopnop;
+		
+		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( code + 32 );
+		
+		*restoreRegisters = nopnop;
+	}
+	
+	static NN::Owned< N::Ptr > ReadProgramAsCodeResource()
 	{
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
-		return NN::Convert< NN::Owned< N::Ptr > >( N::Get1Resource( resType, resID ) );
+		NN::Owned< N::Ptr > code = NN::Convert< NN::Owned< N::Ptr > >( N::Get1Resource( resType, resID ) );
+		
+		Patch68KStartupToNotRestoreRegisters( code.Get() );
+		
+		return code;
 	}
 	
 	static bool SuffixMatches( const unsigned char* name, const unsigned char* endOfName, const char* pattern, std::size_t length )
