@@ -12,6 +12,9 @@
 // POSIX
 #include <sys/wait.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
@@ -19,6 +22,9 @@
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
 #include "Nitrogen/Str.h"
+
+// Io
+#include "Io/TextInput.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -33,6 +39,7 @@
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace p7 = poseven;
 namespace O = Orion;
 
 
@@ -193,6 +200,8 @@ namespace jTools
 	
 	static std::string outputFilename;
 	
+	static FSSpec gOutputFile;
+	
 	
 	static std::string CommandFromArch( const std::string& arch )
 	{
@@ -228,9 +237,9 @@ namespace jTools
 	
 	static std::string OutputFile( const char* pathname )
 	{
-		FSSpec file = Div::ResolvePathToFSSpec( pathname );
+		gOutputFile = Div::ResolvePathToFSSpec( pathname );
 		
-		std::string macPathname = GetMacPathname( file );
+		std::string macPathname = GetMacPathname( gOutputFile );
 		
 		std::string map = ppc ? "-map" : "-mapide";
 		
@@ -287,6 +296,47 @@ namespace jTools
 		                        : "-xm c -rsrcfar -rsrcflags system -rt Wish=0";
 		
 		return build + " -t Wish -c Poof";
+	}
+	
+	static void Mark68KEntryPoints( const FSSpec& file )
+	{
+		FSSpec linkMap = file;
+		
+		const char* dotMap = ".map";
+		
+		std::copy( dotMap, dotMap + 4, linkMap.name + 1 + linkMap.name[0] );
+		
+		linkMap.name[0] += 4;
+		
+		Io::TextInputAdapter< NN::Owned< N::FSFileRefNum > > input( io::open_for_reading( linkMap ) );
+		
+		std::string code = "Code: ";
+		
+		while ( input.Ready() )
+		{
+			std::string line = input.Read();
+			
+			if ( line.find( "\"__InitCode__\"" ) == line.npos )  continue;
+			
+			if ( std::equal( code.begin(), code.end(), line.begin() ) )
+			{
+				unsigned long offset = std::strtoul( line.c_str() + code.size(), NULL, 16 );
+				
+				NN::Owned< N::Handle > h = N::NewHandle( 4 );
+				
+				*reinterpret_cast< UInt32* >( *h.Get().Get() ) = offset;
+				
+				NN::Owned< N::ResFileRefNum > resFileOpened( N::FSpOpenResFile( file, N::fsRdWrPerm ) );
+				
+				N::AddResource( h, N::ResType( 'Entr' ), N::ResID( 0 ), "\p" "__InitCode__" );
+				
+				return;
+			}
+		}
+		
+		p7::write( p7::stderr_fileno, STR_LEN( "ld: can't find __InitCode__ in link map for 68K tool\n" ) );
+		
+		O::ThrowExitStatus( 1 );
 	}
 	
 	static int Main( int argc, iota::argv_t argv )
@@ -487,6 +537,11 @@ namespace jTools
 		
 		std::string output = "tlsrvr --switch --escape -- " + command + ldArgs + '\n';
 		
+		if ( io::file_exists( gOutputFile ) )
+		{
+			io::delete_file( gOutputFile );
+		}
+		
 		if ( verbose )
 		{
 			write( STDOUT_FILENO, output.data(), output.size() );
@@ -494,7 +549,19 @@ namespace jTools
 		
 		int wait_status = system( output.c_str() );
 		
-		return exit_from_wait( wait_status );
+		int exit_status = exit_from_wait( wait_status );
+		
+		if ( exit_status != 0 )
+		{
+			return exit_status;
+		}
+		
+		if ( m68k  &&  gProductType == kProductTool )
+		{
+			Mark68KEntryPoints( gOutputFile );
+		}
+		
+		return exit_status;
 	}
 	
 }
