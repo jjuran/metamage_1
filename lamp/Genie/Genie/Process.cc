@@ -396,53 +396,19 @@ namespace Genie
 		}
 	}
 	
-	static const char* FindSequenceInMemory( const char* mem_begin,
-	                                         const char* mem_end,
-	                                         const char* seq_begin,
-	                                         const char* seq_end )
+	static void Patch68KStartupToNotRestoreRegisters( void* codePtr )
 	{
-		std::ptrdiff_t sequence_length = seq_end - seq_begin;
+		const UInt32 nopnop = 0x4e714e71;
 		
-		while ( sequence_length <= mem_end - mem_begin )
-		{
-			if ( std::equal( seq_begin, seq_end, mem_begin ) )
-			{
-				return mem_begin;
-			}
-			
-			++mem_begin;
-		}
+		char* code = (char*) codePtr;
 		
-		return mem_end;
-	}
-	
-	typedef long (*SetCurrentA4ProcPtr)();
-	
-	static SetCurrentA4ProcPtr GetCurrentA4Setter( void* mainPtr )
-	{
-		const char* codeBytes = (char*) mainPtr;
+		UInt32* saveRegisters = reinterpret_cast< unsigned long* >( code + 12 );
 		
-		const char* end = codeBytes + N::GetPtrSize( (Ptr) mainPtr );
+		*saveRegisters = nopnop;
 		
-		const std::ptrdiff_t patternOffset = 10;
+		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( code + 32 );
 		
-		const UInt16 pattern[] = { 0x2008, 0xA055, 0xC18C, 0x4E75 };
-		
-		const char* pattern_location = FindSequenceInMemory( codeBytes,
-		                                                     end,
-		                                                     (const char*) pattern,
-		                                                     (const char*) pattern + sizeof pattern );
-		
-		if ( pattern_location == end )
-		{
-			throw N::ParamErr();  // FIXME
-		}
-		
-		const char* address_of_SetCurrentA4 = pattern_location - patternOffset;
-		
-		SetCurrentA4ProcPtr setCurrentA4 = (SetCurrentA4ProcPtr) address_of_SetCurrentA4;
-		
-		return setCurrentA4;
+		*restoreRegisters = nopnop;
 	}
 	
 	
@@ -471,18 +437,17 @@ namespace Genie
 	
 	static int RunFromContext( Process* process )
 	{
-		// Local variables need to be volatile so they don't get assigned to A4
-		volatile Main3 mainPtr = process->GetMain();
+		Main3 mainPtr = process->GetMain();
 		
 		ASSERT( mainPtr != NULL );
 		
 		std::vector< const char* > argVector = ArgVectorFromCmdLine( process->GetCmdLine() );
 		
-		volatile int argc = argVector.size() - 1;  // don't count trailing NULL
+		int argc = argVector.size() - 1;  // don't count trailing NULL
 		
-		volatile iota::argp_t argv = &argVector.front();
+		iota::argp_t argv = &argVector.front();
 		
-		volatile iota::environ_t envp = process->GetEnviron();
+		iota::environ_t envp = process->GetEnviron();
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
@@ -494,9 +459,7 @@ namespace Genie
 		
 		LMSetApplScratch( applScratch );
 		
-		SetCurrentA4ProcPtr setCurrentA4 = GetCurrentA4Setter( mainPtr );
-		
-		setCurrentA4();
+		Patch68KStartupToNotRestoreRegisters( mainPtr );
 		
 	#endif
 		
