@@ -114,6 +114,23 @@ namespace Genie
 	}
 	
 	
+	static UInt32 GetInitCodeEntryPoint()
+	{
+		UInt32 offset = 0;
+		
+		try
+		{
+			N::Handle h = N::Get1NamedResource( N::ResType( 'Entr' ), "\p" "__InitCode__" );
+			
+			offset = *(UInt32*) *h.Get();
+		}
+		catch ( ... )
+		{
+		}
+		
+		return offset;
+	}
+	
 	static void Patch68KStartupToNotRestoreRegisters( ::Ptr code )
 	{
 		const UInt32 nopnop = 0x4e714e71;
@@ -125,6 +142,13 @@ namespace Genie
 		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( code + 32 );
 		
 		*restoreRegisters = nopnop;
+		
+		if ( UInt32 offset = GetInitCodeEntryPoint() )
+		{
+			UInt32 jsrInitCode = 0x4eba0000 | (offset - 34);
+			
+			*restoreRegisters = jsrInitCode;
+		}
 	}
 	
 	static NN::Owned< N::Ptr > ReadProgramAsCodeResource()
