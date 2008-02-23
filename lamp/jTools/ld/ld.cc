@@ -228,7 +228,13 @@ namespace jTools
 	
 	static std::string OutputFile( const char* pathname )
 	{
-		return "-o " + QuotedMacPathFromPOSIXPath( pathname );
+		FSSpec file = Div::ResolvePathToFSSpec( pathname );
+		
+		std::string macPathname = GetMacPathname( file );
+		
+		std::string map = ppc ? "-map" : "-mapide";
+		
+		return "-o '" + macPathname + "' " + map + " '" + macPathname + ".map' -cmap 'R*ch'";
 	}
 	
 	std::vector< const char* > gLibraryDirs;
