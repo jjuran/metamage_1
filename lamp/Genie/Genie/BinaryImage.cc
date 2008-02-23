@@ -123,6 +123,8 @@ namespace Genie
 			N::Handle h = N::Get1NamedResource( N::ResType( 'Entr' ), "\p" "__InitCode__" );
 			
 			offset = *(UInt32*) *h.Get();
+			
+			N::ReleaseResource( h );
 		}
 		catch ( ... )
 		{
