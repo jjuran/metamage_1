@@ -27,9 +27,11 @@ namespace MD5
 			 | (word & (0xFF << 24)) >> 24;
 	}
 	
+	// MWC68K doesn't define __BIG_ENDIAN__, so we have to use __LITTLE_ENDIAN__.
+	
 	inline unsigned int HostFromLittle32( unsigned int word )
 	{
-	#ifdef __BIG_ENDIAN__
+	#ifndef __LITTLE_ENDIAN__
 		
 		word = byteswap4( word );
 		
@@ -40,7 +42,7 @@ namespace MD5
 	
 	inline unsigned int LittleFromHost32( unsigned int word )
 	{
-	#ifdef __BIG_ENDIAN__
+	#ifndef __LITTLE_ENDIAN__
 		
 		word = byteswap4( word );
 		
