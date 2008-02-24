@@ -6,8 +6,14 @@
 // Mac OS
 #include <LowMem.h>
 
+// Standard C/C++
+#include <cerrno>
+
 // Lamp
 #include "lamp/syscalls.h"
+
+// Kerosene
+#include "FreeTheMallocPool.h"
 
 
 #pragma exceptions off
@@ -15,14 +21,10 @@
 
 #if TARGET_CPU_68K
 	
-	extern "C" void InitializeProcess();
-	
 	enum { kDispatcherAddr = (long) LMGetToolScratch() };
 	
 	static asm void SystemCall()
 	{
-		JSR			InitializeProcess	;
-		
 		MOVEA.L		kDispatcherAddr,A0	;  // load the dispatcher's address
 										;  // arg 1:  syscall index already on stack
 		JMP			(A0)				;  // jump to dispatcher -- doesn't return
@@ -37,6 +39,26 @@
 	    	MOVE.L #__NR_##name,-(SP) ;  \
 	    	JMP SystemCall            ;  \
 	    }
+	
+	
+	typedef void (*CleanupHandler)();
+	
+	asm static void InitProc( CleanupHandler, int* )
+	{
+		MOVE.L #__NR_InitProc,-(SP) ;
+		JMP SystemCall              ;
+	}
+	
+	class Initializer
+	{
+		public:
+			Initializer()
+			{
+				InitProc( FreeTheMallocPool, &errno );
+			}
+	};
+	
+	static Initializer gInitializer;
 	
 #endif
 
@@ -73,12 +95,6 @@
 			li r11,__NR_##name ;  \
 			b SystemCall       ;  \
 		}
-	
-#endif
-
-#if TARGET_CPU_68K
-	
-	DEFINE_STUB( InitProc )
 	
 #endif
 

@@ -3,48 +3,17 @@
  *	==============
  */
 
-// Standard C
-#include "errno.h"
-
 // POSIX
 #include "netdb.h"
-//#include "unistd.h"
 
 // Mac OS
-#include <LowMem.h>
 #include <OpenTransportProviders.h>
-//#include <Sound.h>
-//#include <Threads.h>
 
 // Kerosene
 #include "SystemCalls.hh"
-#include "FreeTheMallocPool.h"
 
 
 #pragma exceptions off
-
-
-typedef void (*CleanupHandler)();
-
-#if TARGET_CPU_68K
-
-extern "C" void InitProc( CleanupHandler, int* );
-
-extern "C" void InitializeProcess();
-
-void InitializeProcess()
-{
-	static bool beenHere = false;
-	
-	if ( !beenHere )
-	{
-		beenHere = true;
-		
-		InitProc( FreeTheMallocPool, &errno );
-	}
-}
-
-#endif
 
 
 #if 0
