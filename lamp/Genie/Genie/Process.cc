@@ -824,99 +824,20 @@ namespace Genie
 		
 		Normalize( context, GetCWD() );
 		
+		itsCmdLine.Assign( &context.argVector.front() );
+		
 		itsProgramFile = context.executable;
 		
 		// Save the binary image that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.
 		itsOldMainEntry = itsMainEntry;
 		
+		// This sets the errno address on PPC -- any subsequent errors will get lost
 		itsMainEntry = itsProgramFile->GetMainEntry();
-		
-		K::Versions assumedVersions;
-		
-		assumedVersions.current        = 2;
-		assumedVersions.lastCompatible = 2;
-		
-		K::Versions* versions = &assumedVersions;
-		
-	#if 0
-		
-		try
-		{
-			N::FindSymbol( itsFragmentConnection, "\p" "gVersions", &versions );
-		}
-		catch ( ... )
-		{
-			// The practice of exporting main() postdates that of exporting gVersions.
-			// Therefore, we can conclude that a drop-in which exports main() but omits
-			// gVersions does so deliberately, whereas one which omits both we must
-			// assume to be indefinitely old.
-			// The latter case currently results in a warning, and subsequently
-			// (once the protocol incompatibly changes) an error.
-			// But the former indicates a program with zero dependence on the
-			// kernel interface, and therefore ought not be version-checked.
-			// (If such a program supplied version information, then a future version
-			// of Genie with kLastCompatibleLibVersion augmented would needlessly
-			// refuse to run it.)
-			if ( mainEntryPoint == NULL )
-			{
-				//Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
-				
-				//Err << "No version data found.\n";
-			}
-		}
-		
-		using K::kCurrentVersion;
-		using K::kLastCompatibleLibVersion;
-		
-		if ( kCurrentVersion > versions->current )
-		{
-			/*
-			Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
-			
-			// Plugin interface is older than what we know
-			Err << "Plugin uses interface version "
-			    << versions->current
-			    << "\n";
-			*/
-			
-			if ( versions->current < kLastCompatibleLibVersion )
-			{
-				// It's too old
-				//Err << "The plugin is too old\n";
-				throw N::CFragImportTooOldErr();
-			}
-		}
-		else if ( kCurrentVersion < versions->current )
-		{
-			/*
-			Io::Stream< IORef > Err = FileDescriptors()[ 2 ].handle;
-			
-			// Plugin interface is newer than we know
-			Err << "Plugin uses interface version "
-			    << versions->current
-			    << "\n";
-			*/
-			
-			if ( kCurrentVersion < versions->lastCompatible )
-			{
-				// We're too old
-				//Err << "The plugin is too new\n";
-				throw N::CFragImportTooNewErr();
-			}
-		}
-		
-	#endif
-		
-		itsCmdLine.Assign( &context.argVector.front() );
-		
-		//itsErrnoData = itsMainEntry->GetErrnoPtr();
 		
 		iota::environ_t* environ_address = ENVIRON_IS_SHARED ? &gApplScratchGlobals.env : itsMainEntry->GetEnvironPtr();
 		
 		ResetEnviron( envp, environ_address );
-		
-		itsResult = 0;
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
