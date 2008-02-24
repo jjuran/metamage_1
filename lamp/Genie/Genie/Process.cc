@@ -436,10 +436,6 @@ namespace Genie
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
-		const void* toolScratch[2] = { DispatchSystemCall, NULL };
-		
-		LMSetToolScratch( toolScratch );
-		
 		const void* applScratch[3] = { envp, NULL, NULL };
 		
 		LMSetApplScratch( applScratch );
@@ -702,6 +698,8 @@ namespace Genie
 		itsProgramFile        ( FSRoot() ),
 		itsCleanupHandler     ()
 	{
+		*reinterpret_cast< void** >( LMGetToolScratch() ) = DispatchSystemCall;
+		
 		char const *const argv[] = { "init", NULL };
 		
 		itsCmdLine.Assign( argv );
