@@ -7,16 +7,11 @@
 #include <ConditionalMacros.h>
 #endif
 
-// POSIX
-#include "errno.h"
-
 // Iota
 #include "iota/environ.hh"
 
 
 #pragma export on
-
-int errno;
 
 #if TARGET_RT_MAC_CFM
 	
