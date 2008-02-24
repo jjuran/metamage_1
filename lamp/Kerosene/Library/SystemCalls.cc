@@ -34,11 +34,11 @@
 	
 	#define DEFINE_STUB( name )          \
 		extern "C" void name();          \
-	    asm void name()                  \
-	    {                                \
-	    	MOVE.L #__NR_##name,-(SP) ;  \
-	    	JMP SystemCall            ;  \
-	    }
+		asm void name()                  \
+		{                                \
+			MOVE.L #__NR_##name,-(SP) ;  \
+			JMP SystemCall            ;  \
+		}
 	
 	
 	typedef void (*CleanupHandler)();
