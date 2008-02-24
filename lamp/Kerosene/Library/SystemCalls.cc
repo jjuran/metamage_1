@@ -42,11 +42,7 @@
 
 #if TARGET_CPU_PPC
 	
-	#pragma export on
-		
-		void    (*gDispatcher)();
-		
-	#pragma export reset
+	static void* const gDispatcher = *reinterpret_cast< void** >( ::LMGetToolScratch() );
 	
 	extern "C" void __ptr_glue();
 	
@@ -57,8 +53,7 @@
 		
 		stwu	SP,-64(SP)		// allocate our own stack frame
 		
-		lwz		r12,gDispatcher	// load address of export
-		lwz		r12,0(r12)		// load dispatcher T-vector
+		lwz		r12,gDispatcher	// load dispatcher T-vector
 		
 		bl		__ptr_glue		// cross-TOC call
 		nop						// synchronize pipeline
