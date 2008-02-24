@@ -19,6 +19,9 @@
 #pragma exceptions off
 
 
+typedef void (*CleanupHandler)();
+
+
 #if TARGET_CPU_68K
 	
 	enum { kDispatcherAddr = (long) LMGetToolScratch() };
@@ -41,24 +44,11 @@
 		}
 	
 	
-	typedef void (*CleanupHandler)();
-	
 	asm static void InitProc( CleanupHandler, int* )
 	{
 		MOVE.L #__NR_InitProc,-(SP) ;
 		JMP SystemCall              ;
 	}
-	
-	class Initializer
-	{
-		public:
-			Initializer()
-			{
-				InitProc( FreeTheMallocPool, &errno );
-			}
-	};
-	
-	static Initializer gInitializer;
 	
 #endif
 
@@ -96,7 +86,27 @@
 			b SystemCall       ;  \
 		}
 	
+	
+	asm static void InitProc( CleanupHandler, int* )
+	{
+		li r11,__NR_InitProc ;
+		b SystemCall         ;
+	}
+	
 #endif
+
+
+class Initializer
+{
+	public:
+		Initializer()
+		{
+			InitProc( TARGET_RT_MAC_CFM ? NULL : &FreeTheMallocPool, &errno );
+		}
+};
+
+static Initializer gInitializer;
+
 
 DEFINE_STUB( _exit )
 DEFINE_STUB( SpawnVFork )
