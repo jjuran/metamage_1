@@ -31,14 +31,11 @@ namespace Genie
 	{
 		private:
 			Main3             itsMain;
-			int*              itsErrno;
 			iota::environ_t*  itsEnviron;
 		
 		public:
 			MainEntryPoint( Main3             main,
-			                int*              err = NULL,
 			                iota::environ_t*  env = NULL) : itsMain   ( main ),
-			                                                itsErrno  ( err  ),
 			                                                itsEnviron( env  )
 			{
 			}
@@ -47,11 +44,7 @@ namespace Genie
 			
 			Main3 GetMainPtr() const  { return itsMain; }
 			
-			int* GetErrnoPtr() const  { return itsErrno; }
-			
 			iota::environ_t* GetEnvironPtr() const  { return itsEnviron; }
-			
-			void SetErrnoPtr( int* address )  { itsErrno = address; }  // for 68K
 	};
 	
 	typedef boost::shared_ptr< MainEntryPoint > MainEntry;

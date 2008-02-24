@@ -42,7 +42,6 @@ namespace Genie
 		public:
 			CodeResourceMain( const BinaryImage& image ) : BinaryImageClient( image ),
 			                                               MainEntryPoint( reinterpret_cast< Main3 >( image.Get().Get() ),
-			                                                               NULL,
 			                                                               NULL )
 			{
 			}
@@ -84,21 +83,6 @@ namespace Genie
 				return mainEntry;
 			}
 			
-			int* GetErrno() const
-			{
-				int* errnoPtr = NULL;
-				
-				try
-				{
-					N::FindSymbol( itsFragmentConnection, "\p" "errno", &errnoPtr );
-				}
-				catch ( ... )
-				{
-				}
-				
-				return errnoPtr;
-			}
-			
 			iota::environ_t* GetEnviron() const
 			{
 				iota::environ_t* environPtr = NULL;
@@ -125,7 +109,6 @@ namespace Genie
 	CFMPluginMain::CFMPluginMain( const BinaryImage& image ) : BinaryImageClient( image        ),
 	                                                           ConnectedFragment( image        ),
 	                                                           MainEntryPoint   ( GetMain   (),
-	                                                                              GetErrno  (),
 	                                                                              GetEnviron() )
 	{
 	}

@@ -131,6 +131,8 @@ namespace Genie
 			
 			boost::shared_ptr< ProcessGroup > itsProcessGroup;
 			
+			int* itsErrno;
+			
 			Backtrace::StackFramePtr itsStackFramePtr;
 			
 			SavedRegisters itsSavedRegisters;
@@ -191,7 +193,7 @@ namespace Genie
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
-			void SetErrnoPtr( int* address )  { itsMainEntry->SetErrnoPtr( address ); }
+			void SetErrnoPtr( int* address )  { itsErrno = address; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
