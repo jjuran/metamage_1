@@ -310,9 +310,7 @@ namespace Genie
 	
 #if TARGET_CPU_PPC
 	
-	extern "C" void DispatchSystemCall();
-	
-	asm void DispatchSystemCall()
+	static asm void DispatchSystemCall()
 	{
 		// save caller's return address
 		mflr	r0

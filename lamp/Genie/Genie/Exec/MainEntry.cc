@@ -21,9 +21,6 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	extern "C" void DispatchSystemCall();
-	
-	
 	MainEntryPoint::~MainEntryPoint()
 	{
 	}
@@ -76,16 +73,6 @@ namespace Genie
 		public:
 			ConnectedFragment( const BinaryImage& image ) : itsFragmentConnection( ConnectToFragment( image ) )
 			{
-				try
-				{
-					LoadSymbol( itsFragmentConnection,
-					            "\p" "gDispatcher",
-					            DispatchSystemCall );
-				}
-				catch ( ... )
-				{
-					// dispatcher optional if you don't make system calls
-				}
 			}
 			
 			Main3 GetMain() const
