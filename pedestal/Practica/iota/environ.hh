@@ -37,15 +37,15 @@ namespace iota
 
 #if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 	
-	// ToolScratch:  addr = 0x09CE, len = 8 bytes
+	// ApplScratch:  addr = 0x0A78, len = 12 bytes
 	
 	#ifdef __cplusplus
 		
-		static iota::environ_t& environ = *reinterpret_cast< iota::environ_t* >(LMGetToolScratch() + 4);
+		static iota::environ_t& environ = *reinterpret_cast< iota::environ_t* >( LMGetApplScratch() );
 		
 	#else
 		
-		#define                 environ  (*                 (      environ_t*) (LMGetToolScratch() + 4) )
+		#define                 environ  (*                 (      environ_t*) LMGetApplScratch() )
 		
 	#endif
 	
