@@ -132,13 +132,11 @@
 // 125
 // 126
 #define __NR_pump                      127
-
-#define __NR_getenv                    128
-#define __NR_setenv                    129
-#define __NR_unsetenv                  130
-#define __NR_putenv                    131
-#define __NR_clearenv                  132
-
+// 128
+// 129
+// 130
+// 131
+// 132
 #define __NR_opendir                   133
 #define __NR_closedir                  134
 #define __NR_readdir                   135
