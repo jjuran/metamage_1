@@ -3,6 +3,9 @@
  *	==================
  */
 
+// Mac OS Universal Interfaces
+#include <LowMem.h>
+
 // Standard C
 #include "errno.h"
 #include <stdarg.h>
@@ -16,6 +19,14 @@
 #include "sys/stat.h"
 #include "unistd.h"
 
+// Iota
+#include "iota/environ.hh"
+
+// ShellShock
+#include "ShellShock/VarArray.hh"
+
+
+//
 
 	static std::string LookupPath( const char* filename )
 	{
@@ -153,3 +164,181 @@
 		return execv( file, argv );
 	}
 	
+	
+	iota::environ_t environ = reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1];
+	
+	
+	class Environ
+	{
+		private:
+			std::auto_ptr< ShellShock::VarArray > itsEnvironStorage;
+			
+			std::string itsLastEnv;
+		
+		public:
+			Environ();
+			
+			~Environ();
+			
+			void UpdateEnvironValue();
+			
+			char* GetEnv( const char* name );
+			void SetEnv( const char* name, const char* value, bool overwrite );
+			void PutEnv( const char* string );
+			void UnsetEnv( const char* name );
+			void ClearEnv();
+	};
+	
+	
+	namespace Sh = ShellShock;
+	
+	Environ::Environ() : itsEnvironStorage( environ ? new Sh::VarArray( environ )
+	                                                : new Sh::VarArray(         ) )
+	{
+		UpdateEnvironValue();
+	}
+	
+	Environ::~Environ()
+	{
+	}
+	
+	void Environ::UpdateEnvironValue()
+	{
+		environ = itsEnvironStorage->GetPointer();
+	}
+	
+	char* Environ::GetEnv( const char* name )
+	{
+		char* result = NULL;
+		
+		Sh::SVector::const_iterator it = itsEnvironStorage->Find( name );
+		
+		const char* var = *it;
+		
+		const char* end = Sh::EndOfVarName( var );
+		
+		// Did we find the right environment variable?
+		if ( end != NULL  &&  *end == '='  &&  Sh::VarMatchesName( var, end, name ) )
+		{
+			itsLastEnv = var;
+			itsLastEnv += "\0";  // make sure we have a trailing null
+			
+			std::size_t offset = end + 1 - var;
+			
+			result = &itsLastEnv[ offset ];
+		}
+		
+		return result;
+	}
+	
+	void Environ::SetEnv( const char* name, const char* value, bool overwrite )
+	{
+		Sh::SVector::iterator it = itsEnvironStorage->Find( name );
+		
+		const char* var = *it;
+		
+		// Did we find the right environment variable?
+		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
+		
+		// If it doesn't match, we insert (otherwise, we possibly overwrite)
+		bool inserting = !match;
+		
+		if ( inserting )
+		{
+			itsEnvironStorage->Insert( it, Sh::MakeVar( name, value ) );
+			
+			UpdateEnvironValue();
+		}
+		else if ( overwrite )
+		{
+			itsEnvironStorage->Overwrite( it, Sh::MakeVar( name, value ) );
+		}
+	}
+	
+	void Environ::PutEnv( const char* string )
+	{
+		std::string name = string;
+		name.resize( name.find( '=' ) );
+		
+		Sh::SVector::iterator it = itsEnvironStorage->Find( name.c_str() );
+		
+		const char* var = *it;
+		
+		// Did we find the right environment variable?
+		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name.c_str() );
+		
+		// If it doesn't match, we insert (otherwise, we possibly overwrite)
+		bool inserting = !match;
+		
+		if ( inserting )
+		{
+			itsEnvironStorage->Insert( it, string );
+			
+			UpdateEnvironValue();
+		}
+		else
+		{
+			itsEnvironStorage->Overwrite( it, string );
+		}
+	}
+	
+	void Environ::UnsetEnv( const char* name )
+	{
+		Sh::SVector::iterator it = itsEnvironStorage->Find( name );
+		
+		const char* var = *it;
+		
+		// Did we find the right environment variable?
+		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
+		
+		if ( match )
+		{
+			itsEnvironStorage->Remove( it );
+		}
+	}
+	
+	void Environ::ClearEnv()
+	{
+		itsEnvironStorage->Clear();
+		
+		environ = NULL;
+	}
+	
+	static Environ gEnviron;
+	
+	
+	char* getenv( const char* name )
+	{
+		return gEnviron.GetEnv( name );
+	}
+	
+	int setenv( const char* name, const char* value, int overwrite )
+	{
+		gEnviron.SetEnv( name, value, overwrite );
+		
+		return 0;
+	}
+	
+	int putenv( const char* string )
+	{
+		gEnviron.PutEnv( string );
+		
+		return 0;
+	}
+	
+	void unsetenv( const char* name )
+	{
+		gEnviron.UnsetEnv( name );
+	}
+	
+	extern "C" int clearenv();
+	
+	int clearenv()
+	{
+		gEnviron.ClearEnv();
+		
+		return 0;
+	}
+	
+//
+

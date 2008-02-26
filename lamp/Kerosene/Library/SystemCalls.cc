@@ -194,12 +194,6 @@ DEFINE_STUB( recvfrom )
 
 DEFINE_STUB( pump )
 
-DEFINE_STUB( getenv )
-DEFINE_STUB( setenv )
-DEFINE_STUB( unsetenv )
-DEFINE_STUB( putenv )
-DEFINE_STUB( clearenv )
-
 DEFINE_STUB( opendir )
 DEFINE_STUB( closedir )
 DEFINE_STUB( readdir )
