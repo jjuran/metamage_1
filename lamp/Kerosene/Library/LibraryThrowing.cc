@@ -44,8 +44,6 @@
 				
 				std::string tryPath = dir + "/" + filename;
 				
-				const char* foo = separator;
-				
 				struct ::stat sb;
 				int status = stat( tryPath.c_str(), &sb );
 				
@@ -53,18 +51,6 @@
 				{
 					return tryPath;
 				}
-				
-				// This seems to trash separator in CFM68K
-				//int fd = open( tryPath.c_str(), O_RDONLY );
-				
-				separator = foo;
-				
-				if ( foo != separator )
-				{
-					//std::printf( "%s\n", "Warning: foo != separator" );
-				}
-				
-				//std::printf( "%s\n", " nope" );
 			}
 			
 			// If we're at the end, then this sets pathVar > pathEnd
