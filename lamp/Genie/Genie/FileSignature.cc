@@ -24,8 +24,30 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	static bool OSXIsRunning()
+	{
+		UInt32 version = N::Gestalt( N::GestaltSelector( gestaltSystemVersion ) );
+		
+		if ( version > 0x1000 )
+		{
+			return true;
+		}
+		else if ( version < 0x0900 )
+		{
+			return false;
+		}
+		
+		long machine = N::Gestalt( N::GestaltSelector( gestaltMachineType ) );
+		
+		return machine == gestaltMacOSCompatibility;
+	}
+	
 	N::OSType TextFileCreator()
 	{
+		static bool runningOSX = OSXIsRunning();
+		
+		return N::OSType( runningOSX ? '!Rch' : 'R*ch' );
+		
 		if ( const char* macEditorSignature = CurrentProcess().GetEnv( "MAC_EDITOR_SIGNATURE" ) )
 		{
 			try
