@@ -35,7 +35,6 @@
 #include "Genie/Exec/MainEntry.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileSystem/FSTree.hh"
-#include "Genie/Process/Environ.hh"
 #include "Genie/Process/LongJumper.hh"
 #include "Genie/Process/SavedRegisters.hh"
 #include "Genie/Process/TimeKeeper.hh"
@@ -112,8 +111,7 @@ namespace Genie
 			const std::string& Data() const  { return itsStorage; }
 	};
 	
-	class Process : public Environ,
-	                public TimeKeeper,
+	class Process : public TimeKeeper,
 	                public LongJumper,
 	                public TraceTarget
 	{
@@ -132,6 +130,8 @@ namespace Genie
 			boost::shared_ptr< ProcessGroup > itsProcessGroup;
 			
 			int* itsErrno;
+			
+			iota::environ_t itsEnvP;
 			
 			Backtrace::StackFramePtr itsStackFramePtr;
 			
@@ -194,6 +194,8 @@ namespace Genie
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
 			void SetErrnoPtr( int* address )  { itsErrno = address; }
+			
+			iota::environ_t GetEnvP() const  { return itsEnvP; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }

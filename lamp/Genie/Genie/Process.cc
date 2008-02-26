@@ -361,39 +361,20 @@ namespace Genie
 	
 #endif
 	
-	typedef void (*Dispatcher)( const char* );
-	
-	typedef void (*DispatcherByIndex)( unsigned );
+	typedef void (*Dispatcher)( unsigned );
 	
 	struct ToolScratchGlobals
 	{
 		Dispatcher       dispatcher;
-		DispatcherByIndex  dispatcherByIndex;
+		iota::environ_t  envp;
 	};
 	
 	struct ApplScratchGlobals
 	{
-		iota::environ_t  env;
 		void*            reserved1;
 		void*            reserved2;
+		void*            reserved3;
 	};
-	
-#if TARGET_API_MAC_CARBON
-	
-	#define LMGetApplScratch() NULL
-	
-#endif
-	
-	static ApplScratchGlobals& gApplScratchGlobals = *reinterpret_cast< ApplScratchGlobals* >( LMGetApplScratch() );
-	
-	inline void SwapInEnvironValue( iota::environ_t envp )
-	{
-		if ( ENVIRON_IS_SHARED )
-		{
-			gApplScratchGlobals.env = envp;
-		}
-	}
-	
 	
 	static std::vector< const char* > ArgVectorFromCmdLine( const std::string& cmdLine )
 	{
@@ -430,13 +411,11 @@ namespace Genie
 		
 		iota::argp_t argv = &argVector.front();
 		
-		iota::environ_t envp = process->GetEnviron();
+		iota::environ_t envp = process->GetEnvP();
 		
 	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
 		
-		const void* applScratch[3] = { envp, NULL, NULL };
-		
-		LMSetApplScratch( applScratch );
+		reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1] = envp;
 		
 	#endif
 		
@@ -683,6 +662,7 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsErrno              ( NULL ),
+		itsEnvP               ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
@@ -710,12 +690,12 @@ namespace Genie
 	
 	Process::Process( Process& parent ) 
 	:
-		Environ( parent ),
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( GetProcessList().NewProcess( this ) ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsErrno              ( parent.itsErrno ),
+		itsEnvP               ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
@@ -832,12 +812,12 @@ namespace Genie
 		// We can't use stack storage because we run the risk of the thread terminating.
 		itsOldMainEntry = itsMainEntry;
 		
+		itsEnvP = envp;
+		
+		reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1] = envp;
+		
 		// This sets the errno address on PPC -- any subsequent errors will get lost
 		itsMainEntry = itsProgramFile->GetMainEntry();
-		
-		iota::environ_t* environ_address = ENVIRON_IS_SHARED ? &gApplScratchGlobals.env : itsMainEntry->GetEnvironPtr();
-		
-		ResetEnviron( envp, environ_address );
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -907,9 +887,6 @@ namespace Genie
 		
 		itsInterdependence = Forked() ? kProcessForked
 		                              : kProcessIndependent;
-		
-		// Restore environ (which was pointing into the child's environ storage)
-		UpdateEnvironValue();
 		
 		pid_t child = itsForkedChildPID;
 		
@@ -1078,8 +1055,6 @@ namespace Genie
 		gCurrentProcess = this;
 		
 		itsStackFramePtr = NULL;  // We don't track this while running
-		
-		SwapInEnvironValue( GetEnviron() );
 		
 		itsSchedule = kProcessRunning;
 		

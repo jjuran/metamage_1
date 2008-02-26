@@ -30,21 +30,16 @@ namespace Genie
 	class MainEntryPoint
 	{
 		private:
-			Main3             itsMain;
-			iota::environ_t*  itsEnviron;
+			Main3 itsMain;
 		
 		public:
-			MainEntryPoint( Main3             main,
-			                iota::environ_t*  env = NULL) : itsMain   ( main ),
-			                                                itsEnviron( env  )
+			MainEntryPoint( Main3 main ) : itsMain( main )
 			{
 			}
 			
 			virtual ~MainEntryPoint();
 			
 			Main3 GetMainPtr() const  { return itsMain; }
-			
-			iota::environ_t* GetEnvironPtr() const  { return itsEnviron; }
 	};
 	
 	typedef boost::shared_ptr< MainEntryPoint > MainEntry;

@@ -27,7 +27,6 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_socket   )
 	DECLARE_MODULE_INIT( Kernel_Spawn    )
 	DECLARE_MODULE_INIT( Kernel_stat     )
-	DECLARE_MODULE_INIT( Kernel_stdlib   )
 	DECLARE_MODULE_INIT( Kernel_symlink  )
 	DECLARE_MODULE_INIT( Kernel_time     )
 	DECLARE_MODULE_INIT( Kernel_times    )
@@ -52,7 +51,6 @@ namespace Genie
 		CALL_MODULE_INIT( Kernel_socket   );
 		CALL_MODULE_INIT( Kernel_Spawn    );
 		CALL_MODULE_INIT( Kernel_stat     );
-		CALL_MODULE_INIT( Kernel_stdlib   );
 		CALL_MODULE_INIT( Kernel_symlink  );
 		CALL_MODULE_INIT( Kernel_time     );
 		CALL_MODULE_INIT( Kernel_times    );

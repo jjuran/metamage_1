@@ -41,8 +41,7 @@ namespace Genie
 	{
 		public:
 			CodeResourceMain( const BinaryImage& image ) : BinaryImageClient( image ),
-			                                               MainEntryPoint( reinterpret_cast< Main3 >( image.Get().Get() ),
-			                                                               NULL )
+			                                               MainEntryPoint( reinterpret_cast< Main3 >( image.Get().Get() ) )
 			{
 			}
 	};
@@ -82,21 +81,6 @@ namespace Genie
 				
 				return mainEntry;
 			}
-			
-			iota::environ_t* GetEnviron() const
-			{
-				iota::environ_t* environPtr = NULL;
-				
-				try
-				{
-					N::FindSymbol( itsFragmentConnection, "\p" "environ", &environPtr );
-				}
-				catch ( ... )
-				{
-				}
-				
-				return environPtr;
-			}
 	};
 	
 	class CFMPluginMain : public BinaryImageClient, public ConnectedFragment, public MainEntryPoint
@@ -106,10 +90,9 @@ namespace Genie
 	};
 	
 	
-	CFMPluginMain::CFMPluginMain( const BinaryImage& image ) : BinaryImageClient( image        ),
-	                                                           ConnectedFragment( image        ),
-	                                                           MainEntryPoint   ( GetMain   (),
-	                                                                              GetEnviron() )
+	CFMPluginMain::CFMPluginMain( const BinaryImage& image ) : BinaryImageClient( image     ),
+	                                                           ConnectedFragment( image     ),
+	                                                           MainEntryPoint   ( GetMain() )
 	{
 	}
 	
