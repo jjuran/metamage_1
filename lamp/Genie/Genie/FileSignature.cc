@@ -9,13 +9,13 @@
 #include <map>
 
 // Nucleus
-#include "Nucleus/Convert.h"
+//#include "Nucleus/Convert.h"
 
 // Nitrogen
-#include "Nitrogen/MacTypes.h"
+#include "Nitrogen/Gestalt.h"
 
 // Genie
-#include "Genie/Process.hh"
+//#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -48,6 +48,7 @@ namespace Genie
 		
 		return N::OSType( runningOSX ? '!Rch' : 'R*ch' );
 		
+		/*
 		if ( const char* macEditorSignature = CurrentProcess().GetEnv( "MAC_EDITOR_SIGNATURE" ) )
 		{
 			try
@@ -63,6 +64,7 @@ namespace Genie
 		const N::OSType sigSimpleText = N::OSType( 'ttxt' );
 		
 		return sigSimpleText;
+		*/
 	}
 	
 	
