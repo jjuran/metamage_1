@@ -137,7 +137,7 @@ using BitsAndBytes::EncodeAsHex;
 using BitsAndBytes::EncodeDecimal2;
 
 
-static int TestUnit( int argc, const char *const argv[] )
+static int TestUnit( int argc, iota::argv_t argv )
 {
 	Test::SampleTester tester;
 	
@@ -150,7 +150,7 @@ static int TestUnit( int argc, const char *const argv[] )
 	return (status + 2) % 3;  // 0 => passed, 1 => failed, 2 => missed
 }
 
-static int TestAssert( int argc, const char *const argv[] )
+static int TestAssert( int argc, iota::argv_t argv )
 {
 	ASSERT( "This" == "a test" );
 	//TEST_ASSERT( "This" == "a test" );
@@ -158,7 +158,7 @@ static int TestAssert( int argc, const char *const argv[] )
 	return 0;
 }
 
-static int TestMap( int argc, const char *const argv[] )
+static int TestMap( int argc, iota::argv_t argv )
 {
 	std::vector< std::string > foo;
 	
@@ -322,7 +322,7 @@ TEST( Vector )
 	TEST_ASSERT( V::MagnitudeSquared( v2 ) == 25 );
 }
 
-static int TestVectoria( int argc, const char *const argv[] )
+static int TestVectoria( int argc, iota::argv_t argv )
 {
 	namespace V = Vectoria;
 	
@@ -421,7 +421,7 @@ static bool TestAFPServer(const std::string& serverName)
 
 #endif  // #if !TARGET_API_MAC_CARBON
 
-static int TestAFP(int argc, const char *const argv[])
+static int TestAFP( int argc, iota::argv_t argv )
 {
 	const char* server = argv[ 2 ];
 	
@@ -444,7 +444,7 @@ static int TestAFP(int argc, const char *const argv[])
 }
 
 
-static int TestDate(int argc, const char *const argv[])
+static int TestDate( int argc, iota::argv_t argv )
 {
 	Io::Out << "DateTime == " << N::GetDateTime() << "\n";
 	return 0;
@@ -534,7 +534,7 @@ static short CalcCRC(register const unsigned char *dataBuf, register long size)
 	return crc;
 }
 
-static int TestCRC16(int argc, const char *const argv[])
+static int TestCRC16( int argc, iota::argv_t argv )
 {
 	if (argc < 3)  return 1;
 	
@@ -550,7 +550,7 @@ static int TestCRC16(int argc, const char *const argv[])
 	return 0;
 }
 
-static int TestCRC32(int argc, const char *const argv[])
+static int TestCRC32( int argc, iota::argv_t argv )
 {
 	if (argc < 3)  return 1;
 	
@@ -584,7 +584,7 @@ TEST( MD5 )
 	                                                           "5678901234567890" ) );
 }
 
-static int TestMD5(int argc, const char *const argv[])
+static int TestMD5( int argc, iota::argv_t argv )
 {
 	if (argc < 3)  return 1;
 	
@@ -616,7 +616,7 @@ static void PrintADBRegister( const ADBRegister& reg )
 	std::putc( '\n', stdout );
 }
 
-static int TestADB( int argc, const char *const argv[] )
+static int TestADB( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
 	
@@ -654,7 +654,7 @@ static int TestADB( int argc, const char *const argv[] )
 
 #endif
 
-static int TestOADC(int argc, const char *const argv[])
+static int TestOADC( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
 	
@@ -696,7 +696,7 @@ class HasSignature
 		}
 };
 
-static int TestProcesses( int argc, char const *const argv[] )
+static int TestProcesses( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
 	
@@ -733,7 +733,7 @@ static int TestProcesses( int argc, char const *const argv[] )
 	return 0;
 }
 
-static int TestSoundInput( int argc, char const *const argv[] )
+static int TestSoundInput( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
 	
@@ -769,7 +769,7 @@ static void PrintString( const std::string& s )
 	Io::Out << s << "\n";
 }
 
-static int TestAE( int argc, char const *const argv[] )
+static int TestAE( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
 	NN::Owned< AEDescList > list = N::AECreateList< false >();
@@ -816,7 +816,7 @@ void MyThreadRoutine( const std::string& param  )
 	
 }
 
-static int TestThread( int argc, char const *const argv[] )
+static int TestThread( int argc, iota::argv_t argv )
 {
 	int done = 0;
 	
@@ -912,7 +912,7 @@ static void DoSomethingWithServiceFile( const FSSpec& file )
 	}
 }
 
-static int TestServices( int argc, char const *const argv[] )
+static int TestServices( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
 	
@@ -943,7 +943,7 @@ static void WriteToNull( int foo )
 	*null = foo;
 }
 
-static int TestNull( int argc, char const *const argv[] )
+static int TestNull( int argc, iota::argv_t argv )
 {
 	int foo = ReadFromNull();
 	
@@ -990,7 +990,7 @@ static int TestNull( int argc, char const *const argv[] )
 		return NX::DataPtr< FragmentImage >( result, size );
 	}
 	
-static int TestGMFShared( int argc, char const *const argv[] )
+static int TestGMFShared( int argc, iota::argv_t argv )
 {
 #if TARGET_RT_MAC_CFM
 	
@@ -1023,7 +1023,7 @@ static int TestGMFShared( int argc, char const *const argv[] )
 	return 0;
 }
 
-static int TestStrError( int argc, char const *const argv[] )
+static int TestStrError( int argc, iota::argv_t argv )
 {
 	errno = 0;
 	
@@ -1039,7 +1039,7 @@ static int TestStrError( int argc, char const *const argv[] )
 	return 0;
 }
 
-static int TestThrow( int argc, char const *const argv[] )
+static int TestThrow( int argc, iota::argv_t argv )
 {
 	if ( argc < 3 )  return 1;
 	
@@ -1053,7 +1053,7 @@ static int TestThrow( int argc, char const *const argv[] )
 	return 0;
 }
 
-static int TestReadLoc( int argc, char const *const argv[] )
+static int TestReadLoc( int argc, iota::argv_t argv )
 {
 	//if ( argc < 3 )  return 1;
 	
@@ -1114,7 +1114,7 @@ static int TestReadLoc( int argc, char const *const argv[] )
 	return 0;
 }
 
-static int TestKeys( int argc, char const *const argv[] )
+static int TestKeys( int argc, iota::argv_t argv )
 {
 	KeyMap keys;
 	
@@ -1170,7 +1170,7 @@ class path_generator
 		}
 };
 
-static int TestPath( int argc, char const *const argv[] )
+static int TestPath( int argc, iota::argv_t argv )
 {
 	if ( argc < 3 )
 	{
@@ -1246,7 +1246,7 @@ void TestMangling( Foo::Bar_i_ )
 	TestMangling( bar );
 }
 
-static int TestMangling( int argc, char const *const argv[] )
+static int TestMangling( int argc, iota::argv_t argv )
 {
 	Foo::Bar_i_ bar_i_;
 	
@@ -1266,7 +1266,7 @@ static pascal void MyCallback()
 
 typedef pascal unsigned char (*InitMainProcPtr)( RGBColor* );
 
-static int TestCallback( int argc, char const *const argv[] )
+static int TestCallback( int argc, iota::argv_t argv )
 {
 	if ( argc <= 2 )
 	{
@@ -1296,7 +1296,7 @@ static int TestCallback( int argc, char const *const argv[] )
 
 
 
-static int TestUnmangle( int argc, char const *const argv[] )
+static int TestUnmangle( int argc, iota::argv_t argv )
 {
 	if ( argc <= 2 )
 	{
@@ -1359,7 +1359,7 @@ static int TestDefaultThreadStackSize( int argc, iota::argv_t argv )
 	return 0;
 }
 
-typedef int (*MainProcPtr)(int argc, const char *const argv[]);
+typedef int (*MainProcPtr)( int argc, iota::argv_t argv );
 
 struct SubMain
 {
