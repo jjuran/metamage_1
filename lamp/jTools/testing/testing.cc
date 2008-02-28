@@ -40,7 +40,6 @@
 #include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"
-#include "vfork.h"
 
 // Lamp
 #ifdef __MWERKS__
