@@ -1307,9 +1307,8 @@ static int TestUnmangle( int argc, char const *const argv[] )
 	
 	const char* name = argv[2];
 	
-	std::string unmangled = name[0] == '_' ? Backtrace::UnmangleGCC   ( name )
-	                      : name[0] == '.' ? Backtrace::UnmangleMWCPPC( name )
-	                      :                  Backtrace::UnmangleMWC68K( name );
+	std::string unmangled = name[0] == '.' ? Backtrace::UnmangleMWCPPC( name )
+	                                       : Backtrace::UnmangleMWC68K( name );
 	
 	unmangled += "\n";
 	
