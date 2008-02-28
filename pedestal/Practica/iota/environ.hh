@@ -6,12 +6,6 @@
 #ifndef IOTA_ENVIRON_HH
 #define IOTA_ENVIRON_HH
 
-#ifdef __MC68K__
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
-#endif
-
 
 #ifdef __cplusplus
 namespace iota
@@ -35,33 +29,17 @@ namespace iota
 }
 #endif
 
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
+
+#ifdef __cplusplus
 	
-	// ApplScratch:  addr = 0x0A78, len = 12 bytes
-	
-	#ifdef __cplusplus
-		
-		static iota::environ_t& environ = *reinterpret_cast< iota::environ_t* >( LMGetApplScratch() );
-		
-	#else
-		
-		#define                 environ  (*                 (      environ_t*) LMGetApplScratch() )
-		
-	#endif
+	extern iota::environ_t environ;
 	
 #else
 	
-	#ifdef __cplusplus
-		
-		extern iota::environ_t environ;
-		
-	#else
-		
-		extern environ_t environ;
-		
-	#endif
+	extern environ_t environ;
 	
 #endif
+
 
 #endif
 
