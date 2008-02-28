@@ -23,7 +23,7 @@ namespace iota
 #endif
 	
 	typedef env_t const *envp_t;
-	typedef env_t const *environ_t;
+	typedef env_t const  environ_t[];
 	
 #ifdef __cplusplus
 }
