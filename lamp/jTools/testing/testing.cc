@@ -745,8 +745,11 @@ static int TestSoundInput( int argc, iota::argv_t argv )
 	
 	for ( ;  it != end;  ++it )
 	{
-		Io::Out << *it
-		        << "\n";
+		ConstStr255Param deviceName = *it;
+		
+		std::string output = NN::Convert< std::string >( deviceName ) + "\n";
+		
+		p7::write( p7::stdout_fileno, output.data(), output.size() );
 	}
 	
 	return 0;
