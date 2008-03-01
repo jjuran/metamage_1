@@ -10,7 +10,6 @@
 #include "Nitrogen/Files.h"
 
 // Genie
-#include "Genie/BinaryImage.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -112,11 +111,14 @@ namespace Genie
 		return MainEntry( new MainEntryPoint( address ) );
 	}
 	
+	MainEntry GetMainEntryFromBinaryImage( const BinaryImage& binary )
+	{
+		return MainEntry( new ExternalBinaryMain( binary ) );
+	}
+	
 	MainEntry GetMainEntryFromFile( const FSSpec& file )
 	{
-		BinaryImage binary = GetBinaryImage( file );
-		
-		return MainEntry( new ExternalBinaryMain( binary ) );
+		return GetMainEntryFromBinaryImage( GetBinaryImage( file ) );
 	}
 	
 }

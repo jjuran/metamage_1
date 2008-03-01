@@ -16,6 +16,9 @@
 #include "iota/argv.hh"
 #include "iota/environ.hh"
 
+// Genie
+#include "Genie/BinaryImage.hh"
+
 
 struct FSSpec;
 
@@ -55,6 +58,8 @@ namespace Genie
 	{
 		return GetMainEntryFromAddress( reinterpret_cast< Main3 >( address ) );
 	}
+	
+	MainEntry GetMainEntryFromBinaryImage( const BinaryImage& file );
 	
 	MainEntry GetMainEntryFromFile( const FSSpec& file );
 	
