@@ -399,25 +399,22 @@ namespace Genie
 		return result;
 	}
 	
-	static int RunFromContext( Process* process )
+	int Process::Run()
 	{
-		Main3 mainPtr = process->GetMain();
+		std::vector< const char* > argVector = ArgVectorFromCmdLine( itsCmdLine.Data() );
+		
+		int          argc = argVector.size() - 1;  // don't count trailing NULL
+		iota::argp_t argv = &argVector.front();
+		iota::envp_t envp = itsEnvP;
+		
+		// Pass envp in ToolScratch + 4 to initialize environ
+		reinterpret_cast< iota::envp_t* >( LMGetToolScratch() )[1] = envp;
+		
+		itsMainEntry = itsProgramFile->GetMainEntry();
+		
+		Main3 mainPtr = itsMainEntry->GetMainPtr();
 		
 		ASSERT( mainPtr != NULL );
-		
-		std::vector< const char* > argVector = ArgVectorFromCmdLine( process->GetCmdLine() );
-		
-		int argc = argVector.size() - 1;  // don't count trailing NULL
-		
-		iota::argp_t argv = &argVector.front();
-		
-		iota::environ_t envp = process->GetEnvP();
-		
-	#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-		
-		reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1] = envp;
-		
-	#endif
 		
 		// This is a separate function so registers get saved and restored
 		int exit_status = mainPtr( argc, argv, envp );
@@ -432,7 +429,7 @@ namespace Genie
 		{
 			process->InitThread();
 			
-			int exit_status = RunFromContext( process );
+			int exit_status = process->Run();
 			
 			// Accumulate any user time between last system call (if any) and return from main()
 			process->EnterSystemCall( "*RETURN*" );
@@ -810,14 +807,15 @@ namespace Genie
 		
 		// Save the binary image that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.
-		itsOldMainEntry = itsMainEntry;
+		itsOldMainEntry   = itsMainEntry;
+		itsOldBinaryImage = itsBinaryImage;
 		
 		itsEnvP = envp;
 		
-		reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1] = envp;
-		
-		// This sets the errno address on PPC -- any subsequent errors will get lost
-		itsMainEntry = itsProgramFile->GetMainEntry();
+		// This is just to make sure that the fiel is executable.
+		// It breaks kernel-builtin binaries for now, but too bad.
+		itsBinaryImage = GetBinaryImage( itsProgramFile->GetFSSpec() );  // throws on bad executable
+		itsBinaryImage.reset();
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the

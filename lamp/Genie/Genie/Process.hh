@@ -32,6 +32,7 @@
 #include "Nitrogen/Threads.h"
 
 // Genie
+#include "Genie/BinaryImage.hh"
 #include "Genie/Exec/MainEntry.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FileSystem/FSTree.hh"
@@ -158,6 +159,10 @@ namespace Genie
 		
 		private:
 			FSTreePtr itsProgramFile;
+			
+			BinaryImage itsBinaryImage;
+			BinaryImage itsOldBinaryImage;
+			
 			MainEntry itsMainEntry;
 			MainEntry itsOldMainEntry;
 			
@@ -187,15 +192,13 @@ namespace Genie
 			
 			~Process();
 			
-			Main3 GetMain() const  { return itsMainEntry->GetMainPtr(); }
+			int Run();
 			
 			const std::string& GetCmdLine() const  { return itsCmdLine.Data(); }
 			
 			void SetCleanupHandler( CleanupHandlerProc cleanup )  { itsCleanupHandler = cleanup; }
 			
 			void SetErrnoPtr( int* address )  { itsErrno = address; }
-			
-			iota::environ_t GetEnvP() const  { return itsEnvP; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
