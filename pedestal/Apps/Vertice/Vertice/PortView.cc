@@ -465,10 +465,10 @@ namespace Vertice
 		return a[ Y ] > b[ Y ];
 	}
 	
-	void AdvanceVertexIterator( std::vector< DeepVertex >::const_iterator&  it,
-	                            unsigned                                    top_index,
-	                            unsigned                                    bottom_index,
-	                            bool                                        on_right )
+	static void AdvanceVertexIterator( std::vector< DeepVertex >::const_iterator&  it,
+	                                   unsigned                                    top_index,
+	                                   unsigned                                    bottom_index,
+	                                   bool                                        on_right )
 	{
 		bool seam_is_on_right = top_index < bottom_index;
 		
