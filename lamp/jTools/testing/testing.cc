@@ -123,7 +123,6 @@
 
 // Orion
 #include "Orion/Main.hh"
-#include "Orion/StandardIO.hh"
 
 
 namespace N = Nitrogen;
@@ -432,11 +431,15 @@ static int TestAFP( int argc, iota::argv_t argv )
 	const char* supports = isRunningOSX ? "does not support"
 	                                    : "supports";
 	
-	Io::Out << "Server '"
-	        << server
-	        << "' "
-	        << supports
-	        << " AppleTalk.\n";
+	std::string message;
+	
+	message += "Server '";
+	message += server;
+	message += "' ";
+	message += supports;
+	message += " AppleTalk.\n";
+	
+	p7::write( p7::stdout_fileno, message.data(), message.size() );
 	
 #endif
 	
@@ -446,7 +449,8 @@ static int TestAFP( int argc, iota::argv_t argv )
 
 static int TestDate( int argc, iota::argv_t argv )
 {
-	Io::Out << "DateTime == " << N::GetDateTime() << "\n";
+	std::printf( "DateTime == %.8x\n", N::GetDateTime() );
+	
 	return 0;
 }
 
@@ -544,8 +548,10 @@ static int TestCRC16( int argc, iota::argv_t argv )
 	
 	unsigned int lcsCRC = CalcCRC     ( (const unsigned char*)text, std::strlen( text ) );
 	
-	Io::Out << "MB3: " << EncodeAsHex( mb3CRC ) << "\n";
-	Io::Out << "LCS: " << EncodeAsHex( lcsCRC ) << "\n";
+	std::printf( "MB3: %.8x\n"
+	             "LCS: %.8x\n",
+	                   mb3CRC,
+	                   lcsCRC );
 	
 	return 0;
 }
@@ -557,7 +563,7 @@ static int TestCRC32( int argc, iota::argv_t argv )
 	const char* text = argv[2];
 	unsigned int crc = CRC32::Checksum(text, std::strlen(text));
 	
-	Io::Out << EncodeAsHex(crc) << "\n";
+	std::printf( "%.8x\n", crc );
 	
 	return 0;
 }
@@ -590,7 +596,9 @@ static int TestMD5( int argc, iota::argv_t argv )
 	
 	const char* text = argv[ 2 ];
 	
-	Io::Out << MD5Hex( text ) << "\n";
+	std::string message = MD5Hex( text ) + "\n";
+	
+	p7::write( p7::stdout_fileno, message.data(), message.size() );
 	
 	return 0;
 }
@@ -669,7 +677,7 @@ static int TestOADC( int argc, iota::argv_t argv )
 			::CloseComponent( ci );
 		}
 		
-		Io::Out << "OpenADefaultComponent returned " << err << ".\n";
+		std::printf( "OpenADefaultComponent returned %d.\n", err );
 	}
 	
 	return 0;
@@ -714,11 +722,13 @@ static int TestProcesses( int argc, iota::argv_t argv )
 	{
 		N::GetProcessInformation( *it, info );
 		
-		Io::Out << "'"
-		        << NN::Convert< std::string >( N::FourCharCode( info.processSignature ) )
-		        << "' "
-		        << NN::Convert< std::string, const unsigned char* >( name )
-		        << "\n";
+		std::string message = "'"
+		                    + NN::Convert< std::string >( N::FourCharCode( info.processSignature ) )
+		                    + "' "
+		                    + NN::Convert< std::string, const unsigned char* >( name )
+		                    + "\n";
+		
+		p7::write( p7::stdout_fileno, message.data(), message.size() );
 	}
 	
 	N::Process_Container::const_iterator finder = std::find_if( N::Processes().begin(),
@@ -727,7 +737,7 @@ static int TestProcesses( int argc, iota::argv_t argv )
 	
 	if ( finder != N::Processes().end() )
 	{
-		Io::Out << finder->highLongOfPSN << "-" << finder->lowLongOfPSN << "\n";
+		std::printf( "%.8x-%.8x\n", finder->highLongOfPSN, finder->lowLongOfPSN );
 	}
 	
 	return 0;
@@ -767,9 +777,11 @@ static std::string Capitalize( std::string s )
 	return s;
 }
 
-static void PrintString( const std::string& s )
+static void PrintString( std::string s )
 {
-	Io::Out << s << "\n";
+	s += "\n";
+	
+	p7::write( p7::stdout_fileno, s.data(), s.size() );
 }
 
 static int TestAE( int argc, iota::argv_t argv )
@@ -814,9 +826,9 @@ void MyThreadRoutine( const std::string& param  );
 
 void MyThreadRoutine( const std::string& param  )
 {
-	Io::Out << "Param is " << param << "\n";
+	std::string message = "Param is " + param + "\n";
 	
-	
+	p7::write( p7::stdout_fileno, message.data(), message.size() );
 }
 
 static int TestThread( int argc, iota::argv_t argv )
@@ -847,11 +859,12 @@ static int TestThread( int argc, iota::argv_t argv )
 		try
 		{
 			state = N::GetThreadState( thread );
-			Io::Out << "State is " << state << "\n";
+			
+			std::printf( "State is %d\n", state );
 		}
-		catch ( N::OSStatus err )
+		catch ( const N::OSStatus& err )
 		{
-			Io::Err << "OSStatus " << err << "\n";
+			std::fprintf( stderr, "OSStatus %d\n", err.Get() );
 		}
 		
 		++count;
@@ -859,7 +872,7 @@ static int TestThread( int argc, iota::argv_t argv )
 		if ( count >= 5 )  break;
 	}
 	
-	Io::Out << "Looped " << count << " times.\n";
+	std::printf( "Looped %d times.\n", count );
 	
 	return 0;
 }
