@@ -22,6 +22,8 @@ namespace Vertice
 	enum AnaglyphMode
 	{
 		kNoAnaglyph,
+		kTrueAnaglyph,
+		kGrayAnaglyph,
 		kColorAnaglyph,
 		kHalfColorAnaglyph,
 		kOptimizedAnaglyph

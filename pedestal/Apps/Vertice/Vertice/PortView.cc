@@ -1007,27 +1007,41 @@ namespace Vertice
 		}
 	}
 	
-	static void MergeColorAnaglyph( ::Ptr left, ::Ptr right )
+	static void MergeTrueAnaglyph( ::Byte* left, const ::Byte* right )
+	{
+		left[1] = 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3];
+		left[2] = 0;
+		left[3] = 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3];
+	}
+	
+	static void MergeGrayAnaglyph( ::Byte* left, const ::Byte* right )
+	{
+		left[1] = 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3];
+		left[2] = 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3];
+		left[3] = 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3];
+	}
+	
+	static void MergeColorAnaglyph( ::Byte* left, const ::Byte* right )
 	{
 		left[2] = right[2];
 		left[3] = right[3];
 	}
 	
-	static void MergeHalfColorAnaglyph( ::Ptr left, ::Ptr right )
+	static void MergeHalfColorAnaglyph( ::Byte* left, const ::Byte* right )
 	{
 		left[1] = 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3];
 		left[2] = right[2];
 		left[3] = right[3];
 	}
 	
-	static void MergeOptimizedAnaglyph( ::Ptr left, ::Ptr right )
+	static void MergeOptimizedAnaglyph( ::Byte* left, const ::Byte* right )
 	{
 		left[1] = 0.7 * left[2] + 0.3 * left[3];
 		left[2] = right[2];
 		left[3] = right[3];
 	}
 	
-	typedef void (*AnaglyphicMerge)( ::Ptr, ::Ptr );
+	typedef void (*AnaglyphicMerge)( ::Byte*, const ::Byte* );
 	
 	void PortView::DrawAnaglyphic()
 	{
@@ -1035,6 +1049,14 @@ namespace Vertice
 		
 		switch ( itsAnaglyphMode )
 		{
+			case kTrueAnaglyph:
+				merge = &MergeTrueAnaglyph;
+				break;
+			
+			case kGrayAnaglyph:
+				merge = &MergeGrayAnaglyph;
+				break;
+			
 			case kColorAnaglyph:
 				merge = &MergeColorAnaglyph;
 				break;
@@ -1105,8 +1127,8 @@ namespace Vertice
 			{
 				std::size_t pixelOffset = rowOffset + x * 4;
 				
-				::Ptr addrL = baseL + pixelOffset;
-				::Ptr addrR = baseR + pixelOffset;
+				::BytePtr addrL = (::BytePtr) baseL + pixelOffset;
+				::BytePtr addrR = (::BytePtr) baseR + pixelOffset;
 				
 				merge( addrL, addrR );
 			}
@@ -1602,14 +1624,22 @@ namespace Vertice
 				break;
 			
 			case 's':
-				itsAnaglyphMode = kColorAnaglyph;
+				itsAnaglyphMode = kTrueAnaglyph;
 				break;
 			
 			case 'd':
-				itsAnaglyphMode = kHalfColorAnaglyph;
+				itsAnaglyphMode = kGrayAnaglyph;
 				break;
 			
 			case 'f':
+				itsAnaglyphMode = kColorAnaglyph;
+				break;
+			
+			case 'g':
+				itsAnaglyphMode = kHalfColorAnaglyph;
+				break;
+			
+			case 'h':
 				itsAnaglyphMode = kOptimizedAnaglyph;
 				break;
 			
