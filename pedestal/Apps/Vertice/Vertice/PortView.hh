@@ -19,6 +19,14 @@
 namespace Vertice
 {
 	
+	enum AnaglyphMode
+	{
+		kNoAnaglyph,
+		kColorAnaglyph,
+		kHalfColorAnaglyph,
+		kOptimizedAnaglyph
+	};
+	
 	class PortView : public Pedestal::View
 	{
 		private:
@@ -35,6 +43,7 @@ namespace Vertice
 			Vectoria::XMatrix                      itsScreen2Port;
 			std::size_t                            itsSelectedContext;
 			Nucleus::Owned< Nitrogen::GWorldPtr >  itsGWorld;
+			AnaglyphMode                           itsAnaglyphMode;
 		
 		public:
 			PortView( const Rect& bounds, Initializer );

@@ -581,7 +581,8 @@ namespace Vertice
 	
 	PortView::PortView( const Rect& bounds, Initializer ) : itsPort           ( itsScene                   ),
 	                                                        itsSelectedContext(                            ),
-	                                                        itsGWorld         ( N::NewGWorld( 32, bounds ) )
+	                                                        itsGWorld         ( N::NewGWorld( 32, bounds ) ),
+	                                                        itsAnaglyphMode   ( kNoAnaglyph                )
 	{
 		SetBounds( bounds );
 		N::LockPixels( N::GetGWorldPixMap( itsGWorld ) );
@@ -994,13 +995,62 @@ namespace Vertice
 	
 	void PortView::Draw()
 	{
-		itsPort.MakeFrame( itsFrame );
-		
-		Redraw();
+		if ( itsAnaglyphMode )
+		{
+			DrawAnaglyphic();
+		}
+		else
+		{
+			itsPort.MakeFrame( itsFrame );
+			
+			Redraw();
+		}
 	}
+	
+	static void MergeColorAnaglyph( ::Ptr left, ::Ptr right )
+	{
+		left[2] = right[2];
+		left[3] = right[3];
+	}
+	
+	static void MergeHalfColorAnaglyph( ::Ptr left, ::Ptr right )
+	{
+		left[1] = 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3];
+		left[2] = right[2];
+		left[3] = right[3];
+	}
+	
+	static void MergeOptimizedAnaglyph( ::Ptr left, ::Ptr right )
+	{
+		left[1] = 0.7 * left[2] + 0.3 * left[3];
+		left[2] = right[2];
+		left[3] = right[3];
+	}
+	
+	typedef void (*AnaglyphicMerge)( ::Ptr, ::Ptr );
 	
 	void PortView::DrawAnaglyphic()
 	{
+		AnaglyphicMerge merge = NULL;
+		
+		switch ( itsAnaglyphMode )
+		{
+			case kColorAnaglyph:
+				merge = &MergeColorAnaglyph;
+				break;
+			
+			case kHalfColorAnaglyph:
+				merge = &MergeHalfColorAnaglyph;
+				break;
+			
+			case kOptimizedAnaglyph:
+				merge = &MergeOptimizedAnaglyph;
+				break;
+			
+			default:
+				return;  // shouldn't happen
+		}
+		
 		std::size_t contextIndex = itsScene.Cameras().front().ContextIndex();
 		
 		Moveable& target = itsPort.itsScene.GetContext( contextIndex );
@@ -1058,8 +1108,7 @@ namespace Vertice
 				::Ptr addrL = baseL + pixelOffset;
 				::Ptr addrR = baseR + pixelOffset;
 				
-				addrL[2] = addrR[2];
-				addrL[3] = addrR[3];
+				merge( addrL, addrR );
 			}
 		}
 		
@@ -1520,13 +1569,6 @@ namespace Vertice
 			return true;
 		}
 		
-		if ( c == '@' )
-		{
-			DrawAnaglyphic();
-			
-			return true;
-		}
-		
 		short cmd;
 		bool shooter = true;
 		if ( shooter )
@@ -1555,6 +1597,22 @@ namespace Vertice
 		}
 		switch ( c )
 		{
+			case 'a':
+				itsAnaglyphMode = kNoAnaglyph;
+				break;
+			
+			case 's':
+				itsAnaglyphMode = kColorAnaglyph;
+				break;
+			
+			case 'd':
+				itsAnaglyphMode = kHalfColorAnaglyph;
+				break;
+			
+			case 'f':
+				itsAnaglyphMode = kOptimizedAnaglyph;
+				break;
+			
 			case '7':
 				cmd = cmdMoveLeft;
 				break;
