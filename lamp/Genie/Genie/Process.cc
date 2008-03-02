@@ -43,9 +43,6 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
-// Kerosene/Common
-#include "KEnvironment.hh"
-
 // Pedestal
 #include "Pedestal/Application.hh"
 
@@ -111,7 +108,6 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Sh = ShellShock;
-	namespace K = Kerosene;
 	namespace Ped = Pedestal;
 	
 	

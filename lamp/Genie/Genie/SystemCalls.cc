@@ -32,7 +32,6 @@
 #include "OSErrno/OSErrno.hh"
 
 // Kerosene/Common
-#include "KEnvironment.hh"
 #include "SystemCalls.hh"
 
 // Genie
