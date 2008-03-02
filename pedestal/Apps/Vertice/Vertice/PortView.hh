@@ -53,8 +53,10 @@ namespace Vertice
 			bool KeyDown( char c );
 			bool DoCommand( Pedestal::MenuItemCode code )  { return false; }
 			void Resize( const Rect& newBounds );
-			void Draw();
+			void Paint();
 			void Redraw();
+			void Draw();
+			void DrawAnaglyphic();
 			void DrawBetter( bool per_scanline ) const;
 			
 			void Update()  { Draw(); }

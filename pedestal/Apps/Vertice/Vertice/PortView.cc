@@ -844,20 +844,10 @@ namespace Vertice
 		return DotProduct( a, b );
 	}
 	
-	void PortView::Draw()
-	{
-		itsPort.MakeFrame( itsFrame );
-		
-		Redraw();
-	}
-	
-	void PortView::Redraw()
+	void PortView::Paint()
 	{
 		unsigned width  = NX::RectWidth ( itsBounds );
 		unsigned height = NX::RectHeight( itsBounds );
-		
-		NN::Saved< N::GWorld_Value > savedGWorld;
-		N::SetGWorld( itsGWorld );
 		
 		N::RGBBackColor( NN::Make< RGBColor >( 0 ) );
 		
@@ -971,8 +961,107 @@ namespace Vertice
 				DrawDeepPolygon( vertices );
 			}
 		}
+	}
+	
+	void PortView::Redraw()
+	{
+		NN::Saved< N::GWorld_Value > savedGWorld;
+		N::SetGWorld( itsGWorld );
+		
+		
+		Paint();
+		
 		
 		savedGWorld.Restore();
+		
+		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
+		
+		PixMapHandle pix = N::GetGWorldPixMap( thePort );
+		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
+		N::LockPixels( pix );
+		
+		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
+		             N::GetPortBitMapForCopyBits( thePort ),
+		             itsBounds,
+		             itsBounds,
+		             N::srcCopy );
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
+		}
+	}
+	
+	void PortView::Draw()
+	{
+		itsPort.MakeFrame( itsFrame );
+		
+		Redraw();
+	}
+	
+	void PortView::DrawAnaglyphic()
+	{
+		std::size_t contextIndex = itsScene.Cameras().front().ContextIndex();
+		
+		Moveable& target = itsPort.itsScene.GetContext( contextIndex );
+		
+		double eyeRadius = 0.05;  // distance from eye to bridge of nose
+		
+		Nucleus::Owned< Nitrogen::GWorldPtr > altGWorld = N::NewGWorld( 32, itsBounds );
+		
+		N::LockPixels( N::GetGWorldPixMap( altGWorld ) );
+		
+		NN::Saved< N::GWorld_Value > savedGWorld;
+		
+		
+		target.ContextTranslate( -eyeRadius, 0, 0 );
+		
+		itsPort.MakeFrame( itsFrame );
+		
+		N::SetGWorld( itsGWorld );
+		
+		Paint();
+		
+		
+		target.ContextTranslate( 2 * eyeRadius, 0, 0 );
+		
+		itsPort.MakeFrame( itsFrame );
+		
+		N::SetGWorld( altGWorld );
+		
+		Paint();
+		
+		
+		target.ContextTranslate( -eyeRadius, 0, 0 );
+		
+		savedGWorld.Restore();
+		
+		PixMapHandle pixL = N::GetGWorldPixMap( itsGWorld );
+		PixMapHandle pixR = N::GetGWorldPixMap( altGWorld );
+		
+		::Ptr baseL = pixL[0]->baseAddr;
+		::Ptr baseR = pixR[0]->baseAddr;
+		
+		unsigned rowBytes = pixL[0]->rowBytes & 0x3fff;
+		
+		unsigned width  = itsBounds.right - itsBounds.left;
+		unsigned height = itsBounds.bottom - itsBounds.top;
+		
+		for ( unsigned y = 0;  y < height;  ++y )
+		{
+			std::size_t rowOffset = y * rowBytes;
+			
+			for ( unsigned x = 0;  x < width;  ++x )
+			{
+				std::size_t pixelOffset = rowOffset + x * 4;
+				
+				::Ptr addrL = baseL + pixelOffset;
+				::Ptr addrR = baseR + pixelOffset;
+				
+				addrL[2] = addrR[2];
+				addrL[3] = addrR[3];
+			}
+		}
 		
 		N::CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
@@ -1427,6 +1516,13 @@ namespace Vertice
 		if ( c == '!' )
 		{
 			DrawBetter( true );
+			
+			return true;
+		}
+		
+		if ( c == '@' )
+		{
+			DrawAnaglyphic();
 			
 			return true;
 		}
