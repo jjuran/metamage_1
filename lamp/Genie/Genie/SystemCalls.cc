@@ -300,6 +300,9 @@ namespace Genie
 				savedThread = current.Exec( progFile, argv, envp );
 			}
 			
+			// TODO: Yield until the child is done with envp.
+			// For now this doesn't seem to be a problem...
+			
 			// If this thread is us (i.e. we didn't fork), we're now toast.
 			if ( savedThread.Get() != N::kNoThreadID )
 			{
