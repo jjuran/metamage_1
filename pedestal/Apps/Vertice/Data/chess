@@ -73,9 +73,9 @@ define color grey .5 .5 .5
 
 # Chess board
 {
-	define map checkers .2 .8 .8 .2
+	define tile checkers .2 .8 .8 .2
 	
-	define map test .2 .3 .4 .3  .4 .5 .6 .5  .6 .7 .8 .7  .4 .5 .6 .5
+	define tile test .2 .3 .4 .3  .4 .5 .6 .5  .6 .7 .8 .7  .4 .5 .6 .5
 	
 	context Board
 	
@@ -87,7 +87,7 @@ define color grey .5 .5 .5
 	pt a8 -4  4 0  0 4
 	pt h8  4  4 0  4 4
 	
-	map checkers 4
+	tile checkers 4
 	
 	polygon a1 h1 h8 a8
 	
