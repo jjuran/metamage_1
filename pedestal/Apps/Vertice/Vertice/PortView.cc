@@ -1007,41 +1007,46 @@ namespace Vertice
 		}
 	}
 	
-	static void MergeTrueAnaglyph( ::Byte* left, const ::Byte* right )
+	inline int BigToNative32BitOffset( int bits )
 	{
-		left[1] = 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3];
-		left[2] = 0;
-		left[3] = 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3];
+		return (bits - 12) * (TARGET_RT_BIG_ENDIAN - TARGET_RT_LITTLE_ENDIAN) + 12;
 	}
 	
-	static void MergeGrayAnaglyph( ::Byte* left, const ::Byte* right )
+	static const int kBitOffsetToGWorldAlpha = BigToNative32BitOffset( 24 );  //  0
+	static const int kBitOffsetToGWorldRed   = BigToNative32BitOffset( 16 );  //  8
+	static const int kBitOffsetToGWorldGreen = BigToNative32BitOffset(  8 );  // 16
+	static const int kBitOffsetToGWorldBlue  = BigToNative32BitOffset(  0 );  // 24
+	
+	static void MergeTrueAnaglyph( const ::Byte* left, ::Byte* right )
 	{
-		left[1] = 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3];
-		left[2] = 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3];
-		left[3] = 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3];
+		*(UInt32*) right = UInt32( 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3] ) << kBitOffsetToGWorldRed
+		                 |                                                                0 << kBitOffsetToGWorldGreen
+		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldBlue;
 	}
 	
-	static void MergeColorAnaglyph( ::Byte* left, const ::Byte* right )
+	static void MergeGrayAnaglyph( const ::Byte* left, ::Byte* right )
 	{
-		left[2] = right[2];
-		left[3] = right[3];
+		*(UInt32*) right = UInt32( 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3] ) << kBitOffsetToGWorldRed
+		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldGreen
+		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldBlue;
 	}
 	
-	static void MergeHalfColorAnaglyph( ::Byte* left, const ::Byte* right )
+	static void MergeColorAnaglyph( const ::Byte* left, ::Byte* right )
 	{
-		left[1] = 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3];
-		left[2] = right[2];
-		left[3] = right[3];
+		right[1] = left[1];
 	}
 	
-	static void MergeOptimizedAnaglyph( ::Byte* left, const ::Byte* right )
+	static void MergeHalfColorAnaglyph( const ::Byte* left, ::Byte* right )
 	{
-		left[1] = 0.7 * left[2] + 0.3 * left[3];
-		left[2] = right[2];
-		left[3] = right[3];
+		right[1] = 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3];
 	}
 	
-	typedef void (*AnaglyphicMerge)( ::Byte*, const ::Byte* );
+	static void MergeOptimizedAnaglyph( const ::Byte* left, ::Byte* right )
+	{
+		right[1] = 0.7 * left[2] + 0.3 * left[3];
+	}
+	
+	typedef void (*AnaglyphicMerge)( const ::Byte*, ::Byte* );
 	
 	void PortView::DrawAnaglyphic()
 	{
@@ -1140,7 +1145,7 @@ namespace Vertice
 		NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
-		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
+		N::CopyBits( N::GetPortBitMapForCopyBits( altGWorld ),
 		             N::GetPortBitMapForCopyBits( thePort ),
 		             itsBounds,
 		             itsBounds,
