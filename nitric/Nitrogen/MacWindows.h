@@ -540,13 +540,20 @@ namespace Nitrogen
 		::SizeWindow( window, size.h, size.v, updateFlag );
 	}
 	
-	union GrowWindow_Result
+	// Previously GrowWindow_Result was a union with a Point member,
+	// but that only works on big-endian.
+	// The result of GrowWindow() is defined as:
+	// * new height in high-order half
+	// * new width in low-order half
+	// * zero if no change
+	
+	struct GrowWindow_Result
 	{
-		long grew;         // zero if no change
-		Point dimensions;  // otherwise, the new dimensions
+		long grew;
 		
-		operator long () const  { return grew;       }
-		operator Point() const  { return dimensions; }
+		operator long () const  { return grew; }
+		
+		operator Point() const  { return SetPt( grew & 0xffff, grew >> 16 ); }
 	};
 	
 	// 4598
