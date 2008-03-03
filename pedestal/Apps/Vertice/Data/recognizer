@@ -375,11 +375,11 @@ define color grey .5 .5 .5
 			
 			polygon N_ O_ _O _N
 			
-			pt n_ -.5 .5 2.25
-			pt o_ -.4 .5 2.15
+			pt n_ -.5 .5 2.15
+			pt o_ -.4 .5 2.05
 			
-			pt _n .5 .5 2.25
-			pt _o .4 .5 2.15
+			pt _n .5 .5 2.15
+			pt _o .4 .5 2.05
 			
 			polygon _n _o o_ n_
 			
@@ -392,21 +392,21 @@ define color grey .5 .5 .5
 			
 			context Leg left
 			
-			pt E_ -1.9 -.2 2.05
+			pt E_ -1.9 -.2 2.1
 			pt F_ -1.9 -.2 0
 			
 			pt G_  -.8 -.2 0
 			pt H_ -1.5 -.2  .4
-			pt I_ -1.5 -.2 2.05
+			pt I_ -1.5 -.2 2.1
 			
 			polygon H_ I_ E_ F_ G_
 			
-			pt e_ -1.9  .5 2.05
+			pt e_ -1.9  .5 2.1
 			pt f_ -1.9  .5 0
 			
 			pt g_  -.8  .5 0
 			pt h_ -1.5  .5  .4
-			pt i_ -1.5  .5 2.05
+			pt i_ -1.5  .5 2.1
 			
 			polygon h_ g_ f_ e_ i_
 			
@@ -419,21 +419,21 @@ define color grey .5 .5 .5
 			
 			context Leg right
 			
-			pt _E  1.9 -.2 2.05
+			pt _E  1.9 -.2 2.1
 			pt _F  1.9 -.2 0
 			
 			pt _G   .8 -.2 0
 			pt _H  1.5 -.2  .4
-			pt _I  1.5 -.2 2.05
+			pt _I  1.5 -.2 2.1
 			
 			polygon _H _G _F _E _I
 			
-			pt _e  1.9  .5 2.05
+			pt _e  1.9  .5 2.1
 			pt _f  1.9  .5 0
 			
 			pt _g   .8  .5 0
 			pt _h  1.5  .5  .4
-			pt _i  1.5  .5 2.05
+			pt _i  1.5  .5 2.1
 			
 			polygon _h _i _e _f _g
 			
