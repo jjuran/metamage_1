@@ -546,9 +546,20 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_sys_mac_rom::Open( OpenFlags flags ) const
 	{
+	#if TARGET_API_MAC_CARBON
+		
+		p7::throw_errno( EPERM );
+		
+		// Not reached
+		return boost::shared_ptr< IOHandle >();
+		
+	#else
+		
 		return boost::shared_ptr< IOHandle >( new MemoryFileHandle( shared_from_this(),
 		                                                            LMGetROMBase(),
 		                                                            GetEOF() ) );
+		
+	#endif
 	}
 	
 	
