@@ -17,6 +17,7 @@
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
+#include "Genie/IO/MemoryFile.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -425,6 +426,22 @@ namespace Genie
 	};
 	
 	
+	class FSTree_sys_mac_rom : public FSTree
+	{
+		public:
+			FSTree_sys_mac_rom()  {}
+			
+			std::string Name() const  { return "rom"; }
+			
+			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac >(); }
+			
+			mode_t FileTypeMode() const  { return S_IFREG; }
+			mode_t FilePermMode() const  { return S_IRUSR; }
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	
 	FSTree_sys::FSTree_sys()
 	{
 		MapSingleton< FSTree_sys_kernel >();
@@ -468,6 +485,7 @@ namespace Genie
 		MapSingleton< FSTree_sys_mac_vol     >();
 		MapSingleton< FSTree_sys_mac_proc    >();
 		MapSingleton< FSTree_sys_mac_gestalt >();
+		MapSingleton< FSTree_sys_mac_rom     >();
 	}
 	
 	
@@ -514,6 +532,15 @@ namespace Genie
 	boost::shared_ptr< IOHandle > FSTree_sys_mac_gestalt::Open( OpenFlags flags ) const
 	{
 		return boost::shared_ptr< IOHandle >( new GestaltDeviceHandle() );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_sys_mac_rom::Open( OpenFlags flags ) const
+	{
+		UInt32 romSize = N::Gestalt( N::GestaltSelector( gestaltROMSize ) );
+		
+		return boost::shared_ptr< IOHandle >( new MemoryFileHandle( shared_from_this(),
+		                                                            LMGetROMBase(),
+		                                                            romSize ) );
 	}
 	
 	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
