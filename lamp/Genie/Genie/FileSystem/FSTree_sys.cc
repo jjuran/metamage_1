@@ -438,6 +438,8 @@ namespace Genie
 			mode_t FileTypeMode() const  { return S_IFREG; }
 			mode_t FilePermMode() const  { return S_IRUSR; }
 			
+			off_t GetEOF() const;
+			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
@@ -534,14 +536,21 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( new GestaltDeviceHandle() );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_sys_mac_rom::Open( OpenFlags flags ) const
+	
+	off_t FSTree_sys_mac_rom::GetEOF() const
 	{
 		UInt32 romSize = N::Gestalt( N::GestaltSelector( gestaltROMSize ) );
 		
+		return romSize;
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_sys_mac_rom::Open( OpenFlags flags ) const
+	{
 		return boost::shared_ptr< IOHandle >( new MemoryFileHandle( shared_from_this(),
 		                                                            LMGetROMBase(),
-		                                                            romSize ) );
+		                                                            GetEOF() ) );
 	}
+	
 	
 	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
 	{
