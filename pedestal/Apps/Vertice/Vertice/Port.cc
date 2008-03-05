@@ -181,7 +181,7 @@ namespace Vertice
 	
 	static double sAspectRatio = 1;
 	
-	static V::Radians sHorizontalFieldOfViewAngle = V::Degrees( 60 );
+	static V::Radians sHorizontalFieldOfViewAngle = V::Degrees( 45 );
 	
 	static double sFocalLength = FocalLength( sHorizontalFieldOfViewAngle );
 	
