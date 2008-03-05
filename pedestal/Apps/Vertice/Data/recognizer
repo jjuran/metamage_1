@@ -66,42 +66,156 @@ define color grey .5 .5 .5
 		{
 			context Head
 			
-			pt AD_ -.1 -.0 3.6
-			pt AE_ -.9 -.4 3.1
+			pt AD_ -.1  -.0  3.6
+			pt AE_ -1   -.4  3.1
+			pt AJ_ -.3  -.4  3.1
+			pt AK_ -.15 -.4  3.1
+			pt AL_ -.23 -.25 3.25
+			pt AM_ -.16 -.35 3.15
 			
-			pt _AD  .1 -.0 3.6
-			pt _AE  .9 -.4 3.1
+			pt _AD  .1  -.0  3.6
+			pt _AE  1   -.4  3.1
+			pt _AJ  .3  -.4  3.1
+			pt _AK  .15 -.4  3.1
+			pt _AL  .23 -.25 3.25
+			pt _AM  .16 -.35 3.15
 			
-			pt ad_ -.1  .5 3.6
-			pt ae_ -.9  .5 3.1
+			pt ad_ -.1  .5  3.6
+			pt ae_ -1   .5  3.1
+			pt aj_ -.3  .5  3.1
+			pt ak_ -.15 .5  3.1
+			pt al_ -.23 .45 3.25
+			pt am_ -.16 .5  3.15
 			
-			pt _ad  .1  .5 3.6
-			pt _ae  .9  .5 3.1
-			
-			polygon AD_ AE_ _AE _AD
-			polygon _ad _ae ae_ ad_
-			
-			polygon ad_ ae_ AE_ AD_
-			polygon _AD _AE _ae _ad
-			
-			polygon ad_ AD_ _AD _ad
-			polygon AE_ ae_ _ae _AE
+			pt _ad  .1  .5  3.6
+			pt _ae  1   .5  3.1
+			pt _aj  .3  .5  3.1
+			pt _ak  .15 .5  3.1
+			pt _al  .23 .45 3.25
+			pt _am  .16 .5  3.15
 			
 			{
-				# Cockpit
+				context Left shoulder
 				
-				color .8 .8 .8
+				# Front and back
+				polygon AD_ AE_ AJ_
+				polygon aj_ ae_ ad_
 				
-				pt AF_ -.2 -.4 3.25
-				pt AG_ -.1 -.3 3.1
-				pt _AF  .2 -.4 3.25
-				pt _AG  .1 -.3 3.1
+				# Outside and inside
+				polygon ad_ ae_ AE_ AD_
+				polygon AD_ AJ_ aj_ ad_
 				
-				polygon AD_ AF_ _AF _AD
-				polygon AF_ AG_ _AG _AF
+				# Bottom
+				polygon AE_ ae_ aj_ AJ_
+			}
+			
+			{
+				context Right shoulder
 				
-				polygon AD_ AG_ AF_
-				polygon _AD _AF _AG
+				polygon _AJ _AE _AD
+				polygon _ad _ae _aj
+				
+				polygon _AD _AE _ae _ad
+				polygon _ad _aj _AJ _AD
+				
+				polygon _AJ _aj _ae _AE
+			}
+			
+			{
+				context Left clavicle
+				
+				polygon AJ_ AK_ AL_
+				polygon al_ ak_ aj_
+				
+				polygon al_ aj_ AJ_ AL_
+				polygon AL_ AK_ ak_ al_
+				
+				polygon AJ_ aj_ ak_ AK_
+			}
+			
+			{
+				context Right clavicle
+				
+				polygon _AL _AK _AJ
+				polygon _aj _ak _al
+				
+				polygon _AL _AJ _aj _al
+				polygon _al _ak _AK _AL
+				
+				polygon _AK _ak _aj _AJ
+			}
+			
+			{
+				context Neck
+				
+				polygon AM_ AK_ _AK _AM
+				polygon _am _ak ak_ am_
+				
+				polygon am_ ak_ AK_ AM_
+				polygon _AM _AK _ak _am
+				
+				polygon am_ AM_ _AM _am
+				polygon AK_ ak_ _ak _AK
+			}
+			
+			{
+				context Cranium
+				
+				define color light-blue 1 1 1.3
+				
+				pt AN_ -.15 -.35 3.17
+				pt AO_ -.22 -.4  3.25
+				pt AQ_ -.09 -.1  3.59
+				pt AR_ -.1  -.15  3.65
+				pt AS_ -.08 -.1  3.7
+				
+				pt _AN  .15 -.35 3.17
+				pt _AO  .22 -.4  3.25
+				pt _AQ  .09 -.1  3.59
+				pt _AR  .1  -.15  3.65
+				pt _AS  .08 -.1  3.7
+				
+				pt an_ -.15  .4  3.17
+				pt ao_ -.22  .45 3.25
+				pt aq_ -.09  .4  3.59
+				pt ar_ -.1   .45 3.65
+				pt as_ -.08  .4  3.7
+				
+				pt _an  .15  .4  3.17
+				pt _ao  .22  .45 3.25
+				pt _aq  .09  .4  3.59
+				pt _ar  .1   .45 3.65
+				pt _as  .08  .4  3.7
+				
+				# Top / bottom
+				polygon as_ AS_ _AS _as
+				polygon AN_ an_ _an _AN
+				
+				# Left
+				polygon as_ ar_ AR_ AS_
+				polygon ar_ aq_ AQ_ AR_
+				polygon aq_ ao_ AO_ AQ_
+				polygon ao_ an_ AN_ AO_
+				
+				# Right
+				polygon _AS _AR _ar _as
+				polygon _AR _AQ _aq _ar
+				polygon _AQ _AO _ao _aq
+				polygon _AO _AN _an _ao
+				
+				# Back
+				polygon _ao _an an_ ao_
+				polygon _aq _ao ao_ aq_
+				polygon _ar _aq aq_ ar_
+				polygon _as _ar ar_ as_
+				
+				# Front
+				polygon AO_ AN_ _AN _AO
+				polygon AQ_ AO_ _AO _AQ
+				polygon AS_ AR_ _AR _AS
+				
+				color light-blue
+				polygon AR_ AQ_ _AQ _AR
 			}
 			
 			context Upper plate left
