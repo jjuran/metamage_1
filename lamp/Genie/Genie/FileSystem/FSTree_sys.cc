@@ -426,6 +426,13 @@ namespace Genie
 	};
 	
 	
+	static UInt32 GetROMSize()
+	{
+		static UInt32 romSize = N::Gestalt( N::GestaltSelector( gestaltROMSize ) );
+		
+		return romSize;
+	}
+	
 	class FSTree_sys_mac_rom : public FSTree
 	{
 		public:
@@ -436,9 +443,10 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac >(); }
 			
 			mode_t FileTypeMode() const  { return S_IFREG; }
-			mode_t FilePermMode() const  { return S_IRUSR; }
 			
-			off_t GetEOF() const;
+			mode_t FilePermMode() const  { return TARGET_API_MAC_CARBON ? 0 : S_IRUSR; }
+			
+			off_t GetEOF() const  { return GetROMSize(); }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
@@ -487,7 +495,16 @@ namespace Genie
 		MapSingleton< FSTree_sys_mac_vol     >();
 		MapSingleton< FSTree_sys_mac_proc    >();
 		MapSingleton< FSTree_sys_mac_gestalt >();
-		MapSingleton< FSTree_sys_mac_rom     >();
+		
+		try
+		{
+			GetROMSize();
+			
+			MapSingleton< FSTree_sys_mac_rom >();
+		}
+		catch ( ... )
+		{
+		}
 	}
 	
 	
@@ -536,13 +553,6 @@ namespace Genie
 		return boost::shared_ptr< IOHandle >( new GestaltDeviceHandle() );
 	}
 	
-	
-	off_t FSTree_sys_mac_rom::GetEOF() const
-	{
-		UInt32 romSize = N::Gestalt( N::GestaltSelector( gestaltROMSize ) );
-		
-		return romSize;
-	}
 	
 	boost::shared_ptr< IOHandle > FSTree_sys_mac_rom::Open( OpenFlags flags ) const
 	{
