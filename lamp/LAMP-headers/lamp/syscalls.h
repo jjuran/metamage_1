@@ -133,18 +133,7 @@
 // 125
 // 126
 #define __NR_pump                      127
-// 128
-// 129
-// 130
-// 131
-// 132
-#define __NR_opendir                   133
-#define __NR_closedir                  134
-#define __NR_readdir                   135
-#define __NR_rewinddir                 136
-#define __NR_seekdir                   137
-#define __NR_telldir                   138
-#define __NR_dirfd                     139
+
 
 #define __NR_ttypair                   141
 
