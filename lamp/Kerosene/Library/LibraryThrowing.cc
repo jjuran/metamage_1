@@ -16,6 +16,7 @@
 #include <vector>
 
 // POSIX
+#include "dirent.h"
 #include "sys/stat.h"
 #include "unistd.h"
 
@@ -338,6 +339,21 @@
 		gEnviron.ClearEnv();
 		
 		return 0;
+	}
+	
+	
+	struct dirent* readdir( DIR* dir )
+	{
+		static dirent entry;
+		
+		int got = getdents( dirfd( dir ), &entry, sizeof (dirent) );
+		
+		if ( got <= 0 )
+		{
+			return NULL;
+		}
+		
+		return &entry;
 	}
 	
 //
