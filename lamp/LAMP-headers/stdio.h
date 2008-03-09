@@ -38,12 +38,10 @@
 #ifndef	_STDIO_H_
 #define	_STDIO_H_
 
-#undef _POSIX
-
-// declares a bad fdopen() if _POSIX is defined
 #include <CWANSIIncludes/stdio.h>
 
-FILE* fdopen( int fd, const char *type );
+__inline int fileno(__std(FILE) *stream ) {return _fileno(stream);}
+__inline __std(FILE)* fdopen(int fildes , const char* type) {return _fdopen(fildes, (char*) type);}
 
 #include <sys/cdefs.h>
 #include <sys/_types.h>
