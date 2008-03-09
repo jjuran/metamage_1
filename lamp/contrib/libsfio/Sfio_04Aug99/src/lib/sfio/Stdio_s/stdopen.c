@@ -5,13 +5,7 @@
 **	Written by Kiem-Phong Vo (06/27/90).
 */
 
-#if __STD_C
-Sfio_t* _stdopen(reg int fd, reg const char* mode)
-#else
-Sfio_t* _stdopen(fd,mode)
-reg int		fd;
-reg char*	mode;
-#endif
+Sfio_t* _stdopen(int fd, const char* mode)
 {
 	int		sflags;
 
