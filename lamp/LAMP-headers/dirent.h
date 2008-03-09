@@ -37,16 +37,26 @@
 
 #include <sys/types.h>
 
-struct dirent {
-	ino_t	d_ino;	/* file number of entry */
-	char	d_name[255 + 1];	/* name must be no longer than this */
+// Structure and comments taken from Linux getdents(2) man page
+struct dirent
+{
+	ino_t           d_ino;            // inode number
+	off_t           d_off;            // offset to next dirent
+	unsigned short  d_reclen;         // length of this dirent
+	char            d_name[255 + 1];  // filename (null-terminated)
 };
 
-typedef void *	DIR;
+struct DIR
+{
+	int     fd;
+	dirent  entry;
+};
 
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
+int getdents( unsigned int fd, struct dirent* dirp, unsigned int count );
+
 DIR *opendir __P((const char *));
 struct dirent *readdir __P((DIR *));
 void rewinddir __P((DIR *));
