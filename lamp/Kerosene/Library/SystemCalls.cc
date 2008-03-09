@@ -194,14 +194,6 @@ DEFINE_STUB( recvfrom )
 
 DEFINE_STUB( pump )
 
-DEFINE_STUB( opendir )
-DEFINE_STUB( closedir )
-//DEFINE_STUB( readdir )
-DEFINE_STUB( rewinddir )
-DEFINE_STUB( seekdir )
-DEFINE_STUB( telldir )
-DEFINE_STUB( dirfd )
-
 DEFINE_STUB( ttypair )
 
 DEFINE_STUB( gethostbyname )

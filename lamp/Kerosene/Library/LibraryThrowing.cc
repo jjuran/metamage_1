@@ -17,6 +17,7 @@
 
 // POSIX
 #include "dirent.h"
+#include "fcntl.h"
 #include "sys/stat.h"
 #include "unistd.h"
 
@@ -342,6 +343,34 @@
 	}
 	
 	
+	DIR* opendir( const char* pathname )
+	{
+		DIR* result = NULL;
+		
+		try
+		{
+			DIR* dir = new DIR;
+			
+			int fd = open( pathname, O_RDONLY, 0 );
+			
+			if ( fd == -1 )
+			{
+				delete dir;
+			}
+			else
+			{
+				dir->fd = fd;
+				
+				result = dir;
+			}
+		}
+		catch ( ... )
+		{
+		}
+		
+		return result;
+	}
+	
 	struct dirent* readdir( DIR* dir )
 	{
 		static dirent entry;
@@ -354,6 +383,35 @@
 		}
 		
 		return &entry;
+	}
+	
+	int closedir( DIR* dir )
+	{
+		int fd = dirfd( dir );
+		
+		delete dir;
+		
+		return close( fd );
+	}
+	
+	void rewinddir( DIR* dir )
+	{
+		(void) lseek( dirfd( dir ), 0, SEEK_SET );
+	}
+	
+	long telldir( DIR* dir )
+	{
+		return lseek( dirfd( dir ), 0, SEEK_CUR );
+	}
+	
+	void seekdir( DIR* dir, long offset )
+	{
+		(void) lseek( dirfd( dir ), offset, SEEK_SET );
+	}
+	
+	int dirfd( DIR* dir )
+	{
+		return dir->fd;
 	}
 	
 //
