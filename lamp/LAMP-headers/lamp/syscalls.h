@@ -82,24 +82,25 @@
 #define __NR_sethostname                74
 #define __NR_setrlimit                  75
 #define __NR_getrlimit                  76
-#define __NR_getrusage                  78
-#define __NR_gettimeofday               79
-#define __NR_settimeofday               80
+#define __NR_getrusage                  77
+#define __NR_gettimeofday               78
+#define __NR_settimeofday               79
+// 80
 // 81
-// 82
-#define __NR_select                     83
-#define __NR_symlink                    84
-// 85
-#define __NR_readlink_k                 86
+#define __NR_select                     82
+#define __NR_symlink                    83
+#define __NR_getdents                   84
+#define __NR_readlink_k                 85
+// 86
 // 87
 // 88
-// 89
-#define __NR_readdir_k                  90
+#define __NR_readdir_k                  89
+// 90
 // 91
-// 92
-#define __NR_truncate                   93
-#define __NR_ftruncate                  94
-#define __NR_fchmod                     95
+#define __NR_truncate                   92
+#define __NR_ftruncate                  93
+#define __NR_fchmod                     94
+#define __NR_fchown                     95
 // 96
 // 97
 // 98
