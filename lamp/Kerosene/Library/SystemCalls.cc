@@ -165,7 +165,7 @@ DEFINE_STUB( gettimeofday )
 
 DEFINE_STUB( select )
 DEFINE_STUB( symlink )
-
+DEFINE_STUB( getdents )
 DEFINE_STUB( readlink_k )
 
 DEFINE_STUB( truncate )
@@ -196,7 +196,7 @@ DEFINE_STUB( pump )
 
 DEFINE_STUB( opendir )
 DEFINE_STUB( closedir )
-DEFINE_STUB( readdir )
+//DEFINE_STUB( readdir )
 DEFINE_STUB( rewinddir )
 DEFINE_STUB( seekdir )
 DEFINE_STUB( telldir )
