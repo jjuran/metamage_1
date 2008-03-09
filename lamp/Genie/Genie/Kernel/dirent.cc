@@ -30,6 +30,41 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
+	static int getdents( unsigned fd, struct dirent* dirp, unsigned int count )
+	{
+		SystemCallFrame frame( "getdents" );
+		
+		Breathe();
+		
+		try
+		{
+			DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
+			
+			if ( count < sizeof (dirent) )
+			{
+				return frame.SetErrno( EINVAL );
+			}
+			
+			if ( const dirent* entry = dir.ReadDir() )
+			{
+				*dirp = *entry;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+		
+		return sizeof (dirent);
+	}
+	
+	REGISTER_SYSTEM_CALL( getdents );
+	
+	
 	static boost::shared_ptr< IOHandle > OpenDir( const std::string& pathname )
 	{
 		FSTreePtr current( CurrentProcess().GetCWD() );
