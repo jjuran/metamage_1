@@ -34,6 +34,8 @@ namespace Genie
 			
 			FSTreePtr GetFile() const  { return itsDir; }
 			
+			off_t Seek( off_t offset, int whence );
+			
 			const dirent* ReadDir();
 			
 			void RewindDir();

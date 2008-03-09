@@ -11,9 +11,15 @@
 // POSIX
 #include "sys/stat.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 
 namespace Genie
 {
+	
+	namespace p7 = poseven;
+	
 	
 	DirHandle::DirHandle( const FSTreePtr& tree ) : itsDir( tree ), iterator( tree->Iterate() )
 	{
@@ -30,6 +36,32 @@ namespace Genie
 		std::strcpy( dir.d_name, name.c_str() );  // FIXME:  Unsafe!
 		
 		return &dir;
+	}
+	
+	off_t DirHandle::Seek( off_t offset, int whence )
+	{
+		off_t position = 0;
+		
+		switch ( whence )
+		{
+			case SEEK_SET:
+				//position = 0;
+				break;
+			
+			case SEEK_CUR:
+				position = iterator->Tell();
+				break;
+			
+			case SEEK_END:
+			default:
+				p7::throw_errno( EINVAL );
+		}
+		
+		position += offset;
+		
+		iterator->Seek( position );
+		
+		return position;
 	}
 	
 	const dirent* DirHandle::ReadDir()
