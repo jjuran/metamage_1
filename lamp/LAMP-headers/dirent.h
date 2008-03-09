@@ -48,9 +48,11 @@ struct dirent
 
 struct DIR
 {
-	int     fd;
-	dirent  entry;
+	int            fd;
+	struct dirent  entry;
 };
+
+typedef struct DIR DIR;
 
 #include <sys/cdefs.h>
 
