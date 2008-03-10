@@ -30,12 +30,10 @@ namespace Genie
 	}
 	
 	
-	static const dirent* SetDirEntry( dirent& dir, ino_t inode, const std::string& name )
+	static void SetDirEntry( dirent& dir, ino_t inode, const std::string& name )
 	{
 		dir.d_ino = inode;
 		std::strcpy( dir.d_name, name.c_str() );  // FIXME:  Unsafe!
-		
-		return &dir;
 	}
 	
 	off_t DirHandle::Seek( off_t offset, int whence )
@@ -64,13 +62,13 @@ namespace Genie
 		return position;
 	}
 	
-	const dirent* DirHandle::ReadDir()
+	int DirHandle::ReadDir( dirent& entry )
 	{
 		FSNode node = iterator->Get();
 		
 		if ( node.tree == NULL )
 		{
-			return NULL;
+			return 0;
 		}
 		
 		iterator->Advance();
@@ -79,7 +77,9 @@ namespace Genie
 		
 		node.tree->Stat( sb );
 		
-		return SetDirEntry( fLastEntry, sb.st_ino, node.name );
+		SetDirEntry( entry, sb.st_ino, node.name );
+		
+		return sizeof (dirent);
 	}
 	
 }

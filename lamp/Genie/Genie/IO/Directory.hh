@@ -36,7 +36,7 @@ namespace Genie
 			
 			off_t Seek( off_t offset, int whence );
 			
-			const dirent* ReadDir();
+			int ReadDir( dirent& entry );
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< DirHandle >

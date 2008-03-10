@@ -44,21 +44,12 @@ namespace Genie
 				return frame.SetErrno( EINVAL );
 			}
 			
-			if ( const dirent* entry = dir.ReadDir() )
-			{
-				*dirp = *entry;
-			}
-			else
-			{
-				return 0;
-			}
+			return dir.ReadDir( *dirp );
 		}
 		catch ( ... )
 		{
 			return frame.SetErrnoFromException();
 		}
-		
-		return sizeof (dirent);
 	}
 	
 	REGISTER_SYSTEM_CALL( getdents );
