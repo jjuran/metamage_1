@@ -82,20 +82,5 @@ namespace Genie
 		return SetDirEntry( fLastEntry, sb.st_ino, node.name );
 	}
 	
-	void DirHandle::RewindDir()
-	{
-		iterator->Rewind();
-	}
-	
-	void DirHandle::SeekDir( off_t index )
-	{
-		iterator->Seek( index );
-	}
-	
-	off_t DirHandle::TellDir() const
-	{
-		return iterator->Tell();
-	}
-	
 }
 
