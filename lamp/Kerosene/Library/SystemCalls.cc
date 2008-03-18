@@ -197,7 +197,7 @@ DEFINE_STUB( pump )
 DEFINE_STUB( ttypair )
 
 DEFINE_STUB( gethostbyname )
-DEFINE_STUB( Path2FSSpec )
+
 DEFINE_STUB( AESendBlocking )
 DEFINE_STUB( OTInetMailExchange_k )
 
