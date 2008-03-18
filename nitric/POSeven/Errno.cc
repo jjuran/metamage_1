@@ -37,6 +37,7 @@ namespace poseven
 	{
 		register_errno< ENOENT >();
 		register_errno< ENOMEM >();
+		register_errno< EINVAL >();
 		register_errno< EAGAIN >();
 	}
 	
