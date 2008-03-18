@@ -49,6 +49,7 @@ my @winner_libs =
 qw
 (
 	MSL-fixup.lib
+	KSIOUXConsole.cc
 	Kerosene-User.lib
 	Kerosene-Library.lib
 	PascalPreCarbonUPPGlue.o
