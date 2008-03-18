@@ -49,14 +49,14 @@
 // Arcana
 #include "HTTP.hh"
 
+// Divergence
+#if TARGET_OS_MAC
+#include "Divergence/Utilities.hh"
+#endif
+
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-
-// Kerosene
-#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
-#include "SystemCalls.hh"
-#endif
 
 
 #define HTTP_VERSION  "HTTP/1.0"
@@ -65,6 +65,7 @@
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace p7 = poseven;
+namespace Div = Divergence;
 namespace O = Orion;
 
 using namespace io::path_descent_operators;
@@ -501,11 +502,11 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 		
 		FInfo info = { 0 };
 		
-	#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
+	#if TARGET_OS_MAC
 		
 		if ( !is_dir )
 		{
-			FSSpec file = Path2FSS( pathname );
+			FSSpec file = Div::ResolvePathToFSSpec( pathname );
 			
 			info = N::FSpGetFInfo( file );
 			
@@ -520,7 +521,7 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 		
 		responseHeader += HTTP::HeaderLine( "Content-Type",  contentType                   );
 		
-	#if TARGET_OS_MAC && !TARGET_RT_MAC_MACHO
+	#if TARGET_OS_MAC
 		
 		responseHeader += HTTP::HeaderLine( "X-Mac-Type",    EncodeAsHex( info.fdType    ) );
 		responseHeader += HTTP::HeaderLine( "X-Mac-Creator", EncodeAsHex( info.fdCreator ) );

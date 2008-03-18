@@ -10,13 +10,16 @@
 #include "Nitrogen/OSStatus.h"
 #include "Nitrogen/Resources.h"
 
+// Divergence
+#include "Divergence/Utilities.hh"
+
 // Orion
 #include "Orion/Main.hh"
-#include "SystemCalls.hh"
 
 
 namespace N = Nitrogen;
 namespace NN = Nucleus;
+namespace Div = Divergence;
 namespace O = Orion;
 
 
@@ -40,7 +43,7 @@ int O::Main( int argc, char const *const argv[] )
 	
 	try
 	{
-		dest = Path2FSS( argv[ argc - 1 ] );
+		dest = Div::ResolvePathToFSSpec( argv[ argc - 1 ] );
 	}
 	catch ( ... )
 	{
@@ -60,7 +63,8 @@ int O::Main( int argc, char const *const argv[] )
 	{
 		try
 		{
-			FSSpec source = Path2FSS( argv[ index ] );
+			FSSpec source = Div::ResolvePathToFSSpec( argv[ index ] );
+			
 			fail += TryResCopy( source, resFileH );
 		}
 		catch ( const N::OSStatus& err )
