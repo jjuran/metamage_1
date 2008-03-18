@@ -31,9 +31,6 @@
 // OSErrno
 #include "OSErrno/OSErrno.hh"
 
-// Kerosene/Common
-#include "SystemCalls.hh"
-
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -45,12 +42,6 @@
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
-
-extern "C"
-{
-	OSStatus Path2FSSpec( const char*  pathname,
-	                      FSSpec*      outFSS );
-}
 
 namespace Nucleus
 {
@@ -152,29 +143,6 @@ namespace Genie
 	}
 	
 	REGISTER_SYSTEM_CALL( AESendBlocking );
-	
-	static OSStatus Path2FSSpec( const char*  pathname,
-	                             FSSpec*      outFSS )
-	{
-		SystemCallFrame frame( "Path2FSSpec" );
-		
-		try
-		{
-			*outFSS = ResolvePathname( pathname, frame.Caller().GetCWD() )->GetFSSpec();
-		}
-		catch ( const N::OSStatus& err )
-		{
-			return err;
-		}
-		catch ( ... )
-		{
-			return extFSErr;  // Just a guess
-		}
-		
-		return 0;
-	}
-	
-	REGISTER_SYSTEM_CALL( Path2FSSpec );
 	
 	
 	#pragma mark -
