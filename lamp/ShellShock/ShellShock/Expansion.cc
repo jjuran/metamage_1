@@ -17,9 +17,6 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
-// Kerosene
-#include "SystemCalls.hh"
-
 // ShellShock
 #include "ShellShock/PointerToFunction.h"
 
@@ -28,7 +25,6 @@ namespace ShellShock
 {
 	
 	namespace N = Nitrogen;
-	//namespace NN = Nucleus;
 	
 	static bool IsAShellQuoteChar( char c )
 	{
