@@ -43,9 +43,13 @@ int O::Main( int argc, char const *const argv[] )
 	
 	const char* title = NULL;
 	
+	const char* device = "/dev/new/console";
+	
+	O::BindOption( "-d", device      );
 	O::BindOption( "-t", title       );
 	O::BindOption( "-w", should_wait );
 	
+	O::AliasOption( "-d", "--dev"   );
 	O::AliasOption( "-t", "--title" );
 	O::AliasOption( "-w", "--wait"  );
 	
@@ -68,7 +72,7 @@ int O::Main( int argc, char const *const argv[] )
 		
 		setsid();
 		
-		int console = open( "/dev/new/console", O_RDWR, 0 );
+		int console = open( device, O_RDWR, 0 );
 		
 		int io = ioctl( console, TIOCSCTTY, NULL );
 		
