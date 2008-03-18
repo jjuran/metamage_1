@@ -103,27 +103,6 @@
 		return OTInetMailExchange_k( domain, count, result );
 	}
 	
-	#pragma mark -
-	#pragma mark ¥ Genie ¥
-	
-	extern "C" OSStatus Path2FSSpec( const char* pathname, FSSpec* outFSS );
-	
-	FSSpec Path2FSS( const char* pathname )
-	{
-		FSSpec spec;	
-		
-		OSStatus err = Path2FSSpec( pathname, &spec );
-		
-		if ( err != noErr )
-		{
-			spec.vRefNum = 0x8000;
-			spec.parID = err;
-			spec.name[0] = 0;
-		}
-		
-		return spec;
-	}
-	
 #if 0	
 #pragma export reset
 #endif
