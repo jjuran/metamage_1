@@ -67,6 +67,11 @@ namespace io
 		return get_filename( pathname );
 	}
 	
+	inline std::string get_filename_string( const char* pathname, overload = overload() )
+	{
+		return get_filename( pathname );
+	}
+	
 	std::string get_preceding_directory( const std::string& pathname );
 	
 	inline std::string get_preceding_directory( const std::string& pathname, overload )
