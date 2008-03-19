@@ -25,6 +25,7 @@ namespace OSErrno
 		switch ( error.Get() )
 		{
 			case eofErr         :  result = 0;          break;
+			case nsvErr         :  // fall through
 			case fnfErr         :  result = ENOENT;     break;
 			case ioErr          :  result = EIO;        break;
 			case fnOpnErr       :  // fall through
