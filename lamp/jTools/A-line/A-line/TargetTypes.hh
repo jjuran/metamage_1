@@ -18,6 +18,7 @@ namespace ALine
 		productStaticLib,
 		productSharedLib,
 		productTool,
+		productToolkit,
 		productINIT,
 		productDriver
 	};
