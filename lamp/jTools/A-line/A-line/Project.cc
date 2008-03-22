@@ -176,7 +176,7 @@ namespace ALine
 		}
 		else if ( productName == "tool"  ||  productName == "wish" )
 		{
-			return productWish;
+			return productTool;
 		}
 		else if ( productName == "init" )
 		{

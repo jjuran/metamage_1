@@ -269,7 +269,7 @@ namespace ALine
 				        << cmdgen.CustomDriverHeader();
 				break;
 			
-			case productWish:
+			case productTool:
 				gccSupported = true;
 				command << cmdgen.TargetCommandLineTool();
 				break;
