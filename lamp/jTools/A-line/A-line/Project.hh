@@ -21,6 +21,30 @@ namespace ALine
 	
 	class Project
 	{
+		private:
+			// This project's name within the A-line system.
+			ProjName projName;
+			// The name of the output file, if different from the project name.
+			FileName progName;
+			// The project's main folder.
+			std::string projFolderPath;
+			// The include path to a header to precompile.
+			IncludePath precompiledHeaderSource;
+			// What kind of product this project creates.
+			ProductType product;
+			// The names of all projects used directly or indirectly by this one.
+			std::vector< ProjName > allUsedProjects;
+			// Directories to search for headers and unenumerated source files.
+			std::vector< std::string > itsSearchDirs;
+			// Source files to compile, by pathname
+			std::vector< std::string > itsSourceFileSpecs;
+			// Various things to link with.
+			std::vector< FileName > rezFiles, rsrcFiles, myImports, myFrameworks;
+			// Creator code / signature for output files.
+			std::string creator;
+			// Source files to compile.
+			std::vector< std::string > mySources;
+		
 		public:
 			Project( const ProjName& proj );
 			
@@ -47,30 +71,6 @@ namespace ALine
 			void Study();
 			
 			bool FindInclude( const IncludePath& includePath );
-			
-		private:
-			// This project's name within the A-line system.
-			ProjName projName;
-			// The name of the output file, if different from the project name.
-			FileName progName;
-			// The project's main folder.
-			std::string projFolderPath;
-			// The include path to a header to precompile.
-			IncludePath precompiledHeaderSource;
-			// What kind of product this project creates.
-			ProductType product;
-			// The names of all projects used directly or indirectly by this one.
-			std::vector< ProjName > allUsedProjects;
-			// Directories to search for headers and unenumerated source files.
-			std::vector< std::string > itsSearchDirs;
-			// Source files to compile, by pathname
-			std::vector< std::string > itsSourceFileSpecs;
-			// Various things to link with.
-			std::vector< FileName > rezFiles, rsrcFiles, myImports, myFrameworks;
-			// Creator code / signature for output files.
-			std::string creator;
-			// Source files to compile.
-			std::vector< std::string > mySources;
 	};
 	
 }
