@@ -174,7 +174,7 @@ namespace ALine
 		{
 			return productSharedLib;
 		}
-		else if ( productName == "wish" )
+		else if ( productName == "tool"  ||  productName == "wish" )
 		{
 			return productWish;
 		}
