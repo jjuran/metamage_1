@@ -63,6 +63,7 @@ namespace CompileDriver
 			"search",
 			"sources",
 			"subprojects",
+			"tools",
 			"use",
 			"uses",
 			"version",

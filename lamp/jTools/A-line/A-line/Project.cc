@@ -178,6 +178,10 @@ namespace ALine
 		{
 			return productTool;
 		}
+		else if ( productName == "toolkit" )
+		{
+			return productToolkit;
+		}
 		else if ( productName == "init" )
 		{
 			return productINIT;
@@ -290,6 +294,15 @@ namespace ALine
 				
 				itsSearchDirs.push_back( sourceDir );
 			}
+		}
+		
+		itsToolSourceFiles = config[ "tools" ];
+		
+		bool hasTools = !itsToolSourceFiles.empty();
+		
+		if ( hasTools != ( Product() == productToolkit ) )
+		{
+			// Report error
 		}
 		
 		// Make sure we're in the list too, and make sure we're last.

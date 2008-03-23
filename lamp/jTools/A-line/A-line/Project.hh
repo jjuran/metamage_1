@@ -44,6 +44,8 @@ namespace ALine
 			std::string creator;
 			// Source files to compile.
 			std::vector< std::string > mySources;
+			// Tool source files.
+			std::vector< std::string > itsToolSourceFiles;
 		
 		public:
 			Project( const ProjName& proj );
@@ -58,6 +60,7 @@ namespace ALine
 			
 			const std::vector< std::string >& SearchDirs()      const  { return itsSearchDirs;      }
 			const std::vector< std::string >& SourceFileSpecs() const  { return itsSourceFileSpecs; }
+			const std::vector< std::string >& ToolSourceFiles() const  { return itsToolSourceFiles; }
 			
 			std::vector< FileName > LibImports()    const  { return myImports; }
 			std::vector< FileName > Frameworks()    const  { return myFrameworks; }
