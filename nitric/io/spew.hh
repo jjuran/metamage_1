@@ -1,5 +1,5 @@
-// io/spray.hh
-// -----------
+// io/spew.hh
+// ----------
 //
 // Maintained by Joshua Juran
 
@@ -11,8 +11,8 @@
 // in the public domain.
 
 
-#ifndef IO_SPRAY_HH
-#define IO_SPRAY_HH
+#ifndef IO_SPEW_HH
+#define IO_SPEW_HH
 
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
@@ -26,10 +26,10 @@
 namespace io
 {
 	
-	class incomplete_spray {};
+	class incomplete_spew {};
 	
 	template < class details >
-	class spray_putter
+	class spew_putter
 	{
 		private:
 			typedef typename details::file_spec   file_spec;
@@ -39,7 +39,7 @@ namespace io
 			Nucleus::Owned< stream > itsOutput;
 		
 		public:
-			spray_putter( const file_spec& file ) : itsOutput( io::open_for_writing< Nucleus::Owned< stream > >( file ) )  {}
+			spew_putter( const file_spec& file ) : itsOutput( io::open_for_writing< Nucleus::Owned< stream > >( file ) )  {}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
@@ -49,15 +49,15 @@ namespace io
 				
 				if ( bytesRead != bytesToWrite )
 				{
-					throw incomplete_spray();
+					throw incomplete_spew();
 				}
 			}
 	};
 	
 	template < class Flattener, class FileSpec >
-	void spray_file( const FileSpec& file, typename Flattener::Parameter param )
+	void spew_file( const FileSpec& file, typename Flattener::Parameter param )
 	{
-		spray_putter< io::filespec_traits< FileSpec > > putter( file );
+		spew_putter< io::filespec_traits< FileSpec > > putter( file );
 		
 		Flattener().Put( param, putter );
 	}
