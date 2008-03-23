@@ -189,7 +189,7 @@ namespace ALine
 			command << cmdgen.Prefix( pchSourceName );
 		}
 		
-		command << cmdgen.Output( options.Output() / ObjectFileName( filename ) );
+		command << OutputOption( options.Output() / ObjectFileName( filename ) );
 		
 		command << cmdgen.Input( file );
 		
@@ -247,7 +247,7 @@ namespace ALine
 			command << "-Wno-non-template-friend";
 		}
 		
-		command << cmdgen.Output( options.PrecompiledHeaderImage() );
+		command << OutputOption( options.PrecompiledHeaderImage() );
 		
 		// Add the source file to the command line
 		command << cmdgen.Input( pathname_to_precompiled_header_source );

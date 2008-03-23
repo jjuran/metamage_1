@@ -168,11 +168,6 @@ namespace ALine
 			return result;
 		}
 		
-		std::string Output( const std::string& pathname ) const
-		{
-			return OutputOption( pathname );
-		}
-		
 		std::string Input( const std::string& pathname ) const
 		{
 			return q( pathname );
