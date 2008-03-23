@@ -15,7 +15,7 @@
 
 // Io
 #include "io/io.hh"
-#include "io/spray.hh"
+#include "io/spew.hh"
 
 // Nucleus
 #include "Nucleus/Flattener.h"
@@ -513,7 +513,7 @@ namespace ALine
 			
 			std::string info = "APPL" + project.CreatorCode();
 			
-			io::spray_file< NN::StringFlattener< std::string > >( pkgInfo, info );
+			io::spew_file< NN::StringFlattener< std::string > >( pkgInfo, info );
 		}
 		
 		if ( !useAr )
