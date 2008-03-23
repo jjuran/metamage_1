@@ -210,12 +210,25 @@ namespace ALine
 		return std::string( "(" ) + s + ")";
 	}
 	
+	static std::string BundleResourceFileRelativePath( const std::string& linkName )
+	{
+		std::string bundleName   = linkName + ".app";
+		std::string rsrcFileName = linkName + ".rsrc";
+		
+		return bundleName / "Contents" / "Resources" / rsrcFileName;
+	}
+	
 	static void CompileResources( const Project&  project,
 	                              std::string     rsrcFile,
 	                              bool            needsCarbResource,
 	                              bool            usingOSXRez )
 	{
 		const std::vector< FileName >& rez = project.UsedRezFiles();
+		
+		if ( rez.empty() )
+		{
+			return;
+		}
 		
 		std::vector< std::string > rezFiles( rez.size() );
 		
@@ -248,7 +261,7 @@ namespace ALine
 	
 	static void CopyResources( const Project&      project,
 	                           const std::string&  rsrcFile,
-	                           bool                rezzing )
+	                           bool                usingOSXRez )
 	{
 		const std::vector< FileName >& rsrcs = project.UsedRsrcFiles();
 		
@@ -266,13 +279,13 @@ namespace ALine
 		
 		std::string command_line = join( rsrcFiles.begin(),
 		                                 rsrcFiles.end(),
-		                                 rezzing ? "; "
-		                                         : " ",
-		                                 rezzing ? std::ptr_fun( MakeEchoedRezInclude )
-		                                         : std::ptr_fun( q ) );
+		                                 usingOSXRez ? "; "
+		                                             : " ",
+		                                 usingOSXRez ? std::ptr_fun( MakeEchoedRezInclude )
+		                                             : std::ptr_fun( q ) );
 		
 		
-		if ( rezzing )
+		if ( usingOSXRez )
 		{
 			command_line = paren( command_line ) + " | /Developer/Tools/Rez -append -useDF -o";
 		}
@@ -524,24 +537,14 @@ namespace ALine
 		QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
 		QueueCommand( command );
 		
-		std::string rsrcFile = outFile;
+		std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
+		                           : outFile;
 		
-		if ( !project.UsedRezFiles().empty() )
-		{
-			if ( gnu )
-			{
-				std::string bundleName   = linkName + ".app";
-				std::string rsrcFileName = linkName + ".rsrc";
-				
-				rsrcFile = outputDir / bundleName / "Contents" / "Resources" / rsrcFileName;
-			}
-			
-			CompileResources( project, rsrcFile, needCarbResource, gnu );
-		}
+		bool usingOSXRez = gnu;
 		
-		bool rezzing = gnu;
+		CompileResources( project, rsrcFile, needCarbResource, usingOSXRez );
 		
-		CopyResources( project, rsrcFile, rezzing );
+		CopyResources( project, rsrcFile, usingOSXRez );
 	}
 	
 }
