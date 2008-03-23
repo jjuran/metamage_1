@@ -210,6 +210,42 @@ namespace ALine
 		return std::string( "(" ) + s + ")";
 	}
 	
+	static void CompileResources( const Project&  project,
+	                              std::string     rsrcFile,
+	                              bool            needsCarbResource,
+	                              bool            usingOSXRez )
+	{
+		const std::vector< FileName >& rez = project.UsedRezFiles();
+		
+		std::vector< std::string > rezFiles( rez.size() );
+		
+		std::transform( rez.begin(),
+		                rez.end(),
+		                rezFiles.begin(),
+		                std::ptr_fun( RezLocation ) );
+		
+		if ( needsCarbResource )
+		{
+			rezFiles.push_back( RezLocation( "CarbonApp.r" ) );
+		}
+		
+		std::string rezCommand = usingOSXRez ? "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF"
+		                                     : "mpwrez -append";
+		
+		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
+		
+		rezCommand << "-i " + q( includeDir );
+		rezCommand << OutputOption( rsrcFile );
+		
+		rezCommand << join( rezFiles.begin(),
+		                    rezFiles.end(),
+		                    " ",
+		                    std::ptr_fun( q ) );
+		
+		QueueCommand( "echo Rezzing:  " + io::get_filename_string( rsrcFile ) );
+		QueueCommand( rezCommand );
+	}
+	
 	static void CopyResources( const Project&      project,
 	                           const std::string&  rsrcFile,
 	                           bool                rezzing )
@@ -499,43 +535,15 @@ namespace ALine
 		
 		if ( !project.UsedRezFiles().empty() )
 		{
-			const std::vector< FileName >& rez = project.UsedRezFiles();
-			std::vector< std::string > rezFiles( rez.size() );
-			
-			std::transform( rez.begin(),
-			                rez.end(),
-			                rezFiles.begin(),
-			                std::ptr_fun( RezLocation ) );
-			
-			if ( needCarbResource )
-			{
-				rezFiles.push_back( RezLocation( "CarbonApp.r" ) );
-			}
-			
-			std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
-			std::string rezCommand = "mpwrez -append";
-			
 			if ( gnu )
 			{
-				std::string bundleName = linkName + ".app";
+				std::string bundleName   = linkName + ".app";
 				std::string rsrcFileName = linkName + ".rsrc";
 				
 				rsrcFile = outputDir / bundleName / "Contents" / "Resources" / rsrcFileName;
-				
-				rezCommand = "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF";
-				
 			}
 			
-			rezCommand << "-i " + q( includeDir );
-			rezCommand << cmdgen.Output( rsrcFile );
-			
-			rezCommand << join( rezFiles.begin(),
-			                    rezFiles.end(),
-			                    " ",
-			                    std::ptr_fun( q ) );
-			
-			QueueCommand( "echo Rezzing:  " + io::get_filename_string( rsrcFile ) );
-			QueueCommand( rezCommand );
+			CompileResources( project, rsrcFile, needCarbResource, gnu );
 		}
 		
 		bool rezzing = gnu;
