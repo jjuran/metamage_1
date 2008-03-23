@@ -29,6 +29,11 @@ namespace ALine
 	static const std::string space = " ";
 	
 	
+	inline std::string OutputOption( const std::string& pathname )
+	{
+		return "-o " + q( pathname );
+	}
+	
 	struct CommandGenerator
 	{
 		TargetInfo target;
@@ -165,7 +170,7 @@ namespace ALine
 		
 		std::string Output( const std::string& pathname ) const
 		{
-			return "-o " + q( pathname );
+			return OutputOption( pathname );
 		}
 		
 		std::string Input( const std::string& pathname ) const
