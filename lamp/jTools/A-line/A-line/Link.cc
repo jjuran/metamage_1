@@ -496,14 +496,7 @@ namespace ALine
 			
 			std::string pkgInfo = contents / "PkgInfo";
 			
-			try
-			{
-				//const N::OSType codeZero = N::OSType( 0 );
-				
-				//N::FSpCreate( pkgInfo, codeZero, codeZero );
-				p7::open( pkgInfo, p7::o_creat, 0644 );
-			}
-			catch ( ... )  {}
+			p7::open( pkgInfo, p7::o_creat, 0644 );
 			
 			std::string info = "APPL" + project.CreatorCode();
 			
