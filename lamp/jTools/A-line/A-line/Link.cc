@@ -75,7 +75,8 @@ namespace ALine
 		return result;
 	}
 	
-	static std::string MakeEchoedIncludedPOSIXPathname( const std::string& file )
+	// foo.r -> echo 'include "foo.r";'
+	static std::string MakeEchoedRezInclude( const std::string& file )
 	{
 		std::string include = "include ";
 		std::string echo    = "echo ";
@@ -207,6 +208,47 @@ namespace ALine
 	static std::string paren( const std::string& s )
 	{
 		return std::string( "(" ) + s + ")";
+	}
+	
+	static void CopyResources( const Project&      project,
+	                           const std::string&  rsrcFile,
+	                           bool                rezzing )
+	{
+		const std::vector< FileName >& rsrcs = project.UsedRsrcFiles();
+		
+		if ( rsrcs.empty() )
+		{
+			return;
+		}
+		
+		std::vector< std::string > rsrcFiles( rsrcs.size() );
+		
+		std::transform( rsrcs.begin(), 
+		                rsrcs.end(),
+		                rsrcFiles.begin(),
+		                std::ptr_fun( RezLocation ) );
+		
+		std::string command_line = join( rsrcFiles.begin(),
+		                                 rsrcFiles.end(),
+		                                 rezzing ? "; "
+		                                         : " ",
+		                                 rezzing ? std::ptr_fun( MakeEchoedRezInclude )
+		                                         : std::ptr_fun( q ) );
+		
+		
+		if ( rezzing )
+		{
+			command_line = paren( command_line ) + " | /Developer/Tools/Rez -append -useDF -o";
+		}
+		else
+		{
+			command_line = "cpres " + command_line;
+		}
+		
+		command_line << q( rsrcFile );
+		
+		QueueCommand( "echo Copying resources:  " + io::get_filename_string( rsrcFile ) );
+		QueueCommand( command_line );
 	}
 	
 	void LinkProduct( const Project& project, TargetInfo targetInfo )
@@ -496,39 +538,9 @@ namespace ALine
 			QueueCommand( rezCommand );
 		}
 		
-		if ( !project.UsedRsrcFiles().empty() )
-		{
-			const std::vector< FileName >& rsrcs = project.UsedRsrcFiles();
-			std::vector< std::string > rsrcFiles( rsrcs.size() );
-			
-			std::transform( rsrcs.begin(), 
-			                rsrcs.end(),
-			                rsrcFiles.begin(),
-			                std::ptr_fun( RezLocation ) );
-			
-			std::string cpresCommand = "cpres";
-			
-			cpresCommand << join( rsrcFiles.begin(),
-			                      rsrcFiles.end(),
-			                      " ",
-			                      std::ptr_fun( q ) );
-			
-			
-			if ( gnu )
-			{
-				std::string echoes = join( rsrcFiles.begin(),
-				                           rsrcFiles.end(),
-				                           "; ",
-				                           std::ptr_fun( MakeEchoedIncludedPOSIXPathname ) );
-				
-				cpresCommand = paren( echoes ) + " | /Developer/Tools/Rez -append -useDF -o";
-			}
-			
-			cpresCommand << q( rsrcFile );
-			
-			QueueCommand( "echo Copying resources:  " + io::get_filename_string( rsrcFile ) );
-			QueueCommand( cpresCommand );
-		}
+		bool rezzing = gnu;
+		
+		CopyResources( project, rsrcFile, rezzing );
 	}
 	
 }
