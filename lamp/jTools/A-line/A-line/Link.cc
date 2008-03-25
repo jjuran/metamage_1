@@ -468,6 +468,8 @@ namespace ALine
 				needToLink = found != usedProjects.end();
 			}
 			
+			if ( !needToLink )  return;
+			
 			if ( !gnu )
 			{
 				for ( std::vector< std::string >::iterator it = usedProjects.begin();  it != usedProjects.end();  ++it )
@@ -497,6 +499,11 @@ namespace ALine
 			{
 				link << GetImports( project );
 			}
+			
+			if ( machO )
+			{
+				link << GetFrameworks( project );
+			}
 		}
 		
 		if ( !needToLink )  return;
@@ -505,12 +512,6 @@ namespace ALine
 		if ( !gnu && project.CreatorCode().size() > 0 )
 		{
 			command << cmdgen.OutputCreator( project.CreatorCode() );
-		}
-		
-		
-		if ( needLibs && machO )
-		{
-			link << GetFrameworks( project );
 		}
 		
 		const bool useAr = gnu  &&  project.Product() == productStaticLib;
