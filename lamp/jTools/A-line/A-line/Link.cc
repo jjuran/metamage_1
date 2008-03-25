@@ -377,13 +377,6 @@ namespace ALine
 			p7::throw_errno( EINVAL );
 		}
 		
-		const bool useAr = gnu  &&  project.Product() == productStaticLib;
-		
-		if ( !useAr )
-		{
-			command << cmdgen.LinkerOptions();
-		}
-		
 		std::string objectsDir = ProjectObjectsDirPath( project.Name() );
 		
 		std::string libsDir = LibrariesDirPath();
@@ -516,8 +509,11 @@ namespace ALine
 			io::spew_file< NN::StringFlattener< std::string > >( pkgInfo, info );
 		}
 		
+		const bool useAr = gnu  &&  project.Product() == productStaticLib;
+		
 		if ( !useAr )
 		{
+			command << cmdgen.LinkerOptions();
 			command << "-o";
 		}
 		
