@@ -391,7 +391,23 @@ namespace ALine
 		std::string outputDir  = project.Product() == productStaticLib ? libsDir
 		                                                               : ProjectOutputDirPath( project.Name() );
 		
-		std::string outFile = outputDir / linkName;
+		std::string linkDir = outputDir;
+		
+		if ( bundle )
+		{
+			std::string bundleName = linkName + ".app";
+			
+			CreateAppBundle( outputDir, bundleName );
+			
+			std::string contents( outputDir / bundleName / "Contents" );
+			
+			linkDir = contents / "MacOS";
+			
+			WritePkgInfo( contents / "PkgInfo", "APPL" + project.CreatorCode() );
+		}
+		
+		std::string outFile = linkDir / linkName;
+		
 		bool outFileExists = io::item_exists( outFile );
 		
 		time_t outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
@@ -495,23 +511,6 @@ namespace ALine
 		if ( needLibs && machO )
 		{
 			link << GetFrameworks( project );
-		}
-		
-		if ( bundle )
-		{
-			std::string bundleName = linkName + ".app";
-			
-			CreateAppBundle( outputDir, bundleName );
-			
-			std::string contents( outputDir / bundleName / "Contents" );
-			
-			outFile = contents / "MacOS" / linkName;
-			
-			std::string pkgInfo = contents / "PkgInfo";
-			
-			std::string info = "APPL" + project.CreatorCode();
-			
-			WritePkgInfo( pkgInfo, info );
 		}
 		
 		const bool useAr = gnu  &&  project.Product() == productStaticLib;
