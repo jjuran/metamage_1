@@ -210,6 +210,13 @@ namespace ALine
 		return std::string( "(" ) + s + ")";
 	}
 	
+	static void WritePkgInfo( const std::string& pathname, const std::string& contents )
+	{
+		p7::open( pathname, p7::o_creat, 0644 );
+		
+		io::spew_file< NN::StringFlattener< std::string > >( pathname, contents );
+	}
+	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
 	{
 		std::string bundleName   = linkName + ".app";
@@ -502,11 +509,9 @@ namespace ALine
 			
 			std::string pkgInfo = contents / "PkgInfo";
 			
-			p7::open( pkgInfo, p7::o_creat, 0644 );
-			
 			std::string info = "APPL" + project.CreatorCode();
 			
-			io::spew_file< NN::StringFlattener< std::string > >( pkgInfo, info );
+			WritePkgInfo( pkgInfo, info );
 		}
 		
 		const bool useAr = gnu  &&  project.Product() == productStaticLib;
