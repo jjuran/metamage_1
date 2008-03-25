@@ -460,6 +460,18 @@ namespace jTools
 						
 						translatedPath = QuotedMacPathFromPOSIXPath( translatedPath.c_str() );
 						
+						// Link Orion first, if present.
+						// This hack is necessary on 68K to ensure that main()
+						// resides within the first 32K, accessible by JMP from
+						// the startup code.
+						
+						if ( std::strcmp( arg + 2, "Orion" ) == 0 )
+						{
+							ldArgs = " " + translatedPath + ldArgs;
+							
+							continue;
+						}
+						
 						arg = translatedPath.c_str();
 						
 						break;
