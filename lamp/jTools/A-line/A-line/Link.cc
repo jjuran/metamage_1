@@ -258,6 +258,16 @@ namespace ALine
 		             std::ptr_fun( GetLibraryLinkOption ) );
 	}
 	
+	static void LinkFile( std::string         command,
+	                      const std::string&  objectFileArgs,
+	                      const std::string&  libraryArgs,
+	                      const std::string&  trailer )
+	{
+		command << objectFileArgs << libraryArgs << trailer;
+		
+		QueueCommand( command );
+	}
+	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
 	{
 		std::string bundleName   = linkName + ".app";
@@ -472,7 +482,7 @@ namespace ALine
 			objectFiles.push_back( objectFile );
 		}
 		
-		std::string link;
+		std::string allLibraryLinkArgs;
 		
 		if ( needLibs )
 		{
@@ -484,27 +494,27 @@ namespace ALine
 			
 			if ( !usedProjects.empty() )
 			{
-				link = "-L'" + libsDir + "'";
+				allLibraryLinkArgs = "-L'" + libsDir + "'";
 				
-				std::string libLinkArgs = GetLibraryLinkArgs( usedProjects, needToLink ? 0 : outFileDate );
+				std::string projLibLinkArgs = GetLibraryLinkArgs( usedProjects, needToLink ? 0 : outFileDate );
 				
-				if ( libLinkArgs.empty() )
+				if ( projLibLinkArgs.empty() )
 				{
 					return;
 				}
 				
-				link << libLinkArgs;
+				allLibraryLinkArgs << projLibLinkArgs;
 			}
 			
 			// FIXME:  This is a hack
 			if ( !gnu )
 			{
-				link << GetImports( project );
+				allLibraryLinkArgs << GetImports( project );
 			}
 			
 			if ( machO )
 			{
-				link << GetFrameworks( project );
+				allLibraryLinkArgs << GetFrameworks( project );
 			}
 		}
 		else if ( !needToLink )
@@ -533,19 +543,12 @@ namespace ALine
 		                                    " ",
 		                                    std::ptr_fun( q ) );
 		
-		command << objectFilePaths << link;
-		
-		if ( gnu )
-		{
-			command << "> /tmp/link-errs.txt 2>&1";
-		}
-		else
-		{
-			command << " 2>&1 | filter-mwlink-warnings";
-		}
-		
 		QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
-		QueueCommand( command );
+		
+		std::string trailer = gnu ? "> /tmp/link-errs.txt 2>&1"
+		                          : " 2>&1 | filter-mwlink-warnings";
+		
+		LinkFile( command, objectFilePaths, allLibraryLinkArgs, trailer );
 		
 		std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
 		                           : outFile;
