@@ -15,6 +15,7 @@
 
 // Io
 #include "io/io.hh"
+#include "io/slurp.hh"
 #include "io/spew.hh"
 
 // Nucleus
@@ -214,7 +215,10 @@ namespace ALine
 	{
 		p7::open( pathname, p7::o_creat, 0644 );
 		
-		io::spew_file< NN::StringFlattener< std::string > >( pathname, contents );
+		if ( io::slurp_file< NN::StringFlattener< std::string > >( pathname ) != contents )
+		{
+			io::spew_file< NN::StringFlattener< std::string > >( pathname, contents );
+		}
 	}
 	
 	static bool ProjectLibsAreOutOfDate( const std::vector< ProjName >& usedProjects, const time_t& outFileDate )
