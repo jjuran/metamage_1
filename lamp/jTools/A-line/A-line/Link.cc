@@ -476,21 +476,25 @@ namespace ALine
 		
 		bool needToLink = Options().all || !outFileExists;
 		
-		std::vector< std::string > objectFiles;
+		std::vector< std::string > objectFiles( project.Sources().size() );
 		
-		std::vector< std::string >::const_iterator it, end = project.Sources().end();
+		std::transform( project.Sources().begin(),
+		                project.Sources().end(),
+		                objectFiles.begin(),
+		                more::compose1( std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
+		                                              objectsDir ),
+		                                more::compose1( more::ptr_fun( ObjectFileName ),
+		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 		
-		for ( it = project.Sources().begin();  it != end;  ++it )
+		std::vector< std::string >::const_iterator it, end = objectFiles.end();
+		
+		for ( it = objectFiles.begin();  it != end;  ++it )
 		{
-			std::string sourceName = io::get_filename_string( *it );
-			
-			std::string objectFile = objectsDir / ObjectFileName( sourceName );
+			const std::string& objectFile = *it;
 			
 			needToLink =    needToLink
 			             || !io::file_exists( objectFile )
 			             || ModifiedDate( objectFile ) >= outFileDate;
-			
-			objectFiles.push_back( objectFile );
 		}
 		
 		std::string objectFilePaths = join( objectFiles.begin(),
