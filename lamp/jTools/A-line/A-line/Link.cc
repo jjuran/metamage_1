@@ -358,6 +358,23 @@ namespace ALine
 		QueueCommand( command_line );
 	}
 	
+	static bool FilesAreNewer( const std::vector< std::string >& files, const time_t& date )
+	{
+		std::vector< std::string >::const_iterator it, end = files.end();
+		
+		for ( it = files.begin();  it != end;  ++it )
+		{
+			const std::string& pathname = *it;
+			
+			if ( !io::file_exists( pathname ) || ModifiedDate( pathname ) >= date )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	void LinkProduct( const Project& project, TargetInfo targetInfo )
 	{
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
@@ -486,16 +503,7 @@ namespace ALine
 		                                more::compose1( more::ptr_fun( ObjectFileName ),
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 		
-		std::vector< std::string >::const_iterator it, end = objectFiles.end();
-		
-		for ( it = objectFiles.begin();  it != end;  ++it )
-		{
-			const std::string& objectFile = *it;
-			
-			needToLink =    needToLink
-			             || !io::file_exists( objectFile )
-			             || ModifiedDate( objectFile ) >= outFileDate;
-		}
+		needToLink = needToLink || FilesAreNewer( objectFiles, outFileDate );
 		
 		std::string objectFilePaths = join( objectFiles.begin(),
 		                                    objectFiles.end(),
