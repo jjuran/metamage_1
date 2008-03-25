@@ -438,13 +438,9 @@ namespace ALine
 		
 		std::string link;
 		
-		std::string expeditedLib;
-		
-		std::string libSearch;
-		
 		if ( needLibs )
 		{
-			libSearch = "-L'" + libsDir + "'";
+			link = "-L'" + libsDir + "'";
 			
 			std::vector< ProjName > usedProjects = project.AllUsedProjects();
 			
@@ -469,23 +465,6 @@ namespace ALine
 			}
 			
 			if ( !needToLink )  return;
-			
-			if ( !gnu )
-			{
-				for ( std::vector< std::string >::iterator it = usedProjects.begin();  it != usedProjects.end();  ++it )
-				{
-					if ( *it == "Orion" )
-					{
-						expeditedLib = GetLibraryLinkOption( *it );
-						
-						std::copy( it + 1, usedProjects.end(), it );
-						
-						usedProjects.resize( usedProjects.size() - 1 );
-						
-						break;
-					}
-				}
-			}
 			
 			// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
 			// Somehow, this is actually required to actually link anything with Mach-O.
@@ -524,7 +503,7 @@ namespace ALine
 		
 		command << q( outFile );
 		
-		command << libSearch << expeditedLib << objectFilePaths << link;
+		command << objectFilePaths << link;
 		
 		if ( gnu )
 		{
