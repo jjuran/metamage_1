@@ -472,17 +472,10 @@ namespace ALine
 			objectFiles.push_back( objectFile );
 		}
 		
-		std::string objectFilePaths = join( objectFiles.begin(),
-		                                    objectFiles.end(),
-		                                    " ",
-		                                    std::ptr_fun( q ) );
-		
 		std::string link;
 		
 		if ( needLibs )
 		{
-			link = "-L'" + libsDir + "'";
-			
 			std::vector< ProjName > usedProjects = project.AllUsedProjects();
 			
 			usedProjects.pop_back();  // we're last; drop us
@@ -491,6 +484,8 @@ namespace ALine
 			
 			if ( !usedProjects.empty() )
 			{
+				link = "-L'" + libsDir + "'";
+				
 				std::string libLinkArgs = GetLibraryLinkArgs( usedProjects, needToLink ? 0 : outFileDate );
 				
 				if ( libLinkArgs.empty() )
@@ -532,6 +527,11 @@ namespace ALine
 		}
 		
 		command << q( outFile );
+		
+		std::string objectFilePaths = join( objectFiles.begin(),
+		                                    objectFiles.end(),
+		                                    " ",
+		                                    std::ptr_fun( q ) );
 		
 		command << objectFilePaths << link;
 		
