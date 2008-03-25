@@ -233,6 +233,27 @@ namespace ALine
 		return outOfDate;
 	}
 	
+	static std::string GetLibraryLinkArgs( const std::vector< ProjName >& usedProjects, const time_t& outFileDate )
+	{
+		const bool outOfDate = outFileDate == 0;
+		
+		// If we already know we're out of date, don't bother checking further.
+		// If we're fully up to date, return the null string.
+		// It's up to the caller to avoid calling us if usedProjects is empty.
+		
+		if ( !outOfDate && !ProjectLibsAreOutOfDate( usedProjects, outFileDate ) )
+		{
+			return "";
+		}
+		
+		// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
+		// Somehow, this is actually required to actually link anything with Mach-O.
+		return join( usedProjects.rbegin(),
+		             usedProjects.rend(),
+		             " ",
+		             std::ptr_fun( GetLibraryLinkOption ) );
+	}
+	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
 	{
 		std::string bundleName   = linkName + ".app";
@@ -464,21 +485,17 @@ namespace ALine
 			
 			RemoveNonLibs( usedProjects );
 			
-			// As long as needToLink is false, continue checking dates.
-			// Stop as soon as we know we have to link (or we run out).
-			if ( !needToLink )
+			if ( !usedProjects.empty() )
 			{
-				needToLink = ProjectLibsAreOutOfDate( usedProjects, outFileDate );
+				std::string libLinkArgs = GetLibraryLinkArgs( usedProjects, needToLink ? 0 : outFileDate );
 				
-				if ( !needToLink )  return;
+				if ( libLinkArgs.empty() )
+				{
+					return;
+				}
+				
+				link << libLinkArgs;
 			}
-			
-			// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
-			// Somehow, this is actually required to actually link anything with Mach-O.
-			link << join( usedProjects.rbegin(),
-			              usedProjects.rend(),
-			              " ",
-			              std::ptr_fun( GetLibraryLinkOption ) );
 			
 			// FIXME:  This is a hack
 			if ( !gnu )
@@ -491,8 +508,10 @@ namespace ALine
 				link << GetFrameworks( project );
 			}
 		}
-		
-		if ( !needToLink )  return;
+		else if ( !needToLink )
+		{
+			return;
+		}
 		
 		
 		if ( !gnu && project.CreatorCode().size() > 0 )
