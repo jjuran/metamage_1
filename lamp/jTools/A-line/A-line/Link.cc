@@ -380,6 +380,8 @@ namespace ALine
 		
 		command << cmdgen.TargetArchitecture();
 		
+		bool hasStaticLib = false;
+		bool hasExecutable = true;
 		bool needLibs = true;
 		bool needCarbResource = false;
 		bool gccSupported = false;
@@ -394,6 +396,15 @@ namespace ALine
 				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
 				needLibs = false;
 				gccSupported = true;
+				hasStaticLib = true;
+				hasExecutable = false;
+				break;
+			
+			case productToolkit:
+				command = cmdgen.LibraryMakerName();
+				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
+				gccSupported = true;
+				hasStaticLib = true;
 				break;
 			
 			case productApplication:
@@ -482,44 +493,69 @@ namespace ALine
 			objectFiles.push_back( objectFile );
 		}
 		
-		std::string allLibraryLinkArgs;
+		std::string objectFilePaths = join( objectFiles.begin(),
+		                                    objectFiles.end(),
+		                                    " ",
+		                                    std::ptr_fun( q ) );
 		
-		if ( needLibs )
+		std::string trailer = gnu ? "> /tmp/link-errs.txt 2>&1"
+		                          : " 2>&1 | filter-mwlink-warnings";
+		
+		if ( hasStaticLib && needToLink )
 		{
-			std::vector< ProjName > usedProjects = project.AllUsedProjects();
+			std::string link = command;
 			
-			usedProjects.pop_back();  // we're last; drop us
+			const bool useAr = gnu;
 			
-			RemoveNonLibs( usedProjects );
-			
-			if ( !usedProjects.empty() )
+			if ( !useAr )
 			{
-				allLibraryLinkArgs = "-L'" + libsDir + "'";
-				
-				std::string projLibLinkArgs = GetLibraryLinkArgs( usedProjects, needToLink ? 0 : outFileDate );
-				
-				if ( projLibLinkArgs.empty() )
-				{
-					return;
-				}
-				
-				allLibraryLinkArgs << projLibLinkArgs;
+				link << cmdgen.LinkerOptions();
+				link << "-o";
 			}
 			
-			// FIXME:  This is a hack
-			if ( !gnu )
-			{
-				allLibraryLinkArgs << GetImports( project );
-			}
+			link << q( outFile );
 			
-			if ( machO )
-			{
-				allLibraryLinkArgs << GetFrameworks( project );
-			}
+			QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
+			
+			LinkFile( link, objectFilePaths, "", trailer );
 		}
-		else if ( !needToLink )
+		
+		if ( !needLibs )
 		{
 			return;
+		}
+		
+		std::string allLibraryLinkArgs;
+		
+		std::vector< ProjName > usedProjects = project.AllUsedProjects();
+		
+		usedProjects.pop_back();  // we're last; drop us
+		
+		RemoveNonLibs( usedProjects );
+		
+		if ( !usedProjects.empty() )
+		{
+			allLibraryLinkArgs = "-L'" + libsDir + "'";
+			
+			std::string projLibLinkArgs = GetLibraryLinkArgs( usedProjects, needToLink ? 0 : outFileDate );
+			
+			if ( projLibLinkArgs.empty() )
+			{
+				return;
+			}
+			
+			allLibraryLinkArgs << projLibLinkArgs;
+		}
+		
+		// FIXME:  This is a hack
+		if ( !gnu )
+		{
+			allLibraryLinkArgs << GetImports( project );
+		}
+		
+		if ( machO )
+		{
+			allLibraryLinkArgs << GetFrameworks( project );
 		}
 		
 		
@@ -528,7 +564,7 @@ namespace ALine
 			command << cmdgen.OutputCreator( project.CreatorCode() );
 		}
 		
-		const bool useAr = gnu  &&  project.Product() == productStaticLib;
+		const bool useAr = gnu  &&  hasStaticLib;
 		
 		if ( !useAr )
 		{
@@ -538,15 +574,7 @@ namespace ALine
 		
 		command << q( outFile );
 		
-		std::string objectFilePaths = join( objectFiles.begin(),
-		                                    objectFiles.end(),
-		                                    " ",
-		                                    std::ptr_fun( q ) );
-		
 		QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
-		
-		std::string trailer = gnu ? "> /tmp/link-errs.txt 2>&1"
-		                          : " 2>&1 | filter-mwlink-warnings";
 		
 		LinkFile( command, objectFilePaths, allLibraryLinkArgs, trailer );
 		
