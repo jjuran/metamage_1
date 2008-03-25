@@ -217,6 +217,22 @@ namespace ALine
 		io::spew_file< NN::StringFlattener< std::string > >( pathname, contents );
 	}
 	
+	static bool ProjectLibsAreOutOfDate( const std::vector< ProjName >& usedProjects, const time_t& outFileDate )
+	{
+		std::vector< std::string >::const_iterator found;
+		
+		found = std::find_if( usedProjects.begin(),
+		                      usedProjects.end(),
+		                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
+		                                                    outFileDate ),
+		                                      more::compose1( more::ptr_fun( ModifiedDate ),
+		                                                      more::ptr_fun( GetPathnameOfBuiltLibrary ) ) ) );
+		
+		bool outOfDate = found != usedProjects.end();
+		
+		return outOfDate;
+	}
+	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
 	{
 		std::string bundleName   = linkName + ".app";
@@ -452,19 +468,10 @@ namespace ALine
 			// Stop as soon as we know we have to link (or we run out).
 			if ( !needToLink )
 			{
-				std::vector< std::string >::const_iterator found;
+				needToLink = ProjectLibsAreOutOfDate( usedProjects, outFileDate );
 				
-				found = std::find_if( usedProjects.begin(),
-				                      usedProjects.end(),
-				                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
-				                                                    outFileDate ),
-				                                      more::compose1( more::ptr_fun( ModifiedDate ),
-				                                                      more::ptr_fun( GetPathnameOfBuiltLibrary ) ) ) );
-				
-				needToLink = found != usedProjects.end();
+				if ( !needToLink )  return;
 			}
-			
-			if ( !needToLink )  return;
 			
 			// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
 			// Somehow, this is actually required to actually link anything with Mach-O.
