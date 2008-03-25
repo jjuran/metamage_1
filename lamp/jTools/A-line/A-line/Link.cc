@@ -218,10 +218,10 @@ namespace ALine
 		return bundleName / "Contents" / "Resources" / rsrcFileName;
 	}
 	
-	static void CompileResources( const Project&  project,
-	                              std::string     rsrcFile,
-	                              bool            needsCarbResource,
-	                              bool            usingOSXRez )
+	static void CompileResources( const Project&      project,
+	                              const std::string&  rsrcFile,
+	                              bool                needsCarbResource,
+	                              bool                usingOSXRez )
 	{
 		const std::vector< FileName >& rez = project.UsedRezFiles();
 		
