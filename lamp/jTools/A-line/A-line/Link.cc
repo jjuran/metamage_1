@@ -283,11 +283,14 @@ namespace ALine
 	}
 	
 	static void LinkFile( std::string         command,
+	                      const std::string&  outputFile,
 	                      const std::string&  objectFileArgs,
 	                      const std::string&  libraryArgs,
 	                      const std::string&  trailer )
 	{
-		command << objectFileArgs << libraryArgs << trailer;
+		command << q( outputFile ) << objectFileArgs << libraryArgs << trailer;
+		
+		QueueCommand( "echo Linking:  " + io::get_filename_string( outputFile ) );
 		
 		QueueCommand( command );
 	}
@@ -545,11 +548,7 @@ namespace ALine
 				link << "-o";
 			}
 			
-			link << q( outFile );
-			
-			QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
-			
-			LinkFile( link, objectFilePaths, "", trailer );
+			LinkFile( link, outFile, objectFilePaths, "", trailer );
 		}
 		
 		if ( !needLibs || toolkit )
@@ -604,11 +603,7 @@ namespace ALine
 			command << "-o";
 		}
 		
-		command << q( outFile );
-		
-		QueueCommand( "echo Linking:  " + io::get_filename_string( outFile ) );
-		
-		LinkFile( command, objectFilePaths, allLibraryLinkArgs, trailer );
+		LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, trailer );
 		
 		std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
 		                           : outFile;
