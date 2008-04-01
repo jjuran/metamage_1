@@ -249,6 +249,7 @@ namespace ALine
 	{
 		std::vector< std::string >::const_iterator found;
 		
+		// Search for another project's library that's newer than our link output.
 		found = std::find_if( usedProjects.begin(),
 		                      usedProjects.end(),
 		                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
@@ -265,7 +266,6 @@ namespace ALine
 	{
 		const bool outOfDate = outFileDate == 0;
 		
-		// If we already know we're out of date, don't bother checking further.
 		// If we're fully up to date, return the null string.
 		// It's up to the caller to avoid calling us if usedProjects is empty.
 		
@@ -385,6 +385,11 @@ namespace ALine
 		QueueCommand( command_line );
 	}
 	
+	static time_t EffectiveModifiedDate( const std::string& file )
+	{
+		return Options().all || !io::item_exists( file ) ? 0 : ModifiedDate( file );
+	}
+	
 	void LinkProduct( const Project& project, TargetInfo targetInfo )
 	{
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
@@ -498,12 +503,6 @@ namespace ALine
 		
 		std::string outFile = linkDir / linkName;
 		
-		bool outFileExists = io::item_exists( outFile );
-		
-		time_t outFileDate = outFileExists ? ModifiedDate( outFile ) : 0;
-		
-		bool needToLink = Options().all || !outFileExists;
-		
 		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
 		
 		std::sort( toolSourceFiles.begin(), toolSourceFiles.end() );
@@ -526,8 +525,6 @@ namespace ALine
 		                                more::compose1( more::ptr_fun( ObjectFileName ),
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 		
-		needToLink = needToLink || FilesAreNewer( objectFiles, outFileDate );
-		
 		std::string objectFilePaths = join( objectFiles.begin() + n_tools,
 		                                    objectFiles.end(),
 		                                    " ",
@@ -536,7 +533,14 @@ namespace ALine
 		std::string trailer = gnu ? "> /tmp/link-errs.txt 2>&1"
 		                          : " 2>&1 | filter-mwlink-warnings";
 		
-		if ( hasStaticLib && needToLink )
+		time_t outFileDate = EffectiveModifiedDate( outFile );
+		
+		if ( FilesAreNewer( objectFiles, outFileDate ) )
+		{
+			outFileDate = 0;
+		}
+		
+		if ( hasStaticLib  &&  outFileDate == 0 )
 		{
 			std::string link = command;
 			
@@ -568,7 +572,7 @@ namespace ALine
 		{
 			allLibraryLinkArgs = "-L'" + libsDir + "'";
 			
-			std::string projLibLinkArgs = GetLibraryLinkArgs( usedProjects, needToLink ? 0 : outFileDate );
+			std::string projLibLinkArgs = GetLibraryLinkArgs( usedProjects, outFileDate );
 			
 			if ( projLibLinkArgs.empty() )
 			{
