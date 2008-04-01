@@ -595,13 +595,8 @@ namespace ALine
 			command << cmdgen.OutputCreator( project.CreatorCode() );
 		}
 		
-		const bool useAr = gnu  &&  hasStaticLib;
-		
-		if ( !useAr )
-		{
-			command << cmdgen.LinkerOptions();
-			command << "-o";
-		}
+		command << cmdgen.LinkerOptions();
+		command << "-o";
 		
 		LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, trailer );
 		
