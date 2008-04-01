@@ -167,12 +167,28 @@ namespace ALine
 		return "-l" + name;
 	}
 	
-	static std::string gLibraryPrefix;
-	static std::string gLibraryExtension;
-	
-	static std::string GetPathnameOfBuiltLibrary( const std::string& name )
+	static bool FilesAreNewer( const std::vector< std::string >& files, const time_t& date )
 	{
-		return LibrariesDirPath() / gLibraryPrefix + name + gLibraryExtension;
+		std::vector< std::string >::const_iterator it, end = files.end();
+		
+		for ( it = files.begin();  it != end;  ++it )
+		{
+			const std::string& pathname = *it;
+			
+			if ( !io::file_exists( pathname ) || ModifiedDate( pathname ) >= date )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	static bool SourceFileIsTool( const std::string& sourceFile, const std::vector< std::string >& tools )
+	{
+		return std::find( tools.begin(),
+		                  tools.end(),
+		                  io::get_filename( sourceFile ) ) != tools.end();
 	}
 	
 	static bool ProjectBuildsLib( const Project& project )
@@ -219,6 +235,14 @@ namespace ALine
 		{
 			io::spew_file< NN::StringFlattener< std::string > >( pathname, contents );
 		}
+	}
+	
+	static std::string gLibraryPrefix;
+	static std::string gLibraryExtension;
+	
+	static std::string GetPathnameOfBuiltLibrary( const std::string& name )
+	{
+		return LibrariesDirPath() / gLibraryPrefix + name + gLibraryExtension;
 	}
 	
 	static bool ProjectLibsAreOutOfDate( const std::vector< ProjName >& usedProjects, const time_t& outFileDate )
@@ -358,23 +382,6 @@ namespace ALine
 		QueueCommand( command_line );
 	}
 	
-	static bool FilesAreNewer( const std::vector< std::string >& files, const time_t& date )
-	{
-		std::vector< std::string >::const_iterator it, end = files.end();
-		
-		for ( it = files.begin();  it != end;  ++it )
-		{
-			const std::string& pathname = *it;
-			
-			if ( !io::file_exists( pathname ) || ModifiedDate( pathname ) >= date )
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
 	void LinkProduct( const Project& project, TargetInfo targetInfo )
 	{
 		const bool gnu = targetInfo.toolkit == toolkitGNU;
@@ -403,6 +410,7 @@ namespace ALine
 		bool needCarbResource = false;
 		bool gccSupported = false;
 		bool bundle = false;
+		bool toolkit = false;
 		
 		const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
 		
@@ -422,6 +430,7 @@ namespace ALine
 				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
 				gccSupported = true;
 				hasStaticLib = true;
+				toolkit = true;
 				break;
 			
 			case productApplication:
@@ -467,10 +476,9 @@ namespace ALine
 		
 		std::string libsDir = LibrariesDirPath();
 		
-		std::string outputDir  = project.Product() == productStaticLib ? libsDir
-		                                                               : ProjectOutputDirPath( project.Name() );
+		std::string outputDir = ProjectOutputDirPath( project.Name() );
 		
-		std::string linkDir = outputDir;
+		std::string linkDir = hasStaticLib ? libsDir : outputDir;
 		
 		if ( bundle )
 		{
@@ -493,10 +501,22 @@ namespace ALine
 		
 		bool needToLink = Options().all || !outFileExists;
 		
-		std::vector< std::string > objectFiles( project.Sources().size() );
+		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
 		
-		std::transform( project.Sources().begin(),
-		                project.Sources().end(),
+		std::sort( toolSourceFiles.begin(), toolSourceFiles.end() );
+		
+		std::vector< std::string > sourceFiles = project.Sources();
+		
+		std::size_t n_tools = toolkit ? std::partition( sourceFiles.begin(),
+		                                                sourceFiles.end(),
+		                                                std::bind2nd( more::ptr_fun( &SourceFileIsTool ),
+		                                                                              toolSourceFiles ) ) - sourceFiles.begin()
+		                              : 0;
+		
+		std::vector< std::string > objectFiles( sourceFiles.size() );
+		
+		std::transform( sourceFiles.begin(),
+		                sourceFiles.end(),
 		                objectFiles.begin(),
 		                more::compose1( std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
 		                                              objectsDir ),
@@ -505,7 +525,7 @@ namespace ALine
 		
 		needToLink = needToLink || FilesAreNewer( objectFiles, outFileDate );
 		
-		std::string objectFilePaths = join( objectFiles.begin(),
+		std::string objectFilePaths = join( objectFiles.begin() + n_tools,
 		                                    objectFiles.end(),
 		                                    " ",
 		                                    std::ptr_fun( q ) );
@@ -532,7 +552,7 @@ namespace ALine
 			LinkFile( link, objectFilePaths, "", trailer );
 		}
 		
-		if ( !needLibs )
+		if ( !needLibs || toolkit )
 		{
 			return;
 		}
