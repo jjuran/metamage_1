@@ -134,6 +134,7 @@ DEFINE_STUB( nanosleep )
 DEFINE_STUB( pause )
 
 DEFINE_STUB( copyfile )
+DEFINE_STUB( access )
 
 DEFINE_STUB( kill )
 DEFINE_STUB( rename )
