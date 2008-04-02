@@ -22,7 +22,7 @@
 #define __NR_mknod                      14
 #define __NR_chmod                      15
 #define __NR_lchown                     16
-#define __NR_fchdir                     17
+// 17
 #define __NR_getcwd_k                   18
 #define __NR_lseek                      19
 #define __NR_getpid                     20
@@ -33,11 +33,11 @@
 #define __NR_stime                      25
 #define __NR_ptrace                     26
 #define __NR_alarm                      27
-#define __NR_nanosleep                  28
+// 28
 #define __NR_pause                      29
 #define __NR_utime                      30
 // 31
-#define __NR_copyfile                   32
+// 32
 #define __NR_access                     33
 #define __NR_nice                       34
 #define __NR_ftime                      35
@@ -61,16 +61,16 @@
 #define __NR_flock                      53
 #define __NR_ioctl                      54
 #define __NR_fcntl                      55
-#define __NR_getpgid                    56
+// 56
 #define __NR_setpgid                    57
-#define __NR_getsid                     58
+// 58
 #define __NR_uname                      59
 #define __NR_umask                      60
 #define __NR_chroot                     61
 #define __NR_ustat                      62
 #define __NR_dup2                       63
 #define __NR_getppid                    64
-#define __NR_sigprocmask                65
+// 65
 #define __NR_setsid                     66
 #define __NR_sigaction                  67
 #define __NR_sgetmask                   68
@@ -89,7 +89,7 @@
 // 81
 #define __NR_select                     82
 #define __NR_symlink                    83
-#define __NR_getdents                   84
+// 84
 #define __NR_readlink_k                 85
 // 86
 // 87
@@ -114,35 +114,91 @@
 #define __NR_stat                      106
 #define __NR_lstat                     107
 #define __NR_fstat                     108
-#define __NR_socketpair                109
-#define __NR_socket                    110
-#define __NR_bind                      111
-#define __NR_listen                    112
-#define __NR_accept                    113
-#define __NR_connect                   114
-#define __NR_shutdown                  115
-#define __NR_getsockname               116
-#define __NR_getpeername               117
-#define __NR_getsockopt                118
-#define __NR_setsockopt                119
-#define __NR_send                      120
-#define __NR_recv                      121
-#define __NR_sendto                    122
-#define __NR_recvfrom                  123
+// 109
+// 110
+// 111
+// 112
+// 113
+// 114
+// 115
+// 116
+// 117
+#define __NR_fsync                     118
+// 119
+// 120
+// 121
+// 122
+// 123
 // 124
 // 125
-// 126
-#define __NR_pump                      127
+#define __NR_sigprocmask               126
+// 127
+// 128
+// 129
+// 130
+// 131
+#define __NR_getpgid                   132
+#define __NR_fchdir                    133
+// 134
+// 135
+// 136
+// 137
+// 138
+// 139
+// 140
+#define __NR_getdents                  141
+// 142
+#define __NR_flock                     143
+// 144
+#define __NR_readv                     145
+#define __NR_writev                    146
+#define __NR_getsid                    147
+// 148
+// 149
+// 150
+// 151
+// 152
+// 153
+// 154
+// 155
+// 156
+// 157
+// 158
+// 159
+// 160
+// 161
+#define __NR_nanosleep                 162
+// ...
+
+#define __NR_socketpair                257
+#define __NR_socket                    258
+#define __NR_bind                      259
+#define __NR_listen                    260
+#define __NR_accept                    261
+#define __NR_connect                   262
+#define __NR_shutdown                  263
+#define __NR_getsockname               264
+#define __NR_getpeername               265
+#define __NR_getsockopt                266
+#define __NR_setsockopt                267
+#define __NR_send                      268
+#define __NR_recv                      269
+#define __NR_sendto                    270
+#define __NR_recvfrom                  271
+
+#define __NR_gethostbyname             272
+
+#define __NR_fork_and_exit             273
+
+#define __NR_pump                      274
+
+#define __NR_ttypair                   275
+
+#define __NR_copyfile                  276
 
 
-#define __NR_ttypair                   141
-
-#define __NR_gethostbyname             142
-
-#define __NR_AESendBlocking            144
-#define __NR_OTInetMailExchange_k      145
-
-#define __NR_fork_and_exit             146
+#define __NR_AESendBlocking            277
+#define __NR_OTInetMailExchange_k      278
 
 #endif
 
