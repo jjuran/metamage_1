@@ -320,6 +320,31 @@
 		return buffer;
 	}
 	
+	ssize_t pread( int fd, void *buffer, size_t count, off_t offset )
+	{
+		off_t saved_offset = lseek( fd, offset, SEEK_SET );
+		
+		if ( saved_offset < 0 )
+		{
+			return saved_offset;
+		}
+		
+		ssize_t bytes_read = read( fd, buffer, count );
+		
+		off_t new_offset = lseek( fd, saved_offset, SEEK_SET );
+		
+		if ( bytes_read < 0 )
+		{
+			return bytes_read;
+		}
+		else if ( new_offset < 0 )
+		{
+			return new_offset;
+		}
+		
+		return count;
+	}
+	
 	int readlink( const char *path, char *buffer, size_t buffer_size )
 	{
 		return std::min< ssize_t >( readlink_k( path, buffer, buffer_size ), buffer_size );
