@@ -414,7 +414,6 @@ namespace ALine
 		
 		bool hasStaticLib = false;
 		bool hasExecutable = true;
-		bool needLibs = true;
 		bool needCarbResource = false;
 		bool gccSupported = false;
 		bool bundle = false;
@@ -425,16 +424,14 @@ namespace ALine
 		switch ( project.Product() )
 		{
 			case productStaticLib:
-				command = cmdgen.LibraryMakerName();
 				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
-				needLibs = false;
 				gccSupported = true;
 				hasStaticLib = true;
 				hasExecutable = false;
 				break;
 			
 			case productToolkit:
-				command = cmdgen.LibraryMakerName();
+				command << cmdgen.TargetCommandLineTool();
 				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
 				gccSupported = true;
 				hasStaticLib = true;
@@ -542,7 +539,7 @@ namespace ALine
 		
 		if ( hasStaticLib  &&  outFileDate == 0 )
 		{
-			std::string link = command;
+			std::string link = cmdgen.LibraryMakerName();
 			
 			const bool useAr = gnu;
 			
@@ -555,7 +552,7 @@ namespace ALine
 			LinkFile( link, outFile, objectFilePaths, "", trailer );
 		}
 		
-		if ( !needLibs || toolkit )
+		if ( !hasExecutable )
 		{
 			return;
 		}
@@ -602,16 +599,38 @@ namespace ALine
 		command << cmdgen.LinkerOptions();
 		command << "-o";
 		
-		LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, trailer );
-		
-		std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
-		                           : outFile;
-		
-		bool usingOSXRez = gnu;
-		
-		CompileResources( project, rsrcFile, needCarbResource, usingOSXRez );
-		
-		CopyResources( project, rsrcFile, usingOSXRez );
+		if ( toolkit )
+		{
+			allLibraryLinkArgs = q( outFile ) + " " + allLibraryLinkArgs;
+			
+			typedef std::vector< std::string >::const_iterator Iter;
+			
+			const Iter end = objectFiles.begin() + n_tools;
+			
+			for ( Iter it = objectFiles.begin();  it != end;  ++it )
+			{
+				const std::string& objectFile = *it;
+				
+				std::string linkOutput = outputDir / io::get_filename( objectFile );
+				
+				linkOutput.resize( linkOutput.size() - 2 );  // truncate ".o"
+				
+				LinkFile( command, linkOutput, objectFile, allLibraryLinkArgs, trailer );
+			}
+		}
+		else
+		{
+			LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, trailer );
+			
+			std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
+			                           : outFile;
+			
+			bool usingOSXRez = gnu;
+			
+			CompileResources( project, rsrcFile, needCarbResource, usingOSXRez );
+			
+			CopyResources( project, rsrcFile, usingOSXRez );
+		}
 	}
 	
 }
