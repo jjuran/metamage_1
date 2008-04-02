@@ -292,7 +292,7 @@ namespace jTools
 	
 	static std::string ProductOptionsForTool( bool cfm )
 	{
-		std::string build = cfm ? "-xm s -init InitializeFragment -term TerminateFragment -export pragma -sizemin 4096 -sizemax 8192"
+		std::string build = cfm ? "-xm s -init InitializeFragment -term TerminateFragment -export sym=main -sizemin 4096 -sizemax 8192"
 		                        : "-xm c -rsrcfar -rsrcflags system -rt Wish=0";
 		
 		return build + " -t Wish -c Poof";
