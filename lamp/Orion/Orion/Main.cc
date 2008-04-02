@@ -96,8 +96,6 @@ namespace Orion
 	}
 	
 	
-#pragma export on
-	
 	int main( int argc, argv_t argv )
 	{
 		try
@@ -138,8 +136,6 @@ namespace Orion
 		
 		return EXIT_FAILURE;
 	}
-	
-#pragma export reset
 	
 }
 
