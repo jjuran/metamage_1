@@ -167,11 +167,10 @@ namespace ALine
 		return "-l" + name;
 	}
 	
-	static bool FilesAreNewer( const std::vector< std::string >& files, const time_t& date )
+	template < class Iter >
+	static bool FilesAreNewer( Iter begin, Iter end, const time_t& date )
 	{
-		std::vector< std::string >::const_iterator it, end = files.end();
-		
-		for ( it = files.begin();  it != end;  ++it )
+		for ( Iter it = begin;  it != end;  ++it )
 		{
 			const std::string& pathname = *it;
 			
@@ -532,7 +531,7 @@ namespace ALine
 		
 		time_t outFileDate = EffectiveModifiedDate( outFile );
 		
-		if ( FilesAreNewer( objectFiles, outFileDate ) )
+		if ( FilesAreNewer( objectFiles.begin() + n_tools, objectFiles.end(), outFileDate ) )
 		{
 			outFileDate = 0;
 		}
@@ -615,7 +614,10 @@ namespace ALine
 				
 				linkOutput.resize( linkOutput.size() - 2 );  // truncate ".o"
 				
-				LinkFile( command, linkOutput, objectFile, allLibraryLinkArgs, trailer );
+				if ( EffectiveModifiedDate( objectFile ) >= EffectiveModifiedDate( linkOutput ) )
+				{
+					LinkFile( command, linkOutput, objectFile, allLibraryLinkArgs, trailer );
+				}
 			}
 		}
 		else
