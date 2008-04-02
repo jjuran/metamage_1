@@ -138,7 +138,7 @@
 #define __NR_ttypair                   141
 
 #define __NR_gethostbyname             142
-#define __NR_Path2FSSpec               143
+
 #define __NR_AESendBlocking            144
 #define __NR_OTInetMailExchange_k      145
 
