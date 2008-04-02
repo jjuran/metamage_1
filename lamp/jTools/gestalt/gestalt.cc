@@ -13,8 +13,6 @@
 #include <unistd.h>
 
 
-#pragma export on
-
 int main( int argc, char const *const argv[] )
 {
 	int gestalt = open( "/sys/mac/gestalt", O_RDONLY, 0 );
@@ -51,6 +49,4 @@ int main( int argc, char const *const argv[] )
 	
 	return 0;  // Not reached
 }
-
-#pragma export reset
 

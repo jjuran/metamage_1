@@ -28,8 +28,6 @@ static short ConvertColor( const char* str )
 	return level;
 }
 
-#pragma export on
-
 int main( int argc, char const* const argv[] )
 {
 	if ( argc < 2 )
@@ -67,6 +65,4 @@ int main( int argc, char const* const argv[] )
 	
 	return 0;
 }
-
-#pragma export reset
 

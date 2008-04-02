@@ -30,8 +30,6 @@ static void DumpEnvironment()
 	(void) write( STDOUT_FILENO, output.data(), output.size() );
 }
 
-#pragma export on
-
 int main( int argc, iota::argv_t argv )
 {
 	while ( *++argv != NULL  &&  std::strchr( *argv, '=' ) )
@@ -52,6 +50,4 @@ int main( int argc, iota::argv_t argv )
 	
 	return 0;
 }
-
-#pragma export reset
 

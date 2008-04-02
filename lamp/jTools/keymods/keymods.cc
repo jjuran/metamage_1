@@ -12,8 +12,6 @@
 #include <cstdio>
 
 
-#pragma export on
-
 enum
 {
 	kKeyModifierBits = 32
@@ -74,6 +72,4 @@ int main( int argc, char const *const argv[] )
 	
 	return 0;
 }
-
-#pragma export reset
 

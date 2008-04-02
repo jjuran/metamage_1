@@ -14,8 +14,6 @@
 #include "iota/strings.hh"
 
 
-#pragma export on
-
 int main( int argc, char const *const argv[] )
 {
 	// Check for correct number of args
@@ -46,6 +44,4 @@ int main( int argc, char const *const argv[] )
 	
 	return EXIT_SUCCESS;
 }
-
-#pragma export reset
 

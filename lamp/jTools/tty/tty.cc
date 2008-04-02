@@ -13,8 +13,6 @@
 #pragma exceptions off
 
 
-#pragma export on
-
 int main( int argc, char const *const argv[] )
 {
 	char buffer[ 256 ];
@@ -40,6 +38,4 @@ int main( int argc, char const *const argv[] )
 	
 	return 0;
 }
-
-#pragma export reset
 

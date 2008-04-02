@@ -8,8 +8,6 @@
 #include <unistd.h>
 
 
-#pragma export on
-
 int main( int argc, char const *const argv[] )
 {
 	int console = open( "/dev/new/console", O_RDWR, 0 );
@@ -36,6 +34,4 @@ int main( int argc, char const *const argv[] )
 	
 	return 0;  // Not reached
 }
-
-#pragma export reset
 

@@ -10,8 +10,6 @@
 #include "iota/strings.hh"
 
 
-#pragma export on
-
 int main( int argc, char const *const argv[] )
 {
 	(void) write( STDOUT_FILENO, STR_LEN( "Hit return to continue\n" ) );
@@ -22,6 +20,4 @@ int main( int argc, char const *const argv[] )
 	
 	return bytes ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-#pragma export reset
 

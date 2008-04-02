@@ -15,8 +15,6 @@
 #pragma exceptions off
 
 
-#pragma export on
-
 int main( int argc, char *const argv[] )
 {
 	if ( argc < 3 )
@@ -34,6 +32,4 @@ int main( int argc, char *const argv[] )
 	
 	return 127;
 }
-
-#pragma export reset
 

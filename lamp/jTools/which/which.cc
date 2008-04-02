@@ -17,8 +17,6 @@
 #include <unistd.h>
 
 
-#pragma export on
-
 int main( int argc, char const *const argv[] )
 {
 	// Check for sufficient number of args
@@ -95,6 +93,4 @@ int main( int argc, char const *const argv[] )
 	
 	return failed ? 1 : 0;
 }
-
-#pragma export reset
 

@@ -23,8 +23,6 @@
 #include "fork_and_exit.hh"
 
 
-#pragma export on
-
 int main( int argc, iota::argv_t argv )
 {
 	if ( argc < 2 )
@@ -64,6 +62,4 @@ int main( int argc, iota::argv_t argv )
 	
 	return noSuchFile ? 127 : 126;
 }
-
-#pragma export reset
 

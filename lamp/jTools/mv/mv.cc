@@ -18,8 +18,6 @@
 #pragma exceptions off
 
 
-#pragma export on
-
 int main( int argc, char const *const argv[] )
 {
 	// Check for sufficient number of args
@@ -86,6 +84,4 @@ int main( int argc, char const *const argv[] )
 	
 	return fail != 0;
 }
-
-#pragma export reset
 

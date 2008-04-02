@@ -19,8 +19,6 @@
 namespace p7 = poseven;
 
 
-#pragma export on
-
 int main( int argc, const char *const argv[] )
 {
 	while ( true )
@@ -61,6 +59,4 @@ int main( int argc, const char *const argv[] )
 	
 	return 0;
 }
-
-#pragma export reset
 

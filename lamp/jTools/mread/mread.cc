@@ -67,8 +67,6 @@ static bool equal_strings( const char* begin1,
 }
 
 
-#pragma export on
-
 int main( int argc, const char *const argv[] )
 {
 	while ( true )
@@ -105,6 +103,4 @@ int main( int argc, const char *const argv[] )
 	
 	return 2;  // Status message is last line of output
 }
-
-#pragma export reset
 

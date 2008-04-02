@@ -16,8 +16,6 @@
 #pragma exceptions off
 
 
-#pragma export on
-
 int main( int argc, char const *const argv[] )
 {
 	// Check for correct number of args
@@ -57,6 +55,4 @@ int main( int argc, char const *const argv[] )
 	
 	return exit_status;
 }
-
-#pragma export reset
 
