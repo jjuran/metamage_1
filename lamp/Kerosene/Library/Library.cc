@@ -23,6 +23,7 @@
 // POSIX
 #include "dirent.h"
 #include "fcntl.h"
+#include "pwd.h"
 #include "sys/ioctl.h"
 #include "sys/stat.h"
 #include "sys/ttycom.h"
@@ -245,6 +246,31 @@
 	int creat( const char* path, mode_t mode )
 	{
 		return open( path, O_CREAT | O_TRUNC | O_WRONLY, mode );
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ pwd ¥
+	
+	struct passwd* getpwuid( uid_t uid )
+	{
+		static struct passwd result =
+		{
+			"jruser",
+			"",
+			0,
+			0,
+			0,
+			"",
+			"J. Random User",
+			"/",
+			"/bin/sh",
+			0
+		};
+		
+		result.pw_uid =
+		result.pw_gid = uid;
+		
+		return &result;
 	}
 	
 	#pragma mark -
