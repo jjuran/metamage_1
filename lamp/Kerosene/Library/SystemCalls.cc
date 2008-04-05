@@ -152,6 +152,7 @@ DEFINE_STUB( fcntl )
 DEFINE_STUB( setpgid )
 
 DEFINE_STUB( uname )
+DEFINE_STUB( umask )
 
 DEFINE_STUB( dup2 )
 DEFINE_STUB( getppid )
