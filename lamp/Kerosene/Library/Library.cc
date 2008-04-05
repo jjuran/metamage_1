@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include "stdlib.h"
 #include "string.h"
+#include "time.h"
 
 // POSIX
 #include "dirent.h"
@@ -251,6 +252,37 @@
 	int mkfifo( const char* path, mode_t mode )
 	{
 		return mknod( path, S_IFIFO | mode, 0 );
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ time ¥
+	
+	struct tm* gmtime_r( const time_t* clock, struct tm* result )
+	{
+		struct tm* local = gmtime( clock );
+		
+		if ( local == NULL )
+		{
+			return NULL;
+		}
+		
+		*result = *local;
+		
+		return result;
+	}
+	
+	struct tm* localtime_r( const time_t* clock, struct tm* result )
+	{
+		struct tm* local = localtime( clock );
+		
+		if ( local == NULL )
+		{
+			return NULL;
+		}
+		
+		*result = *local;
+		
+		return result;
 	}
 	
 	#pragma mark -
