@@ -26,6 +26,7 @@
 #include "sys/ioctl.h"
 #include "sys/stat.h"
 #include "sys/ttycom.h"
+#include "sys/utsname.h"
 #include "sys/wait.h"
 #include "unistd.h"
 #include "vfork.h"
@@ -303,6 +304,33 @@
 		errno = ENOSYS;
 		
 		return -1;
+	}
+	
+	int gethostname( char* result, size_t buffer_length )
+	{
+		struct utsname uts;
+		
+		int got = uname( &uts );
+		
+		if ( got < 0 )
+		{
+			return got;
+		}
+		
+		const char* nodename = uts.nodename;
+		
+		size_t name_length = std::strlen( nodename );
+		
+		if ( name_length > buffer_length )
+		{
+			errno = ENAMETOOLONG;
+			
+			return -1;
+		}
+		
+		std::copy( nodename, nodename + name_length + 1, result );
+		
+		return 0;
 	}
 	
 	uid_t getuid()   { return 0; }
