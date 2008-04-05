@@ -251,6 +251,13 @@
 	#pragma mark -
 	#pragma mark ¥ pwd ¥
 	
+	struct passwd* getpwnam( const char* name )
+	{
+		errno = ESRCH;
+		
+		return NULL;
+	}
+	
 	struct passwd* getpwuid( uid_t uid )
 	{
 		static struct passwd result =
