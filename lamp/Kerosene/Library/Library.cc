@@ -333,6 +333,11 @@
 		return 0;
 	}
 	
+	int getpagesize()
+	{
+		return 8192;  // Works for now
+	}
+	
 	uid_t getuid()   { return 0; }
 	uid_t geteuid()  { return 0; }
 	
