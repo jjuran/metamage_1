@@ -219,9 +219,9 @@ void	 unsetenv(const char *);
 void  *alloca(int);     /* built-in for gcc */
 #elif defined( __MWERKS__ ) && defined( __POWERPC__ )
 #define alloca( size )  __alloca( size )
-#else
-void  *alloca(size_t);
-#endif /* __GNUC__ */
+#elif defined( __MWERKS__ ) && defined( __MC68K__ )
+void  *alloca(size_t) : __D0;
+#endif
 
 char	*getbsize(int *, long *);
 char	*cgetcap(char *, const char *, int);
