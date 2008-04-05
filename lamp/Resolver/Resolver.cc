@@ -34,6 +34,11 @@
 		return result;
 	}
 	
+	const char* hstrerror( int errnum )
+	{
+		return "hstrerror() is unimplemented";
+	}
+	
 	#pragma mark -
 	#pragma mark ¥ netdb ¥
 	
