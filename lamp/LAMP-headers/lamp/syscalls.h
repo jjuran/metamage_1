@@ -168,6 +168,12 @@
 // 160
 // 161
 #define __NR_nanosleep                 162
+// 163
+// 164
+// 165
+// 166
+// 167
+#define __NR_poll                      168
 // ...
 
 #define __NR_socketpair                257
