@@ -162,6 +162,47 @@
 		(void) raise( SIGABRT );
 	}
 	
+	int mkstemp( char* name )
+	{
+		std::size_t length = std::strlen( name );
+		
+		if ( length < 6  ||  std::strcmp( name + length - 6, "XXXXXX" ) != 0 )
+		{
+			errno = EINVAL;
+			
+			return -1;
+		}
+		
+		char* x = name + length - 6;
+		
+		std::strcpy( x, "000000" );
+		
+		do
+		{
+			int i = 5;
+			
+			while ( ++x[ i ] > '9' )
+			{
+				x[ i-- ] = '0';
+				
+				if ( i < 0 )
+				{
+					return -1;  // errno is already EEXIST
+				}
+			}
+			
+			int opened = open( name, O_RDWR | O_CREAT | O_EXCL, 0600 );
+			
+			if ( opened >= 0 )
+			{
+				return opened;
+			}
+		}
+		while ( errno == EEXIST );
+		
+		return -1;
+	}
+	
 	int raise( int sig )
 	{
 		return kill( getpid(), sig );
