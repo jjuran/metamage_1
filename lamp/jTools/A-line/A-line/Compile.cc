@@ -172,6 +172,8 @@ namespace ALine
 		
 		std::string command = MakeCompileCommand( options );
 		
+		command << MakeIncludeDirOption( io::get_preceding_directory( file ) );
+		
 		std::string filename = io::get_filename_string( file );
 		
 		if ( !IsCFile( filename ) )
