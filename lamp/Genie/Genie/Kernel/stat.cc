@@ -78,6 +78,24 @@ namespace Genie
 		return 0;
 	}
 	
+	static int fchmod( int fd, mode_t mode )
+	{
+		SystemCallFrame frame( "fchmod" );
+		
+		try
+		{
+			GetFileHandle( fd )->GetFile()->ChangeMode( mode );
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( fchmod );
+	
 	static int stat_file( SystemCallFrame& frame, const char* path, struct stat* sb, bool resolveLinks )
 	{
 		Breathe();
