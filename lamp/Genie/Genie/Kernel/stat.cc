@@ -29,6 +29,35 @@ namespace Genie
 	DECLARE_MODULE_INIT( Kernel_stat )
 	DEFINE_MODULE_INIT(Kernel_stat)
 	
+	static int access( const char* path, int mode )
+	{
+		SystemCallFrame frame( "access" );
+		
+		try
+		{
+			FSTreePtr current = frame.Caller().GetCWD();
+			
+			FSTreePtr file = ResolvePathname( path, current );
+			
+			ResolveLinks_InPlace( file );
+			
+			if ( !file->Exists() )
+			{
+				return frame.SetErrno( EACCES );
+			}
+			
+			// FIXME: check permissions
+		}
+		catch ( ... )
+		{
+			return frame.SetErrnoFromException();
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( access );
+	
 	static int chmod_file( SystemCallFrame& frame, const char* path, mode_t mode )
 	{
 		try
