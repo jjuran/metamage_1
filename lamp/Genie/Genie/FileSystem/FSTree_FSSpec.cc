@@ -87,6 +87,33 @@ namespace Genie
 	}
 	
 	
+	static std::string GetUnixName( const FSSpec& item )
+	{
+		return UnixFromMacName( io::get_filename_string( item ) );
+	}
+	
+	static FSSpec Lookup( const N::FSDirSpec& parent, const std::string& unixName )
+	{
+		return parent / MacFromUnixName( unixName );
+	}
+	
+	static bool ItemExists( const N::FSDirSpec& parent, const std::string& unixName )
+	{
+		return io::item_exists( parent / MacFromUnixName( unixName ) );
+	}
+	
+	static void CreateFile( const N::FSDirSpec& parent, const std::string& unixName )
+	{
+		N::FileSignature sig = PickFileSignatureForName( unixName );
+		
+		N::FSpCreate( parent / MacFromUnixName( unixName ), sig );
+	}
+	
+	static void CreateDirectory( const N::FSDirSpec& parent, const std::string& unixName )
+	{
+		N::FSpDirCreate( parent / MacFromUnixName( unixName ) );
+	}
+	
 	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
 	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
 	{
@@ -283,7 +310,7 @@ namespace Genie
 	
 	static FSNode MakeFSNode_FSSpec( const FSSpec& item )
 	{
-		std::string name = UnixFromMacName( io::get_filename_string( item ) );
+		std::string name = GetUnixName( item );
 		
 		FSTreePtr tree( new FSTree_FSSpec( item ) );
 		
