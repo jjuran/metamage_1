@@ -92,7 +92,73 @@ namespace Genie
 		return UnixFromMacName( io::get_filename_string( item ) );
 	}
 	
-	static FSSpec Lookup( const N::FSDirSpec& parent, const std::string& unixName )
+	static FSSpec FSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
+	{
+		std::size_t dot = unixName.find_last_of( "." );
+		
+		const bool has_dot = dot != unixName.npos;
+		
+		unsigned n_delimiters = 1 + has_dot;
+		
+		const unsigned hash_length = 2;
+		
+		std::size_t base_length = has_dot ? dot : unixName.size();
+		
+		std::size_t replaced_length = unixName.size() - 31 + n_delimiters + hash_length;
+		
+		if ( replaced_length >= base_length )
+		{
+			p7::throw_errno( ENAMETOOLONG );
+		}
+		
+		std::size_t shortened_base_length = base_length - replaced_length;
+		
+		std::string macName( unixName.begin(), unixName.begin() + shortened_base_length );
+		
+		macName += 'É';
+		
+		macName += "xx";
+		
+		if ( has_dot )
+		{
+			macName += 'É';
+			
+			macName.append( unixName.begin() + dot, unixName.end() );
+		}
+		
+		std::replace( macName.begin(), macName.end(), ':', '/' );
+		
+		FSSpec result = parent / macName;
+		
+		return result;
+	}
+	
+	static FSSpec NewFSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
+	{
+		FSSpec result = FSSpecForLongUnixName( parent, unixName );
+		
+		if ( io::item_exists( result ) )
+		{
+			p7::throw_errno( ENAMETOOLONG );
+		}
+		
+		return result;
+	}
+	
+	static FSSpec OldFSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
+	{
+		FSSpec result = FSSpecForLongUnixName( parent, unixName );
+		
+		if ( !io::item_exists( result ) )
+		{
+			p7::throw_errno( ENOENT );
+			throw N::FNFErr();
+		}
+		
+		return result;
+	}
+	
+	static FSSpec LookupLongName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
 		return parent / MacFromUnixName( unixName );
 	}
@@ -102,14 +168,14 @@ namespace Genie
 		return io::item_exists( parent / MacFromUnixName( unixName ) );
 	}
 	
-	static void CreateFile( const N::FSDirSpec& parent, const std::string& unixName )
+	static void CreateFileWithLongName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
 		N::FileSignature sig = PickFileSignatureForName( unixName );
 		
 		N::FSpCreate( parent / MacFromUnixName( unixName ), sig );
 	}
 	
-	static void CreateDirectory( const N::FSDirSpec& parent, const std::string& unixName )
+	static void CreateDirectoryWithLongName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
 		N::FSpDirCreate( parent / MacFromUnixName( unixName ) );
 	}
@@ -185,6 +251,8 @@ namespace Genie
 			
 			std::string ReadLink() const;
 			FSTreePtr ResolveLink() const;
+			
+			void CreateFile() const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
@@ -453,6 +521,16 @@ namespace Genie
 		return FSTreePtr( new FSTree_FSSpec( target ) );
 	}
 	
+	void FSTree_FSSpec::CreateFile() const
+	{
+		// No need to convert name -- for examination only
+		std::string name = io::get_filename_string( itsFileSpec );
+		
+		N::FileSignature sig = PickFileSignatureForName( name );
+		
+		N::FSpCreate( itsFileSpec, sig );
+	}
+	
 	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags, mode_t /*mode*/ ) const
 	{
 		bool creating  = flags & O_CREAT;
@@ -460,18 +538,12 @@ namespace Genie
 		
 		if ( creating )
 		{
-			if ( !io::file_exists( itsFileSpec ) )
+			if ( !Exists() )
 			{
-				// No need to convert name -- for examination only
-				std::string name = io::get_filename_string( itsFileSpec );
-				
-				N::FileSignature sig = PickFileSignatureForName( name );
-				
-				N::FSpCreate( itsFileSpec, sig );
+				CreateFile();
 			}
 			else if ( excluding )
 			{
-				//throw N::DupFNErr();
 				p7::throw_errno( EEXIST );
 			}
 		}
