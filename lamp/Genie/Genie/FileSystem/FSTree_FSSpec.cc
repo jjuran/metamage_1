@@ -404,25 +404,14 @@ namespace Genie
 	
 	bool FSTree_FSSpec::IsLink() const
 	{
-		CInfoPBRec paramBlock;
-		
-		try
+		if ( !Exists() )
 		{
-			N::FSpGetCatInfo( itsFileSpec, paramBlock );
-		}
-		catch ( const N::FNFErr& err )
-		{
-		#ifdef __MWERKS__
-			
-			if ( err.Get() != fnfErr )
-			{
-				throw;
-			}
-			
-		#endif
-			
 			return false;
 		}
+		
+		CInfoPBRec paramBlock;
+		
+		N::FSpGetCatInfo( GetFSSpec(), paramBlock );
 		
 		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
@@ -491,17 +480,17 @@ namespace Genie
 	
 	void FSTree_FSSpec::Stat( struct ::stat& sb ) const
 	{
-		StatFile( itsFileSpec, &sb, false );
+		StatFile( GetFSSpec(), &sb, false );
 	}
 	
 	void FSTree_FSSpec::ChangeMode( mode_t mode ) const
 	{
-		ChangeFileMode( itsFileSpec, mode );
+		ChangeFileMode( GetFSSpec(), mode );
 	}
 	
 	void FSTree_FSSpec::Delete() const
 	{
-		N::FSpDelete( itsFileSpec );
+		N::FSpDelete( GetFSSpec() );
 	}
 	
 	
@@ -559,14 +548,14 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags ) const
 	{
-		FSSpec target = N::ResolveAliasFile( itsFileSpec, true );
+		FSSpec target = N::ResolveAliasFile( GetFSSpec(), true );
 		
 		return DataForkUser().OpenFileHandle( target, flags );
 	}
 	
 	MainEntry FSTree_FSSpec::GetMainEntry() const
 	{
-		return GetMainEntryFromFile( itsFileSpec );
+		return GetMainEntryFromFile( GetFSSpec() );
 	}
 	
 	void FSTree_FSSpec::CreateDirectory( mode_t /*mode*/ ) const
@@ -576,7 +565,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_FSSpec::Lookup_Regular( const std::string& name ) const
 	{
-		FSSpec target = N::ResolveAliasFile( itsFileSpec, true );
+		FSSpec target = N::ResolveAliasFile( GetFSSpec(), true );
 		
 		if ( io::file_exists( target )  &&  name == "rsrc" )
 		{
@@ -590,7 +579,7 @@ namespace Genie
 	
 	void FSTree_FSSpec::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		N::FSDirSpec dir( itsFileSpec );
+		N::FSDirSpec dir( GetFSSpec() );
 		
 		N::FSSpecContents_Container contents = N::FSContents( dir );
 		
