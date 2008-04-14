@@ -181,6 +181,7 @@ namespace Genie
 		N::FSpDirCreate( NewFSSpecForLongUnixName( parent, unixName ) );
 	}
 	
+	
 	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
 	                                           N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
 	{
@@ -220,7 +221,34 @@ namespace Genie
 	};
 	
 	
-	class FSTree_FSSpec : public FSTree_Mappable
+	class FSTree_HFS : public FSTree_Mappable
+	{
+		public:
+			bool IsLink() const;
+			
+			void Stat( struct ::stat& sb ) const;
+			
+			void ChangeMode( mode_t mode ) const;
+			
+			void Delete() const;
+			
+			std::string ReadLink() const;
+			FSTreePtr ResolveLink() const;
+			
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
+			
+			MainEntry GetMainEntry() const;
+			
+			FSTreePtr Lookup_Regular( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+		
+		private:
+			virtual void CreateFile() const = 0;
+	};
+	
+	class FSTree_FSSpec : public FSTree_HFS
 	{
 		private:
 			FSSpec itsFileSpec;
@@ -233,7 +261,6 @@ namespace Genie
 			bool Exists() const;
 			bool IsFile() const;
 			bool IsDirectory() const;
-			bool IsLink() const;
 			
 			std::string Name() const;
 			
@@ -241,30 +268,37 @@ namespace Genie
 			
 			FSSpec GetFSSpec() const;
 			
-			//mode_t FileTypeMode() const;
-			//mode_t FilePermMode() const;
+			void CreateFile() const;
 			
-			void Stat( struct ::stat& sb ) const;
+			void CreateDirectory( mode_t mode ) const;
+	};
+	
+	class FSTree_LongName : public FSTree_HFS
+	{
+		private:
+			N::FSDirSpec  itsParent;
+			std::string   itsUnixName;
+		
+		public:
+			FSTree_LongName( const N::FSDirSpec&  parent,
+			                 const std::string&   name ) : itsParent  ( parent ),
+			                                               itsUnixName( name   )
+			{
+			}
 			
-			void ChangeMode( mode_t mode ) const;
+			bool Exists() const;
+			bool IsFile() const;
+			bool IsDirectory() const;
 			
-			void Delete() const;
+			std::string Name() const;
 			
-			std::string ReadLink() const;
-			FSTreePtr ResolveLink() const;
+			FSTreePtr Parent() const;
+			
+			FSSpec GetFSSpec() const;
 			
 			void CreateFile() const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
-			
-			MainEntry GetMainEntry() const;
-			
 			void CreateDirectory( mode_t mode ) const;
-			
-			FSTreePtr Lookup_Regular( const std::string& name ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	
@@ -402,7 +436,22 @@ namespace Genie
 		return io::directory_exists( itsFileSpec );
 	}
 	
-	bool FSTree_FSSpec::IsLink() const
+	bool FSTree_LongName::Exists() const
+	{
+		return ItemWithLongNameExists( itsParent, itsUnixName );
+	}
+	
+	bool FSTree_LongName::IsFile() const
+	{
+		return Exists() && io::file_exists( GetFSSpec() );
+	}
+	
+	bool FSTree_LongName::IsDirectory() const
+	{
+		return Exists() && io::directory_exists( GetFSSpec() );
+	}
+	
+	bool FSTree_HFS::IsLink() const
 	{
 		if ( !Exists() )
 		{
@@ -473,28 +522,43 @@ namespace Genie
 		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( itsFileSpec ) ) );
 	}
 	
+	std::string FSTree_LongName::Name() const
+	{
+		return itsUnixName;
+	}
+	
+	FSTreePtr FSTree_LongName::Parent() const
+	{
+		return FSTreePtr( new FSTree_FSSpec( itsParent ) );
+	}
+	
 	FSSpec FSTree_FSSpec::GetFSSpec() const
 	{
 		return itsFileSpec;
 	}
 	
-	void FSTree_FSSpec::Stat( struct ::stat& sb ) const
+	FSSpec FSTree_LongName::GetFSSpec() const
+	{
+		return LookupLongName( itsParent, itsUnixName );
+	}
+	
+	void FSTree_HFS::Stat( struct ::stat& sb ) const
 	{
 		StatFile( GetFSSpec(), &sb, false );
 	}
 	
-	void FSTree_FSSpec::ChangeMode( mode_t mode ) const
+	void FSTree_HFS::ChangeMode( mode_t mode ) const
 	{
 		ChangeFileMode( GetFSSpec(), mode );
 	}
 	
-	void FSTree_FSSpec::Delete() const
+	void FSTree_HFS::Delete() const
 	{
 		N::FSpDelete( GetFSSpec() );
 	}
 	
 	
-	std::string FSTree_FSSpec::ReadLink() const
+	std::string FSTree_HFS::ReadLink() const
 	{
 		if ( !IsLink() )
 		{
@@ -504,7 +568,7 @@ namespace Genie
 		return ResolveLink()->Pathname();
 	}
 	
-	FSTreePtr FSTree_FSSpec::ResolveLink() const
+	FSTreePtr FSTree_HFS::ResolveLink() const
 	{
 		if ( !Exists() )
 		{
@@ -526,7 +590,12 @@ namespace Genie
 		N::FSpCreate( itsFileSpec, sig );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags, mode_t /*mode*/ ) const
+	void FSTree_LongName::CreateFile() const
+	{
+		CreateFileWithLongName( itsParent, itsUnixName );
+	}
+	
+	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags, mode_t /*mode*/ ) const
 	{
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
@@ -546,14 +615,14 @@ namespace Genie
 		return Open( flags );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_FSSpec::Open( OpenFlags flags ) const
+	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags ) const
 	{
 		FSSpec target = N::ResolveAliasFile( GetFSSpec(), true );
 		
 		return DataForkUser().OpenFileHandle( target, flags );
 	}
 	
-	MainEntry FSTree_FSSpec::GetMainEntry() const
+	MainEntry FSTree_HFS::GetMainEntry() const
 	{
 		return GetMainEntryFromFile( GetFSSpec() );
 	}
@@ -563,7 +632,12 @@ namespace Genie
 		N::FSpDirCreate( itsFileSpec );
 	}
 	
-	FSTreePtr FSTree_FSSpec::Lookup_Regular( const std::string& name ) const
+	void FSTree_LongName::CreateDirectory( mode_t /*mode*/ ) const
+	{
+		CreateDirectoryWithLongName( itsParent, itsUnixName );
+	}
+	
+	FSTreePtr FSTree_HFS::Lookup_Regular( const std::string& name ) const
 	{
 		FSSpec target = N::ResolveAliasFile( GetFSSpec(), true );
 		
@@ -572,12 +646,17 @@ namespace Genie
 			return GetRsrcForkFSTree( target );
 		}
 		
+		if ( name.size() > 31 )
+		{
+			return FSTreePtr( new FSTree_LongName( N::FSDirSpec( target ), name ) );
+		}
+		
 		FSSpec item = target / MacFromUnixName( name );
 		
 		return FSTreeFromFSSpec( item );
 	}
 	
-	void FSTree_FSSpec::IterateIntoCache( FSTreeCache& cache ) const
+	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
 	{
 		N::FSDirSpec dir( GetFSSpec() );
 		
