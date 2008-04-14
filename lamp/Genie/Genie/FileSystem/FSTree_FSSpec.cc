@@ -518,7 +518,12 @@ namespace Genie
 	
 	FSTreePtr FSTree_FSSpec::ResolveLink() const
 	{
-		FSSpec target = N::ResolveAliasFile( itsFileSpec, false );
+		if ( !Exists() )
+		{
+			return shared_from_this();
+		}
+		
+		FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
 		
 		return FSTreePtr( new FSTree_FSSpec( target ) );
 	}
