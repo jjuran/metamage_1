@@ -160,24 +160,26 @@ namespace Genie
 	
 	static FSSpec LookupLongName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
-		return parent / MacFromUnixName( unixName );
+		return OldFSSpecForLongUnixName( parent, unixName );
 	}
 	
-	static bool ItemExists( const N::FSDirSpec& parent, const std::string& unixName )
+	static bool ItemWithLongNameExists( const N::FSDirSpec& parent, const std::string& unixName )
 	{
-		return io::item_exists( parent / MacFromUnixName( unixName ) );
+		FSSpec item = FSSpecForLongUnixName( parent, unixName );
+		
+		return io::item_exists( item );
 	}
 	
 	static void CreateFileWithLongName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
 		N::FileSignature sig = PickFileSignatureForName( unixName );
 		
-		N::FSpCreate( parent / MacFromUnixName( unixName ), sig );
+		N::FSpCreate( NewFSSpecForLongUnixName( parent, unixName ), sig );
 	}
 	
 	static void CreateDirectoryWithLongName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
-		N::FSpDirCreate( parent / MacFromUnixName( unixName ) );
+		N::FSpDirCreate( NewFSSpecForLongUnixName( parent, unixName ) );
 	}
 	
 	static N::FSVolumeRefNum DetermineVRefNum( ConstStr255Param   name,
