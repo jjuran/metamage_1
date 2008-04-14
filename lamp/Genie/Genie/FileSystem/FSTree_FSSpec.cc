@@ -273,6 +273,24 @@ namespace Genie
 			void CreateDirectory( mode_t mode ) const;
 	};
 	
+	class FSTree_ConflictingName : public FSTree_FSSpec
+	{
+		public:
+			FSTree_ConflictingName( const FSSpec& file ) : FSTree_FSSpec( file )
+			{
+			}
+			
+			bool Exists() const;
+			bool IsFile() const;
+			bool IsDirectory() const;
+			
+			FSSpec GetFSSpec() const;
+			
+			void CreateFile() const;
+			
+			void CreateDirectory( mode_t mode ) const;
+	};
+	
 	class FSTree_LongName : public FSTree_HFS
 	{
 		private:
@@ -436,6 +454,21 @@ namespace Genie
 		return io::directory_exists( itsFileSpec );
 	}
 	
+	bool FSTree_ConflictingName::Exists() const
+	{
+		return false;
+	}
+	
+	bool FSTree_ConflictingName::IsFile() const
+	{
+		return false;
+	}
+	
+	bool FSTree_ConflictingName::IsDirectory() const
+	{
+		return false;
+	}
+	
 	bool FSTree_LongName::Exists() const
 	{
 		return ItemWithLongNameExists( itsParent, itsUnixName );
@@ -537,6 +570,13 @@ namespace Genie
 		return itsFileSpec;
 	}
 	
+	FSSpec FSTree_ConflictingName::GetFSSpec() const
+	{
+		p7::throw_errno( ENOENT );
+		
+		return FSSpec();
+	}
+	
 	FSSpec FSTree_LongName::GetFSSpec() const
 	{
 		return LookupLongName( itsParent, itsUnixName );
@@ -590,6 +630,11 @@ namespace Genie
 		N::FSpCreate( itsFileSpec, sig );
 	}
 	
+	void FSTree_ConflictingName::CreateFile() const
+	{
+		p7::throw_errno( EEXIST );
+	}
+	
 	void FSTree_LongName::CreateFile() const
 	{
 		CreateFileWithLongName( itsParent, itsUnixName );
@@ -632,6 +677,11 @@ namespace Genie
 		N::FSpDirCreate( itsFileSpec );
 	}
 	
+	void FSTree_ConflictingName::CreateDirectory( mode_t /*mode*/ ) const
+	{
+		p7::throw_errno( EEXIST );
+	}
+	
 	void FSTree_LongName::CreateDirectory( mode_t /*mode*/ ) const
 	{
 		CreateDirectoryWithLongName( itsParent, itsUnixName );
@@ -651,9 +701,15 @@ namespace Genie
 			return FSTreePtr( new FSTree_LongName( N::FSDirSpec( target ), name ) );
 		}
 		
-		FSSpec item = target / MacFromUnixName( name );
+		std::string macName = MacFromUnixName( name );
 		
-		return FSTreeFromFSSpec( item );
+		FSSpec item = target / macName;
+		
+		// The requested name and the returned name may differ in letter case.
+		bool matchedCase = std::equal( macName.begin(), macName.end(), item.name + 1 );
+		
+		return matchedCase ? FSTreeFromFSSpec( item )
+		                   : FSTreePtr( new FSTree_ConflictingName( item ) );
 	}
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
