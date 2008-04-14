@@ -152,7 +152,6 @@ namespace Genie
 		if ( !io::item_exists( result ) )
 		{
 			p7::throw_errno( ENOENT );
-			throw N::FNFErr();
 		}
 		
 		return result;
