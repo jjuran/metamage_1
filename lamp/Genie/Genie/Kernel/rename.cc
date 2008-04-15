@@ -111,6 +111,42 @@ namespace Genie
 			}
 	};
 	
+	static void Rename( const FSSpec& srcFile, const FSSpec& destFile )
+	{
+		ASSERT( srcFile.vRefNum == destFile.vRefNum );
+		ASSERT( srcFile.parID   == destFile.parID   );
+		
+		FileLockBypass lockBypass( srcFile );
+		
+		// Rename source to dest
+		N::FSpRename( srcFile, destFile.name );
+		
+		lockBypass.SetFile( destFile );
+	}
+	
+	static void MoveAndRename( const FSSpec& srcFile, const FSSpec& destFile )
+	{
+		// Darn, we have to move *and* rename.  Use MoreFiles.
+		
+		// destFolder is the parent of destFile.
+		// It's semantically invalid (though it might work) to pass an
+		// FSSpec with null fields to Mac OS, but MoreFiles won't do that.
+		// (It breaks it into individual parts before passing them.)
+			
+		FSSpec destFolder;
+		
+		destFolder.vRefNum = destFile.vRefNum;
+		destFolder.parID   = destFile.parID;
+		
+		destFolder.name[0] = '\0';
+		
+		FileLockBypass lockBypass( srcFile );
+		
+		N::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFolder, destFile.name ) );
+		
+		lockBypass.SetFile( destFile );
+	}
+	
 	static int rename( const char* src, const char* dest )
 	{
 		SystemCallFrame frame( "rename" );
@@ -175,12 +211,7 @@ namespace Genie
 					N::FSpDelete( destFile );
 				}
 				
-				FileLockBypass lockBypass( srcFile );
-				
-				// Rename source to dest
-				N::FSpRename( srcFile, requestedDestName );
-				
-				lockBypass.SetFile( destFile );
+				Rename( srcFile, destFile );
 				
 				// And we're done
 				return 0;
@@ -195,34 +226,14 @@ namespace Genie
 			
 			if ( NamesAreSame( srcFile.name, requestedDestName ) )
 			{
-				// Same name, different dir.
-				
-				// Move source to dest
+				// Same name, different dir; move only.
 				N::FSpCatMove( srcFile, N::FSDirID( destFile.parID ) );
-				
-				// And we're done
-				return 0;
 			}
-			
-			// Darn, we have to move *and* rename.  Use MoreFiles.
-			
-			// destFolder is the parent of destFile.
-			// It's semantically invalid (though it might work) to pass an
-			// FSSpec with null fields to Mac OS, but MoreFiles won't do that.
-			// (It breaks it into individual parts before passing them.)
-			
-			FSSpec destFolder;
-			
-			destFolder.vRefNum = destFile.vRefNum;
-			destFolder.parID   = destFile.parID;
-			
-			destFolder.name[0] = '\0';
-			
-			FileLockBypass lockBypass( srcFile );
-			
-			N::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFolder, requestedDestName ) );
-			
-			lockBypass.SetFile( destFile );
+			else
+			{
+				// Darn, we have to move *and* rename.
+				MoveAndRename( srcFile, destFile );
+			}
 		}
 		catch ( ... )
 		{
