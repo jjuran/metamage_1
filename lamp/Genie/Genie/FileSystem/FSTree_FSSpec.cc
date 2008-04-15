@@ -133,33 +133,28 @@ namespace Genie
 		return result;
 	}
 	
-	static FSSpec NewFSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
+	static FSSpec FSSpecForLongUnixName( const N::FSDirSpec&  parent,
+	                                     const std::string&   unixName,
+	                                     bool                 forCreation )
 	{
 		FSSpec result = FSSpecForLongUnixName( parent, unixName );
 		
-		if ( io::item_exists( result ) )
+		if ( io::item_exists( result ) == forCreation )
 		{
-			p7::throw_errno( ENAMETOOLONG );
+			p7::throw_errno( forCreation ? ENAMETOOLONG : ENOENT );
 		}
 		
 		return result;
 	}
 	
-	static FSSpec OldFSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
+	inline FSSpec NewFSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
-		FSSpec result = FSSpecForLongUnixName( parent, unixName );
-		
-		if ( !io::item_exists( result ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return result;
+		return FSSpecForLongUnixName( parent, unixName, true );
 	}
 	
-	static FSSpec LookupLongName( const N::FSDirSpec& parent, const std::string& unixName )
+	inline FSSpec OldFSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
-		return OldFSSpecForLongUnixName( parent, unixName );
+		return FSSpecForLongUnixName( parent, unixName, false );
 	}
 	
 	static bool ItemWithLongNameExists( const N::FSDirSpec& parent, const std::string& unixName )
@@ -266,7 +261,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const;
 			
-			FSSpec GetFSSpec() const;
+			FSSpec GetFSSpec( bool forCreation ) const;
 			
 			void CreateFile() const;
 			
@@ -284,7 +279,7 @@ namespace Genie
 			bool IsFile() const;
 			bool IsDirectory() const;
 			
-			FSSpec GetFSSpec() const;
+			FSSpec GetFSSpec( bool forCreation ) const;
 			
 			void CreateFile() const;
 			
@@ -312,7 +307,7 @@ namespace Genie
 			
 			FSTreePtr Parent() const;
 			
-			FSSpec GetFSSpec() const;
+			FSSpec GetFSSpec( bool forCreation = false ) const;
 			
 			void CreateFile() const;
 			
@@ -565,21 +560,21 @@ namespace Genie
 		return FSTreePtr( new FSTree_FSSpec( itsParent ) );
 	}
 	
-	FSSpec FSTree_FSSpec::GetFSSpec() const
+	FSSpec FSTree_FSSpec::GetFSSpec( bool forCreation ) const
 	{
 		return itsFileSpec;
 	}
 	
-	FSSpec FSTree_ConflictingName::GetFSSpec() const
+	FSSpec FSTree_ConflictingName::GetFSSpec( bool forCreation ) const
 	{
-		p7::throw_errno( ENOENT );
+		p7::throw_errno( forCreation ? EEXIST : ENOENT );
 		
 		return FSSpec();
 	}
 	
-	FSSpec FSTree_LongName::GetFSSpec() const
+	FSSpec FSTree_LongName::GetFSSpec( bool forCreation ) const
 	{
-		return LookupLongName( itsParent, itsUnixName );
+		return FSSpecForLongUnixName( itsParent, itsUnixName, forCreation );
 	}
 	
 	void FSTree_HFS::Stat( struct ::stat& sb ) const

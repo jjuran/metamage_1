@@ -92,7 +92,7 @@ namespace Genie
 			
 			virtual FSTreePtr Parent() const = 0;
 			
-			virtual FSSpec GetFSSpec() const;
+			virtual FSSpec GetFSSpec( bool forCreation = false ) const;
 			
 			virtual mode_t FileTypeMode() const;
 			virtual mode_t FilePermMode() const;

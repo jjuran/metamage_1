@@ -71,7 +71,7 @@ namespace Genie
 	
 	static void CreateSymLink( const FSTreePtr& linkFile, const std::string& targetPath )
 	{
-		FSSpec linkSpec = linkFile->GetFSSpec();
+		FSSpec linkSpec = linkFile->GetFSSpec( true );
 		
 		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
 		
@@ -82,7 +82,7 @@ namespace Genie
 		
 		// Do not resolve links -- if the target of this link is another symlink, so be it
 		
-		FSSpec targetSpec = target->GetFSSpec();
+		FSSpec targetSpec = target->GetFSSpec( false );
 		
 		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
 		

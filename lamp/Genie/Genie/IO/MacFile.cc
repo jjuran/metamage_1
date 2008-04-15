@@ -85,7 +85,7 @@ namespace Genie
 		return N::GetFPos( refNum );
 	}
 	
-	FSSpec MacFileHandle::GetFSSpec() const
+	FSSpec MacFileHandle::GetFSSpec( bool forCreation ) const
 	{
 		return FSSpecFromFRefNum( refNum );
 	}

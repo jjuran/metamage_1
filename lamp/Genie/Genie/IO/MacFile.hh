@@ -47,7 +47,7 @@ namespace Genie
 			
 			void SetEOF( off_t length )  { N::SetEOF( refNum, length ); }
 			
-			FSSpec GetFSSpec() const;
+			FSSpec GetFSSpec( bool forCreation = false ) const;
 	};
 	
 	class MacDataForkHandle : public MacFileHandle

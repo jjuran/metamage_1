@@ -208,12 +208,12 @@ namespace Genie
 				return frame.SetErrno( destIsDir ? EISDIR : ENOTDIR );
 			}
 			
-			FSSpec srcFileSpec = srcFile->GetFSSpec();
+			FSSpec srcFileSpec = srcFile->GetFSSpec( false );
 			FSSpec destFileSpec;
 			
 			try
 			{
-				destFileSpec = destFile->GetFSSpec();
+				destFileSpec = destFile->GetFSSpec( true );
 			}
 			catch ( ... )
 			{

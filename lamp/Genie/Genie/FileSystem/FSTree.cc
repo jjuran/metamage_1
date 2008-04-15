@@ -98,7 +98,7 @@ namespace Genie
 		return "";  // Not reached
 	}
 	
-	FSSpec FSTree::GetFSSpec() const
+	FSSpec FSTree::GetFSSpec( bool forCreation ) const
 	{
 		p7::throw_errno( EXDEV );
 		
