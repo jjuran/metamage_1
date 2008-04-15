@@ -122,6 +122,11 @@ namespace Genie
 			FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec();
 			FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec();
 			
+			if ( !io::item_exists( srcFile ) )
+			{
+				return frame.SetErrno( ENOENT );
+			}
+			
 			// Do not resolve links
 			
 			N::Str63 requestedDestName = UntweakMacFilename( Basename( dest ) );
@@ -134,49 +139,14 @@ namespace Genie
 			
 			N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFile.vRefNum );
 			
-			bool destExists = false;
+			bool destExists = io::item_exists( destFile );
 			
-			try
+			bool srcIsDir  = io::directory_exists( srcFile  );
+			bool destIsDir = io::directory_exists( destFile );
+			
+			if ( destExists  &&  srcIsDir != destIsDir )
 			{
-				CInfoPBRec cInfo;
-				
-				N::FSpGetCatInfo( destFile, cInfo );
-				
-				bool isDir = io::item_is_directory( cInfo );
-				
-				if ( isDir )
-				{
-					// Directory specified -- look within
-					//N::FSDirID dirID = N::FSDirID( cInfo.dirInfo.ioDrDirID );
-					//destFile = N::FSMakeFSSpec( vRefNum, dirID, srcFile.name );
-					destFile = destFile / srcFile.name;
-					
-					requestedDestName[0] = 0;  // signal that source name will be used
-					
-					N::FSpGetCatInfo( destFile, cInfo );
-					
-					if ( io::item_is_directory( cInfo ) )
-					{
-						// Also a directory -- can't replace it.
-						return frame.SetErrno( EISDIR );
-					}
-				}
-				
-				// destFile is now the item we're going to replace
-				destExists = true;
-			}
-			catch ( const N::FNFErr& err )
-			{
-			#ifdef __MWERKS__
-				
-				if ( err.Get() != fnfErr )
-				{
-					throw;
-				}
-				
-			#endif
-				
-				// destFile is absent
+				return frame.SetErrno( destIsDir ? EISDIR : ENOTDIR );
 			}
 			
 			if ( srcFile.parID == destFile.parID )
@@ -236,7 +206,7 @@ namespace Genie
 			
 			// Darn, we have to move *and* rename.  Use MoreFiles.
 			
-			// destFolder is tha parent of destFile.
+			// destFolder is the parent of destFile.
 			// It's semantically invalid (though it might work) to pass an
 			// FSSpec with null fields to Mac OS, but MoreFiles won't do that.
 			// (It breaks it into individual parts before passing them.)
