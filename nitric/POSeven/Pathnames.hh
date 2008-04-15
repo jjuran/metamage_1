@@ -120,6 +120,11 @@ namespace io
 			return path_descent( path, name, std::strlen( name ) );
 		}
 		
+		inline std::string operator/( const char* path, const std::string& name )
+		{
+			return operator/( std::string( path ), name );
+		}
+		
 	}
 	
 	// Delete
