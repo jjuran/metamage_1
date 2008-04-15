@@ -16,6 +16,7 @@
 #include <string.h>
 
 // POSIX
+#include <sys/stat.h>
 #include <unistd.h>
 
 // MoreFiles
@@ -23,6 +24,10 @@
 
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
+#include "Nitrogen/Str.h"
+
+// POSeven
+#include "POSeven/Errno.hh"
 
 // Genie
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -39,6 +44,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
 	
@@ -147,6 +153,33 @@ namespace Genie
 		lockBypass.SetFile( destFile );
 	}
 	
+	static FSSpec GetFSSpecForRenameDestination( const FSTreePtr& file, const char* path )
+	{
+		struct ::stat stat_buffer;
+		
+		// Throws ENOENT if parent doesn't exist
+		file->Parent()->Stat( stat_buffer );
+		
+		if ( stat_buffer.st_dev <= 0 )
+		{
+			// Not FSSpecified
+			p7::throw_errno( EXDEV );
+		}
+		
+		FSSpec result;
+		
+		// vRefNum and dir ID from parent
+		result.vRefNum = -stat_buffer.st_dev;
+		result.parID   =  stat_buffer.st_ino;
+		
+		// The requested name (not the on-disk name, in the event of case conflict)
+		N::CopyToPascalString( UntweakMacFilename( Basename( path ) ),
+		                       result.name,
+		                       sizeof result.name - 1 );
+		
+		return result;
+	}
+	
 	static int rename( const char* src, const char* dest )
 	{
 		SystemCallFrame frame( "rename" );
@@ -155,63 +188,67 @@ namespace Genie
 		{
 			FSTreePtr cwd = frame.Caller().GetCWD();
 			
-			FSSpec srcFile  = ResolvePathname( src,  cwd )->GetFSSpec();
-			FSSpec destFile = ResolvePathname( dest, cwd )->GetFSSpec();
+			FSTreePtr srcFile  = ResolvePathname( src,   cwd );
+			FSTreePtr destFile = ResolvePathname( dest,  cwd );
 			
-			if ( !io::item_exists( srcFile ) )
+			// Do not resolve links
+			
+			if ( !srcFile->Exists() )
 			{
 				return frame.SetErrno( ENOENT );
 			}
 			
-			// Do not resolve links
+			bool destExists = destFile->Exists();
 			
-			N::Str63 requestedDestName = UntweakMacFilename( Basename( dest ) );
-			
-			// Can't move across volumes
-			if ( srcFile.vRefNum != destFile.vRefNum )
-			{
-				return frame.SetErrno( EXDEV );
-			}
-			
-			N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFile.vRefNum );
-			
-			bool destExists = io::item_exists( destFile );
-			
-			bool srcIsDir  = io::directory_exists( srcFile  );
-			bool destIsDir = io::directory_exists( destFile );
+			bool srcIsDir  = srcFile ->IsDirectory();
+			bool destIsDir = destFile->IsDirectory();
 			
 			if ( destExists  &&  srcIsDir != destIsDir )
 			{
 				return frame.SetErrno( destIsDir ? EISDIR : ENOTDIR );
 			}
 			
-			if ( srcFile.parID == destFile.parID )
+			FSSpec srcFileSpec = srcFile->GetFSSpec();
+			FSSpec destFileSpec;
+			
+			try
+			{
+				destFileSpec = destFile->GetFSSpec();
+			}
+			catch ( ... )
+			{
+				// Case-sensitivity conflict
+				destFileSpec = GetFSSpecForRenameDestination( destFile, dest );
+			}
+			
+			// Can't move across volumes
+			if ( srcFileSpec.vRefNum != destFileSpec.vRefNum )
+			{
+				return frame.SetErrno( EXDEV );
+			}
+			
+			N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
+			
+			bool sameName = NamesAreSame( srcFileSpec.name, destFileSpec.name );
+			
+			if ( srcFileSpec.parID == destFileSpec.parID )
 			{
 				// Same dir.
 				
-				bool sameFile = ::EqualString( srcFile.name, destFile.name, false, true );
-				
-				if ( sameFile )
+				if ( sameName )
 				{
-					// Could be a case change, or not
-					if ( NamesAreSame( destFile.name, requestedDestName ) )
-					{
-						// Source and dest are the same file, and we're not changing case
-						return 0;
-					}
-					
-					// sameFile now implies case has changed
+					// Identical names in the same directory.  Nothing to do.
+					return 0;
 				}
 				
-				// Don't delete the dest file if it's really the same file!
-				if ( destExists && !sameFile )
+				// destExists is false for case changes
+				if ( destExists )
 				{
 					// Delete existing dest file
-					
-					N::FSpDelete( destFile );
+					N::FSpDelete( destFileSpec );
 				}
 				
-				Rename( srcFile, destFile );
+				Rename( srcFileSpec, destFileSpec );
 				
 				// And we're done
 				return 0;
@@ -221,18 +258,18 @@ namespace Genie
 			{
 				// Can't be the same file, because it's in a different directory.
 				
-				N::FSpDelete( destFile );
+				N::FSpDelete( destFileSpec );
 			}
 			
-			if ( NamesAreSame( srcFile.name, requestedDestName ) )
+			if ( sameName )
 			{
 				// Same name, different dir; move only.
-				N::FSpCatMove( srcFile, N::FSDirID( destFile.parID ) );
+				N::FSpCatMove( srcFileSpec, N::FSDirID( destFileSpec.parID ) );
 			}
 			else
 			{
 				// Darn, we have to move *and* rename.
-				MoveAndRename( srcFile, destFile );
+				MoveAndRename( srcFileSpec, destFileSpec );
 			}
 		}
 		catch ( ... )
