@@ -3,22 +3,56 @@
  *	=====
  */
 
-// Standard C
-#include <errno.h>
+// Standard C++
+#include <string>
 
 // Standard C/C++
 #include <cstdio>
 #include <cstring>
 
+// Standard C
+#include <errno.h>
+
 // POSIX
 #include <sys/stat.h>
 #include <unistd.h>
 
+// POSeven
+#include "POSeven/Pathnames.hh"
+#include "POSeven/Stat.hh"
 
-#pragma exceptions off
+// Orion
+#include "Orion/Main.hh"
 
 
-int main( int argc, char const *const argv[] )
+namespace p7 = poseven;
+namespace O = Orion;
+
+
+static const char* basename( const char* path )
+{
+	const char* slash = std::strrchr( path, '/' );
+	
+	if ( slash == NULL )
+	{
+		return path;
+	}
+	
+	return slash + 1;
+}
+
+static int move_into_dir( const char* old_path, const char* new_dir )
+{
+	using namespace io::path_descent_operators;
+	
+	const char* name = basename( old_path );
+	
+	std::string new_path = std::string( new_dir ) / name;
+	
+	return std::rename( old_path, new_path.c_str() );
+}
+
+int O::Main( int argc, iota::argv_t argv )
 {
 	// Check for sufficient number of args
 	if (argc < 3)
@@ -58,7 +92,7 @@ int main( int argc, char const *const argv[] )
 		
 		for ( int index = 1;  index < argc - 1;  ++index )
 		{
-			fail += std::rename( argv[ index ], destDir ) == -1;
+			fail += move_into_dir( argv[ index ], destDir ) == -1;
 		}
 	}
 	else
@@ -68,7 +102,8 @@ int main( int argc, char const *const argv[] )
 		const char* srcPath  = argv[ 1 ];
 		const char* destPath = argv[ 2 ];
 		
-		int renamed = std::rename( srcPath, destPath );
+		int renamed = io::directory_exists( destPath ) ? move_into_dir( srcPath, destPath )
+		                                               : std::rename  ( srcPath, destPath );
 		
 		if ( renamed == -1 )
 		{
