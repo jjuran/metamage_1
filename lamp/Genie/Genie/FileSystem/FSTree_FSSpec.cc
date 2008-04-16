@@ -31,6 +31,9 @@
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
 
+// Arcana / MD5
+#include "MD5.hh"
+
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FileSystem/FSSpecForkUser.hh"
@@ -87,13 +90,18 @@ namespace Genie
 	}
 	
 	
+	static char base32_encode( unsigned x )
+	{
+		return ( x < 10 ? '0' : 'a' - 10 ) + x;
+	}
+	
 	static FSSpec FSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
 		std::size_t dot = unixName.find_last_of( "." );
 		
 		const bool has_dot = dot != unixName.npos;
 		
-		unsigned n_delimiters = 1 + has_dot;
+		const unsigned n_delimiters = 1;
 		
 		const unsigned hash_length = 2;
 		
@@ -103,21 +111,22 @@ namespace Genie
 		
 		if ( replaced_length >= base_length )
 		{
-			p7::throw_errno( ENAMETOOLONG );
+			p7::throw_errno( ENAMETOOLONG );  // extension is too long
 		}
 		
 		std::size_t shortened_base_length = base_length - replaced_length;
 		
+		MD5::Result hash = MD5::Digest( unixName.data() + shortened_base_length, replaced_length );
+		
 		std::string macName( unixName.begin(), unixName.begin() + shortened_base_length );
 		
-		macName += 'É';
+		macName += '¥';
 		
-		macName += "xx";
+		macName += base32_encode( hash.data[0] >> 3 );
+		macName += base32_encode( hash.data[1] >> 3 );
 		
 		if ( has_dot )
 		{
-			macName += 'É';
-			
 			macName.append( unixName.begin() + dot, unixName.end() );
 		}
 		
