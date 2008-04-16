@@ -225,7 +225,7 @@ namespace Genie
 			
 			try
 			{
-				destFileSpec = destFile->GetFSSpec( true );
+				destFileSpec = destFile->GetFSSpec( !destExists );
 			}
 			catch ( ... )
 			{
