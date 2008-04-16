@@ -89,6 +89,23 @@ namespace Genie
 	
 	static std::string GetUnixName( const FSSpec& item )
 	{
+		if ( item.name[0] == 31 )
+		{
+			try
+			{
+				std::string comment = N::FSpDTGetComment( item );
+				
+				if ( comment.size() > 31 )
+				{
+					// Assume it's a Unix name.  FIXME:  Need better heuristics
+					return comment;
+				}
+			}
+			catch ( ... )
+			{
+			}
+		}
+		
 		return UnixFromMacName( io::get_filename_string( item ) );
 	}
 	
@@ -168,12 +185,20 @@ namespace Genie
 	{
 		N::FileSignature sig = PickFileSignatureForName( unixName );
 		
-		N::FSpCreate( NewFSSpecForLongUnixName( parent, unixName ), sig );
+		FSSpec file = NewFSSpecForLongUnixName( parent, unixName );
+		
+		N::FSpCreate( file, sig );
+		
+		N::FSpDTSetComment( file, unixName );
 	}
 	
 	static void CreateDirectoryWithLongName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
-		N::FSpDirCreate( NewFSSpecForLongUnixName( parent, unixName ) );
+		FSSpec dir = NewFSSpecForLongUnixName( parent, unixName );
+		
+		N::FSpDirCreate( dir );
+		
+		N::FSpDTSetComment( dir, unixName );
 	}
 	
 	
@@ -428,7 +453,12 @@ namespace Genie
 	{
 		std::string name = GetUnixName( item );
 		
-		FSTreePtr tree( new FSTree_FSSpec( item ) );
+		const bool isLong = name.size() > 31;
+		
+		FSTree* ptr = isLong ? static_cast< FSTree* >( new FSTree_LongName( io::get_preceding_directory( item ), name ) )
+		                     : static_cast< FSTree* >( new FSTree_FSSpec( item ) );
+		
+		FSTreePtr tree( ptr );
 		
 		return FSNode( name, tree );
 	}
