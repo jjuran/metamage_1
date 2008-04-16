@@ -87,28 +87,6 @@ namespace Genie
 	}
 	
 	
-	static std::string GetUnixName( const FSSpec& item )
-	{
-		if ( item.name[0] == 31 )
-		{
-			try
-			{
-				std::string comment = N::FSpDTGetComment( item );
-				
-				if ( comment.size() > 31 )
-				{
-					// Assume it's a Unix name.  FIXME:  Need better heuristics
-					return comment;
-				}
-			}
-			catch ( ... )
-			{
-			}
-		}
-		
-		return UnixFromMacName( io::get_filename_string( item ) );
-	}
-	
 	static FSSpec FSSpecForLongUnixName( const N::FSDirSpec& parent, const std::string& unixName )
 	{
 		std::size_t dot = unixName.find_last_of( "." );
@@ -199,6 +177,32 @@ namespace Genie
 		N::FSpDirCreate( dir );
 		
 		N::FSpDTSetComment( dir, unixName );
+	}
+	
+	
+	static std::string GetUnixName( const FSSpec& item )
+	{
+		if ( item.name[0] == 31 )
+		{
+			try
+			{
+				std::string comment = N::FSpDTGetComment( item );
+				
+				if ( comment.size() > 31 )
+				{
+					// throws ENOENT if the encoded name doesn't exist
+					(void) OldFSSpecForLongUnixName( io::get_preceding_directory( item ), comment );
+					
+					// Assume it's a Unix name.  FIXME:  Need better heuristics
+					return comment;
+				}
+			}
+			catch ( ... )
+			{
+			}
+		}
+		
+		return UnixFromMacName( io::get_filename_string( item ) );
 	}
 	
 	
