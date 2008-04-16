@@ -153,6 +153,18 @@ namespace Genie
 		lockBypass.SetFile( destFile );
 	}
 	
+	static void SetLongName( const FSSpec& item, const char* pathname )
+	{
+		const char* name = Basename( pathname );
+		
+		std::size_t length = std::strlen( name );
+		
+		if ( length > 31 )
+		{
+			N::FSpDTSetComment( item, std::string( name, length ) );
+		}
+	}
+	
 	static FSSpec GetFSSpecForRenameDestination( const FSTreePtr& file, const char* path )
 	{
 		struct ::stat stat_buffer;
@@ -250,6 +262,8 @@ namespace Genie
 				
 				Rename( srcFileSpec, destFileSpec );
 				
+				SetLongName( destFileSpec, dest );
+				
 				// And we're done
 				return 0;
 			}
@@ -270,6 +284,8 @@ namespace Genie
 			{
 				// Darn, we have to move *and* rename.
 				MoveAndRename( srcFileSpec, destFileSpec );
+				
+				SetLongName( destFileSpec, dest );
 			}
 		}
 		catch ( ... )
