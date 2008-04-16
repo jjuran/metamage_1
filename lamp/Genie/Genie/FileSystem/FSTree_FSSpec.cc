@@ -116,7 +116,7 @@ namespace Genie
 		
 		std::size_t shortened_base_length = base_length - replaced_length;
 		
-		MD5::Result hash = MD5::Digest( unixName.data() + shortened_base_length, replaced_length );
+		MD5::Result hash = MD5::Digest( unixName.data(), unixName.size() );
 		
 		std::string macName( unixName.begin(), unixName.begin() + shortened_base_length );
 		
