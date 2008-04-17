@@ -91,7 +91,7 @@ my @programs = qw
 	macbin md5sum mkdir mpwrez mread mv mwcc
 	nohup
 	open osascript
-	perl ps ptrace pwd
+	pause perl ps ptrace pwd
 	readlink realpath rm rmdir rsrc-patch
 	setleds setwindow sh sleep stripcr striplf superd
 	tcpcat tcpclient th tlsrvr true tty ttyd
@@ -147,7 +147,7 @@ my %fsmap =
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
-			qw( console cr2lf divide jtest lf2cr lf2crlf mread ptrace setwindow stripcr striplf th window ),
+			qw( console cr2lf divide jtest lf2cr lf2crlf mread pause ptrace setwindow stripcr striplf th window ),
 			qw( beep cds err2text keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
