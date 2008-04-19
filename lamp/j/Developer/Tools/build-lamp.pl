@@ -3,7 +3,7 @@
 use warnings;
 use strict;
 
-use fatal qw( close mkdir open print chmod read );
+use Fatal qw( close mkdir open chmod read );
 
 local $| = 1;  # piping hot output
 
@@ -48,7 +48,7 @@ my $should_copy_syms = $ENV{LAMP_SYMS};
 
 my $timestamp = timestamp();
 
-my $lamp_source_dir = "$ENV{HOME}/Developer/Projects/SourceForge/Lamp";
+my $lamp_source_dir = "$ENV{HOME}/Developer/Projects/SourceForge/lamp";
 my $user_builds_dir = "$ENV{HOME}/Developer/Builds";
 my $user_lamp_dir   = "$ENV{HOME}/Developer/Lamp";
 
@@ -183,9 +183,7 @@ sub want_dir
 {
 	my ( $dir ) = @_;
 	
-	return if -d $dir;
-	
-	mkdir $dir;
+	mkdir $dir unless -d $dir;
 	
 	return;
 }
@@ -309,7 +307,7 @@ sub create_node
 		return;
 	}
 	
-	mkdir $path;
+	want_dir( $path );
 	
 	if ( $ref eq "ARRAY" )
 	{
@@ -367,7 +365,7 @@ my $macball = make_macball( "$tmp_subdir/$root_name" );
 
 my $build_area_path = "$lamp_builds_dir/$build_area";
 
-mkdir $build_area_path  if ! -d $build_area_path;
+want_dir( $build_area_path );
 
 rename "$tmp_subdir", "$build_area_path/$unique_dir_name" or die "rename $tmp_subdir $build_area_path/$unique_dir_name failed: $!\n";
 
