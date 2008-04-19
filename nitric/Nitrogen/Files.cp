@@ -29,7 +29,7 @@
 #include <limits>
 
 namespace Nitrogen
-  {
+{
 	
 	FileManagerErrorsRegistrationDependency::FileManagerErrorsRegistrationDependency()
 	{
@@ -173,7 +173,39 @@ namespace Nucleus
   }
 
 namespace Nitrogen
-  {	
+{	
+	
+	const CInfoPBRec* FSpGetCatInfo( const FSSpec& item )
+	{
+		static CInfoPBRec paramBlock;
+		
+		// There is/was a file sharing problem with null or empty names,
+		// but an FSSpec's name is never empty (and can't be null).
+		
+		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
+		
+		Nucleus::Initialize< CInfoPBRec >( paramBlock,
+		                                   FSVolumeRefNum( item.vRefNum ),
+		                                   FSDirID( item.parID ),
+		                                   const_cast< StringPtr >( item.name ),
+		                                   0 );
+		
+		if ( OSErr err = ::PBGetCatInfoSync( &paramBlock ) )
+		{
+			if ( err == fnfErr )
+			{
+				return NULL;
+			}
+			
+			ThrowOSStatus( err );
+		}
+		
+		// Don't break the const contract on item.name
+		paramBlock.dirInfo.ioNamePtr = NULL;
+		
+		return &paramBlock;
+	}
+	
 	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock )
 	{
 		// There is/was a file sharing problem with null or empty names,
@@ -1449,4 +1481,6 @@ Return Value
       RegisterOSStatus< pathTooLongErr                >();
       RegisterOSStatus< buffersTooSmall               >();
      }
-  }
+	
+}
+

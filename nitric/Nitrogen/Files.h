@@ -418,6 +418,8 @@ namespace Nitrogen
 	
 	// ...
 	
+	const CInfoPBRec* FSpGetCatInfo( const FSSpec& item );
+	
 	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock );
 	
 	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
@@ -1844,31 +1846,9 @@ namespace io
 	inline bool file_exists     ( const Nitrogen::FSDirSpec& dir, overload = overload() )  { return false; }
 	inline bool directory_exists( const Nitrogen::FSDirSpec& dir, overload = overload() )  { return true; }
 	
-	inline bool item_exists( const FSSpec& item, CInfoPBRec& cInfo, overload = overload() )
+	inline bool item_exists( const FSSpec& item, overload )
 	{
-		try
-		{
-			Nitrogen::FSpGetCatInfo( item, cInfo );
-		}
-		catch ( const Nitrogen::FNFErr& err )
-		{
-		#ifdef __MWERKS__
-			
-			if ( err.Get() != fnfErr )  throw;
-			
-		#endif
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	inline bool item_exists( const FSSpec& item, overload = overload() )
-	{
-		CInfoPBRec cInfo;
-		
-		return item_exists( item, cInfo );
+		return Nitrogen::FSpGetCatInfo( item ) != NULL;
 	}
 	
 	inline bool item_is_directory( const HFileInfo& hFileInfo, overload = overload() )
@@ -1886,28 +1866,18 @@ namespace io
 		return !item_is_directory( cInfo );
 	}
 	
-	inline bool file_exists( const FSSpec& file, CInfoPBRec& cInfo, overload = overload() )
-	{
-		return item_exists( file, cInfo ) && item_is_file( cInfo );
-	}
-	
 	inline bool file_exists( const FSSpec& file, overload = overload() )
 	{
-		CInfoPBRec cInfo;
+		const CInfoPBRec* cInfo = Nitrogen::FSpGetCatInfo( file );
 		
-		return file_exists( file, cInfo );
-	}
-	
-	inline bool directory_exists( const FSSpec& dir, CInfoPBRec& cInfo, overload = overload() )
-	{
-		return item_exists( dir, cInfo ) && item_is_directory( cInfo );
+		return cInfo != NULL  &&  item_is_file( *cInfo );
 	}
 	
 	inline bool directory_exists( const FSSpec& dir, overload = overload() )
 	{
-		CInfoPBRec cInfo;
+		const CInfoPBRec* cInfo = Nitrogen::FSpGetCatInfo( dir );
 		
-		return directory_exists( dir, cInfo );
+		return cInfo != NULL  &&  item_is_directory( *cInfo );
 	}
 	
 	// Delete
