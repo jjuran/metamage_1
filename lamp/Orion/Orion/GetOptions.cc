@@ -108,7 +108,7 @@ namespace Orion
 	static OptionMap  gOptionMap;
 	static BindingMap gBindingMap;
 	
-	static std::vector< const char* > gFreeArguments;
+	static std::vector< iota::arg_t > gFreeArguments;
 	
 	
 	OptionID NewOption( const char* optionSpec )
@@ -171,7 +171,7 @@ namespace Orion
 	}
 	
 	
-	static void SetOption( const std::string& name, char const* const*& it )
+	static void SetOption( const std::string& name, iota::argp_t& it )
 	{
 		const OptionBinding& binding = FindOption( name );
 		
@@ -197,19 +197,19 @@ namespace Orion
 		std::exit( EXIT_SUCCESS );
 	}
 	
-	void GetOptions( int argc, char const *const *argv )
+	void GetOptions( int argc, iota::argp_t argv )
 	{
 		if ( gOptionMap.find( "--help" ) == gOptionMap.end() )
 		{
 			BindOptionTrigger( "--help", std::ptr_fun( DefaultHelp ) );
 		}
 		
-		char const* const* begin = argv + 1;  // Skip the command
-		char const* const* end = argv + argc;
+		iota::argp_t begin = argv + 1;  // Skip the command
+		iota::argp_t end = argv + argc;
 		
-		for ( char const* const* it = begin;  it != end;  ++it )
+		for ( iota::argp_t it = begin;  it != end;  ++it )
 		{
-			const char* token = *it;
+			iota::arg_t token = *it;
 			
 			if ( token[ 0 ] == '-' )
 			{
@@ -296,7 +296,7 @@ namespace Orion
 		gFreeArguments.push_back( NULL );
 	}
 	
-	char const* const* FreeArguments()
+	iota::argp_t FreeArguments()
 	{
 		return &gFreeArguments[0];
 	}

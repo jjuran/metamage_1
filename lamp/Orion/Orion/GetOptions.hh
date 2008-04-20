@@ -32,6 +32,9 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
+// Iota
+#include "iota/argv.hh"
+
 // Nucleus
 #include "Nucleus/Convert.h"
 #include "Nucleus/Exception.h"
@@ -207,7 +210,7 @@ namespace Orion
 	
 	void GetOptions( int argc, char const *const argv[] );
 	
-	char const* const* FreeArguments();
+	iota::argp_t FreeArguments();
 	
 	std::size_t FreeArgumentCount();
 	
