@@ -120,7 +120,7 @@ int O::Main( int argc, argv_t argv )
 	
 	O::GetOptions( argc, argv );
 	
-	char const *const *freeArgs = O::FreeArguments();
+	iota::argp_t freeArgs = O::FreeArguments();
 	
 	std::size_t argCount = O::FreeArgumentCount();
 	
