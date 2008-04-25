@@ -167,15 +167,100 @@
 	}
 	
 	
-	iota::environ_t environ = reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1];
+	iota::environ_t environ = NULL;
+	
+	
+	inline iota::environ_t GetEnvironFromKernel()
+	{
+		return reinterpret_cast< iota::environ_t* >( LMGetToolScratch() )[1];
+	}
+	
+	inline char* copy_string( const char* s )
+	{
+		std::size_t len = std::strlen( s );
+		
+		char* result = new char[ len + 1 ];
+		
+		std::copy( s, s + len + 1, result );
+		
+		return result;
+	}
+	
+	inline char* copy_string( const std::string& s )
+	{
+		char* result = new char[ s.size() + 1 ];
+		
+		std::copy( s.c_str(), s.c_str() + s.size() + 1, result );
+		
+		return result;
+	}
+	
+	static void DeleteVars( std::vector< char* >& result )
+	{
+		for ( int i = result.size() - 1;  i >= 0;  --i )
+		{
+			delete [] result[ i ];
+		}
+	}
+	
+	static void CopyVars( char const *const *vars, std::vector< char* >& result  )
+	{
+		try
+		{
+			if ( vars != NULL )
+			{
+				while ( *vars )
+				{
+					result.push_back( copy_string( *vars++ ) );
+				}
+			}
+			
+			result.push_back( NULL );
+		}
+		catch ( ... )
+		{
+			DeleteVars( result );
+			
+			throw;
+		}
+	}
+	
+	
+	namespace Sh = ShellShock;
+	
+	static std::vector< char* >::iterator FindVar( std::vector< char* >& vars, const char* name )
+	{
+		return std::lower_bound( vars.begin(),
+		                         vars.end() - 1,
+		                         name,
+		                         std::ptr_fun( Sh::CompareStrings ) );
+	}
+	
+	static void OverwriteVar( std::vector< char* >::iterator it, const std::string& string )
+	{
+		char* var = *it;
+		
+		std::size_t old_len = std::strlen( var );
+		
+		std::size_t new_len = string.size();
+		
+		if ( new_len != old_len )
+		{
+			var = new char[ new_len + 1 ];
+			
+			delete [] *it;
+			
+			*it = var;
+		}
+		
+		std::copy( string.c_str(), string.c_str() + new_len + 1, var );
+	}
 	
 	
 	class Environ
 	{
 		private:
-			std::auto_ptr< ShellShock::VarArray > itsEnvironStorage;
-			
-			std::string itsLastEnv;
+			std::vector< char* > itsVars;
 		
 		public:
 			Environ();
@@ -192,50 +277,43 @@
 	};
 	
 	
-	namespace Sh = ShellShock;
-	
-	Environ::Environ() : itsEnvironStorage( environ ? new Sh::VarArray( environ )
-	                                                : new Sh::VarArray(         ) )
+	Environ::Environ()
 	{
+		CopyVars( GetEnvironFromKernel(), itsVars );
+		
 		UpdateEnvironValue();
 	}
 	
 	Environ::~Environ()
 	{
+		DeleteVars( itsVars );
 	}
 	
 	void Environ::UpdateEnvironValue()
 	{
-		environ = itsEnvironStorage->GetPointer();
+		environ = &itsVars.front();
 	}
 	
 	char* Environ::GetEnv( const char* name )
 	{
-		char* result = NULL;
+		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
-		Sh::SVector::const_iterator it = itsEnvironStorage->Find( name );
-		
-		const char* var = *it;
+		char* var = *it;
 		
 		const char* end = Sh::EndOfVarName( var );
 		
 		// Did we find the right environment variable?
 		if ( end != NULL  &&  *end == '='  &&  Sh::VarMatchesName( var, end, name ) )
 		{
-			itsLastEnv = var;
-			itsLastEnv += "\0";  // make sure we have a trailing null
-			
-			std::size_t offset = end + 1 - var;
-			
-			result = &itsLastEnv[ offset ];
+			return var + (end - var) + 1;
 		}
 		
-		return result;
+		return NULL;
 	}
 	
 	void Environ::SetEnv( const char* name, const char* value, bool overwrite )
 	{
-		Sh::SVector::iterator it = itsEnvironStorage->Find( name );
+		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
 		const char* var = *it;
 		
@@ -247,13 +325,13 @@
 		
 		if ( inserting )
 		{
-			itsEnvironStorage->Insert( it, Sh::MakeVar( name, value ) );
+			itsVars.insert( it, copy_string( Sh::MakeVar( name, value ) ) );
 			
 			UpdateEnvironValue();
 		}
 		else if ( overwrite )
 		{
-			itsEnvironStorage->Overwrite( it, Sh::MakeVar( name, value ) );
+			OverwriteVar( it, Sh::MakeVar( name, value ) );
 		}
 	}
 	
@@ -262,7 +340,7 @@
 		std::string name = string;
 		name.resize( name.find( '=' ) );
 		
-		Sh::SVector::iterator it = itsEnvironStorage->Find( name.c_str() );
+		std::vector< char* >::iterator it = FindVar( itsVars, name.c_str() );
 		
 		const char* var = *it;
 		
@@ -274,19 +352,19 @@
 		
 		if ( inserting )
 		{
-			itsEnvironStorage->Insert( it, string );
+			itsVars.insert( it, copy_string( string ) );
 			
 			UpdateEnvironValue();
 		}
 		else
 		{
-			itsEnvironStorage->Overwrite( it, string );
+			OverwriteVar( it, string );
 		}
 	}
 	
 	void Environ::UnsetEnv( const char* name )
 	{
-		Sh::SVector::iterator it = itsEnvironStorage->Find( name );
+		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
 		const char* var = *it;
 		
@@ -295,13 +373,15 @@
 		
 		if ( match )
 		{
-			itsEnvironStorage->Remove( it );
+			itsVars.erase( it );
+			
+			delete [] var;
 		}
 	}
 	
 	void Environ::ClearEnv()
 	{
-		itsEnvironStorage->Clear();
+		DeleteVars( itsVars );
 		
 		environ = NULL;
 	}
