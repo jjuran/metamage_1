@@ -10,6 +10,7 @@ qw
 	getenv
 	perror
 	raise
+	remove
 	rename
 	signal
 	strerror
@@ -18,6 +19,12 @@ qw
 	__exit
 	
 	__write_console
+	
+	__open_file
+	__read_file
+	__write_file
+	__position_file
+	__close_file
 	
 	__convert_from_newlines
 	__convert_to_newlines
