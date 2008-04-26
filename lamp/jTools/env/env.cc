@@ -37,7 +37,7 @@ int main( int argc, iota::argv_t argv )
 		putenv( *argv );
 	}
 	
-	if ( argv == NULL )
+	if ( *argv == NULL )
 	{
 		DumpEnvironment();
 	}
