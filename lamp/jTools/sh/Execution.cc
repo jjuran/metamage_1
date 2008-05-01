@@ -175,66 +175,73 @@ class ShellParameterDictionary : public Sh::ParameterDictionary
 	public:
 		ShellParameterDictionary()  {}
 		
-		std::string Lookup( const std::string& param ) const;
+		std::vector< std::string > Lookup( const std::string& param, bool double_quoted ) const;
 };
 
-std::string ShellParameterDictionary::Lookup( const std::string& param ) const
+template < class T >
+inline std::vector< T > MakeVector( const T& value )
 {
+	return std::vector< T >( 1, value );
+}
+
+std::vector< std::string > ShellParameterDictionary::Lookup( const std::string& param, bool double_quoted ) const
+{
+	std::string single_result;
+	
 	if ( param == "$" )
 	{
-		return NN::Convert< std::string >( getpid() );
+		single_result = NN::Convert< std::string >( getpid() );
 	}
 	else if ( param == "?" )
 	{
-		return NN::Convert< std::string >( exit_from_wait( gLastResult ) );
+		single_result = NN::Convert< std::string >( exit_from_wait( gLastResult ) );
 	}
-	
-	std::size_t paramCount = gParameterCount;
-	
-	int i;
-	
-	if ( param == "#" )
+	else if ( param == "#" )
 	{
-		return NN::Convert< std::string >( paramCount );
+		single_result = NN::Convert< std::string >( gParameterCount );
 	}
-	else if ( param == "*" )
+	else if ( double_quoted  &&  param == "*" )
 	{
-		if ( paramCount == 0 )
+		if ( gParameterCount != 0 )
 		{
-			return "";
+			single_result = gParameters[ 0 ];
+			
+			std::for_each( gParameters + 1,
+			               gParameters + gParameterCount,
+			               AppendWithSpace( single_result ) );
 		}
-		
-		std::string params = gParameters[ 0 ];
-		
-		std::for_each( gParameters + 1,
-		               gParameters + gParameterCount,
-		               AppendWithSpace( params ) );
-		
-		return params;
 	}
-	else if ( ( i = std::atoi( param.c_str() ) ) > 0 )
+	else if ( param == "@"  ||  param == "*" )
 	{
-		std::string value = ( i <= paramCount ) ? gParameters[ i - 1 ]
-		                                        : std::string( "" );
+		std::vector< std::string > result( gParameterCount );
 		
-		return value;
+		std::copy( gParameters, gParameters + gParameterCount, result.begin() );
+		
+		return result;
+	}
+	else if ( std::isdigit( param[0] ) )
+	{
+		int i = std::atoi( param.c_str() );
+		
+		if ( i <= gParameterCount )
+		{
+			single_result = gParameters[ i - 1 ];
+		}
 	}
 	else if ( param == "0" )
 	{
-		return gArgZero;
-		//return gParameters[ 0 ];
+		single_result = gArgZero;
 	}
-	
-	if ( const char* value = QueryShellVariable( param ) )
+	else if ( const char* value = QueryShellVariable( param ) )
 	{
-		return value;
+		single_result = value;
 	}
 	else if ( const char* var = getenv( param.c_str() ) )
 	{
-		return var;
+		single_result = var;
 	}
 	
-	return "";
+	return MakeVector( single_result );
 }
 
 static int Open( const char* path, mode_t mode )
