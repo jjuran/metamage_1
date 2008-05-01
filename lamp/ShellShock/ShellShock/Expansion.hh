@@ -20,7 +20,7 @@ namespace ShellShock
 	class ParameterDictionary
 	{
 		public:
-			virtual std::string Lookup( const std::string& param ) const = 0;
+			virtual std::vector< std::string > Lookup( const std::string& param, bool double_quoted ) const = 0;
 	};
 	
 	

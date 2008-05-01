@@ -613,12 +613,6 @@ namespace ShellShock
 		return newstr;
 	}
 	
-	template < class T >
-	inline std::vector< T > MakeVector( const T& value )
-	{
-		return std::vector< T >( 1, value );
-	}
-	
 	static std::string ScanParameter( const char*& p )
 	{
 		// p is pointing to the '$'
@@ -668,6 +662,10 @@ namespace ShellShock
 	{
 		// $HOME -> /home/jjuran
 		
+		std::vector< std::string > result;
+		
+		bool has_empty_params = false;
+		
 		std::string expansion;  // The expanded string
 		
 		// Start p pointing at the beginning of the word.
@@ -693,10 +691,40 @@ namespace ShellShock
 			
 			std::string varName = ScanParameter( p );
 			
-			expansion += dictionary->Lookup( varName );
+			std::vector< std::string > lookup = dictionary->Lookup( varName, double_quoted );
+			
+			// lookup.size() equals 1 except in the case of $*, $@, or "$@"
+			
+			if ( lookup.size() > 0 )
+			{
+				expansion += lookup.front();
+				
+				if ( lookup.size() > 1 )
+				{
+					result.push_back( expansion );
+					
+					result.insert( result.end(),
+					               lookup.begin() + 1,
+					               lookup.end  () - 1 );
+					
+					expansion = lookup.back();
+				}
+			}
+			else
+			{
+				has_empty_params = true;
+			}
 		}
 		
-		return MakeVector( expansion );
+		// A plain empty string produces [ "" ], but if it contains $@, then [].
+		bool expands_to_empty_list = has_empty_params && QuoteRemoval( expansion ).empty();
+		
+		if ( !expands_to_empty_list )
+		{
+			result.push_back( expansion );
+		}
+		
+		return result;
 	}
 	
 	template < class Inserter >
