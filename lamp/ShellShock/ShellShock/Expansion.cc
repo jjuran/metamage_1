@@ -125,7 +125,7 @@ namespace ShellShock
 		return p;
 	}
 	
-	static const char* ScanForDollar( const char* str )
+	static const char* ScanForDollar( const char* str, bool& double_quoted )
 	{
 		const char* p = str;
 		const char c = '$';
@@ -143,9 +143,19 @@ namespace ShellShock
 					}
 					break;
 				
-				case '\'':
-					p = SkipPastNextSingleQuote( p );
+				case '"':
+					double_quoted = !double_quoted;
+					++p;
 					break;
+				
+				case '\'':
+					if ( !double_quoted )
+					{
+						p = SkipPastNextSingleQuote( p );
+						break;
+					}
+					
+					// fall through
 				
 				default:
 					p++;
@@ -663,10 +673,12 @@ namespace ShellShock
 		// Start p pointing at the beginning of the word.
 		const char* p = word.c_str();
 		
+		bool double_quoted = false;
+		
 		while ( *p != '\0' )
 		{
 			// Find the next '$'.
-			const char* var = ScanForDollar( p );
+			const char* var = ScanForDollar( p, double_quoted );
 			
 			// Include what we just scanned over in the string.
 			expansion += std::string( p, var - p );
