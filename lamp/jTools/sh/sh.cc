@@ -164,9 +164,12 @@ int O::Main( int argc, argv_t argv )
 		++gParameters;
 		--gParameterCount;
 		
-		input = p7::open( gArgZero, p7::o_rdonly ).Release();
-		
-		int controlled = fcntl( input, F_SETFD, FD_CLOEXEC );
+		if ( command == NULL )
+		{
+			input = p7::open( gArgZero, p7::o_rdonly ).Release();
+			
+			int controlled = fcntl( input, F_SETFD, FD_CLOEXEC );
+		}
 	}
 	else
 	{
