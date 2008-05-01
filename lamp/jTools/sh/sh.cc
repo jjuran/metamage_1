@@ -142,7 +142,7 @@ int O::Main( int argc, argv_t argv )
 		signal( SIGTSTP, SIG_IGN );
 		signal( SIGTTIN, SIG_IGN );
 		signal( SIGTTOU, SIG_IGN );
-		signal( SIGCHLD, SIG_IGN );
+		//signal( SIGCHLD, SIG_IGN );
 		
 		pid_t pid = getpid();
 		
