@@ -67,9 +67,6 @@
 #endif
 
 
-#define ENVIRON_IS_SHARED  (TARGET_CPU_68K && !TARGET_RT_MAC_CFM)
-
-
 static void DumpBacktrace()
 {
 	using namespace Backtrace;
