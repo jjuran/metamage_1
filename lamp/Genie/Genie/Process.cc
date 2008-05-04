@@ -189,7 +189,112 @@ namespace Genie
 		return it->second.get();
 	}
 	
+	static void DeliverFatalSignal( int signo )
+	{
+		Process& current = CurrentProcess();
+		
+		// first chance -- program can longjmp() out of signal handler
+		current.Raise( signo );
+		current.HandlePendingSignals();
+		
+		// This should be fatal
+		current.SetSignalAction( signo, SIG_DFL );
+		current.Raise( signo );
+		current.HandlePendingSignals();
+		
+		N::SysBeep();
+		
+		::ExitToShell();  // not messing around
+	}
 	
+	static void BusError()
+	{
+		DeliverFatalSignal( SIGBUS );
+	}
+	
+	static void IllegalInstruction()
+	{
+		DeliverFatalSignal( SIGILL );
+	}
+	
+#if TARGET_CPU_68K
+	
+	extern void* gExceptionVectorTable[];
+	extern void* gExceptionUserHandlerTable[];
+	
+	static asm void GenericExceptionHandler()
+	{
+		MOVE.W	6(SP),D0  // get the vector offset
+		ANDI.W	#0x0FFF,D0  // mask off frame code
+		
+		TST.L	gCurrentProcess
+		BEQ		null
+		
+		MOVE	USP,A1
+		MOVE.L	2(SP),-(A1)  // push old PC as return address for stack crawls
+		MOVE	A1,USP
+		
+		LEA		gExceptionUserHandlerTable,A0
+		ADDA.W	D0,A0  // add the offset
+		
+		MOVE.L	(A0),2(SP)  // set stacked PC to the handler address
+		
+		BRA		end
+		
+	null:
+		LEA		gExceptionVectorTable,A0
+		ADDA.W	D0,A0  // add the offset
+		MOVEA.L	(A0),A0  // get the handler address
+		
+		JMP		(A0)
+		
+	end:
+		RTE
+	}
+	
+	static void* gExceptionVectorTable[] =
+	{
+		NULL,  // 0, ISP on reset
+		NULL,  // 1, PC on reset
+		GenericExceptionHandler,
+		NULL,  // 3, address error
+		GenericExceptionHandler
+	};
+	
+	static void* gExceptionUserHandlerTable[] =
+	{
+		NULL,  // 0, ISP on reset
+		NULL,  // 1, PC on reset
+		BusError,
+		NULL,  // 3, address error
+		IllegalInstruction
+	};
+	
+	static void InstallExceptionHandlers()
+	{
+		const std::size_t n_vectors = sizeof gExceptionVectorTable / sizeof gExceptionVectorTable[0];
+		
+		for ( unsigned i = 0;  i < n_vectors;  ++i  )
+		{
+			if ( gExceptionVectorTable[ i ] != NULL )
+			{
+				void **const v = (void**) ( i * sizeof (void*) );
+				
+				std::swap( *v, gExceptionVectorTable[ i ] );
+			}
+		}
+	}
+	
+#endif
+
+#if TARGET_CPU_PPC
+	
+	inline void InstallExceptionHandlers()
+	{
+	}
+	
+#endif
+
 #if TARGET_CPU_68K
 
 	static asm void SaveRegisters( SavedRegisters* saved )
@@ -259,30 +364,13 @@ namespace Genie
 
 #endif
 	
-	static void Die()
-	{
-		Process& current = CurrentProcess();
-		
-		current.Raise( SIGSYS );
-		
-		current.HandlePendingSignals();
-		
-		current.Raise( SIGKILL );
-		
-		current.HandlePendingSignals();
-		
-		N::SysBeep();
-		
-		::ExitToShell();  // not messing around
-	}
-	
 	static void* GetSystemCallAddress( unsigned index )
 	{
 		const SystemCall* syscall = GetSystemCall( index );
 		
 		if ( syscall == NULL  ||  syscall->function == NULL )
 		{
-			Die();
+			DeliverFatalSignal( SIGSYS );
 		}
 		
 		return syscall->function;
@@ -676,6 +764,8 @@ namespace Genie
 		itsFileDescriptors[ 0 ] =
 		itsFileDescriptors[ 1 ] =
 		itsFileDescriptors[ 2 ] = GetSimpleDeviceHandle( "null" );
+		
+		InstallExceptionHandlers();
 	}
 	
 	Process::Process( Process& parent ) 
