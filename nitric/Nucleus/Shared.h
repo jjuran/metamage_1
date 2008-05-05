@@ -110,12 +110,13 @@ namespace Nucleus
          Shared( const Shared<R,Disposer>& s )              : body( GetBody(s) ), share( GetShare(s) )  {}
          
          // Plus the implicit copy constructor
-         // and the implicit assignment operator
+         
+         Shared& operator=( const Shared& s )   { Shared empty; Swap( empty ); body = GetBody(s); share = GetShare(s); return *this; }
           
          ~Shared()                                          { if ( share.Sole() ) body.Dispose(); }
 
          template < class R >
-         Shared& operator=( const Shared<R,Disposer>& s )   { body = GetBody(s); share = GetShare(s); return *this; }
+         Shared& operator=( const Shared<R,Disposer>& s )   { Shared empty; Swap( empty ); body = GetBody(s); share = GetShare(s); return *this; }
          
          void Swap( Shared& s )                             { std::swap( body, s.body ); std::swap( share, s.share ); }
 
