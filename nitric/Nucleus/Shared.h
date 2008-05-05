@@ -127,7 +127,7 @@ namespace Nucleus
 
          Owned<Resource,Disposer> Unshare();
          
-         void Reset()                                       { Body empty;  body.Swap( empty );  share = Share(); }
+         void Reset()                                       { Shared empty;  Swap( empty ); }
          
          // For people who are used to the lowercase std::auto_ptr members:
             void swap( Shared& s )                          { Swap( s ); }
