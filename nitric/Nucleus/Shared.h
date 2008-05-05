@@ -111,10 +111,10 @@ namespace Nucleus
          
          // Plus the implicit copy constructor
          
-         Shared& operator=( const Shared& s )   { Shared empty; Swap( empty ); body = GetBody(s); share = GetShare(s); return *this; }
-          
          ~Shared()                                          { if ( share.Sole() ) body.Dispose(); }
 
+         Shared& operator=( const Shared& s )               { Shared empty; Swap( empty ); body = GetBody(s); share = GetShare(s); return *this; }
+         
          template < class R >
          Shared& operator=( const Shared<R,Disposer>& s )   { Shared empty; Swap( empty ); body = GetBody(s); share = GetShare(s); return *this; }
          
