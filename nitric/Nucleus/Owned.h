@@ -294,7 +294,7 @@ namespace Nucleus
 
          Resource Release()                           { return ReleaseWithDisposer().Get(); }
          
-         void Reset()                                 { Body empty;  body.Swap( empty ); }
+         void Reset()                                 { Owned empty;  Swap( empty ); }
          
          // For people who are used to the lowercase std::auto_ptr members:
             void swap( Owned& s )                     { Swap( s ); }
