@@ -18,6 +18,9 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // BitsAndBytes
 #include "HexStrings.hh"
 
