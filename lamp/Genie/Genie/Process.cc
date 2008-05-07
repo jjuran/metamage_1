@@ -217,6 +217,11 @@ namespace Genie
 		DeliverFatalSignal( SIGILL );
 	}
 	
+	static void DivisionByZero()
+	{
+		DeliverFatalSignal( SIGFPE );
+	}
+	
 #if TARGET_CPU_68K
 	
 	extern void* gExceptionVectorTable[];
@@ -258,6 +263,7 @@ namespace Genie
 		NULL,  // 1, PC on reset
 		GenericExceptionHandler,
 		NULL,  // 3, address error
+		GenericExceptionHandler,
 		GenericExceptionHandler
 	};
 	
@@ -267,7 +273,8 @@ namespace Genie
 		NULL,  // 1, PC on reset
 		BusError,
 		NULL,  // 3, address error
-		IllegalInstruction
+		IllegalInstruction,
+		DivisionByZero
 	};
 	
 	static void InstallExceptionHandlers()
