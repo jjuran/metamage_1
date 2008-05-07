@@ -672,8 +672,7 @@ namespace Pedestal
 	
 	static bool ReadyToWaitForEvents()
 	{
-		//UInt32 minTicksBetweenWNE = gRunState.inForeground ?  2 :  1;
-		UInt32 minTicksBetweenWNE = gRunState.activelyBusy ?  2 :  1;
+		UInt32 minTicksBetweenWNE = 2;
 		
 		UInt32 timetoWNE = gRunState.tickCountAtLastLayerSwitch + minTicksBetweenWNE;
 		
