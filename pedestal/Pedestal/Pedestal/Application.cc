@@ -742,7 +742,7 @@ namespace Pedestal
 					{
 						if ( gRunState.activelyBusy )
 						{
-							AdjustSleepForTimer( 6 );  // sleep only this long if busy
+							AdjustSleepForTimer( 1 );  // sleep only this long if busy
 						}
 						
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
