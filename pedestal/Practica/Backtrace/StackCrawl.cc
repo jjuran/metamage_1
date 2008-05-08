@@ -184,13 +184,13 @@ namespace Backtrace
 		                                 : NULL;
 	}
 	
-	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< ReturnAddress >& result );
+	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result );
 	
 #if defined( __MC68K__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
 	
-	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, std::vector< ReturnAddress >& result )
+	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
-		if ( frame == NULL )
+		if ( frame == NULL  ||  frame >= limit )
 		{
 			return;
 		}
@@ -199,7 +199,7 @@ namespace Backtrace
 		
 		if ( const StackFramePPC* switchFrame = MixedModeSwitchFrame( frame ) )
 		{
-			CrawlStackPPC( level, switchFrame, result );
+			CrawlStackPPC( level, switchFrame, limit, result );
 			
 			return;
 		}
@@ -215,12 +215,12 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStack68K( level + 1, frame->next, result );
+		CrawlStack68K( level + 1, frame->next, limit, result );
 	}
 	
-	inline void CrawlStack( const StackFrame68K* frame, std::vector< ReturnAddress >& result )
+	inline void CrawlStack( const StackFrame68K* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
-		CrawlStack68K( 0, frame, result );
+		CrawlStack68K( 0, frame, limit, result );
 	}
 	
 #endif
@@ -254,9 +254,9 @@ namespace Backtrace
 	
 #if defined( __POWERPC__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
 	
-	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, std::vector< ReturnAddress >& result )
+	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
-		if ( frame == NULL )
+		if ( frame == NULL  ||  frame >= limit )
 		{
 			return;
 		}
@@ -275,7 +275,7 @@ namespace Backtrace
 		
 		if ( const StackFrame68K* switchFrame = MixedModeSwitchFrame( frame ) )
 		{
-			CrawlStack68K( level, switchFrame, result );
+			CrawlStack68K( level, switchFrame, limit, result );
 			
 			return;
 		}
@@ -291,19 +291,19 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStackPPC( level + 1, frame->next, result );
+		CrawlStackPPC( level + 1, frame->next, limit, result );
 	}
 	
-	inline void CrawlStack( const StackFramePPC* frame, std::vector< ReturnAddress >& result )
+	inline void CrawlStack( const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
-		CrawlStackPPC( 0, frame, result );
+		CrawlStackPPC( 0, frame, limit, result );
 	}
 	
 #endif
 	
 #ifdef __i386__
 	
-	static void CrawlStackX86( unsigned level, const StackFrameX86* frame, std::vector< ReturnAddress >& result )
+	static void CrawlStackX86( unsigned level, const StackFrameX86* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
 		if ( frame == NULL )
 		{
@@ -319,12 +319,12 @@ namespace Backtrace
 			return;
 		}
 		
-		CrawlStackX86( level, frame->next, result );
+		CrawlStackX86( level, frame->next, limit, result );
 	}
 	
-	inline void CrawlStack( const StackFrameX86* frame, std::vector< ReturnAddress >& result )
+	inline void CrawlStack( const StackFrameX86* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
-		CrawlStackX86( 0, frame, result );
+		CrawlStackX86( 0, frame, limit, result );
 	}
 	
 #endif
@@ -346,7 +346,7 @@ namespace Backtrace
 	
 #endif
 	
-	static std::vector< ReturnAddress > MakeStackCrawl( const StackFrame* top )
+	static std::vector< ReturnAddress > MakeStackCrawl( const StackFrame* top, const void* limit )
 	{
 		std::vector< ReturnAddress > result;
 		
@@ -365,7 +365,7 @@ namespace Backtrace
 			
 		#endif
 			
-			CrawlStack( top, result );
+			CrawlStack( top, limit, result );
 		}
 		
 	#if defined( __MACOS__ ) && defined( __POWERPC__ )
@@ -394,16 +394,16 @@ namespace Backtrace
 		return result;
 	}
 	
-	std::vector< ReturnAddress > MakeStackCrawl( StackFramePtr top )
+	std::vector< ReturnAddress > MakeStackCrawlFromTopToBottom( StackFramePtr top, const void* limit )
 	{
 		const StackFrame* frame = reinterpret_cast< const StackFrame* >( top );
 		
-		return MakeStackCrawl( frame );
+		return MakeStackCrawl( frame, limit );
 	}
 	
-	std::vector< ReturnAddress > MakeStackCrawl()
+	std::vector< ReturnAddress > MakeStackCrawlToBottom( const void* limit )
 	{
-		return MakeStackCrawl( GetTopFrame() );
+		return MakeStackCrawl( GetTopFrame(), limit );
 	}
 	
 }

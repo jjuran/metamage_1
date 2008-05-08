@@ -117,9 +117,19 @@ namespace Backtrace
 	
 	StackFramePtr GetStackFramePointer( int levelsToSkip = 0 );
 	
-	std::vector< ReturnAddress > MakeStackCrawl( StackFramePtr frame );
+	std::vector< ReturnAddress > MakeStackCrawlFromTopToBottom( StackFramePtr frame, const void* limit );
 	
-	std::vector< ReturnAddress > MakeStackCrawl();
+	inline std::vector< ReturnAddress > MakeStackCrawlFromTop( StackFramePtr frame )
+	{
+		return MakeStackCrawlFromTopToBottom( frame, (const void*) 0xFFFFFFFF );
+	}
+	
+	std::vector< ReturnAddress > MakeStackCrawlToBottom( const void* limit );
+	
+	inline std::vector< ReturnAddress > MakeStackCrawl()
+	{
+		return MakeStackCrawlToBottom( (const void*) 0xFFFFFFFF );
+	}
 	
 }
 
