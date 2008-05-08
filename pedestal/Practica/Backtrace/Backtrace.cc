@@ -204,8 +204,15 @@ namespace Backtrace
 		return MakeReportFromCallChain( callChain.begin(), callChain.end() );
 	}
 	
-	DebuggingContext::DebuggingContext() : itsStackCrawl( MakeStackCrawl() )
+	static const void* gStackBottomLimit = (const void*) 0xFFFFFFFF;
+	
+	DebuggingContext::DebuggingContext() : itsStackCrawl( MakeStackCrawlToBottom( gStackBottomLimit ) )
 	{
+	}
+	
+	void SetStackBottomLimit( const void* limit )
+	{
+		gStackBottomLimit = limit;
 	}
 	
 }

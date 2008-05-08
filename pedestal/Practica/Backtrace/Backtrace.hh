@@ -43,6 +43,8 @@ namespace Backtrace
 			const std::vector< ReturnAddress >& GetStackCrawl() const  { return itsStackCrawl; }
 	};
 	
+	void SetStackBottomLimit( const void* limit );
+	
 }
 
 #endif
