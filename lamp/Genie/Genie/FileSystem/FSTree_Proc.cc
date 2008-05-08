@@ -410,43 +410,22 @@ namespace Genie
 	
 	std::string proc_PID_backtrace_Query::operator()() const
 	{
+		using Backtrace::StackFramePtr;
+		using Backtrace::ReturnAddress;
+		
 		const Process& process = GetProcess( itsPID );
 		
-		Backtrace::StackFramePtr top = process.GetStackFramePointer();
+		StackFramePtr top    = process.GetStackFramePointer();
+		StackFramePtr bottom = process.GetStackBottomPointer();
 		
-		std::vector< Backtrace::ReturnAddress > stackCrawl = MakeStackCrawl( top );
+		std::vector< ReturnAddress > stackCrawl = MakeStackCrawlFromTopToBottom( top, bottom );
 		
-		std::vector< Backtrace::CallInfo > callChain( stackCrawl.size() );
+		std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
+		std::vector< ReturnAddress >::const_iterator end   = stackCrawl.end();
 		
-		std::transform( stackCrawl.begin(),
-		                stackCrawl.end(),
-		                callChain.begin(),
-		                std::ptr_fun( Backtrace::GetCallInfoFromReturnAddress ) );
+		--end;  // skip Genie::Process::Run( void )
 		
-		std::string result;
-		
-		unsigned offset = 0;
-		
-		typedef std::vector< Backtrace::CallInfo >::const_iterator Iter;
-		
-		for ( Iter it = callChain.begin();  it != callChain.end();  ++it, ++offset )
-		{
-			using BitsAndBytes::EncodeAsHex;
-			
-			result += NN::Convert< std::string >( offset );
-			result += ": 0x";
-			result += EncodeAsHex( it->itsReturnAddr );
-			result += " (";
-			result += it->itsArch;
-			result += ") ";
-			result += it->itsUnmangledName;
-			result += "\n";
-			
-			if ( it->itsUnmangledName == "main" )
-			{
-				break;
-			}
-		}
+		std::string result = MakeReportFromStackCrawl( begin, end );
 		
 		return result;
 	}

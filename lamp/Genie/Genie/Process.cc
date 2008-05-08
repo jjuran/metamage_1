@@ -67,33 +67,19 @@
 #endif
 
 
-static void DumpBacktrace()
+static void DumpBacktrace( const void* stackBottom )
 {
 	using namespace Backtrace;
 	
-	std::vector< ReturnAddress > stackCrawl = MakeStackCrawl();
+	std::vector< ReturnAddress > stackCrawl = MakeStackCrawlToBottom( stackBottom );
 	
 	std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
 	std::vector< ReturnAddress >::const_iterator end   = stackCrawl.end();
 	
 	++begin;  // skip DumpBacktrace( void )
+	--end;    // skip Genie::Process::Run( void )
 	
-	std::vector< CallInfo > callChain;
-	
-	callChain.reserve( end - begin );
-	
-	for ( ;  begin < end;  ++begin )
-	{
-		callChain.push_back( GetCallInfoFromReturnAddress( *begin ) );
-		
-		if ( callChain.back().itsUnmangledName == "main" )
-		{
-			break;
-		}
-	}
-	
-	std::string report = MakeReportFromCallChain( callChain.begin(),
-	                                              callChain.end() );
+	std::string report = MakeReportFromStackCrawl( begin, end );
 	
 	(void) Genie::WriteToSystemConsole( report.data(), report.size() );
 }
@@ -504,6 +490,8 @@ namespace Genie
 		
 		ASSERT( mainPtr != NULL );
 		
+		itsStackBottomPtr = Backtrace::GetStackFramePointer();
+		
 		// This is a separate function so registers get saved and restored
 		int exit_status = mainPtr( argc, argv, envp );
 		
@@ -748,6 +736,7 @@ namespace Genie
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsErrno              ( NULL ),
 		itsEnvP               ( NULL ),
+		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
@@ -783,6 +772,7 @@ namespace Genie
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsErrno              ( parent.itsErrno ),
 		itsEnvP               ( NULL ),
+		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
@@ -1306,7 +1296,7 @@ namespace Genie
 			// Fatal signal received.  Terminate.
 			if ( WCOREDUMP( itsResult ) )
 			{
-				DumpBacktrace();
+				DumpBacktrace( itsStackBottomPtr );
 			}
 			
 			if ( itsInterdependence == kProcessForked )

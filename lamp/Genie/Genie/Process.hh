@@ -134,6 +134,7 @@ namespace Genie
 			
 			iota::environ_t itsEnvP;
 			
+			Backtrace::StackFramePtr itsStackBottomPtr;
 			Backtrace::StackFramePtr itsStackFramePtr;
 			
 			SavedRegisters itsSavedRegisters;
@@ -212,6 +213,7 @@ namespace Genie
 			SavedRegisters& GetSavedRegisters()  { return itsSavedRegisters; }
 			
 			Backtrace::StackFramePtr GetStackFramePointer() const  { return itsStackFramePtr; }
+			Backtrace::StackFramePtr GetStackBottomPointer() const  { return itsStackBottomPtr; }
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }
