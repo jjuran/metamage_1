@@ -282,8 +282,44 @@ namespace Genie
 
 #if TARGET_CPU_PPC
 	
-	inline void InstallExceptionHandlers()
+	struct TVector
 	{
+		unsigned long f;
+		unsigned long toc;
+	};
+	
+	static OSStatus GenericExceptionHandler( ExceptionInformation* exception )
+	{
+		if ( exception->theKind == kTraceException )
+		{
+			return -1;  // handled by debugger
+		}
+		
+		const TVector* handler = NULL;
+		
+		switch ( exception->theKind )
+		{
+			case kAccessException:
+			case kUnmappedMemoryException:
+				handler = (const TVector*) BusError;
+				
+				break;
+			
+			default:
+				return -1;
+		}
+		
+		exception->machineState ->PC.lo = handler->f;
+		exception->registerImage->R2.lo = handler->toc;
+		
+		return noErr;
+	}
+	
+	static void InstallExceptionHandlers()
+	{
+		static ExceptionHandlerUPP upp = ::NewExceptionHandlerUPP( GenericExceptionHandler );
+		
+		::InstallExceptionHandler( upp );
 	}
 	
 #endif
