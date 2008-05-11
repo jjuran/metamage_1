@@ -288,6 +288,15 @@ namespace Genie
 		unsigned long toc;
 	};
 	
+	inline void push( unsigned long& address, int offset )
+	{
+		unsigned long updated_address = address + offset;
+		
+		*(unsigned long*) updated_address = address;
+		
+		address = updated_address;
+	}
+	
 	static OSStatus GenericExceptionHandler( ExceptionInformation* exception )
 	{
 		if ( exception->theKind == kTraceException )
@@ -299,6 +308,11 @@ namespace Genie
 		
 		switch ( exception->theKind )
 		{
+			case kIllegalInstructionException:
+				handler = (const TVector*) IllegalInstruction;
+				
+				break;
+				
 			case kAccessException:
 			case kUnmappedMemoryException:
 				handler = (const TVector*) BusError;
@@ -309,6 +323,16 @@ namespace Genie
 				return -1;
 		}
 		
+		// store caller's return address in caller's stack frame; hope he had one
+		*(unsigned long*) ( exception->registerImage->R1.lo + 8 ) = exception->machineState->LR.lo;
+		
+		// push a new stack frame; hope we aren't stomping anything
+		push( exception->registerImage->R1.lo, -32 );
+		
+		// place caller's return address in LR for recovery handler
+		exception->machineState ->LR.lo = exception->machineState->PC.lo;
+		
+		// set new PC and TOC
 		exception->machineState ->PC.lo = handler->f;
 		exception->registerImage->R2.lo = handler->toc;
 		
