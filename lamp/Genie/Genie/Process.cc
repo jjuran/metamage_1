@@ -323,13 +323,32 @@ namespace Genie
 				return -1;
 		}
 		
-		// store caller's return address in caller's stack frame; hope he had one
-		*(unsigned long*) ( exception->registerImage->R1.lo + 8 ) = exception->machineState->LR.lo;
+		// caller: main() in our test cases
+		// offender: function that messed up
+		// exception handler: exits after tweaking things so we resume at...
+		// recovery handler: delivers a fatal signal and doesn't return
 		
-		// push a new stack frame; hope we aren't stomping anything
-		push( exception->registerImage->R1.lo, -32 );
+		// Crawl the stack one step.
+		unsigned long previousSP = *(unsigned long*) exception->registerImage->R1.lo;
 		
-		// place caller's return address in LR for recovery handler
+		unsigned long previousSavedLR = *(unsigned long*) ( previousSP + 8 );
+		
+		bool offenderHasStackFrame = previousSavedLR == exception->machineState->LR.lo;
+		
+		if ( !offenderHasStackFrame )
+		{
+			// Offender doesn't have a stack frame; let's build one
+			
+			unsigned long& savedLR = *(unsigned long*) ( exception->registerImage->R1.lo + 8 );
+			
+			// store caller's return address in caller's stack frame
+			savedLR = exception->machineState->LR.lo;
+			
+			// push a new stack frame; hope we aren't stomping anything
+			push( exception->registerImage->R1.lo, -32 );
+		}
+		
+		// place offender's return address in LR for recovery handler
 		exception->machineState ->LR.lo = exception->machineState->PC.lo;
 		
 		// set new PC and TOC
