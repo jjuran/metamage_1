@@ -208,7 +208,7 @@ namespace Orion
 		AddBinding( optionID, binding );
 	}
 	
-	void GetOptions( int argc, char const *const argv[] );
+	void GetOptions( int argc, iota::argp_t argv );
 	
 	iota::argp_t FreeArguments();
 	
