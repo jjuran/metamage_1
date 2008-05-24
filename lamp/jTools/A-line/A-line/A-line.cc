@@ -398,7 +398,7 @@ int O::Main( int argc, argv_t argv )
 	
 	CD::Platform targetPlatform = arch | runtime | macAPI;
 	
-	CD::AddPendingSubproject( UserProjectsPath() );
+	CD::AddPendingSubproject( UserSrcTreePath() );
 	
 	if ( gOptions.catalog )
 	{
