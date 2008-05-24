@@ -34,10 +34,10 @@
 
 // A-line
 #include "A-line/A-line.hh"
+#include "A-line/AppendWord.hh"
 #include "A-line/BuildCommon.hh"
 #include "A-line/Commands.hh"
 #include "A-line/Locations.hh"
-#include "A-line/MWScripter.hh"
 #include "A-line/ProjectCommon.hh"
 
 
