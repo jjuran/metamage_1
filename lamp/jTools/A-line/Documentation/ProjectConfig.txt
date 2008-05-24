@@ -48,7 +48,7 @@ frameworks
 rsrc
 rez
 
-product - The supplied value is one of { headers, lib, app, shlib, wish, init, driver }.  This setting drives toolkit operation (e.g. 'init' assumes 68K resource with A4 globals).
+product - The supplied value is one of { headers, lib, app, shlib, tool, init, driver }.  This setting drives toolkit operation (e.g. 'init' assumes 68K resource with A4 globals).
 
 uses - Each supplied value is the name of a prerequisite project, which has three effects:  The prerequisite is built first, the prerequisite's headers are searched when compiling the project, and if applicable the project is linked against the prerequisite's output.
 
