@@ -14,6 +14,9 @@
 // Lamp
 #include "lamp/winio.h"
 
+// Nucleus
+#include "Nucleus/Saved.h"
+
 // Nitrogen
 #include "Nitrogen/MacWindows.h"
 
@@ -31,6 +34,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -278,16 +282,15 @@ namespace Genie
 	
 	Point WindowHandle::GetPosition() const
 	{
-		PixMapHandle pixmap = ::GetPortPixMap( ::CGrafPtr( N::GetWindowPort( GetWindowRef() ) ) );
+		NN::Saved< N::Port_Value > savedPort;
 		
-		Rect bounds = pixmap[0]->bounds;
+		N::SetPortWindowPort( GetWindowRef() );
 		
-		Point result = *(Point*) &bounds;
+		Point upperLeft = { 0, 0 };
 		
-		result.h = -result.h;
-		result.v = -result.v;
+		::LocalToGlobal( &upperLeft );
 		
-		return result;
+		return upperLeft;
 	}
 	
 	void WindowHandle::SetPosition( Point position )
