@@ -77,14 +77,14 @@ my @programs = qw
 	A-line
 	SetFile
 	abort aevt argv0
-	beep
+	beep buserror
 	cat cds console cp cpres cr2lf
 	divide
 	echo env err2text
 	false
 	gzip
 	htget httpd
-	ic inetd
+	ic illegal inetd
 	jgetty jtest
 	keymods kill killall
 	ld lf2cr lf2crlf ln load-init local-edit-client login
@@ -113,8 +113,8 @@ my %fsmap =
 		},
 		Tools =>
 		[
-			qw( cpres ld mpwrez mwcc ),
-			qw( A-line abort ),
+			qw( A-line cpres ld mpwrez mwcc ),
+			qw( abort buserror illegal ),
 			qw( SetFile aevt ic keymods load-init rsrc-patch system tlsrvr ),
 			qw( File Line activate quit ),
 			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl run-tests ),
