@@ -53,42 +53,29 @@ namespace ALine
 	using BitsAndBytes::qq;
 	
 	
-	static std::string MakeImport( const std::string& file )
+	// "path/to/file" -> "path/to/file"
+	// "path/to/-lib" -> "-wi path/to/lib"
+	
+	static Command MakeImport( const std::string& file )
 	{
-		std::string result;
+		Command result;
 		
-		std::string importPath;
+		const char* importPath = file.c_str();
 		
-		if ( file[ 0 ] == '-' )
+		if ( importPath[ 0 ] == '-' )
 		{
-			importPath = file.substr( 1, file.npos );
+			++importPath;
 			
-			result = "-wi ";
-		}
-		else
-		{
-			importPath = file;
+			result.push_back( "-wi" );
 		}
 		
-		result += q( importPath );
+		result.push_back( importPath );
 		
 		return result;
 	}
 	
-	// foo.r -> echo 'include "foo.r";'
-	static std::string MakeEchoedRezInclude( const std::string& file )
-	{
-		std::string include = "include ";
-		std::string echo    = "echo ";
-		
-		return echo + q( include + qq( file ) + ";" );
-	}
 	
-	static std::string MakeFramework( const std::string& framework )
-	{
-		return std::string( "-framework " ) + framework;
-	}
-	
+	// "path/to/project", "library" -> "path/to/project/library" | "library"
 	
 	static std::string MakeLibraryPathname( const std::string& projectFolder, const std::string& libName )
 	{
@@ -101,6 +88,7 @@ namespace ALine
 		
 		return io::file_exists( pathname ) ? pathname : libName;
 	}
+	
 	
 	static void CopyImports( const ProjName& projName,
 	                         std::back_insert_iterator< std::vector< std::string > > inserter )
@@ -130,40 +118,45 @@ namespace ALine
 		return importFiles;
 	}
 	
-	static std::string GetImports( const Project& project )
+	static Command GetImports( const std::vector< std::string >& importFiles )
 	{
-		std::vector< std::string > importFiles( GetAllImports( project ) );
+		Command imports;
 		
-		std::string imports;
+		typedef std::vector< std::string >::const_iterator Iter;
 		
-		imports << join( importFiles.begin(),
-		                 importFiles.end(),
-		                 " ",
-		                 std::ptr_fun( MakeImport ) );
+		for ( Iter it = importFiles.begin();  it != importFiles.end();  ++it )
+		{
+			AugmentCommand( imports, MakeImport( *it ) );
+		}
 		
 		return imports;
 	}
 	
-	static std::string GetFrameworks( const Project& project )
+	
+	static Command MakeFramework( const char* framework )
 	{
-		std::vector< FileName > frameworkNames( project.Frameworks() );
+		return MakeCommand( "-framework", framework );
+	}
+	
+	static Command GetFrameworks( const Project& project )
+	{
+		const std::vector< FileName >& frameworkNames( project.Frameworks() );
 		
 		if ( frameworkNames.size() == 0 )
 		{
-			frameworkNames.push_back( "Carbon" );
+			return MakeFramework( "Carbon" );
 		}
 		
-		std::string frameworks = join( frameworkNames.begin(),
-		                               frameworkNames.end(),
-		                               " ",
-		                               std::ptr_fun( MakeFramework ) );
+		Command frameworks;
+		
+		typedef std::vector< FileName >::const_iterator Iter;
+		
+		for ( Iter it = frameworkNames.begin();  it != frameworkNames.end();  ++it )
+		{
+			AugmentCommand( frameworks, MakeFramework( it->c_str() ) );
+		}
 		
 		return frameworks;
-	}
-	
-	static std::string GetLibraryLinkOption( const std::string& name )
-	{
-		return "-l" + name;
 	}
 	
 	template < class Iter >
@@ -260,37 +253,66 @@ namespace ALine
 		return outOfDate;
 	}
 	
-	static std::string GetLibraryLinkArgs( const std::vector< ProjName >& usedProjects, const time_t& outFileDate )
+	static Command MakeLibraryLinkArgs( std::vector< ProjName >& usedLibs, const time_t& outFileDate )
 	{
+		Command result;
+		
 		const bool outOfDate = outFileDate == 0;
 		
-		// If we're fully up to date, return the null string.
-		// It's up to the caller to avoid calling us if usedProjects is empty.
+		// If we're fully up to date, return an empty container.
+		// It's up to the caller to avoid calling us if usedLibs is empty.
 		
-		if ( !outOfDate && !ProjectLibsAreOutOfDate( usedProjects, outFileDate ) )
+		if ( !outOfDate && !ProjectLibsAreOutOfDate( usedLibs, outFileDate ) )
 		{
-			return "";
+			return result;
 		}
 		
 		// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
-		// Somehow, this is actually required to actually link anything with Mach-O.
-		return join( usedProjects.rbegin(),
-		             usedProjects.rend(),
-		             " ",
-		             std::ptr_fun( GetLibraryLinkOption ) );
+		// Somehow, this is actually required to actually link anything on Unix.
+		
+		typedef std::vector< ProjName >::reverse_iterator Iter;
+		
+		for ( Iter it = usedLibs.rbegin();  it != usedLibs.rend();  ++it )
+		{
+			ProjName& name = *it;
+			
+			name = "-l" + name;
+			
+			result.push_back( name.c_str() );
+		}
+		
+		return result;
 	}
 	
-	static void LinkFile( std::string         command,
-	                      const std::string&  outputFile,
-	                      const std::string&  objectFileArgs,
-	                      const std::string&  libraryArgs,
-	                      const std::string&  trailer )
+	static void Echo( const char* a, const char* b )
 	{
-		command << q( outputFile ) << objectFileArgs << libraryArgs << trailer;
+		Command echo;
 		
-		QueueCommand( "echo Linking:  " + io::get_filename_string( outputFile ) );
+		echo.push_back( "/bin/echo" );
+		echo.push_back( a );
+		echo.push_back( b );
+		echo.push_back( NULL );
 		
-		QueueCommand( command );
+		ExecuteCommand( echo );
+	}
+	
+	static void LinkFile( Command                            command,
+	                      const std::string&                 outputFile,
+	                      const std::vector< std::string >&  objectFileArgs,
+	                      const Command                   &  libraryArgs,
+	                      const char*                        diagnosticsFile )
+	{
+		command.push_back( outputFile.c_str() );
+		
+		AugmentCommand( command, objectFileArgs );
+		
+		AugmentCommand( command, libraryArgs );
+		
+		Echo( "Linking:", io::get_filename_string( outputFile ).c_str() );
+		
+		command.push_back( NULL );
+		
+		ExecuteCommand( command, diagnosticsFile );
 	}
 	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
@@ -325,21 +347,46 @@ namespace ALine
 			rezFiles.push_back( RezLocation( "CarbonApp.r" ) );
 		}
 		
-		std::string rezCommand = usingOSXRez ? "/Developer/Tools/Rez -append -i /Developer/Headers/FlatCarbon -useDF"
-		                                     : "mpwrez -append";
+		Command rezCommand;
+		
+		if ( usingOSXRez )
+		{
+			rezCommand.push_back( "/Developer/Tools/Rez" );
+			rezCommand.push_back( "-i" );
+			rezCommand.push_back( "/Developer/Headers/FlatCarbon" );
+			rezCommand.push_back( "-useDF" );
+		}
+		else
+		{
+			rezCommand.push_back( "mpwrez" );
+		}
+		
+		rezCommand.push_back( "-append" );
 		
 		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
 		
-		rezCommand << "-i " + q( includeDir );
-		rezCommand << OutputOption( rsrcFile );
+		rezCommand.push_back( "-i" );
 		
-		rezCommand << join( rezFiles.begin(),
-		                    rezFiles.end(),
-		                    " ",
-		                    std::ptr_fun( q ) );
+		rezCommand.push_back( includeDir.c_str() );
 		
-		QueueCommand( "echo Rezzing:  " + io::get_filename_string( rsrcFile ) );
-		QueueCommand( rezCommand );
+		AugmentCommand( rezCommand, OutputOption( rsrcFile.c_str() ) );
+		
+		AugmentCommand( rezCommand, rezFiles );
+		
+		Echo( "Rezzing:", io::get_filename_string( rsrcFile ).c_str() );
+		
+		rezCommand.push_back( NULL );
+		
+		ExecuteCommand( rezCommand );
+	}
+	
+	// foo.r -> echo 'include "foo.r";'
+	static std::string MakeEchoedRezInclude( const std::string& file )
+	{
+		std::string include = "include ";
+		std::string echo    = "echo ";
+		
+		return echo + q( include + qq( file ) + ";" );
 	}
 	
 	static void CopyResources( const Project&      project,
@@ -360,27 +407,40 @@ namespace ALine
 		                rsrcFiles.begin(),
 		                std::ptr_fun( RezLocation ) );
 		
-		std::string command_line = join( rsrcFiles.begin(),
-		                                 rsrcFiles.end(),
-		                                 usingOSXRez ? "; "
-		                                             : " ",
-		                                 usingOSXRez ? std::ptr_fun( MakeEchoedRezInclude )
-		                                             : std::ptr_fun( q ) );
+		Command command;
 		
+		std::string command_line;
 		
 		if ( usingOSXRez )
 		{
-			command_line = paren( command_line ) + " | /Developer/Tools/Rez -append -useDF -o";
+			command_line = join( rsrcFiles.begin(),
+			                     rsrcFiles.end(),
+			                     "; ",
+			                     std::ptr_fun( MakeEchoedRezInclude ) );
+			
+			command_line = paren( command_line );
+			
+			command_line += " | /Developer/Tools/Rez -append -useDF -o ";
+			command_line += q( rsrcFile );
+			
+			command.push_back( "/bin/sh" );
+			command.push_back( "-c" );
+			command.push_back( command_line.c_str() );
 		}
 		else
 		{
-			command_line = "cpres " + command_line;
+			command.push_back( "cpres" );
+			
+			AugmentCommand( command, rsrcFiles );
+			
+			command.push_back( rsrcFile.c_str() );
 		}
 		
-		command_line << q( rsrcFile );
+		Echo( "Copying resources:", io::get_filename_string( rsrcFile ).c_str() );
 		
-		QueueCommand( "echo Copying resources:  " + io::get_filename_string( rsrcFile ) );
-		QueueCommand( command_line );
+		command.push_back( NULL );
+		
+		ExecuteCommand( command );
 	}
 	
 	static time_t EffectiveModifiedDate( const std::string& file )
@@ -406,9 +466,11 @@ namespace ALine
 			linkName = project.Name();
 		}
 		
-		std::string command = cmdgen.LinkerName();
+		Command command;
 		
-		command << cmdgen.TargetArchitecture();
+		command.push_back( cmdgen.LinkerName() );
+		
+		AugmentCommand( command, cmdgen.TargetArchitecture() );
 		
 		bool hasStaticLib = false;
 		bool hasExecutable = true;
@@ -418,6 +480,8 @@ namespace ALine
 		bool toolkit = false;
 		
 		const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
+		
+		std::string driverName;
 		
 		switch ( project.Product() )
 		{
@@ -429,7 +493,11 @@ namespace ALine
 				break;
 			
 			case productToolkit:
-				command << cmdgen.TargetCommandLineTool();
+				if ( cmdgen.TargetCommandLineTool()[0] )
+				{
+					command.push_back( cmdgen.TargetCommandLineTool() );
+				}
+				
 				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
 				gccSupported = true;
 				hasStaticLib = true;
@@ -437,34 +505,47 @@ namespace ALine
 				break;
 			
 			case productApplication:
-				command << cmdgen.TargetApplication();
+				if ( cmdgen.TargetApplication()[0] )
+				{
+					command.push_back( cmdgen.TargetApplication() );
+				}
+				
 				needCarbResource = (targetInfo.platform & carbonCFM) == carbonCFM;
 				gccSupported = true;
 				bundle = gnu;
 				break;
 			
 			case productINIT:
-				command << cmdgen.MWTargetCodeResource()
-				        << cmdgen.ResourceTypeAndID( "INIT", "0" )
-				        << cmdgen.OutputType( "INIT" );
+				command.push_back( cmdgen.MWTargetCodeResource() );
+				
+				AugmentCommand( command, cmdgen.ResourceTypeAndID( "INIT=0" ) );
+				AugmentCommand( command, cmdgen.OutputType       ( "INIT"   ) );
 				break;
 			
 			case productDriver:
-				command << cmdgen.MWTargetCodeResource()
-				        << cmdgen.ResourceTypeAndID( "DRVR", "0" )
-				        << cmdgen.ResourceName( "." + project.Name() )
-				        << cmdgen.OutputType   ( "INIT" )
-				        << cmdgen.OutputCreator( "RSED" )
-				        << cmdgen.CustomDriverHeader();
+				driverName = "." + project.Name();
+				
+				command.push_back( cmdgen.MWTargetCodeResource() );
+				
+				AugmentCommand( command, cmdgen.ResourceTypeAndID( "DRVR=0" ) );
+				AugmentCommand( command, cmdgen.ResourceName     ( driverName.c_str() ) );
+				AugmentCommand( command, cmdgen.OutputType       ( "INIT"   ) );
+				AugmentCommand( command, cmdgen.OutputCreator    ( "RSED"   ) );
+				
+				command.push_back( cmdgen.CustomDriverHeader() );
 				break;
 			
 			case productTool:
+				if ( cmdgen.TargetCommandLineTool()[0] )
+				{
+					command.push_back( cmdgen.TargetCommandLineTool() );
+				}
+				
 				gccSupported = true;
-				command << cmdgen.TargetCommandLineTool();
 				break;
 			
 			case productSharedLib:
-				command << cmdgen.MWTargetSharedLibrary();
+				command.push_back( cmdgen.MWTargetSharedLibrary() );
 				break;
 		}
 		
@@ -520,13 +601,13 @@ namespace ALine
 		                                more::compose1( more::ptr_fun( ObjectFileName ),
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 		
-		std::string objectFilePaths = join( objectFiles.begin() + n_tools,
-		                                    objectFiles.end(),
-		                                    " ",
-		                                    std::ptr_fun( q ) );
+		std::vector< std::string > objectFilePaths( objectFiles.begin() + n_tools,
+		                                            objectFiles.end() );
 		
 		std::string trailer = gnu ? "> /tmp/link-errs.txt 2>&1"
 		                          : " 2>&1 | filter-mwlink-warnings";
+		
+		const char* diagnosticsFile = gnu ? "/tmp/link-errs.txt" : "";
 		
 		time_t outFileDate = EffectiveModifiedDate( outFile );
 		
@@ -537,17 +618,21 @@ namespace ALine
 		
 		if ( hasStaticLib  &&  outFileDate == 0 )
 		{
-			std::string link = cmdgen.LibraryMakerName();
+			Command link = cmdgen.LibraryMakerName();
 			
 			const bool useAr = gnu;
 			
 			if ( !useAr )
 			{
-				link << cmdgen.LinkerOptions();
-				link << "-o";
+				if ( cmdgen.LinkerOptions()[0] )
+				{
+					link.push_back( cmdgen.LinkerOptions() );
+				}
+				
+				link.push_back( "-o" );
 			}
 			
-			LinkFile( link, outFile, objectFilePaths, "", trailer );
+			LinkFile( link, outFile, objectFilePaths, Command(), diagnosticsFile );
 		}
 		
 		if ( !hasExecutable )
@@ -555,51 +640,66 @@ namespace ALine
 			return;
 		}
 		
-		std::string allLibraryLinkArgs;
+		Command allLibraryLinkArgs;
 		
+		// A copy so we can munge it
 		std::vector< ProjName > usedProjects = project.AllUsedProjects();
 		
 		usedProjects.pop_back();  // we're last; drop us
 		
 		RemoveNonLibs( usedProjects );
 		
+		std::string libsDirOption;
+		
 		if ( !usedProjects.empty() )
 		{
-			allLibraryLinkArgs = "-L'" + libsDir + "'";
+			libsDirOption = "-L" + libsDir;
 			
-			std::string projLibLinkArgs = GetLibraryLinkArgs( usedProjects, outFileDate );
+			allLibraryLinkArgs.push_back( libsDirOption.c_str() );
+			
+			Command projLibLinkArgs = MakeLibraryLinkArgs( usedProjects, outFileDate );
 			
 			if ( projLibLinkArgs.empty() )
 			{
 				return;
 			}
 			
-			allLibraryLinkArgs << projLibLinkArgs;
+			
+			
+			AugmentCommand( allLibraryLinkArgs, projLibLinkArgs );
 		}
+		
+		std::vector< std::string > allImports;
 		
 		// FIXME:  This is a hack
 		if ( !gnu )
 		{
-			allLibraryLinkArgs << GetImports( project );
+			allImports = GetAllImports( project );
+			
+			AugmentCommand( allLibraryLinkArgs, GetImports( allImports ) );
 		}
 		
 		if ( machO )
 		{
-			allLibraryLinkArgs << GetFrameworks( project );
+			AugmentCommand( allLibraryLinkArgs, GetFrameworks( project ) );
 		}
 		
 		
 		if ( !gnu && project.CreatorCode().size() > 0 )
 		{
-			command << cmdgen.OutputCreator( project.CreatorCode() );
+			AugmentCommand( command, cmdgen.OutputCreator( project.CreatorCode().c_str() ) );
 		}
 		
-		command << cmdgen.LinkerOptions();
-		command << "-o";
+		if ( cmdgen.LinkerOptions()[0] )
+		{
+			command.push_back( cmdgen.LinkerOptions() );
+		}
+		
+		command.push_back( "-o" );
 		
 		if ( toolkit )
 		{
-			allLibraryLinkArgs = q( outFile ) + " " + allLibraryLinkArgs;
+			allLibraryLinkArgs.insert( allLibraryLinkArgs.begin(), outFile.c_str() );
 			
 			typedef std::vector< std::string >::const_iterator Iter;
 			
@@ -615,13 +715,15 @@ namespace ALine
 				
 				if ( EffectiveModifiedDate( objectFile ) >= EffectiveModifiedDate( linkOutput ) )
 				{
-					LinkFile( command, linkOutput, objectFile, allLibraryLinkArgs, trailer );
+					std::vector< std::string > objectFilePaths( 1, objectFile );
+					
+					LinkFile( command, linkOutput, objectFilePaths, allLibraryLinkArgs, diagnosticsFile );
 				}
 			}
 		}
 		else
 		{
-			LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, trailer );
+			LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, diagnosticsFile );
 			
 			std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
 			                           : outFile;

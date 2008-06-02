@@ -19,6 +19,7 @@
 #include "stdlib.h"
 
 // POSIX
+#include "fcntl.h"
 #include "sys/wait.h"
 #include "unistd.h"
 
@@ -49,6 +50,7 @@
 #include "CompileDriver/ProjectDotConf.hh"
 
 // A-line
+#include "A-line/Commands.hh"
 #include "A-line/Exceptions.hh"
 #include "A-line/BuildCommon.hh"
 #include "A-line/Compile.hh"
@@ -63,10 +65,8 @@ namespace O = Orion;
 namespace ALine
 {
 	
-	//namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	//namespace NX = NitrogenExtras;
 	namespace CD = CompileDriver;
 	
 	using BitsAndBytes::q;
@@ -134,14 +134,64 @@ namespace ALine
 	*/
 	
 	
-	static void PrintCommand( const std::string& command )
+	static std::string ShellEscapedWord( const std::string& word )
 	{
-		std::string command_line = command + "\n";
+		std::string result;
+		
+		result.reserve( word.size() );
+		
+		for ( const char* p = word.c_str();  *p != '\0';  ++p )
+		{
+			if ( !std::isalnum( *p )  &&  *p != '_' )
+			{
+				switch ( *p )
+				{
+					case '_':
+					case '+':
+					case '-':
+					case '/':
+					case '.':
+					case ',':
+					case '@':
+					case '%':
+						// shell-safe character; don't escape
+						break;
+					
+					default:
+						// insert a backslash before an unsafe character
+						result += '\\';
+						break;
+				}
+			}
+			
+			result += *p;
+		}
+		
+		return result;
+	}
+	
+	static void PrintCommand( const std::vector< const char* >& command )
+	{
+		//ASSERT( command.size() > 1 ) );
+		
+		std::string command_line = command.front();
+		
+		typedef std::vector< const char* >::const_iterator Iter;
+		
+		Iter end = command.end() - (command.back() == NULL ? 1 : 0);
+		
+		for ( Iter it = command.begin() + 1;  it != end;  ++it )
+		{
+			command_line += ' ';
+			command_line += *it;
+		}
+		
+		command_line += "\n";
 		
 		p7::write( p7::stdout_fileno, command_line.data(), command_line.size() );
 	}
 	
-	static void PrintCommandForShell( const std::string& command )
+	static void PrintCommandForShell( const std::vector< const char* >& command )
 	{
 		if ( gOptions.verbose || gDryRun )
 		{
@@ -149,8 +199,21 @@ namespace ALine
 		}
 	}
 	
-	static void ExecuteCommand( const std::string& command )
+	static void SetEditorSignature( const char* filename )
 	{
+		if ( const char* editor_sig = getenv( "MAC_EDITOR_SIGNATURE" ) )
+		{
+			std::string command = "/Developer/Tools/SetFile -t TEXT -c $MAC_EDITOR_SIGNATURE " + q( filename );
+			
+			(void) system( command.c_str() );
+		}
+	}
+	
+	void ExecuteCommand( const std::vector< const char* >& command, const char* diagnosticsFilename )
+	{
+		ASSERT( command.size() > 1 );
+		ASSERT( command.back() == NULL );
+		
 		PrintCommandForShell( command );
 		
 		if ( gDryRun )
@@ -173,26 +236,48 @@ namespace ALine
 		}
 		*/
 		
-		int wait_result = system( command.c_str() );
+		pid_t pid = p7::throw_posix_result( vfork() );
 		
-		if ( wait_result != 0 )
+		if ( pid == 0 )
 		{
-			bool signaled = WIFSIGNALED( wait_result );
+			if ( diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0' )
+			{
+				int diagnostics = ::open( diagnosticsFilename, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
+				
+				if ( diagnostics < 0 )
+				{
+					std::perror( diagnosticsFilename );
+					
+					_exit( EXIT_FAILURE );
+				}
+				
+				SetEditorSignature( diagnosticsFilename );
+				
+				dup2( diagnostics, STDERR_FILENO );
+				
+				close( diagnostics );
+			}
+			
+			execvp( command.front(), const_cast< char** >( &command.front() ) );
+			
+			_exit( 127 );
+		}
+		
+		int wait_status = -1;
+		
+		pid_t resultpid = p7::throw_posix_result( ::waitpid( pid, &wait_status, 0 ) );
+		
+		if ( wait_status != 0 )
+		{
+			bool signaled = WIFSIGNALED( wait_status );
 			
 			const char* ended  = signaled ? "terminated via signal" : "exited with status";
-			int         status = signaled ? WTERMSIG( wait_result ) : WEXITSTATUS( wait_result );
+			int         status = signaled ? WTERMSIG( wait_status ) : WEXITSTATUS( wait_status );
 			
 			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
 			
 			O::ThrowExitStatus( signaled ? 2 : 1 );
 		}
-	}
-	
-	void QueueCommand( const std::string& command )
-	{
-		//gCommands.push_back( command );
-		
-		ExecuteCommand( command );
 	}
 	
 	
@@ -269,7 +354,7 @@ namespace ALine
 		
 		std::string targetDir = TargetDirPath( targetName );
 		
-		PrintCommandForShell( "cd " + targetDir );
+		PrintCommandForShell( MakeCommand( "cd", targetDir.c_str() ) );
 		
 		chdir( targetDir.c_str() );
 		
@@ -417,14 +502,6 @@ int O::Main( int argc, argv_t argv )
 		{
 			Project& project = GetProject( proj );
 			BuildTarget( project, MakeTargetInfo( project, buildVariety ) );
-			
-			//Io::Out << "Executing commands\n";
-			
-			std::for_each( gCommands.begin(),
-			               gCommands.end(),
-			               std::ptr_fun( ExecuteCommand ) );
-			
-			gCommands.clear();
 		}
 		catch ( const CD::NoSuchProject& )
 		{

@@ -40,7 +40,7 @@ namespace ALine
 	
 	OptionsRecord& Options();
 	
-	void QueueCommand( const std::string& command );
+	void ExecuteCommand( const std::vector< const char* >& command, const char* diagnosticsFilename = NULL );
 	
 }
 

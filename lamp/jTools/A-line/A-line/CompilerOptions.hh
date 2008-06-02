@@ -6,7 +6,7 @@
 #pragma once
 
 // C++
-#include <map>
+#include <list>
 #include <string>
 #include <vector>
 
@@ -17,7 +17,7 @@
 namespace ALine
 {
 	
-	typedef std::map< std::string, std::string > Map;
+	typedef std::vector< const char* > Macros;
 	
 	struct TargetInfo;
 	
@@ -27,11 +27,12 @@ namespace ALine
 		private:
 			std::string projectName;
 			const TargetInfo& targetInfo;
-			Map myMacros;
+			Macros itsMacros;
+			std::list< std::string > itsMacroStorage;
 			std::string myPrecompiledHeaderSource;
 			std::string myPrecompiledHeaderImage;
 			std::string myOutputDir;
-			std::vector< std::string > myUserOnlyIncludeDirs;
+			std::vector< std::string > itsIncludeDirOptions;
 			bool hasPrecompiledHeaderSource;
 		
 		public:
@@ -40,15 +41,16 @@ namespace ALine
 			const std::string& Name() const  { return projectName; }
 			const TargetInfo& Target() const  { return targetInfo; }
 			
+			void AddDefinedMacro( const char* macro_definition );
+			
 			void DefineMacro( const std::string& macro, const std::string& value );
-			void DefineMacro( const std::string& macro, const char* value );
 			void DefineMacro( const std::string& macro, bool value = true );
 			
 			void SetPrecompiledHeaderSource( const std::string& pch );
 			void SetPrecompiledHeaderImage ( const std::string& phi );
 			void SetOutput( const std::string& output );
 			
-			const Map&    Macros() const  { return myMacros; }
+			const Macros& GetMacros() const  { return itsMacros; }
 			
 			bool HasPrecompiledHeaderSource() const  { return hasPrecompiledHeaderSource; }
 			
@@ -57,8 +59,10 @@ namespace ALine
 			
 			const std::string& Output() const  { return myOutputDir; }
 			
-			std::vector< std::string > const& UserOnlyIncludeDirs() const       { return myUserOnlyIncludeDirs; }
-			std::vector< std::string >      & UserOnlyIncludeDirs()             { return myUserOnlyIncludeDirs; }
+			std::vector< std::string > const& IncludeDirOptions() const  { return itsIncludeDirOptions; }
+			
+			void AppendIncludeDir ( const std::string& dir );
+			void PrependIncludeDir( const std::string& dir );
 			
 	};
 	

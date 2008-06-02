@@ -11,9 +11,6 @@
 // MoreFunctional
 #include "FunctionalExtensions.hh"
 
-// BitsAndBytes
-#include "StringFilters.hh"
-
 // CompileDriver
 #include "CompileDriver/Platform.hh"
 
@@ -23,15 +20,48 @@ namespace ALine
 	
 	namespace CD = CompileDriver;
 	
-	using BitsAndBytes::q;
-	using BitsAndBytes::qq;
 	
 	static const std::string space = " ";
 	
+	typedef std::vector< const char* > Command;
 	
-	inline std::string OutputOption( const std::string& pathname )
+	inline Command MakeCommand( const char* a, const char* b )
 	{
-		return "-o " + q( pathname );
+		Command result;
+		
+		result.push_back( a );
+		result.push_back( b );
+		
+		return result;
+	}
+	
+	inline Command& AugmentCommand( Command& command, const Command& more )
+	{
+		command.insert( command.end(), more.begin(), more.end() );
+		
+		return command;
+	}
+	
+	static const char* c_str( const std::string& s )
+	{
+		return s.c_str();
+	}
+	
+	inline Command& AugmentCommand( Command& command, const std::vector< std::string >& more )
+	{
+		command.reserve( command.size() + more.size() );
+		
+		std::transform( more.begin(),
+		                more.end(),
+		                std::back_inserter( command ),
+		                std::ptr_fun( c_str ));
+		
+		return command;
+	}
+	
+	inline Command OutputOption( const char* pathname )
+	{
+		return MakeCommand( "-o", pathname );
 	}
 	
 	struct CommandGenerator
@@ -61,32 +91,51 @@ namespace ALine
 			gnu   ( target.toolkit == toolkitGNU )
 		{}
 		
-		std::string UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }
+		const char* UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }
 		
-		std::string CompilerName() const
+		Command CompilerName() const
 		{
-			return UnixCompilerName() + " -c";
+			return MakeCommand( UnixCompilerName(), "-c" );
 		}
 		
-		std::string LinkerName() const
+		const char* LinkerName() const
 		{
 			return gnu ? "g++"
 			           : "ld";
 		}
 		
-		std::string TargetArchitecture() const
+		Command TargetArchitecture() const
 		{
-			if ( elf )  return "";
+			if ( elf )
+			{
+				return Command();
+			}
 			
-			return   ppc  ? "-arch ppc"
-			       : m68k ? "-arch m68k"
-			       :        "-arch i386";
+			const char* arch = ppc  ? "ppc"
+			                 : m68k ? "m68k"
+			                 :        "i386";
+			
+			return MakeCommand( "-arch", arch );
 		}
 		
-		std::string LibraryMakerName() const
+		Command LibraryMakerName() const
 		{
-			return gnu ? "ar rcs"
-			           : "ld -static " + TargetArchitecture();
+			Command result;
+			
+			if ( gnu )
+			{
+				result.push_back( "ar" );
+				result.push_back( "rcs" );
+			}
+			else
+			{
+				result.push_back( "ld" );
+				result.push_back( "-static" );
+				
+				AugmentCommand( result, TargetArchitecture() );
+			}
+			
+			return result;
 		}
 		
 		// This means that we pass the precompiled output, not the header source.
@@ -102,125 +151,122 @@ namespace ALine
 		// Not supported by CodeWarrior.
 		//bool PrecompiledHeaderIsSearched() const  { return gnu; }
 		
-		std::string Prefix( const std::string& pathname ) const
+		Command Prefix( const char* pathname ) const
 		{
-			return "-include " + q( pathname );
+			return MakeCommand( "-include", pathname );
 		}
 		
-		std::string LanguageOptions() const
+		Command LanguageOptions() const
 		{
-			std::string result = " ";
+			Command result;
 			
-			// Pascal strings are Mac-only; always on before OS X
-			if ( machO )  result += "-fpascal-strings ";
+			if ( machO )
+			{
+				// Pascal strings are Mac-only, but implied until OS X
+				result.push_back( "-fpascal-strings" );
+			}
 			
-			// gcc won't compile shared_ptr without RTTI
-			if ( !gnu )  result += "-fno-rtti ";
-			
-			result.resize( result.size() - 1 );
+			if ( !gnu )
+			{
+				// gcc won't compile shared_ptr without RTTI;
+				// otherwise we can turn it off since we don't use it
+				result.push_back( "-fno-rtti" );
+			}
 			
 			return result;
 		}
 		
 		
-		// CodeWarrior only
-		std::string MWCodeModel() const
-		{
-			return m68k && cfm ? "-mCFM" : "";
-		}
-		
-		// CodeWarrior only
-		std::string MW68KGlobals() const  { return a4 ? "-mA4-globals" : ""; }
-		
-		std::string Optimization() const
+		const char* Optimization() const
 		{
 			return   debug ? "-O0"
 			       : gnu   ? "-O2"
 			       :         "-O4";
 		}
 		
-		std::string Debugging() const
+		Command CodeGenOptions() const
 		{
-			return debug ? "-g" : "";
-		}
-		
-		std::string CodeGenOptions() const
-		{
-			std::string result = Optimization() + " " + Debugging();
+			Command result;
 			
-			if ( !gnu )
+			result.push_back( Optimization() );
+			
+			if ( debug )
 			{
-				result += " " + MWCodeModel()
-			            + " " + MW68KGlobals();
+				result.push_back( "-g" );
+			}
+			
+			if ( m68k && cfm )
+			{
+				result.push_back( "-mCFM" );
+			}
+			
+			if ( a4 )
+			{
+				result.push_back( "-mA4-globals" );
 			}
 			
 			return result;
 		}
 		
-		std::string AllCompilerOptions() const
+		Command AllCompilerOptions() const
 		{
-			std::string result;
+			Command result;
 			
-			result =         TargetArchitecture()
-			         + " " + LanguageOptions()
-			         + " " + CodeGenOptions();
+			AugmentCommand( result, TargetArchitecture() );
+			AugmentCommand( result, LanguageOptions   () );
+			AugmentCommand( result, CodeGenOptions    () );
 			
 			return result;
 		}
 		
-		std::string Input( const std::string& pathname ) const
+		Command OutputType( const char* type ) const
 		{
-			return q( pathname );
+			return MakeCommand( "-t", type );
 		}
 		
-		std::string OutputType( const std::string& type ) const
+		Command OutputCreator( const char* creator ) const
 		{
-			return std::string( "-t " ) + type;
+			return MakeCommand( "-c", creator );
 		}
 		
-		std::string OutputCreator( const std::string& creator ) const
+		Command ResourceTypeAndID( const char* type_and_id ) const
 		{
-			return std::string( "-c " ) + q( creator );
+			return MakeCommand( "-rt", type_and_id );
 		}
 		
-		std::string ResourceTypeAndID( const std::string& type, const std::string& id ) const
+		Command ResourceName( const char* name ) const
 		{
-			return std::string( "-rt " ) + type + "=" + id;
+			return MakeCommand( "-rsrcname", name );
 		}
 		
-		std::string ResourceName( const std::string& name ) const
-		{
-			return "-rsrcname " + name;
-		}
+		const char* CustomDriverHeader() const  { return "-custom"; }
 		
-		std::string CustomDriverHeader() const  { return "-custom"; }
-		
-		std::string TargetApplication() const
+		const char* TargetApplication() const
 		{
 			return gnu ? "" : "-bundle";
 		}
 		
 		// CodeWarrior only
-		std::string MWTargetCodeResource() const
+		const char* MWTargetCodeResource() const
 		{
 			return "-object";
 		}
 		
 		// CodeWarrior only
-		std::string MWTargetSharedLibrary() const
+		const char* MWTargetSharedLibrary() const
 		{
 			return "-dynamic";
 		}
 		
-		std::string TargetCommandLineTool() const
+		const char* TargetCommandLineTool() const
 		{
 			return gnu ? ""
 			           : "-execute";
 		}
 		
-		std::string LinkerOptions() const
+		const char* LinkerOptions() const
 		{
-			return debug ? "" : " -s";
+			return debug ? "" : "-s";
 		}
 		
 	};

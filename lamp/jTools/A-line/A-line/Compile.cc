@@ -49,35 +49,13 @@ namespace ALine
 	using BitsAndBytes::q;
 	
 	
-	static std::string MakeMacroDefinition( const std::pair< const std::string, std::string >& value )
-	{
-		return "-D" + value.first + "=" + q( value.second );
-	}
-	
-	static std::string MakeIncludeDirOption( const std::string& pathname )
-	{
-		// Turn a pathname into a -I option.
-		// Works for gcc and CW Pro 6; doesn't work for CW Pro 2, MrC, or SC.
-		
-		return std::string( "-I" ) + q( pathname );
-	}
-	
-	static std::string MakeIncludeDirOptions( const std::vector< std::string >& pathnames )
-	{
-		return join( pathnames.begin(),
-		             pathnames.end(),
-		             " ",
-		             std::ptr_fun( MakeIncludeDirOption ) );
-	}
-	
-	
 	class IncludeDirGatherer
 	{
 		private:
-			std::vector< std::string >& includes;
+			CompilerOptions& itsOptions;
 		
 		public:
-			IncludeDirGatherer( std::vector< std::string >& includes ) : includes( includes )  {}
+			IncludeDirGatherer( CompilerOptions& options ) : itsOptions( options )  {}
 				
 			void operator()( const ProjName& projName );
 	};
@@ -93,9 +71,12 @@ namespace ALine
 		
 		const std::vector< std::string >& searchDirs( project.SearchDirs() );
 		
-		std::copy( searchDirs.begin(),
-		           searchDirs.end(),
-		           std::back_inserter( includes ) );
+		typedef std::vector< std::string >::const_iterator Iter;
+		
+		for ( Iter it = searchDirs.begin();  it != searchDirs.end();  ++it )
+		{
+			itsOptions.AppendIncludeDir( *it );
+		}
 	}
 	
 	
@@ -136,76 +117,85 @@ namespace ALine
 		return diagnosticsFile;
 	}
 	
-	static std::string IncludeDirString( const CompilerOptions& options )
-	{
-		return MakeIncludeDirOptions( options.UserOnlyIncludeDirs() );
-	}
-	
-	static std::string MakeCompileCommand( const CompilerOptions& options )
+	static Command MakeCompileCommand( const CompilerOptions& options )
 	{
 		CommandGenerator cmdgen( options.Target() );
 		
-		std::string command = cmdgen.CompilerName();
+		Command compile = cmdgen.CompilerName();
 		
-		command << cmdgen.AllCompilerOptions();
+		AugmentCommand( compile, cmdgen.AllCompilerOptions() );
 		
 		if ( options.Target().platform & CD::runtimeMachO )
 		{
-			command << "-Wno-deprecated-declarations -Wno-long-double";
+			compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
+			compile.push_back( "-Wno-long-double"             );
 		}
 		
-		command << join( options.Macros().begin(),
-		                 options.Macros().end(),
-		                 " ",
-		                 std::ptr_fun( MakeMacroDefinition ) );
+		AugmentCommand( compile, options.GetMacros() );
 		
-		command << IncludeDirString( options );
+		AugmentCommand( compile, options.IncludeDirOptions() );
 		
-		return command;
+		return compile;
+	}
+	
+	static void Echo( const char* a, const char* b )
+	{
+		Command echo;
+		
+		echo.push_back( "/bin/echo" );
+		echo.push_back( a );
+		echo.push_back( b );
+		echo.push_back( NULL );
+		
+		ExecuteCommand( echo );
 	}
 	
 	static void BuildSourceFile( CompilerOptions options, const std::string& file )
 	{
+		options.AppendIncludeDir( io::get_preceding_directory( file ) );
+		
 		bool gnu = options.Target().toolkit == toolkitGNU;
 		
 		CommandGenerator cmdgen( options.Target() );
 		
-		std::string command = MakeCompileCommand( options );
-		
-		command << MakeIncludeDirOption( io::get_preceding_directory( file ) );
+		Command command = MakeCompileCommand( options );
 		
 		std::string filename = io::get_filename_string( file );
 		
 		if ( !IsCFile( filename ) )
 		{
 			// We don't need this warning for C, and in fact GNU C complains about it
-			command << "-Wno-non-template-friend";
+			command.push_back( "-Wno-non-template-friend" );
 		}
+		
+		std::string pchSourceName;
 		
 		if ( options.HasPrecompiledHeaderSource() )
 		{
 			// Specify by name only, so gcc will search for the .gch image.
-			std::string pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
+			pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
 			
-			//command << "-include" << q( pchSourceName );
-			command << cmdgen.Prefix( pchSourceName );
+			AugmentCommand( command, cmdgen.Prefix( pchSourceName.c_str() ) );
 		}
 		
-		command << OutputOption( options.Output() / ObjectFileName( filename ) );
+		std::string outputFile = options.Output() / ObjectFileName( filename );
 		
-		command << cmdgen.Input( file );
+		AugmentCommand( command, OutputOption( outputFile.c_str() ) );
+		
+		command.push_back( file.c_str() );
 		
 		std::string diagnosticsFile;
 		
 		if ( gnu )
 		{
 			diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
-			
-			command += " > " + q( diagnosticsFile ) + " 2>&1";
 		}
 		
-		QueueCommand( "echo Compiling:  " + filename );
-		QueueCommand( command );
+		Echo( "Compiling:", filename.c_str() );
+		
+		command.push_back( NULL );
+		
+		ExecuteCommand( command, diagnosticsFile.c_str() );
 		
 		if ( gnu )
 		{
@@ -239,28 +229,33 @@ namespace ALine
 		
 		CommandGenerator cmdgen( options.Target() );
 		
-		std::string command = MakeCompileCommand( options );
+		Command command = MakeCompileCommand( options );
 		
 		std::string filename = io::get_filename_string( pathname_to_precompiled_header_source );
 		
 		if ( !IsCFile( filename ) )
 		{
 			// We don't need this warning for C, and in fact GNU C complains about it
-			command << "-Wno-non-template-friend";
+			command.push_back( "-Wno-non-template-friend" );
 		}
 		
-		command << OutputOption( options.PrecompiledHeaderImage() );
+		AugmentCommand( command, OutputOption( options.PrecompiledHeaderImage().c_str() ) );
 		
 		// Add the source file to the command line
-		command << cmdgen.Input( pathname_to_precompiled_header_source );
+		command.push_back( pathname_to_precompiled_header_source.c_str() );
+		
+		std::string diagnosticsFile;
 		
 		if ( gnu )
 		{
-			command << "> " << q( DiagnosticsFilePathname( options.Name(), filename ) ) << " 2>&1";
+			diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
 		}
 		
-		QueueCommand( "echo Precompiling:  " + filename );
-		QueueCommand( command );
+		Echo( "Precompiling:", filename.c_str() );
+		
+		command.push_back( NULL );
+		
+		ExecuteCommand( command, diagnosticsFile.c_str() );
 	}
 	
 	static std::string PrecompiledHeaderImageFile( const ProjName&    projName,
@@ -282,6 +277,10 @@ namespace ALine
 		IncludePath pchSource = GetProject( proj ).PrecompiledHeaderSource();
 		return !pchSource.empty();
 	}
+	
+	#define DEFINE_MACRO_VALUE( macro, value )  AddDefinedMacro( "-D" macro "=" #value )
+	
+	#define DEFINE_MACRO( macro )  DEFINE_MACRO_VALUE( macro, 1 )
 	
 	void CompileSources( const Project& project, TargetInfo targetInfo )
 	{
@@ -416,35 +415,35 @@ namespace ALine
 		
 		if ( !needToPrecompile && dirtyFiles.size() == 0 )  return;
 		
-		options.DefineMacro( "__ALINE__" );
-		options.DefineMacro( "JOSHUA_JURAN_EXPERIMENTAL" );
+		options.DEFINE_MACRO( "__ALINE__" );
+		options.DEFINE_MACRO( "JOSHUA_JURAN_EXPERIMENTAL" );
 		
-		options.DefineMacro( "NUCLEUS_USES_BACKTRACE" );
+		options.DEFINE_MACRO( "NUCLEUS_USES_BACKTRACE" );
 		
 		if ( targetInfo.platform & CD::apiMacCarbon )
 		{
-			options.DefineMacro( "TARGET_API_MAC_CARBON" );
+			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
 		}
 		else if ( targetInfo.platform & CD::apiMacToolbox )
 		{
-			options.DefineMacro( "TARGET_API_MAC_CARBON", false );
-			options.DefineMacro( "TARGET_API_MAC_OS8" );
+			options.DEFINE_MACRO_VALUE( "TARGET_API_MAC_CARBON", 0 );
+			options.DEFINE_MACRO( "TARGET_API_MAC_OS8" );
 			
 			if ( targetInfo.platform & CD::archPPC )
 			{
-				options.DefineMacro( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
-				options.DefineMacro( "OPAQUE_UPP_TYPES" );
+				options.DEFINE_MACRO( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
+				options.DEFINE_MACRO( "OPAQUE_UPP_TYPES" );
 			}
 		}
 		
 		if ( options.Target().toolkit == toolkitCodeWarrior )
 		{
 			// Assume CW Pro 6
-			options.DefineMacro( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
+			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
 		}
 		
 		// Select the includes belonging to the projects we use
-		IncludeDirGatherer gatherer( options.UserOnlyIncludeDirs() );
+		IncludeDirGatherer gatherer( options );
 		
 		const std::vector< ProjName >& allUsedProjects = project.AllUsedProjects();
 		
@@ -453,11 +452,18 @@ namespace ALine
 		               allUsedProjects.rend(),
 		               gatherer );
 		
-		options.DefineMacro( "TARGET_CONFIG_DEBUGGING", targetInfo.build == buildDebug );
+		if ( targetInfo.build == buildDebug )
+		{
+			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 1 );
+		}
+		else
+		{
+			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 0 );
+		}
 		
 		if ( targetInfo.build == buildDemo )
 		{
-			options.DefineMacro( "BUILD_DEMO", true );
+			options.DEFINE_MACRO( "BUILD_DEMO" );
 		}
 		
 		if ( needToPrecompile )
@@ -474,10 +480,7 @@ namespace ALine
 			// but that must already be so to have found it in the first place.
 			// We also need the parent of the image file, so gcc can find that.
 			
-			std::vector< std::string >& userOnlyIncludeDirs = options.UserOnlyIncludeDirs();
-			
-			userOnlyIncludeDirs.insert( userOnlyIncludeDirs.begin(),
-			                            io::get_preceding_directory( pchImage ) );
+			options.PrependIncludeDir( io::get_preceding_directory( pchImage ) );
 		}
 		
 		std::for_each( dirtyFiles.begin(),
