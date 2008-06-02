@@ -57,18 +57,17 @@ namespace ALine
 	{
 		std::string result;
 		
-		std::string importPath = file;
+		std::string importPath;
 		
-		std::string importName = io::get_filename_string( file );
-		
-		if ( importName[ 0 ] == '-' )
+		if ( file[ 0 ] == '-' )
 		{
-			importName = importName.substr( 1, importName.npos );
-			
-			importPath = std::strchr( file.c_str(), '/' ) ? io::get_preceding_directory( file ) / importName
-			                                              : importName;
+			importPath = file.substr( 1, file.npos );
 			
 			result = "-wi ";
+		}
+		else
+		{
+			importPath = file;
 		}
 		
 		result += q( importPath );
