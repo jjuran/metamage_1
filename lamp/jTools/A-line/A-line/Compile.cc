@@ -184,30 +184,6 @@ namespace ALine
 		command.push_back( NULL );
 		
 		ExecuteCommand( command, diagnosticsFile.c_str() );
-		
-		if ( gnu )
-		{
-			struct ::stat sb;
-			
-			int status = ::stat( diagnosticsFile.c_str(), &sb );
-			
-			if ( status == 0 && sb.st_size > 0 )
-			{
-				system( ( "edit " + q( diagnosticsFile ) ).c_str() );
-			}
-			else if ( status == 0 )
-			{
-				try
-				{
-					io::delete_file( diagnosticsFile );
-					
-					io::delete_empty_directory( io::get_preceding_directory( diagnosticsFile ) );
-				}
-				catch ( ... )
-				{
-				}
-			}
-		}
 	}
 	
 	static void Precompile( const CompilerOptions&  options,
