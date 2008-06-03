@@ -208,12 +208,7 @@ namespace ALine
 		// Add the source file to the command line
 		command.push_back( pathname_to_precompiled_header_source.c_str() );
 		
-		std::string diagnosticsFile;
-		
-		if ( gnu )
-		{
-			diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
-		}
+		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
 		
 		Echo( "Precompiling:", filename.c_str() );
 		
