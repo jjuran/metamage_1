@@ -115,7 +115,7 @@ namespace Genie
 	void TerminalsOwner::OpenDocument( const FSSpec& docFile )
 	{
 		//ConsoleProcess* terminal = new ConsoleProcess( docFile );
-		SpawnNewConsole( docFile );
+		//SpawnNewConsole( docFile );
 	}
 	
 }
