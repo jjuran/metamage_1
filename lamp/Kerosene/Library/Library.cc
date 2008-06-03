@@ -165,6 +165,9 @@
 		(void) raise( SIGABRT );
 	}
 	
+	/*
+	// already defined in openbsd-libc
+	
 	int mkstemp( char* name )
 	{
 		std::size_t length = std::strlen( name );
@@ -205,6 +208,7 @@
 		
 		return -1;
 	}
+	*/
 	
 	int raise( int sig )
 	{
