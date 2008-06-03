@@ -493,6 +493,29 @@
 		return std::min< ssize_t >( readlink_k( path, buffer, buffer_size ), buffer_size );
 	}
 	
+	char* realpath( const char *path, char *buffer )
+	{
+		const size_t buffer_size = 4096;
+		
+		ssize_t length = realpath_k( path, buffer, buffer_size );
+		
+		if ( length < 0 )
+		{
+			return NULL;
+		}
+		
+		if ( length + 1 > buffer_size )
+		{
+			errno = ERANGE;
+			
+			return NULL;
+		}
+		
+		buffer[ length ] = '\0';
+		
+		return buffer;
+	}
+	
 	ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 	{
 		if ( !isatty( fd ) )
