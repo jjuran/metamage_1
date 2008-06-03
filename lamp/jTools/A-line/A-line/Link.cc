@@ -296,11 +296,16 @@ namespace ALine
 		ExecuteCommand( echo );
 	}
 	
+	static std::string DiagnosticsFilenameFromSourceFilename( const std::string& filename )
+	{
+		return filename + ".txt";
+	}
+	
 	static void LinkFile( Command                            command,
 	                      const std::string&                 outputFile,
 	                      const std::vector< std::string >&  objectFileArgs,
 	                      const Command                   &  libraryArgs,
-	                      const char*                        diagnosticsFile )
+	                      const std::string&                 diagnosticsDir )
 	{
 		command.push_back( outputFile.c_str() );
 		
@@ -308,11 +313,15 @@ namespace ALine
 		
 		AugmentCommand( command, libraryArgs );
 		
-		Echo( "Linking:", io::get_filename_string( outputFile ).c_str() );
+		std::string filename = io::get_filename_string( outputFile );
+		
+		Echo( "Linking:", filename.c_str() );
 		
 		command.push_back( NULL );
 		
-		ExecuteCommand( command, diagnosticsFile );
+		std::string diagnosticsFile = diagnosticsDir / DiagnosticsFilenameFromSourceFilename( filename );
+		
+		ExecuteCommand( command, diagnosticsFile.c_str() );
 	}
 	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
@@ -456,6 +465,8 @@ namespace ALine
 		gLibraryExtension = gnu ? ".a" : ".lib";
 		
 		const bool machO = targetInfo.platform & CD::runtimeMachO;
+		
+		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
 		CommandGenerator cmdgen( targetInfo );
 		
@@ -607,8 +618,6 @@ namespace ALine
 		std::string trailer = gnu ? "> /tmp/link-errs.txt 2>&1"
 		                          : " 2>&1 | filter-mwlink-warnings";
 		
-		const char* diagnosticsFile = gnu ? "/tmp/link-errs.txt" : "";
-		
 		time_t outFileDate = EffectiveModifiedDate( outFile );
 		
 		if ( FilesAreNewer( objectFiles.begin() + n_tools, objectFiles.end(), outFileDate ) )
@@ -632,7 +641,7 @@ namespace ALine
 				link.push_back( "-o" );
 			}
 			
-			LinkFile( link, outFile, objectFilePaths, Command(), diagnosticsFile );
+			LinkFile( link, outFile, objectFilePaths, Command(), diagnosticsDir );
 		}
 		
 		if ( !hasExecutable )
@@ -717,13 +726,13 @@ namespace ALine
 				{
 					std::vector< std::string > objectFilePaths( 1, objectFile );
 					
-					LinkFile( command, linkOutput, objectFilePaths, allLibraryLinkArgs, diagnosticsFile );
+					LinkFile( command, linkOutput, objectFilePaths, allLibraryLinkArgs, diagnosticsDir );
 				}
 			}
 		}
 		else
 		{
-			LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, diagnosticsFile );
+			LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, diagnosticsDir );
 			
 			std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
 			                           : outFile;
