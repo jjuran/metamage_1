@@ -236,11 +236,13 @@ namespace ALine
 		}
 		*/
 		
+		bool has_diagnostics_file = diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0';
+		
 		pid_t pid = p7::throw_posix_result( vfork() );
 		
 		if ( pid == 0 )
 		{
-			if ( diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0' )
+			if ( has_diagnostics_file )
 			{
 				int diagnostics = ::open( diagnosticsFilename, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
 				
@@ -267,7 +269,48 @@ namespace ALine
 		
 		pid_t resultpid = p7::throw_posix_result( ::waitpid( pid, &wait_status, 0 ) );
 		
-		if ( wait_status != 0 )
+		bool had_errors = wait_status != 0;
+		
+		if ( has_diagnostics_file )
+		{
+			struct ::stat stat_buffer;
+			
+			int status = ::stat( diagnosticsFilename, &stat_buffer );
+			
+			if ( status == 0 )
+			{
+				const size_t size = stat_buffer.st_size;
+				
+				if ( size == 0 )
+				{
+					// empty file; delete
+					unlink( diagnosticsFilename );
+				}
+				else
+				{
+					const char* stuff = had_errors ? "errors" : "warnings";
+					
+					char path_buffer[ 4096 ];
+					
+					const char* pathname = realpath( diagnosticsFilename, path_buffer );
+					
+					if ( pathname == NULL )
+					{
+						pathname = diagnosticsFilename;
+					}
+					
+					std::fprintf( stderr, "#\n# %d bytes of %s\n#\n" "    report %s\n#\n",
+					                            size,       stuff,               pathname );
+				}
+			}
+			else
+			{
+				// something's wrong with the diagnostics file
+				// shouldn't really happen, so screw it
+			}
+		}
+		
+		if ( had_errors )
 		{
 			bool signaled = WIFSIGNALED( wait_status );
 			
