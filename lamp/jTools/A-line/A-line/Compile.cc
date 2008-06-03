@@ -147,8 +147,6 @@ namespace ALine
 	{
 		options.AppendIncludeDir( io::get_preceding_directory( file ) );
 		
-		bool gnu = options.Target().toolkit == toolkitGNU;
-		
 		CommandGenerator cmdgen( options.Target() );
 		
 		Command command = MakeCompileCommand( options );
@@ -189,8 +187,6 @@ namespace ALine
 	static void Precompile( const CompilerOptions&  options,
 	                        const std::string&      pathname_to_precompiled_header_source )
 	{
-		bool gnu = options.Target().toolkit == toolkitGNU;
-		
 		CommandGenerator cmdgen( options.Target() );
 		
 		Command command = MakeCompileCommand( options );
