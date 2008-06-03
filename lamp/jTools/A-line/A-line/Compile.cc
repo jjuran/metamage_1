@@ -184,12 +184,7 @@ namespace ALine
 		
 		command.push_back( file.c_str() );
 		
-		std::string diagnosticsFile;
-		
-		if ( gnu )
-		{
-			diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
-		}
+		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
 		
 		Echo( "Compiling:", filename.c_str() );
 		
