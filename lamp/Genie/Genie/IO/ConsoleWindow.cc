@@ -386,7 +386,10 @@ namespace Genie
 		
 		terminal.Disconnect();
 		
-		SendSignalToProcessGroup( SIGHUP, *terminal.GetProcessGroup().lock() );
+		if ( !terminal.GetProcessGroup().expired() )
+		{
+			SendSignalToProcessGroup( SIGHUP, *terminal.GetProcessGroup().lock() );
+		}
 	}
 	
 }
