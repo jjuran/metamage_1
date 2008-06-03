@@ -95,16 +95,9 @@ namespace ALine
 		return folder;
 	}
 	
-	static std::string GetFilenameBase( const std::string& filename )
-	{
-		std::size_t dot = filename.find_last_of( "." );
-		
-		return filename.substr( 0, dot );
-	}
-	
 	static std::string DiagnosticsFilenameFromSourceFilename( const std::string& filename )
 	{
-		return GetFilenameBase( filename ) + ".txt";
+		return filename + ".txt";
 	}
 	
 	static std::string DiagnosticsFilePathname( const std::string&  proj,
