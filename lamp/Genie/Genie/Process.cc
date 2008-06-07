@@ -265,6 +265,7 @@ namespace Genie
 	
 	static void InstallExceptionHandlers()
 	{
+		/*
 		const std::size_t n_vectors = sizeof gExceptionVectorTable / sizeof gExceptionVectorTable[0];
 		
 		for ( unsigned i = 0;  i < n_vectors;  ++i  )
@@ -276,6 +277,7 @@ namespace Genie
 				std::swap( *v, gExceptionVectorTable[ i ] );
 			}
 		}
+		*/
 	}
 	
 #endif
