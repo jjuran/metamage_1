@@ -48,7 +48,6 @@ namespace ClassicService
 	
 	ServicesMenuItem gServicesMenuItems[ itemCount ];
 	
-	short gLastCheckedMenuID;
 	TEHandle gTE;
 	
 	
@@ -157,13 +156,11 @@ namespace ClassicService
 	
 	static short GetFreeMenuID()
 	{
-		while ( gLastCheckedMenuID <= 255 )
+		for ( short menuID = 1;  menuID <= 255;  ++menuID )
 		{
-			++gLastCheckedMenuID;
-			
-			if ( ::GetMenuHandle( gLastCheckedMenuID ) == NULL )
+			if ( ::GetMenuHandle( menuID ) == NULL )
 			{
-				return gLastCheckedMenuID;
+				return menuID;
 			}
 		}
 		return 0;
@@ -171,8 +168,6 @@ namespace ClassicService
 	
 	static MenuRef InstallServicesMenu()
 	{
-		gLastCheckedMenuID = 0;
-		
 		ServicesMenuItem* servicesMenuItem = FindServicesMenuItem( UniqueKey() );
 		
 		if ( servicesMenuItem == NULL )  return NULL;
