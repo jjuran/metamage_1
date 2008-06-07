@@ -418,6 +418,11 @@ namespace Genie
 		StackFramePtr top    = process.GetStackFramePointer();
 		StackFramePtr bottom = process.GetStackBottomPointer();
 		
+		if ( top == NULL )
+		{
+			return "";
+		}
+		
 		std::vector< ReturnAddress > stackCrawl = MakeStackCrawlFromTopToBottom( top, bottom );
 		
 		std::vector< ReturnAddress >::const_iterator begin = stackCrawl.begin();
