@@ -355,11 +355,6 @@ namespace ALine
 		
 		if ( needToBuild )
 		{
-			//QueueCommand( "echo Building project " + q( project.Name() ) + ":" );
-		}
-		
-		if ( needToBuild )
-		{
 			CompileSources( project, info );
 			LinkProduct   ( project, info );
 		}
