@@ -48,7 +48,7 @@ my $should_copy_syms = $ENV{LAMP_SYMS};
 
 my $timestamp = timestamp();
 
-my $lamp_source_dir = "$ENV{HOME}/Developer/Projects/SourceForge/lamp";
+my $lamp_source_dir = "$ENV{HOME}/src/tree/SourceForge/lamp";
 my $user_builds_dir = "$ENV{HOME}/Developer/Builds";
 my $user_lamp_dir   = "$ENV{HOME}/Developer/Lamp";
 
