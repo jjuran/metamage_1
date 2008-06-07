@@ -174,6 +174,8 @@ namespace ClassicService
 		
 		short servicesMenuID = GetFreeMenuID();
 		
+		if ( servicesMenuID == 0 )  return NULL;
+		
 		MenuRef servicesMenu = ::NewMenu( servicesMenuID, "\pServices" );
 		
 		::InsertMenu( servicesMenu, kInsertHierarchicalMenu );
