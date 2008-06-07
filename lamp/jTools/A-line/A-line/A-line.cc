@@ -358,10 +358,15 @@ namespace ALine
 			//QueueCommand( "echo Building project " + q( project.Name() ) + ":" );
 		}
 		
-		if ( !needToBuild )  return;
+		if ( needToBuild )
+		{
+			CompileSources( project, info );
+			LinkProduct   ( project, info );
+		}
 		
-		CompileSources( project, info );
-		LinkProduct   ( project, info );
+		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
+		
+		(void) rmdir( diagnosticsDir.c_str() );
 	}
 	
 	typedef std::map< ProjName, NN::Shared< Job*, NN::DisposeWithDelete > > JobSubMap;
