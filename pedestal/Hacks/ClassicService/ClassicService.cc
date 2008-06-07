@@ -83,7 +83,7 @@ namespace ClassicService
 	}
 	
 	
-	inline long UniqueKey()
+	inline long GetUniqueKeyForApp()
 	{
 		return (long) LMGetApplZone();
 	}
@@ -168,7 +168,7 @@ namespace ClassicService
 	
 	static MenuRef InstallServicesMenu()
 	{
-		ServicesMenuItem* servicesMenuItem = FindServicesMenuItem( UniqueKey() );
+		ServicesMenuItem* servicesMenuItem = FindServicesMenuItem( GetUniqueKeyForApp() );
 		
 		if ( servicesMenuItem == NULL )  return NULL;
 		
@@ -209,7 +209,7 @@ namespace ClassicService
 		{
 			if ( type == 'DRVR' )
 			{
-				InstallServicesMenuItem( UniqueKey(), menu );
+				InstallServicesMenuItem( GetUniqueKeyForApp(), menu );
 			}
 			
 			nextHandler( menu, type );
@@ -217,7 +217,7 @@ namespace ClassicService
 		
 		void PatchedExitToShell( ExitToShellProcPtr nextHandler )
 		{
-			RemoveServicesMenuItem( UniqueKey() );
+			RemoveServicesMenuItem( GetUniqueKeyForApp() );
 			
 			nextHandler();
 		}
