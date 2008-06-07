@@ -263,8 +263,20 @@ namespace ClassicService
 		
 	}
 	
+	inline bool WindowManagerInitialized()
+	{
+		const UInt8& WWExist = *(UInt8*) 0x08f2;
+		
+		return WWExist == 0;
+	}
+	
 	static OSErr Installer()
 	{
+		if ( WindowManagerInitialized() )
+		{
+			return 0x00ff;
+		}
+		
 		gServicesMenuItems[0].key = 0;
 		gServicesMenuItems[1].key = 0;
 		
