@@ -20,20 +20,13 @@
 
 namespace Silver
 {
-
-	class TempZone
+	
+	inline bool WindowManagerInitialized()
 	{
-		private:
-			THz oldZone;
+		const UInt8& WWExist = *(UInt8*) 0x08f2;
 		
-		public:
-			TempZone( THz zone ) : oldZone( ::GetZone() )
-			{
-				::SetZone( zone );
-			}
-			
-			~TempZone()  { ::SetZone( oldZone ); }
-	};
+		return WWExist == 0;
+	}
 	
 	
 	OSErr gError = noErr;
@@ -67,22 +60,34 @@ namespace Silver
 		return h;
 	}
 	
-	static bool LoadAndLock()
+	static Handle LoadAndLock()
 	{
-		TempZone tempZone = SystemZone();
+		THz oldZone = NULL;
+		
+		if ( !WindowManagerInitialized() )
+		{
+			oldZone = GetZone();
+			
+			SetZone( SystemZone() );
+		}
 		
 		Handle initCode = GetAndLockResource( 'INIT', 0 );
 		
-		return initCode != NULL;
+		if ( oldZone )
+		{
+			SetZone( oldZone );
+		}
+		
+		return initCode;
 	}
 	
 	OSErr Install( InstallerProcPtr installer )
 	{
 		CurrentA4 a4;
 		
-		bool locked = LoadAndLock();
+		Handle initCode = LoadAndLock();
 		
-		if ( !locked )
+		if ( initCode == NULL )
 		{
 			return gError;
 		}
