@@ -1,0 +1,42 @@
+#!/usr/bin/perl -w
+
+my $device = '/sys/mac/gestalt';
+
+my $default_display = 'x';
+
+my %formats =
+(
+	b => '.32b',
+	x => '.8x',
+	d => 'd',
+);
+
+my $display = $default_display;
+
+my $arg = shift;
+
+if ( $arg =~ m/^ - ([bdx]) /x )
+{
+	$display = $1;
+	
+	$arg = shift;
+}
+
+my $selector = $arg;
+
+length $selector == 4 or die "Selector must be length 4";
+
+my $request = unpack "L", $selector;
+
+open my $gestalt, '<', $device or die "Can't open $device ($!)";
+
+my $result = '0000';
+
+ioctl $gestalt, $request, $result or die "Can't ioctl ($!)";
+
+my $output = unpack "L", $result;
+
+my $format = $formats{ $display };
+
+printf "\%$format\n", $output;
+

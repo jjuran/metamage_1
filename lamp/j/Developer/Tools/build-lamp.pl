@@ -117,7 +117,7 @@ my %fsmap =
 			qw( abort buserror illegal ),
 			qw( SetFile aevt ic keymods load-init rsrc-patch system tlsrvr ),
 			qw( File Line activate quit ),
-			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl run-tests ),
+			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl report run-tests ),
 		],
 	},
 	bin =>
@@ -148,7 +148,7 @@ my %fsmap =
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
 			qw( console cr2lf divide jtest lf2cr lf2crlf mread pause ptrace setwindow stripcr striplf th window ),
-			qw( beep cds err2text keymods macbin ),
+			qw( beep cds err2text gestalt keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
 		lib =>

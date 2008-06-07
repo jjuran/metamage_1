@@ -1,0 +1,4 @@
+#!/bin/sh
+
+window --title=Diagnostics -- sh -c 'setwindow --pos=10,50 --size=700x400; cat /dev/fd/5; idle' 5< "$1"
+
