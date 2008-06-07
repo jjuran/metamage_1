@@ -115,7 +115,7 @@ my %fsmap =
 		[
 			qw( A-line cpres ld mpwrez mwcc ),
 			qw( abort buserror illegal ),
-			qw( SetFile aevt ic keymods load-init rsrc-patch system tlsrvr ),
+			qw( SetFile aevt ic load-init rsrc-patch system tlsrvr ),
 			qw( File Line activate quit ),
 			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl report run-tests ),
 		],
