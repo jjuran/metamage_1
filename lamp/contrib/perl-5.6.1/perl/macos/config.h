@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.8  2007-11-04 15:17:55  jax
+Revision 1.9  2008-06-08 19:54:42  jax
+Lamp has 3-arg open() and strerror().
+
+Revision 1.8  2007/11/04 15:17:55  jax
 Include Quickdraw.h early so the Move macro doesn't break it.
 
 Revision 1.7  2007/11/04 14:14:59  jax
@@ -1842,7 +1845,7 @@ First build released to public
  *	This manifest constant lets the C program know that the three
  *	argument form of open(2) is available.
  */
-#undef HAS_OPEN3 /**/
+#define HAS_OPEN3 /**/
 
 /* OLD_PTHREAD_CREATE_JOINABLE:
  *	This symbol, if defined, indicates how to create pthread
@@ -2203,7 +2206,7 @@ First build released to public
  *	not available to translate error numbers to strings but sys_errlist[]
  *	array is there.
  */
-#undef HAS_STRERROR		/**/
+#define HAS_STRERROR		/**/
 #define HAS_SYS_ERRLIST	/**/
 /* #undef Strerror(e) /**/
 
