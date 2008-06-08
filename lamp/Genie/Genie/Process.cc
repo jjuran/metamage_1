@@ -442,9 +442,7 @@ namespace Genie
 	
 	static asm void DispatchSystemCall( unsigned index )
 	{
-		// system call number is on the stack
-		
-		MOVE.L	(SP)+,D0
+		// D0 contains the system call number
 		
 		CMP.L	gLastSystemCall,D0
 		BLT		in_range
