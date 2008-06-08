@@ -1038,12 +1038,12 @@ namespace Vertice
 	
 	static void MergeHalfColorAnaglyph( const ::Byte* left, ::Byte* right )
 	{
-		right[1] = 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3];
+		right[1] = UInt8( 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3] );
 	}
 	
 	static void MergeOptimizedAnaglyph( const ::Byte* left, ::Byte* right )
 	{
-		right[1] = 0.7 * left[2] + 0.3 * left[3];
+		right[1] = UInt8( 0.7 * left[2] + 0.3 * left[3] );
 	}
 	
 	typedef void (*AnaglyphicMerge)( const ::Byte*, ::Byte* );
