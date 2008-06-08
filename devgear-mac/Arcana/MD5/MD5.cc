@@ -71,7 +71,7 @@ namespace MD5
 		
 		for ( int i = 1;  i <= 64;  ++i )
 		{
-			data[ i - 1 ] = 4294967296.0 * abs( sin( double( i ) ) );
+			data[ i - 1 ] = unsigned( 4294967296.0 * abs( sin( double( i ) ) ) );
 		}
 	}
 	
