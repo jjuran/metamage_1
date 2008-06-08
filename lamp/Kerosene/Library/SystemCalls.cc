@@ -35,19 +35,19 @@ typedef void (*CleanupHandler)();
 		// Not reached
 	}
 	
-	#define DEFINE_STUB( name )          \
-		extern "C" void name();          \
-		asm void name()                  \
-		{                                \
-			MOVE.L #__NR_##name,-(SP) ;  \
-			JMP SystemCall            ;  \
+	#define DEFINE_STUB( name )       \
+		extern "C" void name();       \
+		asm void name()               \
+		{                             \
+			MOVE.L #__NR_##name,D0 ;  \
+			JMP SystemCall         ;  \
 		}
 	
 	
 	asm static void InitProc( CleanupHandler, int* )
 	{
-		MOVE.L #__NR_InitProc,-(SP) ;
-		JMP SystemCall              ;
+		MOVE.L #__NR_InitProc,D0 ;
+		JMP SystemCall           ;
 	}
 	
 #endif
