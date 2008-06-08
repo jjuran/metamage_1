@@ -63,8 +63,6 @@ typedef void (*CleanupHandler)();
 		mflr	r0				// get caller's return address
 		stw		r0,8(SP)		// store return address in caller's stack frame
 		
-		mr		r0,r11			// copy syscall number into r0
-		
 		stwu	SP,-64(SP)		// allocate our own stack frame
 		
 		lwz		r12,gDispatcher	// load dispatcher T-vector
