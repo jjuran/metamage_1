@@ -438,19 +438,19 @@ namespace Genie
 
 #endif
 	
+#if TARGET_CPU_68K
+	
 	static void* GetSystemCallAddress( unsigned index )
 	{
-		const SystemCall* syscall = GetSystemCall( index );
-		
-		if ( syscall == NULL  ||  syscall->function == NULL )
+		if ( index > gLastSystemCall )
 		{
-			DeliverFatalSignal( SIGSYS );
+			index = gLastSystemCall;  // last is always unimplemented
 		}
 		
-		return syscall->function;
+		const SystemCall& syscall = gSystemCallArray[ index ];
+		
+		return syscall.function;
 	}
-	
-#if TARGET_CPU_68K
 	
 	static asm void DispatchSystemCall( unsigned index )
 	{
@@ -465,48 +465,35 @@ namespace Genie
 	
 #if TARGET_CPU_PPC
 	
+	enum { kSystemCallSize = sizeof (SystemCall) };
+	
 	static asm void DispatchSystemCall()
 	{
-		// save caller's return address
-		mflr	r0
-		stw		r0,8(SP)
+		// r11 contains the requested system call number
+		// (r0 is already clobbered by compiler-inserted prolog)
+		// r3-r10 are up to 8 arguments
 		
-		// save system call arguments into stack
-		stw		r3,24(SP)
-		stw		r4,28(SP)
-		stw		r5,32(SP)
-		stw		r6,36(SP)
-		stw		r7,40(SP)
-		stw		r8,44(SP)
-		stw		r9,48(SP)
-		stw		r10,52(SP)
+		// r12.last = gLastSystemCall;
+		lwz		r12,gLastSystemCall
+		lwz		r12,0(r12)
 		
-		// allocate stack frame
-		stwu	SP,-32(SP)
+		// if ( r11.index > r12.last )
+		cmpl	cr0,r11,r12
+		blt		cr0,in_range
+			// r11.index = r12.last;
+		mr		r11,r12
 		
-		// get system call address (from its index) or die
-		mr		r3,r11
-		bl		GetSystemCallAddress
-		mr		r12,r3
+	in_range:
+		// r12.array = gSystemCallArray;
+		lwz		r12,gSystemCallArray
+		lwz		r12,0(r12)
 		
-		// deallocate stack frame
-		addi	SP,SP,32
+		// r12.f = r12.array[ r11.index ].function
+		mulli	r11,r11,kSystemCallSize
+		add		r12,r12,r11
+		lwz		r12,0(r12)
 		
-		// restore system call arguments
-		lwz		r3,24(SP)
-		lwz		r4,28(SP)
-		lwz		r5,32(SP)
-		lwz		r6,36(SP)
-		lwz		r7,40(SP)
-		lwz		r8,44(SP)
-		lwz		r9,48(SP)
-		lwz		r10,52(SP)
-		
-		// prepare for hyperspace jump (restore caller's return address to link register)
-		lwz		r0,8(SP)
-		mtlr	r0
-		
-		// load system call address
+		// load system call address for local jump
 		lwz		r0,0(r12)
 		
 		// jump to system call

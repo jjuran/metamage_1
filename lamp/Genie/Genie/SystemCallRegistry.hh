@@ -51,13 +51,17 @@ namespace Genie
 	
 	struct SystemCall
 	{
-		const char*  name;
 		void*        function;
+		const char*  name;
 		
-		SystemCall() : name(), function()  {}
+		SystemCall();
 		
-		SystemCall( const char* nom, void* f ) : name( nom ), function( f )  {}
+		SystemCall( void* f, const char* nom ) : function( f ), name( nom )  {}
 	};
+	
+	extern SystemCall* gSystemCallArray;
+	
+	extern size_t gLastSystemCall;
 	
 	typedef std::vector< SystemCall > SystemCallRegistry;
 	

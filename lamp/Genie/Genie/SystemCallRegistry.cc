@@ -3,8 +3,10 @@
  *	=====================
  */
 
-// Genie
 #include "Genie/SystemCallRegistry.hh"
+
+// Genie
+#include "Genie/Dispatch/UnimplementedSystemCall.hh"
 
 
 namespace Genie
@@ -61,6 +63,16 @@ namespace Genie
 	
 #endif
 	
+	SystemCall* gSystemCallArray = NULL;
+	
+	size_t gLastSystemCall = 0;
+	
+	
+	SystemCall::SystemCall() : function( (void*) UnimplementedSystemCall ), name( "" )
+	{
+		
+	}
+	
 	static bool operator<( const SystemCall& a, const SystemCall& b )
 	{
 		return std::strcmp( a.name, b.name ) < 0;
@@ -73,23 +85,27 @@ namespace Genie
 	
 	static SystemCallRegistry& TheSystemCallRegistry()
 	{
-		static SystemCallRegistry theSystemCallRegistry( 1, SystemCall( "", NULL ) );
+		static SystemCallRegistry theSystemCallRegistry( 1, SystemCall( NULL, "" ) );
 		
 		return theSystemCallRegistry;
 	}
 	
 	void RegisterSystemCall( unsigned index, const char* name, void* func )
 	{
-		const unsigned required_size = index + 1;
-		
 		SystemCallRegistry& registry = TheSystemCallRegistry();
 		
-		if ( registry.size() < required_size )
+		if ( index >= gLastSystemCall )
 		{
+			gLastSystemCall = index + 1;
+			
+			const unsigned required_size = gLastSystemCall + 1;
+			
 			registry.resize( required_size );
+			
+			gSystemCallArray = &registry[0];
 		}
 		
-		registry[ index ] = SystemCall( name, func );
+		registry[ index ] = SystemCall( func, name );
 	}
 	
 	const SystemCallRegistry& GetSystemCallRegistry()
@@ -120,7 +136,7 @@ namespace Genie
 		
 		if ( it == end )
 		{
-			return 0;
+			return NULL;
 		}
 		
 		return &*it;
