@@ -440,25 +440,22 @@ namespace Genie
 	
 #if TARGET_CPU_68K
 	
-	static void* GetSystemCallAddress( unsigned index )
-	{
-		if ( index > gLastSystemCall )
-		{
-			index = gLastSystemCall;  // last is always unimplemented
-		}
-		
-		const SystemCall& syscall = gSystemCallArray[ index ];
-		
-		return syscall.function;
-	}
-	
 	static asm void DispatchSystemCall( unsigned index )
 	{
-		JSR		GetSystemCallAddress  // index is already on the stack
+		// system call number is on the stack
 		
-		ADDQ	#4,SP  // pop the stack
+		MOVE.L	(SP)+,D0
 		
-		JMP		(A0)  // system call address is already in A0
+		CMP.L	gLastSystemCall,D0
+		BLT		in_range
+		
+		MOVE.L	gLastSystemCall,D0
+		
+	in_range:
+		MOVEA.L	gSystemCallArray,A0
+		MOVEA.L	(A0,D0.L*8),A0
+		
+		JMP		(A0)
 	}
 	
 #endif
