@@ -20,12 +20,14 @@
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace Div = Divergence;
-namespace O = Orion;
 
+
+namespace Orion
+{
 
 static int TryResCopy( const FSSpec& source, N::ResFileRefNum dest );
-	
-int O::Main( int argc, char const *const argv[] )
+
+int Main( int argc, iota::argv_t argv )
 {
 	int fail = 0;
 	
@@ -74,7 +76,7 @@ int O::Main( int argc, char const *const argv[] )
 			std::string destName = NN::Convert< std::string >( dest.name );
 			
 			std::fprintf( stderr, "OSStatus %d copying from %s to %s.\n",
-			                                err,            argv[ index ],
+			                                err.Get(),      argv[ index ],
 			                                                      destName.c_str() );
 		}
 	}
@@ -107,7 +109,8 @@ int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
 		
 		for ( int iRsrc = 1;  iRsrc <= rsrcs;  ++iRsrc )
 		{
-			Handle h = N::Get1IndResource( type, iRsrc );
+			N::Handle h = N::Get1IndResource( type, iRsrc );
+			
 			::HNoPurge( h );
 			
 			NN::Saved< N::ResFile_Value > savedResFile( destRes );
@@ -130,5 +133,7 @@ int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
 	}
 	
 	return 0;
+}
+
 }
 
