@@ -208,6 +208,11 @@ namespace Genie
 		DeliverFatalSignal( SIGFPE );
 	}
 	
+	static void PrivilegeViolation()
+	{
+		DeliverFatalSignal( SIGILL );
+	}
+	
 #if TARGET_CPU_68K
 	
 	extern void* gExceptionVectorTable[];
@@ -314,10 +319,15 @@ namespace Genie
 				handler = (const TVector*) IllegalInstruction;
 				
 				break;
-				
+			
 			case kAccessException:
 			case kUnmappedMemoryException:
 				handler = (const TVector*) BusError;
+				
+				break;
+			
+			case kPrivilegeViolationException:
+				handler = (const TVector*) PrivilegeViolation;
 				
 				break;
 			
