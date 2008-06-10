@@ -70,7 +70,7 @@ namespace jTools
 		{
 			m68k = true;
 			
-			return "MWC68K -mbg off -model far";
+			return "MWC68K -mc68020 -mbg off -model far";
 		}
 		else if ( arch == "ppc" )
 		{
