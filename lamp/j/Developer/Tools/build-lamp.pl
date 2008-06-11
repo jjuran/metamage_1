@@ -91,7 +91,7 @@ my @programs = qw
 	macbin md5sum mkdir mpwrez mread mv mwcc
 	nohup
 	open osascript
-	pause perl ps ptrace pwd
+	pause perl privileged ps ptrace pwd
 	readlink realpath rm rmdir rsrc-patch
 	setleds setwindow sh sleep stripcr striplf superd
 	tcpcat tcpclient th tlsrvr true tty ttyd
@@ -114,7 +114,7 @@ my %fsmap =
 		Tools =>
 		[
 			qw( A-line cpres ld mpwrez mwcc ),
-			qw( abort buserror illegal ),
+			qw( abort buserror illegal privileged ),
 			qw( SetFile aevt ic load-init rsrc-patch system tlsrvr ),
 			qw( File Line activate quit ),
 			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl report run-tests ),
