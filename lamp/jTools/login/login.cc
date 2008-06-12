@@ -5,6 +5,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <stdio.h>
 
 // POSIX
 #include <fcntl.h>
@@ -49,6 +50,25 @@ static void SetVariables()
 	                   ":/bin";
 	
 	setenv( "PATH", path, 0 );
+	
+	char path_buffer[ 1024 ];
+	
+	ssize_t size = readlink_k( "/sys/mac/user/home", path_buffer, sizeof path_buffer );
+	
+	if ( size < 0 )
+	{
+		std::perror( "login: /sys/mac/user/home" );
+	}
+	if ( size + 1 > sizeof path_buffer )
+	{
+		// Shouldn't ever happen, but for correctness do nothing
+	}
+	else
+	{
+		path_buffer[ size ] = '\0';
+		
+		setenv( "HOME", path_buffer, 0 );
+	}
 }
 
 static void DumpMOTD()
