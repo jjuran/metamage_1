@@ -27,7 +27,15 @@ namespace Genie
 	
 	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
 	{
-		return N::FindFolder( vRefNum, N::kUsersFolderType, false );
+		try
+		{
+			return N::FindFolder( vRefNum, N::kUsersFolderType, false );
+		}
+		catch ( ... )
+		{
+		}
+		
+		return N::FSDirSpec( N::FSMakeFSSpec( vRefNum, N::fsRtDirID, "\pUsers" ) );
 	}
 	
 	static N::FSDirSpec FindUserHomeFolder()
