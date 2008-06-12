@@ -1,8 +1,5 @@
 # Genie shell profile
 
-# Change this unless you're me
-export HOME=/Users/jjuran
-
 # Change to your preference
 export MAC_EDITOR_SIGNATURE='R*ch'  # BBEdit
 
