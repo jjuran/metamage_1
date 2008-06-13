@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use strict;
+#use strict;
 
 my ($arg, $format, $time, $hr_diff, $let, $date_str);
 my ($sec, $min, $hour, $m_day, $mon, $year, $w_day, $y_day, $isdst);

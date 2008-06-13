@@ -13,9 +13,9 @@
 
 package PPT::test;
 
-use strict;
+#use strict;
 #use diagnostics;
-use vars qw($VERSION);
+#use vars qw($VERSION);
 
 $VERSION = 1.01;
 
