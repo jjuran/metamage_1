@@ -349,6 +349,8 @@ namespace Nitrogen
 		
 		explicit FSDirSpec( const FSSpec& dir );
 		
+		operator FSSpec() const;
+		
 		FSDirSpec& operator/=( const unsigned char* name );
 		
 		FSDirSpec& operator/=( const std::string& name )
@@ -2121,6 +2123,11 @@ namespace Nitrogen
 	inline FSSpec DTGetAPPL( OSType signature )
 	{
 		return DTGetAPPL( signature, Volumes().begin(), Volumes().end() );
+	}
+	
+	inline FSDirSpec::operator FSSpec() const
+	{
+		return Nucleus::Convert< FSSpec >( *this );
 	}
 	
 	inline FSDirSpec& FSDirSpec::operator/=( const unsigned char* name )
