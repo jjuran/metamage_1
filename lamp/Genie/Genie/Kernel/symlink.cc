@@ -84,11 +84,11 @@ namespace Genie
 		
 		FSSpec targetSpec = target->GetFSSpec( false );
 		
-		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkParent, targetSpec );
-		
 		N::FileSignature signature = GetFileSignatureForAlias( targetSpec );
 		
 		N::FSpCreateResFile( linkSpec, signature );
+		
+		NN::Owned< N::AliasHandle > alias = N::NewAlias( linkSpec, targetSpec );
 		
 		FInfo linkFInfo = N::FSpGetFInfo( linkSpec );
 		
