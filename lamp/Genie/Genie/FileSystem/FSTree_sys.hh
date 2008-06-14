@@ -19,7 +19,7 @@ namespace Genie
 	class FSTree_sys : public FSTree_Virtual
 	{
 		public:
-			FSTree_sys();
+			void Init();
 			
 			std::string Name() const  { return "sys"; }
 			

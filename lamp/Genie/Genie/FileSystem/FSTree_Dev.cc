@@ -40,7 +40,7 @@ namespace Genie
 	class FSTree_dev : public FSTree_Virtual
 	{
 		public:
-			FSTree_dev();
+			void Init();
 			
 			std::string Name() const  { return "dev"; }
 			
@@ -157,7 +157,7 @@ namespace Genie
 	class FSTree_dev_new : public FSTree_Virtual
 	{
 		public:
-			FSTree_dev_new();
+			void Init();
 			
 			static std::string OnlyName()  { return "new"; }
 			
@@ -373,7 +373,7 @@ namespace Genie
 	}
 	
 	
-	FSTree_dev::FSTree_dev()
+	void FSTree_dev::Init()
 	{
 		Map( FSTreePtr( new FSTree_Device( "null"    ) ) );
 		Map( FSTreePtr( new FSTree_Device( "zero"    ) ) );
@@ -393,7 +393,7 @@ namespace Genie
 	}
 	
 	
-	FSTree_dev_new::FSTree_dev_new()
+	void FSTree_dev_new::Init()
 	{
 		MapSingleton< FSTree_dev_new_buffer  >();
 		MapSingleton< FSTree_dev_new_console >();

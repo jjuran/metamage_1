@@ -61,7 +61,7 @@ namespace Genie
 	class FSTree_sys_kernel : public FSTree_Virtual
 	{
 		public:
-			FSTree_sys_kernel();
+			void Init();
 			
 			std::string Name() const  { return "kernel"; }
 			
@@ -200,14 +200,14 @@ namespace Genie
 	};
 	
 	
-	FSTree_sys::FSTree_sys()
+	void FSTree_sys::Init()
 	{
 		MapSingleton< FSTree_sys_kernel >();
 		MapSingleton< FSTree_sys_window >();
 		MapSingleton< FSTree_sys_mac    >();
 	}
 	
-	FSTree_sys_kernel::FSTree_sys_kernel()
+	void FSTree_sys_kernel::Init()
 	{
 		MapSingleton< FSTree_sys_kernel_bin     >();
 		MapSingleton< FSTree_sys_kernel_syscall >();

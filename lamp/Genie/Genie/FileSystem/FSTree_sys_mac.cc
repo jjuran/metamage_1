@@ -17,7 +17,7 @@
 namespace Genie
 {
 	
-	FSTree_sys_mac::FSTree_sys_mac()
+	void FSTree_sys_mac::Init()
 	{
 		MapSingleton< FSTree_sys_mac_vol     >();
 		MapSingleton< FSTree_sys_mac_proc    >();

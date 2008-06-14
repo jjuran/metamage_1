@@ -16,7 +16,7 @@ namespace Genie
 	class FSTree_sys_mac : public FSTree_Virtual
 	{
 		public:
-			FSTree_sys_mac();
+			void Init();
 			
 			static std::string OnlyName()  { return "mac"; }
 			
