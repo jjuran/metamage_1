@@ -16,7 +16,7 @@ namespace Genie
 	class FSTree_sys_mac_user : public FSTree_Virtual
 	{
 		public:
-			FSTree_sys_mac_user();
+			void Init();
 			
 			static std::string OnlyName()  { return "user"; }
 			

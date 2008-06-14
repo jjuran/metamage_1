@@ -6,14 +6,16 @@
 #include "Genie/FileSystem/FSTree_sys_mac_user.hh"
 
 // Genie
+#include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_user_home.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_user_name.hh"
 
 
 namespace Genie
 {
 	
-	FSTree_sys_mac_user::FSTree_sys_mac_user()
+	void FSTree_sys_mac_user::Init()
 	{
 		try
 		{
@@ -24,6 +26,9 @@ namespace Genie
 		catch ( ... )
 		{
 		}
+		
+		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_user_name_Query >( Pathname(),
+		                                                                 "name" ) ) );
 	}
 	
 	FSTreePtr FSTree_sys_mac_user::Parent() const
