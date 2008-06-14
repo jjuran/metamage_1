@@ -435,28 +435,31 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr MakeFSRoot()
+	static const FSTreePtr& MakeFSRoot()
 	{
 		FSTree_FSSpec* tree = NULL;
 		
-		FSTreePtr result( tree = new FSTree_FSSpec( FindJDirectory() ) );
+		static FSTreePtr result = FSTreePtr( tree = new FSTree_FSSpec( FindJDirectory() ) );
 		
-		FSTreePtr users( new FSTree_FSSpec( io::system_root< N::FSDirSpec >() / "Users" ) );
-		
-		tree->Map( users );
-		
-		tree->MapSingleton< FSTree_Volumes >();
-		
-		tree->Map( GetDevFSTree () );
-		tree->Map( GetProcFSTree() );
-		tree->Map( GetSingleton< FSTree_sys >() );
+		if ( tree != NULL )
+		{
+			FSTreePtr users( new FSTree_FSSpec( io::system_root< N::FSDirSpec >() / "Users" ) );
+			
+			tree->Map( users );
+			
+			tree->MapSingleton< FSTree_Volumes >();
+			
+			tree->Map( GetDevFSTree () );
+			tree->Map( GetProcFSTree() );
+			tree->Map( GetSingleton< FSTree_sys >() );
+		}
 		
 		return result;
 	}
 	
 	FSTreePtr FSRoot()
 	{
-		static FSTreePtr root = MakeFSRoot();
+		static const FSTreePtr& root = MakeFSRoot();
 		
 		return root;
 	}
