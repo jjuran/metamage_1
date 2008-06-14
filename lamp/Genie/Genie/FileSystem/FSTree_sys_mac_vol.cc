@@ -12,6 +12,7 @@
 #include "POSeven/Errno.hh"
 
 // Genie
+#include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
 
 
@@ -71,6 +72,28 @@ namespace Genie
 		return GetSingleton< FSTree_sys_mac >();
 	}
 	
+	class sys_mac_vol_N_name_Query
+	{
+		private:
+			typedef N::FSVolumeRefNum Key;
+			
+			Key itsKey;
+		
+		public:
+			sys_mac_vol_N_name_Query( const Key& key ) : itsKey( key )
+			{
+			}
+			
+			std::string operator()() const
+			{
+				FSSpec volume = N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" );
+				
+				std::string output = NN::Convert< std::string >( volume.name ) + "\n";
+				
+				return output;
+			}
+	};
+	
 	class FSTree_Folder_Link : public FSTree
 	{
 		private:
@@ -108,6 +131,10 @@ namespace Genie
 		FSSpec volume = N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
 		
 		Map( FSTreeFromFSSpec( volume ) );  // volume roots are named "mnt", not the volume name
+		
+		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_vol_N_name_Query >( Pathname(),
+		                                                                  "name",
+		                                                                  sys_mac_vol_N_name_Query( key ) ) ) );
 		
 		Map( FSTreePtr( new FSTree_Folder_Link( key, N::kSystemFolderType,    "sys" ) ) );
 		Map( FSTreePtr( new FSTree_Folder_Link( key, N::kTemporaryFolderType, "tmp" ) ) );
