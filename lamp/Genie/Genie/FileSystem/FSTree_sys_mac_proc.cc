@@ -6,6 +6,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 
 // Genie
+#include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
 
 
@@ -72,6 +73,36 @@ namespace Genie
 		return true;
 	}
 	
+	class sys_mac_proc_PSN_name_Query
+	{
+		private:
+			typedef ProcessSerialNumber Key;
+			
+			Key itsKey;
+		
+		public:
+			sys_mac_proc_PSN_name_Query( const Key& key ) : itsKey( key )
+			{
+			}
+			
+			std::string operator()() const
+			{
+				Str255 name;
+				
+				ProcessInfoRec processInfo;
+				
+				Nucleus::Initialize< ProcessInfoRec >( processInfo );
+				
+				processInfo.processName = name;
+				
+				N::GetProcessInformation( itsKey, processInfo );
+				
+				std::string output = NN::Convert< std::string >( name ) + "\n";
+				
+				return output;
+			}
+	};
+	
 	class FSTree_sys_mac_proc_PSN_exe : public FSTree
 	{
 		private:
@@ -102,6 +133,10 @@ namespace Genie
 	
 	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const Key& key ) : itsKey( key )
 	{
+		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_proc_PSN_name_Query >( Pathname(),
+		                                                                     "name",
+		                                                                     sys_mac_proc_PSN_name_Query( key ) ) ) );
+		
 		Map( FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( key ) ) );
 	}
 	
