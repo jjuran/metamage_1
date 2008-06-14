@@ -53,7 +53,7 @@ namespace Genie
 	{
 		try
 		{
-			(void) N::GetNextProcess( key );
+			(void) N::GetProcessInformation( key );
 		}
 		catch ( const N::ProcNotFound& err )
 		{
