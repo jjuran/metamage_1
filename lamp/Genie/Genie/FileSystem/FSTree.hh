@@ -76,6 +76,8 @@ namespace Genie
 		public:
 			virtual ~FSTree();
 			
+			void Init()  {}  // never called virtually
+			
 			// General methods
 			
 			virtual bool Exists() const;
