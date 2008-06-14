@@ -330,45 +330,48 @@ namespace ALine
 			// The source file
 			std::string sourceFile( *it );
 			
-			// The file's name
-			std::string sourceName = io::get_filename_string( sourceFile );
+			// We need to compile the source file if any of these apply:
+			// * we're compiling everything anyway
+			// * its object file doesn't exist
+			// * the object file is out of date
 			
-			// The object file for this source file, which may or may not exist yet.
-			std::string objectFile = outDir / ObjectFileName( sourceName );
+			// Below, we run the negation of each test.
+			// Any negative result ends the tests and we proceed to add the file to the list.
+			// If all tests pass then the object file is up to date and we skip it.
 			
-			// If object file is nonexistent or older than source,
-			// then it must be compiled, and we can skip the includes.
-			// Otherwise, compare against the latest include date.
-			
-			bool needToCompile = true;
-			
-			// If the object file doesn't exist, we definitely need to compile.
-			// But if it does...
-			if ( !compilingEverything && io::item_exists( objectFile ) )
+			if ( !compilingEverything )
 			{
-				// The effective modification date of the file, considering only
-				// a precompiled header (if available).  If the precompiled header
-				// has been modified, it saves us extracting the includes.
-				// Premature optimization?  Maybe.
-				time_t sourceDate = std::max( pchImageDate, ModifiedDate( sourceFile ) );
+				// The file's name
+				std::string sourceName = io::get_filename_string( sourceFile );
 				
-				time_t objectDate = ModifiedDate( objectFile );
+				// The object file for this source file, which may or may not exist yet.
+				std::string objectFile = outDir / ObjectFileName( sourceName );
 				
-				// If the object file is more recent than the source,
-				// (considering first the actual mod date and then the effectove mod date),
-				// then it's up to date.
-				
-				if (    objectDate > sourceDate
-				     && objectDate > RecursivelyLatestDate( sourceName, sourceFile ) )
+				if ( io::item_exists( objectFile ) )
 				{
-					needToCompile = false;
+					// The effective modification date of the file, considering only
+					// a precompiled header (if available).  If the precompiled header
+					// has been modified, it saves us extracting the includes.
+					// Premature optimization?  Maybe.
+					time_t sourceDate = std::max( pchImageDate, ModifiedDate( sourceFile ) );
+					
+					time_t objectDate = ModifiedDate( objectFile );
+					
+					// If the object file is more recent than the source,
+					// (considering first the actual mod date and then the effective mod date),
+					// then it's up to date.
+					
+					if (    objectDate > sourceDate
+					     && objectDate > RecursivelyLatestDate( sourceName, sourceFile ) )
+					{
+						// Object file is newer than source file and newest header,
+						// so it's up to date and we can skip it
+						continue;
+					}
 				}
 			}
 			
-			if ( needToCompile )
-			{
-				dirtyFiles.push_back( sourceFile );
-			}
+			dirtyFiles.push_back( sourceFile );
 		}
 		
 		if ( !needToPrecompile && dirtyFiles.size() == 0 )  return;
