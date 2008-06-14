@@ -312,6 +312,9 @@ namespace ALine
 		
 		std::vector< std::string > dirtyFiles;
 		
+		// If we're compiling the precompiled header, then recompile all source
+		bool compilingEverything = Options().all  ||  thisProjectProvidesPrecompiledHeader && needToPrecompile;
+		
 		// See which source files need to be compiled,
 		// caching include information in the process.
 		std::vector< std::string >::const_iterator it, end = project.Sources().end();
@@ -341,7 +344,7 @@ namespace ALine
 			
 			// If the object file doesn't exist, we definitely need to compile.
 			// But if it does...
-			if ( !Options().all && io::item_exists( objectFile ) )
+			if ( !compilingEverything && io::item_exists( objectFile ) )
 			{
 				// The effective modification date of the file, considering only
 				// a precompiled header (if available).  If the precompiled header
