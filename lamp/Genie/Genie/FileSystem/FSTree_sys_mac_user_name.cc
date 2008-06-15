@@ -15,9 +15,9 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	std::string sys_mac_user_name_Query::operator()() const
+	static std::string GetStringResource( ::ResID id )
 	{
-		::Handle h = N::GetResource( N::ResType( 'STR ' ), N::ResID( -16096 ) );
+		::Handle h = N::GetResource( N::ResType( 'STR ' ), N::ResID( id ) );
 		
 		std::size_t length = **h;
 		
@@ -32,6 +32,11 @@ namespace Genie
 		result.end()[ -1 ] = '\n';
 		
 		return result;
+	}
+	
+	std::string sys_mac_user_name_Query::operator()() const
+	{
+		return GetStringResource( -16096 );
 	}
 	
 }
