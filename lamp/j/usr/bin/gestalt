@@ -34,7 +34,7 @@ my $result = '0000';
 
 if ( not ioctl( $gestalt, $request, $result ) )
 {
-	exit 1 if $! == 22;  // EINVAL, no such Gestalt selector
+	exit 1 if $! == 22;  # EINVAL, no such Gestalt selector
 	
 	die "Can't ioctl ($!)";
 }
