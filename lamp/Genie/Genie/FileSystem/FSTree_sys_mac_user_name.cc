@@ -6,6 +6,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_user_name.hh"
 
 // Nitrogen
+#include "Nitrogen/Gestalt.h"
 #include "Nitrogen/Resources.h"
 
 
@@ -25,18 +26,95 @@ namespace Genie
 		
 		std::string result;
 		
-		result.resize( length + 1 );
+		result.resize( length );
 		
 		std::copy( begin, begin + length, result.begin() );
-		
-		result.end()[ -1 ] = '\n';
 		
 		return result;
 	}
 	
+	static CFStringRef CSCopyUserName_CFM( Boolean useShortName )
+	{
+		typedef CFStringRef (*CSCopyUserNameProc)( Boolean useShortName );
+		
+		CFStringRef carbon = CFSTR( "com.apple.Carbon" );
+		
+		CSCopyUserNameProc  csCopyUserName = NULL;
+		
+		CFStringRef result = NULL;
+		
+		if ( CFBundleRef bundle = CFBundleGetBundleWithIdentifier( carbon ) )
+		{
+			CFStringRef name = CFSTR( "CSCopyUserName" );
+			
+			csCopyUserName = (CSCopyUserNameProc) CFBundleGetFunctionPointerForName( bundle, name );
+			
+			if ( void* ptr = CFBundleGetFunctionPointerForName( bundle, name ) )
+			{
+				CSCopyUserNameProc csCopyUserName = (CSCopyUserNameProc) ptr;
+				
+				return csCopyUserName( useShortName );
+			}
+		}
+		
+		// Both bundle and csCopyUserName got with "Get", so
+		// no need to release.
+		
+		return NULL;
+	}
+	
+	static UInt32 SystemVersion()
+	{
+		static UInt32 sysv = N::Gestalt( N::GestaltSelector( gestaltSystemVersion ) );
+		
+		return sysv;
+	}
+	
+	static std::string CFStringGetStdString( CFStringRef string )
+	{
+		CFIndex length = CFStringGetLength( string );
+		
+		std::string result;
+		
+		result.resize( length );
+		
+		CFIndex usedBufLen = 0;
+		
+		CFIndex nConverted = CFStringGetBytes( string,
+		                                       CFRangeMake( 0, length ),
+		                                       kCFStringEncodingMacRoman,
+		                                       '\0',
+		                                       false,
+		                                       (UInt8*) &result[0],
+		                                       length,
+		                                       &usedBufLen );
+		
+		if ( usedBufLen != length )
+		{
+			throw N::ParamErr();
+		}
+		
+		return result;
+	}
+	
+	static std::string GetUserName()
+	{
+		if ( !TARGET_RT_MAC_MACHO && (TARGET_CPU_68K  ||  SystemVersion() < 0x00001000) )
+		{
+			return GetStringResource( -16096 );
+		}
+		
+		if ( CFStringRef userName = CSCopyUserName_CFM( false ) )
+		{
+			return CFStringGetStdString( userName );
+		}
+		
+		return "";
+	}
+	
 	std::string sys_mac_user_name_Query::operator()() const
 	{
-		return GetStringResource( -16096 );
+		return GetUserName() + "\n";
 	}
 	
 }
