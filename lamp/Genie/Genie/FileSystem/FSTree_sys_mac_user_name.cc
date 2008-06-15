@@ -99,7 +99,7 @@ namespace Genie
 	
 	static std::string GetUserName()
 	{
-		if ( !TARGET_RT_MAC_MACHO && (TARGET_CPU_68K  ||  SystemVersion() < 0x00001000) )
+		if ( !TARGET_RT_MAC_MACHO && (!TARGET_API_MAC_CARBON  ||  SystemVersion() < 0x00001000) )
 		{
 			return GetStringResource( -16096 );
 		}
