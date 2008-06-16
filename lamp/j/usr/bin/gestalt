@@ -16,14 +16,18 @@ my %formats =
 		$_ /= 1000, $x = shift @x while $_ >= 1000;
 		".1f ${x}Hz";
 	},
-	t => sub { $_ = pack "L", $_; "s" },
+	t => sub { $_ = pack "L", $_; 's' },
+	v => sub { $_ = join '', ($_ >> 12) & 0xF || '',
+	                         ($_ >>  8) & 0xF, '.',
+	                         ($_ >>  4) & 0xF, '.',
+	                          $_        & 0xF; 's' },
 );
 
 my $display = $default_display;
 
 my $arg = shift;
 
-if ( $arg =~ m/^ - ([bdxkt]) /x )
+if ( $arg =~ m/^ - ([bdxktv]) /x )
 {
 	$display = $1;
 	
