@@ -9,13 +9,20 @@ my %formats =
 	b => '.32b',
 	x => '.8x',
 	d => 'd',
+	k => sub
+	{
+		my @x = qw( K M G );
+		my $x = '';
+		$_ /= 1000, $x = shift @x while $_ >= 1000;
+		".1f ${x}Hz";
+	},
 );
 
 my $display = $default_display;
 
 my $arg = shift;
 
-if ( $arg =~ m/^ - ([bdx]) /x )
+if ( $arg =~ m/^ - ([bdxk]) /x )
 {
 	$display = $1;
 	
@@ -42,6 +49,8 @@ if ( not ioctl( $gestalt, $request, $result ) )
 my $output = unpack "L", $result;
 
 my $format = $formats{ $display };
+
+ref $format and $format = $format->() for $output;
 
 printf "\%$format\n", $output;
 
