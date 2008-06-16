@@ -16,7 +16,7 @@ my %formats =
 		$_ /= 1000, $x = shift @x while $_ >= 1000;
 		".1f ${x}Hz";
 	},
-	t => sub { $_ = pack "L", $_; "'s'" },
+	t => sub { $_ = pack "L", $_; "s" },
 );
 
 my $display = $default_display;
