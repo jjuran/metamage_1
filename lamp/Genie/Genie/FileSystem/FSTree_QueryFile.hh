@@ -47,9 +47,17 @@ namespace Genie
 			                  const Query&        query ) : FSTree_QueryFile_Base( parentPathname, name ),
 			                                                itsQuery( query )  {}
 			
+			off_t GetEOF() const;
+			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
+	
+	template < class Query >
+	off_t FSTree_QueryFile< Query >::GetEOF() const
+	{
+		return itsQuery().size();
+	}
 	
 	template < class Query >
 	boost::shared_ptr< IOHandle > FSTree_QueryFile< Query >::Open( OpenFlags /*flags*/ ) const
