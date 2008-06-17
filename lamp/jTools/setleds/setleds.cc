@@ -29,49 +29,6 @@ namespace O = Orion;
 
 #if !TARGET_API_MAC_CARBON
 
-#include "Nucleus/IndexedContainer.h"
-
-namespace Nitrogen
-{
-	
-	struct ADBDevice_Container_Specifics
-	{
-		typedef UInt16             size_type;
-		typedef SInt16             difference_type;
-		typedef GetIndADB_Result   value_type;
-		typedef const value_type&  const_reference;
-		typedef const value_type*  const_pointer;
-		
-		class Nothing {};
-		
-		typedef Nothing ConstIteratorState;
-		typedef Nothing ConstContainerState;
-		
-		
-		static size_type Size( ConstContainerState )
-		{
-			return CountADBs();
-		}
-		
-		static const_reference GetReference( ConstIteratorState state, size_type position )
-		{
-			return GetIndADB( position + 1 );
-		}
-		
-		static const_pointer GetPointer( ConstIteratorState state, size_type position )
-		{
-			return &GetReference( state, position );
-		}
-	};
-	
-	class ADBDevice_Container : public Nucleus::ConstIndexedContainer< ADBDevice_Container_Specifics >
-	{
-		public:
-			ADBDevice_Container() : ConstIndexedContainer( ADBDevice_Container_Specifics::Nothing() )  {}
-	};
-	
-}
-
 
 const UInt8 kLEDValueMask = 7;
 
