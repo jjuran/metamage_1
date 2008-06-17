@@ -39,15 +39,11 @@ namespace Genie
 		
 		CFStringRef carbon = CFSTR( "com.apple.Carbon" );
 		
-		CSCopyUserNameProc  csCopyUserName = NULL;
-		
-		CFStringRef result = NULL;
-		
 		if ( CFBundleRef bundle = CFBundleGetBundleWithIdentifier( carbon ) )
 		{
 			CFStringRef name = CFSTR( "CSCopyUserName" );
 			
-			csCopyUserName = (CSCopyUserNameProc) CFBundleGetFunctionPointerForName( bundle, name );
+			CSCopyUserNameProc csCopyUserName = (CSCopyUserNameProc) CFBundleGetFunctionPointerForName( bundle, name );
 			
 			if ( void* ptr = CFBundleGetFunctionPointerForName( bundle, name ) )
 			{
