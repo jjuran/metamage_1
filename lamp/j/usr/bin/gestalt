@@ -4,6 +4,36 @@ my $device = '/sys/mac/gestalt';
 
 my $default_display = 'x';
 
+sub Version
+{
+	$_ = join '', ($_ >> 12) & 0xF || '',
+	              ($_ >>  8) & 0xF, '.',
+	              ($_ >>  4) & 0xF, '.',
+	               $_        & 0xF;
+	
+	's';
+}
+
+sub NumVersion
+{
+	my @stages = qw( d a b );
+	
+	my $stage = ($_ >> 13) & 0x7;
+	
+	my $v = $_ >> 16;
+	
+	Version() for $v;
+	
+	if ( my $code = $stages[ $stage - 1 ] )
+	{
+		$v .= $code . ($_ & 0xff);
+	}
+	
+	$_ = $v;
+	
+	's';
+}
+
 my %formats =
 (
 	b => '.32b',
@@ -17,17 +47,15 @@ my %formats =
 		".1f ${x}Hz";
 	},
 	t => sub { $_ = pack "L", $_; 's' },
-	v => sub { $_ = join '', ($_ >> 12) & 0xF || '',
-	                         ($_ >>  8) & 0xF, '.',
-	                         ($_ >>  4) & 0xF, '.',
-	                          $_        & 0xF; 's' },
+	v => sub { Version() },
+	V => sub { NumVersion() },
 );
 
 my $display = $default_display;
 
 my $arg = shift;
 
-if ( $arg =~ m/^ - ([bdxktv]) /x )
+if ( $arg =~ m/^ - ([bdxktvV]) /x )
 {
 	$display = $1;
 	
