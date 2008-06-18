@@ -211,6 +211,9 @@
 			{
 				while ( *vars )
 				{
+					// This ensures push_back() won't (fail to) allocate memory
+					result.reserve( result.size() + 1 );
+					
 					result.push_back( copy_string( *vars++ ) );
 				}
 			}
