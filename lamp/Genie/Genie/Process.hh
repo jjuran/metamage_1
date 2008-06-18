@@ -15,10 +15,6 @@
 #include <map>
 #include <string>
 
-// Iota
-#include "iota/argv.hh"
-#include "iota/environ.hh"
-
 // Boost
 #include <boost/shared_ptr.hpp>
 
@@ -132,7 +128,8 @@ namespace Genie
 			
 			int* itsErrno;
 			
-			iota::environ_t itsEnvP;
+			std::string itsEnvStorage;
+			std::vector< char* > itsEnvP;
 			
 			Backtrace::StackFramePtr itsStackBottomPtr;
 			Backtrace::StackFramePtr itsStackFramePtr;

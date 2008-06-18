@@ -552,7 +552,7 @@ namespace Genie
 		
 		int          argc = argVector.size() - 1;  // don't count trailing NULL
 		iota::argp_t argv = &argVector.front();
-		iota::envp_t envp = itsEnvP;
+		iota::envp_t envp = &itsEnvP.front();
 		
 		// Pass envp in ToolScratch + 4 to initialize environ
 		reinterpret_cast< iota::envp_t* >( LMGetToolScratch() )[1] = envp;
@@ -808,7 +808,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
 		itsErrno              ( NULL ),
-		itsEnvP               ( NULL ),
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
@@ -844,7 +843,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.GetProcessGroup() ),
 		itsErrno              ( parent.itsErrno ),
-		itsEnvP               ( NULL ),
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
@@ -941,6 +939,35 @@ namespace Genie
 		}
 	}
 	
+	static void StoreEnviron( const char* const*     envp,
+	                          std::string&           storage,
+	                          std::vector< char* >&  result )
+	{
+		result.clear();
+		storage.clear();
+		
+		if ( envp != NULL )
+		{
+			size_t total_length = 0;
+			
+			for ( const char* const* pp = envp;  *pp;  ++pp )
+			{
+				total_length += std::strlen( *pp ) + 1;
+			}
+			
+			storage.reserve( total_length );
+			
+			for ( const char* const* pp = envp;  *pp;  ++pp )
+			{
+				result.push_back( &*storage.end() );
+				
+				storage.append( *pp, *pp + std::strlen( *pp ) + 1 );  // include NUL byte
+			}
+		}
+		
+		result.push_back( NULL );
+	}
+	
 	NN::Owned< N::ThreadID >  Process::Exec( const FSTreePtr&    executable,
 	                                         const char* const   argv[],
 	                                         const char* const*  envp )
@@ -963,7 +990,7 @@ namespace Genie
 		itsOldMainEntry   = itsMainEntry;
 		itsOldBinaryImage = itsBinaryImage;
 		
-		itsEnvP = envp;
+		StoreEnviron( envp, itsEnvStorage, itsEnvP );
 		
 		// This is just to make sure that the fiel is executable.
 		// It breaks kernel-builtin binaries for now, but too bad.
