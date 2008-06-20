@@ -55,7 +55,7 @@ namespace jTools
 	
 	
 	static const char* kInvariantMWCOptions = " -nosyspath"
-			                                  " -w all,nounusedarg,noimplicit,nonotinlined"
+			                                  " -w all,nounusedarg,noimplicit,nonotinlined,noextracomma"
 			                                  " -ext o"
 			                                  " -maxerrors 8"
 			                                  " -convertpaths -nomapcr"
