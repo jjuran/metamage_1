@@ -158,9 +158,6 @@ namespace Genie
 		private:
 			FSTreePtr itsProgramFile;
 			
-			BinaryImage itsBinaryImage;
-			BinaryImage itsOldBinaryImage;
-			
 			MainEntry itsMainEntry;
 			MainEntry itsOldMainEntry;
 			

@@ -987,15 +987,13 @@ namespace Genie
 		
 		// Save the binary image that we're running from.
 		// We can't use stack storage because we run the risk of the thread terminating.
-		itsOldMainEntry   = itsMainEntry;
-		itsOldBinaryImage = itsBinaryImage;
+		itsOldMainEntry = itsMainEntry;
 		
 		StoreEnviron( envp, itsEnvStorage, itsEnvP );
 		
-		// This is just to make sure that the fiel is executable.
+		// This is just to make sure that the file is executable.
 		// It breaks kernel-builtin binaries for now, but too bad.
-		itsBinaryImage = GetBinaryImage( itsProgramFile->GetFSSpec() );  // throws on bad executable
-		itsBinaryImage.reset();
+		(void) GetBinaryImage( itsProgramFile->GetFSSpec() );  // throws on bad executable
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
