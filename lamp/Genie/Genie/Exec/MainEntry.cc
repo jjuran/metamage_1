@@ -40,7 +40,7 @@ namespace Genie
 	{
 		public:
 			CodeResourceMain( const BinaryImage& image ) : BinaryImageClient( image ),
-			                                               MainEntryPoint( reinterpret_cast< Main3 >( image.Get().Get() ) )
+			                                               MainEntryPoint( reinterpret_cast< Main3 >( *image.Get().Get() ) )
 			{
 			}
 	};
