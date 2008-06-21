@@ -114,53 +114,12 @@ namespace Genie
 	}
 	
 	
-	static UInt32 GetInitCodeEntryPoint()
-	{
-		UInt32 offset = 0;
-		
-		try
-		{
-			N::Handle h = N::Get1NamedResource( N::ResType( 'Entr' ), "\p" "__InitCode__" );
-			
-			offset = *(UInt32*) *h.Get();
-			
-			N::ReleaseResource( h );
-		}
-		catch ( ... )
-		{
-		}
-		
-		return offset;
-	}
-	
-	static void Patch68KStartupToNotRestoreRegisters( ::Ptr code )
-	{
-		const UInt32 nopnop = 0x4e714e71;
-		
-		UInt32* saveRegisters = reinterpret_cast< unsigned long* >( code + 12 );
-		
-		*saveRegisters = nopnop;
-		
-		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( code + 32 );
-		
-		*restoreRegisters = nopnop;
-		
-		if ( UInt32 offset = GetInitCodeEntryPoint() )
-		{
-			UInt32 jsrInitCode = 0x4eba0000 | (offset - 34);
-			
-			*restoreRegisters = jsrInitCode;
-		}
-	}
-	
 	static NN::Owned< N::Ptr > ReadProgramAsCodeResource()
 	{
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
 		NN::Owned< N::Ptr > code = NN::Convert< NN::Owned< N::Ptr > >( N::Get1Resource( resType, resID ) );
-		
-		Patch68KStartupToNotRestoreRegisters( code.Get() );
 		
 		return code;
 	}
