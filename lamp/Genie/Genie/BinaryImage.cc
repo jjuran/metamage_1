@@ -74,8 +74,8 @@ namespace Genie
 	
 	struct BinaryImageCacheEntry
 	{
-		NN::Shared< N::Ptr >  image;
-		BinaryFileMetadata   metadata;
+		BinaryImage         image;
+		BinaryFileMetadata  metadata;
 	};
 	
 	template < class T > static int cmp( const T& a, const T& b )
@@ -114,12 +114,14 @@ namespace Genie
 	}
 	
 	
-	static NN::Owned< N::Ptr > ReadProgramAsCodeResource()
+	static BinaryImage ReadProgramAsCodeResource()
 	{
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
-		NN::Owned< N::Ptr > code = NN::Convert< NN::Owned< N::Ptr > >( N::Get1Resource( resType, resID ) );
+		BinaryImage code = N::DetachResource( N::Get1Resource( resType, resID ) );
+		
+		N::HLockHi( code.Get() );
 		
 		return code;
 	}
@@ -178,7 +180,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static NN::Owned< N::Ptr > ReadProgramAsCodeFragment( const FSSpec& file )
+	static BinaryImage ReadProgramAsCodeFragment( const FSSpec& file )
 	{
 		N::ResType  resType = N::ResType( kCFragResourceType );  // cfrg
 		N::ResID    resID   = N::ResID  ( kCFragResourceID   );  // 0
@@ -211,18 +213,18 @@ namespace Genie
 			length = eof - offset;
 		}
 		
-		NN::Owned< N::Ptr > data = N::NewPtr( length );
+		BinaryImage data = N::NewHandle( length );
+		
+		N::HLockHi( data );
 		
 		N::SetFPos( refNum, N::fsFromStart, offset );
 		
-		io::read( refNum, data.Get().Get(), length );
-		
-		//return io::slurp_file< N::PtrFlattener >( file );
+		io::read( refNum, *data.Get().Get(), length );
 		
 		return data;
 	}
 	
-	inline NN::Owned< N::Ptr > ReadImageFromFile( const FSSpec& file )
+	inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
 		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
 		
@@ -232,7 +234,7 @@ namespace Genie
 		            : ReadProgramAsCodeFragment( file );
 	}
 	
-	NN::Shared< N::Ptr > GetBinaryImage( const FSSpec& file )
+	BinaryImage GetBinaryImage( const FSSpec& file )
 	{
 		if ( TARGET_CPU_68K )
 		{
@@ -243,7 +245,7 @@ namespace Genie
 		if ( TARGET_API_MAC_CARBON )
 		{
 			// GetMemFragment / kPrivateCFragCopy is broken on OS X
-			// FIXME:  Found out which versions exactly,
+			// FIXME:  Find out which versions exactly,
 			// and still cache for the good ones and OS 9
 			// Or just test for it at runtime
 			return ReadImageFromFile( file );

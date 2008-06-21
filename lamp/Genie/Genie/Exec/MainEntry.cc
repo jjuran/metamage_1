@@ -48,8 +48,8 @@ namespace Genie
 	
 	inline NN::Owned< N::CFragConnectionID > ConnectToFragment( const BinaryImage& image )
 	{
-		return N::GetMemFragment< N::kPrivateCFragCopy >( image.Get(),
-		                                                  N::GetPtrSize( image ) );
+		return N::GetMemFragment< N::kPrivateCFragCopy >( *image.Get(),
+		                                                  N::GetHandleSize( image ) );
 	}
 	
 	

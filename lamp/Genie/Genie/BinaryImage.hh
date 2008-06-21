@@ -24,7 +24,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
-	typedef NN::Shared< N::Ptr > BinaryImage;
+	typedef NN::Shared< N::Handle > BinaryImage;
 	
 	BinaryImage GetBinaryImage( const FSSpec& file );
 	
