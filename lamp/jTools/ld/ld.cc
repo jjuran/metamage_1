@@ -298,7 +298,7 @@ namespace jTools
 		return build + " -t Wish -c Poof";
 	}
 	
-	static void Mark68KEntryPoints( const FSSpec& file )
+	static unsigned long GetOffsetOfInitCode( const FSSpec& file )
 	{
 		FSSpec linkMap = file;
 		
@@ -322,21 +322,51 @@ namespace jTools
 			{
 				unsigned long offset = std::strtoul( line.c_str() + code.size(), NULL, 16 );
 				
-				NN::Owned< N::Handle > h = N::NewHandle( 4 );
-				
-				*reinterpret_cast< UInt32* >( *h.Get().Get() ) = offset;
-				
-				NN::Owned< N::ResFileRefNum > resFileOpened( N::FSpOpenResFile( file, N::fsRdWrPerm ) );
-				
-				N::AddResource( h, N::ResType( 'Entr' ), N::ResID( 0 ), "\p" "__InitCode__" );
-				
-				return;
+				return offset;
 			}
 		}
 		
 		p7::write( p7::stderr_fileno, STR_LEN( "ld: can't find __InitCode__ in link map for 68K tool\n" ) );
 		
 		O::ThrowExitStatus( 1 );
+	}
+	
+	static void Patch68KStartupToNotRestoreRegisters( ::Handle code, UInt32 initCodeOffset )
+	{
+		const UInt32 nopnop = 0x4e714e71;
+		
+		UInt32* saveRegisters = reinterpret_cast< unsigned long* >( *code + 12 );
+		
+		*saveRegisters = nopnop;
+		
+		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( *code + 32 );
+		
+		*restoreRegisters = nopnop;
+		
+		if ( initCodeOffset )
+		{
+			UInt32 jsrInitCode = 0x4eba0000 | (initCodeOffset - 34);
+			
+			*restoreRegisters = jsrInitCode;
+		}
+	}
+	
+	static void Patch68KStartup( const FSSpec& file )
+	{
+		unsigned long offset = GetOffsetOfInitCode( file );
+		
+		N::ResType  resType = N::ResType( 'Wish' );
+		N::ResID    resID   = N::ResID  ( 0      );
+		
+		NN::Owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdWrPerm );
+		
+		N::Handle code = N::Get1Resource( resType, resID );
+		
+		Patch68KStartupToNotRestoreRegisters( code.Get(), offset );
+		
+		N::ChangedResource( code );
+		
+		N::WriteResource( code );
 	}
 	
 	static int Main( int argc, iota::argv_t argv )
@@ -570,7 +600,7 @@ namespace jTools
 		
 		if ( m68k  &&  gProductType == kProductTool )
 		{
-			Mark68KEntryPoints( gOutputFile );
+			Patch68KStartup( gOutputFile );
 		}
 		
 		return exit_status;
