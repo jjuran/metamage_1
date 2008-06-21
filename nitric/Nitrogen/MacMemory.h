@@ -298,6 +298,36 @@ namespace Nitrogen
 		MemError();
 	}
 	
+	inline void HUnlock( Handle h )
+	{
+		::HUnlock( h );
+		MemError();
+	}
+	
+	inline void HPurge( Handle h )
+	{
+		::HPurge( h );
+		MemError();
+	}
+	
+	inline void HNoPurge( Handle h )
+	{
+		::HNoPurge( h );
+		MemError();
+	}
+	
+	inline void HLockHi( Handle h )
+	{
+		::HLockHi( h );
+		MemError();
+	}
+	
+	inline void MoveHHi( Handle h )
+	{
+		::MoveHHi( h );
+		MemError();
+	}
+	
 	// 1058
 	inline void DisposePtr( Nucleus::Owned< Ptr > )  {}
 	
