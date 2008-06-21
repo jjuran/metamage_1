@@ -991,10 +991,6 @@ namespace Genie
 		
 		StoreEnviron( envp, itsEnvStorage, itsEnvP );
 		
-		// This is just to make sure that the file is executable.
-		// It breaks kernel-builtin binaries for now, but too bad.
-		(void) GetBinaryImage( itsProgramFile->GetFSSpec() );  // throws on bad executable
-		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
