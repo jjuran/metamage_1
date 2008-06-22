@@ -13,6 +13,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_rom.hh"
 #if !TARGET_API_MAC_CARBON
+#include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_unit.hh"
 #endif
 #include "Genie/FileSystem/FSTree_sys_mac_user.hh"
@@ -29,6 +30,7 @@ namespace Genie
 		
 	#if !TARGET_API_MAC_CARBON
 		
+		MapSingleton< FSTree_sys_mac_crm     >();
 		MapSingleton< FSTree_sys_mac_unit    >();
 		
 	#endif

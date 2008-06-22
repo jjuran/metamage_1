@@ -1,0 +1,27 @@
+/*	=====================
+ *	FSTree_sys_mac_crm.cc
+ *	=====================
+ */
+
+#include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
+
+// Genie
+#include "Genie/FileSystem/FSTree_sys_mac.hh"
+#include "Genie/FileSystem/FSTree_crm_serial.hh"
+
+
+namespace Genie
+{
+	
+	void FSTree_sys_mac_crm::Init()
+	{
+		MapSingleton< FSTree_sys_mac_crm_serial >();
+	}
+	
+	FSTreePtr FSTree_sys_mac_crm::Parent() const
+	{
+		return GetSingleton< FSTree_sys_mac >();
+	}
+	
+}
+
