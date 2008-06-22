@@ -30,6 +30,7 @@ namespace Nucleus
 			typedef typename Specifics::size_type        size_type;
 			typedef typename Specifics::difference_type  difference_type;
 			typedef typename Specifics::value_type       value_type;
+			typedef typename Specifics::key_type         key_type;
 			
 			typedef value_type& reference;
 			typedef const value_type& const_reference;
@@ -42,41 +43,42 @@ namespace Nucleus
 					typedef typename AdvanceUntilFailureContainer::size_type        size_type;
 					typedef typename AdvanceUntilFailureContainer::difference_type  difference_type;
 					typedef typename AdvanceUntilFailureContainer::value_type       value_type;
+					typedef typename AdvanceUntilFailureContainer::key_type         key_type;
 					typedef const value_type *pointer;
 					typedef const value_type& reference;
 					typedef std::forward_iterator_tag iterator_category;
 				
 				private:
-					value_type value;
+					key_type its_key;
 					
-					void GetNextValue()
+					void GetNextKey()
 					{
 						try
 						{
-							value = Specifics::GetNextValue( value );
+							its_key = Specifics::GetNextKey( its_key );
 						}
 						catch ( const typename Specifics::EndOfEnumeration& )
 						{
-							value = Specifics::end_value();
+							its_key = Specifics::end_key();
 						}
 					}
 					
-					const_iterator( const Specifics& b, value_type v ) : Specifics( b ),
-					                                                     value( v )
+					const_iterator( const Specifics& b, key_type k ) : Specifics( b ),
+					                                                   its_key  ( k )
 					{
 					}
-				
-				public:
-					const_iterator()                  : value( Specifics::end_value() )  {}
 					
-					const_iterator& operator++()      { GetNextValue();  return *this; }
+				public:
+					const_iterator()                  : its_key( Specifics::end_key() )  {}
+					
+					const_iterator& operator++()      { GetNextKey();  return *this; }
 					const_iterator operator++(int)    { const_iterator old = *this; operator++(); return old; }
 					
-					reference operator*() const       { return value; }
-					pointer operator->() const        { return &value; }
+					reference operator*() const       { return *Specifics::GetPointer( its_key ); }
+					pointer operator->() const        { return  Specifics::GetPointer( its_key ); }
 					
 					friend bool operator==( const const_iterator& a,
-					                        const const_iterator& b )    { return a.value == b.value; }
+					                        const const_iterator& b )    { return a.its_key == b.its_key; }
 					
 					friend bool operator!=( const const_iterator& a,
 					                        const const_iterator& b )    { return !( a == b ); }
@@ -86,8 +88,8 @@ namespace Nucleus
 			{
 			}
 			
-			const_iterator begin() const            { const_iterator first( *this, Specifics::begin_value() );  return ++first; }
-			const_iterator end() const              { return const_iterator( *this, Specifics::end_value() ); }
+			const_iterator begin() const            { const_iterator first( *this, Specifics::begin_key() );  return ++first; }
+			const_iterator end() const              { return const_iterator( *this, Specifics::end_key() ); }
 	};
 	
 }
