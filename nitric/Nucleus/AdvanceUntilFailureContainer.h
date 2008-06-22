@@ -88,8 +88,8 @@ namespace Nucleus
 			{
 			}
 			
-			const_iterator begin() const            { const_iterator first( *this, Specifics::begin_key() );  return ++first; }
-			const_iterator end() const              { return const_iterator( *this, Specifics::end_key() ); }
+			const_iterator begin() const            { return const_iterator( *this, Specifics::begin_key() ); }
+			const_iterator end() const              { return const_iterator( *this, Specifics::end_key  () ); }
 	};
 	
 }
