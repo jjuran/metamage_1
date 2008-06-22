@@ -15,8 +15,8 @@
 #include "Nucleus/AdvanceUntilFailureContainer.h"
 #include "Nucleus/IndexedContainer.h"
 
-// Nitrogen
-#include "Nitrogen/Processes.h"
+// ClassicToolbox
+#include "ClassicToolbox/Devices.h"
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
@@ -82,7 +82,7 @@ namespace Nitrogen
 		typedef const value_type*  const_pointer;
 		typedef const_pointer      key_type;
 		
-		typedef Nucleus::ErrorCode< OSStatus, fnfErr > EndOfEnumeration;
+		class EndOfEnumeration {};  // not used
 		
 		static key_type GetNextKey( key_type key )
 		{
@@ -128,7 +128,7 @@ namespace Genie
 	{
 		typedef UnitNumber Key;
 		
-		static std::string NameFromKey( const Key& psn );
+		static std::string NameFromKey( const Key& key );
 		
 		static Key KeyFromName( const std::string& name );
 	};
