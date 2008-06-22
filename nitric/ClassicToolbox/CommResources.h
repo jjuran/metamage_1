@@ -238,6 +238,7 @@ namespace Nitrogen
 			typedef CRMRecPtr value_type;
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
+			typedef value_type key_type;
 			
 			typedef CRMSearch_Failed EndOfEnumeration;
 			
@@ -246,14 +247,16 @@ namespace Nitrogen
 				crmDeviceType( crmDeviceType )
 			{}
 			
-			value_type GetNextValue( const value_type& value )
+			key_type GetNextKey( const key_type& value ) const
 			{
 				return CRMSearch( crmDeviceType,
 				                  CRMDeviceID( value != NULL ? value->crmDeviceID : 0 ) );
 			}
 			
-			static value_type begin_value()  { return NULL; }
-			static value_type end_value()    { return NULL; }
+			static const key_type* GetPointer( const key_type& value )  { return &value; }
+			
+			static key_type begin_key()  { return NULL; }
+			static key_type end_key()    { return NULL; }
 	};
 	
 	class CRMResource_Container: public Nucleus::AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
