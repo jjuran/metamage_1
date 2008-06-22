@@ -32,14 +32,15 @@ namespace Nitrogen
 			ICMapEntry_ContainerSpecifics( ICMapEntryHandle handle ) : itsEntries( *handle ),
 			                                                           itsEntriesEnd( reinterpret_cast< const char* >( itsEntries ) + N::GetHandleSize( handle ) )  {}
 			
-			typedef const ICMapEntry* value_type;
+			typedef ICMapEntry value_type;
 			//typedef std::size_t value_type;
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
+			typedef const value_type* key_type;
 			
 			class EndOfEnumeration {};  // Not used
 			
-			value_type GetNextValue( const value_type& value )
+			key_type GetNextKey( const key_type& value ) const
 			{
 				const char* next = reinterpret_cast< const char* >( value ) + value->totalLength;
 				
@@ -48,14 +49,16 @@ namespace Nitrogen
 				
 				if ( next >= itsEntriesEnd )
 				{
-					return end_value();
+					return end_key();
 				}
 				
 				return reinterpret_cast< const ICMapEntry* >( next );
 			}
 			
-			       value_type begin_value() const  { return itsEntries; }
-			static value_type end_value()          { return NULL;       }
+			static const value_type* GetPointer( key_type ptr )  { return ptr; }
+			
+			       key_type begin_key() const  { return itsEntries; }
+			static key_type end_key()          { return NULL;       }
 	};
 	
 	class ICMapEntry_Container: public Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::ICMapEntry_ContainerSpecifics >
@@ -91,11 +94,11 @@ struct ICMapEntryStrings
 	std::string  entryName;
 };
 
-static ICMapEntryStrings GetStringsFromICMapEntry( const ICMapEntry* entry )
+static ICMapEntryStrings GetStringsFromICMapEntry( const ICMapEntry& entry )
 {
 	ICMapEntryStrings result;
 	
-	const unsigned char* p = (const unsigned char*) entry + entry->fixedLength;
+	const unsigned char* p = (const unsigned char*) &entry + entry.fixedLength;
 	
 	result.extension = NN::Convert< std::string >( p );
 	
@@ -118,11 +121,11 @@ static ICMapEntryStrings GetStringsFromICMapEntry( const ICMapEntry* entry )
 	return result;
 }
 
-static void ReportMapping( const ICMapEntry* entry )
+static void ReportMapping( const ICMapEntry& entry )
 {
-	short version = entry->version;
+	short version = entry.version;
 	
-	//const unsigned char* ext_ension = (const unsigned char*) entry + entry->fixedLength;
+	//const unsigned char* ext_ension = (const unsigned char*) entry + entry.fixedLength;
 	
 	ICMapEntryStrings strings = GetStringsFromICMapEntry( entry );
 	
