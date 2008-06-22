@@ -255,8 +255,8 @@ namespace Nitrogen
 			
 			static const key_type* GetPointer( const key_type& value )  { return &value; }
 			
-			static key_type begin_key()  { return NULL; }
-			static key_type end_key()    { return NULL; }
+			       key_type begin_key() const  { return GetNextKey( NULL ); }
+			static key_type end_key  ()        { return             NULL  ; }
 	};
 	
 	class CRMResource_Container: public Nucleus::AdvanceUntilFailureContainer< CRMResource_Container_Specifics >
