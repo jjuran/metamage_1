@@ -3,6 +3,8 @@
  *	====================
  */
 
+#if !TARGET_API_MAC_CARBON
+
 #include "Genie/FileSystem/FSTree_crm_serial.hh"
 
 // Genie
@@ -92,4 +94,6 @@ namespace Genie
 	}
 	
 }
+
+#endif
 
