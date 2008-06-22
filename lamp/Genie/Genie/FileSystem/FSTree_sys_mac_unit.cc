@@ -73,7 +73,8 @@ namespace Genie
 						DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
 						                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
 						
-						name = NN::Convert< std::string >( header->drvrName );
+						// Copy Pascal string onto stack before we allocate memory
+						name = NN::Convert< std::string >( N::Str255( header->drvrName ) );
 					}
 				}
 				
