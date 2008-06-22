@@ -102,5 +102,14 @@ namespace Nitrogen
 		// FIXME
 	}
 	
+	namespace Tests
+	{
+		
+		static void Test1( CRMDeviceType crmDeviceType )
+		{
+			CRMResource_Container crmResources = CRMResources( crmDeviceType );
+		}
+	}
+	
 }
 
