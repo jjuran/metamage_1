@@ -199,8 +199,8 @@ namespace Nitrogen
 			
 			static const key_type* GetPointer( const key_type& value )  { return &value; }
 			
-			static key_type begin_key()  { return NoProcess(); }
-			static key_type end_key()    { return NoProcess(); }
+			static key_type begin_key()  { return GetNextKey( NoProcess() ); }
+			static key_type end_key()    { return             NoProcess()  ; }
 	};
 	
 	class Process_Container: public Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::Process_ContainerSpecifics >
