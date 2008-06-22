@@ -565,8 +565,14 @@ namespace Genie
 		
 		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
+		// Accumulate any system time between start and entry to main()
+		LeaveSystemCall();
+		
 		// This is a separate function so registers get saved and restored
 		int exit_status = mainPtr( argc, argv, envp );
+		
+		// Accumulate any user time between last system call (if any) and return from main()
+		EnterSystemCall( "*RETURN*" );
 		
 		return exit_status;
 	}
@@ -579,9 +585,6 @@ namespace Genie
 			process->InitThread();
 			
 			int exit_status = process->Run();
-			
-			// Accumulate any user time between last system call (if any) and return from main()
-			process->EnterSystemCall( "*RETURN*" );
 			
 			process->Exit( exit_status );
 			
