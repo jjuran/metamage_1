@@ -765,8 +765,6 @@ namespace Genie
 		return NewProcessGroup( pgid, NewSession( pgid ) );
 	}
 	
-	class NoSuchProcessGroup {};
-	
 	static boost::shared_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
 	{
 		for ( ProcessList::iterator it = GetProcessList().begin();  it != GetProcessList().end();  ++it )
@@ -779,26 +777,24 @@ namespace Genie
 			}
 		}
 		
-		throw NoSuchProcessGroup();
+		return boost::shared_ptr< ProcessGroup >();
 	}
 	
 	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session )
 	{
-		try
-		{
-			boost::shared_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
-			
-			if ( pgrp->GetSession() != session )
-			{
-				p7::throw_errno( EPERM );
-			}
-			
-			return pgrp;
-		}
-		catch ( const NoSuchProcessGroup& )
+		boost::shared_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
+		
+		if ( pgrp.get() == NULL )
 		{
 			return NewProcessGroup( pgid, session );
 		}
+		
+		if ( pgrp->GetSession() != session )
+		{
+			p7::throw_errno( EPERM );
+		}
+		
+		return pgrp;
 	}
 	
 	Process::Process( RootProcess ) 
