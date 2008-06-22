@@ -188,16 +188,19 @@ namespace Nitrogen
 			typedef ProcessSerialNumber value_type;
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
+			typedef value_type key_type;
 			
 			typedef Nucleus::ErrorCode< OSStatus, procNotFound > EndOfEnumeration;
 			
-			value_type GetNextValue( const value_type& value )
+			static key_type GetNextKey( const key_type& value )
 			{
 				return GetNextProcess( value );
 			}
 			
-			static value_type begin_value()  { return NoProcess(); }
-			static value_type end_value()    { return NoProcess(); }
+			static const key_type* GetPointer( const key_type& value )  { return &value; }
+			
+			static key_type begin_key()  { return NoProcess(); }
+			static key_type end_key()    { return NoProcess(); }
 	};
 	
 	class Process_Container: public Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::Process_ContainerSpecifics >
