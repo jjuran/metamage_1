@@ -62,12 +62,17 @@ namespace Genie
 	class sys_mac_crm_serial_N_name_Query
 	{
 		private:
-			typedef N::CRMDeviceID Key;
+			typedef N::CRMDeviceID            Key;
+			typedef StringHandle              CRMSerialRecord::*Selector;
 			
 			Key itsKey;
+			
+			Selector itsSelector;
 		
 		public:
-			sys_mac_crm_serial_N_name_Query( const Key& key ) : itsKey( key )
+			sys_mac_crm_serial_N_name_Query( const Key&  key,
+			                                 Selector    selector ) : itsKey     ( key      ),
+			                                                          itsSelector( selector )
 			{
 			}
 			
@@ -77,7 +82,9 @@ namespace Genie
 				
 				N::CRMSerialPtr serialPtr = NN::Convert< N::CRMSerialPtr >( crmRec );
 				
-				std::string name = NN::Convert< std::string >( N::Str255( *serialPtr->name ) );
+				StringHandle h = serialPtr->*itsSelector;
+				
+				std::string name = NN::Convert< std::string >( N::Str255( *h ) );
 				
 				std::string output = name + "\n";
 				
@@ -88,9 +95,15 @@ namespace Genie
 	
 	FSTree_sys_mac_crm_serial_N::FSTree_sys_mac_crm_serial_N( const Key& key ) : itsKey( key )
 	{
-		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_crm_serial_N_name_Query >( Pathname(),
-		                                                                        "name",
-		                                                                        sys_mac_crm_serial_N_name_Query( key ) ) ) );
+		typedef FSTree_QueryFile< sys_mac_crm_serial_N_name_Query > QueryFile;
+		
+		typedef sys_mac_crm_serial_N_name_Query Query;
+		
+		std::string pathname = Pathname();
+		
+		Map( FSTreePtr( new QueryFile( pathname, "name",   Query( key, &CRMSerialRecord::name             ) ) ) );
+		Map( FSTreePtr( new QueryFile( pathname, "input",  Query( key, &CRMSerialRecord::inputDriverName  ) ) ) );
+		Map( FSTreePtr( new QueryFile( pathname, "output", Query( key, &CRMSerialRecord::outputDriverName ) ) ) );
 	}
 	
 }
