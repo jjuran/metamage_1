@@ -329,6 +329,8 @@ namespace jTools
 		p7::write( p7::stderr_fileno, STR_LEN( "ld: can't find __InitCode__ in link map for 68K tool\n" ) );
 		
 		O::ThrowExitStatus( 1 );
+		
+		return 0;  // not reached
 	}
 	
 	static void Patch68KStartupToNotRestoreRegisters( ::Handle code, UInt32 initCodeOffset )
