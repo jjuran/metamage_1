@@ -3,25 +3,16 @@
  *	==================
  */
 
-// MSL-fixup
-#include "FreeTheMallocPool.h"
-
 // FragmentInitTerm
 #include "FragmentInitTermProcs.h"
 
 #undef FRAGMENT_INIT_TERM_PROCS_ARRAY
 
-	// Cleanup malloc pool
-	static pascal void  MallocPool_Terminate();
+// Initialize our copy of the dispatcher's address from (dynamic) ToolScratch
+extern pascal OSErr InitializeDispatcher( const CFragInitBlock* );
 	
-#define FRAGMENT_INIT_TERM_PROCS_ARRAY  { { NULL, &MallocPool_Terminate }, FRAGMENT_INIT_TERM_PROCS }
+#define FRAGMENT_INIT_TERM_PROCS_ARRAY  { { &InitializeDispatcher, NULL }, FRAGMENT_INIT_TERM_PROCS }
 
 // FragmentInitTerm
 #include "FragmentInitTerm.h"
-
-
-pascal void  MallocPool_Terminate()
-{
-	FreeTheMallocPool( 0 );
-}
 

@@ -19,7 +19,7 @@
 #pragma exceptions off
 
 
-typedef void (*CleanupHandler)();
+typedef void (*CleanupHandler)( short destroying_globals );
 
 
 #if TARGET_CPU_68K
@@ -54,7 +54,16 @@ typedef void (*CleanupHandler)();
 
 #if TARGET_CPU_PPC
 	
-	static void* const gDispatcher = *reinterpret_cast< void** >( ::LMGetToolScratch() );
+	static void* gDispatcher;
+	
+	extern pascal OSErr InitializeDispatcher( const CFragInitBlock* );
+	
+	pascal OSErr InitializeDispatcher( const CFragInitBlock* )
+	{
+		gDispatcher = *reinterpret_cast< void** >( ::LMGetToolScratch() );
+		
+		return noErr;
+	}
 	
 	extern "C" void __ptr_glue();
 	
@@ -111,7 +120,7 @@ class Initializer
 	public:
 		Initializer()
 		{
-			InitProc( TARGET_RT_MAC_CFM ? NULL : &FreeTheMallocPool, &errno );
+			InitProc( &FreeTheMallocPool, &errno );
 		}
 };
 
