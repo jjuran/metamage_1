@@ -389,38 +389,48 @@
 		environ = NULL;
 	}
 	
-	static Environ gEnviron;
+	
+	static Environ* gEnvironPtr;
+	
+	extern "C" void InitializeEnviron();
+	
+	void InitializeEnviron()
+	{
+		static Environ gEnviron;
+		
+		gEnvironPtr = &gEnviron;
+	}
 	
 	
 	char* getenv( const char* name )
 	{
-		return gEnviron.GetEnv( name );
+		return gEnvironPtr->GetEnv( name );
 	}
 	
 	int setenv( const char* name, const char* value, int overwrite )
 	{
-		gEnviron.SetEnv( name, value, overwrite );
+		gEnvironPtr->SetEnv( name, value, overwrite );
 		
 		return 0;
 	}
 	
 	int putenv( const char* string )
 	{
-		gEnviron.PutEnv( string );
+		gEnvironPtr->PutEnv( string );
 		
 		return 0;
 	}
 	
 	void unsetenv( const char* name )
 	{
-		gEnviron.UnsetEnv( name );
+		gEnvironPtr->UnsetEnv( name );
 	}
 	
 	extern "C" int clearenv();
 	
 	int clearenv()
 	{
-		gEnviron.ClearEnv();
+		gEnvironPtr->ClearEnv();
 		
 		return 0;
 	}

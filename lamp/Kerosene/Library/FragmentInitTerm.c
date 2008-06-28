@@ -8,11 +8,24 @@
 
 #undef FRAGMENT_INIT_TERM_PROCS_ARRAY
 
-// Initialize our copy of the dispatcher's address from (dynamic) ToolScratch
-extern pascal OSErr InitializeDispatcher( const CFragInitBlock* );
-	
-#define FRAGMENT_INIT_TERM_PROCS_ARRAY  { { &InitializeDispatcher, NULL }, FRAGMENT_INIT_TERM_PROCS }
+extern pascal OSErr InitializeLampTool( const CFragInitBlock* );
+
+#define FRAGMENT_INIT_TERM_PROCS_ARRAY  { { &InitializeLampTool, NULL }, FRAGMENT_INIT_TERM_PROCS }
 
 // FragmentInitTerm
 #include "FragmentInitTerm.h"
+
+// Initialize our copy of the dispatcher's address from (dynamic) ToolScratch
+extern void InitializeDispatcher();
+
+// Initialize environ from ToolScratch
+extern void InitializeEnviron();
+
+pascal OSErr InitializeLampTool( const CFragInitBlock* )
+{
+	InitializeDispatcher();
+	InitializeEnviron();
+	
+	return noErr;
+}
 

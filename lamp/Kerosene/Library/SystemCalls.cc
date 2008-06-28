@@ -56,13 +56,11 @@ typedef void (*CleanupHandler)( short destroying_globals );
 	
 	static void* gDispatcher;
 	
-	extern pascal OSErr InitializeDispatcher( const CFragInitBlock* );
+	extern "C" void InitializeDispatcher();
 	
-	pascal OSErr InitializeDispatcher( const CFragInitBlock* )
+	void InitializeDispatcher()
 	{
 		gDispatcher = *reinterpret_cast< void** >( ::LMGetToolScratch() );
-		
-		return noErr;
 	}
 	
 	extern "C" void __ptr_glue();
