@@ -19,7 +19,7 @@
 #pragma exceptions off
 
 
-typedef void (*CleanupHandler)( short destroying_globals );
+typedef void (*CleanupHandler)();
 
 
 #if TARGET_CPU_68K
@@ -111,7 +111,7 @@ class Initializer
 	public:
 		Initializer()
 		{
-			InitProc( &FreeTheMallocPool, &errno );
+			InitProc( TARGET_RT_MAC_CFM ? NULL : &FreeTheMallocPool, &errno );
 		}
 };
 
