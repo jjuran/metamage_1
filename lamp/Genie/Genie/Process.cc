@@ -574,6 +574,8 @@ namespace Genie
 		// Accumulate any user time between last system call (if any) and return from main()
 		EnterSystemCall( "*RETURN*" );
 		
+		itsMainEntry.reset();  // calls fragment termination routine
+		
 		return exit_status;
 	}
 	
