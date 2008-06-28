@@ -337,20 +337,17 @@ namespace jTools
 	{
 		const UInt32 nopnop = 0x4e714e71;
 		
-		UInt32* saveRegisters = reinterpret_cast< unsigned long* >( *code + 12 );
+		UInt32* saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
+		UInt32* setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
 		
-		*saveRegisters = nopnop;
+		*saveRegisters = *setCurrentA4 + 4;
+		*setCurrentA4   = nopnop;
 		
 		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( *code + 32 );
 		
-		*restoreRegisters = nopnop;
+		UInt32 jsrInitCode = 0x4eba0000 | (initCodeOffset - 34);
 		
-		if ( initCodeOffset )
-		{
-			UInt32 jsrInitCode = 0x4eba0000 | (initCodeOffset - 34);
-			
-			*restoreRegisters = jsrInitCode;
-		}
+		*restoreRegisters = jsrInitCode;
 	}
 	
 	static void Patch68KStartup( const FSSpec& file )
