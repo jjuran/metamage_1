@@ -340,16 +340,19 @@ namespace jTools
 		UInt32* saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
 		UInt32* setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
 		UInt32* loadStartToA0 = reinterpret_cast< UInt32* >( *code + 20 );
+		UInt32* moveAndStrip  = reinterpret_cast< UInt32* >( *code + 24 );
+		UInt32* setupMainRsrc = reinterpret_cast< UInt32* >( *code + 28 );
+		UInt32* restoreRegs   = reinterpret_cast< UInt32* >( *code + 32 );
 		
 		*saveRegisters = *setCurrentA4  + 4;
 		*setCurrentA4  = *loadStartToA0 + 4;
-		*loadStartToA0 = nopnop;
-		
-		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( *code + 32 );
+		*loadStartToA0 = *moveAndStrip;
+		*moveAndStrip  = *setupMainRsrc + 4;
+		*setupMainRsrc = nopnop;
 		
 		UInt32 jsrInitCode = 0x4eba0000 | (initCodeOffset - 34);
 		
-		*restoreRegisters = jsrInitCode;
+		*restoreRegs = jsrInitCode;
 	}
 	
 	static void Patch68KStartup( const FSSpec& file )
