@@ -339,9 +339,11 @@ namespace jTools
 		
 		UInt32* saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
 		UInt32* setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
+		UInt32* loadStartToA0 = reinterpret_cast< UInt32* >( *code + 20 );
 		
-		*saveRegisters = *setCurrentA4 + 4;
-		*setCurrentA4   = nopnop;
+		*saveRegisters = *setCurrentA4  + 4;
+		*setCurrentA4  = *loadStartToA0 + 4;
+		*loadStartToA0 = nopnop;
 		
 		UInt32* restoreRegisters = reinterpret_cast< unsigned long* >( *code + 32 );
 		
