@@ -36,11 +36,25 @@
 #include "iota/environ.hh"
 #include "iota/strings.hh"
 
+// Kerosene
+#include "FreeTheMallocPool.h"
+
 
 // Exceptions are off here
 #pragma exceptions off
 
-
+	
+	typedef void (*CleanupHandler)( short destroying_globals );
+	
+	extern "C" void InitProc( CleanupHandler, int* );
+	
+	extern "C" void InitializeCallbacks();
+	
+	void InitializeCallbacks()
+	{
+		InitProc( &FreeTheMallocPool, &errno );
+	}
+	
 	const char* sys_errlist[] =
 	{
 /*  0 */	"No error",

@@ -6,14 +6,8 @@
 // Mac OS
 #include <LowMem.h>
 
-// Standard C/C++
-#include <cerrno>
-
 // Lamp
 #include "lamp/syscalls.h"
-
-// Kerosene
-#include "FreeTheMallocPool.h"
 
 
 #pragma exceptions off
@@ -42,13 +36,6 @@ typedef void (*CleanupHandler)( short destroying_globals );
 			MOVE.L #__NR_##name,D0 ;  \
 			JMP SystemCall         ;  \
 		}
-	
-	
-	asm static void InitProc( CleanupHandler, int* )
-	{
-		MOVE.L #__NR_InitProc,D0 ;
-		JMP SystemCall           ;
-	}
 	
 #endif
 
@@ -93,38 +80,9 @@ typedef void (*CleanupHandler)( short destroying_globals );
 			b SystemCall       ;  \
 		}
 	
-	
-	#pragma optimization_level 0
-	
-	// Metrowerks' optimizer cleverly elides the load instruction, so the
-	// dispatcher gets garbage for the system call index and calls one at random.
-	// Hilarity ensues.
-	// Actually, the value is generally out of range and we merely get ENOSYS.
-	// And. of course, InitProc() doesn't get called and errno remains NULL.
-	
-	asm static void InitProc( CleanupHandler, int* )
-	{
-		li r11,__NR_InitProc ;
-		b SystemCall         ;
-	}
-	
-	#pragma optimization_level reset
-	
 #endif
 
-
-class Initializer
-{
-	public:
-		Initializer()
-		{
-			InitProc( &FreeTheMallocPool, &errno );
-		}
-};
-
-static Initializer gInitializer;
-
-
+DEFINE_STUB( InitProc )
 DEFINE_STUB( _exit )
 DEFINE_STUB( SpawnVFork )
 DEFINE_STUB( read  )
