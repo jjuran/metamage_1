@@ -19,7 +19,7 @@
 #pragma exceptions off
 
 
-typedef void (*CleanupHandler)();
+typedef void (*CleanupHandler)( short destroying_globals );
 
 
 #if TARGET_CPU_68K
@@ -87,11 +87,21 @@ typedef void (*CleanupHandler)();
 		}
 	
 	
+	#pragma optimization_level 0
+	
+	// Metrowerks' optimizer cleverly elides the load instruction, so the
+	// dispatcher gets garbage for the system call index and calls one at random.
+	// Hilarity ensues.
+	// Actually, the value is generally out of range and we merely get ENOSYS.
+	// And. of course, InitProc() doesn't get called and errno remains NULL.
+	
 	asm static void InitProc( CleanupHandler, int* )
 	{
 		li r11,__NR_InitProc ;
 		b SystemCall         ;
 	}
+	
+	#pragma optimization_level reset
 	
 #endif
 
@@ -101,7 +111,7 @@ class Initializer
 	public:
 		Initializer()
 		{
-			InitProc( TARGET_RT_MAC_CFM ? NULL : &FreeTheMallocPool, &errno );
+			InitProc( &FreeTheMallocPool, &errno );
 		}
 };
 

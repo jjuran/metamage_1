@@ -22,6 +22,6 @@
 
 pascal void  MallocPool_Terminate()
 {
-	FreeTheMallocPool();
+	FreeTheMallocPool( 0 );
 }
 
