@@ -298,7 +298,7 @@ namespace jTools
 		return build + " -t Wish -c Poof";
 	}
 	
-	static unsigned long GetOffsetOfInitCode( const FSSpec& file )
+	static unsigned long GetOffsetOfRoutine( const FSSpec& file, const char* quoted_name )
 	{
 		FSSpec linkMap = file;
 		
@@ -316,7 +316,7 @@ namespace jTools
 		{
 			std::string line = input.Read();
 			
-			if ( line.find( "\"__InitCode__\"" ) == line.npos )  continue;
+			if ( line.find( quoted_name ) == line.npos )  continue;
 			
 			if ( std::equal( code.begin(), code.end(), line.begin() ) )
 			{
@@ -333,31 +333,40 @@ namespace jTools
 		return 0;  // not reached
 	}
 	
-	static void Patch68KStartupToNotRestoreRegisters( ::Handle code, UInt32 initCodeOffset )
+	static unsigned long GetOffsetOfInitTool( const FSSpec& file )
+	{
+		return GetOffsetOfRoutine( file, "\"InitializeTool\"" );
+	}
+	
+	static unsigned long GetOffsetOfInitCode( const FSSpec& file )
+	{
+		return GetOffsetOfRoutine( file, "\"__InitCode__\"" );
+	}
+	
+	static void Patch68KStartupCode( ::Handle code, UInt32 initToolOffset, UInt32 initCodeOffset )
 	{
 		const UInt32 nopnop = 0x4e714e71;
+		const UInt32 jsr    = 0x4eba0000;
 		
-		UInt32* saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
-		UInt32* setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
-		UInt32* loadStartToA0 = reinterpret_cast< UInt32* >( *code + 20 );
-		UInt32* moveAndStrip  = reinterpret_cast< UInt32* >( *code + 24 );
-		UInt32* setupMainRsrc = reinterpret_cast< UInt32* >( *code + 28 );
-		UInt32* restoreRegs   = reinterpret_cast< UInt32* >( *code + 32 );
+		UInt32* const saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
+		UInt32* const setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
+		UInt32* const loadStartToA0 = reinterpret_cast< UInt32* >( *code + 20 );
+		UInt32* const moveAndStrip  = reinterpret_cast< UInt32* >( *code + 24 );
+		UInt32* const setupMainRsrc = reinterpret_cast< UInt32* >( *code + 28 );
+		UInt32* const restoreRegs   = reinterpret_cast< UInt32* >( *code + 32 );
 		
 		*saveRegisters = *setCurrentA4  + 4;
 		*setCurrentA4  = *loadStartToA0 + 4;
 		*loadStartToA0 = *moveAndStrip;
 		*moveAndStrip  = *setupMainRsrc + 4;
-		*setupMainRsrc = nopnop;
-		
-		UInt32 jsrInitCode = 0x4eba0000 | (initCodeOffset - 34);
-		
-		*restoreRegs = jsrInitCode;
+		*setupMainRsrc = jsr | (initToolOffset - 28 - 2);
+		*restoreRegs   = jsr | (initCodeOffset - 32 - 2);
 	}
 	
 	static void Patch68KStartup( const FSSpec& file )
 	{
-		unsigned long offset = GetOffsetOfInitCode( file );
+		unsigned long inittool = GetOffsetOfInitTool( file );
+		unsigned long initcode = GetOffsetOfInitCode( file );
 		
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
@@ -366,7 +375,7 @@ namespace jTools
 		
 		N::Handle code = N::Get1Resource( resType, resID );
 		
-		Patch68KStartupToNotRestoreRegisters( code.Get(), offset );
+		Patch68KStartupCode( code.Get(), inittool, initcode );
 		
 		N::ChangedResource( code );
 		
