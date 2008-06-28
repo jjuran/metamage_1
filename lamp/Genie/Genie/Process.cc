@@ -574,7 +574,16 @@ namespace Genie
 		// Accumulate any user time between last system call (if any) and return from main()
 		EnterSystemCall( "*RETURN*" );
 		
-		itsMainEntry.reset();  // calls fragment termination routine
+		if ( itsCleanupHandler )
+		{
+			const bool destroying_globals = true;
+			
+			itsCleanupHandler( destroying_globals );
+			
+			itsCleanupHandler = false;
+		}
+		
+		itsMainEntry.reset();
 		
 		return exit_status;
 	}
@@ -1141,7 +1150,9 @@ namespace Genie
 		
 		if ( itsCleanupHandler != NULL )
 		{
-			itsCleanupHandler();
+			const bool not_destroying_globals = false;
+			
+			itsCleanupHandler( not_destroying_globals );
 		}
 		
 		itsLifeStage = kProcessZombie;

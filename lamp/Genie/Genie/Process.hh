@@ -78,24 +78,9 @@ namespace Genie
 		kProcessUnscheduled
 	};
 	
-	typedef void (*CleanupHandlerProc)();
-	
-#if TARGET_CPU_68K
+	typedef void (*CleanupHandlerProc)( short destroying_globals );
 	
 	typedef CleanupHandlerProc CleanupHandler;
-	
-#else
-	
-	struct CleanupHandler
-	{
-		CleanupHandler& operator=( CleanupHandlerProc )  { return *this; }
-		
-		operator CleanupHandlerProc() const  { return NULL; }
-		
-		void operator()() const  {}
-	};
-	
-#endif
 	
 	class CmdLine
 	{
