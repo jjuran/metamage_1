@@ -557,13 +557,13 @@ namespace Genie
 		// Pass envp in ToolScratch + 4 to initialize environ
 		reinterpret_cast< iota::envp_t* >( LMGetToolScratch() )[1] = envp;
 		
+		itsStackBottomPtr = Backtrace::GetStackFramePointer();
+		
 		itsMainEntry = itsProgramFile->GetMainEntry();
 		
 		Main3 mainPtr = itsMainEntry->GetMainPtr();
 		
 		ASSERT( mainPtr != NULL );
-		
-		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
 		// Accumulate any system time between start and entry to main()
 		LeaveSystemCall();
