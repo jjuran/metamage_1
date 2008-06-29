@@ -392,13 +392,21 @@
 	
 	static Environ* gEnvironPtr;
 	
-	extern "C" void InitializeEnviron();
+	extern "C" const void* InitializeEnviron();
 	
-	void InitializeEnviron()
+	const void* InitializeEnviron()
 	{
-		static Environ gEnviron;
+		try
+		{
+			static Environ gEnviron;
+			
+			gEnvironPtr = &gEnviron;
+		}
+		catch ( ... )
+		{
+		}
 		
-		gEnvironPtr = &gEnviron;
+		return gEnvironPtr;  // NULL if bad_alloc
 	}
 	
 	
