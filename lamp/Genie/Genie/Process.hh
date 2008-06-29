@@ -237,9 +237,9 @@ namespace Genie
 			
 			Nitrogen::ThreadID GetThread() const;
 			
-			NN::Owned< N::ThreadID > Exec( const FSTreePtr&    executable,
-			                               const char* const   argv[],
-			                               const char* const*  envp );
+			void Exec( FSTreePtr&          executable,
+			           const char* const   argv[],
+			           const char* const*  envp );
 			
 			void InitThread();
 			

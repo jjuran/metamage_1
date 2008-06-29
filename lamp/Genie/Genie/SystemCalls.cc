@@ -246,9 +246,7 @@ namespace Genie
 			
 			bool forked = current.Forked();
 			
-			NN::Owned< N::ThreadID > savedThread;
-			
-			// Local scope to make sure progFile gets destroyed
+			// progFile gets destroyed by Process::Exec()
 			{
 				FSTreePtr progFile = ResolvePathname( path, current.GetCWD() );
 				
@@ -264,16 +262,9 @@ namespace Genie
 				}
 				
 				// Start a new thread with the child's process context
-				savedThread = current.Exec( progFile, argv, envp );
-			}
-			
-			// TODO: Yield until the child is done with envp.
-			// For now this doesn't seem to be a problem...
-			
-			// If this thread is us (i.e. we didn't fork), we're now toast.
-			if ( savedThread.Get() != N::kNoThreadID )
-			{
-				N::DisposeThread( savedThread, NULL, false );
+				current.Exec( progFile, argv, envp );
+				
+				// If we didn't fork, we're now toast.
 			}
 			
 			// A non-forked exec kills its own thread and doesn't return

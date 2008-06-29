@@ -978,9 +978,9 @@ namespace Genie
 		result.push_back( NULL );
 	}
 	
-	NN::Owned< N::ThreadID >  Process::Exec( const FSTreePtr&    executable,
-	                                         const char* const   argv[],
-	                                         const char* const*  envp )
+	void Process::Exec( FSTreePtr&          executable,
+	                    const char* const   argv[],
+	                    const char* const*  envp )
 	{
 		CloseMarkedFileDescriptors( itsFileDescriptors );
 		
@@ -988,6 +988,8 @@ namespace Genie
 		itsName = executable->Name();
 		
 		ExecContext context( executable, argv );
+		
+		executable.reset();
 		
 		Normalize( context, GetCWD() );
 		
@@ -1014,7 +1016,14 @@ namespace Genie
 		                                                                                   this,
 		                                                                                   stackSize );
 		
-		// Save the old thread
+		if ( itsCleanupHandler != NULL )
+		{
+			const bool not_destroying_globals = false;
+			
+			itsCleanupHandler( not_destroying_globals );
+		}
+		
+		// Save the old thread until end of scope
 		NN::Owned< N::ThreadID > savedThreadID = itsThread;
 		
 		// Make the new thread belong to this process
@@ -1025,8 +1034,6 @@ namespace Genie
 		itsSchedule        = kProcessSleeping;
 		
 		Suspend();
-		
-		return savedThreadID;
 	}
 	
 	int Process::SetErrno( int errorNumber )

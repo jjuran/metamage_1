@@ -16,7 +16,7 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	static void SpawnNewConsole( const FSTreePtr& program )
+	static void SpawnNewConsole( FSTreePtr& program )
 	{
 		// Create new console/terminal device
 		// Spawn new process with file descriptors set
@@ -34,11 +34,6 @@ namespace Genie
 		parent.ResumeAfterFork();
 	}
 	
-	void SpawnNewConsole( const FSSpec& program )
-	{
-		return SpawnNewConsole( FSTreeFromFSSpec( program ) );
-	}
-	
 	static FSTreePtr LoginExecutable()
 	{
 		return ResolvePathname( "/bin/jgetty", FSTreePtr() );
@@ -46,7 +41,9 @@ namespace Genie
 	
 	void SpawnNewConsole()
 	{
-		return SpawnNewConsole( LoginExecutable() );
+		FSTreePtr login = LoginExecutable();
+		
+		return SpawnNewConsole( login );
 	}
 	
 }
