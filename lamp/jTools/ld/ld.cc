@@ -326,11 +326,7 @@ namespace jTools
 			}
 		}
 		
-		p7::write( p7::stderr_fileno, STR_LEN( "ld: can't find __InitCode__ in link map for 68K tool\n" ) );
-		
-		O::ThrowExitStatus( 1 );
-		
-		return 0;  // not reached
+		return 0;
 	}
 	
 	static unsigned long GetOffsetOfInitTool( const FSSpec& file )
@@ -359,14 +355,23 @@ namespace jTools
 		*setCurrentA4  = *loadStartToA0 + 4;
 		*loadStartToA0 = *moveAndStrip;
 		*moveAndStrip  = *setupMainRsrc + 4;
-		*setupMainRsrc = jsr | (initToolOffset - 28 - 2);
-		*restoreRegs   = jsr | (initCodeOffset - 32 - 2);
+		*setupMainRsrc = initToolOffset ? jsr | (initToolOffset - 28 - 2) : nopnop;
+		*restoreRegs   = initCodeOffset ? jsr | (initCodeOffset - 32 - 2) : nopnop;
 	}
 	
 	static void Patch68KStartup( const FSSpec& file )
 	{
 		unsigned long inittool = GetOffsetOfInitTool( file );
 		unsigned long initcode = GetOffsetOfInitCode( file );
+		
+		if ( inittool > 0x7fff )
+		{
+			std::fprintf( stderr, "ld: InitTool() offset 0x%.8x is out of range for 16-bit reference\n", inittool );
+			
+			N::FSpDelete( file );
+			
+			O::ThrowExitStatus( 1 );
+		}
 		
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
@@ -503,12 +508,13 @@ namespace jTools
 						
 						translatedPath = QuotedMacPathFromPOSIXPath( translatedPath.c_str() );
 						
-						// Link Orion first, if present.
+						// Link Orion and InitTool first, if present.
 						// This hack is necessary on 68K to ensure that main()
-						// resides within the first 32K, accessible by JMP from
-						// the startup code.
+						// and InitTool() reside within the first 32K, accessible
+						// by JMP or JSR from the startup code.
 						
-						if ( std::strcmp( arg + 2, "Orion" ) == 0 )
+						if (    std::strcmp( arg + 2, "Orion"    ) == 0
+						     || std::strcmp( arg + 2, "InitTool" ) == 0 )
 						{
 							ldArgs = " " + translatedPath + ldArgs;
 							
