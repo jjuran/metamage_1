@@ -20,7 +20,7 @@ extern pascal OSErr InitializeLampTool( const CFragInitBlock* );
 extern void InitializeDispatcher();
 
 // Initialize environ from ToolScratch
-extern void InitializeEnviron();
+extern const void* InitializeEnviron();
 
 // Call InitProc() to set references to cleanup proc and errno
 extern void InitializeCallbacks();
@@ -29,7 +29,12 @@ extern void InitializeCallbacks();
 pascal OSErr InitializeLampTool( const CFragInitBlock* )
 {
 	InitializeDispatcher();
-	InitializeEnviron();
+	
+	if ( InitializeEnviron() == NULL )
+	{
+		return memFullErr;
+	}
+	
 	InitializeCallbacks();
 	
 	return noErr;
