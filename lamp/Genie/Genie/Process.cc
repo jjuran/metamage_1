@@ -1033,6 +1033,8 @@ namespace Genie
 		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessSleeping;
 		
+		Ped::AdjustSleepForActivity();
+		
 		Suspend();
 	}
 	
