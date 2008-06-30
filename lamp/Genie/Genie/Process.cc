@@ -484,8 +484,8 @@ namespace Genie
 		
 		// if ( r11.index > r12.last )
 		cmpl	cr0,r11,r12
-		blt		cr0,in_range
-			// r11.index = r12.last;
+		blt+	cr0,in_range
+		// r11.index = r12.last;
 		mr		r11,r12
 		
 	in_range:
