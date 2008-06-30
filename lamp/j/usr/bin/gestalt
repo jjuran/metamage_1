@@ -22,7 +22,9 @@ sub NumVersion
 	
 	my $v = $_ >> 16;
 	
-	Version() for $v;
+	$v = join '', ($v >> 8),       '.',
+	              ($v >> 4) & 0xF, '.',
+	               $v       & 0xF;
 	
 	if ( my $code = $stages[ $stage - 1 ] )
 	{
