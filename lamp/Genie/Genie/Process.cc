@@ -1194,6 +1194,8 @@ namespace Genie
 			}
 		}
 		
+		Ped::AdjustSleepForActivity();
+		
 		if ( !Forked() )
 		{
 			NN::Owned< N::ThreadID > savedThreadID = itsThread;
