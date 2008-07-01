@@ -22,6 +22,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 	static pascal void YieldingNotifier( void* contextPtr,
@@ -277,7 +278,37 @@ namespace Genie
 		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( &server ) );
 		sndCall.addr.len = len;
 		
-		N::OTConnect( itsEndpoint, sndCall );
+		try
+		{
+			N::OTConnect( itsEndpoint, sndCall );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err == kOTLookErr )
+			{
+				OTResult look = N::OTLook( itsEndpoint );
+				
+				switch ( look )
+				{
+					case T_DISCONNECT:
+						N::OTRcvDisconnect( itsEndpoint );
+						
+						// FIXME:  We should check the discon info, but for now assume
+						p7::throw_errno( ECONNREFUSED );
+					
+					default:
+						break;
+				}
+				
+				std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
+			}
+			else
+			{
+				std::fprintf( stderr, "OSStatus %d from OTConnect()\n", err.Get() );
+			}
+			
+			throw;
+		}
 	}
 	
 	void OTSocket::ShutdownWriting()
