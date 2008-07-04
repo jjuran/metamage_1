@@ -60,13 +60,7 @@ namespace Genie
 			void Hide() const;
 	};
 	
-	typedef std::map< ::WindowRef, boost::weak_ptr< IOHandle > > WindowMap;
-	
-	const WindowMap& GetWindowMap();
-	
 	void AddWindowToMap( ::WindowRef window, const boost::shared_ptr< IOHandle >& handle );
-	
-	TerminalHandle& GetWindowFromMap( ::WindowRef window );
 	
 	const boost::shared_ptr< Pedestal::WindowCloseHandler >& GetTerminalCloseHandler();
 	

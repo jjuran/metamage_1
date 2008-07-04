@@ -39,9 +39,11 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	typedef std::map< ::WindowRef, boost::weak_ptr< IOHandle > > WindowMap;
+	
 	static WindowMap gWindowMap;
 	
-	const WindowMap& GetWindowMap()
+	static const WindowMap& GetWindowMap()
 	{
 		return gWindowMap;
 	}
@@ -51,7 +53,7 @@ namespace Genie
 		gWindowMap[ window ] = handle;
 	}
 	
-	TerminalHandle& GetWindowFromMap( ::WindowRef window )
+	static TerminalHandle& GetWindowFromMap( ::WindowRef window )
 	{
 		WindowMap::const_iterator it = gWindowMap.find( window );
 		
