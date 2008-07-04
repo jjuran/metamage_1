@@ -6,17 +6,15 @@
 #ifndef GENIE_IO_CONSOLETTY_HH
 #define GENIE_IO_CONSOLETTY_HH
 
-// Standard C++
-#include <map>
-
 // Genie
+#include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/TTY.hh"
 
 
 namespace Genie
 {
 	
-	typedef TerminalID ConsoleID;
+	typedef DynamicElementID ConsoleID;
 	
 	class ConsoleTTYHandle : public TTYHandle
 	{
@@ -50,12 +48,6 @@ namespace Genie
 	
 	
 	boost::shared_ptr< IOHandle > NewConsoleDevice();
-	
-	TerminalHandle& GetConsoleByID( ConsoleID id );
-	
-	typedef std::map< ConsoleID, boost::weak_ptr< IOHandle > > ConsoleMap;
-	
-	const ConsoleMap& GetConsoleMap();
 	
 }
 

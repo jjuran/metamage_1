@@ -30,11 +30,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static ConsoleMap gConsoleMap;
-	
-	const ConsoleMap& GetConsoleMap()
+	inline DynamicGroup& GetConsoleMap()
 	{
-		return gConsoleMap;
+		return GetDynamicGroup< ConsoleTTYHandle >();
 	}
 	
 	
@@ -56,23 +54,9 @@ namespace Genie
 		
 		boost::shared_ptr< IOHandle > consoleDevice( new ConsoleTTYHandle( ++gLastID ) );
 		
-		gConsoleMap[ gLastID ] = consoleDevice;
+		GetConsoleMap()[ gLastID ] = consoleDevice;
 		
 		return consoleDevice;
-	}
-	
-	TerminalHandle& GetConsoleByID( ConsoleID id )
-	{
-		ConsoleMap::const_iterator it = gConsoleMap.find( id );
-		
-		if ( it == gConsoleMap.end() )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		ASSERT( !it->second.expired() );
-		
-		return IOHandle_Cast< TerminalHandle >( *it->second.lock() );
 	}
 	
 	
@@ -94,7 +78,7 @@ namespace Genie
 			LiberateWindow( *window, itsWindow );
 		}
 		
-		gConsoleMap.erase( itsID );
+		GetConsoleMap().erase( itsID );
 	}
 	
 	IOHandle* ConsoleTTYHandle::Next() const

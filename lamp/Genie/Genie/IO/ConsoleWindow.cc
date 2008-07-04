@@ -155,6 +155,22 @@ namespace Genie
 		}
 	}
 	
+	static TerminalHandle& GetConsoleTerminalByID( ConsoleID id )
+	{
+		const boost::shared_ptr< IOHandle >& handle( GetDynamicElementByID< ConsoleTTYHandle >( id ) );
+		
+		TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
+		
+		return terminal;
+	}
+	
+	static void SendSignalToProcessGroupForID( int signo, ConsoleID id )
+	{
+		TerminalHandle& terminal( GetConsoleTerminalByID( id ) );
+		
+		SendSignalToProcessGroup( signo, *terminal.GetProcessGroup().lock() );
+	}
+	
 	bool ConsolePane::KeyDown( const EventRecord& event )
 	{
 		char c   =  event.message & charCodeMask;
@@ -218,11 +234,11 @@ namespace Genie
 					break;
 				
 				case 'C':
-					SendSignalToProcessGroup( SIGINT, *GetConsoleByID( itsConsoleID ).GetProcessGroup().lock() );
+					SendSignalToProcessGroupForID( SIGINT, itsConsoleID );
 					break;
 				
 				case 'Z':
-					SendSignalToProcessGroup( SIGTSTP, *GetConsoleByID( itsConsoleID ).GetProcessGroup().lock() );
+					SendSignalToProcessGroupForID( SIGTSTP, itsConsoleID );
 					break;
 				
 				case 'D':
@@ -382,7 +398,7 @@ namespace Genie
 	
 	void ConsoleCloseHandler::operator()( N::WindowRef ) const
 	{
-		TerminalHandle& terminal = GetConsoleByID( itsConsoleID );
+		TerminalHandle& terminal = GetConsoleTerminalByID( itsConsoleID );
 		
 		terminal.Disconnect();
 		

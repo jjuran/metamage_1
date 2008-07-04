@@ -20,6 +20,7 @@
 
 // Genie
 #include "Genie/Devices.hh"
+#include "Genie/FileSystem/DynamicGroups.hh"
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/BufferFile.hh"
@@ -212,118 +213,46 @@ namespace Genie
 	};
 	
 	
-	template < class Metadetails >
-	struct dev_TTY_Details : public Metadetails, public Integer_KeyName_Traits< unsigned >
+	template <>
+	struct IOHandle_Name_Traits< ConsoleTTYHandle >
 	{
-		typedef typename Metadetails::Sequence Sequence;
-		
-		typedef typename Metadetails::FSTree_N ChildNode;
-		
-		FSTreePtr Parent() const  { return GetSingleton< FSTree_dev >(); }
-		
-		FSTreePtr Lookup( const std::string& name ) const;
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
-		
-		static bool KeyIsValid( const Key& key )
-		{
-			const Sequence& sequence = ItemSequence();
-			
-			return sequence.find( key ) != sequence.end();
-		}
-		
-		static std::string GetChildName( const Sequence::value_type& child )
-		{
-			ASSERT( !child.second.expired() );
-			
-			boost::shared_ptr< IOHandle > io = child.second.lock();
-			
-			TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *io );
-			
-			return io::get_filename( terminal.TTYName() );
-		}
-		
-		FSTreePtr GetChildNode( const Key& key ) const
-		{
-			return FSTreePtr( new ChildNode( key ) );
-		}
-	};
-	
-	class FSTree_dev_con_N;
-	class FSTree_dev_pts_N;
-	
-	struct dev_con_Metadetails
-	{
-		typedef ConsoleMap        Sequence;
-		typedef FSTree_dev_con_N  FSTree_N;
-		
 		static std::string Name()  { return "con"; }
-		
-		const Sequence& ItemSequence() const  { return GetConsoleMap(); }
 	};
 	
-	struct dev_pts_Metadetails
+	template <>
+	struct IOHandle_Name_Traits< PseudoTTYHandle >
 	{
-		typedef PseudoTTYMap      Sequence;
-		typedef FSTree_dev_pts_N  FSTree_N;
-		
 		static std::string Name()  { return "pts"; }
-		
-		const Sequence& ItemSequence() const  { return GetPseudoTTYMap(); }
-	};
-	
-	typedef FSTree_Special< dev_TTY_Details< dev_con_Metadetails > > FSTree_dev_con;
-	typedef FSTree_Special< dev_TTY_Details< dev_pts_Metadetails > > FSTree_dev_pts;
-	
-	
-	class FSTree_dev_TTY_N_Base : public FSTree
-	{
-		private:
-			unsigned itsID;
-		
-		protected:
-			unsigned ID() const  { return itsID; }
-		
-		public:
-			FSTree_dev_TTY_N_Base( unsigned id ) : itsID( id )
-			{
-			}
-			
-			std::string Name() const  { return NN::Convert< std::string >( itsID ); }
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
-	};
-	
-	class FSTree_dev_con_N : public FSTree_dev_TTY_N_Base
-	{
-		public:
-			FSTree_dev_con_N( unsigned id ) : FSTree_dev_TTY_N_Base( id )
-			{
-			}
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_con >(); }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
-			{
-				return GetConsoleByID( ID() ).shared_from_this();
-			}
 	};
 	
 	
-	class FSTree_dev_pts_N : public FSTree_dev_TTY_N_Base
+	template <>
+	struct IOHandle_Parent_Traits< ConsoleTTYHandle >
 	{
-		public:
-			FSTree_dev_pts_N( unsigned id ) : FSTree_dev_TTY_N_Base( id )
-			{
-			}
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_pts >(); }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
-			{
-				return GetPseudoTTYByID( ID() );
-			}
+		typedef FSTree_dev Tree;
+	};
+	
+	template <>
+	struct IOHandle_Parent_Traits< PseudoTTYHandle >
+	{
+		typedef FSTree_dev Tree;
+	};
+	
+	
+	typedef FSTree_Special< DynamicGroup_Details< ConsoleTTYHandle > > FSTree_dev_con;
+	typedef FSTree_Special< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
+	
+	
+	template <>
+	struct IOHandle_FSTree_Traits< ConsoleTTYHandle >
+	{
+		typedef FSTree_dev_con Tree;
+	};
+	
+	template <>
+	struct IOHandle_FSTree_Traits< PseudoTTYHandle >
+	{
+		typedef FSTree_dev_pts Tree;
 	};
 	
 	
@@ -398,15 +327,6 @@ namespace Genie
 		MapSingleton< FSTree_dev_new_buffer  >();
 		MapSingleton< FSTree_dev_new_console >();
 		MapSingleton< FSTree_dev_new_port    >();
-	}
-	
-	
-	template < class Metadetails >
-	FSTreePtr dev_TTY_Details< Metadetails >::Lookup( const std::string& name ) const
-	{
-		Key key = KeyFromName( name );
-		
-		return FSTreePtr( new ChildNode( key ) );
 	}
 	
 }

@@ -11,6 +11,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Genie
+#include "Genie/IO/DynamicGroup.hh"
+
 
 namespace Genie
 {
@@ -19,11 +22,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static PseudoTTYMap gPseudoTTYMap;
-	
-	const PseudoTTYMap& GetPseudoTTYMap()
+	inline DynamicGroup& GetPseudoTTYMap()
 	{
-		return gPseudoTTYMap;
+		return GetDynamicGroup< PseudoTTYHandle >();
 	}
 	
 	void GetNewPseudoTTYPair( boost::shared_ptr< IOHandle >& master,
@@ -37,26 +38,12 @@ namespace Genie
 		boost::shared_ptr< IOHandle > master_handle( new PseudoTTYHandle( index, outgoing, incoming ) );
 		boost::shared_ptr< IOHandle > slave_handle ( new PseudoTTYHandle( index, incoming, outgoing ) );
 		
-		gPseudoTTYMap[ index ] = slave_handle;
+		GetPseudoTTYMap()[ index ] = slave_handle;
 		
 		++index;
 		
 		master.swap( master_handle );
 		slave .swap( slave_handle  );
-	}
-	
-	const boost::shared_ptr< IOHandle >& GetPseudoTTYByID( TerminalID id )
-	{
-		PseudoTTYMap::const_iterator it = gPseudoTTYMap.find( id );
-		
-		if ( it == gPseudoTTYMap.end() )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		ASSERT( !it->second.expired() );
-		
-		return it->second.lock();
 	}
 	
 	
@@ -82,7 +69,7 @@ namespace Genie
 		itsInput->CloseEgress();
 		itsOutput->CloseIngress();
 		
-		gPseudoTTYMap.erase( itsID );
+		GetPseudoTTYMap().erase( itsID );
 	}
 	
 	IOHandle* PseudoTTYHandle::Next() const
