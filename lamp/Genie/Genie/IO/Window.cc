@@ -39,30 +39,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef std::map< ::WindowRef, boost::weak_ptr< IOHandle > > WindowMap;
-	
-	static WindowMap gWindowMap;
-	
-	void AddWindowToMap( ::WindowRef window, const boost::shared_ptr< IOHandle >& handle )
-	{
-		gWindowMap[ window ] = handle;
-	}
-	
-	static TerminalHandle& GetWindowFromMap( ::WindowRef window )
-	{
-		WindowMap::const_iterator it = gWindowMap.find( window );
-		
-		if ( it == gWindowMap.end() )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		ASSERT( !it->second.expired() );
-		
-		return IOHandle_Cast< TerminalHandle >( *it->second.lock() );
-	}
-	
-	
 	class DynamicWindowCloseHandler : public Ped::WindowCloseHandler
 	{
 		private:
@@ -99,36 +75,6 @@ namespace Genie
 		typedef boost::shared_ptr< Ped::WindowCloseHandler > Result;
 		
 		return Result( new DynamicWindowCloseHandler( group, id ) );
-	}
-	
-	
-	class TerminalCloseHandler : public Ped::WindowCloseHandler
-	{
-		public:
-			void operator()( N::WindowRef window ) const;
-	};
-	
-	void TerminalCloseHandler::operator()( N::WindowRef window ) const
-	{
-		TerminalHandle& terminal = GetWindowFromMap( window );
-		
-		terminal.Disconnect();
-		
-		if ( !terminal.GetProcessGroup().expired() )
-		{
-			const boost::shared_ptr< ProcessGroup >& processGroup = terminal.GetProcessGroup().lock();
-			
-			SendSignalToProcessGroup( SIGHUP, *processGroup );
-		}
-	}
-	
-	const boost::shared_ptr< Ped::WindowCloseHandler >& GetTerminalCloseHandler()
-	{
-		typedef boost::shared_ptr< Ped::WindowCloseHandler > SharedHandler;
-		
-		static SharedHandler handler = SharedHandler( new TerminalCloseHandler() );
-		
-		return handler;
 	}
 	
 	
