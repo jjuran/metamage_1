@@ -293,7 +293,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_console::Open( OpenFlags flags ) const
 	{
-		return NewConsoleDevice();
+		return NewDynamicElement< ConsoleTTYHandle >();
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_port::Open( OpenFlags flags ) const

@@ -46,9 +46,6 @@ namespace Genie
 			ConsoleID ID() const  { return itsID; }
 	};
 	
-	
-	boost::shared_ptr< IOHandle > NewConsoleDevice();
-	
 }
 
 #endif

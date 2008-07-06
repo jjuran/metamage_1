@@ -30,12 +30,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	inline DynamicGroup& GetConsoleMap()
-	{
-		return GetDynamicGroup< ConsoleTTYHandle >();
-	}
-	
-	
 	static std::string MakeConsoleName( ConsoleID id )
 	{
 		return "/dev/con/" + NN::Convert< std::string >( id );
@@ -46,17 +40,6 @@ namespace Genie
 		boost::shared_ptr< IOHandle > console( new ConsoleWindow( id, name ) );
 		
 		return console;
-	}
-	
-	boost::shared_ptr< IOHandle > NewConsoleDevice()
-	{
-		static ConsoleID gLastID = 0;
-		
-		boost::shared_ptr< IOHandle > consoleDevice( new ConsoleTTYHandle( ++gLastID ) );
-		
-		GetConsoleMap()[ gLastID ] = consoleDevice;
-		
-		return consoleDevice;
 	}
 	
 	
@@ -78,7 +61,7 @@ namespace Genie
 			LiberateWindow( *window, itsWindow );
 		}
 		
-		GetConsoleMap().erase( itsID );
+		GetDynamicGroup< ConsoleTTYHandle >().erase( itsID );
 	}
 	
 	IOHandle* ConsoleTTYHandle::Next() const
