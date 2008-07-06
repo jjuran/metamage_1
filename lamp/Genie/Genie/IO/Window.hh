@@ -14,6 +14,7 @@
 #include "Nitrogen/Str.h"
 
 // Genie
+#include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 
 
@@ -61,6 +62,15 @@ namespace Genie
 	};
 	
 	void AddWindowToMap( ::WindowRef window, const boost::shared_ptr< IOHandle >& handle );
+	
+	boost::shared_ptr< Pedestal::WindowCloseHandler > GetDynamicWindowCloseHandler( DynamicGroup&     group,
+			                                                                        DynamicElementID  id );
+	
+	template < class Handle >
+	boost::shared_ptr< Pedestal::WindowCloseHandler > GetDynamicWindowCloseHandler( DynamicElementID  id )
+	{
+		return GetDynamicWindowCloseHandler( GetDynamicGroup< Handle >(), id );
+	}
 	
 	const boost::shared_ptr< Pedestal::WindowCloseHandler >& GetTerminalCloseHandler();
 	

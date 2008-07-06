@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
+#include "Genie/FileSystem/FSTree_sys_set.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/MemoryFile.hh"
@@ -159,6 +160,7 @@ namespace Genie
 	{
 		MapSingleton< FSTree_sys_kernel >();
 		MapSingleton< FSTree_sys_mac    >();
+		MapSingleton< FSTree_sys_set    >();
 	}
 	
 	void FSTree_sys_kernel::Init()

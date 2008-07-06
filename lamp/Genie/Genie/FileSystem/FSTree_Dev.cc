@@ -288,7 +288,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_buffer::Open( OpenFlags flags ) const
 	{
-		return NewBufferFile();
+		return NewDynamicElement< BufferFileHandle >();
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_console::Open( OpenFlags flags ) const

@@ -19,20 +19,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	boost::shared_ptr< IOHandle > NewBufferFile()
-	{
-		BufferWindow* w = new BufferWindow( "Edit" );
-		
-		boost::shared_ptr< BufferWindow > window( w );
-		
-		boost::shared_ptr< IOHandle > bufferFile( new BufferFileHandle( window ) );
-		
-		AddWindowToMap( w->Get(), bufferFile );
-		
-		return bufferFile;
-	}
-	
-	
 	static Rect MakeWindowRect()
 	{
 		BitMap screenBits = N::GetQDGlobalsScreenBits();
@@ -48,13 +34,13 @@ namespace Genie
 	}
 	
 	
-	BufferWindow::BufferWindow( const std::string& name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                                     N::Str255( name ),
-	                                                                                     false ),
-	                                                              GetTerminalCloseHandler() ),
-	                                                        WindowHandle( name ),
-	                                                        itsMark(),
-	                                                        itHasReceivedEOF()
+	BufferWindow::BufferWindow( TerminalID id ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                           "\p" "Edit",
+	                                                                           false ),
+	                                                    GetDynamicWindowCloseHandler< BufferFileHandle >( id ) ),
+	                                              WindowHandle( "/sys/set/txt/" + NN::Convert< std::string >( id ) ),
+	                                              itsMark(),
+	                                              itHasReceivedEOF()
 	{
 	}
 	
@@ -212,6 +198,10 @@ namespace Genie
 		editor.SetSelection( length, length );
 	}
 	
+	
+	BufferFileHandle::BufferFileHandle( TerminalID id ) : itsWindow( new BufferWindow( id ) )
+	{
+	}
 	
 	BufferFileHandle::~BufferFileHandle()
 	{

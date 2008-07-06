@@ -41,7 +41,7 @@ namespace Genie
 		public:
 			typedef Ped::Window< Ped::Scroller< Ped::TEView, Ped::kLiveFeedbackVariant > > Base;
 			
-			BufferWindow( const std::string& name );
+			BufferWindow( TerminalID id );
 			
 			~BufferWindow();
 			
@@ -73,13 +73,13 @@ namespace Genie
 			
 		
 		public:
-			BufferFileHandle( const boost::shared_ptr< BufferWindow >&  window ) : itsWindow( window )
-			{
-			}
+			BufferFileHandle( TerminalID id );
 			
 			~BufferFileHandle();
 			
 			IOHandle* Next() const;
+			
+			FSTreePtr GetFile() const  { return itsWindow->GetFile(); }
 			
 			unsigned int SysPoll() const
 			{

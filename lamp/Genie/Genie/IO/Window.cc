@@ -43,11 +43,6 @@ namespace Genie
 	
 	static WindowMap gWindowMap;
 	
-	static const WindowMap& GetWindowMap()
-	{
-		return gWindowMap;
-	}
-	
 	void AddWindowToMap( ::WindowRef window, const boost::shared_ptr< IOHandle >& handle )
 	{
 		gWindowMap[ window ] = handle;
@@ -65,6 +60,45 @@ namespace Genie
 		ASSERT( !it->second.expired() );
 		
 		return IOHandle_Cast< TerminalHandle >( *it->second.lock() );
+	}
+	
+	
+	class DynamicWindowCloseHandler : public Ped::WindowCloseHandler
+	{
+		private:
+			DynamicGroup&     itsGroup;
+			DynamicElementID  itsID;
+		
+		public:
+			DynamicWindowCloseHandler( DynamicGroup&     group,
+			                           DynamicElementID  id ) : itsGroup( group ),
+			                                                    itsID   ( id    )
+			{
+			}
+			
+			void operator()( N::WindowRef ) const;
+	};
+	
+	void DynamicWindowCloseHandler::operator()( N::WindowRef ) const
+	{
+		const boost::shared_ptr< IOHandle >& handle( GetDynamicElementFromGroupByID( itsGroup, itsID ) );
+		
+		TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
+		
+		terminal.Disconnect();
+		
+		if ( !terminal.GetProcessGroup().expired() )
+		{
+			SendSignalToProcessGroup( SIGHUP, *terminal.GetProcessGroup().lock() );
+		}
+	}
+	
+	boost::shared_ptr< Ped::WindowCloseHandler > GetDynamicWindowCloseHandler( DynamicGroup&     group,
+			                                                                   DynamicElementID  id )
+	{
+		typedef boost::shared_ptr< Ped::WindowCloseHandler > Result;
+		
+		return Result( new DynamicWindowCloseHandler( group, id ) );
 	}
 	
 	
