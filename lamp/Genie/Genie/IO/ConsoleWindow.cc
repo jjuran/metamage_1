@@ -43,20 +43,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class ConsoleCloseHandler : public Ped::WindowCloseHandler
-	{
-		private:
-			ConsoleID itsConsoleID;
-		
-		public:
-			ConsoleCloseHandler( ConsoleID id ) : itsConsoleID( id )
-			{
-			}
-			
-			void operator()( N::WindowRef ) const;
-	};
-	
-	
 	bool ConsolePane::CheckEOF()
 	{
 		if ( itHasReceivedEOF )
@@ -155,18 +141,11 @@ namespace Genie
 		}
 	}
 	
-	static TerminalHandle& GetConsoleTerminalByID( ConsoleID id )
+	static void SendSignalToProcessGroupForID( int signo, ConsoleID id )
 	{
 		const boost::shared_ptr< IOHandle >& handle( GetDynamicElementByID< ConsoleTTYHandle >( id ) );
 		
 		TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
-		
-		return terminal;
-	}
-	
-	static void SendSignalToProcessGroupForID( int signo, ConsoleID id )
-	{
-		TerminalHandle& terminal( GetConsoleTerminalByID( id ) );
 		
 		SendSignalToProcessGroup( signo, *terminal.GetProcessGroup().lock() );
 	}
@@ -354,16 +333,11 @@ namespace Genie
 	}
 	
 	
-	static boost::shared_ptr< Ped::WindowCloseHandler > NewConsoleCloseHandler( ConsoleID id )
-	{
-		return boost::shared_ptr< Ped::WindowCloseHandler >( new ConsoleCloseHandler( id ) );
-	}
-	
 	ConsoleWindow::ConsoleWindow( ConsoleID           id,
 	                              const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
 	                                                                                        N::Str255( name ),
 	                                                                                        true ),
-	                                                                 NewConsoleCloseHandler( id ),
+	                                                                 GetDynamicWindowCloseHandler< ConsoleTTYHandle >( id ),
 	                                                                 ConsolePane::Initializer( id, itsInput ) ),
 	                                                           WindowHandle( name )
 	{
@@ -393,19 +367,6 @@ namespace Genie
 		                            N::SetPt( 0, 0 ) );
 		
 		return result;
-	}
-	
-	
-	void ConsoleCloseHandler::operator()( N::WindowRef ) const
-	{
-		TerminalHandle& terminal = GetConsoleTerminalByID( itsConsoleID );
-		
-		terminal.Disconnect();
-		
-		if ( !terminal.GetProcessGroup().expired() )
-		{
-			SendSignalToProcessGroup( SIGHUP, *terminal.GetProcessGroup().lock() );
-		}
 	}
 	
 }
