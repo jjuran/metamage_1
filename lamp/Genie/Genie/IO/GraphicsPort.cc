@@ -22,18 +22,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	boost::shared_ptr< IOHandle > NewGraphicsPort()
-	{
-		GraphicsWindow* window = new GraphicsWindow( "Graphics" );
-		
-		boost::shared_ptr< IOHandle > handle( static_cast< IOHandle* >( window ) );
-		
-		AddWindowToMap( window->Get(), handle );
-		
-		return handle;
-	}
-	
-	
 	static Rect MakeWindowRect()
 	{
 		BitMap screenBits = N::GetQDGlobalsScreenBits();
@@ -49,11 +37,11 @@ namespace Genie
 	}
 	
 	
-	GraphicsWindow::GraphicsWindow( const std::string& name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                                         N::Str255( name ),
-	                                                                                         true ),
-	                                                                  GetTerminalCloseHandler() ),
-	                                                            WindowHandle( name )
+	GraphicsWindow::GraphicsWindow( TerminalID id ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                               "\p" "Graphics",
+	                                                                               true ),
+	                                                        GetDynamicWindowCloseHandler< GraphicsWindow >( id ) ),
+	                                                  WindowHandle( "/sys/set/gfx/" + NN::Convert< std::string >( id ) )
 	{
 	}
 	

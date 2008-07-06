@@ -298,7 +298,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_new_port::Open( OpenFlags flags ) const
 	{
-		return NewGraphicsPort();
+		return NewDynamicElement< GraphicsWindow >();
 	}
 	
 	

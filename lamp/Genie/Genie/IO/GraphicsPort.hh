@@ -29,7 +29,7 @@ namespace Genie
 		public:
 			typedef Pedestal::Window< Pedestal::GWorldView > Base;
 			
-			GraphicsWindow( const std::string& name );
+			GraphicsWindow( TerminalID id );
 			
 			~GraphicsWindow();
 			
@@ -39,9 +39,6 @@ namespace Genie
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 	};
-	
-	
-	boost::shared_ptr< IOHandle > NewGraphicsPort();
 	
 }
 
