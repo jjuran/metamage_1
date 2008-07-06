@@ -7,7 +7,6 @@
 
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
-#include "Nitrogen/MacWindows.h"
 #include "Nitrogen/Processes.h"
 
 // POSeven
@@ -54,8 +53,6 @@ namespace Genie
 			return CheckKey( LookUpSystemCallByName( name.c_str() ) );
 		}
 	};
-	
-	struct WindowRef_KeyName_Traits : public Pointer_KeyName_Traits< N::WindowRef >  {};
 	
 	
 	class FSTree_sys_kernel : public FSTree_Virtual
@@ -158,52 +155,9 @@ namespace Genie
 	};
 	
 	
-	class FSTree_sys_window_REF;
-	
-	
-	struct sys_window_Details : public WindowRef_KeyName_Traits
-	{
-		typedef N::WindowList_Container Sequence;
-		
-		typedef FSTree_sys_window_REF ChildNode;
-		
-		static std::string Name()  { return "window"; }
-		
-		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys >(); }
-		
-		static const Sequence& ItemSequence()  { return N::WindowList(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
-		
-		static bool KeyIsValid( const Key& key )
-		{
-			const Sequence& sequence = ItemSequence();
-			
-			return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
-		}
-	};
-	
-	typedef FSTree_Sequence< sys_window_Details > FSTree_sys_window;
-	
-	class FSTree_sys_window_REF : public FSTree_Virtual,
-	                              public WindowRef_KeyName_Traits
-	{
-		private:
-			Key itsKey;
-		
-		public:
-			FSTree_sys_window_REF( const Key& key ) : itsKey( key )  {}
-			
-			std::string Name() const  { return NameFromKey( itsKey ); }
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_window >(); }
-	};
-	
-	
 	void FSTree_sys::Init()
 	{
 		MapSingleton< FSTree_sys_kernel >();
-		MapSingleton< FSTree_sys_window >();
 		MapSingleton< FSTree_sys_mac    >();
 	}
 	
