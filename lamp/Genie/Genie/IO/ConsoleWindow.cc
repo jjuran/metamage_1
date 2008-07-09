@@ -28,6 +28,9 @@
 #include "Nitrogen/Processes.h"
 #include "Nitrogen/Sound.h"
 
+// POSeven
+#include "POSeven/Errno.hh"
+
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
@@ -40,6 +43,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	
@@ -345,6 +349,35 @@ namespace Genie
 	
 	ConsoleWindow::~ConsoleWindow()
 	{
+	}
+	
+	void ConsoleWindow::IOCtl( unsigned long request, int* argp )
+	{
+		switch ( request )
+		{
+			case WIOCGDIM:
+				if ( argp != NULL )
+				{
+					Point dimensions = Ped::ViewableRange( SubView().ScrolledView().Get() );
+					
+					*(Point*) argp = dimensions;
+				}
+				
+				break;
+			
+			case WIOCSDIM:
+				if ( argp == NULL )
+				{
+					p7::throw_errno( EFAULT );
+				}
+				
+				p7::throw_errno( EINVAL );
+				break;
+			
+			default:
+				WindowHandle::IOCtl( request, argp );
+				break;
+		};
 	}
 	
 	bool ConsoleWindow::IsReadyForInput()
