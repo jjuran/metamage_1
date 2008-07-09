@@ -11,7 +11,14 @@
 #include <stdlib.h>
 
 // POSIX
+#include <sys/ioctl.h>
 #include <unistd.h>
+
+// Lamp
+#include "lamp/winio.h"
+
+// POSeven
+#include "POSeven/Open.hh"
 
 // Io
 #include "Io/TextInput.hh"
@@ -24,6 +31,7 @@
 #include "Options.hh"
 
 
+namespace NN = Nucleus;
 namespace p7 = poseven;
 
 
@@ -63,6 +71,24 @@ static void SendPrompt()
 	p7::write( p7::stdout_fileno, prompt_string, std::strlen( prompt_string ) );
 }
 
+static void SetRowsAndColumns()
+{
+	NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly, 0 );
+	
+	short dimensions[ 2 ] = { 0 };
+	
+	int status = ioctl( tty, WIOCGDIM, (int*) &dimensions );
+	
+	if ( status == 0 )
+	{
+		std::string rows = NN::Convert< std::string >( dimensions[0] );
+		std::string cols = NN::Convert< std::string >( dimensions[1] );
+		
+		setenv( "ROWS",    rows.c_str(), 1 );
+		setenv( "COLUMNS", cols.c_str(), 1 );
+	}
+}
+
 int ReadExecuteLoop( p7::fd_t  fd,
                      bool      prompts )
 {
@@ -90,6 +116,8 @@ int ReadExecuteLoop( p7::fd_t  fd,
 				{
 					return 0;
 				}
+				
+				SetRowsAndColumns();
 				
 				result = ExecuteCmdLine( command );
 				
