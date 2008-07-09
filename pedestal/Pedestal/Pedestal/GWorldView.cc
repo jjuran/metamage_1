@@ -26,8 +26,6 @@ namespace Pedestal
 		itsBounds = bounds;
 		
 		N::UpdateGWorld( itsGWorld, 0, bounds );
-		
-		Update();
 	}
 	
 	void GWorldView::Update()
