@@ -345,6 +345,7 @@ namespace Genie
 	                                                                 ConsolePane::Initializer( id, itsInput ) ),
 	                                                           WindowHandle( name )
 	{
+		SetResizeHandler( GetDynamicWindowResizeHandler< ConsoleTTYHandle >( id ) );
 	}
 	
 	ConsoleWindow::~ConsoleWindow()

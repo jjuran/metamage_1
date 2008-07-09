@@ -42,6 +42,7 @@ namespace Genie
 	                                              itsMark(),
 	                                              itHasReceivedEOF()
 	{
+		SetResizeHandler( GetDynamicWindowResizeHandler< BufferFileHandle >( id ) );
 	}
 	
 	BufferWindow::~BufferWindow()

@@ -11,9 +11,6 @@
 // Io
 #include "io/io.hh"
 
-// POSeven
-#include "POSeven/Errno.hh"
-
 
 namespace Genie
 {
@@ -43,6 +40,7 @@ namespace Genie
 	                                                        GetDynamicWindowCloseHandler< GraphicsWindow >( id ) ),
 	                                                  WindowHandle( "/sys/set/gfx/" + NN::Convert< std::string >( id ) )
 	{
+		SetResizeHandler( GetDynamicWindowResizeHandler< GraphicsWindow >( id ) );
 	}
 	
 	GraphicsWindow::~GraphicsWindow()
