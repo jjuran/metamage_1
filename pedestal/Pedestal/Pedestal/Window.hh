@@ -106,6 +106,12 @@ namespace Pedestal
 			virtual void operator()( N::WindowRef window ) const = 0;
 	};
 	
+	class WindowResizeHandler
+	{
+		public:
+			virtual void operator()( N::WindowRef window, short h, short v ) const = 0;
+	};
+	
 	class WindowRefOwner
 	{
 		private:
@@ -139,9 +145,45 @@ namespace Pedestal
 			void Close( N::WindowRef window )  { return (*itsCloseHandler)( window ); }
 	};
 	
+	class ResizableWindow
+	{
+		private:
+			boost::shared_ptr< WindowResizeHandler > itsResizeHandler;
+		
+		protected:
+			// Non-sliceable
+			~ResizableWindow();
+		
+		public:
+			ResizableWindow()
+			{
+			}
+			
+			ResizableWindow( const boost::shared_ptr< WindowResizeHandler >& handler ) : itsResizeHandler( handler )
+			{
+			}
+			
+			void SetResizeHandler( const boost::shared_ptr< WindowResizeHandler >& handler )
+			{
+				itsResizeHandler = handler;
+			}
+			
+			void Resize( N::WindowRef window, short h, short v )
+			{
+				if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
+				{
+					(*handler)( window, h, v );
+				}
+				else
+				{
+					Nitrogen::SizeWindow( window, h, v, true );
+				}
+			}
+	};
+	
 	class Quasimode;
 	
-	class WindowBase : public ClosableWindow
+	class WindowBase : public ClosableWindow, public ResizableWindow
 	{
 		public:
 			WindowBase( const boost::shared_ptr< WindowCloseHandler >& handler ) : ClosableWindow( handler )  {}

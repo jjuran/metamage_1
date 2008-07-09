@@ -69,6 +69,10 @@ namespace Pedestal
 	{
 	}
 	
+	ResizableWindow::~ResizableWindow()
+	{
+	}
+	
 	
 	#if 0
 	

@@ -315,7 +315,7 @@ namespace Pedestal
 				if ( WindowBase* base = N::GetWRefCon( window ) )
 				{
 					// Resize the window
-					N::SizeWindow( window, grown.h, grown.v, true );
+					base->Resize( window, grown.h, grown.v );
 					
 					base->Resized( N::GetPortBounds( N::GetWindowPort( window ) ) );
 				}
