@@ -197,11 +197,6 @@ namespace Genie
 				
 				break;
 			
-			/*
-			case WIOCGDIM:
-			case WIOCSDIM:
-			*/
-			
 			case WIOCGVIS:
 				if ( argp != NULL )
 				{
