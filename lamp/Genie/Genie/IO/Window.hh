@@ -23,6 +23,7 @@ namespace Pedestal
 	
 	class WindowCore;
 	class WindowCloseHandler;
+	class WindowResizeHandler;
 	
 }
 
@@ -63,12 +64,21 @@ namespace Genie
 	
 	
 	boost::shared_ptr< Pedestal::WindowCloseHandler > GetDynamicWindowCloseHandler( DynamicGroup&     group,
-			                                                                        DynamicElementID  id );
+	                                                                                DynamicElementID  id );
 	
 	template < class Handle >
 	boost::shared_ptr< Pedestal::WindowCloseHandler > GetDynamicWindowCloseHandler( DynamicElementID  id )
 	{
 		return GetDynamicWindowCloseHandler( GetDynamicGroup< Handle >(), id );
+	}
+	
+	boost::shared_ptr< Pedestal::WindowResizeHandler > GetDynamicWindowResizeHandler( DynamicGroup&     group,
+	                                                                                  DynamicElementID  id );
+	
+	template < class Handle >
+	boost::shared_ptr< Pedestal::WindowResizeHandler > GetDynamicWindowResizeHandler( DynamicElementID  id )
+	{
+		return GetDynamicWindowResizeHandler( GetDynamicGroup< Handle >(), id );
 	}
 	
 }
