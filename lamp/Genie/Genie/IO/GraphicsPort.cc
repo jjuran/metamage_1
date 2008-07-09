@@ -8,6 +8,9 @@
 // Lamp
 #include "lamp/grafio.h"
 
+// Nucleus
+#include "Nucleus/Saved.h"
+
 // Io
 #include "io/io.hh"
 
@@ -83,6 +86,29 @@ namespace Genie
 				if ( unsigned char* depth = (unsigned char*) argp )
 				{
 					*depth = pix[0]->pixelSize;
+				}
+				
+				break;
+			
+			case GIOCFLUSHRECT:
+				{
+					N::CGrafPtr port = N::GetWindowPort( GetWindowRef() );
+					
+					Rect bounds = argp ? *(Rect*) argp : N::GetPortBounds( port );
+					
+					// Lock pixels
+					NN::Saved< N::PixelsState_Value > savedPixelsState( pix );
+					
+					N::LockPixels( pix );
+					
+					// Copy to dest
+					N::CopyBits( N::GetPortBitMapForCopyBits( gworld ),
+					             N::GetPortBitMapForCopyBits( port   ),
+					             bounds,
+					             bounds,
+					             N::srcCopy );
+					
+					// Unlock pixels
 				}
 				
 				break;
