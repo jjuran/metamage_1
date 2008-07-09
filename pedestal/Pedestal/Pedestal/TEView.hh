@@ -24,7 +24,6 @@ namespace Pedestal
 	Rect Bounds( TEHandle hTE );
 	short CountLinesForDisplay( TEHandle hTE );
 	short CountLinesForEditing( TEHandle hTE );
-	short ViewableLines( TEHandle hTE );
 	Point ViewableRange( TEHandle hTE );
 	Point ScrollableRange( TEHandle hTE );
 	Point ScrollStep( TEHandle hTE );

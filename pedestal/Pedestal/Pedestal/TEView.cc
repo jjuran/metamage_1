@@ -149,16 +149,15 @@ namespace Pedestal
 		return nLines;
 	}
 	
-	short ViewableLines( TEHandle hTE )
-	{
-		Rect viewRect = N::GetTEViewRect( hTE );
-		short viewHeight = viewRect.bottom - viewRect.top;
-		return viewHeight / N::GetTELineHeight( hTE );
-	}
-	
 	Point ViewableRange( TEHandle hTE )
 	{
-		return N::SetPt( 1, ViewableLines( hTE ) );
+		Rect viewRect = N::GetTEViewRect( hTE );
+		
+		short viewWidth  = viewRect.right - viewRect.left;
+		short viewHeight = viewRect.bottom - viewRect.top;
+		
+		return N::SetPt( viewWidth  /  ::CharWidth      ( 'M' ),
+		                 viewHeight / N::GetTELineHeight( hTE ) );
 	}
 	
 	Point ScrollableRange( TEHandle hTE )
