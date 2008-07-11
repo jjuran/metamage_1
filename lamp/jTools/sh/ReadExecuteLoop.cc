@@ -27,6 +27,7 @@
 #include "Orion/Main.hh"
 
 // sh
+#include "Builtins.hh"
 #include "Execution.hh"
 #include "Options.hh"
 
@@ -81,11 +82,11 @@ static void SetRowsAndColumns()
 	
 	if ( status == 0 )
 	{
-		std::string rows = NN::Convert< std::string >( dimensions[0] );
-		std::string cols = NN::Convert< std::string >( dimensions[1] );
+		std::string lines   = NN::Convert< std::string >( dimensions[0] );
+		std::string columns = NN::Convert< std::string >( dimensions[1] );
 		
-		setenv( "ROWS",    rows.c_str(), 1 );
-		setenv( "COLUMNS", cols.c_str(), 1 );
+		AssignShellVariable( "LINES",   lines  .c_str() );
+		AssignShellVariable( "COLUMNS", columns.c_str() );
 	}
 }
 
