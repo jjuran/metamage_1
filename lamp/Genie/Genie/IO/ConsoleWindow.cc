@@ -15,6 +15,9 @@
 // Standard C
 #include <signal.h>
 
+// POSIX
+#include <sys/ttycom.h>
+
 // Lamp
 #include <lamp/winio.h>
 
@@ -354,24 +357,29 @@ namespace Genie
 	
 	void ConsoleWindow::IOCtl( unsigned long request, int* argp )
 	{
+		Point* result = (Point*) argp;
+		
 		switch ( request )
 		{
-			case WIOCGDIM:
-				if ( argp != NULL )
+			const Point ptZero = { 0 };
+			
+			case TIOCGWINSZ:
+				if ( result != NULL )
 				{
-					Point dimensions = Ped::ViewableRange( SubView().ScrolledView().Get() );
-					
-					*(Point*) argp = dimensions;
+					result[1] = ptZero;
+				}
+				
+				// fall through
+			
+			case WIOCGDIM:
+				if ( result != NULL )
+				{
+					*result = Ped::ViewableRange( SubView().ScrolledView().Get() );
 				}
 				
 				break;
 			
 			case WIOCSDIM:
-				if ( argp == NULL )
-				{
-					p7::throw_errno( EFAULT );
-				}
-				
 				p7::throw_errno( EINVAL );
 				break;
 			
