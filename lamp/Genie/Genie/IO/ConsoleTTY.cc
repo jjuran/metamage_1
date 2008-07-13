@@ -30,21 +30,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static std::string MakeConsoleName( ConsoleID id )
-	{
-		return "/dev/con/" + NN::Convert< std::string >( id );
-	}
-	
-	static boost::shared_ptr< IOHandle > NewConsoleWindow( ConsoleID id, const std::string& name )
-	{
-		boost::shared_ptr< IOHandle > console( new ConsoleWindow( id, name ) );
-		
-		return console;
-	}
-	
-	
-	ConsoleTTYHandle::ConsoleTTYHandle( ConsoleID id ) : itsID( id ),
-	                                                     itsWindow( NewConsoleWindow( id, MakeConsoleName( id ) ) )
+	ConsoleTTYHandle::ConsoleTTYHandle( TerminalID          id,
+	                                    const std::string&  name ) : itsID( id ),
+	                                                                 itsWindow( new ConsoleWindow( id, name ) )
 	{
 	}
 	

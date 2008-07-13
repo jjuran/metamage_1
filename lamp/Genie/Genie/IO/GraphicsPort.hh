@@ -29,7 +29,9 @@ namespace Genie
 		public:
 			typedef Pedestal::Window< Pedestal::GWorldView > Base;
 			
-			GraphicsWindow( TerminalID id );
+			static const char* PathPrefix()  { return "/sys/set/gfx/"; }
+			
+			GraphicsWindow( TerminalID id, const std::string& name );
 			
 			~GraphicsWindow();
 			

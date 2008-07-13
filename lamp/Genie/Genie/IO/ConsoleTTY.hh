@@ -27,7 +27,9 @@ namespace Genie
 			IOHandle* Next() const;
 		
 		public:
-			ConsoleTTYHandle( ConsoleID id );
+			static const char* PathPrefix()  { return "/dev/con/"; }
+			
+			ConsoleTTYHandle( TerminalID id, const std::string& name );
 			
 			~ConsoleTTYHandle();
 			

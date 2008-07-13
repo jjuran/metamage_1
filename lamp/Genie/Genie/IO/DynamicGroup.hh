@@ -44,7 +44,11 @@ namespace Genie
 	{
 		static DynamicElementID gLastID = 0;
 		
-		boost::shared_ptr< IOHandle > element( new Handle( ++gLastID ) );
+		++gLastID;
+		
+		std::string pathname = Handle::PathPrefix() + NN::Convert< std::string >( gLastID );
+		
+		boost::shared_ptr< IOHandle > element( new Handle( gLastID, pathname ) );
 		
 		GetDynamicGroup< Handle >()[ gLastID ] = element;
 		

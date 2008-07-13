@@ -37,11 +37,12 @@ namespace Genie
 	}
 	
 	
-	GraphicsWindow::GraphicsWindow( TerminalID id ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                               "\p" "Graphics",
-	                                                                               true ),
-	                                                        GetDynamicWindowCloseHandler< GraphicsWindow >( id ) ),
-	                                                  WindowHandle( "/sys/set/gfx/" + NN::Convert< std::string >( id ) )
+	GraphicsWindow::GraphicsWindow( TerminalID          id,
+	                                const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                                          "\p" "Graphics",
+	                                                                                          true ),
+	                                                                   GetDynamicWindowCloseHandler< GraphicsWindow >( id ) ),
+	                                                             WindowHandle( name )
 	{
 		SetResizeHandler( GetDynamicWindowResizeHandler< GraphicsWindow >( id ) );
 	}

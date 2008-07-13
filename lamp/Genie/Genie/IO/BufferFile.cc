@@ -34,13 +34,14 @@ namespace Genie
 	}
 	
 	
-	BufferWindow::BufferWindow( TerminalID id ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                           "\p" "Edit",
-	                                                                           false ),
-	                                                    GetDynamicWindowCloseHandler< BufferFileHandle >( id ) ),
-	                                              WindowHandle( "/sys/set/txt/" + NN::Convert< std::string >( id ) ),
-	                                              itsMark(),
-	                                              itHasReceivedEOF()
+	BufferWindow::BufferWindow( TerminalID          id,
+	                            const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                                      "\p" "Edit",
+	                                                                                      false ),
+	                                                               GetDynamicWindowCloseHandler< BufferFileHandle >( id ) ),
+	                                                         WindowHandle( name ),
+	                                                         itsMark(),
+	                                                         itHasReceivedEOF()
 	{
 		SetResizeHandler( GetDynamicWindowResizeHandler< BufferFileHandle >( id ) );
 	}
@@ -200,7 +201,8 @@ namespace Genie
 	}
 	
 	
-	BufferFileHandle::BufferFileHandle( TerminalID id ) : itsWindow( new BufferWindow( id ) )
+	BufferFileHandle::BufferFileHandle( TerminalID          id,
+	                                    const std::string&  name ) : itsWindow( new BufferWindow( id, name ) )
 	{
 	}
 	

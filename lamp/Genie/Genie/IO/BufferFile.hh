@@ -41,7 +41,7 @@ namespace Genie
 		public:
 			typedef Ped::Window< Ped::Scroller< Ped::TEView, Ped::kLiveFeedbackVariant > > Base;
 			
-			BufferWindow( TerminalID id );
+			BufferWindow( TerminalID id, const std::string& name );
 			
 			~BufferWindow();
 			
@@ -73,7 +73,9 @@ namespace Genie
 			
 		
 		public:
-			BufferFileHandle( TerminalID id );
+			static const char* PathPrefix()  { return "/sys/set/txt/"; }
+			
+			BufferFileHandle( TerminalID id, const std::string& name );
 			
 			~BufferFileHandle();
 			
