@@ -92,18 +92,55 @@ namespace Genie
 			}
 	};
 	
+	class sys_mac_crm_serial_N_icon_Query
+	{
+		private:
+			typedef N::CRMDeviceID Key;
+			
+			Key itsKey;
+		
+		public:
+			sys_mac_crm_serial_N_icon_Query( const Key& key ) : itsKey( key )
+			{
+			}
+			
+			std::string operator()() const
+			{
+				N::CRMRecPtr crmRec = GetCRMRecPtrFromID( itsKey );
+				
+				N::CRMSerialPtr serialPtr = NN::Convert< N::CRMSerialPtr >( crmRec );
+				
+				CRMIconHandle iconHandle = serialPtr->deviceIcon;
+				
+				CRMIconRecord icon = **iconHandle;
+				
+				// 32-bit * 32-bit = 1024 bits = 128 bytes, x2 = 256 bytes
+				const std::size_t maskedIconSize = sizeof icon.oldIcon + sizeof icon.oldMask;
+				
+				std::string iconData( (const char*) &icon.oldIcon, maskedIconSize );
+				
+				return iconData;
+			}
+	};
+	
 	
 	FSTree_sys_mac_crm_serial_N::FSTree_sys_mac_crm_serial_N( const Key& key ) : itsKey( key )
 	{
-		typedef FSTree_QueryFile< sys_mac_crm_serial_N_name_Query > QueryFile;
-		
-		typedef sys_mac_crm_serial_N_name_Query Query;
-		
 		std::string pathname = Pathname();
 		
-		Map( FSTreePtr( new QueryFile( pathname, "name",   Query( key, &CRMSerialRecord::name             ) ) ) );
-		Map( FSTreePtr( new QueryFile( pathname, "input",  Query( key, &CRMSerialRecord::inputDriverName  ) ) ) );
-		Map( FSTreePtr( new QueryFile( pathname, "output", Query( key, &CRMSerialRecord::outputDriverName ) ) ) );
+		typedef sys_mac_crm_serial_N_name_Query NameQuery;
+		
+		typedef FSTree_QueryFile< NameQuery > NameQueryFile;
+		
+		Map( FSTreePtr( new NameQueryFile( pathname, "name",   NameQuery( key, &CRMSerialRecord::name             ) ) ) );
+		Map( FSTreePtr( new NameQueryFile( pathname, "input",  NameQuery( key, &CRMSerialRecord::inputDriverName  ) ) ) );
+		Map( FSTreePtr( new NameQueryFile( pathname, "output", NameQuery( key, &CRMSerialRecord::outputDriverName ) ) ) );
+		
+		typedef sys_mac_crm_serial_N_icon_Query IconQuery;
+		
+		typedef FSTree_QueryFile< IconQuery > IconQueryFile;
+		
+		Map( FSTreePtr( new IconQueryFile( pathname, "icon", IconQuery( key ) ) ) );
 	}
 	
 }
