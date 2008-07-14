@@ -19,6 +19,16 @@ namespace Pedestal
 		itsBounds( bounds ),
 	  	itsGWorld( N::NewGWorld( 0, N::LocalToGlobal( bounds ) ) )
 	{
+		Erase( bounds );
+	}
+	
+	void GWorldView::Erase( const Rect& bounds )
+	{
+		NN::Saved< N::GWorld_Value > savedGWorld;
+		
+		N::SetGWorld( itsGWorld );
+		
+		N::EraseRect( bounds );
 	}
 	
 	void GWorldView::Resize( const Rect& bounds )
@@ -26,6 +36,8 @@ namespace Pedestal
 		itsBounds = bounds;
 		
 		N::UpdateGWorld( itsGWorld, 0, bounds );
+		
+		Erase( bounds );
 	}
 	
 	void GWorldView::Update()
