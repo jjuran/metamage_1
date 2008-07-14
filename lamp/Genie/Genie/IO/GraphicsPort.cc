@@ -114,6 +114,18 @@ namespace Genie
 				
 				break;
 			
+			case GIOCSBGCOLOR:
+				if ( const RGBColor* bg = (const RGBColor*) argp )
+				{
+					NN::Saved< N::GWorld_Value > savedGWorld;
+					
+					N::SetGWorld( gworld );
+					
+					N::RGBBackColor( *bg );
+				}
+				
+				break;
+			
 			default:
 				WindowHandle::IOCtl( request, argp );
 				break;
