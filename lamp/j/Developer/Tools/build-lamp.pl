@@ -23,14 +23,17 @@ $build_config_name = shift || $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
 
 my %supported_configs = qw
 (
-	68K-Res-Toolbox-Debug  68k
-	PPC-CFM-Toolbox-Debug  std
-	PPC-CFM-Carbon-Debug   osx
+	68K-Res-Toolbox-Release  68k
+	PPC-CFM-Toolbox-Release  std
+	PPC-CFM-Carbon-Release   osx
+	68K-Res-Toolbox-Debug    68k@
+	PPC-CFM-Toolbox-Debug    std@
+	PPC-CFM-Carbon-Debug     osx@
 );
 
 my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
 
-if ( length $build_config_name == 3 )
+if ( $build_config_name =~ /^ \w{3} @? $/x )
 {
 	$config_short_name = $build_config_name;
 	
