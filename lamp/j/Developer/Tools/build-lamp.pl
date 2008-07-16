@@ -87,7 +87,7 @@ my @programs = qw
 	false
 	gzip
 	htget httpd
-	ic idle illegal inetd
+	ic icon idle illegal inetd
 	jgetty jtest
 	keymods kill killall
 	ld lf2cr lf2crlf ln load-init local-edit-client login
@@ -150,7 +150,7 @@ my %fsmap =
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
-			qw( console cr2lf divide idle jtest lf2cr lf2crlf mread pause ptrace setwindow stripcr striplf th window ),
+			qw( console cr2lf divide icon idle jtest lf2cr lf2crlf mread pause ptrace setwindow stripcr striplf th window ),
 			qw( beep cds drvr err2text gestalt keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
