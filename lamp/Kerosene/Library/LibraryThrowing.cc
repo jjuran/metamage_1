@@ -12,6 +12,7 @@
 #include "stdlib.h"
 
 // Standard C++
+#include <set>
 #include <string>
 #include <vector>
 
@@ -239,31 +240,45 @@
 		                         std::ptr_fun( Sh::CompareStrings ) );
 	}
 	
-	static void OverwriteVar( std::vector< char* >::iterator it, const std::string& string )
+	
+	// This exercise is necessary because we need to pass the string with
+	// different constness depending on whether we're setting or putting.
+	// With setenv(), we construct a new std::string on which we call c_str(),
+	// which returns const char*.  With putenv(), we're using the actual string,
+	// and storing it as char*.  Type-safety for the win.
+	
+	template < bool putting > struct overwrite_traits;
+	
+	template <> struct overwrite_traits< false >
 	{
-		char* var = *it;
+		static const bool user_owned = false;
 		
-		std::size_t old_len = std::strlen( var );
+		typedef const char* param_type;
 		
-		std::size_t new_len = string.size();
-		
-		if ( new_len != old_len )
+		static char* new_storage( param_type, std::size_t length )
 		{
-			var = new char[ new_len + 1 ];
-			
-			delete [] *it;
-			
-			*it = var;
+			return new char[ length + 1 ];
 		}
+	};
+	
+	template <> struct overwrite_traits< true >
+	{
+		static const bool user_owned = true;
 		
-		std::copy( string.c_str(), string.c_str() + new_len + 1, var );
-	}
+		typedef char* param_type;
+		
+		static char* new_storage( param_type string, std::size_t )
+		{
+			return string;
+		}
+	};
 	
 	
 	class Environ
 	{
 		private:
-			std::vector< char* > itsVars;
+			std::vector< char* >     itsVars;
+			std::set< const char* >  itsUserOwnedVars;
 		
 		public:
 			Environ();
@@ -271,10 +286,18 @@
 			~Environ();
 			
 			void UpdateEnvironValue();
+			void Preallocate();
+			
+			template < bool putting >
+			void OverwriteVar( std::vector< char* >::iterator                    it,
+	                           typename overwrite_traits< putting >::param_type  string,
+	                           std::size_t                                       new_len );
+			
+			void RemoveUserOwnedVars();
 			
 			char* GetEnv( const char* name );
 			void SetEnv( const char* name, const char* value, bool overwrite );
-			void PutEnv( const char* string );
+			void PutEnv( char* string );
 			void UnsetEnv( const char* name );
 			void ClearEnv();
 	};
@@ -289,12 +312,95 @@
 	
 	Environ::~Environ()
 	{
-		DeleteVars( itsVars );
+		ClearEnv();
 	}
 	
 	void Environ::UpdateEnvironValue()
 	{
 		environ = &itsVars.front();
+	}
+	
+	void Environ::Preallocate()
+	{
+		// We reserve an extra slot so we can later insert without allocating memory, which
+		// (a) could fail and throw bad_alloc, or
+		// (b) could succeed and invalidate iterators.
+		
+		itsVars.reserve( itsVars.size() + 1 );
+		
+		UpdateEnvironValue();
+	}
+	
+	template < bool putting >
+	void Environ::OverwriteVar( std::vector< char* >::iterator                    it,
+	                            typename overwrite_traits< putting >::param_type  string,
+	                            std::size_t                                       new_len )
+	{
+		typedef overwrite_traits< putting > traits;
+		
+		// true for putenv(), false for setenv(), known at compile time.
+		const bool new_is_user_owned = traits::user_owned;
+		
+		char* var = *it;
+		
+		std::size_t old_len = std::strlen( var );
+		
+		std::set< const char* >::iterator user_ownership = itsUserOwnedVars.find( var );
+		
+		// true for putenv(), false for setenv(), known at runtime.
+		bool old_is_user_owned = user_ownership != itsUserOwnedVars.end();
+		
+		// If neither var string is user-owned and the lengths are the same,
+		// it's a straight copy -- no memory management is required.
+		// User-owned var strings don't get allocated or deallocated here,
+		// but instead we have to mark them so we don't delete them later.
+		
+		if ( old_is_user_owned  ||  new_is_user_owned  ||  new_len != old_len )
+		{
+			if ( new_is_user_owned )
+			{
+				itsUserOwnedVars.insert( string );  // may throw
+			}
+			
+			*it = traits::new_storage( string, new_len );
+			
+			if ( old_is_user_owned )
+			{
+				itsUserOwnedVars.erase( user_ownership );
+			}
+			else
+			{
+				delete [] var;
+			}
+			
+			var = *it;
+		}
+		
+		if ( !new_is_user_owned )
+		{
+			std::copy( string, string + new_len + 1, var );
+		}
+	}
+	
+	void Environ::RemoveUserOwnedVars()
+	{
+		// Here we zero out user-owned var string storage.  This is a convenience
+		// that allows us to subsequently call DeleteVars() safely without
+		// giving it a dependency on the user ownership structure.
+		
+		for ( std::vector< char* >::iterator it = itsVars.begin();  it != itsVars.end();  ++it )
+		{
+			std::set< const char* >::iterator user_ownership = itsUserOwnedVars.find( *it );
+			
+			if ( user_ownership != itsUserOwnedVars.end() )
+			{
+				//itsUserOwnedVars.erase( user_ownership );
+				
+				*it = NULL;
+			}
+		}
+		
+		itsUserOwnedVars.clear();
 	}
 	
 	char* Environ::GetEnv( const char* name )
@@ -316,6 +422,8 @@
 	
 	void Environ::SetEnv( const char* name, const char* value, bool overwrite )
 	{
+		Preallocate();  // make insertion safe
+		
 		std::vector< char* >::iterator it = FindVar( itsVars, name );
 		
 		const char* var = *it;
@@ -328,20 +436,26 @@
 		
 		if ( inserting )
 		{
+			// copy_string() may throw, but insert() will not
 			itsVars.insert( it, copy_string( Sh::MakeVar( name, value ) ) );
-			
-			UpdateEnvironValue();
 		}
 		else if ( overwrite )
 		{
-			OverwriteVar( it, Sh::MakeVar( name, value ) );
+			std::string new_var = Sh::MakeVar( name, value );
+			
+			OverwriteVar< false >( it, new_var.c_str(), new_var.length() );
 		}
 	}
 	
-	void Environ::PutEnv( const char* string )
+	void Environ::PutEnv( char* string )
 	{
 		std::string name = string;
+		
+		std::size_t length = name.length();
+		
 		name.resize( name.find( '=' ) );
+		
+		Preallocate();  // make insertion safe
 		
 		std::vector< char* >::iterator it = FindVar( itsVars, name.c_str() );
 		
@@ -355,13 +469,13 @@
 		
 		if ( inserting )
 		{
-			itsVars.insert( it, copy_string( string ) );
+			itsUserOwnedVars.insert( string );  // may throw
 			
-			UpdateEnvironValue();
+			itsVars.insert( it, string );  // memory already reserved
 		}
 		else
 		{
-			OverwriteVar( it, string );
+			OverwriteVar< true >( it, string, length );
 		}
 	}
 	
@@ -374,8 +488,18 @@
 		// Did we find the right environment variable?
 		bool match = Sh::VarMatchesName( var, Sh::EndOfVarName( var ), name );
 		
+		
 		if ( match )
 		{
+			std::set< const char* >::iterator user_ownership = itsUserOwnedVars.find( var );
+			
+			bool user_owned = user_ownership != itsUserOwnedVars.end();
+			
+			if ( user_owned )
+			{
+				itsUserOwnedVars.erase( user_ownership );
+			}
+			
 			itsVars.erase( it );
 			
 			delete [] var;
@@ -384,6 +508,9 @@
 	
 	void Environ::ClearEnv()
 	{
+		// Zero out user-owned memory so we don't try to delete it.
+		RemoveUserOwnedVars();
+		
 		DeleteVars( itsVars );
 		
 		environ = NULL;
@@ -422,7 +549,7 @@
 		return 0;
 	}
 	
-	int putenv( const char* string )
+	int putenv( char* string )
 	{
 		gEnvironPtr->PutEnv( string );
 		
