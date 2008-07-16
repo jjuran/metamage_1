@@ -534,9 +534,11 @@ static void ShiftEnvironmentVariables( char**& argv )
 {
 	//ASSERT( argv != NULL );
 	
-	while ( std::strchr( argv[ 0 ], '=' ) )
+	while ( char* eq = std::strchr( argv[ 0 ], '=' ) )
 	{
-		putenv( argv[0] );
+		std::string name( argv[ 0 ], eq );
+		
+		setenv( name.c_str(), eq + 1, true );
 		
 		++argv;
 	}

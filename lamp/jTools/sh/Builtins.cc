@@ -224,13 +224,14 @@ static int Builtin_Export( int argc, iota::argv_t argv )
 	{
 		iota::arg_t const arg1 = argv[ 1 ];
 		
-		if ( char* eq = std::strchr( arg1, '=' ) )
+		if ( const char* eq = std::strchr( arg1, '=' ) )
 		{
 			// $ export foo=bar
-			putenv( arg1 );
+			std::string name( arg1, eq );
 			
-			//gLocalVariables.erase( name );
-			gLocalVariables.erase( std::string( arg1, eq - arg1 ) );
+			setenv( name.c_str(), eq + 1, true );
+			
+			gLocalVariables.erase( name );
 		}
 		else
 		{
