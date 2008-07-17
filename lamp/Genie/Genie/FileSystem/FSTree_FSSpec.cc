@@ -364,7 +364,9 @@ namespace Genie
 		
 		static std::string Name()  { return "Volumes"; }
 		
-		Sequence ItemSequence() const  { return N::Volumes(); }
+		static FSTreePtr Parent()  { return FSRoot(); }
+		
+		static Sequence ItemSequence()  { return N::Volumes(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
@@ -376,10 +378,10 @@ namespace Genie
 		FSTreePtr GetChildNode( const Key& key ) const;
 	};
 	
-	class FSTree_Volumes : public FSTree_Sequence< UniqueDetails< Volumes_Details > >
+	class FSTree_Volumes : public FSTree_Sequence< Volumes_Details >
 	{
 		private:
-			typedef FSTree_Sequence< UniqueDetails< Volumes_Details > > Base;
+			typedef FSTree_Sequence< Volumes_Details > Base;
 		
 		public:
 			void Stat( struct ::stat& sb ) const;
