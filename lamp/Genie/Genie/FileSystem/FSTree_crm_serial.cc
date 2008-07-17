@@ -48,6 +48,11 @@ namespace Genie
 		return GetSingleton< FSTree_sys_mac_crm >();
 	}
 	
+	FSTreePtr sys_mac_crm_serial_Details::GetChildNode( const Key& key )
+	{
+		return MakeFSTree( new FSTree_sys_mac_crm_serial_N( key ) );
+	}
+	
 	
 	class sys_mac_crm_serial_N_name_Query
 	{

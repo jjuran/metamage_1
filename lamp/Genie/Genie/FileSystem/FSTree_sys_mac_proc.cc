@@ -73,6 +73,12 @@ namespace Genie
 		return true;
 	}
 	
+	FSTreePtr sys_mac_proc_Details::GetChildNode( const Key& key )
+	{
+		return MakeFSTree( new FSTree_sys_mac_proc_PSN( key ) );
+	}
+	
+	
 	class sys_mac_proc_PSN_name_Query
 	{
 		private:

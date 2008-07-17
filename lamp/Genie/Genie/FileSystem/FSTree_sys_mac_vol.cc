@@ -72,6 +72,12 @@ namespace Genie
 		return GetSingleton< FSTree_sys_mac >();
 	}
 	
+	FSTreePtr sys_mac_vol_Details::GetChildNode( const Key& key )
+	{
+		return MakeFSTree( new FSTree_sys_mac_vol_N( key ) );
+	}
+	
+	
 	class sys_mac_vol_N_name_Query
 	{
 		private:

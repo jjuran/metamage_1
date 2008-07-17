@@ -80,6 +80,11 @@ namespace Genie
 		return GetSingleton< FSTree_sys_mac >();
 	}
 	
+	FSTreePtr sys_mac_unit_Details::GetChildNode( const Key& key )
+	{
+		return MakeFSTree( new FSTree_sys_mac_unit_N( key ) );
+	}
+	
 	
 	static FSTreePtr Name_Factory( const FSTreePtr&                 parent,
 	                               const std::string&               name,

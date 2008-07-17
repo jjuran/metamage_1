@@ -372,6 +372,8 @@ namespace Genie
 		{
 			return true;  // DetermineVRefNum() only returns valid keys
 		}
+		
+		FSTreePtr GetChildNode( const Key& key ) const;
 	};
 	
 	class FSTree_Volumes : public FSTree_Sequence< UniqueDetails< Volumes_Details > >
@@ -787,6 +789,12 @@ namespace Genie
 			
 			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_FSSpec( NN::Make< N::FSDirSpec >( itsKey, N::fsRtDirID ) ) ); }
 	};
+	
+	
+	FSTreePtr Volumes_Details::GetChildNode( const Key& key ) const
+	{
+		return MakeFSTree( new FSTree_Volumes_Link( key ) );
+	}
 	
 	void FSTree_Volumes::Stat( struct ::stat& sb ) const
 	{

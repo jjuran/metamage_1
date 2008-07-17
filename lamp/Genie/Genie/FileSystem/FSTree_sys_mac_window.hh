@@ -38,6 +38,8 @@ namespace Genie
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
 		static bool KeyIsValid( const Key& key );
+		
+		static FSTreePtr GetChildNode( const Key& key );
 	};
 	
 	typedef FSTree_Sequence< sys_mac_window_Details > FSTree_sys_mac_window;

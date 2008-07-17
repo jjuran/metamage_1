@@ -145,6 +145,8 @@ namespace Genie
 		static Key KeyFromValue( Sequence::const_reference ref )  { return &ref - GetUTableBase(); }
 		
 		static bool KeyIsValid( const Key& key );
+		
+		static FSTreePtr GetChildNode( const Key& key );
 	};
 	
 	typedef FSTree_Sequence< sys_mac_unit_Details > FSTree_sys_mac_unit;
