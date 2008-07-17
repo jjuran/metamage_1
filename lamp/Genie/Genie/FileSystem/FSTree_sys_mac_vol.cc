@@ -26,12 +26,12 @@ namespace Genie
 	
 	std::string VRefNum_KeyName_Traits::NameFromKey( const Key& key )
 	{
-		return NN::Convert< std::string >( -key );
+		return Int_KeyName_Traits::NameFromKey( -key );
 	}
 	
 	VRefNum_KeyName_Traits::Key VRefNum_KeyName_Traits::KeyFromName( const std::string& name )
 	{
-		int n = std::atoi( name.c_str() );
+		int n = Int_KeyName_Traits::KeyFromName( name );
 		
 		if ( n <= 0  ||  SInt16( n ) != n )
 		{
