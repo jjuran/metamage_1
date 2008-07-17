@@ -40,7 +40,7 @@ namespace Genie
 		MapSingleton< FSTree_sys_mac_user    >();
 		MapSingleton< FSTree_sys_mac_gestalt >();
 		
-		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_name_Query >( Pathname(),
+		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_name_Query >( shared_from_this(),
 		                                                            "name" ) ) );
 		
 		try
