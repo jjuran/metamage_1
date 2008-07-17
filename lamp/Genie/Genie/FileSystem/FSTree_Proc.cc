@@ -74,6 +74,8 @@ namespace Genie
 		public:
 			FSTree_PID( Key pid );
 			
+			void Init();
+			
 			std::string Name() const  { return NN::Convert< std::string >( itsPID ); }
 			
 			FSTreePtr Parent() const  { return GetProcFSTree(); }
@@ -94,7 +96,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return NN::Convert< std::string >( getpid() ); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_PID( getpid() ) ); }
+			FSTreePtr ResolveLink() const  { return MakeFSTree( new FSTree_PID( getpid() ) ); }
 	};
 	
 	
@@ -109,7 +111,7 @@ namespace Genie
 		
 		static std::string Name()  { return "fd"; }
 		
-		FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID   ( itsPID ) ); }
+		FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
 		
 		FSTreePtr Lookup( const std::string& name ) const;
 		
@@ -166,7 +168,7 @@ namespace Genie
 			
 			std::string Name() const  { return "cwd"; }
 			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID( itsPID ) ); }
+			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -185,7 +187,7 @@ namespace Genie
 			
 			std::string Name() const  { return "exe"; }
 			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID( itsPID ) ); }
+			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -204,7 +206,7 @@ namespace Genie
 			
 			std::string Name() const  { return "root"; }
 			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID( itsPID ) ); }
+			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -233,12 +235,12 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return FSTreePtr( new FSTree_PID( key ) );
+		return MakeFSTree( new FSTree_PID( key ) );
 	}
 	
 	FSTreePtr proc_Details::GetChildNode( const Key& key )
 	{
-		return FSTreePtr( new FSTree_PID( key ) );
+		return MakeFSTree( new FSTree_PID( key ) );
 	}
 	
 	// Process states
@@ -438,22 +440,26 @@ namespace Genie
 	
 	FSTree_PID::FSTree_PID( pid_t pid ) : itsPID( pid )
 	{
-		Map( FSTreePtr( new FSTree_PID_fd  ( pid ) ) );
-		Map( FSTreePtr( new FSTree_PID_cwd ( pid ) ) );
-		Map( FSTreePtr( new FSTree_PID_exe ( pid ) ) );
-		Map( FSTreePtr( new FSTree_PID_root( pid ) ) );
+	}
+	
+	void FSTree_PID::Init()
+	{
+		Map( FSTreePtr( new FSTree_PID_fd  ( itsPID ) ) );
+		Map( FSTreePtr( new FSTree_PID_cwd ( itsPID ) ) );
+		Map( FSTreePtr( new FSTree_PID_exe ( itsPID ) ) );
+		Map( FSTreePtr( new FSTree_PID_root( itsPID ) ) );
 		
 		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_cmdline_Query >( Pathname(),
 		                                                                "cmdline",
-		                                                                proc_PID_cmdline_Query( pid ) ) ) );
+		                                                                proc_PID_cmdline_Query( itsPID ) ) ) );
 		
 		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( Pathname(),
 		                                                             "stat",
-		                                                             proc_PID_stat_Query( pid ) ) ) );
+		                                                             proc_PID_stat_Query( itsPID ) ) ) );
 		
 		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_backtrace_Query >( Pathname(),
 		                                                                  "backtrace",
-		                                                                  proc_PID_backtrace_Query( pid ) ) ) );
+		                                                                  proc_PID_backtrace_Query( itsPID ) ) ) );
 	}
 	
 	FSTreePtr PID_fd_Details::Lookup( const std::string& name ) const
