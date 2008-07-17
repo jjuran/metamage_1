@@ -133,6 +133,15 @@ namespace Genie
 	};
 	
 	
+	static FSTreePtr Root_Factory( const FSTreePtr&             parent,
+	                               const char*                  name,
+	                               VRefNum_KeyName_Traits::Key  key )
+	{
+		FSSpec volume = N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
+		
+		return FSTreeFromFSSpec( volume );
+	}
+	
 	static FSTreePtr Name_Factory( const FSTreePtr&             parent,
 	                               const char*                  name,
 	                               VRefNum_KeyName_Traits::Key  key )
@@ -154,10 +163,8 @@ namespace Genie
 	
 	void FSTree_sys_mac_vol_N::Init()
 	{
-		FSSpec volume = N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" );
-		
-		Map( FSTreeFromFSSpec( volume ) );  // volume roots are named "mnt", not the volume name
-		
+		// volume roots are named "mnt", not the volume name
+		Map( Root_Factory( shared_from_this(), "mnt",  itsKey ) );
 		Map( Name_Factory( shared_from_this(), "name", itsKey ) );
 		
 		Map( Link_Factory< N::kSystemFolderType    >( shared_from_this(), "sys", itsKey ) );
