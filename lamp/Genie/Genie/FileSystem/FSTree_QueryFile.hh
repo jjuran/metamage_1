@@ -27,6 +27,12 @@ namespace Genie
 			{
 			}
 			
+			FSTree_QueryFile_Base( const FSTreePtr&    parent,
+			                       const std::string&  name ) : itsParentPathname( parent->Pathname() ),
+			                                                    itsName( name )
+			{
+			}
+			
 			std::string Name() const  { return itsName; }
 			
 			FSTreePtr Parent() const;
@@ -49,6 +55,19 @@ namespace Genie
 			FSTree_QueryFile( const std::string&  parentPathname,
 			                  const std::string&  name,
 			                  const Query&        query ) : FSTree_QueryFile_Base( parentPathname, name ),
+			                                                itsQuery( query )
+			{
+			}
+			
+			FSTree_QueryFile( const FSTreePtr&    parent,
+			                  const std::string&  name ) : FSTree_QueryFile_Base( parent, name ),
+			                                               itsQuery()
+			{
+			}
+			
+			FSTree_QueryFile( const FSTreePtr&    parent,
+			                  const std::string&  name,
+			                  const Query&        query ) : FSTree_QueryFile_Base( parent, name ),
 			                                                itsQuery( query )
 			{
 			}
