@@ -141,13 +141,20 @@ namespace Genie
 	{
 	}
 	
+	static FSTreePtr Name_Factory( const FSTreePtr&                          parent,
+	                               const std::string&                        name,
+	                               ProcessSerialNumber_KeyName_Traits::Key   key )
+	{
+		typedef sys_mac_proc_PSN_name_Query Query;
+		
+		typedef FSTree_QueryFile< Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+	}
+	
 	void FSTree_sys_mac_proc_PSN::Init()
 	{
-		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_proc_PSN_name_Query >( shared_from_this(),
-		                                                                     "name",
-		                                                                     sys_mac_proc_PSN_name_Query( itsKey ) ) ) );
-		
-		Map( FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( itsKey ) ) );
+		Map( Name_Factory( shared_from_this(), "name", itsKey ) );
 	}
 	
 }
