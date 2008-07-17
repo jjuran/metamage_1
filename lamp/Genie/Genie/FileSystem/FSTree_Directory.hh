@@ -139,13 +139,13 @@ namespace Genie
 	};
 	
 	template < class Details >
-	class SequenceIteratorConverter
+	class IteratorConverter
 	{
 		private:
 			Details itsDetails;
 		
 		public:
-			SequenceIteratorConverter( const Details& details ) : itsDetails( details )  {}
+			IteratorConverter( const Details& details ) : itsDetails( details )  {}
 			
 			FSNode operator()( const Details::Sequence::value_type& value ) const
 			{
@@ -153,7 +153,7 @@ namespace Genie
 				
 				std::string name = itsDetails.NameFromKey( key );
 				
-				FSTreePtr node( MakeFSTree( new Details::ChildNode( key ) ) );
+				FSTreePtr node( itsDetails.GetChildNode( key ) );
 				
 				return FSNode( name, node );
 			}
@@ -162,7 +162,7 @@ namespace Genie
 	template < class Details >
 	void FSTree_Sequence< Details >::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		SequenceIteratorConverter< Details > converter( itsDetails );
+		IteratorConverter< Details > converter( itsDetails );
 		
 		std::transform( itsDetails.ItemSequence().begin(),
 		                itsDetails.ItemSequence().end(),
@@ -194,24 +194,6 @@ namespace Genie
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	template < class Details >
-	class IteratorConverter
-	{
-		private:
-			Details itsDetails;
-		
-		public:
-			IteratorConverter( const Details& details ) : itsDetails( details )  {}
-			
-			FSNode operator()( const Details::Sequence::value_type& value ) const
-			{
-				typename Details::Key key = itsDetails.KeyFromValue( value );
-				
-				return FSNode( itsDetails.GetChildName( value ),
-				               itsDetails.GetChildNode( key   ) );
-			}
 	};
 	
 	template < class Details >
