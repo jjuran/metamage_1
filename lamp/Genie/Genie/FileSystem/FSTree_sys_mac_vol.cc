@@ -132,9 +132,6 @@ namespace Genie
 			}
 	};
 	
-	FSTree_sys_mac_vol_N::FSTree_sys_mac_vol_N( const Key& key ) : itsKey( key )
-	{
-	}
 	
 	void FSTree_sys_mac_vol_N::Init()
 	{
