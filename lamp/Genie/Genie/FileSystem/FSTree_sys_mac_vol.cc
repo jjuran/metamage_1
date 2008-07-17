@@ -134,7 +134,7 @@ namespace Genie
 	
 	
 	static FSTreePtr Name_Factory( const FSTreePtr&             parent,
-	                               const std::string&           name,
+	                               const char*                  name,
 	                               VRefNum_KeyName_Traits::Key  key )
 	{
 		typedef sys_mac_vol_N_name_Query Query;
@@ -142,6 +142,14 @@ namespace Genie
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+	}
+	
+	template < N::FolderType type >
+	static FSTreePtr Link_Factory( const FSTreePtr&             parent,
+	                               const char*                  name,
+	                               VRefNum_KeyName_Traits::Key  key )
+	{
+		return MakeFSTree( new FSTree_Folder_Link( key, type, name ) );
 	}
 	
 	void FSTree_sys_mac_vol_N::Init()
@@ -152,8 +160,8 @@ namespace Genie
 		
 		Map( Name_Factory( shared_from_this(), "name", itsKey ) );
 		
-		Map( FSTreePtr( new FSTree_Folder_Link( itsKey, N::kSystemFolderType,    "sys" ) ) );
-		Map( FSTreePtr( new FSTree_Folder_Link( itsKey, N::kTemporaryFolderType, "tmp" ) ) );
+		Map( Link_Factory< N::kSystemFolderType    >( shared_from_this(), "sys", itsKey ) );
+		Map( Link_Factory< N::kTemporaryFolderType >( shared_from_this(), "tmp", itsKey ) );
 	}
 	
 	
