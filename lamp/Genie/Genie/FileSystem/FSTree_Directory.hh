@@ -48,9 +48,9 @@ namespace Genie
 		}
 	};
 	
-	template < class Integer > struct Integer_KeyName_Traits
+	struct Int_KeyName_Traits
 	{
-		typedef Integer Key;
+		typedef int Key;
 		
 		static std::string NameFromKey( const Key& key )
 		{
@@ -60,7 +60,22 @@ namespace Genie
 		static Key KeyFromName( const std::string& name )
 		{
 			//return Nucleus::Convert< Integer >( name );
-			return std::atoi( name.c_str() );
+			return Key( std::atoi( name.c_str() ) );
+		}
+	};
+	
+	template < class Integer > struct Integer_KeyName_Traits
+	{
+		typedef Integer Key;
+		
+		static std::string NameFromKey( const Key& key )
+		{
+			return Int_KeyName_Traits::NameFromKey( key );
+		}
+		
+		static Key KeyFromName( const std::string& name )
+		{
+			return Key( Int_KeyName_Traits::KeyFromName( name ) );
 		}
 	};
 	
