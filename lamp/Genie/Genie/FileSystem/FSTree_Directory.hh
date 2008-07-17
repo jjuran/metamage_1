@@ -119,7 +119,7 @@ namespace Genie
 					poseven::throw_errno( ENOENT );
 				}
 				
-				return FSTreePtr( new typename Details::ChildNode( key ) );
+				return MakeFSTree( new Details::ChildNode( key ) );
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -140,7 +140,7 @@ namespace Genie
 				
 				std::string name = itsDetails.NameFromKey( key );
 				
-				FSTreePtr node( new Details::ChildNode( key ) );
+				FSTreePtr node( MakeFSTree( new Details::ChildNode( key ) ) );
 				
 				return FSNode( name, node );
 			}
