@@ -117,7 +117,7 @@ namespace Genie
 			
 			std::string Name() const  { return "exe"; }
 			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_proc_PSN( itsKey ) ); }
+			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_sys_mac_proc_PSN( itsKey ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -133,11 +133,15 @@ namespace Genie
 	
 	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const Key& key ) : itsKey( key )
 	{
+	}
+	
+	void FSTree_sys_mac_proc_PSN::Init()
+	{
 		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_proc_PSN_name_Query >( Pathname(),
 		                                                                     "name",
-		                                                                     sys_mac_proc_PSN_name_Query( key ) ) ) );
+		                                                                     sys_mac_proc_PSN_name_Query( itsKey ) ) ) );
 		
-		Map( FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( key ) ) );
+		Map( FSTreePtr( new FSTree_sys_mac_proc_PSN_exe( itsKey ) ) );
 	}
 	
 }
