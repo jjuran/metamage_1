@@ -314,7 +314,7 @@ namespace Genie
 		
 		for ( Iter it = itsMappings.begin();  it != itsMappings.end();  ++it )
 		{
-			std::string name( it->first );
+			const std::string& name = it->first;
 			
 			const Function& f = it->second;
 			
