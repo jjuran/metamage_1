@@ -40,7 +40,7 @@ namespace Genie
 		
 		static std::string Name()  { return "proc"; }
 		
-		static FSTreePtr Lookup( const std::string& name );
+		static FSTreePtr Parent()  { return FSRoot(); }
 		
 		static const Sequence& ItemSequence()  { return GetProcessList().GetMap(); }
 		
@@ -50,13 +50,13 @@ namespace Genie
 		{
 			const Sequence& sequence = ItemSequence();
 			
-			return sequence.find( key ) != sequence.end();
+			return key == 0  ||  sequence.find( key ) != sequence.end();
 		}
 		
 		static FSTreePtr GetChildNode( const Key& key );
 	};
 	
-	typedef FSTree_Special_Unique< proc_Details > FSTree_proc;
+	typedef FSTree_Sequence< proc_Details > FSTree_proc;
 	
 	
 	class FSTree_PID : public FSTree_Virtual
@@ -209,25 +209,13 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr proc_Details::Lookup( const std::string& name )
-	{
-		if ( name == "self" )
-		{
-			return FSTreePtr( new FSTree_proc_self() );
-		}
-		
-		Key key = KeyFromName( name );
-		
-		if ( !KeyIsValid( key ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return MakeFSTree( new FSTree_PID( key ) );
-	}
-	
 	FSTreePtr proc_Details::GetChildNode( const Key& key )
 	{
+		if ( key == 0 )
+		{
+			return MakeFSTree( new FSTree_proc_self() );
+		}
+		
 		return MakeFSTree( new FSTree_PID( key ) );
 	}
 	
