@@ -24,6 +24,14 @@
 namespace Genie
 {
 	
+	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
+	{
+		typedef FSTree_QueryFile< sys_mac_name_Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name ) );
+	}
+	
 	void FSTree_sys_mac::Init()
 	{
 		MapSingleton< FSTree_sys_mac_vol     >();
@@ -40,8 +48,7 @@ namespace Genie
 		MapSingleton< FSTree_sys_mac_user    >();
 		MapSingleton< FSTree_sys_mac_gestalt >();
 		
-		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_name_Query >( shared_from_this(),
-		                                                            "name" ) ) );
+		Map( Name_Factory( shared_from_this(), "name" ) );
 		
 		try
 		{

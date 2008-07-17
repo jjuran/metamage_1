@@ -418,6 +418,16 @@ namespace Genie
 	{
 	}
 	
+	template < class Query >
+	FSTreePtr Query_Factory( const FSTreePtr&    parent,
+	                         const std::string&  name,
+	                         pid_t               key )
+	{
+		typedef FSTree_QueryFile< Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+	}
+	
 	void FSTree_PID::Init()
 	{
 		Map( FSTreePtr( new FSTree_PID_fd  ( itsPID ) ) );
@@ -425,17 +435,9 @@ namespace Genie
 		Map( FSTreePtr( new FSTree_PID_exe ( itsPID ) ) );
 		Map( FSTreePtr( new FSTree_PID_root( itsPID ) ) );
 		
-		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_cmdline_Query >( shared_from_this(),
-		                                                                "cmdline",
-		                                                                proc_PID_cmdline_Query( itsPID ) ) ) );
-		
-		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( shared_from_this(),
-		                                                             "stat",
-		                                                             proc_PID_stat_Query( itsPID ) ) ) );
-		
-		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_backtrace_Query >( shared_from_this(),
-		                                                                  "backtrace",
-		                                                                  proc_PID_backtrace_Query( itsPID ) ) ) );
+		Map( Query_Factory< proc_PID_cmdline_Query   >( shared_from_this(), "cmdline",   itsPID ) );
+		Map( Query_Factory< proc_PID_stat_Query      >( shared_from_this(), "stat",      itsPID ) );
+		Map( Query_Factory< proc_PID_backtrace_Query >( shared_from_this(), "backtrace", itsPID ) );
 	}
 	
 	FSTreePtr PID_fd_Details::GetChildNode( const Key& key ) const
