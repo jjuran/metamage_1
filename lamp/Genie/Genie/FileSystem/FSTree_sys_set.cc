@@ -42,8 +42,8 @@ namespace Genie
 	};
 	
 	
-	typedef FSTree_Special< DynamicGroup_Details< GraphicsWindow   > > FSTree_sys_set_gfx;
-	typedef FSTree_Special< DynamicGroup_Details< BufferFileHandle > > FSTree_sys_set_txt;
+	typedef FSTree_Sequence< DynamicGroup_Details< GraphicsWindow   > > FSTree_sys_set_gfx;
+	typedef FSTree_Sequence< DynamicGroup_Details< BufferFileHandle > > FSTree_sys_set_txt;
 	
 	
 	template <>

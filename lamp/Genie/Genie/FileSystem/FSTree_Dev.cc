@@ -239,8 +239,8 @@ namespace Genie
 	};
 	
 	
-	typedef FSTree_Special< DynamicGroup_Details< ConsoleTTYHandle > > FSTree_dev_con;
-	typedef FSTree_Special< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
+	typedef FSTree_Sequence< DynamicGroup_Details< ConsoleTTYHandle > > FSTree_dev_con;
+	typedef FSTree_Sequence< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
 	
 	
 	template <>

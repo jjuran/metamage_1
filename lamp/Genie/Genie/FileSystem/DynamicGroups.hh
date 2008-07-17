@@ -80,9 +80,7 @@ namespace Genie
 		
 		static std::string Name()  { return IOHandle_Name_Traits< Handle >::Name(); }
 		
-		FSTreePtr Parent() const  { return GetSingleton< typename IOHandle_Parent_Traits< Handle >::Tree >(); }
-		
-		FSTreePtr Lookup( const std::string& name ) const;
+		static FSTreePtr Parent()  { return GetSingleton< typename IOHandle_Parent_Traits< Handle >::Tree >(); }
 		
 		static bool KeyIsValid( const Key& key )
 		{
@@ -91,21 +89,13 @@ namespace Genie
 			return sequence.find( key ) != sequence.end();
 		}
 		
-		FSTreePtr GetChildNode( const Key& key ) const
+		static FSTreePtr GetChildNode( const Key& key )
 		{
 			return MakeFSTree( new ChildNode( key ) );
 		}
 		
-		const Sequence& ItemSequence() const  { return GetDynamicGroup< Handle >(); }
+		static const Sequence& ItemSequence()  { return GetDynamicGroup< Handle >(); }
 	};
-	
-	template < class Handle >
-	FSTreePtr DynamicGroup_Details< Handle >::Lookup( const std::string& name ) const
-	{
-		Key key = KeyFromName( name );
-		
-		return FSTreePtr( new ChildNode( key ) );
-	}
 	
 }
 

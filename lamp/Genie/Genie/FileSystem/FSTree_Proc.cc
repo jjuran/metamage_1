@@ -108,8 +108,6 @@ namespace Genie
 		
 		FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
 		
-		FSTreePtr Lookup( const std::string& name ) const;
-		
 		const Sequence& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
 		
 		static int KeyFromValue( const Sequence::value_type& value )  { return value.first; }
@@ -124,7 +122,7 @@ namespace Genie
 		FSTreePtr GetChildNode( const Key& key ) const;
 	};
 	
-	typedef FSTree_Special< PID_fd_Details > FSTree_PID_fd;
+	typedef FSTree_Sequence< PID_fd_Details > FSTree_PID_fd;
 	
 	class FSTree_PID_fd_N : public FSTree
 	{
@@ -452,21 +450,9 @@ namespace Genie
 		                                                                  proc_PID_backtrace_Query( itsPID ) ) ) );
 	}
 	
-	FSTreePtr PID_fd_Details::Lookup( const std::string& name ) const
-	{
-		Key key = KeyFromName( name );
-		
-		if ( !KeyIsValid( key ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		return FSTreePtr( new FSTree_PID_fd_N( itsPID, key ) );
-	}
-	
 	FSTreePtr PID_fd_Details::GetChildNode( const Key& key ) const
 	{
-		return FSTreePtr( new FSTree_PID_fd_N( itsPID, key ) );
+		return MakeFSTree( new FSTree_PID_fd_N( itsPID, key ) );
 	}
 	
 	
