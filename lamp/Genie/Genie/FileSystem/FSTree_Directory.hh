@@ -171,13 +171,6 @@ namespace Genie
 	}
 	
 	
-	template < class Details >
-	struct UniqueDetails : public Details
-	{
-		FSTreePtr Parent() const  { return FSRoot(); }
-	};
-	
-	
 	class FSTree_Mappable : public FSTree_Directory
 	{
 		protected:
