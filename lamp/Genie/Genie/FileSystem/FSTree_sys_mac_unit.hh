@@ -161,7 +161,9 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			FSTree_sys_mac_unit_N( const Key& key );
+			FSTree_sys_mac_unit_N( const Key& key ) : itsKey( key )
+			{
+			}
 			
 			void Init();
 			
