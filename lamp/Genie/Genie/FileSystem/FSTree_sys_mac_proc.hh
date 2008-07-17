@@ -55,7 +55,9 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			FSTree_sys_mac_proc_PSN( const Key& key );
+			FSTree_sys_mac_proc_PSN( const Key& key ) : itsKey( key )
+			{
+			}
 			
 			void Init();
 			

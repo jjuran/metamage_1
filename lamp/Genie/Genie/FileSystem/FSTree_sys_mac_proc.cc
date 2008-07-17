@@ -137,10 +137,6 @@ namespace Genie
 	}
 	
 	
-	FSTree_sys_mac_proc_PSN::FSTree_sys_mac_proc_PSN( const Key& key ) : itsKey( key )
-	{
-	}
-	
 	static FSTreePtr Name_Factory( const FSTreePtr&                          parent,
 	                               const std::string&                        name,
 	                               ProcessSerialNumber_KeyName_Traits::Key   key )
