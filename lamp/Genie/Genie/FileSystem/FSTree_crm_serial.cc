@@ -130,21 +130,21 @@ namespace Genie
 	
 	void FSTree_sys_mac_crm_serial_N::Init()
 	{
-		std::string pathname = Pathname();
+		FSTreePtr shared_this( shared_from_this() );
 		
 		typedef sys_mac_crm_serial_N_name_Query NameQuery;
 		
 		typedef FSTree_QueryFile< NameQuery > NameQueryFile;
 		
-		Map( FSTreePtr( new NameQueryFile( pathname, "name",   NameQuery( itsKey, &CRMSerialRecord::name             ) ) ) );
-		Map( FSTreePtr( new NameQueryFile( pathname, "input",  NameQuery( itsKey, &CRMSerialRecord::inputDriverName  ) ) ) );
-		Map( FSTreePtr( new NameQueryFile( pathname, "output", NameQuery( itsKey, &CRMSerialRecord::outputDriverName ) ) ) );
+		Map( FSTreePtr( new NameQueryFile( shared_this, "name",   NameQuery( itsKey, &CRMSerialRecord::name             ) ) ) );
+		Map( FSTreePtr( new NameQueryFile( shared_this, "input",  NameQuery( itsKey, &CRMSerialRecord::inputDriverName  ) ) ) );
+		Map( FSTreePtr( new NameQueryFile( shared_this, "output", NameQuery( itsKey, &CRMSerialRecord::outputDriverName ) ) ) );
 		
 		typedef sys_mac_crm_serial_N_icon_Query IconQuery;
 		
 		typedef FSTree_QueryFile< IconQuery > IconQueryFile;
 		
-		Map( FSTreePtr( new IconQueryFile( pathname, "icon", IconQuery( itsKey ) ) ) );
+		Map( FSTreePtr( new IconQueryFile( shared_this, "icon", IconQuery( itsKey ) ) ) );
 	}
 	
 }

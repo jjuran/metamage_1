@@ -136,7 +136,7 @@ namespace Genie
 		
 		Map( FSTreeFromFSSpec( volume ) );  // volume roots are named "mnt", not the volume name
 		
-		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_vol_N_name_Query >( Pathname(),
+		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_vol_N_name_Query >( shared_from_this(),
 		                                                                  "name",
 		                                                                  sys_mac_vol_N_name_Query( itsKey ) ) ) );
 		

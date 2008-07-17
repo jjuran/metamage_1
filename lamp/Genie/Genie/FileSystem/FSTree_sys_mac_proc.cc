@@ -137,7 +137,7 @@ namespace Genie
 	
 	void FSTree_sys_mac_proc_PSN::Init()
 	{
-		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_proc_PSN_name_Query >( Pathname(),
+		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_proc_PSN_name_Query >( shared_from_this(),
 		                                                                     "name",
 		                                                                     sys_mac_proc_PSN_name_Query( itsKey ) ) ) );
 		

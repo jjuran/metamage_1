@@ -449,15 +449,15 @@ namespace Genie
 		Map( FSTreePtr( new FSTree_PID_exe ( itsPID ) ) );
 		Map( FSTreePtr( new FSTree_PID_root( itsPID ) ) );
 		
-		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_cmdline_Query >( Pathname(),
+		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_cmdline_Query >( shared_from_this(),
 		                                                                "cmdline",
 		                                                                proc_PID_cmdline_Query( itsPID ) ) ) );
 		
-		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( Pathname(),
+		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_stat_Query >( shared_from_this(),
 		                                                             "stat",
 		                                                             proc_PID_stat_Query( itsPID ) ) ) );
 		
-		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_backtrace_Query >( Pathname(),
+		Map( FSTreePtr( new FSTree_QueryFile< proc_PID_backtrace_Query >( shared_from_this(),
 		                                                                  "backtrace",
 		                                                                  proc_PID_backtrace_Query( itsPID ) ) ) );
 	}

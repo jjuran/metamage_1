@@ -27,7 +27,7 @@ namespace Genie
 		{
 		}
 		
-		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_user_name_Query >( Pathname(),
+		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_user_name_Query >( shared_from_this(),
 		                                                                 "name" ) ) );
 	}
 	
