@@ -126,21 +126,25 @@ namespace Genie
 	
 	FSTree_sys_mac_crm_serial_N::FSTree_sys_mac_crm_serial_N( const Key& key ) : itsKey( key )
 	{
+	}
+	
+	void FSTree_sys_mac_crm_serial_N::Init()
+	{
 		std::string pathname = Pathname();
 		
 		typedef sys_mac_crm_serial_N_name_Query NameQuery;
 		
 		typedef FSTree_QueryFile< NameQuery > NameQueryFile;
 		
-		Map( FSTreePtr( new NameQueryFile( pathname, "name",   NameQuery( key, &CRMSerialRecord::name             ) ) ) );
-		Map( FSTreePtr( new NameQueryFile( pathname, "input",  NameQuery( key, &CRMSerialRecord::inputDriverName  ) ) ) );
-		Map( FSTreePtr( new NameQueryFile( pathname, "output", NameQuery( key, &CRMSerialRecord::outputDriverName ) ) ) );
+		Map( FSTreePtr( new NameQueryFile( pathname, "name",   NameQuery( itsKey, &CRMSerialRecord::name             ) ) ) );
+		Map( FSTreePtr( new NameQueryFile( pathname, "input",  NameQuery( itsKey, &CRMSerialRecord::inputDriverName  ) ) ) );
+		Map( FSTreePtr( new NameQueryFile( pathname, "output", NameQuery( itsKey, &CRMSerialRecord::outputDriverName ) ) ) );
 		
 		typedef sys_mac_crm_serial_N_icon_Query IconQuery;
 		
 		typedef FSTree_QueryFile< IconQuery > IconQueryFile;
 		
-		Map( FSTreePtr( new IconQueryFile( pathname, "icon", IconQuery( key ) ) ) );
+		Map( FSTreePtr( new IconQueryFile( pathname, "icon", IconQuery( itsKey ) ) ) );
 	}
 	
 }

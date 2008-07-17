@@ -59,6 +59,8 @@ namespace Genie
 		public:
 			FSTree_sys_mac_crm_serial_N( const Key& key );
 			
+			void Init();
+			
 			std::string Name() const  { return NameFromKey( itsKey ); }
 			
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_crm_serial >(); }
