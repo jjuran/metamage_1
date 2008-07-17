@@ -154,14 +154,32 @@ namespace Genie
 	
 	typedef FSTree_Sequence< sys_mac_unit_Details > FSTree_sys_mac_unit;
 	
-	class FSTree_sys_mac_unit_N : public FSTree_Virtual,
-	                              public UnitNumber_KeyName_Traits
+	
+	class sys_mac_unit_N_Details : public UnitNumber_KeyName_Traits
 	{
-		private:
-			Key itsKey;
+		public:
+			const Key itsKey;
 		
 		public:
-			FSTree_sys_mac_unit_N( const Key& key ) : itsKey( key )
+			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string&, Key key );
+			
+			sys_mac_unit_N_Details( Key key ) : itsKey( key )
+			{
+			}
+			
+			FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
+			{
+				return f( parent, name, itsKey );
+			}
+	};
+	
+	class FSTree_sys_mac_unit_N : public FSTree_Functional< sys_mac_unit_N_Details >
+	{
+		private:
+			typedef FSTree_Functional< sys_mac_unit_N_Details > Base;
+		
+		public:
+			FSTree_sys_mac_unit_N( const Key& key ) : Base( key )
 			{
 			}
 			
