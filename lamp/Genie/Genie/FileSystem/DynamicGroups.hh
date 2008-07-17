@@ -22,8 +22,6 @@ namespace Genie
 		typedef DynamicGroup Sequence;
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
-		
-		static std::string GetChildName( const Sequence::value_type& child );
 	};
 	
 	class FSTree_Dynamic_N_Base : public FSTree
@@ -95,7 +93,7 @@ namespace Genie
 		
 		FSTreePtr GetChildNode( const Key& key ) const
 		{
-			return FSTreePtr( new ChildNode( key ) );
+			return MakeFSTree( new ChildNode( key ) );
 		}
 		
 		const Sequence& ItemSequence() const  { return GetDynamicGroup< Handle >(); }

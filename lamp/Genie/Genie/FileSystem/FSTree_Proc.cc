@@ -53,11 +53,6 @@ namespace Genie
 			return sequence.find( key ) != sequence.end();
 		}
 		
-		static std::string GetChildName( const Sequence::value_type& value )
-		{
-			return NameFromKey( KeyFromValue( value ) );
-		}
-		
 		static FSTreePtr GetChildNode( const Key& key );
 	};
 	
@@ -124,11 +119,6 @@ namespace Genie
 			const Sequence& sequence = ItemSequence();
 			
 			return sequence.find( key ) != sequence.end();
-		}
-		
-		static std::string GetChildName( const Sequence::value_type& value )
-		{
-			return NameFromKey( KeyFromValue( value ) );
 		}
 		
 		FSTreePtr GetChildNode( const Key& key ) const;
