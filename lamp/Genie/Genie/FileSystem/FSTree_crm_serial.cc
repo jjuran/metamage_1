@@ -124,10 +124,6 @@ namespace Genie
 	};
 	
 	
-	FSTree_sys_mac_crm_serial_N::FSTree_sys_mac_crm_serial_N( const Key& key ) : itsKey( key )
-	{
-	}
-	
 	static FSTreePtr String_Factory( const FSTreePtr&                 parent,
 	                                 const std::string&               name,
 	                                 CRMDeviceID_KeyName_Traits::Key  key,
@@ -174,12 +170,10 @@ namespace Genie
 	
 	void FSTree_sys_mac_crm_serial_N::Init()
 	{
-		FSTreePtr shared_this( shared_from_this() );
-		
-		Map( Name_Factory  ( shared_this, "name",   itsKey ) );
-		Map( Input_Factory ( shared_this, "input",  itsKey ) );
-		Map( Output_Factory( shared_this, "output", itsKey ) );
-		Map( Icon_Factory  ( shared_this, "icon",   itsKey ) );
+		Map( "name",   &Name_Factory   );
+		Map( "input",  &Input_Factory  );
+		Map( "output", &Output_Factory );
+		Map( "icon",   &Icon_Factory   );
 	}
 	
 }
