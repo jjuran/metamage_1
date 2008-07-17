@@ -107,7 +107,7 @@ namespace Genie
 	template < class Details >
 	class FSTree_Sequence : public FSTree_Directory
 	{
-		private:
+		protected:
 			Details itsDetails;
 			
 			typedef typename Details::Key Key;
@@ -172,40 +172,22 @@ namespace Genie
 	
 	
 	template < class Details >
-	class FSTree_Special : public FSTree_Directory
+	class FSTree_Special : public FSTree_Sequence< Details >
 	{
-		private:
-			Details itsDetails;
-		
 		public:
-			FSTree_Special() : itsDetails()  {}
+			FSTree_Special()
+			{
+			}
 			
-			FSTree_Special( const Details& details ) : itsDetails( details )  {}
-			
-			static std::string OnlyName()  { return Details::Name(); }
-			
-			std::string Name() const  { return OnlyName(); }
-			
-			FSTreePtr Parent() const  { return itsDetails.Parent(); }
+			FSTree_Special( const Details& details ) : FSTree_Sequence< Details >( details )
+			{
+			}
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const
 			{
 				return itsDetails.Lookup( name );
 			}
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
-	
-	template < class Details >
-	void FSTree_Special< Details >::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		IteratorConverter< Details > converter( itsDetails );
-		
-		std::transform( itsDetails.ItemSequence().begin(),
-		                itsDetails.ItemSequence().end(),
-		                std::back_inserter( cache ),
-		                converter );
-	}
 	
 	template < class Details > struct FSTree_Special_Unique;
 	
