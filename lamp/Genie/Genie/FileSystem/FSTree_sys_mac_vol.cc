@@ -116,7 +116,7 @@ namespace Genie
 			
 			std::string Name() const  { return itsName; }
 			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_sys_mac_vol_N( itsKey ) ); }
+			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_sys_mac_vol_N( itsKey ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -128,22 +128,26 @@ namespace Genie
 	
 	FSTree_sys_mac_vol_N::FSTree_sys_mac_vol_N( const Key& key ) : itsKey( key )
 	{
-		FSSpec volume = N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
+	}
+	
+	void FSTree_sys_mac_vol_N::Init()
+	{
+		FSSpec volume = N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" );
 		
 		Map( FSTreeFromFSSpec( volume ) );  // volume roots are named "mnt", not the volume name
 		
 		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_vol_N_name_Query >( Pathname(),
 		                                                                  "name",
-		                                                                  sys_mac_vol_N_name_Query( key ) ) ) );
+		                                                                  sys_mac_vol_N_name_Query( itsKey ) ) ) );
 		
-		Map( FSTreePtr( new FSTree_Folder_Link( key, N::kSystemFolderType,    "sys" ) ) );
-		Map( FSTreePtr( new FSTree_Folder_Link( key, N::kTemporaryFolderType, "tmp" ) ) );
+		Map( FSTreePtr( new FSTree_Folder_Link( itsKey, N::kSystemFolderType,    "sys" ) ) );
+		Map( FSTreePtr( new FSTree_Folder_Link( itsKey, N::kTemporaryFolderType, "tmp" ) ) );
 	}
 	
 	
 	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
 	{
-		return FSTreePtr( new FSTree_sys_mac_vol_N( vRefNum ) );
+		return MakeFSTree( new FSTree_sys_mac_vol_N( vRefNum ) );
 	}
 	
 }
