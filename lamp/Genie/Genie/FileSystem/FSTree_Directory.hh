@@ -172,34 +172,9 @@ namespace Genie
 	
 	
 	template < class Details >
-	class FSTree_Special : public FSTree_Sequence< Details >
-	{
-		public:
-			FSTree_Special()
-			{
-			}
-			
-			FSTree_Special( const Details& details ) : FSTree_Sequence< Details >( details )
-			{
-			}
-			
-			FSTreePtr Lookup_Child( const std::string& name ) const
-			{
-				return itsDetails.Lookup( name );
-			}
-	};
-	
-	template < class Details > struct FSTree_Special_Unique;
-	
-	template < class Details >
 	struct UniqueDetails : public Details
 	{
 		FSTreePtr Parent() const  { return FSRoot(); }
-	};
-	
-	template < class Details >
-	struct FSTree_Special_Unique : public FSTree_Special< UniqueDetails< Details > >
-	{
 	};
 	
 	
