@@ -261,6 +261,72 @@ namespace Genie
 	};
 	
 	
+	template < class Details >
+	class FSTree_Functional : public FSTree_Directory, public Details
+	{
+		private:
+			typedef typename Details::Function Function;
+			
+			typedef std::map< std::string, Function > Mappings;
+			
+			Mappings itsMappings;
+		
+		public:
+			FSTree_Functional()
+			{
+			}
+			
+			template < class Key >
+			FSTree_Functional( const Key& key ) : Details( key )
+			{
+			}
+			
+			void Map( const std::string& name, Function f );
+			
+			FSTreePtr Lookup_Child( const std::string& name ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+	};
+	
+	template < class Details >
+	void FSTree_Functional< Details >::Map( const std::string& name, Function f )
+	{
+		itsMappings[ name ] = f;
+	}
+	
+	template < class Details >
+	FSTreePtr FSTree_Functional< Details >::Lookup_Child( const std::string& name ) const
+	{
+		Mappings::const_iterator it = itsMappings.find( name );
+		
+		if ( it == itsMappings.end() )
+		{
+			return FSNull();
+		}
+		
+		const Function& f = it->second;
+		
+		return Details::Invoke( f, shared_from_this(), name );
+	}
+	
+	template < class Details >
+	void FSTree_Functional< Details >::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		typedef Mappings::const_iterator Iter;
+		
+		for ( Iter it = itsMappings.begin();  it != itsMappings.end();  ++it )
+		{
+			std::string name( it->first );
+			
+			const Function& f = it->second;
+			
+			FSTreePtr tree( Details::Invoke( f, shared_from_this(), name ) );
+			
+			cache.push_back( FSNode( name, tree ) );
+		}
+	}
+	
+	
 	UInt32 DecodeHex32( const char* begin, const char* end );
 	
 }
