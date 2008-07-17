@@ -128,23 +128,58 @@ namespace Genie
 	{
 	}
 	
+	static FSTreePtr String_Factory( const FSTreePtr&                 parent,
+	                                 const std::string&               name,
+	                                 CRMDeviceID_KeyName_Traits::Key  key,
+	                                 StringHandle CRMSerialRecord::*  member )
+	{
+		typedef sys_mac_crm_serial_N_name_Query Query;
+		
+		typedef FSTree_QueryFile< Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name, Query( key, member ) ) );
+	}
+	
+	static FSTreePtr Name_Factory( const FSTreePtr&                 parent,
+	                               const std::string&               name,
+	                               CRMDeviceID_KeyName_Traits::Key  key )
+	{
+		return String_Factory( parent, name, key, &CRMSerialRecord::name );
+	}
+	
+	static FSTreePtr Input_Factory( const FSTreePtr&                 parent,
+	                                const std::string&               name,
+	                                CRMDeviceID_KeyName_Traits::Key  key )
+	{
+		return String_Factory( parent, name, key, &CRMSerialRecord::inputDriverName );
+	}
+	
+	static FSTreePtr Output_Factory( const FSTreePtr&                 parent,
+	                                 const std::string&               name,
+	                                 CRMDeviceID_KeyName_Traits::Key  key )
+	{
+		return String_Factory( parent, name, key, &CRMSerialRecord::outputDriverName );
+	}
+	
+	static FSTreePtr Icon_Factory( const FSTreePtr&                 parent,
+	                               const std::string&               name,
+	                               CRMDeviceID_KeyName_Traits::Key  key )
+	{
+		typedef sys_mac_crm_serial_N_icon_Query Query;
+		
+		typedef FSTree_QueryFile< Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+	}
+	
 	void FSTree_sys_mac_crm_serial_N::Init()
 	{
 		FSTreePtr shared_this( shared_from_this() );
 		
-		typedef sys_mac_crm_serial_N_name_Query NameQuery;
-		
-		typedef FSTree_QueryFile< NameQuery > NameQueryFile;
-		
-		Map( FSTreePtr( new NameQueryFile( shared_this, "name",   NameQuery( itsKey, &CRMSerialRecord::name             ) ) ) );
-		Map( FSTreePtr( new NameQueryFile( shared_this, "input",  NameQuery( itsKey, &CRMSerialRecord::inputDriverName  ) ) ) );
-		Map( FSTreePtr( new NameQueryFile( shared_this, "output", NameQuery( itsKey, &CRMSerialRecord::outputDriverName ) ) ) );
-		
-		typedef sys_mac_crm_serial_N_icon_Query IconQuery;
-		
-		typedef FSTree_QueryFile< IconQuery > IconQueryFile;
-		
-		Map( FSTreePtr( new IconQueryFile( shared_this, "icon", IconQuery( itsKey ) ) ) );
+		Map( Name_Factory  ( shared_this, "name",   itsKey ) );
+		Map( Input_Factory ( shared_this, "input",  itsKey ) );
+		Map( Output_Factory( shared_this, "output", itsKey ) );
+		Map( Icon_Factory  ( shared_this, "icon",   itsKey ) );
 	}
 	
 }
