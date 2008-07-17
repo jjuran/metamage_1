@@ -124,13 +124,8 @@ namespace Genie
 	
 	AuxDCEHandle* GetUTableBase();
 	
-	struct UnitNumber_KeyName_Traits
+	struct UnitNumber_KeyName_Traits : Integer_KeyName_Traits< UnitNumber >
 	{
-		typedef UnitNumber Key;
-		
-		static std::string NameFromKey( const Key& key );
-		
-		static Key KeyFromName( const std::string& name );
 	};
 	
 	class FSTree_sys_mac_unit_N;

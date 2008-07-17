@@ -24,16 +24,6 @@ namespace Genie
 		return (AuxDCEHandle*) LMGetUTableBase();
 	}
 	
-	std::string UnitNumber_KeyName_Traits::NameFromKey( const Key& key )
-	{
-		return NN::Convert< std::string >( key );
-	}
-	
-	UnitNumber_KeyName_Traits::Key UnitNumber_KeyName_Traits::KeyFromName( const std::string& name )
-	{
-		return std::atoi( name.c_str() );
-	}
-	
 	
 	bool sys_mac_unit_Details::KeyIsValid( const Key& key )
 	{
