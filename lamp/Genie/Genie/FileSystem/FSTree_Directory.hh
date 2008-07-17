@@ -132,7 +132,7 @@ namespace Genie
 					poseven::throw_errno( ENOENT );
 				}
 				
-				return MakeFSTree( new Details::ChildNode( key ) );
+				return itsDetails.GetChildNode( key );
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
