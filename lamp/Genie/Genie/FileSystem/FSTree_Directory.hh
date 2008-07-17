@@ -76,8 +76,6 @@ namespace Genie
 			bool IsFile     () const  { return false; }
 			bool IsDirectory() const  { return true;  }
 			
-			virtual FSTreePtr Parent() const = 0;
-			
 			mode_t FileTypeMode() const  { return S_IFDIR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR | S_IXUSR; }
 			
