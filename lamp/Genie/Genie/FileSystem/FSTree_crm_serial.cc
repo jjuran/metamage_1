@@ -34,16 +34,6 @@ namespace Genie
 		return NULL;
 	}
 	
-	std::string CRMDeviceID_KeyName_Traits::NameFromKey( const Key& key )
-	{
-		return NN::Convert< std::string >( key );
-	}
-	
-	CRMDeviceID_KeyName_Traits::Key CRMDeviceID_KeyName_Traits::KeyFromName( const std::string& name )
-	{
-		return Key( std::atoi( name.c_str() ) );
-	}
-	
 	
 	bool sys_mac_crm_serial_Details::KeyIsValid( const Key& key )
 	{

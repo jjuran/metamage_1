@@ -20,13 +20,8 @@
 namespace Genie
 {
 	
-	struct CRMDeviceID_KeyName_Traits
+	struct CRMDeviceID_KeyName_Traits : Integer_KeyName_Traits< Nitrogen::CRMDeviceID >
 	{
-		typedef Nitrogen::CRMDeviceID Key;
-		
-		static std::string NameFromKey( const Key& key );
-		
-		static Key KeyFromName( const std::string& name );
 	};
 	
 	class FSTree_sys_mac_crm_serial_N;
