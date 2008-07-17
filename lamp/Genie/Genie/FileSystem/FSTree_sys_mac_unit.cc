@@ -93,9 +93,13 @@ namespace Genie
 	
 	FSTree_sys_mac_unit_N::FSTree_sys_mac_unit_N( const Key& key ) : itsKey( key )
 	{
+	}
+	
+	void FSTree_sys_mac_unit_N::Init()
+	{
 		Map( FSTreePtr( new FSTree_QueryFile< sys_mac_unit_N_name_Query >( Pathname(),
 		                                                                   "name",
-		                                                                   sys_mac_unit_N_name_Query( key ) ) ) );
+		                                                                   sys_mac_unit_N_name_Query( itsKey ) ) ) );
 	}
 	
 }
