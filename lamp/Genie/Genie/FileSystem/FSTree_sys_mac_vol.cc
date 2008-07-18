@@ -110,9 +110,11 @@ namespace Genie
 			std::string    itsName;
 		
 		public:
-			FSTree_Folder_Link( const Key&          key,
+			FSTree_Folder_Link( const FSTreePtr&    parent,
+			                    const Key&          key,
 			                    N::FolderType       type,
-			                    const std::string&  name ) : itsKey ( key  ),
+			                    const std::string&  name ) : FSTree( parent ),
+			                                                 itsKey ( key  ),
 			                                                 itsType( type ),
 			                                                 itsName( name )
 			{
@@ -122,7 +124,7 @@ namespace Genie
 			
 			std::string Name() const  { return itsName; }
 			
-			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_sys_mac_vol_N( itsKey ) ); }
+			FSTreePtr Parent() const  { return itsParent; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -158,7 +160,7 @@ namespace Genie
 	                               const std::string&           name,
 	                               VRefNum_KeyName_Traits::Key  key )
 	{
-		return MakeFSTree( new FSTree_Folder_Link( key, type, name ) );
+		return MakeFSTree( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
 	
 	void FSTree_sys_mac_vol_N::Init()
