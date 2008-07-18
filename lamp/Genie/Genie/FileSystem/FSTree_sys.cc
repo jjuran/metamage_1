@@ -66,7 +66,7 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
 	
-	class FSTree_sys_kernel_bin : public FSTree_Virtual
+	class FSTree_sys_kernel_bin : public FSTree_Functional< Singleton_Functional_Details >
 	{
 		public:
 			void Init();
@@ -171,36 +171,41 @@ namespace Genie
 		MapSingleton< FSTree_sys_kernel_syscall >();
 	}
 	
-	static int main_true()
+	namespace
 	{
-		return 0;
-	}
-	
-	static int main_false()
-	{
-		return 1;
-	}
-	
-	static int main_beep()
-	{
-		N::SysBeep();
 		
-		return 0;
+		int main_true()
+		{
+			return 0;
+		}
+		
+		int main_false()
+		{
+			return 1;
+		}
+		
+		int main_beep()
+		{
+			N::SysBeep();
+			
+			return 0;
+		}
+		
 	}
 	
+	template < int (*main)() >
 	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
-	                                     const std::string&  name,
-	                                     int                 (*main)() )
+	                                     const std::string&  name )
 	{
 		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( name, main ) );
 	}
 	
 	void FSTree_sys_kernel_bin::Init()
 	{
-		Map( Executable_Factory( shared_from_this(), "true",  main_true  ) );
-		Map( Executable_Factory( shared_from_this(), "false", main_false ) );
+		Map( "true",  &Executable_Factory< main_true  > );
+		Map( "false", &Executable_Factory< main_false > );
 		
-		Map( Executable_Factory( shared_from_this(), "beep", main_beep ) );
+		Map( "beep", &Executable_Factory< main_beep > );
 	}
 	
 	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
