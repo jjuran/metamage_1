@@ -42,7 +42,7 @@ namespace Genie
 		
 		static bool KeyIsValid( const Key& key );
 		
-		static FSTreePtr GetChildNode( const Key& key );
+		static FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key );
 	};
 	
 	typedef FSTree_Sequence< sys_mac_crm_serial_Details > FSTree_sys_mac_crm_serial;

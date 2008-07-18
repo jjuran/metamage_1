@@ -89,7 +89,7 @@ namespace Genie
 			return sequence.find( key ) != sequence.end();
 		}
 		
-		static FSTreePtr GetChildNode( const Key& key )
+		static FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key )
 		{
 			return MakeFSTree( new ChildNode( key ) );
 		}

@@ -138,7 +138,7 @@ namespace Genie
 			return key != NULL;
 		}
 		
-		FSTreePtr GetChildNode( const Key& key ) const;
+		FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key ) const;
 	};
 	
 	typedef FSTree_Sequence< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
@@ -196,7 +196,7 @@ namespace Genie
 		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "beep", main_beep ) ) );
 	}
 	
-	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const Key& key ) const
+	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
 	{
 		return MakeFSTree( new FSTree_sys_kernel_syscall_PTR( key ) );
 	}

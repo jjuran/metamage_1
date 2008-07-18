@@ -53,7 +53,7 @@ namespace Genie
 			return key == 0  ||  sequence.find( key ) != sequence.end();
 		}
 		
-		static FSTreePtr GetChildNode( const Key& key );
+		static FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key );
 	};
 	
 	typedef FSTree_Sequence< proc_Details > FSTree_proc;
@@ -141,7 +141,7 @@ namespace Genie
 			return sequence.find( key ) != sequence.end();
 		}
 		
-		FSTreePtr GetChildNode( const Key& key ) const;
+		FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key ) const;
 	};
 	
 	typedef FSTree_Sequence< PID_fd_Details > FSTree_PID_fd;
@@ -243,7 +243,7 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr proc_Details::GetChildNode( const Key& key )
+	FSTreePtr proc_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
 	{
 		if ( key == 0 )
 		{
@@ -486,7 +486,7 @@ namespace Genie
 		Map( "backtrace", &Query_Factory< proc_PID_backtrace_Query > );
 	}
 	
-	FSTreePtr PID_fd_Details::GetChildNode( const Key& key ) const
+	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
 	{
 		return MakeFSTree( new FSTree_PID_fd_N( itsPID, key ) );
 	}

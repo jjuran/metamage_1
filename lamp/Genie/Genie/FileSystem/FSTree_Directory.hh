@@ -132,7 +132,7 @@ namespace Genie
 					poseven::throw_errno( ENOENT );
 				}
 				
-				return itsDetails.GetChildNode( key );
+				return itsDetails.GetChildNode( shared_from_this(), key );
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -142,10 +142,15 @@ namespace Genie
 	class IteratorConverter
 	{
 		private:
-			Details itsDetails;
+			FSTreePtr  itsParent;
+			Details    itsDetails;
 		
 		public:
-			IteratorConverter( const Details& details ) : itsDetails( details )  {}
+			IteratorConverter( const FSTreePtr&  parent,
+			                   const Details&    details ) : itsParent ( parent  ),
+			                                                 itsDetails( details )
+			{
+			}
 			
 			FSNode operator()( const Details::Sequence::value_type& value ) const
 			{
@@ -153,7 +158,7 @@ namespace Genie
 				
 				std::string name = itsDetails.NameFromKey( key );
 				
-				FSTreePtr node( itsDetails.GetChildNode( key ) );
+				FSTreePtr node( itsDetails.GetChildNode( itsParent, key ) );
 				
 				return FSNode( name, node );
 			}
@@ -162,7 +167,7 @@ namespace Genie
 	template < class Details >
 	void FSTree_Sequence< Details >::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		IteratorConverter< Details > converter( itsDetails );
+		IteratorConverter< Details > converter( shared_from_this(), itsDetails );
 		
 		std::transform( itsDetails.ItemSequence().begin(),
 		                itsDetails.ItemSequence().end(),
