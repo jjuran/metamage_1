@@ -211,6 +211,12 @@ namespace Genie
 	};
 	
 	
+	template < class FSTree_Type >
+	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
+	{
+		return GetSingleton< FSTree_Type >();
+	}
+	
 	template < class Details >
 	class FSTree_Functional : public FSTree_Directory, public Details
 	{
@@ -232,6 +238,12 @@ namespace Genie
 			}
 			
 			void Map( const std::string& name, Function f );
+			
+			template < class FSTree_Type >
+			void MapSingleton()
+			{
+				Map( GetSingleton< FSTree_Type >()->Name(), &Singleton_Factory< FSTree_Type > );
+			}
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
@@ -275,6 +287,18 @@ namespace Genie
 			cache.push_back( FSNode( name, tree ) );
 		}
 	}
+	
+	
+	class Singleton_Functional_Details
+	{
+		public:
+			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string& );
+			
+			FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
+			{
+				return f( parent, name );
+			}
+	};
 	
 	
 	UInt32 DecodeHex32( const char* begin, const char* end );
