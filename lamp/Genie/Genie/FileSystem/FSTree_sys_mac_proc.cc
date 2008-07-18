@@ -117,13 +117,17 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			FSTree_sys_mac_proc_PSN_exe( const Key& key ) : itsKey( key )  {}
+			FSTree_sys_mac_proc_PSN_exe( const FSTreePtr&  parent,
+			                             const Key&        key ) : FSTree( parent ),
+			                                                       itsKey( key    )
+			{
+			}
 			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "exe"; }
 			
-			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_sys_mac_proc_PSN( itsKey ) ); }
+			FSTreePtr Parent() const  { return itsParent; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -148,9 +152,18 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
+	static FSTreePtr Executable_Factory( const FSTreePtr&                          parent,
+	                                     const std::string&                        name,
+	                                     ProcessSerialNumber_KeyName_Traits::Key   key )
+	{
+		return MakeFSTree( new FSTree_sys_mac_proc_PSN_exe( parent, key ) );
+	}
+	
 	void FSTree_sys_mac_proc_PSN::Init()
 	{
 		Map( "name", &Name_Factory );
+		
+		Map( "exe", &Executable_Factory );
 	}
 	
 }
