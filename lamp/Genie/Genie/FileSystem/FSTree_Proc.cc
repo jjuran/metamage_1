@@ -152,68 +152,66 @@ namespace Genie
 			FSTreePtr ResolveLink() const;
 	};
 	
-	class FSTree_PID_cwd : public FSTree
+	class FSTree_PID_Link_Base : public FSTree
 	{
 		private:
-			pid_t itsPID;
+			std::string  itsName;
+			pid_t        itsPID;
 		
 		public:
-			FSTree_PID_cwd( const FSTreePtr&  parent,
-			                pid_t             pid ) : FSTree( parent ),
-			                                          itsPID( pid    )
+			FSTree_PID_Link_Base( const FSTreePtr&    parent,
+			                      const std::string&  name,
+			                      pid_t               pid ) : FSTree( parent ),
+			                                                  itsName( name ),
+			                                                  itsPID( pid    )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
 			
-			std::string Name() const  { return "cwd"; }
+			std::string Name() const  { return itsName; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return GetProcess( itsPID ).GetCWD(); }
+		protected:
+			Process& GetProcess() const  { return Genie::GetProcess( itsPID ); }
 	};
 	
-	class FSTree_PID_exe : public FSTree
+	template < class LinkResolver >
+	class FSTree_PID_Link : public FSTree_PID_Link_Base
 	{
-		private:
-			pid_t itsPID;
-		
 		public:
-			FSTree_PID_exe( const FSTreePtr&  parent,
-			                pid_t             pid ) : FSTree( parent ),
-			                                          itsPID( pid    )
+			FSTree_PID_Link( const FSTreePtr&    parent,
+			                 const std::string&  name,
+			                 pid_t               pid ) : FSTree_PID_Link_Base( parent, name, pid )
 			{
 			}
 			
-			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return "exe"; }
-			
-			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
-			
-			FSTreePtr ResolveLink() const  { return GetProcess( itsPID ).ProgramFile(); }
+			FSTreePtr ResolveLink() const  { return LinkResolver()( GetProcess() ); }
 	};
 	
-	class FSTree_PID_root : public FSTree
+	struct ResolveLink_cwd
 	{
-		private:
-			pid_t itsPID;
-		
-		public:
-			FSTree_PID_root( const FSTreePtr&  parent,
-			                 pid_t             pid ) : FSTree( parent ),
-			                                           itsPID( pid    )
-			{
-			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return "root"; }
-			
-			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
-			
-			//FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( GetProcess( itsPID ).RootDirectory() ); }
-			FSTreePtr ResolveLink() const  { return FSRoot(); }
+		FSTreePtr operator()( Process& process ) const
+		{
+			return process.GetCWD();
+		}
+	};
+	
+	struct ResolveLink_exe
+	{
+		FSTreePtr operator()( Process& process ) const
+		{
+			return process.ProgramFile();
+		}
+	};
+	
+	struct ResolveLink_root
+	{
+		FSTreePtr operator()( Process& process ) const
+		{
+			return FSRoot();
+		}
 	};
 	
 	
@@ -435,12 +433,12 @@ namespace Genie
 		return MakeFSTree( new FSTree_PID_fd( parent, key ) );
 	}
 	
-	template < class Type >
+	template < class LinkResolver >
 	FSTreePtr Link_Factory( const FSTreePtr&    parent,
 	                        const std::string&  name,
 	                        pid_t               key )
 	{
-		return MakeFSTree( new Type( parent, key ) );
+		return MakeFSTree( new FSTree_PID_Link< LinkResolver >( parent, name, key ) );
 	}
 	
 	template < class Query >
@@ -457,9 +455,9 @@ namespace Genie
 	{
 		Map( "fd", &fd_Factory );
 		
-		Map( "cwd",  &Link_Factory< FSTree_PID_cwd  > );
-		Map( "exe",  &Link_Factory< FSTree_PID_exe  > );
-		Map( "root", &Link_Factory< FSTree_PID_root > );
+		Map( "cwd",  &Link_Factory< ResolveLink_cwd  > );
+		Map( "exe",  &Link_Factory< ResolveLink_exe  > );
+		Map( "root", &Link_Factory< ResolveLink_root > );
 		
 		Map( "cmdline",   &Query_Factory< proc_PID_cmdline_Query   > );
 		Map( "stat",      &Query_Factory< proc_PID_stat_Query      > );
