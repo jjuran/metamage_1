@@ -150,7 +150,7 @@ namespace Genie
 	
 	void FSTree_sys_mac_proc_PSN::Init()
 	{
-		Map( Name_Factory( shared_from_this(), "name", itsKey ) );
+		Map( "name", &Name_Factory );
 	}
 	
 }

@@ -48,14 +48,32 @@ namespace Genie
 	
 	typedef FSTree_Sequence< sys_mac_proc_Details > FSTree_sys_mac_proc;
 	
-	class FSTree_sys_mac_proc_PSN : public FSTree_Virtual,
-	                                public ProcessSerialNumber_KeyName_Traits
+	
+	class sys_mac_proc_PSN_Details : public ProcessSerialNumber_KeyName_Traits
 	{
-		private:
-			Key itsKey;
+		public:
+			const Key itsKey;
 		
 		public:
-			FSTree_sys_mac_proc_PSN( const Key& key ) : itsKey( key )
+			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string&, Key key );
+			
+			sys_mac_proc_PSN_Details( Key key ) : itsKey( key )
+			{
+			}
+			
+			FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
+			{
+				return f( parent, name, itsKey );
+			}
+	};
+	
+	class FSTree_sys_mac_proc_PSN : public FSTree_Functional< sys_mac_proc_PSN_Details >
+	{
+		private:
+			typedef FSTree_Functional< sys_mac_proc_PSN_Details > Base;
+		
+		public:
+			FSTree_sys_mac_proc_PSN( const Key& key ) : Base( key )
 			{
 			}
 			
