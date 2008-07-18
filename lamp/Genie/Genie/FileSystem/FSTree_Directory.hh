@@ -336,6 +336,8 @@ namespace Genie
 			}
 	};
 	
+	typedef FSTree_Functional< Singleton_Functional_Details > FSTree_Functional_Singleton;
+	
 	
 	UInt32 DecodeHex32( const char* begin, const char* end );
 	
