@@ -86,6 +86,14 @@ namespace Genie
 	class FSTree_Directory : public FSTree
 	{
 		public:
+			FSTree_Directory()
+			{
+			}
+			
+			FSTree_Directory( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
+			
 			virtual ~FSTree_Directory();
 			
 			bool IsFile     () const  { return false; }
@@ -117,16 +125,18 @@ namespace Genie
 			{
 			}
 			
-			FSTree_Sequence( const FSTreePtr& parent ) : itsDetails()
-			{
-			}
-			
 			FSTree_Sequence( const Details& details ) : itsDetails( details )
 			{
 			}
 			
+			FSTree_Sequence( const FSTreePtr& parent ) : FSTree_Directory( parent ),
+			                                             itsDetails()
+			{
+			}
+			
 			FSTree_Sequence( const FSTreePtr&  parent,
-			                 const Details&    details ) : itsDetails( details )
+			                 const Details&    details ) : FSTree_Directory( parent ),
+			                                               itsDetails( details )
 			{
 			}
 			
@@ -197,6 +207,14 @@ namespace Genie
 			Mappings mappings;
 		
 		public:
+			FSTree_Mappable()
+			{
+			}
+			
+			FSTree_Mappable( const FSTreePtr& parent ) : FSTree_Directory( parent )
+			{
+			}
+			
 			virtual ~FSTree_Mappable();
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
@@ -245,8 +263,19 @@ namespace Genie
 			{
 			}
 			
+			FSTree_Functional( const FSTreePtr& parent ) : FSTree_Directory( parent )
+			{
+			}
+			
 			template < class Key >
 			FSTree_Functional( const Key& key ) : Details( key )
+			{
+			}
+			
+			template < class Key >
+			FSTree_Functional( const FSTreePtr&  parent,
+			                   const Key&        key ) : FSTree_Directory( parent ),
+			                                             Details( key )
 			{
 			}
 			
