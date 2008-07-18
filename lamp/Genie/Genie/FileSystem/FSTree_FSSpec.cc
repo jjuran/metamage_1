@@ -806,8 +806,6 @@ namespace Genie
 			
 			std::string Name() const  { return io::get_filename_string( N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" ) ); }
 			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_Volumes >(); }
-			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_FSSpec( NN::Make< N::FSDirSpec >( itsKey, N::fsRtDirID ) ) ); }

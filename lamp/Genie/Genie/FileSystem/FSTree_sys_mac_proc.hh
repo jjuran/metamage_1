@@ -35,8 +35,6 @@ namespace Genie
 		
 		static std::string Name()  { return "proc"; }
 		
-		static FSTreePtr Parent();
-		
 		static const Sequence& ItemSequence()  { return N::Processes(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }

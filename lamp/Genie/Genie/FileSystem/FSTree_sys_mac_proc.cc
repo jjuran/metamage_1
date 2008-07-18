@@ -133,12 +133,6 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr sys_mac_proc_Details::Parent() const
-	{
-		return GetSingleton< FSTree_sys_mac >();
-	}
-	
-	
 	static FSTreePtr Name_Factory( const FSTreePtr&                          parent,
 	                               const std::string&                        name,
 	                               ProcessSerialNumber_KeyName_Traits::Key   key )

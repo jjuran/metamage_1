@@ -31,8 +31,6 @@ namespace Genie
 		
 		static std::string Name()  { return "window"; }
 		
-		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys_mac >(); }
-		
 		static const Sequence& ItemSequence()  { return Nitrogen::WindowList(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }

@@ -132,8 +132,6 @@ namespace Genie
 			
 			std::string Name() const  { return OnlyName(); }
 			
-			FSTreePtr Parent() const  { return itsDetails.Parent(); }
-			
 			FSTreePtr Lookup_Child( const std::string& name ) const
 			{
 				Key key = itsDetails.KeyFromName( name );

@@ -128,8 +128,6 @@ namespace Genie
 		
 		static std::string Name()  { return "fd"; }
 		
-		FSTreePtr Parent() const  { return proc_Details::GetChildNode( GetProcFSTree(), itsPID ); }
-		
 		const Sequence& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
 		
 		static int KeyFromValue( const Sequence::value_type& value )  { return value.first; }
@@ -237,7 +235,7 @@ namespace Genie
 	
 	FSTreePtr GetProcFSTree()
 	{
-		return GetSingleton< FSTree_proc >();
+		return GetSingleton< FSTree_proc >( FSRoot() );
 	}
 	
 	

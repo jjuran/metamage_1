@@ -75,11 +75,6 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr sys_mac_unit_Details::Parent() const
-	{
-		return GetSingleton< FSTree_sys_mac >();
-	}
-	
 	FSTreePtr sys_mac_unit_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
 	{
 		return MakeFSTree( new FSTree_sys_mac_unit_N( parent, key ) );

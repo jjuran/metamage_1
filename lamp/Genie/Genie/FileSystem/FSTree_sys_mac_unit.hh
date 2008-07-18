@@ -138,8 +138,6 @@ namespace Genie
 		
 		static std::string Name()  { return "unit"; }
 		
-		static FSTreePtr Parent();
-		
 		static const Sequence& ItemSequence()  { return N::UnitTableDrivers(); }
 		
 		static Key KeyFromValue( Sequence::const_reference ref )  { return &ref - GetUTableBase(); }

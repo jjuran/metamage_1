@@ -34,8 +34,6 @@ namespace Genie
 		
 		static std::string Name()  { return "serial"; }
 		
-		static FSTreePtr Parent();
-		
 		static const Sequence& ItemSequence()  { return Nitrogen::CRMSerialDevices(); }
 		
 		static Key KeyFromValue( Sequence::const_reference ref )  { return Key( ref->crmDeviceID ); }

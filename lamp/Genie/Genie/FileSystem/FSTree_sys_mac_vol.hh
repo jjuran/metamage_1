@@ -38,8 +38,6 @@ namespace Genie
 		
 		static std::string Name()  { return "vol"; }
 		
-		static FSTreePtr Parent();
-		
 		static const Sequence& ItemSequence()  { return Nitrogen::Volumes(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }

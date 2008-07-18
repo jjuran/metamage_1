@@ -135,8 +135,6 @@ namespace Genie
 		
 		static std::string Name()  { return "syscall"; }
 		
-		static FSTreePtr Parent()  { return GetSingleton< FSTree_sys_kernel >(); }
-		
 		static const Sequence& ItemSequence()  { return GetSystemCallRegistry(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return &value; }
