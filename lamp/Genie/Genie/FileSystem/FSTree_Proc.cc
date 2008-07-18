@@ -67,7 +67,9 @@ namespace Genie
 			Key itsPID;
 		
 		public:
-			FSTree_PID( Key pid );
+			FSTree_PID( Key pid ) : itsPID( pid )
+			{
+			}
 			
 			void Init();
 			
@@ -413,10 +415,6 @@ namespace Genie
 		return result;
 	}
 	
-	
-	FSTree_PID::FSTree_PID( pid_t pid ) : itsPID( pid )
-	{
-	}
 	
 	template < class Query >
 	FSTreePtr Query_Factory( const FSTreePtr&    parent,
