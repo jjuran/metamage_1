@@ -302,11 +302,17 @@ namespace Genie
 	}
 	
 	
+	static FSTreePtr Device_Factory( const FSTreePtr&    parent,
+	                                 const std::string&  name )
+	{
+		return MakeFSTree( new FSTree_Device( name ) );
+	}
+	
 	void FSTree_dev::Init()
 	{
-		Map( FSTreePtr( new FSTree_Device( "null"    ) ) );
-		Map( FSTreePtr( new FSTree_Device( "zero"    ) ) );
-		Map( FSTreePtr( new FSTree_Device( "console" ) ) );
+		Map( Device_Factory( shared_from_this(), "null"    ) );
+		Map( Device_Factory( shared_from_this(), "zero"    ) );
+		Map( Device_Factory( shared_from_this(), "console" ) );
 		
 		MapSingleton< FSTree_dev_tty >();
 		
