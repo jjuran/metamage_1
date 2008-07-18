@@ -124,8 +124,6 @@ namespace Genie
 			
 			std::string Name() const  { return itsName; }
 			
-			FSTreePtr Parent() const  { return itsParent; }
-			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const

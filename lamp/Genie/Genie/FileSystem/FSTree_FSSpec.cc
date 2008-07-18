@@ -257,6 +257,11 @@ namespace Genie
 	class FSTree_HFS : public FSTree_Mappable
 	{
 		public:
+			FSTree_HFS() : FSTree_Mappable( FSTreePtr() )
+			{
+				// we override Parent()
+			}
+			
 			bool IsLink() const;
 			
 			void Stat( struct ::stat& sb ) const;
@@ -287,9 +292,13 @@ namespace Genie
 			FSSpec itsFileSpec;
 		
 		public:
-			FSTree_FSSpec( const FSSpec& file ) : itsFileSpec( file )  {}
+			FSTree_FSSpec( const FSSpec& file ) : itsFileSpec( file )
+			{
+			}
 			
-			FSTree_FSSpec( const N::FSDirSpec& dir ) : itsFileSpec( NN::Convert< FSSpec >( dir ) )  {}
+			FSTree_FSSpec( const N::FSDirSpec& dir ) : itsFileSpec( NN::Convert< FSSpec >( dir ) )
+			{
+			}
 			
 			bool Exists() const;
 			bool IsFile() const;

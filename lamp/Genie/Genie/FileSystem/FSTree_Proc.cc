@@ -113,11 +113,9 @@ namespace Genie
 			
 			std::string Name() const  { return "self"; }
 			
-			FSTreePtr Parent() const  { return GetProcFSTree(); }
-			
 			std::string ReadLink() const  { return NN::Convert< std::string >( getpid() ); }
 			
-			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( itsParent, getpid() ); }
+			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( Parent(), getpid() ); }
 	};
 	
 	
@@ -169,8 +167,6 @@ namespace Genie
 			
 			std::string Name() const;
 			
-			FSTreePtr Parent() const  { return itsParent; }
-			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const;
@@ -191,8 +187,6 @@ namespace Genie
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "cwd"; }
-			
-			FSTreePtr Parent() const  { return itsParent; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -215,8 +209,6 @@ namespace Genie
 			
 			std::string Name() const  { return "exe"; }
 			
-			FSTreePtr Parent() const  { return itsParent; }
-			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const  { return GetProcess( itsPID ).ProgramFile(); }
@@ -237,8 +229,6 @@ namespace Genie
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "root"; }
-			
-			FSTreePtr Parent() const  { return itsParent; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			

@@ -127,8 +127,6 @@ namespace Genie
 			
 			std::string Name() const  { return "exe"; }
 			
-			FSTreePtr Parent() const  { return itsParent; }
-			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
 			FSTreePtr ResolveLink() const  { return FSTreeFromFSSpec( N::GetProcessAppSpec( itsKey ) ); }

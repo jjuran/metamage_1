@@ -73,7 +73,7 @@ namespace Genie
 	
 	class FSTree : public boost::enable_shared_from_this< FSTree >
 	{
-		protected:
+		private:
 			FSTreePtr itsParent;
 		
 		public:
@@ -103,7 +103,7 @@ namespace Genie
 			
 			FSTreePtr Self() const  { return shared_from_this(); }
 			
-			virtual FSTreePtr Parent() const = 0;
+			virtual FSTreePtr Parent() const;
 			
 			virtual FSSpec GetFSSpec( bool forCreation = false ) const;
 			

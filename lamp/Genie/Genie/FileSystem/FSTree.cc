@@ -98,6 +98,11 @@ namespace Genie
 		return "";  // Not reached
 	}
 	
+	FSTreePtr FSTree::Parent() const
+	{
+		return itsParent;
+	}
+	
 	FSSpec FSTree::GetFSSpec( bool forCreation ) const
 	{
 		p7::throw_errno( EXDEV );

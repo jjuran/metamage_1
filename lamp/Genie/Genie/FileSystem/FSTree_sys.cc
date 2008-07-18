@@ -157,14 +157,16 @@ namespace Genie
 	
 	typedef FSTree_Sequence< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
 	
-	class FSTree_sys_kernel_syscall_PTR : public FSTree_Virtual,
+	class FSTree_sys_kernel_syscall_PTR : public FSTree_Functional_Singleton,
 	                                      public SystemCall_KeyName_Traits
 	{
 		private:
 			Key itsKey;
 		
 		public:
-			FSTree_sys_kernel_syscall_PTR( const FSTreePtr& parent, const Key& key ) : itsKey( key )
+			FSTree_sys_kernel_syscall_PTR( const FSTreePtr&  parent,
+			                               const Key&        key ) : FSTree_Functional_Singleton( parent ),
+			                                                         itsKey( key )
 			{
 			}
 			
