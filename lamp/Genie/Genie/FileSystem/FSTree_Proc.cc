@@ -65,13 +65,13 @@ namespace Genie
 	
 	typedef Level1_Functional_Details< pid_KeyName_Traits > proc_PID_Details;
 	
-	class FSTree_PID : public FSTree_Functional< proc_PID_Details >
+	class FSTree_proc_PID : public FSTree_Functional< proc_PID_Details >
 	{
 		private:
 			typedef FSTree_Functional< proc_PID_Details > Base;
 		
 		public:
-			FSTree_PID( const FSTreePtr& parent, const Key& key ) : Base( parent, key )
+			FSTree_proc_PID( const FSTreePtr& parent, const Key& key ) : Base( parent, key )
 			{
 			}
 			
@@ -230,7 +230,7 @@ namespace Genie
 			return MakeFSTree( new FSTree_proc_self( parent ) );
 		}
 		
-		return MakeFSTree( new FSTree_PID( parent, key ) );
+		return MakeFSTree( new FSTree_proc_PID( parent, key ) );
 	}
 	
 	// Process states
@@ -453,7 +453,7 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
-	void FSTree_PID::Init()
+	void FSTree_proc_PID::Init()
 	{
 		Map( "fd", &fd_Factory );
 		
