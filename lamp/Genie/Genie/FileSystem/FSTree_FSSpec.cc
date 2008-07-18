@@ -779,7 +779,11 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			FSTree_Volumes_Link( const Key& key ) : itsKey( key )  {}
+			FSTree_Volumes_Link( const FSTreePtr&  parent,
+			                     const Key&        key ) : FSTree( parent ),
+			                                               itsKey( key    )
+			{
+			}
 			
 			bool IsLink() const  { return true; }
 			
@@ -795,7 +799,7 @@ namespace Genie
 	
 	FSTreePtr Volumes_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
 	{
-		return MakeFSTree( new FSTree_Volumes_Link( key ) );
+		return MakeFSTree( new FSTree_Volumes_Link( parent, key ) );
 	}
 	
 	void FSTree_Volumes::Stat( struct ::stat& sb ) const

@@ -74,7 +74,7 @@ namespace Genie
 	
 	FSTreePtr sys_mac_vol_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_vol_N( key ) );
+		return MakeFSTree( new FSTree_sys_mac_vol_N( parent, key ) );
 	}
 	
 	
@@ -176,7 +176,7 @@ namespace Genie
 	
 	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
 	{
-		return MakeFSTree( new FSTree_sys_mac_vol_N( vRefNum ) );
+		return MakeFSTree( new FSTree_sys_mac_vol_N( GetSingleton< FSTree_sys_mac_vol >(), vRefNum ) );
 	}
 	
 }

@@ -72,7 +72,7 @@ namespace Genie
 			typedef FSTree_Functional< sys_mac_crm_serial_N_Details > Base;
 		
 		public:
-			FSTree_sys_mac_crm_serial_N( const Key& key ) : Base( key )
+			FSTree_sys_mac_crm_serial_N( const FSTreePtr& parent, const Key& key ) : Base( parent, key )
 			{
 			}
 			

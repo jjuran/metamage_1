@@ -73,7 +73,7 @@ namespace Genie
 			typedef FSTree_Functional< sys_mac_proc_PSN_Details > Base;
 		
 		public:
-			FSTree_sys_mac_proc_PSN( const Key& key ) : Base( key )
+			FSTree_sys_mac_proc_PSN( const FSTreePtr& parent, const Key& key ) : Base( parent, key )
 			{
 			}
 			

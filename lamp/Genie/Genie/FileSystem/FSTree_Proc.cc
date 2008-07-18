@@ -105,6 +105,10 @@ namespace Genie
 			pid_t getpid() const  { return CurrentProcess().GetPID(); }
 		
 		public:
+			FSTree_proc_self( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
+			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "self"; }
@@ -253,7 +257,7 @@ namespace Genie
 	{
 		if ( key == 0 )
 		{
-			return MakeFSTree( new FSTree_proc_self() );
+			return MakeFSTree( new FSTree_proc_self( parent ) );
 		}
 		
 		return MakeFSTree( new FSTree_PID( key ) );

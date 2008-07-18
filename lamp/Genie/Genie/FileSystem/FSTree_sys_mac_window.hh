@@ -69,7 +69,7 @@ namespace Genie
 			typedef FSTree_Functional< sys_mac_window_REF_Details > Base;
 		
 		public:
-			FSTree_sys_mac_window_REF( const Key& key ) : Base( key )
+			FSTree_sys_mac_window_REF( const FSTreePtr& parent, const Key& key ) : Base( parent, key )
 			{
 			}
 			
