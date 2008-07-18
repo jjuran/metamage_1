@@ -38,7 +38,7 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
-	class FSTree_dev : public FSTree_Virtual
+	class FSTree_dev : public FSTree_Functional< Singleton_Functional_Details >
 	{
 		public:
 			void Init();
@@ -155,7 +155,7 @@ namespace Genie
 			static const char* OnlyName()  { return "tty.printer"; }
 	};
 	
-	class FSTree_dev_new : public FSTree_Virtual
+	class FSTree_dev_new : public FSTree_Functional< Singleton_Functional_Details >
 	{
 		public:
 			void Init();
@@ -310,9 +310,9 @@ namespace Genie
 	
 	void FSTree_dev::Init()
 	{
-		Map( Device_Factory( shared_from_this(), "null"    ) );
-		Map( Device_Factory( shared_from_this(), "zero"    ) );
-		Map( Device_Factory( shared_from_this(), "console" ) );
+		Map( "null",    &Device_Factory );
+		Map( "zero",    &Device_Factory );
+		Map( "console", &Device_Factory );
 		
 		MapSingleton< FSTree_dev_tty >();
 		

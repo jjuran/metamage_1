@@ -48,7 +48,7 @@ namespace Genie
 		MapSingleton< FSTree_sys_mac_user    >();
 		MapSingleton< FSTree_sys_mac_gestalt >();
 		
-		Map( Name_Factory( shared_from_this(), "name" ) );
+		Map( "name", &Name_Factory );
 		
 		try
 		{

@@ -35,7 +35,7 @@ namespace Genie
 		{
 		}
 		
-		Map( Name_Factory( shared_from_this(), "name" ) );
+		Map( "name", &Name_Factory );
 	}
 	
 	FSTreePtr FSTree_sys_mac_user::Parent() const

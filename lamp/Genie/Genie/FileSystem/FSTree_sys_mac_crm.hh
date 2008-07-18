@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	class FSTree_sys_mac_crm : public FSTree_Virtual
+	class FSTree_sys_mac_crm : public FSTree_Functional< Singleton_Functional_Details >
 	{
 		public:
 			void Init();

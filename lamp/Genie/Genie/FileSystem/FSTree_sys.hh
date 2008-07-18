@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	class FSTree_sys : public FSTree_Virtual
+	class FSTree_sys : public FSTree_Functional< Singleton_Functional_Details >
 	{
 		public:
 			void Init();
