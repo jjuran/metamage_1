@@ -153,13 +153,19 @@ namespace Genie
 			int    itsFD;
 		
 		public:
-			FSTree_PID_fd_N( pid_t pid, int fd ) : itsPID( pid ), itsFD( fd )  {}
+			FSTree_PID_fd_N( const FSTreePtr&  parent,
+			                 pid_t             pid,
+			                 int               fd ) : FSTree( parent ),
+			                                          itsPID( pid    ),
+			                                          itsFD ( fd     )
+			{
+			}
 			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const;
 			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_PID_fd( itsPID ) ); }
+			FSTreePtr Parent() const  { return itsParent; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -488,7 +494,7 @@ namespace Genie
 	
 	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
 	{
-		return MakeFSTree( new FSTree_PID_fd_N( itsPID, key ) );
+		return MakeFSTree( new FSTree_PID_fd_N( parent, itsPID, key ) );
 	}
 	
 	
