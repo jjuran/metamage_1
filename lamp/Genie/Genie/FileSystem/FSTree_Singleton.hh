@@ -14,7 +14,7 @@ namespace Genie
 {
 	
 	template < class FSTree_Type >
-	const FSTreePtr& MakeSingleton()
+	const FSTreePtr& MakeSingleton( const FSTreePtr& parent )
 	{
 		FSTree_Type* raw_ptr = NULL;
 		
@@ -29,9 +29,9 @@ namespace Genie
 	}
 	
 	template < class FSTree_Type >
-	FSTreePtr GetSingleton()
+	FSTreePtr GetSingleton( const FSTreePtr& parent = FSTreePtr() )
 	{
-		static const FSTreePtr& singleton = MakeSingleton< FSTree_Type >();
+		static const FSTreePtr& singleton = MakeSingleton< FSTree_Type >( parent );
 		
 		return singleton;
 	}
