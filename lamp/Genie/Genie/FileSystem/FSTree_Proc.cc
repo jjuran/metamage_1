@@ -416,6 +416,14 @@ namespace Genie
 	}
 	
 	
+	template < class Type >
+	FSTreePtr Factory( const FSTreePtr&    parent,
+	                   const std::string&  name,
+	                   pid_t               key )
+	{
+		return MakeFSTree( new Type( key ) );
+	}
+	
 	template < class Query >
 	FSTreePtr Query_Factory( const FSTreePtr&    parent,
 	                         const std::string&  name,
@@ -428,10 +436,10 @@ namespace Genie
 	
 	void FSTree_PID::Init()
 	{
-		Map( FSTreePtr( new FSTree_PID_fd  ( itsPID ) ) );
-		Map( FSTreePtr( new FSTree_PID_cwd ( itsPID ) ) );
-		Map( FSTreePtr( new FSTree_PID_exe ( itsPID ) ) );
-		Map( FSTreePtr( new FSTree_PID_root( itsPID ) ) );
+		Map( Factory< FSTree_PID_fd   >( shared_from_this(), "fd",   itsPID ) );
+		Map( Factory< FSTree_PID_cwd  >( shared_from_this(), "cwd",  itsPID ) );
+		Map( Factory< FSTree_PID_exe  >( shared_from_this(), "exe",  itsPID ) );
+		Map( Factory< FSTree_PID_root >( shared_from_this(), "root", itsPID ) );
 		
 		Map( Query_Factory< proc_PID_cmdline_Query   >( shared_from_this(), "cmdline",   itsPID ) );
 		Map( Query_Factory< proc_PID_stat_Query      >( shared_from_this(), "stat",      itsPID ) );
