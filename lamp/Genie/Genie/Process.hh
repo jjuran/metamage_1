@@ -205,7 +205,7 @@ namespace Genie
 			
 			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
 			
-			FSTreePtr GetCWD() const  { return itsCWD; }
+			const FSTreePtr& GetCWD() const  { return itsCWD; }
 			
 			void ChangeDirectory( const FSTreePtr& newCWD );
 			
