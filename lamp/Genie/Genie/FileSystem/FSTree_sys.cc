@@ -188,12 +188,19 @@ namespace Genie
 		return 0;
 	}
 	
+	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
+	                                     const std::string&  name,
+	                                     int                 (*main)() )
+	{
+		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( name, main ) )
+	}
+	
 	void FSTree_sys_kernel_bin::Init()
 	{
-		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "true",  main_true  ) ) );
-		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "false", main_false ) ) );
+		Map( Executable_Factory( shared_from_this(), "true",  main_true  ) );
+		Map( Executable_Factory( shared_from_this(), "false", main_false ) );
 		
-		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "beep", main_beep ) ) );
+		Map( Executable_Factory( shared_from_this(), "beep", main_beep ) );
 	}
 	
 	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
