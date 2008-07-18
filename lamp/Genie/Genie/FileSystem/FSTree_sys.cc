@@ -66,8 +66,6 @@ namespace Genie
 			void Init();
 			
 			std::string Name() const  { return "kernel"; }
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
 	
 	class FSTree_sys_kernel_bin : public FSTree_Functional_Singleton
@@ -80,8 +78,6 @@ namespace Genie
 			void Init();
 			
 			std::string Name() const  { return "bin"; }
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_kernel >(); }
 	};
 	
 	class FSTree_sys_kernel_bin_EXE : public FSTree
@@ -121,8 +117,6 @@ namespace Genie
 			}
 			
 			std::string Name() const  { return itsName; }
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_kernel_bin >(); }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IXUSR; }
 			
@@ -171,8 +165,6 @@ namespace Genie
 			}
 			
 			std::string Name() const  { return NameFromKey( itsKey ); }
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_kernel_syscall >(); }
 	};
 	
 	

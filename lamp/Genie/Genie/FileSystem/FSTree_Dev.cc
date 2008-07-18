@@ -65,8 +65,6 @@ namespace Genie
 			
 			std::string Name() const  { return OnlyName(); }
 			
-			FSTreePtr Parent() const  { return GetDevFSTree(); }
-			
 			std::string ReadLink() const  { return "/proc/self/fd"; }
 			
 			FSTreePtr ResolveLink() const  { return ResolvePathname( ReadLink(), FSRoot() ); }
@@ -86,8 +84,6 @@ namespace Genie
 			
 			std::string Name() const  { return deviceName; }
 			
-			FSTreePtr Parent() const  { return GetDevFSTree(); }
-			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
@@ -104,8 +100,6 @@ namespace Genie
 			static std::string OnlyName()  { return "tty"; }
 			
 			std::string Name() const  { return OnlyName(); }
-			
-			FSTreePtr Parent() const  { return GetDevFSTree(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -132,8 +126,6 @@ namespace Genie
 			}
 			
 			std::string Name() const  { return itsDeviceName; }
-			
-			FSTreePtr Parent() const  { return GetDevFSTree(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -193,8 +185,6 @@ namespace Genie
 			static std::string OnlyName()  { return "new"; }
 			
 			std::string Name() const  { return OnlyName(); }
-			
-			FSTreePtr Parent() const  { return GetDevFSTree(); }
 	};
 	
 	class FSTree_dev_new_buffer : public FSTree
@@ -207,8 +197,6 @@ namespace Genie
 			static std::string OnlyName()  { return "buffer"; }
 			
 			std::string Name() const  { return OnlyName(); }
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_new  >(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -227,8 +215,6 @@ namespace Genie
 			
 			std::string Name() const  { return OnlyName(); }
 			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_new  >(); }
-			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
@@ -245,8 +231,6 @@ namespace Genie
 			static std::string OnlyName()  { return "port"; }
 			
 			std::string Name() const  { return OnlyName(); }
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_dev_new  >(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }

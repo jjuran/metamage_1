@@ -38,10 +38,5 @@ namespace Genie
 		Map( "name", &Name_Factory );
 	}
 	
-	FSTreePtr FSTree_sys_mac_user::Parent() const
-	{
-		return GetSingleton< FSTree_sys_mac >();
-	}
-	
 }
 

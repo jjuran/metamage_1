@@ -20,11 +20,6 @@ namespace Genie
 		Map( "serial", &Singleton_Factory< FSTree_sys_mac_crm_serial > );
 	}
 	
-	FSTreePtr FSTree_sys_mac_crm::Parent() const
-	{
-		return GetSingleton< FSTree_sys_mac >();
-	}
-	
 }
 
 #endif

@@ -34,8 +34,6 @@ namespace Genie
 			
 			std::string Name() const  { return "home"; }
 			
-			FSTreePtr Parent() const;
-			
 			std::string ReadLink() const;
 			
 			FSTreePtr ResolveLink() const;

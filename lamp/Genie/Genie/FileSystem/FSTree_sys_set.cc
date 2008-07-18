@@ -64,10 +64,5 @@ namespace Genie
 		Map( "txt", &Singleton_Factory< FSTree_sys_set_txt > );
 	}
 	
-	FSTreePtr FSTree_sys_set::Parent() const
-	{
-		return GetSingleton< FSTree_sys >();
-	}
-	
 }
 

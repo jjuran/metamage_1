@@ -25,8 +25,6 @@ namespace Genie
 			static std::string OnlyName()  { return "set"; }
 			
 			std::string Name() const  { return OnlyName(); }
-			
-			FSTreePtr Parent() const;
 	};
 	
 }

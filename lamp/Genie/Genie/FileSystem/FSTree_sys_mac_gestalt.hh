@@ -25,8 +25,6 @@ namespace Genie
 			
 			std::string Name() const  { return "gestalt"; }
 			
-			FSTreePtr Parent() const;
-			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR; }
 			

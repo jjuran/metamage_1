@@ -32,8 +32,6 @@ namespace Genie
 			
 			std::string Name() const  { return "rom"; }
 			
-			FSTreePtr Parent() const;
-			
 			mode_t FileTypeMode() const  { return S_IFREG; }
 			
 			mode_t FilePermMode() const  { return TARGET_API_MAC_CARBON ? 0 : S_IRUSR; }

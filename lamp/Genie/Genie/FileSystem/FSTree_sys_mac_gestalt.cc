@@ -19,12 +19,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	FSTreePtr FSTree_sys_mac_gestalt::Parent() const
-	{
-		return GetSingleton< FSTree_sys_mac >();
-	}
-	
-	
 	class GestaltDeviceHandle : public DeviceHandle
 	{
 		public:

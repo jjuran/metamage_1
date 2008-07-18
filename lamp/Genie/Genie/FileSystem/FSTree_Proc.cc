@@ -94,8 +94,6 @@ namespace Genie
 			void Init();
 			
 			std::string Name() const  { return NameFromKey( itsKey ); }
-			
-			FSTreePtr Parent() const  { return GetProcFSTree(); }
 	};
 	
 	

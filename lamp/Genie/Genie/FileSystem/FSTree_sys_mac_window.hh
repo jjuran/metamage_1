@@ -74,8 +74,6 @@ namespace Genie
 			}
 			
 			std::string Name() const  { return NameFromKey( itsKey ); }
-			
-			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys_mac_window >(); }
 	};
 	
 }

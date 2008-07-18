@@ -77,11 +77,6 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr FSTree_sys_mac_user_home::Parent() const
-	{
-		return GetSingleton< FSTree_sys_mac_user >();
-	}
-	
 	std::string FSTree_sys_mac_user_home::ReadLink() const
 	{
 		return ResolveLink()->Pathname();

@@ -31,11 +31,6 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr FSTree_sys_mac_rom::Parent() const
-	{
-		return GetSingleton< FSTree_sys_mac >();
-	}
-	
 	boost::shared_ptr< IOHandle > FSTree_sys_mac_rom::Open( OpenFlags flags ) const
 	{
 	#if TARGET_API_MAC_CARBON
