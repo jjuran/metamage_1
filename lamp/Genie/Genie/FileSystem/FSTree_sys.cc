@@ -192,7 +192,7 @@ namespace Genie
 	                                     const std::string&  name,
 	                                     int                 (*main)() )
 	{
-		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( name, main ) )
+		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( name, main ) );
 	}
 	
 	void FSTree_sys_kernel_bin::Init()
