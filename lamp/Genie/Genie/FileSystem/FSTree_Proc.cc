@@ -87,7 +87,7 @@ namespace Genie
 			typedef FSTree_Functional< proc_PID_Details > Base;
 		
 		public:
-			FSTree_PID( const Key& key ) : Base( key )
+			FSTree_PID( const FSTreePtr& parent, const Key& key ) : Base( parent, key )
 			{
 			}
 			
@@ -117,7 +117,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return NN::Convert< std::string >( getpid() ); }
 			
-			FSTreePtr ResolveLink() const  { return MakeFSTree( new FSTree_PID( getpid() ) ); }
+			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( itsParent, getpid() ); }
 	};
 	
 	
@@ -132,7 +132,7 @@ namespace Genie
 		
 		static std::string Name()  { return "fd"; }
 		
-		FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
+		FSTreePtr Parent() const  { return proc_Details::GetChildNode( GetProcFSTree(), itsPID ); }
 		
 		const Sequence& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
 		
@@ -260,7 +260,7 @@ namespace Genie
 			return MakeFSTree( new FSTree_proc_self( parent ) );
 		}
 		
-		return MakeFSTree( new FSTree_PID( key ) );
+		return MakeFSTree( new FSTree_PID( parent, key ) );
 	}
 	
 	// Process states
