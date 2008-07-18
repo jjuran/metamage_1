@@ -59,21 +59,41 @@ namespace Genie
 	typedef FSTree_Sequence< proc_Details > FSTree_proc;
 	
 	
-	class FSTree_PID : public FSTree_Virtual
+	struct pid_KeyName_Traits : Integer_KeyName_Traits< pid_t >
 	{
-		private:
-			typedef pid_t Key;
-			
-			Key itsPID;
+	};
+	
+	class proc_PID_Details : public pid_KeyName_Traits
+	{
+		public:
+			const Key itsKey;
 		
 		public:
-			FSTree_PID( Key pid ) : itsPID( pid )
+			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string&, Key key );
+			
+			proc_PID_Details( Key key ) : itsKey( key )
+			{
+			}
+			
+			FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
+			{
+				return f( parent, name, itsKey );
+			}
+	};
+	
+	class FSTree_PID : public FSTree_Functional< proc_PID_Details >
+	{
+		private:
+			typedef FSTree_Functional< proc_PID_Details > Base;
+		
+		public:
+			FSTree_PID( const Key& key ) : Base( key )
 			{
 			}
 			
 			void Init();
 			
-			std::string Name() const  { return NN::Convert< std::string >( itsPID ); }
+			std::string Name() const  { return NameFromKey( itsKey ); }
 			
 			FSTreePtr Parent() const  { return GetProcFSTree(); }
 	};
@@ -436,14 +456,14 @@ namespace Genie
 	
 	void FSTree_PID::Init()
 	{
-		Map( Factory< FSTree_PID_fd   >( shared_from_this(), "fd",   itsPID ) );
-		Map( Factory< FSTree_PID_cwd  >( shared_from_this(), "cwd",  itsPID ) );
-		Map( Factory< FSTree_PID_exe  >( shared_from_this(), "exe",  itsPID ) );
-		Map( Factory< FSTree_PID_root >( shared_from_this(), "root", itsPID ) );
+		Map( "fd",   &Factory< FSTree_PID_fd   > );
+		Map( "cwd",  &Factory< FSTree_PID_cwd  > );
+		Map( "exe",  &Factory< FSTree_PID_exe  > );
+		Map( "root", &Factory< FSTree_PID_root > );
 		
-		Map( Query_Factory< proc_PID_cmdline_Query   >( shared_from_this(), "cmdline",   itsPID ) );
-		Map( Query_Factory< proc_PID_stat_Query      >( shared_from_this(), "stat",      itsPID ) );
-		Map( Query_Factory< proc_PID_backtrace_Query >( shared_from_this(), "backtrace", itsPID ) );
+		Map( "cmdline",   &Query_Factory< proc_PID_cmdline_Query   > );
+		Map( "stat",      &Query_Factory< proc_PID_stat_Query      > );
+		Map( "backtrace", &Query_Factory< proc_PID_backtrace_Query > );
 	}
 	
 	FSTreePtr PID_fd_Details::GetChildNode( const Key& key ) const
