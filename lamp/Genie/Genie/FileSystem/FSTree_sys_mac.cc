@@ -34,19 +34,19 @@ namespace Genie
 	
 	void FSTree_sys_mac::Init()
 	{
-		MapSingleton< FSTree_sys_mac_vol     >();
-		MapSingleton< FSTree_sys_mac_proc    >();
-		MapSingleton< FSTree_sys_mac_window  >();
+		Map( "vol",    &Singleton_Factory< FSTree_sys_mac_vol    > );
+		Map( "proc",   &Singleton_Factory< FSTree_sys_mac_proc   > );
+		Map( "window", &Singleton_Factory< FSTree_sys_mac_window > );
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		MapSingleton< FSTree_sys_mac_crm     >();
-		MapSingleton< FSTree_sys_mac_unit    >();
+		Map( "crm",  &Singleton_Factory< FSTree_sys_mac_crm  > );
+		Map( "unit", &Singleton_Factory< FSTree_sys_mac_unit > );
 		
 	#endif
 		
-		MapSingleton< FSTree_sys_mac_user    >();
-		MapSingleton< FSTree_sys_mac_gestalt >();
+		Map( "user",    &Singleton_Factory< FSTree_sys_mac_user    > );
+		Map( "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > );
 		
 		Map( "name", &Name_Factory );
 		
@@ -54,7 +54,7 @@ namespace Genie
 		{
 			GetROMSize();
 			
-			MapSingleton< FSTree_sys_mac_rom >();
+			Map( "rom", &Singleton_Factory< FSTree_sys_mac_rom > );
 		}
 		catch ( ... )
 		{

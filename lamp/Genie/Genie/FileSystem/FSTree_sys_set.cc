@@ -60,8 +60,8 @@ namespace Genie
 	
 	void FSTree_sys_set::Init()
 	{
-		MapSingleton< FSTree_sys_set_gfx >();
-		MapSingleton< FSTree_sys_set_txt >();
+		Map( "gfx", &Singleton_Factory< FSTree_sys_set_gfx > );
+		Map( "txt", &Singleton_Factory< FSTree_sys_set_txt > );
 	}
 	
 	FSTreePtr FSTree_sys_set::Parent() const

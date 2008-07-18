@@ -29,7 +29,7 @@ namespace Genie
 		{
 			CheckForHomeFolder();
 			
-			MapSingleton< FSTree_sys_mac_user_home >();
+			Map( "home", &Singleton_Factory< FSTree_sys_mac_user_home > );
 		}
 		catch ( ... )
 		{
