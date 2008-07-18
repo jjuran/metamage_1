@@ -45,14 +45,33 @@ namespace Genie
 	typedef FSTree_Sequence< sys_mac_window_Details > FSTree_sys_mac_window;
 	
 	
-	class FSTree_sys_mac_window_REF : public FSTree_Virtual,
-	                                  public WindowRef_KeyName_Traits
+	class sys_mac_window_REF_Details : public WindowRef_KeyName_Traits
 	{
-		private:
-			Key itsKey;
+		public:
+			const Key itsKey;
 		
 		public:
-			FSTree_sys_mac_window_REF( const Key& key ) : itsKey( key )  {}
+			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string&, Key key );
+			
+			sys_mac_window_REF_Details( Key key ) : itsKey( key )
+			{
+			}
+			
+			FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
+			{
+				return f( parent, name, itsKey );
+			}
+	};
+	
+	class FSTree_sys_mac_window_REF : public FSTree_Functional< sys_mac_window_REF_Details >
+	{
+		private:
+			typedef FSTree_Functional< sys_mac_window_REF_Details > Base;
+		
+		public:
+			FSTree_sys_mac_window_REF( const Key& key ) : Base( key )
+			{
+			}
 			
 			std::string Name() const  { return NameFromKey( itsKey ); }
 			
