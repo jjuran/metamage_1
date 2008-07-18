@@ -312,6 +312,28 @@ namespace Genie
 	typedef FSTree_Functional< Singleton_Functional_Details > FSTree_Functional_Singleton;
 	
 	
+	template < class KeyName_Traits >
+	class Level1_Functional_Details : public KeyName_Traits
+	{
+		public:
+			typedef typename KeyName_Traits::Key Key;
+			
+			const Key itsKey;
+		
+		public:
+			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string&, Key key );
+			
+			Level1_Functional_Details( Key key ) : itsKey( key )
+			{
+			}
+			
+			FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
+			{
+				return f( parent, name, itsKey );
+			}
+	};
+	
+	
 	UInt32 DecodeHex32( const char* begin, const char* end );
 	
 }
