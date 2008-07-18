@@ -12,10 +12,5 @@
 namespace Genie
 {
 	
-	FSTreePtr FSTree_QueryFile_Base::Parent() const
-	{
-		return ResolvePathname( itsParentPathname, FSRoot() );
-	}
-	
 }
 

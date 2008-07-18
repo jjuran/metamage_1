@@ -17,19 +17,18 @@ namespace Genie
 	class FSTree_QueryFile_Base : public FSTree
 	{
 		private:
-			std::string  itsParentPathname;
 			std::string  itsName;
 		
 		public:
 			FSTree_QueryFile_Base( const FSTreePtr&    parent,
-			                       const std::string&  name ) : itsParentPathname( parent->Pathname() ),
+			                       const std::string&  name ) : FSTree( parent ),
 			                                                    itsName( name )
 			{
 			}
 			
 			std::string Name() const  { return itsName; }
 			
-			FSTreePtr Parent() const;
+			FSTreePtr Parent() const  { return itsParent; }
 	};
 	
 	
