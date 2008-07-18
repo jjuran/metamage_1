@@ -56,9 +56,13 @@ namespace Genie
 	};
 	
 	
-	class FSTree_sys_kernel : public FSTree_Functional< Singleton_Functional_Details >
+	class FSTree_sys_kernel : public FSTree_Functional_Singleton
 	{
 		public:
+			FSTree_sys_kernel( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			{
+			}
+			
 			void Init();
 			
 			std::string Name() const  { return "kernel"; }
@@ -66,9 +70,13 @@ namespace Genie
 			FSTreePtr Parent() const  { return GetSingleton< FSTree_sys >(); }
 	};
 	
-	class FSTree_sys_kernel_bin : public FSTree_Functional< Singleton_Functional_Details >
+	class FSTree_sys_kernel_bin : public FSTree_Functional_Singleton
 	{
 		public:
+			FSTree_sys_kernel_bin( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			{
+			}
+			
 			void Init();
 			
 			std::string Name() const  { return "bin"; }
@@ -88,20 +96,26 @@ namespace Genie
 			MainEntry itsMainEntry;
 		
 		public:
-			FSTree_sys_kernel_bin_EXE( const std::string&  name,
-			                           Main3               main ) : itsName( name ),
+			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
+			                           const std::string&  name,
+			                           Main3               main ) : FSTree( parent ),
+			                                                        itsName( name ),
 			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
 			{
 			}
 			
-			FSTree_sys_kernel_bin_EXE( const std::string&  name,
-			                           Main2               main ) : itsName( name ),
+			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
+			                           const std::string&  name,
+			                           Main2               main ) : FSTree( parent ),
+			                                                        itsName( name ),
 			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
 			{
 			}
 			
-			FSTree_sys_kernel_bin_EXE( const std::string&  name,
-			                           Main0               main ) : itsName( name ),
+			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
+			                           const std::string&  name,
+			                           Main0               main ) : FSTree( parent ),
+			                                                        itsName( name ),
 			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
 			{
 			}
@@ -199,7 +213,7 @@ namespace Genie
 	static FSTreePtr Executable_Factory( const FSTreePtr&    parent,
 	                                     const std::string&  name )
 	{
-		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( name, main ) );
+		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}
 	
 	void FSTree_sys_kernel_bin::Init()

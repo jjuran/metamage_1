@@ -13,9 +13,13 @@
 namespace Genie
 {
 	
-	class FSTree_sys_set : public FSTree_Functional< Singleton_Functional_Details >
+	class FSTree_sys_set : public FSTree_Functional_Singleton
 	{
 		public:
+			FSTree_sys_set( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			{
+			}
+			
 			void Init();
 			
 			static std::string OnlyName()  { return "set"; }

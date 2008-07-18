@@ -17,11 +17,17 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	
 	FSTreePtr FSTree_Null::Parent() const
 	{
 		p7::throw_errno( ENOENT );
 		
 		throw;
+	}
+	
+	FSTreePtr FSNull()
+	{
+		return FSTreePtr( new FSTree_Null() );
 	}
 	
 }

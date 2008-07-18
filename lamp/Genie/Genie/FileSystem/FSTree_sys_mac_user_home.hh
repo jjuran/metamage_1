@@ -26,7 +26,9 @@ namespace Genie
 	class FSTree_sys_mac_user_home : public FSTree
 	{
 		public:
-			FSTree_sys_mac_user_home()  {}
+			FSTree_sys_mac_user_home( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
 			
 			bool IsLink() const  { return true; }
 			

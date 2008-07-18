@@ -22,7 +22,7 @@ namespace Genie
 			FSTreePtr Parent() const;
 	};
 	
-	inline FSTreePtr FSNull()  { return GetSingleton< FSTree_Null >(); }
+	FSTreePtr FSNull();
 	
 }
 

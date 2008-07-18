@@ -13,9 +13,13 @@
 namespace Genie
 {
 	
-	class FSTree_sys_mac : public FSTree_Functional< Singleton_Functional_Details >
+	class FSTree_sys_mac : public FSTree_Functional_Singleton
 	{
 		public:
+			FSTree_sys_mac( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			{
+			}
+			
 			void Init();
 			
 			static std::string OnlyName()  { return "mac"; }

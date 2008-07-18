@@ -384,6 +384,10 @@ namespace Genie
 			typedef FSTree_Sequence< Volumes_Details > Base;
 		
 		public:
+			FSTree_Volumes( const FSTreePtr& parent ) : Base( parent )
+			{
+			}
+			
 			void Stat( struct ::stat& sb ) const;
 	};
 	
@@ -417,6 +421,10 @@ namespace Genie
 	class FSTree_J_Symlink : public FSTree
 	{
 		public:
+			FSTree_J_Symlink( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
+			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return NN::Convert< std::string >( NN::Convert< FSSpec >( FindJDirectory() ).name ); }

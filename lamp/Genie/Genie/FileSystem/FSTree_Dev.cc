@@ -38,9 +38,13 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
-	class FSTree_dev : public FSTree_Functional< Singleton_Functional_Details >
+	class FSTree_dev : public FSTree_Functional_Singleton
 	{
 		public:
+			FSTree_dev( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			{
+			}
+			
 			void Init();
 			
 			std::string Name() const  { return "dev"; }
@@ -51,6 +55,10 @@ namespace Genie
 	class FSTree_dev_fd : public FSTree
 	{
 		public:
+			FSTree_dev_fd( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
+			
 			bool IsLink() const { return true; }
 			
 			static const char* OnlyName()  { return "fd"; }
@@ -70,7 +78,11 @@ namespace Genie
 			std::string deviceName;
 		
 		public:
-			FSTree_Device( const std::string& name ) : deviceName( name )  {}
+			FSTree_Device( const FSTreePtr&    parent,
+			               const std::string&  name ) : FSTree( parent ),
+			                                            deviceName( name )
+			{
+			}
 			
 			std::string Name() const  { return deviceName; }
 			
@@ -85,6 +97,10 @@ namespace Genie
 	class FSTree_dev_tty : public FSTree
 	{
 		public:
+			FSTree_dev_tty( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
+			
 			static std::string OnlyName()  { return "tty"; }
 			
 			std::string Name() const  { return OnlyName(); }
@@ -105,11 +121,13 @@ namespace Genie
 			bool         itIsPassive;
 		
 		public:
-			FSTree_dev_Serial( const char*  device,
-			                   const char*  port,
-			                   bool         passive ) : itsDeviceName( device  ),
-			                                            itsPortName  ( port    ),
-			                                            itIsPassive  ( passive )
+			FSTree_dev_Serial( const FSTreePtr&  parent,
+			                   const char*       device,
+			                   const char*       port,
+			                   bool              passive ) : FSTree       ( parent  ),
+			                                                 itsDeviceName( device  ),
+			                                                 itsPortName  ( port    ),
+			                                                 itIsPassive  ( passive )
 			{
 			}
 			
@@ -126,7 +144,9 @@ namespace Genie
 	class FSTree_dev_cumodem : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_cumodem() : FSTree_dev_Serial( OnlyName(), "A", false )  {}
+			FSTree_dev_cumodem( const FSTreePtr& parent ) : FSTree_dev_Serial( parent, OnlyName(), "A", false )
+			{
+			}
 			
 			static const char* OnlyName()  { return "cu.modem"; }
 	};
@@ -134,7 +154,9 @@ namespace Genie
 	class FSTree_dev_cuprinter : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_cuprinter() : FSTree_dev_Serial( OnlyName(), "B", false )  {}
+			FSTree_dev_cuprinter( const FSTreePtr& parent ) : FSTree_dev_Serial( parent, OnlyName(), "B", false )
+			{
+			}
 			
 			static const char* OnlyName()  { return "cu.printer"; }
 	};
@@ -142,7 +164,9 @@ namespace Genie
 	class FSTree_dev_ttymodem : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_ttymodem() : FSTree_dev_Serial( OnlyName(), "A", true )  {}
+			FSTree_dev_ttymodem( const FSTreePtr& parent ) : FSTree_dev_Serial( parent, OnlyName(), "A", true )
+			{
+			}
 			
 			static const char* OnlyName()  { return "tty.modem"; }
 	};
@@ -150,14 +174,20 @@ namespace Genie
 	class FSTree_dev_ttyprinter : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_ttyprinter() : FSTree_dev_Serial( OnlyName(), "B", true )  {}
+			FSTree_dev_ttyprinter( const FSTreePtr& parent ) : FSTree_dev_Serial( parent, OnlyName(), "B", true )
+			{
+			}
 			
 			static const char* OnlyName()  { return "tty.printer"; }
 	};
 	
-	class FSTree_dev_new : public FSTree_Functional< Singleton_Functional_Details >
+	class FSTree_dev_new : public FSTree_Functional_Singleton
 	{
 		public:
+			FSTree_dev_new( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			{
+			}
+			
 			void Init();
 			
 			static std::string OnlyName()  { return "new"; }
@@ -170,6 +200,10 @@ namespace Genie
 	class FSTree_dev_new_buffer : public FSTree
 	{
 		public:
+			FSTree_dev_new_buffer( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
+			
 			static std::string OnlyName()  { return "buffer"; }
 			
 			std::string Name() const  { return OnlyName(); }
@@ -185,6 +219,10 @@ namespace Genie
 	class FSTree_dev_new_console : public FSTree
 	{
 		public:
+			FSTree_dev_new_console( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
+			
 			static std::string OnlyName()  { return "console"; }
 			
 			std::string Name() const  { return OnlyName(); }
@@ -200,6 +238,10 @@ namespace Genie
 	class FSTree_dev_new_port : public FSTree
 	{
 		public:
+			FSTree_dev_new_port( const FSTreePtr& parent ) : FSTree( parent )
+			{
+			}
+			
 			static std::string OnlyName()  { return "port"; }
 			
 			std::string Name() const  { return OnlyName(); }
@@ -305,7 +347,7 @@ namespace Genie
 	static FSTreePtr Device_Factory( const FSTreePtr&    parent,
 	                                 const std::string&  name )
 	{
-		return MakeFSTree( new FSTree_Device( name ) );
+		return MakeFSTree( new FSTree_Device( parent, name ) );
 	}
 	
 	void FSTree_dev::Init()

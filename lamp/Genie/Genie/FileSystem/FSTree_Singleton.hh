@@ -18,7 +18,7 @@ namespace Genie
 	{
 		FSTree_Type* raw_ptr = NULL;
 		
-		static FSTreePtr singleton = FSTreePtr( raw_ptr = new FSTree_Type() );
+		static FSTreePtr singleton = FSTreePtr( raw_ptr = new FSTree_Type( parent ) );
 		
 		if ( raw_ptr != NULL )
 		{
