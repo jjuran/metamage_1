@@ -458,7 +458,7 @@ namespace Genie
 	                             const std::string&  name,
 	                             pid_t               key )
 	{
-		return MakeFSTree( new FSTree_PID_fd( key ) );
+		return MakeFSTree( new FSTree_PID_fd( parent, key ) );
 	}
 	
 	template < class Type >
