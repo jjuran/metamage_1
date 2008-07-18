@@ -33,7 +33,9 @@ namespace Genie
 			unsigned ID() const  { return itsID; }
 		
 		public:
-			FSTree_Dynamic_N_Base( unsigned id ) : itsID( id )
+			FSTree_Dynamic_N_Base( const FSTreePtr&  parent,
+			                       unsigned          id ) : FSTree( parent ),
+			                                                itsID ( id     )
 			{
 			}
 			
@@ -53,11 +55,10 @@ namespace Genie
 	class FSTree_Dynamic_N : public FSTree_Dynamic_N_Base
 	{
 		public:
-			FSTree_Dynamic_N( unsigned id ) : FSTree_Dynamic_N_Base( id )
+			FSTree_Dynamic_N( const FSTreePtr&  parent,
+			                  unsigned          id ) : FSTree_Dynamic_N_Base( parent, id )
 			{
 			}
-			
-			FSTreePtr Parent() const;
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{
@@ -67,20 +68,11 @@ namespace Genie
 	
 	
 	template < class Handle >
-	FSTreePtr FSTree_Dynamic_N< Handle >::Parent() const
-	{
-		return GetSingleton< typename IOHandle_FSTree_Traits< Handle >::Tree >();
-	}
-	
-	
-	template < class Handle >
 	struct DynamicGroup_Details : public DynamicGroup_Details_Base
 	{
 		typedef typename FSTree_Dynamic_N< Handle > ChildNode;
 		
 		static std::string Name()  { return IOHandle_Name_Traits< Handle >::Name(); }
-		
-		static FSTreePtr Parent()  { return GetSingleton< typename IOHandle_Parent_Traits< Handle >::Tree >(); }
 		
 		static bool KeyIsValid( const Key& key )
 		{
@@ -91,7 +83,7 @@ namespace Genie
 		
 		static FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key )
 		{
-			return MakeFSTree( new ChildNode( key ) );
+			return MakeFSTree( new ChildNode( parent, key ) );
 		}
 		
 		static const Sequence& ItemSequence()  { return GetDynamicGroup< Handle >(); }
