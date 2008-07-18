@@ -73,7 +73,18 @@ namespace Genie
 	
 	class FSTree : public boost::enable_shared_from_this< FSTree >
 	{
+		protected:
+			FSTreePtr itsParent;
+		
 		public:
+			FSTree()
+			{
+			}
+			
+			FSTree( const FSTreePtr& parent ) : itsParent( parent )
+			{
+			}
+			
 			virtual ~FSTree();
 			
 			void Init()  {}  // never called virtually
