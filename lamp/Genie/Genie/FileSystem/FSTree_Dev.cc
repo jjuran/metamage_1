@@ -314,25 +314,25 @@ namespace Genie
 		Map( "zero",    &Device_Factory );
 		Map( "console", &Device_Factory );
 		
-		MapSingleton< FSTree_dev_tty >();
+		Map( "tty", &Singleton_Factory< FSTree_dev_tty > );
 		
-		MapSingleton< FSTree_dev_cumodem    >();
-		MapSingleton< FSTree_dev_cuprinter  >();
-		MapSingleton< FSTree_dev_ttymodem   >();
-		MapSingleton< FSTree_dev_ttyprinter >();
+		Map( "cu.modem",    &Singleton_Factory< FSTree_dev_cumodem    > );
+		Map( "cu.printer",  &Singleton_Factory< FSTree_dev_cuprinter  > );
+		Map( "tty.modem",   &Singleton_Factory< FSTree_dev_ttymodem   > );
+		Map( "tty.printer", &Singleton_Factory< FSTree_dev_ttyprinter > );
 		
-		MapSingleton< FSTree_dev_new >();
-		MapSingleton< FSTree_dev_con >();
-		MapSingleton< FSTree_dev_pts >();
-		MapSingleton< FSTree_dev_fd  >();
+		Map( "new", &Singleton_Factory< FSTree_dev_new > );
+		Map( "con", &Singleton_Factory< FSTree_dev_con > );
+		Map( "pts", &Singleton_Factory< FSTree_dev_pts > );
+		Map( "fd",  &Singleton_Factory< FSTree_dev_fd  > );
 	}
 	
 	
 	void FSTree_dev_new::Init()
 	{
-		MapSingleton< FSTree_dev_new_buffer  >();
-		MapSingleton< FSTree_dev_new_console >();
-		MapSingleton< FSTree_dev_new_port    >();
+		Map( "buffer",  &Singleton_Factory< FSTree_dev_new_buffer  > );
+		Map( "console", &Singleton_Factory< FSTree_dev_new_console > );
+		Map( "port",    &Singleton_Factory< FSTree_dev_new_port    > );
 	}
 	
 }

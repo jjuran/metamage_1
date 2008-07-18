@@ -162,15 +162,15 @@ namespace Genie
 	
 	void FSTree_sys::Init()
 	{
-		MapSingleton< FSTree_sys_kernel >();
-		MapSingleton< FSTree_sys_mac    >();
-		MapSingleton< FSTree_sys_set    >();
+		Map( "kernel", &Singleton_Factory< FSTree_sys_kernel > );
+		Map( "mac",    &Singleton_Factory< FSTree_sys_mac    > );
+		Map( "set",    &Singleton_Factory< FSTree_sys_set    > );
 	}
 	
 	void FSTree_sys_kernel::Init()
 	{
-		MapSingleton< FSTree_sys_kernel_bin     >();
-		MapSingleton< FSTree_sys_kernel_syscall >();
+		Map( "bin",     &Singleton_Factory< FSTree_sys_kernel_bin     > );
+		Map( "syscall", &Singleton_Factory< FSTree_sys_kernel_syscall > );
 	}
 	
 	namespace
