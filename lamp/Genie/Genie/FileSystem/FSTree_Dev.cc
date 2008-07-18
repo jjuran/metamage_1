@@ -252,19 +252,6 @@ namespace Genie
 	};
 	
 	
-	template <>
-	struct IOHandle_Parent_Traits< ConsoleTTYHandle >
-	{
-		typedef FSTree_dev Tree;
-	};
-	
-	template <>
-	struct IOHandle_Parent_Traits< PseudoTTYHandle >
-	{
-		typedef FSTree_dev Tree;
-	};
-	
-	
 	typedef FSTree_Sequence< DynamicGroup_Details< ConsoleTTYHandle > > FSTree_dev_con;
 	typedef FSTree_Sequence< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
 	

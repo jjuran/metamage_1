@@ -47,7 +47,6 @@ namespace Genie
 	
 	
 	template < class Handle > struct IOHandle_Name_Traits   {};
-	template < class Handle > struct IOHandle_Parent_Traits {};
 	template < class Handle > struct IOHandle_FSTree_Traits {};
 	
 	

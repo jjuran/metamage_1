@@ -29,19 +29,6 @@ namespace Genie
 	};
 	
 	
-	template <>
-	struct IOHandle_Parent_Traits< GraphicsWindow >
-	{
-		typedef FSTree_sys_set Tree;
-	};
-	
-	template <>
-	struct IOHandle_Parent_Traits< BufferFileHandle >
-	{
-		typedef FSTree_sys_set Tree;
-	};
-	
-	
 	typedef FSTree_Sequence< DynamicGroup_Details< GraphicsWindow   > > FSTree_sys_set_gfx;
 	typedef FSTree_Sequence< DynamicGroup_Details< BufferFileHandle > > FSTree_sys_set_txt;
 	
