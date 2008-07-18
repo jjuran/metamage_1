@@ -69,7 +69,7 @@ namespace Genie
 	class FSTree_sys_kernel_bin : public FSTree_Virtual
 	{
 		public:
-			FSTree_sys_kernel_bin();
+			void Init();
 			
 			std::string Name() const  { return "bin"; }
 			
@@ -188,7 +188,7 @@ namespace Genie
 		return 0;
 	}
 	
-	FSTree_sys_kernel_bin::FSTree_sys_kernel_bin()
+	void FSTree_sys_kernel_bin::Init()
 	{
 		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "true",  main_true  ) ) );
 		Map( FSTreePtr( new FSTree_sys_kernel_bin_EXE( "false", main_false ) ) );
