@@ -252,12 +252,6 @@ namespace Genie
 			
 			void Map( const std::string& name, Function f );
 			
-			template < class FSTree_Type >
-			void MapSingleton()
-			{
-				Map( GetSingleton< FSTree_Type >()->Name(), &Singleton_Factory< FSTree_Type > );
-			}
-			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
