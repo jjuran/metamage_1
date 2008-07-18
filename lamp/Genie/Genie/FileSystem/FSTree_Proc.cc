@@ -172,13 +172,17 @@ namespace Genie
 			pid_t itsPID;
 		
 		public:
-			FSTree_PID_cwd( pid_t pid ) : itsPID( pid )  {}
+			FSTree_PID_cwd( const FSTreePtr&  parent,
+			                pid_t             pid ) : FSTree( parent ),
+			                                          itsPID( pid    )
+			{
+			}
 			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "cwd"; }
 			
-			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
+			FSTreePtr Parent() const  { return itsParent; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -191,13 +195,17 @@ namespace Genie
 			pid_t itsPID;
 		
 		public:
-			FSTree_PID_exe( pid_t pid ) : itsPID( pid )  {}
+			FSTree_PID_exe( const FSTreePtr&  parent,
+			                pid_t             pid ) : FSTree( parent ),
+			                                          itsPID( pid    )
+			{
+			}
 			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "exe"; }
 			
-			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
+			FSTreePtr Parent() const  { return itsParent; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -210,13 +218,17 @@ namespace Genie
 			pid_t itsPID;
 		
 		public:
-			FSTree_PID_root( pid_t pid ) : itsPID( pid )  {}
+			FSTree_PID_root( const FSTreePtr&  parent,
+			                 pid_t             pid ) : FSTree( parent ),
+			                                           itsPID( pid    )
+			{
+			}
 			
 			bool IsLink() const  { return true; }
 			
 			std::string Name() const  { return "root"; }
 			
-			FSTreePtr Parent() const  { return MakeFSTree( new FSTree_PID( itsPID ) ); }
+			FSTreePtr Parent() const  { return itsParent; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -436,12 +448,19 @@ namespace Genie
 	}
 	
 	
-	template < class Type >
-	FSTreePtr Factory( const FSTreePtr&    parent,
-	                   const std::string&  name,
-	                   pid_t               key )
+	static FSTreePtr fd_Factory( const FSTreePtr&    parent,
+	                             const std::string&  name,
+	                             pid_t               key )
 	{
-		return MakeFSTree( new Type( key ) );
+		return MakeFSTree( new FSTree_PID_fd( key ) );
+	}
+	
+	template < class Type >
+	FSTreePtr Link_Factory( const FSTreePtr&    parent,
+	                        const std::string&  name,
+	                        pid_t               key )
+	{
+		return MakeFSTree( new Type( parent, key ) );
 	}
 	
 	template < class Query >
@@ -456,10 +475,11 @@ namespace Genie
 	
 	void FSTree_PID::Init()
 	{
-		Map( "fd",   &Factory< FSTree_PID_fd   > );
-		Map( "cwd",  &Factory< FSTree_PID_cwd  > );
-		Map( "exe",  &Factory< FSTree_PID_exe  > );
-		Map( "root", &Factory< FSTree_PID_root > );
+		Map( "fd", &fd_Factory );
+		
+		Map( "cwd",  &Link_Factory< FSTree_PID_cwd  > );
+		Map( "exe",  &Link_Factory< FSTree_PID_exe  > );
+		Map( "root", &Link_Factory< FSTree_PID_root > );
 		
 		Map( "cmdline",   &Query_Factory< proc_PID_cmdline_Query   > );
 		Map( "stat",      &Query_Factory< proc_PID_stat_Query      > );
