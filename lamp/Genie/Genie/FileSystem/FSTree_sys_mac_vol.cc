@@ -107,14 +107,14 @@ namespace Genie
 			
 			Key            itsKey;
 			N::FolderType  itsType;
-			const char*    itsName;
+			std::string    itsName;
 		
 		public:
-			FSTree_Folder_Link( const Key&     key,
-			                    N::FolderType  type,
-			                    const char*    name ) : itsKey ( key  ),
-			                                            itsType( type ),
-			                                            itsName( name )
+			FSTree_Folder_Link( const Key&          key,
+			                    N::FolderType       type,
+			                    const std::string&  name ) : itsKey ( key  ),
+			                                                 itsType( type ),
+			                                                 itsName( name )
 			{
 			}
 			
@@ -134,7 +134,7 @@ namespace Genie
 	
 	
 	static FSTreePtr Root_Factory( const FSTreePtr&             parent,
-	                               const char*                  name,
+	                               const std::string&           name,
 	                               VRefNum_KeyName_Traits::Key  key )
 	{
 		FSSpec volume = N::FSMakeFSSpec( key, N::fsRtDirID, "\p" );
@@ -143,7 +143,7 @@ namespace Genie
 	}
 	
 	static FSTreePtr Name_Factory( const FSTreePtr&             parent,
-	                               const char*                  name,
+	                               const std::string&           name,
 	                               VRefNum_KeyName_Traits::Key  key )
 	{
 		typedef sys_mac_vol_N_name_Query Query;
@@ -155,7 +155,7 @@ namespace Genie
 	
 	template < N::FolderType type >
 	static FSTreePtr Link_Factory( const FSTreePtr&             parent,
-	                               const char*                  name,
+	                               const std::string&           name,
 	                               VRefNum_KeyName_Traits::Key  key )
 	{
 		return MakeFSTree( new FSTree_Folder_Link( key, type, name ) );
@@ -164,11 +164,11 @@ namespace Genie
 	void FSTree_sys_mac_vol_N::Init()
 	{
 		// volume roots are named "mnt", not the volume name
-		Map( Root_Factory( shared_from_this(), "mnt",  itsKey ) );
-		Map( Name_Factory( shared_from_this(), "name", itsKey ) );
+		Map( "mnt",  &Root_Factory );
+		Map( "name", &Name_Factory );
 		
-		Map( Link_Factory< N::kSystemFolderType    >( shared_from_this(), "sys", itsKey ) );
-		Map( Link_Factory< N::kTemporaryFolderType >( shared_from_this(), "tmp", itsKey ) );
+		Map( "sys", &Link_Factory< N::kSystemFolderType    > );
+		Map( "tmp", &Link_Factory< N::kTemporaryFolderType > );
 	}
 	
 	
