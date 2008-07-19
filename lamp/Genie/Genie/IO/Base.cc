@@ -36,13 +36,6 @@ namespace Genie
 			bool IsAnonymous() const  { return true; }
 			
 			std::string Pathname() const  { return Name(); }
-			
-			FSTreePtr Parent() const
-			{
-				p7::throw_errno( ENOENT );
-				
-				return FSTreePtr();
-			}
 	};
 	
 	IOHandle::~IOHandle()
