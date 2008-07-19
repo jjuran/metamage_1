@@ -42,6 +42,8 @@
 #include "Genie/FileSystem/FSTree_Proc.hh"
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
 #include "Genie/FileSystem/FSTree_sys.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_vol.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
 
@@ -585,6 +587,11 @@ namespace Genie
 		return io::get_filename_string( itsFileSpec );
 	}
 	
+	inline FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
+	{
+		return MakeFSTree( new FSTree_sys_mac_vol_N( ResolvePathname( "/sys/mac/vol" ), vRefNum ) );
+	}
+	
 	FSTreePtr FSTree_FSSpec::Parent() const
 	{
 		if ( itsFileSpec.parID == fsRtParID )
@@ -787,11 +794,9 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes_Link : public FSTree
+	class FSTree_Volumes_Link : public FSTree, public Volume_KeyName_Traits
 	{
 		private:
-			typedef N::FSVolumeRefNum Key;
-			
 			Key itsKey;
 		
 		public:
@@ -803,11 +808,11 @@ namespace Genie
 			
 			bool IsLink() const  { return true; }
 			
-			std::string Name() const  { return io::get_filename_string( N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" ) ); }
+			std::string Name() const  { return io::get_filename_string( FSSpecFromKey( itsKey ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
-			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_FSSpec( NN::Make< N::FSDirSpec >( itsKey, N::fsRtDirID ) ) ); }
+			FSTreePtr ResolveLink() const  { return FSTreePtr( new FSTree_FSSpec( FSSpecFromKey( itsKey ) ) ); }
 	};
 	
 	
