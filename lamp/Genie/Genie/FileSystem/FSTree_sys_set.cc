@@ -16,19 +16,6 @@
 namespace Genie
 {
 	
-	template <>
-	struct IOHandle_Name_Traits< GraphicsWindow >
-	{
-		static std::string Name()  { return "gfx"; }
-	};
-	
-	template <>
-	struct IOHandle_Name_Traits< BufferFileHandle >
-	{
-		static std::string Name()  { return "txt"; }
-	};
-	
-	
 	typedef FSTree_Sequence< DynamicGroup_Details< GraphicsWindow   > > FSTree_sys_set_gfx;
 	typedef FSTree_Sequence< DynamicGroup_Details< BufferFileHandle > > FSTree_sys_set_txt;
 	

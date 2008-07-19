@@ -204,19 +204,6 @@ namespace Genie
 	};
 	
 	
-	template <>
-	struct IOHandle_Name_Traits< ConsoleTTYHandle >
-	{
-		static std::string Name()  { return "con"; }
-	};
-	
-	template <>
-	struct IOHandle_Name_Traits< PseudoTTYHandle >
-	{
-		static std::string Name()  { return "pts"; }
-	};
-	
-	
 	typedef FSTree_Sequence< DynamicGroup_Details< ConsoleTTYHandle > > FSTree_dev_con;
 	typedef FSTree_Sequence< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
 	
