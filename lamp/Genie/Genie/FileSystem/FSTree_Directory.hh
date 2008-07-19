@@ -315,9 +315,15 @@ namespace Genie
 			
 			const Function& f = it->second;
 			
-			FSTreePtr tree( Details::Invoke( f, shared_from_this(), name ) );
-			
-			cache.push_back( FSNode( name, tree ) );
+			try
+			{
+				FSTreePtr tree( Details::Invoke( f, shared_from_this(), name ) );
+				
+				cache.push_back( FSNode( name, tree ) );
+			}
+			catch ( ... )
+			{
+			}
 		}
 	}
 	
