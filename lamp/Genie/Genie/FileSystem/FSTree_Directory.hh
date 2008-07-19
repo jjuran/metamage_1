@@ -90,6 +90,11 @@ namespace Genie
 			{
 			}
 			
+			FSTree_Directory( const FSTreePtr&    parent,
+			                  const std::string&  name ) : FSTree( parent, name )
+			{
+			}
+			
 			virtual ~FSTree_Directory();
 			
 			bool IsFile     () const  { return false; }
@@ -122,9 +127,22 @@ namespace Genie
 			{
 			}
 			
+			FSTree_Sequence( const FSTreePtr&    parent,
+			                 const std::string&  name ) : FSTree_Directory( parent, name ),
+			                                              itsDetails()
+			{
+			}
+			
 			FSTree_Sequence( const FSTreePtr&  parent,
 			                 const Details&    details ) : FSTree_Directory( parent ),
 			                                               itsDetails( details )
+			{
+			}
+			
+			FSTree_Sequence( const FSTreePtr&    parent,
+			                 const std::string&  name,
+			                 const Details&      details ) : FSTree_Directory( parent, name ),
+			                                                 itsDetails( details )
 			{
 			}
 			
