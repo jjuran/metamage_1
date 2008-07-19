@@ -74,25 +74,31 @@ namespace Genie
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	class FSTree_dev_tty : public FSTree
+	class FSTree_SimpleDevice : public FSTree_Device
 	{
 		public:
-			FSTree_dev_tty( const FSTreePtr&    parent,
-			                const std::string&  name ) : FSTree( parent, name )
+			FSTree_SimpleDevice( const FSTreePtr&    parent,
+			                     const std::string&  name ) : FSTree_Device( parent, name )
 			{
 			}
 			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+	};
+	
+	class FSTree_dev_tty : public FSTree_Device
+	{
+		public:
+			FSTree_dev_tty( const FSTreePtr&    parent,
+			                const std::string&  name ) : FSTree_Device( parent, name )
+			{
+			}
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	class FSTree_dev_Serial : public FSTree
+	class FSTree_dev_Serial : public FSTree_Device
 	{
 		private:
 			const char*  itsPortName;
@@ -102,14 +108,11 @@ namespace Genie
 			FSTree_dev_Serial( const FSTreePtr&    parent,
 			                   const std::string&  name,
 			                   const char*         port,
-			                   bool                passive ) : FSTree     ( parent, name ),
-			                                                   itsPortName( port    ),
-			                                                   itIsPassive( passive )
+			                   bool                passive ) : FSTree_Device( parent, name ),
+			                                                   itsPortName  ( port    ),
+			                                                   itIsPassive  ( passive )
 			{
 			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
@@ -161,44 +164,35 @@ namespace Genie
 			void Init();
 	};
 	
-	class FSTree_dev_new_buffer : public FSTree
+	class FSTree_dev_new_buffer : public FSTree_Device
 	{
 		public:
 			FSTree_dev_new_buffer( const FSTreePtr&    parent,
-			                       const std::string&  name ) : FSTree( parent, name )
+			                       const std::string&  name ) : FSTree_Device( parent, name )
 			{
 			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	class FSTree_dev_new_console : public FSTree
+	class FSTree_dev_new_console : public FSTree_Device
 	{
 		public:
 			FSTree_dev_new_console( const FSTreePtr&    parent,
-			                        const std::string&  name ) : FSTree( parent, name )
+			                        const std::string&  name ) : FSTree_Device( parent, name )
 			{
 			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
-	class FSTree_dev_new_port : public FSTree
+	class FSTree_dev_new_port : public FSTree_Device
 	{
 		public:
 			FSTree_dev_new_port( const FSTreePtr&    parent,
-			                     const std::string&  name ) : FSTree( parent, name )
+			                     const std::string&  name ) : FSTree_Device( parent, name )
 			{
 			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
@@ -214,7 +208,7 @@ namespace Genie
 	}
 	
 	
-	boost::shared_ptr< IOHandle > FSTree_Device::Open( OpenFlags /*flags*/ ) const
+	boost::shared_ptr< IOHandle > FSTree_SimpleDevice::Open( OpenFlags /*flags*/ ) const
 	{
 		return GetSimpleDeviceHandle( Name() );
 	}
@@ -254,17 +248,17 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr Device_Factory( const FSTreePtr&    parent,
-	                                 const std::string&  name )
+	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
+	                                       const std::string&  name )
 	{
-		return MakeFSTree( new FSTree_Device( parent, name ) );
+		return MakeFSTree( new FSTree_SimpleDevice( parent, name ) );
 	}
 	
 	void FSTree_dev::Init()
 	{
-		Map( "null",    &Device_Factory );
-		Map( "zero",    &Device_Factory );
-		Map( "console", &Device_Factory );
+		Map( "null",    &SimpleDevice_Factory );
+		Map( "zero",    &SimpleDevice_Factory );
+		Map( "console", &SimpleDevice_Factory );
 		
 		Map( "tty", &Singleton_Factory< FSTree_dev_tty > );
 		
