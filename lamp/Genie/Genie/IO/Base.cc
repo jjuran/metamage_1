@@ -28,7 +28,7 @@ namespace Genie
 	class FSTree_IOHandle : public FSTree
 	{
 		public:
-			FSTree_IOHandle( const void* address ) : FSTree( FSTreePtr(), IOName( address, IsPipe() ) )
+			FSTree_IOHandle( const void* address ) : FSTree( FSTreePtr(), IOName( address, true ) )
 			{
 			}
 			
