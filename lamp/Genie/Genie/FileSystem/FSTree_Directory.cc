@@ -123,23 +123,5 @@ namespace Genie
 		return found != mappings.end() ? found->second : FSTreePtr();
 	}
 	
-	
-	static FSNode MakeFSNode_Virtual( const std::pair< const std::string, FSTreePtr >& node )
-	{
-		const std::string& name( node.first );
-		const FSTreePtr  & tree( node.second );
-		
-		return FSNode( name, tree );
-	}
-	
-	
-	void FSTree_Virtual::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		std::transform( mappings.begin(),
-		                mappings.end(),
-		                std::back_inserter( cache ),
-		                std::ptr_fun( MakeFSNode_Virtual ) );
-	}
-	
 }
 

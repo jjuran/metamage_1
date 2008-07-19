@@ -215,15 +215,6 @@ namespace Genie
 	};
 	
 	
-	class FSTree_Virtual : public FSTree_Mappable
-	{
-		public:
-			FSTreePtr Lookup_Regular( const std::string& /*name*/ ) const  { return FSNull(); }
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	
 	template < class FSTree_Type >
 	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
 	{
