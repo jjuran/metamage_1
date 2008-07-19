@@ -205,7 +205,7 @@ namespace Nucleus
      }
    
    template < class Output, class Exception >
-   void RegisterExceptionConversion()
+   inline void RegisterExceptionConversion()
      {
       typedef Output (*ConversionFunction)( const Exception& );
 #ifdef __MWERKS__
