@@ -20,18 +20,6 @@ namespace Genie
 	typedef FSTree_Sequence< DynamicGroup_Details< BufferFileHandle > > FSTree_sys_set_txt;
 	
 	
-	template <>
-	struct IOHandle_FSTree_Traits< GraphicsWindow >
-	{
-		typedef FSTree_sys_set_gfx Tree;
-	};
-	
-	template <>
-	struct IOHandle_FSTree_Traits< BufferFileHandle >
-	{
-		typedef FSTree_sys_set_txt Tree;
-	};
-	
 	void FSTree_sys_set::Init()
 	{
 		Map( "gfx", &Singleton_Factory< FSTree_sys_set_gfx > );

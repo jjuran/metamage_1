@@ -208,19 +208,6 @@ namespace Genie
 	typedef FSTree_Sequence< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
 	
 	
-	template <>
-	struct IOHandle_FSTree_Traits< ConsoleTTYHandle >
-	{
-		typedef FSTree_dev_con Tree;
-	};
-	
-	template <>
-	struct IOHandle_FSTree_Traits< PseudoTTYHandle >
-	{
-		typedef FSTree_dev_pts Tree;
-	};
-	
-	
 	FSTreePtr GetDevFSTree()
 	{
 		return GetSingleton< FSTree_dev >( FSRoot(), "dev" );

@@ -46,9 +46,6 @@ namespace Genie
 	};
 	
 	
-	template < class Handle > struct IOHandle_FSTree_Traits {};
-	
-	
 	template < class Handle >
 	class FSTree_Dynamic_N : public FSTree_Dynamic_N_Base
 	{
