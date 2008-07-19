@@ -98,60 +98,49 @@ namespace Genie
 			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
+	
+	struct CallOut_Traits
+	{
+		static const bool isPassive = false;
+	};
+	
+	struct DialIn_Traits
+	{
+		static const bool isPassive = true;
+	};
+	
+	struct ModemPort_Traits
+	{
+		static const char* Name()  { return "A"; }
+	};
+	
+	struct PrinterPort_Traits
+	{
+		static const char* Name()  { return "A"; }
+	};
+	
+	template < class Mode, class Port >
 	class FSTree_dev_Serial : public FSTree_Device
 	{
-		private:
-			const char*  itsPortName;
-			bool         itIsPassive;
-		
 		public:
 			FSTree_dev_Serial( const FSTreePtr&    parent,
-			                   const std::string&  name,
-			                   const char*         port,
-			                   bool                passive ) : FSTree_Device( parent, name ),
-			                                                   itsPortName  ( port    ),
-			                                                   itIsPassive  ( passive )
+			                   const std::string&  name ) : FSTree_Device( parent, name )
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
-	
-	class FSTree_dev_cumodem : public FSTree_dev_Serial
-	{
-		public:
-			FSTree_dev_cumodem( const FSTreePtr&    parent,
-			                    const std::string&  name ) : FSTree_dev_Serial( parent, name, "A", false )
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{
+				bool nonblocking = flags & O_NONBLOCK;
+				
+				return OpenSerialDevice( Port::Name(), Mode::isPassive, nonblocking );
 			}
 	};
 	
-	class FSTree_dev_cuprinter : public FSTree_dev_Serial
-	{
-		public:
-			FSTree_dev_cuprinter( const FSTreePtr&    parent,
-			                      const std::string&  name ) : FSTree_dev_Serial( parent, name, "B", false )
-			{
-			}
-	};
+	typedef FSTree_dev_Serial< CallOut_Traits, ModemPort_Traits   > FSTree_dev_cumodem;
+	typedef FSTree_dev_Serial< CallOut_Traits, PrinterPort_Traits > FSTree_dev_cuprinter;
+	typedef FSTree_dev_Serial< DialIn_Traits,  ModemPort_Traits   > FSTree_dev_ttymodem;
+	typedef FSTree_dev_Serial< DialIn_Traits,  PrinterPort_Traits > FSTree_dev_ttyprinter;
 	
-	class FSTree_dev_ttymodem : public FSTree_dev_Serial
-	{
-		public:
-			FSTree_dev_ttymodem( const FSTreePtr&    parent,
-			                     const std::string&  name ) : FSTree_dev_Serial( parent, name, "A", true )
-			{
-			}
-	};
-	
-	class FSTree_dev_ttyprinter : public FSTree_dev_Serial
-	{
-		public:
-			FSTree_dev_ttyprinter( const FSTreePtr&    parent,
-			                       const std::string&  name ) : FSTree_dev_Serial( parent, name, "B", true )
-			{
-			}
-	};
 	
 	class FSTree_dev_new : public FSTree_Functional_Singleton
 	{
@@ -164,37 +153,19 @@ namespace Genie
 			void Init();
 	};
 	
-	class FSTree_dev_new_buffer : public FSTree_Device
+	template < class Handle >
+	class FSTree_dev_new_Device : public FSTree_Device
 	{
 		public:
-			FSTree_dev_new_buffer( const FSTreePtr&    parent,
+			FSTree_dev_new_Device( const FSTreePtr&    parent,
 			                       const std::string&  name ) : FSTree_Device( parent, name )
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
-	
-	class FSTree_dev_new_console : public FSTree_Device
-	{
-		public:
-			FSTree_dev_new_console( const FSTreePtr&    parent,
-			                        const std::string&  name ) : FSTree_Device( parent, name )
+			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
 			{
+				return NewDynamicElement< Handle >();
 			}
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
-	
-	class FSTree_dev_new_port : public FSTree_Device
-	{
-		public:
-			FSTree_dev_new_port( const FSTreePtr&    parent,
-			                     const std::string&  name ) : FSTree_Device( parent, name )
-			{
-			}
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
 	};
 	
 	
@@ -223,28 +194,6 @@ namespace Genie
 		}
 		
 		return tty;
-	}
-	
-	boost::shared_ptr< IOHandle > FSTree_dev_Serial::Open( OpenFlags flags ) const
-	{
-		bool nonblocking = flags & O_NONBLOCK;
-		
-		return OpenSerialDevice( itsPortName, itIsPassive, nonblocking );
-	}
-	
-	boost::shared_ptr< IOHandle > FSTree_dev_new_buffer::Open( OpenFlags flags ) const
-	{
-		return NewDynamicElement< BufferFileHandle >();
-	}
-	
-	boost::shared_ptr< IOHandle > FSTree_dev_new_console::Open( OpenFlags flags ) const
-	{
-		return NewDynamicElement< ConsoleTTYHandle >();
-	}
-	
-	boost::shared_ptr< IOHandle > FSTree_dev_new_port::Open( OpenFlags flags ) const
-	{
-		return NewDynamicElement< GraphicsWindow >();
 	}
 	
 	
@@ -276,9 +225,9 @@ namespace Genie
 	
 	void FSTree_dev_new::Init()
 	{
-		Map( "buffer",  &Singleton_Factory< FSTree_dev_new_buffer  > );
-		Map( "console", &Singleton_Factory< FSTree_dev_new_console > );
-		Map( "port",    &Singleton_Factory< FSTree_dev_new_port    > );
+		Map( "buffer",  &Singleton_Factory< FSTree_dev_new_Device< BufferFileHandle > > );
+		Map( "console", &Singleton_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > );
+		Map( "port",    &Singleton_Factory< FSTree_dev_new_Device< GraphicsWindow   > > );
 	}
 	
 }
