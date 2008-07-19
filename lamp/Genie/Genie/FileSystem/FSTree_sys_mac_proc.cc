@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 
+// Nucleus
+#include "Nucleus/ArrayContainerFunctions.h"
+
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
@@ -14,6 +17,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	std::string ProcessSerialNumber_KeyName_Traits::NameFromKey( const Key& psn )
@@ -150,11 +154,16 @@ namespace Genie
 		return MakeFSTree( new FSTree_sys_mac_proc_PSN_exe( parent, name, key ) );
 	}
 	
+	static FSTree_sys_mac_proc_PSN::Mapping sys_mac_proc_PSN_Mappings[] =
+	{
+		{ "name", &Name_Factory },
+		
+		{ "exe", &Executable_Factory }
+	};
+	
 	void FSTree_sys_mac_proc_PSN::Init()
 	{
-		Map( "name", &Name_Factory );
-		
-		Map( "exe", &Executable_Factory );
+		AddMappings( sys_mac_proc_PSN_Mappings, NN::ArrayEnd( sys_mac_proc_PSN_Mappings ) );
 	}
 	
 }

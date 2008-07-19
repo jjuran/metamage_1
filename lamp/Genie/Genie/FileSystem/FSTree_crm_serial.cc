@@ -7,6 +7,9 @@
 
 #include "Genie/FileSystem/FSTree_crm_serial.hh"
 
+// Nucleus
+#include "Nucleus/ArrayContainerFunctions.h"
+
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
@@ -14,6 +17,9 @@
 
 namespace Genie
 {
+	
+	namespace NN = Nucleus;
+	
 	
 	static N::CRMRecPtr GetCRMRecPtrFromID( N::CRMDeviceID id )
 	{
@@ -158,12 +164,18 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
+	static FSTree_sys_mac_crm_serial_N::Mapping sys_mac_crm_serial_N_Mappings[] =
+	{
+		{ "name",   &Name_Factory   },
+		{ "input",  &Input_Factory  },
+		{ "output", &Output_Factory },
+		{ "icon",   &Icon_Factory   }
+		
+	};
+	
 	void FSTree_sys_mac_crm_serial_N::Init()
 	{
-		Map( "name",   &Name_Factory   );
-		Map( "input",  &Input_Factory  );
-		Map( "output", &Output_Factory );
-		Map( "icon",   &Icon_Factory   );
+		AddMappings( sys_mac_crm_serial_N_Mappings, NN::ArrayEnd( sys_mac_crm_serial_N_Mappings ) );
 	}
 	
 }

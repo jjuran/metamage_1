@@ -7,6 +7,9 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_unit.hh"
 
+// Nucleus
+#include "Nucleus/ArrayContainerFunctions.h"
+
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
@@ -92,9 +95,14 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
+	static FSTree_sys_mac_unit_N::Mapping sys_mac_unit_N_Mappings[] =
+	{
+		{ "name", &Name_Factory },
+	};
+	
 	void FSTree_sys_mac_unit_N::Init()
 	{
-		Map( "name", &Name_Factory );
+		AddMappings( sys_mac_unit_N_Mappings, NN::ArrayEnd( sys_mac_unit_N_Mappings ) );
 	}
 	
 }

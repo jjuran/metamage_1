@@ -12,6 +12,7 @@
 #include "fcntl.h"
 
 // Nucleus
+#include "Nucleus/ArrayContainerFunctions.h"
 #include "Nucleus/Convert.h"
 
 // POSeven
@@ -203,31 +204,41 @@ namespace Genie
 		return MakeFSTree( new FSTree_SimpleDevice( parent, name ) );
 	}
 	
+	static FSTree_dev::Mapping dev_Mappings[] =
+	{
+		{ "null",    &SimpleDevice_Factory },
+		{ "zero",    &SimpleDevice_Factory },
+		{ "console", &SimpleDevice_Factory },
+		
+		{ "tty", &Singleton_Factory< FSTree_dev_tty > },
+		
+		{ "cu.modem",    &Singleton_Factory< FSTree_dev_cumodem    > },
+		{ "cu.printer",  &Singleton_Factory< FSTree_dev_cuprinter  > },
+		{ "tty.modem",   &Singleton_Factory< FSTree_dev_ttymodem   > },
+		{ "tty.printer", &Singleton_Factory< FSTree_dev_ttyprinter > },
+		
+		{ "new", &Singleton_Factory< FSTree_dev_new > },
+		{ "con", &Singleton_Factory< FSTree_dev_con > },
+		{ "pts", &Singleton_Factory< FSTree_dev_pts > },
+		{ "fd",  &Singleton_Factory< FSTree_dev_fd  > }
+	};
+	
 	void FSTree_dev::Init()
 	{
-		Map( "null",    &SimpleDevice_Factory );
-		Map( "zero",    &SimpleDevice_Factory );
-		Map( "console", &SimpleDevice_Factory );
-		
-		Map( "tty", &Singleton_Factory< FSTree_dev_tty > );
-		
-		Map( "cu.modem",    &Singleton_Factory< FSTree_dev_cumodem    > );
-		Map( "cu.printer",  &Singleton_Factory< FSTree_dev_cuprinter  > );
-		Map( "tty.modem",   &Singleton_Factory< FSTree_dev_ttymodem   > );
-		Map( "tty.printer", &Singleton_Factory< FSTree_dev_ttyprinter > );
-		
-		Map( "new", &Singleton_Factory< FSTree_dev_new > );
-		Map( "con", &Singleton_Factory< FSTree_dev_con > );
-		Map( "pts", &Singleton_Factory< FSTree_dev_pts > );
-		Map( "fd",  &Singleton_Factory< FSTree_dev_fd  > );
+		AddMappings( dev_Mappings, NN::ArrayEnd( dev_Mappings ) );
 	}
 	
 	
+	static FSTree_dev_new::Mapping dev_new_Mappings[] =
+	{
+		{ "buffer",  &Singleton_Factory< FSTree_dev_new_Device< BufferFileHandle > > },
+		{ "console", &Singleton_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
+		{ "port",    &Singleton_Factory< FSTree_dev_new_Device< GraphicsWindow   > > }
+	};
+	
 	void FSTree_dev_new::Init()
 	{
-		Map( "buffer",  &Singleton_Factory< FSTree_dev_new_Device< BufferFileHandle > > );
-		Map( "console", &Singleton_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > );
-		Map( "port",    &Singleton_Factory< FSTree_dev_new_Device< GraphicsWindow   > > );
+		AddMappings( dev_new_Mappings, NN::ArrayEnd( dev_new_Mappings ) );
 	}
 	
 }

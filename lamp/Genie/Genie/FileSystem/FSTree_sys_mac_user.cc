@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_user.hh"
 
+// Nucleus
+#include "Nucleus/ArrayContainerFunctions.h"
+
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
@@ -15,6 +18,9 @@
 namespace Genie
 {
 	
+	namespace NN = Nucleus;
+	
+	
 	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
@@ -23,19 +29,16 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name ) );
 	}
 	
+	static FSTree_sys_mac_user::Mapping sys_mac_user_Mappings[] =
+	{
+		{ "home", &Singleton_Factory< FSTree_sys_mac_user_home  > },
+		
+		{ "name", &Name_Factory },
+	};
+	
 	void FSTree_sys_mac_user::Init()
 	{
-		try
-		{
-			CheckForHomeFolder();
-			
-			Map( "home", &Singleton_Factory< FSTree_sys_mac_user_home > );
-		}
-		catch ( ... )
-		{
-		}
-		
-		Map( "name", &Name_Factory );
+		AddMappings( sys_mac_user_Mappings, NN::ArrayEnd( sys_mac_user_Mappings ) );
 	}
 	
 }

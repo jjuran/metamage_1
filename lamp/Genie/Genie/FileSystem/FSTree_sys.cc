@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_sys.hh"
 
+// Nucleus
+#include "Nucleus/ArrayContainerFunctions.h"
+
 // Nitrogen
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/Processes.h"
@@ -155,17 +158,27 @@ namespace Genie
 	};
 	
 	
+	static FSTree_Functional_Singleton::Mapping sys_Mappings[] =
+	{
+		{ "kernel", &Singleton_Factory< FSTree_sys_kernel > },
+		{ "mac",    &Singleton_Factory< FSTree_sys_mac    > },
+		{ "set",    &Singleton_Factory< FSTree_sys_set    > }
+	};
+	
 	void FSTree_sys::Init()
 	{
-		Map( "kernel", &Singleton_Factory< FSTree_sys_kernel > );
-		Map( "mac",    &Singleton_Factory< FSTree_sys_mac    > );
-		Map( "set",    &Singleton_Factory< FSTree_sys_set    > );
+		AddMappings( sys_Mappings, NN::ArrayEnd( sys_Mappings ) );
 	}
+	
+	static FSTree_Functional_Singleton::Mapping sys_kernel_Mappings[] =
+	{
+		{ "bin",     &Singleton_Factory< FSTree_sys_kernel_bin     > },
+		{ "syscall", &Singleton_Factory< FSTree_sys_kernel_syscall > }
+	};
 	
 	void FSTree_sys_kernel::Init()
 	{
-		Map( "bin",     &Singleton_Factory< FSTree_sys_kernel_bin     > );
-		Map( "syscall", &Singleton_Factory< FSTree_sys_kernel_syscall > );
+		AddMappings( sys_kernel_Mappings, NN::ArrayEnd( sys_kernel_Mappings ) );
 	}
 	
 	namespace
@@ -197,12 +210,17 @@ namespace Genie
 		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}
 	
+	static FSTree_Functional_Singleton::Mapping sys_kernel_bin_Mappings[] =
+	{
+		{ "true",  &Executable_Factory< main_true  > },
+		{ "false", &Executable_Factory< main_false > },
+		
+		{ "beep", &Executable_Factory< main_beep > }
+	};
+	
 	void FSTree_sys_kernel_bin::Init()
 	{
-		Map( "true",  &Executable_Factory< main_true  > );
-		Map( "false", &Executable_Factory< main_false > );
-		
-		Map( "beep", &Executable_Factory< main_beep > );
+		AddMappings( sys_kernel_bin_Mappings, NN::ArrayEnd( sys_kernel_bin_Mappings ) );
 	}
 	
 	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const

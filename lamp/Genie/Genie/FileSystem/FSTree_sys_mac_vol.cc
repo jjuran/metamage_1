@@ -5,6 +5,9 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_vol.hh"
 
+// Nucleus
+#include "Nucleus/ArrayContainerFunctions.h"
+
 // Nitrogen
 #include "Nitrogen/Folders.h"
 
@@ -152,14 +155,20 @@ namespace Genie
 		return MakeFSTree( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
 	
-	void FSTree_sys_mac_vol_N::Init()
+	static FSTree_sys_mac_vol_N::Mapping sys_mac_vol_N_Mappings[] =
 	{
 		// volume roots are named "mnt", not the volume name
-		Map( "mnt",  &Root_Factory );
-		Map( "name", &Name_Factory );
+		{ "mnt",  &Root_Factory },
+		{ "name", &Name_Factory },
 		
-		Map( "sys", &Link_Factory< N::kSystemFolderType    > );
-		Map( "tmp", &Link_Factory< N::kTemporaryFolderType > );
+		{ "sys", &Link_Factory< N::kSystemFolderType    > },
+		{ "tmp", &Link_Factory< N::kTemporaryFolderType > }
+		
+	};
+	
+	void FSTree_sys_mac_vol_N::Init()
+	{
+		AddMappings( sys_mac_vol_N_Mappings, NN::ArrayEnd( sys_mac_vol_N_Mappings ) );
 	}
 	
 }

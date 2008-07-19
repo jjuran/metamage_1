@@ -9,6 +9,7 @@
 #include "Backtrace/Backtrace.hh"
 
 // Nucleus
+#include "Nucleus/ArrayContainerFunctions.h"
 #include "Nucleus/Convert.h"
 
 // POSeven
@@ -439,17 +440,22 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
+	static FSTree_proc_PID::Mapping proc_PID_Mappings[] =
+	{
+		{ "fd", &fd_Factory },
+		
+		{ "cwd",  &Link_Factory< ResolveLink_cwd  > },
+		{ "exe",  &Link_Factory< ResolveLink_exe  > },
+		{ "root", &Link_Factory< ResolveLink_root > },
+		
+		{ "cmdline",   &Query_Factory< proc_PID_cmdline_Query   > },
+		{ "stat",      &Query_Factory< proc_PID_stat_Query      > },
+		{ "backtrace", &Query_Factory< proc_PID_backtrace_Query > }
+	};
+	
 	void FSTree_proc_PID::Init()
 	{
-		Map( "fd", &fd_Factory );
-		
-		Map( "cwd",  &Link_Factory< ResolveLink_cwd  > );
-		Map( "exe",  &Link_Factory< ResolveLink_exe  > );
-		Map( "root", &Link_Factory< ResolveLink_root > );
-		
-		Map( "cmdline",   &Query_Factory< proc_PID_cmdline_Query   > );
-		Map( "stat",      &Query_Factory< proc_PID_stat_Query      > );
-		Map( "backtrace", &Query_Factory< proc_PID_backtrace_Query > );
+		AddMappings( proc_PID_Mappings, NN::ArrayEnd( proc_PID_Mappings ) );
 	}
 	
 	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
