@@ -584,7 +584,7 @@ namespace Genie
 			return "";
 		}
 		
-		return io::get_filename_string( itsFileSpec );
+		return GetUnixName( itsFileSpec );
 	}
 	
 	inline FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
