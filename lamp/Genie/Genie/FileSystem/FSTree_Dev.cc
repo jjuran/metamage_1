@@ -61,7 +61,7 @@ namespace Genie
 			
 			std::string ReadLink() const  { return "/proc/self/fd"; }
 			
-			FSTreePtr ResolveLink() const  { return ResolvePathname( ReadLink(), FSRoot() ); }
+			FSTreePtr ResolveLink() const  { return ResolvePathname( ReadLink() ); }
 	};
 	
 	class FSTree_Device : public FSTree

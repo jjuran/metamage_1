@@ -30,7 +30,7 @@ namespace Genie
 	
 	FSTreePtr TerminalHandle::GetFile() const
 	{
-		return ResolvePathname( itsTTYName, FSRoot() );
+		return ResolvePathname( itsTTYName );
 	}
 	
 	static void CheckControllingTerminal( const Process& process, const TerminalHandle& tty )
