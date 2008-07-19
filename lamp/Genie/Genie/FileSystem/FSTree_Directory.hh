@@ -240,10 +240,6 @@ namespace Genie
 			Mappings itsMappings;
 		
 		public:
-			FSTree_Functional( const FSTreePtr& parent ) : FSTree_Directory( parent )
-			{
-			}
-			
 			FSTree_Functional( const FSTreePtr&    parent,
 			                   const std::string&  name ) : FSTree_Directory( parent, name )
 			{
