@@ -27,7 +27,6 @@ namespace Genie
 			void Init();
 	};
 	
-	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum );
 }
 
 #endif

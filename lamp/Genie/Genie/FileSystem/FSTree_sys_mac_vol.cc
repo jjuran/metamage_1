@@ -162,11 +162,5 @@ namespace Genie
 		Map( "tmp", &Link_Factory< N::kTemporaryFolderType > );
 	}
 	
-	
-	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
-	{
-		return MakeFSTree( new FSTree_sys_mac_vol_N( GetSingleton< FSTree_sys_mac_vol >(), vRefNum ) );
-	}
-	
 }
 

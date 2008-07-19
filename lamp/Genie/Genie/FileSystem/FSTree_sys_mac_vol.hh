@@ -63,9 +63,6 @@ namespace Genie
 			std::string Name() const  { return NameFromKey( itsKey ); }
 	};
 	
-	
-	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum );
-	
 }
 
 #endif
