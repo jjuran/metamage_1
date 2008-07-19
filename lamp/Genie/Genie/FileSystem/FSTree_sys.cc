@@ -87,36 +87,29 @@ namespace Genie
 			typedef int (*Main2)( int argc, char const *const *argv );
 			typedef int (*Main3)( int argc, char const *const *argv, char const *const *envp );
 			
-			std::string itsName;
-			
 			MainEntry itsMainEntry;
 		
 		public:
 			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
 			                           const std::string&  name,
-			                           Main3               main ) : FSTree( parent ),
-			                                                        itsName( name ),
+			                           Main3               main ) : FSTree( parent, name ),
 			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
 			{
 			}
 			
 			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
 			                           const std::string&  name,
-			                           Main2               main ) : FSTree( parent ),
-			                                                        itsName( name ),
+			                           Main2               main ) : FSTree( parent, name ),
 			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
 			{
 			}
 			
 			FSTree_sys_kernel_bin_EXE( const FSTreePtr&    parent,
 			                           const std::string&  name,
-			                           Main0               main ) : FSTree( parent ),
-			                                                        itsName( name ),
+			                           Main0               main ) : FSTree( parent, name ),
 			                                                        itsMainEntry( GetMainEntryFromAddress( main ) )
 			{
 			}
-			
-			std::string Name() const  { return itsName; }
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IXUSR; }
 			

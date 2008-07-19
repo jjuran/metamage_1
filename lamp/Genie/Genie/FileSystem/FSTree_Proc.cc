@@ -153,21 +153,17 @@ namespace Genie
 	class FSTree_PID_Link_Base : public FSTree
 	{
 		private:
-			std::string  itsName;
-			pid_t        itsPID;
+			pid_t itsPID;
 		
 		public:
 			FSTree_PID_Link_Base( const FSTreePtr&    parent,
 			                      const std::string&  name,
-			                      pid_t               pid ) : FSTree( parent ),
-			                                                  itsName( name ),
-			                                                  itsPID( pid    )
+			                      pid_t               pid ) : FSTree( parent, name ),
+			                                                  itsPID( pid )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return itsName; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			

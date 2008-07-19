@@ -102,22 +102,18 @@ namespace Genie
 			
 			Key            itsKey;
 			N::FolderType  itsType;
-			std::string    itsName;
 		
 		public:
 			FSTree_Folder_Link( const FSTreePtr&    parent,
 			                    const Key&          key,
 			                    N::FolderType       type,
-			                    const std::string&  name ) : FSTree( parent ),
+			                    const std::string&  name ) : FSTree( parent, name ),
 			                                                 itsKey ( key  ),
-			                                                 itsType( type ),
-			                                                 itsName( name )
+			                                                 itsType( type )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return itsName; }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			

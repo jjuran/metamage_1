@@ -93,9 +93,7 @@ namespace Genie
 	
 	std::string FSTree::Name() const
 	{
-		p7::throw_errno( ENOENT );
-		
-		return "";  // Not reached
+		return itsName;
 	}
 	
 	FSTreePtr FSTree::Parent() const

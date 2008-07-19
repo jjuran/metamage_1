@@ -14,38 +14,22 @@
 namespace Genie
 {
 	
-	class FSTree_QueryFile_Base : public FSTree
-	{
-		private:
-			std::string  itsName;
-		
-		public:
-			FSTree_QueryFile_Base( const FSTreePtr&    parent,
-			                       const std::string&  name ) : FSTree( parent ),
-			                                                    itsName( name )
-			{
-			}
-			
-			std::string Name() const  { return itsName; }
-	};
-	
-	
 	template < class Query >
-	class FSTree_QueryFile : public FSTree_QueryFile_Base
+	class FSTree_QueryFile : public FSTree
 	{
 		private:
 			Query itsQuery;
 		
 		public:
 			FSTree_QueryFile( const FSTreePtr&    parent,
-			                  const std::string&  name ) : FSTree_QueryFile_Base( parent, name ),
+			                  const std::string&  name ) : FSTree( parent, name ),
 			                                               itsQuery()
 			{
 			}
 			
 			FSTree_QueryFile( const FSTreePtr&    parent,
 			                  const std::string&  name,
-			                  const Query&        query ) : FSTree_QueryFile_Base( parent, name ),
+			                  const Query&        query ) : FSTree( parent, name ),
 			                                                itsQuery( query )
 			{
 			}

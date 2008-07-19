@@ -27,18 +27,13 @@ namespace Genie
 	
 	class FSTree_IOHandle : public FSTree
 	{
-		private:
-			std::string itsName;
-		
 		public:
-			FSTree_IOHandle( const void* address ) : itsName( IOName( address, IsPipe() ) )
+			FSTree_IOHandle( const void* address ) : FSTree( FSTreePtr(), IOName( address, IsPipe() ) )
 			{
 			}
 			
 			bool IsPipe()      const  { return true; }
 			bool IsAnonymous() const  { return true; }
-			
-			std::string Name() const  { return itsName; }
 			
 			std::string Pathname() const  { return Name(); }
 			

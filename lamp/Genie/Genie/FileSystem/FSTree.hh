@@ -74,7 +74,8 @@ namespace Genie
 	class FSTree : public boost::enable_shared_from_this< FSTree >
 	{
 		private:
-			FSTreePtr itsParent;
+			FSTreePtr    itsParent;
+			std::string  itsName;
 		
 		public:
 			FSTree()
@@ -82,6 +83,12 @@ namespace Genie
 			}
 			
 			FSTree( const FSTreePtr& parent ) : itsParent( parent )
+			{
+			}
+			
+			FSTree( const FSTreePtr&    parent,
+			        const std::string&  name ) : itsParent( parent ),
+			                                     itsName  ( name   )
 			{
 			}
 			

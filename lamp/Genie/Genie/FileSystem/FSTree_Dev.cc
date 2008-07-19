@@ -70,17 +70,11 @@ namespace Genie
 	
 	class FSTree_Device : public FSTree
 	{
-		private:
-			std::string deviceName;
-		
 		public:
 			FSTree_Device( const FSTreePtr&    parent,
-			               const std::string&  name ) : FSTree( parent ),
-			                                            deviceName( name )
+			               const std::string&  name ) : FSTree( parent, name )
 			{
 			}
-			
-			std::string Name() const  { return deviceName; }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -108,22 +102,18 @@ namespace Genie
 	class FSTree_dev_Serial : public FSTree
 	{
 		private:
-			const char*  itsDeviceName;
 			const char*  itsPortName;
 			bool         itIsPassive;
 		
 		public:
 			FSTree_dev_Serial( const FSTreePtr&  parent,
-			                   const char*       device,
+			                   const char*       name,
 			                   const char*       port,
-			                   bool              passive ) : FSTree       ( parent  ),
-			                                                 itsDeviceName( device  ),
-			                                                 itsPortName  ( port    ),
-			                                                 itIsPassive  ( passive )
+			                   bool              passive ) : FSTree     ( parent, name ),
+			                                                 itsPortName( port    ),
+			                                                 itIsPassive( passive )
 			{
 			}
-			
-			std::string Name() const  { return itsDeviceName; }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -275,7 +265,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_Device::Open( OpenFlags /*flags*/ ) const
 	{
-		return GetSimpleDeviceHandle( deviceName );
+		return GetSimpleDeviceHandle( Name() );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_dev_tty::Open( OpenFlags /*flags*/ ) const
