@@ -55,7 +55,7 @@ namespace Genie
 			parentPathname += "/";
 		}
 		
-		return parentPathname + Name();
+		return parentPathname + name;
 	}
 	
 	
