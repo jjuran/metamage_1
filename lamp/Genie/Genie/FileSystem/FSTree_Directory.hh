@@ -200,6 +200,11 @@ namespace Genie
 			{
 			}
 			
+			FSTree_Mappable( const FSTreePtr&    parent,
+			                 const std::string&  name ) : FSTree_Directory( parent, name )
+			{
+			}
+			
 			virtual ~FSTree_Mappable();
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;

@@ -264,6 +264,11 @@ namespace Genie
 				// we override Parent()
 			}
 			
+			FSTree_HFS( const std::string& name ) : FSTree_Mappable( FSTreePtr(), name )
+			{
+				// we override Parent()
+			}
+			
 			bool IsLink() const;
 			
 			void Stat( struct ::stat& sb ) const;
@@ -339,20 +344,17 @@ namespace Genie
 	{
 		private:
 			N::FSDirSpec  itsParent;
-			std::string   itsUnixName;
 		
 		public:
 			FSTree_LongName( const N::FSDirSpec&  parent,
-			                 const std::string&   name ) : itsParent  ( parent ),
-			                                               itsUnixName( name   )
+			                 const std::string&   name ) : FSTree_HFS ( name   ),
+			                                               itsParent  ( parent )
 			{
 			}
 			
 			bool Exists() const;
 			bool IsFile() const;
 			bool IsDirectory() const;
-			
-			std::string Name() const;
 			
 			FSTreePtr Parent() const;
 			
@@ -534,7 +536,7 @@ namespace Genie
 	
 	bool FSTree_LongName::Exists() const
 	{
-		return ItemWithLongNameExists( itsParent, itsUnixName );
+		return ItemWithLongNameExists( itsParent, Name() );
 	}
 	
 	bool FSTree_LongName::IsFile() const
@@ -623,11 +625,6 @@ namespace Genie
 		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( itsFileSpec ) ) );
 	}
 	
-	std::string FSTree_LongName::Name() const
-	{
-		return itsUnixName;
-	}
-	
 	FSTreePtr FSTree_LongName::Parent() const
 	{
 		return FSTreePtr( new FSTree_FSSpec( itsParent ) );
@@ -647,7 +644,7 @@ namespace Genie
 	
 	FSSpec FSTree_LongName::GetFSSpec( bool forCreation ) const
 	{
-		return FSSpecForLongUnixName( itsParent, itsUnixName, forCreation );
+		return FSSpecForLongUnixName( itsParent, Name(), forCreation );
 	}
 	
 	void FSTree_HFS::Stat( struct ::stat& sb ) const
@@ -705,7 +702,7 @@ namespace Genie
 	
 	void FSTree_LongName::CreateFile() const
 	{
-		CreateFileWithLongName( itsParent, itsUnixName );
+		CreateFileWithLongName( itsParent, Name() );
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags, mode_t /*mode*/ ) const
@@ -752,7 +749,7 @@ namespace Genie
 	
 	void FSTree_LongName::CreateDirectory( mode_t /*mode*/ ) const
 	{
-		CreateDirectoryWithLongName( itsParent, itsUnixName );
+		CreateDirectoryWithLongName( itsParent, Name() );
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Regular( const std::string& name ) const
