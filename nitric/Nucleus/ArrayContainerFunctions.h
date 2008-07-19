@@ -19,43 +19,43 @@
 namespace Nucleus
   {
    template < class Element, std::size_t size >
-   Element *ArrayBegin( Element (&array)[size] )
+   inline Element *ArrayBegin( Element (&array)[size] )
      {
       return array;
      }
    
    template < class Element, std::size_t size >
-   Element *ArrayEnd( Element (&array)[size] )
+   inline Element *ArrayEnd( Element (&array)[size] )
      {
       return array + size;
      }
    
    template < class Element, std::size_t size >
-   std::size_t ArraySize( const Element (&/*array*/)[size] )
+   inline std::size_t ArraySize( const Element (&/*array*/)[size] )
      {
       return size;
      }
    
    template < class Element, std::size_t size >
-   std::reverse_iterator<Element *> ArrayRBegin( Element (&array)[size] )
+   inline std::reverse_iterator<Element *> ArrayRBegin( Element (&array)[size] )
      {
       return std::reverse_iterator<Element *>( ArrayEnd( array ) );
      }
    
    template < class Element, std::size_t size >
-   std::reverse_iterator<Element *> ArrayREnd( Element (&array)[size] )
+   inline std::reverse_iterator<Element *> ArrayREnd( Element (&array)[size] )
      {
       return std::reverse_iterator<Element *>( ArrayBegin( array ) );
      }
    
    template < class Element, std::size_t size >
-   void ArrayAssign( Element (&destination)[size], const Element (&source)[size] )
+   inline void ArrayAssign( Element (&destination)[size], const Element (&source)[size] )
      {
       std::copy( ArrayBegin( source ), ArrayEnd( source ), ArrayBegin( destination ) );
      }
    
    template < class Element, std::size_t size >
-   void ArraySwap( Element (&a)[size], Element (&b)[size] )
+   inline void ArraySwap( Element (&a)[size], Element (&b)[size] )
      {
       Element *p = ArrayBegin( a );
       Element *q = ArrayBegin( b );
@@ -64,32 +64,32 @@ namespace Nucleus
      }
    
    template < class Element, std::size_t size >
-   void ArrayEqualTo( const Element (&a)[size], const Element (&b)[size] )
+   inline void ArrayEqualTo( const Element (&a)[size], const Element (&b)[size] )
      {
       return std::equal( ArrayBegin( a ), ArrayEnd( a ), ArrayBegin( b ) );
      }
 
    template < class Element, std::size_t size >
-   void ArrayNotEqualTo( const Element (&a)[size], const Element (&b)[size] )
+   inline void ArrayNotEqualTo( const Element (&a)[size], const Element (&b)[size] )
      {
       return !ArrayEqualTo( a, b );
      }
    
    template < class Element, std::size_t size >
-   void ArrayLess( const Element (&a)[size], const Element (&b)[size] )
+   inline void ArrayLess( const Element (&a)[size], const Element (&b)[size] )
      {
       return std::lexicographical_compare( ArrayBegin( a ), ArrayEnd( a ),
                                            ArrayBegin( b ), ArrayEnd( b ) );
      }
    
    template < class Element, std::size_t size >
-   void ArrayGreater( const Element (&a)[size], const Element (&b)[size] )
+   inline void ArrayGreater( const Element (&a)[size], const Element (&b)[size] )
      {
       return ArrayLess( b, a );
      }
    
    template < class Element, std::size_t size >
-   void ArrayLessEqual( const Element (&a)[size], const Element (&b)[size] )
+   inline void ArrayLessEqual( const Element (&a)[size], const Element (&b)[size] )
      {
       std::pair< Element *, Element * > m = std::mismatch( ArrayBegin( a ), ArrayEnd( a ),
                                                            ArrayBegin( b ) );
@@ -97,7 +97,7 @@ namespace Nucleus
      }
    
    template < class Element, std::size_t size >
-   void ArrayGreaterEqual( const Element (&a)[size], const Element (&b)[size] )
+   inline void ArrayGreaterEqual( const Element (&a)[size], const Element (&b)[size] )
      {
       return ArrayLessEqual( b, a );
      }
