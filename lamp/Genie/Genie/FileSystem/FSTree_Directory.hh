@@ -229,6 +229,12 @@ namespace Genie
 		private:
 			typedef typename Details::Function Function;
 			
+			struct Mapping
+			{
+				const char*  name;
+				Function     f;
+			};
+			
 			typedef std::map< std::string, Function > Mappings;
 			
 			Mappings itsMappings;
@@ -260,6 +266,8 @@ namespace Genie
 			
 			void Map( const std::string& name, Function f );
 			
+			void AddMappings( const Mapping* begin, const Mapping* end );
+			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -269,6 +277,16 @@ namespace Genie
 	void FSTree_Functional< Details >::Map( const std::string& name, Function f )
 	{
 		itsMappings[ name ] = f;
+	}
+	
+	template < class Details >
+	void FSTree_Functional< Details >::AddMappings( const Mapping* begin,
+	                                                const Mapping* end )
+	{
+		for ( const Mapping* it = begin;  it != end;  ++it )
+		{
+			Map( it->name, it->f );
+		}
 	}
 	
 	template < class Details >
