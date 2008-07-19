@@ -172,13 +172,13 @@ namespace Nucleus
      }
    
    template < class ErrorClass, typename ErrorClassTraits<ErrorClass>::ErrorNumber number >
-   void RegisterErrorCode()
+   inline void RegisterErrorCode()
      {
       TheGlobalErrorCodeThrower<ErrorClass>().template Register<number>();
      }
    
    template < class ErrorClass >
-   void ThrowErrorCode( ErrorClass error )
+   inline void ThrowErrorCode( ErrorClass error )
      {
       TheGlobalErrorCodeThrower<ErrorClass>().Throw( error );
      }
