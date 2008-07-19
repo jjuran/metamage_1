@@ -36,7 +36,7 @@ namespace Genie
 	
 	static FSTreePtr LoginExecutable()
 	{
-		return ResolvePathname( "/bin/jgetty", FSTreePtr() );
+		return ResolvePathname( "/bin/jgetty" );
 	}
 	
 	void SpawnNewConsole()
