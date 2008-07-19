@@ -14,11 +14,11 @@ namespace Genie
 {
 	
 	template < class FSTree_Type >
-	const FSTreePtr& MakeSingleton( const FSTreePtr& parent )
+	const FSTreePtr& MakeSingleton( const FSTreePtr& parent, const std::string& name )
 	{
 		FSTree_Type* raw_ptr = NULL;
 		
-		static FSTreePtr singleton = FSTreePtr( raw_ptr = new FSTree_Type( parent ) );
+		static FSTreePtr singleton = FSTreePtr( raw_ptr = new FSTree_Type( parent, name ) );
 		
 		if ( raw_ptr != NULL )
 		{
@@ -29,9 +29,10 @@ namespace Genie
 	}
 	
 	template < class FSTree_Type >
-	FSTreePtr GetSingleton( const FSTreePtr& parent = FSTreePtr() )
+	FSTreePtr GetSingleton( const FSTreePtr&    parent = FSTreePtr(),
+	                        const std::string&  name   = std::string() )
 	{
-		static const FSTreePtr& singleton = MakeSingleton< FSTree_Type >( parent );
+		static const FSTreePtr& singleton = MakeSingleton< FSTree_Type >( parent, name );
 		
 		return singleton;
 	}

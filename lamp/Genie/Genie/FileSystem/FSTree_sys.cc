@@ -59,25 +59,23 @@ namespace Genie
 	class FSTree_sys_kernel : public FSTree_Functional_Singleton
 	{
 		public:
-			FSTree_sys_kernel( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			FSTree_sys_kernel( const FSTreePtr&    parent,
+			                   const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
 			{
 			}
 			
 			void Init();
-			
-			std::string Name() const  { return "kernel"; }
 	};
 	
 	class FSTree_sys_kernel_bin : public FSTree_Functional_Singleton
 	{
 		public:
-			FSTree_sys_kernel_bin( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			FSTree_sys_kernel_bin( const FSTreePtr&    parent,
+			                       const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
 			{
 			}
 			
 			void Init();
-			
-			std::string Name() const  { return "bin"; }
 	};
 	
 	class FSTree_sys_kernel_bin_EXE : public FSTree

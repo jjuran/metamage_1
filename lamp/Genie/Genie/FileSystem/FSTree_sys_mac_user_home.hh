@@ -26,13 +26,12 @@ namespace Genie
 	class FSTree_sys_mac_user_home : public FSTree
 	{
 		public:
-			FSTree_sys_mac_user_home( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_sys_mac_user_home( const FSTreePtr&    parent,
+			                          const std::string&  name ) : FSTree( parent, name )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return "home"; }
 			
 			std::string ReadLink() const;
 			

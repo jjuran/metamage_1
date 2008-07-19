@@ -85,13 +85,11 @@ namespace Genie
 			pid_t getpid() const  { return CurrentProcess().GetPID(); }
 		
 		public:
-			FSTree_proc_self( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_proc_self( const FSTreePtr& parent ) : FSTree( parent, "self" )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return "self"; }
 			
 			std::string ReadLink() const  { return NN::Convert< std::string >( getpid() ); }
 			
@@ -211,7 +209,7 @@ namespace Genie
 	
 	FSTreePtr GetProcFSTree()
 	{
-		return GetSingleton< FSTree_proc >( FSRoot() );
+		return GetSingleton< FSTree_proc >( FSRoot(), "proc" );
 	}
 	
 	

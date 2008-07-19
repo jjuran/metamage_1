@@ -221,12 +221,6 @@ namespace Genie
 			
 			void Map( FSTreePtr tree );
 			
-			template < class FSTree_Type >
-			void MapSingleton()
-			{
-				Map( GetSingleton< FSTree_Type >( shared_from_this() ) );
-			}
-			
 			FSTreePtr Lookup_Mapping( const std::string& name ) const;
 			
 			virtual FSTreePtr Lookup_Regular( const std::string& name ) const = 0;
@@ -236,7 +230,7 @@ namespace Genie
 	template < class FSTree_Type >
 	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
 	{
-		return GetSingleton< FSTree_Type >( parent );
+		return GetSingleton< FSTree_Type >( parent, name );
 	}
 	
 	template < class Details >
@@ -254,10 +248,23 @@ namespace Genie
 			{
 			}
 			
+			FSTree_Functional( const FSTreePtr&    parent,
+			                   const std::string&  name ) : FSTree_Directory( parent, name )
+			{
+			}
+			
 			template < class Key >
 			FSTree_Functional( const FSTreePtr&  parent,
 			                   const Key&        key ) : FSTree_Directory( parent ),
 			                                             Details( key )
+			{
+			}
+			
+			template < class Key >
+			FSTree_Functional( const FSTreePtr&    parent,
+			                   const std::string&  name,
+			                   const Key&          key ) : FSTree_Directory( parent, name ),
+			                                               Details( key )
 			{
 			}
 			

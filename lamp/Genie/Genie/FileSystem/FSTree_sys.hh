@@ -19,13 +19,12 @@ namespace Genie
 	class FSTree_sys : public FSTree_Functional_Singleton
 	{
 		public:
-			FSTree_sys( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			FSTree_sys( const FSTreePtr&    parent,
+			            const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
 			{
 			}
 			
 			void Init();
-			
-			std::string Name() const  { return "sys"; }
 	};
 	
 	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum );

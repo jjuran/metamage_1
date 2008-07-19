@@ -393,7 +393,8 @@ namespace Genie
 			typedef FSTree_Sequence< Volumes_Details > Base;
 		
 		public:
-			FSTree_Volumes( const FSTreePtr& parent ) : Base( parent )
+			FSTree_Volumes( const FSTreePtr&    parent,
+			                const std::string&  name ) : Base( parent, name )
 			{
 			}
 			
@@ -430,7 +431,7 @@ namespace Genie
 	class FSTree_J_Symlink : public FSTree
 	{
 		public:
-			FSTree_J_Symlink( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_J_Symlink( const FSTreePtr& parent, const std::string& ) : FSTree( parent )
 			{
 			}
 			
@@ -468,11 +469,11 @@ namespace Genie
 			
 			tree->Map( users );
 			
-			tree->MapSingleton< FSTree_Volumes >();
+			tree->Map( GetSingleton< FSTree_Volumes >( result, "Volumes" ) );
 			
 			tree->Map( GetDevFSTree () );
 			tree->Map( GetProcFSTree() );
-			tree->Map( GetSingleton< FSTree_sys >( result ) );
+			tree->Map( GetSingleton< FSTree_sys >( result, "sys" ) );
 		}
 		
 		return result;

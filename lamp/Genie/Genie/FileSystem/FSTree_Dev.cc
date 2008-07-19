@@ -41,27 +41,23 @@ namespace Genie
 	class FSTree_dev : public FSTree_Functional_Singleton
 	{
 		public:
-			FSTree_dev( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			FSTree_dev( const FSTreePtr&    parent,
+			            const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
 			{
 			}
 			
 			void Init();
-			
-			std::string Name() const  { return "dev"; }
 	};
 	
 	class FSTree_dev_fd : public FSTree
 	{
 		public:
-			FSTree_dev_fd( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_dev_fd( const FSTreePtr&    parent,
+			               const std::string&  name ) : FSTree( parent, name )
 			{
 			}
 			
 			bool IsLink() const { return true; }
-			
-			static const char* OnlyName()  { return "fd"; }
-			
-			std::string Name() const  { return OnlyName(); }
 			
 			std::string ReadLink() const  { return "/proc/self/fd"; }
 			
@@ -85,13 +81,10 @@ namespace Genie
 	class FSTree_dev_tty : public FSTree
 	{
 		public:
-			FSTree_dev_tty( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_dev_tty( const FSTreePtr&    parent,
+			                const std::string&  name ) : FSTree( parent, name )
 			{
 			}
-			
-			static std::string OnlyName()  { return "tty"; }
-			
-			std::string Name() const  { return OnlyName(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -106,12 +99,12 @@ namespace Genie
 			bool         itIsPassive;
 		
 		public:
-			FSTree_dev_Serial( const FSTreePtr&  parent,
-			                   const char*       name,
-			                   const char*       port,
-			                   bool              passive ) : FSTree     ( parent, name ),
-			                                                 itsPortName( port    ),
-			                                                 itIsPassive( passive )
+			FSTree_dev_Serial( const FSTreePtr&    parent,
+			                   const std::string&  name,
+			                   const char*         port,
+			                   bool                passive ) : FSTree     ( parent, name ),
+			                                                   itsPortName( port    ),
+			                                                   itIsPassive( passive )
 			{
 			}
 			
@@ -124,67 +117,57 @@ namespace Genie
 	class FSTree_dev_cumodem : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_cumodem( const FSTreePtr& parent ) : FSTree_dev_Serial( parent, OnlyName(), "A", false )
+			FSTree_dev_cumodem( const FSTreePtr&    parent,
+			                    const std::string&  name ) : FSTree_dev_Serial( parent, name, "A", false )
 			{
 			}
-			
-			static const char* OnlyName()  { return "cu.modem"; }
 	};
 	
 	class FSTree_dev_cuprinter : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_cuprinter( const FSTreePtr& parent ) : FSTree_dev_Serial( parent, OnlyName(), "B", false )
+			FSTree_dev_cuprinter( const FSTreePtr&    parent,
+			                      const std::string&  name ) : FSTree_dev_Serial( parent, name, "B", false )
 			{
 			}
-			
-			static const char* OnlyName()  { return "cu.printer"; }
 	};
 	
 	class FSTree_dev_ttymodem : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_ttymodem( const FSTreePtr& parent ) : FSTree_dev_Serial( parent, OnlyName(), "A", true )
+			FSTree_dev_ttymodem( const FSTreePtr&    parent,
+			                     const std::string&  name ) : FSTree_dev_Serial( parent, name, "A", true )
 			{
 			}
-			
-			static const char* OnlyName()  { return "tty.modem"; }
 	};
 	
 	class FSTree_dev_ttyprinter : public FSTree_dev_Serial
 	{
 		public:
-			FSTree_dev_ttyprinter( const FSTreePtr& parent ) : FSTree_dev_Serial( parent, OnlyName(), "B", true )
+			FSTree_dev_ttyprinter( const FSTreePtr&    parent,
+			                       const std::string&  name ) : FSTree_dev_Serial( parent, name, "B", true )
 			{
 			}
-			
-			static const char* OnlyName()  { return "tty.printer"; }
 	};
 	
 	class FSTree_dev_new : public FSTree_Functional_Singleton
 	{
 		public:
-			FSTree_dev_new( const FSTreePtr& parent ) : FSTree_Functional_Singleton( parent )
+			FSTree_dev_new( const FSTreePtr&    parent,
+			                const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
 			{
 			}
 			
 			void Init();
-			
-			static std::string OnlyName()  { return "new"; }
-			
-			std::string Name() const  { return OnlyName(); }
 	};
 	
 	class FSTree_dev_new_buffer : public FSTree
 	{
 		public:
-			FSTree_dev_new_buffer( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_dev_new_buffer( const FSTreePtr&    parent,
+			                       const std::string&  name ) : FSTree( parent, name )
 			{
 			}
-			
-			static std::string OnlyName()  { return "buffer"; }
-			
-			std::string Name() const  { return OnlyName(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -195,13 +178,10 @@ namespace Genie
 	class FSTree_dev_new_console : public FSTree
 	{
 		public:
-			FSTree_dev_new_console( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_dev_new_console( const FSTreePtr&    parent,
+			                        const std::string&  name ) : FSTree( parent, name )
 			{
 			}
-			
-			static std::string OnlyName()  { return "console"; }
-			
-			std::string Name() const  { return OnlyName(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -212,13 +192,10 @@ namespace Genie
 	class FSTree_dev_new_port : public FSTree
 	{
 		public:
-			FSTree_dev_new_port( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_dev_new_port( const FSTreePtr&    parent,
+			                     const std::string&  name ) : FSTree( parent, name )
 			{
 			}
-			
-			static std::string OnlyName()  { return "port"; }
-			
-			std::string Name() const  { return OnlyName(); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -259,7 +236,7 @@ namespace Genie
 	
 	FSTreePtr GetDevFSTree()
 	{
-		return GetSingleton< FSTree_dev >( FSRoot() );
+		return GetSingleton< FSTree_dev >( FSRoot(), "dev" );
 	}
 	
 	

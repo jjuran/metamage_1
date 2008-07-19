@@ -26,11 +26,10 @@ namespace Genie
 	class FSTree_sys_mac_rom : public FSTree
 	{
 		public:
-			FSTree_sys_mac_rom( const FSTreePtr& parent ) : FSTree( parent )
+			FSTree_sys_mac_rom( const FSTreePtr&    parent,
+			                    const std::string&  name ) : FSTree( parent, name )
 			{
 			}
-			
-			std::string Name() const  { return "rom"; }
 			
 			mode_t FileTypeMode() const  { return S_IFREG; }
 			
