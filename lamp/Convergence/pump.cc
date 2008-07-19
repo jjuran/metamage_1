@@ -13,6 +13,8 @@
 #include <unistd.h>
 
 
+#ifndef __MWERKS__
+
 int pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count )
 {
 	const std::size_t buffer_size = 4096;
@@ -76,4 +78,6 @@ int pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count )
 	
 	return bytes_pumped;
 }
+
+#endif
 
