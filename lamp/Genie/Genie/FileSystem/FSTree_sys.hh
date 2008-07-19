@@ -26,8 +26,6 @@ namespace Genie
 			void Init();
 			
 			std::string Name() const  { return "sys"; }
-			
-			FSTreePtr Parent() const  { return FSRoot(); }
 	};
 	
 	FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum );

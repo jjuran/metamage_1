@@ -472,7 +472,7 @@ namespace Genie
 			
 			tree->Map( GetDevFSTree () );
 			tree->Map( GetProcFSTree() );
-			tree->Map( GetSingleton< FSTree_sys >() );
+			tree->Map( GetSingleton< FSTree_sys >( result ) );
 		}
 		
 		return result;

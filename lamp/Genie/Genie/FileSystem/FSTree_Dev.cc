@@ -48,8 +48,6 @@ namespace Genie
 			void Init();
 			
 			std::string Name() const  { return "dev"; }
-			
-			FSTreePtr Parent() const  { return FSRoot(); }
 	};
 	
 	class FSTree_dev_fd : public FSTree
@@ -271,7 +269,7 @@ namespace Genie
 	
 	FSTreePtr GetDevFSTree()
 	{
-		return GetSingleton< FSTree_dev >();
+		return GetSingleton< FSTree_dev >( FSRoot() );
 	}
 	
 	
