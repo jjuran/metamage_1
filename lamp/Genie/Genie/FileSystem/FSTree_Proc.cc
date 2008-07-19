@@ -424,7 +424,7 @@ namespace Genie
 	                             const std::string&  name,
 	                             pid_t               key )
 	{
-		return MakeFSTree( new FSTree_PID_fd( parent, key ) );
+		return MakeFSTree( new FSTree_PID_fd( parent, name, key ) );
 	}
 	
 	template < class LinkResolver >
