@@ -32,8 +32,6 @@ namespace Genie
 		
 		typedef FSTree_sys_mac_crm_serial_N ChildNode;
 		
-		static std::string Name()  { return "serial"; }
-		
 		static const Sequence& ItemSequence()  { return Nitrogen::CRMSerialDevices(); }
 		
 		static Key KeyFromValue( Sequence::const_reference ref )  { return Key( ref->crmDeviceID ); }

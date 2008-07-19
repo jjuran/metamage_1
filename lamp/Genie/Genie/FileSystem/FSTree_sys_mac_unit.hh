@@ -136,8 +136,6 @@ namespace Genie
 		
 		typedef FSTree_sys_mac_unit_N ChildNode;
 		
-		static std::string Name()  { return "unit"; }
-		
 		static const Sequence& ItemSequence()  { return N::UnitTableDrivers(); }
 		
 		static Key KeyFromValue( Sequence::const_reference ref )  { return &ref - GetUTableBase(); }

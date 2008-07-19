@@ -371,8 +371,6 @@ namespace Genie
 		
 		typedef FSTree_Volumes_Link ChildNode;
 		
-		static std::string Name()  { return "Volumes"; }
-		
 		static FSTreePtr Parent()  { return FSRoot(); }
 		
 		static Sequence ItemSequence()  { return N::Volumes(); }

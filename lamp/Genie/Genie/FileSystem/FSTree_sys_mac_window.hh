@@ -29,8 +29,6 @@ namespace Genie
 		
 		typedef FSTree_sys_mac_window_REF ChildNode;
 		
-		static std::string Name()  { return "window"; }
-		
 		static const Sequence& ItemSequence()  { return Nitrogen::WindowList(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }

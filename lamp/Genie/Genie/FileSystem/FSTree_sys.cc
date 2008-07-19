@@ -124,8 +124,6 @@ namespace Genie
 		
 		typedef FSTree_sys_kernel_syscall_PTR ChildNode;
 		
-		static std::string Name()  { return "syscall"; }
-		
 		static const Sequence& ItemSequence()  { return GetSystemCallRegistry(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return &value; }

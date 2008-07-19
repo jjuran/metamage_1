@@ -36,8 +36,6 @@ namespace Genie
 		
 		typedef FSTree_sys_mac_vol_N ChildNode;
 		
-		static std::string Name()  { return "vol"; }
-		
 		static const Sequence& ItemSequence()  { return Nitrogen::Volumes(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }

@@ -38,8 +38,6 @@ namespace Genie
 	{
 		typedef ProcessList::Map Sequence;
 		
-		static std::string Name()  { return "proc"; }
-		
 		static const Sequence& ItemSequence()  { return GetProcessList().GetMap(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
@@ -105,8 +103,6 @@ namespace Genie
 		ParentKey itsPID;
 		
 		PID_fd_Details( ParentKey pid ) : itsPID( pid )  {}
-		
-		static std::string Name()  { return "fd"; }
 		
 		const Sequence& ItemSequence() const  { return GetProcess( itsPID ).FileDescriptors(); }
 		

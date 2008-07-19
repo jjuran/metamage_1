@@ -46,7 +46,6 @@ namespace Genie
 	};
 	
 	
-	template < class Handle > struct IOHandle_Name_Traits   {};
 	template < class Handle > struct IOHandle_FSTree_Traits {};
 	
 	
@@ -70,8 +69,6 @@ namespace Genie
 	struct DynamicGroup_Details : public DynamicGroup_Details_Base
 	{
 		typedef typename FSTree_Dynamic_N< Handle > ChildNode;
-		
-		static std::string Name()  { return IOHandle_Name_Traits< Handle >::Name(); }
 		
 		static bool KeyIsValid( const Key& key )
 		{

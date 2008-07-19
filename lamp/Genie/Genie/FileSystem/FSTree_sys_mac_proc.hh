@@ -33,8 +33,6 @@ namespace Genie
 		
 		typedef FSTree_sys_mac_proc_PSN ChildNode;
 		
-		static std::string Name()  { return "proc"; }
-		
 		static const Sequence& ItemSequence()  { return N::Processes(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
