@@ -122,20 +122,9 @@ namespace Genie
 			typedef typename Details::Key Key;
 		
 		public:
-			FSTree_Sequence( const FSTreePtr& parent ) : FSTree_Directory( parent ),
-			                                             itsDetails()
-			{
-			}
-			
 			FSTree_Sequence( const FSTreePtr&    parent,
 			                 const std::string&  name ) : FSTree_Directory( parent, name ),
 			                                              itsDetails()
-			{
-			}
-			
-			FSTree_Sequence( const FSTreePtr&  parent,
-			                 const Details&    details ) : FSTree_Directory( parent ),
-			                                               itsDetails( details )
 			{
 			}
 			
@@ -145,10 +134,6 @@ namespace Genie
 			                                                 itsDetails( details )
 			{
 			}
-			
-			static std::string OnlyName()  { return Details::Name(); }
-			
-			std::string Name() const  { return OnlyName(); }
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const
 			{
