@@ -18,6 +18,8 @@
 namespace Genie
 {
 	
+	namespace N = Nitrogen;
+	
 	DECLARE_MODULE_INIT( Kernel_times )
 	DEFINE_MODULE_INIT(  Kernel_times )
 	

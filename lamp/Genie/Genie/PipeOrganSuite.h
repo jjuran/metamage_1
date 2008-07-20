@@ -12,19 +12,17 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
+	static const Nitrogen::AEEventClass kAEPipeOrganSuite = Nitrogen::AEEventClass( '|gan' );
 	
-	static const N::AEEventClass kAEPipeOrganSuite = N::AEEventClass( '|gan' );
+	static const Nitrogen::AEEventID kAEExec = Nitrogen::AEEventID( 'Exec' );
 	
-	static const N::AEEventID kAEExec = N::AEEventID( 'Exec' );
-	
-	static const N::AEKeyword keyCurrentWorkingDir = N::AEKeyword( 'CWD ' );
-	static const N::AEKeyword keyRedirectedInput   = N::AEKeyword( '0<  ' );
-	static const N::AEKeyword keyInlineInput       = N::AEKeyword( '0<< ' );
-	static const N::AEKeyword keyRedirectedOutput  = N::AEKeyword( '1>  ' );
-	static const N::AEKeyword keyAppendedOutput    = N::AEKeyword( '1>> ' );
-	static const N::AEKeyword keyAppend            = N::AEKeyword( '>>  ' );
-	static const N::AEKeyword keyPOSIXEnvironment  = N::AEKeyword( 'Envi' );
+	static const Nitrogen::AEKeyword keyCurrentWorkingDir = Nitrogen::AEKeyword( 'CWD ' );
+	static const Nitrogen::AEKeyword keyRedirectedInput   = Nitrogen::AEKeyword( '0<  ' );
+	static const Nitrogen::AEKeyword keyInlineInput       = Nitrogen::AEKeyword( '0<< ' );
+	static const Nitrogen::AEKeyword keyRedirectedOutput  = Nitrogen::AEKeyword( '1>  ' );
+	static const Nitrogen::AEKeyword keyAppendedOutput    = Nitrogen::AEKeyword( '1>> ' );
+	static const Nitrogen::AEKeyword keyAppend            = Nitrogen::AEKeyword( '>>  ' );
+	static const Nitrogen::AEKeyword keyPOSIXEnvironment  = Nitrogen::AEKeyword( 'Envi' );
 	
 }
 

@@ -19,6 +19,10 @@
 namespace Genie
 {
 	
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	
+	
 	static FSSpec FSSpecFromFRefNum( N::FSFileRefNum refNum )
 	{
 		FSSpec result;

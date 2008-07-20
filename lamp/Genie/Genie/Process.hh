@@ -42,10 +42,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	
 	typedef void ( *sig_t )( int );
 	
 	typedef std::map< int, FileDescriptor > FileDescriptorMap;

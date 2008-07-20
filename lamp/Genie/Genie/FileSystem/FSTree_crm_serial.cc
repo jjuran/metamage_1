@@ -15,6 +15,7 @@
 namespace Genie
 {
 	
+	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
 	

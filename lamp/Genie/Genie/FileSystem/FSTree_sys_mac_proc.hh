@@ -18,7 +18,7 @@ namespace Genie
 	
 	struct ProcessSerialNumber_KeyName_Traits
 	{
-		typedef N::ProcessSerialNumber Key;
+		typedef Nitrogen::ProcessSerialNumber Key;
 		
 		static std::string NameFromKey( const Key& psn );
 		
@@ -27,9 +27,9 @@ namespace Genie
 	
 	struct sys_mac_proc_Details : public ProcessSerialNumber_KeyName_Traits
 	{
-		typedef N::Process_Container Sequence;
+		typedef Nitrogen::Process_Container Sequence;
 		
-		static const Sequence& ItemSequence()  { return N::Processes(); }
+		static const Sequence& ItemSequence()  { return Nitrogen::Processes(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		

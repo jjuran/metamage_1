@@ -130,9 +130,9 @@ namespace Genie
 	
 	struct sys_mac_unit_Details : public UnitNumber_KeyName_Traits
 	{
-		typedef N::UnitTableDrivers_Container Sequence;
+		typedef Nitrogen::UnitTableDrivers_Container Sequence;
 		
-		static const Sequence& ItemSequence()  { return N::UnitTableDrivers(); }
+		static const Sequence& ItemSequence()  { return Nitrogen::UnitTableDrivers(); }
 		
 		static Key KeyFromValue( Sequence::const_reference ref )  { return &ref - GetUTableBase(); }
 		

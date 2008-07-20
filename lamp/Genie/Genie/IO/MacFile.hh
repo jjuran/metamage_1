@@ -22,16 +22,13 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
 	class MacFileHandle : public RegularFileHandle
 	{
 		private:
-			NN::Owned< N::FSFileRefNum > refNum;
+			Nucleus::Owned< Nitrogen::FSFileRefNum > refNum;
 		
 		public:
-			MacFileHandle( NN::Owned< N::FSFileRefNum > refNum );
+			MacFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum );
 			
 			~MacFileHandle();
 			
@@ -43,9 +40,9 @@ namespace Genie
 			
 			off_t Seek( off_t offset, int whence );
 			
-			off_t GetEOF() const  { return N::GetEOF( refNum ); }
+			off_t GetEOF() const  { return Nitrogen::GetEOF( refNum ); }
 			
-			void SetEOF( off_t length )  { N::SetEOF( refNum, length ); }
+			void SetEOF( off_t length )  { Nitrogen::SetEOF( refNum, length ); }
 			
 			FSSpec GetFSSpec( bool forCreation = false ) const;
 	};
@@ -53,7 +50,7 @@ namespace Genie
 	class MacDataForkHandle : public MacFileHandle
 	{
 		public:
-			MacDataForkHandle( NN::Owned< N::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
+			MacDataForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
 			
 			FSTreePtr GetFile() const;
 	};
@@ -61,7 +58,7 @@ namespace Genie
 	class MacRsrcForkHandle : public MacFileHandle
 	{
 		public:
-			MacRsrcForkHandle( NN::Owned< N::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
+			MacRsrcForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
 			
 			FSTreePtr GetFile() const;
 	};

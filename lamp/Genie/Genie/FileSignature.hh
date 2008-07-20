@@ -16,11 +16,9 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
+	Nitrogen::OSType TextFileCreator();
 	
-	N::OSType TextFileCreator();
-	
-	N::FileSignature PickFileSignatureForName( const std::string& name );
+	Nitrogen::FileSignature PickFileSignatureForName( const std::string& name );
 	
 }
 

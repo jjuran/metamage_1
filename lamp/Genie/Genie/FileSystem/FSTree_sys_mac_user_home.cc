@@ -13,6 +13,7 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	static N::FSDirSpec GetAppFolder()

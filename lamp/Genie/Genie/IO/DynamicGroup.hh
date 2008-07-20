@@ -9,6 +9,9 @@
 // Standard C++
 #include <map>
 
+// Nucleus
+#include "Nucleus/Convert.h"
+
 // Genie
 #include "Genie/IO/Base.hh"
 
@@ -46,7 +49,7 @@ namespace Genie
 		
 		++gLastID;
 		
-		std::string pathname = Handle::PathPrefix() + NN::Convert< std::string >( gLastID );
+		std::string pathname = Handle::PathPrefix() + Nucleus::Convert< std::string >( gLastID );
 		
 		boost::shared_ptr< IOHandle > element( new Handle( gLastID, pathname ) );
 		

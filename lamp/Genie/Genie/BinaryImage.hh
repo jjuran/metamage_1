@@ -21,10 +21,7 @@ struct FSSpec;
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	typedef NN::Shared< N::Handle > BinaryImage;
+	typedef Nucleus::Shared< Nitrogen::Handle > BinaryImage;
 	
 	BinaryImage GetBinaryImage( const FSSpec& file );
 	

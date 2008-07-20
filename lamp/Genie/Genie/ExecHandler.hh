@@ -1,9 +1,10 @@
-/*	===================
- *	GenieExecHandler.hh
- *	===================
+/*	====================
+ *	Genie/ExecHandler.hh
+ *	====================
  */
 
-#pragma once
+#ifndef GENIE_EXECHANDLER_HH
+#define GENIE_EXECHANDLER_HH
 
 // Nitrogen
 #include "Nitrogen/AppleEvents.h"
@@ -13,10 +14,7 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	class GenieExecHandler : public NN::Owned< N::AEEventHandler >
+	class GenieExecHandler : public Nucleus::Owned< Nitrogen::AEEventHandler >
 	{
 		public:
 			static void AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, GenieExecHandler* handler );
@@ -26,8 +24,10 @@ namespace Genie
 			void HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& outReply );
 			
 			int ExecArgList( const std::vector< std::string >& argVec );
-			int ExecString( const std::string& cmd, const N::FSDirSpec& cwd );
+			int ExecString( const std::string& cmd, const Nitrogen::FSDirSpec& cwd );
 	};
 	
 }
+
+#endif
 
