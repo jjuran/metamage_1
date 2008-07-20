@@ -85,8 +85,6 @@ namespace Genie
 			
 			virtual ~FSTree();
 			
-			void Init()  {}  // never called virtually
-			
 			// General methods
 			
 			virtual bool Exists() const;
@@ -142,8 +140,6 @@ namespace Genie
 	inline FSTreePtr MakeFSTree( Tree* tree )
 	{
 		FSTreePtr result( tree );
-		
-		tree->Init();
 		
 		return result;
 	}
