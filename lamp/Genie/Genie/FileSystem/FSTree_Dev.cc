@@ -143,17 +143,6 @@ namespace Genie
 	typedef FSTree_dev_Serial< DialIn_Traits,  PrinterPort_Traits > FSTree_dev_ttyprinter;
 	
 	
-	class FSTree_dev_new : public FSTree_Functional_Singleton
-	{
-		public:
-			FSTree_dev_new( const FSTreePtr&    parent,
-			                const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
-			{
-			}
-			
-			void Init();
-	};
-	
 	template < class Handle >
 	class FSTree_dev_new_Device : public FSTree_Device
 	{
@@ -198,13 +187,25 @@ namespace Genie
 	}
 	
 	
+	extern const Singleton_Mapping dev_new_Mappings[];
+	
+	const Singleton_Mapping dev_new_Mappings[] =
+	{
+		{ "buffer",  &Singleton_Factory< FSTree_dev_new_Device< BufferFileHandle > > },
+		{ "console", &Singleton_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
+		{ "port",    &Singleton_Factory< FSTree_dev_new_Device< GraphicsWindow   > > },
+		
+		{ NULL, NULL }
+	};
+	
+	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&    parent,
 	                                       const std::string&  name )
 	{
 		return MakeFSTree( new FSTree_SimpleDevice( parent, name ) );
 	}
 	
-	static FSTree_dev::Mapping dev_Mappings[] =
+	static const Singleton_Mapping dev_Mappings[] =
 	{
 		{ "null",    &SimpleDevice_Factory },
 		{ "zero",    &SimpleDevice_Factory },
@@ -217,7 +218,8 @@ namespace Genie
 		{ "tty.modem",   &Singleton_Factory< FSTree_dev_ttymodem   > },
 		{ "tty.printer", &Singleton_Factory< FSTree_dev_ttyprinter > },
 		
-		{ "new", &Singleton_Factory< FSTree_dev_new > },
+		{ "new", &Premapped_Factory< dev_new_Mappings > },
+		
 		{ "con", &Singleton_Factory< FSTree_dev_con > },
 		{ "pts", &Singleton_Factory< FSTree_dev_pts > },
 		{ "fd",  &Singleton_Factory< FSTree_dev_fd  > }
@@ -226,19 +228,6 @@ namespace Genie
 	void FSTree_dev::Init()
 	{
 		AddMappings( dev_Mappings, NN::ArrayEnd( dev_Mappings ) );
-	}
-	
-	
-	static FSTree_dev_new::Mapping dev_new_Mappings[] =
-	{
-		{ "buffer",  &Singleton_Factory< FSTree_dev_new_Device< BufferFileHandle > > },
-		{ "console", &Singleton_Factory< FSTree_dev_new_Device< ConsoleTTYHandle > > },
-		{ "port",    &Singleton_Factory< FSTree_dev_new_Device< GraphicsWindow   > > }
-	};
-	
-	void FSTree_dev_new::Init()
-	{
-		AddMappings( dev_new_Mappings, NN::ArrayEnd( dev_new_Mappings ) );
 	}
 	
 }
