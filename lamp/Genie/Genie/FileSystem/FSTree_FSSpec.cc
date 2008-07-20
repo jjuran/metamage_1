@@ -401,18 +401,20 @@ namespace Genie
 	};
 	
 	
+	static const char* const_j_directory_name = "j";
+	
 	static N::FSDirSpec FindJDirectory()
 	{
 		FSSpec result;
 		
 		// Try current directory first
-		if ( io::directory_exists( result = N::FSDirSpec() / "j" ) )
+		if ( io::directory_exists( result = N::FSDirSpec() / const_j_directory_name ) )
 		{
 			return N::FSDirSpec( result );
 		}
 		
 		// Then root, or bust
-		result = io::system_root< N::FSDirSpec >() / "j";
+		result = io::system_root< N::FSDirSpec >() / const_j_directory_name;
 		
 		return N::FSDirSpec( result );
 	}
@@ -430,13 +432,11 @@ namespace Genie
 	class FSTree_J_Symlink : public FSTree
 	{
 		public:
-			FSTree_J_Symlink( const FSTreePtr& parent, const std::string& ) : FSTree( parent, std::string() )
+			FSTree_J_Symlink( const FSTreePtr& parent, const std::string& ) : FSTree( parent, const_j_directory_name )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return NN::Convert< std::string >( NN::Convert< FSSpec >( FindJDirectory() ).name ); }
 			
 			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( FindJDirectory() ) ) ); }
 			
@@ -445,9 +445,19 @@ namespace Genie
 			FSTreePtr ResolveLink() const  { return FSRoot(); }
 	};
 	
+	static bool IsRootDirectory( const N::FSDirSpec& dir )
+	{
+		return dir == FindJDirectory();
+	}
+	
+	static bool IsRootDirectory( const FSSpec& fileSpec )
+	{
+		return io::directory_exists( fileSpec )  &&  IsRootDirectory( N::FSDirSpec( fileSpec ) );
+	}
+	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
-		if ( io::directory_exists( item )  &&  N::FSDirSpec( item ) == FindJDirectory() )
+		if ( IsRootDirectory( item ) )
 		{
 			return GetSingleton< FSTree_J_Symlink >();
 		}
@@ -566,11 +576,6 @@ namespace Genie
 		return isAlias;
 	}
 	
-	static bool IsRootDirectory( const FSSpec& fileSpec )
-	{
-		return io::directory_exists( fileSpec )  &&  N::FSDirSpec( fileSpec ) == FindJDirectory();
-	}
-	
 	std::string FSTree_FSSpec::Name() const
 	{
 		if ( itsFileSpec.parID == fsRtParID )
@@ -604,7 +609,7 @@ namespace Genie
 		{
 			N::FSDirSpec dir( itsFileSpec );
 			
-			if ( dir == FindJDirectory() )
+			if ( IsRootDirectory( dir ) )
 			{
 				return FSRoot();
 			}
