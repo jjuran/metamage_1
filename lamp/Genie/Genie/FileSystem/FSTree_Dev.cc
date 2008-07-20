@@ -11,13 +11,8 @@
 // POSIX
 #include "fcntl.h"
 
-// Nucleus
-#include "Nucleus/ArrayContainerFunctions.h"
-#include "Nucleus/Convert.h"
-
 // POSeven
 #include "POSeven/Errno.hh"
-#include "POSeven/Pathnames.hh"
 
 // Genie
 #include "Genie/Devices.hh"
@@ -35,7 +30,6 @@
 namespace Genie
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -188,7 +182,7 @@ namespace Genie
 		return MakeFSTree( new FSTree_SimpleDevice( parent, name ) );
 	}
 	
-	static const Singleton_Mapping dev_Mappings[] =
+	const Singleton_Mapping dev_Mappings[] =
 	{
 		{ "null",    &SimpleDevice_Factory },
 		{ "zero",    &SimpleDevice_Factory },
@@ -205,13 +199,10 @@ namespace Genie
 		
 		{ "con", &Singleton_Factory< FSTree_dev_con > },
 		{ "pts", &Singleton_Factory< FSTree_dev_pts > },
-		{ "fd",  &Singleton_Factory< FSTree_dev_fd  > }
+		{ "fd",  &Singleton_Factory< FSTree_dev_fd  > },
+		
+		{ NULL, NULL }
 	};
-	
-	void FSTree_dev::Init()
-	{
-		AddMappings( dev_Mappings, NN::ArrayEnd( dev_Mappings ) );
-	}
 	
 }
 

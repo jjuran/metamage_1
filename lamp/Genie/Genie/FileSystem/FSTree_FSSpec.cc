@@ -479,9 +479,10 @@ namespace Genie
 			tree->Map( users );
 			
 			tree->Map( GetSingleton< FSTree_Volumes >( result, "Volumes" ) );
-			tree->Map( GetSingleton< FSTree_dev     >( result, "dev"     ) );
 			tree->Map( GetSingleton< FSTree_proc    >( result, "proc"    ) );
-			tree->Map( GetSingleton< FSTree_sys     >( result, "sys"     ) );
+			
+			tree->Map( Premapped_Factory< dev_Mappings >( result, "dev" ) );
+			tree->Map( Premapped_Factory< sys_Mappings >( result, "sys" ) );
 		}
 		
 		return result;

@@ -5,23 +5,15 @@
 
 #include "Genie/FileSystem/FSTree_sys.hh"
 
-// Nucleus
-#include "Nucleus/ArrayContainerFunctions.h"
-
 // Nitrogen
-#include "Nitrogen/Gestalt.h"
-#include "Nitrogen/Processes.h"
+#include "Nitrogen/Sound.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
 #include "Genie/FileSystem/FSTree_sys_set.hh"
-#include "Genie/IO/Base.hh"
-#include "Genie/IO/Device.hh"
-#include "Genie/IO/MemoryFile.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -29,7 +21,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -47,7 +38,10 @@ namespace Genie
 		
 		static Key CheckKey( Key key )
 		{
-			if ( key == NULL )  p7::throw_errno( ENOENT );
+			if ( key == NULL )
+			{
+				p7::throw_errno( ENOENT );
+			}
 			
 			return key;
 		}
@@ -170,22 +164,19 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	static const Singleton_Mapping sys_Mappings[] =
+	const Singleton_Mapping sys_Mappings[] =
 	{
 		{ "kernel", &Premapped_Factory< sys_kernel_Mappings > },
 		{ "mac",    &Premapped_Factory< sys_mac_Mappings    > },
-		{ "set",    &Premapped_Factory< sys_set_Mappings    > }
+		{ "set",    &Premapped_Factory< sys_set_Mappings    > },
+		
+		{ NULL, NULL }
 	};
-	
-	void FSTree_sys::Init()
-	{
-		AddMappings( sys_Mappings, NN::ArrayEnd( sys_Mappings ) );
-	}
 	
 	
 	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr&    parent,
-		                                                const std::string&  name,
-		                                                const Key&          key ) const
+	                                                    const std::string&  name,
+	                                                    const Key&          key ) const
 	{
 		return MakeFSTree( new FSTree_Functional< Key >( parent, name, key ) );
 	}
