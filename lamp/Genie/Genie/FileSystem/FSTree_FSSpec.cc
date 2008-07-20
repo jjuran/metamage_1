@@ -259,12 +259,7 @@ namespace Genie
 	class FSTree_HFS : public FSTree_Mappable
 	{
 		public:
-			FSTree_HFS() : FSTree_Mappable( FSTreePtr() )
-			{
-				// we override Parent()
-			}
-			
-			FSTree_HFS( const std::string& name ) : FSTree_Mappable( FSTreePtr(), name )
+			FSTree_HFS( const std::string& name = std::string() ) : FSTree_Mappable( FSTreePtr(), name )
 			{
 				// we override Parent()
 			}
@@ -435,7 +430,7 @@ namespace Genie
 	class FSTree_J_Symlink : public FSTree
 	{
 		public:
-			FSTree_J_Symlink( const FSTreePtr& parent, const std::string& ) : FSTree( parent )
+			FSTree_J_Symlink( const FSTreePtr& parent, const std::string& ) : FSTree( parent, std::string() )
 			{
 			}
 			
