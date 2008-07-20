@@ -91,7 +91,7 @@ namespace Genie
 			{
 			}
 			
-			virtual ~FSTree_Directory();
+			~FSTree_Directory();
 			
 			bool IsFile     () const  { return false; }
 			bool IsDirectory() const  { return true;  }
@@ -197,7 +197,7 @@ namespace Genie
 			{
 			}
 			
-			virtual ~FSTree_Mappable();
+			~FSTree_Mappable();
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
 			
