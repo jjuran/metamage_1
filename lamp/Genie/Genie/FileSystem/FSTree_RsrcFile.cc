@@ -19,7 +19,9 @@ namespace Genie
 			FSSpec itsFileSpec;
 		
 		public:
-			FSTree_RsrcFile( const FSSpec& file ) : itsFileSpec( file )  {}
+			FSTree_RsrcFile( const FSSpec& file ) : itsFileSpec( file )
+			{
+			}
 			
 			std::string Name() const  { return "rsrc"; }
 			
