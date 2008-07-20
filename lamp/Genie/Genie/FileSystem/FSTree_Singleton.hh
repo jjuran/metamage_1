@@ -29,8 +29,8 @@ namespace Genie
 	}
 	
 	template < class FSTree_Type >
-	FSTreePtr GetSingleton( const FSTreePtr&    parent = FSTreePtr(),
-	                        const std::string&  name   = std::string() )
+	FSTreePtr GetSingleton( const FSTreePtr&    parent,
+	                        const std::string&  name )
 	{
 		static const FSTreePtr& singleton = MakeSingleton< FSTree_Type >( parent, name );
 		
