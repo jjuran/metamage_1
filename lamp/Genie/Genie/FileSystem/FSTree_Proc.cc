@@ -18,13 +18,11 @@
 #include "HexStrings.hh"
 
 // Genie
-#include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Terminal.hh"
-#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -32,34 +30,6 @@ namespace Genie
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	
-	
-	struct proc_Details : public Integer_KeyName_Traits< pid_t >
-	{
-		typedef ProcessList::Map Sequence;
-		
-		static const Sequence& ItemSequence()  { return GetProcessList().GetMap(); }
-		
-		static Key KeyFromValue( const Sequence::value_type& value )  { return value.first; }
-		
-		static bool KeyIsValid( const Key& key )
-		{
-			const Sequence& sequence = ItemSequence();
-			
-			return key == 0  ||  sequence.find( key ) != sequence.end();
-		}
-		
-		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
-		                               const std::string&  name,
-		                               const Key&          key );
-	};
-	
-	typedef FSTree_Sequence< proc_Details > FSTree_proc;
-	
-	
-	struct pid_KeyName_Traits : Integer_KeyName_Traits< pid_t >
-	{
-	};
 	
 	
 	class FSTree_proc_self : public FSTree
@@ -187,12 +157,6 @@ namespace Genie
 			return FSRoot();
 		}
 	};
-	
-	
-	FSTreePtr GetProcFSTree()
-	{
-		return GetSingleton< FSTree_proc >( FSRoot(), "proc" );
-	}
 	
 	
 	extern const Functional_Traits< pid_KeyName_Traits::Key >::Mapping proc_PID_Mappings[];

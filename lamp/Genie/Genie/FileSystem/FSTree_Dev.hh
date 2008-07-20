@@ -7,13 +7,22 @@
 #define GENIE_FILESYSTEM_FSTREE_DEV_HH
 
 // Genie 
-#include "Genie/FileSystem/FSTree.hh"
+#include "Genie/FileSystem/FSTree_Directory.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr GetDevFSTree();
+	class FSTree_dev : public FSTree_Functional< void >
+	{
+		public:
+			FSTree_dev( const FSTreePtr&    parent,
+			            const std::string&  name ) : FSTree_Functional< void >( parent, name )
+			{
+			}
+			
+			void Init();
+	};
 	
 }
 

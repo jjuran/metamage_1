@@ -22,7 +22,6 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/DynamicGroups.hh"
-#include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/BufferFile.hh"
 #include "Genie/IO/ConsoleTTY.hh"
@@ -39,16 +38,6 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
-	class FSTree_dev : public FSTree_Functional< void >
-	{
-		public:
-			FSTree_dev( const FSTreePtr&    parent,
-			            const std::string&  name ) : FSTree_Functional< void >( parent, name )
-			{
-			}
-			
-			void Init();
-	};
 	
 	class FSTree_dev_fd : public FSTree
 	{
@@ -161,12 +150,6 @@ namespace Genie
 	
 	typedef FSTree_Sequence< DynamicGroup_Details< ConsoleTTYHandle > > FSTree_dev_con;
 	typedef FSTree_Sequence< DynamicGroup_Details< PseudoTTYHandle  > > FSTree_dev_pts;
-	
-	
-	FSTreePtr GetDevFSTree()
-	{
-		return GetSingleton< FSTree_dev >( FSRoot(), "dev" );
-	}
 	
 	
 	boost::shared_ptr< IOHandle > FSTree_SimpleDevice::Open( OpenFlags /*flags*/ ) const
