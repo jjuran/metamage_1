@@ -78,9 +78,11 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr sys_mac_unit_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
+	FSTreePtr sys_mac_unit_Details::GetChildNode( const FSTreePtr&    parent,
+		                                          const std::string&  name,
+		                                          const Key&          key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_unit_N( parent, NameFromKey( key ), key ) );
+		return MakeFSTree( new FSTree_sys_mac_unit_N( parent, name, key ) );
 	}
 	
 	

@@ -386,7 +386,9 @@ namespace Genie
 			return true;  // DetermineVRefNum() only returns valid keys
 		}
 		
-		FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key ) const;
+		FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                        const std::string&  name,
+		                        const Key&          key ) const;
 	};
 	
 	class FSTree_Volumes : public FSTree_Sequence< Volumes_Details >
@@ -814,10 +816,10 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr Volumes_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
+	FSTreePtr Volumes_Details::GetChildNode( const FSTreePtr&    parent,
+		                                     const std::string&  name,
+		                                     const Key&          key ) const
 	{
-		std::string name = io::get_filename_string( FSSpecFromKey( key ) );
-		
 		return MakeFSTree( new FSTree_Volumes_Link( parent, name, key ) );
 	}
 	

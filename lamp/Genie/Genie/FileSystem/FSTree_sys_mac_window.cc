@@ -19,9 +19,11 @@ namespace Genie
 		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
 	}
 	
-	FSTreePtr sys_mac_window_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
+	FSTreePtr sys_mac_window_Details::GetChildNode( const FSTreePtr&    parent,
+		                                            const std::string&  name,
+		                                            const Key&          key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_window_REF( parent, NameFromKey( key ), key ) );
+		return MakeFSTree( new FSTree_sys_mac_window_REF( parent, name, key ) );
 	}
 	
 }

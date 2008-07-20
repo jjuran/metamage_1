@@ -74,9 +74,11 @@ namespace Genie
 			return sequence.find( key ) != sequence.end();
 		}
 		
-		static FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key )
+		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                               const std::string&  name,
+		                               const Key&          key )
 		{
-			return MakeFSTree( new ChildNode( parent, NameFromKey( key ), key ) );
+			return MakeFSTree( new ChildNode( parent, name, key ) );
 		}
 		
 		static const Sequence& ItemSequence()  { return GetDynamicGroup< Handle >(); }

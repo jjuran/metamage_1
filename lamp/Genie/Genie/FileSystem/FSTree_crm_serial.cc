@@ -49,9 +49,11 @@ namespace Genie
 		return GetCRMRecPtrFromID( key ) != NULL;
 	}
 	
-	FSTreePtr sys_mac_crm_serial_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
+	FSTreePtr sys_mac_crm_serial_Details::GetChildNode( const FSTreePtr&    parent,
+		                                                const std::string&  name,
+		                                                const Key&          key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_crm_serial_N( parent, NameFromKey( key ), key ) );
+		return MakeFSTree( new FSTree_sys_mac_crm_serial_N( parent, name, key ) );
 	}
 	
 	

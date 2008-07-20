@@ -144,7 +144,7 @@ namespace Genie
 					poseven::throw_errno( ENOENT );
 				}
 				
-				return itsDetails.GetChildNode( shared_from_this(), key );
+				return itsDetails.GetChildNode( shared_from_this(), name, key );
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -170,7 +170,7 @@ namespace Genie
 				
 				std::string name = itsDetails.NameFromKey( key );
 				
-				FSTreePtr node( itsDetails.GetChildNode( itsParent, key ) );
+				FSTreePtr node( itsDetails.GetChildNode( itsParent, name, key ) );
 				
 				return FSNode( name, node );
 			}

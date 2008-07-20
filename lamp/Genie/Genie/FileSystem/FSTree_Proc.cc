@@ -50,7 +50,9 @@ namespace Genie
 			return key == 0  ||  sequence.find( key ) != sequence.end();
 		}
 		
-		static FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key );
+		static FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                               const std::string&  name,
+		                               const Key&          key );
 	};
 	
 	typedef FSTree_Sequence< proc_Details > FSTree_proc;
@@ -90,9 +92,9 @@ namespace Genie
 			
 			bool IsLink() const  { return true; }
 			
-			std::string ReadLink() const  { return NN::Convert< std::string >( getpid() ); }
+			std::string ReadLink() const  { return pid_KeyName_Traits::NameFromKey( getpid() ); }
 			
-			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( Parent(), getpid() ); }
+			FSTreePtr ResolveLink() const  { return proc_Details::GetChildNode( Parent(), ReadLink(), getpid() ); }
 	};
 	
 	
@@ -116,7 +118,9 @@ namespace Genie
 			return sequence.find( key ) != sequence.end();
 		}
 		
-		FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key ) const;
+		FSTreePtr GetChildNode( const FSTreePtr&    parent,
+		                        const std::string&  name,
+		                        const Key&          key ) const;
 	};
 	
 	typedef FSTree_Sequence< PID_fd_Details > FSTree_PID_fd;
@@ -209,14 +213,16 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr proc_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
+	FSTreePtr proc_Details::GetChildNode( const FSTreePtr&    parent,
+		                                  const std::string&  name,
+		                                  const Key&          key )
 	{
 		if ( key == 0 )
 		{
 			return MakeFSTree( new FSTree_proc_self( parent ) );
 		}
 		
-		return MakeFSTree( new FSTree_proc_PID( parent, NameFromKey( key ), key ) );
+		return MakeFSTree( new FSTree_proc_PID( parent, name, key ) );
 	}
 	
 	// Process states
@@ -457,9 +463,11 @@ namespace Genie
 		AddMappings( proc_PID_Mappings, NN::ArrayEnd( proc_PID_Mappings ) );
 	}
 	
-	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
+	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr&    parent,
+		                                    const std::string&  name,
+		                                    const Key&          key ) const
 	{
-		return MakeFSTree( new FSTree_PID_fd_N( parent, NameFromKey( key ), itsPID, key ) );
+		return MakeFSTree( new FSTree_PID_fd_N( parent, name, itsPID, key ) );
 	}
 	
 	
