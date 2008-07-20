@@ -19,13 +19,10 @@ namespace Genie
 			FSSpec itsFileSpec;
 		
 		public:
-			FSTree_RsrcFile( const FSSpec& file ) : itsFileSpec( file )
+			FSTree_RsrcFile( const FSSpec& file ) : FSTree( FSTreeFromFSSpec( file ), "rsrc" ),
+			                                        itsFileSpec( file )
 			{
 			}
-			
-			std::string Name() const  { return "rsrc"; }
-			
-			FSTreePtr Parent() const  { return FSTreeFromFSSpec( itsFileSpec ); }
 			
 			void Stat( struct ::stat& sb ) const;
 			
