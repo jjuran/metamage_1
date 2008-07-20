@@ -217,17 +217,64 @@ namespace Genie
 	};
 	
 	
-	template < class Details >
-	class FSTree_Functional : public FSTree_Directory, public Details
+	template < class Key >
+	struct Keyed_Function_Traits
+	{
+		typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string&, Key key );
+	};
+	
+	template <>
+	struct Keyed_Function_Traits< void >
+	{
+		typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string& );
+	};
+	
+	template < class Key >
+	struct Functional_Traits : Keyed_Function_Traits< Key >
+	{
+		typedef typename Keyed_Function_Traits< Key >::Function Function;
+		
+		struct Mapping
+		{
+			const char*  name;
+			Function     f;
+		};
+	};
+	
+	template < class Key >
+	struct Keyed_Invoker_Details : Functional_Traits< Key >
+	{
+		typedef typename Functional_Traits< Key >::Function Function;
+		
+		Key itsKey;
+		
+		Keyed_Invoker_Details( Key key ) : itsKey( key )
+		{
+		}
+		
+		FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
+		{
+			return f( parent, name, itsKey );
+		}
+	};
+	
+	template <>
+	struct Keyed_Invoker_Details< void > : Functional_Traits< void >
+	{
+		FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
+		{
+			return f( parent, name );
+		}
+	};
+	
+	template < class Key >
+	class FSTree_Functional : public FSTree_Directory, public Keyed_Invoker_Details< Key >
 	{
 		private:
-			typedef typename Details::Function Function;
+			typedef Keyed_Invoker_Details< Key > Details;
 			
-			struct Mapping
-			{
-				const char*  name;
-				Function     f;
-			};
+			typedef typename Details::Function  Function;
+			typedef typename Details::Mapping   Mapping;
 			
 			typedef std::map< std::string, Function > Mappings;
 			
@@ -264,14 +311,14 @@ namespace Genie
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
-	template < class Details >
-	void FSTree_Functional< Details >::Map( const std::string& name, Function f )
+	template < class Key >
+	void FSTree_Functional< Key >::Map( const std::string& name, Function f )
 	{
 		itsMappings[ name ] = f;
 	}
 	
-	template < class Details >
-	void FSTree_Functional< Details >::AddMappings( const Mapping* array )
+	template < class Key >
+	void FSTree_Functional< Key >::AddMappings( const Mapping* array )
 	{
 		while ( array->name != NULL )
 		{
@@ -281,9 +328,9 @@ namespace Genie
 		}
 	}
 	
-	template < class Details >
-	void FSTree_Functional< Details >::AddMappings( const Mapping* begin,
-	                                                const Mapping* end )
+	template < class Key >
+	void FSTree_Functional< Key >::AddMappings( const Mapping* begin,
+	                                            const Mapping* end )
 	{
 		for ( const Mapping* it = begin;  it != end;  ++it )
 		{
@@ -291,8 +338,8 @@ namespace Genie
 		}
 	}
 	
-	template < class Details >
-	FSTreePtr FSTree_Functional< Details >::Lookup_Child( const std::string& name ) const
+	template < class Key >
+	FSTreePtr FSTree_Functional< Key >::Lookup_Child( const std::string& name ) const
 	{
 		Mappings::const_iterator it = itsMappings.find( name );
 		
@@ -306,8 +353,8 @@ namespace Genie
 		return Details::Invoke( f, shared_from_this(), name );
 	}
 	
-	template < class Details >
-	void FSTree_Functional< Details >::IterateIntoCache( FSTreeCache& cache ) const
+	template < class Key >
+	void FSTree_Functional< Key >::IterateIntoCache( FSTreeCache& cache ) const
 	{
 		typedef Mappings::const_iterator Iter;
 		
@@ -330,20 +377,7 @@ namespace Genie
 	}
 	
 	
-	class Singleton_Functional_Details
-	{
-		public:
-			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string& );
-			
-			FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
-			{
-				return f( parent, name );
-			}
-	};
-	
-	typedef FSTree_Functional< Singleton_Functional_Details > FSTree_Functional_Singleton;
-	
-	typedef FSTree_Functional_Singleton::Mapping Singleton_Mapping;
+	typedef FSTree_Functional< void >::Mapping Singleton_Mapping;
 	
 	template < class FSTree_Type >
 	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
@@ -354,7 +388,7 @@ namespace Genie
 	template < const Singleton_Mapping mappings[] >
 	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
 	{
-		FSTree_Functional_Singleton* raw_ptr = new FSTree_Functional_Singleton( parent, name );
+		FSTree_Functional< void >* raw_ptr = new FSTree_Functional< void >( parent, name );
 		
 		FSTreePtr result( raw_ptr );
 		
@@ -363,27 +397,17 @@ namespace Genie
 		return result;
 	}
 	
-	
-	template < class KeyName_Traits >
-	class Level1_Functional_Details : public KeyName_Traits
+	template < class Key, const typename FSTree_Functional< Key >::Mapping mappings[] >
+	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name, Key key )
 	{
-		public:
-			typedef typename KeyName_Traits::Key Key;
-			
-			const Key itsKey;
+		FSTree_Functional< Key >* raw_ptr = new FSTree_Functional< Key >( parent, name, key );
 		
-		public:
-			typedef FSTreePtr (*Function)( const FSTreePtr&, const std::string&, Key key );
-			
-			Level1_Functional_Details( Key key ) : itsKey( key )
-			{
-			}
-			
-			FSTreePtr Invoke( Function f, const FSTreePtr& parent, const std::string& name ) const
-			{
-				return f( parent, name, itsKey );
-			}
-	};
+		FSTreePtr result( raw_ptr );
+		
+		raw_ptr->AddMappings( mappings );
+		
+		return result;
+	}
 	
 	
 	UInt32 DecodeHex32( const char* begin, const char* end );
