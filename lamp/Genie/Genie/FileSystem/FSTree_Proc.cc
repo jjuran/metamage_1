@@ -117,9 +117,9 @@ namespace Genie
 			FSTree_PID_fd_N( const FSTreePtr&    parent,
 			                 const std::string&  name,
 			                 pid_t               pid,
-			                 int                 fd ) : FSTree( parent ),
-			                                            itsPID( pid    ),
-			                                            itsFD ( fd     )
+			                 int                 fd ) : FSTree( parent, name ),
+			                                            itsPID( pid ),
+			                                            itsFD ( fd  )
 			{
 			}
 			
@@ -458,7 +458,9 @@ namespace Genie
 			Key itsHandle;
 		
 		public:
-			FSTree_MagicFileReference( const Key& io ) : itsHandle( io )  {}
+			FSTree_MagicFileReference( const Key& io ) : itsHandle( io )
+			{
+			}
 			
 			std::string Name    () const  { return itsHandle->GetFile()->Name    (); }
 			std::string Pathname() const  { return itsHandle->GetFile()->Pathname(); }
