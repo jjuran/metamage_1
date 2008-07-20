@@ -166,7 +166,7 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
-	static FSTree_sys_mac_crm_serial_N::Mapping sys_mac_crm_serial_N_Mappings[] =
+	static Functional_Traits< CRMDeviceID_KeyName_Traits::Key >::Mapping sys_mac_crm_serial_N_Mappings[] =
 	{
 		{ "name",   &Name_Factory   },
 		{ "input",  &Input_Factory  },

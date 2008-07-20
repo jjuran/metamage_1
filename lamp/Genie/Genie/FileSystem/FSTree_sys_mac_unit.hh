@@ -150,12 +150,12 @@ namespace Genie
 	typedef FSTree_Sequence< sys_mac_unit_Details > FSTree_sys_mac_unit;
 	
 	
-	typedef Level1_Functional_Details< UnitNumber_KeyName_Traits > sys_mac_unit_N_Details;
-	
-	class FSTree_sys_mac_unit_N : public FSTree_Functional< sys_mac_unit_N_Details >
+	class FSTree_sys_mac_unit_N : public FSTree_Functional< UnitNumber_KeyName_Traits::Key >
 	{
 		private:
-			typedef FSTree_Functional< sys_mac_unit_N_Details > Base;
+			typedef UnitNumber_KeyName_Traits::Key Key;
+			
+			typedef FSTree_Functional< Key > Base;
 		
 		public:
 			FSTree_sys_mac_unit_N( const FSTreePtr&    parent,

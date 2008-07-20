@@ -46,12 +46,12 @@ namespace Genie
 	typedef FSTree_Sequence< sys_mac_crm_serial_Details > FSTree_sys_mac_crm_serial;
 	
 	
-	typedef Level1_Functional_Details< CRMDeviceID_KeyName_Traits > sys_mac_crm_serial_N_Details;
-	
-	class FSTree_sys_mac_crm_serial_N : public FSTree_Functional< sys_mac_crm_serial_N_Details >
+	class FSTree_sys_mac_crm_serial_N : public FSTree_Functional< CRMDeviceID_KeyName_Traits::Key >
 	{
 		private:
-			typedef FSTree_Functional< sys_mac_crm_serial_N_Details > Base;
+			typedef CRMDeviceID_KeyName_Traits::Key Key;
+			
+			typedef FSTree_Functional< Key > Base;
 		
 		public:
 			FSTree_sys_mac_crm_serial_N( const FSTreePtr&    parent,

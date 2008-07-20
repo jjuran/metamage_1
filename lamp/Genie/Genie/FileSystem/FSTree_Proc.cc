@@ -62,12 +62,12 @@ namespace Genie
 	{
 	};
 	
-	typedef Level1_Functional_Details< pid_KeyName_Traits > proc_PID_Details;
-	
-	class FSTree_proc_PID : public FSTree_Functional< proc_PID_Details >
+	class FSTree_proc_PID : public FSTree_Functional< pid_KeyName_Traits::Key >
 	{
 		private:
-			typedef FSTree_Functional< proc_PID_Details > Base;
+			typedef pid_KeyName_Traits::Key Key;
+			
+			typedef FSTree_Functional< Key > Base;
 		
 		public:
 			FSTree_proc_PID( const FSTreePtr&    parent,

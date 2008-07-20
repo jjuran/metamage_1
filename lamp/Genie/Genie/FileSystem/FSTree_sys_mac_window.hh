@@ -43,12 +43,12 @@ namespace Genie
 	typedef FSTree_Sequence< sys_mac_window_Details > FSTree_sys_mac_window;
 	
 	
-	typedef Level1_Functional_Details< WindowRef_KeyName_Traits > sys_mac_window_REF_Details;
-	
-	class FSTree_sys_mac_window_REF : public FSTree_Functional< sys_mac_window_REF_Details >
+	class FSTree_sys_mac_window_REF : public FSTree_Functional< WindowRef_KeyName_Traits::Key >
 	{
 		private:
-			typedef FSTree_Functional< sys_mac_window_REF_Details > Base;
+			typedef WindowRef_KeyName_Traits::Key Key;
+			
+			typedef FSTree_Functional< Key > Base;
 		
 		public:
 			FSTree_sys_mac_window_REF( const FSTreePtr&    parent,

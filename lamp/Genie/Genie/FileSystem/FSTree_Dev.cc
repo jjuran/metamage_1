@@ -39,11 +39,11 @@ namespace Genie
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
-	class FSTree_dev : public FSTree_Functional_Singleton
+	class FSTree_dev : public FSTree_Functional< void >
 	{
 		public:
 			FSTree_dev( const FSTreePtr&    parent,
-			            const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
+			            const std::string&  name ) : FSTree_Functional< void >( parent, name )
 			{
 			}
 			
