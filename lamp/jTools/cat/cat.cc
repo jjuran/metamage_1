@@ -16,6 +16,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/IOPump.hh"
 #include "POSeven/Open.hh"
 
 // Orion
@@ -66,7 +67,7 @@ int O::Main( int argc, argv_t argv )
 		{
 			NN::Owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
 			
-			p7::throw_posix_result( pump( fd, NULL, p7::stdout_fileno, NULL, 0 ) );
+			p7::pump( fd, NULL, p7::stdout_fileno, NULL, 0 );
 		}
 		catch ( const p7::errno_t& error )
 		{
