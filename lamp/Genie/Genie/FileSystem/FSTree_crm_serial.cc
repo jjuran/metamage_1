@@ -7,9 +7,6 @@
 
 #include "Genie/FileSystem/FSTree_crm_serial.hh"
 
-// Nucleus
-#include "Nucleus/ArrayContainerFunctions.h"
-
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
@@ -49,11 +46,13 @@ namespace Genie
 		return GetCRMRecPtrFromID( key ) != NULL;
 	}
 	
+	extern const Functional_Traits< CRMDeviceID_KeyName_Traits::Key >::Mapping sys_mac_crm_serial_N_Mappings[];
+	
 	FSTreePtr sys_mac_crm_serial_Details::GetChildNode( const FSTreePtr&    parent,
 		                                                const std::string&  name,
 		                                                const Key&          key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_crm_serial_N( parent, name, key ) );
+		return Premapped_Factory< Key, sys_mac_crm_serial_N_Mappings >( parent, name, key );
 	}
 	
 	
@@ -166,19 +165,15 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
-	static Functional_Traits< CRMDeviceID_KeyName_Traits::Key >::Mapping sys_mac_crm_serial_N_Mappings[] =
+	const Functional_Traits< CRMDeviceID_KeyName_Traits::Key >::Mapping sys_mac_crm_serial_N_Mappings[] =
 	{
 		{ "name",   &Name_Factory   },
 		{ "input",  &Input_Factory  },
 		{ "output", &Output_Factory },
-		{ "icon",   &Icon_Factory   }
+		{ "icon",   &Icon_Factory   },
 		
+		{ NULL, NULL }
 	};
-	
-	void FSTree_sys_mac_crm_serial_N::Init()
-	{
-		AddMappings( sys_mac_crm_serial_N_Mappings, NN::ArrayEnd( sys_mac_crm_serial_N_Mappings ) );
-	}
 	
 }
 

@@ -25,13 +25,9 @@ namespace Genie
 		static Key KeyFromName( const std::string& name );
 	};
 	
-	class FSTree_sys_mac_proc_PSN;
-	
 	struct sys_mac_proc_Details : public ProcessSerialNumber_KeyName_Traits
 	{
 		typedef N::Process_Container Sequence;
-		
-		typedef FSTree_sys_mac_proc_PSN ChildNode;
 		
 		static const Sequence& ItemSequence()  { return N::Processes(); }
 		
@@ -45,24 +41,6 @@ namespace Genie
 	};
 	
 	typedef FSTree_Sequence< sys_mac_proc_Details > FSTree_sys_mac_proc;
-	
-	
-	class FSTree_sys_mac_proc_PSN : public FSTree_Functional< ProcessSerialNumber_KeyName_Traits::Key >
-	{
-		private:
-			typedef ProcessSerialNumber_KeyName_Traits::Key Key;
-			
-			typedef FSTree_Functional< Key > Base;
-		
-		public:
-			FSTree_sys_mac_proc_PSN( const FSTreePtr&    parent,
-			                         const std::string&  name,
-			                         const Key&          key ) : Base( parent, name, key )
-			{
-			}
-			
-			void Init();
-	};
 	
 }
 

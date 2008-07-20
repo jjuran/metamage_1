@@ -9,7 +9,6 @@
 #include "Backtrace/Backtrace.hh"
 
 // Nucleus
-#include "Nucleus/ArrayContainerFunctions.h"
 #include "Nucleus/Convert.h"
 
 // POSeven
@@ -60,23 +59,6 @@ namespace Genie
 	
 	struct pid_KeyName_Traits : Integer_KeyName_Traits< pid_t >
 	{
-	};
-	
-	class FSTree_proc_PID : public FSTree_Functional< pid_KeyName_Traits::Key >
-	{
-		private:
-			typedef pid_KeyName_Traits::Key Key;
-			
-			typedef FSTree_Functional< Key > Base;
-		
-		public:
-			FSTree_proc_PID( const FSTreePtr&    parent,
-			                 const std::string&  name,
-			                 const Key&          key ) : Base( parent, name, key )
-			{
-			}
-			
-			void Init();
 	};
 	
 	
@@ -213,6 +195,8 @@ namespace Genie
 	}
 	
 	
+	extern const Functional_Traits< pid_KeyName_Traits::Key >::Mapping proc_PID_Mappings[];
+	
 	FSTreePtr proc_Details::GetChildNode( const FSTreePtr&    parent,
 		                                  const std::string&  name,
 		                                  const Key&          key )
@@ -222,7 +206,7 @@ namespace Genie
 			return MakeFSTree( new FSTree_proc_self( parent ) );
 		}
 		
-		return MakeFSTree( new FSTree_proc_PID( parent, name, key ) );
+		return Premapped_Factory< Key, proc_PID_Mappings >( parent, name, key );
 	}
 	
 	// Process states
@@ -445,7 +429,7 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
-	static FSTree_proc_PID::Mapping proc_PID_Mappings[] =
+	const Functional_Traits< pid_KeyName_Traits::Key >::Mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
 		
@@ -457,11 +441,6 @@ namespace Genie
 		{ "stat",      &Query_Factory< proc_PID_stat_Query      > },
 		{ "backtrace", &Query_Factory< proc_PID_backtrace_Query > }
 	};
-	
-	void FSTree_proc_PID::Init()
-	{
-		AddMappings( proc_PID_Mappings, NN::ArrayEnd( proc_PID_Mappings ) );
-	}
 	
 	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr&    parent,
 		                                    const std::string&  name,

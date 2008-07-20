@@ -96,14 +96,9 @@ namespace Genie
 	};
 	
 	
-	class FSTree_sys_kernel_syscall_PTR;
-	
-	
 	struct sys_kernel_syscall_Details : public SystemCall_KeyName_Traits
 	{
 		typedef SystemCallRegistry Sequence;
-		
-		typedef FSTree_sys_kernel_syscall_PTR ChildNode;
 		
 		static const Sequence& ItemSequence()  { return GetSystemCallRegistry(); }
 		
@@ -120,22 +115,6 @@ namespace Genie
 	};
 	
 	typedef FSTree_Sequence< sys_kernel_syscall_Details > FSTree_sys_kernel_syscall;
-	
-	
-	class FSTree_sys_kernel_syscall_PTR : public FSTree_Functional< SystemCall_KeyName_Traits::Key >
-	{
-		private:
-			typedef SystemCall_KeyName_Traits::Key Key;
-			
-			typedef FSTree_Functional< Key > Base;
-		
-		public:
-			FSTree_sys_kernel_syscall_PTR( const FSTreePtr&    parent,
-			                               const std::string&  name,
-			                               const Key&          key ) : Base( parent, name, key )
-			{
-			}
-	};
 	
 	
 	namespace
@@ -208,7 +187,7 @@ namespace Genie
 		                                                const std::string&  name,
 		                                                const Key&          key ) const
 	{
-		return MakeFSTree( new FSTree_sys_kernel_syscall_PTR( parent, name, key ) );
+		return MakeFSTree( new FSTree_Functional< Key >( parent, name, key ) );
 	}
 	
 }

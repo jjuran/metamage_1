@@ -7,12 +7,8 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_unit.hh"
 
-// Nucleus
-#include "Nucleus/ArrayContainerFunctions.h"
-
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
-#include "Genie/FileSystem/FSTree_sys_mac.hh"
 
 
 namespace Genie
@@ -78,11 +74,13 @@ namespace Genie
 	};
 	
 	
+	extern const Functional_Traits< UnitNumber_KeyName_Traits::Key >::Mapping sys_mac_unit_N_Mappings[];
+	
 	FSTreePtr sys_mac_unit_Details::GetChildNode( const FSTreePtr&    parent,
 		                                          const std::string&  name,
 		                                          const Key&          key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_unit_N( parent, name, key ) );
+		return Premapped_Factory< Key, sys_mac_unit_N_Mappings >( parent, name, key );
 	}
 	
 	
@@ -97,15 +95,12 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
-	static FSTree_sys_mac_unit_N::Mapping sys_mac_unit_N_Mappings[] =
+	const Functional_Traits< UnitNumber_KeyName_Traits::Key >::Mapping sys_mac_unit_N_Mappings[] =
 	{
 		{ "name", &Name_Factory },
+		
+		{ NULL, NULL }
 	};
-	
-	void FSTree_sys_mac_unit_N::Init()
-	{
-		AddMappings( sys_mac_unit_N_Mappings, NN::ArrayEnd( sys_mac_unit_N_Mappings ) );
-	}
 	
 }
 

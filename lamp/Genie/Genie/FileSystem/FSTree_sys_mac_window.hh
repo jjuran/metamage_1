@@ -11,7 +11,6 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_Directory.hh"
-#include "Genie/FileSystem/FSTree_sys_mac.hh"
 
 
 namespace Genie
@@ -41,22 +40,6 @@ namespace Genie
 	};
 	
 	typedef FSTree_Sequence< sys_mac_window_Details > FSTree_sys_mac_window;
-	
-	
-	class FSTree_sys_mac_window_REF : public FSTree_Functional< WindowRef_KeyName_Traits::Key >
-	{
-		private:
-			typedef WindowRef_KeyName_Traits::Key Key;
-			
-			typedef FSTree_Functional< Key > Base;
-		
-		public:
-			FSTree_sys_mac_window_REF( const FSTreePtr&    parent,
-			                           const std::string&  name,
-			                           const Key&          key ) : Base( parent, name, key )
-			{
-			}
-	};
 	
 }
 

@@ -24,13 +24,9 @@ namespace Genie
 	{
 	};
 	
-	class FSTree_sys_mac_crm_serial_N;
-	
 	struct sys_mac_crm_serial_Details : public CRMDeviceID_KeyName_Traits
 	{
 		typedef Nitrogen::CRMSerialDevice_Container Sequence;
-		
-		typedef FSTree_sys_mac_crm_serial_N ChildNode;
 		
 		static const Sequence& ItemSequence()  { return Nitrogen::CRMSerialDevices(); }
 		
@@ -45,23 +41,6 @@ namespace Genie
 	
 	typedef FSTree_Sequence< sys_mac_crm_serial_Details > FSTree_sys_mac_crm_serial;
 	
-	
-	class FSTree_sys_mac_crm_serial_N : public FSTree_Functional< CRMDeviceID_KeyName_Traits::Key >
-	{
-		private:
-			typedef CRMDeviceID_KeyName_Traits::Key Key;
-			
-			typedef FSTree_Functional< Key > Base;
-		
-		public:
-			FSTree_sys_mac_crm_serial_N( const FSTreePtr&    parent,
-			                             const std::string&  name,
-			                             const Key&          key ) : Base( parent, name, key )
-			{
-			}
-			
-			void Init();
-	};
 	
 }
 

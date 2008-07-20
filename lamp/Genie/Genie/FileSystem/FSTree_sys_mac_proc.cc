@@ -5,12 +5,8 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 
-// Nucleus
-#include "Nucleus/ArrayContainerFunctions.h"
-
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
-#include "Genie/FileSystem/FSTree_sys_mac.hh"
 
 
 namespace Genie
@@ -77,11 +73,14 @@ namespace Genie
 		return true;
 	}
 	
+	
+	extern const Functional_Traits< ProcessSerialNumber_KeyName_Traits::Key >::Mapping sys_mac_proc_PSN_Mappings[];
+	
 	FSTreePtr sys_mac_proc_Details::GetChildNode( const FSTreePtr&    parent,
 		                                          const std::string&  name,
 		                                          const Key&          key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_proc_PSN( parent, name, key ) );
+		return Premapped_Factory< Key, sys_mac_proc_PSN_Mappings >( parent, name, key );
 	}
 	
 	
@@ -156,17 +155,14 @@ namespace Genie
 		return MakeFSTree( new FSTree_sys_mac_proc_PSN_exe( parent, name, key ) );
 	}
 	
-	static FSTree_sys_mac_proc_PSN::Mapping sys_mac_proc_PSN_Mappings[] =
+	const Functional_Traits< ProcessSerialNumber_KeyName_Traits::Key >::Mapping sys_mac_proc_PSN_Mappings[] =
 	{
 		{ "name", &Name_Factory },
 		
-		{ "exe", &Executable_Factory }
+		{ "exe", &Executable_Factory },
+		
+		{ NULL, NULL }
 	};
-	
-	void FSTree_sys_mac_proc_PSN::Init()
-	{
-		AddMappings( sys_mac_proc_PSN_Mappings, NN::ArrayEnd( sys_mac_proc_PSN_Mappings ) );
-	}
 	
 }
 

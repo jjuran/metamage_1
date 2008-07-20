@@ -23,7 +23,7 @@ namespace Genie
 		                                            const std::string&  name,
 		                                            const Key&          key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_window_REF( parent, name, key ) );
+		return MakeFSTree( new FSTree_Functional< WindowRef_KeyName_Traits::Key >( parent, name, key ) );
 	}
 	
 }

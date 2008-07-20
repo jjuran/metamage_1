@@ -5,9 +5,6 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_vol.hh"
 
-// Nucleus
-#include "Nucleus/ArrayContainerFunctions.h"
-
 // Nitrogen
 #include "Nitrogen/Folders.h"
 
@@ -16,7 +13,6 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
-#include "Genie/FileSystem/FSTree_sys_mac.hh"
 
 
 namespace Genie
@@ -70,11 +66,13 @@ namespace Genie
 	}
 	
 	
+	extern const Functional_Traits< VRefNum_KeyName_Traits::Key >::Mapping sys_mac_vol_N_Mappings[];
+	
 	FSTreePtr sys_mac_vol_Details::GetChildNode( const FSTreePtr&    parent,
 		                                         const std::string&  name,
 		                                         const Key&          key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_vol_N( parent, name, key ) );
+		return Premapped_Factory< Key, sys_mac_vol_N_Mappings >( parent, name, key );
 	}
 	
 	
@@ -157,21 +155,18 @@ namespace Genie
 		return MakeFSTree( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
 	
-	static FSTree_sys_mac_vol_N::Mapping sys_mac_vol_N_Mappings[] =
+	const Functional_Traits< VRefNum_KeyName_Traits::Key >::Mapping sys_mac_vol_N_Mappings[] =
 	{
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
 		{ "name", &Name_Factory },
 		
 		{ "sys", &Link_Factory< N::kSystemFolderType    > },
-		{ "tmp", &Link_Factory< N::kTemporaryFolderType > }
+		{ "tmp", &Link_Factory< N::kTemporaryFolderType > },
+		
+		{ NULL, NULL }
 		
 	};
-	
-	void FSTree_sys_mac_vol_N::Init()
-	{
-		AddMappings( sys_mac_vol_N_Mappings, NN::ArrayEnd( sys_mac_vol_N_Mappings ) );
-	}
 	
 }
 

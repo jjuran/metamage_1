@@ -128,13 +128,9 @@ namespace Genie
 	{
 	};
 	
-	class FSTree_sys_mac_unit_N;
-	
 	struct sys_mac_unit_Details : public UnitNumber_KeyName_Traits
 	{
 		typedef N::UnitTableDrivers_Container Sequence;
-		
-		typedef FSTree_sys_mac_unit_N ChildNode;
 		
 		static const Sequence& ItemSequence()  { return N::UnitTableDrivers(); }
 		
@@ -148,24 +144,6 @@ namespace Genie
 	};
 	
 	typedef FSTree_Sequence< sys_mac_unit_Details > FSTree_sys_mac_unit;
-	
-	
-	class FSTree_sys_mac_unit_N : public FSTree_Functional< UnitNumber_KeyName_Traits::Key >
-	{
-		private:
-			typedef UnitNumber_KeyName_Traits::Key Key;
-			
-			typedef FSTree_Functional< Key > Base;
-		
-		public:
-			FSTree_sys_mac_unit_N( const FSTreePtr&    parent,
-			                       const std::string&  name,
-			                       const Key&          key ) : Base( parent, name, key )
-			{
-			}
-			
-			void Init();
-	};
 	
 }
 

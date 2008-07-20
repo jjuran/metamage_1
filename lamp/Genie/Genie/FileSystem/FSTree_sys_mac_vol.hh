@@ -27,14 +27,10 @@ namespace Genie
 		static bool KeyIsValid( const Key& key );
 	};
 	
-	class FSTree_sys_mac_vol_N;
-	
 	
 	struct sys_mac_vol_Details : public VRefNum_KeyName_Traits
 	{
 		typedef Nitrogen::Volume_Container Sequence;
-		
-		typedef FSTree_sys_mac_vol_N ChildNode;
 		
 		static const Sequence& ItemSequence()  { return Nitrogen::Volumes(); }
 		
@@ -46,24 +42,6 @@ namespace Genie
 	};
 	
 	typedef FSTree_Sequence< sys_mac_vol_Details > FSTree_sys_mac_vol;
-	
-	
-	class FSTree_sys_mac_vol_N : public FSTree_Functional< VRefNum_KeyName_Traits::Key >
-	{
-		private:
-			typedef VRefNum_KeyName_Traits::Key Key;
-			
-			typedef FSTree_Functional< Key > Base;
-		
-		public:
-			FSTree_sys_mac_vol_N( const FSTreePtr&    parent,
-			                      const std::string&  name,
-			                      const Key&          key ) : Base( parent, name, key )
-			{
-			}
-			
-			void Init();
-	};
 	
 }
 
