@@ -6,10 +6,6 @@
 #ifndef GENIE_FILESYSTEM_FSTREESYSMACCRMSERIAL_HH
 #define GENIE_FILESYSTEM_FSTREESYSMACCRMSERIAL_HH
 
-// Nucleus
-#include "Nucleus/AdvanceUntilFailureContainer.h"
-#include "Nucleus/IndexedContainer.h"
-
 // ClassicToolbox
 #include "ClassicToolbox/CRMSerialDevices.h"
 
