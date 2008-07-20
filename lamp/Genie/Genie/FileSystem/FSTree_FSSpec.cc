@@ -432,13 +432,11 @@ namespace Genie
 	class FSTree_J_Symlink : public FSTree
 	{
 		public:
-			FSTree_J_Symlink( const FSTreePtr& parent, const std::string& ) : FSTree( parent, const_j_directory_name )
+			FSTree_J_Symlink( const FSTreePtr& parent ) : FSTree( parent, const_j_directory_name )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
-			
-			FSTreePtr Parent() const  { return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( FindJDirectory() ) ) ); }
 			
 			std::string ReadLink() const  { return "/"; }
 			
@@ -459,7 +457,9 @@ namespace Genie
 	{
 		if ( IsRootDirectory( item ) )
 		{
-			return GetSingleton< FSTree_J_Symlink >();
+			FSTreePtr parent( new FSTree_FSSpec( io::get_preceding_directory( item ) ) );
+			
+			return FSTreePtr( new FSTree_J_Symlink( parent ) );
 		}
 		
 		return FSTreePtr( new FSTree_FSSpec( item ) );
