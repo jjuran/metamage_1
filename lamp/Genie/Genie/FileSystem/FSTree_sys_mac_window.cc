@@ -21,7 +21,7 @@ namespace Genie
 	
 	FSTreePtr sys_mac_window_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_window_REF( parent, key ) );
+		return MakeFSTree( new FSTree_sys_mac_window_REF( parent, NameFromKey( key ), key ) );
 	}
 	
 }

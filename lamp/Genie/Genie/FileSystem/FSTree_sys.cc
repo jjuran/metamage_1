@@ -128,12 +128,11 @@ namespace Genie
 			typedef FSTree_Functional< sys_kernel_syscall_PTR_Details > Base;
 		
 		public:
-			FSTree_sys_kernel_syscall_PTR( const FSTreePtr&  parent,
-			                               const Key&        key ) : Base( parent, key )
+			FSTree_sys_kernel_syscall_PTR( const FSTreePtr&    parent,
+			                               const std::string&  name,
+			                               const Key&          key ) : Base( parent, name, key )
 			{
 			}
-			
-			std::string Name() const  { return NameFromKey( itsKey ); }
 	};
 	
 	
@@ -205,7 +204,7 @@ namespace Genie
 	
 	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
 	{
-		return MakeFSTree( new FSTree_sys_kernel_syscall_PTR( parent, key ) );
+		return MakeFSTree( new FSTree_sys_kernel_syscall_PTR( parent, NameFromKey( key ), key ) );
 	}
 	
 }

@@ -52,13 +52,13 @@ namespace Genie
 			typedef FSTree_Functional< sys_mac_crm_serial_N_Details > Base;
 		
 		public:
-			FSTree_sys_mac_crm_serial_N( const FSTreePtr& parent, const Key& key ) : Base( parent, key )
+			FSTree_sys_mac_crm_serial_N( const FSTreePtr&    parent,
+			                             const std::string&  name,
+			                             const Key&          key ) : Base( parent, name, key )
 			{
 			}
 			
 			void Init();
-			
-			std::string Name() const  { return NameFromKey( itsKey ); }
 	};
 	
 }

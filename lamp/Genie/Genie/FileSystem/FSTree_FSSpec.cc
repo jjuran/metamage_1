@@ -589,9 +589,11 @@ namespace Genie
 		return GetUnixName( itsFileSpec );
 	}
 	
-	inline FSTreePtr Get_sys_mac_vol_N( Nitrogen::FSVolumeRefNum vRefNum )
+	inline FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
-		return MakeFSTree( new FSTree_sys_mac_vol_N( ResolvePathname( "/sys/mac/vol" ), vRefNum ) );
+		return MakeFSTree( new FSTree_sys_mac_vol_N( ResolvePathname( "/sys/mac/vol" ),
+		                                             FSTree_sys_mac_vol_N::NameFromKey( vRefNum ),
+		                                             vRefNum ) );
 	}
 	
 	FSTreePtr FSTree_FSSpec::Parent() const
@@ -797,15 +799,14 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			FSTree_Volumes_Link( const FSTreePtr&  parent,
-			                     const Key&        key ) : FSTree( parent ),
-			                                               itsKey( key    )
+			FSTree_Volumes_Link( const FSTreePtr&    parent,
+			                     const std::string&  name,
+			                     const Key&          key ) : FSTree( parent, name ),
+			                                                 itsKey( key    )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
-			
-			std::string Name() const  { return io::get_filename_string( FSSpecFromKey( itsKey ) ); }
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -815,7 +816,9 @@ namespace Genie
 	
 	FSTreePtr Volumes_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
 	{
-		return MakeFSTree( new FSTree_Volumes_Link( parent, key ) );
+		std::string name = io::get_filename_string( FSSpecFromKey( key ) );
+		
+		return MakeFSTree( new FSTree_Volumes_Link( parent, name, key ) );
 	}
 	
 	void FSTree_Volumes::Stat( struct ::stat& sb ) const

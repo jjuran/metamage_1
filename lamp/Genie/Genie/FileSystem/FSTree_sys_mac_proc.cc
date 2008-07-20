@@ -79,7 +79,7 @@ namespace Genie
 	
 	FSTreePtr sys_mac_proc_Details::GetChildNode( const FSTreePtr& parent, const Key& key )
 	{
-		return MakeFSTree( new FSTree_sys_mac_proc_PSN( parent, key ) );
+		return MakeFSTree( new FSTree_sys_mac_proc_PSN( parent, NameFromKey( key ), key ) );
 	}
 	
 	

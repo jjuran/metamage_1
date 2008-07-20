@@ -33,13 +33,12 @@ namespace Genie
 			unsigned ID() const  { return itsID; }
 		
 		public:
-			FSTree_Dynamic_N_Base( const FSTreePtr&  parent,
-			                       unsigned          id ) : FSTree( parent ),
-			                                                itsID ( id     )
+			FSTree_Dynamic_N_Base( const FSTreePtr&    parent,
+			                       const std::string&  name,
+			                       unsigned            id ) : FSTree( parent, name ),
+			                                                  itsID ( id     )
 			{
 			}
-			
-			std::string Name() const  { return Nucleus::Convert< std::string >( itsID ); }
 			
 			mode_t FileTypeMode() const  { return S_IFCHR; }
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
@@ -50,8 +49,9 @@ namespace Genie
 	class FSTree_Dynamic_N : public FSTree_Dynamic_N_Base
 	{
 		public:
-			FSTree_Dynamic_N( const FSTreePtr&  parent,
-			                  unsigned          id ) : FSTree_Dynamic_N_Base( parent, id )
+			FSTree_Dynamic_N( const FSTreePtr&    parent,
+			                  const std::string&  name,
+			                  unsigned            id ) : FSTree_Dynamic_N_Base( parent, name, id )
 			{
 			}
 			
@@ -76,7 +76,7 @@ namespace Genie
 		
 		static FSTreePtr GetChildNode( const FSTreePtr& parent, const Key& key )
 		{
-			return MakeFSTree( new ChildNode( parent, key ) );
+			return MakeFSTree( new ChildNode( parent, NameFromKey( key ), key ) );
 		}
 		
 		static const Sequence& ItemSequence()  { return GetDynamicGroup< Handle >(); }

@@ -68,13 +68,13 @@ namespace Genie
 			typedef FSTree_Functional< proc_PID_Details > Base;
 		
 		public:
-			FSTree_proc_PID( const FSTreePtr& parent, const Key& key ) : Base( parent, key )
+			FSTree_proc_PID( const FSTreePtr&    parent,
+			                 const std::string&  name,
+			                 const Key&          key ) : Base( parent, name, key )
 			{
 			}
 			
 			void Init();
-			
-			std::string Name() const  { return NameFromKey( itsKey ); }
 	};
 	
 	
@@ -128,17 +128,16 @@ namespace Genie
 			int    itsFD;
 		
 		public:
-			FSTree_PID_fd_N( const FSTreePtr&  parent,
-			                 pid_t             pid,
-			                 int               fd ) : FSTree( parent ),
-			                                          itsPID( pid    ),
-			                                          itsFD ( fd     )
+			FSTree_PID_fd_N( const FSTreePtr&    parent,
+			                 const std::string&  name,
+			                 pid_t               pid,
+			                 int                 fd ) : FSTree( parent ),
+			                                            itsPID( pid    ),
+			                                            itsFD ( fd     )
 			{
 			}
 			
 			bool IsLink() const  { return true; }
-			
-			std::string Name() const;
 			
 			std::string ReadLink() const  { return ResolveLink()->Pathname(); }
 			
@@ -217,7 +216,7 @@ namespace Genie
 			return MakeFSTree( new FSTree_proc_self( parent ) );
 		}
 		
-		return MakeFSTree( new FSTree_proc_PID( parent, key ) );
+		return MakeFSTree( new FSTree_proc_PID( parent, NameFromKey( key ), key ) );
 	}
 	
 	// Process states
@@ -460,7 +459,7 @@ namespace Genie
 	
 	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
 	{
-		return MakeFSTree( new FSTree_PID_fd_N( parent, itsPID, key ) );
+		return MakeFSTree( new FSTree_PID_fd_N( parent, NameFromKey( key ), itsPID, key ) );
 	}
 	
 	
@@ -492,11 +491,6 @@ namespace Genie
 	off_t FSTree_MagicFileReference::GetEOF() const
 	{
 		return IOHandle_Cast< RegularFileHandle >( *itsHandle.get() ).GetEOF();
-	}
-	
-	std::string FSTree_PID_fd_N::Name() const
-	{
-		return NN::Convert< std::string >( itsFD );
 	}
 	
 	FSTreePtr FSTree_PID_fd_N::ResolveLink() const
