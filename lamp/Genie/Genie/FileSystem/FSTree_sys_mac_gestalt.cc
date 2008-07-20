@@ -9,7 +9,7 @@
 #include "Nitrogen/Gestalt.h"
 
 // Genie
-#include "Genie/FileSystem/FSTree_sys_mac.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/Device.hh"
 
 
@@ -22,7 +22,7 @@ namespace Genie
 	class GestaltDeviceHandle : public DeviceHandle
 	{
 		public:
-			FSTreePtr GetFile() const  { return GetSingleton< FSTree_sys_mac_gestalt >(); }
+			FSTreePtr GetFile() const  { return ResolvePathname( "/sys/mac/gestalt" ); }
 			
 			unsigned int SysPoll() const  { return 0; }
 			
