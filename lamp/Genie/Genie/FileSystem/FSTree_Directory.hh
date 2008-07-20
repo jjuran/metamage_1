@@ -27,7 +27,6 @@
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
 #include "Genie/FileSystem/FSTree_Null.hh"
-#include "Genie/FileSystem/FSTree_Singleton.hh"
 
 
 namespace Genie
@@ -367,7 +366,7 @@ namespace Genie
 	template < class FSTree_Type >
 	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
 	{
-		return GetSingleton< FSTree_Type >( parent, name );
+		return FSTreePtr( new FSTree_Type( parent, name ) );
 	}
 	
 	template < const Singleton_Mapping mappings[] >
