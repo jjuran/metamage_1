@@ -86,10 +86,6 @@ namespace Genie
 	class FSTree_Directory : public FSTree
 	{
 		public:
-			FSTree_Directory( const FSTreePtr& parent ) : FSTree( parent )
-			{
-			}
-			
 			FSTree_Directory( const FSTreePtr&    parent,
 			                  const std::string&  name ) : FSTree( parent, name )
 			{
@@ -196,10 +192,6 @@ namespace Genie
 			Mappings mappings;
 		
 		public:
-			FSTree_Mappable( const FSTreePtr& parent ) : FSTree_Directory( parent )
-			{
-			}
-			
 			FSTree_Mappable( const FSTreePtr&    parent,
 			                 const std::string&  name ) : FSTree_Directory( parent, name )
 			{
@@ -283,13 +275,6 @@ namespace Genie
 		public:
 			FSTree_Functional( const FSTreePtr&    parent,
 			                   const std::string&  name ) : FSTree_Directory( parent, name )
-			{
-			}
-			
-			template < class Key >
-			FSTree_Functional( const FSTreePtr&  parent,
-			                   const Key&        key ) : FSTree_Directory( parent ),
-			                                             Details( key )
 			{
 			}
 			
