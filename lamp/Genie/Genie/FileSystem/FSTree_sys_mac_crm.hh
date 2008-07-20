@@ -13,16 +13,7 @@
 namespace Genie
 {
 	
-	class FSTree_sys_mac_crm : public FSTree_Functional_Singleton
-	{
-		public:
-			FSTree_sys_mac_crm( const FSTreePtr&    parent,
-			                    const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
-			{
-			}
-			
-			void Init();
-	};
+	extern const Singleton_Mapping sys_mac_crm_Mappings[];
 	
 }
 

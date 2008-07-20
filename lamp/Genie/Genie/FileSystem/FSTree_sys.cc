@@ -59,28 +59,6 @@ namespace Genie
 	};
 	
 	
-	class FSTree_sys_kernel : public FSTree_Functional_Singleton
-	{
-		public:
-			FSTree_sys_kernel( const FSTreePtr&    parent,
-			                   const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
-			{
-			}
-			
-			void Init();
-	};
-	
-	class FSTree_sys_kernel_bin : public FSTree_Functional_Singleton
-	{
-		public:
-			FSTree_sys_kernel_bin( const FSTreePtr&    parent,
-			                       const std::string&  name ) : FSTree_Functional_Singleton( parent, name )
-			{
-			}
-			
-			void Init();
-	};
-	
 	class FSTree_sys_kernel_bin_EXE : public FSTree
 	{
 		private:
@@ -159,29 +137,6 @@ namespace Genie
 	};
 	
 	
-	static FSTree_Functional_Singleton::Mapping sys_Mappings[] =
-	{
-		{ "kernel", &Singleton_Factory< FSTree_sys_kernel > },
-		{ "mac",    &Singleton_Factory< FSTree_sys_mac    > },
-		{ "set",    &Singleton_Factory< FSTree_sys_set    > }
-	};
-	
-	void FSTree_sys::Init()
-	{
-		AddMappings( sys_Mappings, NN::ArrayEnd( sys_Mappings ) );
-	}
-	
-	static FSTree_Functional_Singleton::Mapping sys_kernel_Mappings[] =
-	{
-		{ "bin",     &Singleton_Factory< FSTree_sys_kernel_bin     > },
-		{ "syscall", &Singleton_Factory< FSTree_sys_kernel_syscall > }
-	};
-	
-	void FSTree_sys_kernel::Init()
-	{
-		AddMappings( sys_kernel_Mappings, NN::ArrayEnd( sys_kernel_Mappings ) );
-	}
-	
 	namespace
 	{
 		
@@ -211,18 +166,42 @@ namespace Genie
 		return MakeFSTree( new FSTree_sys_kernel_bin_EXE( parent, name, main ) );
 	}
 	
-	static FSTree_Functional_Singleton::Mapping sys_kernel_bin_Mappings[] =
+	extern const Singleton_Mapping sys_kernel_bin_Mappings[];
+	
+	const Singleton_Mapping sys_kernel_bin_Mappings[] =
 	{
 		{ "true",  &Executable_Factory< main_true  > },
 		{ "false", &Executable_Factory< main_false > },
 		
-		{ "beep", &Executable_Factory< main_beep > }
+		{ "beep", &Executable_Factory< main_beep > },
+		
+		{ NULL, NULL }
 	};
 	
-	void FSTree_sys_kernel_bin::Init()
+	
+	extern const Singleton_Mapping sys_kernel_Mappings[];
+	
+	const Singleton_Mapping sys_kernel_Mappings[] =
 	{
-		AddMappings( sys_kernel_bin_Mappings, NN::ArrayEnd( sys_kernel_bin_Mappings ) );
+		{ "bin",     &Premapped_Factory< sys_kernel_bin_Mappings > },
+		
+		{ "syscall", &Singleton_Factory< FSTree_sys_kernel_syscall > },
+		
+		{ NULL, NULL }
+	};
+	
+	static const Singleton_Mapping sys_Mappings[] =
+	{
+		{ "kernel", &Premapped_Factory< sys_kernel_Mappings > },
+		{ "mac",    &Premapped_Factory< sys_mac_Mappings    > },
+		{ "set",    &Premapped_Factory< sys_set_Mappings    > }
+	};
+	
+	void FSTree_sys::Init()
+	{
+		AddMappings( sys_Mappings, NN::ArrayEnd( sys_Mappings ) );
 	}
+	
 	
 	FSTreePtr sys_kernel_syscall_Details::GetChildNode( const FSTreePtr& parent, const Key& key ) const
 	{

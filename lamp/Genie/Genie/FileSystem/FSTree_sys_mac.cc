@@ -5,12 +5,8 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
 
-// Nucleus
-#include "Nucleus/ArrayContainerFunctions.h"
-
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
-#include "Genie/FileSystem/FSTree_sys.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gestalt.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_name.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
@@ -27,9 +23,6 @@
 namespace Genie
 {
 	
-	namespace NN = Nucleus;
-	
-	
 	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
 	                               const std::string&  name )
 	{
@@ -38,7 +31,7 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name ) );
 	}
 	
-	static FSTree_Functional_Singleton::Mapping sys_mac_Mappings[] =
+	const Singleton_Mapping sys_mac_Mappings[] =
 	{
 		{ "vol",    &Singleton_Factory< FSTree_sys_mac_vol    > },
 		{ "proc",   &Singleton_Factory< FSTree_sys_mac_proc   > },
@@ -46,24 +39,23 @@ namespace Genie
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		{ "crm",  &Singleton_Factory< FSTree_sys_mac_crm  > },
+		{ "crm",  &Premapped_Factory< sys_mac_crm_Mappings > },
+		
 		{ "unit", &Singleton_Factory< FSTree_sys_mac_unit > },
 		
 	#endif
 		
-		{ "user",    &Singleton_Factory< FSTree_sys_mac_user    > },
+		{ "user",    &Premapped_Factory< sys_mac_user_Mappings > },
+		
 		{ "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > },
 		
 		{ "name", &Name_Factory },
 		
-		{ "rom", &Singleton_Factory< FSTree_sys_mac_rom > }
+		{ "rom", &Singleton_Factory< FSTree_sys_mac_rom > },
+		
+		{ NULL, NULL }
 		
 	};
-	
-	void FSTree_sys_mac::Init()
-	{
-		AddMappings( sys_mac_Mappings, NN::ArrayEnd( sys_mac_Mappings ) );
-	}
 	
 }
 
