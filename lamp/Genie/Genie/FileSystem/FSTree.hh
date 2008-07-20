@@ -148,7 +148,7 @@ namespace Genie
 	};
 	
 	template < class Tree >
-	FSTreePtr MakeFSTree( Tree* tree )
+	inline FSTreePtr MakeFSTree( Tree* tree )
 	{
 		FSTreePtr result( tree );
 		
