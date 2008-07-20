@@ -33,6 +33,16 @@ namespace Genie
 	{
 	}
 	
+	FSTree::FSTree() : itsParent(), itsName()
+	{
+	}
+	
+	FSTree::FSTree( const FSTreePtr&    parent,
+	                const std::string&  name ) : itsParent( parent ),
+	                                             itsName  ( name   )
+	{
+	}
+	
 	FSTree::~FSTree()
 	{
 	}

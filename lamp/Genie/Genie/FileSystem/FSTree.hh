@@ -78,19 +78,10 @@ namespace Genie
 			std::string  itsName;
 		
 		public:
-			FSTree()
-			{
-			}
-			
-			FSTree( const FSTreePtr& parent ) : itsParent( parent )
-			{
-			}
+			FSTree();
 			
 			FSTree( const FSTreePtr&    parent,
-			        const std::string&  name ) : itsParent( parent ),
-			                                     itsName  ( name   )
-			{
-			}
+			        const std::string&  name );
 			
 			virtual ~FSTree();
 			
