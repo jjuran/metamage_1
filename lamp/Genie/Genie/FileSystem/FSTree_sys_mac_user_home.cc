@@ -8,9 +8,6 @@
 // Nitrogen
 #include "Nitrogen/Folders.h"
 
-// Genie
-#include "Genie/FileSystem/FSTree_sys_mac_user.hh"
-
 
 namespace Genie
 {
