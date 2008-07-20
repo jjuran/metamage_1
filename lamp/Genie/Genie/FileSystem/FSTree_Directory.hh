@@ -217,12 +217,6 @@ namespace Genie
 	};
 	
 	
-	template < class FSTree_Type >
-	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
-	{
-		return GetSingleton< FSTree_Type >( parent, name );
-	}
-	
 	template < class Details >
 	class FSTree_Functional : public FSTree_Directory, public Details
 	{
@@ -262,6 +256,7 @@ namespace Genie
 			
 			void Map( const std::string& name, Function f );
 			
+			void AddMappings( const Mapping* begin );
 			void AddMappings( const Mapping* begin, const Mapping* end );
 			
 			FSTreePtr Lookup_Child( const std::string& name ) const;
@@ -273,6 +268,17 @@ namespace Genie
 	void FSTree_Functional< Details >::Map( const std::string& name, Function f )
 	{
 		itsMappings[ name ] = f;
+	}
+	
+	template < class Details >
+	void FSTree_Functional< Details >::AddMappings( const Mapping* array )
+	{
+		while ( array->name != NULL )
+		{
+			Map( array->name, array->f );
+			
+			++array;
+		}
 	}
 	
 	template < class Details >
@@ -336,6 +342,26 @@ namespace Genie
 	};
 	
 	typedef FSTree_Functional< Singleton_Functional_Details > FSTree_Functional_Singleton;
+	
+	typedef FSTree_Functional_Singleton::Mapping Singleton_Mapping;
+	
+	template < class FSTree_Type >
+	FSTreePtr Singleton_Factory( const FSTreePtr& parent, const std::string& name )
+	{
+		return GetSingleton< FSTree_Type >( parent, name );
+	}
+	
+	template < const Singleton_Mapping mappings[] >
+	FSTreePtr Premapped_Factory( const FSTreePtr& parent, const std::string& name )
+	{
+		FSTree_Functional_Singleton* raw_ptr = new FSTree_Functional_Singleton( parent, name );
+		
+		FSTreePtr result( raw_ptr );
+		
+		raw_ptr->AddMappings( mappings );
+		
+		return result;
+	}
 	
 	
 	template < class KeyName_Traits >
