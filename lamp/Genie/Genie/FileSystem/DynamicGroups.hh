@@ -6,9 +6,6 @@
 #ifndef GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 #define GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 
-// Nucleus
-#include "Nucleus/Convert.h"
-
 // Genie 
 #include "Genie/FileSystem/FSTree_Directory.hh"
 #include "Genie/IO/DynamicGroup.hh"
