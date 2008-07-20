@@ -594,7 +594,7 @@ namespace Genie
 	inline FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
 		return MakeFSTree( new FSTree_sys_mac_vol_N( ResolvePathname( "/sys/mac/vol" ),
-		                                             FSTree_sys_mac_vol_N::NameFromKey( vRefNum ),
+		                                             VRefNum_KeyName_Traits::NameFromKey( vRefNum ),
 		                                             vRefNum ) );
 	}
 	
