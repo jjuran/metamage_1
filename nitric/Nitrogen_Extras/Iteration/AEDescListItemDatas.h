@@ -66,11 +66,11 @@ namespace Nitrogen
 			operator GetResult() const  { return Get(); }
 	};
 	
-	template < DescType type >
+	template < DescType type, class AEDescList_Type >
 	class AEDescList_ItemData_Details
 	{
 		private:
-			Nucleus::Owned< AEDescList >& list;
+			Nucleus::Owned< AEDescList_Type >& list;
 			std::size_t index;
 			
 		public:
@@ -78,31 +78,31 @@ namespace Nitrogen
 			typedef typename DescType_Traits< type >::Result    GetResult;
 			typedef typename DescType_Traits< type >::Parameter SetParameter;
 			
-			AEDescList_ItemData_Details( Nucleus::Owned< AEDescList >& list, std::size_t index ) : list( list ), index( index )  {}
+			AEDescList_ItemData_Details( Nucleus::Owned< AEDescList_Type >& list, std::size_t index ) : list( list ), index( index )  {}
 			
 			GetResult Get() const  { return AEGetNthPtr< type >( list, index ); }
 			void Set( SetParameter param ) const  { AEPutPtr< type >( list, index, param ); }
 	};
 	
-	template < DescType type >
-	class AEDescList_ItemData : public Nucleus::Pseudoreference< AEDescList_ItemData_Details< type > >
+	template < DescType type, class AEDescList_Type >
+	class AEDescList_ItemData : public Nucleus::Pseudoreference< AEDescList_ItemData_Details< type, AEDescList_Type > >
 	{
 		private:
-			typedef Nucleus::Pseudoreference< AEDescList_ItemData_Details< type > > Base;
+			typedef Nucleus::Pseudoreference< AEDescList_ItemData_Details< type, AEDescList_Type > > Base;
 			
 		public:
 			typedef typename Base::Details Details;
 			typedef typename Base::GetResult GetResult;
 			typedef typename Base::SetParameter SetParameter;
 			
-			typedef AEDescList_ItemData< type > Reference;
+			typedef AEDescList_ItemData< type, AEDescList_Type > Reference;
 			typedef Const_AEDescList_ItemData< type > ConstReference;
 			
 			typedef Nucleus::Pseudopointer< Reference > Pointer;
 			typedef Nucleus::Pseudopointer< ConstReference > ConstPointer;
 			
 			explicit AEDescList_ItemData( Details theDetails ) : Base( theDetails )  {}
-			AEDescList_ItemData( Nucleus::Owned< AEDescList >& list, std::size_t index ) : Base( Details( list, index ) )  {}
+			AEDescList_ItemData( Nucleus::Owned< AEDescList_Type >& list, std::size_t index ) : Base( Details( list, index ) )  {}
 			
 			Pointer operator&() const  { return Pointer( Base::operator&().Get() ); }
 			
@@ -122,10 +122,10 @@ namespace Nitrogen
 namespace Nucleus
 {
 	
-	template < DescType type >
-	struct ReferenceTraits< Nitrogen::AEDescList_ItemData< type > >
+	template < DescType type, class AEDescList_Type >
+	struct ReferenceTraits< Nitrogen::AEDescList_ItemData< type, AEDescList_Type > >
 	{
-		typedef Nitrogen::AEDescList_ItemData< type > Reference;
+		typedef Nitrogen::AEDescList_ItemData< type, AEDescList_Type > Reference;
 		
 		typedef typename Reference::Value           Value;
 		typedef typename Reference::Pointer         Pointer;
@@ -229,13 +229,13 @@ namespace Nitrogen
 		return AEDescList_ItemData_ValueIterator< type >( list, AECountItems( list ) );
 	}
 	
-	template < DescType type, class Disposer >
+	template < DescType type, class AEDescList_Type >
 	class AEDescList_ItemData_BackInsertionIterator
 	{
 		private:
-			typedef AEDescList_ItemData_BackInsertionIterator< type, Disposer > This;
+			typedef AEDescList_ItemData_BackInsertionIterator< type, AEDescList_Type > This;
 			typedef This Proxy;
-			typedef Nucleus::Owned< AEDescList, Disposer > List;
+			typedef Nucleus::Owned< AEDescList_Type > List;
 			typedef typename DescType_Traits< type >::Parameter Parameter;
 			
 			List& list;
@@ -251,11 +251,11 @@ namespace Nitrogen
 			This& operator++(int)  { return *this; }
 	};
 	
-	template < DescType type, class Disposer >
-	inline AEDescList_ItemData_BackInsertionIterator< type, Disposer >
-	AEDescList_ItemData_BackInserter( Nucleus::Owned< AEDescList, Disposer >& list )
+	template < DescType type, class AEDescList_Type >
+	inline AEDescList_ItemData_BackInsertionIterator< type, AEDescList_Type >
+	AEDescList_ItemData_BackInserter( Nucleus::Owned< AEDescList_Type >& list )
 	{
-		return AEDescList_ItemData_BackInsertionIterator< type, Disposer >( list );
+		return AEDescList_ItemData_BackInsertionIterator< type, AEDescList_Type >( list );
 	}
 	
 }
