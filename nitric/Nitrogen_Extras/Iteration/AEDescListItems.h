@@ -22,17 +22,18 @@
 namespace Nitrogen
 {
 	
+	template < class AEDesc_Type >
 	class Const_AEDescList_Item_Details
 	{
 		private:
-			const AEDescList& list;
+			const AEDesc_Type& list;
 			std::size_t index;
 			
 		public:
-			typedef Nucleus::Owned< AEDesc > Value;
-			typedef Value           GetResult;
+			typedef Nucleus::Owned< AEDesc_Type >  Value;
+			typedef Value                          GetResult;
 			
-			Const_AEDescList_Item_Details( const AEDescList& list, std::size_t index ) 
+			Const_AEDescList_Item_Details( const AEDesc_Type& list, std::size_t index ) 
 			: 
 				list( list ), 
 				index( index )  {}
@@ -40,71 +41,78 @@ namespace Nitrogen
 			GetResult Get() const  { return AEGetNthDesc( list, index ); }
 	};
 	
-	typedef Nucleus::ConstPseudoreference< Const_AEDescList_Item_Details > Const_AEDescList_Item;
+	//typedef Nucleus::ConstPseudoreference< Const_AEDescList_Item_Details > Const_AEDescList_Item;
 	
+	template < class AEDesc_Type >
 	class AEDescList_Item_Details
 	{
 		private:
-			Nucleus::Owned< AEDescList >& list;
+			Nucleus::Owned< AEDesc_Type >& list;
 			std::size_t index;
 			
 		public:
-			typedef Nucleus::Owned< AEDesc > Value;
-			typedef Value           GetResult;
-			typedef const AEDesc&   SetParameter;
+			typedef Nucleus::Owned< AEDesc_Type >  Value;
+			typedef Value                          GetResult;
+			typedef const AEDesc_Type&             SetParameter;
 			
-			AEDescList_Item_Details( Nucleus::Owned< AEDescList >& list, std::size_t index ) : list( list ), index( index )  {}
+			AEDescList_Item_Details( Nucleus::Owned< AEDesc_Type >& list, std::size_t index ) : list( list ), index( index )  {}
 			
 			GetResult Get() const  { return AEGetNthDesc( list, index ); }
 			void Set( SetParameter param ) const  { AEPutDesc( list, index, param ); }
 	};
 	
-	typedef Nucleus::Pseudoreference< AEDescList_Item_Details > AEDescList_Item;
+	//typedef Nucleus::Pseudoreference< AEDescList_Item_Details > AEDescList_Item;
 	
+	template < class AEDesc_Type >
 	struct AEDescList_Item_Specifics
 	{
-		typedef UInt32                   size_type;
-		typedef SInt32                   difference_type;
-		typedef Nucleus::Owned< AEDesc >          value_type;
+		typedef UInt32                         size_type;
+		typedef SInt32                         difference_type;
+		typedef Nucleus::Owned< AEDesc_Type >  value_type;
 		
-		static std::size_t Size( const AEDescList& list )
+		static std::size_t Size( const AEDesc_Type& list )
 		{
 			return AECountItems( list );
 		}
 		
-		static value_type GetValue( const AEDescList& list, size_type position )
+		static value_type GetValue( const AEDesc_Type& list, size_type position )
 		{
-			return AEGetNthDesc( list, position + 1 );  // one-based
+			return AEGetNthDesc< AEDesc_Type >( list, position + 1 );  // one-based
 		}
 		
-		typedef const AEDescList& ContainerState;
+		typedef const AEDesc_Type& ContainerState;
 		typedef ContainerState IteratorState;
 	};
 	
-	typedef IndexedValueContainer< AEDescList_Item_Specifics > AEDescList_ItemValue_Container;
+	//typedef IndexedValueContainer< AEDescList_Item_Specifics > AEDescList_ItemValue_Container;
 	
-	inline AEDescList_ItemValue_Container AEDescList_ItemValues( const AEDescList& list )
+	typedef IndexedValueContainer< AEDescList_Item_Specifics< AEDesc_Data  > > AEDescList_Data_ItemValue_Container;
+	typedef IndexedValueContainer< AEDescList_Item_Specifics< AEDesc_Token > > AEDescList_Token_ItemValue_Container;
+	
+	template < class AEDesc_Type >
+	inline IndexedValueContainer< AEDescList_Item_Specifics< AEDesc_Type > > AEDescList_ItemValues( const AEDesc_Type& list )
 	{
-		return AEDescList_ItemValue_Container( list );
+		return IndexedValueContainer< AEDescList_Item_Specifics< AEDesc_Type > >( list );
 	}
 	
+	template < class AEDesc_Type >
 	class AEDescList_Item_ValueIterator
 	{
 		public:
 			typedef UInt32 size_type;
 			typedef SInt32 difference_type;
-			typedef Nucleus::Owned< AEDesc > value_type;
+			typedef Nucleus::Owned< AEDesc_Type > value_type;
 		
 		private:
 			typedef AEDescList_Item_ValueIterator This;
 			
-			const AEDescList& list;
+			const AEDesc_Type& list;
 			size_type position;
 		
 		public:
 			AEDescList_Item_ValueIterator() : list( Nucleus::Make< AEDescList >() )  {}
 			
-			AEDescList_Item_ValueIterator( const AEDescList& list, size_type pos )
+			AEDescList_Item_ValueIterator( const AEDesc_Type& list, size_type pos )
 			:
 				list( list ),
 				position( pos )
@@ -119,25 +127,27 @@ namespace Nitrogen
 			friend bool operator!=( const This& a, const This& b )  { return !( a == b ); }
 	};
 	
-	inline AEDescList_Item_ValueIterator
-	AEDescList_Item_ValuesBegin( const AEDescList& list )
+	template < class AEDesc_Type >
+	inline AEDescList_Item_ValueIterator< AEDesc_Type >
+	AEDescList_Item_ValuesBegin( const AEDesc_Type& list )
 	{
-		return AEDescList_Item_ValueIterator( list, 0 );
+		return AEDescList_Item_ValueIterator< AEDesc_Type >( list, 0 );
 	}
 	
-	inline AEDescList_Item_ValueIterator
-	AEDescList_Item_ValuesEnd( const AEDescList& list )
+	template < class AEDesc_Type >
+	inline AEDescList_Item_ValueIterator< AEDesc_Type >
+	AEDescList_Item_ValuesEnd( const AEDesc_Type& list )
 	{
-		return AEDescList_Item_ValueIterator( list, AECountItems( list ) );
+		return AEDescList_Item_ValueIterator< AEDesc_Type >( list, AECountItems( list ) );
 	}
 	
-	template < class Disposer >
+	template < class AEDesc_Type >
 	class AEDescList_Item_BackInsertionIterator
 	{
 		private:
-			typedef AEDescList_Item_BackInsertionIterator< Disposer > This;
+			typedef AEDescList_Item_BackInsertionIterator< AEDesc_Type > This;
 			typedef This Proxy;
-			typedef Nucleus::Owned< AEDescList, Disposer > List;
+			typedef Nucleus::Owned< AEDesc_Type > List;
 			
 			List& list;
 		
@@ -146,17 +156,17 @@ namespace Nitrogen
 			
 			Proxy& operator*()  { return *this; }
 			
-			Proxy& operator=( const AEDesc& param )  { AEPutDesc( list, 0, param );  return *this; }
+			Proxy& operator=( const AEDesc_Type& param )  { AEPutDesc( list, 0, param );  return *this; }
 			
 			This& operator++()     { return *this; }
 			This& operator++(int)  { return *this; }
 	};
 	
-	template < class Disposer >
-	inline AEDescList_Item_BackInsertionIterator< Disposer >
-	AEDescList_Item_BackInserter( Nucleus::Owned< AEDescList, Disposer >& list )
+	template < class AEDesc_Type >
+	inline AEDescList_Item_BackInsertionIterator< AEDesc_Type >
+	AEDescList_Item_BackInserter( Nucleus::Owned< AEDesc_Type >& list )
 	{
-		return AEDescList_Item_BackInsertionIterator< Disposer >( list );
+		return AEDescList_Item_BackInsertionIterator< AEDesc_Type >( list );
 	}
 	
 }
