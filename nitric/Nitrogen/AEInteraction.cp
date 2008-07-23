@@ -27,7 +27,7 @@ namespace Nitrogen
 	                                     AEIdleUPP          idleProc,
 	                                     AEFilterUPP        filterProc )
 	{
-		AEDesc reply;
+		AppleEvent reply;
 		
 		ThrowOSStatus( ::AESend( &appleEvent,
 		                         &reply,
@@ -44,7 +44,7 @@ namespace Nitrogen
 	{
 		return AESend( AECreateAppleEvent( eventClass,
 				                           eventID,
-				                           AECreateDesc< typeProcessSerialNumber >( CurrentProcess() ) ),
+				                           AECreateDesc< AEDesc_Data, typeProcessSerialNumber >( CurrentProcess() ) ),
 				       AESendMode( kAEWaitReply ) );
 	}
 	

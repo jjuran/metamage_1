@@ -99,13 +99,14 @@ namespace Nitrogen
 	
 #endif
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > AEResolve( const AEObjectSpecifier&  objectSpecifier, 
-	                                                      AEResolveCallbackFlags    callbackFlags )
+	Nucleus::Owned< AEDesc_Token > AEResolve( const AEDesc_ObjectSpecifier&  objectSpecifier, 
+	                                          AEResolveCallbackFlags         callbackFlags )
 	{
-		AEToken token;
+		AEDesc_Token token;
+		
 		ThrowOSStatus( ::AEResolve( &objectSpecifier, callbackFlags, &token ) );
 		
-		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( token );
+		return Nucleus::Owned< AEDesc_Token >::Seize( token );
 	}
 	
 	Nucleus::Owned< OSLAccessor > AEInstallObjectAccessor( const OSLAccessor& toInstall )
@@ -139,13 +140,13 @@ namespace Nitrogen
 		                    isSysHandler );
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > AECallObjectAccessor( AEObjectClass   desiredClass,
-	                                                                 const AEToken&  containerToken,
-	                                                                 AEObjectClass   containerClass,
-	                                                                 AEEnumerated    keyForm,
-	                                                                 const AEDesc&   keyData )
+	Nucleus::Owned< AEDesc_Token > AECallObjectAccessor( AEObjectClass        desiredClass,
+	                                                     const AEDesc_Token&  containerToken,
+	                                                     AEObjectClass        containerClass,
+	                                                     AEEnumerated         keyForm,
+	                                                     const AEDesc_Data&   keyData )
 	{
-		AEToken result;
+		AEDesc_Token result;
 		
 		ThrowOSStatus( ::AECallObjectAccessor( desiredClass,
 		                                       &containerToken,
@@ -154,15 +155,7 @@ namespace Nitrogen
 		                                       &keyData,
 		                                       &result ) );
 		
-		return Nucleus::Owned< AEToken, AETokenDisposer >::Seize( result );
-	}
-	
-	Nucleus::Owned< AEToken, AETokenDisposer > AECreateToken( DescType typeCode,
-	                                                          Nucleus::Owned< AEToken, AETokenDisposer > token )
-	{
-		Detail::AETokenEditor( token ).Get().descriptorType = typeCode;
-		
-		return token;
+		return Nucleus::Owned< AEDesc_Token >::Seize( result );
 	}
 	
 }

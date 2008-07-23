@@ -138,14 +138,14 @@ namespace Nitrogen
 	           typename AEEventHandler_RefCon_Traits< RefConType >::ProcPtr handler >
 	struct AEEventHandler_Callback
 	{
-		static pascal OSErr Adapter( AppleEvent const*  appleEvent,
-		                             AppleEvent      *  reply,
+		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
+		                             ::AppleEvent      *  reply,
 		                             long               refCon )
 		{
 			try
 			{
-				handler( *appleEvent,
-				         *reply,
+				handler( static_cast< AppleEvent const& >( *appleEvent ),
+				         static_cast< AppleEvent      & >( *reply      ),
 				         reinterpret_cast< RefConType >( refCon ) );
 			}
 			catch ( ... )
@@ -160,14 +160,14 @@ namespace Nitrogen
 	template < AEEventHandler_RefCon_Traits< void >::ProcPtr handler >
 	struct AEEventHandler_Callback< void, handler >
 	{
-		static pascal OSErr Adapter( AppleEvent const*  appleEvent,
-		                             AppleEvent      *  reply,
+		static pascal OSErr Adapter( ::AppleEvent const*  appleEvent,
+		                             ::AppleEvent      *  reply,
 		                             long )
 		{
 			try
 			{
-				handler( *appleEvent,
-				         *reply );
+				handler( static_cast< AppleEvent const& >( *appleEvent ),
+				         static_cast< AppleEvent      & >( *reply      ) );
 			}
 			catch ( ... )
 			{

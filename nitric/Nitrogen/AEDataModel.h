@@ -325,35 +325,27 @@ namespace Nitrogen
 	
 	using ::AEDesc;
 	using ::AEDescList;
-    using ::AEKeyDesc;
-	using ::AEAddressDesc;
 	using ::AERecord;
-	using ::AppleEvent;
+    using ::AEKeyDesc;
 	
-	typedef AEDesc     AEToken;
-	typedef AEDescList AETokenList;
-	typedef AERecord   AEObjectSpecifier;
-  }
+	struct AEDesc_Data : AEDesc
+	{
+	};
+	
+	typedef AEDesc_Data AEDescList_Data, AERecord_Data;
+	typedef AEDesc_Data AEAddressDesc, AppleEvent;
+	typedef AEDesc_Data AEDesc_ObjectSpecifier;
+	
+	struct AEDesc_Token : AEDesc
+	{
+	};
+	
+	typedef AEDesc_Token AEDescList_Token, AERecord_Token;
+	
+}
 
 namespace Nucleus
-  {
-	template <>
-	struct Disposer< Nitrogen::AEDesc > : public std::unary_function< Nitrogen::AEDesc, void >,
-	                                      private Nitrogen::DefaultDestructionOSStatusPolicy
-	{
-		// parameter can't be const
-		void operator()( Nitrogen::AEDesc desc ) const
-		{
-			// AEDisposeDesc() is documented as only ever returning noErr,
-			// but we check anyway to be future-proof.
-			
-			(void) Nitrogen::AppleEventManagerErrorsRegistrationDependency();
-			HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
-		}
-	};
-
-	template <>
-	struct LivelinessTraits< Nitrogen::AEDesc, Disposer< Nitrogen::AEDesc > >   { typedef SeizedValuesAreLive LivelinessTest; };
+{
 	
 	template <>
 	struct Maker< Nitrogen::AEDesc >
@@ -366,13 +358,51 @@ namespace Nucleus
 	};
 	
 	template <>
+	struct Disposer< Nitrogen::AEDesc_Data > : public std::unary_function< Nitrogen::AEDesc, void >,
+	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
+	{
+		// parameter can't be const
+		void operator()( Nitrogen::AEDesc desc ) const
+		{
+			// AEDisposeDesc() is documented as only ever returning noErr,
+			// but we check anyway to be future-proof.
+			
+			(void) Nitrogen::AppleEventManagerErrorsRegistrationDependency();
+			
+			HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
+		}
+	};
+
+	template <>
+	struct LivelinessTraits< Nitrogen::AEDesc_Data, Disposer< Nitrogen::AEDesc_Data > >   { typedef SeizedValuesAreLive LivelinessTest; };
+	
+	template <>
+	struct Disposer< Nitrogen::AEDesc_Token > : public std::unary_function< Nitrogen::AEDesc, void >,
+	                                            private Nitrogen::DefaultDestructionOSStatusPolicy
+	{
+		// parameter can't be const
+		void operator()( Nitrogen::AEDesc desc ) const
+		{
+			// AEDisposeDesc() is documented as only ever returning noErr,
+			// but we check anyway to be future-proof.
+			
+			(void) Nitrogen::AppleEventManagerErrorsRegistrationDependency();
+			
+			HandleDestructionOSStatus( ::AEDisposeToken( &desc ) );
+		}
+	};
+
+	template <>
+	struct LivelinessTraits< Nitrogen::AEDesc_Token, Disposer< Nitrogen::AEDesc_Token > >   { typedef SeizedValuesAreLive LivelinessTest; };
+	
+	template <>
 	struct Disposer< Nitrogen::AEKeyDesc > : public std::unary_function< Nitrogen::AEKeyDesc, void >,
 	                                         private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		// parameter can't be const
 		void operator()( Nitrogen::AEKeyDesc keyDesc ) const
 		{
-			Disposer< Nitrogen::AEDesc >()( keyDesc.descContent );
+			Disposer< Nitrogen::AEDesc_Data >()( keyDesc.descContent );
 		}
 	};
 	
@@ -391,7 +421,8 @@ namespace Nucleus
 			return result;
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
   {	
@@ -428,11 +459,11 @@ namespace Nitrogen
 	inline void DisposeAECoerceDescUPP( Nucleus::Owned< AECoerceDescUPP > )  {}
 	inline void DisposeAECoercePtrUPP ( Nucleus::Owned< AECoercePtrUPP  > )  {}
 	
-	inline void InvokeAECoerceDescUPP( const AEDesc&    fromDesc,
-	                                   DescType         toType,
-	                                   RefCon           handlerRefCon,
-	                                   AEDesc&          toDesc,
-	                                   AECoerceDescUPP  userUPP )
+	inline void InvokeAECoerceDescUPP( const AEDesc_Data&  fromDesc,
+	                                   DescType            toType,
+	                                   RefCon              handlerRefCon,
+	                                   AEDesc_Data&        toDesc,
+	                                   AECoerceDescUPP     userUPP )
 	{
 		ThrowOSStatus( userUPP( &fromDesc,
 		                        toType,
@@ -445,7 +476,7 @@ namespace Nitrogen
 	                                  std::size_t     dataSize,
 	                                  DescType        toType,
 	                                  RefCon          handlerRefCon,
-	                                  AEDesc&         toDesc,
+	                                  AEDesc_Data&    toDesc,
 	                                  AECoercePtrUPP  userUPP )
 	{
 		ThrowOSStatus( userUPP( typeCode,
@@ -553,15 +584,15 @@ namespace Nucleus
 
 namespace Nitrogen
   {
-	typedef Nucleus::Owned< AEDesc > ( *AECoerceDescProcPtr )( const AEDesc&  fromDesc,
-	                                                           DescType       toType,
-	                                                           RefCon         refCon );
+	typedef Nucleus::Owned< AEDesc_Data > ( *AECoerceDescProcPtr )( const AEDesc_Data&  fromDesc,
+	                                                                DescType            toType,
+	                                                                RefCon              refCon );
 	
-	typedef Nucleus::Owned< AEDesc > ( *AECoercePtrProcPtr )( DescType     typeCode,
-	                                                          const void*  dataPtr,
-	                                                          std::size_t  datasize,
-	                                                          DescType     toType,
-	                                                          RefCon       refCon );
+	typedef Nucleus::Owned< AEDesc_Data > ( *AECoercePtrProcPtr )( DescType     typeCode,
+	                                                               const void*  dataPtr,
+	                                                               std::size_t  datasize,
+	                                                               DescType     toType,
+	                                                               RefCon       refCon );
 	
 	template < AECoerceDescProcPtr handler >
 	struct Adapt_AECoerceDesc
@@ -573,7 +604,9 @@ namespace Nitrogen
 		{
 			try
 			{
-				*result = handler( *fromDesc, DescType( toType ), refCon ).Release();
+				*result = handler( static_cast< const AEDesc_Data& >( *fromDesc ),
+				                   DescType( toType ),
+				                   refCon ).Release();
 			}
 			catch ( OSStatus err )
 			{
@@ -700,13 +733,13 @@ namespace Nitrogen
 	                                        bool      isSysHandler );
 	
 	// 444
-	Nucleus::Owned< AEDesc > AECoercePtr( DescType     typeCode,
-	                                      const void*  dataPtr,
-	                                      Size         dataSize,
-	                                      DescType     toType );
+	Nucleus::Owned< AEDesc_Data > AECoercePtr( DescType     typeCode,
+	                                           const void*  dataPtr,
+	                                           Size         dataSize,
+	                                           DescType     toType );
 	
 	// 461
-	Nucleus::Owned< AEDesc > AECoerceDesc( const AEDesc& desc, DescType toType );
+	Nucleus::Owned< AEDesc_Data > AECoerceDesc( const AEDesc& desc, DescType toType );
 	
 	#pragma mark -
 	#pragma mark ¥ AEDescs ¥
@@ -714,22 +747,25 @@ namespace Nitrogen
 	namespace Detail
 	{
 		
+		template < class AEDesc_Type >
 		class AEDescEditor
 		{
 			private:
-				Nucleus::Owned< AEDesc >& desc;
-				AEDesc workingCopy;
+				Nucleus::Owned< AEDesc_Type >& itsDesc;
+				AEDesc_Type                    itsWorkingCopy;
 			
 			public:
-				AEDescEditor( Nucleus::Owned< AEDesc >& desc )
+				AEDescEditor( Nucleus::Owned< AEDesc_Type >& desc )
 				:
-					desc       ( desc           ), 
-					workingCopy( desc.Release() )
-				{}
-				~AEDescEditor()  { desc = Nucleus::Owned< AEDesc >::Seize( workingCopy ); }
+					itsDesc       ( desc           ), 
+					itsWorkingCopy( desc.Release() )
+				{
+				}
 				
-				AEDesc& Get()       { return workingCopy; }
-				operator AEDesc&()  { return Get();       }
+				~AEDescEditor()  { itsDesc = Nucleus::Owned< AEDesc_Type >::Seize( itsWorkingCopy ); }
+				
+				AEDesc_Type& Get()       { return itsWorkingCopy; }
+				operator AEDesc_Type&()  { return Get();          }
 		};
 		
 	}
@@ -751,53 +787,155 @@ namespace Nitrogen
 	                    AEGetAttributePtr_Result;
 
 	// 484
-	inline Nucleus::Owned< AEDesc > AEInitializeDesc()
+	inline AEDesc AEInitializeDesc()
 	{
-		return Nucleus::Owned< AEDesc >::Seize( Nucleus::Make< AEDesc >() );
+		return Nucleus::Make< AEDesc >();
 	}
 	
-	Nucleus::Owned< AEDesc > AECreateDesc( DescType     typeCode,
-	                                       const void*  dataPtr,
-	                                       Size         dataSize );
-	
-	Nucleus::Owned< AEDesc > AECreateDesc( DescType  typeCode,
-	                                       Handle    handle );
-	
-	Nucleus::Owned< AEDesc > AECreateDesc( DescType         typeCode,
-	                                       Nucleus::Owned< Handle >  handle );
-	
-	template < class T >
-	inline Nucleus::Owned< AEDesc > AECreateDesc( DescType typeCode, T** handle )
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AEInitializeDesc()
 	{
-		return AECreateDesc( typeCode, Handle( handle ) );
+		// AEDesc_Type must be a subclass of AEDesc
+		(void) static_cast< const AEDesc& >( AEDesc_Type() );
+		
+		AEDesc desc = AEInitializeDesc();
+		
+		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
 	}
 	
-	template < class T >
-	inline Nucleus::Owned< AEDesc > AECreateDesc( DescType                                            typeCode,
-	                                              Nucleus::Owned< T**, Nucleus::Disposer< Handle > >  handle )
+	namespace Detail
 	{
-		return AECreateDesc( typeCode, Nucleus::Owned< Handle >( handle ) );
+		
+		AEDesc AECreateDesc_Unowned( DescType     typeCode,
+		                             const void*  dataPtr,
+		                             Size         dataSize );
+		
+		AEDesc AECreateDesc_Unowned( DescType typeCode, Handle handle );
+		
+		AEDesc AECreateDesc_Unowned( DescType typeCode, Nucleus::Owned< Handle > handle );
+		
+		AEDesc AEDuplicateDesc_Unowned( const AEDesc& desc );
+		
+		AEDesc AECreateList_Unowned( const void*  factoringPtr,
+	                                 std::size_t  factoredSize,
+	                                 bool         isRecord );
+		
+		AEDesc AEGetNthDesc_Unowned( const AEDesc&  listDesc,
+	                                 long           index,
+	                                 DescType       desiredType,
+	                                 ::AEKeyword*   keyword );
+		
+		AEDesc AEGetKeyDesc_Unowned( const AERecord&  record,
+	                                 AEKeyword        keyword,
+	                                 DescType         desiredType );
+		
 	}
 	
-	Nucleus::Owned< AEDesc > AECreateDesc( DescType typeCode, Nucleus::Owned< AEDesc > desc );
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType     typeCode,
+	                                                   const void*  dataPtr,
+	                                                   Size         dataSize )
+	{
+		// AEDesc_Type must be a subclass of AEDesc
+		(void) static_cast< const AEDesc& >( AEDesc_Type() );
+		
+		AEDesc desc = Detail::AECreateDesc_Unowned( typeCode, dataPtr, dataSize );
+		
+		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+	}
+	
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType  typeCode,
+	                                                   Handle    handle )
+	{
+		// AEDesc_Type must be a subclass of AEDesc
+		(void) static_cast< const AEDesc& >( AEDesc_Type() );
+		
+		AEDesc desc = Detail::AECreateDesc_Unowned( typeCode, handle );
+		
+		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+	}
+	
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType                  typeCode,
+	                                                   Nucleus::Owned< Handle >  handle )
+	{
+		// AEDesc_Type must be a subclass of AEDesc
+		(void) static_cast< const AEDesc& >( AEDesc_Type() );
+		
+		AEDesc desc = Detail::AECreateDesc_Unowned( typeCode, handle );
+		
+		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+	}
+	
+	template < class AEDesc_Type, class T >
+	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType typeCode, T** handle )
+	{
+		return AECreateDesc< AEDesc_Type >( typeCode, Handle( handle ) );
+	}
+	
+	template < class AEDesc_Type, class T >
+	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType                                            typeCode,
+	                                                   Nucleus::Owned< T**, Nucleus::Disposer< Handle > >  handle )
+	{
+		return AECreateDesc< AEDesc_Type >( typeCode, Nucleus::Owned< Handle >( handle ) );
+	}
+	
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType typeCode, Nucleus::Owned< AEDesc_Type > desc )
+	{
+		Detail::AEDescEditor< AEDesc_Type >( desc ).Get().descriptorType = typeCode;
+		
+		return desc;
+	}
 	
 	
-	inline void AEDisposeDesc( Nucleus::Owned< AEDesc > )  {}
+	inline void AEDisposeDesc( Nucleus::Owned< AEDesc_Data > )
+	{
+	}
 	
-	Nucleus::Owned< AEDesc > AEDuplicateDesc( const AEDesc& desc );
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AEDuplicateDesc( const AEDesc& original )
+	{
+		AEDesc desc = Detail::AEDuplicateDesc_Unowned( original );
+		
+		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+	}
+	
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AEDuplicateDesc( const AEDesc_Type& desc )
+	{
+		const AEDesc& basic( desc );
+		
+		return AEDuplicateDesc< AEDesc_Type >( basic );
+	}
 	
 	#pragma mark -
 	#pragma mark ¥ AEDescLists ¥
 	
-	Nucleus::Owned< AEDesc > AECreateList( bool isRecord = false );
-	
-	Nucleus::Owned< AEDesc > AECreateList( const void*  factoringPtr,
-	                                       std::size_t  factoredSize,
-	                                       bool         isRecord );
-	
-	inline Nucleus::Owned< AEDesc > AECreateList( DescType typeCode, bool isRecord )
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AECreateList( const void*  factoringPtr,
+	                                                   std::size_t  factoredSize,
+	                                                   bool         isRecord )
 	{
-		return AECreateDesc( typeCode, AECreateList( isRecord ) );
+		// Generally speaking we won't use factoring for tokens, but since the
+		// unfactored version calls this one it's simpler to be general.
+		
+		AEDesc desc = Detail::AECreateList_Unowned( factoringPtr, factoredSize, isRecord );
+		
+		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+	}
+	
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AECreateList( bool isRecord = false )
+	{
+		return AECreateList< AEDesc_Type >( NULL, 0, isRecord );
+	}
+	
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AECreateList( DescType typeCode, bool isRecord )
+	{
+		return AECreateDesc( typeCode, AECreateList< AEDesc_Type >( isRecord ) );
 	}
 	
 	long AECountItems( const AEDesc& desc );
@@ -808,19 +946,32 @@ namespace Nitrogen
 	               const void*  dataPtr,
 	               Size         dataSize );
 	
-	void AEPutPtr( Nucleus::Owned< AEDescList >&  list,
-	               long                           index,
-	               DescType                       type,
-	               const void*                    dataPtr,
-	               Size                           dataSize );
+	template < class AEDescList_Type >
+	inline void AEPutPtr( Nucleus::Owned< AEDescList_Type >&  list,
+	                      long                                index,
+	                      DescType                            type,
+	                      const void*                         dataPtr,
+	                      Size                                dataSize )
+	{
+		AEPutPtr( Detail::AEDescEditor< AEDescList_Type >( list ),
+		          index,
+		          type,
+		          dataPtr,
+		          dataSize );
+	}
 	
 	void AEPutDesc( AEDescList&    list,
 	                long           index,
 	                const AEDesc&  desc );
 	
-	void AEPutDesc( Nucleus::Owned< AEDescList >&  list,
-	                long                           index,
-	                const AEDesc&                  desc );
+	// Assumes AEDesc_Foo == AEDescList_Foo
+	template < class AEDesc_Type >
+	inline void AEPutDesc( Nucleus::Owned< AEDesc_Type >&  list,
+	                long                                   index,
+	                const AEDesc_Type&                     desc )
+	{
+		AEPutDesc( Detail::AEDescEditor< AEDesc_Type >( list ), index, desc );
+	}
 	
 	struct GetNthPtr_Result
 	{
@@ -835,19 +986,31 @@ namespace Nitrogen
 	                              void*          dataPtr,
 	                              Size           maximumSize );
 	
-	Nucleus::Owned< AEDesc > AEGetNthDesc( const AEDesc&  listDesc,
-	                                       long           index,
-	                                       DescType       desiredType = typeWildCard,
-	                                       ::AEKeyword*   keyword     = NULL );
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AEGetNthDesc( const AEDesc&  listDesc,
+	                                                   long           index,
+	                                                   DescType       desiredType = typeWildCard,
+	                                                   ::AEKeyword*   keyword     = NULL )
+	{
+		AEDesc desc = Detail::AEGetNthDesc_Unowned( listDesc, index, desiredType, keyword );
+		
+		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+	}
 	
-	Nucleus::Owned< AEDesc > AEGetNthDesc( const AEDesc&  listDesc,
-	                                       long           index,
-	                                       ::AEKeyword*   keyword );
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Type > AEGetNthDesc( const AEDesc&  listDesc,
+	                                                   long           index,
+	                                                   ::AEKeyword*   keyword )
+	{
+		return AEGetNthDesc< AEDesc_Type >( listDesc, index, typeWildCard, keyword );
+	}
 	
 	AESizeOfNthItem_Result AESizeOfNthItem( const AEDescList& list, long index );
 	
-	void AEDeleteItem(                 AEDescList  & listDesc, long index );
-	void AEDeleteItem( Nucleus::Owned< AEDescList >& listDesc, long index );
+	// If you have a reason for deleting an item in a token list, please let me know
+	
+	void AEDeleteItem(                 AEDescList_Data  & listDesc, long index );
+	void AEDeleteItem( Nucleus::Owned< AEDescList_Data >& listDesc, long index );
 	
 	#pragma mark -
 	#pragma mark ¥ AERecords ¥
@@ -863,11 +1026,19 @@ namespace Nitrogen
 	                  const void*  dataPtr,
 	                  std::size_t  dataSize );
 	
-	void AEPutKeyPtr( Nucleus::Owned< AERecord >&  record,
-	                  AEKeyword                    keyword,
-	                  DescType                     typeCode,
-	                  const void*                  dataPtr,
-	                  std::size_t                  dataSize );
+	template < class AEDesc_Type >
+	inline void AEPutKeyPtr( Nucleus::Owned< AEDesc_Type >&  record,
+	                         AEKeyword                       keyword,
+	                         DescType                        typeCode,
+	                         const void*                     dataPtr,
+	                         std::size_t                     dataSize )
+	{
+		AEPutKeyPtr( Detail::AEDescEditor< AEDesc_Type >( record ),
+		             keyword,
+		             typeCode,
+		             dataPtr,
+		             dataSize );
+	}
 	
 	void AEPutKeyDesc( AERecord&      record,
 	                   AEKeyword      keyword,
@@ -876,12 +1047,20 @@ namespace Nitrogen
 	void AEPutKeyDesc( AERecord&         record,
 	                   const AEKeyDesc&  keyDesc );
 	
-	void AEPutKeyDesc( Nucleus::Owned< AERecord >&  record,
-	                   AEKeyword                    keyword,
-	                   const AEDesc&                desc );
+	template < class AEDesc_Type >
+	inline void AEPutKeyDesc( Nucleus::Owned< AEDesc_Type >&  record,
+	                          AEKeyword                       keyword,
+	                          const AEDesc_Type&              desc )
+	{
+		AEPutKeyDesc( Detail::AEDescEditor< AEDesc_Type >( record ), keyword, desc );
+	}
 	
-	void AEPutKeyDesc( Nucleus::Owned< AERecord >&  record,
-	                   const AEKeyDesc&             keyDesc );
+	template < class AEDesc_Type >
+	inline void AEPutKeyDesc( Nucleus::Owned< AEDesc_Type >&  record,
+	                          const AEKeyDesc&                keyDesc )
+	{
+		AEPutKeyDesc( Detail::AEDescEditor< AEDesc_Type >( record ), keyDesc );
+	}
 	
 	class AEPutKeyDesc_Binding
 	{
@@ -908,15 +1087,26 @@ namespace Nitrogen
 	                                void*            dataPtr,
 	                                std::size_t      maximumSize );
 	
-	Nucleus::Owned< AEDesc > AEGetKeyDesc( const AERecord&  record,
-	                                       AEKeyword        keyword,
-	                                       DescType         desiredType = typeWildCard );
+	template < class AEDesc_Type >
+	inline Nucleus::Owned< AEDesc_Data > AEGetKeyDesc( const AERecord&  record,
+	                                                   AEKeyword        keyword,
+	                                                   DescType         desiredType = typeWildCard )
+	{
+		AEDesc desc = Detail::AEGetKeyDesc_Unowned( record, keyword, desiredType );
+		
+		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+	}
 	
 	AESizeOfKeyDesc_Result AESizeOfKeyDesc( const AERecord&  record,
 	                                        AEKeyword        keyword );
 	
 	void AEDeleteKeyDesc(                 AERecord  & record, AEKeyword keyword );
-	void AEDeleteKeyDesc( Nucleus::Owned< AERecord >& record, AEKeyword keyword );
+	
+	template < class AEDesc_Type >
+	inline void AEDeleteKeyDesc( Nucleus::Owned< AEDesc_Type >& record, AEKeyword keyword )
+	{
+		AEDeleteKeyDesc( Detail::AEDescEditor< AEDesc_Type >( record ), keyword );
+	}
 	
 	#pragma mark -
 	#pragma mark ¥ AppleEvents ¥
@@ -953,9 +1143,9 @@ namespace Nitrogen
 	                                    void*              dataPtr,
 	                                    std::size_t        maximumSize );
 	
-	Nucleus::Owned< AEDesc > AEGetParamDesc( const AppleEvent&  appleEvent,
-	                                         AEKeyword          keyword,
-	                                         DescType           desiredType = typeWildCard );
+	Nucleus::Owned< AEDesc_Data > AEGetParamDesc( const AppleEvent&  appleEvent,
+	                                              AEKeyword          keyword,
+	                                              DescType           desiredType = typeWildCard );
 	
 	AESizeOfParam_Result AESizeOfParam( const AppleEvent&  appleEvent,
 	                                    AEKeyword          keyword );
@@ -989,9 +1179,9 @@ namespace Nitrogen
 	                                            void*              dataPtr,
 	                                            std::size_t        maximumSize );
 	
-	Nucleus::Owned< AEDesc > AEGetAttributeDesc( const AppleEvent&  appleEvent,
-	                                             AEKeyword          keyword,
-	                                             DescType           desiredType = typeWildCard );
+	Nucleus::Owned< AEDesc_Data > AEGetAttributeDesc( const AppleEvent&  appleEvent,
+	                                                  AEKeyword          keyword,
+	                                                  DescType           desiredType = typeWildCard );
 	
 	AESizeOfAttribute_Result AESizeOfAttribute( const AppleEvent&  appleEvent,
 	                                            AEKeyword          keyword );
@@ -1013,10 +1203,10 @@ namespace Nitrogen
 	                        std::size_t  dataSize,
 	                        AEDesc&      result );
 	
-	void AEReplaceDescData( DescType                   typeCode,
-	                        const void*                dataPtr,
-	                        std::size_t                dataSize,
-	                        Nucleus::Owned< AEDesc >&  result );
+	void AEReplaceDescData( DescType                        typeCode,
+	                        const void*                     dataPtr,
+	                        std::size_t                     dataSize,
+	                        Nucleus::Owned< AEDesc_Data >&  result );
 	
 	
 	#pragma mark -
@@ -1058,12 +1248,12 @@ namespace Nitrogen
 		private:
 			DescType fromType;
 			DescType toType;
-			Nucleus::Owned< AEDesc >& theDesc;
+			Nucleus::Owned< AEDesc_Data >& theDesc;
 		
 		public:
-			AECoercePtr_Putter( DescType                   from,
-			                    DescType                   to,
-			                    Nucleus::Owned< AEDesc >&  desc )
+			AECoercePtr_Putter( DescType                        from,
+			                    DescType                        to,
+			                    Nucleus::Owned< AEDesc_Data >&  desc )
 			: fromType( from ),
 			  toType  ( to   ),
 			  theDesc ( desc )  {}
@@ -1075,10 +1265,10 @@ namespace Nitrogen
 	};
 	
 	template < DescType type >
-	inline Nucleus::Owned< AEDesc > AECoercePtr( typename DescType_Traits< type >::Parameter  data,
-	                                             DescType                                     toType )
+	inline Nucleus::Owned< AEDesc_Data > AECoercePtr( typename DescType_Traits< type >::Parameter  data,
+	                                                  DescType                                     toType )
 	{
-		Nucleus::Owned< AEDesc > result;
+		Nucleus::Owned< AEDesc_Data > result;
 		
 		DescType_Traits< type >().Put( data,
 		                               AECoercePtr_Putter( DescType_Map_Traits< type >::result,
@@ -1089,29 +1279,34 @@ namespace Nitrogen
 	}
 	
 	
+	template < class AEDesc_Type >
 	class AECreateDesc_Putter
 	{
 		private:
-			DescType theType;
-			Nucleus::Owned< AEDesc >& theDesc;
+			DescType                        theType;
+			Nucleus::Owned< AEDesc_Type >&  theDesc;
 		
 		public:
-			AECreateDesc_Putter( DescType type, Nucleus::Owned< AEDesc >& desc ) : theType( type ), theDesc( desc )  {}
+			AECreateDesc_Putter( DescType                        type,
+			                     Nucleus::Owned< AEDesc_Type >&  desc ) : theType( type ),
+			                                                              theDesc( desc )
+			{
+			}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				theDesc = AECreateDesc( theType, begin, Detail::Distance( begin, end ) );
+				theDesc = AECreateDesc< AEDesc_Type >( theType, begin, Detail::Distance( begin, end ) );
 			}
 	};
 	
-	template < DescType type >
-	inline Nucleus::Owned< AEDesc > AECreateDesc( typename DescType_Traits< type >::Parameter  data )
+	template < class AEDesc_Type, DescType type >
+	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( typename DescType_Traits< type >::Parameter  data )
 	{
-		Nucleus::Owned< AEDesc > result;
+		Nucleus::Owned< AEDesc_Type > result;
 		
 		DescType_Traits< type >().Put( data,
-		                               AECreateDesc_Putter( DescType_Map_Traits< type >::result,
-		                                                    result ) );
+		                               AECreateDesc_Putter< AEDesc_Type >( DescType_Map_Traits< type >::result,
+		                                                                   result ) );
 		
 		return result;
 	}
@@ -1149,13 +1344,13 @@ namespace Nitrogen
 		                               DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < DescType type, class Disposer >
-	inline void AEPutPtr( Nucleus::Owned< AEDescList, Disposer >&               list,
-	                      long                                                  index,
-	                      typename DescType_Traits< type >::Parameter           data )
+	template < DescType type, class AEDescList_Type >
+	inline void AEPutPtr( Nucleus::Owned< AEDescList_Type >&           list,
+	                      long                                         index,
+	                      typename DescType_Traits< type >::Parameter  data )
 	{
 		DescType_Traits< type >().Put( data,
-		                               AEPutPtr_Putter( Detail::AEDescEditor( list ),
+		                               AEPutPtr_Putter( Detail::AEDescEditor< AEDescList_Type >( list ),
 		                                                index,
 		                                                DescType( DescType_Map_Traits< type >::result ) ) );
 	}
@@ -1234,13 +1429,13 @@ namespace Nitrogen
 		                                                   DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < DescType type, class Disposer >
-	inline void AEPutKeyPtr( Nucleus::Owned< AERecord, Disposer >&                 record,
-	                         AEKeyword                                             keyword,
-	                         typename DescType_Traits< type >::Parameter           data )
+	template < class AERecord_Type, DescType type >
+	inline void AEPutKeyPtr( Nucleus::Owned< AERecord_Type >&             record,
+	                         AEKeyword                                    keyword,
+	                         typename DescType_Traits< type >::Parameter  data )
 	{
 		DescType_Traits< type >().Put( data,
-		                               AEPutKeyPtr_Putter( Detail::AEDescEditor( record ),
+		                               AEPutKeyPtr_Putter( Detail::AEDescEditor< AERecord_Type >( record ),
 		                                                   keyword,
 		                                                   DescType( DescType_Map_Traits< type >::result ) ) );
 	}
@@ -1255,11 +1450,11 @@ namespace Nitrogen
 		                                                   DescType( AEKeyword_Traits< key >::descType ) ) );
 	}
 	
-	template < AEKeyword key, class Disposer >
-	inline void AEPutKeyPtr( Nucleus::Owned< AERecord, Disposer >&        record,
+	template < class AERecord_Type, AEKeyword key >
+	inline void AEPutKeyPtr( Nucleus::Owned< AERecord_Type >&             record,
 	                         typename AEKeyword_Traits< key >::Parameter  data )
 	{
-		AEPutKeyPtr< key >( Detail::AEDescEditor( record ), data );
+		AEPutKeyPtr< key >( Detail::AEDescEditor< AERecord_Type >( record ), data );
 	}
 	
 	template < AEKeyword key >
@@ -1363,13 +1558,13 @@ namespace Nitrogen
 		                                                     DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < DescType type, class Disposer >
-	inline void AEPutParamPtr( Nucleus::Owned< AppleEvent, Disposer >&               appleEvent,
-	                           AEKeyword                                             keyword,
-	                           typename DescType_Traits< type >::Parameter           data )
+	template < DescType type >
+	inline void AEPutParamPtr( Nucleus::Owned< AppleEvent >&                appleEvent,
+	                           AEKeyword                                    keyword,
+	                           typename DescType_Traits< type >::Parameter  data )
 	{
 		DescType_Traits< type >().Put( data,
-		                               AEPutParamPtr_Putter( Detail::AEDescEditor( appleEvent ),
+		                               AEPutParamPtr_Putter( Detail::AEDescEditor< AppleEvent >( appleEvent ),
 		                                                     keyword,
 		                                                     DescType( DescType_Map_Traits< type >::result ) ) );
 	}
@@ -1384,11 +1579,11 @@ namespace Nitrogen
 		                                                     DescType( AEKeyword_Traits< key >::descType ) ) );
 	}
 	
-	template < AEKeyword key, class Disposer >
-	inline void AEPutParamPtr( Nucleus::Owned< AppleEvent, Disposer >&      appleEvent,
+	template < AEKeyword key >
+	inline void AEPutParamPtr( Nucleus::Owned< AppleEvent >&                appleEvent,
 	                           typename AEKeyword_Traits< key >::Parameter  data )
 	{
-		AEPutParamPtr< key >( Detail::AEDescEditor( appleEvent ), data );
+		AEPutParamPtr< key >( Detail::AEDescEditor< AppleEvent >( appleEvent ), data );
 	}
 	
 	
@@ -1472,13 +1667,13 @@ namespace Nitrogen
 		                               DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < DescType type, class Disposer >
-	inline void AEPutAttributePtr( Nucleus::Owned< AppleEvent, Disposer >&               appleEvent,
-	                               AEKeyword                                             keyword,
-	                               typename DescType_Traits< type >::Parameter           data )
+	template < DescType type >
+	inline void AEPutAttributePtr( Nucleus::Owned< AppleEvent >&                appleEvent,
+	                               AEKeyword                                    keyword,
+	                               typename DescType_Traits< type >::Parameter  data )
 	{
 		DescType_Traits< type >().Put( data,
-		                               AEPutAttributePtr_Putter( Detail::AEDescEditor( appleEvent ),
+		                               AEPutAttributePtr_Putter( Detail::AEDescEditor< AppleEvent >( appleEvent ),
 		                                                         keyword,
 		                                                         DescType( DescType_Map_Traits< type >::result ) ) );
 	}
@@ -1493,11 +1688,11 @@ namespace Nitrogen
 		                                                         DescType( AEKeyword_Traits< key >::descType ) ) );
 	}
 	
-	template < AEKeyword key, class Disposer >
-	inline void AEPutAttributePtr( Nucleus::Owned< AppleEvent, Disposer >&      appleEvent,
+	template < AEKeyword key >
+	inline void AEPutAttributePtr( Nucleus::Owned< AppleEvent >&                appleEvent,
 	                               typename AEKeyword_Traits< key >::Parameter  data )
 	{
-		AEPutAttributePtr< key >( Detail::AEDescEditor( appleEvent ), data );
+		AEPutAttributePtr< key >( Detail::AEDescEditor< AppleEvent >( appleEvent ), data );
 	}
 	
 	
@@ -1587,12 +1782,12 @@ namespace Nitrogen
 	class AEReplaceDescData_Putter
 	{
 		private:
-			DescType theType;
-			Nucleus::Owned< AEDesc >& theDesc;
+			DescType                        theType;
+			Nucleus::Owned< AEDesc_Data >&  theDesc;
 		
 		public:
-			AEReplaceDescData_Putter( DescType                   type,
-			                          Nucleus::Owned< AEDesc >&  desc )
+			AEReplaceDescData_Putter( DescType                        type,
+			                          Nucleus::Owned< AEDesc_Data >&  desc )
 			: theType( type ),
 			  theDesc( desc )  {}
 			
@@ -1611,13 +1806,13 @@ namespace Nitrogen
 		                                                         result ) );
 	}
 	
-	template < DescType type, class Disposer >
-	inline void AEReplaceDescData( typename DescType_Traits< type >::Parameter           data,
-	                               Nucleus::Owned< AEDesc, Disposer >&                   result )
+	template < DescType type >
+	inline void AEReplaceDescData( typename DescType_Traits< type >::Parameter  data,
+	                               Nucleus::Owned< AEDesc_Data >&               result )
 	{
 		DescType_Traits< type >().Put( data,
 		                               AEReplaceDescData_Putter( DescType_Map_Traits< type >::result,
-		                                                         Detail::AEDescEditor( result ) ) );
+		                                                         Detail::AEDescEditor< AEDesc_Data >( result ) ) );
 	}
 	
 }

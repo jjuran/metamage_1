@@ -141,14 +141,14 @@ namespace Nitrogen
 	                                   const AEDesc&                         scriptData,
 	                                   OSAModeFlags                          modeFlags = OSAModeFlags() );
 	
-	Nucleus::Owned< AEDesc > OSAStore( ComponentInstance  scriptingComponent,
-	                                   OSAID              scriptID,
-	                                   DescType           desiredType = typeOSAGenericStorage,
-	                                   OSAModeFlags       modeFlags   = kOSAModeNull );
+	Nucleus::Owned< AEDesc_Data > OSAStore( ComponentInstance  scriptingComponent,
+	                                        OSAID              scriptID,
+	                                        DescType           desiredType = typeOSAGenericStorage,
+	                                        OSAModeFlags       modeFlags   = kOSAModeNull );
 	
-	inline Nucleus::Owned< AEDesc > OSAStore( const OSASpec&  script,
-	                                          DescType        desiredType = typeOSAGenericStorage,
-	                                          OSAModeFlags    modeFlags   = OSAModeFlags() )
+	inline Nucleus::Owned< AEDesc_Data > OSAStore( const OSASpec&  script,
+	                                               DescType        desiredType = typeOSAGenericStorage,
+	                                               OSAModeFlags    modeFlags   = OSAModeFlags() )
 	{
 		return OSAStore( script.component, script.id, desiredType, modeFlags );
 	}
@@ -165,14 +165,14 @@ namespace Nitrogen
 		return OSAExecute( script.component, script.id, contextID, modeFlags );
 	}
 	
-	Nucleus::Owned< AEDesc > OSADisplay( ComponentInstance  scriptingComponent,
-	                                     OSAID              scriptValueID,
-	                                     DescType           desiredType = typeChar,
-	                                     OSAModeFlags       modeFlags   = OSAModeFlags() );
+	Nucleus::Owned< AEDesc_Data > OSADisplay( ComponentInstance  scriptingComponent,
+	                                          OSAID              scriptValueID,
+	                                          DescType           desiredType = typeChar,
+	                                          OSAModeFlags       modeFlags   = OSAModeFlags() );
 	
-	inline Nucleus::Owned< AEDesc > OSADisplay( const OSASpec&  scriptValue,
-	                                            DescType        desiredType = typeChar,
-	                                            OSAModeFlags    modeFlags   = OSAModeFlags() )
+	inline Nucleus::Owned< AEDesc_Data > OSADisplay( const OSASpec&  scriptValue,
+	                                                 DescType        desiredType = typeChar,
+	                                                 OSAModeFlags    modeFlags   = OSAModeFlags() )
 	{
 		return OSADisplay( scriptValue.component,
 		                   scriptValue.id,
@@ -180,9 +180,9 @@ namespace Nitrogen
 		                   modeFlags );
 	}
 	
-	Nucleus::Owned< AEDesc > OSAScriptError( ComponentInstance  scriptingComponent,
-	                                         AEKeyword          selector,
-	                                         DescType           desiredType );
+	Nucleus::Owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
+	                                              AEKeyword          selector,
+	                                              DescType           desiredType );
 	
 	inline void OSADispose( Nucleus::Owned< OSASpec > )  {}
 	
@@ -191,7 +191,7 @@ namespace Nitrogen
 	// OSASetActiveProc
 	// OSAGetActiveProc
 	
-	Nucleus::Owned< AEDesc > OSAScriptingComponentName( ComponentInstance scriptingComponent );
+	Nucleus::Owned< AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent );
 	
 	Nucleus::Owned< OSASpec > OSACompile( Nucleus::Shared< ComponentInstance >  scriptingComponent, 
 	                                      const AEDesc&                         sourceData, 

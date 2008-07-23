@@ -52,12 +52,12 @@ namespace Nitrogen
 		                                                  OSAID( resultingScriptID ) ) );
 	}
 	
-	Nucleus::Owned< AEDesc > OSAStore( ComponentInstance  scriptingComponent,
-	                                   OSAID              scriptID,
-	                                   DescType           desiredType,
-	                                   OSAModeFlags       modeFlags )
+	Nucleus::Owned< AEDesc_Data > OSAStore( ComponentInstance  scriptingComponent,
+	                                        OSAID              scriptID,
+	                                        DescType           desiredType,
+	                                        OSAModeFlags       modeFlags )
 	{
-		AEDesc resultingScriptData;
+		AEDesc_Data resultingScriptData;
 		
 		ThrowOSStatus( ::OSAStore( scriptingComponent,
 		                           scriptID,
@@ -65,7 +65,7 @@ namespace Nitrogen
 		                           modeFlags,
 		                           &resultingScriptData ) );
 		
-		return Nucleus::Owned< AEDesc >::Seize( resultingScriptData );
+		return Nucleus::Owned< AEDesc_Data >::Seize( resultingScriptData );
 	}
 	
 	Nucleus::Owned< OSASpec > OSAExecute( Nucleus::Shared< ComponentInstance >  scriptingComponent,
@@ -85,12 +85,12 @@ namespace Nitrogen
 		                                                  OSAID( resultingScriptValueID ) ) );
 	}
 	
-	Nucleus::Owned< AEDesc > OSADisplay( ComponentInstance  scriptingComponent,
-	                                     OSAID              scriptValueID,
-	                                     DescType           desiredType,
-	                                     OSAModeFlags       modeFlags )
+	Nucleus::Owned< AEDesc_Data > OSADisplay( ComponentInstance  scriptingComponent,
+	                                          OSAID              scriptValueID,
+	                                          DescType           desiredType,
+	                                          OSAModeFlags       modeFlags )
 	{
-		AEDesc resultingText;
+		AEDesc_Data resultingText;
 		
 		ThrowOSStatus( ::OSADisplay( scriptingComponent,
 		                             scriptValueID,
@@ -98,31 +98,31 @@ namespace Nitrogen
 		                             modeFlags,
 		                             &resultingText ) );
 		
-		return Nucleus::Owned< AEDesc >::Seize( resultingText );
+		return Nucleus::Owned< AEDesc_Data >::Seize( resultingText );
 	}
 	
-	Nucleus::Owned< AEDesc > OSAScriptError( ComponentInstance  scriptingComponent,
-	                                         AEKeyword          selector,
-	                                         DescType           desiredType )
+	Nucleus::Owned< AEDesc_Data > OSAScriptError( ComponentInstance  scriptingComponent,
+	                                              AEKeyword          selector,
+	                                              DescType           desiredType )
 	{
-		AEDesc resultingErrorDescription;
+		AEDesc_Data resultingErrorDescription;
 		
 		ThrowOSStatus( ::OSAScriptError( scriptingComponent,
 		                                 selector,
 		                                 desiredType,
 		                                 &resultingErrorDescription ) );
 		
-		return Nucleus::Owned< AEDesc >::Seize( resultingErrorDescription );
+		return Nucleus::Owned< AEDesc_Data >::Seize( resultingErrorDescription );
 	}
 	
-	Nucleus::Owned< AEDesc > OSAScriptingComponentName( ComponentInstance scriptingComponent )
+	Nucleus::Owned< AEDesc_Data > OSAScriptingComponentName( ComponentInstance scriptingComponent )
 	{
-		AEDesc resultingScriptingComponentName;
+		AEDesc_Data resultingScriptingComponentName;
 		
 		ThrowOSStatus( ::OSAScriptingComponentName( scriptingComponent,
 		                                            &resultingScriptingComponentName ) );
 		
-		return Nucleus::Owned< AEDesc >::Seize( resultingScriptingComponentName );
+		return Nucleus::Owned< AEDesc_Data >::Seize( resultingScriptingComponentName );
 	}
 	
 	Nucleus::Owned< OSASpec > OSACompile( Nucleus::Shared< ComponentInstance >  scriptingComponent, 
