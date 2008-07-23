@@ -795,15 +795,9 @@ namespace Nitrogen
 	                                       std::size_t  factoredSize,
 	                                       bool         isRecord );
 	
-	inline Nucleus::Owned< AEDesc > AECreateRecord()  { return AECreateList( true ); }
-	
-	template < bool isRecord >
-	inline Nucleus::Owned< AEDesc > AECreateList()  { return AECreateList( isRecord ); }
-	
-	template < bool isRecord >
-	inline Nucleus::Owned< AEDesc > AECreateList( DescType typeCode )
+	inline Nucleus::Owned< AEDesc > AECreateList( DescType typeCode, bool isRecord )
 	{
-		return AECreateDesc( typeCode, AECreateList< isRecord >() );
+		return AECreateDesc( typeCode, AECreateList( isRecord ) );
 	}
 	
 	long AECountItems( const AEDesc& desc );
