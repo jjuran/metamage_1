@@ -15,16 +15,16 @@
 namespace Nitrogen
 {
 	
-	bool Compare( AECompOperator  op,
-	              const AEToken&  obj1,
-	              const AEToken&  obj2 )
+	bool Compare( AECompOperator       op,
+	              const AEDesc_Token&  obj1,
+	              const AEDesc_Token&  obj2 )
 	{
 		return TheGlobalComparer().Compare( op, obj1, obj2 );
 	}
 	
-	bool Comparer::Compare( AECompOperator  op,
-	                        const AEToken&  obj1,
-	                        const AEToken&  obj2 )
+	bool Comparer::Compare( AECompOperator       op,
+	                        const AEDesc_Token&  obj1,
+	                        const AEDesc_Token&  obj2 )
 	{
 		Map::const_iterator found = map.find( DescType( obj1.descriptorType ) );
 		

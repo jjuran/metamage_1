@@ -16,16 +16,16 @@
 namespace Nitrogen
 {
 	
-	std::size_t Count( AEObjectClass   desiredClass,
-			           AEObjectClass   containerClass,
-			           const AEToken&  containerToken );
+	std::size_t Count( AEObjectClass        desiredClass,
+			           AEObjectClass        containerClass,
+			           const AEDesc_Token&  containerToken );
 	
 	template < ::DescType desiredClass, ::DescType containerType > struct Count_Traits;
 	
 	class Counter
 	{
 		public:
-			typedef std::size_t (*Callback)( AEObjectClass, AEObjectClass, const AEToken& );
+			typedef std::size_t (*Callback)( AEObjectClass, AEObjectClass, const AEDesc_Token& );
 		
 		private:
 			class Key
@@ -71,9 +71,9 @@ namespace Nitrogen
 				Register( desiredClass, containerType, Count_Traits< desiredClass, containerType >::Count );
 			}
 			
-			std::size_t Count( AEObjectClass   desiredClass,
-			                   AEObjectClass   containerClass,
-			                   const AEToken&  containerToken );
+			std::size_t Count( AEObjectClass        desiredClass,
+			                   AEObjectClass        containerClass,
+			                   const AEDesc_Token&  containerToken );
 	};
 	
 	Counter& TheGlobalCounter();

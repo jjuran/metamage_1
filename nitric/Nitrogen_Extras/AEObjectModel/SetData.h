@@ -19,14 +19,14 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ SetData ¥
 	
-	void SetData( const AEToken& obj, const AEDesc& data );
+	void SetData( const AEDesc_Token& obj, const AEDesc_Data& data );
 	
 	template < ::DescType tokenType > struct SetData_Traits;
 	
 	class DataSetter
 	{
 		public:
-			typedef void (*Callback)( const AEToken&, const AEDesc& );
+			typedef void (*Callback)( const AEDesc_Token&, const AEDesc_Data& );
 		
 		private:
 			typedef std::map< DescType, Callback >  Map;
@@ -51,7 +51,7 @@ namespace Nitrogen
 				Register( tokenType, SetData_Traits< tokenType >::SetData );
 			}
 			
-			void SetData( const AEToken& obj, const AEDesc& data );
+			void SetData( const AEDesc_Token& obj, const AEDesc_Data& data );
 	};
 	
 	DataSetter& TheGlobalDataSetter();

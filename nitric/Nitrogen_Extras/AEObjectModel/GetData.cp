@@ -11,21 +11,18 @@
 #include "Nitrogen/MacErrors.h"
 #endif
 
-// Nitrogen Extras / Operators
-#include "Operators/AEDataModel.h"
-
 
 namespace Nitrogen
 {
 	
-	static Nucleus::Owned< AEDesc > GetDataFromAppToken( const AEToken&, DescType )
+	static Nucleus::Owned< AEDesc_Data > GetDataFromAppToken( const AEDesc_Token&, DescType )
 	{
 		return GetRootObjectSpecifier();
 	}
 	
-	static Nucleus::Owned< AEDesc > GetDataFromTokenList( const AEToken& obj, DescType desiredType )
+	static Nucleus::Owned< AEDesc_Data > GetDataFromTokenList( const AEDescList_Token& obj, DescType desiredType )
 	{
-		Nucleus::Owned< AEDescList > list = AECreateList( false );
+		Nucleus::Owned< AEDescList_Data > list = AECreateList< AEDescList_Data >( false );
 		
 		UInt32 count = AECountItems( obj );
 		
@@ -33,29 +30,31 @@ namespace Nitrogen
 		{
 			AEPutDesc( list,
 			           0,
-			           GetData( AEGetNthDesc( obj, i ),
-			                    desiredType ) );
+			           GetData( AEGetNthDesc< AEDesc_Token >( obj, i ),
+			                    desiredType ).Get() );
 		}
 		
 		return list;
 	}
 	
 	
-	Nucleus::Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
-	                                                             const AEObjectSpecifier&  container,
-	                                                             AEEnumeration             keyForm,
-	                                                             const AEDesc&             keyData )
+	Nucleus::Owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( AEObjectClass                  objectClass,
+	                                                                  const AEDesc_ObjectSpecifier&  container,
+	                                                                  AEEnumeration                  keyForm,
+	                                                                  const AEDesc_Data&             keyData )
 	{
-		using namespace Nucleus::Operators;
+		Nucleus::Owned< AERecord_Data > record = AECreateList< AERecord_Data >( true );
 		
-		return AECoerceDesc( AECreateList( true ) << AEPutKeyPtr< keyAEDesiredClass >( objectClass )
-		                                          << AEPutKeyPtr< keyAEKeyForm      >( keyForm     )
-		                                          << AEPutKeyDesc( keyAEKeyData,   keyData   )
-		                                          << AEPutKeyDesc( keyAEContainer, container ),
-		                     typeObjectSpecifier );
+		AEPutKeyPtr< AERecord_Data, keyAEDesiredClass >( record, objectClass );
+		AEPutKeyPtr< AERecord_Data, keyAEKeyForm      >( record, keyForm     );
+		
+		AEPutKeyDesc( record, keyAEKeyData,   keyData   );
+		AEPutKeyDesc( record, keyAEContainer, container );
+		
+		return AECoerceDesc( record, typeObjectSpecifier );
 	}
 	
-	Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType )
+	Nucleus::Owned< AEDesc_Data > GetData( const AEDesc_Token& obj, DescType desiredType )
 	{
 		return TheGlobalDataGetter().GetData( obj, desiredType );
 	}
@@ -66,7 +65,7 @@ namespace Nitrogen
 		Register( typeAEList, GetDataFromTokenList );
 	}
 	
-	Nucleus::Owned< AEDesc > DataGetter::GetData( const AEToken& obj, DescType desiredType )
+	Nucleus::Owned< AEDesc_Data > DataGetter::GetData( const AEDesc_Token& obj, DescType desiredType )
 	{
 		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
 		

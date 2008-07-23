@@ -16,14 +16,14 @@
 namespace Nitrogen
 {
 	
-	void DisposeToken( Nucleus::Owned< AEToken > token );
+	void DisposeToken( Nucleus::Owned< AEDesc_Data > token );
 	
 	template < ::DescType tokenType > struct DisposeToken_Traits;
 	
 	class TokenDisposer
 	{
 		public:
-			typedef void (*Callback)( Nucleus::Owned< AEToken > );
+			typedef void (*Callback)( Nucleus::Owned< AEDesc_Data > );
 		
 		private:
 			typedef std::map< DescType, Callback >  Map;
@@ -48,7 +48,7 @@ namespace Nitrogen
 				Register( tokenType, DisposeToken_Traits< tokenType >::DisposeToken );
 			}
 			
-			void DisposeToken( Nucleus::Owned< AEToken > token );
+			void DisposeToken( Nucleus::Owned< AEDesc_Data > token );
 	};
 	
 	TokenDisposer& TheGlobalTokenDisposer();
@@ -64,7 +64,7 @@ namespace Nitrogen
 		TheGlobalTokenDisposer().template Register< tokenType >();
 	}
 	
-	void DisposeTokenList( Nucleus::Owned< AETokenList > tokenList );
+	void DisposeTokenList( Nucleus::Owned< AEDescList_Data > tokenList );
 	
 }
 

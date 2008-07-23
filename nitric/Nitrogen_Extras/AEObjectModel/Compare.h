@@ -16,16 +16,16 @@
 namespace Nitrogen
 {
 	
-	bool Compare( AECompOperator  op,
-			      const AEToken&  obj1,
-			      const AEToken&  obj2 );
+	bool Compare( AECompOperator       op,
+			      const AEDesc_Token&  obj1,
+			      const AEDesc_Token&  obj2 );
 	
 	template < ::DescType tokenType > struct Compare_Traits;
 	
 	class Comparer
 	{
 		public:
-			typedef bool (*Callback)( AECompOperator, const AEToken&, const AEToken& );
+			typedef bool (*Callback)( AECompOperator, const AEDesc_Token&, const AEDesc_Token& );
 		
 		private:
 			typedef std::map< DescType, Callback >  Map;
@@ -50,9 +50,9 @@ namespace Nitrogen
 				Register( tokenType, Compare_Traits< tokenType >::Compare );
 			}
 			
-			bool Compare( AECompOperator  op,
-			              const AEToken&  obj1,
-			              const AEToken&  obj2 );
+			bool Compare( AECompOperator       op,
+			              const AEDesc_Token&  obj1,
+			              const AEDesc_Token&  obj2 );
 	};
 	
 	Comparer& TheGlobalComparer();
@@ -73,9 +73,9 @@ namespace Nitrogen
 	{
 		typedef typename DescType_Traits< descType >::Result Result;
 		
-		static bool Compare( AECompOperator  op,
-		                     const AEToken&  obj1,
-		                     const AEToken&  obj2 )
+		static bool Compare( AECompOperator       op,
+		                     const AEDesc_Token&  obj1,
+		                     const AEDesc_Token&  obj2 )
 		{
 			if ( op != AECompOperator( kAEEquals ) )
 			{
@@ -94,9 +94,9 @@ namespace Nitrogen
 	{
 		typedef typename DescType_Traits< descType >::Result Result;
 		
-		static bool Compare( AECompOperator  op,
-		                     const AEToken&  obj1,
-		                     const AEToken&  obj2 )
+		static bool Compare( AECompOperator       op,
+		                     const AEDesc_Token&  obj1,
+		                     const AEDesc_Token&  obj2 )
 		{
 			Result a = AEGetDescData< descType >( obj1 );
 			Result b = AEGetDescData< descType >( obj2 );

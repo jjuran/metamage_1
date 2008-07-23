@@ -15,16 +15,16 @@
 namespace Nitrogen
 {
 	
-	std::size_t Count( AEObjectClass   desiredClass,
-	                   AEObjectClass   containerClass,
-	                   const AEToken&  containerToken )
+	std::size_t Count( AEObjectClass        desiredClass,
+	                   AEObjectClass        containerClass,
+	                   const AEDesc_Token&  containerToken )
 	{
 		return TheGlobalCounter().Count( desiredClass, containerClass, containerToken );
 	}
 	
-	std::size_t Counter::Count( AEObjectClass   desiredClass,
-	                            AEObjectClass   containerClass,
-	                            const AEToken&  containerToken )
+	std::size_t Counter::Count( AEObjectClass        desiredClass,
+	                            AEObjectClass        containerClass,
+	                            const AEDesc_Token&  containerToken )
 	{
 		Map::const_iterator found = map.find( Key( desiredClass, DescType( containerToken.descriptorType ) ) );
 		

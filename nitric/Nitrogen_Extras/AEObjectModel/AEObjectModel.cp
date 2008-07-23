@@ -59,8 +59,8 @@ namespace Nitrogen
 	// etc.  Any index (including zero) that doesn't correspond to an existing element
 	// will cause errAENoSuchObject to be thrown.
 	
-	UInt32 ComputeAbsoluteIndex( const AEDesc&  keyData,
-	                             std::size_t    count )
+	UInt32 ComputeAbsoluteIndex( const AEDesc_Data&  keyData,
+	                             std::size_t         count )
 	{
 		switch ( keyData.descriptorType )
 		{
@@ -132,14 +132,16 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ OSL Object Callbacks ¥
 	
-	pascal OSErr OSLCompare( ::DescType      op,
-	                         const AEToken*  obj1,
-	                         const AEToken*  obj2,
-	                         ::Boolean*      result )
+	pascal OSErr OSLCompare( ::DescType     op,
+	                         const AEDesc*  obj1,
+	                         const AEDesc*  obj2,
+	                         ::Boolean*     result )
 	{
 		try
 		{
-			*result = Compare( AECompOperator( op ), *obj1, *obj2 );
+			*result = Compare( AECompOperator( op ),
+			                   static_cast< const AEDesc_Token& >( *obj1 ),
+			                   static_cast< const AEDesc_Token& >( *obj2 ) );
 		}
 		catch ( OSStatus err )
 		{
@@ -149,16 +151,16 @@ namespace Nitrogen
 		return noErr;
 	}
 	
-	pascal OSErr OSLCount( ::DescType      desiredClass,
-	                       ::DescType      containerClass,
-	                       const AEToken*  containerToken,
-	                       SInt32*         result )
+	pascal OSErr OSLCount( ::DescType     desiredClass,
+	                       ::DescType     containerClass,
+	                       const AEDesc*  containerToken,
+	                       SInt32*        result )
 	{
 		try
 		{
 			*result = Count( AEObjectClass( desiredClass   ),
 			                 AEObjectClass( containerClass ),
-			                 *containerToken );
+			                 static_cast< const AEDesc_Token& >( *containerToken ) );
 		}
 		catch ( OSStatus err )
 		{
@@ -168,19 +170,21 @@ namespace Nitrogen
 		return noErr;
 	}
 	
-	pascal OSErr OSLDisposeToken( AEToken* token )
+	pascal OSErr OSLDisposeToken( AEDesc* token )
 	{
 		try
 		{
-			// Yes, that's right.  We are seizing the token with Disposer< AEDesc >, 
-			// not AETokenDisposer.  That's because we're releasing the token-ness,
+			// Yes, that's right.  We are seizing the token as AEDesc_Data, 
+			// not AEDesc_Token.  That's because we're releasing the token-ness,
 			// but not the AEDesc-ness just yet.
 			// More pragmatically, it makes the called code work more smoothly.
 			// The called function is only responsible for disposing the token material,
 			// and the Owned destructor will call AEDisposeDesc() for us.
 			
+			const AEDesc_Data& desc( static_cast< const AEDesc_Data& >( *token ) );
+			
 			// Atom or list, it will hence be missed.
-			DisposeToken( Nucleus::Owned< AEDesc >::Seize( *token ) );
+			DisposeToken( Nucleus::Owned< AEDesc_Data >::Seize( desc ) );
 		}
 		catch ( OSStatus err )
 		{
@@ -201,12 +205,12 @@ namespace Nitrogen
 		                                ( ::OSLGetErrDescProcPtr   )NULL );
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   /*desiredClass*/,
-	                                                                   const AEToken&  containerToken,
-	                                                                   AEObjectClass   containerClass,
-	                                                                   AEEnumerated    /*keyForm*/,
-	                                                                   const AEDesc&   keyData,
-	                                                                   RefCon )
+	Nucleus::Owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
+	                                                       const AEDesc_Token&  containerToken,
+	                                                       AEObjectClass        containerClass,
+	                                                       AEEnumerated         keyForm,
+	                                                       const AEDesc_Data&   keyData,
+	                                                       RefCon )
 	{
 		if ( keyData.descriptorType == typeAbsoluteOrdinal )
 		{
@@ -220,15 +224,15 @@ namespace Nitrogen
 	
 	struct ObjectAccessContext
 	{
-		AEObjectClass  desiredClass;
-		AEObjectClass  containerClass;
-		AEEnumerated   keyForm;
-		const AEDesc&  keyData;
+		AEObjectClass       desiredClass;
+		AEObjectClass       containerClass;
+		AEEnumerated        keyForm;
+		const AEDesc_Data&  keyData;
 		
-		ObjectAccessContext( AEObjectClass  desiredClass,
-		                     AEObjectClass  containerClass,
-		                     AEEnumerated   keyForm,
-		                     const AEDesc&  keyData )
+		ObjectAccessContext( AEObjectClass       desiredClass,
+		                     AEObjectClass       containerClass,
+		                     AEEnumerated        keyForm,
+		                     const AEDesc_Data&  keyData )
 		:
 			desiredClass  ( desiredClass ),
 			containerClass( containerClass ),
@@ -237,8 +241,8 @@ namespace Nitrogen
 		{}
 	};
 	
-	static Nucleus::Owned< AEToken, AETokenDisposer > CallObjectAccessor( const AEToken& containerToken,
-	                                                                      const ObjectAccessContext& context )
+	static Nucleus::Owned< AEDesc_Token > CallObjectAccessor( const AEDesc_Token&         containerToken,
+	                                                          const ObjectAccessContext&  context )
 	{
 		return AECallObjectAccessor( context.desiredClass,
 		                             containerToken,
@@ -247,23 +251,23 @@ namespace Nitrogen
 		                             context.keyData );
 	}
 	
-	static Nucleus::Owned< AEToken, AETokenDisposer > CallObjectAccessorWithContext( const AEToken& containerToken,
-	                                                                                 const ObjectAccessContext& context )
+	static Nucleus::Owned< AEDesc_Token > CallObjectAccessorWithContext( const AEDesc_Token&         containerToken,
+	                                                                     const ObjectAccessContext&  context )
 	{
 		return CallObjectAccessor( containerToken,
 		                           context );
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > DispatchAccessToList( AEObjectClass   desiredClass,
-	                                                                 const AEToken&  containerToken,
-	                                                                 AEObjectClass   containerClass,
-	                                                                 AEEnumerated    keyForm,
-	                                                                 const AEDesc&   keyData,
-	                                                                 RefCon )
+	Nucleus::Owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
+	                                                     const AEDesc_Token&  containerToken,
+	                                                     AEObjectClass        containerClass,
+	                                                     AEEnumerated         keyForm,
+	                                                     const AEDesc_Data&   keyData,
+	                                                     RefCon )
 	{
-		Nucleus::Owned< AEDescList, AETokenDisposer > result = AECreateTokenList();
+		Nucleus::Owned< AEDescList_Token > result = AECreateList< AEDescList_Token >();
 		
-		AEDescList_ItemValue_Container values = AEDescList_ItemValues( containerToken );
+		AEDescList_Token_ItemValue_Container values = AEDescList_ItemValues( containerToken );
 		
 		std::transform( values.begin(),
 		                values.end(),

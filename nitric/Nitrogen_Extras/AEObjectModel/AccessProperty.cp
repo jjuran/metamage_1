@@ -25,9 +25,9 @@ namespace Nitrogen
 {
 	
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > AccessProperty( AEPropertyID    propertyID,
-	                                                           const AEToken&  containerToken,
-	                                                           AEObjectClass   containerClass )
+	Nucleus::Owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
+	                                               const AEDesc_Token&  containerToken,
+	                                               AEObjectClass        containerClass )
 	{
 		return TheGlobalPropertyAccessor().AccessProperty( propertyID, containerToken, containerClass );
 	}
@@ -85,17 +85,17 @@ namespace Nitrogen
 		throw ErrAEEventNotHandled();
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > PropertyAccessor::AccessProperty( AEPropertyID    propertyID,
-	                                                                             const AEToken&  containerToken,
-	                                                                             AEObjectClass   containerClass )
+	Nucleus::Owned< AEDesc_Token > PropertyAccessor::AccessProperty( AEPropertyID         propertyID,
+	                                                                 const AEDesc_Token&  containerToken,
+	                                                                 AEObjectClass        containerClass )
 	{
 		Callback accessor = FindAccessor( propertyID, DescType( containerToken.descriptorType ) );
 		
 		return accessor( propertyID, containerToken, containerClass );
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > PropertyAccessor::AccessAll( const AEToken&  containerToken,
-	                                                                        AEObjectClass   containerClass )
+	Nucleus::Owned< AEDesc_Token > PropertyAccessor::AccessAll( const AEDesc_Token&  containerToken,
+	                                                            AEObjectClass        containerClass )
 	{
 		Map::const_iterator foundType = map.find( DescType( containerToken.descriptorType ) );
 		
@@ -104,7 +104,7 @@ namespace Nitrogen
 			throw ErrAEEventNotHandled();
 		}
 		
-		Nucleus::Owned< AEToken, AETokenDisposer > result = AECreateTokenList< true >();
+		Nucleus::Owned< AEDesc_Token > result = AECreateList< AEDesc_Token >( true );
 		
 		for ( PropertyMap::const_iterator itProp = foundType->second.begin();
 		      itProp != foundType->second.end();
@@ -112,7 +112,7 @@ namespace Nitrogen
 		{
 			AEPropertyID propertyID = itProp->first;
 			
-			Nucleus::Owned< AEToken, AETokenDisposer > propertyToken;
+			Nucleus::Owned< AEDesc_Token > propertyToken;
 			
 			try
 			{
@@ -127,7 +127,7 @@ namespace Nitrogen
 			
 			AEPutKeyDesc( result,
 			              AEKeyword( ::FourCharCode( propertyID ) ),
-			              propertyToken );
+			              propertyToken.Get() );
 		}
 		
 		return result;
@@ -139,17 +139,17 @@ namespace Nitrogen
 		return theGlobalPropertyAccessor;
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > AccessClassProperty( AEPropertyID    /* propertyID */,
-	                                                                const AEToken&  /* containerToken */,
-	                                                                AEObjectClass   containerClass )
+	Nucleus::Owned< AEDesc_Token > AccessClassProperty( AEPropertyID         /* propertyID */,
+	                                                    const AEDesc_Token&  /* containerToken */,
+	                                                    AEObjectClass        containerClass )
 	{
-		//return AECreateToken< typeObjectClass >( containerClass );
-		return AECreateToken< typeType >( DescType( ::FourCharCode( containerClass ) ) );
+		//return AECreateDesc< AEDesc_Token, typeObjectClass >( containerClass );
+		return AECreateDesc< AEDesc_Token, typeType >( DescType( ::FourCharCode( containerClass ) ) );
 	}
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > AccessAllProperties( AEPropertyID    /*propertyID*/,
-	                                                                const AEToken&  containerToken,
-	                                                                AEObjectClass   containerClass )
+	Nucleus::Owned< AEDesc_Token > AccessAllProperties( AEPropertyID         /*propertyID*/,
+	                                                    const AEDesc_Token&  containerToken,
+	                                                    AEObjectClass        containerClass )
 	{
 		return TheGlobalPropertyAccessor().AccessAll( containerToken, containerClass );
 	}

@@ -20,7 +20,7 @@
 namespace Nitrogen
 {
 	
-	AEObjectClass GetObjectClass( const AEToken&  obj );
+	AEObjectClass GetObjectClass( const AEDesc_Token& obj );
 	
 	#pragma mark -
 	#pragma mark ¥ ObjectClassMap ¥
@@ -83,7 +83,7 @@ namespace Nitrogen
 	class ObjectClassGetter
 	{
 		public:
-			typedef AEObjectClass (*Callback)( const AEToken& );
+			typedef AEObjectClass (*Callback)( const AEDesc_Token& );
 		
 		private:
 			typedef std::map< DescType, Callback >  Map;
@@ -108,7 +108,7 @@ namespace Nitrogen
 				Register( tokenType, GetObjectClass_Traits< tokenType >::GetObjectClass );
 			}
 			
-			AEObjectClass GetObjectClass( const AEToken&  obj );
+			AEObjectClass GetObjectClass( const AEDesc_Token& obj );
 	};
 	
 	ObjectClassGetter& TheGlobalObjectClassGetter();

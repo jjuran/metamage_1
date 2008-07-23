@@ -23,44 +23,44 @@
 namespace Nitrogen
 {
 	
-	inline Nucleus::Owned< AEToken, AETokenDisposer > GetRootToken()
+	inline Nucleus::Owned< AEDesc_Token > GetRootToken()
 	{
-		return AEInitializeToken();
+		return AEInitializeDesc< AEDesc_Token >();
 	}
 	
-	UInt32 ComputeAbsoluteIndex( const AEDesc&  keyData,
-	                             std::size_t    count );
+	UInt32 ComputeAbsoluteIndex( const AEDesc_Data&  keyData,
+	                             std::size_t         count );
 	
 	#pragma mark -
 	#pragma mark ¥ OSL Object Callbacks ¥
 	
-	pascal OSErr OSLCompare( ::DescType      op,
-	                         const AEToken*  obj1,
-	                         const AEToken*  obj2,
-	                         ::Boolean*      result );
+	pascal OSErr OSLCompare( ::DescType     op,
+	                         const AEDesc*  obj1,
+	                         const AEDesc*  obj2,
+	                         ::Boolean*     result );
 	
-	pascal OSErr OSLCount( ::DescType      desiredClass,
-	                       ::DescType      containerClass,
-	                       const AEToken*  containerToken,
-	                       SInt32*         result );
+	pascal OSErr OSLCount( ::DescType     desiredClass,
+	                       ::DescType     containerClass,
+	                       const AEDesc*  containerToken,
+	                       SInt32*        result );
 	
-	pascal OSErr OSLDisposeToken( AEToken* token );
+	pascal OSErr OSLDisposeToken( AEDesc* token );
 	
 	void AESetObjectCallbacks();
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > DispatchPropertyAccess( AEObjectClass   desiredClass,
-	                                                                   const AEToken&  containerToken,
-	                                                                   AEObjectClass   containerClass,
-	                                                                   AEEnumerated    keyForm,
-	                                                                   const AEDesc&   keyData,
-	                                                                   RefCon );
+	Nucleus::Owned< AEDesc_Token > DispatchPropertyAccess( AEObjectClass        desiredClass,
+	                                                       const AEDesc_Token&  containerToken,
+	                                                       AEObjectClass        containerClass,
+	                                                       AEEnumerated         keyForm,
+	                                                       const AEDesc_Data&   keyData,
+	                                                       RefCon );
 	
-	Nucleus::Owned< AEToken, AETokenDisposer > DispatchAccessToList( AEObjectClass   desiredClass,
-	                                                                 const AEToken&  containerToken,
-	                                                                 AEObjectClass   containerClass,
-	                                                                 AEEnumerated    keyForm,
-	                                                                 const AEDesc&   keyData,
-	                                                                 RefCon );
+	Nucleus::Owned< AEDesc_Token > DispatchAccessToList( AEObjectClass        desiredClass,
+	                                                     const AEDesc_Token&  containerToken,
+	                                                     AEObjectClass        containerClass,
+	                                                     AEEnumerated         keyForm,
+	                                                     const AEDesc_Data&   keyData,
+	                                                     RefCon );
 	
 }
 

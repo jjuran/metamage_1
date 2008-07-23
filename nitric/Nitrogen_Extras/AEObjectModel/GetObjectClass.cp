@@ -15,7 +15,7 @@
 namespace Nitrogen
 {
 	
-	AEObjectClass GetObjectClass( const AEToken& obj )
+	AEObjectClass GetObjectClass( const AEDesc_Token& obj )
 	{
 		try
 		{
@@ -66,7 +66,7 @@ namespace Nitrogen
 	{
 	}
 	
-	AEObjectClass ObjectClassGetter::GetObjectClass( const AEToken& obj )
+	AEObjectClass ObjectClassGetter::GetObjectClass( const AEDesc_Token& obj )
 	{
 		Map::const_iterator found = map.find( DescType( obj.descriptorType ) );
 		

@@ -16,22 +16,22 @@
 namespace Nitrogen
 {
 	
-	inline Nucleus::Owned< AEObjectSpecifier > GetRootObjectSpecifier()
+	inline Nucleus::Owned< AEDesc_ObjectSpecifier > GetRootObjectSpecifier()
 	{
-		return AEInitializeDesc();
+		return AEInitializeDesc< AEDesc_Data >();
 	}
 	
-	Nucleus::Owned< AEObjectSpecifier > AECreateObjectSpecifier( AEObjectClass             objectClass,
-	                                                             const AEObjectSpecifier&  container,
-	                                                             AEEnumeration             keyForm,
-	                                                             const AEDesc&             keyData );
+	Nucleus::Owned< AEDesc_ObjectSpecifier > AECreateObjectSpecifier( AEObjectClass                  objectClass,
+	                                                                  const AEDesc_ObjectSpecifier&  container,
+	                                                                  AEEnumeration                  keyForm,
+	                                                                  const AEDesc_Data&             keyData );
 	
-	Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType = typeWildCard );
+	Nucleus::Owned< AEDesc_Data > GetData( const AEDesc_Token& obj, DescType desiredType = typeWildCard );
 	
 	class DataGetter
 	{
 		public:
-			typedef Nucleus::Owned< AEDesc > (*Callback)( const AEToken&, DescType );
+			typedef Nucleus::Owned< AEDesc_Data > (*Callback)( const AEDesc_Token&, DescType );
 		
 		private:
 			typedef std::map< DescType, Callback >  Map;
@@ -50,7 +50,7 @@ namespace Nitrogen
 				map[ tokenType ] = callback;
 			}
 			
-			Nucleus::Owned< AEDesc > GetData( const AEToken& obj, DescType desiredType );
+			Nucleus::Owned< AEDesc_Data > GetData( const AEDesc_Token& obj, DescType desiredType );
 	};
 	
 	DataGetter& TheGlobalDataGetter();

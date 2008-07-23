@@ -19,7 +19,7 @@
 namespace Nitrogen
 {
 	
-	void DisposeToken( Nucleus::Owned< AEToken > token )
+	void DisposeToken( Nucleus::Owned< AEDesc_Data > token )
 	{
 		return TheGlobalTokenDisposer().DisposeToken( token );
 	}
@@ -29,7 +29,7 @@ namespace Nitrogen
 		Register( typeAEList, DisposeTokenList );
 	}
 	
-	void TokenDisposer::DisposeToken( Nucleus::Owned< AEToken > token )
+	void TokenDisposer::DisposeToken( Nucleus::Owned< AEDesc_Data > token )
 	{
 		Map::const_iterator found = map.find( DescType( token.Get().descriptorType ) );
 		if ( found == map.end() )
@@ -51,30 +51,34 @@ namespace Nitrogen
 		return theGlobalTokenDisposer;
 	}
 	
-	static void AEDisposeTokenFromList( Nucleus::Owned< AEToken > token )
+	void DisposeTokenList( Nucleus::Owned< AEDescList_Data > listOfTokens )
 	{
-		AEDisposeToken( Nucleus::Owned< AEToken, AETokenDisposer >::Seize( token.Release() ) );
-	}
-	
-	void DisposeTokenList( Nucleus::Owned< AETokenList > tokenList )
-	{
-		AEDescList_ItemValue_Container tokens = AEDescList_ItemValues( tokenList );
+		// The following casting exercise is necessary for this reason:
+		// We're already inside AEDisposeToken() for the list, so
+		// Disposer< AEDesc_Token > isn't appropriate (since running it would
+		// yield recursion).  But we haven't yet called AEDisposeToken() on the
+		// individual list elements, so they still have token-nature.
+		// Since we've deliberately made it hard to accidentally pull tokens out
+		// of a non-token list, here we'll have to jump through our own hoop.
+		
+		const AEDesc& list = listOfTokens;
+		
+		const AEDescList_Token& tokenList = static_cast< const AEDescList_Token& >( list );
+		
+		AEDescList_Token_ItemValue_Container tokens = AEDescList_ItemValues( tokenList );
 		
 		// Get each token from the list (which allocates a new AEDesc),
 		// and call AEDisposeToken on it, which disposes both
 		// any token-related resources and the newly allocated AEDesc itself.
 		// The copy of the token AEDesc remaining in the list descriptor will go 
 		// when the list goes.
-		// We use AEDisposeTokenFromList() which accepts an Owned< AEDesc >
-		// and passes an Owned< AEToken, AETokenDisposer > to AEDisposeToken().
-		// This is necessary because AEGetNthDesc() always returns Owned< AEDesc >.
 		
 		std::for_each( tokens.begin(),
 		               tokens.end(),
-		               more::ptr_fun( AEDisposeTokenFromList ) );
+		               more::ptr_fun( AEDisposeToken ) );
 		
-		// Optional
-		AEDisposeDesc( tokenList );
+		// Implicit
+		//AEDisposeDesc( listOfTokens );
 	};
 	
 }
