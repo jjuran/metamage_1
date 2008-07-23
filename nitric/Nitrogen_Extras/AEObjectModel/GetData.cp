@@ -25,7 +25,7 @@ namespace Nitrogen
 	
 	static Nucleus::Owned< AEDesc > GetDataFromTokenList( const AEToken& obj, DescType desiredType )
 	{
-		Nucleus::Owned< AEDescList > list = AECreateList< false >();
+		Nucleus::Owned< AEDescList > list = AECreateList( false );
 		
 		UInt32 count = AECountItems( obj );
 		
@@ -48,10 +48,10 @@ namespace Nitrogen
 	{
 		using namespace Nucleus::Operators;
 		
-		return AECoerceDesc( AECreateList< true >() << AEPutKeyPtr< keyAEDesiredClass >( objectClass )
-		                                            << AEPutKeyPtr< keyAEKeyForm      >( keyForm     )
-		                                            << AEPutKeyDesc( keyAEKeyData,   keyData   )
-		                                            << AEPutKeyDesc( keyAEContainer, container ),
+		return AECoerceDesc( AECreateList( true ) << AEPutKeyPtr< keyAEDesiredClass >( objectClass )
+		                                          << AEPutKeyPtr< keyAEKeyForm      >( keyForm     )
+		                                          << AEPutKeyDesc( keyAEKeyData,   keyData   )
+		                                          << AEPutKeyDesc( keyAEContainer, container ),
 		                     typeObjectSpecifier );
 	}
 	
