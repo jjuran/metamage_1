@@ -76,8 +76,8 @@ namespace UseEdit
 			bool ExistsElementByIndex( std::size_t index ) const  { return index <= CountElements(); }
 			bool ExistsElementByID   ( UInt32      id    ) const;
 			
-			NN::Owned< N::AEToken, N::AETokenDisposer > GetElementByIndex( std::size_t index ) const;
-			NN::Owned< N::AEToken, N::AETokenDisposer > GetElementByID   ( UInt32      id    ) const;
+			NN::Owned< N::AEDesc_Token > GetElementByIndex( std::size_t index ) const;
+			NN::Owned< N::AEDesc_Token > GetElementByID   ( UInt32      id    ) const;
 			
 			void DeleteElementByIndex( std::size_t index );
 			
@@ -109,7 +109,7 @@ namespace UseEdit
 		private:
 			static App* theApp;
 			
-			typedef void (*AEEventHandlerProcPtr)( AppleEvent const&, AppleEvent&, App* );
+			typedef void (*AEEventHandlerProcPtr)( N::AppleEvent const&, N::AppleEvent&, App* );
 			
 			Ped::AboutHandler< App > itsAboutHandler;
 			Ped::NewHandler  < App > itsNewHandler;

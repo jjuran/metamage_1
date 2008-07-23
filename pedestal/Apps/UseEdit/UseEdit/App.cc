@@ -63,14 +63,14 @@ namespace UseEdit
 		
 		// Apple event handlers
 		
-		void HandleCloseAppleEvent( const AppleEvent&  appleEvent,
-		                            AppleEvent&        reply,
-		                            App*               app )
+		void HandleCloseAppleEvent( const N::AppleEvent&  appleEvent,
+		                            N::AppleEvent&        reply,
+		                            App*                  app )
 		{
 			ASSERT( app != NULL );
 			
-			NN::Owned< N::AEToken, N::AETokenDisposer > token = N::AEResolve( N::AEGetParamDesc( appleEvent,
-			                                                                                     keyDirectObject ) );
+			NN::Owned< N::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( appleEvent,
+			                                                                      keyDirectObject ) );
 			
 			switch ( N::DescType( token.Get().descriptorType ) )
 			{
@@ -90,20 +90,20 @@ namespace UseEdit
 			}
 		}
 		
-		void HandleCountAppleEvent( const AppleEvent&  appleEvent,
-		                            AppleEvent&        reply,
-		                            App*               app )
+		void HandleCountAppleEvent( const N::AppleEvent&  appleEvent,
+		                            N::AppleEvent&        reply,
+		                            App*                  app )
 		{
 			ASSERT( app != NULL );
 			
-			NN::Owned< N::AEDesc > containerObjSpec = N::AEGetParamDesc( appleEvent,
-			                                                             keyDirectObject );
+			NN::Owned< N::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( appleEvent,
+			                                                                             keyDirectObject );
 			
 			bool containerIsRoot = containerObjSpec.Get().descriptorType == typeNull;
 			
 			// AEResolve can't handle a null descriptor.
-			NN::Owned< N::AEToken, N::AETokenDisposer > containerToken = containerIsRoot ? N::GetRootToken()
-			                                                                             : N::AEResolve( containerObjSpec );
+			NN::Owned< N::AEDesc_Token > containerToken = containerIsRoot ? N::GetRootToken()
+			                                                              : N::AEResolve( containerObjSpec );
 			// The kind of container of the things we're counting, e.g. 'folder'
 			N::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 			
@@ -114,12 +114,12 @@ namespace UseEdit
 			
 			N::AEPutParamDesc( reply,
 			                   keyDirectObject,
-			                   N::AECreateDesc< typeUInt32 >( count ) );
+			                   N::AECreateDesc< N::AEDesc_Data, typeUInt32 >( count ) );
 		}
 		
-		void HandleGetDataAppleEvent( const AppleEvent&  appleEvent,
-		                              AppleEvent&        reply,
-		                              App*               app )
+		void HandleGetDataAppleEvent( const N::AppleEvent&  appleEvent,
+		                              N::AppleEvent&        reply,
+		                              App*                  app )
 		{
 			ASSERT( app != NULL );
 			
@@ -129,18 +129,18 @@ namespace UseEdit
 			                                                                keyDirectObject ) ) ) );
 		}
 		
-		void HandleOpenDocumentsAppleEvent( const AppleEvent&  appleEvent,
-											AppleEvent&        reply,
-											App*               app )
+		void HandleOpenDocumentsAppleEvent( const N::AppleEvent&  appleEvent,
+											N::AppleEvent&        reply,
+											App*                  app )
 		{
 			ASSERT( app != NULL );
 			
 			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
 			typedef Container::const_iterator const_iterator;
 			
-			NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
-			                                                        keyDirectObject,
-			                                                        typeAEList );
+			NN::Owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+			                                                             keyDirectObject,
+			                                                             typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
 			
@@ -155,33 +155,33 @@ namespace UseEdit
 		
 		// Object accessors
 		
-		NN::Owned< N::AEToken, N::AETokenDisposer > AccessAppFrontmost( N::AEPropertyID    propertyID,
-	                                                                    const N::AEToken&  containerToken,
-	                                                                    N::AEObjectClass   containerClass )
+		NN::Owned< N::AEDesc_Token > AccessAppFrontmost( N::AEPropertyID         propertyID,
+	                                                     const N::AEDesc_Token&  containerToken,
+	                                                     N::AEObjectClass        containerClass )
 		{
 			
-			return N::AECreateToken< N::typeBoolean >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
+			return N::AECreateDesc< N::AEDesc_Token, N::typeBoolean >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
 		}
 		
-		NN::Owned< N::AEToken, N::AETokenDisposer > AccessAppName( N::AEPropertyID    propertyID,
-	                                                               const N::AEToken&  containerToken,
-	                                                               N::AEObjectClass   containerClass )
+		NN::Owned< N::AEDesc_Token > AccessAppName( N::AEPropertyID         propertyID,
+	                                                const N::AEDesc_Token&  containerToken,
+	                                                N::AEObjectClass        containerClass )
 		{
 			
-			return N::AECreateToken< typeChar >( "UseEdit" );
+			return N::AECreateDesc< N::AEDesc_Token, typeChar >( "UseEdit" );
 		}
 		
-		static NN::Owned< N::AEToken, N::AETokenDisposer > TokenForDocument( const Document& document )
+		static NN::Owned< N::AEDesc_Token > TokenForDocument( const Document& document )
 		{
-			return N::AECreateToken( typeDocument, N::AECreateToken< typePtr >( document.GetWindowRef() ) );
+			return N::AECreateDesc( typeDocument, N::AECreateDesc< N::AEDesc_Token, typePtr >( document.GetWindowRef() ) );
 		}
 		
-		NN::Owned< N::AEToken, N::AETokenDisposer > AccessDocument( N::AEObjectClass   desiredClass,
-	                                                                const N::AEToken&  containerToken,
-	                                                                N::AEObjectClass   containerClass,
-	                                                                N::AEEnumerated    keyForm,
-	                                                                const N::AEDesc&   keyData,
-	                                                                N::RefCon )
+		NN::Owned< N::AEDesc_Token > AccessDocument( N::AEObjectClass        desiredClass,
+	                                                 const N::AEDesc_Token&  containerToken,
+	                                                 N::AEObjectClass        containerClass,
+	                                                 N::AEEnumerated         keyForm,
+	                                                 const N::AEDesc_Data&   keyData,
+	                                                 N::RefCon )
 		{
 			const DocumentContainer& docs( App::Get().Documents() );
 			
@@ -202,13 +202,13 @@ namespace UseEdit
 				}
 				
 				// All documents
-				NN::Owned< N::AETokenList, N::AETokenDisposer > list = N::AECreateTokenList< false >();
+				NN::Owned< N::AEDescList_Token > list = N::AECreateList< N::AEDescList_Token >( false );
 				
 				for ( UInt32 i = 1;  i <= count;  ++i )
 				{
 					N::AEPutDesc( list,
 					              0,
-					              docs.GetElementByIndex( i ) );
+					              docs.GetElementByIndex( i ).Get() );
 				}
 				
 				return list;
@@ -217,45 +217,46 @@ namespace UseEdit
 			// Unsupported key form
 			throw N::ErrAEEventNotHandled();
 			
-			return NN::Owned< N::AEToken, N::AETokenDisposer >();
+			return NN::Owned< N::AEDesc_Token >();
 		}
 		
-		NN::Owned< N::AEToken, N::AETokenDisposer > AccessDocName( N::AEPropertyID    propertyID,
-	                                                               const N::AEToken&  containerToken,
-	                                                               N::AEObjectClass   containerClass )
+		NN::Owned< N::AEDesc_Token > AccessDocName( N::AEPropertyID         propertyID,
+	                                                const N::AEDesc_Token&  containerToken,
+	                                                N::AEObjectClass        containerClass )
 		{
 			UInt32 id = N::AEGetDescData< typeUInt32 >( containerToken, typeDocument );
 			
 			const Document& document = App::Get().Documents().GetDocumentByID( id );
 			
-			return N::AECreateToken< typeChar >( document.GetName() );
+			return N::AECreateDesc< N::AEDesc_Token, typeChar >( document.GetName() );
 		}
 		
 		// Count
 		
-		std::size_t CountDocuments( N::AEObjectClass   desiredClass,
-		                            N::AEObjectClass   containerClass,
-		                            const N::AEToken&  containerToken )
+		std::size_t CountDocuments( N::AEObjectClass        desiredClass,
+		                            N::AEObjectClass        containerClass,
+		                            const N::AEDesc_Token&  containerToken )
 		{
 			return App::Get().Documents().CountElements();
 		}
 		
 		// Get data
 		
-		NN::Owned< N::AEDesc > GetLiteralData( const N::AEToken& obj, N::DescType /*desiredType*/ )
+		NN::Owned< N::AEDesc_Data > GetLiteralData( const N::AEDesc_Token& obj, N::DescType /*desiredType*/ )
 		{
-			return N::AEDuplicateDesc( obj );
+			return N::AEDuplicateDesc< N::AEDesc_Data >( obj );
 		}
 		
-		NN::Owned< N::AEDesc > GetDocument( const N::AEToken& obj, N::DescType /*desiredType*/ )
+		NN::Owned< N::AEDesc_Data > GetDocument( const N::AEDesc_Token& obj, N::DescType /*desiredType*/ )
 		{
-			AEDesc keyData = obj;
+			N::AEDesc keyData = obj;
+			
 			keyData.descriptorType = typeUInt32;
 			
 			return N::AECreateObjectSpecifier( cDocument,
 			                                   N::GetRootObjectSpecifier(),
 			                                   formUniqueID,
-			                                   keyData );
+			                                   static_cast< const N::AEDesc_Data& >( keyData ) );
 		}
 		
 	}
@@ -322,12 +323,12 @@ namespace UseEdit
 		return Find( id ) != itsMap.end();
 	}
 	
-	NN::Owned< N::AEToken, N::AETokenDisposer > DocumentContainer::GetElementByIndex( std::size_t index ) const
+	NN::Owned< N::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
 	{
 		return TokenForDocument( GetDocumentByIndex( index ) );
 	}
 	
-	NN::Owned< N::AEToken, N::AETokenDisposer > DocumentContainer::GetElementByID( UInt32 id ) const
+	NN::Owned< N::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) const
 	{
 		return TokenForDocument( GetDocumentByID( id ) );
 	}
