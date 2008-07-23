@@ -61,7 +61,9 @@ namespace Pedestal
 	class Application : public ApplicationContext
 	{
 		public:
-			static void AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, Application* app );
+			static void AppleEventHandler( const N::AppleEvent&  appleEvent,
+			                               N::AppleEvent&        reply,
+			                               Application*          app );
 			
 			// Constructor & destructor.
 			Application();
@@ -71,7 +73,7 @@ namespace Pedestal
 			int Run(); // This calls the main event loop.
 			
 			// Event responding
-			void HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& reply );
+			void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
 			void HandleMenuChoice( long menuChoice );
 			
 			bool DoCommand( MenuItemCode code );

@@ -626,7 +626,9 @@ namespace Pedestal
 		}
 	}
 	
-	void Application::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, Application* app )
+	void Application::AppleEventHandler( const N::AppleEvent&  appleEvent,
+	                                     N::AppleEvent&        reply,
+	                                     Application*          app )
 	{
 		app->HandleAppleEvent( appleEvent, reply );
 	}
@@ -796,7 +798,7 @@ namespace Pedestal
 		return 0;
 	}
 	
-	void Application::HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& reply )
+	void Application::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
 	{
 		N::AEEventClass eventClass = N::AEGetAttributePtr< N::keyEventClassAttr >( appleEvent );
 		N::AEEventID    eventID    = N::AEGetAttributePtr< N::keyEventIDAttr    >( appleEvent );
