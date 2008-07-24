@@ -5,30 +5,12 @@
 
 #include "Genie/IO/ConsoleTTY.hh"
 
-// Standard C
-#include <errno.h>
-
-// Lamp
-#include <lamp/winio.h>
-
-// Nucleus
-#include "Nucleus/Convert.h"
-
-// POSeve
-#include "POSeven/Errno.hh"
-
 // Genie
 #include "Genie/IO/ConsoleWindow.hh"
-#include "Genie/IO/WindowLiberty.hh"
 
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace p7 = poseven;
-	
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( TerminalID          id,
 	                                    const std::string&  name ) : itsID( id ),
@@ -38,17 +20,6 @@ namespace Genie
 	
 	ConsoleTTYHandle::~ConsoleTTYHandle()
 	{
-		ConsoleWindow* window = static_cast< ConsoleWindow* >( itsWindow.get() );
-		
-		if ( window != NULL  &&  window->ShouldBeSalvaged() )
-		{
-			std::string exCon = "(" + NN::Convert< std::string >( window->GetLeaderWaitStatus() ) + ")";
-			
-			window->SetTitle( N::Str255( exCon ) );
-			
-			LiberateWindow( *window, itsWindow );
-		}
-		
 		GetDynamicGroup< ConsoleTTYHandle >().erase( itsID );
 	}
 	

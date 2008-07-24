@@ -52,7 +52,6 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/IO/Terminal.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 
@@ -1135,24 +1134,6 @@ namespace Genie
 		pid_t sid  = GetSID();
 		
 		bool isSessionLeader = pid == sid;
-		
-		if ( isSessionLeader )
-		{
-			try
-			{
-				const boost::shared_ptr< IOHandle >& ctty = ControllingTerminal();
-				
-				if ( ctty.get() != NULL )
-				{
-					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *ctty );
-					
-					terminal.SaveLeaderWaitStatus( itsResult );
-				}
-			}
-			catch ( ... )
-			{
-			}
-		}
 		
 		// This could yield, e.g. in OTCloseProvider() with sync idle events
 		itsFileDescriptors.clear();

@@ -126,30 +126,6 @@ namespace Genie
 	{
 	}
 	
-	bool WindowHandle::ShouldBeSalvaged() const
-	{
-		if ( IsDisconnected() )
-		{
-			return false;
-		}
-		
-		switch ( itsWindowSalvagePolicy )
-		{
-			default:
-			case kLampSalvageWindowOnExitNever:
-				//return false;
-			
-			case kLampSalvageWindowOnExitForSignal:
-				// FIXME
-			
-			case kLampSalvageWindowOnExitForFailure:
-				return GetLeaderWaitStatus() != 0;
-			
-			case kLampSalvageWindowOnExitAlways:
-				return true;
-		}
-	}
-	
 	
 	static Point GetWindowSize( N::WindowRef window )
 	{

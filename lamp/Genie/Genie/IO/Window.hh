@@ -46,8 +46,6 @@ namespace Genie
 			
 			virtual Nitrogen::WindowRef GetWindowRef() const = 0;
 			
-			bool ShouldBeSalvaged() const;
-			
 			Nitrogen::Str255 GetTitle() const;
 			
 			void SetTitle( ConstStr255Param title );

@@ -28,12 +28,10 @@ namespace Genie
 			const std::string                itsTTYName;
 			boost::weak_ptr< ProcessGroup >  itsForegroundProcessGroup;
 			bool                             itIsDisconnected;
-			int                              itsLeaderWaitStatus;
 		
 		public:
 			TerminalHandle( const std::string& ttyName ) : itsTTYName         ( ttyName ),
-			                                               itIsDisconnected   ( false   ),
-			                                               itsLeaderWaitStatus( 0       )
+			                                               itIsDisconnected   ( false   )
 			{
 			}
 			
@@ -54,10 +52,6 @@ namespace Genie
 			void Disconnect()  { itIsDisconnected = true; }
 			
 			const std::string& TTYName() const  { return itsTTYName; }
-			
-			void SaveLeaderWaitStatus( int status )  { itsLeaderWaitStatus = status; }
-			
-			int GetLeaderWaitStatus() const  { return itsLeaderWaitStatus; }
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< TerminalHandle >
