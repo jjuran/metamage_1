@@ -403,7 +403,9 @@ namespace Genie
 		
 		{ "cmdline",   &Query_Factory< proc_PID_cmdline_Query   > },
 		{ "stat",      &Query_Factory< proc_PID_stat_Query      > },
-		{ "backtrace", &Query_Factory< proc_PID_backtrace_Query > }
+		{ "backtrace", &Query_Factory< proc_PID_backtrace_Query > },
+		
+		{ NULL, NULL }
 	};
 	
 	FSTreePtr PID_fd_Details::GetChildNode( const FSTreePtr&    parent,
