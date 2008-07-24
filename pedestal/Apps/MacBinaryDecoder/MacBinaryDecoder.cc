@@ -37,36 +37,20 @@ namespace MacBinaryDecoder
 	{
 		MacBinary::Decoder decoder( destDir );
 		
-		char data[ 4096 ];
+		const std::size_t blockSize = 4096;
+		
+		char data[ blockSize ];
 		
 		std::size_t totalBytes = 0;
 		
 		try
 		{
-			while ( true )
+			while ( std::size_t bytes = io::read( input, data, blockSize ) )
 			{
-				std::size_t bytes = io::read( input, data, 4096 );
-				
-				if ( bytes == 0 )
-				{
-					// Not reached -- exception thrown instead
-					break;
-				}
-				else if ( bytes < 0 )
-				{
-					// Not reached -- exception thrown instead
-					//std::fprintf( stderr, "macbin: Read failure: %s\n", strerror( errno ) );
-					//O::ThrowExitStatus( 1 );
-				}
-				
 				decoder.Write( data, bytes );
 				
 				totalBytes += bytes;
 			}
-		}
-		catch ( const io::end_of_input& )
-		{
-			// We're done
 		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
