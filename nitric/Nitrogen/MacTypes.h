@@ -372,9 +372,11 @@ namespace Nucleus
 	
 	template <> struct Converter< Nitrogen::FourCharCode, std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::FourCharCode > {};
 	template <> struct Converter< Nitrogen::OSType,       std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::OSType       > {};
+	template <> struct Converter< Nitrogen::ResType,      std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::ResType      > {};
 	
 	template <> struct Converter< std::string, Nitrogen::FourCharCode > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::FourCharCode > {};
 	template <> struct Converter< std::string, Nitrogen::OSType       > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::OSType       > {};
+	template <> struct Converter< std::string, Nitrogen::ResType      > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::ResType      > {};
 	
   }
 
