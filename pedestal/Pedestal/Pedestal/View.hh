@@ -43,8 +43,6 @@ namespace Pedestal
 			
 			void Activate( bool activating )  {}
 			
-			void UpdateScrollPosition( Point scrollPosition )  {}
-			
 			bool SetCursor( Point      location,
 			                RgnHandle  mouseRgn  )  { return false; }
 			
