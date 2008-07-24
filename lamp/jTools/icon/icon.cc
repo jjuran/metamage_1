@@ -65,10 +65,10 @@ static void create_window( const char* pathname )
 	
 	unsigned short bg_color[3] = { 0xdddd, 0xdddd, 0xdddd };
 	
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCSBGCOLOR, (int*) bg_color ) );
+	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCSBGCOLOR, bg_color ) );
 	
-	p7::throw_posix_result( ioctl( STDIN_FILENO, WIOCSSIZE, (int*) &window_size ) );
-	p7::throw_posix_result( ioctl( STDIN_FILENO, WIOCSTITLE, (int*) pathname ) );
+	p7::throw_posix_result( ioctl( STDIN_FILENO, WIOCSSIZE, &window_size ) );
+	p7::throw_posix_result( ioctl( STDIN_FILENO, WIOCSTITLE, pathname ) );
 }
 
 template < int depth >  struct bit_depth_traits;
@@ -152,10 +152,10 @@ static void draw_window()
 	unsigned short rowBytes = 0;
 	unsigned short nRows    = 0;
 	
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGDEPTH,    (int*) &depth    ) );
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGROWBYTES, (int*) &rowBytes ) );
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGNROWS,    (int*) &nRows    ) );
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGBASEADDR, (int*) &baseAddr ) );
+	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGDEPTH,    &depth    ) );
+	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGROWBYTES, &rowBytes ) );
+	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGNROWS,    &nRows    ) );
+	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGBASEADDR, &baseAddr ) );
 	
 	size_t size = nRows * rowBytes;
 	
@@ -199,7 +199,7 @@ static void draw_window()
 		draw( global_icon_data.icon + row * 32/8, rowBase );
 	}
 	
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCFLUSHRECT, (int*) NULL ) );
+	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCFLUSHRECT, NULL ) );
 }
 
 int main( int argc, char const* const argv[] )

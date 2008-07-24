@@ -84,42 +84,42 @@ inline std::string get_window_title( p7::fd_t window )
 {
 	char title[ 256 ];
 	
-	p7::ioctl( window, WIOCGTITLE, (int*) title );
+	p7::ioctl( window, WIOCGTITLE, title );
 	
 	return title;
 }
 
 inline void set_window_title( p7::fd_t window, const char* title )
 {
-	p7::ioctl( window, WIOCSTITLE, (int*) title );
+	p7::ioctl( window, WIOCSTITLE, title );
 }
 
 inline Point get_window_position( p7::fd_t window )
 {
 	Point position;
 	
-	p7::ioctl( window, WIOCGPOS, (int*) &position );
+	p7::ioctl( window, WIOCGPOS, &position );
 	
 	return position;
 }
 
 inline void set_window_position( p7::fd_t window, Point position )
 {
-	p7::ioctl( window, WIOCSPOS, (int*) &position );
+	p7::ioctl( window, WIOCSPOS, &position );
 }
 
 inline Point get_window_size( p7::fd_t window )
 {
 	Point size;
 	
-	p7::ioctl( window, WIOCGSIZE, (int*) &size );
+	p7::ioctl( window, WIOCGSIZE, &size );
 	
 	return size;
 }
 
 inline void set_window_size( p7::fd_t window, Point size )
 {
-	p7::ioctl( window, WIOCSSIZE, (int*) &size );
+	p7::ioctl( window, WIOCSSIZE, &size );
 }
 
 inline bool get_window_visibility( p7::fd_t window )

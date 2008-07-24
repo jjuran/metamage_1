@@ -78,7 +78,7 @@ int O::Main( int argc, char const *const argv[] )
 		
 		if ( title != NULL )
 		{
-			io = ioctl( console, WIOCSTITLE, (int*) title );
+			io = ioctl( console, WIOCSTITLE, title );
 		}
 		
 		dup2( console, 0 );

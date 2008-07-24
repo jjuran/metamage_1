@@ -78,7 +78,7 @@ static void SetRowsAndColumns()
 	
 	short dimensions[ 2 ] = { 0 };
 	
-	int status = ioctl( tty, WIOCGDIM, (int*) &dimensions );
+	int status = ioctl( tty, WIOCGDIM, &dimensions );
 	
 	if ( status == 0 )
 	{

@@ -1201,7 +1201,7 @@ static int TestPath( int argc, iota::argv_t argv )
 	
 	int fd = 0;
 	
-	ioctl( fd, WIOCGPOS, (int*) &location );
+	ioctl( fd, WIOCGPOS, &location );
 	
 	int start_pos = location.h;
 	
@@ -1226,12 +1226,12 @@ static int TestPath( int argc, iota::argv_t argv )
 	{
 		location.h = start_pos + path.sample( elapsed_time ) * pix;
 		
-		ioctl( fd, WIOCSPOS, (int*) &location );
+		ioctl( fd, WIOCSPOS, &location );
 	}
 	
 	location.h = stop_pos;
 	
-	ioctl( fd, WIOCSPOS, (int*) &location );
+	ioctl( fd, WIOCSPOS, &location );
 	
 #endif
 	

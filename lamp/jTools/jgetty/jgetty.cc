@@ -78,7 +78,7 @@ int main( int argc, char const *const argv[] )
 		// so we'll get SIGHUP when the window is closed.
 		int pgrpset = tcsetpgrp( STDIN_FILENO, sid );
 		
-		result = ioctl( STDIN_FILENO, WIOCSTITLE, (int*) "(Done)" );
+		result = ioctl( STDIN_FILENO, WIOCSTITLE, "(Done)" );
 		
 		// Loop so resizing the window doesn't kill us (via SIGWINCH).
 		while ( true )

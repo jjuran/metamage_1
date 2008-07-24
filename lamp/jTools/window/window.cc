@@ -87,17 +87,17 @@ inline Point read_size( const char* string )
 
 inline void set_window_title( p7::fd_t window, const char* title )
 {
-	p7::ioctl( window, WIOCSTITLE, (int*) title );
+	p7::ioctl( window, WIOCSTITLE, title );
 }
 
 inline void set_window_position( p7::fd_t window, Point position )
 {
-	p7::ioctl( window, WIOCSPOS, (int*) &position );
+	p7::ioctl( window, WIOCSPOS, &position );
 }
 
 inline void set_window_size( p7::fd_t window, Point size )
 {
-	p7::ioctl( window, WIOCSSIZE, (int*) &size );
+	p7::ioctl( window, WIOCSSIZE, &size );
 }
 
 inline void set_window_visibility( p7::fd_t window, int visibility )
