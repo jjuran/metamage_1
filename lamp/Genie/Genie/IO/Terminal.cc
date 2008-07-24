@@ -67,18 +67,18 @@ namespace Genie
 				CheckControllingTerminal( current, *this );
 				
 				{
-					boost::shared_ptr< Session > terminal_session = !GetProcessGroup().expired() ? GetProcessGroup().lock()->GetSession()
-					                                                                             : process_session;
-					
-					// Since this is the process' controlling terminal, they should share a session
-					ASSERT( terminal_session.get() == process_session.get() );
-					
-					if ( process_session->GetControllingTerminal().get() != this )
+					// If the terminal has an existing foreground process group,
+					// it must be in the same session as the calling process.
+					if ( GetProcessGroup().expired()  ||  GetProcessGroup().lock()->GetSession().get() == process_session.get() )
 					{
-						p7::throw_errno( ENOTTY );
+						// This must be the caller's controlling terminal.
+						if ( process_session->GetControllingTerminal().get() == this )
+						{
+							SetProcessGroup( GetProcessGroupInSession( *argp, process_session ) );
+						}
 					}
 					
-					SetProcessGroup( GetProcessGroupInSession( *argp, terminal_session ) );
+					p7::throw_errno( ENOTTY );
 				}
 				
 				break;
