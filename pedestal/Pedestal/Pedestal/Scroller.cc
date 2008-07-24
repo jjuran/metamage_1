@@ -26,55 +26,32 @@ namespace Pedestal
 			+ ScrollbarOverlap();
 	}
 	
-	Rect VerticalScrollbarBounds(const Rect& scrollerBounds, bool shortened)
+	Rect VerticalScrollbarBounds( UInt16 width, UInt16 height, bool shortened )
 	{
-		int width = NX::RectWidth(scrollerBounds);
-		int height = NX::RectHeight(scrollerBounds);
-		
-		return N::OffsetRect
-		(
-			N::SetRect
-			(
-				-ScrollbarThickness(), 
-				0, 
-				0, 
-				ActualScrollbarLength( height, shortened )
-			), 
-			width + ScrollbarOverlap(), 
-			-ScrollbarOverlap()
-		);
+		return N::OffsetRect( N::SetRect( -ScrollbarThickness(),
+		                                  0,
+		                                  0,
+		                                  ActualScrollbarLength( height, shortened ) ),
+		                      width + ScrollbarOverlap(),
+		                      -ScrollbarOverlap() );
 	}
 	
-	Rect HorizontalScrollbarBounds(const Rect& scrollerBounds, bool shortened)
+	Rect HorizontalScrollbarBounds( UInt16 width, UInt16 height, bool shortened )
 	{
-		int width = NX::RectWidth(scrollerBounds);
-		int height = NX::RectHeight(scrollerBounds);
-		
-		return N::OffsetRect
-		(
-			N::SetRect
-			(
-				0, 
-				-ScrollbarThickness(), 
-				ActualScrollbarLength( width, shortened ), 
-				0
-			), 
-			-ScrollbarOverlap(), 
-			height + ScrollbarOverlap()
-		);
+		return N::OffsetRect( N::SetRect( 0,
+		                                  -ScrollbarThickness(),
+		                                  ActualScrollbarLength( width, shortened ),
+		                                  0 ),
+		                      -ScrollbarOverlap(),
+		                      height + ScrollbarOverlap() );
 	}
 	
-	Rect Aperture( const Rect& scrollerBounds, bool vertical, bool horizontal )
+	Rect Aperture( UInt16 width, UInt16 height, bool vertical, bool horizontal )
 	{
-		int width  = NX::RectWidth ( scrollerBounds );
-		int height = NX::RectHeight( scrollerBounds );
-		
-		return N::SetRect(
-			0, 
-			0, 
-			width  - ( vertical   ? ScrollbarProfile() : 0), 
-			height - ( horizontal ? ScrollbarProfile() : 0)
-		);
+		return N::SetRect( 0,
+		                   0,
+		                   width  - ( vertical   ? ScrollbarProfile() : 0),
+		                   height - ( horizontal ? ScrollbarProfile() : 0) );
 	}
 	
 	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition )

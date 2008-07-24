@@ -39,10 +39,10 @@ namespace Pedestal
 	
 	short ActualScrollbarLength( short viewLength, bool shortened );
 	
-	Rect VerticalScrollbarBounds  (const Rect& scrollerBounds, bool shortened);
-	Rect HorizontalScrollbarBounds(const Rect& scrollerBounds, bool shortened);
+	Rect VerticalScrollbarBounds  ( UInt16 width, UInt16 height, bool shortened );
+	Rect HorizontalScrollbarBounds( UInt16 width, UInt16 height, bool shortened );
 	
-	Rect Aperture( const Rect& scrollerBounds, bool vertical, bool horizontal );
+	Rect Aperture( UInt16 width, UInt16 height, bool vertical, bool horizontal );
 	
 	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition );
 	
@@ -571,7 +571,11 @@ namespace Pedestal
 				BoundedView::Resize( NX::RectWidth ( newBounds ),
 				                     NX::RectHeight( newBounds ) );
 				
-				Rect aperture = Aperture( Bounds(),
+				UInt16 width  = NX::RectWidth ( Bounds() );
+				UInt16 height = NX::RectHeight( Bounds() );
+				
+				Rect aperture = Aperture( width,
+				                          height,
 				                          VerticalTraits  ::profile,
 				                          HorizontalTraits::profile );
 				
@@ -579,8 +583,8 @@ namespace Pedestal
 				InvalidateControl( VerticalScrollbar  ().Get() );
 				InvalidateControl( HorizontalScrollbar().Get() );
 				
-				SetBounds( VerticalScrollbar  ().Get(),   VerticalScrollbarBounds( Bounds(), true ) );
-				SetBounds( HorizontalScrollbar().Get(), HorizontalScrollbarBounds( Bounds(), true ) );
+				SetBounds( VerticalScrollbar  ().Get(),   VerticalScrollbarBounds( width, height, true ) );
+				SetBounds( HorizontalScrollbar().Get(), HorizontalScrollbarBounds( width, height, true ) );
 				
 				// Invalidate new scrollbar regions
 				InvalidateControl( VerticalScrollbar  ().Get() );
@@ -605,21 +609,24 @@ namespace Pedestal
 	Scroller< ScrollViewType, vertical, horizontal >::Scroller( const Rect& bounds, Initializer init )
 	: 
 		BoundedView( bounds ),
-		myScrollV( VerticalScrollbarBounds  ( bounds,
+		myScrollV( VerticalScrollbarBounds  ( NX::RectWidth ( bounds ),
+		                                      NX::RectHeight( bounds ),
 		                                      true ),
 		           VerticalTraits::procID,
 		           &myScrollView,
 		           Track< kVertical,
 		                  Scrollbar_Traits< vertical >::scrollingIsLive,
 		                  ScrollViewType > ),
-		myScrollH( HorizontalScrollbarBounds( bounds,
+		myScrollH( HorizontalScrollbarBounds( NX::RectWidth ( bounds ),
+		                                      NX::RectHeight( bounds ),
 		                                      true ),
 		           HorizontalTraits::procID,
 		           &myScrollView,
 		           Track< kHorizontal,
 		                  Scrollbar_Traits< horizontal >::scrollingIsLive,
 		                  ScrollViewType > ),
-		myScrollView( Aperture( bounds,
+		myScrollView( Aperture( NX::RectWidth ( bounds ),
+		                        NX::RectHeight( bounds ),
 		                        VerticalTraits::profile,
 		                        HorizontalTraits::profile ),
 		              init )
