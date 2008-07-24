@@ -74,19 +74,25 @@ static void SendPrompt()
 
 static void SetRowsAndColumns()
 {
-	NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly, 0 );
-	
-	short dimensions[ 2 ] = { 0 };
-	
-	int status = ioctl( tty, WIOCGDIM, &dimensions );
-	
-	if ( status == 0 )
+	try
 	{
-		std::string lines   = NN::Convert< std::string >( dimensions[0] );
-		std::string columns = NN::Convert< std::string >( dimensions[1] );
+		NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly, 0 );
 		
-		AssignShellVariable( "LINES",   lines  .c_str() );
-		AssignShellVariable( "COLUMNS", columns.c_str() );
+		short dimensions[ 2 ] = { 0 };
+		
+		int status = ioctl( tty, WIOCGDIM, &dimensions );
+		
+		if ( status == 0 )
+		{
+			std::string lines   = NN::Convert< std::string >( dimensions[0] );
+			std::string columns = NN::Convert< std::string >( dimensions[1] );
+			
+			AssignShellVariable( "LINES",   lines  .c_str() );
+			AssignShellVariable( "COLUMNS", columns.c_str() );
+		}
+	}
+	catch ( ... )
+	{
 	}
 }
 
