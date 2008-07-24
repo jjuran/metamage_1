@@ -145,7 +145,7 @@ namespace Genie
 		
 		if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
 		{
-			base->Resized( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			base->Resized( size.h, size.v );
 		}
 	}
 	
