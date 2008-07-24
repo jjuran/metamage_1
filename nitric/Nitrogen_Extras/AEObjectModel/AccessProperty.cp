@@ -24,7 +24,6 @@
 namespace Nitrogen
 {
 	
-	
 	Nucleus::Owned< AEDesc_Token > AccessProperty( AEPropertyID         propertyID,
 	                                               const AEDesc_Token&  containerToken,
 	                                               AEObjectClass        containerClass )
@@ -120,8 +119,17 @@ namespace Nitrogen
 				                                containerToken,
 				                                containerClass );
 			}
-			catch ( ErrAENoSuchObject )
+			catch ( const ErrAENoSuchObject& err )
 			{
+			#ifdef __MWERKS__
+				
+				if ( err.Get() != errAENoSuchObject )
+				{
+					throw;
+				}
+				
+			#endif
+				
 				propertyToken = MissingValue();
 			}
 			
