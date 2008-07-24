@@ -58,19 +58,24 @@ namespace Pedestal
 		::TextSize( 9 );
 	}
 	
-	static Rect AdjustListBounds( const Rect& bounds, bool scrollHoriz, bool scrollVert )
+	static void AdjustListBounds( short& right, short& bottom, bool scrollHoriz, bool scrollVert )
 	{
-		Rect result = bounds;
-		
 		if ( scrollHoriz )
 		{
-			result.bottom -= 15;
+			bottom -= 15;
 		}
 		
 		if ( scrollVert )
 		{
-			result.right -= 15;
+			right -= 15;
 		}
+	}
+	
+	static Rect AdjustListBounds( const Rect& bounds, bool scrollHoriz, bool scrollVert )
+	{
+		Rect result = bounds;
+		
+		AdjustListBounds( result.right, result.bottom, scrollHoriz, scrollVert );
 		
 		return result;
 	}
@@ -111,12 +116,9 @@ namespace Pedestal
 		N::LUpdate( N::GetPortVisibleRegion( N::GetQDGlobalsThePort() ), list );
 	}
 	
-	void ListView::Resize( const Rect& newBounds )
+	void ListView::Resize( short width, short height )
 	{
-		Rect bounds = AdjustListBounds( newBounds, false, true );
-		
-		short width  = bounds.right - bounds.left;
-		short height = bounds.bottom - bounds.top;
+		AdjustListBounds( width, height, false, true );
 		
 		N::LSize( width, height, list );
 	}

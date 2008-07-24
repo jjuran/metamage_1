@@ -26,7 +26,7 @@ namespace Pedestal
 			+ ScrollbarOverlap();
 	}
 	
-	Rect VerticalScrollbarBounds( UInt16 width, UInt16 height, bool shortened )
+	Rect VerticalScrollbarBounds( short width, short height, bool shortened )
 	{
 		return N::OffsetRect( N::SetRect( -ScrollbarThickness(),
 		                                  0,
@@ -36,7 +36,7 @@ namespace Pedestal
 		                      -ScrollbarOverlap() );
 	}
 	
-	Rect HorizontalScrollbarBounds( UInt16 width, UInt16 height, bool shortened )
+	Rect HorizontalScrollbarBounds( short width, short height, bool shortened )
 	{
 		return N::OffsetRect( N::SetRect( 0,
 		                                  -ScrollbarThickness(),
@@ -46,12 +46,10 @@ namespace Pedestal
 		                      height + ScrollbarOverlap() );
 	}
 	
-	Rect Aperture( UInt16 width, UInt16 height, bool vertical, bool horizontal )
+	Point ScrollDimensions( short width, short height, bool vertical, bool horizontal )
 	{
-		return N::SetRect( 0,
-		                   0,
-		                   width  - ( vertical   ? ScrollbarProfile() : 0),
-		                   height - ( horizontal ? ScrollbarProfile() : 0) );
+		return N::SetPt( width  - ( vertical   ? ScrollbarProfile() : 0 ),
+		                 height - ( horizontal ? ScrollbarProfile() : 0 ) );
 	}
 	
 	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition )

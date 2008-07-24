@@ -49,7 +49,7 @@ namespace Pedestal
 			
 			void Update();
 			
-			void Resize( const Rect& newBounds );
+			void Resize( short width, short height );
 	};
 	
 	inline Rect Bounds( const ListView& view )

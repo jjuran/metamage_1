@@ -194,7 +194,7 @@ namespace Pedestal
 			virtual void Update     (                                    ) = 0;
 			virtual void Activate   ( bool activating                    ) = 0;
 			virtual bool SetCursor  ( Point location, RgnHandle mouseRgn ) = 0;
-			virtual void Resized    ( const Rect& newBounds              ) = 0;
+			virtual void Resized    ( short width, short height          ) = 0;
 			virtual bool UserCommand( MenuItemCode code                  ) = 0;
 			
 			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event ) = 0;
@@ -229,11 +229,11 @@ namespace Pedestal
 			Type const& SubView() const  { return mySubView; }
 			Type      & SubView()        { return mySubView; }
 			
-			void Idle       ( const EventRecord& event )  { SubView().Idle( event );              }
-			bool KeyDown    ( const EventRecord& event )  { return SubView().KeyDown( event );    }
-			void Activate   ( bool activating          )  { SubView().Activate( activating );  InvalidateGrowBox( Get() ); }
-			void Resized    ( const Rect& newBounds    )  { SubView().Resize  ( newBounds  );  InvalidateGrowBox( Get() ); }
-			bool UserCommand( MenuItemCode code        )  { return SubView().UserCommand( code ); }
+			void Idle       ( const EventRecord& event  )  { SubView().Idle( event );              }
+			bool KeyDown    ( const EventRecord& event  )  { return SubView().KeyDown( event );    }
+			void Activate   ( bool activating           )  { SubView().Activate( activating    );  InvalidateGrowBox( Get() ); }
+			void Resized    ( short width, short height )  { SubView().Resize  ( width, height );  InvalidateGrowBox( Get() ); }
+			bool UserCommand( MenuItemCode code         )  { return SubView().UserCommand( code ); }
 			
 			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
 			{

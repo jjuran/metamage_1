@@ -34,7 +34,7 @@ namespace Pedestal
 			
 			void Erase( const Rect& bounds );
 			
-			void Resize( const Rect& bounds );
+			void Resize( short width, short height );
 			
 			void Update();
 	};

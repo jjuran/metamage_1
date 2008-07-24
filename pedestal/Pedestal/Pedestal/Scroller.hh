@@ -39,10 +39,17 @@ namespace Pedestal
 	
 	short ActualScrollbarLength( short viewLength, bool shortened );
 	
-	Rect VerticalScrollbarBounds  ( UInt16 width, UInt16 height, bool shortened );
-	Rect HorizontalScrollbarBounds( UInt16 width, UInt16 height, bool shortened );
+	Rect VerticalScrollbarBounds  ( short width, short height, bool shortened );
+	Rect HorizontalScrollbarBounds( short width, short height, bool shortened );
 	
-	Rect Aperture( UInt16 width, UInt16 height, bool vertical, bool horizontal );
+	Point ScrollDimensions( short width, short height, bool vertical, bool horizontal );
+	
+	inline Rect ScrollBounds( short width, short height, bool vertical, bool horizontal )
+	{
+		Point dimensions = ScrollDimensions( width, height, vertical, horizontal );
+		
+		return N::SetRect( 0, 0, dimensions.h, dimensions.v );
+	}
 	
 	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition );
 	
@@ -566,18 +573,14 @@ namespace Pedestal
 				return false;
 			}
 			
-			void Resize( const Rect& newBounds )
+			void Resize( short width, short height )
 			{
-				BoundedView::Resize( NX::RectWidth ( newBounds ),
-				                     NX::RectHeight( newBounds ) );
+				BoundedView::Resize( width, height );
 				
-				UInt16 width  = NX::RectWidth ( Bounds() );
-				UInt16 height = NX::RectHeight( Bounds() );
-				
-				Rect aperture = Aperture( width,
-				                          height,
-				                          VerticalTraits  ::profile,
-				                          HorizontalTraits::profile );
+				Point dimensions = ScrollDimensions( width,
+				                                     height,
+				                                     VerticalTraits  ::profile,
+				                                     HorizontalTraits::profile );
 				
 				// Invalidate old scrollbar regions
 				InvalidateControl( VerticalScrollbar  ().Get() );
@@ -590,7 +593,7 @@ namespace Pedestal
 				InvalidateControl( VerticalScrollbar  ().Get() );
 				InvalidateControl( HorizontalScrollbar().Get() );
 				
-				ScrolledView().Resize( aperture );
+				ScrolledView().Resize( dimensions.h, dimensions.v );
 				
 				Calibrate();
 				
@@ -625,10 +628,10 @@ namespace Pedestal
 		           Track< kHorizontal,
 		                  Scrollbar_Traits< horizontal >::scrollingIsLive,
 		                  ScrollViewType > ),
-		myScrollView( Aperture( NX::RectWidth ( bounds ),
-		                        NX::RectHeight( bounds ),
-		                        VerticalTraits::profile,
-		                        HorizontalTraits::profile ),
+		myScrollView( ScrollBounds( NX::RectWidth ( bounds ),
+		                            NX::RectHeight( bounds ),
+		                            VerticalTraits::profile,
+		                            HorizontalTraits::profile ),
 		              init )
 	{
 		SetControlViewSizes();

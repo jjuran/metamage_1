@@ -37,7 +37,7 @@ namespace Pedestal
 			
 			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& )  { return boost::shared_ptr< Quasimode >(); }
 			
-			void Resize( const Rect& newBounds )  {}
+			void Resize( short width, short height )  {}
 			
 			void Update()  {}
 			

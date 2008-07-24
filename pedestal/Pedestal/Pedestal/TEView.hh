@@ -30,7 +30,6 @@ namespace Pedestal
 	Point ScrollPosition( TEHandle hTE );
 	
 	void Resize( TEHandle hTE, short width, short height );
-	void Resize( TEHandle hTE, const Rect& newBounds );
 	
 	void Scroll( TEHandle hTE, short dh, short dv );
 	
@@ -71,7 +70,7 @@ namespace Pedestal
 			
 			void Update();
 			
-			void Resize( const Rect& newBounds )  { Pedestal::Resize( Get(), newBounds ); }
+			void Resize( short width, short height )  { Pedestal::Resize( Get(), width, height ); }
 			
 			bool SetCursor( Point location, RgnHandle mouseRgn );
 			

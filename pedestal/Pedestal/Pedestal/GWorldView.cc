@@ -31,13 +31,14 @@ namespace Pedestal
 		N::EraseRect( bounds );
 	}
 	
-	void GWorldView::Resize( const Rect& bounds )
+	void GWorldView::Resize( short width, short height )
 	{
-		itsBounds = bounds;
+		itsBounds.right = itsBounds.left + width;
+		itsBounds.bottom = itsBounds.top + height;
 		
-		N::UpdateGWorld( itsGWorld, 0, bounds );
+		N::UpdateGWorld( itsGWorld, 0, itsBounds );
 		
-		Erase( bounds );
+		Erase( itsBounds );
 	}
 	
 	void GWorldView::Update()

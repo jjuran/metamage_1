@@ -188,7 +188,7 @@ namespace Pedestal
 		                         : (dv - 1) / N::GetTELineHeight( hTE ) + 1 );
 	}
 	
-	void Resize( TEHandle hTE, const Rect& newBounds )
+	static void Resize( TEHandle hTE, const Rect& newBounds )
 	{
 		int dv = VScrollOffset( hTE );
 		

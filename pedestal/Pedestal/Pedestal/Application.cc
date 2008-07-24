@@ -317,7 +317,9 @@ namespace Pedestal
 					// Resize the window
 					base->Resize( window, grown.h, grown.v );
 					
-					base->Resized( N::GetPortBounds( N::GetWindowPort( window ) ) );
+					Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+					
+					base->Resized( bounds.right, bounds.bottom );
 				}
 			}
 		}

@@ -85,14 +85,10 @@ namespace Pedestal
 			
 			const Rect& Bounds() const  { return bounds; }
 			
-			void Resize( const Rect& newBounds )
+			void Resize( short width, short height )
 			{
-				/*
 				bounds.right = bounds.left + width;
 				bounds.bottom = bounds.top + height;
-				*/
-				
-				bounds = newBounds;
 			}
 			
 			Point ScrollPosition() const  { return scrollPosition; }
