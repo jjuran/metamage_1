@@ -206,7 +206,7 @@ namespace Nitrogen
 			
 			ThrowOSStatus( ::AEDuplicateDesc( &desc, &result ) );
 			
-			return desc;
+			return result;
 		}
 		
 		AEDesc AECreateList_Unowned( const void*  factoringPtr,
