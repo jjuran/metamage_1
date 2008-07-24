@@ -9,7 +9,6 @@
 
 // POSIX
 #include <fcntl.h>
-#include <sys/ioctl.h>
 #include <unistd.h>
 
 
@@ -99,9 +98,6 @@ int main( int /*argc*/, char const *const /*argv*/[] )
 {
 	// Error output may be going to a log somewhere
 	dup2( STDOUT_FILENO, STDERR_FILENO );
-	
-	setsid();  // New session
-	ioctl( STDIN_FILENO, TIOCSCTTY, NULL );  // Reattach to terminal
 	
 	SetVariables();
 	
