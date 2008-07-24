@@ -39,13 +39,13 @@ namespace Vertice
 			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
 		
 		public:
-			static void AppleEventHandler( AppleEvent const&  appleEvent,
-			                               AppleEvent      &  reply,
-			                               App*               app );
+			static void AppleEventHandler( N::AppleEvent const&  appleEvent,
+			                               N::AppleEvent      &  reply,
+			                               App*                  app );
 			
 			App();
 			
-			void HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& reply );
+			void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
 	};
 	
 	
@@ -77,16 +77,16 @@ namespace Vertice
 		//myMenubar.AddMenu(myViewMenu);
 	}
 	
-	void App::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, App* app )
+	void App::AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app )
 	{
 		app->HandleAppleEvent( appleEvent, reply );
 	}
 	
-	void App::HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& reply )
+	void App::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply )
 	{
-		NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
-		                                                        N::keyDirectObject,
-		                                                        N::typeAEList );
+		NN::Owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+		                                                             N::keyDirectObject,
+		                                                             N::typeAEList );
 		
 		int docCount = N::AECountItems( docList );
 		

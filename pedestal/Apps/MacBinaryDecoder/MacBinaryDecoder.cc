@@ -80,18 +80,18 @@ namespace MacBinaryDecoder
 		
 		// Apple event handlers
 		
-		void HandleOpenDocumentsAppleEvent( const AppleEvent&  appleEvent,
-											AppleEvent&        reply,
-											App*               app )
+		void HandleOpenDocumentsAppleEvent( const N::AppleEvent&  appleEvent,
+											N::AppleEvent&        reply,
+											App   *               app )
 		{
 			ASSERT( app != NULL );
 			
 			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
 			typedef Container::const_iterator const_iterator;
 			
-			NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
-			                                                        keyDirectObject,
-			                                                        typeAEList );
+			NN::Owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+			                                                             keyDirectObject,
+			                                                             typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
 			
