@@ -117,19 +117,23 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( InitProc );
 	
-	static OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
+	static OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 	{
 		SystemCallFrame frame( "AESendBlocking" );
 		
 		try
 		{
-			(void) N::AESend( *appleEvent, N::kAEQueueReply | N::kAECanInteract );
+			N::AppleEvent const& appleEvent = static_cast< const N::AppleEvent& >( *appleEventPtr );
+			N::AppleEvent      & reply      = static_cast<       N::AppleEvent& >( *replyPtr      );
+			
+			(void) N::AESend( appleEvent,
+			                  N::kAEQueueReply | N::kAECanInteract );
 			
 			// Now that we've sent the event, retrieve the return ID
-			N::AEReturnID returnID = N::AEGetAttributePtr< N::keyReturnIDAttr >( *appleEvent );
+			N::AEReturnID returnID = N::AEGetAttributePtr< N::keyReturnIDAttr >( appleEvent );
 			
 			// Subscribe to AEFramework's queued reply delivery and wake-up service
-			N::ExpectReply( returnID, reply );
+			N::ExpectReply( returnID, &reply );
 			
 			// Sleep until the reply is delivered
 			frame.Caller().Raise( SIGSTOP );

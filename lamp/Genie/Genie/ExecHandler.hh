@@ -17,11 +17,11 @@ namespace Genie
 	class GenieExecHandler : public Nucleus::Owned< Nitrogen::AEEventHandler >
 	{
 		public:
-			static void AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, GenieExecHandler* handler );
+			static void AppleEventHandler( const Nitrogen::AppleEvent& appleEvent, Nitrogen::AppleEvent& reply, GenieExecHandler* handler );
 			
 			GenieExecHandler();
 			
-			void HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& outReply );
+			void HandleAppleEvent( const Nitrogen::AppleEvent& appleEvent, Nitrogen::AppleEvent& outReply );
 			
 			int ExecArgList( const std::vector< std::string >& argVec );
 			int ExecString( const std::string& cmd, const Nitrogen::FSDirSpec& cwd );

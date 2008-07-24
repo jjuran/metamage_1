@@ -47,12 +47,12 @@ namespace Genie
 			NN::Owned< N::AEEventHandler > myOpenDocsEventHandler;
 		
 		public:
-			static void AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, App* app );
+			static void AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app );
 			
 			App();
 			~App()  { GetProcessList().KillAll(); }
 			
-			void HandleAppleEvent(const AppleEvent& appleEvent, AppleEvent& reply);
+			void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
 			void CreateSystemConsole();
 	};
 	
@@ -74,16 +74,16 @@ namespace Genie
 		CreateSystemConsole();
 	}
 	
-	void App::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, App* app )
+	void App::AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, App* app )
 	{
 		app->HandleAppleEvent( appleEvent, reply );
 	}
 	
-	void App::HandleAppleEvent( const AppleEvent& appleEvent, AppleEvent& /*reply*/ )
+	void App::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& /*reply*/ )
 	{
-		NN::Owned< N::AEDescList > docList = N::AEGetParamDesc( appleEvent,
-		                                                        N::keyDirectObject,
-		                                                        N::typeAEList );
+		NN::Owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
+		                                                             N::keyDirectObject,
+		                                                             N::typeAEList );
 		
 		int docCount = N::AECountItems( docList );
 		

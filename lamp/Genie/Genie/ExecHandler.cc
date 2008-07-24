@@ -30,7 +30,7 @@ namespace Genie
 	using N::keyDirectObject;
 	
 	
-	void GenieExecHandler::AppleEventHandler( const AppleEvent& appleEvent, AppleEvent& reply, GenieExecHandler* handler )
+	void GenieExecHandler::AppleEventHandler( const N::AppleEvent& appleEvent, N::AppleEvent& reply, GenieExecHandler* handler )
 	{
 		handler->HandleAppleEvent( appleEvent, reply );
 	}
@@ -53,7 +53,7 @@ namespace Genie
 		//MakeNoteToTouchParam(keyAppend);
 	}
 	
-	static N::FSDirSpec GetCWD(const AEDesc& appleEvent)
+	static N::FSDirSpec GetCWD( const N::AppleEvent& appleEvent )
 	{
 		try
 		{
@@ -75,7 +75,7 @@ namespace Genie
 		}
 	}
 	
-	void GenieExecHandler::HandleAppleEvent( const AEDesc& appleEvent, AEDesc& outReply )
+	void GenieExecHandler::HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& outReply )
 	{
 		int returnValue = -1;
 		
@@ -91,7 +91,7 @@ namespace Genie
 		} 
 		else
 		{
-			NN::Owned< N::AEDescList > list = N::AEGetParamDesc( appleEvent, N::keyDirectObject, N::typeWildCard );
+			NN::Owned< N::AEDescList_Data > list = N::AEGetParamDesc( appleEvent, N::keyDirectObject, N::typeWildCard );
 			
 			std::vector< std::string > argVec;
 			

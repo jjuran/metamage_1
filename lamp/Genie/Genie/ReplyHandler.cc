@@ -27,9 +27,9 @@ namespace Genie
 	namespace NN = Nucleus;
 	
 	
-	void GenieHandlerReply::AppleEventHandler( const AppleEvent&   appleEvent,
-	                                           AppleEvent&         /*reply*/,
-	                                           GenieHandlerReply*  /*handler*/ )
+	void GenieHandlerReply::AppleEventHandler( const N::AppleEvent&   appleEvent,
+	                                           N::AppleEvent&         /*reply*/,
+	                                           GenieHandlerReply*     /*handler*/ )
 	{
 		N::ReceiveReply( appleEvent );
 	}
