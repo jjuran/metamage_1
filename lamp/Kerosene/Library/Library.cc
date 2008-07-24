@@ -307,6 +307,16 @@
 	}
 	
 	#pragma mark -
+	#pragma mark ¥ sys/wait ¥
+	
+	int wait( int* stat )
+	{
+		const pid_t any = -1;
+		
+		return waitpid( any, stat, 0 );
+	}
+	
+	#pragma mark -
 	#pragma mark ¥ time ¥
 	
 	struct tm* gmtime_r( const time_t* clock, struct tm* result )
