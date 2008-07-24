@@ -35,7 +35,8 @@
 namespace poseven
 {
 	
-	inline void ioctl( fd_t fd, int command, int* argp )
+	template < class FD, class Pointer >
+	inline void ioctl( const FD& fd, unsigned long command, Pointer argp )
 	{
 		throw_posix_result( ::ioctl( fd, command, argp ) );
 	}
