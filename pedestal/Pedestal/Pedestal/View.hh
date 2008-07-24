@@ -35,7 +35,7 @@ namespace Pedestal
 			void MouseDown( const EventRecord& event )  {}
 			bool KeyDown  ( const EventRecord& event )  { return false; }
 			
-			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& )  { return boost::shared_ptr< Quasimode >(); }
+			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );
 			
 			void Resize( short width, short height )  {}
 			
