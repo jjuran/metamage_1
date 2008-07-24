@@ -347,6 +347,18 @@ namespace Nitrogen
 namespace Nucleus
 {
 	
+	template <> struct Converter< Nitrogen::DescType,     std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::DescType     > {};
+	template <> struct Converter< Nitrogen::AEKeyword,    std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEKeyword    > {};
+	template <> struct Converter< Nitrogen::AEEventClass, std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEEventClass > {};
+	template <> struct Converter< Nitrogen::AEEventID,    std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEEventID    > {};
+	template <> struct Converter< Nitrogen::AEEnumerated, std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::AEEnumerated > {};
+	
+	template <> struct Converter< std::string, Nitrogen::DescType     > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::DescType     > {};
+	template <> struct Converter< std::string, Nitrogen::AEKeyword    > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEKeyword    > {};
+	template <> struct Converter< std::string, Nitrogen::AEEventClass > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEEventClass > {};
+	template <> struct Converter< std::string, Nitrogen::AEEventID    > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEEventID    > {};
+	template <> struct Converter< std::string, Nitrogen::AEEnumerated > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::AEEnumerated > {};
+	
 	template <>
 	struct Maker< Nitrogen::AEDesc >
 	{
