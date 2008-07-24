@@ -55,7 +55,6 @@ namespace Vertice
 			
 			// Pane management
 			const Rect& Bounds() const  { return itsBounds; }
-			void SetBounds( const Rect& bounds );
 			
 			// Event processing
 			bool DispatchCursor( const EventRecord& event );
@@ -63,7 +62,7 @@ namespace Vertice
 			bool KeyDown( const EventRecord& event );
 			bool KeyDown( char c );
 			bool DoCommand( Pedestal::MenuItemCode code )  { return false; }
-			void Resize( const Rect& newBounds );
+			void Resize( short width, short height );
 			void Paint();
 			void Redraw();
 			void Draw();

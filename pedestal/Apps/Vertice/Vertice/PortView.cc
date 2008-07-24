@@ -579,13 +579,13 @@ namespace Vertice
 		gPort2Clip = V::MakePortToClipTransform( n, f, e, a );
 	}
 	
-	PortView::PortView( const Rect& bounds, Initializer ) : itsPort           ( itsScene                   ),
-	                                                        itsSelectedContext(                            ),
-	                                                        itsGWorld         ( N::NewGWorld( 32, bounds ) ),
-	                                                        itsAnaglyphMode   ( kNoAnaglyph                )
+	PortView::PortView( const Rect& bounds, Initializer ) : itsBounds         ( bounds      ),
+	                                                        itsPort           ( itsScene    ),
+	                                                        itsSelectedContext(             ),
+	                                                        itsAnaglyphMode   ( kNoAnaglyph )
 	{
-		SetBounds( bounds );
-		N::LockPixels( N::GetGWorldPixMap( itsGWorld ) );
+		Resize( bounds.right - bounds.left,
+		        bounds.bottom - bounds.top );
 	}
 	
 	static V::Point3D::Type PortFromScreen_Point( const V::Point3D::Type&  point,
@@ -632,22 +632,6 @@ namespace Vertice
 		scale.Cell( 1, 1 ) = 1.0 / (e * -width / 2);
 		
 		return screen2port = Compose( translate.Make(), scale );
-	}
-	
-	void PortView::SetBounds( const Rect& bounds )
-	{
-		itsBounds = bounds;
-		
-		N::InvalRect( bounds );  // Invalidate the entire window, not just the new area
-		
-		short width  = NX::RectWidth ( bounds );
-		short height = NX::RectHeight( bounds );
-		
-		itsScreen2Port = ScreenToPortTransform( width, height );
-		
-		sAspectRatio = AspectRatio( width, height );
-		
-		SetPortToClipTransform();
 	}
 	
 	static const V::XMatrix& PortToScreenTransform( short width, short height )
@@ -1736,13 +1720,22 @@ namespace Vertice
 		return std::equal( (const SInt16*)&a, (const SInt16*)&a + 4, (const SInt16*)&b );
 	}
 	
-	void PortView::Resize( const Rect& newBounds )
+	void PortView::Resize( short width, short height )
 	{
 		using namespace Nucleus::Operators;
 		
 		//if ( newBounds == itsBounds )  return;
 		
-		SetBounds( NX::NormalRect( newBounds ) );
+		itsBounds.right = itsBounds.left + width;
+		itsBounds.bottom = itsBounds.top + height;
+		
+		N::InvalRect( itsBounds );  // Invalidate the entire window, not just the new area
+		
+		itsScreen2Port = ScreenToPortTransform( width, height );
+		
+		sAspectRatio = AspectRatio( width, height );
+		
+		SetPortToClipTransform();
 		
 		itsGWorld = N::NewGWorld( 32, itsBounds );
 		
