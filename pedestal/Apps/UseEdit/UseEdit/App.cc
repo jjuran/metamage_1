@@ -438,8 +438,9 @@ namespace UseEdit
 		N::RegisterCounter( cDocument, typeNull, CountDocuments );
 		
 		// Literal data tokens
-		N::RegisterDataGetter( typeChar,     GetLiteralData );
-		N::RegisterDataGetter( typeAERecord, GetLiteralData );
+		N::RegisterDataGetter( N::typeBoolean,  GetLiteralData );
+		N::RegisterDataGetter( N::typeChar,     GetLiteralData );
+		N::RegisterDataGetter( N::typeAERecord, GetLiteralData );
 		
 		// Specify a document given a token
 		N::RegisterDataGetter( typeDocument, GetDocument );
