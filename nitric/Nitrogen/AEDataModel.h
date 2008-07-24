@@ -370,6 +370,32 @@ namespace Nucleus
 	};
 	
 	template <>
+	struct Maker< Nitrogen::AEDesc_Data >
+	{
+		Nitrogen::AEDesc_Data operator()() const
+		{
+			Nitrogen::AEDesc_Data result;
+			
+			static_cast< AEDesc& >( result ) = Make< AEDesc >();
+			
+			return result;
+		}
+	};
+	
+	template <>
+	struct Maker< Nitrogen::AEDesc_Token >
+	{
+		Nitrogen::AEDesc_Token operator()() const
+		{
+			Nitrogen::AEDesc_Token result;
+			
+			static_cast< AEDesc& >( result ) = Make< AEDesc >();
+			
+			return result;
+		}
+	};
+	
+	template <>
 	struct Disposer< Nitrogen::AEDesc_Data > : public std::unary_function< Nitrogen::AEDesc, void >,
 	                                           private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
