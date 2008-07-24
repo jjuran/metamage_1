@@ -41,7 +41,7 @@
 #include "GetPathname.hh"
 
 // Nitrogen Extras / Operators
-#include "Operators/AEDataModel.h"
+//#include "Operators/AEDataModel.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Processes.h"
@@ -70,7 +70,7 @@ namespace RunToolServer
 	
 	using BitsAndBytes::q;
 	
-	using namespace Nucleus::Operators;
+	//using namespace Nucleus::Operators;
 	
 	using namespace io::path_descent_operators;
 	
@@ -155,7 +155,7 @@ namespace RunToolServer
 	}
 	
 	
-	static long GetResult( const AppleEvent& reply )
+	static long GetResult( const N::AppleEvent& reply )
 	{
 		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, N::AEKeyword( 'stat' ) );
 		
@@ -173,7 +173,7 @@ namespace RunToolServer
 	}
 	
 	
-	static NN::Owned< AppleEvent > CreateScriptEvent( const std::string& script )
+	static NN::Owned< N::AppleEvent > CreateScriptEvent( const std::string& script )
 	{
 		ProcessSerialNumber psnToolServer;
 		
@@ -197,20 +197,22 @@ namespace RunToolServer
 			Orion::ThrowExitStatus( EXIT_FAILURE );
 		}
 		
-		return N::AECreateAppleEvent( N::kAEMiscStandards,
-		                              N::kAEDoScript,
-		                              N::AECreateDesc< N::typeProcessSerialNumber >( psnToolServer ) )
-		       << N::keyDirectObject
-		          + N::AECreateDesc< N::typeChar >( script );
+		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
+		                                                               N::kAEDoScript,
+		                                                               N::AECreateDesc< N::AEDesc_Data, N::typeProcessSerialNumber >( psnToolServer ) );
+		
+		N::AEPutParamDesc( appleEvent, N::keyDirectObject, N::AECreateDesc< N::AEDesc_Data, N::typeChar >( script ) );
+		
+		return appleEvent;
 	}
 	
 	static NN::Owned< N::AppleEvent > AESendBlocking( const N::AppleEvent& appleEvent )
 	{
-		NN::Owned< AppleEvent > replyEvent = N::AEInitializeDesc();
+		NN::Owned< N::AppleEvent > replyEvent = N::AEInitializeDesc< N::AppleEvent >();
 		
 		// Declare a block to limit the scope of mutableReply
 		{
-			N::Detail::AEDescEditor mutableReply( replyEvent );
+			N::Detail::AEDescEditor< N::AppleEvent > mutableReply( replyEvent );
 			
 			N::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &mutableReply.Get() ) );
 			

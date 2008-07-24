@@ -147,7 +147,7 @@ static NN::Owned< N::OSASpec > MakeCWDContext( const NN::Shared< N::ComponentIns
 	
 	return
 	N::OSACompile( scriptingComponent,
-	               N::AECreateDesc< N::typeChar >( cwdProperty ),
+	               N::AECreateDesc< N::AEDesc_Data, N::typeChar >( cwdProperty ),
 	               N::kOSAModeCompileIntoContext );
 }
 
@@ -205,7 +205,7 @@ static NN::Owned< N::OSASpec > LoadCompiledScript( const FSSpec& scriptFile )
 	                                                           fsRdPerm ) );
 	
 	return N::OSALoad( OpenGenericScriptingComponent(),
-	                   N::AECreateDesc( N::typeOSAGenericStorage,
+	                   N::AECreateDesc< N::AEDesc_Data >( N::typeOSAGenericStorage,
 	                                    N::Get1Resource( N::kOSAScriptResourceType,
 	                                                     N::ResID( 128 ) ) ) );
 }
@@ -227,7 +227,7 @@ static NN::Owned< N::OSASpec > LoadScriptFile( const char* pathname, bool useCWD
 	{
 	}
 	
-	return CompileSource( N::AECreateDesc< N::typeChar >( ReadFileData( pathname ) ), useCWD );
+	return CompileSource( N::AECreateDesc< N::AEDesc_Data, N::typeChar >( ReadFileData( pathname ) ), useCWD );
 }
 
 
@@ -300,7 +300,7 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( !inlineScriptPieces.empty() )
 	{
-		script = CompileSource( N::AECreateDesc< N::typeChar >( JoinScriptPieces( inlineScriptPieces ) ), getsCWDProperty );
+		script = CompileSource( N::AECreateDesc< N::AEDesc_Data, N::typeChar >( JoinScriptPieces( inlineScriptPieces ) ), getsCWDProperty );
 	}
 	else
 	{
@@ -322,7 +322,7 @@ int O::Main( int argc, argv_t argv )
 	
 	// Add the list, even if there are zero parameters.
 	{
-		NN::Owned< N::AEDescList > list = N::AECreateList< false >();
+		NN::Owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >( false );
 		
 		for ( const_iterator it = params_begin;  it != params_end;  ++it )
 		{

@@ -31,7 +31,7 @@
 #include "Iteration/AEDescListItems.h"
 
 // Nitrogen Extras / Operators
-#include "Operators/AEDataModel.h"
+//#include "Operators/AEDataModel.h"
 
 // Nitrogen Extras / Utilities
 #include "Utilities/Processes.h"
@@ -68,7 +68,7 @@ static FSSpec ResolvePathname( const std::string& pathname, bool macPathname )
 	                   : Div::ResolvePathToFSSpec(            pathname.c_str() );
 }
 
-static NN::Owned< N::AEDesc > CoerceFSSpecToAliasDesc( const FSSpec& item )
+static NN::Owned< N::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
 {
 	return N::AECoercePtr< N::typeFSS >( item, N::typeAlias );
 }
@@ -76,19 +76,22 @@ static NN::Owned< N::AEDesc > CoerceFSSpecToAliasDesc( const FSSpec& item )
 static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >&  items,
                                                      const ProcessSerialNumber&    psn )
 {
-	NN::Owned< N::AEDescList > documents = N::AECreateList< false >();
+	NN::Owned< N::AEDescList_Data > documents = N::AECreateList< N::AEDescList_Data >( false );
 	
 	std::transform( items.begin(),
 	                items.end(),
 	                N::AEDescList_Item_BackInserter( documents ),
 	                std::ptr_fun( CoerceFSSpecToAliasDesc ) );
 	
-	using namespace NN::Operators;
+	//using namespace NN::Operators;
 	
-	return N::AECreateAppleEvent( N::kCoreEventClass,
-	                              N::kAEOpenDocuments,
-	                              N::AECreateDesc< N::typeProcessSerialNumber >( psn ) )
-	       << N::keyDirectObject + documents;
+	NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kCoreEventClass,
+	                                                               N::kAEOpenDocuments,
+	                                                               N::AECreateDesc< N::AEDesc_Data, N::typeProcessSerialNumber >( psn ) );
+	
+	N::AEPutParamDesc( appleEvent, N::keyDirectObject, documents );
+	
+	return appleEvent;
 }
 
 static void OpenItemsWithRunningApp( const std::vector< FSSpec >& items, const ProcessSerialNumber& psn )

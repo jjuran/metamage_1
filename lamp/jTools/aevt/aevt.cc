@@ -47,13 +47,13 @@ namespace jTools
 	namespace p7 = poseven;
 	
 	
-	static NN::Owned< AEDesc > BuildAppleEvent( AEEventClass          eventClass,
-	                                            AEEventID             eventID,
-	                                            const AEAddressDesc&  address,
-	                                            const char*           buildString,
-	                                            va_list               args,
-	                                            AEReturnID            returnID      = kAutoGenerateReturnID,
-	                                            AETransactionID       transactionID = kAnyTransactionID )
+	static NN::Owned< N::AppleEvent > BuildAppleEvent( N::AEEventClass          eventClass,
+	                                                   N::AEEventID             eventID,
+	                                                   const N::AEAddressDesc&  address,
+	                                                   const char*              buildString,
+	                                                   va_list                  args,
+	                                                   N::AEReturnID            returnID      = N::kAutoGenerateReturnID,
+	                                                   N::AETransactionID       transactionID = N::kAnyTransactionID )
 	{
 		std::size_t addrSize = N::AEGetDescDataSize( address );
 		
@@ -61,7 +61,7 @@ namespace jTools
 		
 		N::AEGetDescData( address, &addrData.front(), addrSize );
 		
-		N::AEDesc appleEvent;
+		N::AppleEvent appleEvent;
 		AEBuildError aeErr;
 		
 		N::ThrowOSStatus( ::vAEBuildAppleEvent( eventClass,
@@ -76,7 +76,7 @@ namespace jTools
 		                                        buildString,
 		                                        args ) );
 		
-		return NN::Owned< AEDesc >::Seize( appleEvent );
+		return NN::Owned< N::AppleEvent >::Seize( appleEvent );
 	}
 	
 #if CALL_NOT_IN_CARBON
@@ -102,31 +102,31 @@ namespace jTools
 	
 #endif
 	
-	static NN::Owned< AEDesc > SelectAddress( N::OSType           sig,
-	                                          const std::string&  app,
-	                                          const std::string&  machine,
-	                                          const std::string&  host,
-	                                          const std::string&  url )
+	static NN::Owned< N::AEAddressDesc > SelectAddress( N::OSType           sig,
+	                                                    const std::string&  app,
+	                                                    const std::string&  machine,
+	                                                    const std::string&  host,
+	                                                    const std::string&  url )
 	{
 		if ( sig != N::OSType( kUnknownType ) )
 		{
-			return N::AECreateDesc< N::typeApplSignature >( sig );
+			return N::AECreateDesc< N::AEAddressDesc, N::typeApplSignature >( sig );
 		}
 		else
 		{
 		#if CALL_NOT_IN_CARBON
 			
-			return N::AECreateDesc< N::typeTargetID >( LocateTarget( app, machine, host ) );
+			return N::AECreateDesc< N::AEAddressDesc, N::typeTargetID >( LocateTarget( app, machine, host ) );
 			
 		#else
 			
-			return N::AECreateDesc< N::typeApplicationURL >( url );
+			return N::AECreateDesc< N::AEAddressDesc, N::typeApplicationURL >( url );
 			
 		#endif
 		}
 		
 		// Not reached
-		return NN::Owned< AEDesc >();
+		return NN::Owned< N::AEAddressDesc >();
 	}
 	
 	// shell$ aevt -m Otter -a Genie |gan Exec '----':[“shutdown”,“-h”]
@@ -193,18 +193,15 @@ namespace jTools
 		
 		N::OSType sigCode = (sig.size() == 4) ? NN::Convert< N::OSType >( sig ) : N::kUnknownType;
 		
-		AEEventClass eventClass = NN::Convert< N::FourCharCode >( argEventClass );
-		AEEventID    eventID    = NN::Convert< N::FourCharCode >( argEventID    );
-		
-		using N::kAENoReply;
-		using N::kAECanInteract;
+		N::AEEventClass eventClass = NN::Convert< N::AEEventClass >( argEventClass );
+		N::AEEventID    eventID    = NN::Convert< N::AEEventID    >( argEventID    );
 		
 		N::AESend( BuildAppleEvent( eventClass,
 		                            eventID,
 		                            SelectAddress( sigCode, app, machine, host, url ),
 		                            argBuild.c_str(),
 		                            NULL ),
-		           kAENoReply | kAECanInteract );
+		           N::kAENoReply | N::kAECanInteract );
 		
 		return 0;
 	}
