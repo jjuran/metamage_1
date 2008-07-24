@@ -24,15 +24,6 @@
 #include "Orion/Main.hh"
 
 
-namespace Nucleus
-{
-	
-	template <> struct Converter< Nitrogen::ResType, std::string > : public Nitrogen::StringToFourCharCode_Converter< Nitrogen::ResType > {};
-	
-	template <> struct Converter< std::string, Nitrogen::ResType > : public Nitrogen::FourCharCodeToString_Converter< Nitrogen::ResType > {};
-	
-}
-
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace Bits = BitsAndBytes;
