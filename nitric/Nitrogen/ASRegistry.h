@@ -66,7 +66,7 @@ namespace Nitrogen
 	// Do we ever need the missing value outside an object accessor?
 	inline Nucleus::Owned< AEDesc_Token > MissingValue()
 	{
-		return AECreateDesc< AEDesc_Token, typeType >( DescType( ::cMissingValue ) );
+		return AECreateDesc< typeType, AEDesc_Token >( DescType( ::cMissingValue ) );
 	}
 	
 }

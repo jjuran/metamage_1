@@ -44,7 +44,7 @@ namespace Nitrogen
 	{
 		return AESend( AECreateAppleEvent( eventClass,
 				                           eventID,
-				                           AECreateDesc< AEDesc_Data, typeProcessSerialNumber >( CurrentProcess() ) ),
+				                           AECreateDesc< typeProcessSerialNumber >( CurrentProcess() ) ),
 				       AESendMode( kAEWaitReply ) );
 	}
 	
