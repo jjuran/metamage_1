@@ -22,7 +22,7 @@ namespace Nitrogen
 	
 	static Nucleus::Owned< AEDesc_Data > GetDataFromTokenList( const AEDescList_Token& obj, DescType desiredType )
 	{
-		Nucleus::Owned< AEDescList_Data > list = AECreateList< AEDescList_Data >( false );
+		Nucleus::Owned< AEDescList_Data > list = AECreateList( false );
 		
 		UInt32 count = AECountItems( obj );
 		
@@ -43,7 +43,7 @@ namespace Nitrogen
 	                                                                  AEEnumeration                  keyForm,
 	                                                                  const AEDesc_Data&             keyData )
 	{
-		Nucleus::Owned< AERecord_Data > record = AECreateList< AERecord_Data >( true );
+		Nucleus::Owned< AERecord_Data > record = AECreateList( true );
 		
 		AEPutKeyPtr< keyAEDesiredClass >( record, objectClass );
 		AEPutKeyPtr< keyAEKeyForm      >( record, keyForm     );
