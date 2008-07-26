@@ -191,15 +191,15 @@ namespace Nitrogen
 	                                                                RefCon               accessorRefcon );
 	
 	template < OSLAccessorProcPtr handler >
-	struct Adapt_OSLAccessor
+	struct ObjectAccessor_Callback
 	{
-		static pascal OSErr ToCallback( ::DescType     desiredClass,
-		                                const AEDesc*  containerToken,
-		                                ::DescType     containerClass,
-		                                ::DescType     keyForm,
-		                                const AEDesc*  keyData,
-		                                AEDesc*        value,
-		                                long           accessorRefcon )
+		static pascal OSErr Adapter( ::DescType     desiredClass,
+		                             const AEDesc*  containerToken,
+		                             ::DescType     containerClass,
+		                             ::DescType     keyForm,
+		                             const AEDesc*  keyData,
+		                             AEDesc*        value,
+		                             long           accessorRefcon )
 		{
 			try
 			{
@@ -388,7 +388,7 @@ namespace Nitrogen
 	                                                              RefCon           accessorRefCon = RefCon(),
 	                                                              bool             isSysHandler   = false )
 	{
-		return AEInstallObjectAccessor< Adapt_OSLAccessor< accessor >::ToCallback >
+		return AEInstallObjectAccessor< ObjectAccessor_Callback< accessor >::Adapter >
 		(
 			desiredClass, 
 			containerType, 

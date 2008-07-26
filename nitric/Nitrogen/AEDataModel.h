@@ -640,12 +640,12 @@ namespace Nitrogen
 	                                                               RefCon       refCon );
 	
 	template < AECoerceDescProcPtr handler >
-	struct Adapt_AECoerceDesc
+	struct AECoercionHandler_Desc_Callback
 	{
-		static pascal OSErr ToCallback( const AEDesc*  fromDesc,
-		                                ::DescType     toType,
-		                                long           refCon,
-		                                AEDesc*        result )
+		static pascal OSErr Adapter( const AEDesc*  fromDesc,
+		                             ::DescType     toType,
+		                             long           refCon,
+		                             AEDesc*        result )
 		{
 			try
 			{
@@ -664,14 +664,14 @@ namespace Nitrogen
 	};
 	
 	template < AECoercePtrProcPtr handler >
-	struct Adapt_AECoercePtr
+	struct AECoercionHandler_Ptr_Callback
 	{
-		static pascal OSErr ToCallback( ::DescType   typeCode,
-		                                const void*  dataPtr,
-		                                ::Size       dataSize,
-		                                ::DescType   toType,
-		                                long         refCon,
-		                                AEDesc*      result )
+		static pascal OSErr Adapter( ::DescType   typeCode,
+		                             const void*  dataPtr,
+		                             ::Size       dataSize,
+		                             ::DescType   toType,
+		                             long         refCon,
+		                             AEDesc*      result )
 		{
 			try
 			{
@@ -752,10 +752,10 @@ namespace Nitrogen
 	                                                              RefCon    handlerRefCon = RefCon(),
 	                                                              Boolean   isSysHandler  = false )
 	{
-		return AEInstallCoercionHandler< Adapt_AECoerceDesc< handler >::ToCallback >( fromType,
-		                                                                              toType,
-		                                                                              handlerRefCon,
-		                                                                              isSysHandler );
+		return AEInstallCoercionHandler< AECoercionHandler_Desc_Callback< handler >::Adapter >( fromType,
+		                                                                                        toType,
+		                                                                                        handlerRefCon,
+		                                                                                        isSysHandler );
 	}
 	
 	template < AECoercePtrProcPtr handler >
@@ -764,10 +764,10 @@ namespace Nitrogen
 	                                                              RefCon    handlerRefCon = RefCon(),
 	                                                              Boolean   isSysHandler  = false )
 	{
-		return AEInstallCoercionHandler< Adapt_AECoercePtr< handler >::ToCallback >( fromType,
-		                                                                             toType,
-		                                                                             handlerRefCon,
-		                                                                             isSysHandler );
+		return AEInstallCoercionHandler< AECoercionHandler_Ptr_Callback< handler >::Adapter >( fromType,
+		                                                                                       toType,
+		                                                                                       handlerRefCon,
+		                                                                                       isSysHandler );
 	}
 	
 	// 406

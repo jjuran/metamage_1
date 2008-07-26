@@ -93,9 +93,9 @@ namespace Nitrogen
 	typedef void ( *ControlActionProcPtr )( ControlRef control, ControlPartCode partCode );
 	
 	template < ControlActionProcPtr actionProc >
-	struct Adapt_ControlAction
+	struct ControlAction_Callback
 	{
-		static pascal void ToCallback( ::ControlRef control, ::ControlPartCode partCode )
+		static pascal void Adapter( ::ControlRef control, ::ControlPartCode partCode )
 		{
 			try
 			{
@@ -178,7 +178,7 @@ namespace Nitrogen
 	template < ControlActionProcPtr actionProc >
 	inline ControlPartCode TrackControl( ControlRef theControl, Point startPoint )
 	{
-		return TrackControl< Adapt_ControlAction< actionProc >::ToCallback >( theControl,
+		return TrackControl< ControlAction_Callback< actionProc >::Adapter >( theControl,
 		                                                                      startPoint );
 	}
 	
@@ -269,7 +269,7 @@ namespace Nitrogen
 	template < ControlActionProcPtr actionProc >
 	inline void SetControlAction( ControlRef control )
 	{
-		SetControlAction< Adapt_ControlAction< actionProc >::ToCallback >( control );
+		SetControlAction< ControlAction_Callback< actionProc >::Adapter >( control );
 	}
 	
 	// 2505
