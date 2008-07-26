@@ -951,20 +951,11 @@ namespace Nitrogen
 	{
 	}
 	
-	template < class AEDesc_Type >
-	inline Nucleus::Owned< AEDesc_Type > AEDuplicateDesc( const AEDesc& original )
+	inline Nucleus::Owned< AEDesc_Data > AEDuplicateDesc( const AEDesc& original )
 	{
 		AEDesc desc = Detail::AEDuplicateDesc_Unowned( original );
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
-	}
-	
-	template < class AEDesc_Type >
-	inline Nucleus::Owned< AEDesc_Type > AEDuplicateDesc( const AEDesc_Type& desc )
-	{
-		const AEDesc& basic( desc );
-		
-		return AEDuplicateDesc< AEDesc_Type >( basic );
+		return Nucleus::Owned< AEDesc_Data >::Seize( static_cast< const AEDesc_Data& >( desc ) );
 	}
 	
 	#pragma mark -
@@ -1033,7 +1024,10 @@ namespace Nitrogen
 	{
 		// This is the only variant of AEPutDesc() supported for tokens.
 		// The desc argument must be an Owned token to ensure that its tokenness
-		// is managed correctly.
+		// is managed correctly (i.e. disposed exactly once).
+		// Since a token list's token disposal function calls AEDisposeToken()
+		// on each member token, we must not do so here.  But we do need to
+		// dispose the AEDesc.  Got it?
 		
 		AEPutDesc( AEDesc_Token_Cast( Detail::AEDescEditor< AEDescList_Token >( list ) ),
 		           index,
