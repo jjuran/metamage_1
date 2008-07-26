@@ -238,41 +238,41 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ DescType_Traits ¥
 	
-   template < DescType > struct DescType_Traits;
-   
-   template<> struct DescType_Traits< typeChar > : public Nucleus::StringFlattener< std::string > {};
-
-   template<> struct DescType_Traits< typeFixed > : public FixedFlattener {};
-
-   template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
-   
-   template<> struct DescType_Traits< typeBoolean >                : BooleanFlattener                     {};
-   template<> struct DescType_Traits< typeSInt16 >                 : Nucleus::PodFlattener< SInt16 >      {};
-   template<> struct DescType_Traits< typeSInt32 >                 : Nucleus::PodFlattener< SInt32 >      {};
-   template<> struct DescType_Traits< typeUInt32 >                 : Nucleus::PodFlattener< UInt32 >      {};
-   template<> struct DescType_Traits< typeSInt64 >                 : Nucleus::PodFlattener< SInt64 >      {};
-   template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : Nucleus::PodFlattener< float >       {};
-   template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : Nucleus::PodFlattener< double >      {};
-   template<> struct DescType_Traits< type128BitFloatingPoint >    : Nucleus::PodFlattener< long double > {};
-
+	template < DescType > struct DescType_Traits;
+	
+	template<> struct DescType_Traits< typeChar > : public Nucleus::StringFlattener< std::string > {};
+	
+	template<> struct DescType_Traits< typeFixed > : public FixedFlattener {};
+	
+	template<> struct DescType_Traits< typeNull >                   { typedef void Result; };
+	
+	template<> struct DescType_Traits< typeBoolean >                : BooleanFlattener                     {};
+	template<> struct DescType_Traits< typeSInt16 >                 : Nucleus::PodFlattener< SInt16 >      {};
+	template<> struct DescType_Traits< typeSInt32 >                 : Nucleus::PodFlattener< SInt32 >      {};
+	template<> struct DescType_Traits< typeUInt32 >                 : Nucleus::PodFlattener< UInt32 >      {};
+	template<> struct DescType_Traits< typeSInt64 >                 : Nucleus::PodFlattener< SInt64 >      {};
+	template<> struct DescType_Traits< typeIEEE32BitFloatingPoint > : Nucleus::PodFlattener< float >       {};
+	template<> struct DescType_Traits< typeIEEE64BitFloatingPoint > : Nucleus::PodFlattener< double >      {};
+	template<> struct DescType_Traits< type128BitFloatingPoint >    : Nucleus::PodFlattener< long double > {};
+	
 	inline std::size_t SizeOf_AppParameters( const AppParameters& appParameters )
 	{
 		return sizeof (AppParameters) + appParameters.messageLength;
 	}
 	
-   template<> struct DescType_Traits< typeEventRecord >            : Nucleus::PodFlattener< EventRecord >                      {};
-   template<> struct DescType_Traits< typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
-   template<> struct DescType_Traits< typeEnumerated >             : Nucleus::ConvertingPODFlattener< AEEnumerated, UInt32 >   {};
-   template<> struct DescType_Traits< typeType >                   : Nucleus::ConvertingPODFlattener< DescType, ::DescType >   {};
-   template<> struct DescType_Traits< typeAppParameters >          : Nucleus::VariableLengthPodFlattener< AppParameters, SizeOf_AppParameters > {};
-   template<> struct DescType_Traits< typeFSS >                    : Nucleus::PodFlattener< FSSpec >                           {};
-   template<> struct DescType_Traits< typeFSRef >                  : Nucleus::PodFlattener< FSRef >                            {};
-   template<> struct DescType_Traits< typeKeyword >                : Nucleus::ConvertingPODFlattener< AEKeyword, ::AEKeyword > {};
-   template<> struct DescType_Traits< typeApplSignature >          : Nucleus::ConvertingPODFlattener< OSType, ::OSType >       {};
-   template<> struct DescType_Traits< typeQDRectangle >            : Nucleus::PodFlattener< Rect >                             {};
-   template<> struct DescType_Traits< typeProcessSerialNumber >    : Nucleus::PodFlattener< ProcessSerialNumber >              {};
-   template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                               {};
-   
+	template<> struct DescType_Traits< typeEventRecord >            : Nucleus::PodFlattener< EventRecord >                      {};
+	template<> struct DescType_Traits< typeAlias >                  : TypedHandleFlattener< AliasRecord >                       {};
+	template<> struct DescType_Traits< typeEnumerated >             : Nucleus::ConvertingPODFlattener< AEEnumerated, UInt32 >   {};
+	template<> struct DescType_Traits< typeType >                   : Nucleus::ConvertingPODFlattener< DescType, ::DescType >   {};
+	template<> struct DescType_Traits< typeAppParameters >          : Nucleus::VariableLengthPodFlattener< AppParameters, SizeOf_AppParameters > {};
+	template<> struct DescType_Traits< typeFSS >                    : Nucleus::PodFlattener< FSSpec >                           {};
+	template<> struct DescType_Traits< typeFSRef >                  : Nucleus::PodFlattener< FSRef >                            {};
+	template<> struct DescType_Traits< typeKeyword >                : Nucleus::ConvertingPODFlattener< AEKeyword, ::AEKeyword > {};
+	template<> struct DescType_Traits< typeApplSignature >          : Nucleus::ConvertingPODFlattener< OSType, ::OSType >       {};
+	template<> struct DescType_Traits< typeQDRectangle >            : Nucleus::PodFlattener< Rect >                             {};
+	template<> struct DescType_Traits< typeProcessSerialNumber >    : Nucleus::PodFlattener< ProcessSerialNumber >              {};
+	template<> struct DescType_Traits< typeApplicationURL >         : DescType_Traits< typeChar >                               {};
+	
 	
 	template < DescType type >
 	struct DescType_Map_Traits
@@ -326,7 +326,7 @@ namespace Nitrogen
 	using ::AEDesc;
 	using ::AEDescList;
 	using ::AERecord;
-    using ::AEKeyDesc;
+	using ::AEKeyDesc;
 	
 	struct AEDesc_Data : AEDesc
 	{
@@ -410,7 +410,7 @@ namespace Nucleus
 			HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
 		}
 	};
-
+	
 	template <>
 	struct LivelinessTraits< Nitrogen::AEDesc_Data, Disposer< Nitrogen::AEDesc_Data > >   { typedef SeizedValuesAreLive LivelinessTest; };
 	
@@ -426,7 +426,7 @@ namespace Nucleus
 			HandleDestructionOSStatus( ::AEDisposeToken( &desc ) );
 		}
 	};
-
+	
 	template <>
 	struct LivelinessTraits< Nitrogen::AEDesc_Token, Disposer< Nitrogen::AEDesc_Token > >   { typedef SeizedValuesAreLive LivelinessTest; };
 	
@@ -460,7 +460,8 @@ namespace Nucleus
 }
 
 namespace Nitrogen
-  {	
+{
+	
 	#pragma mark -
 	#pragma mark ¥ Coercions ¥
 	
@@ -469,14 +470,16 @@ namespace Nitrogen
 	                                                   ::NewAECoerceDescUPP,
 	                                                   ::DisposeAECoerceDescUPP,
 	                                                   ::InvokeAECoerceDescUPP >
-	{};
+	{
+	};
 	
 	struct AECoercePtrUPP_Details: Basic_UPP_Details< ::AECoercePtrUPP,
 	                                                  ::AECoercePtrProcPtr,
 	                                                  ::NewAECoercePtrUPP,
 	                                                  ::DisposeAECoercePtrUPP,
 	                                                  ::InvokeAECoercePtrUPP >
-	{};
+	{
+	};
 	
 	typedef UPP< AECoerceDescUPP_Details > AECoerceDescUPP;
 	typedef UPP< AECoercePtrUPP_Details  > AECoercePtrUPP;
@@ -532,7 +535,8 @@ namespace Nitrogen
 		AECoercionHandlerUPP( ::AECoercePtrUPP p )
 		:
 			AECoerceDescUPP( reinterpret_cast< ::AECoerceDescUPP >( p ) )
-		{}
+		{
+		}
 		
 	#endif
 	};
@@ -561,7 +565,8 @@ namespace Nitrogen
 			handlerRefCon ( handlerRefCon  ),
 			fromTypeIsDesc( fromTypeIsDesc ),
 			isSysHandler  ( isSysHandler   )
-		{}
+		{
+		}
 		
 		AECoercionHandler( DescType         fromType,
 		                   DescType         toType,
@@ -575,7 +580,8 @@ namespace Nitrogen
 			handlerRefCon ( handlerRefCon ),
 			fromTypeIsDesc( true          ),
 			isSysHandler  ( isSysHandler  )
-		{}
+		{
+		}
 		
 		AECoercionHandler( DescType        fromType,
 		                   DescType        toType,
@@ -589,7 +595,8 @@ namespace Nitrogen
 			handlerRefCon ( handlerRefCon ),
 			fromTypeIsDesc( false         ),
 			isSysHandler  ( isSysHandler  )
-		{}
+		{
+		}
 	};
 	
 	bool operator==( const AECoercionHandler& a, const AECoercionHandler& b );
@@ -599,13 +606,14 @@ namespace Nitrogen
 		return !( a == b );
 	}
 	
-  }
+}
 
 namespace Nucleus
-  {
+{
+	
 	template <>
 	struct Disposer< Nitrogen::AECoercionHandler > : public std::unary_function< Nitrogen::AECoercionHandler, void >,
-												     private Nitrogen::DefaultDestructionOSStatusPolicy
+	                                                 private Nitrogen::DefaultDestructionOSStatusPolicy
 	{
 		void operator()( const Nitrogen::AECoercionHandler& installation ) const
 		{
@@ -615,10 +623,12 @@ namespace Nucleus
 			                                                      installation.isSysHandler ) );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {
+{
+	
 	typedef Nucleus::Owned< AEDesc_Data > ( *AECoerceDescProcPtr )( const AEDesc_Data&  fromDesc,
 	                                                                DescType            toType,
 	                                                                RefCon              refCon );
@@ -852,17 +862,17 @@ namespace Nitrogen
 		AEDesc AEDuplicateDesc_Unowned( const AEDesc& desc );
 		
 		AEDesc AECreateList_Unowned( const void*  factoringPtr,
-	                                 std::size_t  factoredSize,
-	                                 bool         isRecord );
+		                             std::size_t  factoredSize,
+		                             bool         isRecord );
 		
 		AEDesc AEGetNthDesc_Unowned( const AEDesc&  listDesc,
-	                                 long           index,
-	                                 DescType       desiredType,
-	                                 ::AEKeyword*   keyword );
+		                             long           index,
+		                             DescType       desiredType,
+		                             ::AEKeyword*   keyword );
 		
 		AEDesc AEGetKeyDesc_Unowned( const AERecord&  record,
-	                                 AEKeyword        keyword,
-	                                 DescType         desiredType );
+		                             AEKeyword        keyword,
+		                             DescType         desiredType );
 		
 	}
 	
@@ -1247,33 +1257,34 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ¥ AEEventHandlerUPP ¥
 	
-   struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
-                                                        ::AEEventHandlerProcPtr,
-                                                        ::NewAEEventHandlerUPP,
-                                                        ::DisposeAEEventHandlerUPP,
-                                                        ::InvokeAEEventHandlerUPP >
-     {};
-   
-   typedef UPP< AEEventHandlerUPP_Details > AEEventHandlerUPP;
-   
-   //using ::AEEventHandlerProcPtr;
-   
-   inline Nucleus::Owned< AEEventHandlerUPP > NewAEEventHandlerUPP( ::AEEventHandlerProcPtr p )
-     {
-      return NewUPP< AEEventHandlerUPP >( p );
-     }
-
-   inline void DisposeAEEventHandlerUPP( Nucleus::Owned< AEEventHandlerUPP > )
-     {
-     }
-   
-   inline void InvokeAEEventHandlerUPP( const AppleEvent& theAppleEvent,
-                                        AppleEvent& reply,
-                                        RefCon handlerRefCon,
-                                        AEEventHandlerUPP userUPP )
-     {
-      ThrowOSStatus( userUPP( &theAppleEvent, &reply, handlerRefCon ) );
-     }
+	struct AEEventHandlerUPP_Details: Basic_UPP_Details< ::AEEventHandlerUPP,
+	                                                     ::AEEventHandlerProcPtr,
+	                                                     ::NewAEEventHandlerUPP,
+	                                                     ::DisposeAEEventHandlerUPP,
+	                                                     ::InvokeAEEventHandlerUPP >
+	{
+	};
+	
+	typedef UPP< AEEventHandlerUPP_Details > AEEventHandlerUPP;
+	
+	//using ::AEEventHandlerProcPtr;
+	
+	inline Nucleus::Owned< AEEventHandlerUPP > NewAEEventHandlerUPP( ::AEEventHandlerProcPtr p )
+	{
+		return NewUPP< AEEventHandlerUPP >( p );
+	}
+	
+	inline void DisposeAEEventHandlerUPP( Nucleus::Owned< AEEventHandlerUPP > )
+	{
+	}
+	
+	inline void InvokeAEEventHandlerUPP( const AppleEvent& theAppleEvent,
+	                                     AppleEvent& reply,
+	                                     RefCon handlerRefCon,
+	                                     AEEventHandlerUPP userUPP )
+	{
+		ThrowOSStatus( userUPP( &theAppleEvent, &reply, handlerRefCon ) );
+	}
 	
 	#pragma mark -
 	#pragma mark ¥ Powered by DescType_Traits ¥
@@ -1288,10 +1299,11 @@ namespace Nitrogen
 		public:
 			AECoercePtr_Putter( DescType                        from,
 			                    DescType                        to,
-			                    Nucleus::Owned< AEDesc_Data >&  desc )
-			: fromType( from ),
-			  toType  ( to   ),
-			  theDesc ( desc )  {}
+			                    Nucleus::Owned< AEDesc_Data >&  desc ) : fromType( from ),
+			                                                             toType  ( to   ),
+			                                                             theDesc ( desc )
+			{
+			}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
@@ -1350,17 +1362,18 @@ namespace Nitrogen
 	class AEPutPtr_Putter
 	{
 		private:
-			AEDescList& theList;
-			long        theIndex;
-			DescType    theType;
+			AEDescList&  theList;
+			long         theIndex;
+			DescType     theType;
 		
 		public:
 			AEPutPtr_Putter( AEDescList&  list,
 			                 long         index,
-			                 DescType     type )
-			: theList ( list  ),
-			  theIndex( index ),
-			  theType ( type  )  {}
+			                 DescType     type ) : theList ( list  ),
+			                                       theIndex( index ),
+			                                       theType ( type  )
+			{
+			}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
@@ -1395,13 +1408,15 @@ namespace Nitrogen
 	class AEGetNthPtr_Getter
 	{
 		private:
-			const AEDescList& theList;
-			long              theIndex;
+			const AEDescList&  theList;
+			long               theIndex;
 		
 		public:
-			AEGetNthPtr_Getter( const AEDescList& list, long index )
-			: theList ( list  ),
-			  theIndex( index )  {}
+			AEGetNthPtr_Getter( const AEDescList&  list,
+			                    long               index ) : theList ( list  ),
+			                                                 theIndex( index )
+			{
+			}
 			
 			std::size_t size() const
 			{
@@ -1521,9 +1536,11 @@ namespace Nitrogen
 			AEKeyword       theKeyword;
 		
 		public:
-			AEGetKeyPtr_Getter( const AERecord& record, AEKeyword keyword )
-			: theRecord ( record  ),
-			  theKeyword( keyword )  {}
+			AEGetKeyPtr_Getter( const AERecord&  record,
+			                    AEKeyword        keyword ) : theRecord ( record  ),
+			                                                 theKeyword( keyword )
+			{
+			}
 			
 			std::size_t size() const
 			{
@@ -1564,17 +1581,18 @@ namespace Nitrogen
 	class AEPutParamPtr_Putter
 	{
 		private:
-			AppleEvent& theAppleEvent;
-			AEKeyword   theKeyword;
-			DescType    theType;
+			AppleEvent&  theAppleEvent;
+			AEKeyword    theKeyword;
+			DescType     theType;
 		
 		public:
 			AEPutParamPtr_Putter( AppleEvent&  appleEvent,
 			                      AEKeyword    keyword,
-			                      DescType     type )
-			: theAppleEvent( appleEvent  ),
-			  theKeyword   ( keyword     ),
-			  theType      ( type        )  {}
+			                      DescType     type ) : theAppleEvent( appleEvent  ),
+			                                            theKeyword   ( keyword     ),
+			                                            theType      ( type        )
+			{
+			}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
@@ -1626,13 +1644,15 @@ namespace Nitrogen
 	class AEGetParamPtr_Getter
 	{
 		private:
-			const AppleEvent& theAppleEvent;
-			AEKeyword         theKeyword;
+			const AppleEvent&  theAppleEvent;
+			AEKeyword          theKeyword;
 		
 		public:
-			AEGetParamPtr_Getter( const AppleEvent& appleEvent, AEKeyword keyword )
-			: theAppleEvent( appleEvent ),
-			  theKeyword   ( keyword    )  {}
+			AEGetParamPtr_Getter( const AppleEvent&  appleEvent,
+			                      AEKeyword          keyword ) : theAppleEvent( appleEvent ),
+			                                                     theKeyword   ( keyword    )
+			{
+			}
 			
 			std::size_t size() const
 			{
@@ -1673,17 +1693,18 @@ namespace Nitrogen
 	class AEPutAttributePtr_Putter
 	{
 		private:
-			AppleEvent& theAppleEvent;
-			AEKeyword   theKeyword;
-			DescType    theType;
+			AppleEvent&  theAppleEvent;
+			AEKeyword    theKeyword;
+			DescType     theType;
 		
 		public:
 			AEPutAttributePtr_Putter( AppleEvent&  appleEvent,
 			                          AEKeyword    keyword,
-			                          DescType     type )
-			: theAppleEvent( appleEvent  ),
-			  theKeyword   ( keyword     ),
-			  theType      ( type        )  {}
+			                          DescType     type ) : theAppleEvent( appleEvent  ),
+			                                                theKeyword   ( keyword     ),
+			                                                theType      ( type        )
+			{
+			}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
@@ -1698,8 +1719,8 @@ namespace Nitrogen
 	{
 		DescType_Traits< type >().Put( data,
 		                               AEPutAttributePtr_Putter( appleEvent,
-		                               keyword,
-		                               DescType( DescType_Map_Traits< type >::result ) ) );
+		                                                         keyword,
+		                                                         DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
 	template < DescType type >
@@ -1739,9 +1760,11 @@ namespace Nitrogen
 			AEKeyword         theKeyword;
 		
 		public:
-			AEGetAttributePtr_Getter( const AppleEvent& appleEvent, AEKeyword keyword )
-			: theAppleEvent( appleEvent ),
-			  theKeyword   ( keyword    )  {}
+			AEGetAttributePtr_Getter( const AppleEvent&  appleEvent,
+			                          AEKeyword          keyword ) : theAppleEvent( appleEvent ),
+			                                                         theKeyword   ( keyword    )
+			{
+			}
 			
 			std::size_t size() const
 			{
@@ -1785,7 +1808,9 @@ namespace Nitrogen
 			const AEDesc& theDesc;
 		
 		public:
-			AEGetDescData_Getter( const AEDesc& desc = AEInitializeDesc() ) : theDesc( desc )  {}
+			AEGetDescData_Getter( const AEDesc& desc = AEInitializeDesc() ) : theDesc( desc )
+			{
+			}
 			
 			std::size_t size() const  { return AEGetDescDataSize( theDesc ); }
 			
@@ -1796,9 +1821,9 @@ namespace Nitrogen
 	};
 	
 	template < DescType type >
-	inline
-	typename DescType_Traits< type >::Result AEGetDescData( const AEDesc&  desc,
-	                                                        DescType       requiredType = DescType_Map_Traits< type >::result )
+	inline typename DescType_Traits< type >::Result
+	AEGetDescData( const AEDesc&  desc,
+	               DescType       requiredType = DescType_Map_Traits< type >::result )
 	{
 		ASSERT( requiredType == typeWildCard || requiredType == desc.descriptorType );
 		
@@ -1822,9 +1847,10 @@ namespace Nitrogen
 		
 		public:
 			AEReplaceDescData_Putter( DescType                        type,
-			                          Nucleus::Owned< AEDesc_Data >&  desc )
-			: theType( type ),
-			  theDesc( desc )  {}
+			                          Nucleus::Owned< AEDesc_Data >&  desc ) : theType( type ),
+			                                                                   theDesc( desc )
+			{
+			}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
