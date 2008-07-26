@@ -223,7 +223,7 @@ namespace UseEdit
 		
 		NN::Owned< N::AEDesc_Data > GetLiteralData( const N::AEDesc_Token& obj, N::DescType /*desiredType*/ )
 		{
-			return N::AEDuplicateDesc< N::AEDesc_Data >( obj );
+			return N::AEDuplicateDesc( obj );
 		}
 		
 		NN::Owned< N::AEDesc_Data > GetDocument( const N::AEDesc_Token& obj, N::DescType /*desiredType*/ )
