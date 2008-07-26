@@ -859,7 +859,7 @@ namespace Nitrogen
 		
 		AEDesc desc = AEInitializeDesc();
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
 	namespace Detail
@@ -900,7 +900,7 @@ namespace Nitrogen
 		
 		AEDesc desc = Detail::AECreateDesc_Unowned( typeCode, dataPtr, dataSize );
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
 	template < class AEDesc_Type >
@@ -912,7 +912,7 @@ namespace Nitrogen
 		
 		AEDesc desc = Detail::AECreateDesc_Unowned( typeCode, handle );
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
 	template < class AEDesc_Type >
@@ -924,7 +924,7 @@ namespace Nitrogen
 		
 		AEDesc desc = Detail::AECreateDesc_Unowned( typeCode, handle );
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
 	template < class AEDesc_Type, class T >
@@ -973,7 +973,7 @@ namespace Nitrogen
 		
 		AEDesc desc = Detail::AECreateList_Unowned( factoringPtr, factoredSize, isRecord );
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
 	template < class AEDesc_Type >
@@ -1165,7 +1165,7 @@ namespace Nitrogen
 	{
 		AEDesc desc = Detail::AEGetKeyDesc_Unowned( record, keyword, desiredType );
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
 	AESizeOfKeyDesc_Result AESizeOfKeyDesc( const AERecord&  record,
