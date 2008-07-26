@@ -187,7 +187,7 @@ namespace UseEdit
 				{
 					N::AEPutDesc( list,
 					              0,
-					              docs.GetElementByIndex( i ).Get() );
+					              docs.GetElementByIndex( i ) );
 				}
 				
 				return list;
