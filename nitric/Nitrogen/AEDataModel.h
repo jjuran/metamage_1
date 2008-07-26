@@ -343,15 +343,23 @@ namespace Nitrogen
 	typedef AEDesc_Token AEDescList_Token, AERecord_Token;
 	
 	template < class AEDesc_Type >
-	inline const AEDesc_Type& AEDesc_Cast( const AEDesc& desc )
+	struct Qualified_AEDesc_Traits
 	{
-		return static_cast< const AEDesc_Type& >( desc );
-	}
+		typedef AEDesc Type;
+	};
 	
 	template < class AEDesc_Type >
-	inline AEDesc_Type& AEDesc_Cast( AEDesc& desc )
+	struct Qualified_AEDesc_Traits< const AEDesc_Type >
 	{
-		return static_cast< AEDesc_Type& >( desc );
+		typedef const AEDesc Type;
+	};
+	
+	template < class AEDesc_Type, class InputType >
+	inline AEDesc_Type& AEDesc_Cast( InputType& desc )
+	{
+		typedef typename Qualified_AEDesc_Traits< AEDesc_Type >::Type Base;
+		
+		return static_cast< AEDesc_Type& >( static_cast< Base& >( desc ) );
 	}
 	
 }
@@ -903,13 +911,6 @@ namespace Nitrogen
 		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
-	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType     typeCode,
-	                                                   const void*  dataPtr,
-	                                                   Size         dataSize )
-	{
-		return AECreateDesc< AEDesc_Data >( typeCode, dataPtr, dataSize );
-	}
-	
 	template < class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType  typeCode,
 	                                                   Handle    handle )
@@ -920,12 +921,6 @@ namespace Nitrogen
 		AEDesc desc = Detail::AECreateDesc_Unowned( typeCode, handle );
 		
 		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
-	}
-	
-	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType  typeCode,
-	                                                   Handle    handle )
-	{
-		return AECreateDesc< AEDesc_Data >( typeCode, handle );
 	}
 	
 	template < class AEDesc_Type >
@@ -940,22 +935,10 @@ namespace Nitrogen
 		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
-	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType                  typeCode,
-	                                                   Nucleus::Owned< Handle >  handle )
-	{
-		return AECreateDesc< AEDesc_Data >( typeCode, handle );
-	}
-	
 	template < class T, class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType typeCode, T** handle )
 	{
 		return AECreateDesc< AEDesc_Type >( typeCode, Handle( handle ) );
-	}
-	
-	template < class T >
-	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType typeCode, T** handle )
-	{
-		return AECreateDesc< AEDesc_Data >( typeCode, handle );
 	}
 	
 	template < class T, class AEDesc_Type >
@@ -965,13 +948,6 @@ namespace Nitrogen
 		return AECreateDesc< AEDesc_Type >( typeCode, Nucleus::Owned< Handle >( handle ) );
 	}
 	
-	template < class T >
-	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType                                            typeCode,
-	                                                   Nucleus::Owned< T**, Nucleus::Disposer< Handle > >  handle )
-	{
-		return AECreateDesc< AEDesc_Data >( typeCode, handle );
-	}
-	
 	template < class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType typeCode, Nucleus::Owned< AEDesc_Type > desc )
 	{
@@ -979,6 +955,49 @@ namespace Nitrogen
 		
 		return desc;
 	}
+	
+	template < class T >
+	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType typeCode, T** handle )
+	{
+		return AECreateDesc< AEDesc_Data >( typeCode, handle );
+	}
+	
+	template < class T >
+	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType                                            typeCode,
+	                                                   Nucleus::Owned< T**, Nucleus::Disposer< Handle > >  handle )
+	{
+		return AECreateDesc< AEDesc_Data >( typeCode, handle );
+	}
+	
+	namespace MetrowerksHack
+	{
+		
+		// CW Pro 6 complains of illegal function overloading without this namespace
+		
+		using Nitrogen::AECreateDesc;
+		
+		inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType     typeCode,
+		                                                   const void*  dataPtr,
+		                                                   Size         dataSize )
+		{
+			return AECreateDesc< AEDesc_Data >( typeCode, dataPtr, dataSize );
+		}
+		
+		inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType  typeCode,
+		                                                   Handle    handle )
+		{
+			return AECreateDesc< AEDesc_Data >( typeCode, handle );
+		}
+		
+		inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType                  typeCode,
+		                                                   Nucleus::Owned< Handle >  handle )
+		{
+			return AECreateDesc< AEDesc_Data >( typeCode, handle );
+		}
+		
+	}
+	
+	using namespace MetrowerksHack;
 	
 	
 	inline void AEDisposeDesc( Nucleus::Owned< AEDesc_Data > )
@@ -1008,22 +1027,10 @@ namespace Nitrogen
 		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
-	inline Nucleus::Owned< AEDesc_Data > AECreateList( const void*  factoringPtr,
-	                                                   std::size_t  factoredSize,
-	                                                   bool         isRecord )
-	{
-		return AECreateList< AEDesc_Data >( factoringPtr, factoredSize, isRecord );
-	}
-	
 	template < class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateList( bool isRecord = false )
 	{
 		return AECreateList< AEDesc_Type >( NULL, 0, isRecord );
-	}
-	
-	inline Nucleus::Owned< AEDesc_Data > AECreateList( bool isRecord = false )
-	{
-		return AECreateList< AEDesc_Data >( isRecord );
 	}
 	
 	template < class AEDesc_Type >
@@ -1032,10 +1039,33 @@ namespace Nitrogen
 		return AECreateDesc( typeCode, AECreateList< AEDesc_Type >( isRecord ) );
 	}
 	
-	inline Nucleus::Owned< AEDesc_Data > AECreateList( DescType typeCode, bool isRecord )
+	namespace MetrowerksHack
 	{
-		return AECreateList< AEDesc_Data >( typeCode, isRecord );
+		
+		// CW Pro 6 complains of illegal function overloading without this namespace
+		
+		using Nitrogen::AECreateList;
+		
+		inline Nucleus::Owned< AEDesc_Data > AECreateList( const void*  factoringPtr,
+		                                                   std::size_t  factoredSize,
+		                                                   bool         isRecord )
+		{
+			return AECreateList< AEDesc_Data >( factoringPtr, factoredSize, isRecord );
+		}
+		
+		inline Nucleus::Owned< AEDesc_Data > AECreateList( bool isRecord = false )
+		{
+			return AECreateList< AEDesc_Data >( isRecord );
+		}
+		
+		inline Nucleus::Owned< AEDesc_Data > AECreateList( DescType typeCode, bool isRecord )
+		{
+			return AECreateList< AEDesc_Data >( typeCode, isRecord );
+		}
+		
 	}
+	
+	using namespace MetrowerksHack;
 	
 	long AECountItems( const AEDesc& desc );
 	
@@ -1080,9 +1110,9 @@ namespace Nitrogen
 		// on each member token, we must not do so here.  But we do need to
 		// dispose the AEDesc.  Got it?
 		
-		AEPutDesc( AEDesc_Cast< AEDescList_Data >( Detail::AEDescEditor< AEDescList_Token >( list ) ),
+		AEPutDesc( AEDesc_Cast< AEDescList_Data >( Detail::AEDescEditor< AEDescList_Token >( list ).Get() ),
 		           index,
-		           AEDesc_Cast< AEDesc_Data >( desc.Get() ) );
+		           AEDesc_Cast< const AEDesc_Data >( desc.Get() ) );
 		
 		Nucleus::Disposer< AEDesc_Data >()( desc.Release() );
 	}
@@ -1169,9 +1199,9 @@ namespace Nitrogen
 	                          AEKeyword                          keyword,
 	                          Nucleus::Owned< AEDesc_Token >     token )
 	{
-		AEPutKeyDesc( AEDesc_Cast< AERecord_Data >( Detail::AEDescEditor< AERecord_Token >( record ) ),
+		AEPutKeyDesc( AEDesc_Cast< AERecord_Data >( Detail::AEDescEditor< AERecord_Token >( record ).Get() ),
 		              keyword,
-		              AEDesc_Cast< AEDesc_Data >( token ) );
+		              AEDesc_Cast< const AEDesc_Data >( token ) );
 		
 		Nucleus::Disposer< AEDesc_Data >()( token.Release() );
 	}
