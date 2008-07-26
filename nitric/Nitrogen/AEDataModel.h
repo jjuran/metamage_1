@@ -1008,16 +1008,33 @@ namespace Nitrogen
 		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
+	inline Nucleus::Owned< AEDesc_Data > AECreateList( const void*  factoringPtr,
+	                                                   std::size_t  factoredSize,
+	                                                   bool         isRecord )
+	{
+		return AECreateList< AEDesc_Data >( factoringPtr, factoredSize, isRecord );
+	}
+	
 	template < class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateList( bool isRecord = false )
 	{
 		return AECreateList< AEDesc_Type >( NULL, 0, isRecord );
 	}
 	
+	inline Nucleus::Owned< AEDesc_Data > AECreateList( bool isRecord = false )
+	{
+		return AECreateList< AEDesc_Data >( isRecord );
+	}
+	
 	template < class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateList( DescType typeCode, bool isRecord )
 	{
 		return AECreateDesc( typeCode, AECreateList< AEDesc_Type >( isRecord ) );
+	}
+	
+	inline Nucleus::Owned< AEDesc_Data > AECreateList( DescType typeCode, bool isRecord )
+	{
+		return AECreateList< AEDesc_Data >( typeCode, isRecord );
 	}
 	
 	long AECountItems( const AEDesc& desc );
