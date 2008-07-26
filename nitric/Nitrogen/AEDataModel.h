@@ -342,14 +342,16 @@ namespace Nitrogen
 	
 	typedef AEDesc_Token AEDescList_Token, AERecord_Token;
 	
-	inline const AEDesc_Data& AEDesc_Token_Cast( const AEDesc_Token& token )
+	template < class AEDesc_Type >
+	inline const AEDesc_Type& AEDesc_Cast( const AEDesc& desc )
 	{
-		return static_cast< const AEDesc_Data& >( static_cast< const AEDesc& >( token ) );
+		return static_cast< const AEDesc_Type& >( desc );
 	}
 	
-	inline AEDesc_Data& AEDesc_Token_Cast( AEDesc_Token& token )
+	template < class AEDesc_Type >
+	inline AEDesc_Type& AEDesc_Cast( AEDesc& desc )
 	{
-		return static_cast< AEDesc_Data& >( static_cast< AEDesc& >( token ) );
+		return static_cast< AEDesc_Type& >( desc );
 	}
 	
 }
@@ -1029,9 +1031,9 @@ namespace Nitrogen
 		// on each member token, we must not do so here.  But we do need to
 		// dispose the AEDesc.  Got it?
 		
-		AEPutDesc( AEDesc_Token_Cast( Detail::AEDescEditor< AEDescList_Token >( list ) ),
+		AEPutDesc( AEDesc_Cast< AEDescList_Data >( Detail::AEDescEditor< AEDescList_Token >( list ) ),
 		           index,
-		           AEDesc_Token_Cast( desc.Get() ) );
+		           AEDesc_Cast< AEDesc_Data >( desc.Get() ) );
 		
 		Nucleus::Disposer< AEDesc_Data >()( desc.Release() );
 	}
