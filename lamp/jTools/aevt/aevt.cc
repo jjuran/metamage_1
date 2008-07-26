@@ -110,17 +110,17 @@ namespace jTools
 	{
 		if ( sig != N::OSType( kUnknownType ) )
 		{
-			return N::AECreateDesc< N::AEAddressDesc, N::typeApplSignature >( sig );
+			return N::AECreateDesc< N::typeApplSignature >( sig );
 		}
 		else
 		{
 		#if CALL_NOT_IN_CARBON
 			
-			return N::AECreateDesc< N::AEAddressDesc, N::typeTargetID >( LocateTarget( app, machine, host ) );
+			return N::AECreateDesc< N::typeTargetID >( LocateTarget( app, machine, host ) );
 			
 		#else
 			
-			return N::AECreateDesc< N::AEAddressDesc, N::typeApplicationURL >( url );
+			return N::AECreateDesc< N::typeApplicationURL >( url );
 			
 		#endif
 		}

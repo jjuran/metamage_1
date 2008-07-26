@@ -199,9 +199,9 @@ namespace RunToolServer
 		
 		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
 		                                                               N::kAEDoScript,
-		                                                               N::AECreateDesc< N::AEDesc_Data, N::typeProcessSerialNumber >( psnToolServer ) );
+		                                                               N::AECreateDesc< N::typeProcessSerialNumber >( psnToolServer ) );
 		
-		N::AEPutParamDesc( appleEvent, N::keyDirectObject, N::AECreateDesc< N::AEDesc_Data, N::typeChar >( script ) );
+		N::AEPutParamDesc( appleEvent, N::keyDirectObject, N::AECreateDesc< N::typeChar >( script ) );
 		
 		return appleEvent;
 	}

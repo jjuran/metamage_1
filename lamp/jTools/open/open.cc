@@ -87,7 +87,7 @@ static NN::Owned< N::AppleEvent > MakeOpenDocsEvent( const std::vector< FSSpec >
 	
 	NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kCoreEventClass,
 	                                                               N::kAEOpenDocuments,
-	                                                               N::AECreateDesc< N::AEDesc_Data, N::typeProcessSerialNumber >( psn ) );
+	                                                               N::AECreateDesc< N::typeProcessSerialNumber >( psn ) );
 	
 	N::AEPutParamDesc( appleEvent, N::keyDirectObject, documents );
 	

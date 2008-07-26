@@ -147,7 +147,7 @@ static NN::Owned< N::OSASpec > MakeCWDContext( const NN::Shared< N::ComponentIns
 	
 	return
 	N::OSACompile( scriptingComponent,
-	               N::AECreateDesc< N::AEDesc_Data, N::typeChar >( cwdProperty ),
+	               N::AECreateDesc< N::typeChar >( cwdProperty ),
 	               N::kOSAModeCompileIntoContext );
 }
 
@@ -227,7 +227,7 @@ static NN::Owned< N::OSASpec > LoadScriptFile( const char* pathname, bool useCWD
 	{
 	}
 	
-	return CompileSource( N::AECreateDesc< N::AEDesc_Data, N::typeChar >( ReadFileData( pathname ) ), useCWD );
+	return CompileSource( N::AECreateDesc< N::typeChar >( ReadFileData( pathname ) ), useCWD );
 }
 
 
@@ -300,7 +300,7 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( !inlineScriptPieces.empty() )
 	{
-		script = CompileSource( N::AECreateDesc< N::AEDesc_Data, N::typeChar >( JoinScriptPieces( inlineScriptPieces ) ), getsCWDProperty );
+		script = CompileSource( N::AECreateDesc< N::typeChar >( JoinScriptPieces( inlineScriptPieces ) ), getsCWDProperty );
 	}
 	else
 	{
