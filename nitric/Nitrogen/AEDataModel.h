@@ -1049,23 +1049,21 @@ namespace Nitrogen
 	                              void*          dataPtr,
 	                              Size           maximumSize );
 	
-	template < class AEDesc_Type >
-	inline Nucleus::Owned< AEDesc_Type > AEGetNthDesc( const AEDesc&  listDesc,
+	inline Nucleus::Owned< AEDesc_Data > AEGetNthDesc( const AEDesc&  listDesc,
 	                                                   long           index,
 	                                                   DescType       desiredType = typeWildCard,
 	                                                   ::AEKeyword*   keyword     = NULL )
 	{
 		AEDesc desc = Detail::AEGetNthDesc_Unowned( listDesc, index, desiredType, keyword );
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( static_cast< const AEDesc_Type& >( desc ) );
+		return Nucleus::Owned< AEDesc_Data >::Seize( static_cast< const AEDesc_Data& >( desc ) );
 	}
 	
-	template < class AEDesc_Type >
-	inline Nucleus::Owned< AEDesc_Type > AEGetNthDesc( const AEDesc&  listDesc,
+	inline Nucleus::Owned< AEDesc_Data > AEGetNthDesc( const AEDesc&  listDesc,
 	                                                   long           index,
 	                                                   ::AEKeyword*   keyword )
 	{
-		return AEGetNthDesc< AEDesc_Type >( listDesc, index, typeWildCard, keyword );
+		return AEGetNthDesc( listDesc, index, typeWildCard, keyword );
 	}
 	
 	AESizeOfNthItem_Result AESizeOfNthItem( const AEDescList& list, long index );
