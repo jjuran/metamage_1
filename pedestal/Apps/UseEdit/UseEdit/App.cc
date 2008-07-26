@@ -30,27 +30,6 @@ namespace UseEdit
 	
 	namespace N = Nitrogen;
 	
-	using N::keyDirectObject;
-	using N::keyAEObjectClass;
-	using N::typeWildCard;
-	using N::typePtr;
-	using N::typeUInt32;
-	using N::typeAEList;
-	using N::typeChar;
-	using N::typeNull;
-	using N::typeAERecord;
-	using N::formUniqueID;
-	using N::formAbsolutePosition;
-	using N::kCoreEventClass;
-	using N::kAEOpenDocuments;
-	using N::kAECoreSuite;
-	using N::kAEClose;
-	using N::kAECountElements;
-	using N::kAEGetData;
-	using N::cProperty;
-	using N::cDocument;
-	using N::pName;
-	using N::pIsFrontProcess;
 	
 	App* App::theApp = NULL;
 	
@@ -70,12 +49,12 @@ namespace UseEdit
 			ASSERT( app != NULL );
 			
 			NN::Owned< N::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( appleEvent,
-			                                                                      keyDirectObject ) );
+			                                                                      N::keyDirectObject ) );
 			
 			switch ( N::DescType( token.Get().descriptorType ) )
 			{
 				case typeDocument:
-					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< typePtr >( token, typeDocument ) ) )
+					if ( N::WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< N::typePtr >( token, typeDocument ) ) )
 					{
 						if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
 						{
@@ -97,7 +76,7 @@ namespace UseEdit
 			ASSERT( app != NULL );
 			
 			NN::Owned< N::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( appleEvent,
-			                                                                             keyDirectObject );
+			                                                                             N::keyDirectObject );
 			
 			bool containerIsRoot = containerObjSpec.Get().descriptorType == typeNull;
 			
@@ -113,8 +92,8 @@ namespace UseEdit
 			std::size_t count = N::Count( desiredClass, containerClass, containerToken );
 			
 			N::AEPutParamDesc( reply,
-			                   keyDirectObject,
-			                   N::AECreateDesc< N::AEDesc_Data, typeUInt32 >( count ) );
+			                   N::keyDirectObject,
+			                   N::AECreateDesc< N::AEDesc_Data, N::typeUInt32 >( count ) );
 		}
 		
 		void HandleGetDataAppleEvent( const N::AppleEvent&  appleEvent,
@@ -124,9 +103,9 @@ namespace UseEdit
 			ASSERT( app != NULL );
 			
 			N::AEPutParamDesc( reply,
-			                   keyDirectObject,
+			                   N::keyDirectObject,
 			                   N::GetData( N::AEResolve( N::AEGetParamDesc( appleEvent,
-			                                                                keyDirectObject ) ) ) );
+			                                                                N::keyDirectObject ) ) ) );
 		}
 		
 		void HandleOpenDocumentsAppleEvent( const N::AppleEvent&  appleEvent,
@@ -139,8 +118,8 @@ namespace UseEdit
 			typedef Container::const_iterator const_iterator;
 			
 			NN::Owned< N::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-			                                                             keyDirectObject,
-			                                                             typeAEList );
+			                                                             N::keyDirectObject,
+			                                                             N::typeAEList );
 			
 			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
 			
@@ -168,12 +147,12 @@ namespace UseEdit
 	                                                N::AEObjectClass        containerClass )
 		{
 			
-			return N::AECreateDesc< N::AEDesc_Token, typeChar >( "UseEdit" );
+			return N::AECreateDesc< N::AEDesc_Token, N::typeChar >( "UseEdit" );
 		}
 		
 		static NN::Owned< N::AEDesc_Token > TokenForDocument( const Document& document )
 		{
-			return N::AECreateDesc( typeDocument, N::AECreateDesc< N::AEDesc_Token, typePtr >( document.GetWindowRef() ) );
+			return N::AECreateDesc( typeDocument, N::AECreateDesc< N::AEDesc_Token, N::typePtr >( document.GetWindowRef() ) );
 		}
 		
 		NN::Owned< N::AEDesc_Token > AccessDocument( N::AEObjectClass        desiredClass,
@@ -185,12 +164,12 @@ namespace UseEdit
 		{
 			const DocumentContainer& docs( App::Get().Documents() );
 			
-			if ( keyForm == formUniqueID )
+			if ( keyForm == N::formUniqueID )
 			{
-				return docs.GetElementByID( N::AEGetDescData< typeUInt32 >( keyData ) );
+				return docs.GetElementByID( N::AEGetDescData< N::typeUInt32 >( keyData ) );
 			}
 			
-			if ( keyForm == formAbsolutePosition )
+			if ( keyForm == N::formAbsolutePosition )
 			{
 				std::size_t count = docs.CountElements();
 				
@@ -224,11 +203,11 @@ namespace UseEdit
 	                                                const N::AEDesc_Token&  containerToken,
 	                                                N::AEObjectClass        containerClass )
 		{
-			UInt32 id = N::AEGetDescData< typeUInt32 >( containerToken, typeDocument );
+			UInt32 id = N::AEGetDescData< N::typeUInt32 >( containerToken, typeDocument );
 			
 			const Document& document = App::Get().Documents().GetDocumentByID( id );
 			
-			return N::AECreateDesc< N::AEDesc_Token, typeChar >( document.GetName() );
+			return N::AECreateDesc< N::AEDesc_Token, N::typeChar >( document.GetName() );
 		}
 		
 		// Count
@@ -253,9 +232,9 @@ namespace UseEdit
 			
 			keyData.descriptorType = typeUInt32;
 			
-			return N::AECreateObjectSpecifier( cDocument,
+			return N::AECreateObjectSpecifier( N::cDocument,
 			                                   N::GetRootObjectSpecifier(),
-			                                   formUniqueID,
+			                                   N::formUniqueID,
 			                                   static_cast< const N::AEDesc_Data& >( keyData ) );
 		}
 		
@@ -406,10 +385,10 @@ namespace UseEdit
 	: 
 		itsAboutHandler( *this ),
 		itsNewHandler  ( *this ),
-		itsOpenDocsEventHandler( InstallAppleEventHandler< HandleOpenDocumentsAppleEvent >( kCoreEventClass, kAEOpenDocuments ) ),
-		itsCloseHandler  ( InstallAppleEventHandler< HandleCloseAppleEvent   >( kAECoreSuite, kAEClose         ) ),
-		itsCountHandler  ( InstallAppleEventHandler< HandleCountAppleEvent   >( kAECoreSuite, kAECountElements ) ),
-		itsGetDataHandler( InstallAppleEventHandler< HandleGetDataAppleEvent >( kAECoreSuite, kAEGetData       ) )
+		itsOpenDocsHandler( InstallAppleEventHandler< HandleOpenDocumentsAppleEvent >( N::kCoreEventClass, N::kAEOpenDocuments ) ),
+		itsCloseHandler   ( InstallAppleEventHandler< HandleCloseAppleEvent   >( N::kAECoreSuite, N::kAEClose         ) ),
+		itsCountHandler   ( InstallAppleEventHandler< HandleCountAppleEvent   >( N::kAECoreSuite, N::kAECountElements ) ),
+		itsGetDataHandler ( InstallAppleEventHandler< HandleGetDataAppleEvent >( N::kAECoreSuite, N::kAEGetData       ) )
 	{
 		ASSERT( theApp == NULL );
 		
@@ -422,20 +401,20 @@ namespace UseEdit
 		N::AEObjectInit();
 		
 		// List multiplexor, e.g. for 'get name of every window'
-		N::AEInstallObjectAccessor< N::DispatchAccessToList >( N::AEObjectClass( typeWildCard ), typeAEList ).Release();
+		N::AEInstallObjectAccessor< N::DispatchAccessToList >( N::AEObjectClass( typeWildCard ), N::typeAEList ).Release();
 		
 		// Property accessors
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeNull     ).Release();
-		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( cProperty, typeDocument ).Release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::cProperty, N::typeNull  ).Release();
+		N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( N::cProperty, typeDocument ).Release();
 		
 		// Document accessor
-		N::AEInstallObjectAccessor< AccessDocument >( cDocument, typeNull ).Release();
+		N::AEInstallObjectAccessor< AccessDocument >( N::cDocument, N::typeNull ).Release();
 		
 		// Set up AEObjectModel
 		N::AESetObjectCallbacks();
 		
 		// Count documents
-		N::RegisterCounter( cDocument, typeNull, CountDocuments );
+		N::RegisterCounter( N::cDocument, N::typeNull, CountDocuments );
 		
 		// Literal data tokens
 		N::RegisterDataGetter( N::typeBoolean,  GetLiteralData );
@@ -446,11 +425,11 @@ namespace UseEdit
 		N::RegisterDataGetter( typeDocument, GetDocument );
 		
 		// Name of app
-		N::RegisterPropertyAccessor( pName,           typeNull, AccessAppName );
-		N::RegisterPropertyAccessor( pIsFrontProcess, typeNull, AccessAppFrontmost );
+		N::RegisterPropertyAccessor( N::pName,           N::typeNull, AccessAppName );
+		N::RegisterPropertyAccessor( N::pIsFrontProcess, N::typeNull, AccessAppFrontmost );
 		
 		// Name of document
-		N::RegisterPropertyAccessor( pName, typeDocument, AccessDocName );
+		N::RegisterPropertyAccessor( N::pName, typeDocument, AccessDocName );
 	}
 	
 	App::~App()

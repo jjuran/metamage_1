@@ -113,7 +113,7 @@ namespace UseEdit
 			
 			Ped::AboutHandler< App > itsAboutHandler;
 			Ped::NewHandler  < App > itsNewHandler;
-			NN::Owned< N::AEEventHandler > itsOpenDocsEventHandler;
+			NN::Owned< N::AEEventHandler > itsOpenDocsHandler;
 			NN::Owned< N::AEEventHandler > itsCloseHandler;
 			NN::Owned< N::AEEventHandler > itsCountHandler;
 			NN::Owned< N::AEEventHandler > itsGetDataHandler;
