@@ -156,7 +156,11 @@ namespace Nitrogen
 			
 			Proxy& operator*()  { return *this; }
 			
-			Proxy& operator=( const AEDesc_Type& param )  { AEPutDesc( list, 0, param );  return *this; }
+			// For normal use, i.e. AEDesc_Data
+			Proxy& operator=(           const AEDesc_Type&  param )  { AEPutDesc( list, 0, param );  return *this; }
+			
+			// For AEDesc_Token, where param must be Owned
+			Proxy& operator=( Nucleus::Owned< AEDesc_Type > param )  { AEPutDesc( list, 0, param );  return *this; }
 			
 			This& operator++()     { return *this; }
 			This& operator++(int)  { return *this; }
