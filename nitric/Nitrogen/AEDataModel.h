@@ -653,9 +653,10 @@ namespace Nitrogen
 				                   DescType( toType ),
 				                   refCon ).Release();
 			}
-			catch ( OSStatus err )
+			catch ( ... )
 			{
-				return err.Get();
+				return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(),
+				                                     OSStatus( errAEEventFailed ) );
 			}
 			
 			return noErr;
@@ -680,9 +681,10 @@ namespace Nitrogen
 				                   DescType( toType ),
 				                   refCon ).Release();
 			}
-			catch ( OSStatus err )
+			catch ( ... )
 			{
-				return err.Get();
+				return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(),
+				                                     OSStatus( errAEEventFailed ) );
 			}
 			
 			return noErr;

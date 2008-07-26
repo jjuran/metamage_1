@@ -210,9 +210,10 @@ namespace Nitrogen
 				                  static_cast< const AEDesc_Data& >( *keyData ),
 				                  accessorRefcon ).Release();
 			}
-			catch ( OSStatus err )
+			catch ( ... )
 			{
-				return err;
+				return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(),
+				                                     OSStatus( errAEEventFailed ) );
 			}
 			
 			return noErr;
