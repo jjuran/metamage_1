@@ -54,6 +54,7 @@ typedef	__size_t	size_t;
 __BEGIN_DECLS
 void	*memchr(const void *, int, size_t);
 void	*memrchr(const void *, int, size_t);
+void* memmem( const void* haystack, size_t haystack_len, const void* needle, size_t needle_len );
 int	 memcmp(const void *, const void *, size_t);
 void	*memcpy(void *, const void *, size_t)
 		__attribute__ ((__bounded__(__buffer__,1,3)))
