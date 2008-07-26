@@ -1089,14 +1089,13 @@ namespace Nitrogen
 	                  const void*  dataPtr,
 	                  std::size_t  dataSize );
 	
-	template < class AEDesc_Type >
-	inline void AEPutKeyPtr( Nucleus::Owned< AEDesc_Type >&  record,
-	                         AEKeyword                       keyword,
-	                         DescType                        typeCode,
-	                         const void*                     dataPtr,
-	                         std::size_t                     dataSize )
+	inline void AEPutKeyPtr( Nucleus::Owned< AERecord_Data >&  record,
+	                         AEKeyword                         keyword,
+	                         DescType                          typeCode,
+	                         const void*                       dataPtr,
+	                         std::size_t                       dataSize )
 	{
-		AEPutKeyPtr( Detail::AEDescEditor< AEDesc_Type >( record ),
+		AEPutKeyPtr( Detail::AEDescEditor< AERecord_Data >( record ),
 		             keyword,
 		             typeCode,
 		             dataPtr,
@@ -1110,19 +1109,28 @@ namespace Nitrogen
 	void AEPutKeyDesc( AERecord&         record,
 	                   const AEKeyDesc&  keyDesc );
 	
-	template < class AEDesc_Type >
-	inline void AEPutKeyDesc( Nucleus::Owned< AEDesc_Type >&  record,
-	                          AEKeyword                       keyword,
-	                          const AEDesc_Type&              desc )
+	inline void AEPutKeyDesc( Nucleus::Owned< AERecord_Data >&  record,
+	                          AEKeyword                         keyword,
+	                          const AEDesc_Data&                desc )
 	{
-		AEPutKeyDesc( Detail::AEDescEditor< AEDesc_Type >( record ), keyword, desc );
+		AEPutKeyDesc( Detail::AEDescEditor< AERecord_Data >( record ), keyword, desc );
 	}
 	
-	template < class AEDesc_Type >
-	inline void AEPutKeyDesc( Nucleus::Owned< AEDesc_Type >&  record,
-	                          const AEKeyDesc&                keyDesc )
+	inline void AEPutKeyDesc( Nucleus::Owned< AERecord_Token >&  record,
+	                          AEKeyword                          keyword,
+	                          Nucleus::Owned< AEDesc_Token >     token )
 	{
-		AEPutKeyDesc( Detail::AEDescEditor< AEDesc_Type >( record ), keyDesc );
+		AEPutKeyDesc( AEDesc_Cast< AERecord_Data >( Detail::AEDescEditor< AERecord_Token >( record ) ),
+		              keyword,
+		              AEDesc_Cast< AEDesc_Data >( token ) );
+		
+		Nucleus::Disposer< AEDesc_Data >()( token.Release() );
+	}
+	
+	inline void AEPutKeyDesc( Nucleus::Owned< AERecord_Data >&  record,
+	                          const AEKeyDesc&                  keyDesc )
+	{
+		AEPutKeyDesc( Detail::AEDescEditor< AERecord_Data >( record ), keyDesc );
 	}
 	
 	class AEPutKeyDesc_Binding
@@ -1497,13 +1505,13 @@ namespace Nitrogen
 		                                                   DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < class AERecord_Type, DescType type >
-	inline void AEPutKeyPtr( Nucleus::Owned< AERecord_Type >&             record,
+	template < DescType type >
+	inline void AEPutKeyPtr( Nucleus::Owned< AERecord_Data >&             record,
 	                         AEKeyword                                    keyword,
 	                         typename DescType_Traits< type >::Parameter  data )
 	{
 		DescType_Traits< type >().Put( data,
-		                               AEPutKeyPtr_Putter( Detail::AEDescEditor< AERecord_Type >( record ),
+		                               AEPutKeyPtr_Putter( Detail::AEDescEditor< AERecord_Data >( record ),
 		                                                   keyword,
 		                                                   DescType( DescType_Map_Traits< type >::result ) ) );
 	}
@@ -1518,11 +1526,11 @@ namespace Nitrogen
 		                                                   DescType( AEKeyword_Traits< key >::descType ) ) );
 	}
 	
-	template < class AERecord_Type, AEKeyword key >
-	inline void AEPutKeyPtr( Nucleus::Owned< AERecord_Type >&             record,
+	template < AEKeyword key >
+	inline void AEPutKeyPtr( Nucleus::Owned< AERecord_Data >&             record,
 	                         typename AEKeyword_Traits< key >::Parameter  data )
 	{
-		AEPutKeyPtr< key >( Detail::AEDescEditor< AERecord_Type >( record ), data );
+		AEPutKeyPtr< key >( Detail::AEDescEditor< AERecord_Data >( record ), data );
 	}
 	
 	template < AEKeyword key >
