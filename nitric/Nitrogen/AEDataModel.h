@@ -1410,13 +1410,13 @@ namespace Nitrogen
 		                               DescType( DescType_Map_Traits< type >::result ) ) );
 	}
 	
-	template < DescType type, class AEDescList_Type >
-	inline void AEPutPtr( Nucleus::Owned< AEDescList_Type >&           list,
+	template < DescType type >
+	inline void AEPutPtr( Nucleus::Owned< AEDescList_Data >&           list,
 	                      long                                         index,
 	                      typename DescType_Traits< type >::Parameter  data )
 	{
 		DescType_Traits< type >().Put( data,
-		                               AEPutPtr_Putter( Detail::AEDescEditor< AEDescList_Type >( list ),
+		                               AEPutPtr_Putter( Detail::AEDescEditor< AEDescList_Data >( list ),
 		                                                index,
 		                                                DescType( DescType_Map_Traits< type >::result ) ) );
 	}
