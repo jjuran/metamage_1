@@ -51,9 +51,16 @@ namespace Nitrogen
 		return theGlobalTokenDisposer;
 	}
 	
+	static void DisposeTokenFromList( Nucleus::Owned< AEDesc_Data > token )
+	{
+		// This is basically a call to AEDisposeToken().
+		
+		Nucleus::Disposer< AEDesc_Token >()( token.Release() );
+	}
+	
 	void DisposeTokenList( Nucleus::Owned< AEDescList_Data > listOfTokens )
 	{
-		// The following casting exercise is necessary for this reason:
+		// listOfTokens is Owned< AEDescList_Data > for this reason:
 		// We're already inside AEDisposeToken() for the list, so
 		// Disposer< AEDesc_Token > isn't appropriate (since running it would
 		// yield recursion).  But we haven't yet called AEDisposeToken() on the
@@ -61,11 +68,7 @@ namespace Nitrogen
 		// Since we've deliberately made it hard to accidentally pull tokens out
 		// of a non-token list, here we'll have to jump through our own hoop.
 		
-		const AEDesc& list = listOfTokens;
-		
-		const AEDescList_Token& tokenList = static_cast< const AEDescList_Token& >( list );
-		
-		AEDescList_Token_ItemValue_Container tokens = AEDescList_ItemValues( tokenList );
+		AEDescList_ItemValue_Container tokens = AEDescList_ItemValues( listOfTokens );
 		
 		// Get each token from the list (which allocates a new AEDesc),
 		// and call AEDisposeToken on it, which disposes both
@@ -75,7 +78,7 @@ namespace Nitrogen
 		
 		std::for_each( tokens.begin(),
 		               tokens.end(),
-		               more::ptr_fun( AEDisposeToken ) );
+		               more::ptr_fun( DisposeTokenFromList ) );
 		
 		// Implicit
 		//AEDisposeDesc( listOfTokens );

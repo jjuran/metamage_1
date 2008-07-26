@@ -254,10 +254,10 @@ namespace Nitrogen
 		                             context.keyData );
 	}
 	
-	static Nucleus::Owned< AEDesc_Token > CallObjectAccessorWithContext( const AEDesc_Token&         containerToken,
+	static Nucleus::Owned< AEDesc_Token > CallObjectAccessorWithContext( const AEDesc&               containerToken,
 	                                                                     const ObjectAccessContext&  context )
 	{
-		return CallObjectAccessor( containerToken,
+		return CallObjectAccessor( AEDesc_Cast< AEDesc_Token >( containerToken ),
 		                           context );
 	}
 	
@@ -270,7 +270,7 @@ namespace Nitrogen
 	{
 		Nucleus::Owned< AEDescList_Token > result = AECreateList< AEDescList_Token >();
 		
-		AEDescList_Token_ItemValue_Container values = AEDescList_ItemValues( containerToken );
+		AEDescList_ItemValue_Container values = AEDescList_ItemValues( containerToken );
 		
 		std::transform( values.begin(),
 		                values.end(),

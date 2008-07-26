@@ -30,7 +30,7 @@ namespace Nitrogen
 		{
 			AEPutDesc( list,
 			           0,
-			           GetData( AEGetNthDesc< AEDesc_Token >( obj, i ),
+			           GetData( AEDesc_Cast< AEDesc_Token >( AEGetNthDesc( obj, i ) ),
 			                    desiredType ).Get() );
 		}
 		
