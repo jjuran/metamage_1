@@ -30,7 +30,7 @@ static void DumpEnvironment()
 	(void) write( STDOUT_FILENO, output.data(), output.size() );
 }
 
-int main( int argc, iota::argv_t argv )
+int main( int argc, char** argv )
 {
 	while ( *++argv != NULL  &&  std::strchr( *argv, '=' ) )
 	{
