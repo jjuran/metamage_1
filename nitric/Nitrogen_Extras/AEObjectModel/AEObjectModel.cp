@@ -143,9 +143,10 @@ namespace Nitrogen
 			                   static_cast< const AEDesc_Token& >( *obj1 ),
 			                   static_cast< const AEDesc_Token& >( *obj2 ) );
 		}
-		catch ( OSStatus err )
+		catch ( ... )
 		{
-			return err;
+			return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(),
+				                                 OSStatus( errAEEventFailed ) );
 		}
 		
 		return noErr;
@@ -162,9 +163,10 @@ namespace Nitrogen
 			                 AEObjectClass( containerClass ),
 			                 static_cast< const AEDesc_Token& >( *containerToken ) );
 		}
-		catch ( OSStatus err )
+		catch ( ... )
 		{
-			return err;
+			return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(),
+				                                 OSStatus( errAEEventFailed ) );
 		}
 		
 		return noErr;
@@ -186,9 +188,10 @@ namespace Nitrogen
 			// Atom or list, it will hence be missed.
 			DisposeToken( Nucleus::Owned< AEDesc_Data >::Seize( desc ) );
 		}
-		catch ( OSStatus err )
+		catch ( ... )
 		{
-			return err;
+			return Nucleus::Convert< OSStatus >( Nucleus::TheExceptionBeingHandled(),
+				                                 OSStatus( errAEEventFailed ) );
 		}
 		
 		return noErr;
