@@ -53,7 +53,8 @@ namespace Nitrogen
 	
 	static void DisposeTokenFromList( Nucleus::Owned< AEDesc_Data > token )
 	{
-		// This is basically a call to AEDisposeToken().
+		// This is basically a call to AEDisposeToken(), but it's for tokens
+		// stored as Owned< AEDesc_Data >.
 		
 		Nucleus::Disposer< AEDesc_Token >()( token.Release() );
 	}
