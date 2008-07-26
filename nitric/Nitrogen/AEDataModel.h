@@ -342,6 +342,16 @@ namespace Nitrogen
 	
 	typedef AEDesc_Token AEDescList_Token, AERecord_Token;
 	
+	inline const AEDesc_Data& AEDesc_Token_Cast( const AEDesc_Token& token )
+	{
+		return static_cast< const AEDesc_Data& >( static_cast< const AEDesc& >( token ) );
+	}
+	
+	inline AEDesc_Data& AEDesc_Token_Cast( AEDesc_Token& token )
+	{
+		return static_cast< AEDesc_Data& >( static_cast< AEDesc& >( token ) );
+	}
+	
 }
 
 namespace Nucleus
@@ -993,14 +1003,13 @@ namespace Nitrogen
 	               const void*  dataPtr,
 	               Size         dataSize );
 	
-	template < class AEDescList_Type >
-	inline void AEPutPtr( Nucleus::Owned< AEDescList_Type >&  list,
+	inline void AEPutPtr( Nucleus::Owned< AEDescList_Data >&  list,
 	                      long                                index,
 	                      DescType                            type,
 	                      const void*                         dataPtr,
 	                      Size                                dataSize )
 	{
-		AEPutPtr( Detail::AEDescEditor< AEDescList_Type >( list ),
+		AEPutPtr( Detail::AEDescEditor< AEDescList_Data >( list ),
 		          index,
 		          type,
 		          dataPtr,
@@ -1011,13 +1020,26 @@ namespace Nitrogen
 	                long           index,
 	                const AEDesc&  desc );
 	
-	// Assumes AEDesc_Foo == AEDescList_Foo
-	template < class AEDesc_Type >
-	inline void AEPutDesc( Nucleus::Owned< AEDesc_Type >&  list,
-	                long                                   index,
-	                const AEDesc_Type&                     desc )
+	inline void AEPutDesc( Nucleus::Owned< AEDescList_Data >&  list,
+	                       long                                index,
+	                       const AEDesc_Data&                  desc )
 	{
-		AEPutDesc( Detail::AEDescEditor< AEDesc_Type >( list ), index, desc );
+		AEPutDesc( Detail::AEDescEditor< AEDescList_Data >( list ), index, desc );
+	}
+	
+	inline void AEPutDesc( Nucleus::Owned< AEDescList_Token >&  list,
+	                       long                                 index,
+	                       Nucleus::Owned< AEDesc_Token >       desc )
+	{
+		// This is the only variant of AEPutDesc() supported for tokens.
+		// The desc argument must be an Owned token to ensure that its tokenness
+		// is managed correctly.
+		
+		AEPutDesc( AEDesc_Token_Cast( Detail::AEDescEditor< AEDescList_Token >( list ) ),
+		           index,
+		           AEDesc_Token_Cast( desc.Get() ) );
+		
+		Nucleus::Disposer< AEDesc_Data >()( desc.Release() );
 	}
 	
 	struct GetNthPtr_Result
