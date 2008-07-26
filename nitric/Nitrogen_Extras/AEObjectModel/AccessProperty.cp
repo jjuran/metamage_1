@@ -135,7 +135,7 @@ namespace Nitrogen
 			
 			AEPutKeyDesc( result,
 			              AEKeyword( ::FourCharCode( propertyID ) ),
-			              propertyToken.Get() );
+			              propertyToken );
 			
 			// Dispose the token's AEDesc, but don't call the token disposal function.
 			AEDesc tokenDesc = propertyToken.Release();

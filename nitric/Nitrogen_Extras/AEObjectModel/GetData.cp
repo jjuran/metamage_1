@@ -45,8 +45,8 @@ namespace Nitrogen
 	{
 		Nucleus::Owned< AERecord_Data > record = AECreateList< AERecord_Data >( true );
 		
-		AEPutKeyPtr< AERecord_Data, keyAEDesiredClass >( record, objectClass );
-		AEPutKeyPtr< AERecord_Data, keyAEKeyForm      >( record, keyForm     );
+		AEPutKeyPtr< keyAEDesiredClass >( record, objectClass );
+		AEPutKeyPtr< keyAEKeyForm      >( record, keyForm     );
 		
 		AEPutKeyDesc( record, keyAEKeyData,   keyData   );
 		AEPutKeyDesc( record, keyAEContainer, container );
