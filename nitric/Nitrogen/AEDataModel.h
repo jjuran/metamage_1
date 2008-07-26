@@ -903,6 +903,13 @@ namespace Nitrogen
 		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
+	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType     typeCode,
+	                                                   const void*  dataPtr,
+	                                                   Size         dataSize )
+	{
+		return AECreateDesc< AEDesc_Data >( typeCode, dataPtr, dataSize );
+	}
+	
 	template < class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType  typeCode,
 	                                                   Handle    handle )
@@ -913,6 +920,12 @@ namespace Nitrogen
 		AEDesc desc = Detail::AECreateDesc_Unowned( typeCode, handle );
 		
 		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
+	}
+	
+	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType  typeCode,
+	                                                   Handle    handle )
+	{
+		return AECreateDesc< AEDesc_Data >( typeCode, handle );
 	}
 	
 	template < class AEDesc_Type >
@@ -927,17 +940,36 @@ namespace Nitrogen
 		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
 	}
 	
-	template < class AEDesc_Type, class T >
+	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType                  typeCode,
+	                                                   Nucleus::Owned< Handle >  handle )
+	{
+		return AECreateDesc< AEDesc_Data >( typeCode, handle );
+	}
+	
+	template < class T, class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType typeCode, T** handle )
 	{
 		return AECreateDesc< AEDesc_Type >( typeCode, Handle( handle ) );
 	}
 	
-	template < class AEDesc_Type, class T >
+	template < class T >
+	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType typeCode, T** handle )
+	{
+		return AECreateDesc< AEDesc_Data >( typeCode, handle );
+	}
+	
+	template < class T, class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( DescType                                            typeCode,
 	                                                   Nucleus::Owned< T**, Nucleus::Disposer< Handle > >  handle )
 	{
 		return AECreateDesc< AEDesc_Type >( typeCode, Nucleus::Owned< Handle >( handle ) );
+	}
+	
+	template < class T >
+	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType                                            typeCode,
+	                                                   Nucleus::Owned< T**, Nucleus::Disposer< Handle > >  handle )
+	{
+		return AECreateDesc< AEDesc_Data >( typeCode, handle );
 	}
 	
 	template < class AEDesc_Type >
@@ -1372,7 +1404,7 @@ namespace Nitrogen
 			}
 	};
 	
-	template < class AEDesc_Type, DescType type >
+	template < DescType type, class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Type > AECreateDesc( typename DescType_Traits< type >::Parameter  data )
 	{
 		Nucleus::Owned< AEDesc_Type > result;
@@ -1382,6 +1414,12 @@ namespace Nitrogen
 		                                                                   result ) );
 		
 		return result;
+	}
+	
+	template < DescType type >
+	inline Nucleus::Owned< AEDesc_Data > AECreateDesc( typename DescType_Traits< type >::Parameter  data )
+	{
+		return AECreateDesc< type, AEDesc_Data >( data );
 	}
 	
 	
