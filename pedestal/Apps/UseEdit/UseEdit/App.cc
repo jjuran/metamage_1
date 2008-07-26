@@ -93,7 +93,7 @@ namespace UseEdit
 			
 			N::AEPutParamDesc( reply,
 			                   N::keyDirectObject,
-			                   N::AECreateDesc< N::AEDesc_Data, N::typeUInt32 >( count ) );
+			                   N::AECreateDesc< N::typeUInt32 >( count ) );
 		}
 		
 		void HandleGetDataAppleEvent( const N::AppleEvent&  appleEvent,
@@ -139,7 +139,7 @@ namespace UseEdit
 	                                                     N::AEObjectClass        containerClass )
 		{
 			
-			return N::AECreateDesc< N::AEDesc_Token, N::typeBoolean >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
+			return N::AECreateDesc< N::typeBoolean, N::AEDesc_Token >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
 		}
 		
 		NN::Owned< N::AEDesc_Token > AccessAppName( N::AEPropertyID         propertyID,
@@ -147,12 +147,12 @@ namespace UseEdit
 	                                                N::AEObjectClass        containerClass )
 		{
 			
-			return N::AECreateDesc< N::AEDesc_Token, N::typeChar >( "UseEdit" );
+			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( "UseEdit" );
 		}
 		
 		static NN::Owned< N::AEDesc_Token > TokenForDocument( const Document& document )
 		{
-			return N::AECreateDesc( typeDocument, N::AECreateDesc< N::AEDesc_Token, N::typePtr >( document.GetWindowRef() ) );
+			return N::AECreateDesc( typeDocument, N::AECreateDesc< N::typePtr, N::AEDesc_Token >( document.GetWindowRef() ) );
 		}
 		
 		NN::Owned< N::AEDesc_Token > AccessDocument( N::AEObjectClass        desiredClass,
@@ -207,7 +207,7 @@ namespace UseEdit
 			
 			const Document& document = App::Get().Documents().GetDocumentByID( id );
 			
-			return N::AECreateDesc< N::AEDesc_Token, N::typeChar >( document.GetName() );
+			return N::AECreateDesc< N::typeChar, N::AEDesc_Token >( document.GetName() );
 		}
 		
 		// Count
