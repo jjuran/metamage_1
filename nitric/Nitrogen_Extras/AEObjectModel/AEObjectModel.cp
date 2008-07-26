@@ -257,7 +257,7 @@ namespace Nitrogen
 	static Nucleus::Owned< AEDesc_Token > CallObjectAccessorWithContext( const AEDesc&               containerToken,
 	                                                                     const ObjectAccessContext&  context )
 	{
-		return CallObjectAccessor( AEDesc_Cast< AEDesc_Token >( containerToken ),
+		return CallObjectAccessor( AEDesc_Cast< const AEDesc_Token >( containerToken ),
 		                           context );
 	}
 	
