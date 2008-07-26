@@ -1190,25 +1190,23 @@ namespace Nitrogen
 	                                void*            dataPtr,
 	                                std::size_t      maximumSize );
 	
-	template < class AEDesc_Type >
 	inline Nucleus::Owned< AEDesc_Data > AEGetKeyDesc( const AERecord&  record,
 	                                                   AEKeyword        keyword,
 	                                                   DescType         desiredType = typeWildCard )
 	{
 		AEDesc desc = Detail::AEGetKeyDesc_Unowned( record, keyword, desiredType );
 		
-		return Nucleus::Owned< AEDesc_Type >::Seize( AEDesc_Cast< AEDesc_Type >( desc ) );
+		return Nucleus::Owned< AEDesc_Data >::Seize( AEDesc_Cast< AEDesc_Data >( desc ) );
 	}
 	
 	AESizeOfKeyDesc_Result AESizeOfKeyDesc( const AERecord&  record,
 	                                        AEKeyword        keyword );
 	
-	void AEDeleteKeyDesc(                 AERecord  & record, AEKeyword keyword );
+	void AEDeleteKeyDesc( AERecord& record, AEKeyword keyword );
 	
-	template < class AEDesc_Type >
-	inline void AEDeleteKeyDesc( Nucleus::Owned< AEDesc_Type >& record, AEKeyword keyword )
+	inline void AEDeleteKeyDesc( Nucleus::Owned< AERecord_Data >& record, AEKeyword keyword )
 	{
-		AEDeleteKeyDesc( Detail::AEDescEditor< AEDesc_Type >( record ), keyword );
+		AEDeleteKeyDesc( Detail::AEDescEditor< AERecord_Data >( record ), keyword );
 	}
 	
 	#pragma mark -
