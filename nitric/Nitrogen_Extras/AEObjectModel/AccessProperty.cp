@@ -156,8 +156,8 @@ namespace Nitrogen
 	                                                    const AEDesc_Token&  /* containerToken */,
 	                                                    AEObjectClass        containerClass )
 	{
-		//return AECreateDesc< AEDesc_Token, typeObjectClass >( containerClass );
-		return AECreateDesc< AEDesc_Token, typeType >( DescType( ::FourCharCode( containerClass ) ) );
+		//return AECreateDesc< typeObjectClass, AEDesc_Token >( containerClass );
+		return AECreateDesc< typeType, AEDesc_Token >( DescType( ::FourCharCode( containerClass ) ) );
 	}
 	
 	Nucleus::Owned< AEDesc_Token > AccessAllProperties( AEPropertyID         /*propertyID*/,

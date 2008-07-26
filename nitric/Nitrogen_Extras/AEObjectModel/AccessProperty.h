@@ -48,7 +48,7 @@ namespace Nitrogen
 			Field fieldValue = record->*member;
 			Result result = Nucleus::Convert< Result >( fieldValue );
 			
-			return AECreateDesc< AEDesc_Token, descType >( result );
+			return AECreateDesc< descType, AEDesc_Token >( result );
 		}
 	};
 	
