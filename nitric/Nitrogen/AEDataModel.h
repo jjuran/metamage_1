@@ -974,25 +974,23 @@ namespace Nitrogen
 		
 		// CW Pro 6 complains of illegal function overloading without this namespace
 		
-		using Nitrogen::AECreateDesc;
-		
 		inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType     typeCode,
 		                                                   const void*  dataPtr,
 		                                                   Size         dataSize )
 		{
-			return AECreateDesc< AEDesc_Data >( typeCode, dataPtr, dataSize );
+			return Nitrogen::AECreateDesc< AEDesc_Data >( typeCode, dataPtr, dataSize );
 		}
 		
 		inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType  typeCode,
 		                                                   Handle    handle )
 		{
-			return AECreateDesc< AEDesc_Data >( typeCode, handle );
+			return Nitrogen::AECreateDesc< AEDesc_Data >( typeCode, handle );
 		}
 		
 		inline Nucleus::Owned< AEDesc_Data > AECreateDesc( DescType                  typeCode,
 		                                                   Nucleus::Owned< Handle >  handle )
 		{
-			return AECreateDesc< AEDesc_Data >( typeCode, handle );
+			return Nitrogen::AECreateDesc< AEDesc_Data >( typeCode, handle );
 		}
 		
 	}
@@ -1044,23 +1042,21 @@ namespace Nitrogen
 		
 		// CW Pro 6 complains of illegal function overloading without this namespace
 		
-		using Nitrogen::AECreateList;
-		
 		inline Nucleus::Owned< AEDesc_Data > AECreateList( const void*  factoringPtr,
 		                                                   std::size_t  factoredSize,
 		                                                   bool         isRecord )
 		{
-			return AECreateList< AEDesc_Data >( factoringPtr, factoredSize, isRecord );
+			return Nitrogen::AECreateList< AEDesc_Data >( factoringPtr, factoredSize, isRecord );
 		}
 		
 		inline Nucleus::Owned< AEDesc_Data > AECreateList( bool isRecord = false )
 		{
-			return AECreateList< AEDesc_Data >( isRecord );
+			return Nitrogen::AECreateList< AEDesc_Data >( isRecord );
 		}
 		
 		inline Nucleus::Owned< AEDesc_Data > AECreateList( DescType typeCode, bool isRecord )
 		{
-			return AECreateList< AEDesc_Data >( typeCode, isRecord );
+			return Nitrogen::AECreateList< AEDesc_Data >( typeCode, isRecord );
 		}
 		
 	}
