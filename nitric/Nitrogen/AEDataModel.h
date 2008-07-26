@@ -421,9 +421,6 @@ namespace Nucleus
 		// parameter can't be const
 		void operator()( Nitrogen::AEDesc desc ) const
 		{
-			// AEDisposeDesc() is documented as only ever returning noErr,
-			// but we check anyway to be future-proof.
-			
 			(void) Nitrogen::AppleEventManagerErrorsRegistrationDependency();
 			
 			HandleDestructionOSStatus( ::AEDisposeToken( &desc ) );
