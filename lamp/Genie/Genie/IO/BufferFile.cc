@@ -37,12 +37,12 @@ namespace Genie
 	BufferWindow::BufferWindow( TerminalID          id,
 	                            const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
 	                                                                                      "\p" "Edit",
-	                                                                                      false ),
-	                                                               GetDynamicWindowCloseHandler< BufferFileHandle >( id ) ),
+	                                                                                      false ) ),
 	                                                         WindowHandle( name ),
 	                                                         itsMark(),
 	                                                         itHasReceivedEOF()
 	{
+		SetCloseHandler ( GetDynamicWindowCloseHandler < BufferFileHandle >( id ) );
 		SetResizeHandler( GetDynamicWindowResizeHandler< BufferFileHandle >( id ) );
 	}
 	

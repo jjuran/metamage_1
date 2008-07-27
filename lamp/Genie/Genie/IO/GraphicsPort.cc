@@ -41,10 +41,10 @@ namespace Genie
 	GraphicsWindow::GraphicsWindow( TerminalID          id,
 	                                const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
 	                                                                                          "\p" "Graphics",
-	                                                                                          true ),
-	                                                                   GetDynamicWindowCloseHandler< GraphicsWindow >( id ) ),
+	                                                                                          true ) ),
 	                                                             WindowHandle( name )
 	{
+		SetCloseHandler ( GetDynamicWindowCloseHandler < GraphicsWindow >( id ) );
 		SetResizeHandler( GetDynamicWindowResizeHandler< GraphicsWindow >( id ) );
 	}
 	

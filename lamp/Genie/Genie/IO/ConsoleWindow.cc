@@ -344,10 +344,10 @@ namespace Genie
 	                              const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
 	                                                                                        N::Str255( name ),
 	                                                                                        true ),
-	                                                                 GetDynamicWindowCloseHandler< ConsoleTTYHandle >( id ),
 	                                                                 ConsolePane::Initializer( id, itsInput ) ),
 	                                                           WindowHandle( name )
 	{
+		SetCloseHandler ( GetDynamicWindowCloseHandler < ConsoleTTYHandle >( id ) );
 		SetResizeHandler( GetDynamicWindowResizeHandler< ConsoleTTYHandle >( id ) );
 	}
 	

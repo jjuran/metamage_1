@@ -51,10 +51,9 @@ namespace Genie
 	
 	SystemConsole::SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler )
 	:
-		Base( Ped::NewWindowContext( MakeWindowRect(), "\p" "System Console" ),
-		      handler )
+		Base( Ped::NewWindowContext( MakeWindowRect(), "\p" "System Console" ) )
 	{
-		
+		SetCloseHandler( handler );
 	}
 	
 	int SystemConsoleOwner::WriteToSystemConsole( const char* data, std::size_t byteCount )
