@@ -135,8 +135,6 @@ namespace Pedestal
 			~ClosableWindow();
 		
 		public:
-			ClosableWindow( const boost::shared_ptr< WindowCloseHandler >& handler ) : itsCloseHandler( handler )  {}
-			
 			void SetCloseHandler( const boost::shared_ptr< WindowCloseHandler >& handler )
 			{
 				itsCloseHandler = handler;
@@ -186,8 +184,6 @@ namespace Pedestal
 	class WindowBase : public ClosableWindow, public ResizableWindow
 	{
 		public:
-			WindowBase( const boost::shared_ptr< WindowCloseHandler >& handler ) : ClosableWindow( handler )  {}
-			
 			virtual void Idle       ( const EventRecord& event           ) = 0;
 			virtual void MouseDown  ( const EventRecord& event           ) = 0;
 			virtual bool KeyDown    ( const EventRecord& event           ) = 0;
@@ -204,9 +200,7 @@ namespace Pedestal
 	                   public WindowRefOwner
 	{
 		public:
-			WindowCore( const boost::shared_ptr< WindowCloseHandler >&  handler,
-			            NN::Owned< N::WindowRef >                       window ) : WindowBase    ( handler ),
-			                                                                       WindowRefOwner( window  )
+			WindowCore( NN::Owned< N::WindowRef > window ) : WindowRefOwner( window  )
 			{
 			}
 	};
@@ -222,9 +216,8 @@ namespace Pedestal
 			typedef Type SubViewType;
 			typedef typename Type::Initializer Initializer;
 			
-			Window( const NewWindowContext&                         context,
-			        const boost::shared_ptr< WindowCloseHandler >&  handler,
-			        Initializer                                     init );
+			Window( const NewWindowContext&  context,
+			        Initializer              init );
 			
 			Type const& SubView() const  { return mySubView; }
 			Type      & SubView()        { return mySubView; }
@@ -253,12 +246,10 @@ namespace Pedestal
 	};
 	
 	template < class Type, N::WindowDefProcID defProcID >
-	inline Window< Type, defProcID >::Window( const NewWindowContext&                         context,
-	                                          const boost::shared_ptr< WindowCloseHandler >&  handler,
-	                                          Initializer                                     init = Initializer() )
+	inline Window< Type, defProcID >::Window( const NewWindowContext&  context,
+	                                          Initializer              init = Initializer() )
 	:
-		WindowCore( handler,
-		            CreateWindow( context,
+		WindowCore( CreateWindow( context,
 		                          defProcID,
 		                          static_cast< WindowBase* >( this ) ) ),
 		mySubView ( N::GlobalToLocal( context.bounds ), init )

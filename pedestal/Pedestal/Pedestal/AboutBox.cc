@@ -43,7 +43,6 @@ namespace Pedestal
 		                                       300,
 		                                       200 ),
 		                        "\pPedestal" ),
-		      handler,
 		      #if 0
 		      MakePair( N::DetachResource( N::GetResource< kLarge1BitMask >( N::ResID( 128 ) ) ),
 		                NN::Make< RGBColor >( 0xDDDD ) )
@@ -56,6 +55,7 @@ namespace Pedestal
 		      #endif
 		)
 	{
+		SetCloseHandler( handler );
 	}
 	
 	AboutBox::~AboutBox()
