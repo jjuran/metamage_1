@@ -100,6 +100,31 @@ namespace Pedestal
 	template <>  struct DefProcID_Traits< N::zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
 	template <>  struct DefProcID_Traits< N::zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
 	
+	template < N::WindowDefProcID defProcID >
+	struct Static_DefProcID : DefProcID_Traits< defProcID >
+	{
+		N::WindowDefProcID Get() const  { return defProcID; }
+	};
+	
+	class Variable_DefProcID
+	{
+		private:
+			N::WindowDefProcID itsDefProcID;
+		
+		public:
+			Variable_DefProcID() : itsDefProcID()
+			{
+			}
+			
+			Variable_DefProcID( N::WindowDefProcID procID ) : itsDefProcID( procID )
+			{
+			}
+			
+			N::WindowDefProcID Get() const  { return itsDefProcID; }
+			
+			bool HasGrowIcon() const  { return (itsDefProcID & 0x7) == 0; }
+	};
+	
 	class WindowCloseHandler
 	{
 		public:
@@ -205,16 +230,20 @@ namespace Pedestal
 			}
 	};
 	
-	template < class Type, N::WindowDefProcID defProcID = N::documentProc >
-	class Window : private DefProcID_Traits< defProcID >,
-	               public  WindowCore
+	template < class Type, class DefProcID = Static_DefProcID< N::documentProc > >
+	class Window : public WindowCore
 	{
 		private:
+			DefProcID  itsDefProcID;
 			Type mySubView;
 		
 		public:
 			typedef Type SubViewType;
 			typedef typename Type::Initializer Initializer;
+			
+			Window( const NewWindowContext&  context,
+			        DefProcID                defProcID = DefProcID(),
+			        Initializer              init      = Initializer() );
 			
 			Window( const NewWindowContext&  context,
 			        Initializer              init );
@@ -245,19 +274,33 @@ namespace Pedestal
 			
 	};
 	
-	template < class Type, N::WindowDefProcID defProcID >
-	inline Window< Type, defProcID >::Window( const NewWindowContext&  context,
-	                                          Initializer              init = Initializer() )
+	template < class Type, class DefProcID >
+	inline Window< Type, DefProcID >::Window( const NewWindowContext&  context,
+	                                          DefProcID                defProcID,
+	                                          Initializer              init )
 	:
 		WindowCore( CreateWindow( context,
-		                          defProcID,
+		                          defProcID.Get(),
 		                          static_cast< WindowBase* >( this ) ) ),
+		itsDefProcID( defProcID ),
 		mySubView ( N::GlobalToLocal( context.bounds ), init )
 	{
 	}
 	
-	template < class Type, N::WindowDefProcID defProcID >
-	inline void Window< Type, defProcID >::MouseDown( const EventRecord& event )
+	template < class Type, class DefProcID >
+	inline Window< Type, DefProcID >::Window( const NewWindowContext&  context,
+	                                          Initializer              init )
+	:
+		WindowCore( CreateWindow( context,
+		                          DefProcID().Get(),
+		                          static_cast< WindowBase* >( this ) ) ),
+		itsDefProcID( DefProcID() ),
+		mySubView ( N::GlobalToLocal( context.bounds ), init )
+	{
+	}
+	
+	template < class Type, class DefProcID >
+	inline void Window< Type, DefProcID >::MouseDown( const EventRecord& event )
 	{
 		// FIXME:  The window may want clicks even if it's not in front.
 		if ( Get() != N::FrontWindow() )
@@ -270,12 +313,12 @@ namespace Pedestal
 		}
 	}
 	
-	template < class Type, N::WindowDefProcID defProcID >
-	inline void Window< Type, defProcID >::Update()
+	template < class Type, class DefProcID >
+	inline void Window< Type, DefProcID >::Update()
 	{
 		SubView().Update();
 		
-		if ( DefProcID_Traits< defProcID >::HasGrowIcon() )
+		if ( itsDefProcID.HasGrowIcon() )
 		{
 			DrawWindow( Get() );
 		}

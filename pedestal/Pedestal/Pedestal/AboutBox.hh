@@ -39,7 +39,7 @@ namespace Pedestal
 	
 	typedef Window< GraphicView< FrontBackGraphic< ABOUT_GRAPHIC,
 	                                               SolidColorGraphic > >,
-	                N::noGrowDocProc >
+	                Static_DefProcID< Nitrogen::noGrowDocProc > >
 	        AboutBoxBase;
 	
 	class AboutBox : public AboutBoxBase
