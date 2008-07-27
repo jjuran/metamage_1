@@ -68,7 +68,7 @@ namespace Genie
 	size_t gLastSystemCall = 0;
 	
 	
-	SystemCall::SystemCall() : function( (void*) UnimplementedSystemCall ), name( "" )
+	SystemCall::SystemCall() : function( (void*) UnimplementedSystemCall ), name()
 	{
 		
 	}
@@ -85,7 +85,7 @@ namespace Genie
 	
 	static SystemCallRegistry& TheSystemCallRegistry()
 	{
-		static SystemCallRegistry theSystemCallRegistry( 1, SystemCall( NULL, "" ) );
+		static SystemCallRegistry theSystemCallRegistry( 1 );
 		
 		return theSystemCallRegistry;
 	}
