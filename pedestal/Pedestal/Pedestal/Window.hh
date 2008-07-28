@@ -235,7 +235,7 @@ namespace Pedestal
 	{
 		private:
 			DefProcID  itsDefProcID;
-			Type mySubView;
+			Type       itsSubView;
 		
 		public:
 			typedef Type SubViewType;
@@ -248,8 +248,8 @@ namespace Pedestal
 			Window( const NewWindowContext&  context,
 			        Initializer              init );
 			
-			Type const& SubView() const  { return mySubView; }
-			Type      & SubView()        { return mySubView; }
+			Type const& SubView() const  { return itsSubView; }
+			Type      & SubView()        { return itsSubView; }
 			
 			void Idle       ( const EventRecord& event  )  { SubView().Idle( event );              }
 			bool KeyDown    ( const EventRecord& event  )  { return SubView().KeyDown( event );    }
@@ -283,7 +283,7 @@ namespace Pedestal
 		                          defProcID.Get(),
 		                          static_cast< WindowBase* >( this ) ) ),
 		itsDefProcID( defProcID ),
-		mySubView ( N::GlobalToLocal( context.bounds ), init )
+		itsSubView  ( N::GlobalToLocal( context.bounds ), init )
 	{
 	}
 	
@@ -295,7 +295,7 @@ namespace Pedestal
 		                          DefProcID().Get(),
 		                          static_cast< WindowBase* >( this ) ) ),
 		itsDefProcID( DefProcID() ),
-		mySubView ( N::GlobalToLocal( context.bounds ), init )
+		itsSubView  ( N::GlobalToLocal( context.bounds ), init )
 	{
 	}
 	
