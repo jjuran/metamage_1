@@ -17,10 +17,6 @@ static void IllegalInstructionTest()
 	}
 }
 
-inline void TheRealIllegalInstructionTest()
-{
-}
-
 #endif
 
 #ifdef __POWERPC__
@@ -42,9 +38,15 @@ end:
 	// we're pointing to the zero word following the blr.  Yay!
 }
 
-static void IllegalInstructionTest()
+static asm void IllegalInstructionTest()
 {
-	// This is only here for the traceback table.
+	// This is really here for the traceback table.
+	// Since we immediately branch to another function, we get the same results
+	// as if we had called that function in the first place.  However, since
+	// the address of the illegal instruction follows the blr, the backtrace
+	// has already skipped the traceback table, and stops on the next one,
+	// which is here.
+	b	TheRealIllegalInstructionTest
 }
 
 #endif
@@ -53,7 +55,6 @@ static void IllegalInstructionTest()
 int main()
 {
 	IllegalInstructionTest();
-	TheRealIllegalInstructionTest();
 	
 	return 0;
 }
