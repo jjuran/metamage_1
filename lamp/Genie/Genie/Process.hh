@@ -34,6 +34,7 @@
 #include "Genie/FileSystem/FSTree.hh"
 #include "Genie/Process/LongJumper.hh"
 #include "Genie/Process/SavedRegisters.hh"
+#include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
 #include "Genie/Process/TraceTarget.hh"
 #include "Genie/ProcessGroup.hh"
@@ -41,8 +42,6 @@
 
 namespace Genie
 {
-	
-	typedef void ( *sig_t )( int );
 	
 	typedef std::map< int, FileDescriptor > FileDescriptorMap;
 	
@@ -90,6 +89,7 @@ namespace Genie
 	};
 	
 	class Process : public TimeKeeper,
+	                public SignalReceiver,
 	                public LongJumper,
 	                public TraceTarget
 	{
@@ -119,10 +119,6 @@ namespace Genie
 			
 			UInt64 itsAlarmClock;
 			
-			UInt32 itsPendingSignals;
-			UInt32 itsBlockedSignals;
-			UInt32 itsMaskedSignals;
-			
 			std::string itsName;
 			
 			FSTreePtr itsCWD;
@@ -134,8 +130,6 @@ namespace Genie
 			ProcessSchedule         itsSchedule;
 			
 			int itsResult;
-			
-			std::map< int, sig_t > itsSignalMap;
 		
 		private:
 			FSTreePtr itsProgramFile;
@@ -213,8 +207,6 @@ namespace Genie
 			FileDescriptorMap& FileDescriptors()  { return itsFileDescriptors; }
 			
 			unsigned int SetAlarm( unsigned int seconds );
-			
-			sig_t SetSignalAction( int signal, sig_t signalAction );
 			
 			void DeliverSignal( int signal );
 			

@@ -178,7 +178,7 @@ namespace Genie
 	{
 		Process& current = CurrentProcess();
 		
-		// first chance -- program can longjmp() out of signal handler
+		// first chance -- program can siglongjmp() out of signal handler
 		current.Raise( signo );
 		current.HandlePendingSignals();
 		
@@ -820,9 +820,6 @@ namespace Genie
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
-		itsPendingSignals     ( 0 ),
-		itsBlockedSignals     ( 0 ),
-		itsMaskedSignals      ( 0 ),
 		itsName               ( "init" ),
 		itsCWD                ( FSRoot() ),
 		itsFileDescriptors    ( FileDescriptorMap() ),
@@ -856,9 +853,6 @@ namespace Genie
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
-		itsPendingSignals     ( 0 ),
-		itsBlockedSignals     ( 0 ),
-		itsMaskedSignals      ( 0 ),
 		itsName               ( parent.ProgramName() ),
 		itsCWD                ( parent.GetCWD() ),
 		itsFileDescriptors    ( parent.FileDescriptors() ),
@@ -1263,24 +1257,9 @@ namespace Genie
 		return HandlePendingSignals();
 	}
 	
-	sig_t Process::SetSignalAction( int signal, sig_t signalAction )
-	{
-		if ( signal == SIGKILL  ||  signal == SIGSTOP  ||  signalAction == SIG_ERR )
-		{
-			//errno = EINVAL;  // FIXME
-			return SIG_ERR;
-		}
-		
-		sig_t result = itsSignalMap[ signal ];
-		
-		itsSignalMap[ signal ] = signalAction;
-		
-		return result;
-	}
-	
 	void Process::DeliverSignal( int signal )
 	{
-		sig_t action = itsSignalMap[ signal ];
+		__sig_handler action = itsSignalMap[ signal ];
 		
 		if ( action == SIG_IGN )
 		{
@@ -1420,32 +1399,7 @@ namespace Genie
 			// Not reached
 		}
 		
-		UInt32 previousSignals = itsPendingSignals;
-		
-		int signal = 1;
-		
-		for ( int signal = 1;  itsPendingSignals && signal < NSIG;  ++signal )
-		{
-			UInt32 signal_mask = 1 << signal - 1;
-			
-			if ( ~itsMaskedSignals & itsPendingSignals & signal_mask )
-			{
-				sig_t action = itsSignalMap[ signal ];
-				
-				ASSERT( action != SIG_IGN );
-				ASSERT( action != SIG_DFL );
-				
-				itsPendingSignals &= ~signal_mask;
-				
-				itsMaskedSignals |= signal_mask;
-				
-				action( signal );
-				
-				itsMaskedSignals &= itsBlockedSignals | ~signal_mask;
-			}
-		}
-		
-		return previousSignals;
+		return DeliverPendingSignals();
 	}
 	
 	ProcessList::ProcessList() : itsNextPID( 1 )
