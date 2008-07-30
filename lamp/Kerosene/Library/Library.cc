@@ -13,6 +13,7 @@
 // Standard C
 #include <assert.h>
 #include "errno.h"
+#include "setjmp.h"
 #include "signal.h"
 #include <stdarg.h>
 #include <stdio.h>
@@ -296,6 +297,33 @@
 		result.pw_gid = uid;
 		
 		return &result;
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ setjmp ¥
+	
+	__sigjmp_buf_struct* __savemasktoenv( sigjmp_buf env, int savemask )
+	{
+		sigset_t signals = 0xffffffff;
+		
+		if ( savemask )
+		{
+			int got = sigprocmask( SIG_BLOCK, NULL, &signals );
+		}
+		
+		env->sigmask = signals;
+		
+		return env;
+	}
+	
+	void siglongjmp( sigjmp_buf env, int val )
+	{
+		if ( env->sigmask != 0xffffffff )
+		{
+			int set = sigprocmask( SIG_SETMASK, &env->sigmask, NULL );
+		}
+		
+		longjmp( env->jumpbuf, val );
 	}
 	
 	#pragma mark -
