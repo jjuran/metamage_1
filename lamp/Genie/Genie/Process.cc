@@ -1379,6 +1379,11 @@ namespace Genie
 	// This function doesn't return if the process receives a fatal signal.
 	bool Process::HandlePendingSignals()
 	{
+		if ( itsLifeStage != kProcessLive )
+		{
+			return false;  // Don't try to handle signals in terminated processes
+		}
+		
 		if ( itsAlarmClock )
 		{
 			UInt64 now = N::Microseconds();
