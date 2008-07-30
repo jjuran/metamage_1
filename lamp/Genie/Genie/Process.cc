@@ -821,7 +821,8 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
-		itsPreviousSignals    ( 0 ),
+		itsBlockedSignals     ( 0 ),
+		itsMaskedSignals      ( 0 ),
 		itsName               ( "init" ),
 		itsCWD                ( FSRoot() ),
 		itsFileDescriptors    ( FileDescriptorMap() ),
@@ -856,7 +857,8 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsPendingSignals     ( 0 ),
-		itsPreviousSignals    ( 0 ),
+		itsBlockedSignals     ( 0 ),
+		itsMaskedSignals      ( 0 ),
 		itsName               ( parent.ProgramName() ),
 		itsCWD                ( parent.GetCWD() ),
 		itsFileDescriptors    ( parent.FileDescriptors() ),
@@ -1418,30 +1420,32 @@ namespace Genie
 			// Not reached
 		}
 		
-		itsPreviousSignals = itsPendingSignals;
+		UInt32 previousSignals = itsPendingSignals;
 		
-		UInt32 bits = itsPendingSignals;
 		int signal = 1;
 		
-		while ( bits )
+		for ( int signal = 1;  itsPendingSignals && signal < NSIG;  ++signal )
 		{
-			if ( bits & 1 )
+			UInt32 signal_mask = 1 << signal - 1;
+			
+			if ( ~itsMaskedSignals & itsPendingSignals & signal_mask )
 			{
 				sig_t action = itsSignalMap[ signal ];
 				
 				ASSERT( action != SIG_IGN );
 				ASSERT( action != SIG_DFL );
 				
+				itsPendingSignals &= ~signal_mask;
+				
+				itsMaskedSignals |= signal_mask;
+				
 				action( signal );
 				
-				itsPendingSignals &= ~( 1 << signal - 1 );
+				itsMaskedSignals &= itsBlockedSignals | ~signal_mask;
 			}
-			
-			bits >>= 1;
-			++signal;
 		}
 		
-		return itsPreviousSignals;
+		return previousSignals;
 	}
 	
 	ProcessList::ProcessList() : itsNextPID( 1 )

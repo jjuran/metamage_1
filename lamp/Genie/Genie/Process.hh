@@ -120,7 +120,8 @@ namespace Genie
 			UInt64 itsAlarmClock;
 			
 			UInt32 itsPendingSignals;
-			UInt32 itsPreviousSignals;
+			UInt32 itsBlockedSignals;
+			UInt32 itsMaskedSignals;
 			
 			std::string itsName;
 			
