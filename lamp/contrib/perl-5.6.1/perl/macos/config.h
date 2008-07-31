@@ -13,8 +13,8 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.15  2008-07-31 11:27:21  jax
-Added sigprocmask() and sigaction().
+Revision 1.16  2008-07-31 11:44:38  jax
+Added mkstemp{,s}().
 
 Revision 1.10  2008/07/31 10:48:19  jax
 Added fchmod().
@@ -1802,14 +1802,14 @@ First build released to public
  *	available to exclusively create and open a uniquely named
  *	temporary file.
  */
-#undef HAS_MKSTEMP		/**/
+#define HAS_MKSTEMP		/**/
 
 /* HAS_MKSTEMPS:
  *	This symbol, if defined, indicates that the mkstemps routine is
  *	available to excluslvely create and open a uniquely named
  *	(with a suffix) temporary file.
  */
-#undef HAS_MKSTEMPS		/**/
+#define HAS_MKSTEMPS		/**/
 
 /* HAS_MMAP:
  *	This symbol, if defined, indicates that the mmap system call is
