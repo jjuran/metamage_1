@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.10  2008-07-31 10:48:19  jax
+Revision 1.11  2008-07-31 10:53:52  jax
+Added tc[gs]etpgrp().
+
+Revision 1.10  2008/07/31 10:48:19  jax
 Added fchmod().
 
 Revision 1.9  2008/06/08 19:54:42  jax
@@ -693,13 +696,13 @@ First build released to public
  *	This symbol, if defined, indicates that the tcgetpgrp routine is
  *	available to get foreground process group ID.
  */
-#undef HAS_TCGETPGRP		/**/
+#define HAS_TCGETPGRP		/**/
 
 /* HAS_TCSETPGRP:
  *	This symbol, if defined, indicates that the tcsetpgrp routine is
  *	available to set foreground process group ID.
  */
-#undef HAS_TCSETPGRP		/**/
+#define HAS_TCSETPGRP		/**/
 
 /* HAS_TRUNCATE:
  *	This symbol, if defined, indicates that the truncate routine is
