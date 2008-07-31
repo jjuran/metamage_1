@@ -29,18 +29,12 @@ namespace Genie
 		return itsHandlers[ signo - 1 ];
 	}
 	
-	__sig_handler SignalReceiver::SetSignalAction( int signo, __sig_handler action )
+	void SignalReceiver::SetSignalAction( int signo, __sig_handler action )
 	{
 		ASSERT( signo >    0 );
 		ASSERT( signo < NSIG );
 		
-		__sig_handler& mapped_action = itsHandlers[ signo - 1 ];
-		
-		__sig_handler result = mapped_action;
-		
-		mapped_action = action;
-		
-		return result;
+		itsHandlers[ signo - 1 ] = action;
 	}
 	
 	void SignalReceiver::ResetSignalAction( int signo )

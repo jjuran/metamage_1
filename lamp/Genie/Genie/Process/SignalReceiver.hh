@@ -31,7 +31,7 @@ namespace Genie
 			
 			__sig_handler GetSignalAction( int signo ) const;
 			
-			__sig_handler SetSignalAction( int signo, __sig_handler action );
+			void SetSignalAction( int signo, __sig_handler action );
 			
 			void ResetSignalAction( int signo );
 			

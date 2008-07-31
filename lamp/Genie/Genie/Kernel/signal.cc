@@ -116,7 +116,13 @@ namespace Genie
 			return SIG_ERR;
 		}
 		
-		return frame.Caller().SetSignalAction( signo, func );
+		Process& current = frame.Caller();
+		
+		__sig_handler result = current.GetSignalAction( signo );
+		
+		current.SetSignalAction( signo, func );
+		
+		return result;
 	}
 	
 	REGISTER_SYSTEM_CALL( signal );
