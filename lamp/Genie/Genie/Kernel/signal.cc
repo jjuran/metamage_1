@@ -100,11 +100,18 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( kill );
 	
-	static sig_t signal( int sig, sig_t func )
+	static sig_t signal( int signo, sig_t func )
 	{
 		SystemCallFrame frame( "signal" );
 		
-		return CurrentProcess().SetSignalAction( sig, func );
+		if ( signo == SIGKILL  ||  signo == SIGSTOP  ||  func == SIG_ERR )
+		{
+			frame.SetErrno( EINVAL );
+			
+			return SIG_ERR;
+		}
+		
+		return frame.Caller().SetSignalAction( signo, func );
 	}
 	
 	REGISTER_SYSTEM_CALL( signal );
