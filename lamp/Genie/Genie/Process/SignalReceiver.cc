@@ -74,15 +74,17 @@ namespace Genie
 		{
 			const struct sigaction& action = itsActions[ signo - 1 ];
 			
-			sigset_t signal_mask = action.sa_mask;
+			const sigset_t signo_mask = 1 << signo - 1;
 			
-			if ( action.sa_flags & (SA_NODEFER | SA_RESETHAND) )
+			if ( ~itsBlockedSignals & itsPendingSignals & signo_mask )
 			{
-				signal_mask |= 1 << signo - 1;
-			}
-			
-			if ( ~itsBlockedSignals & itsPendingSignals & signal_mask )
-			{
+				sigset_t signal_mask = action.sa_mask;
+				
+				if ( !(action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
+				{
+					signal_mask |= signo_mask;
+				}
+				
 				const __sig_handler handler = action.sa_handler;
 				
 				ASSERT( handler != SIG_IGN );
@@ -96,12 +98,12 @@ namespace Genie
 				
 				itsBlockedSignals &= ~signal_mask;
 				
-				if ( action.sa_flags & SA_RESTART == 0 )
+				if ( !(action.sa_flags & SA_RESTART) )
 				{
 					will_interrupt = true;
 				}
 				
-				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  && signo != SIGTRAP )
+				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
 					ResetSignalAction( signo );
 				}
