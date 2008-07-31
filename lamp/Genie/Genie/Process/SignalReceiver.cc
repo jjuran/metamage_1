@@ -13,8 +13,7 @@ namespace Genie
 {
 	
 	SignalReceiver::SignalReceiver() : itsPendingSignals(),
-	                                   itsBlockedSignals(),
-	                                   itsMaskedSignals()
+	                                   itsBlockedSignals()
 	{
 	}
 	
@@ -37,7 +36,7 @@ namespace Genie
 		{
 			sigset_t signal_mask = 1 << signo - 1;
 			
-			if ( ~itsMaskedSignals & itsPendingSignals & signal_mask )
+			if ( ~itsBlockedSignals & itsPendingSignals & signal_mask )
 			{
 				__sig_handler action = itsSignalMap[ signo ];
 				
@@ -46,11 +45,11 @@ namespace Genie
 				
 				itsPendingSignals &= ~signal_mask;
 				
-				itsMaskedSignals |= signal_mask;
+				itsBlockedSignals |= signal_mask;
 				
 				action( signo );
 				
-				itsMaskedSignals &= itsBlockedSignals | ~signal_mask;
+				itsBlockedSignals &= ~signal_mask;
 			}
 		}
 		
