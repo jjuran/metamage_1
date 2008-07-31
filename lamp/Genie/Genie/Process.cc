@@ -1259,7 +1259,7 @@ namespace Genie
 	
 	void Process::DeliverSignal( int signo )
 	{
-		__sig_handler action = GetSignalAction( signo );
+		__sig_handler action = GetSignalAction( signo ).sa_handler;
 		
 		if ( action == SIG_IGN )
 		{

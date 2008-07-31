@@ -118,9 +118,11 @@ namespace Genie
 		
 		Process& current = frame.Caller();
 		
-		__sig_handler result = current.GetSignalAction( signo );
+		__sig_handler result = current.GetSignalAction( signo ).sa_handler;
 		
-		current.SetSignalAction( signo, func );
+		struct sigaction action = { func, 0, 0 };
+		
+		current.SetSignalAction( signo, action );
 		
 		return result;
 	}
@@ -140,10 +142,7 @@ namespace Genie
 		
 		if ( oldaction != NULL )
 		{
-			oldaction->sa_mask  = 0;
-			oldaction->sa_flags = 0;
-			
-			oldaction->sa_handler = current.GetSignalAction( signo );
+			*oldaction = current.GetSignalAction( signo );
 		}
 		
 		if ( action != NULL )
@@ -162,7 +161,7 @@ namespace Genie
 			
 		#endif
 			
-			current.SetSignalAction( signo, action->sa_handler );
+			current.SetSignalAction( signo, *action );
 		}
 		
 		return 0;

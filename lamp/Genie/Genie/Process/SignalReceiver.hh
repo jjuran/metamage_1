@@ -21,7 +21,7 @@ namespace Genie
 	class SignalReceiver
 	{
 		private:
-			__sig_handler itsHandlers[ NSIG ];
+			struct sigaction itsActions[ NSIG ];
 			
 			sigset_t  itsPendingSignals;
 			sigset_t  itsBlockedSignals;
@@ -29,9 +29,9 @@ namespace Genie
 		public:
 			SignalReceiver();
 			
-			__sig_handler GetSignalAction( int signo ) const;
+			const struct sigaction& GetSignalAction( int signo ) const;
 			
-			void SetSignalAction( int signo, __sig_handler action );
+			void SetSignalAction( int signo, const struct sigaction& action );
 			
 			void ResetSignalAction( int signo );
 			

@@ -18,23 +18,23 @@ namespace Genie
 	SignalReceiver::SignalReceiver() : itsPendingSignals(),
 	                                   itsBlockedSignals()
 	{
-		std::memset( itsHandlers, 0, sizeof itsHandlers );
+		std::memset( itsActions, 0, sizeof itsActions );
 	}
 	
-	__sig_handler SignalReceiver::GetSignalAction( int signo ) const
+	const struct sigaction& SignalReceiver::GetSignalAction( int signo ) const
 	{
 		ASSERT( signo >    0 );
 		ASSERT( signo < NSIG );
 		
-		return itsHandlers[ signo - 1 ];
+		return itsActions[ signo - 1 ];
 	}
 	
-	void SignalReceiver::SetSignalAction( int signo, __sig_handler action )
+	void SignalReceiver::SetSignalAction( int signo, const struct sigaction& action )
 	{
 		ASSERT( signo >    0 );
 		ASSERT( signo < NSIG );
 		
-		itsHandlers[ signo - 1 ] = action;
+		itsActions[ signo - 1 ] = action;
 	}
 	
 	void SignalReceiver::ResetSignalAction( int signo )
@@ -42,40 +42,73 @@ namespace Genie
 		ASSERT( signo >    0 );
 		ASSERT( signo < NSIG );
 		
-		itsHandlers[ signo - 1 ] = SIG_DFL;
+		struct sigaction default_sigaction = { SIG_DFL, 0, 0 };
+		
+		itsActions[ signo - 1 ] = default_sigaction;
 	}
 	
 	bool SignalReceiver::WaitsForChildren() const
 	{
-		return itsHandlers[ SIGCHLD - 1 ] != SIG_IGN;
+		const struct sigaction& chld = itsActions[ SIGCHLD - 1 ];
+		
+		enum
+		{
+			sa_nocldwait
+			
+		#ifdef SA_NOCLDWAIT
+			
+			= SA_NOCLDWAIT
+			
+		#endif
+			
+		};
+		
+		return chld.sa_handler != SIG_IGN  &&  (chld.sa_flags & sa_nocldwait) == 0;
 	}
 	
 	bool SignalReceiver::DeliverPendingSignals()
 	{
-		sigset_t previousSignals = itsPendingSignals;
+		bool will_interrupt = false;
 		
 		for ( int signo = 1;  itsPendingSignals && signo < NSIG;  ++signo )
 		{
-			sigset_t signal_mask = 1 << signo - 1;
+			const struct sigaction& action = itsActions[ signo - 1 ];
+			
+			sigset_t signal_mask = action.sa_mask;
+			
+			if ( action.sa_flags & (SA_NODEFER | SA_RESETHAND) )
+			{
+				signal_mask |= 1 << signo - 1;
+			}
 			
 			if ( ~itsBlockedSignals & itsPendingSignals & signal_mask )
 			{
-				__sig_handler action = itsHandlers[ signo - 1 ];
+				const __sig_handler handler = action.sa_handler;
 				
-				ASSERT( action != SIG_IGN );
-				ASSERT( action != SIG_DFL );
+				ASSERT( handler != SIG_IGN );
+				ASSERT( handler != SIG_DFL );
 				
 				itsPendingSignals &= ~signal_mask;
 				
 				itsBlockedSignals |= signal_mask;
 				
-				action( signo );
+				handler( signo );
 				
 				itsBlockedSignals &= ~signal_mask;
+				
+				if ( action.sa_flags & SA_RESTART == 0 )
+				{
+					will_interrupt = true;
+				}
+				
+				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  && signo != SIGTRAP )
+				{
+					ResetSignalAction( signo );
+				}
 			}
 		}
 		
-		return previousSignals;
+		return will_interrupt;
 	}
 	
 }
