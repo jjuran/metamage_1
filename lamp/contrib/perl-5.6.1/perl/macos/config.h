@@ -13,8 +13,8 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.13  2008-07-31 10:56:33  jax
-Added getpgrp().
+Revision 1.14  2008-07-31 11:09:04  jax
+Added sig{set,long}jmp().
 
 Revision 1.10  2008/07/31 10:48:19  jax
 Added fchmod().
@@ -2026,7 +2026,7 @@ First build released to public
  *	traditional longjmp() if siglongjmp isn't available.
  *	See HAS_SIGSETJMP.
  */
-#undef HAS_SIGSETJMP /**/
+#define HAS_SIGSETJMP /**/
 #ifdef HAS_SIGSETJMP
 #define Sigjmp_buf sigjmp_buf
 #define Sigsetjmp(buf,save_mask) sigsetjmp((buf),(save_mask))
