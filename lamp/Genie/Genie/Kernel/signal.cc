@@ -78,6 +78,11 @@ namespace Genie
 	{
 		SystemCallFrame frame( "kill" );
 		
+		if ( signo <= 0  ||  signo >= NSIG )
+		{
+			return frame.SetErrno( EINVAL );
+		}
+		
 		Process& current = CurrentProcess();
 		
 		int result = pid >   0 ? kill_pid ( pid,               signo )
