@@ -113,6 +113,39 @@ namespace Genie
 	{
 		SystemCallFrame frame( "sigaction" );
 		
+		Process& current = frame.Caller();
+		
+		if ( oldaction != NULL )
+		{
+			oldaction->sa_mask  = 0;
+			oldaction->sa_flags = 0;
+			
+			oldaction->sa_handler = current.GetSignalAction( signo );
+		}
+		
+		if ( action != NULL )
+		{
+			if ( signo == SIGKILL  ||  signo == SIGSTOP )
+			{
+				frame.SetErrno( EINVAL );
+				
+				return SIG_ERR;
+			}
+			
+		#ifdef SA_SIGINFO
+			
+			if ( action->sa_flags & SA_SIGINFO )
+			{
+				frame.SetErrno( ENOTSUP );
+				
+				return SIG_ERR;
+			}
+			
+		#endif
+			
+			current.SetSignalAction( signo, action->sa_handler );
+		}
+		
 		frame.SetErrno( ENOSYS );
 		
 		return SIG_ERR;
