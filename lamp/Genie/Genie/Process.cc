@@ -1145,7 +1145,7 @@ namespace Genie
 		
 		Process& parent = GetProcess( ppid );
 		
-		if ( ppid > 1  &&  parent.itsSignalMap[ SIGCHLD ] != SIG_IGN )
+		if ( ppid > 1  &&  parent.GetSignalAction( SIGCHLD ) != SIG_IGN )
 		{
 			parent.Raise( SIGCHLD );
 		}
@@ -1259,7 +1259,7 @@ namespace Genie
 	
 	void Process::DeliverSignal( int signo )
 	{
-		__sig_handler action = itsSignalMap[ signo ];
+		__sig_handler action = GetSignalAction( signo );
 		
 		if ( action == SIG_IGN )
 		{
@@ -1331,8 +1331,7 @@ namespace Genie
 		}
 		else
 		{
-			// FIXME:  Block this signal during the function call
-			itsPendingSignals |= 1 << signo - 1;
+			AddPendingSignal( signo );
 			
 			Continue();
 		}
