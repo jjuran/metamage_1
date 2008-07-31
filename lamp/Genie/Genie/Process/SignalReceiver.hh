@@ -41,6 +41,11 @@ namespace Genie
 			
 			void AddPendingSignal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }
 			
+			void SetBlockedSignals( sigset_t sigset )  { itsBlockedSignals = sigset; }
+			
+			void BlockSignals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
+			void UnblockSignals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
+			
 			bool DeliverPendingSignals();
 	};
 	
