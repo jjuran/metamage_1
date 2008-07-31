@@ -22,19 +22,19 @@ namespace Genie
 	DEFINE_MODULE_INIT(  Kernel_signal )
 	
 	
-	static void send_signal( Process& process, int sig )
+	static void send_signal( Process& process, int signo )
 	{
-		if ( sig != 0 )
+		if ( signo != 0 )
 		{
-			process.Raise( sig );
+			process.Raise( signo );
 		}
 	}
 	
-	static int kill_pid( pid_t pid, int sig )
+	static int kill_pid( pid_t pid, int signo )
 	{
 		if ( Process* process = FindProcess( pid ) )
 		{
-			send_signal( *process, sig );
+			send_signal( *process, signo );
 			
 			return 0;
 		}
@@ -42,7 +42,7 @@ namespace Genie
 		return CurrentProcess().SetErrno( ESRCH );
 	}
 	
-	static int kill_pgid( pid_t pgid, int sig )
+	static int kill_pgid( pid_t pgid, int signo )
 	{
 		bool killed_any = false;
 		
@@ -64,7 +64,7 @@ namespace Genie
 			
 			if ( pgid_matches )
 			{
-				send_signal( proc, sig );
+				send_signal( proc, signo );
 				
 				killed_any = true;
 			}
@@ -74,16 +74,16 @@ namespace Genie
 		
 	}
 	
-	static int kill( pid_t pid, int sig )
+	static int kill( pid_t pid, int signo )
 	{
 		SystemCallFrame frame( "kill" );
 		
 		Process& current = CurrentProcess();
 		
-		int result = pid >   0 ? kill_pid ( pid,               sig )
-		           : pid ==  0 ? kill_pgid( current.GetPGID(), sig )
-		           : pid == -1 ? kill_pgid( 0,                 sig )
-		           :             kill_pgid( -pid,              sig );
+		int result = pid >   0 ? kill_pid ( pid,               signo )
+		           : pid ==  0 ? kill_pgid( current.GetPGID(), signo )
+		           : pid == -1 ? kill_pgid( 0,                 signo )
+		           :             kill_pgid( -pid,              signo );
 		
 		// In case we signalled ourself
 		current.HandlePendingSignals();
