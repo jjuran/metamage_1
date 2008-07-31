@@ -1370,6 +1370,8 @@ namespace Genie
 			
 			if ( now > itsAlarmClock )
 			{
+				itsAlarmClock = 0;
+				
 				Raise( SIGALRM );
 			}
 		}
