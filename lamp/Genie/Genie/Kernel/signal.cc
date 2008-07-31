@@ -109,5 +109,89 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( signal );
 	
+	static __sig_handler sigaction( int signo, const struct sigaction* action, struct sigaction* oldaction )
+	{
+		SystemCallFrame frame( "sigaction" );
+		
+		frame.SetErrno( ENOSYS );
+		
+		return SIG_ERR;
+	}
+	
+	REGISTER_SYSTEM_CALL( sigaction );
+	
+	static int sigpending( sigset_t* oldset )
+	{
+		SystemCallFrame frame( "sigpending" );
+		
+		if ( oldset != NULL )
+		{
+			*oldset = frame.Caller().GetBlockedSignals();
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( sigpending );
+	
+	static int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
+	{
+		SystemCallFrame frame( "sigprocmask" );
+		
+		Process& current = frame.Caller();
+		
+		if ( oldset != NULL )
+		{
+			*oldset = current.GetBlockedSignals();
+		}
+		
+		if ( set != NULL )
+		{
+			switch ( how )
+			{
+				case SIG_SETMASK:
+					current.SetBlockedSignals( *set );
+					break;
+				
+				case SIG_BLOCK:
+					current.BlockSignals( *set );
+					break;
+				
+				case SIG_UNBLOCK:
+					current.UnblockSignals( *set );
+					break;
+				
+				default:
+					return frame.SetErrno( EINVAL );
+			}
+		}
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( sigprocmask );
+	
+	static int sigsuspend( const sigset_t* sigmask )
+	{
+		SystemCallFrame frame( "sigsuspend" );
+		
+		Process& current = frame.Caller();
+		
+		sigset_t previous = current.GetBlockedSignals();
+		
+		if ( sigmask != NULL )
+		{
+			current.SetBlockedSignals( *sigmask );
+		}
+		
+		current.Raise( SIGSTOP );
+		
+		current.SetBlockedSignals( previous );
+		
+		return 0;
+	}
+	
+	REGISTER_SYSTEM_CALL( sigsuspend );
+	
 }
 
