@@ -30,7 +30,7 @@ namespace Genie
 		
 		if ( current.GetSchedule() != kProcessUnscheduled )
 		{
-			current.SetSignalAction( SIGABRT, SIG_DFL );
+			current.ResetSignalAction( SIGABRT );
 			
 			current.Raise( SIGABRT );
 			

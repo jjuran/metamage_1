@@ -183,7 +183,7 @@ namespace Genie
 		current.HandlePendingSignals();
 		
 		// This should be fatal
-		current.SetSignalAction( signo, SIG_DFL );
+		current.ResetSignalAction( signo );
 		current.Raise( signo );
 		current.HandlePendingSignals();
 		

@@ -33,6 +33,8 @@ namespace Genie
 			
 			__sig_handler SetSignalAction( int signo, __sig_handler action );
 			
+			void ResetSignalAction( int signo );
+			
 			sigset_t GetPendingSignals() const  { return itsPendingSignals; }
 			sigset_t GetBlockedSignals() const  { return itsBlockedSignals; }
 			

@@ -43,6 +43,14 @@ namespace Genie
 		return result;
 	}
 	
+	void SignalReceiver::ResetSignalAction( int signo )
+	{
+		ASSERT( signo >    0 );
+		ASSERT( signo < NSIG );
+		
+		itsHandlers[ signo - 1 ] = SIG_DFL;
+	}
+	
 	bool SignalReceiver::DeliverPendingSignals()
 	{
 		sigset_t previousSignals = itsPendingSignals;
