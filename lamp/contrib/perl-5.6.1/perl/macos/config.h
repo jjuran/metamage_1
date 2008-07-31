@@ -13,8 +13,8 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.12  2008-07-31 10:55:49  jax
-Added uname().
+Revision 1.13  2008-07-31 10:56:33  jax
+Added getpgrp().
 
 Revision 1.10  2008/07/31 10:48:19  jax
 Added fchmod().
@@ -1593,7 +1593,7 @@ First build released to public
  *	This symbol, if defined, indicates that getpgrp needs one
  *	arguments whereas USG one needs none.
  */
-#undef HAS_GETPGRP		/**/
+#define HAS_GETPGRP		/**/
 #undef USE_BSD_GETPGRP	/**/
 
 /* HAS_GETPROTOBYNAME:
