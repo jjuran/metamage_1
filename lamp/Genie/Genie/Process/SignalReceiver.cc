@@ -5,6 +5,9 @@
 
 #include "Genie/Process/SignalReceiver.hh"
 
+// Standard C/C++
+#include <cstring>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -15,11 +18,23 @@ namespace Genie
 	SignalReceiver::SignalReceiver() : itsPendingSignals(),
 	                                   itsBlockedSignals()
 	{
+		std::memset( itsHandlers, 0, sizeof itsHandlers );
+	}
+	
+	__sig_handler SignalReceiver::GetSignalAction( int signo ) const
+	{
+		ASSERT( signo >    0 );
+		ASSERT( signo < NSIG );
+		
+		return itsHandlers[ signo - 1 ];
 	}
 	
 	__sig_handler SignalReceiver::SetSignalAction( int signo, __sig_handler action )
 	{
-		__sig_handler& mapped_action = itsSignalMap[ signo ];
+		ASSERT( signo >    0 );
+		ASSERT( signo < NSIG );
+		
+		__sig_handler& mapped_action = itsHandlers[ signo - 1 ];
 		
 		__sig_handler result = mapped_action;
 		
@@ -38,7 +53,7 @@ namespace Genie
 			
 			if ( ~itsBlockedSignals & itsPendingSignals & signal_mask )
 			{
-				__sig_handler action = itsSignalMap[ signo ];
+				__sig_handler action = itsHandlers[ signo - 1 ];
 				
 				ASSERT( action != SIG_IGN );
 				ASSERT( action != SIG_DFL );

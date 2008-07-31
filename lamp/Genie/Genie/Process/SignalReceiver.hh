@@ -6,9 +6,6 @@
 #ifndef GENIE_PROCESS_SIGNALRECEIVER_HH
 #define GENIE_PROCESS_SIGNALRECEIVER_HH
 
-// Standard C++
-#include <map>
-
 // Standard C
 #include <signal.h>
 
@@ -24,7 +21,7 @@ namespace Genie
 	class SignalReceiver
 	{
 		private:
-			std::map< int, __sig_handler > itsSignalMap;
+			__sig_handler itsHandlers[ NSIG ];
 			
 			sigset_t  itsPendingSignals;
 			sigset_t  itsBlockedSignals;
@@ -32,7 +29,7 @@ namespace Genie
 		public:
 			SignalReceiver();
 			
-			__sig_handler GetSignalAction( int signo )  { return itsSignalMap[ signo ]; }
+			__sig_handler GetSignalAction( int signo ) const;
 			
 			__sig_handler SetSignalAction( int signo, __sig_handler action );
 			
