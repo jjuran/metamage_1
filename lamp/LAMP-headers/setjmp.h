@@ -14,9 +14,9 @@ struct __sigjmp_buf_struct
 	sigset_t  sigmask;
 };
 
-typedef __sigjmp_buf_struct sigjmp_buf[1];
+typedef struct __sigjmp_buf_struct sigjmp_buf[1];
 
-__sigjmp_buf_struct* __savemasktoenv( sigjmp_buf env, int savemask );
+struct __sigjmp_buf_struct* __savemasktoenv( sigjmp_buf env, int savemask );
 
 void siglongjmp( sigjmp_buf env, int val );
 
