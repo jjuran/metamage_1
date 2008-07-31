@@ -15,13 +15,6 @@
 #include "Genie/SystemCalls.hh"
 
 
-#if TARGET_RT_MAC_CFM
-
-typedef __sig_handler sig_t;
-
-#endif
-
-
 namespace Genie
 {
 	
@@ -100,7 +93,7 @@ namespace Genie
 	
 	REGISTER_SYSTEM_CALL( kill );
 	
-	static sig_t signal( int signo, sig_t func )
+	static __sig_handler signal( int signo, __sig_handler func )
 	{
 		SystemCallFrame frame( "signal" );
 		
