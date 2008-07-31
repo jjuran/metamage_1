@@ -35,6 +35,8 @@ namespace Genie
 			
 			void ResetSignalAction( int signo );
 			
+			bool WaitsForChildren() const;
+			
 			sigset_t GetPendingSignals() const  { return itsPendingSignals; }
 			sigset_t GetBlockedSignals() const  { return itsBlockedSignals; }
 			

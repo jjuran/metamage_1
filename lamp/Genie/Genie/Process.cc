@@ -1145,7 +1145,7 @@ namespace Genie
 		
 		Process& parent = GetProcess( ppid );
 		
-		if ( ppid > 1  &&  parent.GetSignalAction( SIGCHLD ) != SIG_IGN )
+		if ( ppid > 1  &&  parent.WaitsForChildren() )
 		{
 			parent.Raise( SIGCHLD );
 		}

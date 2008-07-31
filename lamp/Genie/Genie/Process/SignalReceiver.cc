@@ -45,6 +45,11 @@ namespace Genie
 		itsHandlers[ signo - 1 ] = SIG_DFL;
 	}
 	
+	bool SignalReceiver::WaitsForChildren() const
+	{
+		return itsHandlers[ SIGCHLD - 1 ] != SIG_IGN;
+	}
+	
 	bool SignalReceiver::DeliverPendingSignals()
 	{
 		sigset_t previousSignals = itsPendingSignals;
