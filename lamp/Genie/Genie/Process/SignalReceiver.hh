@@ -28,7 +28,7 @@ namespace Genie
 		public:
 			SignalReceiver();
 			
-			__sig_handler SetSignalAction( int signal, __sig_handler action );
+			__sig_handler SetSignalAction( int signo, __sig_handler action );
 			
 			bool DeliverPendingSignals();
 	};

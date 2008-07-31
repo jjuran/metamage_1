@@ -18,9 +18,9 @@ namespace Genie
 	{
 	}
 	
-	__sig_handler SignalReceiver::SetSignalAction( int signal, __sig_handler action )
+	__sig_handler SignalReceiver::SetSignalAction( int signo, __sig_handler action )
 	{
-		__sig_handler& mapped_action = itsSignalMap[ signal ];
+		__sig_handler& mapped_action = itsSignalMap[ signo ];
 		
 		__sig_handler result = mapped_action;
 		
@@ -33,13 +33,13 @@ namespace Genie
 	{
 		sigset_t previousSignals = itsPendingSignals;
 		
-		for ( int signal = 1;  itsPendingSignals && signal < NSIG;  ++signal )
+		for ( int signo = 1;  itsPendingSignals && signo < NSIG;  ++signo )
 		{
-			sigset_t signal_mask = 1 << signal - 1;
+			sigset_t signal_mask = 1 << signo - 1;
 			
 			if ( ~itsMaskedSignals & itsPendingSignals & signal_mask )
 			{
-				__sig_handler action = itsSignalMap[ signal ];
+				__sig_handler action = itsSignalMap[ signo ];
 				
 				ASSERT( action != SIG_IGN );
 				ASSERT( action != SIG_DFL );
@@ -48,7 +48,7 @@ namespace Genie
 				
 				itsMaskedSignals |= signal_mask;
 				
-				action( signal );
+				action( signo );
 				
 				itsMaskedSignals &= itsBlockedSignals | ~signal_mask;
 			}

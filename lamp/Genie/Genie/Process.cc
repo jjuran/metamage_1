@@ -1257,9 +1257,9 @@ namespace Genie
 		return HandlePendingSignals();
 	}
 	
-	void Process::DeliverSignal( int signal )
+	void Process::DeliverSignal( int signo )
 	{
-		__sig_handler action = itsSignalMap[ signal ];
+		__sig_handler action = itsSignalMap[ signo ];
 		
 		if ( action == SIG_IGN )
 		{
@@ -1273,7 +1273,7 @@ namespace Genie
 				return;
 			}
 			
-			switch ( signal )
+			switch ( signo )
 			{
 				case SIGQUIT:
 				case SIGILL:
@@ -1285,7 +1285,7 @@ namespace Genie
 				case SIGSEGV:
 				case SIGSYS:
 					// create core image
-					signal |= 0x80;
+					signo |= 0x80;
 					// fall through
 					//break;
 				case SIGHUP:
@@ -1301,7 +1301,7 @@ namespace Genie
 				case SIGUSR1:
 				case SIGUSR2:
 					// terminate process
-					itsResult = signal;  // indicates fatal signal
+					itsResult = signo;  // indicates fatal signal
 					Continue();  // Wake the thread if it's stopped so it can die
 					break;
 				
@@ -1332,7 +1332,7 @@ namespace Genie
 		else
 		{
 			// FIXME:  Block this signal during the function call
-			itsPendingSignals |= 1 << signal - 1;
+			itsPendingSignals |= 1 << signo - 1;
 			
 			Continue();
 		}
@@ -1340,20 +1340,20 @@ namespace Genie
 	
 	// Doesn't return if the process was current and receives a fatal signal while stopped.
 	// But always returns when *raising* a fatal signal.
-	void Process::Raise( int signal )
+	void Process::Raise( int signo )
 	{
 		if ( itsLifeStage >= kProcessTerminating  ||  itsResult != 0 )
 		{
 			return;
 		}
 		
-		if ( IsBeingTraced()  &&  signal != SIGKILL )
+		if ( IsBeingTraced()  &&  signo != SIGKILL )
 		{
 			Stop();
 		}
 		else
 		{
-			DeliverSignal( signal );
+			DeliverSignal( signo );
 		}
 	}
 	
