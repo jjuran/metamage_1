@@ -97,6 +97,13 @@ namespace Genie
 	{
 		SystemCallFrame frame( "signal" );
 		
+		if ( signo <= 0  ||  signo >= NSIG )
+		{
+			frame.SetErrno( EINVAL );
+			
+			return SIG_ERR;
+		}
+		
 		if ( signo == SIGKILL  ||  signo == SIGSTOP  ||  func == SIG_ERR )
 		{
 			frame.SetErrno( EINVAL );
@@ -112,6 +119,13 @@ namespace Genie
 	static __sig_handler sigaction( int signo, const struct sigaction* action, struct sigaction* oldaction )
 	{
 		SystemCallFrame frame( "sigaction" );
+		
+		if ( signo <= 0  ||  signo >= NSIG )
+		{
+			frame.SetErrno( EINVAL );
+			
+			return SIG_ERR;
+		}
 		
 		Process& current = frame.Caller();
 		
