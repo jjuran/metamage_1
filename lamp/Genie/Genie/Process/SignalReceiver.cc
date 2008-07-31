@@ -20,12 +20,6 @@ namespace Genie
 	
 	__sig_handler SignalReceiver::SetSignalAction( int signal, __sig_handler action )
 	{
-		if ( signal == SIGKILL  ||  signal == SIGSTOP  ||  action == SIG_ERR )
-		{
-			//errno = EINVAL;  // FIXME
-			return SIG_ERR;
-		}
-		
 		__sig_handler& mapped_action = itsSignalMap[ signal ];
 		
 		__sig_handler result = mapped_action;
