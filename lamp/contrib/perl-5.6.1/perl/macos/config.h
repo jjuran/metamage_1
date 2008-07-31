@@ -13,8 +13,8 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.14  2008-07-31 11:09:04  jax
-Added sig{set,long}jmp().
+Revision 1.15  2008-07-31 11:27:21  jax
+Added sigprocmask() and sigaction().
 
 Revision 1.10  2008/07/31 10:48:19  jax
 Added fchmod().
@@ -3335,10 +3335,6 @@ First build released to public
 #define HAS_SIGPROCMASK		/**/
 
 /* MacOS Specials */
-
-// Not implemented yet
-#undef HAS_SIGPROCMASK
-#undef HAS_SIGACTION
 
 #define STANDARD_C 1
 
