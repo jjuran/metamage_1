@@ -13,8 +13,8 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.11  2008-07-31 10:53:52  jax
-Added tc[gs]etpgrp().
+Revision 1.12  2008-07-31 10:55:49  jax
+Added uname().
 
 Revision 1.10  2008/07/31 10:48:19  jax
 Added fchmod().
@@ -1520,7 +1520,7 @@ First build released to public
  *	to derive the host name.
  */
 #define HAS_GETHOSTNAME /**/
-#undef HAS_UNAME /**/
+#define HAS_UNAME /**/
 #undef HAS_PHOSTNAME
 #ifdef HAS_PHOSTNAME
 #define PHOSTNAME /**/
