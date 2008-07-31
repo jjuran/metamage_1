@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.9  2008-06-08 19:54:42  jax
+Revision 1.10  2008-07-31 10:48:19  jax
+Added fchmod().
+
+Revision 1.9  2008/06/08 19:54:42  jax
 Lamp has 3-arg open() and strerror().
 
 Revision 1.8  2007/11/04 15:17:55  jax
@@ -226,7 +229,7 @@ First build released to public
  *	This symbol, if defined, indicates that the fchmod routine is available
  *	to change mode of opened files.  If unavailable, use chmod().
  */
-#undef HAS_FCHMOD		/**/
+#define HAS_FCHMOD		/**/
 
 /* HAS_FCHOWN:
  *	This symbol, if defined, indicates that the fchown routine is available
