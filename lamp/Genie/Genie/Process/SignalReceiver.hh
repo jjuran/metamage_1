@@ -16,19 +16,30 @@
 namespace Genie
 {
 	
+	inline sigset_t sigset_from_signo( int signo )
+	{
+		return 1 << signo - 1;
+	}
+	
 	class SignalReceiver
 	{
-		public:
+		private:
 			std::map< int, __sig_handler > itsSignalMap;
 			
 			sigset_t  itsPendingSignals;
 			sigset_t  itsBlockedSignals;
-			sigset_t  itsMaskedSignals;
 		
 		public:
 			SignalReceiver();
 			
+			__sig_handler GetSignalAction( int signo )  { return itsSignalMap[ signo ]; }
+			
 			__sig_handler SetSignalAction( int signo, __sig_handler action );
+			
+			sigset_t GetPendingSignals() const  { return itsPendingSignals; }
+			sigset_t GetBlockedSignals() const  { return itsBlockedSignals; }
+			
+			void AddPendingSignal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }
 			
 			bool DeliverPendingSignals();
 	};
