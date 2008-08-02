@@ -8,12 +8,21 @@
 // Standard C/C++
 #include <cstring>
 
+// Standard C
+#include "errno.h"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
+
+// POSeven
+#include "POSeven/Errno.hh"
 
 
 namespace Genie
 {
+	
+	namespace p7 = poseven;
+	
 	
 	SignalReceiver::SignalReceiver() : itsPendingSignals(),
 	                                   itsBlockedSignals()
@@ -66,9 +75,10 @@ namespace Genie
 		return chld.sa_handler != SIG_IGN  &&  (chld.sa_flags & sa_nocldwait) == 0;
 	}
 	
-	bool SignalReceiver::DeliverPendingSignals()
+	bool SignalReceiver::DeliverPendingSignals( Interruptibility interrupting )
 	{
-		bool will_interrupt = false;
+		bool signal_delivered = false;
+		bool return_eintr = false;
 		
 		for ( int signo = 1;  itsPendingSignals && signo < NSIG;  ++signo )
 		{
@@ -98,9 +108,11 @@ namespace Genie
 				
 				itsBlockedSignals &= ~signal_mask;
 				
-				if ( !(action.sa_flags & SA_RESTART) )
+				signal_delivered = true;
+				
+				if ( !!(action.sa_flags & SA_RESTART)  <=  interrupting - kInterruptUnlessRestarting )
 				{
-					will_interrupt = true;
+					return_eintr = true;
 				}
 				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
@@ -110,7 +122,12 @@ namespace Genie
 			}
 		}
 		
-		return will_interrupt;
+		if ( return_eintr )
+		{
+			p7::throw_errno( EINTR );
+		}
+		
+		return signal_delivered;
 	}
 	
 }

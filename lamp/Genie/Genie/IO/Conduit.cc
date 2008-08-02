@@ -108,7 +108,7 @@ namespace Genie
 			
 			current.Raise( SIGPIPE );
 			
-			current.HandlePendingSignals();
+			current.HandlePendingSignals( kInterruptNever );
 			
 			p7::throw_errno( EPIPE );
 		}

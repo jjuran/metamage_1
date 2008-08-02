@@ -180,12 +180,12 @@ namespace Genie
 		
 		// first chance -- program can siglongjmp() out of signal handler
 		current.Raise( signo );
-		current.HandlePendingSignals();
+		current.HandlePendingSignals( kInterruptNever );
 		
 		// This should be fatal
 		current.ResetSignalAction( signo );
 		current.Raise( signo );
-		current.HandlePendingSignals();
+		current.HandlePendingSignals( kInterruptNever );
 		
 		N::SysBeep();
 		
@@ -1233,7 +1233,9 @@ namespace Genie
 		ResumeTimer();
 	}
 	
-	bool Process::Pause( ProcessSchedule newSchedule )
+	static UInt32 gTickCountOfLastSleep = 0;
+	
+	bool Process::Pause( ProcessSchedule newSchedule, Interruptibility interrupting )
 	{
 		itsSchedule = newSchedule;
 		
@@ -1254,7 +1256,9 @@ namespace Genie
 		
 		Resume();
 		
-		return HandlePendingSignals();
+		gTickCountOfLastSleep = ::TickCount();
+		
+		return HandlePendingSignals( interrupting );
 	}
 	
 	void Process::DeliverSignal( int signo )
@@ -1357,7 +1361,7 @@ namespace Genie
 	}
 	
 	// This function doesn't return if the process receives a fatal signal.
-	bool Process::HandlePendingSignals()
+	bool Process::HandlePendingSignals( Interruptibility interrupting )
 	{
 		if ( itsLifeStage != kProcessLive )
 		{
@@ -1400,7 +1404,7 @@ namespace Genie
 			// Not reached
 		}
 		
-		return DeliverPendingSignals();
+		return DeliverPendingSignals( interrupting );
 	}
 	
 	ProcessList::ProcessList() : itsNextPID( 1 )
@@ -1497,7 +1501,8 @@ namespace Genie
 			
 			ASSERT( N::GetCurrentThread() == thread );
 			
-			Pause( kProcessStopped );
+			// Stoppers are never restartable
+			Pause( kProcessStopped, kInterruptAlways );
 		}
 		else
 		{
@@ -1534,34 +1539,25 @@ namespace Genie
 	}
 	
 	
-	static UInt32 gTickCountOfLastSleep = 0;
-	
 	static const UInt32 gMinimumSleepIntervalTicks = 15;  // Sleep every quarter second
 	
 	// This function doesn't return if we received a fatal signal.
-	void Process::Yield()
+	bool Process::Yield( Interruptibility interrupting )
 	{
 		// Doesn't return if we received a fatal signal.
-		bool signalled = Pause( kProcessSleeping );
-		
-		gTickCountOfLastSleep = ::TickCount();
-		
-		if ( signalled )
-		{
-			p7::throw_errno( EINTR );
-		}
+		return Pause( kProcessSleeping, interrupting );
 	}
 	
 	// This function doesn't return if we received a fatal signal.
-	void Yield()
+	bool Yield( Interruptibility interrupting )
 	{
 		ASSERT( gCurrentProcess != NULL );
 		
-		gCurrentProcess->Yield();
+		return gCurrentProcess->Yield( interrupting );
 	}
 	
 	// This function doesn't return if we received a fatal signal.
-	void Breathe()
+	bool Breathe()
 	{
 		UInt32 now = ::TickCount();
 		
@@ -1569,10 +1565,11 @@ namespace Genie
 		{
 			Ped::AdjustSleepForActivity();
 			
-			Yield();
-			
-			gTickCountOfLastSleep = now;
+			// Breathers are restartable
+			return Yield( kInterruptNever );
 		}
+		
+		return false;
 	}
 	
 	void TryAgainLater( bool isNonblocking )
@@ -1582,7 +1579,8 @@ namespace Genie
 			throw io::no_input_pending();
 		}
 		
-		Yield();
+		// I/O is restartable
+		Yield( kInterruptUnlessRestarting );
 	}
 	
 }

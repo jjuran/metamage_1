@@ -40,7 +40,7 @@ namespace Genie
 			case kOTSyncIdleEvent:
 				try
 				{
-					Yield();
+					Yield( kInterruptNever );  // FIXME
 				}
 				catch ( ... )
 				{

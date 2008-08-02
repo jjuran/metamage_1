@@ -34,7 +34,8 @@ namespace Genie
 			
 			current.Raise( SIGABRT );
 			
-			current.HandlePendingSignals();
+			// restartability is immaterial for fatal signal
+			current.HandlePendingSignals( kInterruptNever );
 			
 			// Probably not reached
 			WriteToSystemConsole( STR_LEN( "Genie: abort(): process failed to terminate, stopping its thread\n" ) );

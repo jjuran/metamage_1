@@ -141,7 +141,8 @@ namespace Genie
 					return 0;
 				}
 				
-				caller.Yield();
+				// wait is restartable
+				caller.Yield( kInterruptUnlessRestarting );
 			}
 		}
 		catch ( ... )

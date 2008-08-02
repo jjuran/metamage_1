@@ -57,7 +57,7 @@ namespace Genie
 			
 			do
 			{
-				Yield();
+				Yield( kInterruptUnlessRestarting );
 				
 				for ( int i = 0;  i != n;  ++i )
 				{

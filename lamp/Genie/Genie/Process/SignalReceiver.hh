@@ -13,6 +13,13 @@
 namespace Genie
 {
 	
+	enum Interruptibility
+	{
+		kInterruptNever,
+		kInterruptUnlessRestarting,
+		kInterruptAlways
+	};
+	
 	inline sigset_t sigset_from_signo( int signo )
 	{
 		return 1 << signo - 1;
@@ -47,7 +54,7 @@ namespace Genie
 			void BlockSignals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
 			void UnblockSignals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
 			
-			bool DeliverPendingSignals();
+			bool DeliverPendingSignals( Interruptibility interrupting );
 	};
 	
 }

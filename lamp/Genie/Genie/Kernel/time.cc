@@ -108,7 +108,7 @@ namespace Genie
 				// anyway.
 				Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
 				
-				Yield();
+				Yield( kInterruptAlways );  // don't restart sleep
 				
 				remaining_microseconds = end_microseconds - N::Microseconds();
 			}

@@ -148,7 +148,7 @@ namespace Genie
 		private:
 			void Suspend();
 			void Resume();
-			bool Pause( ProcessSchedule newSchedule );
+			bool Pause( ProcessSchedule newSchedule, Interruptibility interrupting );
 			
 			void Terminate();
 			void Terminate( int wait_status );
@@ -192,7 +192,7 @@ namespace Genie
 			
 			void Release();
 			
-			void Yield();
+			bool Yield( Interruptibility interrupting );
 			
 			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
 			
@@ -237,7 +237,7 @@ namespace Genie
 			void Stop();
 			void Continue();
 			
-			bool HandlePendingSignals();
+			bool HandlePendingSignals( Interruptibility interrupting );
 	};
 	
 	boost::shared_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::shared_ptr< Session >& session );
@@ -294,8 +294,8 @@ namespace Genie
 	
 	Process* FindProcess( pid_t pid );
 	
-	void Yield();
-	void Breathe();
+	bool Yield( Interruptibility interrupting );
+	bool Breathe();
 	
 	void TryAgainLater( bool isNonblocking );
 	
