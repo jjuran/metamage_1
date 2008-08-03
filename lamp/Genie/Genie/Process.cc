@@ -1501,8 +1501,8 @@ namespace Genie
 			
 			ASSERT( N::GetCurrentThread() == thread );
 			
-			// Stoppers are never restartable
-			Pause( kProcessStopped, kInterruptAlways );
+			// Stoppers (pause, sigsuspend) never restart, but don't throw
+			Pause( kProcessStopped, kInterruptNever );
 		}
 		else
 		{
