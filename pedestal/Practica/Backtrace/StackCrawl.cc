@@ -25,8 +25,6 @@ namespace Backtrace
 	
 #if defined( __MACOS__ ) && defined( __POWERPC__ )
 	
-	static jmp_buf gStackCrawlJmpBuf;
-	
 	class ScopedExceptionHandler
 	{
 		private:
@@ -45,7 +43,28 @@ namespace Backtrace
 		return ::InstallExceptionHandler( handler );
 	}
 	
-	static OSStatus UnmappedMemoryExceptionTrappingHandler( ExceptionInformation* exception )
+	class ScopeToTrapBadAddresses
+	{
+		private:
+			ExceptionHandlerUPP     itsUPP;
+			ScopedExceptionHandler  itsScope;
+		
+		public:
+			ScopeToTrapBadAddresses( ExceptionHandlerProcPtr handler ) : itsUPP( ::NewExceptionHandlerUPP( handler ) ),
+			                                                             itsScope( itsUPP )
+			{
+			}
+			
+			~ScopeToTrapBadAddresses()
+			{
+				::DisposeExceptionHandlerUPP( itsUPP );
+			}
+	};
+	
+	
+	static jmp_buf gStackCrawlJmpBuf;
+	
+	static OSStatus BadAddressTrappingHandler( ExceptionInformation* exception )
 	{
 		if ( exception->theKind == kTraceException )
 		{
@@ -65,22 +84,6 @@ namespace Backtrace
 		
 		return -1;
 	}
-	
-	class ScopeToTrapUnmappedMemoryExceptions : public ScopedExceptionHandler
-	{
-		private:
-			ExceptionHandlerUPP itsUPP;
-		
-		public:
-			ScopeToTrapUnmappedMemoryExceptions() : ScopedExceptionHandler( itsUPP = ::NewExceptionHandlerUPP( UnmappedMemoryExceptionTrappingHandler ) )
-			{
-			}
-			
-			~ScopeToTrapUnmappedMemoryExceptions()
-			{
-				::DisposeExceptionHandlerUPP( itsUPP );
-			}
-	};
 	
 #endif
 	
@@ -354,7 +357,7 @@ namespace Backtrace
 		{
 		#if defined( __MACOS__ ) && defined( __POWERPC__ )
 			
-			ScopeToTrapUnmappedMemoryExceptions trappingUnmappedMemoryExceptions;
+			ScopeToTrapBadAddresses trappingUnmappedMemoryExceptions( BadAddressTrappingHandler );
 			
 			if ( ::ExceptionKind kind = setjmp( gStackCrawlJmpBuf ) )
 			{
