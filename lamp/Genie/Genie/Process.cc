@@ -558,8 +558,10 @@ namespace Genie
 		iota::argp_t argv = &argVector.front();
 		iota::envp_t envp = &itsEnvP.front();
 		
+		// Pass kernel dispatcher in ToolScratch to initialize library dispatcher
 		// Pass envp in ToolScratch + 4 to initialize environ
-		GetToolScratchGlobals().envp = envp;
+		GetToolScratchGlobals().dispatcher = DispatchSystemCall;
+		GetToolScratchGlobals().envp       = envp;
 		
 		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
@@ -835,8 +837,6 @@ namespace Genie
 		itsProgramFile        ( FSRoot() ),
 		itsCleanupHandler     ()
 	{
-		GetToolScratchGlobals().dispatcher = DispatchSystemCall;
-		
 		char const *const argv[] = { "init", NULL };
 		
 		itsCmdLine.Assign( argv );
@@ -1229,13 +1229,6 @@ namespace Genie
 	
 	void Process::Resume()
 	{
-		if ( GetToolScratchGlobals().dispatcher != DispatchSystemCall )
-		{
-			WriteToSystemConsole( STR_LEN( "Genie: Process::Run(): ToolScratch has been trashed!  Fixing.\n" ) );
-			
-			GetToolScratchGlobals().dispatcher = DispatchSystemCall;
-		}
-		
 		gCurrentProcess = this;
 		
 		itsStackFramePtr = NULL;  // We don't track this while running
