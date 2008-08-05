@@ -8,6 +8,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gestalt.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_machine.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_name.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_rom.hh"
@@ -45,7 +46,8 @@ namespace Genie
 		
 	#endif
 		
-		{ "user",    &Premapped_Factory< sys_mac_user_Mappings > },
+		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
+		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		
 		{ "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > },
 		
