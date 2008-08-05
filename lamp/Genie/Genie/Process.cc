@@ -1229,6 +1229,13 @@ namespace Genie
 	
 	void Process::Resume()
 	{
+		if ( GetToolScratchGlobals().dispatcher != DispatchSystemCall )
+		{
+			WriteToSystemConsole( STR_LEN( "Genie: Process::Run(): ToolScratch has been trashed!  Fixing.\n" ) );
+			
+			GetToolScratchGlobals().dispatcher = DispatchSystemCall;
+		}
+		
 		gCurrentProcess = this;
 		
 		itsStackFramePtr = NULL;  // We don't track this while running
