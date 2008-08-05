@@ -471,7 +471,7 @@ namespace Genie
 	
 	enum { kSystemCallSize = sizeof (SystemCall) };
 	
-	static asm void DispatchSystemCall()
+	static asm void DispatchSystemCall( unsigned index )
 	{
 		// r11 contains the requested system call number
 		// (r0 is already clobbered by compiler-inserted prolog)
@@ -511,8 +511,8 @@ namespace Genie
 	
 	struct ToolScratchGlobals
 	{
-		Dispatcher       dispatcher;
-		iota::environ_t  envp;
+		Dispatcher    dispatcher;
+		iota::envp_t  envp;
 	};
 	
 	struct ApplScratchGlobals
@@ -521,6 +521,11 @@ namespace Genie
 		void*            reserved2;
 		void*            reserved3;
 	};
+	
+	inline ToolScratchGlobals& GetToolScratchGlobals()
+	{
+		return *reinterpret_cast< ToolScratchGlobals* >( LMGetToolScratch() );
+	}
 	
 	static std::vector< const char* > ArgVectorFromCmdLine( const std::string& cmdLine )
 	{
@@ -554,7 +559,7 @@ namespace Genie
 		iota::envp_t envp = &itsEnvP.front();
 		
 		// Pass envp in ToolScratch + 4 to initialize environ
-		reinterpret_cast< iota::envp_t* >( LMGetToolScratch() )[1] = envp;
+		GetToolScratchGlobals().envp = envp;
 		
 		itsStackBottomPtr = Backtrace::GetStackFramePointer();
 		
@@ -830,7 +835,7 @@ namespace Genie
 		itsProgramFile        ( FSRoot() ),
 		itsCleanupHandler     ()
 	{
-		*reinterpret_cast< void** >( LMGetToolScratch() ) = DispatchSystemCall;
+		GetToolScratchGlobals().dispatcher = DispatchSystemCall;
 		
 		char const *const argv[] = { "init", NULL };
 		
