@@ -9,6 +9,10 @@
 #include "Nitrogen/Gestalt.h"
 #include "Nitrogen/OSStatus.h"
 
+// BitsAndBytes
+#include "HexCodes.hh"
+#include "HexStrings.hh"
+
 
 namespace Nitrogen
 {
@@ -33,16 +37,80 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
+	namespace Bits = BitsAndBytes;
 	
 	
 	std::string OSType_KeyName_Traits::NameFromKey( const Key& key )
 	{
-		return Nucleus::Convert< std::string >( key );
+		std::string bytes = Nucleus::Convert< std::string >( key );
+		
+		std::string result;
+		
+		result.reserve( sizeof (Key) );  // the usual case
+		
+		try
+		{
+			N::Gestalt( N::GestaltSelector( key ) );
+		}
+		catch ( ... )
+		{
+			result = '.';
+		}
+		
+		char escape[] = "%00";
+		
+		for ( int i = 0;  i < sizeof (Key);  ++i )
+		{
+			unsigned char c = bytes[ i ];
+			
+			if ( c < ' '  ||  c == '%' )
+			{
+				escape[ 1 ] = Bits::NibbleAsHex( Bits::HighNibble( c ) );
+				escape[ 2 ] = Bits::NibbleAsHex( Bits::LowNibble ( c ) );
+				
+				result.append( escape, sizeof escape - 1 );
+			}
+			else
+			{
+				result += c;
+			}
+		}
+		
+		return result;
 	}
 	
 	OSType_KeyName_Traits::Key OSType_KeyName_Traits::KeyFromName( const std::string& name )
 	{
-		return Nucleus::Convert< Nitrogen::OSType >( name );
+		std::string decoded;
+		
+		decoded.reserve( sizeof (Key) );
+		
+		const char* end = name.data() + name.size();
+		
+		for ( const char* p = name.data();; )
+		{
+			const char* escape = std::find( p, end, '%' );
+			
+			decoded.append( p, escape );
+			
+			if ( escape == end )
+			{
+				break;
+			}
+			
+			p = escape + 3;
+			
+			if ( p > end )
+			{
+				break;  // conversion below will fail and throw exception
+			}
+			
+			char c = Bits::DecodeHexNibbles( escape[1], escape[2] );
+			
+			decoded += c;
+		}
+		
+		return Nucleus::Convert< Nitrogen::OSType >( decoded );
 	}
 	
 	
