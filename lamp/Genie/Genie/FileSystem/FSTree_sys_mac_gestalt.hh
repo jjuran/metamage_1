@@ -6,29 +6,9 @@
 #ifndef GENIE_FILESYSTEM_FSTREESYSMACGESTALT_HH
 #define GENIE_FILESYSTEM_FSTREESYSMACGESTALT_HH
 
-// POSIX
-#include "sys/stat.h"
-
-// Genie
-#include "Genie/FileSystem/FSTree.hh"
-
 
 namespace Genie
 {
-	
-	class FSTree_sys_mac_gestalt : public FSTree
-	{
-		public:
-			FSTree_sys_mac_gestalt( const FSTreePtr&    parent,
-			                        const std::string&  name ) : FSTree( parent, name )
-			{
-			}
-			
-			mode_t FileTypeMode() const  { return S_IFCHR; }
-			mode_t FilePermMode() const  { return S_IRUSR; }
-			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
-	};
 	
 }
 
