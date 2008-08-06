@@ -105,15 +105,9 @@ namespace Genie
 	{
 		typedef Nitrogen::OSType Key;
 		
-		static std::string NameFromKey( const Key& key )
-		{
-			return Nucleus::Convert< std::string >( key );
-		}
+		static std::string NameFromKey( const Key& key );
 		
-		static Key KeyFromName( const std::string& name )
-		{
-			return Nucleus::Convert< Nitrogen::OSType >( name );
-		}
+		static Key KeyFromName( const std::string& name );
 	};
 	
 	struct Gestalt_KeyName_Traits : OSType_KeyName_Traits

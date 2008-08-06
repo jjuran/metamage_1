@@ -35,6 +35,17 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
+	std::string OSType_KeyName_Traits::NameFromKey( const Key& key )
+	{
+		return Nucleus::Convert< std::string >( key );
+	}
+	
+	OSType_KeyName_Traits::Key OSType_KeyName_Traits::KeyFromName( const std::string& name )
+	{
+		return Nucleus::Convert< Nitrogen::OSType >( name );
+	}
+	
+	
 	bool sys_mac_gestalt_Details::KeyIsValid( const Key& key )
 	{
 		try
