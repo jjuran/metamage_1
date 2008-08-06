@@ -49,7 +49,7 @@ namespace Genie
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		
-		//{ "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > },
+		{ "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > },
 		
 		{ "name", &Name_Factory },
 		
