@@ -17,6 +17,7 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/DynamicGroups.hh"
+#include "Genie/FileSystem/FSTree_dev_gestalt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/BufferFile.hh"
 #include "Genie/IO/ConsoleTTY.hh"
@@ -194,6 +195,8 @@ namespace Genie
 		{ "cu.printer",  &Singleton_Factory< FSTree_dev_cuprinter  > },
 		{ "tty.modem",   &Singleton_Factory< FSTree_dev_ttymodem   > },
 		{ "tty.printer", &Singleton_Factory< FSTree_dev_ttyprinter > },
+		
+		{ "gestalt", &Singleton_Factory< FSTree_dev_gestalt > },
 		
 		{ "new", &Premapped_Factory< dev_new_Mappings > },
 		
