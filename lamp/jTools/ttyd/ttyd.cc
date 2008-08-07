@@ -5,8 +5,8 @@
 
 // POSIX
 #include <signal.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
-#include <vfork.h>
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -47,7 +47,24 @@ static int Spawn()
 		dup2( slave, STDOUT_FILENO );
 		dup2( slave, STDERR_FILENO );
 		
-		close( slave );
+		if ( slave > STDERR_FILENO )
+		{
+			close( slave );
+		}
+		
+		int sid = setsid();  // New session
+		
+		if ( sid < 0 )
+		{
+			_exit( EXIT_FAILURE );
+		}
+		
+		int result = ioctl( STDIN_FILENO, TIOCSCTTY, NULL );  // Reattach to terminal
+		
+		if ( result < 0 )
+		{
+			_exit( EXIT_FAILURE );
+		}
 		
 		const char* login_argv[] = { "/bin/login", NULL };
 		
@@ -57,6 +74,8 @@ static int Spawn()
 	}
 	
 	close( slave );
+	
+	dup2( STDOUT_FILENO, STDERR_FILENO );
 	
 	return master;
 }
@@ -110,6 +129,13 @@ static void Serve( p7::fd_t master )
 
 int O::Main( int argc, argv_t argv )
 {
+	int sid = setsid();  // New session
+	
+	if ( sid < 0 )
+	{
+		return 1;
+	}
+	
 	signal( SIGCHLD, sigchld_handler );
 	
 	int master = Spawn();
