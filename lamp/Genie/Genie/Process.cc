@@ -982,8 +982,6 @@ namespace Genie
 	                    const char* const   argv[],
 	                    const char* const*  envp )
 	{
-		CloseMarkedFileDescriptors( itsFileDescriptors );
-		
 		// Do we take the name before or after normalization?
 		itsName = executable->Name();
 		
@@ -992,6 +990,8 @@ namespace Genie
 		executable.reset();
 		
 		Normalize( context, GetCWD() );
+		
+		CloseMarkedFileDescriptors( itsFileDescriptors );
 		
 		itsCmdLine.Assign( &context.argVector.front() );
 		
