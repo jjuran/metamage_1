@@ -260,6 +260,11 @@ namespace Genie
 				
 				progFile->Stat( sb );
 				
+				if ( S_ISDIR( sb.st_mode ) )
+				{
+					return frame.SetErrno( EISDIR );
+				}
+				
 				if ( (sb.st_mode & S_IXUSR) == 0 )
 				{
 					return frame.SetErrno( EACCES );
