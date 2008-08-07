@@ -15,6 +15,7 @@
 #include "POSeven/Errno.hh"
 
 // Genie
+#include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 
 
@@ -112,6 +113,7 @@ namespace Genie
 		return "/sys/mac/unit/" + name;
 	}
 	
+	
 	static FSTreePtr Link_Factory( const FSTreePtr&                 parent,
 	                               const std::string&               name,
 	                               DriveNumber_KeyName_Traits::Key  key )
@@ -128,9 +130,55 @@ namespace Genie
 		return MakeFSTree( new FSTree_Driver_Link( parent, refNum, name ) );
 	}
 	
+	class sys_mac_drive_N_size_Query
+	{
+		private:
+			typedef UInt16 Key;
+			
+			Key itsKey;
+		
+		public:
+			sys_mac_drive_N_size_Query( const Key& key ) : itsKey( key )
+			{
+			}
+			
+			std::string operator()() const
+			{
+				const DrvQEl* el = FindDrive( itsKey );
+				
+				if ( el == NULL )
+				{
+					return "";
+				}
+				
+				UInt32 size = el->dQDrvSz;
+				
+				if ( el->qType != 0 )
+				{
+					size += el->dQDrvSz2 << 16;
+				}
+				
+				std::string output = NN::Convert< std::string >( size ) + "\n";
+				
+				return output;
+			}
+	};
+	
+	static FSTreePtr Size_Factory( const FSTreePtr&             parent,
+	                               const std::string&           name,
+	                               DriveNumber_KeyName_Traits::Key  key )
+	{
+		typedef sys_mac_drive_N_size_Query Query;
+		
+		typedef FSTree_QueryFile< Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+	}
+	
 	const Functional_Traits< DriveNumber_KeyName_Traits::Key >::Mapping sys_mac_drive_N_Mappings[] =
 	{
 		{ "driver", &Link_Factory },
+		{ "size",   &Size_Factory },
 		
 		{ NULL, NULL }
 	};
