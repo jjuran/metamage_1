@@ -63,7 +63,13 @@ namespace Genie
 		{
 			unsigned char c = bytes[ i ];
 			
-			if ( c < ' '  ||  c == '%' )
+			// We escape
+			// * NUL because it can't be used in POSIX filenames
+			// * other control characters because they're non-printable
+			// * percent because it's the escape char
+			// * slash because it's the path separator
+			
+			if ( c < ' '  ||  c == '%'  ||  c == '/' )
 			{
 				escape[ 1 ] = Bits::NibbleAsHex( Bits::HighNibble( c ) );
 				escape[ 2 ] = Bits::NibbleAsHex( Bits::LowNibble ( c ) );
