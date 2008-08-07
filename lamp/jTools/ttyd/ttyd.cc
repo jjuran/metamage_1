@@ -9,6 +9,7 @@
 #include <vfork.h>
 
 // POSeven
+#include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
 
 // Orion
@@ -79,7 +80,7 @@ static void Serve( p7::fd_t master )
 	{
 		fd_set readfds = fds;
 		
-		int selected = select( max_fd + 1, &readfds, NULL, NULL, NULL );
+		int selected = p7::throw_posix_result( select( max_fd + 1, &readfds, NULL, NULL, NULL ) );
 		
 		if ( FD_ISSET( STDIN_FILENO, &readfds ) )
 		{
