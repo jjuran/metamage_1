@@ -76,6 +76,62 @@ namespace Genie
 	}
 	
 	
+	struct GetVolumeSignature
+	{
+		typedef const char* Result;
+		
+		Result operator()( const HVolumeParam& volume ) const
+		{
+			static char sigWord[] = "ab";
+			
+			sigWord[ 0 ] = volume.ioVSigWord >> 8;
+			sigWord[ 1 ] = volume.ioVSigWord & 0xff;
+			
+			return sigWord;
+		}
+	};
+	
+	struct GetVolumeFSID
+	{
+		typedef SInt16 Result;
+		
+		SInt16 operator()( const HVolumeParam& volume ) const
+		{
+			return volume.ioVFSID;
+		}
+	};
+	
+	template < class Get >
+	class sys_mac_vol_N_Query
+	{
+		private:
+			typedef N::FSVolumeRefNum Key;
+			
+			Key itsKey;
+		
+		public:
+			sys_mac_vol_N_Query( const Key& key ) : itsKey( key )
+			{
+			}
+			
+			std::string operator()() const
+			{
+				HParamBlockRec paramBlock;
+				
+				HVolumeParam& pb = paramBlock.volumeParam;
+				
+				pb.ioNamePtr  = NULL;
+				pb.ioVRefNum  = itsKey;
+				pb.ioVolIndex = 0;
+				
+				N::ThrowOSStatus( ::PBHGetVInfoSync( &paramBlock ) );
+				
+				std::string output = NN::Convert< std::string >( Get()( pb ) ) + "\n";
+				
+				return output;
+			}
+	};
+	
 	class sys_mac_vol_N_name_Query
 	{
 		private:
@@ -127,6 +183,18 @@ namespace Genie
 	};
 	
 	
+	template < class Get >
+	static FSTreePtr Query_Factory( const FSTreePtr&             parent,
+	                                const std::string&           name,
+	                                VRefNum_KeyName_Traits::Key  key )
+	{
+		typedef sys_mac_vol_N_Query< Get > Query;
+		
+		typedef FSTree_QueryFile< Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+	}
+	
 	static FSTreePtr Root_Factory( const FSTreePtr&             parent,
 	                               const std::string&           name,
 	                               VRefNum_KeyName_Traits::Key  key )
@@ -157,6 +225,10 @@ namespace Genie
 	
 	const Functional_Traits< VRefNum_KeyName_Traits::Key >::Mapping sys_mac_vol_N_Mappings[] =
 	{
+		{ "sig", &Query_Factory< GetVolumeSignature > },
+		
+		{ "fsid", &Query_Factory< GetVolumeFSID > },
+		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
 		{ "name", &Name_Factory },
