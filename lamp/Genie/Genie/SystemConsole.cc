@@ -64,6 +64,9 @@ namespace Genie
 		
 		gSystemConsoleOwner.itsWindow->SubView().ScrolledView().WriteChars( data, byteCount );
 		
+		gSystemConsoleOwner.itsWindow->SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
+		                                                           N::SetPt( 0, 0 ) );
+		
 		return byteCount;
 	}
 	
