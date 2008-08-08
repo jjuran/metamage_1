@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/ResolvePathname.hh"
 
 
 namespace Genie
@@ -117,6 +118,15 @@ namespace Genie
 		}
 	};
 	
+	static void PBHGetVInfoSync( HVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
+	{
+		pb.ioNamePtr  = name;
+		pb.ioVRefNum  = vRefNum;
+		pb.ioVolIndex = 0;
+		
+		N::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
+	}
+	
 	template < class Get >
 	class sys_mac_vol_N_Query
 	{
@@ -132,21 +142,38 @@ namespace Genie
 			
 			std::string operator()() const
 			{
-				HParamBlockRec paramBlock;
-				
-				HVolumeParam& pb = paramBlock.volumeParam;
+				HVolumeParam pb;
 				
 				Str31 name;
 				
-				pb.ioNamePtr  = Get::needsName ? name : NULL;
-				pb.ioVRefNum  = itsKey;
-				pb.ioVolIndex = 0;
-				
-				N::ThrowOSStatus( ::PBHGetVInfoSync( &paramBlock ) );
+				PBHGetVInfoSync( pb, itsKey, Get::needsName ? name : NULL );
 				
 				std::string output = NN::Convert< std::string >( Get()( pb ) ) + "\n";
 				
 				return output;
+			}
+	};
+	
+	class FSTree_Virtual_Link : public FSTree
+	{
+		private:
+			std::string itsTarget;
+		
+		public:
+			FSTree_Virtual_Link( const FSTreePtr&    parent,
+			                     const std::string&  name,
+			                     const std::string&  target ) : FSTree( parent, name ),
+			                                                    itsTarget( target )
+			{
+			}
+			
+			bool IsLink() const  { return true; }
+			
+			std::string ReadLink() const  { return itsTarget; }
+			
+			FSTreePtr ResolveLink() const
+			{
+				return ResolvePathname( itsTarget );
 			}
 	};
 	
@@ -200,10 +227,36 @@ namespace Genie
 		return FSTreeFromFSSpec( volume );
 	}
 	
+	static FSTreePtr Drive_Link_Factory( const FSTreePtr&             parent,
+	                                     const std::string&           name,
+	                                     VRefNum_KeyName_Traits::Key  key )
+	{
+		HVolumeParam pb;
+		
+		PBHGetVInfoSync( pb, key );
+		
+		std::string drive = NN::Convert< std::string >( pb.ioVDrvInfo );
+		
+		return MakeFSTree( new FSTree_Virtual_Link( parent, name, "/sys/mac/drive/" + drive ) );
+	}
+	
+	static FSTreePtr Driver_Link_Factory( const FSTreePtr&             parent,
+	                                      const std::string&           name,
+	                                      VRefNum_KeyName_Traits::Key  key )
+	{
+		HVolumeParam pb;
+		
+		PBHGetVInfoSync( pb, key );
+		
+		std::string unit = NN::Convert< std::string >( ~pb.ioVDRefNum );
+		
+		return MakeFSTree( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
+	}
+	
 	template < N::FolderType type >
-	static FSTreePtr Link_Factory( const FSTreePtr&             parent,
-	                               const std::string&           name,
-	                               VRefNum_KeyName_Traits::Key  key )
+	static FSTreePtr Folder_Link_Factory( const FSTreePtr&             parent,
+	                                      const std::string&           name,
+	                                      VRefNum_KeyName_Traits::Key  key )
 	{
 		return MakeFSTree( new FSTree_Folder_Link( parent, key, type, name ) );
 	}
@@ -214,13 +267,16 @@ namespace Genie
 		
 		{ "sig", &Query_Factory< GetVolumeSignature > },
 		
+		{ "drive",  &Drive_Link_Factory  },
+		{ "driver", &Driver_Link_Factory },
+		
 		{ "fsid", &Query_Factory< GetVolumeFSID > },
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
 		
-		{ "sys", &Link_Factory< N::kSystemFolderType    > },
-		{ "tmp", &Link_Factory< N::kTemporaryFolderType > },
+		{ "sys", &Folder_Link_Factory< N::kSystemFolderType    > },
+		{ "tmp", &Folder_Link_Factory< N::kTemporaryFolderType > },
 		
 		{ NULL, NULL }
 		
