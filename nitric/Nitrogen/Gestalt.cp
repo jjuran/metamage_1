@@ -39,14 +39,14 @@ namespace Nitrogen
 	static GestaltManagerErrorsRegistration theRegistration;
 	
 	
-   long Gestalt( GestaltSelector selector )
+   long Gestalt( Gestalt_Selector selector )
      {
       long result;
       ThrowOSStatus( ::Gestalt( selector, &result ) );
       return result;
      }
 
-   long Gestalt( GestaltSelector selector, long defaultValue )
+   long Gestalt( Gestalt_Selector selector, long defaultValue )
      {
       try
         {

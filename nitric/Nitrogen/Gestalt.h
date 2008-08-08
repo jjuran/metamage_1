@@ -33,7 +33,7 @@ namespace Nitrogen
 			GestaltManagerErrorsRegistrationDependency();
 	};
 	
-	enum GestaltSelector
+	enum Gestalt_Selector
 	{
 		gestaltAliasMgrAttr     = ::gestaltAliasMgrAttr,
 		gestaltAppleEventsAttr  = ::gestaltAppleEventsAttr,
@@ -48,31 +48,33 @@ namespace Nitrogen
 		kGestaltSelector_Max = Nucleus::Enumeration_Traits< ::OSType >::max
 	};
 	
+	typedef Gestalt_Selector GestaltSelector;
 	
-   long Gestalt( GestaltSelector selector );
-   long Gestalt( GestaltSelector selector, long defaultValue );
+	
+   long Gestalt( Gestalt_Selector selector );
+   long Gestalt( Gestalt_Selector selector, long defaultValue );
    
-   template < GestaltSelector selector > struct GestaltDefault;
+   template < Gestalt_Selector selector > struct GestaltDefault;
    
-   template < GestaltSelector selector >
+   template < Gestalt_Selector selector >
    inline long Gestalt()
      {
       return Gestalt( selector, GestaltDefault<selector>::defaultValue );
      }
    
-	template < GestaltSelector selector, SInt32 bitMask >
+	template < Gestalt_Selector selector, SInt32 bitMask >
 	inline bool Gestalt_Mask()
 	{
 		return Gestalt< selector >() & bitMask;
 	}
 	
-	template < GestaltSelector selector, SInt32 bitOffset >
+	template < Gestalt_Selector selector, SInt32 bitOffset >
 	inline bool Gestalt_Bit()
 	{
 		return Gestalt_Mask< selector, 1 << bitOffset >();
 	}
 	
-	template < GestaltSelector selector >
+	template < Gestalt_Selector selector >
 	inline bool Gestalt_NonZero()
 	{
 		return Gestalt_Mask< selector, 0xffffffff >();
