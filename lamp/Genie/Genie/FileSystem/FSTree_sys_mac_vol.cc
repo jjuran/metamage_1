@@ -78,6 +78,8 @@ namespace Genie
 	
 	struct GetVolumeSignature
 	{
+		static const bool needsName = false;
+		
 		typedef const char* Result;
 		
 		Result operator()( const HVolumeParam& volume ) const
@@ -93,11 +95,25 @@ namespace Genie
 	
 	struct GetVolumeFSID
 	{
+		static const bool needsName = false;
+		
 		typedef SInt16 Result;
 		
 		SInt16 operator()( const HVolumeParam& volume ) const
 		{
 			return volume.ioVFSID;
+		}
+	};
+	
+	struct GetVolumeName
+	{
+		static const bool needsName = true;
+		
+		typedef const unsigned char* Result;
+		
+		Result operator()( const HVolumeParam& volume ) const
+		{
+			return volume.ioNamePtr;
 		}
 	};
 	
@@ -120,35 +136,15 @@ namespace Genie
 				
 				HVolumeParam& pb = paramBlock.volumeParam;
 				
-				pb.ioNamePtr  = NULL;
+				Str31 name;
+				
+				pb.ioNamePtr  = Get::needsName ? name : NULL;
 				pb.ioVRefNum  = itsKey;
 				pb.ioVolIndex = 0;
 				
 				N::ThrowOSStatus( ::PBHGetVInfoSync( &paramBlock ) );
 				
 				std::string output = NN::Convert< std::string >( Get()( pb ) ) + "\n";
-				
-				return output;
-			}
-	};
-	
-	class sys_mac_vol_N_name_Query
-	{
-		private:
-			typedef N::FSVolumeRefNum Key;
-			
-			Key itsKey;
-		
-		public:
-			sys_mac_vol_N_name_Query( const Key& key ) : itsKey( key )
-			{
-			}
-			
-			std::string operator()() const
-			{
-				FSSpec volume = N::FSMakeFSSpec( itsKey, N::fsRtDirID, "\p" );
-				
-				std::string output = NN::Convert< std::string >( volume.name ) + "\n";
 				
 				return output;
 			}
@@ -204,17 +200,6 @@ namespace Genie
 		return FSTreeFromFSSpec( volume );
 	}
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&             parent,
-	                               const std::string&           name,
-	                               VRefNum_KeyName_Traits::Key  key )
-	{
-		typedef sys_mac_vol_N_name_Query Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
-	}
-	
 	template < N::FolderType type >
 	static FSTreePtr Link_Factory( const FSTreePtr&             parent,
 	                               const std::string&           name,
@@ -225,13 +210,14 @@ namespace Genie
 	
 	const Functional_Traits< VRefNum_KeyName_Traits::Key >::Mapping sys_mac_vol_N_Mappings[] =
 	{
+		{ "name", &Query_Factory< GetVolumeName > },
+		
 		{ "sig", &Query_Factory< GetVolumeSignature > },
 		
 		{ "fsid", &Query_Factory< GetVolumeFSID > },
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
-		{ "name", &Name_Factory },
 		
 		{ "sys", &Link_Factory< N::kSystemFolderType    > },
 		{ "tmp", &Link_Factory< N::kTemporaryFolderType > },
