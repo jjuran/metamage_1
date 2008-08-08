@@ -77,6 +77,54 @@ namespace Genie
 	}
 	
 	
+	struct GetVolumeName
+	{
+		static const bool needsName = true;
+		
+		typedef const unsigned char* Result;
+		
+		Result operator()( const HVolumeParam& volume ) const
+		{
+			return volume.ioNamePtr;
+		}
+	};
+	
+	struct GetVolumeBlockCount
+	{
+		static const bool needsName = false;
+		
+		typedef UInt16 Result;
+		
+		Result operator()( const HVolumeParam& volume ) const
+		{
+			return volume.ioVNmAlBlks;
+		}
+	};
+	
+	struct GetVolumeBlockSize
+	{
+		static const bool needsName = false;
+		
+		typedef UInt32 Result;
+		
+		Result operator()( const HVolumeParam& volume ) const
+		{
+			return volume.ioVAlBlkSiz;
+		}
+	};
+	
+	struct GetVolumeFreeBlockCount
+	{
+		static const bool needsName = false;
+		
+		typedef UInt16 Result;
+		
+		Result operator()( const HVolumeParam& volume ) const
+		{
+			return volume.ioVFrBlk;
+		}
+	};
+	
 	struct GetVolumeSignature
 	{
 		static const bool needsName = false;
@@ -100,23 +148,48 @@ namespace Genie
 		
 		typedef SInt16 Result;
 		
-		SInt16 operator()( const HVolumeParam& volume ) const
+		Result operator()( const HVolumeParam& volume ) const
 		{
 			return volume.ioVFSID;
 		}
 	};
 	
-	struct GetVolumeName
+	struct GetVolumeWriteCount
 	{
-		static const bool needsName = true;
+		static const bool needsName = false;
 		
-		typedef const unsigned char* Result;
+		typedef SInt32 Result;
 		
 		Result operator()( const HVolumeParam& volume ) const
 		{
-			return volume.ioNamePtr;
+			return volume.ioVWrCnt;
 		}
 	};
+	
+	struct GetVolumeFileCount
+	{
+		static const bool needsName = false;
+		
+		typedef SInt32 Result;
+		
+		Result operator()( const HVolumeParam& volume ) const
+		{
+			return volume.ioVFilCnt;
+		}
+	};
+	
+	struct GetVolumeDirCount
+	{
+		static const bool needsName = false;
+		
+		typedef SInt32 Result;
+		
+		Result operator()( const HVolumeParam& volume ) const
+		{
+			return volume.ioVDirCnt;
+		}
+	};
+	
 	
 	static void PBHGetVInfoSync( HVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
 	{
@@ -265,12 +338,20 @@ namespace Genie
 	{
 		{ "name", &Query_Factory< GetVolumeName > },
 		
+		{ "used_blocks", &Query_Factory< GetVolumeBlockCount     > },
+		{ "block_size",  &Query_Factory< GetVolumeBlockSize      > },
+		{ "free_blocks", &Query_Factory< GetVolumeFreeBlockCount > },
+		
 		{ "sig", &Query_Factory< GetVolumeSignature > },
 		
 		{ "drive",  &Drive_Link_Factory  },
 		{ "driver", &Driver_Link_Factory },
 		
 		{ "fsid", &Query_Factory< GetVolumeFSID > },
+		
+		{ "writes", &Query_Factory< GetVolumeWriteCount > },
+		{ "files",  &Query_Factory< GetVolumeFileCount  > },
+		{ "dirs",   &Query_Factory< GetVolumeDirCount   > },
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
