@@ -130,7 +130,35 @@ namespace Genie
 		return MakeFSTree( new FSTree_Driver_Link( parent, refNum, name ) );
 	}
 	
-	class sys_mac_drive_N_size_Query
+	struct GetDriveSize
+	{
+		typedef UInt32 Result;
+		
+		UInt32 operator()( const DrvQEl& drive ) const
+		{
+			UInt32 size = drive.dQDrvSz;
+			
+			if ( drive.qType != 0 )
+			{
+				size += drive.dQDrvSz2 << 16;
+			}
+			
+			return size;
+		}
+	};
+	
+	struct GetDriveFSID
+	{
+		typedef SInt16 Result;
+		
+		SInt16 operator()( const DrvQEl& drive ) const
+		{
+			return drive.dQFSID;
+		}
+	};
+	
+	template < class Get >
+	class sys_mac_drive_N_Query
 	{
 		private:
 			typedef UInt16 Key;
@@ -138,7 +166,7 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			sys_mac_drive_N_size_Query( const Key& key ) : itsKey( key )
+			sys_mac_drive_N_Query( const Key& key ) : itsKey( key )
 			{
 			}
 			
@@ -151,24 +179,18 @@ namespace Genie
 					return "";
 				}
 				
-				UInt32 size = el->dQDrvSz;
-				
-				if ( el->qType != 0 )
-				{
-					size += el->dQDrvSz2 << 16;
-				}
-				
-				std::string output = NN::Convert< std::string >( size ) + "\n";
+				std::string output = NN::Convert< std::string >( Get()( *el ) ) + "\n";
 				
 				return output;
 			}
 	};
 	
-	static FSTreePtr Size_Factory( const FSTreePtr&             parent,
-	                               const std::string&           name,
-	                               DriveNumber_KeyName_Traits::Key  key )
+	template < class Get >
+	static FSTreePtr Query_Factory( const FSTreePtr&                 parent,
+	                                const std::string&               name,
+	                                DriveNumber_KeyName_Traits::Key  key )
 	{
-		typedef sys_mac_drive_N_size_Query Query;
+		typedef sys_mac_drive_N_Query< Get > Query;
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
@@ -178,7 +200,9 @@ namespace Genie
 	const Functional_Traits< DriveNumber_KeyName_Traits::Key >::Mapping sys_mac_drive_N_Mappings[] =
 	{
 		{ "driver", &Link_Factory },
-		{ "size",   &Size_Factory },
+		
+		{ "fsid", &Query_Factory< GetDriveFSID > },
+		{ "size", &Query_Factory< GetDriveSize > },
 		
 		{ NULL, NULL }
 	};
