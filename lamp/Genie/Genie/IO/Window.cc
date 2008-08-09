@@ -14,9 +14,6 @@
 // Lamp
 #include "lamp/winio.h"
 
-// Nucleus
-#include "Nucleus/Saved.h"
-
 // Nitrogen
 #include "Nitrogen/MacWindows.h"
 
@@ -127,29 +124,6 @@ namespace Genie
 	}
 	
 	
-	static Point GetWindowSize( N::WindowRef window )
-	{
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-		
-		Point result;
-		
-		result.h = bounds.right - bounds.left;
-		result.v = bounds.bottom - bounds.top;
-		
-		return result;
-	}
-	
-	static void SetWindowSize( N::WindowRef window, Point size )
-	{
-		N::SizeWindow( window, size.h, size.v, true );
-		
-		if ( Ped::WindowBase* base = N::GetWRefCon( window ) )
-		{
-			base->Resized( size.h, size.v );
-		}
-	}
-	
-	
 	void WindowHandle::IOCtl( unsigned long request, int* argp )
 	{
 		switch ( request )
@@ -195,7 +169,7 @@ namespace Genie
 			case WIOCGSIZE:
 				if ( argp != NULL )
 				{
-					Point size = GetWindowSize( GetWindowRef() );
+					Point size = Ped::GetWindowSize( GetWindowRef() );
 					
 					*(Point*) argp = size;
 				}
@@ -208,7 +182,7 @@ namespace Genie
 					p7::throw_errno( EFAULT );
 				}
 				
-				SetWindowSize( GetWindowRef(), *(Point*) argp );
+				Ped::SetWindowSize( GetWindowRef(), *(Point*) argp );
 				
 				break;
 			
@@ -274,20 +248,12 @@ namespace Genie
 	
 	Point WindowHandle::GetPosition() const
 	{
-		NN::Saved< N::Port_Value > savedPort;
-		
-		N::SetPortWindowPort( GetWindowRef() );
-		
-		Point upperLeft = { 0, 0 };
-		
-		::LocalToGlobal( &upperLeft );
-		
-		return upperLeft;
+		return Ped::GetWindowPosition( GetWindowRef() );
 	}
 	
 	void WindowHandle::SetPosition( Point position )
 	{
-		N::MoveWindow( GetWindowRef(), position );
+		Ped::SetWindowPosition( GetWindowRef(), position );
 	}
 	
 	bool WindowHandle::IsVisible() const
