@@ -25,10 +25,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	
 	void ResizeWindow( Nitrogen::WindowRef window, Point newSize );
 	
 	
@@ -48,37 +44,38 @@ namespace Pedestal
 	
 	struct NewWindowContext
 	{
-		const Rect&         bounds;
-		ConstStr255Param    title;
-		bool                visible;
-		N::WindowRef        behind;
-		bool                goAwayFlag;
+		const Rect&          bounds;
+		ConstStr255Param     title;
+		bool                 visible;
+		Nitrogen::WindowRef  behind;
+		bool                 goAwayFlag;
 		
-		NewWindowContext( const Rect&         bounds,
-			              ConstStr255Param    title,
-			              bool                visible    = true,
-			              N::WindowRef        behind     = kFirstWindowOfClass,
-			              bool                goAwayFlag = true )
+		NewWindowContext( const Rect&          bounds,
+			              ConstStr255Param     title,
+			              bool                 visible    = true,
+			              Nitrogen::WindowRef  behind     = kFirstWindowOfClass,
+			              bool                 goAwayFlag = true )
 		:
 			bounds    ( bounds     ),
 			title     ( title      ),
 			visible   ( visible    ),
 			behind    ( behind     ),
 			goAwayFlag( goAwayFlag )
-		{}
+		{
+		}
 	};
 	
-	NN::Owned< N::WindowRef > CreateWindow( const Rect& bounds,
-	                                        ConstStr255Param title,
-	                                        bool visible,
-	                                        N::WindowDefProcID procID,
-	                                        N::WindowRef behind,
-	                                        bool goAwayFlag,
-	                                        N::RefCon refCon );
+	Nucleus::Owned< Nitrogen::WindowRef > CreateWindow( const Rect&                bounds,
+	                                                    ConstStr255Param           title,
+	                                                    bool                       visible,
+	                                                    Nitrogen::WindowDefProcID  procID,
+	                                                    Nitrogen::WindowRef        behind,
+	                                                    bool                       goAwayFlag,
+	                                                    Nitrogen::RefCon           refCon );
 	
-	inline NN::Owned< N::WindowRef > CreateWindow( const NewWindowContext&  context,
-	                                               N::WindowDefProcID       procID,
-	                                               N::RefCon                refCon )
+	inline Nucleus::Owned< Nitrogen::WindowRef > CreateWindow( const NewWindowContext&    context,
+	                                                           Nitrogen::WindowDefProcID  procID,
+	                                                           Nitrogen::RefCon           refCon )
 	{
 		return CreateWindow( context.bounds,
 		                     context.title,
@@ -89,9 +86,9 @@ namespace Pedestal
 		                     refCon );
 	}
 	
-	void DrawWindow( N::WindowRef window );
+	void DrawWindow( Nitrogen::WindowRef window );
 	
-	void InvalidateGrowBox( N::WindowRef window );
+	void InvalidateGrowBox( Nitrogen::WindowRef window );
 	
 	
 	enum
@@ -106,38 +103,38 @@ namespace Pedestal
 		bool HasGrowIcon() const  { return hasGrowIcon; }
 	};
 	
-	template < N::WindowDefProcID defProcID >  struct DefProcID_Traits;
+	template < Nitrogen::WindowDefProcID defProcID >  struct DefProcID_Traits;
 	
-	template <>  struct DefProcID_Traits< N::documentProc    > : DefProcID_HasGrowIcon< true  >  {};
-	template <>  struct DefProcID_Traits< N::dBoxProc        > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< N::plainDBox       > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< N::altDBoxProc     > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< N::noGrowDocProc   > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< N::movableDBoxProc > : DefProcID_HasGrowIcon< false >  {};
-	template <>  struct DefProcID_Traits< N::zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
-	template <>  struct DefProcID_Traits< N::zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< Nitrogen::documentProc    > : DefProcID_HasGrowIcon< true  >  {};
+	template <>  struct DefProcID_Traits< Nitrogen::dBoxProc        > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< Nitrogen::plainDBox       > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< Nitrogen::altDBoxProc     > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< Nitrogen::noGrowDocProc   > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< Nitrogen::movableDBoxProc > : DefProcID_HasGrowIcon< false >  {};
+	template <>  struct DefProcID_Traits< Nitrogen::zoomDocProc     > : DefProcID_HasGrowIcon< true  >  {};
+	template <>  struct DefProcID_Traits< Nitrogen::zoomNoGrow      > : DefProcID_HasGrowIcon< false >  {};
 	
-	template < N::WindowDefProcID defProcID >
+	template < Nitrogen::WindowDefProcID defProcID >
 	struct Static_DefProcID : DefProcID_Traits< defProcID >
 	{
-		N::WindowDefProcID Get() const  { return defProcID; }
+		Nitrogen::WindowDefProcID Get() const  { return defProcID; }
 	};
 	
 	class Variable_DefProcID
 	{
 		private:
-			N::WindowDefProcID itsDefProcID;
+			Nitrogen::WindowDefProcID itsDefProcID;
 		
 		public:
 			Variable_DefProcID() : itsDefProcID()
 			{
 			}
 			
-			Variable_DefProcID( N::WindowDefProcID procID ) : itsDefProcID( procID )
+			Variable_DefProcID( Nitrogen::WindowDefProcID procID ) : itsDefProcID( procID )
 			{
 			}
 			
-			N::WindowDefProcID Get() const  { return itsDefProcID; }
+			Nitrogen::WindowDefProcID Get() const  { return itsDefProcID; }
 			
 			bool HasGrowIcon() const  { return (itsDefProcID & 0x7) == 0; }
 	};
@@ -145,25 +142,27 @@ namespace Pedestal
 	class WindowCloseHandler
 	{
 		public:
-			virtual void operator()( N::WindowRef window ) const = 0;
+			virtual void operator()( Nitrogen::WindowRef window ) const = 0;
 	};
 	
 	class WindowResizeHandler
 	{
 		public:
-			virtual void operator()( N::WindowRef window, short h, short v ) const = 0;
+			virtual void operator()( Nitrogen::WindowRef window, short h, short v ) const = 0;
 	};
 	
 	class WindowRefOwner
 	{
 		private:
-			NN::Owned< N::WindowRef > windowRef;
+			Nucleus::Owned< Nitrogen::WindowRef > windowRef;
 		
 		public:
-			WindowRefOwner( NN::Owned< N::WindowRef > windowRef ) : windowRef( windowRef )  {}
+			WindowRefOwner( Nucleus::Owned< Nitrogen::WindowRef > windowRef ) : windowRef( windowRef )
+			{
+			}
 			
-			N::WindowRef Get()      const  { return windowRef; }
-			operator N::WindowRef() const  { return Get();     }
+			Nitrogen::WindowRef Get()      const  { return windowRef; }
+			operator Nitrogen::WindowRef() const  { return Get();     }
 			
 	};
 	
@@ -182,7 +181,7 @@ namespace Pedestal
 				itsCloseHandler = handler;
 			}
 			
-			void Close( N::WindowRef window )  { return (*itsCloseHandler)( window ); }
+			void Close( Nitrogen::WindowRef window )  { return (*itsCloseHandler)( window ); }
 	};
 	
 	class ResizableWindow
@@ -208,7 +207,7 @@ namespace Pedestal
 				itsResizeHandler = handler;
 			}
 			
-			void Resize( N::WindowRef window, short h, short v )
+			void Resize( Nitrogen::WindowRef window, short h, short v )
 			{
 				if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
 				{
@@ -242,12 +241,12 @@ namespace Pedestal
 	                   public WindowRefOwner
 	{
 		public:
-			WindowCore( NN::Owned< N::WindowRef > window ) : WindowRefOwner( window  )
+			WindowCore( Nucleus::Owned< Nitrogen::WindowRef > window ) : WindowRefOwner( window  )
 			{
 			}
 	};
 	
-	template < class Type, class DefProcID = Static_DefProcID< N::documentProc > >
+	template < class Type, class DefProcID = Static_DefProcID< Nitrogen::documentProc > >
 	class Window : public WindowCore
 	{
 		private:
@@ -300,7 +299,7 @@ namespace Pedestal
 		                          defProcID.Get(),
 		                          static_cast< WindowBase* >( this ) ) ),
 		itsDefProcID( defProcID ),
-		itsSubView  ( N::GlobalToLocal( context.bounds ), init )
+		itsSubView  ( Nitrogen::GlobalToLocal( context.bounds ), init )
 	{
 	}
 	
@@ -312,7 +311,7 @@ namespace Pedestal
 		                          DefProcID().Get(),
 		                          static_cast< WindowBase* >( this ) ) ),
 		itsDefProcID( DefProcID() ),
-		itsSubView  ( N::GlobalToLocal( context.bounds ), init )
+		itsSubView  ( Nitrogen::GlobalToLocal( context.bounds ), init )
 	{
 	}
 	
@@ -320,9 +319,9 @@ namespace Pedestal
 	inline void Window< Type, DefProcID >::MouseDown( const EventRecord& event )
 	{
 		// FIXME:  The window may want clicks even if it's not in front.
-		if ( Get() != N::FrontWindow() )
+		if ( Get() != Nitrogen::FrontWindow() )
 		{
-			N::SelectWindow( Get() );
+			Nitrogen::SelectWindow( Get() );
 		}
 		else
 		{
@@ -375,7 +374,7 @@ namespace Pedestal
 			public:
 				CloseHandler( WindowStorage& storage ) : storage( storage )  {}
 				
-				void operator()( N::WindowRef /*window*/ ) const
+				void operator()( Nitrogen::WindowRef /*window*/ ) const
 				{
 					// assert( storage.get() );
 					// assert( storage->Get() == window );
@@ -401,7 +400,7 @@ namespace Pedestal
 	{
 		if ( itsWindow.get() )
 		{
-			N::SelectWindow( itsWindow->Get() );
+			Nitrogen::SelectWindow( itsWindow->Get() );
 		}
 		else
 		{
@@ -423,7 +422,7 @@ namespace Pedestal
 			public:
 				CloseHandler( WindowStorage& windows ) : itsWindows( windows  )  {}
 				
-				void operator()( N::WindowRef window ) const
+				void operator()( Nitrogen::WindowRef window ) const
 				{
 					typename WindowStorage::iterator found = itsWindows.find( window );
 					
