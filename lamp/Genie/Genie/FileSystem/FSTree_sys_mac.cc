@@ -19,7 +19,7 @@
 #endif
 #include "Genie/FileSystem/FSTree_sys_mac_user.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_vol.hh"
-#include "Genie/FileSystem/FSTree_sys_mac_window.hh"
+//#include "Genie/FileSystem/FSTree_sys_mac_window.hh"
 
 
 namespace Genie
@@ -37,7 +37,7 @@ namespace Genie
 	{
 		{ "vol",    &Singleton_Factory< FSTree_sys_mac_vol    > },
 		{ "proc",   &Singleton_Factory< FSTree_sys_mac_proc   > },
-		{ "window", &Singleton_Factory< FSTree_sys_mac_window > },
+		//{ "window", &Singleton_Factory< FSTree_sys_mac_window > },
 		
 	#if !TARGET_API_MAC_CARBON
 		
