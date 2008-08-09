@@ -312,15 +312,7 @@ namespace Pedestal
 		{
 			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
-				if ( WindowBase* base = N::GetWRefCon( window ) )
-				{
-					// Resize the window
-					base->Resize( window, grown.h, grown.v );
-					
-					Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-					
-					base->Resized( bounds.right, bounds.bottom );
-				}
+				ResizeWindow( window, grown );
 			}
 		}
 	}
