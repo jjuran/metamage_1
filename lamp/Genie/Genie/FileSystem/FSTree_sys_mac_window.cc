@@ -11,18 +11,34 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 
-// Nitrogen
-#include "Nitrogen/MacWindows.h"
+// Pedestal
+#include "Pedestal/Window.hh"
 
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 
+
+namespace Nucleus
+{
+	
+	// Bust partial specialization ambiguity
+	template <>
+	struct Converter< std::string, std::string >: public std::unary_function< std::string, std::string >
+	{
+		const std::string& operator()( const std::string& input ) const
+		{
+			return input;
+		}
+	};
+	
+}
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Ped = Pedestal;
 	
 	
 	bool sys_mac_window_Details::KeyIsValid( const Key& key )
@@ -49,6 +65,42 @@ namespace Genie
 		Result operator()( N::WindowRef window ) const
 		{
 			return N::GetWTitle( window );
+		}
+	};
+	
+	struct GetWindowPosition
+	{
+		typedef std::string Result;
+		
+		Result operator()( N::WindowRef window ) const
+		{
+			Point position = Ped::GetWindowPosition( window );
+			
+			std::string result = NN::Convert< std::string >( position.h );
+			
+			result += ",";
+			
+			result += NN::Convert< std::string >( position.v );
+			
+			return result;
+		}
+	};
+	
+	struct GetWindowSize
+	{
+		typedef std::string Result;
+		
+		Result operator()( N::WindowRef window ) const
+		{
+			Point size = Ped::GetWindowSize( window );
+			
+			std::string result = NN::Convert< std::string >( size.h );
+			
+			result += "x";
+			
+			result += NN::Convert< std::string >( size.v );
+			
+			return result;
 		}
 	};
 	
@@ -87,7 +139,9 @@ namespace Genie
 	
 	const Functional_Traits< WindowRef_KeyName_Traits::Key >::Mapping sys_mac_window_REF_Mappings[] =
 	{
-		{ "name", &Query_Factory< GetWindowName > },
+		{ "name", &Query_Factory< GetWindowName     > },
+		{ "pos",  &Query_Factory< GetWindowPosition > },
+		{ "size", &Query_Factory< GetWindowSize     > },
 		
 		{ NULL, NULL }
 	};
