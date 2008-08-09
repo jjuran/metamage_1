@@ -29,6 +29,23 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
+	void ResizeWindow( Nitrogen::WindowRef window, Point newSize );
+	
+	
+	Point GetWindowSize( Nitrogen::WindowRef window );
+	
+	inline void SetWindowSize( Nitrogen::WindowRef window, Point size )
+	{
+		ResizeWindow( window, size );
+	}
+	
+	Point GetWindowPosition( Nitrogen::WindowRef window );
+	
+	inline void SetWindowPosition( Nitrogen::WindowRef window, Point position )
+	{
+		Nitrogen::MoveWindow( window, position );
+	}
+	
 	struct NewWindowContext
 	{
 		const Rect&         bounds;

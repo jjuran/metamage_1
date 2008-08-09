@@ -18,6 +18,49 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	
+	void ResizeWindow( N::WindowRef window, Point newSize )
+	{
+		if ( WindowBase* base = N::GetWRefCon( window ) )
+		{
+			// Resize the window
+			base->Resize( window, newSize.h, newSize.v );
+			
+			// Don't rely on the requested size because it might have been tweaked
+			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+			
+			// Inform the window's contents that it has been resized
+			base->Resized( bounds.right, bounds.bottom );
+		}
+	}
+	
+	
+	Point GetWindowSize( N::WindowRef window )
+	{
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		
+		Point result;
+		
+		result.h = bounds.right - bounds.left;
+		result.v = bounds.bottom - bounds.top;
+		
+		return result;
+	}
+	
+	Point GetWindowPosition( N::WindowRef window )
+	{
+		NN::Saved< N::Port_Value > savedPort;
+		
+		N::SetPortWindowPort( window );
+		
+		Point upperLeft = { 0, 0 };
+		
+		::LocalToGlobal( &upperLeft );
+		
+		return upperLeft;
+	}
+	
+	
 	NN::Owned< N::WindowRef > CreateWindow( const Rect&         bounds,
 	                                        ConstStr255Param    title,
 	                                        bool                visible,
