@@ -42,7 +42,18 @@ namespace Genie
 	}
 	
 	
-	class sys_mac_window_REF_name_Query
+	struct GetWindowName
+	{
+		typedef N::Str255 Result;
+		
+		Result operator()( N::WindowRef window ) const
+		{
+			return N::GetWTitle( window );
+		}
+	};
+	
+	template < class Get >
+	class sys_mac_window_REF_Query
 	{
 		private:
 			typedef N::WindowRef Key;
@@ -50,25 +61,24 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			sys_mac_window_REF_name_Query( const Key& key ) : itsKey( key )
+			sys_mac_window_REF_Query( const Key& key ) : itsKey( key )
 			{
 			}
 			
 			std::string operator()() const
 			{
-				N::Str255 name = N::GetWTitle( itsKey );
-				
-				std::string output = NN::Convert< std::string >( name ) + "\n";
+				std::string output = NN::Convert< std::string >( Get()( itsKey ) ) + "\n";
 				
 				return output;
 			}
 	};
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&                parent,
-	                               const std::string&              name,
-	                               WindowRef_KeyName_Traits::Key   key )
+	template < class Get >
+	static FSTreePtr Query_Factory( const FSTreePtr&                parent,
+	                                const std::string&              name,
+	                                WindowRef_KeyName_Traits::Key   key )
 	{
-		typedef sys_mac_window_REF_name_Query Query;
+		typedef sys_mac_window_REF_Query< Get > Query;
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
@@ -77,7 +87,7 @@ namespace Genie
 	
 	const Functional_Traits< WindowRef_KeyName_Traits::Key >::Mapping sys_mac_window_REF_Mappings[] =
 	{
-		{ "name", &Name_Factory },
+		{ "name", &Query_Factory< GetWindowName > },
 		
 		{ NULL, NULL }
 	};
