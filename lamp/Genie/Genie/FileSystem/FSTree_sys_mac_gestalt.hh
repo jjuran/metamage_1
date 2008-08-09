@@ -118,7 +118,7 @@ namespace Genie
 	{
 		typedef Nitrogen::GestaltTable_Container Sequence;
 		
-		static const Sequence& ItemSequence()  { return Nitrogen::GestaltTable(); }
+		static Sequence ItemSequence()  { return Nitrogen::GestaltTable(); }
 		
 		static Key KeyFromValue( Sequence::const_reference ref )  { return ref; }
 		

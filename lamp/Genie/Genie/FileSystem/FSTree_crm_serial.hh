@@ -24,7 +24,7 @@ namespace Genie
 	{
 		typedef Nitrogen::CRMSerialDevice_Container Sequence;
 		
-		static const Sequence& ItemSequence()  { return Nitrogen::CRMSerialDevices(); }
+		static Sequence ItemSequence()  { return Nitrogen::CRMSerialDevices(); }
 		
 		static Key KeyFromValue( Sequence::const_reference ref )  { return Key( ref->crmDeviceID ); }
 		

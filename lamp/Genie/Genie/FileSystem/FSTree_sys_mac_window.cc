@@ -27,7 +27,7 @@ namespace Genie
 	
 	bool sys_mac_window_Details::KeyIsValid( const Key& key )
 	{
-		const Sequence& sequence = ItemSequence();
+		Sequence sequence = ItemSequence();
 		
 		return std::find( sequence.begin(), sequence.end(), key ) != sequence.end();
 	}

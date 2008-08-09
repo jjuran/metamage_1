@@ -176,8 +176,10 @@ namespace Genie
 	{
 		IteratorConverter< Details > converter( shared_from_this(), itsDetails );
 		
-		std::transform( itsDetails.ItemSequence().begin(),
-		                itsDetails.ItemSequence().end(),
+		typename Details::Sequence sequence = itsDetails.ItemSequence();
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
 		                std::back_inserter( cache ),
 		                converter );
 	}

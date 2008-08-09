@@ -95,7 +95,7 @@ namespace Genie
 	{
 		typedef Nitrogen::DriveQueue_Container Sequence;
 		
-		static const Sequence& ItemSequence()  { return Nitrogen::DriveQueue(); }
+		static Sequence ItemSequence()  { return Nitrogen::DriveQueue(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return Key( value.dQDrive ); }
 		

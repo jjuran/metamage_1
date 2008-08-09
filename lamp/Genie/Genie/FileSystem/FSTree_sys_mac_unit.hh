@@ -132,7 +132,7 @@ namespace Genie
 	{
 		typedef Nitrogen::UnitTableDrivers_Container Sequence;
 		
-		static const Sequence& ItemSequence()  { return Nitrogen::UnitTableDrivers(); }
+		static Sequence ItemSequence()  { return Nitrogen::UnitTableDrivers(); }
 		
 		static Key KeyFromValue( Sequence::const_reference ref )  { return &ref - GetUTableBase(); }
 		

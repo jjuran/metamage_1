@@ -32,7 +32,7 @@ namespace Genie
 	{
 		typedef Nitrogen::Volume_Container Sequence;
 		
-		static const Sequence& ItemSequence()  { return Nitrogen::Volumes(); }
+		static Sequence ItemSequence()  { return Nitrogen::Volumes(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		

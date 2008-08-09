@@ -29,7 +29,7 @@ namespace Genie
 	{
 		typedef Nitrogen::Process_Container Sequence;
 		
-		static const Sequence& ItemSequence()  { return Nitrogen::Processes(); }
+		static Sequence ItemSequence()  { return Nitrogen::Processes(); }
 		
 		static Key KeyFromValue( const Sequence::value_type& value )  { return value; }
 		
