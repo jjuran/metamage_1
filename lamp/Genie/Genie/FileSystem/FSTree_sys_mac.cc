@@ -7,6 +7,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_desktop.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gestalt.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_machine.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_name.hh"
@@ -48,6 +49,7 @@ namespace Genie
 		
 	#endif
 		
+		{ "desktop", &Premapped_Factory< sys_mac_desktop_Mappings > },
 		{ "machine", &Premapped_Factory< sys_mac_machine_Mappings > },
 		{ "user",    &Premapped_Factory< sys_mac_user_Mappings    > },
 		
