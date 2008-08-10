@@ -18,21 +18,6 @@
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 
 
-namespace Nucleus
-{
-	
-	// Bust partial specialization ambiguity
-	template <>
-	struct Converter< std::string, std::string >: public std::unary_function< std::string, std::string >
-	{
-		const std::string& operator()( const std::string& input ) const
-		{
-			return input;
-		}
-	};
-	
-}
-
 namespace Genie
 {
 	
