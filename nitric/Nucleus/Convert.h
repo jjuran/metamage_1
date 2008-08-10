@@ -110,8 +110,21 @@ namespace Nucleus
       return Converter< Output, typename ConvertInputTraits<Input>::ConverterInputType >( p1, p2, p3 )( input );
      }
 
-
-   
+	// Bust partial specialization ambiguity
+	template < class Char, class Traits, class Allocator >
+	struct Converter< std::basic_string< Char, Traits, Allocator >,
+	                  std::basic_string< Char, Traits, Allocator > >
+	: public std::unary_function< std::basic_string< Char, Traits, Allocator >,
+	                              std::basic_string< Char, Traits, Allocator > >
+	{
+		typedef std::basic_string< Char, Traits, Allocator > String;
+		
+		const String& operator()( const String& input ) const
+		{
+			return input;
+		}
+	};
+	
    template < class CharT,
               class Traits,
               class Allocator,
