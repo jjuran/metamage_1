@@ -234,6 +234,26 @@ namespace Genie
 		            : ReadProgramAsCodeFragment( file );
 	}
 	
+	static bool CachedImageIsPurged( const BinaryImageCache::value_type& value )
+	{
+		const BinaryImageCacheEntry& cacheEntry = value.second;
+		
+		const BinaryImage& image = cacheEntry.image;
+		
+		return *image.get() == NULL;
+	}
+	
+	template < class Container, class Predicate >
+	static void erase_if( Container& container, Predicate f )
+	{
+		Container::iterator it;
+		
+		while ( (it = std::find_if( container.begin(), container.end(), f )) != container.end() )
+		{
+			container.erase( it );
+		}
+	}
+	
 	static void ReleaseCachedImageIfUnused( const BinaryImageCache::value_type& value )
 	{
 		const BinaryImageCacheEntry& cacheEntry = value.second;
@@ -248,6 +268,8 @@ namespace Genie
 	
 	static void ReleaseUnusedCode()
 	{
+		erase_if( gBinaryImageCache, std::ptr_fun( CachedImageIsPurged ) );
+		
 		std::for_each( gBinaryImageCache.begin(),
 		               gBinaryImageCache.end(),
 		               std::ptr_fun( ReleaseCachedImageIfUnused ) );
