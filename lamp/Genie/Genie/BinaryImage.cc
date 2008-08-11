@@ -234,6 +234,25 @@ namespace Genie
 		            : ReadProgramAsCodeFragment( file );
 	}
 	
+	static void ReleaseCachedImageIfUnused( const BinaryImageCache::value_type& value )
+	{
+		const BinaryImageCacheEntry& cacheEntry = value.second;
+		
+		const BinaryImage& image = cacheEntry.image;
+		
+		if ( image.Sole() && *image.get() )
+		{
+			N::HUnlock( image.get() );
+		}
+	}
+	
+	static void ReleaseUnusedCode()
+	{
+		std::for_each( gBinaryImageCache.begin(),
+		               gBinaryImageCache.end(),
+		               std::ptr_fun( ReleaseCachedImageIfUnused ) );
+	}
+	
 	BinaryImage GetBinaryImage( const FSSpec& file )
 	{
 		if ( TARGET_CPU_68K )
@@ -251,6 +270,8 @@ namespace Genie
 			return ReadImageFromFile( file );
 		}
 		
+		ReleaseUnusedCode();
+		
 		BinaryFileMetadata metadata = GetFileMetadata( file );
 		
 		BinaryImageCache::iterator it = gBinaryImageCache.find( file );
@@ -265,7 +286,20 @@ namespace Genie
 			// Do the metadata match?
 			if ( cacheEntry->metadata == metadata )
 			{
-				return cacheEntry->image;  // Yup, we're done
+				const BinaryImage& image = cacheEntry->image;
+				
+				N::Handle h = image.get();
+				
+				// Is the handle unpurged?
+				if ( *h )
+				{
+					// Make sure it's locked
+					N::HLockHi( h );
+					
+					return image;
+				}
+				
+				// Our cached image got purged; load another
 			}
 		}
 		else
@@ -277,6 +311,9 @@ namespace Genie
 		
 		newEntry.metadata = metadata;
 		newEntry.image    = ReadImageFromFile( file );
+		
+		// Mark it purgeable for when we later unlock it
+		N::HPurge( newEntry.image );
 		
 		// Install the new cache entry
 		*cacheEntry = newEntry;
