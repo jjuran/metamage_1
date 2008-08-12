@@ -543,7 +543,7 @@ namespace Genie
 			Process& target( pid != 0 ? GetProcess( pid )
 			                          : current );
 			
-			bool target_is_self = pid == 0  ||  target.GetPID() != current.GetPID();
+			bool target_is_self = pid == 0  ||  target.GetPID() == current.GetPID();
 			
 			if ( target_is_self )
 			{
