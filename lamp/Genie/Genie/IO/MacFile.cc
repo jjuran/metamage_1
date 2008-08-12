@@ -5,6 +5,9 @@
 
 #include "Genie/IO/MacFile.hh"
 
+// POSIX
+#include <fcntl.h>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -42,8 +45,9 @@ namespace Genie
 		return result;
 	}
 	
-	MacFileHandle::MacFileHandle( NN::Owned< N::FSFileRefNum > refNum )
-	: refNum( refNum )
+	MacFileHandle::MacFileHandle( NN::Owned< N::FSFileRefNum > refNum, OpenFlags flags )
+	: refNum( refNum ),
+	  itsOpenFlags( flags )
 	{
 	}
 	
@@ -58,6 +62,11 @@ namespace Genie
 	
 	int MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
+		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  N::GetFPos( refNum ) == 0 )
+		{
+			N::SetEOF( refNum, 0 );
+		}
+		
 		return N::FSWrite( refNum, byteCount, data );
 	}
 	

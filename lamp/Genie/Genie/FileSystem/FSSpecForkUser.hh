@@ -21,7 +21,7 @@ namespace Genie
 		public:
 			virtual Nucleus::Owned< Nitrogen::FSFileRefNum > OpenFork( const FSSpec& fileSpec, Nitrogen::FSIOPermissions perm ) const = 0;
 			
-			virtual boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum ) const = 0;
+			virtual boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) const = 0;
 			
 			boost::shared_ptr< IOHandle > OpenFileHandle( const FSSpec& fileSpec, OpenFlags flags ) const;
 	};
@@ -34,7 +34,7 @@ namespace Genie
 				return Nitrogen::FSpOpenDF( fileSpec, perm );
 			}
 			
-			boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum ) const;
+			boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) const;
 	};
 	
 	class ResourceForkUser : public FSSpecForkUser
@@ -45,7 +45,7 @@ namespace Genie
 				return Nitrogen::FSpOpenRF( fileSpec, perm );
 			}
 			
-			boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum ) const;
+			boost::shared_ptr< IOHandle > NewFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) const;
 	};
 	
 }

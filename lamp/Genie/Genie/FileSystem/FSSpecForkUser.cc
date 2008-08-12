@@ -31,10 +31,11 @@ namespace Genie
 		bool truncating  = flags & O_TRUNC;
 		bool excluding   = flags & O_EXCL;
 		// ...
+		bool lazy        = flags & O_LAZY;
 		
 		NN::Owned< N::FSFileRefNum > fileHandle = OpenFork( fileSpec, rdPerm | wrPerm );
 		
-		if ( truncating )
+		if ( truncating  && !lazy )
 		{
 			N::SetEOF( fileHandle, 0 );
 		}
@@ -43,17 +44,17 @@ namespace Genie
 			N::SetFPos( fileHandle, N::fsFromLEOF, 0 );
 		}
 		
-		return NewFileHandle( fileHandle );
+		return NewFileHandle( fileHandle, flags );
 	}
 	
-	boost::shared_ptr< IOHandle > DataForkUser::NewFileHandle( NN::Owned< N::FSFileRefNum > refNum ) const
+	boost::shared_ptr< IOHandle > DataForkUser::NewFileHandle( NN::Owned< N::FSFileRefNum > refNum, OpenFlags flags ) const
 	{
-		return boost::shared_ptr< IOHandle >( new MacDataForkHandle( refNum ) );
+		return boost::shared_ptr< IOHandle >( new MacDataForkHandle( refNum, flags ) );
 	}
 	
-	boost::shared_ptr< IOHandle > ResourceForkUser::NewFileHandle( NN::Owned< N::FSFileRefNum > refNum ) const
+	boost::shared_ptr< IOHandle > ResourceForkUser::NewFileHandle( NN::Owned< N::FSFileRefNum > refNum, OpenFlags flags ) const
 	{
-		return boost::shared_ptr< IOHandle >( new MacRsrcForkHandle( refNum ) );
+		return boost::shared_ptr< IOHandle >( new MacRsrcForkHandle( refNum, flags ) );
 	}
 	
 }

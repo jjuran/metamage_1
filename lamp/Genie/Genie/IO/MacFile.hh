@@ -26,9 +26,11 @@ namespace Genie
 	{
 		private:
 			Nucleus::Owned< Nitrogen::FSFileRefNum > refNum;
+			
+			OpenFlags  itsOpenFlags;
 		
 		public:
-			MacFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum );
+			MacFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags );
 			
 			~MacFileHandle();
 			
@@ -50,7 +52,9 @@ namespace Genie
 	class MacDataForkHandle : public MacFileHandle
 	{
 		public:
-			MacDataForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
+			MacDataForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) : MacFileHandle( refNum, flags )
+			{
+			}
 			
 			FSTreePtr GetFile() const;
 	};
@@ -58,7 +62,9 @@ namespace Genie
 	class MacRsrcForkHandle : public MacFileHandle
 	{
 		public:
-			MacRsrcForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum ) : MacFileHandle( refNum )  {}
+			MacRsrcForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) : MacFileHandle( refNum, flags )
+			{
+			}
 			
 			FSTreePtr GetFile() const;
 	};
