@@ -41,11 +41,9 @@ extern "C" {
 	
 	#define	O_NOCTTY	0		/* don't assign controlling terminal */
 	
-	enum
-	{
-		O_ResFork = 0x00010000,
-		O_ResMap  = 0x00010001
-	};
+	#define O_LAZY  0x00010000
+	
+	#define O_TRUNC_LAZY  (O_TRUNC | O_LAZY)  // truncate at initial write(), not open()
 	
 	#define	F_DUPFD  0
 	#define	F_GETFD  1
