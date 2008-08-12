@@ -45,6 +45,12 @@ namespace poseven
 		o_append = O_APPEND,
 		o_excl   = O_EXCL,
 		
+	#ifdef O_TRUNC_LAZY
+		
+		o_trunc_lazy = O_TRUNC_LAZY,
+		
+	#endif
+		
 		oflag_t_max = Nucleus::Enumeration_Traits< int >::max
 	};
 	
