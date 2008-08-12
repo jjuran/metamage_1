@@ -152,7 +152,7 @@ int O::Main( int argc, argv_t argv )
 		}
 		
 		// set fg pg
-		tcsetpgrp( STDIN_FILENO, shell_pgid );
+		tcsetpgrp( STDIN_FILENO, pid );
 		
 		// save terminal attrs
 	}
