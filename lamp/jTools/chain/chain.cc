@@ -78,7 +78,7 @@ int main( int argc, const char *argv[] )
 		// child process, or end of chain
 		if ( pid == 0 )
 		{
-			(void) execvp( argp[ 0 ], argp );
+			(void) execvp( argp[ 0 ], (char**) argp );
 			
 			std::fprintf( stderr, "%s: %s: %s\n", argv[0], argp[0], std::strerror( errno ) );
 			
