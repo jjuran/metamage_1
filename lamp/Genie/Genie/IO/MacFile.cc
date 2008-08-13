@@ -45,9 +45,10 @@ namespace Genie
 		return result;
 	}
 	
-	MacFileHandle::MacFileHandle( NN::Owned< N::FSFileRefNum > refNum, OpenFlags flags )
-	: refNum( refNum ),
-	  itsOpenFlags( flags )
+	MacFileHandle::MacFileHandle( NN::Owned< N::FSFileRefNum >  refNum,
+	                              OpenFlags                     flags )
+	: itsRefNum   ( refNum ),
+	  itsOpenFlags( flags  )
 	{
 	}
 	
@@ -57,17 +58,17 @@ namespace Genie
 	
 	int MacFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return N::FSRead( refNum, byteCount, data, N::ReturnZeroOnEOF() );
+		return N::FSRead( itsRefNum, byteCount, data, N::ReturnZeroOnEOF() );
 	}
 	
 	int MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  N::GetFPos( refNum ) == 0 )
+		if ( (itsOpenFlags & O_TRUNC_LAZY)  &&  N::GetFPos( itsRefNum ) == 0 )
 		{
-			N::SetEOF( refNum, 0 );
+			N::SetEOF( itsRefNum, 0 );
 		}
 		
-		return N::FSWrite( refNum, byteCount, data );
+		return N::FSWrite( itsRefNum, byteCount, data );
 	}
 	
 	off_t MacFileHandle::Seek( off_t offset, int whence )
@@ -93,15 +94,16 @@ namespace Genie
 				throw N::ParamErr();
 		}
 		
-		N::SetFPos( refNum, mode, offset );
+		N::SetFPos( itsRefNum, mode, offset );
 		
-		return N::GetFPos( refNum );
+		return N::GetFPos( itsRefNum );
 	}
 	
 	FSSpec MacFileHandle::GetFSSpec( bool forCreation ) const
 	{
-		return FSSpecFromFRefNum( refNum );
+		return FSSpecFromFRefNum( itsRefNum );
 	}
+	
 	
 	FSTreePtr MacDataForkHandle::GetFile() const
 	{

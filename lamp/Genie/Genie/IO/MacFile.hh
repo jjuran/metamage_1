@@ -15,8 +15,8 @@
 // Nitrogen
 #include "Nitrogen/Files.h"
 
- // Genie
- #include "Genie/IO/RegularFile.hh"
+// Genie
+#include "Genie/IO/RegularFile.hh"
 
 
 namespace Genie
@@ -25,12 +25,13 @@ namespace Genie
 	class MacFileHandle : public RegularFileHandle
 	{
 		private:
-			Nucleus::Owned< Nitrogen::FSFileRefNum > refNum;
+			Nucleus::Owned< Nitrogen::FSFileRefNum > itsRefNum;
 			
 			OpenFlags  itsOpenFlags;
 		
 		public:
-			MacFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags );
+			MacFileHandle( Nucleus::Owned< Nitrogen::FSFileRefNum >  refNum,
+			               OpenFlags                                 flags );
 			
 			~MacFileHandle();
 			
@@ -42,9 +43,9 @@ namespace Genie
 			
 			off_t Seek( off_t offset, int whence );
 			
-			off_t GetEOF() const  { return Nitrogen::GetEOF( refNum ); }
+			off_t GetEOF() const  { return Nitrogen::GetEOF( itsRefNum ); }
 			
-			void SetEOF( off_t length )  { Nitrogen::SetEOF( refNum, length ); }
+			void SetEOF( off_t length )  { Nitrogen::SetEOF( itsRefNum, length ); }
 			
 			FSSpec GetFSSpec( bool forCreation = false ) const;
 	};
@@ -52,7 +53,8 @@ namespace Genie
 	class MacDataForkHandle : public MacFileHandle
 	{
 		public:
-			MacDataForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) : MacFileHandle( refNum, flags )
+			MacDataForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum >  refNum,
+			                   OpenFlags                                 flags ) : MacFileHandle( refNum, flags )
 			{
 			}
 			
@@ -62,7 +64,8 @@ namespace Genie
 	class MacRsrcForkHandle : public MacFileHandle
 	{
 		public:
-			MacRsrcForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum > refNum, OpenFlags flags ) : MacFileHandle( refNum, flags )
+			MacRsrcForkHandle( Nucleus::Owned< Nitrogen::FSFileRefNum >  refNum,
+			                   OpenFlags                                 flags ) : MacFileHandle( refNum, flags )
 			{
 			}
 			
