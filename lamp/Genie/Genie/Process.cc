@@ -850,6 +850,7 @@ namespace Genie
 	
 	Process::Process( Process& parent ) 
 	:
+		SignalReceiver        ( parent ),
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( GetProcessList().NewProcess( this ) ),
 		itsForkedChildPID     ( 0 ),
@@ -868,6 +869,8 @@ namespace Genie
 		itsMainEntry          ( parent.itsMainEntry ),
 		itsCleanupHandler     ()
 	{
+		ClearPendingSignals();
+		
 		parent.SuspendForFork( itsPID );
 		
 		gCurrentProcess = this;
@@ -995,6 +998,10 @@ namespace Genie
 		Normalize( context, GetCWD() );
 		
 		CloseMarkedFileDescriptors( itsFileDescriptors );
+		
+		ClearPendingSignals();
+		
+		ResetSignalHandlers();
 		
 		itsCmdLine.Assign( &context.argVector.front() );
 		
