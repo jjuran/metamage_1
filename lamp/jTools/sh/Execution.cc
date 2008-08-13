@@ -549,6 +549,22 @@ static Command ParseCommand( const Command& command )
 	return Sh::ParseCommand( command, ShellParameterDictionary() );
 }
 
+static void SetupChildProcess( pid_t pgid = 0 )
+{
+	if ( GetOption( kOptionMonitor ) )
+	{
+		signal( SIGINT,  SIG_DFL );
+		signal( SIGQUIT, SIG_DFL );
+		signal( SIGTSTP, SIG_DFL );
+		signal( SIGTTIN, SIG_DFL );
+		signal( SIGTTOU, SIG_DFL );
+		
+		setpgid( 0, pgid );
+		
+		tcsetpgrp( 0, getpgrp() );
+	}
+}
+
 static int ExecuteCommand( const Command& command )
 {
 	Sh::StringArray argvec( command.args );
@@ -578,12 +594,7 @@ static int ExecuteCommand( const Command& command )
 		
 		if ( pid == 0 )
 		{
-			if ( GetOption( kOptionMonitor ) )
-			{
-				setpgid( 0, 0 );
-				
-				tcsetpgrp( 0, getpgrp() );
-			}
+			SetupChildProcess();
 			
 			try
 			{
@@ -749,12 +760,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		close( writing );     // we duped this, close it
 		close( pipes[ 0 ] );  // we don't read from this pipe, close it
 		
-		if ( GetOption( kOptionMonitor ) )
-		{
-			setpgid( 0, 0 );
-			
-			tcsetpgrp( 0, getpgrp() );
-		}
+		SetupChildProcess();
 		
 		// exec or exit
 		ExecuteCommandAndExitFromPipeline( commands.front() );
@@ -787,7 +793,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 			close( writing );     // we duped this, close it
 			close( pipes[ 0 ] );  // we don't read from this pipe, close it
 			
-			setpgid( 0, first );
+			SetupChildProcess( first );
 			
 			ExecuteCommandAndExitFromPipeline( *command );
 		}
@@ -812,7 +818,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		
 		close( reading );     // we duped this, close it
 		
-		setpgid( 0, first );
+		SetupChildProcess( first );
 		
 		ExecuteCommandAndExitFromPipeline( *command );
 	}
