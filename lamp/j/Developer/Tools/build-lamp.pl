@@ -80,7 +80,7 @@ my @programs = qw
 	A-line
 	SetFile
 	abort aevt argv0
-	beep buserror
+	beep buffer buserror
 	cat cds console cp cpres cr2lf
 	divide
 	echo env err2text
@@ -150,7 +150,8 @@ my %fsmap =
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
-			qw( console cr2lf divide icon idle jtest lf2cr lf2crlf mread pause ptrace setwindow stripcr striplf th window ),
+			qw( buffer console icon idle pause setwindow window ),
+			qw( cr2lf divide jtest lf2cr lf2crlf mread pause ptrace stripcr striplf th ),
 			qw( beep cds drvr err2text gestalt keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
