@@ -1,4 +1,4 @@
 #!/bin/sh
 
-window --title=Diagnostics -- sh -c 'setwindow --pos=10,50 --size=700x400; cat /dev/fd/5; idle' 5< "$1"
+window --title=Diagnostics -- chain setwindow --pos=10,50 --size=700x400 ';' cat "$1" ';' idle
 
