@@ -36,6 +36,10 @@ namespace Genie
 		public:
 			SignalReceiver();
 			
+			void ClearPendingSignals()  { itsPendingSignals = 0; }
+			
+			void ResetSignalHandlers();
+			
 			const struct sigaction& GetSignalAction( int signo ) const;
 			
 			void SetSignalAction( int signo, const struct sigaction& action );

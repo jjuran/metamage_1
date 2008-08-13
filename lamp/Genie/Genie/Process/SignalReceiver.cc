@@ -5,6 +5,10 @@
 
 #include "Genie/Process/SignalReceiver.hh"
 
+// Standard C++
+#include <algorithm>
+#include <functional>
+
 // Standard C/C++
 #include <cstring>
 
@@ -28,6 +32,21 @@ namespace Genie
 	                                   itsBlockedSignals()
 	{
 		std::memset( itsActions, 0, sizeof itsActions );
+	}
+	
+	static void ResetSignalHandler( struct sigaction& action )
+	{
+		if ( action.sa_handler != SIG_IGN )
+		{
+			action.sa_handler = SIG_DFL;
+		}
+	}
+	
+	void SignalReceiver::ResetSignalHandlers()
+	{
+		std::for_each( itsActions,
+		               itsActions + NSIG,
+		               std::ptr_fun( ResetSignalHandler ) );
 	}
 	
 	const struct sigaction& SignalReceiver::GetSignalAction( int signo ) const
