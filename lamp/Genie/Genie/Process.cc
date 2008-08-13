@@ -982,6 +982,9 @@ namespace Genie
 	                    const char* const   argv[],
 	                    const char* const*  envp )
 	{
+		// Declare this first so it goes out of scope last
+		NN::Owned< N::ThreadID > looseThread;
+		
 		// Do we take the name before or after normalization?
 		itsName = executable->Name();
 		
@@ -1012,9 +1015,9 @@ namespace Genie
 		stackSize = std::max( stackSize, 32768ul );  // at least 32K of stack
 		
 		// Create the new thread
-		NN::Owned< N::ThreadID > newThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
-		                                                                                   this,
-		                                                                                   stackSize );
+		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
+		                                                            this,
+		                                                            stackSize );
 		
 		if ( itsCleanupHandler != NULL )
 		{
@@ -1023,11 +1026,8 @@ namespace Genie
 			itsCleanupHandler( not_destroying_globals );
 		}
 		
-		// Save the old thread until end of scope
-		NN::Owned< N::ThreadID > savedThreadID = itsThread;
-		
-		// Make the new thread belong to this process
-		itsThread = newThread;
+		// Make the new thread belong to this process and save the old one
+		itsThread.swap( looseThread );
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
