@@ -81,7 +81,7 @@ my @programs = qw
 	SetFile
 	abort aevt argv0
 	beep buffer buserror
-	cat cds console cp cpres cr2lf
+	cat cds chain console cp cpres cr2lf
 	divide
 	echo env err2text
 	false
@@ -151,7 +151,7 @@ my %fsmap =
 			qw( cidlistener cidmon mcmd ),
 			qw( local-edit-client ),
 			qw( buffer console icon idle pause setwindow window ),
-			qw( cr2lf divide jtest lf2cr lf2crlf mread pause ptrace stripcr striplf th ),
+			qw( chain cr2lf divide jtest lf2cr lf2crlf mread pause ptrace stripcr striplf th ),
 			qw( beep cds drvr err2text gestalt keymods macbin ),
 			qw( env grep head printenv strings tee time tr wc ),
 		],
