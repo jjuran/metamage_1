@@ -8,6 +8,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/types.h>
 
 #ifndef __MWERKS__
 
