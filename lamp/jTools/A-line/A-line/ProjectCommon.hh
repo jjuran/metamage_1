@@ -1,8 +1,6 @@
 /*	================
  *	ProjectCommon.hh
  *	================
- *	
- *	Implemented by ProjectCommon.cc
  */
 
 #pragma once
@@ -33,11 +31,6 @@ namespace ALine
 	void AddInclude ( const IncludePath& includePath, const std::string& file );
 	
 	void AddRezFile( const std::string& file );
-	
-	/*
-	void SetCurrentSourceDir( const N::FSDirSpec& dir );
-	void SetCurrentSourceDir( int zero );
-	*/
 	
 	time_t RecursivelyLatestDate( const IncludePath& includePath );
 	time_t RecursivelyLatestDate( const IncludePath& includePath, const std::string& pathname );

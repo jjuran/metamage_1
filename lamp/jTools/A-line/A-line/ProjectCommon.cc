@@ -46,9 +46,6 @@ namespace ALine
 	static IncludeMap gIncludes;
 	static DateMap gDates;
 	
-	//static bool gNeedsCwdSourceOption = false;
-	//static N::FSDirSpec gCurrentSourceDir;
-	
 	
 	Project& GetProject( const ProjName& projName )
 	{
@@ -85,21 +82,6 @@ namespace ALine
 		gRezzes[ io::get_filename_string( file ) ] = file;
 	}
 	
-	/*
-	void SetCurrentSourceDir( const N::FSDirSpec& dir )
-	{
-		gNeedsCwdSourceOption = true;
-		gCurrentSourceDir = dir;
-	}
-	
-	void SetCurrentSourceDir( int zero )
-	{
-		ASSERT( zero == 0 );
-		
-		gNeedsCwdSourceOption = false;
-	}
-	*/
-	
 	std::string IncludeLocation( const IncludePath& includePath )
 	{
 		return gIncludes[ includePath ];
@@ -113,22 +95,6 @@ namespace ALine
 	
 	bool FindInclude( const IncludePath& includePath )
 	{
-		// This is a nasty hack.
-		// It would be nice if we didn't have to support this, but OpenSSL requires it.
-		
-		/*
-		if ( gNeedsCwdSourceOption )
-		{
-			FSSpec file = gCurrentSourceDir / includePath;
-			
-			if ( io::item_exists( file ) )
-			{
-				AddInclude( includePath, file );
-				return true;
-			}
-		}
-		*/
-		
 		ProjectSet::const_iterator it, end = gProjectsWithIncludeDirs.end();
 		
 		// For each project with an include folder,
