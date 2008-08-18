@@ -14,9 +14,11 @@
 // POSIX
 #include "unistd.h"
 
+// Boost
+#include <boost/shared_ptr.hpp>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
-#include "Nucleus/Shared.h"
 
 // POSeven
 #include "POSeven/Pathnames.hh"
@@ -34,7 +36,7 @@ namespace ALine
 	using namespace io::path_descent_operators;
 	
 	
-	typedef std::map< ProjName, NN::Shared< Project*, NN::DisposeWithDelete > > ProjectMap;
+	typedef std::map< ProjName, boost::shared_ptr< Project > > ProjectMap;
 	typedef std::set< ProjName > ProjectSet;
 	typedef std::map< FileName, std::string > FileMap;
 	typedef std::map< IncludePath, std::string > IncludeMap;
@@ -54,12 +56,12 @@ namespace ALine
 		if ( it != gProjects.end() )
 		{
 			// We already have it
-			return *it->second.Get();
+			return *it->second;
 		}
 		
 		// Load it
-		NN::Owned< Project*, NN::DisposeWithDelete > newProject = NN::Owned< Project*, NN::DisposeWithDelete >::Seize( new Project( projName ) );
-		Project& project = *( gProjects[ projName ] = newProject ).Get();
+		boost::shared_ptr< Project > newProject( new Project( projName ) );
+		Project& project = *( gProjects[ projName ] = newProject );
 		
 		project.Study();
 		
