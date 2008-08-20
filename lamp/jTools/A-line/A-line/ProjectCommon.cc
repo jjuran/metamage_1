@@ -22,7 +22,7 @@
 
 // A-line
 #include "A-line/BuildCommon.hh"
-#include "A-line/ExtractIncludes.hh"
+#include "A-line/Includes.hh"
 
 
 namespace ALine
@@ -169,7 +169,7 @@ namespace ALine
 	
 	time_t RecursivelyLatestDate( const IncludePath& includePath, const std::string& pathname )
 	{
-		std::vector< IncludePath > includes = ExtractIncludes( pathname );
+		const std::vector< IncludePath >& includes = GetIncludes( pathname ).user;
 		
 		time_t modDate = ModifiedDate( pathname );
 		
