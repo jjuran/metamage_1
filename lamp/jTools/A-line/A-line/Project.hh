@@ -73,7 +73,7 @@ namespace ALine
 			
 			void Study();
 			
-			bool FindInclude( const IncludePath& includePath );
+			std::string FindInclude( const IncludePath& includePath );
 	};
 	
 }

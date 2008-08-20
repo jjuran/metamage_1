@@ -90,7 +90,7 @@ namespace ALine
 		gIncludes[ includePath ] = file;
 	}
 	
-	bool FindInclude( const IncludePath& includePath )
+	std::string FindInclude( const IncludePath& includePath )
 	{
 		ProjectSet::const_iterator it, end = gProjectsWithIncludeDirs.end();
 		
@@ -100,14 +100,16 @@ namespace ALine
 			const ProjName& proj = *it;
 			
 			// Check to see if it has the include file.
-			if ( GetProject( proj ).FindInclude( includePath ) )
+			std::string path = GetProject( proj ).FindInclude( includePath );
+			
+			if ( !path.empty() )
 			{
 				// If we get here, the file exists and its location is stored.
-				return true;
+				return path;
 			}
 		}
 		
-		return false;
+		return "";
 	}
 	
 	time_t RecursivelyLatestDate( const IncludePath& includePath )
@@ -120,9 +122,9 @@ namespace ALine
 		else
 		{
 			// Not stored yet
-			bool found = FindInclude( includePath );
+			std::string path = FindInclude( includePath );
 			
-			if ( !found )
+			if ( path.empty() )
 			{
 				// We can't display this warning any more because it may be a
 				// case where a system include file was included as a user include.

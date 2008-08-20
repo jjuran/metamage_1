@@ -96,7 +96,7 @@ namespace ALine
 		return file;
 	}
 	
-	bool Project::FindInclude( const std::string& includePath )
+	std::string Project::FindInclude( const std::string& includePath )
 	{
 		typedef std::vector< std::string >::const_iterator Iter;
 		
@@ -109,14 +109,14 @@ namespace ALine
 				
 				AddInclude( includePath, file );
 				
-				return true;
+				return file;
 			}
 			catch ( ... )
 			{
 			}
 		}
 		
-		return false;
+		return "";
 	}
 	
 	static std::string First( const std::vector< std::string >& v )
