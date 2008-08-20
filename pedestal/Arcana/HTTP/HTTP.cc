@@ -31,22 +31,21 @@ namespace p7 = poseven;
 namespace HTTP
 {
 	
-	// Can be used to construct a message header (for sending)
-	struct Header
+	// Can be used to construct a message header field (for sending)
+	struct HeaderFieldData
 	{
 		std::string name;
 		std::string value;
 		
-		Header()  {}
+		HeaderFieldData()
+		{
+		}
 		
-		Header( const std::string& n, const std::string& v ) : name( n ), value( v )  {}
+		HeaderFieldData( const std::string& n, const std::string& v ) : name( n ), value( v )
+		{
+		}
 	};
 	
-	
-	static std::string HeaderLine( const Header& header )
-	{
-		return HeaderLine( header.name, header.value );
-	}
 	
 	static std::size_t GetContentLength( p7::fd_t message_body )
 	{
@@ -60,14 +59,9 @@ namespace HTTP
 		return sb.st_size;
 	}
 	
-	std::string GetContentLengthHeaderLine( p7::fd_t message_body )
+	std::string GetContentLengthLine( p7::fd_t message_body )
 	{
-		return HeaderLine( "Content-Length", NN::Convert< std::string >( GetContentLength( message_body ) ) );
-	}
-	
-	static Header GetContentLengthHeader( p7::fd_t message_body )
-	{
-		return Header( "Content-Length", NN::Convert< std::string >( GetContentLength( message_body ) ) );
+		return HeaderFieldLine( "Content-Length", NN::Convert< std::string >( GetContentLength( message_body ) ) );
 	}
 	
 	void SendMessageBody( p7::fd_t  out,
@@ -84,17 +78,17 @@ namespace HTTP
 	}
 	
 	
-	inline HeaderIndexTuple MakeHeaderIndexTuple( std::size_t header,
+	inline HeaderFieldEntry MakeHeaderFieldEntry( std::size_t name,
 	                                              std::size_t colon,
 	                                              std::size_t value,
 	                                              std::size_t crlf )
 	{
-		HeaderIndexTuple result;
+		HeaderFieldEntry result;
 		
-		result.header_offset = header;
-		result.colon_offset  = colon;
-		result.value_offset  = value;
-		result.crlf_offset   = crlf;
+		result.field_offset = name;
+		result.colon_offset = colon;
+		result.value_offset = value;
+		result.crlf_offset  = crlf;
 		
 		return result;
 	}
@@ -108,13 +102,13 @@ namespace HTTP
 		
 		while ( p < end )
 		{
-			const char* header = p;
+			const char* field = p;
 			
 			const char* crlf = std::strstr( p, "\r\n" );
 			
 			if ( crlf == p )
 			{
-				// Empty line indicates end of headers
+				// Empty line indicates end of header
 				return result;
 			}
 			
@@ -133,17 +127,17 @@ namespace HTTP
 			
 			const char* value = p;
 			
-			HeaderIndexTuple tuple = MakeHeaderIndexTuple( header - header_stream,
-			                                               colon  - header_stream,
-			                                               value  - header_stream,
-			                                               crlf   - header_stream );
+			HeaderFieldEntry tuple = MakeHeaderFieldEntry( field - header_stream,
+			                                               colon - header_stream,
+			                                               value - header_stream,
+			                                               crlf  - header_stream );
 			
 			result.push_back( tuple );
 			
 			p = crlf + STRLEN( "\r\n" );
 		}
 		
-		// Ran out of data without finding end of headers
+		// Ran out of data without finding end of header
 		throw MalformedHeader();
 	}
 	
@@ -163,18 +157,18 @@ namespace HTTP
 		return true;
 	}
 	
-	static const HeaderIndexTuple* FindHeaderInStream( const char*         stream,
-	                                                   const HeaderIndex&  index,
-	                                                   const char*         name,
-	                                                   std::size_t         name_length )
+	static const HeaderFieldEntry* FindHeaderFieldInStream( const char*         stream,
+	                                                        const HeaderIndex&  index,
+	                                                        const char*         name,
+	                                                        std::size_t         name_length )
 	{
 		for ( HeaderIndex::const_iterator it = index.begin();  it != index.end();  ++it )
 		{
-			const char* header = stream + it->header_offset;
+			const char* field = stream + it->field_offset;
 			
-			std::size_t length = it->colon_offset - it->header_offset;
+			std::size_t length = it->colon_offset - it->field_offset;
 			
-			if ( strings_case_insensitively_equal( header, length, name, name_length ) )
+			if ( strings_case_insensitively_equal( field, length, name, name_length ) )
 			{
 				return &*it;
 			}
@@ -193,44 +187,44 @@ namespace HTTP
 	
 	void MessageReceiver::ReceiveData( const char* data, std::size_t byteCount )
 	{
-		// Are we receiving headers or content?
-		if ( !itHasReceivedAllHeaders )
+		// Are we receiving header or content?
+		if ( !itHasReceivedEntireHeader )
 		{
-			// We haven't received all the headers yet.
+			// We haven't received the entire header yet.
 			// We need to concatenate all received data to check for the EOH marker.
 			itsReceivedData.append( data, byteCount );
 			
-			if ( itsStartOfHeaders == 0 )
+			if ( itsStartOfHeaderFields == 0 )
 			{
 				if ( std::size_t crlf = itsReceivedData.find( "\r\n" ) )
 				{
-					itsStartOfHeaders = crlf + STRLEN( "\r\n" );
+					itsStartOfHeaderFields = crlf + STRLEN( "\r\n" );
 					
-					itsPlaceToLookForEndOfHeaders = crlf;
+					itsPlaceToLookForEndOfHeader = crlf;
 				}
 			}
 			
-			if ( itsPlaceToLookForEndOfHeaders == 0 )
+			if ( itsPlaceToLookForEndOfHeader == 0 )
 			{
 				return;
 			}
 			
-			if ( itsReceivedData.size() - itsPlaceToLookForEndOfHeaders < STRLEN( "\r\n" "\r\n" ) )
+			if ( itsReceivedData.size() - itsPlaceToLookForEndOfHeader < STRLEN( "\r\n" "\r\n" ) )
 			{
 				return;
 			}
 			
-			std::size_t eohMarker = itsReceivedData.find( "\r\n" "\r\n", itsPlaceToLookForEndOfHeaders );
+			std::size_t eohMarker = itsReceivedData.find( "\r\n" "\r\n", itsPlaceToLookForEndOfHeader );
 			
 			if ( eohMarker == itsReceivedData.npos )
 			{
-				itsPlaceToLookForEndOfHeaders = itsReceivedData.size() - STRLEN( "\r\n" "\r\n" ) + 1;
+				itsPlaceToLookForEndOfHeader = itsReceivedData.size() - STRLEN( "\r\n" "\r\n" ) + 1;
 				
 				return;
 			}
 			
-			// Found it, so we've got all the headers now
-			itHasReceivedAllHeaders = true;
+			// Found it, so we've got the entire header now
+			itHasReceivedEntireHeader = true;
 			
 			// The content starts after the two CRLF
 			std::size_t startOfContent = eohMarker + STRLEN( "\r\n" "\r\n" );
@@ -250,12 +244,12 @@ namespace HTTP
 			
 			itsHeaderIndex = MakeHeaderIndex( header_stream, &*itsReceivedData.end() );
 			
-			if ( const HeaderIndexTuple* contentLengthTuple = FindHeaderInStream( header_stream,
-			                                                                      itsHeaderIndex,
-			                                                                      STR_LEN( "Content-Length" ) ) )
+			if ( const HeaderFieldEntry* contentLengthEntry = FindHeaderFieldInStream( header_stream,
+			                                                                           itsHeaderIndex,
+			                                                                           STR_LEN( "Content-Length" ) ) )
 			{
-				std::string contentLength( header_stream + contentLengthTuple->value_offset,
-				                           header_stream + contentLengthTuple->crlf_offset );
+				std::string contentLength( header_stream + contentLengthEntry->value_offset,
+				                           header_stream + contentLengthEntry->crlf_offset );
 				
 				// Now get the *real* value, as opposed to its textual representation
 				itsContentLength = std::atoi( contentLength.c_str() );
@@ -282,7 +276,7 @@ namespace HTTP
 		
 		std::size_t bytesToRead = blockSize;
 		
-		if ( itHasReceivedAllHeaders && itsContentLengthIsKnown )
+		if ( itHasReceivedEntireHeader && itsContentLengthIsKnown )
 		{
 			std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
 			
@@ -313,9 +307,9 @@ namespace HTTP
 		return true;
 	}
 	
-	void MessageReceiver::ReceiveHeaders( p7::fd_t socket )
+	void MessageReceiver::ReceiveHeader( p7::fd_t socket )
 	{
-		while ( !itHasReceivedAllHeaders && ReceiveBlock( socket ) )
+		while ( !itHasReceivedEntireHeader && ReceiveBlock( socket ) )
 		{
 			continue;
 		}
@@ -329,14 +323,14 @@ namespace HTTP
 		}
 	}
 	
-	std::string MessageReceiver::GetHeader( const std::string& name, const char* nullValue )
+	std::string MessageReceiver::GetHeaderField( const std::string& name, const char* nullValue )
 	{
 		const char* stream = GetHeaderStream();
 		
-		const HeaderIndexTuple* it = FindHeaderInStream( stream,
-		                                                 itsHeaderIndex,
-		                                                 name.data(),
-		                                                 name.size() );
+		const HeaderFieldEntry* it = FindHeaderFieldInStream( stream,
+		                                                      itsHeaderIndex,
+		                                                      name.data(),
+		                                                      name.size() );
 		
 		if ( it != NULL )
 		{
@@ -346,7 +340,7 @@ namespace HTTP
 		
 		if ( nullValue == NULL )
 		{
-			throw NoSuchHeader();
+			throw NoSuchHeaderField();
 		}
 		
 		return nullValue;
