@@ -249,12 +249,18 @@ namespace ALine
 		
 		if ( thisProjectProvidesPrecompiledHeader )
 		{
-			// Locate the file and return the latest modification date of any file referenced
-			time_t pchSourceDate = RecursivelyLatestDate( pchSourcePath );
-			
 			// Locate the precompiled header image file.
-			pchSource = IncludeLocation( pchSourcePath );
-			std::string pchSourceName = io::get_filename_string( pchSource );
+			pchSource = FindInclude( pchSourcePath );
+			
+			if ( pchSource.empty() )
+			{
+				std::fprintf( stderr, "Missing precompiled header '%s'\n", pchSourcePath.c_str() );
+			}
+			
+			// Locate the file and return the latest modification date of any file referenced
+			time_t pchSourceDate = RecursivelyLatestDate( pchSourcePath, pchSource );
+			
+			std::string pchSourceName = io::get_filename_string( pchSourcePath );
 			
 			pchImage = PrecompiledHeaderImageFile( project.Name(),
 			                                       pchSourceName,

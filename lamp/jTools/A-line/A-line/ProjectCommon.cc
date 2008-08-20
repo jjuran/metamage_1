@@ -40,7 +40,6 @@ namespace ALine
 	static ProjectMap gProjects;
 	static ProjectSet gProjectsWithIncludeDirs;
 	static FileMap gRezzes;
-	static IncludeMap gIncludes;
 	static DateMap gDates;
 	
 	
@@ -77,11 +76,6 @@ namespace ALine
 	void AddRezFile( const std::string& file )
 	{
 		gRezzes[ io::get_filename_string( file ) ] = file;
-	}
-	
-	std::string IncludeLocation( const IncludePath& includePath )
-	{
-		return gIncludes[ includePath ];
 	}
 	
 	std::string FindInclude( const IncludePath& includePath )
@@ -166,8 +160,6 @@ namespace ALine
 	
 	time_t RecursivelyLatestDate( const IncludePath& includePath, const std::string& pathname )
 	{
-		gIncludes[ includePath ] = pathname;
-		
 		const std::vector< IncludePath >& includes = GetIncludes( pathname ).user;
 		
 		time_t modDate = ModifiedDate( pathname );

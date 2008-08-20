@@ -23,8 +23,6 @@ namespace ALine
 	
 	void AddIncludeDir( const ProjName& projName );
 	
-	std::string IncludeLocation( const IncludePath& includePath );
-	
 	std::string RezLocation( const FileName& filename );
 	
 	std::string FindInclude( const IncludePath& includePath );
