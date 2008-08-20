@@ -19,9 +19,6 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
-// BitsAndBytes
-#include "StringFilters.hh"
-
 // CompileDriver
 #include "CompileDriver/ProjectConfig.hh"
 
@@ -84,8 +81,6 @@ namespace ALine
 	namespace CD = CompileDriver;
 	
 	using namespace io::path_descent_operators;
-	
-	using BitsAndBytes::q;
 	
 	
 	static std::string FindIncludeInFolder( const std::string& folder, IncludePath includePath )

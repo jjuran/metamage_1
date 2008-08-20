@@ -17,9 +17,6 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
-// Nucleus
-#include "Nucleus/NAssert.h"
-
 // POSeven
 #include "POSeven/Pathnames.hh"
 
@@ -30,8 +27,6 @@
 
 namespace ALine
 {
-	
-	namespace NN = Nucleus;
 	
 	using namespace io::path_descent_operators;
 	
