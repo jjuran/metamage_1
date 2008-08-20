@@ -105,11 +105,7 @@ namespace ALine
 			// FIXME:  Use a trapped function
 			try
 			{
-				std::string file = FindIncludeInFolder( *it, includePath );
-				
-				AddInclude( includePath, file );
-				
-				return file;
+				return FindIncludeInFolder( *it, includePath );
 			}
 			catch ( ... )
 			{

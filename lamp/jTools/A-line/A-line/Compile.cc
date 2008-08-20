@@ -291,8 +291,8 @@ namespace ALine
 			if ( found != project.AllUsedProjects().end() )
 			{
 				pchSourcePath = GetProject( *found ).PrecompiledHeaderSource();
-				pchSource = IncludeLocation( pchSourcePath );
-				std::string pchSourceName = io::get_filename_string( pchSource );
+				
+				std::string pchSourceName = io::get_filename_string( pchSourcePath );
 				
 				pchImage = PrecompiledHeaderImageFile( *found,
 				                                       pchSourceName,

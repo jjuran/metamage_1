@@ -84,12 +84,6 @@ namespace ALine
 		return gIncludes[ includePath ];
 	}
 	
-	void AddInclude( const IncludePath& includePath, const std::string& file )
-	{
-		// Store the found location of the include specified by the pathname.
-		gIncludes[ includePath ] = file;
-	}
-	
 	std::string FindInclude( const IncludePath& includePath )
 	{
 		ProjectSet::const_iterator it, end = gProjectsWithIncludeDirs.end();
@@ -104,7 +98,6 @@ namespace ALine
 			
 			if ( !path.empty() )
 			{
-				// If we get here, the file exists and its location is stored.
 				return path;
 			}
 		}
@@ -114,10 +107,12 @@ namespace ALine
 	
 	time_t RecursivelyLatestDate( const IncludePath& includePath )
 	{
-		if ( gIncludes.find( includePath ) != gIncludes.end() )
+		DateMap::const_iterator it = gDates.find( includePath );
+		
+		if ( it != gDates.end() )
 		{
 			// Already stored
-			return gDates[ includePath ];
+			return it->second;
 		}
 		else
 		{
@@ -138,7 +133,7 @@ namespace ALine
 				return 0;  // FIXME
 			}
 			
-			return RecursivelyLatestDate( includePath, gIncludes[ includePath ] );
+			return RecursivelyLatestDate( includePath, path );
 		}
 	}
 	
@@ -171,6 +166,8 @@ namespace ALine
 	
 	time_t RecursivelyLatestDate( const IncludePath& includePath, const std::string& pathname )
 	{
+		gIncludes[ includePath ] = pathname;
+		
 		const std::vector< IncludePath >& includes = GetIncludes( pathname ).user;
 		
 		time_t modDate = ModifiedDate( pathname );

@@ -29,8 +29,6 @@ namespace ALine
 	
 	std::string FindInclude( const IncludePath& includePath );
 	
-	void AddInclude ( const IncludePath& includePath, const std::string& file );
-	
 	void AddRezFile( const std::string& file );
 	
 	time_t RecursivelyLatestDate( const IncludePath& includePath );
