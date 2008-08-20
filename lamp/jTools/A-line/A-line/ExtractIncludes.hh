@@ -6,15 +6,14 @@
 #ifndef ALINE_EXTRACTINCLUDES_HH
 #define ALINE_EXTRACTINCLUDES_HH
 
-// C++
-#include <string>
-#include <vector>
+// A-line
+#include "A-line/Includes.hh"
 
 
 namespace ALine
 {
 	
-	extern std::vector< std::string > ExtractIncludes( const std::string& pathname );
+	IncludesCache ExtractIncludes( const std::string& pathname );
 	
 }
 

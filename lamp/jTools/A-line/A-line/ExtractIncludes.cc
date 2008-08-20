@@ -27,7 +27,7 @@ namespace ALine
 	using BitsAndBytes::eos;
 	
 	
-	static void ExtractInclude( const std::string& line, std::vector< std::string >& includes )
+	static void ExtractInclude( const std::string& line, IncludesCache& includes )
 	{
 		struct BadIncludeDirective {};
 		
@@ -53,8 +53,6 @@ namespace ALine
 					}
 					else if ( line[ pos ] == '<' )
 					{
-						return;  // Ignore system includes for now
-						
 						c = '>';
 					}
 					else
@@ -69,7 +67,9 @@ namespace ALine
 					
 					if ( eos( end ) )  throw BadIncludeDirective();
 					
-					includes.push_back( line.substr( pos, end - pos ) );
+					std::vector< std::string >& v( c == '"' ? includes.user : includes.system );
+					
+					v.push_back( line.substr( pos, end - pos ) );
 				}
 				catch ( const BadIncludeDirective& )
 				{
@@ -83,11 +83,11 @@ namespace ALine
 		}
 	}
 	
-	std::vector< std::string > ExtractIncludes( const std::string& pathname )
+	IncludesCache ExtractIncludes( const std::string& pathname )
 	{
 		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( pathname ) );
 		
-		std::vector< std::string > includes;
+		IncludesCache includes;
 		
 		while ( input.Ready() )
 		{
