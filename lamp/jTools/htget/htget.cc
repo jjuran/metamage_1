@@ -118,14 +118,14 @@ static struct in_addr ResolveHostname( const char* hostname )
 int O::Main( int argc, argv_t argv )
 {
 	bool sendHEADRequest = false;
-	bool dumpHeaders     = false;
+	bool dumpHeader      = false;
 	bool saveToFile      = false;
 	
 	const char* defaultOutput = "/dev/fd/1";
 	
 	const char* outputFile = defaultOutput;
 	
-	O::BindOption( "-i", dumpHeaders     );
+	O::BindOption( "-i", dumpHeader      );
 	O::BindOption( "-I", sendHEADRequest );
 	O::BindOption( "-o", outputFile      );
 	O::BindOption( "-O", saveToFile      );
@@ -157,7 +157,7 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( sendHEADRequest )
 	{
-		dumpHeaders = true;
+		dumpHeader = true;
 		expectNoContent = true;
 		method = "HEAD";
 	}
@@ -216,7 +216,7 @@ int O::Main( int argc, argv_t argv )
 	p7::connect( sock, inetAddress );
 	
 	std::string message_header =   HTTP::RequestLine( method, urlPath )
-	                             + HTTP::HeaderLine( "Host", hostname )
+	                             + HTTP::HeaderFieldLine( "Host", hostname )
 	                             + "\r\n";
 	
 	HTTP::SendMessageHeader( sock, message_header );
@@ -227,9 +227,9 @@ int O::Main( int argc, argv_t argv )
 	
 	HTTP::ResponseReceiver response;
 	
-	response.ReceiveHeaders( sock );
+	response.ReceiveHeader( sock );
 	
-	if ( dumpHeaders )
+	if ( dumpHeader )
 	{
 		const std::string& message = response.GetMessageStream();
 		

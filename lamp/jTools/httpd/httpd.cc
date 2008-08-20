@@ -89,26 +89,26 @@ static void SetCGIVariables( const HTTP::MessageReceiver& request )
 	
 	for ( HTTP::HeaderIndex::const_iterator it = index.begin();  it != index.end();  ++it )
 	{
-		std::string header( stream + it->header_offset,
-		                    stream + it->colon_offset );
+		std::string name( stream + it->field_offset,
+		                  stream + it->colon_offset );
 		
 		std::string value( stream + it->value_offset,
 		                   stream + it->crlf_offset );
 		
-		std::transform( header.begin(),
-		                header.end(),
-		                header.begin(),
+		std::transform( name.begin(),
+		                name.end(),
+		                name.begin(),
 		                std::ptr_fun( ToCGI ) );
 		
-		if ( header == "CONTENT_TYPE"  ||  header == "CONTENT_LENGTH" )
+		if ( name == "CONTENT_TYPE"  ||  name == "CONTENT_LENGTH" )
 		{
 		}
 		else
 		{
-			header = "HTTP_" + header;
+			name = "HTTP_" + name;
 		}
 		
-		setenv( header.c_str(), value.c_str(), 1 );
+		setenv( name.c_str(), value.c_str(), 1 );
 	}
 }
 
@@ -519,12 +519,12 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 		
 		std::string responseHeader = HTTP_VERSION " 200 OK\r\n";
 		
-		responseHeader += HTTP::HeaderLine( "Content-Type",  contentType                   );
+		responseHeader += HTTP::HeaderFieldLine( "Content-Type",  contentType                   );
 		
 	#if TARGET_OS_MAC
 		
-		responseHeader += HTTP::HeaderLine( "X-Mac-Type",    EncodeAsHex( info.fdType    ) );
-		responseHeader += HTTP::HeaderLine( "X-Mac-Creator", EncodeAsHex( info.fdCreator ) );
+		responseHeader += HTTP::HeaderFieldLine( "X-Mac-Type",    EncodeAsHex( info.fdType    ) );
+		responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", EncodeAsHex( info.fdCreator ) );
 		
 	#endif
 		
@@ -557,7 +557,7 @@ int O::Main( int argc, argv_t argv )
 	
 	HTTP::MessageReceiver request;
 	
-	request.ReceiveHeaders( p7::stdin_fileno );
+	request.ReceiveHeader( p7::stdin_fileno );
 	
 	SendResponse( request );
 	
