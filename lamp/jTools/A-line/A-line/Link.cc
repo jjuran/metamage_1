@@ -283,18 +283,6 @@ namespace ALine
 		return result;
 	}
 	
-	static void Echo( const char* a, const char* b )
-	{
-		Command echo;
-		
-		echo.push_back( "/bin/echo" );
-		echo.push_back( a );
-		echo.push_back( b );
-		echo.push_back( NULL );
-		
-		ExecuteCommand( echo );
-	}
-	
 	static std::string DiagnosticsFilenameFromSourceFilename( const std::string& filename )
 	{
 		return filename + ".txt";
@@ -314,13 +302,13 @@ namespace ALine
 		
 		std::string filename = io::get_filename_string( outputFile );
 		
-		Echo( "Linking:", filename.c_str() );
-		
 		command.push_back( NULL );
 		
 		std::string diagnosticsFile = diagnosticsDir / DiagnosticsFilenameFromSourceFilename( filename );
 		
-		ExecuteCommand( command, diagnosticsFile.c_str() );
+		TaskPtr link( new CommandTask( command, diagnosticsFile, "Linking: " + filename ) );
+		
+		link->Main();
 	}
 	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
@@ -381,11 +369,11 @@ namespace ALine
 		
 		AugmentCommand( rezCommand, rezFiles );
 		
-		Echo( "Rezzing:", io::get_filename_string( rsrcFile ).c_str() );
-		
 		rezCommand.push_back( NULL );
 		
-		ExecuteCommand( rezCommand );
+		TaskPtr rezTask( new CommandTask( rezCommand, "", "Rezzing: " + io::get_filename_string( rsrcFile ) ) );
+		
+		rezTask->Main();
 	}
 	
 	// foo.r -> echo 'include "foo.r";'
@@ -444,11 +432,11 @@ namespace ALine
 			command.push_back( rsrcFile.c_str() );
 		}
 		
-		Echo( "Copying resources:", io::get_filename_string( rsrcFile ).c_str() );
-		
 		command.push_back( NULL );
 		
-		ExecuteCommand( command );
+		TaskPtr cpres( new CommandTask( command, "", "Copying resources: " + io::get_filename_string( rsrcFile ) ) );
+		
+		cpres->Main();
 	}
 	
 	static time_t EffectiveModifiedDate( const std::string& file )

@@ -35,6 +35,7 @@
 #include "A-line/CompilerOptions.hh"
 #include "A-line/Locations.hh"
 #include "A-line/ProjectCommon.hh"
+#include "A-line/Task.hh"
 
 
 namespace ALine
@@ -125,18 +126,6 @@ namespace ALine
 		return compile;
 	}
 	
-	static void Echo( const char* a, const char* b )
-	{
-		Command echo;
-		
-		echo.push_back( "/bin/echo" );
-		echo.push_back( a );
-		echo.push_back( b );
-		echo.push_back( NULL );
-		
-		ExecuteCommand( echo );
-	}
-	
 	static void BuildSourceFile( CompilerOptions options, const std::string& file )
 	{
 		options.AppendIncludeDir( io::get_preceding_directory( file ) );
@@ -171,11 +160,11 @@ namespace ALine
 		
 		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
 		
-		Echo( "Compiling:", filename.c_str() );
-		
 		command.push_back( NULL );
 		
-		ExecuteCommand( command, diagnosticsFile.c_str() );
+		TaskPtr compile( new CommandTask( command, diagnosticsFile, "Compiling: " + filename ) );
+		
+		compile->Main();
 	}
 	
 	static void Precompile( const CompilerOptions&  options,
@@ -200,11 +189,11 @@ namespace ALine
 		
 		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
 		
-		Echo( "Precompiling:", filename.c_str() );
-		
 		command.push_back( NULL );
 		
-		ExecuteCommand( command, diagnosticsFile.c_str() );
+		TaskPtr precompile( new CommandTask( command, diagnosticsFile, "Precompiling: " + filename ) );
+		
+		precompile->Main();
 	}
 	
 	static std::string PrecompiledHeaderImageFile( const ProjName&    projName,
