@@ -132,8 +132,6 @@ namespace ALine
 		
 		options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
 		
-		CommandGenerator cmdgen( options.Target() );
-		
 		Command command = MakeCompileCommand( options );
 		
 		std::string filename = io::get_filename_string( source_pathname );
@@ -151,7 +149,8 @@ namespace ALine
 			// Specify by name only, so gcc will search for the .gch image.
 			pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
 			
-			AugmentCommand( command, cmdgen.Prefix( pchSourceName.c_str() ) );
+			command.push_back( "-include"            );
+			command.push_back( pchSourceName.c_str() );
 		}
 		
 		std::string outputFile = options.Output() / ObjectFileName( filename );
@@ -174,8 +173,6 @@ namespace ALine
 	                        const std::string&      source_pathname )
 	{
 		const char* caption = "Precompiling: ";
-		
-		CommandGenerator cmdgen( options.Target() );
 		
 		Command command = MakeCompileCommand( options );
 		
