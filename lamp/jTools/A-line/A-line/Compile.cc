@@ -126,7 +126,7 @@ namespace ALine
 		return compile;
 	}
 	
-	static void BuildSourceFile( CompilerOptions options, const std::string& source_pathname )
+	static void Compile( CompilerOptions options, const std::string& source_pathname )
 	{
 		const char* caption = "Compiling: ";
 		
@@ -439,7 +439,7 @@ namespace ALine
 		
 		std::for_each( dirtyFiles.begin(),
 		               dirtyFiles.end(),
-		               std::bind1st( more::ptr_fun( BuildSourceFile ),
+		               std::bind1st( more::ptr_fun( Compile ),
 		                             options ) );
 	}
 	
