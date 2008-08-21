@@ -142,12 +142,10 @@ namespace ALine
 			command.push_back( "-Wno-non-template-friend" );
 		}
 		
-		std::string pchSourceName;
-		
 		if ( options.HasPrecompiledHeaderSource() )
 		{
 			// Specify by name only, so gcc will search for the .gch image.
-			pchSourceName = io::get_filename_string( options.PrecompiledHeaderSource() );
+			const std::string& pchSourceName = options.PrecompiledHeaderSource();
 			
 			command.push_back( "-include"            );
 			command.push_back( pchSourceName.c_str() );
@@ -427,7 +425,7 @@ namespace ALine
 		
 		if ( !pchSourcePath.empty() )
 		{
-			options.SetPrecompiledHeaderSource( pchSource );
+			options.SetPrecompiledHeaderSource( io::get_filename_string( pchSourcePath ) );
 			// Theory:
 			// We need to include the pch source by name only, not path.
 			// Therefore, we need its parent directory to be in the search path,
