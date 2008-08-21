@@ -165,24 +165,6 @@ namespace ALine
 			return result;
 		}
 		
-		// This means that we pass the precompiled output, not the header source.
-		// Required for CodeWarrior (i.e. otherwise you lose precompile benefit).
-		// Not supported by gcc.
-		//bool PrecompiledHeaderIsImage() const  { return !gnu; }
-		
-		// This means that the prefix header is given by name only
-		// and the parent directory of the precompiled header image
-		// is in the search path.
-		// Required for gcc unless the precompiled header image is in the same
-		// directory as the precompiled header source.
-		// Not supported by CodeWarrior.
-		//bool PrecompiledHeaderIsSearched() const  { return gnu; }
-		
-		Command Prefix( const char* pathname ) const
-		{
-			return MakeCommand( "-include", pathname );
-		}
-		
 		Command LanguageOptions() const
 		{
 			Command result;
