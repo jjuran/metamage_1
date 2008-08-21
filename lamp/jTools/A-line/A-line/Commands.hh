@@ -7,9 +7,14 @@
 
 // Standard C++
 #include <string>
+#include <vector>
 
 // MoreFunctional
 #include "FunctionalExtensions.hh"
+
+// A-line
+#include "A-line/TargetInfo.hh"
+#include "A-line/Task.hh"
 
 // CompileDriver
 #include "CompileDriver/Platform.hh"
@@ -24,6 +29,28 @@ namespace ALine
 	static const std::string space = " ";
 	
 	typedef std::vector< const char* > Command;
+	
+	
+	class CommandTask : public Task
+	{
+		private:
+			Command      itsCommand;
+			std::string  itsDiagnosticsFile;
+			std::string  itsCaption;
+		
+		public:
+			CommandTask( const Command&      command,
+			             const std::string&  diagnostics,
+			             const std::string&  caption )
+			: itsCommand        ( command     ),
+			  itsDiagnosticsFile( diagnostics ),
+			  itsCaption        ( caption     )
+			{
+			}
+			
+			void Main();
+	};
+	
 	
 	inline Command MakeCommand( const char* a, const char* b )
 	{
