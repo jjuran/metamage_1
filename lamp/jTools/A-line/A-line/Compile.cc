@@ -126,15 +126,17 @@ namespace ALine
 		return compile;
 	}
 	
-	static void BuildSourceFile( CompilerOptions options, const std::string& file )
+	static void BuildSourceFile( CompilerOptions options, const std::string& source_pathname )
 	{
-		options.AppendIncludeDir( io::get_preceding_directory( file ) );
+		const char* caption = "Compiling: ";
+		
+		options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
 		
 		CommandGenerator cmdgen( options.Target() );
 		
 		Command command = MakeCompileCommand( options );
 		
-		std::string filename = io::get_filename_string( file );
+		std::string filename = io::get_filename_string( source_pathname );
 		
 		if ( !IsCFile( filename ) )
 		{
@@ -156,25 +158,27 @@ namespace ALine
 		
 		AugmentCommand( command, OutputOption( outputFile.c_str() ) );
 		
-		command.push_back( file.c_str() );
+		command.push_back( source_pathname.c_str() );
 		
 		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
 		
 		command.push_back( NULL );
 		
-		TaskPtr compile( new CommandTask( command, diagnosticsFile, "Compiling: " + filename ) );
+		TaskPtr task( new CommandTask( command, diagnosticsFile, caption + filename ) );
 		
-		compile->Main();
+		task->Main();
 	}
 	
 	static void Precompile( const CompilerOptions&  options,
-	                        const std::string&      pathname_to_precompiled_header_source )
+	                        const std::string&      source_pathname )
 	{
+		const char* caption = "Precompiling: ";
+		
 		CommandGenerator cmdgen( options.Target() );
 		
 		Command command = MakeCompileCommand( options );
 		
-		std::string filename = io::get_filename_string( pathname_to_precompiled_header_source );
+		std::string filename = io::get_filename_string( source_pathname );
 		
 		if ( !IsCFile( filename ) )
 		{
@@ -185,15 +189,15 @@ namespace ALine
 		AugmentCommand( command, OutputOption( options.PrecompiledHeaderImage().c_str() ) );
 		
 		// Add the source file to the command line
-		command.push_back( pathname_to_precompiled_header_source.c_str() );
+		command.push_back( source_pathname.c_str() );
 		
 		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
 		
 		command.push_back( NULL );
 		
-		TaskPtr precompile( new CommandTask( command, diagnosticsFile, "Precompiling: " + filename ) );
+		TaskPtr task( new CommandTask( command, diagnosticsFile, caption + filename ) );
 		
-		precompile->Main();
+		task->Main();
 	}
 	
 	static std::string PrecompiledHeaderImageFile( const ProjName&    projName,
