@@ -187,7 +187,7 @@ namespace ALine
 			command.push_back( "-Wno-non-template-friend" );
 		}
 		
-		const std::string& outputFile = options.PrecompiledHeaderImage().c_str();
+		const std::string& outputFile = options.PrecompiledHeaderImage();
 		
 		AugmentCommand( command, OutputOption( outputFile.c_str() ) );
 		
