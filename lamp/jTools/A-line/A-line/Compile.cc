@@ -107,7 +107,7 @@ namespace ALine
 	
 	static Command MakeCompileCommand( const CompilerOptions&  options,
 	                                   const std::string&      source_pathname,
-	                                   const std::string&      output_file )
+	                                   const std::string&      output_pathname )
 	{
 		CommandGenerator cmdgen( options.Target() );
 		
@@ -143,7 +143,7 @@ namespace ALine
 			compile.push_back( pchSourceName.c_str() );
 		}
 		
-		AugmentCommand( compile, OutputOption( output_file.c_str() ) );
+		AugmentCommand( compile, OutputOption( output_pathname.c_str() ) );
 		
 		// Add the source file to the command line
 		compile.push_back( source_pathname.c_str() );
