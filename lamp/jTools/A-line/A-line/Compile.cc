@@ -189,7 +189,7 @@ namespace ALine
 		
 		const std::string& outputFile = options.PrecompiledHeaderImage().c_str();
 		
-		AugmentCommand( command, OutputOption( outputFile ) );
+		AugmentCommand( command, OutputOption( outputFile.c_str() ) );
 		
 		// Add the source file to the command line
 		command.push_back( source_pathname.c_str() );
