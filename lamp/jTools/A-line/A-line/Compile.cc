@@ -134,9 +134,9 @@ namespace ALine
 		
 		Command command = MakeCompileCommand( options );
 		
-		std::string filename = io::get_filename_string( source_pathname );
+		std::string source_filename = io::get_filename_string( source_pathname );
 		
-		if ( !IsCFile( filename ) )
+		if ( !IsCFile( source_filename ) )
 		{
 			// We don't need this warning for C, and in fact GNU C complains about it
 			command.push_back( "-Wno-non-template-friend" );
@@ -151,18 +151,18 @@ namespace ALine
 			command.push_back( pchSourceName.c_str() );
 		}
 		
-		std::string outputFile = options.Output() / ObjectFileName( filename );
+		std::string outputFile = options.Output() / ObjectFileName( source_filename );
 		
 		AugmentCommand( command, OutputOption( outputFile.c_str() ) );
 		
 		// Add the source file to the command line
 		command.push_back( source_pathname.c_str() );
 		
-		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
+		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), source_filename );
 		
 		command.push_back( NULL );
 		
-		TaskPtr task( new CommandTask( command, diagnosticsFile, caption + filename ) );
+		TaskPtr task( new CommandTask( command, diagnosticsFile, caption + source_filename ) );
 		
 		task->Main();
 	}
