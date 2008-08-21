@@ -158,6 +158,7 @@ namespace ALine
 		
 		AugmentCommand( command, OutputOption( outputFile.c_str() ) );
 		
+		// Add the source file to the command line
 		command.push_back( source_pathname.c_str() );
 		
 		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
@@ -186,7 +187,9 @@ namespace ALine
 			command.push_back( "-Wno-non-template-friend" );
 		}
 		
-		AugmentCommand( command, OutputOption( options.PrecompiledHeaderImage().c_str() ) );
+		const std::string& outputFile = options.PrecompiledHeaderImage().c_str();
+		
+		AugmentCommand( command, OutputOption( outputFile ) );
 		
 		// Add the source file to the command line
 		command.push_back( source_pathname.c_str() );
