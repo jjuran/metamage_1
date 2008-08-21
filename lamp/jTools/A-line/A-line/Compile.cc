@@ -105,7 +105,9 @@ namespace ALine
 		return diagnosticsFile;
 	}
 	
-	static Command MakeCompileCommand( const CompilerOptions& options )
+	static Command MakeCompileCommand( const CompilerOptions&  options,
+	                                   const std::string&      source_pathname,
+	                                   const std::string&      output_file )
 	{
 		CommandGenerator cmdgen( options.Target() );
 		
@@ -119,84 +121,87 @@ namespace ALine
 			compile.push_back( "-Wno-long-double"             );
 		}
 		
+		bool cplusplus = !IsCFile( source_pathname );
+		
+		if ( cplusplus )
+		{
+			// We don't need this warning for C, and in fact GNU C complains about it
+			compile.push_back( "-Wno-non-template-friend" );
+		}
+		
 		AugmentCommand( compile, options.GetMacros() );
 		
 		AugmentCommand( compile, options.IncludeDirOptions() );
 		
-		return compile;
-	}
-	
-	static void Compile( CompilerOptions options, const std::string& source_pathname )
-	{
-		const char* caption = "Compiling: ";
-		
-		options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
-		
-		Command command = MakeCompileCommand( options );
-		
-		std::string source_filename = io::get_filename_string( source_pathname );
-		
-		if ( !IsCFile( source_filename ) )
-		{
-			// We don't need this warning for C, and in fact GNU C complains about it
-			command.push_back( "-Wno-non-template-friend" );
-		}
-		
+		// False while precompiling
 		if ( options.HasPrecompiledHeaderSource() )
 		{
 			// Specify by name only, so gcc will search for the .gch image.
 			const std::string& pchSourceName = options.PrecompiledHeaderSource();
 			
-			command.push_back( "-include"            );
-			command.push_back( pchSourceName.c_str() );
+			compile.push_back( "-include"            );
+			compile.push_back( pchSourceName.c_str() );
 		}
 		
-		std::string outputFile = options.Output() / ObjectFileName( source_filename );
-		
-		AugmentCommand( command, OutputOption( outputFile.c_str() ) );
+		AugmentCommand( compile, OutputOption( output_file.c_str() ) );
 		
 		// Add the source file to the command line
-		command.push_back( source_pathname.c_str() );
+		compile.push_back( source_pathname.c_str() );
+		
+		compile.push_back( NULL );
+		
+		return compile;
+	}
+	
+	static void RunCompiler( const CompilerOptions&  options,
+	                         const std::string&      source_pathname,
+	                         const std::string&      output_pathname,
+	                         const char*             caption )
+	{
+		Command command = MakeCompileCommand( options, source_pathname, output_pathname );
+		
+		std::string source_filename = io::get_filename_string( source_pathname );
 		
 		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), source_filename );
-		
-		command.push_back( NULL );
 		
 		TaskPtr task( new CommandTask( command, diagnosticsFile, caption + source_filename ) );
 		
 		task->Main();
 	}
 	
+	
+	static void CompileSource( const CompilerOptions& options, const std::string& source_pathname )
+	{
+		std::string source_filename = io::get_filename_string( source_pathname );
+		
+		
+		std::string output_pathname = options.Output() / ObjectFileName( source_filename );
+		
+		const char* caption = "Compiling: ";
+		
+		
+		RunCompiler( options, source_pathname, output_pathname, caption );
+	}
+	
+	static void Compile( CompilerOptions options, const std::string& source_pathname )
+	{
+		options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
+		
+		CompileSource( options, source_pathname );
+	}
+	
+	
 	static void Precompile( const CompilerOptions&  options,
 	                        const std::string&      source_pathname )
 	{
+		const std::string& output_pathname = options.PrecompiledHeaderImage();
+		
 		const char* caption = "Precompiling: ";
 		
-		Command command = MakeCompileCommand( options );
 		
-		std::string filename = io::get_filename_string( source_pathname );
-		
-		if ( !IsCFile( filename ) )
-		{
-			// We don't need this warning for C, and in fact GNU C complains about it
-			command.push_back( "-Wno-non-template-friend" );
-		}
-		
-		const std::string& outputFile = options.PrecompiledHeaderImage();
-		
-		AugmentCommand( command, OutputOption( outputFile.c_str() ) );
-		
-		// Add the source file to the command line
-		command.push_back( source_pathname.c_str() );
-		
-		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), filename );
-		
-		command.push_back( NULL );
-		
-		TaskPtr task( new CommandTask( command, diagnosticsFile, caption + filename ) );
-		
-		task->Main();
+		RunCompiler( options, source_pathname, output_pathname, caption );
 	}
+	
 	
 	static std::string PrecompiledHeaderImageFile( const ProjName&    projName,
 	                                               std::string        pchSourceName,
