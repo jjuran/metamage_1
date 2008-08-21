@@ -28,9 +28,6 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
-// BitsAndBytes
-#include "StringFilters.hh"
-
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/BuildCommon.hh"
@@ -44,8 +41,6 @@ namespace ALine
 {
 	
 	using namespace io::path_descent_operators;
-	
-	using BitsAndBytes::q;
 	
 	
 	class IncludeDirGatherer
