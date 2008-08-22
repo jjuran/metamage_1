@@ -44,11 +44,6 @@ namespace ALine
 		hasPrecompiledHeaderSource = true;
 	}
 	
-	void CompilerOptions::SetOutput( const std::string& output )
-	{
-		myOutputDir = output;
-	}
-	
 	inline std::string Include( const std::string& dir )
 	{
 		// Turn a pathname into a -I option.

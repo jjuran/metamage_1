@@ -373,8 +373,6 @@ namespace ALine
 		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
-		options.SetOutput( outDir );
-		
 		if ( precompiledHeaderIsAvailable )
 		{
 			options.SetPrecompiledHeaderSource( pchSourceName );
