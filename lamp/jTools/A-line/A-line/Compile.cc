@@ -364,8 +364,6 @@ namespace ALine
 			precompile_task.reset( new NullTask() );
 		}
 		
-		precompile_task->Main();
-		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
 		options.SetOutput( outDir );
@@ -444,7 +442,14 @@ namespace ALine
 			
 			TaskPtr task( new CompilingTask( source_options, source_pathname, output_pathname, caption ) );
 			
-			task->Main();
+			precompile_task->AddDependent( task );
+		}
+		
+		AddReadyTask( precompile_task );
+		
+		while ( RunNextTask() )
+		{
+			continue;
 		}
 	}
 	
