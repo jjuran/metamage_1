@@ -44,6 +44,28 @@ namespace ALine
 	using namespace io::path_descent_operators;
 	
 	
+	class CompilingTask : public Task
+	{
+		private:
+			CompilerOptions  itsOptions;
+			std::string      itsSourcePathname;
+			std::string      itsOutputPathname;
+			const char*      itsCaption;
+		
+		public:
+			CompilingTask( const CompilerOptions&  options,
+			               const std::string&      source,
+			               const std::string&      output,
+			               const char*             caption ) : itsOptions       ( options ),
+			                                                   itsSourcePathname( source  ),
+			                                                   itsOutputPathname( output  ),
+			                                                   itsCaption       ( caption )
+			{
+			}
+			
+			void Main();
+	};
+	
 	class IncludeDirGatherer
 	{
 		private:
@@ -169,6 +191,10 @@ namespace ALine
 		task->Main();
 	}
 	
+	void CompilingTask::Main()
+	{
+		RunCompiler( itsOptions, itsSourcePathname, itsOutputPathname, itsCaption );
+	}
 	
 	static void CompileSource( const CompilerOptions& options, const std::string& source_pathname )
 	{
@@ -180,7 +206,9 @@ namespace ALine
 		const char* caption = "Compiling: ";
 		
 		
-		RunCompiler( options, source_pathname, output_pathname, caption );
+		TaskPtr task( new CompilingTask( options, source_pathname, output_pathname, caption ) );
+		
+		task->Main();
 	}
 	
 	static void Compile( CompilerOptions options, const std::string& source_pathname )
@@ -199,7 +227,9 @@ namespace ALine
 		const char* caption = "Precompiling: ";
 		
 		
-		RunCompiler( options, source_pathname, output_pathname, caption );
+		TaskPtr task( new CompilingTask( options, source_pathname, output_pathname, caption ) );
+		
+		task->Main();
 	}
 	
 	
