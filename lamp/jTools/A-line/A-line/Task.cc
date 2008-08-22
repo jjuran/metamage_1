@@ -63,5 +63,26 @@ namespace ALine
 		itsDependents.clear();
 	}
 	
+	void AddReadyTask( const TaskPtr& task )
+	{
+		gReadyTasks.push( task );
+	}
+	
+	bool RunNextTask()
+	{
+		if ( gReadyTasks.empty() )
+		{
+			return false;
+		}
+		
+		TaskPtr task = gReadyTasks.front();
+		
+		gReadyTasks.pop();
+		
+		task->Run();
+		
+		return true;
+	}
+	
 }
 

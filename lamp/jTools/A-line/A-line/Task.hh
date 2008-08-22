@@ -59,6 +59,10 @@ namespace ALine
 			void Main()  {}
 	};
 	
+	void AddReadyTask( const TaskPtr& task );
+	
+	bool RunNextTask();
+	
 }
 
 #endif
