@@ -381,10 +381,12 @@ namespace ALine
 			}
 		}
 		
-		if ( precompile_task.get() )
+		if ( precompile_task.get() == NULL )
 		{
-			precompile_task->Main();
+			precompile_task.reset( new NullTask() );
 		}
+		
+		precompile_task->Main();
 		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
