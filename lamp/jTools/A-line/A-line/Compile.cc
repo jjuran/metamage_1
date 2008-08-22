@@ -350,6 +350,8 @@ namespace ALine
 			}
 		}
 		
+		TaskPtr precompile_task;
+		
 		if ( thisProjectProvidesPrecompiledHeader )
 		{
 			// Locate the precompiled header image file.
@@ -372,13 +374,16 @@ namespace ALine
 			
 			if ( needToPrecompile )
 			{
-				TaskPtr precompile_task( new CompilingTask( options, pchSource, pchImage, "Precompiling: " ) );
-				
-				precompile_task->Main();
+				precompile_task.reset( new CompilingTask( options, pchSource, pchImage, "Precompiling: " ) );
 				
 				// If we're compiling the precompiled header, then recompile all source
 				compilingEverything = true;
 			}
+		}
+		
+		if ( precompile_task.get() )
+		{
+			precompile_task->Main();
 		}
 		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
