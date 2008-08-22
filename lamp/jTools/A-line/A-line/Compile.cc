@@ -391,12 +391,6 @@ namespace ALine
 		
 		for ( it = project.Sources().begin();  it != end;  ++it )
 		{
-			// What we do in this loop:
-			//  * We set the current source directory to the parent directory
-			//    of the current file if the project requires that information.
-			//  * If a file needs to be compiled, we add it to the dirty files list.
-			//  * Dependency information may be acquired and cached, in RecursivelyLatestDate().
-			
 			// The source file
 			std::string sourceFile( *it );
 			
