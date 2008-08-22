@@ -216,19 +216,6 @@ namespace ALine
 	}
 	
 	
-	static void Precompile( const CompilerOptions&  options,
-	                        const std::string&      source_pathname,
-	                        const std::string&      output_pathname )
-	{
-		const char* caption = "Precompiling: ";
-		
-		
-		TaskPtr task( new CompilingTask( options, source_pathname, output_pathname, caption ) );
-		
-		task->Main();
-	}
-	
-	
 	static std::string PrecompiledHeaderImageFile( const ProjName&    projName,
 	                                               std::string        pchSourceName,
 	                                               const TargetInfo&  targetInfo )
@@ -385,7 +372,9 @@ namespace ALine
 			
 			if ( needToPrecompile )
 			{
-				Precompile( options, pchSource, pchImage );
+				TaskPtr precompile_task( new CompilingTask( options, pchSource, pchImage, "Precompiling: " ) );
+				
+				precompile_task->Main();
 				
 				// If we're compiling the precompiled header, then recompile all source
 				compilingEverything = true;
