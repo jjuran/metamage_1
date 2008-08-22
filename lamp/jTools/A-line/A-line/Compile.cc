@@ -391,26 +391,29 @@ namespace ALine
 		// If we're compiling the precompiled header, then recompile all source
 		bool compilingEverything = Options().all  ||  thisProjectProvidesPrecompiledHeader && needToPrecompile;
 		
-		// See which source files need to be compiled,
-		// caching include information in the process.
-		std::vector< std::string >::const_iterator it, end = project.Sources().end();
-		
-		for ( it = project.Sources().begin();  it != end;  ++it )
+		if ( compilingEverything )
 		{
-			// The source file
-			std::string sourceFile( *it );
+			dirtyFiles = project.Sources();
+		}
+		else
+		{
+			// See which source files need to be compiled,
+			// caching include information in the process.
+			std::vector< std::string >::const_iterator it, end = project.Sources().end();
 			
-			// We need to compile the source file if any of these apply:
-			// * we're compiling everything anyway
-			// * its object file doesn't exist
-			// * the object file is out of date
-			
-			// Below, we run the negation of each test.
-			// Any negative result ends the tests and we proceed to add the file to the list.
-			// If all tests pass then the object file is up to date and we skip it.
-			
-			if ( !compilingEverything )
+			for ( it = project.Sources().begin();  it != end;  ++it )
 			{
+				// The source file
+				const std::string& sourceFile( *it );
+				
+				// We need to compile the source file if any of these apply:
+				// * its object file doesn't exist
+				// * the object file is out of date
+				
+				// Below, we run the negation of each test.
+				// Any negative result ends the tests and we proceed to add the file to the list.
+				// If all tests pass then the object file is up to date and we skip it.
+				
 				// The file's name
 				std::string sourceName = io::get_filename_string( sourceFile );
 				
@@ -439,9 +442,9 @@ namespace ALine
 						continue;
 					}
 				}
+				
+				dirtyFiles.push_back( sourceFile );
 			}
-			
-			dirtyFiles.push_back( sourceFile );
 		}
 		
 		if ( !needToPrecompile && dirtyFiles.size() == 0 )  return;
