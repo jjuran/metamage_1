@@ -42,6 +42,8 @@ namespace ALine
 			{
 			}
 			
+			bool UpToDate( time_t output_stamp )  { return output_stamp > itsInputStamp; }
+			
 			void UpdateInputStamp( time_t stamp );
 			
 			void AddDependent( const TaskPtr& task )  { itsDependents.push_back( task ); }
