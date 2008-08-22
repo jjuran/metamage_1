@@ -285,6 +285,32 @@ namespace ALine
 	}
 	
 	
+	static const Project* ProjectProvidingPrecompiledHeader( const Project& project )
+	{
+		const Project* result = NULL;
+		
+		if ( project.HasPrecompiledHeader() )
+		{
+			result = &project;
+		}
+		else
+		{
+			// This project doesn't have a precompiled header, but maybe a used one does
+			typedef std::vector< ProjName >::const_iterator const_iterator;
+			
+			const_iterator it = std::find_if( project.AllUsedProjects().begin(),
+			                                  project.AllUsedProjects().end(),
+			                                  std::ptr_fun( ProjectHasPrecompiledHeader ) );
+			
+			if ( it != project.AllUsedProjects().end() )
+			{
+				result = &GetProject( *it );
+			}
+		}
+		
+		return result;
+	}
+	
 	void CompileSources( const Project& project, TargetInfo targetInfo )
 	{
 		CompilerOptions options( project.Name(), targetInfo );
@@ -302,28 +328,7 @@ namespace ALine
 		               gatherer );
 		
 		
-		bool thisProjectProvidesPrecompiledHeader = project.HasPrecompiledHeader();
-		
-		const Project* projectProvidingPrecompiledHeader = NULL;
-		
-		if ( thisProjectProvidesPrecompiledHeader )
-		{
-			projectProvidingPrecompiledHeader = &project;
-		}
-		else
-		{
-			// This project doesn't have a precompiled header, but maybe a used one does
-			typedef std::vector< ProjName >::const_iterator const_iterator;
-			
-			const_iterator found = std::find_if( project.AllUsedProjects().begin(),
-			                                     project.AllUsedProjects().end(),
-			                                     std::ptr_fun( ProjectHasPrecompiledHeader ) );
-			
-			if ( found != project.AllUsedProjects().end() )
-			{
-				projectProvidingPrecompiledHeader = &GetProject( *found );
-			}
-		}
+		const Project* projectProvidingPrecompiledHeader = ProjectProvidingPrecompiledHeader( project );
 		
 		bool precompiledHeaderIsAvailable = projectProvidingPrecompiledHeader != NULL;
 		
@@ -344,7 +349,7 @@ namespace ALine
 		
 		TaskPtr precompile_task;
 		
-		if ( thisProjectProvidesPrecompiledHeader )
+		if ( project.HasPrecompiledHeader() )
 		{
 			// Locate the precompiled header image file.
 			std::string pchSource = FindInclude( pchSourcePath );
