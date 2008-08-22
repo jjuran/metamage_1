@@ -137,11 +137,8 @@ namespace ALine
 		
 		AugmentCommand( compile, cmdgen.AllCompilerOptions() );
 		
-		if ( options.Target().platform & CD::runtimeMachO )
-		{
-			compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
-			compile.push_back( "-Wno-long-double"             );
-		}
+		compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
+		compile.push_back( "-Wno-long-double"             );
 		
 		bool cplusplus = !IsCFile( source_pathname );
 		
