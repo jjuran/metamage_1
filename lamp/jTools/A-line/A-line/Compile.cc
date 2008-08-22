@@ -191,6 +191,8 @@ namespace ALine
 	void CompilingTask::Main()
 	{
 		RunCompiler( itsOptions, itsSourcePathname, itsOutputPathname, itsCaption );
+		
+		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
 	}
 	
 	
