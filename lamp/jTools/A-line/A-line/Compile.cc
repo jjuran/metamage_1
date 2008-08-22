@@ -193,28 +193,6 @@ namespace ALine
 		RunCompiler( itsOptions, itsSourcePathname, itsOutputPathname, itsCaption );
 	}
 	
-	static void CompileSource( const CompilerOptions& options, const std::string& source_pathname )
-	{
-		std::string source_filename = io::get_filename_string( source_pathname );
-		
-		
-		std::string output_pathname = options.Output() / ObjectFileName( source_filename );
-		
-		const char* caption = "Compiling: ";
-		
-		
-		TaskPtr task( new CompilingTask( options, source_pathname, output_pathname, caption ) );
-		
-		task->Main();
-	}
-	
-	static void Compile( CompilerOptions options, const std::string& source_pathname )
-	{
-		options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
-		
-		CompileSource( options, source_pathname );
-	}
-	
 	
 	static std::string PrecompiledHeaderImageFile( const ProjName&    projName,
 	                                               std::string        pchSourceName,
@@ -392,66 +370,6 @@ namespace ALine
 		
 		options.SetOutput( outDir );
 		
-		std::vector< std::string > dirtyFiles;
-		
-		if ( compilingEverything )
-		{
-			dirtyFiles = project.Sources();
-		}
-		else
-		{
-			// See which source files need to be compiled,
-			// caching include information in the process.
-			std::vector< std::string >::const_iterator it, end = project.Sources().end();
-			
-			for ( it = project.Sources().begin();  it != end;  ++it )
-			{
-				// The source file
-				const std::string& sourceFile( *it );
-				
-				// We need to compile the source file if any of these apply:
-				// * its object file doesn't exist
-				// * the object file is out of date
-				
-				// Below, we run the negation of each test.
-				// Any negative result ends the tests and we proceed to add the file to the list.
-				// If all tests pass then the object file is up to date and we skip it.
-				
-				// The file's name
-				std::string sourceName = io::get_filename_string( sourceFile );
-				
-				// The object file for this source file, which may or may not exist yet.
-				std::string objectFile = outDir / ObjectFileName( sourceName );
-				
-				if ( io::item_exists( objectFile ) )
-				{
-					// The effective modification date of the file, considering only
-					// a precompiled header (if available).  If the precompiled header
-					// has been modified, it saves us extracting the includes.
-					// Premature optimization?  Maybe.
-					time_t sourceDate = std::max( pchImageDate, ModifiedDate( sourceFile ) );
-					
-					time_t objectDate = ModifiedDate( objectFile );
-					
-					// If the object file is more recent than the source,
-					// (considering first the actual mod date and then the effective mod date),
-					// then it's up to date.
-					
-					if (    objectDate > sourceDate
-					     && objectDate > RecursivelyLatestDate( sourceName, sourceFile ) )
-					{
-						// Object file is newer than source file and newest header,
-						// so it's up to date and we can skip it
-						continue;
-					}
-				}
-				
-				dirtyFiles.push_back( sourceFile );
-			}
-		}
-		
-		if ( dirtyFiles.size() == 0 )  return;
-		
 		if ( precompiledHeaderIsAvailable )
 		{
 			options.SetPrecompiledHeaderSource( pchSourceName );
@@ -464,10 +382,70 @@ namespace ALine
 			options.PrependIncludeDir( io::get_preceding_directory( pchImage ) );
 		}
 		
-		std::for_each( dirtyFiles.begin(),
-		               dirtyFiles.end(),
-		               std::bind1st( more::ptr_fun( Compile ),
-		                             options ) );
+		// See which source files need to be compiled,
+		// caching include information in the process.
+		std::vector< std::string >::const_iterator it, end = project.Sources().end();
+		
+		for ( it = project.Sources().begin();  it != end;  ++it )
+		{
+			// The source file
+			const std::string& source_pathname( *it );
+			
+			// We need to compile the source file if any of these apply:
+			// * we're compiling everything anyway
+			// * its object file doesn't exist
+			// * the object file is out of date
+			
+			// Below, we run the negation of each test.
+			// Any negative result ends the tests and we proceed to add the file to the list.
+			// If all tests pass then the object file is up to date and we skip it.
+			
+			if ( !compilingEverything )
+			{
+				// The file's name
+				std::string sourceName = io::get_filename_string( source_pathname );
+				
+				// The object file for this source file, which may or may not exist yet.
+				std::string objectFile = outDir / ObjectFileName( sourceName );
+				
+				if ( io::item_exists( objectFile ) )
+				{
+					// The effective modification date of the file, considering only
+					// a precompiled header (if available).  If the precompiled header
+					// has been modified, it saves us extracting the includes.
+					// Premature optimization?  Maybe.
+					time_t sourceDate = std::max( pchImageDate, ModifiedDate( source_pathname ) );
+					
+					time_t objectDate = ModifiedDate( objectFile );
+					
+					// If the object file is more recent than the source,
+					// (considering first the actual mod date and then the effective mod date),
+					// then it's up to date.
+					
+					if (    objectDate > sourceDate
+					     && objectDate > RecursivelyLatestDate( sourceName, source_pathname ) )
+					{
+						// Object file is newer than source file and newest header,
+						// so it's up to date and we can skip it
+						continue;
+					}
+				}
+			}
+			
+			CompilerOptions source_options = options;
+			
+			source_options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
+			
+			std::string source_filename = io::get_filename_string( source_pathname );
+			
+			std::string output_pathname = options.Output() / ObjectFileName( source_filename );
+			
+			const char* caption = "Compiling: ";
+			
+			TaskPtr task( new CompilingTask( source_options, source_pathname, output_pathname, caption ) );
+			
+			task->Main();
+		}
 	}
 	
 }
