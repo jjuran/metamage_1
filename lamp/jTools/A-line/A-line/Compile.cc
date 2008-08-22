@@ -302,6 +302,19 @@ namespace ALine
 	{
 		CompilerOptions options( project.Name(), targetInfo );
 		
+		DefineMacros( options, targetInfo );
+		
+		// Select the includes belonging to the projects we use
+		IncludeDirGatherer gatherer( options );
+		
+		const std::vector< ProjName >& allUsedProjects = project.AllUsedProjects();
+		
+		// Reverse direction so projects can override Prefix.hh
+		std::for_each( allUsedProjects.rbegin(),
+		               allUsedProjects.rend(),
+		               gatherer );
+		
+		
 		bool thisProjectProvidesPrecompiledHeader = project.HasPrecompiledHeader();
 		
 		const Project* projectProvidingPrecompiledHeader = NULL;
@@ -333,6 +346,8 @@ namespace ALine
 		
 		time_t pchImageDate = 0;
 		
+		bool compilingEverything = Options().all;
+		
 		if ( precompiledHeaderIsAvailable )
 		{
 			pchSourcePath = projectProvidingPrecompiledHeader->PrecompiledHeaderSource();
@@ -345,40 +360,38 @@ namespace ALine
 			
 			options.SetPrecompiledHeaderImage( pchImage );
 			
-			// If the image doesn't exist, use a date that will always be newer
-			// (for comparison to source files)
-			pchImageDate = !Options().all && io::file_exists( pchImage ) ? ModifiedDate( pchImage )
-			                                                             : 0xFFFFFFFFU;
+			if ( !compilingEverything && io::file_exists( pchImage ) )
+			{
+				pchImageDate = ModifiedDate( pchImage );
+			}
 		}
-		
-		bool needToPrecompile = false;
-		std::string pchSource;
 		
 		if ( thisProjectProvidesPrecompiledHeader )
 		{
 			// Locate the precompiled header image file.
-			pchSource = FindInclude( pchSourcePath );
+			std::string pchSource = FindInclude( pchSourcePath );
 			
 			if ( pchSource.empty() )
 			{
 				std::fprintf( stderr, "Missing precompiled header '%s'\n", pchSourcePath.c_str() );
 			}
 			
-			// Locate the file and return the latest modification date of any file referenced
-			time_t pchSourceDate = RecursivelyLatestDate( pchSourcePath, pchSource );
+			bool needToPrecompile = pchImageDate == 0;  // optimization
 			
-			needToPrecompile = true;
-			
-			if ( pchImageDate != 0xFFFFFFFFU )
+			if ( !needToPrecompile )
 			{
-				if ( pchImageDate > pchSourceDate )
-				{
-					needToPrecompile = false;
-				}
-				else
-				{
-					pchImageDate = 0xFFFFFFFFU;
-				}
+				// Locate the file and return the latest modification date of any file referenced
+				time_t pchSourceDate = RecursivelyLatestDate( pchSourcePath, pchSource );
+				
+				needToPrecompile = pchImageDate <= pchSourceDate;
+			}
+			
+			if ( needToPrecompile )
+			{
+				Precompile( options, pchSource );
+				
+				// If we're compiling the precompiled header, then recompile all source
+				compilingEverything = true;
 			}
 		}
 		
@@ -387,9 +400,6 @@ namespace ALine
 		options.SetOutput( outDir );
 		
 		std::vector< std::string > dirtyFiles;
-		
-		// If we're compiling the precompiled header, then recompile all source
-		bool compilingEverything = Options().all  ||  needToPrecompile;
 		
 		if ( compilingEverything )
 		{
@@ -447,28 +457,11 @@ namespace ALine
 			}
 		}
 		
-		if ( !needToPrecompile && dirtyFiles.size() == 0 )  return;
-		
-		DefineMacros( options, targetInfo );
-		
-		// Select the includes belonging to the projects we use
-		IncludeDirGatherer gatherer( options );
-		
-		const std::vector< ProjName >& allUsedProjects = project.AllUsedProjects();
-		
-		// Reverse direction so projects can override Prefix.hh
-		std::for_each( allUsedProjects.rbegin(),
-		               allUsedProjects.rend(),
-		               gatherer );
-		
-		if ( needToPrecompile )
-		{
-			Precompile( options, pchSource );
-		}
+		if ( dirtyFiles.size() == 0 )  return;
 		
 		if ( precompiledHeaderIsAvailable )
 		{
-			options.SetPrecompiledHeaderSource( io::get_filename_string( pchSourcePath ) );
+			options.SetPrecompiledHeaderSource( pchSourceName );
 			// Theory:
 			// We need to include the pch source by name only, not path.
 			// Therefore, we need its parent directory to be in the search path,
