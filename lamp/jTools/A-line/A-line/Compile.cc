@@ -227,6 +227,50 @@ namespace ALine
 	
 	#define DEFINE_MACRO( macro )  DEFINE_MACRO_VALUE( macro, 1 )
 	
+	static void DefineMacros( CompilerOptions& options, const TargetInfo& targetInfo )
+	{
+		options.DEFINE_MACRO( "__ALINE__" );
+		options.DEFINE_MACRO( "JOSHUA_JURAN_EXPERIMENTAL" );
+		
+		options.DEFINE_MACRO( "NUCLEUS_USES_BACKTRACE" );
+		
+		if ( targetInfo.platform & CD::apiMacCarbon )
+		{
+			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
+		}
+		else if ( targetInfo.platform & CD::apiMacToolbox )
+		{
+			options.DEFINE_MACRO_VALUE( "TARGET_API_MAC_CARBON", 0 );
+			options.DEFINE_MACRO( "TARGET_API_MAC_OS8" );
+			
+			if ( targetInfo.platform & CD::archPPC )
+			{
+				options.DEFINE_MACRO( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
+				options.DEFINE_MACRO( "OPAQUE_UPP_TYPES" );
+			}
+		}
+		
+		if ( options.Target().toolkit == toolkitCodeWarrior )
+		{
+			// Assume CW Pro 6
+			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
+		}
+		
+		if ( targetInfo.build == buildDebug )
+		{
+			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 1 );
+		}
+		else
+		{
+			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 0 );
+		}
+		
+		if ( targetInfo.build == buildDemo )
+		{
+			options.DEFINE_MACRO( "BUILD_DEMO" );
+		}
+	}
+	
 	void CompileSources( const Project& project, TargetInfo targetInfo )
 	{
 		CompilerOptions options( project.Name(), targetInfo );
@@ -372,33 +416,6 @@ namespace ALine
 		
 		if ( !needToPrecompile && dirtyFiles.size() == 0 )  return;
 		
-		options.DEFINE_MACRO( "__ALINE__" );
-		options.DEFINE_MACRO( "JOSHUA_JURAN_EXPERIMENTAL" );
-		
-		options.DEFINE_MACRO( "NUCLEUS_USES_BACKTRACE" );
-		
-		if ( targetInfo.platform & CD::apiMacCarbon )
-		{
-			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
-		}
-		else if ( targetInfo.platform & CD::apiMacToolbox )
-		{
-			options.DEFINE_MACRO_VALUE( "TARGET_API_MAC_CARBON", 0 );
-			options.DEFINE_MACRO( "TARGET_API_MAC_OS8" );
-			
-			if ( targetInfo.platform & CD::archPPC )
-			{
-				options.DEFINE_MACRO( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
-				options.DEFINE_MACRO( "OPAQUE_UPP_TYPES" );
-			}
-		}
-		
-		if ( options.Target().toolkit == toolkitCodeWarrior )
-		{
-			// Assume CW Pro 6
-			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
-		}
-		
 		// Select the includes belonging to the projects we use
 		IncludeDirGatherer gatherer( options );
 		
@@ -408,20 +425,6 @@ namespace ALine
 		std::for_each( allUsedProjects.rbegin(),
 		               allUsedProjects.rend(),
 		               gatherer );
-		
-		if ( targetInfo.build == buildDebug )
-		{
-			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 1 );
-		}
-		else
-		{
-			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 0 );
-		}
-		
-		if ( targetInfo.build == buildDemo )
-		{
-			options.DEFINE_MACRO( "BUILD_DEMO" );
-		}
 		
 		if ( needToPrecompile )
 		{
