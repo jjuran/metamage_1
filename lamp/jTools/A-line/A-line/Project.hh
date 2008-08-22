@@ -54,6 +54,9 @@ namespace ALine
 			FileName ProgramName() const  { return progName; }
 			std::string ProjectFolder() const  { return projFolderPath; }
 			ProductType Product() const  { return product; }
+			
+			bool HasPrecompiledHeader() const  { return !precompiledHeaderSource.empty(); }
+			
 			const IncludePath& PrecompiledHeaderSource() const  { return precompiledHeaderSource; }
 			
 			const std::vector< ProjName >& AllUsedProjects() const  { return allUsedProjects; }
