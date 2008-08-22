@@ -246,8 +246,7 @@ namespace ALine
 	
 	static bool ProjectHasPrecompiledHeader( const ProjName& proj )
 	{
-		IncludePath pchSource = GetProject( proj ).PrecompiledHeaderSource();
-		return !pchSource.empty();
+		return GetProject( proj ).HasPrecompiledHeader();
 	}
 	
 	#define DEFINE_MACRO_VALUE( macro, value )  AddDefinedMacro( "-D" macro "=" #value )
@@ -298,16 +297,62 @@ namespace ALine
 		}
 	}
 	
+	
 	void CompileSources( const Project& project, TargetInfo targetInfo )
 	{
 		CompilerOptions options( project.Name(), targetInfo );
 		
-		time_t pchImageDate = 0;
-		bool needToPrecompile = false;
-		IncludePath pchSourcePath = project.PrecompiledHeaderSource();
-		bool thisProjectProvidesPrecompiledHeader = !pchSourcePath.empty();
-		std::string pchSource;
+		bool thisProjectProvidesPrecompiledHeader = project.HasPrecompiledHeader();
+		
+		const Project* projectProvidingPrecompiledHeader = NULL;
+		
+		if ( thisProjectProvidesPrecompiledHeader )
+		{
+			projectProvidingPrecompiledHeader = &project;
+		}
+		else
+		{
+			// This project doesn't have a precompiled header, but maybe a used one does
+			typedef std::vector< ProjName >::const_iterator const_iterator;
+			
+			const_iterator found = std::find_if( project.AllUsedProjects().begin(),
+			                                     project.AllUsedProjects().end(),
+			                                     std::ptr_fun( ProjectHasPrecompiledHeader ) );
+			
+			if ( found != project.AllUsedProjects().end() )
+			{
+				projectProvidingPrecompiledHeader = &GetProject( *found );
+			}
+		}
+		
+		bool precompiledHeaderIsAvailable = projectProvidingPrecompiledHeader != NULL;
+		
+		IncludePath pchSourcePath;
+		std::string pchSourceName;
 		std::string pchImage;
+		
+		time_t pchImageDate = 0;
+		
+		if ( precompiledHeaderIsAvailable )
+		{
+			pchSourcePath = projectProvidingPrecompiledHeader->PrecompiledHeaderSource();
+			
+			pchSourceName = io::get_filename_string( pchSourcePath );
+			
+			pchImage = PrecompiledHeaderImageFile( project.Name(),
+			                                       pchSourceName,
+			                                       targetInfo );
+			
+			options.SetPrecompiledHeaderImage( pchImage );
+			
+			// If the image doesn't exist, use a date that will always be newer
+			// (for comparison to source files)
+			pchImageDate = !Options().all && io::file_exists( pchImage ) ? ModifiedDate( pchImage )
+			                                                             : 0xFFFFFFFFU;
+		}
+		
+		bool needToPrecompile = false;
+		std::string pchSource;
 		
 		if ( thisProjectProvidesPrecompiledHeader )
 		{
@@ -322,54 +367,18 @@ namespace ALine
 			// Locate the file and return the latest modification date of any file referenced
 			time_t pchSourceDate = RecursivelyLatestDate( pchSourcePath, pchSource );
 			
-			std::string pchSourceName = io::get_filename_string( pchSourcePath );
-			
-			pchImage = PrecompiledHeaderImageFile( project.Name(),
-			                                       pchSourceName,
-			                                       targetInfo );
-			
-			options.SetPrecompiledHeaderImage( pchImage );
-			
 			needToPrecompile = true;
 			
-			// If the image doesn't exist, use a date that will always be newer
-			// (for comparison to source files)
-			pchImageDate = 0xFFFFFFFFU;
-			
-			if ( !Options().all && io::file_exists( pchImage ) )
+			if ( pchImageDate != 0xFFFFFFFFU )
 			{
-				time_t pchImageModifiedDate = ModifiedDate( pchImage );
-				
-				if ( pchImageModifiedDate > pchSourceDate )
+				if ( pchImageDate > pchSourceDate )
 				{
 					needToPrecompile = false;
-					pchImageDate = pchImageModifiedDate;
 				}
-			}
-		}
-		else
-		{
-			// This project doesn't have a precompiled header, but maybe a used one does
-			typedef std::vector< ProjName >::const_iterator const_iterator;
-			
-			const_iterator found = std::find_if( project.AllUsedProjects().begin(),
-			                                     project.AllUsedProjects().end(),
-			                                     std::ptr_fun( ProjectHasPrecompiledHeader ) );
-			
-			if ( found != project.AllUsedProjects().end() )
-			{
-				pchSourcePath = GetProject( *found ).PrecompiledHeaderSource();
-				
-				std::string pchSourceName = io::get_filename_string( pchSourcePath );
-				
-				pchImage = PrecompiledHeaderImageFile( *found,
-				                                       pchSourceName,
-				                                       targetInfo );
-				
-				pchImageDate = io::file_exists( pchImage ) ? ModifiedDate( pchImage )
-				                                           : 0xFFFFFFFF;
-				
-				options.SetPrecompiledHeaderImage( pchImage );
+				else
+				{
+					pchImageDate = 0xFFFFFFFFU;
+				}
 			}
 		}
 		
@@ -454,7 +463,7 @@ namespace ALine
 			Precompile( options, pchSource );
 		}
 		
-		if ( !pchSourcePath.empty() )
+		if ( precompiledHeaderIsAvailable )
 		{
 			options.SetPrecompiledHeaderSource( io::get_filename_string( pchSourcePath ) );
 			// Theory:
