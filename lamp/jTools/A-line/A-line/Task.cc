@@ -42,6 +42,13 @@ namespace ALine
 		}
 	}
 	
+	void Task::Run()
+	{
+		Main();
+		
+		Complete( itsInputStamp );
+	}
+	
 	void Task::Complete( time_t stamp )
 	{
 		std::for_each( itsDependents.begin(),

@@ -48,6 +48,8 @@ namespace ALine
 			
 			virtual void Main() = 0;
 			
+			void Run();
+			
 			void Complete( time_t stamp );
 	};
 	
