@@ -416,6 +416,8 @@ namespace ALine
 		
 		if ( !needToPrecompile && dirtyFiles.size() == 0 )  return;
 		
+		DefineMacros( options, targetInfo );
+		
 		// Select the includes belonging to the projects we use
 		IncludeDirGatherer gatherer( options );
 		
