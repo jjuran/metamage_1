@@ -331,24 +331,15 @@ namespace ALine
 		std::string pchSourceName;
 		std::string pchImage;
 		
-		time_t pchImageDate = 0;
-		
-		bool compilingEverything = Options().all;
-		
 		if ( precompiledHeaderIsAvailable )
 		{
 			pchSourcePath = projectProvidingPrecompiledHeader->PrecompiledHeaderSource();
 			
 			pchSourceName = io::get_filename_string( pchSourcePath );
 			
-			pchImage = PrecompiledHeaderImageFile( project.Name(),
+			pchImage = PrecompiledHeaderImageFile( projectProvidingPrecompiledHeader->Name(),
 			                                       pchSourceName,
 			                                       targetInfo );
-			
-			if ( !compilingEverything && io::file_exists( pchImage ) )
-			{
-				pchImageDate = ModifiedDate( pchImage );
-			}
 		}
 		
 		TaskPtr precompile_task;
@@ -363,31 +354,19 @@ namespace ALine
 				std::fprintf( stderr, "Missing precompiled header '%s'\n", pchSourcePath.c_str() );
 			}
 			
-			bool needToPrecompile = pchImageDate == 0;  // optimization
-			
-			if ( !needToPrecompile )
-			{
-				// Locate the file and return the latest modification date of any file referenced
-				time_t pchSourceDate = RecursivelyLatestDate( pchSourcePath, pchSource );
-				
-				needToPrecompile = pchImageDate <= pchSourceDate;
-			}
-			
-			if ( needToPrecompile )
-			{
-				precompile_task.reset( new CompilingTask( options, pchSource, pchImage, "Precompiling: " ) );
-				
-				// If we're compiling the precompiled header, then recompile all source
-				compilingEverything = true;
-			}
+			precompile_task.reset( new CompilingTask( options, pchSource, pchImage, "Precompiling: " ) );
 		}
-		
-		if ( precompile_task.get() == NULL )
+		else
 		{
 			precompile_task.reset( new NullTask() );
+			
+			if ( precompiledHeaderIsAvailable )
+			{
+				precompile_task->UpdateInputStamp( ModifiedDate( pchImage ) );
+			}
 		}
 		
-		if ( compilingEverything )
+		if ( Options().all )
 		{
 			precompile_task->UpdateInputStamp( 0x7FFFFFFF );
 		}
