@@ -51,6 +51,12 @@ namespace ALine
 			void Complete( time_t stamp );
 	};
 	
+	class NullTask : public Task
+	{
+		public:
+			void Main()  {}
+	};
+	
 }
 
 #endif
