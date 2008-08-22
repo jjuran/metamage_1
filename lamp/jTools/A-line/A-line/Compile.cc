@@ -389,6 +389,11 @@ namespace ALine
 			// The source file
 			const std::string& source_pathname( *it );
 			
+			std::string source_filename = io::get_filename_string( source_pathname );
+			
+			// The object file for this source file, which may or may not exist yet.
+			std::string output_pathname = outDir / ObjectFileName( source_filename );
+			
 			// We need to compile the source file if any of these apply:
 			// * we're compiling everything anyway
 			// * its object file doesn't exist
@@ -400,13 +405,7 @@ namespace ALine
 			
 			if ( !compilingEverything )
 			{
-				// The file's name
-				std::string sourceName = io::get_filename_string( source_pathname );
-				
-				// The object file for this source file, which may or may not exist yet.
-				std::string objectFile = outDir / ObjectFileName( sourceName );
-				
-				if ( io::item_exists( objectFile ) )
+				if ( io::item_exists( output_pathname ) )
 				{
 					// The effective modification date of the file, considering only
 					// a precompiled header (if available).  If the precompiled header
@@ -414,14 +413,14 @@ namespace ALine
 					// Premature optimization?  Maybe.
 					time_t sourceDate = std::max( pchImageDate, ModifiedDate( source_pathname ) );
 					
-					time_t objectDate = ModifiedDate( objectFile );
+					time_t objectDate = ModifiedDate( output_pathname );
 					
 					// If the object file is more recent than the source,
 					// (considering first the actual mod date and then the effective mod date),
 					// then it's up to date.
 					
 					if (    objectDate > sourceDate
-					     && objectDate > RecursivelyLatestDate( sourceName, source_pathname ) )
+					     && objectDate > RecursivelyLatestDate( source_filename, source_pathname ) )
 					{
 						// Object file is newer than source file and newest header,
 						// so it's up to date and we can skip it
@@ -433,10 +432,6 @@ namespace ALine
 			CompilerOptions source_options = options;
 			
 			source_options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
-			
-			std::string source_filename = io::get_filename_string( source_pathname );
-			
-			std::string output_pathname = options.Output() / ObjectFileName( source_filename );
 			
 			const char* caption = "Compiling: ";
 			
