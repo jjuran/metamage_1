@@ -389,7 +389,7 @@ namespace ALine
 		std::vector< std::string > dirtyFiles;
 		
 		// If we're compiling the precompiled header, then recompile all source
-		bool compilingEverything = Options().all  ||  thisProjectProvidesPrecompiledHeader && needToPrecompile;
+		bool compilingEverything = Options().all  ||  needToPrecompile;
 		
 		if ( compilingEverything )
 		{
