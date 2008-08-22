@@ -30,7 +30,6 @@ namespace ALine
 			Macros itsMacros;
 			std::list< std::string > itsMacroStorage;
 			std::string myPrecompiledHeaderSource;
-			std::string myPrecompiledHeaderImage;
 			std::string myOutputDir;
 			std::vector< std::string > itsIncludeDirOptions;
 			bool hasPrecompiledHeaderSource;
@@ -47,7 +46,6 @@ namespace ALine
 			void DefineMacro( const std::string& macro, bool value = true );
 			
 			void SetPrecompiledHeaderSource( const std::string& pch );
-			void SetPrecompiledHeaderImage ( const std::string& phi );
 			void SetOutput( const std::string& output );
 			
 			const Macros& GetMacros() const  { return itsMacros; }
@@ -55,7 +53,6 @@ namespace ALine
 			bool HasPrecompiledHeaderSource() const  { return hasPrecompiledHeaderSource; }
 			
 			const std::string& PrecompiledHeaderSource() const  { return myPrecompiledHeaderSource; }
-			const std::string& PrecompiledHeaderImage () const  { return myPrecompiledHeaderImage;  }
 			
 			const std::string& Output() const  { return myOutputDir; }
 			

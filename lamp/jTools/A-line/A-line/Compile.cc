@@ -217,10 +217,9 @@ namespace ALine
 	
 	
 	static void Precompile( const CompilerOptions&  options,
-	                        const std::string&      source_pathname )
+	                        const std::string&      source_pathname,
+	                        const std::string&      output_pathname )
 	{
-		const std::string& output_pathname = options.PrecompiledHeaderImage();
-		
 		const char* caption = "Precompiling: ";
 		
 		
@@ -358,8 +357,6 @@ namespace ALine
 			                                       pchSourceName,
 			                                       targetInfo );
 			
-			options.SetPrecompiledHeaderImage( pchImage );
-			
 			if ( !compilingEverything && io::file_exists( pchImage ) )
 			{
 				pchImageDate = ModifiedDate( pchImage );
@@ -388,7 +385,7 @@ namespace ALine
 			
 			if ( needToPrecompile )
 			{
-				Precompile( options, pchSource );
+				Precompile( options, pchSource, pchImage );
 				
 				// If we're compiling the precompiled header, then recompile all source
 				compilingEverything = true;

@@ -44,11 +44,6 @@ namespace ALine
 		hasPrecompiledHeaderSource = true;
 	}
 	
-	void CompilerOptions::SetPrecompiledHeaderImage( const std::string& phi )
-	{
-		myPrecompiledHeaderImage = phi;
-	}
-	
 	void CompilerOptions::SetOutput( const std::string& output )
 	{
 		myOutputDir = output;
