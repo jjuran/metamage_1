@@ -190,6 +190,27 @@ namespace ALine
 	
 	void CompilingTask::Main()
 	{
+		// If the output file exists and it's up to date, we can skip compiling.
+		
+		if ( io::item_exists( itsOutputPathname ) )
+		{
+			time_t output_stamp = ModifiedDate( itsOutputPathname );
+			
+			UpdateInputStamp( ModifiedDate( itsSourcePathname ) );
+			
+			if ( UpToDate( output_stamp ) )
+			{
+				std::string source_filename = io::get_filename_string( itsSourcePathname );
+				
+				UpdateInputStamp( RecursivelyLatestDate( source_filename, itsSourcePathname ) );
+				
+				if ( UpToDate( output_stamp ) )
+				{
+					return;
+				}
+			}
+		}
+		
 		RunCompiler( itsOptions, itsSourcePathname, itsOutputPathname, itsCaption );
 		
 		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
@@ -366,6 +387,11 @@ namespace ALine
 			precompile_task.reset( new NullTask() );
 		}
 		
+		if ( compilingEverything )
+		{
+			precompile_task->UpdateInputStamp( 0x7FFFFFFF );
+		}
+		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
 		options.SetOutput( outDir );
@@ -395,41 +421,6 @@ namespace ALine
 			
 			// The object file for this source file, which may or may not exist yet.
 			std::string output_pathname = outDir / ObjectFileName( source_filename );
-			
-			// We need to compile the source file if any of these apply:
-			// * we're compiling everything anyway
-			// * its object file doesn't exist
-			// * the object file is out of date
-			
-			// Below, we run the negation of each test.
-			// Any negative result ends the tests and we proceed to add the file to the list.
-			// If all tests pass then the object file is up to date and we skip it.
-			
-			if ( !compilingEverything )
-			{
-				if ( io::item_exists( output_pathname ) )
-				{
-					// The effective modification date of the file, considering only
-					// a precompiled header (if available).  If the precompiled header
-					// has been modified, it saves us extracting the includes.
-					// Premature optimization?  Maybe.
-					time_t sourceDate = std::max( pchImageDate, ModifiedDate( source_pathname ) );
-					
-					time_t objectDate = ModifiedDate( output_pathname );
-					
-					// If the object file is more recent than the source,
-					// (considering first the actual mod date and then the effective mod date),
-					// then it's up to date.
-					
-					if (    objectDate > sourceDate
-					     && objectDate > RecursivelyLatestDate( source_filename, source_pathname ) )
-					{
-						// Object file is newer than source file and newest header,
-						// so it's up to date and we can skip it
-						continue;
-					}
-				}
-			}
 			
 			CompilerOptions source_options = options;
 			
