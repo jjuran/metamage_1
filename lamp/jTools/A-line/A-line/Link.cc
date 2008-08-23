@@ -10,6 +10,9 @@
 #include <functional>
 #include <vector>
 
+// Standard C
+#include <stdio.h>
+
 // Iota
 #include "iota/strings.hh"
 
