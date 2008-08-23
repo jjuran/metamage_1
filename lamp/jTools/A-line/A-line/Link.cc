@@ -633,16 +633,17 @@ namespace ALine
 			
 			// Link input is only .o files
 			link_static_library_task.reset( new LinkingTask( link_command, outFile, link_input_arguments, diagnosticsDir ) );
+			
+			AddReadyTask( link_static_library_task );
 		}
-		else
-		{
-			link_static_library_task.reset( new NullTask() );
-		}
-		
-		link_static_library_task->Main();
 		
 		if ( !hasExecutable )
 		{
+			while ( RunNextTask() )
+			{
+				continue;
+			}
+			
 			return;
 		}
 		
@@ -732,7 +733,7 @@ namespace ALine
 					
 					TaskPtr link_tool_task( new LinkingTask( command, linkOutput, link_input_arguments, diagnosticsDir ) );
 					
-					link_tool_task->Main();
+					link_static_library_task->AddDependent( link_tool_task );
 				}
 			}
 		}
@@ -749,20 +750,22 @@ namespace ALine
 			
 			bool usingOSXRez = gnu;
 			
+			TaskPtr rez_task;
+			
 			if ( !project.UsedRezFiles().empty() )
 			{
 				std::string rez_output_pathname = RezzedDirPath() / project.Name() + ".rsrc";
 				
-				TaskPtr rezTask = MakeRezTask( project, rez_output_pathname, needCarbResource, usingOSXRez );
-				
-				rezTask->Main();
-				
 				rsrc_pathnames.push_back( rez_output_pathname );
+				
+				rez_task = MakeRezTask( project, rez_output_pathname, needCarbResource, usingOSXRez );
+				
+				AddReadyTask( rez_task );
 			}
 			
 			TaskPtr link_task( new LinkingTask( command, outFile, link_input_arguments, diagnosticsDir ) );
 			
-			link_task->Main();
+			AddReadyTask( link_task );
 			
 			if ( !rsrc_pathnames.empty() )
 			{
@@ -771,8 +774,18 @@ namespace ALine
 				
 				TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, usingOSXRez ) );
 				
-				copy_rsrcs->Main();
+				if ( rez_task.get() )
+				{
+					rez_task->AddDependent( copy_rsrcs );
+				}
+				
+				link_task->AddDependent( copy_rsrcs );
 			}
+		}
+		
+		while ( RunNextTask() )
+		{
+			continue;
 		}
 	}
 	
