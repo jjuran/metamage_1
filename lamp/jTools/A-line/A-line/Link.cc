@@ -659,6 +659,8 @@ namespace ALine
 			base_task.reset( new NullTask() );
 		}
 		
+		source_dependency->AddDependent( base_task );
+		
 		if ( !hasExecutable )
 		{
 			return;
@@ -671,16 +673,6 @@ namespace ALine
 			link_input_arguments.push_back( "" );  // the tool .o file, later
 			
 			link_input_arguments.push_back( outFile );  // the static library
-			
-			// We don't just add a blanket dependency on all source, because then
-			// updating a tool's source would relink the common lib and all tools
-			std::for_each( objectFiles.begin() + n_tools,
-			               objectFiles.end(),
-			               std::bind1st( more::ptr_fun( UpdateInputStamp ), base_task ) );
-		}
-		else
-		{
-			source_dependency->AddDependent( base_task );
 		}
 		
 		TaskPtr link_dependency_task( new NullTask() );
