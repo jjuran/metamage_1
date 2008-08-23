@@ -633,9 +633,13 @@ namespace ALine
 			
 			// Link input is only .o files
 			link_static_library_task.reset( new LinkingTask( link_command, outFile, link_input_arguments, diagnosticsDir ) );
-			
-			AddReadyTask( link_static_library_task );
 		}
+		else
+		{
+			link_static_library_task.reset( new NullTask() );
+		}
+		
+		AddReadyTask( link_static_library_task );
 		
 		if ( !hasExecutable )
 		{
