@@ -558,9 +558,9 @@ namespace ALine
 		
 		std::string libsDir = LibrariesDirPath();
 		
-		std::string outputDir = ProjectOutputDirPath( project.Name() );
+		std::string outputDir = hasStaticLib ? libsDir : ProjectOutputDirPath( project.Name() );
 		
-		std::string linkDir = hasStaticLib ? libsDir : outputDir;
+		std::string linkDir = outputDir;
 		
 		if ( bundle )
 		{
