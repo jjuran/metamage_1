@@ -249,22 +249,51 @@ namespace ALine
 		return filename + ".txt";
 	}
 	
-	static void LinkFile( Command                            command,
+	class LinkingTask : public Task
+	{
+		private:
+			Command                     itsCommand;
+			std::string                 itsOutputPathname;
+			std::vector< std::string >  itsInputArguments;
+			std::string                 itsDiagnosticsDir;
+		
+		public:
+			LinkingTask( const Command&                     command,
+			             const std::string&                 output,
+			             const std::vector< std::string >&  input,
+			             const std::string&                 diagnostics ) : itsCommand       ( command     ),
+			                                                                itsOutputPathname( output      ),
+			                                                                itsInputArguments( input       ),
+			                                                                itsDiagnosticsDir( diagnostics )
+			{
+			}
+			
+			void Main();
+	};
+	
+	void LinkingTask::Main()
+	{
+		itsCommand.push_back( itsOutputPathname.c_str() );
+		
+		AugmentCommand( itsCommand, itsInputArguments );
+		
+		std::string output_filename = io::get_filename_string( itsOutputPathname );
+		
+		itsCommand.push_back( NULL );
+		
+		std::string diagnostics_pathname = itsDiagnosticsDir / DiagnosticsFilenameFromSourceFilename( output_filename );
+		
+		TaskPtr link( new CommandTask( itsCommand, diagnostics_pathname, "Linking: " + output_filename ) );
+		
+		link->Main();
+	}
+	
+	static void LinkFile( const Command&                     command,
 	                      const std::string&                 output_pathname,
 	                      const std::vector< std::string >&  link_input_arguments,
 	                      const std::string&                 diagnosticsDir )
 	{
-		command.push_back( output_pathname.c_str() );
-		
-		AugmentCommand( command, link_input_arguments );
-		
-		std::string filename = io::get_filename_string( output_pathname );
-		
-		command.push_back( NULL );
-		
-		std::string diagnosticsFile = diagnosticsDir / DiagnosticsFilenameFromSourceFilename( filename );
-		
-		TaskPtr link( new CommandTask( command, diagnosticsFile, "Linking: " + filename ) );
+		TaskPtr link( new LinkingTask( command, output_pathname, link_input_arguments, diagnosticsDir ) );
 		
 		link->Main();
 	}
