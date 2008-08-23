@@ -700,7 +700,11 @@ namespace ALine
 		}
 		else
 		{
-			LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, diagnosticsDir );
+			std::string linkDir = ProjectLinkedDirPath( project.Name() );
+			
+			std::string linkFile = linkDir / linkName;
+			
+			LinkFile( command, linkFile, objectFilePaths, allLibraryLinkArgs, diagnosticsDir );
 			
 			std::vector< FileName > rsrc_filenames = project.UsedRsrcFiles();
 			
@@ -721,6 +725,8 @@ namespace ALine
 				
 				rsrc_pathnames.push_back( rez_output_pathname );
 			}
+			
+			p7::throw_posix_result( rename( linkFile.c_str(), outFile.c_str() ) );
 			
 			if ( !rsrc_pathnames.empty() )
 			{
