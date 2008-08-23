@@ -311,7 +311,7 @@ namespace ALine
 		return result;
 	}
 	
-	void CompileSources( const Project& project, TargetInfo targetInfo )
+	void CompileSources( const Project& project, const TargetInfo& targetInfo )
 	{
 		CompilerOptions options( project.Name(), targetInfo );
 		
