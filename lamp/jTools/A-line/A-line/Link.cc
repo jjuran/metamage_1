@@ -353,9 +353,11 @@ namespace ALine
 		else
 		{
 			rezCommand.push_back( "mpwrez" );
+			rezCommand.push_back( "-c" );
+			rezCommand.push_back( "RSED" );
+			rezCommand.push_back( "-t" );
+			rezCommand.push_back( "rsrc" );
 		}
-		
-		rezCommand.push_back( "-append" );
 		
 		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
 		
