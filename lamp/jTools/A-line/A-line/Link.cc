@@ -541,7 +541,7 @@ namespace ALine
 		
 		std::string outputDir = hasStaticLib ? libsDir : ProjectOutputDirPath( project.Name() );
 		
-		std::string linkDir = outputDir;
+		std::string exeDir = outputDir;
 		
 		if ( bundle )
 		{
@@ -551,12 +551,12 @@ namespace ALine
 			
 			std::string contents( outputDir / bundleName / "Contents" );
 			
-			linkDir = contents / "MacOS";
+			exeDir = contents / "MacOS";
 			
 			WritePkgInfo( contents / "PkgInfo", "APPL" + project.CreatorCode() );
 		}
 		
-		std::string outFile = linkDir / linkName;
+		std::string outFile = exeDir / linkName;
 		
 		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
 		
