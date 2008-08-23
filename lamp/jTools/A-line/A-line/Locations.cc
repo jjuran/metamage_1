@@ -147,6 +147,11 @@ namespace ALine
 		return CreateDirPath( "Libraries" );
 	}
 	
+	std::string RezzedDirPath()
+	{
+		return CreateDirPath( "_Rezzed" );
+	}
+	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj )
 	{
 		return CreateDirPath( CreateDirPath( "Diagnostics" ) / proj );
