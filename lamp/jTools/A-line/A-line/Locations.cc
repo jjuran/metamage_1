@@ -167,6 +167,11 @@ namespace ALine
 		return CreateDirPath( CreateDirPath( "Objects" ) / proj );
 	}
 	
+	std::string ProjectLinkedDirPath( const std::string& proj )
+	{
+		return CreateDirPath( CreateDirPath( "_Linked" ) / proj );
+	}
+	
 	std::string ProjectOutputDirPath( const std::string& proj )
 	{
 		return CreateDirPath( CreateDirPath( "Output" ) / proj );
