@@ -251,15 +251,12 @@ namespace ALine
 	
 	static void LinkFile( Command                            command,
 	                      const std::string&                 output_pathname,
-	                      const std::vector< std::string >&  objectFileArgs,
-	                      const std::vector< std::string >&  libraryArgs,
+	                      const std::vector< std::string >&  link_input_arguments,
 	                      const std::string&                 diagnosticsDir )
 	{
 		command.push_back( output_pathname.c_str() );
 		
-		AugmentCommand( command, objectFileArgs );
-		
-		AugmentCommand( command, libraryArgs );
+		AugmentCommand( command, link_input_arguments );
 		
 		std::string filename = io::get_filename_string( output_pathname );
 		
@@ -587,8 +584,8 @@ namespace ALine
 		                                more::compose1( more::ptr_fun( ObjectFileName ),
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 		
-		std::vector< std::string > objectFilePaths( objectFiles.begin() + n_tools,
-		                                            objectFiles.end() );
+		std::vector< std::string > link_input_arguments( objectFiles.begin() + n_tools,
+		                                                 objectFiles.end() );
 		
 		time_t outFileDate = EffectiveModifiedDate( outFile );
 		
@@ -613,7 +610,8 @@ namespace ALine
 				link.push_back( "-o" );
 			}
 			
-			LinkFile( link, outFile, objectFilePaths, std::vector< std::string >(), diagnosticsDir );
+			// Link input is only .o files
+			LinkFile( link, outFile, link_input_arguments, diagnosticsDir );
 		}
 		
 		if ( !hasExecutable )
@@ -621,7 +619,14 @@ namespace ALine
 			return;
 		}
 		
-		std::vector< std::string > allLibraryLinkArgs;
+		if ( toolkit )
+		{
+			link_input_arguments.clear();  // don't link against common .o files
+			
+			link_input_arguments.push_back( "" );  // the tool .o file, later
+			
+			link_input_arguments.push_back( outFile );  // the static library
+		}
 		
 		// A copy so we can munge it
 		std::vector< ProjName > usedProjects = project.AllUsedProjects();
@@ -636,7 +641,7 @@ namespace ALine
 		{
 			libsDirOption = "-L" + libsDir;
 			
-			allLibraryLinkArgs.push_back( libsDirOption );
+			link_input_arguments.push_back( libsDirOption );
 			
 			const bool outOfDate = outFileDate == 0  ||  ProjectLibsAreOutOfDate( usedProjects, outFileDate );
 			
@@ -645,7 +650,7 @@ namespace ALine
 				return;
 			}
 			
-			AddLibraryLinkArgs( usedProjects, allLibraryLinkArgs );
+			AddLibraryLinkArgs( usedProjects, link_input_arguments );
 		}
 		
 		std::vector< std::string > allImports;
@@ -655,7 +660,7 @@ namespace ALine
 		{
 			allImports = GetAllImports( project );
 			
-			AddImports( allImports, allLibraryLinkArgs );
+			AddImports( allImports, link_input_arguments );
 		}
 		
 		if ( machO )
@@ -664,7 +669,7 @@ namespace ALine
 			
 			AddFrameworks( has_frameworks ? project.Frameworks()
 			                              : std::vector< std::string >( 1, "Carbon" ),
-			               allLibraryLinkArgs );
+			               link_input_arguments );
 		}
 		
 		
@@ -682,8 +687,6 @@ namespace ALine
 		
 		if ( toolkit )
 		{
-			allLibraryLinkArgs.insert( allLibraryLinkArgs.begin(), outFile );
-			
 			typedef std::vector< std::string >::const_iterator Iter;
 			
 			const Iter end = objectFiles.begin() + n_tools;
@@ -698,9 +701,9 @@ namespace ALine
 				
 				if ( EffectiveModifiedDate( objectFile ) >= EffectiveModifiedDate( linkOutput ) )
 				{
-					std::vector< std::string > objectFilePaths( 1, objectFile );
+					link_input_arguments.front() = objectFile;
 					
-					LinkFile( command, linkOutput, objectFilePaths, allLibraryLinkArgs, diagnosticsDir );
+					LinkFile( command, linkOutput, link_input_arguments, diagnosticsDir );
 				}
 			}
 		}
@@ -728,7 +731,7 @@ namespace ALine
 				rsrc_pathnames.push_back( rez_output_pathname );
 			}
 			
-			LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, diagnosticsDir );
+			LinkFile( command, outFile, link_input_arguments, diagnosticsDir );
 			
 			if ( !rsrc_pathnames.empty() )
 			{
