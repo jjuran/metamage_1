@@ -665,11 +665,6 @@ namespace ALine
 		
 		if ( !hasExecutable )
 		{
-			while ( RunNextTask() )
-			{
-				continue;
-			}
-			
 			return;
 		}
 		
@@ -807,13 +802,6 @@ namespace ALine
 				
 				link_task->AddDependent( copy_rsrcs );
 			}
-		}
-		
-		link_dependency_task.reset();
-		
-		while ( RunNextTask() )
-		{
-			continue;
 		}
 	}
 	

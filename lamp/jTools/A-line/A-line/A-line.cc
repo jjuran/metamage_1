@@ -57,6 +57,7 @@
 #include "A-line/Link.hh"
 #include "A-line/Locations.hh"
 #include "A-line/ProjectCommon.hh"
+#include "A-line/Task.hh"
 
 
 namespace O = Orion;
@@ -357,6 +358,11 @@ namespace ALine
 		{
 			CompileSources( project, info );
 			LinkProduct   ( project, info );
+			
+			while ( RunNextTask() )
+			{
+				continue;
+			}
 		}
 		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
