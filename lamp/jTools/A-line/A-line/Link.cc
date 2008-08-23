@@ -326,11 +326,6 @@ namespace ALine
 	{
 		const std::vector< FileName >& rez = project.UsedRezFiles();
 		
-		if ( rez.empty() )
-		{
-			return;
-		}
-		
 		std::vector< std::string > rezFiles( rez.size() );
 		
 		std::transform( rez.begin(),
@@ -376,41 +371,27 @@ namespace ALine
 		rezTask->Main();
 	}
 	
-	// foo.r -> echo 'include "foo.r";'
+	// foo.r -> echo -n 'include "foo.r";'
 	static std::string MakeEchoedRezInclude( const std::string& file )
 	{
 		std::string include = "include ";
-		std::string echo    = "echo ";
+		std::string echo    = "echo -n ";  // OS X Rez can't handle Unix newlines
 		
 		return echo + q( include + qq( file ) + ";" );
 	}
 	
-	static void CopyResources( const Project&      project,
-	                           const std::string&  rsrcFile,
-	                           bool                usingOSXRez )
+	static void CopyResources( const std::vector< FileName >&  input_pathnames,
+	                           const std::string&              rsrcFile,
+	                           bool                            usingOSXRez )
 	{
-		const std::vector< FileName >& rsrcs = project.UsedRsrcFiles();
-		
-		if ( rsrcs.empty() )
-		{
-			return;
-		}
-		
-		std::vector< std::string > rsrcFiles( rsrcs.size() );
-		
-		std::transform( rsrcs.begin(), 
-		                rsrcs.end(),
-		                rsrcFiles.begin(),
-		                std::ptr_fun( RezLocation ) );
-		
 		Command command;
 		
 		std::string command_line;
 		
 		if ( usingOSXRez )
 		{
-			command_line = join( rsrcFiles.begin(),
-			                     rsrcFiles.end(),
+			command_line = join( input_pathnames.begin(),
+			                     input_pathnames.end(),
 			                     "; ",
 			                     std::ptr_fun( MakeEchoedRezInclude ) );
 			
@@ -427,7 +408,7 @@ namespace ALine
 		{
 			command.push_back( "cpres" );
 			
-			AugmentCommand( command, rsrcFiles );
+			AugmentCommand( command, input_pathnames );
 			
 			command.push_back( rsrcFile.c_str() );
 		}
@@ -721,14 +702,33 @@ namespace ALine
 		{
 			LinkFile( command, outFile, objectFilePaths, allLibraryLinkArgs, diagnosticsDir );
 			
-			std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
-			                           : outFile;
+			std::vector< FileName > rsrc_filenames = project.UsedRsrcFiles();
+			
+			std::vector< std::string > rsrc_pathnames( rsrc_filenames.size() );
+			
+			std::transform( rsrc_filenames.begin(), 
+			                rsrc_filenames.end(),
+			                rsrc_pathnames.begin(),
+			                std::ptr_fun( RezLocation ) );
 			
 			bool usingOSXRez = gnu;
 			
-			CompileResources( project, rsrcFile, needCarbResource, usingOSXRez );
+			if ( !project.UsedRezFiles().empty() )
+			{
+				std::string rez_output_pathname = RezzedDirPath() / project.Name() + ".rsrc";
+				
+				CompileResources( project, rez_output_pathname, needCarbResource, usingOSXRez );
+				
+				rsrc_pathnames.push_back( rez_output_pathname );
+			}
 			
-			CopyResources( project, rsrcFile, usingOSXRez );
+			if ( !rsrc_pathnames.empty() )
+			{
+				std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
+				                           : outFile;
+				
+				CopyResources( rsrc_pathnames, rsrcFile, usingOSXRez );
+			}
 		}
 	}
 	
