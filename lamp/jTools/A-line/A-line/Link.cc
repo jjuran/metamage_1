@@ -382,25 +382,42 @@ namespace ALine
 		return echo + q( include + qq( file ) + ";" );
 	}
 	
-	static void CopyResources( const std::vector< FileName >&  input_pathnames,
-	                           const std::string&              rsrcFile,
-	                           bool                            usingOSXRez )
+	class ResourceCopyingTask : public Task
+	{
+		private:
+			std::vector< std::string >  itsInputPathnames;
+			std::string                 itsOutputPathname;
+			bool                        itIsUsingOSX;
+		
+		public:
+			ResourceCopyingTask( const std::vector< std::string >&  input,
+			                     const std::string&                 output,
+			                     bool                               usingOSX ) : itsInputPathnames( input    ),
+			                                                                     itsOutputPathname( output   ),
+			                                                                     itIsUsingOSX     ( usingOSX )
+			{
+			}
+			
+			void Main();
+	};
+	
+	void ResourceCopyingTask::Main()
 	{
 		Command command;
 		
 		std::string command_line;
 		
-		if ( usingOSXRez )
+		if ( itIsUsingOSX )
 		{
-			command_line = join( input_pathnames.begin(),
-			                     input_pathnames.end(),
+			command_line = join( itsInputPathnames.begin(),
+			                     itsInputPathnames.end(),
 			                     "; ",
 			                     std::ptr_fun( MakeEchoedRezInclude ) );
 			
 			command_line = paren( command_line );
 			
 			command_line += " | /Developer/Tools/Rez -append -useDF -o ";
-			command_line += q( rsrcFile );
+			command_line += q( itsOutputPathname );
 			
 			command.push_back( "/bin/sh" );
 			command.push_back( "-c" );
@@ -410,14 +427,14 @@ namespace ALine
 		{
 			command.push_back( "cpres" );
 			
-			AugmentCommand( command, input_pathnames );
+			AugmentCommand( command, itsInputPathnames );
 			
-			command.push_back( rsrcFile.c_str() );
+			command.push_back( itsOutputPathname.c_str() );
 		}
 		
 		command.push_back( NULL );
 		
-		TaskPtr cpres( new CommandTask( command, "", "Copying resources: " + io::get_filename_string( rsrcFile ) ) );
+		TaskPtr cpres( new CommandTask( command, "", "Copying resources: " + io::get_filename_string( itsOutputPathname ) ) );
 		
 		cpres->Main();
 	}
@@ -729,7 +746,9 @@ namespace ALine
 				std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
 				                           : outFile;
 				
-				CopyResources( rsrc_pathnames, rsrcFile, usingOSXRez );
+				TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, usingOSXRez ) );
+				
+				copy_rsrcs->Main();
 			}
 		}
 	}
