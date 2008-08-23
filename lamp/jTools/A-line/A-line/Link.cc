@@ -8,6 +8,7 @@
 // Standard C++
 #include <algorithm>
 #include <functional>
+#include <numeric>
 #include <vector>
 
 // Iota
@@ -135,22 +136,6 @@ namespace ALine
 		}
 	}
 	
-	template < class Iter >
-	static bool FilesAreNewer( Iter begin, Iter end, const time_t& date )
-	{
-		for ( Iter it = begin;  it != end;  ++it )
-		{
-			const std::string& pathname = *it;
-			
-			if ( !io::file_exists( pathname ) || ModifiedDate( pathname ) >= date )
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
 	static bool SourceFileIsTool( const std::string& sourceFile, const std::vector< std::string >& tools )
 	{
 		return std::find( tools.begin(),
@@ -212,23 +197,6 @@ namespace ALine
 		return LibrariesDirPath() / gLibraryPrefix + name + gLibraryExtension;
 	}
 	
-	static bool ProjectLibsAreOutOfDate( const std::vector< ProjName >& usedProjects, const time_t& outFileDate )
-	{
-		std::vector< std::string >::const_iterator found;
-		
-		// Search for another project's library that's newer than our link output.
-		found = std::find_if( usedProjects.begin(),
-		                      usedProjects.end(),
-		                      more::compose1( std::bind2nd( std::not2( std::less< time_t >() ),
-		                                                    outFileDate ),
-		                                      more::compose1( more::ptr_fun( ModifiedDate ),
-		                                                      more::ptr_fun( GetPathnameOfBuiltLibrary ) ) ) );
-		
-		bool outOfDate = found != usedProjects.end();
-		
-		return outOfDate;
-	}
-	
 	static void AddLibraryLinkArgs( const std::vector< ProjName >& usedLibs, std::vector< std::string >& v )
 	{
 		// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
@@ -247,6 +215,11 @@ namespace ALine
 	static std::string DiagnosticsFilenameFromSourceFilename( const std::string& filename )
 	{
 		return filename + ".txt";
+	}
+	
+	static void UpdateInputStamp( const TaskPtr& task, const std::string& input_pathname )
+	{
+		task->UpdateInputStamp( ModifiedDate( input_pathname ) );
 	}
 	
 	class LinkingTask : public Task
@@ -273,6 +246,18 @@ namespace ALine
 	
 	void LinkingTask::Main()
 	{
+		// If the output file exists and it's up to date, we can skip compiling.
+		
+		if ( io::item_exists( itsOutputPathname ) )
+		{
+			time_t output_stamp = ModifiedDate( itsOutputPathname );
+			
+			if ( UpToDate( output_stamp ) )
+			{
+				return;
+			}
+		}
+		
 		itsCommand.push_back( itsOutputPathname.c_str() );
 		
 		AugmentCommand( itsCommand, itsInputArguments );
@@ -320,6 +305,16 @@ namespace ALine
 	
 	void RezzingTask::Main()
 	{
+		if ( io::item_exists( itsOutputPathname ) )
+		{
+			time_t output_stamp = ModifiedDate( itsOutputPathname );
+			
+			if ( UpToDate( output_stamp ) )
+			{
+				return;
+			}
+		}
+		
 		Command rezCommand;
 		
 		if ( itIsUsingOSX )
@@ -374,7 +369,13 @@ namespace ALine
 		
 		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
 		
-		return TaskPtr( new RezzingTask( input_pathnames, output_pathname, includeDir, usingOSXRez ) );
+		TaskPtr rez_task( new RezzingTask( input_pathnames, output_pathname, includeDir, usingOSXRez ) );
+		
+		std::for_each( input_pathnames.begin(),
+		               input_pathnames.end(),
+		               std::bind1st( more::ptr_fun( UpdateInputStamp ), rez_task ) );
+		
+		return rez_task;
 	}
 	
 	// foo.r -> echo -n 'include "foo.r";'
@@ -407,6 +408,16 @@ namespace ALine
 	
 	void ResourceCopyingTask::Main()
 	{
+		if ( io::item_exists( itsOutputPathname ) )
+		{
+			time_t output_stamp = ModifiedDate( itsOutputPathname );
+			
+			if ( UpToDate( output_stamp ) )
+			{
+				return;
+			}
+		}
+		
 		Command command;
 		
 		std::string command_line;
@@ -446,6 +457,20 @@ namespace ALine
 	static time_t EffectiveModifiedDate( const std::string& file )
 	{
 		return Options().all || !io::item_exists( file ) ? 0 : ModifiedDate( file );
+	}
+	
+	inline time_t later_of_time_or_library_mod_stamp( time_t a, const std::string& b )
+	{
+		return std::max( a, ModifiedDate( GetPathnameOfBuiltLibrary( b ) ) );
+	}
+	
+	static time_t LatestLibraryModificationDate( const std::vector< ProjName >& used_project_names )
+	{
+		// Get the time of the latest modification to any built library we use.
+		return std::accumulate( used_project_names.begin(),
+		                        used_project_names.end(),
+		                        0,
+		                        later_of_time_or_library_mod_stamp );
 	}
 	
 	void LinkProduct( const Project& project, TargetInfo targetInfo )
@@ -606,16 +631,9 @@ namespace ALine
 		std::vector< std::string > link_input_arguments( objectFiles.begin() + n_tools,
 		                                                 objectFiles.end() );
 		
-		time_t outFileDate = EffectiveModifiedDate( outFile );
+		TaskPtr base_task;
 		
-		if ( FilesAreNewer( objectFiles.begin() + n_tools, objectFiles.end(), outFileDate ) )
-		{
-			outFileDate = 0;
-		}
-		
-		TaskPtr link_static_library_task;
-		
-		if ( hasStaticLib  &&  outFileDate == 0 )
+		if ( hasStaticLib )
 		{
 			Command link_command = cmdgen.LibraryMakerName();
 			
@@ -632,14 +650,18 @@ namespace ALine
 			}
 			
 			// Link input is only .o files
-			link_static_library_task.reset( new LinkingTask( link_command, outFile, link_input_arguments, diagnosticsDir ) );
+			base_task.reset( new LinkingTask( link_command, outFile, link_input_arguments, diagnosticsDir ) );
 		}
 		else
 		{
-			link_static_library_task.reset( new NullTask() );
+			base_task.reset( new NullTask() );
 		}
 		
-		AddReadyTask( link_static_library_task );
+		std::for_each( objectFiles.begin() + n_tools,
+		               objectFiles.end(),
+		               std::bind1st( more::ptr_fun( UpdateInputStamp ), base_task ) );
+		
+		AddReadyTask( base_task );
 		
 		if ( !hasExecutable )
 		{
@@ -660,6 +682,10 @@ namespace ALine
 			link_input_arguments.push_back( outFile );  // the static library
 		}
 		
+		TaskPtr link_dependency_task( new NullTask() );
+		
+		base_task->AddDependent( link_dependency_task );
+		
 		// A copy so we can munge it
 		std::vector< ProjName > usedProjects = project.AllUsedProjects();
 		
@@ -675,12 +701,7 @@ namespace ALine
 			
 			link_input_arguments.push_back( libsDirOption );
 			
-			const bool outOfDate = outFileDate == 0  ||  ProjectLibsAreOutOfDate( usedProjects, outFileDate );
-			
-			if ( !outOfDate )
-			{
-				return;
-			}
+			link_dependency_task->UpdateInputStamp( LatestLibraryModificationDate( usedProjects ) );
 			
 			AddLibraryLinkArgs( usedProjects, link_input_arguments );
 		}
@@ -731,14 +752,13 @@ namespace ALine
 				
 				linkOutput.resize( linkOutput.size() - 2 );  // truncate ".o"
 				
-				if ( EffectiveModifiedDate( objectFile ) >= EffectiveModifiedDate( linkOutput ) )
-				{
-					link_input_arguments.front() = objectFile;
-					
-					TaskPtr link_tool_task( new LinkingTask( command, linkOutput, link_input_arguments, diagnosticsDir ) );
-					
-					link_static_library_task->AddDependent( link_tool_task );
-				}
+				link_input_arguments.front() = objectFile;
+				
+				TaskPtr link_tool_task( new LinkingTask( command, linkOutput, link_input_arguments, diagnosticsDir ) );
+				
+				link_tool_task->UpdateInputStamp( ModifiedDate( objectFile ) );
+				
+				link_dependency_task->AddDependent( link_tool_task );
 			}
 		}
 		else
@@ -769,6 +789,8 @@ namespace ALine
 			
 			TaskPtr link_task( new LinkingTask( command, outFile, link_input_arguments, diagnosticsDir ) );
 			
+			link_dependency_task->AddDependent( link_task );
+			
 			AddReadyTask( link_task );
 			
 			if ( !rsrc_pathnames.empty() )
@@ -786,6 +808,8 @@ namespace ALine
 				link_task->AddDependent( copy_rsrcs );
 			}
 		}
+		
+		link_dependency_task.reset();
 		
 		while ( RunNextTask() )
 		{
