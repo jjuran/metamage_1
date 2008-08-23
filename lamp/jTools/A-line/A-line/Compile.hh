@@ -7,12 +7,19 @@
 
 #pragma once
 
-#include "A-line/Project.hh"
+// A-line
+#include "A-line/Task.hh"
 
 
-namespace ALine {
+namespace ALine
+{
 	
-	void CompileSources( const Project& project, const TargetInfo& targetInfo );
+	class Project;
+	struct TargetInfo;
+	
+	void CompileSources( const Project&     project,
+	                     const TargetInfo&  targetInfo,
+	                     const TaskPtr&     source_dependency );
 	
 }
 

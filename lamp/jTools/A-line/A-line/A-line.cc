@@ -356,8 +356,12 @@ namespace ALine
 		
 		if ( needToBuild )
 		{
-			CompileSources( project, info );
-			LinkProduct   ( project, info );
+			TaskPtr source_dependency( new NullTask() );
+			
+			CompileSources( project, info, source_dependency );
+			LinkProduct   ( project, info, source_dependency );
+			
+			source_dependency.reset();
 			
 			while ( RunNextTask() )
 			{

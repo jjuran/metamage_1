@@ -6,13 +6,18 @@
 #pragma once
 
 // A-line
-#include "A-line/Project.hh"
+#include "A-line/Task.hh"
 
 
 namespace ALine
 {
 	
-	void LinkProduct( const Project& project, TargetInfo targetInfo );
+	class Project;
+	struct TargetInfo;
+	
+	void LinkProduct( const Project&     project,
+	                  const TargetInfo&  targetInfo,
+	                  const TaskPtr&     source_dependency );
 	
 }
 

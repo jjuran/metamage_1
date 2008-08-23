@@ -311,7 +311,9 @@ namespace ALine
 		return result;
 	}
 	
-	void CompileSources( const Project& project, const TargetInfo& targetInfo )
+	void CompileSources( const Project&     project,
+	                     const TargetInfo&  targetInfo,
+	                     const TaskPtr&     source_dependency )
 	{
 		CompilerOptions options( project.Name(), targetInfo );
 		
@@ -413,14 +415,11 @@ namespace ALine
 			TaskPtr task( new CompilingTask( source_options, source_pathname, output_pathname, caption ) );
 			
 			precompile_task->AddDependent( task );
+			
+			task->AddDependent( source_dependency );
 		}
 		
 		AddReadyTask( precompile_task );
-		
-		while ( RunNextTask() )
-		{
-			continue;
-		}
 	}
 	
 }
