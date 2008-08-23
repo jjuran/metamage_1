@@ -288,16 +288,6 @@ namespace ALine
 		link->Main();
 	}
 	
-	static void LinkFile( const Command&                     command,
-	                      const std::string&                 output_pathname,
-	                      const std::vector< std::string >&  link_input_arguments,
-	                      const std::string&                 diagnosticsDir )
-	{
-		TaskPtr link( new LinkingTask( command, output_pathname, link_input_arguments, diagnosticsDir ) );
-		
-		link->Main();
-	}
-	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
 	{
 		std::string bundleName   = linkName + ".app";
@@ -623,9 +613,11 @@ namespace ALine
 			outFileDate = 0;
 		}
 		
+		TaskPtr link_static_library_task;
+		
 		if ( hasStaticLib  &&  outFileDate == 0 )
 		{
-			Command link = cmdgen.LibraryMakerName();
+			Command link_command = cmdgen.LibraryMakerName();
 			
 			const bool useAr = gnu;
 			
@@ -633,15 +625,21 @@ namespace ALine
 			{
 				if ( cmdgen.LinkerOptions()[0] )
 				{
-					link.push_back( cmdgen.LinkerOptions() );
+					link_command.push_back( cmdgen.LinkerOptions() );
 				}
 				
-				link.push_back( "-o" );
+				link_command.push_back( "-o" );
 			}
 			
 			// Link input is only .o files
-			LinkFile( link, outFile, link_input_arguments, diagnosticsDir );
+			link_static_library_task.reset( new LinkingTask( link_command, outFile, link_input_arguments, diagnosticsDir ) );
 		}
+		else
+		{
+			link_static_library_task.reset( new NullTask() );
+		}
+		
+		link_static_library_task->Main();
 		
 		if ( !hasExecutable )
 		{
@@ -732,7 +730,9 @@ namespace ALine
 				{
 					link_input_arguments.front() = objectFile;
 					
-					LinkFile( command, linkOutput, link_input_arguments, diagnosticsDir );
+					TaskPtr link_tool_task( new LinkingTask( command, linkOutput, link_input_arguments, diagnosticsDir ) );
+					
+					link_tool_task->Main();
 				}
 			}
 		}
@@ -760,7 +760,9 @@ namespace ALine
 				rsrc_pathnames.push_back( rez_output_pathname );
 			}
 			
-			LinkFile( command, outFile, link_input_arguments, diagnosticsDir );
+			TaskPtr link_task( new LinkingTask( command, outFile, link_input_arguments, diagnosticsDir ) );
+			
+			link_task->Main();
 			
 			if ( !rsrc_pathnames.empty() )
 			{
