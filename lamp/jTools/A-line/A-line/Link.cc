@@ -319,28 +319,33 @@ namespace ALine
 		return bundleName / "Contents" / "Resources" / rsrcFileName;
 	}
 	
-	static void CompileResources( const Project&      project,
-	                              const std::string&  rsrcFile,
-	                              bool                needsCarbResource,
-	                              bool                usingOSXRez )
+	class RezzingTask : public Task
 	{
-		const std::vector< FileName >& rez = project.UsedRezFiles();
+		private:
+			std::vector< std::string >  itsInputPathnames;
+			std::string                 itsOutputPathname;
+			std::string                 itsIncludeDirPathname;
+			bool                        itIsUsingOSX;
 		
-		std::vector< std::string > rezFiles( rez.size() );
-		
-		std::transform( rez.begin(),
-		                rez.end(),
-		                rezFiles.begin(),
-		                std::ptr_fun( RezLocation ) );
-		
-		if ( needsCarbResource )
-		{
-			rezFiles.push_back( RezLocation( "CarbonApp.r" ) );
-		}
-		
+		public:
+			RezzingTask( const std::vector< std::string >&  input,
+			             const std::string&                 output,
+			             const std::string&                 includeDir,
+			             bool                               usingOSX ) : itsInputPathnames    ( input      ),
+			                                                             itsOutputPathname    ( output     ),
+			                                                             itsIncludeDirPathname( includeDir ),
+			                                                             itIsUsingOSX         ( usingOSX   )
+			{
+			}
+			
+			void Main();
+	};
+	
+	void RezzingTask::Main()
+	{
 		Command rezCommand;
 		
-		if ( usingOSXRez )
+		if ( itIsUsingOSX )
 		{
 			rezCommand.push_back( "/Developer/Tools/Rez" );
 			rezCommand.push_back( "-i" );
@@ -356,21 +361,43 @@ namespace ALine
 			rezCommand.push_back( "rsrc" );
 		}
 		
-		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
-		
 		rezCommand.push_back( "-i" );
 		
-		rezCommand.push_back( includeDir.c_str() );
+		rezCommand.push_back( itsIncludeDirPathname.c_str() );
 		
-		AugmentCommand( rezCommand, OutputOption( rsrcFile.c_str() ) );
+		AugmentCommand( rezCommand, OutputOption( itsOutputPathname.c_str() ) );
 		
-		AugmentCommand( rezCommand, rezFiles );
+		AugmentCommand( rezCommand, itsInputPathnames );
 		
 		rezCommand.push_back( NULL );
 		
-		TaskPtr rezTask( new CommandTask( rezCommand, "", "Rezzing: " + io::get_filename_string( rsrcFile ) ) );
+		TaskPtr rezTask( new CommandTask( rezCommand, "", "Rezzing: " + io::get_filename_string( itsOutputPathname ) ) );
 		
 		rezTask->Main();
+	}
+	
+	static TaskPtr MakeRezTask( const Project&      project,
+	                            const std::string&  output_pathname,
+	                            bool                needsCarbResource,
+	                            bool                usingOSXRez )
+	{
+		const std::vector< FileName >& input_filenames = project.UsedRezFiles();
+		
+		std::vector< std::string > input_pathnames( input_filenames.size() );
+		
+		std::transform( input_filenames.begin(),
+		                input_filenames.end(),
+		                input_pathnames.begin(),
+		                std::ptr_fun( RezLocation ) );
+		
+		if ( needsCarbResource )
+		{
+			input_pathnames.push_back( RezLocation( "CarbonApp.r" ) );
+		}
+		
+		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
+		
+		return TaskPtr( new RezzingTask( input_pathnames, output_pathname, includeDir, usingOSXRez ) );
 	}
 	
 	// foo.r -> echo -n 'include "foo.r";'
@@ -734,7 +761,9 @@ namespace ALine
 			{
 				std::string rez_output_pathname = RezzedDirPath() / project.Name() + ".rsrc";
 				
-				CompileResources( project, rez_output_pathname, needCarbResource, usingOSXRez );
+				TaskPtr rezTask = MakeRezTask( project, rez_output_pathname, needCarbResource, usingOSXRez );
+				
+				rezTask->Main();
 				
 				rsrc_pathnames.push_back( rez_output_pathname );
 			}
