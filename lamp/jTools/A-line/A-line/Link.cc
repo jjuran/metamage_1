@@ -749,7 +749,7 @@ namespace ALine
 				
 				TaskPtr link_tool_task( new LinkingTask( command, linkOutput, link_input_arguments, diagnosticsDir ) );
 				
-				link_tool_task->UpdateInputStamp( ModifiedDate( objectFile ) );
+				link_tool_task->UpdateInputStamp( EffectiveModifiedDate( objectFile ) );
 				
 				link_dependency_task->AddDependent( link_tool_task );
 			}
