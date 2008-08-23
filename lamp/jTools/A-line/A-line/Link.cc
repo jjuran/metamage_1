@@ -590,9 +590,6 @@ namespace ALine
 		std::vector< std::string > objectFilePaths( objectFiles.begin() + n_tools,
 		                                            objectFiles.end() );
 		
-		std::string trailer = gnu ? "> /tmp/link-errs.txt 2>&1"
-		                          : " 2>&1 | filter-mwlink-warnings";
-		
 		time_t outFileDate = EffectiveModifiedDate( outFile );
 		
 		if ( FilesAreNewer( objectFiles.begin() + n_tools, objectFiles.end(), outFileDate ) )
