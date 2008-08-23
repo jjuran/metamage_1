@@ -55,22 +55,18 @@ namespace ALine
 	// "path/to/file" -> "path/to/file"
 	// "path/to/-lib" -> "-wi path/to/lib"
 	
-	static Command MakeImport( const std::string& file )
+	static void AddImport( const std::string& file, std::vector< std::string >& v )
 	{
-		Command result;
-		
 		const char* importPath = file.c_str();
 		
 		if ( importPath[ 0 ] == '-' )
 		{
 			++importPath;
 			
-			result.push_back( "-wi" );
+			v.push_back( "-wi" );
 		}
 		
-		result.push_back( importPath );
-		
-		return result;
+		v.push_back( importPath );
 	}
 	
 	
@@ -117,45 +113,26 @@ namespace ALine
 		return importFiles;
 	}
 	
-	static Command GetImports( const std::vector< std::string >& importFiles )
+	static void AddImports( const std::vector< std::string >& importFiles, std::vector< std::string >& v )
 	{
-		Command imports;
-		
 		typedef std::vector< std::string >::const_iterator Iter;
 		
 		for ( Iter it = importFiles.begin();  it != importFiles.end();  ++it )
 		{
-			AugmentCommand( imports, MakeImport( *it ) );
+			AddImport( *it, v );
 		}
-		
-		return imports;
 	}
 	
 	
-	static Command MakeFramework( const char* framework )
+	static void AddFrameworks( const std::vector< std::string >& frameworkNames, std::vector< std::string >& v )
 	{
-		return MakeCommand( "-framework", framework );
-	}
-	
-	static Command GetFrameworks( const Project& project )
-	{
-		const std::vector< FileName >& frameworkNames( project.Frameworks() );
-		
-		if ( frameworkNames.size() == 0 )
-		{
-			return MakeFramework( "Carbon" );
-		}
-		
-		Command frameworks;
-		
 		typedef std::vector< FileName >::const_iterator Iter;
 		
 		for ( Iter it = frameworkNames.begin();  it != frameworkNames.end();  ++it )
 		{
-			AugmentCommand( frameworks, MakeFramework( it->c_str() ) );
+			v.push_back( "-framework" );
+			v.push_back( *it );
 		}
-		
-		return frameworks;
 	}
 	
 	template < class Iter >
@@ -252,35 +229,19 @@ namespace ALine
 		return outOfDate;
 	}
 	
-	static Command MakeLibraryLinkArgs( std::vector< ProjName >& usedLibs, const time_t& outFileDate )
+	static void AddLibraryLinkArgs( const std::vector< ProjName >& usedLibs, std::vector< std::string >& v )
 	{
-		Command result;
-		
-		const bool outOfDate = outFileDate == 0;
-		
-		// If we're fully up to date, return an empty container.
-		// It's up to the caller to avoid calling us if usedLibs is empty.
-		
-		if ( !outOfDate && !ProjectLibsAreOutOfDate( usedLibs, outFileDate ) )
-		{
-			return result;
-		}
-		
 		// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
 		// Somehow, this is actually required to actually link anything on Unix.
 		
-		typedef std::vector< ProjName >::reverse_iterator Iter;
+		typedef std::vector< ProjName >::const_reverse_iterator Iter;
 		
 		for ( Iter it = usedLibs.rbegin();  it != usedLibs.rend();  ++it )
 		{
-			ProjName& name = *it;
+			const ProjName& name = *it;
 			
-			name = "-l" + name;
-			
-			result.push_back( name.c_str() );
+			v.push_back( "-l" + name );
 		}
-		
-		return result;
 	}
 	
 	static std::string DiagnosticsFilenameFromSourceFilename( const std::string& filename )
@@ -291,7 +252,7 @@ namespace ALine
 	static void LinkFile( Command                            command,
 	                      const std::string&                 output_pathname,
 	                      const std::vector< std::string >&  objectFileArgs,
-	                      const Command                   &  libraryArgs,
+	                      const std::vector< std::string >&  libraryArgs,
 	                      const std::string&                 diagnosticsDir )
 	{
 		command.push_back( output_pathname.c_str() );
@@ -655,7 +616,7 @@ namespace ALine
 				link.push_back( "-o" );
 			}
 			
-			LinkFile( link, outFile, objectFilePaths, Command(), diagnosticsDir );
+			LinkFile( link, outFile, objectFilePaths, std::vector< std::string >(), diagnosticsDir );
 		}
 		
 		if ( !hasExecutable )
@@ -663,7 +624,7 @@ namespace ALine
 			return;
 		}
 		
-		Command allLibraryLinkArgs;
+		std::vector< std::string > allLibraryLinkArgs;
 		
 		// A copy so we can munge it
 		std::vector< ProjName > usedProjects = project.AllUsedProjects();
@@ -678,18 +639,16 @@ namespace ALine
 		{
 			libsDirOption = "-L" + libsDir;
 			
-			allLibraryLinkArgs.push_back( libsDirOption.c_str() );
+			allLibraryLinkArgs.push_back( libsDirOption );
 			
-			Command projLibLinkArgs = MakeLibraryLinkArgs( usedProjects, outFileDate );
+			const bool outOfDate = outFileDate == 0  ||  ProjectLibsAreOutOfDate( usedProjects, outFileDate );
 			
-			if ( projLibLinkArgs.empty() )
+			if ( !outOfDate )
 			{
 				return;
 			}
 			
-			
-			
-			AugmentCommand( allLibraryLinkArgs, projLibLinkArgs );
+			AddLibraryLinkArgs( usedProjects, allLibraryLinkArgs );
 		}
 		
 		std::vector< std::string > allImports;
@@ -699,12 +658,16 @@ namespace ALine
 		{
 			allImports = GetAllImports( project );
 			
-			AugmentCommand( allLibraryLinkArgs, GetImports( allImports ) );
+			AddImports( allImports, allLibraryLinkArgs );
 		}
 		
 		if ( machO )
 		{
-			AugmentCommand( allLibraryLinkArgs, GetFrameworks( project ) );
+			bool has_frameworks = !project.Frameworks().empty();
+			
+			AddFrameworks( has_frameworks ? project.Frameworks()
+			                              : std::vector< std::string >( 1, "Carbon" ),
+			               allLibraryLinkArgs );
 		}
 		
 		
@@ -722,7 +685,7 @@ namespace ALine
 		
 		if ( toolkit )
 		{
-			allLibraryLinkArgs.insert( allLibraryLinkArgs.begin(), outFile.c_str() );
+			allLibraryLinkArgs.insert( allLibraryLinkArgs.begin(), outFile );
 			
 			typedef std::vector< std::string >::const_iterator Iter;
 			
