@@ -289,18 +289,18 @@ namespace ALine
 	}
 	
 	static void LinkFile( Command                            command,
-	                      const std::string&                 outputFile,
+	                      const std::string&                 output_pathname,
 	                      const std::vector< std::string >&  objectFileArgs,
 	                      const Command                   &  libraryArgs,
 	                      const std::string&                 diagnosticsDir )
 	{
-		command.push_back( outputFile.c_str() );
+		command.push_back( output_pathname.c_str() );
 		
 		AugmentCommand( command, objectFileArgs );
 		
 		AugmentCommand( command, libraryArgs );
 		
-		std::string filename = io::get_filename_string( outputFile );
+		std::string filename = io::get_filename_string( output_pathname );
 		
 		command.push_back( NULL );
 		
