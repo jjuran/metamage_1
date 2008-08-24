@@ -280,9 +280,7 @@ namespace ALine
 		
 		std::string diagnostics_pathname = itsDiagnosticsDir / DiagnosticsFilenameFromSourceFilename( output_filename );
 		
-		TaskPtr link( new CommandTask( itsCommand, diagnostics_pathname, "Linking: " + output_filename ) );
-		
-		link->Main();
+		RunCommand( itsCommand, diagnostics_pathname.c_str(), "Linking: " + output_filename );
 		
 		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
 	}
@@ -357,9 +355,7 @@ namespace ALine
 		
 		rezCommand.push_back( NULL );
 		
-		TaskPtr rezTask( new CommandTask( rezCommand, "", "Rezzing: " + io::get_filename_string( itsOutputPathname ) ) );
-		
-		rezTask->Main();
+		RunCommand( rezCommand, NULL, "Rezzing: " + io::get_filename_string( itsOutputPathname ) );
 		
 		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
 	}
@@ -465,9 +461,7 @@ namespace ALine
 		
 		command.push_back( NULL );
 		
-		TaskPtr cpres( new CommandTask( command, "", "Copying resources: " + io::get_filename_string( itsOutputPathname ) ) );
-		
-		cpres->Main();
+		RunCommand( command, "", "Copying resources: " + io::get_filename_string( itsOutputPathname ) );
 		
 		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
 	}

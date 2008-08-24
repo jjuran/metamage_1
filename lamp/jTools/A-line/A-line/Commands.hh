@@ -31,26 +31,9 @@ namespace ALine
 	typedef std::vector< const char* > Command;
 	
 	
-	class CommandTask : public Task
-	{
-		private:
-			Command      itsCommand;
-			std::string  itsDiagnosticsFile;
-			std::string  itsCaption;
-		
-		public:
-			CommandTask( const Command&      command,
-			             const std::string&  diagnostics,
-			             const std::string&  caption )
-			: itsCommand        ( command     ),
-			  itsDiagnosticsFile( diagnostics ),
-			  itsCaption        ( caption     )
-			{
-			}
-			
-			void Main();
-	};
-	
+	void RunCommand( const Command&      command,
+			         const char*         diagnostics_pathname,
+			         const std::string&  caption );
 	
 	inline Command MakeCommand( const char* a, const char* b )
 	{

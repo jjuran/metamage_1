@@ -24,11 +24,13 @@ namespace ALine
 	}
 	
 	
-	void CommandTask::Main()
+	void RunCommand( const Command&      command,
+			         const char*         diagnostics_pathname,
+			         const std::string&  caption )
 	{
-		Echo( itsCaption.c_str() );
+		Echo( caption.c_str() );
 		
-		ExecuteCommand( itsCommand, itsDiagnosticsFile.c_str() );
+		ExecuteCommand( command, diagnostics_pathname );
 	}
 	
 }

@@ -183,9 +183,7 @@ namespace ALine
 		
 		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), source_filename );
 		
-		TaskPtr task( new CommandTask( command, diagnosticsFile, caption + source_filename ) );
-		
-		task->Main();
+		RunCommand( command, diagnosticsFile.c_str(), caption + source_filename );
 	}
 	
 	void CompilingTask::Main()
