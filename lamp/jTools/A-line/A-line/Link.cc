@@ -629,9 +629,7 @@ namespace ALine
 		
 		std::string objectsDir = ProjectObjectsDirPath( project.Name() );
 		
-		std::string libsDir = LibrariesDirPath();
-		
-		std::string outputDir = hasStaticLib ? libsDir : ProjectOutputDirPath( project.Name() );
+		std::string outputDir = ProjectOutputDirPath( project.Name() );
 		
 		std::string exeDir = outputDir;
 		
@@ -649,8 +647,6 @@ namespace ALine
 			
 			WritePkgInfo( contents / "PkgInfo", "APPL" + project.CreatorCode() );
 		}
-		
-		std::string outFile = exeDir / linkName;
 		
 		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
 		
@@ -674,11 +670,15 @@ namespace ALine
 		                                more::compose1( more::ptr_fun( ObjectFileName ),
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 		
+		std::string libsDir = LibrariesDirPath();
+		
+		std::string library_pathname = libsDir / linkName;
+		
 		TaskPtr base_task;
 		
 		if ( hasStaticLib )
 		{
-			base_task = MakeStaticLibTask( outFile,
+			base_task = MakeStaticLibTask( library_pathname,
 			                               objectFiles.begin() + n_tools,
 			                               objectFiles.end(),
 			                               diagnosticsDir,
@@ -702,7 +702,7 @@ namespace ALine
 		{
 			link_input_arguments.push_back( "" );  // the tool .o file, later
 			
-			link_input_arguments.push_back( outFile );  // the static library
+			link_input_arguments.push_back( library_pathname );  // the static library
 		}
 		else
 		{
@@ -817,6 +817,8 @@ namespace ALine
 			}
 			
 			AddReadyTask( rez_task );
+			
+			std::string outFile = exeDir / linkName;
 			
 			TaskPtr link_task( new LinkingTask( command, outFile, link_input_arguments, diagnosticsDir ) );
 			
