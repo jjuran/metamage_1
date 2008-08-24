@@ -9,12 +9,8 @@
 #include <string>
 #include <vector>
 
-// MoreFunctional
-#include "FunctionalExtensions.hh"
-
 // A-line
 #include "A-line/TargetInfo.hh"
-#include "A-line/Task.hh"
 
 // CompileDriver
 #include "CompileDriver/Platform.hh"
@@ -241,32 +237,6 @@ namespace ALine
 		}
 		
 	};
-	
-	
-	template < class F, class Iter >
-	std::string join( Iter begin, Iter end, const std::string& glue = "", F f = F() )
-	{
-		if ( begin == end )
-		{
-			return "";
-		}
-		
-		std::string result = f( *begin++ );
-		
-		while ( begin != end )
-		{
-			result += glue;
-			result += f( *begin++ );
-		}
-		
-		return result;
-	}
-	
-	template < class Iter >
-	std::string join( Iter begin, Iter end, const std::string& glue = "" )
-	{
-		return join( begin, end, glue, more::identity< std::string >() );
-	}
 	
 }
 

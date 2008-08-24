@@ -28,6 +28,7 @@
 #include "POSeven/Pathnames.hh"
 
 // MoreFunctional
+#include "FunctionalExtensions.hh"
 #include "PointerToFunction.hh"
 
 // BitsAndBytes
@@ -375,6 +376,31 @@ namespace ALine
 		std::string echo    = "echo -n ";  // OS X Rez can't handle Unix newlines
 		
 		return echo + q( include + qq( file ) + ";" );
+	}
+	
+	template < class F, class Iter >
+	std::string join( Iter begin, Iter end, const std::string& glue = "", F f = F() )
+	{
+		if ( begin == end )
+		{
+			return "";
+		}
+		
+		std::string result = f( *begin++ );
+		
+		while ( begin != end )
+		{
+			result += glue;
+			result += f( *begin++ );
+		}
+		
+		return result;
+	}
+	
+	template < class Iter >
+	std::string join( Iter begin, Iter end, const std::string& glue = "" )
+	{
+		return join( begin, end, glue, more::identity< std::string >() );
 	}
 	
 	class ResourceCopyingTask : public FileTask
