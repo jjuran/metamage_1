@@ -283,6 +283,8 @@ namespace ALine
 		TaskPtr link( new CommandTask( itsCommand, diagnostics_pathname, "Linking: " + output_filename ) );
 		
 		link->Main();
+		
+		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
 	}
 	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
@@ -358,6 +360,8 @@ namespace ALine
 		TaskPtr rezTask( new CommandTask( rezCommand, "", "Rezzing: " + io::get_filename_string( itsOutputPathname ) ) );
 		
 		rezTask->Main();
+		
+		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
 	}
 	
 	static TaskPtr MakeRezTask( const Project&      project,
@@ -464,6 +468,8 @@ namespace ALine
 		TaskPtr cpres( new CommandTask( command, "", "Copying resources: " + io::get_filename_string( itsOutputPathname ) ) );
 		
 		cpres->Main();
+		
+		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
 	}
 	
 	static time_t EffectiveModifiedDate( const std::string& file )
