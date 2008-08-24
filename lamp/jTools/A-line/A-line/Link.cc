@@ -289,16 +289,16 @@ namespace ALine
 		private:
 			std::vector< std::string >  itsInputPathnames;
 			std::string                 itsIncludeDirPathname;
-			bool                        itIsUsingOSX;
+			bool                        itIsTargetingLamp;
 		
 		public:
 			RezzingTask( const std::vector< std::string >&  input,
 			             const std::string&                 output,
 			             const std::string&                 includeDir,
-			             bool                               usingOSX ) : FileTask             ( output     ),
-			                                                             itsInputPathnames    ( input      ),
-			                                                             itsIncludeDirPathname( includeDir ),
-			                                                             itIsUsingOSX         ( usingOSX   )
+			             bool                               lamp ) : FileTask             ( output     ),
+			                                                         itsInputPathnames    ( input      ),
+			                                                         itsIncludeDirPathname( includeDir ),
+			                                                         itIsTargetingLamp    ( lamp       )
 			{
 			}
 			
@@ -309,20 +309,20 @@ namespace ALine
 	{
 		Command rezCommand;
 		
-		if ( itIsUsingOSX )
-		{
-			rezCommand.push_back( "/Developer/Tools/Rez" );
-			rezCommand.push_back( "-i" );
-			rezCommand.push_back( "/Developer/Headers/FlatCarbon" );
-			rezCommand.push_back( "-useDF" );
-		}
-		else
+		if ( itIsTargetingLamp )
 		{
 			rezCommand.push_back( "mpwrez" );
 			rezCommand.push_back( "-c" );
 			rezCommand.push_back( "RSED" );
 			rezCommand.push_back( "-t" );
 			rezCommand.push_back( "rsrc" );
+		}
+		else
+		{
+			rezCommand.push_back( "/Developer/Tools/Rez" );
+			rezCommand.push_back( "-i" );
+			rezCommand.push_back( "/Developer/Headers/FlatCarbon" );
+			rezCommand.push_back( "-useDF" );
 		}
 		
 		rezCommand.push_back( "-i" );
@@ -341,7 +341,7 @@ namespace ALine
 	static TaskPtr MakeRezTask( const Project&      project,
 	                            const std::string&  output_pathname,
 	                            bool                needsCarbResource,
-	                            bool                usingOSXRez )
+	                            bool                lamp )
 	{
 		const std::vector< FileName >& input_filenames = project.UsedRezFiles();
 		
@@ -359,7 +359,7 @@ namespace ALine
 		
 		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
 		
-		TaskPtr rez_task( new RezzingTask( input_pathnames, output_pathname, includeDir, usingOSXRez ) );
+		TaskPtr rez_task( new RezzingTask( input_pathnames, output_pathname, includeDir, lamp ) );
 		
 		std::for_each( input_pathnames.begin(),
 		               input_pathnames.end(),
@@ -381,14 +381,14 @@ namespace ALine
 	{
 		private:
 			std::vector< std::string >  itsInputPathnames;
-			bool                        itIsUsingOSX;
+			bool                        itIsTargetingLamp;
 		
 		public:
 			ResourceCopyingTask( const std::vector< std::string >&  input,
 			                     const std::string&                 output,
-			                     bool                               usingOSX ) : FileTask         ( output   ),
-			                                                                     itsInputPathnames( input    ),
-			                                                                     itIsUsingOSX     ( usingOSX )
+			                     bool                               lamp ) : FileTask         ( output   ),
+			                                                                 itsInputPathnames( input    ),
+			                                                                 itIsTargetingLamp( lamp     )
 			{
 			}
 			
@@ -401,7 +401,15 @@ namespace ALine
 		
 		std::string command_line;
 		
-		if ( itIsUsingOSX )
+		if ( itIsTargetingLamp )
+		{
+			command.push_back( "cpres" );
+			
+			AugmentCommand( command, itsInputPathnames );
+			
+			command.push_back( OutputPathname().c_str() );
+		}
+		else
 		{
 			command_line = join( itsInputPathnames.begin(),
 			                     itsInputPathnames.end(),
@@ -416,14 +424,6 @@ namespace ALine
 			command.push_back( "/bin/sh" );
 			command.push_back( "-c" );
 			command.push_back( command_line.c_str() );
-		}
-		else
-		{
-			command.push_back( "cpres" );
-			
-			AugmentCommand( command, itsInputPathnames );
-			
-			command.push_back( OutputPathname().c_str() );
 		}
 		
 		command.push_back( NULL );
@@ -775,8 +775,6 @@ namespace ALine
 			                rsrc_pathnames.begin(),
 			                std::ptr_fun( RezLocation ) );
 			
-			const bool usingOSXRez = gnu;
-			
 			TaskPtr rez_task;
 			
 			if ( !project.UsedRezFiles().empty() )
@@ -785,7 +783,7 @@ namespace ALine
 				
 				rsrc_pathnames.push_back( rez_output_pathname );
 				
-				rez_task = MakeRezTask( project, rez_output_pathname, needCarbResource, usingOSXRez );
+				rez_task = MakeRezTask( project, rez_output_pathname, needCarbResource, lamp );
 			}
 			else
 			{
@@ -803,7 +801,7 @@ namespace ALine
 				std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
 				                           : outFile;
 				
-				TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, usingOSXRez ) );
+				TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, lamp ) );
 				
 				if ( bundle )
 				{
