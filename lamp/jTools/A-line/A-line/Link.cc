@@ -53,9 +53,9 @@ namespace ALine
 	using BitsAndBytes::qq;
 	
 	
-	inline bool TargettingLamp( bool targettingLamp )
+	inline bool TargetingLamp( bool targetingLamp )
 	{
-		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_LAMP_DEVELOPMENT && targettingLamp;
+		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_LAMP_DEVELOPMENT && targetingLamp;
 	}
 	
 	
@@ -493,7 +493,7 @@ namespace ALine
 	                  const TargetInfo&  targetInfo,
 	                  const TaskPtr&     source_dependency )
 	{
-		const bool lamp = TargettingLamp( targetInfo.toolkit != toolkitGNU );
+		const bool lamp = TargetingLamp( targetInfo.toolkit != toolkitGNU );
 		
 		const bool gnu = !lamp;
 		
