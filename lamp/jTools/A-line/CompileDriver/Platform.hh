@@ -29,6 +29,12 @@
 #define ALINE_LAMP_DEVELOPMENT 0
 #endif
 
+#if defined(__MACOS__) || defined(__APPLE__)
+#define ALINE_MAC_DEVELOPMENT 1
+#else
+#define ALINE_MAC_DEVELOPMENT 0
+#endif
+
 /*
 
 arch-runtime-api
