@@ -445,14 +445,18 @@ namespace ALine
 	}
 	
 	template < class Iter >
-	static TaskPtr MakeStaticLibTask( const std::string& output_pathname,
-	                                  Iter begin,
-	                                  Iter end,
-	                                  const std::string& diagnostics_dir,
-	                                  bool gnu,
-	                                  bool debug )
+	static TaskPtr MakeStaticLibTask( const std::string&  output_pathname,
+	                                  Iter                begin,
+	                                  Iter                end,
+	                                  const std::string&  diagnostics_dir,
+	                                  const TargetInfo&   target )
 	{
-		const bool use_ar = gnu;
+		const bool gnu   = target.toolkit == toolkitGNU;
+		const bool debug = target.build   == buildDebug;
+		const bool ppc   = target.platform & CD::archPPC;
+		const bool m68k  = target.platform & CD::arch68K;
+		
+		const bool use_ar = !ALINE_LAMP_DEVELOPMENT || gnu;
 		
 		Command link_command;
 		
@@ -461,6 +465,13 @@ namespace ALine
 		
 		if ( !use_ar )
 		{
+			const char* arch = ppc  ? "ppc"
+			                 : m68k ? "m68k"
+			                 :        "ERROR";
+			
+			link_command.push_back( "-arch" );
+			link_command.push_back(   arch  );
+			
 			if ( !debug )
 			{
 				link_command.push_back( "-s" );
@@ -637,8 +648,7 @@ namespace ALine
 			                               objectFiles.begin() + n_tools,
 			                               objectFiles.end(),
 			                               diagnosticsDir,
-			                               gnu,
-			                               targetInfo.build == buildDebug );
+			                               targetInfo );
 		}
 		else
 		{
