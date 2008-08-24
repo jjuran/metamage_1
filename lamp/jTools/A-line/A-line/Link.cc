@@ -53,6 +53,12 @@ namespace ALine
 	using BitsAndBytes::qq;
 	
 	
+	inline bool TargettingLamp( bool targettingLamp )
+	{
+		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_LAMP_DEVELOPMENT && targettingLamp;
+	}
+	
+	
 	// "path/to/file" -> "path/to/file"
 	// "path/to/-lib" -> "-wi path/to/lib"
 	
@@ -487,7 +493,9 @@ namespace ALine
 	                  const TargetInfo&  targetInfo,
 	                  const TaskPtr&     source_dependency )
 	{
-		const bool gnu = !ALINE_LAMP_DEVELOPMENT  ||  ALINE_UNIX_DEVELOPMENT  &&  targetInfo.toolkit == toolkitGNU;
+		const bool lamp = TargettingLamp( targetInfo.toolkit != toolkitGNU );
+		
+		const bool gnu = !lamp;
 		
 		gLibraryPrefix    = gnu ? "lib" : "";
 		gLibraryExtension = gnu ? ".a" : ".lib";
@@ -704,7 +712,7 @@ namespace ALine
 		std::vector< std::string > allImports;
 		
 		// FIXME:  This is a hack
-		if ( !gnu )
+		if ( lamp )
 		{
 			allImports = GetAllImports( project );
 			
@@ -721,7 +729,7 @@ namespace ALine
 		}
 		
 		
-		if ( !gnu && project.CreatorCode().size() > 0 )
+		if ( lamp  &&  project.CreatorCode().size() > 0 )
 		{
 			AugmentCommand( command, cmdgen.OutputCreator( project.CreatorCode().c_str() ) );
 		}
