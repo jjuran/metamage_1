@@ -84,6 +84,13 @@ namespace ALine
 	
 	void FileTask::Main()
 	{
+		// If the output file exists and it's up to date, we can skip this.
+		
+		if ( UpToDate() )
+		{
+			return;
+		}
+		
 		Make();
 		
 		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );

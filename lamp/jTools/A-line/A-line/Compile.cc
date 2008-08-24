@@ -213,13 +213,6 @@ namespace ALine
 	
 	void CompilingTask::Make()
 	{
-		// If the output file exists and it's up to date, we can skip compiling.
-		
-		if ( UpToDate() )
-		{
-			return;
-		}
-		
 		RunCompiler( itsOptions, itsSourcePathname, OutputPathname(), itsCaption );
 	}
 	

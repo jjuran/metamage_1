@@ -257,13 +257,6 @@ namespace ALine
 	
 	void LinkingTask::Make()
 	{
-		// If the output file exists and it's up to date, we can skip compiling.
-		
-		if ( UpToDate() )
-		{
-			return;
-		}
-		
 		itsCommand.push_back( OutputPathname().c_str() );
 		
 		AugmentCommand( itsCommand, itsInputArguments );
@@ -308,11 +301,6 @@ namespace ALine
 	
 	void RezzingTask::Make()
 	{
-		if ( UpToDate() )
-		{
-			return;
-		}
-		
 		Command rezCommand;
 		
 		if ( itIsUsingOSX )
@@ -403,11 +391,6 @@ namespace ALine
 	
 	void ResourceCopyingTask::Make()
 	{
-		if ( UpToDate() )
-		{
-			return;
-		}
-		
 		Command command;
 		
 		std::string command_line;
