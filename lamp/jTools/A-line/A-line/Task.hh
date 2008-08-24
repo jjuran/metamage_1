@@ -76,6 +76,8 @@ namespace ALine
 			
 			time_t OutputStamp() const;
 			
+			bool UpToDate() const;
+			
 			virtual void Make() = 0;
 			
 			void Main();

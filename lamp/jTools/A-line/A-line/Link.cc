@@ -259,14 +259,9 @@ namespace ALine
 	{
 		// If the output file exists and it's up to date, we can skip compiling.
 		
-		if ( io::item_exists( OutputPathname() ) )
+		if ( UpToDate() )
 		{
-			time_t output_stamp = ModifiedDate( OutputPathname() );
-			
-			if ( MoreRecent( output_stamp ) )
-			{
-				return;
-			}
+			return;
 		}
 		
 		itsCommand.push_back( OutputPathname().c_str() );
@@ -313,14 +308,9 @@ namespace ALine
 	
 	void RezzingTask::Make()
 	{
-		if ( io::item_exists( OutputPathname() ) )
+		if ( UpToDate() )
 		{
-			time_t output_stamp = ModifiedDate( OutputPathname() );
-			
-			if ( MoreRecent( output_stamp ) )
-			{
-				return;
-			}
+			return;
 		}
 		
 		Command rezCommand;
@@ -413,14 +403,9 @@ namespace ALine
 	
 	void ResourceCopyingTask::Make()
 	{
-		if ( io::item_exists( OutputPathname() ) )
+		if ( UpToDate() )
 		{
-			time_t output_stamp = ModifiedDate( OutputPathname() );
-			
-			if ( MoreRecent( output_stamp ) )
-			{
-				return;
-			}
+			return;
 		}
 		
 		Command command;
