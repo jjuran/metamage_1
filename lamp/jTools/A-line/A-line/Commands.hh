@@ -79,7 +79,7 @@ namespace ALine
 		TargetInfo target;
 		
 		bool m68k, ppc, x86;
-		bool a4, a5, cfm, machO, elf;
+		bool a4, a5, cfm, machO;
 		bool blue, carbon;
 		bool debug;
 		bool gnu;
@@ -94,7 +94,6 @@ namespace ALine
 			a5    ( target.platform & CD::runtimeA5CodeSegments ),
 			cfm   ( target.platform & CD::runtimeCodeFragments  ),
 			machO ( target.platform & CD::runtimeMachO          ),
-			elf   ( target.platform & CD::runtimeELF            ),
 			blue  ( target.platform & CD::apiMacToolbox         ),
 			carbon( target.platform & CD::apiMacCarbon          ),
 			debug ( target.build   == buildDebug ),
@@ -116,7 +115,7 @@ namespace ALine
 		
 		Command TargetArchitecture() const
 		{
-			if ( elf )
+			if ( !ALINE_CROSS_DEVELOPMENT )
 			{
 				return Command();
 			}
