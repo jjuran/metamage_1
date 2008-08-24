@@ -825,14 +825,16 @@ namespace ALine
 				
 				TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, usingOSXRez ) );
 				
-				rez_task->AddDependent( copy_rsrcs );
-				
-				if ( !bundle )
+				if ( bundle )
+				{
+					rez_task->AddDependent( copy_rsrcs );
+				}
+				else
 				{
 					rez_task->AddDependent( link_task );
+					
+					link_task->AddDependent( copy_rsrcs );
 				}
-				
-				link_task->AddDependent( copy_rsrcs );
 			}
 		}
 	}
