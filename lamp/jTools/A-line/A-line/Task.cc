@@ -13,6 +13,9 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
+// A-line
+#include "A-line/BuildCommon.hh"
+
 
 namespace ALine
 {
@@ -62,6 +65,25 @@ namespace ALine
 		
 		itsDependents.clear();
 	}
+	
+	
+	time_t FileTask::OutputStamp() const
+	{
+		if ( io::file_exists( itsOutputPathname ) )
+		{
+			return ModifiedDate( itsOutputPathname );
+		}
+		
+		return 0;
+	}
+	
+	void FileTask::Main()
+	{
+		Make();
+		
+		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
+	}
+	
 	
 	void AddReadyTask( const TaskPtr& task )
 	{

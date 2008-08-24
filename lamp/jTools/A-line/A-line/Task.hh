@@ -11,6 +11,7 @@
 #endif
 
 // Standard C++
+#include <string>
 #include <vector>
 
 // Standard C
@@ -59,6 +60,26 @@ namespace ALine
 	{
 		public:
 			void Main()  {}
+	};
+	
+	class FileTask : public Task
+	{
+		private:
+			std::string itsOutputPathname;
+		
+		public:
+			FileTask( const std::string& output ) : itsOutputPathname( output )
+			{
+			}
+			
+			const std::string& OutputPathname() const  { return itsOutputPathname; }
+			
+			time_t OutputStamp() const;
+			
+			virtual void Make() = 0;
+			
+			void Main();
+			
 	};
 	
 	void AddReadyTask( const TaskPtr& task );
