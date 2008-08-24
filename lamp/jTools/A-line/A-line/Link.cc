@@ -629,9 +629,6 @@ namespace ALine
 		                                more::compose1( more::ptr_fun( ObjectFileName ),
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 		
-		std::vector< std::string > link_input_arguments( objectFiles.begin() + n_tools,
-		                                                 objectFiles.end() );
-		
 		TaskPtr base_task;
 		
 		if ( hasStaticLib )
@@ -655,13 +652,19 @@ namespace ALine
 			return;
 		}
 		
+		std::vector< std::string > link_input_arguments;
+		
 		if ( toolkit )
 		{
-			link_input_arguments.clear();  // don't link against common .o files
-			
 			link_input_arguments.push_back( "" );  // the tool .o file, later
 			
 			link_input_arguments.push_back( outFile );  // the static library
+		}
+		else
+		{
+			link_input_arguments.insert( link_input_arguments.begin(),
+			                             objectFiles.begin() + n_tools,
+			                             objectFiles.end() );
 		}
 		
 		TaskPtr link_dependency_task( new NullTask() );
