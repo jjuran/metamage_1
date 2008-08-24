@@ -824,6 +824,11 @@ namespace ALine
 				if ( rez_task.get() )
 				{
 					rez_task->AddDependent( copy_rsrcs );
+					
+					if ( !bundle )
+					{
+						rez_task->AddDependent( link_task );
+					}
 				}
 				
 				link_task->AddDependent( copy_rsrcs );
