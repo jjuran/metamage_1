@@ -329,59 +329,23 @@ namespace ALine
 		               allUsedProjects.rend(),
 		               gatherer );
 		
+		CompilerOptions precompile_options = options;
+		
+		
+		TaskPtr precompile_task( new NullTask() );
 		
 		const Project* projectProvidingPrecompiledHeader = ProjectProvidingPrecompiledHeader( project );
 		
-		bool precompiledHeaderIsAvailable = projectProvidingPrecompiledHeader != NULL;
-		
-		IncludePath pchSourcePath;
-		std::string pchSourceName;
-		std::string pchImage;
-		
-		if ( precompiledHeaderIsAvailable )
+		if ( projectProvidingPrecompiledHeader != NULL )
 		{
-			pchSourcePath = projectProvidingPrecompiledHeader->PrecompiledHeaderSource();
+			std::string pchSourcePath = projectProvidingPrecompiledHeader->PrecompiledHeaderSource();
 			
-			pchSourceName = io::get_filename_string( pchSourcePath );
+			std::string pchSourceName = io::get_filename_string( pchSourcePath );
 			
-			pchImage = PrecompiledHeaderImageFile( projectProvidingPrecompiledHeader->Name(),
-			                                       pchSourceName,
-			                                       targetInfo );
-		}
-		
-		TaskPtr precompile_task;
-		
-		if ( project.HasPrecompiledHeader() )
-		{
-			// Locate the precompiled header image file.
-			std::string pchSource = FindInclude( pchSourcePath );
+			std::string pchImage = PrecompiledHeaderImageFile( projectProvidingPrecompiledHeader->Name(),
+			                                                   pchSourceName,
+			                                                   targetInfo );
 			
-			if ( pchSource.empty() )
-			{
-				std::fprintf( stderr, "Missing precompiled header '%s'\n", pchSourcePath.c_str() );
-			}
-			
-			precompile_task.reset( new CompilingTask( options, pchSource, pchImage, "Precompiling: " ) );
-		}
-		else
-		{
-			precompile_task.reset( new NullTask() );
-			
-			if ( precompiledHeaderIsAvailable )
-			{
-				precompile_task->UpdateInputStamp( ModifiedDate( pchImage ) );
-			}
-		}
-		
-		if ( Options().all )
-		{
-			precompile_task->UpdateInputStamp( 0x7FFFFFFF );
-		}
-		
-		std::string outDir = ProjectObjectsDirPath( project.Name() );
-		
-		if ( precompiledHeaderIsAvailable )
-		{
 			options.SetPrecompiledHeaderSource( pchSourceName );
 			// Theory:
 			// We need to include the pch source by name only, not path.
@@ -390,7 +354,32 @@ namespace ALine
 			// We also need the parent of the image file, so gcc can find that.
 			
 			options.PrependIncludeDir( io::get_preceding_directory( pchImage ) );
+			
+			if ( project.HasPrecompiledHeader() )
+			{
+				// Locate the precompiled header image file.
+				std::string pchSource = FindInclude( pchSourcePath );
+				
+				if ( pchSource.empty() )
+				{
+					std::fprintf( stderr, "Missing precompiled header '%s'\n", pchSourcePath.c_str() );
+				}
+				
+				precompile_task.reset( new CompilingTask( precompile_options, pchSource, pchImage, "Precompiling: " ) );
+			}
+			else
+			{
+				precompile_task->UpdateInputStamp( ModifiedDate( pchImage ) );
+			}
 		}
+		
+		
+		if ( Options().all )
+		{
+			precompile_task->UpdateInputStamp( 0x7FFFFFFF );
+		}
+		
+		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
 		// See which source files need to be compiled,
 		// caching include information in the process.
