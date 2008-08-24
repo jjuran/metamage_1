@@ -6,11 +6,27 @@
 #ifndef COMPILEDRIVER_PLATFORM_HH
 #define COMPILEDRIVER_PLATFORM_HH
 
+// ALINE_CROSS_DEVELOPMENT: true if A-line can cross-compile.
+// ALINE_UNIX_DEVELOPMENT:  true if A-line can target native Unix.
+// ALINE_LAMP_DEVELOPMENT:  true if A-line can target Lamp (maybe via Classic).
+
 #if defined(__APPLE_CC__) || defined(__MWERKS__)
 #include <TargetConditionals.h>
 #define ALINE_CROSS_DEVELOPMENT 1
 #else
 #define ALINE_CROSS_DEVELOPMENT 0
+#endif
+
+#ifdef __GNUC__
+#define ALINE_UNIX_DEVELOPMENT 1
+#else
+#define ALINE_UNIX_DEVELOPMENT 0
+#endif
+
+#if !ALINE_UNIX_DEVELOPMENT || (defined(__MACOS__) && TARGET_CPU_PPC)
+#define ALINE_LAMP_DEVELOPMENT 1
+#else
+#define ALINE_LAMP_DEVELOPMENT 0
 #endif
 
 /*
