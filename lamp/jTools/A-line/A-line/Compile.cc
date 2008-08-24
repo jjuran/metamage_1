@@ -62,6 +62,8 @@ namespace ALine
 			{
 			}
 			
+			bool UpToDate();
+			
 			void Make();
 	};
 	
@@ -185,10 +187,8 @@ namespace ALine
 		RunCommand( command, diagnosticsFile.c_str(), caption + source_filename );
 	}
 	
-	void CompilingTask::Make()
+	bool CompilingTask::UpToDate()
 	{
-		// If the output file exists and it's up to date, we can skip compiling.
-		
 		if ( io::item_exists( OutputPathname() ) )
 		{
 			time_t output_stamp = ModifiedDate( OutputPathname() );
@@ -203,9 +203,21 @@ namespace ALine
 				
 				if ( MoreRecent( output_stamp ) )
 				{
-					return;
+					return true;
 				}
 			}
+		}
+		
+		return false;
+	}
+	
+	void CompilingTask::Make()
+	{
+		// If the output file exists and it's up to date, we can skip compiling.
+		
+		if ( UpToDate() )
+		{
+			return;
 		}
 		
 		RunCompiler( itsOptions, itsSourcePathname, OutputPathname(), itsCaption );

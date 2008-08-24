@@ -77,7 +77,7 @@ namespace ALine
 		return 0;
 	}
 	
-	bool FileTask::UpToDate() const
+	bool FileTask::UpToDate()
 	{
 		return MoreRecent( OutputStamp() );
 	}
