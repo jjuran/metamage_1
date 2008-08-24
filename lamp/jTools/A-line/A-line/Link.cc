@@ -309,7 +309,7 @@ namespace ALine
 	{
 		Command rezCommand;
 		
-		if ( itIsTargetingLamp )
+		if ( TargetingLamp( itIsTargetingLamp ) )
 		{
 			rezCommand.push_back( "mpwrez" );
 			rezCommand.push_back( "-c" );
@@ -401,7 +401,7 @@ namespace ALine
 		
 		std::string command_line;
 		
-		if ( itIsTargetingLamp )
+		if ( TargetingLamp( itIsTargetingLamp ) )
 		{
 			command.push_back( "cpres" );
 			
