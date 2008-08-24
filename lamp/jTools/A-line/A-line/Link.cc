@@ -806,9 +806,13 @@ namespace ALine
 				rsrc_pathnames.push_back( rez_output_pathname );
 				
 				rez_task = MakeRezTask( project, rez_output_pathname, needCarbResource, usingOSXRez );
-				
-				AddReadyTask( rez_task );
 			}
+			else
+			{
+				rez_task.reset( new NullTask() );
+			}
+			
+			AddReadyTask( rez_task );
 			
 			TaskPtr link_task( new LinkingTask( command, outFile, link_input_arguments, diagnosticsDir ) );
 			
@@ -821,14 +825,11 @@ namespace ALine
 				
 				TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, usingOSXRez ) );
 				
-				if ( rez_task.get() )
+				rez_task->AddDependent( copy_rsrcs );
+				
+				if ( !bundle )
 				{
-					rez_task->AddDependent( copy_rsrcs );
-					
-					if ( !bundle )
-					{
-						rez_task->AddDependent( link_task );
-					}
+					rez_task->AddDependent( link_task );
 				}
 				
 				link_task->AddDependent( copy_rsrcs );
