@@ -43,7 +43,7 @@ namespace ALine
 			{
 			}
 			
-			bool UpToDate( time_t output_stamp )  { return output_stamp > itsInputStamp; }
+			bool MoreRecent( time_t output_stamp ) const  { return output_stamp > itsInputStamp; }
 			
 			void UpdateInputStamp( time_t stamp );
 			

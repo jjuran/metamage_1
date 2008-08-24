@@ -195,13 +195,13 @@ namespace ALine
 			
 			UpdateInputStamp( ModifiedDate( itsSourcePathname ) );
 			
-			if ( UpToDate( output_stamp ) )
+			if ( MoreRecent( output_stamp ) )
 			{
 				std::string source_filename = io::get_filename_string( itsSourcePathname );
 				
 				UpdateInputStamp( RecursivelyLatestDate( source_filename, itsSourcePathname ) );
 				
-				if ( UpToDate( output_stamp ) )
+				if ( MoreRecent( output_stamp ) )
 				{
 					return;
 				}

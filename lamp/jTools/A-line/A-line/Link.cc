@@ -263,7 +263,7 @@ namespace ALine
 		{
 			time_t output_stamp = ModifiedDate( OutputPathname() );
 			
-			if ( UpToDate( output_stamp ) )
+			if ( MoreRecent( output_stamp ) )
 			{
 				return;
 			}
@@ -317,7 +317,7 @@ namespace ALine
 		{
 			time_t output_stamp = ModifiedDate( OutputPathname() );
 			
-			if ( UpToDate( output_stamp ) )
+			if ( MoreRecent( output_stamp ) )
 			{
 				return;
 			}
@@ -417,7 +417,7 @@ namespace ALine
 		{
 			time_t output_stamp = ModifiedDate( OutputPathname() );
 			
-			if ( UpToDate( output_stamp ) )
+			if ( MoreRecent( output_stamp ) )
 			{
 				return;
 			}
