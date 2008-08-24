@@ -10,12 +10,14 @@
 // ALINE_UNIX_DEVELOPMENT:  true if A-line can target native Unix.
 // ALINE_LAMP_DEVELOPMENT:  true if A-line can target Lamp (maybe via Classic).
 
-#if defined(__APPLE_CC__) || defined(__MWERKS__)
+#if defined(__MACOS__) || defined(__APPLE__)
 #include <TargetConditionals.h>
-#define ALINE_CROSS_DEVELOPMENT 1
+#define ALINE_MAC_DEVELOPMENT 1
 #else
-#define ALINE_CROSS_DEVELOPMENT 0
+#define ALINE_MAC_DEVELOPMENT 0
 #endif
+
+#define ALINE_CROSS_DEVELOPMENT ALINE_MAC_DEVELOPMENT
 
 #ifdef __GNUC__
 #define ALINE_UNIX_DEVELOPMENT 1
@@ -27,12 +29,6 @@
 #define ALINE_LAMP_DEVELOPMENT 1
 #else
 #define ALINE_LAMP_DEVELOPMENT 0
-#endif
-
-#if defined(__MACOS__) || defined(__APPLE__)
-#define ALINE_MAC_DEVELOPMENT 1
-#else
-#define ALINE_MAC_DEVELOPMENT 0
 #endif
 
 /*
