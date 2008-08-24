@@ -515,7 +515,6 @@ namespace ALine
 		bool hasExecutable = true;
 		bool needCarbResource = false;
 		bool gccSupported = false;
-		bool bundle = false;
 		bool toolkit = false;
 		
 		const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
@@ -551,7 +550,6 @@ namespace ALine
 				
 				needCarbResource = (targetInfo.platform & carbonCFM) == carbonCFM;
 				gccSupported = true;
-				bundle = gnu;
 				break;
 			
 			case productINIT:
@@ -602,6 +600,8 @@ namespace ALine
 		std::string outputDir = hasStaticLib ? libsDir : ProjectOutputDirPath( project.Name() );
 		
 		std::string exeDir = outputDir;
+		
+		const bool bundle = gnu  &&  project.Product() == productApplication;
 		
 		if ( bundle )
 		{
