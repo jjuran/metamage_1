@@ -241,6 +241,18 @@ namespace ALine
 			{
 			}
 			
+			template < class Iter >
+			LinkingTask( const Command&      command,
+			             const std::string&  output,
+			             Iter                input_begin,
+			             Iter                input_end,
+			             const std::string&  diagnostics ) : itsCommand       ( command     ),
+			                                                 itsOutputPathname( output      ),
+			                                                 itsInputArguments( input_begin, input_end ),
+			                                                 itsDiagnosticsDir( diagnostics )
+			{
+			}
+			
 			void Main();
 	};
 	
@@ -473,6 +485,34 @@ namespace ALine
 		                        later_of_time_or_library_mod_stamp );
 	}
 	
+	template < class Iter >
+	static TaskPtr MakeStaticLibTask( const std::string& output_pathname,
+	                                  Iter begin,
+	                                  Iter end,
+	                                  const std::string& diagnostics_dir,
+	                                  bool gnu,
+	                                  bool debug )
+	{
+		const bool use_ar = gnu;
+		
+		Command link_command;
+		
+		link_command.push_back( use_ar ? "ar"  : "ld"      );
+		link_command.push_back( use_ar ? "rcs" : "-static" );
+		
+		if ( !use_ar )
+		{
+			if ( !debug )
+			{
+				link_command.push_back( "-s" );
+			}
+			
+			link_command.push_back( "-o" );
+		}
+		
+		return TaskPtr( new LinkingTask( link_command, output_pathname, begin, end, diagnostics_dir ) );
+	}
+	
 	void LinkProduct( const Project&     project,
 	                  const TargetInfo&  targetInfo,
 	                  const TaskPtr&     source_dependency )
@@ -637,22 +677,12 @@ namespace ALine
 		
 		if ( hasStaticLib )
 		{
-			Command link_command = cmdgen.LibraryMakerName();
-			
-			const bool useAr = gnu;
-			
-			if ( !useAr )
-			{
-				if ( cmdgen.LinkerOptions()[0] )
-				{
-					link_command.push_back( cmdgen.LinkerOptions() );
-				}
-				
-				link_command.push_back( "-o" );
-			}
-			
-			// Link input is only .o files
-			base_task.reset( new LinkingTask( link_command, outFile, link_input_arguments, diagnosticsDir ) );
+			base_task = MakeStaticLibTask( outFile,
+			                               objectFiles.begin() + n_tools,
+			                               objectFiles.end(),
+			                               diagnosticsDir,
+			                               gnu,
+			                               targetInfo.build == buildDebug );
 		}
 		else
 		{
