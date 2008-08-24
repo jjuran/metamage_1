@@ -127,26 +127,6 @@ namespace ALine
 			return MakeCommand( "-arch", arch );
 		}
 		
-		Command LibraryMakerName() const
-		{
-			Command result;
-			
-			if ( gnu )
-			{
-				result.push_back( "ar" );
-				result.push_back( "rcs" );
-			}
-			else
-			{
-				result.push_back( "ld" );
-				result.push_back( "-static" );
-				
-				AugmentCommand( result, TargetArchitecture() );
-			}
-			
-			return result;
-		}
-		
 		Command LanguageOptions() const
 		{
 			Command result;
