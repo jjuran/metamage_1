@@ -487,7 +487,7 @@ namespace ALine
 	                  const TargetInfo&  targetInfo,
 	                  const TaskPtr&     source_dependency )
 	{
-		const bool gnu = targetInfo.toolkit == toolkitGNU;
+		const bool gnu = !ALINE_LAMP_DEVELOPMENT  ||  ALINE_UNIX_DEVELOPMENT  &&  targetInfo.toolkit == toolkitGNU;
 		
 		gLibraryPrefix    = gnu ? "lib" : "";
 		gLibraryExtension = gnu ? ".a" : ".lib";
@@ -767,7 +767,7 @@ namespace ALine
 			                rsrc_pathnames.begin(),
 			                std::ptr_fun( RezLocation ) );
 			
-			bool usingOSXRez = gnu;
+			const bool usingOSXRez = gnu;
 			
 			TaskPtr rez_task;
 			
