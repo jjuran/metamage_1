@@ -814,8 +814,6 @@ namespace ALine
 			
 			link_dependency_task->AddDependent( link_task );
 			
-			AddReadyTask( link_task );
-			
 			if ( !rsrc_pathnames.empty() )
 			{
 				std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
