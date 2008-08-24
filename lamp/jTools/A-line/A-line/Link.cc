@@ -222,11 +222,10 @@ namespace ALine
 		task->UpdateInputStamp( ModifiedDate( input_pathname ) );
 	}
 	
-	class LinkingTask : public Task
+	class LinkingTask : public FileTask
 	{
 		private:
 			Command                     itsCommand;
-			std::string                 itsOutputPathname;
 			std::vector< std::string >  itsInputArguments;
 			std::string                 itsDiagnosticsDir;
 		
@@ -234,8 +233,8 @@ namespace ALine
 			LinkingTask( const Command&                     command,
 			             const std::string&                 output,
 			             const std::vector< std::string >&  input,
-			             const std::string&                 diagnostics ) : itsCommand       ( command     ),
-			                                                                itsOutputPathname( output      ),
+			             const std::string&                 diagnostics ) : FileTask         ( output      ),
+			                                                                itsCommand       ( command     ),
 			                                                                itsInputArguments( input       ),
 			                                                                itsDiagnosticsDir( diagnostics )
 			{
@@ -246,23 +245,23 @@ namespace ALine
 			             const std::string&  output,
 			             Iter                input_begin,
 			             Iter                input_end,
-			             const std::string&  diagnostics ) : itsCommand       ( command     ),
-			                                                 itsOutputPathname( output      ),
+			             const std::string&  diagnostics ) : FileTask         ( output      ),
+			                                                 itsCommand       ( command     ),
 			                                                 itsInputArguments( input_begin, input_end ),
 			                                                 itsDiagnosticsDir( diagnostics )
 			{
 			}
 			
-			void Main();
+			void Make();
 	};
 	
-	void LinkingTask::Main()
+	void LinkingTask::Make()
 	{
 		// If the output file exists and it's up to date, we can skip compiling.
 		
-		if ( io::item_exists( itsOutputPathname ) )
+		if ( io::item_exists( OutputPathname() ) )
 		{
-			time_t output_stamp = ModifiedDate( itsOutputPathname );
+			time_t output_stamp = ModifiedDate( OutputPathname() );
 			
 			if ( UpToDate( output_stamp ) )
 			{
@@ -270,19 +269,17 @@ namespace ALine
 			}
 		}
 		
-		itsCommand.push_back( itsOutputPathname.c_str() );
+		itsCommand.push_back( OutputPathname().c_str() );
 		
 		AugmentCommand( itsCommand, itsInputArguments );
 		
-		std::string output_filename = io::get_filename_string( itsOutputPathname );
+		std::string output_filename = io::get_filename_string( OutputPathname() );
 		
 		itsCommand.push_back( NULL );
 		
 		std::string diagnostics_pathname = itsDiagnosticsDir / DiagnosticsFilenameFromSourceFilename( output_filename );
 		
 		RunCommand( itsCommand, diagnostics_pathname.c_str(), "Linking: " + output_filename );
-		
-		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
 	}
 	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
@@ -293,11 +290,10 @@ namespace ALine
 		return bundleName / "Contents" / "Resources" / rsrcFileName;
 	}
 	
-	class RezzingTask : public Task
+	class RezzingTask : public FileTask
 	{
 		private:
 			std::vector< std::string >  itsInputPathnames;
-			std::string                 itsOutputPathname;
 			std::string                 itsIncludeDirPathname;
 			bool                        itIsUsingOSX;
 		
@@ -305,21 +301,21 @@ namespace ALine
 			RezzingTask( const std::vector< std::string >&  input,
 			             const std::string&                 output,
 			             const std::string&                 includeDir,
-			             bool                               usingOSX ) : itsInputPathnames    ( input      ),
-			                                                             itsOutputPathname    ( output     ),
+			             bool                               usingOSX ) : FileTask             ( output     ),
+			                                                             itsInputPathnames    ( input      ),
 			                                                             itsIncludeDirPathname( includeDir ),
 			                                                             itIsUsingOSX         ( usingOSX   )
 			{
 			}
 			
-			void Main();
+			void Make();
 	};
 	
-	void RezzingTask::Main()
+	void RezzingTask::Make()
 	{
-		if ( io::item_exists( itsOutputPathname ) )
+		if ( io::item_exists( OutputPathname() ) )
 		{
-			time_t output_stamp = ModifiedDate( itsOutputPathname );
+			time_t output_stamp = ModifiedDate( OutputPathname() );
 			
 			if ( UpToDate( output_stamp ) )
 			{
@@ -349,15 +345,13 @@ namespace ALine
 		
 		rezCommand.push_back( itsIncludeDirPathname.c_str() );
 		
-		AugmentCommand( rezCommand, OutputOption( itsOutputPathname.c_str() ) );
+		AugmentCommand( rezCommand, OutputOption( OutputPathname().c_str() ) );
 		
 		AugmentCommand( rezCommand, itsInputPathnames );
 		
 		rezCommand.push_back( NULL );
 		
-		RunCommand( rezCommand, NULL, "Rezzing: " + io::get_filename_string( itsOutputPathname ) );
-		
-		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
+		RunCommand( rezCommand, NULL, "Rezzing: " + io::get_filename_string( OutputPathname() ) );
 	}
 	
 	static TaskPtr MakeRezTask( const Project&      project,
@@ -399,30 +393,29 @@ namespace ALine
 		return echo + q( include + qq( file ) + ";" );
 	}
 	
-	class ResourceCopyingTask : public Task
+	class ResourceCopyingTask : public FileTask
 	{
 		private:
 			std::vector< std::string >  itsInputPathnames;
-			std::string                 itsOutputPathname;
 			bool                        itIsUsingOSX;
 		
 		public:
 			ResourceCopyingTask( const std::vector< std::string >&  input,
 			                     const std::string&                 output,
-			                     bool                               usingOSX ) : itsInputPathnames( input    ),
-			                                                                     itsOutputPathname( output   ),
+			                     bool                               usingOSX ) : FileTask         ( output   ),
+			                                                                     itsInputPathnames( input    ),
 			                                                                     itIsUsingOSX     ( usingOSX )
 			{
 			}
 			
-			void Main();
+			void Make();
 	};
 	
-	void ResourceCopyingTask::Main()
+	void ResourceCopyingTask::Make()
 	{
-		if ( io::item_exists( itsOutputPathname ) )
+		if ( io::item_exists( OutputPathname() ) )
 		{
-			time_t output_stamp = ModifiedDate( itsOutputPathname );
+			time_t output_stamp = ModifiedDate( OutputPathname() );
 			
 			if ( UpToDate( output_stamp ) )
 			{
@@ -444,7 +437,7 @@ namespace ALine
 			command_line = paren( command_line );
 			
 			command_line += " | /Developer/Tools/Rez -append -useDF -o ";
-			command_line += q( itsOutputPathname );
+			command_line += q( OutputPathname() );
 			
 			command.push_back( "/bin/sh" );
 			command.push_back( "-c" );
@@ -456,14 +449,12 @@ namespace ALine
 			
 			AugmentCommand( command, itsInputPathnames );
 			
-			command.push_back( itsOutputPathname.c_str() );
+			command.push_back( OutputPathname().c_str() );
 		}
 		
 		command.push_back( NULL );
 		
-		RunCommand( command, "", "Copying resources: " + io::get_filename_string( itsOutputPathname ) );
-		
-		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
+		RunCommand( command, "", "Copying resources: " + io::get_filename_string( OutputPathname() ) );
 	}
 	
 	static time_t EffectiveModifiedDate( const std::string& file )

@@ -44,26 +44,25 @@ namespace ALine
 	using namespace io::path_descent_operators;
 	
 	
-	class CompilingTask : public Task
+	class CompilingTask : public FileTask
 	{
 		private:
 			CompilerOptions  itsOptions;
 			std::string      itsSourcePathname;
-			std::string      itsOutputPathname;
 			const char*      itsCaption;
 		
 		public:
 			CompilingTask( const CompilerOptions&  options,
 			               const std::string&      source,
 			               const std::string&      output,
-			               const char*             caption ) : itsOptions       ( options ),
+			               const char*             caption ) : FileTask         ( output ),
+			                                                   itsOptions       ( options ),
 			                                                   itsSourcePathname( source  ),
-			                                                   itsOutputPathname( output  ),
 			                                                   itsCaption       ( caption )
 			{
 			}
 			
-			void Main();
+			void Make();
 	};
 	
 	class IncludeDirGatherer
@@ -186,13 +185,13 @@ namespace ALine
 		RunCommand( command, diagnosticsFile.c_str(), caption + source_filename );
 	}
 	
-	void CompilingTask::Main()
+	void CompilingTask::Make()
 	{
 		// If the output file exists and it's up to date, we can skip compiling.
 		
-		if ( io::item_exists( itsOutputPathname ) )
+		if ( io::item_exists( OutputPathname() ) )
 		{
-			time_t output_stamp = ModifiedDate( itsOutputPathname );
+			time_t output_stamp = ModifiedDate( OutputPathname() );
 			
 			UpdateInputStamp( ModifiedDate( itsSourcePathname ) );
 			
@@ -209,9 +208,7 @@ namespace ALine
 			}
 		}
 		
-		RunCompiler( itsOptions, itsSourcePathname, itsOutputPathname, itsCaption );
-		
-		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
+		RunCompiler( itsOptions, itsSourcePathname, OutputPathname(), itsCaption );
 	}
 	
 	
