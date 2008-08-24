@@ -500,7 +500,7 @@ namespace ALine
 		gLibraryPrefix    = gnu ? "lib" : "";
 		gLibraryExtension = gnu ? ".a" : ".lib";
 		
-		const bool machO = targetInfo.platform & CD::runtimeMachO;
+		const bool machO = gnu && targetInfo.platform & CD::runtimeMachO;
 		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
