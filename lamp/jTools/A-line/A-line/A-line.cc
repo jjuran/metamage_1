@@ -513,8 +513,8 @@ int O::Main( int argc, argv_t argv )
 	O::BindOption( "-F", runtime, CD::runtimeCodeFragments  );
 	O::BindOption( "-O", runtime, CD::runtimeMachO          );
 	
-	O::BindOption( "-B", macAPI, CD::apiMacToolbox );
-	O::BindOption( "-C", macAPI, CD::apiMacCarbon  );
+	O::BindOption( "-B", macAPI, CD::apiMacBlue   );
+	O::BindOption( "-C", macAPI, CD::apiMacCarbon );
 	
 	O::BindOption( "-g", buildVariety, buildDebug   );
 	O::BindOption( "-R", buildVariety, buildRelease );

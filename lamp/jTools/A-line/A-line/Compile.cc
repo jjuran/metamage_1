@@ -252,7 +252,7 @@ namespace ALine
 		{
 			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
 		}
-		else if ( targetInfo.platform & CD::apiMacToolbox )
+		else if ( targetInfo.platform & CD::apiMacBlue )
 		{
 			options.DEFINE_MACRO_VALUE( "TARGET_API_MAC_CARBON", 0 );
 			options.DEFINE_MACRO( "TARGET_API_MAC_OS8" );

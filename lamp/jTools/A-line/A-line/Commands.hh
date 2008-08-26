@@ -90,7 +90,7 @@ namespace ALine
 			a5    ( target.platform & CD::runtimeA5CodeSegments ),
 			cfm   ( target.platform & CD::runtimeCodeFragments  ),
 			machO ( target.platform & CD::runtimeMachO          ),
-			blue  ( target.platform & CD::apiMacToolbox         ),
+			blue  ( target.platform & CD::apiMacBlue            ),
 			carbon( target.platform & CD::apiMacCarbon          ),
 			debug ( target.build     == buildDebug   ),
 			gnu   ( target.toolchain == toolchainGNU )

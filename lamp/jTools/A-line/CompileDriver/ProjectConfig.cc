@@ -96,8 +96,8 @@ namespace CompileDriver
 		map[ "mach-o" ] = runtimeMachO;
 		map[ "elf"    ] = runtimeELF;
 		
-		map[ "blue"    ] = apiMacToolbox;
-		map[ "classic" ] = apiMacToolbox;
+		map[ "blue"    ] = apiMacBlue;
+		map[ "classic" ] = apiMacBlue;
 		map[ "carbon"  ] = apiMacCarbon;
 		
 		map[ "mac"  ] = platformMac;

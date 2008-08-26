@@ -202,7 +202,7 @@ namespace ALine
 			if (    product == productINIT
 			     || product == productDriver )
 			{
-				Options().platform |= CD::arch68K | CD::runtimeA4CodeResource | CD::apiMacToolbox;
+				Options().platform |= CD::arch68K | CD::runtimeA4CodeResource | CD::apiMacBlue;
 			}
 			
 			typedef std::vector< ProjName >::const_iterator vPN_ci;

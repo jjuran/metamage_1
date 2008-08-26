@@ -88,7 +88,6 @@ namespace CompileDriver
 		runtimeELF            = 1 << 7,
 		
 		apiMacBlue    = 1 <<  8,
-		apiMacToolbox = 1 <<  8,
 		apiMacCarbon  = 1 <<  9,
 		
 		platformMac  = 1 << 10,
@@ -207,7 +206,7 @@ namespace CompileDriver
 		
 		if ( platform & arch68K )
 		{
-			platform |= apiMacToolbox;
+			platform |= apiMacBlue;
 		}
 		
 		if ( platform & runtimeMachO )
@@ -227,7 +226,7 @@ namespace CompileDriver
 			if ( TARGET_CPU_68K )
 			{
 				platform |= arch68K;
-				platform |= apiMacToolbox;
+				platform |= apiMacBlue;
 				
 				if ( (platform & runtimeMask) == 0 )
 				{
@@ -251,7 +250,7 @@ namespace CompileDriver
 		
 		if ( (platform & apiMask) == 0 )
 		{
-			platform |= TARGET_API_MAC_CARBON ? apiMacCarbon : apiMacToolbox;
+			platform |= TARGET_API_MAC_CARBON ? apiMacCarbon : apiMacBlue;
 		}
 		
 		platform |= platformMac;
