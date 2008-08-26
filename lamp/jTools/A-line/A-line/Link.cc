@@ -495,13 +495,6 @@ namespace ALine
 		
 		CommandGenerator cmdgen( targetInfo );
 		
-		std::string linkName = project.ProgramName();
-		
-		if ( linkName == "" )
-		{
-			linkName = project.Name();
-		}
-		
 		Command command;
 		
 		command.push_back( cmdgen.LinkerName() );
@@ -509,22 +502,13 @@ namespace ALine
 		AugmentCommand( command, cmdgen.TargetArchitecture() );
 		
 		bool hasStaticLib = false;
-		bool hasExecutable = true;
-		bool needCarbResource = false;
-		bool gccSupported = false;
-		bool toolkit = false;
-		
-		const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
 		
 		std::string driverName;
 		
 		switch ( project.Product() )
 		{
 			case productStaticLib:
-				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
-				gccSupported = true;
 				hasStaticLib = true;
-				hasExecutable = false;
 				break;
 			
 			case productToolkit:
@@ -533,10 +517,7 @@ namespace ALine
 					command.push_back( cmdgen.TargetCommandLineTool() );
 				}
 				
-				linkName = gLibraryPrefix + project.Name() + gLibraryExtension;
-				gccSupported = true;
 				hasStaticLib = true;
-				toolkit = true;
 				break;
 			
 			case productApplication:
@@ -545,8 +526,20 @@ namespace ALine
 					command.push_back( cmdgen.TargetApplication() );
 				}
 				
-				needCarbResource = (targetInfo.platform & carbonCFM) == carbonCFM;
-				gccSupported = true;
+				break;
+			
+			case productTool:
+				if ( cmdgen.TargetCommandLineTool()[0] )
+				{
+					command.push_back( cmdgen.TargetCommandLineTool() );
+				}
+				
+				break;
+			
+		#if ALINE_LAMP_DEVELOPMENT
+			
+			case productSharedLib:
+				command.push_back( cmdgen.MWTargetSharedLibrary() );
 				break;
 			
 			case productINIT:
@@ -569,53 +562,24 @@ namespace ALine
 				command.push_back( cmdgen.CustomDriverHeader() );
 				break;
 			
-			case productTool:
-				if ( cmdgen.TargetCommandLineTool()[0] )
-				{
-					command.push_back( cmdgen.TargetCommandLineTool() );
-				}
+		#endif
+			
+			default:
+				p7::write( p7::stderr_fileno, STR_LEN( "Sorry, this product can't be built on this platform.\n" ) );
 				
-				gccSupported = true;
-				break;
-			
-			case productSharedLib:
-				command.push_back( cmdgen.MWTargetSharedLibrary() );
-				break;
-		}
-		
-		if ( gnu  &&  !gccSupported )
-		{
-			p7::write( p7::stderr_fileno, STR_LEN( "Sorry, GCC is not supported for this type of product.\n" ) );
-			
-			p7::throw_errno( EINVAL );
+				p7::throw_errno( EINVAL );
 		}
 		
 		std::string objectsDir = ProjectObjectsDirPath( project.Name() );
 		
-		std::string outputDir = ProjectOutputDirPath( project.Name() );
-		
-		std::string exeDir = outputDir;
-		
-		const bool bundle = gnu  &&  project.Product() == productApplication;
-		
-		if ( bundle )
-		{
-			std::string bundleName = linkName + ".app";
-			
-			CreateAppBundle( outputDir, bundleName );
-			
-			std::string contents( outputDir / bundleName / "Contents" );
-			
-			exeDir = contents / "MacOS";
-			
-			WritePkgInfo( contents / "PkgInfo", "APPL" + project.CreatorCode() );
-		}
 		
 		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
 		
 		std::sort( toolSourceFiles.begin(), toolSourceFiles.end() );
 		
 		std::vector< std::string > sourceFiles = project.Sources();
+		
+		bool toolkit = project.Product() == productToolkit;
 		
 		std::size_t n_tools = toolkit ? std::partition( sourceFiles.begin(),
 		                                                sourceFiles.end(),
@@ -633,14 +597,19 @@ namespace ALine
 		                                more::compose1( more::ptr_fun( ObjectFileName ),
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 		
+		
 		std::string libsDir = LibrariesDirPath();
 		
-		std::string library_pathname = libsDir / linkName;
+		std::string library_pathname;
 		
 		TaskPtr base_task;
 		
 		if ( hasStaticLib )
 		{
+			std::string library_filename = gLibraryPrefix + project.Name() + gLibraryExtension;
+			
+			library_pathname = libsDir / library_filename;
+			
 			base_task = MakeStaticLibTask( library_pathname,
 			                               objectFiles.begin() + n_tools,
 			                               objectFiles.end(),
@@ -654,10 +623,11 @@ namespace ALine
 		
 		source_dependency->AddDependent( base_task );
 		
-		if ( !hasExecutable )
+		if ( project.Product() == productStaticLib )
 		{
 			return;
 		}
+		
 		
 		std::vector< std::string > link_input_arguments;
 		
@@ -724,6 +694,8 @@ namespace ALine
 			command.push_back( cmdgen.LinkerOptions() );
 		}
 		
+		std::string outputDir = ProjectOutputDirPath( project.Name() );
+		
 		command.push_back( "-o" );
 		
 		if ( toolkit )
@@ -762,13 +734,17 @@ namespace ALine
 			
 			TaskPtr rez_task;
 			
-			if ( !project.UsedRezFiles().empty() )
+			const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
+			
+			const bool needsCarbResource = project.Product() == productApplication  &&  (targetInfo.platform & carbonCFM) == carbonCFM;
+			
+			if ( needsCarbResource || !project.UsedRezFiles().empty() )
 			{
 				std::string rez_output_pathname = RezzedDirPath() / project.Name() + ".rsrc";
 				
 				rsrc_pathnames.push_back( rez_output_pathname );
 				
-				rez_task = MakeRezTask( project, rez_output_pathname, needCarbResource, lamp );
+				rez_task = MakeRezTask( project, rez_output_pathname, needsCarbResource, lamp );
 			}
 			else
 			{
@@ -776,6 +752,30 @@ namespace ALine
 			}
 			
 			AddReadyTask( rez_task );
+			
+			std::string exeDir = outputDir;
+			
+			const bool bundle = gnu  &&  project.Product() == productApplication;
+			
+			std::string linkName = project.ProgramName();
+			
+			if ( linkName == "" )
+			{
+				linkName = project.Name();
+			}
+			
+			if ( bundle )
+			{
+				std::string bundleName = linkName + ".app";
+				
+				CreateAppBundle( outputDir, bundleName );
+				
+				std::string contents( outputDir / bundleName / "Contents" );
+				
+				exeDir = contents / "MacOS";
+				
+				WritePkgInfo( contents / "PkgInfo", "APPL" + project.CreatorCode() );
+			}
 			
 			std::string outFile = exeDir / linkName;
 			
