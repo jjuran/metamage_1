@@ -512,7 +512,7 @@ namespace ALine
 	{
 		std::size_t n_tools = 0;
 		
-		bool toolkit = project.Product() != productToolkit;
+		bool toolkit = project.Product() == productToolkit;
 		
 		if ( toolkit )
 		{
