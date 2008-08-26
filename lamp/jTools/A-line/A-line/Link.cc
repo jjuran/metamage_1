@@ -420,11 +420,6 @@ namespace ALine
 		RunCommand( command, "", "Copying resources: " + io::get_filename_string( OutputPathname() ) );
 	}
 	
-	static time_t EffectiveModifiedDate( const std::string& file )
-	{
-		return Options().all || !io::item_exists( file ) ? 0 : ModifiedDate( file );
-	}
-	
 	inline time_t later_of_time_or_library_mod_stamp( time_t a, const std::string& b )
 	{
 		return std::max( a, ModifiedDate( GetPathnameOfBuiltLibrary( b ) ) );
@@ -674,7 +669,7 @@ namespace ALine
 		else
 		{
 			link_input_arguments.insert( link_input_arguments.begin(),
-			                             objectFiles.begin() + n_tools,
+			                             objectFiles.begin(),
 			                             objectFiles.end() );
 		}
 		
