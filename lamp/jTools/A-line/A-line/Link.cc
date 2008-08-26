@@ -60,74 +60,37 @@ namespace ALine
 	}
 	
 	
-	// "path/to/file" -> "path/to/file"
-	// "path/to/-lib" -> "-wi path/to/lib"
-	
-	static void AddImport( const std::string& file, std::vector< std::string >& v )
+	static void AddProjectImports( const Project& project, std::vector< std::string >& link_input_arguments )
 	{
-		const char* importPath = file.c_str();
+		const std::vector< std::string >& used_project_names = project.AllUsedProjects();
 		
-		if ( importPath[ 0 ] == '-' )
-		{
-			++importPath;
-			
-			v.push_back( "-wi" );
-		}
-		
-		v.push_back( importPath );
-	}
-	
-	
-	// "path/to/project", "library" -> "path/to/project/library" | "library"
-	
-	static std::string MakeLibraryPathname( const std::string& projectFolder, const std::string& libName )
-	{
-		if ( libName[0] == '-' )
-		{
-			return libName;
-		}
-		
-		std::string pathname = projectFolder / libName;
-		
-		return io::file_exists( pathname ) ? pathname : libName;
-	}
-	
-	
-	static void CopyImports( const ProjName& projName,
-	                         std::back_insert_iterator< std::vector< std::string > > inserter )
-	{
-		Project& project = GetProject( projName );
-		
-		std::vector< FileName > importNames( project.LibImports() );
-		
-		std::transform( importNames.begin(),
-		                importNames.end(),
-		                inserter,
-		                std::bind1st( more::ptr_fun( MakeLibraryPathname ),
-		                              project.ProjectFolder() ) );
-	}
-	
-	static std::vector< std::string > GetAllImports( const Project& project )
-	{
-		const std::vector< ProjName >& used = project.AllUsedProjects();
-		
-		std::vector< std::string > importFiles;
-		
-		std::for_each( used.begin(),
-		               used.end(),
-		               std::bind2nd( more::ptr_fun( CopyImports ),
-		                             std::back_inserter( importFiles ) ) );
-		
-		return importFiles;
-	}
-	
-	static void AddImports( const std::vector< std::string >& importFiles, std::vector< std::string >& v )
-	{
 		typedef std::vector< std::string >::const_iterator Iter;
 		
-		for ( Iter it = importFiles.begin();  it != importFiles.end();  ++it )
+		for ( Iter the_name = used_project_names.begin();  the_name != used_project_names.end();  ++the_name )
 		{
-			AddImport( *it, v );
+			const Project& used_project = GetProject( *the_name );
+			
+			const std::vector< std::string >& library_imports = used_project.LibImports();
+			
+			for ( Iter the_import = library_imports.begin();  the_import != library_imports.end();  ++the_import )
+			{
+				const std::string& import = *the_import;
+				
+				if ( import[ 0 ] == '-' )
+				{
+					// Weak-linked, so it's a stub library.
+					// Currently, all of these are system-provided, not project-local.
+					
+					link_input_arguments.push_back( "-wi" );
+					link_input_arguments.push_back( import.c_str() + 1 );
+				}
+				else
+				{
+					std::string library_pathname = used_project.ProjectFolder() / import;
+					
+					link_input_arguments.push_back( io::file_exists( library_pathname ) ? library_pathname : import );
+				}
+			}
 		}
 	}
 	
@@ -735,14 +698,10 @@ namespace ALine
 			AddLibraryLinkArgs( usedProjects, link_input_arguments );
 		}
 		
-		std::vector< std::string > allImports;
-		
 		// FIXME:  This is a hack
 		if ( lamp )
 		{
-			allImports = GetAllImports( project );
-			
-			AddImports( allImports, link_input_arguments );
+			AddProjectImports( project, link_input_arguments );
 		}
 		
 		if ( machO )
