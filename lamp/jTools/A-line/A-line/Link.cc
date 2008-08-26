@@ -511,8 +511,8 @@ namespace ALine
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 	}
 	
-	static std::size_t NameObjectFiles( const Project&               project,
-	                                    std::vector< std::string >&  object_pathnames )
+	std::size_t NameObjectFiles( const Project&               project,
+	                             std::vector< std::string >&  object_pathnames )
 	{
 		std::size_t n_tools = 0;
 		
@@ -539,9 +539,10 @@ namespace ALine
 	}
 	
 	
-	void LinkProduct( const Project&     project,
-	                  const TargetInfo&  targetInfo,
-	                  const TaskPtr&     source_dependency )
+	void LinkProduct( const Project&                 project,
+	                  const TargetInfo&              targetInfo,
+	                  const TaskPtr&                 source_dependency,
+	                  const std::vector< TaskPtr >&  tool_dependencies )
 	{
 		const bool lamp = TargetingLamp( targetInfo.toolkit != toolkitGNU );
 		
@@ -739,9 +740,11 @@ namespace ALine
 			
 			const Iter end = objectFiles.begin() + n_tools;
 			
-			for ( Iter it = objectFiles.begin();  it != end;  ++it )
+			std::vector< TaskPtr >::const_iterator the_task = tool_dependencies.begin();
+			
+			for ( Iter the_object = objectFiles.begin();  the_object != end;  ++the_object, ++the_task )
 			{
-				const std::string& objectFile = *it;
+				const std::string& objectFile = *the_object;
 				
 				std::string linkOutput = outputDir / io::get_filename( objectFile );
 				
@@ -751,7 +754,7 @@ namespace ALine
 				
 				TaskPtr link_tool_task( new LinkingTask( command, linkOutput, link_input_arguments, diagnosticsDir ) );
 				
-				link_tool_task->UpdateInputStamp( EffectiveModifiedDate( objectFile ) );
+				(*the_task)->AddDependent( link_tool_task );
 				
 				link_dependency_task->AddDependent( link_tool_task );
 			}

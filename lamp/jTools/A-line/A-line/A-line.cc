@@ -358,10 +358,14 @@ namespace ALine
 		{
 			TaskPtr source_dependency( new NullTask() );
 			
-			CompileSources( project, info, source_dependency );
-			LinkProduct   ( project, info, source_dependency );
+			std::vector< TaskPtr > tool_dependencies;
+			
+			CompileSources( project, info, source_dependency, tool_dependencies );
+			LinkProduct   ( project, info, source_dependency, tool_dependencies );
 			
 			source_dependency.reset();
+			
+			tool_dependencies.clear();
 			
 			while ( RunNextTask() )
 			{

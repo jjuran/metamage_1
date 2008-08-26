@@ -33,6 +33,7 @@
 #include "A-line/BuildCommon.hh"
 #include "A-line/Commands.hh"
 #include "A-line/CompilerOptions.hh"
+#include "A-line/Link.hh"
 #include "A-line/Locations.hh"
 #include "A-line/ProjectCommon.hh"
 #include "A-line/Task.hh"
@@ -311,9 +312,39 @@ namespace ALine
 		return result;
 	}
 	
-	void CompileSources( const Project&     project,
-	                     const TargetInfo&  targetInfo,
-	                     const TaskPtr&     source_dependency )
+	class ToolTaskMaker
+	{
+		private:
+			const CompilerOptions&  itsOptions;
+			const TaskPtr&          itsPrecompileTask;
+		
+		public:
+			ToolTaskMaker( const CompilerOptions&  options,
+			               const TaskPtr&          precompile ) : itsOptions       ( options    ),
+			                                                      itsPrecompileTask( precompile )
+			{
+			}
+			
+			TaskPtr operator()( const std::string& source_pathname, const std::string& object_pathname )
+			{
+				const char* caption = "Compiling: ";
+				
+				CompilerOptions source_options = itsOptions;
+				
+				source_options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
+				
+				TaskPtr task( new CompilingTask( source_options, source_pathname, object_pathname, caption ) );
+				
+				itsPrecompileTask->AddDependent( task );
+				
+				return task;
+			}
+	};
+	
+	void CompileSources( const Project&           project,
+	                     const TargetInfo&        targetInfo,
+	                     const TaskPtr&           source_dependency,
+	                     std::vector< TaskPtr >&  tool_dependencies )
 	{
 		CompilerOptions options( project.Name(), targetInfo );
 		
@@ -381,19 +412,28 @@ namespace ALine
 		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
-		// See which source files need to be compiled,
-		// caching include information in the process.
-		std::vector< std::string >::const_iterator it, end = project.Sources().end();
+		std::vector< std::string > objectFiles;
 		
-		for ( it = project.Sources().begin();  it != end;  ++it )
+		const std::size_t n_tools = NameObjectFiles( project, objectFiles );
+		
+		tool_dependencies.resize( n_tools );
+		
+		std::transform( project.Sources().begin(),
+		                project.Sources().begin() + n_tools,
+		                objectFiles.begin(),
+		                tool_dependencies.begin(),
+		                ToolTaskMaker( options, precompile_task ) );
+		
+		std::vector< std::string >::const_iterator the_source, the_object, end = project.Sources().end();
+		
+		for ( the_source = project.Sources().begin() + n_tools,
+		      the_object = objectFiles.begin();  the_source != end;  ++the_source,
+		                                                             ++the_object )
 		{
 			// The source file
-			const std::string& source_pathname( *it );
+			const std::string& source_pathname = *the_source;
 			
-			std::string source_filename = io::get_filename_string( source_pathname );
-			
-			// The object file for this source file, which may or may not exist yet.
-			std::string output_pathname = outDir / ObjectFileName( source_filename );
+			const std::string& output_pathname = *the_object;
 			
 			CompilerOptions source_options = options;
 			
