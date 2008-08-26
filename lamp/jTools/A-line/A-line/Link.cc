@@ -478,6 +478,7 @@ namespace ALine
 		return TaskPtr( new LinkingTask( link_command, output_pathname, begin, end, diagnostics_dir ) );
 	}
 	
+	
 	void LinkProduct( const Project&     project,
 	                  const TargetInfo&  targetInfo,
 	                  const TaskPtr&     source_dependency )
@@ -489,9 +490,69 @@ namespace ALine
 		gLibraryPrefix    = gnu ? "lib" : "";
 		gLibraryExtension = gnu ? ".a" : ".lib";
 		
-		const bool machO = gnu && targetInfo.platform & CD::runtimeMachO;
-		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
+		
+		
+		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
+		
+		std::sort( toolSourceFiles.begin(), toolSourceFiles.end() );
+		
+		std::vector< std::string > sourceFiles = project.Sources();
+		
+		const bool toolkit = project.Product() == productToolkit;
+		
+		std::size_t n_tools = toolkit ? std::partition( sourceFiles.begin(),
+		                                                sourceFiles.end(),
+		                                                std::bind2nd( more::ptr_fun( &SourceFileIsTool ),
+		                                                                              toolSourceFiles ) ) - sourceFiles.begin()
+		                              : 0;
+		
+		
+		std::string objectsDir = ProjectObjectsDirPath( project.Name() );
+		
+		std::vector< std::string > objectFiles( sourceFiles.size() );
+		
+		std::transform( sourceFiles.begin(),
+		                sourceFiles.end(),
+		                objectFiles.begin(),
+		                more::compose1( std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
+		                                              objectsDir ),
+		                                more::compose1( more::ptr_fun( ObjectFileName ),
+		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
+		
+		
+		const bool hasStaticLib = project.Product() == productStaticLib  ||  project.Product() == productToolkit;
+		
+		std::string libsDir = LibrariesDirPath();
+		
+		std::string library_pathname;
+		
+		TaskPtr base_task;
+		
+		if ( hasStaticLib )
+		{
+			std::string library_filename = gLibraryPrefix + project.Name() + gLibraryExtension;
+			
+			library_pathname = libsDir / library_filename;
+			
+			base_task = MakeStaticLibTask( library_pathname,
+			                               objectFiles.begin() + n_tools,
+			                               objectFiles.end(),
+			                               diagnosticsDir,
+			                               targetInfo );
+		}
+		else
+		{
+			base_task.reset( new NullTask() );
+		}
+		
+		source_dependency->AddDependent( base_task );
+		
+		if ( project.Product() == productStaticLib )
+		{
+			return;
+		}
+		
 		
 		CommandGenerator cmdgen( targetInfo );
 		
@@ -501,23 +562,16 @@ namespace ALine
 		
 		AugmentCommand( command, cmdgen.TargetArchitecture() );
 		
-		bool hasStaticLib = false;
-		
 		std::string driverName;
 		
 		switch ( project.Product() )
 		{
-			case productStaticLib:
-				hasStaticLib = true;
-				break;
-			
 			case productToolkit:
 				if ( cmdgen.TargetCommandLineTool()[0] )
 				{
 					command.push_back( cmdgen.TargetCommandLineTool() );
 				}
 				
-				hasStaticLib = true;
 				break;
 			
 			case productApplication:
@@ -570,64 +624,6 @@ namespace ALine
 				p7::throw_errno( EINVAL );
 		}
 		
-		std::string objectsDir = ProjectObjectsDirPath( project.Name() );
-		
-		
-		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
-		
-		std::sort( toolSourceFiles.begin(), toolSourceFiles.end() );
-		
-		std::vector< std::string > sourceFiles = project.Sources();
-		
-		bool toolkit = project.Product() == productToolkit;
-		
-		std::size_t n_tools = toolkit ? std::partition( sourceFiles.begin(),
-		                                                sourceFiles.end(),
-		                                                std::bind2nd( more::ptr_fun( &SourceFileIsTool ),
-		                                                                              toolSourceFiles ) ) - sourceFiles.begin()
-		                              : 0;
-		
-		std::vector< std::string > objectFiles( sourceFiles.size() );
-		
-		std::transform( sourceFiles.begin(),
-		                sourceFiles.end(),
-		                objectFiles.begin(),
-		                more::compose1( std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
-		                                              objectsDir ),
-		                                more::compose1( more::ptr_fun( ObjectFileName ),
-		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
-		
-		
-		std::string libsDir = LibrariesDirPath();
-		
-		std::string library_pathname;
-		
-		TaskPtr base_task;
-		
-		if ( hasStaticLib )
-		{
-			std::string library_filename = gLibraryPrefix + project.Name() + gLibraryExtension;
-			
-			library_pathname = libsDir / library_filename;
-			
-			base_task = MakeStaticLibTask( library_pathname,
-			                               objectFiles.begin() + n_tools,
-			                               objectFiles.end(),
-			                               diagnosticsDir,
-			                               targetInfo );
-		}
-		else
-		{
-			base_task.reset( new NullTask() );
-		}
-		
-		source_dependency->AddDependent( base_task );
-		
-		if ( project.Product() == productStaticLib )
-		{
-			return;
-		}
-		
 		
 		std::vector< std::string > link_input_arguments;
 		
@@ -673,6 +669,8 @@ namespace ALine
 		{
 			AddProjectImports( project, link_input_arguments );
 		}
+		
+		const bool machO = gnu && targetInfo.platform & CD::runtimeMachO;
 		
 		if ( machO )
 		{
