@@ -27,17 +27,6 @@ namespace ALine
 		throw InvalidPlatform();
 	}
 	
-	static std::string ToolkitName( Toolkit tools )
-	{
-		switch ( tools )
-		{
-			case toolkitCodeWarrior:  return "CW";
-			case toolkitGNU:          return "GNU";
-		};
-		
-		return "";
-	}
-	
 	static std::string RuntimeName( CD::Platform rt )
 	{
 		switch ( rt )

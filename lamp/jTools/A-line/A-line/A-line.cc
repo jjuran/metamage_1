@@ -440,11 +440,13 @@ namespace ALine
 		// This is wrong for Metrowerks targeting Mach-O, but does anyone care?
 		if ( !ALINE_CROSS_DEVELOPMENT  ||  target.platform & CD::runtimeMachO )
 		{
-			target.toolkit = toolkitGNU;
+			target.envType   = envUnix;
+			target.toolchain = toolchainGNU;
 		}
 		else
 		{
-			target.toolkit = toolkitCodeWarrior;
+			target.envType   = envLamp;
+			target.toolchain = toolchainMetrowerks;
 		}
 	}
 	

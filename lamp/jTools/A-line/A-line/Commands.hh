@@ -92,8 +92,8 @@ namespace ALine
 			machO ( target.platform & CD::runtimeMachO          ),
 			blue  ( target.platform & CD::apiMacToolbox         ),
 			carbon( target.platform & CD::apiMacCarbon          ),
-			debug ( target.build   == buildDebug ),
-			gnu   ( target.toolkit == toolkitGNU )
+			debug ( target.build     == buildDebug   ),
+			gnu   ( target.toolchain == toolchainGNU )
 		{}
 		
 		const char* UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }

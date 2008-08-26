@@ -224,7 +224,7 @@ namespace ALine
 	{
 		std::string folder = ProjectPrecompiledDirPath( projName );
 		
-		bool gnu = targetInfo.toolkit == toolkitGNU;
+		const bool gnu = targetInfo.toolchain == toolchainGNU;
 		
 		std::string pchImageName = pchSourceName + (gnu ? ".gch"
 		                                                : ".mwch");
@@ -264,7 +264,7 @@ namespace ALine
 			}
 		}
 		
-		if ( options.Target().toolkit == toolkitCodeWarrior )
+		if ( options.Target().toolchain == toolchainMetrowerks )
 		{
 			// Assume CW Pro 6
 			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );

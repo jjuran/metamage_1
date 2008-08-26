@@ -28,11 +28,18 @@ namespace ALine
 		return product > productSource;
 	}
 	
-	enum Toolkit
+	enum Toolchain
 	{
-		toolkitUnspecified = 0, 
-		toolkitCodeWarrior, 
-		toolkitGNU
+		toolchainUnspecified = 0,
+		toolchainMetrowerks,
+		toolchainGNU
+	};
+	
+	enum EnvType
+	{
+		envUnspecified = 0,
+		envLamp,
+		envUnix
 	};
 	
 	enum BuildVariety

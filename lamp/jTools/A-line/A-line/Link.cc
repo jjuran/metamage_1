@@ -441,19 +441,20 @@ namespace ALine
 	                                  const std::string&  diagnostics_dir,
 	                                  const TargetInfo&   target )
 	{
-		const bool gnu   = target.toolkit == toolkitGNU;
-		const bool debug = target.build   == buildDebug;
-		const bool ppc   = target.platform & CD::archPPC;
-		const bool m68k  = target.platform & CD::arch68K;
+		const bool mw    = target.toolchain == toolchainMetrowerks;
+		const bool debug = target.build     == buildDebug;
 		
-		const bool use_ar = !ALINE_LAMP_DEVELOPMENT || gnu;
+		const bool ppc  = target.platform & CD::archPPC;
+		const bool m68k = target.platform & CD::arch68K;
+		
+		const bool use_ld_static = !ALINE_UNIX_DEVELOPMENT || mw;
 		
 		Command link_command;
 		
-		link_command.push_back( use_ar ? "ar"  : "ld"      );
-		link_command.push_back( use_ar ? "rcs" : "-static" );
+		link_command.push_back( use_ld_static ? "ld"      : "ar"  );
+		link_command.push_back( use_ld_static ? "-static" : "rcs" );
 		
-		if ( !use_ar )
+		if ( use_ld_static )
 		{
 			const char* arch = ppc  ? "ppc"
 			                 : m68k ? "m68k"
@@ -546,12 +547,12 @@ namespace ALine
 	                  const TaskPtr&                 source_dependency,
 	                  const std::vector< TaskPtr >&  tool_dependencies )
 	{
-		const bool lamp = TargetingLamp( targetInfo.toolkit != toolkitGNU );
+		const bool lamp = TargetingLamp( targetInfo.envType == envLamp );
 		
-		const bool gnu = !lamp;
+		const bool unix = !lamp;
 		
-		gLibraryPrefix    = gnu ? "lib" : "";
-		gLibraryExtension = gnu ? ".a" : ".lib";
+		gLibraryPrefix    = unix ? "lib" : "";
+		gLibraryExtension = unix ? ".a" : ".lib";
 		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
@@ -710,7 +711,7 @@ namespace ALine
 			AddProjectImports( project, link_input_arguments );
 		}
 		
-		const bool machO = gnu && targetInfo.platform & CD::runtimeMachO;
+		const bool machO = unix && targetInfo.platform & CD::runtimeMachO;
 		
 		if ( machO )
 		{
@@ -795,7 +796,7 @@ namespace ALine
 			
 			std::string exeDir = outputDir;
 			
-			const bool bundle = gnu  &&  project.Product() == productApplication;
+			const bool bundle = unix  &&  project.Product() == productApplication;
 			
 			std::string linkName = project.ProgramName();
 			
@@ -825,8 +826,8 @@ namespace ALine
 			
 			if ( !rsrc_pathnames.empty() )
 			{
-				std::string rsrcFile = gnu ? outputDir / BundleResourceFileRelativePath( linkName )
-				                           : outFile;
+				std::string rsrcFile = bundle ? outputDir / BundleResourceFileRelativePath( linkName )
+				                              : outFile;
 				
 				TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, lamp ) );
 				

@@ -21,19 +21,22 @@ namespace ALine
 	struct TargetInfo
 	{
 		CD::Platform  platform;
-		Toolkit       toolkit;
+		EnvType       envType;
+		Toolchain     toolchain;
 		BuildVariety  build;
 		
-		TargetInfo() : platform( CD::Platform()     ),
-		               toolkit ( toolkitUnspecified ),
-		               build   ( buildDefault       )
+		TargetInfo() : platform ( CD::Platform()       ),
+		               envType  ( envUnspecified       ),
+		               toolchain( toolchainUnspecified ),
+		               build    ( buildDefault         )
 		{
 		}
 		
 		TargetInfo( CD::Platform  platform,
-		            BuildVariety  build ) : platform( platform           ),
-		                                    toolkit ( toolkitUnspecified ),
-		                                    build   ( build              )
+		            BuildVariety  build ) : platform ( platform             ),
+		                                    envType  ( envUnspecified       ),
+		                                    toolchain( toolchainUnspecified ),
+		                                    build    ( build                )
 		{
 		}
 		
