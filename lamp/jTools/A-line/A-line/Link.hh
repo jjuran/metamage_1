@@ -20,6 +20,7 @@ namespace ALine
 	struct TargetInfo;
 	
 	std::size_t NameObjectFiles( const Project&               project,
+	                             std::vector< std::string >&  source_paths,
 	                             std::vector< std::string >&  object_pathnames );
 	
 	void LinkProduct( const Project&                 project,

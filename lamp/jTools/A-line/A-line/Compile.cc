@@ -415,21 +415,25 @@ namespace ALine
 		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
+		std::vector< std::string > source_paths;
+		
 		std::vector< std::string > objectFiles;
 		
-		const std::size_t n_tools = NameObjectFiles( project, objectFiles );
+		const std::size_t n_tools = NameObjectFiles( project, source_paths, objectFiles );
+		
+		const std::vector< std::string >& sources = n_tools > 0 ? source_paths : project.Sources();
 		
 		tool_dependencies.resize( n_tools );
 		
-		std::transform( project.Sources().begin(),
-		                project.Sources().begin() + n_tools,
+		std::transform( sources.begin(),
+		                sources.begin() + n_tools,
 		                objectFiles.begin(),
 		                tool_dependencies.begin(),
 		                ToolTaskMaker( options, precompile_task ) );
 		
-		std::vector< std::string >::const_iterator the_source, the_object, end = project.Sources().end();
+		std::vector< std::string >::const_iterator the_source, the_object, end = sources.end();
 		
-		for ( the_source = project.Sources().begin() + n_tools,
+		for ( the_source = sources.begin() + n_tools,
 		      the_object = objectFiles.begin();  the_source != end;  ++the_source,
 		                                                             ++the_object )
 		{

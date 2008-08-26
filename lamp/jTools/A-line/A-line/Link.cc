@@ -507,11 +507,10 @@ namespace ALine
 	}
 	
 	std::size_t NameObjectFiles( const Project&               project,
+	                             std::vector< std::string >&  source_paths,
 	                             std::vector< std::string >&  object_pathnames )
 	{
 		std::size_t n_tools = 0;
-		
-		std::vector< std::string > source_paths;
 		
 		bool toolkit = project.Product() != productToolkit;
 		
@@ -531,6 +530,14 @@ namespace ALine
 		FillObjectFiles( objects_dir, sources, object_pathnames );
 		
 		return n_tools;
+	}
+	
+	static std::size_t NameObjectFiles( const Project&               project,
+	                                    std::vector< std::string >&  object_pathnames )
+	{
+		std::vector< std::string > source_paths;
+		
+		return NameObjectFiles( project, source_paths, object_pathnames );
 	}
 	
 	
