@@ -56,9 +56,9 @@ namespace ALine
 	{
 		switch ( api )
 		{
-			case CD::apiMacToolbox:     return "Toolbox";
-			case CD::apiMacCarbon:      return "Carbon";
-			default:                    return "NA";
+			case CD::apiMacBlue:    return "Blue";
+			case CD::apiMacCarbon:  return "Carbon";
+			default:                return "NA";
 		};
 		
 		return "";

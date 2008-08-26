@@ -87,6 +87,7 @@ namespace CompileDriver
 		runtimeMachO          = 1 << 6,
 		runtimeELF            = 1 << 7,
 		
+		apiMacBlue    = 1 <<  8,
 		apiMacToolbox = 1 <<  8,
 		apiMacCarbon  = 1 <<  9,
 		
