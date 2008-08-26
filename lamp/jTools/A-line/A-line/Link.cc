@@ -479,6 +479,66 @@ namespace ALine
 	}
 	
 	
+	static std::size_t PartitionSourceFiles( const Project& project, std::vector< std::string >& sourceFiles )
+	{
+		if ( project.Product() != productToolkit )
+		{
+			return 0;
+		}
+		
+		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
+		
+		std::sort( toolSourceFiles.begin(), toolSourceFiles.end() );
+		
+		std::size_t n_tools = std::partition( sourceFiles.begin(),
+		                                      sourceFiles.end(),
+		                                      std::bind2nd( more::ptr_fun( &SourceFileIsTool ),
+		                                                                    toolSourceFiles ) ) - sourceFiles.begin();
+		
+		return n_tools;
+	}
+	
+	static void FillObjectFiles( const std::string&                 objects_dir,
+	                             const std::vector< std::string >&  source_paths,
+	                             std::vector< std::string >&        object_pathnames )
+	{
+		std::transform( source_paths.begin(),
+		                source_paths.end(),
+		                object_pathnames.begin(),
+		                more::compose1( std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
+		                                              objects_dir ),
+		                                more::compose1( more::ptr_fun( ObjectFileName ),
+		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
+	}
+	
+	static std::size_t NameObjectFiles( const Project&               project,
+	                                    std::vector< std::string >&  object_pathnames )
+	{
+		std::size_t n_tools = 0;
+		
+		std::vector< std::string > source_paths;
+		
+		bool toolkit = project.Product() != productToolkit;
+		
+		if ( toolkit )
+		{
+			source_paths = project.Sources();
+			
+			n_tools = PartitionSourceFiles( project, source_paths );
+		}
+		
+		std::string objects_dir = ProjectObjectsDirPath( project.Name() );
+		
+		const std::vector< std::string >& sources = toolkit ? source_paths : project.Sources();
+		
+		object_pathnames.resize( sources.size() );
+		
+		FillObjectFiles( objects_dir, sources, object_pathnames );
+		
+		return n_tools;
+	}
+	
+	
 	void LinkProduct( const Project&     project,
 	                  const TargetInfo&  targetInfo,
 	                  const TaskPtr&     source_dependency )
@@ -492,34 +552,9 @@ namespace ALine
 		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
+		std::vector< std::string > objectFiles;
 		
-		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
-		
-		std::sort( toolSourceFiles.begin(), toolSourceFiles.end() );
-		
-		std::vector< std::string > sourceFiles = project.Sources();
-		
-		const bool toolkit = project.Product() == productToolkit;
-		
-		std::size_t n_tools = toolkit ? std::partition( sourceFiles.begin(),
-		                                                sourceFiles.end(),
-		                                                std::bind2nd( more::ptr_fun( &SourceFileIsTool ),
-		                                                                              toolSourceFiles ) ) - sourceFiles.begin()
-		                              : 0;
-		
-		
-		std::string objectsDir = ProjectObjectsDirPath( project.Name() );
-		
-		std::vector< std::string > objectFiles( sourceFiles.size() );
-		
-		std::transform( sourceFiles.begin(),
-		                sourceFiles.end(),
-		                objectFiles.begin(),
-		                more::compose1( std::bind1st( more::ptr_fun( static_cast< std::string (*)( const std::string&, const std::string& ) >( operator/ ) ),
-		                                              objectsDir ),
-		                                more::compose1( more::ptr_fun( ObjectFileName ),
-		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
-		
+		const std::size_t n_tools = NameObjectFiles( project, objectFiles );
 		
 		const bool hasStaticLib = project.Product() == productStaticLib  ||  project.Product() == productToolkit;
 		
@@ -624,6 +659,8 @@ namespace ALine
 				p7::throw_errno( EINVAL );
 		}
 		
+		
+		const bool toolkit = n_tools > 0;
 		
 		std::vector< std::string > link_input_arguments;
 		
