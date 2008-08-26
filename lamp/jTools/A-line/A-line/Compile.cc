@@ -365,6 +365,9 @@ namespace ALine
 		
 		TaskPtr precompile_task( new NullTask() );
 		
+		// In case we have a toolkit with no common sources?
+		precompile_task->AddDependent( source_dependency );
+		
 		const Project* projectProvidingPrecompiledHeader = ProjectProvidingPrecompiledHeader( project );
 		
 		if ( projectProvidingPrecompiledHeader != NULL )
