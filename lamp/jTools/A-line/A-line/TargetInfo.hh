@@ -24,22 +24,23 @@ namespace ALine
 		Toolkit       toolkit;
 		BuildVariety  build;
 		
-		TargetInfo() 
-		:
-			platform( CD::Platform()     ),
-			toolkit ( toolkitUnspecified ),
-			build   ( buildDefault       )
-		{}
+		TargetInfo() : platform( CD::Platform()     ),
+		               toolkit ( toolkitUnspecified ),
+		               build   ( buildDefault       )
+		{
+		}
 		
-		TargetInfo( CD::Platform platform, BuildVariety build )
-		:
-			platform( platform           ),
-			toolkit ( toolkitUnspecified ),
-			build   ( build              )
-		{}
+		TargetInfo( CD::Platform  platform,
+		            BuildVariety  build ) : platform( platform           ),
+		                                    toolkit ( toolkitUnspecified ),
+		                                    build   ( build              )
+		{
+		}
 		
 		void DeduceFromProduct( ProductType product );
+		
 		void ApplyOptions( TargetInfo options );
+		
 		void ApplyDefaults();
 	};
 	
