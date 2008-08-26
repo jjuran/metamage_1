@@ -11,7 +11,7 @@ die "\$HOME must be defined\n" if !exists $ENV{HOME};
 
 my %arches   = qw( m68k 68K  powerpc PPC );
 my %runtimes = qw( cfm CFM  rsrc Res);
-my %backends = qw( blue Toolbox  carbon Carbon );
+my %backends = qw( blue Blue  carbon Carbon );
 
 my $arch    = $ENV{HOSTTYPE}    or die "Missing HOSTTYPE\n";
 my $runtime = $ENV{MAC_RUNTIME} or die "Missing MAC_RUNTIME\n";
@@ -23,12 +23,12 @@ $build_config_name = shift || $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
 
 my %supported_configs = qw
 (
-	68K-Res-Toolbox-Release  68k
-	PPC-CFM-Toolbox-Release  std
-	PPC-CFM-Carbon-Release   osx
-	68K-Res-Toolbox-Debug    68k@
-	PPC-CFM-Toolbox-Debug    std@
-	PPC-CFM-Carbon-Debug     osx@
+	68K-Res-Blue-Release    68k
+	PPC-CFM-Blue-Release    std
+	PPC-CFM-Carbon-Release  osx
+	68K-Res-Blue-Debug      68k@
+	PPC-CFM-Blue-Debug      std@
+	PPC-CFM-Carbon-Debug    osx@
 );
 
 my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
