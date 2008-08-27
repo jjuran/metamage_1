@@ -39,7 +39,7 @@ namespace io
 		public:
 			slurp_getter( const file_spec& file ) : itsInput( open_for_reading( file, overload() ) )  {}
 			
-			byte_count size() const  { return get_file_size( itsInput ); }
+			byte_count size() const  { return get_file_size( itsInput, overload() ); }
 			
 			void operator()( void *begin, void *end ) const
 			{
