@@ -26,6 +26,7 @@
 #include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
+#include "POSeven/Stat.hh"
 
 // MoreFunctional
 #include "FunctionalExtensions.hh"
