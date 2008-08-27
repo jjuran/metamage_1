@@ -43,7 +43,7 @@ namespace Nitrogen
 	
 #if OPAQUE_TOOLBOX_STRUCTS
 	
-	static       Nucleus::OwnedDefaults< WindowRef >::Disposer gDisposeWindow;
+	static       Nucleus::OwnedDefaults< WindowRef >::DisposerType gDisposeWindow;
 	
 #else
 	
@@ -60,8 +60,8 @@ namespace Nitrogen
 	#endif
 	}
 	
-	static const Nucleus::OwnedDefaults< WindowRef >::Disposer gDisposeWindow( &Function::DisposeWindow );
-		
+	static const Nucleus::OwnedDefaults< WindowRef >::DisposerType gDisposeWindow( &Function::DisposeWindow );
+	
 #endif
 	
 	Nucleus::Owned< WindowRef > NewWindow( const Rect&       bounds,
