@@ -35,7 +35,6 @@ namespace ALine
 			case CD::runtimeA5CodeSegments:  return "Code";
 			case CD::runtimeCodeFragments:   return "CFM";
 			case CD::runtimeMachO:           return "MachO";
-			case CD::runtimeELF:             return "ELF";
 		};
 		
 		return "";

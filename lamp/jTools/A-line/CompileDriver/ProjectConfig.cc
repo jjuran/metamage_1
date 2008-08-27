@@ -94,7 +94,6 @@ namespace CompileDriver
 		map[ "a5"     ] = runtimeA5CodeSegments;
 		map[ "cfm"    ] = runtimeCodeFragments;
 		map[ "mach-o" ] = runtimeMachO;
-		map[ "elf"    ] = runtimeELF;
 		
 		map[ "blue"    ] = apiMacBlue;
 		map[ "classic" ] = apiMacBlue;

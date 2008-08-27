@@ -85,7 +85,6 @@ namespace CompileDriver
 		runtimeA5CodeSegments = 1 << 4,
 		runtimeCodeFragments  = 1 << 5,
 		runtimeMachO          = 1 << 6,
-		runtimeELF            = 1 << 7,
 		
 		apiMacBlue    = 1 <<  8,
 		apiMacCarbon  = 1 <<  9,
@@ -262,11 +261,6 @@ namespace CompileDriver
 		if ( (platform & archMask) == 0 )
 		{
 			platform |= archX86;  // assumed for Linux at the moment
-		}
-		
-		if ( (platform & runtimeMask) == 0 )
-		{
-			platform |= runtimeELF;
 		}
 		
 		platform |= platformUnix;
