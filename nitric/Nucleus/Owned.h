@@ -14,7 +14,7 @@
 /*
       Owned: Ownership of a disposable resource.
      
-      template < class Resource, class Disposer = OwnedDefaults<Resource>::Disposer >
+      template < class Resource, class Disposer = OwnedDefaults<Resource>::DisposerType >
       class Owned;
 
          Resource: a type which can be disposed, deleted, removed, released, closed, or unlocked
@@ -75,7 +75,7 @@
          template < class Resource > struct OwnedDefaults;
       
       to find the default disposer for each type Resource.  The default disposer is
-      OwnedDefaults<Resource>::Disposer; in the unspecialized OwnedDefaults template,
+      OwnedDefaults<Resource>::DisposerType; in the unspecialized OwnedDefaults template,
       this is a typedef name for Disposer<Resource>.
       
       The template 
@@ -108,7 +108,7 @@
             template <> struct OwnedDefaults< CFStringRef >: OwnedDefaults< CFTypeRef > {};
            }
        
-       With these declarations, OwnedDefaults<CFStringRef>::Disposer and OwnedDefaults<CFTypeRef>::Disposer
+       With these declarations, OwnedDefaults<CFStringRef>::DisposerType and OwnedDefaults<CFTypeRef>::DisposerType
        are both names for Disposer<CFTypeRef>, and thus Owned<CFStringRef> may be converted to
        Owned<CFTypeRef>.
 */
@@ -129,7 +129,7 @@ namespace Nucleus
    template < class Resource >
    struct OwnedDefaults
      {
-      typedef Disposer<Resource> Disposer;
+      typedef Disposer<Resource> DisposerType;
      };
 
    class AllValuesAreLive
@@ -241,7 +241,7 @@ namespace Nucleus
          Body& operator*()       { return converted; }
      };
    
-   template < class Resource, class Disposer = typename OwnedDefaults<Resource>::Disposer >
+   template < class Resource, class Disposer = typename OwnedDefaults<Resource>::DisposerType >
    class Owned
      {
       private:

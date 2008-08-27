@@ -89,7 +89,7 @@ namespace Nucleus
            }
      };
 
-   template < class Resource, class Disposer = typename OwnedDefaults<Resource>::Disposer >
+   template < class Resource, class Disposer = typename OwnedDefaults<Resource>::DisposerType >
    class Shared: private SharedAccessHack
      {
       private:
