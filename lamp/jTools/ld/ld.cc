@@ -528,13 +528,19 @@ namespace jTools
 			}
 			else
 			{
-				if ( io::get_filename( arg ) == "CarbonLib" )
+				std::string filename = io::get_filename( arg );
+				
+				if ( filename == "CarbonLib" )
 				{
 					gMacAPI = kMacAPICarbon;
 				}
-				else if ( io::get_filename( arg ) == "InterfaceLib" )
+				else if ( filename == "InterfaceLib" )
 				{
 					gMacAPI = kMacAPIBlue;
+				}
+				else if ( filename == "PkgInfo" )
+				{
+					continue;  // safely ignore for now
 				}
 				
 				bool pathname = std::strchr( arg, '/' ) != NULL;
