@@ -423,22 +423,6 @@ namespace jTools
 						}
 						break;
 					
-					case 'e':
-						if ( std::strcmp( arg + 1, "execute" ) == 0 )
-						{
-							gProductType = kProductTool;
-							continue;
-						}
-						break;
-					
-					case 'b':
-						if ( std::strcmp( arg + 1, "bundle" ) == 0 )
-						{
-							gProductType = kProductApp;
-							continue;
-						}
-						break;
-					
 					case 's':
 						if ( arg[2] == '\0' )
 						{
