@@ -528,7 +528,8 @@ namespace jTools
 				}
 				else if ( filename == "PkgInfo" )
 				{
-					continue;  // safely ignore for now
+					gProductType = kProductApp;  // PkgInfo indicates an app
+					continue;
 				}
 				
 				bool pathname = std::strchr( arg, '/' ) != NULL;
@@ -581,6 +582,7 @@ namespace jTools
 				product = "-xm s -init __initialize -term __terminate -export pragma";
 				break;
 			
+			default:
 			case kProductTool:
 				product = ProductOptionsForTool( ppc );
 				
@@ -603,10 +605,6 @@ namespace jTools
 				
 				deadstripping = m68k ? " -dead code" : " -dead off";
 				
-				break;
-			
-			default:
-				// complain
 				break;
 		}
 		
