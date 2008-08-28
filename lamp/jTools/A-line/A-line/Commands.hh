@@ -208,11 +208,6 @@ namespace ALine
 		
 		const char* CustomDriverHeader() const  { return "-custom"; }
 		
-		const char* TargetApplication() const
-		{
-			return gnu ? "" : "-bundle";
-		}
-		
 		// CodeWarrior only
 		const char* MWTargetCodeResource() const
 		{
@@ -223,12 +218,6 @@ namespace ALine
 		const char* MWTargetSharedLibrary() const
 		{
 			return "-dynamic";
-		}
-		
-		const char* TargetCommandLineTool() const
-		{
-			return gnu ? ""
-			           : "-execute";
 		}
 		
 		const char* LinkerOptions() const

@@ -580,27 +580,8 @@ namespace ALine
 		switch ( project.Product() )
 		{
 			case productToolkit:
-				if ( cmdgen.TargetCommandLineTool()[0] )
-				{
-					command.push_back( cmdgen.TargetCommandLineTool() );
-				}
-				
-				break;
-			
 			case productApplication:
-				if ( cmdgen.TargetApplication()[0] )
-				{
-					command.push_back( cmdgen.TargetApplication() );
-				}
-				
-				break;
-			
 			case productTool:
-				if ( cmdgen.TargetCommandLineTool()[0] )
-				{
-					command.push_back( cmdgen.TargetCommandLineTool() );
-				}
-				
 				break;
 			
 		#if ALINE_LAMP_DEVELOPMENT
