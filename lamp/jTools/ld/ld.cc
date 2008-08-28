@@ -282,6 +282,7 @@ namespace jTools
 	enum ProductType
 	{
 		kProductUnknown,
+		kProductCodeResource,
 		kProductSharedLib,
 		kProductTool,
 		kProductApp
@@ -391,7 +392,6 @@ namespace jTools
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
 		std::string command = TARGET_CPU_68K ? "MWLink68K -model far" : "MWLinkPPC";
-		std::string product = "-xm l";
 		std::string ldArgs;
 		std::string translatedPath;
 		
@@ -419,7 +419,6 @@ namespace jTools
 						if ( std::strcmp( arg + 1, "dynamic" ) == 0 )
 						{
 							gProductType = kProductSharedLib;
-							product = "-xm s -init __initialize -term __terminate -export pragma";
 							continue;
 						}
 						break;
@@ -428,7 +427,6 @@ namespace jTools
 						if ( std::strcmp( arg + 1, "execute" ) == 0 )
 						{
 							gProductType = kProductTool;
-							product = ProductOptionsForTool( ppc );
 							continue;
 						}
 						break;
@@ -437,16 +435,6 @@ namespace jTools
 						if ( std::strcmp( arg + 1, "bundle" ) == 0 )
 						{
 							gProductType = kProductApp;
-							
-							product = "-xm a -sizemin 4096 -sizemax 8192";
-							
-							if ( ppc )
-							{
-								// 	For CFMLateImport support
-								product += " -b"                                     // don't pack the data segment
-								           " -init Initialize_SavedCFragInitBlock";  // save fragment data for later
-							}
-							
 							continue;
 						}
 						break;
@@ -490,7 +478,7 @@ namespace jTools
 						
 						if ( std::strcmp( arg + 1, "object" ) == 0 )
 						{
-							product = "-xm c -rsrcfar -rsrcflags system";
+							gProductType = kProductCodeResource;
 							continue;
 						}
 						
@@ -579,18 +567,47 @@ namespace jTools
 			}
 		}
 		
+		std::string product;
+		std::string fragmentName;
 		std::string deadstripping;
 		
-		if ( gProductType == kProductApp )
+		switch ( gProductType )
 		{
-			deadstripping = m68k ? " -dead code" : " -dead off";
-		}
-		
-		std::string fragmentName;
-		
-		if ( !m68k  &&  gProductType == kProductTool )
-		{
-			fragmentName = " -name '" + outputFilename + " " + gMacAPINames[ gMacAPI ] + "'";
+			case kProductCodeResource:
+				product = "-xm c -rsrcfar -rsrcflags system";
+				break;
+			
+			case kProductSharedLib:
+				product = "-xm s -init __initialize -term __terminate -export pragma";
+				break;
+			
+			case kProductTool:
+				product = ProductOptionsForTool( ppc );
+				
+				if ( !m68k )
+				{
+					fragmentName = " -name '" + outputFilename + " " + gMacAPINames[ gMacAPI ] + "'";
+				}
+				
+				break;
+			
+			case kProductApp:
+				product = "-xm a -sizemin 4096 -sizemax 8192";
+				
+				if ( ppc )
+				{
+					// 	For CFMLateImport support
+					product += " -b"                                     // don't pack the data segment
+					           " -init Initialize_SavedCFragInitBlock";  // save fragment data for later
+				}
+				
+				deadstripping = m68k ? " -dead code" : " -dead off";
+				
+				break;
+			
+			default:
+				// complain
+				break;
 		}
 		
 		ldArgs = " " + product + debugging + deadstripping + fragmentName + " " + ldArgs;
