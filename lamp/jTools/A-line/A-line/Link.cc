@@ -779,6 +779,8 @@ namespace ALine
 				linkName = project.Name();
 			}
 			
+			std::string pkginfo_dir;
+			
 			if ( bundle )
 			{
 				std::string bundleName = linkName + ".app";
@@ -789,8 +791,14 @@ namespace ALine
 				
 				exeDir = contents / "MacOS";
 				
-				WritePkgInfo( contents / "PkgInfo", "APPL" + project.CreatorCode() );
+				pkginfo_dir = contents;
 			}
+			else
+			{
+				pkginfo_dir = ProjectMetadataDirPath( project.Name() );
+			}
+			
+			WritePkgInfo( pkginfo_dir / "PkgInfo", "APPL" + project.CreatorCode() );
 			
 			std::string outFile = exeDir / linkName;
 			
