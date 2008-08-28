@@ -197,7 +197,7 @@ int O::Main( int argc, argv_t argv )
 	
 	try
 	{
-		contentLengthHeader = HTTP::GetContentLengthHeaderLine( target_file_stream );
+		contentLengthHeader = HTTP::GetContentLengthLine( target_file_stream );
 	}
 	catch ( ... )
 	{
@@ -205,8 +205,8 @@ int O::Main( int argc, argv_t argv )
 	
 	std::string message_header =   HTTP::RequestLine( method, urlPath )
 	                             //+ HTTP::HeaderLine( "Host", hostname )
-	                             + HTTP::HeaderLine( "X-Edit-Title", io::get_filename( target_pathname ) )
-	                             + HTTP::HeaderLine( "Content-MD5", old_digest_b64 )
+	                             + HTTP::HeaderFieldLine( "X-Edit-Title", io::get_filename( target_pathname ) )
+	                             + HTTP::HeaderFieldLine( "Content-MD5", old_digest_b64 )
 	                             + contentLengthHeader
 	                             + "\r\n";
 	
@@ -216,7 +216,7 @@ int O::Main( int argc, argv_t argv )
 	
 	HTTP::ResponseReceiver response;
 	
-	response.ReceiveHeaders( socket_in );
+	response.ReceiveHeader( socket_in );
 	
 	if ( dumpHeaders )
 	{
@@ -246,7 +246,7 @@ int O::Main( int argc, argv_t argv )
 		
 		std::string new_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 		
-		std::string received_digest_b64 = response.GetHeader( "Content-MD5", "" );
+		std::string received_digest_b64 = response.GetHeaderField( "Content-MD5", "" );
 		
 		if ( new_digest_b64 != received_digest_b64 )
 		{
