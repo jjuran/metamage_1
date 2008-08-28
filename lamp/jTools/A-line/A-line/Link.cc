@@ -439,38 +439,12 @@ namespace ALine
 	static TaskPtr MakeStaticLibTask( const std::string&  output_pathname,
 	                                  Iter                begin,
 	                                  Iter                end,
-	                                  const std::string&  diagnostics_dir,
-	                                  const TargetInfo&   target )
+	                                  const std::string&  diagnostics_dir )
 	{
-		const bool mw    = target.toolchain == toolchainMetrowerks;
-		const bool debug = target.build     == buildDebug;
-		
-		const bool ppc  = target.platform & CD::archPPC;
-		const bool m68k = target.platform & CD::arch68K;
-		
-		const bool use_ld_static = !ALINE_UNIX_DEVELOPMENT || mw;
-		
 		Command link_command;
 		
-		link_command.push_back( use_ld_static ? "ld"      : "ar"  );
-		link_command.push_back( use_ld_static ? "-static" : "rcs" );
-		
-		if ( use_ld_static )
-		{
-			const char* arch = ppc  ? "ppc"
-			                 : m68k ? "m68k"
-			                 :        "ERROR";
-			
-			link_command.push_back( "-arch" );
-			link_command.push_back(   arch  );
-			
-			if ( !debug )
-			{
-				link_command.push_back( "-s" );
-			}
-			
-			link_command.push_back( "-o" );
-		}
+		link_command.push_back( "ar"  );
+		link_command.push_back( "rcs" );
 		
 		return TaskPtr( new LinkingTask( link_command, output_pathname, begin, end, diagnostics_dir ) );
 	}
@@ -578,8 +552,7 @@ namespace ALine
 			base_task = MakeStaticLibTask( library_pathname,
 			                               objectFiles.begin() + n_tools,
 			                               objectFiles.end(),
-			                               diagnosticsDir,
-			                               targetInfo );
+			                               diagnosticsDir );
 		}
 		else
 		{
