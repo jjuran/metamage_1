@@ -282,7 +282,6 @@ namespace jTools
 	enum ProductType
 	{
 		kProductUnknown,
-		kProductStaticLib,
 		kProductSharedLib,
 		kProductTool,
 		kProductApp
@@ -456,12 +455,6 @@ namespace jTools
 						if ( arg[2] == '\0' )
 						{
 							debug = false;
-							continue;
-						}
-						
-						if ( std::strcmp( arg + 1, "static" ) == 0 )
-						{
-							gProductType = kProductStaticLib;
 							continue;
 						}
 						
