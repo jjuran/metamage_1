@@ -770,14 +770,16 @@ namespace ALine
 			
 			std::string exeDir = outputDir;
 			
-			const bool bundle = unix  &&  project.Product() == productApplication;
-			
 			std::string linkName = project.ProgramName();
 			
 			if ( linkName == "" )
 			{
 				linkName = project.Name();
 			}
+			
+			const bool app = project.Product() == productApplication;
+			
+			const bool bundle = unix && app;
 			
 			std::string pkginfo_dir;
 			
@@ -793,12 +795,22 @@ namespace ALine
 				
 				pkginfo_dir = contents;
 			}
-			else
+			else if ( app )
 			{
 				pkginfo_dir = ProjectMetadataDirPath( project.Name() );
 			}
 			
-			WritePkgInfo( pkginfo_dir / "PkgInfo", "APPL" + project.CreatorCode() );
+			if ( app )
+			{
+				std::string pkginfo = pkginfo_dir / "PkgInfo";
+				
+				WritePkgInfo( pkginfo, "APPL" + project.CreatorCode() );
+				
+				if ( lamp )
+				{
+					link_input_arguments.push_back( pkginfo );
+				}
+			}
 			
 			std::string outFile = exeDir / linkName;
 			
