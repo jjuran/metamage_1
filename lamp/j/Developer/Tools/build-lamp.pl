@@ -79,7 +79,7 @@ my @programs = qw
 (
 	A-line
 	SetFile
-	abort aevt argv0
+	abort aevt ar argv0
 	beep buffer buserror
 	cat cds chain console cp cpres cr2lf
 	divide
@@ -116,7 +116,7 @@ my %fsmap =
 		},
 		Tools =>
 		[
-			qw( A-line cpres ld mpwrez mwcc ),
+			qw( A-line ar cpres ld mpwrez mwcc ),
 			qw( abort buserror illegal privileged ),
 			qw( SetFile aevt ic load-init rsrc-patch system tlsrvr ),
 			qw( File Line activate quit ),
