@@ -37,7 +37,7 @@ ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count
 		}
 	}
 	
-	std::size_t bytes_pumped = 0;
+	ssize_t bytes_pumped = 0;
 	
 	while ( int bytes_read = read( fd_in, buffer, count ? std::min( count - bytes_pumped, buffer_size ) : buffer_size ) )
 	{
