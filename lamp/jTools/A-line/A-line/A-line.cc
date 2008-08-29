@@ -451,7 +451,7 @@ namespace ALine
 		// (a) Metrowerks/Mach-O is fully untested and almost certainly broken
 		// (b) This doesn't consider MPW compilers
 		
-		if ( !ALINE_CROSS_DEVELOPMENT )
+		if ( !ALINE_CROSS_DEVELOPMENT  ||  target.platform & CD::runtimeMachO )
 		{
 			target.toolchain = toolchainGNU;
 		}
