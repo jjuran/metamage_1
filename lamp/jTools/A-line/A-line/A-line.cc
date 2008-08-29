@@ -395,10 +395,11 @@ namespace ALine
 		}
 		else
 		{
-			Job& job = *( subMap[ projName ] = NN::Owned< Job*, NN::DisposeWithDelete >::Seize
-			(
-				new Job( GetProject( projName ), targetInfo ) )
-			);
+			Job* job_ptr = new Job( GetProject( projName ), targetInfo );
+			
+			NN::Owned< Job*, NN::DisposeWithDelete > owned_job( NN::Owned< Job*, NN::DisposeWithDelete >::Seize( job_ptr ) );
+			
+			Job& job = *( subMap[ projName ] = owned_job );
 			
 			job.Build();
 			
