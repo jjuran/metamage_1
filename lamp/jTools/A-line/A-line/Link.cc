@@ -277,10 +277,6 @@ namespace ALine
 		if ( TargetingLamp( itIsTargetingLamp ) )
 		{
 			rezCommand.push_back( "mpwrez" );
-			rezCommand.push_back( "-c" );
-			rezCommand.push_back( "RSED" );
-			rezCommand.push_back( "-t" );
-			rezCommand.push_back( "rsrc" );
 		}
 		else
 		{
