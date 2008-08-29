@@ -1,5 +1,5 @@
-// FileDescriptor.hh
-// -----------------
+// pid_t.hh
+// --------
 //
 // Maintained by Joshua Juran
 
