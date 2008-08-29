@@ -151,6 +151,8 @@ namespace ALine
 				// We don't need this warning for C, and in fact GNU C complains about it
 				compile.push_back( "-Wno-non-template-friend" );
 			}
+			
+			compile.push_back( "-fvisibility=hidden" );
 		}
 		
 		AugmentCommand( compile, options.GetMacros() );
