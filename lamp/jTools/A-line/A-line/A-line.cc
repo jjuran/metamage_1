@@ -33,6 +33,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/vfork.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
@@ -242,7 +243,7 @@ namespace ALine
 		
 		bool has_diagnostics_file = diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0';
 		
-		pid_t pid = p7::throw_posix_result( vfork() );
+		pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
@@ -287,8 +288,8 @@ namespace ALine
 				
 				if ( size == 0 )
 				{
-					// empty file; delete
-					unlink( diagnosticsFilename );
+					// empty file; delete, ignore errors
+					(void) unlink( diagnosticsFilename );
 				}
 				else
 				{
