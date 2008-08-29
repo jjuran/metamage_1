@@ -21,6 +21,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/ftruncate.hh"
 #include "POSeven/IOPump.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
@@ -133,7 +134,7 @@ static void CopyFileContents( p7::fd_t in, p7::fd_t out )
 	p7::throw_posix_result( lseek( out, 0, 0 ) );
 	
 	// Truncate the destinaton so we don't get leftover garbage
-	p7::throw_posix_result( ftruncate( out, 0 ) );
+	p7::ftruncate( out, 0 );
 	
 	// Read/write until EOF
 	p7::pump( in, out );
