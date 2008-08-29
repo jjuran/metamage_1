@@ -210,9 +210,18 @@ namespace ALine
 	{
 		if ( const char* editor_sig = getenv( "MAC_EDITOR_SIGNATURE" ) )
 		{
-			std::string command = "/Developer/Tools/SetFile -t TEXT -c $MAC_EDITOR_SIGNATURE " + q( filename );
+			const char* command[] = { "/Developer/Tools/SetFile", "-t", "TEXT", "-c", editor_sig, filename, NULL };
 			
-			(void) system( command.c_str() );
+			p7::pid_t pid = POSEVEN_VFORK();
+			
+			if ( pid == 0 )
+			{
+				(void) execv( command[0], (char**) command );
+				
+				_exit( 127 );
+			}
+			
+			(void) p7::waitpid( pid );
 		}
 	}
 	
@@ -260,8 +269,6 @@ namespace ALine
 					p7::_exit( p7::exit_failure );
 				}
 				
-				SetEditorSignature( diagnosticsFilename );
-				
 				dup2( diagnostics, STDERR_FILENO );
 				
 				close( diagnostics );
@@ -270,6 +277,11 @@ namespace ALine
 			execvp( command.front(), const_cast< char** >( &command.front() ) );
 			
 			_exit( 127 );
+		}
+		
+		if ( has_diagnostics_file )
+		{
+			SetEditorSignature( diagnosticsFilename );
 		}
 		
 		p7::wait_t wait_status = p7::waitpid( pid );
