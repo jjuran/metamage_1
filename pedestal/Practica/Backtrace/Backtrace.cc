@@ -86,6 +86,15 @@ namespace Backtrace
 	
 #endif
 	
+#ifdef __ELF__
+	
+	static const char* FindSymbolName( ReturnAddrNative )
+	{
+		return NULL;
+	}
+	
+#endif
+	
 	template < class SymbolPtr >
 	inline std::string GetNameFromSymbolPtr( SymbolPtr symbol )
 	{
