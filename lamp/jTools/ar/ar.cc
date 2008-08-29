@@ -9,9 +9,6 @@
 // Standard C/C++
 #include <cstring>
 
-// Standard C
-#include <stdlib.h>
-
 // POSIX
 #include <sys/wait.h>
 
@@ -19,9 +16,8 @@
 #include "iota/strings.hh"
 
 // POSeven
+#include "POSeven/functions/vfork.hh"
 #include "POSeven/Open.hh"
-#include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
 
 // Nitrogen
 #include "Nitrogen/OSStatus.h"
@@ -58,7 +54,25 @@ namespace jTools
 	namespace p7 = poseven;
 	namespace Div = Divergence;
 	
-	using namespace io::path_descent_operators;
+	
+	template < class Iter >
+	std::string join( Iter begin, Iter end, const std::string& glue = "" )
+	{
+		if ( begin == end )
+		{
+			return "";
+		}
+		
+		std::string result = *begin++;
+		
+		while ( begin != end )
+		{
+			result += glue;
+			result += *begin++;
+		}
+		
+		return result;
+	}
 	
 	
 	static std::string MacPathFromPOSIXPath( const char* pathname )
@@ -68,14 +82,13 @@ namespace jTools
 		return GetMacPathname( item );
 	}
 	
-	static std::string QuotedMacPathFromPOSIXPath( const char* pathname )
+	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
 	{
-		return "'" + MacPathFromPOSIXPath( pathname ) + "'";
-	}
-	
-	static std::string OutputMacPathname( const char* output_path )
-	{
-		return GetMacPathname( Div::ResolvePathToFSSpec( output_path ) );
+		static std::list< std::string > static_string_storage;
+		
+		static_string_storage.push_back( MacPathFromPOSIXPath( pathname ) );
+		
+		return static_string_storage.back().c_str();
 	}
 	
 	
@@ -229,16 +242,25 @@ namespace jTools
 		
 		CheckObjectFile( first_input_path, arch, debug );
 		
+		std::vector< const char* > command;
+		
+		command.push_back( "tlsrvr"   );
+		command.push_back( "--switch" );  // bring ToolServer to front
+		command.push_back( "--escape" );  // escape arguments to prevent expansion
+		command.push_back( "--"       );  // stop interpreting options here
+		
 		std::string linker = "MWLinkUnsupportedArchitecture";
 		
 		switch ( arch )
 		{
 			case archM68K:
-				linker = "MWLink68K -model far";
+				command.push_back( "MWLink68K" );
+				command.push_back( "-model"    );
+				command.push_back( "far"       );
 				break;
 			
 			case archPPC:
-				linker = "MWLinkPPC";
+				command.push_back( "MWLinkPPC" );
 				break;
 			
 			default:
@@ -246,9 +268,25 @@ namespace jTools
 				break;
 		};
 		
-		std::string product = "-xm l";
-		std::string ldArgs;
+		command.push_back( "-xm" );
+		command.push_back( "l"   );
 		
+		if ( debug )
+		{
+			command.push_back( "-sym" );
+			command.push_back( "full" );
+			
+			if ( arch == archPPC )
+			{
+				command.push_back( "-tb" );
+				command.push_back( "on"  );
+			}
+		}
+		
+		command.push_back( "-o" );
+		command.push_back( output_mac_pathname.c_str() );
+		
+		bool dry_run = false;
 		bool verbose = false;
 		
 		argv += 2;  // skip rcs and output.lib
@@ -259,9 +297,13 @@ namespace jTools
 			{
 				switch ( arg[1] )
 				{
+					case 'n':
+						dry_run = true;
+						break;
+					
 					case 'v':
 						verbose = true;
-						continue;
+						break;
 					
 					default:
 						break;
@@ -270,41 +312,40 @@ namespace jTools
 			else
 			{
 				// translate path
-				std::string mac_pathname = QuotedMacPathFromPOSIXPath( arg );
-				
-				ldArgs += ' ';
-				ldArgs += mac_pathname;
+				command.push_back( StoreMacPathFromPOSIXPath( arg ) );
 			}
 		}
-		
-		std::string debugging;
-		
-		if ( debug )
-		{
-			debugging = " -sym full";
-			
-			if ( arch == archPPC )
-			{
-				debugging += " -tb on";
-			}
-		}
-		
-		std::string output = " -o '" + output_mac_pathname + "'";
-		
-		ldArgs = " " + product + debugging + output + " " + ldArgs;
-		
-		std::string command = "tlsrvr --switch --escape -- " + linker + ldArgs + '\n';
 		
 		if ( verbose )
 		{
-			write( STDOUT_FILENO, command.data(), command.size() );
+			std::string output = join( command.begin(), command.end(), " " );
+			
+			output += '\n';
+			
+			write( STDOUT_FILENO, output.data(), output.size() );
 		}
 		
-		int wait_status = system( command.c_str() );
+		command.push_back( NULL );
 		
-		int exit_status = exit_from_wait( wait_status );
+		if ( dry_run )
+		{
+			return EXIT_SUCCESS;
+		}
 		
-		return exit_status;
+		pid_t pid = p7::vfork();
+		
+		if ( pid == 0 )
+		{
+			(void) execvp( command[0], &command[0] );
+			
+			_exit( 127 );
+		}
+		
+		int wait_status = -1;
+		
+		p7::throw_posix_result( wait( &wait_status ) );
+		
+		return exit_from_wait( wait_status );
 	}
 	
 }
