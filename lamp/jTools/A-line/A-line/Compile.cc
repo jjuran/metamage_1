@@ -139,15 +139,18 @@ namespace ALine
 		
 		AugmentCommand( compile, cmdgen.AllCompilerOptions() );
 		
-		compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
-		compile.push_back( "-Wno-long-double"             );
-		
-		bool cplusplus = !IsCFile( source_pathname );
-		
-		if ( cplusplus )
+		if ( options.Target().toolchain & toolchainGNU )
 		{
-			// We don't need this warning for C, and in fact GNU C complains about it
-			compile.push_back( "-Wno-non-template-friend" );
+			compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
+			compile.push_back( "-Wno-long-double"             );
+			
+			bool cplusplus = !IsCFile( source_pathname );
+			
+			if ( cplusplus )
+			{
+				// We don't need this warning for C, and in fact GNU C complains about it
+				compile.push_back( "-Wno-non-template-friend" );
+			}
 		}
 		
 		AugmentCommand( compile, options.GetMacros() );
