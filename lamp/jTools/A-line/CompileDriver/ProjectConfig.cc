@@ -7,9 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <list>
-#include <string>
-#include <vector>
 
 // Nucleus
 #include "Nucleus/ResourceTransfer.h"
