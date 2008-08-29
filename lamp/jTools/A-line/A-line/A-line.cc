@@ -14,6 +14,7 @@
 
 // Standard C/C++
 #include <cstdio>
+#include <cstring>
 
 // Standard C
 #include "stdlib.h"

@@ -6,6 +6,7 @@
 #pragma once
 
 // Standard C++
+#include <algorithm>
 #include <string>
 #include <vector>
 

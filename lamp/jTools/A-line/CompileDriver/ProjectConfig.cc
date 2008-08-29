@@ -6,6 +6,7 @@
 #include "CompileDriver/ProjectConfig.hh"
 
 // Standard C++
+#include <algorithm>
 #include <list>
 #include <string>
 #include <vector>
