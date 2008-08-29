@@ -102,8 +102,8 @@ namespace Backtrace
 	
 	struct StackFrameX86
 	{
-		StackFrameX86*   next;
-		ReturnAddrMachO  returnAddr;
+		StackFrameX86*    next;
+		ReturnAddrNative  returnAddr;
 	};
 	
 	
