@@ -24,6 +24,7 @@
 
 // POSeven
 #include "POSeven/Pathnames.hh"
+#include "POSeven/Stat.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
@@ -41,6 +42,8 @@
 
 namespace ALine
 {
+	
+	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
 	
@@ -112,7 +115,7 @@ namespace ALine
 	{
 		if ( !io::item_exists( folder ) )
 		{
-			int made = mkdir( folder.c_str(), 0700 );
+			p7::mkdir( folder, 0700 );
 		}
 		
 		return folder;
