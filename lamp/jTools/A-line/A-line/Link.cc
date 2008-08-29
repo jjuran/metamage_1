@@ -719,36 +719,6 @@ namespace ALine
 		}
 		else
 		{
-			std::vector< FileName > rsrc_filenames = project.UsedRsrcFiles();
-			
-			std::vector< std::string > rsrc_pathnames( rsrc_filenames.size() );
-			
-			std::transform( rsrc_filenames.begin(), 
-			                rsrc_filenames.end(),
-			                rsrc_pathnames.begin(),
-			                std::ptr_fun( RezLocation ) );
-			
-			TaskPtr rez_task;
-			
-			const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
-			
-			const bool needsCarbResource = project.Product() == productApplication  &&  (targetInfo.platform & carbonCFM) == carbonCFM;
-			
-			if ( needsCarbResource || !project.UsedRezFiles().empty() )
-			{
-				std::string rez_output_pathname = RezzedDirPath() / project.Name() + ".rsrc";
-				
-				rsrc_pathnames.push_back( rez_output_pathname );
-				
-				rez_task = MakeRezTask( project, rez_output_pathname, needsCarbResource, lamp );
-			}
-			else
-			{
-				rez_task.reset( new NullTask() );
-			}
-			
-			AddReadyTask( rez_task );
-			
 			std::string exeDir = outputDir;
 			
 			std::string linkName = project.ProgramName();
@@ -758,38 +728,41 @@ namespace ALine
 				linkName = project.Name();
 			}
 			
-			const bool app = project.Product() == productApplication;
+			const bool app = ALINE_MAC_DEVELOPMENT  &&  project.Product() == productApplication;
 			
 			const bool bundle = real_unix && app;
 			
-			std::string pkginfo_dir;
-			
-			if ( bundle )
+			if ( ALINE_MAC_DEVELOPMENT )
 			{
-				std::string bundleName = linkName + ".app";
+				std::string pkginfo_dir;
 				
-				CreateAppBundle( outputDir, bundleName );
-				
-				std::string contents( outputDir / bundleName / "Contents" );
-				
-				exeDir = contents / "MacOS";
-				
-				pkginfo_dir = contents;
-			}
-			else if ( app )
-			{
-				pkginfo_dir = ProjectMetadataDirPath( project.Name() );
-			}
-			
-			if ( app )
-			{
-				std::string pkginfo = pkginfo_dir / "PkgInfo";
-				
-				WritePkgInfo( pkginfo, "APPL" + project.CreatorCode() );
-				
-				if ( lamp )
+				if ( bundle )
 				{
-					link_input_arguments.push_back( pkginfo );
+					std::string bundleName = linkName + ".app";
+					
+					CreateAppBundle( outputDir, bundleName );
+					
+					std::string contents( outputDir / bundleName / "Contents" );
+					
+					exeDir = contents / "MacOS";
+					
+					pkginfo_dir = contents;
+				}
+				else if ( app )
+				{
+					pkginfo_dir = ProjectMetadataDirPath( project.Name() );
+				}
+				
+				if ( app )
+				{
+					std::string pkginfo = pkginfo_dir / "PkgInfo";
+					
+					WritePkgInfo( pkginfo, "APPL" + project.CreatorCode() );
+					
+					if ( lamp )
+					{
+						link_input_arguments.push_back( pkginfo );
+					}
 				}
 			}
 			
@@ -799,22 +772,55 @@ namespace ALine
 			
 			link_dependency_task->AddDependent( link_task );
 			
-			if ( !rsrc_pathnames.empty() )
+			if ( ALINE_MAC_DEVELOPMENT )
 			{
-				std::string rsrcFile = bundle ? outputDir / BundleResourceFileRelativePath( linkName )
-				                              : outFile;
+				std::vector< std::string > rsrc_filenames = project.UsedRsrcFiles();
 				
-				TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, lamp ) );
+				std::vector< std::string > rsrc_pathnames( rsrc_filenames.size() );
 				
-				if ( bundle )
+				std::transform( rsrc_filenames.begin(), 
+				                rsrc_filenames.end(),
+				                rsrc_pathnames.begin(),
+				                std::ptr_fun( RezLocation ) );
+				
+				TaskPtr rez_task;
+				
+				const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
+				
+				const bool needsCarbResource = project.Product() == productApplication  &&  (targetInfo.platform & carbonCFM) == carbonCFM;
+				
+				if ( needsCarbResource || !project.UsedRezFiles().empty() )
 				{
-					rez_task->AddDependent( copy_rsrcs );
+					std::string rez_output_pathname = RezzedDirPath() / project.Name() + ".rsrc";
+					
+					rsrc_pathnames.push_back( rez_output_pathname );
+					
+					rez_task = MakeRezTask( project, rez_output_pathname, needsCarbResource, lamp );
 				}
 				else
 				{
-					rez_task->AddDependent( link_task );
+					rez_task.reset( new NullTask() );
+				}
+				
+				AddReadyTask( rez_task );
+				
+				if ( !rsrc_pathnames.empty() )
+				{
+					std::string rsrcFile = bundle ? outputDir / BundleResourceFileRelativePath( linkName )
+					                              : outFile;
 					
-					link_task->AddDependent( copy_rsrcs );
+					TaskPtr copy_rsrcs( new ResourceCopyingTask( rsrc_pathnames, rsrcFile, lamp ) );
+					
+					if ( bundle )
+					{
+						rez_task->AddDependent( copy_rsrcs );
+					}
+					else
+					{
+						rez_task->AddDependent( link_task );
+						
+						link_task->AddDependent( copy_rsrcs );
+					}
 				}
 			}
 		}
