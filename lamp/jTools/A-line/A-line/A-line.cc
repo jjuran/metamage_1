@@ -439,15 +439,24 @@ namespace ALine
 			target.build = buildDebug;
 		}
 		
-		// This is wrong for Metrowerks targeting Mach-O, but does anyone care?
 		if ( !ALINE_CROSS_DEVELOPMENT  ||  target.platform & CD::runtimeMachO )
 		{
 			target.envType   = envUnix;
-			target.toolchain = toolchainGNU;
 		}
 		else
 		{
 			target.envType   = envLamp;
+		}
+		
+		// (a) Metrowerks/Mach-O is fully untested and almost certainly broken
+		// (b) This doesn't consider MPW compilers
+		
+		if ( !ALINE_CROSS_DEVELOPMENT )
+		{
+			target.toolchain = toolchainGNU;
+		}
+		else
+		{
 			target.toolchain = toolchainMetrowerks;
 		}
 	}
