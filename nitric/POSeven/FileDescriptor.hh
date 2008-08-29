@@ -17,11 +17,7 @@
 // Standard C
 #include <errno.h>
 
-// POSIX
-#include <unistd.h>
-
 // Nucleus
-#include "Nucleus/ID.h"
 #include "Nucleus/Owned.h"
 
 // Io
@@ -29,21 +25,8 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/types/fd_t.hh"
 
-
-namespace poseven
-{
-	
-	enum fd_t
-	{
-		stdin_fileno  = STDIN_FILENO,
-		stdout_fileno = STDOUT_FILENO,
-		stderr_fileno = STDERR_FILENO,
-		
-		fd_t_max = Nucleus::Enumeration_Traits< int >::max
-	};
-	
-}
 
 namespace Nucleus
 {
