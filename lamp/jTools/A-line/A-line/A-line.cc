@@ -24,9 +24,11 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// Boost
+#include <boost/shared_ptr.hpp>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
-#include "Nucleus/Shared.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -379,7 +381,7 @@ namespace ALine
 		(void) rmdir( diagnosticsDir.c_str() );
 	}
 	
-	typedef std::map< ProjName, NN::Shared< Job*, NN::DisposeWithDelete > > JobSubMap;
+	typedef std::map< std::string, boost::shared_ptr< Job > > JobSubMap;
 	typedef std::map< TargetName, JobSubMap > JobMap;
 	
 	static Job& BuildJob( const ProjName& projName, const TargetInfo& targetInfo )
@@ -391,15 +393,13 @@ namespace ALine
 		
 		if ( it != subMap.end() )
 		{
-			return *it->second.Get();
+			return *it->second;
 		}
 		else
 		{
-			Job* job_ptr = new Job( GetProject( projName ), targetInfo );
+			boost::shared_ptr< Job > job_ptr( new Job( GetProject( projName ), targetInfo ) );
 			
-			NN::Owned< Job*, NN::DisposeWithDelete > owned_job( NN::Owned< Job*, NN::DisposeWithDelete >::Seize( job_ptr ) );
-			
-			Job& job = *( subMap[ projName ] = owned_job );
+			Job& job = *( subMap[ projName ] = job_ptr );
 			
 			job.Build();
 			
