@@ -189,7 +189,7 @@ namespace Backtrace
 	
 	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result );
 	
-#if defined( __MC68K__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
+#if defined( __MC68K__ )  ||  defined( __MACOS__ )
 	
 	static void CrawlStack68K( unsigned level, const StackFrame68K* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
@@ -198,7 +198,7 @@ namespace Backtrace
 			return;
 		}
 		
-	#if defined( __MACOS__ ) && !defined( __MACH__ )
+	#ifdef __MACOS__
 		
 		if ( const StackFramePPC* switchFrame = MixedModeSwitchFrame( frame ) )
 		{
@@ -229,7 +229,7 @@ namespace Backtrace
 #endif
 	
 	
-#if defined( __MACOS__ ) && !defined( __MACH__ )
+#ifdef __MACOS__
 	
 	static bool AddressExceedsMemoryLimit( const StackFramePPC* frame )
 	{
@@ -255,7 +255,7 @@ namespace Backtrace
 	
 #endif
 	
-#if defined( __POWERPC__ )  ||  defined( __MACOS__ ) && !defined( __MACH__ )
+#if defined( __POWERPC__ )  ||  defined( __MACOS__ )
 	
 	static void CrawlStackPPC( unsigned level, const StackFramePPC* frame, const void* limit, std::vector< ReturnAddress >& result )
 	{
@@ -264,7 +264,7 @@ namespace Backtrace
 			return;
 		}
 		
-	#if defined( __MACOS__ ) && !defined( __MACH__ )
+	#ifdef __MACOS__
 		
 		if ( AddressExceedsMemoryLimit( frame ) )
 		{

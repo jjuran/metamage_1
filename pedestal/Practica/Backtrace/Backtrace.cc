@@ -39,7 +39,7 @@ namespace Backtrace
 	
 	template < class ReturnAddr > struct UnmanglingForReturnAddr_Traits;
 	
-#if defined( __MACOS__ ) && !defined( __MACH__ )
+#ifdef __MACOS__
 	
 	template <> struct UnmanglingForReturnAddr_Traits< ReturnAddr68K >
 	{
@@ -113,7 +113,7 @@ namespace Backtrace
 		return FindSymbolString( addr );
 	}
 	
-#if defined( __MACOS__ ) && !defined( __MACH__ )
+#ifdef __MACOS__
 	
 	template <>
 	inline std::string GetSymbolName< ReturnAddrPPC >( ReturnAddrPPC addr )
@@ -146,7 +146,7 @@ namespace Backtrace
 		
 		result.itsReturnAddr = call.addrNative;
 		
-	#if defined( __MACOS__ ) && !defined( __MACH__ )
+	#ifdef __MACOS__
 		
 		result.itsArch          = call.isCFM ? "PPC" : "68K";
 		result.itsUnmangledName = call.isCFM ? GetUnmangledSymbolName( call.addrCFM    )
