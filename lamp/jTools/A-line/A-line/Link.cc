@@ -524,10 +524,10 @@ namespace ALine
 	{
 		const bool lamp = TargetingLamp( targetInfo.envType == envLamp );
 		
-		const bool unix = !lamp;
+		const bool real_unix = !lamp;  // unix is an evil macro on Linux
 		
-		gLibraryPrefix    = unix ? "lib" : "";
-		gLibraryExtension = unix ? ".a" : ".lib";
+		gLibraryPrefix    = real_unix ? "lib" : "";
+		gLibraryExtension = real_unix ? ".a" : ".lib";
 		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
@@ -666,7 +666,7 @@ namespace ALine
 			AddProjectImports( project, link_input_arguments );
 		}
 		
-		const bool machO = unix && targetInfo.platform & CD::runtimeMachO;
+		const bool machO = real_unix && targetInfo.platform & CD::runtimeMachO;
 		
 		if ( machO )
 		{
@@ -760,7 +760,7 @@ namespace ALine
 			
 			const bool app = project.Product() == productApplication;
 			
-			const bool bundle = unix && app;
+			const bool bundle = real_unix && app;
 			
 			std::string pkginfo_dir;
 			
