@@ -101,7 +101,11 @@ namespace ALine
 	
 	static bool IsCFile( const std::string& name )
 	{
-		return name.substr( name.size() - 2, name.size() ) == ".c";
+		// For our purposes here, ".c" is not a C file.
+		
+		return name.size() > 2  &&  std::equal( name.end() - 2,
+		                                        name.end(),
+		                                        ".c" );
 	}
 	
 	static std::string CreateFolder( const std::string& folder )
