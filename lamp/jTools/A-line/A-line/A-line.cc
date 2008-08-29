@@ -34,6 +34,8 @@
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/waitpid.hh"
+#include "POSeven/functions/_exit.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
@@ -243,7 +245,7 @@ namespace ALine
 		
 		bool has_diagnostics_file = diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0';
 		
-		pid_t pid = POSEVEN_VFORK();
+		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
@@ -255,7 +257,7 @@ namespace ALine
 				{
 					std::perror( diagnosticsFilename );
 					
-					_exit( EXIT_FAILURE );
+					p7::_exit( p7::exit_failure );
 				}
 				
 				SetEditorSignature( diagnosticsFilename );
@@ -270,9 +272,7 @@ namespace ALine
 			_exit( 127 );
 		}
 		
-		int wait_status = -1;
-		
-		pid_t resultpid = p7::throw_posix_result( ::waitpid( pid, &wait_status, 0 ) );
+		p7::wait_t wait_status = p7::waitpid( pid );
 		
 		bool had_errors = wait_status != 0;
 		
@@ -317,14 +317,14 @@ namespace ALine
 		
 		if ( had_errors )
 		{
-			bool signaled = WIFSIGNALED( wait_status );
+			const bool signaled = p7::wifsignaled( wait_status );
 			
 			const char* ended  = signaled ? "terminated via signal" : "exited with status";
 			int         status = signaled ? WTERMSIG( wait_status ) : WEXITSTATUS( wait_status );
 			
 			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
 			
-			O::ThrowExitStatus( signaled ? 2 : 1 );
+			O::ThrowExitStatus( signaled ? 2 : p7::exit_failure );
 		}
 	}
 	
