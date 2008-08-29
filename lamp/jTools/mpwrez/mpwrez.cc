@@ -71,6 +71,17 @@ namespace jTools
 		return GetMacPathname( item );
 	}
 	
+	
+	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
+	{
+		static std::list< std::string > static_string_storage;
+		
+		static_string_storage.push_back( MacPathFromPOSIXPath( pathname ) );
+		
+		return static_string_storage.back().c_str();
+	}
+	
+	
 	static int Main( int argc, iota::argv_t argv )
 	{
 		std::vector< const char* > command;
@@ -84,8 +95,6 @@ namespace jTools
 		command.push_back( "RSED"     );
 		command.push_back( "-t"       );
 		command.push_back( "rsrc"     );
-		
-		std::list< std::string > storage;
 		
 		bool dry_run = false;
 		bool verbose = false;
@@ -110,9 +119,7 @@ namespace jTools
 						{
 							command.push_back( arg );
 							
-							storage.push_back( MacPathFromPOSIXPath( *++argv ) );
-							
-							command.push_back( storage.back().c_str() );
+							command.push_back( StoreMacPathFromPOSIXPath( *++argv ) );
 						}
 						break;
 					
@@ -123,9 +130,7 @@ namespace jTools
 			else if ( std::strchr( arg, '/' ) )
 			{
 				// translate path
-				storage.push_back( MacPathFromPOSIXPath( arg ) );
-				
-				command.push_back( storage.back().c_str() );
+				command.push_back( StoreMacPathFromPOSIXPath( arg ) );
 			}
 			else if ( arg[0] != '\0' )
 			{
