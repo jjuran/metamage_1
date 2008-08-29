@@ -8,6 +8,7 @@
 // Standard C/C++
 #include <cctype>
 #include <cstdlib>
+#include <cstring>
 
 // Standard C++
 #include <map>
