@@ -4,21 +4,15 @@
  */
 
 // Standard C++
+#include <list>
+#include <string>
 #include <vector>
-
-// Standard C
-#include <stdlib.h>
 
 // POSIX
 #include <sys/wait.h>
 
 // POSeven
-#include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
-
-// Nitrogen
-#include "Nitrogen/MacErrors.h"
-#include "Nitrogen/Str.h"
+#include "POSeven/functions/vfork.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -46,9 +40,28 @@ static int exit_from_wait( int stat )
 namespace jTools
 {
 	
+	namespace p7 = poseven;
 	namespace Div = Divergence;
 	
-	using namespace io::path_descent_operators;
+	
+	template < class Iter >
+	std::string join( Iter begin, Iter end, const std::string& glue = "" )
+	{
+		if ( begin == end )
+		{
+			return "";
+		}
+		
+		std::string result = *begin++;
+		
+		while ( begin != end )
+		{
+			result += glue;
+			result += *begin++;
+		}
+		
+		return result;
+	}
 	
 	
 	static std::string MacPathFromPOSIXPath( const char* pathname )
@@ -58,24 +71,23 @@ namespace jTools
 		return GetMacPathname( item );
 	}
 	
-	static std::string QuotedMacPathFromPOSIXPath( const char* pathname )
-	{
-		return "'" + MacPathFromPOSIXPath( pathname ) + "'";
-	}
-	
-	static std::string PathnameOption( const char* option, const char* pathname )
-	{
-		return std::string( option ) + " " + QuotedMacPathFromPOSIXPath( pathname );
-	}
-	
-	std::vector< const char* > gIncludeDirs;
-	
 	static int Main( int argc, iota::argv_t argv )
 	{
-		std::string command = "Rez";
-		std::string rezArgs;
-		std::string translatedPath;
+		std::vector< const char* > command;
 		
+		command.push_back( "tlsrvr"   );
+		command.push_back( "--switch" );  // bring ToolServer to front
+		command.push_back( "--escape" );  // escape arguments to prevent expansion
+		command.push_back( "--"       );  // stop interpreting options here
+		command.push_back( "Rez"      );
+		command.push_back( "-c"       );
+		command.push_back( "RSED"     );
+		command.push_back( "-t"       );
+		command.push_back( "rsrc"     );
+		
+		std::list< std::string > storage;
+		
+		bool dry_run = false;
 		bool verbose = false;
 		
 		while ( const char* arg = *++argv )
@@ -84,12 +96,23 @@ namespace jTools
 			{
 				switch ( arg[1] )
 				{
+					case 'n':
+						dry_run = true;
+						break;
+					
+					case 'v':
+						verbose = true;
+						break;
+					
 					case 'i':
 					case 'o':
 						if ( arg[2] == '\0' )
 						{
-							translatedPath = PathnameOption( arg, *++argv );
-							arg = translatedPath.c_str();
+							command.push_back( arg );
+							
+							storage.push_back( MacPathFromPOSIXPath( *++argv ) );
+							
+							command.push_back( storage.back().c_str() );
 						}
 						break;
 					
@@ -100,26 +123,44 @@ namespace jTools
 			else if ( std::strchr( arg, '/' ) )
 			{
 				// translate path
-				translatedPath = QuotedMacPathFromPOSIXPath( arg );
+				storage.push_back( MacPathFromPOSIXPath( arg ) );
 				
-				arg = translatedPath.c_str();
+				command.push_back( storage.back().c_str() );
 			}
-			
-			if ( arg[0] != '\0' )
+			else if ( arg[0] != '\0' )
 			{
-				rezArgs += ' ';
-				rezArgs += arg;
+				command.push_back( arg );
 			}
 		}
-		
-		std::string output = "tlsrvr --switch --escape -- " + command + rezArgs + '\n';
 		
 		if ( verbose )
 		{
+			std::string output = join( command.begin(), command.end(), " " );
+			
+			output += '\n';
+			
 			write( STDOUT_FILENO, output.data(), output.size() );
 		}
 		
-		int wait_status = system( output.c_str() );
+		command.push_back( NULL );
+		
+		if ( dry_run )
+		{
+			return EXIT_SUCCESS;
+		}
+		
+		pid_t pid = p7::vfork();
+		
+		if ( pid == 0 )
+		{
+			(void) execvp( command[0], &command[0] );
+			
+			_exit( 127 );
+		}
+		
+		int wait_status = -1;
+		
+		p7::throw_posix_result( wait( &wait_status ) );
 		
 		return exit_from_wait( wait_status );
 	}
