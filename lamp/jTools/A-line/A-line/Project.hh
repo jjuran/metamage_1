@@ -50,27 +50,28 @@ namespace ALine
 		public:
 			Project( const std::string& name );
 			
-			std::string Name() const  { return its_name; }
-			std::string ProgramName() const  { return its_program_filename; }
-			std::string ProjectFolder() const  { return its_dir_pathname; }
+			const std::string& Name         () const  { return its_name;             }
+			const std::string& ProgramName  () const  { return its_program_filename; }
+			const std::string& ProjectFolder() const  { return its_dir_pathname;     }
+			
 			ProductType Product() const  { return its_product_type; }
 			
 			bool HasPrecompiledHeader() const  { return !its_precompiled_header_source_path.empty(); }
 			
 			const std::string& PrecompiledHeaderSource() const  { return its_precompiled_header_source_path; }
 			
-			const std::vector< std::string >& AllUsedProjects() const  { return its_used_project_names; }
+			const std::vector< std::string >& AllUsedProjects() const  { return its_used_project_names;    }
 			
-			const std::vector< std::string >& SearchDirs()      const  { return its_search_dir_pathnames;      }
-			const std::vector< std::string >& SourceFileSpecs() const  { return its_source_paths; }
+			const std::vector< std::string >& SearchDirs()      const  { return its_search_dir_pathnames;  }
+			const std::vector< std::string >& SourceFileSpecs() const  { return its_source_paths;          }
 			const std::vector< std::string >& ToolSourceFiles() const  { return its_tool_source_filenames; }
 			
-			std::vector< std::string > LibImports()    const  { return its_lib_import_specs; }
-			std::vector< std::string > Frameworks()    const  { return its_framework_names; }
-			std::vector< std::string > UsedRezFiles()  const  { return its_rez_filenames; }
-			std::vector< std::string > UsedRsrcFiles() const  { return its_rsrc_filenames; }
+			const std::vector< std::string >& LibImports()    const  { return its_lib_import_specs; }
+			const std::vector< std::string >& Frameworks()    const  { return its_framework_names;  }
+			const std::vector< std::string >& UsedRezFiles()  const  { return its_rez_filenames;    }
+			const std::vector< std::string >& UsedRsrcFiles() const  { return its_rsrc_filenames;   }
 			
-			std::string CreatorCode() const  { return its_creator_code; }
+			const std::string& CreatorCode() const  { return its_creator_code; }
 			
 			const std::vector< std::string >& Sources() const  { return its_source_file_pathnames; }
 			
