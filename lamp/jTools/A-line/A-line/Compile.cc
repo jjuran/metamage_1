@@ -189,10 +189,10 @@ namespace ALine
 	
 	static void RunCompiler( const CompilerOptions&  options,
 	                         const std::string&      source_pathname,
-	                         const std::string&      output_pathname,
+	                         const std::string&      output_path,
 	                         const char*             caption )
 	{
-		Command command = MakeCompileCommand( options, source_pathname, output_pathname );
+		Command command = MakeCompileCommand( options, source_pathname, output_path );
 		
 		std::string source_filename = io::get_filename_string( source_pathname );
 		
@@ -203,9 +203,9 @@ namespace ALine
 	
 	bool CompilingTask::UpToDate()
 	{
-		if ( io::item_exists( OutputPathname() ) )
+		if ( io::item_exists( OutputPath() ) )
 		{
-			time_t output_stamp = ModifiedDate( OutputPathname() );
+			time_t output_stamp = ModifiedDate( OutputPath() );
 			
 			UpdateInputStamp( ModifiedDate( itsSourcePathname ) );
 			
@@ -227,7 +227,7 @@ namespace ALine
 	
 	void CompilingTask::Make()
 	{
-		RunCompiler( itsOptions, itsSourcePathname, OutputPathname(), itsCaption );
+		RunCompiler( itsOptions, itsSourcePathname, OutputPath(), itsCaption );
 	}
 	
 	
@@ -454,7 +454,7 @@ namespace ALine
 			// The source file
 			const std::string& source_pathname = *the_source;
 			
-			const std::string& output_pathname = *the_object;
+			const std::string& output_path = *the_object;
 			
 			CompilerOptions source_options = options;
 			
@@ -462,7 +462,7 @@ namespace ALine
 			
 			const char* caption = "Compiling: ";
 			
-			TaskPtr task( new CompilingTask( source_options, source_pathname, output_pathname, caption ) );
+			TaskPtr task( new CompilingTask( source_options, source_pathname, output_path, caption ) );
 			
 			precompile_task->AddDependent( task );
 			

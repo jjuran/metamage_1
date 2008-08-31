@@ -229,11 +229,11 @@ namespace ALine
 	
 	void LinkingTask::Make()
 	{
-		itsCommand.push_back( OutputPathname().c_str() );
+		itsCommand.push_back( OutputPath().c_str() );
 		
 		AugmentCommand( itsCommand, itsInputArguments );
 		
-		std::string output_filename = io::get_filename_string( OutputPathname() );
+		std::string output_filename = io::get_filename_string( OutputPath() );
 		
 		itsCommand.push_back( NULL );
 		
@@ -291,13 +291,13 @@ namespace ALine
 		
 		rezCommand.push_back( itsIncludeDirPathname.c_str() );
 		
-		AugmentCommand( rezCommand, OutputOption( OutputPathname().c_str() ) );
+		AugmentCommand( rezCommand, OutputOption( OutputPath().c_str() ) );
 		
 		AugmentCommand( rezCommand, itsInputPathnames );
 		
 		rezCommand.push_back( NULL );
 		
-		RunCommand( rezCommand, NULL, "Rezzing: " + io::get_filename_string( OutputPathname() ) );
+		RunCommand( rezCommand, NULL, "Rezzing: " + io::get_filename_string( OutputPath() ) );
 	}
 	
 	static TaskPtr MakeRezTask( const Project&      project,
@@ -394,7 +394,7 @@ namespace ALine
 			
 			AugmentCommand( command, itsInputPathnames );
 			
-			command.push_back( OutputPathname().c_str() );
+			command.push_back( OutputPath().c_str() );
 		}
 		else
 		{
@@ -406,7 +406,7 @@ namespace ALine
 			command_line = paren( command_line );
 			
 			command_line += " | /Developer/Tools/Rez -append -useDF -o ";
-			command_line += q( OutputPathname() );
+			command_line += q( OutputPath() );
 			
 			command.push_back( "/bin/sh" );
 			command.push_back( "-c" );
@@ -415,7 +415,7 @@ namespace ALine
 		
 		command.push_back( NULL );
 		
-		RunCommand( command, "", "Copying resources: " + io::get_filename_string( OutputPathname() ) );
+		RunCommand( command, "", "Copying resources: " + io::get_filename_string( OutputPath() ) );
 	}
 	
 	inline time_t later_of_time_or_library_mod_stamp( time_t a, const std::string& b )

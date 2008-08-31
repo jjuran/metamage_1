@@ -69,9 +69,9 @@ namespace ALine
 	
 	time_t FileTask::OutputStamp() const
 	{
-		if ( io::file_exists( its_output_pathname ) )
+		if ( io::file_exists( its_output_path ) )
 		{
-			return ModifiedDate( its_output_pathname );
+			return ModifiedDate( its_output_path );
 		}
 		
 		return 0;
@@ -93,7 +93,7 @@ namespace ALine
 		
 		Make();
 		
-		UpdateInputStamp( ModifiedDate( its_output_pathname ) );
+		UpdateInputStamp( ModifiedDate( its_output_path ) );
 	}
 	
 	

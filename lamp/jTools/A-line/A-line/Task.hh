@@ -65,14 +65,14 @@ namespace ALine
 	class FileTask : public Task
 	{
 		private:
-			std::string its_output_pathname;
+			std::string its_output_path;
 		
 		public:
-			FileTask( const std::string& output ) : its_output_pathname( output )
+			FileTask( const std::string& output ) : its_output_path( output )
 			{
 			}
 			
-			const std::string& OutputPathname() const  { return its_output_pathname; }
+			const std::string& OutputPath() const  { return its_output_path; }
 			
 			time_t OutputStamp() const;
 			
