@@ -469,8 +469,6 @@ namespace ALine
 			task->AddDependent( source_dependency );
 		}
 		
-		//AddReadyTask( precompile_task );
-		
 		project_base_task->AddDependent( precompile_task );
 	}
 	
