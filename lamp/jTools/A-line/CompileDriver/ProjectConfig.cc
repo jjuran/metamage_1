@@ -103,39 +103,44 @@ namespace CompileDriver
 		return map;
 	}
 	
-	static void SetPlatformInfo( NN::ResourceTransfer< PlatformDemands > cumulativeDemands, std::string info )
+	static void SetPlatformInfo( NN::ResourceTransfer< PlatformDemands >  cumulative_demands,
+	                             const std::string&                       new_spec )
 	{
 		static std::map< std::string, Platform > map = MakePlatformMap();
 		
-		bool inverted = false;
-		
-		if ( info.empty() )
+		if ( new_spec.empty() )
 		{
 			return;
 		}
-		else if ( info[0] == '!' )
-		{
-			info = info.substr( 1, info.npos );
-			inverted = true;
-		}
 		
-		Platform platform = map[ info ];
+		const bool inverted = new_spec[0] == '!';
 		
-		if ( platform == Platform() )
-		{
-			throw NoSuchPlatform( info );
-		}
-		
-		PlatformDemands infoDemands = PlatformDemands( platform, Platform() );
+		std::string new_prohibition;
 		
 		if ( inverted )
 		{
-			infoDemands = -infoDemands;
+			new_prohibition = new_spec.substr( 1, new_spec.npos );
 		}
 		
-		*cumulativeDemands |= infoDemands;
+		const std::string& platform_name = inverted ? new_prohibition : new_spec;
 		
-		cumulativeDemands->Verify();
+		Platform platform = map[ platform_name ];
+		
+		if ( platform == Platform() )
+		{
+			throw NoSuchPlatform( platform_name );
+		}
+		
+		PlatformDemands new_demands = PlatformDemands( platform, Platform() );
+		
+		if ( inverted )
+		{
+			new_demands = -new_demands;
+		}
+		
+		*cumulative_demands |= new_demands;
+		
+		cumulative_demands->Verify();
 		
 		/*
 			// Only classic Toolbox is supported on 68K
