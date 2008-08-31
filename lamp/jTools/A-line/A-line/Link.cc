@@ -800,7 +800,7 @@ namespace ALine
 					rez_task.reset( new NullTask() );
 				}
 				
-				AddReadyTask( rez_task );
+				project_base_task->AddDependent( rez_task );
 				
 				if ( !rsrc_pathnames.empty() )
 				{
