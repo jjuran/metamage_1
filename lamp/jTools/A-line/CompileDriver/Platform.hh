@@ -127,26 +127,33 @@ namespace CompileDriver
 	class PlatformDemands
 	{
 		private:
-			Platform itsRequired;
-			Platform itsProhibited;
+			Platform its_requirements;
+			Platform its_prohibitions;
 		
 		public:
-			PlatformDemands() : itsRequired(), itsProhibited()  {}
+			PlatformDemands() : its_requirements(),
+			                    its_prohibitions()
+			{
+			}
 			
-			PlatformDemands( Platform required, Platform prohibited ) : itsRequired( required ), itsProhibited( prohibited )  {}
+			PlatformDemands( Platform requirements,
+			                 Platform prohibitions ) : its_requirements( requirements ),
+			                                           its_prohibitions( prohibitions )
+			{
+			}
 			
-			Platform Required  () const  { return itsRequired;   }
-			Platform Prohibited() const  { return itsProhibited; }
+			Platform Required  () const  { return its_requirements; }
+			Platform Prohibited() const  { return its_prohibitions; }
 			
 			bool Test( Platform platform ) const
 			{
-				return     (platform & itsRequired  ) == itsRequired
-				       &&  (platform & itsProhibited) == 0;
+				return     (platform & its_requirements) == its_requirements
+				       &&  (platform & its_prohibitions) == 0;
 			}
 			
 			bool Contradicted() const
 			{
-				return itsRequired & itsProhibited;
+				return (its_requirements & its_prohibitions) != 0;
 			}
 			
 			void Verify() const
@@ -159,14 +166,14 @@ namespace CompileDriver
 			
 			friend bool operator<( const PlatformDemands& a, const PlatformDemands& b )
 			{
-				return                                      a.itsRequired   < b.itsRequired
-				       || a.itsRequired == b.itsRequired && a.itsProhibited < b.itsProhibited;
+				return                                                a.its_requirements < b.its_requirements
+				       || a.its_requirements == b.its_requirements && a.its_prohibitions < b.its_prohibitions;
 			}
 			
 			friend bool operator==( const PlatformDemands& a, const PlatformDemands& b )
 			{
-				return    a.itsRequired   == b.itsRequired
-				       && a.itsProhibited == b.itsProhibited;
+				return    a.its_requirements == b.its_requirements
+				       && a.its_prohibitions == b.its_prohibitions;
 			}
 			
 			friend bool operator!=( const PlatformDemands& a, const PlatformDemands& b )
@@ -176,19 +183,19 @@ namespace CompileDriver
 			
 			friend PlatformDemands operator-( const PlatformDemands& it )
 			{
-				return PlatformDemands( it.itsProhibited, it.itsRequired );
+				return PlatformDemands( it.its_prohibitions, it.its_requirements );
 			}
 			
 			friend PlatformDemands operator|( const PlatformDemands& a, const PlatformDemands& b )
 			{
-				return PlatformDemands( a.itsRequired   | b.itsRequired,
-				                        a.itsProhibited | b.itsProhibited );
+				return PlatformDemands( a.its_requirements | b.its_requirements,
+				                        a.its_prohibitions | b.its_prohibitions );
 			}
 			
 			PlatformDemands& operator|=( const PlatformDemands& it )
 			{
-				itsRequired   |= it.itsRequired;
-				itsProhibited |= it.itsProhibited;
+				its_requirements |= it.its_requirements;
+				its_prohibitions |= it.its_prohibitions;
 				
 				return *this;
 			}
