@@ -62,6 +62,7 @@
 #include "A-line/Compile.hh"
 #include "A-line/Link.hh"
 #include "A-line/Locations.hh"
+#include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 #include "A-line/Task.hh"
 
@@ -397,7 +398,7 @@ namespace ALine
 	typedef std::map< std::string, boost::shared_ptr< Job > > JobSubMap;
 	typedef std::map< TargetName, JobSubMap > JobMap;
 	
-	static Job& BuildJob( const ProjName& projName, const TargetInfo& targetInfo )
+	static Job& BuildJob( const std::string& projName, const TargetInfo& targetInfo )
 	{
 		static JobMap gJobs;
 		
@@ -430,7 +431,7 @@ namespace ALine
 		
 		chdir( targetDir.c_str() );
 		
-		const std::vector< ProjName >& prereqs = project.AllUsedProjects();
+		const std::vector< std::string >& prereqs = project.AllUsedProjects();
 		std::for_each
 		(
 			prereqs.begin(), 

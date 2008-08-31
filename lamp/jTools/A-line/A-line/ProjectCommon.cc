@@ -23,6 +23,7 @@
 // A-line
 #include "A-line/BuildCommon.hh"
 #include "A-line/Includes.hh"
+#include "A-line/Project.hh"
 
 
 namespace ALine
@@ -31,11 +32,18 @@ namespace ALine
 	using namespace io::path_descent_operators;
 	
 	
-	typedef std::map< ProjName, boost::shared_ptr< Project > > ProjectMap;
-	typedef std::set< ProjName > ProjectSet;
-	typedef std::map< FileName, std::string > FileMap;
-	typedef std::map< IncludePath, std::string > IncludeMap;
-	typedef std::map< IncludePath, time_t > DateMap;
+	typedef std::map< std::string, boost::shared_ptr< Project > > ProjectMap;
+	
+	typedef std::set< std::string > ProjectSet;
+	
+	// maps filenames to pathnames
+	typedef std::map< std::string, std::string > FileMap;
+	
+	// maps (search-dir-relative) include paths to pathnames
+	typedef std::map< std::string, std::string > IncludeMap;
+	
+	// maps (search-dir-relative) include paths to modification dates
+	typedef std::map< std::string, time_t > DateMap;
 	
 	static ProjectMap gProjects;
 	static ProjectSet gProjectsWithIncludeDirs;
@@ -43,7 +51,7 @@ namespace ALine
 	static DateMap gDates;
 	
 	
-	Project& GetProject( const ProjName& projName )
+	Project& GetProject( const std::string& projName )
 	{
 		ProjectMap::iterator it = gProjects.find( projName );
 		
@@ -62,13 +70,13 @@ namespace ALine
 		return project;
 	}
 	
-	void AddIncludeDir( const ProjName& projName )
+	void AddIncludeDir( const std::string& projName )
 	{
 		gProjectsWithIncludeDirs.insert( projName );
 	}
 	
 	
-	std::string RezLocation( const FileName& filename )
+	std::string RezLocation( const std::string& filename )
 	{
 		return gRezzes[ filename ];
 	}
@@ -78,17 +86,17 @@ namespace ALine
 		gRezzes[ io::get_filename_string( file ) ] = file;
 	}
 	
-	std::string FindInclude( const IncludePath& includePath )
+	std::string FindInclude( const std::string& includePath )
 	{
 		ProjectSet::const_iterator it, end = gProjectsWithIncludeDirs.end();
 		
 		// For each project with an include folder,
 		for ( it = gProjectsWithIncludeDirs.begin();  it != end;  ++it )
 		{
-			const ProjName& proj = *it;
+			const std::string& name = *it;
 			
 			// Check to see if it has the include file.
-			std::string path = GetProject( proj ).FindInclude( includePath );
+			std::string path = GetProject( name ).FindInclude( includePath );
 			
 			if ( !path.empty() )
 			{
@@ -99,7 +107,7 @@ namespace ALine
 		return "";
 	}
 	
-	time_t RecursivelyLatestDate( const IncludePath& includePath )
+	time_t RecursivelyLatestDate( const std::string& includePath )
 	{
 		DateMap::const_iterator it = gDates.find( includePath );
 		
@@ -158,9 +166,9 @@ namespace ALine
 	}
 	*/
 	
-	time_t RecursivelyLatestDate( const IncludePath& includePath, const std::string& pathname )
+	time_t RecursivelyLatestDate( const std::string& includePath, const std::string& pathname )
 	{
-		const std::vector< IncludePath >& includes = GetIncludes( pathname ).user;
+		const std::vector< std::string >& includes = GetIncludes( pathname ).user;
 		
 		time_t modDate = ModifiedDate( pathname );
 		

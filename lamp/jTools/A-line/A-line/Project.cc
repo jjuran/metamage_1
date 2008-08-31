@@ -83,7 +83,7 @@ namespace ALine
 	using namespace io::path_descent_operators;
 	
 	
-	static std::string FindIncludeInFolder( const std::string& folder, IncludePath includePath )
+	static std::string FindIncludeInFolder( const std::string& folder, std::string includePath )
 	{
 		// This will throw if folder or any subfolders are missing.
 		std::string file = folder / includePath;
@@ -205,12 +205,12 @@ namespace ALine
 				Options().platform |= CD::arch68K | CD::runtimeA4CodeResource | CD::apiMacBlue;
 			}
 			
-			typedef std::vector< ProjName >::const_iterator vPN_ci;
+			typedef std::vector< std::string >::const_iterator vPN_ci;
 			
 			// Figure out which projects we use
-			const std::vector< ProjName >& moreUsedProjects = config[ "use" ];
+			const std::vector< std::string >& moreUsedProjects = config[ "use" ];
 			
-			std::vector< ProjName > usedProjects = config[ "uses" ];
+			std::vector< std::string > usedProjects = config[ "uses" ];
 			
 			std::size_t usedCount = usedProjects.size();
 			
@@ -220,7 +220,7 @@ namespace ALine
 			           moreUsedProjects.end(),
 			           usedProjects.begin() + usedCount );
 			
-			std::set< ProjName > allUsedSet;
+			std::set< std::string > allUsedSet;
 			
 			// For each project named in the 'uses' directive:
 			for ( vPN_ci it = usedProjects.begin();  it != usedProjects.end();  ++it )
@@ -237,12 +237,12 @@ namespace ALine
 				Project& used = GetProject( *it );
 				
 				// Find out which projects it uses
-				const std::vector< ProjName >& subUsed = used.AllUsedProjects();
+				const std::vector< std::string >& subUsed = used.AllUsedProjects();
 				
 				// For each project even indirectly used by this one:
 				for ( vPN_ci it2 = subUsed.begin();  it2 != subUsed.end();  ++it2 )
 				{
-					const ProjName& name = *it2;
+					const std::string& name = *it2;
 					
 					// If it isn't already in the collection,
 					if ( allUsedSet.count( name ) == 0 )

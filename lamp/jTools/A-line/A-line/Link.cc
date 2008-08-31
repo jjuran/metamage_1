@@ -40,6 +40,7 @@
 #include "A-line/BuildCommon.hh"
 #include "A-line/Commands.hh"
 #include "A-line/Locations.hh"
+#include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 
 
@@ -98,7 +99,7 @@ namespace ALine
 	
 	static void AddFrameworks( const std::vector< std::string >& frameworkNames, std::vector< std::string >& v )
 	{
-		typedef std::vector< FileName >::const_iterator Iter;
+		typedef std::vector< std::string >::const_iterator Iter;
 		
 		for ( Iter it = frameworkNames.begin();  it != frameworkNames.end();  ++it )
 		{
@@ -119,7 +120,7 @@ namespace ALine
 		return project.Product() == productStaticLib;
 	}
 	
-	static void RemoveNonLibs( std::vector< ProjName >& usedProjects )
+	static void RemoveNonLibs( std::vector< std::string >& usedProjects )
 	{
 		usedProjects.resize( std::remove_if( usedProjects.begin(),
 		                                     usedProjects.end(),
@@ -168,16 +169,16 @@ namespace ALine
 		return LibrariesDirPath() / gLibraryPrefix + name + gLibraryExtension;
 	}
 	
-	static void AddLibraryLinkArgs( const std::vector< ProjName >& usedLibs, std::vector< std::string >& v )
+	static void AddLibraryLinkArgs( const std::vector< std::string >& usedLibs, std::vector< std::string >& v )
 	{
 		// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
 		// Somehow, this is actually required to actually link anything on Unix.
 		
-		typedef std::vector< ProjName >::const_reverse_iterator Iter;
+		typedef std::vector< std::string >::const_reverse_iterator Iter;
 		
 		for ( Iter it = usedLibs.rbegin();  it != usedLibs.rend();  ++it )
 		{
-			const ProjName& name = *it;
+			const std::string& name = *it;
 			
 			v.push_back( "-l" + name );
 		}
@@ -304,7 +305,7 @@ namespace ALine
 	                            bool                needsCarbResource,
 	                            bool                lamp )
 	{
-		const std::vector< FileName >& input_filenames = project.UsedRezFiles();
+		const std::vector< std::string >& input_filenames = project.UsedRezFiles();
 		
 		std::vector< std::string > input_pathnames( input_filenames.size() );
 		
@@ -422,7 +423,7 @@ namespace ALine
 		return std::max( a, ModifiedDate( GetPathnameOfBuiltLibrary( b ) ) );
 	}
 	
-	static time_t LatestLibraryModificationDate( const std::vector< ProjName >& used_project_names )
+	static time_t LatestLibraryModificationDate( const std::vector< std::string >& used_project_names )
 	{
 		// Get the time of the latest modification to any built library we use.
 		return std::accumulate( used_project_names.begin(),
@@ -637,7 +638,7 @@ namespace ALine
 		base_task->AddDependent( link_dependency_task );
 		
 		// A copy so we can munge it
-		std::vector< ProjName > usedProjects = project.AllUsedProjects();
+		std::vector< std::string > usedProjects = project.AllUsedProjects();
 		
 		usedProjects.pop_back();  // we're last; drop us
 		

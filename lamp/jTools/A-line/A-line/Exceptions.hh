@@ -5,8 +5,8 @@
 
 #pragma once
 
-// A-line
-#include "A-line/Project.hh"
+// Standard C++
+#include <string>
 
 
 namespace ALine
@@ -14,13 +14,13 @@ namespace ALine
 	
 	struct NoSuchUsedProject
 	{
-		NoSuchUsedProject( const ProjName& projName, const std::string& used )
+		NoSuchUsedProject( const std::string& projName, const std::string& used )
 		:
 			projName( projName ), 
 			used    ( used )
 		{}
 		
-		ProjName projName;
+		std::string projName;
 		std::string used;
 	};
 	

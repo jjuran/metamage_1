@@ -36,6 +36,7 @@
 #include "A-line/CompilerOptions.hh"
 #include "A-line/Link.hh"
 #include "A-line/Locations.hh"
+#include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 #include "A-line/Task.hh"
 
@@ -79,10 +80,10 @@ namespace ALine
 		public:
 			IncludeDirGatherer( CompilerOptions& options ) : itsOptions( options )  {}
 				
-			void operator()( const ProjName& projName );
+			void operator()( const std::string& projName );
 	};
 	
-	void IncludeDirGatherer::operator()( const ProjName& projName )
+	void IncludeDirGatherer::operator()( const std::string& projName )
 	{
 		const Project& project = GetProject( projName );
 		
@@ -230,9 +231,9 @@ namespace ALine
 	}
 	
 	
-	static std::string PrecompiledHeaderImageFile( const ProjName&    projName,
-	                                               std::string        pchSourceName,
-	                                               const TargetInfo&  targetInfo )
+	static std::string PrecompiledHeaderImageFile( const std::string&  projName,
+	                                               std::string         pchSourceName,
+	                                               const TargetInfo&   targetInfo )
 	{
 		std::string folder = ProjectPrecompiledDirPath( projName );
 		
@@ -244,7 +245,7 @@ namespace ALine
 		return folder / pchImageName;
 	}
 	
-	static bool ProjectHasPrecompiledHeader( const ProjName& proj )
+	static bool ProjectHasPrecompiledHeader( const std::string& proj )
 	{
 		return GetProject( proj ).HasPrecompiledHeader();
 	}
@@ -309,7 +310,7 @@ namespace ALine
 		else
 		{
 			// This project doesn't have a precompiled header, but maybe a used one does
-			typedef std::vector< ProjName >::const_iterator const_iterator;
+			typedef std::vector< std::string >::const_iterator const_iterator;
 			
 			const_iterator it = std::find_if( project.AllUsedProjects().begin(),
 			                                  project.AllUsedProjects().end(),
@@ -365,7 +366,7 @@ namespace ALine
 		// Select the includes belonging to the projects we use
 		IncludeDirGatherer gatherer( options );
 		
-		const std::vector< ProjName >& allUsedProjects = project.AllUsedProjects();
+		const std::vector< std::string >& allUsedProjects = project.AllUsedProjects();
 		
 		// Reverse direction so projects can override Prefix.hh
 		std::for_each( allUsedProjects.rbegin(),

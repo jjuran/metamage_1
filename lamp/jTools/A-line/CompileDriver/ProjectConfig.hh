@@ -19,17 +19,15 @@
 namespace CompileDriver
 {
 	
-	typedef std::string ProjName;
-	
 	typedef std::string ConfigKey;
 	typedef std::vector< std::string > ConfigValue;
 	typedef std::map< ConfigKey, ConfigValue > ConfData;
 	
 	struct NoSuchProject
 	{
-		ProjName name;
+		std::string name;
 		
-		NoSuchProject( const ProjName& name ) : name( name )  {}
+		NoSuchProject( const std::string& name ) : name( name )  {}
 	};
 	
 	struct NoSuchPlatform

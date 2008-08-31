@@ -12,25 +12,24 @@
 // Standard C
 #include <time.h>
 
-// A-line
-#include "A-line/Project.hh"
-
 
 namespace ALine
 {
 	
-	Project& GetProject( const ProjName& projName );
+	class Project;
 	
-	void AddIncludeDir( const ProjName& projName );
+	Project& GetProject( const std::string& projName );
 	
-	std::string RezLocation( const FileName& filename );
+	void AddIncludeDir( const std::string& projName );
 	
-	std::string FindInclude( const IncludePath& includePath );
+	std::string RezLocation( const std::string& filename );
+	
+	std::string FindInclude( const std::string& includePath );
 	
 	void AddRezFile( const std::string& file );
 	
-	time_t RecursivelyLatestDate( const IncludePath& includePath );
-	time_t RecursivelyLatestDate( const IncludePath& includePath, const std::string& pathname );
+	time_t RecursivelyLatestDate( const std::string& includePath );
+	time_t RecursivelyLatestDate( const std::string& includePath, const std::string& pathname );
 	
 }
 

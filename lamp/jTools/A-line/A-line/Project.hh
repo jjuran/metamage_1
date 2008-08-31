@@ -17,8 +17,6 @@
 namespace ALine
 {
 	
-	typedef std::string ProjName, FileName, IncludePath;
-	
 	class Project
 	{
 		private:
@@ -33,7 +31,7 @@ namespace ALine
 			// What kind of product this project creates.
 			ProductType its_product_type;
 			// The names of all projects used directly or indirectly by this one.
-			std::vector< ProjName > its_used_project_names;
+			std::vector< std::string > its_used_project_names;
 			// Directories to search for headers and unenumerated source files.
 			std::vector< std::string > its_search_dir_pathnames;
 			// Source files to compile, by pathname
@@ -50,7 +48,7 @@ namespace ALine
 			std::vector< std::string > its_tool_source_filenames;
 		
 		public:
-			Project( const ProjName& proj );
+			Project( const std::string& name );
 			
 			std::string Name() const  { return its_name; }
 			std::string ProgramName() const  { return its_program_filename; }
@@ -61,16 +59,16 @@ namespace ALine
 			
 			const std::string& PrecompiledHeaderSource() const  { return its_precompiled_header_source_path; }
 			
-			const std::vector< ProjName >& AllUsedProjects() const  { return its_used_project_names; }
+			const std::vector< std::string >& AllUsedProjects() const  { return its_used_project_names; }
 			
 			const std::vector< std::string >& SearchDirs()      const  { return its_search_dir_pathnames;      }
 			const std::vector< std::string >& SourceFileSpecs() const  { return its_source_paths; }
 			const std::vector< std::string >& ToolSourceFiles() const  { return its_tool_source_filenames; }
 			
-			std::vector< FileName > LibImports()    const  { return its_lib_import_specs; }
-			std::vector< FileName > Frameworks()    const  { return its_framework_names; }
-			std::vector< FileName > UsedRezFiles()  const  { return its_rez_filenames; }
-			std::vector< FileName > UsedRsrcFiles() const  { return its_rsrc_filenames; }
+			std::vector< std::string > LibImports()    const  { return its_lib_import_specs; }
+			std::vector< std::string > Frameworks()    const  { return its_framework_names; }
+			std::vector< std::string > UsedRezFiles()  const  { return its_rez_filenames; }
+			std::vector< std::string > UsedRsrcFiles() const  { return its_rsrc_filenames; }
 			
 			std::string CreatorCode() const  { return its_creator_code; }
 			
@@ -78,7 +76,7 @@ namespace ALine
 			
 			void Study();
 			
-			std::string FindInclude( const IncludePath& includePath );
+			std::string FindInclude( const std::string& includePath );
 	};
 	
 }
