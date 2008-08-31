@@ -373,13 +373,17 @@ namespace ALine
 		
 		if ( needToBuild )
 		{
+			TaskPtr project_base_task( new NullTask() );
 			TaskPtr source_dependency( new NullTask() );
 			
 			std::vector< TaskPtr > tool_dependencies;
 			
-			CompileSources( project, info, source_dependency, tool_dependencies );
-			LinkProduct   ( project, info, source_dependency, tool_dependencies );
+			CompileSources( project, info, project_base_task, source_dependency, tool_dependencies );
+			LinkProduct   ( project, info, project_base_task, source_dependency, tool_dependencies );
 			
+			AddReadyTask( project_base_task );
+			
+			project_base_task.reset();
 			source_dependency.reset();
 			
 			tool_dependencies.clear();

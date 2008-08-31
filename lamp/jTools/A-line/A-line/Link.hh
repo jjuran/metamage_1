@@ -25,6 +25,7 @@ namespace ALine
 	
 	void LinkProduct( const Project&                 project,
 	                  const TargetInfo&              targetInfo,
+	                  const TaskPtr&                 project_base_task,
 	                  const TaskPtr&                 source_dependency,
 	                  const std::vector< TaskPtr >&  tool_dependencies );
 	
