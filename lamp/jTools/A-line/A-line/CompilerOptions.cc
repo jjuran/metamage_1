@@ -12,25 +12,24 @@
 namespace ALine
 {
 	
-	CompilerOptions::CompilerOptions( std::string name, const TargetInfo& targetInfo )
-	:
-		projectName( name ),
-		targetInfo( targetInfo ),
-		hasPrecompiledHeaderSource( false )
+	CompilerOptions::CompilerOptions( std::string name, const TargetInfo& target_info )
+	: its_project_name                ( name        ),
+	  its_target_info                 ( target_info ),
+	  it_has_precompiled_header_source( false       )
 	{
 		
 	}
 	
 	void CompilerOptions::AddDefinedMacro( const char* macro_definition )
 	{
-		itsMacros.push_back( macro_definition );
+		its_macros.push_back( macro_definition );
 	}
 	
 	void CompilerOptions::DefineMacro( const std::string& macro, const std::string& value )
 	{
-		itsMacroStorage.push_back( "-D" + macro + "=" + value );
+		its_macro_storage.push_back( "-D" + macro + "=" + value );
 		
-		itsMacros.push_back( itsMacroStorage.back().c_str() );
+		its_macros.push_back( its_macro_storage.back().c_str() );
 	}
 	
 	void CompilerOptions::DefineMacro( const std::string& macro, bool value )
@@ -40,8 +39,9 @@ namespace ALine
 	
 	void CompilerOptions::SetPrecompiledHeaderSource( const std::string& pch )
 	{
-		myPrecompiledHeaderSource = pch;
-		hasPrecompiledHeaderSource = true;
+		its_precompiled_header_source_pathname = pch;
+		
+		it_has_precompiled_header_source = true;
 	}
 	
 	inline std::string Include( const std::string& dir )
@@ -54,12 +54,12 @@ namespace ALine
 	
 	void CompilerOptions::AppendIncludeDir( const std::string& dir )
 	{
-		itsIncludeDirOptions.push_back( Include( dir ) );
+		its_include_search_options.push_back( Include( dir ) );
 	}
 	
 	void CompilerOptions::PrependIncludeDir( const std::string& dir )
 	{
-		itsIncludeDirOptions.insert( itsIncludeDirOptions.begin(), Include( dir ) );
+		its_include_search_options.insert( its_include_search_options.begin(), Include( dir ) );
 	}
 	
 }

@@ -25,19 +25,19 @@ namespace ALine
 	class CompilerOptions
 	{
 		private:
-			std::string projectName;
-			const TargetInfo& targetInfo;
-			Macros itsMacros;
-			std::list< std::string > itsMacroStorage;
-			std::string myPrecompiledHeaderSource;
-			std::vector< std::string > itsIncludeDirOptions;
-			bool hasPrecompiledHeaderSource;
+			std::string                 its_project_name;
+			const TargetInfo&           its_target_info;
+			Macros                      its_macros;
+			std::list< std::string >    its_macro_storage;
+			std::vector< std::string >  its_include_search_options;
+			std::string                 its_precompiled_header_source_pathname;
+			bool                        it_has_precompiled_header_source;
 		
 		public:
-			CompilerOptions( std::string name, const TargetInfo& targetInfo );
+			CompilerOptions( std::string name, const TargetInfo& its_target_info );
 			
-			const std::string& Name() const  { return projectName; }
-			const TargetInfo& Target() const  { return targetInfo; }
+			const std::string& Name() const  { return its_project_name; }
+			const TargetInfo& Target() const  { return its_target_info; }
 			
 			void AddDefinedMacro( const char* macro_definition );
 			
@@ -47,13 +47,13 @@ namespace ALine
 			void SetPrecompiledHeaderSource( const std::string& pch );
 			void SetOutput( const std::string& output );
 			
-			const Macros& GetMacros() const  { return itsMacros; }
+			const Macros& GetMacros() const  { return its_macros; }
 			
-			bool HasPrecompiledHeaderSource() const  { return hasPrecompiledHeaderSource; }
+			bool HasPrecompiledHeaderSource() const  { return it_has_precompiled_header_source; }
 			
-			const std::string& PrecompiledHeaderSource() const  { return myPrecompiledHeaderSource; }
+			const std::string& PrecompiledHeaderSource() const  { return its_precompiled_header_source_pathname; }
 			
-			std::vector< std::string > const& IncludeDirOptions() const  { return itsIncludeDirOptions; }
+			std::vector< std::string > const& IncludeDirOptions() const  { return its_include_search_options; }
 			
 			void AppendIncludeDir ( const std::string& dir );
 			void PrependIncludeDir( const std::string& dir );

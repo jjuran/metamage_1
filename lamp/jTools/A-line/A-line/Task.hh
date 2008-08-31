@@ -31,11 +31,11 @@ namespace ALine
 	class Task
 	{
 		private:
-			std::vector< TaskPtr >  itsDependents;
-			time_t                  itsInputStamp;
+			std::vector< TaskPtr >  its_dependents;
+			time_t                  its_input_stamp;
 		
 		public:
-			Task() : itsInputStamp()
+			Task() : its_input_stamp()
 			{
 			}
 			
@@ -43,11 +43,11 @@ namespace ALine
 			{
 			}
 			
-			bool MoreRecent( time_t output_stamp ) const  { return output_stamp > itsInputStamp; }
+			bool MoreRecent( time_t output_stamp ) const  { return output_stamp > its_input_stamp; }
 			
 			void UpdateInputStamp( time_t stamp );
 			
-			void AddDependent( const TaskPtr& task )  { itsDependents.push_back( task ); }
+			void AddDependent( const TaskPtr& task )  { its_dependents.push_back( task ); }
 			
 			virtual void Main() = 0;
 			
@@ -65,14 +65,14 @@ namespace ALine
 	class FileTask : public Task
 	{
 		private:
-			std::string itsOutputPathname;
+			std::string its_output_pathname;
 		
 		public:
-			FileTask( const std::string& output ) : itsOutputPathname( output )
+			FileTask( const std::string& output ) : its_output_pathname( output )
 			{
 			}
 			
-			const std::string& OutputPathname() const  { return itsOutputPathname; }
+			const std::string& OutputPathname() const  { return its_output_pathname; }
 			
 			time_t OutputStamp() const;
 			

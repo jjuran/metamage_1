@@ -39,9 +39,9 @@ namespace ALine
 	
 	void Task::UpdateInputStamp( time_t stamp )
 	{
-		if ( stamp > itsInputStamp )
+		if ( stamp > its_input_stamp )
 		{
-			itsInputStamp = stamp;
+			its_input_stamp = stamp;
 		}
 	}
 	
@@ -49,29 +49,29 @@ namespace ALine
 	{
 		Main();
 		
-		Complete( itsInputStamp );
+		Complete( its_input_stamp );
 	}
 	
 	void Task::Complete( time_t stamp )
 	{
-		std::for_each( itsDependents.begin(),
-		               itsDependents.end(),
+		std::for_each( its_dependents.begin(),
+		               its_dependents.end(),
 		               std::bind2nd( more::ptr_fun( UpdateTaskInputStamp ),
 		                             stamp ) );
 		
-		std::for_each( itsDependents.begin(),
-		               itsDependents.end(),
+		std::for_each( its_dependents.begin(),
+		               its_dependents.end(),
 		               std::ptr_fun( CheckIfTaskIsReady ) );
 		
-		itsDependents.clear();
+		its_dependents.clear();
 	}
 	
 	
 	time_t FileTask::OutputStamp() const
 	{
-		if ( io::file_exists( itsOutputPathname ) )
+		if ( io::file_exists( its_output_pathname ) )
 		{
-			return ModifiedDate( itsOutputPathname );
+			return ModifiedDate( its_output_pathname );
 		}
 		
 		return 0;
@@ -93,7 +93,7 @@ namespace ALine
 		
 		Make();
 		
-		UpdateInputStamp( ModifiedDate( itsOutputPathname ) );
+		UpdateInputStamp( ModifiedDate( its_output_pathname ) );
 	}
 	
 	
