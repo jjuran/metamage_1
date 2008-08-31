@@ -52,18 +52,18 @@ namespace ALine
 	class CompilingTask : public FileTask
 	{
 		private:
-			CompilerOptions  itsOptions;
-			std::string      itsSourcePathname;
-			const char*      itsCaption;
+			CompilerOptions  its_options;
+			std::string      its_source_pathname;
+			const char*      its_caption;
 		
 		public:
 			CompilingTask( const CompilerOptions&  options,
 			               const std::string&      source,
 			               const std::string&      output,
-			               const char*             caption ) : FileTask         ( output ),
-			                                                   itsOptions       ( options ),
-			                                                   itsSourcePathname( source  ),
-			                                                   itsCaption       ( caption )
+			               const char*             caption ) : FileTask           ( output ),
+			                                                   its_options        ( options ),
+			                                                   its_source_pathname( source  ),
+			                                                   its_caption        ( caption )
 			{
 			}
 			
@@ -75,30 +75,32 @@ namespace ALine
 	class IncludeDirGatherer
 	{
 		private:
-			CompilerOptions& itsOptions;
+			CompilerOptions& its_options;
 		
 		public:
-			IncludeDirGatherer( CompilerOptions& options ) : itsOptions( options )  {}
+			IncludeDirGatherer( CompilerOptions& options ) : its_options( options )
+			{
+			}
 				
 			void operator()( const std::string& projName );
 	};
 	
-	void IncludeDirGatherer::operator()( const std::string& projName )
+	void IncludeDirGatherer::operator()( const std::string& project_name )
 	{
-		const Project& project = GetProject( projName );
+		const Project& project = GetProject( project_name );
 		
 		if ( project.Product() == productNotBuilt )
 		{
 			return;
 		}
 		
-		const std::vector< std::string >& searchDirs( project.SearchDirs() );
+		const std::vector< std::string >& search_dirs( project.SearchDirs() );
 		
 		typedef std::vector< std::string >::const_iterator Iter;
 		
-		for ( Iter it = searchDirs.begin();  it != searchDirs.end();  ++it )
+		for ( Iter it = search_dirs.begin();  it != search_dirs.end();  ++it )
 		{
-			itsOptions.AppendIncludeDir( *it );
+			its_options.AppendIncludeDir( *it );
 		}
 	}
 	
@@ -127,14 +129,12 @@ namespace ALine
 		return filename + ".txt";
 	}
 	
-	static std::string DiagnosticsFilePathname( const std::string&  proj,
-	                                            const std::string&  filename )
+	static std::string DiagnosticsPathnameFromSourceFilename( const std::string&  project_name,
+	                                                          const std::string&  source_filename )
 	{
-		std::string diagnosticsDir = ProjectDiagnosticsDirPath( proj );
+		std::string diagnostics_dir = ProjectDiagnosticsDirPath( project_name );
 		
-		std::string diagnosticsFile = diagnosticsDir / DiagnosticsFilenameFromSourceFilename( filename );
-		
-		return diagnosticsFile;
+		return diagnostics_dir / DiagnosticsFilenameFromSourceFilename( source_filename );
 	}
 	
 	static Command MakeCompileCommand( const CompilerOptions&  options,
@@ -196,9 +196,9 @@ namespace ALine
 		
 		std::string source_filename = io::get_filename_string( source_pathname );
 		
-		std::string diagnosticsFile = DiagnosticsFilePathname( options.Name(), source_filename );
+		std::string diagnostics_pathname = DiagnosticsPathnameFromSourceFilename( options.Name(), source_filename );
 		
-		RunCommand( command, diagnosticsFile.c_str(), caption + source_filename );
+		RunCommand( command, diagnostics_pathname.c_str(), caption + source_filename );
 	}
 	
 	bool CompilingTask::UpToDate()
@@ -207,13 +207,13 @@ namespace ALine
 		{
 			time_t output_stamp = ModifiedDate( OutputPath() );
 			
-			UpdateInputStamp( ModifiedDate( itsSourcePathname ) );
+			UpdateInputStamp( ModifiedDate( its_source_pathname ) );
 			
 			if ( MoreRecent( output_stamp ) )
 			{
-				std::string source_filename = io::get_filename_string( itsSourcePathname );
+				std::string source_filename = io::get_filename_string( its_source_pathname );
 				
-				UpdateInputStamp( RecursivelyLatestDate( source_filename, itsSourcePathname ) );
+				UpdateInputStamp( RecursivelyLatestDate( source_filename, its_source_pathname ) );
 				
 				if ( MoreRecent( output_stamp ) )
 				{
@@ -227,50 +227,51 @@ namespace ALine
 	
 	void CompilingTask::Make()
 	{
-		RunCompiler( itsOptions, itsSourcePathname, OutputPath(), itsCaption );
+		RunCompiler( its_options, its_source_pathname, OutputPath(), its_caption );
 	}
 	
 	
-	static std::string PrecompiledHeaderImageFile( const std::string&  projName,
-	                                               std::string         pchSourceName,
-	                                               const TargetInfo&   targetInfo )
+	static std::string PrecompiledHeaderImageFile( const std::string&  project_name,
+	                                               std::string         precompiled_header_source_filename,
+	                                               const TargetInfo&   target_info )
 	{
-		std::string folder = ProjectPrecompiledDirPath( projName );
+		std::string precompiled_header_dir_pathname = ProjectPrecompiledDirPath( project_name );
 		
-		const bool gnu = targetInfo.toolchain == toolchainGNU;
+		const bool gnu = target_info.toolchain == toolchainGNU;
 		
-		std::string pchImageName = pchSourceName + (gnu ? ".gch"
-		                                                : ".mwch");
+		const char* extension = (gnu ? ".gch" : ".mwch");
 		
-		return folder / pchImageName;
+		std::string precompiled_header_image_filename = precompiled_header_source_filename + extension;
+		
+		return precompiled_header_dir_pathname / precompiled_header_image_filename;
 	}
 	
-	static bool ProjectHasPrecompiledHeader( const std::string& proj )
+	static bool ProjectHasPrecompiledHeader( const std::string& project_name )
 	{
-		return GetProject( proj ).HasPrecompiledHeader();
+		return GetProject( project_name ).HasPrecompiledHeader();
 	}
 	
 	#define DEFINE_MACRO_VALUE( macro, value )  AddDefinedMacro( "-D" macro "=" #value )
 	
 	#define DEFINE_MACRO( macro )  DEFINE_MACRO_VALUE( macro, 1 )
 	
-	static void DefineMacros( CompilerOptions& options, const TargetInfo& targetInfo )
+	static void DefineMacros( CompilerOptions& options, const TargetInfo& target_info )
 	{
 		options.DEFINE_MACRO( "__ALINE__" );
 		options.DEFINE_MACRO( "JOSHUA_JURAN_EXPERIMENTAL" );
 		
 		options.DEFINE_MACRO( "NUCLEUS_USES_BACKTRACE" );
 		
-		if ( targetInfo.platform & CD::apiMacCarbon )
+		if ( target_info.platform & CD::apiMacCarbon )
 		{
 			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
 		}
-		else if ( targetInfo.platform & CD::apiMacBlue )
+		else if ( target_info.platform & CD::apiMacBlue )
 		{
 			options.DEFINE_MACRO_VALUE( "TARGET_API_MAC_CARBON", 0 );
 			options.DEFINE_MACRO( "TARGET_API_MAC_OS8" );
 			
-			if ( targetInfo.platform & CD::archPPC )
+			if ( target_info.platform & CD::archPPC )
 			{
 				options.DEFINE_MACRO( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
 				options.DEFINE_MACRO( "OPAQUE_UPP_TYPES" );
@@ -283,7 +284,7 @@ namespace ALine
 			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
 		}
 		
-		if ( targetInfo.build == buildDebug )
+		if ( target_info.build == buildDebug )
 		{
 			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 1 );
 		}
@@ -292,7 +293,7 @@ namespace ALine
 			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 0 );
 		}
 		
-		if ( targetInfo.build == buildDemo )
+		if ( target_info.build == buildDemo )
 		{
 			options.DEFINE_MACRO( "BUILD_DEMO" );
 		}
@@ -328,13 +329,13 @@ namespace ALine
 	class ToolTaskMaker
 	{
 		private:
-			const CompilerOptions&  itsOptions;
-			const TaskPtr&          itsPrecompileTask;
+			const CompilerOptions&  its_options;
+			const TaskPtr&          its_precompile_task;
 		
 		public:
 			ToolTaskMaker( const CompilerOptions&  options,
-			               const TaskPtr&          precompile ) : itsOptions       ( options    ),
-			                                                      itsPrecompileTask( precompile )
+			               const TaskPtr&          precompile ) : its_options        ( options    ),
+			                                                      its_precompile_task( precompile )
 			{
 			}
 			
@@ -342,36 +343,36 @@ namespace ALine
 			{
 				const char* caption = "Compiling: ";
 				
-				CompilerOptions source_options = itsOptions;
+				CompilerOptions source_options = its_options;
 				
 				source_options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
 				
 				TaskPtr task( new CompilingTask( source_options, source_pathname, object_pathname, caption ) );
 				
-				itsPrecompileTask->AddDependent( task );
+				its_precompile_task->AddDependent( task );
 				
 				return task;
 			}
 	};
 	
 	void CompileSources( const Project&           project,
-	                     const TargetInfo&        targetInfo,
+	                     const TargetInfo&        target_info,
 	                     const TaskPtr&           project_base_task,
 	                     const TaskPtr&           source_dependency,
 	                     std::vector< TaskPtr >&  tool_dependencies )
 	{
-		CompilerOptions options( project.Name(), targetInfo );
+		CompilerOptions options( project.Name(), target_info );
 		
-		DefineMacros( options, targetInfo );
+		DefineMacros( options, target_info );
 		
 		// Select the includes belonging to the projects we use
 		IncludeDirGatherer gatherer( options );
 		
-		const std::vector< std::string >& allUsedProjects = project.AllUsedProjects();
+		const std::vector< std::string >& all_used_projects = project.AllUsedProjects();
 		
 		// Reverse direction so projects can override Prefix.hh
-		std::for_each( allUsedProjects.rbegin(),
-		               allUsedProjects.rend(),
+		std::for_each( all_used_projects.rbegin(),
+		               all_used_projects.rend(),
 		               gatherer );
 		
 		CompilerOptions precompile_options = options;
@@ -382,19 +383,19 @@ namespace ALine
 		// In case we have a toolkit with no common sources?
 		precompile_task->AddDependent( source_dependency );
 		
-		const Project* projectProvidingPrecompiledHeader = ProjectProvidingPrecompiledHeader( project );
+		const Project* project_providing_precompiled_header = ProjectProvidingPrecompiledHeader( project );
 		
-		if ( projectProvidingPrecompiledHeader != NULL )
+		if ( project_providing_precompiled_header != NULL )
 		{
-			std::string pchSourcePath = projectProvidingPrecompiledHeader->PrecompiledHeaderSource();
+			std::string precompiled_header_source_path = project_providing_precompiled_header->PrecompiledHeaderSource();
 			
-			std::string pchSourceName = io::get_filename_string( pchSourcePath );
+			std::string precompiled_header_source_filename = io::get_filename_string( precompiled_header_source_path );
 			
-			std::string pchImage = PrecompiledHeaderImageFile( projectProvidingPrecompiledHeader->Name(),
-			                                                   pchSourceName,
-			                                                   targetInfo );
+			std::string pchImage = PrecompiledHeaderImageFile( project_providing_precompiled_header->Name(),
+			                                                   precompiled_header_source_filename,
+			                                                   target_info );
 			
-			options.SetPrecompiledHeaderSource( pchSourceName );
+			options.SetPrecompiledHeaderSource( precompiled_header_source_filename );
 			// Theory:
 			// We need to include the pch source by name only, not path.
 			// Therefore, we need its parent directory to be in the search path,
@@ -406,14 +407,14 @@ namespace ALine
 			if ( project.HasPrecompiledHeader() )
 			{
 				// Locate the precompiled header image file.
-				std::string pchSource = FindInclude( pchSourcePath );
+				std::string precompiled_header_source_pathname = FindInclude( precompiled_header_source_path );
 				
-				if ( pchSource.empty() )
+				if ( precompiled_header_source_pathname.empty() )
 				{
-					std::fprintf( stderr, "Missing precompiled header '%s'\n", pchSourcePath.c_str() );
+					std::fprintf( stderr, "Missing precompiled header '%s'\n", precompiled_header_source_path.c_str() );
 				}
 				
-				precompile_task.reset( new CompilingTask( precompile_options, pchSource, pchImage, "Precompiling: " ) );
+				precompile_task.reset( new CompilingTask( precompile_options, precompiled_header_source_pathname, pchImage, "Precompiling: " ) );
 			}
 			else
 			{
@@ -431,9 +432,9 @@ namespace ALine
 		
 		std::vector< std::string > source_paths;
 		
-		std::vector< std::string > objectFiles;
+		std::vector< std::string > object_paths;
 		
-		const std::size_t n_tools = NameObjectFiles( project, source_paths, objectFiles );
+		const std::size_t n_tools = NameObjectFiles( project, source_paths, object_paths );
 		
 		const std::vector< std::string >& sources = n_tools > 0 ? source_paths : project.Sources();
 		
@@ -441,15 +442,15 @@ namespace ALine
 		
 		std::transform( sources.begin(),
 		                sources.begin() + n_tools,
-		                objectFiles.begin(),
+		                object_paths.begin(),
 		                tool_dependencies.begin(),
 		                ToolTaskMaker( options, precompile_task ) );
 		
 		std::vector< std::string >::const_iterator the_source, the_object, end = sources.end();
 		
 		for ( the_source = sources.begin() + n_tools,
-		      the_object = objectFiles.begin();  the_source != end;  ++the_source,
-		                                                             ++the_object )
+		      the_object = object_paths.begin();  the_source != end;  ++the_source,
+		                                                              ++the_object )
 		{
 			// The source file
 			const std::string& source_pathname = *the_source;
