@@ -100,7 +100,7 @@ namespace ALine
 	{
 		typedef std::vector< std::string >::const_iterator Iter;
 		
-		for ( Iter it = itsSearchDirs.begin();  it != itsSearchDirs.end();  ++it )
+		for ( Iter it = its_search_dir_pathnames.begin();  it != its_search_dir_pathnames.end();  ++it )
 		{
 			// FIXME:  Use a trapped function
 			try
@@ -187,20 +187,20 @@ namespace ALine
 	
 	Project::Project( const std::string& proj )
 	:
-		projName  ( proj ),
-		projFolderPath( CD::GetProjectConfig( proj, Options().platform ).itsProjectFolder ),
-		product   ( productNotBuilt )
+		its_name  ( proj ),
+		its_dir_pathname( CD::GetProjectConfig( proj, Options().platform ).itsProjectFolder ),
+		its_product_type   ( productNotBuilt )
 	{
-		CD::ConfData config = CD::GetProjectConfig( projName, Options().platform ).itsConfigData;
+		CD::ConfData config = CD::GetProjectConfig( its_name, Options().platform ).itsConfigData;
 		
 		//if ( config.size() > 0 )
 		{
-			progName = First( config[ "program" ] );
+			its_program_filename = First( config[ "program" ] );
 			
-			product = ReadProduct( First( config[ "product" ] ) );
+			its_product_type = ReadProduct( First( config[ "product" ] ) );
 			
-			if (    product == productINIT
-			     || product == productDriver )
+			if (    its_product_type == productINIT
+			     || its_product_type == productDriver )
 			{
 				Options().platform |= CD::arch68K | CD::runtimeA4CodeResource | CD::apiMacBlue;
 			}
@@ -231,7 +231,7 @@ namespace ALine
 				}
 				catch ( CD::NoSuchProject )
 				{
-					throw NoSuchUsedProject( projName, *it );
+					throw NoSuchUsedProject( its_name, *it );
 				}
 				
 				Project& used = GetProject( *it );
@@ -249,7 +249,7 @@ namespace ALine
 					{
 						// Add it to the collection.
 						allUsedSet.insert( name );
-						allUsedProjects.push_back( name );
+						its_used_project_names.push_back( name );
 					}
 				}
 			}
@@ -260,14 +260,14 @@ namespace ALine
 			// If search folders are specified,
 			if ( search.size() > 0 )
 			{
-				itsSearchDirs.resize( search.size() );
+				its_search_dir_pathnames.resize( search.size() );
 				
 				// Find and record them.
 				std::transform( search.begin(),
 				                search.end(),
-				                itsSearchDirs.begin(),
+				                its_search_dir_pathnames.begin(),
 				                std::bind1st( more::ptr_fun( FindSearchDir ),
-					                          projFolderPath ) );
+					                          its_dir_pathname ) );
 			}
 			else
 			{
@@ -276,20 +276,20 @@ namespace ALine
 				// Otherwise, just use a default location.
 				try
 				{
-					sourceDir = ProjectSourcesPath( projFolderPath );
+					sourceDir = ProjectSourcesPath( its_dir_pathname );
 				}
 				catch ( ... )
 				{
-					sourceDir = projFolderPath;
+					sourceDir = its_dir_pathname;
 				}
 				
-				itsSearchDirs.push_back( sourceDir );
+				its_search_dir_pathnames.push_back( sourceDir );
 			}
 		}
 		
-		itsToolSourceFiles = config[ "tools" ];
+		its_tool_source_filenames = config[ "tools" ];
 		
-		bool hasTools = !itsToolSourceFiles.empty();
+		const bool hasTools = !its_tool_source_filenames.empty();
 		
 		if ( hasTools != ( Product() == productToolkit ) )
 		{
@@ -297,26 +297,26 @@ namespace ALine
 		}
 		
 		// Make sure we're in the list too, and make sure we're last.
-		allUsedProjects.push_back( proj );
+		its_used_project_names.push_back( proj );
 		
 		//printf("%s recursively uses %d projects.\n", proj.c_str(), allUsedProjects.size());
 		
 		// If this project precompiles a header, this is the relative path to it.
-		precompiledHeaderSource  = First( config[ "precompile" ] );
+		its_precompiled_header_source_path  = First( config[ "precompile" ] );
 		
 		// The creator code for linked output files.  Mac only.
-		creator = First( config[ "creator"    ] );
+		its_creator_code = First( config[ "creator"    ] );
 		
-		if ( creator.size() == 6  &&  creator[0] == '\''  &&  creator[5] == '\'' )
+		if ( its_creator_code.size() == 6  &&  its_creator_code[0] == '\''  &&  its_creator_code[5] == '\'' )
 		{
-			creator = creator.substr( 1, 4 );
+			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
 		
-		itsSourceFileSpecs = config[ "sources"    ];  // Sources to compile.
-		myImports      = config[ "imports"    ];  // Libraries to import.
-		myFrameworks   = config[ "frameworks" ];  // Frameworks to include when building for OS X.
-		rsrcFiles      = config[ "rsrc"       ];  // Resource files from which to copy resources.
-		rezFiles       = config[ "rez"        ];  // Rez files to compile.
+		its_source_paths = config[ "sources"    ];  // Sources to compile.
+		its_lib_import_specs      = config[ "imports"    ];  // Libraries to import.
+		its_framework_names   = config[ "frameworks" ];  // Frameworks to include when building for OS X.
+		its_rsrc_filenames      = config[ "rsrc"       ];  // Resource files from which to copy resources.
+		its_rez_filenames       = config[ "rez"        ];  // Rez files to compile.
 	}
 	
 	static bool IsCompilableExtension( const std::string& ext )
@@ -409,11 +409,11 @@ namespace ALine
 		return result;
 	}
 	
-	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& itsSearchDirs )
+	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& search_dirs )
 	{
 		typedef std::vector< std::string >::const_iterator dir_iter;
 		
-		for ( dir_iter it = itsSearchDirs.begin();  it != itsSearchDirs.end();  ++it )
+		for ( dir_iter it = search_dirs.begin();  it != search_dirs.end();  ++it )
 		{
 			std::string dir = *it;
 			
@@ -444,15 +444,15 @@ namespace ALine
 	
 	void Project::Study()
 	{
-		if ( product == productNotBuilt )
+		if ( its_product_type == productNotBuilt )
 		{
 			return;
 		}
 		
 		// Add the includes directory
-		AddIncludeDir( projName );
+		AddIncludeDir( its_name );
 		
-		if ( !ProductGetsBuilt( product ) )
+		if ( !ProductGetsBuilt( its_product_type ) )
 		{
 			return;
 		}
@@ -463,7 +463,7 @@ namespace ALine
 		// None?  Try a Source.list file
 		if ( sourceList.size() == 0 )
 		{
-			std::string sourceDotListfile = SourceDotListFile( projFolderPath );
+			std::string sourceDotListfile = SourceDotListFile( its_dir_pathname );
 			
 			if ( io::item_exists( sourceDotListfile ) )
 			{
@@ -473,12 +473,12 @@ namespace ALine
 		
 		std::vector< std::string > sourceFileSearchDirs;
 		
-		if ( !itsSourceFileSpecs.empty() )
+		if ( !its_source_paths.empty() )
 		{
 			// 'sources' directive specifies source files or source list files.
 			typedef std::vector< std::string >::const_iterator str_iter;
 			
-			for ( str_iter it = itsSourceFileSpecs.begin();  it != itsSourceFileSpecs.end();  ++it )
+			for ( str_iter it = its_source_paths.begin();  it != its_source_paths.end();  ++it )
 			{
 				const std::string& project_relative_path = *it;
 				
@@ -493,7 +493,7 @@ namespace ALine
 				
 				if ( io::file_exists( absolute_path ) )
 				{
-					mySources.push_back( absolute_path );
+					its_source_file_pathnames.push_back( absolute_path );
 					
 					continue;
 				}
@@ -507,7 +507,7 @@ namespace ALine
 		
 		if ( sourceFileSearchDirs.empty() )
 		{
-			sourceFileSearchDirs = itsSearchDirs;
+			sourceFileSearchDirs = its_search_dir_pathnames;
 		}
 		
 		// We have filenames -- now, find them
@@ -519,7 +519,7 @@ namespace ALine
 			{
 				const std::string& sourceName = *it;
 				
-				mySources.push_back( FindSourceFileInDirs( sourceName, itsSearchDirs ) );
+				its_source_file_pathnames.push_back( FindSourceFileInDirs( sourceName, its_search_dir_pathnames ) );
 			}
 		}
 		else
@@ -547,13 +547,13 @@ namespace ALine
 			}
 			
 			// FIXME:  Doesn't deal with duplicates
-			std::swap( mySources, sources );
+			std::swap( its_source_file_pathnames, sources );
 		}
 		
 		// Locate resources
 		try
 		{
-			std::vector< std::string > rezFiles = DeepFiles( projFolderPath / "Resources" );
+			std::vector< std::string > rezFiles = DeepFiles( its_dir_pathname / "Resources" );
 			
 			std::for_each
 			(
