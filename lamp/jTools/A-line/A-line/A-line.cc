@@ -415,7 +415,7 @@ namespace ALine
 		}
 		else
 		{
-			boost::shared_ptr< Job > job_ptr( new Job( GetProject( projName ), targetInfo ) );
+			boost::shared_ptr< Job > job_ptr( new Job( GetProject( projName, targetInfo.platform ), targetInfo ) );
 			
 			Job& job = *( subMap[ projName ] = job_ptr );
 			
@@ -588,7 +588,8 @@ int O::Main( int argc, argv_t argv )
 		
 		try
 		{
-			Project& project = GetProject( proj );
+			Project& project = GetProject( proj, targetPlatform );
+			
 			BuildTarget( project, MakeTargetInfo( project, buildVariety ) );
 		}
 		catch ( const CD::NoSuchProject& )

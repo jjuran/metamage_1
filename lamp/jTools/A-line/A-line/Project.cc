@@ -185,7 +185,7 @@ namespace ALine
 		return productNotBuilt;
 	}
 	
-	Project::Project( const std::string& proj )
+	Project::Project( const std::string& proj, Platform platform )
 	:
 		its_name  ( proj ),
 		its_dir_pathname( CD::GetProjectConfig( proj, Options().platform ).get_project_dir() ),
@@ -227,14 +227,14 @@ namespace ALine
 			{
 				try
 				{
-					GetProject( *it );  // Recursively creates projects
+					GetProject( *it, platform );  // Recursively creates projects
 				}
 				catch ( CD::NoSuchProject )
 				{
 					throw NoSuchUsedProject( its_name, *it );
 				}
 				
-				Project& used = GetProject( *it );
+				Project& used = GetProject( *it, platform );
 				
 				// Find out which projects it uses
 				const std::vector< std::string >& subUsed = used.AllUsedProjects();

@@ -48,7 +48,7 @@ namespace ALine
 			std::vector< std::string > its_tool_source_filenames;
 		
 		public:
-			Project( const std::string& name );
+			Project( const std::string& name, Platform platform );
 			
 			const std::string& Name         () const  { return its_name;             }
 			const std::string& ProgramName  () const  { return its_program_filename; }

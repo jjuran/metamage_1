@@ -87,7 +87,7 @@ namespace ALine
 	
 	void IncludeDirGatherer::operator()( const std::string& project_name )
 	{
-		const Project& project = GetProject( project_name );
+		const Project& project = GetProject( project_name, its_options.Target().platform );
 		
 		if ( project.Product() == productNotBuilt )
 		{
@@ -213,7 +213,7 @@ namespace ALine
 			{
 				std::string source_filename = io::get_filename_string( its_source_pathname );
 				
-				UpdateInputStamp( RecursivelyLatestDate( source_filename, its_source_pathname ) );
+				UpdateInputStamp( RecursivelyLatestDate( source_filename, its_source_pathname, its_options.Target().platform ) );
 				
 				if ( MoreRecent( output_stamp ) )
 				{
@@ -246,9 +246,9 @@ namespace ALine
 		return precompiled_header_dir_pathname / precompiled_header_image_filename;
 	}
 	
-	static bool ProjectHasPrecompiledHeader( const std::string& project_name )
+	static bool ProjectHasPrecompiledHeader( const std::string& project_name, Platform platform )
 	{
-		return GetProject( project_name ).HasPrecompiledHeader();
+		return GetProject( project_name, platform ).HasPrecompiledHeader();
 	}
 	
 	#define DEFINE_MACRO_VALUE( macro, value )  AddDefinedMacro( "-D" macro "=" #value )
@@ -300,7 +300,7 @@ namespace ALine
 	}
 	
 	
-	static const Project* ProjectProvidingPrecompiledHeader( const Project& project )
+	static const Project* ProjectProvidingPrecompiledHeader( const Project& project, Platform platform )
 	{
 		const Project* result = NULL;
 		
@@ -315,11 +315,12 @@ namespace ALine
 			
 			const_iterator it = std::find_if( project.AllUsedProjects().begin(),
 			                                  project.AllUsedProjects().end(),
-			                                  std::ptr_fun( ProjectHasPrecompiledHeader ) );
+			                                  std::bind2nd( more::ptr_fun( ProjectHasPrecompiledHeader ),
+			                                                platform ) );
 			
 			if ( it != project.AllUsedProjects().end() )
 			{
-				result = &GetProject( *it );
+				result = &GetProject( *it, platform );
 			}
 		}
 		
@@ -383,7 +384,7 @@ namespace ALine
 		// In case we have a toolkit with no common sources?
 		precompile_task->AddDependent( source_dependency );
 		
-		const Project* project_providing_precompiled_header = ProjectProvidingPrecompiledHeader( project );
+		const Project* project_providing_precompiled_header = ProjectProvidingPrecompiledHeader( project, target_info.platform );
 		
 		if ( project_providing_precompiled_header != NULL )
 		{
@@ -407,7 +408,7 @@ namespace ALine
 			if ( project.HasPrecompiledHeader() )
 			{
 				// Locate the precompiled header image file.
-				std::string precompiled_header_source_pathname = FindInclude( precompiled_header_source_path );
+				std::string precompiled_header_source_pathname = FindInclude( precompiled_header_source_path, target_info.platform );
 				
 				if ( precompiled_header_source_pathname.empty() )
 				{

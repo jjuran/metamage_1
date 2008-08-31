@@ -51,7 +51,7 @@ namespace ALine
 	static DateMap gDates;
 	
 	
-	Project& GetProject( const std::string& projName )
+	Project& GetProject( const std::string& projName, Platform platform )
 	{
 		ProjectMap::iterator it = gProjects.find( projName );
 		
@@ -62,13 +62,15 @@ namespace ALine
 		}
 		
 		// Load it
-		boost::shared_ptr< Project > newProject( new Project( projName ) );
+		boost::shared_ptr< Project > newProject( new Project( projName, platform ) );
+		
 		Project& project = *( gProjects[ projName ] = newProject );
 		
 		project.Study();
 		
 		return project;
 	}
+	
 	
 	void AddIncludeDir( const std::string& projName )
 	{
@@ -86,7 +88,7 @@ namespace ALine
 		gRezzes[ io::get_filename_string( file ) ] = file;
 	}
 	
-	std::string FindInclude( const std::string& includePath )
+	std::string FindInclude( const std::string& includePath, Platform platform )
 	{
 		ProjectSet::const_iterator it, end = gProjectsWithIncludeDirs.end();
 		
@@ -96,7 +98,7 @@ namespace ALine
 			const std::string& name = *it;
 			
 			// Check to see if it has the include file.
-			std::string path = GetProject( name ).FindInclude( includePath );
+			std::string path = GetProject( name, platform ).FindInclude( includePath );
 			
 			if ( !path.empty() )
 			{
@@ -107,7 +109,7 @@ namespace ALine
 		return "";
 	}
 	
-	time_t RecursivelyLatestDate( const std::string& includePath )
+	time_t RecursivelyLatestDate( const std::string& includePath, Platform platform )
 	{
 		DateMap::const_iterator it = gDates.find( includePath );
 		
@@ -119,7 +121,7 @@ namespace ALine
 		else
 		{
 			// Not stored yet
-			std::string path = FindInclude( includePath );
+			std::string path = FindInclude( includePath, platform );
 			
 			if ( path.empty() )
 			{
@@ -135,7 +137,7 @@ namespace ALine
 				return 0;  // FIXME
 			}
 			
-			return RecursivelyLatestDate( includePath, path );
+			return RecursivelyLatestDate( includePath, path, platform );
 		}
 	}
 	
@@ -166,7 +168,9 @@ namespace ALine
 	}
 	*/
 	
-	time_t RecursivelyLatestDate( const std::string& includePath, const std::string& pathname )
+	time_t RecursivelyLatestDate( const std::string&  includePath,
+	                              const std::string&  pathname,
+	                              Platform            platform )
 	{
 		const std::vector< std::string >& includes = GetIncludes( pathname ).user;
 		
@@ -177,7 +181,8 @@ namespace ALine
 		
 		for ( it = includes.begin();  it != end;  ++it )
 		{
-			time_t incDate = RecursivelyLatestDate( *it );
+			time_t incDate = RecursivelyLatestDate( *it, platform );
+			
 			modDate = std::max( modDate, incDate );
 		}
 		

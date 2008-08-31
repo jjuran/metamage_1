@@ -62,7 +62,7 @@ namespace ALine
 	}
 	
 	
-	static void AddProjectImports( const Project& project, std::vector< std::string >& link_input_arguments )
+	static void AddProjectImports( const Project& project, Platform platform, std::vector< std::string >& link_input_arguments )
 	{
 		const std::vector< std::string >& used_project_names = project.AllUsedProjects();
 		
@@ -70,7 +70,7 @@ namespace ALine
 		
 		for ( Iter the_name = used_project_names.begin();  the_name != used_project_names.end();  ++the_name )
 		{
-			const Project& used_project = GetProject( *the_name );
+			const Project& used_project = GetProject( *the_name, platform );
 			
 			const std::vector< std::string >& library_imports = used_project.LibImports();
 			
@@ -120,12 +120,13 @@ namespace ALine
 		return project.Product() == productStaticLib;
 	}
 	
-	static void RemoveNonLibs( std::vector< std::string >& usedProjects )
+	static void RemoveNonLibs( std::vector< std::string >& usedProjects, Platform platform )
 	{
 		usedProjects.resize( std::remove_if( usedProjects.begin(),
 		                                     usedProjects.end(),
 		                                     more::compose1( std::not1( more::ptr_fun( ProjectBuildsLib ) ),
-		                                                     more::ptr_fun( GetProject ) ) ) - usedProjects.begin() );
+		                                                     std::bind2nd( more::ptr_fun( GetProject ),
+		                                                                   platform ) ) ) - usedProjects.begin() );
 	}
 	
 	static std::string DirCreate_Idempotent( const std::string& dir )
@@ -641,7 +642,7 @@ namespace ALine
 		
 		usedProjects.pop_back();  // we're last; drop us
 		
-		RemoveNonLibs( usedProjects );
+		RemoveNonLibs( usedProjects, targetInfo.platform );
 		
 		std::string libsDirOption;
 		
@@ -659,7 +660,7 @@ namespace ALine
 		// FIXME:  This is a hack
 		if ( lamp )
 		{
-			AddProjectImports( project, link_input_arguments );
+			AddProjectImports( project, targetInfo.platform, link_input_arguments );
 		}
 		
 		const bool machO = real_unix && targetInfo.platform & CD::runtimeMachO;
