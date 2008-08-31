@@ -49,37 +49,42 @@ namespace CompileDriver
 		return projectDemands.Test( target );
 	}
 	
-	const ProjectConfig& GetProjectConfig( const std::string& name, Platform targetPlatform )
+	static const ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
 	{
-		ProjectCatalog::const_iterator itProject = gProjectCatalog.find( name );
+		ProjectCatalog::const_iterator it = gProjectCatalog.find( project_name );
 		
-		if ( itProject == gProjectCatalog.end() )
+		if ( it == gProjectCatalog.end() )
 		{
 			RecursivelyAddPendingSubprojects();
 			
-			itProject = gProjectCatalog.find( name );
+			it = gProjectCatalog.find( project_name );
 			
-			if ( itProject == gProjectCatalog.end() )
+			if ( it == gProjectCatalog.end() )
 			{
-				throw NoSuchProject( name );
+				throw NoSuchProject( project_name );
 			}
 		}
 		
-		const ProjectConfigCandidates& candidates = itProject->second;
+		return it->second;
+	}
+	
+	const ProjectConfig& GetProjectConfig( const std::string& name, Platform targetPlatform )
+	{
+		const ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
-		const ProjectConfigCandidates::const_iterator itCandidate = std::find_if( candidates.begin(),
-		                                                                          candidates.end(),
-		                                                                          std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
-		                                                                                        targetPlatform ) );
+		const ProjectConfigCandidates::const_iterator it = std::find_if( candidates.begin(),
+		                                                                 candidates.end(),
+		                                                                 std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
+		                                                                               targetPlatform ) );
 		
-		if ( itCandidate == candidates.end() )
+		if ( it == candidates.end() )
 		{
 			// FIXME:  Indicate that there are projects with this name,
 			// but that they're not compatible with the current target
 			throw NoSuchProject( name );
 		}
 		
-		return itCandidate->second;
+		return it->second;
 	}
 	
 	void ScanDirForProjects( const std::string&                                       dirPath,
