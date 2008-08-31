@@ -539,7 +539,7 @@ namespace ALine
 		
 		std::string library_pathname;
 		
-		TaskPtr base_task;
+		TaskPtr lib_task;
 		
 		if ( hasStaticLib )
 		{
@@ -547,17 +547,13 @@ namespace ALine
 			
 			library_pathname = libsDir / library_filename;
 			
-			base_task = MakeStaticLibTask( library_pathname,
-			                               objectFiles.begin() + n_tools,
-			                               objectFiles.end(),
-			                               diagnosticsDir );
+			lib_task = MakeStaticLibTask( library_pathname,
+			                              objectFiles.begin() + n_tools,
+			                              objectFiles.end(),
+			                              diagnosticsDir );
+			
+			source_dependency->AddDependent( lib_task );
 		}
-		else
-		{
-			base_task.reset( new NullTask() );
-		}
-		
-		source_dependency->AddDependent( base_task );
 		
 		if ( project.Product() == productStaticLib )
 		{
@@ -619,24 +615,26 @@ namespace ALine
 		
 		const bool toolkit = n_tools > 0;
 		
+		TaskPtr link_dependency_task( new NullTask() );
+		
 		std::vector< std::string > link_input_arguments;
 		
 		if ( toolkit )
 		{
+			lib_task->AddDependent( link_dependency_task );
+			
 			link_input_arguments.push_back( "" );  // the tool .o file, later
 			
 			link_input_arguments.push_back( library_pathname );  // the static library
 		}
 		else
 		{
+			source_dependency->AddDependent( link_dependency_task );
+			
 			link_input_arguments.insert( link_input_arguments.begin(),
 			                             objectFiles.begin(),
 			                             objectFiles.end() );
 		}
-		
-		TaskPtr link_dependency_task( new NullTask() );
-		
-		base_task->AddDependent( link_dependency_task );
 		
 		// A copy so we can munge it
 		std::vector< std::string > usedProjects = project.AllUsedProjects();
