@@ -14,9 +14,6 @@
 // POSIX
 #include "unistd.h"
 
-// Boost
-#include <boost/shared_ptr.hpp>
-
 // POSeven
 #include "POSeven/Pathnames.hh"
 
@@ -33,8 +30,6 @@ namespace ALine
 	using namespace io::path_descent_operators;
 	
 	
-	typedef std::map< std::string, boost::shared_ptr< Project > > ProjectMap;
-	
 	typedef std::set< std::string > ProjectSet;
 	
 	// maps filenames to pathnames
@@ -46,7 +41,6 @@ namespace ALine
 	// maps (search-dir-relative) include paths to modification dates
 	typedef std::map< std::string, time_t > DateMap;
 	
-	static ProjectMap gProjects;
 	static ProjectSet gProjectsWithIncludeDirs;
 	static FileMap gRezzes;
 	static DateMap gDates;
