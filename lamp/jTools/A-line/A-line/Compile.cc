@@ -81,8 +81,8 @@ namespace ALine
 			IncludeDirGatherer( CompilerOptions& options ) : its_options( options )
 			{
 			}
-				
-			void operator()( const std::string& projName );
+			
+			void operator()( const std::string& project_name );
 	};
 	
 	void IncludeDirGatherer::operator()( const std::string& project_name )
