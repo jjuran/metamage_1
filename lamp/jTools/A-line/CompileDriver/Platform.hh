@@ -277,5 +277,12 @@ namespace CompileDriver
 	
 }
 
+namespace ALine
+{
+	
+	using namespace CompileDriver;  // End the madness
+	
+}
+
 #endif
 
