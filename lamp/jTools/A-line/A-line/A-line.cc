@@ -479,9 +479,9 @@ namespace ALine
 		}
 	}
 	
-	static TargetInfo MakeTargetInfo( const Project& project, BuildVariety build )
+	static TargetInfo MakeTargetInfo( const Project& project, Platform platform, BuildVariety build )
 	{
-		TargetInfo targetInfo( gOptions.platform, build );
+		TargetInfo targetInfo( platform, build );
 		
 		//targetInfo.DeduceFromProduct( project.Product() );
 		//targetInfo.ApplyOptions( gOptions.target );
@@ -590,7 +590,7 @@ int O::Main( int argc, argv_t argv )
 		{
 			Project& project = GetProject( proj, targetPlatform );
 			
-			BuildTarget( project, MakeTargetInfo( project, buildVariety ) );
+			BuildTarget( project, MakeTargetInfo( project, targetPlatform, buildVariety ) );
 		}
 		catch ( const CD::NoSuchProject& )
 		{
