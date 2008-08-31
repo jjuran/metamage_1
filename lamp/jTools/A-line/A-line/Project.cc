@@ -312,11 +312,11 @@ namespace ALine
 			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
 		
-		its_source_paths = config[ "sources"    ];  // Sources to compile.
-		its_lib_import_specs      = config[ "imports"    ];  // Libraries to import.
-		its_framework_names   = config[ "frameworks" ];  // Frameworks to include when building for OS X.
-		its_rsrc_filenames      = config[ "rsrc"       ];  // Resource files from which to copy resources.
-		its_rez_filenames       = config[ "rez"        ];  // Rez files to compile.
+		its_source_paths     = config[ "sources"    ];  // Sources to compile.
+		its_lib_import_specs = config[ "imports"    ];  // Libraries to import.
+		its_framework_names  = config[ "frameworks" ];  // Frameworks to include when building for OS X.
+		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
+		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
 	}
 	
 	static bool IsCompilableExtension( const std::string& ext )
