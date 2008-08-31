@@ -34,7 +34,8 @@ namespace ALine
 			bool                        it_has_precompiled_header_source;
 		
 		public:
-			CompilerOptions( std::string name, const TargetInfo& its_target_info );
+			CompilerOptions( const std::string&  name,
+			                 const TargetInfo&   its_target_info );
 			
 			const std::string& Name() const  { return its_project_name; }
 			const TargetInfo& Target() const  { return its_target_info; }
