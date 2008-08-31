@@ -770,7 +770,7 @@ namespace ALine
 			
 			if ( ALINE_MAC_DEVELOPMENT )
 			{
-				std::vector< std::string > rsrc_filenames = project.UsedRsrcFiles();
+				const std::vector< std::string >& rsrc_filenames = project.UsedRsrcFiles();
 				
 				std::vector< std::string > rsrc_pathnames( rsrc_filenames.size() );
 				
