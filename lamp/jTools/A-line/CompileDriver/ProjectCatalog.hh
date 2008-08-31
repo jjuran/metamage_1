@@ -22,19 +22,29 @@ namespace CompileDriver
 	
 	struct ProjectConfig
 	{
-		std::string  itsPathname;
-		std::string  itsProjectFolder;
-		ConfData     itsConfigData;
+		private:
+			std::string  its_pathname;
+			std::string  its_project_dir;  // pathname
+			ConfData     its_config_data;
 		
-		ProjectConfig()  {}
-		
-		ProjectConfig( const std::string&  pathname,
-		               const std::string&  folder,
-		               const ConfData&     data ) : itsPathname     ( pathname ),
-		                                            itsProjectFolder( folder   ),
-		                                            itsConfigData   ( data     )
-		{
-		}
+		public:
+			ProjectConfig()
+			{
+			}
+			
+			ProjectConfig( const std::string&  pathname,
+			               const std::string&  project_dir,
+			               const ConfData&     data ) : its_pathname   ( pathname    ),
+			                                            its_project_dir( project_dir ),
+			                                            its_config_data( data        )
+			{
+			}
+			
+			const std::string& get_pathname() const  { return its_pathname; }
+			
+			const std::string& get_project_dir() const  { return its_project_dir; }
+			
+			const ConfData& get_config_data() const  { return its_config_data; }
 	};
 	
 	// A map from platform requirements to project config data

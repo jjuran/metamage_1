@@ -188,10 +188,10 @@ namespace ALine
 	Project::Project( const std::string& proj )
 	:
 		its_name  ( proj ),
-		its_dir_pathname( CD::GetProjectConfig( proj, Options().platform ).itsProjectFolder ),
+		its_dir_pathname( CD::GetProjectConfig( proj, Options().platform ).get_project_dir() ),
 		its_product_type   ( productNotBuilt )
 	{
-		CD::ConfData config = CD::GetProjectConfig( its_name, Options().platform ).itsConfigData;
+		CD::ConfData config = CD::GetProjectConfig( its_name, Options().platform ).get_config_data();
 		
 		//if ( config.size() > 0 )
 		{
