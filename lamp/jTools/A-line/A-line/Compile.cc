@@ -356,8 +356,8 @@ namespace ALine
 	
 	void CompileSources( const Project&           project,
 	                     const TargetInfo&        targetInfo,
-	                     const TaskPtr&           source_dependency,
 	                     const TaskPtr&           project_base_task,
+	                     const TaskPtr&           source_dependency,
 	                     std::vector< TaskPtr >&  tool_dependencies )
 	{
 		CompilerOptions options( project.Name(), targetInfo );
