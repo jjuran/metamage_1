@@ -24,19 +24,5 @@ namespace ALine
 		std::string used;
 	};
 	
-	/*
-	struct BadSourceAlias
-	{
-		BadSourceAlias( const Project& proj, const FSSpec& alias ) 
-		:
-			proj ( proj ), 
-			alias( alias )
-		{}
-		
-		const Project& proj;
-		FSSpec alias;
-	};
-	*/
-	
 }
 
