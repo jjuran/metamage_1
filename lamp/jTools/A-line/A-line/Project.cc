@@ -185,13 +185,16 @@ namespace ALine
 		return productNotBuilt;
 	}
 	
-	Project::Project( const std::string& proj, Platform platform )
+	Project::Project( const std::string&  proj,
+	                  Platform            platform,
+	                  const std::string&  project_dir,
+	                  const ConfData&     conf_data )
 	:
 		its_name  ( proj ),
-		its_dir_pathname( CD::GetProjectConfig( proj, platform ).get_project_dir() ),
+		its_dir_pathname( project_dir ),
 		its_product_type   ( productNotBuilt )
 	{
-		CD::ConfData config = CD::GetProjectConfig( its_name, platform ).get_config_data();
+		CD::ConfData config = conf_data;
 		
 		//if ( config.size() > 0 )
 		{

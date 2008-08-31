@@ -21,6 +21,9 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
+// A-line
+#include "A-line/Project.hh"
+
 
 namespace CompileDriver
 {
@@ -49,9 +52,9 @@ namespace CompileDriver
 		return projectDemands.Test( target );
 	}
 	
-	static const ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
+	static ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
 	{
-		ProjectCatalog::const_iterator it = gProjectCatalog.find( project_name );
+		ProjectCatalog::iterator it = gProjectCatalog.find( project_name );
 		
 		if ( it == gProjectCatalog.end() )
 		{
@@ -70,12 +73,12 @@ namespace CompileDriver
 	
 	const ProjectConfig& GetProjectConfig( const std::string& name, Platform targetPlatform )
 	{
-		const ProjectConfigCandidates& candidates = find_project_config_candidates( name );
+		ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
-		const ProjectConfigCandidates::const_iterator it = std::find_if( candidates.begin(),
-		                                                                 candidates.end(),
-		                                                                 std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
-		                                                                               targetPlatform ) );
+		ProjectConfigCandidates::iterator it = std::find_if( candidates.begin(),
+		                                                     candidates.end(),
+		                                                     std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
+		                                                                   targetPlatform ) );
 		
 		if ( it == candidates.end() )
 		{
@@ -84,7 +87,21 @@ namespace CompileDriver
 			throw NoSuchProject( name );
 		}
 		
-		return it->second;
+		ProjectConfig& result = it->second;
+		
+		if ( result.get_refined_data() == NULL )
+		{
+			boost::shared_ptr< Project > new_project( new Project( name,
+			                                                       targetPlatform,
+			                                                       result.get_project_dir(),
+			                                                       result.get_config_data() ) );
+			
+			result.set_refined_data( new_project );
+			
+			new_project->Study();
+		}
+		
+		return result;
 	}
 	
 	void ScanDirForProjects( const std::string&                                       dirPath,

@@ -12,13 +12,26 @@
 #include <string>
 #include <vector>
 
+// Boost
+#include <boost/shared_ptr.hpp>
+
 // A-line
 #include "CompileDriver/Platform.hh"
 #include "CompileDriver/ProjectConfig.hh"
 
 
+namespace ALine
+{
+	
+	class Project;
+	
+}
+
 namespace CompileDriver
 {
+	
+	using ALine::Project;
+	
 	
 	struct ProjectConfig
 	{
@@ -26,6 +39,8 @@ namespace CompileDriver
 			std::string  its_pathname;
 			std::string  its_project_dir;  // pathname
 			ConfData     its_config_data;
+			
+			boost::shared_ptr< Project > its_refined_data;
 		
 		public:
 			ProjectConfig()
@@ -45,6 +60,10 @@ namespace CompileDriver
 			const std::string& get_project_dir() const  { return its_project_dir; }
 			
 			const ConfData& get_config_data() const  { return its_config_data; }
+			
+			const boost::shared_ptr< Project >& get_refined_data() const  { return its_refined_data; }
+			
+			void set_refined_data( const boost::shared_ptr< Project >& project )  { its_refined_data = project; }
 	};
 	
 	// A map from platform requirements to project config data

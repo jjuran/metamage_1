@@ -24,6 +24,7 @@
 #include "A-line/BuildCommon.hh"
 #include "A-line/Includes.hh"
 #include "A-line/Project.hh"
+#include "CompileDriver/ProjectCatalog.hh"
 
 
 namespace ALine
@@ -51,24 +52,9 @@ namespace ALine
 	static DateMap gDates;
 	
 	
-	Project& GetProject( const std::string& projName, Platform platform )
+	Project& GetProject( const std::string& project_name, Platform platform )
 	{
-		ProjectMap::iterator it = gProjects.find( projName );
-		
-		if ( it != gProjects.end() )
-		{
-			// We already have it
-			return *it->second;
-		}
-		
-		// Load it
-		boost::shared_ptr< Project > newProject( new Project( projName, platform ) );
-		
-		Project& project = *( gProjects[ projName ] = newProject );
-		
-		project.Study();
-		
-		return project;
+		return *GetProjectConfig( project_name, platform ).get_refined_data();
 	}
 	
 	

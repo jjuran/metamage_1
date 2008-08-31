@@ -12,6 +12,7 @@
 
 // A-line
 #include "A-line/TargetInfo.hh"
+#include "CompileDriver/ProjectConfig.hh"
 
 
 namespace ALine
@@ -48,7 +49,10 @@ namespace ALine
 			std::vector< std::string > its_tool_source_filenames;
 		
 		public:
-			Project( const std::string& name, Platform platform );
+			Project( const std::string&  name,
+			         Platform            platform,
+			         const std::string&  project_dir,
+			         const ConfData&     conf_data );
 			
 			const std::string& Name         () const  { return its_name;             }
 			const std::string& ProgramName  () const  { return its_program_filename; }
