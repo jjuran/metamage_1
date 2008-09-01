@@ -322,7 +322,7 @@ namespace ALine
 		
 		if ( needsCarbResource )
 		{
-			input_pathnames.push_back( project.FindResourceFile( "CarbonApp.r" ) );
+			input_pathnames.push_back( project.FindResourceFile( "Pedestal:CarbonApp.r" ) );
 		}
 		
 		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
