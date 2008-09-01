@@ -8,7 +8,6 @@
 // C++
 #include <algorithm>
 #include <map>
-#include <set>
 #include <vector>
 
 // A-line
@@ -64,33 +63,6 @@ namespace ALine
 			return RecursivelyLatestDate( project, includePath, path );
 		}
 	}
-	
-	/*
-	static void FixNullFileType( const FSSpec& file )
-	{
-	#if !TARGET_API_MAC_CARBON  // FIXME:  This is a hack -- check Gestalt
-		
-		CInfoPBRec pb;
-		
-		N::FSpGetCatInfo( file, pb );
-		
-		FInfo& fInfo = pb.hFileInfo.ioFlFndrInfo;
-		
-		if ( fInfo.fdType == ::OSType( 0 ) )
-		{
-			fInfo.fdCreator = 'R*ch';  // FIXME:  Should be configurable
-			fInfo.fdType    = 'TEXT';
-			
-			pb.hFileInfo.ioDirID   = file.parID;
-			pb.hFileInfo.ioNamePtr = const_cast< FSSpec& >( file ).name;
-			
-			//N::FSpSetFileInfo( pb );
-			N::ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
-		}
-		
-	#endif
-	}
-	*/
 	
 	time_t RecursivelyLatestDate( const Project&      project,
 	                              const std::string&  includePath,
