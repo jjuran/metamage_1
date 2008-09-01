@@ -146,6 +146,9 @@ namespace ALine
 		                               its_name.c_str(),             filespec.c_str() );
 		
 		p7::throw_errno( ENOENT );
+		
+		// Not reached
+		return "";
 	}
 	
 	static std::string First( const std::vector< std::string >& v )
