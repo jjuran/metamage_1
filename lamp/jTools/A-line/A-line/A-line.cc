@@ -382,16 +382,6 @@ namespace ALine
 			LinkProduct   ( project, info, project_base_task, source_dependency, tool_dependencies );
 			
 			AddReadyTask( project_base_task );
-			
-			project_base_task.reset();
-			source_dependency.reset();
-			
-			tool_dependencies.clear();
-			
-			while ( RunNextTask() )
-			{
-				continue;
-			}
 		}
 		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
@@ -420,6 +410,11 @@ namespace ALine
 			Job& job = *( subMap[ projName ] = job_ptr );
 			
 			job.Build();
+			
+			while ( RunNextTask() )
+			{
+				continue;
+			}
 			
 			return job;
 		}
