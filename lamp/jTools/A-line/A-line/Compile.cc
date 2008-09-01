@@ -408,7 +408,7 @@ namespace ALine
 			if ( project.HasPrecompiledHeader() )
 			{
 				// Locate the precompiled header image file.
-				std::string precompiled_header_source_pathname = FindInclude( precompiled_header_source_path, target_info.platform );
+				std::string precompiled_header_source_pathname = project.FindIncludeRecursively( precompiled_header_source_path );
 				
 				if ( precompiled_header_source_pathname.empty() )
 				{
