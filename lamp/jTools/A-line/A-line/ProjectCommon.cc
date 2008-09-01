@@ -20,12 +20,6 @@
 namespace ALine
 {
 	
-	// maps (search-dir-relative) include paths to modification dates
-	typedef std::map< std::string, time_t > DateMap;
-	
-	static DateMap gDates;
-	
-	
 	Project& GetProject( const std::string& project_name, Platform platform )
 	{
 		return *GetProjectConfig( project_name, platform ).get_refined_data();
@@ -34,9 +28,9 @@ namespace ALine
 	
 	time_t Project::RecursivelyLatestDate( const std::string& includePath ) const
 	{
-		DateMap::const_iterator it = gDates.find( includePath );
+		DateMap::const_iterator it = its_dates.find( includePath );
 		
-		if ( it != gDates.end() )
+		if ( it != its_dates.end() )
 		{
 			// Already stored
 			return it->second;
@@ -81,7 +75,7 @@ namespace ALine
 			modDate = std::max( modDate, incDate );
 		}
 		
-		gDates[ includePath ] = modDate;
+		its_dates[ includePath ] = modDate;
 		
 		return modDate;
 	}

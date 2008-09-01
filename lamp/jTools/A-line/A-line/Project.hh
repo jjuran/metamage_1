@@ -21,6 +21,9 @@
 namespace ALine
 {
 	
+	// maps (search-dir-relative) include paths to modification dates
+	typedef std::map< std::string, time_t > DateMap;
+	
 	class Project
 	{
 		private:
@@ -51,6 +54,8 @@ namespace ALine
 			std::vector< std::string > its_source_file_pathnames;
 			// Tool source files.
 			std::vector< std::string > its_tool_source_filenames;
+			
+			mutable DateMap its_dates;
 		
 		public:
 			Project( const std::string&  name,
