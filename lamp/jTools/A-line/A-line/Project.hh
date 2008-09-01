@@ -23,6 +23,7 @@ namespace ALine
 		private:
 			// This project's name within the A-line system.
 			std::string its_name;
+			Platform its_platform;
 			// The name of the output file, if different from the project name.
 			std::string its_program_filename;
 			// The project's main folder.

@@ -191,6 +191,7 @@ namespace ALine
 	                  const ConfData&     conf_data )
 	:
 		its_name  ( proj ),
+		its_platform( platform ),
 		its_dir_pathname( project_dir ),
 		its_product_type   ( productNotBuilt )
 	{
