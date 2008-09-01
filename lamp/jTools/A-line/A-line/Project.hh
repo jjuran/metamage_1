@@ -82,7 +82,8 @@ namespace ALine
 			
 			void Study();
 			
-			std::string FindInclude( const std::string& includePath );
+			std::string FindInclude           ( const std::string& include_path ) const;
+			std::string FindIncludeRecursively( const std::string& include_path ) const;
 			
 			std::string FindResourceFile( const std::string& filename ) const;
 	};
