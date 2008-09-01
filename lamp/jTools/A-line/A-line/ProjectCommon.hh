@@ -23,10 +23,6 @@ namespace ALine
 	
 	Project& GetProject( const std::string& project_name, Platform platform );
 	
-	void AddIncludeDir( const std::string& projName );
-	
-	std::string FindInclude( const std::string& includePath, Platform platform );
-	
 	time_t RecursivelyLatestDate( const Project& project, const std::string& includePath );
 	
 	time_t RecursivelyLatestDate( const Project&      project,

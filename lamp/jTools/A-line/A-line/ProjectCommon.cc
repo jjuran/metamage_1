@@ -11,13 +11,6 @@
 #include <set>
 #include <vector>
 
-// POSIX
-#include "unistd.h"
-
-// POSeven
-#include "POSeven/Errno.hh"
-#include "POSeven/Pathnames.hh"
-
 // A-line
 #include "A-line/BuildCommon.hh"
 #include "A-line/Includes.hh"
@@ -28,23 +21,9 @@
 namespace ALine
 {
 	
-	namespace p7 = poseven;
-	
-	using namespace io::path_descent_operators;
-	
-	
-	typedef std::set< std::string > ProjectSet;
-	
-	// maps filenames to pathnames
-	typedef std::map< std::string, std::string > FileMap;
-	
-	// maps (search-dir-relative) include paths to pathnames
-	typedef std::map< std::string, std::string > IncludeMap;
-	
 	// maps (search-dir-relative) include paths to modification dates
 	typedef std::map< std::string, time_t > DateMap;
 	
-	static ProjectSet gProjectsWithIncludeDirs;
 	static DateMap gDates;
 	
 	
@@ -53,33 +32,6 @@ namespace ALine
 		return *GetProjectConfig( project_name, platform ).get_refined_data();
 	}
 	
-	
-	void AddIncludeDir( const std::string& projName )
-	{
-		gProjectsWithIncludeDirs.insert( projName );
-	}
-	
-	
-	std::string FindInclude( const std::string& includePath, Platform platform )
-	{
-		ProjectSet::const_iterator it, end = gProjectsWithIncludeDirs.end();
-		
-		// For each project with an include folder,
-		for ( it = gProjectsWithIncludeDirs.begin();  it != end;  ++it )
-		{
-			const std::string& name = *it;
-			
-			// Check to see if it has the include file.
-			std::string path = GetProject( name, platform ).FindInclude( includePath );
-			
-			if ( !path.empty() )
-			{
-				return path;
-			}
-		}
-		
-		return "";
-	}
 	
 	time_t RecursivelyLatestDate( const Project& project, const std::string& includePath )
 	{

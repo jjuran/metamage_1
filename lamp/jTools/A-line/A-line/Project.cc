@@ -504,14 +504,6 @@ namespace ALine
 	
 	void Project::Study()
 	{
-		if ( its_product_type == productNotBuilt )
-		{
-			return;
-		}
-		
-		// Add the includes directory
-		AddIncludeDir( its_name );
-		
 		if ( !ProductGetsBuilt( its_product_type ) )
 		{
 			return;
