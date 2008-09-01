@@ -216,7 +216,7 @@ namespace ALine
 			{
 				std::string source_filename = io::get_filename_string( its_source_pathname );
 				
-				UpdateInputStamp( RecursivelyLatestDate( its_project, source_filename, its_source_pathname ) );
+				UpdateInputStamp( its_project.RecursivelyLatestDate( source_filename, its_source_pathname ) );
 				
 				if ( MoreRecent( output_stamp ) )
 				{

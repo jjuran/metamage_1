@@ -10,6 +10,9 @@
 #include <string>
 #include <vector>
 
+// Standard C
+#include <time.h>
+
 // A-line
 #include "A-line/TargetInfo.hh"
 #include "CompileDriver/ProjectConfig.hh"
@@ -84,6 +87,11 @@ namespace ALine
 			
 			std::string FindInclude           ( const std::string& include_path ) const;
 			std::string FindIncludeRecursively( const std::string& include_path ) const;
+			
+			time_t RecursivelyLatestDate( const std::string& include_path ) const;
+			
+			time_t RecursivelyLatestDate( const std::string&  include_path,
+			                              const std::string&  pathname ) const;
 			
 			std::string FindResourceFile( const std::string& filename ) const;
 	};

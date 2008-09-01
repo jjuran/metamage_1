@@ -32,7 +32,7 @@ namespace ALine
 	}
 	
 	
-	time_t RecursivelyLatestDate( const Project& project, const std::string& includePath )
+	time_t Project::RecursivelyLatestDate( const std::string& includePath ) const
 	{
 		DateMap::const_iterator it = gDates.find( includePath );
 		
@@ -44,7 +44,7 @@ namespace ALine
 		else
 		{
 			// Not stored yet
-			std::string path = project.FindIncludeRecursively( includePath );
+			std::string path = FindIncludeRecursively( includePath );
 			
 			if ( path.empty() )
 			{
@@ -60,13 +60,12 @@ namespace ALine
 				return 0;  // FIXME
 			}
 			
-			return RecursivelyLatestDate( project, includePath, path );
+			return RecursivelyLatestDate( includePath, path );
 		}
 	}
 	
-	time_t RecursivelyLatestDate( const Project&      project,
-	                              const std::string&  includePath,
-	                              const std::string&  pathname )
+	time_t Project::RecursivelyLatestDate( const std::string&  includePath,
+	                                       const std::string&  pathname ) const
 	{
 		const std::vector< std::string >& includes = GetIncludes( pathname ).user;
 		
@@ -77,7 +76,7 @@ namespace ALine
 		
 		for ( it = includes.begin();  it != end;  ++it )
 		{
-			time_t incDate = RecursivelyLatestDate( project, *it );
+			time_t incDate = RecursivelyLatestDate( *it );
 			
 			modDate = std::max( modDate, incDate );
 		}
