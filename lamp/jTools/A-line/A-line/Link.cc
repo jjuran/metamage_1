@@ -301,6 +301,11 @@ namespace ALine
 		RunCommand( rezCommand, NULL, "Rezzing: " + io::get_filename_string( OutputPath() ) );
 	}
 	
+	static std::string Project_FindResourceFile( const Project& project, const std::string& filespec )
+	{
+		return project.FindResourceFile( filespec );
+	}
+	
 	static TaskPtr MakeRezTask( const Project&      project,
 	                            const std::string&  output_pathname,
 	                            bool                needsCarbResource,
@@ -313,11 +318,11 @@ namespace ALine
 		std::transform( input_filenames.begin(),
 		                input_filenames.end(),
 		                input_pathnames.begin(),
-		                std::ptr_fun( RezLocation ) );
+		                std::bind1st( more::ptr_fun( &Project_FindResourceFile ), project ) );
 		
 		if ( needsCarbResource )
 		{
-			input_pathnames.push_back( RezLocation( "CarbonApp.r" ) );
+			input_pathnames.push_back( project.FindResourceFile( "CarbonApp.r" ) );
 		}
 		
 		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
@@ -778,7 +783,7 @@ namespace ALine
 				std::transform( rsrc_filenames.begin(), 
 				                rsrc_filenames.end(),
 				                rsrc_pathnames.begin(),
-				                std::ptr_fun( RezLocation ) );
+		                        std::bind1st( more::ptr_fun( &Project_FindResourceFile ), project ) );
 				
 				TaskPtr rez_task;
 				
