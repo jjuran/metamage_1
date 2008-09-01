@@ -115,6 +115,36 @@ namespace ALine
 		return "";
 	}
 	
+	std::string Project::FindResourceFile( const std::string& filespec ) const
+	{
+		if ( const char* colon = std::strchr( filespec.c_str(), ':' ) )
+		{
+			std::string project_name( filespec.c_str(), colon );
+			
+			const char* filename = colon + 1;
+			
+			return GetProject( project_name, its_platform ).FindResourceFile( filename );
+		}
+		
+		try
+		{
+			return FindIncludeInFolder( its_dir_pathname / "Resources", filespec );
+		}
+		catch ( ... )
+		{
+		}
+		
+		try
+		{
+			return FindIncludeInFolder( its_dir_pathname, filespec );
+		}
+		catch ( ... )
+		{
+		}
+		
+		return RezLocation( filespec );
+	}
+	
 	static std::string First( const std::vector< std::string >& v )
 	{
 		return ( v.size() > 0 ) ? v[ 0 ] : std::string();

@@ -83,6 +83,8 @@ namespace ALine
 			void Study();
 			
 			std::string FindInclude( const std::string& includePath );
+			
+			std::string FindResourceFile( const std::string& filename ) const;
 	};
 	
 }
