@@ -45,7 +45,6 @@ namespace ALine
 	typedef std::map< std::string, time_t > DateMap;
 	
 	static ProjectSet gProjectsWithIncludeDirs;
-	static FileMap gRezzes;
 	static DateMap gDates;
 	
 	
@@ -60,25 +59,6 @@ namespace ALine
 		gProjectsWithIncludeDirs.insert( projName );
 	}
 	
-	
-	std::string RezLocation( const std::string& filename )
-	{
-		FileMap::const_iterator it = gRezzes.find( filename );
-		
-		if ( it == gRezzes.end() )
-		{
-			std::fprintf( stderr, "A-line: can't find resource file '%s'\n", filename.c_str() );
-			
-			p7::throw_errno( ENOENT );
-		}
-		
-		return it->second;
-	}
-	
-	void AddRezFile( const std::string& file )
-	{
-		gRezzes[ io::get_filename_string( file ) ] = file;
-	}
 	
 	std::string FindInclude( const std::string& includePath, Platform platform )
 	{

@@ -25,11 +25,7 @@ namespace ALine
 	
 	void AddIncludeDir( const std::string& projName );
 	
-	std::string RezLocation( const std::string& filename );
-	
 	std::string FindInclude( const std::string& includePath, Platform platform );
-	
-	void AddRezFile( const std::string& file );
 	
 	time_t RecursivelyLatestDate( const std::string& includePath, Platform platform );
 	

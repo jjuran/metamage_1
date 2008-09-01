@@ -142,7 +142,10 @@ namespace ALine
 		{
 		}
 		
-		return RezLocation( filespec );
+		std::fprintf( stderr, "A-line: %s: can't find resource file '%s'\n",
+		                               its_name.c_str(),             filespec.c_str() );
+		
+		p7::throw_errno( ENOENT );
 	}
 	
 	static std::string First( const std::vector< std::string >& v )
@@ -583,24 +586,6 @@ namespace ALine
 			// FIXME:  Doesn't deal with duplicates
 			std::swap( its_source_file_pathnames, sources );
 		}
-		
-		// Locate resources
-		try
-		{
-			std::vector< std::string > rezFiles = DeepFiles( its_dir_pathname / "Resources" );
-			
-			std::for_each
-			(
-				rezFiles.begin(), 
-				rezFiles.end(), 
-				std::ptr_fun( AddRezFile )
-			);
-		}
-		catch ( ... )
-		{
-			
-		}
-		
 	}
 	
 }
