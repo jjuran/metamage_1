@@ -15,6 +15,7 @@
 #include "unistd.h"
 
 // POSeven
+#include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
 
 // A-line
@@ -26,6 +27,8 @@
 
 namespace ALine
 {
+	
+	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
 	
@@ -60,7 +63,16 @@ namespace ALine
 	
 	std::string RezLocation( const std::string& filename )
 	{
-		return gRezzes[ filename ];
+		FileMap::const_iterator it = gRezzes.find( filename );
+		
+		if ( it == gRezzes.end() )
+		{
+			std::fprintf( stderr, "A-line: can't find resource file '%s'\n", filename.c_str() );
+			
+			p7::throw_errno( ENOENT );
+		}
+		
+		return it->second;
 	}
 	
 	void AddRezFile( const std::string& file )
