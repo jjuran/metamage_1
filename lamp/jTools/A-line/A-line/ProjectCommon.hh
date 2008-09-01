@@ -27,11 +27,11 @@ namespace ALine
 	
 	std::string FindInclude( const std::string& includePath, Platform platform );
 	
-	time_t RecursivelyLatestDate( const std::string& includePath, Platform platform );
+	time_t RecursivelyLatestDate( const Project& project, const std::string& includePath );
 	
-	time_t RecursivelyLatestDate( const std::string&  includePath,
-	                              const std::string&  pathname,
-	                              Platform            platform );
+	time_t RecursivelyLatestDate( const Project&      project,
+	                              const std::string&  includePath,
+	                              const std::string&  pathname );
 	
 }
 

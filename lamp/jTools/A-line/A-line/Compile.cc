@@ -52,15 +52,18 @@ namespace ALine
 	class CompilingTask : public FileTask
 	{
 		private:
+			const Project&   its_project;
 			CompilerOptions  its_options;
 			std::string      its_source_pathname;
 			const char*      its_caption;
 		
 		public:
-			CompilingTask( const CompilerOptions&  options,
+			CompilingTask( const Project&          project,
+			               const CompilerOptions&  options,
 			               const std::string&      source,
 			               const std::string&      output,
 			               const char*             caption ) : FileTask           ( output ),
+			                                                   its_project        ( project ),
 			                                                   its_options        ( options ),
 			                                                   its_source_pathname( source  ),
 			                                                   its_caption        ( caption )
@@ -213,7 +216,7 @@ namespace ALine
 			{
 				std::string source_filename = io::get_filename_string( its_source_pathname );
 				
-				UpdateInputStamp( RecursivelyLatestDate( source_filename, its_source_pathname, its_options.Target().platform ) );
+				UpdateInputStamp( RecursivelyLatestDate( its_project, source_filename, its_source_pathname ) );
 				
 				if ( MoreRecent( output_stamp ) )
 				{
@@ -330,12 +333,15 @@ namespace ALine
 	class ToolTaskMaker
 	{
 		private:
+			const Project&          its_project;
 			const CompilerOptions&  its_options;
 			const TaskPtr&          its_precompile_task;
 		
 		public:
-			ToolTaskMaker( const CompilerOptions&  options,
-			               const TaskPtr&          precompile ) : its_options        ( options    ),
+			ToolTaskMaker( const Project&          project,
+			               const CompilerOptions&  options,
+			               const TaskPtr&          precompile ) : its_project        ( project    ),
+			                                                      its_options        ( options    ),
 			                                                      its_precompile_task( precompile )
 			{
 			}
@@ -348,7 +354,11 @@ namespace ALine
 				
 				source_options.AppendIncludeDir( io::get_preceding_directory( source_pathname ) );
 				
-				TaskPtr task( new CompilingTask( source_options, source_pathname, object_pathname, caption ) );
+				TaskPtr task( new CompilingTask( its_project,
+				                                 source_options,
+				                                 source_pathname,
+				                                 object_pathname,
+				                                 caption ) );
 				
 				its_precompile_task->AddDependent( task );
 				
@@ -415,7 +425,11 @@ namespace ALine
 					std::fprintf( stderr, "Missing precompiled header '%s'\n", precompiled_header_source_path.c_str() );
 				}
 				
-				precompile_task.reset( new CompilingTask( precompile_options, precompiled_header_source_pathname, pchImage, "Precompiling: " ) );
+				precompile_task.reset( new CompilingTask( project,
+				                                          precompile_options,
+				                                          precompiled_header_source_pathname,
+				                                          pchImage,
+				                                          "Precompiling: " ) );
 			}
 			else
 			{
@@ -445,7 +459,7 @@ namespace ALine
 		                sources.begin() + n_tools,
 		                object_paths.begin(),
 		                tool_dependencies.begin(),
-		                ToolTaskMaker( options, precompile_task ) );
+		                ToolTaskMaker( project, options, precompile_task ) );
 		
 		std::vector< std::string >::const_iterator the_source, the_object, end = sources.end();
 		
@@ -464,7 +478,7 @@ namespace ALine
 			
 			const char* caption = "Compiling: ";
 			
-			TaskPtr task( new CompilingTask( source_options, source_pathname, output_path, caption ) );
+			TaskPtr task( new CompilingTask( project, source_options, source_pathname, output_path, caption ) );
 			
 			precompile_task->AddDependent( task );
 			

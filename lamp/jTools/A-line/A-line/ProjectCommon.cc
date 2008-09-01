@@ -81,7 +81,7 @@ namespace ALine
 		return "";
 	}
 	
-	time_t RecursivelyLatestDate( const std::string& includePath, Platform platform )
+	time_t RecursivelyLatestDate( const Project& project, const std::string& includePath )
 	{
 		DateMap::const_iterator it = gDates.find( includePath );
 		
@@ -93,7 +93,7 @@ namespace ALine
 		else
 		{
 			// Not stored yet
-			std::string path = FindInclude( includePath, platform );
+			std::string path = project.FindIncludeRecursively( includePath );
 			
 			if ( path.empty() )
 			{
@@ -109,7 +109,7 @@ namespace ALine
 				return 0;  // FIXME
 			}
 			
-			return RecursivelyLatestDate( includePath, path, platform );
+			return RecursivelyLatestDate( project, includePath, path );
 		}
 	}
 	
@@ -140,9 +140,9 @@ namespace ALine
 	}
 	*/
 	
-	time_t RecursivelyLatestDate( const std::string&  includePath,
-	                              const std::string&  pathname,
-	                              Platform            platform )
+	time_t RecursivelyLatestDate( const Project&      project,
+	                              const std::string&  includePath,
+	                              const std::string&  pathname )
 	{
 		const std::vector< std::string >& includes = GetIncludes( pathname ).user;
 		
@@ -153,7 +153,7 @@ namespace ALine
 		
 		for ( it = includes.begin();  it != end;  ++it )
 		{
-			time_t incDate = RecursivelyLatestDate( *it, platform );
+			time_t incDate = RecursivelyLatestDate( project, *it );
 			
 			modDate = std::max( modDate, incDate );
 		}
