@@ -96,19 +96,19 @@ namespace ALine
 		return file;
 	}
 	
-	std::string Project::FindInclude( const std::string& includePath )
+	std::string Project::FindInclude( const std::string& include_path )
 	{
 		typedef std::vector< std::string >::const_iterator Iter;
 		
 		for ( Iter it = its_search_dir_pathnames.begin();  it != its_search_dir_pathnames.end();  ++it )
 		{
-			// FIXME:  Use a trapped function
-			try
+			const std::string& search_dir_pathname = *it;
+			
+			std::string include_pathname = search_dir_pathname / include_path;
+			
+			if ( io::file_exists( include_pathname ) )
 			{
-				return FindIncludeInFolder( *it, includePath );
-			}
-			catch ( ... )
-			{
+				return include_pathname;
 			}
 		}
 		
