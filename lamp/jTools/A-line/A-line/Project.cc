@@ -309,6 +309,31 @@ namespace ALine
 		return all_used_project_names;
 	}
 	
+	static std::vector< std::string > get_search_dir_pathnames( const std::vector< std::string >&  search_directives,
+	                                                            const std::string&                 project_dir_pathname )
+	{
+		std::vector< std::string > result;
+		
+		// If search folders are specified,
+		if ( search_directives.size() > 0 )
+		{
+			result.resize( search_directives.size() );
+			
+			// Find and record them.
+			std::transform( search_directives.begin(),
+			                search_directives.end(),
+			                result.begin(),
+			                std::bind1st( more::ptr_fun( FindSearchDir ),
+				                          project_dir_pathname ) );
+		}
+		else
+		{
+			result.push_back( ProjectSourcesPath( project_dir_pathname ) );
+		}
+		
+		return result;
+	}
+	
 	
 	Project::Project( const std::string&  proj,
 	                  Platform            platform,
@@ -335,30 +360,9 @@ namespace ALine
 			return;
 		}
 		
-		//if ( config.size() > 0 )
-		{
-			its_program_filename = First( config[ "program" ] );
-			
-			// Locate source files
-			const std::vector< std::string >& search = config[ "search" ];
-			
-			// If search folders are specified,
-			if ( search.size() > 0 )
-			{
-				its_search_dir_pathnames.resize( search.size() );
-				
-				// Find and record them.
-				std::transform( search.begin(),
-				                search.end(),
-				                its_search_dir_pathnames.begin(),
-				                std::bind1st( more::ptr_fun( FindSearchDir ),
-					                          its_dir_pathname ) );
-			}
-			else
-			{
-				its_search_dir_pathnames.push_back( ProjectSourcesPath( its_dir_pathname ) );
-			}
-		}
+		its_search_dir_pathnames = get_search_dir_pathnames( config[ "search" ], its_dir_pathname );
+		
+		its_program_filename = First( config[ "program" ] );
 		
 		its_tool_source_filenames = config[ "tools" ];
 		
