@@ -241,6 +241,74 @@ namespace ALine
 		return productNotBuilt;
 	}
 	
+	static std::vector< std::string > GetDirectlyUsedProjectsFromConfig( CD::ConfData& config )
+	{
+		// Figure out which projects we use
+		const std::vector< std::string >& moreUsedProjects = config[ "use" ];
+		
+		std::vector< std::string > usedProjects = config[ "uses" ];
+		
+		usedProjects.insert( usedProjects.end(),
+		                     moreUsedProjects.begin(),
+		                     moreUsedProjects.end() );
+		
+		return usedProjects;
+	}
+	
+	static Project& GetUsedProject( const std::string&  user_name,
+	                                const std::string&  used_name,
+	                                Platform            platform )
+	{
+		try
+		{
+			return GetProject( used_name, platform );
+		}
+		catch ( const CD::NoSuchProject& )
+		{
+			throw NoSuchUsedProject( user_name, used_name );
+		}
+	}
+	
+	static std::vector< std::string > GetAllUsedProjects( const std::string&  project_name,
+	                                                      Platform            platform,
+	                                                      CD::ConfData&       config )
+	{
+		std::vector< std::string > used_project_names = GetDirectlyUsedProjectsFromConfig( config );
+		
+		std::vector< std::string > all_used_project_names;
+		
+		std::set< std::string > set_of_all_used_project_names;
+		
+		typedef std::vector< std::string >::const_iterator Iter;
+		
+		// For each project named in the 'uses' directive:
+		for ( Iter it = used_project_names.begin();  it != used_project_names.end();  ++it )
+		{
+			// Recursively creates projects
+			Project& used = GetUsedProject( project_name, *it, platform );
+			
+			// Find out which projects it uses
+			const std::vector< std::string >& subUsed = used.AllUsedProjects();
+			
+			// For each project even indirectly used by this one:
+			for ( Iter it2 = subUsed.begin();  it2 != subUsed.end();  ++it2 )
+			{
+				const std::string& name = *it2;
+				
+				// If it isn't already in the collection,
+				if ( set_of_all_used_project_names.count( name ) == 0 )
+				{
+					// Add it to the collection.
+					set_of_all_used_project_names.insert( name );
+					
+					all_used_project_names.push_back( name );
+				}
+			}
+		}
+		
+		return all_used_project_names;
+	}
+	
 	Project::Project( const std::string&  proj,
 	                  Platform            platform,
 	                  const std::string&  project_dir,
@@ -253,66 +321,17 @@ namespace ALine
 	{
 		CD::ConfData config = conf_data;
 		
+		its_product_type = ReadProduct( First( config[ "product" ] ) );
+		
+		// Figure out which projects we use
+		its_used_project_names = GetAllUsedProjects( its_name, platform, config );
+		
+		// Make sure we're in the list too, and make sure we're last.
+		its_used_project_names.push_back( proj );
+		
 		//if ( config.size() > 0 )
 		{
 			its_program_filename = First( config[ "program" ] );
-			
-			its_product_type = ReadProduct( First( config[ "product" ] ) );
-			
-			if (    its_product_type == productINIT
-			     || its_product_type == productDriver )
-			{
-				Options().platform |= CD::arch68K | CD::runtimeA4CodeResource | CD::apiMacBlue;
-			}
-			
-			typedef std::vector< std::string >::const_iterator vPN_ci;
-			
-			// Figure out which projects we use
-			const std::vector< std::string >& moreUsedProjects = config[ "use" ];
-			
-			std::vector< std::string > usedProjects = config[ "uses" ];
-			
-			std::size_t usedCount = usedProjects.size();
-			
-			usedProjects.resize( usedCount + moreUsedProjects.size() );
-			
-			std::copy( moreUsedProjects.begin(),
-			           moreUsedProjects.end(),
-			           usedProjects.begin() + usedCount );
-			
-			std::set< std::string > allUsedSet;
-			
-			// For each project named in the 'uses' directive:
-			for ( vPN_ci it = usedProjects.begin();  it != usedProjects.end();  ++it )
-			{
-				try
-				{
-					GetProject( *it, platform );  // Recursively creates projects
-				}
-				catch ( CD::NoSuchProject )
-				{
-					throw NoSuchUsedProject( its_name, *it );
-				}
-				
-				Project& used = GetProject( *it, platform );
-				
-				// Find out which projects it uses
-				const std::vector< std::string >& subUsed = used.AllUsedProjects();
-				
-				// For each project even indirectly used by this one:
-				for ( vPN_ci it2 = subUsed.begin();  it2 != subUsed.end();  ++it2 )
-				{
-					const std::string& name = *it2;
-					
-					// If it isn't already in the collection,
-					if ( allUsedSet.count( name ) == 0 )
-					{
-						// Add it to the collection.
-						allUsedSet.insert( name );
-						its_used_project_names.push_back( name );
-					}
-				}
-			}
 			
 			// Locate source files
 			const std::vector< std::string >& search = config[ "search" ];
@@ -355,9 +374,6 @@ namespace ALine
 		{
 			// Report error
 		}
-		
-		// Make sure we're in the list too, and make sure we're last.
-		its_used_project_names.push_back( proj );
 		
 		//printf("%s recursively uses %d projects.\n", proj.c_str(), allUsedProjects.size());
 		
