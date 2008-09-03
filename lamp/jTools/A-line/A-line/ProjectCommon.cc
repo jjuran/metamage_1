@@ -42,8 +42,6 @@ namespace ALine
 			                                platform,
 			                                config.get_project_dir(),
 			                                config.get_config_data() ) );
-			
-			project_ptr->Study();
 		}
 		
 		return *project_ptr;

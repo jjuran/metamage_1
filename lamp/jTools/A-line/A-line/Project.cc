@@ -377,6 +377,8 @@ namespace ALine
 		its_framework_names  = config[ "frameworks" ];  // Frameworks to include when building for OS X.
 		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
 		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
+		
+		Study();
 	}
 	
 	static bool IsCompilableExtension( const std::string& ext )
