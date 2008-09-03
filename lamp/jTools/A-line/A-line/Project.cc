@@ -362,6 +362,14 @@ namespace ALine
 		
 		its_search_dir_pathnames = get_search_dir_pathnames( config[ "search" ], its_dir_pathname );
 		
+		if ( !ProductGetsBuilt( its_product_type ) )
+		{
+			return;
+		}
+		
+		// If this project precompiles a header, this is the relative path to it.
+		its_precompiled_header_source_path  = First( config[ "precompile" ] );
+		
 		its_program_filename = First( config[ "program" ] );
 		
 		its_tool_source_filenames = config[ "tools" ];
@@ -374,9 +382,6 @@ namespace ALine
 		}
 		
 		//printf("%s recursively uses %d projects.\n", proj.c_str(), allUsedProjects.size());
-		
-		// If this project precompiles a header, this is the relative path to it.
-		its_precompiled_header_source_path  = First( config[ "precompile" ] );
 		
 		// The creator code for linked output files.  Mac only.
 		its_creator_code = First( config[ "creator"    ] );
@@ -520,11 +525,6 @@ namespace ALine
 	
 	void Project::Study()
 	{
-		if ( !ProductGetsBuilt( its_product_type ) )
-		{
-			return;
-		}
-		
 		// First try files explicitly specified on the command line
 		std::vector< std::string > sourceList = Options().files;
 		
