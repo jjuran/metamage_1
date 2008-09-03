@@ -31,6 +31,13 @@ namespace CompileDriver
 	using namespace io::path_descent_operators;
 	
 	
+	// A map from platform requirements to project config data
+	typedef std::map< PlatformDemands, ProjectConfig > ProjectConfigCandidates;
+	
+	// A map from project name to config file set
+	typedef std::map< std::string, ProjectConfigCandidates > ProjectCatalog;
+	
+	
 	static ProjectCatalog gProjectCatalog;
 	
 	

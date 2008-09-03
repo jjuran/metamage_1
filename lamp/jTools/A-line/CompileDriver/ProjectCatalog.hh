@@ -66,12 +66,6 @@ namespace CompileDriver
 			void set_refined_data( const boost::shared_ptr< Project >& project )  { its_refined_data = project; }
 	};
 	
-	// A map from platform requirements to project config data
-	typedef std::map< PlatformDemands, ProjectConfig > ProjectConfigCandidates;
-	
-	// A map from project name to config file set
-	typedef std::map< std::string, ProjectConfigCandidates > ProjectCatalog;
-	
 	
 	void AddProjectConfigFile( const std::string&      name,
 	                           const PlatformDemands&  demands,
