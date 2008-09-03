@@ -309,6 +309,7 @@ namespace ALine
 		return all_used_project_names;
 	}
 	
+	
 	Project::Project( const std::string&  proj,
 	                  Platform            platform,
 	                  const std::string&  project_dir,
@@ -328,6 +329,11 @@ namespace ALine
 		
 		// Make sure we're in the list too, and make sure we're last.
 		its_used_project_names.push_back( proj );
+		
+		if ( its_product_type == productNotBuilt )
+		{
+			return;
+		}
 		
 		//if ( config.size() > 0 )
 		{
@@ -350,19 +356,7 @@ namespace ALine
 			}
 			else
 			{
-				std::string sourceDir;
-				
-				// Otherwise, just use a default location.
-				try
-				{
-					sourceDir = ProjectSourcesPath( its_dir_pathname );
-				}
-				catch ( ... )
-				{
-					sourceDir = its_dir_pathname;
-				}
-				
-				its_search_dir_pathnames.push_back( sourceDir );
+				its_search_dir_pathnames.push_back( ProjectSourcesPath( its_dir_pathname ) );
 			}
 		}
 		
