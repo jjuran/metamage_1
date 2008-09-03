@@ -21,9 +21,6 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
-// A-line
-#include "A-line/Project.hh"
-
 
 namespace CompileDriver
 {
@@ -95,18 +92,6 @@ namespace CompileDriver
 		}
 		
 		ProjectConfig& result = it->second;
-		
-		if ( result.get_refined_data() == NULL )
-		{
-			boost::shared_ptr< Project > new_project( new Project( name,
-			                                                       targetPlatform,
-			                                                       result.get_project_dir(),
-			                                                       result.get_config_data() ) );
-			
-			result.set_refined_data( new_project );
-			
-			new_project->Study();
-		}
 		
 		return result;
 	}
