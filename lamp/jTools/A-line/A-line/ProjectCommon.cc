@@ -20,9 +20,33 @@
 namespace ALine
 {
 	
+	// A map from project name to project data
+	typedef std::map< std::string, boost::shared_ptr< Project > > ProjectMap;
+	
+	// A map from platform to project map
+	typedef std::map< Platform, ProjectMap > ProjectPlatformMap;
+	
+	
+	static ProjectPlatformMap gProjectPlatformMap;
+	
+	
 	Project& GetProject( const std::string& project_name, Platform platform )
 	{
-		return *GetProjectConfig( project_name, platform ).get_refined_data();
+		boost::shared_ptr< Project >& project_ptr = gProjectPlatformMap[ platform ][ project_name ];
+		
+		if ( project_ptr == NULL )
+		{
+			const ProjectConfig& config = GetProjectConfig( project_name, platform );
+			
+			project_ptr.reset( new Project( project_name,
+			                                platform,
+			                                config.get_project_dir(),
+			                                config.get_config_data() ) );
+			
+			project_ptr->Study();
+		}
+		
+		return *project_ptr;
 	}
 	
 	
