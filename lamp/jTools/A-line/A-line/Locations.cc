@@ -154,7 +154,7 @@ namespace ALine
 	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj )
 	{
-		return CreateDirPath( CreateDirPath( "Diagnostics" ) / proj );
+		return "Diagnostics" / proj;
 	}
 	
 	std::string ProjectPrecompiledDirPath( const std::string& proj )
