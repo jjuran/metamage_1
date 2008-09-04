@@ -232,8 +232,6 @@ namespace ALine
 	{
 		if ( !io::directory_exists( path ) )
 		{
-			std::fprintf( stderr, "Creating %s\n", path.c_str() );
-			
 			mkdir_path( io::get_preceding_directory( path ) );
 			
 			p7::mkdir( path, 0777 );
