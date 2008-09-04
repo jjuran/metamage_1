@@ -617,17 +617,11 @@ namespace ALine
 			
 			for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 			{
-				std::vector< std::string > deepSources = DeepFiles
-				(
-					*it, 
-					std::ptr_fun( IsCompilableFilename )
-				);
+				std::vector< std::string > deepSources = DeepFiles( *it, std::ptr_fun( IsCompilableFilename ) );
 				
-				its_source_file_pathnames.resize( its_source_file_pathnames.size() + deepSources.size() );
-				
-				std::copy( deepSources.begin(),
-				           deepSources.end(),
-				           its_source_file_pathnames.end() - deepSources.size() );
+				its_source_file_pathnames.insert( its_source_file_pathnames.end(),
+				                                  deepSources.begin(),
+				                                  deepSources.end() );
 			}
 		}
 	}
