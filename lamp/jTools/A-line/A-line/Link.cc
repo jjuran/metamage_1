@@ -56,6 +56,25 @@ namespace ALine
 	using BitsAndBytes::qq;
 	
 	
+	class RemoveDirTask : public Task
+	{
+		private:
+			std::string its_pathname;
+		
+		public:
+			RemoveDirTask( const std::string& pathname ) : its_pathname( pathname )
+			{
+			}
+			
+			void Main();
+	};
+	
+	void RemoveDirTask::Main()
+	{
+		(void) rmdir( its_pathname.c_str() );
+	}
+	
+	
 	inline bool TargetingLamp( bool targetingLamp )
 	{
 		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_LAMP_DEVELOPMENT && targetingLamp;
@@ -558,6 +577,8 @@ namespace ALine
 		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
+		TaskPtr rmdir_diagnostics_task( new RemoveDirTask( diagnosticsDir ) );
+		
 		std::vector< std::string > objectFiles;
 		
 		const std::size_t n_tools = NameObjectFiles( project, objectFiles );
@@ -587,6 +608,8 @@ namespace ALine
 		if ( project.Product() == productStaticLib )
 		{
 			project.set_static_lib_task( lib_task );
+			
+			lib_task->AddDependent( rmdir_diagnostics_task );
 			
 			return;
 		}
@@ -742,6 +765,8 @@ namespace ALine
 				(*the_task)->AddDependent( link_tool_task );
 				
 				link_dependency_task->AddDependent( link_tool_task );
+				
+				link_tool_task->AddDependent( rmdir_diagnostics_task );
 			}
 		}
 		else
@@ -798,6 +823,8 @@ namespace ALine
 			TaskPtr link_task( new LinkingTask( command, outFile, link_input_arguments, diagnosticsDir ) );
 			
 			link_dependency_task->AddDependent( link_task );
+			
+			link_task->AddDependent( rmdir_diagnostics_task );
 			
 			if ( ALINE_MAC_DEVELOPMENT )
 			{
