@@ -564,18 +564,14 @@ namespace ALine
 	
 	void Project::Study()
 	{
-		// First try files explicitly specified on the command line
-		std::vector< std::string > sourceList = Options().files;
+		std::vector< std::string > sourceList;
 		
-		// None?  Try a Source.list file
-		if ( sourceList.size() == 0 )
+		// Try a Source.list file
+		std::string sourceDotListfile = SourceDotListFile( its_dir_pathname );
+		
+		if ( io::item_exists( sourceDotListfile ) )
 		{
-			std::string sourceDotListfile = SourceDotListFile( its_dir_pathname );
-			
-			if ( io::item_exists( sourceDotListfile ) )
-			{
-				sourceList = ReadSourceDotList( sourceDotListfile );
-			}
+			sourceList = ReadSourceDotList( sourceDotListfile );
 		}
 		
 		std::vector< std::string > sourceFileSearchDirs;
