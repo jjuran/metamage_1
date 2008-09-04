@@ -420,64 +420,6 @@ namespace ALine
 	}
 	
 	
-	template < class Container >
-	class MembershipTest 
-	:
-		public std::unary_function< const typename Container::key_type&, bool >
-	{
-		private:
-			const Container& container;
-		
-		public:
-			MembershipTest( const Container& con ) : container( con )  {}
-			
-			bool operator()( const typename Container::key_type& element ) const
-			{
-				return    std::find( container.begin(),
-				                     container.end(),
-				                     element )
-				       != container.end();
-			}
-	};
-	
-	template < class Container >
-	MembershipTest< Container > Membership( const Container& container )
-	{
-		return MembershipTest< Container >( container );
-	}
-	
-	template < class Exception, class Function >
-	struct ExceptionConverter
-	{
-		typedef typename Function::result_type   result_type;
-		typedef typename Function::argument_type argument_type;
-		
-		ExceptionConverter( const Function& f ) : f( f )  {}
-		
-		result_type operator()( const argument_type& arg ) const
-		{
-			try
-			{
-				return f( arg );
-			}
-			catch ( ... )
-			{
-				throw Exception( arg );
-			}
-			
-			// Not reached
-			return result_type();
-		}
-		
-		Function f;
-	};
-	
-	template < class Exception, class Function >
-	ExceptionConverter< Exception, Function > ConvertException( const Function& f )
-	{
-		return ExceptionConverter< Exception, Function >( f );
-	}
-	
 	static std::string FindFileInDir( const std::string& filename, const std::string& dir )
 	{
 		std::string result = dir / filename;
