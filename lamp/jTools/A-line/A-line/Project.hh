@@ -42,8 +42,6 @@ namespace ALine
 			std::vector< std::string > its_used_project_names;
 			// Directories to search for headers and unenumerated source files.
 			std::vector< std::string > its_search_dir_pathnames;
-			// Source files to compile, by pathname
-			std::vector< std::string > its_source_paths;
 			// Various things to link with.
 			std::vector< std::string > its_rez_filenames, its_rsrc_filenames;
 			std::vector< std::string > its_lib_import_specs;
@@ -76,7 +74,6 @@ namespace ALine
 			const std::vector< std::string >& AllUsedProjects() const  { return its_used_project_names;    }
 			
 			const std::vector< std::string >& SearchDirs()      const  { return its_search_dir_pathnames;  }
-			const std::vector< std::string >& SourceFileSpecs() const  { return its_source_paths;          }
 			const std::vector< std::string >& ToolSourceFiles() const  { return its_tool_source_filenames; }
 			
 			const std::vector< std::string >& LibImports()    const  { return its_lib_import_specs; }
