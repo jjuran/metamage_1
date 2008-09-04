@@ -44,16 +44,16 @@ namespace io
 		
 		std::size_t last_slash = result.find_last_of( "/" );
 		
-		if ( last_slash == result.npos )
-		{
-			return ".";
-		}
-		
 		if ( last_slash == result.size() - 1 )
 		{
 			result.resize( last_slash );
 			
 			last_slash = result.find_last_of( "/" );
+		}
+		
+		if ( last_slash == result.npos )
+		{
+			return ".";
 		}
 		
 		result.resize( last_slash + 1 );
