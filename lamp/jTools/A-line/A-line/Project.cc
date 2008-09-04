@@ -562,6 +562,25 @@ namespace ALine
 		}
 	}
 	
+	static std::vector< std::string > find_sources( const std::vector< std::string >&  source_filenames,
+	                                                const std::vector< std::string >&  search_dir_pathnames )
+	{
+		std::vector< std::string > result;
+		
+		// We have filenames -- now, find them
+		
+		typedef std::vector< std::string >::const_iterator str_iter;
+		
+		for ( str_iter it = source_filenames.begin();  it != source_filenames.end();  ++it )
+		{
+			const std::string& source_filename = *it;
+			
+			result.push_back( FindSourceFileInDirs( source_filename, search_dir_pathnames ) );
+		}
+		
+		return result;
+	}
+	
 	void Project::Study()
 	{
 		std::vector< std::string > sourceFileSearchDirs;
@@ -581,18 +600,8 @@ namespace ALine
 		
 		if ( io::item_exists( sourceDotListfile ) )
 		{
-			std::vector< std::string > sourceList = ReadSourceDotList( sourceDotListfile );
-			
-			// We have filenames -- now, find them
-			
-			typedef std::vector< std::string >::const_iterator str_iter;
-			
-			for ( str_iter it = sourceList.begin();  it != sourceList.end();  ++it )
-			{
-				const std::string& sourceName = *it;
-				
-				its_source_file_pathnames.push_back( FindSourceFileInDirs( sourceName, its_search_dir_pathnames ) );
-			}
+			its_source_file_pathnames = find_sources( ReadSourceDotList( sourceDotListfile ),
+			                                          its_search_dir_pathnames );
 		}
 		else
 		{
