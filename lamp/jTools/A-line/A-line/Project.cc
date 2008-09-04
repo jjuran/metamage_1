@@ -613,7 +613,7 @@ namespace ALine
 			typedef std::vector< std::string >::const_iterator Iter;
 			
 			// Enumerate our source files
-			std::vector< std::string > sources;
+			// FIXME:  Doesn't deal with duplicates
 			
 			for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 			{
@@ -623,15 +623,12 @@ namespace ALine
 					std::ptr_fun( IsCompilableFilename )
 				);
 				
-				sources.resize( sources.size() + deepSources.size() );
+				its_source_file_pathnames.resize( its_source_file_pathnames.size() + deepSources.size() );
 				
 				std::copy( deepSources.begin(),
 				           deepSources.end(),
-				           sources.end() - deepSources.size() );
+				           its_source_file_pathnames.end() - deepSources.size() );
 			}
-			
-			// FIXME:  Doesn't deal with duplicates
-			std::swap( its_source_file_pathnames, sources );
 		}
 	}
 	
