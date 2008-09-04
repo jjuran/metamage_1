@@ -13,8 +13,12 @@
 // Standard C
 #include <time.h>
 
+// Boost
+#include <boost/weak_ptr.hpp>
+
 // A-line
 #include "A-line/TargetInfo.hh"
+#include "A-line/Task.hh"
 #include "CompileDriver/ProjectConfig.hh"
 
 
@@ -54,12 +58,17 @@ namespace ALine
 			std::vector< std::string > its_tool_source_filenames;
 			
 			mutable DateMap its_dates;
+			
+			boost::weak_ptr< Task > its_precompile_task;
+			boost::weak_ptr< Task > its_static_lib_task;
 		
 		public:
 			Project( const std::string&  name,
 			         Platform            platform,
 			         const std::string&  project_dir,
 			         const ConfData&     conf_data );
+			
+			Platform get_platform() const  { return its_platform; }
 			
 			const std::string& Name         () const  { return its_name;             }
 			const std::string& ProgramName  () const  { return its_program_filename; }
@@ -94,6 +103,12 @@ namespace ALine
 			                              const std::string&  pathname ) const;
 			
 			std::string FindResourceFile( const std::string& filename ) const;
+			
+			const boost::weak_ptr< Task >& get_precompile_task() const  { return its_precompile_task; }
+			const boost::weak_ptr< Task >& get_static_lib_task() const  { return its_static_lib_task; }
+			
+			void set_precompile_task( const TaskPtr& task )  { its_precompile_task = task; }
+			void set_static_lib_task( const TaskPtr& task )  { its_static_lib_task = task; }
 	};
 	
 }
