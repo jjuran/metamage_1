@@ -438,6 +438,29 @@ namespace ALine
 		                        later_of_time_or_library_mod_stamp );
 	}
 	
+	static void make_task_depend_on_libs( const TaskPtr&                     task,
+	                                      const std::vector< std::string >&  used_project_names,
+	                                      Platform                           platform )
+	{
+		typedef std::vector< std::string >::const_iterator Iter;
+		
+		for ( Iter it = used_project_names.begin();  it != used_project_names.end();  ++it )
+		{
+			const std::string& name = *it;
+			
+			const Project& project  = GetProject( name, platform );
+			
+			if ( !project.get_static_lib_task().expired() )
+			{
+				project.get_static_lib_task().lock()->AddDependent( task );
+			}
+			else
+			{
+				task->UpdateInputStamp( ModifiedDate( GetPathnameOfBuiltLibrary( name ) ) );
+			}
+		}
+	}
+	
 	template < class Iter >
 	static TaskPtr MakeStaticLibTask( const std::string&  output_pathname,
 	                                  Iter                begin,
@@ -520,7 +543,7 @@ namespace ALine
 	}
 	
 	
-	void LinkProduct( const Project&                 project,
+	void LinkProduct( Project&                       project,
 	                  const TargetInfo&              targetInfo,
 	                  const TaskPtr&                 project_base_task,
 	                  const TaskPtr&                 source_dependency,
@@ -563,6 +586,8 @@ namespace ALine
 		
 		if ( project.Product() == productStaticLib )
 		{
+			project.set_static_lib_task( lib_task );
+			
 			return;
 		}
 		
@@ -657,7 +682,7 @@ namespace ALine
 			
 			link_input_arguments.push_back( libsDirOption );
 			
-			link_dependency_task->UpdateInputStamp( LatestLibraryModificationDate( usedProjects ) );
+			make_task_depend_on_libs( link_dependency_task, usedProjects, project.get_platform() );
 			
 			AddLibraryLinkArgs( usedProjects, link_input_arguments );
 		}

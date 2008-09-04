@@ -23,7 +23,7 @@ namespace ALine
 	                             std::vector< std::string >&  source_paths,
 	                             std::vector< std::string >&  object_pathnames );
 	
-	void LinkProduct( const Project&                 project,
+	void LinkProduct( Project&                       project,
 	                  const TargetInfo&              targetInfo,
 	                  const TaskPtr&                 project_base_task,
 	                  const TaskPtr&                 source_dependency,

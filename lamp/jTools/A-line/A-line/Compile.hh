@@ -20,10 +20,10 @@ namespace ALine
 	class Project;
 	struct TargetInfo;
 	
-	void CompileSources( const Project&           project,
-	                     const TargetInfo&        targetInfo,
-	                     const TaskPtr&           source_dependency,
+	void CompileSources( Project&                 project,
+	                     const TargetInfo&        target_info,
 	                     const TaskPtr&           project_base_task,
+	                     const TaskPtr&           source_dependency,
 	                     std::vector< TaskPtr >&  tool_dependencies );
 	
 }

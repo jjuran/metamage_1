@@ -366,7 +366,7 @@ namespace ALine
 			}
 	};
 	
-	void CompileSources( const Project&           project,
+	void CompileSources( Project&                 project,
 	                     const TargetInfo&        target_info,
 	                     const TaskPtr&           project_base_task,
 	                     const TaskPtr&           source_dependency,
@@ -430,9 +430,17 @@ namespace ALine
 				                                          precompiled_header_source_pathname,
 				                                          pchImage,
 				                                          "Precompiling: " ) );
+				
+				project.set_precompile_task( precompile_task );
+			}
+			else if ( !project_providing_precompiled_header->get_precompile_task().expired() )
+			{
+				// The providing project's precompile task hasn't run yet; use it
+				precompile_task = project_providing_precompiled_header->get_precompile_task().lock();
 			}
 			else
 			{
+				// It's already gone; use a null task with time stamp
 				precompile_task->UpdateInputStamp( ModifiedDate( pchImage ) );
 			}
 		}
