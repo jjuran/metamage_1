@@ -581,6 +581,27 @@ namespace ALine
 		return result;
 	}
 	
+	static std::vector< std::string > list_sources( const std::vector< std::string >& source_dirs )
+	{
+		// Enumerate our source files
+		// FIXME:  Doesn't deal with duplicates
+		
+		std::vector< std::string > result;
+		
+		typedef std::vector< std::string >::const_iterator Iter;
+		
+		for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
+		{
+			std::vector< std::string > deepSources = DeepFiles( *it, std::ptr_fun( IsCompilableFilename ) );
+			
+			result.insert( result.end(),
+			               deepSources.begin(),
+			               deepSources.end() );
+		}
+		
+		return result;
+	}
+	
 	void Project::Study()
 	{
 		std::vector< std::string > sourceFileSearchDirs;
@@ -610,19 +631,7 @@ namespace ALine
 			const std::vector< std::string >& source_dirs = !sourceFileSearchDirs.empty() ? sourceFileSearchDirs
 			                                                                              : its_search_dir_pathnames;
 			
-			typedef std::vector< std::string >::const_iterator Iter;
-			
-			// Enumerate our source files
-			// FIXME:  Doesn't deal with duplicates
-			
-			for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
-			{
-				std::vector< std::string > deepSources = DeepFiles( *it, std::ptr_fun( IsCompilableFilename ) );
-				
-				its_source_file_pathnames.insert( its_source_file_pathnames.end(),
-				                                  deepSources.begin(),
-				                                  deepSources.end() );
-			}
+			its_source_file_pathnames = list_sources( source_dirs );
 		}
 	}
 	
