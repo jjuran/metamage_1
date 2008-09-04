@@ -571,6 +571,11 @@ namespace ALine
 		                 sourceFileSearchDirs,
 		                 its_source_file_pathnames );
 		
+		if ( !its_source_file_pathnames.empty() )
+		{
+			return;
+		}
+		
 		// Try a Source.list file
 		std::string sourceDotListfile = SourceDotListFile( its_dir_pathname );
 		
