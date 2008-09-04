@@ -88,8 +88,6 @@ namespace ALine
 			
 			const std::vector< std::string >& Sources() const  { return its_source_file_pathnames; }
 			
-			void Study();
-			
 			std::string FindInclude           ( const std::string& include_path ) const;
 			std::string FindIncludeRecursively( const std::string& include_path ) const;
 			

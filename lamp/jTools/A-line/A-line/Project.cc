@@ -563,9 +563,5 @@ namespace ALine
 			                                                                                                           : its_search_dir_pathnames );
 	}
 	
-	void Project::Study()
-	{
-	}
-	
 }
 
