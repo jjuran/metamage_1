@@ -564,16 +564,6 @@ namespace ALine
 	
 	void Project::Study()
 	{
-		std::vector< std::string > sourceList;
-		
-		// Try a Source.list file
-		std::string sourceDotListfile = SourceDotListFile( its_dir_pathname );
-		
-		if ( io::item_exists( sourceDotListfile ) )
-		{
-			sourceList = ReadSourceDotList( sourceDotListfile );
-		}
-		
 		std::vector< std::string > sourceFileSearchDirs;
 		
 		get_source_data( its_dir_pathname,
@@ -581,14 +571,15 @@ namespace ALine
 		                 sourceFileSearchDirs,
 		                 its_source_file_pathnames );
 		
-		if ( sourceFileSearchDirs.empty() )
-		{
-			sourceFileSearchDirs = its_search_dir_pathnames;
-		}
+		// Try a Source.list file
+		std::string sourceDotListfile = SourceDotListFile( its_dir_pathname );
 		
-		// We have filenames -- now, find them
-		if ( sourceList.size() > 0 )
+		if ( io::item_exists( sourceDotListfile ) )
 		{
+			std::vector< std::string > sourceList = ReadSourceDotList( sourceDotListfile );
+			
+			// We have filenames -- now, find them
+			
 			typedef std::vector< std::string >::const_iterator str_iter;
 			
 			for ( str_iter it = sourceList.begin();  it != sourceList.end();  ++it )
@@ -602,12 +593,15 @@ namespace ALine
 		{
 			// Still nothing?  Just enumerate everything in the source directory.
 			
+			const std::vector< std::string >& source_dirs = !sourceFileSearchDirs.empty() ? sourceFileSearchDirs
+			                                                                              : its_search_dir_pathnames;
+			
 			typedef std::vector< std::string >::const_iterator Iter;
 			
 			// Enumerate our source files
 			std::vector< std::string > sources;
 			
-			for ( Iter it = sourceFileSearchDirs.begin();  it != sourceFileSearchDirs.end();  ++it )
+			for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 			{
 				std::vector< std::string > deepSources = DeepFiles
 				(
