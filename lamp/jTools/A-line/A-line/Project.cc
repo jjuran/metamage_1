@@ -335,71 +335,6 @@ namespace ALine
 	}
 	
 	
-	Project::Project( const std::string&  proj,
-	                  Platform            platform,
-	                  const std::string&  project_dir,
-	                  const ConfData&     conf_data )
-	:
-		its_name  ( proj ),
-		its_platform( platform ),
-		its_dir_pathname( project_dir ),
-		its_product_type   ( productNotBuilt )
-	{
-		CD::ConfData config = conf_data;
-		
-		its_product_type = ReadProduct( First( config[ "product" ] ) );
-		
-		// Figure out which projects we use
-		its_used_project_names = GetAllUsedProjects( its_name, platform, config );
-		
-		// Make sure we're in the list too, and make sure we're last.
-		its_used_project_names.push_back( proj );
-		
-		if ( its_product_type == productNotBuilt )
-		{
-			return;
-		}
-		
-		its_search_dir_pathnames = get_search_dir_pathnames( config[ "search" ], its_dir_pathname );
-		
-		if ( !ProductGetsBuilt( its_product_type ) )
-		{
-			return;
-		}
-		
-		// If this project precompiles a header, this is the relative path to it.
-		its_precompiled_header_source_path  = First( config[ "precompile" ] );
-		
-		its_program_filename = First( config[ "program" ] );
-		
-		its_tool_source_filenames = config[ "tools" ];
-		
-		const bool hasTools = !its_tool_source_filenames.empty();
-		
-		if ( hasTools != ( Product() == productToolkit ) )
-		{
-			// Report error
-		}
-		
-		//printf("%s recursively uses %d projects.\n", proj.c_str(), allUsedProjects.size());
-		
-		// The creator code for linked output files.  Mac only.
-		its_creator_code = First( config[ "creator"    ] );
-		
-		if ( its_creator_code.size() == 6  &&  its_creator_code[0] == '\''  &&  its_creator_code[5] == '\'' )
-		{
-			its_creator_code = its_creator_code.substr( 1, 4 );
-		}
-		
-		its_source_paths     = config[ "sources"    ];  // Sources to compile.
-		its_lib_import_specs = config[ "imports"    ];  // Libraries to import.
-		its_framework_names  = config[ "frameworks" ];  // Frameworks to include when building for OS X.
-		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
-		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
-		
-		Study();
-	}
-	
 	static bool IsCompilableExtension( const std::string& ext )
 	{
 		if ( ext == ".c"   )  return true;
@@ -544,8 +479,69 @@ namespace ALine
 		return result;
 	}
 	
-	void Project::Study()
+	
+	Project::Project( const std::string&  proj,
+	                  Platform            platform,
+	                  const std::string&  project_dir,
+	                  const ConfData&     conf_data )
+	:
+		its_name  ( proj ),
+		its_platform( platform ),
+		its_dir_pathname( project_dir ),
+		its_product_type   ( productNotBuilt )
 	{
+		CD::ConfData config = conf_data;
+		
+		its_product_type = ReadProduct( First( config[ "product" ] ) );
+		
+		// Figure out which projects we use
+		its_used_project_names = GetAllUsedProjects( its_name, platform, config );
+		
+		// Make sure we're in the list too, and make sure we're last.
+		its_used_project_names.push_back( proj );
+		
+		if ( its_product_type == productNotBuilt )
+		{
+			return;
+		}
+		
+		its_search_dir_pathnames = get_search_dir_pathnames( config[ "search" ], its_dir_pathname );
+		
+		if ( !ProductGetsBuilt( its_product_type ) )
+		{
+			return;
+		}
+		
+		// If this project precompiles a header, this is the relative path to it.
+		its_precompiled_header_source_path  = First( config[ "precompile" ] );
+		
+		its_program_filename = First( config[ "program" ] );
+		
+		its_tool_source_filenames = config[ "tools" ];
+		
+		const bool hasTools = !its_tool_source_filenames.empty();
+		
+		if ( hasTools != ( Product() == productToolkit ) )
+		{
+			// Report error
+		}
+		
+		//printf("%s recursively uses %d projects.\n", proj.c_str(), allUsedProjects.size());
+		
+		// The creator code for linked output files.  Mac only.
+		its_creator_code = First( config[ "creator"    ] );
+		
+		if ( its_creator_code.size() == 6  &&  its_creator_code[0] == '\''  &&  its_creator_code[5] == '\'' )
+		{
+			its_creator_code = its_creator_code.substr( 1, 4 );
+		}
+		
+		its_source_paths     = config[ "sources"    ];  // Sources to compile.
+		its_lib_import_specs = config[ "imports"    ];  // Libraries to import.
+		its_framework_names  = config[ "frameworks" ];  // Frameworks to include when building for OS X.
+		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
+		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
+		
 		std::vector< std::string > sourceFileSearchDirs;
 		
 		get_source_data( its_dir_pathname,
@@ -565,6 +561,10 @@ namespace ALine
 			                                                                             its_search_dir_pathnames )
 			                                                             : list_sources( !sourceFileSearchDirs.empty() ? sourceFileSearchDirs
 			                                                                                                           : its_search_dir_pathnames );
+	}
+	
+	void Project::Study()
+	{
 	}
 	
 }
