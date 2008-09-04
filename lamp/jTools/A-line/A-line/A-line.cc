@@ -33,6 +33,8 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/Pathnames.hh"
+#include "POSeven/Stat.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/waitpid.hh"
 #include "POSeven/functions/_exit.hh"
@@ -226,6 +228,18 @@ namespace ALine
 		}
 	}
 	
+	static void mkdir_path( const std::string& path )
+	{
+		if ( !io::directory_exists( path ) )
+		{
+			std::fprintf( stderr, "Creating %s\n", path.c_str() );
+			
+			mkdir_path( io::get_preceding_directory( path ) );
+			
+			p7::mkdir( path, 0777 );
+		}
+	}
+	
 	void ExecuteCommand( const std::vector< const char* >& command, const char* diagnosticsFilename )
 	{
 		ASSERT( command.size() > 1 );
@@ -253,7 +267,14 @@ namespace ALine
 		}
 		*/
 		
-		bool has_diagnostics_file = diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0';
+		const bool has_diagnostics_file = diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0';
+		
+		if ( has_diagnostics_file )
+		{
+			std::string diagnostics_dir = io::get_preceding_directory( diagnosticsFilename );
+			
+			mkdir_path( diagnostics_dir );
+		}
 		
 		p7::pid_t pid = POSEVEN_VFORK();
 		
@@ -287,7 +308,7 @@ namespace ALine
 		
 		p7::wait_t wait_status = p7::waitpid( pid );
 		
-		bool had_errors = wait_status != 0;
+		const bool had_errors = wait_status != 0;
 		
 		if ( has_diagnostics_file )
 		{
@@ -383,10 +404,6 @@ namespace ALine
 			
 			AddReadyTask( project_base_task );
 		}
-		
-		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
-		
-		(void) rmdir( diagnosticsDir.c_str() );
 	}
 	
 	typedef std::map< std::string, boost::shared_ptr< Job > > JobSubMap;
@@ -410,11 +427,6 @@ namespace ALine
 			Job& job = *( subMap[ projName ] = job_ptr );
 			
 			job.Build();
-			
-			while ( RunNextTask() )
-			{
-				continue;
-			}
 			
 			return job;
 		}
@@ -441,6 +453,11 @@ namespace ALine
 				targetInfo
 			)
 		);
+		
+		while ( RunNextTask() )
+		{
+			continue;
+		}
 	}
 	
 	static void ApplyTargetDefaults( TargetInfo& target )
