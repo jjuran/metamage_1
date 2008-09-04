@@ -619,20 +619,10 @@ namespace ALine
 		// Try a Source.list file
 		std::string sourceDotListfile = SourceDotListFile( its_dir_pathname );
 		
-		if ( io::item_exists( sourceDotListfile ) )
-		{
-			its_source_file_pathnames = find_sources( ReadSourceDotList( sourceDotListfile ),
-			                                          its_search_dir_pathnames );
-		}
-		else
-		{
-			// Still nothing?  Just enumerate everything in the source directory.
-			
-			const std::vector< std::string >& source_dirs = !sourceFileSearchDirs.empty() ? sourceFileSearchDirs
-			                                                                              : its_search_dir_pathnames;
-			
-			its_source_file_pathnames = list_sources( source_dirs );
-		}
+		its_source_file_pathnames = io::item_exists( sourceDotListfile ) ? find_sources( ReadSourceDotList( sourceDotListfile ),
+			                                                                             its_search_dir_pathnames )
+			                                                             : list_sources( !sourceFileSearchDirs.empty() ? sourceFileSearchDirs
+			                                                                                                           : its_search_dir_pathnames );
 	}
 	
 }
