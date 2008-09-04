@@ -536,6 +536,11 @@ namespace ALine
 			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
 		
+		its_lib_import_specs = config[ "imports"    ];  // Libraries to import.
+		its_framework_names  = config[ "frameworks" ];  // Frameworks to include when building for OS X.
+		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
+		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
+		
 		std::vector< std::string > sourceFileSearchDirs;
 		
 		get_source_data( its_dir_pathname,
@@ -555,11 +560,6 @@ namespace ALine
 			                                                                             its_search_dir_pathnames )
 			                                                             : list_sources( !sourceFileSearchDirs.empty() ? sourceFileSearchDirs
 			                                                                                                           : its_search_dir_pathnames );
-		
-		its_lib_import_specs = config[ "imports"    ];  // Libraries to import.
-		its_framework_names  = config[ "frameworks" ];  // Frameworks to include when building for OS X.
-		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
-		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
 	}
 	
 }
