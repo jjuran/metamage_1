@@ -523,6 +523,45 @@ namespace ALine
 		throw;  // Not reached
 	}
 	
+	
+	static void get_source_data( const std::string&                 project_dir,
+	                             const std::vector< std::string >&  source_paths,
+	                             std::vector< std::string >&        source_file_search_dirs,
+	                             std::vector< std::string >&        source_file_pathnames )
+	{
+		if ( !source_paths.empty() )
+		{
+			// 'sources' directive specifies source files or source list files.
+			typedef std::vector< std::string >::const_iterator str_iter;
+			
+			for ( str_iter it = source_paths.begin();  it != source_paths.end();  ++it )
+			{
+				const std::string& project_relative_path = *it;
+				
+				std::string absolute_path = project_dir / project_relative_path;
+				
+				if ( io::directory_exists( absolute_path ) )
+				{
+					source_file_search_dirs.push_back( absolute_path );
+					
+					continue;
+				}
+				
+				if ( io::file_exists( absolute_path ) )
+				{
+					source_file_pathnames.push_back( absolute_path );
+					
+					continue;
+				}
+				
+				if ( *absolute_path.rbegin() == '*' )
+				{
+					
+				}
+			}
+		}
+	}
+	
 	void Project::Study()
 	{
 		// First try files explicitly specified on the command line
@@ -541,37 +580,10 @@ namespace ALine
 		
 		std::vector< std::string > sourceFileSearchDirs;
 		
-		if ( !its_source_paths.empty() )
-		{
-			// 'sources' directive specifies source files or source list files.
-			typedef std::vector< std::string >::const_iterator str_iter;
-			
-			for ( str_iter it = its_source_paths.begin();  it != its_source_paths.end();  ++it )
-			{
-				const std::string& project_relative_path = *it;
-				
-				std::string absolute_path = ProjectFolder() / project_relative_path;
-				
-				if ( io::directory_exists( absolute_path ) )
-				{
-					sourceFileSearchDirs.push_back( absolute_path );
-					
-					continue;
-				}
-				
-				if ( io::file_exists( absolute_path ) )
-				{
-					its_source_file_pathnames.push_back( absolute_path );
-					
-					continue;
-				}
-				
-				if ( *absolute_path.rbegin() == '*' )
-				{
-					
-				}
-			}
-		}
+		get_source_data( its_dir_pathname,
+		                 its_source_paths,
+		                 sourceFileSearchDirs,
+		                 its_source_file_pathnames );
 		
 		if ( sourceFileSearchDirs.empty() )
 		{
