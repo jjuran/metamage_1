@@ -21,6 +21,7 @@
 
 // Nucleus
 #include "Nucleus/Flattener.h"
+#include "Nucleus/NAssert.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
@@ -181,13 +182,6 @@ namespace ALine
 		}
 	}
 	
-	static std::string gLibraryPrefix;
-	static std::string gLibraryExtension;
-	
-	static std::string GetPathnameOfBuiltLibrary( const std::string& name )
-	{
-		return LibrariesDirPath() / gLibraryPrefix + name + gLibraryExtension;
-	}
 	
 	static void AddLibraryLinkArgs( const std::vector< std::string >& usedLibs, std::vector< std::string >& v )
 	{
@@ -443,20 +437,6 @@ namespace ALine
 		RunCommand( command, "", "Copying resources: " + io::get_filename_string( OutputPath() ) );
 	}
 	
-	inline time_t later_of_time_or_library_mod_stamp( time_t a, const std::string& b )
-	{
-		return std::max( a, ModifiedDate( GetPathnameOfBuiltLibrary( b ) ) );
-	}
-	
-	static time_t LatestLibraryModificationDate( const std::vector< std::string >& used_project_names )
-	{
-		// Get the time of the latest modification to any built library we use.
-		return std::accumulate( used_project_names.begin(),
-		                        used_project_names.end(),
-		                        0,
-		                        later_of_time_or_library_mod_stamp );
-	}
-	
 	static void make_task_depend_on_libs( const TaskPtr&                     task,
 	                                      const std::vector< std::string >&  used_project_names,
 	                                      Platform                           platform )
@@ -469,14 +449,9 @@ namespace ALine
 			
 			const Project& project  = GetProject( name, platform );
 			
-			if ( !project.get_static_lib_task().expired() )
-			{
-				project.get_static_lib_task().lock()->AddDependent( task );
-			}
-			else
-			{
-				task->UpdateInputStamp( ModifiedDate( GetPathnameOfBuiltLibrary( name ) ) );
-			}
+			ASSERT( !project.get_static_lib_task().expired() );
+			
+			project.get_static_lib_task().lock()->AddDependent( task );
 		}
 	}
 	
@@ -572,9 +547,6 @@ namespace ALine
 		
 		const bool real_unix = !lamp;  // unix is an evil macro on Linux
 		
-		gLibraryPrefix    = real_unix ? "lib" : "";
-		gLibraryExtension = real_unix ? ".a" : ".lib";
-		
 		std::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
 		TaskPtr rmdir_diagnostics_task( new RemoveDirTask( diagnosticsDir ) );
@@ -593,7 +565,10 @@ namespace ALine
 		
 		if ( hasStaticLib )
 		{
-			std::string library_filename = gLibraryPrefix + project.Name() + gLibraryExtension;
+			std::string library_prefix    = real_unix ? "lib" : "";
+			std::string library_extension = real_unix ? ".a" : ".lib";
+			
+			std::string library_filename = library_prefix + project.Name() + library_extension;
 			
 			library_pathname = libsDir / library_filename;
 			

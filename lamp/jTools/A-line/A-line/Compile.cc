@@ -22,6 +22,9 @@
 #include "io/io.hh"
 #include "io/files.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // POSeven
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
@@ -433,15 +436,11 @@ namespace ALine
 				
 				project.set_precompile_task( precompile_task );
 			}
-			else if ( !project_providing_precompiled_header->get_precompile_task().expired() )
-			{
-				// The providing project's precompile task hasn't run yet; use it
-				precompile_task = project_providing_precompiled_header->get_precompile_task().lock();
-			}
 			else
 			{
-				// It's already gone; use a null task with time stamp
-				precompile_task->UpdateInputStamp( ModifiedDate( pchImage ) );
+				ASSERT( !project_providing_precompiled_header->get_precompile_task().expired() );
+				
+				precompile_task = project_providing_precompiled_header->get_precompile_task().lock();
 			}
 		}
 		
