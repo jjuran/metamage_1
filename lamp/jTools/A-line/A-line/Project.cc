@@ -267,6 +267,9 @@ namespace ALine
 		{
 			throw NoSuchUsedProject( user_name, used_name );
 		}
+		
+		// Not reached, but MWC 2.4.1 is unable to determine this
+		throw;
 	}
 	
 	static std::vector< std::string > GetAllUsedProjects( const std::string&  project_name,
