@@ -500,6 +500,8 @@ namespace ALine
 		// Make sure we're in the list too, and make sure we're last.
 		its_used_project_names.push_back( proj );
 		
+		its_lib_import_specs = config[ "imports" ];  // Libraries to import.
+		
 		if ( its_product_type == productNotBuilt )
 		{
 			return;
@@ -536,7 +538,6 @@ namespace ALine
 			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
 		
-		its_lib_import_specs = config[ "imports"    ];  // Libraries to import.
 		its_framework_names  = config[ "frameworks" ];  // Frameworks to include when building for OS X.
 		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
 		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
