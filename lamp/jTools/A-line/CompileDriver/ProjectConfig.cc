@@ -12,6 +12,7 @@
 #include "Nucleus/ResourceTransfer.h"
 
 // POSeven
+#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Pathnames.hh"
 
 // MoreFunctional
@@ -21,7 +22,9 @@
 // Orion
 #include "Orion/Main.hh"
 
-// CompileDriver
+// A-line
+#include "A-line/A-line.hh"
+#include "A-line/Locations.hh"
 #include "CompileDriver/Platform.hh"
 #include "CompileDriver/ProjectCatalog.hh"
 
@@ -30,6 +33,8 @@ namespace CompileDriver
 {
 	
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
+	
 	
 	using namespace io::path_descent_operators;
 	
@@ -211,6 +216,33 @@ namespace CompileDriver
 		if ( found != conf.end() )
 		{
 			name = found->second[ 0 ];  // 'name' directive overrides folder name
+		}
+		
+		if ( ALine::Options().catalog )
+		{
+			const std::size_t pad_length = 25;
+			
+			std::string listing = name;
+			
+			listing += ':';
+			
+			if ( listing.length() < pad_length )
+			{
+				listing.resize( pad_length, ' ' );
+			}
+			
+			static std::string src_tree = ALine::UserSrcTreePath();
+			
+			const bool in_tree = std::equal( src_tree.begin(),
+			                                 src_tree.end(),
+			                                 filePath.begin() );
+			
+			listing.append( filePath.begin() + (in_tree ? src_tree.length() + 1 : 0),
+			                filePath.end() );
+			
+			listing += '\n';
+			
+			p7::write( p7::stdout_fileno, listing.data(), listing.length() );
 		}
 		
 		try
