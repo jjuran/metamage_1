@@ -29,7 +29,6 @@ namespace ALine
 		bool verbose;
 		bool catalog;
 		CD::Platform platform;
-		std::vector< std::string > files;
 		
 		OptionsRecord()
 		:

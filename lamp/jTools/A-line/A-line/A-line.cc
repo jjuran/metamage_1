@@ -537,10 +537,6 @@ int O::Main( int argc, argv_t argv )
 	
 	O::AliasOption( "-t", "--catalog" );
 	
-	O::BindOption( "-f", gOptions.files );
-	
-	O::AliasOption( "-f", "--file" );
-	
 	// Targeting
 	
 	O::BindOption( "-6", arch, CD::arch68K );
