@@ -58,7 +58,7 @@ namespace CompileDriver
 	
 	static ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
 	{
-		ProjectCatalog::iterator it = gProjectCatalog.find( project_name );
+		ProjectCatalog::iterator it;
 		
 		do
 		{
