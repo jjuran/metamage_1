@@ -38,7 +38,7 @@ namespace CompileDriver
 	static ProjectCatalog gProjectCatalog;
 	
 	
-	void RecursivelyAddPendingSubprojects();
+	bool AddPendingSubprojects();
 	
 	
 	void AddProjectConfigFile( const std::string&      name,
@@ -60,16 +60,15 @@ namespace CompileDriver
 	{
 		ProjectCatalog::iterator it = gProjectCatalog.find( project_name );
 		
+		do
+		{
+			it = gProjectCatalog.find( project_name );
+		}
+		while ( it == gProjectCatalog.end()  &&  AddPendingSubprojects() );
+		
 		if ( it == gProjectCatalog.end() )
 		{
-			RecursivelyAddPendingSubprojects();
-			
-			it = gProjectCatalog.find( project_name );
-			
-			if ( it == gProjectCatalog.end() )
-			{
-				throw NoSuchProject( project_name );
-			}
+			throw NoSuchProject( project_name );
 		}
 		
 		return it->second;

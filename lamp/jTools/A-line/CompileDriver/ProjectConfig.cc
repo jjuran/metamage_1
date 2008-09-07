@@ -284,7 +284,9 @@ namespace CompileDriver
 		               std::ptr_fun( AddPendingConfigFile ) );
 	}
 	
-	static void AddPendingSubprojects()
+	bool AddPendingSubprojects();
+	
+	bool AddPendingSubprojects()
 	{
 		std::vector< std::string > subprojects;
 		
@@ -294,16 +296,7 @@ namespace CompileDriver
 		               subprojects.end(),
 		               std::ptr_fun( AddPendingSubproject ) );
 		
-	}
-	
-	void RecursivelyAddPendingSubprojects();
-	
-	void RecursivelyAddPendingSubprojects()
-	{
-		while ( Subprojects().size() > 0 )
-		{
-			AddPendingSubprojects();
-		}
+		return subprojects.size() > 0;
 	}
 	
 	class ConfDataMaker
