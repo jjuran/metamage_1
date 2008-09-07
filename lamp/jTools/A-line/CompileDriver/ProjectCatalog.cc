@@ -56,9 +56,9 @@ namespace CompileDriver
 		return projectDemands.Test( target );
 	}
 	
-	static ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
+	static const ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
 	{
-		ProjectCatalog::iterator it;
+		ProjectCatalog::const_iterator it;
 		
 		do
 		{
@@ -76,12 +76,12 @@ namespace CompileDriver
 	
 	const ProjectConfig& GetProjectConfig( const std::string& name, Platform targetPlatform )
 	{
-		ProjectConfigCandidates& candidates = find_project_config_candidates( name );
+		const ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
-		ProjectConfigCandidates::iterator it = std::find_if( candidates.begin(),
-		                                                     candidates.end(),
-		                                                     std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
-		                                                                   targetPlatform ) );
+		ProjectConfigCandidates::const_iterator it = std::find_if( candidates.begin(),
+		                                                           candidates.end(),
+		                                                           std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
+		                                                                         targetPlatform ) );
 		
 		if ( it == candidates.end() )
 		{
@@ -90,7 +90,7 @@ namespace CompileDriver
 			throw NoSuchProject( name );
 		}
 		
-		ProjectConfig& result = it->second;
+		const ProjectConfig& result = it->second;
 		
 		return result;
 	}
