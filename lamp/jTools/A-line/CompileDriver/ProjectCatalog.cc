@@ -78,10 +78,16 @@ namespace CompileDriver
 	{
 		const ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
-		ProjectConfigCandidates::const_iterator it = std::find_if( candidates.begin(),
-		                                                           candidates.end(),
-		                                                           std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
-		                                                                         targetPlatform ) );
+		ProjectConfigCandidates::const_iterator it;
+		
+		do
+		{
+			it = std::find_if( candidates.begin(),
+			                   candidates.end(),
+			                   std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
+			                                 targetPlatform ) );
+		}
+		while ( it == candidates.end()  &&  AddPendingSubprojects() );
 		
 		if ( it == candidates.end() )
 		{
