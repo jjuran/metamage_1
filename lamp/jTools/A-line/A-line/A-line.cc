@@ -599,7 +599,43 @@ int O::Main( int argc, argv_t argv )
 		p7::write( p7::stdout_fileno, STR_LEN( "done\n" ) );
 	}
 	
+	p7::write( p7::stdout_fileno, STR_LEN( "# Loading project data..." ) );
+	
 	CD::ApplyPlatformDefaults( targetPlatform );
+	
+	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
+	{
+		const std::string& project_name = freeArgs[ i ];
+		
+		gOptions.platform = targetPlatform;
+		
+		try
+		{
+			Project& project = GetProject( project_name, targetPlatform );
+		}
+		catch ( const CD::NoSuchProject& )
+		{
+			std::fprintf( stderr, "A-line: No such project '%s'\n", project_name.c_str() );
+			
+			return EXIT_FAILURE;
+		}
+		catch ( const NoSuchUsedProject& ex )
+		{
+			std::fprintf( stderr, "A-line: No such project '%s' used by %s\n",
+			                                                ex.used.c_str(),
+			                                                            ex.projName.c_str() );
+			
+			return EXIT_FAILURE;
+		}
+		catch ( const p7::errno_t& err )
+		{
+			std::fprintf( stderr, "A-line: %s: %s\n", project_name.c_str(), std::strerror( err ) );
+			
+			throw;
+		}
+	}
+	
+	p7::write( p7::stdout_fileno, STR_LEN( "done\n" ) );
 	
 	p7::write( p7::stdout_fileno, STR_LEN( "# Generating task graph..." ) );
 	
