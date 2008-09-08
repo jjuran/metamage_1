@@ -13,6 +13,9 @@
 #include "io/files.hh"
 #include "io/walk.hh"
 
+// Nucleus
+#include "Nucleus/Convert.h"
+
 // POSeven
 #include "POSeven/Directory.hh"
 #include "POSeven/Pathnames.hh"
@@ -27,6 +30,10 @@
 
 namespace CompileDriver
 {
+	
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
+	
 	
 	using namespace io::path_descent_operators;
 	
@@ -130,6 +137,44 @@ namespace CompileDriver
 		std::copy( contents.begin(),
 		           contents.end(),
 		           has_confd ? configs : folders );
+	}
+	
+	
+	void write_catalog_cache( p7::fd_t output )
+	{
+		typedef ProjectCatalog::const_iterator name_iter;
+		
+		typedef ProjectConfigCandidates::const_iterator demands_iter;
+		
+		for ( name_iter the_name = gProjectCatalog.begin();  the_name != gProjectCatalog.end();  ++the_name )
+		{
+			const std::string&              name       = the_name->first;
+			const ProjectConfigCandidates&  candidates = the_name->second;
+			
+			for ( demands_iter the_demands = candidates.begin();  the_demands != candidates.end();  ++the_demands )
+			{
+				const PlatformDemands&  demands = the_demands->first;
+				const ProjectConfig&    config  = the_demands->second;
+				
+				std::string record = name;
+				
+				record += '\t';
+				
+				record += NN::Convert< std::string >( demands.Required  () );
+				
+				record += '/';
+				
+				record += NN::Convert< std::string >( demands.Prohibited() );
+				
+				record += '\t';
+				
+				record += config.get_pathname();
+				
+				record += '\n';
+				
+				p7::write( output, record.data(), record.length() );
+			}
+		}
 	}
 	
 }

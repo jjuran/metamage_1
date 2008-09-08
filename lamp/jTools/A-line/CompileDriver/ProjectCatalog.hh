@@ -15,6 +15,9 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
+// POSeven
+#include "POSeven/types/fd_t.hh"
+
 // A-line
 #include "CompileDriver/Platform.hh"
 #include "CompileDriver/ProjectConfig.hh"
@@ -60,6 +63,8 @@ namespace CompileDriver
 	void ScanDirForProjects( const std::string&                                       dirPath,
 	                         std::back_insert_iterator< std::vector< std::string > >  configs,
 	                         std::back_insert_iterator< std::vector< std::string > >  folders );
+	
+	void write_catalog_cache( poseven::fd_t output );
 	
 }
 
