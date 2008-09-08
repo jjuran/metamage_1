@@ -460,11 +460,6 @@ namespace ALine
 				targetInfo
 			)
 		);
-		
-		while ( RunNextTask() )
-		{
-			continue;
-		}
 	}
 	
 	static void ApplyTargetDefaults( TargetInfo& target )
@@ -646,6 +641,11 @@ int O::Main( int argc, argv_t argv )
 			
 			throw;
 		}
+	}
+	
+	while ( RunNextTask() )
+	{
+		continue;
 	}
 	
 	return EXIT_SUCCESS;
