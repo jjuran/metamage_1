@@ -12,15 +12,9 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
-// CompileDriver
-#include "CompileDriver/ProjectConfig.hh"
-
 
 namespace ALine
 {
-	
-	namespace CD = CompileDriver;
-	
 	
 	using namespace io::path_descent_operators;
 	
@@ -44,7 +38,7 @@ namespace ALine
 	
 	static std::string UserDeveloperPath()
 	{
-		return CurrentUserHomeDirPath() + "/Developer";
+		return CurrentUserHomeDirPath() / "Developer";
 	}
 	
 	static std::string UserProjectsPath()
