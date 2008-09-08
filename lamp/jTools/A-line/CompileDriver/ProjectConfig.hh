@@ -39,6 +39,8 @@ namespace CompileDriver
 	
 	void AddPendingSubproject( const std::string& dir );
 	
+	bool AddPendingSubprojects();
+	
 	ConfData MakeConfData( const DotConfData& data );
 	
 }

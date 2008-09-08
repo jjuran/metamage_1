@@ -284,8 +284,6 @@ namespace CompileDriver
 		               std::ptr_fun( AddPendingConfigFile ) );
 	}
 	
-	bool AddPendingSubprojects();
-	
 	bool AddPendingSubprojects()
 	{
 		std::vector< std::string > subprojects;

@@ -21,6 +21,9 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
+// A-line
+#include "CompileDriver/ProjectConfig.hh"
+
 
 namespace CompileDriver
 {
@@ -36,9 +39,6 @@ namespace CompileDriver
 	
 	
 	static ProjectCatalog gProjectCatalog;
-	
-	
-	bool AddPendingSubprojects();
 	
 	
 	void AddProjectConfigFile( const std::string&      name,
