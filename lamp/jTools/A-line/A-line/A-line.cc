@@ -33,6 +33,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 #include "POSeven/functions/vfork.hh"
@@ -67,6 +68,8 @@
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 #include "A-line/Task.hh"
+#include "CompileDriver/ProjectCatalog.hh"
+#include "CompileDriver/ProjectConfig.hh"
 
 
 namespace O = Orion;
@@ -80,6 +83,9 @@ namespace ALine
 	namespace CD = CompileDriver;
 	
 	using BitsAndBytes::q;
+	
+	
+	using namespace io::path_descent_operators;
 	
 	
 	static bool gDryRun = false;
@@ -578,6 +584,18 @@ int O::Main( int argc, argv_t argv )
 	CD::Platform targetPlatform = arch | runtime | macAPI;
 	
 	CD::AddPendingSubproject( UserSrcTreePath() );
+	
+	std::string catalog_cache_pathname = get_user_cache_pathname() / "catalog";
+	
+	if ( !io::file_exists( catalog_cache_pathname ) )
+	{
+		while ( AddPendingSubprojects() )
+		{
+			continue;
+		}
+		
+		write_catalog_cache( p7::open( catalog_cache_pathname, p7::o_wronly | p7::o_creat, 0644 ) );
+	}
 	
 	CD::ApplyPlatformDefaults( targetPlatform );
 	
