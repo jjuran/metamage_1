@@ -394,7 +394,7 @@ namespace ALine
 		
 		if ( needToBuild || Options().verbose )
 		{
-			std::string checking = "# Checking project " + q( project.Name() ) + ":\n";
+			std::string checking = " " + project.Name();
 			
 			(void) p7::write( p7::stdout_fileno, checking.data(), checking.size() );
 		}
@@ -601,6 +601,8 @@ int O::Main( int argc, argv_t argv )
 	
 	CD::ApplyPlatformDefaults( targetPlatform );
 	
+	p7::write( p7::stdout_fileno, STR_LEN( "# Generating task graph..." ) );
+	
 	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
 	{
 		const std::string& proj = freeArgs[ i ];
@@ -642,6 +644,8 @@ int O::Main( int argc, argv_t argv )
 			throw;
 		}
 	}
+	
+	p7::write( p7::stdout_fileno, STR_LEN( ".\n" ) );
 	
 	while ( RunNextTask() )
 	{
