@@ -27,6 +27,9 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -589,12 +592,16 @@ int O::Main( int argc, argv_t argv )
 	
 	if ( !io::file_exists( catalog_cache_pathname ) )
 	{
+		p7::write( p7::stdout_fileno, STR_LEN( "# Catalogging project configs..." ) );
+		
 		while ( AddPendingSubprojects() )
 		{
 			continue;
 		}
 		
 		write_catalog_cache( p7::open( catalog_cache_pathname, p7::o_wronly | p7::o_creat, 0644 ) );
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "done\n" ) );
 	}
 	
 	CD::ApplyPlatformDefaults( targetPlatform );
