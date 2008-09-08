@@ -15,6 +15,8 @@ namespace ALine
 	
 	std::string UserSrcTreePath();
 	
+	std::string get_user_cache_pathname();
+	
 	std::string ProjectSourcesPath ( const std::string& projectPath );
 	std::string ProjectIncludesPath( const std::string& projectPath );
 	

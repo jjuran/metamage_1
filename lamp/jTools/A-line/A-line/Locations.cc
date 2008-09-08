@@ -46,6 +46,21 @@ namespace ALine
 		return CurrentUserHomeDirPath() / "src/tree";
 	}
 	
+	std::string get_user_cache_pathname()
+	{
+		std::string home = CurrentUserHomeDirPath();
+		
+		std::string subdir_name    = "var";
+		std::string cache_dir_name = "cache";
+		std::string aline_dir_name = "a-line";
+		
+		std::string subdir_pathname = CreateDirPath( home / subdir_name );
+		
+		std::string cache_pathname = CreateDirPath( subdir_name / cache_dir_name );
+		
+		return CreateDirPath( cache_pathname / aline_dir_name );
+	}
+	
 	static std::string UserLabDirPath()
 	{
 		if ( const char* builds = getenv( "ALINE_BUILDS" ) )
