@@ -41,16 +41,6 @@ namespace ALine
 		return CurrentUserHomeDirPath() / "Developer";
 	}
 	
-	static std::string UserProjectsPath()
-	{
-		if ( const char* projects = getenv( "ALINE_PROJECTS" ) )
-		{
-			return projects;
-		}
-		
-		return UserDeveloperPath() / "Projects";
-	}
-	
 	static std::string UserSrcPath()
 	{
 		return CurrentUserHomeDirPath() / "src";
@@ -58,13 +48,6 @@ namespace ALine
 	
 	std::string UserSrcTreePath()
 	{
-		std::string projects = UserProjectsPath();
-		
-		if ( io::directory_exists( projects ) )
-		{
-			return projects;
-		}
-		
 		if ( const char* tree = getenv( "ALINE_SRC_TREE" ) )
 		{
 			return tree;
