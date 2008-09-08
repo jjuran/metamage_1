@@ -36,16 +36,6 @@ namespace ALine
 		return "/";
 	}
 	
-	static std::string UserDeveloperPath()
-	{
-		return CurrentUserHomeDirPath() / "Developer";
-	}
-	
-	static std::string UserSrcPath()
-	{
-		return CurrentUserHomeDirPath() / "src";
-	}
-	
 	std::string UserSrcTreePath()
 	{
 		if ( const char* tree = getenv( "ALINE_SRC_TREE" ) )
@@ -53,7 +43,7 @@ namespace ALine
 			return tree;
 		}
 		
-		return UserSrcPath() / "tree";
+		return CurrentUserHomeDirPath() / "src/tree";
 	}
 	
 	static std::string UserLabDirPath()
@@ -63,7 +53,7 @@ namespace ALine
 			return builds;
 		}
 		
-		return CreateDirPath( UserDeveloperPath() / "Builds" );
+		return CreateDirPath( CurrentUserHomeDirPath() / "Developer/Builds" );
 	}
 	
 	std::string ProjectSourcesPath( const std::string& projectPath )
