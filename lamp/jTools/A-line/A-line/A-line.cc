@@ -579,11 +579,6 @@ int O::Main( int argc, argv_t argv )
 	
 	CD::AddPendingSubproject( UserSrcTreePath() );
 	
-	if ( gOptions.catalog )
-	{
-		//(void)GetProjectCatalog();
-	}
-	
 	CD::ApplyPlatformDefaults( targetPlatform );
 	
 	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
