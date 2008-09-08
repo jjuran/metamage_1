@@ -629,14 +629,6 @@ int O::Main( int argc, argv_t argv )
 			
 			return EXIT_FAILURE;
 		}
-		/*
-		catch ( BadSourceAlias& ex )
-		{
-			Io::Err << argv[ 0 ] 
-				<< ": Unresolvable source alias " << q( NN::Convert< std::string >( ex.alias.name ) )
-				<< " in " << ex.proj.Name() << "\n";
-		}
-		*/
 		catch ( const p7::errno_t& err )
 		{
 			std::fprintf( stderr, "A-line: %s: %s\n", proj.c_str(), std::strerror( err ) );
