@@ -50,6 +50,8 @@ namespace CompileDriver
 	
 	static ProjectCatalog gProjectCatalog;
 	
+	static std::vector< std::string > global_pending_configs;
+	
 	
 	void AddProjectConfigFile( const std::string&      name,
 	                           const PlatformDemands&  demands,
@@ -84,6 +86,22 @@ namespace CompileDriver
 		return it->second;
 	}
 	
+	static bool AddPendingProjects()
+	{
+		if ( global_pending_configs.empty() )
+		{
+			return AddPendingSubprojects();
+		}
+		
+		std::string next_project_config = global_pending_configs.back();
+		
+		global_pending_configs.pop_back();
+		
+		AddCachedConfigFile( next_project_config );
+		
+		return true;
+	}
+	
 	const ProjectConfig& GetProjectConfig( const std::string& name, Platform targetPlatform )
 	{
 		const ProjectConfigCandidates& candidates = find_project_config_candidates( name );
@@ -97,7 +115,7 @@ namespace CompileDriver
 			                   std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
 			                                 targetPlatform ) );
 		}
-		while ( it == candidates.end()  &&  AddPendingSubprojects() );
+		while ( it == candidates.end()  &&  AddPendingProjects() );
 		
 		if ( it == candidates.end() )
 		{
@@ -174,7 +192,7 @@ namespace CompileDriver
 		{
 			std::string pathname = input.Read();
 			
-			AddCachedConfigFile( pathname );
+			global_pending_configs.push_back( pathname );
 		}
 	}
 	
