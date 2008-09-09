@@ -178,11 +178,6 @@ namespace CompileDriver
 		return gSubprojects;
 	}
 	
-	static void AddSubproject( const std::string& location )
-	{
-		Subprojects().push_back( location );
-	}
-	
 	static std::string DescendPathToDir( const std::string& dir, const std::string& path )
 	{
 		return dir / path;
@@ -256,11 +251,11 @@ namespace CompileDriver
 		
 		std::string project_dir = get_project_dir_from_config_file( filePath );
 		
-		std::for_each( conf[ "subprojects" ].begin(),
-		               conf[ "subprojects" ].end(),
-		               more::compose1( more::ptr_fun( AddSubproject ),
-		                               std::bind1st( more::ptr_fun( DescendPathToDir ),
-		                                             project_dir ) ) );
+		std::transform( conf[ "subprojects" ].begin(),
+		                conf[ "subprojects" ].end(),
+		                std::back_inserter( Subprojects() ),
+		                std::bind1st( more::ptr_fun( DescendPathToDir ),
+		                              project_dir ) );
 		
 	}
 	
