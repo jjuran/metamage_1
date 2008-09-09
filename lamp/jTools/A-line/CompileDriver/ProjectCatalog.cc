@@ -24,6 +24,9 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
+// Io
+#include "Io/TextInput.hh"
+
 // A-line
 #include "CompileDriver/ProjectConfig.hh"
 
@@ -160,6 +163,18 @@ namespace CompileDriver
 				
 				p7::write( output, record.data(), record.length() );
 			}
+		}
+	}
+	
+	void read_catalog_cache( p7::fd_t input_fd )
+	{
+		Io::TextInputAdapter< p7::fd_t > input( input_fd );
+		
+		while ( input.Ready() )
+		{
+			std::string pathname = input.Read();
+			
+			AddCachedConfigFile( pathname );
 		}
 	}
 	

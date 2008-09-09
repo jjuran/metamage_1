@@ -64,7 +64,8 @@ namespace CompileDriver
 	                         std::back_insert_iterator< std::vector< std::string > >  configs,
 	                         std::back_insert_iterator< std::vector< std::string > >  folders );
 	
-	void write_catalog_cache( poseven::fd_t output );
+	void write_catalog_cache( poseven::fd_t output   );
+	void read_catalog_cache ( poseven::fd_t input_fd );
 	
 }
 
