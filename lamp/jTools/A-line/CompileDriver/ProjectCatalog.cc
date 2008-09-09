@@ -68,24 +68,6 @@ namespace CompileDriver
 		return projectDemands.Test( target );
 	}
 	
-	static const ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
-	{
-		ProjectCatalog::const_iterator it;
-		
-		do
-		{
-			it = gProjectCatalog.find( project_name );
-		}
-		while ( it == gProjectCatalog.end()  &&  AddPendingSubprojects() );
-		
-		if ( it == gProjectCatalog.end() )
-		{
-			throw NoSuchProject( project_name );
-		}
-		
-		return it->second;
-	}
-	
 	static bool AddPendingProjects()
 	{
 		if ( global_pending_configs.empty() )
@@ -100,6 +82,24 @@ namespace CompileDriver
 		AddCachedConfigFile( next_project_config );
 		
 		return true;
+	}
+	
+	static const ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
+	{
+		ProjectCatalog::const_iterator it;
+		
+		do
+		{
+			it = gProjectCatalog.find( project_name );
+		}
+		while ( it == gProjectCatalog.end()  &&  AddPendingProjects() );
+		
+		if ( it == gProjectCatalog.end() )
+		{
+			throw NoSuchProject( project_name );
+		}
+		
+		return it->second;
 	}
 	
 	const ProjectConfig& GetProjectConfig( const std::string& name, Platform targetPlatform )
