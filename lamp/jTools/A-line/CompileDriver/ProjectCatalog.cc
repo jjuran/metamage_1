@@ -30,9 +30,6 @@
 // Io
 #include "Io/TextInput.hh"
 
-// A-line
-#include "CompileDriver/ProjectConfig.hh"
-
 
 namespace CompileDriver
 {
@@ -110,13 +107,7 @@ namespace CompileDriver
 	
 	static ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
 	{
-		ProjectCatalog::iterator it;
-		
-		do
-		{
-			it = gProjectCatalog.find( project_name );
-		}
-		while ( it == gProjectCatalog.end()  &&  AddPendingSubprojects() );
+		ProjectCatalog::iterator it = gProjectCatalog.find( project_name );
 		
 		if ( it == gProjectCatalog.end() )
 		{
@@ -130,16 +121,9 @@ namespace CompileDriver
 	{
 		ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
-		ProjectConfigCandidates::iterator it;
-		
-		do
-		{
-			it = std::find_if( candidates.begin(),
-			                   candidates.end(),
-			                   platform_compatibility( targetPlatform ) );
-		}
-		while ( it == candidates.end()  &&  AddPendingSubprojects() );
-		
+		ProjectConfigCandidates::iterator it = std::find_if( candidates.begin(),
+		                                                     candidates.end(),
+		                                                     platform_compatibility( targetPlatform ) );
 		if ( it == candidates.end() )
 		{
 			// FIXME:  Indicate that there are projects with this name,
