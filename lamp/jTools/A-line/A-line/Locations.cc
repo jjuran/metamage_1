@@ -134,6 +134,11 @@ namespace ALine
 		return CreateDirPath( "_Rezzed" );
 	}
 	
+	std::string get_project_dependencies_pathname( const std::string& project_name )
+	{
+		return CreateDirPath( CreateDirPath( "_Dependencies" ) / project_name );
+	}
+	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj )
 	{
 		return "Diagnostics" / proj;

@@ -27,6 +27,8 @@ namespace ALine
 	std::string LibrariesDirPath();
 	std::string RezzedDirPath();
 	
+	std::string get_project_dependencies_pathname( const std::string& project_name );
+	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj );
 	std::string ProjectPrecompiledDirPath( const std::string& proj );
 	std::string ProjectObjectsDirPath    ( const std::string& proj );
