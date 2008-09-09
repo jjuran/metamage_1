@@ -10,9 +10,6 @@
 #include <string>
 #include <vector>
 
-// Standard C
-#include <time.h>
-
 // Boost
 #include <boost/weak_ptr.hpp>
 
@@ -24,9 +21,6 @@
 
 namespace ALine
 {
-	
-	// maps (search-dir-relative) include paths to modification dates
-	typedef std::map< std::string, time_t > DateMap;
 	
 	class Project
 	{
@@ -56,8 +50,6 @@ namespace ALine
 			std::vector< std::string > its_source_file_pathnames;
 			// Tool source files.
 			std::vector< std::string > its_tool_source_filenames;
-			
-			mutable DateMap its_dates;
 			
 			boost::weak_ptr< Task > its_precompile_task;
 			boost::weak_ptr< Task > its_static_lib_task;
@@ -96,11 +88,6 @@ namespace ALine
 			
 			std::string FindInclude           ( const std::string& include_path ) const;
 			std::string FindIncludeRecursively( const std::string& include_path ) const;
-			
-			time_t RecursivelyLatestDate( const std::string& include_path ) const;
-			
-			time_t RecursivelyLatestDate( const std::string&  include_path,
-			                              const std::string&  pathname ) const;
 			
 			std::string FindResourceFile( const std::string& filename ) const;
 			
