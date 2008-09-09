@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+// Iota
+#include "iota/strings.hh"
+
 // Io
 #include "io/files.hh"
 #include "io/walk.hh"
@@ -41,16 +44,37 @@ namespace CompileDriver
 	using namespace io::path_descent_operators;
 	
 	
-	// A map from platform requirements to project config data
-	typedef std::map< PlatformDemands, ProjectConfig > ProjectConfigCandidates;
+	template < class Data >
+	struct project_data
+	{
+		// A map from platform requirements to project data
+		typedef std::map< PlatformDemands, Data > platform_map;
+		
+		// A map from project name to config file set
+		typedef std::map< std::string, platform_map > name_map;
+	};
 	
-	// A map from project name to config file set
-	typedef std::map< std::string, ProjectConfigCandidates > ProjectCatalog;
+	typedef project_data< ProjectConfig >::platform_map  ProjectConfigCandidates;
+	typedef project_data< ProjectConfig >::name_map      ProjectCatalog;
 	
 	
 	static ProjectCatalog gProjectCatalog;
 	
-	static std::vector< std::string > global_pending_configs;
+	
+	static bool ends_with( const std::string& string, const char* substring, std::size_t length )
+	{
+		return std::equal( string.end() - length, string.end(), substring );
+	}
+	
+	static std::string get_project_dir_from_config_file( const std::string& config_pathname )
+	{
+		std::string config_dir = io::get_preceding_directory( config_pathname );
+		
+		const bool has_confd = ends_with( config_dir, STR_LEN( "A-line.confd/" ) );
+		
+		return has_confd ? io::get_preceding_directory( config_dir )
+		                 :                              config_dir;
+	}
 	
 	
 	void AddProjectConfigFile( const std::string&      name,
@@ -60,39 +84,39 @@ namespace CompileDriver
 		gProjectCatalog[ name ][ demands ] = config;
 	}
 	
-	static bool ProjectPlatformIsCompatible( const ProjectConfigCandidates::value_type&  candidate,
-	                                         Platform                                    target )
+	struct platform_compatibility
 	{
-		const PlatformDemands& projectDemands = candidate.first;
+		Platform platform;
 		
-		return projectDemands.Test( target );
-	}
-	
-	static bool AddPendingProjects()
-	{
-		if ( global_pending_configs.empty() )
+		platform_compatibility() : platform()
 		{
-			return AddPendingSubprojects();
 		}
 		
-		std::string next_project_config = global_pending_configs.back();
+		platform_compatibility( Platform p ) : platform( p )
+		{
+		}
 		
-		global_pending_configs.pop_back();
+		bool operator()( const PlatformDemands& demands ) const
+		{
+			return demands.Test( platform );
+		}
 		
-		AddCachedConfigFile( next_project_config );
-		
-		return true;
-	}
+		template < class value_type >
+		bool operator()( const value_type& map_value ) const
+		{
+			return operator()( map_value.first );
+		}
+	};
 	
-	static const ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
+	static ProjectConfigCandidates& find_project_config_candidates( const std::string& project_name )
 	{
-		ProjectCatalog::const_iterator it;
+		ProjectCatalog::iterator it;
 		
 		do
 		{
 			it = gProjectCatalog.find( project_name );
 		}
-		while ( it == gProjectCatalog.end()  &&  AddPendingProjects() );
+		while ( it == gProjectCatalog.end()  &&  AddPendingSubprojects() );
 		
 		if ( it == gProjectCatalog.end() )
 		{
@@ -104,18 +128,17 @@ namespace CompileDriver
 	
 	const ProjectConfig& GetProjectConfig( const std::string& name, Platform targetPlatform )
 	{
-		const ProjectConfigCandidates& candidates = find_project_config_candidates( name );
+		ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
-		ProjectConfigCandidates::const_iterator it;
+		ProjectConfigCandidates::iterator it;
 		
 		do
 		{
 			it = std::find_if( candidates.begin(),
 			                   candidates.end(),
-			                   std::bind2nd( more::ptr_fun( ProjectPlatformIsCompatible ),
-			                                 targetPlatform ) );
+			                   platform_compatibility( targetPlatform ) );
 		}
-		while ( it == candidates.end()  &&  AddPendingProjects() );
+		while ( it == candidates.end()  &&  AddPendingSubprojects() );
 		
 		if ( it == candidates.end() )
 		{
@@ -124,9 +147,37 @@ namespace CompileDriver
 			throw NoSuchProject( name );
 		}
 		
-		const ProjectConfig& result = it->second;
+		ProjectConfig& result = it->second;
+		
+		if ( result.get_config_data().empty() )
+		{
+			result.load_config();
+		}
 		
 		return result;
+	}
+	
+	static void add_cached_config( const std::string&      project_name,
+	                               const PlatformDemands&  demands,
+	                               const std::string&      pathname )
+	{
+		ProjectConfig& config = gProjectCatalog[ project_name ][ demands ];
+		
+		if ( config.get_pathname().empty() )
+		{
+			config.set_pathname( pathname );
+		}
+	}
+	
+	void ProjectConfig::load_config()
+	{
+		its_project_dir = get_project_dir_from_config_file( its_pathname );
+		
+		DotConfData data;
+		
+		ReadProjectDotConf( its_pathname, data );
+		
+		its_config_data = MakeConfData( data );
 	}
 	
 	void ScanDirForProjects( const std::string&                                       dirPath,
@@ -169,13 +220,27 @@ namespace CompileDriver
 		
 		for ( name_iter the_name = gProjectCatalog.begin();  the_name != gProjectCatalog.end();  ++the_name )
 		{
-			const ProjectConfigCandidates& candidates = the_name->second;
+			const std::string&              name       = the_name->first;
+			const ProjectConfigCandidates&  candidates = the_name->second;
 			
 			for ( demands_iter the_demands = candidates.begin();  the_demands != candidates.end();  ++the_demands )
 			{
-				const ProjectConfig& config = the_demands->second;
+				const PlatformDemands&  demands = the_demands->first;
+				const ProjectConfig&    config  = the_demands->second;
 				
-				std::string record = config.get_pathname();
+				std::string record = name;
+				
+				record += '\t';
+				
+				record += NN::Convert< std::string >( demands.Required  () );
+				
+				record += '/';
+				
+				record += NN::Convert< std::string >( demands.Prohibited() );
+				
+				record += '\t';
+				
+				record += config.get_pathname();
 				
 				record += '\n';
 				
@@ -190,9 +255,30 @@ namespace CompileDriver
 		
 		while ( input.Ready() )
 		{
-			std::string pathname = input.Read();
+			std::string text = input.Read();
 			
-			global_pending_configs.push_back( pathname );
+			const char* begin = text.c_str();
+			
+			if ( const char* tab1 = std::strchr( begin, '\t' ) )
+			{
+				if ( const char* slash = std::strchr( tab1 + 1, '/' ) )
+				{
+					if ( const char* tab2 = std::strchr( slash + 1, '\t' ) )
+					{
+						std::string project_name( begin, tab1 );
+						
+						std::string requirements( tab1  + 1, slash );
+						std::string prohibitions( slash + 1, tab2  );
+						
+						std::string config_pathname( tab2 + 1 );
+						
+						PlatformDemands demands( Platform( std::atoi( requirements.c_str() ) ),
+						                         Platform( std::atoi( prohibitions.c_str() ) ) );
+						
+						add_cached_config( project_name, demands, config_pathname );
+					}
+				}
+			}
 		}
 	}
 	

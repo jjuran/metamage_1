@@ -51,6 +51,10 @@ namespace CompileDriver
 			const std::string& get_project_dir() const  { return its_project_dir; }
 			
 			const ConfData& get_config_data() const  { return its_config_data; }
+			
+			void set_pathname( const std::string& pathname )  { its_pathname = pathname; }
+			
+			void load_config();
 	};
 	
 	
