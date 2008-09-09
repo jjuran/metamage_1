@@ -263,6 +263,20 @@ namespace ALine
 		}
 	}
 	
+	time_t get_memoized_timestamp( const std::string& pathname )
+	{
+		static std::map< std::string, time_t > map;
+		
+		time_t& value = map[ pathname ];
+		
+		if ( value == 0 )
+		{
+			value = ModifiedDate( pathname );
+		}
+		
+		return value;
+	}
+	
 	template < class Iter >
 	static time_t get_collective_timestamp( Iter begin, Iter end )
 	{
@@ -278,7 +292,7 @@ namespace ALine
 				return 0x7fffffff;
 			}
 			
-			time_t stamp = ModifiedDate( pathname );
+			time_t stamp = get_memoized_timestamp( pathname );
 			
 			if ( stamp > result )
 			{
@@ -295,6 +309,7 @@ namespace ALine
 		{
 			time_t output_stamp = ModifiedDate( OutputPath() );
 			
+			// Memoize this once we have multi-platform builds
 			UpdateInputStamp( ModifiedDate( its_source_pathname ) );
 			
 			if ( MoreRecent( output_stamp ) )
