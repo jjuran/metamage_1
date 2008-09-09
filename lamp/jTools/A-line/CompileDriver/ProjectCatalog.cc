@@ -148,27 +148,13 @@ namespace CompileDriver
 		
 		for ( name_iter the_name = gProjectCatalog.begin();  the_name != gProjectCatalog.end();  ++the_name )
 		{
-			const std::string&              name       = the_name->first;
-			const ProjectConfigCandidates&  candidates = the_name->second;
+			const ProjectConfigCandidates& candidates = the_name->second;
 			
 			for ( demands_iter the_demands = candidates.begin();  the_demands != candidates.end();  ++the_demands )
 			{
-				const PlatformDemands&  demands = the_demands->first;
-				const ProjectConfig&    config  = the_demands->second;
+				const ProjectConfig& config = the_demands->second;
 				
-				std::string record = name;
-				
-				record += '\t';
-				
-				record += NN::Convert< std::string >( demands.Required  () );
-				
-				record += '/';
-				
-				record += NN::Convert< std::string >( demands.Prohibited() );
-				
-				record += '\t';
-				
-				record += config.get_pathname();
+				std::string record = config.get_pathname();
 				
 				record += '\n';
 				
