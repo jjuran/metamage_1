@@ -263,7 +263,7 @@ namespace ALine
 		}
 	}
 	
-	time_t get_memoized_timestamp( const std::string& pathname )
+	static time_t get_memoized_timestamp( const std::string& pathname )
 	{
 		static std::map< std::string, time_t > map;
 		
