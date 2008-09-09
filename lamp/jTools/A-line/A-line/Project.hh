@@ -7,6 +7,7 @@
 #define ALINE_PROJECT_HH
 
 // Standard C++
+#include <map>
 #include <string>
 #include <vector>
 
@@ -50,6 +51,9 @@ namespace ALine
 			std::vector< std::string > its_source_file_pathnames;
 			// Tool source files.
 			std::vector< std::string > its_tool_source_filenames;
+			
+			// maps include paths to absolute pathnames
+			mutable std::map< std::string, std::string > its_include_map;
 			
 			boost::weak_ptr< Task > its_precompile_task;
 			boost::weak_ptr< Task > its_static_lib_task;

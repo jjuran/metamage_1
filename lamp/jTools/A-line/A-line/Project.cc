@@ -117,19 +117,24 @@ namespace ALine
 	
 	std::string Project::FindIncludeRecursively( const std::string& include_path ) const
 	{
-		std::string result = FindInclude( include_path );
+		std::string& result = its_include_map[ include_path ];
 		
-		const std::vector< std::string >& project_names = AllUsedProjects();
-		
-		typedef std::vector< std::string >::const_iterator Iter;
-		
-		for ( Iter it = project_names.begin();  result.empty()  &&  it != project_names.end();  ++it )
+		if ( result.empty() )
 		{
-			const Project& used_project = GetProject( *it, its_platform );
+			result = FindInclude( include_path );
 			
-			// for searching only directly used projects, call recursive
-			// for searching all used projects, call non-recursive
-			result = used_project.FindInclude( include_path );
+			const std::vector< std::string >& project_names = AllUsedProjects();
+			
+			typedef std::vector< std::string >::const_iterator Iter;
+			
+			for ( Iter it = project_names.begin();  result.empty()  &&  it != project_names.end();  ++it )
+			{
+				const Project& used_project = GetProject( *it, its_platform );
+				
+				// for searching only directly used projects, call recursive
+				// for searching all used projects, call non-recursive
+				result = used_project.FindInclude( include_path );
+			}
 		}
 		
 		return result;
