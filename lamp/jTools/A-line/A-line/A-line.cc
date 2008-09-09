@@ -613,8 +613,6 @@ int O::Main( int argc, argv_t argv )
 	{
 		const std::string& project_name = freeArgs[ i ];
 		
-		gOptions.platform = targetPlatform;
-		
 		try
 		{
 			Project& project = GetProject( project_name, targetPlatform );
@@ -648,8 +646,6 @@ int O::Main( int argc, argv_t argv )
 	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
 	{
 		const std::string& proj = freeArgs[ i ];
-		
-		gOptions.platform = targetPlatform;
 		
 		try
 		{
