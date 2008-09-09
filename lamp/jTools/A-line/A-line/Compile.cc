@@ -271,7 +271,16 @@ namespace ALine
 		
 		if ( value == 0 )
 		{
-			value = ModifiedDate( pathname );
+			if ( !io::file_exists( pathname ) )
+			{
+				// A missing include file means the .d file is out of date
+				value = 0x7fffffff;
+			}
+			else
+			{
+				// FIXME:  These are both stat ops and could be combined	
+				value = ModifiedDate( pathname );
+			}
 		}
 		
 		return value;
@@ -286,17 +295,17 @@ namespace ALine
 		{
 			const std::string& pathname = *begin++;
 			
-			if ( !io::file_exists( pathname ) )
-			{
-				// A missing include file means the .d file is out of date
-				return 0x7fffffff;
-			}
-			
 			time_t stamp = get_memoized_timestamp( pathname );
 			
 			if ( stamp > result )
 			{
 				result = stamp;
+				
+				if ( result == 0x7fffffff )
+				{
+					// The .d file is out of date, and that's that.
+					break;
+				}
 			}
 		}
 		
