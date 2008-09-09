@@ -264,6 +264,17 @@ namespace CompileDriver
 		
 	}
 	
+	void AddCachedConfigFile( const std::string& pathname )
+	{
+		DotConfData data;
+		
+		ReadProjectDotConf( pathname, data );
+		
+		ConfData conf = MakeConfData( data );
+		
+		AddConfigFile( pathname, conf );
+	}
+	
 	void AddPendingSubproject( const std::string& dir )
 	{
 		std::vector< std::string > configs;

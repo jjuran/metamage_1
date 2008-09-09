@@ -37,6 +37,8 @@ namespace CompileDriver
 		NoSuchPlatform( const std::string& name ) : name( name )  {}
 	};
 	
+	void AddCachedConfigFile( const std::string& pathname );
+	
 	void AddPendingSubproject( const std::string& dir );
 	
 	bool AddPendingSubprojects();
