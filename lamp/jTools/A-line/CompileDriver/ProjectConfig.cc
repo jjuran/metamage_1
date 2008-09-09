@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/ResourceTransfer.h"
 
@@ -185,6 +188,54 @@ namespace CompileDriver
 		return dir / path;
 	}
 	
+	static bool ends_with( const std::string& string, const char* substring, std::size_t length )
+	{
+		return std::equal( string.end() - length, string.end(), substring );
+	}
+	
+	static std::string get_project_dir_from_config_file( const std::string& config_pathname )
+	{
+		std::string config_dir = io::get_preceding_directory( config_pathname );
+		
+		const bool has_confd = ends_with( config_dir, STR_LEN( "A-line.confd/" ) );
+		
+		return has_confd ? io::get_preceding_directory( config_dir )
+		                 :                              config_dir;
+	}
+	
+	static void AddConfigFile( const std::string& config_pathname, const ConfData& conf )
+	{
+		std::string project_dir = get_project_dir_from_config_file( config_pathname );
+		
+		typedef ConfData::const_iterator const_iterator;
+		
+		const_iterator it = conf.find( "name" );
+		
+		std::string project_name = it != conf.end() ? it->second[ 0 ]
+		                                            : io::get_filename( project_dir );
+		
+		it = conf.find( "platform" );
+		
+		PlatformDemands demands = it != conf.end() ? MakePlatformInfo( it->second )
+		                                           : PlatformDemands();
+		
+		try
+		{
+			AddProjectConfigFile( project_name,
+			                      demands,
+			                      ProjectConfig( config_pathname, project_dir, conf ) );
+		}
+		catch ( const NoSuchPlatform& e )
+		{
+			std::fprintf( stderr, "No such platform '%s' in %s\n",
+			                                         e.name.c_str(),
+			                                                config_pathname.c_str() );
+			
+			Orion::ThrowExitStatus( EXIT_FAILURE );
+		}
+		
+	}
+	
 	static void AddPendingConfigFile( const std::string& filePath )
 	{
 		std::string filename = io::get_filename_string( filePath );
@@ -197,72 +248,19 @@ namespace CompileDriver
 			return;
 		}
 		
-		std::string  parent = io::get_preceding_directory( filePath );
-		std::string  name   = io::get_filename_string    ( parent   );
-		
-		if ( name == "A-line.confd" )
-		{
-			parent = io::get_preceding_directory( parent );
-			name   = io::get_filename_string    ( parent );
-		}
-		
 		DotConfData data;
 		ReadProjectDotConf( filePath, data );
 		ConfData conf = MakeConfData( data );
 		
-		typedef ConfData::const_iterator const_iterator;
+		AddConfigFile( filePath, conf );
 		
-		const_iterator found = conf.find( "name" );
-		if ( found != conf.end() )
-		{
-			name = found->second[ 0 ];  // 'name' directive overrides folder name
-		}
-		
-		if ( ALine::Options().catalog )
-		{
-			const std::size_t pad_length = 25;
-			
-			std::string listing = name;
-			
-			listing += ':';
-			
-			if ( listing.length() < pad_length )
-			{
-				listing.resize( pad_length, ' ' );
-			}
-			
-			static std::string src_tree = ALine::UserSrcTreePath();
-			
-			const bool in_tree = std::equal( src_tree.begin(),
-			                                 src_tree.end(),
-			                                 filePath.begin() );
-			
-			listing.append( filePath.begin() + (in_tree ? src_tree.length() + 1 : 0),
-			                filePath.end() );
-			
-			listing += '\n';
-			
-			p7::write( p7::stdout_fileno, listing.data(), listing.length() );
-		}
-		
-		try
-		{
-			AddProjectConfigFile( name,
-			                      MakePlatformInfo( conf[ "platform" ] ),
-			                      ProjectConfig( filePath, parent, conf ) );
-		}
-		catch ( const NoSuchPlatform& e )
-		{
-			std::fprintf( stderr, "No such platform '%s' in %s\n", e.name.c_str(), filePath.c_str() );
-			
-			Orion::ThrowExitStatus( EXIT_FAILURE );
-		}
+		std::string project_dir = get_project_dir_from_config_file( filePath );
 		
 		std::for_each( conf[ "subprojects" ].begin(),
 		               conf[ "subprojects" ].end(),
 		               more::compose1( more::ptr_fun( AddSubproject ),
 		                               std::bind1st( more::ptr_fun( DescendPathToDir ),
-		                                             parent ) ) );
+		                                             project_dir ) ) );
 		
 	}
 	
