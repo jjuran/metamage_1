@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <functional>
 #include <numeric>
+#include <set>
 #include <vector>
 
 // Standard C
@@ -26,17 +27,22 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
+#include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
 
+// Io
+#include "Io/TextInput.hh"
+
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/BuildCommon.hh"
 #include "A-line/Commands.hh"
 #include "A-line/CompilerOptions.hh"
+#include "A-line/Includes.hh"
 #include "A-line/Link.hh"
 #include "A-line/Locations.hh"
 #include "A-line/Project.hh"
@@ -207,6 +213,82 @@ namespace ALine
 		RunCommand( command, diagnostics_pathname.c_str(), caption + source_filename );
 	}
 	
+	static void get_recursive_includes( const Project&            project,
+	                                    const std::string&        source_pathname,
+	                                    std::set< std::string >&  result )
+	{
+		const std::vector< std::string >& includes = GetIncludes( source_pathname ).user;
+		
+		typedef std::vector< std::string >::const_iterator Iter;
+		
+		for ( Iter it = includes.begin();  it != includes.end();  ++it )
+		{
+			const std::string& include_path = *it;
+			
+			if ( result.find( include_path ) == result.end() )
+			{
+				std::string pathname = project.FindIncludeRecursively( include_path );
+				
+				if ( !pathname.empty() )
+				{
+					result.insert( pathname );
+					
+					get_recursive_includes( project, pathname, result );
+				}
+			}
+		}
+	}
+	
+	static void write_dependencies_file( p7::fd_t output, const std::set< std::string >& includes )
+	{
+		typedef std::set< std::string >::const_iterator Iter;
+		
+		for ( Iter it = includes.begin();  it != includes.end();  ++it )
+		{
+			std::string line = *it + '\n';
+			
+			p7::write( output, line.data(), line.length() );
+		}
+	}
+	
+	static void read_dependencies_file( p7::fd_t input_fd, std::set< std::string >& includes )
+	{
+		Io::TextInputAdapter< p7::fd_t > input( input_fd );
+		
+		while ( input.Ready() )
+		{
+			std::string include_path = input.Read();
+			
+			includes.insert( include_path );
+		}
+	}
+	
+	template < class Iter >
+	static time_t get_collective_timestamp( Iter begin, Iter end )
+	{
+		time_t result = 0;
+		
+		while ( begin != end )
+		{
+			const std::string& pathname = *begin++;
+			
+			if ( !io::file_exists( pathname ) )
+			{
+				// A missing include file means the .d file is out of date
+				return 0x7fffffff;
+			}
+			
+			time_t stamp = ModifiedDate( pathname );
+			
+			if ( stamp > result )
+			{
+				result = stamp;
+			}
+		}
+		
+		return result;
+	}
+	
 	bool CompilingTask::UpToDate()
 	{
 		if ( io::item_exists( OutputPath() ) )
@@ -219,7 +301,44 @@ namespace ALine
 			{
 				std::string source_filename = io::get_filename_string( its_source_pathname );
 				
-				UpdateInputStamp( its_project.RecursivelyLatestDate( source_filename, its_source_pathname ) );
+				std::string dependencies_dir = get_project_dependencies_pathname( its_project.Name() );
+				
+				std::string dependencies_pathname = dependencies_dir / source_filename + ".d";
+				
+				bool has_dot_d = io::file_exists( dependencies_pathname );
+				
+				time_t includes_stamp;
+				
+				std::set< std::string > includes;
+				
+				if ( has_dot_d )
+				{
+					read_dependencies_file( p7::open( dependencies_pathname, p7::o_rdonly ), includes );
+					
+					includes_stamp = get_collective_timestamp( includes.begin(), includes.end() );
+					
+					time_t dependencies_stamp = ModifiedDate( dependencies_pathname );
+					
+					if ( includes_stamp >= dependencies_stamp )
+					{
+						// .d file is out of date
+						includes.clear();
+						
+						has_dot_d = false;
+					}
+				}
+				
+				if ( !has_dot_d )
+				{
+					get_recursive_includes( its_project, its_source_pathname, includes );
+					
+					includes_stamp = get_collective_timestamp( includes.begin(), includes.end() );
+					
+					// Write .d file for next time
+					write_dependencies_file( p7::open( dependencies_pathname, p7::o_wronly | p7::o_creat, 0644 ), includes );
+				}
+				
+				UpdateInputStamp( includes_stamp );
 				
 				if ( MoreRecent( output_stamp ) )
 				{
