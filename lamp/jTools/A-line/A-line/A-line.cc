@@ -585,9 +585,9 @@ int O::Main( int argc, argv_t argv )
 	
 	std::string catalog_cache_pathname = get_user_cache_pathname() / "catalog";
 	
-	const bool catalog_cache_existed = io::file_exists( catalog_cache_pathname );
+	bool cache_was_written = false;
 	
-	if ( !catalog_cache_existed )
+	if ( gOptions.catalog || !io::file_exists( catalog_cache_pathname ) )
 	{
 		p7::write( p7::stdout_fileno, STR_LEN( "# Catalogging project configs..." ) );
 		
@@ -597,6 +597,8 @@ int O::Main( int argc, argv_t argv )
 		}
 		
 		write_catalog_cache( p7::open( catalog_cache_pathname, p7::o_wronly | p7::o_creat, 0644 ) );
+		
+		cache_was_written = true;
 		
 		p7::write( p7::stdout_fileno, STR_LEN( "done\n" ) );
 	}
@@ -621,6 +623,11 @@ int O::Main( int argc, argv_t argv )
 		{
 			std::fprintf( stderr, "A-line: No such project '%s'\n", project_name.c_str() );
 			
+			if ( !cache_was_written )
+			{
+				std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
+			}
+			
 			return EXIT_FAILURE;
 		}
 		catch ( const NoSuchUsedProject& ex )
@@ -628,6 +635,11 @@ int O::Main( int argc, argv_t argv )
 			std::fprintf( stderr, "A-line: No such project '%s' used by %s\n",
 			                                                ex.used.c_str(),
 			                                                            ex.projName.c_str() );
+			
+			if ( !cache_was_written )
+			{
+				std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
+			}
 			
 			return EXIT_FAILURE;
 		}
@@ -652,20 +664,6 @@ int O::Main( int argc, argv_t argv )
 			Project& project = GetProject( proj, targetPlatform );
 			
 			BuildTarget( project, MakeTargetInfo( project, targetPlatform, buildVariety ) );
-		}
-		catch ( const CD::NoSuchProject& )
-		{
-			std::fprintf( stderr, "A-line: No such project '%s'\n", proj.c_str() );
-			
-			return EXIT_FAILURE;
-		}
-		catch ( const NoSuchUsedProject& ex )
-		{
-			std::fprintf( stderr, "A-line: No such project '%s' used by %s\n",
-			                                                ex.used.c_str(),
-			                                                            ex.projName.c_str() );
-			
-			return EXIT_FAILURE;
 		}
 		catch ( const p7::errno_t& err )
 		{
