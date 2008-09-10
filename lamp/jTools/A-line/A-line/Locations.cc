@@ -144,7 +144,7 @@ namespace ALine
 	
 	std::string get_project_dependencies_pathname( const std::string& project_name )
 	{
-		return mkdir_path( "_Dependencies" / project_name );
+		return "_Dependencies" / project_name;
 	}
 	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj )
