@@ -24,9 +24,6 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// Boost
-#include <boost/shared_ptr.hpp>
-
 // Iota
 #include "iota/strings.hh"
 
@@ -94,8 +91,6 @@ namespace ALine
 	static bool gDryRun = false;
 	
 	static OptionsRecord gOptions;
-	
-	static std::vector< std::string > gCommands;
 	
 	OptionsRecord& Options()
 	{
@@ -370,26 +365,23 @@ namespace ALine
 	}
 	
 	
-	class Job
+	class project_builder
 	{
 		private:
-			Project& project;
-			TargetInfo info;
-			int failures;
+			const TargetInfo& its_target_info;
 		
 		public:
-			Job( Project& proj, const TargetInfo& targetInfo )
-			: 
-				project ( proj ), 
-				info    ( targetInfo ), 
-				failures( 0 )
-			{}
+			project_builder( const TargetInfo& info ) : its_target_info( info )
+			{
+			}
 			
-			void Build();
+			void operator()( const std::string& project_name ) const;
 	};
 	
-	void Job::Build()
+	void project_builder::operator()( const std::string& project_name ) const
 	{
+		Project& project = GetProject( project_name, its_target_info.platform );
+		
 		bool needToBuild = ProductGetsBuilt( project.Product() );
 		
 		if ( needToBuild )
@@ -399,40 +391,14 @@ namespace ALine
 			
 			std::vector< TaskPtr > tool_dependencies;
 			
-			CompileSources( project, info, project_base_task, source_dependency, tool_dependencies );
-			LinkProduct   ( project, info, project_base_task, source_dependency, tool_dependencies );
+			CompileSources( project, its_target_info, project_base_task, source_dependency, tool_dependencies );
+			LinkProduct   ( project, its_target_info, project_base_task, source_dependency, tool_dependencies );
 			
 			AddReadyTask( project_base_task );
 		}
 	}
 	
-	typedef std::map< std::string, boost::shared_ptr< Job > > JobSubMap;
-	typedef std::map< TargetName, JobSubMap > JobMap;
-	
-	static Job& BuildJob( const std::string& projName, const TargetInfo& targetInfo )
-	{
-		static JobMap gJobs;
-		
-		JobSubMap& subMap = gJobs[ MakeTargetName( targetInfo ) ];
-		JobSubMap::iterator it = subMap.find( projName );
-		
-		if ( it != subMap.end() )
-		{
-			return *it->second;
-		}
-		else
-		{
-			boost::shared_ptr< Job > job_ptr( new Job( GetProject( projName, targetInfo.platform ), targetInfo ) );
-			
-			Job& job = *( subMap[ projName ] = job_ptr );
-			
-			job.Build();
-			
-			return job;
-		}
-	}
-	
-	static void BuildTarget( const Project& project, TargetInfo targetInfo )
+	static void BuildTarget( const Project& project, const TargetInfo& targetInfo )
 	{
 		std::string targetName = MakeTargetName( targetInfo );
 		
@@ -447,11 +413,7 @@ namespace ALine
 		(
 			prereqs.begin(), 
 			prereqs.end(), 
-			std::bind2nd
-			(
-				more::ptr_fun( BuildJob ), 
-				targetInfo
-			)
+			project_builder( targetInfo )
 		);
 	}
 	
@@ -648,6 +610,10 @@ int O::Main( int argc, argv_t argv )
 	
 	p7::write( p7::stdout_fileno, STR_LEN( "# Generating task graph..." ) );
 	
+	TargetInfo target_info( targetPlatform, buildVariety );
+	
+	ApplyTargetDefaults( target_info );
+	
 	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
 	{
 		const std::string& proj = freeArgs[ i ];
@@ -656,7 +622,7 @@ int O::Main( int argc, argv_t argv )
 		{
 			Project& project = GetProject( proj, targetPlatform );
 			
-			BuildTarget( project, MakeTargetInfo( project, targetPlatform, buildVariety ) );
+			BuildTarget( project, target_info );
 		}
 		catch ( const p7::errno_t& err )
 		{
