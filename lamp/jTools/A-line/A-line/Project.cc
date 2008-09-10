@@ -336,7 +336,7 @@ namespace ALine
 		}
 		else
 		{
-			result.push_back( ProjectSourcesPath( project_dir_pathname ) );
+			result.push_back( project_dir_pathname );
 		}
 		
 		return result;

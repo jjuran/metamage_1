@@ -79,18 +79,6 @@ namespace ALine
 		return CreateDirPath( CurrentUserHomeDirPath() / "Developer/Builds" );
 	}
 	
-	std::string ProjectSourcesPath( const std::string& projectPath )
-	{
-		std::string sources = projectPath / "Sources";
-		
-		if ( io::directory_exists( sources ) )
-		{
-			return sources;
-		}
-		
-		return projectPath;
-	}
-	
 	std::string ProjectIncludesPath( const std::string& projectPath )
 	{
 		std::string includes = projectPath / "Includes";
@@ -107,7 +95,7 @@ namespace ALine
 			return includes;
 		}
 		
-		return ProjectSourcesPath( projectPath );
+		return projectPath;
 	}
 	
 	static std::string ProjectConfigDirPath( const std::string& projectPath )
