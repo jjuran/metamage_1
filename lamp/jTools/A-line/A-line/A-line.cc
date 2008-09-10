@@ -55,12 +55,12 @@
 // A-line
 #include "A-line/Commands.hh"
 #include "A-line/Exceptions.hh"
-#include "A-line/BuildCommon.hh"
 #include "A-line/Compile.hh"
 #include "A-line/Link.hh"
 #include "A-line/Locations.hh"
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
+#include "A-line/TargetNames.hh"
 #include "A-line/Task.hh"
 #include "CompileDriver/ProjectCatalog.hh"
 #include "CompileDriver/ProjectConfig.hh"
@@ -137,6 +137,15 @@ namespace ALine
 			}
 	};
 	*/
+	
+	
+	inline std::string MakeTargetName( const TargetInfo& info )
+	{
+		return MakeTargetName( info.platform & CD::archMask,
+		                       info.platform & CD::runtimeMask,
+		                       info.platform & CD::apiMask,
+		                       info.build );
+	}
 	
 	
 	static std::string ShellEscapedWord( const std::string& word )

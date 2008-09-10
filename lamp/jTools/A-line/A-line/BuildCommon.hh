@@ -13,24 +13,12 @@
 // POSeven
 #include "POSeven/Stat.hh"
 
-// A-line
-#include "A-line/TargetInfo.hh"
-#include "A-line/TargetNames.hh"
-
 
 namespace ALine
 {
 	
 	struct BuildFailure  {};
 	
-	
-	inline std::string MakeTargetName( TargetInfo info )
-	{
-		return MakeTargetName( info.platform & CD::archMask,
-		                       info.platform & CD::runtimeMask,
-		                       info.platform & CD::apiMask,
-		                       info.build );
-	}
 	
 	inline time_t ModifiedDate( const std::string& pathname )
 	{
