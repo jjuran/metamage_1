@@ -20,6 +20,8 @@
 namespace ALine
 {
 	
+	namespace p7 = poseven;
+	
 	static std::queue< TaskPtr > gReadyTasks;
 	static std::vector< TaskPtr > gFailedTasks;
 	
@@ -69,9 +71,13 @@ namespace ALine
 	
 	time_t FileTask::OutputStamp() const
 	{
-		if ( io::file_exists( its_output_path ) )
+		struct stat output_stat;
+		
+		const bool output_exists = p7::stat( its_output_path, output_stat );
+		
+		if ( output_exists )
 		{
-			return ModifiedDate( its_output_path );
+			return output_stat.st_mtime;
 		}
 		
 		return 0;
