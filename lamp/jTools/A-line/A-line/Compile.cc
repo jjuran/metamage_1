@@ -329,7 +329,9 @@ namespace ALine
 				
 				std::string dependencies_pathname = dependencies_dir / source_filename + ".d";
 				
-				bool has_dot_d = io::file_exists( dependencies_pathname );
+				struct stat dependencies_stat;
+				
+				bool has_dot_d = p7::stat( dependencies_pathname, dependencies_stat );
 				
 				time_t includes_stamp;
 				
@@ -341,7 +343,7 @@ namespace ALine
 					
 					includes_stamp = get_collective_timestamp( includes.begin(), includes.end() );
 					
-					time_t dependencies_stamp = ModifiedDate( dependencies_pathname );
+					const time_t dependencies_stamp = dependencies_stat.st_mtime;
 					
 					if ( includes_stamp >= dependencies_stamp )
 					{
