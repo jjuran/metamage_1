@@ -392,13 +392,6 @@ namespace ALine
 	{
 		bool needToBuild = ProductGetsBuilt( project.Product() );
 		
-		if ( needToBuild || Options().verbose )
-		{
-			std::string checking = " " + project.Name();
-			
-			(void) p7::write( p7::stdout_fileno, checking.data(), checking.size() );
-		}
-		
 		if ( needToBuild )
 		{
 			TaskPtr project_base_task( new NullTask() );
@@ -651,7 +644,7 @@ int O::Main( int argc, argv_t argv )
 		}
 	}
 	
-	p7::write( p7::stdout_fileno, STR_LEN( "done\n" ) );
+	p7::write( p7::stdout_fileno, STR_LEN( "done.\n" ) );
 	
 	p7::write( p7::stdout_fileno, STR_LEN( "# Generating task graph..." ) );
 	
@@ -673,7 +666,7 @@ int O::Main( int argc, argv_t argv )
 		}
 	}
 	
-	p7::write( p7::stdout_fileno, STR_LEN( ".\n" ) );
+	p7::write( p7::stdout_fileno, STR_LEN( "done.\n" ) );
 	
 	while ( RunNextTask() )
 	{
