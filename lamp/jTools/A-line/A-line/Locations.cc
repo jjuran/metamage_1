@@ -66,15 +66,7 @@ namespace ALine
 	{
 		std::string home = CurrentUserHomeDirPath();
 		
-		std::string subdir_name    = "var";
-		std::string cache_dir_name = "cache";
-		std::string aline_dir_name = "a-line";
-		
-		std::string subdir_pathname = CreateDirPath( home / subdir_name );
-		
-		std::string cache_pathname = CreateDirPath( subdir_pathname / cache_dir_name );
-		
-		return CreateDirPath( cache_pathname / aline_dir_name );
+		return mkdir_path( home / "var/cache/a-line" );
 	}
 	
 	static std::string UserLabDirPath()
@@ -152,7 +144,7 @@ namespace ALine
 	
 	std::string get_project_dependencies_pathname( const std::string& project_name )
 	{
-		return CreateDirPath( CreateDirPath( "_Dependencies" ) / project_name );
+		return mkdir_path( "_Dependencies" / project_name );
 	}
 	
 	std::string ProjectDiagnosticsDirPath( const std::string& proj )
@@ -162,27 +154,27 @@ namespace ALine
 	
 	std::string ProjectPrecompiledDirPath( const std::string& proj )
 	{
-		return CreateDirPath( CreateDirPath( "PrecompiledHeaders" ) / proj );
+		return mkdir_path( "PrecompiledHeaders" / proj );
 	}
 	
 	std::string ProjectObjectsDirPath( const std::string& proj )
 	{
-		return CreateDirPath( CreateDirPath( "Objects" ) / proj );
+		return mkdir_path( "Objects" / proj );
 	}
 	
 	std::string ProjectMetadataDirPath( const std::string& proj )
 	{
-		return CreateDirPath( CreateDirPath( "_Metadata" ) / proj );
+		return mkdir_path( "_Metadata" / proj );
 	}
 	
 	std::string ProjectLinkedDirPath( const std::string& proj )
 	{
-		return CreateDirPath( CreateDirPath( "_Linked" ) / proj );
+		return mkdir_path( "_Linked" / proj );
 	}
 	
 	std::string ProjectOutputDirPath( const std::string& proj )
 	{
-		return CreateDirPath( CreateDirPath( "Output" ) / proj );
+		return mkdir_path( "Output" / proj );
 	}
 	
 }
