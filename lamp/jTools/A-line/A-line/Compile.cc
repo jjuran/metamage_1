@@ -271,16 +271,12 @@ namespace ALine
 		
 		if ( value == 0 )
 		{
-			if ( !io::file_exists( pathname ) )
-			{
-				// A missing include file means the .d file is out of date
-				value = 0x7fffffff;
-			}
-			else
-			{
-				// FIXME:  These are both stat ops and could be combined	
-				value = ModifiedDate( pathname );
-			}
+			struct stat include_stat;
+			
+			const bool exists = p7::stat( pathname, include_stat );
+			
+			// If an include is missing, ensure the .d gets refreshed by returning max
+			value = exists ? include_stat.st_mtime : 0x7fffffff;
 		}
 		
 		return value;
