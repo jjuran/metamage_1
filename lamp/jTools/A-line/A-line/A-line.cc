@@ -551,7 +551,9 @@ int O::Main( int argc, argv_t argv )
 			continue;
 		}
 		
-		write_catalog_cache( p7::open( catalog_cache_pathname, p7::o_wronly | p7::o_creat, 0644 ) );
+		write_catalog_cache( p7::open( catalog_cache_pathname,
+		                               p7::o_wronly | p7::o_creat | p7::o_trunc,
+		                               0644 ) );
 		
 		cache_was_written = true;
 		
