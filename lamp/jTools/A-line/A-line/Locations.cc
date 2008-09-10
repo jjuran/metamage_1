@@ -79,25 +79,6 @@ namespace ALine
 		return CreateDirPath( CurrentUserHomeDirPath() / "Developer/Builds" );
 	}
 	
-	std::string ProjectIncludesPath( const std::string& projectPath )
-	{
-		std::string includes = projectPath / "Includes";
-		
-		if ( io::directory_exists( includes ) )
-		{
-			return includes;
-		}
-		
-		includes = projectPath / "include";
-		
-		if ( io::directory_exists( includes ) )
-		{
-			return includes;
-		}
-		
-		return projectPath;
-	}
-	
 	static std::string ProjectConfigDirPath( const std::string& projectPath )
 	{
 		std::string confd = projectPath / "A-line.confd";

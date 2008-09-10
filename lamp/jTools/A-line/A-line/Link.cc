@@ -338,7 +338,7 @@ namespace ALine
 			input_pathnames.push_back( project.FindResourceFile( "Pedestal:CarbonApp.r" ) );
 		}
 		
-		std::string includeDir = ProjectIncludesPath( project.ProjectFolder() );
+		const std::string& includeDir = project.ProjectFolder();
 		
 		TaskPtr rez_task( new RezzingTask( input_pathnames, output_pathname, includeDir, lamp ) );
 		

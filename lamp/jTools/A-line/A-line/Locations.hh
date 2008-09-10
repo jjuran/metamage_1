@@ -19,8 +19,6 @@ namespace ALine
 	
 	std::string get_user_cache_pathname();
 	
-	std::string ProjectIncludesPath( const std::string& projectPath );
-	
 	std::string SourceDotListFile( const std::string& projectPath );
 	
 	std::string TargetDirPath( const std::string& target );
