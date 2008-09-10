@@ -11,7 +11,6 @@
 #include <vector>
 
 // A-line
-#include "A-line/BuildCommon.hh"
 #include "A-line/Includes.hh"
 #include "A-line/Project.hh"
 #include "CompileDriver/ProjectCatalog.hh"
