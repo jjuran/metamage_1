@@ -310,9 +310,13 @@ namespace ALine
 	
 	bool CompilingTask::UpToDate()
 	{
-		if ( io::item_exists( OutputPath() ) )
+		struct stat output_stat;
+		
+		const bool output_exists = p7::stat( OutputPath(), output_stat );
+		
+		if ( output_exists )
 		{
-			time_t output_stamp = ModifiedDate( OutputPath() );
+			time_t output_stamp = output_stat.st_mtime;
 			
 			// Memoize this once we have multi-platform builds
 			UpdateInputStamp( ModifiedDate( its_source_pathname ) );
