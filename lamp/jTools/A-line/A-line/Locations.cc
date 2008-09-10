@@ -16,7 +16,23 @@
 namespace ALine
 {
 	
+	namespace p7 = poseven;
+	
+	
 	using namespace io::path_descent_operators;
+	
+	
+	const std::string& mkdir_path( const std::string& path )
+	{
+		if ( !io::directory_exists( path ) )
+		{
+			mkdir_path( io::get_preceding_directory( path ) );
+			
+			p7::mkdir( path, 0777 );
+		}
+		
+		return path;
+	}
 	
 	
 	static std::string CreateDirPath( const std::string& path )

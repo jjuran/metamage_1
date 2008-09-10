@@ -232,16 +232,6 @@ namespace ALine
 		}
 	}
 	
-	static void mkdir_path( const std::string& path )
-	{
-		if ( !io::directory_exists( path ) )
-		{
-			mkdir_path( io::get_preceding_directory( path ) );
-			
-			p7::mkdir( path, 0777 );
-		}
-	}
-	
 	void ExecuteCommand( const std::vector< const char* >& command, const char* diagnosticsFilename )
 	{
 		ASSERT( command.size() > 1 );

@@ -13,6 +13,8 @@
 namespace ALine
 {
 	
+	const std::string& mkdir_path( const std::string& path );
+	
 	std::string UserSrcTreePath();
 	
 	std::string get_user_cache_pathname();
