@@ -13,8 +13,8 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
-// A-line
-#include "A-line/BuildCommon.hh"
+// POSeven
+#include "POSeven/Stat.hh"
 
 
 namespace ALine
@@ -99,7 +99,7 @@ namespace ALine
 		
 		Make();
 		
-		UpdateInputStamp( ModifiedDate( its_output_path ) );
+		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
 	}
 	
 	

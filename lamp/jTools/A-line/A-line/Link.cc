@@ -38,7 +38,6 @@
 
 // A-line
 #include "A-line/A-line.hh"
-#include "A-line/BuildCommon.hh"
 #include "A-line/Commands.hh"
 #include "A-line/Locations.hh"
 #include "A-line/Project.hh"
@@ -205,7 +204,7 @@ namespace ALine
 	
 	static void UpdateInputStamp( const TaskPtr& task, const std::string& input_pathname )
 	{
-		task->UpdateInputStamp( ModifiedDate( input_pathname ) );
+		task->UpdateInputStamp( p7::stat( input_pathname ).st_mtime );
 	}
 	
 	class LinkingTask : public FileTask
@@ -487,6 +486,14 @@ namespace ALine
 		                                                                    toolSourceFiles ) ) - sourceFiles.begin();
 		
 		return n_tools;
+	}
+	
+	inline std::string ObjectFileName( const std::string& sourceName )
+	{
+		std::size_t dot = sourceName.find_last_of( '.' );
+		// If the filename has no dot, then dot == npos, 
+		// and substr() returns the whole string.  (And ".o" is appended.)
+		return sourceName.substr( 0, dot ) + ".o";
 	}
 	
 	static void FillObjectFiles( const std::string&                 objects_dir,

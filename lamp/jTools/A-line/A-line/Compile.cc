@@ -39,7 +39,6 @@
 
 // A-line
 #include "A-line/A-line.hh"
-#include "A-line/BuildCommon.hh"
 #include "A-line/Commands.hh"
 #include "A-line/CompilerOptions.hh"
 #include "A-line/Includes.hh"
@@ -319,7 +318,7 @@ namespace ALine
 			time_t output_stamp = output_stat.st_mtime;
 			
 			// Memoize this once we have multi-platform builds
-			UpdateInputStamp( ModifiedDate( its_source_pathname ) );
+			UpdateInputStamp( p7::stat( its_source_pathname ).st_mtime );
 			
 			if ( MoreRecent( output_stamp ) )
 			{
