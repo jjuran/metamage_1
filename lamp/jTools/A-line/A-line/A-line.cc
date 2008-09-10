@@ -40,14 +40,8 @@
 #include "POSeven/functions/waitpid.hh"
 #include "POSeven/functions/_exit.hh"
 
-// MoreFunctional
-#include "PointerToFunction.hh"
-
 // Nitrogen Extras / Utilities
 //#include "Utilities/Processes.h"
-
-// BitsAndBytes
-#include "StringFilters.hh"
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -78,11 +72,8 @@ namespace O = Orion;
 namespace ALine
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace CD = CompileDriver;
-	
-	using BitsAndBytes::q;
 	
 	
 	using namespace io::path_descent_operators;
