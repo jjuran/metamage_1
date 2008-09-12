@@ -3,6 +3,8 @@
  *	=======
  */
 
+#ifdef __MACOS__
+
 // Universal Interfaces
 #ifndef __CODEFRAGMENTS__
 #include <CodeFragments.h>
@@ -24,4 +26,6 @@ extern pascal void TerminateFragment();
 	}
 	
 #pragma export reset
+
+#endif
 
