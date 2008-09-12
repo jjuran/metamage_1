@@ -175,7 +175,9 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 
 #define dXSUB_SYS
 
+#ifndef CLK_TCK
 #define CLK_TCK  60
+#endif
 
 /* MacOS 68K defines atan2 et al. as macros */
 
