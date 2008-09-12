@@ -75,7 +75,7 @@ Null SV pointer.
 # endif /* !HAS_BOOL */
 #endif /* NeXT || __NeXT__ */
 
-#ifndef HAS_BOOL
+#if !defined(HAS_BOOL) && !defined(bool)
 # if defined(UTS) || defined(VMS)
 #  define bool int
 # else
