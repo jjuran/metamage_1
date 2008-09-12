@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.16  2008-07-31 11:44:38  jax
+Revision 1.17  2008-09-12 09:29:44  jax
+Removed include of compat.h, with no ill effects.
+
+Revision 1.16  2008/07/31 11:44:38  jax
 Added mkstemp{,s}().
 
 Revision 1.10  2008/07/31 10:48:19  jax
@@ -3349,8 +3352,6 @@ First build released to public
 #endif
 #define BIG_TIME
 #endif
-
-#include <compat.h>
 
 #endif
 
