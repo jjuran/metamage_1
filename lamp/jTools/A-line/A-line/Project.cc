@@ -185,7 +185,8 @@ namespace ALine
 	{
 		try
 		{
-			std::string dirPath = p7::realpath( cwdPath / pathname );
+			std::string dirPath = pathname[0] == '/' ? pathname
+			                                         : p7::realpath( cwdPath / pathname );
 			
 			if ( io::directory_exists( dirPath ) )
 			{
