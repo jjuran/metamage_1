@@ -132,7 +132,10 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 /* Since we have CROSSCOMPILE and MULTIARCH defined, we need to make
  * sure everyone knows we are big-endian.
  */
+
+#ifdef __MC68K__
 #define __BIG_ENDIAN__
+#endif
 
 #if !defined(NSIG) || defined(M_UNIX) || defined(M_XENIX) || defined(__NetBSD__)
 # include <signal.h>
