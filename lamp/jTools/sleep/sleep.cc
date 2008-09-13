@@ -5,6 +5,7 @@
 
 // Standard C/C++
 #include <cstdio>
+#include <cstdlib>
 
 // POSIX
 #include <time.h>

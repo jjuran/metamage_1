@@ -21,7 +21,7 @@
 #include "iota/strings.hh"
 
 
-int main( int argc, char const *const argv[] )
+int main( int argc, char *const argv[] )
 {
 	if ( argc < 2 )
 	{

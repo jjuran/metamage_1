@@ -19,10 +19,15 @@ namespace NN = Nucleus;
 namespace O = Orion;
 
 
-int O::Main( int argc, const char *const argv[] )
+namespace Orion
 {
-	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	
-	throw Nitrogen::EOFErr();
+	int Main( int argc, iota::argv_t argv )
+	{
+		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+		
+		throw Nitrogen::EOFErr();
+	}
+	
 }
 

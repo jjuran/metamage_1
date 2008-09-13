@@ -154,11 +154,11 @@ namespace jTools
 			return EXIT_SUCCESS;
 		}
 		
-		pid_t pid = p7::vfork();
+		pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
-			(void) execvp( command[0], &command[0] );
+			(void) execvp( command[0], (char**) &command[0] );
 			
 			_exit( 127 );
 		}

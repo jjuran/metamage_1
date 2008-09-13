@@ -3,6 +3,9 @@
  *	========
  */
 
+// Standard C/C++
+#include <cstdlib>
+
 // POSIX
 #include <unistd.h>
 
