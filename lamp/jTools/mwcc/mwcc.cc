@@ -148,28 +148,21 @@ namespace jTools
 		
 		bool headerIsSource = hasDot  &&  dot[1] == 'h';
 		
-		std::string precompiledHeaderImage;
+		std::string precompiledHeaderImage = pathname;
+		
+		precompiledHeaderImage += ".mwch";
 		
 		if ( headerIsSource )
 		{
 			bool pathSpecified = slash != NULL;
 			
-			if ( pathSpecified )
+			if ( !pathSpecified )
 			{
-				precompiledHeaderImage = pathname;
-				precompiledHeaderImage += ".mwch";
-			}
-			else
-			{
-				std::string filename = io::get_filename( pathname );
-				
-				filename += ".mwch";
-				
 				typedef std::vector< const char* >::const_iterator Iter;
 				
 				for ( Iter it = gIncludeDirs.begin();  it != gIncludeDirs.end();  ++it )
 				{
-					std::string location = *it / filename;
+					std::string location = *it / precompiledHeaderImage;
 					
 					if ( io::file_exists( location ) )
 					{
@@ -180,10 +173,6 @@ namespace jTools
 			}
 			
 			pathname = precompiledHeaderImage.c_str();
-		}
-		else
-		{
-			//precompiledHeaderImage = pathname;
 		}
 		
 		return "-prefix " + QuotedMacPathFromPOSIXPath( pathname );
