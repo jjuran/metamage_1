@@ -15,6 +15,10 @@
 // Standard C
 #include <errno.h>
 
+// Backtrace
+#include "Backtrace/Backtrace.hh"
+#include "Backtrace/StackCrawl.hh"
+
 // Nucleus
 #include "Nucleus/ErrorCode.h"
 #include "Nucleus/Exception.h"
@@ -57,32 +61,18 @@ namespace Orion
 			
 			++begin;  // skip Backtrace::DebuggingContext::DebuggingContext( void )
 			
-			std::vector< CallInfo > callChain;
-			
-			callChain.reserve( end - begin );
-			
 			std::string prefix = "Nucleus::Throw< Nucleus::ErrorCode< ";
-			
-			callChain.push_back( GetCallInfoFromReturnAddress( *begin ) );
 			
 			if ( std::equal( prefix.begin(),
 			                 prefix.end(),
-			                 callChain[0].itsUnmangledName.begin() ) )
+			                 GetCallInfoFromReturnAddress( *begin ).itsUnmangledName.begin() ) )
 			{
 				// Skip Nucleus::Throw< Nucleus::ErrorCode< T, i > >( void )
 				// Skip Nucleus::ThrowErrorCode< T >( T )
 				begin += 2;
-				
-				callChain[0] = GetCallInfoFromReturnAddress( *begin );
 			}
 			
-			while ( callChain.back().itsUnmangledName != "main"  &&  ++begin < end )
-			{
-				callChain.push_back( GetCallInfoFromReturnAddress( *begin ) );
-			}
-			
-			std::string report = MakeReportFromCallChain( callChain.begin(),
-			                                              callChain.end() );
+			std::string report = MakeReportFromStackCrawl( begin, end );
 			
 			p7::write( p7::stderr_fileno, report.data(), report.size() );
 			
@@ -98,6 +88,10 @@ namespace Orion
 	
 	int main( int argc, argv_t argv )
 	{
+		const void* stackBottom = Backtrace::GetStackFramePointer();
+		
+		Backtrace::SetStackBottomLimit( stackBottom );
+		
 		try
 		{
 			return Main( argc, argv );
