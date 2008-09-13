@@ -613,7 +613,6 @@ namespace tool
 					command.push_back( "-xm"        );
 					command.push_back( "c"          );
 					command.push_back( "-rsrcfar"   );
-					command.push_back( "-rsrcflags" );
 					command.push_back( "-rt"        );
 					command.push_back( "Wish=0"     );
 				}
