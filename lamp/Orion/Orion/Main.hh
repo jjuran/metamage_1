@@ -33,5 +33,12 @@ namespace Orion
 	
 }
 
+namespace tool
+{
+	
+	int Main( int argc, iota::argv_t argv );
+	
+}
+
 #endif
 
