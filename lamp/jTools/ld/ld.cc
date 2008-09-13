@@ -4,6 +4,7 @@
  */
 
 // Standard C++
+#include <list>
 #include <vector>
 
 // Standard C
@@ -16,6 +17,7 @@
 #include "iota/strings.hh"
 
 // POSeven
+#include "POSeven/functions/vfork.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
@@ -58,6 +60,26 @@ namespace tool
 	
 	
 	using namespace io::path_descent_operators;
+	
+	
+	template < class Iter >
+	std::string join( Iter begin, Iter end, const std::string& glue = "" )
+	{
+		if ( begin == end )
+		{
+			return "";
+		}
+		
+		std::string result = *begin++;
+		
+		while ( begin != end )
+		{
+			result += glue;
+			result += *begin++;
+		}
+		
+		return result;
+	}
 	
 	
 	static std::string InterfacesAndLibraries()
@@ -175,11 +197,6 @@ namespace tool
 	}
 	
 	
-	static bool m68k = TARGET_CPU_68K;
-	static bool ppc  = TARGET_CPU_PPC;
-	
-	static bool debug = true;
-	
 	enum MacAPI
 	{
 		kMacAPINone,
@@ -196,29 +213,27 @@ namespace tool
 	
 	static MacAPI gMacAPI = kMacAPINone;
 	
-	static std::string outputFilename;
 	
-	static FSSpec gOutputFile;
-	
-	
-	static std::string CommandFromArch( const std::string& arch )
+	enum Architecture
 	{
-		if ( arch == "m68k" )
+		arch_none,
+		arch_m68k,
+		arch_ppc
+	};
+	
+	static Architecture read_arch( const char* arch )
+	{
+		if ( std::strcmp( arch, "m68k" ) == 0 )
 		{
-			m68k = true;
-			ppc = false;
-			
-			return "MWLink68K -model far";
-		}
-		else if ( arch == "ppc" )
-		{
-			ppc = true;
-			m68k = false;
-			
-			return "MWLinkPPC";
+			return arch_m68k;
 		}
 		
-		return "MWLinkUnsupportedArchitecture";
+		if ( std::strcmp( arch, "ppc" ) == 0 )
+		{
+			return arch_ppc;
+		}
+		
+		return arch_none;
 	}
 	
 	static std::string MacPathFromPOSIXPath( const char* pathname )
@@ -226,22 +241,6 @@ namespace tool
 		FSSpec item = Div::ResolvePathToFSSpec( pathname );
 		
 		return GetMacPathname( item );
-	}
-	
-	static std::string QuotedMacPathFromPOSIXPath( const char* pathname )
-	{
-		return "'" + MacPathFromPOSIXPath( pathname ) + "'";
-	}
-	
-	static std::string OutputFile( const char* pathname )
-	{
-		gOutputFile = Div::ResolvePathToFSSpec( pathname );
-		
-		std::string macPathname = GetMacPathname( gOutputFile );
-		
-		std::string map = ppc ? "-map" : "-mapide";
-		
-		return "-o '" + macPathname + "' " + map + " '" + macPathname + ".map' -cmap 'R*ch'";
 	}
 	
 	std::vector< const char* > gLibraryDirs;
@@ -385,14 +384,30 @@ namespace tool
 		N::WriteResource( code );
 	}
 	
+	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
+	{
+		static std::list< std::string > static_string_storage;
+		
+		static_string_storage.push_back( MacPathFromPOSIXPath( pathname ) );
+		
+		return static_string_storage.back().c_str();
+	}
+	
+	
 	int Main( int argc, iota::argv_t argv )
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
-		std::string command = TARGET_CPU_68K ? "MWLink68K -model far" : "MWLinkPPC";
-		std::string ldArgs;
-		std::string translatedPath;
+		std::vector< const char* > command_args;
 		
+		Architecture arch = TARGET_CPU_68K ? arch_m68k
+		                  : TARGET_CPU_PPC ? arch_ppc
+		                  :                  arch_none;
+		
+		const char* output_pathname = NULL;
+		
+		bool debug = true;
+		bool dry_run = false;
 		bool verbose = false;
 		
 		while ( const char* arg = *++argv )
@@ -401,31 +416,42 @@ namespace tool
 			{
 				switch ( arg[1] )
 				{
+					case 'n':
+						dry_run = true;
+						break;
+					
 					case 'v':
 						verbose = true;
-						continue;
+						break;
 					
 					case 'a':
 						if ( std::strcmp( arg + 1, "arch" ) == 0 )
 						{
-							command = CommandFromArch( *++argv );
-							continue;
+							arch = read_arch( *++argv );
 						}
+						
 						break;
 					
 					case 'd':
 						if ( std::strcmp( arg + 1, "dynamic" ) == 0 )
 						{
 							gProductType = kProductSharedLib;
-							continue;
 						}
+						
 						break;
 					
 					case 's':
 						if ( arg[2] == '\0' )
 						{
 							debug = false;
-							continue;
+						}
+						
+						break;
+					
+					case 'w':
+						if ( arg[2] == 'i'  &&  arg[3] == '\0' )
+						{
+							command_args.push_back( arg );
 						}
 						
 						break;
@@ -434,63 +460,60 @@ namespace tool
 					case 't':
 						if ( arg[2] == '\0' )
 						{
-							translatedPath = std::string( arg ) + " '" + *++argv + "'";
-							arg = translatedPath.c_str();
+							command_args.push_back(    arg  );
+							command_args.push_back( *++argv );
 						}
+						
 						break;
 					
 					case 'r':
 						if ( arg[2] == 't'  &&  arg[3] == '\0' )
 						{
-							translatedPath = std::string( arg ) + " '" + *++argv + "'";
-							arg = translatedPath.c_str();
+							command_args.push_back(    arg  );
+							command_args.push_back( *++argv );
 						}
+						
 						break;
 					
 					case 'o':
 						if ( arg[2] == '\0' )
 						{
-							translatedPath = OutputFile( *++argv );
-							
-							outputFilename = io::get_filename( *argv );
-							
-							arg = translatedPath.c_str();
-							break;
+							output_pathname = *++argv;
 						}
-						
-						if ( std::strcmp( arg + 1, "object" ) == 0 )
+						else if ( std::strcmp( arg + 1, "object" ) == 0 )
 						{
 							gProductType = kProductCodeResource;
-							continue;
 						}
 						
 						break;
 					
 					case 'l':
-						translatedPath = FindLibrary( arg + 2 );
-						
-						translatedPath = QuotedMacPathFromPOSIXPath( translatedPath.c_str() );
-						
-						// Link Orion and InitTool first, if present.
-						// This hack is necessary on 68K to ensure that main()
-						// and InitTool() reside within the first 32K, accessible
-						// by JMP or JSR from the startup code.
-						
-						if (    std::strcmp( arg + 2, "Orion"    ) == 0
-						     || std::strcmp( arg + 2, "InitTool" ) == 0 )
+						// new block
 						{
-							ldArgs = " " + translatedPath + ldArgs;
+							const char* lib_name = arg + 2;  // skip "-l"
 							
-							continue;
+							std::string library_pathname = FindLibrary( lib_name );
+							
+							const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
+							
+							// Link Orion and InitTool first, if present.
+							// This hack is necessary on 68K to ensure that main()
+							// and InitTool() reside within the first 32K, accessible
+							// by JMP or JSR from the startup code.
+							
+							const bool expedited =    std::strcmp( lib_name, "Orion"    ) == 0
+							                       || std::strcmp( lib_name, "InitTool" ) == 0;
+							
+							command_args.insert( ( expedited ? command_args.begin()
+							                                 : command_args.end() ),
+							                       mac_pathname );
 						}
-						
-						arg = translatedPath.c_str();
 						
 						break;
 					
 					case 'L':
 						RememberLibraryDir( arg + 2 );
-						continue;
+						break;
 					
 					default:
 						break;
@@ -514,97 +537,206 @@ namespace tool
 					continue;
 				}
 				
-				bool pathname = std::strchr( arg, '/' ) != NULL;
+				const bool is_pathname = std::strchr( arg, '/' ) != NULL;
 				
-				std::string foundLib;
+				std::string library_pathname;
 				
-				if ( !pathname )
+				if ( !is_pathname )
 				{
-					foundLib = FindSystemLibrary( arg );
+					library_pathname = FindSystemLibrary( arg );
 					
-					arg = foundLib.c_str();
+					arg = library_pathname.c_str();
 				}
 				
-				// translate path
-				translatedPath = QuotedMacPathFromPOSIXPath( arg );
-				
-				arg = translatedPath.c_str();
-			}
-			
-			if ( arg[0] != '\0' )
-			{
-				ldArgs += ' ';
-				ldArgs += arg;
+				command_args.push_back( StoreMacPathFromPOSIXPath( arg ) );
 			}
 		}
 		
-		std::string debugging;
-		
-		if ( debug )
+		if ( output_pathname == NULL )
 		{
-			debugging = " -sym full";
+			std::fprintf( stderr, "%s\n", "ld: -o is required" );
 			
-			if ( ppc )
-			{
-				debugging += " -tb on";
-			}
+			return EXIT_FAILURE;
 		}
 		
-		std::string product;
-		std::string fragmentName;
-		std::string deadstripping;
+		std::vector< const char* > command;
+		
+		command.push_back( "tlsrvr"   );
+		command.push_back( "--switch" );  // bring ToolServer to front
+		command.push_back( "--escape" );  // escape arguments to prevent expansion
+		command.push_back( "--"       );  // stop interpreting options here
+		
+		switch ( arch )
+		{
+			default:
+			case arch_none:
+				std::fprintf( stderr, "%s\n", "ld: invalid architecture" );
+				
+				return EXIT_FAILURE;
+			
+			case arch_m68k:
+				command.push_back( "MWLink68K" );
+				command.push_back( "-model"    );
+				command.push_back( "far"       );
+				break;
+			
+			case arch_ppc:
+				command.push_back( "MWLinkPPC" );
+				break;
+		}
 		
 		switch ( gProductType )
 		{
 			case kProductCodeResource:
-				product = "-xm c -rsrcfar -rsrcflags system";
+				command.push_back( "-xm" );
+				command.push_back( "c" );
+				command.push_back( "-rsrcfar" );
+				command.push_back( "-rsrcflags" );
+				command.push_back( "system" );  // FIXME: Not all code rsrc are system
 				break;
 			
 			case kProductSharedLib:
-				product = "-xm s -init __initialize -term __terminate -export pragma";
+				command.push_back( "-xm"          );
+				command.push_back( "s"            );
+				command.push_back( "-init"        );
+				command.push_back( "__initialize" );
+				command.push_back( "-term"        );
+				command.push_back( "__terminate"  );
+				command.push_back( "-export"      );
+				command.push_back( "pragma"       );
 				break;
 			
 			default:
 			case kProductTool:
-				product = ProductOptionsForTool( ppc );
-				
-				if ( !m68k )
+				if ( arch == arch_m68k )
 				{
-					fragmentName = " -name '" + outputFilename + " " + gMacAPINames[ gMacAPI ] + "'";
+					command.push_back( "-xm"        );
+					command.push_back( "c"          );
+					command.push_back( "-rsrcfar"   );
+					command.push_back( "-rsrcflags" );
+					command.push_back( "-rt"        );
+					command.push_back( "Wish=0"     );
 				}
+				else
+				{
+					command.push_back( "-xm"                );
+					command.push_back( "s"                  );
+					command.push_back( "-init"              );
+					command.push_back( "InitializeFragment" );
+					command.push_back( "-term"              );
+					command.push_back( "TerminateFragment"  );
+					command.push_back( "-export"            );
+					command.push_back( "sym=main"           );
+					
+					// MWLinkPPC gets pissy if a shlb is larger than the default size,
+					// even though the size is meaningless since this isn't an app.
+					command.push_back( "-sizemin" );
+					command.push_back( "4096"     );
+					command.push_back( "-sizemax" );
+					command.push_back( "8192"     );
+					
+					static std::string output_name;
+					
+					output_name  = io::get_filename( output_pathname );
+					output_name += ' ';
+					output_name += gMacAPINames[ gMacAPI ];
+					
+					command.push_back( "-name" );
+					command.push_back( output_name.c_str() );
+				}
+				
+				command.push_back( "-t"   );
+				command.push_back( "Wish" );
+				command.push_back( "-c"   );
+				command.push_back( "Poof" );
 				
 				break;
 			
 			case kProductApp:
-				product = "-xm a -sizemin 4096 -sizemax 8192";
+				command.push_back( "-xm"      );
+				command.push_back( "a"        );
+				command.push_back( "-sizemin" );
+				command.push_back( "4096"     );
+				command.push_back( "-sizemax" );
+				command.push_back( "8192"     );
 				
-				if ( ppc )
+				if ( arch == arch_ppc )
 				{
 					// 	For CFMLateImport support
-					product += " -b"                                     // don't pack the data segment
-					           " -init Initialize_SavedCFragInitBlock";  // save fragment data for later
+					command.push_back( "-b"                             );  // don't pack the data segment
+					command.push_back( "-init"                          );
+					command.push_back( "Initialize_SavedCFragInitBlock" );  // save fragment data for later
 				}
 				
-				deadstripping = m68k ? " -dead code" : " -dead off";
+				command.push_back( "-dead" );
+				
+				command.push_back( arch == arch_m68k ? "code" : "off" );
 				
 				break;
 		}
 		
-		ldArgs = " " + product + debugging + deadstripping + fragmentName + " " + ldArgs;
-		
-		std::string output = "tlsrvr --switch --escape -- " + command + ldArgs + '\n';
-		
-		if ( io::file_exists( gOutputFile ) )
+		if ( debug )
 		{
-			io::delete_file( gOutputFile );
+			command.push_back( "-sym" );
+			command.push_back( "full" );
+			
+			if ( arch == arch_ppc )
+			{
+				command.push_back( "-tb" );
+				command.push_back( "on"  );
+			}
+		}
+		
+		FSSpec output_filespec = Div::ResolvePathToFSSpec( output_pathname );
+		
+		std::string output_mac_pathname = GetMacPathname( output_filespec );
+		
+		std::string linkmap_mac_pathname = output_mac_pathname + ".map";
+		
+		command.push_back( "-o" );
+		command.push_back( output_mac_pathname.c_str() );
+		
+		command.push_back( arch == arch_ppc ? "-map" : "-mapide" );
+		command.push_back( linkmap_mac_pathname.c_str() );
+		
+		command.push_back( "-cmap" );
+		command.push_back( "R*ch" );
+		
+		command.insert( command.end(), command_args.begin(), command_args.end() );
+		
+		if ( io::file_exists( output_filespec ) )
+		{
+			io::delete_file( output_filespec );
 		}
 		
 		if ( verbose )
 		{
+			std::string output = join( command.begin(), command.end(), " " );
+			
+			output += '\n';
+			
 			write( STDOUT_FILENO, output.data(), output.size() );
 		}
 		
-		int wait_status = system( output.c_str() );
+		command.push_back( NULL );
+		
+		if ( dry_run )
+		{
+			return EXIT_SUCCESS;
+		}
+		
+		pid_t pid = POSEVEN_VFORK();
+		
+		if ( pid == 0 )
+		{
+			(void) execvp( command[0], (char**) &command[0] );
+			
+			_exit( 127 );
+		}
+		
+		int wait_status = -1;
+		
+		p7::throw_posix_result( wait( &wait_status ) );
 		
 		int exit_status = exit_from_wait( wait_status );
 		
@@ -613,9 +745,9 @@ namespace tool
 			return exit_status;
 		}
 		
-		if ( m68k  &&  gProductType == kProductTool )
+		if ( arch == arch_m68k  &&  gProductType == kProductTool )
 		{
-			Patch68KStartup( gOutputFile );
+			Patch68KStartup( output_filespec );
 		}
 		
 		return exit_status;
