@@ -46,7 +46,7 @@ static int exit_from_wait( int stat )
 }
 
 
-namespace jTools
+namespace tool
 {
 	
 	namespace N = Nitrogen;
@@ -350,8 +350,13 @@ namespace jTools
 	
 }
 
-int O::Main( int argc, argv_t argv )
+namespace Orion
 {
-	return jTools::Main( argc, argv );
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 

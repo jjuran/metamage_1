@@ -13,55 +13,67 @@
 #include "Orion/Main.hh"
 
 
-namespace O = Orion;
-
-
-template < class F, class Iter >
-std::string join( Iter begin, Iter end, const std::string& glue = "", F f = F() )
+namespace tool
 {
-	if ( begin == end )
+	
+	template < class F, class Iter >
+	std::string join( Iter begin, Iter end, const std::string& glue = "", F f = F() )
 	{
-		return "";
+		if ( begin == end )
+		{
+			return "";
+		}
+		
+		std::string result = f( *begin++ );
+		
+		while ( begin != end )
+		{
+			result += glue;
+			result += f( *begin++ );
+		}
+		
+		return result;
 	}
 	
-	std::string result = f( *begin++ );
-	
-	while ( begin != end )
+	struct string_identity
 	{
-		result += glue;
-		result += f( *begin++ );
+		const std::string& operator()( const std::string& s ) const
+		{
+			return s;
+		}
+	};
+	
+	template < class Iter >
+	std::string join( Iter begin, Iter end, const std::string& glue = "" )
+	{
+		return join( begin,
+		             end,
+		             glue,
+		             //ext::identity< std::string >()
+		             string_identity()
+		             );
 	}
 	
-	return result;
+	int Main( int argc, iota::argv_t argv )
+	{
+		std::string output = join( argv + 1,
+		                           argv + argc,
+		                           " "          ) + "\n";
+		
+		(void) write( STDOUT_FILENO, output.data(), output.size() );
+		
+		return 0;
+	}
+	
 }
 
-struct string_identity
+namespace Orion
 {
-	const std::string& operator()( const std::string& s ) const
+	
+	int Main( int argc, iota::argv_t argv )
 	{
-		return s;
+		return tool::Main( argc, argv );
 	}
-};
-
-template < class Iter >
-std::string join( Iter begin, Iter end, const std::string& glue = "" )
-{
-	return join( begin,
-	             end,
-	             glue,
-	             //ext::identity< std::string >()
-	             string_identity()
-	             );
-}
-
-int O::Main( int argc, char const *const argv[] )
-{
-	std::string output = join( argv + 1,
-	                           argv + argc,
-	                           " "          ) + "\n";
 	
-	(void) write( STDOUT_FILENO, output.data(), output.size() );
-	
-	return 0;
 }
 

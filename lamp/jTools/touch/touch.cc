@@ -5,6 +5,7 @@
 
 // Standard C/C++
 #include <cstdio>
+#include <cstring>
 
 // POSIX
 #include <errno.h>
@@ -15,40 +16,52 @@
 #include "Orion/Main.hh"
 
 
-namespace O = Orion;
-
-
-int O::Main( int argc, char const* const argv[] )
+namespace tool
 {
-	// Check for sufficient number of args
-	if ( argc < 2 )
-	{
-		std::fprintf( stderr, "touch: missing arguments\n" );
-		
-		return 1;
-	}
 	
-	// Try to touch each item.  Return whether any errors occurred.
-	int fail = 0;
-	
-	for ( std::size_t index = 1;  index < argc;  ++index )
+	int Main( int argc, iota::argv_t argv )
 	{
-		const char* pathname = argv[ index ];
-		
-		int fd = open( pathname, O_WRONLY | O_CREAT, 0600 );
-		
-		if ( fd == -1 )
+		// Check for sufficient number of args
+		if ( argc < 2 )
 		{
-			std::fprintf( stderr, "touch: %s: %s\n", pathname, strerror( errno ) );
+			std::fprintf( stderr, "touch: missing arguments\n" );
 			
-			++fail;
+			return 1;
 		}
-		else
+		
+		// Try to touch each item.  Return whether any errors occurred.
+		int fail = 0;
+		
+		for ( std::size_t index = 1;  index < argc;  ++index )
 		{
-			close( fd );
+			const char* pathname = argv[ index ];
+			
+			int fd = open( pathname, O_WRONLY | O_CREAT, 0600 );
+			
+			if ( fd == -1 )
+			{
+				std::fprintf( stderr, "touch: %s: %s\n", pathname, std::strerror( errno ) );
+				
+				++fail;
+			}
+			else
+			{
+				close( fd );
+			}
 		}
+		
+		return (fail == 0) ? 0 : 1;
 	}
 	
-	return (fail == 0) ? 0 : 1;
+}
+
+namespace Orion
+{
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 
