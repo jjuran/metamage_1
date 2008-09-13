@@ -208,7 +208,7 @@ namespace tool
 	}
 	
 	
-	static int Main( int argc, iota::argv_t argv )
+	int Main( int argc, iota::argv_t argv )
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
