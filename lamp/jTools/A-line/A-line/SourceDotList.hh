@@ -11,7 +11,7 @@
 #include <vector>
 
 
-namespace ALine
+namespace tool
 {
 	
 	std::vector< std::string > ReadSourceDotList( const std::string& pathname );

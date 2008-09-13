@@ -10,7 +10,7 @@
 #include "A-line/Includes.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	IncludesCache ExtractIncludes( const std::string& pathname );

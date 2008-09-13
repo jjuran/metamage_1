@@ -13,7 +13,7 @@
 #include "A-line/TargetTypes.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	namespace CD = CompileDriver;

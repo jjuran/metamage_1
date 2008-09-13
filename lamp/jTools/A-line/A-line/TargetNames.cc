@@ -8,7 +8,7 @@
 #include "A-line/TargetNames.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	class InvalidPlatform {};

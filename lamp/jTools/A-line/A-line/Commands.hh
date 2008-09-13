@@ -17,7 +17,7 @@
 #include "CompileDriver/Platform.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	namespace CD = CompileDriver;

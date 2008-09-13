@@ -14,7 +14,7 @@
 #include "A-line/Task.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	class Project;

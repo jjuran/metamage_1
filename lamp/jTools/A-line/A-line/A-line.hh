@@ -12,7 +12,7 @@
 #include <vector>
 
 
-namespace ALine
+namespace tool
 {
 	
 	struct OptionsRecord

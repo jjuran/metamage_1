@@ -17,7 +17,7 @@
 #include "POSeven/Stat.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	namespace p7 = poseven;

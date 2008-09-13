@@ -20,7 +20,7 @@
 #include "POSeven/Stat.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	using namespace io::path_descent_operators;

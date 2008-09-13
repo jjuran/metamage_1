@@ -277,7 +277,7 @@ namespace CompileDriver
 	
 }
 
-namespace ALine
+namespace tool
 {
 	
 	using namespace CompileDriver;  // End the madness

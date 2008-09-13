@@ -12,7 +12,7 @@
 #include "A-line/ExtractIncludes.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	std::map< std::string, IncludesCache > gIncludesCaches;

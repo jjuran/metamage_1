@@ -16,7 +16,7 @@
 #include "CompileDriver/ProjectCatalog.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	// A map from project name to project data

@@ -11,7 +11,7 @@
 #include <vector>
 
 
-namespace ALine
+namespace tool
 {
 	
 	struct IncludesCache

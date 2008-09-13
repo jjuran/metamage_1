@@ -66,13 +66,11 @@
 #include "CompileDriver/ProjectConfig.hh"
 
 
-namespace O = Orion;
-
-
-namespace ALine
+namespace tool
 {
 	
 	namespace p7 = poseven;
+	namespace O = Orion;
 	namespace CD = CompileDriver;
 	
 	
@@ -450,187 +448,193 @@ namespace ALine
 		return targetInfo;
 	}
 	
-}
-
-namespace O = Orion;
-
-using namespace ALine;
-
-int O::Main( int argc, argv_t argv )
-{
-	if ( argc <= 1 )  return 0;
-	
-	CD::Platform arch    = CD::platformUnspecified;
-	CD::Platform runtime = CD::platformUnspecified;
-	CD::Platform macAPI  = CD::platformUnspecified;
-	
-	BuildVariety buildVariety = buildDefault;
-	
-	// General
-	
-	O::BindOption( "-v", gOptions.verbose );
-	
-	O::AliasOption( "-v", "--verbose" );
-	
-	// Actions
-	
-	O::BindOption( "-a", gOptions.all );
-	
-	O::AliasOption( "-a", "--all" );
-	
-	O::BindOption( "-n", gDryRun );
-	
-	O::AliasOption( "-n", "--dry-run" );
-	
-	O::BindOption( "-t", gOptions.catalog );
-	
-	O::AliasOption( "-t", "--catalog" );
-	
-	// Targeting
-	
-	O::BindOption( "-6", arch, CD::arch68K );
-	O::BindOption( "-P", arch, CD::archPPC );
-	O::BindOption( "-8", arch, CD::archX86 );
-	
-	O::BindOption( "-4", runtime, CD::runtimeA4CodeResource );
-	O::BindOption( "-5", runtime, CD::runtimeA5CodeSegments );
-	O::BindOption( "-F", runtime, CD::runtimeCodeFragments  );
-	O::BindOption( "-O", runtime, CD::runtimeMachO          );
-	
-	O::BindOption( "-B", macAPI, CD::apiMacBlue   );
-	O::BindOption( "-C", macAPI, CD::apiMacCarbon );
-	
-	O::BindOption( "-g", buildVariety, buildDebug   );
-	O::BindOption( "-R", buildVariety, buildRelease );
-	O::BindOption( "-D", buildVariety, buildDemo    );
-	
-	O::AliasOption( "-6", "--68k" );
-	O::AliasOption( "-P", "--ppc" );
-	O::AliasOption( "-8", "--x86" );
-	
-	O::AliasOption( "-4", "--a4"    );
-	O::AliasOption( "-5", "--a5"    );
-	O::AliasOption( "-F", "--cfm"   );
-	O::AliasOption( "-O", "--macho" );
-	
-	O::AliasOption( "-B", "--blue"   );
-	O::AliasOption( "-C", "--carbon" );
-	
-	O::AliasOption( "-g", "--debug"   );
-	O::AliasOption( "-R", "--release" );
-	O::AliasOption( "-D", "--demo"    );
-	
-	O::GetOptions( argc, argv );
-	
-	char const *const *freeArgs = O::FreeArguments();
-	
-	CD::Platform targetPlatform = arch | runtime | macAPI;
-	
-	CD::AddPendingSubproject( UserSrcTreePath() );
-	
-	std::string catalog_cache_pathname = get_user_cache_pathname() / "catalog";
-	
-	bool cache_was_written = false;
-	
-	if ( gOptions.catalog || !io::file_exists( catalog_cache_pathname ) )
+	int Main( int argc, iota::argv_t argv )
 	{
-		p7::write( p7::stdout_fileno, STR_LEN( "# Catalogging project configs..." ) );
+		if ( argc <= 1 )  return 0;
 		
-		while ( AddPendingSubprojects() )
+		CD::Platform arch    = CD::platformUnspecified;
+		CD::Platform runtime = CD::platformUnspecified;
+		CD::Platform macAPI  = CD::platformUnspecified;
+		
+		BuildVariety buildVariety = buildDefault;
+		
+		// General
+		
+		O::BindOption( "-v", gOptions.verbose );
+		
+		O::AliasOption( "-v", "--verbose" );
+		
+		// Actions
+		
+		O::BindOption( "-a", gOptions.all );
+		
+		O::AliasOption( "-a", "--all" );
+		
+		O::BindOption( "-n", gDryRun );
+		
+		O::AliasOption( "-n", "--dry-run" );
+		
+		O::BindOption( "-t", gOptions.catalog );
+		
+		O::AliasOption( "-t", "--catalog" );
+		
+		// Targeting
+		
+		O::BindOption( "-6", arch, CD::arch68K );
+		O::BindOption( "-P", arch, CD::archPPC );
+		O::BindOption( "-8", arch, CD::archX86 );
+		
+		O::BindOption( "-4", runtime, CD::runtimeA4CodeResource );
+		O::BindOption( "-5", runtime, CD::runtimeA5CodeSegments );
+		O::BindOption( "-F", runtime, CD::runtimeCodeFragments  );
+		O::BindOption( "-O", runtime, CD::runtimeMachO          );
+		
+		O::BindOption( "-B", macAPI, CD::apiMacBlue   );
+		O::BindOption( "-C", macAPI, CD::apiMacCarbon );
+		
+		O::BindOption( "-g", buildVariety, buildDebug   );
+		O::BindOption( "-R", buildVariety, buildRelease );
+		O::BindOption( "-D", buildVariety, buildDemo    );
+		
+		O::AliasOption( "-6", "--68k" );
+		O::AliasOption( "-P", "--ppc" );
+		O::AliasOption( "-8", "--x86" );
+		
+		O::AliasOption( "-4", "--a4"    );
+		O::AliasOption( "-5", "--a5"    );
+		O::AliasOption( "-F", "--cfm"   );
+		O::AliasOption( "-O", "--macho" );
+		
+		O::AliasOption( "-B", "--blue"   );
+		O::AliasOption( "-C", "--carbon" );
+		
+		O::AliasOption( "-g", "--debug"   );
+		O::AliasOption( "-R", "--release" );
+		O::AliasOption( "-D", "--demo"    );
+		
+		O::GetOptions( argc, argv );
+		
+		char const *const *freeArgs = O::FreeArguments();
+		
+		CD::Platform targetPlatform = arch | runtime | macAPI;
+		
+		CD::AddPendingSubproject( UserSrcTreePath() );
+		
+		std::string catalog_cache_pathname = get_user_cache_pathname() / "catalog";
+		
+		bool cache_was_written = false;
+		
+		if ( gOptions.catalog || !io::file_exists( catalog_cache_pathname ) )
+		{
+			p7::write( p7::stdout_fileno, STR_LEN( "# Catalogging project configs..." ) );
+			
+			while ( AddPendingSubprojects() )
+			{
+				continue;
+			}
+			
+			write_catalog_cache( p7::open( catalog_cache_pathname,
+			                               p7::o_wronly | p7::o_creat | p7::o_trunc,
+			                               0644 ) );
+			
+			cache_was_written = true;
+			
+			p7::write( p7::stdout_fileno, STR_LEN( "done\n" ) );
+		}
+		else
+		{
+			read_catalog_cache( p7::open( catalog_cache_pathname, p7::o_rdonly ) );
+		}
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "# Loading project data..." ) );
+		
+		CD::ApplyPlatformDefaults( targetPlatform );
+		
+		for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
+		{
+			const std::string& project_name = freeArgs[ i ];
+			
+			try
+			{
+				Project& project = GetProject( project_name, targetPlatform );
+			}
+			catch ( const CD::NoSuchProject& )
+			{
+				std::fprintf( stderr, "A-line: No such project '%s'\n", project_name.c_str() );
+				
+				if ( !cache_was_written )
+				{
+					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
+				}
+				
+				return EXIT_FAILURE;
+			}
+			catch ( const NoSuchUsedProject& ex )
+			{
+				std::fprintf( stderr, "A-line: No such project '%s' used by %s\n",
+				                                                ex.used.c_str(),
+				                                                            ex.projName.c_str() );
+				
+				if ( !cache_was_written )
+				{
+					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
+				}
+				
+				return EXIT_FAILURE;
+			}
+			catch ( const p7::errno_t& err )
+			{
+				std::fprintf( stderr, "A-line: %s: %s\n", project_name.c_str(), std::strerror( err ) );
+				
+				throw;
+			}
+		}
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "done.\n" ) );
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "# Generating task graph..." ) );
+		
+		TargetInfo target_info( targetPlatform, buildVariety );
+		
+		ApplyTargetDefaults( target_info );
+		
+		for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
+		{
+			const std::string& proj = freeArgs[ i ];
+			
+			try
+			{
+				Project& project = GetProject( proj, targetPlatform );
+				
+				BuildTarget( project, target_info );
+			}
+			catch ( const p7::errno_t& err )
+			{
+				std::fprintf( stderr, "A-line: %s: %s\n", proj.c_str(), std::strerror( err ) );
+				
+				throw;
+			}
+		}
+		
+		p7::write( p7::stdout_fileno, STR_LEN( "done.\n" ) );
+		
+		while ( RunNextTask() )
 		{
 			continue;
 		}
 		
-		write_catalog_cache( p7::open( catalog_cache_pathname,
-		                               p7::o_wronly | p7::o_creat | p7::o_trunc,
-		                               0644 ) );
-		
-		cache_was_written = true;
-		
-		p7::write( p7::stdout_fileno, STR_LEN( "done\n" ) );
+		return EXIT_SUCCESS;
 	}
-	else
+	
+}
+
+namespace Orion
+{
+	
+	int Main( int argc, iota::argv_t argv )
 	{
-		read_catalog_cache( p7::open( catalog_cache_pathname, p7::o_rdonly ) );
+		return tool::Main( argc, argv );
 	}
 	
-	p7::write( p7::stdout_fileno, STR_LEN( "# Loading project data..." ) );
-	
-	CD::ApplyPlatformDefaults( targetPlatform );
-	
-	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
-	{
-		const std::string& project_name = freeArgs[ i ];
-		
-		try
-		{
-			Project& project = GetProject( project_name, targetPlatform );
-		}
-		catch ( const CD::NoSuchProject& )
-		{
-			std::fprintf( stderr, "A-line: No such project '%s'\n", project_name.c_str() );
-			
-			if ( !cache_was_written )
-			{
-				std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
-			}
-			
-			return EXIT_FAILURE;
-		}
-		catch ( const NoSuchUsedProject& ex )
-		{
-			std::fprintf( stderr, "A-line: No such project '%s' used by %s\n",
-			                                                ex.used.c_str(),
-			                                                            ex.projName.c_str() );
-			
-			if ( !cache_was_written )
-			{
-				std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
-			}
-			
-			return EXIT_FAILURE;
-		}
-		catch ( const p7::errno_t& err )
-		{
-			std::fprintf( stderr, "A-line: %s: %s\n", project_name.c_str(), std::strerror( err ) );
-			
-			throw;
-		}
-	}
-	
-	p7::write( p7::stdout_fileno, STR_LEN( "done.\n" ) );
-	
-	p7::write( p7::stdout_fileno, STR_LEN( "# Generating task graph..." ) );
-	
-	TargetInfo target_info( targetPlatform, buildVariety );
-	
-	ApplyTargetDefaults( target_info );
-	
-	for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
-	{
-		const std::string& proj = freeArgs[ i ];
-		
-		try
-		{
-			Project& project = GetProject( proj, targetPlatform );
-			
-			BuildTarget( project, target_info );
-		}
-		catch ( const p7::errno_t& err )
-		{
-			std::fprintf( stderr, "A-line: %s: %s\n", proj.c_str(), std::strerror( err ) );
-			
-			throw;
-		}
-	}
-	
-	p7::write( p7::stdout_fileno, STR_LEN( "done.\n" ) );
-	
-	while ( RunNextTask() )
-	{
-		continue;
-	}
-	
-	return EXIT_SUCCESS;
 }
 

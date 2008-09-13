@@ -7,7 +7,7 @@
 #define ALINE_TARGET_TYPES_HH
 
 
-namespace ALine
+namespace tool
 {
 	
 	enum ProductType

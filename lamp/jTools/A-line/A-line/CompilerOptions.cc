@@ -9,7 +9,7 @@
 #include "A-line/TargetNames.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	CompilerOptions::CompilerOptions( const std::string&  name,

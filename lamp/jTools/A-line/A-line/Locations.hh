@@ -10,7 +10,7 @@
 #include <string>
 
 
-namespace ALine
+namespace tool
 {
 	
 	const std::string& mkdir_path( const std::string& path );

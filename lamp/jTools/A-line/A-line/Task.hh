@@ -21,7 +21,7 @@
 #include <boost/shared_ptr.hpp>
 
 
-namespace ALine
+namespace tool
 {
 	
 	class Task;

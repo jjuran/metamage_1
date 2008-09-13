@@ -18,7 +18,7 @@
 #include "StringPredicates.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	namespace NN = Nucleus;

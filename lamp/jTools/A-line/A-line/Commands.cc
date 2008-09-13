@@ -9,7 +9,7 @@
 #include "A-line/A-line.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	static void Echo( const char* string )

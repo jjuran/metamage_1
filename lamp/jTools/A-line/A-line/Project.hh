@@ -20,7 +20,7 @@
 #include "CompileDriver/ProjectConfig.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	class Project

@@ -4,7 +4,7 @@
  */
 
 
-namespace ALine
+namespace tool
 {
 	
 	inline std::string& operator<<( std::string& str, const std::string& appendage )

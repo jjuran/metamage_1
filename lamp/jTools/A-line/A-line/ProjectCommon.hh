@@ -16,7 +16,7 @@
 #include "CompileDriver/Platform.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	class Project;

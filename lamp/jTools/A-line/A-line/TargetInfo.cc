@@ -10,7 +10,7 @@
 //#include "Nitrogen/OSStatus.h"
 
 
-namespace ALine
+namespace tool
 {
 	
 	//namespace N = Nitrogen;

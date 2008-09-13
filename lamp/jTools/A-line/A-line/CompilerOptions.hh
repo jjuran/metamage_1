@@ -14,7 +14,7 @@
 #include "A-line/TargetTypes.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	typedef std::vector< const char* > Macros;

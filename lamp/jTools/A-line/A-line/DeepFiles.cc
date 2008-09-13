@@ -6,7 +6,7 @@
 #include "A-line/DeepFiles.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	struct AllFilter

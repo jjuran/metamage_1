@@ -44,7 +44,7 @@
 #include "A-line/ProjectCommon.hh"
 
 
-namespace ALine
+namespace tool
 {
 	
 	namespace NN = Nucleus;

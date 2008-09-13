@@ -9,7 +9,7 @@
 #include <string>
 
 
-namespace ALine
+namespace tool
 {
 	
 	struct NoSuchUsedProject
