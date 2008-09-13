@@ -118,11 +118,10 @@ namespace ALine
 	
 	static bool IsCFile( const std::string& name )
 	{
-		// For our purposes here, ".c" is not a C file.
+		// For our purposes here, ".c" is not a C file.  (Basename can't be empty.)
+		// Any one-character extension passes the test, including 'c', 'h', and 'm'.
 		
-		return name.size() > 2  &&  std::equal( name.end() - 2,
-		                                        name.end(),
-		                                        ".c" );
+		return name.size() > 2  &&  *(name.end() - 2) == '.';
 	}
 	
 	static std::string CreateFolder( const std::string& folder )
