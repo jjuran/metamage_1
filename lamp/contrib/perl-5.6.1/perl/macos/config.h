@@ -13,7 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
-Revision 1.17  2008-09-12 09:29:44  jax
+Revision 1.18  2008-09-13 01:54:19  jax
+Including vfork.h is unnecessary.
+
+Revision 1.17  2008/09/12 09:29:44  jax
 Removed include of compat.h, with no ill effects.
 
 Revision 1.16  2008/07/31 11:44:38  jax
@@ -1006,7 +1009,7 @@ First build released to public
  *	This symbol, if defined, indicates to the C program that it should
  *	include vfork.h.
  */
-#define I_VFORK	/**/
+#undef I_VFORK	/* We have vfork.h on Lamp, but unistd.h includes it */
 
 /* CAN_PROTOTYPE:
  *	If defined, this macro indicates that the C compiler can handle
