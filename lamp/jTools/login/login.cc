@@ -14,10 +14,12 @@
 
 static void SetVariables()
 {
-	#if TARGET_CPU_68K
+	#if defined(__MC68K__)
 	#define ENV_HOSTTYPE "m68k"
-	#elif TARGET_CPU_PPC
+	#elif defined( __POWERPC__ )
 	#define ENV_HOSTTYPE "powerpc"
+	#elif defined( __i386__ )
+	#define ENV_HOSTTYPE "i386"
 	#endif
 	
 	#if TARGET_RT_MAC_CFM
