@@ -775,7 +775,7 @@ namespace Genie
 		FSSpec item = target / macName;
 		
 		// The requested name and the returned name may differ in letter case.
-		bool matchedCase = std::equal( macName.begin(), macName.end(), item.name + 1 );
+		const bool matchedCase = std::equal( macName.begin(), macName.end(), (const char*) item.name + 1 );
 		
 		return matchedCase ? FSTreeFromFSSpec( item )
 		                   : FSTreePtr( new FSTree_ConflictingName( item ) );
