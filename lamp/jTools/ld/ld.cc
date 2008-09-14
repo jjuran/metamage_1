@@ -279,14 +279,13 @@ namespace tool
 	
 	enum ProductType
 	{
-		kProductUnknown,
+		kProductTool,
 		kProductCodeResource,
 		kProductSharedLib,
-		kProductTool,
 		kProductApp
 	};
 	
-	static ProductType gProductType = kProductUnknown;
+	static ProductType gProductType = kProductTool;
 	
 	static std::string ProductOptionsForTool( bool cfm )
 	{
