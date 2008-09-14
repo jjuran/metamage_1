@@ -18,6 +18,7 @@
 
 // POSeven
 #include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/waitpid.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
@@ -724,18 +725,59 @@ namespace tool
 			return EXIT_SUCCESS;
 		}
 		
-		pid_t pid = POSEVEN_VFORK();
+		const bool filtering = arch == arch_ppc;
 		
-		if ( pid == 0 )
+		int pipe_ends[2];
+		
+		if ( filtering )
 		{
+			p7::throw_posix_result( pipe( pipe_ends ) );
+		}
+		
+		p7::pid_t tlsrvr_pid = POSEVEN_VFORK();
+		
+		if ( tlsrvr_pid == 0 )
+		{
+			if ( filtering )
+			{
+				close( pipe_ends[0] );  // close reader
+				
+				dup2( pipe_ends[1], STDERR_FILENO );
+				
+				close( pipe_ends[1] );  // close spare writer
+			}
+			
 			(void) execvp( command[0], (char**) &command[0] );
 			
 			_exit( 127 );
 		}
 		
-		int wait_status = -1;
+		if ( filtering )
+		{
+			close( pipe_ends[1] );  // close writer
+			
+			p7::pid_t filter_pid = POSEVEN_VFORK();
+			
+			if ( filter_pid == 0 )
+			{
+				dup2( p7::stderr_fileno, p7::stdout_fileno );  // redirect stdout to stderr
+				dup2( pipe_ends[0],      p7::stdin_fileno  );  // redirect stdin to pipe reader
+				
+				close( pipe_ends[0] );  // close spare reader
+				
+				const char *const filter_argv[] = { "filter-mwlink-warnings.pl", NULL };
+				
+				(void) execvp( filter_argv[0], (char**) filter_argv );
+				
+				_exit( 127 );
+			}
+			
+			close( pipe_ends[0] );  // close reader
+			
+			p7::waitpid( filter_pid );
+		}
 		
-		p7::throw_posix_result( wait( &wait_status ) );
+		p7::wait_t wait_status = p7::waitpid( tlsrvr_pid );
 		
 		int exit_status = exit_from_wait( wait_status );
 		
