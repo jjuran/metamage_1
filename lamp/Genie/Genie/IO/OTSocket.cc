@@ -30,27 +30,34 @@ namespace Genie
 	                                     OTResult     result,
 	                                     void*        cookie )
 	{
-		switch ( code )
+		OTSocket* socket = (OTSocket*) contextPtr;
+		
+		try
 		{
-			case kOTSyncIdleEvent:
-				try
-				{
-					Yield( kInterruptNever );  // FIXME
-				}
-				catch ( ... )
-				{
-				}
+			switch ( code )
+			{
+				case T_ORDREL:
+					socket->ReceiveOrderlyDisconnect();
+					
+					break;
 				
-				break;
-			
-			case kOTProviderWillClose:
-				break;
-			
-			case kOTProviderIsClosed:
-				break;
-			
-			default:
-				break;
+				case kOTSyncIdleEvent:
+					Yield( kInterruptNever );  // FIXME
+					
+					break;
+				
+				case kOTProviderWillClose:
+					break;
+				
+				case kOTProviderIsClosed:
+					break;
+				
+				default:
+					break;
+			}
+		}
+		catch ( ... )
+		{
 		}
 	}
 	
