@@ -310,6 +310,8 @@ namespace Genie
 	void OTSocket::ShutdownWriting()
 	{
 		N::OTSndOrderlyDisconnect( itsEndpoint );
+		
+		itHasSentFIN = true;
 	}
 	
 }
