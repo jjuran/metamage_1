@@ -32,6 +32,8 @@ namespace Genie
 			SocketAddress                            itsSocketAddress;
 			SocketAddress                            itsPeerAddress;
 			bool                                     itIsBound;
+			bool                                     itHasSentFIN;
+			bool                                     itHasReceivedFIN;
 		
 		public:
 			OTSocket( bool isBlocking = true );
@@ -39,6 +41,8 @@ namespace Genie
 			~OTSocket();
 			
 			bool IsNonblocking() const  { return !Nitrogen::OTIsBlocking( itsEndpoint ); }
+			
+			void ReceiveOrderlyDisconnect();
 			
 			unsigned int SysPoll() const;
 			

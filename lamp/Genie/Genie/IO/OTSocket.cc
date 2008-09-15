@@ -25,15 +25,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static pascal void YieldingNotifier( void* contextPtr,
-	                                     OTEventCode code,
-	                                     OTResult result,
-	                                     void* cookie );
-	
-	static pascal void YieldingNotifier( void*,
-	                                     OTEventCode code,
-	                                     OTResult,
-	                                     void* )
+	static pascal void YieldingNotifier( void*        contextPtr,
+	                                     OTEventCode  code,
+	                                     OTResult     result,
+	                                     void*        cookie )
 	{
 		switch ( code )
 		{
@@ -60,7 +55,9 @@ namespace Genie
 	}
 	
 	OTSocket::OTSocket( bool isBlocking ) : itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
-	                                        itIsBound( false )
+	                                        itIsBound       ( false ),
+	                                        itHasSentFIN    ( false ),
+	                                        itHasReceivedFIN( false )
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
 		
@@ -83,6 +80,13 @@ namespace Genie
 		{
 			(void) ::OTUnbind( itsEndpoint );
 		}
+	}
+	
+	void OTSocket::ReceiveOrderlyDisconnect()
+	{
+		N::OTRcvOrderlyDisconnect( itsEndpoint );
+		
+		itHasReceivedFIN = true;
 	}
 	
 	unsigned int OTSocket::SysPoll() const
