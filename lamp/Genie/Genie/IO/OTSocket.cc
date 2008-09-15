@@ -30,17 +30,10 @@ namespace Genie
 	                                     OTResult     result,
 	                                     void*        cookie )
 	{
-		OTSocket* socket = (OTSocket*) contextPtr;
-		
 		try
 		{
 			switch ( code )
 			{
-				case T_ORDREL:
-					socket->ReceiveOrderlyDisconnect();
-					
-					break;
-				
 				case kOTSyncIdleEvent:
 					Yield( kInterruptNever );  // FIXME
 					
@@ -55,6 +48,20 @@ namespace Genie
 				default:
 					break;
 			}
+			
+			if ( OTSocket* socket = (OTSocket*) contextPtr )
+			{
+				switch ( code )
+				{
+					case T_ORDREL:
+						socket->ReceiveOrderlyDisconnect();
+						
+						break;
+					
+					default:
+						break;
+				}
+			}
 		}
 		catch ( ... )
 		{
@@ -64,7 +71,8 @@ namespace Genie
 	OTSocket::OTSocket( bool isBlocking ) : itsEndpoint( N::OTOpenEndpoint( N::OTCreateConfiguration( "tcp" ) ) ),
 	                                        itIsBound       ( false ),
 	                                        itHasSentFIN    ( false ),
-	                                        itHasReceivedFIN( false )
+	                                        itHasReceivedFIN( false ),
+	                                        itHasReceivedRST( false )
 	{
 		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( YieldingNotifier );
 		
@@ -87,6 +95,13 @@ namespace Genie
 		{
 			(void) ::OTUnbind( itsEndpoint );
 		}
+	}
+	
+	void OTSocket::ReceiveDisconnect()
+	{
+		N::OTRcvDisconnect( itsEndpoint );
+		
+		itHasReceivedRST = true;
 	}
 	
 	void OTSocket::ReceiveOrderlyDisconnect()
@@ -190,6 +205,28 @@ namespace Genie
 			if ( err == kOTLookErr )
 			{
 				OTResult look = N::OTLook( itsEndpoint );
+				
+				switch ( look )
+				{
+					case T_DISCONNECT:
+						ReceiveDisconnect();
+						
+						Process& current = CurrentProcess();
+						
+						current.Raise( SIGPIPE );
+						
+						current.HandlePendingSignals( kInterruptNever );
+						
+						p7::throw_errno( EPIPE );
+						
+					case T_ORDREL:
+						ReceiveOrderlyDisconnect();
+						
+						goto retry;
+					
+					default:
+						break;
+				}
 				
 				std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
 			}

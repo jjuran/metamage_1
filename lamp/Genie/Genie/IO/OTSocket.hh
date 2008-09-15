@@ -34,6 +34,7 @@ namespace Genie
 			bool                                     itIsBound;
 			bool                                     itHasSentFIN;
 			bool                                     itHasReceivedFIN;
+			bool                                     itHasReceivedRST;
 		
 		public:
 			OTSocket( bool isBlocking = true );
@@ -42,6 +43,7 @@ namespace Genie
 			
 			bool IsNonblocking() const  { return !Nitrogen::OTIsBlocking( itsEndpoint ); }
 			
+			void ReceiveDisconnect();
 			void ReceiveOrderlyDisconnect();
 			
 			unsigned int SysPoll() const;
