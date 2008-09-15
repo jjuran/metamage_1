@@ -161,6 +161,18 @@ namespace Genie
 			Yield( kInterruptAlways );
 		}
 		
+		if ( err_count == kOTLookErr )
+		{
+			OTResult look = N::OTLook( itsEndpoint );
+			
+			if ( look == T_ORDREL )
+			{
+				ReceiveOrderlyDisconnect();
+				
+				return 0;
+			}
+		}
+		
 		N::ThrowOSStatus( err_count );
 		
 		if ( byteCount > n_readable_bytes )
