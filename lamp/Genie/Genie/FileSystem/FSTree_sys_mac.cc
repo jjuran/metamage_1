@@ -8,6 +8,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_desktop.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_gdev.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gestalt.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_machine.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_name.hh"
@@ -37,6 +38,7 @@ namespace Genie
 	const Singleton_Mapping sys_mac_Mappings[] =
 	{
 		{ "vol",    &Singleton_Factory< FSTree_sys_mac_vol    > },
+		{ "gdev",   &Singleton_Factory< FSTree_sys_mac_gdev   > },
 		{ "proc",   &Singleton_Factory< FSTree_sys_mac_proc   > },
 		//{ "window", &Singleton_Factory< FSTree_sys_mac_window > },
 		
