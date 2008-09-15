@@ -136,17 +136,6 @@ namespace Genie
 				{
 					OTResult look = N::OTLook( itsEndpoint );
 					
-					switch ( look )
-					{
-						case T_ORDREL:
-							N::OTRcvOrderlyDisconnect( itsEndpoint );
-							
-							return 0;
-						
-						default:
-							break;
-					}
-					
 					std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
 				}
 				else
@@ -194,17 +183,6 @@ namespace Genie
 			if ( err == kOTLookErr )
 			{
 				OTResult look = N::OTLook( itsEndpoint );
-				
-				switch ( look )
-				{
-					case T_ORDREL:
-						N::OTRcvOrderlyDisconnect( itsEndpoint );
-						
-						goto retry;
-					
-					default:
-						break;
-				}
 				
 				std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
 			}
