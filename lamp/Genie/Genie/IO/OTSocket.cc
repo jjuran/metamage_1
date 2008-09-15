@@ -118,56 +118,63 @@ namespace Genie
 	
 	int OTSocket::SysRead( char* data, std::size_t byteCount )
 	{
-		if ( !IsNonblocking() )
+		if ( itHasReceivedFIN )
 		{
-			// OTRcv() will block until ALL bytes requested are received
-			// (unlike read()), so we block only while reading the first byte.
-			
-			std::size_t bytes = 0;
-			
-			try
-			{
-				// Always 1 byte (unless there's an error); may block
-				bytes = N::OTRcv( itsEndpoint, data, 1 );
-			}
-			catch ( const N::OSStatus& err )
-			{
-				if ( err == kOTLookErr )
-				{
-					OTResult look = N::OTLook( itsEndpoint );
-					
-					std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
-				}
-				else
-				{
-					std::fprintf( stderr, "OSStatus %d from OTRcv()\n", err.Get() );
-				}
-				
-				throw;
-			}
-			
-			SetNonblocking();
-			
-			try
-			{
-				// Read whatever's left, nonblocking
-				bytes += N::OTRcv( itsEndpoint, data + 1, byteCount - 1 );
-			}
-			catch ( const io::no_input_pending& ) {}  // There was only one byte
-			catch ( ... )
-			{
-				// FIXME:  This smells
-				ClearNonblocking();
-				throw;
-			}
-			
-			ClearNonblocking();
-			
-			// And return one or more bytes.  Yay, POSIX semantics!
-			return bytes;
+			return 0;
 		}
 		
-		return N::OTRcv( itsEndpoint, data, byteCount );
+		const bool socket_is_nonblocking = IsNonblocking();
+		
+		::OTByteCount n_readable_bytes;
+		
+		OSStatus err_count;
+		
+		while ( true )
+		{
+			err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
+			
+			if ( err_count != kOTNoDataErr )
+			{
+				break;
+			}
+			
+			if ( socket_is_nonblocking )
+			{
+				break;
+			}
+			
+			Yield( kInterruptAlways );
+		}
+		
+		N::ThrowOSStatus( err_count );
+		
+		if ( byteCount > n_readable_bytes )
+		{
+			byteCount = n_readable_bytes;
+		}
+		
+		try
+		{
+			return N::OTRcv( itsEndpoint, data, byteCount );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err == kOTLookErr )
+			{
+				OTResult look = N::OTLook( itsEndpoint );
+				
+				std::fprintf( stderr, "OTResult %d from OTLook()\n", look );
+			}
+			else
+			{
+				std::fprintf( stderr, "OSStatus %d from OTRcv()\n", err.Get() );
+			}
+			
+			throw;
+		}
+		
+		// Not reached, but MWCPPC 2.4.1 doesn't realize that
+		return 0;
 	}
 	
 	int OTSocket::SysWrite( const char* data, std::size_t byteCount )
