@@ -57,6 +57,7 @@ qw
 (
 	MSL-fixup.lib
 	KSIOUXConsole.cc
+	:KSIOUXConsole.cc
 	Kerosene-User.lib
 	Kerosene-Library.lib
 	PascalPreCarbonUPPGlue.o
