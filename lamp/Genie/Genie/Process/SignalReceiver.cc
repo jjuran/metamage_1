@@ -129,6 +129,23 @@ namespace Genie
 				
 				signal_delivered = true;
 				
+				/*
+					kInterruptUnlessRestarting == 1
+					
+					interrupting   interrupting - kInterruptUnlessRestarting
+					------------   -----------------------------------------
+					0 (never)      -1
+					1 (unless)     0
+					2 (always)     1
+					
+					interrupting                restartable   relation   interrupt
+					------------                -----------   --------   ---------
+					kInterruptAlways            x             x <= 1     true
+					kInterruptUnlessRestarting  false         0 <= 0     true
+					kInterruptUnlessRestarting  true          1 <= 0     false
+					kInterruptNever,            x             x <= -1    false
+				*/
+				
 				if ( !!(action.sa_flags & SA_RESTART)  <=  interrupting - kInterruptUnlessRestarting )
 				{
 					return_eintr = true;
