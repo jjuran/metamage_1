@@ -264,7 +264,8 @@ namespace Genie
 		
 		reqAddr.addr.buf = reinterpret_cast< unsigned char* >( itsSocketAddress.Get() );
 		reqAddr.addr.len = itsSocketAddress.Len();
-		reqAddr.qlen = backlog;
+		//reqAddr.qlen = backlog;
+		reqAddr.qlen = 1;
 		
 		N::OTBind( itsEndpoint, &reqAddr, NULL );
 		
@@ -290,7 +291,32 @@ namespace Genie
 		
 		handle->itsPeerAddress.Assign( client, len );
 		
-		N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
+		try
+		{
+			N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err == kOTLookErr )
+			{
+				OTResult look = N::OTLook( itsEndpoint );
+				
+				switch ( look )
+				{
+					
+					default:
+						break;
+				}
+				
+				std::fprintf( stderr, "OTResult %d from OTLook() after OTAccept()\n", look );
+			}
+			else
+			{
+				std::fprintf( stderr, "OSStatus %d from OTAccept()\n", err.Get() );
+			}
+			
+			throw;
+		}
 		
 		return newSocket;
 	}
