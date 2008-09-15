@@ -119,7 +119,7 @@ namespace Genie
 				ASSERT( handler != SIG_IGN );
 				ASSERT( handler != SIG_DFL );
 				
-				itsPendingSignals &= ~signal_mask;
+				itsPendingSignals &= ~signo_mask;
 				
 				itsBlockedSignals |= signal_mask;
 				
