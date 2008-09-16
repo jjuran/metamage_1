@@ -31,74 +31,89 @@
 #include "Orion/Main.hh"
 
 
-namespace NN = Nucleus;
-namespace p7 = poseven;
-namespace O = Orion;
-
-
-static struct in_addr ResolveHostname( const char* hostname )
+namespace tool
 {
-	hostent* hosts = gethostbyname( hostname );
 	
-	if ( !hosts || h_errno )
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
+	namespace O = Orion;
+	
+	
+	static struct in_addr ResolveHostname( const char* hostname )
 	{
-		std::string message = "Domain name lookup failed: ";
+		hostent* hosts = gethostbyname( hostname );
 		
-		message += NN::Convert< std::string >( h_errno );
-		message += "\n";
+		if ( !hosts || h_errno )
+		{
+			std::string message = "Domain name lookup failed: ";
+			
+			message += NN::Convert< std::string >( h_errno );
+			message += "\n";
+			
+			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			
+			O::ThrowExitStatus( 1 );
+		}
 		
-		p7::write( p7::stderr_fileno, message.data(), message.size() );
+		in_addr addr = *(in_addr*) hosts->h_addr;
 		
-		O::ThrowExitStatus( 1 );
+		return addr;
 	}
 	
-	in_addr addr = *(in_addr*) hosts->h_addr;
-	
-	return addr;
-}
-
-static p7::fd_t Connect( const char* hostname, const char* port_str )
-{
-	p7::fd_t result = p7::fd_t( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
-	
-	short port = std::atoi( port_str );
-	
-	struct in_addr ip = ResolveHostname( hostname );
-	
-	struct sockaddr_in inetAddress = { 0 };
-	
-	inetAddress.sin_family = AF_INET;
-	inetAddress.sin_port   = htons( port );
-	inetAddress.sin_addr   = ip;
-	
-	p7::throw_posix_result( connect( result, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) ) );
-	
-	return result;
-}
-
-int O::Main( int argc, argv_t argv )
-{
-	if ( argc < 4 )
+	static p7::fd_t Connect( const char* hostname, const char* port_str )
 	{
-		p7::write( p7::stderr_fileno, STR_LEN( "Usage:  tcpclient <host> <port> <program argv>\n" ) );
+		p7::fd_t result = p7::fd_t( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 		
-		return 1;
+		short port = std::atoi( port_str );
+		
+		struct in_addr ip = ResolveHostname( hostname );
+		
+		struct sockaddr_in inetAddress = { 0 };
+		
+		inetAddress.sin_family = AF_INET;
+		inetAddress.sin_port   = htons( port );
+		inetAddress.sin_addr   = ip;
+		
+		p7::throw_posix_result( connect( result, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) ) );
+		
+		return result;
 	}
 	
-	const char* hostname = argv[1];
-	const char* port_str = argv[2];
+	int Main( int argc, iota::argv_t argv )
+	{
+		if ( argc < 4 )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "Usage:  tcpclient <host> <port> <program argv>\n" ) );
+			
+			return 1;
+		}
+		
+		const char* hostname = argv[1];
+		const char* port_str = argv[2];
+		
+		iota::argp_t program_argv = argv + 3;
+		
+		p7::fd_t sock = Connect( hostname, port_str );
+		
+		dup2( sock, 6 );
+		dup2( sock, 7 );
+		
+		execvp( program_argv[0], program_argv );
+		
+		_exit( 127 );
+		
+		return 0;
+	}
 	
-	iota::argp_t program_argv = argv + 3;
+}
+
+namespace Orion
+{
 	
-	p7::fd_t sock = Connect( hostname, port_str );
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
 	
-	dup2( sock, 6 );
-	dup2( sock, 7 );
-	
-	execvp( program_argv[0], program_argv );
-	
-	_exit( 127 );
-	
-	return 0;
 }
 
