@@ -6,6 +6,9 @@
 // Standard C++
 #include <string>
 
+// Standard C/C++
+#include <cstring>
+
 // Standard C
 #include <stdlib.h>
 

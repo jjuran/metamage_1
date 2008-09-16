@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Standard C/C++
+#include <cstring>
+
 // Standard C++
 #include <string>
 
