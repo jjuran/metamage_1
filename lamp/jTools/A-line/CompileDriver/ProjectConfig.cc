@@ -251,8 +251,10 @@ namespace CompileDriver
 		
 		std::string project_dir = get_project_dir_from_config_file( filePath );
 		
-		std::transform( conf[ "subprojects" ].begin(),
-		                conf[ "subprojects" ].end(),
+		std::vector< std::string >& conf_subprojects = conf[ "subprojects" ];
+		
+		std::transform( conf_subprojects.begin(),
+		                conf_subprojects.end(),
 		                std::back_inserter( Subprojects() ),
 		                std::bind1st( more::ptr_fun( DescendPathToDir ),
 		                              project_dir ) );
