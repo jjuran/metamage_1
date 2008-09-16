@@ -23,7 +23,7 @@
 #include "lamp/winio.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/functions/ioctl.hh"
 #include "POSeven/IOPump.hh"
 #include "POSeven/Open.hh"
 
@@ -31,17 +31,6 @@
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 
-
-namespace poseven
-{
-	
-	template < class FD, class Pointer >
-	inline void ioctl( const FD& fd, unsigned long command, Pointer argp )
-	{
-		throw_posix_result( ::ioctl( fd, command, argp ) );
-	}
-	
-}
 
 namespace NN = Nucleus;
 namespace p7 = poseven;
