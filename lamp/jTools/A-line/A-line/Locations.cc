@@ -12,6 +12,9 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
+// A-line
+#include "CompileDriver/Platform.hh"
+
 
 namespace tool
 {
@@ -66,7 +69,10 @@ namespace tool
 	{
 		std::string home = CurrentUserHomeDirPath();
 		
-		return mkdir_path( home / "var/cache/a-line" );
+		const char* cache = ALINE_MAC_DEVELOPMENT ? "Library/Caches/A-line"
+		                                          : "var/cache/a-line";
+		
+		return mkdir_path( home / cache );
 	}
 	
 	static std::string UserLabDirPath()
