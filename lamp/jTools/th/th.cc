@@ -20,6 +20,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Nucleus
 #include "Nucleus/Convert.h"
 
@@ -38,9 +41,6 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	
-	
-	#define STR_LEN( str )  "" str, (sizeof str - 1)
 	
 	
 	static int exit_from_wait( int stat )

@@ -17,12 +17,12 @@
 // Lamp
 #include "lamp/winio.h"
 
+// Iota
+#include "iota/strings.hh"
+
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-
-
-#define STR_LEN( str )  "" str, (sizeof str - 1)
 
 
 static int exit_from_wait( int stat )

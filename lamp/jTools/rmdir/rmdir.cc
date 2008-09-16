@@ -13,11 +13,11 @@
 // POSIX
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Orion
 #include "Orion/Main.hh"
-
-
-#define STR_LEN( string )  "" string, (sizeof string - 1)
 
 
 namespace tool

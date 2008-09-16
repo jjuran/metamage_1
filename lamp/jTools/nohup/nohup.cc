@@ -19,8 +19,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
-#define STR_LEN( str )  "" str, (sizeof str - 1)
+// Iota
+#include "iota/strings.hh"
 
 
 int main( int argc, char *const argv[] )
