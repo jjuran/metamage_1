@@ -25,6 +25,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/vfork.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -38,16 +39,6 @@
 #include "Options.hh"
 #include "PositionalParameters.hh"
 
-
-namespace poseven
-{
-	
-	inline pid_t vfork()
-	{
-		return pid_t( throw_posix_result( ::vfork() ) );
-	}
-	
-}
 
 namespace NN = Nucleus;
 namespace p7 = poseven;
