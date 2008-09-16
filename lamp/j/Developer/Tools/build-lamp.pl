@@ -120,7 +120,7 @@ my %fsmap =
 			qw( abort buserror illegal privileged ),
 			qw( SetFile aevt ic load-init rsrc-patch system tlsrvr ),
 			qw( File Line activate quit ),
-			qw( filter-mwlink-warnings filter-mwlink-warnings.pl build-lamp.pl report run-tests ),
+			qw( filter-mwlink-warnings.pl build-lamp.pl report run-tests ),
 		],
 	},
 	bin =>
