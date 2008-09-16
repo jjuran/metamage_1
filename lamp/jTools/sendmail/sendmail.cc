@@ -39,6 +39,12 @@
 #include "Orion/Main.hh"
 
 
+inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
+{
+	return a.preference < b.preference;
+}
+
+
 namespace tool
 {
 	
@@ -48,12 +54,6 @@ namespace tool
 	namespace O = Orion;
 	
 	using namespace io::path_descent_operators;
-	
-	
-	inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
-	{
-		return a.preference < b.preference;
-	}
 	
 	
 	static std::string gRelayServer;
