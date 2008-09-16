@@ -12,7 +12,6 @@
 #include <sys/ttycom.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <vfork.h>
 
 // Lamp
 #include "lamp/winio.h"
