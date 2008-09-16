@@ -41,6 +41,24 @@
 #include "Orion/Main.hh"
 
 
+namespace Nitrogen
+{
+	
+	static const AEKeyword kOSAErrorNumber  = AEKeyword( ::kOSAErrorNumber  );
+	static const AEKeyword kOSAErrorMessage = AEKeyword( ::kOSAErrorMessage );
+	
+	template < DescType desiredType >
+	inline
+	typename DescType_Traits< desiredType >::Result
+	OSAScriptError( ComponentInstance scriptingComponent, AEKeyword keyword )
+	{
+		return AEGetDescData< desiredType >( OSAScriptError( scriptingComponent,
+		                                                     keyword,
+		                                                     desiredType ) );
+	}
+	
+}
+
 namespace N = Nitrogen;
 namespace NN = Nucleus;
 namespace p7 = poseven;
@@ -48,19 +66,10 @@ namespace Div = Divergence;
 namespace O = Orion;
 
 
-template < N::DescType desiredType >
-typename N::DescType_Traits< desiredType >::Result
-GetScriptErrorData( N::ComponentInstance scriptingComponent, N::AEKeyword keyword )
-{
-	return N::AEGetDescData< desiredType >( N::OSAScriptError( scriptingComponent,
-	                                                           keyword,
-	                                                           desiredType ) );
-}
-
 static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* step )
 {
-	SInt16       errorNumber  = GetScriptErrorData< N::typeSInt16 >( comp, N::AEKeyword( kOSAErrorNumber  ) );
-	std::string  errorMessage = GetScriptErrorData< N::typeChar   >( comp, N::AEKeyword( kOSAErrorMessage ) );
+	SInt16       errorNumber  = N::OSAScriptError< N::typeSInt16 >( comp, N::kOSAErrorNumber  );
+	std::string  errorMessage = N::OSAScriptError< N::typeChar   >( comp, N::kOSAErrorMessage );
 	
 	if ( errorNumber < 0 )
 	{
