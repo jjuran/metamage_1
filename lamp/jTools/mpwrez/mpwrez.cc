@@ -13,6 +13,7 @@
 
 // POSeven
 #include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -160,9 +161,7 @@ namespace tool
 			_exit( 127 );
 		}
 		
-		int wait_status = -1;
-		
-		p7::throw_posix_result( wait( &wait_status ) );
+		p7::wait_t wait_status = p7::wait();
 		
 		return exit_from_wait( wait_status );
 	}
