@@ -19,6 +19,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/types/fd_t.hh"
 
 
 namespace poseven
@@ -27,7 +28,9 @@ namespace poseven
 	template < class FD, class Pointer >
 	inline void ioctl( const FD& fd, unsigned long command, Pointer argp )
 	{
-		throw_posix_result( ::ioctl( fd, command, argp ) );
+		fd_t converted = fd;
+		
+		throw_posix_result( ::ioctl( converted, command, argp ) );
 	}
 	
 }
