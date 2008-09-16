@@ -10,7 +10,6 @@
 
 // POSIX
 #include <signal.h>
-#include <sys/ioctl.h>
 #include <unistd.h>
 
 // Lamp
@@ -65,10 +64,10 @@ static void create_window( const char* pathname )
 	
 	unsigned short bg_color[3] = { 0xdddd, 0xdddd, 0xdddd };
 	
-	p7::ioctl( STDIN_FILENO, GIOCSBGCOLOR, bg_color );
+	p7::ioctl( p7::stdin_fileno, GIOCSBGCOLOR, bg_color );
 	
-	p7::ioctl( STDIN_FILENO, WIOCSSIZE, &window_size );
-	p7::ioctl( STDIN_FILENO, WIOCSTITLE, pathname );
+	p7::ioctl( p7::stdin_fileno, WIOCSSIZE, &window_size );
+	p7::ioctl( p7::stdin_fileno, WIOCSTITLE, pathname );
 }
 
 template < int depth >  struct bit_depth_traits;
@@ -152,10 +151,10 @@ static void draw_window()
 	unsigned short rowBytes = 0;
 	unsigned short nRows    = 0;
 	
-	p7::ioctl( STDIN_FILENO, GIOCGDEPTH,    &depth    );
-	p7::ioctl( STDIN_FILENO, GIOCGROWBYTES, &rowBytes );
-	p7::ioctl( STDIN_FILENO, GIOCGNROWS,    &nRows    );
-	p7::ioctl( STDIN_FILENO, GIOCGBASEADDR, &baseAddr );
+	p7::ioctl( p7::stdin_fileno, GIOCGDEPTH,    &depth    );
+	p7::ioctl( p7::stdin_fileno, GIOCGROWBYTES, &rowBytes );
+	p7::ioctl( p7::stdin_fileno, GIOCGNROWS,    &nRows    );
+	p7::ioctl( p7::stdin_fileno, GIOCGBASEADDR, &baseAddr );
 	
 	size_t size = nRows * rowBytes;
 	
@@ -199,7 +198,7 @@ static void draw_window()
 		draw( global_icon_data.icon + row * 32/8, rowBase );
 	}
 	
-	p7::ioctl( STDIN_FILENO, GIOCFLUSHRECT, NULL );
+	p7::ioctl( p7::stdin_fileno, GIOCFLUSHRECT, NULL );
 }
 
 int main( int argc, char const* const argv[] )
