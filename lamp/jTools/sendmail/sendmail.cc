@@ -285,14 +285,13 @@ void Transmitter::operator()( const FSSpec& destFile )
 {
 	try
 	{
-		using N::fsRdWrPerm;
-		
 		// destFile serves as a lock on this destination
+		// We can't switch from FSSpec to pathname until we sort out locking
 		Relay( itsReturnPath,
-		       ReadOneLinerFromStream( N::FSpOpenDF( destFile, fsRdWrPerm ) ),
+		       ReadOneLinerFromStream( io::open_for_io( destFile ) ),
 		       itsMessageFile );
 		
-		N::FSpDelete( destFile );
+		io::delete_file( destFile );
 	}
 	catch ( ... )
 	{
