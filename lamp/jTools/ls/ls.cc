@@ -21,62 +21,74 @@
 #include "Orion/Main.hh"
 
 
-namespace O = Orion;
-
-
-static void iterate_dir( const char* pathname )
+namespace tool
 {
-	DIR* iter = opendir( pathname );
 	
-	while ( const dirent* ent = readdir( iter ) )
+	static void iterate_dir( const char* pathname )
 	{
-		std::printf( "%s\n", ent->d_name );
+		DIR* iter = opendir( pathname );
+		
+		while ( const dirent* ent = readdir( iter ) )
+		{
+			std::printf( "%s\n", ent->d_name );
+		}
+		
+		closedir( iter );
 	}
 	
-	closedir( iter );
+	int Main( int argc, iota::argv_t argv )
+	{
+		if ( argc > 1 )
+		{
+			int fail = 0;
+			
+			for ( int i = 1; i < argc; i++ )
+			{
+				struct stat st;
+				
+				int result = stat( argv[ i ], &st );
+				
+				if ( result == -1 )
+				{
+					++fail;
+					
+					std::string message = "ls: ";
+					
+					message += argv[ i ];
+					
+					std::perror( message.c_str() );
+					
+					continue;
+				}
+				
+				if ( S_ISDIR( st.st_mode ) )
+				{
+					iterate_dir( argv[ i ] );
+				}
+				else
+				{
+					std::printf( "%s\n", argv[ i ] );
+				}
+			}
+			return fail;
+		}
+		else
+		{
+			iterate_dir( "." );
+		}
+		
+		return 0;
+	}
+	
 }
 
-int O::Main( int argc, argv_t argv )
+namespace Orion
 {
-	if ( argc > 1 )
+	
+	int Main( int argc, iota::argv_t argv )
 	{
-		int fail = 0;
-		
-		for ( int i = 1; i < argc; i++ )
-		{
-			struct stat st;
-			
-			int result = stat( argv[ i ], &st );
-			
-			if ( result == -1 )
-			{
-				++fail;
-				
-				std::string message = "ls: ";
-				
-				message += argv[ i ];
-				
-				std::perror( message.c_str() );
-				
-				continue;
-			}
-			
-			if ( S_ISDIR( st.st_mode ) )
-			{
-				iterate_dir( argv[ i ] );
-			}
-			else
-			{
-				std::printf( "%s\n", argv[ i ] );
-			}
-		}
-		return fail;
-	}
-	else
-	{
-		iterate_dir( "." );
+		return tool::Main( argc, argv );
 	}
 	
-	return 0;
 }
 

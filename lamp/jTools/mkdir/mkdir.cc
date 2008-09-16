@@ -17,35 +17,47 @@
 #include "Orion/Main.hh"
 
 
-namespace O = Orion;
-
-
-int O::Main( int argc, argv_t argv )
+namespace tool
 {
-	// Check for sufficient number of args
-	if ( argc < 2 )
-	{
-		std::fprintf( stderr, "mkdir: missing arguments\n" );
-		return 1;
-	}
 	
-	// Try to make each directory.  Return whether any errors occurred.
-	int fail = 0;
-	
-	for ( int index = 1;  index < argc;  ++index )
+	int Main( int argc, iota::argv_t argv )
 	{
-		int result = mkdir( argv[ index ], 0700 );
-		
-		if ( result == -1 )
+		// Check for sufficient number of args
+		if ( argc < 2 )
 		{
-			std::fprintf( stderr,
-			              "mkdir: %s: %s\n",
-			                      argv[ index ],
-			                          std::strerror( errno ) );
-			fail++;
+			std::fprintf( stderr, "mkdir: missing arguments\n" );
+			return 1;
 		}
+		
+		// Try to make each directory.  Return whether any errors occurred.
+		int fail = 0;
+		
+		for ( int index = 1;  index < argc;  ++index )
+		{
+			int result = mkdir( argv[ index ], 0700 );
+			
+			if ( result == -1 )
+			{
+				std::fprintf( stderr,
+				              "mkdir: %s: %s\n",
+				                      argv[ index ],
+				                          std::strerror( errno ) );
+				fail++;
+			}
+		}
+		
+		return (fail == 0) ? 0 : 1;
+	}
+
+}
+
+namespace Orion
+{
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
 	}
 	
-	return (fail == 0) ? 0 : 1;
 }
 

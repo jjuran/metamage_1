@@ -16,38 +16,50 @@
 #include "Orion/Main.hh"
 
 
-namespace O = Orion;
-
-
 #define STR_LEN( string )  "" string, (sizeof string - 1)
 
 
-int O::Main( int argc, argv_t argv )
+namespace tool
 {
-	// Check for sufficient number of args
-	if ( argc < 2 )
-	{
-		(void) write( STDERR_FILENO, STR_LEN( "rm: missing arguments\n" ) );
-		
-		return 1;
-	}
 	
-	int exit_status = EXIT_SUCCESS;
-	
-	for ( int index = 1;  index < argc;  ++index )
+	int Main( int argc, iota::argv_t argv )
 	{
-		const char* pathname = argv[ index ];
-		
-		int unlinked = unlink( pathname );
-		
-		if ( unlinked == -1 )
+		// Check for sufficient number of args
+		if ( argc < 2 )
 		{
-			exit_status = EXIT_FAILURE;
+			(void) write( STDERR_FILENO, STR_LEN( "rm: missing arguments\n" ) );
 			
-			std::fprintf( stderr, "rm: %s: %s\n", pathname, std::strerror( errno ) );
+			return 1;
 		}
+		
+		int exit_status = EXIT_SUCCESS;
+		
+		for ( int index = 1;  index < argc;  ++index )
+		{
+			const char* pathname = argv[ index ];
+			
+			int unlinked = unlink( pathname );
+			
+			if ( unlinked == -1 )
+			{
+				exit_status = EXIT_FAILURE;
+				
+				std::fprintf( stderr, "rm: %s: %s\n", pathname, std::strerror( errno ) );
+			}
+		}
+		
+		return exit_status;
 	}
 	
-	return exit_status;
+}
+
+namespace Orion
+{
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 
