@@ -13,9 +13,7 @@
 namespace tool
 {
 	
-	namespace N = Nitrogen;
-	
-	static const N::OSType sigToolServer = N::OSType( 'MPSX' );
+	static const Nitrogen::OSType sigToolServer = Nitrogen::OSType( 'MPSX' );
 	
 	static const char* sEscapedQuote = "'¶''";
 	
