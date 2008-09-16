@@ -14,16 +14,15 @@ namespace iota
 	
 #if defined( __GNUC__ ) || defined( __MACH__ )
 	
-	typedef char       *env_t;
+	typedef char **envp_t;
 	
 #else
 	
-	typedef char const *env_t;
+	typedef char const *const *envp_t;
 	
 #endif
 	
-	typedef env_t       *environ_t;
-	typedef env_t const *envp_t;
+	typedef envp_t environ_t;
 	
 #ifdef __cplusplus
 }
