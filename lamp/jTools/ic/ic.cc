@@ -14,11 +14,6 @@
 #include "Orion/Main.hh"
 
 
-namespace N = Nitrogen;
-namespace NN = Nucleus;
-namespace O = Orion;
-
-
 namespace Nitrogen
 {
 	
@@ -30,7 +25,9 @@ namespace Nitrogen
 		
 		public:
 			ICMapEntry_ContainerSpecifics( ICMapEntryHandle handle ) : itsEntries( *handle ),
-			                                                           itsEntriesEnd( reinterpret_cast< const char* >( itsEntries ) + N::GetHandleSize( handle ) )  {}
+			                                                           itsEntriesEnd( reinterpret_cast< const char* >( itsEntries ) + Nitrogen::GetHandleSize( handle ) )
+			{
+			}
 			
 			typedef ICMapEntry value_type;
 			//typedef std::size_t value_type;
@@ -63,105 +60,123 @@ namespace Nitrogen
 	
 	class ICMapEntry_Container: public Nucleus::AdvanceUntilFailureContainer< ::Nitrogen::ICMapEntry_ContainerSpecifics >
 	{
-		friend ICMapEntry_Container ICMapEntries( NN::Shared< ICMapEntryHandle > entries );
+		friend ICMapEntry_Container ICMapEntries( Nucleus::Shared< ICMapEntryHandle > entries );
 		
 		private:
-			NN::Shared< ICMapEntryHandle > itsEntries;
+			Nucleus::Shared< ICMapEntryHandle > itsEntries;
 			
 			typedef ::Nitrogen::ICMapEntry_ContainerSpecifics Specifics;
 			
-			ICMapEntry_Container( const NN::Shared< ICMapEntryHandle >& entries ) : Nucleus::AdvanceUntilFailureContainer< Specifics >( Specifics( entries ) ),
-			                                                                        itsEntries( entries )
+			ICMapEntry_Container( const Nucleus::Shared< ICMapEntryHandle >& entries ) : Nucleus::AdvanceUntilFailureContainer< Specifics >( Specifics( entries ) ),
+			                                                                             itsEntries( entries )
 			{
-				N::HLock( entries.Get() );
+				Nitrogen::HLock( entries.Get() );
 			}
 	};
 	
-	inline ICMapEntry_Container ICMapEntries( NN::Shared< ICMapEntryHandle > entries )
+	inline ICMapEntry_Container ICMapEntries( Nucleus::Shared< ICMapEntryHandle > entries )
 	{
 		return ICMapEntry_Container( entries );
 	}
 	
 }
 
-
-struct ICMapEntryStrings
+namespace tool
 {
-	std::string  extension;
-	std::string  creatorAppName;
-	std::string  postAppName;
-	std::string  MIMEType;
-	std::string  entryName;
-};
+	
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	
+	
+	struct ICMapEntryStrings
+	{
+		std::string  extension;
+		std::string  creatorAppName;
+		std::string  postAppName;
+		std::string  MIMEType;
+		std::string  entryName;
+	};
+	
+	static ICMapEntryStrings GetStringsFromICMapEntry( const ICMapEntry& entry )
+	{
+		ICMapEntryStrings result;
+		
+		const unsigned char* p = (const unsigned char*) &entry + entry.fixedLength;
+		
+		result.extension = NN::Convert< std::string >( p );
+		
+		p += 1 + p[0];
+		
+		result.creatorAppName = NN::Convert< std::string >( p );
+		
+		p += 1 + p[0];
+		
+		result.postAppName = NN::Convert< std::string >( p );
+		
+		p += 1 + p[0];
+		
+		result.MIMEType = NN::Convert< std::string >( p );
+		
+		p += 1 + p[0];
+		
+		result.entryName = NN::Convert< std::string >( p );
+		
+		return result;
+	}
+	
+	static void ReportMapping( const ICMapEntry& entry )
+	{
+		short version = entry.version;
+		
+		//const unsigned char* ext_ension = (const unsigned char*) entry + entry.fixedLength;
+		
+		ICMapEntryStrings strings = GetStringsFromICMapEntry( entry );
+		
+		const char* extension      = strings.extension     .c_str();
+		const char* creatorAppName = strings.creatorAppName.c_str();
+		const char* postAppName    = strings.postAppName   .c_str();
+		const char* MIMEType       = strings.MIMEType      .c_str();
+		const char* entryName      = strings.entryName     .c_str();
+		
+		std::printf( "v%d: %s - %s: %s\n", version, extension, creatorAppName, MIMEType );
+	}
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+		
+		N::OSType signature = N::OSType( 'Poof' );
+		
+		NN::Owned< N::ICInstance > ic = N::ICStart( signature );
+		
+	#if !TARGET_API_MAC_CARBON
+		
+		N::ThrowOSStatus( ::ICFindConfigFile( ic, 0, NULL ) );
+		
+	#endif
+		
+		N::ThrowOSStatus( ::ICBegin( ic, icReadWritePerm ) );
+		
+		N::ICMapEntry_Container mappings = N::ICMapEntries( N::Handle_Cast< ICMapEntry >( N::ICFindPrefHandle( ic, kICMapping ) ) );
+		
+		std::for_each( mappings.begin(),
+		               mappings.end(),
+		               std::ptr_fun( ReportMapping ) );
+		
+		::ICEnd( ic );
+		
+		return 0;
+	}
 
-static ICMapEntryStrings GetStringsFromICMapEntry( const ICMapEntry& entry )
-{
-	ICMapEntryStrings result;
-	
-	const unsigned char* p = (const unsigned char*) &entry + entry.fixedLength;
-	
-	result.extension = NN::Convert< std::string >( p );
-	
-	p += 1 + p[0];
-	
-	result.creatorAppName = NN::Convert< std::string >( p );
-	
-	p += 1 + p[0];
-	
-	result.postAppName = NN::Convert< std::string >( p );
-	
-	p += 1 + p[0];
-	
-	result.MIMEType = NN::Convert< std::string >( p );
-	
-	p += 1 + p[0];
-	
-	result.entryName = NN::Convert< std::string >( p );
-	
-	return result;
 }
 
-static void ReportMapping( const ICMapEntry& entry )
+namespace Orion
 {
-	short version = entry.version;
 	
-	//const unsigned char* ext_ension = (const unsigned char*) entry + entry.fixedLength;
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
 	
-	ICMapEntryStrings strings = GetStringsFromICMapEntry( entry );
-	
-	const char* extension      = strings.extension     .c_str();
-	const char* creatorAppName = strings.creatorAppName.c_str();
-	const char* postAppName    = strings.postAppName   .c_str();
-	const char* MIMEType       = strings.MIMEType      .c_str();
-	const char* entryName      = strings.entryName     .c_str();
-	
-	std::printf( "v%d: %s - %s: %s\n", version, extension, creatorAppName, MIMEType );
-}
-
-int O::Main( int argc, argv_t argv )
-{
-	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-	
-	N::OSType signature = N::OSType( 'Poof' );
-	
-	NN::Owned< N::ICInstance > ic = N::ICStart( signature );
-	
-#if !TARGET_API_MAC_CARBON
-	
-	N::ThrowOSStatus( ::ICFindConfigFile( ic, 0, NULL ) );
-	
-#endif
-	
-	N::ThrowOSStatus( ::ICBegin( ic, icReadWritePerm ) );
-	
-	N::ICMapEntry_Container mappings = N::ICMapEntries( N::Handle_Cast< ICMapEntry >( N::ICFindPrefHandle( ic, kICMapping ) ) );
-	
-	std::for_each( mappings.begin(),
-	               mappings.end(),
-	               std::ptr_fun( ReportMapping ) );
-	
-	::ICEnd( ic );
-	
-	return 0;
 }
 
