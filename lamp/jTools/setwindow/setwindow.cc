@@ -20,7 +20,6 @@
 #include "lamp/winio.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/ioctl.hh"
 
