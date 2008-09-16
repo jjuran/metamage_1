@@ -17,6 +17,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/functions/stat.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -68,7 +69,7 @@ namespace tool
 			// Last arg should be the destination directory.
 			const char* destDir = argv[ argc - 1 ];
 			
-			p7::throw_posix_result( stat( destDir, &sb ) );
+			p7::stat( destDir, sb );
 			
 			if ( bool not_a_dir = sb.st_mode & S_IFDIR == 0 )
 			{
