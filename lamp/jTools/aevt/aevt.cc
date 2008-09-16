@@ -208,8 +208,13 @@ namespace tool
 	
 }
 
-int O::Main( int argc, argv_t argv )
+namespace Orion
 {
-	return tool::Main( argc, argv );
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 
