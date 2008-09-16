@@ -310,10 +310,17 @@ namespace tool
 			{
 				const size_t size = stat_buffer.st_size;
 				
-				if ( size == 0 )
+				if ( size == 0  ||  size == 26 )
 				{
 					// empty file; delete, ignore errors
 					(void) unlink( diagnosticsFilename );
+					
+					if ( size == 26 )
+					{
+						p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
+						
+						O::ThrowExitStatus( 3 );
+					}
 				}
 				else
 				{
