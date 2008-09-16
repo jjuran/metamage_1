@@ -94,7 +94,7 @@ namespace Orion
 		
 		try
 		{
-			return Main( argc, argv );
+			return tool::Main( argc, argv );
 		}
 		catch ( const ExitStatus& exit )
 		{
