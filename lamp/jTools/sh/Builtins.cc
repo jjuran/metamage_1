@@ -227,7 +227,7 @@ static int Builtin_Export( int argc, iota::argv_t argv )
 		if ( const char* eq = std::strchr( arg1, '=' ) )
 		{
 			// $ export foo=bar
-			std::string name( arg1, eq );
+			std::string name( arg1, eq - arg1 );
 			
 			setenv( name.c_str(), eq + 1, true );
 			
