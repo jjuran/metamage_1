@@ -31,11 +31,6 @@
 #include "Orion/Main.hh"
 
 
-namespace N = Nitrogen;
-namespace NN = Nucleus;
-namespace O = Orion;
-
-
 static int exit_from_wait( int stat )
 {
 	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
@@ -46,10 +41,13 @@ static int exit_from_wait( int stat )
 }
 
 
-namespace jTools
+namespace tool
 {
 	
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	namespace Div = Divergence;
+	
 	
 	using namespace io::path_descent_operators;
 	
@@ -178,7 +176,7 @@ namespace jTools
 		return "-prefix " + QuotedMacPathFromPOSIXPath( pathname );
 	}
 	
-	static int Main( int argc, iota::argv_t argv )
+	int Main( int argc, iota::argv_t argv )
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
@@ -289,8 +287,13 @@ namespace jTools
 	
 }
 
-int O::Main( int argc, argv_t argv )
+namespace Orion
 {
-	return jTools::Main( argc, argv );
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 

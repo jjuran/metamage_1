@@ -24,9 +24,6 @@
 #include "Orion/Main.hh"
 
 
-namespace O = Orion;
-
-
 static int exit_from_wait( int stat )
 {
 	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
@@ -37,7 +34,7 @@ static int exit_from_wait( int stat )
 }
 
 
-namespace jTools
+namespace tool
 {
 	
 	namespace p7 = poseven;
@@ -82,7 +79,7 @@ namespace jTools
 	}
 	
 	
-	static int Main( int argc, iota::argv_t argv )
+	int Main( int argc, iota::argv_t argv )
 	{
 		std::vector< const char* > command;
 		
@@ -172,8 +169,13 @@ namespace jTools
 	
 }
 
-int O::Main( int argc, argv_t argv )
+namespace Orion
 {
-	return jTools::Main( argc, argv );
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 
