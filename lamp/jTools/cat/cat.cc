@@ -5,9 +5,8 @@
 
 // Standard C/C++
 #include <cerrno>
-
-// Standard C/C++
 #include <cstdio>
+#include <cstring>
 
 // POSIX
 #include <fcntl.h>
