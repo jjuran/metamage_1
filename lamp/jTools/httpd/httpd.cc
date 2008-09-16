@@ -541,7 +541,7 @@ static void SendResponse( const HTTP::MessageReceiver& request )
 
 int O::Main( int argc, argv_t argv )
 {
-	O:BindOption( "--doc-root", gDocumentRoot );
+	O::BindOption( "--doc-root", gDocumentRoot );
 	
 	O::GetOptions( argc, argv );
 	
