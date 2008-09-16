@@ -20,15 +20,14 @@
 #include "Orion/Main.hh"
 
 
-namespace p7 = poseven;
-
-#if !TARGET_API_MAC_CARBON
-
-namespace CDS
+namespace tool
 {
+	
+#if !TARGET_API_MAC_CARBON
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace NX = NitrogenExtras;
 	
 	using namespace NX::Constants;
@@ -213,14 +212,21 @@ namespace CDS
 	}
 	
 	
-	static int Main( const char* argv1 )
+	int Main( int argc, iota::argv_t argv )
 	{
+		if ( argc <= 1 )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "cds: (usage missing)\n" ) );
+			
+			return EXIT_FAILURE;
+		}
+		
 		gDrive  = NX::OpenCDROMDriver();
 		
 		gTOC    = NX::ReadTOC    ( gDrive );
 		gStatus = NX::AudioStatus( gDrive );
 		
-		switch ( argv1[ 0 ] )
+		switch ( argv[ 1 ][ 0 ] )
 		{
 			case 'h':  PrintHelp  ();  break;  // How to use CDS.
 			case '/':  PrintStatus();  break;  // AudioStatus.  Mnemonic: same key as '?'
@@ -236,7 +242,7 @@ namespace CDS
 			case 'b':  GoBack   ();  break;  // Skip to previous track, or track boundary?
 			
 			default:
-				std::fprintf( stderr, "Unrecognized command '%s'\n", argv1 );
+				std::fprintf( stderr, "Unrecognized command '%s'\n", argv[ 1 ] );
 				
 				return EXIT_FAILURE;
 		}
@@ -244,32 +250,16 @@ namespace CDS
 		return 0;
 	}
 	
-}
-
-#endif
-
-
-int Orion::Main( int argc, argv_t argv )
-{
-	ASSERT( argc > 0 );
-	
-#if TARGET_API_MAC_CARBON
-	
-	p7::write( p7::stderr_fileno, STR_LEN( "cds: Sorry, no Carbon support!\n" ) );
-	
-	return EXIT_FAILURE;
-	
 #else
 	
-	if ( argc <= 1 )
+	int Main( int argc, iota::argv_t argv )
 	{
-		p7::write( p7::stderr_fileno, STR_LEN( "cds: (usage missing)\n" ) );
+		p7::write( p7::stderr_fileno, STR_LEN( "cds: Sorry, no Carbon support!\n" ) );
 		
 		return EXIT_FAILURE;
 	}
 	
-	return CDS::Main( argv[ 1 ] );
-	
 #endif
+	
 }
 
