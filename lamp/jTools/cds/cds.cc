@@ -23,11 +23,12 @@
 namespace tool
 {
 	
+	namespace p7 = poseven;
+	
 #if !TARGET_API_MAC_CARBON
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
-	namespace p7 = poseven;
 	namespace NX = NitrogenExtras;
 	
 	using namespace NX::Constants;
