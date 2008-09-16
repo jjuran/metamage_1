@@ -52,9 +52,9 @@ int O::Main( int argc, argv_t argv )
 	// Check for sufficient number of args
 	if ( *args == NULL )
 	{
-		static iota::argv_t default_args = { "-", NULL };
+		static iota::const_argv_t default_args = { "-", NULL };
 		
-		args = default_args;
+		args = (iota::argp_t) default_args;
 	}
 	
 	// Print each file in turn.  Return whether any errors occurred.
