@@ -268,9 +268,9 @@ namespace CompileDriver
 		                    std::back_inserter( configs ),
 		                    std::back_inserter( folders ) );
 		
-		std::copy( folders.begin(),
-		           folders.end(),
-		           std::back_inserter( Subprojects() ) );
+		std::vector< std::string >& subprojects = Subprojects();
+		
+		subprojects.insert( subprojects.end(), folders.begin(), folders.end() );
 		
 		std::for_each( configs.begin(),
 		               configs.end(),
@@ -307,9 +307,9 @@ namespace CompileDriver
 					                                       line.key.c_str() );
 				}
 				
-				std::copy( line.values.begin(),
-				           line.values.end(),
-				           std::back_inserter( conf[ line.key ] ) );
+				std::vector< std::string >& conf_key = conf[ line.key ];
+				
+				conf_key.insert( conf_key.end(), line.values.begin(), line.values.end() );
 			}
 	};
 	
