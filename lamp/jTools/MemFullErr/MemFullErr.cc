@@ -20,13 +20,3 @@ namespace tool
 	
 }
 
-namespace Orion
-{
-	
-	int Main( int argc, iota::argv_t argv )
-	{
-		return tool::Main( argc, argv );
-	}
-	
-}
-
