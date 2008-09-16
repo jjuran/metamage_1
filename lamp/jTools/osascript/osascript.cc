@@ -47,6 +47,20 @@ namespace Nitrogen
 	static const AEKeyword kOSAErrorNumber  = AEKeyword( ::kOSAErrorNumber  );
 	static const AEKeyword kOSAErrorMessage = AEKeyword( ::kOSAErrorMessage );
 	
+	template < class Char > struct Char_DescType_Traits;
+	
+	template <> struct Char_DescType_Traits< char >  { static const DescType descType = typeChar; };
+	
+	template < class Char >
+	struct Char_AEKeyword_Traits : Nucleus::StringFlattener< std::basic_string< Char > >,
+	                               Char_DescType_Traits< Char >
+	{
+	};
+	
+	template <> struct AEKeyword_Traits< kOSAErrorNumber > : Integer_AEKeyword_Traits< OSStatus, ::OSErr > {};
+	
+	template <> struct AEKeyword_Traits< kOSAErrorMessage > : Char_AEKeyword_Traits< char > {};
+	
 	template < DescType desiredType >
 	inline
 	typename DescType_Traits< desiredType >::Result
@@ -55,6 +69,14 @@ namespace Nitrogen
 		return AEGetDescData< desiredType >( OSAScriptError( scriptingComponent,
 		                                                     keyword,
 		                                                     desiredType ) );
+	}
+	
+	template < AEKeyword key >
+	inline
+	typename AEKeyword_Traits< key >::Result
+	OSAScriptError( ComponentInstance scriptingComponent )
+	{
+		return OSAScriptError< AEKeyword_Traits< key >::descType >( scriptingComponent, key );
 	}
 	
 }
@@ -68,8 +90,8 @@ namespace O = Orion;
 
 static void ReportAndThrowScriptError( N::ComponentInstance comp, const char* step )
 {
-	SInt16       errorNumber  = N::OSAScriptError< N::typeSInt16 >( comp, N::kOSAErrorNumber  );
-	std::string  errorMessage = N::OSAScriptError< N::typeChar   >( comp, N::kOSAErrorMessage );
+	SInt16       errorNumber  = N::OSAScriptError< N::kOSAErrorNumber  >( comp );
+	std::string  errorMessage = N::OSAScriptError< N::kOSAErrorMessage >( comp );
 	
 	if ( errorNumber < 0 )
 	{
