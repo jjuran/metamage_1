@@ -26,6 +26,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/mkdir.hh"
 
 
 namespace poseven
@@ -53,16 +54,6 @@ namespace poseven
 		throw_posix_result( ::fstat( fd, &sb ) );
 		
 		return sb;
-	}
-	
-	inline void mkdir( const char* pathname, mode_t mode )
-	{
-		throw_posix_result( ::mkdir( pathname, mode ) );
-	}
-	
-	inline void mkdir( const std::string& pathname, mode_t mode )
-	{
-		mkdir( pathname.c_str(), mode );
 	}
 	
 	inline void mkfifo( const char* pathname, mode_t mode )
