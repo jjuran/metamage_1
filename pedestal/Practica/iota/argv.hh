@@ -23,6 +23,7 @@ namespace iota
 	typedef arg_t const *argp_t;
 	typedef arg_t const  argv_t[];
 	
+	typedef char const *const const_argv_t[];
 }
 
 #endif
