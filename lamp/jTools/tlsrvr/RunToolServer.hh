@@ -7,7 +7,7 @@
 #include <string>
 
 
-namespace RunToolServer
+namespace tool
 {
 	
 	/*

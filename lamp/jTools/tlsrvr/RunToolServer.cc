@@ -59,7 +59,7 @@
 #include "ToolServer.hh"
 
 
-namespace RunToolServer
+namespace tool
 {
 	
 	namespace N = Nitrogen;

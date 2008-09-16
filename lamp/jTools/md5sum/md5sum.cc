@@ -19,50 +19,64 @@
 #include "Orion/Main.hh"
 
 
-namespace p7 = poseven;
-namespace O = Orion;
-namespace Bits = BitsAndBytes;
-
-
-static std::string MD5Sum( p7::fd_t input )
+namespace tool
 {
-	const std::size_t blockSize = 64;
 	
-	char data[ blockSize ];
-	std::size_t bytes;
-	MD5::Engine engine;
+	namespace p7 = poseven;
+	namespace Bits = BitsAndBytes;
 	
-	// loop exits on a partial block or at EOF
-	while ( ( bytes = p7::read( input, data, blockSize ) ) == blockSize )
+	
+	static std::string MD5Sum( p7::fd_t input )
 	{
-		engine.DoBlock( data );
+		const std::size_t blockSize = 64;
+		
+		char data[ blockSize ];
+		std::size_t bytes;
+		MD5::Engine engine;
+		
+		// loop exits on a partial block or at EOF
+		while ( ( bytes = p7::read( input, data, blockSize ) ) == blockSize )
+		{
+			engine.DoBlock( data );
+		}
+		
+		engine.Finish( data, bytes * 8 );
+		
+		std::string digest = Bits::EncodeAsHex( engine.GetResult() );
+		
+		return digest;
 	}
 	
-	engine.Finish( data, bytes * 8 );
-	
-	std::string digest = Bits::EncodeAsHex( engine.GetResult() );
-	
-	return digest;
+	int Main( int argc, iota::argv_t argv )
+	{
+		int fail = 0;
+		
+		for ( int i = 1;  i < argc;  ++i )
+		{
+			try
+			{
+				std::printf( "%s  %s\n",
+				              MD5Sum( p7::open( argv[ i ], p7::o_rdonly ) ).c_str(),
+				                  argv[ i ] );
+			}
+			catch ( ... )
+			{
+				fail++;
+			}
+		}
+		
+		return fail == 0 ? 0 : 1;
+	}
+
 }
 
-int O::Main( int argc, argv_t argv )
+namespace Orion
 {
-	int fail = 0;
 	
-	for ( int i = 1;  i < argc;  ++i )
+	int Main( int argc, iota::argv_t argv )
 	{
-		try
-		{
-			std::printf( "%s  %s\n",
-			              MD5Sum( p7::open( argv[ i ], p7::o_rdonly ) ).c_str(),
-			                  argv[ i ] );
-		}
-		catch ( ... )
-		{
-			fail++;
-		}
+		return tool::Main( argc, argv );
 	}
 	
-	return fail == 0 ? 0 : 1;
 }
 

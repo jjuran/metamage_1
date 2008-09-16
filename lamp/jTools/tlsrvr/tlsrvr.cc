@@ -35,142 +35,153 @@
 #include "RunToolServer.hh"
 
 
-namespace N = Nitrogen;
-namespace NN = Nucleus;
-namespace NX = NitrogenExtras;
-namespace O = Orion;
-
-using RunToolServer::sigToolServer;
-using RunToolServer::sEscapedQuote;
-using RunToolServer::RunCommandInToolServer;
-
-
-template < class F >
-class Concat
+namespace tool
 {
-	private:
-		F f;
 	
-	public:
-		Concat() : f( F() )  {}
-		Concat( const F& f ) : f( f )  {}
-		std::string operator()( const std::string& one, const char* other ) const
-		{
-			return one + " " + f( other );
-		}
-};
-
-template < class F >
-Concat< F > MakeConcat( const F& f )
-{
-	return Concat< F >( f );
-}
-
-
-static std::string QuoteForMPW( const std::string& str )
-{
-	std::string::const_iterator p = str.begin(), q = p, end = str.end();
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	namespace NX = NitrogenExtras;
+	namespace O = Orion;
 	
-	bool needsQuoting = false;
 	
-	std::string result = "'";
-	
-	while ( p < end )
+	template < class F >
+	class Concat
 	{
-		while ( q < end  &&  *q != '\'' )
+		private:
+			F f;
+		
+		public:
+			Concat() : f( F() )  {}
+			Concat( const F& f ) : f( f )  {}
+			std::string operator()( const std::string& one, const char* other ) const
+			{
+				return one + " " + f( other );
+			}
+	};
+	
+	template < class F >
+	Concat< F > MakeConcat( const F& f )
+	{
+		return Concat< F >( f );
+	}
+	
+	
+	static std::string QuoteForMPW( const std::string& str )
+	{
+		std::string::const_iterator p = str.begin(), q = p, end = str.end();
+		
+		bool needsQuoting = false;
+		
+		std::string result = "'";
+		
+		while ( p < end )
 		{
-			needsQuoting = needsQuoting || !std::isalnum( *q );
-			++q;
+			while ( q < end  &&  *q != '\'' )
+			{
+				needsQuoting = needsQuoting || !std::isalnum( *q );
+				++q;
+			}
+			
+			result += std::string( p, q );
+			
+			if ( q < end )
+			{
+				needsQuoting = true;
+				result += sEscapedQuote;
+				++q;
+			}
+			
+			p = q;
 		}
 		
-		result += std::string( p, q );
-		
-		if ( q < end )
+		if ( !needsQuoting )
 		{
-			needsQuoting = true;
-			result += sEscapedQuote;
-			++q;
+			return str;
 		}
 		
-		p = q;
+		result += "'";
+		
+		return result;
 	}
 	
-	if ( !needsQuoting )
+	
+	static std::string MakeCommand( char const *const *begin, char const *const *end, bool needToEscape )
 	{
-		return str;
+		std::string command;
+		
+		if ( end - begin > 0 )
+		{
+			if ( needToEscape )
+			{
+				command = std::accumulate
+				(
+					begin + 1, 
+					end, 
+					QuoteForMPW( begin[ 0 ] ), 
+					MakeConcat( std::ptr_fun( QuoteForMPW ) )
+				);
+			}
+			else
+			{
+				command = std::accumulate
+				(
+					begin + 1, 
+					end, 
+					std::string( begin[ 0 ] ), 
+					Concat< more::identity< const char* > >()
+				);
+			}
+		}
+		
+		return command;
 	}
 	
-	result += "'";
-	
-	return result;
+	int Main( int argc, iota::argv_t argv )
+	{
+		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+		
+		bool escapeForMPW = false;
+		bool switchLayers = false;
+		
+		O::BindOption( "--escape", escapeForMPW );
+		O::BindOption( "--switch", switchLayers );
+		
+		O::GetOptions( argc, argv );
+		
+		char const *const *freeArgs = O::FreeArguments();
+		
+		std::string command = MakeCommand( freeArgs,
+		                                   freeArgs + O::FreeArgumentCount(),
+		                                   escapeForMPW );
+		
+		// This is a bit of a hack.  It really ought to happen just after we send the event,
+		// but switchLayers is local to this file and I'm not dealing with that now.
+		if ( switchLayers && N::SameProcess( N::CurrentProcess(),
+		                                     N::GetFrontProcess() ) )
+		{
+			N::SetFrontProcess( NX::LaunchApplication( sigToolServer ) );
+		}
+		
+		int result = RunCommandInToolServer( command );
+		
+		if ( switchLayers && N::SameProcess( NX::LaunchApplication( sigToolServer ),
+		                                     N::GetFrontProcess() ) )
+		{
+			N::SetFrontProcess( N::CurrentProcess() );
+		}
+		
+		return result;
+	}
+
 }
 
-
-static std::string MakeCommand( char const *const *begin, char const *const *end, bool needToEscape )
+namespace Orion
 {
-	std::string command;
 	
-	if ( end - begin > 0 )
+	int Main( int argc, iota::argv_t argv )
 	{
-		if ( needToEscape )
-		{
-			command = std::accumulate
-			(
-				begin + 1, 
-				end, 
-				QuoteForMPW( begin[ 0 ] ), 
-				MakeConcat( std::ptr_fun( QuoteForMPW ) )
-			);
-		}
-		else
-		{
-			command = std::accumulate
-			(
-				begin + 1, 
-				end, 
-				std::string( begin[ 0 ] ), 
-				Concat< more::identity< const char* > >()
-			);
-		}
+		return tool::Main( argc, argv );
 	}
 	
-	return command;
-}
-
-int O::Main( int argc, argv_t argv )
-{
-	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-	
-	bool escapeForMPW = false;
-	bool switchLayers = false;
-	
-	O::BindOption( "--escape", escapeForMPW );
-	O::BindOption( "--switch", switchLayers );
-	
-	O::GetOptions( argc, argv );
-	
-	char const *const *freeArgs = O::FreeArguments();
-	
-	std::string command = MakeCommand( freeArgs,
-	                                   freeArgs + O::FreeArgumentCount(),
-	                                   escapeForMPW );
-	
-	// This is a bit of a hack.  It really ought to happen just after we send the event,
-	// but switchLayers is local to this file and I'm not dealing with that now.
-	if ( switchLayers && N::SameProcess( N::CurrentProcess(),
-	                                     N::GetFrontProcess() ) )
-	{
-		N::SetFrontProcess( NX::LaunchApplication( sigToolServer ) );
-	}
-	
-	int result = RunCommandInToolServer( command );
-	
-	if ( switchLayers && N::SameProcess( NX::LaunchApplication( sigToolServer ),
-	                                     N::GetFrontProcess() ) )
-	{
-		N::SetFrontProcess( N::CurrentProcess() );
-	}
-	
-	return result;
 }
 

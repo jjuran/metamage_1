@@ -10,7 +10,7 @@
 #include "Nitrogen/MacTypes.h"
 
 
-namespace RunToolServer
+namespace tool
 {
 	
 	namespace N = Nitrogen;
