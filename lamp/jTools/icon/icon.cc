@@ -18,7 +18,7 @@
 #include "lamp/winio.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/functions/ioctl.hh"
 #include "POSeven/Open.hh"
 
 
@@ -65,10 +65,10 @@ static void create_window( const char* pathname )
 	
 	unsigned short bg_color[3] = { 0xdddd, 0xdddd, 0xdddd };
 	
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCSBGCOLOR, bg_color ) );
+	p7::ioctl( STDIN_FILENO, GIOCSBGCOLOR, bg_color );
 	
-	p7::throw_posix_result( ioctl( STDIN_FILENO, WIOCSSIZE, &window_size ) );
-	p7::throw_posix_result( ioctl( STDIN_FILENO, WIOCSTITLE, pathname ) );
+	p7::ioctl( STDIN_FILENO, WIOCSSIZE, &window_size );
+	p7::ioctl( STDIN_FILENO, WIOCSTITLE, pathname );
 }
 
 template < int depth >  struct bit_depth_traits;
@@ -152,10 +152,10 @@ static void draw_window()
 	unsigned short rowBytes = 0;
 	unsigned short nRows    = 0;
 	
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGDEPTH,    &depth    ) );
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGROWBYTES, &rowBytes ) );
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGNROWS,    &nRows    ) );
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCGBASEADDR, &baseAddr ) );
+	p7::ioctl( STDIN_FILENO, GIOCGDEPTH,    &depth    );
+	p7::ioctl( STDIN_FILENO, GIOCGROWBYTES, &rowBytes );
+	p7::ioctl( STDIN_FILENO, GIOCGNROWS,    &nRows    );
+	p7::ioctl( STDIN_FILENO, GIOCGBASEADDR, &baseAddr );
 	
 	size_t size = nRows * rowBytes;
 	
@@ -199,7 +199,7 @@ static void draw_window()
 		draw( global_icon_data.icon + row * 32/8, rowBase );
 	}
 	
-	p7::throw_posix_result( ioctl( STDIN_FILENO, GIOCFLUSHRECT, NULL ) );
+	p7::ioctl( STDIN_FILENO, GIOCFLUSHRECT, NULL );
 }
 
 int main( int argc, char const* const argv[] )
