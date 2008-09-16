@@ -48,6 +48,11 @@ static int exit_from_wait( int stat )
 }
 
 
+const char* gArgZero = NULL;
+std::size_t gParameterCount = 0;
+char const* const* gParameters = NULL;
+
+
 namespace tool
 {
 	
@@ -57,10 +62,6 @@ namespace tool
 	
 	bool gStandardIn  = false;
 	bool gLoginShell  = false;
-	
-	const char* gArgZero = NULL;
-	std::size_t gParameterCount = 0;
-	char const* const* gParameters = NULL;
 	
 	
 	struct OnExit
