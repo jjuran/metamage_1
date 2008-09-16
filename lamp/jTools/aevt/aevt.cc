@@ -39,7 +39,7 @@
 
 namespace O = Orion;
 
-namespace jTools
+namespace tool
 {
 	
 	namespace N = Nitrogen;
@@ -132,7 +132,7 @@ namespace jTools
 	// shell$ aevt -m Otter -a Genie |gan Exec '----':[“shutdown”,“-h”]
 	// shell$ aevt -s hhgg aevt quit
 	
-	static int Main( int argc, iota::argv_t argv )
+	int Main( int argc, iota::argv_t argv )
 	{
 		std::string url, host, machine, app, sig;
 		
@@ -210,6 +210,6 @@ namespace jTools
 
 int O::Main( int argc, argv_t argv )
 {
-	return jTools::Main( argc, argv );
+	return tool::Main( argc, argv );
 }
 
