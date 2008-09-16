@@ -10,11 +10,23 @@
 #include "Orion/Main.hh"
 
 
-namespace O = Orion;
-
-
-int O::Main( int argc, argv_t argv )
+namespace tool
 {
-	throw Nitrogen::MemFullErr();
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		throw Nitrogen::MemFullErr();
+	}
+	
+}
+
+namespace Orion
+{
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 

@@ -39,224 +39,240 @@ namespace poseven
 	
 }
 
-namespace p7 = poseven;
-namespace O = Orion;
 
-
-static p7::fd_t global_window_fd = p7::stdin_fileno;
-
-
-class invalid_point {};
-
-
-static Point read_point( const char* string, const char* format )
+namespace tool
 {
-	int h, v;
 	
-	int scanned = std::sscanf( string, format, &h, &v );
+	namespace p7 = poseven;
+	namespace O = Orion;
 	
-	if ( scanned != 2 )
+	
+	static p7::fd_t global_window_fd = p7::stdin_fileno;
+	
+	
+	class invalid_point {};
+	
+	
+	static Point read_point( const char* string, const char* format )
 	{
-		throw invalid_point();
+		int h, v;
+		
+		int scanned = std::sscanf( string, format, &h, &v );
+		
+		if ( scanned != 2 )
+		{
+			throw invalid_point();
+		}
+		
+		Point position;
+		
+		position.h = h;
+		position.v = v;
+		
+		return position;
 	}
 	
-	Point position;
+	inline Point read_position( const char* string )
+	{
+		return read_point( string, "%d,%d" );
+	}
 	
-	position.h = h;
-	position.v = v;
+	inline Point read_size( const char* string )
+	{
+		return read_point( string, "%dx%d" );
+	}
 	
-	return position;
-}
-
-inline Point read_position( const char* string )
-{
-	return read_point( string, "%d,%d" );
-}
-
-inline Point read_size( const char* string )
-{
-	return read_point( string, "%dx%d" );
-}
-
-
-// ioctl() wrappers
-
-inline std::string get_window_title( p7::fd_t window )
-{
-	char title[ 256 ];
 	
-	p7::ioctl( window, WIOCGTITLE, title );
+	// ioctl() wrappers
 	
-	return title;
-}
-
-inline void set_window_title( p7::fd_t window, const char* title )
-{
-	p7::ioctl( window, WIOCSTITLE, title );
-}
-
-inline Point get_window_position( p7::fd_t window )
-{
-	Point position;
+	inline std::string get_window_title( p7::fd_t window )
+	{
+		char title[ 256 ];
+		
+		p7::ioctl( window, WIOCGTITLE, title );
+		
+		return title;
+	}
 	
-	p7::ioctl( window, WIOCGPOS, &position );
+	inline void set_window_title( p7::fd_t window, const char* title )
+	{
+		p7::ioctl( window, WIOCSTITLE, title );
+	}
 	
-	return position;
-}
-
-inline void set_window_position( p7::fd_t window, Point position )
-{
-	p7::ioctl( window, WIOCSPOS, &position );
-}
-
-inline Point get_window_size( p7::fd_t window )
-{
-	Point size;
+	inline Point get_window_position( p7::fd_t window )
+	{
+		Point position;
+		
+		p7::ioctl( window, WIOCGPOS, &position );
+		
+		return position;
+	}
 	
-	p7::ioctl( window, WIOCGSIZE, &size );
+	inline void set_window_position( p7::fd_t window, Point position )
+	{
+		p7::ioctl( window, WIOCSPOS, &position );
+	}
 	
-	return size;
-}
-
-inline void set_window_size( p7::fd_t window, Point size )
-{
-	p7::ioctl( window, WIOCSSIZE, &size );
-}
-
-inline bool get_window_visibility( p7::fd_t window )
-{
-	int visibility;
+	inline Point get_window_size( p7::fd_t window )
+	{
+		Point size;
+		
+		p7::ioctl( window, WIOCGSIZE, &size );
+		
+		return size;
+	}
 	
-	p7::ioctl( window, WIOCGVIS, &visibility );
+	inline void set_window_size( p7::fd_t window, Point size )
+	{
+		p7::ioctl( window, WIOCSSIZE, &size );
+	}
 	
-	return visibility;
-}
-
-inline void set_window_visibility( p7::fd_t window, int visibility )
-{
-	p7::ioctl( window, WIOCSVIS, &visibility );
-}
-
-
-// option handlers
-
-static void get_title( const char* )
-{
-	std::string result = get_window_title( global_window_fd );
+	inline bool get_window_visibility( p7::fd_t window )
+	{
+		int visibility;
+		
+		p7::ioctl( window, WIOCGVIS, &visibility );
+		
+		return visibility;
+	}
 	
-	result += "\n";
+	inline void set_window_visibility( p7::fd_t window, int visibility )
+	{
+		p7::ioctl( window, WIOCSVIS, &visibility );
+	}
 	
-	p7::write( p7::stdout_fileno, result.data(), result.size() );
-}
-
-static void set_title( const char* title )
-{
-	set_window_title( global_window_fd, title );
-}
-
-static void get_position( const char* )
-{
-	Point position = get_window_position( global_window_fd );
 	
-	std::printf( "%d,%d\n", position.h, position.v );
-}
-
-static void set_position( const char* position_string )
-{
-	Point position = read_position( position_string );
+	// option handlers
 	
-	set_window_position( global_window_fd, position );
-}
-
-static void move( const char* movement_string )
-{
-	int dx, dy;
+	static void get_title( const char* )
+	{
+		std::string result = get_window_title( global_window_fd );
+		
+		result += "\n";
+		
+		p7::write( p7::stdout_fileno, result.data(), result.size() );
+	}
 	
-	int scanned = std::sscanf( movement_string, "%d,%d", &dx, &dy );
+	static void set_title( const char* title )
+	{
+		set_window_title( global_window_fd, title );
+	}
 	
-	if ( scanned == 2 )
+	static void get_position( const char* )
 	{
 		Point position = get_window_position( global_window_fd );
 		
-		position.h += dx;
-		position.v += dy;
+		std::printf( "%d,%d\n", position.h, position.v );
+	}
+	
+	static void set_position( const char* position_string )
+	{
+		Point position = read_position( position_string );
 		
 		set_window_position( global_window_fd, position );
 	}
-}
-
-static void get_size( const char* )
-{
-	Point size = get_window_size( global_window_fd );
 	
-	std::printf( "%dx%d\n", size.h, size.v );
-}
-
-static void set_size( const char* size_string )
-{
-	Point size = read_size( size_string );
-	
-	set_window_size( global_window_fd, size );
-}
-
-static void get_visibility( const char* )
-{
-	int visibility = get_window_visibility( global_window_fd );
-	
-	std::printf( "%d\n", visibility );
-}
-
-static void set_visibility( const char* visibility_string )
-{
-	int visibility = std::atoi( visibility_string );
-	
-	set_window_visibility( global_window_fd, visibility );
-}
-
-static void show( const char* )
-{
-	set_window_visibility( global_window_fd, true );
-}
-
-static void hide( const char* )
-{
-	set_window_visibility( global_window_fd, false );
-}
-
-
-int O::Main( int argc, char const *const argv[] )
-{
-	O::BindOptionTrigger( "--get-title", std::ptr_fun( get_title ) );
-	O::BindOptionTrigger( "--title",     std::ptr_fun( set_title ) );
-	
-	O::BindOptionTrigger( "--get-pos", std::ptr_fun( get_position ) );
-	O::BindOptionTrigger( "--pos",     std::ptr_fun( set_position ) );
-	
-	O::BindOptionTrigger( "--move", std::ptr_fun( move ) );
-	
-	O::BindOptionTrigger( "--get-size", std::ptr_fun( get_size ) );
-	O::BindOptionTrigger( "--size",     std::ptr_fun( set_size ) );
-	
-	//O::BindOptionTrigger( "--get-dim", std::ptr_fun( get_dimensions ) );
-	//O::BindOptionTrigger( "--dim", std::ptr_fun( set_dimensions ) );
-	
-	O::BindOptionTrigger( "--get-vis", std::ptr_fun( get_visibility ) );
-	O::BindOptionTrigger( "--vis",     std::ptr_fun( set_visibility ) );
-	
-	O::BindOptionTrigger( "--show", std::ptr_fun( show ) );
-	O::BindOptionTrigger( "--hide", std::ptr_fun( hide ) );
-	
-	//O::AliasOption( "--title", "-t" );
-	
-	O::GetOptions( argc, argv );
-	
-	char const *const *freeArgs = O::FreeArguments();
-	
-	if ( *freeArgs != NULL )
+	static void move( const char* movement_string )
 	{
-		p7::write( p7::stderr_fileno, STR_LEN( "setwindow: extra arguments ignored\n" ) );
+		int dx, dy;
+		
+		int scanned = std::sscanf( movement_string, "%d,%d", &dx, &dy );
+		
+		if ( scanned == 2 )
+		{
+			Point position = get_window_position( global_window_fd );
+			
+			position.h += dx;
+			position.v += dy;
+			
+			set_window_position( global_window_fd, position );
+		}
 	}
 	
-	return 0;
+	static void get_size( const char* )
+	{
+		Point size = get_window_size( global_window_fd );
+		
+		std::printf( "%dx%d\n", size.h, size.v );
+	}
+	
+	static void set_size( const char* size_string )
+	{
+		Point size = read_size( size_string );
+		
+		set_window_size( global_window_fd, size );
+	}
+	
+	static void get_visibility( const char* )
+	{
+		int visibility = get_window_visibility( global_window_fd );
+		
+		std::printf( "%d\n", visibility );
+	}
+	
+	static void set_visibility( const char* visibility_string )
+	{
+		int visibility = std::atoi( visibility_string );
+		
+		set_window_visibility( global_window_fd, visibility );
+	}
+	
+	static void show( const char* )
+	{
+		set_window_visibility( global_window_fd, true );
+	}
+	
+	static void hide( const char* )
+	{
+		set_window_visibility( global_window_fd, false );
+	}
+	
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		O::BindOptionTrigger( "--get-title", std::ptr_fun( get_title ) );
+		O::BindOptionTrigger( "--title",     std::ptr_fun( set_title ) );
+		
+		O::BindOptionTrigger( "--get-pos", std::ptr_fun( get_position ) );
+		O::BindOptionTrigger( "--pos",     std::ptr_fun( set_position ) );
+		
+		O::BindOptionTrigger( "--move", std::ptr_fun( move ) );
+		
+		O::BindOptionTrigger( "--get-size", std::ptr_fun( get_size ) );
+		O::BindOptionTrigger( "--size",     std::ptr_fun( set_size ) );
+		
+		//O::BindOptionTrigger( "--get-dim", std::ptr_fun( get_dimensions ) );
+		//O::BindOptionTrigger( "--dim", std::ptr_fun( set_dimensions ) );
+		
+		O::BindOptionTrigger( "--get-vis", std::ptr_fun( get_visibility ) );
+		O::BindOptionTrigger( "--vis",     std::ptr_fun( set_visibility ) );
+		
+		O::BindOptionTrigger( "--show", std::ptr_fun( show ) );
+		O::BindOptionTrigger( "--hide", std::ptr_fun( hide ) );
+		
+		//O::AliasOption( "--title", "-t" );
+		
+		O::GetOptions( argc, argv );
+		
+		char const *const *freeArgs = O::FreeArguments();
+		
+		if ( *freeArgs != NULL )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "setwindow: extra arguments ignored\n" ) );
+		}
+		
+		return 0;
+	}
+	
+}
+
+namespace Orion
+{
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 

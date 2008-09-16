@@ -25,9 +25,6 @@
 #define STR_LEN( str )  "" str, (sizeof str - 1)
 
 
-namespace O = Orion;
-
-
 static int exit_from_wait( int stat )
 {
 	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
@@ -37,77 +34,96 @@ static int exit_from_wait( int stat )
 	return result;
 }
 
-int O::Main( int argc, char const *const argv[] )
+
+namespace tool
 {
-	bool should_wait = false;
 	
-	const char* title = NULL;
+	namespace O = Orion;
 	
-	const char* device = "/dev/new/console";
 	
-	O::BindOption( "-d", device      );
-	O::BindOption( "-t", title       );
-	O::BindOption( "-w", should_wait );
-	
-	O::AliasOption( "-d", "--dev"   );
-	O::AliasOption( "-t", "--title" );
-	O::AliasOption( "-w", "--wait"  );
-	
-	O::GetOptions( argc, argv );
-	
-	char const *const *freeArgs = O::FreeArguments();
-	
-	if ( *freeArgs == NULL )
+	int Main( int argc, iota::argv_t argv )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "Usage: console command [ arg1 ... argn ]\n" ) );
+		bool should_wait = false;
 		
-		return 1;
-	}
-	
-	int forked = vfork();
-	
-	if ( forked == 0 )
-	{
-		// New child, so we're not a process group leader
+		const char* title = NULL;
 		
-		setsid();
+		const char* device = "/dev/new/console";
 		
-		int console = open( device, O_RDWR, 0 );
+		O::BindOption( "-d", device      );
+		O::BindOption( "-t", title       );
+		O::BindOption( "-w", should_wait );
 		
-		int io = ioctl( console, TIOCSCTTY, NULL );
+		O::AliasOption( "-d", "--dev"   );
+		O::AliasOption( "-t", "--title" );
+		O::AliasOption( "-w", "--wait"  );
 		
-		if ( title != NULL )
+		O::GetOptions( argc, argv );
+		
+		char const *const *freeArgs = O::FreeArguments();
+		
+		if ( *freeArgs == NULL )
 		{
-			io = ioctl( console, WIOCSTITLE, title );
-		}
-		
-		dup2( console, 0 );
-		dup2( console, 1 );
-		dup2( console, 2 );
-		
-		close( console );
-		
-		(void) execvp( freeArgs[ 0 ], &freeArgs[ 0 ] );
-		
-		_exit( 127 );
-	}
-	
-	if ( should_wait )
-	{
-		int stat = -1;
-		
-		int waited = waitpid( forked, &stat, 0 );
-		
-		if ( waited == -1 )
-		{
-			std::perror( "console: waitpid" );
+			(void) write( STDERR_FILENO, STR_LEN( "Usage: console command [ arg1 ... argn ]\n" ) );
 			
-			return 127;
+			return 1;
 		}
 		
-		return exit_from_wait( stat );
+		int forked = vfork();
+		
+		if ( forked == 0 )
+		{
+			// New child, so we're not a process group leader
+			
+			setsid();
+			
+			int console = open( device, O_RDWR, 0 );
+			
+			int io = ioctl( console, TIOCSCTTY, NULL );
+			
+			if ( title != NULL )
+			{
+				io = ioctl( console, WIOCSTITLE, title );
+			}
+			
+			dup2( console, 0 );
+			dup2( console, 1 );
+			dup2( console, 2 );
+			
+			close( console );
+			
+			(void) execvp( freeArgs[ 0 ], &freeArgs[ 0 ] );
+			
+			_exit( 127 );
+		}
+		
+		if ( should_wait )
+		{
+			int stat = -1;
+			
+			int waited = waitpid( forked, &stat, 0 );
+			
+			if ( waited == -1 )
+			{
+				std::perror( "console: waitpid" );
+				
+				return 127;
+			}
+			
+			return exit_from_wait( stat );
+		}
+		
+		return 0;
 	}
 	
-	return 0;
+}
+
+namespace Orion
+{
+	
+	int Main( int argc, iota::argv_t argv )
+	{
+		return tool::Main( argc, argv );
+	}
+	
 }
 
