@@ -159,14 +159,9 @@ namespace tool
 	{
 		SInt32 stat = N::AEGetParamPtr< N::typeSInt32 >( reply, N::AEKeyword( 'stat' ) );
 		
-		if ( stat != 0 )
+		if ( stat == -1 )
 		{
-			std::printf( "Reply stat is '%d'.\n", stat );
-			
-			if ( stat == -1 )
-			{
-				stat = 127;
-			}
+			stat = 127;
 		}
 		
 		return stat;
