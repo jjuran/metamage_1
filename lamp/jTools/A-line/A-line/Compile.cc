@@ -414,6 +414,11 @@ namespace tool
 		
 		options.DEFINE_MACRO( "NUCLEUS_USES_BACKTRACE" );
 		
+		if ( options.Target().envType == envLamp )
+		{
+			options.DEFINE_MACRO( "__LaMP__" );
+		}
+		
 		if ( target_info.platform & CD::apiMacCarbon )
 		{
 			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
