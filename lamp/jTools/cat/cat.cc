@@ -45,22 +45,24 @@ static const char* EvaluateMetaFilename( const char* pathname )
 
 int O::Main( int argc, argv_t argv )
 {
+	iota::arg_t argv0 = argv[0];
+	
+	iota::argp_t args = argv + 1;
+	
 	// Check for sufficient number of args
-	if ( argc < 2 )
+	if ( *args == NULL )
 	{
-		static argv_t default_argv = { "cat", "-", NULL };
+		static iota::argv_t default_args = { "-", NULL };
 		
-		argv = default_argv;
-		
-		argc = 2;
+		args = default_args;
 	}
 	
 	// Print each file in turn.  Return whether any errors occurred.
 	int exit_status = EXIT_SUCCESS;
 	
-	for ( int index = 1;  index < argc;  ++index )
+	while ( *args != NULL )
 	{
-		const char* pathname = EvaluateMetaFilename( argv[ index ] );
+		const char* pathname = EvaluateMetaFilename( *args++ );
 		
 		try
 		{
@@ -70,7 +72,7 @@ int O::Main( int argc, argv_t argv )
 		}
 		catch ( const p7::errno_t& error )
 		{
-			std::fprintf( stderr, "%s: %s: %s\n", argv[0], pathname, std::strerror( error ) );
+			std::fprintf( stderr, "%s: %s: %s\n", argv0, pathname, std::strerror( error ) );
 			
 			exit_status = EXIT_FAILURE;
 			
