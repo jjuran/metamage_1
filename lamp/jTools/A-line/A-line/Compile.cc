@@ -197,20 +197,6 @@ namespace tool
 		return compile;
 	}
 	
-	static void RunCompiler( const CompilerOptions&  options,
-	                         const std::string&      source_pathname,
-	                         const std::string&      output_path,
-	                         const char*             caption )
-	{
-		Command command = MakeCompileCommand( options, source_pathname, output_path );
-		
-		std::string source_filename = io::get_filename_string( source_pathname );
-		
-		std::string diagnostics_pathname = DiagnosticsPathnameFromSourceFilename( options.Name(), source_filename );
-		
-		RunCommand( command, diagnostics_pathname.c_str(), caption + source_filename );
-	}
-	
 	static void get_recursive_includes( const Project&            project,
 	                                    const std::string&        source_pathname,
 	                                    std::set< std::string >&  result )
@@ -379,7 +365,13 @@ namespace tool
 	
 	void CompilingTask::Make()
 	{
-		RunCompiler( its_options, its_source_pathname, OutputPath(), its_caption );
+		Command command = MakeCompileCommand( its_options, its_source_pathname, OutputPath() );
+		
+		std::string source_filename = io::get_filename_string( its_source_pathname );
+		
+		std::string diagnostics_pathname = DiagnosticsPathnameFromSourceFilename( its_options.Name(), source_filename );
+		
+		RunCommand( command, diagnostics_pathname.c_str(), its_caption + source_filename );
 	}
 	
 	
