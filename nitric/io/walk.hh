@@ -15,6 +15,7 @@
 #define IO_WALK_HH
 
 // Standard C++
+#include <algorithm>
 #include <string>
 
 // Nucleus
