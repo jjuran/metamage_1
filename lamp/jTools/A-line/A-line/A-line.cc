@@ -404,7 +404,7 @@ namespace tool
 		
 		check_results( wait_status, diagnostics_file_path );
 		
-		//recovered_task->Return( wait_status );
+		recovered_task->Return( wait_status );
 	}
 	
 	
@@ -673,7 +673,7 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, STR_LEN( "done.\n" ) );
 		
-		while ( RunNextTask() )
+		while ( StartNextTask() )
 		{
 			continue;
 		}
