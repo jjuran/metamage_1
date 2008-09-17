@@ -366,7 +366,7 @@ namespace tool
 		
 		std::string source_filename = io::get_filename_string( its_source_pathname );
 		
-		RunCommand( command, its_diagnostics_file_path.c_str(), its_caption + source_filename );
+		ExecuteCommand( shared_from_this(), its_caption + source_filename, command, its_diagnostics_file_path.c_str() );
 	}
 	
 	

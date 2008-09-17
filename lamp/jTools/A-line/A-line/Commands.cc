@@ -12,6 +12,7 @@
 namespace tool
 {
 	
+	/*
 	static void Echo( const char* string )
 	{
 		Command echo;
@@ -30,8 +31,9 @@ namespace tool
 	{
 		Echo( caption.c_str() );
 		
-		ExecuteCommand( command, diagnostics_pathname );
+		ExecuteCommand( caption, command, diagnostics_pathname );
 	}
+	*/
 	
 }
 

@@ -238,7 +238,7 @@ namespace tool
 	{
 		std::string output_filename = io::get_filename_string( OutputPath() );
 		
-		RunCommand( get_command(), get_diagnostics_file_path().c_str(), "Linking: " + output_filename );
+		ExecuteCommand( shared_from_this(), "Linking: " + output_filename, get_command(), get_diagnostics_file_path().c_str() );
 	}
 	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
@@ -296,7 +296,7 @@ namespace tool
 		
 		rezCommand.push_back( NULL );
 		
-		RunCommand( rezCommand, NULL, "Rezzing: " + io::get_filename_string( OutputPath() ) );
+		ExecuteCommand( shared_from_this(), "Rezzing: " + io::get_filename_string( OutputPath() ), rezCommand );
 	}
 	
 	static std::string Project_FindResourceFile( const Project& project, const std::string& filespec )
@@ -419,7 +419,7 @@ namespace tool
 		
 		command.push_back( NULL );
 		
-		RunCommand( command, "", "Copying resources: " + io::get_filename_string( OutputPath() ) );
+		ExecuteCommand( shared_from_this(), "Copying resources: " + io::get_filename_string( OutputPath() ), command );
 	}
 	
 	static void make_task_depend_on_libs( const TaskPtr&                     task,

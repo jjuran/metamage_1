@@ -251,6 +251,7 @@ namespace tool
 		return string == NULL  ||  string[0] == '\0';
 	}
 	
+	
 	static p7::pid_t launch_job( const std::vector< const char* >& command, const char* diagnostics_path )
 	{
 		p7::pid_t pid = POSEVEN_VFORK();
@@ -318,10 +319,15 @@ namespace tool
 		}
 	}
 	
-	void ExecuteCommand( const std::vector< const char* >& command, const char* diagnosticsFilename )
+	void ExecuteCommand( const TaskPtr&                     task,
+	                     const std::string&                 caption,
+	                     const std::vector< const char* >&  command,
+	                     const char*                        diagnostics_file_path )
 	{
 		ASSERT( command.size() > 1 );
 		ASSERT( command.back() == NULL );
+		
+		std::printf( "%s\n", caption.c_str() );
 		
 		PrintCommandForShell( command );
 		
@@ -345,25 +351,25 @@ namespace tool
 		}
 		*/
 		
-		const bool has_diagnostics_file = !is_null( diagnosticsFilename );
+		const bool has_diagnostics_file = !is_null( diagnostics_file_path );
 		
 		if ( has_diagnostics_file )
 		{
-			std::string diagnostics_dir = io::get_preceding_directory( diagnosticsFilename );
+			std::string diagnostics_dir = io::get_preceding_directory( diagnostics_file_path );
 			
 			mkdir_path( diagnostics_dir );
 		}
 		
-		p7::pid_t pid = launch_job( command, diagnosticsFilename );
+		p7::pid_t pid = launch_job( command, diagnostics_file_path );
 		
 		if ( has_diagnostics_file )
 		{
-			SetEditorSignature( diagnosticsFilename );
+			SetEditorSignature( diagnostics_file_path );
 		}
 		
 		p7::wait_t wait_status = p7::waitpid( pid );
 		
-		check_diagnostics( wait_status, diagnosticsFilename );
+		check_diagnostics( wait_status, diagnostics_file_path );
 		
 		const bool had_errors = wait_status != 0;
 		

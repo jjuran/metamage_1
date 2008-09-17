@@ -1,16 +1,18 @@
 /*	=========
  *	A-line.hh
  *	=========
- *	
- *	Implemented by A-line.cc
  */
 
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // Standard C++
 #include <string>
 #include <vector>
 
+// A-line
+#include "A-line/Task.hh"
 
 namespace tool
 {
@@ -30,7 +32,10 @@ namespace tool
 	
 	OptionsRecord& Options();
 	
-	void ExecuteCommand( const std::vector< const char* >& command, const char* diagnosticsFilename = NULL );
+	void ExecuteCommand( const TaskPtr&                     task,
+	                     const std::string&                 caption,
+	                     const std::vector< const char* >&  command,
+	                     const char*                        diagnostics_file_path = NULL );
 	
 }
 
