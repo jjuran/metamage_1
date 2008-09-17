@@ -272,6 +272,52 @@ namespace tool
 		return pid;
 	}
 	
+	static void report_diagnostics( size_t size, bool had_errors, const char* diagnostics_path )
+	{
+		const char* stuff = had_errors ? "errors" : "warnings";
+		
+		char path_buffer[ 4096 ];
+		
+		const char* pathname = realpath( diagnostics_path, path_buffer );
+		
+		if ( pathname == NULL )
+		{
+			pathname = diagnostics_path;
+		}
+		
+		std::fprintf( stderr, "#\n# %d bytes of %s\n#\n" "    report %s\n#\n",
+		                            size,       stuff,               pathname );
+	}
+	
+	static void check_diagnostics( p7::wait_t wait_status, const char* diagnostics_path )
+	{
+		if ( !is_null( diagnostics_path ) )
+		{
+			struct ::stat stat_buffer = p7::stat( diagnostics_path );
+			
+			const size_t size = stat_buffer.st_size;
+			
+			if ( size == 26  &&  p7::wifexited( wait_status )  &&  p7::wexitstatus( wait_status ) == 2 )
+			{
+				p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
+			}
+			else if ( size != 0 )
+			{
+				report_diagnostics( size, wait_status != 0, diagnostics_path );
+				
+				return;
+			}
+			
+			// empty file; delete, ignore errors
+			(void) unlink( diagnostics_path );
+			
+			if ( size != 0 )
+			{
+				O::ThrowExitStatus( 3 );
+			}
+		}
+	}
+	
 	void ExecuteCommand( const std::vector< const char* >& command, const char* diagnosticsFilename )
 	{
 		ASSERT( command.size() > 1 );
@@ -317,43 +363,9 @@ namespace tool
 		
 		p7::wait_t wait_status = p7::waitpid( pid );
 		
-		const bool had_errors = wait_status != 0;
+		check_diagnostics( wait_status, diagnosticsFilename );
 		
-		if ( has_diagnostics_file )
-		{
-			struct ::stat stat_buffer = p7::stat( diagnosticsFilename );
-			
-			const size_t size = stat_buffer.st_size;
-			
-			if ( size == 0  ||  size == 26 )
-			{
-				// empty file; delete, ignore errors
-				(void) unlink( diagnosticsFilename );
-				
-				if ( size == 26 )
-				{
-					p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
-					
-					O::ThrowExitStatus( 3 );
-				}
-			}
-			else
-			{
-				const char* stuff = had_errors ? "errors" : "warnings";
-				
-				char path_buffer[ 4096 ];
-				
-				const char* pathname = realpath( diagnosticsFilename, path_buffer );
-				
-				if ( pathname == NULL )
-				{
-					pathname = diagnosticsFilename;
-				}
-				
-				std::fprintf( stderr, "#\n# %d bytes of %s\n#\n" "    report %s\n#\n",
-				                            size,       stuff,               pathname );
-			}
-		}
+		const bool had_errors = wait_status != 0;
 		
 		if ( had_errors )
 		{
