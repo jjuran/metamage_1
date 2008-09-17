@@ -259,13 +259,6 @@ namespace tool
 		
 		const bool has_diagnostics_file = diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0';
 		
-		if ( has_diagnostics_file )
-		{
-			std::string diagnostics_dir = io::get_preceding_directory( diagnosticsFilename );
-			
-			mkdir_path( diagnostics_dir );
-		}
-		
 		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )

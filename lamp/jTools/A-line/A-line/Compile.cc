@@ -603,6 +603,8 @@ namespace tool
 		
 		mkdir_path( get_project_dependencies_pathname( project.Name() ) );
 		
+		mkdir_path( ProjectDiagnosticsDirPath( project.Name() ) );
+		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
 		std::vector< std::string > source_paths;
