@@ -355,6 +355,46 @@ namespace tool
 		task->Return( wait_status );
 	}
 	
+	static bool wait_and_end_task( bool nonblocking )
+	{
+		p7::wait_t wait_status;
+		
+		if ( p7::pid_t pid = p7::waitpid( p7::pid_t( -1 ), wait_status, nonblocking ? WNOHANG : 0 ) )
+		{
+			end_task( pid, wait_status );
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	static bool reap_job( bool nonblocking )
+	{
+		return !global_running_tasks.empty() && wait_and_end_task( nonblocking );
+	}
+	
+	static void reap_jobs( bool nonblocking )
+	{
+		while ( reap_job( nonblocking ) )
+		{
+			continue;
+		}
+	}
+	
+	static std::size_t global_job_limit = 1;
+	
+	static void wait_for_jobs()
+	{
+		// If all the available slots are taken, wait for a job to exit
+		while ( global_running_tasks.size() >= global_job_limit )
+		{
+			wait_and_end_task( false );
+		}
+		
+		reap_jobs( true );
+	}
+	
 	void ExecuteCommand( const TaskPtr&                     task,
 	                     const std::string&                 caption,
 	                     const std::vector< const char* >&  command,
@@ -405,9 +445,7 @@ namespace tool
 			SetEditorSignature( diagnostics_file_path );
 		}
 		
-		p7::wait_t wait_status = p7::waitpid( pid );
-		
-		end_task( pid, wait_status );
+		wait_for_jobs();
 	}
 	
 	
@@ -570,6 +608,10 @@ namespace tool
 		O::AliasOption( "-R", "--release" );
 		O::AliasOption( "-D", "--demo"    );
 		
+		// Performance
+		
+		O::BindOption( "-j", global_job_limit );
+		
 		O::GetOptions( argc, argv );
 		
 		char const *const *freeArgs = O::FreeArguments();
@@ -676,10 +718,12 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, STR_LEN( "done.\n" ) );
 		
-		while ( StartNextTask() )
+		while ( StartNextTask() || reap_job( false ) )
 		{
 			continue;
 		}
+		
+		reap_jobs( false );
 		
 		return EXIT_SUCCESS;
 	}
