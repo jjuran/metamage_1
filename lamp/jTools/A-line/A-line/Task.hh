@@ -67,7 +67,7 @@ namespace tool
 	class NullTask : public Task
 	{
 		public:
-			void Start()  {}
+			void Start()  { Complete(); }
 	};
 	
 	class FileTask : public Task
