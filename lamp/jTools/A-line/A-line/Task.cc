@@ -14,6 +14,7 @@
 #include "PointerToFunction.hh"
 
 // POSeven
+#include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
 
@@ -21,6 +22,10 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
+	
+	
+	using namespace io::path_descent_operators;
+	
 	
 	static std::queue< TaskPtr > gReadyTasks;
 	static std::vector< TaskPtr > gFailedTasks;
@@ -100,6 +105,42 @@ namespace tool
 		Make();
 		
 		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
+	}
+	
+	
+	static std::string diagnostics_file_path( const std::string&  dir_path,
+	                                          const std::string&  target_path )
+	{
+		return dir_path / io::get_filename( target_path ) + ".txt";
+	}
+	
+	
+	static const char* c_str( const std::string& s )
+	{
+		return s.c_str();
+	}
+	
+	
+	CommandTask::CommandTask( const Command&      command,
+			                  const std::string&  output,
+			                  const std::string&  diagnostics,
+			                  const std::string  *input_begin,
+			                  const std::string  *input_end )
+	: FileTask( output ),
+	  its_command( command ),
+	  its_diagnostics_file_path( diagnostics_file_path( diagnostics, output ) ),
+	  its_input_file_paths( input_begin, input_end )
+	{
+		its_command.reserve( command.size() + 2 + input_end - input_begin );
+		
+		its_command.push_back( OutputPath().c_str() );
+		
+		std::transform( its_input_file_paths.begin(),
+		                its_input_file_paths.end(),
+		                std::back_inserter( its_command ),
+		                std::ptr_fun( c_str ));
+		
+		its_command.push_back( NULL );
 	}
 	
 	

@@ -84,6 +84,28 @@ namespace tool
 			
 	};
 	
+	
+	typedef std::vector< const char* > Command;
+	
+	class CommandTask : public FileTask
+	{
+		private:
+			Command                     its_command;
+			std::string                 its_diagnostics_file_path;
+			std::vector< std::string >  its_input_file_paths;
+		
+		public:
+			CommandTask( const Command&      command,
+			             const std::string&  output,
+			             const std::string&  diagnostics,
+			             const std::string  *input_begin,
+			             const std::string  *input_end );
+			
+			const Command& get_command() const  { return its_command; }
+			
+			const std::string& get_diagnostics_file_path() const  { return its_diagnostics_file_path; }
+	};
+	
 	void AddReadyTask( const TaskPtr& task );
 	
 	bool RunNextTask();
