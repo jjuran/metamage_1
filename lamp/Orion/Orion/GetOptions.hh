@@ -147,6 +147,8 @@ namespace Orion
 		return NewOptionBinding( flag, true );
 	}
 	
+	boost::shared_ptr< OptionBinding > NewOptionBinding( std::size_t& integer );
+	
 	boost::shared_ptr< OptionBinding > NewOptionBinding( const char*& string );
 	
 	boost::shared_ptr< OptionBinding > NewOptionBinding( std::string& string );

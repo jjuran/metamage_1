@@ -29,6 +29,7 @@
 #include <map>
 
 // Standard C/C++
+#include <cstdlib>
 #include <cstring>
 
 // Nucleus
@@ -57,6 +58,20 @@
 
 namespace Orion
 {
+	
+	template < class Integer >
+	class IntegerOptionBinding : public OptionBinding
+	{
+		private:
+			Integer& itsInteger;
+		
+		public:
+			IntegerOptionBinding( Integer& integer ) : itsInteger( integer )  {}
+			
+			bool ParameterExpected() const  { return true; }
+			
+			void Set( const char* param ) const  { itsInteger = std::atoi( param ); }
+	};
 	
 	class CStringOptionBinding : public OptionBinding
 	{
@@ -121,6 +136,11 @@ namespace Orion
 		gOptionMap[ to ] = gOptionMap[ from ];
 	}
 	
+	
+	boost::shared_ptr< OptionBinding > NewOptionBinding( std::size_t& integer )
+	{
+		return boost::shared_ptr< OptionBinding >( new IntegerOptionBinding< std::size_t >( integer ) );
+	}
 	
 	boost::shared_ptr< OptionBinding > NewOptionBinding( const char*& string )
 	{
