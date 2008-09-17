@@ -230,6 +230,48 @@ namespace tool
 		}
 	}
 	
+	static bool open_diagnostics_file( const char* path )
+	{
+		int fd = ::open( path, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
+		
+		if ( fd < 0 )
+		{
+			return false;
+		}
+		
+		dup2( fd, STDERR_FILENO );
+		
+		close( fd );
+		
+		return true;
+	}
+	
+	inline bool is_null( const char* string )
+	{
+		return string == NULL  ||  string[0] == '\0';
+	}
+	
+	static p7::pid_t launch_job( const std::vector< const char* >& command, const char* diagnostics_path )
+	{
+		p7::pid_t pid = POSEVEN_VFORK();
+		
+		if ( pid == 0 )
+		{
+			if ( !is_null( diagnostics_path ) && !open_diagnostics_file( diagnostics_path ) )
+			{
+				std::perror( diagnostics_path );
+				
+				p7::_exit( p7::exit_failure );
+			}
+			
+			execvp( command.front(), const_cast< char** >( &command.front() ) );
+			
+			_exit( 127 );
+		}
+		
+		return pid;
+	}
+	
 	void ExecuteCommand( const std::vector< const char* >& command, const char* diagnosticsFilename )
 	{
 		ASSERT( command.size() > 1 );
@@ -257,7 +299,7 @@ namespace tool
 		}
 		*/
 		
-		const bool has_diagnostics_file = diagnosticsFilename != NULL  &&  diagnosticsFilename[0] != '\0';
+		const bool has_diagnostics_file = !is_null( diagnosticsFilename );
 		
 		if ( has_diagnostics_file )
 		{
@@ -266,30 +308,7 @@ namespace tool
 			mkdir_path( diagnostics_dir );
 		}
 		
-		p7::pid_t pid = POSEVEN_VFORK();
-		
-		if ( pid == 0 )
-		{
-			if ( has_diagnostics_file )
-			{
-				int diagnostics = ::open( diagnosticsFilename, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
-				
-				if ( diagnostics < 0 )
-				{
-					std::perror( diagnosticsFilename );
-					
-					p7::_exit( p7::exit_failure );
-				}
-				
-				dup2( diagnostics, STDERR_FILENO );
-				
-				close( diagnostics );
-			}
-			
-			execvp( command.front(), const_cast< char** >( &command.front() ) );
-			
-			_exit( 127 );
-		}
+		p7::pid_t pid = launch_job( command, diagnosticsFilename );
 		
 		if ( has_diagnostics_file )
 		{
@@ -302,47 +321,37 @@ namespace tool
 		
 		if ( has_diagnostics_file )
 		{
-			struct ::stat stat_buffer;
+			struct ::stat stat_buffer = p7::stat( diagnosticsFilename );
 			
-			int status = ::stat( diagnosticsFilename, &stat_buffer );
+			const size_t size = stat_buffer.st_size;
 			
-			if ( status == 0 )
+			if ( size == 0  ||  size == 26 )
 			{
-				const size_t size = stat_buffer.st_size;
+				// empty file; delete, ignore errors
+				(void) unlink( diagnosticsFilename );
 				
-				if ( size == 0  ||  size == 26 )
+				if ( size == 26 )
 				{
-					// empty file; delete, ignore errors
-					(void) unlink( diagnosticsFilename );
+					p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
 					
-					if ( size == 26 )
-					{
-						p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
-						
-						O::ThrowExitStatus( 3 );
-					}
-				}
-				else
-				{
-					const char* stuff = had_errors ? "errors" : "warnings";
-					
-					char path_buffer[ 4096 ];
-					
-					const char* pathname = realpath( diagnosticsFilename, path_buffer );
-					
-					if ( pathname == NULL )
-					{
-						pathname = diagnosticsFilename;
-					}
-					
-					std::fprintf( stderr, "#\n# %d bytes of %s\n#\n" "    report %s\n#\n",
-					                            size,       stuff,               pathname );
+					O::ThrowExitStatus( 3 );
 				}
 			}
 			else
 			{
-				// something's wrong with the diagnostics file
-				// shouldn't really happen, so screw it
+				const char* stuff = had_errors ? "errors" : "warnings";
+				
+				char path_buffer[ 4096 ];
+				
+				const char* pathname = realpath( diagnosticsFilename, path_buffer );
+				
+				if ( pathname == NULL )
+				{
+					pathname = diagnosticsFilename;
+				}
+				
+				std::fprintf( stderr, "#\n# %d bytes of %s\n#\n" "    report %s\n#\n",
+				                            size,       stuff,               pathname );
 			}
 		}
 		
