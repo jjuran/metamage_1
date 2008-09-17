@@ -5,6 +5,7 @@
 
 // Standard C++
 #include <string>
+#include <vector>
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
