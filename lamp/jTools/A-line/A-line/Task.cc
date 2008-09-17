@@ -108,13 +108,6 @@ namespace tool
 	}
 	
 	
-	static std::string diagnostics_file_path( const std::string&  dir_path,
-	                                          const std::string&  target_path )
-	{
-		return dir_path / io::get_filename( target_path ) + ".txt";
-	}
-	
-	
 	static const char* c_str( const std::string& s )
 	{
 		return s.c_str();
@@ -128,7 +121,7 @@ namespace tool
 			                  const std::string  *input_end )
 	: FileTask( output ),
 	  its_command( command ),
-	  its_diagnostics_file_path( diagnostics_file_path( diagnostics, output ) ),
+	  its_diagnostics_file_path( diagnostics ),
 	  its_input_file_paths( input_begin, input_end )
 	{
 		its_command.reserve( command.size() + 2 + input_end - input_begin );

@@ -215,8 +215,11 @@ namespace tool
 			             const std::string&                 output,
 			             const std::vector< std::string >&  input,
 			             const std::string&                 diagnostics )
-			: CommandTask( command, output, diagnostics, &*input.begin(),
-			                                             &*input.end  () )
+			: CommandTask( command,
+			               output,
+			               diagnostics_file_path( diagnostics, output ),
+			               &*input.begin(),
+			               &*input.end  () )
 			{
 			}
 			
@@ -226,8 +229,11 @@ namespace tool
 			             Iter                input_begin,
 			             Iter                input_end,
 			             const std::string&  diagnostics )
-			: CommandTask( command, output, diagnostics, &*input_begin,
-			                                             &*input_end )
+			: CommandTask( command,
+			               output,
+			               diagnostics_file_path( diagnostics, output ),
+			               &*input_begin,
+			               &*input_end )
 			{
 			}
 			
