@@ -644,14 +644,14 @@ namespace tool
 					command.push_back( "-sizemax" );
 					command.push_back( "8192"     );
 					
-					static std::string output_name;
+					std::string output_name;
 					
 					output_name  = io::get_filename( output_pathname );
 					output_name += ' ';
 					output_name += gMacAPINames[ gMacAPI ];
 					
 					command.push_back( "-name" );
-					command.push_back( output_name.c_str() );
+					command.push_back( store_string( output_name ) );
 				}
 				
 				command.push_back( "-t"   );
