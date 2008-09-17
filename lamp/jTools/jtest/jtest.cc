@@ -3,13 +3,14 @@
  *	========
  */
 
-// Standard C/C++
-#include <cctype>
-
 // Standard C++
 #include <algorithm>
 #include <functional>
 #include <vector>
+
+// Standard C/C++
+#include <cctype>
+#include <cstring>
 
 // Standard C
 #include <errno.h>

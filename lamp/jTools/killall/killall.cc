@@ -7,10 +7,10 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 // Standard C/C++
 #include <cctype>
+#include <cstdlib>
 #include <cstring>
 
 // Standard C++
