@@ -53,7 +53,7 @@ namespace tool
 			
 			virtual void Start() = 0;
 			
-			virtual void Finish()  { Complete(); }
+			virtual void Finish()  {}
 			
 			virtual void Return( poseven::wait_t wait_status )  { Finish(); }
 			
@@ -65,7 +65,7 @@ namespace tool
 	class NullTask : public Task
 	{
 		public:
-			void Start()  { Complete(); }
+			void Start()  {}
 	};
 	
 	class FileTask : public Task

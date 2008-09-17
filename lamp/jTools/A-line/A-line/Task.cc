@@ -49,6 +49,7 @@ namespace tool
 	
 	Task::~Task()
 	{
+		Complete();
 	}
 	
 	void Task::UpdateInputStamp( time_t stamp )
@@ -115,8 +116,6 @@ namespace tool
 	void FileTask::Finish()
 	{
 		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
-		
-		Complete();
 	}
 	
 	
