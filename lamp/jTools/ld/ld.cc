@@ -671,10 +671,8 @@ namespace tool
 				
 				if ( arch == arch_ppc )
 				{
-					// 	For CFMLateImport support
-					command.push_back( "-b"                             );  // don't pack the data segment
-					command.push_back( "-init"                          );
-					command.push_back( "Initialize_SavedCFragInitBlock" );  // save fragment data for later
+					// CFMLateImport requires that we don't pack the data segment
+					command.push_back( "-b" );
 				}
 				
 				command.push_back( "-dead" );
