@@ -20,7 +20,7 @@ test -d $dest && echo You already have $1. && exit || true
 cd /tmp
 
 echo Downloading $1.$MBIN.gz...
-htget -O http://lamp.sourceforge.net/experimental/$1.$MBIN.gz
+htget -O http://$LAMP_SITE/experimental/$1.$MBIN.gz
 
 echo Decompressing...
 gzip -d $1.$MBIN.gz
