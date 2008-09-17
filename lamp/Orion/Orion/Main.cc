@@ -35,7 +35,7 @@ namespace Orion
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
-	extern "C" int main( int argc, argv_t argv );
+	extern "C" int main( int argc, iota::argv_t argv );
 	
 	
 	static void ShowDebuggingContext()
@@ -87,7 +87,7 @@ namespace Orion
 	}
 	
 	
-	int main( int argc, argv_t argv )
+	int main( int argc, iota::argv_t argv )
 	{
 		const void* stackBottom = Backtrace::GetStackFramePointer();
 		

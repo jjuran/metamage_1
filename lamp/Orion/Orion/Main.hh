@@ -27,8 +27,6 @@ namespace Orion
 	
 	inline void ThrowExitStatus( int status )  { throw ExitStatus( status ); }
 	
-	using iota::argv_t;
-	
 }
 
 namespace tool
