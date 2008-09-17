@@ -56,15 +56,15 @@ namespace tool
 	{
 		Main();
 		
-		Complete( its_input_stamp );
+		Complete();
 	}
 	
-	void Task::Complete( time_t stamp )
+	void Task::Complete()
 	{
 		std::for_each( its_dependents.begin(),
 		               its_dependents.end(),
 		               std::bind2nd( more::ptr_fun( UpdateTaskInputStamp ),
-		                             stamp ) );
+		                             its_input_stamp ) );
 		
 		std::for_each( its_dependents.begin(),
 		               its_dependents.end(),

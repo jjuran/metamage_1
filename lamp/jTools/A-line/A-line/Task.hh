@@ -54,7 +54,7 @@ namespace tool
 			
 			void Run();
 			
-			void Complete( time_t stamp );
+			void Complete();
 	};
 	
 	class NullTask : public Task
