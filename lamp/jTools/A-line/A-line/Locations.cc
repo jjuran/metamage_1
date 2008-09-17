@@ -45,7 +45,7 @@ namespace tool
 		return path;
 	}
 	
-	static std::string CurrentUserHomeDirPath()
+	static std::string home_dir_pathname()
 	{
 		if ( const char* home = getenv( "HOME" ) )
 		{
@@ -62,12 +62,12 @@ namespace tool
 			return tree;
 		}
 		
-		return CurrentUserHomeDirPath() / "src/tree";
+		return home_dir_pathname() / "src/tree";
 	}
 	
 	std::string get_user_cache_pathname()
 	{
-		std::string home = CurrentUserHomeDirPath();
+		std::string home = home_dir_pathname();
 		
 		const char* cache = ALINE_MAC_DEVELOPMENT ? "Library/Caches/A-line"
 		                                          : "var/cache/a-line";
@@ -82,7 +82,7 @@ namespace tool
 			return builds;
 		}
 		
-		return CreateDirPath( CurrentUserHomeDirPath() / "Developer/Builds" );
+		return CreateDirPath( home_dir_pathname() / "Developer/Builds" );
 	}
 	
 	static std::string ProjectConfigDirPath( const std::string& projectPath )
