@@ -17,6 +17,9 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
+// A-line
+#include "A-line/A-line.hh"
+
 
 namespace tool
 {
@@ -56,13 +59,11 @@ namespace tool
 	{
 		Start();
 		
-		Complete();
+		Return( p7::wait_t() );
 	}
 	
 	void Task::Complete()
 	{
-		Finish();
-		
 		std::for_each( its_dependents.begin(),
 		               its_dependents.end(),
 		               std::bind2nd( more::ptr_fun( UpdateTaskInputStamp ),
@@ -110,6 +111,8 @@ namespace tool
 	void FileTask::Finish()
 	{
 		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
+		
+		Complete();
 	}
 	
 	
@@ -141,10 +144,33 @@ namespace tool
 		its_command.push_back( NULL );
 	}
 	
+	void CommandTask::Return( poseven::wait_t wait_status )
+	{
+		//check_results( wait_status, its_diagnostics_file_path.c_str() );
+		
+		Finish();
+	}
+	
 	
 	void AddReadyTask( const TaskPtr& task )
 	{
 		gReadyTasks.push( task );
+	}
+	
+	bool StartNextTask()
+	{
+		if ( gReadyTasks.empty() )
+		{
+			return false;
+		}
+		
+		TaskPtr task = gReadyTasks.front();
+		
+		gReadyTasks.pop();
+		
+		task->Start();
+		
+		return true;
 	}
 	
 	bool RunNextTask()

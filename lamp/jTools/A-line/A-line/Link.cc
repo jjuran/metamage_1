@@ -274,6 +274,8 @@ namespace tool
 			}
 			
 			void Make();
+			
+			void Return( p7::wait_t wait_status );
 	};
 	
 	void RezzingTask::Make()
@@ -304,6 +306,14 @@ namespace tool
 		
 		ExecuteCommand( shared_from_this(), "Rezzing: " + io::get_filename_string( OutputPath() ), rezCommand );
 	}
+	
+	void RezzingTask::Return( p7::wait_t wait_status )
+	{
+		//check_results( wait_status, NULL );
+		
+		Finish();
+	}
+	
 	
 	static std::string Project_FindResourceFile( const Project& project, const std::string& filespec )
 	{
@@ -390,6 +400,8 @@ namespace tool
 			}
 			
 			void Make();
+			
+			void Return( p7::wait_t wait_status );
 	};
 	
 	void ResourceCopyingTask::Make()
@@ -427,6 +439,14 @@ namespace tool
 		
 		ExecuteCommand( shared_from_this(), "Copying resources: " + io::get_filename_string( OutputPath() ), command );
 	}
+	
+	void ResourceCopyingTask::Return( p7::wait_t wait_status )
+	{
+		//check_results( wait_status, NULL );
+		
+		Finish();
+	}
+	
 	
 	static void make_task_depend_on_libs( const TaskPtr&                     task,
 	                                      const std::vector< std::string >&  used_project_names,

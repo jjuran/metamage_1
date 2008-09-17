@@ -319,7 +319,7 @@ namespace tool
 		}
 	}
 	
-	static void check_results( p7::wait_t wait_status, const char* diagnostics_path )
+	void check_results( p7::wait_t wait_status, const char* diagnostics_path )
 	{
 		check_diagnostics( wait_status, diagnostics_path );
 		
@@ -337,6 +337,9 @@ namespace tool
 			O::ThrowExitStatus( signaled ? 2 : p7::exit_failure );
 		}
 	}
+	
+	
+	static std::map< p7::pid_t, TaskPtr > global_running_tasks;
 	
 	
 	void ExecuteCommand( const TaskPtr&                     task,
@@ -382,6 +385,8 @@ namespace tool
 		
 		p7::pid_t pid = launch_job( command, diagnostics_file_path );
 		
+		global_running_tasks[ pid ] = task;
+		
 		if ( has_diagnostics_file )
 		{
 			SetEditorSignature( diagnostics_file_path );
@@ -389,7 +394,17 @@ namespace tool
 		
 		p7::wait_t wait_status = p7::waitpid( pid );
 		
+		std::map< p7::pid_t, TaskPtr >::iterator it = global_running_tasks.find( pid );
+		
+		ASSERT( it != global_running_tasks.end() );
+		
+		TaskPtr recovered_task = it->second;
+		
+		global_running_tasks.erase( it );
+		
 		check_results( wait_status, diagnostics_file_path );
+		
+		//recovered_task->Return( wait_status );
 	}
 	
 	

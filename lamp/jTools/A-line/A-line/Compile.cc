@@ -91,6 +91,8 @@ namespace tool
 			bool UpToDate();
 			
 			void Make();
+			
+			void Return( p7::wait_t wait_status );
 	};
 	
 	class IncludeDirGatherer
@@ -367,6 +369,13 @@ namespace tool
 		std::string source_filename = io::get_filename_string( its_source_pathname );
 		
 		ExecuteCommand( shared_from_this(), its_caption + source_filename, command, its_diagnostics_file_path.c_str() );
+	}
+	
+	void CompilingTask::Return( p7::wait_t wait_status )
+	{
+		//check_results( wait_status, its_diagnostics_file_path.c_str() );
+		
+		Finish();
 	}
 	
 	

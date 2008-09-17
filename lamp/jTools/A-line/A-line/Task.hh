@@ -21,6 +21,9 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 
+// POSeven
+#include "POSeven/types/wait_t.hh"
+
 
 namespace tool
 {
@@ -51,7 +54,10 @@ namespace tool
 			void AddDependent( const TaskPtr& task )  { its_dependents.push_back( task ); }
 			
 			virtual void Start() = 0;
-			virtual void Finish()  {}
+			
+			virtual void Finish()  { Complete(); }
+			
+			virtual void Return( poseven::wait_t wait_status )  { Finish(); }
 			
 			void Run();
 			
@@ -62,7 +68,6 @@ namespace tool
 	{
 		public:
 			void Start()  {}
-			void Finish()  {}
 	};
 	
 	class FileTask : public Task
@@ -108,9 +113,13 @@ namespace tool
 			const Command& get_command() const  { return its_command; }
 			
 			const std::string& get_diagnostics_file_path() const  { return its_diagnostics_file_path; }
+			
+			void Return( poseven::wait_t wait_status );
 	};
 	
 	void AddReadyTask( const TaskPtr& task );
+	
+	bool StartNextTask();
 	
 	bool RunNextTask();
 	
