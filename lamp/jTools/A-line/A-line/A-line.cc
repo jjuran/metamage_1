@@ -342,6 +342,19 @@ namespace tool
 	static std::map< p7::pid_t, TaskPtr > global_running_tasks;
 	
 	
+	static void end_task( p7::pid_t pid, p7::wait_t wait_status )
+	{
+		std::map< p7::pid_t, TaskPtr >::iterator it = global_running_tasks.find( pid );
+		
+		ASSERT( it != global_running_tasks.end() );
+		
+		TaskPtr task = it->second;
+		
+		global_running_tasks.erase( it );
+		
+		task->Return( wait_status );
+	}
+	
 	void ExecuteCommand( const TaskPtr&                     task,
 	                     const std::string&                 caption,
 	                     const std::vector< const char* >&  command,
@@ -394,17 +407,7 @@ namespace tool
 		
 		p7::wait_t wait_status = p7::waitpid( pid );
 		
-		std::map< p7::pid_t, TaskPtr >::iterator it = global_running_tasks.find( pid );
-		
-		ASSERT( it != global_running_tasks.end() );
-		
-		TaskPtr recovered_task = it->second;
-		
-		global_running_tasks.erase( it );
-		
-		//check_results( wait_status, diagnostics_file_path );
-		
-		recovered_task->Return( wait_status );
+		end_task( pid, wait_status );
 	}
 	
 	
