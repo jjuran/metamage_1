@@ -29,8 +29,6 @@ namespace Orion
 	
 	using iota::argv_t;
 	
-	int Main( int argc, argv_t argv );
-	
 }
 
 namespace tool
