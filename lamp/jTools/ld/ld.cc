@@ -376,13 +376,18 @@ namespace tool
 		N::WriteResource( code );
 	}
 	
-	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
+	static const char* store_string( const std::string& string )
 	{
 		static std::list< std::string > static_string_storage;
 		
-		static_string_storage.push_back( MacPathFromPOSIXPath( pathname ) );
+		static_string_storage.push_back( string );
 		
 		return static_string_storage.back().c_str();
+	}
+	
+	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
+	{
+		return store_string( MacPathFromPOSIXPath( pathname ) );
 	}
 	
 	
@@ -511,6 +516,23 @@ namespace tool
 						break;
 				}
 			}
+			else if ( arg[0] == '+' )
+			{
+				if ( const char* equals = std::strchr( arg, '=' ) )
+				{
+					std::string option( arg, equals );
+					
+					option[0] = '-';
+					
+					command_args.push_back( store_string( option ) );
+					
+					command_args.push_back( equals + 1 );
+				}
+				else
+				{
+					// error
+				}
+			}
 			else
 			{
 				std::string filename = io::get_filename( arg );
@@ -612,10 +634,13 @@ namespace tool
 				{
 					command.push_back( "-xm"                );
 					command.push_back( "s"                  );
+					/*
+					// These are supplied using the library propagation mechanism
 					command.push_back( "-init"              );
 					command.push_back( "InitializeFragment" );
 					command.push_back( "-term"              );
 					command.push_back( "TerminateFragment"  );
+					*/
 					command.push_back( "-export"            );
 					command.push_back( "sym=main"           );
 					
