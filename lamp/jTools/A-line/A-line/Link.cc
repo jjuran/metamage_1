@@ -208,22 +208,15 @@ namespace tool
 		return dir_path / io::get_filename( target_path ) + ".txt";
 	}
 	
-	class LinkingTask : public FileTask
+	class LinkingTask : public CommandTask
 	{
-		private:
-			Command                     itsCommand;
-			std::vector< std::string >  itsInputArguments;
-			std::string                 itsDiagnosticsFile;
-		
 		public:
 			LinkingTask( const Command&                     command,
 			             const std::string&                 output,
 			             const std::vector< std::string >&  input,
 			             const std::string&                 diagnostics )
-			: FileTask          ( output  ),
-			  itsCommand        ( command ),
-			  itsInputArguments ( input   ),
-			  itsDiagnosticsFile( diagnostics_file_path( diagnostics, output ) )
+			: CommandTask( command, output, diagnostics, &*input.begin(),
+			                                             &*input.end  () )
 			{
 			}
 			
@@ -233,10 +226,8 @@ namespace tool
 			             Iter                input_begin,
 			             Iter                input_end,
 			             const std::string&  diagnostics )
-			: FileTask          ( output  ),
-			  itsCommand        ( command ),
-			  itsInputArguments ( input_begin, input_end ),
-			  itsDiagnosticsFile( diagnostics_file_path( diagnostics, output ) )
+			: CommandTask( command, output, diagnostics, &*input_begin,
+			                                             &*input_end )
 			{
 			}
 			
@@ -245,15 +236,9 @@ namespace tool
 	
 	void LinkingTask::Make()
 	{
-		itsCommand.push_back( OutputPath().c_str() );
-		
-		AugmentCommand( itsCommand, itsInputArguments );
-		
 		std::string output_filename = io::get_filename_string( OutputPath() );
 		
-		itsCommand.push_back( NULL );
-		
-		RunCommand( itsCommand, itsDiagnosticsFile.c_str(), "Linking: " + output_filename );
+		RunCommand( get_command(), get_diagnostics_file_path().c_str(), "Linking: " + output_filename );
 	}
 	
 	static std::string BundleResourceFileRelativePath( const std::string& linkName )
