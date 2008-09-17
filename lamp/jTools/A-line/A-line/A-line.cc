@@ -319,6 +319,26 @@ namespace tool
 		}
 	}
 	
+	static void check_results( p7::wait_t wait_status, const char* diagnostics_path )
+	{
+		check_diagnostics( wait_status, diagnostics_path );
+		
+		const bool had_errors = wait_status != 0;
+		
+		if ( had_errors )
+		{
+			const bool signaled = p7::wifsignaled( wait_status );
+			
+			const char* ended  = signaled ? "terminated via signal" : "exited with status";
+			int         status = signaled ? WTERMSIG( wait_status ) : WEXITSTATUS( wait_status );
+			
+			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
+			
+			O::ThrowExitStatus( signaled ? 2 : p7::exit_failure );
+		}
+	}
+	
+	
 	void ExecuteCommand( const TaskPtr&                     task,
 	                     const std::string&                 caption,
 	                     const std::vector< const char* >&  command,
@@ -369,21 +389,7 @@ namespace tool
 		
 		p7::wait_t wait_status = p7::waitpid( pid );
 		
-		check_diagnostics( wait_status, diagnostics_file_path );
-		
-		const bool had_errors = wait_status != 0;
-		
-		if ( had_errors )
-		{
-			const bool signaled = p7::wifsignaled( wait_status );
-			
-			const char* ended  = signaled ? "terminated via signal" : "exited with status";
-			int         status = signaled ? WTERMSIG( wait_status ) : WEXITSTATUS( wait_status );
-			
-			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
-			
-			O::ThrowExitStatus( signaled ? 2 : p7::exit_failure );
-		}
+		check_results( wait_status, diagnostics_file_path );
 	}
 	
 	
