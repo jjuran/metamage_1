@@ -43,9 +43,7 @@ namespace tool
 			{
 			}
 			
-			virtual ~Task()
-			{
-			}
+			virtual ~Task();
 			
 			bool MoreRecent( time_t output_stamp ) const  { return output_stamp > its_input_stamp; }
 			

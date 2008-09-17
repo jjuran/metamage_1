@@ -47,6 +47,10 @@ namespace tool
 		}
 	}
 	
+	Task::~Task()
+	{
+	}
+	
 	void Task::UpdateInputStamp( time_t stamp )
 	{
 		if ( stamp > its_input_stamp )
