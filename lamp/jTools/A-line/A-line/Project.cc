@@ -83,6 +83,38 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
+	const std::vector< std::string >& get_values( const ConfData& config, const std::string& key )
+	{
+		ConfData::const_iterator it = config.find( key );
+		
+		if ( it == config.end () )
+		{
+			static std::vector< std::string > null;
+			
+			return null;
+		}
+		
+		return it->second;
+	}
+	
+	static const std::string& get_first( const std::vector< std::string >& v )
+	{
+		if ( v.empty() )
+		{
+			static std::string null;
+			
+			return null;
+		}
+		
+		return v[ 0 ];
+	}
+	
+	inline const std::string& get_first( const ConfData& config, const std::string& key )
+	{
+		return get_first( get_values( config, key ) );
+	}
+	
+	
 	static std::string FindIncludeInFolder( const std::string& folder, std::string includePath )
 	{
 		// This will throw if folder or any subfolders are missing.
@@ -176,11 +208,6 @@ namespace tool
 		return "";
 	}
 	
-	static std::string First( const std::vector< std::string >& v )
-	{
-		return ( v.size() > 0 ) ? v[ 0 ] : std::string();
-	}
-	
 	static std::string FindSearchDir( const std::string& cwdPath, const std::string& pathname )
 	{
 		try
@@ -247,12 +274,12 @@ namespace tool
 		return productNotBuilt;
 	}
 	
-	static std::vector< std::string > GetDirectlyUsedProjectsFromConfig( CD::ConfData& config )
+	static std::vector< std::string > GetDirectlyUsedProjectsFromConfig( const CD::ConfData& config )
 	{
 		// Figure out which projects we use
-		const std::vector< std::string >& moreUsedProjects = config[ "use" ];
+		const std::vector< std::string >& moreUsedProjects = get_values( config, "use" );
 		
-		std::vector< std::string > usedProjects = config[ "uses" ];
+		std::vector< std::string > usedProjects = get_values( config, "uses" );
 		
 		usedProjects.insert( usedProjects.end(),
 		                     moreUsedProjects.begin(),
@@ -278,9 +305,9 @@ namespace tool
 		throw;
 	}
 	
-	static std::vector< std::string > GetAllUsedProjects( const std::string&  project_name,
-	                                                      Platform            platform,
-	                                                      CD::ConfData&       config )
+	static std::vector< std::string > GetAllUsedProjects( const std::string&   project_name,
+	                                                      Platform             platform,
+	                                                      const CD::ConfData&  config )
 	{
 		std::vector< std::string > used_project_names = GetDirectlyUsedProjectsFromConfig( config );
 		
@@ -499,24 +526,22 @@ namespace tool
 		its_dir_pathname( project_dir ),
 		its_product_type   ( productNotBuilt )
 	{
-		CD::ConfData config = conf_data;
-		
-		its_product_type = ReadProduct( First( config[ "product" ] ) );
+		its_product_type = ReadProduct( get_first( conf_data, "product" ) );
 		
 		// Figure out which projects we use
-		its_used_project_names = GetAllUsedProjects( its_name, platform, config );
+		its_used_project_names = GetAllUsedProjects( its_name, platform, conf_data );
 		
 		// Make sure we're in the list too, and make sure we're last.
 		its_used_project_names.push_back( proj );
 		
-		its_lib_import_specs = config[ "imports" ];  // Libraries to import.
+		its_lib_import_specs = get_values( conf_data, "imports" );  // Libraries to import.
 		
 		if ( its_product_type == productNotBuilt )
 		{
 			return;
 		}
 		
-		its_search_dir_pathnames = get_search_dir_pathnames( config[ "search" ], its_dir_pathname );
+		its_search_dir_pathnames = get_search_dir_pathnames( get_values( conf_data, "search" ), its_dir_pathname );
 		
 		if ( !ProductGetsBuilt( its_product_type ) )
 		{
@@ -524,11 +549,11 @@ namespace tool
 		}
 		
 		// If this project precompiles a header, this is the relative path to it.
-		its_precompiled_header_source_path  = First( config[ "precompile" ] );
+		its_precompiled_header_source_path  = get_first( conf_data, "precompile" );
 		
-		its_program_filename = First( config[ "program" ] );
+		its_program_filename = get_first( conf_data, "program" );
 		
-		its_tool_source_filenames = config[ "tools" ];
+		its_tool_source_filenames = get_values( conf_data, "tools" );
 		
 		const bool hasTools = !its_tool_source_filenames.empty();
 		
@@ -540,21 +565,21 @@ namespace tool
 		//printf("%s recursively uses %d projects.\n", proj.c_str(), allUsedProjects.size());
 		
 		// The creator code for linked output files.  Mac only.
-		its_creator_code = First( config[ "creator"    ] );
+		its_creator_code = get_first( conf_data, "creator" );
 		
 		if ( its_creator_code.size() == 6  &&  its_creator_code[0] == '\''  &&  its_creator_code[5] == '\'' )
 		{
 			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
 		
-		its_framework_names  = config[ "frameworks" ];  // Frameworks to include when building for OS X.
-		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
-		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
+		its_framework_names  = get_values( conf_data, "frameworks" );  // Frameworks to include when building for OS X.
+		its_rsrc_filenames   = get_values( conf_data, "rsrc"       );  // Resource files from which to copy resources.
+		its_rez_filenames    = get_values( conf_data, "rez"        );  // Rez files to compile.
 		
 		std::vector< std::string > source_search_dirs;
 		
 		get_source_data( its_dir_pathname,
-		                 config[ "sources" ],
+		                 get_values( conf_data, "sources" ),
 		                 source_search_dirs,
 		                 its_source_file_pathnames );
 		
