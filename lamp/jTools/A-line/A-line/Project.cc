@@ -117,13 +117,9 @@ namespace tool
 	
 	static std::string FindIncludeInFolder( const std::string& folder, std::string includePath )
 	{
-		// This will throw if folder or any subfolders are missing.
 		std::string file = folder / includePath;
 		
-		if ( !io::item_exists( file ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
+		(void) p7::stat( file );  // throw if nonexistent
 		
 		return file;
 	}
