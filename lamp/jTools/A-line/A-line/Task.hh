@@ -18,6 +18,7 @@
 #include <time.h>
 
 // Boost
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
 
 
@@ -28,7 +29,7 @@ namespace tool
 	
 	typedef boost::shared_ptr< Task > TaskPtr;
 	
-	class Task
+	class Task : public boost::enable_shared_from_this< Task >
 	{
 		private:
 			std::vector< TaskPtr >  its_dependents;
