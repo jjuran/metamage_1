@@ -15,6 +15,8 @@ namespace tool
 	
 	const std::string& mkdir_path( const std::string& path );
 	
+	std::string home_dir_pathname();
+	
 	std::string UserSrcTreePath();
 	
 	std::string get_user_cache_pathname();

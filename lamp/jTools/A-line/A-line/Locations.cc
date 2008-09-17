@@ -45,7 +45,7 @@ namespace tool
 		return path;
 	}
 	
-	static std::string home_dir_pathname()
+	std::string home_dir_pathname()
 	{
 		if ( const char* home = getenv( "HOME" ) )
 		{
