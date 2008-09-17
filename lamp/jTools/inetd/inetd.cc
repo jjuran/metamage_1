@@ -5,6 +5,8 @@
 
 // Standard C++
 #include <map>
+#include <string>
+#include <vector>
 
 // Standard C/C++
 #include <cstring>
