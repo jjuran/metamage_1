@@ -402,7 +402,7 @@ namespace tool
 		
 		global_running_tasks.erase( it );
 		
-		check_results( wait_status, diagnostics_file_path );
+		//check_results( wait_status, diagnostics_file_path );
 		
 		recovered_task->Return( wait_status );
 	}
