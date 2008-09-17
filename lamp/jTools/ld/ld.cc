@@ -602,11 +602,11 @@ namespace tool
 		switch ( gProductType )
 		{
 			case kProductCodeResource:
-				command.push_back( "-xm" );
-				command.push_back( "c" );
-				command.push_back( "-rsrcfar" );
+				command.push_back( "-xm"        );
+				command.push_back( "c"          );
+				command.push_back( "-rsrcfar"   );
 				command.push_back( "-rsrcflags" );
-				command.push_back( "system" );  // FIXME: Not all code rsrc are system
+				command.push_back( "system"     );  // FIXME: Not all code rsrc are system
 				break;
 			
 			case kProductSharedLib:
@@ -624,25 +624,18 @@ namespace tool
 			case kProductTool:
 				if ( arch == arch_m68k )
 				{
-					command.push_back( "-xm"        );
-					command.push_back( "c"          );
-					command.push_back( "-rsrcfar"   );
-					command.push_back( "-rt"        );
-					command.push_back( "Wish=0"     );
+					command.push_back( "-xm"      );
+					command.push_back( "c"        );
+					command.push_back( "-rsrcfar" );
+					command.push_back( "-rt"      );
+					command.push_back( "Wish=0"   );
 				}
 				else
 				{
-					command.push_back( "-xm"                );
-					command.push_back( "s"                  );
-					/*
-					// These are supplied using the library propagation mechanism
-					command.push_back( "-init"              );
-					command.push_back( "InitializeFragment" );
-					command.push_back( "-term"              );
-					command.push_back( "TerminateFragment"  );
-					*/
-					command.push_back( "-export"            );
-					command.push_back( "sym=main"           );
+					command.push_back( "-xm"      );
+					command.push_back( "s"        );
+					command.push_back( "-export"  );
+					command.push_back( "sym=main" );
 					
 					// MWLinkPPC gets pissy if a shlb is larger than the default size,
 					// even though the size is meaningless since this isn't an app.
