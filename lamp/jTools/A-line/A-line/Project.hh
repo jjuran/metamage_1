@@ -51,8 +51,6 @@ namespace tool
 			std::string its_creator_code;
 			// Source files to compile.
 			std::vector< std::string > its_source_file_pathnames;
-			// Tool source files.
-			std::vector< std::string > its_tool_source_filenames;
 			
 			// maps include paths to absolute pathnames
 			mutable std::map< std::string, std::string > its_include_map;
@@ -80,13 +78,13 @@ namespace tool
 			
 			const std::vector< std::string >& AllUsedProjects() const  { return its_used_project_names;    }
 			
-			const std::vector< std::string >& SearchDirs()      const  { return its_search_dir_pathnames;  }
-			const std::vector< std::string >& ToolSourceFiles() const  { return its_tool_source_filenames; }
+			const std::vector< std::string >& SearchDirs() const  { return its_search_dir_pathnames; }
 			
-			const std::vector< std::string >& LibImports()    const  { return get_values( its_config_data, "imports"    ); }
-			const std::vector< std::string >& Frameworks()    const  { return get_values( its_config_data, "frameworks" ); }
-			const std::vector< std::string >& UsedRezFiles()  const  { return get_values( its_config_data, "rez"        ); }
-			const std::vector< std::string >& UsedRsrcFiles() const  { return get_values( its_config_data, "rsrc"       ); }
+			const std::vector< std::string >& ToolSourceFiles() const  { return get_values( its_config_data, "tools"      ); }
+			const std::vector< std::string >& LibImports()      const  { return get_values( its_config_data, "imports"    ); }
+			const std::vector< std::string >& Frameworks()      const  { return get_values( its_config_data, "frameworks" ); }
+			const std::vector< std::string >& UsedRezFiles()    const  { return get_values( its_config_data, "rez"        ); }
+			const std::vector< std::string >& UsedRsrcFiles()   const  { return get_values( its_config_data, "rsrc"       ); }
 			
 			const std::string& CreatorCode() const  { return its_creator_code; }
 			

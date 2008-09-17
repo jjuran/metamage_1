@@ -552,15 +552,6 @@ namespace tool
 		
 		its_program_filename = get_first( conf_data, "program" );
 		
-		its_tool_source_filenames = get_values( conf_data, "tools" );
-		
-		const bool hasTools = !its_tool_source_filenames.empty();
-		
-		if ( hasTools != ( Product() == productToolkit ) )
-		{
-			// Report error
-		}
-		
 		//printf("%s recursively uses %d projects.\n", proj.c_str(), allUsedProjects.size());
 		
 		// The creator code for linked output files.  Mac only.
