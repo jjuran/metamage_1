@@ -524,6 +524,7 @@ namespace tool
 		its_name  ( proj ),
 		its_platform( platform ),
 		its_dir_pathname( project_dir ),
+		its_config_data( conf_data ),
 		its_product_type   ( productNotBuilt )
 	{
 		its_product_type = ReadProduct( get_first( conf_data, "product" ) );
@@ -533,8 +534,6 @@ namespace tool
 		
 		// Make sure we're in the list too, and make sure we're last.
 		its_used_project_names.push_back( proj );
-		
-		its_lib_import_specs = get_values( conf_data, "imports" );  // Libraries to import.
 		
 		if ( its_product_type == productNotBuilt )
 		{
@@ -571,10 +570,6 @@ namespace tool
 		{
 			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
-		
-		its_framework_names  = get_values( conf_data, "frameworks" );  // Frameworks to include when building for OS X.
-		its_rsrc_filenames   = get_values( conf_data, "rsrc"       );  // Resource files from which to copy resources.
-		its_rez_filenames    = get_values( conf_data, "rez"        );  // Rez files to compile.
 		
 		std::vector< std::string > source_search_dirs;
 		

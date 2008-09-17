@@ -23,6 +23,9 @@
 namespace tool
 {
 	
+	const std::vector< std::string >& get_values( const ConfData& config, const std::string& key );
+	
+	
 	class Project
 	{
 		private:
@@ -33,6 +36,9 @@ namespace tool
 			std::string its_program_filename;
 			// The project's main folder.
 			std::string its_dir_pathname;
+			
+			const ConfData& its_config_data;
+			
 			// The include path to a header to precompile.
 			std::string its_precompiled_header_source_path;
 			// What kind of product this project creates.
@@ -41,10 +47,6 @@ namespace tool
 			std::vector< std::string > its_used_project_names;
 			// Directories to search for headers and unenumerated source files.
 			std::vector< std::string > its_search_dir_pathnames;
-			// Various things to link with.
-			std::vector< std::string > its_rez_filenames, its_rsrc_filenames;
-			std::vector< std::string > its_lib_import_specs;
-			std::vector< std::string > its_framework_names;
 			// Creator code / signature for output files.
 			std::string its_creator_code;
 			// Source files to compile.
@@ -81,10 +83,10 @@ namespace tool
 			const std::vector< std::string >& SearchDirs()      const  { return its_search_dir_pathnames;  }
 			const std::vector< std::string >& ToolSourceFiles() const  { return its_tool_source_filenames; }
 			
-			const std::vector< std::string >& LibImports()    const  { return its_lib_import_specs; }
-			const std::vector< std::string >& Frameworks()    const  { return its_framework_names;  }
-			const std::vector< std::string >& UsedRezFiles()  const  { return its_rez_filenames;    }
-			const std::vector< std::string >& UsedRsrcFiles() const  { return its_rsrc_filenames;   }
+			const std::vector< std::string >& LibImports()    const  { return get_values( its_config_data, "imports"    ); }
+			const std::vector< std::string >& Frameworks()    const  { return get_values( its_config_data, "frameworks" ); }
+			const std::vector< std::string >& UsedRezFiles()  const  { return get_values( its_config_data, "rez"        ); }
+			const std::vector< std::string >& UsedRsrcFiles() const  { return get_values( its_config_data, "rsrc"       ); }
 			
 			const std::string& CreatorCode() const  { return its_creator_code; }
 			
