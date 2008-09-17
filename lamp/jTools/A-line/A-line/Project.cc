@@ -551,11 +551,11 @@ namespace tool
 		its_rsrc_filenames   = config[ "rsrc"       ];  // Resource files from which to copy resources.
 		its_rez_filenames    = config[ "rez"        ];  // Rez files to compile.
 		
-		std::vector< std::string > sourceFileSearchDirs;
+		std::vector< std::string > source_search_dirs;
 		
 		get_source_data( its_dir_pathname,
 		                 config[ "sources" ],
-		                 sourceFileSearchDirs,
+		                 source_search_dirs,
 		                 its_source_file_pathnames );
 		
 		if ( !its_source_file_pathnames.empty() )
@@ -564,12 +564,12 @@ namespace tool
 		}
 		
 		// Try a Source.list file
-		std::string sourceDotListfile = SourceDotListFile( its_dir_pathname );
+		std::string source_list = SourceDotListFile( its_dir_pathname );
 		
-		its_source_file_pathnames = io::item_exists( sourceDotListfile ) ? find_sources( ReadSourceDotList( sourceDotListfile ),
-			                                                                             its_search_dir_pathnames )
-			                                                             : list_sources( !sourceFileSearchDirs.empty() ? sourceFileSearchDirs
-			                                                                                                           : its_search_dir_pathnames );
+		its_source_file_pathnames = io::item_exists( source_list ) ? find_sources( ReadSourceDotList( source_list ),
+		                                                                           its_search_dir_pathnames )
+		                                                           : list_sources( !source_search_dirs.empty() ? source_search_dirs
+		                                                                                                       : its_search_dir_pathnames );
 	}
 	
 }
