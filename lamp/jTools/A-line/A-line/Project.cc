@@ -209,7 +209,8 @@ namespace tool
 		try
 		{
 			std::string dirPath = pathname[0] == '/' ? pathname
-			                                         : p7::realpath( cwdPath / pathname );
+			                    : pathname[0] == '~' ? home_dir_pathname() / (pathname.c_str() + 2)
+			                    :                      p7::realpath( cwdPath / pathname );
 			
 			if ( io::directory_exists( dirPath ) )
 			{
