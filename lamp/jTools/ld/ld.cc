@@ -287,14 +287,6 @@ namespace tool
 	
 	static ProductType gProductType = kProductTool;
 	
-	static std::string ProductOptionsForTool( bool cfm )
-	{
-		std::string build = cfm ? "-xm s -init InitializeFragment -term TerminateFragment -export sym=main -sizemin 4096 -sizemax 8192"
-		                        : "-xm c -rsrcfar -rsrcflags system -rt Wish=0";
-		
-		return build + " -t Wish -c Poof";
-	}
-	
 	static unsigned long GetOffsetOfRoutine( const FSSpec& file, const char* quoted_name )
 	{
 		FSSpec linkMap = file;
