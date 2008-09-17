@@ -54,13 +54,15 @@ namespace tool
 	
 	void Task::Run()
 	{
-		Main();
+		Start();
 		
 		Complete();
 	}
 	
 	void Task::Complete()
 	{
+		Finish();
+		
 		std::for_each( its_dependents.begin(),
 		               its_dependents.end(),
 		               std::bind2nd( more::ptr_fun( UpdateTaskInputStamp ),
@@ -93,7 +95,7 @@ namespace tool
 		return MoreRecent( OutputStamp() );
 	}
 	
-	void FileTask::Main()
+	void FileTask::Start()
 	{
 		// If the output file exists and it's up to date, we can skip this.
 		
@@ -103,7 +105,10 @@ namespace tool
 		}
 		
 		Make();
-		
+	}
+	
+	void FileTask::Finish()
+	{
 		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
 	}
 	

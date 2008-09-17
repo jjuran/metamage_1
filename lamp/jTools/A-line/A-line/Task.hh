@@ -50,7 +50,8 @@ namespace tool
 			
 			void AddDependent( const TaskPtr& task )  { its_dependents.push_back( task ); }
 			
-			virtual void Main() = 0;
+			virtual void Start() = 0;
+			virtual void Finish()  {}
 			
 			void Run();
 			
@@ -60,7 +61,8 @@ namespace tool
 	class NullTask : public Task
 	{
 		public:
-			void Main()  {}
+			void Start()  {}
+			void Finish()  {}
 	};
 	
 	class FileTask : public Task
@@ -81,7 +83,8 @@ namespace tool
 			
 			virtual void Make() = 0;
 			
-			void Main();
+			void Start();
+			void Finish();
 			
 	};
 	

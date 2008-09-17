@@ -66,10 +66,10 @@ namespace tool
 			{
 			}
 			
-			void Main();
+			void Start();
 	};
 	
-	void RemoveDirTask::Main()
+	void RemoveDirTask::Start()
 	{
 		(void) rmdir( its_pathname.c_str() );
 	}
