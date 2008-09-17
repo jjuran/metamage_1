@@ -57,12 +57,19 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
+	static std::string diagnostics_file_path( const std::string&  dir_path,
+	                                          const std::string&  target_path )
+	{
+		return dir_path / io::get_filename( target_path ) + ".txt";
+	}
+	
 	class CompilingTask : public FileTask
 	{
 		private:
 			const Project&   its_project;
 			CompilerOptions  its_options;
 			std::string      its_source_pathname;
+			std::string      its_diagnostics_file_path;
 			const char*      its_caption;
 		
 		public:
@@ -70,11 +77,14 @@ namespace tool
 			               const CompilerOptions&  options,
 			               const std::string&      source,
 			               const std::string&      output,
-			               const char*             caption ) : FileTask           ( output ),
-			                                                   its_project        ( project ),
-			                                                   its_options        ( options ),
-			                                                   its_source_pathname( source  ),
-			                                                   its_caption        ( caption )
+			               const std::string&      diagnostics,
+			               const char*             caption )
+			: FileTask                 ( output ),
+			  its_project              ( project ),
+			  its_options              ( options ),
+			  its_source_pathname      ( source  ),
+			  its_diagnostics_file_path( diagnostics_file_path( diagnostics, output ) ),
+			  its_caption              ( caption )
 			{
 			}
 			
@@ -132,19 +142,6 @@ namespace tool
 		}
 		
 		return folder;
-	}
-	
-	static std::string DiagnosticsFilenameFromSourceFilename( const std::string& filename )
-	{
-		return filename + ".txt";
-	}
-	
-	static std::string DiagnosticsPathnameFromSourceFilename( const std::string&  project_name,
-	                                                          const std::string&  source_filename )
-	{
-		std::string diagnostics_dir = ProjectDiagnosticsDirPath( project_name );
-		
-		return diagnostics_dir / DiagnosticsFilenameFromSourceFilename( source_filename );
 	}
 	
 	static Command MakeCompileCommand( const CompilerOptions&  options,
@@ -369,9 +366,7 @@ namespace tool
 		
 		std::string source_filename = io::get_filename_string( its_source_pathname );
 		
-		std::string diagnostics_pathname = DiagnosticsPathnameFromSourceFilename( its_options.Name(), source_filename );
-		
-		RunCommand( command, diagnostics_pathname.c_str(), its_caption + source_filename );
+		RunCommand( command, its_diagnostics_file_path.c_str(), its_caption + source_filename );
 	}
 	
 	
@@ -504,6 +499,7 @@ namespace tool
 				                                 source_options,
 				                                 source_pathname,
 				                                 object_pathname,
+				                                 ProjectDiagnosticsDirPath( its_project.Name() ),
 				                                 caption ) );
 				
 				its_precompile_task->AddDependent( task );
@@ -534,6 +530,7 @@ namespace tool
 		
 		CompilerOptions precompile_options = options;
 		
+		const std::string& diagnostics_dir_path = ProjectDiagnosticsDirPath( project.Name() );
 		
 		TaskPtr precompile_task( new NullTask() );
 		
@@ -575,6 +572,7 @@ namespace tool
 				                                          precompile_options,
 				                                          precompiled_header_source_pathname,
 				                                          pchImage,
+				                                          diagnostics_dir_path,
 				                                          "Precompiling: " ) );
 				
 				project.set_precompile_task( precompile_task );
@@ -630,7 +628,12 @@ namespace tool
 			
 			const char* caption = "Compiling: ";
 			
-			TaskPtr task( new CompilingTask( project, source_options, source_pathname, output_path, caption ) );
+			TaskPtr task( new CompilingTask( project,
+			                                 source_options,
+			                                 source_pathname,
+			                                 output_path,
+			                                 diagnostics_dir_path,
+			                                 caption ) );
 			
 			precompile_task->AddDependent( task );
 			
