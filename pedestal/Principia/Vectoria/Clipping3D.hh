@@ -6,6 +6,10 @@
 #ifndef VECTORIA_CLIPPING3D_HH
 #define VECTORIA_CLIPPING3D_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 #include "Vectoria/LinearAlgebra3D.hh"
 
 

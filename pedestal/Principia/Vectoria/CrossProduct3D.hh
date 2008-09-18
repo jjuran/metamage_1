@@ -6,6 +6,10 @@
 #ifndef VECTORIA_CROSSPRODUCT_HH
 #define VECTORIA_CROSSPRODUCT_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Vertice
 #include "Vectoria/Coordinates.hh"
 #include "Vectoria/Vector.hh"

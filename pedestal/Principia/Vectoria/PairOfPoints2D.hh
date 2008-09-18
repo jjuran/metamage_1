@@ -6,6 +6,10 @@
 #ifndef VECTORIA_PAIROFPOINTS2D_HH
 #define VECTORIA_PAIROFPOINTS2D_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Vertice
 #include "Vectoria/Coordinates.hh"
 #include "Vectoria/Point2D.hh"

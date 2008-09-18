@@ -6,6 +6,10 @@
 #ifndef VECTORIA_LINEARALGEBRA2D_HH
 #define VECTORIA_LINEARALGEBRA2D_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C/C++
 #include <cmath>
 

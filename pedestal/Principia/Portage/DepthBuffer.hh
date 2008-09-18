@@ -6,6 +6,10 @@
 #ifndef PORTAGE_DEPTHBUFFER_HH
 #define PORTAGE_DEPTHBUFFER_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <algorithm>
 #include <vector>

@@ -6,6 +6,10 @@
 #ifndef VECTORIA_MATRIX_HH
 #define VECTORIA_MATRIX_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 #include <algorithm>
 #include <functional>
 

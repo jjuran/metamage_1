@@ -6,6 +6,10 @@
 #ifndef VECTORIA_VIEWFRUSTUM_HH
 #define VECTORIA_VIEWFRUSTUM_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C/C++
 #include <cmath>
 

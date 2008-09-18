@@ -6,6 +6,10 @@
 #ifndef VECTORIA_HOMOGENEOUSCLIPPING_HH
 #define VECTORIA_HOMOGENEOUSCLIPPING_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 #include "Vectoria/Matrix.hh"
 
 

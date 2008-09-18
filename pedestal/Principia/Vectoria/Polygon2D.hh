@@ -6,6 +6,10 @@
 #ifndef VECTORIA_POLYGON2D_HH
 #define VECTORIA_POLYGON2D_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <vector>
 
