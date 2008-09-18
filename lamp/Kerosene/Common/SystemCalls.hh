@@ -6,16 +6,14 @@
 #ifndef KEROSENE_SYSTEMCALLS_HH
 #define KEROSENE_SYSTEMCALLS_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 struct AEDesc;
 typedef AEDesc AppleEvent;
 
 struct InetMailExchange;
-
-
-#ifdef __cplusplus
-#include <string>
-#endif
-
 
 #ifdef __cplusplus
 extern "C" {
