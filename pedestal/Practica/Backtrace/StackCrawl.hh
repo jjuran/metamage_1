@@ -6,6 +6,10 @@
 #ifndef BACKTRACE_STACKCRAWL_HH
 #define BACKTRACE_STACKCRAWL_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <vector>
 

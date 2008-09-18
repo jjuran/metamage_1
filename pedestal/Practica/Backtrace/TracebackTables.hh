@@ -6,6 +6,10 @@
 #ifndef BACKTRACE_TRACEBACKTABLES_HH
 #define BACKTRACE_TRACEBACKTABLES_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <string>
 

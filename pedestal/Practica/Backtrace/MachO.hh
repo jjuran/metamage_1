@@ -6,6 +6,10 @@
 #ifndef BACKTRACE_MACHO_HH
 #define BACKTRACE_MACHO_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <string>
 

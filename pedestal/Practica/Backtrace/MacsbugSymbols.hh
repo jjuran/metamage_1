@@ -6,6 +6,10 @@
 #ifndef BACKTRACE_MACSBUGSYMBOLS_HH
 #define BACKTRACE_MACSBUGSYMBOLS_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <string>
 

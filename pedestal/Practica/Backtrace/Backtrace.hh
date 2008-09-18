@@ -6,6 +6,10 @@
 #ifndef BACKTRACE_BACKTRACE_HH
 #define BACKTRACE_BACKTRACE_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <string>
 #include <vector>

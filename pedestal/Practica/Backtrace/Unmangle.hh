@@ -6,6 +6,10 @@
 #ifndef BACKTRACE_UNMANGLE_HH
 #define BACKTRACE_UNMANGLE_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <string>
 
