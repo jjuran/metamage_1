@@ -6,10 +6,6 @@
 #ifndef TIMEOFF_HH
 #define TIMEOFF_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace TimeOff
 {

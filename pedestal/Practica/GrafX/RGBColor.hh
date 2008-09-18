@@ -6,10 +6,6 @@
 #ifndef GRAFX_RGBCOLOR_HH
 #define GRAFX_RGBCOLOR_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Nucleus
 #include "Nucleus/Convert.h"
 

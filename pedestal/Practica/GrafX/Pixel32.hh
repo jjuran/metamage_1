@@ -6,10 +6,6 @@
 #ifndef GRAFX_PIXEL32_HH
 #define GRAFX_PIXEL32_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Mac OS Universal Interfaces
 #include <Quickdraw.h>
 

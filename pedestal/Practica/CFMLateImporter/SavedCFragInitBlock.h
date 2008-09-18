@@ -6,10 +6,6 @@
 #ifndef SAVEDCFRAGINITBLOCK_H
 #define SAVEDCFRAGINITBLOCK_H
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 #include <MacTypes.h>
 
 
