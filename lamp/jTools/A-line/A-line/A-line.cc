@@ -307,26 +307,19 @@ namespace tool
 		}
 	}
 	
-	static void check_results( p7::wait_t wait_status )
-	{
-		const bool had_errors = wait_status != 0;
-		
-		if ( had_errors )
-		{
-			const bool signaled = p7::wifsignaled( wait_status );
-			
-			const char* ended  = signaled ? "terminated via signal" : "exited with status";
-			int         status = signaled ? WTERMSIG( wait_status ) : WEXITSTATUS( wait_status );
-			
-			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
-			
-			O::ThrowExitStatus( signaled ? 2 : p7::exit_failure );
-		}
-	}
-	
 	
 	static std::map< p7::pid_t, TaskPtr > global_running_tasks;
 	
+	
+	inline bool is_user_break( p7::wait_t wait_status )
+	{
+		return p7::wifexited( wait_status )  &&  p7::wexitstatus( wait_status ) == 128;
+	}
+	
+	inline bool is_plain_error( p7::wait_t wait_status )
+	{
+		return p7::wifexited( wait_status )  &&  p7::wexitstatus( wait_status ) == 1;
+	}
 	
 	static void end_task( p7::pid_t pid, p7::wait_t wait_status )
 	{
@@ -342,17 +335,21 @@ namespace tool
 		{
 			task->Success();
 		}
-		else
+		else if ( is_plain_error( wait_status ) )
 		{
 			task->Failure();
 		}
-		
-		check_results( wait_status );
-	}
-	
-	inline bool is_user_break( p7::wait_t wait_status )
-	{
-		return p7::wifexited( wait_status )  &&  p7::wexitstatus( wait_status ) == 128;
+		else
+		{
+			const bool signaled = p7::wifsignaled( wait_status );
+			
+			const char* ended  = signaled ? "terminated via signal" : "exited with status";
+			int         status = signaled ? WTERMSIG( wait_status ) : WEXITSTATUS( wait_status );
+			
+			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
+			
+			O::ThrowExitStatus( signaled ? 2 : p7::exit_failure );
+		}
 	}
 	
 	static bool wait_and_end_task( bool nonblocking )
@@ -731,6 +728,13 @@ namespace tool
 		}
 		
 		reap_jobs( false );
+		
+		if ( std::size_t n = CountFailures() )
+		{
+			std::fprintf( stderr, "### A-line: %d task%s had errors\n", n, n == 1 ? "" : "s" );
+			
+			return EXIT_FAILURE;
+		}
 		
 		return EXIT_SUCCESS;
 	}
