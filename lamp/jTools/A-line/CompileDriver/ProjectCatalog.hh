@@ -6,10 +6,6 @@
 #ifndef COMPILEDRIVER_PROJECTCATALOG_HH
 #define COMPILEDRIVER_PROJECTCATALOG_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C++
 #include <iterator>
 #include <map>

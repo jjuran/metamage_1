@@ -6,10 +6,6 @@
 #ifndef ALINE_DEEPFILES_HH
 #define ALINE_DEEPFILES_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // C++
 #include <string>
 #include <vector>

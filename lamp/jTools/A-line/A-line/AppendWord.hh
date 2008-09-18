@@ -6,10 +6,6 @@
 #ifndef ALINE_APPENDWORD_HH
 #define ALINE_APPENDWORD_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace tool
 {

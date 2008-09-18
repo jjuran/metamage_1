@@ -6,10 +6,6 @@
 #ifndef ALINE_PROJECTCOMMON_HH
 #define ALINE_PROJECTCOMMON_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C++
 #include <string>
 #include <vector>

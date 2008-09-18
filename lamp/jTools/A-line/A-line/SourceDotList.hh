@@ -6,10 +6,6 @@
 #ifndef ALINE_SOURCEDOTLIST_HH
 #define ALINE_SOURCEDOTLIST_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // C++
 #include <string>
 #include <vector>

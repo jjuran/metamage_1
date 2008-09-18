@@ -6,10 +6,6 @@
 #ifndef ALINE_COMMANDS_HH
 #define ALINE_COMMANDS_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C++
 #include <algorithm>
 #include <string>

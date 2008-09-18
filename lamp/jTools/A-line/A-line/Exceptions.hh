@@ -6,10 +6,6 @@
 #ifndef ALINE_EXCEPTIONS_HH
 #define ALINE_EXCEPTIONS_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C++
 #include <string>
 
