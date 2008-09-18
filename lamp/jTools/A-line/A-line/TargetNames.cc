@@ -64,12 +64,12 @@ namespace tool
 		return "";
 	}
 	
-	TargetName MakeTargetName( Platform      arch,
-	                           Platform      runtime,
-	                           Platform      api,
-	                           BuildVariety  build )
+	std::string MakeTargetName( Platform      arch,
+	                            Platform      runtime,
+	                            Platform      api,
+	                            BuildVariety  build )
 	{
-		TargetName name;
+		std::string name;
 		
 	#if ALINE_CROSS_DEVELOPMENT
 		

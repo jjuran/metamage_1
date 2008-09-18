@@ -18,14 +18,12 @@
 namespace tool
 {
 	
-	typedef std::string TargetName;
-	
 	std::string ArchName( Platform arch );
 	
-	TargetName MakeTargetName( Platform      arch,
-	                           Platform      runtime,
-	                           Platform      api,
-	                           BuildVariety  build );
+	std::string MakeTargetName( Platform      arch,
+	                            Platform      runtime,
+	                            Platform      api,
+	                            BuildVariety  build );
 	
 }
 
