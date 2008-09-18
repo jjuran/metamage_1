@@ -44,7 +44,9 @@ namespace tool
 	                     const std::vector< const char* >&  command,
 	                     const char*                        diagnostics_file_path = NULL );
 	
-	void check_results( poseven::wait_t wait_status, const char* diagnostics_path );
+	void check_diagnostics( poseven::wait_t wait_status, const char* diagnostics_path );
+	
+	void check_results( poseven::wait_t wait_status );
 	
 }
 

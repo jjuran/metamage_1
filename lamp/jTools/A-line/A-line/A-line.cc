@@ -289,7 +289,7 @@ namespace tool
 		                            size,       stuff,               pathname );
 	}
 	
-	static void check_diagnostics( p7::wait_t wait_status, const char* diagnostics_path )
+	void check_diagnostics( p7::wait_t wait_status, const char* diagnostics_path )
 	{
 		if ( !is_null( diagnostics_path ) )
 		{
@@ -318,10 +318,8 @@ namespace tool
 		}
 	}
 	
-	void check_results( p7::wait_t wait_status, const char* diagnostics_path )
+	void check_results( p7::wait_t wait_status )
 	{
-		check_diagnostics( wait_status, diagnostics_path );
-		
 		const bool had_errors = wait_status != 0;
 		
 		if ( had_errors )

@@ -373,7 +373,9 @@ namespace tool
 	
 	void CompilingTask::Return( p7::wait_t wait_status )
 	{
-		check_results( wait_status, its_diagnostics_file_path.c_str() );
+		check_diagnostics( wait_status, its_diagnostics_file_path.c_str() );
+		
+		check_results( wait_status );
 	}
 	
 	
