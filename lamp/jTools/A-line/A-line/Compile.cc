@@ -413,16 +413,16 @@ namespace tool
 			options.DEFINE_MACRO( "__LaMP__" );
 		}
 		
-		if ( target_info.platform & CD::apiMacCarbon )
+		if ( target_info.platform & apiMacCarbon )
 		{
 			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
 		}
-		else if ( target_info.platform & CD::apiMacBlue )
+		else if ( target_info.platform & apiMacBlue )
 		{
 			options.DEFINE_MACRO_VALUE( "TARGET_API_MAC_CARBON", 0 );
 			options.DEFINE_MACRO( "TARGET_API_MAC_OS8" );
 			
-			if ( target_info.platform & CD::archPPC )
+			if ( target_info.platform & archPPC )
 			{
 				options.DEFINE_MACRO( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
 				options.DEFINE_MACRO( "OPAQUE_UPP_TYPES" );

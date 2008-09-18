@@ -16,23 +16,21 @@
 namespace tool
 {
 	
-	namespace CD = CompileDriver;
-	
 	struct TargetInfo
 	{
-		CD::Platform  platform;
+		Platform      platform;
 		EnvType       envType;
 		Toolchain     toolchain;
 		BuildVariety  build;
 		
-		TargetInfo() : platform ( CD::Platform()       ),
+		TargetInfo() : platform ( Platform()           ),
 		               envType  ( envUnspecified       ),
 		               toolchain( toolchainUnspecified ),
 		               build    ( buildDefault         )
 		{
 		}
 		
-		TargetInfo( CD::Platform  platform,
+		TargetInfo( Platform      platform,
 		            BuildVariety  build ) : platform ( platform             ),
 		                                    envType  ( envUnspecified       ),
 		                                    toolchain( toolchainUnspecified ),

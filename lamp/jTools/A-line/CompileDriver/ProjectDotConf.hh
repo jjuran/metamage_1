@@ -11,7 +11,7 @@
 #include <vector>
 
 
-namespace CompileDriver
+namespace tool
 {
 	
 	typedef std::string ConfigKey;

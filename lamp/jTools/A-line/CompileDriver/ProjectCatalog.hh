@@ -23,7 +23,7 @@
 #include "CompileDriver/ProjectConfig.hh"
 
 
-namespace CompileDriver
+namespace tool
 {
 	
 	struct ProjectConfig

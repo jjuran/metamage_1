@@ -20,9 +20,6 @@
 namespace tool
 {
 	
-	namespace CD = CompileDriver;
-	
-	
 	static const std::string space = " ";
 	
 	typedef std::vector< const char* > Command;
@@ -84,15 +81,15 @@ namespace tool
 		CommandGenerator( const TargetInfo& target )
 		:
 			target( target ),
-			m68k  ( target.platform & CD::arch68K               ),
-			ppc   ( target.platform & CD::archPPC               ),
-			x86   ( target.platform & CD::archX86               ),
-			a4    ( target.platform & CD::runtimeA4CodeResource ),
-			a5    ( target.platform & CD::runtimeA5CodeSegments ),
-			cfm   ( target.platform & CD::runtimeCodeFragments  ),
-			machO ( target.platform & CD::runtimeMachO          ),
-			blue  ( target.platform & CD::apiMacBlue            ),
-			carbon( target.platform & CD::apiMacCarbon          ),
+			m68k  ( target.platform & arch68K               ),
+			ppc   ( target.platform & archPPC               ),
+			x86   ( target.platform & archX86               ),
+			a4    ( target.platform & runtimeA4CodeResource ),
+			a5    ( target.platform & runtimeA5CodeSegments ),
+			cfm   ( target.platform & runtimeCodeFragments  ),
+			machO ( target.platform & runtimeMachO          ),
+			blue  ( target.platform & apiMacBlue            ),
+			carbon( target.platform & apiMacCarbon          ),
 			debug ( target.build     == buildDebug   ),
 			gnu   ( target.toolchain == toolchainGNU )
 		{}

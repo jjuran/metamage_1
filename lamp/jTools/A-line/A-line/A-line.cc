@@ -71,7 +71,6 @@ namespace tool
 	
 	namespace p7 = poseven;
 	namespace O = Orion;
-	namespace CD = CompileDriver;
 	
 	
 	using namespace io::path_descent_operators;
@@ -139,9 +138,9 @@ namespace tool
 	
 	inline std::string MakeTargetName( const TargetInfo& info )
 	{
-		return MakeTargetName( info.platform & CD::archMask,
-		                       info.platform & CD::runtimeMask,
-		                       info.platform & CD::apiMask,
+		return MakeTargetName( info.platform & archMask,
+		                       info.platform & runtimeMask,
+		                       info.platform & apiMask,
 		                       info.build );
 	}
 	
@@ -503,14 +502,14 @@ namespace tool
 	
 	static void ApplyTargetDefaults( TargetInfo& target )
 	{
-		CD::ApplyPlatformDefaults( target.platform );
+		ApplyPlatformDefaults( target.platform );
 		
 		if ( target.build == buildDefault )
 		{
 			target.build = buildDebug;
 		}
 		
-		if ( !ALINE_CROSS_DEVELOPMENT  ||  target.platform & CD::runtimeMachO )
+		if ( !ALINE_CROSS_DEVELOPMENT  ||  target.platform & runtimeMachO )
 		{
 			target.envType   = envUnix;
 		}
@@ -522,7 +521,7 @@ namespace tool
 		// (a) Metrowerks/Mach-O is fully untested and almost certainly broken
 		// (b) This doesn't consider MPW compilers
 		
-		if ( !ALINE_CROSS_DEVELOPMENT  ||  target.platform & CD::runtimeMachO )
+		if ( !ALINE_CROSS_DEVELOPMENT  ||  target.platform & runtimeMachO )
 		{
 			target.toolchain = toolchainGNU;
 		}
@@ -548,9 +547,9 @@ namespace tool
 	{
 		if ( argc <= 1 )  return 0;
 		
-		CD::Platform arch    = CD::platformUnspecified;
-		CD::Platform runtime = CD::platformUnspecified;
-		CD::Platform macAPI  = CD::platformUnspecified;
+		Platform arch    = platformUnspecified;
+		Platform runtime = platformUnspecified;
+		Platform macAPI  = platformUnspecified;
 		
 		BuildVariety buildVariety = buildDefault;
 		
@@ -576,17 +575,17 @@ namespace tool
 		
 		// Targeting
 		
-		O::BindOption( "-6", arch, CD::arch68K );
-		O::BindOption( "-P", arch, CD::archPPC );
-		O::BindOption( "-8", arch, CD::archX86 );
+		O::BindOption( "-6", arch, arch68K );
+		O::BindOption( "-P", arch, archPPC );
+		O::BindOption( "-8", arch, archX86 );
 		
-		O::BindOption( "-4", runtime, CD::runtimeA4CodeResource );
-		O::BindOption( "-5", runtime, CD::runtimeA5CodeSegments );
-		O::BindOption( "-F", runtime, CD::runtimeCodeFragments  );
-		O::BindOption( "-O", runtime, CD::runtimeMachO          );
+		O::BindOption( "-4", runtime, runtimeA4CodeResource );
+		O::BindOption( "-5", runtime, runtimeA5CodeSegments );
+		O::BindOption( "-F", runtime, runtimeCodeFragments  );
+		O::BindOption( "-O", runtime, runtimeMachO          );
 		
-		O::BindOption( "-B", macAPI, CD::apiMacBlue   );
-		O::BindOption( "-C", macAPI, CD::apiMacCarbon );
+		O::BindOption( "-B", macAPI, apiMacBlue   );
+		O::BindOption( "-C", macAPI, apiMacCarbon );
 		
 		O::BindOption( "-g", buildVariety, buildDebug   );
 		O::BindOption( "-R", buildVariety, buildRelease );
@@ -616,9 +615,9 @@ namespace tool
 		
 		char const *const *freeArgs = O::FreeArguments();
 		
-		CD::Platform targetPlatform = arch | runtime | macAPI;
+		Platform targetPlatform = arch | runtime | macAPI;
 		
-		CD::AddPendingSubproject( UserSrcTreePath() );
+		AddPendingSubproject( UserSrcTreePath() );
 		
 		std::string catalog_cache_pathname = get_user_cache_pathname() / "catalog";
 		
@@ -648,7 +647,7 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, STR_LEN( "# Loading project data..." ) );
 		
-		CD::ApplyPlatformDefaults( targetPlatform );
+		ApplyPlatformDefaults( targetPlatform );
 		
 		for ( int i = 0;  freeArgs[ i ] != NULL;  ++i )
 		{
@@ -658,7 +657,7 @@ namespace tool
 			{
 				Project& project = GetProject( project_name, targetPlatform );
 			}
-			catch ( const CD::NoSuchProject& )
+			catch ( const NoSuchProject& )
 			{
 				std::fprintf( stderr, "A-line: No such project '%s'\n", project_name.c_str() );
 				

@@ -18,15 +18,13 @@
 namespace tool
 {
 	
-	namespace CD = CompileDriver;
-	
 	typedef std::string TargetName;
 	
-	std::string ArchName( CD::Platform arch );
+	std::string ArchName( Platform arch );
 	
-	TargetName MakeTargetName( CD::Platform  arch,
-	                           CD::Platform  runtime,
-	                           CD::Platform  api,
+	TargetName MakeTargetName( Platform      arch,
+	                           Platform      runtime,
+	                           Platform      api,
 	                           BuildVariety  build );
 	
 }

@@ -70,7 +70,7 @@ ppc-macho-carbon
 
 */
 
-namespace CompileDriver
+namespace tool
 {
 	
 	enum Platform
@@ -274,13 +274,6 @@ namespace CompileDriver
 		
 	#endif
 	}
-	
-}
-
-namespace tool
-{
-	
-	using namespace CompileDriver;  // End the madness
 	
 }
 

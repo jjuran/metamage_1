@@ -13,13 +13,13 @@ namespace tool
 	
 	class InvalidPlatform {};
 	
-	std::string ArchName( CD::Platform arch )
+	std::string ArchName( Platform arch )
 	{
 		switch ( arch )
 		{
-			case CD::arch68K:  return "68K";
-			case CD::archPPC:  return "PPC";
-			case CD::archX86:  return "X86";
+			case arch68K:  return "68K";
+			case archPPC:  return "PPC";
+			case archX86:  return "X86";
 		};
 		
 		std::fprintf( stderr, "Invalid arch: %x\n", arch );
@@ -27,26 +27,26 @@ namespace tool
 		throw InvalidPlatform();
 	}
 	
-	static std::string RuntimeName( CD::Platform rt )
+	static std::string RuntimeName( Platform rt )
 	{
 		switch ( rt )
 		{
-			case CD::runtimeA4CodeResource:  return "Res";
-			case CD::runtimeA5CodeSegments:  return "Code";
-			case CD::runtimeCodeFragments:   return "CFM";
-			case CD::runtimeMachO:           return "MachO";
+			case runtimeA4CodeResource:  return "Res";
+			case runtimeA5CodeSegments:  return "Code";
+			case runtimeCodeFragments:   return "CFM";
+			case runtimeMachO:           return "MachO";
 		};
 		
 		return "";
 	}
 	
-	static std::string APIName( CD::Platform api )
+	static std::string APIName( Platform api )
 	{
 		switch ( api )
 		{
-			case CD::apiMacBlue:    return "Blue";
-			case CD::apiMacCarbon:  return "Carbon";
-			default:                return "NA";
+			case apiMacBlue:    return "Blue";
+			case apiMacCarbon:  return "Carbon";
+			default:            return "NA";
 		};
 		
 		return "";
@@ -64,9 +64,9 @@ namespace tool
 		return "";
 	}
 	
-	TargetName MakeTargetName( CD::Platform  arch,
-	                           CD::Platform  runtime,
-	                           CD::Platform  api,
+	TargetName MakeTargetName( Platform      arch,
+	                           Platform      runtime,
+	                           Platform      api,
 	                           BuildVariety  build )
 	{
 		TargetName name;

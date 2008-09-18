@@ -31,7 +31,7 @@
 #include "Io/TextInput.hh"
 
 
-namespace CompileDriver
+namespace tool
 {
 	
 	namespace NN = Nucleus;

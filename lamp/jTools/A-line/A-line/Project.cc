@@ -78,7 +78,6 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace CD = CompileDriver;
 	
 	using namespace io::path_descent_operators;
 	
@@ -271,7 +270,7 @@ namespace tool
 		return productNotBuilt;
 	}
 	
-	static std::vector< std::string > GetDirectlyUsedProjectsFromConfig( const CD::ConfData& config )
+	static std::vector< std::string > GetDirectlyUsedProjectsFromConfig( const ConfData& config )
 	{
 		// Figure out which projects we use
 		const std::vector< std::string >& moreUsedProjects = get_values( config, "use" );
@@ -293,7 +292,7 @@ namespace tool
 		{
 			return GetProject( used_name, platform );
 		}
-		catch ( const CD::NoSuchProject& )
+		catch ( const NoSuchProject& )
 		{
 			throw NoSuchUsedProject( user_name, used_name );
 		}
@@ -302,9 +301,9 @@ namespace tool
 		throw;
 	}
 	
-	static std::vector< std::string > GetAllUsedProjects( const std::string&   project_name,
-	                                                      Platform             platform,
-	                                                      const CD::ConfData&  config )
+	static std::vector< std::string > GetAllUsedProjects( const std::string&  project_name,
+	                                                      Platform            platform,
+	                                                      const ConfData&     config )
 	{
 		std::vector< std::string > used_project_names = GetDirectlyUsedProjectsFromConfig( config );
 		

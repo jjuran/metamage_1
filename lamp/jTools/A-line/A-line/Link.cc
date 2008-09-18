@@ -706,7 +706,7 @@ namespace tool
 			AddProjectImports( project, targetInfo.platform, link_input_arguments );
 		}
 		
-		const bool machO = real_unix && targetInfo.platform & CD::runtimeMachO;
+		const bool machO = real_unix && targetInfo.platform & runtimeMachO;
 		
 		if ( machO )
 		{
@@ -829,7 +829,7 @@ namespace tool
 				
 				TaskPtr rez_task;
 				
-				const CD::Platform carbonCFM = CD::apiMacCarbon | CD::runtimeCodeFragments;
+				const Platform carbonCFM = apiMacCarbon | runtimeCodeFragments;
 				
 				const bool needsCarbResource = project.Product() == productApplication  &&  (targetInfo.platform & carbonCFM) == carbonCFM;
 				
