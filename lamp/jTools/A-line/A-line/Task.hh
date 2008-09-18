@@ -55,6 +55,10 @@ namespace tool
 			
 			virtual void Return( poseven::wait_t wait_status )  {}
 			
+			virtual void Success()  {}
+			
+			void Failure();
+			
 			void Run();
 			
 			void Complete();
@@ -87,6 +91,9 @@ namespace tool
 			virtual void Make() = 0;
 			
 			void Start();
+			
+			void Success();
+			void Failure();
 			
 	};
 	

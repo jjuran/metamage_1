@@ -351,6 +351,15 @@ namespace tool
 		
 		task->Return( wait_status );
 		
+		if ( wait_status == 0 )
+		{
+			task->Success();
+		}
+		else
+		{
+			task->Failure();
+		}
+		
 		check_results( wait_status );
 	}
 	

@@ -81,6 +81,12 @@ namespace tool
 		its_dependents.clear();
 	}
 	
+	void Task::Failure()
+	{
+		// Save the task for later reporting and to tie up its dependents
+		gFailedTasks.push_back( shared_from_this() );
+	}
+	
 	
 	time_t FileTask::OutputStamp() const
 	{
@@ -114,6 +120,10 @@ namespace tool
 	}
 	
 	FileTask::~FileTask()
+	{
+	}
+	
+	void FileTask::Success()
 	{
 		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
 	}
