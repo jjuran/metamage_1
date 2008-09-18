@@ -10,8 +10,11 @@
 #include <AERegistry.h>
 #endif
 
-// C++ Standard Library
+// Standard C++
 #include <string>
+
+// Standard C
+#include <signal.h>
 
 // POSIX
 #include <unistd.h>
@@ -296,20 +299,48 @@ namespace tool
 		return script;
 	}
 	
+	static void ConvertAndDumpMacText( std::string& text, p7::fd_t fd )
+	{
+		std::replace( text.begin(), text.end(), '\r', '\n' );
+		
+		io::write( fd, text.data(), text.size() );
+	}
+	
 	static void DumpFile( const FSSpec& file, p7::fd_t fd )
 	{
-		std::string outputFromToolServer = io::slurp_file< NN::StringFlattener< std::string > >( file );
+		std::string text = io::slurp_file< NN::StringFlattener< std::string > >( file );
 		
-		std::replace( outputFromToolServer.begin(), outputFromToolServer.end(), '\r', '\n' );
-		
-		io::write( fd, outputFromToolServer.data(), outputFromToolServer.size() );
+		ConvertAndDumpMacText( text, fd );
 	}
 	
 	int RunCommandInToolServer( const std::string& command )
 	{
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		DumpFile( gTempFiles[ kErrorFile  ], p7::stderr_fileno );
+		std::string errors = io::slurp_file< NN::StringFlattener< std::string > >( gTempFiles[ kErrorFile ].Get() );
+		
+		// A Metrowerks tool returns 1 on error and 2 on user break, except that
+		// if you limit the number of diagnostics displayed and there more errors
+		// than the limit, it pretends that YOU canceled it while printing the
+		// output, claiming "User break", and returning 2.  Here we fix that.
+		
+		if ( result == 2 )
+		{
+			if ( errors == "\r" "User break, cancelled..." "\r" )
+			{
+				// User pressed Command-period
+				return 128;
+			}
+			else
+			{
+				// Sorry, but the existence of more errors than I asked to be
+				// printed does NOT equal user-sponsored cancellation.
+				result = 1;
+			}
+		}
+		
+		ConvertAndDumpMacText( errors, p7::stderr_fileno );
+		
 		DumpFile( gTempFiles[ kOutputFile ], p7::stdout_fileno );
 		
 		// Delete temp files
