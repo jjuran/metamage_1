@@ -6,10 +6,6 @@
 #ifndef VECTORIA_POINT2D_HH
 #define VECTORIA_POINT2D_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "Vectoria/Vector.hh"
 
 

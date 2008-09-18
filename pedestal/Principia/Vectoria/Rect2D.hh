@@ -6,10 +6,6 @@
 #ifndef VECTORIA_RECT2D_HH
 #define VECTORIA_RECT2D_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 #include <algorithm>
 
 #include "Vectoria/Coordinates.hh"

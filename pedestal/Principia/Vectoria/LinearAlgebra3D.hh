@@ -6,10 +6,6 @@
 #ifndef VECTORIA_LINEARALGEBRA3D_HH
 #define VECTORIA_LINEARALGEBRA3D_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "Vectoria/Transform.hh"
 #include "Vectoria/Point2D.hh"
 #include "Vectoria/Point3D.hh"

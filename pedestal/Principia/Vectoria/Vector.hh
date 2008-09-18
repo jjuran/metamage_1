@@ -6,10 +6,6 @@
 #ifndef VECTORIA_VECTOR_HH
 #define VECTORIA_VECTOR_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C++
 #include <numeric>
 

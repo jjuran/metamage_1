@@ -6,10 +6,6 @@
 #ifndef VECTORIA_COORDINATES_HH
 #define VECTORIA_COORDINATES_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "Vectoria/Matrix.hh"
 
 

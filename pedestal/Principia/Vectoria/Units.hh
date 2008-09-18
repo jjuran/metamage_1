@@ -6,10 +6,6 @@
 #ifndef VECTORIA_UNITS_HH
 #define VECTORIA_UNITS_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "Vectoria/Trig.hh"
 
 

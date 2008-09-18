@@ -6,10 +6,6 @@
 #ifndef VECTORIA_TRICOLOR_HH
 #define VECTORIA_TRICOLOR_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Vectoria
 #include "Vectoria/Matrix.hh"
 

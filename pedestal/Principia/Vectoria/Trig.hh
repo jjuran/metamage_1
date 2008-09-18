@@ -6,10 +6,6 @@
 #ifndef VECTORIA_TRIG_HH
 #define VECTORIA_TRIG_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C/C++
 #include <cmath>
 
