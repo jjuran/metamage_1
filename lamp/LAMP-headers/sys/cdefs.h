@@ -40,6 +40,16 @@
 #ifndef	_CDEFS_H_
 #define	_CDEFS_H_
 
+#ifndef PRAGMA_ONCE
+#ifdef __MWERKS__
+#define PRAGMA_ONCE 1
+#endif
+#endif
+
+#if PRAGMA_ONCE
+#pragma once on
+#endif
+
 #if defined(__cplusplus)
 #define	__BEGIN_DECLS	extern "C" {
 #define	__END_DECLS	}
