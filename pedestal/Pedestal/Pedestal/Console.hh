@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_CONSOLE_HH
 #define PEDESTAL_CONSOLE_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 #include "Pedestal/TEView.hh"
 
 

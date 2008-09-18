@@ -3,7 +3,12 @@
  *	==============
  */
 
+#ifndef PEDESTAL_GRAPHICVIEW_HH
+#define PEDESTAL_GRAPHICVIEW_HH
+
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -37,4 +42,6 @@ namespace Pedestal
 	};
 	
 }
+
+#endif
 

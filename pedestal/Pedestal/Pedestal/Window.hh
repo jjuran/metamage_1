@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_WINDOW_HH
 #define PEDESTAL_WINDOW_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <map>
 

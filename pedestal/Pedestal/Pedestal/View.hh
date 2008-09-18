@@ -6,10 +6,12 @@
 #ifndef PEDESTAL_VIEW_HH
 #define PEDESTAL_VIEW_HH
 
-// Mac OS
-#ifndef __QUICKDRAW__
-	#include <Quickdraw.h>
+#if PRAGMA_ONCE
+#pragma once
 #endif
+
+// Mac OS
+#include <Quickdraw.h>
 
 // Boost
 #include <boost/shared_ptr.hpp>

@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_TEVIEW_HH
 #define PEDESTAL_TEVIEW_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Nitrogen
 #include "Nitrogen/TextEdit.h"
 

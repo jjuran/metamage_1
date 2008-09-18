@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_ABOUTBOX_HH
 #define PEDESTAL_ABOUTBOX_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <memory>
 

@@ -6,10 +6,12 @@
 #ifndef PEDESTAL_SCROLLINGVIEW_HH
 #define PEDESTAL_SCROLLINGVIEW_HH
 
-// Universal Interfaces
-#ifndef __EVENTS__
-#include <Events.h>
+#if PRAGMA_ONCE
+#pragma once
 #endif
+
+// Universal Interfaces
+#include <Events.h>
 
 // Nucleus
 #include "Nucleus/Saved.h"

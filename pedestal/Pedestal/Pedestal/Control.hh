@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_CONTROL_HH
 #define PEDESTAL_CONTROL_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Nitrogen
 #include "Nitrogen/Controls.h"
 

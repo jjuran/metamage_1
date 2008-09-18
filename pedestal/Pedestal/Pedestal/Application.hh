@@ -6,13 +6,15 @@
 #ifndef PEDESTAL_APPLICATION_HH
 #define PEDESTAL_APPLICATION_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <map>
 
 // Mac OS Universal Interfaces
-#ifndef __AEREGISTRY__
 #include <AERegistry.h>
-#endif
 
 // Nitrogen
 #include "Nitrogen/AppleEvents.h"

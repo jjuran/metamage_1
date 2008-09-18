@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_GRAPHIC_HH
 #define PEDESTAL_GRAPHIC_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 
 namespace Pedestal
 {

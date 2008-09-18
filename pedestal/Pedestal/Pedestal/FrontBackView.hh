@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_FRONTBACKVIEW_HH
 #define PEDESTAL_FRONTBACKVIEW_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <utility>
 

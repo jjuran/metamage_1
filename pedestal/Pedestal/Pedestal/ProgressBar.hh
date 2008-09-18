@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_PROGRESSBAR_HH
 #define PEDESTAL_PROGRESSBAR_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 #include "Pedestal/View.hh"
 
 

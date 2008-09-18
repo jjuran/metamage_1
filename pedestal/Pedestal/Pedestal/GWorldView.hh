@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_GWORLDVIEW_HH
 #define PEDESTAL_GWORLDVIEW_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Nitrogen
 #include "Nitrogen/QDOffScreen.h"
 

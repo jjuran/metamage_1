@@ -6,10 +6,12 @@
 #ifndef PEDESTAL_SCROLLER_HH
 #define PEDESTAL_SCROLLER_HH
 
-// Mac OS
-#ifndef __CONTROLDEFINITIONS__
-#include <ControlDefinitions.h>
+#if PRAGMA_ONCE
+#pragma once
 #endif
+
+// Mac OS
+#include <ControlDefinitions.h>
 
 // Nucleus
 #include "Nucleus/NAssert.h"

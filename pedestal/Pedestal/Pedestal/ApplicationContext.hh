@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_APPLICATIONCONTEXT_HH
 #define PEDESTAL_APPLICATIONCONTEXT_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Nitrogen
 #include "Nitrogen/Resources.h"
 

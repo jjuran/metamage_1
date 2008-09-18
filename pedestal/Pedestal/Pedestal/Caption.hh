@@ -3,7 +3,12 @@
  *	==========
  */
 
+#ifndef PEDESTAL_CAPTION_HH
+#define PEDESTAL_CAPTION_HH
+
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // Standard C++
 #include <string>
@@ -33,4 +38,6 @@ namespace Pedestal
 	};
 	
 }
+
+#endif
 

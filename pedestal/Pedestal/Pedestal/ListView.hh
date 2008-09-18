@@ -3,7 +3,12 @@
  *	===========
  */
 
+#ifndef PEDESTAL_LISTVIEW_HH
+#define PEDESTAL_LISTVIEW_HH
+
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // Nitrogen
 #include "Nitrogen/Lists.h"
@@ -73,4 +78,6 @@ namespace Pedestal
 	}
 	
 }
+
+#endif
 

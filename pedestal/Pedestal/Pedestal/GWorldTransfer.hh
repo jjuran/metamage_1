@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_QWORLDTRANSFER_HH
 #define PEDESTAL_QWORLDTRANSFER_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Nucleus
 #include "Nucleus/Shared.h"
 

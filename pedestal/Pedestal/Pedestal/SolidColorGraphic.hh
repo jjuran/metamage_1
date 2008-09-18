@@ -3,7 +3,12 @@
  *	====================
  */
 
+#ifndef PEDESTAL_SOLIDCOLORGRAPHIC_HH
+#define PEDESTAL_SOLIDCOLORGRAPHIC_HH
+
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // Pedestal
 #include "Pedestal/Graphic.hh"
@@ -28,4 +33,6 @@ namespace Pedestal
 	};
 	
 }
+
+#endif
 

@@ -6,10 +6,12 @@
 #ifndef PEDESTAL_CLIPBOARD_HH
 #define PEDESTAL_CLIPBOARD_HH
 
-// Mac OS
-#ifndef __TEXTEDIT__
-#include <TextEdit.h>
+#if PRAGMA_ONCE
+#pragma once
 #endif
+
+// Mac OS
+#include <TextEdit.h>
 
 
 namespace Pedestal

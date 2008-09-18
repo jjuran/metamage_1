@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_ICONS_HH
 #define PEDESTAL_ICONS_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Nitrogen
 #include "Nitrogen/Icons.h"
 

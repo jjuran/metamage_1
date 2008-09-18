@@ -6,6 +6,10 @@
 #ifndef PEDESTAL_GENERATEDGRAPHIC_HH
 #define PEDESTAL_GENERATEDGRAPHIC_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Nitrogen
 #include "Nitrogen/QuickDraw.h"
 

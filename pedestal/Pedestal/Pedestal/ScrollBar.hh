@@ -1,10 +1,14 @@
-/*	===============
- *	PedScrollbar.hh
- *	===============
+/*	============
+ *	Scrollbar.hh
+ *	============
  */
 
 #ifndef PEDESTAL_SCROLLBAR_HH
 #define PEDESTAL_SCROLLBAR_HH
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 // Pedestal
 #include "Pedestal/Control.hh"

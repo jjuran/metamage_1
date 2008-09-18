@@ -1,11 +1,14 @@
-/*	================
- *	PedPushButton.hh
- *	================
- *	
- *	Implemented by PedPushButton.cc
+/*	=============
+ *	PushButton.hh
+ *	=============
  */
 
+#ifndef PEDESTAL_PUSHBUTTON_HH
+#define PEDESTAL_PUSHBUTTON_HH
+
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // Nitrogen
 #include "Nitrogen/RefCon.h"
@@ -41,4 +44,6 @@ namespace Pedestal {
 	};
 	
 }
+
+#endif
 
