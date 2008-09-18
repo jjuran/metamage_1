@@ -289,17 +289,15 @@ namespace tool
 		                            size,       stuff,               pathname );
 	}
 	
-	void check_diagnostics( p7::wait_t wait_status, const char* diagnostics_path )
+	void check_diagnostics( bool succeeded, const char* diagnostics_path )
 	{
 		if ( !is_null( diagnostics_path ) )
 		{
 			struct ::stat stat_buffer = p7::stat( diagnostics_path );
 			
-			const size_t size = stat_buffer.st_size;
-			
-			if ( size != 0 )
+			if ( const size_t size = stat_buffer.st_size )
 			{
-				report_diagnostics( size, wait_status != 0, diagnostics_path );
+				report_diagnostics( size, !succeeded, diagnostics_path );
 				
 				return;
 			}
@@ -339,8 +337,6 @@ namespace tool
 		TaskPtr task = it->second;
 		
 		global_running_tasks.erase( it );
-		
-		task->Return( wait_status );
 		
 		if ( wait_status == 0 )
 		{

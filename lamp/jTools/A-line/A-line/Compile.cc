@@ -92,7 +92,7 @@ namespace tool
 			
 			void Make();
 			
-			void Return( p7::wait_t wait_status );
+			void Return( bool succeeded );
 	};
 	
 	class IncludeDirGatherer
@@ -371,9 +371,9 @@ namespace tool
 		ExecuteCommand( shared_from_this(), its_caption + source_filename, command, its_diagnostics_file_path.c_str() );
 	}
 	
-	void CompilingTask::Return( p7::wait_t wait_status )
+	void CompilingTask::Return( bool succeeded )
 	{
-		check_diagnostics( wait_status, its_diagnostics_file_path.c_str() );
+		check_diagnostics( succeeded, its_diagnostics_file_path.c_str() );
 	}
 	
 	

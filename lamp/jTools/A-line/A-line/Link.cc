@@ -275,7 +275,7 @@ namespace tool
 			
 			void Make();
 			
-			void Return( p7::wait_t wait_status );
+			void Return( bool succeeded );
 	};
 	
 	void RezzingTask::Make()
@@ -307,9 +307,9 @@ namespace tool
 		ExecuteCommand( shared_from_this(), "Rezzing: " + io::get_filename_string( OutputPath() ), rezCommand );
 	}
 	
-	void RezzingTask::Return( p7::wait_t wait_status )
+	void RezzingTask::Return( bool succeeded )
 	{
-		// check_diagnostics( wait_status, its_diagnostics_file_path.c_str() );
+		// check_diagnostics( succeeded, its_diagnostics_file_path.c_str() );
 	}
 	
 	
@@ -399,7 +399,7 @@ namespace tool
 			
 			void Make();
 			
-			void Return( p7::wait_t wait_status );
+			void Return( bool succeeded );
 	};
 	
 	void ResourceCopyingTask::Make()
@@ -438,9 +438,9 @@ namespace tool
 		ExecuteCommand( shared_from_this(), "Copying resources: " + io::get_filename_string( OutputPath() ), command );
 	}
 	
-	void ResourceCopyingTask::Return( p7::wait_t wait_status )
+	void ResourceCopyingTask::Return( bool succeeded )
 	{
-		// check_diagnostics( wait_status, its_diagnostics_file_path.c_str() );
+		// check_diagnostics( succeeded, its_diagnostics_file_path.c_str() );
 	}
 	
 	

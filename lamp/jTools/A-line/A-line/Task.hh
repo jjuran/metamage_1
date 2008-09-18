@@ -53,11 +53,9 @@ namespace tool
 			
 			virtual void Start() = 0;
 			
-			virtual void Return( poseven::wait_t wait_status )  {}
-			
 			virtual void Success()  {}
 			
-			void Failure();
+			virtual void Failure();
 			
 			void Run();
 			
@@ -95,6 +93,7 @@ namespace tool
 			void Success();
 			void Failure();
 			
+			virtual void Return( bool succeeded )  {}
 	};
 	
 	
@@ -118,7 +117,7 @@ namespace tool
 			
 			const std::string& get_diagnostics_file_path() const  { return its_diagnostics_file_path; }
 			
-			void Return( poseven::wait_t wait_status );
+			void Return( bool succeeded );
 	};
 	
 	void AddReadyTask( const TaskPtr& task );

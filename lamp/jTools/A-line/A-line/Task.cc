@@ -64,7 +64,7 @@ namespace tool
 	{
 		Start();
 		
-		Return( p7::wait_t() );
+		Success();
 	}
 	
 	void Task::Complete()
@@ -126,6 +126,15 @@ namespace tool
 	void FileTask::Success()
 	{
 		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
+		
+		Return( true );
+	}
+	
+	void FileTask::Failure()
+	{
+		Task::Failure();
+		
+		Return( false );
 	}
 	
 	
@@ -157,9 +166,9 @@ namespace tool
 		its_command.push_back( NULL );
 	}
 	
-	void CommandTask::Return( poseven::wait_t wait_status )
+	void CommandTask::Return( bool succeeded )
 	{
-		check_diagnostics( wait_status, its_diagnostics_file_path.c_str() );
+		check_diagnostics( succeeded, its_diagnostics_file_path.c_str() );
 	}
 	
 	
