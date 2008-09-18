@@ -309,7 +309,7 @@ namespace tool
 	
 	void RezzingTask::Return( p7::wait_t wait_status )
 	{
-		check_results( wait_status );
+		// check_diagnostics( wait_status, its_diagnostics_file_path.c_str() );
 	}
 	
 	
@@ -440,7 +440,7 @@ namespace tool
 	
 	void ResourceCopyingTask::Return( p7::wait_t wait_status )
 	{
-		check_results( wait_status );
+		// check_diagnostics( wait_status, its_diagnostics_file_path.c_str() );
 	}
 	
 	

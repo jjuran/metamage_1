@@ -46,8 +46,6 @@ namespace tool
 	
 	void check_diagnostics( poseven::wait_t wait_status, const char* diagnostics_path );
 	
-	void check_results( poseven::wait_t wait_status );
-	
 }
 
 #endif

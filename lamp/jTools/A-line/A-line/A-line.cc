@@ -318,7 +318,7 @@ namespace tool
 		}
 	}
 	
-	void check_results( p7::wait_t wait_status )
+	static void check_results( p7::wait_t wait_status )
 	{
 		const bool had_errors = wait_status != 0;
 		
@@ -350,6 +350,8 @@ namespace tool
 		global_running_tasks.erase( it );
 		
 		task->Return( wait_status );
+		
+		check_results( wait_status );
 	}
 	
 	static bool wait_and_end_task( bool nonblocking )
