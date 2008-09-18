@@ -172,6 +172,11 @@ namespace tool
 	}
 	
 	
+	std::size_t CountFailures()
+	{
+		return gFailedTasks.size();
+	}
+	
 	void AddReadyTask( const TaskPtr& task )
 	{
 		gReadyTasks.push( task );

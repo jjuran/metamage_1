@@ -120,6 +120,8 @@ namespace tool
 			void Return( bool succeeded );
 	};
 	
+	std::size_t CountFailures();
+	
 	void AddReadyTask( const TaskPtr& task );
 	
 	bool StartNextTask();
