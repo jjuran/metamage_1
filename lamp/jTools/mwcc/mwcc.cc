@@ -57,7 +57,9 @@ namespace tool
 			                                  " -ext o"
 			                                  " -maxerrors 8"
 			                                  " -convertpaths -nomapcr"
-			                                  " -proto strict";
+			                                  " -proto strict"
+			                                  " -once"
+			                                  " -DPRAGMA_ONCE=1";
 	
 	static bool m68k = false;
 	static bool ppc  = false;
