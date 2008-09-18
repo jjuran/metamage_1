@@ -49,8 +49,6 @@ namespace tool
 	
 	Task::~Task()
 	{
-		Finish();
-		
 		Complete();
 	}
 	
@@ -115,7 +113,7 @@ namespace tool
 		Make();
 	}
 	
-	void FileTask::Finish()
+	FileTask::~FileTask()
 	{
 		UpdateInputStamp( p7::stat( its_output_path ).st_mtime );
 	}

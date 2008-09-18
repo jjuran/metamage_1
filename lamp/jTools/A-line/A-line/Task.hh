@@ -53,9 +53,7 @@ namespace tool
 			
 			virtual void Start() = 0;
 			
-			virtual void Finish()  {}
-			
-			virtual void Return( poseven::wait_t wait_status )  { Finish(); }
+			virtual void Return( poseven::wait_t wait_status )  {}
 			
 			void Run();
 			
@@ -78,6 +76,8 @@ namespace tool
 			{
 			}
 			
+			~FileTask();
+			
 			const std::string& OutputPath() const  { return its_output_path; }
 			
 			time_t OutputStamp() const;
@@ -87,7 +87,6 @@ namespace tool
 			virtual void Make() = 0;
 			
 			void Start();
-			void Finish();
 			
 	};
 	
