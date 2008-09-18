@@ -363,12 +363,24 @@ namespace tool
 		check_results( wait_status );
 	}
 	
+	inline bool is_user_break( p7::wait_t wait_status )
+	{
+		return p7::wifexited( wait_status )  &&  p7::wexitstatus( wait_status ) == 128;
+	}
+	
 	static bool wait_and_end_task( bool nonblocking )
 	{
 		p7::wait_t wait_status;
 		
 		if ( p7::pid_t pid = p7::waitpid( p7::pid_t( -1 ), wait_status, nonblocking ? WNOHANG : 0 ) )
 		{
+			if ( is_user_break( wait_status ) )
+			{
+				p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
+				
+				O::ThrowExitStatus( 128 );
+			}
+			
 			end_task( pid, wait_status );
 			
 			return true;
