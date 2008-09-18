@@ -6,9 +6,12 @@
 #ifndef SAVEDCFRAGINITBLOCK_H
 #define SAVEDCFRAGINITBLOCK_H
 
-#ifndef __MACTYPES__
-#include "MacTypes.h"
+#if PRAGMA_ONCE
+#pragma once
 #endif
+
+#include <MacTypes.h>
+
 
 #ifdef __cplusplus
 extern "C"

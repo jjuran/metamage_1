@@ -6,12 +6,12 @@
 #ifndef CFMLATEIMPORTER_HH
 #define CFMLATEIMPORTER_HH
 
-#ifndef __CODEFRAGMENTS__
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 #include <CodeFragments.h>
-#endif
-#ifndef __MACTYPES__
 #include <MacTypes.h>
-#endif
 
 
 namespace CFMLateImporter

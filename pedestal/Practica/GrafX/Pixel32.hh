@@ -6,10 +6,12 @@
 #ifndef GRAFX_PIXEL32_HH
 #define GRAFX_PIXEL32_HH
 
-// Mac OS Universal Interfaces
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
+#if PRAGMA_ONCE
+#pragma once
 #endif
+
+// Mac OS Universal Interfaces
+#include <Quickdraw.h>
 
 
 namespace GrafX
