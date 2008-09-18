@@ -731,7 +731,10 @@ namespace tool
 		
 		if ( std::size_t n = CountFailures() )
 		{
-			std::fprintf( stderr, "### A-line: %d task%s had errors\n", n, n == 1 ? "" : "s" );
+			std::fprintf( stderr, "###\n"
+			                      "### A-line: %d task%s had errors\n"
+			                      "###\n",     n,     n == 1 ? ""
+			                                                 : "s" );
 			
 			return EXIT_FAILURE;
 		}
