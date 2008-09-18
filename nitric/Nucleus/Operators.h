@@ -21,7 +21,12 @@
 #ifndef NUCLEUS_OPERATORS_H
 #define NUCLEUS_OPERATORS_H
 
+#if PRAGMA_ONCE
+#pragma once off
+#endif
+
 #include <cstddef>
+
 
 namespace Nucleus
   {
