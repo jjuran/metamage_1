@@ -297,11 +297,7 @@ namespace tool
 			
 			const size_t size = stat_buffer.st_size;
 			
-			if ( size == 26  &&  p7::wifexited( wait_status )  &&  p7::wexitstatus( wait_status ) == 2 )
-			{
-				p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
-			}
-			else if ( size != 0 )
+			if ( size != 0 )
 			{
 				report_diagnostics( size, wait_status != 0, diagnostics_path );
 				
@@ -310,11 +306,6 @@ namespace tool
 			
 			// empty file; delete, ignore errors
 			(void) unlink( diagnostics_path );
-			
-			if ( size != 0 )
-			{
-				O::ThrowExitStatus( 3 );
-			}
 		}
 	}
 	
