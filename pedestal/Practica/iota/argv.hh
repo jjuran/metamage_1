@@ -6,6 +6,10 @@
 #ifndef IOTA_ARGV_HH
 #define IOTA_ARGV_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 
 namespace iota
 {

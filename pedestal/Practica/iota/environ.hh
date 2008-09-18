@@ -6,6 +6,10 @@
 #ifndef IOTA_ENVIRON_HH
 #define IOTA_ENVIRON_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 
 #ifdef __cplusplus
 namespace iota

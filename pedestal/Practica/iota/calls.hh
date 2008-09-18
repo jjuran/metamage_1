@@ -6,6 +6,10 @@
 #ifndef IOTA_CALLS_HH
 #define IOTA_CALLS_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C/C++
 #include <cstdio>
 #include <cstdlib>

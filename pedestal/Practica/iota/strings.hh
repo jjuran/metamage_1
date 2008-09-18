@@ -6,6 +6,10 @@
 #ifndef IOTA_STRINGS_HH
 #define IOTA_STRINGS_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C/C++
 #include <cstring>
 
