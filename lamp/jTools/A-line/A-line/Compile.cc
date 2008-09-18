@@ -83,7 +83,7 @@ namespace tool
 			  its_project              ( project ),
 			  its_options              ( options ),
 			  its_source_pathname      ( source  ),
-			  its_diagnostics_file_path( diagnostics_file_path( diagnostics, output ) ),
+			  its_diagnostics_file_path( diagnostics_file_path( diagnostics, source ) ),
 			  its_caption              ( caption )
 			{
 			}
