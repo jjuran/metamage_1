@@ -6,11 +6,11 @@
 #ifndef PEDESTAL_CONSOLE_HH
 #define PEDESTAL_CONSOLE_HH
 
+#include "Pedestal/TEView.hh"
+
 #if PRAGMA_ONCE
 #pragma once
 #endif
-
-#include "Pedestal/TEView.hh"
 
 
 namespace Pedestal

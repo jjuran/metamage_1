@@ -6,15 +6,19 @@
 #ifndef PEDESTAL_FRONTBACKVIEW_HH
 #define PEDESTAL_FRONTBACKVIEW_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C++
 #include <utility>
 
 // Pedestal
 #include "Pedestal/View.hh"
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 
 namespace Pedestal

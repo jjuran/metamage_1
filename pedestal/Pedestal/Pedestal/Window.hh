@@ -6,10 +6,6 @@
 #ifndef PEDESTAL_WINDOW_HH
 #define PEDESTAL_WINDOW_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C++
 #include <map>
 
@@ -24,6 +20,10 @@
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 
 namespace Pedestal

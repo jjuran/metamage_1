@@ -6,11 +6,11 @@
 #ifndef PEDESTAL_PROGRESSBAR_HH
 #define PEDESTAL_PROGRESSBAR_HH
 
+#include "Pedestal/View.hh"
+
 #if PRAGMA_ONCE
 #pragma once
 #endif
-
-#include "Pedestal/View.hh"
 
 
 namespace Pedestal

@@ -6,16 +6,16 @@
 #ifndef PEDESTAL_TEVIEW_HH
 #define PEDESTAL_TEVIEW_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Nitrogen
 #include "Nitrogen/TextEdit.h"
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/View.hh"
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 
 namespace Pedestal

@@ -6,10 +6,6 @@
 #ifndef PEDESTAL_SCROLLER_HH
 #define PEDESTAL_SCROLLER_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Mac OS
 #include <ControlDefinitions.h>
 
@@ -30,6 +26,10 @@
 #include "Pedestal/View.hh"
 #include "Pedestal/Scrollbar.hh"
 #include "Pedestal/ScrollingView.hh"
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 
 namespace Pedestal

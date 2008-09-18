@@ -6,12 +6,12 @@
 #ifndef PEDESTAL_SOLIDCOLORGRAPHIC_HH
 #define PEDESTAL_SOLIDCOLORGRAPHIC_HH
 
+// Pedestal
+#include "Pedestal/Graphic.hh"
+
 #if PRAGMA_ONCE
 #pragma once
 #endif
-
-// Pedestal
-#include "Pedestal/Graphic.hh"
 
 
 namespace Pedestal

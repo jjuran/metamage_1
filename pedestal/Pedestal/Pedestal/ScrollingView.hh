@@ -6,10 +6,6 @@
 #ifndef PEDESTAL_SCROLLINGVIEW_HH
 #define PEDESTAL_SCROLLINGVIEW_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Universal Interfaces
 #include <Events.h>
 
@@ -25,6 +21,10 @@
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/View.hh"
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 
 namespace Pedestal

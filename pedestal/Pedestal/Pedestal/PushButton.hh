@@ -6,15 +6,15 @@
 #ifndef PEDESTAL_PUSHBUTTON_HH
 #define PEDESTAL_PUSHBUTTON_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Nitrogen
 #include "Nitrogen/RefCon.h"
 
 // Pedestal
 #include "Pedestal/Control.hh"
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 
 namespace Pedestal {

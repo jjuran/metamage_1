@@ -6,10 +6,6 @@
 #ifndef PEDESTAL_ABOUTBOX_HH
 #define PEDESTAL_ABOUTBOX_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Standard C++
 #include <memory>
 
@@ -21,6 +17,10 @@
 #include "Pedestal/SolidColorGraphic.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 
 #define GEN_FUNCTION AboutFunction

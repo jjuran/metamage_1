@@ -6,10 +6,6 @@
 #ifndef PEDESTAL_VIEW_HH
 #define PEDESTAL_VIEW_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 // Mac OS
 #include <Quickdraw.h>
 
@@ -18,6 +14,10 @@
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 
 struct EventRecord;

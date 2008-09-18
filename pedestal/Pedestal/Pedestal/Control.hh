@@ -6,12 +6,12 @@
 #ifndef PEDESTAL_CONTROL_HH
 #define PEDESTAL_CONTROL_HH
 
+// Nitrogen
+#include "Nitrogen/Controls.h"
+
 #if PRAGMA_ONCE
 #pragma once
 #endif
-
-// Nitrogen
-#include "Nitrogen/Controls.h"
 
 
 namespace Pedestal
