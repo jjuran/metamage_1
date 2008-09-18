@@ -3,7 +3,12 @@
  *	==================
  */
 
+#ifndef ALINE_COMPILEROPTIONS_HH
+#define ALINE_COMPILEROPTIONS_HH
+
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // C++
 #include <list>
@@ -62,4 +67,6 @@ namespace tool
 	};
 	
 }
+
+#endif
 

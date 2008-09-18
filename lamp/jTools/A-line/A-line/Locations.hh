@@ -6,6 +6,10 @@
 #ifndef A_LINE_LOCATIONS_HH
 #define A_LINE_LOCATIONS_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <string>
 

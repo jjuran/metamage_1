@@ -6,6 +6,10 @@
 #ifndef ALINE_TARGETINFO_HH
 #define ALINE_TARGETINFO_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // CompileDriver
 #include "CompileDriver/Platform.hh"
 

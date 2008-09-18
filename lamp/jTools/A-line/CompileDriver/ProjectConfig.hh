@@ -6,6 +6,10 @@
 #ifndef COMPILEDRIVER_PROJECTCONFIG_HH
 #define COMPILEDRIVER_PROJECTCONFIG_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <map>
 #include <string>

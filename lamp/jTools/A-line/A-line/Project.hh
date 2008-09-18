@@ -1,10 +1,14 @@
 /*	==========
  *	Project.hh
  *	==========
-  */
+ */
 
 #ifndef ALINE_PROJECT_HH
 #define ALINE_PROJECT_HH
+
+#if PRAGMA_ONCE
+#pragma once
+#endif
 
 // Standard C++
 #include <map>

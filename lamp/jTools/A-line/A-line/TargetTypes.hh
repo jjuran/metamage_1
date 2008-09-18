@@ -6,6 +6,10 @@
 #ifndef ALINE_TARGET_TYPES_HH
 #define ALINE_TARGET_TYPES_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 
 namespace tool
 {

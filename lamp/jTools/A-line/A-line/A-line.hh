@@ -3,6 +3,9 @@
  *	=========
  */
 
+#ifndef ALINE_ALINE_HH
+#define ALINE_ALINE_HH
+
 #if PRAGMA_ONCE
 #pragma once
 #endif
@@ -44,4 +47,6 @@ namespace tool
 	void check_results( poseven::wait_t wait_status, const char* diagnostics_path );
 	
 }
+
+#endif
 

@@ -3,7 +3,12 @@
  *	==============
  */
 
+#ifndef ALINE_TARGETNAMES_HH
+#define ALINE_TARGETNAMES_HH
+
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // C++
 #include <string>
@@ -26,4 +31,6 @@ namespace tool
 	                            BuildVariety  build );
 	
 }
+
+#endif
 

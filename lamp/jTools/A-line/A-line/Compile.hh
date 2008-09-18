@@ -1,11 +1,14 @@
 /*	==========
  *	Compile.hh
  *	==========
- *	
- *	Implemented by Compile.cc
  */
 
+#ifndef ALINE_COMPILE_HH
+#define ALINE_COMPILE_HH
+
+#if PRAGMA_ONCE
 #pragma once
+#endif
 
 // Standard C++
 #include <vector>
@@ -27,4 +30,6 @@ namespace tool
 	                     std::vector< TaskPtr >&  tool_dependencies );
 	
 }
+
+#endif
 

@@ -6,6 +6,10 @@
 #ifndef COMPILEDRIVER_PROJECTDOTCONF_HH
 #define COMPILEDRIVER_PROJECTDOTCONF_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // Standard C++
 #include <string>
 #include <vector>

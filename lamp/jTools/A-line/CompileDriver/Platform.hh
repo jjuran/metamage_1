@@ -6,6 +6,10 @@
 #ifndef COMPILEDRIVER_PLATFORM_HH
 #define COMPILEDRIVER_PLATFORM_HH
 
+#if PRAGMA_ONCE
+#pragma once
+#endif
+
 // ALINE_MAC_DEVELOPMENT:   true if A-line can target Mac OS or Mac OS X.
 // ALINE_CROSS_DEVELOPMENT: true if A-line can cross-compile.
 // ALINE_UNIX_DEVELOPMENT:  true if A-line can target native Unix.
