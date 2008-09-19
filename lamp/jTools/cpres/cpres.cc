@@ -45,7 +45,7 @@ namespace tool
 	{
 		try
 		{
-			if ( globally_using_data_fork )
+			if ( TARGET_API_MAC_CARBON && globally_using_data_fork )
 			{
 				return open_res_file_from_data_fork( filespec, perm );
 			}
@@ -120,7 +120,7 @@ namespace tool
 		
 		std::size_t n_args = O::FreeArgumentCount();
 		
-		if ( globally_using_data_fork  &&  ::FSOpenResourceFile == NULL )
+		if ( !TARGET_API_MAC_CARBON  ||  globally_using_data_fork  &&  ::FSOpenResourceFile == NULL )
 		{
 			std::fprintf( stderr, "cpres: FSOpenResourceFile() unavailable for data fork\n" );
 			
@@ -152,7 +152,7 @@ namespace tool
 			return 1;
 		}
 		
-		if ( globally_using_data_fork )
+		if ( TARGET_API_MAC_CARBON && globally_using_data_fork )
 		{
 			FSSpec parent_spec = io::get_preceding_directory( dest );
 			
