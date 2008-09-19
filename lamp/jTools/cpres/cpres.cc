@@ -25,7 +25,56 @@ namespace Div = Divergence;
 namespace tool
 {
 	
-	static int TryResCopy( const FSSpec& source, N::ResFileRefNum dest );
+	static int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
+	{
+		if ( io::directory_exists( source ) )
+		{
+			std::string name = NN::Convert< std::string >( source.name );
+			
+			// Source item is a directory.
+			std::fprintf( stderr, "cpres: %s: omitting directory\n", name.c_str() );
+			
+			return 1;
+		}
+		
+		using N::fsRdPerm;
+		
+		NN::Owned< N::ResFileRefNum > sourceRes( N::FSpOpenResFile( source, fsRdPerm ) );
+		
+		int types = N::Count1Types();
+		
+		for ( int iType = 1;  iType <= types;  ++iType )
+		{
+			N::ResType type = N::Get1IndType( iType );
+			int rsrcs = N::Count1Resources( type );
+			
+			for ( int iRsrc = 1;  iRsrc <= rsrcs;  ++iRsrc )
+			{
+				N::Handle h = N::Get1IndResource( type, iRsrc );
+				
+				::HNoPurge( h );
+				
+				NN::Saved< N::ResFile_Value > savedResFile( destRes );
+				
+				N::GetResInfo_Result resInfo = N::GetResInfo( h );
+				
+				try
+				{
+					Handle existing = N::Get1Resource( resInfo.type, resInfo.id );
+					
+					if ( existing )
+					{
+						::RemoveResource( existing );
+					}
+				}
+				catch ( N::ResNotFound ) {}  // Okay, resource didn't exist in dest file
+				
+				N::AddResource( N::DetachResource( h ), resInfo );
+			}
+		}
+		
+		return 0;
+	}
 	
 	int Main( int argc, iota::argv_t argv )
 	{
@@ -84,56 +133,5 @@ namespace tool
 		return fail;
 	}
 	
-	int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
-	{
-		if ( io::directory_exists( source ) )
-		{
-			std::string name = NN::Convert< std::string >( source.name );
-			
-			// Source item is a directory.
-			std::fprintf( stderr, "cpres: %s: omitting directory\n", name.c_str() );
-			
-			return 1;
-		}
-		
-		using N::fsRdPerm;
-		
-		NN::Owned< N::ResFileRefNum > sourceRes( N::FSpOpenResFile( source, fsRdPerm ) );
-		
-		int types = N::Count1Types();
-		
-		for ( int iType = 1;  iType <= types;  ++iType )
-		{
-			N::ResType type = N::Get1IndType( iType );
-			int rsrcs = N::Count1Resources( type );
-			
-			for ( int iRsrc = 1;  iRsrc <= rsrcs;  ++iRsrc )
-			{
-				N::Handle h = N::Get1IndResource( type, iRsrc );
-				
-				::HNoPurge( h );
-				
-				NN::Saved< N::ResFile_Value > savedResFile( destRes );
-				
-				N::GetResInfo_Result resInfo = N::GetResInfo( h );
-				
-				try
-				{
-					Handle existing = N::Get1Resource( resInfo.type, resInfo.id );
-					
-					if ( existing )
-					{
-						::RemoveResource( existing );
-					}
-				}
-				catch ( N::ResNotFound ) {}  // Okay, resource didn't exist in dest file
-				
-				N::AddResource( N::DetachResource( h ), resInfo );
-			}
-		}
-		
-		return 0;
-	}
-
 }
 
