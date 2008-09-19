@@ -9,10 +9,6 @@
 // Nitrogen
 #include "Nitrogen/Resources.h"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal
 {

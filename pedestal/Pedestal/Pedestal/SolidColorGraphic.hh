@@ -9,10 +9,6 @@
 // Pedestal
 #include "Pedestal/Graphic.hh"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal
 {

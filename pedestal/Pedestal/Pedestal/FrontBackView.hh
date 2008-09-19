@@ -12,14 +12,6 @@
 // Pedestal
 #include "Pedestal/View.hh"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal
 {

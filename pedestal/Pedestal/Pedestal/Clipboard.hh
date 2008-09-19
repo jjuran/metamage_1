@@ -9,10 +9,6 @@
 // Mac OS
 #include <TextEdit.h>
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal
 {

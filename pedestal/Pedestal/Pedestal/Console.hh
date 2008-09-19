@@ -8,10 +8,6 @@
 
 #include "Pedestal/TEView.hh"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal
 {

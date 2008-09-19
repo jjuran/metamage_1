@@ -27,10 +27,6 @@
 #include "Pedestal/Scrollbar.hh"
 #include "Pedestal/ScrollingView.hh"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal
 {

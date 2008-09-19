@@ -12,10 +12,6 @@
 // Pedestal
 #include "Pedestal/Control.hh"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal {
 	

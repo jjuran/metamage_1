@@ -15,10 +15,6 @@
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 struct EventRecord;
 

@@ -10,10 +10,6 @@
 #include "Pedestal/Control.hh"
 #include "Pedestal/View.hh"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal
 {

@@ -21,10 +21,6 @@
 #include "Pedestal/MenuItemCode.hh"
 #include "Pedestal/Menubar.hh"
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 namespace Pedestal
 {

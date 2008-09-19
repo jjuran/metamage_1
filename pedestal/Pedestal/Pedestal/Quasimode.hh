@@ -6,10 +6,6 @@
 #ifndef PEDESTAL_QUASIMODE_HH
 #define PEDESTAL_QUASIMODE_HH
 
-#if PRAGMA_ONCE
-#pragma once
-#endif
-
 
 struct EventRecord;
 
