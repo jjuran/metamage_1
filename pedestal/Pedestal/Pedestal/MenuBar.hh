@@ -21,8 +21,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
 	//typedef bool ( *MenuItemHandler )( MenuItemCode code );
 	
 	class MenuItemHandler
@@ -37,18 +35,18 @@ namespace Pedestal
 			MenuBar( const MenuItemHandler& handler );
 			~MenuBar();
 			
-			void AddMenu     ( N::MenuID menuID );
-			void AddAppleMenu( N::MenuID menuID );
+			void AddMenu     ( Nitrogen::MenuID menuID );
+			void AddAppleMenu( Nitrogen::MenuID menuID );
 			
-			void ProcessMenuItem( N::MenuID menuID, SInt16 item );
+			void ProcessMenuItem( Nitrogen::MenuID menuID, SInt16 item );
 			void ProcessMenuItem( int menuItem );
 		
 		private:
-			typedef std::map< N::MenuID, std::vector< MenuItemCode > > Menus;
+			typedef std::map< Nitrogen::MenuID, std::vector< MenuItemCode > > Menus;
 			
 			const MenuItemHandler& handler;
 			Menus myMenus;
-			N::MenuID appleMenuID;
+			Nitrogen::MenuID appleMenuID;
 	};
 	
 }

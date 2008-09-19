@@ -16,16 +16,13 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
 	inline UInt16 DenormalizeUInt16( double x )  { return UInt16( 65535.0 * x ); }
 	
 	inline RGBColor DenormalizeRGBColor( double r, double g, double b )
 	{
-		return NN::Make< RGBColor >( DenormalizeUInt16( r ),
-		                             DenormalizeUInt16( g ),
-		                             DenormalizeUInt16( b ) );
+		return Nucleus::Make< RGBColor >( DenormalizeUInt16( r ),
+		                                  DenormalizeUInt16( g ),
+		                                  DenormalizeUInt16( b ) );
 	}
 	
 	inline RGBColor DenormalizeRGBColor( double grey )
@@ -93,11 +90,11 @@ namespace Pedestal
 			{
 				double x = (h - area.left) / width;
 				
-				N::SetCPixel( h,
-				              v,
-				              fFunction( x,
-				                         y,
-				                         0 ) );
+				Nitrogen::SetCPixel( h,
+				                     v,
+				                     fFunction( x,
+				                                y,
+				                                0 ) );
 			}
 		}
 	}

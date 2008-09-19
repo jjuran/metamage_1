@@ -16,10 +16,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	
 	Rect Bounds( ListHandle list );
 	Point ViewableRange( ListHandle list );
 	Point ScrollableRange( ListHandle list );
@@ -36,7 +32,7 @@ namespace Pedestal
 			};
 			
 			TextAttributes textAttributes;
-			NN::Owned< ListHandle > list;
+			Nucleus::Owned< ListHandle > list;
 		
 		public:
 			ListView( const Rect& bounds );
@@ -46,7 +42,7 @@ namespace Pedestal
 			void MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
-			void Activate( bool activating )  { N::LActivate( activating, list ); }
+			void Activate( bool activating )  { Nitrogen::LActivate( activating, list ); }
 			
 			void Update();
 			

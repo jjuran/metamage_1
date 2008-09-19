@@ -16,16 +16,13 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
 	class PlainIcon : public Graphic
 	{
-		typedef N::PlainIconHandle Handle;
+		typedef Nitrogen::PlainIconHandle Handle;
 		
-		typedef NN::Owned< Handle >  Value;
-		typedef NN::Owned< Handle >  Parameter;
-		typedef Handle              GetResult;
+		typedef Nucleus::Owned< Handle >  Value;
+		typedef Nucleus::Owned< Handle >  Parameter;
+		typedef Handle                    GetResult;
 		
 		private:
 			Value value;
@@ -42,11 +39,11 @@ namespace Pedestal
 	
 	class MaskedIcon : public Graphic
 	{
-		typedef N::MaskedIconHandle Handle;
+		typedef Nitrogen::MaskedIconHandle Handle;
 		
-		typedef NN::Owned< Handle >  Value;
-		typedef NN::Owned< Handle >  Parameter;
-		typedef Handle              GetResult;
+		typedef Nucleus::Owned< Handle >  Value;
+		typedef Nucleus::Owned< Handle >  Parameter;
+		typedef Handle                    GetResult;
 		
 		private:
 			Value value;
@@ -63,9 +60,9 @@ namespace Pedestal
 	
 	class IconID : public Graphic
 	{
-		typedef N::ResID Value;
-		typedef N::ResID Parameter;
-		typedef N::ResID GetResult;
+		typedef Nitrogen::ResID Value;
+		typedef Nitrogen::ResID Parameter;
+		typedef Nitrogen::ResID GetResult;
 		
 		private:
 			Value value;

@@ -14,8 +14,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
 	class Scrollbar : public View
 	{
 		private:
@@ -23,10 +21,10 @@ namespace Pedestal
 			Control_Hooks controlHooks;
 		
 		public:
-			Scrollbar( const Rect&       bounds,
-			           N::ControlProcID  procID,
-			           N::RefCon         refCon,
-			           ControlTracker    tracker );
+			Scrollbar( const Rect&              bounds,
+			           Nitrogen::ControlProcID  procID,
+			           Nitrogen::RefCon         refCon,
+			           ControlTracker           tracker );
 			
 			ControlRef Get() const  { return control; }
 			

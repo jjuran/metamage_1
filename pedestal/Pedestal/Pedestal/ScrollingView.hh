@@ -26,15 +26,10 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace NX = NitrogenExtras;
-	
-	
 	class ScopedOrigin
 	{
 		private:
-			NN::Saved< N::Clip_Value > savedClip;  // automatically save and restore the clip region
+			Nucleus::Saved< Nitrogen::Clip_Value > savedClip;  // automatically save and restore the clip region
 			
 			void Setup( short h, short v, RgnHandle copyOfClipRegion );
 		
@@ -42,22 +37,22 @@ namespace Pedestal
 			// Temporarily adjust the origin
 			ScopedOrigin( short h, short v )
 			{
-				Setup( h, v, N::GetClip() );
+				Setup( h, v, Nitrogen::GetClip() );
 			}
 			
 			ScopedOrigin( Point origin )
 			{
-				Setup( origin.h, origin.v, N::GetClip() );
+				Setup( origin.h, origin.v, Nitrogen::GetClip() );
 			}
 			
 			// Temporarily adjust the origin and set a new clip region
 			ScopedOrigin( short h, short v, RgnHandle newClip )
 			{
-				Setup( h, v, N::CopyRgn( newClip ) );
+				Setup( h, v, Nitrogen::CopyRgn( newClip ) );
 			}
 			
 			// Restore (assumed) zero origin (and the original clip region)
-			~ScopedOrigin()  { N::SetOrigin( 0, 0 ); }
+			~ScopedOrigin()  { Nitrogen::SetOrigin( 0, 0 ); }
 	};
 	
 	template < class SubViewType >
@@ -74,7 +69,7 @@ namespace Pedestal
 			ScrollingView( const Rect& bounds, Initializer init = Initializer() )
 			: 
 				bounds( bounds ), 
-				scrollPosition( N::SetPt( 0, 0 ) ), 
+				scrollPosition( Nitrogen::SetPt( 0, 0 ) ), 
 				mySubView( bounds, init )
 			{}
 			
@@ -113,7 +108,7 @@ namespace Pedestal
 			void Update()
 			{
 				// FIXME:  This (perhaps unnecessarily) erases the subview content.
-				//N::EraseRect( Bounds() );
+				//Nitrogen::EraseRect( Bounds() );
 				
 				Rect subviewBounds = SubView().Bounds();
 				
@@ -123,8 +118,8 @@ namespace Pedestal
 				Rect right = Bounds();
 				right.left = subviewBounds.right - scrollPosition.h;
 				
-				N::EraseRect( bottom );
-				N::EraseRect( right  );
+				Nitrogen::EraseRect( bottom );
+				Nitrogen::EraseRect( right  );
 				
 				ScopedOrigin scopedOrigin( ScrollPosition() );
 				
@@ -138,7 +133,7 @@ namespace Pedestal
 			
 			bool SetCursor( Point location, RgnHandle mouseRgn )
 			{
-				if ( N::PtInRect( location, SubView().Bounds() ) )
+				if ( Nitrogen::PtInRect( location, SubView().Bounds() ) )
 				{
 					return SubView().SetCursor( location, mouseRgn );
 				}
@@ -168,7 +163,7 @@ namespace Pedestal
 	template < class SubViewType >
 	inline Point ScrollableArea( const ScrollingView< SubViewType >& scroll )
 	{
-		return NX::RectSize( scroll.SubView().Bounds() );
+		return NitrogenExtras::RectSize( scroll.SubView().Bounds() );
 	}
 	
 	template < class SubViewType >
@@ -180,7 +175,7 @@ namespace Pedestal
 	template < class SubViewType >
 	inline Point ViewableRange( const ScrollingView< SubViewType >& scroll )
 	{
-		return NX::RectSize( Bounds( scroll ) );
+		return NitrogenExtras::RectSize( Bounds( scroll ) );
 	}
 	
 	template < class SubViewType >
@@ -188,7 +183,7 @@ namespace Pedestal
 	{
 		scroll.Resize( width, height );
 		
-		N::ClipRect( Bounds( scroll ) );
+		Nitrogen::ClipRect( Bounds( scroll ) );
 	}
 	
 	template < class SubViewType >
@@ -201,23 +196,24 @@ namespace Pedestal
 	template < class SubViewType >
 	void ScrollingView< SubViewType >::Scroll( short dh, short dv, bool updateNow )
 	{
-		using namespace NN::Operators;
-		scrollPosition = scrollPosition + N::SetPt( dh, dv );
+		using namespace Nucleus::Operators;
 		
-		NN::Owned< RgnHandle > updateRegion = N::ScrollRect( Bounds(), -dh, -dv );
+		scrollPosition = scrollPosition + Nitrogen::SetPt( dh, dv );
+		
+		Nucleus::Owned< RgnHandle > updateRegion = Nitrogen::ScrollRect( Bounds(), -dh, -dv );
 		
 		if ( updateNow )
 		{
 			// Update immediately
 			
-			NN::Saved< N::Clip_Value > savedClip( updateRegion );
+			Nucleus::Saved< Nitrogen::Clip_Value > savedClip( updateRegion );
 			
-			N::EraseRgn( updateRegion );
+			Nitrogen::EraseRgn( updateRegion );
 			Update();
 		}
 		else
 		{
-			N::InvalRgn( updateRegion );
+			Nitrogen::InvalRgn( updateRegion );
 		}
 	}
 	

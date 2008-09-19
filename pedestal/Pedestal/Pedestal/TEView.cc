@@ -35,6 +35,7 @@ namespace Pedestal
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	static std::string gLastSearchPattern;

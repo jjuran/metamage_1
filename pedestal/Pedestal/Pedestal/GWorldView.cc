@@ -12,6 +12,7 @@
 namespace Pedestal
 {
 	
+	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
 	GWorldView::GWorldView( const Rect& bounds, Initializer )

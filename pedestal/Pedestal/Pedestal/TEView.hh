@@ -17,10 +17,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	
 	Rect Bounds( TEHandle hTE );
 	short CountLinesForDisplay( TEHandle hTE );
 	short CountLinesForEditing( TEHandle hTE );
@@ -37,7 +33,7 @@ namespace Pedestal
 	class TEView : public View
 	{
 		private:
-			NN::Owned< TEHandle > itsTE;
+			Nucleus::Owned< TEHandle > itsTE;
 		
 		public:
 			TEView( const Rect& bounds, Initializer );
@@ -47,8 +43,8 @@ namespace Pedestal
 			Rect Bounds() const  { return Pedestal::Bounds( Get() ); }
 			
 			// Text manipulation
-			SInt16 TextLength() const  { return N::GetTELength( itsTE ); }
-			Handle TextHandle()  { return N::GetTETextHandle( itsTE ); }
+			SInt16 TextLength() const  { return Nitrogen::GetTELength    ( itsTE ); }
+			Handle TextHandle()        { return Nitrogen::GetTETextHandle( itsTE ); }
 			
 			void SetSelection( short start, short end );
 			

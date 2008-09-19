@@ -31,10 +31,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NX = NitrogenExtras;
-	
-	
 	short ActualScrollbarLength( short viewLength, bool shortened );
 	
 	Rect VerticalScrollbarBounds  ( short width, short height, bool shortened );
@@ -46,12 +42,13 @@ namespace Pedestal
 	{
 		Point dimensions = ScrollDimensions( width, height, vertical, horizontal );
 		
-		return N::SetRect( 0, 0, dimensions.h, dimensions.v );
+		return Nitrogen::SetRect( 0, 0, dimensions.h, dimensions.v );
 	}
 	
 	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition );
 	
-	short FigureScrollDistance( N::ControlPartCode part, short pageDistance );
+	short FigureScrollDistance( Nitrogen::ControlPartCode part, short pageDistance );
+	
 	short SetControlValueFromClippedDelta( ControlRef control, short delta );
 	
 	
@@ -95,7 +92,9 @@ namespace Pedestal
 		
 		struct Type
 		{
-			Type( const Rect&, NoProcID, N::RefCon, ControlTracker )  {}
+			Type( const Rect&, NoProcID, Nitrogen::RefCon, ControlTracker )
+			{
+			}
 			
 			Type& Get()  { return *this; }
 			
@@ -140,19 +139,19 @@ namespace Pedestal
 	
 	template <> struct ScrollbarVariant_Traits< kOldSchoolVariant >
 	{
-		static const N::ControlProcID procID = N::scrollBarProc;
+		static const Nitrogen::ControlProcID procID = Nitrogen::scrollBarProc;
 	};
 	
 #if !TARGET_CPU_68K
 	
 	template <> struct ScrollbarVariant_Traits< kAppearanceSavvyVariant >
 	{
-		static const N::ControlProcID procID = N::kControlScrollBarProc;
+		static const Nitrogen::ControlProcID procID = Nitrogen::kControlScrollBarProc;
 	};
 	
 	template <> struct ScrollbarVariant_Traits< kLiveFeedbackVariant >
 	{
-		static const N::ControlProcID procID = N::kControlScrollBarLiveProc;
+		static const Nitrogen::ControlProcID procID = Nitrogen::kControlScrollBarLiveProc;
 	};
 	
 	template <> struct ScrollbarLiveScrolling_Traits< kLiveFeedbackVariant >
@@ -170,7 +169,7 @@ namespace Pedestal
 		
 	};
 	
-	using N::SetControlMaximum;
+	using Nitrogen::SetControlMaximum;
 	
 	inline void SetControlViewSize( ControlRef control, long size )
 	{
@@ -184,7 +183,7 @@ namespace Pedestal
 	#endif
 	}
 	
-	inline void InvalidateControl( ControlRef control )  { N::InvalRect( N::GetControlBounds( control ) ); }
+	inline void InvalidateControl( ControlRef control )  { Nitrogen::InvalRect( Nitrogen::GetControlBounds( control ) ); }
 	
 	inline void SetBounds         ( ScrollbarPresence_Traits< false >::Type, Rect  )  {}
 	inline void SetControlMaximum ( ScrollbarPresence_Traits< false >::Type, short )  {}
@@ -225,7 +224,7 @@ namespace Pedestal
 	template < class ScrollViewType >
 	inline ScrollViewType& RecoverScrolledViewFromScrollbar( ControlRef control )
 	{
-		Control_Hooks* controlHooks = N::GetControlReference( control );
+		Control_Hooks* controlHooks = Nitrogen::GetControlReference( control );
 		
 		ASSERT( controlHooks       != NULL );
 		ASSERT( controlHooks->data != NULL );
@@ -259,7 +258,7 @@ namespace Pedestal
 	}
 	
 	template < ScrollbarAxis axis, class ScrollViewType >
-	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
+	void ScrollbarAction( ControlRef control, Nitrogen::ControlPartCode part )
 	{
 		ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
 		
@@ -268,21 +267,21 @@ namespace Pedestal
 		
 		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
 		
-		if ( part == N::kControlIndicatorPart )
+		if ( part == Nitrogen::kControlIndicatorPart )
 		{
 			short oldValue = VHSelect< axis >( ScrollPosition( scrolledView ) );
 			
-			delta = N::GetControlValue( control ) - oldValue;
+			delta = Nitrogen::GetControlValue( control ) - oldValue;
 		}
 		
 		ScrollByDelta< axis >( scrolledView, control, delta, true );
 	}
 	
 	template < ScrollbarAxis axis, bool scrollingIsLive, class ScrollViewType >
-	inline void Track( ControlRef control, N::ControlPartCode part, Point point )
+	inline void Track( ControlRef control, Nitrogen::ControlPartCode part, Point point )
 	{
-		NN::Saved< N::Clip_Value > savedClip;
-		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
+		Nitrogen::ClipRect( Nitrogen::GetPortBounds( Nitrogen::GetQDGlobalsThePort() ) );
 		
 		switch ( part )
 		{
@@ -294,15 +293,15 @@ namespace Pedestal
 					// Classic scrolling, handled specially.
 					
 					// Get the current scrollbar value.
-					short oldValue = N::GetControlValue( control );
+					short oldValue = Nitrogen::GetControlValue( control );
 					
 					// Let the system track the drag...
-					part = N::TrackControl( control, point );
+					part = Nitrogen::TrackControl( control, point );
 					
-					if ( part == N::kControlIndicatorPart )
+					if ( part == Nitrogen::kControlIndicatorPart )
 					{
 						// Drag was successful (i.e. within bounds).  Subtract to get distance.
-						short scrollDistance = N::GetControlValue( control ) - oldValue;
+						short scrollDistance = Nitrogen::GetControlValue( control ) - oldValue;
 						
 						// Scroll by that amount, but don't update just yet.
 						ScrollByDelta< axis, ScrollViewType >( control, scrollDistance, false );
@@ -316,9 +315,9 @@ namespace Pedestal
 			case kControlDownButtonPart:
 			case kControlPageUpPart:
 			case kControlPageDownPart:
-				part = N::TrackControl<
+				part = Nitrogen::TrackControl<
 				                        #ifdef __MWERKS__
-				                        (N::ControlActionProcPtr)
+				                        (Nitrogen::ControlActionProcPtr)
 				                        #endif
 				                        ScrollbarAction< axis, ScrollViewType >  >( control, point );
 				break;
@@ -345,9 +344,9 @@ namespace Pedestal
 	                              Point                  maxima,
 	                              Point                  position )
 	{
-		NN::Saved< N::Clip_Value > savedClip;
+		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
 		
-		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		Nitrogen::ClipRect( Nitrogen::GetPortBounds( Nitrogen::GetQDGlobalsThePort() ) );
 		
 		SetValueStretch( horizontalScrollbar, position.h );
 		SetValueStretch( verticalScrollbar,   position.v );
@@ -456,15 +455,15 @@ namespace Pedestal
 			{
 				// Intersect the clip region with the scrollview bounds,
 				// so the scrollview doesn't overpaint the scroll bars.
-				NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-				                                                  N::RectRgn( ScrolledView().Bounds() ) ) );
+				Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
+				                                                                     Nitrogen::RectRgn( ScrolledView().Bounds() ) ) );
 				
 				ScrolledView().Idle( event );
 			}
 			
 			void MouseDown( const EventRecord& event )
 			{
-				if ( N::PtInRect( N::GlobalToLocal( event.where ), ScrolledView().Bounds() ) )
+				if ( Nitrogen::PtInRect( Nitrogen::GlobalToLocal( event.where ), ScrolledView().Bounds() ) )
 				{
 					gCurrentScroller = this;
 					
@@ -499,11 +498,11 @@ namespace Pedestal
 							return true;
 						
 						case kPageUpCharCode:
-							ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), N::kControlPageUpPart );
+							ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), Nitrogen::kControlPageUpPart );
 							return true;
 						
 						case kPageDownCharCode:
-							ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), N::kControlPageDownPart );
+							ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), Nitrogen::kControlPageDownPart );
 							return true;
 						
 						default:
@@ -529,8 +528,8 @@ namespace Pedestal
 			{
 				// Intersect the clip region with the scrollview bounds,
 				// so the scrollview doesn't overpaint the scroll bars.
-				NN::Saved< N::Clip_Value > savedClip( N::SectRgn( N::GetClip(),
-				                                                  N::RectRgn( ScrolledView().Bounds() ) ) );
+				Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
+				                                                                     Nitrogen::RectRgn( ScrolledView().Bounds() ) ) );
 				
 				ScrolledView().Update();
 			}
@@ -539,8 +538,9 @@ namespace Pedestal
 			{
 				ScrolledView().Activate( activating );
 				
-				NN::Saved< N::Clip_Value > savedClip;
-				N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+				Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
+				
+				Nitrogen::ClipRect( Nitrogen::GetPortBounds( Nitrogen::GetQDGlobalsThePort() ) );
 				
 				
 				VerticalScrollbar  ().Activate( activating );
@@ -549,7 +549,7 @@ namespace Pedestal
 			
 			bool SetCursor( Point location, RgnHandle mouseRgn )
 			{
-				if ( N::PtInRect( location, ScrolledView().Bounds() ) )
+				if ( Nitrogen::PtInRect( location, ScrolledView().Bounds() ) )
 				{
 					return ScrolledView().SetCursor( location, mouseRgn );
 				}
@@ -610,24 +610,24 @@ namespace Pedestal
 	Scroller< ScrollViewType, vertical, horizontal >::Scroller( const Rect& bounds, Initializer init )
 	: 
 		BoundedView( bounds ),
-		myScrollV( VerticalScrollbarBounds  ( NX::RectWidth ( bounds ),
-		                                      NX::RectHeight( bounds ),
+		myScrollV( VerticalScrollbarBounds  ( NitrogenExtras::RectWidth ( bounds ),
+		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
 		           VerticalTraits::procID,
 		           &myScrollView,
 		           Track< kVertical,
 		                  Scrollbar_Traits< vertical >::scrollingIsLive,
 		                  ScrollViewType > ),
-		myScrollH( HorizontalScrollbarBounds( NX::RectWidth ( bounds ),
-		                                      NX::RectHeight( bounds ),
+		myScrollH( HorizontalScrollbarBounds( NitrogenExtras::RectWidth ( bounds ),
+		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
 		           HorizontalTraits::procID,
 		           &myScrollView,
 		           Track< kHorizontal,
 		                  Scrollbar_Traits< horizontal >::scrollingIsLive,
 		                  ScrollViewType > ),
-		myScrollView( ScrollBounds( NX::RectWidth ( bounds ),
-		                            NX::RectHeight( bounds ),
+		myScrollView( ScrollBounds( NitrogenExtras::RectWidth ( bounds ),
+		                            NitrogenExtras::RectHeight( bounds ),
 		                            VerticalTraits::profile,
 		                            HorizontalTraits::profile ),
 		              init )

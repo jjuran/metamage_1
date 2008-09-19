@@ -13,16 +13,14 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
 	inline void SetBounds( ControlRef control, const Rect& bounds )
 	{
-		N::SetControlBounds( control, bounds );
+		Nitrogen::SetControlBounds( control, bounds );
 	}
 	
-	using N::ControlPartCode;
-	using N::ControlPartCode;
-	using N::FindControl_Result;
+	using Nitrogen::ControlPartCode;
+	using Nitrogen::ControlPartCode;
+	using Nitrogen::FindControl_Result;
 	
 	bool TrackControl( const FindControl_Result& param, Point startPoint );
 	
@@ -83,7 +81,7 @@ namespace Pedestal
 	
 	inline Rect Bounds( const Control& view )
 	{
-		return N::GetControlBounds( view.Get() );
+		return Nitrogen::GetControlBounds( view.Get() );
 	}
 	
 }

@@ -13,8 +13,6 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
 	struct MacToolboxInit
 	{
 		MacToolboxInit();
@@ -28,16 +26,16 @@ namespace Pedestal
 	class ApplicationContext
 	{
 		private:
-			MacToolboxInit    itsMacToolboxInit;
-			MemoryInit        itsMemoryInit;
-			N::ResFileRefNum  itsResFileRefNum;
-			VersRec           itsVersion;
+			MacToolboxInit           itsMacToolboxInit;
+			MemoryInit               itsMemoryInit;
+			Nitrogen::ResFileRefNum  itsResFileRefNum;
+			VersRec                  itsVersion;
 		
 		public:
 			ApplicationContext();
 			
-			N::ResFileRefNum    ResFileAccessPath() const  { return itsResFileRefNum; }
-			const VersRec&      Version          () const  { return itsVersion;       }
+			Nitrogen::ResFileRefNum ResFileAccessPath() const  { return itsResFileRefNum; }
+			const VersRec&          Version          () const  { return itsVersion;       }
 	};
 	
 }

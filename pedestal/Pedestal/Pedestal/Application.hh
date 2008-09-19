@@ -25,18 +25,15 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	
-	
 	struct AppleEventSignature
 	{
-		N::AEEventClass eventClass;
-		N::AEEventID    eventID;
+		Nitrogen::AEEventClass eventClass;
+		Nitrogen::AEEventID    eventID;
 		
 		AppleEventSignature()  {}
 		
-		AppleEventSignature( N::AEEventClass eventClass, N::AEEventID eventID )
+		AppleEventSignature( Nitrogen::AEEventClass  eventClass,
+		                     Nitrogen::AEEventID     eventID )
 		:
 			eventClass( eventClass ),
 			eventID   ( eventID    )
@@ -59,9 +56,9 @@ namespace Pedestal
 	class Application : public ApplicationContext
 	{
 		public:
-			static void AppleEventHandler( const N::AppleEvent&  appleEvent,
-			                               N::AppleEvent&        reply,
-			                               Application*          app );
+			static void AppleEventHandler( const Nitrogen::AppleEvent&  appleEvent,
+			                               Nitrogen::AppleEvent&        reply,
+			                               Application*                 app );
 			
 			// Constructor & destructor.
 			Application();
@@ -71,7 +68,9 @@ namespace Pedestal
 			int Run(); // This calls the main event loop.
 			
 			// Event responding
-			void HandleAppleEvent( const N::AppleEvent& appleEvent, N::AppleEvent& reply );
+			void HandleAppleEvent( const Nitrogen::AppleEvent&  appleEvent,
+			                       Nitrogen::AppleEvent&        reply );
+			
 			void HandleMenuChoice( long menuChoice );
 			
 			bool DoCommand( MenuItemCode code );
@@ -90,11 +89,11 @@ namespace Pedestal
 			MenuItemHandlerMap menuItemHandlers;
 			
 			MenuBar myMenubar;
-			NN::Owned< N::MenuID > myAppleMenu;
-			NN::Owned< N::MenuID > myFileMenu;
-			NN::Owned< N::MenuID > myEditMenu;
+			Nucleus::Owned< Nitrogen::MenuID > myAppleMenu;
+			Nucleus::Owned< Nitrogen::MenuID > myFileMenu;
+			Nucleus::Owned< Nitrogen::MenuID > myEditMenu;
 			
-			NN::Owned< N::AEEventHandler > myCoreEventsHandler;
+			Nucleus::Owned< Nitrogen::AEEventHandler > myCoreEventsHandler;
 	};
 	
 	template < class Responder >

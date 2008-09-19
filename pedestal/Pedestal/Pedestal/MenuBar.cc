@@ -22,7 +22,9 @@
 namespace Pedestal
 {
 	
+	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	
 	
 	struct UnhighlightMenus
 	{

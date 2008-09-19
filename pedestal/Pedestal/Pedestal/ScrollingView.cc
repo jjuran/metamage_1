@@ -9,6 +9,9 @@
 namespace Pedestal
 {
 	
+	namespace N = Nitrogen;
+	
+	
 	void ScopedOrigin::Setup( short h, short v, RgnHandle copyOfClipRegion )
 	{
 		// Set the new origin

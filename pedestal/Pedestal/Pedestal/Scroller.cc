@@ -15,6 +15,9 @@
 namespace Pedestal
 {
 	
+	namespace N = Nitrogen;
+	
+	
 	ClickableScroller* ClickableScroller::gCurrentScroller = NULL;
 	
 	short ActualScrollbarLength( short viewLength, bool shortened )

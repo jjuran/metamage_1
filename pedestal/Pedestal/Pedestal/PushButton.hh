@@ -13,25 +13,26 @@
 #include "Pedestal/Control.hh"
 
 
-namespace Pedestal {
+namespace Pedestal
+{
 	
-	typedef void ( *ButtonAction )( N::RefCon refCon );
+	typedef void ( *ButtonAction )( Nitrogen::RefCon refCon );
 	
 	class PushButton : public Control
 	{
 		private:
 			ButtonAction action;
-			N::RefCon refCon;
+			Nitrogen::RefCon refCon;
 		
 		public:
 			struct Initializer
 			{
-				Initializer( ConstStr255Param title, ButtonAction action, N::RefCon refCon ) 
+				Initializer( ConstStr255Param title, ButtonAction action, Nitrogen::RefCon refCon ) 
 				  :	title( title ), action( action ), refCon( refCon )  {}
 				
 				ConstStr255Param title;
 				ButtonAction action;
-				N::RefCon refCon;
+				Nitrogen::RefCon refCon;
 			};
 			
 			PushButton( const Rect& bounds, const Initializer& init );
