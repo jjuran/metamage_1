@@ -23,6 +23,7 @@
 #if TARGET_RT_MAC_MACHO
 	#include "Nucleus/Convert.h"
 	#include "Nitrogen/Files.h"
+	#include "POSeven/Pathnames.hh"
 #else
 	#include "fsspec_from_path.hh"
 	#include "SystemCalls.hh"
@@ -36,7 +37,23 @@ namespace Divergence
 	{
 	#if TARGET_RT_MAC_MACHO
 		
-		return Nucleus::Convert< FSSpec >( Nitrogen::FSPathMakeRef( path ).ref );
+		try
+		{
+			return Nucleus::Convert< FSSpec >( Nitrogen::FSPathMakeRef( path ).ref );
+		}
+		catch ( ... )
+		{
+		}
+		
+		using namespace io::path_descent_operators;
+		
+		const std::string parent_path = io::get_preceding_directory( path );
+		
+		FSRef parent_ref = Nitrogen::FSPathMakeRef( parent_path ).ref;
+		
+		FSSpec parent_spec = Nucleus::Convert< FSSpec >( parent_ref );
+		
+		return parent_spec / io::get_filename( path );
 		
 	#else
 		
