@@ -581,7 +581,7 @@ static int ExecuteCommand( const Command& command )
 		// and subsequently clobbered.
 		volatile bool exiting = false;
 		
-		pid_t pid = p7::vfork();
+		pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
@@ -740,7 +740,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	int writing = pipes[ 1 ];
 	
 	// The first command in the pipline
-	pid_t first = p7::vfork();
+	pid_t first = POSEVEN_VFORK();
 	
 	if ( first == 0 )
 	{
@@ -769,7 +769,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		writing = pipes[ 1 ];  // write-end of next pipe
 		
 		// Middle command in the pipeline (not first or last)
-		pid_t middle = p7::vfork();
+		pid_t middle = POSEVEN_VFORK();
 		
 		if ( middle == 0 )
 		{
@@ -800,7 +800,7 @@ static int ExecutePipeline( const Pipeline& pipeline )
 	// Close previous write-end
 	close( writing );
 	
-	pid_t last = p7::vfork();
+	pid_t last = POSEVEN_VFORK();
 	
 	if ( last == 0 )
 	{
