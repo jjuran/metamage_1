@@ -17,19 +17,14 @@
 namespace MacBinaryDecoder
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace Ped = Pedestal;
-	
-	
-	struct FSSpec_Io_Details : public N::FSSpec_Io_Details
+	struct FSSpec_Io_Details : public Nitrogen::FSSpec_Io_Details
 	{
-		static const N::DescType typeFileSpec = N::typeFSS;
+		static const Nitrogen::DescType typeFileSpec = Nitrogen::typeFSS;
 	};
 	
-	struct FSRef_Io_Details : public N::FSRef_Io_Details
+	struct FSRef_Io_Details : public Nitrogen::FSRef_Io_Details
 	{
-		static const N::DescType typeFileSpec = N::typeFSRef;
+		static const Nitrogen::DescType typeFileSpec = Nitrogen::typeFSRef;
 	};
 	
 #if TARGET_API_MAC_CARBON
@@ -43,14 +38,14 @@ namespace MacBinaryDecoder
 #endif
 	
 	
-	class App : public Ped::Application,
-	            public Ped::AboutBoxOwner
+	class App : public Pedestal::Application,
+	            public Pedestal::AboutBoxOwner
 	{
 		private:
 			static App* theApp;
 			
-			Ped::AboutHandler< App > itsAboutHandler;
-			NN::Owned< N::AEEventHandler > itsOpenDocsEventHandler;
+			Pedestal::AboutHandler< App > itsAboutHandler;
+			Nucleus::Owned< Nitrogen::AEEventHandler > itsOpenDocsEventHandler;
 		
 		public:
 			static App& Get();

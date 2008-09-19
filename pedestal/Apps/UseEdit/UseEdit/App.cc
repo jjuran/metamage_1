@@ -29,6 +29,7 @@ namespace UseEdit
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	
 	App* App::theApp = NULL;

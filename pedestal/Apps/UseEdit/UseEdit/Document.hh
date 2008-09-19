@@ -16,8 +16,6 @@
 namespace UseEdit
 {
 	
-	namespace N = Nitrogen;
-	
 	class Document
 	{
 		private:
@@ -33,7 +31,7 @@ namespace UseEdit
 			Window const& GetWindow() const  { return itsWindow.Get(); }
 			Window      & GetWindow()        { return itsWindow.Get(); }
 			
-			N::WindowRef GetWindowRef() const  { return GetWindow().Get(); }
+			Nitrogen::WindowRef GetWindowRef() const  { return GetWindow().Get(); }
 			
 			std::string GetName() const  { return GetWindow().GetName(); }
 	};

@@ -24,6 +24,7 @@ namespace MacBinaryDecoder
 {
 	
 	namespace N = Nitrogen;
+	namespace NN = Nucleus;
 	
 	using N::keyDirectObject;
 	using N::typeAEList;

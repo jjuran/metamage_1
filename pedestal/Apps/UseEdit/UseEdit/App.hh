@@ -23,19 +23,14 @@
 namespace UseEdit
 {
 	
-	namespace N = Nitrogen;
-	namespace NN = Nucleus;
-	namespace Ped = Pedestal;
-	
-	
-	struct FSSpec_Io_Details : public N::FSSpec_Io_Details
+	struct FSSpec_Io_Details : public Nitrogen::FSSpec_Io_Details
 	{
-		static const N::DescType typeFileSpec = N::typeFSS;
+		static const Nitrogen::DescType typeFileSpec = Nitrogen::typeFSS;
 	};
 	
-	struct FSRef_Io_Details : public N::FSRef_Io_Details
+	struct FSRef_Io_Details : public Nitrogen::FSRef_Io_Details
 	{
-		static const N::DescType typeFileSpec = N::typeFSRef;
+		static const Nitrogen::DescType typeFileSpec = Nitrogen::typeFSRef;
 	};
 	
 #if TARGET_API_MAC_CARBON
@@ -76,8 +71,8 @@ namespace UseEdit
 			bool ExistsElementByIndex( std::size_t index ) const  { return index <= CountElements(); }
 			bool ExistsElementByID   ( UInt32      id    ) const;
 			
-			NN::Owned< N::AEDesc_Token > GetElementByIndex( std::size_t index ) const;
-			NN::Owned< N::AEDesc_Token > GetElementByID   ( UInt32      id    ) const;
+			Nucleus::Owned< Nitrogen::AEDesc_Token > GetElementByIndex( std::size_t index ) const;
+			Nucleus::Owned< Nitrogen::AEDesc_Token > GetElementByID   ( UInt32      id    ) const;
 			
 			void DeleteElementByIndex( std::size_t index );
 			
@@ -87,14 +82,14 @@ namespace UseEdit
 	class DocumentsOwner
 	{
 		private:
-			DocumentContainer                             itsDocuments;
-			boost::shared_ptr< Ped::WindowCloseHandler >  itsCloseHandler;
+			DocumentContainer                                  itsDocuments;
+			boost::shared_ptr< Pedestal::WindowCloseHandler >  itsCloseHandler;
 		
 		public:
 			DocumentsOwner();
 			~DocumentsOwner();
 			
-			void CloseDocument( N::WindowRef window );
+			void CloseDocument( Nitrogen::WindowRef window );
 			
 			DocumentContainer& Documents()  { return itsDocuments; }
 			
@@ -102,27 +97,29 @@ namespace UseEdit
 			void OpenDocument( const Io_Details::file_spec& file );
 	};
 	
-	class App : public Ped::Application,
-	            public Ped::AboutBoxOwner,
+	class App : public Pedestal::Application,
+	            public Pedestal::AboutBoxOwner,
 	            public DocumentsOwner
 	{
 		private:
 			static App* theApp;
 			
-			typedef void (*AEEventHandlerProcPtr)( N::AppleEvent const&, N::AppleEvent&, App* );
+			typedef void (*AEEventHandlerProcPtr)( Nitrogen::AppleEvent const&, Nitrogen::AppleEvent&, App* );
 			
-			Ped::AboutHandler< App > itsAboutHandler;
-			Ped::NewHandler  < App > itsNewHandler;
-			NN::Owned< N::AEEventHandler > itsOpenDocsHandler;
-			NN::Owned< N::AEEventHandler > itsCloseHandler;
-			NN::Owned< N::AEEventHandler > itsCountHandler;
-			NN::Owned< N::AEEventHandler > itsGetDataHandler;
+			Pedestal::AboutHandler< App > itsAboutHandler;
+			Pedestal::NewHandler  < App > itsNewHandler;
+			Nucleus::Owned< Nitrogen::AEEventHandler > itsOpenDocsHandler;
+			Nucleus::Owned< Nitrogen::AEEventHandler > itsCloseHandler;
+			Nucleus::Owned< Nitrogen::AEEventHandler > itsCountHandler;
+			Nucleus::Owned< Nitrogen::AEEventHandler > itsGetDataHandler;
 			
 			template < AEEventHandlerProcPtr proc >
-			inline NN::Owned< N::AEEventHandler > InstallAppleEventHandler( N::AEEventClass  eventClass,
-			                                                                N::AEEventID     eventID )
+			inline
+			Nucleus::Owned< Nitrogen::AEEventHandler >
+			InstallAppleEventHandler( Nitrogen::AEEventClass  eventClass,
+			                          Nitrogen::AEEventID     eventID )
 			{
-				return N::AEInstallEventHandler< App*, proc >( eventClass, eventID, this );
+				return Nitrogen::AEInstallEventHandler< App*, proc >( eventClass, eventID, this );
 			}
 		
 		public:
