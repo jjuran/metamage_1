@@ -33,9 +33,6 @@
 #include "FunctionalExtensions.hh"
 #include "PointerToFunction.hh"
 
-// BitsAndBytes
-#include "StringFilters.hh"
-
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/Commands.hh"
@@ -51,9 +48,6 @@ namespace tool
 	namespace p7 = poseven;
 	
 	using namespace io::path_descent_operators;
-	
-	using BitsAndBytes::q;
-	using BitsAndBytes::qq;
 	
 	
 	class RemoveDirTask : public Task
@@ -164,11 +158,6 @@ namespace tool
 		std::string contents  = DirCreate_Idempotent(   package  / "Contents" );
 		std::string macOS     = DirCreate_Idempotent(     contents / "MacOS" );
 		std::string resources = DirCreate_Idempotent(     contents / "Resources" );
-	}
-	
-	static std::string paren( const std::string& s )
-	{
-		return std::string( "(" ) + s + ")";
 	}
 	
 	static void WritePkgInfo( const std::string& pathname, const std::string& contents )
@@ -348,40 +337,6 @@ namespace tool
 		return rez_task;
 	}
 	
-	// foo.r -> echo -n 'include "foo.r";'
-	static std::string MakeEchoedRezInclude( const std::string& file )
-	{
-		std::string include = "include ";
-		std::string echo    = "echo -n ";  // OS X Rez can't handle Unix newlines
-		
-		return echo + q( include + qq( file ) + ";" );
-	}
-	
-	template < class F, class Iter >
-	std::string join( Iter begin, Iter end, const std::string& glue = "", F f = F() )
-	{
-		if ( begin == end )
-		{
-			return "";
-		}
-		
-		std::string result = f( *begin++ );
-		
-		while ( begin != end )
-		{
-			result += glue;
-			result += f( *begin++ );
-		}
-		
-		return result;
-	}
-	
-	template < class Iter >
-	std::string join( Iter begin, Iter end, const std::string& glue = "" )
-	{
-		return join( begin, end, glue, more::identity< std::string >() );
-	}
-	
 	class ResourceCopyingTask : public FileTask
 	{
 		private:
@@ -406,32 +361,16 @@ namespace tool
 	{
 		Command command;
 		
-		std::string command_line;
+		command.push_back( "cpres" );
 		
-		if ( TargetingLamp( itIsTargetingLamp ) )
+		if ( !TargetingLamp( itIsTargetingLamp ) )
 		{
-			command.push_back( "cpres" );
-			
-			AugmentCommand( command, itsInputPathnames );
-			
-			command.push_back( OutputPath().c_str() );
+			command.push_back( "--data" );
 		}
-		else
-		{
-			command_line = join( itsInputPathnames.begin(),
-			                     itsInputPathnames.end(),
-			                     "; ",
-			                     std::ptr_fun( MakeEchoedRezInclude ) );
-			
-			command_line = paren( command_line );
-			
-			command_line += " | /Developer/Tools/Rez -append -useDF -o ";
-			command_line += q( OutputPath() );
-			
-			command.push_back( "/bin/sh" );
-			command.push_back( "-c" );
-			command.push_back( command_line.c_str() );
-		}
+		
+		AugmentCommand( command, itsInputPathnames );
+		
+		command.push_back( OutputPath().c_str() );
 		
 		command.push_back( NULL );
 		
