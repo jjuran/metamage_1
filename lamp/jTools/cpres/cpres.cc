@@ -14,6 +14,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
+#include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 
 
@@ -24,6 +25,38 @@ namespace Div = Divergence;
 
 namespace tool
 {
+	
+	namespace O = Orion;
+	
+	
+	static bool globally_using_data_fork = false;
+	
+	
+	static NN::Owned< N::ResFileRefNum > open_res_file_from_data_fork( const FSSpec&   filespec,
+	                                                                   N::FSIOPermssn  perm )
+	{
+		FSRef fileref = NN::Convert< FSRef >( filespec );
+		
+		return N::FSOpenResourceFile( fileref, N::UniString(), perm );
+	}
+	
+	static NN::Owned< N::ResFileRefNum > open_res_file( const FSSpec&   filespec,
+	                                                    N::FSIOPermssn  perm )
+	{
+		try
+		{
+			if ( globally_using_data_fork )
+			{
+				return open_res_file_from_data_fork( filespec, perm );
+			}
+		}
+		catch ( ... )
+		{
+		}
+		
+		return N::FSpOpenResFile( filespec, perm );
+	}
+	
 	
 	static int TryResCopy( const FSSpec& source, N::ResFileRefNum destRes )
 	{
@@ -37,9 +70,7 @@ namespace tool
 			return 1;
 		}
 		
-		using N::fsRdPerm;
-		
-		NN::Owned< N::ResFileRefNum > sourceRes( N::FSpOpenResFile( source, fsRdPerm ) );
+		NN::Owned< N::ResFileRefNum > sourceRes( open_res_file( source, N::fsRdPerm ) );
 		
 		int types = N::Count1Types();
 		
@@ -76,15 +107,33 @@ namespace tool
 		return 0;
 	}
 	
+	
 	int Main( int argc, iota::argv_t argv )
 	{
+		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
+		
+		O::BindOption( "--data", globally_using_data_fork );
+		
+		O::GetOptions( argc, argv );
+		
+		char const *const *freeArgs = O::FreeArguments();
+		
+		std::size_t n_args = O::FreeArgumentCount();
+		
+		if ( globally_using_data_fork  &&  ::FSOpenResourceFile == NULL )
+		{
+			std::fprintf( stderr, "cpres: FSOpenResourceFile() unavailable for data fork\n" );
+			
+			return 2;
+		}
+		
 		int fail = 0;
 		
 		// Check for sufficient number of args
-		if ( argc < 3 )
+		if ( n_args < 2 )
 		{
-			std::fprintf( stderr, "cpres: missing %s\n", (argc == 1) ? "file arguments"
-			                                                         : "destination file" );
+			std::fprintf( stderr, "cpres: missing %s\n", (n_args == 0) ? "file arguments"
+			                                                           : "destination file" );
 			
 			return 1;
 		}
@@ -94,27 +143,46 @@ namespace tool
 		
 		try
 		{
-			dest = Div::ResolvePathToFSSpec( argv[ argc - 1 ] );
+			dest = Div::ResolvePathToFSSpec( freeArgs[ n_args - 1 ] );
 		}
 		catch ( ... )
 		{
-			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", argv[ argc - 1 ] );
+			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", freeArgs[ n_args - 1 ] );
 			
 			return 1;
 		}
 		
-		::FSpCreateResFile( &dest, 'RSED', 'rsrc', smRoman );
+		if ( globally_using_data_fork )
+		{
+			FSSpec parent_spec = io::get_preceding_directory( dest );
+			
+			FSRef parent_ref = NN::Convert< FSRef >( parent_spec );
+			
+			N::UniString name( dest.name + 1, dest.name + 1 + dest.name[0] );
+			
+			N::ThrowOSStatus( ::FSCreateResourceFile( &parent_ref,
+			                                          name.size(),
+			                                          name.data(),
+			                                          FSCatalogInfoBitmap(),
+			                                          NULL,
+			                                          0,
+			                                          NULL,
+			                                          NULL,
+			                                          NULL ) );
+		}
+		else
+		{
+			::FSpCreateResFile( &dest, 'RSED', 'rsrc', smRoman );
+		}
 		
-		using N::fsRdWrPerm;
-		
-		NN::Owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( dest, fsRdWrPerm ) );
+		NN::Owned< N::ResFileRefNum > resFileH( open_res_file( dest, N::fsRdWrPerm ) );
 		
 		// Try to copy each file.  Return whether any errors occurred.
-		for ( int index = 1;  index < argc - 1;  ++index )
+		for ( int index = 0;  index < n_args - 1;  ++index )
 		{
 			try
 			{
-				FSSpec source = Div::ResolvePathToFSSpec( argv[ index ] );
+				FSSpec source = Div::ResolvePathToFSSpec( freeArgs[ index ] );
 				
 				fail += TryResCopy( source, resFileH );
 			}
@@ -125,7 +193,7 @@ namespace tool
 				std::string destName = NN::Convert< std::string >( dest.name );
 				
 				std::fprintf( stderr, "OSStatus %d copying from %s to %s.\n",
-				                                err.Get(),      argv[ index ],
+				                                err.Get(),      freeArgs[ index ],
 				                                                      destName.c_str() );
 			}
 		}
