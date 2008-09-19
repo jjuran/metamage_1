@@ -686,6 +686,19 @@ namespace tool
 				
 				return EXIT_FAILURE;
 			}
+			catch ( const missing_project_config& missing )
+			{
+				std::fprintf( stderr, "A-line: project %s's config %s doesn't exist\n",
+				                                       missing.project_name.c_str(),
+				                                                   missing.config_pathname.c_str() );
+				
+				if ( !cache_was_written )
+				{
+					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
+				}
+				
+				O::ThrowExitStatus( 3 );
+			}
 			catch ( const p7::errno_t& err )
 			{
 				std::fprintf( stderr, "A-line: %s: %s\n", project_name.c_str(), std::strerror( err ) );

@@ -25,6 +25,19 @@ namespace tool
 		std::string used;
 	};
 	
+	struct missing_project_config
+	{
+		std::string project_name;
+		std::string config_pathname;
+		
+		missing_project_config( const std::string& name,
+		                        const std::string& path )
+		: project_name   ( name ),
+		  config_pathname( path )
+		{
+		}
+	};
+	
 }
 
 #endif

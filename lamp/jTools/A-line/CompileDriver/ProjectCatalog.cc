@@ -30,6 +30,9 @@
 // Io
 #include "Io/TextInput.hh"
 
+// A-line
+#include "A-line/Exceptions.hh"
+
 
 namespace tool
 {
@@ -135,7 +138,23 @@ namespace tool
 		
 		if ( result.get_config_data().empty() )
 		{
-			result.load_config();
+			try
+			{
+				result.load_config();
+			}
+			catch ( const p7::enoent& err )
+			{
+			#ifdef __MWERKS__
+				
+				if ( err != ENOENT )
+				{
+					throw;
+				}
+				
+			#endif
+				
+				throw missing_project_config( name, result.get_pathname() );
+			}
 		}
 		
 		return result;
