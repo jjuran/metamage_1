@@ -134,6 +134,9 @@ namespace tool
 	{
 		Task::Failure();
 		
+		// FIXME: Just bump the date back
+		(void) ::unlink( its_output_path.c_str() );
+		
 		Return( false );
 	}
 	
