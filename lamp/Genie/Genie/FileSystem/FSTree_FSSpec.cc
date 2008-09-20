@@ -13,6 +13,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include "utime.h"
 #include "sys/stat.h"
 
 // MoreFiles
@@ -30,6 +31,9 @@
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
+
+// TimeOff
+#include "TimeOff.hh"
 
 // Arcana / MD5
 #include "MD5.hh"
@@ -269,6 +273,8 @@ namespace Genie
 			void Stat( struct ::stat& sb ) const;
 			
 			void ChangeMode( mode_t mode ) const;
+			
+			void SetUTime( const struct utimbuf* utime_buf ) const;
 			
 			void Delete() const;
 			
@@ -659,6 +665,29 @@ namespace Genie
 	void FSTree_HFS::ChangeMode( mode_t mode ) const
 	{
 		ChangeFileMode( GetFSSpec(), mode );
+	}
+	
+	void FSTree_HFS::SetUTime( const struct utimbuf* utime_buf ) const
+	{
+		time_t mod_time = utime_buf != NULL ? utime_buf->modtime : time( NULL );
+		
+		FSSpec filespec = GetFSSpec();
+		
+		CInfoPBRec paramBlock;
+		
+		N::FSpGetCatInfo( GetFSSpec(), paramBlock );
+		
+		paramBlock.hFileInfo.ioNamePtr = filespec.name;
+		paramBlock.hFileInfo.ioDirID   = filespec.parID;
+		
+		using namespace TimeOff;
+		
+		//UInt32 modTime = MacToUnixTimeDifference( GetGMTDelta() ) + mod_time;
+		UInt32 modTime = MacToUnixTimeDifference( 0 ) + mod_time;
+		
+		paramBlock.hFileInfo.ioFlMdDat = modTime;
+		
+		N::PBSetCatInfoSync( paramBlock );
 	}
 	
 	void FSTree_HFS::Delete() const
