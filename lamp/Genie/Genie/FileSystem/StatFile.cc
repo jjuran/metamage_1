@@ -16,7 +16,10 @@
 #include "POSeven/Errno.hh"
 
 // Nitrogen
-#include "Nitrogen/OSUtils.h"
+#include "Nitrogen/Files.h"
+
+// TimeOff
+#include "TimeOff.hh"
 
 // Genie
 #include "Genie/FileSignature.hh"
@@ -28,60 +31,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
-	
-	inline unsigned long MacUnixEpochOffset()
-	{
-		// Returns the number of seconds between Mac and Unix epochs (global time).
-		// Mac time - Unix time = offset
-		// Mac time - offset = Unix time
-		// Unix time + offset = Mac time
-		
-		enum { macYear = 1904, unixYear = 1970 };
-		
-		const unsigned years = unixYear - macYear;  // 66
-		const unsigned quads = years / 4;  // 16
-		const unsigned extra = years % 4;  // 2
-		const unsigned daysPerQuad = 4 * 365 + 1;  // One Feb 29 per four years
-		const unsigned extraDays = extra * 365 + 1;  // First year is a leap year
-		const unsigned daysOffset = daysPerQuad * quads + extraDays;
-		const unsigned secondsPerDay = 60 * 60 * 24;
-		const unsigned long kMacUnixEpochOffset = daysOffset * secondsPerDay;
-		
-		return kMacUnixEpochOffset;
-	}
-	
-	static long MacLocalTimeDeltaForFiles( long gmtDelta )
-	{
-		// Returns the delta in seconds between global time and File Manager time.
-		// Call it with loc.u.gmtDelta (without masking the high byte) after calling
-		// ReadLocation( &loc ).
-		// Subtract the result from a File Manager date to get a GMT date (Mac epoch).
-		// Add it to a GMT date to get a File Manager date.
-		
-		// 7th bit of high byte indicates Daylight Savings Time is in effect
-		bool dls = gmtDelta & 0x80000000;
-		
-		// Mask off DLS byte
-		gmtDelta &= 0x00FFFFFF;
-		
-		// gmtDelta is the number of seconds ahead of GMT we are.
-		// For EST, it's -5 * 3600 = -18000.  For EDT, it's -4 * 3600 = -14400.
-		
-		// If delta is negative we need to sign-extend it
-		bool signExtend = gmtDelta & 0x00800000;
-		
-		// Sign-extend if required
-		gmtDelta |= signExtend ? 0xFF000000 : 0x00000000;
-		
-		// The Mac OS File Manager returns dates in local standard time (e.g. EST)
-		// regardless of Daylight Savings Time.  So if DLS is in effect, we have to
-		// compensate.
-		
-		// If DLS is in effect (clocks set forward), subtract an hour
-		gmtDelta -= dls ? 3600 : 0;
-		
-		return gmtDelta;
-	}
 	
 	static bool TypeIsExecutable( OSType type )
 	{
@@ -136,9 +85,7 @@ namespace Genie
 	
 	void StatFile( const FSSpec& file, struct stat* sb, bool wantRsrcFork )
 	{
-		long gmtDelta = N::ReadLocation().u.gmtDelta;
-		
-		const unsigned long timeDiff = MacUnixEpochOffset() + MacLocalTimeDeltaForFiles( gmtDelta );
+		const unsigned long timeDiff = TimeOff::MacUnixEpochOffset() + TimeOff::GetGMTDelta();
 		
 		CInfoPBRec paramBlock;
 		
