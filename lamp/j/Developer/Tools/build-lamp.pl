@@ -97,7 +97,7 @@ my @programs = qw
 	pause perl privileged ps ptrace pwd
 	readlink realpath rm rmdir rsrc-patch
 	setleds setwindow sh sleep stripcr striplf superd
-	tcpcat tcpclient th tlsrvr true tty ttyd
+	tcpcat tcpclient th tlsrvr touch true tty ttyd
 	uncaught_exception
 	which window
 );
@@ -146,6 +146,7 @@ my %fsmap =
 	{
 		bin =>
 		[
+			qw( touch ),
 			qw( gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			qw( argv0 tcpcat tcpclient ),
 			qw( cidlistener cidmon mcmd ),
