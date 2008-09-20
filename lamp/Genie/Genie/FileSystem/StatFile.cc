@@ -85,7 +85,7 @@ namespace Genie
 	
 	void StatFile( const FSSpec& file, struct stat* sb, bool wantRsrcFork )
 	{
-		const unsigned long timeDiff = TimeOff::MacUnixEpochOffset() + TimeOff::GetGMTDelta();
+		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
 		
 		CInfoPBRec paramBlock;
 		

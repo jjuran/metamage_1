@@ -671,7 +671,7 @@ namespace Genie
 	{
 		using namespace TimeOff;
 		
-		UInt32 modTime = utime_buf != NULL ? utime_buf->modtime + MacToUnixTimeDifference( GetGMTDelta() )
+		UInt32 modTime = utime_buf != NULL ? utime_buf->modtime + MacToUnixTimeDifference()
 		                                   : N::GetDateTime();
 		
 		FSSpec filespec = GetFSSpec();
