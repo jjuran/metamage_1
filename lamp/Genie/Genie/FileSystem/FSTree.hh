@@ -19,6 +19,9 @@
 // Files.h
 struct FSSpec;
 
+// utime.h
+struct utimbuf;
+
 // <sys/stat.h>
 struct stat;
 
@@ -109,6 +112,8 @@ namespace Genie
 			virtual void Stat( struct ::stat& sb ) const;
 			
 			virtual void ChangeMode( mode_t mode ) const;
+			
+			virtual void SetUTime( const struct utimbuf* utime_buf ) const;
 			
 			virtual void Delete() const;
 			

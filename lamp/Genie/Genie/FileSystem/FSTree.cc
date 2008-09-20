@@ -169,6 +169,11 @@ namespace Genie
 		p7::throw_errno( EPERM );
 	}
 	
+	void FSTree::SetUTime( const struct utimbuf* utime_buf ) const
+	{
+		p7::throw_errno( EPERM );
+	}
+	
 	void FSTree::Delete() const
 	{
 		p7::throw_errno( EPERM );
