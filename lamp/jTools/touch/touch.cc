@@ -5,12 +5,14 @@
 
 // Standard C/C++
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 // POSIX
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <utime.h>
 
 // Orion
 #include "Orion/Main.hh"
@@ -30,27 +32,35 @@ namespace tool
 		}
 		
 		// Try to touch each item.  Return whether any errors occurred.
-		int fail = 0;
+		int exit_status = EXIT_SUCCESS;
 		
 		for ( std::size_t index = 1;  index < argc;  ++index )
 		{
 			const char* pathname = argv[ index ];
 			
-			int fd = open( pathname, O_WRONLY | O_CREAT, 0600 );
+			int result = utime( pathname, NULL );
 			
-			if ( fd == -1 )
+			if ( result < 0 )
 			{
+				if ( errno == ENOENT )
+				{
+					result = open( pathname, O_WRONLY | O_CREAT, 0666 );
+					
+					if ( result >= 0 )
+					{
+						close( result );
+						
+						continue;
+					}
+				}
+				
 				std::fprintf( stderr, "touch: %s: %s\n", pathname, std::strerror( errno ) );
 				
-				++fail;
-			}
-			else
-			{
-				close( fd );
+				exit_status = EXIT_FAILURE;
 			}
 		}
 		
-		return (fail == 0) ? 0 : 1;
+		return exit_status;
 	}
 	
 }
