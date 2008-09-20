@@ -35,12 +35,20 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	inline UInt32 GlobalDateTime()
+	{
+		return N::GetDateTime() - TimeOff::GetGMTDelta();
+	}
+	
 	struct StartTime
 	{
 		UInt64 microseconds;
 		UInt32 dateTime;
 		
-		StartTime() : microseconds( N::Microseconds() ), dateTime( TimeOff::GlobalDateTime() )  {}
+		StartTime() : microseconds( N::Microseconds() ),
+		              dateTime    ( GlobalDateTime()  )
+		{
+		}
 	};
 	
 	static StartTime gStartTime;
@@ -50,9 +58,7 @@ namespace Genie
 	{
 		SystemCallFrame frame( "gettimeofday" );
 		
-		long gmtDelta = TimeOff::GetGMTDelta();
-		
-		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference( gmtDelta );
+		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
 		
 		if ( tv != NULL )
 		{
@@ -60,12 +66,6 @@ namespace Genie
 			
 			tv->tv_sec  = now;
 			tv->tv_usec = (N::Microseconds() - gStartTime.microseconds) % 1000000;
-		}
-		
-		if ( tz != NULL )
-		{
-			tz->tz_minuteswest = -gmtDelta / 60;
-			tz->tz_dsttime     = 0;
 		}
 		
 		return 0;
