@@ -8,6 +8,8 @@ qw
 (
 	abort
 	getenv
+	gmtime
+	localtime
 	perror
 	raise
 	remove
