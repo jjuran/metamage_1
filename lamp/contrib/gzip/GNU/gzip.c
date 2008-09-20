@@ -62,8 +62,6 @@ static char rcsid[] = "$Id$";
 
 		/* configuration */
 
-#define NO_UTIME 1
-
 #ifdef NO_TIME_H
 #  include <sys/time.h>
 #else
@@ -423,8 +421,6 @@ local void version()
 }
 
 /* ======================================================================== */
-#pragma export on
-
 int main (argc, argv)
     int argc;
     char **argv;
@@ -605,8 +601,6 @@ int main (argc, argv)
     do_exit(exit_code);
     return exit_code; /* just to avoid lint warning */
 }
-
-#pragma export reset
 
 /* ========================================================================
  * Compress or decompress stdin
