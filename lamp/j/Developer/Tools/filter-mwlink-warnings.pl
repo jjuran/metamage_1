@@ -15,6 +15,7 @@ qw
 	signal
 	strerror
 	system
+	utime
 	__atexit
 	__exit
 	
