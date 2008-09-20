@@ -299,12 +299,12 @@ namespace tool
 		
 		if ( output_exists )
 		{
-			time_t output_stamp = output_stat.st_mtime;
-			
 			// Memoize this once we have multi-platform builds
-			UpdateInputStamp( p7::stat( its_source_pathname ).st_mtime );
+			const time_t source_stamp = p7::stat( its_source_pathname ).st_mtime;
 			
-			if ( MoreRecent( output_stamp ) )
+			UpdateInputStamp( source_stamp );
+			
+			if ( MoreRecent( output_stat.st_mtime ) )
 			{
 				std::string source_filename = io::get_filename_string( its_source_pathname );
 				
@@ -314,7 +314,7 @@ namespace tool
 				
 				struct stat dependencies_stat;
 				
-				bool has_dot_d = p7::stat( dependencies_pathname, dependencies_stat );
+				bool has_dot_d = p7::stat( dependencies_pathname, dependencies_stat )  &&  dependencies_stat.st_mtime > source_stamp;
 				
 				time_t includes_stamp;
 				
@@ -326,9 +326,7 @@ namespace tool
 					
 					includes_stamp = get_collective_timestamp( includes.begin(), includes.end() );
 					
-					const time_t dependencies_stamp = dependencies_stat.st_mtime;
-					
-					if ( includes_stamp >= dependencies_stamp )
+					if ( includes_stamp >= dependencies_stat.st_mtime )
 					{
 						// .d file is out of date
 						includes.clear();
@@ -352,7 +350,7 @@ namespace tool
 				
 				UpdateInputStamp( includes_stamp );
 				
-				if ( MoreRecent( output_stamp ) )
+				if ( MoreRecent( output_stat.st_mtime ) )
 				{
 					return true;
 				}
