@@ -120,7 +120,7 @@ namespace tool
 		
 		std::size_t n_args = O::FreeArgumentCount();
 		
-		if ( !TARGET_API_MAC_CARBON  ||  globally_using_data_fork  &&  ::FSOpenResourceFile == NULL )
+		if ( globally_using_data_fork  &&  ( !TARGET_API_MAC_CARBON || ::FSOpenResourceFile == NULL ) )
 		{
 			std::fprintf( stderr, "cpres: FSOpenResourceFile() unavailable for data fork\n" );
 			
