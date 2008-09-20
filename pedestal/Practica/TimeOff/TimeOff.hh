@@ -10,6 +10,33 @@
 namespace TimeOff
 {
 	
+	// Gets the raw machineLocation.u.gmtDelta
+	long GetGMTDeltaField();
+	
+	// Returns whether DLS is in effect
+	inline bool GetDLSFromGMTDeltaField( long gmtDeltaField )
+	{
+		return gmtDeltaField & 0x80000000;
+	}
+	
+	// Gets the refined GMT delta from the raw field.
+	// Call it with loc.u.gmtDelta (without masking the high byte) after calling
+	// ReadLocation( &loc ).
+	inline long GetGMTDeltaFromField( long field )
+	{
+		// Mask off DLS byte, and sign extend if negative
+		// (Look, mom, no branches!)
+		return (field & 0x00FFFFFF) | (field & 0x00800000) * 0xFF << 1;
+	}
+	
+	// Returns the delta in seconds between global time and Mac system time.
+	// Subtract the result from a Mac system date to get a GMT date (Mac epoch).
+	// Add it to a GMT date to get a Mac system date.
+	inline long GetGMTDelta()
+	{
+		return GetGMTDeltaFromField( GetGMTDeltaField() );
+	}
+	
 	inline unsigned long MacUnixEpochOffset()
 	{
 		// Returns the number of seconds between Mac and Unix epochs (global time).
@@ -31,14 +58,10 @@ namespace TimeOff
 		return kMacUnixEpochOffset;
 	}
 	
-	inline unsigned long MacToUnixTimeDifference( long gmtDelta )
+	inline unsigned long MacToUnixTimeDifference()
 	{
-		return MacUnixEpochOffset() + gmtDelta;
+		return MacUnixEpochOffset() + GetGMTDelta();
 	}
-	
-	long GetGMTDelta();
-	
-	unsigned long GlobalDateTime();
 	
 }
 
