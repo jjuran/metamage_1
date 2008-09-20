@@ -31,14 +31,14 @@ namespace TimeOff
 		return kMacUnixEpochOffset;
 	}
 	
-	inline UInt32 MacToUnixTimeDifference( long gmtDelta )
+	inline unsigned long MacToUnixTimeDifference( long gmtDelta )
 	{
 		return MacUnixEpochOffset() + gmtDelta;
 	}
 	
 	long GetGMTDelta();
 	
-	UInt32 GlobalDateTime();
+	unsigned long GlobalDateTime();
 	
 }
 

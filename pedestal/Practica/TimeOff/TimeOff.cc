@@ -5,14 +5,12 @@
 
 #include "TimeOff.hh"
 
-// Nitrogen
-#include "Nitrogen/OSUtils.h"
+// Universal Interfaces
+#include <OSUtils.h>
 
 
 namespace TimeOff
 {
-	
-	namespace N = Nitrogen;
 	
 	static long MacLocalTimeDelta( long gmtDelta )
 	{
@@ -42,16 +40,24 @@ namespace TimeOff
 	
 	long GetGMTDelta()
 	{
-		long rawGMTDelta = N::ReadLocation().u.gmtDelta;
+		MachineLocation location;
+		
+		::ReadLocation( &location );
+		
+		long rawGMTDelta = location.u.gmtDelta;
 		
 		long gmtDelta = MacLocalTimeDelta( rawGMTDelta );
 		
 		return gmtDelta;
 	}
 	
-	UInt32 GlobalDateTime()
+	unsigned long GlobalDateTime()
 	{
-		return N::GetDateTime() - MacToUnixTimeDifference( GetGMTDelta() );
+		UInt32 dateTime;
+		
+		::GetDateTime( &dateTime );
+		
+		return dateTime - MacToUnixTimeDifference( GetGMTDelta() );
 	}
 	
 }
