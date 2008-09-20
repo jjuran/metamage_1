@@ -15,6 +15,7 @@ qw
 	signal
 	strerror
 	system
+	time
 	utime
 	__atexit
 	__exit
@@ -56,15 +57,16 @@ my @loser_libs =
 my @winner_libs =
 qw
 (
-	MSL-fixup.lib
-	KSIOUXConsole.cc
 	:KSIOUXConsole.cc
-	Kerosene-User.lib
-	Kerosene-Library.lib
-	PascalPreCarbonUPPGlue.o
-	OTXTILib
-	sfio.lib
 	Abort.cc
+	KSIOUXConsole.cc
+	Kerosene-Library.lib
+	Kerosene-User.lib
+	MSL-fixup.lib
+	openbsd-libc.lib
+	OTXTILib
+	PascalPreCarbonUPPGlue.o
+	sfio.lib
 );
 
 my $warning_template = << '[END]';
