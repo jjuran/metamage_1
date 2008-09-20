@@ -21,9 +21,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_wait )
-	DEFINE_MODULE_INIT( Kernel_wait )
-	
 	namespace p7 = poseven;
 	
 	
@@ -154,7 +151,11 @@ namespace Genie
 		return -1;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( waitpid );
+	
+	#pragma force_active reset
 	
 }
 

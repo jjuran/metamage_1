@@ -20,9 +20,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_select )
-	DEFINE_MODULE_INIT(  Kernel_select )
-	
 	namespace N = Nitrogen;
 	
 	
@@ -116,7 +113,11 @@ namespace Genie
 		}
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( select );
+	
+	#pragma force_active reset
 	
 }
 

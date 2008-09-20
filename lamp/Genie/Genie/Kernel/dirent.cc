@@ -23,9 +23,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_dirent )
-	DEFINE_MODULE_INIT( Kernel_dirent )
-	
 	namespace N = Nitrogen;
 	
 	
@@ -52,7 +49,11 @@ namespace Genie
 		}
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( getdents );
+	
+	#pragma force_active reset
 	
 }
 

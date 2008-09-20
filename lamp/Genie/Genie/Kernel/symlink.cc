@@ -31,9 +31,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_symlink )
-	DEFINE_MODULE_INIT(  Kernel_symlink )
-	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -151,7 +148,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( symlink );
 	
 	static ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
 	{
@@ -181,7 +177,12 @@ namespace Genie
 		}
 	}
 	
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( symlink    );
 	REGISTER_SYSTEM_CALL( readlink_k );
+	
+	#pragma force_active reset
 	
 }
 

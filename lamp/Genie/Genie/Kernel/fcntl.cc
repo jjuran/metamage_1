@@ -20,10 +20,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_fcntl )
-	DEFINE_MODULE_INIT( Kernel_fcntl )
-	
-	
 	static int open( const char* path, int oflag, mode_t mode )
 	{
 		SystemCallFrame frame( "open" );
@@ -55,8 +51,6 @@ namespace Genie
 			return frame.SetErrnoFromException();
 		}
 	}
-	
-	REGISTER_SYSTEM_CALL( open );
 	
 	static int fcntl( int filedes, int cmd, int param )
 	{
@@ -98,7 +92,12 @@ namespace Genie
 		return frame.SetErrno( EINVAL );
 	}
 	
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( open  );
 	REGISTER_SYSTEM_CALL( fcntl );
+	
+	#pragma force_active reset
 	
 }
 

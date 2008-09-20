@@ -23,9 +23,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_realpath )
-	DEFINE_MODULE_INIT(  Kernel_realpath )
-	
 	namespace N = Nitrogen;
 	
 	using namespace io::path_descent_operators;
@@ -57,7 +54,11 @@ namespace Genie
 		}
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( realpath_k );
+	
+	#pragma force_active reset
 	
 }
 

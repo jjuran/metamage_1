@@ -15,7 +15,6 @@
 #include "Genie/ExecHandler.hh"
 #include "Genie/ReplyHandler.hh"
 #include "Genie/Process.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
@@ -127,8 +126,6 @@ namespace Genie
 int main()
 {
 	Genie::App app;
-	
-	Genie::InitKernelModules();
 	
 	return app.Run();
 }

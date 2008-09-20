@@ -18,10 +18,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_signal )
-	DEFINE_MODULE_INIT(  Kernel_signal )
-	
-	
 	static void send_signal( Process& process, int signo )
 	{
 		if ( signo != 0 )
@@ -74,6 +70,7 @@ namespace Genie
 		
 	}
 	
+	
 	static int kill( pid_t pid, int signo )
 	{
 		SystemCallFrame frame( "kill" );
@@ -96,7 +93,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( kill );
 	
 	static __sig_handler signal( int signo, __sig_handler func )
 	{
@@ -127,7 +123,6 @@ namespace Genie
 		return result;
 	}
 	
-	REGISTER_SYSTEM_CALL( signal );
 	
 	static int sigaction( int signo, const struct sigaction* action, struct sigaction* oldaction )
 	{
@@ -167,7 +162,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( sigaction );
 	
 	static int sigpending( sigset_t* oldset )
 	{
@@ -181,7 +175,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( sigpending );
 	
 	static int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
 	{
@@ -218,7 +211,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( sigprocmask );
 	
 	static int sigsuspend( const sigset_t* sigmask )
 	{
@@ -240,7 +232,17 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( sigsuspend );
+	
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( kill        );
+	REGISTER_SYSTEM_CALL( signal      );
+	REGISTER_SYSTEM_CALL( sigaction   );
+	REGISTER_SYSTEM_CALL( sigpending  );
+	REGISTER_SYSTEM_CALL( sigprocmask );
+	REGISTER_SYSTEM_CALL( sigsuspend  );
+	
+	#pragma force_active reset
 	
 }
 

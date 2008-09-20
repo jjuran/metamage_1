@@ -115,7 +115,6 @@ namespace Genie
 		current.SetErrnoPtr( errno_addr );
 	}
 	
-	REGISTER_SYSTEM_CALL( InitProc );
 	
 	static OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 	{
@@ -146,7 +145,6 @@ namespace Genie
 		return noErr;
 	}
 	
-	REGISTER_SYSTEM_CALL( AESendBlocking );
 	
 	
 	#pragma mark -
@@ -159,7 +157,6 @@ namespace Genie
 		return frame.Caller().SetAlarm( seconds );
 	}
 	
-	REGISTER_SYSTEM_CALL( alarm );
 	
 	static int chdir( const char* pathname )
 	{
@@ -186,8 +183,6 @@ namespace Genie
 		}
 	}
 	
-	REGISTER_SYSTEM_CALL( chdir );
-	
 	
 	static int close( int fd )
 	{
@@ -205,7 +200,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( close );
 	
 	static int dup_common( SystemCallFrame& frame, int oldfd, int newfd )
 	{
@@ -226,7 +220,6 @@ namespace Genie
 		return dup_common( frame, oldfd, LowestUnusedFileDescriptor() );
 	}
 	
-	REGISTER_SYSTEM_CALL( dup );
 	
 	static int dup2( int oldfd, int newfd )
 	{
@@ -235,7 +228,6 @@ namespace Genie
 		return dup_common( frame, oldfd, newfd );
 	}
 	
-	REGISTER_SYSTEM_CALL( dup2 );
 	
 	static int execve( const char* path, const char* const argv[], const char* const envp[] )
 	{
@@ -321,7 +313,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( execve );
 	
 	static void _exit( int status )
 	{
@@ -338,7 +329,6 @@ namespace Genie
 		GetProcess( current.GetPPID() ).ResumeAfterFork();  // doesn't return
 	}
 	
-	REGISTER_SYSTEM_CALL( _exit );
 	
 	static ssize_t getcwd_k( char* buffer, std::size_t buffer_size )
 	{
@@ -364,7 +354,6 @@ namespace Genie
 		}
 	}
 	
-	REGISTER_SYSTEM_CALL( getcwd_k );
 	
 	static pid_t getpgid( pid_t pid )
 	{
@@ -376,7 +365,6 @@ namespace Genie
 		return proc.GetPGID();
 	}
 	
-	REGISTER_SYSTEM_CALL( getpgid );
 	
 	static pid_t getpid()
 	{
@@ -385,7 +373,6 @@ namespace Genie
 		return frame.Caller().GetPID();
 	}
 	
-	REGISTER_SYSTEM_CALL( getpid );
 	
 	static pid_t getppid()
 	{
@@ -394,7 +381,6 @@ namespace Genie
 		return frame.Caller().GetPPID();
 	}
 	
-	REGISTER_SYSTEM_CALL( getppid );
 	
 	static pid_t getsid( pid_t pid )
 	{
@@ -406,7 +392,6 @@ namespace Genie
 		return proc.GetSID();
 	}
 	
-	REGISTER_SYSTEM_CALL( getsid );
 	
 	static off_t lseek( int fd, off_t offset, int whence )
 	{
@@ -429,7 +414,6 @@ namespace Genie
 		return frame.SetErrno( ESPIPE );
 	}
 	
-	REGISTER_SYSTEM_CALL( lseek );
 	
 	static int mknod( const char* /*path*/, mode_t /*mode*/, dev_t /*dev*/ )
 	{
@@ -438,7 +422,6 @@ namespace Genie
 		return frame.SetErrno( EINVAL );
 	}
 	
-	REGISTER_SYSTEM_CALL( mknod );
 	
 	static int pause()
 	{
@@ -449,7 +432,6 @@ namespace Genie
 		return frame.SetErrno( EINTR );
 	}
 	
-	REGISTER_SYSTEM_CALL( pause );
 	
 	static int pipe( int filedes[ 2 ] )
 	{
@@ -474,7 +456,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( pipe );
 	
 	static int peek( int fd, const char** buffer, size_t minBytes )
 	{
@@ -502,7 +483,6 @@ namespace Genie
 		}
 	}
 	
-	//REGISTER_SYSTEM_CALL( peek );
 	
 	static ssize_t read( int fd, void* buf, size_t count )
 	{
@@ -525,7 +505,6 @@ namespace Genie
 		}
 	}
 	
-	REGISTER_SYSTEM_CALL( read );
 	
 	static int setpgid( pid_t pid, pid_t pgid )
 	{
@@ -592,7 +571,6 @@ namespace Genie
 		}
 	}
 	
-	REGISTER_SYSTEM_CALL( setpgid );
 	
 	static boost::shared_ptr< Session > NewSession( pid_t sid )
 	{
@@ -620,7 +598,6 @@ namespace Genie
 		}
 	}
 	
-	REGISTER_SYSTEM_CALL( setsid );
 	
 	static int truncate( const char* path, off_t length )
 	{
@@ -642,7 +619,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( truncate );
 	
 	static int ftruncate( int fd, off_t length )
 	{
@@ -662,7 +638,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( ftruncate );
 	
 	// ttypair() is analogous to socketpair(), and creates a pseudo-tty device.
 	// File descriptors refering to the master and slave respectively are returned
@@ -695,7 +670,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( ttypair );
 	
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
@@ -719,7 +693,37 @@ namespace Genie
 		}
 	}
 	
-	REGISTER_SYSTEM_CALL( write );
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( InitProc       );
+	REGISTER_SYSTEM_CALL( AESendBlocking );
+	
+	REGISTER_SYSTEM_CALL( alarm     );
+	REGISTER_SYSTEM_CALL( chdir     );
+	REGISTER_SYSTEM_CALL( close     );
+	REGISTER_SYSTEM_CALL( dup       );
+	REGISTER_SYSTEM_CALL( dup2      );
+	REGISTER_SYSTEM_CALL( execve    );
+	REGISTER_SYSTEM_CALL( _exit     );
+	REGISTER_SYSTEM_CALL( getcwd_k  );
+	REGISTER_SYSTEM_CALL( getpgid   );
+	REGISTER_SYSTEM_CALL( getpid    );
+	REGISTER_SYSTEM_CALL( getppid   );
+	REGISTER_SYSTEM_CALL( getsid    );
+	REGISTER_SYSTEM_CALL( lseek     );
+	REGISTER_SYSTEM_CALL( mknod     );
+	REGISTER_SYSTEM_CALL( pause     );
+	REGISTER_SYSTEM_CALL( pipe      );
+	//REGISTER_SYSTEM_CALL( peek );
+	REGISTER_SYSTEM_CALL( read      );
+	REGISTER_SYSTEM_CALL( setpgid   );
+	REGISTER_SYSTEM_CALL( setsid    );
+	REGISTER_SYSTEM_CALL( truncate  );
+	REGISTER_SYSTEM_CALL( ftruncate );
+	REGISTER_SYSTEM_CALL( ttypair   );
+	REGISTER_SYSTEM_CALL( write     );
+	
+	#pragma force_active reset
 	
 }
 

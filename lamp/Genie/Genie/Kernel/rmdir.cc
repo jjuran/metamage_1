@@ -25,9 +25,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_rmdir )
-	DEFINE_MODULE_INIT(  Kernel_rmdir )
-	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
@@ -77,7 +74,11 @@ namespace Genie
 		return 0;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( rmdir );
+	
+	#pragma force_active reset
 	
 }
 

@@ -22,9 +22,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_ioctl )
-	DEFINE_MODULE_INIT(  Kernel_ioctl )
-	
 	static int ioctl( int filedes, unsigned long request, int* argp )
 	{
 		SystemCallFrame frame( "ioctl" );
@@ -45,7 +42,11 @@ namespace Genie
 		return 0;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( ioctl );
+	
+	#pragma force_active reset
 	
 }
 

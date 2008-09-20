@@ -16,27 +16,10 @@
 namespace Genie
 {
 	
-#if TARGET_CPU_68K && defined(__MWERKS__)
-	
-	#define DECLARE_MODULE_INIT(Module)  void Init_##Module##_();
-	#define DEFINE_MODULE_INIT(Module)   void Init_##Module##_()  {}
-	#define CALL_MODULE_INIT(Module)          Init_##Module##_()
-	
-	void InitKernelModules();
-	
-#else
-	
-	#define DECLARE_MODULE_INIT(Module)
-	#define DEFINE_MODULE_INIT(Module)
-	#define CALL_MODULE_INIT(Module)
-	
-	inline void InitKernelModules()  {}
-	
-#endif
-	
 	// Register system calls
 	
-	#define REGISTER_SYSTEM_CALL(call)  SystemCallRegistration call##_syscall_( __NR_##call, #call, (void*) call )
+	#define REGISTER_SYSTEM_CALL(call)  \
+		SystemCallRegistration call##_syscall_( __NR_##call, #call, (void*) call )
 	
 	void RegisterSystemCall( unsigned index, const char* name, void* func );
 	

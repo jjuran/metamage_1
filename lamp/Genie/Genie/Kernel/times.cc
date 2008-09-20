@@ -20,9 +20,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	
-	DECLARE_MODULE_INIT( Kernel_times )
-	DEFINE_MODULE_INIT(  Kernel_times )
-	
 	
 	struct StartTime
 	{
@@ -51,7 +48,11 @@ namespace Genie
 		return (N::Microseconds() - gStartTime.microseconds) * (CLOCKS_PER_SEC / 1000000.0);
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( times );
+	
+	#pragma force_active reset
 	
 }
 

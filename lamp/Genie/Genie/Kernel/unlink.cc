@@ -23,9 +23,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_unlink )
-	DEFINE_MODULE_INIT(  Kernel_unlink )
-	
 	static int unlink( const char* pathname )
 	{
 		SystemCallFrame frame( "unlink" );
@@ -59,7 +56,11 @@ namespace Genie
 		return 0;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( unlink );
+	
+	#pragma force_active reset
 	
 }
 

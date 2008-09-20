@@ -16,9 +16,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_mkdir )
-	DEFINE_MODULE_INIT(  Kernel_mkdir )
-	
 	static int mkdir( const char* pathname, mode_t mode )
 	{
 		SystemCallFrame frame( "mkdir" );
@@ -41,7 +38,11 @@ namespace Genie
 		return 0;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( mkdir );
+	
+	#pragma force_active reset
 	
 }
 

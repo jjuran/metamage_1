@@ -27,10 +27,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_socket )
-	DEFINE_MODULE_INIT(  Kernel_socket )
-	
-	
 	static int socketpair( int domain, int type, int protocol, int fds[2] )
 	{
 		SystemCallFrame frame( "socketpair" );
@@ -60,7 +56,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( socketpair );
 	
 	static int socket( int domain, int type, int protocol )
 	{
@@ -82,7 +77,6 @@ namespace Genie
 		return fd;
 	}
 	
-	REGISTER_SYSTEM_CALL( socket );
 	
 	static int bind( int fd, const struct sockaddr* name, socklen_t namelen )
 	{
@@ -102,7 +96,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( bind );
 	
 	static int listen( int fd, int backlog )
 	{
@@ -122,7 +115,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( listen );
 	
 	static int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 	{
@@ -148,7 +140,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( accept );
 	
 	static int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	{
@@ -170,7 +161,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( connect );
 	
 	static int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 	{
@@ -194,7 +184,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( getsockname );
 	
 	static int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 	{
@@ -218,7 +207,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( getpeername );
 	
 	static int shutdown( int fd, int how )
 	{
@@ -251,7 +239,19 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( shutdown );
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( socketpair  );
+	REGISTER_SYSTEM_CALL( socket      );
+	REGISTER_SYSTEM_CALL( bind        );
+	REGISTER_SYSTEM_CALL( listen      );
+	REGISTER_SYSTEM_CALL( accept      );
+	REGISTER_SYSTEM_CALL( connect     );
+	REGISTER_SYSTEM_CALL( getsockname );
+	REGISTER_SYSTEM_CALL( getpeername );
+	REGISTER_SYSTEM_CALL( shutdown    );
+	
+	#pragma force_active reset
 	
 }
 

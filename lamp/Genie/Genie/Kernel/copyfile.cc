@@ -23,9 +23,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_copyfile )
-	DEFINE_MODULE_INIT(  Kernel_copyfile )
-	
 	namespace N = Nitrogen;
 	
 	using namespace io::path_descent_operators;
@@ -87,7 +84,11 @@ namespace Genie
 		return 0;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( copyfile );
+	
+	#pragma force_active reset
 	
 }
 

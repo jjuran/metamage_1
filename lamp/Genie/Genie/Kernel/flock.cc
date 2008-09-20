@@ -21,10 +21,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_flock )
-	DEFINE_MODULE_INIT( Kernel_flock )
-	
-	
 	static int flock( int fd, int operation )
 	{
 		SystemCallFrame frame( "flock" );
@@ -53,7 +49,11 @@ namespace Genie
 		return frame.SetErrno( EINVAL );
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( flock );
+	
+	#pragma force_active reset
 	
 }
 

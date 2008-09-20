@@ -20,10 +20,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_pump )
-	DEFINE_MODULE_INIT(  Kernel_pump )
-	
-	
 	static ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count )
 	{
 		SystemCallFrame frame( "pump" );
@@ -99,7 +95,11 @@ namespace Genie
 		return bytes_pumped;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( pump );
+	
+	#pragma force_active reset
 	
 }
 

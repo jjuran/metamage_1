@@ -15,9 +15,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_Spawn )
-	DEFINE_MODULE_INIT( Kernel_Spawn )
-	
 	inline Process& SpawnFrom( Process& parent )
 	{
 		Process* child = new Process( parent );
@@ -43,7 +40,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( SpawnVFork );
 	
 	static int fork_and_exit( int exit_status )
 	{
@@ -63,7 +59,12 @@ namespace Genie
 		return 0;
 	}
 	
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( SpawnVFork    );
 	REGISTER_SYSTEM_CALL( fork_and_exit );
+	
+	#pragma force_active reset
 	
 }
 

@@ -31,9 +31,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_time )
-	DEFINE_MODULE_INIT(  Kernel_time )
-	
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
@@ -74,7 +71,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( gettimeofday );
 	
 	static int nanosleep( const struct timespec* requested, struct timespec* remaining )
 	{
@@ -134,7 +130,12 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( nanosleep );
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( gettimeofday );
+	REGISTER_SYSTEM_CALL( nanosleep    );
+	
+	#pragma force_active reset
 	
 }
 

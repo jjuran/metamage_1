@@ -39,9 +39,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_rename )
-	DEFINE_MODULE_INIT(  Kernel_rename )
-	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
@@ -296,7 +293,11 @@ namespace Genie
 		return 0;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( rename );
+	
+	#pragma force_active reset
 	
 }
 

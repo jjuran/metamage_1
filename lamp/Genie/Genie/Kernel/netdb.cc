@@ -19,9 +19,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_netdb )
-	DEFINE_MODULE_INIT(  Kernel_netdb )
-	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
@@ -101,8 +98,6 @@ namespace Genie
 		return &host_entry;
 	}
 	
-	REGISTER_SYSTEM_CALL( gethostbyname );
-	
 	static OSStatus OTInetMailExchange_k( char* domain, UInt16* count, InetMailExchange* result )
 	{
 		SystemCallFrame frame( "OTInetMailExchange" );
@@ -112,11 +107,17 @@ namespace Genie
 		return ::OTInetMailExchange( InternetServices(), domain, count, result );
 	}
 	
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( gethostbyname );
+	
 #if !TARGET_API_MAC_CARBON
 	
 	REGISTER_SYSTEM_CALL( OTInetMailExchange_k );
 	
 #endif
+	
+	#pragma force_active reset
 	
 }
 

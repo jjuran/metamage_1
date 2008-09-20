@@ -26,9 +26,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_stat )
-	DEFINE_MODULE_INIT(Kernel_stat)
-	
 	static int access( const char* path, int mode )
 	{
 		SystemCallFrame frame( "access" );
@@ -56,7 +53,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( access );
 	
 	static int chmod_file( SystemCallFrame& frame, const char* path, mode_t mode )
 	{
@@ -94,7 +90,6 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( fchmod );
 	
 	static int stat_file( SystemCallFrame& frame, const char* path, struct stat* sb, bool resolveLinks )
 	{
@@ -130,7 +125,6 @@ namespace Genie
 		return chmod_file( frame, path, mode );
 	}
 	
-	REGISTER_SYSTEM_CALL( chmod );
 	
 	static int lstat( const char* path, struct stat* sb )
 	{
@@ -139,7 +133,6 @@ namespace Genie
 		return stat_file( frame, path, sb, false );
 	}
 	
-	REGISTER_SYSTEM_CALL( lstat );
 	
 	static int stat( const char* path, struct stat* sb )
 	{
@@ -148,7 +141,6 @@ namespace Genie
 		return stat_file( frame, path, sb, true );  // FIXME:  Resolve symlinks
 	}
 	
-	REGISTER_SYSTEM_CALL( stat );
 	
 	static int fstat( int fd, struct stat* sb )
 	{
@@ -168,7 +160,16 @@ namespace Genie
 		return 0;
 	}
 	
-	REGISTER_SYSTEM_CALL( fstat );
+	#pragma force_active on
+	
+	REGISTER_SYSTEM_CALL( access );
+	REGISTER_SYSTEM_CALL( fchmod );
+	REGISTER_SYSTEM_CALL( chmod  );
+	REGISTER_SYSTEM_CALL( lstat  );
+	REGISTER_SYSTEM_CALL( stat   );
+	REGISTER_SYSTEM_CALL( fstat  );
+	
+	#pragma force_active reset
 	
 }
 

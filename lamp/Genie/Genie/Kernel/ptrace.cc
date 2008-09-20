@@ -18,10 +18,6 @@
 namespace Genie
 {
 	
-	DECLARE_MODULE_INIT( Kernel_ptrace )
-	DEFINE_MODULE_INIT(  Kernel_ptrace )
-	
-	
 	static int ptrace( int request, pid_t pid, void* addr, int data )
 	{
 		SystemCallFrame frame( "ptrace" );
@@ -130,7 +126,11 @@ namespace Genie
 		return 0;
 	}
 	
+	#pragma force_active on
+	
 	REGISTER_SYSTEM_CALL( ptrace );
+	
+	#pragma force_active reset
 	
 }
 
