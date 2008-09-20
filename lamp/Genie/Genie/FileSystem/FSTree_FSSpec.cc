@@ -669,7 +669,10 @@ namespace Genie
 	
 	void FSTree_HFS::SetUTime( const struct utimbuf* utime_buf ) const
 	{
-		time_t mod_time = utime_buf != NULL ? utime_buf->modtime : time( NULL );
+		using namespace TimeOff;
+		
+		UInt32 modTime = utime_buf != NULL ? utime_buf->modtime + MacToUnixTimeDifference( GetGMTDelta() )
+		                                   : N::GetDateTime();
 		
 		FSSpec filespec = GetFSSpec();
 		
@@ -679,11 +682,6 @@ namespace Genie
 		
 		paramBlock.hFileInfo.ioNamePtr = filespec.name;
 		paramBlock.hFileInfo.ioDirID   = filespec.parID;
-		
-		using namespace TimeOff;
-		
-		//UInt32 modTime = MacToUnixTimeDifference( GetGMTDelta() ) + mod_time;
-		UInt32 modTime = MacToUnixTimeDifference( 0 ) + mod_time;
 		
 		paramBlock.hFileInfo.ioFlMdDat = modTime;
 		
