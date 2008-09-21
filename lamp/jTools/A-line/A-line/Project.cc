@@ -400,10 +400,7 @@ namespace tool
 	{
 		std::string result = dir / filename;
 		
-		if ( !io::item_exists( result ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
+		(void) p7::stat( result );  // throws ENOENT if nonexistent
 		
 		return result;
 	}
