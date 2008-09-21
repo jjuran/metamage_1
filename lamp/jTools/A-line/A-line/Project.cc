@@ -413,7 +413,7 @@ namespace tool
 			}
 			
 			// dir has trailing slash, add another for sentinel
-			std::string result = dir + "//" +  relative_path;
+			std::string result = dir + "/" +  relative_path;
 			
 			if ( io::item_exists( result ) )
 			{
