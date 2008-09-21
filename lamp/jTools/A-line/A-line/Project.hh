@@ -50,7 +50,9 @@ namespace tool
 			// Creator code / signature for output files.
 			std::string its_creator_code;
 			// Source files to compile.
-			std::vector< std::string > its_source_file_pathnames;
+			std::vector< std::string > its_source_file_pathnames;  // absolute
+			
+			std::map< std::string, std::vector< std::string > > its_source_file_paths;  // search-dir-relative
 			
 			// maps include paths to absolute pathnames
 			mutable std::map< std::string, std::string > its_include_map;

@@ -490,25 +490,26 @@ namespace tool
 		return result;
 	}
 	
-	static std::vector< std::string > list_sources( const std::vector< std::string >& source_dirs )
+	static void list_sources( const std::vector< std::string >&                     source_dirs,
+	                          std::map< std::string, std::vector< std::string > >&  results )
 	{
 		// Enumerate our source files
 		// FIXME:  Doesn't deal with duplicates
-		
-		std::vector< std::string > result;
 		
 		typedef std::vector< std::string >::const_iterator Iter;
 		
 		for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 		{
-			std::vector< std::string > deepSources = DeepFiles( *it, std::ptr_fun( IsCompilableFilename ) );
+			const std::string& source_dir = *it;
 			
-			result.insert( result.end(),
+			std::vector< std::string > deepSources = DeepFiles( source_dir, std::ptr_fun( IsCompilableFilename ) );
+			
+			std::vector< std::string >& output( results[ source_dir ] );
+			
+			output.insert( output.end(),
 			               deepSources.begin(),
 			               deepSources.end() );
 		}
-		
-		return result;
 	}
 	
 	
@@ -570,9 +571,9 @@ namespace tool
 		get_source_data( its_dir_pathname,
 		                 get_values( conf_data, "sources" ),
 		                 source_search_dirs,
-		                 its_source_file_pathnames );
+		                 its_source_file_paths[ its_dir_pathname ] );
 		
-		if ( !its_source_file_pathnames.empty() )
+		if ( !its_source_file_paths[ its_dir_pathname ].empty() )
 		{
 			return;
 		}
@@ -580,10 +581,36 @@ namespace tool
 		// Try a Source.list file
 		std::string source_list = SourceDotListFile( its_dir_pathname );
 		
-		its_source_file_pathnames = io::item_exists( source_list ) ? find_sources( ReadSourceDotList( source_list ),
-		                                                                           its_search_dir_pathnames )
-		                                                           : list_sources( !source_search_dirs.empty() ? source_search_dirs
-		                                                                                                       : its_search_dir_pathnames );
+		if ( io::item_exists( source_list ) )
+		{
+			its_source_file_paths[ its_dir_pathname ] = find_sources( ReadSourceDotList( source_list ),
+		                                                              its_search_dir_pathnames );
+		}
+		else
+		{
+			list_sources( !source_search_dirs.empty() ? source_search_dirs
+		                                              : its_search_dir_pathnames,
+		                  its_source_file_paths );
+		}
+		
+		typedef std::map< std::string, std::vector< std::string > >::const_iterator Map_Iter;
+		
+		for ( Map_Iter it = its_source_file_paths.begin();  it != its_source_file_paths.end();  ++it )
+		{
+			const std::string& search_pathname = it->first;
+			
+			const std::vector< std::string >& file_paths = it->second;
+			
+			typedef std::vector< std::string >::const_iterator V_Iter;
+			
+			for ( V_Iter it = file_paths.begin();  it != file_paths.end();  ++it )
+			{
+				const std::string& path = *it;
+				
+				its_source_file_pathnames.push_back( path[0] == '/' ? path
+				                                                    : search_pathname / path );
+			}
+		}
 	}
 	
 }
