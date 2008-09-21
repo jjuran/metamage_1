@@ -562,15 +562,17 @@ namespace tool
 		
 		if ( project_providing_precompiled_header != NULL )
 		{
-			std::string precompiled_header_source_path = project_providing_precompiled_header->PrecompiledHeaderSource();
+			// For width reasons, we call the precompiled header a 'prefix'.
 			
-			std::string precompiled_header_source_filename = io::get_filename_string( precompiled_header_source_path );
+			std::string prefix_source_path = project_providing_precompiled_header->PrecompiledHeaderSource();
+			
+			std::string prefix_source_filename = io::get_filename_string( prefix_source_path );
 			
 			std::string pchImage = PrecompiledHeaderImageFile( project_providing_precompiled_header->Name(),
-			                                                   precompiled_header_source_filename,
+			                                                   prefix_source_filename,
 			                                                   target_info );
 			
-			options.SetPrecompiledHeaderSource( precompiled_header_source_filename );
+			options.SetPrecompiledHeaderSource( prefix_source_filename );
 			// Theory:
 			// We need to include the pch source by name only, not path.
 			// Therefore, we need its parent directory to be in the search path,
@@ -582,21 +584,21 @@ namespace tool
 			if ( project.HasPrecompiledHeader() )
 			{
 				// Locate the precompiled header image file.
-				std::string precompiled_header_source_pathname = project.FindIncludeRecursively( precompiled_header_source_path );
+				std::string prefix_source_pathname = project.FindIncludeRecursively( prefix_source_path );
 				
-				if ( precompiled_header_source_pathname.empty() )
+				if ( prefix_source_pathname.empty() )
 				{
-					std::fprintf( stderr, "Missing precompiled header '%s'\n", precompiled_header_source_path.c_str() );
+					std::fprintf( stderr, "Missing precompiled header '%s'\n", prefix_source_path.c_str() );
 				}
 				else
 				{
 					// Insert a "//" sentinel before the relative path
-					precompiled_header_source_pathname.insert( precompiled_header_source_pathname.end() - precompiled_header_source_path.size(), '/' );
+					prefix_source_pathname.insert( prefix_source_pathname.end() - prefix_source_path.size(), '/' );
 				}
 				
 				precompile_task.reset( new CompilingTask( project,
 				                                          precompile_options,
-				                                          precompiled_header_source_pathname,
+				                                          prefix_source_pathname,
 				                                          pchImage,
 				                                          diagnostics_dir_path,
 				                                          "Precompiling: " ) );
