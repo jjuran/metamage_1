@@ -407,10 +407,13 @@ namespace tool
 		{
 			std::string dir = *it;
 			
-			ASSERT( dir[ dir.size() - 1 ] == '/' );
+			if ( dir[ dir.size() - 1 ] != '/' )
+			{
+				dir += '/';
+			}
 			
 			// dir has trailing slash, add another for sentinel
-			std::string result = dir + "/" +  relative_path;
+			std::string result = dir + "//" +  relative_path;
 			
 			if ( io::item_exists( result ) )
 			{
