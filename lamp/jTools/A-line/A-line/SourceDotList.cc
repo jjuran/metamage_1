@@ -24,11 +24,10 @@ namespace tool
 	using BitsAndBytes::eos;
 	
 	
-	std::vector< std::string > ReadSourceDotList( const std::string& pathname )
+	void ReadSourceDotList( const std::string&           pathname,
+	                        std::vector< std::string >&  files )
 	{
 		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( io::open_for_reading( pathname ) );
-		
-		std::vector< std::string > files;
 		
 		while ( input.Ready() )
 		{
@@ -42,6 +41,13 @@ namespace tool
 			files.push_back( line.substr( line.find_first_not_of( "\t" ),
 			                              line.npos ) );
 		}
+	}
+	
+	std::vector< std::string > ReadSourceDotList( const std::string& pathname )
+	{
+		std::vector< std::string > files;
+		
+		ReadSourceDotList( pathname, files );
 		
 		return files;
 	}

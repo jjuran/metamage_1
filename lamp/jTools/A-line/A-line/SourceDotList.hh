@@ -14,6 +14,9 @@
 namespace tool
 {
 	
+	void ReadSourceDotList( const std::string&           pathname,
+	                        std::vector< std::string >&  results );
+	
 	std::vector< std::string > ReadSourceDotList( const std::string& pathname );
 	
 }
