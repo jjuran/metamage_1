@@ -566,6 +566,10 @@ namespace tool
 			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
 		
+		its_tool_filenames = get_values( its_config_data, "tools" );
+		
+		std::sort( its_tool_filenames.begin(), its_tool_filenames.end() );
+		
 		std::vector< std::string > source_search_dirs;
 		
 		get_source_data( its_dir_pathname,

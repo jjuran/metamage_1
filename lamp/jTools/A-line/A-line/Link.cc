@@ -423,9 +423,7 @@ namespace tool
 			return 0;
 		}
 		
-		std::vector< std::string > toolSourceFiles = project.ToolSourceFiles();
-		
-		std::sort( toolSourceFiles.begin(), toolSourceFiles.end() );
+		const std::vector< std::string >& toolSourceFiles = project.ToolSourceFiles();
 		
 		std::size_t n_tools = std::partition( sourceFiles.begin(),
 		                                      sourceFiles.end(),

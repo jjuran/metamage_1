@@ -49,6 +49,8 @@ namespace tool
 			std::vector< std::string > its_search_dir_pathnames;
 			// Creator code / signature for output files.
 			std::string its_creator_code;
+			// Source filenames which are tools.
+			std::vector< std::string > its_tool_filenames;
 			// Source files to compile.
 			std::vector< std::string > its_source_file_pathnames;  // absolute
 			
@@ -82,7 +84,8 @@ namespace tool
 			
 			const std::vector< std::string >& SearchDirs() const  { return its_search_dir_pathnames; }
 			
-			const std::vector< std::string >& ToolSourceFiles() const  { return get_values( its_config_data, "tools"      ); }
+			const std::vector< std::string >& ToolSourceFiles() const  { return its_tool_filenames; }
+			
 			const std::vector< std::string >& LibImports()      const  { return get_values( its_config_data, "imports"    ); }
 			const std::vector< std::string >& Frameworks()      const  { return get_values( its_config_data, "frameworks" ); }
 			const std::vector< std::string >& UsedRezFiles()    const  { return get_values( its_config_data, "rez"        ); }
