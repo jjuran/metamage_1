@@ -490,7 +490,8 @@ namespace tool
 	}
 	
 	static void list_sources( const std::vector< std::string >&  source_dirs,
-	                          std::vector< std::string >&        output )
+	                          std::vector< std::string >&        output,
+	                          bool                               source_only_search )
 	{
 		// Enumerate our source files
 		// FIXME:  Doesn't deal with duplicates
@@ -502,6 +503,18 @@ namespace tool
 			const std::string& source_dir = *it;
 			
 			std::vector< std::string > deepSources = DeepFiles( source_dir, std::ptr_fun( IsCompilableFilename ) );
+			
+			if ( !source_only_search )
+			{
+				typedef std::vector< std::string >::iterator Iter;
+				
+				for ( Iter it = deepSources.begin();  it != deepSources.end();  ++ it )
+				{
+					std::string& pathname = *it;
+					
+					pathname.insert( pathname.begin() + source_dir.size(), '/' );
+				}
+			}
 			
 			output.insert( output.end(),
 			               deepSources.begin(),
@@ -604,9 +617,12 @@ namespace tool
 		}
 		else
 		{
-			list_sources( !source_search_dirs.empty() ? source_search_dirs
-		                                              : its_search_dir_pathnames,
-		                  its_source_file_pathnames );
+			const bool source_only_search = !source_search_dirs.empty();
+			
+			list_sources( source_only_search ? source_search_dirs
+		                                     : its_search_dir_pathnames,
+		                  its_source_file_pathnames,
+		                  source_only_search );
 		}
 		
 		if ( its_product_type == productToolkit )
