@@ -14,6 +14,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
@@ -404,7 +407,10 @@ namespace tool
 		{
 			std::string dir = *it;
 			
-			std::string result = dir / relative_path;
+			ASSERT( dir[ dir.size() - 1 ] == '/' );
+			
+			// dir has trailing slash, add another for sentinel
+			std::string result = dir + "/" +  relative_path;
 			
 			if ( io::item_exists( result ) )
 			{
@@ -434,7 +440,10 @@ namespace tool
 			{
 				const std::string& project_relative_path = *it;
 				
-				std::string absolute_path = project_dir / project_relative_path;
+				ASSERT( project_dir[ project_dir.size() - 1 ] == '/' );
+				
+				// project_dir has trailing slash, add another for sentinel
+				std::string absolute_path = project_dir + "/" + project_relative_path;
 				
 				if ( io::directory_exists( absolute_path ) )
 				{
