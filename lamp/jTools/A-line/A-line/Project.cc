@@ -512,17 +512,36 @@ namespace tool
 		}
 	}
 	
+	static bool filename_belongs( const std::string& source_path, const std::vector< std::string >& tools )
+	{
+		return std::find( tools.begin(),
+		                  tools.end(),
+		                  io::get_filename( source_path ) ) != tools.end();
+	}
+	
+	static std::size_t partition_sources( const std::vector< std::string >&  tool_filenames,
+	                                      std::vector< std::string >&        source_paths )
+	{
+		std::size_t n_tools = std::partition( source_paths.begin(),
+		                                      source_paths.end(),
+		                                      std::bind2nd( more::ptr_fun( &filename_belongs ),
+		                                                                    tool_filenames ) ) - source_paths.begin();
+		
+		return n_tools;
+	}
+	
 	
 	Project::Project( const std::string&  proj,
 	                  Platform            platform,
 	                  const std::string&  project_dir,
 	                  const ConfData&     conf_data )
 	:
-		its_name  ( proj ),
-		its_platform( platform ),
-		its_dir_pathname( project_dir ),
-		its_config_data( conf_data ),
-		its_product_type   ( productNotBuilt )
+		its_name        ( proj            ),
+		its_platform    ( platform        ),
+		its_dir_pathname( project_dir     ),
+		its_config_data ( conf_data       ),
+		its_product_type( productNotBuilt ),
+		its_tool_count  ()
 	{
 		its_product_type = ReadProduct( get_first( conf_data, "product" ) );
 		
@@ -565,10 +584,6 @@ namespace tool
 		{
 			its_creator_code = its_creator_code.substr( 1, 4 );
 		}
-		
-		its_tool_filenames = get_values( its_config_data, "tools" );
-		
-		std::sort( its_tool_filenames.begin(), its_tool_filenames.end() );
 		
 		std::vector< std::string > source_search_dirs;
 		
@@ -614,6 +629,15 @@ namespace tool
 				its_source_file_pathnames.push_back( path[0] == '/' ? path
 				                                                    : search_pathname / path );
 			}
+		}
+		
+		if ( its_product_type == productToolkit )
+		{
+			its_tool_filenames = get_values( its_config_data, "tools" );
+			
+			std::sort( its_tool_filenames.begin(), its_tool_filenames.end() );
+			
+			its_tool_count = partition_sources( its_tool_filenames, its_source_file_pathnames );
 		}
 	}
 	

@@ -600,13 +600,13 @@ namespace tool
 		
 		std::string outDir = ProjectObjectsDirPath( project.Name() );
 		
-		std::vector< std::string > source_paths;
-		
 		std::vector< std::string > object_paths;
 		
-		const std::size_t n_tools = NameObjectFiles( project, source_paths, object_paths );
+		NameObjectFiles( project, object_paths );
 		
-		const std::vector< std::string >& sources = n_tools > 0 ? source_paths : project.Sources();
+		const std::vector< std::string >& sources = project.Sources();
+		
+		const std::size_t n_tools = project.ToolCount();
 		
 		tool_dependencies.resize( n_tools );
 		

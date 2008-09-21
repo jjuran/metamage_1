@@ -121,13 +121,6 @@ namespace tool
 		}
 	}
 	
-	static bool SourceFileIsTool( const std::string& sourceFile, const std::vector< std::string >& tools )
-	{
-		return std::find( tools.begin(),
-		                  tools.end(),
-		                  io::get_filename( sourceFile ) ) != tools.end();
-	}
-	
 	static bool ProjectBuildsLib( const Project& project )
 	{
 		return project.Product() == productStaticLib;
@@ -416,23 +409,6 @@ namespace tool
 	}
 	
 	
-	static std::size_t PartitionSourceFiles( const Project& project, std::vector< std::string >& sourceFiles )
-	{
-		if ( project.Product() != productToolkit )
-		{
-			return 0;
-		}
-		
-		const std::vector< std::string >& toolSourceFiles = project.ToolSourceFiles();
-		
-		std::size_t n_tools = std::partition( sourceFiles.begin(),
-		                                      sourceFiles.end(),
-		                                      std::bind2nd( more::ptr_fun( &SourceFileIsTool ),
-		                                                                    toolSourceFiles ) ) - sourceFiles.begin();
-		
-		return n_tools;
-	}
-	
 	inline std::string ObjectFileName( const std::string& sourceName )
 	{
 		std::size_t dot = sourceName.find_last_of( '.' );
@@ -454,38 +430,16 @@ namespace tool
 		                                                more::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ) ) ) );
 	}
 	
-	std::size_t NameObjectFiles( const Project&               project,
-	                             std::vector< std::string >&  source_paths,
-	                             std::vector< std::string >&  object_pathnames )
+	void NameObjectFiles( const Project&               project,
+	                      std::vector< std::string >&  object_pathnames )
 	{
-		std::size_t n_tools = 0;
-		
-		bool toolkit = project.Product() == productToolkit;
-		
-		if ( toolkit )
-		{
-			source_paths = project.Sources();
-			
-			n_tools = PartitionSourceFiles( project, source_paths );
-		}
-		
 		std::string objects_dir = ProjectObjectsDirPath( project.Name() );
 		
-		const std::vector< std::string >& sources = toolkit ? source_paths : project.Sources();
+		const std::vector< std::string >& sources = project.Sources();
 		
 		object_pathnames.resize( sources.size() );
 		
 		FillObjectFiles( objects_dir, sources, object_pathnames );
-		
-		return n_tools;
-	}
-	
-	static std::size_t NameObjectFiles( const Project&               project,
-	                                    std::vector< std::string >&  object_pathnames )
-	{
-		std::vector< std::string > source_paths;
-		
-		return NameObjectFiles( project, source_paths, object_pathnames );
 	}
 	
 	
@@ -505,7 +459,9 @@ namespace tool
 		
 		std::vector< std::string > objectFiles;
 		
-		const std::size_t n_tools = NameObjectFiles( project, objectFiles );
+		NameObjectFiles( project, objectFiles );
+		
+		const std::size_t n_tools = project.ToolCount();
 		
 		const bool hasStaticLib = project.Product() == productStaticLib  ||  project.Product() == productToolkit;
 		
