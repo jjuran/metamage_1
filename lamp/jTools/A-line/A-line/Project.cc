@@ -11,6 +11,9 @@
 #include <set>
 #include <vector>
 
+// Iota
+#include "iota/strings.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
@@ -378,12 +381,18 @@ namespace tool
 		return false;
 	}
 	
+	inline bool match_backwards( const char* a_end, const char* b_begin, std::size_t length )
+	{
+		return std::equal( a_end - length, a_end, b_begin );
+	}
+	
 	static bool IsCompilableFilename( const std::string& filename )
 	{
 		std::size_t lastDot = filename.find_last_of( "." );
 		
 		return    lastDot != std::string::npos
-		       && IsCompilableExtension( filename.substr( lastDot, std::string::npos ) );
+		       && IsCompilableExtension( filename.substr( lastDot, std::string::npos ) )
+		       && !match_backwards( filename.c_str() + lastDot, STR_LEN( " copy" ) );
 	}
 	
 	
