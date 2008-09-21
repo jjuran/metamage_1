@@ -489,8 +489,8 @@ namespace tool
 		return result;
 	}
 	
-	static void list_sources( const std::vector< std::string >&                     source_dirs,
-	                          std::map< std::string, std::vector< std::string > >&  results )
+	static void list_sources( const std::vector< std::string >&  source_dirs,
+	                          std::vector< std::string >&        output )
 	{
 		// Enumerate our source files
 		// FIXME:  Doesn't deal with duplicates
@@ -502,8 +502,6 @@ namespace tool
 			const std::string& source_dir = *it;
 			
 			std::vector< std::string > deepSources = DeepFiles( source_dir, std::ptr_fun( IsCompilableFilename ) );
-			
-			std::vector< std::string >& output( results[ source_dir ] );
 			
 			output.insert( output.end(),
 			               deepSources.begin(),
@@ -589,9 +587,9 @@ namespace tool
 		get_source_data( its_dir_pathname,
 		                 get_values( conf_data, "sources" ),
 		                 source_search_dirs,
-		                 its_source_file_paths[ its_dir_pathname ] );
+		                 its_source_file_pathnames );
 		
-		if ( !its_source_file_paths[ its_dir_pathname ].empty() )
+		if ( !its_source_file_pathnames.empty() )
 		{
 			return;
 		}
@@ -601,33 +599,14 @@ namespace tool
 		
 		if ( io::item_exists( source_list ) )
 		{
-			its_source_file_paths[ its_dir_pathname ] = find_sources( ReadSourceDotList( source_list ),
-		                                                              its_search_dir_pathnames );
+			its_source_file_pathnames = find_sources( ReadSourceDotList( source_list ),
+		                                              its_search_dir_pathnames );
 		}
 		else
 		{
 			list_sources( !source_search_dirs.empty() ? source_search_dirs
 		                                              : its_search_dir_pathnames,
-		                  its_source_file_paths );
-		}
-		
-		typedef std::map< std::string, std::vector< std::string > >::const_iterator Map_Iter;
-		
-		for ( Map_Iter it = its_source_file_paths.begin();  it != its_source_file_paths.end();  ++it )
-		{
-			const std::string& search_pathname = it->first;
-			
-			const std::vector< std::string >& file_paths = it->second;
-			
-			typedef std::vector< std::string >::const_iterator V_Iter;
-			
-			for ( V_Iter it = file_paths.begin();  it != file_paths.end();  ++it )
-			{
-				const std::string& path = *it;
-				
-				its_source_file_pathnames.push_back( path[0] == '/' ? path
-				                                                    : search_pathname / path );
-			}
+		                  its_source_file_pathnames );
 		}
 		
 		if ( its_product_type == productToolkit )
