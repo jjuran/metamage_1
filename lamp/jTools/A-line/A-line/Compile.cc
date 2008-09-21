@@ -19,6 +19,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+// Iota
+#include "iota/strings.hh"
+
 // Io
 #include "io/io.hh"
 #include "io/files.hh"
@@ -364,9 +367,22 @@ namespace tool
 	{
 		Command command = MakeCompileCommand( its_options, its_source_pathname, OutputPath() );
 		
-		std::string source_filename = io::get_filename_string( its_source_pathname );
+		const char* source_path = std::strstr( its_source_pathname.c_str(), "//" );
 		
-		ExecuteCommand( shared_from_this(), its_caption + source_filename, command, its_diagnostics_file_path.c_str() );
+		if ( source_path == NULL )
+		{
+			source_path = its_source_pathname.c_str();
+		}
+		else
+		{
+			source_path += STRLEN( "//" );
+		}
+		
+		std::string full_caption = its_caption;
+		
+		full_caption += source_path;
+		
+		ExecuteCommand( shared_from_this(), full_caption, command, its_diagnostics_file_path.c_str() );
 	}
 	
 	void CompilingTask::Return( bool succeeded )
