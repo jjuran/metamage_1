@@ -391,22 +391,22 @@ namespace tool
 	}
 	
 	
-	static std::string PrecompiledHeaderImageFile( const std::string&  project_name,
-	                                               std::string         precompiled_header_source_filename,
-	                                               const TargetInfo&   target_info )
+	static std::string get_prefix_image_pathname( const std::string&  project_name,
+	                                              std::string         prefix_source_filename,
+	                                              const TargetInfo&   target_info )
 	{
-		std::string precompiled_header_dir_pathname = ProjectPrecompiledDirPath( project_name );
+		std::string prefix_dir_pathname = ProjectPrecompiledDirPath( project_name );
 		
 		const bool gnu = target_info.toolchain == toolchainGNU;
 		
 		const char* extension = (gnu ? ".gch" : ".mwch");
 		
-		std::string precompiled_header_image_filename = precompiled_header_source_filename + extension;
+		std::string prefix_image_filename = prefix_source_filename + extension;
 		
-		return precompiled_header_dir_pathname / precompiled_header_image_filename;
+		return prefix_dir_pathname / prefix_image_filename;
 	}
 	
-	static bool ProjectHasPrecompiledHeader( const std::string& project_name, Platform platform )
+	static bool project_has_prefix( const std::string& project_name, Platform platform )
 	{
 		return GetProject( project_name, platform ).HasPrecompiledHeader();
 	}
@@ -465,7 +465,7 @@ namespace tool
 	}
 	
 	
-	static const Project* ProjectProvidingPrecompiledHeader( const Project& project, Platform platform )
+	static const Project* get_project_providing_prefix( const Project& project, Platform platform )
 	{
 		const Project* result = NULL;
 		
@@ -480,7 +480,7 @@ namespace tool
 			
 			const_iterator it = std::find_if( project.AllUsedProjects().begin(),
 			                                  project.AllUsedProjects().end(),
-			                                  std::bind2nd( more::ptr_fun( ProjectHasPrecompiledHeader ),
+			                                  std::bind2nd( more::ptr_fun( project_has_prefix ),
 			                                                platform ) );
 			
 			if ( it != project.AllUsedProjects().end() )
@@ -558,19 +558,19 @@ namespace tool
 		// In case we have a toolkit with no common sources?
 		precompile_task->AddDependent( source_dependency );
 		
-		const Project* project_providing_precompiled_header = ProjectProvidingPrecompiledHeader( project, target_info.platform );
+		// For width reasons, we call the precompiled header a 'prefix'.
 		
-		if ( project_providing_precompiled_header != NULL )
+		const Project* project_providing_prefix = get_project_providing_prefix( project, target_info.platform );
+		
+		if ( project_providing_prefix != NULL )
 		{
-			// For width reasons, we call the precompiled header a 'prefix'.
-			
-			std::string prefix_source_path = project_providing_precompiled_header->PrecompiledHeaderSource();
+			std::string prefix_source_path = project_providing_prefix->PrecompiledHeaderSource();
 			
 			std::string prefix_source_filename = io::get_filename_string( prefix_source_path );
 			
-			std::string pchImage = PrecompiledHeaderImageFile( project_providing_precompiled_header->Name(),
-			                                                   prefix_source_filename,
-			                                                   target_info );
+			std::string pchImage = get_prefix_image_pathname( project_providing_prefix->Name(),
+			                                                  prefix_source_filename,
+			                                                  target_info );
 			
 			options.SetPrecompiledHeaderSource( prefix_source_filename );
 			// Theory:
@@ -607,9 +607,9 @@ namespace tool
 			}
 			else
 			{
-				ASSERT( !project_providing_precompiled_header->get_precompile_task().expired() );
+				ASSERT( !project_providing_prefix->get_precompile_task().expired() );
 				
-				precompile_task = project_providing_precompiled_header->get_precompile_task().lock();
+				precompile_task = project_providing_prefix->get_precompile_task().lock();
 			}
 		}
 		
