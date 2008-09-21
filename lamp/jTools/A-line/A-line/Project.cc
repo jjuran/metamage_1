@@ -396,15 +396,6 @@ namespace tool
 	}
 	
 	
-	static std::string FindFileInDir( const std::string& filename, const std::string& dir )
-	{
-		std::string result = dir / filename;
-		
-		(void) p7::stat( result );  // throws ENOENT if nonexistent
-		
-		return result;
-	}
-	
 	static std::string FindSourceFileInDirs( const std::string& relative_path, const std::vector< std::string >& search_dirs )
 	{
 		typedef std::vector< std::string >::const_iterator dir_iter;
@@ -413,21 +404,11 @@ namespace tool
 		{
 			std::string dir = *it;
 			
-			try
+			std::string result = dir / relative_path;
+			
+			if ( io::item_exists( result ) )
 			{
-				const char* path = relative_path.c_str();
-				
-				while ( const char* slash = std::strchr( path, '/' ) )
-				{
-					dir = dir / std::string( path, slash );
-					
-					path = slash + 1;
-				}
-				
-				return FindFileInDir( path, dir );
-			}
-			catch ( ... )
-			{
+				return result;
 			}
 		}
 		
