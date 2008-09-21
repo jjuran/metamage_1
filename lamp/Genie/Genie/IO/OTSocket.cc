@@ -267,8 +267,11 @@ namespace Genie
 	{
 		if ( itsSocketAddress.Get() == NULL )
 		{
-			// Fail
+			throw N::OTOutStateErr();
 		}
+		
+		// Throw out our tcp-only endpoint and make one with tilisten prepended
+		itsEndpoint = N::OTOpenEndpoint( N::OTCreateConfiguration( "tilisten,tcp" ) );
 		
 		TBind reqAddr;
 		
@@ -276,8 +279,7 @@ namespace Genie
 		
 		reqAddr.addr.buf = reinterpret_cast< unsigned char* >( itsSocketAddress.Get() );
 		reqAddr.addr.len = itsSocketAddress.Len();
-		//reqAddr.qlen = backlog;
-		reqAddr.qlen = 1;
+		reqAddr.qlen = backlog;
 		
 		N::OTBind( itsEndpoint, &reqAddr, NULL );
 		
