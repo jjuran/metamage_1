@@ -588,6 +588,11 @@ namespace tool
 				{
 					std::fprintf( stderr, "Missing precompiled header '%s'\n", precompiled_header_source_path.c_str() );
 				}
+				else
+				{
+					// Insert a "//" sentinel before the relative path
+					precompiled_header_source_pathname.insert( precompiled_header_source_pathname.end() - precompiled_header_source_path.size(), '/' );
+				}
 				
 				precompile_task.reset( new CompilingTask( project,
 				                                          precompile_options,
