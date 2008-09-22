@@ -97,9 +97,9 @@ namespace Orion
 		{
 			return tool::Main( argc, argv );
 		}
-		catch ( const ExitStatus& exit )
+		catch ( const p7::exit_t& status )
 		{
-			return exit.Get();
+			return status;
 		}
 		catch ( const p7::errno_t& err )
 		{

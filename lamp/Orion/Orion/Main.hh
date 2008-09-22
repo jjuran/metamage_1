@@ -6,26 +6,17 @@
 #ifndef ORION_MAIN_HH
 #define ORION_MAIN_HH
 
+// Iota
 #include "iota/argv.hh"
+
+// POSeven
+#include "POSeven/types/exit_t.hh"
 
 
 namespace Orion
 {
 	
-	class ExitStatus
-	{
-		private:
-			int status;
-		
-		public:
-			ExitStatus( int status ) : status( status )  {}
-			
-			int Get() const  { return status; }
-			
-			operator int() const  { return Get(); }
-	};
-	
-	inline void ThrowExitStatus( int status )  { throw ExitStatus( status ); }
+	inline void ThrowExitStatus( int status )  { throw poseven::exit_t( status ); }
 	
 }
 
