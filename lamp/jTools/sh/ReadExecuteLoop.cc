@@ -104,8 +104,8 @@ static void SetRowsAndColumns()
 #endif
 }
 
-int ReadExecuteLoop( p7::fd_t  fd,
-                     bool      prompts )
+p7::wait_t ReadExecuteLoop( p7::fd_t  fd,
+                            bool      prompts )
 {
 	Io::TextInputAdapter< p7::fd_t > input( fd );
 	
@@ -129,7 +129,7 @@ int ReadExecuteLoop( p7::fd_t  fd,
 			{
 				if ( command == "exit" )
 				{
-					return 0;
+					return p7::wait_t( 0 );
 				}
 				
 				SetRowsAndColumns();
@@ -149,6 +149,6 @@ int ReadExecuteLoop( p7::fd_t  fd,
 		}
 	}
 	
-	return result;
+	return p7::wait_t( result );
 }
 

@@ -10,6 +10,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/types/wait_t.hh"
 
 
 extern int gLastResult;
@@ -24,8 +25,8 @@ enum PromptLevel
 
 void SetPromptLevel( PromptLevel level );
 
-int ReadExecuteLoop( poseven::fd_t  fd,
-                     bool           prompts );
+poseven::wait_t ReadExecuteLoop( poseven::fd_t  fd,
+                                 bool           prompts );
 
 #endif
 

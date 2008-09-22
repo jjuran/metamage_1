@@ -355,15 +355,6 @@ class ReplacedParametersScope
 		}
 };
 
-static int exit_from_wait( int stat )
-{
-	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-	           :                       -1;
-	
-	return result;
-}
-
 static int BuiltinDot( int argc, iota::argv_t argv )
 {
 	if ( argc < 2 )
@@ -378,7 +369,7 @@ static int BuiltinDot( int argc, iota::argv_t argv )
 	
 	ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 	
-	int result = exit_from_wait( ReadExecuteLoop( fd, false ) );
+	int result = Nucleus::Convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
 	
 	return result;
 }

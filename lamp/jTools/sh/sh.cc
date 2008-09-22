@@ -22,6 +22,7 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/functions/wait.hh"
 
 // Iota
 #include "iota/strings.hh"
@@ -36,16 +37,6 @@
 #include "Options.hh"
 #include "PositionalParameters.hh"
 #include "ReadExecuteLoop.hh"
-
-
-static int exit_from_wait( int stat )
-{
-	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-	           :                       -1;
-	
-	return result;
-}
 
 
 const char* gArgZero = NULL;
@@ -196,12 +187,15 @@ namespace tool
 		if ( command != NULL )
 		{
 			// Run a single command
-			return exit_from_wait( ExecuteCmdLine( command ) );
+			return Nucleus::Convert< p7::exit_t >( ExecuteCmdLine( command ) );
 		}
 		
 		OnExit onExit;
 		
-		return exit_from_wait( ReadExecuteLoop( input, GetOption( kOptionInteractive ) ) );
+		p7::wait_t status = ReadExecuteLoop( input,
+		                                     GetOption( kOptionInteractive ) );
+		
+		return Nucleus::Convert< p7::exit_t >( status );
 	}
 	
 }
