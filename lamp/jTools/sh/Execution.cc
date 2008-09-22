@@ -40,749 +40,777 @@
 #include "PositionalParameters.hh"
 
 
-namespace NN = Nucleus;
-namespace p7 = poseven;
-namespace O = Orion;
-namespace Sh = ShellShock;
-
-
-using Sh::Command;
-using Sh::Pipeline;
-using Sh::Circuit;
-using Sh::List;
-
-
-int gLastResult = 0;
-
-
-struct Job
+namespace tool
 {
-	Circuit circuit;
-	int pid;
-};
-
-typedef std::map< std::size_t, Job > JobTable;
-
-static JobTable gJobTable;
-
-static int NextJobNumber()
-{
-	return 0;
-}
-
-/*
-static int NewJob( const Circuit& circuit )
-{
-	int job = NextJobNumber();
 	
-	gJobTable[ job ];
-	
-	return job;
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
+	namespace O = Orion;
+	namespace Sh = ShellShock;
 	
 	
+	using Sh::Command;
+	using Sh::Pipeline;
+	using Sh::Circuit;
+	using Sh::List;
 	
-}
-*/
-
-
-static const char* global_signal_names[] =
-{
-	"Signal 0",
-	"Hangup",
-	"",  // INT
-	"Quit",
-	"Illegal instruction",
-	"Trace/breakpoint trap",
-	"Aborted",
-	"Bus error",
-	"Floating point exception",
-	"Killed",
-	"User defined signal 1",
-	"Segmentation fault",
-	"User defined signal 2",
-	"Broken pipe",
-	"Alarm clock",
-	"Terminated",
-	"Stack fault",
-	"Child exited",
-	"Continued",
-	"Stopped (signal)",
-	"Stopped",
-	"Stopped (tty input)",
-	"Stopped (tty output)",
-	"Urgent I/O condition",
-	"CPU time limit exceeded",
-	"File size limit exceeded",
-	"Virtual timer expired",
-	"Profiling timer expired",
-	"Window changed",
-	"I/O possible",
-	"Power failure",
-	"Bad system call",
-	NULL
-};
-
-#ifdef __MWERKS__
-
-const char* strsignal( int signo )
-{
-	if ( signo < 0  ||  signo > NSIG )
+	
+	int gLastResult = 0;
+	
+	
+	struct Job
 	{
-		return "BAD SIGNAL NUMBER";
+		Circuit circuit;
+		int pid;
+	};
+	
+	typedef std::map< std::size_t, Job > JobTable;
+	
+	static JobTable gJobTable;
+	
+	static int NextJobNumber()
+	{
+		return 0;
 	}
 	
-	return global_signal_names[ signo ];
-}
-
-#endif
-
-static int exit_from_wait( int stat )
-{
-	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-	           :                       -1;
-	
-	return result;
-}
-
-
-class AppendWithSpace
-{
-	public:
-		AppendWithSpace( std::string& ioString ) : myString( ioString )  {}
+	/*
+	static int NewJob( const Circuit& circuit )
+	{
+		int job = NextJobNumber();
 		
-		void operator()( const std::string& inNew )
+		gJobTable[ job ];
+		
+		return job;
+		
+		
+		
+	}
+	*/
+	
+	
+	static const char* global_signal_names[] =
+	{
+		"Signal 0",
+		"Hangup",
+		"",  // INT
+		"Quit",
+		"Illegal instruction",
+		"Trace/breakpoint trap",
+		"Aborted",
+		"Bus error",
+		"Floating point exception",
+		"Killed",
+		"User defined signal 1",
+		"Segmentation fault",
+		"User defined signal 2",
+		"Broken pipe",
+		"Alarm clock",
+		"Terminated",
+		"Stack fault",
+		"Child exited",
+		"Continued",
+		"Stopped (signal)",
+		"Stopped",
+		"Stopped (tty input)",
+		"Stopped (tty output)",
+		"Urgent I/O condition",
+		"CPU time limit exceeded",
+		"File size limit exceeded",
+		"Virtual timer expired",
+		"Profiling timer expired",
+		"Window changed",
+		"I/O possible",
+		"Power failure",
+		"Bad system call",
+		NULL
+	};
+	
+	#ifdef __MWERKS__
+	
+	const char* strsignal( int signo )
+	{
+		if ( signo < 0  ||  signo > NSIG )
 		{
-			myString += " " + inNew;
+			return "BAD SIGNAL NUMBER";
 		}
-	
-	private:
-		std::string& myString;
-};
-
-
-class ShellParameterDictionary : public Sh::ParameterDictionary
-{
-	public:
-		ShellParameterDictionary()  {}
 		
-		std::vector< std::string > Lookup( const std::string& param, bool double_quoted ) const;
-};
-
-template < class T >
-inline std::vector< T > MakeVector( const T& value )
-{
-	return std::vector< T >( 1, value );
-}
-
-std::vector< std::string > ShellParameterDictionary::Lookup( const std::string& param, bool double_quoted ) const
-{
-	std::string single_result;
+		return global_signal_names[ signo ];
+	}
 	
-	if ( param == "$" )
+	#endif
+	
+	static int exit_from_wait( int stat )
 	{
-		single_result = NN::Convert< std::string >( getpid() );
-	}
-	else if ( param == "?" )
-	{
-		single_result = NN::Convert< std::string >( exit_from_wait( gLastResult ) );
-	}
-	else if ( param == "#" )
-	{
-		single_result = NN::Convert< std::string >( gParameterCount );
-	}
-	else if ( double_quoted  &&  param == "*" )
-	{
-		if ( gParameterCount != 0 )
-		{
-			single_result = gParameters[ 0 ];
-			
-			std::for_each( gParameters + 1,
-			               gParameters + gParameterCount,
-			               AppendWithSpace( single_result ) );
-		}
-	}
-	else if ( param == "@"  ||  param == "*" )
-	{
-		std::vector< std::string > result( gParameterCount );
-		
-		std::copy( gParameters, gParameters + gParameterCount, result.begin() );
+		int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+		           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+		           :                       -1;
 		
 		return result;
 	}
-	else if ( std::isdigit( param[0] ) )
+	
+	
+	class AppendWithSpace
 	{
-		int i = std::atoi( param.c_str() );
+		public:
+			AppendWithSpace( std::string& ioString ) : myString( ioString )  {}
+			
+			void operator()( const std::string& inNew )
+			{
+				myString += " " + inNew;
+			}
 		
-		if ( i <= gParameterCount )
+		private:
+			std::string& myString;
+	};
+	
+	
+	class ShellParameterDictionary : public Sh::ParameterDictionary
+	{
+		public:
+			ShellParameterDictionary()  {}
+			
+			std::vector< std::string > Lookup( const std::string& param, bool double_quoted ) const;
+	};
+	
+	template < class T >
+	inline std::vector< T > MakeVector( const T& value )
+	{
+		return std::vector< T >( 1, value );
+	}
+	
+	std::vector< std::string > ShellParameterDictionary::Lookup( const std::string& param, bool double_quoted ) const
+	{
+		std::string single_result;
+		
+		if ( param == "$" )
 		{
-			single_result = gParameters[ i - 1 ];
+			single_result = NN::Convert< std::string >( getpid() );
 		}
-	}
-	else if ( param == "0" )
-	{
-		single_result = gArgZero;
-	}
-	else if ( const char* value = QueryShellVariable( param ) )
-	{
-		single_result = value;
-	}
-	else if ( const char* var = getenv( param.c_str() ) )
-	{
-		single_result = var;
-	}
-	
-	return MakeVector( single_result );
-}
-
-static int Open( const char* path, mode_t mode )
-{
-	int opened = open( path, mode );
-	
-	p7::throw_posix_result( opened );
-	
-	return opened;
-}
-
-static int OpenNoClobber( const char* path )
-{
-	// Try a non-creative open first.
-	int opened = open( path, O_WRONLY );
-	
-	if ( opened == -1 )
-	{
-		if ( errno != ENOENT )
+		else if ( param == "?" )
 		{
-			p7::throw_errno( errno );
+			single_result = NN::Convert< std::string >( exit_from_wait( gLastResult ) );
+		}
+		else if ( param == "#" )
+		{
+			single_result = NN::Convert< std::string >( gParameterCount );
+		}
+		else if ( double_quoted  &&  param == "*" )
+		{
+			if ( gParameterCount != 0 )
+			{
+				single_result = gParameters[ 0 ];
+				
+				std::for_each( gParameters + 1,
+				               gParameters + gParameterCount,
+				               AppendWithSpace( single_result ) );
+			}
+		}
+		else if ( param == "@"  ||  param == "*" )
+		{
+			std::vector< std::string > result( gParameterCount );
+			
+			std::copy( gParameters, gParameters + gParameterCount, result.begin() );
+			
+			return result;
+		}
+		else if ( std::isdigit( param[0] ) )
+		{
+			int i = std::atoi( param.c_str() );
+			
+			if ( i <= gParameterCount )
+			{
+				single_result = gParameters[ i - 1 ];
+			}
+		}
+		else if ( param == "0" )
+		{
+			single_result = gArgZero;
+		}
+		else if ( const char* value = QueryShellVariable( param ) )
+		{
+			single_result = value;
+		}
+		else if ( const char* var = getenv( param.c_str() ) )
+		{
+			single_result = var;
 		}
 		
-		// No such file, exclusively create it, or bust.
-		opened = Open( path, O_WRONLY | O_CREAT | O_EXCL );
+		return MakeVector( single_result );
+	}
+	
+	static int Open( const char* path, mode_t mode )
+	{
+		int opened = open( path, mode );
 		
-		// Return exclusively created file.
+		p7::throw_posix_result( opened );
+		
 		return opened;
 	}
 	
-	struct ::stat sb;
-	
-	int status = fstat( opened, &sb );
-	
-	if ( status == -1  ||  S_ISREG( sb.st_mode ) )
+	static int OpenNoClobber( const char* path )
 	{
-		// Either the stat failed and something's wrong, or a regular file exists.
-		int error = status == -1 ? errno : EEXIST;
+		// Try a non-creative open first.
+		int opened = open( path, O_WRONLY );
 		
-		// Close the file.
-		int closed = close( opened );
+		if ( opened == -1 )
+		{
+			if ( errno != ENOENT )
+			{
+				p7::throw_errno( errno );
+			}
+			
+			// No such file, exclusively create it, or bust.
+			opened = Open( path, O_WRONLY | O_CREAT | O_EXCL );
+			
+			// Return exclusively created file.
+			return opened;
+		}
 		
-		p7::throw_errno( error );
-	}
-	
-	// Return non-regular file -- maybe a device/pipe/socket, etc.
-	return opened;
-}
-
-/*
-static int OpenNoClobber( const char* path )
-{
-	// Try exclusively creating first.
-	int opened = open( path, O_WRONLY | O_CREAT | O_EXCL );
-	
-	if ( opened >= 0 )
-	{
-		// Return a newly created regular file.
+		struct ::stat sb;
+		
+		int status = fstat( opened, &sb );
+		
+		if ( status == -1  ||  S_ISREG( sb.st_mode ) )
+		{
+			// Either the stat failed and something's wrong, or a regular file exists.
+			int error = status == -1 ? errno : EEXIST;
+			
+			// Close the file.
+			int closed = close( opened );
+			
+			p7::throw_errno( error );
+		}
+		
+		// Return non-regular file -- maybe a device/pipe/socket, etc.
 		return opened;
 	}
 	
-	if ( errno != EEXIST )
+	/*
+	static int OpenNoClobber( const char* path )
 	{
-		p7::throw_errno( errno );  // Some error occurred (besides an existing file)
-	}
-	
-	// File exists.  Try again without creating.
-	opened = Open( path, O_WRONLY );
-	
-	struct ::stat sb;
-	
-	int status = fstat( opened, &sb );
-	
-	if ( status == -1  ||  S_ISREG( sb.st_mode ) )
-	{
-		// Either the stat failed and something's wrong, or a regular file exists.
-		int error = status == -1 ? errno : EEXIST;
+		// Try exclusively creating first.
+		int opened = open( path, O_WRONLY | O_CREAT | O_EXCL );
 		
-		// Close the file.
-		int closed = close( opened );
-		
-		p7::throw_errno( error );
-	}
-	
-	// Return existing non-regular file -- maybe a device/pipe/socket, etc.
-	return opened;
-}
-*/
-
-static void Dup2( int oldfd, int newfd )
-{
-	p7::throw_posix_result( dup2( oldfd, newfd ) );
-}
-
-static void RedirectIO( Sh::Redirection redirection )
-{
-	int fd = redirection.fd;
-	const char* param = redirection.param.c_str();
-	
-	int file = -1;
-	
-	try
-	{
-		switch ( redirection.op )
+		if ( opened >= 0 )
 		{
-			case Sh::kRedirectInput:
-				file = Open( param, O_RDONLY );
-				Dup2( file, fd );
-				close( file );
-				break;
+			// Return a newly created regular file.
+			return opened;
+		}
+		
+		if ( errno != EEXIST )
+		{
+			p7::throw_errno( errno );  // Some error occurred (besides an existing file)
+		}
+		
+		// File exists.  Try again without creating.
+		opened = Open( path, O_WRONLY );
+		
+		struct ::stat sb;
+		
+		int status = fstat( opened, &sb );
+		
+		if ( status == -1  ||  S_ISREG( sb.st_mode ) )
+		{
+			// Either the stat failed and something's wrong, or a regular file exists.
+			int error = status == -1 ? errno : EEXIST;
 			
-			case Sh::kRedirectInputHere:
-			case Sh::kRedirectInputHereStrippingTabs:
-				break;
+			// Close the file.
+			int closed = close( opened );
 			
-			case Sh::kRedirectInputDuplicate:
-				file = std::atoi( param );  // FIXME:  Probably bad if param isn't an integer
-				Dup2( file, fd );
-				break;
-			
-			case Sh::kRedirectInputAndOutput:
-				file = Open( param, O_RDWR );
-				
-				if ( fd == -1 )
-				{
-					Dup2( file, 0 );
-					Dup2( file, 1 );
-				}
-				else
-				{
-					Dup2( file, fd );
-				}
-				
-				close( file );
-				break;
-			
-			case Sh::kRedirectOutput:
-				if ( GetOption( kOptionNonClobberingRedirection ) )
-				{
-					file = OpenNoClobber( param );
+			p7::throw_errno( error );
+		}
+		
+		// Return existing non-regular file -- maybe a device/pipe/socket, etc.
+		return opened;
+	}
+	*/
+	
+	static void Dup2( int oldfd, int newfd )
+	{
+		p7::throw_posix_result( dup2( oldfd, newfd ) );
+	}
+	
+	static void RedirectIO( Sh::Redirection redirection )
+	{
+		int fd = redirection.fd;
+		const char* param = redirection.param.c_str();
+		
+		int file = -1;
+		
+		try
+		{
+			switch ( redirection.op )
+			{
+				case Sh::kRedirectInput:
+					file = Open( param, O_RDONLY );
 					Dup2( file, fd );
 					close( file );
-					
 					break;
-				}
-				// else fall through
 				
-			case Sh::kRedirectOutputClobbering:
-				file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
-				Dup2( file, fd );
-				close( file );
-				break;
-			
-			case Sh::kRedirectOutputAppending:
-				file = Open( param, O_WRONLY | O_APPEND | O_CREAT );
-				Dup2( file, fd );
-				close( file );
-				break;
-			
-			case Sh::kRedirectOutputDuplicate:
-				file = std::atoi( param );  // FIXME:  Probably bad if atoi returns 0
-				Dup2( file, fd );
-				break;
-			
-			case Sh::kRedirectOutputAndError:
-				file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
-				Dup2( file, 1 );
-				Dup2( file, 2 );
-				close( file );
-				break;
-		}  // switch
-	}
-	catch ( const p7::errno_t& errnum )
-	{
-		std::fprintf( stderr, "sh: %s: %s\n", param, strerror( errnum ) );
-		
-		throw;
-	}
-}
-
-static void RedirectIOs( const std::vector< Sh::Redirection >& redirections )
-{
-	std::for_each( redirections.begin(),
-				   redirections.end(),
-				   std::ptr_fun( RedirectIO ) );
-}
-
-static const int exec_failure_exit_status = 127;
-static const int exec_failure_wait_status = exec_failure_exit_status << 8;
-
-static void Exec( char const* const argv[] )
-{
-	const char* file = argv[ 0 ];
-	
-	int exec_result = execvp( file, const_cast< char** >( argv ) );
-	
-	const char* error_msg = errno == ENOENT ? "command not found" : std::strerror( errno );
-	
-	std::fprintf( stderr, "%s: %s: %s\n", "sh", file, error_msg );
-	
-	_exit( exec_failure_exit_status );  // Use _exit() to exit a forked but not exec'ed process.
-}
-
-static int Wait( pid_t pid )
-{
-	int stat = -1;
-	
-	pid_t resultpid = waitpid( pid, &stat, 0 );
-	
-	if ( resultpid == -1 )
-	{
-		std::perror( "sh: waitpid() failed" );
-	}
-	
-	return stat;
-}
-
-
-static int CallBuiltin( Builtin builtin, char** argv )
-{
-	int argc = Sh::CountStringArray( argv );
-	
-	return builtin( argc, argv );
-}
-
-static std::string EscapeForShell( const char* word )
-{
-	std::string result;
-	
-	for ( const char* p = word;  *p != '\0';  ++p )
-	{
-		if ( !std::isalnum( *p ) )
-		{
-			result += '\\';
-		}
-		
-		result += *p;
-	}
-	
-	return result;
-}
-
-static std::string MakeShellCommandFromBuiltin( char** argv )
-{
-	std::string command = *argv;
-	
-	while ( *++argv != NULL )
-	{
-		command += " ";
-		command += EscapeForShell( *argv );
-	}
-	
-	return command;
-}
-
-static bool CommandIsOnlyAssignments( char** argv )
-{
-	//ASSERT( argv != NULL );
-	
-	while ( *argv != NULL  &&  std::strchr( *argv, '=' ) )
-	{
-		++argv;
-	}
-	
-	return *argv == NULL;
-}
-
-static int AssignShellVariablesFromArgV( char** argv )
-{
-	//ASSERT( argv != NULL );
-	
-	while ( *argv != NULL )
-	{
-		char* eq = std::strchr( *argv, '=' );
-		
-		//ASSERT( eq != NULL );
-		
-		const char* name = *argv++;
-		const char* value = eq + 1;
-		
-		*eq = '\0';
-		
-		AssignShellVariable( name, value );
-	}
-	
-	return 0;
-}
-
-static void ShiftEnvironmentVariables( char**& argv )
-{
-	//ASSERT( argv != NULL );
-	
-	while ( char* eq = std::strchr( argv[ 0 ], '=' ) )
-	{
-		std::string name( argv[ 0 ], eq );
-		
-		setenv( name.c_str(), eq + 1, true );
-		
-		++argv;
-	}
-}
-
-static Command ParseCommand( const Command& command )
-{
-	return Sh::ParseCommand( command, ShellParameterDictionary() );
-}
-
-static void SetupChildProcess( pid_t pgid = 0 )
-{
-	if ( GetOption( kOptionMonitor ) )
-	{
-		signal( SIGINT,  SIG_DFL );
-		signal( SIGQUIT, SIG_DFL );
-		signal( SIGTSTP, SIG_DFL );
-		signal( SIGTTIN, SIG_DFL );
-		signal( SIGTTOU, SIG_DFL );
-		
-		setpgid( 0, pgid );
-		
-		tcsetpgrp( 0, getpgrp() );
-	}
-}
-
-static int ExecuteCommand( const Command& command )
-{
-	Sh::StringArray argvec( command.args );
-	
-	char** argv = argvec.GetPointer();
-	
-	if ( CommandIsOnlyAssignments( argv ) )
-	{
-		return AssignShellVariablesFromArgV( argv );
-	}
-	
-	Builtin builtin = FindBuiltin( argv[ 0 ] );
-	
-	try
-	{
-		if ( builtin != NULL  &&  command.redirections.empty() )
-		{
-			return CallBuiltin( builtin, argv ) << 8;  // wait from exit
-		}
-		
-		// This variable is set before and examined after a longjmp(), so it
-		// needs to be volatile to make sure it doesn't wind up in a register
-		// and subsequently clobbered.
-		volatile bool exiting = false;
-		
-		pid_t pid = POSEVEN_VFORK();
-		
-		if ( pid == 0 )
-		{
-			SetupChildProcess();
-			
-			try
-			{
-				RedirectIOs( command.redirections );
+				case Sh::kRedirectInputHere:
+				case Sh::kRedirectInputHereStrippingTabs:
+					break;
 				
-				if ( builtin != NULL )
-				{
-					try
+				case Sh::kRedirectInputDuplicate:
+					file = std::atoi( param );  // FIXME:  Probably bad if param isn't an integer
+					Dup2( file, fd );
+					break;
+				
+				case Sh::kRedirectInputAndOutput:
+					file = Open( param, O_RDWR );
+					
+					if ( fd == -1 )
 					{
-						// Since we didn't actually exec anything, we have to exit manually
-						_exit( CallBuiltin( builtin, argv ) );
+						Dup2( file, 0 );
+						Dup2( file, 1 );
 					}
-					catch ( const O::ExitStatus& status )
+					else
 					{
-						// We get here if the 'exit' builtin was called.
-						// But we can't let the exception unwind past vfork(),
-						// so we catch it here, set a flag, and exit normally.
-						exiting = true;
+						Dup2( file, fd );
+					}
+					
+					close( file );
+					break;
+				
+				case Sh::kRedirectOutput:
+					if ( GetOption( kOptionNonClobberingRedirection ) )
+					{
+						file = OpenNoClobber( param );
+						Dup2( file, fd );
+						close( file );
 						
-						_exit( status );
+						break;
+					}
+					// else fall through
+					
+				case Sh::kRedirectOutputClobbering:
+					file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
+					Dup2( file, fd );
+					close( file );
+					break;
+				
+				case Sh::kRedirectOutputAppending:
+					file = Open( param, O_WRONLY | O_APPEND | O_CREAT );
+					Dup2( file, fd );
+					close( file );
+					break;
+				
+				case Sh::kRedirectOutputDuplicate:
+					file = std::atoi( param );  // FIXME:  Probably bad if atoi returns 0
+					Dup2( file, fd );
+					break;
+				
+				case Sh::kRedirectOutputAndError:
+					file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
+					Dup2( file, 1 );
+					Dup2( file, 2 );
+					close( file );
+					break;
+			}  // switch
+		}
+		catch ( const p7::errno_t& errnum )
+		{
+			std::fprintf( stderr, "sh: %s: %s\n", param, strerror( errnum ) );
+			
+			throw;
+		}
+	}
+	
+	static void RedirectIOs( const std::vector< Sh::Redirection >& redirections )
+	{
+		std::for_each( redirections.begin(),
+					   redirections.end(),
+					   std::ptr_fun( RedirectIO ) );
+	}
+	
+	static const int exec_failure_exit_status = 127;
+	static const int exec_failure_wait_status = exec_failure_exit_status << 8;
+	
+	static void Exec( char const* const argv[] )
+	{
+		const char* file = argv[ 0 ];
+		
+		int exec_result = execvp( file, const_cast< char** >( argv ) );
+		
+		const char* error_msg = errno == ENOENT ? "command not found" : std::strerror( errno );
+		
+		std::fprintf( stderr, "%s: %s: %s\n", "sh", file, error_msg );
+		
+		_exit( exec_failure_exit_status );  // Use _exit() to exit a forked but not exec'ed process.
+	}
+	
+	static int Wait( pid_t pid )
+	{
+		int stat = -1;
+		
+		pid_t resultpid = waitpid( pid, &stat, 0 );
+		
+		if ( resultpid == -1 )
+		{
+			std::perror( "sh: waitpid() failed" );
+		}
+		
+		return stat;
+	}
+	
+	
+	static int CallBuiltin( Builtin builtin, char** argv )
+	{
+		int argc = Sh::CountStringArray( argv );
+		
+		return builtin( argc, argv );
+	}
+	
+	static std::string EscapeForShell( const char* word )
+	{
+		std::string result;
+		
+		for ( const char* p = word;  *p != '\0';  ++p )
+		{
+			if ( !std::isalnum( *p ) )
+			{
+				result += '\\';
+			}
+			
+			result += *p;
+		}
+		
+		return result;
+	}
+	
+	static std::string MakeShellCommandFromBuiltin( char** argv )
+	{
+		std::string command = *argv;
+		
+		while ( *++argv != NULL )
+		{
+			command += " ";
+			command += EscapeForShell( *argv );
+		}
+		
+		return command;
+	}
+	
+	static bool CommandIsOnlyAssignments( char** argv )
+	{
+		//ASSERT( argv != NULL );
+		
+		while ( *argv != NULL  &&  std::strchr( *argv, '=' ) )
+		{
+			++argv;
+		}
+		
+		return *argv == NULL;
+	}
+	
+	static int AssignShellVariablesFromArgV( char** argv )
+	{
+		//ASSERT( argv != NULL );
+		
+		while ( *argv != NULL )
+		{
+			char* eq = std::strchr( *argv, '=' );
+			
+			//ASSERT( eq != NULL );
+			
+			const char* name = *argv++;
+			const char* value = eq + 1;
+			
+			*eq = '\0';
+			
+			AssignShellVariable( name, value );
+		}
+		
+		return 0;
+	}
+	
+	static void ShiftEnvironmentVariables( char**& argv )
+	{
+		//ASSERT( argv != NULL );
+		
+		while ( char* eq = std::strchr( argv[ 0 ], '=' ) )
+		{
+			std::string name( argv[ 0 ], eq );
+			
+			setenv( name.c_str(), eq + 1, true );
+			
+			++argv;
+		}
+	}
+	
+	static Command ParseCommand( const Command& command )
+	{
+		return Sh::ParseCommand( command, ShellParameterDictionary() );
+	}
+	
+	static void SetupChildProcess( pid_t pgid = 0 )
+	{
+		if ( GetOption( kOptionMonitor ) )
+		{
+			signal( SIGINT,  SIG_DFL );
+			signal( SIGQUIT, SIG_DFL );
+			signal( SIGTSTP, SIG_DFL );
+			signal( SIGTTIN, SIG_DFL );
+			signal( SIGTTOU, SIG_DFL );
+			
+			setpgid( 0, pgid );
+			
+			tcsetpgrp( 0, getpgrp() );
+		}
+	}
+	
+	static int ExecuteCommand( const Command& command )
+	{
+		Sh::StringArray argvec( command.args );
+		
+		char** argv = argvec.GetPointer();
+		
+		if ( CommandIsOnlyAssignments( argv ) )
+		{
+			return AssignShellVariablesFromArgV( argv );
+		}
+		
+		Builtin builtin = FindBuiltin( argv[ 0 ] );
+		
+		try
+		{
+			if ( builtin != NULL  &&  command.redirections.empty() )
+			{
+				return CallBuiltin( builtin, argv ) << 8;  // wait from exit
+			}
+			
+			// This variable is set before and examined after a longjmp(), so it
+			// needs to be volatile to make sure it doesn't wind up in a register
+			// and subsequently clobbered.
+			volatile bool exiting = false;
+			
+			pid_t pid = POSEVEN_VFORK();
+			
+			if ( pid == 0 )
+			{
+				SetupChildProcess();
+				
+				try
+				{
+					RedirectIOs( command.redirections );
+					
+					if ( builtin != NULL )
+					{
+						try
+						{
+							// Since we didn't actually exec anything, we have to exit manually
+							_exit( CallBuiltin( builtin, argv ) );
+						}
+						catch ( const O::ExitStatus& status )
+						{
+							// We get here if the 'exit' builtin was called.
+							// But we can't let the exception unwind past vfork(),
+							// so we catch it here, set a flag, and exit normally.
+							exiting = true;
+							
+							_exit( status );
+						}
+						
+						// Not reached
+					}
+					else
+					{
+						ShiftEnvironmentVariables( argv );
+						
+						Exec( argv );
 					}
 					
 					// Not reached
 				}
-				else
+				catch ( ... )
 				{
-					ShiftEnvironmentVariables( argv );
-					
-					Exec( argv );
+					// Don't unwind past vfork().  That would be Bad.
 				}
 				
-				// Not reached
+				// If the child hasn't exited by now, do so.
+				_exit( 1 );
 			}
-			catch ( ... )
+			
+			// Wait for the child process to exit
+			int wait_status = Wait( pid );
+			
+			if ( exiting )
 			{
-				// Don't unwind past vfork().  That would be Bad.
+				// The 'child' was the 'exit' builtin, meaning we should exit
+				O::ThrowExitStatus( exit_from_wait( wait_status ) );
 			}
 			
-			// If the child hasn't exited by now, do so.
-			_exit( 1 );
+			return wait_status;
 		}
-		
-		// Wait for the child process to exit
-		int wait_status = Wait( pid );
-		
-		if ( exiting )
+		catch ( const O::ExitStatus& )
 		{
-			// The 'child' was the 'exit' builtin, meaning we should exit
-			O::ThrowExitStatus( exit_from_wait( wait_status ) );
+			// Rethrow.  We catch here so a thrown exit doesn't get caught below.
+			throw;
 		}
-		
-		return wait_status;
-	}
-	catch ( const O::ExitStatus& )
-	{
-		// Rethrow.  We catch here so a thrown exit doesn't get caught below.
-		throw;
-	}
-	catch ( ... )
-	{
-		p7::write( p7::stderr_fileno, STR_LEN( "sh: exception occurred running command\n" ) );
-	}
-	
-	return exec_failure_wait_status;
-}
-
-
-static int ExecuteCommandFromPipeline( const Command& command )
-{
-	Sh::StringArray argvec( command.args );
-	
-	char** argv = argvec.GetPointer();
-	
-	if ( CommandIsOnlyAssignments( argv ) )
-	{
-		// An assignment as the sole command to a shell is pointless, so just exit
-		return 0;
-	}
-	
-	try
-	{
-		RedirectIOs( command.redirections );
-		
-		ShiftEnvironmentVariables( argv );
-		
-		if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
+		catch ( ... )
 		{
-			std::string subshell = MakeShellCommandFromBuiltin( argv );
-			
-			const char* subshell_argv[] = { "/bin/sh", "-c", subshell.c_str(), NULL };
-			
-			Exec( subshell_argv );
+			p7::write( p7::stderr_fileno, STR_LEN( "sh: exception occurred running command\n" ) );
 		}
 		
-		Exec( argv );
+		return exec_failure_wait_status;
+	}
+	
+	
+	static int ExecuteCommandFromPipeline( const Command& command )
+	{
+		Sh::StringArray argvec( command.args );
 		
-	}
-	catch ( const O::ExitStatus& status )
-	{
-		throw;
-	}
-	catch ( ... )
-	{
-		p7::write( p7::stderr_fileno, STR_LEN( "sh: exception occurred running command\n" ) );
-	}
-	
-	return exec_failure_wait_status;
-}
-
-static void ExecuteCommandAndExitFromPipeline( const Command& command )
-{
-	try
-	{
-		_exit( exit_from_wait( ExecuteCommandFromPipeline( command ) ) );
-	}
-	catch ( const O::ExitStatus& status )
-	{
-		_exit( status );
-	}
-}
-
-static int ExecutePipeline( const Pipeline& pipeline )
-{
-	std::vector< Command > commands( pipeline.commands.size() );
-	
-	std::transform( pipeline.commands.begin(),
-	                pipeline.commands.end(),
-	                commands.begin(),
-	                std::ptr_fun( ParseCommand ) );
-	
-	switch ( commands.size() )
-	{
-		case 0:
+		char** argv = argvec.GetPointer();
+		
+		if ( CommandIsOnlyAssignments( argv ) )
+		{
+			// An assignment as the sole command to a shell is pointless, so just exit
 			return 0;
-			break;
-		case 1:
+		}
+		
+		try
+		{
+			RedirectIOs( command.redirections );
+			
+			ShiftEnvironmentVariables( argv );
+			
+			if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
 			{
-				return ExecuteCommand( commands.front() );
+				std::string subshell = MakeShellCommandFromBuiltin( argv );
+				
+				const char* subshell_argv[] = { "/bin/sh", "-c", subshell.c_str(), NULL };
+				
+				Exec( subshell_argv );
 			}
-			break;
+			
+			Exec( argv );
+			
+		}
+		catch ( const O::ExitStatus& status )
+		{
+			throw;
+		}
+		catch ( ... )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "sh: exception occurred running command\n" ) );
+		}
+		
+		return exec_failure_wait_status;
 	}
 	
-	typedef std::vector< Command >::const_iterator const_iterator;
-	
-	const_iterator command = commands.begin();
-	
-	int pipes[ 2 ];
-	
-	pipe( pipes );  // pipe between first two processes
-	
-	int reading = pipes[ 0 ];
-	int writing = pipes[ 1 ];
-	
-	// The first command in the pipline
-	pid_t first = POSEVEN_VFORK();
-	
-	if ( first == 0 )
+	static void ExecuteCommandAndExitFromPipeline( const Command& command )
 	{
-		// Redirect output to write-end of pipe
-		dup2( writing, 1 );
-		
-		// Close duped write-end and unused read-end
-		close( writing );     // we duped this, close it
-		close( pipes[ 0 ] );  // we don't read from this pipe, close it
-		
-		SetupChildProcess();
-		
-		// exec or exit
-		ExecuteCommandAndExitFromPipeline( commands.front() );
+		try
+		{
+			_exit( exit_from_wait( ExecuteCommandFromPipeline( command ) ) );
+		}
+		catch ( const O::ExitStatus& status )
+		{
+			_exit( status );
+		}
 	}
 	
-	// previous pipe fd's are saved in 'reading' and 'writing'.
-	
-	while ( ++command != commands.end() - 1 )
+	static int ExecutePipeline( const Pipeline& pipeline )
 	{
-		pipe( pipes );  // next pipe
+		std::vector< Command > commands( pipeline.commands.size() );
+		
+		std::transform( pipeline.commands.begin(),
+		                pipeline.commands.end(),
+		                commands.begin(),
+		                std::ptr_fun( ParseCommand ) );
+		
+		switch ( commands.size() )
+		{
+			case 0:
+				return 0;
+				break;
+			case 1:
+				{
+					return ExecuteCommand( commands.front() );
+				}
+				break;
+		}
+		
+		typedef std::vector< Command >::const_iterator const_iterator;
+		
+		const_iterator command = commands.begin();
+		
+		int pipes[ 2 ];
+		
+		pipe( pipes );  // pipe between first two processes
+		
+		int reading = pipes[ 0 ];
+		int writing = pipes[ 1 ];
+		
+		// The first command in the pipline
+		pid_t first = POSEVEN_VFORK();
+		
+		if ( first == 0 )
+		{
+			// Redirect output to write-end of pipe
+			dup2( writing, 1 );
+			
+			// Close duped write-end and unused read-end
+			close( writing );     // we duped this, close it
+			close( pipes[ 0 ] );  // we don't read from this pipe, close it
+			
+			SetupChildProcess();
+			
+			// exec or exit
+			ExecuteCommandAndExitFromPipeline( commands.front() );
+		}
+		
+		// previous pipe fd's are saved in 'reading' and 'writing'.
+		
+		while ( ++command != commands.end() - 1 )
+		{
+			pipe( pipes );  // next pipe
+			
+			// Close previous write-end
+			close( writing );
+			
+			writing = pipes[ 1 ];  // write-end of next pipe
+			
+			// Middle command in the pipeline (not first or last)
+			pid_t middle = POSEVEN_VFORK();
+			
+			if ( middle == 0 )
+			{
+				// Redirect input from read-end of previous pipe
+				dup2( reading, 0 );
+				
+				// Redirect output to write-end of next pipe
+				dup2( writing, 1 );
+				
+				// Close duped pipe-in, duped pipe-out, and unused read-end
+				close( reading );     // we duped this, close it
+				close( writing );     // we duped this, close it
+				close( pipes[ 0 ] );  // we don't read from this pipe, close it
+				
+				SetupChildProcess( first );
+				
+				ExecuteCommandAndExitFromPipeline( *command );
+			}
+			
+			// Child is forked, so we're done reading
+			close( reading );
+			
+			reading = pipes[ 0 ];  // read-end of next pipe
+		}
+		
+		// previous pipe fd's are saved in 'reading' and 'writing'.
 		
 		// Close previous write-end
 		close( writing );
 		
-		writing = pipes[ 1 ];  // write-end of next pipe
+		pid_t last = POSEVEN_VFORK();
 		
-		// Middle command in the pipeline (not first or last)
-		pid_t middle = POSEVEN_VFORK();
-		
-		if ( middle == 0 )
+		if ( last == 0 )
 		{
 			// Redirect input from read-end of previous pipe
 			dup2( reading, 0 );
 			
-			// Redirect output to write-end of next pipe
-			dup2( writing, 1 );
-			
-			// Close duped pipe-in, duped pipe-out, and unused read-end
 			close( reading );     // we duped this, close it
-			close( writing );     // we duped this, close it
-			close( pipes[ 0 ] );  // we don't read from this pipe, close it
 			
 			SetupChildProcess( first );
 			
@@ -792,133 +820,110 @@ static int ExecutePipeline( const Pipeline& pipeline )
 		// Child is forked, so we're done reading
 		close( reading );
 		
-		reading = pipes[ 0 ];  // read-end of next pipe
-	}
-	
-	// previous pipe fd's are saved in 'reading' and 'writing'.
-	
-	// Close previous write-end
-	close( writing );
-	
-	pid_t last = POSEVEN_VFORK();
-	
-	if ( last == 0 )
-	{
-		// Redirect input from read-end of previous pipe
-		dup2( reading, 0 );
+		int processes = commands.size();
 		
-		close( reading );     // we duped this, close it
+		int wait_status = -1;
 		
-		SetupChildProcess( first );
-		
-		ExecuteCommandAndExitFromPipeline( *command );
-	}
-	
-	// Child is forked, so we're done reading
-	close( reading );
-	
-	int processes = commands.size();
-	
-	int wait_status = -1;
-	
-	while ( processes )
-	{
-		int stat = -1;
-		
-		// Wait for every child process
-		pid_t pid = waitpid( -1, &stat, 0 );
-		
-		--processes;
-		
-		if ( pid == last )
+		while ( processes )
 		{
-			// And keep the result from the last one
-			wait_status = stat;
+			int stat = -1;
+			
+			// Wait for every child process
+			pid_t pid = waitpid( -1, &stat, 0 );
+			
+			--processes;
+			
+			if ( pid == last )
+			{
+				// And keep the result from the last one
+				wait_status = stat;
+			}
 		}
+		
+		return wait_status;
 	}
 	
-	return wait_status;
-}
+	static bool ShortCircuit( Sh::ControlOperator op, int result )
+	{
+		return ( op == Sh::kControlAnd  &&  result != 0 )
+			|| ( op == Sh::kControlOr   &&  result == 0 );
+	}
+	
+	static int ExecuteCircuit( const Circuit& circuit )
+	{
+		if ( circuit.op == Sh::kControlBackground )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "Background jobs are not supported.  Sorry.\n" ) );
+			
+			return exec_failure_wait_status;
+		}
+		
+		int result = 0;
+		
+		typedef std::vector< Pipeline >::const_iterator vP_ci;
+		
+		for ( vP_ci it = circuit.pipelines.begin();  it != circuit.pipelines.end();  ++it )
+		{
+			if ( ShortCircuit( it->op, result ) )
+			{
+				continue;
+			}
+			
+			try
+			{
+				result = ExecutePipeline( *it );
+			}
+			catch ( const p7::errno_t& )
+			{
+				result = exec_failure_wait_status;
+			}
+			
+			gLastResult = result;
+			
+			if ( GetOption( kOptionMonitor ) )
+			{
+				tcsetpgrp( 0, getpgrp() );
+			}
+		}
+		
+		return result;
+	}
+	
+	static int ExecuteList( const List& list )
+	{
+		int result = 0;
+		
+		typedef std::vector< Circuit >::const_iterator vP_ci;
+		
+		for ( vP_ci it = list.begin();  it != list.end();  ++it )
+		{
+			result = ExecuteCircuit( *it );
+			
+			if ( GetOption( kOptionExitOnError )  &&  result != 0 )
+			{
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
+	int ExecuteCmdLine( const std::string& cmd )
+	{
+		List list = Sh::Tokenization( cmd );
+		
+		int result = ExecuteList( list );
+		
+		// notify user of fatal signal, e.g. "Alarm clock"
+		if ( WIFSIGNALED( result ) )
+		{
+			int signo = WTERMSIG( result );
+			
+			std::fprintf( stderr, "%s\n", strsignal( signo ) );
+		}
+		
+		return result;
+	}
 
-static bool ShortCircuit( Sh::ControlOperator op, int result )
-{
-	return ( op == Sh::kControlAnd  &&  result != 0 )
-		|| ( op == Sh::kControlOr   &&  result == 0 );
-}
-
-static int ExecuteCircuit( const Circuit& circuit )
-{
-	if ( circuit.op == Sh::kControlBackground )
-	{
-		p7::write( p7::stderr_fileno, STR_LEN( "Background jobs are not supported.  Sorry.\n" ) );
-		
-		return exec_failure_wait_status;
-	}
-	
-	int result = 0;
-	
-	typedef std::vector< Pipeline >::const_iterator vP_ci;
-	
-	for ( vP_ci it = circuit.pipelines.begin();  it != circuit.pipelines.end();  ++it )
-	{
-		if ( ShortCircuit( it->op, result ) )
-		{
-			continue;
-		}
-		
-		try
-		{
-			result = ExecutePipeline( *it );
-		}
-		catch ( const p7::errno_t& )
-		{
-			result = exec_failure_wait_status;
-		}
-		
-		gLastResult = result;
-		
-		if ( GetOption( kOptionMonitor ) )
-		{
-			tcsetpgrp( 0, getpgrp() );
-		}
-	}
-	
-	return result;
-}
-
-static int ExecuteList( const List& list )
-{
-	int result = 0;
-	
-	typedef std::vector< Circuit >::const_iterator vP_ci;
-	
-	for ( vP_ci it = list.begin();  it != list.end();  ++it )
-	{
-		result = ExecuteCircuit( *it );
-		
-		if ( GetOption( kOptionExitOnError )  &&  result != 0 )
-		{
-			break;
-		}
-	}
-	
-	return result;
-}
-
-int ExecuteCmdLine( const std::string& cmd )
-{
-	List list = Sh::Tokenization( cmd );
-	
-	int result = ExecuteList( list );
-	
-	// notify user of fatal signal, e.g. "Alarm clock"
-	if ( WIFSIGNALED( result ) )
-	{
-		int signo = WTERMSIG( result );
-		
-		std::fprintf( stderr, "%s\n", strsignal( signo ) );
-	}
-	
-	return result;
 }
 

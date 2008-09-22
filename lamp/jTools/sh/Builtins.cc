@@ -34,379 +34,393 @@
 #include "ReadExecuteLoop.hh"
 
 
-namespace NN = Nucleus;
-namespace p7 = poseven;
-namespace O = Orion;
-
-
-static StringMap gLocalVariables;
-static StringMap gAliases;
-
-static std::set< std::string > gVariablesToExport;
-
-static void PrintVariable( const StringMap::value_type& var )
+namespace tool
 {
-	const std::string& name  = var.first;
-	const std::string& value = var.second;
 	
-	std::printf( "%s='%s'\n", name.c_str(), value.c_str() );
-}
-
-static void PrintAlias( const StringMap::value_type& var )
-{
-	const std::string& name  = var.first;
-	const std::string& value = var.second;
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
+	namespace O = Orion;
 	
-	std::printf( "alias %s='%s'\n", name.c_str(), value.c_str() );
-}
-
-
-static bool UnmarkVariableForExport( const std::string& name )
-{
-	std::set< std::string >::iterator found = gVariablesToExport.find( name );
-	bool wasMarked = found != gVariablesToExport.end();
 	
-	if ( wasMarked )
+	static StringMap gLocalVariables;
+	static StringMap gAliases;
+	
+	static std::set< std::string > gVariablesToExport;
+	
+	static void PrintVariable( const StringMap::value_type& var )
 	{
-		gVariablesToExport.erase( found );
+		const std::string& name  = var.first;
+		const std::string& value = var.second;
+		
+		std::printf( "%s='%s'\n", name.c_str(), value.c_str() );
 	}
 	
-	return wasMarked;
-}
-
-int AssignShellVariable( const char* name, const char* value )
-{
-	if ( getenv( name ) || UnmarkVariableForExport( name ) )
+	static void PrintAlias( const StringMap::value_type& var )
 	{
-		// Variable already exists in environment, or was marked for export
-		setenv( name, value, 1 );
-	}
-	else
-	{
-		// Not set, or set locally
-		gLocalVariables[ name ] = value;
+		const std::string& name  = var.first;
+		const std::string& value = var.second;
+		
+		std::printf( "alias %s='%s'\n", name.c_str(), value.c_str() );
 	}
 	
-	return 0;
-}
-
-const char* QueryShellVariable( const std::string& name )
-{
-	StringMap::const_iterator found = gLocalVariables.find( name );
 	
-	if ( found != gLocalVariables.end() )
+	static bool UnmarkVariableForExport( const std::string& name )
 	{
-		return found->second.c_str();
-	}
-	
-	return NULL;
-}
-
-// Builtins.  argc is guaranteed to be positive.
-
-static int Builtin_CD( int argc, iota::argv_t argv )
-{
-	const char* dir = argv[1];
-	
-	if ( argc == 1 )
-	{
-		if ( const char* home = getenv( "HOME" ) )
+		std::set< std::string >::iterator found = gVariablesToExport.find( name );
+		bool wasMarked = found != gVariablesToExport.end();
+		
+		if ( wasMarked )
 		{
-			dir = home;
+			gVariablesToExport.erase( found );
+		}
+		
+		return wasMarked;
+	}
+	
+	int AssignShellVariable( const char* name, const char* value )
+	{
+		if ( getenv( name ) || UnmarkVariableForExport( name ) )
+		{
+			// Variable already exists in environment, or was marked for export
+			setenv( name, value, 1 );
 		}
 		else
 		{
-			dir = "/";
-		}
-	}
-	
-	int changed = chdir( dir );
-	
-	if ( changed < 0 )
-	{
-		std::fprintf( stderr, "cd: %s: %s\n", dir, std::strerror( errno ) );
-		
-		return 1;
-	}
-	
-	// Apparently setenv() breaks something.
-	//setenv( "OLDPWD", getenv( "PWD" ), 1 );
-	
-	// FIXME:  This should be full pathname.
-	//setenv( "PWD", argv[ 1 ], 1 );
-	
-	return 0;
-}
-
-static int Builtin_Alias( int argc, iota::argv_t argv )
-{
-	if ( argc == 1 )
-	{
-		// $ alias
-		std::for_each( gAliases.begin(),
-		               gAliases.end(),
-		               std::ptr_fun( PrintAlias ) );
-	}
-	else if ( argc == 2 )
-	{
-		const char* name = argv[ 1 ];
-		
-		if ( char* eq = std::strchr( argv[ 1 ], '=' ) )
-		{
-			// $ alias foo=bar
-			
-			// FIXME:  This is const.
-			*eq = '\0';
-			
-			gAliases[ name ] = eq + 1;
-		}
-		else
-		{
-			// $ alias foo
-			StringMap::const_iterator found = gAliases.find( name );
-			
-			if ( found != gAliases.end() )
-			{
-				PrintAlias( *found );
-			}
-		}
-	}
-	
-	return 0;
-}
-
-static int Builtin_Echo( int argc, iota::argv_t argv )
-{
-	if ( argc > 1 )
-	{
-		std::printf( "%s", argv[1] );
-		
-		for ( short i = 2; i < argc; i++ )
-		{
-			std::printf( " %s", argv[i] );
-		}
-	}
-	
-	std::printf( "\n" );
-	
-	return 0;
-}
-
-static int Builtin_Exit( int argc, iota::argv_t argv )
-{
-	int exitStatus = 0;
-	
-	if ( argc > 1 )
-	{
-		exitStatus = std::atoi( argv[ 1 ] );
-	}
-	
-	O::ThrowExitStatus( exitStatus );
-	
-	// Not reached
-	return -1;
-}
-
-static int Builtin_Export( int argc, iota::argv_t argv )
-{
-	if ( argc == 1 )
-	{
-		// $ export
-		iota::envp_t envp = environ;
-		
-		while ( *envp != NULL )
-		{
-			std::printf( "export %s\n", *envp );
-			++envp;
-		}
-	}
-	else if ( argc == 2 )
-	{
-		iota::arg_t const arg1 = argv[ 1 ];
-		
-		if ( const char* eq = std::strchr( arg1, '=' ) )
-		{
-			// $ export foo=bar
-			std::string name( arg1, eq - arg1 );
-			
-			setenv( name.c_str(), eq + 1, true );
-			
-			gLocalVariables.erase( name );
-		}
-		else
-		{
-			// $ export foo
-			const char* var = arg1;
-			
-			if ( getenv( var ) == NULL )
-			{
-				// Environment variable unset
-				StringMap::const_iterator found = gLocalVariables.find( var );
-				
-				if ( found != gLocalVariables.end() )
-				{
-					// Shell variable is set, export it
-					setenv( var, found->second.c_str(), 1 );
-					gLocalVariables.erase( var );
-				}
-				else
-				{
-					// Shell variable unset, mark exported
-					gVariablesToExport.insert( var );
-				}
-			}
-		}
-	}
-	
-	return 0;
-}
-
-static int Builtin_PWD( int /*argc*/, iota::argv_t /*argv*/ )
-{
-	std::string cwd;
-	cwd.resize( 256 );
-	
-	while ( getcwd( &cwd[ 0 ], cwd.size() ) == NULL )
-	{
-		cwd.resize( cwd.size() * 2 );
-	}
-	
-	std::printf( "%s\n", cwd.c_str() );
-	
-	return 0;
-}
-
-static int Builtin_Set( int argc, iota::argv_t argv )
-{
-	if ( argc == 1 )
-	{
-		// $ set
-		std::for_each( gLocalVariables.begin(),
-		               gLocalVariables.end(),
-		               std::ptr_fun( PrintVariable ) );
-	}
-	else if ( argc == 2 )
-	{
-		if ( argv[1] == std::string( "-e" ) )
-		{
-			SetOption( kOptionExitOnError, true );
-		}
-		else if ( argv[1] == std::string( "+e" ) )
-		{
-			SetOption( kOptionExitOnError, false );
-		}
-	}
-	else if ( argc == 3 )
-	{
-		if ( argv[1] == std::string( "-o" ) )
-		{
-			SetOptionByName( argv[2], true );
-		}
-		else if ( argv[1] == std::string( "+o" ) )
-		{
-			SetOptionByName( argv[2], false );
-		}
-	}
-	
-	return 0;
-}
-
-static int Builtin_Unalias( int argc, iota::argv_t argv )
-{
-	while ( --argc )
-	{
-		gAliases.erase( argv[ argc ] );
-	}
-	
-	return 0;
-}
-
-static int Builtin_Unset( int argc, iota::argv_t argv )
-{
-	while ( --argc )
-	{
-		gLocalVariables.erase( argv[ argc ] );
-		unsetenv( argv[ argc ] );
-	}
-	
-	return 0;
-}
-
-class ReplacedParametersScope
-{
-	private:
-		std::size_t         itsSavedParameterCount;
-		char const* const*  itsSavedParameters;
-	
-	public:
-		ReplacedParametersScope( std::size_t count, char const* const* params )
-		:
-			itsSavedParameterCount( gParameterCount ),
-			itsSavedParameters    ( gParameters     )
-		{
-			gParameterCount = count;
-			gParameters     = params;
+			// Not set, or set locally
+			gLocalVariables[ name ] = value;
 		}
 		
-		~ReplacedParametersScope()
+		return 0;
+	}
+	
+	const char* QueryShellVariable( const std::string& name )
+	{
+		StringMap::const_iterator found = gLocalVariables.find( name );
+		
+		if ( found != gLocalVariables.end() )
 		{
-			gParameterCount = itsSavedParameterCount;
-			gParameters     = itsSavedParameters;
+			return found->second.c_str();
 		}
-};
-
-static int BuiltinDot( int argc, iota::argv_t argv )
-{
-	if ( argc < 2 )
-	{
-		std::fprintf( stderr, "%s\n", "sh: .: filename argument required" );
-		return 2;
-	}
-	
-	NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], p7::o_rdonly );
-	
-	int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
-	
-	ReplacedParametersScope dotParams( argc - 2, argv + 2 );
-	
-	int result = Nucleus::Convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
-	
-	return result;
-}
-
-typedef std::map< std::string, Builtin > BuiltinMap;
-
-static BuiltinMap MakeBuiltins()
-{
-	BuiltinMap builtins;
-	
-	builtins[ "alias"   ] = Builtin_Alias;
-	builtins[ "cd"      ] = Builtin_CD;
-	builtins[ "echo"    ] = Builtin_Echo;
-	builtins[ "exit"    ] = Builtin_Exit;
-	builtins[ "export"  ] = Builtin_Export;
-	builtins[ "pwd"     ] = Builtin_PWD;
-	builtins[ "set"     ] = Builtin_Set;
-	builtins[ "unalias" ] = Builtin_Unalias;
-	builtins[ "unset"   ] = Builtin_Unset;
-	builtins[ "."       ] = BuiltinDot;
-	
-	return builtins;
-}
-
-Builtin FindBuiltin( const std::string& name )
-{
-	static BuiltinMap sBuiltins = MakeBuiltins();
-	
-	BuiltinMap::const_iterator found = sBuiltins.find( name );
-	
-	if ( found != sBuiltins.end() )
-	{
-		return found->second;
-	}
-	else
-	{
+		
 		return NULL;
 	}
+	
+	// Builtins.  argc is guaranteed to be positive.
+	
+	static int Builtin_CD( int argc, iota::argv_t argv )
+	{
+		const char* dir = argv[1];
+		
+		if ( argc == 1 )
+		{
+			if ( const char* home = getenv( "HOME" ) )
+			{
+				dir = home;
+			}
+			else
+			{
+				dir = "/";
+			}
+		}
+		
+		int changed = chdir( dir );
+		
+		if ( changed < 0 )
+		{
+			std::fprintf( stderr, "cd: %s: %s\n", dir, std::strerror( errno ) );
+			
+			return 1;
+		}
+		
+		// Apparently setenv() breaks something.
+		//setenv( "OLDPWD", getenv( "PWD" ), 1 );
+		
+		// FIXME:  This should be full pathname.
+		//setenv( "PWD", argv[ 1 ], 1 );
+		
+		return 0;
+	}
+	
+	static int Builtin_Alias( int argc, iota::argv_t argv )
+	{
+		if ( argc == 1 )
+		{
+			// $ alias
+			std::for_each( gAliases.begin(),
+			               gAliases.end(),
+			               std::ptr_fun( PrintAlias ) );
+		}
+		else if ( argc == 2 )
+		{
+			const char* name = argv[ 1 ];
+			
+			if ( char* eq = std::strchr( argv[ 1 ], '=' ) )
+			{
+				// $ alias foo=bar
+				
+				// FIXME:  This is const.
+				*eq = '\0';
+				
+				gAliases[ name ] = eq + 1;
+			}
+			else
+			{
+				// $ alias foo
+				StringMap::const_iterator found = gAliases.find( name );
+				
+				if ( found != gAliases.end() )
+				{
+					PrintAlias( *found );
+				}
+			}
+		}
+		
+		return 0;
+	}
+	
+	static int Builtin_Echo( int argc, iota::argv_t argv )
+	{
+		if ( argc > 1 )
+		{
+			std::printf( "%s", argv[1] );
+			
+			for ( short i = 2; i < argc; i++ )
+			{
+				std::printf( " %s", argv[i] );
+			}
+		}
+		
+		std::printf( "\n" );
+		
+		return 0;
+	}
+	
+	static int Builtin_Exit( int argc, iota::argv_t argv )
+	{
+		int exitStatus = 0;
+		
+		if ( argc > 1 )
+		{
+			exitStatus = std::atoi( argv[ 1 ] );
+		}
+		
+		O::ThrowExitStatus( exitStatus );
+		
+		// Not reached
+		return -1;
+	}
+	
+	static int Builtin_Export( int argc, iota::argv_t argv )
+	{
+		if ( argc == 1 )
+		{
+			// $ export
+			iota::envp_t envp = environ;
+			
+			while ( *envp != NULL )
+			{
+				std::printf( "export %s\n", *envp );
+				++envp;
+			}
+		}
+		else if ( argc == 2 )
+		{
+			iota::arg_t const arg1 = argv[ 1 ];
+			
+			if ( const char* eq = std::strchr( arg1, '=' ) )
+			{
+				// $ export foo=bar
+				std::string name( arg1, eq - arg1 );
+				
+				setenv( name.c_str(), eq + 1, true );
+				
+				gLocalVariables.erase( name );
+			}
+			else
+			{
+				// $ export foo
+				const char* var = arg1;
+				
+				if ( getenv( var ) == NULL )
+				{
+					// Environment variable unset
+					StringMap::const_iterator found = gLocalVariables.find( var );
+					
+					if ( found != gLocalVariables.end() )
+					{
+						// Shell variable is set, export it
+						setenv( var, found->second.c_str(), 1 );
+						gLocalVariables.erase( var );
+					}
+					else
+					{
+						// Shell variable unset, mark exported
+						gVariablesToExport.insert( var );
+					}
+				}
+			}
+		}
+		
+		return 0;
+	}
+	
+	static int Builtin_PWD( int /*argc*/, iota::argv_t /*argv*/ )
+	{
+		std::string cwd;
+		cwd.resize( 256 );
+		
+		while ( getcwd( &cwd[ 0 ], cwd.size() ) == NULL )
+		{
+			cwd.resize( cwd.size() * 2 );
+		}
+		
+		std::printf( "%s\n", cwd.c_str() );
+		
+		return 0;
+	}
+	
+	static int Builtin_Set( int argc, iota::argv_t argv )
+	{
+		if ( argc == 1 )
+		{
+			// $ set
+			std::for_each( gLocalVariables.begin(),
+			               gLocalVariables.end(),
+			               std::ptr_fun( PrintVariable ) );
+		}
+		else if ( argc == 2 )
+		{
+			if ( argv[1] == std::string( "-e" ) )
+			{
+				SetOption( kOptionExitOnError, true );
+			}
+			else if ( argv[1] == std::string( "+e" ) )
+			{
+				SetOption( kOptionExitOnError, false );
+			}
+		}
+		else if ( argc == 3 )
+		{
+			if ( argv[1] == std::string( "-o" ) )
+			{
+				SetOptionByName( argv[2], true );
+			}
+			else if ( argv[1] == std::string( "+o" ) )
+			{
+				SetOptionByName( argv[2], false );
+			}
+		}
+		
+		return 0;
+	}
+	
+	static int Builtin_Unalias( int argc, iota::argv_t argv )
+	{
+		while ( --argc )
+		{
+			gAliases.erase( argv[ argc ] );
+		}
+		
+		return 0;
+	}
+	
+	static int Builtin_Unset( int argc, iota::argv_t argv )
+	{
+		while ( --argc )
+		{
+			gLocalVariables.erase( argv[ argc ] );
+			unsetenv( argv[ argc ] );
+		}
+		
+		return 0;
+	}
+	
+	class ReplacedParametersScope
+	{
+		private:
+			std::size_t         itsSavedParameterCount;
+			char const* const*  itsSavedParameters;
+		
+		public:
+			ReplacedParametersScope( std::size_t count, char const* const* params )
+			:
+				itsSavedParameterCount( gParameterCount ),
+				itsSavedParameters    ( gParameters     )
+			{
+				gParameterCount = count;
+				gParameters     = params;
+			}
+			
+			~ReplacedParametersScope()
+			{
+				gParameterCount = itsSavedParameterCount;
+				gParameters     = itsSavedParameters;
+			}
+	};
+	
+	static int exit_from_wait( int stat )
+	{
+		int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
+		           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
+		           :                       -1;
+		
+		return result;
+	}
+	
+	static int BuiltinDot( int argc, iota::argv_t argv )
+	{
+		if ( argc < 2 )
+		{
+			std::fprintf( stderr, "%s\n", "sh: .: filename argument required" );
+			return 2;
+		}
+		
+		NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], p7::o_rdonly );
+		
+		int controlled = fcntl( fd, F_SETFD, FD_CLOEXEC );
+		
+		ReplacedParametersScope dotParams( argc - 2, argv + 2 );
+		
+		int result = Nucleus::Convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
+		
+		return result;
+	}
+	
+	typedef std::map< std::string, Builtin > BuiltinMap;
+	
+	static BuiltinMap MakeBuiltins()
+	{
+		BuiltinMap builtins;
+		
+		builtins[ "alias"   ] = Builtin_Alias;
+		builtins[ "cd"      ] = Builtin_CD;
+		builtins[ "echo"    ] = Builtin_Echo;
+		builtins[ "exit"    ] = Builtin_Exit;
+		builtins[ "export"  ] = Builtin_Export;
+		builtins[ "pwd"     ] = Builtin_PWD;
+		builtins[ "set"     ] = Builtin_Set;
+		builtins[ "unalias" ] = Builtin_Unalias;
+		builtins[ "unset"   ] = Builtin_Unset;
+		builtins[ "."       ] = BuiltinDot;
+		
+		return builtins;
+	}
+	
+	Builtin FindBuiltin( const std::string& name )
+	{
+		static BuiltinMap sBuiltins = MakeBuiltins();
+		
+		BuiltinMap::const_iterator found = sBuiltins.find( name );
+		
+		if ( found != sBuiltins.end() )
+		{
+			return found->second;
+		}
+		else
+		{
+			return NULL;
+		}
+	}
+	
 }
 

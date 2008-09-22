@@ -34,121 +34,126 @@
 #include "Options.hh"
 
 
-namespace NN = Nucleus;
-namespace p7 = poseven;
-
-
-static PromptLevel gPromptLevel = kPS1;
-
-void SetPromptLevel( PromptLevel level )
+namespace tool
 {
-	gPromptLevel = level;
-}
-
-struct Prompt
-{
-	const char*  environmentVariableName;
-	const char*  defaultValue;
-};
-
-static const Prompt gPrompts[] =
-{
-	{ "", "" },
-	{ "PS1", "$ " },
-	{ "PS2", "> " },
-	{ "PS3", "" },
-	{ "PS4", "" },
-};
-
-static void SendPrompt()
-{
-	const Prompt& prompt = gPrompts[ gPromptLevel ];
 	
-	const char* prompt_string = getenv( prompt.environmentVariableName );
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	
-	if ( prompt_string == NULL )
+	
+	static PromptLevel gPromptLevel = kPS1;
+	
+	void SetPromptLevel( PromptLevel level )
 	{
-		prompt_string = prompt.defaultValue;
+		gPromptLevel = level;
 	}
 	
-	p7::write( p7::stdout_fileno, prompt_string, std::strlen( prompt_string ) );
-}
-
-static void SetRowsAndColumns()
-{
-#ifdef WIOCGDIM
-	
-	// FIXME:  Use fallback for real Unix
-	
-	try
+	struct Prompt
 	{
-		NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly, 0 );
+		const char*  environmentVariableName;
+		const char*  defaultValue;
+	};
+	
+	static const Prompt gPrompts[] =
+	{
+		{ "", "" },
+		{ "PS1", "$ " },
+		{ "PS2", "> " },
+		{ "PS3", "" },
+		{ "PS4", "" },
+	};
+	
+	static void SendPrompt()
+	{
+		const Prompt& prompt = gPrompts[ gPromptLevel ];
 		
-		short dimensions[ 2 ] = { 0 };
+		const char* prompt_string = getenv( prompt.environmentVariableName );
 		
-		int status = ioctl( tty, WIOCGDIM, &dimensions );
-		
-		if ( status == 0 )
+		if ( prompt_string == NULL )
 		{
-			std::string lines   = NN::Convert< std::string >( dimensions[0] );
-			std::string columns = NN::Convert< std::string >( dimensions[1] );
-			
-			AssignShellVariable( "LINES",   lines  .c_str() );
-			AssignShellVariable( "COLUMNS", columns.c_str() );
+			prompt_string = prompt.defaultValue;
 		}
-	}
-	catch ( ... )
-	{
-	}
-	
-#endif
-}
-
-p7::wait_t ReadExecuteLoop( p7::fd_t  fd,
-                            bool      prompts )
-{
-	Io::TextInputAdapter< p7::fd_t > input( fd );
-	
-	int result = 0;
-	
-	if ( prompts )
-	{
-		std::printf( "Shell spawned with pid %d\n", getpid() );
 		
-		SendPrompt();
+		p7::write( p7::stdout_fileno, prompt_string, std::strlen( prompt_string ) );
 	}
 	
-	while ( !input.Ended() )
+	static void SetRowsAndColumns()
 	{
-		if ( input.Ready() )
+	#ifdef WIOCGDIM
+		
+		// FIXME:  Use fallback for real Unix
+		
+		try
 		{
-			std::string command = input.Read();
+			NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly, 0 );
 			
-			// Only process non-blank lines
-			if ( command.find_first_not_of( " \t" ) != command.npos )
-			{
-				if ( command == "exit" )
-				{
-					return p7::wait_t( 0 );
-				}
-				
-				SetRowsAndColumns();
-				
-				result = ExecuteCmdLine( command );
-				
-				if ( !GetOption( kOptionInteractive )  &&  GetOption( kOptionExitOnError )  &&  result != 0 )
-				{
-					break;
-				}
-			}
+			short dimensions[ 2 ] = { 0 };
 			
-			if ( prompts )
+			int status = ioctl( tty, WIOCGDIM, &dimensions );
+			
+			if ( status == 0 )
 			{
-				SendPrompt();
+				std::string lines   = NN::Convert< std::string >( dimensions[0] );
+				std::string columns = NN::Convert< std::string >( dimensions[1] );
+				
+				AssignShellVariable( "LINES",   lines  .c_str() );
+				AssignShellVariable( "COLUMNS", columns.c_str() );
 			}
 		}
+		catch ( ... )
+		{
+		}
+		
+	#endif
 	}
 	
-	return p7::wait_t( result );
+	p7::wait_t ReadExecuteLoop( p7::fd_t  fd,
+	                            bool      prompts )
+	{
+		Io::TextInputAdapter< p7::fd_t > input( fd );
+		
+		int result = 0;
+		
+		if ( prompts )
+		{
+			std::printf( "Shell spawned with pid %d\n", getpid() );
+			
+			SendPrompt();
+		}
+		
+		while ( !input.Ended() )
+		{
+			if ( input.Ready() )
+			{
+				std::string command = input.Read();
+				
+				// Only process non-blank lines
+				if ( command.find_first_not_of( " \t" ) != command.npos )
+				{
+					if ( command == "exit" )
+					{
+						return p7::wait_t( 0 );
+					}
+					
+					SetRowsAndColumns();
+					
+					result = ExecuteCmdLine( command );
+					
+					if ( !GetOption( kOptionInteractive )  &&  GetOption( kOptionExitOnError )  &&  result != 0 )
+					{
+						break;
+					}
+				}
+				
+				if ( prompts )
+				{
+					SendPrompt();
+				}
+			}
+		}
+		
+		return p7::wait_t( result );
+	}
+	
 }
 

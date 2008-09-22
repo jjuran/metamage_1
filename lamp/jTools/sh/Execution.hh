@@ -9,7 +9,12 @@
 #include <string>
 
 
-int ExecuteCmdLine( const std::string& cmd );
+namespace tool
+{
+	
+	int ExecuteCmdLine( const std::string& cmd );
+	
+}
 
 #endif
 

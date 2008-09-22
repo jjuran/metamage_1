@@ -39,11 +39,6 @@
 #include "ReadExecuteLoop.hh"
 
 
-const char* gArgZero = NULL;
-std::size_t gParameterCount = 0;
-char const* const* gParameters = NULL;
-
-
 namespace tool
 {
 	
@@ -51,8 +46,13 @@ namespace tool
 	namespace O = Orion;
 	
 	
-	bool gStandardIn  = false;
-	bool gLoginShell  = false;
+	const char*         gArgZero        = NULL;
+	std::size_t         gParameterCount = 0;
+	char const* const*  gParameters     = NULL;
+	
+	
+	bool gStandardIn = false;
+	bool gLoginShell = false;
 	
 	
 	struct OnExit

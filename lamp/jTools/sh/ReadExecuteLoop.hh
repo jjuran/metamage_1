@@ -13,20 +13,25 @@
 #include "POSeven/types/wait_t.hh"
 
 
-extern int gLastResult;
-
-enum PromptLevel
+namespace tool
 {
-	kPS1 = 1,
-	kPS2 = 2,
-	kPS3 = 3,
-	kPS4 = 4
-};
-
-void SetPromptLevel( PromptLevel level );
-
-poseven::wait_t ReadExecuteLoop( poseven::fd_t  fd,
-                                 bool           prompts );
+	
+	extern int gLastResult;
+	
+	enum PromptLevel
+	{
+		kPS1 = 1,
+		kPS2 = 2,
+		kPS3 = 3,
+		kPS4 = 4
+	};
+	
+	void SetPromptLevel( PromptLevel level );
+	
+	poseven::wait_t ReadExecuteLoop( poseven::fd_t  fd,
+	                                 bool           prompts );
+	
+}
 
 #endif
 
