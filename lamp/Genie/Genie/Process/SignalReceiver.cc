@@ -123,7 +123,13 @@ namespace Genie
 				
 				itsBlockedSignals |= signal_mask;
 				
+				// (a) Account for time spent in signal handler as user time
+				// (b) System time is accrued in the event of [sig]longjmp()
+				LeaveSystemCall();
+				
 				handler( signo );
+				
+				EnterSystemCall( "*SIGNAL HANDLED*" );
 				
 				itsBlockedSignals &= ~signal_mask;
 				
