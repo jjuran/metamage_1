@@ -9,6 +9,9 @@
 // Standard C
 #include <signal.h>
 
+// Genie
+#include "Genie/Process/TimeKeeper.hh"
+
 
 namespace Genie
 {
@@ -25,7 +28,7 @@ namespace Genie
 		return 1 << signo - 1;
 	}
 	
-	class SignalReceiver
+	class SignalReceiver : public TimeKeeper
 	{
 		private:
 			struct sigaction itsActions[ NSIG ];

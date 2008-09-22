@@ -35,7 +35,6 @@
 #include "Genie/Process/LongJumper.hh"
 #include "Genie/Process/SavedRegisters.hh"
 #include "Genie/Process/SignalReceiver.hh"
-#include "Genie/Process/TimeKeeper.hh"
 #include "Genie/Process/TraceTarget.hh"
 #include "Genie/ProcessGroup.hh"
 
@@ -88,8 +87,7 @@ namespace Genie
 			const std::string& Data() const  { return itsStorage; }
 	};
 	
-	class Process : public TimeKeeper,
-	                public SignalReceiver,
+	class Process : public SignalReceiver,
 	                public LongJumper,
 	                public TraceTarget
 	{
