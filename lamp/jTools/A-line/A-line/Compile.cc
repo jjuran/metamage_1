@@ -424,7 +424,7 @@ namespace tool
 		
 		if ( options.Target().envType == envLamp )
 		{
-			options.DEFINE_MACRO( "__LaMP__" );
+			options.DEFINE_MACRO( "__LAMP__" );
 		}
 		
 		if ( target_info.platform & apiMacCarbon )
