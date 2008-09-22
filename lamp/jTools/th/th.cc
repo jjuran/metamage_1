@@ -43,16 +43,6 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static int exit_from_wait( int stat )
-	{
-		int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-		           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-		           :                       -1;
-		
-		return result;
-	}
-	
-	
 	struct TestResults
 	{
 		int planned;
