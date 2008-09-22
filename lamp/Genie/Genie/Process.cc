@@ -850,7 +850,6 @@ namespace Genie
 	
 	Process::Process( Process& parent ) 
 	:
-		SignalReceiver        ( parent ),
 		itsPPID               ( parent.GetPID() ),
 		itsPID                ( GetProcessList().NewProcess( this ) ),
 		itsForkedChildPID     ( 0 ),
