@@ -15,6 +15,7 @@
 #define POSEVEN_TYPES_WAIT_T_HH
 
 // Nucleus
+#include "Nucleus/Convert.h"
 #include "Nucleus/Enumeration.h"
 
 // POSeven
@@ -69,6 +70,26 @@ namespace poseven
 		
 		operator pid_t () const  { return pid;    }
 		operator wait_t() const  { return status; }
+	};
+	
+}
+
+namespace Nucleus
+{
+	
+	template <>
+	struct Converter< poseven::exit_t, poseven::wait_t > : public std::unary_function< poseven::wait_t, poseven::exit_t >
+	{
+		poseven::exit_t operator()( poseven::wait_t status ) const
+		{
+			using namespace poseven;
+			
+			int result = wifexited  ( status ) ? wexitstatus( status )
+			           : wifsignaled( status ) ? wtermsig   ( status ) + 128
+			           :                         -1;
+			
+			return exit_t( result );
+		}
 	};
 	
 }
