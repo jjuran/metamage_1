@@ -40,16 +40,6 @@
 #include "Orion/Main.hh"
 
 
-static int exit_from_wait( int stat )
-{
-	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-	           :                       -1;
-	
-	return result;
-}
-
-
 namespace tool
 {
 	
@@ -786,7 +776,7 @@ namespace tool
 		
 		p7::wait_t wait_status = p7::waitpid( tlsrvr_pid );
 		
-		int exit_status = exit_from_wait( wait_status );
+		int exit_status = Nucleus::Convert< p7::exit_t >( wait_status );
 		
 		if ( exit_status != 0 )
 		{
