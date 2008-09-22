@@ -215,11 +215,6 @@ namespace tool
 						break;
 					
 					case 'm':
-						if ( std::strcmp( arg + 1, "model" ) == 0 )
-						{
-							break;
-						}
-						// fall through
 					case 'f':
 						arg = TranslateCodeGenFlag( arg );
 						break;
