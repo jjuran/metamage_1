@@ -637,7 +637,7 @@ namespace tool
 	}
 	
 	
-	static int ExecuteCommandFromPipeline( const Command& command )
+	static p7::wait_t ExecuteCommandFromPipeline( const Command& command )
 	{
 		Sh::StringArray argvec( command.args );
 		
@@ -646,7 +646,7 @@ namespace tool
 		if ( CommandIsOnlyAssignments( argv ) )
 		{
 			// An assignment as the sole command to a shell is pointless, so just exit
-			return 0;
+			return p7::wait_t( 0 );
 		}
 		
 		try
