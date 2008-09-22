@@ -18,7 +18,6 @@
 
 // POSIX
 #include <fcntl.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 // Nucleus
@@ -26,6 +25,8 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
 
 // Io
 #include "Io/TextInput.hh"
@@ -46,15 +47,6 @@ namespace tool
 	{
 		return    pathname[0] == '-'
 		       && pathname[1] == '\0';
-	}
-	
-	static int exit_from_wait( int stat )
-	{
-		int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-		           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-		           :                       -1;
-		
-		return result;
 	}
 	
 	enum IoOperator
@@ -402,7 +394,7 @@ namespace tool
 		
 		CreatePipes();
 		
-		pid_t pid = vfork();
+		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
@@ -421,11 +413,10 @@ namespace tool
 		
 		ClosePipeWriters();
 		
-		int wait_status = -1;
-		pid_t resultpid = waitpid( pid, &wait_status, 0 );
+		p7::wait_t wait_status = p7::wait();
 		
 		bool output_matches = DoesOutputMatch();
-		bool status_matches = exit_from_wait( wait_status ) == itsExpectedExitStatus;
+		bool status_matches = NN::Convert< p7::exit_t >( wait_status ) == itsExpectedExitStatus;
 		
 		bool test_ok = status_matches && output_matches;
 		
