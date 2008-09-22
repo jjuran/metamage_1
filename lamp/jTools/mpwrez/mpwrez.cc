@@ -8,9 +8,6 @@
 #include <string>
 #include <vector>
 
-// POSIX
-#include <sys/wait.h>
-
 // POSeven
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
@@ -142,7 +139,7 @@ namespace tool
 			return EXIT_SUCCESS;
 		}
 		
-		pid_t pid = POSEVEN_VFORK();
+		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
