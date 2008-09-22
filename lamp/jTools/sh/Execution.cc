@@ -602,7 +602,7 @@ namespace tool
 							// Since we didn't actually exec anything, we have to exit manually
 							_exit( CallBuiltin( builtin, argv ) );
 						}
-						catch ( const O::ExitStatus& status )
+						catch ( const p7::exit_t& status )
 						{
 							// We get here if the 'exit' builtin was called.
 							// But we can't let the exception unwind past vfork(),
@@ -643,7 +643,7 @@ namespace tool
 			
 			return wait_status;
 		}
-		catch ( const O::ExitStatus& )
+		catch ( const p7::exit_t& )
 		{
 			// Rethrow.  We catch here so a thrown exit doesn't get caught below.
 			throw;
@@ -687,7 +687,7 @@ namespace tool
 			Exec( argv );
 			
 		}
-		catch ( const O::ExitStatus& status )
+		catch ( const p7::exit_t& status )
 		{
 			throw;
 		}
@@ -705,7 +705,7 @@ namespace tool
 		{
 			_exit( exit_from_wait( ExecuteCommandFromPipeline( command ) ) );
 		}
-		catch ( const O::ExitStatus& status )
+		catch ( const p7::exit_t& status )
 		{
 			_exit( status );
 		}
