@@ -15,7 +15,9 @@
 #include <unistd.h>
 
 // Lamp
+#ifdef __LAMP__
 #include "lamp/winio.h"
+#endif
 
 // POSeven
 #include "POSeven/Open.hh"
@@ -74,6 +76,10 @@ static void SendPrompt()
 
 static void SetRowsAndColumns()
 {
+#ifdef WIOCGDIM
+	
+	// FIXME:  Use fallback for real Unix
+	
 	try
 	{
 		NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly, 0 );
@@ -94,6 +100,8 @@ static void SetRowsAndColumns()
 	catch ( ... )
 	{
 	}
+	
+#endif
 }
 
 int ReadExecuteLoop( p7::fd_t  fd,
