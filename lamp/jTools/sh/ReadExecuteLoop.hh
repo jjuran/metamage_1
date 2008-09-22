@@ -16,8 +16,6 @@
 namespace tool
 {
 	
-	extern int gLastResult;
-	
 	enum PromptLevel
 	{
 		kPS1 = 1,

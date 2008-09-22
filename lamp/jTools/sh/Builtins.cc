@@ -42,6 +42,8 @@ namespace tool
 	namespace O = Orion;
 	
 	
+	typedef std::map< std::string, std::string > StringMap;
+	
 	static StringMap gLocalVariables;
 	static StringMap gAliases;
 	
@@ -77,7 +79,7 @@ namespace tool
 		return wasMarked;
 	}
 	
-	int AssignShellVariable( const char* name, const char* value )
+	void AssignShellVariable( const char* name, const char* value )
 	{
 		if ( getenv( name ) || UnmarkVariableForExport( name ) )
 		{
@@ -89,8 +91,6 @@ namespace tool
 			// Not set, or set locally
 			gLocalVariables[ name ] = value;
 		}
-		
-		return 0;
 	}
 	
 	const char* QueryShellVariable( const std::string& name )
@@ -107,7 +107,7 @@ namespace tool
 	
 	// Builtins.  argc is guaranteed to be positive.
 	
-	static int Builtin_CD( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_CD( int argc, iota::argv_t argv )
 	{
 		const char* dir = argv[1];
 		
@@ -129,7 +129,7 @@ namespace tool
 		{
 			std::fprintf( stderr, "cd: %s: %s\n", dir, std::strerror( errno ) );
 			
-			return 1;
+			return p7::exit_failure;
 		}
 		
 		// Apparently setenv() breaks something.
@@ -138,10 +138,10 @@ namespace tool
 		// FIXME:  This should be full pathname.
 		//setenv( "PWD", argv[ 1 ], 1 );
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
-	static int Builtin_Alias( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Alias( int argc, iota::argv_t argv )
 	{
 		if ( argc == 1 )
 		{
@@ -175,10 +175,10 @@ namespace tool
 			}
 		}
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
-	static int Builtin_Echo( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Echo( int argc, iota::argv_t argv )
 	{
 		if ( argc > 1 )
 		{
@@ -192,10 +192,10 @@ namespace tool
 		
 		std::printf( "\n" );
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
-	static int Builtin_Exit( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Exit( int argc, iota::argv_t argv )
 	{
 		int exitStatus = 0;
 		
@@ -207,10 +207,10 @@ namespace tool
 		O::ThrowExitStatus( exitStatus );
 		
 		// Not reached
-		return -1;
+		return p7::exit_success;
 	}
 	
-	static int Builtin_Export( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Export( int argc, iota::argv_t argv )
 	{
 		if ( argc == 1 )
 		{
@@ -261,10 +261,10 @@ namespace tool
 			}
 		}
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
-	static int Builtin_PWD( int /*argc*/, iota::argv_t /*argv*/ )
+	static p7::exit_t Builtin_PWD( int /*argc*/, iota::argv_t /*argv*/ )
 	{
 		std::string cwd;
 		cwd.resize( 256 );
@@ -276,10 +276,10 @@ namespace tool
 		
 		std::printf( "%s\n", cwd.c_str() );
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
-	static int Builtin_Set( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Set( int argc, iota::argv_t argv )
 	{
 		if ( argc == 1 )
 		{
@@ -311,20 +311,20 @@ namespace tool
 			}
 		}
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
-	static int Builtin_Unalias( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Unalias( int argc, iota::argv_t argv )
 	{
 		while ( --argc )
 		{
 			gAliases.erase( argv[ argc ] );
 		}
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
-	static int Builtin_Unset( int argc, iota::argv_t argv )
+	static p7::exit_t Builtin_Unset( int argc, iota::argv_t argv )
 	{
 		while ( --argc )
 		{
@@ -332,7 +332,7 @@ namespace tool
 			unsetenv( argv[ argc ] );
 		}
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
 	class ReplacedParametersScope
@@ -367,12 +367,13 @@ namespace tool
 		return result;
 	}
 	
-	static int BuiltinDot( int argc, iota::argv_t argv )
+	static p7::exit_t BuiltinDot( int argc, iota::argv_t argv )
 	{
 		if ( argc < 2 )
 		{
 			std::fprintf( stderr, "%s\n", "sh: .: filename argument required" );
-			return 2;
+			
+			return p7::exit_t( 2 );
 		}
 		
 		NN::Owned< p7::fd_t > fd = p7::open( argv[ 1 ], p7::o_rdonly );
@@ -381,9 +382,7 @@ namespace tool
 		
 		ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 		
-		int result = Nucleus::Convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
-		
-		return result;
+		return NN::Convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
 	}
 	
 	typedef std::map< std::string, Builtin > BuiltinMap;

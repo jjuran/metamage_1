@@ -8,11 +8,14 @@
 // Standard C++
 #include <string>
 
+// POSeven
+#include "POSeven/types/wait_t.hh"
+
 
 namespace tool
 {
 	
-	int ExecuteCmdLine( const std::string& cmd );
+	poseven::wait_t ExecuteCmdLine( const std::string& cmd );
 	
 }
 

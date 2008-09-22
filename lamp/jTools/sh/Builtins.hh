@@ -12,19 +12,20 @@
 // Iota
 #include "iota/argv.hh"
 
+// POSeven
+#include "POSeven/types/exit_t.hh"
+
 
 namespace tool
 {
 	
-	typedef int (*Builtin)( int argc, iota::argv_t argv );
+	typedef poseven::exit_t (*Builtin)( int argc, iota::argv_t argv );
 	
-	int AssignShellVariable( const char* name, const char* value );
+	void AssignShellVariable( const char* name, const char* value );
 	
 	const char* QueryShellVariable( const std::string& name );
 	
 	Builtin FindBuiltin( const std::string& name );
-	
-	typedef std::map< std::string, std::string > StringMap;
 	
 }
 

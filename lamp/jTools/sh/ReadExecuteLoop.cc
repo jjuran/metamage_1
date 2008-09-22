@@ -112,7 +112,7 @@ namespace tool
 	{
 		Io::TextInputAdapter< p7::fd_t > input( fd );
 		
-		int result = 0;
+		p7::wait_t status = p7::wait_t( 0 );
 		
 		if ( prompts )
 		{
@@ -137,9 +137,9 @@ namespace tool
 					
 					SetRowsAndColumns();
 					
-					result = ExecuteCmdLine( command );
+					status = ExecuteCmdLine( command );
 					
-					if ( !GetOption( kOptionInteractive )  &&  GetOption( kOptionExitOnError )  &&  result != 0 )
+					if ( !GetOption( kOptionInteractive )  &&  GetOption( kOptionExitOnError )  &&  status != 0 )
 					{
 						break;
 					}
@@ -152,7 +152,7 @@ namespace tool
 			}
 		}
 		
-		return p7::wait_t( result );
+		return status;
 	}
 	
 }

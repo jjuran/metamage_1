@@ -26,6 +26,8 @@
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
+#include "POSeven/functions/_exit.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -107,8 +109,13 @@ namespace tool
 	using Sh::List;
 	
 	
-	int gLastResult = 0;
+	static p7::wait_t global_last_wait_status;
 	
+	
+	inline p7::wait_t wait_from_exit( p7::exit_t exit_status )
+	{
+		return p7::wait_t( exit_status << 8 );
+	}
 	
 	struct Job
 	{
@@ -138,16 +145,6 @@ namespace tool
 		
 	}
 	*/
-	
-	
-	static int exit_from_wait( int stat )
-	{
-		int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-		           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-		           :                       -1;
-		
-		return result;
-	}
 	
 	
 	class AppendWithSpace
@@ -189,7 +186,7 @@ namespace tool
 		}
 		else if ( param == "?" )
 		{
-			single_result = NN::Convert< std::string >( exit_from_wait( gLastResult ) );
+			single_result = NN::Convert< std::string >( NN::Convert< p7::exit_t >( global_last_wait_status ) );
 		}
 		else if ( param == "#" )
 		{
@@ -424,38 +421,21 @@ namespace tool
 					   std::ptr_fun( RedirectIO ) );
 	}
 	
-	static const int exec_failure_exit_status = 127;
-	static const int exec_failure_wait_status = exec_failure_exit_status << 8;
-	
 	static void Exec( char const* const argv[] )
 	{
 		const char* file = argv[ 0 ];
 		
-		int exec_result = execvp( file, const_cast< char** >( argv ) );
+		(void) execvp( file, const_cast< char** >( argv ) );
 		
 		const char* error_msg = errno == ENOENT ? "command not found" : std::strerror( errno );
 		
 		std::fprintf( stderr, "%s: %s: %s\n", "sh", file, error_msg );
 		
-		_exit( exec_failure_exit_status );  // Use _exit() to exit a forked but not exec'ed process.
-	}
-	
-	static int Wait( pid_t pid )
-	{
-		int stat = -1;
-		
-		pid_t resultpid = waitpid( pid, &stat, 0 );
-		
-		if ( resultpid == -1 )
-		{
-			std::perror( "sh: waitpid() failed" );
-		}
-		
-		return stat;
+		_exit( ENOENT ? 127 : 126 );  // Use _exit() to exit a forked but not exec'ed process.
 	}
 	
 	
-	static int CallBuiltin( Builtin builtin, char** argv )
+	static p7::exit_t CallBuiltin( Builtin builtin, char** argv )
 	{
 		int argc = Sh::CountStringArray( argv );
 		
@@ -504,7 +484,7 @@ namespace tool
 		return *argv == NULL;
 	}
 	
-	static int AssignShellVariablesFromArgV( char** argv )
+	static p7::wait_t AssignShellVariablesFromArgV( char** argv )
 	{
 		//ASSERT( argv != NULL );
 		
@@ -522,7 +502,7 @@ namespace tool
 			AssignShellVariable( name, value );
 		}
 		
-		return 0;
+		return p7::wait_t( 0 );
 	}
 	
 	static void ShiftEnvironmentVariables( char**& argv )
@@ -544,7 +524,7 @@ namespace tool
 		return Sh::ParseCommand( command, ShellParameterDictionary() );
 	}
 	
-	static void SetupChildProcess( pid_t pgid = 0 )
+	static void SetupChildProcess( p7::pid_t pgid = p7::pid_t( 0 ) )
 	{
 		if ( GetOption( kOptionMonitor ) )
 		{
@@ -560,7 +540,7 @@ namespace tool
 		}
 	}
 	
-	static int ExecuteCommand( const Command& command )
+	static p7::wait_t ExecuteCommand( const Command& command )
 	{
 		Sh::StringArray argvec( command.args );
 		
@@ -577,7 +557,7 @@ namespace tool
 		{
 			if ( builtin != NULL  &&  command.redirections.empty() )
 			{
-				return CallBuiltin( builtin, argv ) << 8;  // wait from exit
+				return wait_from_exit( CallBuiltin( builtin, argv ) );  // wait from exit
 			}
 			
 			// This variable is set before and examined after a longjmp(), so it
@@ -585,7 +565,7 @@ namespace tool
 			// and subsequently clobbered.
 			volatile bool exiting = false;
 			
-			pid_t pid = POSEVEN_VFORK();
+			p7::pid_t pid = POSEVEN_VFORK();
 			
 			if ( pid == 0 )
 			{
@@ -600,7 +580,7 @@ namespace tool
 						try
 						{
 							// Since we didn't actually exec anything, we have to exit manually
-							_exit( CallBuiltin( builtin, argv ) );
+							p7::_exit( CallBuiltin( builtin, argv ) );
 						}
 						catch ( const p7::exit_t& status )
 						{
@@ -629,16 +609,16 @@ namespace tool
 				}
 				
 				// If the child hasn't exited by now, do so.
-				_exit( 1 );
+				p7::_exit( p7::exit_failure );
 			}
 			
 			// Wait for the child process to exit
-			int wait_status = Wait( pid );
+			p7::wait_t wait_status = p7::wait();
 			
 			if ( exiting )
 			{
 				// The 'child' was the 'exit' builtin, meaning we should exit
-				O::ThrowExitStatus( exit_from_wait( wait_status ) );
+				O::ThrowExitStatus( NN::Convert< p7::exit_t >( wait_status ) );
 			}
 			
 			return wait_status;
@@ -653,7 +633,7 @@ namespace tool
 			p7::write( p7::stderr_fileno, STR_LEN( "sh: exception occurred running command\n" ) );
 		}
 		
-		return exec_failure_wait_status;
+		return wait_from_exit( p7::exit_failure );
 	}
 	
 	
@@ -696,22 +676,22 @@ namespace tool
 			p7::write( p7::stderr_fileno, STR_LEN( "sh: exception occurred running command\n" ) );
 		}
 		
-		return exec_failure_wait_status;
+		return wait_from_exit( p7::exit_failure );
 	}
 	
 	static void ExecuteCommandAndExitFromPipeline( const Command& command )
 	{
 		try
 		{
-			_exit( exit_from_wait( ExecuteCommandFromPipeline( command ) ) );
+			p7::_exit( NN::Convert< p7::exit_t >( ExecuteCommandFromPipeline( command ) ) );
 		}
 		catch ( const p7::exit_t& status )
 		{
-			_exit( status );
+			p7::_exit( status );
 		}
 	}
 	
-	static int ExecutePipeline( const Pipeline& pipeline )
+	static p7::wait_t ExecutePipeline( const Pipeline& pipeline )
 	{
 		std::vector< Command > commands( pipeline.commands.size() );
 		
@@ -723,8 +703,9 @@ namespace tool
 		switch ( commands.size() )
 		{
 			case 0:
-				return 0;
+				return p7::wait_t( 0 );
 				break;
+			
 			case 1:
 				{
 					return ExecuteCommand( commands.front() );
@@ -744,7 +725,7 @@ namespace tool
 		int writing = pipes[ 1 ];
 		
 		// The first command in the pipline
-		pid_t first = POSEVEN_VFORK();
+		p7::pid_t first = POSEVEN_VFORK();
 		
 		if ( first == 0 )
 		{
@@ -773,7 +754,7 @@ namespace tool
 			writing = pipes[ 1 ];  // write-end of next pipe
 			
 			// Middle command in the pipeline (not first or last)
-			pid_t middle = POSEVEN_VFORK();
+			p7::pid_t middle = POSEVEN_VFORK();
 			
 			if ( middle == 0 )
 			{
@@ -804,7 +785,7 @@ namespace tool
 		// Close previous write-end
 		close( writing );
 		
-		pid_t last = POSEVEN_VFORK();
+		p7::pid_t last = POSEVEN_VFORK();
 		
 		if ( last == 0 )
 		{
@@ -823,14 +804,14 @@ namespace tool
 		
 		int processes = commands.size();
 		
-		int wait_status = -1;
+		p7::wait_t wait_status = p7::wait_t( -1 );
 		
 		while ( processes )
 		{
-			int stat = -1;
+			p7::wait_t stat = p7::wait_t( -1 );
 			
 			// Wait for every child process
-			pid_t pid = waitpid( -1, &stat, 0 );
+			p7::pid_t pid = p7::wait( stat );
 			
 			--processes;
 			
@@ -850,36 +831,36 @@ namespace tool
 			|| ( op == Sh::kControlOr   &&  result == 0 );
 	}
 	
-	static int ExecuteCircuit( const Circuit& circuit )
+	static p7::wait_t ExecuteCircuit( const Circuit& circuit )
 	{
 		if ( circuit.op == Sh::kControlBackground )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "Background jobs are not supported.  Sorry.\n" ) );
 			
-			return exec_failure_wait_status;
+			return wait_from_exit( p7::exit_failure );
 		}
 		
-		int result = 0;
+		p7::wait_t status = p7::wait_t( 0 );
 		
 		typedef std::vector< Pipeline >::const_iterator vP_ci;
 		
 		for ( vP_ci it = circuit.pipelines.begin();  it != circuit.pipelines.end();  ++it )
 		{
-			if ( ShortCircuit( it->op, result ) )
+			if ( ShortCircuit( it->op, status ) )
 			{
 				continue;
 			}
 			
 			try
 			{
-				result = ExecutePipeline( *it );
+				status = ExecutePipeline( *it );
 			}
 			catch ( const p7::errno_t& )
 			{
-				result = exec_failure_wait_status;
+				status = wait_from_exit( p7::exit_failure );
 			}
 			
-			gLastResult = result;
+			global_last_wait_status = status;
 			
 			if ( GetOption( kOptionMonitor ) )
 			{
@@ -887,43 +868,43 @@ namespace tool
 			}
 		}
 		
-		return result;
+		return status;
 	}
 	
-	static int ExecuteList( const List& list )
+	static p7::wait_t ExecuteList( const List& list )
 	{
-		int result = 0;
+		p7::wait_t status = p7::wait_t( 0 );
 		
 		typedef std::vector< Circuit >::const_iterator vP_ci;
 		
 		for ( vP_ci it = list.begin();  it != list.end();  ++it )
 		{
-			result = ExecuteCircuit( *it );
+			status = ExecuteCircuit( *it );
 			
-			if ( GetOption( kOptionExitOnError )  &&  result != 0 )
+			if ( GetOption( kOptionExitOnError )  &&  status != 0 )
 			{
 				break;
 			}
 		}
 		
-		return result;
+		return status;
 	}
 	
-	int ExecuteCmdLine( const std::string& cmd )
+	p7::wait_t ExecuteCmdLine( const std::string& cmd )
 	{
 		List list = Sh::Tokenization( cmd );
 		
-		int result = ExecuteList( list );
+		p7::wait_t status = ExecuteList( list );
 		
 		// notify user of fatal signal, e.g. "Alarm clock"
-		if ( WIFSIGNALED( result ) )
+		if ( p7::wifsignaled( status ) )
 		{
-			int signo = WTERMSIG( result );
+			int signo = p7::wtermsig( status );
 			
 			std::fprintf( stderr, "%s\n", strsignal( signo ) );
 		}
 		
-		return result;
+		return status;
 	}
 
 }
