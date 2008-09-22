@@ -51,8 +51,7 @@ namespace tool
 	char const* const*  gParameters     = NULL;
 	
 	
-	bool gStandardIn = false;
-	bool gLoginShell = false;
+	static bool gLoginShell = false;
 	
 	
 	struct OnExit
@@ -169,7 +168,6 @@ namespace tool
 		else
 		{
 			// Read from stdin
-			gStandardIn = true;
 			
 			if ( gLoginShell )
 			{
