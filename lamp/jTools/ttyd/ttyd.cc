@@ -11,6 +11,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/signal.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -138,7 +139,7 @@ namespace tool
 			return 1;
 		}
 		
-		signal( SIGCHLD, sigchld_handler );
+		p7::signal( p7::sigchld, sigchld_handler );
 		
 		int master = Spawn();
 		

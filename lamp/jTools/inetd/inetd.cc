@@ -32,6 +32,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
+#include "POSeven/functions/signal.hh"
 
 // Io
 #include "Io/TextInput.hh"
@@ -297,7 +298,7 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, STR_LEN( "Starting internet superserver: inetd" ) );
 		
-		(void)signal( SIGCHLD, HandleSIGCHLD );
+		p7::signal( p7::sigchld, HandleSIGCHLD );
 		
 		ReadInetdDotConf();
 		
