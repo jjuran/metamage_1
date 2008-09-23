@@ -37,7 +37,7 @@ namespace poseven
 	
 	inline void spew( const char* path, const std::string& stuff )
 	{
-		return io::spew_output< Nucleus::StringFlattener< std::string > >( open( path, o_rdonly ).get(), stuff );
+		return io::spew_output< Nucleus::StringFlattener< std::string > >( open( path, o_wronly ).get(), stuff );
 	}
 	
 }
