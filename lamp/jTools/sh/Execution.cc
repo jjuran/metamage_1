@@ -431,7 +431,7 @@ namespace tool
 		
 		std::fprintf( stderr, "%s: %s: %s\n", "sh", file, error_msg );
 		
-		_exit( ENOENT ? 127 : 126 );  // Use _exit() to exit a forked but not exec'ed process.
+		_exit( errno == ENOENT ? 127 : 126 );  // Use _exit() to exit a forked but not exec'ed process.
 	}
 	
 	
