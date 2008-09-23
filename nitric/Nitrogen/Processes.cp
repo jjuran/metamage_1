@@ -156,6 +156,12 @@ namespace Nitrogen
 		RegisterOSStatus< appModeErr    >();
 		RegisterOSStatus< appMemFullErr >();
 		RegisterOSStatus< appIsDaemon   >();
+		
+	#if TARGET_RT_MAC_MACHO
+		
+		RegisterOSStatus< -10661 >();
+		
+	#endif
 	}
 	
 }
