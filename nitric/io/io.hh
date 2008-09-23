@@ -35,7 +35,7 @@ namespace io
 	
 	template < class FileSpec > struct filespec_traits;
 	
-	namespace dummy
+	namespace you_missed_some_includes
 	{
 		
 		class file_spec     {};
@@ -44,6 +44,8 @@ namespace io
 		class byte_count    {};
 		
 	}
+	
+	namespace dummy = you_missed_some_includes;
 	
 	class overload {};
 	

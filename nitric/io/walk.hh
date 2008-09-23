@@ -35,7 +35,7 @@ namespace io
 	
 	template < class FileSpec > struct directory_contents_traits;
 	
-	namespace dummy
+	namespace you_missed_some_includes  // dummy
 	{
 		
 		class directory_stream {};
