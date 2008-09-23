@@ -62,6 +62,7 @@ namespace Nitrogen
 	
 	static const DescType typeOSAGenericStorage = DescType( ::typeOSAGenericStorage );
 	
+	
 	enum OSAID
 	{
 		kOSANullScript = ::kOSANullScript,
@@ -309,6 +310,24 @@ namespace Nitrogen
 	// OSADebuggerGetPreviousCallFrame
 	// OSADebuggerDisposeCallFrame
 	// OSADebuggerCountVariables
+	
+	template < DescType desiredType >
+	inline
+	typename DescType_Traits< desiredType >::Result
+	OSAScriptError( ComponentInstance scriptingComponent, AEKeyword keyword )
+	{
+		return AEGetDescData< desiredType >( OSAScriptError( scriptingComponent,
+		                                                     keyword,
+		                                                     desiredType ) );
+	}
+	
+	template < AEKeyword key >
+	inline
+	typename AEKeyword_Traits< key >::Result
+	OSAScriptError( ComponentInstance scriptingComponent )
+	{
+		return OSAScriptError< AEKeyword_Traits< key >::descType >( scriptingComponent, key );
+	}
 	
 }
 
