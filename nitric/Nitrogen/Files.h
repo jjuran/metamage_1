@@ -1787,6 +1787,8 @@ namespace io
 	template <> struct filespec_traits< FSSpec              > : public Nitrogen::FSSpec_Io_Details {};
 	template <> struct filespec_traits< Nitrogen::FSDirSpec > : public Nitrogen::FSSpec_Io_Details {};
 	
+	template <> struct iostream_traits< Nitrogen::FSFileRefNum > : public Nitrogen::FSSpec_Io_Details {};
+	
 	// Get file info
 	
 	inline Nitrogen::Str63 get_filename( const FSSpec& file, overload = overload() )
@@ -1962,6 +1964,8 @@ namespace io
 	
 	
 	template <> struct filespec_traits< FSRef  > : public Nitrogen::FSRef_Io_Details {};
+	
+	template <> struct iostream_traits< Nitrogen::FSForkRefNum > : public Nitrogen::FSRef_Io_Details {};
 	
 	// Get file info
 	
