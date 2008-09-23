@@ -118,18 +118,10 @@ namespace Nitrogen
 	
 	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn )
 	{
-	#if TARGET_API_MAC_CARBON
-		
 		FSRef location;
 		ThrowOSStatus( ::GetProcessBundleLocation( &psn, &location ) );
 		
 		return location;
-		
-	#else
-		
-		return Nucleus::Convert< FSRef >( GetProcessAppSpec( psn ) );
-		
-	#endif
 	}
 	
 	FSSpec GetProcessAppSpec( const ProcessSerialNumber& process )
