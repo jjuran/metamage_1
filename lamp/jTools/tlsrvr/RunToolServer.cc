@@ -27,7 +27,7 @@
 
 // Io
 #include "io/slurp.hh"
-#include "io/spray.hh"
+#include "io/spew.hh"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
@@ -116,7 +116,7 @@ namespace tool
 		script += DirectoryCommandForMPW();
 		script += command + "\r";
 		
-		io::spray_file< NN::StringFlattener< std::string > >( scriptFile, script );
+		io::spew_file< NN::StringFlattener< std::string > >( scriptFile, script );
 	}
 	
 	inline void WriteInputFile( const FSSpec& file )
