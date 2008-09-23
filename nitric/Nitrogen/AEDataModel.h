@@ -280,6 +280,10 @@ namespace Nitrogen
 		static const DescType result = type;
 	};
 	
+	template < class Char > struct Char_DescType_Traits;
+	
+	template <> struct Char_DescType_Traits< char >  { static const DescType descType = typeChar; };
+	
 	template < class Integer > struct Integer_DescType_Traits;
 	
 	template <> struct Integer_DescType_Traits< SInt16 >  { static const DescType descType = typeSInt16; };
@@ -288,6 +292,13 @@ namespace Nitrogen
 	
 	struct Type_DescType_Traits  { static const DescType descType = typeType;       };
 	struct Enum_DescType_Traits  { static const DescType descType = typeEnumerated; };
+	
+	
+	template < class Char >
+	struct Char_AEKeyword_Traits : Nucleus::StringFlattener< std::basic_string< Char > >,
+	                               Char_DescType_Traits< Char >
+	{
+	};
 	
 	template < class POD, class Integer >
 	struct Integer_AEKeyword_Traits : Nucleus::ConvertingPODFlattener< POD, Integer >,
@@ -319,6 +330,7 @@ namespace Nitrogen
 	//template <> struct AEKeyword_Traits< keyEventSourceAttr > : Integer_AEKeyword_Traits< AEEventSource, SInt16 > {};
 	
 	template <> struct AEKeyword_Traits< keyMissedKeywordAttr > : Type_AEKeyword_Traits< AEKeyword > {};
+	
 	
 	#pragma mark -
 	#pragma mark ¥ AEDesc ¥
