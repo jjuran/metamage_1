@@ -14,9 +14,7 @@
 
 // POSIX
 #include <fcntl.h>
-#include <sys/signal.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 // Iota
@@ -25,6 +23,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/signal.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 #include "POSeven/functions/_exit.hh"
@@ -528,11 +527,11 @@ namespace tool
 	{
 		if ( GetOption( kOptionMonitor ) )
 		{
-			signal( SIGINT,  SIG_DFL );
-			signal( SIGQUIT, SIG_DFL );
-			signal( SIGTSTP, SIG_DFL );
-			signal( SIGTTIN, SIG_DFL );
-			signal( SIGTTOU, SIG_DFL );
+			p7::signal( p7::sigint,  p7::sig_dfl );
+			p7::signal( p7::sigquit, p7::sig_dfl );
+			p7::signal( p7::sigtstp, p7::sig_dfl );
+			p7::signal( p7::sigttin, p7::sig_dfl );
+			p7::signal( p7::sigttou, p7::sig_dfl );
 			
 			setpgid( 0, pgid );
 			
