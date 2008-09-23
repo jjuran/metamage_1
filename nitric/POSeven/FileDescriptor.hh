@@ -25,6 +25,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/types/fd_t.hh"
 
 
@@ -60,11 +61,6 @@ namespace poseven
 	inline ssize_t read( fd_t fd, char* buffer, std::size_t bytes_requested )
 	{
 		return throw_posix_result( ::read( fd, buffer, bytes_requested ) );
-	}
-	
-	inline ssize_t write( fd_t fd, const char* buffer, std::size_t bytes_requested )
-	{
-		return throw_posix_result( ::write( fd, buffer, bytes_requested ) );
 	}
 	
 }
