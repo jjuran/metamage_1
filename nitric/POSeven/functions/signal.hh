@@ -30,7 +30,7 @@ namespace poseven
 	
 	inline signal_handler_t throw_posix_result( signal_handler_t result )
 	{
-		if ( result < 0 )
+		if ( (long) result < 0 )
 		{
 			throw_errno_internal( errno );
 		}
