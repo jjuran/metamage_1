@@ -92,7 +92,8 @@ namespace poseven
 namespace io
 {
 	
-	template <> struct filespec_traits< std::string > : public poseven::posix_io_details {};
+	template <> struct filespec_traits< std::string   > : public poseven::posix_io_details {};
+	template <> struct iostream_traits< poseven::fd_t > : public poseven::posix_io_details {};
 	
 	template < class ByteCount >
 	inline ssize_t read( poseven::fd_t fd, char* buffer, ByteCount byteCount, overload = overload() )
