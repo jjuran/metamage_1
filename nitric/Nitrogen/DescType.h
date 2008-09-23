@@ -238,6 +238,11 @@ namespace Nitrogen
 		
 		typeScrapRef          = ::typeScrapRef,
 		typeCFMutableArrayRef = ::typeCFMutableArrayRef,
+				
+		// OSA
+		// ---
+		
+		typeOSAErrorRange = ::typeOSAErrorRange,
 		
 		kDescType_Max = Nucleus::Enumeration_Traits< ::DescType >::max
 	};
