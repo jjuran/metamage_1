@@ -38,46 +38,6 @@
 #include "Orion/Main.hh"
 
 
-namespace Nitrogen
-{
-	
-	static const AEKeyword kOSAErrorNumber  = AEKeyword( ::kOSAErrorNumber  );
-	static const AEKeyword kOSAErrorMessage = AEKeyword( ::kOSAErrorMessage );
-	
-	template < class Char > struct Char_DescType_Traits;
-	
-	template <> struct Char_DescType_Traits< char >  { static const DescType descType = typeChar; };
-	
-	template < class Char >
-	struct Char_AEKeyword_Traits : Nucleus::StringFlattener< std::basic_string< Char > >,
-	                               Char_DescType_Traits< Char >
-	{
-	};
-	
-	template <> struct AEKeyword_Traits< kOSAErrorNumber > : Integer_AEKeyword_Traits< OSStatus, ::OSErr > {};
-	
-	template <> struct AEKeyword_Traits< kOSAErrorMessage > : Char_AEKeyword_Traits< char > {};
-	
-	template < DescType desiredType >
-	inline
-	typename DescType_Traits< desiredType >::Result
-	OSAScriptError( ComponentInstance scriptingComponent, AEKeyword keyword )
-	{
-		return AEGetDescData< desiredType >( OSAScriptError( scriptingComponent,
-		                                                     keyword,
-		                                                     desiredType ) );
-	}
-	
-	template < AEKeyword key >
-	inline
-	typename AEKeyword_Traits< key >::Result
-	OSAScriptError( ComponentInstance scriptingComponent )
-	{
-		return OSAScriptError< AEKeyword_Traits< key >::descType >( scriptingComponent, key );
-	}
-	
-}
-
 namespace tool
 {
 	
