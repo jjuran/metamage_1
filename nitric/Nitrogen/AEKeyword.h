@@ -239,6 +239,20 @@ namespace Nitrogen
 		
 		// keyASPrepositionAt .. keyASPrepositionUntil
 		
+		// OSA
+		// ---
+		
+		kOSAErrorNumber          = ::kOSAErrorNumber,   // keyErrorNumber
+		kOSAErrorMessage         = ::kOSAErrorMessage,  // keyErrorString
+		kOSAErrorBriefMessage    = ::kOSAErrorBriefMessage,
+		kOSAErrorApp             = ::kOSAErrorApp,
+		kOSAErrorPartialResult   = ::kOSAErrorPartialResult,
+		kOSAErrorOffendingObject = ::kOSAErrorOffendingObject,
+		kOSAErrorExpectedType    = ::kOSAErrorExpectedType,
+		kOSAErrorRange           = ::kOSAErrorRange,
+		keyOSASourceStart        = ::keyOSASourceStart,
+		keyOSASourceEnd          = ::keyOSASourceEnd,
+		
 		kAEKeyword_Max = Nucleus::Enumeration_Traits< ::AEKeyword >::max
 	};
 	
