@@ -77,8 +77,17 @@ namespace NitrogenExtras
 		{
 			return FindProcess( signature );
 		}
-		catch ( N::ProcNotFound )
+		catch ( const N::ProcNotFound& err )
 		{
+		#ifdef __MWERKS__
+			
+			if ( err.Get() != procNotFound )
+			{
+				throw;
+			}
+			
+		#endif
+			
 			return N::LaunchApplication( N::DTGetAPPL( signature ) );
 		}
 	}
