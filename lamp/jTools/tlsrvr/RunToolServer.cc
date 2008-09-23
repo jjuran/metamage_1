@@ -192,8 +192,19 @@ namespace tool
 			
 			p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not found\n" ) );
 			
-			Orion::ThrowExitStatus( EXIT_FAILURE );
+			Orion::ThrowExitStatus( p7::exit_failure );
 		}
+		
+	#if TARGET_RT_MAC_MACHO
+		
+		catch ( const NN::ErrorCode< N::OSStatus, -10661 >& err )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not runnable on this system\n" ) );
+			
+			Orion::ThrowExitStatus( p7::exit_failure );
+		}
+		
+	#endif
 		
 		NN::Owned< N::AppleEvent > appleEvent = N::AECreateAppleEvent( N::kAEMiscStandards,
 		                                                               N::kAEDoScript,
