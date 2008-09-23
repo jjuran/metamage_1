@@ -69,7 +69,12 @@ namespace Nitrogen
 		kAEEventSource_Max = Nucleus::Enumeration_Traits< ::AEEventSource >::max
 	};
 	
+	// In AppleEvents.h due to dependency on enum AEEventSource.
 	template <> struct AEKeyword_Traits< keyEventSourceAttr > : Integer_AEKeyword_Traits< AEEventSource, SInt16 > {};
+	
+	template <> struct AEKeyword_Traits< keyErrorNumber > : Integer_AEKeyword_Traits< OSStatus, ::OSErr > {};
+	
+	template <> struct AEKeyword_Traits< keyErrorString > : Char_AEKeyword_Traits< char > {};
 	
    struct AEEventHandler
      {
