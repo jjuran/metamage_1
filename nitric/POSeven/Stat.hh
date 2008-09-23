@@ -20,12 +20,9 @@
 // POSIX
 #include <sys/stat.h>
 
-// Io
-#include "io/io.hh"
-
 // POSeven
 #include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/fstat.hh"
 #include "POSeven/functions/mkdir.hh"
 #include "POSeven/functions/stat.hh"
 
@@ -46,15 +43,6 @@ namespace poseven
 	inline void fchmod( fd_t fd, mode_t mode )
 	{
 		throw_posix_result( ::fchmod( fd, mode ) );
-	}
-	
-	inline struct stat fstat( fd_t fd )
-	{
-		struct stat sb;
-		
-		throw_posix_result( ::fstat( fd, &sb ) );
-		
-		return sb;
 	}
 	
 	inline void mkfifo( const char* pathname, mode_t mode )
@@ -101,23 +89,6 @@ namespace poseven
 	inline struct stat lstat( const std::string& pathname )
 	{
 		return lstat( pathname.c_str() );
-	}
-	
-}
-
-namespace io
-{
-	
-	inline std::size_t get_file_size( poseven::fd_t stream, overload = overload() )
-	{
-		struct stat status = poseven::fstat( stream );
-		
-		if ( !S_ISREG( status.st_mode ) )
-		{
-			poseven::throw_errno( ESPIPE );
-		}
-		
-		return status.st_size;
 	}
 	
 }
