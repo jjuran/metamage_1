@@ -6,13 +6,10 @@
 // Standard C++
 #include <vector>
 
-// Standard C
-#include <stdlib.h>
-
-// POSIX
-#include <sys/wait.h>
-
 // POSeven
+#include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
@@ -31,81 +28,87 @@
 #include "Orion/Main.hh"
 
 
-static int exit_from_wait( int stat )
-{
-	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-	           :                       -1;
-	
-	return result;
-}
-
-
 namespace tool
 {
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace Div = Divergence;
 	
 	
 	using namespace io::path_descent_operators;
 	
 	
-	static const char* kInvariantMWCOptions = " -nosyspath"
-			                                  " -w all,nounusedarg,noimplicit,nonotinlined,noextracomma"
-			                                  " -ext o"
-			                                  " -maxerrors 8"
-			                                  " -convertpaths -nomapcr"
-			                                  " -proto strict"
-			                                  " -once"
-			                                  " -DPRAGMA_ONCE=1";
-	
-	static bool m68k = false;
-	static bool ppc  = false;
-	
-	static std::string CommandFromArch( const std::string& arch )
+	template < class Iter >
+	std::string join( const std::string& glue, Iter begin, Iter end )
 	{
-		if ( arch == "m68k" )
-		{
-			m68k = true;
-			
-			return "MWC68K -mc68020 -mbg off -model far";
-		}
-		else if ( arch == "ppc" )
-		{
-			ppc = true;
-			
-			return "MWCPPC";
-		}
-		
-		return "MWCUnsupportedArchitecture";
-	}
-	
-	static const char* TranslateCodeGenFlag( const std::string& flag )
-	{
-		if ( flag == "-fpascal-strings" )
+		if ( begin == end )
 		{
 			return "";
 		}
+		
+		std::string result = *begin++;
+		
+		while ( begin != end )
+		{
+			result += glue;
+			result += *begin++;
+		}
+		
+		return result;
+	}
+	
+	
+	enum Architecture
+	{
+		arch_none,
+		arch_m68k,
+		arch_ppc
+	};
+	
+	static Architecture read_arch( const char* arch )
+	{
+		if ( std::strcmp( arch, "m68k" ) == 0 )
+		{
+			return arch_m68k;
+		}
+		
+		if ( std::strcmp( arch, "ppc" ) == 0 )
+		{
+			return arch_ppc;
+		}
+		
+		return arch_none;
+	}
+	
+	static bool rtti = true;
+	static bool cfm = false;
+	static bool a4 = false;
+	static bool traceback = false;
+	
+	static void set_codegen_flag( const std::string& flag )
+	{
+		if ( flag == "-fpascal-strings" )
+		{
+			// Mac compilers use Pascal strings by default
+		}
 		else if ( flag == "-fno-rtti" )
 		{
-			return "-RTTI off";
+			rtti = false;
 		}
-		else if ( flag == "-mCFM"  &&  m68k )
+		else if ( flag == "-mCFM" )
 		{
-			return "-model CFMflatdf";
+			cfm = true;
 		}
 		else if ( flag == "-mA4-globals" )
 		{
-			return "-a4";
+			a4 = true;
 		}
 		else if ( flag == "-mtraceback" )
 		{
-			return "-tb on";
+			traceback = true;
 		}
-		
-		return "";
 	}
 	
 	static std::string MacPathFromPOSIXPath( const char* pathname )
@@ -115,21 +118,19 @@ namespace tool
 		return GetMacPathname( item );
 	}
 	
-	static std::string QuotedMacPathFromPOSIXPath( const char* pathname )
+	static bool extension_begins_with_char( const char* path, char c )
 	{
-		return "'" + MacPathFromPOSIXPath( pathname ) + "'";
+		const char* dot   = std::strrchr( path, '.' );
+		const char* slash = std::strrchr( path, '/' );
+		
+		const bool has_dot = dot > slash;  // Works even if slash or dot is NULL
+		
+		return has_dot  &&  dot[ 1 ] == c;
 	}
 	
-	static std::string OutputFile( const char* pathname )
+	inline bool is_object_filename( const char* path )
 	{
-		const char* dot   = std::strrchr( pathname, '.' );
-		const char* slash = std::strrchr( pathname, '/' );
-		
-		bool hasDot = dot > slash;  // Works even if slash or dot is NULL
-		
-		bool objectCode = !hasDot || dot[1] == 'o';
-		
-		return (objectCode ? "-o " : "-precompile ") + QuotedMacPathFromPOSIXPath( pathname );
+		return extension_begins_with_char( path, 'o' );
 	}
 	
 	std::vector< const char* > gIncludeDirs;
@@ -139,53 +140,73 @@ namespace tool
 		gIncludeDirs.push_back( pathname );
 	}
 	
-	static std::string PrecompiledHeader( const char* pathname )
+	static std::string get_prefix_image_path( const char* prefix_path )
 	{
-		const char* dot   = std::strrchr( pathname, '.' );
-		const char* slash = std::strrchr( pathname, '/' );
+		const bool header_is_source = extension_begins_with_char( prefix_path, 'h' );
 		
-		bool hasDot = dot > slash;  // Works even if slash or dot is NULL
-		
-		bool headerIsSource = hasDot  &&  dot[1] == 'h';
-		
-		std::string precompiledHeaderImage = pathname;
-		
-		precompiledHeaderImage += ".mwch";
-		
-		if ( headerIsSource )
+		if ( !header_is_source )
 		{
-			bool pathSpecified = slash != NULL;
-			
-			if ( !pathSpecified )
-			{
-				typedef std::vector< const char* >::const_iterator Iter;
-				
-				for ( Iter it = gIncludeDirs.begin();  it != gIncludeDirs.end();  ++it )
-				{
-					std::string location = *it / precompiledHeaderImage;
-					
-					if ( io::file_exists( location ) )
-					{
-						precompiledHeaderImage = location;
-						break;
-					}
-				}
-			}
-			
-			pathname = precompiledHeaderImage.c_str();
+			return prefix_path;
 		}
 		
-		return "-prefix " + QuotedMacPathFromPOSIXPath( pathname );
+		std::string prefix_image_path = prefix_path;
+		
+		prefix_image_path += ".mwch";
+		
+		const bool filename_only = std::strchr( prefix_path, '/' ) == NULL;
+		
+		if ( !filename_only )
+		{
+			return prefix_image_path;
+		}
+		
+		typedef std::vector< const char* >::const_iterator Iter;
+		
+		for ( Iter it = gIncludeDirs.begin();  it != gIncludeDirs.end();  ++it )
+		{
+			std::string location = *it / prefix_image_path;
+			
+			if ( io::file_exists( location ) )
+			{
+				return location;
+			}
+		}
+		
+		// FIXME:  Should probably throw ENOENT
+		return prefix_image_path;
 	}
+	
+	static const char* store_string( const std::string& string )
+	{
+		static std::list< std::string > static_string_storage;
+		
+		static_string_storage.push_back( string );
+		
+		return static_string_storage.back().c_str();
+	}
+	
+	static const char* store_mac_path_from_posix_path( const char* path )
+	{
+		return store_string( MacPathFromPOSIXPath( path ) );
+	}
+	
 	
 	int Main( int argc, iota::argv_t argv )
 	{
 		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
-		std::string command = TARGET_CPU_68K ? "MWC68K" : "MWCPPC";
-		std::string mwcArgs = kInvariantMWCOptions;
-		std::string translatedPath;
+		std::vector< const char* > command_args;
 		
+		Architecture arch = TARGET_CPU_68K ? arch_m68k
+		                  : TARGET_CPU_PPC ? arch_ppc
+		                  :                  arch_none;
+		
+		const char* output_pathname = NULL;
+		
+		const char* opt = NULL;
+		
+		bool debug   = false;
+		bool dry_run = false;
 		bool verbose = false;
 		
 		while ( const char* arg = *++argv )
@@ -194,60 +215,63 @@ namespace tool
 			{
 				switch ( arg[1] )
 				{
+					case 'n':
+						dry_run = true;
+						break;
+					
 					case 'v':
 						verbose = true;
-						continue;
+						break;
 					
 					case 'c':
 						// 'gcc -c' means compile
-						continue;
+						break;
 					
 					case 'W':
 						// ignore gcc warning options
-						continue;
+						break;
 					
 					case 'a':
 						if ( std::strcmp( arg + 1, "arch" ) == 0 )
 						{
-							command = CommandFromArch( *++argv );
-							continue;
+							arch = read_arch( *++argv );
 						}
 						break;
 					
 					case 'm':
 					case 'f':
-						arg = TranslateCodeGenFlag( arg );
+						set_codegen_flag( arg );
 						break;
 					
 					case 'g':
-						arg = ppc ? "-sym full -tb on" : "-sym full -mbg full";
+						debug = true;
 						break;
 					
 					case 'O':
-						arg = arg[2] == '0' ? "-opt off"
-						    : arg[2] == '4' ? "-opt full"
-						    :                 arg;
+						opt = arg;
 						break;
 					
 					case 'o':
 						if ( arg[2] == '\0' )
 						{
-							translatedPath = OutputFile( *++argv );
-							arg = translatedPath.c_str();
+							output_pathname = *++argv;
 						}
 						break;
 					
 					case 'I':
 						RememberIncludeDir( arg + 2 );
-						translatedPath = "-I" + QuotedMacPathFromPOSIXPath( arg + 2 );
-						arg = translatedPath.c_str();
+						
+						command_args.push_back( store_string( "-I" + MacPathFromPOSIXPath( arg + 2 ) ) );
 						break;
 					
 					case 'i':
 						if ( std::strcmp( arg + 1, "include" ) == 0 )
 						{
-							translatedPath = PrecompiledHeader( *++argv );
-							arg = translatedPath.c_str();
+							std::string prefix_path = get_prefix_image_path( *++argv );
+							
+							command_args.push_back( "-prefix" );
+							
+							command_args.push_back( store_mac_path_from_posix_path( prefix_path.c_str() ) );
 						}
 						break;
 					
@@ -257,29 +281,133 @@ namespace tool
 			}
 			else if ( std::strchr( arg, '/' ) )
 			{
-				// translate path
-				translatedPath = QuotedMacPathFromPOSIXPath( arg );
-				
-				arg = translatedPath.c_str();
-			}
-			
-			if ( arg[0] != '\0' )
-			{
-				mwcArgs += ' ';
-				mwcArgs += arg;
+				command_args.push_back( store_mac_path_from_posix_path( arg ) );
 			}
 		}
 		
-		std::string output = "tlsrvr --switch --escape -- " + command + mwcArgs + '\n';
+		if ( output_pathname == NULL )
+		{
+			std::fprintf( stderr, "%s\n", "mwcc: -o is required" );
+			
+			return EXIT_FAILURE;
+		}
+		
+		std::vector< const char* > command;
+		
+		command.push_back( "tlsrvr"   );
+		command.push_back( "--switch" );  // bring ToolServer to front
+		command.push_back( "--escape" );  // escape arguments to prevent expansion
+		command.push_back( "--"       );  // stop interpreting options here
+		
+		switch ( arch )
+		{
+			default:
+			case arch_none:
+				std::fprintf( stderr, "%s\n", "mwcc: invalid architecture" );
+				
+				return EXIT_FAILURE;
+			
+			case arch_m68k:
+				command.push_back( "MWC68K"   );
+				command.push_back( "-mc68020" );
+				command.push_back( "-model"   );
+				command.push_back( "far"      );
+				
+				if ( a4 )
+				{
+					command.push_back( "-a4" );
+				}
+				else if ( cfm )
+				{
+					command.push_back( "-model"     );
+					command.push_back( "-CFMflatdf" );
+				}
+				break;
+			
+			case arch_ppc:
+				command.push_back( "MWCPPC" );
+				break;
+		}
+		
+		if ( !rtti )
+		{
+			command.push_back( "-RTTI" );
+			command.push_back( "off"   );
+		}
+		
+		if ( debug )
+		{
+			command.push_back( "-sym" );
+			command.push_back( "full" );
+		}
+		
+		if ( arch == arch_m68k )
+		{
+			command.push_back( "-mbg" );
+			command.push_back( debug ? "full" : "off" );
+		}
+		
+		if ( arch == arch_ppc  &&  debug  ||  traceback )
+		{
+			command.push_back( "-tb" );
+			command.push_back( "on"  );
+		}
+		
+		command.push_back( "-opt" );
+		command.push_back( opt[2] == '0' ? "off" : "full" );
+		
+		command.push_back( "-nosyspath"      );
+		command.push_back( "-convertpaths"   );
+		command.push_back( "-nomapcr"        );
+		command.push_back( "-once"           );
+		command.push_back( "-DPRAGMA_ONCE=1" );
+		
+		command.push_back( "-w"                                                   );
+		command.push_back( "all,nounusedarg,noimplicit,nonotinlined,noextracomma" );
+		
+		command.push_back( "-ext" );
+		command.push_back( "o"    );
+		
+		command.push_back( "-maxerrors" );
+		command.push_back( "8"          );
+		
+		command.push_back( "-proto" );
+		command.push_back( "strict" );
+		
+		command.push_back( is_object_filename( output_pathname ) ? "-o" : "-precompile" );
+		
+		command.push_back( store_mac_path_from_posix_path( output_pathname ) );
+		
+		command.insert( command.end(), command_args.begin(), command_args.end() );
 		
 		if ( verbose )
 		{
-			write( STDOUT_FILENO, output.data(), output.size() );
+			std::string output = join( " ", command.begin(), command.end() );
+			
+			output += '\n';
+			
+			p7::write( p7::stdout_fileno, output );
 		}
 		
-		int wait_status = system( output.c_str() );
+		command.push_back( NULL );
 		
-		return exit_from_wait( wait_status );
+		if ( dry_run )
+		{
+			return EXIT_SUCCESS;
+		}
+		
+		p7::pid_t pid = POSEVEN_VFORK();
+		
+		if ( pid == 0 )
+		{
+			(void) execvp( command[0], (char**) &command[0] );
+			
+			_exit( errno == ENOENT ? 127 : 126 );
+		}
+		
+		p7::wait_t wait_status = p7::wait();
+		
+		return NN::Convert< p7::exit_t >( wait_status );
 	}
 	
 }
