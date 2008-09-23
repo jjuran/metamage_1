@@ -22,6 +22,7 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/functions/signal.hh"
 #include "POSeven/functions/wait.hh"
 
 // Iota
@@ -131,12 +132,11 @@ namespace tool
 				kill( -shell_pgid, SIGTTIN );
 			}
 			
-			signal( SIGINT,  SIG_IGN );
-			signal( SIGQUIT, SIG_IGN );
-			signal( SIGTSTP, SIG_IGN );
-			signal( SIGTTIN, SIG_IGN );
-			signal( SIGTTOU, SIG_IGN );
-			//signal( SIGCHLD, SIG_IGN );
+			p7::signal( p7::sigint,  p7::sig_ign );
+			p7::signal( p7::sigquit, p7::sig_ign );
+			p7::signal( p7::sigtstp, p7::sig_ign );
+			p7::signal( p7::sigttin, p7::sig_ign );
+			p7::signal( p7::sigttou, p7::sig_ign );
 			
 			pid_t pid = getpid();
 			
