@@ -21,12 +21,9 @@
 #include "Nucleus/Owned.h"
 #include "Nucleus/TheExceptionBeingHandled.h"
 
-// Io
-#include "io/slurp.hh"
-
 // POSeven
 #include "POSeven/Open.hh"
-#include "POSeven/Stat.hh"
+#include "POSeven/extras/slurp.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.h"
@@ -136,7 +133,7 @@ namespace tool
 		
 		try
 		{
-			result = io::slurp_file< NN::StringFlattener< std::string > >( file );
+			result = p7::slurp( file );
 		}
 		catch ( const p7::errno_t& err )
 		{
