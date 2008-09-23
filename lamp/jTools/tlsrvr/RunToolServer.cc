@@ -317,9 +317,14 @@ namespace tool
 		io::write( fd, text.data(), text.size() );
 	}
 	
+	static std::string Slurp( const FSSpec& file )
+	{
+		return io::slurp_file< NN::StringFlattener< std::string > >( file );
+	}
+	
 	static void DumpFile( const FSSpec& file, p7::fd_t fd )
 	{
-		std::string text = io::slurp_file< NN::StringFlattener< std::string > >( file );
+		std::string text = Slurp( file );
 		
 		ConvertAndDumpMacText( text, fd );
 	}
@@ -328,7 +333,7 @@ namespace tool
 	{
 		int result = GetResult( AESendBlocking( CreateScriptEvent( SetUpScript( command ) ) ) );
 		
-		std::string errors = io::slurp_file< NN::StringFlattener< std::string > >( gTempFiles[ kErrorFile ].Get() );
+		std::string errors = Slurp( gTempFiles[ kErrorFile ] );
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
 		// if you limit the number of diagnostics displayed and there more errors
