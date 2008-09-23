@@ -62,7 +62,7 @@ namespace io
 	template < class Flattener, class FileSpec >
 	void spew_file( const FileSpec& file, typename Flattener::Parameter param )
 	{
-		spew_output< Flattener >( open_for_writing( file ).get(), param );
+		spew_output< Flattener >( open_for_writing( file, overload() ).get(), param );
 	}
 	
 }
