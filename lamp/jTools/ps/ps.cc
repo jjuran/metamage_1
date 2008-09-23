@@ -6,9 +6,6 @@
 // Standard C++
 #include <string>
 
-// Standard C
-#include <errno.h>
-
 // POSIX
 #include <dirent.h>
 
@@ -16,16 +13,11 @@
 #include "iota/strings.hh"
 
 // Nucleus
-#include "Nucleus/Flattener.h"
 #include "Nucleus/NAssert.h"
-
-// Io
-#include "io/slurp.hh"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
-#include "POSeven/Stat.hh"
 #include "POSeven/Pathnames.hh"
 
 // Orion
@@ -35,7 +27,6 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
