@@ -34,6 +34,7 @@ namespace io
 	
 	
 	template < class FileSpec > struct filespec_traits;
+	template < class IOStream > struct iostream_traits;
 	
 	namespace you_missed_some_includes
 	{
