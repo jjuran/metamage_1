@@ -27,6 +27,7 @@
 #include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/slurp.hh"
+#include "POSeven/extras/spew.hh"
 #include "POSeven/functions/stat.hh"
 
 // MoreFunctional
@@ -159,7 +160,7 @@ namespace tool
 		
 		if ( p7::slurp( pathname ) != contents )
 		{
-			io::spew_file< NN::StringFlattener< std::string > >( pathname, contents );
+			p7::spew( pathname, contents );
 		}
 	}
 	
