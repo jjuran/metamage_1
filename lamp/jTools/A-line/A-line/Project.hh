@@ -31,17 +31,17 @@ namespace tool
 			// This project's name within the A-line system.
 			std::string its_name;
 			Platform its_platform;
-			// The name of the output file, if different from the project name.
-			std::string its_program_filename;
 			// The project's main folder.
 			std::string its_dir_pathname;
 			
 			const ConfData& its_config_data;
 			
-			// The include path to a header to precompile.
-			std::string its_precompiled_header_source_path;
 			// What kind of product this project creates.
 			ProductType its_product_type;
+			// The name of the output file, if different from the project name.
+			const std::string& its_program_filename;
+			// The include path to a header to precompile.
+			const std::string& its_prefix_source_path;
 			// The names of all projects used directly or indirectly by this one.
 			std::vector< std::string > its_used_project_names;
 			// Directories to search for headers and unenumerated source files.
@@ -75,9 +75,9 @@ namespace tool
 			
 			ProductType Product() const  { return its_product_type; }
 			
-			bool HasPrecompiledHeader() const  { return !its_precompiled_header_source_path.empty(); }
+			bool HasPrecompiledHeader() const  { return !its_prefix_source_path.empty(); }
 			
-			const std::string& PrecompiledHeaderSource() const  { return its_precompiled_header_source_path; }
+			const std::string& PrecompiledHeaderSource() const  { return its_prefix_source_path; }
 			
 			const std::vector< std::string >& AllUsedProjects() const  { return its_used_project_names;    }
 			

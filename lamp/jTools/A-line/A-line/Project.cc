@@ -551,6 +551,8 @@ namespace tool
 		its_dir_pathname( project_dir     ),
 		its_config_data ( conf_data       ),
 		its_product_type( productNotBuilt ),
+		its_program_filename  ( get_first( conf_data, "program"    ) ),
+		its_prefix_source_path( get_first( conf_data, "precompile" ) ),
 		its_tool_count  ()
 	{
 		its_product_type = ReadProduct( get_first( conf_data, "product" ) );
@@ -579,11 +581,6 @@ namespace tool
 		{
 			return;
 		}
-		
-		// If this project precompiles a header, this is the relative path to it.
-		its_precompiled_header_source_path  = get_first( conf_data, "precompile" );
-		
-		its_program_filename = get_first( conf_data, "program" );
 		
 		//printf("%s recursively uses %d projects.\n", proj.c_str(), allUsedProjects.size());
 		
