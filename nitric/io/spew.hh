@@ -14,10 +14,6 @@
 #ifndef IO_SPEW_HH
 #define IO_SPEW_HH
 
-#ifndef NUCLEUS_OWNED_H
-#include "Nucleus/Owned.h"
-#endif
-
 #ifndef IO_IO_HH
 #include "io/io.hh"
 #endif
@@ -32,20 +28,21 @@ namespace io
 	class spew_putter
 	{
 		private:
-			typedef typename details::file_spec   file_spec;
 			typedef typename details::stream      stream;
 			typedef typename details::byte_count  byte_count;
 			
-			Nucleus::Owned< stream > itsOutput;
+			stream its_output;
 		
 		public:
-			spew_putter( const file_spec& file ) : itsOutput( io::open_for_writing< Nucleus::Owned< stream > >( file ) )  {}
+			spew_putter( const stream& output ) : its_output( output )
+			{
+			}
 			
 			void operator()( const void *begin, const void *end ) const
 			{
 				byte_count bytesToWrite = distance( begin, end );
 				
-				byte_count bytesRead = io::write< byte_count, stream >( itsOutput, (const char*) begin, bytesToWrite );
+				byte_count bytesRead = io::write< byte_count, stream >( its_output, (const char*) begin, bytesToWrite );
 				
 				if ( bytesRead != bytesToWrite )
 				{
@@ -54,12 +51,18 @@ namespace io
 			}
 	};
 	
+	template < class Flattener, class Stream >
+	void spew_output( const Stream& output, typename Flattener::Parameter param )
+	{
+		spew_putter< io::iostream_traits< Stream > > putter( output );
+		
+		Flattener().Put( param, putter );
+	}
+	
 	template < class Flattener, class FileSpec >
 	void spew_file( const FileSpec& file, typename Flattener::Parameter param )
 	{
-		spew_putter< io::filespec_traits< FileSpec > > putter( file );
-		
-		Flattener().Put( param, putter );
+		spew_output< Flattener >( open_for_writing( file ).get(), param );
 	}
 	
 }
