@@ -21,6 +21,7 @@
 
 // POSeven
 #include "POSeven/Directory.hh"
+#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 
