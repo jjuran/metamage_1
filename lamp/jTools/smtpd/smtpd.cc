@@ -27,7 +27,7 @@
 
 // Io
 #include "io/io.hh"
-#include "io/spray.hh"
+#include "io/spew.hh"
 
 // Nitrogen
 #include "Nitrogen/DateTimeUtils.h"
@@ -172,10 +172,10 @@ namespace tool
 		
 		std::string output = line + "\n";
 		
-		io::spray_file< Flattener >( N::FSpCreate( file,
-		                                           N::OSType( 'R*ch' ),
-		                                           N::OSType( 'TEXT' ) ),
-		                             output );
+		io::spew_file< Flattener >( N::FSpCreate( file,
+		                                          N::OSType( 'R*ch' ),
+		                                          N::OSType( 'TEXT' ) ),
+		                            output );
 	}
 	
 	static void CreateDestinationFile( const N::FSDirSpec& destFolder, const std::string& dest )
