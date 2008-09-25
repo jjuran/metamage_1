@@ -25,38 +25,12 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/functions/close.hh"
 #include "POSeven/functions/write.hh"
-#include "POSeven/types/fd_t.hh"
 
-
-namespace Nucleus
-{
-	
-	template <>
-	struct Disposer< poseven::fd_t > : std::unary_function< poseven::fd_t, void >,
-	                                   poseven::DefaultDestructionErrnoPolicy
-	{
-		void operator()( poseven::fd_t fd ) const
-		{
-			// FIXME
-			// HandleDestructionPOSIXError( ::close( fd ) );
-			
-			if ( ::close( fd ) == -1 )
-			{
-				HandleDestructionErrno( errno );
-			}
-		}
-	};
-	
-}
 
 namespace poseven
 {
-	
-	inline void close( Nucleus::Owned< fd_t > fd )
-	{
-		throw_posix_result( ::close( fd.Release() ) );
-	}
 	
 	inline ssize_t read( fd_t fd, char* buffer, std::size_t bytes_requested )
 	{
