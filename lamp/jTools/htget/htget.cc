@@ -91,9 +91,12 @@ namespace tool
 		
 		if ( !hosts || h_errno )
 		{
-			std::string message = "Domain name lookup failed: " + NN::Convert< std::string >( h_errno ) + "\n";
+			std::string message = "Domain name lookup failed: ";
 			
-			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			message += NN::Convert< std::string >( h_errno );
+			message += "\n";
+			
+			p7::write( p7::stderr_fileno, message );
 			
 			throw p7::exit_failure;
 		}
