@@ -3,7 +3,7 @@
  *	=======
  */
 
-#include "pump.hh"
+#include "pump.h"
 
 // Standard C++
 #include <algorithm>
