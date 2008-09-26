@@ -19,6 +19,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/types/fd_t.hh"
 #include "POSeven/types/sockaddr.hh"
 
 
