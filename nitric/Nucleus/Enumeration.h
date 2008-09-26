@@ -33,7 +33,7 @@ namespace Nucleus
 		const static int binaryDigits = bitWidth - int( isSigned );
 		
 		const static IntegralType min = IntegralType( isSigned ? one << bitWidth - 1 : 0 );
-		const static IntegralType max = ~zero ^ min;
+		const static IntegralType max = IntegralType( ~zero ^ min );
 	};
 	
 	template < class Tag, class Int >
