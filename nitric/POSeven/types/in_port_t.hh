@@ -46,6 +46,24 @@ namespace poseven
 		in_port_t_max = Nucleus::Enumeration_Traits< ::in_port_t >::max
 	};
 	
+	namespace big_endian
+	{
+		
+	#ifdef __LITTLE_ENDIAN__
+		
+		enum in_port_t
+		{
+			in_port_t_max = Nucleus::Enumeration_Traits< ::in_port_t >::max
+		};
+		
+	#else
+		
+		using poseven::in_port_t;
+		
+	#endif
+		
+	}
+	
 }
 
 #endif
