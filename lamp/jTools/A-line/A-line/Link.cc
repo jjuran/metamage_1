@@ -14,13 +14,7 @@
 // Iota
 #include "iota/strings.hh"
 
-// Io
-#include "io/io.hh"
-#include "io/slurp.hh"
-#include "io/spew.hh"
-
 // Nucleus
-#include "Nucleus/Flattener.h"
 #include "Nucleus/NAssert.h"
 
 // POSeven
