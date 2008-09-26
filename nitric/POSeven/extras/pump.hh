@@ -25,19 +25,19 @@
 namespace poseven
 {
 	
-	inline int pump( fd_t    fd_in,
-	                 off_t*  off_in,
-	                 fd_t    fd_out,
-	                 off_t*  off_out = NULL,
-	                 size_t  count = 0 )
+	inline ssize_t pump( fd_t    fd_in,
+	                     off_t*  off_in,
+	                     fd_t    fd_out,
+	                     off_t*  off_out = NULL,
+	                     size_t  count = 0 )
 	{
 		return throw_posix_result( ::pump( fd_in, off_in, fd_out, off_out, count ) );
 	}
 	
-	inline int pump( fd_t    fd_in,
-	                 fd_t    fd_out,
-	                 off_t*  off_out = NULL,
-	                 size_t  count = 0 )
+	inline ssize_t pump( fd_t    fd_in,
+	                     fd_t    fd_out,
+	                     off_t*  off_out = NULL,
+	                     size_t  count = 0 )
 	{
 		return pump( fd_in, NULL, fd_out, off_out, count );
 	}
