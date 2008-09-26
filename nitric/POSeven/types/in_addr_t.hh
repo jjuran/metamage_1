@@ -26,15 +26,15 @@ namespace poseven
 	
 	enum in_addr_t
 	{
-		inaddr_any       = INADDR_ANY,
-		inaddr_broadcast = INADDR_BROADCAST,
-		inaddr_none      = INADDR_NONE,
-		inaddr_loopback  = INADDR_LOOPBACK,
+		inaddr_any       = 0x00000000,
+		inaddr_broadcast = 0xffffffff,
+		inaddr_none      = 0xffffffff,
+		inaddr_loopback  = 0x7f000001,
 		
-		inaddr_unspec_group    = INADDR_UNSPEC_GROUP,
-		inaddr_allhosts_group  = INADDR_ALLHOSTS_GROUP,
-		inaddr_allrtrs_group   = INADDR_ALLRTRS_GROUP,
-		inaddr_max_local_group = INADDR_MAX_LOCAL_GROUP,
+		inaddr_unspec_group    = 0xe0000000,
+		inaddr_allhosts_group  = 0xe0000001,
+		inaddr_allrtrs_group   = 0xe0000002,
+		inaddr_max_local_group = 0xe00000ff,
 		
 		in_addr_t_max = Nucleus::Enumeration_Traits< ::in_addr_t >::max
 	};
