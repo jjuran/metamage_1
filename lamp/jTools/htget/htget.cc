@@ -11,8 +11,6 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -23,6 +21,8 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/functions/socket.hh"
+#include "POSeven/bundles/inet.hh"
 
 // Arcana
 #include "HTTP.hh"
@@ -36,16 +36,6 @@ namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace O = Orion;
 
-
-namespace poseven
-{
-	
-	static void connect( fd_t sock, const sockaddr_in& serverAddr )
-	{
-		p7::throw_posix_result( ::connect( sock, (const sockaddr*) &serverAddr, sizeof (sockaddr_in) ) );
-	}
-	
-}
 
 namespace tool
 {
@@ -95,7 +85,7 @@ namespace tool
 	}
 	
 	
-	static struct in_addr ResolveHostname( const char* hostname )
+	static p7::in_addr_t ResolveHostname( const char* hostname )
 	{
 		hostent* hosts = gethostbyname( hostname );
 		
@@ -110,7 +100,7 @@ namespace tool
 		
 		in_addr addr = *(in_addr*) hosts->h_addr;
 		
-		return addr;
+		return p7::in_addr_t( addr.s_addr );
 	}
 	
 	
@@ -173,7 +163,7 @@ namespace tool
 		std::string urlPath;
 		std::string portStr;
 		
-		short defaultPort = 0;
+		p7::in_port_t default_port = p7::in_port_t( 0 );
 		
 		bool parsed = ParseURL( freeArgs[ 0 ], scheme, hostname, portStr, urlPath );
 		
@@ -186,11 +176,11 @@ namespace tool
 		
 		bool outputIsToFile = outputFile != defaultOutput;
 		
-		p7::fd_t sock = p7::fd_t( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
+		NN::Owned< p7::fd_t > sock = p7::socket( p7::pf_inet, p7::sock_stream );
 		
 		if ( scheme == "http" )
 		{
-			defaultPort = 80;
+			default_port = p7::in_port_t( 80 );
 		}
 		else
 		{
@@ -201,18 +191,16 @@ namespace tool
 			return 2;
 		}
 		
-		short port = ( !portStr.empty() ) ? std::atoi( portStr.c_str() )
-		                                  : defaultPort;
+		p7::in_port_t port = default_port;
 		
-		struct in_addr ip = ResolveHostname( hostname.c_str() );
+		if ( !portStr.empty() )
+		{
+			port = p7::in_port_t( std::atoi( portStr.c_str() ) );
+		}
 		
-		struct sockaddr_in inetAddress = { 0 };
+		p7::in_addr_t ip = ResolveHostname( hostname.c_str() );
 		
-		inetAddress.sin_family = AF_INET;
-		inetAddress.sin_port   = htons( port );
-		inetAddress.sin_addr   = ip;
-		
-		p7::connect( sock, inetAddress );
+		p7::connect( sock, ip, port );
 		
 		std::string message_header =   HTTP::RequestLine( method, urlPath )
 		                             + HTTP::HeaderFieldLine( "Host", hostname )
