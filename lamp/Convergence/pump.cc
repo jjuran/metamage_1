@@ -13,7 +13,7 @@
 #include <unistd.h>
 
 
-#ifndef __MWERKS__
+#ifndef __LAMP__
 
 ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count )
 {

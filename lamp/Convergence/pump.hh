@@ -7,10 +7,9 @@
 #define PUMP_HH
 
 // POSIX
-#include <fcntl.h>
 #include <sys/types.h>
 
-#ifndef __MWERKS__
+#ifndef __LAMP__
 
 #ifdef __cplusplus
 extern "C"
