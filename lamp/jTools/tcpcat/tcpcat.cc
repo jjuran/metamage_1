@@ -22,6 +22,7 @@
 #include "Nucleus/Convert.h"
 
 // POSeven
+#include "POSeven/extras/pump.hh"
 #include "POSeven/functions/socket.hh"
 #include "POSeven/functions/write.hh"
 #include "POSeven/bundles/inet.hh"
@@ -78,28 +79,7 @@ namespace tool
 		
 		p7::connect( sock, addr, port );
 		
-		while ( true )
-		{
-			enum { blockSize = 4096 };
-			char data[ blockSize ];
-			
-			std::size_t bytesToRead = blockSize;
-			
-			int received = read( sock, data, bytesToRead );
-			
-			if ( received == 0 )
-			{
-				break;
-			}
-			else if ( received == -1 )
-			{
-				std::perror( "tcpcat" );
-				
-				return 1;
-			}
-			
-			(void) p7::write( p7::stdout_fileno, data, received );
-		}
+		p7::pump( sock, p7::stdout_fileno );
 		
 		return 0;
 	}
