@@ -34,11 +34,10 @@
 
 // POSeven
 #include "POSeven/Directory.hh"
-#include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
-#include "POSeven/IOPump.hh"
 #include "POSeven/Stat.hh"
+#include "POSeven/extras/pump.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.h"

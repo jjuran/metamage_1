@@ -19,12 +19,10 @@
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
 #include "POSeven/functions/ftruncate.hh"
-#include "POSeven/IOPump.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
+#include "POSeven/extras/pump.hh"
 
 // Arcana
 #include "HTTP.hh"
