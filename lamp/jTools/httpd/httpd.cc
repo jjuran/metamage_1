@@ -20,11 +20,7 @@
 // POSIX
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <sys/ioctl.h>
 #include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -36,22 +32,27 @@
 #include "POSeven/Directory.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
 #include "POSeven/extras/pump.hh"
+#include "POSeven/functions/stat.hh"
+#include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
+#include "POSeven/functions/write.hh"
+
+#if defined( __MACOS__ ) || defined( __APPLE__ )
 
 // Nitrogen
 #include "Nitrogen/Files.h"
+
+// Divergence
+#include "Divergence/Utilities.hh"
+
+#endif
 
 // BitsAndBytes
 #include "HexStrings.hh"
 
 // Arcana
 #include "HTTP.hh"
-
-// Divergence
-#if TARGET_OS_MAC
-#include "Divergence/Utilities.hh"
-#endif
 
 // Orion
 #include "Orion/GetOptions.hh"
@@ -64,10 +65,8 @@
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace Div = Divergence;
 	namespace O = Orion;
 	
 	
@@ -115,9 +114,9 @@ namespace tool
 		}
 	}
 	
-	static int ForkExecWait( const char*                   path,
-	                         char const* const             argv[],
-	                         const HTTP::MessageReceiver&  request )
+	static void ForkExecWait( const char*                   path,
+	                          char const* const             argv[],
+	                          const HTTP::MessageReceiver&  request )
 	{
 		const std::string& partialData = request.GetPartialContent();
 		
@@ -133,14 +132,7 @@ namespace tool
 		p7::fd_t reader = p7::fd_t( pipe_ends[0] );
 		p7::fd_t writer = p7::fd_t( pipe_ends[1] );
 		
-		int pid = vfork();
-		
-		if ( pid == -1 )
-		{
-			std::perror( "httpd: vfork()" );
-			
-			return -1;
-		}
+		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
@@ -174,22 +166,14 @@ namespace tool
 		{
 			close( reader );
 			
-			p7::write( writer, partialData.data(), partialData.size() );
+			p7::write( writer, partialData );
 			
 			p7::pump( p7::stdin_fileno, writer );
 			
 			close( writer );
 		}
 		
-		int stat = -1;
-		pid_t resultpid = waitpid( pid, &stat, 0 );
-		
-		if ( resultpid == -1 )
-		{
-			std::perror( "httpd: waitpid()" );
-		}
-		
-		return stat;
+		p7::wait();
 	}
 	
 	
@@ -428,7 +412,7 @@ namespace tool
 			
 			listing += "\n";
 			
-			io::write( p7::stdout_fileno, listing.data(), listing.size() );
+			p7::write( p7::stdout_fileno, listing );
 		}
 		
 	}
@@ -441,7 +425,7 @@ namespace tool
 		                      "<title>" + error + "</title>"  "\r\n"
 		                      "<p>"     + error + "</p>"      "\r\n";
 		
-			io::write( p7::stdout_fileno, message.data(), message.size() );
+			p7::write( p7::stdout_fileno, message );
 	}
 	
 	static void SendResponse( const HTTP::MessageReceiver& request )
@@ -474,7 +458,7 @@ namespace tool
 			
 			char const* const argv[] = { path, NULL };
 			
-			int stat = ForkExecWait( path, argv, request );
+			ForkExecWait( path, argv, request );
 		}
 		else
 		{
@@ -509,9 +493,9 @@ namespace tool
 			
 			if ( !is_dir )
 			{
-				FSSpec file = Div::ResolvePathToFSSpec( pathname );
+				FSSpec file = Divergence::ResolvePathToFSSpec( pathname );
 				
-				info = N::FSpGetFInfo( file );
+				info = Nitrogen::FSpGetFInfo( file );
 				
 				type = info.fdType;
 			}
@@ -533,7 +517,7 @@ namespace tool
 			
 			responseHeader += "\r\n";
 			
-			p7::write( p7::stdout_fileno, responseHeader.data(), responseHeader.size() );
+			p7::write( p7::stdout_fileno, responseHeader );
 			
 			if ( parsed.method != "HEAD" )
 			{
