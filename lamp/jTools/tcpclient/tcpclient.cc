@@ -14,9 +14,6 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -25,7 +22,9 @@
 #include "Nucleus/Convert.h"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/socket.hh"
+#include "POSeven/functions/write.hh"
+#include "POSeven/bundles/inet.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -36,10 +35,9 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
 	
 	
-	static struct in_addr ResolveHostname( const char* hostname )
+	static p7::in_addr_t ResolveHostname( const char* hostname )
 	{
 		hostent* hosts = gethostbyname( hostname );
 		
@@ -50,31 +48,25 @@ namespace tool
 			message += NN::Convert< std::string >( h_errno );
 			message += "\n";
 			
-			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			p7::write( p7::stderr_fileno, message );
 			
-			O::ThrowExitStatus( 1 );
+			throw p7::exit_failure;
 		}
 		
 		in_addr addr = *(in_addr*) hosts->h_addr;
 		
-		return addr;
+		return p7::in_addr_t( addr.s_addr );
 	}
 	
-	static p7::fd_t Connect( const char* hostname, const char* port_str )
+	static NN::Owned< p7::fd_t > Connect( const char* hostname, const char* port_str )
 	{
-		p7::fd_t result = p7::fd_t( socket( PF_INET, SOCK_STREAM, IPPROTO_TCP ) );
+		NN::Owned< p7::fd_t > result = p7::socket( p7::pf_inet, p7::sock_stream );
 		
-		short port = std::atoi( port_str );
+		p7::in_port_t port = p7::in_port_t( std::atoi( port_str ) );
 		
-		struct in_addr ip = ResolveHostname( hostname );
+		p7::in_addr_t addr = ResolveHostname( hostname );
 		
-		struct sockaddr_in inetAddress = { 0 };
-		
-		inetAddress.sin_family = AF_INET;
-		inetAddress.sin_port   = htons( port );
-		inetAddress.sin_addr   = ip;
-		
-		p7::throw_posix_result( connect( result, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) ) );
+		p7::connect( result, addr, port );
 		
 		return result;
 	}
@@ -93,14 +85,14 @@ namespace tool
 		
 		iota::argp_t program_argv = argv + 3;
 		
-		p7::fd_t sock = Connect( hostname, port_str );
+		NN::Owned< p7::fd_t > sock = Connect( hostname, port_str );
 		
 		dup2( sock, 6 );
 		dup2( sock, 7 );
 		
 		execvp( program_argv[0], program_argv );
 		
-		_exit( 127 );
+		_exit( errno == ENOENT ? 127 : 126 );
 		
 		return 0;
 	}
