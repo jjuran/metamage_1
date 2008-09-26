@@ -15,11 +15,11 @@
 #define POSEVEN_PUMP_HH
 
 // Convergence
-#include "pump.hh"
+#include "pump.h"
 
 // POSeven
 #include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/types/fd_t.hh"
 
 
 namespace poseven
