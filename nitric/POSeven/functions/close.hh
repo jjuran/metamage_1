@@ -17,6 +17,9 @@
 // POSIX
 #include <unistd.h>
 
+// Nucleus
+#include "Nucleus/Owned.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/types/fd_t.hh"
