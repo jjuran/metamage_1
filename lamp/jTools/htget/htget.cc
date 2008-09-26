@@ -32,13 +32,13 @@
 #include "Orion/Main.hh"
 
 
-namespace NN = Nucleus;
-namespace p7 = poseven;
-namespace O = Orion;
-
-
 namespace tool
 {
+	
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
+	namespace O = Orion;
+	
 	
 	static bool ParseURL( const std::string& url,
 	                      std::string& outURLScheme, 
@@ -95,7 +95,7 @@ namespace tool
 			
 			p7::write( p7::stderr_fileno, message.data(), message.size() );
 			
-			O::ThrowExitStatus( 1 );
+			throw p7::exit_failure;
 		}
 		
 		in_addr addr = *(in_addr*) hosts->h_addr;
