@@ -21,6 +21,7 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/extras/pump.hh"
 #include "POSeven/functions/socket.hh"
 #include "POSeven/bundles/inet.hh"
 
@@ -107,6 +108,15 @@ namespace tool
 	}
 	
 	
+	static void receive_document( const std::string&  partial_content,
+	                              p7::fd_t            http_server,
+	                              p7::fd_t            document_destination )
+	{
+		p7::write( document_destination, partial_content );
+		
+		p7::pump( http_server, document_destination );
+	}
+	
 	int Main( int argc, iota::argv_t argv )
 	{
 		bool sendHEADRequest = false;
@@ -143,18 +153,17 @@ namespace tool
 			return EXIT_FAILURE;
 		}
 		
-		bool expectNoContent = false;
-		
 		std::string method = "GET";
+		
+		const bool expecting_content = !sendHEADRequest;
 		
 		if ( sendHEADRequest )
 		{
 			dumpHeader = true;
-			expectNoContent = true;
 			method = "HEAD";
 		}
 		
-		if ( expectNoContent  &&  (saveToFile  ||  outputFile != defaultOutput) )
+		if ( !expecting_content  &&  (saveToFile  ||  outputFile != defaultOutput) )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "htget: Can't save null document to file\n" ) );
 			
@@ -179,8 +188,6 @@ namespace tool
 		
 		bool outputIsToFile = outputFile != defaultOutput;
 		
-		NN::Owned< p7::fd_t > sock = p7::socket( p7::pf_inet, p7::sock_stream );
-		
 		if ( scheme == "http" )
 		{
 			default_port = p7::in_port_t( 80 );
@@ -189,7 +196,7 @@ namespace tool
 		{
 			std::string message = "Unsupported scheme '" + scheme + "'.\n";
 			
-			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			p7::write( p7::stderr_fileno, message );
 			
 			return 2;
 		}
@@ -203,39 +210,30 @@ namespace tool
 		
 		p7::in_addr_t ip = ResolveHostname( hostname.c_str() );
 		
-		p7::connect( sock, ip, port );
-		
 		std::string message_header =   HTTP::RequestLine( method, urlPath )
 		                             + HTTP::HeaderFieldLine( "Host", hostname )
 		                             + "\r\n";
 		
-		HTTP::SendMessageHeader( sock, message_header );
+		NN::Owned< p7::fd_t > http_server = p7::connect( ip, port );
+		
+		p7::write( http_server, message_header );
 		
 		p7::oflag_t create_flags = outputIsToFile ? p7::o_creat | p7::o_excl : p7::oflag_t();
 		
-		NN::Owned< p7::fd_t > bodyOutput = p7::open( outputFile, p7::o_wronly | create_flags, 0644 );
-		
 		HTTP::ResponseReceiver response;
 		
-		response.ReceiveHeader( sock );
+		response.ReceiveHeader( http_server );
 		
 		if ( dumpHeader )
 		{
-			const std::string& message = response.GetMessageStream();
-			
-			p7::write( p7::stdout_fileno, message.data(), message.size() );
+			p7::write( p7::stdout_fileno, response.GetMessageStream() );
 		}
 		
-		if ( !expectNoContent )
+		if ( expecting_content )
 		{
-			const std::string& partial_content = response.GetPartialContent();
-			
-			if ( !partial_content.empty() )
-			{
-				p7::write( bodyOutput, partial_content.data(), partial_content.size() );
-			}
-			
-			HTTP::SendMessageBody( bodyOutput, sock );
+			receive_document( response.GetPartialContent(),
+			                  http_server,
+			                  p7::open( outputFile, p7::o_wronly | create_flags, 0644 ) );
 		}
 		
 		return 0;
