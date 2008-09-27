@@ -19,7 +19,6 @@
 #include <netinet/in.h>
 #include <signal.h>
 #include <sys/select.h>
-#include <sys/socket.h>
 #include <sys/wait.h>
 
 // Iota
@@ -31,7 +30,10 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
+#include "POSeven/functions/execv.hh"
+#include "POSeven/functions/listen.hh"
 #include "POSeven/functions/signal.hh"
+#include "POSeven/functions/socket.hh"
 #include "POSeven/functions/vfork.hh"
 
 // Io
@@ -74,7 +76,7 @@ namespace tool
 		gChildSignalled = true;
 	}
 	
-	static int ForkCommand( int client, const char* path, char *const argv[] )
+	static void ServiceClient( int client, char *const argv[] )
 	{
 		p7::pid_t pid = POSEVEN_VFORK();
 		
@@ -86,24 +88,8 @@ namespace tool
 			
 			int result = close( client );
 			
-			result = execv( path, argv );
-			
-			std::string message = "inetd: execv( ";
-			
-			message += argv[ 0 ];
-			message += " ) failed";
-			
-			std::perror( message.c_str() );
-			
-			_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
+			p7::execv( argv );
 		}
-		
-		return pid;
-	}
-	
-	static void ServiceClient( int client, const char* path, char *const argv[] )
-	{
-		int pid = ForkCommand( client, path, argv );
 		
 		int result = close( client );
 	}
@@ -171,7 +157,7 @@ namespace tool
 					const char* path = gServers[ listener ].path.c_str();
 					char* const argv[] = { (char*)path, (char*)NULL };
 					
-					ServiceClient( client, path, argv );
+					ServiceClient( client, argv );
 				}
 			}
 		}
@@ -244,7 +230,7 @@ namespace tool
 			return;  // It's blank or a comment
 		}
 		
-		int listener = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
+		p7::fd_t listener = p7::socket( p7::pf_inet, p7::sock_stream ).release();
 		
 		if ( listener == -1 )
 		{
@@ -266,12 +252,7 @@ namespace tool
 			FailedCall( "bind" );
 		}
 		
-		result = listen( listener, 3 );
-		
-		if ( result == -1 )
-		{
-			FailedCall( "listen" );
-		}
+		p7::listen( listener, 3 );
 	}
 	
 	static void ReadInetdDotConf()

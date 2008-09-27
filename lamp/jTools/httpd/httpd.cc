@@ -33,6 +33,7 @@
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
+#include "POSeven/functions/execv.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
@@ -114,8 +115,7 @@ namespace tool
 		}
 	}
 	
-	static void ForkExecWait( const char*                   path,
-	                          char const* const             argv[],
+	static void ForkExecWait( char const* const             argv[],
 	                          const HTTP::MessageReceiver&  request )
 	{
 		const std::string& partialData = request.GetPartialContent();
@@ -151,15 +151,7 @@ namespace tool
 			
 			SetCGIVariables( request );
 			
-			execv( path, const_cast< char* const* >( argv ) );
-			
-			std::string message = "httpd: ";
-			
-			message += path;
-			
-			std::perror( message.c_str() );
-			
-			_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
+			p7::execv( argv );
 		}
 		
 		if ( partial_data_exist )
@@ -395,7 +387,7 @@ namespace tool
 	
 	static void DumpFile( const std::string& pathname )
 	{
-		HTTP::SendMessageBody( p7::stdout_fileno, io::open_for_reading( pathname ) );
+		p7::pump( io::open_for_reading( pathname ), p7::stdout_fileno );
 	}
 	
 	static void ListDir( const std::string& pathname )
@@ -458,7 +450,7 @@ namespace tool
 			
 			char const* const argv[] = { path, NULL };
 			
-			ForkExecWait( path, argv, request );
+			ForkExecWait( argv, request );
 		}
 		else
 		{

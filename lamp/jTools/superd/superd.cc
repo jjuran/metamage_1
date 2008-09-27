@@ -9,17 +9,17 @@
 // Standard C/C++
 #include <cstring>
 
-// POSIX
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <unistd.h>
-
 // Iota
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/bundles/inet.hh"
+#include "POSeven/functions/close.hh"
+#include "POSeven/functions/execv.hh"
+#include "POSeven/functions/listen.hh"
+#include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
+#include "POSeven/functions/write.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -28,12 +28,13 @@
 namespace tool
 {
 	
+	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
-	static int ForkCommand( int client, iota::argv_t argv )
+	static void ForkCommand( int client, iota::argv_t argv )
 	{
-		int pid = vfork();
+		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
@@ -44,30 +45,17 @@ namespace tool
 			
 			int result = close( client );  // Extraneous fd
 			
-			result = execv( argv[ 0 ], argv );
-			
-			std::string message = "superd: execv( ";
-			
-			message += argv[ 0 ];
-			message += " ) failed";
-			
-			std::perror( message.c_str() );
-			
-			_exit( 1 );  // Use _exit() to exit a forked but not exec'ed process.
+			p7::execv( argv );
 		}
-		
-		return pid;
 	}
 	
 	static void ServiceClient( int client, iota::argv_t argv )
 	{
-		int pid = ForkCommand( client, argv );
+		ForkCommand( client, argv );
 		
 		int result = close( client );
 		
-		int stat;
-		
-		pid = waitpid( pid, &stat, 0 );
+		(void) p7::wait();
 	}
 	
 	static void WaitForClients( int listener, iota::argv_t argv )
@@ -106,49 +94,21 @@ namespace tool
 			return 1;
 		}
 		
-		unsigned short port = std::atoi( argv[ 1 ] );
+		p7::in_port_t port = p7::in_port_t( std::atoi( argv[ 1 ] ) );
 		
 		const char* command = argv[ 2 ];
 		
-		struct in_addr ip = { 0 };
-		
 		p7::write( p7::stdout_fileno, STR_LEN( "Daemon starting up..." ) );
 		
-		int listener = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
+		NN::Owned< p7::fd_t > listener = p7::bind( p7::inaddr_any, port );
 		
-		if ( listener == -1 )
-		{
-			std::perror( "superd: socket()" );
-			return 1;
-		}
-		
-		struct sockaddr_in inetAddress;
-		
-		inetAddress.sin_family = AF_INET;
-		inetAddress.sin_port = htons( port );
-		inetAddress.sin_addr = ip;
-		
-		int result = bind( listener, (const sockaddr*)&inetAddress, sizeof (sockaddr_in) );
-		
-		if ( result == -1 )
-		{
-			std::perror( "superd: bind()" );
-			return 1;
-		}
-		
-		result = listen( listener, 3 );
-		
-		if ( result == -1 )
-		{
-			std::perror( "superd: listen()" );
-			return 1;
-		}
+		p7::listen( listener, 3 );
 		
 		p7::write( p7::stdout_fileno, STR_LEN( " done.\n" ) );
 		
 		WaitForClients( listener, argv + 2 );
 		
-		result = close( listener );
+		p7::close( listener );
 		
 		return 0;
 	}
