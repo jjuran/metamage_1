@@ -9,14 +9,13 @@
 // Standard C/C++
 #include <cstring>
 
-// POSIX
-#include <sys/wait.h>
-
 // Iota
 #include "iota/strings.hh"
 
 // POSeven
+#include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
 #include "POSeven/Open.hh"
 
 // Nitrogen
@@ -29,21 +28,7 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-
-
-namespace O = Orion;
-
-
-static int exit_from_wait( int stat )
-{
-	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-	           :                       -1;
-	
-	return result;
-}
 
 
 namespace tool
@@ -336,16 +321,12 @@ namespace tool
 		
 		if ( pid == 0 )
 		{
-			(void) execvp( command[0], (char**) &command[0] );
-			
-			_exit( 127 );
+			p7::execvp( &command[0] );
 		}
 		
-		int wait_status = -1;
+		p7::wait_t wait_status = p7::wait();
 		
-		p7::throw_posix_result( wait( &wait_status ) );
-		
-		return exit_from_wait( wait_status );
+		return NN::Convert< p7::exit_t >( wait_status );
 	}
 	
 }
