@@ -231,6 +231,10 @@ namespace tool
 						// ignore gcc warning options
 						break;
 					
+					case 'D':
+						command_args.push_back( arg );
+						break;
+					
 					case 'a':
 						if ( std::strcmp( arg + 1, "arch" ) == 0 )
 						{
@@ -341,10 +345,10 @@ namespace tool
 			command.push_back( "full" );
 		}
 		
-		if ( arch == arch_m68k )
+		if ( arch == arch_m68k  &&  !debug )
 		{
 			command.push_back( "-mbg" );
-			command.push_back( debug ? "full" : "off" );
+			command.push_back( "off"  );
 		}
 		
 		if ( arch == arch_ppc  &&  debug  ||  traceback )
