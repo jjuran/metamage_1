@@ -27,6 +27,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/types/exit_t.hh"
 
 
 namespace Orion
