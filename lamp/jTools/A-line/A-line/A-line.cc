@@ -33,6 +33,7 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
 #include "POSeven/functions/execv.hh"
+#include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/waitpid.hh"
 #include "POSeven/functions/_exit.hh"
@@ -259,9 +260,7 @@ namespace tool
 				p7::_exit( p7::exit_failure );
 			}
 			
-			execvp( command.front(), const_cast< char** >( &command.front() ) );
-			
-			_exit( 127 );
+			p7::execvp( &command.front() );
 		}
 		
 		return pid;

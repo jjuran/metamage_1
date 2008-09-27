@@ -7,6 +7,7 @@
 #include <vector>
 
 // POSeven
+#include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 #include "POSeven/functions/write.hh"
@@ -404,9 +405,7 @@ namespace tool
 		
 		if ( pid == 0 )
 		{
-			(void) execvp( command[0], (char**) &command[0] );
-			
-			_exit( errno == ENOENT ? 127 : 126 );
+			p7::execvp( &command[0] );
 		}
 		
 		p7::wait_t wait_status = p7::wait();

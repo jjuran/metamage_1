@@ -10,13 +10,11 @@
 // Standard C
 #include <stdlib.h>
 
-// POSIX
-#include <sys/wait.h>
-
 // Iota
 #include "iota/strings.hh"
 
 // POSeven
+#include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/waitpid.hh"
 #include "POSeven/Pathnames.hh"
@@ -744,9 +742,7 @@ namespace tool
 				close( pipe_ends[1] );  // close spare writer
 			}
 			
-			(void) execvp( command[0], (char**) &command[0] );
-			
-			_exit( 127 );
+			p7::execvp( &command[0] );
 		}
 		
 		if ( filtering )
@@ -764,9 +760,7 @@ namespace tool
 				
 				const char *const filter_argv[] = { "filter-mwlink-warnings.pl", NULL };
 				
-				(void) execvp( filter_argv[0], (char**) filter_argv );
-				
-				_exit( 127 );
+				p7::execvp( filter_argv );
 			}
 			
 			close( pipe_ends[0] );  // close reader
