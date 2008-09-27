@@ -22,9 +22,6 @@
 #include "FunctionalExtensions.hh"
 #include "PointerToFunction.hh"
 
-// Orion
-#include "Orion/Main.hh"
-
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/Locations.hh"

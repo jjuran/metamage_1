@@ -28,9 +28,6 @@
 #include "POSeven/functions/wait.hh"
 #include "POSeven/functions/_exit.hh"
 
-// Orion
-#include "Orion/Main.hh"
-
 // ShellShock
 #include "ShellShock/Expansion.hh"
 #include "ShellShock/StringArray.hh"

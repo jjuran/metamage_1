@@ -31,6 +31,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/types/exit_t.hh"
 
 // Nitrogen
 #include "Nitrogen/AEInteraction.h"
@@ -54,9 +55,6 @@
 
 // Divergence
 #include "Divergence/Utilities.hh"
-
-// Orion
-#include "Orion/Main.hh"
 
 // tlsrvr
 #include "ToolServer.hh"

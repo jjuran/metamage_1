@@ -24,9 +24,6 @@
 // POSeven
 #include "POSeven/Open.hh"
 
-// Orion
-#include "Orion/Main.hh"
-
 // sh
 #include "Options.hh"
 #include "PositionalParameters.hh"
