@@ -13,13 +13,6 @@
 #include "POSeven/types/exit_t.hh"
 
 
-namespace Orion
-{
-	
-	inline void ThrowExitStatus( int status )  { throw poseven::exit_t( status ); }
-	
-}
-
 namespace tool
 {
 	
