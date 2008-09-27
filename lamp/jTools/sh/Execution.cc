@@ -98,7 +98,6 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
 	namespace Sh = ShellShock;
 	
 	
@@ -617,7 +616,7 @@ namespace tool
 			if ( exiting )
 			{
 				// The 'child' was the 'exit' builtin, meaning we should exit
-				O::ThrowExitStatus( NN::Convert< p7::exit_t >( wait_status ) );
+				throw NN::Convert< p7::exit_t >( wait_status );
 			}
 			
 			return wait_status;

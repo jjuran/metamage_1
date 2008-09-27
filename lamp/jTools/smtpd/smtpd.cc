@@ -100,7 +100,6 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
 	
 	using namespace io::path_descent_operators;
 	
@@ -321,7 +320,7 @@ namespace tool
 			//isComplete = true;
 			p7::write( p7::stdout_fileno, STR_LEN( "221 Closing connection"  "\r\n" ) );
 			
-			O::ThrowExitStatus( 0 );
+			throw p7::exit_success;
 		}
 		else
 		{

@@ -39,7 +39,6 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
 	
 	
 	typedef std::map< std::string, std::string > StringMap;
@@ -204,7 +203,7 @@ namespace tool
 			exitStatus = std::atoi( argv[ 1 ] );
 		}
 		
-		O::ThrowExitStatus( exitStatus );
+		throw p7::exit_t( exitStatus );
 		
 		// Not reached
 		return p7::exit_success;

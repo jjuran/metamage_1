@@ -288,7 +288,7 @@ namespace tool
 			
 			p7::write( p7::stderr_fileno, message.data(), message.size() );
 			
-			O::ThrowExitStatus( 1 );
+			throw p7::exit_failure;
 		}
 		
 		in_addr addr = *(in_addr*) hosts->h_addr;

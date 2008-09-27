@@ -45,7 +45,6 @@ namespace tool
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace O = Orion;
 	
 	
 	using namespace io::path_descent_operators;
@@ -179,7 +178,7 @@ namespace tool
 		{
 			std::fprintf( stderr, "System library missing: %s\n", pathname.c_str() );
 			
-			O::ThrowExitStatus( 1 );
+			throw p7::exit_failure;
 		}
 		
 		return pathname;
@@ -259,7 +258,7 @@ namespace tool
 		
 		std::fprintf( stderr, "ld: can't find library: %s\n", lib );
 		
-		O::ThrowExitStatus( 1 );
+		throw p7::exit_failure;
 		
 		// Not reached
 		return filename;
@@ -347,7 +346,7 @@ namespace tool
 			
 			N::FSpDelete( file );
 			
-			O::ThrowExitStatus( 1 );
+			throw p7::exit_failure;
 		}
 		
 		N::ResType  resType = N::ResType( 'Wish' );

@@ -226,7 +226,7 @@ namespace tool
 			                                         e.name.c_str(),
 			                                                config_pathname.c_str() );
 			
-			Orion::ThrowExitStatus( EXIT_FAILURE );
+			throw p7::exit_failure;
 		}
 		
 	}

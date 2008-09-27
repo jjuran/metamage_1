@@ -192,7 +192,7 @@ namespace tool
 			
 			p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not found\n" ) );
 			
-			Orion::ThrowExitStatus( p7::exit_failure );
+			throw p7::exit_failure;
 		}
 		
 	#if TARGET_RT_MAC_MACHO
@@ -201,7 +201,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not runnable on this system\n" ) );
 			
-			Orion::ThrowExitStatus( p7::exit_failure );
+			throw p7::exit_failure;
 		}
 		
 	#endif

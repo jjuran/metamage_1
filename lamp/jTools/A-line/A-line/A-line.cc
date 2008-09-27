@@ -342,7 +342,7 @@ namespace tool
 			
 			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
 			
-			O::ThrowExitStatus( signaled ? 2 : p7::exit_failure );
+			throw signaled ? p7::exit_t( 2 ) : p7::exit_failure;
 		}
 	}
 	
@@ -356,7 +356,7 @@ namespace tool
 			{
 				p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
 				
-				O::ThrowExitStatus( 128 );
+				throw p7::exit_t( 128 );
 			}
 			
 			end_task( pid, wait_status );
@@ -691,7 +691,7 @@ namespace tool
 					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
 				}
 				
-				O::ThrowExitStatus( 3 );
+				throw p7::exit_t( 3 );
 			}
 			catch ( const p7::errno_t& err )
 			{

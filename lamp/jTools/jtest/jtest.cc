@@ -41,7 +41,6 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
 	
 	
 	static bool PathnameMeansStdIn( const char* pathname )
@@ -118,7 +117,8 @@ namespace tool
 		if ( line.size() < end_of_op )
 		{
 			std::fprintf( stderr, "Missing operator in line: %s\n", line.c_str() );
-			O::ThrowExitStatus( 1 );
+			
+			throw p7::exit_failure;
 		}
 		
 		IoOperator op = ReadOp( line.c_str() + start_of_op );
@@ -126,7 +126,8 @@ namespace tool
 		if ( op == kNoOp )
 		{
 			std::fprintf( stderr, "Unrecognized operator in line: %s\n", line.c_str() );
-			O::ThrowExitStatus( 1 );
+			
+			throw p7::exit_failure;
 		}
 		
 		std::string param;
@@ -174,7 +175,7 @@ namespace tool
 				{
 					std::fprintf( stderr, "Missing heredoc terminator '%s'\n", param.c_str() );
 					
-					O::ThrowExitStatus( 1 );
+					throw p7::exit_failure;
 				}
 				
 				std::swap( param, hereDoc );
@@ -316,7 +317,7 @@ namespace tool
 		{
 			std::fprintf( stderr, "Command missing\n" );
 			
-			O::ThrowExitStatus( 1 );
+			throw p7::exit_failure;
 		}
 	}
 	

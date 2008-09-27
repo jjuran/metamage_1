@@ -60,9 +60,10 @@ namespace tool
 		
 		errorMessage += "\n";
 		
-		p7::write( p7::stderr_fileno, errorMessage.data(), errorMessage.size() );
+		p7::write( p7::stderr_fileno, errorMessage );
 		
-		O::ThrowExitStatus( errorNumber > 0 ? errorNumber : 1 );
+		throw errorNumber > 0 ? p7::exit_t( errorNumber )
+		                      : p7::exit_failure;
 	}
 	
 	inline NN::Owned< N::ComponentInstance > OpenGenericScriptingComponent()
@@ -128,7 +129,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "getcwd() returned NULL, sorry\n" ) );
 			
-			O::ThrowExitStatus( 1 );
+			throw p7::exit_failure;
 		}
 		
 		std::string cwd( stupid_buffer );
