@@ -32,7 +32,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static void ForkCommand( int client, iota::argv_t argv )
+	static void ServiceClient( int client, iota::argv_t argv )
 	{
 		p7::pid_t pid = POSEVEN_VFORK();
 		
@@ -47,11 +47,6 @@ namespace tool
 			
 			p7::execv( argv );
 		}
-	}
-	
-	static void ServiceClient( int client, iota::argv_t argv )
-	{
-		ForkCommand( client, argv );
 		
 		int result = close( client );
 		
