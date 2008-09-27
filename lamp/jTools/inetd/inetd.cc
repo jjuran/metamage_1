@@ -30,6 +30,7 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
+#include "POSeven/functions/accept.hh"
 #include "POSeven/functions/execv.hh"
 #include "POSeven/functions/listen.hh"
 #include "POSeven/functions/signal.hh"
@@ -76,7 +77,7 @@ namespace tool
 		gChildSignalled = true;
 	}
 	
-	static void ServiceClient( int client, char *const argv[] )
+	static void ServiceClient( p7::fd_t client, const char *const argv[] )
 	{
 		p7::pid_t pid = POSEVEN_VFORK();
 		
@@ -90,15 +91,10 @@ namespace tool
 			
 			p7::execv( argv );
 		}
-		
-		int result = close( client );
 	}
 	
 	static void WaitForClients()
 	{
-		struct sockaddr_in from;
-		socklen_t len = sizeof from;
-		
 		int maxFD = -1;
 		
 		fd_set listeners;
@@ -144,20 +140,13 @@ namespace tool
 				{
 					if ( !FD_ISSET( listener, &readfds ) )  continue;
 					
-					// This won't block unless select() is broken
-					int client = accept( listener, (sockaddr*)&from, &len );
-					
-					if ( client == -1 )
-					{
-						std::perror( "inetd: accept() failed" );
-						
-						return;
-					}
-					
 					const char* path = gServers[ listener ].path.c_str();
-					char* const argv[] = { (char*)path, (char*)NULL };
 					
-					ServiceClient( client, argv );
+					const char* const argv[] = { path, NULL };
+					
+					// This won't block unless select() is broken
+					// FIXME:  Yes it will, due to a race condition
+					ServiceClient( p7::accept( p7::fd_t( listener ) ), argv );
 				}
 			}
 		}

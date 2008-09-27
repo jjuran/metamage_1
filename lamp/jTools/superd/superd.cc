@@ -32,7 +32,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static void ServiceClient( int client, iota::argv_t argv )
+	static void ServiceClient( p7::fd_t client, iota::argv_t argv )
 	{
 		p7::pid_t pid = POSEVEN_VFORK();
 		
@@ -47,37 +47,16 @@ namespace tool
 			
 			p7::execv( argv );
 		}
-		
-		int result = close( client );
-		
-		(void) p7::wait();
 	}
 	
-	static void WaitForClients( int listener, iota::argv_t argv )
+	static void WaitForClients( p7::fd_t listener, iota::argv_t argv )
 	{
-		struct sockaddr_in from;
-		socklen_t len = sizeof from;
-		
-		int failures = 0;
-		
 		while ( true )
 		{
 			// This blocks and yields to other threads
-			int client = accept( listener, (sockaddr*)&from, &len );
+			ServiceClient( p7::accept( listener ), argv );
 			
-			if ( client == -1 )
-			{
-				std::perror( "superd: accept()" );
-				
-				if ( ++failures >= 3 )
-				{
-					break;
-				}
-				
-				continue;
-			}
-			
-			ServiceClient( client, argv );
+			(void) p7::wait();
 		}
 	}
 	
