@@ -38,16 +38,16 @@ namespace poseven
 		return fd;
 	}
 	
-	inline void connect( fd_t sock, in_addr_t addr, in_port_t port )
+	inline void connect( fd_t fd, in_addr_t addr, in_port_t port )
 	{
-		connect< af_inet >( sock, sockaddr_traits< af_inet >::make( addr, port ) );
+		connect< af_inet >( fd, sockaddr_traits< af_inet >::make( addr, port ) );
 	}
 	
 	inline Nucleus::Owned< fd_t > connect( in_addr_t addr, in_port_t port )
 	{
 		Nucleus::Owned< fd_t > fd = socket( pf_inet, sock_stream );
 		
-		connect< af_inet >( fd, sockaddr_traits< af_inet >::make( addr, port ) );
+		connect( fd, addr, port );
 		
 		return fd;
 	}
