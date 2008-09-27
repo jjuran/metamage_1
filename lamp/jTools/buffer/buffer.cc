@@ -23,8 +23,8 @@
 #include "lamp/winio.h"
 
 // POSeven
+#include "POSeven/extras/pump.hh"
 #include "POSeven/functions/ioctl.hh"
-#include "POSeven/IOPump.hh"
 #include "POSeven/Open.hh"
 
 // Orion
