@@ -23,6 +23,7 @@
 
 // POSeven
 #include "POSeven/bundles/inet.hh"
+#include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/socket.hh"
 #include "POSeven/functions/write.hh"
 
@@ -33,7 +34,6 @@
 namespace tool
 {
 	
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -45,7 +45,7 @@ namespace tool
 		{
 			std::string message = "Domain name lookup failed: ";
 			
-			message += NN::Convert< std::string >( h_errno );
+			message += Nucleus::Convert< std::string >( h_errno );
 			message += "\n";
 			
 			p7::write( p7::stderr_fileno, message );
@@ -58,17 +58,15 @@ namespace tool
 		return p7::in_addr_t( addr.s_addr );
 	}
 	
-	static NN::Owned< p7::fd_t > Connect( const char* hostname, const char* port_str )
+	static void Connect( const char* hostname, const char* port_str )
 	{
-		NN::Owned< p7::fd_t > result = p7::socket( p7::pf_inet, p7::sock_stream );
-		
 		p7::in_port_t port = p7::in_port_t( std::atoi( port_str ) );
 		
 		p7::in_addr_t addr = ResolveHostname( hostname );
 		
-		p7::connect( result, addr, port );
+		dup2( p7::connect( addr, port ), 6 );
 		
-		return result;
+		dup2( 6, 7 );
 	}
 	
 	int Main( int argc, iota::argv_t argv )
@@ -85,15 +83,11 @@ namespace tool
 		
 		iota::argp_t program_argv = argv + 3;
 		
-		NN::Owned< p7::fd_t > sock = Connect( hostname, port_str );
+		Connect( hostname, port_str );
 		
-		dup2( sock, 6 );
-		dup2( sock, 7 );
+		p7::execvp( program_argv );
 		
-		execvp( program_argv[0], program_argv );
-		
-		_exit( errno == ENOENT ? 127 : 126 );
-		
+		// Not reached
 		return 0;
 	}
 	
