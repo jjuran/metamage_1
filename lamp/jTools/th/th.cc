@@ -28,6 +28,10 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/execv.hh"
+#include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
+#include "POSeven/functions/write.hh"
 
 // Io
 #include "Io/TextInput.hh"
@@ -81,7 +85,7 @@ namespace tool
 		
 		int piped = pipe( pipe_ends );
 		
-		pid_t pid = vfork();
+		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
@@ -95,15 +99,12 @@ namespace tool
 			
 			argv[0] = test_file;
 			
-			execv( test_file, (char**) argv );
-			
-			_exit( 127 );
+			p7::execv( argv );
 		}
 		
 		int closed = close( pipe_ends[1] );
 		
-		int wait_status = -1;
-		pid_t resultpid = waitpid( pid, &wait_status, 0 );
+		(void) p7::wait();
 		
 		Io::TextInputAdapter< NN::Owned< p7::fd_t > > input( NN::Owned< p7::fd_t >::Seize( p7::fd_t( pipe_ends[0] ) ) );
 		
@@ -230,7 +231,7 @@ namespace tool
 			
 			result += "\n";
 			
-			write( STDOUT_FILENO, result.data(), result.size() );
+			p7::write( p7::stdout_fileno, result );
 			
 			totals = totals + results;
 		}
