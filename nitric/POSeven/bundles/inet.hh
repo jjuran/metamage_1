@@ -15,6 +15,7 @@
 #define POSEVEN_BUNDLES_INET_HH
 
 // POSeven
+#include "POSeven/functions/accept.hh"
 #include "POSeven/functions/bind.hh"
 #include "POSeven/functions/connect.hh"
 #include "POSeven/functions/socket.hh"
@@ -23,6 +24,11 @@
 
 namespace poseven
 {
+	
+	inline Nucleus::Owned< fd_t > accept( fd_t listener, sockaddr_in& address )
+	{
+		return accept< af_inet >( listener, address );
+	}
 	
 	inline void bind( fd_t fd, in_addr_t addr, in_port_t port )
 	{
