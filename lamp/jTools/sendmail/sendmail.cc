@@ -27,6 +27,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/bundles/inet.hh"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"
@@ -133,22 +134,25 @@ namespace tool
 	#endif
 	}
 	
-	static struct in_addr ResolveHostname( const char* hostname )
+	static p7::in_addr_t ResolveHostname( const char* hostname )
 	{
 		hostent* hosts = gethostbyname( hostname );
 		
 		if ( !hosts || h_errno )
 		{
-			std::string message = "Domain name lookup failed: " + NN::Convert< std::string >( h_errno ) + "\n";
+			std::string message = "Domain name lookup failed: ";
 			
-			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			message += NN::Convert< std::string >( h_errno );
+			message += "\n";
 			
-			O::ThrowExitStatus( 1 );
+			p7::write( p7::stderr_fileno, message );
+			
+			throw p7::exit_failure;
 		}
 		
 		in_addr addr = *(in_addr*) hosts->h_addr;
 		
-		return addr;
+		return p7::in_addr_t( addr.s_addr );
 	}
 	
 	static void Relay( const std::string&  returnPath,
@@ -191,29 +195,20 @@ namespace tool
 			
 		}
 		
-		short smtpPort = 25;
+		p7::in_port_t smtp_port = p7::in_port_t( 25 );
 		
-		struct in_addr ip = ResolveHostname( smtpServer.c_str() );
+		p7::in_addr_t addr = ResolveHostname( smtpServer.c_str() );
 		
-		std::printf( "Address of %s is %s\n", smtpServer.c_str(), inet_ntoa( ip ) );
+		struct in_addr sin_addr = { addr };
+		
+		std::printf( "Address of %s is %s\n", smtpServer.c_str(), inet_ntoa( sin_addr ) );
 		
 		// Make a new socket
-		
-		int sock = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
-		
-		p7::fd_t serverStream = p7::fd_t( sock );
-		
 		// and connect to the server.  This could fail, thanks to a bunch of Cox.
 		
-		struct sockaddr_in inetAddress;
+		NN::Owned< p7::fd_t > smtp_server = p7::connect( addr, smtp_port );
 		
-		inetAddress.sin_family = AF_INET;
-		inetAddress.sin_port   = htons( smtpPort );
-		inetAddress.sin_addr   = ip;
-		
-		int result = connect( sock, (const sockaddr*) &inetAddress, sizeof (sockaddr_in) );
-		
-		SMTP::Client::Session< p7::fd_t > smtpSession( serverStream );
+		SMTP::Client::Session< p7::fd_t > smtpSession( smtp_server );
 		
 		NN::Owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
 		
@@ -230,7 +225,7 @@ namespace tool
 		
 		while ( std::size_t bytes = io::read( messageStream, data, blockSize ) )
 		{
-			p7::write( serverStream, data, bytes );
+			p7::write( smtp_server, data, bytes );
 		}
 		
 		smtpSession.EndData();
