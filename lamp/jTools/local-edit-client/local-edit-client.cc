@@ -162,13 +162,13 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		bool dumpHeaders = false;
+		bool dumpHeader = false;
 		
 		char const *const defaultOutput = "/dev/fd/1";
 		
 		const char* outputFile = defaultOutput;
 		
-		O::BindOption( "-i", dumpHeaders );
+		O::BindOption( "-i", dumpHeader );
 		O::BindOption( "-o", outputFile  );
 		
 		O::GetOptions( argc, argv );
@@ -212,7 +212,9 @@ namespace tool
 		                             + contentLengthHeader
 		                             + "\r\n";
 		
-		HTTP::SendMessage( socket_out, message_header, target_file_stream );
+		p7::write( socket_out, message_header );
+		
+		p7::pump( target_file_stream, socket_out );
 		
 		shutdown( socket_out, SHUT_WR );
 		
@@ -220,11 +222,9 @@ namespace tool
 		
 		response.ReceiveHeader( socket_in );
 		
-		if ( dumpHeaders )
+		if ( dumpHeader )
 		{
-			const std::string& message = response.GetMessageStream();
-			
-			p7::write( p7::stdout_fileno, message.data(), message.size() );
+			p7::write( p7::stdout_fileno, response.GetMessageStream() );
 		}
 		
 		unsigned result_code = response.GetResultCode();
@@ -233,14 +233,9 @@ namespace tool
 		{
 			NN::Owned< p7::fd_t > edited_file_stream = p7::open( outputFile, p7::o_rdwr | p7::o_trunc | p7::o_creat, 0400 );
 			
-			const std::string& partial_content = response.GetPartialContent();
+			p7::write( edited_file_stream, response.GetPartialContent() );
 			
-			if ( !partial_content.empty() )
-			{
-				p7::write( edited_file_stream, partial_content.data(), partial_content.size() );
-			}
-			
-			HTTP::SendMessageBody( edited_file_stream, socket_in );
+			p7::pump( socket_in, edited_file_stream );
 			
 			lseek( edited_file_stream, 0, 0 );
 			
