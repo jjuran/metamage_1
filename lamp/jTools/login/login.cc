@@ -4,6 +4,7 @@
  */
 
 // Standard C
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -109,7 +110,7 @@ int main( int /*argc*/, char const *const /*argv*/[] )
 	
 	execv( "/bin/sh", exec_argv );
 	
-	_exit( 127 );
+	_exit( errno == ENOENT ? 127 : 126 );
 	
 	return 0;  // Not reached
 }
