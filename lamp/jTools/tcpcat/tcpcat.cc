@@ -24,7 +24,6 @@
 // POSeven
 #include "POSeven/bundles/inet.hh"
 #include "POSeven/extras/pump.hh"
-#include "POSeven/functions/socket.hh"
 #include "POSeven/functions/write.hh"
 
 // Orion
@@ -71,15 +70,12 @@ namespace tool
 		const char* hostname = argv[1];
 		const char* port_str = argv[2];
 		
-		NN::Owned< p7::fd_t > sock = p7::socket( p7::pf_inet, p7::sock_stream );
-		
 		p7::in_port_t port = p7::in_port_t( std::atoi( port_str ) );
 		
 		p7::in_addr_t addr = ResolveHostname( hostname );
 		
-		p7::connect( sock, addr, port );
-		
-		p7::pump( sock, p7::stdout_fileno );
+		p7::pump( p7::connect( addr, port ),
+		          p7::stdout_fileno );
 		
 		return 0;
 	}
