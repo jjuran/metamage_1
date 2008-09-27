@@ -21,7 +21,6 @@
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
-#include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -33,6 +32,7 @@
 #include "POSeven/Errno.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/functions/signal.hh"
+#include "POSeven/functions/vfork.hh"
 
 // Io
 #include "Io/TextInput.hh"
@@ -46,7 +46,6 @@ namespace tool
 	
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace O = Orion;
 	
 	
 	struct Record
@@ -67,7 +66,7 @@ namespace tool
 	{
 		std::perror( ("inetd: " + name).c_str() );
 		
-		O::ThrowExitStatus( 1 );
+		throw p7::exit_failure;
 	}
 	
 	static void HandleSIGCHLD( int )
@@ -77,7 +76,7 @@ namespace tool
 	
 	static int ForkCommand( int client, const char* path, char *const argv[] )
 	{
-		int pid = vfork();
+		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
@@ -219,7 +218,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "Too few tokens in record\n" ) );
 			
-			O::ThrowExitStatus( 1 );
+			throw p7::exit_failure;
 		}
 		
 		Record result;
