@@ -64,19 +64,6 @@ namespace HTTP
 		return HeaderFieldLine( "Content-Length", NN::Convert< std::string >( GetContentLength( message_body ) ) );
 	}
 	
-	void SendMessageBody( p7::fd_t  out,
-	                      p7::fd_t  message_body )
-	{
-		const std::size_t data_size = 4096;
-		
-		char buffer[ data_size ];
-		
-		while ( int bytes_read = p7::read( message_body, buffer, data_size ) )
-		{
-			p7::write( out, buffer, bytes_read );
-		}
-	}
-	
 	
 	inline HeaderFieldEntry MakeHeaderFieldEntry( std::size_t name,
 	                                              std::size_t colon,

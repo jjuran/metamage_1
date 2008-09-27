@@ -101,22 +101,5 @@ namespace HTTP
 	
 	std::string GetContentLengthLine( poseven::fd_t message_body );
 	
-	inline void SendMessageHeader( poseven::fd_t       out,
-	                               const std::string&  message_header )
-	{
-		poseven::write( out, message_header.data(), message_header.size() );
-	}
-	
-	void SendMessageBody( poseven::fd_t  out,
-	                      poseven::fd_t  message_body );
-	
-	inline void SendMessage( poseven::fd_t       out,
-	                         const std::string&  message_header,
-	                         poseven::fd_t       message_body )
-	{
-		SendMessageHeader( out, message_header );
-		SendMessageBody  ( out, message_body   );
-	}
-	
 }
 
