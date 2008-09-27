@@ -25,6 +25,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/execv.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 
@@ -406,9 +407,7 @@ namespace tool
 			
 			argv[2] = itsCommand.c_str();
 			
-			execv( "/bin/sh", (char**) argv );
-			
-			_exit( 127 );
+			p7::execv( "/bin/sh", argv );
 		}
 		
 		ClosePipeWriters();

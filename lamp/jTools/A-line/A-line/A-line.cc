@@ -21,8 +21,6 @@
 
 // POSIX
 #include "fcntl.h"
-#include "sys/wait.h"
-#include "unistd.h"
 
 // Iota
 #include "iota/strings.hh"
@@ -31,11 +29,10 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
-#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/Stat.hh"
+#include "POSeven/functions/execv.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/waitpid.hh"
 #include "POSeven/functions/_exit.hh"
@@ -220,9 +217,7 @@ namespace tool
 			
 			if ( pid == 0 )
 			{
-				(void) execv( command[0], (char**) command );
-				
-				_exit( 127 );
+				p7::execv( command );
 			}
 			
 			(void) p7::waitpid( pid );
