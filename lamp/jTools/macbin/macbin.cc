@@ -27,6 +27,7 @@
 // POSeven
 #include "POSeven/Open.hh"
 #include "POSeven/Stat.hh"
+#include "POSeven/types/exit_t.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

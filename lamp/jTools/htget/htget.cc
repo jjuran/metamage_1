@@ -21,9 +21,10 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/bundles/inet.hh"
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/socket.hh"
-#include "POSeven/bundles/inet.hh"
+#include "POSeven/types/exit_t.hh"
 
 // Arcana
 #include "HTTP.hh"

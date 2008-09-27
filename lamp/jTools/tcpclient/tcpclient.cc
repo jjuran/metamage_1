@@ -26,6 +26,7 @@
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/socket.hh"
 #include "POSeven/functions/write.hh"
+#include "POSeven/types/exit_t.hh"
 
 // Orion
 #include "Orion/Main.hh"

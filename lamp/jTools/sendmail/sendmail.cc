@@ -22,6 +22,7 @@
 // POSeven
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/bundles/inet.hh"
+#include "POSeven/types/exit_t.hh"
 
 // Nitrogen Extras / Iteration
 #include "Iteration/FSContents.h"

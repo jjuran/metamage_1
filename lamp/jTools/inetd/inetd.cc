@@ -36,6 +36,7 @@
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/socket.hh"
 #include "POSeven/functions/vfork.hh"
+#include "POSeven/types/exit_t.hh"
 
 // Io
 #include "Io/TextInput.hh"

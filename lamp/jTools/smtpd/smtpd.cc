@@ -35,6 +35,7 @@
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/types/exit_t.hh"
 
 // MoreFunctional
 #include "FunctionalExtensions.hh"

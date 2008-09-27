@@ -24,6 +24,7 @@
 // POSeven
 #include "POSeven/Open.hh"
 #include "POSeven/extras/slurp.hh"
+#include "POSeven/types/exit_t.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.h"
