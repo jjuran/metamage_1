@@ -201,7 +201,9 @@ namespace Genie
 		bool textIsSelected = start != end;
 		bool atStartOfInput = start == itsStartOfInput;
 		
-		if ( event.modifiers & controlKey  &&  c < 0x20 )
+		const UInt32 kEitherControlKey = controlKey | rightControlKey;
+		
+		if ( event.modifiers & kEitherControlKey  &&  c < 0x20 )
 		{
 			char cntrl = c | 0x40;
 			
