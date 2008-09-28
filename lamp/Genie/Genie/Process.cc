@@ -1550,7 +1550,7 @@ namespace Genie
 	}
 	
 	
-	static const UInt32 gMinimumSleepIntervalTicks = 15;  // Sleep every quarter second
+	static const UInt32 gMinimumSleepIntervalTicks = 2;
 	
 	// This function doesn't return if we received a fatal signal.
 	bool Process::Yield( Interruptibility interrupting )
