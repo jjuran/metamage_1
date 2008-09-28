@@ -12,9 +12,6 @@
 
 // POSIX
 #include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
-#include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -24,7 +21,11 @@
 
 // POSeven
 #include "POSeven/extras/pump.hh"
+#include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/Open.hh"
 
 // Orion
@@ -133,15 +134,6 @@ namespace tool
 	}
 	
 	
-	static int exit_from_wait( int stat )
-	{
-		int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-		           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-		           :                       -1;
-		
-		return result;
-	}
-	
 	int Main( int argc, iota::argv_t argv )
 	{
 		/*
@@ -218,13 +210,13 @@ namespace tool
 		
 		p7::close( input );
 		
-		lseek( window, 0, SEEK_SET );
+		p7::lseek( window, 0 );
 		
 		NN::Owned< p7::fd_t > output = p7::open( output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy, 0666 );
 		
-		int forked = vfork();
+		p7::pid_t pid = p7::vfork();
 		
-		if ( forked == 0 )
+		if ( pid == 0 )
 		{
 			// New child, so we're not a process group leader
 			
@@ -237,28 +229,15 @@ namespace tool
 			
 			const char* window_argv[] = { "/bin/cat", NULL };
 			
-			(void) execvp( window_argv[ 0 ], window_argv );
-			
-			_exit( 127 );
+			p7::execvp( window_argv );
 		}
 		
 		if ( should_wait )
 		{
-			int stat = -1;
-			
-			int waited = waitpid( forked, &stat, 0 );
-			
-			if ( waited == -1 )
-			{
-				std::perror( "buffer: waitpid" );
-				
-				return 127;
-			}
-			
-			return exit_from_wait( stat );
+			return NN::Convert< p7::exit_t >( p7::wait() );
 		}
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
 }
