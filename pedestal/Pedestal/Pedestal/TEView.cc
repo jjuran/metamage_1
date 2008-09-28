@@ -70,6 +70,22 @@ namespace Pedestal
 	}
 	
 	
+	static bool pattern_match( const char* text, const char* pattern, std::size_t length )
+	{
+		for ( const char* end = pattern + length;  pattern != end;  ++pattern,
+		                                                            ++text )
+		{
+			// A lower-case pattern char can match an upper-case text char.
+			
+			if ( *text != *pattern  &&  std::tolower( *text ) != *pattern )
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	static short TESearch( TEHandle hTE, short position, const std::string& pattern, bool backward, bool matchAtPosition )
 	{
 		short teLength = hTE[0]->teLength;
@@ -93,7 +109,7 @@ namespace Pedestal
 		
 		while ( position != limit )
 		{
-			if ( std::memcmp( hText[0] + position, pattern.data(), pattern.size() ) == 0 )
+			if ( pattern_match( hText[0] + position, pattern.data(), pattern.size() ) )
 			{
 				return position;
 			}
