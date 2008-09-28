@@ -264,19 +264,7 @@ namespace tool
 				{
 					char c;
 					
-					int bytes_read = read( p7::stdin_fileno, &c, sizeof c );
-					
-					if ( bytes_read == -1 )
-					{
-						std::perror( "local-edit-client: read" );
-						
-						// I'm not sure what the scenario is here.
-						// (EINTR on handled signal?  EIO on disconnected terminal?)
-						// Leave tmp file for recovery.
-						return EXIT_FAILURE;
-					}
-					
-					if ( bytes_read == 0 )
+					if ( p7::read( p7::stdin_fileno, &c, sizeof c ) == 0 )
 					{
 						p7::write( p7::stdout_fileno, STR_LEN( "\n" "canceled\n" ) );
 						
