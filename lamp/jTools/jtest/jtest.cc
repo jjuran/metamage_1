@@ -443,7 +443,7 @@ namespace tool
 		
 		result += "\n";
 		
-		(void) write( STDOUT_FILENO, result.data(), result.size() );
+		p7::write( p7::stdout_fileno, result );
 	}
 	
 	int Main( int argc, iota::argv_t argv )
@@ -526,7 +526,7 @@ namespace tool
 		
 		std::string header = "1.." + NN::Convert< std::string >( battery.size() ) + "\n";
 		
-		(void) write( STDOUT_FILENO, header.data(), header.size() );
+		p7::write( p7::stdout_fileno, header );
 		
 		std::for_each( battery.begin(), battery.end(), std::ptr_fun( RunTest ) );
 		
