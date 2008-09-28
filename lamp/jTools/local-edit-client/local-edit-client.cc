@@ -24,6 +24,7 @@
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/ftruncate.hh"
 #include "POSeven/functions/lseek.hh"
+#include "POSeven/functions/shutdown.hh"
 
 // Arcana
 #include "HTTP.hh"
@@ -216,7 +217,7 @@ namespace tool
 		
 		p7::pump( target_file_stream, socket_out );
 		
-		shutdown( socket_out, SHUT_WR );
+		p7::shutdown( socket_out, p7::shut_wr );
 		
 		HTTP::ResponseReceiver response;
 		
@@ -307,7 +308,7 @@ namespace tool
 			return EXIT_FAILURE;
 		}
 		
-		shutdown( socket_in, SHUT_RD );
+		p7::shutdown( socket_in, p7::shut_rd );
 		
 		return 0;
 	}
