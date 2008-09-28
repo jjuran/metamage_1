@@ -14,6 +14,7 @@
 
 // POSeven
 #include "POSeven/functions/execvp.hh"
+#include "POSeven/functions/lseek.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 #include "POSeven/Open.hh"
@@ -135,7 +136,7 @@ namespace tool
 	
 	static bool HasSymH( p7::fd_t object_file_stream, const MetrowerksObjectFileHeader& file_header )
 	{
-		p7::throw_posix_result( lseek( object_file_stream, file_header.objectOffset, SEEK_SET ) );
+		p7::lseek( object_file_stream, file_header.objectOffset );
 		
 		ObjectHeader object_header;
 		

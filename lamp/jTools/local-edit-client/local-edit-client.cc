@@ -19,10 +19,11 @@
 #include "iota/strings.hh"
 
 // POSeven
-#include "POSeven/functions/ftruncate.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
+#include "POSeven/functions/ftruncate.hh"
+#include "POSeven/functions/lseek.hh"
 
 // Arcana
 #include "HTTP.hh"
@@ -131,8 +132,8 @@ namespace tool
 	static void CopyFileContents( p7::fd_t in, p7::fd_t out )
 	{
 		// Start at the beginning of each file
-		p7::throw_posix_result( lseek( in,  0, 0 ) );
-		p7::throw_posix_result( lseek( out, 0, 0 ) );
+		p7::lseek( in,  0 );
+		p7::lseek( out, 0 );
 		
 		// Truncate the destinaton so we don't get leftover garbage
 		p7::ftruncate( out, 0 );
@@ -185,8 +186,7 @@ namespace tool
 		
 		std::string old_digest_b64 = EncodeBase64( digest.data, digest.data + 16 );
 		
-		//p7::lseek( target_file_stream, 0, 0 );
-		lseek( target_file_stream, 0, 0 );
+		p7::lseek( target_file_stream, 0 );
 		
 		const p7::fd_t socket_in  = p7::fd_t( 6 );
 		const p7::fd_t socket_out = p7::fd_t( 7 );
@@ -237,7 +237,7 @@ namespace tool
 			
 			p7::pump( socket_in, edited_file_stream );
 			
-			lseek( edited_file_stream, 0, 0 );
+			p7::lseek( edited_file_stream, 0 );
 			
 			digest = MD5DigestFile( edited_file_stream );
 			
