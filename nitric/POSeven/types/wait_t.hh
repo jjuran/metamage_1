@@ -92,6 +92,11 @@ namespace Nucleus
 		}
 	};
 	
+	template <>
+	struct Converter< poseven::exit_t, poseven::wait_result > : public Converter< poseven::exit_t, poseven::wait_t > 
+	{
+	};
+	
 }
 
 #endif
