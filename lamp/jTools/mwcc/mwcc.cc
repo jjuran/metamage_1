@@ -398,7 +398,7 @@ namespace tool
 		
 		if ( dry_run )
 		{
-			return EXIT_SUCCESS;
+			return p7::exit_success;
 		}
 		
 		p7::pid_t pid = POSEVEN_VFORK();
@@ -408,9 +408,7 @@ namespace tool
 			p7::execvp( &command[0] );
 		}
 		
-		p7::wait_t wait_status = p7::wait();
-		
-		return NN::Convert< p7::exit_t >( wait_status );
+		return NN::Convert< p7::exit_t >( p7::wait() );
 	}
 	
 }

@@ -12,6 +12,7 @@
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
+#include "POSeven/functions/write.hh"
 
 // GetPathname
 #include "GetPathname.hh"
@@ -31,7 +32,7 @@ namespace tool
 	
 	
 	template < class Iter >
-	std::string join( Iter begin, Iter end, const std::string& glue = "" )
+	std::string join( const std::string& glue, Iter begin, Iter end )
 	{
 		if ( begin == end )
 		{
@@ -126,18 +127,18 @@ namespace tool
 		
 		if ( verbose )
 		{
-			std::string output = join( command.begin(), command.end(), " " );
+			std::string output = join( " ", command.begin(), command.end() );
 			
 			output += '\n';
 			
-			write( STDOUT_FILENO, output.data(), output.size() );
+			p7::write( p7::stdout_fileno, output );
 		}
 		
 		command.push_back( NULL );
 		
 		if ( dry_run )
 		{
-			return EXIT_SUCCESS;
+			return p7::exit_success;
 		}
 		
 		p7::pid_t pid = POSEVEN_VFORK();
@@ -147,9 +148,7 @@ namespace tool
 			p7::execvp( &command[0] );
 		}
 		
-		p7::wait_t wait_status = p7::wait();
-		
-		return Nucleus::Convert< p7::exit_t >( wait_status );
+		return Nucleus::Convert< p7::exit_t >( p7::wait() );
 	}
 	
 }
