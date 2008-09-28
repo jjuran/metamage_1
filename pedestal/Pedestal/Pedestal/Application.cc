@@ -691,19 +691,6 @@ namespace Pedestal
 	{
 	}
 	
-	static bool ReadyToWaitForEvents()
-	{
-		UInt32 minTicksBetweenWNE = 2;
-		
-		UInt32 timetoWNE = gTickCountAtLastContextSwitch + minTicksBetweenWNE;
-		
-		UInt32 now = ::TickCount();
-		
-		bool readyToWait = !gRunState.activelyBusy || now >= timetoWNE;
-		
-		return readyToWait;
-	}
-	
 	static void CheckMouse()
 	{
 		using namespace Nucleus::Operators;
@@ -743,6 +730,24 @@ namespace Pedestal
 	#endif
 	}
 	
+	static bool ReadyToWaitForEvents()
+	{
+		UInt32 minTicksBetweenWNE = 2;
+		
+		UInt32 timetoWNE = gTickCountAtLastContextSwitch + minTicksBetweenWNE;
+		
+		UInt32 now = ::TickCount();
+		
+		bool readyToWait = !gRunState.activelyBusy || now >= timetoWNE;
+		
+		if ( readyToWait && gRunState.activelyBusy )
+		{
+			AdjustSleepForTimer( 1 );  // sleep only this long if busy
+		}
+		
+		return readyToWait;
+	}
+	
 	static void CheckShiftSpaceQuasiMode( const EventRecord& event )
 	{
 		if ( !(event.modifiers & kEitherShiftKey) )
@@ -777,11 +782,6 @@ namespace Pedestal
 					
 					if ( ReadyToWaitForEvents() )
 					{
-						if ( gRunState.activelyBusy )
-						{
-							AdjustSleepForTimer( 1 );  // sleep only this long if busy
-						}
-						
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
 						gTickCountAtLastContextSwitch = ::TickCount();
