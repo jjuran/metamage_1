@@ -35,6 +35,10 @@ static bool gExtendingSelection;
 static short gSelectionAnchor, gSelectionExtent;
 
 
+static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
+static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
+static const UInt32 kEitherControlKey = controlKey | rightControlKey;
+
 inline bool CharIsHorizontalArrow( char c )
 {
 	return (c & 0xFE) == 0x1C;
@@ -110,8 +114,8 @@ namespace
 		bool emptySelection = selStart == selEnd;
 		
 		bool cmdKeyIsDown    = gLastEvent.modifiers & cmdKey;
-		bool shiftKeyIsDown  = gLastEvent.modifiers & shiftKey;
-		bool optionKeyIsDown = gLastEvent.modifiers & optionKey;
+		bool shiftKeyIsDown  = gLastEvent.modifiers & kEitherShiftKey;
+		bool optionKeyIsDown = gLastEvent.modifiers & kEitherOptionKey;
 		
 		bool forward = CharIsForwardArrow( c );
 		
