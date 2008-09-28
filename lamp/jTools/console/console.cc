@@ -8,10 +8,7 @@
 
 // POSIX
 #include <fcntl.h>
-#include <sys/ioctl.h>
 #include <sys/ttycom.h>
-#include <sys/wait.h>
-#include <unistd.h>
 
 // Lamp
 #include "lamp/winio.h"
@@ -19,24 +16,24 @@
 // Iota
 #include "iota/strings.hh"
 
+// POSeven
+#include "POSeven/Open.hh"
+#include "POSeven/functions/execvp.hh"
+#include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/wait.hh"
+#include "POSeven/functions/write.hh"
+
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 
 
-static int exit_from_wait( int stat )
-{
-	int result = WIFEXITED( stat )   ? WEXITSTATUS( stat )
-	           : WIFSIGNALED( stat ) ? WTERMSIG( stat ) + 128
-	           :                       -1;
-	
-	return result;
-}
-
-
 namespace tool
 {
 	
+	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace O = Orion;
 	
 	
@@ -62,26 +59,26 @@ namespace tool
 		
 		if ( *freeArgs == NULL )
 		{
-			(void) write( STDERR_FILENO, STR_LEN( "Usage: console command [ arg1 ... argn ]\n" ) );
+			p7::write( p7::stderr_fileno, STR_LEN( "Usage: console command [ arg1 ... argn ]\n" ) );
 			
 			return 1;
 		}
 		
-		int forked = vfork();
+		p7::pid_t pid = p7::vfork();
 		
-		if ( forked == 0 )
+		if ( pid == 0 )
 		{
 			// New child, so we're not a process group leader
 			
 			setsid();
 			
-			int console = open( device, O_RDWR, 0 );
+			NN::Owned< p7::fd_t > console = p7::open( device, p7::o_rdwr );
 			
-			int io = ioctl( console, TIOCSCTTY, NULL );
+			p7::ioctl( console, TIOCSCTTY, NULL );
 			
 			if ( title != NULL )
 			{
-				io = ioctl( console, WIOCSTITLE, title );
+				p7::ioctl( console, WIOCSTITLE, title );
 			}
 			
 			dup2( console, 0 );
@@ -90,28 +87,15 @@ namespace tool
 			
 			close( console );
 			
-			(void) execvp( freeArgs[ 0 ], &freeArgs[ 0 ] );
-			
-			_exit( 127 );
+			p7::execvp( &freeArgs[ 0 ] );
 		}
 		
 		if ( should_wait )
 		{
-			int stat = -1;
-			
-			int waited = waitpid( forked, &stat, 0 );
-			
-			if ( waited == -1 )
-			{
-				std::perror( "console: waitpid" );
-				
-				return 127;
-			}
-			
-			return exit_from_wait( stat );
+			return NN::Convert< p7::exit_t >( p7::wait() );
 		}
 		
-		return 0;
+		return p7::exit_success;
 	}
 	
 }
