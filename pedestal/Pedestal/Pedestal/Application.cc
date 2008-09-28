@@ -65,6 +65,24 @@ namespace Nitrogen
 	
 }
 
+namespace Nucleus
+{
+	namespace Operators
+	{
+		
+		inline bool operator==( ::Point a, ::Point b )
+		{
+			return a.v == b.v  &&  a.h == b.h;
+		}
+		
+		inline bool operator!=( ::Point a, ::Point b )
+		{
+			return !( a == b );
+		}
+		
+	}
+}
+
 namespace Pedestal
 {
 	
@@ -81,7 +99,6 @@ namespace Pedestal
 	struct RunState
 	{
 		AppleEventSignature signatureOfFirstAppleEvent;
-		UInt32 tickCountAtLastLayerSwitch;
 		UInt32 maxTicksToSleep;
 		
 		bool inForeground;     // set to true when the app is frontmost
@@ -92,7 +109,6 @@ namespace Pedestal
 		
 		RunState()
 		:
-			tickCountAtLastLayerSwitch( 0 ),
 			maxTicksToSleep           ( 0 ),
 			inForeground   ( false ),  // we have to check
 			startupComplete( false ),
@@ -104,6 +120,11 @@ namespace Pedestal
 	
 	
 	static RunState gRunState;
+	
+	static UInt32 gTickCountAtLastContextSwitch = 0;
+	static UInt32 gTickCountAtLastUserEvent     = 0;
+	
+	static Point gLastMouseLocation;
 	
 #if !TARGET_API_MAC_CARBON
 	
@@ -332,6 +353,8 @@ namespace Pedestal
 	{
 		ASSERT( event.what == mouseDown );
 		
+		gTickCountAtLastUserEvent = ::TickCount();
+		
 		N::FindWindow_Result found = N::FindWindow( event.where );
 		
 		if ( found.part == N::inMenuBar )
@@ -431,6 +454,8 @@ namespace Pedestal
 	static void DispatchKey( const EventRecord& event )
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
+		
+		gTickCountAtLastUserEvent = ::TickCount();
 		
 	#if !TARGET_API_MAC_CARBON
 		
@@ -670,13 +695,27 @@ namespace Pedestal
 	{
 		UInt32 minTicksBetweenWNE = 2;
 		
-		UInt32 timetoWNE = gRunState.tickCountAtLastLayerSwitch + minTicksBetweenWNE;
+		UInt32 timetoWNE = gTickCountAtLastContextSwitch + minTicksBetweenWNE;
 		
 		UInt32 now = ::TickCount();
 		
 		bool readyToWait = !gRunState.activelyBusy || now >= timetoWNE;
 		
 		return readyToWait;
+	}
+	
+	static void CheckMouse()
+	{
+		using namespace Nucleus::Operators;
+		
+		Point mouseLocation = N::GetMouse();
+		
+		if ( mouseLocation != gLastMouseLocation )
+		{
+			gLastMouseLocation = mouseLocation;
+			
+			gTickCountAtLastUserEvent = ::TickCount();
+		}
 	}
 	
 	static void CheckKeyboard()
@@ -730,6 +769,8 @@ namespace Pedestal
 				{
 					gRunState.activelyBusy = false;
 					
+					CheckMouse();
+					
 					CheckKeyboard();
 					
 					N::YieldToAnyThread();
@@ -743,7 +784,7 @@ namespace Pedestal
 						
 						EventRecord event = N::WaitNextEvent( N::everyEvent, gRunState.maxTicksToSleep );
 						
-						gRunState.tickCountAtLastLayerSwitch = ::TickCount();
+						gTickCountAtLastContextSwitch = ::TickCount();
 						
 						CheckShiftSpaceQuasiMode( event );
 						
