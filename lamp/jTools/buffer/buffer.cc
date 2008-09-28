@@ -23,6 +23,7 @@
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/lseek.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/wait.hh"
 #include "POSeven/functions/write.hh"
