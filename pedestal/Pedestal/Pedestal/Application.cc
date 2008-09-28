@@ -163,6 +163,11 @@ namespace Pedestal
 		return *gApp;
 	}
 	
+	static void UpdateLastUserEvent()
+	{
+		gTickCountAtLastUserEvent = ::TickCount();
+	}
+	
 	bool MenuItemDispatcher::Run( MenuItemCode code ) const
 	{
 		bool handled = false;
@@ -353,7 +358,7 @@ namespace Pedestal
 	{
 		ASSERT( event.what == mouseDown );
 		
-		gTickCountAtLastUserEvent = ::TickCount();
+		UpdateLastUserEvent();
 		
 		N::FindWindow_Result found = N::FindWindow( event.where );
 		
@@ -392,6 +397,8 @@ namespace Pedestal
 			default:
 				break;
 		}
+		
+		UpdateLastUserEvent();
 	}
 	
 	inline bool CharIsArrowKey( char c )
@@ -455,7 +462,7 @@ namespace Pedestal
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
 		
-		gTickCountAtLastUserEvent = ::TickCount();
+		UpdateLastUserEvent();
 		
 	#if !TARGET_API_MAC_CARBON
 		
@@ -614,6 +621,10 @@ namespace Pedestal
 			case diskEvt:          DispatchDiskInsert    ( event );  break;
 			case osEvt:            DispatchOSEvent       ( event );  break;
 			
+			case mouseUp:
+				UpdateLastUserEvent();
+				break;
+			
 			default:
 				break;
 		}
@@ -701,7 +712,7 @@ namespace Pedestal
 		{
 			gLastMouseLocation = mouseLocation;
 			
-			gTickCountAtLastUserEvent = ::TickCount();
+			UpdateLastUserEvent();
 		}
 	}
 	
