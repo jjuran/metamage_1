@@ -513,6 +513,10 @@
 		
 		DeleteVars( itsVars );
 		
+		itsVars.clear();
+		
+		itsVars.resize( 1, NULL );
+		
 		environ = NULL;
 	}
 	
