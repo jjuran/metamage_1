@@ -36,7 +36,6 @@
 
 // Genie
 #include "Genie/Devices.hh"
-#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/IO/ConsoleTTY.hh"
 #include "Genie/Process.hh"
 
@@ -45,7 +44,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	namespace NN = Nucleus;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -126,8 +124,6 @@ namespace Genie
 		
 		argv[2] = command.c_str();
 		
-		FSTreePtr program = ResolvePathname( "/bin/sh" );
-		
 		Process& parent = GetProcess( 1 );
 		
 		Process* process = new Process( parent );
@@ -140,7 +136,7 @@ namespace Genie
 		
 		try
 		{
-			process->Exec( program, argv, envp );
+			process->Exec( "/bin/sh", argv, envp );
 		}
 		catch ( ... )
 		{

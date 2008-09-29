@@ -14,7 +14,6 @@
 #include "Pedestal/Application.hh"
 
 // Genie
-#include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/PipeOrganSuite.h"
 #include "Genie/Process.hh"
 
@@ -140,15 +139,13 @@ namespace Genie
 		}
 	#endif
 		
-		FSTreePtr program = ResolvePathname( argv[0], FSTreePtr() );
-		
 		Process& parent = GetProcess( 1 );
 		
 		Process* process = new Process( parent );
 		
 		try
 		{
-			process->Exec( program, &argv[0], NULL );
+			process->Exec( argv[0], &argv[0], NULL );
 		}
 		catch ( ... )
 		{

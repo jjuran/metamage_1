@@ -42,6 +42,7 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/Pathnames.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -630,7 +631,7 @@ namespace Genie
 	
 	inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
 	
-	static ExecContext& Normalize( ExecContext& context, const FSTreePtr& cwd )
+	static void Normalize( const char* path, ExecContext& context, const FSTreePtr& cwd )
 	{
 		FSSpec fileSpec;
 		
@@ -649,7 +650,7 @@ namespace Genie
 		
 		if ( type == 'Wish' )
 		{
-			return context;  // Already normalized
+			return;  // Already normalized
 		}
 		
 		if ( type == 'TEXT' )
@@ -695,10 +696,8 @@ namespace Genie
 			
 			if ( std::strchr( context.argVector[ 0 ], '/' ) == NULL )
 			{
-				// Overwrite with full pathname
-				context.scriptPath = GetPOSIXPathname( fileSpec );
-				
-				context.argVector[ 0 ] = context.scriptPath.c_str();
+				// Overwrite with path
+				context.argVector[ 0 ] = path;
 				
 				// argv == { "/path/to/script", "foo", "bar", "baz", NULL }
 			}
@@ -751,8 +750,6 @@ namespace Genie
 		{
 			throw NotExecutable();
 		}
-		
-		return context;
 	}
 	
 	
@@ -966,21 +963,42 @@ namespace Genie
 		result.push_back( NULL );
 	}
 	
-	void Process::Exec( FSTreePtr&          executable,
+	static void CheckProgramFile( const FSTreePtr& programFile )
+	{
+		struct ::stat sb;
+		
+		programFile->Stat( sb );
+		
+		if ( S_ISDIR( sb.st_mode ) )
+		{
+			p7::throw_errno( EISDIR );
+		}
+		
+		if ( (sb.st_mode & S_IXUSR) == 0 )
+		{
+			p7::throw_errno( EACCES );
+		}
+	}
+	
+	void Process::Exec( const char*         path,
 	                    const char* const   argv[],
 	                    const char* const*  envp )
 	{
 		// Declare this first so it goes out of scope last
 		NN::Owned< N::ThreadID > looseThread;
 		
+		FSTreePtr programFile = ResolvePathname( path, GetCWD() );
+		
+		ResolveLinks_InPlace( programFile );
+		
+		CheckProgramFile( programFile );
+		
 		// Do we take the name before or after normalization?
-		itsName = executable->Name();
+		itsName = io::get_filename( path );
 		
-		ExecContext context( executable, argv );
+		ExecContext context( programFile, argv );
 		
-		executable.reset();
-		
-		Normalize( context, GetCWD() );
+		Normalize( path, context, GetCWD() );
 		
 		CloseMarkedFileDescriptors( itsFileDescriptors );
 		

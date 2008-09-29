@@ -230,7 +230,9 @@ namespace Genie
 	}
 	
 	
-	static int execve( const char* path, const char* const argv[], const char* const envp[] )
+	static int execve( const char*        path,
+	                   const char* const  argv[],
+	                   const char* const  envp[] )
 	{
 		// On a successful exec, the frame doesn't get destructed, but we compensate.
 		// Exec() calls Suspend(), which is equivalent to LeaveSystemCall().
@@ -243,31 +245,10 @@ namespace Genie
 			
 			bool forked = current.Forked();
 			
-			// progFile gets destroyed by Process::Exec()
-			{
-				FSTreePtr progFile = ResolvePathname( path, current.GetCWD() );
-				
-				ResolveLinks_InPlace( progFile );
-				
-				struct ::stat sb;
-				
-				progFile->Stat( sb );
-				
-				if ( S_ISDIR( sb.st_mode ) )
-				{
-					return frame.SetErrno( EISDIR );
-				}
-				
-				if ( (sb.st_mode & S_IXUSR) == 0 )
-				{
-					return frame.SetErrno( EACCES );
-				}
-				
-				// Start a new thread with the child's process context
-				current.Exec( progFile, argv, envp );
-				
-				// If we didn't fork, we're now toast.
-			}
+			// Start a new thread with the child's process context
+			current.Exec( path, argv, envp );
+			
+			// If we didn't fork, we're now toast.
 			
 			// A non-forked exec kills its own thread and doesn't return
 			ASSERT( forked );
