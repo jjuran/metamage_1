@@ -690,43 +690,29 @@ namespace Genie
 				context.interpreterArg  = std::string( space ? space + 1 : nl, nl );
 			}
 			
-			const int newTokenCount = 1 + hasArg;
-			
 			// E.g. "$ script foo bar baz"
 			// argv == { "script", "foo", "bar", "baz", NULL }
 			
-			context.argVector.resize( context.argVector.size() + newTokenCount );
-			
-			const char* const* const argv = &context.argVector.front();
-			
-			// argv == { "script", "foo", "bar", "baz", NULL, ?? }
-			
-			bool pathSearched = std::strchr( argv[0], '/' ) == NULL;
-			
-			const int skipCount = pathSearched;  // skip the script's name if we're overwriting it anyway
-						
-			std::copy_backward( context.argVector.begin() + skipCount,
-			                    context.argVector.end() - newTokenCount,
-			                    context.argVector.end() );
-			
-			// argv == { "script", "script", "foo", "bar", "baz", NULL }
-			
-			context.argVector[ 0 ] = context.interpreterPath.c_str();
-			
-			if ( hasArg )
-			{
-				context.argVector[ 1 ] = context.interpreterArg.c_str();
-			}
-			
-			if ( pathSearched )
+			if ( std::strchr( context.argVector[ 0 ], '/' ) == NULL )
 			{
 				// Overwrite with full pathname
 				context.scriptPath = GetPOSIXPathname( fileSpec );
 				
-				context.argVector[ 1 + hasArg ] = context.scriptPath.c_str();
+				context.argVector[ 0 ] = context.scriptPath.c_str();
+				
+				// argv == { "/path/to/script", "foo", "bar", "baz", NULL }
 			}
 			
+			context.argVector.insert( context.argVector.begin(),
+			                          context.interpreterPath.c_str() );
+			
 			// argv == { "sh", "script", "foo", "bar", "baz", NULL }
+			
+			if ( hasArg )
+			{
+				context.argVector.insert( context.argVector.begin() + 1,
+				                          context.interpreterArg.c_str() );
+			}
 			
 			context.executable = ResolvePathname( context.interpreterPath, cwd );
 		}
