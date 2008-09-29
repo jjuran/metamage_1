@@ -34,6 +34,7 @@
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -402,6 +403,11 @@ namespace Genie
 			if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( GetFileHandle( fd ).get() ) )
 			{
 				return fh->Seek( offset, whence );
+			}
+			
+			if ( DirHandle* h = IOHandle_Cast< DirHandle >( GetFileHandle( fd ).get() ) )
+			{
+				return h->Seek( offset, whence );
 			}
 			
 			// downcast failed
