@@ -22,6 +22,7 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/Stat.hh"
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/wait.hh"
 
@@ -169,16 +170,9 @@ namespace tool
 		{
 			// Read from stdin
 			
-			if ( gLoginShell )
+			if ( gLoginShell && io::item_exists( "/etc/profile" ) )
 			{
-				struct ::stat sb;
-				
-				int statted = stat( "/etc/profile", &sb );
-				
-				if ( statted != -1 )
-				{
-					ExecuteCmdLine( ". /etc/profile" );
-				}
+				ExecuteCmdLine( ". /etc/profile" );
 			}
 		}
 		
