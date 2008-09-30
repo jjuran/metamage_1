@@ -53,15 +53,6 @@
 #include <cmath>
 
 
-// Temporary measure until this code moves elsewhere
-#if !TARGET_API_MAC_OSX
-
-inline UInt32 CFSwapInt32BigToHost( UInt32 x )  { return x; }
-inline UInt32 CFSwapInt32HostToBig( UInt32 x )  { return x; }
-
-#endif
-
-
 namespace Nitrogen
   {
 	
@@ -287,27 +278,22 @@ namespace Nitrogen
    using ::Rect;
 	
 	
+	namespace Detail
+	{
+		
+		::FourCharCode ConvertStringToFourCharCode( const std::string& string );
+		
+		std::string ConvertFourCharCodeToString( ::FourCharCode code );
+		
+	}
+	
 	// Convert string to FourCharCode
 	template < class CodeType >
 	struct StringToFourCharCode_Converter : public std::unary_function< std::string, CodeType >
 	{
 		CodeType operator()( const std::string& input ) const
 		{
-			if ( input.size() != sizeof (::FourCharCode) )
-			{
-				throw Nucleus::ConversionFromStringFailed();
-			}
-			
-			::FourCharCode result;
-			
-			std::copy( input.begin(), input.end(), reinterpret_cast< char* >( &result ) );
-			
-			if ( TARGET_RT_LITTLE_ENDIAN )
-			{
-				result = ::CFSwapInt32BigToHost( result );
-			}
-			
-			return CodeType( result );
+			return CodeType( Detail::ConvertStringToFourCharCode( input ) );
 		}
 	};
 	
@@ -317,14 +303,7 @@ namespace Nitrogen
 	{
 		std::string operator()( CodeType input ) const
 		{
-			::FourCharCode code = input;
-			
-			if ( TARGET_RT_LITTLE_ENDIAN )
-			{
-				code = ::CFSwapInt32HostToBig( code );
-			}
-			
-			return std::string( reinterpret_cast< const char* >( &code ), sizeof (::FourCharCode) );
+			return Detail::ConvertFourCharCodeToString( input );
 		}
 	};
 	
