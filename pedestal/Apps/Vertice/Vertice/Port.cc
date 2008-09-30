@@ -205,8 +205,8 @@ namespace Vertice
 		
 		V::XMatrix port2worldInverseTranspose = Transpose( world2port );
 		
-		V::Plane3D::Type nearPlane = port2worldInverseTranspose * V::NearPlane(   0.01 );
-		V::Plane3D::Type farPlane  = port2worldInverseTranspose * V::FarPlane ( 100    );
+		V::Plane3D::Type nearPlane = port2worldInverseTranspose * V::NearPlane(    1 );
+		V::Plane3D::Type farPlane  = port2worldInverseTranspose * V::FarPlane ( 1000 );
 		
 		V::Plane3D::Type leftPlane  = port2worldInverseTranspose * V::LeftPlane (  sFocalLength );
 		V::Plane3D::Type rightPlane = port2worldInverseTranspose * V::RightPlane(  sFocalLength );
