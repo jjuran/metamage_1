@@ -1107,14 +1107,11 @@ namespace Genie
 		
 		LongJmp jump = GetLongJmp();
 		
-		ASSERT( jump != NULL  ||  child == 0 );
+		ASSERT( jump != NULL );
 		
-		if ( jump != NULL  &&  child != 0 )
-		{
-			LeaveSystemCall();
-			
-			jump( child );
-		}
+		LeaveSystemCall();
+		
+		jump( child );
 	}
 	
 	void Process::UsurpParent( int exit_status )
