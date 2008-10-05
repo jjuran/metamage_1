@@ -809,6 +809,7 @@ namespace Genie
 		itsErrno              ( NULL ),
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
+		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
 		itsCWD                ( FSRoot() ),
@@ -840,6 +841,7 @@ namespace Genie
 		itsErrno              ( parent.itsErrno ),
 		itsStackBottomPtr     ( NULL ),
 		itsStackFramePtr      ( NULL ),
+		itsVForkFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
 		itsCWD                ( parent.GetCWD() ),
@@ -1077,6 +1079,7 @@ namespace Genie
 		itsInterdependence = kProcessForking;
 		itsSchedule        = kProcessFrozen;
 		
+		itsVForkFramePtr =
 		itsStackFramePtr = Backtrace::GetStackFramePointer( 3 );
 		
 		SaveRegisters( &itsSavedRegisters );
@@ -1090,6 +1093,11 @@ namespace Genie
 		ASSERT( itsSchedule        == kProcessFrozen  );
 		
 		ASSERT( itsForkedChildPID != 0 );
+		
+		// Stack grows down
+		const bool stack_fault = Backtrace::GetStackFramePointer( 2 ) > itsVForkFramePtr;
+		
+		itsVForkFramePtr = NULL;
 		
 		Resume();
 		
@@ -1105,6 +1113,11 @@ namespace Genie
 			itsSchedule = kProcessSleeping;
 			
 			return;
+		}
+		
+		if ( stack_fault )
+		{
+			DeliverFatalSignal( SIGSEGV );
 		}
 		
 		LongJmp jump = GetLongJmp();

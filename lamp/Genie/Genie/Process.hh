@@ -112,6 +112,7 @@ namespace Genie
 			
 			Backtrace::StackFramePtr itsStackBottomPtr;
 			Backtrace::StackFramePtr itsStackFramePtr;
+			Backtrace::StackFramePtr itsVForkFramePtr;
 			
 			SavedRegisters itsSavedRegisters;
 			
