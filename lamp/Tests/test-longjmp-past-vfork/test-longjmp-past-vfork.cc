@@ -14,16 +14,54 @@
 #include "iota/strings.hh"
 
 
-jmp_buf global_jmpbuf;
+static jmp_buf global_jmpbuf;
 
-static void sigsegv_handler( int signo )
+static void control_sigsegv_handler_1( int signo )
 {
-	write( STDOUT_FILENO, STR_LEN( "ok 1\n" ) );
+	write( STDOUT_FILENO, STR_LEN( "not ok 1\n" ) );
 	
 	_exit( 0 );
 }
 
-static void spawn()
+static void control_sigsegv_handler_2( int signo )
+{
+	write( STDOUT_FILENO, STR_LEN( "not ok 2\n" ) );
+	
+	_exit( 0 );
+}
+
+static void experimental_sigsegv_handler( int signo )
+{
+	write( STDOUT_FILENO, STR_LEN( "ok 3\n" ) );
+	
+	_exit( 0 );
+}
+
+static void control_1()
+{
+	pid_t pid = vfork();
+	
+	if ( pid == 0 )
+	{
+		_exit( 0 );
+	}
+	
+	write( STDOUT_FILENO, STR_LEN( "ok 1\n" ) );
+}
+
+static void control_2()
+{
+	pid_t pid = vfork();
+	
+	if ( pid == 0 )
+	{
+		kill( getpid(), SIGKILL );
+	}
+	
+	write( STDOUT_FILENO, STR_LEN( "ok 2\n" ) );
+}
+
+static void experiment()
 {
 	static bool shared_memory = false;
 	
@@ -50,20 +88,28 @@ static void spawn()
 	
 	// Otherwise, vfork() is really fork() and there's no problem.
 	
-	write( STDOUT_FILENO, STR_LEN( "ok 1\n" ) );
+	write( STDOUT_FILENO, STR_LEN( "ok 3\n" ) );
 	
 	_exit( 0 );
 }
 
 int main( int argc, const char *const *argv )
 {
-	signal( SIGSEGV, &sigsegv_handler );
+	write( STDOUT_FILENO, STR_LEN( "1..3\n" ) );
 	
-	write( STDOUT_FILENO, STR_LEN( "1..1\n" ) );
+	signal( SIGSEGV, &control_sigsegv_handler_1 );
+	
+	control_1();
+	
+	signal( SIGSEGV, &control_sigsegv_handler_2 );
+	
+	control_2();
+	
+	signal( SIGSEGV, &experimental_sigsegv_handler );
 	
 	if ( setjmp( global_jmpbuf ) == 0 )
 	{
-		spawn();
+		experiment();
 	}
 	else
 	{
