@@ -109,8 +109,8 @@
 // 101
 // 102
 // 103
-// 104
-// 105
+#define __NR_setitimer                 104
+#define __NR_getitimer                 105
 #define __NR_stat                      106
 #define __NR_lstat                     107
 #define __NR_fstat                     108
