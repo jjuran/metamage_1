@@ -1084,6 +1084,11 @@ namespace Genie
 	
 	void Process::ResumeAfterFork()
 	{
+		ASSERT( itsInterdependence == kProcessForking );
+		ASSERT( itsSchedule        == kProcessFrozen  );
+		
+		ASSERT( itsForkedChildPID != 0 );
+		
 		Resume();
 		
 		itsInterdependence = Forked() ? kProcessForked
