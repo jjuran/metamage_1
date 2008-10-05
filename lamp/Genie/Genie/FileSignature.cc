@@ -125,6 +125,9 @@ namespace Genie
 		{ "mov", 'MooV', "QuickTime" " movie" },
 		
 		{ "mp3", 'MPEG', "MP3" " audio" },
+		
+		// Application-specific binary formats
+		{ "lib", 'MPLF', "Metrowerks static library" },
 	};
 	
 	struct FileSignature
@@ -145,6 +148,7 @@ namespace Genie
 		{ 'ogle', 'JPEG' },
 		{ 'TVOD', 'MPEG' },
 		{ 'TVOD', 'MooV' },
+		{ 'CWIE', 'MPLF' },
 	};
 	
 	typedef std::map< N::OSType,   N::OSType        > TypeToCreatorMapping;
