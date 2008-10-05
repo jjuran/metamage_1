@@ -5,9 +5,7 @@
 #include <Files.h>
 #endif
 
-#if TARGET_API_MAC_CARBON
-#error Configuration error:  This file is for classic only
-#endif
+#if !TARGET_API_MAC_CARBON
 
 struct FSRefPeek
 {
@@ -27,5 +25,5 @@ struct FSRefPeek
 
 // These functions are always declared in the headers and are always extern.
 
-
+#endif
 

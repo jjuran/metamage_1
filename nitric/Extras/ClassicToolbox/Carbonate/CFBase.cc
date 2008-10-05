@@ -5,11 +5,9 @@
 #include <CFBase.h>
 #endif
 
-#include "Carbonate/CFBase.hh"
+#if !TARGET_API_MAC_CARBON
 
-#if TARGET_API_MAC_CARBON
-#error Configuration error:  This file is for classic only
-#endif
+#include "Carbonate/CFBase.hh"
 
 /*
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
@@ -44,4 +42,6 @@ CFIndex CFGetRetainCount( CFTypeRef cf )
 	
 	return object->retainCount;
 }
+
+#endif
 

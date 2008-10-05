@@ -5,14 +5,12 @@
 #include <CFString.h>
 #endif
 
+#if !TARGET_API_MAC_CARBON
+
 #include <string>
 
 #include "Carbonate/CFBase.hh"
 
-
-#if TARGET_API_MAC_CARBON
-#error Configuration error:  This file is for classic only
-#endif
 
 
 //#define CFSTR( x )  ( x )
@@ -47,4 +45,6 @@ CFStringRef CFStringCreateWithCharacters( CFAllocatorRef  alloc,
 {
 	return new __CFString( chars, numChars );
 }
+
+#endif
 

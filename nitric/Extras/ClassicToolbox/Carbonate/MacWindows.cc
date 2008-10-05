@@ -5,10 +5,6 @@
 #include <MacWindows.h>
 #endif
 
-#if TARGET_API_MAC_CARBON
-#error Configuration error:  This file is for classic only
-#endif
-
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
 // Compile the Carbon accessors as extern pascal functions.
 #define CARBONATE_LINKAGE pascal
@@ -25,4 +21,19 @@ pascal WindowRef GetWindowList()
 }
 
 #endif
+
+OSStatus SetWindowAlpha( WindowRef window, float alpha )
+{
+	return unimpErr;
+}
+
+OSStatus GetWindowAlpha( WindowRef window, float* outAlpha )
+{
+	if ( outAlpha != NULL )
+	{
+		*outAlpha = 1.0;
+	}
+	
+	return noErr;
+}
 
