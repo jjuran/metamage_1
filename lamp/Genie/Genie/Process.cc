@@ -1020,9 +1020,11 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
-		N::Size stackSize = N::GetDefaultThreadStackSize( N::kCooperativeThread );
+		const N::Size defaultStackSize = N::GetDefaultThreadStackSize( N::kCooperativeThread );
 		
-		stackSize = std::max( stackSize, 32768ul );  // at least 32K of stack
+		const N::Size minimumStackSize = 64 * 1024;
+		
+		const N::Size stackSize = std::max( defaultStackSize, minimumStackSize );
 		
 		// Create the new thread
 		looseThread = N::NewThread< Process*, ProcessThreadEntry >( N::kCooperativeThread,
