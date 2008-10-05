@@ -91,6 +91,11 @@ namespace poseven
 	}
 	
 	
+	inline bool name_is_dots( const char* name )
+	{
+		return name[0] == '.'  &&  ( name[ 1 + (name[1] == '.') ] == '\0' );
+	}
+	
 	class directory_contents_container
 	{
 		private:
@@ -132,26 +137,27 @@ namespace poseven
 					{
 						using namespace io::path_descent_operators;
 						
-						try
+						dir_t dir = itsDirHandle;
+						
+						const dirent* entry;
+						
+						while ( (entry = ::readdir( dir ))  &&  name_is_dots( entry->d_name ) )
 						{
-							dirent entry;
-							
-							do
-							{
-								entry = poseven::readdir( itsDirHandle );
-							}
-							while ( entry.d_name[0] == '.'  &&  ( entry.d_name[ 1 + (entry.d_name[1] == '.') ] == '\0' ) );
-							
-							value = itsDirPathname / entry.d_name;
+							continue;
 						}
-						catch ( const errno_t& error )
+						
+						if ( entry )
 						{
-							if ( error != ENOENT )
-							{
-								throw;
-							}
+							value = itsDirPathname / entry->d_name;
 							
-							done = true;
+							return;
+						}
+						
+						done = true;
+						
+						if ( errno != ENOENT )
+						{
+							throw_errno( errno );
 						}
 					}
 					
