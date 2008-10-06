@@ -38,9 +38,6 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
-	static std::string gLastSearchPattern;
-	
-	
 	struct TESelection
 	{
 		short start;
@@ -67,6 +64,17 @@ namespace Pedestal
 		result.end   = te.selEnd;
 		
 		return result;
+	}
+	
+	
+	static std::string gLastSearchPattern;
+	
+	static TESelection gSelectionPriorToSearch;
+	
+	
+	inline bool CharIsHorizontalArrow( char c )
+	{
+		return (c & 0xFE) == 0x1C;
 	}
 	
 	
@@ -234,6 +242,14 @@ namespace Pedestal
 		N::TEPinScroll( -dh * scrollStep.h, -dv * scrollStep.v, hTE );
 	}
 	
+	static void AugmentTESelection( TEHandle hTE, const TESelection& more )
+	{
+		const TERec& te = **hTE;
+		
+		N::TESetSelect( std::min( te.selStart, more.start ),
+		                std::max( te.selEnd,   more.end   ), hTE );
+	}
+	
 	
 	static void CustomClickLoop()
 	{
@@ -389,11 +405,37 @@ namespace Pedestal
 			{
 				SetSelection( match, match + gLastSearchPattern.size() );
 			}
-			
-			return true;
 		}
-		
-		if ( KeyIsAllowedAgainstSelection( c, itsTE ) )
+		else if ( event.modifiers & controlKey  &&  CharIsHorizontalArrow( c ) )
+		{
+			KeyMapByteArray desiredKeys = { 0,  //  0 -  7
+			                                0,  //  8 -  f
+			                                0,  // 10 - 17
+			                                0,  // 18 - 1f
+			                                
+			                                0,  // 20 - 27
+			                                0,  // 28 - 2f
+			                                0,  // 30 - 37
+			                                1 << (0x3b & 0x07),
+			                                
+			                                0,  // 40 - 47
+			                                0,  // 48 - 4f
+			                                0,  // 50 - 57
+			                                0,  // 58 - 5f
+			                                
+			                                0,  // 60 - 67
+			                                0,  // 68 - 6f
+			                                0,  // 70 - 77
+			                                1 << (0x7b & 0x07) | 1 << (0x7c & 0x07) };
+			
+			N::GetKeys_Result keys = N::GetKeys();
+			
+			if ( std::memcmp( keys.keyMapByteArray, desiredKeys, sizeof desiredKeys ) == 0 )
+			{
+				AugmentTESelection( itsTE, gSelectionPriorToSearch );
+			}
+		}
+		else if ( KeyIsAllowedAgainstSelection( c, itsTE ) )
 		{
 			N::TEKey( c, itsTE );
 		}
@@ -461,6 +503,8 @@ namespace Pedestal
 		if ( GetTESelection( itsView.Get() ) != itsSavedSelection )
 		{
 			gLastSearchPattern = itsPattern;
+			
+			gSelectionPriorToSearch = itsSavedSelection;
 		}
 	}
 	
@@ -484,11 +528,6 @@ namespace Pedestal
 		const char c = key & 0xff;
 		
 		return c;
-	}
-	
-	inline bool CharIsHorizontalArrow( char c )
-	{
-		return (c & 0xFE) == 0x1C;
 	}
 	
 	bool TESearchQuasimode::KeyDown( const EventRecord& event )
