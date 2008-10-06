@@ -423,6 +423,7 @@ namespace Pedestal
 		private:
 			TEView&                     itsView;
 			bool                        itSearchesBackward;
+			UInt16                      itsModifierMask;
 			TESelection                 itsSavedSelection;
 			std::vector< TESelection >  itsMatches;
 			std::string                 itsPattern;
@@ -439,6 +440,7 @@ namespace Pedestal
 	TESearchQuasimode::TESearchQuasimode( TEView&  view,
 	                                      bool     backward ) : itsView           ( view     ),
 	                                                            itSearchesBackward( backward ),
+	                                                            itsModifierMask   ( backward ? shiftKey : rightShiftKey ),
 	                                                            itsSavedSelection ( GetTESelection( view.Get() ) )
 	{
 		DrawQuasimodeFrame( itsView.Bounds() );
@@ -483,6 +485,11 @@ namespace Pedestal
 		return c;
 	}
 	
+	inline bool CharIsHorizontalArrow( char c )
+	{
+		return (c & 0xFE) == 0x1C;
+	}
+	
 	bool TESearchQuasimode::KeyDown( const EventRecord& event )
 	{
 		if ( event.what == autoKey )
@@ -490,11 +497,31 @@ namespace Pedestal
 			return true;  // eat auto-repeat keys
 		}
 		
-		UInt16 ignoredModifierMask = itSearchesBackward ? shiftKey : rightShiftKey;
+		const UInt16 ignoredModifierMask = itsModifierMask;
 		
 		const char c = GetTranslatedKeyFromEvent( event, ignoredModifierMask );
 		
-		if ( c == 0x08 )
+		if ( CharIsHorizontalArrow( c ) )
+		{
+			const bool goingToSearchBackward = c == kLeftArrowCharCode;
+			
+			if ( itSearchesBackward != goingToSearchBackward )
+			{
+				itSearchesBackward = goingToSearchBackward;
+				
+				if ( !itsPattern.empty() )
+				{
+					// FIXME:  Rerun the search in the other direction
+					itsPattern.clear();
+					itsMatches.clear();
+					
+					itsView.SetSelection( itsSavedSelection.start, itsSavedSelection.end );
+					
+					N::SysBeep( 30 );
+				}
+			}
+		}
+		else if ( c == 0x08 )
 		{
 			if ( itsPattern.empty() )
 			{
