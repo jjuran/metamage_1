@@ -86,8 +86,18 @@ namespace Pedestal
 		return true;
 	}
 	
-	static short TESearch( TEHandle hTE, short position, const std::string& pattern, bool backward, bool matchAtPosition )
+	static short TESearch( TEHandle            hTE,
+	                       const TESelection&  selection,
+	                       const std::string&  pattern,
+	                       bool                backward,
+	                       bool                matchAtPosition )
 	{
+		short increment = backward ? -1 : 1;
+		
+		short position = pattern.size() == 1 ? backward ? selection.start - pattern.size()
+		                                                : selection.end
+		               : selection.start + !matchAtPosition * increment;
+		
 		short teLength = hTE[0]->teLength;
 		
 		Handle hText = hTE[0]->hText;
@@ -96,16 +106,7 @@ namespace Pedestal
 		
 		short maxPosition = hLength - pattern.size();
 		
-		bool couldFitAtPosition = position <= maxPosition;
-		
 		short limit = backward ? -1 : maxPosition + 1;
-		
-		short increment = backward ? -1 : 1;
-		
-		if ( !matchAtPosition )
-		{
-			position += increment;
-		}
 		
 		while ( position != limit )
 		{
@@ -378,7 +379,7 @@ namespace Pedestal
 			
 			TESelection selection = GetTESelection( Get() );
 			
-			short match = TESearch( Get(), selection.start, gLastSearchPattern, backward, false );
+			short match = TESearch( Get(), selection, gLastSearchPattern, backward, false );
 			
 			if ( match == -1 )
 			{
@@ -548,7 +549,7 @@ namespace Pedestal
 			
 			itsMatches.push_back( selection );
 			
-			short match = TESearch( itsView.Get(), selection.start, itsPattern, itSearchesBackward, itsPattern.size() > 1 );
+			short match = TESearch( itsView.Get(), selection, itsPattern, itSearchesBackward, true );
 			
 			if ( match == -1 )
 			{
