@@ -1396,7 +1396,13 @@ Perl_do_execfree(pTHX)
 bool
 Perl_do_exec(pTHX_ char *cmd)
 {
-    return do_exec3(cmd,0,0);
+    do_exec3(cmd,0,0);
+    
+    if (ckWARN(WARN_EXEC))
+	Perl_warner(aTHX_ WARN_EXEC, "Can't exec \"%s\": %s", 
+	    cmd, Strerror(errno));
+    
+    return FALSE;
 }
 
 bool
@@ -1499,9 +1505,6 @@ Perl_do_exec3(pTHX_ char *cmd, int fd, int do_report)
 	{
 	    int e = errno;
 
-	    if (ckWARN(WARN_EXEC))
-		Perl_warner(aTHX_ WARN_EXEC, "Can't exec \"%s\": %s", 
-		    PL_Argv[0], Strerror(errno));
 	    if (do_report) {
 		PerlLIO_write(fd, (void*)&e, sizeof(int));
 		PerlLIO_close(fd);

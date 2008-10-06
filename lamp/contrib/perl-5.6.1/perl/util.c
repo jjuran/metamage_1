@@ -2444,6 +2444,11 @@ Perl_my_popen(pTHX_ char *cmd, char *mode)
 		pid2 = wait4pid(pid, &status, 0);
 	    } while (pid2 == -1 && errno == EINTR);
 	    errno = errkid;		/* Propagate errno from kid */
+	    
+	    if (ckWARN(WARN_EXEC))
+		Perl_warner(aTHX_ WARN_EXEC, "Can't exec \"%s\": %s", 
+		    cmd, Strerror(errno));
+	    
 	    return Nullfp;
 	}
     }

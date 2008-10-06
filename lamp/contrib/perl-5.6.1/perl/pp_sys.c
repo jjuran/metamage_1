@@ -3793,6 +3793,7 @@ PP(pp_system)
   {
     Pid_t childpid;
     int pp[2];
+    const char *volatile command = NULL;
 
     if (PerlProc_pipe(pp) >= 0)
 	did_pipes = 1;
@@ -3841,6 +3842,12 @@ PP(pp_system)
 		if (n != sizeof(int))
 		    DIE(aTHX_ "panic: kid popen errno read");
 		errno = errkid;		/* Propagate errno from kid */
+		
+		if ( command )
+		    if (ckWARN(WARN_EXEC))
+			Perl_warner(aTHX_ WARN_EXEC, "Can't exec \"%s\": %s", 
+			    command, Strerror(errno));
+		
 		STATUS_CURRENT = -1;
 	    }
 	}
@@ -3860,7 +3867,9 @@ PP(pp_system)
     else if (SP - MARK != 1)
 	value = (I32)do_aexec5(Nullsv, MARK, SP, pp[1], did_pipes);
     else {
-	value = (I32)do_exec3(SvPVx(sv_mortalcopy(*SP), n_a), pp[1], did_pipes);
+	char* cmd = SvPVx(sv_mortalcopy(*SP), n_a);
+	command = cmd;
+	value = (I32)do_exec3(cmd, pp[1], did_pipes);
     }
     PerlProc__exit(-1);
   }
