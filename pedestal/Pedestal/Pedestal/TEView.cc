@@ -70,6 +70,12 @@ namespace Pedestal
 	static std::string gLastSearchPattern;
 	
 	static TESelection gSelectionPriorToSearch;
+	static TESelection gSelectionPriorToArrow;
+	static TESelection gSelectionPriorToAugment;
+	
+	static char gLastKeyDownChar;
+	
+	static bool gAugmentingSelection;
 	
 	
 	inline bool CharIsHorizontalArrow( char c )
@@ -353,6 +359,33 @@ namespace Pedestal
 		return true;
 	}
 	
+	static bool LeftAndRightArrowsKeyed()
+	{
+		KeyMapByteArray desiredKeys = { 0,  //  0 -  7
+		                                0,  //  8 -  f
+		                                0,  // 10 - 17
+		                                0,  // 18 - 1f
+		                                
+		                                0,  // 20 - 27
+		                                0,  // 28 - 2f
+		                                0,  // 30 - 37
+		                                0,  // 38 - 3f
+		                                
+		                                0,  // 40 - 47
+		                                0,  // 48 - 4f
+		                                0,  // 50 - 57
+		                                0,  // 58 - 5f
+		                                
+		                                0,  // 60 - 67
+		                                0,  // 68 - 6f
+		                                0,  // 70 - 77
+		                                1 << (0x7b & 0x07) | 1 << (0x7c & 0x07) };
+		
+		N::GetKeys_Result keys = N::GetKeys();
+		
+		return std::memcmp( keys.keyMapByteArray, desiredKeys, sizeof desiredKeys ) == 0;
+	}
+	
 	bool TEView::KeyDown( const EventRecord& event )
 	{
 		if ( AutoKeyRequiresThreeStrikes()  &&  event.what == autoKey  &&  gTextEditKeyCount < 3 )
@@ -435,9 +468,51 @@ namespace Pedestal
 				AugmentTESelection( itsTE, gSelectionPriorToSearch );
 			}
 		}
+		else if ( CharIsHorizontalArrow( c ) )
+		{
+			const char opposite = c ^ kLeftArrowCharCode ^ kRightArrowCharCode;
+			
+			const bool keyed = LeftAndRightArrowsKeyed();
+			
+			const bool augment = keyed && !gAugmentingSelection;
+			
+			if ( !keyed )
+			{
+				gSelectionPriorToArrow = GetTESelection( Get() );
+				
+				N::TEKey( c, itsTE );
+				
+				gLastKeyDownChar = c;
+			}
+			else if ( augment )
+			{
+				gSelectionPriorToAugment = GetTESelection( itsTE );
+				
+				// Restore selection undone by previous arrow key
+				SetSelection( gSelectionPriorToArrow.start,
+				              gSelectionPriorToArrow.end );
+				
+				AugmentTESelection( itsTE, gSelectionPriorToSearch );
+			}
+			else
+			{
+				// Oops, the keys were pressed at the same time and the first
+				// one 'corrected' for the previous key when it shouldn't have.
+				// So we correct for the overcorrection.
+				
+				SetSelection( gSelectionPriorToAugment.start,
+				              gSelectionPriorToAugment.end );
+				
+				AugmentTESelection( itsTE, gSelectionPriorToSearch );
+			}
+			
+			gAugmentingSelection = augment;
+		}
 		else if ( KeyIsAllowedAgainstSelection( c, itsTE ) )
 		{
 			N::TEKey( c, itsTE );
+			
+			gLastKeyDownChar = c;
 		}
 		else
 		{
