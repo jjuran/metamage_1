@@ -490,13 +490,6 @@ static unsigned short crctable[] = {
 };
 
 
-static Boolean FSpExists(FSSpec *file)
-{
-	FInfo	fndrInfo;
-	
-	return FSpGetFInfo(file, &fndrInfo) == noErr; 
-}
-
 /* taken from the mcvert source code */
 static short CalculateCRC(const unsigned char *p, long len, short seed = 0)
 {
@@ -787,7 +780,7 @@ static void PrintString( std::string s )
 static int TestAE( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
-	NN::Owned< AEDescList > list = N::AECreateList< false >();
+	NN::Owned< N::AEDescList_Data > list = N::AECreateList< false >();
 	
 	N::AEPutPtr< N::typeChar >( list, 0, "foo" );
 	N::AEPutPtr< N::typeChar >( list, 0, "bar" );
@@ -1439,46 +1432,51 @@ static void MakeMap()
 	}
 }
 
-int O::Main( int argc, argv_t argv )
+namespace tool
 {
-	NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 	
-	//Assert_(argc > 0);
-	
-	MakeMap();
-	
-	std::string message;
-	
-	if (argc <= 1)
+	int Main( int argc, iota::argv_t argv )
 	{
-		typedef std::map< std::string, const SubMain* >::const_iterator const_iterator;
+		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
 		
-		for ( const_iterator it = gMapping.begin();  it != gMapping.end();  ++it )
+		//Assert_(argc > 0);
+		
+		MakeMap();
+		
+		std::string message;
+		
+		if (argc <= 1)
 		{
-			const char* name = it->second->name;
+			typedef std::map< std::string, const SubMain* >::const_iterator const_iterator;
 			
-			message += name;
-			message += "\n";
+			for ( const_iterator it = gMapping.begin();  it != gMapping.end();  ++it )
+			{
+				const char* name = it->second->name;
+				
+				message += name;
+				message += "\n";
+			}
+			
+			p7::write( p7::stdout_fileno, message.data(), message.size() );
+			
+			return 0;
 		}
 		
-		p7::write( p7::stdout_fileno, message.data(), message.size() );
+		std::string arg1 = argv[1];
 		
-		return 0;
+		const SubMain* sub = gMapping[ arg1 ];
+		
+		if ( sub == NULL )
+		{
+			message = "No such test '" + arg1 + "'.\n";
+			
+			p7::write( p7::stderr_fileno, message.data(), message.size() );
+			
+			return 1;
+		}
+		
+		return sub->proc( argc, argv );
 	}
-	
-	std::string arg1 = argv[1];
-	
-	const SubMain* sub = gMapping[ arg1 ];
-	
-	if ( sub == NULL )
-	{
-		message = "No such test '" + arg1 + "'.\n";
-		
-		p7::write( p7::stderr_fileno, message.data(), message.size() );
-		
-		return 1;
-	}
-	
-	return sub->proc( argc, argv );
+
 }
 
