@@ -477,20 +477,39 @@ namespace Pedestal
 		}
 		else if ( CharIsHorizontalArrow( c ) )
 		{
-			const bool keyed = LeftAndRightArrowsKeyed() && gArrowKeyMayBeChorded;
+			static bool selectionModified;
 			
-			if ( !keyed )
+			if ( !gArrowKeyMayBeChorded )
 			{
-				itsSelectionPriorToArrow = Get_TESelection( Get() );
-				
-				N::TEKey( c, itsTE );
-				
+				// This is an independent arrow key, pressed by itself
+				// (although the user could press the other one to complete the
+				// chord, and this may have already happened).
 				gArrowKeyMayBeChorded = true;
+				
+				// If both arrow keys are already down, then a chord occurs
+				// (to be processed on the next key-down), so don't change the
+				// selection in that case.
+				selectionModified = !LeftAndRightArrowsKeyed();
+				
+				if ( selectionModified )
+				{
+					// Save the selection (which will be changed by the arrow key).
+					// If this turns out to be a chord, we'll restore it.
+					itsSelectionPriorToArrow = Get_TESelection( Get() );
+					
+					N::TEKey( c, itsTE );
+				}
 			}
-			else
+			else if ( LeftAndRightArrowsKeyed() )
 			{
-				// Restore selection undone by previous arrow key
-				SetSelection( itsSelectionPriorToArrow );
+				// gArrowKeyMayBeChorded is true, so we're the second arrow key
+				// to go down, and both arrow keys are still down.  Hit it!
+				
+				if ( selectionModified )
+				{
+					// Restore selection undone by previous arrow key
+					SetSelection( itsSelectionPriorToArrow );
+				}
 				
 				AugmentTESelection( itsTE, itsSelectionPriorToSearch );
 			}
