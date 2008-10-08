@@ -38,12 +38,6 @@ namespace Pedestal
 	namespace NN = Nucleus;
 	
 	
-	struct TESelection
-	{
-		short start;
-		short end;
-	};
-	
 	inline bool operator==( const TESelection& a, const TESelection& b )
 	{
 		return a.start == b.start  &&  a.end == b.end;
@@ -54,7 +48,7 @@ namespace Pedestal
 		return !( a == b );
 	}
 	
-	static TESelection GetTESelection( TEHandle hTE )
+	static TESelection Get_TESelection( TEHandle hTE )
 	{
 		struct TESelection result;
 		
@@ -67,15 +61,9 @@ namespace Pedestal
 	}
 	
 	
+	static bool gArrowKeyMayBeChorded = false;
+	
 	static std::string gLastSearchPattern;
-	
-	static TESelection gSelectionPriorToSearch;
-	static TESelection gSelectionPriorToArrow;
-	static TESelection gSelectionPriorToAugment;
-	
-	static char gLastKeyDownChar;
-	
-	static bool gAugmentingSelection;
 	
 	
 	inline bool CharIsHorizontalArrow( char c )
@@ -133,6 +121,45 @@ namespace Pedestal
 		}
 		
 		return -1;
+	}
+	
+	
+	static bool LeftAndRightArrowsKeyed()
+	{
+		KeyMapByteArray desiredKeys = { 0,  //  0 -  7
+		                                0,  //  8 -  f
+		                                0,  // 10 - 17
+		                                0,  // 18 - 1f
+		                                
+		                                0,  // 20 - 27
+		                                0,  // 28 - 2f
+		                                0,  // 30 - 37
+		                                0,  // 38 - 3f
+		                                
+		                                0,  // 40 - 47
+		                                0,  // 48 - 4f
+		                                0,  // 50 - 57
+		                                0,  // 58 - 5f
+		                                
+		                                0,  // 60 - 67
+		                                0,  // 68 - 6f
+		                                0,  // 70 - 77
+		                                1 << (0x7b & 0x07) | 1 << (0x7c & 0x07) };
+		
+		N::GetKeys_Result keys = N::GetKeys();
+		
+		return std::memcmp( keys.keyMapByteArray, desiredKeys, sizeof desiredKeys ) == 0;
+	}
+	
+	static bool LeftOrRightArrowsKeyed()
+	{
+		N::GetKeys_Result keys = N::GetKeys();
+		
+		const UInt8 high7x = keys.keyMapByteArray[ 0x7b >> 3 ];
+		
+		const UInt8 leftRightArrowBits = 1 << (0x7b & 0x07) | 1 << (0x7c & 0x07);
+		
+		return high7x & leftRightArrowBits;
 	}
 	
 	
@@ -308,7 +335,9 @@ namespace Pedestal
 	
 	TEView::TEView( const Rect&  bounds,
 	                Initializer  /**/ ) : itsTE( ( SetTextAttributes(),
-	                                               N::TENew( ViewRectFromBounds( bounds ) ) ) )
+	                                               N::TENew( ViewRectFromBounds( bounds ) ) ) ),
+	                                      itsSelectionPriorToSearch(),
+	                                      itsSelectionPriorToArrow ()
 	{
 		N::TEAutoView( true, itsTE );  // enable auto-scrolling
 		
@@ -322,6 +351,11 @@ namespace Pedestal
 		N::TEIdle( itsTE );
 		
 		AdjustSleepForTimer( ::GetCaretTime() );
+		
+		if ( !LeftOrRightArrowsKeyed() )
+		{
+			gArrowKeyMayBeChorded = false;
+		}
 	}
 	
 	void TEView::MouseDown( const EventRecord& event )
@@ -357,33 +391,6 @@ namespace Pedestal
 	{
 		// False in Mac HIG
 		return true;
-	}
-	
-	static bool LeftAndRightArrowsKeyed()
-	{
-		KeyMapByteArray desiredKeys = { 0,  //  0 -  7
-		                                0,  //  8 -  f
-		                                0,  // 10 - 17
-		                                0,  // 18 - 1f
-		                                
-		                                0,  // 20 - 27
-		                                0,  // 28 - 2f
-		                                0,  // 30 - 37
-		                                0,  // 38 - 3f
-		                                
-		                                0,  // 40 - 47
-		                                0,  // 48 - 4f
-		                                0,  // 50 - 57
-		                                0,  // 58 - 5f
-		                                
-		                                0,  // 60 - 67
-		                                0,  // 68 - 6f
-		                                0,  // 70 - 77
-		                                1 << (0x7b & 0x07) | 1 << (0x7c & 0x07) };
-		
-		N::GetKeys_Result keys = N::GetKeys();
-		
-		return std::memcmp( keys.keyMapByteArray, desiredKeys, sizeof desiredKeys ) == 0;
 	}
 	
 	bool TEView::KeyDown( const EventRecord& event )
@@ -426,7 +433,7 @@ namespace Pedestal
 			
 			bool backward = shifted == shiftKey;
 			
-			TESelection selection = GetTESelection( Get() );
+			TESelection selection = Get_TESelection( Get() );
 			
 			short match = TESearch( Get(), selection, gLastSearchPattern, backward, false );
 			
@@ -465,54 +472,32 @@ namespace Pedestal
 			
 			if ( std::memcmp( keys.keyMapByteArray, desiredKeys, sizeof desiredKeys ) == 0 )
 			{
-				AugmentTESelection( itsTE, gSelectionPriorToSearch );
+				AugmentTESelection( itsTE, itsSelectionPriorToSearch );
 			}
 		}
 		else if ( CharIsHorizontalArrow( c ) )
 		{
-			const char opposite = c ^ kLeftArrowCharCode ^ kRightArrowCharCode;
-			
-			const bool keyed = LeftAndRightArrowsKeyed();
-			
-			const bool augment = keyed && !gAugmentingSelection;
+			const bool keyed = LeftAndRightArrowsKeyed() && gArrowKeyMayBeChorded;
 			
 			if ( !keyed )
 			{
-				gSelectionPriorToArrow = GetTESelection( Get() );
+				itsSelectionPriorToArrow = Get_TESelection( Get() );
 				
 				N::TEKey( c, itsTE );
 				
-				gLastKeyDownChar = c;
-			}
-			else if ( augment )
-			{
-				gSelectionPriorToAugment = GetTESelection( itsTE );
-				
-				// Restore selection undone by previous arrow key
-				SetSelection( gSelectionPriorToArrow.start,
-				              gSelectionPriorToArrow.end );
-				
-				AugmentTESelection( itsTE, gSelectionPriorToSearch );
+				gArrowKeyMayBeChorded = true;
 			}
 			else
 			{
-				// Oops, the keys were pressed at the same time and the first
-				// one 'corrected' for the previous key when it shouldn't have.
-				// So we correct for the overcorrection.
+				// Restore selection undone by previous arrow key
+				SetSelection( itsSelectionPriorToArrow );
 				
-				SetSelection( gSelectionPriorToAugment.start,
-				              gSelectionPriorToAugment.end );
-				
-				AugmentTESelection( itsTE, gSelectionPriorToSearch );
+				AugmentTESelection( itsTE, itsSelectionPriorToSearch );
 			}
-			
-			gAugmentingSelection = augment;
 		}
 		else if ( KeyIsAllowedAgainstSelection( c, itsTE ) )
 		{
 			N::TEKey( c, itsTE );
-			
-			gLastKeyDownChar = c;
 		}
 		else
 		{
@@ -559,7 +544,7 @@ namespace Pedestal
 	                                      bool     backward ) : itsView           ( view     ),
 	                                                            itSearchesBackward( backward ),
 	                                                            itsModifierMask   ( backward ? shiftKey : rightShiftKey ),
-	                                                            itsSavedSelection ( GetTESelection( view.Get() ) )
+	                                                            itsSavedSelection ( Get_TESelection( view.Get() ) )
 	{
 		DrawQuasimodeFrame( itsView.Bounds() );
 	}
@@ -575,11 +560,11 @@ namespace Pedestal
 		
 		N::RGBForeColor( gRGBBlack );
 		
-		if ( GetTESelection( itsView.Get() ) != itsSavedSelection )
+		if ( Get_TESelection( itsView.Get() ) != itsSavedSelection )
 		{
 			gLastSearchPattern = itsPattern;
 			
-			gSelectionPriorToSearch = itsSavedSelection;
+			itsView.itsSelectionPriorToSearch = itsSavedSelection;
 		}
 	}
 	
@@ -630,7 +615,7 @@ namespace Pedestal
 					itsPattern.clear();
 					itsMatches.clear();
 					
-					itsView.SetSelection( itsSavedSelection.start, itsSavedSelection.end );
+					itsView.SetSelection( itsSavedSelection );
 					
 					N::SysBeep( 30 );
 				}
@@ -650,7 +635,7 @@ namespace Pedestal
 				
 				itsPattern.resize( itsPattern.size() - 1 );  // pop_back() isn't standard
 				
-				itsView.SetSelection( match.start, match.end );
+				itsView.SetSelection( match );
 			}
 		}
 		else
@@ -659,7 +644,7 @@ namespace Pedestal
 			
 			short position = itsView.Get()[0]->selStart;
 			
-			TESelection selection = GetTESelection( itsView.Get() );
+			TESelection selection = Get_TESelection( itsView.Get() );
 			
 			itsMatches.push_back( selection );
 			
@@ -667,7 +652,7 @@ namespace Pedestal
 			
 			if ( match == -1 )
 			{
-				itsView.SetSelection( itsSavedSelection.start, itsSavedSelection.end );
+				itsView.SetSelection( itsSavedSelection );
 				
 				N::SysBeep();
 			}
@@ -699,6 +684,8 @@ namespace Pedestal
 		{
 			N::TEDeactivate( itsTE );
 		}
+		
+		gArrowKeyMayBeChorded = false;
 	}
 	
 	void TEView::Update()
@@ -788,11 +775,6 @@ namespace Pedestal
 		{
 			return false;
 		}
-	}
-	
-	void TEView::SetSelection( short start, short end )
-	{
-		N::TESetSelect( start, end, itsTE );
 	}
 	
 	int TEView::AppendChars( const char* data, unsigned int byteCount, bool updateNow )

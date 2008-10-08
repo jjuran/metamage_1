@@ -17,6 +17,12 @@
 namespace Pedestal
 {
 	
+	struct TESelection
+	{
+		short start;
+		short end;
+	};
+	
 	Rect Bounds( TEHandle hTE );
 	short CountLinesForDisplay( TEHandle hTE );
 	short CountLinesForEditing( TEHandle hTE );
@@ -30,10 +36,17 @@ namespace Pedestal
 	void Scroll( TEHandle hTE, short dh, short dv );
 	
 	
+	class TESearchQuasimode;
+	
 	class TEView : public View
 	{
+		friend class TESearchQuasimode;
+		
 		private:
 			Nucleus::Owned< TEHandle > itsTE;
+			
+			TESelection itsSelectionPriorToSearch;
+			TESelection itsSelectionPriorToArrow;
 		
 		public:
 			TEView( const Rect& bounds, Initializer );
@@ -46,7 +59,15 @@ namespace Pedestal
 			SInt16 TextLength() const  { return Nitrogen::GetTELength    ( itsTE ); }
 			Handle TextHandle()        { return Nitrogen::GetTETextHandle( itsTE ); }
 			
-			void SetSelection( short start, short end );
+			void SetSelection( short start, short end )
+			{
+				Nitrogen::TESetSelect( start, end, itsTE );
+			}
+			
+			void SetSelection( const TESelection& selection )
+			{
+				SetSelection( selection.start, selection.end );
+			}
 			
 			int AppendChars( const char* data, unsigned int byteCount, bool updateNow );
 			
