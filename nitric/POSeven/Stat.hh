@@ -14,84 +14,15 @@
 #ifndef POSEVEN_STAT_HH
 #define POSEVEN_STAT_HH
 
-// Standard C++
-#include <string>
-
-// POSIX
-#include <sys/stat.h>
-
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/functions/chmod.hh"
+#include "POSeven/functions/fchmod.hh"
 #include "POSeven/functions/fstat.hh"
+#include "POSeven/functions/lstat.hh"
 #include "POSeven/functions/mkdir.hh"
+#include "POSeven/functions/mkfifo.hh"
 #include "POSeven/functions/stat.hh"
 
-
-namespace poseven
-{
-	
-	inline void chmod( const char* pathname, mode_t mode )
-	{
-		throw_posix_result( ::chmod( pathname, mode ) );
-	}
-	
-	inline void chmod( const std::string& pathname, mode_t mode )
-	{
-		chmod( pathname.c_str(), mode );
-	}
-	
-	inline void fchmod( fd_t fd, mode_t mode )
-	{
-		throw_posix_result( ::fchmod( fd, mode ) );
-	}
-	
-	inline void mkfifo( const char* pathname, mode_t mode )
-	{
-		throw_posix_result( ::mkfifo( pathname, mode ) );
-	}
-	
-	inline void mkfifo( const std::string& pathname, mode_t mode )
-	{
-		mkfifo( pathname.c_str(), mode );
-	}
-	
-	inline bool lstat( const char* pathname, struct stat& sb )
-	{
-		int status = ::lstat( pathname, &sb );
-		
-		if ( status == -1 )
-		{
-			if ( errno == ENOENT )
-			{
-				return false;
-			}
-			
-			throw_errno( errno );
-		}
-		
-		return true;
-	}
-	
-	inline struct stat lstat( const char* pathname )
-	{
-		struct stat sb;
-		
-		throw_posix_result( ::lstat( pathname, &sb ) );
-		
-		return sb;
-	}
-	
-	inline bool lstat( const std::string& pathname, struct stat& sb )
-	{
-		return lstat( pathname.c_str(), sb );
-	}
-	
-	inline struct stat lstat( const std::string& pathname )
-	{
-		return lstat( pathname.c_str() );
-	}
-	
-}
 
 #endif
 
