@@ -62,6 +62,14 @@ namespace Genie
 	using namespace io::path_descent_operators;
 	
 	
+	inline bool operator==( const FSSpec& a, const FSSpec& b )
+	{
+		const std::size_t length = sizeof (SInt16) + sizeof (UInt32) + 1 + a.name[0];
+		
+		return std::memcmp( &a, &b, length ) == 0;
+	}
+	
+	
 	static std::string MacFromUnixName( const std::string& name )
 	{
 		//ASSERT( name != "."  );
@@ -109,7 +117,7 @@ namespace Genie
 		
 		const unsigned n_delimiters = 1;
 		
-		const unsigned hash_length = 2;
+		const unsigned hash_length = 6;
 		
 		std::size_t base_length = has_dot ? dot : unixName.size();
 		
@@ -128,8 +136,10 @@ namespace Genie
 		
 		macName += '¥';
 		
-		macName += base32_encode( hash.data[0] >> 3 );
-		macName += base32_encode( hash.data[1] >> 3 );
+		for ( int i = 0;  i != hash_length;  ++i )
+		{
+			macName += base32_encode( hash.data[ i ] >> 3 );
+		}
 		
 		if ( has_dot )
 		{
@@ -206,10 +216,13 @@ namespace Genie
 				if ( comment.size() > 31 )
 				{
 					// throws ENOENT if the encoded name doesn't exist
-					(void) OldFSSpecForLongUnixName( io::get_preceding_directory( item ), comment );
+					FSSpec hashed = OldFSSpecForLongUnixName( io::get_preceding_directory( item ), comment );
 					
-					// Assume it's a Unix name.  FIXME:  Need better heuristics
-					return comment;
+					if ( hashed == item )
+					{
+						// Assume it's a Unix name.  FIXME:  Need better heuristics
+						return comment;
+					}
 				}
 			}
 			catch ( ... )
