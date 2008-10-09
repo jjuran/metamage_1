@@ -23,6 +23,9 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
+// Io
+#include "io/walk.hh"
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -34,12 +37,12 @@
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
-#include "POSeven/functions/chmod.hh"
 #include "POSeven/functions/fchmod.hh"
 #include "POSeven/functions/fstat.hh"
 #include "POSeven/functions/mkdir.hh"
 #include "POSeven/functions/lseek.hh"
 #include "POSeven/functions/stat.hh"
+#include "POSeven/functions/utime.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Divergence
@@ -48,58 +51,6 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-
-
-namespace io
-{
-	
-	inline void unlock( const std::string& path )
-	{
-		poseven::chmod( path, 0600 );
-	}
-	
-	void recursively_delete_locked                   ( dummy::file_spec );
-	void recursively_delete_directory_locked         ( dummy::file_spec );
-	void recursively_delete_directory_contents_locked( dummy::file_spec );
-	
-	template < class FileSpec >
-	void recursively_delete_locked( FileSpec item )
-	{
-		if ( file_exists( item ) )
-		{
-			unlock( item );
-			
-			delete_file( item );
-		}
-		else
-		{
-			recursively_delete_directory_locked( item );
-		}
-	}
-	
-	template < class DirSpec >
-	void recursively_delete_directory_locked( DirSpec dir )
-	{
-		recursively_delete_directory_contents_locked( dir );
-		
-		delete_empty_directory( dir );
-	}
-	
-	template < class DirSpec >
-	void recursively_delete_directory_contents_locked( DirSpec item )
-	{
-		typedef typename filespec_traits< DirSpec >::file_spec file_spec;
-		
-		typedef typename directory_contents_traits< DirSpec >::container_type directory_container;
-		
-		directory_container contents = directory_contents( item );
-		
-		std::for_each( contents.begin(),
-		               contents.end(),
-		               std::ptr_fun( static_cast< void (*)(file_spec) >( recursively_delete_locked ) ) );
-	}
-	
-}
 
 
 namespace tool
@@ -156,14 +107,10 @@ namespace tool
 	}
 	
 	
-	static void copy_modification_date( p7::fd_t in, const std::string& out_file )
+	inline void copy_modification_date( p7::fd_t in, const std::string& out_file )
 	{
-		time_t mod_time = p7::fstat( in ).st_mtime;
-		
-		struct utimbuf time_buffer = { 0, mod_time };
-		
 		// Copy the modification date
-		p7::throw_posix_result( ::utime( out_file.c_str(), &time_buffer ) );
+		p7::utime( out_file, p7::fstat( in ).st_mtime );
 	}
 	
 	static void copy_file( const std::string& source, const std::string& dest )
@@ -378,7 +325,7 @@ namespace tool
 		// copy a to b
 		p7::lseek( a_fd, 0 );
 		
-		p7::throw_posix_result( ::fchmod( b_fd, 0600 ) );  // unlock
+		p7::fchmod( b_fd, 0600 );  // unlock
 		
 		p7::close( b_fd );
 		
@@ -388,7 +335,7 @@ namespace tool
 		
 		copy_modification_date( a_fd, b );
 		
-		p7::throw_posix_result( ::fchmod( b_fd, 0400 ) );  // lock
+		p7::fchmod( b_fd, 0400 );  // lock
 	}
 	
 	static void recursively_sync_directories( const std::string&  a,
@@ -715,7 +662,7 @@ namespace tool
 			
 			if ( !global_dry_run )
 			{
-				io::recursively_delete_locked( b_path );
+				io::recursively_delete( b_path );
 			}
 		}
 		
