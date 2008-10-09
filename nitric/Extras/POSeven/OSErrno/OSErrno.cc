@@ -41,6 +41,7 @@ namespace OSErrno
 			case posErr         :  // fall through
 			case paramErr       :  result = EINVAL;        break;
 			case dskFulErr      :  result = ENOSPC;        break;
+			case wPrErr         :  // fall through
 			case vLckdErr       :  result = EROFS;         break;
 			case bdNamErr       :  result = ENAMETOOLONG;  break;
 			
