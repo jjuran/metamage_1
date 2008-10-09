@@ -68,6 +68,12 @@ namespace poseven
 		
 	#endif
 		
+	#ifdef SIGSTKFLT
+		
+		sigstkflt = SIGSTKFLT,
+		
+	#endif
+		
 		signo_t_max = Nucleus::Enumeration_Traits< int >::max
 	};
 	
