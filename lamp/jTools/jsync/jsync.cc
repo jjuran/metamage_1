@@ -17,9 +17,6 @@
 #include <unistd.h>
 #include <utime.h>
 
-// Convergence
-#include "copyfile.hh"
-
 // Iota
 #include "iota/strings.hh"
 
@@ -36,9 +33,13 @@
 #include "POSeven/Directory.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
 #include "POSeven/extras/pump.hh"
+#include "POSeven/functions/chmod.hh"
+#include "POSeven/functions/fchmod.hh"
+#include "POSeven/functions/fstat.hh"
+#include "POSeven/functions/mkdir.hh"
 #include "POSeven/functions/lseek.hh"
+#include "POSeven/functions/stat.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Divergence
@@ -49,22 +50,12 @@
 #include "Orion/Main.hh"
 
 
-namespace poseven
-{
-	
-	static void rename( const std::string& a, const std::string& b )
-	{
-		throw_posix_result( std::rename( a.c_str(), b.c_str() ) );
-	}
-	
-}
-
 namespace io
 {
 	
-	static void unlock( const std::string& path )
+	inline void unlock( const std::string& path )
 	{
-		poseven::throw_posix_result( ::chmod( path.c_str(), 0600 ) );
+		poseven::chmod( path, 0600 );
 	}
 	
 	void recursively_delete_locked                   ( dummy::file_spec );
@@ -177,7 +168,7 @@ namespace tool
 	
 	static void copy_file( const std::string& source, const std::string& dest )
 	{
-		//p7::throw_posix_result( ::copyfile( source.c_str(), dest.c_str() ) );
+		//p7::copyfile( source, dest );
 		
 		NN::Owned< p7::fd_t > in  = p7::open( source, p7::o_rdonly );
 		NN::Owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, 0400 );
@@ -187,7 +178,7 @@ namespace tool
 		if ( globally_locking_files )
 		{
 			// Lock the backup file to prevent accidents
-			p7::throw_posix_result( fchmod( out, 0400 ) );
+			p7::fchmod( out, 0400 );
 		}
 		
 		p7::close( out );

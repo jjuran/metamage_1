@@ -17,9 +17,6 @@
 #include <unistd.h>
 #include <utime.h>
 
-// Convergence
-#include "copyfile.hh"
-
 // Iota
 #include "iota/strings.hh"
 
@@ -36,8 +33,14 @@
 #include "POSeven/Directory.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
 #include "POSeven/extras/pump.hh"
+#include "POSeven/functions/fchmod.hh"
+#include "POSeven/functions/fstat.hh"
+#include "POSeven/functions/mkdir.hh"
+#include "POSeven/functions/rename.hh"
+#include "POSeven/functions/stat.hh"
+#include "POSeven/functions/symlink.hh"
+#include "POSeven/functions/utime.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Divergence
@@ -46,17 +49,6 @@
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
-
-
-namespace poseven
-{
-	
-	static void rename( const std::string& a, const std::string& b )
-	{
-		throw_errno( std::rename( a.c_str(), b.c_str() ) );
-	}
-	
-}
 
 
 namespace tool
@@ -114,7 +106,7 @@ namespace tool
 			return;
 		}
 		
-		//p7::throw_errno( ::copyfile( source.c_str(), dest.c_str() ) );
+		//p7::copyfile( source, dest );
 		
 		NN::Owned< p7::fd_t > in  = p7::open( source, p7::o_rdonly );
 		NN::Owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, 0400 );
@@ -122,16 +114,12 @@ namespace tool
 		p7::pump( in, out );
 		
 		// Lock the backup file to prevent accidents
-		p7::throw_errno( ::fchmod( out, 0400 ) );
+		p7::fchmod( out, 0400 );
 		
 		p7::close( out );
 		
-		time_t mod_time = p7::fstat( in ).st_mtime;
-		
-		struct utimbuf time_buffer = { 0, mod_time };
-		
 		// Copy the modification date
-		p7::throw_errno( ::utime( dest.c_str(), &time_buffer ) );
+		p7::utime( dest, p7::fstat( in ).st_mtime );
 	}
 	
 	static void recursively_copy_directory( const std::string& source, const std::string& dest );
@@ -400,7 +388,7 @@ namespace tool
 		
 		::unlink( active.c_str() );
 		
-		p7::throw_errno( ::symlink( name, active.c_str() ) );
+		p7::symlink( name, active );
 	}
 	
 	
