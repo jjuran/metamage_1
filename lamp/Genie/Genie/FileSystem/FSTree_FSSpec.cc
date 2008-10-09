@@ -703,7 +703,12 @@ namespace Genie
 	
 	void FSTree_HFS::Delete() const
 	{
-		N::FSpDelete( GetFSSpec() );
+		FSSpec file = GetFSSpec();
+		
+		// returns fnfErr for directories
+		(void) ::FSpRstFLock( &file );
+		
+		N::FSpDelete( file );
 	}
 	
 	
