@@ -4,9 +4,7 @@
  */
 
 // Standard C/C++
-#include <cerrno>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 // Iota
@@ -77,6 +75,10 @@ namespace tool
 		O::BindOption( "-r", recursive       );
 		O::BindOption( "-f", globally_forced );
 		
+		O::AliasOption( "-r", "-R" );
+		O::AliasOption( "-r", "--recursive" );
+		O::AliasOption( "-f", "--force" );
+		
 		O::GetOptions( argc, argv );
 		
 		char const *const *free_args = O::FreeArguments();
@@ -86,9 +88,9 @@ namespace tool
 		// Check for sufficient number of args
 		if ( n_args < 1 )
 		{
-			(void) write( STDERR_FILENO, STR_LEN( "rm: missing arguments\n" ) );
+			p7::write( p7::stderr_fileno, STR_LEN( "rm: missing arguments\n" ) );
 			
-			return 1;
+			return p7::exit_failure;
 		}
 		
 		typedef void (*deleter_f)(const char*);
