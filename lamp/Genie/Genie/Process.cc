@@ -5,8 +5,7 @@
 
 #include "Genie/Process.hh"
 
-// Standard C/C++
-//#include <csignal>
+// Standard C
 #include <errno.h>
 #include <signal.h>
 
@@ -1117,7 +1116,7 @@ namespace Genie
 		
 		if ( stack_fault )
 		{
-			DeliverFatalSignal( SIGSEGV );
+			DeliverFatalSignal( SIGSTKFLT );
 		}
 		
 		LongJmp jump = GetLongJmp();
@@ -1319,6 +1318,7 @@ namespace Genie
 				case SIGFPE:
 				case SIGBUS:
 				case SIGSEGV:
+				case SIGSTKFLT:
 				case SIGSYS:
 					// create core image
 					signo |= 0x80;
