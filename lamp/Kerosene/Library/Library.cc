@@ -422,8 +422,8 @@
 		{
 			bool jan = extra_days < 31;
 			
-			result->tm_mday = 1 + extra_days - jan ? 0 : 31;
-			result->tm_mon  =                  jan ? 0 :  1;
+			result->tm_mday = 1 + extra_days - (jan ? 0 : 31);
+			result->tm_mon  =                   jan ? 0 :  1;
 		}
 		else
 		{
@@ -437,7 +437,7 @@
 			
 			result->tm_mon = 2 + 5 * late + month_offset;
 			
-			result->tm_mday = extra_days - month_offset * 61 / 2;
+			result->tm_mday = 1 + extra_days - month_offset * 61 / 2 - month_offset % 2;
 		}
 		
 		result->tm_isdst = 0;
