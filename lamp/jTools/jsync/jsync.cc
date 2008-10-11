@@ -13,9 +13,6 @@
 
 // POSIX
 #include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <utime.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -25,12 +22,6 @@
 
 // Io
 #include "io/walk.hh"
-
-// Nucleus
-#include "Nucleus/NAssert.h"
-
-// Nitrogen
-#include "Nitrogen/OSStatus.h"
 
 // POSeven
 #include "POSeven/Directory.hh"
@@ -45,9 +36,6 @@
 #include "POSeven/functions/utime.hh"
 #include "POSeven/types/exit_t.hh"
 
-// Divergence
-#include "Divergence/Utilities.hh"
-
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
@@ -56,10 +44,8 @@
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace Div = Divergence;
 	namespace O = Orion;
 	
 	
@@ -117,16 +103,13 @@ namespace tool
 	{
 		//p7::copyfile( source, dest );
 		
+		// Lock backup files to prevent accidents
+		mode_t mode = globally_locking_files ? 0400 : 0600;
+		
 		NN::Owned< p7::fd_t > in  = p7::open( source, p7::o_rdonly );
-		NN::Owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, 0400 );
+		NN::Owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, mode );
 		
 		p7::pump( in, out );
-		
-		if ( globally_locking_files )
-		{
-			// Lock the backup file to prevent accidents
-			p7::fchmod( out, 0400 );
-		}
 		
 		p7::close( out );
 		
@@ -180,58 +163,38 @@ namespace tool
 	}
 	
 	
-	static void sync_files( const std::string&  a,
-	                        const std::string&  b,
-	                        const std::string&  c )
+	static void compare_3_files( p7::fd_t  a,
+	                             p7::fd_t  b,
+	                             p7::fd_t  c,
+	                             bool&     a_matches_b,
+	                             bool&     b_matches_c,
+	                             bool&     c_matches_a )
 	{
-		if ( globally_verbose )
-		{
-			//std::printf( "%s\n", a.c_str() );
-		}
-		
-		NN::Owned< p7::fd_t > a_fd = p7::open( a, p7::o_rdonly );
-		NN::Owned< p7::fd_t > b_fd = p7::open( b, p7::o_rdonly );
-		NN::Owned< p7::fd_t > c_fd = p7::open( c, p7::o_rdonly );
-		
-		time_t a_time = p7::fstat( a_fd ).st_mtime;
-		time_t b_time = p7::fstat( b_fd ).st_mtime;
-		time_t c_time = p7::fstat( c_fd ).st_mtime;
-		
-		if ( a_time == b_time  &&  c_time == b_time )
-		{
-			return;
-		}
-		
 		const std::size_t buffer_size = 4096;
 		
 		char a_buffer[ buffer_size ];
 		char b_buffer[ buffer_size ];
 		char c_buffer[ buffer_size ];
 		
-		bool a_changed = false;
-		bool c_changed = false;
-		
-		bool out_of_sync = false;
-		
-		while ( !( a_changed && c_changed && out_of_sync ) )
+		while ( a_matches_b || b_matches_c || c_matches_a )
 		{
 			ssize_t a_read = 0;
 			ssize_t b_read = 0;
 			ssize_t c_read = 0;
 			
-			if ( !a_changed  ||  !out_of_sync )
+			if ( c_matches_a || a_matches_b )
 			{
-				a_read = p7::read( a_fd, a_buffer, buffer_size );
+				a_read = p7::read( a, a_buffer, buffer_size );
 			}
 			
-			if ( !a_changed  ||  !c_changed )
+			if ( a_matches_b || b_matches_c )
 			{
-				b_read = p7::read( b_fd, b_buffer, buffer_size );
+				b_read = p7::read( b, b_buffer, buffer_size );
 			}
 			
-			if ( !c_changed  ||  !out_of_sync )
+			if ( b_matches_c || c_matches_a )
 			{
-				c_read = p7::read( c_fd, c_buffer, buffer_size );
+				c_read = p7::read( c, c_buffer, buffer_size );
 			}
 			
 			if ( a_read + b_read + c_read == 0 )
@@ -239,51 +202,96 @@ namespace tool
 				break;
 			}
 			
-			if ( !a_changed )
+			if ( a_matches_b )
 			{
-				a_changed = a_read != b_read  ||  !std::equal( a_buffer, a_buffer + a_read, b_buffer );
+				a_matches_b = a_read == b_read  &&  std::equal( a_buffer, a_buffer + a_read, b_buffer );
 			}
 			
-			if ( !c_changed )
+			if ( b_matches_c )
 			{
-				c_changed = c_read != b_read  ||  !std::equal( c_buffer, c_buffer + c_read, b_buffer );
+				b_matches_c = c_read == b_read  &&  std::equal( c_buffer, c_buffer + c_read, b_buffer );
 			}
 			
-			if ( !out_of_sync )
+			if ( c_matches_a )
 			{
-				out_of_sync = a_read != c_read  ||  !std::equal( a_buffer, a_buffer + a_read, c_buffer );
+				c_matches_a = a_read == c_read  &&  std::equal( a_buffer, a_buffer + a_read, c_buffer );
+			}
+		}
+	}
+	
+	
+	static void sync_files( const std::string&  a,
+	                        const std::string&  b,
+	                        const std::string&  c,
+	                        bool                b_exists )
+	{
+		if ( globally_verbose )
+		{
+			//std::printf( "%s\n", a.c_str() );
+		}
+		
+		NN::Owned< p7::fd_t > a_fd = p7::open( a, p7::o_rdonly );
+		NN::Owned< p7::fd_t > c_fd = p7::open( c, p7::o_rdonly );
+		
+		NN::Owned< p7::fd_t > b_fd;
+		
+		if ( b_exists )
+		{
+			b_fd = p7::open( b, p7::o_rdonly );
+			
+			time_t a_time = p7::fstat( a_fd ).st_mtime;
+			time_t b_time = p7::fstat( b_fd ).st_mtime;
+			time_t c_time = p7::fstat( c_fd ).st_mtime;
+			
+			if ( a_time == b_time  &&  c_time == b_time )
+			{
+				return;
 			}
 		}
 		
-		if ( !a_changed && !c_changed )
+		bool a_matches_b = b_exists;
+		bool b_matches_c = b_exists;
+		bool c_matches_a = true;
+		
+		compare_3_files( a_fd,
+		                 b_fd,
+		                 c_fd,
+		                 a_matches_b,
+		                 b_matches_c,
+		                 c_matches_a );
+		
+		if ( a_matches_b && b_matches_c )
 		{
 			return;
 		}
 		
-		if ( out_of_sync )
+		if ( !c_matches_a )
 		{
 			// A and C are different from each other,
 			// so at least one must have changed from B
 			
-			if ( a_changed && c_changed )
+			if ( !a_matches_b && !b_matches_c )
 			{
-				std::printf( "%s requires 3-way merge\n", a.c_str() );
+				const char* status = b_exists ? "requires 3-way merge"
+				                              : "added simultaneously with different contents";
+				
+				std::printf( "%s %s\n", a.c_str(), status );
 				
 				return;
 			}
 			
-			// Both A and C didn't change, so exactly one did,
-			// and a copy is required
+			// At least one of A and C matched B, and it can't be both.
+			// A copy is required.
 			
-			std::printf( "%s %s\n", a_changed ? "Outgoing"
-			                                  : "Incoming", a.c_str() );
+			std::printf( "%s %s\n", a_matches_b ? "Incoming"
+			                                    : "Outgoing", a.c_str() );
 			
 			if ( global_dry_run )
 			{
 				return;
 			}
 			
-			if ( a_changed )
+			if ( b_matches_c )
 			{
 				// copy a to c
 				p7::lseek( a_fd, 0 );
@@ -312,7 +320,7 @@ namespace tool
 		}
 		else
 		{
-			std::printf( "Updating %s\n", a.c_str() );
+			std::printf( "%s %s\n", b_exists ? "Updating" : "Adding", a.c_str() );
 		}
 		
 		if ( global_dry_run )
@@ -325,17 +333,23 @@ namespace tool
 		// copy a to b
 		p7::lseek( a_fd, 0 );
 		
-		p7::fchmod( b_fd, 0600 );  // unlock
+		if ( b_exists )
+		{
+			p7::fchmod( b_fd, 0600 );  // unlock
+			
+			p7::close( b_fd );
+		}
 		
-		p7::close( b_fd );
-		
-		b_fd = p7::open( b, p7::o_rdwr | p7::o_trunc );
+		b_fd = p7::open( b, p7::o_rdwr | p7::o_trunc | p7::o_creat, 0400 );
 		
 		p7::pump( a_fd, b_fd );
 		
 		copy_modification_date( a_fd, b );
 		
-		p7::fchmod( b_fd, 0400 );  // lock
+		if ( b_exists )
+		{
+			p7::fchmod( b_fd, 0400 );  // lock
+		}
 	}
 	
 	static void recursively_sync_directories( const std::string&  a,
@@ -346,22 +360,29 @@ namespace tool
 	                              const std::string&  b,
 	                              const std::string&  c )
 	{
+		const bool b_exists = io::item_exists( b );
+		
 		bool a_is_dir = io::directory_exists( a );
 		bool b_is_dir = io::directory_exists( b );
 		bool c_is_dir = io::directory_exists( c );
 		
-		if ( bool matched = a_is_dir == b_is_dir  &&  c_is_dir == b_is_dir )
+		if ( bool matched = a_is_dir == c_is_dir  &&  (!b_exists || a_is_dir == b_is_dir) )
 		{
 			if ( a_is_dir )
 			{
+				if ( !b_exists )
+				{
+					p7::mkdir( b, 0777 );
+				}
+				
 				recursively_sync_directories( a, b, c );
 			}
 			else
 			{
-				sync_files( a, b, c );
+				sync_files( a, b, c, b_exists );
 			}
 		}
-		else
+		else if ( b_exists )
 		{
 			// file vs. directory
 			if ( a_is_dir != b_is_dir )
@@ -377,6 +398,10 @@ namespace tool
 				              c.c_str(),      b_is_dir ? "directory" : "file",
 				                                    c_is_dir ? "directory" : "file" );
 			}
+		}
+		else
+		{
+			std::printf( "Add conflict in %s (file vs. directory)\n", a.c_str() );
 		}
 	}
 	
@@ -626,6 +651,8 @@ namespace tool
 			std::string c_path = c_dir / filename;
 			
 			std::printf( "%s mutually added\n", a_path.c_str() );
+			
+			recursively_sync( a_path, b_path, c_path );
 		}
 		
 		for ( Iter it = a_deleted.begin();  it != a_deleted.end();  ++ it )
@@ -721,8 +748,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		O::BindOption( "-v", globally_verbose );
 		O::BindOption( "-n", global_dry_run   );
 		
