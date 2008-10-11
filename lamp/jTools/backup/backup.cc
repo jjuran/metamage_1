@@ -7,27 +7,16 @@
 #include <functional>
 #include <vector>
 
-// Standard C/C++
-#include <cstdio>
-#include <cstdlib>
-
-// POSIX
+// Standard C
 #include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <utime.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // Iota
 #include "iota/strings.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"
-
-// Nucleus
-#include "Nucleus/NAssert.h"
-
-// Nitrogen
-#include "Nitrogen/OSStatus.h"
 
 // POSeven
 #include "POSeven/Directory.hh"
@@ -43,9 +32,6 @@
 #include "POSeven/functions/utime.hh"
 #include "POSeven/types/exit_t.hh"
 
-// Divergence
-#include "Divergence/Utilities.hh"
-
 // Orion
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
@@ -54,10 +40,8 @@
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
-	namespace Div = Divergence;
 	namespace O = Orion;
 	
 	
@@ -402,8 +386,6 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
-		NN::RegisterExceptionConversion< NN::Exception, N::OSStatus >();
-		
 		bool backing_up = false;
 		bool comparing  = false;
 		
