@@ -754,16 +754,20 @@ namespace Genie
 		CreateFileWithLongName( itsParent, Name() );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags, mode_t /*mode*/ ) const
+	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags, mode_t mode ) const
 	{
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
+		
+		bool created = false;
 		
 		if ( creating )
 		{
 			if ( !Exists() )
 			{
 				CreateFile();
+				
+				created = true;
 			}
 			else if ( excluding )
 			{
@@ -771,7 +775,14 @@ namespace Genie
 			}
 		}
 		
-		return Open( flags );
+		boost::shared_ptr< IOHandle > opened = Open( flags );
+		
+		if ( created  &&  (mode & 0200) == 0 )
+		{
+			N::FSpSetFLock( GetFSSpec() );
+		}
+		
+		return opened;
 	}
 	
 	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags ) const
