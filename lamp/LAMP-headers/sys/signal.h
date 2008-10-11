@@ -82,6 +82,7 @@ __END_DECLS
 #define	SIGTERM	15	/* software termination signal from kill */
 #ifndef _POSIX_SOURCE
 //#define	SIGURG	16	/* urgent condition on IO channel */
+#define SIGSTKFLT 16
 #endif
 //#define	SIGSTOP	17	/* sendable stop signal not from tty */
 #define SIGCHLD	17
