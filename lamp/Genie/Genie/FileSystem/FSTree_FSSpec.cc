@@ -291,6 +291,9 @@ namespace Genie
 			
 			void Delete() const;
 			
+			off_t GetEOF() const;
+			void  SetEOF( off_t length ) const;
+			
 			std::string ReadLink() const;
 			FSTreePtr ResolveLink() const;
 			
@@ -711,6 +714,20 @@ namespace Genie
 		N::FSpDelete( file );
 	}
 	
+	
+	off_t FSTree_HFS::GetEOF() const
+	{
+		CInfoPBRec paramBlock;
+		
+		N::FSpGetCatInfo( GetFSSpec(), paramBlock );
+		
+		return paramBlock.hFileInfo.ioFlLgLen;
+	}
+	
+	void FSTree_HFS::SetEOF( off_t length ) const
+	{
+		N::SetEOF( N::FSpOpenDF( GetFSSpec(), N::fsWrPerm ), length );
+	}
 	
 	std::string FSTree_HFS::ReadLink() const
 	{
