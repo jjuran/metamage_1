@@ -231,9 +231,9 @@ namespace tool
 		return MakeVector( single_result );
 	}
 	
-	static int Open( const char* path, mode_t mode )
+	static int Open( const char* path, int oflags )
 	{
-		int opened = open( path, mode );
+		int opened = open( path, oflags, 0666 );
 		
 		p7::throw_posix_result( opened );
 		
