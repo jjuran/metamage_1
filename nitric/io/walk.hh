@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2007 by Joshua Juran.
+// Written 2007-2008 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -44,25 +44,105 @@ namespace io
 	
 	dummy::directory_stream directory_contents( dummy::file_spec );
 	
+	struct walk_noop
+	{
+		template < class Param >
+		bool operator()( const Param&, unsigned depth ) const
+		{
+			return true;
+		}
+	};
+	
+	template < class DirSpec, class F1, class F2, class F3 >
+	void recursively_walk_subtrees( const DirSpec&  dir,
+	                                F1              visit_dir_before,
+	                                F2              visit_file,
+	                                F3              visit_dir_after,
+	                                unsigned        depth = 0 );
+	
+	template < class FileSpec, class F1, class F2, class F3 >
+	void recursively_walk_tree( const FileSpec&  spec,
+	                            F1               visit_dir_before,
+	                            F2               visit_file,
+	                            F3               visit_dir_after,
+	                            unsigned         depth = 0 )
+	{
+		if ( file_exists( spec ) )
+		{
+			visit_file( spec, depth );
+		}
+		else if ( visit_dir_before( spec, depth ) )
+		{
+			recursively_walk_subtrees( spec,
+			                           visit_dir_before,
+			                           visit_file,
+			                           visit_dir_after,
+			                           depth );
+			
+			visit_dir_after( spec, depth );
+		}
+	}
+	
+	template < class DirSpec, class F1, class F2, class F3 >
+	void recursively_walk_subtrees( const DirSpec&  dir,
+	                                F1              visit_dir_before,
+	                                F2              visit_file,
+	                                F3              visit_dir_after,
+	                                unsigned        depth = 0 )
+	{
+		typedef typename filespec_traits< DirSpec >::file_spec file_spec;
+		
+		typedef typename directory_contents_traits< DirSpec >::container_type directory_container;
+		
+		directory_container contents = directory_contents( dir );
+		
+		++depth;
+		
+		typedef typename directory_container::const_iterator Iter;
+		
+		for ( Iter it = contents.begin();  it != contents.end();  ++it )
+		{
+			recursively_walk_tree( *it,
+			                       visit_dir_before,
+			                       visit_file,
+			                       visit_dir_after,
+			                       depth );
+		}
+	}
+	
 	void recursively_delete                   ( dummy::file_spec );
 	void recursively_delete_directory         ( dummy::file_spec );
 	void recursively_delete_directory_contents( dummy::file_spec );
 	
 	template < class FileSpec >
-	void recursively_delete( FileSpec item )
+	struct file_deleter
 	{
-		if ( file_exists( item ) )
+		void operator()( const FileSpec& spec, unsigned depth ) const
 		{
-			delete_file( item );
+			delete_file( spec );
 		}
-		else
+	};
+	
+	template < class FileSpec >
+	struct directory_deleter
+	{
+		void operator()( const FileSpec& spec, unsigned depth ) const
 		{
-			recursively_delete_directory( item );
+			delete_empty_directory( spec );
 		}
+	};
+	
+	template < class FileSpec >
+	inline void recursively_delete( const FileSpec& item )
+	{
+		recursively_walk_tree( item,
+		                       walk_noop(),
+		                       file_deleter     < FileSpec >(),
+		                       directory_deleter< FileSpec >() );
 	}
 	
 	template < class DirSpec >
-	void recursively_delete_directory( DirSpec dir )
+	void recursively_delete_directory( const DirSpec& dir )
 	{
 		recursively_delete_directory_contents( dir );
 		
@@ -70,26 +150,15 @@ namespace io
 	}
 	
 	template < class DirSpec >
-	void recursively_delete_directory_contents( DirSpec item )
+	void recursively_delete_directory_contents( const DirSpec& item )
 	{
 		typedef typename filespec_traits< DirSpec >::file_spec file_spec;
 		
-		typedef typename directory_contents_traits< DirSpec >::container_type directory_container;
-		
-		directory_container contents = directory_contents( item );
-		
-		std::for_each( contents.begin(),
-		               contents.end(),
-		               std::ptr_fun( static_cast< void (*)(file_spec) >( recursively_delete ) ) );
+		recursively_walk_subtrees( item,
+		                           walk_noop(),
+		                           file_deleter     < file_spec >(),
+		                           directory_deleter< file_spec >() );
 	}
-	
-	template < class F1, class F2 >
-	void walk_tree( dummy::file_spec, F1 visit_before, F2 visit_after );
-	
-	template < class F1, class F2, class F3 >
-	void walk_tree( dummy::file_spec, F1 visit_dir_down,
-	                                  F2 visit_file,
-	                                  F3 visit_dir_up );
 	
 }
 
