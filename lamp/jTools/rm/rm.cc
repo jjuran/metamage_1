@@ -61,6 +61,11 @@ namespace tool
 	
 	static void recursive_delete( const char* path )
 	{
+		if ( globally_forced && !io::item_exists( path ) )
+		{
+			return;
+		}
+		
 		recursively_walk_tree( std::string( path ),
 		                       io::walk_noop(),
 		                       file_deleter(),
