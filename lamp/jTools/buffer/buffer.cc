@@ -213,7 +213,7 @@ namespace tool
 		
 		p7::lseek( window, 0 );
 		
-		NN::Owned< p7::fd_t > output = p7::open( output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy, 0666 );
+		NN::Owned< p7::fd_t > output = p7::open( output_file, p7::o_wronly | p7::o_creat | p7::o_trunc_lazy );
 		
 		p7::pid_t pid = p7::vfork();
 		
