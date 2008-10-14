@@ -10,10 +10,6 @@
 // Standard C
 #include <stdlib.h>
 
-// POSIX
-#include <sys/ioctl.h>
-#include <unistd.h>
-
 // Lamp
 #ifdef __LAMP__
 #include "lamp/winio.h"
@@ -21,6 +17,8 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/write.hh"
 
 // Io
 #include "Io/TextInput.hh"
@@ -85,20 +83,17 @@ namespace tool
 		
 		try
 		{
-			NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly );
-			
 			short dimensions[ 2 ] = { 0 };
 			
-			int status = ioctl( tty, WIOCGDIM, &dimensions );
+			p7::ioctl( p7::open( "/dev/tty", p7::o_rdonly ),
+			           WIOCGDIM,
+			           &dimensions );
 			
-			if ( status == 0 )
-			{
-				std::string lines   = NN::Convert< std::string >( dimensions[0] );
-				std::string columns = NN::Convert< std::string >( dimensions[1] );
-				
-				AssignShellVariable( "LINES",   lines  .c_str() );
-				AssignShellVariable( "COLUMNS", columns.c_str() );
-			}
+			std::string lines   = NN::Convert< std::string >( dimensions[0] );
+			std::string columns = NN::Convert< std::string >( dimensions[1] );
+			
+			AssignShellVariable( "LINES",   lines  .c_str() );
+			AssignShellVariable( "COLUMNS", columns.c_str() );
 		}
 		catch ( ... )
 		{
