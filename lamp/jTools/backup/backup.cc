@@ -93,7 +93,7 @@ namespace tool
 		//p7::copyfile( source, dest );
 		
 		NN::Owned< p7::fd_t > in  = p7::open( source, p7::o_rdonly );
-		NN::Owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, 0400 );
+		NN::Owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, p7::mode_t( 0400 ) );
 		
 		p7::pump( in, out );
 		

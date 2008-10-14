@@ -232,7 +232,7 @@ namespace tool
 		
 		if ( result_code == 200 )
 		{
-			NN::Owned< p7::fd_t > edited_file_stream = p7::open( outputFile, p7::o_rdwr | p7::o_trunc | p7::o_creat, 0400 );
+			NN::Owned< p7::fd_t > edited_file_stream = p7::open( outputFile, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::mode_t( 0400 ) );
 			
 			p7::write( edited_file_stream, response.GetPartialContent() );
 			

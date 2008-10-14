@@ -104,7 +104,7 @@ namespace tool
 		//p7::copyfile( source, dest );
 		
 		// Lock backup files to prevent accidents
-		mode_t mode = globally_locking_files ? 0400 : 0600;
+		p7::mode_t mode = p7::mode_t( globally_locking_files ? 0400 : 0600 );
 		
 		NN::Owned< p7::fd_t > in  = p7::open( source, p7::o_rdonly );
 		NN::Owned< p7::fd_t > out = p7::open( dest,   p7::o_wronly | p7::o_creat | p7::o_excl, mode );
@@ -340,7 +340,7 @@ namespace tool
 			p7::close( b_fd );
 		}
 		
-		b_fd = p7::open( b, p7::o_rdwr | p7::o_trunc | p7::o_creat, 0400 );
+		b_fd = p7::open( b, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::mode_t( 0400 ) );
 		
 		p7::pump( a_fd, b_fd );
 		
