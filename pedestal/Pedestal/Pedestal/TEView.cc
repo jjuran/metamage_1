@@ -27,6 +27,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/Clipboard.hh"
+#include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/Scroller.hh"
 
@@ -284,46 +285,6 @@ namespace Pedestal
 	}
 	
 	
-	static void CustomClickLoop()
-	{
-		ClickableScroller::ClickLoop();
-	}
-	
-	// This gets set the first time we call TENew().
-	static ::TEClickLoopUPP gSystemClickLoop = NULL;
-	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	static pascal asm void MasterTEClickLoop()
-	{
-		MOVEA.L		gSystemClickLoop,A0	;  // load the default clickLoop
-		
-		JSR			(A0)				;  // invoke it
-		
-		MOVEM.L		D1-D2/A1,-(SP)		;  // save registers
-		JSR			CustomClickLoop		;  // invoke our custom clickLoop
-		MOVEM.L		(SP)+,D1-D2/A1		;  // restore registers
-		
-		MOVEQ		#1,D0				;  // return true by clearing the zero flag
-		RTS
-	}
-	
-#else
-	
-	static pascal Boolean MasterTEClickLoop( TEPtr pTE )
-	{
-		(void) ::InvokeTEClickLoopUPP( pTE, gSystemClickLoop );
-		
-		CustomClickLoop();
-		
-		return true;
-	}
-	
-#endif
-	
-	static ::TEClickLoopUPP gMasterClickLoop = ::NewTEClickLoopUPP( MasterTEClickLoop );
-	
-	
 	static int SetTextAttributes()
 	{
 		::TextFont( kFontIDMonaco );
@@ -341,9 +302,7 @@ namespace Pedestal
 	{
 		N::TEAutoView( true, itsTE );  // enable auto-scrolling
 		
-		static ::TEClickLoopUPP clickLoop = gSystemClickLoop = itsTE.Get()[0]->clickLoop;
-		
-		itsTE.Get()[0]->clickLoop = gMasterClickLoop;
+		InstallCustomTEClickLoop( itsTE );
 	}
 	
 	void TEView::Idle( const EventRecord& )
