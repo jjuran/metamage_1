@@ -18,7 +18,7 @@
 #include <sys/stat.h>
 
 // Nucleus
-#include "Nucleus/Enumeration.h"
+#include "Nucleus/Flag.h"
 
 
 namespace poseven
@@ -56,6 +56,8 @@ namespace poseven
 		
 		mode_t_max = Nucleus::Enumeration_Traits< ::mode_t >::max
 	};
+	
+	NUCLEUS_DEFINE_FLAG_OPS( mode_t )
 	
 	inline bool s_isblk ( mode_t mode )  { return S_ISBLK ( mode ); }
 	inline bool s_ischr ( mode_t mode )  { return S_ISCHR ( mode ); }
