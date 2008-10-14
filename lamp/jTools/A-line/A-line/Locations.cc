@@ -38,13 +38,6 @@ namespace tool
 	}
 	
 	
-	static std::string CreateDirPath( const std::string& path )
-	{
-		int made_dir = mkdir( path.c_str(), 0700 );
-		
-		return path;
-	}
-	
 	std::string home_dir_pathname()
 	{
 		if ( const char* home = getenv( "HOME" ) )
@@ -82,7 +75,7 @@ namespace tool
 			return builds;
 		}
 		
-		return CreateDirPath( home_dir_pathname() / "Developer/Builds" );
+		return mkdir_path( home_dir_pathname() / "Developer/Builds" );
 	}
 	
 	static std::string ProjectConfigDirPath( const std::string& projectPath )
@@ -104,17 +97,17 @@ namespace tool
 	
 	std::string TargetDirPath( const std::string& target )
 	{
-		return CreateDirPath( UserLabDirPath() / target );
+		return mkdir_path( UserLabDirPath() / target );
 	}
 	
 	std::string LibrariesDirPath()
 	{
-		return CreateDirPath( "Libraries" );
+		return mkdir_path( "Libraries" );
 	}
 	
 	std::string RezzedDirPath()
 	{
-		return CreateDirPath( "_Rezzed" );
+		return mkdir_path( "_Rezzed" );
 	}
 	
 	std::string get_project_dependencies_pathname( const std::string& project_name )
