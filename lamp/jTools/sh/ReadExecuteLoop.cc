@@ -85,7 +85,7 @@ namespace tool
 		
 		try
 		{
-			NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly, 0 );
+			NN::Owned< p7::fd_t > tty = p7::open( "/dev/tty", p7::o_rdonly );
 			
 			short dimensions[ 2 ] = { 0 };
 			
