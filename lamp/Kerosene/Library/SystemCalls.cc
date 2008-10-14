@@ -150,6 +150,8 @@ DEFINE_STUB( truncate )
 DEFINE_STUB( ftruncate )
 DEFINE_STUB( fchmod )
 
+DEFINE_STUB( setitimer )
+DEFINE_STUB( getitimer )
 DEFINE_STUB( stat )
 DEFINE_STUB( lstat )
 DEFINE_STUB( fstat )
