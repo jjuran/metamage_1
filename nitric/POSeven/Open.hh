@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2006-2007 by Joshua Juran.
+// Written 2006-2008 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -20,16 +20,12 @@
 // POSIX
 #include <fcntl.h>
 
-// Nucleus
-#ifndef NUCLEUS_FLAG_H
-#include "Nucleus/Flag.h"
-#endif
-
 // Io
 #include "io/io.hh"
 
 // POSeven
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/types/mode_t.hh"
 
 
 namespace poseven
@@ -56,9 +52,9 @@ namespace poseven
 	
 	NUCLEUS_DEFINE_FLAG_OPS( oflag_t )
 	
-	Nucleus::Owned< fd_t > open( const char* name, oflag_t oflag, int mode = 0 );
+	Nucleus::Owned< fd_t > open( const char* name, oflag_t oflag, mode_t mode = mode_t( 644 ) );
 	
-	inline Nucleus::Owned< fd_t > open( const std::string& name, oflag_t oflag, int mode = 0 )
+	inline Nucleus::Owned< fd_t > open( const std::string& name, oflag_t oflag, mode_t mode = mode_t( 644 ) )
 	{
 		return open( name.c_str(), oflag, mode );
 	}

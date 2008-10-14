@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2006-2007 by Joshua Juran.
+// Written 2006-2008 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -17,13 +17,11 @@
 namespace poseven
 {
 	
-	Nucleus::Owned< fd_t > open( const char* name, oflag_t oflag, int mode )
+	Nucleus::Owned< fd_t > open( const char* name, oflag_t oflag, mode_t mode )
 	{
 		// register errnos
 		
-		int fd;
-		
-		throw_posix_result( fd = ::open( name, oflag, mode ) );
+		int fd = throw_posix_result( ::open( name, oflag, mode ) );
 		
 		return Nucleus::Owned< fd_t >::Seize( fd_t( fd ) );
 	}
@@ -34,7 +32,7 @@ namespace poseven
 		
 		static void Foo()
 		{
-			fd_t foo = open( "/etc/motd", o_rdonly, 0 );
+			fd_t foo = open( "/etc/motd", o_rdonly );
 			
 			//Read( foo );
 			
