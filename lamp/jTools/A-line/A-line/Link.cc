@@ -150,7 +150,7 @@ namespace tool
 	
 	static void WritePkgInfo( const std::string& pathname, const std::string& contents )
 	{
-		p7::open( pathname, p7::o_creat, 0644 );
+		p7::open( pathname, p7::o_creat );
 		
 		if ( p7::slurp( pathname ) != contents )
 		{

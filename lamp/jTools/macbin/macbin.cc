@@ -152,8 +152,7 @@ namespace tool
 			MacBinary::Encode( targetFile,
 			                   &BlockWrite,
 			                   p7::open( argCount > 0 ? freeArgs[ 0 ] : make_archive_name( encode_target ).c_str(),
-			                             p7::o_wronly | p7::o_excl | p7::o_creat,
-			                             0644 ) );
+			                             p7::o_wronly | p7::o_excl | p7::o_creat ) );
 		}
 		else if ( decode_target )
 		{

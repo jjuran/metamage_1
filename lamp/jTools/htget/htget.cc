@@ -234,7 +234,7 @@ namespace tool
 		{
 			receive_document( response.GetPartialContent(),
 			                  http_server,
-			                  p7::open( outputFile, p7::o_wronly | create_flags, 0644 ) );
+			                  p7::open( outputFile, p7::o_wronly | create_flags ) );
 		}
 		
 		return 0;
