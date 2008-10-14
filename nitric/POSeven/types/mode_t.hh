@@ -47,7 +47,12 @@ namespace poseven
 		s_ixoth = S_IXOTH,
 		s_isuid = S_ISUID,
 		s_isgid = S_ISGID,
+		
+	#ifdef S_ISVTX
+		
 		s_isvtx = S_ISVTX,
+		
+	#endif
 		
 		mode_t_max = Nucleus::Enumeration_Traits< ::mode_t >::max
 	};
