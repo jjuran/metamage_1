@@ -18,6 +18,9 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
+// Io
+#include "io/walk.hh"
+
 // POSeven
 #include "POSeven/Directory.hh"
 #include "POSeven/Open.hh"
@@ -106,48 +109,63 @@ namespace tool
 		p7::utime( dest, p7::fstat( in ).st_mtime );
 	}
 	
-	static void recursively_copy_directory( const std::string& source, const std::string& dest );
-	
-	static void recursively_copy( const std::string& source, const std::string& dest )
+	class directory_maker
 	{
-		if ( io::file_exists( source ) )
-		{
-			copy_file( source, dest );
-		}
-		else
-		{
-			recursively_copy_directory( source, dest );
-		}
-	}
+		private:
+			const std::string& its_source;
+			const std::string& its_dest;
+		
+		public:
+			directory_maker( const std::string& source,
+			                 const std::string& dest ) : its_source( source ),
+			                                             its_dest  ( dest   )
+			{
+			}
+			
+			bool operator()( const std::string& path, unsigned depth ) const
+			{
+				if ( filter_directory( path ) )
+				{
+					return false;
+				}
+				
+				std::string new_path = its_dest;
+				
+				new_path.append( path.begin() + its_source.size(), path.end() );
+				
+				p7::mkdir( new_path );
+				
+				return true;
+			}
+	};
 	
-	static void recursively_copy_into( const std::string& source, const std::string& dest )
+	class file_copier
 	{
-		recursively_copy( source, dest / io::get_filename( source ) );
-	}
-	
-	static void recursively_copy_directory_contents( const std::string& source, const std::string& dest )
-	{
-		typedef p7::directory_contents_container directory_container;
+		private:
+			const std::string& its_source;
+			const std::string& its_dest;
 		
-		directory_container contents = io::directory_contents( source );
-		
-		std::for_each( contents.begin(),
-		               contents.end(),
-		               std::bind2nd( more::ptr_fun( recursively_copy_into ),
-		                             dest ) );
-	}
-	
-	static void recursively_copy_directory( const std::string& source, const std::string& dest )
-	{
-		if ( filter_directory( source ) )
-		{
-			return;
-		}
-		
-		p7::mkdir( dest );
-		
-		recursively_copy_directory_contents( source, dest );
-	}
+		public:
+			file_copier( const std::string& source,
+			             const std::string& dest ) : its_source( source ),
+			                                         its_dest  ( dest   )
+			{
+			}
+			
+			void operator()( const std::string& path, unsigned depth ) const
+			{
+				if ( filter_file( path ) )
+				{
+					return;
+				}
+				
+				std::string new_path = its_dest;
+				
+				new_path.append( path.begin() + its_source.size(), path.end() );
+				
+				copy_file( path, new_path );
+			}
+	};
 	
 	
 	static void compare_files( const std::string& a, const std::string& b )
@@ -352,7 +370,10 @@ namespace tool
 		
 		gmtime_r( &mod_time, &backup_time );
 		
-		recursively_copy_directory_contents( target, in_progress );
+		io::recursively_walk_subtrees( target,
+		                               directory_maker( target, in_progress ),
+		                               file_copier    ( target, in_progress ),
+		                               io::walk_noop() );
 		
 		char name[ sizeof "2008-10-02 01:30:00" ];  // 19 + 1 = 20
 		
