@@ -22,17 +22,18 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/types/mode_t.hh"
 
 
 namespace poseven
 {
 	
-	inline void mkdir( const char* path, mode_t mode )
+	inline void mkdir( const char* path, mode_t mode = mode_t( 0777 ) )
 	{
 		throw_posix_result( ::mkdir( path, mode ) );
 	}
 	
-	inline void mkdir( const std::string& path, mode_t mode )
+	inline void mkdir( const std::string& path, mode_t mode = mode_t( 0777 ) )
 	{
 		mkdir( path.c_str(), mode );
 	}
