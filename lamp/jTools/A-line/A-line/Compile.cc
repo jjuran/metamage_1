@@ -143,7 +143,7 @@ namespace tool
 	{
 		if ( !io::item_exists( folder ) )
 		{
-			p7::mkdir( folder, 0700 );
+			p7::mkdir( folder, p7::mode_t( 0700 ) );
 		}
 		
 		return folder;

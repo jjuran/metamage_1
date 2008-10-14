@@ -64,7 +64,7 @@ namespace tool
 		{
 			mkdir_path( io::get_preceding_directory( path ) );
 			
-			p7::mkdir( path, 0777 );
+			p7::mkdir( path );
 		}
 		
 		return path;
@@ -157,7 +157,7 @@ namespace tool
 			return;
 		}
 		
-		p7::mkdir( dest, p7::stat( source ).st_mode );
+		p7::mkdir( dest );
 		
 		recursively_copy_directory_contents( source, dest );
 	}
@@ -335,7 +335,7 @@ namespace tool
 		
 		if ( b_exists )
 		{
-			p7::fchmod( b_fd, 0600 );  // unlock
+			p7::fchmod( b_fd, p7::mode_t( 0600 ) );  // unlock
 			
 			p7::close( b_fd );
 		}
@@ -348,7 +348,7 @@ namespace tool
 		
 		if ( b_exists )
 		{
-			p7::fchmod( b_fd, 0400 );  // lock
+			p7::fchmod( b_fd, p7::mode_t( 0400 ) );  // lock
 		}
 	}
 	
@@ -372,7 +372,7 @@ namespace tool
 			{
 				if ( !b_exists )
 				{
-					p7::mkdir( b, 0777 );
+					p7::mkdir( b );
 				}
 				
 				recursively_sync_directories( a, b, c );

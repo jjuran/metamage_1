@@ -54,7 +54,7 @@ namespace tool
 		{
 			mkdir_path( io::get_preceding_directory( path ) );
 			
-			p7::mkdir( path, 0777 );
+			p7::mkdir( path );
 		}
 		
 		return path;
@@ -98,7 +98,7 @@ namespace tool
 		p7::pump( in, out );
 		
 		// Lock the backup file to prevent accidents
-		p7::fchmod( out, 0400 );
+		p7::fchmod( out, p7::mode_t( 0400 ) );
 		
 		p7::close( out );
 		
@@ -144,7 +144,7 @@ namespace tool
 			return;
 		}
 		
-		p7::mkdir( dest, p7::stat( source ).st_mode );
+		p7::mkdir( dest );
 		
 		recursively_copy_directory_contents( source, dest );
 	}
@@ -344,7 +344,7 @@ namespace tool
 	{
 		std::string in_progress = mkdir_path( storage ) / "(In Progress)";
 		
-		p7::mkdir( in_progress, 0700 );
+		p7::mkdir( in_progress );
 		
 		time_t mod_time = p7::stat( in_progress ).st_mtime;
 		
