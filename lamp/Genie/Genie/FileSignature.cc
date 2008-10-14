@@ -28,7 +28,7 @@ namespace Genie
 	{
 		UInt32 version = N::Gestalt( N::GestaltSelector( gestaltSystemVersion ) );
 		
-		if ( version > 0x1000 )
+		if ( version >= 0x1000 )
 		{
 			return true;
 		}
