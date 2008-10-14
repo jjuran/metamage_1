@@ -17,11 +17,9 @@
 // Standard C++
 #include <string>
 
-// POSIX
-#include <sys/stat.h>
-
 // POSeven
 #include "POSeven/Errno.hh"
+#include "POSeven/types/mode_t.hh"
 
 
 namespace poseven

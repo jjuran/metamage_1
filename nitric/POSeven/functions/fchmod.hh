@@ -14,12 +14,10 @@
 #ifndef POSEVEN_FUNCTIONS_FCHMOD_HH
 #define POSEVEN_FUNCTIONS_FCHMOD_HH
 
-// POSIX
-#include <sys/stat.h>
-
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/types/fd_t.hh"
+#include "POSeven/types/mode_t.hh"
 
 
 namespace poseven
