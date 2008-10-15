@@ -68,7 +68,7 @@ namespace Genie
 	
 	static std::string GetMachineName()
 	{
-		if ( !TARGET_RT_MAC_MACHO && (!TARGET_API_MAC_CARBON  ||  SystemVersion() < 0x00001000) )
+		if ( !TARGET_API_MAC_CARBON  ||  !TARGET_RT_MAC_MACHO  &&  SystemVersion() < 0x00001000 )
 		{
 			return GetStringResource( -16413 );
 		}
