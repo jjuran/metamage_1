@@ -16,6 +16,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_rom.hh"
 #if !TARGET_API_MAC_CARBON
+#include "Genie/FileSystem/FSTree_sys_mac_adb.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_drive.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_unit.hh"
@@ -55,6 +56,7 @@ namespace Genie
 		
 		{ "crm",  &Premapped_Factory< sys_mac_crm_Mappings > },
 		
+		{ "adb",   &Singleton_Factory< FSTree_sys_mac_adb   > },
 		{ "drive", &Singleton_Factory< FSTree_sys_mac_drive > },
 		{ "unit",  &Singleton_Factory< FSTree_sys_mac_unit  > },
 		
