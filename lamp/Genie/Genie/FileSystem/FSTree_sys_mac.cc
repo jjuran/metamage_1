@@ -10,6 +10,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_desktop.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gdev.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_gestalt.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_keys.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_machine.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_name.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_proc.hh"
@@ -31,6 +32,14 @@ namespace Genie
 	                               const std::string&  name )
 	{
 		typedef FSTree_QueryFile< sys_mac_name_Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name ) );
+	}
+	
+	static FSTreePtr Keys_Factory( const FSTreePtr&    parent,
+	                               const std::string&  name )
+	{
+		typedef FSTree_QueryFile< sys_mac_keys_Query > QueryFile;
 		
 		return MakeFSTree( new QueryFile( parent, name ) );
 	}
@@ -58,6 +67,7 @@ namespace Genie
 		{ "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > },
 		
 		{ "name", &Name_Factory },
+		{ "keys", &Keys_Factory },
 		
 		{ "rom", &Singleton_Factory< FSTree_sys_mac_rom > },
 		
