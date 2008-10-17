@@ -20,6 +20,7 @@
 #include "Genie/FileSystem/FSTree_sys_mac_crm.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_drive.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_unit.hh"
+#include "Genie/FileSystem/FSTree_sys_mac_xpram.hh"
 #endif
 #include "Genie/FileSystem/FSTree_sys_mac_user.hh"
 #include "Genie/FileSystem/FSTree_sys_mac_vol.hh"
@@ -45,6 +46,15 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name ) );
 	}
 	
+	template < class Query >
+	static FSTreePtr Query_Factory( const FSTreePtr&    parent,
+	                                const std::string&  name )
+	{
+		typedef FSTree_QueryFile< Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name ) );
+	}
+	
 	const Singleton_Mapping sys_mac_Mappings[] =
 	{
 		{ "vol",    &Singleton_Factory< FSTree_sys_mac_vol    > },
@@ -59,6 +69,8 @@ namespace Genie
 		{ "adb",   &Singleton_Factory< FSTree_sys_mac_adb   > },
 		{ "drive", &Singleton_Factory< FSTree_sys_mac_drive > },
 		{ "unit",  &Singleton_Factory< FSTree_sys_mac_unit  > },
+		
+		{ "xpram", &Query_Factory< sys_mac_xpram_Query > },
 		
 	#endif
 		
