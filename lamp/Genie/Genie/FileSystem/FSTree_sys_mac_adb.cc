@@ -27,14 +27,12 @@ namespace Genie
 	{
 		try
 		{
-			N::GetADBInfo( key );
+			return N::GetADBInfo( key ).devType != 0;
 		}
 		catch ( ... )
 		{
 			return false;
 		}
-		
-		return true;
 	}
 	
 	
@@ -92,9 +90,9 @@ namespace Genie
 				
 				ADBDataBlock data = N::GetADBInfo( itsKey );
 				
-				std::string value = ByteAsHex( data.origADBAddr );
+				std::string output = "0\n";
 				
-				std::string output = value + "\n";
+				output[0] += data.origADBAddr;
 				
 				return output;
 			}
