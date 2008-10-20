@@ -23,7 +23,7 @@ namespace Pedestal
 	Point ScrollPosition( ListHandle list );
 	
 	
-	class ListView
+	class ListView : public View
 	{
 		private:
 			struct TextAttributes

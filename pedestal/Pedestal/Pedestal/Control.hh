@@ -9,6 +9,9 @@
 // Nitrogen
 #include "Nitrogen/Controls.h"
 
+// Pedestal
+#include "Pedestal/View.hh"
+
 
 namespace Pedestal
 {
@@ -56,7 +59,7 @@ namespace Pedestal
 			static void TrackControl( object_type object, ControlPartCode part, Point point );
 	};
 	
-	class Control
+	class Control : public View
 	{
 		protected:
 			ControlRef macControl;
