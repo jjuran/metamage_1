@@ -29,22 +29,24 @@ namespace Pedestal
 		public:
 			struct Initializer {};
 			
-			void Idle     ( const EventRecord& event )  {}
-			void MouseDown( const EventRecord& event )  {}
-			bool KeyDown  ( const EventRecord& event )  { return false; }
+			virtual ~View()  {}
 			
-			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );
+			virtual void Idle     ( const EventRecord& event )  {}
+			virtual void MouseDown( const EventRecord& event )  {}
+			virtual bool KeyDown  ( const EventRecord& event )  { return false; }
 			
-			void Resize( short width, short height )  {}
+			virtual boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );
 			
-			void Update()  {}
+			virtual void Resize( short width, short height )  {}
 			
-			void Activate( bool activating )  {}
+			virtual void Update()  {}
 			
-			bool SetCursor( Point      location,
-			                RgnHandle  mouseRgn  )  { return false; }
+			virtual void Activate( bool activating )  {}
 			
-			bool UserCommand( MenuItemCode code  )  { return false; }
+			virtual bool SetCursor( Point      location,
+			                        RgnHandle  mouseRgn  )  { return false; }
+			
+			virtual bool UserCommand( MenuItemCode code  )  { return false; }
 	};
 	
 }
