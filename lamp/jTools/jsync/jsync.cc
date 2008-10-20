@@ -55,6 +55,9 @@ namespace tool
 	static bool globally_verbose = false;
 	static bool global_dry_run = false;
 	
+	static bool globally_up   = false;
+	static bool globally_down = false;
+	
 	static bool globally_locking_files = false;
 	
 	
@@ -291,9 +294,10 @@ namespace tool
 				return;
 			}
 			
-			if ( b_matches_c )
+			if ( b_matches_c && globally_up )
 			{
-				// copy a to c
+				// B matches C, so A changed.  Copy A to C if we're syncing up.
+				
 				p7::lseek( a_fd, 0 );
 				
 				p7::close( c_fd );
@@ -304,9 +308,10 @@ namespace tool
 				
 				copy_modification_date( a_fd, c );
 			}
-			else
+			else if ( a_matches_b && globally_down )
 			{
-				// copy c to a
+				// A matches B, so C changed.  Copy C to A if we're syncing down.
+				
 				p7::lseek( c_fd, 0 );
 				
 				p7::close( a_fd );
@@ -316,6 +321,12 @@ namespace tool
 				p7::pump( c_fd, a_fd );
 				
 				copy_modification_date( c_fd, a );
+			}
+			else
+			{
+				// We're skipping changes in this direction
+				
+				return;
 			}
 		}
 		else
@@ -608,7 +619,7 @@ namespace tool
 			
 			std::printf( "%s created\n", a_path.c_str() );
 			
-			if ( !global_dry_run )
+			if ( globally_up && !global_dry_run )
 			{
 				globally_locking_files = false;
 				
@@ -630,7 +641,7 @@ namespace tool
 			
 			std::printf( "%s created\n", c_path.c_str() );
 			
-			if ( !global_dry_run )
+			if ( globally_down && !global_dry_run )
 			{
 				globally_locking_files = false;
 				
@@ -748,10 +759,38 @@ namespace tool
 	
 	int Main( int argc, iota::argv_t argv )
 	{
+		bool bidirectional = false;
+		bool null          = false;
+		
 		O::BindOption( "-v", globally_verbose );
 		O::BindOption( "-n", global_dry_run   );
+		O::BindOption( "-v", globally_verbose );
+		
+		O::AliasOption( "-n", "--dry-run" );
+		O::AliasOption( "-v", "--verbose" );
+		
+		O::BindOption( "--up",   globally_up   );
+		O::BindOption( "--down", globally_down );
+		
+		O::BindOption( "-0", null          );
+		O::BindOption( "-2", bidirectional );
+		
+		O::AliasOption( "-2", "--bidi" );
 		
 		O::GetOptions( argc, argv );
+		
+		if ( bidirectional )
+		{
+			globally_up   =
+			globally_down = true;
+		}
+		else if ( !globally_up && !globally_down && !null )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "jsync: nothing to do; specify --up, --down, or -2,""\n"
+			                                       "jsync: or pass -0 go through the motions anyway."  "\n" ) );
+			
+			return p7::exit_failure;
+		}
 		
 		char const *const *free_args = O::FreeArguments();
 		
