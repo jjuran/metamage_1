@@ -28,7 +28,7 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
+#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/functions/accept.hh"
 #include "POSeven/functions/execv.hh"
@@ -36,6 +36,7 @@
 #include "POSeven/functions/signal.hh"
 #include "POSeven/functions/socket.hh"
 #include "POSeven/functions/vfork.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Io

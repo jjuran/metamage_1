@@ -36,6 +36,7 @@
 #include "POSeven/functions/execvp.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/waitpid.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/functions/_exit.hh"
 
 // Nitrogen Extras / Utilities

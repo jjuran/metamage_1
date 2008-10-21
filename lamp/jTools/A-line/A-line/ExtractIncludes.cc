@@ -9,7 +9,9 @@
 #include "iota/strings.hh"
 
 // POSeven
+#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
+#include "POSeven/functions/write.hh"
 
 // Io
 #include "Io/TextInput.hh"

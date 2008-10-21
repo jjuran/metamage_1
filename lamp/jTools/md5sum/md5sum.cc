@@ -8,6 +8,7 @@
 
 // POSeven
 #include "POSeven/Open.hh"
+#include "POSeven/functions/read.hh"
 
 // BitsAndBytes
 #include "HexStrings.hh"

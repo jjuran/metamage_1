@@ -24,6 +24,8 @@
 // POSeven
 #include "POSeven/Open.hh"
 #include "POSeven/extras/slurp.hh"
+#include "POSeven/functions/read.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Nitrogen

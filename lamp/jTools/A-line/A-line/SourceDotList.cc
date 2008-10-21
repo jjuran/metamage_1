@@ -6,6 +6,7 @@
 #include "A-line/SourceDotList.hh"
 
 // POSeven
+#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
 
 // Io
