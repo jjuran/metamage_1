@@ -55,16 +55,16 @@ namespace io
 	
 	template < class DirSpec, class F1, class F2, class F3 >
 	void recursively_walk_subtrees( const DirSpec&  dir,
-	                                F1              visit_dir_before,
-	                                F2              visit_file,
-	                                F3              visit_dir_after,
+	                                const F1&       visit_dir_before,
+	                                const F2&       visit_file,
+	                                const F3&       visit_dir_after,
 	                                unsigned        depth = 0 );
 	
 	template < class FileSpec, class F1, class F2, class F3 >
 	void recursively_walk_tree( const FileSpec&  spec,
-	                            F1               visit_dir_before,
-	                            F2               visit_file,
-	                            F3               visit_dir_after,
+	                            const F1&        visit_dir_before,
+	                            const F2&        visit_file,
+	                            const F3&        visit_dir_after,
 	                            unsigned         depth = 0 )
 	{
 		if ( file_exists( spec, overload() ) )
@@ -85,9 +85,9 @@ namespace io
 	
 	template < class DirSpec, class F1, class F2, class F3 >
 	void recursively_walk_subtrees( const DirSpec&  dir,
-	                                F1              visit_dir_before,
-	                                F2              visit_file,
-	                                F3              visit_dir_after,
+	                                const F1&       visit_dir_before,
+	                                const F2&       visit_file,
+	                                const F3&       visit_dir_after,
 	                                unsigned        depth = 0 )
 	{
 		typedef typename filespec_traits< DirSpec >::file_spec file_spec;
