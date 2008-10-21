@@ -9,6 +9,9 @@
 #include <set>
 #include <string>
 
+// Standard C/C++
+#include <cstring>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
