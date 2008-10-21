@@ -24,7 +24,7 @@
 #include "io/io.hh"
 
 // POSeven
-#include "POSeven/FileDescriptor.hh"
+#include "POSeven/functions/close.hh"
 #include "POSeven/types/mode_t.hh"
 
 
