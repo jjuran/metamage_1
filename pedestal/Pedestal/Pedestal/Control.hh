@@ -59,7 +59,7 @@ namespace Pedestal
 			static void TrackControl( object_type object, ControlPartCode part, Point point );
 	};
 	
-	class Control : public View
+	class Control
 	{
 		protected:
 			ControlRef macControl;
