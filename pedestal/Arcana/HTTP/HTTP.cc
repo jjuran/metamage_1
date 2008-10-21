@@ -21,7 +21,7 @@
 #include "Nucleus/NAssert.h"
 
 // POSeven
-#include "POSeven/Stat.hh"
+#include "POSeven/functions/fstat.hh"
 
 
 namespace NN = Nucleus;
