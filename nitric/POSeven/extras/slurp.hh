@@ -24,6 +24,7 @@
 #include "Nucleus/Flattener.h"
 
 // POSeven
+#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/functions/fstat.hh"
 
