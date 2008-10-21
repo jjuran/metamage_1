@@ -26,8 +26,8 @@
 
 // POSeven
 #include "POSeven/Open.hh"
-#include "POSeven/Stat.hh"
 #include "POSeven/functions/read.hh"
+#include "POSeven/functions/stat.hh"
 #include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 

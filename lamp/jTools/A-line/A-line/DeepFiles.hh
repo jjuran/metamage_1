@@ -17,7 +17,7 @@
 // POSeven
 #include "POSeven/Directory.hh"
 #include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
+#include "POSeven/functions/stat.hh"
 
 
 namespace tool

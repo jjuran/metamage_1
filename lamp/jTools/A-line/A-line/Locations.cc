@@ -10,7 +10,8 @@
 
 // POSeven
 #include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
+#include "POSeven/functions/mkdir.hh"
+#include "POSeven/functions/stat.hh"
 
 // A-line
 #include "CompileDriver/Platform.hh"

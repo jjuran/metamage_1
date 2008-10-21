@@ -22,8 +22,8 @@
 
 // POSeven
 #include "POSeven/Open.hh"
-#include "POSeven/Stat.hh"
 #include "POSeven/functions/signal.hh"
+#include "POSeven/functions/stat.hh"
 #include "POSeven/functions/wait.hh"
 
 // Iota

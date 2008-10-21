@@ -15,7 +15,7 @@
 
 // POSeven
 #include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
+#include "POSeven/functions/stat.hh"
 
 // A-line
 #include "A-line/A-line.hh"

@@ -23,7 +23,7 @@
 #include "POSeven/Directory.hh"
 #include "POSeven/FileDescriptor.hh"
 #include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
+#include "POSeven/functions/stat.hh"
 
 // MoreFunctional
 #include "PointerToFunction.hh"

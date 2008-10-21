@@ -15,10 +15,11 @@
 
 // POSeven
 #include "POSeven/functions/execvp.hh"
+#include "POSeven/functions/stat.hh"
 #include "POSeven/functions/vfork.hh"
 #include "POSeven/functions/waitpid.hh"
+#include "POSeven/types/fd_t.hh"
 #include "POSeven/Pathnames.hh"
-#include "POSeven/Stat.hh"
 
 // Nitrogen
 #include "Nitrogen/MacErrors.h"
