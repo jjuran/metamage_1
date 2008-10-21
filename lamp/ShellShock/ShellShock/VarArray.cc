@@ -4,6 +4,9 @@
 
 #include "ShellShock/VarArray.hh"
 
+// Standard C++
+#include <algorithm>
+
 
 namespace ShellShock
 {

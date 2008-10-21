@@ -4,6 +4,9 @@
 
 #include "ShellShock/StringArray.hh"
 
+// Standard C++
+#include <algorithm>
+
 
 namespace ShellShock
 {

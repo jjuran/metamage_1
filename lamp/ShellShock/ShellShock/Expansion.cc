@@ -7,6 +7,7 @@
 
 // Standard C/C++
 #include <cctype>
+#include <cstring>
 
 // Standard C++
 #include <functional>

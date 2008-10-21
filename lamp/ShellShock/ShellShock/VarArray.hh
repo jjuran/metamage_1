@@ -5,6 +5,9 @@
 #ifndef SHELLSHOCK_VARARRAY_HH
 #define SHELLSHOCK_VARARRAY_HH
 
+// Standard C/C++
+#include <cstring>
+
 // ShellShock
 #include "ShellShock/StringArray.hh"
 

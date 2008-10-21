@@ -6,6 +6,7 @@
 
 // Standard C/C++
 #include <cctype>
+#include <cstdlib>
 
 
 namespace ShellShock
