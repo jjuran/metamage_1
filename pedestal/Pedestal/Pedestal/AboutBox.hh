@@ -10,42 +10,16 @@
 #include <memory>
 
 // Pedestal
-#include "Pedestal/FrontBackGraphic.hh"
-#include "Pedestal/GeneratedGraphic.hh"
-#include "Pedestal/GraphicView.hh"
-#include "Pedestal/Icons.hh"
-#include "Pedestal/SolidColorGraphic.hh"
-#include "Pedestal/View.hh"
-#include "Pedestal/Window.hh"
-
-
-#define GEN_FUNCTION AboutFunction
-
-//#define ABOUT_GRAPHIC IconID
-//#define ABOUT_GRAPHIC MaskedIcon
-#define ABOUT_GRAPHIC GeneratedGraphic< GEN_FUNCTION >
+#include "Pedestal/UserWindow.hh"
 
 
 namespace Pedestal
 {
 	
-	class AboutFunction
+	class AboutBox : public UserWindow
 	{
 		public:
-			RGBColor operator()( double x,
-			                     double y,
-			                     double t ) const;
-	};
-	
-	typedef Window< GraphicView< FrontBackGraphic< ABOUT_GRAPHIC,
-	                                               SolidColorGraphic > >,
-	                Static_DefProcID< Nitrogen::noGrowDocProc > >
-	        AboutBoxBase;
-	
-	class AboutBox : public AboutBoxBase
-	{
-		public:
-			typedef AboutBoxBase Base;
+			typedef UserWindow Base;
 			
 			AboutBox( const boost::shared_ptr< WindowCloseHandler >& handler );
 			~AboutBox();
