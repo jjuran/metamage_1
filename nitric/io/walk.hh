@@ -67,7 +67,7 @@ namespace io
 	                            F3               visit_dir_after,
 	                            unsigned         depth = 0 )
 	{
-		if ( file_exists( spec ) )
+		if ( file_exists( spec, overload() ) )
 		{
 			visit_file( spec, depth );
 		}
@@ -94,7 +94,7 @@ namespace io
 		
 		typedef typename directory_contents_traits< DirSpec >::container_type directory_container;
 		
-		directory_container contents = directory_contents( dir );
+		directory_container contents = directory_contents( dir, overload() );
 		
 		++depth;
 		
