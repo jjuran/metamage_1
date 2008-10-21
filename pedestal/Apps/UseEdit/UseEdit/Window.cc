@@ -15,6 +15,7 @@ namespace UseEdit
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	
+	
 	static Rect MakeWindowRect()
 	{
 		Rect screenBounds = N::GetQDGlobalsScreenBits().bounds;
@@ -27,12 +28,21 @@ namespace UseEdit
 		return N::OffsetRect(rect, hMargin / 2, mbarHeight + vMargin / 3);
 	}
 	
+	
+	static inline std::auto_ptr< Ped::View > MakeView()
+	{
+		return std::auto_ptr< Ped::View >( new View( MakeWindowRect(), View::Initializer() ) );
+	}
+	
+	
 	Window::Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler,
 			        ConstStr255Param                                     title )
-	: 
-		Base( Ped::NewWindowContext( MakeWindowRect(), title ) )
+	: Base( Ped::NewWindowContext( MakeWindowRect(), title ),
+	  N::documentProc )
 	{
 		SetCloseHandler( handler );
+		
+		SetView( MakeView() );
 	}
 	
 	std::string Window::GetName() const

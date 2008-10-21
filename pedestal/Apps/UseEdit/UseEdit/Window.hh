@@ -12,7 +12,7 @@
 // Pedestal
 #include "Pedestal/Scroller.hh"
 #include "Pedestal/TEView.hh"
-#include "Pedestal/Window.hh"
+#include "Pedestal/UserWindow.hh"
 
 
 namespace UseEdit
@@ -20,14 +20,16 @@ namespace UseEdit
 	
 	namespace Ped = Pedestal;
 	
-	class Window : public Ped::Window< Ped::Scroller< Ped::TEView,
-	                                                  Ped::kLiveFeedbackVariant,
-	                                                  Ped::kNoScrollbar > >
+	
+	typedef Pedestal::Scroller< Pedestal::TEView,
+	                            Pedestal::kLiveFeedbackVariant,
+	                            Pedestal::kNoScrollbar > View;
+	
+	
+	class Window : public Pedestal::UserWindow
 	{
 		public:
-			typedef Ped::Window< Ped::Scroller< Ped::TEView,
-			                                    Ped::kLiveFeedbackVariant,
-			                                    Ped::kNoScrollbar > > Base;
+			typedef Pedestal::UserWindow Base;
 			
 			Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler,
 			        ConstStr255Param                                     title = "\p" "UseEdit" );
