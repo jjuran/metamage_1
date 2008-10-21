@@ -210,7 +210,10 @@ namespace io
 		typedef poseven::directory_contents_container container_type;
 	};
 	
-	using poseven::directory_contents;
+	inline poseven::directory_contents_container directory_contents( const std::string& dir, overload = overload() )
+	{
+		return poseven::directory_contents( dir );
+	}
 	
 }
 

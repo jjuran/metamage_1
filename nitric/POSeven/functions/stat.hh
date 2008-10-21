@@ -70,51 +70,51 @@ namespace io
 	
 	// Existence
 	
-	inline bool item_exists( const char* item )
+	inline bool item_exists( const char* item, overload = overload() )
 	{
 		struct ::stat sb;
 		
 		return poseven::stat( item, sb );
 	}
 	
-	inline bool item_exists( const std::string& item )
+	inline bool item_exists( const std::string& item, overload = overload() )
 	{
 		return item_exists( item.c_str() );
 	}
 	
 	
-	inline bool item_is_file( const struct ::stat& sb )
+	inline bool item_is_file( const struct ::stat& sb, overload = overload() )
 	{
 		return S_ISREG( sb.st_mode );
 	}
 	
-	inline bool item_is_directory( const struct ::stat& sb )
+	inline bool item_is_directory( const struct ::stat& sb, overload = overload() )
 	{
 		return S_ISDIR( sb.st_mode );
 	}
 	
 	
-	inline bool file_exists( const char* item )
+	inline bool file_exists( const char* item, overload = overload() )
 	{
 		struct ::stat sb;
 		
 		return poseven::stat( item, sb ) && item_is_file( sb );
 	}
 	
-	inline bool file_exists( const std::string& item )
+	inline bool file_exists( const std::string& item, overload = overload() )
 	{
 		return file_exists( item.c_str() );
 	}
 	
 	
-	inline bool directory_exists( const char* item )
+	inline bool directory_exists( const char* item, overload = overload() )
 	{
 		struct ::stat sb;
 		
 		return poseven::stat( item, sb ) && item_is_directory( sb );
 	}
 	
-	inline bool directory_exists( const std::string& item )
+	inline bool directory_exists( const std::string& item, overload = overload() )
 	{
 		return directory_exists( item.c_str() );
 	}
