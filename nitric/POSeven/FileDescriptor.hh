@@ -14,28 +14,17 @@
 #ifndef POSEVEN_FILEDESCRIPTOR_HH
 #define POSEVEN_FILEDESCRIPTOR_HH
 
-// Standard C
-#include <errno.h>
-
-// Nucleus
-#include "Nucleus/Owned.h"
-
 // Io
 #include "io/io.hh"
 
 // POSeven
-#include "POSeven/Errno.hh"
 #include "POSeven/functions/close.hh"
+#include "POSeven/functions/read.hh"
 #include "POSeven/functions/write.hh"
 
 
 namespace poseven
 {
-	
-	inline ssize_t read( fd_t fd, char* buffer, std::size_t bytes_requested )
-	{
-		return throw_posix_result( ::read( fd, buffer, bytes_requested ) );
-	}
 	
 }
 
