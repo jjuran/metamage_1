@@ -94,17 +94,17 @@ namespace io
 	};
 	
 	
-	inline Nitrogen::FSSpecContents_Container directory_contents( const Nitrogen::FSDirSpec& dir )
+	inline Nitrogen::FSSpecContents_Container directory_contents( const Nitrogen::FSDirSpec& dir, overload = overload() )
 	{
 		return Nitrogen::FSSpecContents_Container( dir );
 	}
 	
-	inline Nitrogen::FSSpecContents_Container directory_contents( const FSSpec& dir )
+	inline Nitrogen::FSSpecContents_Container directory_contents( const FSSpec& dir, overload = overload() )
 	{
 		return Nitrogen::FSSpecContents_Container( Nitrogen::FSDirSpec( dir ) );
 	}
 	
-	inline Nitrogen::FSRefContents_Container directory_contents( const FSRef& dir )
+	inline Nitrogen::FSRefContents_Container directory_contents( const FSRef& dir, overload = overload() )
 	{
 		return Nitrogen::FSRefContents_Container( dir );
 	}
