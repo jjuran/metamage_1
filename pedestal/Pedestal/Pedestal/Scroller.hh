@@ -454,6 +454,10 @@ namespace Pedestal
 				{
 					char keyChar = event.message & charCodeMask;
 					
+					const char pageXCharToPartDiff = kControlPageUpPart - kPageUpCharCode;
+					
+					ASSERT( kControlPageDownPart - kPageDownCharCode == pageXCharToPartDiff );
+					
 					switch ( keyChar )
 					{
 						case kHomeCharCode:
@@ -467,11 +471,16 @@ namespace Pedestal
 							return true;
 						
 						case kPageUpCharCode:
-							ScrollbarAction< kVertical >( myScrollV.Get(), Nitrogen::kControlPageUpPart );
-							return true;
-						
 						case kPageDownCharCode:
-							ScrollbarAction< kVertical >( myScrollV.Get(), Nitrogen::kControlPageDownPart );
+							if ( ControlRef v = myScrollV.Get() )
+							{
+								using Nitrogen::ControlPartCode;
+								
+								ControlPartCode part = ControlPartCode( keyChar + pageXCharToPartDiff );
+								
+								ScrollbarAction< kVertical >( v, part );
+							}
+							
 							return true;
 						
 						default:
