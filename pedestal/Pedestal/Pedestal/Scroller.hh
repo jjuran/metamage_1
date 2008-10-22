@@ -255,6 +255,16 @@ namespace Pedestal
 	}
 	
 	template < ScrollbarAxis axis, class ScrollViewType >
+	inline Nitrogen::ControlPartCode TrackScrollBar( ControlRef control, Point point )
+	{
+		return Nitrogen::TrackControl<
+		                               #ifdef __MWERKS__
+		                               (Nitrogen::ControlActionProcPtr)
+		                               #endif
+		                               ScrollbarAction< axis, ScrollViewType > >( control, point );
+	}
+	
+	template < ScrollbarAxis axis, class ScrollViewType >
 	inline void Track( ControlRef control, Nitrogen::ControlPartCode part, Point point )
 	{
 		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
@@ -292,11 +302,7 @@ namespace Pedestal
 			case kControlDownButtonPart:
 			case kControlPageUpPart:
 			case kControlPageDownPart:
-				part = Nitrogen::TrackControl<
-				                        #ifdef __MWERKS__
-				                        (Nitrogen::ControlActionProcPtr)
-				                        #endif
-				                        ScrollbarAction< axis, ScrollViewType >  >( control, point );
+				part = TrackScrollBar< axis, ScrollViewType >( control, point );
 				break;
 			
 			default:
