@@ -18,6 +18,22 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	inline bool AppearanceManagerExists()
+	{
+		return N::Gestalt( N::Gestalt_Selector( gestaltAppearanceAttr ), 0 );
+	}
+	
+#if TARGET_API_MAC_CARBON
+	
+	Static_AppearanceExistence< true > gAppearenceExists;
+	
+#else
+	
+	Variable_AppearanceExistence gAppearenceExists = AppearanceManagerExists();
+	
+#endif
+	
+	
 	ClickableScroller* ClickableScroller::gCurrentScroller = NULL;
 	
 	short ActualScrollbarLength( short viewLength, bool shortened )

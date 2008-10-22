@@ -13,7 +13,7 @@
 #include "Nucleus/NAssert.h"
 #include "Nucleus/Saved.h"
 
-// Nitrogen / Carbon support
+// Nitrogen
 #include "Nitrogen/Controls.h"
 
 // ClassicToolbox
@@ -69,30 +69,28 @@ namespace Pedestal
 			}
 	};
 	
-	template < bool present >  struct ScrollbarPresence_Traits;
+	template < bool present >  struct Scrollbar_Traits;
 	
 	// present:  Is the scrollbar present?
-	// Type:     The storage type of the scrollbar object.
 	// profile:  The amount the scrollbar encroaches on the scroll view.
+	// Type:     The storage type of the scrollbar object.
 	
-	template <>  struct ScrollbarPresence_Traits< true >
+	template <>  struct Scrollbar_Traits< true >
 	{
-		static const bool present = true;
-		typedef Scrollbar Type;
+		static const bool  present = true;
 		static const short profile = 15;
+		
+		typedef Scrollbar Type;
 	};
 	
-	template <>  struct ScrollbarPresence_Traits< false >
+	template <>  struct Scrollbar_Traits< false >
 	{
-		static const bool present = false;
-		
-		struct NoProcID {};
-		
-		static NoProcID procID;
+		static const bool  present = false;
+		static const short profile = 0;
 		
 		struct Type
 		{
-			Type( const Rect&, NoProcID, Nitrogen::RefCon, ControlTracker )
+			Type( const Rect&, Nitrogen::ControlProcID, Nitrogen::RefCon, ControlTracker )
 			{
 			}
 			
@@ -100,28 +98,6 @@ namespace Pedestal
 			
 			void Activate( bool )  {}
 		};
-		
-		static const short profile = 0;
-	};
-	
-	enum ScrollbarConfig
-	{
-		kNoScrollbar            = 0,
-		kOldSchoolVariant       = 1,
-		
-	#if TARGET_CPU_68K
-		
-		// Cheap hack until we figure out something better
-		
-		kAppearanceSavvyVariant = kOldSchoolVariant,
-		kLiveFeedbackVariant    = kOldSchoolVariant
-		
-	#else
-		
-		kAppearanceSavvyVariant = 2,
-		kLiveFeedbackVariant    = 3
-		
-	#endif
 	};
 	
 	enum ScrollbarAxis
@@ -130,50 +106,51 @@ namespace Pedestal
 		kHorizontal
 	};
 	
-	template < ScrollbarConfig config > struct ScrollbarLiveScrolling_Traits
+	template < bool hasAppearance > struct Static_AppearanceExistence
 	{
-		static const bool scrollingIsLive = false;
+		operator bool() const  { return hasAppearance; }
 	};
 	
-	template < ScrollbarConfig config > struct ScrollbarVariant_Traits {};
-	
-	template <> struct ScrollbarVariant_Traits< kOldSchoolVariant >
+	class Variable_AppearanceExistence
 	{
-		static const Nitrogen::ControlProcID procID = Nitrogen::scrollBarProc;
+		private:
+			bool itIsLive;
+		
+		public:
+			Variable_AppearanceExistence() : itIsLive()
+			{
+			}
+			
+			Variable_AppearanceExistence( bool live ) : itIsLive( live )
+			{
+			}
+			
+			operator bool() const  { return itIsLive; }
 	};
 	
-#if !TARGET_CPU_68K
+#if TARGET_API_MAC_CARBON
 	
-	template <> struct ScrollbarVariant_Traits< kAppearanceSavvyVariant >
-	{
-		static const Nitrogen::ControlProcID procID = Nitrogen::kControlScrollBarProc;
-	};
+	extern Static_AppearanceExistence< true > gAppearenceExists;
 	
-	template <> struct ScrollbarVariant_Traits< kLiveFeedbackVariant >
-	{
-		static const Nitrogen::ControlProcID procID = Nitrogen::kControlScrollBarLiveProc;
-	};
+#else
 	
-	template <> struct ScrollbarLiveScrolling_Traits< kLiveFeedbackVariant >
-	{
-		static const bool scrollingIsLive = true;
-	};
+	extern Variable_AppearanceExistence gAppearenceExists;
 	
 #endif
 	
-	template < ScrollbarConfig config >
-	struct Scrollbar_Traits : public ScrollbarPresence_Traits< config != kNoScrollbar >,
-	                          public ScrollbarVariant_Traits< config >,
-	                          public ScrollbarLiveScrolling_Traits< config >
+	template < class Existence >
+	inline Nitrogen::ControlProcID GetControlProcIDForAppearenceExistence( Existence exists )
 	{
-		
-	};
+		return exists ? Nitrogen::kControlScrollBarLiveProc
+		              : Nitrogen::scrollBarProc;
+	}
+	
 	
 	using Nitrogen::SetControlMaximum;
 	
 	inline void SetControlViewSize( ControlRef control, long size )
 	{
-	#if TARGET_CPU_PPC
+	#if !TARGET_CPU_68K
 		
 		if ( TARGET_API_MAC_CARBON || ::SetControlViewSize != (void*)kUnresolvedCFragSymbolAddress )
 		{
@@ -185,11 +162,11 @@ namespace Pedestal
 	
 	inline void InvalidateControl( ControlRef control )  { Nitrogen::InvalRect( Nitrogen::GetControlBounds( control ) ); }
 	
-	inline void SetBounds         ( ScrollbarPresence_Traits< false >::Type, Rect  )  {}
-	inline void SetControlMaximum ( ScrollbarPresence_Traits< false >::Type, short )  {}
-	inline void SetValueStretch   ( ScrollbarPresence_Traits< false >::Type, short )  {}
-	inline void SetControlViewSize( ScrollbarPresence_Traits< false >::Type, long  )  {}
-	inline void InvalidateControl ( ScrollbarPresence_Traits< false >::Type        )  {}
+	inline void SetBounds         ( Scrollbar_Traits< false >::Type, Rect  )  {}
+	inline void SetControlMaximum ( Scrollbar_Traits< false >::Type, short )  {}
+	inline void SetValueStretch   ( Scrollbar_Traits< false >::Type, short )  {}
+	inline void SetControlViewSize( Scrollbar_Traits< false >::Type, long  )  {}
+	inline void InvalidateControl ( Scrollbar_Traits< false >::Type        )  {}
 	
 	
 	template < ScrollbarAxis axis >
@@ -277,7 +254,7 @@ namespace Pedestal
 		ScrollByDelta< axis >( scrolledView, control, delta, true );
 	}
 	
-	template < ScrollbarAxis axis, bool scrollingIsLive, class ScrollViewType >
+	template < ScrollbarAxis axis, class ScrollViewType >
 	inline void Track( ControlRef control, Nitrogen::ControlPartCode part, Point point )
 	{
 		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
@@ -288,7 +265,7 @@ namespace Pedestal
 			case kControlIndicatorPart:
 				// The user clicked on the indicator
 				
-				if ( !scrollingIsLive )
+				if ( !gAppearenceExists )
 				{
 					// Classic scrolling, handled specially.
 					
@@ -391,9 +368,7 @@ namespace Pedestal
 			virtual void ClickInLoop() = 0;
 	};
 	
-	template < class            ScrollViewType,
-	           ScrollbarConfig  vertical,
-	           ScrollbarConfig  horizontal = kNoScrollbar >
+	template < class ScrollViewType, bool vertical, bool horizontal = false >
 	class Scroller : public BoundedView, public ClickableScroller
 	{
 		private:
@@ -600,31 +575,29 @@ namespace Pedestal
 	};
 	
 	
-	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
+	template < class ScrollViewType, bool vertical, bool horizontal >
 	inline Rect Bounds( const Scroller< ScrollViewType, vertical, horizontal >& scroller )
 	{
 		return scroller.Bounds();
 	}
 	
-	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
+	template < class ScrollViewType, bool vertical, bool horizontal >
 	Scroller< ScrollViewType, vertical, horizontal >::Scroller( const Rect& bounds, Initializer init )
 	: 
 		BoundedView( bounds ),
 		myScrollV( VerticalScrollbarBounds  ( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
-		           VerticalTraits::procID,
+		           GetControlProcIDForAppearenceExistence( gAppearenceExists ),
 		           &myScrollView,
 		           Track< kVertical,
-		                  Scrollbar_Traits< vertical >::scrollingIsLive,
 		                  ScrollViewType > ),
 		myScrollH( HorizontalScrollbarBounds( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
-		           HorizontalTraits::procID,
+		           GetControlProcIDForAppearenceExistence( gAppearenceExists ),
 		           &myScrollView,
 		           Track< kHorizontal,
-		                  Scrollbar_Traits< horizontal >::scrollingIsLive,
 		                  ScrollViewType > ),
 		myScrollView( ScrollBounds( NitrogenExtras::RectWidth ( bounds ),
 		                            NitrogenExtras::RectHeight( bounds ),
@@ -635,7 +608,7 @@ namespace Pedestal
 		SetControlViewSizes();
 	}
 	
-	template < class ScrollViewType, ScrollbarConfig vertical, ScrollbarConfig horizontal >
+	template < class ScrollViewType, bool vertical, bool horizontal >
 	void Scroller< ScrollViewType, vertical, horizontal >::SetControlViewSizes()
 	{
 		Point range = ViewableRange( myScrollView );
