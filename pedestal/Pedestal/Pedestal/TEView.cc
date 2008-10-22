@@ -209,20 +209,20 @@ namespace Pedestal
 		return nLines;
 	}
 	
-	Point ViewableRange( TEHandle hTE )
+	Point TEView::ViewableRange() const
 	{
-		Rect viewRect = N::GetTEViewRect( hTE );
+		Rect viewRect = N::GetTEViewRect( itsTE );
 		
 		short viewWidth  = viewRect.right - viewRect.left;
 		short viewHeight = viewRect.bottom - viewRect.top;
 		
 		return N::SetPt( viewWidth  /  ::CharWidth      ( 'M' ),
-		                 viewHeight / N::GetTELineHeight( hTE ) );
+		                 viewHeight / N::GetTELineHeight( itsTE ) );
 	}
 	
-	Point ScrollableRange( TEHandle hTE )
+	Point TEView::ScrollableRange() const
 	{
-		return N::SetPt( 1, CountLinesForEditing( hTE ) );
+		return N::SetPt( 1, CountLinesForEditing( itsTE ) );
 	}
 	
 	Point ScrollStep( TEHandle hTE )
@@ -239,13 +239,13 @@ namespace Pedestal
 		return dv;
 	}
 	
-	Point ScrollPosition( TEHandle hTE )
+	Point TEView::ScrollPosition() const
 	{
-		int dv = VScrollOffset( hTE );
+		int dv = VScrollOffset( itsTE );
 		
 		return N::SetPt( 0,
 		                 dv == 0 ? 0
-		                         : (dv - 1) / N::GetTELineHeight( hTE ) + 1 );
+		                         : (dv - 1) / N::GetTELineHeight( itsTE ) + 1 );
 	}
 	
 	static void Resize( TEHandle hTE, const Rect& newBounds )
@@ -270,10 +270,11 @@ namespace Pedestal
 		Resize( hTE, bounds );
 	}
 	
-	void Scroll( TEHandle hTE, short dh, short dv )
+	void TEView::Scroll( short dh, short dv, bool updateNow )
 	{
-		Point scrollStep = ScrollStep( hTE );
-		N::TEPinScroll( -dh * scrollStep.h, -dv * scrollStep.v, hTE );
+		Point scrollStep = ScrollStep( itsTE );
+		
+		N::TEPinScroll( -dh * scrollStep.h, -dv * scrollStep.v, itsTE );
 	}
 	
 	static void AugmentTESelection( TEHandle hTE, const TESelection& more )

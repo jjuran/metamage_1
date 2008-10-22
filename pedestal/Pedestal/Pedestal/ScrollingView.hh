@@ -20,7 +20,7 @@
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
-#include "Pedestal/View.hh"
+#include "Pedestal/ScrollableBase.hh"
 
 
 namespace Pedestal
@@ -56,7 +56,7 @@ namespace Pedestal
 	};
 	
 	template < class SubViewType >
-	class ScrollingView : public View
+	class ScrollingView : public ScrollableBase
 	{
 		private:
 			Rect bounds;
@@ -82,6 +82,16 @@ namespace Pedestal
 			{
 				bounds.right = bounds.left + width;
 				bounds.bottom = bounds.top + height;
+			}
+			
+			Point ViewableRange() const
+			{
+				return NitrogenExtras::RectSize( Bounds() );
+			}
+			
+			Point ScrollableRange() const
+			{
+				return NitrogenExtras::RectSize( SubView().Bounds() );
 			}
 			
 			Point ScrollPosition() const  { return scrollPosition; }
@@ -155,41 +165,11 @@ namespace Pedestal
 	}
 	
 	template < class SubViewType >
-	inline Point ScrollPosition( const ScrollingView< SubViewType >& scroll )
-	{
-		return scroll.ScrollPosition();
-	}
-	
-	template < class SubViewType >
-	inline Point ScrollableArea( const ScrollingView< SubViewType >& scroll )
-	{
-		return NitrogenExtras::RectSize( scroll.SubView().Bounds() );
-	}
-	
-	template < class SubViewType >
-	inline Point ScrollableRange( const ScrollingView< SubViewType >& scroll )
-	{
-		return ScrollableArea( scroll );
-	}
-	
-	template < class SubViewType >
-	inline Point ViewableRange( const ScrollingView< SubViewType >& scroll )
-	{
-		return NitrogenExtras::RectSize( Bounds( scroll ) );
-	}
-	
-	template < class SubViewType >
 	inline void Resize( ScrollingView< SubViewType >& scroll, short width, short height )
 	{
 		scroll.Resize( width, height );
 		
 		Nitrogen::ClipRect( Bounds( scroll ) );
-	}
-	
-	template < class SubViewType >
-	inline void ScrollView( ScrollingView< SubViewType >& scroll, short dh, short dv, bool updateNow )
-	{
-		scroll.Scroll( dh, dv, updateNow );
 	}
 	
 	

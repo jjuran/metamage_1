@@ -175,18 +175,7 @@ namespace Pedestal
 		return ( axis == kVertical ) ? point.v : point.h;
 	}
 	
-	template < class ScrollViewType >
-	inline Point ComputeScrollbarMaxima( const ScrollViewType&  scrolledView )
-	{
-		Point scrollRange = ScrollableRange( scrolledView );
-		Point viewRange   = ViewableRange  ( scrolledView );
-		
-		Point scrollPos   = ScrollPosition ( scrolledView );
-		
-		Point maxima = ScrollbarMaxima( scrollRange, viewRange, scrollPos );
-		
-		return maxima;
-	}
+	Point ComputeScrollbarMaxima( const ScrollableBase& scrolledView );
 	
 	template < class Vertical, class Horizontal >
 	inline void SetScrollbarMaxima( const Vertical&    verticalScrollbar,
@@ -198,55 +187,53 @@ namespace Pedestal
 	}
 	
 	
-	template < class ScrollViewType >
-	inline ScrollViewType& RecoverScrolledViewFromScrollbar( ControlRef control )
+	inline ScrollableBase& RecoverScrolledViewFromScrollbar( ControlRef control )
 	{
 		Control_Hooks* controlHooks = Nitrogen::GetControlReference( control );
 		
 		ASSERT( controlHooks       != NULL );
 		ASSERT( controlHooks->data != NULL );
 		
-		ScrollViewType& scrolledView = *static_cast< ScrollViewType* >( controlHooks->data );
+		ScrollableBase& scrolledView = *static_cast< ScrollableBase* >( controlHooks->data );
 		
 		return scrolledView;
 	}
 	
 	
-	template < ScrollbarAxis axis, class ScrollViewType >
-	inline void ScrollByDelta( ScrollViewType& scrolledView, ControlRef control, short delta, bool updateNow )
+	template < ScrollbarAxis axis >
+	inline void ScrollByDelta( ScrollableBase& scrolledView, ControlRef control, short delta, bool updateNow )
 	{
 		if ( delta != 0 )
 		{
-			ScrollView( scrolledView,
-			            ( axis != kVertical ) ? delta : 0,
-			            ( axis == kVertical ) ? delta : 0,
-			            updateNow );
+			scrolledView.Scroll( ( axis != kVertical ) ? delta : 0,
+			                     ( axis == kVertical ) ? delta : 0,
+			                     updateNow );
 			
 			SetControlMaximum( control, VHSelect< axis >( ComputeScrollbarMaxima( scrolledView ) ) );
 		}
 	}
 	
-	template < ScrollbarAxis axis, class ScrollViewType >
+	template < ScrollbarAxis axis >
 	inline void ScrollByDelta( ControlRef control, short delta, bool updateNow )
 	{
-		ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
+		ScrollableBase& scrolledView = RecoverScrolledViewFromScrollbar( control );
 		
 		ScrollByDelta< axis >( scrolledView, control, delta, updateNow );
 	}
 	
-	template < ScrollbarAxis axis, class ScrollViewType >
+	template < ScrollbarAxis axis >
 	void ScrollbarAction( ControlRef control, Nitrogen::ControlPartCode part )
 	{
-		ScrollViewType& scrolledView = RecoverScrolledViewFromScrollbar< ScrollViewType >( control );
+		ScrollableBase& scrolledView = RecoverScrolledViewFromScrollbar( control );
 		
-		short jump = VHSelect< axis >( ViewableRange( scrolledView ) ) - 1;
+		short jump = VHSelect< axis >( scrolledView.ViewableRange() ) - 1;
 		short scrollDistance = FigureScrollDistance( part, jump );
 		
 		short delta = SetControlValueFromClippedDelta( control, scrollDistance );
 		
 		if ( part == Nitrogen::kControlIndicatorPart )
 		{
-			short oldValue = VHSelect< axis >( ScrollPosition( scrolledView ) );
+			short oldValue = VHSelect< axis >( scrolledView.ScrollPosition() );
 			
 			delta = Nitrogen::GetControlValue( control ) - oldValue;
 		}
@@ -254,18 +241,18 @@ namespace Pedestal
 		ScrollByDelta< axis >( scrolledView, control, delta, true );
 	}
 	
-	template < ScrollbarAxis axis, class ScrollViewType >
+	template < ScrollbarAxis axis >
 	inline Nitrogen::ControlPartCode TrackScrollBar( ControlRef control, Point point )
 	{
 		return Nitrogen::TrackControl<
 		                               #ifdef __MWERKS__
 		                               (Nitrogen::ControlActionProcPtr)
 		                               #endif
-		                               ScrollbarAction< axis, ScrollViewType > >( control, point );
+		                               ScrollbarAction< axis > >( control, point );
 	}
 	
-	template < ScrollbarAxis axis, class ScrollViewType >
-	inline void Track( ControlRef control, Nitrogen::ControlPartCode part, Point point )
+	template < ScrollbarAxis axis >
+	void Track( ControlRef control, Nitrogen::ControlPartCode part, Point point )
 	{
 		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
 		Nitrogen::ClipRect( Nitrogen::GetPortBounds( Nitrogen::GetQDGlobalsThePort() ) );
@@ -291,7 +278,7 @@ namespace Pedestal
 						short scrollDistance = Nitrogen::GetControlValue( control ) - oldValue;
 						
 						// Scroll by that amount, but don't update just yet.
-						ScrollByDelta< axis, ScrollViewType >( control, scrollDistance, false );
+						ScrollByDelta< axis >( control, scrollDistance, false );
 					}
 					
 					// Break here for classic thumb-scrolling (whether sucessful or not).
@@ -302,7 +289,7 @@ namespace Pedestal
 			case kControlDownButtonPart:
 			case kControlPageUpPart:
 			case kControlPageDownPart:
-				part = TrackScrollBar< axis, ScrollViewType >( control, point );
+				part = TrackScrollBar< axis >( control, point );
 				break;
 			
 			default:
@@ -340,8 +327,8 @@ namespace Pedestal
 		                    maxima );
 	}
 	
-	template < class ScrollViewType, class Vertical, class Horizontal >
-	inline void UpdateScrollbars( const ScrollViewType&  scrolledView,
+	template < class Vertical, class Horizontal >
+	inline void UpdateScrollbars( const ScrollableBase&  scrolledView,
 	                              const Vertical&        verticalScrollbar,
 	                              const Horizontal&      horizontalScrollbar,
 	                              Point                  oldRange,
@@ -349,8 +336,8 @@ namespace Pedestal
 	{
 		using namespace Nucleus::Operators;
 		
-		Point range = ScrollableRange( scrolledView );
-		Point pos   = ScrollPosition ( scrolledView );
+		Point range = scrolledView.ScrollableRange();
+		Point pos   = scrolledView.ScrollPosition();
 		
 		if ( oldPosition != pos  ||  oldRange != range )
 		{
@@ -413,7 +400,8 @@ namespace Pedestal
 			
 			void Scroll(short dh, short dv, bool updateNow = 0)
 			{
-				ScrollView( myScrollView, dh, dv, updateNow );
+				myScrollView.Scroll( dh, dv, updateNow );
+				
 				Calibrate();
 			}
 			
@@ -427,7 +415,7 @@ namespace Pedestal
 				Pedestal::UpdateScrollbars( myScrollV.Get(),
 				                            myScrollH.Get(),
 				                            ComputeScrollbarMaxima( ScrolledView() ),
-				                            ScrollPosition        ( ScrolledView() ) );
+				                            ScrolledView().ScrollPosition() );
 				
 				return;
 			}
@@ -456,8 +444,8 @@ namespace Pedestal
 			
 			bool KeyDown( const EventRecord& event )
 			{
-				Point scrollableRange = ScrollableRange( ScrolledView() );
-				Point scrollPosition  = ScrollPosition ( ScrolledView() );
+				Point scrollableRange = ScrolledView().ScrollableRange();
+				Point scrollPosition  = ScrolledView().ScrollPosition();
 				
 				char keyCode = (event.message & keyCodeMask) >> 8;
 				
@@ -479,11 +467,11 @@ namespace Pedestal
 							return true;
 						
 						case kPageUpCharCode:
-							ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), Nitrogen::kControlPageUpPart );
+							ScrollbarAction< kVertical >( myScrollV.Get(), Nitrogen::kControlPageUpPart );
 							return true;
 						
 						case kPageDownCharCode:
-							ScrollbarAction< kVertical, ScrollViewType >( myScrollV.Get(), Nitrogen::kControlPageDownPart );
+							ScrollbarAction< kVertical >( myScrollV.Get(), Nitrogen::kControlPageDownPart );
 							return true;
 						
 						default:
@@ -540,8 +528,8 @@ namespace Pedestal
 			
 			bool UserCommand( MenuItemCode code )
 			{
-				Point scrollableRange = ScrollableRange( ScrolledView() );
-				Point scrollPosition  = ScrollPosition ( ScrolledView() );
+				Point scrollableRange = ScrolledView().ScrollableRange();
+				Point scrollPosition  = ScrolledView().ScrollPosition();
 				
 				if ( ScrolledView().UserCommand( code ) )
 				{
@@ -596,15 +584,13 @@ namespace Pedestal
 		                                      true ),
 		           GetControlProcIDForAppearenceExistence( gAppearenceExists ),
 		           &myScrollView,
-		           Track< kVertical,
-		                  ScrollViewType > ),
+		           Track< kVertical > ),
 		myScrollH( HorizontalScrollbarBounds( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
 		           GetControlProcIDForAppearenceExistence( gAppearenceExists ),
 		           &myScrollView,
-		           Track< kHorizontal,
-		                  ScrollViewType > ),
+		           Track< kHorizontal > ),
 		myScrollView( ScrollBounds( NitrogenExtras::RectWidth ( bounds ),
 		                            NitrogenExtras::RectHeight( bounds ),
 		                            VerticalTraits::profile,
@@ -617,7 +603,7 @@ namespace Pedestal
 	template < class ScrollViewType, bool vertical, bool horizontal >
 	void Scroller< ScrollViewType, vertical, horizontal >::SetControlViewSizes()
 	{
-		Point range = ViewableRange( myScrollView );
+		Point range = myScrollView.ViewableRange();
 		
 		Pedestal::SetControlViewSize( VerticalScrollbar  ().Get(), range.v );
 		Pedestal::SetControlViewSize( HorizontalScrollbar().Get(), range.h );

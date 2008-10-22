@@ -36,6 +36,19 @@ namespace Pedestal
 	
 	ClickableScroller* ClickableScroller::gCurrentScroller = NULL;
 	
+	
+	Point ComputeScrollbarMaxima( const ScrollableBase& scrolledView )
+	{
+		Point scrollRange = scrolledView.ScrollableRange();
+		Point viewRange   = scrolledView.ViewableRange();
+		
+		Point scrollPos   = scrolledView.ScrollPosition();
+		
+		Point maxima = ScrollbarMaxima( scrollRange, viewRange, scrollPos );
+		
+		return maxima;
+	}
+	
 	short ActualScrollbarLength( short viewLength, bool shortened )
 	{
 		return 

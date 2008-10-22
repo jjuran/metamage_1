@@ -11,7 +11,7 @@
 
 // Pedestal
 #include "Pedestal/MenuItemCode.hh"
-#include "Pedestal/View.hh"
+#include "Pedestal/ScrollableBase.hh"
 
 
 namespace Pedestal
@@ -26,19 +26,14 @@ namespace Pedestal
 	Rect Bounds( TEHandle hTE );
 	short CountLinesForDisplay( TEHandle hTE );
 	short CountLinesForEditing( TEHandle hTE );
-	Point ViewableRange( TEHandle hTE );
-	Point ScrollableRange( TEHandle hTE );
 	Point ScrollStep( TEHandle hTE );
-	Point ScrollPosition( TEHandle hTE );
 	
 	void Resize( TEHandle hTE, short width, short height );
-	
-	void Scroll( TEHandle hTE, short dh, short dv );
 	
 	
 	class TESearchQuasimode;
 	
-	class TEView : public View
+	class TEView : public ScrollableBase
 	{
 		friend class TESearchQuasimode;
 		
@@ -77,6 +72,12 @@ namespace Pedestal
 			void Clear();
 			void SelectAll();
 			
+			Point ViewableRange() const;
+			Point ScrollableRange() const;
+			Point ScrollPosition() const;
+			
+			void Scroll( short dh, short dv, bool updateNow );
+			
 			void Idle     ( const EventRecord& event );
 			void MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
@@ -93,26 +94,6 @@ namespace Pedestal
 			
 			bool UserCommand( MenuItemCode code );
 	};
-	
-	inline Point ViewableRange( const TEView& view )
-	{
-		return ViewableRange( view.Get() );
-	}
-	
-	inline Point ScrollableRange( const TEView& view )
-	{
-		return ScrollableRange( view.Get() );
-	}
-	
-	inline Point ScrollPosition( const TEView& view )
-	{
-		return ScrollPosition( view.Get() );
-	}
-	
-	inline void ScrollView( const TEView& view, short dh, short dv, bool /*updateNow*/ )
-	{
-		Scroll( view.Get(), dh, dv );
-	}
 	
 }
 
