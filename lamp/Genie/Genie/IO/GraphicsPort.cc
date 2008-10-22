@@ -11,6 +11,9 @@
 // Nucleus
 #include "Nucleus/Saved.h"
 
+// Pedestal
+#include "Pedestal/GWorldView.hh"
+
 // Io
 #include "io/io.hh"
 
@@ -38,14 +41,22 @@ namespace Genie
 	}
 	
 	
+	static inline std::auto_ptr< Ped::View > MakeView()
+	{
+		return std::auto_ptr< Ped::View >( new Ped::GWorldView( MakeWindowRect(), Ped::GWorldView::Initializer() ) );
+	}
+	
 	GraphicsWindow::GraphicsWindow( TerminalID          id,
 	                                const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
 	                                                                                          "\p" "Graphics",
-	                                                                                          true ) ),
+	                                                                                          true ),
+	                                                                   N::documentProc ),
 	                                                             WindowHandle( name )
 	{
 		SetCloseHandler ( GetDynamicWindowCloseHandler < GraphicsWindow >( id ) );
 		SetResizeHandler( GetDynamicWindowResizeHandler< GraphicsWindow >( id ) );
+		
+		SetView( MakeView() );
 	}
 	
 	GraphicsWindow::~GraphicsWindow()
@@ -54,7 +65,7 @@ namespace Genie
 	
 	void GraphicsWindow::IOCtl( unsigned long request, int* argp )
 	{
-		N::GWorldPtr gworld = SubView().Get();
+		N::GWorldPtr gworld = SubView().Get< Ped::GWorldView >().Get();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( gworld );
 		

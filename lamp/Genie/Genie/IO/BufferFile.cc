@@ -11,6 +11,10 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Pedestal
+#include "Pedestal/Scroller.hh"
+#include "Pedestal/TEView.hh"
+
 
 namespace Genie
 {
@@ -34,16 +38,27 @@ namespace Genie
 	}
 	
 	
+	typedef Ped::Scroller< Ped::TEView, Ped::kLiveFeedbackVariant > BufferView;
+	
+	static inline std::auto_ptr< Ped::View > MakeView()
+	{
+		return std::auto_ptr< Ped::View >( new BufferView( MakeWindowRect(), BufferView::Initializer() ) );
+	}
+	
+	
 	BufferWindow::BufferWindow( TerminalID          id,
 	                            const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
 	                                                                                      "\p" "Edit",
-	                                                                                      false ) ),
+	                                                                                      false ),
+	                                                               N::documentProc ),
 	                                                         WindowHandle( name ),
 	                                                         itsMark(),
 	                                                         itHasReceivedEOF()
 	{
 		SetCloseHandler ( GetDynamicWindowCloseHandler < BufferFileHandle >( id ) );
 		SetResizeHandler( GetDynamicWindowResizeHandler< BufferFileHandle >( id ) );
+		
+		SetView( MakeView() );
 	}
 	
 	BufferWindow::~BufferWindow()
@@ -95,7 +110,7 @@ namespace Genie
 			return 0;
 		}
 		
-		Ped::TEView& editor = SubView().ScrolledView();
+		Ped::TEView& editor = SubView().Get< BufferView >().ScrolledView();
 		
 		Handle hText = editor.TextHandle();
 		
@@ -134,7 +149,7 @@ namespace Genie
 	{
 		Show();
 		
-		Ped::TEView& editor = SubView().ScrolledView();
+		Ped::TEView& editor = SubView().Get< BufferView >().ScrolledView();
 		
 		SetEOF( itsMark );
 		
@@ -142,8 +157,8 @@ namespace Genie
 		
 		itsMark += result;
 		
-		SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
-		                            N::SetPt( 0, 0 ) );
+		SubView().Get< BufferView >().UpdateScrollbars( N::SetPt( 0, 0 ),
+		                                                N::SetPt( 0, 0 ) );
 		
 		return result;
 	}
@@ -174,12 +189,12 @@ namespace Genie
 	
 	off_t BufferWindow::GetEOF() const
 	{
-		return SubView().ScrolledView().TextLength();
+		return SubView().Get< BufferView >().ScrolledView().TextLength();
 	}
 	
 	void BufferWindow::SetEOF( off_t length )
 	{
-		Ped::TEView& editor = SubView().ScrolledView();
+		Ped::TEView& editor = SubView().Get< BufferView >().ScrolledView();
 		
 		// Handle dereferenced here
 		TERec& te = *editor.Get()[0];

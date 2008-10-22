@@ -5,7 +5,7 @@
 // Pedestal
 #include "Pedestal/Console.hh"
 #include "Pedestal/Scroller.hh"
-#include "Pedestal/Window.hh"
+#include "Pedestal/UserWindow.hh"
 
 
 namespace Genie
@@ -14,14 +14,15 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
-	typedef Ped::Window< Ped::Scroller< Ped::Console,
-	                                    Ped::kLiveFeedbackVariant > >
-	        SystemConsoleBase;
 	
-	class SystemConsole : public SystemConsoleBase
+	typedef Ped::Scroller< Ped::Console,
+	                       Ped::kLiveFeedbackVariant >
+	        SystemConsoleView;
+	
+	class SystemConsole : public Ped::UserWindow
 	{
 		public:
-			typedef SystemConsoleBase Base;
+			typedef Ped::UserWindow Base;
 			
 			SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler );
 	};
@@ -49,11 +50,19 @@ namespace Genie
 		                      mbarHeight + vMargin / 3 );
 	}
 	
+	static inline std::auto_ptr< Ped::View > MakeView()
+	{
+		return std::auto_ptr< Ped::View >( new SystemConsoleView( MakeWindowRect(), SystemConsoleView::Initializer() ) );
+	}
+	
 	SystemConsole::SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler )
-	:
-		Base( Ped::NewWindowContext( MakeWindowRect(), "\p" "System Console" ) )
+	: Base( Ped::NewWindowContext( MakeWindowRect(),
+	                               "\p" "System Console" ),
+	        N::documentProc )
 	{
 		SetCloseHandler( handler );
+		
+		SetView( MakeView() );
 	}
 	
 	int SystemConsoleOwner::WriteToSystemConsole( const char* data, std::size_t byteCount )
@@ -62,10 +71,12 @@ namespace Genie
 		
 		gSystemConsoleOwner.Show();
 		
-		gSystemConsoleOwner.itsWindow->SubView().ScrolledView().WriteChars( data, byteCount );
+		SystemConsoleView& view = gSystemConsoleOwner.itsWindow->SubView().Get< SystemConsoleView >();
 		
-		gSystemConsoleOwner.itsWindow->SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
-		                                                           N::SetPt( 0, 0 ) );
+		view.ScrolledView().WriteChars( data, byteCount );
+		
+		view.UpdateScrollbars( N::SetPt( 0, 0 ),
+		                       N::SetPt( 0, 0 ) );
 		
 		return byteCount;
 	}

@@ -21,6 +21,9 @@
 // Lamp
 #include <lamp/winio.h>
 
+// boost
+#include <boost/shared_ptr.hpp>
+
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -34,6 +37,10 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Pedestal
+#include "Pedestal/Console.hh"
+#include "Pedestal/Scroller.hh"
+
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/IO/ConsoleTTY.hh"
@@ -46,6 +53,46 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
+	
+	
+	class ConsolePane : public Pedestal::Console
+	{
+		private:
+			ConsoleID        itsConsoleID;
+			Io::StringPipe&  itsInput;
+			short            itsStartOfInput;
+			bool             itHasReceivedEOF;
+		
+		public:
+			struct Initializer : public Pedestal::Console::Initializer
+			{
+				ConsoleID        id;
+				Io::StringPipe&  input;
+				
+				Initializer( ConsoleID id, Io::StringPipe& in ) : id( id ), input( in )  {}
+			};
+		
+		public:
+			ConsolePane( const Rect&         bounds,
+			             const Initializer&  init   ) : Pedestal::Console( bounds, init ),
+			                                            itsConsoleID     ( init.id      ),
+			                                            itsInput         ( init.input   ),
+			                                            itsStartOfInput  ( TextLength() ),
+			                                            itHasReceivedEOF ( false        )
+			{
+			}
+			
+			bool CheckEOF();
+			
+			int WriteChars( const char* data, unsigned int byteCount );
+			
+			void MouseDown( const EventRecord& event );
+			bool KeyDown  ( const EventRecord& event );
+			
+			bool UserCommand( Pedestal::MenuItemCode code );
+			
+			void Paste();
+	};
 	
 	
 	bool ConsolePane::CheckEOF()
@@ -337,16 +384,27 @@ namespace Genie
 		                      mbarHeight + vMargin / 3 );
 	}
 	
+	typedef Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > ConsoleView;
+	
+	inline std::auto_ptr< Ped::View > MakeView( ConsoleID        id,
+	                                            Io::StringPipe&  input )
+	{
+		return std::auto_ptr< Ped::View >( new ConsoleView( MakeWindowRect(),
+		                                                    ConsoleView::Initializer( id, input ) ) );
+	}
+	
 	
 	ConsoleWindow::ConsoleWindow( ConsoleID           id,
 	                              const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
 	                                                                                        N::Str255( name ),
 	                                                                                        true ),
-	                                                                 ConsolePane::Initializer( id, itsInput ) ),
+	                                                                 N::documentProc ),
 	                                                           WindowHandle( name )
 	{
 		SetCloseHandler ( GetDynamicWindowCloseHandler < ConsoleTTYHandle >( id ) );
 		SetResizeHandler( GetDynamicWindowResizeHandler< ConsoleTTYHandle >( id ) );
+		
+		SetView( MakeView( id, itsInput ) );
 	}
 	
 	ConsoleWindow::~ConsoleWindow()
@@ -372,7 +430,7 @@ namespace Genie
 			case WIOCGDIM:
 				if ( result != NULL )
 				{
-					*result = Ped::ViewableRange( SubView().ScrolledView().Get() );
+					*result = Ped::ViewableRange( SubView().Get< ConsoleView >().ScrolledView().Get() );
 				}
 				
 				break;
@@ -391,7 +449,7 @@ namespace Genie
 	{
 		bool ready = itsInput.Ready();
 		
-		if ( !ready && SubView().ScrolledView().CheckEOF() )
+		if ( !ready && SubView().Get< ConsoleView >().ScrolledView().CheckEOF() )
 		{
 			throw io::end_of_input();
 		}
@@ -401,10 +459,12 @@ namespace Genie
 	
 	int ConsoleWindow::Write( const char* data, std::size_t byteCount )
 	{
-		int result = SubView().ScrolledView().WriteChars( data, byteCount );
+		ConsoleView& view = SubView().Get< ConsoleView >();
 		
-		SubView().UpdateScrollbars( N::SetPt( 0, 0 ),
-		                            N::SetPt( 0, 0 ) );
+		int result = view.ScrolledView().WriteChars( data, byteCount );
+		
+		view.UpdateScrollbars( N::SetPt( 0, 0 ),
+		                       N::SetPt( 0, 0 ) );
 		
 		return result;
 	}

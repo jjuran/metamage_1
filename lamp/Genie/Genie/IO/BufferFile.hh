@@ -16,9 +16,7 @@
 #include <boost/shared_ptr.hpp>
 
 // Pedestal
-#include "Pedestal/Scroller.hh"
-#include "Pedestal/TEView.hh"
-#include "Pedestal/Window.hh"
+#include "Pedestal/UserWindow.hh"
 
 // Genie
 #include "Genie/IO/RegularFile.hh"
@@ -31,7 +29,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class BufferWindow : public Ped::Window< Ped::Scroller< Ped::TEView, Ped::kLiveFeedbackVariant > >,
+	class BufferWindow : public Ped::UserWindow,
 	                     public WindowHandle
 	{
 		private:
@@ -39,7 +37,7 @@ namespace Genie
 			bool         itHasReceivedEOF;
 		
 		public:
-			typedef Ped::Window< Ped::Scroller< Ped::TEView, Ped::kLiveFeedbackVariant > > Base;
+			typedef Ped::UserWindow Base;
 			
 			BufferWindow( TerminalID id, const std::string& name );
 			
