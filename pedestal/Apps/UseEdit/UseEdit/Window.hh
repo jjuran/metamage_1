@@ -21,9 +21,7 @@ namespace UseEdit
 	namespace Ped = Pedestal;
 	
 	
-	typedef Pedestal::Scroller< Pedestal::TEView,
-	                            Pedestal::kLiveFeedbackVariant,
-	                            Pedestal::kNoScrollbar > View;
+	typedef Pedestal::Scroller< Pedestal::TEView, true > View;
 	
 	
 	class Window : public Pedestal::UserWindow
