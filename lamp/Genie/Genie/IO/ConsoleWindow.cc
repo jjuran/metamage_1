@@ -384,7 +384,7 @@ namespace Genie
 		                      mbarHeight + vMargin / 3 );
 	}
 	
-	typedef Ped::Scroller< ConsolePane, Ped::kLiveFeedbackVariant > ConsoleView;
+	typedef Ped::Scroller< ConsolePane, true > ConsoleView;
 	
 	inline std::auto_ptr< Ped::View > MakeView( ConsoleID        id,
 	                                            Io::StringPipe&  input )

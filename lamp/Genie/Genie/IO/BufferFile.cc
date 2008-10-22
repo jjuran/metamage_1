@@ -38,7 +38,7 @@ namespace Genie
 	}
 	
 	
-	typedef Ped::Scroller< Ped::TEView, Ped::kLiveFeedbackVariant > BufferView;
+	typedef Ped::Scroller< Ped::TEView, true > BufferView;
 	
 	static inline std::auto_ptr< Ped::View > MakeView()
 	{
