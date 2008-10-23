@@ -26,48 +26,11 @@
 #include "Pedestal/View.hh"
 #include "Pedestal/Scrollbar.hh"
 #include "Pedestal/ScrollingView.hh"
+#include "Pedestal/UserWindow.hh"
 
 
 namespace Pedestal
 {
-	
-	short ActualScrollbarLength( short viewLength, bool shortened );
-	
-	Rect VerticalScrollbarBounds  ( short width, short height, bool shortened );
-	Rect HorizontalScrollbarBounds( short width, short height, bool shortened );
-	
-	Point ScrollDimensions( short width, short height, bool vertical, bool horizontal );
-	
-	inline Rect ScrollBounds( short width, short height, bool vertical, bool horizontal )
-	{
-		Point dimensions = ScrollDimensions( width, height, vertical, horizontal );
-		
-		return Nitrogen::SetRect( 0, 0, dimensions.h, dimensions.v );
-	}
-	
-	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition );
-	
-	short FigureScrollDistance( Nitrogen::ControlPartCode part, short pageDistance );
-	
-	short SetControlValueFromClippedDelta( ControlRef control, short delta );
-	
-	
-	class BoundedView : public View
-	{
-		private:
-			Rect bounds;
-		
-		public:
-			BoundedView(const Rect& bounds) : bounds( bounds )  {}
-			
-			const Rect& Bounds() const  { return bounds; }
-			
-			void Resize( short width, short height )
-			{
-				bounds.right = bounds.left + width;
-				bounds.bottom = bounds.top + height;
-			}
-	};
 	
 	template < bool present >  struct Scrollbar_Traits;
 	
@@ -98,6 +61,62 @@ namespace Pedestal
 			
 			void Activate( bool )  {}
 		};
+	};
+	
+	short ActualScrollbarLength( short viewLength, bool shortened );
+	
+	Rect VerticalScrollbarBounds  ( short width, short height, bool shortened );
+	Rect HorizontalScrollbarBounds( short width, short height, bool shortened );
+	
+	Point ScrollDimensions( short width, short height, bool vertical, bool horizontal );
+	
+	inline Rect ScrollBounds( short width, short height, bool vertical, bool horizontal )
+	{
+		Point dimensions = ScrollDimensions( width, height, vertical, horizontal );
+		
+		return Nitrogen::SetRect( 0, 0, dimensions.h, dimensions.v );
+	}
+	
+	template < bool vertical, bool horizontal >
+	inline Point ScrollDimensions( const Rect& scroller_bounds )
+	{
+		return ScrollDimensions( NitrogenExtras::RectWidth ( scroller_bounds ),
+		                         NitrogenExtras::RectHeight( scroller_bounds ),
+		                         Scrollbar_Traits< vertical   >::profile,
+		                         Scrollbar_Traits< horizontal >::profile );
+	}
+	
+	template < bool vertical, bool horizontal >
+	inline Rect ScrollBounds( const Rect& scroller_bounds )
+	{
+		return ScrollBounds( NitrogenExtras::RectWidth ( scroller_bounds ),
+		                     NitrogenExtras::RectHeight( scroller_bounds ),
+		                     Scrollbar_Traits< vertical   >::profile,
+		                     Scrollbar_Traits< horizontal >::profile );
+	}
+	
+	Point ScrollbarMaxima( Point scrollableRange, Point viewableRange, Point scrollPosition );
+	
+	short FigureScrollDistance( Nitrogen::ControlPartCode part, short pageDistance );
+	
+	short SetControlValueFromClippedDelta( ControlRef control, short delta );
+	
+	
+	class BoundedView : public View
+	{
+		private:
+			Rect bounds;
+		
+		public:
+			BoundedView(const Rect& bounds) : bounds( bounds )  {}
+			
+			const Rect& Bounds() const  { return bounds; }
+			
+			void Resize( short width, short height )
+			{
+				bounds.right = bounds.left + width;
+				bounds.bottom = bounds.top + height;
+			}
 	};
 	
 	enum ScrollbarAxis
@@ -187,6 +206,56 @@ namespace Pedestal
 	}
 	
 	
+	class ClickableScroller
+	{
+		protected:
+			static ClickableScroller* gCurrentScroller;
+		
+		public:
+			//static ClickableScroller& Current();
+			
+			static void ClickLoop()  { if ( gCurrentScroller )  gCurrentScroller->ClickInLoop(); }
+			
+			virtual void ClickInLoop() = 0;
+	};
+	
+	class ScrollerBase : public BoundedView, public ClickableScroller
+	{
+		private:
+			UserView itsScrollableView;
+		
+		public:
+			ScrollerBase( const Rect& bounds ) : BoundedView( bounds )
+			{
+			}
+			
+			void SetSubView( std::auto_ptr< ScrollableBase > subview )  { itsScrollableView.Set( std::auto_ptr< View >( subview ) ); }
+			
+			ScrollableBase const& GetSubView() const  { return itsScrollableView.Get< ScrollableBase >(); }
+			ScrollableBase      & GetSubView()        { return itsScrollableView.Get< ScrollableBase >(); }
+			
+			template < class ViewType >
+			ViewType& GetSubView()  { return itsScrollableView.Get< ViewType >(); }
+			
+			template < class ViewType >
+			const ViewType& GetSubView() const  { return itsScrollableView.Get< ViewType >(); }
+			
+			void Idle( const EventRecord& event );
+			
+			void MouseDown( const EventRecord& event );
+			
+			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
+			{
+				return GetSubView().EnterShiftSpaceQuasimode( event );
+			}
+			
+			void Update();
+			
+			bool SetCursor( Point location, RgnHandle mouseRgn );
+			
+	};
+	
+	
 	inline ScrollableBase& RecoverScrolledViewFromScrollbar( ControlRef control )
 	{
 		Control_Hooks* controlHooks = Nitrogen::GetControlReference( control );
@@ -194,9 +263,9 @@ namespace Pedestal
 		ASSERT( controlHooks       != NULL );
 		ASSERT( controlHooks->data != NULL );
 		
-		ScrollableBase& scrolledView = *static_cast< ScrollableBase* >( controlHooks->data );
+		ScrollerBase& scroller = *static_cast< ScrollerBase* >( controlHooks->data );
 		
-		return scrolledView;
+		return scroller.GetSubView();
 	}
 	
 	
@@ -348,21 +417,8 @@ namespace Pedestal
 		}
 	}
 	
-	class ClickableScroller
-	{
-		protected:
-			static ClickableScroller* gCurrentScroller;
-		
-		public:
-			//static ClickableScroller& Current();
-			
-			static void ClickLoop()  { if ( gCurrentScroller )  gCurrentScroller->ClickInLoop(); }
-			
-			virtual void ClickInLoop() = 0;
-	};
-	
-	template < class ScrollViewType, bool vertical, bool horizontal = false >
-	class Scroller : public BoundedView, public ClickableScroller
+	template < bool vertical, bool horizontal = false >
+	class Scroller : public ScrollerBase
 	{
 		private:
 			typedef Scrollbar_Traits< vertical   > VerticalTraits;
@@ -373,21 +429,26 @@ namespace Pedestal
 			
 			VerticalScrollbarType    myScrollV;
 			HorizontalScrollbarType  myScrollH;
-			
-			ScrollViewType myScrollView;
 		
 		public:
-			typedef typename ScrollViewType::Initializer Initializer;
-			
 			Scroller( const Rect& bounds, Initializer init = Initializer() );
 			
 			static bool ScrollsVertically()    { return VerticalTraits  ::present; }
 			static bool ScrollsHorizontally()  { return HorizontalTraits::present; }
 			
-			ScrollViewType const&          ScrolledView() const        { return myScrollView; }
-			ScrollViewType&                ScrolledView()              { return myScrollView; }
 			VerticalScrollbarType&   VerticalScrollbar()    { return myScrollV; }
 			HorizontalScrollbarType& HorizontalScrollbar()  { return myScrollH; }
+			
+			void SetSubView( std::auto_ptr< ScrollableBase > subview )
+			{
+				ScrollerBase::SetSubView( subview );
+				
+				//Point dimensions = ScrollDimensions< true, false >( Bounds() ) );
+				
+				//GetSubView().Resize( dimensions.h, dimensions.v );
+				
+				SetControlViewSizes();
+			}
 			
 			void SetControlViewSizes();
 			
@@ -395,57 +456,35 @@ namespace Pedestal
 			{
 				SetScrollbarMaxima( myScrollV.Get(),
 				                    myScrollH.Get(),
-				                    ComputeScrollbarMaxima( myScrollView ) );
+				                    ComputeScrollbarMaxima( GetSubView() ) );
 			}
 			
 			void Scroll(short dh, short dv, bool updateNow = 0)
 			{
-				myScrollView.Scroll( dh, dv, updateNow );
+				GetSubView().Scroll( dh, dv, updateNow );
 				
 				Calibrate();
 			}
 			
 			void UpdateScrollbars( Point oldRange, Point oldPosition )
 			{
-				Pedestal::UpdateScrollbars( myScrollView, myScrollV.Get(), myScrollH.Get(), oldRange, oldPosition );
+				Pedestal::UpdateScrollbars( GetSubView(), myScrollV.Get(), myScrollH.Get(), oldRange, oldPosition );
 			}
 			
 			void ClickInLoop()
 			{
 				Pedestal::UpdateScrollbars( myScrollV.Get(),
 				                            myScrollH.Get(),
-				                            ComputeScrollbarMaxima( ScrolledView() ),
-				                            ScrolledView().ScrollPosition() );
+				                            ComputeScrollbarMaxima( GetSubView() ),
+				                            GetSubView().ScrollPosition() );
 				
 				return;
 			}
 			
-			void Idle( const EventRecord& event )
-			{
-				// Intersect the clip region with the scrollview bounds,
-				// so the scrollview doesn't overpaint the scroll bars.
-				Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
-				                                                                     Nitrogen::RectRgn( ScrolledView().Bounds() ) ) );
-				
-				ScrolledView().Idle( event );
-			}
-			
-			void MouseDown( const EventRecord& event )
-			{
-				if ( Nitrogen::PtInRect( Nitrogen::GlobalToLocal( event.where ), ScrolledView().Bounds() ) )
-				{
-					gCurrentScroller = this;
-					
-					ScrolledView().MouseDown( event );
-					
-					gCurrentScroller = NULL;
-				}
-			}
-			
 			bool KeyDown( const EventRecord& event )
 			{
-				Point scrollableRange = ScrolledView().ScrollableRange();
-				Point scrollPosition  = ScrolledView().ScrollPosition();
+				Point scrollableRange = GetSubView().ScrollableRange();
+				Point scrollPosition  = GetSubView().ScrollPosition();
 				
 				char keyCode = (event.message & keyCodeMask) >> 8;
 				
@@ -488,7 +527,7 @@ namespace Pedestal
 					}
 				}
 				
-				if ( ScrolledView().KeyDown( event ) )
+				if ( GetSubView().KeyDown( event ) )
 				{
 					UpdateScrollbars( scrollableRange, scrollPosition );
 					return true;
@@ -497,24 +536,9 @@ namespace Pedestal
 				return false;
 			}
 			
-			boost::shared_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event )
-			{
-				return ScrolledView().EnterShiftSpaceQuasimode( event );
-			}
-			
-			void Update()
-			{
-				// Intersect the clip region with the scrollview bounds,
-				// so the scrollview doesn't overpaint the scroll bars.
-				Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
-				                                                                     Nitrogen::RectRgn( ScrolledView().Bounds() ) ) );
-				
-				ScrolledView().Update();
-			}
-			
 			void Activate( bool activating )
 			{
-				ScrolledView().Activate( activating );
+				GetSubView().Activate( activating );
 				
 				Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
 				
@@ -525,24 +549,15 @@ namespace Pedestal
 				HorizontalScrollbar().Activate( activating );
 			}
 			
-			bool SetCursor( Point location, RgnHandle mouseRgn )
-			{
-				if ( Nitrogen::PtInRect( location, ScrolledView().Bounds() ) )
-				{
-					return ScrolledView().SetCursor( location, mouseRgn );
-				}
-				
-				return false;
-			}
-			
 			bool UserCommand( MenuItemCode code )
 			{
-				Point scrollableRange = ScrolledView().ScrollableRange();
-				Point scrollPosition  = ScrolledView().ScrollPosition();
+				Point scrollableRange = GetSubView().ScrollableRange();
+				Point scrollPosition  = GetSubView().ScrollPosition();
 				
-				if ( ScrolledView().UserCommand( code ) )
+				if ( GetSubView().UserCommand( code ) )
 				{
 					UpdateScrollbars( scrollableRange, scrollPosition );
+					
 					return true;
 				}
 				
@@ -569,7 +584,7 @@ namespace Pedestal
 				InvalidateControl( VerticalScrollbar  ().Get() );
 				InvalidateControl( HorizontalScrollbar().Get() );
 				
-				ScrolledView().Resize( dimensions.h, dimensions.v );
+				GetSubView().Resize( dimensions.h, dimensions.v );
 				
 				Calibrate();
 				
@@ -578,41 +593,29 @@ namespace Pedestal
 	};
 	
 	
-	template < class ScrollViewType, bool vertical, bool horizontal >
-	inline Rect Bounds( const Scroller< ScrollViewType, vertical, horizontal >& scroller )
-	{
-		return scroller.Bounds();
-	}
-	
-	template < class ScrollViewType, bool vertical, bool horizontal >
-	Scroller< ScrollViewType, vertical, horizontal >::Scroller( const Rect& bounds, Initializer init )
+	template < bool vertical, bool horizontal >
+	Scroller< vertical, horizontal >::Scroller( const Rect& bounds, Initializer )
 	: 
-		BoundedView( bounds ),
+		ScrollerBase( bounds ),
 		myScrollV( VerticalScrollbarBounds  ( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
 		           GetControlProcIDForAppearenceExistence( gAppearenceExists ),
-		           &myScrollView,
+		           static_cast< ScrollerBase* >( this ),
 		           Track< kVertical > ),
 		myScrollH( HorizontalScrollbarBounds( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
 		           GetControlProcIDForAppearenceExistence( gAppearenceExists ),
-		           &myScrollView,
-		           Track< kHorizontal > ),
-		myScrollView( ScrollBounds( NitrogenExtras::RectWidth ( bounds ),
-		                            NitrogenExtras::RectHeight( bounds ),
-		                            VerticalTraits::profile,
-		                            HorizontalTraits::profile ),
-		              init )
+		           static_cast< ScrollerBase* >( this ),
+		           Track< kHorizontal > )
 	{
-		SetControlViewSizes();
 	}
 	
-	template < class ScrollViewType, bool vertical, bool horizontal >
-	void Scroller< ScrollViewType, vertical, horizontal >::SetControlViewSizes()
+	template < bool vertical, bool horizontal >
+	void Scroller< vertical, horizontal >::SetControlViewSizes()
 	{
-		Point range = myScrollView.ViewableRange();
+		Point range = GetSubView().ViewableRange();
 		
 		Pedestal::SetControlViewSize( VerticalScrollbar  ().Get(), range.v );
 		Pedestal::SetControlViewSize( HorizontalScrollbar().Get(), range.h );

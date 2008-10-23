@@ -138,5 +138,47 @@ namespace Pedestal
 		return value - oldValue;
 	}
 	
+	void ScrollerBase::Idle( const EventRecord& event )
+	{
+		// Intersect the clip region with the scrollview bounds,
+		// so the scrollview doesn't overpaint the scroll bars.
+		Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
+		                                                                     Nitrogen::RectRgn( GetSubView().Bounds() ) ) );
+		
+		GetSubView().Idle( event );
+	}
+	
+	void ScrollerBase::MouseDown( const EventRecord& event )
+	{
+		if ( Nitrogen::PtInRect( Nitrogen::GlobalToLocal( event.where ), GetSubView().Bounds() ) )
+		{
+			gCurrentScroller = this;
+			
+			GetSubView().MouseDown( event );
+			
+			gCurrentScroller = NULL;
+		}
+	}
+	
+	void ScrollerBase::Update()
+	{
+		// Intersect the clip region with the scrollview bounds,
+		// so the scrollview doesn't overpaint the scroll bars.
+		Nucleus::Saved< Nitrogen::Clip_Value > savedClip( Nitrogen::SectRgn( Nitrogen::GetClip(),
+		                                                                     Nitrogen::RectRgn( GetSubView().Bounds() ) ) );
+		
+		GetSubView().Update();
+	}
+	
+	bool ScrollerBase::SetCursor( Point location, RgnHandle mouseRgn )
+	{
+		if ( Nitrogen::PtInRect( location, GetSubView().Bounds() ) )
+		{
+			return GetSubView().SetCursor( location, mouseRgn );
+		}
+		
+		return false;
+	}
+	
 }
 
