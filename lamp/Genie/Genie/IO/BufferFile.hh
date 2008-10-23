@@ -26,40 +26,18 @@
 namespace Genie
 {
 	
-	namespace Ped = Pedestal;
-	
-	
-	class BufferWindow : public Ped::UserWindow,
+	class BufferWindow : public Pedestal::UserWindow,
 	                     public WindowHandle
 	{
-		private:
-			std::size_t  itsMark;
-			bool         itHasReceivedEOF;
-		
 		public:
-			typedef Ped::UserWindow Base;
+			typedef Pedestal::UserWindow Base;
 			
 			BufferWindow( TerminalID id, const std::string& name );
-			
-			~BufferWindow();
 			
 			Pedestal::WindowCore& GetWindowCore()  { return *this; }
 			
 			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 			
-			bool KeyDown( const EventRecord& event );
-			
-			bool ReceivedEOF() const  { return itHasReceivedEOF; }
-			
-			int SysRead( char* data, std::size_t byteCount );
-			
-			int SysWrite( const char* data, std::size_t byteCount );
-			
-			off_t Seek( off_t offset, int whence );
-			
-			off_t GetEOF() const;
-			
-			void SetEOF( off_t length );
 	};
 	
 	
@@ -81,22 +59,17 @@ namespace Genie
 			
 			FSTreePtr GetFile() const  { return itsWindow->GetFile(); }
 			
-			unsigned int SysPoll() const
-			{
-				unsigned readability = static_cast< BufferWindow* >( itsWindow.get() )->ReceivedEOF() ? kPollRead : 0;
-				
-				return readability | kPollWrite;
-			}
+			unsigned int SysPoll() const;
 			
 			int SysRead( char* data, std::size_t byteCount );
 			
-			int SysWrite( const char* data, std::size_t byteCount )  { return static_cast< BufferWindow* >( itsWindow.get() )->SysWrite( data, byteCount ); }
+			int SysWrite( const char* data, std::size_t byteCount );
 			
-			off_t Seek( off_t offset, int whence )  { return static_cast< BufferWindow* >( itsWindow.get() )->Seek( offset, whence ); }
+			off_t Seek( off_t offset, int whence );
 			
-			off_t GetEOF() const  { return static_cast< BufferWindow* >( itsWindow.get() )->GetEOF(); }
+			off_t GetEOF() const;
 			
-			void SetEOF( off_t length )  { static_cast< BufferWindow* >( itsWindow.get() )->SetEOF( length ); }
+			void SetEOF( off_t length );
 	};
 	
 	boost::shared_ptr< IOHandle > NewBufferFile();
