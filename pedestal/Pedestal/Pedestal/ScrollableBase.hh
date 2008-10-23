@@ -16,6 +16,8 @@ namespace Pedestal
 	class ScrollableBase : public View
 	{
 		public:
+			virtual Rect Bounds() const = 0;
+			
 			virtual Point ViewableRange() const = 0;
 			virtual Point ScrollableRange() const = 0;
 			virtual Point ScrollPosition() const = 0;
