@@ -44,7 +44,7 @@ namespace Pedestal
 			TESelection itsSelectionPriorToArrow;
 		
 		public:
-			TEView( const Rect& bounds, Initializer );
+			TEView( const Rect& bounds, Initializer = Initializer() );
 			
 			TEHandle Get() const  { return itsTE; }
 			

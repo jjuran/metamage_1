@@ -23,7 +23,7 @@ namespace Pedestal
 			boost::shared_ptr< View > itsView;
 		
 		public:
-			UserView( const Rect&, Initializer )
+			UserView( const Rect& = Rect(), Initializer = Initializer() )
 			{
 			}
 			
