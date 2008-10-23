@@ -384,13 +384,24 @@ namespace Genie
 		                      mbarHeight + vMargin / 3 );
 	}
 	
-	typedef Ped::Scroller< ConsolePane, true > ConsoleView;
+	typedef Ped::Scroller< true > ConsoleView;
 	
 	inline std::auto_ptr< Ped::View > MakeView( ConsoleID        id,
 	                                            Io::StringPipe&  input )
 	{
-		return std::auto_ptr< Ped::View >( new ConsoleView( MakeWindowRect(),
-		                                                    ConsoleView::Initializer( id, input ) ) );
+		Rect scroller_bounds = MakeWindowRect();
+		
+		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
+		
+		ConsoleView* scroller = NULL;
+		
+		std::auto_ptr< Ped::View > view( scroller = new ConsoleView( scroller_bounds ) );
+		
+		std::auto_ptr< Ped::ScrollableBase > subview( new ConsolePane( subview_bounds, ConsolePane::Initializer( id, input ) ) );
+		
+		scroller->SetSubView( subview );
+		
+		return view;
 	}
 	
 	
@@ -430,7 +441,7 @@ namespace Genie
 			case WIOCGDIM:
 				if ( result != NULL )
 				{
-					*result = Ped::ViewableRange( SubView().Get< ConsoleView >().ScrolledView().Get() );
+					*result = SubView().Get< ConsoleView >().GetSubView().ViewableRange();
 				}
 				
 				break;
@@ -449,7 +460,7 @@ namespace Genie
 	{
 		bool ready = itsInput.Ready();
 		
-		if ( !ready && SubView().Get< ConsoleView >().ScrolledView().CheckEOF() )
+		if ( !ready && SubView().Get< ConsoleView >().GetSubView< ConsolePane >().CheckEOF() )
 		{
 			throw io::end_of_input();
 		}
@@ -461,7 +472,7 @@ namespace Genie
 	{
 		ConsoleView& view = SubView().Get< ConsoleView >();
 		
-		int result = view.ScrolledView().WriteChars( data, byteCount );
+		int result = view.GetSubView< ConsolePane >().WriteChars( data, byteCount );
 		
 		view.UpdateScrollbars( N::SetPt( 0, 0 ),
 		                       N::SetPt( 0, 0 ) );

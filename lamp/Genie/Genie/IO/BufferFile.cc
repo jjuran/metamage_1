@@ -38,11 +38,23 @@ namespace Genie
 	}
 	
 	
-	typedef Ped::Scroller< Ped::TEView, true > BufferView;
+	typedef Ped::Scroller< true > BufferView;
 	
 	static inline std::auto_ptr< Ped::View > MakeView()
 	{
-		return std::auto_ptr< Ped::View >( new BufferView( MakeWindowRect(), BufferView::Initializer() ) );
+		Rect scroller_bounds = MakeWindowRect();
+		
+		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
+		
+		BufferView* scroller = NULL;
+		
+		std::auto_ptr< Ped::View > view( scroller = new BufferView( scroller_bounds ) );
+		
+		std::auto_ptr< Ped::ScrollableBase > subview( new Ped::TEView( subview_bounds ) );
+		
+		scroller->SetSubView( subview );
+		
+		return view;
 	}
 	
 	
@@ -110,7 +122,7 @@ namespace Genie
 			return 0;
 		}
 		
-		Ped::TEView& editor = SubView().Get< BufferView >().ScrolledView();
+		Ped::TEView& editor = SubView().Get< BufferView >().GetSubView< Ped::TEView >();
 		
 		Handle hText = editor.TextHandle();
 		
@@ -149,7 +161,7 @@ namespace Genie
 	{
 		Show();
 		
-		Ped::TEView& editor = SubView().Get< BufferView >().ScrolledView();
+		Ped::TEView& editor = SubView().Get< BufferView >().GetSubView< Ped::TEView >();
 		
 		SetEOF( itsMark );
 		
@@ -189,12 +201,12 @@ namespace Genie
 	
 	off_t BufferWindow::GetEOF() const
 	{
-		return SubView().Get< BufferView >().ScrolledView().TextLength();
+		return SubView().Get< BufferView >().GetSubView< Ped::TEView >().TextLength();
 	}
 	
 	void BufferWindow::SetEOF( off_t length )
 	{
-		Ped::TEView& editor = SubView().Get< BufferView >().ScrolledView();
+		Ped::TEView& editor = SubView().Get< BufferView >().GetSubView< Ped::TEView >();
 		
 		// Handle dereferenced here
 		TERec& te = *editor.Get()[0];

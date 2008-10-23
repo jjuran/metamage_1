@@ -15,7 +15,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef Ped::Scroller< Ped::Console, true > SystemConsoleView;
+	typedef Ped::Scroller< true > SystemConsoleView;
 	
 	class SystemConsole : public Ped::UserWindow
 	{
@@ -50,7 +50,19 @@ namespace Genie
 	
 	static inline std::auto_ptr< Ped::View > MakeView()
 	{
-		return std::auto_ptr< Ped::View >( new SystemConsoleView( MakeWindowRect(), SystemConsoleView::Initializer() ) );
+		Rect scroller_bounds = MakeWindowRect();
+		
+		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
+		
+		SystemConsoleView* scroller = NULL;
+		
+		std::auto_ptr< Ped::View > view( scroller = new SystemConsoleView( scroller_bounds ) );
+		
+		std::auto_ptr< Ped::ScrollableBase > subview( new Ped::Console( subview_bounds, Ped::Console::Initializer() ) );
+		
+		scroller->SetSubView( subview );
+		
+		return view;
 	}
 	
 	SystemConsole::SystemConsole( const boost::shared_ptr< Ped::WindowCloseHandler >& handler )
@@ -71,7 +83,7 @@ namespace Genie
 		
 		SystemConsoleView& view = gSystemConsoleOwner.itsWindow->SubView().Get< SystemConsoleView >();
 		
-		view.ScrolledView().WriteChars( data, byteCount );
+		view.GetSubView< Ped::Console >().WriteChars( data, byteCount );
 		
 		view.UpdateScrollbars( N::SetPt( 0, 0 ),
 		                       N::SetPt( 0, 0 ) );
