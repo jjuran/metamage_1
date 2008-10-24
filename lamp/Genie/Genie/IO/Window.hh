@@ -32,17 +32,12 @@ namespace Genie
 	
 	class WindowHandle : public TerminalHandle
 	{
-		private:
-			int itsWindowSalvagePolicy;
-		
 		public:
 			WindowHandle( const std::string& name );
 			
 			virtual ~WindowHandle();
 			
 			virtual void IOCtl( unsigned long request, int* argp );
-			
-			virtual Pedestal::WindowCore& GetWindowCore() = 0;
 			
 			virtual Nitrogen::WindowRef GetWindowRef() const = 0;
 			
