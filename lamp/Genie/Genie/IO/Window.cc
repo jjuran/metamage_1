@@ -114,8 +114,7 @@ namespace Genie
 	}
 	
 	
-	WindowHandle::WindowHandle( const std::string& name ) : TerminalHandle( name ),
-	                                                        itsWindowSalvagePolicy( kLampSalvageWindowOnExitNever )
+	WindowHandle::WindowHandle( const std::string& name ) : TerminalHandle( name )
 	{
 	}
 	
@@ -211,23 +210,6 @@ namespace Genie
 					Hide();
 				}
 				
-				break;
-			
-			case WIOCGEXIT:
-				if ( argp != NULL )
-				{
-					*argp = itsWindowSalvagePolicy;
-				}
-				
-				break;
-			
-			case WIOCSEXIT:
-				if ( argp == NULL )
-				{
-					p7::throw_errno( EFAULT );
-				}
-				
-				itsWindowSalvagePolicy = *argp;
 				break;
 			
 			default:
