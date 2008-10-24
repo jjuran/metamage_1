@@ -15,9 +15,6 @@
 // boost
 #include <boost/shared_ptr.hpp>
 
-// Pedestal
-#include "Pedestal/UserWindow.hh"
-
 // Genie
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Window.hh"
@@ -25,21 +22,6 @@
 
 namespace Genie
 {
-	
-	class BufferWindow : public Pedestal::UserWindow,
-	                     public WindowHandle
-	{
-		public:
-			typedef Pedestal::UserWindow Base;
-			
-			BufferWindow( TerminalID id, const std::string& name );
-			
-			Pedestal::WindowCore& GetWindowCore()  { return *this; }
-			
-			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
-			
-	};
-	
 	
 	class BufferFileHandle : public RegularFileHandle
 	{
@@ -71,8 +53,6 @@ namespace Genie
 			
 			void SetEOF( off_t length );
 	};
-	
-	boost::shared_ptr< IOHandle > NewBufferFile();
 	
 }
 

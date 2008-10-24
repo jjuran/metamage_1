@@ -14,6 +14,7 @@
 // Pedestal
 #include "Pedestal/Scroller.hh"
 #include "Pedestal/TEView.hh"
+#include "Pedestal/UserWindow.hh"
 
 
 namespace Genie
@@ -47,7 +48,7 @@ namespace Genie
 			
 			off_t Seek( off_t offset, int whence );
 			
-			off_t GetEOF() const;
+			off_t GetEOF() const  { return TextLength(); }
 			
 			void SetEOF( off_t length );
 		
@@ -159,11 +160,6 @@ namespace Genie
 		return itsMark;
 	}
 	
-	off_t BufferView::GetEOF() const
-	{
-		return TextLength();
-	}
-	
 	void BufferView::SetEOF( off_t length )
 	{
 		// Handle dereferenced here
@@ -207,7 +203,7 @@ namespace Genie
 	{
 		Rect scroller_bounds = MakeWindowRect();
 		
-		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
+		Rect subview_bounds = Ped::ScrollBounds< true, false >( scroller_bounds );
 		
 		Scroller* scroller = NULL;
 		
@@ -221,23 +217,47 @@ namespace Genie
 	}
 	
 	
-	BufferWindow::BufferWindow( TerminalID          id,
-	                            const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                                      "\p" "Edit",
-	                                                                                      false ),
-	                                                               N::documentProc ),
-	                                                         WindowHandle( name )
+	class BufferWindow : public Ped::UserWindow,
+	                     public WindowHandle
 	{
-		SetCloseHandler ( GetDynamicWindowCloseHandler < BufferFileHandle >( id ) );
-		SetResizeHandler( GetDynamicWindowResizeHandler< BufferFileHandle >( id ) );
-		
-		SetView( MakeView() );
+		public:
+			typedef Ped::UserWindow Base;
+			
+			BufferWindow( const std::string& name );
+			
+			N::WindowRef GetWindowRef() const  { return Get(); }
+			
+	};
+	
+	BufferWindow::BufferWindow( const std::string& name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                                     "\p" "Edit",
+	                                                                                     false ),
+	                                                              N::documentProc ),
+	                                                        WindowHandle( name )
+	{
 	}
 	
 	
-	BufferFileHandle::BufferFileHandle( TerminalID          id,
-	                                    const std::string&  name ) : itsWindow( new BufferWindow( id, name ) )
+	static BufferView& GetBuffer( const boost::shared_ptr< IOHandle >& h )
 	{
+		BufferWindow& window = *static_cast< BufferWindow* >( h.get() );
+		
+		Scroller& scroller = window.SubView().Get< Scroller >();
+		
+		BufferView& view = scroller.GetSubView< BufferView >();
+		
+		return view;
+	}
+	
+	BufferFileHandle::BufferFileHandle( TerminalID          id,
+	                                    const std::string&  name ) : itsWindow( new BufferWindow( name ) )
+	{
+		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
+		
+		window.SetCloseHandler ( GetDynamicWindowCloseHandler < BufferFileHandle >( id ) );
+		window.SetResizeHandler( GetDynamicWindowResizeHandler< BufferFileHandle >( id ) );
+		
+		window.SetView( MakeView() );
 	}
 	
 	BufferFileHandle::~BufferFileHandle()
@@ -251,13 +271,7 @@ namespace Genie
 	
 	unsigned int BufferFileHandle::SysPoll() const
 	{
-		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
-		
-		const Scroller& scroller = window.SubView().Get< Scroller >();
-		
-		const BufferView& view = scroller.GetSubView< BufferView >();
-		
-		unsigned readability = view.ReceivedEOF() ? kPollRead : 0;
+		unsigned readability = GetBuffer( itsWindow ).ReceivedEOF() ? kPollRead : 0;
 		
 		return readability | kPollWrite;
 	}
@@ -266,11 +280,11 @@ namespace Genie
 	{
 		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
 		
-		window.Show();
-		
 		Scroller& scroller = window.SubView().Get< Scroller >();
 		
 		BufferView& view = scroller.GetSubView< BufferView >();
+		
+		window.Show();
 		
 		while ( !view.ReceivedEOF() )
 		{
@@ -286,11 +300,11 @@ namespace Genie
 	{
 		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
 		
-		window.Show();
-		
 		Scroller& scroller = window.SubView().Get< Scroller >();
 		
 		BufferView& view = scroller.GetSubView< BufferView >();
+		
+		window.Show();
 		
 		int result = view.SysWrite( data, byteCount );
 		
@@ -302,35 +316,17 @@ namespace Genie
 	
 	off_t BufferFileHandle::Seek( off_t offset, int whence )
 	{
-		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
-		
-		Scroller& scroller = window.SubView().Get< Scroller >();
-		
-		BufferView& view = scroller.GetSubView< BufferView >();
-		
-		return view.Seek( offset, whence );
+		return GetBuffer( itsWindow ).Seek( offset, whence );
 	}
 	
 	off_t BufferFileHandle::GetEOF() const
 	{
-		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
-		
-		Scroller& scroller = window.SubView().Get< Scroller >();
-		
-		BufferView& view = scroller.GetSubView< BufferView >();
-		
-		return view.TextLength();
+		return GetBuffer( itsWindow ).GetEOF();
 	}
 	
 	void BufferFileHandle::SetEOF( off_t length )
 	{
-		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
-		
-		Scroller& scroller = window.SubView().Get< Scroller >();
-		
-		BufferView& view = scroller.GetSubView< BufferView >();
-		
-		view.SetEOF( length );
+		GetBuffer( itsWindow ).SetEOF( length );
 	}
 	
 }

@@ -37,6 +37,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// Io
+#include "Io/TextInput.hh"
+
 // Pedestal
 #include "Pedestal/Console.hh"
 #include "Pedestal/Scroller.hh"
@@ -55,34 +58,38 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class ConsolePane : public Pedestal::Console
+	class ConsolePane : public Ped::Console
 	{
 		private:
-			ConsoleID        itsConsoleID;
-			Io::StringPipe&  itsInput;
-			short            itsStartOfInput;
-			bool             itHasReceivedEOF;
+			ConsoleID       itsConsoleID;
+			Io::StringPipe  itsInput;
+			short           itsStartOfInput;
+			bool            itHasReceivedEOF;
 		
 		public:
 			struct Initializer : public Pedestal::Console::Initializer
 			{
-				ConsoleID        id;
-				Io::StringPipe&  input;
+				ConsoleID id;
 				
-				Initializer( ConsoleID id, Io::StringPipe& in ) : id( id ), input( in )  {}
+				Initializer( ConsoleID id ) : id( id )
+				{
+				}
 			};
 		
 		public:
 			ConsolePane( const Rect&         bounds,
 			             const Initializer&  init   ) : Pedestal::Console( bounds, init ),
 			                                            itsConsoleID     ( init.id      ),
-			                                            itsInput         ( init.input   ),
 			                                            itsStartOfInput  ( TextLength() ),
 			                                            itHasReceivedEOF ( false        )
 			{
 			}
 			
 			bool CheckEOF();
+			
+			bool IsReadyForInput();
+			
+			std::string ReadLine();
 			
 			int WriteChars( const char* data, unsigned int byteCount );
 			
@@ -105,6 +112,23 @@ namespace Genie
 		}
 		
 		return false;
+	}
+	
+	bool ConsolePane::IsReadyForInput()
+	{
+		bool ready = itsInput.Ready();
+		
+		if ( !ready && CheckEOF() )
+		{
+			throw io::end_of_input();
+		}
+		
+		return ready;
+	}
+	
+	std::string ConsolePane::ReadLine()
+	{
+		return itsInput.Read();
 	}
 	
 	int ConsolePane::WriteChars( const char* data, unsigned int byteCount )
@@ -384,26 +408,34 @@ namespace Genie
 		                      mbarHeight + vMargin / 3 );
 	}
 	
-	typedef Ped::Scroller< true > ConsoleView;
+	typedef Ped::Scroller< true > Scroller;
 	
-	inline std::auto_ptr< Ped::View > MakeView( ConsoleID        id,
-	                                            Io::StringPipe&  input )
+	static inline std::auto_ptr< Ped::View > MakeView( ConsoleID id )
 	{
 		Rect scroller_bounds = MakeWindowRect();
 		
 		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
 		
-		ConsoleView* scroller = NULL;
+		Scroller* scroller = NULL;
 		
-		std::auto_ptr< Ped::View > view( scroller = new ConsoleView( scroller_bounds ) );
+		std::auto_ptr< Ped::View > view( scroller = new Scroller( scroller_bounds ) );
 		
-		std::auto_ptr< Ped::ScrollableBase > subview( new ConsolePane( subview_bounds, ConsolePane::Initializer( id, input ) ) );
+		std::auto_ptr< Ped::ScrollableBase > subview( new ConsolePane( subview_bounds, ConsolePane::Initializer( id ) ) );
 		
 		scroller->SetSubView( subview );
 		
 		return view;
 	}
 	
+	
+	static ConsolePane& GetConsole( Ped::UserView& view )
+	{
+		Scroller& scroller = view.Get< Scroller >();
+		
+		ConsolePane& pane = scroller.GetSubView< ConsolePane >();
+		
+		return pane;
+	}
 	
 	ConsoleWindow::ConsoleWindow( ConsoleID           id,
 	                              const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
@@ -415,7 +447,7 @@ namespace Genie
 		SetCloseHandler ( GetDynamicWindowCloseHandler < ConsoleTTYHandle >( id ) );
 		SetResizeHandler( GetDynamicWindowResizeHandler< ConsoleTTYHandle >( id ) );
 		
-		SetView( MakeView( id, itsInput ) );
+		SetView( MakeView( id ) );
 	}
 	
 	ConsoleWindow::~ConsoleWindow()
@@ -441,7 +473,7 @@ namespace Genie
 			case WIOCGDIM:
 				if ( result != NULL )
 				{
-					*result = SubView().Get< ConsoleView >().GetSubView().ViewableRange();
+					*result = GetConsole( SubView() ).ViewableRange();
 				}
 				
 				break;
@@ -458,24 +490,24 @@ namespace Genie
 	
 	bool ConsoleWindow::IsReadyForInput()
 	{
-		bool ready = itsInput.Ready();
-		
-		if ( !ready && SubView().Get< ConsoleView >().GetSubView< ConsolePane >().CheckEOF() )
-		{
-			throw io::end_of_input();
-		}
-		
-		return ready;
+		return GetConsole( SubView() ).IsReadyForInput();
+	}
+	
+	std::string ConsoleWindow::ReadInput()
+	{
+		return GetConsole( SubView() ).ReadLine();
 	}
 	
 	int ConsoleWindow::Write( const char* data, std::size_t byteCount )
 	{
-		ConsoleView& view = SubView().Get< ConsoleView >();
+		Scroller& scroller = SubView().Get< Scroller >();
 		
-		int result = view.GetSubView< ConsolePane >().WriteChars( data, byteCount );
+		ConsolePane& pane = scroller.GetSubView< ConsolePane >();
 		
-		view.UpdateScrollbars( N::SetPt( 0, 0 ),
-		                       N::SetPt( 0, 0 ) );
+		int result = pane.WriteChars( data, byteCount );
+		
+		scroller.UpdateScrollbars( N::SetPt( 0, 0 ),
+		                           N::SetPt( 0, 0 ) );
 		
 		return result;
 	}

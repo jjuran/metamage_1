@@ -9,9 +9,6 @@
 // Standard C++
 #include <string>
 
-// Io
-#include "Io/TextInput.hh"
-
 // Pedestal
 #include "Pedestal/UserWindow.hh"
 
@@ -28,9 +25,6 @@ namespace Genie
 	class ConsoleWindow : public Pedestal::UserWindow,
 	                      public WindowHandle
 	{
-		private:
-			Io::StringPipe itsInput;
-		
 		public:
 			typedef Pedestal::UserWindow Base;
 			
@@ -40,13 +34,11 @@ namespace Genie
 			
 			void IOCtl( unsigned long request, int* argp );
 			
-			Pedestal::WindowCore& GetWindowCore() { return *this; }
-			
 			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 			
 			bool IsReadyForInput();
 			
-			std::string ReadInput()  { return itsInput.Read(); }
+			std::string ReadInput();
 			
 			int Write( const char* data, std::size_t byteCount );
 	};
