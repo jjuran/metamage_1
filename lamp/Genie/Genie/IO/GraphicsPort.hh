@@ -33,8 +33,6 @@ namespace Genie
 			
 			void IOCtl( unsigned long request, int* argp );
 			
-			Pedestal::WindowCore& GetWindowCore() { return *this; }
-			
 			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 	};
 	
