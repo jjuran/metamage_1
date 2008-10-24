@@ -22,7 +22,6 @@ namespace Genie
 			ConsoleID                      itsID;
 			boost::shared_ptr< IOHandle >  itsWindow;
 			std::string                    itsCurrentInput;
-			int                            itsWindowSalvagePolicy;
 			
 			IOHandle* Next() const;
 		
