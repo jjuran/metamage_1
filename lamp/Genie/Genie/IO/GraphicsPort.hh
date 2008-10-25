@@ -6,9 +6,6 @@
 #ifndef GENIE_IO_GRAPHICSPORT_HH
 #define GENIE_IO_GRAPHICSPORT_HH
 
-// Pedestal
-#include "Pedestal/UserWindow.hh"
-
 // Genie
 #include "Genie/IO/Window.hh"
 
@@ -16,15 +13,9 @@
 namespace Genie
 {
 	
-	class GraphicsWindow : public Pedestal::UserWindow,
-	                       public WindowHandle
+	class GraphicsWindow : public WindowHandle
 	{
-		private:
-			
-		
 		public:
-			typedef Pedestal::UserWindow Base;
-			
 			static const char* PathPrefix()  { return "/sys/set/gfx/"; }
 			
 			GraphicsWindow( TerminalID id, const std::string& name );
@@ -32,8 +23,6 @@ namespace Genie
 			~GraphicsWindow();
 			
 			void IOCtl( unsigned long request, int* argp );
-			
-			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 	};
 	
 }

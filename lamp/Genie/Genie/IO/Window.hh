@@ -13,6 +13,9 @@
 #include "Nitrogen/MacWindows.h"
 #include "Nitrogen/Str.h"
 
+// Pedestal
+#include "Pedestal/UserWindow.hh"
+
 // Genie
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
@@ -21,7 +24,6 @@
 namespace Pedestal
 {
 	
-	class WindowCore;
 	class WindowCloseHandler;
 	class WindowResizeHandler;
 	
@@ -30,16 +32,19 @@ namespace Pedestal
 namespace Genie
 {
 	
-	class WindowHandle : public TerminalHandle
+	class WindowHandle : public Pedestal::UserWindow,
+	                     public TerminalHandle
 	{
 		public:
-			WindowHandle( const std::string& name );
+			WindowHandle( const Pedestal::NewWindowContext&  context,
+			              Nitrogen::WindowDefProcID          procID,
+			              const std::string&                 name );
 			
 			virtual ~WindowHandle();
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
-			virtual Nitrogen::WindowRef GetWindowRef() const = 0;
+			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 			
 			Nitrogen::Str255 GetTitle() const;
 			

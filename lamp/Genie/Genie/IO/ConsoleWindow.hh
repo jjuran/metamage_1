@@ -9,9 +9,6 @@
 // Standard C++
 #include <string>
 
-// Pedestal
-#include "Pedestal/UserWindow.hh"
-
 // Genie
 #include "Genie/IO/Window.hh"
 
@@ -22,19 +19,14 @@ namespace Genie
 	typedef std::size_t ConsoleID;
 	
 	
-	class ConsoleWindow : public Pedestal::UserWindow,
-	                      public WindowHandle
+	class ConsoleWindow : public WindowHandle
 	{
 		public:
-			typedef Pedestal::UserWindow Base;
-			
 			ConsoleWindow( ConsoleID id, const std::string& name );
 			
 			~ConsoleWindow();
 			
 			void IOCtl( unsigned long request, int* argp );
-			
-			Nitrogen::WindowRef GetWindowRef() const  { return Get(); }
 			
 			bool IsReadyForInput();
 			

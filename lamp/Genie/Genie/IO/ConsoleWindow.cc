@@ -438,11 +438,11 @@ namespace Genie
 	}
 	
 	ConsoleWindow::ConsoleWindow( ConsoleID           id,
-	                              const std::string&  name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                                        N::Str255( name ),
-	                                                                                        true ),
-	                                                                 N::documentProc ),
-	                                                           WindowHandle( name )
+	                              const std::string&  name ) : WindowHandle( Ped::NewWindowContext( MakeWindowRect(),
+	                                                                                                N::Str255( name ),
+	                                                                                                true ),
+	                                                                         N::documentProc,
+	                                                                         name )
 	{
 		SetCloseHandler ( GetDynamicWindowCloseHandler < ConsoleTTYHandle >( id ) );
 		SetResizeHandler( GetDynamicWindowResizeHandler< ConsoleTTYHandle >( id ) );

@@ -14,7 +14,6 @@
 // Pedestal
 #include "Pedestal/Scroller.hh"
 #include "Pedestal/TEView.hh"
-#include "Pedestal/UserWindow.hh"
 
 
 namespace Genie
@@ -199,10 +198,8 @@ namespace Genie
 	
 	typedef Ped::Scroller< true > Scroller;
 	
-	static inline std::auto_ptr< Ped::View > MakeView()
+	static inline std::auto_ptr< Ped::View > MakeView( const Rect& scroller_bounds )
 	{
-		Rect scroller_bounds = MakeWindowRect();
-		
 		Rect subview_bounds = Ped::ScrollBounds< true, false >( scroller_bounds );
 		
 		Scroller* scroller = NULL;
@@ -217,30 +214,9 @@ namespace Genie
 	}
 	
 	
-	class BufferWindow : public Ped::UserWindow,
-	                     public WindowHandle
-	{
-		public:
-			typedef Ped::UserWindow Base;
-			
-			BufferWindow( const std::string& name );
-			
-			N::WindowRef GetWindowRef() const  { return Get(); }
-			
-	};
-	
-	BufferWindow::BufferWindow( const std::string& name ) : Base( Ped::NewWindowContext( MakeWindowRect(),
-	                                                                                     "\p" "Edit",
-	                                                                                     false ),
-	                                                              N::documentProc ),
-	                                                        WindowHandle( name )
-	{
-	}
-	
-	
 	static BufferView& GetBuffer( const boost::shared_ptr< IOHandle >& h )
 	{
-		BufferWindow& window = *static_cast< BufferWindow* >( h.get() );
+		WindowHandle& window = *static_cast< WindowHandle* >( h.get() );
 		
 		Scroller& scroller = window.SubView().Get< Scroller >();
 		
@@ -250,14 +226,22 @@ namespace Genie
 	}
 	
 	BufferFileHandle::BufferFileHandle( TerminalID          id,
-	                                    const std::string&  name ) : itsWindow( new BufferWindow( name ) )
+	                                    const std::string&  name )
 	{
-		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
+		Rect bounds = MakeWindowRect();
 		
-		window.SetCloseHandler ( GetDynamicWindowCloseHandler < BufferFileHandle >( id ) );
-		window.SetResizeHandler( GetDynamicWindowResizeHandler< BufferFileHandle >( id ) );
+		Ped::NewWindowContext context( bounds,
+	                                   "\p" "Edit",
+	                                   false );
 		
-		window.SetView( MakeView() );
+		WindowHandle* window = new WindowHandle( context, N::documentProc, name );
+		
+		itsWindow.reset( window );
+		
+		window->SetCloseHandler ( GetDynamicWindowCloseHandler < BufferFileHandle >( id ) );
+		window->SetResizeHandler( GetDynamicWindowResizeHandler< BufferFileHandle >( id ) );
+		
+		window->SetView( MakeView( bounds ) );
 	}
 	
 	BufferFileHandle::~BufferFileHandle()
@@ -278,7 +262,7 @@ namespace Genie
 	
 	int BufferFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
+		WindowHandle& window = *static_cast< WindowHandle* >( itsWindow.get() );
 		
 		Scroller& scroller = window.SubView().Get< Scroller >();
 		
@@ -298,7 +282,7 @@ namespace Genie
 	
 	int BufferFileHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		BufferWindow& window = *static_cast< BufferWindow* >( itsWindow.get() );
+		WindowHandle& window = *static_cast< WindowHandle* >( itsWindow.get() );
 		
 		Scroller& scroller = window.SubView().Get< Scroller >();
 		
