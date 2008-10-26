@@ -16,6 +16,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_PseudoFile.hh"
 
 
 namespace Genie
@@ -23,6 +24,7 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
 	
@@ -43,21 +45,55 @@ namespace Genie
 	}
 	
 	
-	struct GetWindowName
+	static inline bool is_integer( const char* s )
+	{
+		return std::isdigit( s[ s[0] == '-' ] );
+	}
+	
+	static Point ReadPoint( const std::string& value )
+	{
+		const char* p = value.c_str();
+		
+		long x = std::strtol( p, (char**) &p, 10 );
+		
+		if ( p != value.c_str()  &&  *p != '\0' )
+		{
+			while ( *++p )
+			{
+				if ( is_integer( p ) )
+				{
+					long y = std::strtol( p, NULL, 10 );
+					
+					Point result = { y, x };
+					
+					return result;
+				}
+			}
+		}
+		
+		throw p7::errno_t( EINVAL );
+	}
+	
+	struct Property_WindowName
 	{
 		typedef N::Str255 Result;
 		
-		Result operator()( N::WindowRef window ) const
+		Result Get( N::WindowRef window ) const
 		{
 			return N::GetWTitle( window );
 		}
+		
+		void Set( N::WindowRef window, const std::string& value )
+		{
+			N::SetWTitle( window, N::Str255( value ) );
+		}
 	};
 	
-	struct GetWindowPosition
+	struct Property_WindowPosition
 	{
 		typedef std::string Result;
 		
-		Result operator()( N::WindowRef window ) const
+		Result Get( N::WindowRef window ) const
 		{
 			Point position = Ped::GetWindowPosition( window );
 			
@@ -69,13 +105,18 @@ namespace Genie
 			
 			return result;
 		}
+		
+		void Set( N::WindowRef window, const std::string& value )
+		{
+			Ped::SetWindowPosition( window, ReadPoint( value ) );
+		}
 	};
 	
-	struct GetWindowSize
+	struct Property_WindowSize
 	{
 		typedef std::string Result;
 		
-		Result operator()( N::WindowRef window ) const
+		Result Get( N::WindowRef window ) const
 		{
 			Point size = Ped::GetWindowSize( window );
 			
@@ -87,9 +128,14 @@ namespace Genie
 			
 			return result;
 		}
+		
+		void Set( N::WindowRef window, const std::string& value )
+		{
+			Ped::SetWindowSize( window, ReadPoint( value ) );
+		}
 	};
 	
-	template < class Get >
+	template < class Property >
 	class sys_mac_window_REF_Query
 	{
 		private:
@@ -102,11 +148,16 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
-				std::string output = NN::Convert< std::string >( Get()( itsKey ) ) + "\n";
+				std::string output = NN::Convert< std::string >( Property().Get( itsKey ) ) + "\n";
 				
 				return output;
+			}
+			
+			void Set( const std::string& value )
+			{
+				Property().Set( itsKey, value );
 			}
 	};
 	
@@ -122,11 +173,23 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
+	template < class Property >
+	static FSTreePtr Property_Factory( const FSTreePtr&                parent,
+	                                   const std::string&              name,
+	                                   WindowRef_KeyName_Traits::Key   key )
+	{
+		typedef sys_mac_window_REF_Query< Property > Query;
+		
+		typedef FSTree_PseudoFile< Query > QueryFile;
+		
+		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+	}
+	
 	const Functional_Traits< WindowRef_KeyName_Traits::Key >::Mapping sys_mac_window_REF_Mappings[] =
 	{
-		{ "name", &Query_Factory< GetWindowName     > },
-		{ "pos",  &Query_Factory< GetWindowPosition > },
-		{ "size", &Query_Factory< GetWindowSize     > },
+		{ "name", &Property_Factory< Property_WindowName     > },
+		{ "pos",  &Property_Factory< Property_WindowPosition > },
+		{ "size", &Property_Factory< Property_WindowSize     > },
 		
 		{ NULL, NULL }
 	};
