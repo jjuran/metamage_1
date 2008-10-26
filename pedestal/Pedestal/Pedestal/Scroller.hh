@@ -378,10 +378,10 @@ namespace Pedestal
 	}
 	
 	template < class Vertical, class Horizontal >
-	inline void UpdateScrollbars( const Vertical&        verticalScrollbar,
-	                              const Horizontal&      horizontalScrollbar,
-	                              Point                  maxima,
-	                              Point                  position )
+	void UpdateScrollbars( const Vertical&        verticalScrollbar,
+	                       const Horizontal&      horizontalScrollbar,
+	                       Point                  maxima,
+	                       Point                  position )
 	{
 		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
 		
@@ -394,27 +394,6 @@ namespace Pedestal
 		SetScrollbarMaxima( verticalScrollbar,
 		                    horizontalScrollbar,
 		                    maxima );
-	}
-	
-	template < class Vertical, class Horizontal >
-	inline void UpdateScrollbars( const ScrollableBase&  scrolledView,
-	                              const Vertical&        verticalScrollbar,
-	                              const Horizontal&      horizontalScrollbar,
-	                              Point                  oldRange,
-	                              Point                  oldPosition )
-	{
-		using namespace Nucleus::Operators;
-		
-		Point range = scrolledView.ScrollableRange();
-		Point pos   = scrolledView.ScrollPosition();
-		
-		if ( oldPosition != pos  ||  oldRange != range )
-		{
-			UpdateScrollbars( verticalScrollbar,
-			                  horizontalScrollbar,
-			                  ComputeScrollbarMaxima( scrolledView ),
-			                  pos );
-		}
 	}
 	
 	template < bool vertical, bool horizontal = false >
@@ -466,10 +445,7 @@ namespace Pedestal
 				Calibrate();
 			}
 			
-			void UpdateScrollbars( Point oldRange, Point oldPosition )
-			{
-				Pedestal::UpdateScrollbars( GetSubView(), myScrollV.Get(), myScrollH.Get(), oldRange, oldPosition );
-			}
+			void UpdateScrollbars( Point oldRange, Point oldPosition );
 			
 			void ClickInLoop()
 			{
@@ -481,115 +457,13 @@ namespace Pedestal
 				return;
 			}
 			
-			bool KeyDown( const EventRecord& event )
-			{
-				Point scrollableRange = GetSubView().ScrollableRange();
-				Point scrollPosition  = GetSubView().ScrollPosition();
-				
-				char keyCode = (event.message & keyCodeMask) >> 8;
-				
-				// Only consider programmers' keys, not control characters
-				if ( keyCode >= 0x70 )
-				{
-					char keyChar = event.message & charCodeMask;
-					
-					const char pageXCharToPartDiff = kControlPageUpPart - kPageUpCharCode;
-					
-					ASSERT( kControlPageDownPart - kPageDownCharCode == pageXCharToPartDiff );
-					
-					switch ( keyChar )
-					{
-						case kHomeCharCode:
-							Scroll( 0, -scrollPosition.v );
-							UpdateScrollbars( scrollableRange, scrollPosition );
-							return true;
-						
-						case kEndCharCode:
-							Scroll( 0, scrollableRange.v - scrollPosition.v );
-							UpdateScrollbars( scrollableRange, scrollPosition );
-							return true;
-						
-						case kPageUpCharCode:
-						case kPageDownCharCode:
-							if ( ControlRef v = myScrollV.Get() )
-							{
-								using Nitrogen::ControlPartCode;
-								
-								ControlPartCode part = ControlPartCode( keyChar + pageXCharToPartDiff );
-								
-								ScrollbarAction< kVertical >( v, part );
-							}
-							
-							return true;
-						
-						default:
-							break;
-					}
-				}
-				
-				if ( GetSubView().KeyDown( event ) )
-				{
-					UpdateScrollbars( scrollableRange, scrollPosition );
-					return true;
-				}
-				
-				return false;
-			}
+			bool KeyDown( const EventRecord& event );
 			
-			void Activate( bool activating )
-			{
-				GetSubView().Activate( activating );
-				
-				Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
-				
-				Nitrogen::ClipRect( Nitrogen::GetPortBounds( Nitrogen::GetQDGlobalsThePort() ) );
-				
-				
-				VerticalScrollbar  ().Activate( activating );
-				HorizontalScrollbar().Activate( activating );
-			}
+			void Activate( bool activating );
 			
-			bool UserCommand( MenuItemCode code )
-			{
-				Point scrollableRange = GetSubView().ScrollableRange();
-				Point scrollPosition  = GetSubView().ScrollPosition();
-				
-				if ( GetSubView().UserCommand( code ) )
-				{
-					UpdateScrollbars( scrollableRange, scrollPosition );
-					
-					return true;
-				}
-				
-				return false;
-			}
+			void Resize( short width, short height );
 			
-			void Resize( short width, short height )
-			{
-				BoundedView::Resize( width, height );
-				
-				Point dimensions = ScrollDimensions( width,
-				                                     height,
-				                                     VerticalTraits  ::profile,
-				                                     HorizontalTraits::profile );
-				
-				// Invalidate old scrollbar regions
-				InvalidateControl( VerticalScrollbar  ().Get() );
-				InvalidateControl( HorizontalScrollbar().Get() );
-				
-				SetBounds( VerticalScrollbar  ().Get(),   VerticalScrollbarBounds( width, height, true ) );
-				SetBounds( HorizontalScrollbar().Get(), HorizontalScrollbarBounds( width, height, true ) );
-				
-				// Invalidate new scrollbar regions
-				InvalidateControl( VerticalScrollbar  ().Get() );
-				InvalidateControl( HorizontalScrollbar().Get() );
-				
-				GetSubView().Resize( dimensions.h, dimensions.v );
-				
-				Calibrate();
-				
-				SetControlViewSizes();
-			}
+			bool UserCommand( MenuItemCode code );
 	};
 	
 	
@@ -619,6 +493,137 @@ namespace Pedestal
 		
 		Pedestal::SetControlViewSize( VerticalScrollbar  ().Get(), range.v );
 		Pedestal::SetControlViewSize( HorizontalScrollbar().Get(), range.h );
+	}
+	
+	template < bool vertical, bool horizontal >
+	void Scroller< vertical, horizontal >::UpdateScrollbars( Point oldRange, Point oldPosition )
+	{
+		using namespace Nucleus::Operators;
+		
+		Point range = GetSubView().ScrollableRange();
+		Point pos   = GetSubView().ScrollPosition();
+		
+		if ( oldPosition != pos  ||  oldRange != range )
+		{
+			Pedestal::UpdateScrollbars( myScrollV.Get(),
+			                            myScrollH.Get(),
+			                            ComputeScrollbarMaxima( GetSubView() ),
+			                            pos );
+		}
+	}
+	
+	template < bool vertical, bool horizontal >
+	bool Scroller< vertical, horizontal >::KeyDown( const EventRecord& event )
+	{
+		Point scrollableRange = GetSubView().ScrollableRange();
+		Point scrollPosition  = GetSubView().ScrollPosition();
+		
+		char keyCode = (event.message & keyCodeMask) >> 8;
+		
+		// Only consider programmers' keys, not control characters
+		if ( keyCode >= 0x70 )
+		{
+			char keyChar = event.message & charCodeMask;
+			
+			const char pageXCharToPartDiff = kControlPageUpPart - kPageUpCharCode;
+			
+			ASSERT( kControlPageDownPart - kPageDownCharCode == pageXCharToPartDiff );
+			
+			switch ( keyChar )
+			{
+				case kHomeCharCode:
+					Scroll( 0, -scrollPosition.v );
+					UpdateScrollbars( scrollableRange, scrollPosition );
+					return true;
+				
+				case kEndCharCode:
+					Scroll( 0, scrollableRange.v - scrollPosition.v );
+					UpdateScrollbars( scrollableRange, scrollPosition );
+					return true;
+				
+				case kPageUpCharCode:
+				case kPageDownCharCode:
+					if ( ControlRef v = myScrollV.Get() )
+					{
+						using Nitrogen::ControlPartCode;
+						
+						ControlPartCode part = ControlPartCode( keyChar + pageXCharToPartDiff );
+						
+						ScrollbarAction< kVertical >( v, part );
+					}
+					
+					return true;
+				
+				default:
+					break;
+			}
+		}
+		
+		if ( GetSubView().KeyDown( event ) )
+		{
+			UpdateScrollbars( scrollableRange, scrollPosition );
+			return true;
+		}
+		
+		return false;
+	}
+	
+	template < bool vertical, bool horizontal >
+	void Scroller< vertical, horizontal >::Activate( bool activating )
+	{
+		GetSubView().Activate( activating );
+		
+		Nucleus::Saved< Nitrogen::Clip_Value > savedClip;
+		
+		Nitrogen::ClipRect( Nitrogen::GetPortBounds( Nitrogen::GetQDGlobalsThePort() ) );
+		
+		
+		VerticalScrollbar  ().Activate( activating );
+		HorizontalScrollbar().Activate( activating );
+	}
+	
+	template < bool vertical, bool horizontal >
+	void Scroller< vertical, horizontal >::Resize( short width, short height )
+	{
+		BoundedView::Resize( width, height );
+		
+		Point dimensions = ScrollDimensions( width,
+		                                     height,
+		                                     VerticalTraits  ::profile,
+		                                     HorizontalTraits::profile );
+		
+		// Invalidate old scrollbar regions
+		InvalidateControl( VerticalScrollbar  ().Get() );
+		InvalidateControl( HorizontalScrollbar().Get() );
+		
+		SetBounds( VerticalScrollbar  ().Get(),   VerticalScrollbarBounds( width, height, true ) );
+		SetBounds( HorizontalScrollbar().Get(), HorizontalScrollbarBounds( width, height, true ) );
+		
+		// Invalidate new scrollbar regions
+		InvalidateControl( VerticalScrollbar  ().Get() );
+		InvalidateControl( HorizontalScrollbar().Get() );
+		
+		GetSubView().Resize( dimensions.h, dimensions.v );
+		
+		Calibrate();
+		
+		SetControlViewSizes();
+	}
+	
+	template < bool vertical, bool horizontal >
+	bool Scroller< vertical, horizontal >::UserCommand( MenuItemCode code )
+	{
+		Point scrollableRange = GetSubView().ScrollableRange();
+		Point scrollPosition  = GetSubView().ScrollPosition();
+		
+		if ( GetSubView().UserCommand( code ) )
+		{
+			UpdateScrollbars( scrollableRange, scrollPosition );
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 }
