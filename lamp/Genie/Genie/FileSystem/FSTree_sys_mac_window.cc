@@ -74,7 +74,18 @@ namespace Genie
 		throw p7::errno_t( EINVAL );
 	}
 	
-	struct Property_WindowName
+	static std::string WritePoint( Point point, const char* separator )
+	{
+		std::string result = NN::Convert< std::string >( point.h );
+		
+		result += separator;
+		
+		result += NN::Convert< std::string >( point.v );
+		
+		return result;
+	}
+	
+	struct Access_WindowTitle
 	{
 		typedef N::Str255 Result;
 		
@@ -89,7 +100,7 @@ namespace Genie
 		}
 	};
 	
-	struct Property_WindowPosition
+	struct Access_WindowPosition
 	{
 		typedef std::string Result;
 		
@@ -97,13 +108,7 @@ namespace Genie
 		{
 			Point position = Ped::GetWindowPosition( window );
 			
-			std::string result = NN::Convert< std::string >( position.h );
-			
-			result += ",";
-			
-			result += NN::Convert< std::string >( position.v );
-			
-			return result;
+			return WritePoint( position, "," );
 		}
 		
 		void Set( N::WindowRef window, const std::string& value )
@@ -112,7 +117,7 @@ namespace Genie
 		}
 	};
 	
-	struct Property_WindowSize
+	struct Access_WindowSize
 	{
 		typedef std::string Result;
 		
@@ -120,13 +125,7 @@ namespace Genie
 		{
 			Point size = Ped::GetWindowSize( window );
 			
-			std::string result = NN::Convert< std::string >( size.h );
-			
-			result += "x";
-			
-			result += NN::Convert< std::string >( size.v );
-			
-			return result;
+			return WritePoint( size, "x" );
 		}
 		
 		void Set( N::WindowRef window, const std::string& value )
@@ -135,8 +134,8 @@ namespace Genie
 		}
 	};
 	
-	template < class Property >
-	class sys_mac_window_REF_Query
+	template < class Accessor >
+	class sys_mac_window_REF_Property
 	{
 		private:
 			typedef N::WindowRef Key;
@@ -144,52 +143,40 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			sys_mac_window_REF_Query( const Key& key ) : itsKey( key )
+			sys_mac_window_REF_Property( const Key& key ) : itsKey( key )
 			{
 			}
 			
 			std::string Get() const
 			{
-				std::string output = NN::Convert< std::string >( Property().Get( itsKey ) ) + "\n";
+				std::string output = NN::Convert< std::string >( Accessor().Get( itsKey ) ) + "\n";
 				
 				return output;
 			}
 			
 			void Set( const std::string& value )
 			{
-				Property().Set( itsKey, value );
+				Accessor().Set( itsKey, value );
 			}
 	};
 	
-	template < class Get >
-	static FSTreePtr Query_Factory( const FSTreePtr&                parent,
-	                                const std::string&              name,
-	                                WindowRef_KeyName_Traits::Key   key )
-	{
-		typedef sys_mac_window_REF_Query< Get > Query;
-		
-		typedef FSTree_QueryFile< Query > QueryFile;
-		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
-	}
-	
-	template < class Property >
+	template < class Accessor >
 	static FSTreePtr Property_Factory( const FSTreePtr&                parent,
 	                                   const std::string&              name,
 	                                   WindowRef_KeyName_Traits::Key   key )
 	{
-		typedef sys_mac_window_REF_Query< Property > Query;
+		typedef sys_mac_window_REF_Property< Accessor > Property;
 		
-		typedef FSTree_PseudoFile< Query > QueryFile;
+		typedef FSTree_PseudoFile< Property > QueryFile;
 		
-		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+		return MakeFSTree( new QueryFile( parent, name, Property( key ) ) );
 	}
 	
 	const Functional_Traits< WindowRef_KeyName_Traits::Key >::Mapping sys_mac_window_REF_Mappings[] =
 	{
-		{ "name", &Property_Factory< Property_WindowName     > },
-		{ "pos",  &Property_Factory< Property_WindowPosition > },
-		{ "size", &Property_Factory< Property_WindowSize     > },
+		{ "title", &Property_Factory< Access_WindowTitle    > },
+		{ "pos",   &Property_Factory< Access_WindowPosition > },
+		{ "size",  &Property_Factory< Access_WindowSize     > },
 		
 		{ NULL, NULL }
 	};
