@@ -36,7 +36,7 @@ namespace Genie
 		}
 	}
 	
-	std::string sys_mac_keys_Query::operator()() const
+	std::string sys_mac_keys_Query::Get() const
 	{
 		std::string result;
 		

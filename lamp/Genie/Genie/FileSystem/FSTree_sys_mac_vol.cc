@@ -83,7 +83,7 @@ namespace Genie
 		
 		typedef const unsigned char* Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			return volume.ioNamePtr;
 		}
@@ -95,7 +95,7 @@ namespace Genie
 		
 		typedef UInt16 Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			return volume.ioVNmAlBlks;
 		}
@@ -107,7 +107,7 @@ namespace Genie
 		
 		typedef UInt32 Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			return volume.ioVAlBlkSiz;
 		}
@@ -119,7 +119,7 @@ namespace Genie
 		
 		typedef UInt16 Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			return volume.ioVFrBlk;
 		}
@@ -131,7 +131,7 @@ namespace Genie
 		
 		typedef const char* Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			static char sigWord[] = "ab";
 			
@@ -148,7 +148,7 @@ namespace Genie
 		
 		typedef SInt16 Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			return volume.ioVFSID;
 		}
@@ -160,7 +160,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			return volume.ioVWrCnt;
 		}
@@ -172,7 +172,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			return volume.ioVFilCnt;
 		}
@@ -184,7 +184,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result operator()( const HVolumeParam& volume ) const
+		Result Get( const HVolumeParam& volume ) const
 		{
 			return volume.ioVDirCnt;
 		}
@@ -200,7 +200,7 @@ namespace Genie
 		N::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
 	}
 	
-	template < class Get >
+	template < class Accessor >
 	class sys_mac_vol_N_Query
 	{
 		private:
@@ -213,15 +213,15 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				HVolumeParam pb;
 				
 				Str31 name;
 				
-				PBHGetVInfoSync( pb, itsKey, Get::needsName ? name : NULL );
+				PBHGetVInfoSync( pb, itsKey, Accessor::needsName ? name : NULL );
 				
-				std::string output = NN::Convert< std::string >( Get()( pb ) ) + "\n";
+				std::string output = NN::Convert< std::string >( Accessor().Get( pb ) ) + "\n";
 				
 				return output;
 			}

@@ -16,7 +16,7 @@ namespace Genie
 	class sys_mac_machine_name_Query
 	{
 		public:
-			std::string operator()() const;
+			std::string Get() const;
 	};
 	
 }

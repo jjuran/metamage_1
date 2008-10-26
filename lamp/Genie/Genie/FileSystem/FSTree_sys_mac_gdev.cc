@@ -84,7 +84,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result operator()( N::GDHandle gdevice ) const
+		Result Get( N::GDHandle gdevice ) const
 		{
 			return PrintableBounds( Rect( gdevice[0]->gdRect ) );
 		}
@@ -94,13 +94,13 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result operator()( N::GDHandle gdevice ) const
+		Result Get( N::GDHandle gdevice ) const
 		{
 			return PrintableSize( gdevice[0]->gdRect );
 		}
 	};
 	
-	template < class Get >
+	template < class Accessor >
 	class sys_mac_gdev_H_Query
 	{
 		private:
@@ -113,9 +113,9 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
-				std::string output = NN::Convert< std::string >( Get()( itsKey ) ) + "\n";
+				std::string output = NN::Convert< std::string >( Accessor().Get( itsKey ) ) + "\n";
 				
 				return output;
 			}
@@ -153,12 +153,12 @@ namespace Genie
 		return MakeFSTree( new FSTree_Virtual_Link( parent, name, "/sys/mac/unit/" + unit ) );
 	}
 	
-	template < class Get >
+	template < class Accessor >
 	static FSTreePtr Query_Factory( const FSTreePtr&               parent,
 	                                const std::string&             name,
 	                                GDHandle_KeyName_Traits::Key   key )
 	{
-		typedef sys_mac_gdev_H_Query< Get > Query;
+		typedef sys_mac_gdev_H_Query< Accessor > Query;
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		

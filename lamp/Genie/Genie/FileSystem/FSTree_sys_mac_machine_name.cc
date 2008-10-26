@@ -28,7 +28,7 @@ namespace Genie
 		return NN::Convert< std::string >( name );
 	}
 	
-	std::string sys_mac_machine_name_Query::operator()() const
+	std::string sys_mac_machine_name_Query::Get() const
 	{
 		return GetMachineName() + "\n";
 	}

@@ -27,7 +27,7 @@ namespace Genie
 	{
 		typedef long Result;
 		
-		Result operator()() const
+		Result Get() const
 		{
 			return ::FreeMem();
 		}
@@ -39,7 +39,7 @@ namespace Genie
 	{
 		typedef long Result;
 		
-		Result operator()() const
+		Result Get() const
 		{
 			THz zone = ::ApplicationZone();
 			
@@ -49,23 +49,23 @@ namespace Genie
 	
 #endif
 	
-	template < class Get >
+	template < class Accessor >
 	class sys_app_Query
 	{
 		public:
-			std::string operator()() const
+			std::string Get() const
 			{
-				std::string output = NN::Convert< std::string >( Get()() ) + "\n";
+				std::string output = NN::Convert< std::string >( Accessor().Get() ) + "\n";
 				
 				return output;
 			}
 	};
 	
-	template < class Get >
+	template < class Accessor >
 	static FSTreePtr Query_Factory( const FSTreePtr&    parent,
 	                                const std::string&  name )
 	{
-		typedef sys_app_Query< Get > Query;
+		typedef sys_app_Query< Accessor > Query;
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		

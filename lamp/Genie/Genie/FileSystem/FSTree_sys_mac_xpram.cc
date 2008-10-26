@@ -71,7 +71,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	std::string sys_mac_xpram_Query::operator()() const
+	std::string sys_mac_xpram_Query::Get() const
 	{
 		return N::ReadXPRam();
 	}

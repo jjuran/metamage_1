@@ -70,7 +70,7 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result operator()( const BitMap& screenBits ) const
+		Result Get( const BitMap& screenBits ) const
 		{
 			return PrintableBounds( screenBits.bounds );
 		}
@@ -80,21 +80,21 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		Result operator()( const BitMap& screenBits ) const
+		Result Get( const BitMap& screenBits ) const
 		{
 			return PrintableSize( screenBits.bounds );
 		}
 	};
 	
-	template < class Get >
+	template < class Accessor >
 	class sys_mac_desktop_Query
 	{
 		public:
-			std::string operator()() const
+			std::string Get() const
 			{
 				const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 				
-				std::string output = Get()( screenBits );
+				std::string output = Accessor().Get( screenBits );
 				
 				output += "\n";
 				

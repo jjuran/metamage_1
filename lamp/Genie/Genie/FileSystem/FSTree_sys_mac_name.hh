@@ -18,7 +18,7 @@ namespace Genie
 		public:
 			sys_mac_name_Query()  {}
 			
-			std::string operator()() const;
+			std::string Get() const;
 	};
 	
 }

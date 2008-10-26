@@ -43,13 +43,13 @@ namespace Genie
 	template < class Query >
 	off_t FSTree_QueryFile< Query >::GetEOF() const
 	{
-		return itsQuery().size();
+		return itsQuery.Get().size();
 	}
 	
 	template < class Query >
 	boost::shared_ptr< IOHandle > FSTree_QueryFile< Query >::Open( OpenFlags /*flags*/ ) const
 	{
-		return boost::shared_ptr< IOHandle >( new QueryFileHandle( shared_from_this(), itsQuery() ) );
+		return boost::shared_ptr< IOHandle >( new QueryFileHandle( shared_from_this(), itsQuery.Get() ) );
 	}
 	
 }

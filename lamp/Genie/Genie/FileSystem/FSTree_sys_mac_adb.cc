@@ -58,7 +58,7 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				using BitsAndBytes::ByteAsHex;
 				
@@ -84,7 +84,7 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				using BitsAndBytes::ByteAsHex;
 				
@@ -131,7 +131,7 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				using BitsAndBytes::ByteAsHex;
 				

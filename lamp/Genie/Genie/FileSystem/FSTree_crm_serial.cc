@@ -74,7 +74,7 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				N::CRMRecPtr crmRec = GetCRMRecPtrFromID( itsKey );
 				
@@ -102,7 +102,7 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				N::CRMRecPtr crmRec = GetCRMRecPtrFromID( itsKey );
 				

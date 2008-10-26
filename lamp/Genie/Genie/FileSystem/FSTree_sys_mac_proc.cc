@@ -96,7 +96,7 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				Str255 name;
 				

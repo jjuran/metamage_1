@@ -134,7 +134,7 @@ namespace Genie
 	{
 		typedef UInt32 Result;
 		
-		UInt32 operator()( const DrvQEl& drive ) const
+		UInt32 Get( const DrvQEl& drive ) const
 		{
 			UInt32 size = drive.dQDrvSz;
 			
@@ -151,13 +151,13 @@ namespace Genie
 	{
 		typedef SInt16 Result;
 		
-		SInt16 operator()( const DrvQEl& drive ) const
+		SInt16 Get( const DrvQEl& drive ) const
 		{
 			return drive.dQFSID;
 		}
 	};
 	
-	template < class Get >
+	template < class Accessor >
 	class sys_mac_drive_N_Query
 	{
 		private:
@@ -170,7 +170,7 @@ namespace Genie
 			{
 			}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				const DrvQEl* el = FindDrive( itsKey );
 				
@@ -179,18 +179,18 @@ namespace Genie
 					return "";
 				}
 				
-				std::string output = NN::Convert< std::string >( Get()( *el ) ) + "\n";
+				std::string output = NN::Convert< std::string >( Accessor().Get( *el ) ) + "\n";
 				
 				return output;
 			}
 	};
 	
-	template < class Get >
+	template < class Accessor >
 	static FSTreePtr Query_Factory( const FSTreePtr&                 parent,
 	                                const std::string&               name,
 	                                DriveNumber_KeyName_Traits::Key  key )
 	{
-		typedef sys_mac_drive_N_Query< Get > Query;
+		typedef sys_mac_drive_N_Query< Accessor > Query;
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		

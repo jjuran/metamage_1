@@ -264,7 +264,7 @@ namespace Genie
 		public:
 			proc_PID_cmdline_Query( pid_t pid ) : itsPID( pid )  {}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				const Process& process = GetProcess( itsPID );
 				
@@ -280,7 +280,7 @@ namespace Genie
 		public:
 			proc_PID_stat_Query( pid_t pid ) : itsPID( pid )  {}
 			
-			std::string operator()() const
+			std::string Get() const
 			{
 				const Process& process = GetProcess( itsPID );
 				
@@ -337,10 +337,10 @@ namespace Genie
 		public:
 			proc_PID_backtrace_Query( pid_t pid ) : itsPID( pid )  {}
 			
-			std::string operator()() const;
+			std::string Get() const;
 	};
 	
-	std::string proc_PID_backtrace_Query::operator()() const
+	std::string proc_PID_backtrace_Query::Get() const
 	{
 		using Backtrace::StackFramePtr;
 		using Backtrace::ReturnAddress;
