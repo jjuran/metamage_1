@@ -14,12 +14,6 @@
 #include <MacErrors.h>
 #endif
 
-#if !TARGET_API_MAC_CARBON
-#ifndef __DESKBUS__
-#include <DeskBus.h>
-#endif
-#endif
-
 // Standard C
 #include "errno.h"
 #include "signal.h"
@@ -110,9 +104,6 @@
 #include "HexStrings.hh"
 
 // Arcana
-#if !TARGET_API_MAC_CARBON
-#include "ADBProtocol.hh"
-#endif
 #include "CRC32.hh"
 #include "MD5.hh"
 
@@ -130,7 +121,6 @@ namespace NN = Nucleus;
 namespace p7 = poseven;
 namespace NX = NitrogenExtras;
 namespace Div = Divergence;
-namespace O = Orion;
 
 using BitsAndBytes::EncodeAsHex;
 using BitsAndBytes::EncodeDecimal2;
@@ -596,65 +586,6 @@ static int TestMD5( int argc, iota::argv_t argv )
 	return 0;
 }
 
-#if !TARGET_API_MAC_CARBON
-
-static void PrintADBRegister( const ADBRegister& reg )
-{
-	unsigned count = reg.buffer[0];
-	
-	for ( unsigned i = 1;  i <= count;  ++i )
-	{
-		using namespace BitsAndBytes;
-		
-		Byte c = reg.buffer[i];
-		
-		std::putc( ' ', stdout );
-		
-		std::putc( NibbleAsHex( HighNibble( c ) ), stdout );
-		std::putc( NibbleAsHex( LowNibble ( c ) ), stdout );
-	}
-	
-	std::putc( '\n', stdout );
-}
-
-static int TestADB( int argc, iota::argv_t argv )
-{
-	//if (argc < 3)  return 1;
-	
-	int count = ::CountADBs();
-	
-	std::printf( "ADB count: %d\n", count );
-	
-	ADBDataBlock adbData;
-	
-	for ( unsigned i = 1;  i <= count;  ++i )
-	{
-		N::ADBAddress address = N::GetIndADB( adbData, i );
-		
-		std::printf( "ADB address[%d]: %d\n", i, int( address ) );
-		
-		std::printf( "\t" "Device type: %d\n",   int( adbData.devType     ) );
-		std::printf( "\t" "Original addr: %d\n", int( adbData.origADBAddr ) );
-		
-		std::printf( "\t" "Registers:\n" );
-		
-		for ( unsigned j = 0; j <= 3;  ++j )
-		{
-			ADBRegister reg = GetADBRegister( address, j );
-			
-			std::printf( "\t\t" "%d:", j );
-			
-			PrintADBRegister( reg );
-		}
-		
-		std::putc( '\n', stdout );
-	}
-	
-	return 0;
-}
-
-#endif
-
 static int TestOADC( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
@@ -780,7 +711,7 @@ static void PrintString( std::string s )
 static int TestAE( int argc, iota::argv_t argv )
 {
 	//if (argc < 3)  return 1;
-	NN::Owned< N::AEDescList_Data > list = N::AECreateList< false >();
+	NN::Owned< N::AEDescList_Data > list = N::AECreateList< N::AEDescList_Data >();
 	
 	N::AEPutPtr< N::typeChar >( list, 0, "foo" );
 	N::AEPutPtr< N::typeChar >( list, 0, "bar" );
@@ -1386,7 +1317,6 @@ const SubMain gSubs[] =
 #if !TARGET_API_MAC_CARBON
 	
 	{ "afp",       TestAFP        },
-	{ "adb",       TestADB        },
 	
 #endif
 	
