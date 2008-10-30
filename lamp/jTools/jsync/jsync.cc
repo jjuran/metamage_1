@@ -20,6 +20,9 @@
 // MoreFunctional
 #include "PointerToFunction.hh"
 
+// Nucleus
+#include "Nucleus/NAssert.h"
+
 // Io
 #include "io/walk.hh"
 
@@ -61,6 +64,12 @@ namespace tool
 	static bool globally_up   = false;
 	static bool globally_down = false;
 	
+	static bool globally_deleting = false;
+	
+	static std::string global_base_root;
+	static std::string global_local_root;
+	static std::string global_remote_root;
+	
 	static bool globally_locking_files = false;
 	
 	
@@ -74,6 +83,30 @@ namespace tool
 		}
 		
 		return path;
+	}
+	
+	
+	static std::string get_subpath( const std::string& root_path, const std::string& subdir_path )
+	{
+		ASSERT( subdir_path.length() >= root_path.length() );
+		
+		ASSERT( *root_path.rbegin() != '/' );
+		
+		if ( subdir_path.length() == root_path.length() )
+		{
+			return "";
+		}
+		
+		std::string result( subdir_path.begin() + root_path.length() + 1, subdir_path.end() );
+		
+		ASSERT( *result.rbegin() != '/' );
+		
+		return result;
+	}
+	
+	static std::string get_dir_subpath( const std::string& root_path, const std::string& subdir_path )
+	{
+		return get_subpath( root_path, subdir_path ) + '/';
 	}
 	
 	
@@ -231,6 +264,8 @@ namespace tool
 	                        const std::string&  c,
 	                        bool                b_exists )
 	{
+		std::string subpath = get_subpath( global_local_root, a );
+		
 		if ( globally_verbose )
 		{
 			//std::printf( "%s\n", a.c_str() );
@@ -281,60 +316,43 @@ namespace tool
 				const char* status = b_exists ? "requires 3-way merge"
 				                              : "added simultaneously with different contents";
 				
-				std::printf( "%s %s\n", a.c_str(), status );
+				std::printf( "### %s %s\n", subpath.c_str(), status );
 				
 				return;
 			}
 			
-			// At least one of A and C matched B, and it can't be both.
-			// A copy is required.
+			// A and C do not both match B, and A and C do not both differ from B.
+			// One matches (i.e. is unchanged) and one differs.  A copy is required.
 			
-			std::printf( "%s %s\n", a_matches_b ? "Incoming"
-			                                    : "Outgoing", a.c_str() );
+			const bool doable = a_matches_b ? globally_down : globally_up;
 			
-			if ( global_dry_run )
+			std::printf( "%s %s\n", a_matches_b ? doable ? "--->"
+			                                             : "---|"
+			                                    : doable ? "<---"
+			                                             : "|---", subpath.c_str() );
+			
+			if ( !doable || global_dry_run )
 			{
 				return;
 			}
 			
-			if ( b_matches_c && globally_up )
-			{
-				// B matches C, so A changed.  Copy A to C if we're syncing up.
-				
-				p7::lseek( a_fd, 0 );
-				
-				p7::close( c_fd );
-				
-				c_fd = p7::open( c, p7::o_rdwr | p7::o_trunc );
-				
-				p7::pump( a_fd, c_fd );
-				
-				copy_modification_date( a_fd, c );
-			}
-			else if ( a_matches_b && globally_down )
-			{
-				// A matches B, so C changed.  Copy C to A if we're syncing down.
-				
-				p7::lseek( c_fd, 0 );
-				
-				p7::close( a_fd );
-				
-				a_fd = p7::open( a, p7::o_rdwr | p7::o_trunc );
-				
-				p7::pump( c_fd, a_fd );
-				
-				copy_modification_date( c_fd, a );
-			}
-			else
-			{
-				// We're skipping changes in this direction
-				
-				return;
-			}
+			p7::fd_t                from_fd = a_matches_b ? c_fd : a_fd;
+			NN::Owned< p7::fd_t >&  to_fd   = a_matches_b ? a_fd : c_fd;
+			const std::string&      to_path = a_matches_b ? a    : c;
+			
+			p7::lseek( from_fd, 0 );
+			
+			p7::close( to_fd );
+			
+			to_fd = p7::open( to_path, p7::o_rdwr | p7::o_trunc );
+			
+			p7::pump( from_fd, to_fd );
+			
+			copy_modification_date( from_fd, to_path );
 		}
 		else
 		{
-			std::printf( "%s %s\n", b_exists ? "Updating" : "Adding", a.c_str() );
+			std::printf( "%s %s\n", b_exists ? "----" : "+--+", subpath.c_str() );
 		}
 		
 		if ( global_dry_run )
@@ -342,7 +360,7 @@ namespace tool
 			return;
 		}
 		
-		// A and C match
+		// A and C match, but B is out of date
 		
 		// copy a to b
 		p7::lseek( a_fd, 0 );
@@ -401,37 +419,22 @@ namespace tool
 			// file vs. directory
 			if ( a_is_dir != b_is_dir )
 			{
-				std::printf( "%s changed from %s to %s\n",
-				              a.c_str(),      b_is_dir ? "directory" : "file",
-				                                    a_is_dir ? "directory" : "file" );
+				std::printf( "### %s changed from %s to %s\n",
+				                  a.c_str(),      b_is_dir ? "directory" : "file",
+				                                        a_is_dir ? "directory" : "file" );
 			}
 			
 			if ( c_is_dir != b_is_dir )
 			{
-				std::printf( "%s changed from %s to %s\n",
-				              c.c_str(),      b_is_dir ? "directory" : "file",
-				                                    c_is_dir ? "directory" : "file" );
+				std::printf( "### %s changed from %s to %s\n",
+				                  c.c_str(),      b_is_dir ? "directory" : "file",
+				                                        c_is_dir ? "directory" : "file" );
 			}
 		}
 		else
 		{
-			std::printf( "Add conflict in %s (file vs. directory)\n", a.c_str() );
+			std::printf( "### Add conflict in %s (file vs. directory)\n", a.c_str() );
 		}
-	}
-	
-	static void odd_item( const std::string& path, bool new_vs_old )
-	{
-		std::printf( "%s is %s\n", path.c_str(), new_vs_old ? "new" : "old" );
-	}
-	
-	inline void new_item( const std::string& path )
-	{
-		odd_item( path, true );
-	}
-	
-	inline void old_item( const std::string& path )
-	{
-		odd_item( path, false );
 	}
 	
 	template < class In, class Out, class Pred >
@@ -539,6 +542,8 @@ namespace tool
 	                                                 const std::string&  b_dir,
 	                                                 const std::string&  c_dir )
 	{
+		std::string subpath = get_dir_subpath( global_local_root, a_dir );
+		
 		typedef p7::directory_contents_container directory_container;
 		
 		directory_container a_contents = io::directory_contents( a_dir );
@@ -620,9 +625,13 @@ namespace tool
 			std::string b_path = b_dir / filename;
 			std::string c_path = c_dir / filename;
 			
-			std::printf( "%s created\n", a_path.c_str() );
+			const bool doable = globally_up;
 			
-			if ( globally_up && !global_dry_run )
+			std::string path = subpath / filename;
+			
+			std::printf( "%s %s\n", doable ? "<+++" : "|+++", path.c_str() );
+			
+			if ( doable && !global_dry_run )
 			{
 				globally_locking_files = false;
 				
@@ -642,9 +651,13 @@ namespace tool
 			std::string b_path = b_dir / filename;
 			std::string c_path = c_dir / filename;
 			
-			std::printf( "%s created\n", c_path.c_str() );
+			const bool doable = globally_down;
 			
-			if ( globally_down && !global_dry_run )
+			std::string path = subpath / filename;
+			
+			std::printf( "%s %s\n", doable ? "+++>" : "+++|", path.c_str() );
+			
+			if ( doable && !global_dry_run )
 			{
 				globally_locking_files = false;
 				
@@ -664,7 +677,9 @@ namespace tool
 			std::string b_path = b_dir / filename;
 			std::string c_path = c_dir / filename;
 			
-			std::printf( "%s mutually added\n", a_path.c_str() );
+			std::string path = subpath / filename;
+			
+			std::printf( "++++ %s\n", path.c_str() );
 			
 			recursively_sync( a_path, b_path, c_path );
 		}
@@ -677,7 +692,17 @@ namespace tool
 			std::string b_path = b_dir / filename;
 			std::string c_path = c_dir / filename;
 			
-			std::printf( "%s deleted\n", a_path.c_str() );
+			const bool doable = globally_up && globally_deleting;
+			
+			std::string path = subpath / filename;
+			
+			std::printf( "%s %s\n", doable ? "<--X" : "|--X", path.c_str() );
+			
+			if ( doable && !global_dry_run )
+			{
+				io::recursively_delete( c_path );
+				io::recursively_delete( b_path );
+			}
 		}
 		
 		for ( Iter it = c_deleted.begin();  it != c_deleted.end();  ++ it )
@@ -688,7 +713,17 @@ namespace tool
 			std::string b_path = b_dir / filename;
 			std::string c_path = c_dir / filename;
 			
-			std::printf( "%s deleted\n", c_path.c_str() );
+			const bool doable = globally_down && globally_deleting;
+			
+			std::string path = subpath / filename;
+			
+			std::printf( "%s %s\n", doable ? "X-->" : "X--|", path.c_str() );
+			
+			if ( doable && !global_dry_run )
+			{
+				io::recursively_delete( a_path );
+				io::recursively_delete( b_path );
+			}
 		}
 		
 		for ( Iter it = mutually_deleted.begin();  it != mutually_deleted.end();  ++ it )
@@ -699,7 +734,9 @@ namespace tool
 			std::string b_path = b_dir / filename;
 			std::string c_path = c_dir / filename;
 			
-			std::printf( "%s mutually deleted\n", a_path.c_str() );
+			std::string path = subpath / filename;
+			
+			std::printf( "X--X %s\n", path.c_str() );
 			
 			if ( !global_dry_run )
 			{
@@ -775,6 +812,8 @@ namespace tool
 		O::BindOption( "--up",   globally_up   );
 		O::BindOption( "--down", globally_down );
 		
+		O::BindOption( "--delete", globally_deleting );
+		
 		O::BindOption( "-0", null          );
 		O::BindOption( "-2", bidirectional );
 		
@@ -818,13 +857,13 @@ namespace tool
 			return 1;
 		}
 		
-		std::string jsync_sandbox = jsync_path / "Sandbox";  // should be a link
-		std::string jsync_remote  = jsync_path / "Remote";   // should be a link
-		std::string jsync_base    = jsync_path / "Base";
+		global_local_root  = jsync_path / "Sandbox";  // should be a link
+		global_remote_root = jsync_path / "Remote";   // should be a link
+		global_base_root   = jsync_path / "Base";
 		
 		//if ( comparing )
 		{
-			recursively_sync_directories( jsync_sandbox, jsync_base, jsync_remote );
+			recursively_sync_directories( global_local_root, global_base_root, global_remote_root );
 		}
 		
 		return 0;
