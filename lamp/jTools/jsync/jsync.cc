@@ -259,12 +259,14 @@ namespace tool
 	}
 	
 	
-	static void sync_files( const std::string&  a,
-	                        const std::string&  b,
-	                        const std::string&  c,
+	static void sync_files( const std::string&  subpath,
 	                        bool                b_exists )
 	{
-		std::string subpath = get_subpath( global_local_root, a );
+		std::string a = global_local_root  / subpath;
+		std::string b = global_base_root   / subpath;
+		std::string c = global_remote_root / subpath;
+		
+		//std::string subpath = get_subpath( global_local_root, a );
 		
 		if ( globally_verbose )
 		{
@@ -384,14 +386,14 @@ namespace tool
 		}
 	}
 	
-	static void recursively_sync_directories( const std::string&  a,
-	                                          const std::string&  b,
-	                                          const std::string&  c );
+	static void recursively_sync_directories( const std::string& subpath );
 	
-	static void recursively_sync( const std::string&  a,
-	                              const std::string&  b,
-	                              const std::string&  c )
+	static void recursively_sync( const std::string& subpath )
 	{
+		std::string a = global_local_root  / subpath;
+		std::string b = global_base_root   / subpath;
+		std::string c = global_remote_root / subpath;
+		
 		const bool b_exists = io::item_exists( b );
 		
 		bool a_is_dir = io::directory_exists( a );
@@ -407,11 +409,11 @@ namespace tool
 					p7::mkdir( b );
 				}
 				
-				recursively_sync_directories( a, b, c );
+				recursively_sync_directories( subpath );
 			}
 			else
 			{
-				sync_files( a, b, c, b_exists );
+				sync_files( subpath, b_exists );
 			}
 		}
 		else if ( b_exists )
@@ -538,11 +540,11 @@ namespace tool
 		std::transform( b_begin, b_end, b_only, f );
 	}
 	
-	static void recursively_sync_directory_contents( const std::string&  a_dir,
-	                                                 const std::string&  b_dir,
-	                                                 const std::string&  c_dir )
+	static void recursively_sync_directory_contents( const std::string& subpath )
 	{
-		std::string subpath = get_dir_subpath( global_local_root, a_dir );
+		std::string a_dir = global_local_root  / subpath;
+		std::string b_dir = global_base_root   / subpath;
+		std::string c_dir = global_remote_root / subpath;
 		
 		typedef p7::directory_contents_container directory_container;
 		
@@ -621,18 +623,18 @@ namespace tool
 		{
 			const std::string& filename = *it;
 			
-			std::string a_path = a_dir / filename;
-			std::string b_path = b_dir / filename;
-			std::string c_path = c_dir / filename;
-			
 			const bool doable = globally_up;
 			
-			std::string path = subpath / filename;
+			std::string child_subpath = subpath + filename;
 			
-			std::printf( "%s %s\n", doable ? "<+++" : "|+++", path.c_str() );
+			std::printf( "%s %s\n", doable ? "<+++" : "|+++", child_subpath.c_str() );
 			
 			if ( doable && !global_dry_run )
 			{
+				std::string a_path = global_local_root  / child_subpath;
+				std::string b_path = global_base_root   / child_subpath;
+				std::string c_path = global_remote_root / child_subpath;
+				
 				globally_locking_files = false;
 				
 				recursively_copy( a_path, c_path );
@@ -647,18 +649,18 @@ namespace tool
 		{
 			const std::string& filename = *it;
 			
-			std::string a_path = a_dir / filename;
-			std::string b_path = b_dir / filename;
-			std::string c_path = c_dir / filename;
-			
 			const bool doable = globally_down;
 			
-			std::string path = subpath / filename;
+			std::string child_subpath = subpath + filename;
 			
-			std::printf( "%s %s\n", doable ? "+++>" : "+++|", path.c_str() );
+			std::printf( "%s %s\n", doable ? "+++>" : "+++|", child_subpath.c_str() );
 			
 			if ( doable && !global_dry_run )
 			{
+				std::string a_path = global_local_root  / child_subpath;
+				std::string b_path = global_base_root   / child_subpath;
+				std::string c_path = global_remote_root / child_subpath;
+				
 				globally_locking_files = false;
 				
 				recursively_copy( c_path, a_path );
@@ -673,33 +675,28 @@ namespace tool
 		{
 			const std::string& filename = *it;
 			
-			std::string a_path = a_dir / filename;
-			std::string b_path = b_dir / filename;
-			std::string c_path = c_dir / filename;
+			std::string child_subpath = subpath + filename;
 			
-			std::string path = subpath / filename;
+			std::printf( "++++ %s\n", child_subpath.c_str() );
 			
-			std::printf( "++++ %s\n", path.c_str() );
-			
-			recursively_sync( a_path, b_path, c_path );
+			recursively_sync( child_subpath );
 		}
 		
 		for ( Iter it = a_deleted.begin();  it != a_deleted.end();  ++ it )
 		{
 			const std::string& filename = *it;
 			
-			std::string a_path = a_dir / filename;
-			std::string b_path = b_dir / filename;
-			std::string c_path = c_dir / filename;
-			
 			const bool doable = globally_up && globally_deleting;
 			
-			std::string path = subpath / filename;
+			std::string child_subpath = subpath + filename;
 			
-			std::printf( "%s %s\n", doable ? "<--X" : "|--X", path.c_str() );
+			std::printf( "%s %s\n", doable ? "<--X" : "|--X", child_subpath.c_str() );
 			
 			if ( doable && !global_dry_run )
 			{
+				std::string b_path = global_base_root   / child_subpath;
+				std::string c_path = global_remote_root / child_subpath;
+				
 				io::recursively_delete( c_path );
 				io::recursively_delete( b_path );
 			}
@@ -709,18 +706,17 @@ namespace tool
 		{
 			const std::string& filename = *it;
 			
-			std::string a_path = a_dir / filename;
-			std::string b_path = b_dir / filename;
-			std::string c_path = c_dir / filename;
-			
 			const bool doable = globally_down && globally_deleting;
 			
-			std::string path = subpath / filename;
+			std::string child_subpath = subpath + filename;
 			
-			std::printf( "%s %s\n", doable ? "X-->" : "X--|", path.c_str() );
+			std::printf( "%s %s\n", doable ? "X-->" : "X--|", child_subpath.c_str() );
 			
 			if ( doable && !global_dry_run )
 			{
+				std::string a_path = global_local_root / child_subpath;
+				std::string b_path = global_base_root  / child_subpath;
+				
 				io::recursively_delete( a_path );
 				io::recursively_delete( b_path );
 			}
@@ -730,16 +726,14 @@ namespace tool
 		{
 			const std::string& filename = *it;
 			
-			std::string a_path = a_dir / filename;
-			std::string b_path = b_dir / filename;
-			std::string c_path = c_dir / filename;
+			std::string child_subpath = subpath + filename;
 			
-			std::string path = subpath / filename;
-			
-			std::printf( "X--X %s\n", path.c_str() );
+			std::printf( "X--X %s\n", child_subpath.c_str() );
 			
 			if ( !global_dry_run )
 			{
+				std::string b_path = global_base_root / child_subpath;
+				
 				io::recursively_delete( b_path );
 			}
 		}
@@ -748,11 +742,7 @@ namespace tool
 		{
 			const std::string& filename = *it;
 			
-			std::string a_path = a_dir / filename;
-			std::string b_path = b_dir / filename;
-			std::string c_path = c_dir / filename;
-			
-			recursively_sync( a_path, b_path, c_path );
+			recursively_sync( subpath + filename );
 		}
 		
 		// added/nil:  simple add -- just do it
@@ -762,18 +752,16 @@ namespace tool
 		// deleted/deleted:  mutual delete -- just do it
 	}
 	
-	static void recursively_sync_directories( const std::string&  a,
-	                                          const std::string&  b,
-	                                          const std::string&  c )
+	static void recursively_sync_directories( const std::string& subpath )
 	{
 		// compare any relevant metadata, like Desktop comment
 		
 		if ( globally_verbose )
 		{
-			std::printf( "%s\n", a.c_str() );
+			std::printf( "%s\n", subpath.c_str() );
 		}
 		
-		recursively_sync_directory_contents( a, b, c );
+		recursively_sync_directory_contents( subpath + '/' );
 	}
 	
 	
@@ -861,10 +849,7 @@ namespace tool
 		global_remote_root = jsync_path / "Remote";   // should be a link
 		global_base_root   = jsync_path / "Base";
 		
-		//if ( comparing )
-		{
-			recursively_sync_directories( global_local_root, global_base_root, global_remote_root );
-		}
+		recursively_sync_directory_contents( "" );
 		
 		return 0;
 	}
