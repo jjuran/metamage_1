@@ -631,16 +631,16 @@
 	
 	struct dirent* readdir( DIR* dir )
 	{
-		static dirent entry;
+		struct dirent *const entry = &dir->entry;
 		
-		int got = getdents( dirfd( dir ), &entry, sizeof (dirent) );
+		int got = getdents( dirfd( dir ), entry, sizeof (dirent) );
 		
 		if ( got <= 0 )
 		{
 			return NULL;
 		}
 		
-		return &entry;
+		return entry;
 	}
 	
 	int closedir( DIR* dir )
