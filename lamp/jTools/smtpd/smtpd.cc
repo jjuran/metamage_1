@@ -55,27 +55,23 @@
 #include "Orion/Main.hh"
 
 
-namespace Nitrogen
+namespace io
 {
 	
-	static void RecursivelyDelete( const FSSpec& item );
-	
-	static void RecursivelyDeleteDirectoryContents( const FSDirSpec& dir )
+	inline FSSpec path_descent( const Nitrogen::FSDirSpec& dir, const unsigned char* name )
 	{
-		std::for_each( FSContents( dir ).begin(),
-		               FSContents( dir ).end(),
-		               std::ptr_fun( RecursivelyDelete ) );
+		return Nitrogen::FSMakeFSSpec( dir, name );
 	}
 	
-	static void RecursivelyDelete( const FSSpec& item )
+	inline FSSpec path_descent( const FSSpec& dir, const unsigned char* name )
 	{
-		if ( io::directory_exists( item ) )
-		{
-			RecursivelyDeleteDirectoryContents( Nucleus::Convert< FSDirSpec >( item ) );
-		}
-		
-		FSpDelete( item );
+		return path_descent( Nitrogen::FSDirSpec( dir ), name );
 	}
+	
+}
+
+namespace Nitrogen
+{
 	
 	struct RecursiveFSDeleter
 	{
