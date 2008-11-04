@@ -11,6 +11,7 @@
 
 // Genie
 #include "Genie/FileDescriptors.hh"
+#include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -20,9 +21,9 @@
 namespace Genie
 {
 	
-	static int open( const char* path, int oflag, mode_t mode )
+	static int openat( int dirfd, const char* path, int flags, mode_t mode )
 	{
-		SystemCallFrame frame( "open" );
+		SystemCallFrame frame( "openat" );
 		
 		Breathe();
 		
@@ -30,19 +31,24 @@ namespace Genie
 		{
 			int fd = LowestUnusedFileDescriptor();
 			
-			FSTreePtr file = ResolvePathname( path, frame.Caller().GetCWD() );
+			FSTreePtr file = ResolvePathAt( dirfd, path );
 			
-			ResolveLinks_InPlace( file );
+			const bool following = (flags & O_NOFOLLOW) == 0;
 			
-			bool is_dir = file->IsDirectory();
+			if ( following )
+			{
+				ResolveLinks_InPlace( file );
+			}
 			
-			if ( is_dir  &&  oflag != O_RDONLY )
+			const bool directory = flags & O_DIRECTORY;
+			
+			if ( directory  &&  (flags & O_ACCMODE) != O_RDONLY )
 			{
 				return frame.SetErrno( EISDIR );
 			}
 			
-			AssignFileDescriptor( fd, is_dir ? file->OpenDirectory()
-			                                 : file->Open( oflag, mode ) );
+			AssignFileDescriptor( fd, directory ? file->OpenDirectory()
+			                                    : file->Open( flags, mode ) );
 			
 			return fd;
 		}
@@ -50,6 +56,11 @@ namespace Genie
 		{
 			return frame.SetErrnoFromException();
 		}
+	}
+	
+	static int open( const char* path, int oflag, mode_t mode )
+	{
+		return openat( AT_FDCWD, path, oflag, mode  );
 	}
 	
 	static int fcntl( int filedes, int cmd, int param )
@@ -94,8 +105,9 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( open  );
-	REGISTER_SYSTEM_CALL( fcntl );
+	REGISTER_SYSTEM_CALL( openat );
+	REGISTER_SYSTEM_CALL( open   );
+	REGISTER_SYSTEM_CALL( fcntl  );
 	
 	#pragma force_active reset
 	
