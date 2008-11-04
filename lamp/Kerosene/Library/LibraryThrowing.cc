@@ -583,7 +583,7 @@
 		{
 			DIR* dir = new DIR;
 			
-			int fd = open( pathname, O_RDONLY, 0 );
+			int fd = open( pathname, O_RDONLY | O_DIRECTORY );
 			
 			if ( fd == -1 )
 			{
@@ -598,6 +598,7 @@
 		}
 		catch ( ... )
 		{
+			errno = ENOMEM;
 		}
 		
 		return result;
