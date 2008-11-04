@@ -16,6 +16,9 @@
 #include "utime.h"
 #include "sys/stat.h"
 
+// MoreFunctional
+#include "PointerToFunction.hh"
+
 // MoreFiles
 #include "MoreFilesExtras.h"
 
@@ -518,8 +521,10 @@ namespace Genie
 	}
 	
 	
-	static FSNode MakeFSNode_FSSpec( const FSSpec& item )
+	static FSNode MakeFSNode_FSSpec( const N::FSDirSpec& dir, const unsigned char* macName )
 	{
+		FSSpec item = dir / macName;
+		
 		std::string name = GetUnixName( item );
 		
 		const bool isLong = name.size() > 31;
@@ -864,7 +869,8 @@ namespace Genie
 		                contents.end(),
 		                //cache.begin() + 2,
 		                std::back_inserter( cache ),
-		                std::ptr_fun( MakeFSNode_FSSpec ) );
+		                std::bind1st( more::ptr_fun( MakeFSNode_FSSpec ),
+		                              dir ) );
 	}
 	
 	
