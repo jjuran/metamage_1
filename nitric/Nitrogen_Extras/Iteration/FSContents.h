@@ -9,6 +9,9 @@
 // Io
 #include "io/walk.hh"
 
+// Nitrogen
+#include "Nitrogen/Files.h"
+
 // Nitrogen Extras / Iteration
 #include "Iteration/IndexedValueContainer.h"
 
@@ -16,52 +19,39 @@
 namespace Nitrogen
 {
 	
-	struct FSSpecContents_Specifics
-	{
-		typedef FSSpec    FileSpec;
-		typedef FSDirSpec DirSpec;
-	};
-	
-	struct FSRefContents_Specifics
-	{
-		typedef FSRef FileSpec;
-		typedef FSRef DirSpec;
-	};
-	
 	template < class Specifics >
 	struct FSContents_Specifics
 	{
-		typedef std::size_t                   size_type;
-		typedef std::ptrdiff_t                difference_type;
-		typedef typename Specifics::FileSpec  value_type;
+		typedef std::size_t      size_type;
+		typedef std::ptrdiff_t   difference_type;
+		typedef Nitrogen::Str63  value_type;
 		
-		typedef typename Specifics::DirSpec  ContainerType;
+		//typedef typename Specifics::filename_result           value_type;
+		typedef typename Specifics::optimized_directory_spec  ContainerType;
 		
-		static std::size_t Size( ContainerType dir )
+		static std::size_t Size( const ContainerType& dir )
 		{
 			CInfoPBRec pb;
 			
 			return FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), pb ).dirInfo.ioDrNmFls;
 		}
 		
-		static value_type GetValue( ContainerType dir, size_type position )
+		static value_type GetValue( const ContainerType& dir, size_type position )
 		{
 			CInfoPBRec pb;
-			Str255 name;
+			::Str255 name;
 			
 			FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), position + 1, pb, name );  // one-based
 			
-			using namespace io::path_descent_operators;
-			
-			return Nucleus::Convert< value_type >( Nucleus::Convert< FSDirSpec >( dir ) / name );
+			return name;
 		}
 		
 		typedef ContainerType ContainerState;
 		typedef ContainerState IteratorState;
 	};
 	
-	typedef IndexedValueContainer< FSContents_Specifics< FSSpecContents_Specifics > > FSSpecContents_Container;
-	typedef IndexedValueContainer< FSContents_Specifics< FSRefContents_Specifics  > > FSRefContents_Container;
+	typedef IndexedValueContainer< FSContents_Specifics< FSSpec_Io_Details > > FSSpecContents_Container;
+	typedef IndexedValueContainer< FSContents_Specifics< FSRef_Io_Details  > > FSRefContents_Container;
 	
 	inline FSSpecContents_Container FSContents( const FSDirSpec& dir )
 	{
