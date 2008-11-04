@@ -39,14 +39,13 @@ namespace poseven
 	class directory_contents_container
 	{
 		private:
-			std::string               itsDirPathname;
 			Nucleus::Shared< dir_t >  itsDirHandle;
 			
 			// not implemented:
 			directory_contents_container& operator=( const directory_contents_container& );
 		
 		public:
-			typedef std::string  value_type;
+			typedef const char*  value_type;
 			typedef unsigned     size_type;
 			typedef int          difference_type;
 			
@@ -68,7 +67,6 @@ namespace poseven
 					typedef std::forward_iterator_tag iterator_category;
 					
 				private:
-					std::string               itsDirPathname;
 					Nucleus::Shared< dir_t >  itsDirHandle;
 					value_type                value;
 					bool                      done;
@@ -88,7 +86,7 @@ namespace poseven
 						
 						if ( entry )
 						{
-							value = itsDirPathname / entry->d_name;
+							value = entry->d_name;
 							
 							return;
 						}
@@ -101,10 +99,8 @@ namespace poseven
 						}
 					}
 					
-					const_iterator( const std::string&               dirPathname,
-					                const Nucleus::Shared< dir_t >&  dirHandle ) : itsDirPathname( dirPathname ),
-					                                                               itsDirHandle( dirHandle ),
-					                                                               done( false )
+					const_iterator( const Nucleus::Shared< dir_t >& dirHandle ) : itsDirHandle( dirHandle ),
+					                                                              done( false )
 					{
 						GetNextValue();
 					}
@@ -124,13 +120,12 @@ namespace poseven
 					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
 			};
 			
-			directory_contents_container( const std::string& dirPathname ) : itsDirPathname( dirPathname ),
-			                                                                 itsDirHandle  ( poseven::opendir( dirPathname ) )
+			directory_contents_container( const std::string& dir_path ) : itsDirHandle( poseven::opendir( dir_path ) )
 			{
 			}
 			
-			const_iterator begin() const                    { return const_iterator( itsDirPathname, itsDirHandle ); }
-			const_iterator end() const                      { return const_iterator(                              ); }
+			const_iterator begin() const                    { return const_iterator( itsDirHandle ); }
+			const_iterator end() const                      { return const_iterator(              ); }
 			
 	};
 	
