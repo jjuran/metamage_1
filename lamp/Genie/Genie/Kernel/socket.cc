@@ -124,11 +124,32 @@ namespace Genie
 		{
 			SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( listener );
 			
-			std::auto_ptr< IOHandle > incoming( sock.Accept( *addr, *addrlen ) );
+			if ( addrlen == NULL  &&  addr != NULL )
+			{
+				// If you pass the address buffer you must indicate the size
+				frame.SetErrno( EINVAL );
+			}
+			
+			sockaddr dummy_addr;
+			
+			socklen_t dummy_length = sizeof dummy_addr;
+			
+			sockaddr& address = addr != NULL ? *addr : dummy_addr;
+			
+			// addr != NULL  implies  addrlen != NULL
+			socklen_t& length = addr != NULL ? *addrlen : dummy_length;
+			
+			std::auto_ptr< IOHandle > incoming( sock.Accept( address, length ) );
 			
 			int fd = LowestUnusedFileDescriptor();
 			
 			AssignFileDescriptor( fd, boost::shared_ptr< IOHandle >( incoming ) );
+			
+			if ( addr == NULL  &&  addrlen != NULL )
+			{
+				// You can pass a NULL address buffer and still get the size back
+				*addrlen = length;
+			}
 			
 			return fd;
 		}
