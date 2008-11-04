@@ -171,6 +171,8 @@ DEFINE_STUB( nanosleep )
 
 DEFINE_STUB( poll )
 
+DEFINE_STUB( openat )
+
 DEFINE_STUB( socketpair )
 DEFINE_STUB( socket )
 DEFINE_STUB( bind )
