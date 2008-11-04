@@ -18,6 +18,7 @@
 
 // POSeven
 #include "POSeven/functions/ioctl.hh"
+#include "POSeven/functions/read.hh"
 #include "POSeven/Open.hh"
 
 
