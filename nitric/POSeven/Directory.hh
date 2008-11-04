@@ -14,12 +14,6 @@
 #ifndef POSEVEN_DIRECTORY_HH
 #define POSEVEN_DIRECTORY_HH
 
-// Standard C++
-#include <string>
-
-// POSIX
-#include <dirent.h>
-
 // Io
 #include "io/files.hh"
 #include "io/walk.hh"
@@ -30,66 +24,12 @@
 // POSeven
 #include "POSeven/Errno.hh"
 #include "POSeven/Pathnames.hh"
+#include "POSeven/functions/opendir.hh"
+#include "POSeven/functions/readdir.hh"
 
 
 namespace poseven
 {
-	
-	typedef DIR* dir_t;
-	
-}
-
-namespace Nucleus
-{
-	
-	template <> struct Disposer< poseven::dir_t > : public std::unary_function< poseven::dir_t, void >//,
-	                                                //private POSeven::DefaultDestructionPOSIXResultPolicy
-	{
-		void operator()( poseven::dir_t dir ) const
-		{
-			//(void) Nitrogen::FileManagerErrorsRegistrationDependency();
-			//HandleDestructionPOSIXResult( ::closedir( dir ) );
-			::closedir( dir );
-		}
-	};
-}
-
-namespace poseven
-{
-	
-	inline Nucleus::Owned< dir_t > opendir( const char* pathname )
-	{
-		DIR* handle = ::opendir( pathname );
-		
-		if ( handle == NULL )
-		{
-			throw_errno( errno );
-		}
-		
-		return Nucleus::Owned< dir_t >::Seize( handle );
-	}
-	
-	inline Nucleus::Owned< dir_t > opendir( const std::string& pathname )
-	{
-		return opendir( pathname.c_str() );
-	}
-	
-	
-	inline void closedir( Nucleus::Owned< dir_t > )  {}
-	
-	
-	inline const dirent& readdir( dir_t dir )
-	{
-		const dirent* entry = ::readdir( dir );
-		
-		if ( entry == NULL )
-		{
-			throw_errno( errno );
-		}
-		
-		return *entry;
-	}
-	
 	
 	inline bool name_is_dots( const char* name )
 	{
