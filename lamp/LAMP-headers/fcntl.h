@@ -36,14 +36,18 @@ extern "C" {
 	#define	O_TRUNC		0x0400		/* truncate to zero length */
 	#define	O_EXCL		0x0800		/* error if already exists */
 	
-	//#define O_NONBLOCK	0x4000
-	#define O_NDELAY	0x4000
+	#define O_NDELAY	O_NONBLOCK
 	
 	#define	O_NOCTTY	0		/* don't assign controlling terminal */
+	#define O_NOATIME	0		/* atime is not supported and therefore never modified */
+	
+	#define O_DIRECTORY	0x4000  // matches m68k and powerpc Linux
 	
 	#define O_LAZY  0x00010000
 	
 	#define O_TRUNC_LAZY  (O_TRUNC | O_LAZY)  // truncate at initial write(), not open()
+	
+	#define AT_FDCWD  (-100)
 	
 	#define	F_DUPFD  0
 	#define	F_GETFD  1
@@ -73,14 +77,17 @@ extern "C" {
 	
 	#ifdef __cplusplus
 	
-	//int open( const char* path, int oflag );
 	int open( const char* path, int oflag, mode_t mode = 0 );
+	
+	int openat( int dirfd, const char* path, int flags, mode_t mode = 0 );
 	
 	int fcntl( int fd, int cmd, int param );
 	
 	#else
 	
 	int open( const char* path, int oflag, ... );
+	
+	int openat( int dirfd, const char* path, int flags, ... );
 	
 	int fcntl( int fd, int cmd, ... );
 	
