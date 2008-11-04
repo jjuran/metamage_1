@@ -23,16 +23,19 @@
 
 // POSeven
 #include "POSeven/Directory.hh"
+#include "POSeven/FileDescriptor.hh"
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/fchmod.hh"
 #include "POSeven/functions/fstat.hh"
 #include "POSeven/functions/mkdir.hh"
+#include "POSeven/functions/read.hh"
 #include "POSeven/functions/rename.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/symlink.hh"
 #include "POSeven/functions/utime.hh"
+#include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 
 // Orion
@@ -279,24 +282,22 @@ namespace tool
 				break;
 			}
 			
-			// Redefining a and b, but as different types
-			const std::string& a = *aa;
-			const std::string& b = *bb;
+			const std::string& a_name = *aa;
+			const std::string& b_name = *bb;
 			
-			std::string a_name = io::get_filename( a );
-			std::string b_name = io::get_filename( b );
+			int cmp = std::strcmp( a_name.c_str(), b_name.c_str() );
 			
-			if ( a_name == b_name )
+			if ( cmp == 0 )
 			{
-				recursively_compare( a, b );
+				recursively_compare( a_dir / a_name, b_dir / b_name );
 				
 				++aa;
 				++bb;
 			}
-			else if ( a_name < b_name )
+			else if ( cmp < 0 )
 			{
 				// new item
-				new_item( a );
+				new_item( a_dir / a_name );
 				++aa;
 			}
 			else
@@ -312,7 +313,7 @@ namespace tool
 			// new items
 			if ( !filter_item( *aa ) )
 			{
-				new_item( *aa );
+				new_item( a_dir / *aa );
 			}
 			
 			++aa;
@@ -323,7 +324,7 @@ namespace tool
 			// deleted items
 			if ( !filter_item( *bb ) )
 			{
-				old_item( a_dir / io::get_filename( *bb ) );
+				old_item( a_dir / *bb );
 			}
 			
 			++bb;

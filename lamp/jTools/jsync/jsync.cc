@@ -172,9 +172,12 @@ namespace tool
 		}
 	}
 	
-	static void recursively_copy_into( const std::string& source, const std::string& dest )
+	typedef std::pair< std::string, std::string > pair_of_strings;
+	
+	static void recursively_copy_into( const char*             name,
+	                                   const pair_of_strings&  dirs )
 	{
-		recursively_copy( source, dest / io::get_filename( source ) );
+		recursively_copy( dirs.first / name, dirs.second / name );
 	}
 	
 	static void recursively_copy_directory_contents( const std::string& source, const std::string& dest )
@@ -186,7 +189,7 @@ namespace tool
 		std::for_each( contents.begin(),
 		               contents.end(),
 		               std::bind2nd( more::ptr_fun( recursively_copy_into ),
-		                             dest ) );
+		                             std::make_pair( source, dest ) ) );
 	}
 	
 	static void recursively_copy_directory( const std::string& source, const std::string& dest )
@@ -478,12 +481,23 @@ namespace tool
 	
 	struct null_iterator
 	{
-		template < class Data >  void operator=( Data )  {}
+		struct null
+		{
+			template < class Data >  void operator=( Data )  {}
+		};
+		
+		typedef std::forward_iterator_tag iterator_category;
+		
+		typedef null  value_type;
+		typedef null *pointer;
+		typedef null& reference;
+		
+		typedef int difference_type;
 		
 		null_iterator operator++(     )  { return null_iterator(); }
 		null_iterator operator++( int )  { return null_iterator(); }
 		
-		null_iterator operator*()  { return null_iterator(); }
+		null operator*()  { return null(); }
 	};
 	
 	template < class Type >
@@ -494,27 +508,22 @@ namespace tool
 		       :          0;
 	}
 	
-	/*
-	inline int compare( const std::string& a, const std::string& b )
-	{
-		return std::lexicographical_compare_3way( a.begin(), a.end(), b.begin(), b.end() );
-	}
-	*/
-	
-	template < class Iter, class F, class A, class B, class Both >
+	template < class Iter, class A, class B, class Both >
 	static void compare_sequences( Iter a_begin, Iter a_end,
-	                               Iter b_begin, Iter b_end, F f, A a_only,
-	                                                              B b_only, Both both )
+	                               Iter b_begin, Iter b_end, A a_only,
+	                                                         B b_only, Both both )
 	{
 		while ( a_begin != a_end  &&  b_begin != b_end )
 		{
-			typename F::result_type a_result = f( *a_begin );
-			typename F::result_type b_result = f( *b_begin );
+			typedef typename std::iterator_traits< Iter >::value_type value_type;
 			
-			switch ( compare( a_result, b_result ) )
+			const value_type& a = *a_begin;
+			const value_type& b = *b_begin;
+			
+			switch ( compare( a, b ) )
 			{
 				case 0:
-					*both++ = a_result;
+					*both++ = a;
 					
 					++a_begin;
 					++b_begin;
@@ -522,13 +531,13 @@ namespace tool
 					break;
 				
 				case -1:
-					*a_only++ = a_result;
+					*a_only++ = a;
 					
 					a_begin++;
 					break;
 				
 				case 1:
-					*b_only++ = b_result;
+					*b_only++ = b;
 					
 					b_begin++;
 					break;
@@ -536,8 +545,8 @@ namespace tool
 			}
 		}
 		
-		std::transform( a_begin, a_end, a_only, f );
-		std::transform( b_begin, b_end, b_only, f );
+		std::copy( a_begin, a_end, a_only );
+		std::copy( b_begin, b_end, b_only );
 	}
 	
 	static void recursively_sync_directory_contents( const std::string& subpath )
@@ -574,14 +583,12 @@ namespace tool
 		
 		compare_sequences( a.begin(), a.end(),
 		                   b.begin(), b.end(),
-		                   std::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ),
 		                   std::back_inserter( a_added   ),
 		                   std::back_inserter( a_removed ),
 		                   std::back_inserter( a_static  ) );
 		
 		compare_sequences( c.begin(), c.end(),
 		                   b.begin(), b.end(),
-		                   std::ptr_fun( static_cast< std::string (*)( const std::string& ) >( io::get_filename ) ),
 		                   std::back_inserter( c_added   ),
 		                   std::back_inserter( c_removed ),
 		                   std::back_inserter( c_static  ) );
@@ -598,21 +605,18 @@ namespace tool
 		
 		compare_sequences( a_added.begin(), a_added.end(),
 		                   c_added.begin(), c_added.end(),
-		                   std::ptr_fun( identity ),
 		                   std::back_inserter( a_created ),
 		                   std::back_inserter( c_created ),
 		                   std::back_inserter( mutually_added ) );
 		
 		compare_sequences( a_removed.begin(), a_removed.end(),
 		                   c_removed.begin(), c_removed.end(),
-		                   std::ptr_fun( identity ),
 		                   std::back_inserter( a_deleted ),
 		                   std::back_inserter( c_deleted ),
 		                   std::back_inserter( mutually_deleted ) );
 		
 		compare_sequences( a_static.begin(), a_static.end(),
 		                   c_static.begin(), c_static.end(),
-		                   std::ptr_fun( identity ),
 		                   null_iterator(),
 		                   null_iterator(),
 		                   std::back_inserter( mutually_static ) );
