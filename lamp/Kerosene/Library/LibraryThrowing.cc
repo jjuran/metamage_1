@@ -575,6 +575,31 @@
 	}
 	
 	
+	DIR* fdopendir( int fd )
+	{
+		DIR* result = NULL;
+		
+		if ( fd < 0 )
+		{
+			errno = EBADF;
+			
+			return result;
+		}
+		
+		try
+		{
+			result = new DIR;
+			
+			result->fd = fd;
+		}
+		catch ( ... )
+		{
+			errno = ENOMEM;
+		}
+		
+		return result;
+	}
+	
 	DIR* opendir( const char* pathname )
 	{
 		DIR* result = NULL;
