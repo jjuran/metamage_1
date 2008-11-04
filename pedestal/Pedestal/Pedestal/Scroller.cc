@@ -20,6 +20,13 @@ namespace Pedestal
 	
 	inline bool AppearanceManagerExists()
 	{
+		long result;
+		
+		OSErr err = ::Gestalt( gestaltAppearanceAttr, &result );
+		
+		return err != noErr  &&  result != 0;
+		
+		// This terminates on 68K, since exceptions are not tolerated during init
 		return N::Gestalt( N::Gestalt_Selector( gestaltAppearanceAttr ), 0 );
 	}
 	
