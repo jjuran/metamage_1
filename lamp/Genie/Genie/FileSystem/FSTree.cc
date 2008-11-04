@@ -12,8 +12,14 @@
 // Nucleus
 #include "Nucleus/NAssert.h"
 
+// Nitrogen
+#include "Nitrogen/OSUtils.h"
+
 // POSeven
 #include "POSeven/Errno.hh"
+
+// TimeOff
+#include "TimeOff.hh"
 
 // Genie
 #include "Genie/IO/Directory.hh"
@@ -22,6 +28,7 @@
 namespace Genie
 {
 	
+	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -145,7 +152,9 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		time_t now = time( NULL );
+		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
+		
+		time_t now = N::GetDateTime() - timeDiff;
 		
 		sb.st_mode = FileTypeMode() | FilePermMode();
 		
@@ -255,7 +264,10 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree::OpenDirectory() const
 	{
-		ASSERT( IsDirectory() );  // already checked in open()
+		if ( !IsDirectory() )
+		{
+			p7::throw_errno( ENOTDIR );
+		}
 		
 		return boost::shared_ptr< IOHandle >( new DirHandle( shared_from_this() ) );
 	}
