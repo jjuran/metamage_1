@@ -10,6 +10,10 @@
 #include <string>
 #include <vector>
 
+// MoreFunctional
+#include "FunctionalExtensions.hh"
+#include "PointerToFunction.hh"
+
 // Io
 #include "io/files.hh"
 #include "io/walk.hh"
@@ -66,12 +70,16 @@ namespace tool
 	{
 		typedef typename io::directory_contents_traits< FileSpec >::container_type directory_container;
 		
+		typedef FileSpec (*path_descender)(const FileSpec&, const char*);  // FIXME
+		
 		directory_container contents = io::directory_contents( dir );
 		
 		std::for_each( contents.begin(),
 		               contents.end(),
-		               std::bind1st( std::mem_fun( &DeepFileSearch< FileSpec, Filter >::SearchItem ),
-		                             this ) );
+		               more::compose1( std::bind1st( std::mem_fun( &DeepFileSearch< FileSpec, Filter >::SearchItem ),
+		                                             this ),
+		                               std::bind1st( more::ptr_fun( path_descender( io::path_descent ) ),
+		                                             dir ) ) );
 		
 		return *this;
 	}

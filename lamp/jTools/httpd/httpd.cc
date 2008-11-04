@@ -400,7 +400,7 @@ namespace tool
 		
 		for ( Iter it = contents.begin();  it != contents.end();  ++it )
 		{
-			std::string listing = io::get_filename_string( *it );
+			std::string listing = *it;
 			
 			listing += "\n";
 			

@@ -15,6 +15,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+// MoreFunctional
+#include "PointerToFunction.hh"
+
 // Nitrogen
 #include "Nitrogen/Folders.h"
 #include "Nitrogen/OpenTransportProviders.h"
@@ -264,20 +267,26 @@ namespace tool
 		private:
 			std::string  itsReturnPath;
 			FSSpec       itsMessageFile;
+			FSSpec       itsDestinations;
 		
 		public:
 			Transmitter( const std::string&  returnPath,
-			             const FSSpec&       message ) : itsReturnPath ( returnPath ),
-			                                             itsMessageFile( message    )
-			{}
+			             const FSSpec&       message,
+			             const FSSpec&       dests ) : itsReturnPath  ( returnPath ),
+			                                           itsMessageFile ( message    ),
+			                                           itsDestinations( dests      )
+			{
+			}
 			
-			void operator()( const FSSpec& destFile );
+			void operator()( const unsigned char* dest_filename );
 	};
 	
-	void Transmitter::operator()( const FSSpec& destFile )
+	void Transmitter::operator()( const unsigned char* dest_filename )
 	{
 		try
 		{
+			FSSpec destFile = itsDestinations / dest_filename;
+			
 			// destFile serves as a lock on this destination
 			// We can't switch from FSSpec to pathname until we sort out locking
 			Relay( itsReturnPath,
@@ -293,8 +302,10 @@ namespace tool
 	}
 	
 	
-	static void ProcessMessage( const FSSpec& msgFolderItem )
+	static void ProcessMessage( const N::FSDirSpec& messages, const unsigned char* name )
 	{
+		FSSpec msgFolderItem = messages / name;
+		
 		if ( !io::directory_exists( msgFolderItem ) )  return;  // Icon files, et al
 		
 		typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
@@ -312,7 +323,8 @@ namespace tool
 		std::for_each( contents.begin(),
 		               contents.end(),
 		               Transmitter( ReadOneLinerFromFile( returnPath ),
-		                            message ) );
+		                            message,
+		                            destFolder ) );
 		
 		io::delete_empty_directory( destFolder );  // this fails if destinations remain
 		io::delete_file           ( returnPath );
@@ -327,11 +339,13 @@ namespace tool
 		
 		O::GetOptions( argc, argv );
 		
-		N::FSDirSpec queue = QueueDirectory();
+		N::FSDirSpec queue_dir = QueueDirectory();
 		
-		std::for_each( N::FSContents( queue ).begin(),
-		               N::FSContents( queue ).end(),
-		               std::ptr_fun( ProcessMessage ) );
+		N::FSSpecContents_Container queue = io::directory_contents( queue_dir );
+		
+		std::for_each( queue.begin(),
+		               queue.end(),
+		               std::bind1st( more::ptr_fun( ProcessMessage ), queue_dir ) );
 		
 		return 0;
 	}

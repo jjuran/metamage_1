@@ -204,15 +204,21 @@ namespace tool
 		
 		typedef io::directory_contents_traits< std::string >::container_type directory_container;
 		
+		typedef std::string (*path_descender)(const std::string&, const char*);
+		
 		std::string confd = dirPath / "A-line.confd";
 		
-		bool has_confd = io::directory_exists( confd );
+		const bool has_confd = io::directory_exists( confd );
 		
-		directory_container contents = io::directory_contents( has_confd ? confd : dirPath );
+		const std::string& conf_path = has_confd ? confd : dirPath;
 		
-		std::copy( contents.begin(),
-		           contents.end(),
-		           has_confd ? configs : folders );
+		directory_container contents = io::directory_contents( conf_path );
+		
+		std::transform( contents.begin(),
+		                contents.end(),
+		                has_confd ? configs : folders,
+		                std::bind1st( more::ptr_fun( path_descender( io::path_descent ) ),
+		                              conf_path ) );
 	}
 	
 	
