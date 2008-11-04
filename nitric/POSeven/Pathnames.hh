@@ -110,6 +110,11 @@ namespace io
 		return path;
 	}
 	
+	inline std::string path_descent( const std::string& path, const char* name )
+	{
+		return path_descent( path, name, std::strlen( name ) );
+	}
+	
 	namespace path_descent_operators
 	{
 		
