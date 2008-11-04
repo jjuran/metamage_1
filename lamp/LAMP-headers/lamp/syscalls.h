@@ -176,6 +176,8 @@
 #define __NR_poll                      168
 // ...
 
+#define __NR_openat                    240
+
 #define __NR_socketpair                257
 #define __NR_socket                    258
 #define __NR_bind                      259
