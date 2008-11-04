@@ -219,7 +219,7 @@ namespace tool
 		
 		p7::write( http_server, message_header );
 		
-		p7::oflag_t create_flags = outputIsToFile ? p7::o_creat | p7::o_excl : p7::oflag_t();
+		p7::open_flags_t create_flags = outputIsToFile ? p7::o_creat | p7::o_excl : p7::open_flags_t();
 		
 		HTTP::ResponseReceiver response;
 		
