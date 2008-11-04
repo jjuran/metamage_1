@@ -15,6 +15,7 @@
 #define POSEVEN_TYPES_FD_T_HH
 
 // POSIX
+#include <fcntl.h>
 #include <unistd.h>
 
 // Nucleus
@@ -29,6 +30,12 @@ namespace poseven
 		stdin_fileno  = STDIN_FILENO,
 		stdout_fileno = STDOUT_FILENO,
 		stderr_fileno = STDERR_FILENO,
+		
+	#ifdef AT_FDCWD
+		
+		at_fdcwd = AT_FDCWD,
+		
+	#endif
 		
 		fd_t_max = Nucleus::Enumeration_Traits< int >::max
 	};
