@@ -102,7 +102,7 @@ namespace io
 		
 		for ( Iter it = contents.begin();  it != contents.end();  ++it )
 		{
-			recursively_walk_tree( *it,
+			recursively_walk_tree( path_descent( dir, *it ),
 			                       visit_dir_before,
 			                       visit_file,
 			                       visit_dir_after,
