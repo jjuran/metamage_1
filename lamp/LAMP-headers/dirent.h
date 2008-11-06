@@ -59,6 +59,8 @@ typedef struct DIR DIR;
 __BEGIN_DECLS
 int getdents( unsigned int fd, struct dirent* dirp, unsigned int count );
 
+DIR *fdopendir( int fd );
+
 DIR *opendir __P((const char *));
 struct dirent *readdir __P((DIR *));
 void rewinddir __P((DIR *));
