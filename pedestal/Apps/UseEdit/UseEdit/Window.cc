@@ -8,6 +8,9 @@
 // Nucleus
 #include "Nucleus/Convert.h"
 
+// Pedestal
+#include "Pedestal/TEView.hh"
+
 
 namespace UseEdit
 {
@@ -31,7 +34,19 @@ namespace UseEdit
 	
 	static inline std::auto_ptr< Ped::View > MakeView()
 	{
-		return std::auto_ptr< Ped::View >( new View( MakeWindowRect(), View::Initializer() ) );
+		Rect scroller_bounds = MakeWindowRect();
+		
+		Rect subview_bounds = Pedestal::ScrollBounds< true, false >( scroller_bounds );
+		
+		View* scroller = NULL;
+		
+		std::auto_ptr< Ped::View > view( scroller = new View( scroller_bounds ) );
+		
+		std::auto_ptr< Ped::ScrollableBase > subview( new Ped::TEView( subview_bounds ) );
+		
+		scroller->SetSubView( subview );
+		
+		return view;
 	}
 	
 	

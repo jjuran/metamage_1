@@ -11,7 +11,6 @@
 
 // Pedestal
 #include "Pedestal/Scroller.hh"
-#include "Pedestal/TEView.hh"
 #include "Pedestal/UserWindow.hh"
 
 
@@ -21,7 +20,7 @@ namespace UseEdit
 	namespace Ped = Pedestal;
 	
 	
-	typedef Pedestal::Scroller< Pedestal::TEView, true > View;
+	typedef Pedestal::Scroller< true > View;
 	
 	
 	class Window : public Pedestal::UserWindow
