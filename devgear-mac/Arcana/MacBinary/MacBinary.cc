@@ -629,7 +629,7 @@ namespace MacBinary
 		
 		for ( const_iterator it = contents.begin();  it != contents.end();  ++it )
 		{
-			Encode( *it, blockWrite, output );
+			Encode( dir / *it, blockWrite, output );
 		}
 		
 		u.h.Set< kFileCreator >( 0xFFFFFFFE );
