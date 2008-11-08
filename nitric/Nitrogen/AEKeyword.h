@@ -36,6 +36,7 @@
 #ifndef __ASREGISTRY__
 #include <ASRegistry.h>
 #endif
+#include <OSA.h>
 
 
 namespace Nitrogen
