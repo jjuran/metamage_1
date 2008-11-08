@@ -16,6 +16,7 @@
 // POSeven
 #include "POSeven/Directory.hh"
 #include "POSeven/FileDescriptor.hh"
+#include "POSeven/Pathnames.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
