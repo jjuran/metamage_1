@@ -110,25 +110,21 @@ namespace tool
 	}
 	
 	
-	static bool filter_file( const std::string& path )
+	static bool filter_file( const std::string& filename )
 	{
-		std::string filename = io::get_filename( path );
-		
 		return filename == "Icon\r"
 		    || filename == ".DS_Store";
 	}
 	
-	static bool filter_directory( const std::string& path )
+	static bool filter_directory( const std::string& filename )
 	{
-		std::string filename = io::get_filename( path );
-		
 		return filename == "CVS"
 		    || filename == "CVSROOT";
 	}
 	
-	static bool filter_item( const std::string& path )
+	static bool filter_item( const std::string& filename )
 	{
-		return filter_file( path ) || filter_directory( path );
+		return filter_file( filename ) || filter_directory( filename );
 	}
 	
 	
@@ -161,7 +157,7 @@ namespace tool
 	{
 		if ( io::file_exists( source ) )
 		{
-			if ( !filter_file( source ) )
+			if ( !filter_file( io::get_filename( source ) ) )
 			{
 				copy_file( source, dest );
 			}
@@ -194,7 +190,7 @@ namespace tool
 	
 	static void recursively_copy_directory( const std::string& source, const std::string& dest )
 	{
-		if ( filter_directory( source ) )
+		if ( filter_directory( io::get_filename( source ) ) )
 		{
 			return;
 		}
@@ -472,11 +468,6 @@ namespace tool
 		}
 		
 		return result;
-	}
-	
-	inline const std::string& identity( const std::string& s )
-	{
-		return s;
 	}
 	
 	struct null_iterator
@@ -857,6 +848,6 @@ namespace tool
 		
 		return 0;
 	}
-
+	
 }
 
