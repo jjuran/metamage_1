@@ -30,22 +30,6 @@
 namespace Genie
 {
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
-	{
-		typedef FSTree_QueryFile< sys_mac_name_Query > QueryFile;
-		
-		return MakeFSTree( new QueryFile( parent, name ) );
-	}
-	
-	static FSTreePtr Keys_Factory( const FSTreePtr&    parent,
-	                               const std::string&  name )
-	{
-		typedef FSTree_QueryFile< sys_mac_keys_Query > QueryFile;
-		
-		return MakeFSTree( new QueryFile( parent, name ) );
-	}
-	
 	template < class Query >
 	static FSTreePtr Query_Factory( const FSTreePtr&    parent,
 	                                const std::string&  name )
@@ -80,8 +64,8 @@ namespace Genie
 		
 		{ "gestalt", &Singleton_Factory< FSTree_sys_mac_gestalt > },
 		
-		{ "name", &Name_Factory },
-		{ "keys", &Keys_Factory },
+		{ "name", &Query_Factory< sys_mac_name_Query > },
+		{ "keys", &Query_Factory< sys_mac_keys_Query > },
 		
 		{ "rom", &Singleton_Factory< FSTree_sys_mac_rom > },
 		
