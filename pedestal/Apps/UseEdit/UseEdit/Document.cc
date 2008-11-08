@@ -11,12 +11,16 @@
 // Io
 #include "io/slurp.hh"
 
+// Pedestal
+#include "Pedestal/TEView.hh"
+
 
 namespace UseEdit
 {
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Ped = Pedestal;
 	
 	template < class FileSpec >
 	static std::string ReadFileData( const FileSpec& file )
@@ -56,9 +60,11 @@ namespace UseEdit
 	{
 	}
 	
-	static void LoadText( Window::Base::SubViewType& scroller, const std::string& text )
+	static void LoadText( Window::Base::SubViewType& subview, const std::string& text )
 	{
-		Ped::TEView& editor( scroller.ScrolledView() );
+		View& scroller = subview.Get< View >();
+		
+		Ped::TEView& editor( scroller.GetSubView< Ped::TEView >() );
 		
 		editor.AppendChars( text.data(), text.size(), false );
 		
