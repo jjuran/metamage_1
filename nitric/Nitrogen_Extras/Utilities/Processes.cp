@@ -8,6 +8,7 @@
 #endif
 
 // Nitrogen
+#include "Nitrogen/Files.h"
 #ifndef NITROGEN_MACERRORS_H
 #include "Nitrogen/MacErrors.h"
 #endif
