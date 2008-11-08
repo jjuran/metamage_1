@@ -17,6 +17,7 @@ namespace UseEdit
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Ped = Pedestal;
 	
 	
 	static Rect MakeWindowRect()

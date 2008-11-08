@@ -19,14 +19,14 @@ namespace UseEdit
 	class Document
 	{
 		private:
-			Ped::SingleWindowOwner< Window >  itsWindow;
-			bool                              itHasFile;
-			bool                              itIsDirty;
+			Pedestal::SingleWindowOwner< Window >  itsWindow;
+			bool                                   itHasFile;
+			bool                                   itIsDirty;
 		
 		public:
-			Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler );
-			Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSSpec& file );
-			Document( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler, const FSRef & file );
+			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler );
+			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler, const FSSpec& file );
+			Document( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler, const FSRef & file );
 			
 			Window const& GetWindow() const  { return itsWindow.Get(); }
 			Window      & GetWindow()        { return itsWindow.Get(); }

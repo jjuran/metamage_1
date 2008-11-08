@@ -30,6 +30,7 @@ namespace UseEdit
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
+	namespace Ped = Pedestal;
 	
 	
 	App* App::theApp = NULL;

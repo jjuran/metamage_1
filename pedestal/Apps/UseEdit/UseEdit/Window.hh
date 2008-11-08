@@ -17,9 +17,6 @@
 namespace UseEdit
 {
 	
-	namespace Ped = Pedestal;
-	
-	
 	typedef Pedestal::Scroller< true > View;
 	
 	
@@ -28,8 +25,8 @@ namespace UseEdit
 		public:
 			typedef Pedestal::UserWindow Base;
 			
-			Window( const boost::shared_ptr< Ped::WindowCloseHandler >&  handler,
-			        ConstStr255Param                                     title = "\p" "UseEdit" );
+			Window( const boost::shared_ptr< Pedestal::WindowCloseHandler >&  handler,
+			        ConstStr255Param                                          title = "\p" "UseEdit" );
 			
 			std::string GetName() const;
 			
