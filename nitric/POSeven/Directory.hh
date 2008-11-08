@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2007 by Joshua Juran.
+// Written 2007-2008 by Joshua Juran.
 //
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
@@ -22,19 +22,11 @@
 #include "Nucleus/Shared.h"
 
 // POSeven
-#include "POSeven/Errno.hh"
-#include "POSeven/Pathnames.hh"
 #include "POSeven/functions/opendir.hh"
-#include "POSeven/functions/readdir.hh"
 
 
 namespace poseven
 {
-	
-	inline bool name_is_dots( const char* name )
-	{
-		return name[0] == '.'  &&  ( name[ 1 + (name[1] == '.') ] == '\0' );
-	}
 	
 	class directory_contents_container
 	{
@@ -71,33 +63,7 @@ namespace poseven
 					value_type                value;
 					bool                      done;
 					
-					void GetNextValue()
-					{
-						using namespace io::path_descent_operators;
-						
-						dir_t dir = itsDirHandle;
-						
-						const dirent* entry;
-						
-						while ( (entry = ::readdir( dir ))  &&  name_is_dots( entry->d_name ) )
-						{
-							continue;
-						}
-						
-						if ( entry )
-						{
-							value = entry->d_name;
-							
-							return;
-						}
-						
-						done = true;
-						
-						if ( errno != ENOENT )
-						{
-							throw_errno( errno );
-						}
-					}
+					void GetNextValue();
 					
 					const_iterator( const Nucleus::Shared< dir_t >& dirHandle ) : itsDirHandle( dirHandle ),
 					                                                              done( false )
@@ -120,7 +86,7 @@ namespace poseven
 					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
 			};
 			
-			directory_contents_container( const std::string& dir_path ) : itsDirHandle( poseven::opendir( dir_path ) )
+			directory_contents_container( const Nucleus::Shared< dir_t >& dir ) : itsDirHandle( dir )
 			{
 			}
 			
@@ -130,9 +96,14 @@ namespace poseven
 	};
 	
 	
-	inline directory_contents_container directory_contents( const std::string& dir )
+	inline directory_contents_container directory_contents( const Nucleus::Shared< dir_t >& dir )
 	{
 		return directory_contents_container( dir );
+	}
+	
+	inline directory_contents_container directory_contents( const std::string& dir_path )
+	{
+		return directory_contents_container( poseven::opendir( dir_path ) );
 	}
 	
 }
