@@ -6,15 +6,15 @@
 #ifndef CFMLATEIMPORTER_HH
 #define CFMLATEIMPORTER_HH
 
-#include <CodeFragments.h>
-#include <MacTypes.h>
+// Nitrogen
+#include "Nitrogen/CodeFragments.h"
 
 
 namespace CFMLateImporter
 {
 	
-	OSStatus ImportLibrary( ConstStr255Param   weakLinkedLibraryName,
-	                        CFragConnectionID  connIDToImport );
+	void ImportLibrary( ConstStr255Param                     weakLinkedLibraryName,
+	                    Nucleus::Owned< CFragConnectionID >  connIDToImport );
 	
 }
 

@@ -15,16 +15,22 @@
 namespace CFMLateImporter
 {
 	
-	OSStatus ImportLibrary( ConstStr255Param   weakLinkedLibraryName,
-	                        CFragConnectionID  connIDToImport )
+	namespace N = Nitrogen;
+	namespace NN = Nucleus;
+	
+	
+	void ImportLibrary( ConstStr255Param                weakLinkedLibraryName,
+	                    NN::Owned< CFragConnectionID >  connIDToImport )
 	{
 		const CFragSystem7InitBlock* initBlock = SavedCFragInitBlock();
 		
-		return CFMLateImportLibrary( &initBlock->fragLocator.u.onDisk,
-		                             (CFragConnectionID) initBlock->closureID,
-		                             Initialize_SavedCFragInitBlock,
-		                             weakLinkedLibraryName,
-		                             connIDToImport );
+		N::ThrowOSStatus( CFMLateImportLibrary( &initBlock->fragLocator.u.onDisk,
+		                                        (CFragConnectionID) initBlock->closureID,
+		                                        Initialize_SavedCFragInitBlock,
+		                                        weakLinkedLibraryName,
+		                                        connIDToImport ) );
+		
+		connIDToImport.Release();
 	}
 	
 }
