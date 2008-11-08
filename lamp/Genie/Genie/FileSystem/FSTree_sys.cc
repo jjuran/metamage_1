@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree_sys_app.hh"
+#include "Genie/FileSystem/FSTree_sys_cpu.hh"
 #include "Genie/FileSystem/FSTree_sys_mac.hh"
 #include "Genie/FileSystem/FSTree_sys_set.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -168,6 +169,7 @@ namespace Genie
 	const Singleton_Mapping sys_Mappings[] =
 	{
 		{ "app",    &Premapped_Factory< sys_app_Mappings    > },
+		{ "cpu",    &Premapped_Factory< sys_cpu_Mappings    > },
 		{ "kernel", &Premapped_Factory< sys_kernel_Mappings > },
 		{ "mac",    &Premapped_Factory< sys_mac_Mappings    > },
 		{ "set",    &Premapped_Factory< sys_set_Mappings    > },
