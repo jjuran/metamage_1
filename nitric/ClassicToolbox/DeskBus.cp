@@ -3,9 +3,10 @@
  *	==========
  */
 
-#ifndef CLASSICTOOLBOX_DESKBUS_H
 #include "ClassicToolbox/DeskBus.h"
-#endif
+
+// Nitrogen
+#include "Nitrogen/OSStatus.h"
 
 
 namespace Nitrogen
