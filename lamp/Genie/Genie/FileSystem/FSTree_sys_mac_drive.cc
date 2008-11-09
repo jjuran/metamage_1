@@ -15,7 +15,9 @@
 #include "POSeven/Errno.hh"
 
 // Genie
+#include "Genie/FileSystem/Drives.hh"
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
+#include "Genie/FileSystem/FSTree_Stamp_Action.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 
 
@@ -197,12 +199,30 @@ namespace Genie
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
 	}
 	
+	template < class Stamp >
+	static FSTreePtr Stamp_Factory( const FSTreePtr&                 parent,
+	                                const std::string&               name,
+	                                DriveNumber_KeyName_Traits::Key  key )
+	{
+		return MakeFSTree( new Stamp( parent, name, key ) );
+	}
+	
 	const Functional_Traits< DriveNumber_KeyName_Traits::Key >::Mapping sys_mac_drive_N_Mappings[] =
 	{
 		{ "driver", &Link_Factory },
 		
 		{ "fsid", &Query_Factory< GetDriveFSID > },
 		{ "size", &Query_Factory< GetDriveSize > },
+		
+		{ "flush",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Flush   > > },
+		{ "umount", &Stamp_Factory< FSTree_Stamp_Action< Volume_Unmount > > },
+		
+	#if !TARGET_API_MAC_CARBON
+		
+		{ "eject",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Eject   > > },
+		{ "mount",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Mount   > > },
+		
+	#endif
 		
 		{ NULL, NULL }
 	};

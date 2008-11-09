@@ -12,8 +12,10 @@
 #include "POSeven/Errno.hh"
 
 // Genie
+#include "Genie/FileSystem/Drives.hh"
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
-#include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/FileSystem/FSTree_Stamp_Action.hh"
+#include "Genie/FileSystem/FSTree_Virtual_Link.hh"
 
 
 namespace Genie
@@ -227,29 +229,6 @@ namespace Genie
 			}
 	};
 	
-	class FSTree_Virtual_Link : public FSTree
-	{
-		private:
-			std::string itsTarget;
-		
-		public:
-			FSTree_Virtual_Link( const FSTreePtr&    parent,
-			                     const std::string&  name,
-			                     const std::string&  target ) : FSTree( parent, name ),
-			                                                    itsTarget( target )
-			{
-			}
-			
-			bool IsLink() const  { return true; }
-			
-			std::string ReadLink() const  { return itsTarget; }
-			
-			FSTreePtr ResolveLink() const
-			{
-				return ResolvePathname( itsTarget );
-			}
-	};
-	
 	class FSTree_Folder_Link : public FSTree
 	{
 		private:
@@ -289,6 +268,14 @@ namespace Genie
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
 		return MakeFSTree( new QueryFile( parent, name, Query( key ) ) );
+	}
+	
+	template < class Stamp >
+	static FSTreePtr Stamp_Factory( const FSTreePtr&             parent,
+	                                const std::string&           name,
+	                                VRefNum_KeyName_Traits::Key  key )
+	{
+		return MakeFSTree( new Stamp( parent, name, key ) );
 	}
 	
 	static FSTreePtr Root_Factory( const FSTreePtr&             parent,
@@ -355,6 +342,15 @@ namespace Genie
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
+		
+		{ "flush",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Flush   > > },
+		{ "umount", &Stamp_Factory< FSTree_Stamp_Action< Volume_Unmount > > },
+		
+	#if !TARGET_API_MAC_CARBON
+		
+		{ "eject",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Eject   > > },
+		
+	#endif
 		
 		{ "sys", &Folder_Link_Factory< N::kSystemFolderType    > },
 		{ "tmp", &Folder_Link_Factory< N::kTemporaryFolderType > },
