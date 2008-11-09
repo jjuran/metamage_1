@@ -125,35 +125,13 @@ namespace Pedestal
 		kHorizontal
 	};
 	
-	template < bool hasAppearance > struct Static_AppearanceExistence
-	{
-		operator bool() const  { return hasAppearance; }
-	};
-	
-	class Variable_AppearanceExistence
-	{
-		private:
-			bool itIsLive;
-		
-		public:
-			Variable_AppearanceExistence() : itIsLive()
-			{
-			}
-			
-			Variable_AppearanceExistence( bool live ) : itIsLive( live )
-			{
-			}
-			
-			operator bool() const  { return itIsLive; }
-	};
-	
 #if TARGET_API_MAC_CARBON
 	
-	extern Static_AppearanceExistence< true > gAppearenceExists;
+	inline bool AppearanceManagerExists()  { return true; }
 	
 #else
 	
-	extern Variable_AppearanceExistence gAppearenceExists;
+	bool AppearanceManagerExists();
 	
 #endif
 	
@@ -331,7 +309,7 @@ namespace Pedestal
 			case kControlIndicatorPart:
 				// The user clicked on the indicator
 				
-				if ( !gAppearenceExists )
+				if ( !AppearanceManagerExists() )
 				{
 					// Classic scrolling, handled specially.
 					
@@ -474,13 +452,13 @@ namespace Pedestal
 		myScrollV( VerticalScrollbarBounds  ( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
-		           GetControlProcIDForAppearenceExistence( gAppearenceExists ),
+		           GetControlProcIDForAppearenceExistence( AppearanceManagerExists() ),
 		           static_cast< ScrollerBase* >( this ),
 		           Track< kVertical > ),
 		myScrollH( HorizontalScrollbarBounds( NitrogenExtras::RectWidth ( bounds ),
 		                                      NitrogenExtras::RectHeight( bounds ),
 		                                      true ),
-		           GetControlProcIDForAppearenceExistence( gAppearenceExists ),
+		           GetControlProcIDForAppearenceExistence( AppearanceManagerExists() ),
 		           static_cast< ScrollerBase* >( this ),
 		           Track< kHorizontal > )
 	{

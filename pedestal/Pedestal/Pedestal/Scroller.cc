@@ -18,25 +18,19 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	inline bool AppearanceManagerExists()
+	static inline long Gestalt_AppearanceManager()
 	{
-		long result;
-		
-		OSErr err = ::Gestalt( gestaltAppearanceAttr, &result );
-		
-		return err != noErr  &&  result != 0;
-		
-		// This terminates on 68K, since exceptions are not tolerated during init
 		return N::Gestalt( N::Gestalt_Selector( gestaltAppearanceAttr ), 0 );
 	}
 	
-#if TARGET_API_MAC_CARBON
+#if !TARGET_API_MAC_CARBON
 	
-	Static_AppearanceExistence< true > gAppearenceExists;
-	
-#else
-	
-	Variable_AppearanceExistence gAppearenceExists = AppearanceManagerExists();
+	bool AppearanceManagerExists()
+	{
+		static bool exists = Gestalt_AppearanceManager() != 0;
+		
+		return exists;
+	}
 	
 #endif
 	
