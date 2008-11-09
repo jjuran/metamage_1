@@ -8,8 +8,12 @@
 // Standard C++
 #include <algorithm>
 
+// Standard C/C++
+#include <cstring>
+
 // Nucleus
 #include "Nucleus/Convert.h"
+#include "Nucleus/Saved.h"
 
 // Pedestal
 #include "Pedestal/Window.hh"
@@ -134,6 +138,93 @@ namespace Genie
 		}
 	};
 	
+	inline unsigned char nibble_from_ascii( char c )
+	{
+		return c & 0x10 ?  c         - '0'
+		                : (c | 0x20) - 'a' + 10;
+	}
+	
+	static UInt16 ReadIntensity( const char* p, unsigned n )
+	{
+		UInt16 result = nibble_from_ascii( p[ 0     ] ) << 12
+		              | nibble_from_ascii( p[ n > 1 ] ) <<  8
+		              | nibble_from_ascii( p[ n-1&2 ] ) <<  4
+		              | nibble_from_ascii( p[ n - 1 ] ) <<  0;
+		
+		return result;
+	}
+	
+	template < RGBColor (*GetColor)(N::CGrafPtr), void (*SetColor)(const RGBColor&) >
+	struct Access_WindowBackColor
+	{
+		typedef std::string Result;
+		
+		Result Get( N::WindowRef window ) const
+		{
+			RGBColor color = GetColor( N::GetWindowPort( window ) );
+			
+			char encoded[] = "#rrrrggggbbbb";
+			
+			std::sprintf( encoded + 1, "%.4x%.4x%.4x", color.red,
+			                                           color.green,
+			                                           color.blue );
+			
+			return encoded;
+		}
+		
+		void Set( N::WindowRef window, const std::string& value )
+		{
+			RGBColor color;
+			
+			size_t length = value.length();
+			
+			if ( length == sizeof color )
+			{
+				std::copy( value.begin(),
+				           value.end(),
+				           (char*) &color );
+			}
+			else if ( length >= 2 )
+			{
+				const char* p = value.c_str();
+				const char* q = p + value.length();
+				
+				if ( value[0] == '#' )
+				{
+					++p;
+				}
+				
+				if ( *value.rbegin() == '\n' )
+				{
+					--q;
+				}
+				
+				length = q - p;
+				
+				unsigned detail = length / 3;
+				
+				if ( length % 3 != 0  ||  detail < 1  ||  detail > 4 )
+				{
+					p7::throw_errno( EINVAL );
+				}
+				
+				color.red   = ReadIntensity( p,              detail );
+				color.green = ReadIntensity( p + detail,     detail );
+				color.blue  = ReadIntensity( p + detail * 2, detail );
+			}
+			else
+			{
+				p7::throw_errno( EINVAL );
+			}
+			
+			NN::Saved< N::Port_Value > savePort;
+			
+			N::SetPortWindowPort( window );
+			
+			SetColor( color );
+		}
+	};
+	
 	template < class Accessor >
 	class sys_mac_window_REF_Property
 	{
@@ -177,6 +268,9 @@ namespace Genie
 		{ "title", &Property_Factory< Access_WindowTitle    > },
 		{ "pos",   &Property_Factory< Access_WindowPosition > },
 		{ "size",  &Property_Factory< Access_WindowSize     > },
+		
+		{ "back-color", &Property_Factory< Access_WindowBackColor< N::GetPortBackColor, N::RGBBackColor > > },
+		{ "fore-color", &Property_Factory< Access_WindowBackColor< N::GetPortForeColor, N::RGBForeColor > > },
 		
 		{ NULL, NULL }
 	};
