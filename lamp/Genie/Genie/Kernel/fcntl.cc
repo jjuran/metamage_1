@@ -58,11 +58,6 @@ namespace Genie
 		}
 	}
 	
-	static int open( const char* path, int oflag, mode_t mode )
-	{
-		return openat( AT_FDCWD, path, oflag, mode  );
-	}
-	
 	static int fcntl( int filedes, int cmd, int param )
 	{
 		SystemCallFrame frame( "fcntl" );
@@ -106,7 +101,6 @@ namespace Genie
 	#pragma force_active on
 	
 	REGISTER_SYSTEM_CALL( openat );
-	REGISTER_SYSTEM_CALL( open   );
 	REGISTER_SYSTEM_CALL( fcntl  );
 	
 	#pragma force_active reset
