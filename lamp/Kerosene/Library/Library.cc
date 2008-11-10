@@ -270,6 +270,11 @@
 		return open( path, O_CREAT | O_TRUNC | O_WRONLY, mode );
 	}
 	
+	int open( const char* path, int flags, mode_t mode )
+	{
+		return openat( AT_FDCWD, path, flags, mode );
+	}
+	
 	#pragma mark -
 	#pragma mark ¥ pwd ¥
 	
@@ -330,11 +335,57 @@
 	}
 	
 	#pragma mark -
+	#pragma mark ¥ stdio ¥
+	
+	extern "C" int rename( const char* oldpath, const char* newpath );
+	
+	int rename( const char* oldpath, const char* newpath )
+	{
+		return renameat( AT_FDCWD, oldpath, AT_FDCWD, newpath );
+	}
+	
+	int symlink( const char* oldpath, const char* newpath )
+	{
+		return symlinkat( oldpath, AT_FDCWD, newpath );
+	}
+	
+	#pragma mark -
 	#pragma mark ¥ sys/stat ¥
+	
+	int mkfifoat( int dirfd, const char* path, mode_t mode )
+	{
+		return mknodat( dirfd, path, S_IFIFO | mode, 0 );
+	}
+	
+	int chmod( const char* path, mode_t mode )
+	{
+		return fchmodat( AT_FDCWD, path, mode, 0 );
+	}
+	
+	int lstat( const char* path, struct stat* sb )
+	{
+		return fstatat( AT_FDCWD, path, sb, AT_SYMLINK_NOFOLLOW );
+	}
+	
+	
+	int stat( const char* path, struct stat* sb )
+	{
+		return fstatat( AT_FDCWD, path, sb, 0 );
+	}
+	
+	int mkdir( const char* path, mode_t mode )
+	{
+		return mkdirat( AT_FDCWD, path, mode );
+	}
 	
 	int mkfifo( const char* path, mode_t mode )
 	{
-		return mknod( path, S_IFIFO | mode, 0 );
+		return mkfifoat( AT_FDCWD, path, mode );
+	}
+	
+	int mknod( const char* path, mode_t mode, dev_t dev )
+	{
+		return mknodat( AT_FDCWD, path, mode, dev );
 	}
 	
 	#pragma mark -
@@ -483,9 +534,29 @@
 	#pragma mark -
 	#pragma mark ¥ unistd ¥
 	
-	int chown( const char* /*path*/, uid_t /*owner*/, gid_t /*group*/ )
+	int access( const char* path, int mode )
 	{
-		return 0;
+		return faccessat( AT_FDCWD, path, mode, 0 );
+	}
+	
+	int chown( const char* path, uid_t owner, gid_t group )
+	{
+		return fchownat( AT_FDCWD, path, owner, group, 0 );
+	}
+	
+	int link( const char* target_path, const char* link_location )
+	{
+		return linkat( target_path, AT_FDCWD, link_location, 0 );
+	}
+	
+	int readlink( const char *path, char *buffer, size_t buffer_size )
+	{
+		return readlinkat( AT_FDCWD, path, buffer, buffer_size );
+	}
+	
+	ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
+	{
+		return readlinkat_k( AT_FDCWD, path, buffer, buffer_size );
 	}
 	
 	int execv( const char* path, const char* const* argv )
@@ -543,13 +614,6 @@
 	int isatty( int fd )
 	{
 		return tcgetpgrp( fd ) >= 0;
-	}
-	
-	int link( const char* target_path, const char* link_location )
-	{
-		errno = ENOSYS;
-		
-		return -1;
 	}
 	
 	unsigned int sleep( unsigned int seconds )
@@ -647,9 +711,9 @@
 		return count;
 	}
 	
-	int readlink( const char *path, char *buffer, size_t buffer_size )
+	int readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
 	{
-		return std::min< ssize_t >( readlink_k( path, buffer, buffer_size ), buffer_size );
+		return std::min< ssize_t >( readlinkat_k( dirfd, path, buffer, buffer_size ), buffer_size );
 	}
 	
 	char* realpath( const char *path, char *buffer )
