@@ -7,8 +7,7 @@
 #include "sys/stat.h"
 
 // Genie
-#include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/Process.hh"
+#include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -16,15 +15,13 @@
 namespace Genie
 {
 	
-	static int mkdir( const char* pathname, mode_t mode )
+	static int mkdirat( int dirfd, const char* path, mode_t mode )
 	{
 		SystemCallFrame frame( "mkdir" );
 		
 		try
 		{
-			FSTreePtr current = frame.Caller().GetCWD();
-			
-			FSTreePtr location = ResolvePathname( pathname, current );
+			FSTreePtr location = ResolvePathAt( dirfd, path );
 			
 			// Do not resolve links
 			
@@ -40,7 +37,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( mkdir );
+	REGISTER_SYSTEM_CALL( mkdirat );
 	
 	#pragma force_active reset
 	
