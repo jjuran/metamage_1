@@ -7,13 +7,13 @@
 #include <algorithm>
 
 // POSIX
-#include "sys/utsname.h"
+#include "utime.h"
 
 // Nucleus
 #include "Nucleus/NAssert.h"
 
 // Genie
-#include "Genie/Process.hh"
+#include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
@@ -22,19 +22,27 @@
 namespace Genie
 {
 	
-	static int utime( const char* path, const struct utimbuf *time_buffer )
+	static int futimesat_k( int dirfd, const char* path, const timeval* access,
+	                                                     const timeval* mod,
+	                                                     const timeval* backup,
+	                                                     const timeval* creat )
 	{
-		SystemCallFrame frame( "utime" );
+		SystemCallFrame frame( "futimesat_k" );
 		
 		try
 		{
-			FSTreePtr current = frame.Caller().GetCWD();
-			
-			FSTreePtr file = ResolvePathname( path, current );
+			FSTreePtr file = ResolvePathAt( dirfd, path );
 			
 			ResolveLinks_InPlace( file );
 			
-			file->SetUTime( time_buffer );
+			if ( access || mod || backup || creat )
+			{
+				file->SetTimes( access, mod, backup, creat );
+			}
+			else
+			{
+				file->SetTimes();
+			}
 		}
 		catch ( ... )
 		{
@@ -46,7 +54,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( utime );
+	REGISTER_SYSTEM_CALL( futimesat_k );
 	
 	#pragma force_active reset
 	
