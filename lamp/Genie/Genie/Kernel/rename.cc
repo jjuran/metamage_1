@@ -30,8 +30,7 @@
 #include "POSeven/Errno.hh"
 
 // Genie
-#include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/Process.hh"
+#include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -189,16 +188,14 @@ namespace Genie
 		return result;
 	}
 	
-	static int rename( const char* src, const char* dest )
+	static int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath )
 	{
-		SystemCallFrame frame( "rename" );
+		SystemCallFrame frame( "renameat" );
 		
 		try
 		{
-			FSTreePtr cwd = frame.Caller().GetCWD();
-			
-			FSTreePtr srcFile  = ResolvePathname( src,   cwd );
-			FSTreePtr destFile = ResolvePathname( dest,  cwd );
+			FSTreePtr srcFile  = ResolvePathAt( olddirfd, oldpath );
+			FSTreePtr destFile = ResolvePathAt( newdirfd, newpath );
 			
 			// Do not resolve links
 			
@@ -227,7 +224,7 @@ namespace Genie
 			catch ( ... )
 			{
 				// Case-sensitivity conflict
-				destFileSpec = GetFSSpecForRenameDestination( destFile, dest );
+				destFileSpec = GetFSSpecForRenameDestination( destFile, newpath );
 			}
 			
 			// Can't move across volumes
@@ -259,7 +256,7 @@ namespace Genie
 				
 				Rename( srcFileSpec, destFileSpec );
 				
-				SetLongName( destFileSpec, dest );
+				SetLongName( destFileSpec, newpath );
 				
 				// And we're done
 				return 0;
@@ -282,7 +279,7 @@ namespace Genie
 				// Darn, we have to move *and* rename.
 				MoveAndRename( srcFileSpec, destFileSpec );
 				
-				SetLongName( destFileSpec, dest );
+				SetLongName( destFileSpec, newpath );
 			}
 		}
 		catch ( ... )
@@ -295,7 +292,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( rename );
+	REGISTER_SYSTEM_CALL( renameat );
 	
 	#pragma force_active reset
 	
