@@ -107,7 +107,7 @@ DEFINE_STUB( ptrace )
 DEFINE_STUB( alarm )
 
 DEFINE_STUB( pause )
-DEFINE_STUB( utime )
+//DEFINE_STUB( utime )
 
 //DEFINE_STUB( access )
 

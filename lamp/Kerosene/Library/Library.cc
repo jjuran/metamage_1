@@ -31,6 +31,7 @@
 #include "sys/utsname.h"
 #include "sys/wait.h"
 #include "unistd.h"
+#include "utime.h"
 #include "vfork.h"
 
 // Iota
@@ -789,6 +790,29 @@
 		buffer[ length ] = '\0';
 		
 		return buffer;
+	}
+	
+	#pragma mark -
+	#pragma mark ¥ utime ¥
+	
+	int utime( const char* path, const struct utimbuf *time_buffer )
+	{
+		struct timeval a_tv = { 0 };
+		struct timeval m_tv = { 0 };
+		
+		const timeval* access = NULL;
+		const timeval* mod    = NULL;
+		
+		if ( time_buffer )
+		{
+			a_tv.tv_sec = time_buffer->actime;
+			m_tv.tv_sec = time_buffer->modtime;
+			
+			access = &a_tv;
+			mod    = &m_tv;
+		}
+		
+		return futimesat_k( AT_FDCWD, path, access, mod, NULL, NULL );
 	}
 	
 	#pragma mark -
