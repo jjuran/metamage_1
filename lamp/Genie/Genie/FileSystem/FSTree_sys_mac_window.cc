@@ -144,14 +144,118 @@ namespace Genie
 		                : (c | 0x20) - 'a' + 10;
 	}
 	
-	static UInt16 ReadIntensity( const char* p, unsigned n )
+	inline UInt16 ReadIntensity_1n( const char* p )
 	{
-		UInt16 result = nibble_from_ascii( p[ 0     ] ) << 12
-		              | nibble_from_ascii( p[ n > 1 ] ) <<  8
-		              | nibble_from_ascii( p[ n-1&2 ] ) <<  4
-		              | nibble_from_ascii( p[ n - 1 ] ) <<  0;
+		const unsigned char nibble = nibble_from_ascii( p[ 0 ] );
+		
+		UInt16 result = nibble << 12
+		              | nibble <<  8
+		              | nibble <<  4
+		              | nibble <<  0;
 		
 		return result;
+	}
+	
+	inline UInt16 ReadIntensity_2n( const char* p )
+	{
+		const unsigned char high = nibble_from_ascii( p[ 0 ] );
+		const unsigned char low  = nibble_from_ascii( p[ 1 ] );
+		
+		UInt16 result = high << 12
+		              | low  <<  8
+		              | high <<  4
+		              | low  <<  0;
+		
+		return result;
+	}
+	
+	inline UInt16 ReadIntensity_3n( const char* p )
+	{
+		const unsigned char high = nibble_from_ascii( p[ 0 ] );
+		const unsigned char med  = nibble_from_ascii( p[ 1 ] );
+		const unsigned char low  = nibble_from_ascii( p[ 2 ] );
+		
+		UInt16 result = high << 12
+		              | med  <<  8
+		              | low  <<  4
+		              | high <<  0;
+		
+		return result;
+	}
+	
+	static UInt16 ReadIntensity_4n( const char* p )
+	{
+		UInt16 result = nibble_from_ascii( p[ 0 ] ) << 12
+		              | nibble_from_ascii( p[ 1 ] ) <<  8
+		              | nibble_from_ascii( p[ 2 ] ) <<  4
+		              | nibble_from_ascii( p[ 3 ] ) <<  0;
+		
+		return result;
+	}
+	
+	static RGBColor ReadColor( const std::string& value )
+	{
+		const char* p = value.c_str();
+		
+		size_t length = value.length();
+		
+		if ( value[0] == '#' )
+		{
+			++p;
+			--length;
+		}
+		
+		unsigned detail = length / 3;
+		
+		if ( length % 3 != 0 )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
+		RGBColor color;
+		
+		switch ( detail )
+		{
+			case 1:
+				color.red   = ReadIntensity_1n( p );
+				color.green = ReadIntensity_1n( p += detail );
+				color.blue  = ReadIntensity_1n( p += detail );
+				break;
+			
+			case 2:
+				color.red   = ReadIntensity_2n( p );
+				color.green = ReadIntensity_2n( p += detail );
+				color.blue  = ReadIntensity_2n( p += detail );
+				break;
+			
+			case 3:
+				color.red   = ReadIntensity_3n( p );
+				color.green = ReadIntensity_3n( p += detail );
+				color.blue  = ReadIntensity_3n( p += detail );
+				break;
+			
+			case 4:
+				color.red   = ReadIntensity_4n( p );
+				color.green = ReadIntensity_4n( p += detail );
+				color.blue  = ReadIntensity_4n( p += detail );
+				break;
+			
+			default:
+				p7::throw_errno( EINVAL );
+		}
+		
+		return color;
+	}
+	
+	static std::string WriteColor( const RGBColor& color )
+	{
+		char encoded[] = "#rrrrggggbbbb";
+		
+		std::sprintf( encoded + 1, "%.4x%.4x%.4x", color.red,
+		                                           color.green,
+		                                           color.blue );
+		
+		return encoded;
 	}
 	
 	template < RGBColor (*GetColor)(N::CGrafPtr), void (*SetColor)(const RGBColor&) >
@@ -163,59 +267,12 @@ namespace Genie
 		{
 			RGBColor color = GetColor( N::GetWindowPort( window ) );
 			
-			char encoded[] = "#rrrrggggbbbb";
-			
-			std::sprintf( encoded + 1, "%.4x%.4x%.4x", color.red,
-			                                           color.green,
-			                                           color.blue );
-			
-			return encoded;
+			return WriteColor( color );
 		}
 		
 		void Set( N::WindowRef window, const std::string& value )
 		{
-			RGBColor color;
-			
-			size_t length = value.length();
-			
-			if ( length == sizeof color )
-			{
-				std::copy( value.begin(),
-				           value.end(),
-				           (char*) &color );
-			}
-			else if ( length >= 2 )
-			{
-				const char* p = value.c_str();
-				const char* q = p + value.length();
-				
-				if ( value[0] == '#' )
-				{
-					++p;
-				}
-				
-				if ( *value.rbegin() == '\n' )
-				{
-					--q;
-				}
-				
-				length = q - p;
-				
-				unsigned detail = length / 3;
-				
-				if ( length % 3 != 0  ||  detail < 1  ||  detail > 4 )
-				{
-					p7::throw_errno( EINVAL );
-				}
-				
-				color.red   = ReadIntensity( p,              detail );
-				color.green = ReadIntensity( p + detail,     detail );
-				color.blue  = ReadIntensity( p + detail * 2, detail );
-			}
-			else
-			{
-				p7::throw_errno( EINVAL );
-			}
+			RGBColor color = ReadColor( value );
 			
 			NN::Saved< N::Port_Value > savePort;
 			
