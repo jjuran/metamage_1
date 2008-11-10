@@ -15,6 +15,7 @@
 
 // Genie
 #include "Genie/FileDescriptors.hh"
+#include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/IO/File.hh"
@@ -26,17 +27,18 @@
 namespace Genie
 {
 	
-	static int access( const char* path, int mode )
+	static int faccessat( int dirfd, const char* path, int mode, int flags )
 	{
-		SystemCallFrame frame( "access" );
+		SystemCallFrame frame( "faccessat" );
 		
 		try
 		{
-			FSTreePtr current = frame.Caller().GetCWD();
+			FSTreePtr file = ResolvePathAt( dirfd, path );
 			
-			FSTreePtr file = ResolvePathname( path, current );
-			
-			ResolveLinks_InPlace( file );
+			if ( const bool following_links = !(flags & AT_SYMLINK_NOFOLLOW) )
+			{
+				ResolveLinks_InPlace( file );
+			}
 			
 			if ( !file->Exists() )
 			{
@@ -54,15 +56,18 @@ namespace Genie
 	}
 	
 	
-	static int chmod_file( SystemCallFrame& frame, const char* path, mode_t mode )
+	static int fchmodat( int dirfd, const char* path, mode_t mode, int flags )
 	{
+		SystemCallFrame frame( "fchmodat" );
+		
 		try
 		{
-			FSTreePtr current = frame.Caller().GetCWD();
+			FSTreePtr file = ResolvePathAt( dirfd, path );
 			
-			FSTreePtr file = ResolvePathname( path, current );
-			
-			ResolveLinks_InPlace( file );
+			if ( const bool following_links = !(flags & AT_SYMLINK_NOFOLLOW) )
+			{
+				ResolveLinks_InPlace( file );
+			}
 			
 			file->ChangeMode( mode );
 		}
@@ -91,19 +96,19 @@ namespace Genie
 	}
 	
 	
-	static int stat_file( SystemCallFrame& frame, const char* path, struct stat* sb, bool resolveLinks )
+	static int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 	{
+		SystemCallFrame frame( "fstatat" );
+		
 		Breathe();
 		
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		try
 		{
-			FSTreePtr current = frame.Caller().GetCWD();
+			FSTreePtr file = ResolvePathAt( dirfd, path );
 			
-			FSTreePtr file = ResolvePathname( path, current );
-			
-			if ( resolveLinks )
+			if ( const bool following_links = !(flags & AT_SYMLINK_NOFOLLOW) )
 			{
 				ResolveLinks_InPlace( file );
 			}
@@ -116,29 +121,6 @@ namespace Genie
 		}
 		
 		return 0;
-	}
-	
-	static int chmod( const char* path, mode_t mode )
-	{
-		SystemCallFrame frame( "chmod" );
-		
-		return chmod_file( frame, path, mode );
-	}
-	
-	
-	static int lstat( const char* path, struct stat* sb )
-	{
-		SystemCallFrame frame( "lstat" );
-		
-		return stat_file( frame, path, sb, false );
-	}
-	
-	
-	static int stat( const char* path, struct stat* sb )
-	{
-		SystemCallFrame frame( "stat" );
-		
-		return stat_file( frame, path, sb, true );  // FIXME:  Resolve symlinks
 	}
 	
 	
@@ -162,12 +144,11 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( access );
-	REGISTER_SYSTEM_CALL( fchmod );
-	REGISTER_SYSTEM_CALL( chmod  );
-	REGISTER_SYSTEM_CALL( lstat  );
-	REGISTER_SYSTEM_CALL( stat   );
-	REGISTER_SYSTEM_CALL( fstat  );
+	REGISTER_SYSTEM_CALL( faccessat );
+	REGISTER_SYSTEM_CALL( fchmodat  );
+	REGISTER_SYSTEM_CALL( fchmod    );
+	REGISTER_SYSTEM_CALL( fstatat   );
+	REGISTER_SYSTEM_CALL( fstat     );
 	
 	#pragma force_active reset
 	
