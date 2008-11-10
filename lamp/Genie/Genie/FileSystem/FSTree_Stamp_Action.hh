@@ -37,17 +37,12 @@ namespace Genie
 			{
 			}
 			
-			void SetUTime( const struct utimbuf* utime_buf ) const;
+			void SetTimes() const;
 	};
 	
 	template < class Action >
-	void FSTree_Stamp_Action< Action >::SetUTime( const struct utimbuf* utime_buf ) const
+	void FSTree_Stamp_Action< Action >::SetTimes() const
 	{
-		if ( utime_buf != NULL )
-		{
-			poseven::throw_errno( EPERM );
-		}
-		
 		itsAction();
 	}
 	

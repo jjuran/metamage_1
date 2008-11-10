@@ -113,7 +113,12 @@ namespace Genie
 			
 			virtual void ChangeMode( mode_t mode ) const;
 			
-			virtual void SetUTime( const struct utimbuf* utime_buf ) const;
+			virtual void SetTimes() const;
+			
+			virtual void SetTimes( const struct timeval* access,
+			                       const struct timeval* mod,
+			                       const struct timeval* backup,
+			                       const struct timeval* creat ) const;
 			
 			virtual void Delete() const;
 			

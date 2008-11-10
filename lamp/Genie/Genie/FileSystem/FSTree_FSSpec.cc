@@ -290,7 +290,12 @@ namespace Genie
 			
 			void ChangeMode( mode_t mode ) const;
 			
-			void SetUTime( const struct utimbuf* utime_buf ) const;
+			void SetTimes() const;
+			
+			void SetTimes( const struct timeval* access,
+			               const struct timeval* mod,
+			               const struct timeval* backup,
+			               const struct timeval* creat ) const;
 			
 			void Delete() const;
 			
@@ -688,12 +693,11 @@ namespace Genie
 		ChangeFileMode( GetFSSpec(), mode );
 	}
 	
-	void FSTree_HFS::SetUTime( const struct utimbuf* utime_buf ) const
+	void FSTree_HFS::SetTimes() const
 	{
 		using namespace TimeOff;
 		
-		UInt32 modTime = utime_buf != NULL ? utime_buf->modtime + MacToUnixTimeDifference()
-		                                   : N::GetDateTime();
+		UInt32 modTime = N::GetDateTime();
 		
 		FSSpec filespec = GetFSSpec();
 		
@@ -705,6 +709,40 @@ namespace Genie
 		paramBlock.hFileInfo.ioDirID   = filespec.parID;
 		
 		paramBlock.hFileInfo.ioFlMdDat = modTime;
+		
+		N::PBSetCatInfoSync( paramBlock );
+	}
+	
+	void FSTree_HFS::SetTimes( const struct timeval* access,
+	                           const struct timeval* mod,
+	                           const struct timeval* backup,
+	                           const struct timeval* creat ) const
+	{
+		using namespace TimeOff;
+		
+		FSSpec filespec = GetFSSpec();
+		
+		CInfoPBRec paramBlock;
+		
+		N::FSpGetCatInfo( GetFSSpec(), paramBlock );
+		
+		paramBlock.hFileInfo.ioNamePtr = filespec.name;
+		paramBlock.hFileInfo.ioDirID   = filespec.parID;
+		
+		if ( creat )
+		{
+			paramBlock.hFileInfo.ioFlCrDat = creat->tv_sec + MacToUnixTimeDifference();
+		}
+		
+		if ( mod )
+		{
+			paramBlock.hFileInfo.ioFlMdDat = mod->tv_sec + MacToUnixTimeDifference();
+		}
+		
+		if ( backup )
+		{
+			paramBlock.hFileInfo.ioFlBkDat = backup->tv_sec + MacToUnixTimeDifference();
+		}
 		
 		N::PBSetCatInfoSync( paramBlock );
 	}
