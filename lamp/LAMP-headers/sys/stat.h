@@ -99,9 +99,18 @@ struct stat {
 #define	S_ISSOCK(m)	((m & 0170000) == 0010000 || \
 			 (m & 0170000) == 0140000)	/* fifo or socket */
 
+#define AT_FDCWD  (-100)
+#define AT_SYMLINK_NOFOLLOW  4096
+
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
+int fchmodat( int dirfd, const char* path, mode_t mode, int flags );
+int fstatat( int dirfd, const char* path, struct stat* sb, int flags );
+int mkdirat( int dirfd, const char* path, mode_t mode );
+int mkfifoat( int dirfd, const char* path, mode_t mode );
+int mknodat( int dirfd, const char* path, mode_t mode, dev_t dev );
+
 int	chmod(const char *, mode_t);
 int	fstat(int, struct stat *);
 int	mknod(const char *, mode_t, dev_t);

@@ -95,6 +95,15 @@ extern "C" {
 	
 	int creat( const char* pathname, mode_t mode );
 	
+	int futimesat( int dirfd, const char* path, const struct timeval times[2] );
+	
+	int futimesat_k( int dirfd, const char* path, const struct timeval* access,
+	                                              const struct timeval* mod,
+	                                              const struct timeval* backup,
+	                                              const struct timeval* creat );
+	
+	int unlinkat( int dirfd, const char* path, int flags );
+	
 	ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count );
 	
 #ifdef __cplusplus

@@ -177,6 +177,18 @@
 // ...
 
 #define __NR_openat                    240
+#define __NR_mkdirat                   241
+#define __NR_mknodat                   242
+#define __NR_fchownat                  243
+#define __NR_futimesat_k               244
+#define __NR_fstatat                   245
+#define __NR_unlinkat                  246
+#define __NR_renameat                  247
+#define __NR_linkat                    248
+#define __NR_symlinkat                 249
+#define __NR_readlinkat_k              250
+#define __NR_fchmodat                  251
+#define __NR_faccessat                 252
 
 #define __NR_socketpair                257
 #define __NR_socket                    258
