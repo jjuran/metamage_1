@@ -22,8 +22,8 @@
 
 // Genie
 #include "Genie/FileSystem/FSTree.hh"
+#include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -98,15 +98,13 @@ namespace Genie
 		(void) N::AddResource< N::rAliasType >( alias, N::ResID( 0 ), "\p" );
 	}
 	
-	static int symlink( const char* target_path, const char* link_location )
+	static int symlinkat( const char* target_path, int newdirfd, const char* newpath )
 	{
-		SystemCallFrame frame( "symlink" );
+		SystemCallFrame frame( "symlinkat" );
 		
 		try
 		{
-			FSTreePtr current = frame.Caller().GetCWD();
-			
-			FSTreePtr link = ResolvePathname( link_location, current );
+			FSTreePtr link = ResolvePathAt( newdirfd, newpath );
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
@@ -149,15 +147,13 @@ namespace Genie
 	}
 	
 	
-	static ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
+	static ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_size )
 	{
-		SystemCallFrame frame( "readlink_k" );
+		SystemCallFrame frame( "readlinkat_k" );
 		
 		try
 		{
-			FSTreePtr current = frame.Caller().GetCWD();
-			
-			FSTreePtr link = ResolvePathname( path, current );
+			FSTreePtr link = ResolvePathAt( dirfd, path );
 			
 			// Do not resolve links -- we want the target even if it's another symlink
 			
@@ -179,8 +175,8 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( symlink    );
-	REGISTER_SYSTEM_CALL( readlink_k );
+	REGISTER_SYSTEM_CALL( symlinkat    );
+	REGISTER_SYSTEM_CALL( readlinkat_k );
 	
 	#pragma force_active reset
 	
