@@ -32,17 +32,18 @@
 #include "POSeven/Open.hh"
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
+#include "POSeven/functions/dirfd.hh"
 #include "POSeven/functions/fchmod.hh"
 #include "POSeven/functions/fdopendir.hh"
 #include "POSeven/functions/fstat.hh"
 #include "POSeven/functions/fstatat.hh"
 #include "POSeven/functions/mkdir.hh"
+#include "POSeven/functions/mkdirat.hh"
 #include "POSeven/functions/lseek.hh"
 #include "POSeven/functions/open.hh"
 #include "POSeven/functions/openat.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/stat.hh"
-#include "POSeven/functions/utime.hh"
 #include "POSeven/functions/write.hh"
 #include "POSeven/types/exit_t.hh"
 
@@ -54,21 +55,11 @@
 namespace poseven
 {
 	
-	inline fd_t dirfd( dir_t dir )
-	{
-		return fd_t( dir->fd );
-	}
-	
 	inline void futimesat_k( fd_t dirfd, const std::string& path, const time_t& modtime )
 	{
 		struct timeval mod = { modtime, 0 };
 		
 		throw_posix_result( ::futimesat_k( dirfd, path.c_str(), NULL, &mod, NULL, NULL ) );
-	}
-	
-	inline void mkdirat( fd_t dirfd, const std::string& path, mode_t mode = mode_t( 0777 ) )
-	{
-		throw_posix_result( ::mkdirat( dirfd, path.c_str(), mode ) );
 	}
 	
 }
