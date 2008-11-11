@@ -11,8 +11,8 @@
 // in the public domain.
 
 
-#ifndef POSEVEN_FUNCTIONS_OPEN_HH
-#define POSEVEN_FUNCTIONS_OPEN_HH
+#ifndef POSEVEN_FUNCTIONS_OPENAT_HH
+#define POSEVEN_FUNCTIONS_OPENAT_HH
 
 // Standard C++
 #include <string>
