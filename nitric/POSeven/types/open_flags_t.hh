@@ -34,6 +34,12 @@ namespace poseven
 		o_append = O_APPEND,
 		o_excl   = O_EXCL,
 		
+	#ifdef O_DIRECTORY
+		
+		o_directory = O_DIRECTORY,
+		
+	#endif
+		
 	#ifdef O_TRUNC_LAZY
 		
 		o_trunc_lazy = O_TRUNC_LAZY,
