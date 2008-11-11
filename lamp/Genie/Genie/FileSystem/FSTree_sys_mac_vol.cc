@@ -18,12 +18,40 @@
 #include "Genie/FileSystem/FSTree_Virtual_Link.hh"
 
 
+namespace Nitrogen
+{
+	
+	static const Gestalt_Selector gestaltFSAttr = Gestalt_Selector( ::gestaltFSAttr );
+	
+	template <> struct GestaltDefault< gestaltFSAttr > : GestaltAttrDefaults {};
+	
+}
+
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
 	namespace NN = Nucleus;
 	namespace p7 = poseven;
+	
+	
+#if TARGET_API_MAC_CARBON
+	
+	static inline bool Has_PBXGetVolInfo()
+	{
+		return true;
+	}
+	
+#else
+	
+	static bool Has_PBXGetVolInfo()
+	{
+		static bool result = N::Gestalt_Bit< N::gestaltFSAttr, gestaltFSSupports2TBVols >();
+		
+		return result;
+	}
+	
+#endif
 	
 	
 	std::string VRefNum_KeyName_Traits::NameFromKey( const Key& key )
@@ -85,7 +113,7 @@ namespace Genie
 		
 		typedef const unsigned char* Result;
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
 			return volume.ioNamePtr;
 		}
@@ -95,11 +123,12 @@ namespace Genie
 	{
 		static const bool needsName = false;
 		
-		typedef UInt16 Result;
+		typedef UInt32 Result;  // will break on 16TB volumes
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
-			return volume.ioVNmAlBlks;
+			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes / volume.ioVAlBlkSiz
+			                           : volume.ioVNmAlBlks;
 		}
 	};
 	
@@ -109,7 +138,7 @@ namespace Genie
 		
 		typedef UInt32 Result;
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
 			return volume.ioVAlBlkSiz;
 		}
@@ -119,11 +148,38 @@ namespace Genie
 	{
 		static const bool needsName = false;
 		
-		typedef UInt16 Result;
+		typedef UInt32 Result;
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
-			return volume.ioVFrBlk;
+			return Has_PBXGetVolInfo() ? volume.ioVFreeBytes / volume.ioVAlBlkSiz
+			                           : volume.ioVFrBlk;
+		}
+	};
+	
+	struct GetVolumeCapacity
+	{
+		static const bool needsName = false;
+		
+		typedef UInt64 Result;
+		
+		Result Get( const XVolumeParam& volume ) const
+		{
+			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes
+			                           : volume.ioVFrBlk * volume.ioVAlBlkSiz;
+		}
+	};
+	
+	struct GetVolumeFreeSpace
+	{
+		static const bool needsName = false;
+		
+		typedef UInt64 Result;
+		
+		Result Get( const XVolumeParam& volume ) const
+		{
+			return Has_PBXGetVolInfo() ? volume.ioVFreeBytes
+			                           : volume.ioVNmAlBlks * volume.ioVAlBlkSiz;
 		}
 	};
 	
@@ -133,7 +189,7 @@ namespace Genie
 		
 		typedef const char* Result;
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
 			static char sigWord[] = "ab";
 			
@@ -150,7 +206,7 @@ namespace Genie
 		
 		typedef SInt16 Result;
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
 			return volume.ioVFSID;
 		}
@@ -162,7 +218,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
 			return volume.ioVWrCnt;
 		}
@@ -174,7 +230,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
 			return volume.ioVFilCnt;
 		}
@@ -186,7 +242,7 @@ namespace Genie
 		
 		typedef SInt32 Result;
 		
-		Result Get( const HVolumeParam& volume ) const
+		Result Get( const XVolumeParam& volume ) const
 		{
 			return volume.ioVDirCnt;
 		}
@@ -197,9 +253,25 @@ namespace Genie
 	{
 		pb.ioNamePtr  = name;
 		pb.ioVRefNum  = vRefNum;
+		pb.filler2    = 0;
 		pb.ioVolIndex = 0;
 		
 		N::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
+	}
+	
+	inline void PBHGetVInfoSync( XVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
+	{
+		PBHGetVInfoSync( (HVolumeParam&) pb, vRefNum, name );
+	}
+	
+	static void PBXGetVolInfoSync( XVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
+	{
+		pb.ioNamePtr  = name;
+		pb.ioVRefNum  = vRefNum;
+		pb.ioXVersion = 0;
+		pb.ioVolIndex = 0;
+		
+		N::ThrowOSStatus( ::PBXGetVolInfoSync( &pb ) );
 	}
 	
 	template < class Accessor >
@@ -217,11 +289,18 @@ namespace Genie
 			
 			std::string Get() const
 			{
-				HVolumeParam pb;
+				XVolumeParam pb;
 				
 				Str31 name;
 				
-				PBHGetVInfoSync( pb, itsKey, Accessor::needsName ? name : NULL );
+				if ( Has_PBXGetVolInfo() )
+				{
+					PBXGetVolInfoSync( pb, itsKey, Accessor::needsName ? name : NULL );
+				}
+				else
+				{
+					PBHGetVInfoSync( pb, itsKey, Accessor::needsName ? name : NULL );
+				}
 				
 				std::string output = NN::Convert< std::string >( Accessor().Get( pb ) ) + "\n";
 				
@@ -325,9 +404,12 @@ namespace Genie
 	{
 		{ "name", &Query_Factory< GetVolumeName > },
 		
-		{ "used_blocks", &Query_Factory< GetVolumeBlockCount     > },
-		{ "block_size",  &Query_Factory< GetVolumeBlockSize      > },
-		{ "free_blocks", &Query_Factory< GetVolumeFreeBlockCount > },
+		{ "block-size",  &Query_Factory< GetVolumeBlockSize      > },
+		{ "blocks",      &Query_Factory< GetVolumeBlockCount     > },
+		{ "blocks-free", &Query_Factory< GetVolumeFreeBlockCount > },
+		
+		{ "capacity",  &Query_Factory< GetVolumeCapacity  > },
+		{ "freespace", &Query_Factory< GetVolumeFreeSpace > },
 		
 		{ "sig", &Query_Factory< GetVolumeSignature > },
 		
