@@ -33,9 +33,13 @@
 #include "POSeven/Pathnames.hh"
 #include "POSeven/extras/pump.hh"
 #include "POSeven/functions/fchmod.hh"
+#include "POSeven/functions/fdopendir.hh"
 #include "POSeven/functions/fstat.hh"
+#include "POSeven/functions/fstatat.hh"
 #include "POSeven/functions/mkdir.hh"
 #include "POSeven/functions/lseek.hh"
+#include "POSeven/functions/open.hh"
+#include "POSeven/functions/openat.hh"
 #include "POSeven/functions/read.hh"
 #include "POSeven/functions/stat.hh"
 #include "POSeven/functions/utime.hh"
@@ -46,6 +50,16 @@
 #include "Orion/GetOptions.hh"
 #include "Orion/Main.hh"
 
+
+namespace poseven
+{
+	
+	inline fd_t dirfd( dir_t dir )
+	{
+		return fd_t( dir->fd );
+	}
+	
+}
 
 namespace tool
 {
@@ -72,6 +86,16 @@ namespace tool
 	
 	static bool globally_locking_files = false;
 	
+	
+	static inline NN::Owned< p7::fd_t > open_dir( p7::fd_t dirfd, const std::string& path )
+	{
+		return p7::openat( dirfd, path, p7::o_rdonly | p7::o_directory );
+	}
+	
+	static inline NN::Owned< p7::fd_t > open_dir( const std::string& path )
+	{
+		return p7::open( path, p7::o_rdonly | p7::o_directory );
+	}
 	
 	static const std::string& mkdir_path( const std::string& path )
 	{
@@ -258,7 +282,10 @@ namespace tool
 	}
 	
 	
-	static void sync_files( const std::string&  subpath,
+	static void sync_files( p7::fd_t            a_dirfd,
+	                        p7::fd_t            b_dirfd,
+	                        p7::fd_t            c_dirfd,
+	                        const std::string&  subpath,
 	                        bool                b_exists )
 	{
 		std::string a = global_local_root  / subpath;
@@ -267,19 +294,21 @@ namespace tool
 		
 		//std::string subpath = get_subpath( global_local_root, a );
 		
+		std::string filename = io::get_filename( subpath );
+		
 		if ( globally_verbose )
 		{
 			//std::printf( "%s\n", a.c_str() );
 		}
 		
-		NN::Owned< p7::fd_t > a_fd = p7::open( a, p7::o_rdonly );
-		NN::Owned< p7::fd_t > c_fd = p7::open( c, p7::o_rdonly );
+		NN::Owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly );
+		NN::Owned< p7::fd_t > c_fd = p7::openat( c_dirfd, filename, p7::o_rdonly );
 		
 		NN::Owned< p7::fd_t > b_fd;
 		
 		if ( b_exists )
 		{
-			b_fd = p7::open( b, p7::o_rdonly );
+			b_fd = p7::openat( b_dirfd, filename, p7::o_rdonly );
 			
 			time_t a_time = p7::fstat( a_fd ).st_mtime;
 			time_t b_time = p7::fstat( b_fd ).st_mtime;
@@ -341,11 +370,15 @@ namespace tool
 			NN::Owned< p7::fd_t >&  to_fd   = a_matches_b ? a_fd : c_fd;
 			const std::string&      to_path = a_matches_b ? a    : c;
 			
+			p7::fd_t to_dirfd = a_matches_b ? a_dirfd : c_dirfd;
+			
 			p7::lseek( from_fd, 0 );
 			
 			p7::close( to_fd );
 			
-			to_fd = p7::open( to_path, p7::o_rdwr | p7::o_trunc );
+			//to_fd = p7::open( to_path, p7::o_rdwr | p7::o_trunc );
+			
+			to_fd = p7::openat( to_dirfd, filename, p7::o_rdwr | p7::o_trunc );
 			
 			p7::pump( from_fd, to_fd );
 			
@@ -373,7 +406,7 @@ namespace tool
 			p7::close( b_fd );
 		}
 		
-		b_fd = p7::open( b, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::mode_t( 0400 ) );
+		b_fd = p7::openat( b_dirfd, filename, p7::o_rdwr | p7::o_trunc | p7::o_creat, p7::mode_t( 0400 ) );
 		
 		p7::pump( a_fd, b_fd );
 		
@@ -385,19 +418,27 @@ namespace tool
 		}
 	}
 	
-	static void recursively_sync_directories( const std::string& subpath );
+	static void recursively_sync_directories( NN::Owned< p7::fd_t >  a_dirfd,
+	                                          NN::Owned< p7::fd_t >  b_dirfd,
+	                                          NN::Owned< p7::fd_t >  c_dirfd,
+	                                          const std::string&     subpath );
 	
-	static void recursively_sync( const std::string& subpath )
+	static void recursively_sync( p7::fd_t            a_dirfd,
+	                              p7::fd_t            b_dirfd,
+	                              p7::fd_t            c_dirfd,
+	                              const std::string&  subpath )
 	{
 		std::string a = global_local_root  / subpath;
 		std::string b = global_base_root   / subpath;
 		std::string c = global_remote_root / subpath;
 		
-		const bool b_exists = io::item_exists( b );
+		std::string filename = io::get_filename( subpath );
 		
-		bool a_is_dir = io::directory_exists( a );
-		bool b_is_dir = io::directory_exists( b );
-		bool c_is_dir = io::directory_exists( c );
+		const bool b_exists = io::item_exists( b_dirfd, filename );
+		
+		bool a_is_dir = io::directory_exists( a_dirfd, filename );
+		bool b_is_dir = io::directory_exists( b_dirfd, filename );
+		bool c_is_dir = io::directory_exists( c_dirfd, filename );
 		
 		if ( bool matched = a_is_dir == c_is_dir  &&  (!b_exists || a_is_dir == b_is_dir) )
 		{
@@ -408,11 +449,13 @@ namespace tool
 					p7::mkdir( b );
 				}
 				
-				recursively_sync_directories( subpath );
+				recursively_sync_directories( open_dir( a_dirfd, filename ),
+				                              open_dir( b_dirfd, filename ),
+				                              open_dir( c_dirfd, filename ), subpath );
 			}
 			else
 			{
-				sync_files( subpath, b_exists );
+				sync_files( a_dirfd, b_dirfd, c_dirfd, subpath, b_exists );
 			}
 		}
 		else if ( b_exists )
@@ -540,17 +583,26 @@ namespace tool
 		std::copy( b_begin, b_end, b_only );
 	}
 	
-	static void recursively_sync_directory_contents( const std::string& subpath )
+	static void recursively_sync_directory_contents( NN::Owned< p7::fd_t >  a_dirfd,
+	                                                 NN::Owned< p7::fd_t >  b_dirfd,
+	                                                 NN::Owned< p7::fd_t >  c_dirfd,
+	                                                 const std::string&     subpath )
 	{
+		/*
 		std::string a_dir = global_local_root  / subpath;
 		std::string b_dir = global_base_root   / subpath;
 		std::string c_dir = global_remote_root / subpath;
+		*/
 		
 		typedef p7::directory_contents_container directory_container;
 		
-		directory_container a_contents = io::directory_contents( a_dir );
-		directory_container b_contents = io::directory_contents( b_dir );
-		directory_container c_contents = io::directory_contents( c_dir );
+		NN::Shared< p7::dir_t > a_dir = p7::fdopendir( a_dirfd );
+		NN::Shared< p7::dir_t > b_dir = p7::fdopendir( b_dirfd );
+		NN::Shared< p7::dir_t > c_dir = p7::fdopendir( c_dirfd );
+		
+		directory_container a_contents = p7::directory_contents( a_dir );
+		directory_container b_contents = p7::directory_contents( b_dir );
+		directory_container c_contents = p7::directory_contents( c_dir );
 		
 		std::vector< std::string > a;
 		std::vector< std::string > b;
@@ -674,7 +726,9 @@ namespace tool
 			
 			std::printf( "++++ %s\n", child_subpath.c_str() );
 			
-			recursively_sync( child_subpath );
+			recursively_sync( p7::dirfd( a_dir ),
+			                  p7::dirfd( b_dir ),
+			                  p7::dirfd( c_dir ), child_subpath );
 		}
 		
 		for ( Iter it = a_deleted.begin();  it != a_deleted.end();  ++ it )
@@ -737,7 +791,9 @@ namespace tool
 		{
 			const std::string& filename = *it;
 			
-			recursively_sync( subpath + filename );
+			recursively_sync( p7::dirfd( a_dir ),
+			                  p7::dirfd( b_dir ),
+			                  p7::dirfd( c_dir ), subpath + filename );
 		}
 		
 		// added/nil:  simple add -- just do it
@@ -747,7 +803,10 @@ namespace tool
 		// deleted/deleted:  mutual delete -- just do it
 	}
 	
-	static void recursively_sync_directories( const std::string& subpath )
+	static void recursively_sync_directories( NN::Owned< p7::fd_t >  a_dirfd,
+	                                          NN::Owned< p7::fd_t >  b_dirfd,
+	                                          NN::Owned< p7::fd_t >  c_dirfd,
+	                                          const std::string&     subpath )
 	{
 		// compare any relevant metadata, like Desktop comment
 		
@@ -756,7 +815,7 @@ namespace tool
 			std::printf( "%s\n", subpath.c_str() );
 		}
 		
-		recursively_sync_directory_contents( subpath + '/' );
+		recursively_sync_directory_contents( a_dirfd, b_dirfd, c_dirfd, subpath + '/' );
 	}
 	
 	
@@ -778,7 +837,6 @@ namespace tool
 		
 		return mkdir_path( home / jsync );
 	}
-	
 	
 	int Main( int argc, iota::argv_t argv )
 	{
@@ -844,7 +902,10 @@ namespace tool
 		global_remote_root = jsync_path / "Remote";   // should be a link
 		global_base_root   = jsync_path / "Base";
 		
-		recursively_sync_directory_contents( "" );
+		recursively_sync_directory_contents( open_dir( global_local_root  ),
+		                                     open_dir( global_base_root   ),
+		                                     open_dir( global_remote_root ),
+		                                     "" );
 		
 		return 0;
 	}
