@@ -389,6 +389,11 @@
 		return mknodat( AT_FDCWD, path, mode, dev );
 	}
 	
+	int rmdir( const char* path )
+	{
+		return unlinkat( AT_FDCWD, path, AT_REMOVEDIR );
+	}
+	
 	#pragma mark -
 	#pragma mark ¥ sys/wait ¥
 	
@@ -558,6 +563,11 @@
 	ssize_t readlink_k( const char *path, char *buffer, size_t buffer_size )
 	{
 		return readlinkat_k( AT_FDCWD, path, buffer, buffer_size );
+	}
+	
+	int unlink( const char* path )
+	{
+		return unlinkat( AT_FDCWD, path, 0 );
 	}
 	
 	int execv( const char* path, const char* const* argv )
