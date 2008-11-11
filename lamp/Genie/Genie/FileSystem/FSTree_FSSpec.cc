@@ -752,9 +752,19 @@ namespace Genie
 		FSSpec file = GetFSSpec();
 		
 		// returns fnfErr for directories
-		(void) ::FSpRstFLock( &file );
+		OSErr unlockErr = ::FSpRstFLock( &file );
 		
-		N::FSpDelete( file );
+		OSErr deleteErr = ::FSpDelete( &file );
+		
+		// Unfortunately, fBsyErr can mean different things.
+		// Here we assume it means a directory is not empty.
+		
+		if ( unlockErr == fnfErr  &&  deleteErr == fBsyErr )
+		{
+			p7::throw_errno( ENOTEMPTY );
+		}
+		
+		N::ThrowOSStatus( deleteErr );
 	}
 	
 	
