@@ -49,6 +49,9 @@ extern "C" {
 	
 	#define AT_FDCWD  (-100)
 	
+	#define AT_REMOVEDIR  1
+	#define AT_REMOVEANY  2
+	
 	#define	F_DUPFD  0
 	#define	F_GETFD  1
 	#define	F_SETFD  2
