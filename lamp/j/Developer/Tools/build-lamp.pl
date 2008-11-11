@@ -88,7 +88,7 @@ my @programs = qw
 	gzip
 	htget httpd
 	ic icon idle illegal inetd
-	jgetty jtest
+	jgetty jsync jtest
 	keymods kill killall
 	ld lf2cr lf2crlf ln load-init local-edit-client login
 	macbin md5sum mkdir mpwrez mread mv mwcc
@@ -117,6 +117,7 @@ my %fsmap =
 		Tools =>
 		[
 			qw( A-line ar cpres ld mpwrez mwcc ),
+			qw( jsync ),
 			qw( abort buserror illegal privileged ),
 			qw( SetFile aevt ic load-init rsrc-patch system tlsrvr ),
 			qw( File Line activate quit ),
