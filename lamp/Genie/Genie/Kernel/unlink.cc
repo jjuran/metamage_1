@@ -7,15 +7,10 @@
 #include <errno.h>
 
 // POSIX
-#include "sys/stat.h"
-#include "unistd.h"
-
-// OSErrno
-#include "OSErrno/OSErrno.hh"
+#include "fcntl.h"
 
 // Genie
-#include "Genie/FileSystem/ResolvePathname.hh"
-#include "Genie/Process.hh"
+#include "Genie/FileSystem/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemCalls.hh"
 
@@ -23,30 +18,27 @@
 namespace Genie
 {
 	
-	static int unlink( const char* pathname )
+	static int unlinkat( int dirfd, const char* path, int flags )
 	{
-		SystemCallFrame frame( "unlink" );
+		SystemCallFrame frame( "unlinkat" );
 		
 		try
 		{
-			FSTreePtr current = frame.Caller().GetCWD();
-			
-			FSTreePtr file = ResolvePathname( pathname, current );
+			FSTreePtr file = ResolvePathAt( dirfd, path );
 			
 			// Do not resolve links -- delete the symlink
 			
-			struct ::stat sb;
+			const bool remove_any = flags & AT_REMOVEANY;
+			const bool remove_dir = flags & AT_REMOVEDIR;
 			
-			file->Stat( sb );
-			
-			bool isDir = sb.st_mode & S_IFDIR;
-			
-			if ( isDir )
+			if ( remove_any || remove_dir == file->IsDirectory() )
 			{
-				return frame.SetErrno( EISDIR );
+				file->Delete();
 			}
-			
-			file->Delete();
+			else
+			{
+				return frame.SetErrno( remove_dir ? ENOTDIR : EISDIR );
+			}
 		}
 		catch ( ... )
 		{
@@ -58,7 +50,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( unlink );
+	REGISTER_SYSTEM_CALL( unlinkat );
 	
 	#pragma force_active reset
 	
