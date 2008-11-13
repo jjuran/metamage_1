@@ -7,6 +7,9 @@
 
 extern void InitializeTool();
 
+// Initialize our copy of the dispatcher's address from (dynamic) ToolScratch
+extern void InitializeDispatcher();
+
 // Initialize environ from ToolScratch
 extern const void* InitializeEnviron();
 
@@ -20,6 +23,8 @@ extern void _exit( int );
 
 void InitializeTool()
 {
+	InitializeDispatcher();
+	
 	if ( InitializeEnviron() == 0L )
 	{
 		_exit( 127 );

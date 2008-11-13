@@ -13,18 +13,23 @@
 #pragma exceptions off
 
 
-typedef void (*CleanupHandler)( short destroying_globals );
+static void* gDispatcher;
+
+extern "C" void InitializeDispatcher();
+
+void InitializeDispatcher()
+{
+	gDispatcher = *reinterpret_cast< void** >( LMGetToolScratch() );
+}
 
 
 #if TARGET_CPU_68K
 	
-	enum { kDispatcherAddr = (long) LMGetToolScratch() };
-	
 	static asm void SystemCall()
 	{
-		MOVEA.L		kDispatcherAddr,A0	;  // load the dispatcher's address
-										;  // arg 1:  syscall index already on stack
-		JMP			(A0)				;  // jump to dispatcher -- doesn't return
+		MOVEA.L		gDispatcher,A0	;  // load the dispatcher's address
+									;  // arg 1:  syscall index already on stack
+		JMP			(A0)			;  // jump to dispatcher -- doesn't return
 		
 		// Not reached
 	}
@@ -40,15 +45,6 @@ typedef void (*CleanupHandler)( short destroying_globals );
 #endif
 
 #if TARGET_CPU_PPC
-	
-	static void* gDispatcher;
-	
-	extern "C" void InitializeDispatcher();
-	
-	void InitializeDispatcher()
-	{
-		gDispatcher = *reinterpret_cast< void** >( ::LMGetToolScratch() );
-	}
 	
 	extern "C" void __ptr_glue();
 	
