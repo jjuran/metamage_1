@@ -42,6 +42,10 @@ namespace Genie
 		return true;
 	}
 	
+	// never called
+	static inline UInt16 GetTotalBlocks( const XVolumeParam& volume );
+	static inline UInt16 GetFreeBlocks ( const XVolumeParam& volume );
+	
 #else
 	
 	static bool Has_PBXGetVolInfo()
@@ -49,6 +53,44 @@ namespace Genie
 		static bool result = N::Gestalt_Bit< N::gestaltFSAttr, gestaltFSSupports2TBVols >();
 		
 		return result;
+	}
+	
+	static bool Has4GBVolumes()
+	{
+		static bool result = N::Gestalt_Bit< N::gestaltFSAttr, gestaltFSSupports4GBVols >();
+		
+		return result;
+	}
+	
+	static const VCB* FindVCB( ::FSVolumeRefNum vRefNum )
+	{
+		const VCB* vcb = (VCB*) ::GetVCBQHdr()->qHead;
+		
+		while ( vcb != NULL )
+		{
+			if ( vcb->vcbVRefNum == vRefNum )
+			{
+				break;
+			}
+			
+			vcb = (VCB*) vcb->qLink;
+		}
+		
+		return vcb;
+	}
+	
+	static inline UInt16 GetTotalBlocks( const XVolumeParam& volume )
+	{
+		const VCB* vcb = Has4GBVolumes() ? FindVCB( volume.ioVRefNum ) : NULL;
+		
+		return vcb ? vcb->vcbNmAlBlks : volume.ioVNmAlBlks;
+	}
+	
+	static inline UInt16 GetFreeBlocks( const XVolumeParam& volume )
+	{
+		const VCB* vcb = Has4GBVolumes() ? FindVCB( volume.ioVRefNum ) : NULL;
+		
+		return vcb ? vcb->vcbFreeBks : volume.ioVFrBlk;
 	}
 	
 #endif
@@ -128,7 +170,7 @@ namespace Genie
 		Result Get( const XVolumeParam& volume ) const
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes / volume.ioVAlBlkSiz
-			                           : volume.ioVNmAlBlks;
+			                           : GetTotalBlocks( volume );
 		}
 	};
 	
@@ -153,7 +195,7 @@ namespace Genie
 		Result Get( const XVolumeParam& volume ) const
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVFreeBytes / volume.ioVAlBlkSiz
-			                           : volume.ioVFrBlk;
+			                           : GetFreeBlocks( volume );
 		}
 	};
 	
@@ -166,7 +208,7 @@ namespace Genie
 		Result Get( const XVolumeParam& volume ) const
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVTotalBytes
-			                           : volume.ioVFrBlk * volume.ioVAlBlkSiz;
+			                           : GetTotalBlocks( volume ) * volume.ioVAlBlkSiz;
 		}
 	};
 	
@@ -179,7 +221,7 @@ namespace Genie
 		Result Get( const XVolumeParam& volume ) const
 		{
 			return Has_PBXGetVolInfo() ? volume.ioVFreeBytes
-			                           : volume.ioVNmAlBlks * volume.ioVAlBlkSiz;
+			                           : GetFreeBlocks( volume ) * volume.ioVAlBlkSiz;
 		}
 	};
 	
