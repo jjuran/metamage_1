@@ -62,10 +62,15 @@
 
 __BEGIN_DECLS
 int faccessat( int dirfd, const char* path, int mode, int flags );
+int fchmodat( int dirfd, const char* path, mode_t mode, int flags );
 int fchownat( int dirfd, const char* path, uid_t owner, gid_t group, int flags );
+int fexecve( int fd, const char *const argv[], const char *const envp[] );
 int linkat( const char* target_path, int newdirfd, const char* newpath, int flags );
-int readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size );
+ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size );
 ssize_t readlinkat_k( int dirfd, const char *path, char *buffer, size_t buffer_size );
+int symlinkat( const char* target_path, int newdirfd, const char* newpath );
+int unlinkat( int dirfd, const char* path, int flags );
+
 
 __dead void	 _exit(int);
 int	 access(const char *, int);

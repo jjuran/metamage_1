@@ -105,7 +105,6 @@ struct stat {
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
-int fchmodat( int dirfd, const char* path, mode_t mode, int flags );
 int fstatat( int dirfd, const char* path, struct stat* sb, int flags );
 int mkdirat( int dirfd, const char* path, mode_t mode );
 int mkfifoat( int dirfd, const char* path, mode_t mode );

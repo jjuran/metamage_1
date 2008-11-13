@@ -99,7 +99,6 @@ extern const char *sys_errlist[];
 
 __BEGIN_DECLS
 int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath );
-int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 
 char	*ctermid(char *);
 char	*cuserid(char *);

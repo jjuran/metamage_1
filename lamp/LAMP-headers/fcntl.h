@@ -20,6 +20,7 @@ extern "C" {
 	#define	O_RDONLY	0x0000
 	#define	O_WRONLY	0x0001
 	#define	O_RDWR		0x0002
+	#define O_NONE		0x0003
 	#define	O_ACCMODE	0x0003
 	
 	#define	FREAD		0x0001
@@ -46,6 +47,8 @@ extern "C" {
 	#define O_LAZY  0x00010000
 	
 	#define O_TRUNC_LAZY  (O_TRUNC | O_LAZY)  // truncate at initial write(), not open()
+	
+	#define O_EXEC  0x00040000
 	
 	#define AT_FDCWD  (-100)
 	
@@ -97,15 +100,6 @@ extern "C" {
 	#endif
 	
 	int creat( const char* pathname, mode_t mode );
-	
-	int futimesat( int dirfd, const char* path, const struct timeval times[2] );
-	
-	int futimesat_k( int dirfd, const char* path, const struct timeval* access,
-	                                              const struct timeval* mod,
-	                                              const struct timeval* backup,
-	                                              const struct timeval* creat );
-	
-	int unlinkat( int dirfd, const char* path, int flags );
 	
 	ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count );
 	

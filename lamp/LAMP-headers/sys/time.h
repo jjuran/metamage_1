@@ -343,6 +343,14 @@ void clock_secs_to_ymdhms(time_t, struct clock_ymdhms *);
 
 #if __BSD_VISIBLE || __XPG_VISIBLE
 __BEGIN_DECLS
+
+int futimesat( int dirfd, const char* path, const struct timeval times[2] );
+
+int futimesat_k( int dirfd, const char* path, const struct timeval* access,
+                                              const struct timeval* mod,
+                                              const struct timeval* backup,
+                                              const struct timeval* creat );
+
 #if __BSD_VISIBLE
 int	adjtime(const struct timeval *, struct timeval *);
 int	adjfreq(const int64_t *, int64_t *);
