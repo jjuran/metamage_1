@@ -722,7 +722,7 @@
 		return count;
 	}
 	
-	int readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
+	ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size )
 	{
 		return std::min< ssize_t >( readlinkat_k( dirfd, path, buffer, buffer_size ), buffer_size );
 	}
