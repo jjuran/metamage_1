@@ -65,11 +65,7 @@ inline pascal void SwapMMUMode( SInt8* mode )
 namespace Nitrogen
 {
 	
-	class DeferredTaskManagerErrorsRegistrationDependency
-	{
-		public:
-			DeferredTaskManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( DeferredTaskManager );
 	
 	// Serial port usage
 	

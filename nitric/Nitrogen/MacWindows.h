@@ -95,12 +95,9 @@ inline pascal Boolean IsValidWindowRef( WindowRef w )  { return IsValidWindowPtr
 #endif
 
 namespace Nitrogen
-  {
-	class WindowManagerErrorsRegistrationDependency
-	{
-		public:
-			WindowManagerErrorsRegistrationDependency();
-	};
+{
+	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( WindowManager );
 	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
@@ -474,14 +471,14 @@ namespace Nitrogen
 	
 	inline void SetWindowTitleWithCFString( WindowRef inWindow, CFStringRef inString )
 	{
-		(void) WindowManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
 		ThrowOSStatus( ::SetWindowTitleWithCFString( inWindow, inString ) );
 	}
 	
 	inline Nucleus::Owned< CFStringRef > CopyWindowTitleAsCFString( WindowRef inWindow )
 	{
-		(void) WindowManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
 		CFStringRef result;
 		ThrowOSStatus( ::CopyWindowTitleAsCFString( inWindow, &result ) );
@@ -578,7 +575,7 @@ namespace Nitrogen
 	
 	inline Rect GetWindowBounds( WindowRef inWindow, WindowRegionCode regionCode )
 	{
-		(void) WindowManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
 		Rect result;
 		ThrowOSStatus( ::GetWindowBounds( inWindow, regionCode, &result ) );
@@ -592,7 +589,7 @@ namespace Nitrogen
 	                             WindowRegionCode  regionCode,
 	                             const Rect &      globalBounds )
 	{
-		(void) WindowManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		
 		ThrowOSStatus( ::SetWindowBounds( inWindow, regionCode, &globalBounds ) );
 	}
@@ -686,19 +683,19 @@ namespace Nitrogen
 /*ÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑ*/
 
 	inline void SetWindowToolbar ( WindowRef inWindow, HIToolbarRef inToolbar ) {
-		(void) WindowManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		ThrowOSStatus ( ::SetWindowToolbar ( inWindow, inToolbar ));
 		}
 
 	inline HIToolbarRef GetWindowToolbar ( WindowRef inWindow ) {
-		(void) WindowManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		HIToolbarRef result;
 		ThrowOSStatus ( ::GetWindowToolbar ( inWindow, &result ));
 		return result;
 		}
 
 	inline void ShowHideWindowToolbar ( WindowRef inWindow, Boolean inShow, Boolean inAnimate ) {
-		(void) WindowManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( WindowManager );
 		ThrowOSStatus ( ::ShowHideWindowToolbar ( inWindow, inShow, inAnimate ));
 		}
 

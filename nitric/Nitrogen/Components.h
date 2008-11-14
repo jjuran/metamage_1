@@ -30,15 +30,12 @@
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
 #endif
+#include "Nucleus/ErrorsRegistered.h"
 
 namespace Nitrogen
 {
 	
-	class ComponentManagerErrorsRegistrationDependency
-	{
-		public:
-			ComponentManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ComponentManager );
 	
 	typedef Nucleus::Selector< class ComponentType_Tag,         ::OSType >::Type ComponentType;
 	typedef Nucleus::Selector< class ComponentSubType_Tag,      ::OSType >::Type ComponentSubType;
@@ -66,7 +63,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ComponentInstance component ) const
 		{
-			(void) Nitrogen::ComponentManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ComponentManager );
 			
 			HandleDestructionOSStatus( ::CloseComponent( component ) );
 		}

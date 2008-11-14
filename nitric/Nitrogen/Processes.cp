@@ -26,14 +26,14 @@
 namespace Nitrogen
 {
 	
-	ProcessManagerErrorsRegistrationDependency::ProcessManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( ProcessManager )
 	
 	
 	static void RegisterProcessManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class ProcessManagerErrorsRegistration
 	{
@@ -42,6 +42,8 @@ namespace Nitrogen
 	};
 	
 	static ProcessManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	ProcessSerialNumber GetCurrentProcess()

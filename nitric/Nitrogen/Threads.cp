@@ -18,14 +18,14 @@
 namespace Nitrogen
 {
 	
-	ThreadManagerErrorsRegistrationDependency::ThreadManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( ThreadManager )
 	
 	
 	static void RegisterThreadManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class ThreadManagerErrorsRegistration
 	{
@@ -34,6 +34,8 @@ namespace Nitrogen
 	};
 	
 	static ThreadManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	Nucleus::Owned< ThreadID > NewThread( ThreadStyle     threadStyle,

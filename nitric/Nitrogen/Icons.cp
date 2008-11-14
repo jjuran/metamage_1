@@ -24,14 +24,14 @@
 namespace Nitrogen
 {
 	
-	IconManagerErrorsRegistrationDependency::IconManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( IconManager )
 	
 	
 	static void RegisterIconManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class IconManagerErrorsRegistration
 	{
@@ -40,6 +40,8 @@ namespace Nitrogen
 	};
 	
 	static IconManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	Nucleus::Owned< CIconHandle > GetCIcon( ResID iconID )

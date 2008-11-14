@@ -18,14 +18,14 @@
 namespace Nitrogen
   {
 	
-	AliasManagerErrorsRegistrationDependency::AliasManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( AliasManager )
 	
 	
 	static void RegisterAliasManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class AliasManagerErrorsRegistration
 	{
@@ -34,6 +34,8 @@ namespace Nitrogen
 	};
 	
 	static AliasManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	static Nucleus::Owned< AliasHandle > NewAlias( const FSSpec* fromFile, const FSSpec& target )

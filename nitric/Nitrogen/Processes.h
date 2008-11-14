@@ -48,15 +48,13 @@
 #ifndef NITROGEN_TEXTCOMMON_H
 //#include "Nitrogen/TextCommon.h"
 #endif
+#include "Nucleus/ErrorsRegistered.h"
+
 
 namespace Nitrogen
 {
 	
-	class ProcessManagerErrorsRegistrationDependency
-	{
-		public:
-			ProcessManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ProcessManager );
 	
 	enum LaunchFlags
 	{

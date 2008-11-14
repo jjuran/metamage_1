@@ -45,11 +45,7 @@
 namespace Nitrogen
 {
 	
-	class OSAErrorsRegistrationDependency
-	{
-		public:
-			OSAErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( OSA );
 	
 	
 	static const ComponentType kOSAComponentType = ComponentType( ::kOSAComponentType );
@@ -127,7 +123,7 @@ namespace Nucleus
 	{
 		void operator()( const Nitrogen::OSASpec& osaSpec ) const
 		{
-			(void) Nitrogen::OSAErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::OSA );
 			
 			HandleDestructionOSStatus( ::OSADispose( osaSpec.component, osaSpec.id ) );
 		}

@@ -31,14 +31,14 @@
 namespace Nitrogen
 {
 	
-	FileManagerErrorsRegistrationDependency::FileManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( FileManager )
 	
 	
 	static void RegisterFileManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class FileManagerErrorsRegistration
 	{
@@ -47,6 +47,8 @@ namespace Nitrogen
 	};
 	
 	static FileManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	void UnmountVol( ConstStr63Param volName )

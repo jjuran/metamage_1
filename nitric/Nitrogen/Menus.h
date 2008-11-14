@@ -77,12 +77,9 @@ inline MenuRef GetMenuRef( MenuID menuID )  { return GetMenuHandle( menuID ); }
 #endif
 
 namespace Nitrogen
-  {
-	class MenuManagerErrorsRegistrationDependency
-	{
-		public:
-			MenuManagerErrorsRegistrationDependency();
-	};
+{
+	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( MenuManager );
 	
    typedef Nucleus::Flag< class MenuAttributes_Tag, ::MenuAttributes >::Type MenuAttributes;
    

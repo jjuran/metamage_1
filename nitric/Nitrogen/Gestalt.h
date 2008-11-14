@@ -23,15 +23,13 @@
 #ifndef NITROGEN_MACTYPES_H
 #include "Nitrogen/MacTypes.h"
 #endif
+#include "Nucleus/ErrorsRegistered.h"
 
 
 namespace Nitrogen
-  {
-	class GestaltManagerErrorsRegistrationDependency
-	{
-		public:
-			GestaltManagerErrorsRegistrationDependency();
-	};
+{
+	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( GestaltManager );
 	
 	enum Gestalt_Selector
 	{

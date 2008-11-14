@@ -70,23 +70,9 @@
 
 
 namespace Nitrogen
-  {
+{
 	
-	class FileManagerErrorsRegistrationDependency
-	{
-		public:
-			FileManagerErrorsRegistrationDependency();
-	};
-	
-	inline void ThrowFileManagerError( ::OSStatus err )
-	{
-		if ( err != noErr )
-		{
-			(void) FileManagerErrorsRegistrationDependency();
-			
-			ThrowOSStatus( err );
-		}
-	}
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( FileManager );
 	
 	
 	struct FileSignature
@@ -257,7 +243,8 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::FSFileRefNum file ) const
 		{
-			(void) Nitrogen::FileManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
+			
 			HandleDestructionOSStatus( ::FSClose( file ) );
 		}
 	};
@@ -931,7 +918,8 @@ namespace Nucleus
      {
       void operator()( Nitrogen::FSIterator iterator ) const
         {
-         (void) Nitrogen::FileManagerErrorsRegistrationDependency();
+         NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
+         
          HandleDestructionOSStatus( ::FSCloseIterator( iterator ) );
         }
      };
@@ -1145,7 +1133,8 @@ namespace Nucleus
      {
       void operator()( const Nitrogen::FSForkRef& fork ) const
         {
-         (void) Nitrogen::FileManagerErrorsRegistrationDependency();
+         NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
+         
          HandleDestructionOSStatus( ::FSDeleteFork( &fork.File(),
                                                     fork.Name().size(),
                                                     fork.Name().data() ) );
@@ -1184,7 +1173,8 @@ namespace Nucleus
      {
       void operator()( Nitrogen::FSForkRefNum fork ) const
         {
-         (void) Nitrogen::FileManagerErrorsRegistrationDependency();
+         NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
+         
          HandleDestructionOSStatus( ::FSCloseFork( fork ) );
         }
      };

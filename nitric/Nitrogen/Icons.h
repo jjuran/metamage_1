@@ -41,11 +41,8 @@
 
 namespace Nitrogen
 {
-	class IconManagerErrorsRegistrationDependency
-	{
-		public:
-			IconManagerErrorsRegistrationDependency();
-	};
+	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( IconManager );
 	
 	namespace Constants
 	{
@@ -148,7 +145,8 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::CIconHandle h ) const
 		{
-			//(void) Nitrogen::IconManagerErrorsRegistrationDependency();
+			//NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
+			
 			::DisposeCIcon( h );
 		}
 	};
@@ -200,7 +198,8 @@ namespace Nucleus
 		
 		void operator()( Nitrogen::IconSuiteRef i ) const
 		{
-			(void) Nitrogen::IconManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
+			
 			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
 		}
 	};
@@ -216,7 +215,8 @@ namespace Nitrogen
 		
 		void operator()( IconSuiteRef i ) const
 		{
-			(void) IconManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( IconManager );
+			
 			HandleDestructionOSStatus( ::DisposeIconSuite( i, disposeData ) );
 		}
 	};
@@ -232,7 +232,8 @@ namespace Nucleus
      {
       void operator()( Nitrogen::IconRef i ) const
         {
-         (void) Nitrogen::IconManagerErrorsRegistrationDependency();
+         NUCLEUS_REQUIRE_ERRORS( Nitrogen::IconManager );
+         
          HandleDestructionOSStatus( ::ReleaseIconRef( i ) );
         }
      };

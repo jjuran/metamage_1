@@ -34,6 +34,8 @@
 #include "Nucleus/Owned.h"
 #endif
 
+#include "Nucleus/ErrorsRegistered.h"
+
 // Nitrogen
 #ifndef NITROGEN_OSSTATUS_H
 #include "Nitrogen/OSStatus.h"
@@ -138,12 +140,8 @@ inline bool OTIsAsynchronous( ProviderRef ref )  { return !OTIsSynchronous( ref 
 namespace Nitrogen
 {
 	
-	class OpenTransportErrorsRegistrationDependency
-	{
-		public:
-			OpenTransportErrorsRegistrationDependency();
-	};
- 	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( OpenTransport );
+	
 	#pragma mark -
 	#pragma mark ¥ Types ¥
 	
@@ -197,7 +195,8 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ProviderRef provider ) const
 		{
-			(void) Nitrogen::OpenTransportErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::OpenTransport );
+			
 			HandleDestructionOSStatus( ::OTCloseProvider( provider ) );
 		}
 	};

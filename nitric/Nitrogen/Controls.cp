@@ -19,16 +19,16 @@
 #endif
 
 namespace Nitrogen
-  {
+{
 	
-	ControlManagerErrorsRegistrationDependency::ControlManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( ControlManager )
 	
 	
 	static void RegisterControlManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class ControlManagerErrorsRegistration
 	{
@@ -37,6 +37,8 @@ namespace Nitrogen
 	};
 	
 	static ControlManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	ControlRef NewControl( WindowRef         owningWindow,

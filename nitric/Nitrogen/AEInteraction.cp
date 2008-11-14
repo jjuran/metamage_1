@@ -18,7 +18,7 @@
 namespace Nitrogen
 {
 	
-	static AppleEventManagerErrorsRegistrationDependency gAppleEventManagerErrorsRegistrationDependency;
+	NUCLEUS_REQUIRE_ERRORS_STATIC( AppleEventManager )
 	
 	Nucleus::Owned< AppleEvent > AESend( const AppleEvent&  appleEvent,
 	                                     AESendMode         sendMode,

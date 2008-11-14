@@ -22,14 +22,14 @@
 namespace Nitrogen
 {
 	
-	SoundManagerErrorsRegistrationDependency::SoundManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( SoundManager )
 	
 	
 	static void RegisterSoundManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class SoundManagerErrorsRegistration
 	{
@@ -38,6 +38,8 @@ namespace Nitrogen
 	};
 	
 	static SoundManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	SPBGetIndexedDevice_Result SPBGetIndexedDevice( std::size_t count )

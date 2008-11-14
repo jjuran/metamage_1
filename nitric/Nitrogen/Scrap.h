@@ -20,6 +20,7 @@
 #ifndef __SCRAP__
 #include FRAMEWORK_HEADER(HIToolbox,Scrap.h)
 #endif
+#include "Nucleus/ErrorsRegistered.h"
 
 // Replace macro
 
@@ -33,12 +34,8 @@ static const ScrapRef kScrapRefNone = ScrapRef( NULL );
 namespace Nitrogen
 {
 	
-	class ScrapManagerErrorsRegistrationDependency
-	{
-		public:
-			ScrapManagerErrorsRegistrationDependency();
-	};
- 	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ScrapManager );
+	
 	using ::ScrapRef;
 	
 	ScrapRef GetCurrentScrap();

@@ -43,13 +43,10 @@
 
 
 namespace Nitrogen
-  {
-	class AliasManagerErrorsRegistrationDependency
-	{
-		public:
-			AliasManagerErrorsRegistrationDependency();
-	};
- 	
+{
+	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AliasManager );
+	
  	
  	static const ResType rAliasType = ResType( ::rAliasType );
    

@@ -25,14 +25,14 @@
 namespace Nitrogen
 {
 	
-	CodeFragmentManagerErrorsRegistrationDependency::CodeFragmentManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( CodeFragmentManager )
 	
 	
 	static void RegisterCodeFragmentManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class CodeFragmentManagerErrorsRegistration
 	{
@@ -41,6 +41,8 @@ namespace Nitrogen
 	};
 	
 	static CodeFragmentManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	template < class ErrorCode >

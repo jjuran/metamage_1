@@ -16,15 +16,16 @@
 #endif
 
 namespace Nitrogen
-  {
-	DragManagerErrorsRegistrationDependency::DragManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+{
+	
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( DragManager )
 	
 	
 	static void RegisterDragManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class DragManagerErrorsRegistration
 	{
@@ -33,6 +34,8 @@ namespace Nitrogen
 	};
 	
 	static DragManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
    Nucleus::Owned<DragRef> NewDrag()

@@ -19,14 +19,14 @@
 namespace Nitrogen
 {
 	
-	OSAErrorsRegistrationDependency::OSAErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( OSA )
 	
 	
 	static void RegisterOSAErrors();
 	
+	
+#pragma force_active on
 	
 	class OSAErrorsRegistration
 	{
@@ -35,6 +35,8 @@ namespace Nitrogen
 	};
 	
 	static OSAErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	Nucleus::Owned< OSASpec > OSALoad( Nucleus::Shared< ComponentInstance >  scriptingComponent, 

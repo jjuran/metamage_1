@@ -171,11 +171,7 @@ inline OSErr AEDeleteKeyDesc( AppleEvent*  theAppleEvent,
 namespace Nitrogen
 {
 	
-	class AppleEventManagerErrorsRegistrationDependency
-	{
-		public:
-			AppleEventManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( AppleEventManager );
 	
 	#pragma mark -
 	#pragma mark ¥ DescType ¥
@@ -437,7 +433,7 @@ namespace Nucleus
 			// AEDisposeDesc() is documented as only ever returning noErr,
 			// but we check anyway to be future-proof.
 			
-			(void) Nitrogen::AppleEventManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::AppleEventManager );
 			
 			HandleDestructionOSStatus( ::AEDisposeDesc( &desc ) );
 		}
@@ -453,7 +449,7 @@ namespace Nucleus
 		// parameter can't be const
 		void operator()( Nitrogen::AEDesc desc ) const
 		{
-			(void) Nitrogen::AppleEventManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::AppleEventManager );
 			
 			HandleDestructionOSStatus( ::AEDisposeToken( &desc ) );
 		}

@@ -35,6 +35,7 @@
 #ifndef NUCLEUS_SCOPED_H
 #include "Nucleus/Scoped.h"
 #endif
+#include "Nucleus/ErrorsRegistered.h"
 
 #include <cstddef>
 
@@ -52,11 +53,7 @@ inline Ptr    NewPtrSysClear   ( long bytes )  { return NewPtrClear   ( bytes );
 namespace Nitrogen
 {
 	
-	class MemoryManagerErrorsRegistrationDependency
-	{
-		public:
-			MemoryManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( MemoryManager );
 	
    
 	class Ptr
@@ -89,7 +86,8 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::Ptr ptr ) const
 		{
-			(void) Nitrogen::MemoryManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::MemoryManager );
+			
 			::DisposePtr( ptr );
 			HandleDestructionOSStatus( ::MemError() );
 		}
@@ -133,7 +131,8 @@ namespace Nucleus
      {
       void operator()( Nitrogen::Handle h ) const
         {
-         (void) Nitrogen::MemoryManagerErrorsRegistrationDependency();
+         NUCLEUS_REQUIRE_ERRORS( Nitrogen::MemoryManager );
+         
          ::DisposeHandle( h );
          HandleDestructionOSStatus( ::MemError() );
         }

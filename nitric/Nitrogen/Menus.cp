@@ -16,15 +16,16 @@
 #endif
 
 namespace Nitrogen
-  {
-	MenuManagerErrorsRegistrationDependency::MenuManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+{
+	
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( MenuManager )
 	
 	
 	static void RegisterMenuManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class MenuManagerErrorsRegistration
 	{
@@ -33,6 +34,8 @@ namespace Nitrogen
 	};
 	
 	static MenuManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
    Nucleus::Owned<MenuRef> NewMenu( MenuID           menuID,

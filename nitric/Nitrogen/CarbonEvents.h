@@ -200,12 +200,9 @@
 #endif
 
 namespace Nitrogen
-  {
-	class CarbonEventManagerErrorsRegistrationDependency
-	{
-		public:
-			CarbonEventManagerErrorsRegistrationDependency();
-	};
+{
+	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( CarbonEventManager );
 	
    typedef Nucleus::ErrorCode< OSStatus, eventAlreadyPostedErr           > EventAlreadyPostedErr;
    typedef Nucleus::ErrorCode< OSStatus, eventTargetBusyErr              > EventTargetBusyErr;
@@ -1292,7 +1289,7 @@ namespace Nucleus
      {
       void operator()( EventHandlerRef toDispose ) const
         {
-         (void) Nitrogen::CarbonEventManagerErrorsRegistrationDependency();
+         NUCLEUS_REQUIRE_ERRORS( Nitrogen::CarbonEventManager );
          
          HandleDestructionOSStatus( ::RemoveEventHandler( toDispose ) );
         }

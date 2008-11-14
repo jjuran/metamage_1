@@ -18,14 +18,14 @@
 namespace Nitrogen
 {
 	
-	TimeManagerErrorsRegistrationDependency::TimeManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( TimeManager )
 	
 	
 	static void RegisterTimeManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class TimeManagerErrorsRegistration
 	{
@@ -34,6 +34,8 @@ namespace Nitrogen
 	};
 	
 	static TimeManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	Nucleus::Owned< TMTaskPtr > InstallTimeTask ( TMTask& tmTask )

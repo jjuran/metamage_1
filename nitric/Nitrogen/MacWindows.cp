@@ -21,16 +21,16 @@
 
 
 namespace Nitrogen
-  {
+{
 	
-	WindowManagerErrorsRegistrationDependency::WindowManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( WindowManager )
 	
 	
 	static void RegisterWindowManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class WindowManagerErrorsRegistration
 	{
@@ -39,6 +39,8 @@ namespace Nitrogen
 	};
 	
 	static WindowManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 #if OPAQUE_TOOLBOX_STRUCTS

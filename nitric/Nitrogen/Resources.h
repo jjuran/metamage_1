@@ -42,11 +42,7 @@
 namespace Nitrogen
 {
 	
-	class ResourceManagerErrorsRegistrationDependency
-	{
-		public:
-			ResourceManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ResourceManager );
 	
 	
 	typedef Nucleus::ID< class ResFileRefNum_Tag, ::ResFileRefNum >::Type ResFileRefNum;
@@ -73,7 +69,8 @@ namespace Nitrogen
 	{
 		void operator()( Handle r ) const
 		{
-			(void) ResourceManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( ResourceManager );
+			
 			::ReleaseResource( r );
 			HandleDestructionOSStatus( ::ResError() );
 		}
@@ -89,7 +86,8 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ResFileRefNum resFile ) const
 		{
-			(void) Nitrogen::ResourceManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ResourceManager );
+			
 			::CloseResFile( resFile );
 			HandleDestructionOSStatus( ::ResError() );
 		}

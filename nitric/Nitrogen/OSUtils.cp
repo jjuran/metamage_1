@@ -24,14 +24,14 @@
 namespace Nitrogen
 {
 	
-	DeferredTaskManagerErrorsRegistrationDependency::DeferredTaskManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( DeferredTaskManager )
 	
 	
 	static void RegisterDeferredTaskManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class DeferredTaskManagerErrorsRegistration
 	{
@@ -40,6 +40,8 @@ namespace Nitrogen
 	};
 	
 	static DeferredTaskManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	void DTInstall( DeferredTask& dtTaskPtr )

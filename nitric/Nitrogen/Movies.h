@@ -46,11 +46,7 @@
 namespace Nitrogen
 {
 	
-	class QuickTimeErrorsRegistrationDependency
-	{
-		public:
-			QuickTimeErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( QuickTime );
 	
 	using ::Movie;
 	
@@ -87,7 +83,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::MovieFileRefNum refNum ) const
 		{
-			(void) Nitrogen::QuickTimeErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::QuickTime );
 			
 			HandleDestructionOSStatus( ::CloseMovieFile( refNum ) );
 		}
@@ -99,7 +95,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::FullScreenContextPtr context ) const
 		{
-			(void) Nitrogen::QuickTimeErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::QuickTime );
 			
 			HandleDestructionOSStatus( ::EndFullScreen( reinterpret_cast< ::Ptr >( context ), 0 ) );
 		}

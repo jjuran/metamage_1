@@ -42,13 +42,9 @@
 #endif
 
 namespace Nitrogen
-  {
+{
 	
-	class ControlManagerErrorsRegistrationDependency
-	{
-		public:
-			ControlManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ControlManager );
 	
    using ::ControlRef;
   }

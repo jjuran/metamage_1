@@ -16,16 +16,16 @@
 #endif
 
 namespace Nitrogen
-  {
+{
 	
-	MemoryManagerErrorsRegistrationDependency::MemoryManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( MemoryManager )
 	
 	
 	static void RegisterMemoryManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class MemoryManagerErrorsRegistration
 	{
@@ -34,6 +34,8 @@ namespace Nitrogen
 	};
 	
 	static MemoryManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
    void MemError()

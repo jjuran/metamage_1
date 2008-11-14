@@ -19,14 +19,14 @@
 namespace Nitrogen
 {
 	
-	QuickTimeErrorsRegistrationDependency::QuickTimeErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( QuickTime )
 	
 	
 	static void RegisterQuickTimeErrors();
 	
+	
+#pragma force_active on
 	
 	class QuickTimeErrorsRegistration
 	{
@@ -35,6 +35,8 @@ namespace Nitrogen
 	};
 	
 	static QuickTimeErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	Nucleus::Owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,

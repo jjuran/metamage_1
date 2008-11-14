@@ -25,14 +25,14 @@
 namespace Nitrogen
 {
 	
-	AppleEventManagerErrorsRegistrationDependency::AppleEventManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( AppleEventManager )
 	
 	
 	static void RegisterAppleEventManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class AppleEventManagerErrorsRegistration
 	{
@@ -41,6 +41,8 @@ namespace Nitrogen
 	};
 	
 	static AppleEventManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	AECoercionHandler::AECoercionHandler() : fromType(),

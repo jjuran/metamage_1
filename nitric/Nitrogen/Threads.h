@@ -40,16 +40,13 @@
 #ifndef NITROGEN_UPP_H
 #include "Nitrogen/UPP.h"
 #endif
+#include "Nucleus/ErrorsRegistered.h"
 
 
 namespace Nitrogen
 {
 	
-	class ThreadManagerErrorsRegistrationDependency
-	{
-		public:
-			ThreadManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ThreadManager );
 	
 	#pragma mark -
 	#pragma mark ¥ Types and constants ¥
@@ -109,7 +106,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ThreadID thread ) const
 		{
-			(void) Nitrogen::ThreadManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::ThreadManager );
 			
 			HandleDestructionOSStatus( ::DisposeThread( thread, NULL, false ) );
 		}
@@ -133,7 +130,7 @@ namespace Nitrogen
 				
 				void operator()( ThreadID thread ) const
 				{
-					(void) ThreadManagerErrorsRegistrationDependency();
+					NUCLEUS_REQUIRE_ERRORS( ThreadManager );
 					
 					HandleDestructionOSStatus( ::DisposeThread( thread, NULL, recycleThread ) );
 				}

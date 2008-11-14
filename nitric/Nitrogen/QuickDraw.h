@@ -38,11 +38,7 @@
 namespace Nitrogen
 {
 	
-	class QuickDrawErrorsRegistrationDependency
-	{
-		public:
-			QuickDrawErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( QuickDraw );
 	
 	
 	// Constants of types defined elsewhere

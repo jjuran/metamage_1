@@ -20,15 +20,16 @@
 
 
 namespace Nitrogen
-  {
-	GestaltManagerErrorsRegistrationDependency::GestaltManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+{
+	
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( GestaltManager )
 	
 	
 	static void RegisterGestaltManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class GestaltManagerErrorsRegistration
 	{
@@ -37,6 +38,8 @@ namespace Nitrogen
 	};
 	
 	static GestaltManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
    long Gestalt( Gestalt_Selector selector )

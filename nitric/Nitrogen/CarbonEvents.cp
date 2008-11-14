@@ -16,16 +16,16 @@
 #endif
 
 namespace Nitrogen
-  {
+{
 	
-	CarbonEventManagerErrorsRegistrationDependency::CarbonEventManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( CarbonEventManager )
 	
 	
 	static void RegisterCarbonEventManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class CarbonEventManagerErrorsRegistration
 	{
@@ -34,6 +34,8 @@ namespace Nitrogen
 	};
 	
 	static CarbonEventManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
    void RunCurrentEventLoop( EventTimeout inTimeout )

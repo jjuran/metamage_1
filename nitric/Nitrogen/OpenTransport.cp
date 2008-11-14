@@ -19,14 +19,14 @@
 namespace Nitrogen
 {
 	
-	OpenTransportErrorsRegistrationDependency::OpenTransportErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( OpenTransport )
 	
 	
 	static void RegisterOpenTransportErrors();
 	
+	
+#pragma force_active on
 	
 	class OpenTransportErrorsRegistration
 	{
@@ -35,6 +35,8 @@ namespace Nitrogen
 	};
 	
 	static OpenTransportErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	Nucleus::Owned< OTClientContextPtr > InitOpenTransportInContext( OTInitializationFlags flags )

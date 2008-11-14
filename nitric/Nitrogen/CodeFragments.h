@@ -55,11 +55,7 @@ inline bool CFragHasFileLocation( CFragLocatorKind where )
 namespace Nitrogen
 {
 	
-	class CodeFragmentManagerErrorsRegistrationDependency
-	{
-		public:
-			CodeFragmentManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( CodeFragmentManager );
 	
 	#pragma mark -
 	#pragma mark ¥ General Types and Constants ¥
@@ -134,7 +130,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::CFragConnectionID connID ) const
 		{
-			(void) Nitrogen::CodeFragmentManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::CodeFragmentManager );
 			
 			HandleDestructionOSStatus( ::CloseConnection( &connID ) );
 		}

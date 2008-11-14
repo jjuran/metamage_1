@@ -36,11 +36,8 @@
 
 namespace Nitrogen
 {
-	class InternetConfigErrorsRegistrationDependency
-	{
-		public:
-			InternetConfigErrorsRegistrationDependency();
-	};
+	
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( InternetConfig );
 	
 	using ::ICInstance;
 	using ::ICDirSpec;
@@ -108,7 +105,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::ICInstance instance ) const
 		{
-			(void) Nitrogen::InternetConfigErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::InternetConfig );
 			
 			HandleDestructionOSStatus( ::ICStop( instance ) );
 		}

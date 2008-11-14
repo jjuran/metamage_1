@@ -22,14 +22,14 @@
 namespace Nitrogen
 {
 	
-	ScrapManagerErrorsRegistrationDependency::ScrapManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( ScrapManager )
 	
 	
 	static void RegisterScrapManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class ScrapManagerErrorsRegistration
 	{
@@ -38,6 +38,8 @@ namespace Nitrogen
 	};
 	
 	static ScrapManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	ScrapRef GetCurrentScrap()

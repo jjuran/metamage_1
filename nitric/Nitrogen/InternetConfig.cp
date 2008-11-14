@@ -23,14 +23,14 @@
 namespace Nitrogen
 {
 	
-	InternetConfigErrorsRegistrationDependency::InternetConfigErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( InternetConfig )
 	
 	
 	static void RegisterInternetConfigErrors();
 	
+	
+#pragma force_active on
 	
 	class InternetConfigErrorsRegistration
 	{
@@ -39,6 +39,8 @@ namespace Nitrogen
 	};
 	
 	static InternetConfigErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	Nucleus::Owned< ICInstance > ICStart( OSType signature )

@@ -33,14 +33,14 @@
 namespace Nitrogen
 {
 	
-	QuickDrawErrorsRegistrationDependency::QuickDrawErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( QuickDraw )
 	
 	
 	static void RegisterQuickDrawErrors();
 	
+	
+#pragma force_active on
 	
 	class QuickDrawErrorsRegistration
 	{
@@ -49,6 +49,8 @@ namespace Nitrogen
 	};
 	
 	static QuickDrawErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	GrafPtr GetPort()
@@ -426,7 +428,7 @@ namespace Nitrogen
 	
 	void RegisterQuickDrawErrors()
 	{
-		(void) MemoryManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( MemoryManager );
 		
 		// CopyBits couldn't allocate required temporary memory
 		RegisterOSStatus< -143                    >();

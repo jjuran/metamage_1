@@ -24,16 +24,13 @@
 #ifndef NITROGEN_UPP_H
 #include "Nitrogen/UPP.h"
 #endif
+#include "Nucleus/ErrorsRegistered.h"
 
 
 namespace Nitrogen
 {
 	
-	class TimeManagerErrorsRegistrationDependency
-	{
-		public:
-			TimeManagerErrorsRegistrationDependency();
-	};
+	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( TimeManager );
 	
 	using ::TMTask;
 	using ::TMTaskPtr;
@@ -47,7 +44,7 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::TMTaskPtr tmTaskPtr ) const
 		{
-			(void) Nitrogen::TimeManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( Nitrogen::TimeManager );
 			
 			HandleDestructionOSStatus( ::RemoveTimeTask( reinterpret_cast< ::QElemPtr >( tmTaskPtr ) ) );
 		}

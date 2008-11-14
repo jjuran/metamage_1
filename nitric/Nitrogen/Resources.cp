@@ -25,14 +25,14 @@
 namespace Nitrogen
 {
 	
-	ResourceManagerErrorsRegistrationDependency::ResourceManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
+	// does nothing, but guarantees construction of theRegistration
+	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( ResourceManager )
 	
 	
 	static void RegisterResourceManagerErrors();
 	
+	
+#pragma force_active on
 	
 	class ResourceManagerErrorsRegistration
 	{
@@ -41,6 +41,8 @@ namespace Nitrogen
 	};
 	
 	static ResourceManagerErrorsRegistration theRegistration;
+	
+#pragma force_active reset
 	
 	
 	Handle CheckResource( Handle r )
