@@ -27,12 +27,6 @@
 namespace Nitrogen
 {
 	
-	class DeviceManagerErrorsRegistrationDependency
-	{
-		public:
-			DeviceManagerErrorsRegistrationDependency();
-	};
-	
 #if CALL_NOT_IN_CARBON
 	
 	typedef Nucleus::Selector< struct CSCode_Tag, SInt16 >::Type ControlStatusCode;
@@ -49,7 +43,8 @@ namespace Nucleus
 	{
 		void operator()( Nitrogen::DriverRefNum driverRefNum ) const
 		{
-			(void) Nitrogen::DeviceManagerErrorsRegistrationDependency();
+			NUCLEUS_REQUIRE_ERRORS( DeviceManager );
+			
 			HandleDestructionOSStatus( ::CloseDriver( driverRefNum ) );
 		}
 	};

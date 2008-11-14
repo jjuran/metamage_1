@@ -22,24 +22,6 @@
 namespace Nitrogen
 {
 	
-	DeviceManagerErrorsRegistrationDependency::DeviceManagerErrorsRegistrationDependency()
-	{
-		// does nothing, but guarantees construction of theRegistration
-	}
-	
-	
-	static void RegisterDeviceManagerErrors();
-	
-	
-	class DeviceManagerErrorsRegistration
-	{
-		public:
-			DeviceManagerErrorsRegistration()  { RegisterDeviceManagerErrors(); }
-	};
-	
-	static DeviceManagerErrorsRegistration theRegistration;
-	
-	
 #if CALL_NOT_IN_CARBON
 	
 	Nucleus::Owned< DriverRefNum > OpenDriver( ConstStr255Param name )
@@ -122,23 +104,6 @@ namespace Nitrogen
 	}
 	
 #endif  // CALL_NOT_IN_CARBON
-	
-	void RegisterDeviceManagerErrors()
-	{
-		RegisterOSStatus< controlErr   >();
-		RegisterOSStatus< statusErr    >();
-		RegisterOSStatus< readErr      >();
-		RegisterOSStatus< writErr      >();
-		RegisterOSStatus< badUnitErr   >();
-		RegisterOSStatus< unitEmptyErr >();
-		RegisterOSStatus< openErr      >();
-		RegisterOSStatus< closErr      >();
-		RegisterOSStatus< dRemovErr    >();
-		RegisterOSStatus< dInstErr     >();
-		RegisterOSStatus< abortErr     >();
-		RegisterOSStatus< notOpenErr   >();
-		RegisterOSStatus< ioErr        >();
-	}
 	
 }
 
