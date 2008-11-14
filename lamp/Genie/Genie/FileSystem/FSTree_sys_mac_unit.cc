@@ -33,8 +33,7 @@ namespace Genie
 		
 		const UInt16 count = LMGetUnitTableEntryCount();
 		
-		//return key < count  &&  base[ key ] != NULL;
-		return key < count;
+		return key < count  &&  base[ key ] != NULL;
 	}
 	
 	
@@ -42,22 +41,13 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		std::string Get( UnitNumber number ) const
+		std::string Get( AuxDCEHandle dceHandle ) const
 		{
-			std::string name;
+			ASSERT( dceHandle != NULL );
 			
-			AuxDCEHandle dceHandle = GetUTableBase()[ number ];
+			short flags = dceHandle[0]->dCtlFlags;
 			
-			if ( dceHandle != NULL )
-			{
-				using BitsAndBytes::EncodeAsHex;
-				
-				short flags = dceHandle[0]->dCtlFlags;
-				
-				return EncodeAsHex( &flags, sizeof flags );
-			}
-			
-			return name;
+			return BitsAndBytes::EncodeAsHex( &flags, sizeof flags );
 		}
 	};
 	
@@ -65,13 +55,13 @@ namespace Genie
 	{
 		typedef std::string Result;
 		
-		std::string Get( UnitNumber number ) const
+		std::string Get( AuxDCEHandle dceHandle ) const
 		{
+			ASSERT( dceHandle != NULL );
+			
 			std::string name;
 			
-			AuxDCEHandle dceHandle = GetUTableBase()[ number ];
-			
-			if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
+			if ( dceHandle[0]->dCtlDriver != NULL )
 			{
 				const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
 				
@@ -87,6 +77,43 @@ namespace Genie
 		}
 	};
 	
+	struct GetDriverSlot
+	{
+		// dCtlSlot is defined as 'char', but we want integer conversion
+		typedef UInt16 Result;
+		
+		Result Get( AuxDCEHandle dceHandle ) const
+		{
+			ASSERT( dceHandle != NULL );
+			
+			if ( dceHandle[0]->dCtlSlot == 0 )
+			{
+				N::ThrowOSStatus( fnfErr );
+			}
+			
+			return dceHandle[0]->dCtlSlot;
+		}
+	};
+	
+	struct GetDriverBase
+	{
+		typedef std::string Result;
+		
+		Result Get( AuxDCEHandle dceHandle ) const
+		{
+			ASSERT( dceHandle != NULL );
+			
+			if ( dceHandle[0]->dCtlDevBase == 0 )
+			{
+				N::ThrowOSStatus( fnfErr );
+			}
+			
+			long base = dceHandle[0]->dCtlDevBase;
+			
+			return BitsAndBytes::EncodeAsHex( &base, sizeof base );
+		}
+	};
+	
 	template < class Accessor >
 	class sys_mac_unit_N_Query
 	{
@@ -94,19 +121,28 @@ namespace Genie
 			typedef UnitNumber Key;
 			
 			Key itsKey;
+			
+			std::string itsValue;
 		
 		public:
-			sys_mac_unit_N_Query( const Key& key ) : itsKey( key )
+			sys_mac_unit_N_Query( const Key& key ) : itsKey( key ), itsValue( Make() )
 			{
 			}
 			
-			std::string Get() const
+			const std::string& Get() const
+			{
+				return itsValue;
+			}
+			
+			std::string Make() const
 			{
 				std::string output;
 				
 				if ( sys_mac_unit_Details::KeyIsValid( itsKey ) )
 				{
-					output = NN::Convert< std::string >( Accessor().Get( itsKey ) );
+					AuxDCEHandle dceHandle = GetUTableBase()[ itsKey ];
+					
+					output = NN::Convert< std::string >( Accessor().Get( dceHandle ) );
 					
 					output += "\n";
 				}
@@ -142,6 +178,8 @@ namespace Genie
 	{
 		{ "flags", &Query_Factory< GetDriverFlags > },
 		{ "name",  &Query_Factory< GetDriverName > },
+		{ "slot",  &Query_Factory< GetDriverSlot > },
+		{ "base",  &Query_Factory< GetDriverBase > },
 		
 		{ NULL, NULL }
 	};
