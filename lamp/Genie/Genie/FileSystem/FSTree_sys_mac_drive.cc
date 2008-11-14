@@ -14,6 +14,9 @@
 // POSeven
 #include "POSeven/Errno.hh"
 
+// BitsAndBytes
+#include "HexStrings.hh"
+
 // Genie
 #include "Genie/FileSystem/Drives.hh"
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
@@ -132,6 +135,23 @@ namespace Genie
 		return MakeFSTree( new FSTree_Driver_Link( parent, refNum, name ) );
 	}
 	
+	struct GetDriveFlags
+	{
+		typedef std::string Result;
+		
+		std::string Get( const DrvQEl& drive ) const
+		{
+			const std::size_t sizeof_flags = 4;
+			
+			const UInt8* end   = (UInt8*) &drive;
+			const UInt8* begin = end - sizeof_flags;
+			
+			using BitsAndBytes::EncodeAsHex;
+			
+			return EncodeAsHex( begin, sizeof_flags );
+		}
+	};
+	
 	struct GetDriveSize
 	{
 		typedef UInt32 Result;
@@ -211,18 +231,14 @@ namespace Genie
 	{
 		{ "driver", &Link_Factory },
 		
-		{ "fsid", &Query_Factory< GetDriveFSID > },
-		{ "size", &Query_Factory< GetDriveSize > },
+		{ "flags", &Query_Factory< GetDriveFlags > },
+		{ "fsid",  &Query_Factory< GetDriveFSID  > },
+		{ "size",  &Query_Factory< GetDriveSize  > },
 		
 		{ "flush",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Flush   > > },
 		{ "umount", &Stamp_Factory< FSTree_Stamp_Action< Volume_Unmount > > },
-		
-	#if !TARGET_API_MAC_CARBON
-		
 		{ "eject",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Eject   > > },
 		{ "mount",  &Stamp_Factory< FSTree_Stamp_Action< Volume_Mount   > > },
-		
-	#endif
 		
 		{ NULL, NULL }
 	};

@@ -7,6 +7,9 @@
 
 #include "Genie/FileSystem/FSTree_sys_mac_unit.hh"
 
+// BitsAndBytes
+#include "HexStrings.hh"
+
 // Genie
 #include "Genie/FileSystem/FSTree_QueryFile.hh"
 
@@ -34,7 +37,58 @@ namespace Genie
 		return key < count;
 	}
 	
-	class sys_mac_unit_N_name_Query
+	
+	struct GetDriverFlags
+	{
+		typedef std::string Result;
+		
+		std::string Get( UnitNumber number ) const
+		{
+			std::string name;
+			
+			AuxDCEHandle dceHandle = GetUTableBase()[ number ];
+			
+			if ( dceHandle != NULL )
+			{
+				using BitsAndBytes::EncodeAsHex;
+				
+				short flags = dceHandle[0]->dCtlFlags;
+				
+				return EncodeAsHex( &flags, sizeof flags );
+			}
+			
+			return name;
+		}
+	};
+	
+	struct GetDriverName
+	{
+		typedef std::string Result;
+		
+		std::string Get( UnitNumber number ) const
+		{
+			std::string name;
+			
+			AuxDCEHandle dceHandle = GetUTableBase()[ number ];
+			
+			if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
+			{
+				const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
+				
+				// Dereferences a handle if ramBased
+				DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
+				                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
+				
+				// Copy Pascal string onto stack before we allocate memory
+				name = NN::Convert< std::string >( N::Str255( header->drvrName ) );
+			}
+			
+			return name;
+		}
+	};
+	
+	template < class Accessor >
+	class sys_mac_unit_N_Query
 	{
 		private:
 			typedef UnitNumber Key;
@@ -42,32 +96,20 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			sys_mac_unit_N_name_Query( const Key& key ) : itsKey( key )
+			sys_mac_unit_N_Query( const Key& key ) : itsKey( key )
 			{
 			}
 			
 			std::string Get() const
 			{
-				std::string name;
+				std::string output;
 				
 				if ( sys_mac_unit_Details::KeyIsValid( itsKey ) )
 				{
-					AuxDCEHandle dceHandle = GetUTableBase()[ itsKey ];
+					output = NN::Convert< std::string >( Accessor().Get( itsKey ) );
 					
-					if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
-					{
-						const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
-						
-						// Dereferences a handle if ramBased
-						DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
-						                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
-						
-						// Copy Pascal string onto stack before we allocate memory
-						name = NN::Convert< std::string >( N::Str255( header->drvrName ) );
-					}
+					output += "\n";
 				}
-				
-				std::string output = name + "\n";
 				
 				return output;
 			}
@@ -84,11 +126,12 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr Name_Factory( const FSTreePtr&                 parent,
-	                               const std::string&               name,
-	                               UnitNumber_KeyName_Traits::Key   key )
+	template < class Accessor >
+	static FSTreePtr Query_Factory( const FSTreePtr&                parent,
+	                                const std::string&              name,
+	                                UnitNumber_KeyName_Traits::Key  key )
 	{
-		typedef sys_mac_unit_N_name_Query Query;
+		typedef sys_mac_unit_N_Query< Accessor > Query;
 		
 		typedef FSTree_QueryFile< Query > QueryFile;
 		
@@ -97,7 +140,8 @@ namespace Genie
 	
 	const Functional_Traits< UnitNumber_KeyName_Traits::Key >::Mapping sys_mac_unit_N_Mappings[] =
 	{
-		{ "name", &Name_Factory },
+		{ "flags", &Query_Factory< GetDriverFlags > },
+		{ "name",  &Query_Factory< GetDriverName > },
 		
 		{ NULL, NULL }
 	};
