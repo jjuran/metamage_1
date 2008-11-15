@@ -139,7 +139,7 @@ namespace Genie
 				}
 				
 				// wait is restartable
-				caller.Yield( kInterruptUnlessRestarting );
+				Yield( kInterruptUnlessRestarting );
 			}
 		}
 		catch ( ... )
