@@ -1,8 +1,6 @@
-/*	===============
- *	GenieProcess.hh
- *	===============
- *	
- *	Implemented by GenieProcess.cc
+/*	==========
+ *	Process.hh
+ *	==========
  */
 
 #ifndef GENIE_PROCESS_HH
@@ -147,7 +145,7 @@ namespace Genie
 		private:
 			void Suspend();
 			void Resume();
-			bool Pause( ProcessSchedule newSchedule, Interruptibility interrupting );
+			void Pause( ProcessSchedule newSchedule );
 			
 			void Terminate();
 			void Terminate( int wait_status );
@@ -191,7 +189,7 @@ namespace Genie
 			
 			void Release();
 			
-			bool Yield( Interruptibility interrupting );
+			void Yield();
 			
 			const boost::shared_ptr< IOHandle >& ControllingTerminal() const  { return GetProcessGroup()->GetSession()->GetControllingTerminal(); }
 			

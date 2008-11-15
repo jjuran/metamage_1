@@ -52,6 +52,7 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileSystem/ResolvePathname.hh"
+#include "Genie/Process/AsyncYield.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 
@@ -1266,7 +1267,7 @@ namespace Genie
 	
 	static UInt32 gTickCountOfLastSleep = 0;
 	
-	bool Process::Pause( ProcessSchedule newSchedule, Interruptibility interrupting )
+	void Process::Pause( ProcessSchedule newSchedule )
 	{
 		itsSchedule = newSchedule;
 		
@@ -1288,8 +1289,6 @@ namespace Genie
 		Resume();
 		
 		gTickCountOfLastSleep = ::TickCount();
-		
-		return HandlePendingSignals( interrupting );
 	}
 	
 	void Process::DeliverSignal( int signo )
@@ -1533,8 +1532,10 @@ namespace Genie
 			
 			ASSERT( N::GetCurrentThread() == thread );
 			
+			Pause( kProcessStopped );
+			
 			// Stoppers (pause, sigsuspend) never restart, but don't throw
-			Pause( kProcessStopped, kInterruptNever );
+			HandlePendingSignals( kInterruptNever );
 		}
 		else
 		{
@@ -1573,11 +1574,9 @@ namespace Genie
 	
 	static const UInt32 gMinimumSleepIntervalTicks = 2;
 	
-	// This function doesn't return if we received a fatal signal.
-	bool Process::Yield( Interruptibility interrupting )
+	void Process::Yield()
 	{
-		// Doesn't return if we received a fatal signal.
-		return Pause( kProcessSleeping, interrupting );
+		Pause( kProcessSleeping );
 	}
 	
 	// This function doesn't return if we received a fatal signal.
@@ -1585,7 +1584,31 @@ namespace Genie
 	{
 		ASSERT( gCurrentProcess != NULL );
 		
-		return gCurrentProcess->Yield( interrupting );
+		gCurrentProcess->Yield();
+		
+		// Doesn't return if we received a fatal signal.
+		return gCurrentProcess->HandlePendingSignals( interrupting );
+	}
+	
+	// declared in Process/AsyncYield.hh
+	void AsyncYield()
+	{
+		// This is not quite correct.
+		// What we really want to do is install a completion routine that will
+		// call WakeUpProcess(), so we can pass a large sleep value and still
+		// wake up promptly when the I/O is done.
+		
+		// For now we sleep only a little.
+		Ped::AdjustSleepForActivity();
+		
+		if ( gCurrentProcess == NULL )
+		{
+			N::YieldToAnyThread();
+		}
+		else
+		{
+			gCurrentProcess->Yield();
+		}
 	}
 	
 	// This function doesn't return if we received a fatal signal.
