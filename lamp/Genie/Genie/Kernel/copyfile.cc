@@ -35,7 +35,7 @@ namespace Genie
 	                         long                  copyBufferSize = 0,
 	                         bool                  preflight      = true )
 	{
-		(void) N::FileManagerErrorsRegistrationDependency();
+		NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
 		
 		N::ThrowOSStatus( ::FSpFileCopy( &source,
 		                                 &destDir,
