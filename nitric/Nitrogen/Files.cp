@@ -15,13 +15,6 @@
 #include "Nitrogen/Files.h"
 #endif
 
-#ifndef NITROGEN_MACERRORS_H
-#include "Nitrogen/MacErrors.h"
-#endif
-
-#ifndef NUCLEUS_INITIALIZE_H
-#include "Nucleus/Initialize.h"
-#endif
 #ifndef NUCLEUS_NASSERT_H
 #include "Nucleus/NAssert.h"
 #endif
@@ -76,37 +69,6 @@ namespace Nitrogen
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum )
 	{
 		ThrowOSStatus( ::FSClose( fileRefNum.Release() ) );
-	}
-	
-	SInt32 FSRead( FSFileRefNum     file,
-	               SInt32           requestCount,
-	               void *           buffer,
-	               ReturnZeroOnEOF  /* policy */ )
-	{
-		SInt32 actualCount = requestCount;
-		
-		OSStatus err = ::FSRead( file, &actualCount, buffer );
-		
-		if ( err != eofErr )
-		{
-			ThrowOSStatus( err );
-		}
-		
-		return actualCount;
-	}
-	
-	SInt32 FSRead( FSFileRefNum file,
-	               SInt32       requestCount,
-	               void *       buffer )
-	{
-		SInt32 actualCount = FSRead( file, requestCount, buffer, ReturnZeroOnEOF() );
-		
-		if ( actualCount == 0 )
-		{
-			ThrowOSStatus( eofErr );
-		}
-		
-		return actualCount;
 	}
 	
 	SInt32 FSWrite( FSFileRefNum file,
@@ -168,32 +130,7 @@ namespace Nitrogen
 		ThrowOSStatus( ::PBSetCatInfoSync( &cInfo ) );
 	}
 	
-  using ::CInfoPBRec;
-  using ::DirInfo;
   using ::FileInfo;
-  }
-
-namespace Nucleus
-  {	
-	template <>
-	struct Initializer< Nitrogen::CInfoPBRec >
-	{
-		Nitrogen::CInfoPBRec& operator()( Nitrogen::CInfoPBRec&     paramBlock,
-		                        Nitrogen::FSVolumeRefNum  vRefNum,
-		                        Nitrogen::FSDirID         dirID,
-		                        StringPtr                 name,
-		                        SInt16                    index )
-		{
-			Nitrogen::DirInfo& dirInfo = paramBlock.dirInfo;
-			
-			dirInfo.ioNamePtr = name;
-			dirInfo.ioVRefNum = vRefNum;
-			dirInfo.ioDrDirID = dirID;
-			dirInfo.ioFDirIndex = index;
-			
-			return paramBlock;
-		}
-	};
   }
 
 namespace Nitrogen
@@ -988,12 +925,12 @@ Return Value
       return FSOpenFork( fork.File(), fork.Name(), permissions );
      }
 	
-	ByteCount FSReadFork( FSForkRefNum     fork,
-	                      FSIOPosMode      positionMode,
-	                      SInt64           positionOffset,
-	                      ByteCount        requestCount,
-	                      void *           buffer,
-	                      ReturnZeroOnEOF  /* policy */ )
+	ByteCount FSReadFork( FSForkRefNum    fork,
+	                      FSIOPosMode     positionMode,
+	                      SInt64          positionOffset,
+	                      ByteCount       requestCount,
+	                      void *          buffer,
+	                      ThrowEOF_Never  policy )
 	{
 		ByteCount actualCount;
 		
@@ -1023,7 +960,7 @@ Return Value
 		                                    positionOffset,
 		                                    requestCount,
 		                                    buffer,
-		                                    ReturnZeroOnEOF() );
+		                                    ThrowEOF_Never() );
 		
 		if ( actualCount == 0 )
 		{

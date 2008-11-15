@@ -5,7 +5,7 @@
 
 // Part of the Nitrogen project.
 //
-// Written 2003-2007 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
+// Written 2003-2008 by Lisa Lippincott, Marshall Clow, and Joshua Juran.
 //
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
@@ -36,6 +36,7 @@
 #ifndef NUCLEUS_INDEXUNTILFAILURECONTAINER_H
 #include "Nucleus/IndexUntilFailureContainer.h"
 #endif
+#include "Nucleus/Initialize.h"
 #ifndef NUCLEUS_OWNED_H
 #include "Nucleus/Owned.h"
 #endif
@@ -65,6 +66,8 @@
 #ifndef NITROGEN_TEXTCOMMON_H
 #include "Nitrogen/TextCommon.h"
 #endif
+
+#include "Nitrogen/Devices.h"
 
 #include <vector>
 
@@ -187,11 +190,13 @@ namespace Nitrogen
    typedef DriverReferenceNumber DriverRefNum;
 
    typedef Nucleus::ID< class HFSCatalogNodeID_Tag, UInt32 >::Type HFSCatalogNodeID;
-   
-   using ::HFSUniStr255;
-   using ::FSSpec;
-   using ::FSRef;
-  }
+	
+	using ::HFSUniStr255;
+	using ::CInfoPBRec;
+	using ::DirInfo;
+	using ::FSSpec;
+	using ::FSRef;
+}
 
 namespace Nucleus
   {
@@ -269,24 +274,66 @@ namespace Nitrogen
 	
 	void FSClose( Nucleus::Owned< FSFileRefNum > fileRefNum );
 	
-	struct ThrowOnEOF       {};  // type not used, semantics implied by default
-	struct ReturnZeroOnEOF  {};
-	
+	// Mac OS semantics, almost certainly not what you want
 	SInt32 FSRead( FSFileRefNum     file,
 	               SInt32           requestCount,
 	               void *           buffer,
-	               ReturnZeroOnEOF  /* policy */ );
+	               ThrowEOF_Always  policy );
 	
+	template < class EOF_Policy >
 	SInt32 FSRead( FSFileRefNum  file,
 	               SInt32        requestCount,
-	               void *        buffer );
-	
-	template < class Element, std::size_t count >
-	inline SInt32 FSRead( FSFileRefNum  file,
-	                      Element       (&buffer)[count] )
+	               void *        buffer,
+	               EOF_Policy    policy )
 	{
-		return FSRead( file, count * sizeof (Element), buffer );
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
+		
+		SInt32 actualCount = requestCount;
+		
+		OSErr err = ::FSRead( file, &actualCount, buffer );
+		
+		ThrowReadOSStatus( err, actualCount, policy );
+		
+		return actualCount;
 	}
+	
+	template < class Element, std::size_t count, class Policy >
+	inline SInt32 FSRead( FSFileRefNum  file,
+	                      Element       (&buffer)[count],
+	                      Policy        policy )
+	{
+		return FSRead( file, count * sizeof (Element), buffer, policy );
+	}
+	
+	// Async read
+	template < class Callback, class EOF_Policy >
+	SInt32 FSRead( FSFileRefNum  file,
+	               SInt32        requestCount,
+	               void *        buffer,
+	               Callback      callback,
+	               EOF_Policy    policy )
+	{
+		ParamBlockRec pb = { 0 };
+		
+		IOParam& io = pb.ioParam;
+		
+		io.ioRefNum   = file;
+		io.ioBuffer   = (char*) buffer;
+		io.ioReqCount = requestCount;
+		io.ioPosMode  = fsAtMark;
+		
+		PBReadAsync( pb, policy );
+		
+		while ( io.ioResult == 1 )
+		{
+			callback();
+		}
+		
+		ThrowReadOSStatus( io.ioResult, io.ioActCount, policy );
+		
+		return io.ioActCount;
+	}
+	
 	
 	SInt32 FSWrite( FSFileRefNum  file,
 	                SInt32        requestCount,
@@ -298,6 +345,35 @@ namespace Nitrogen
 	{
 		return FSWrite( file, count * sizeof (Element), buffer );
 	}
+	
+	// Async write
+	template < class Callback >
+	SInt32 FSWrite( FSFileRefNum  file,
+	                SInt32        requestCount,
+	                const void *  buffer,
+	                Callback      callback )
+	{
+		ParamBlockRec pb = { 0 };
+		
+		IOParam& io = pb.ioParam;
+		
+		io.ioRefNum   = file;
+		io.ioBuffer   = (char*) buffer;
+		io.ioReqCount = requestCount;
+		io.ioPosMode  = fsAtMark;
+		
+		PBWriteAsync( pb );
+		
+		while ( io.ioResult == 1 )
+		{
+			callback();
+		}
+		
+		ThrowOSStatus( io.ioResult );
+		
+		return io.ioActCount;
+	}
+	
 	
 	SInt32 Allocate( FSFileRefNum  fileRefNum,
 	                 SInt32        requestCount );
@@ -392,6 +468,26 @@ namespace Nucleus
 		}
 	};
 	
+	template <>
+	struct Initializer< Nitrogen::CInfoPBRec >
+	{
+		Nitrogen::CInfoPBRec& operator()( Nitrogen::CInfoPBRec&     pb,
+		                                  Nitrogen::FSVolumeRefNum  vRefNum,
+		                                  Nitrogen::FSDirID         dirID,
+		                                  StringPtr                 name,
+		                                  SInt16                    index )
+		{
+			Nitrogen::DirInfo& dirInfo = pb.dirInfo;
+			
+			dirInfo.ioNamePtr = name;
+			dirInfo.ioVRefNum = vRefNum;
+			dirInfo.ioDrDirID = dirID;
+			dirInfo.ioFDirIndex = index;
+			
+			return pb;
+		}
+	};
+	
 }
 
 namespace Nitrogen
@@ -402,6 +498,13 @@ namespace Nitrogen
 	// ...
 	
 	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock );
+	
+	inline void PBGetCatInfoAsync( CInfoPBRec& pb )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
+		
+		ThrowOSStatus( ::PBGetCatInfoAsync( &pb ) );
+	}
 	
 	void PBSetCatInfoSync( CInfoPBRec& cInfo );
 	
@@ -419,6 +522,39 @@ namespace Nitrogen
 	                           UInt16            index,
 	                           CInfoPBRec&       paramBlock,
 	                           StringPtr         name        = NULL );
+	
+	template < class Callback >
+	CInfoPBRec& FSpGetCatInfo( const FSSpec&  item,
+	                           CInfoPBRec&    pb,
+	                           Callback       callback )
+	{
+		// There is/was a file sharing problem with null or empty names,
+		// but an FSSpec's name is never empty (and can't be null).
+		
+		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
+		
+		Nucleus::Initialize< CInfoPBRec >( pb,
+		                                   FSVolumeRefNum( item.vRefNum ),
+		                                   FSDirID( item.parID ),
+		                                   const_cast< StringPtr >( item.name ),
+		                                   0 );
+		
+		pb.dirInfo.ioCompletion = NULL;
+		
+		PBGetCatInfoAsync( pb );
+		
+		while ( pb.dirInfo.ioResult == 1 )
+		{
+			callback();
+		}
+		
+		ThrowOSStatus( pb.dirInfo.ioResult );
+		
+		// Don't break the const contract on item.name
+		pb.dirInfo.ioNamePtr = NULL;
+		
+		return pb;
+	}
 	
 	// ...
 	
@@ -1195,12 +1331,12 @@ namespace Nitrogen
    Nucleus::Owned<FSForkRefNum> FSOpenFork( const FSForkRef& fork,
                                             FSIOPermssn      permissions );
 	
-	ByteCount FSReadFork( FSForkRefNum     fork,
-	                      FSIOPosMode      positionMode,
-	                      SInt64           positionOffset,
-	                      ByteCount        requestCount,
-	                      void *           buffer,
-	                      ReturnZeroOnEOF  /* policy */ );
+	ByteCount FSReadFork( FSForkRefNum    fork,
+	                      FSIOPosMode     positionMode,
+	                      SInt64          positionOffset,
+	                      ByteCount       requestCount,
+	                      void *          buffer,
+	                      ThrowEOF_Never  policy );
 	
 	ByteCount FSReadFork( FSForkRefNum fork,
 	                      FSIOPosMode  positionMode,
@@ -1208,10 +1344,10 @@ namespace Nitrogen
 	                      ByteCount    requestCount,
 	                      void *       buffer );
 	
-	inline ByteCount FSReadFork( FSForkRefNum     fork,
-	                             ByteCount        requestCount,
-	                             void *           buffer,
-	                             ReturnZeroOnEOF  policy )
+	inline ByteCount FSReadFork( FSForkRefNum    fork,
+	                             ByteCount       requestCount,
+	                             void *          buffer,
+	                             ThrowEOF_Never  policy )
 	{
 		return FSReadFork( fork, fsAtMark, 0, requestCount, buffer, policy );
 	}
@@ -1943,7 +2079,7 @@ namespace io
 	template < class ByteCount >
 	inline SInt32 read( Nitrogen::FSFileRefNum input, char* data, ByteCount byteCount, overload = overload() )
 	{
-		return Nitrogen::FSRead( input, byteCount, data, Nitrogen::ReturnZeroOnEOF() );
+		return Nitrogen::FSRead( input, byteCount, data, Nitrogen::ThrowEOF_Never() );
 	}
 	
 	template < class ByteCount >
@@ -2075,7 +2211,7 @@ namespace io
 	template < class ByteCount >
 	inline ByteCount read( Nitrogen::FSForkRefNum input, char* data, ByteCount byteCount, overload = overload() )
 	{
-		return Nitrogen::FSReadFork( input, byteCount, data, Nitrogen::ReturnZeroOnEOF() );
+		return Nitrogen::FSReadFork( input, byteCount, data, Nitrogen::ThrowEOF_Never() );
 	}
 	
 	template < class ByteCount >
