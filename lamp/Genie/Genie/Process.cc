@@ -662,7 +662,7 @@ namespace Genie
 			char data[ 1024 + 1 ];
 			data[1024] = '\0';
 			
-			size_t bytes = N::FSRead( script, 1024, data );
+			size_t bytes = N::FSRead( script, 1024, data, N::ThrowEOF_Never() );
 			
 			N::FSClose( script );
 			
