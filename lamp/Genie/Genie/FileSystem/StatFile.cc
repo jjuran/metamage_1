@@ -12,6 +12,9 @@
 #include "stdlib.h"
 #include "sys/stat.h"
 
+// MoreFunctional
+#include "PointerToFunction.hh"
+
 // POSeven
 #include "POSeven/Errno.hh"
 
@@ -23,13 +26,31 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
+#include "Genie/Process/AsyncYield.hh"
 
+
+namespace Nitrogen
+{
+	
+	static const Gestalt_Selector gestaltMacOSCompatibilityBoxAttr = Gestalt_Selector( ::gestaltMacOSCompatibilityBoxAttr );
+	
+	template <> struct GestaltDefault< gestaltMacOSCompatibilityBoxAttr > : GestaltAttrDefaults {};
+	
+}
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	static bool RunningInClassic()
+	{
+		static bool inClassic = N::Gestalt_Bit< N::gestaltMacOSCompatibilityBoxAttr, gestaltMacOSCompatibilityBoxPresent >();
+		
+		return inClassic;
+	}
 	
 	
 	static bool TypeIsExecutable( OSType type )
@@ -87,9 +108,31 @@ namespace Genie
 	{
 		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
 		
-		CInfoPBRec paramBlock;
+		CInfoPBRec paramBlock = { 0 };
 		
-		N::FSpGetCatInfo( file, paramBlock );
+		// Calling the asynchronous variant of FSpGetCatInfo() reliably elicits
+		// System Error 27 (dsFSErr: file system map has been trashed) in Classic
+		// (eventually), but (so far) only when called from CheckProgramFile().
+		
+		// On infrequent (but not rare) occasion, ioResult is set and control is
+		// returned to the application (allowing it to destroy the parameter block)
+		// before the completion routine has run.  Sadly, polling a flag set by
+		// the completion routine only delays the crash instead of avoiding it.
+		// Apparently this is a bug in the .BlueBoxShared driver.
+		
+		// We could set have CheckProgramFile() set an indicator in one of sb's
+		// fields, but (a) the same bug may affect other uses besides, even if
+		// they haven't shown up yet, and (b) it's just not worth it to hack
+		// around Apple's bug like that.
+		
+		if ( RunningInClassic() )
+		{
+			N::FSpGetCatInfo( file, paramBlock );
+		}
+		else
+		{
+			N::FSpGetCatInfo( file, paramBlock, more::ptr_fun( AsyncYield ) );
+		}
 		
 		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
@@ -147,7 +190,7 @@ namespace Genie
 	{
 		CInfoPBRec paramBlock;
 		
-		N::FSpGetCatInfo( file, paramBlock );
+		N::FSpGetCatInfo( file, paramBlock, more::ptr_fun( AsyncYield ) );
 		
 		HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
