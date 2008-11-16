@@ -164,10 +164,9 @@ namespace Genie
 				typename Details::Key key = itsDetails.KeyFromValue( value );
 				
 				std::string name = itsDetails.NameFromKey( key );
+				ino_t inode = 0;
 				
-				FSTreePtr node( itsDetails.GetChildNode( itsParent, name, key ) );
-				
-				return FSNode( node->Inode(), name );
+				return FSNode( inode, name );
 			}
 	};
 	
@@ -352,9 +351,9 @@ namespace Genie
 			
 			try
 			{
-				FSTreePtr tree( Details::Invoke( f, shared_from_this(), name ) );
+				ino_t inode = 0;
 				
-				cache.push_back( FSNode( tree->Inode(), name ) );
+				cache.push_back( FSNode( inode, name ) );
 			}
 			catch ( ... )
 			{
