@@ -884,9 +884,9 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::Lookup_Regular( const std::string& name ) const
 	{
-		FSSpec target = N::ResolveAliasFile( GetFSSpec(), true );
+		N::ResolveAliasFile_Result target = N::ResolveAliasFile( GetFSSpec(), true );
 		
-		if ( io::file_exists( target )  &&  name == "rsrc" )
+		if ( !target.targetIsFolder  &&  name == "rsrc" )
 		{
 			return GetRsrcForkFSTree( target );
 		}
