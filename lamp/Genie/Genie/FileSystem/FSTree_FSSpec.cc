@@ -16,9 +16,6 @@
 #include "utime.h"
 #include "sys/stat.h"
 
-// MoreFunctional
-#include "PointerToFunction.hh"
-
 // MoreFiles
 #include "MoreFilesExtras.h"
 
@@ -31,9 +28,6 @@
 
 // POSeven
 #include "POSeven/Errno.hh"
-
-// Nitrogen Extras / Iteration
-#include "Iteration/FSContents.h"
 
 // TimeOff
 #include "TimeOff.hh"
@@ -286,6 +280,8 @@ namespace Genie
 			
 			bool IsLink() const;
 			
+			ino_t Inode() const;
+			
 			void Stat( struct ::stat& sb ) const;
 			
 			void ChangeMode( mode_t mode ) const;
@@ -341,6 +337,8 @@ namespace Genie
 			FSTreePtr Parent() const;
 			
 			FSSpec GetFSSpec( bool forCreation ) const;
+			
+			ino_t ParentInode() const;
 			
 			void CreateFile() const;
 			
@@ -427,7 +425,7 @@ namespace Genie
 			{
 			}
 			
-			void Stat( struct ::stat& sb ) const;
+			ino_t Inode() const;
 	};
 	
 	
@@ -523,23 +521,6 @@ namespace Genie
 		static const FSTreePtr& root = MakeFSRoot();
 		
 		return root;
-	}
-	
-	
-	static FSNode MakeFSNode_FSSpec( const N::FSDirSpec& dir, const unsigned char* macName )
-	{
-		FSSpec item = dir / macName;
-		
-		std::string name = GetUnixName( item );
-		
-		const bool isLong = name.size() > 31;
-		
-		FSTree* ptr = isLong ? static_cast< FSTree* >( new FSTree_LongName( io::get_preceding_directory( item ), name ) )
-		                     : static_cast< FSTree* >( new FSTree_FSSpec( item ) );
-		
-		FSTreePtr tree( ptr );
-		
-		return FSNode( name, tree );
 	}
 	
 	
@@ -682,6 +663,11 @@ namespace Genie
 		return itsFileSpec;
 	}
 	
+	ino_t FSTree_FSSpec::ParentInode() const
+	{
+		return itsFileSpec.parID;
+	}
+	
 	FSSpec FSTree_ConflictingName::GetFSSpec( bool forCreation ) const
 	{
 		p7::throw_errno( forCreation ? EEXIST : ENOENT );
@@ -692,6 +678,15 @@ namespace Genie
 	FSSpec FSTree_LongName::GetFSSpec( bool forCreation ) const
 	{
 		return FSSpecForLongUnixName( itsParent, Name(), forCreation );
+	}
+	
+	ino_t FSTree_HFS::Inode() const
+	{
+		struct ::stat sb;
+		
+		Stat( sb );
+		
+		return sb.st_ino;
 	}
 	
 	void FSTree_HFS::Stat( struct ::stat& sb ) const
@@ -922,14 +917,21 @@ namespace Genie
 	{
 		N::FSDirSpec dir( GetFSSpec() );
 		
-		N::FSSpecContents_Container contents = N::FSContents( dir );
+		CInfoPBRec  pb;
+		::Str255    name;
 		
-		std::transform( contents.begin(),
-		                contents.end(),
-		                //cache.begin() + 2,
-		                std::back_inserter( cache ),
-		                std::bind1st( more::ptr_fun( MakeFSNode_FSSpec ),
-		                              dir ) );
+		const UInt32 n_items = N::FSpGetCatInfo( dir, pb ).dirInfo.ioDrNmFls;
+		
+		for ( UInt32 i = 1;  i <= n_items;  ++i )
+		{
+			N::FSpGetCatInfo( dir, i, pb, name );
+			
+			ino_t inode = pb.hFileInfo.ioDirID;  // file or dir ID for inode
+			
+			FSNode node( inode, NN::Convert< std::string >( name ) );
+			
+			cache.push_back( node );
+		}
 	}
 	
 	
@@ -961,11 +963,9 @@ namespace Genie
 		return MakeFSTree( new FSTree_Volumes_Link( parent, name, key ) );
 	}
 	
-	void FSTree_Volumes::Stat( struct ::stat& sb ) const
+	ino_t FSTree_Volumes::Inode() const
 	{
-		Base::Stat( sb );
-		
-		sb.st_ino = fsRtParID;
+		return fsRtParID;
 	}
 	
 }

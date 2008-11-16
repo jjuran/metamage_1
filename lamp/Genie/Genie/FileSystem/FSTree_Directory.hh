@@ -167,7 +167,7 @@ namespace Genie
 				
 				FSTreePtr node( itsDetails.GetChildNode( itsParent, name, key ) );
 				
-				return FSNode( name, node );
+				return FSNode( node->Inode(), name );
 			}
 	};
 	
@@ -354,7 +354,7 @@ namespace Genie
 			{
 				FSTreePtr tree( Details::Invoke( f, shared_from_this(), name ) );
 				
-				cache.push_back( FSNode( name, tree ) );
+				cache.push_back( FSNode( tree->Inode(), name ) );
 			}
 			catch ( ... )
 			{

@@ -33,6 +33,7 @@ namespace Genie
 	static void SetDirEntry( dirent& dir, ino_t inode, const std::string& name )
 	{
 		dir.d_ino = inode;
+		
 		std::strcpy( dir.d_name, name.c_str() );  // FIXME:  Unsafe!
 	}
 	
@@ -66,18 +67,14 @@ namespace Genie
 	{
 		FSNode node = iterator->Get();
 		
-		if ( node.tree == NULL )
+		if ( node.name.empty() )
 		{
 			return 0;
 		}
 		
 		iterator->Advance();
 		
-		struct ::stat sb;
-		
-		node.tree->Stat( sb );
-		
-		SetDirEntry( entry, sb.st_ino, node.name );
+		SetDirEntry( entry, node.inode, node.name );
 		
 		return sizeof (dirent);
 	}

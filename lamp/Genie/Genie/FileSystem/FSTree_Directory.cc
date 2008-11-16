@@ -66,8 +66,8 @@ namespace Genie
 	{
 		FSTreeCache cache( 2 );
 		
-		cache[0] = FSNode( ".",  Self()   );
-		cache[1] = FSNode( "..", Parent() );
+		cache[0] = FSNode( Inode(),       "."  ); 
+		cache[1] = FSNode( ParentInode(), ".." );
 		
 		IterateIntoCache( cache );
 		

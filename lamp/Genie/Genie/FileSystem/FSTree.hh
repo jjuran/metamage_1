@@ -47,12 +47,16 @@ namespace Genie
 	
 	struct FSNode
 	{
+		ino_t        inode;
 		std::string  name;
-		FSTreePtr    tree;
 		
-		FSNode()  {}
+		FSNode()
+		{
+		}
 		
-		FSNode( const std::string& name, const FSTreePtr& tree ) : name( name ), tree( tree )  {}
+		FSNode( ino_t i, const std::string& n ) : inode( i ), name( n )
+		{
+		}
 		
 		~FSNode();
 	};
@@ -105,6 +109,9 @@ namespace Genie
 			virtual FSTreePtr Parent() const;
 			
 			virtual FSSpec GetFSSpec( bool forCreation = false ) const;
+			
+			virtual ino_t Inode() const;
+			virtual ino_t ParentInode() const;
 			
 			virtual mode_t FileTypeMode() const;
 			virtual mode_t FilePermMode() const;

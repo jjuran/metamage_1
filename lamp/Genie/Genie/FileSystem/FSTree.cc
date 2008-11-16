@@ -125,6 +125,16 @@ namespace Genie
 		return FSSpec();  // Not reached
 	}
 	
+	ino_t FSTree::Inode() const
+	{
+		return 0;
+	}
+	
+	ino_t FSTree::ParentInode() const
+	{
+		return Parent()->Inode();
+	}
+	
 	mode_t FSTree::FileTypeMode() const
 	{
 		mode_t type = IsDirectory() ? S_IFDIR
@@ -155,6 +165,8 @@ namespace Genie
 		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
 		
 		time_t now = N::GetDateTime() - timeDiff;
+		
+		sb.st_ino = Inode();
 		
 		sb.st_mode = FileTypeMode() | FilePermMode();
 		
