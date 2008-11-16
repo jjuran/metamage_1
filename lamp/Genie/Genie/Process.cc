@@ -1614,6 +1614,11 @@ namespace Genie
 	// This function doesn't return if we received a fatal signal.
 	bool Breathe()
 	{
+		ASSERT( gCurrentProcess != NULL );
+		
+		// Check for fatal signals; don't throw EINTR
+		gCurrentProcess->HandlePendingSignals( kInterruptNever );
+		
 		UInt32 now = ::TickCount();
 		
 		if ( now - gTickCountOfLastSleep > gMinimumSleepIntervalTicks )
