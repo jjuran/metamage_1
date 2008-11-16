@@ -590,14 +590,25 @@ namespace Genie
 	
 	bool FSTree_HFS::IsLink() const
 	{
-		if ( !Exists() )
-		{
-			return false;
-		}
-		
 		CInfoPBRec paramBlock;
 		
-		N::FSpGetCatInfo( GetFSSpec(), paramBlock );
+		try
+		{
+			N::FSpGetCatInfo( GetFSSpec(), paramBlock );
+		}
+		catch ( const N::FNFErr& err )
+		{
+		#ifdef __MWERKS__
+			
+			if ( err != fnfErr )
+			{
+				throw;
+			}
+			
+		#endif
+			
+			return false;
+		}
 		
 		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		
