@@ -431,29 +431,45 @@ namespace Genie
 	
 	static const char* const_j_directory_name = "j";
 	
-	static N::FSDirSpec FindJDirectory()
+	static FSSpec FindJDirectory()
 	{
-		FSSpec result;
-		
 		// Try current directory first
-		if ( io::directory_exists( result = N::FSDirSpec() / const_j_directory_name ) )
+		FSSpec j =  N::FSDirSpec() / const_j_directory_name;
+		
+		if ( !io::directory_exists( j ) )
 		{
-			return N::FSDirSpec( result );
+			// Then root, or bust
+			j = io::system_root< N::FSDirSpec >() / const_j_directory_name;
+			
+			(void) N::FSDirSpec( j );  // throws if not a dir
 		}
 		
-		// Then root, or bust
-		result = io::system_root< N::FSDirSpec >() / const_j_directory_name;
-		
-		return N::FSDirSpec( result );
+		return j;
 	}
 	
-	static N::FSDirSpec UsersDirectory()
+	static const FSSpec& GetJDirectory()
+	{
+		static FSSpec j = FindJDirectory();
+		
+		return j;
+	}
+	
+	static FSSpec FindUsersDirectory()
 	{
 		N::FSDirSpec root = io::system_root< N::FSDirSpec >();
 		
 		FSSpec users = root / "Users";
 		
-		return N::FSDirSpec( users );
+		(void) N::FSDirSpec( users );  // throws if not a dir
+		
+		return users;
+	}
+	
+	static const FSSpec& GetUsersDirectory()
+	{
+		static FSSpec users = FindUsersDirectory();
+		
+		return users;
 	}
 	
 	
@@ -471,17 +487,17 @@ namespace Genie
 			FSTreePtr ResolveLink() const  { return FSRoot(); }
 	};
 	
-	static bool IsRootDirectory( const N::FSDirSpec& dir )
+	inline bool IsRootDirectory( const FSSpec& fileSpec )
 	{
-		return dir == FindJDirectory();
-	}
-	
-	static bool IsRootDirectory( const FSSpec& fileSpec )
-	{
-		return io::directory_exists( fileSpec )  &&  IsRootDirectory( N::FSDirSpec( fileSpec ) );
+		return fileSpec == GetJDirectory();
 	}
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
+	{
+		return FSTreePtr( new FSTree_FSSpec( item ) );
+	}
+	
+	static FSTreePtr FSTreeFromFSSpecRespectingJ( const FSSpec& item )
 	{
 		if ( IsRootDirectory( item ) )
 		{
@@ -629,25 +645,9 @@ namespace Genie
 			return Get_sys_mac_vol_N( N::FSVolumeRefNum( itsFileSpec.vRefNum ) );
 		}
 		
-		if ( io::directory_exists( itsFileSpec ) )
+		if ( IsRootDirectory( itsFileSpec ) || itsFileSpec == GetUsersDirectory() )
 		{
-			N::FSDirSpec dir( itsFileSpec );
-			
-			if ( IsRootDirectory( dir ) )
-			{
-				return FSRoot();
-			}
-			
-			try
-			{
-				if ( dir == UsersDirectory() )
-				{
-					return FSRoot();
-				}
-			}
-			catch ( ... )
-			{
-			}
+			return FSRoot();
 		}
 		
 		return FSTreePtr( new FSTree_FSSpec( io::get_preceding_directory( itsFileSpec ) ) );
@@ -909,7 +909,7 @@ namespace Genie
 		// The requested name and the returned name may differ in letter case.
 		const bool matchedCase = std::equal( macName.begin(), macName.end(), (const char*) item.name + 1 );
 		
-		return matchedCase ? FSTreeFromFSSpec( item )
+		return matchedCase ? FSTreeFromFSSpecRespectingJ( item )
 		                   : FSTreePtr( new FSTree_ConflictingName( item ) );
 	}
 	
