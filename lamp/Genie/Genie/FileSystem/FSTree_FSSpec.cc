@@ -591,29 +591,42 @@ namespace Genie
 		
 		try
 		{
-			N::FSpGetCatInfo( GetFSSpec(), paramBlock );
-		}
-		catch ( const N::FNFErr& err )
-		{
-		#ifdef __MWERKS__
+			// GetFSSpec() may throw ENOENT for nonexistent long names
+			FSSpec spec = GetFSSpec();
 			
-			if ( err != fnfErr )
+			try
+			{
+				N::FSpGetCatInfo( spec, paramBlock );
+				
+				const HFileInfo& hFileInfo = paramBlock.hFileInfo;
+				
+				bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+				
+				bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
+				
+				return isAlias;
+			}
+			catch ( const N::FNFErr& err )
+			{
+			#ifdef __MWERKS__
+				
+				if ( err != fnfErr )
+				{
+					throw;
+				}
+				
+			#endif
+			}
+		}
+		catch ( const p7::errno_t& err )
+		{
+			if ( err != ENOENT )
 			{
 				throw;
 			}
-			
-		#endif
-			
-			return false;
 		}
 		
-		const HFileInfo& hFileInfo = paramBlock.hFileInfo;
-		
-		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
-		
-		bool isAlias = !isDir  &&  hFileInfo.ioFlFndrInfo.fdFlags & kIsAlias;
-		
-		return isAlias;
+		return false;
 	}
 	
 	std::string FSTree_FSSpec::Name() const
@@ -920,9 +933,11 @@ namespace Genie
 		CInfoPBRec  pb;
 		::Str255    name;
 		
-		const UInt32 n_items = N::FSpGetCatInfo( dir, pb ).dirInfo.ioDrNmFls;
+		N::FSpGetCatInfo( dir, pb );
 		
-		for ( UInt32 i = 1;  i <= n_items;  ++i )
+		const UInt16 n_items = pb.dirInfo.ioDrNmFls;
+		
+		for ( UInt16 i = 1;  i <= n_items;  ++i )
 		{
 			N::FSpGetCatInfo( dir, i, pb, name );
 			
