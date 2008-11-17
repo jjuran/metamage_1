@@ -33,7 +33,9 @@ namespace Nitrogen
 		{
 			CInfoPBRec pb;
 			
-			return FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), pb ).dirInfo.ioDrNmFls;
+			FSpGetCatInfo( Nucleus::Convert< FSDirSpec >( dir ), pb );
+			
+			return pb.dirInfo.ioDrNmFls;
 		}
 		
 		static value_type GetValue( const ContainerType& dir, size_type position )
