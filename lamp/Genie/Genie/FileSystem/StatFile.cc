@@ -188,7 +188,7 @@ namespace Genie
 	
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode )
 	{
-		CInfoPBRec paramBlock;
+		CInfoPBRec paramBlock = { 0 };
 		
 		N::FSpGetCatInfo( file, paramBlock, more::ptr_fun( AsyncYield ) );
 		
