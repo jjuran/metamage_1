@@ -72,6 +72,15 @@
 #include <vector>
 
 
+#undef PBGetCatInfo
+
+inline OSErr PBGetCatInfo( CInfoPBRec* pb, Boolean async )
+{
+	return async ? PBGetCatInfoAsync( pb )
+	             : PBGetCatInfoSync ( pb );
+}
+
+
 namespace Nitrogen
 {
 	
@@ -497,68 +506,347 @@ namespace Nitrogen
 	
 	// ...
 	
-	CInfoPBRec& PBGetCatInfoSync( CInfoPBRec& paramBlock );
+	struct FNF_Throws
+	{
+		typedef void Result;
+		
+		static void HandleOSStatus( OSStatus err )
+		{
+			ThrowOSStatus( err );
+		}
+	};
 	
-	inline void PBGetCatInfoAsync( CInfoPBRec& pb )
+	struct FNF_ReturnsFalse
+	{
+		typedef bool Result;
+		
+		static bool HandleOSStatus( OSStatus err )
+		{
+			if ( err == fnfErr )
+			{
+				return false;
+			}
+			
+			ThrowOSStatus( err );
+			
+			return true;
+		}
+	};
+	
+	
+	struct Dummy {};
+	
+	
+	template < class Policy >
+	inline typename Policy::Result PBGetCatInfoSync( CInfoPBRec& pb, Policy = Policy() )
 	{
 		NUCLEUS_REQUIRE_ERRORS( FileManager );
 		
-		ThrowOSStatus( ::PBGetCatInfoAsync( &pb ) );
+		return Policy::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
 	}
 	
-	void PBSetCatInfoSync( CInfoPBRec& cInfo );
-	
-	// ...
-	
-	const CInfoPBRec* FSpGetCatInfo( const FSSpec& item );
-	
-	CInfoPBRec& FSpGetCatInfo( const FSSpec& item, CInfoPBRec& paramBlock );
-	
-	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
-	                           CInfoPBRec&       paramBlock,
-	                           StringPtr         name        = NULL );
-	
-	CInfoPBRec& FSpGetCatInfo( const FSDirSpec&  dir,
-	                           UInt16            index,
-	                           CInfoPBRec&       paramBlock,
-	                           StringPtr         name        = NULL );
-	
-	template < class Callback >
-	CInfoPBRec& FSpGetCatInfo( const FSSpec&  item,
-	                           CInfoPBRec&    pb,
-	                           Callback       callback )
+	// throw FNFErr by default
+	inline void PBGetCatInfoSync( CInfoPBRec& pb )
 	{
-		// There is/was a file sharing problem with null or empty names,
-		// but an FSSpec's name is never empty (and can't be null).
+		PBGetCatInfoSync< FNF_Throws >( pb );
+	}
+	
+	
+	template < class Policy >
+	inline typename Policy::Result PBGetCatInfoAsync( CInfoPBRec& pb, Policy = Policy() )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
 		
-		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
-		
-		Nucleus::Initialize< CInfoPBRec >( pb,
-		                                   FSVolumeRefNum( item.vRefNum ),
-		                                   FSDirID( item.parID ),
-		                                   const_cast< StringPtr >( item.name ),
-		                                   0 );
-		
-		pb.dirInfo.ioCompletion = NULL;
-		
-		PBGetCatInfoAsync( pb );
+		return Policy::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+	}
+	
+	// throw FNFErr by default
+	inline void PBGetCatInfoAsync( CInfoPBRec& pb )
+	{
+		PBGetCatInfoAsync< FNF_Throws >( pb );
+	}
+	
+	template < class Policy, class Callback >
+	typename Policy::Result PBGetCatInfoAsync( CInfoPBRec&    pb,
+	                                           Callback       callback,
+	                                           Dummy          dummy )
+	{
+		PBGetCatInfoAsync< Policy >( pb );
 		
 		while ( pb.dirInfo.ioResult == 1 )
 		{
 			callback();
 		}
 		
-		ThrowOSStatus( pb.dirInfo.ioResult );
+		return Policy::HandleOSStatus( pb.dirInfo.ioResult );
+	}
+	
+	
+	inline void PBSetCatInfoSync( CInfoPBRec& pb )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
 		
-		// Don't break the const contract on item.name
-		pb.dirInfo.ioNamePtr = NULL;
+		ThrowOSStatus( ::PBSetCatInfoSync( &pb ) );
+	}
+	
+	inline void PBSetCatInfoAsync( CInfoPBRec& pb )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
 		
-		return pb;
+		ThrowOSStatus( ::PBSetCatInfoAsync( &pb ) );
 	}
 	
 	// ...
 	
+	
+	struct Synchronous {};
+	
+	template < class Callback >
+	struct Callback_Traits
+	{
+		static const bool is_async = true;
+		
+		template < class Policy >
+		static typename Policy::Result PBGetCatInfo( CInfoPBRec& pb, Callback callback )
+		{
+			return PBGetCatInfoAsync< Policy >( pb, callback, Dummy() );
+		}
+	};
+	
+	template <>
+	struct Callback_Traits< Synchronous >
+	{
+		static const bool is_async = false;
+		
+		template < class Policy >
+		static typename Policy::Result PBGetCatInfo( CInfoPBRec& pb, Synchronous = Synchronous() )
+		{
+			return PBGetCatInfoSync< Policy >( pb );
+		}
+	};
+	
+	
+	// Variant 1:  FSSpec to get info on
+	//             CInfoPBRec output parameter
+	
+	template < class Policy, class Callback >
+	typename Policy::Result FSpGetCatInfo( const FSSpec&  item,
+	                                       CInfoPBRec&    pb,
+	                                       Callback       callback,
+	                                       Dummy          dummy )
+	{
+		// There is/was a file sharing problem with null or empty names,
+		// but an FSSpec's name is never empty (and can't be null).
+		
+		// ioFDirIndex = 0:  use ioDrDirID and ioNamePtr
+		
+		Str255 name = item.name;
+		
+		Nucleus::Initialize< CInfoPBRec >( pb,
+		                                   FSVolumeRefNum( item.vRefNum ),
+		                                   FSDirID       ( item.parID   ),
+		                                   name,
+		                                   0 );
+		
+		// This may throw (or not), or return true or false
+		Callback_Traits< Callback >::template PBGetCatInfo< Policy >( pb, callback );
+		
+		pb.dirInfo.ioNamePtr = NULL;
+		
+		// This will do the same thing as above (which means it won't throw)
+		return Policy::HandleOSStatus( pb.dirInfo.ioResult );
+	}
+	
+	// Synchronous, throws FNFErr
+	inline void FSpGetCatInfo( const FSSpec&  item,
+	                           CInfoPBRec&    pb,
+	                           FNF_Throws     policy = FNF_Throws() )
+	{
+		FSpGetCatInfo< FNF_Throws, Synchronous >( item, pb, Synchronous(), Dummy() );
+	}
+	
+	// Synchronous, returns false on fnfErr
+	inline bool FSpGetCatInfo( const FSSpec&     item,
+	                           CInfoPBRec&       pb,
+	                           FNF_ReturnsFalse  policy )
+	{
+		return FSpGetCatInfo< FNF_ReturnsFalse, Synchronous >( item, pb, Synchronous(), Dummy() );
+	}
+	
+	// Asynchronous, throws FNFErr
+	template < class Callback >
+	inline void FSpGetCatInfo( const FSSpec&  item,
+	                           CInfoPBRec&    pb,
+	                           Callback       callback,
+	                           FNF_Throws     policy = FNF_Throws() )
+	{
+		FSpGetCatInfo< FNF_Throws, Callback >( item, pb, callback, Dummy() );
+	}
+	
+	// Asynchronous, returns false on fnfErr
+	template < class Callback >
+	inline bool FSpGetCatInfo( const FSSpec&     item,
+	                           CInfoPBRec&       pb,
+	                           Callback          callback,
+	                           FNF_ReturnsFalse  policy )
+	{
+		return FSpGetCatInfo< FNF_ReturnsFalse, Callback >( item, pb, callback, Dummy() );
+	}
+	
+	
+	// Variant 2:  FSDirSpec parent and index
+	//             CInfoPBRec and StringPtr output parameters
+	
+	template < class Policy, class Callback >
+	typename Policy::Result FSpGetCatInfo( const FSDirSpec&  dir,
+	                                       SInt16            index,
+	                                       CInfoPBRec&       pb,
+	                                       StringPtr         name,
+	                                       Callback          callback,
+	                                       Dummy             dummy )
+	{
+		// ioFDirIndex > 0:  use ioDrDirID only
+		
+		// Variant 3 calls through with a negative index, so allow that
+		ASSERT( index != 0 );
+		
+		Nucleus::Initialize< CInfoPBRec >( pb,
+		                                   dir.vRefNum,
+		                                   dir.dirID,
+		                                   name,  // Output only
+		                                   index );
+		
+		return Callback_Traits< Callback >::template PBGetCatInfo< Policy >( pb, callback );
+		
+	}
+	
+	// Synchronous, throws FNFErr
+	inline void FSpGetCatInfo( const FSDirSpec&  dir,
+	                           SInt16            index,
+	                           CInfoPBRec&       pb,
+	                           StringPtr         name,
+	                           FNF_Throws        policy = FNF_Throws() )
+	{
+		FSpGetCatInfo< FNF_Throws, Synchronous >( dir,
+		                                          index,
+		                                          pb,
+		                                          name,
+		                                          Synchronous(),
+		                                          Dummy() );
+		
+	}
+	
+	// Synchronous, returns false on fnfErr
+	inline bool FSpGetCatInfo( const FSDirSpec&  dir,
+	                           SInt16            index,
+	                           CInfoPBRec&       pb,
+	                           StringPtr         name,
+	                           FNF_ReturnsFalse  policy )
+	{
+		return FSpGetCatInfo< FNF_ReturnsFalse, Synchronous >( dir,
+		                                                       index,
+		                                                       pb,
+		                                                       name,
+		                                                       Synchronous(),
+		                                                       Dummy() );
+	}
+	
+	// Asynchronous, throws FNFErr
+	template < class Callback >
+	inline void FSpGetCatInfo( const FSDirSpec&  dir,
+	                           SInt16            index,
+	                           CInfoPBRec&       pb,
+	                           StringPtr         name,
+	                           Callback          callback,
+	                           FNF_Throws        policy = FNF_Throws() )
+	{
+		FSpGetCatInfo< FNF_Throws, Callback >( dir,
+		                                       index,
+		                                       pb,
+		                                       name,
+		                                       callback,
+		                                       Dummy() );
+		
+	}
+	
+	// Asynchronous, returns false on fnfErr
+	template < class Callback >
+	inline bool FSpGetCatInfo( const FSDirSpec&  dir,
+	                           SInt16            index,
+	                           CInfoPBRec&       pb,
+	                           StringPtr         name,
+	                           Callback          callback,
+	                           FNF_ReturnsFalse  policy )
+	{
+		return FSpGetCatInfo< FNF_ReturnsFalse, Callback >( dir,
+		                                                    index,
+		                                                    pb,
+		                                                    name,
+		                                                    callback,
+		                                                    Dummy() );
+	}
+	
+	
+	// Variant 3:  FSDirSpec to get info on
+	//             CInfoPBRec and StringPtr output parameters
+	
+	template < class Policy, class Callback >
+	inline typename Policy::Result FSpGetCatInfo( const FSDirSpec&  dir,
+	                                              CInfoPBRec&       pb,
+	                                              StringPtr         name,
+	                                              Callback          callback,
+	                                              Dummy             dummy )
+	{
+		// ioFDirIndex < 0:  use ioDrDirID only
+		
+		return FSpGetCatInfo< Policy, Callback >( dir, -1, pb, name, callback, dummy );
+	}
+	
+	// Synchronous, throws FNFErr
+	inline void FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       pb,
+	                           StringPtr         name,
+	                           FNF_Throws        policy = FNF_Throws() )
+	{
+		FSpGetCatInfo( dir, -1, pb, name, policy );
+	}
+	
+	// Synchronous, returns false on fnfErr
+	inline bool FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       pb,
+	                           StringPtr         name,
+	                           FNF_ReturnsFalse  policy )
+	{
+		return FSpGetCatInfo( dir, -1, pb, name, policy );
+	}
+	
+	// Asynchronous, throws FNFErr
+	template < class Callback >
+	inline void FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       pb,
+	                           StringPtr         name,
+	                           Callback          callback,
+	                           FNF_Throws        policy = FNF_Throws() )
+	{
+		FSpGetCatInfo( dir, -1, pb, name, callback, policy );
+	}
+	
+	// Asynchronous, returns false on fnfErr
+	template < class Callback >
+	inline bool FSpGetCatInfo( const FSDirSpec&  dir,
+	                           CInfoPBRec&       pb,
+	                           StringPtr         name,
+	                           Callback          callback,
+	                           FNF_ReturnsFalse  policy )
+	{
+		return FSpGetCatInfo( dir, -1, pb, name, callback, policy );
+	}
+	
+	
+	// ...
+	
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock );
+	
 	GetVolParmsInfoBuffer PBHGetVolParmsSync( FSVolumeRefNum vRefNum );
 	
 	// Desktop Manager
@@ -1978,7 +2266,9 @@ namespace io
 	
 	inline bool item_exists( const FSSpec& item, overload )
 	{
-		return Nitrogen::FSpGetCatInfo( item ) != NULL;
+		CInfoPBRec pb;
+		
+		return Nitrogen::FSpGetCatInfo( item, pb, Nitrogen::FNF_ReturnsFalse() );
 	}
 	
 	inline bool item_is_directory( const HFileInfo& hFileInfo, overload = overload() )
@@ -1998,16 +2288,20 @@ namespace io
 	
 	inline bool file_exists( const FSSpec& file, overload = overload() )
 	{
-		const CInfoPBRec* cInfo = Nitrogen::FSpGetCatInfo( file );
+		CInfoPBRec pb;
 		
-		return cInfo != NULL  &&  item_is_file( *cInfo );
+		const bool exists = Nitrogen::FSpGetCatInfo( file, pb, Nitrogen::FNF_ReturnsFalse() );
+		
+		return exists  &&  item_is_file( pb );
 	}
 	
 	inline bool directory_exists( const FSSpec& dir, overload = overload() )
 	{
-		const CInfoPBRec* cInfo = Nitrogen::FSpGetCatInfo( dir );
+		CInfoPBRec pb;
 		
-		return cInfo != NULL  &&  item_is_directory( *cInfo );
+		const bool exists = Nitrogen::FSpGetCatInfo( dir, pb, Nitrogen::FNF_ReturnsFalse() );
+		
+		return exists  &&  item_is_directory( pb );
 	}
 	
 	// Delete
