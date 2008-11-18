@@ -14,6 +14,9 @@
 // Io
 #include "io/slurp.hh"
 
+// Genie
+#include "Genie/Utilities/AsyncIO.hh"
+
 
 namespace Nucleus
 {
@@ -108,7 +111,7 @@ namespace Genie
 	{
 		CInfoPBRec pb;
 		
-		N::FSpGetCatInfo( file, pb );
+		FSpGetCatInfo( file, pb, Async() );
 		
 		return BinaryFileMetadata( pb.hFileInfo );
 	}

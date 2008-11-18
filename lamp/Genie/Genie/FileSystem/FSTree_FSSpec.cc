@@ -47,6 +47,7 @@
 #include "Genie/FileSystem/ResolvePathname.hh"
 #include "Genie/FileSystem/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
+#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie
@@ -596,7 +597,7 @@ namespace Genie
 			
 			try
 			{
-				N::FSpGetCatInfo( spec, paramBlock );
+				FSpGetCatInfo( spec, paramBlock, Async() );
 				
 				const HFileInfo& hFileInfo = paramBlock.hFileInfo;
 				
