@@ -1593,14 +1593,6 @@ namespace Genie
 	// declared in Process/AsyncYield.hh
 	void AsyncYield()
 	{
-		// This is not quite correct.
-		// What we really want to do is install a completion routine that will
-		// call WakeUpProcess(), so we can pass a large sleep value and still
-		// wake up promptly when the I/O is done.
-		
-		// For now we sleep only a little.
-		Ped::AdjustSleepForActivity();
-		
 		if ( gCurrentProcess == NULL )
 		{
 			N::YieldToAnyThread();
