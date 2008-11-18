@@ -181,7 +181,7 @@ namespace Pedestal
 	
 	short CountLinesForDisplay( TEHandle hTE )
 	{
-		return hTE[0]->lineHeight;
+		return hTE[0]->nLines;
 	}
 	
 	short CountLinesForEditing( TEHandle hTE )
