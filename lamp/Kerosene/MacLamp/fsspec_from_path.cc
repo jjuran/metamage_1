@@ -20,6 +20,9 @@
 #include "Nitrogen/Files.h"
 #include "Nitrogen/Str.h"
 
+// Kerosene
+#include "MacFilenameFromUnixFilename.hh"
+
 // MacLamp
 #include "fsspec_from_path.hh"
 
@@ -28,6 +31,7 @@
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	namespace K = Kerosene;
 	
 	int fsspec_from_path( const char*  pathname,
 	                      FSSpec*      outFSS )
@@ -59,6 +63,8 @@
 			{
 				parent_pathname_string = io::get_preceding_directory( pathname );
 				basename_string        = io::get_filename_string    ( pathname );
+				
+				basename_string = K::MacFilenameFromUnixFilename( basename_string );
 				
 				status = stat( parent_pathname_string.c_str(), &stat_buffer );
 				
