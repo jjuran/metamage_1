@@ -316,15 +316,18 @@ namespace Nitrogen
 	
 	// Async read
 	template < class Callback, class EOF_Policy >
-	SInt32 FSRead( FSFileRefNum  file,
-	               SInt32        requestCount,
-	               void *        buffer,
-	               Callback      callback,
-	               EOF_Policy    policy )
+	SInt32 FSRead( FSFileRefNum       file,
+	               SInt32             requestCount,
+	               void *             buffer,
+	               Callback           callback,
+	               ::IOCompletionUPP  completion,
+	               EOF_Policy         policy )
 	{
-		ParamBlockRec pb = { 0 };
+		ParamBlockRec pb;
 		
 		IOParam& io = pb.ioParam;
+		
+		io.ioCompletion = completion;
 		
 		io.ioRefNum   = file;
 		io.ioBuffer   = (char*) buffer;
@@ -343,6 +346,16 @@ namespace Nitrogen
 		return io.ioActCount;
 	}
 	
+	template < class Callback, class EOF_Policy >
+	inline SInt32 FSRead( FSFileRefNum  file,
+	                      SInt32        requestCount,
+	                      void *        buffer,
+	                      Callback      callback,
+	                      EOF_Policy    policy )
+	{
+		return FSRead( file, requestCount, buffer, callback, NULL, policy );
+	}
+	
 	
 	SInt32 FSWrite( FSFileRefNum  file,
 	                SInt32        requestCount,
@@ -357,14 +370,17 @@ namespace Nitrogen
 	
 	// Async write
 	template < class Callback >
-	SInt32 FSWrite( FSFileRefNum  file,
-	                SInt32        requestCount,
-	                const void *  buffer,
-	                Callback      callback )
+	SInt32 FSWrite( FSFileRefNum       file,
+	                SInt32             requestCount,
+	                const void *       buffer,
+	                Callback           callback,
+	                ::IOCompletionUPP  completion = NULL )
 	{
-		ParamBlockRec pb = { 0 };
+		ParamBlockRec pb;
 		
 		IOParam& io = pb.ioParam;
+		
+		io.ioCompletion = completion;
 		
 		io.ioRefNum   = file;
 		io.ioBuffer   = (char*) buffer;
@@ -516,7 +532,7 @@ namespace Nitrogen
 		}
 	};
 	
-	struct FNF_ReturnsFalse
+	struct FNF_Returns
 	{
 		typedef bool Result;
 		
@@ -534,44 +550,43 @@ namespace Nitrogen
 	};
 	
 	
-	struct Dummy {};
-	
-	
-	template < class Policy >
-	inline typename Policy::Result PBGetCatInfoSync( CInfoPBRec& pb, Policy = Policy() )
+	// throw FNFErr by default
+	inline void PBGetCatInfoSync( CInfoPBRec& pb, FNF_Throws policy = FNF_Throws() )
 	{
 		NUCLEUS_REQUIRE_ERRORS( FileManager );
 		
-		return Policy::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
+		FNF_Throws::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
 	}
 	
-	// throw FNFErr by default
-	inline void PBGetCatInfoSync( CInfoPBRec& pb )
-	{
-		PBGetCatInfoSync< FNF_Throws >( pb );
-	}
-	
-	
-	template < class Policy >
-	inline typename Policy::Result PBGetCatInfoAsync( CInfoPBRec& pb, Policy = Policy() )
+	inline bool PBGetCatInfoSync( CInfoPBRec& pb, FNF_Returns policy )
 	{
 		NUCLEUS_REQUIRE_ERRORS( FileManager );
 		
-		return Policy::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+		return FNF_Returns::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
 	}
 	
+	
 	// throw FNFErr by default
-	inline void PBGetCatInfoAsync( CInfoPBRec& pb )
+	inline void PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Throws policy = FNF_Throws() )
 	{
-		PBGetCatInfoAsync< FNF_Throws >( pb );
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
+		
+		FNF_Throws::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
 	}
+	
+	inline bool PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Returns policy )
+	{
+		NUCLEUS_REQUIRE_ERRORS( FileManager );
+		
+		return FNF_Returns::HandleOSStatus( ::PBGetCatInfoAsync( &pb ) );
+	}
+	
 	
 	template < class Policy, class Callback >
 	typename Policy::Result PBGetCatInfoAsync( CInfoPBRec&    pb,
-	                                           Callback       callback,
-	                                           Dummy          dummy )
+	                                           Callback       callback )
 	{
-		PBGetCatInfoAsync< Policy >( pb );
+		PBGetCatInfoAsync( pb, Policy() );
 		
 		while ( pb.dirInfo.ioResult == 1 )
 		{
@@ -607,9 +622,13 @@ namespace Nitrogen
 		static const bool is_async = true;
 		
 		template < class Policy >
-		static typename Policy::Result PBGetCatInfo( CInfoPBRec& pb, Callback callback )
+		static typename Policy::Result PBGetCatInfo( CInfoPBRec&        pb,
+		                                             Callback           callback,
+		                                             ::IOCompletionUPP  completion )
 		{
-			return PBGetCatInfoAsync< Policy >( pb, callback, Dummy() );
+			pb.dirInfo.ioCompletion = completion;
+			
+			return PBGetCatInfoAsync< Policy >( pb, callback );
 		}
 	};
 	
@@ -619,9 +638,9 @@ namespace Nitrogen
 		static const bool is_async = false;
 		
 		template < class Policy >
-		static typename Policy::Result PBGetCatInfo( CInfoPBRec& pb, Synchronous = Synchronous() )
+		static typename Policy::Result PBGetCatInfo( CInfoPBRec& pb, Synchronous, ::IOCompletionUPP )
 		{
-			return PBGetCatInfoSync< Policy >( pb );
+			return PBGetCatInfoSync( pb, Policy() );
 		}
 	};
 	
@@ -630,10 +649,10 @@ namespace Nitrogen
 	//             CInfoPBRec output parameter
 	
 	template < class Policy, class Callback >
-	typename Policy::Result FSpGetCatInfo( const FSSpec&  item,
-	                                       CInfoPBRec&    pb,
-	                                       Callback       callback,
-	                                       Dummy          dummy )
+	typename Policy::Result FSpGetCatInfo( const FSSpec&      item,
+	                                       CInfoPBRec&        pb,
+	                                       Callback           callback,
+	                                       ::IOCompletionUPP  completion )
 	{
 		// There is/was a file sharing problem with null or empty names,
 		// but an FSSpec's name is never empty (and can't be null).
@@ -649,7 +668,7 @@ namespace Nitrogen
 		                                   0 );
 		
 		// This may throw (or not), or return true or false
-		Callback_Traits< Callback >::template PBGetCatInfo< Policy >( pb, callback );
+		Callback_Traits< Callback >::template PBGetCatInfo< Policy >( pb, callback, completion );
 		
 		pb.dirInfo.ioNamePtr = NULL;
 		
@@ -662,15 +681,15 @@ namespace Nitrogen
 	                           CInfoPBRec&    pb,
 	                           FNF_Throws     policy = FNF_Throws() )
 	{
-		FSpGetCatInfo< FNF_Throws, Synchronous >( item, pb, Synchronous(), Dummy() );
+		FSpGetCatInfo< FNF_Throws, Synchronous >( item, pb, Synchronous(), NULL );
 	}
 	
 	// Synchronous, returns false on fnfErr
-	inline bool FSpGetCatInfo( const FSSpec&     item,
-	                           CInfoPBRec&       pb,
-	                           FNF_ReturnsFalse  policy )
+	inline bool FSpGetCatInfo( const FSSpec&  item,
+	                           CInfoPBRec&    pb,
+	                           FNF_Returns    policy )
 	{
-		return FSpGetCatInfo< FNF_ReturnsFalse, Synchronous >( item, pb, Synchronous(), Dummy() );
+		return FSpGetCatInfo< FNF_Returns, Synchronous >( item, pb, Synchronous(), NULL );
 	}
 	
 	// Asynchronous, throws FNFErr
@@ -680,17 +699,39 @@ namespace Nitrogen
 	                           Callback       callback,
 	                           FNF_Throws     policy = FNF_Throws() )
 	{
-		FSpGetCatInfo< FNF_Throws, Callback >( item, pb, callback, Dummy() );
+		FSpGetCatInfo< FNF_Throws, Callback >( item, pb, callback, NULL );
 	}
 	
 	// Asynchronous, returns false on fnfErr
 	template < class Callback >
-	inline bool FSpGetCatInfo( const FSSpec&     item,
-	                           CInfoPBRec&       pb,
-	                           Callback          callback,
-	                           FNF_ReturnsFalse  policy )
+	inline bool FSpGetCatInfo( const FSSpec&  item,
+	                           CInfoPBRec&    pb,
+	                           Callback       callback,
+	                           FNF_Returns    policy )
 	{
-		return FSpGetCatInfo< FNF_ReturnsFalse, Callback >( item, pb, callback, Dummy() );
+		return FSpGetCatInfo< FNF_Returns, Callback >( item, pb, callback, NULL );
+	}
+	
+	// Asynchronous with completion, throws FNFErr
+	template < class Callback >
+	inline void FSpGetCatInfo( const FSSpec&      item,
+	                           CInfoPBRec&        pb,
+	                           Callback           callback,
+	                           ::IOCompletionUPP  completion,
+	                           FNF_Throws         policy = FNF_Throws() )
+	{
+		FSpGetCatInfo< FNF_Throws, Callback >( item, pb, callback, completion );
+	}
+	
+	// Asynchronous with completion, returns false on fnfErr
+	template < class Callback >
+	inline bool FSpGetCatInfo( const FSSpec&      item,
+	                           CInfoPBRec&        pb,
+	                           Callback           callback,
+	                           ::IOCompletionUPP  completion,
+	                           FNF_Returns        policy )
+	{
+		return FSpGetCatInfo< FNF_Returns, Callback >( item, pb, callback, completion );
 	}
 	
 	
@@ -698,12 +739,12 @@ namespace Nitrogen
 	//             CInfoPBRec and StringPtr output parameters
 	
 	template < class Policy, class Callback >
-	typename Policy::Result FSpGetCatInfo( const FSDirSpec&  dir,
-	                                       SInt16            index,
-	                                       CInfoPBRec&       pb,
-	                                       StringPtr         name,
-	                                       Callback          callback,
-	                                       Dummy             dummy )
+	typename Policy::Result FSpGetCatInfo( const FSDirSpec&   dir,
+	                                       SInt16             index,
+	                                       CInfoPBRec&        pb,
+	                                       StringPtr          name,
+	                                       Callback           callback,
+	                                       ::IOCompletionUPP  completion )
 	{
 		// ioFDirIndex > 0:  use ioDrDirID only
 		
@@ -716,7 +757,7 @@ namespace Nitrogen
 		                                   name,  // Output only
 		                                   index );
 		
-		return Callback_Traits< Callback >::template PBGetCatInfo< Policy >( pb, callback );
+		return Callback_Traits< Callback >::template PBGetCatInfo< Policy >( pb, callback, completion );
 		
 	}
 	
@@ -732,7 +773,7 @@ namespace Nitrogen
 		                                          pb,
 		                                          name,
 		                                          Synchronous(),
-		                                          Dummy() );
+		                                          NULL );
 		
 	}
 	
@@ -741,14 +782,14 @@ namespace Nitrogen
 	                           SInt16            index,
 	                           CInfoPBRec&       pb,
 	                           StringPtr         name,
-	                           FNF_ReturnsFalse  policy )
+	                           FNF_Returns       policy )
 	{
-		return FSpGetCatInfo< FNF_ReturnsFalse, Synchronous >( dir,
-		                                                       index,
-		                                                       pb,
-		                                                       name,
-		                                                       Synchronous(),
-		                                                       Dummy() );
+		return FSpGetCatInfo< FNF_Returns, Synchronous >( dir,
+		                                                  index,
+		                                                  pb,
+		                                                  name,
+		                                                  Synchronous(),
+		                                                  NULL );
 	}
 	
 	// Asynchronous, throws FNFErr
@@ -765,7 +806,7 @@ namespace Nitrogen
 		                                       pb,
 		                                       name,
 		                                       callback,
-		                                       Dummy() );
+		                                       NULL );
 		
 	}
 	
@@ -776,14 +817,51 @@ namespace Nitrogen
 	                           CInfoPBRec&       pb,
 	                           StringPtr         name,
 	                           Callback          callback,
-	                           FNF_ReturnsFalse  policy )
+	                           FNF_Returns       policy )
 	{
-		return FSpGetCatInfo< FNF_ReturnsFalse, Callback >( dir,
-		                                                    index,
-		                                                    pb,
-		                                                    name,
-		                                                    callback,
-		                                                    Dummy() );
+		return FSpGetCatInfo< FNF_Returns, Callback >( dir,
+		                                               index,
+		                                               pb,
+		                                               name,
+		                                               callback,
+		                                               NULL );
+	}
+	
+	// Asynchronous with completion, throws FNFErr
+	template < class Callback >
+	inline void FSpGetCatInfo( const FSDirSpec&   dir,
+	                           SInt16             index,
+	                           CInfoPBRec&        pb,
+	                           StringPtr          name,
+	                           Callback           callback,
+	                           ::IOCompletionUPP  completion,
+	                           FNF_Throws         policy = FNF_Throws() )
+	{
+		FSpGetCatInfo< FNF_Throws, Callback >( dir,
+		                                       index,
+		                                       pb,
+		                                       name,
+		                                       callback,
+		                                       completion );
+		
+	}
+	
+	// Asynchronous with completion, returns false on fnfErr
+	template < class Callback >
+	inline bool FSpGetCatInfo( const FSDirSpec&   dir,
+	                           SInt16             index,
+	                           CInfoPBRec&        pb,
+	                           StringPtr          name,
+	                           Callback           callback,
+	                           ::IOCompletionUPP  completion,
+	                           FNF_Returns        policy )
+	{
+		return FSpGetCatInfo< FNF_Returns, Callback >( dir,
+		                                               index,
+		                                               pb,
+		                                               name,
+		                                               callback,
+		                                               completion );
 	}
 	
 	
@@ -791,15 +869,15 @@ namespace Nitrogen
 	//             CInfoPBRec and StringPtr output parameters
 	
 	template < class Policy, class Callback >
-	inline typename Policy::Result FSpGetCatInfo( const FSDirSpec&  dir,
-	                                              CInfoPBRec&       pb,
-	                                              StringPtr         name,
-	                                              Callback          callback,
-	                                              Dummy             dummy )
+	inline typename Policy::Result FSpGetCatInfo( const FSDirSpec&   dir,
+	                                              CInfoPBRec&        pb,
+	                                              StringPtr          name,
+	                                              Callback           callback,
+	                                              ::IOCompletionUPP  completion )
 	{
 		// ioFDirIndex < 0:  use ioDrDirID only
 		
-		return FSpGetCatInfo< Policy, Callback >( dir, -1, pb, name, callback, dummy );
+		return FSpGetCatInfo< Policy, Callback >( dir, -1, pb, name, callback, completion );
 	}
 	
 	// Synchronous, throws FNFErr
@@ -815,7 +893,7 @@ namespace Nitrogen
 	inline bool FSpGetCatInfo( const FSDirSpec&  dir,
 	                           CInfoPBRec&       pb,
 	                           StringPtr         name,
-	                           FNF_ReturnsFalse  policy )
+	                           FNF_Returns       policy )
 	{
 		return FSpGetCatInfo( dir, -1, pb, name, policy );
 	}
@@ -837,9 +915,33 @@ namespace Nitrogen
 	                           CInfoPBRec&       pb,
 	                           StringPtr         name,
 	                           Callback          callback,
-	                           FNF_ReturnsFalse  policy )
+	                           FNF_Returns       policy )
 	{
 		return FSpGetCatInfo( dir, -1, pb, name, callback, policy );
+	}
+	
+	// Asynchronous with completion, throws FNFErr
+	template < class Callback >
+	inline void FSpGetCatInfo( const FSDirSpec&   dir,
+	                           CInfoPBRec&        pb,
+	                           StringPtr          name,
+	                           Callback           callback,
+	                           ::IOCompletionUPP  completion,
+	                           FNF_Throws         policy = FNF_Throws() )
+	{
+		FSpGetCatInfo( dir, -1, pb, name, callback, completion, policy );
+	}
+	
+	// Asynchronous with completion, returns false on fnfErr
+	template < class Callback >
+	inline bool FSpGetCatInfo( const FSDirSpec&   dir,
+	                           CInfoPBRec&        pb,
+	                           StringPtr          name,
+	                           Callback           callback,
+	                           ::IOCompletionUPP  completion,
+	                           FNF_Returns        policy )
+	{
+		return FSpGetCatInfo( dir, -1, pb, name, callback, completion, policy );
 	}
 	
 	
@@ -2268,7 +2370,7 @@ namespace io
 	{
 		CInfoPBRec pb;
 		
-		return Nitrogen::FSpGetCatInfo( item, pb, Nitrogen::FNF_ReturnsFalse() );
+		return Nitrogen::FSpGetCatInfo( item, pb, Nitrogen::FNF_Returns() );
 	}
 	
 	inline bool item_is_directory( const HFileInfo& hFileInfo, overload = overload() )
@@ -2290,7 +2392,7 @@ namespace io
 	{
 		CInfoPBRec pb;
 		
-		const bool exists = Nitrogen::FSpGetCatInfo( file, pb, Nitrogen::FNF_ReturnsFalse() );
+		const bool exists = Nitrogen::FSpGetCatInfo( file, pb, Nitrogen::FNF_Returns() );
 		
 		return exists  &&  item_is_file( pb );
 	}
@@ -2299,7 +2401,7 @@ namespace io
 	{
 		CInfoPBRec pb;
 		
-		const bool exists = Nitrogen::FSpGetCatInfo( dir, pb, Nitrogen::FNF_ReturnsFalse() );
+		const bool exists = Nitrogen::FSpGetCatInfo( dir, pb, Nitrogen::FNF_Returns() );
 		
 		return exists  &&  item_is_directory( pb );
 	}
