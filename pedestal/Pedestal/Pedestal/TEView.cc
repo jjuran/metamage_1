@@ -176,17 +176,17 @@ namespace Pedestal
 	
 	Rect Bounds( TEHandle hTE )
 	{
-		return BoundsFromViewRect( N::GetTEViewRect( hTE ) );
+		return BoundsFromViewRect( hTE[0]->viewRect );
 	}
 	
 	short CountLinesForDisplay( TEHandle hTE )
 	{
-		return N::GetTELineCount( hTE );
+		return hTE[0]->lineHeight;
 	}
 	
 	short CountLinesForEditing( TEHandle hTE )
 	{
-		short teLength = N::GetTELength( hTE );
+		short teLength = hTE[0]->teLength;
 		
 		// An empty buffer counts as one line
 		if ( teLength == 0 )
@@ -194,8 +194,8 @@ namespace Pedestal
 			return 1;
 		}
 		
-		short    nLines = N::GetTELineCount ( hTE );
-		::Handle hText  = N::GetTETextHandle( hTE );
+		short    nLines = hTE[0]->nLines;
+		::Handle hText  = hTE[0]->hText;
 		
 		// Find the last character in the buffer
 		char c = ( *hText )[ teLength - 1 ];
@@ -211,13 +211,13 @@ namespace Pedestal
 	
 	Point TEView::ViewableRange() const
 	{
-		Rect viewRect = N::GetTEViewRect( itsTE );
+		Rect viewRect = itsTE[0]->viewRect;
 		
 		short viewWidth  = viewRect.right - viewRect.left;
 		short viewHeight = viewRect.bottom - viewRect.top;
 		
-		return N::SetPt( viewWidth  /  ::CharWidth      ( 'M' ),
-		                 viewHeight / N::GetTELineHeight( itsTE ) );
+		return N::SetPt( viewWidth  / ::CharWidth( 'M' ),
+		                 viewHeight / itsTE[0]->lineHeight );
 	}
 	
 	Point TEView::ScrollableRange() const
@@ -228,13 +228,13 @@ namespace Pedestal
 	Point ScrollStep( TEHandle hTE )
 	{
 		return N::SetPt( 1,
-		                 N::GetTELineHeight( hTE ) );
+		                 hTE[0]->lineHeight );
 	}
 	
 	static int VScrollOffset( TEHandle hTE )
 	{
-		int dv =   N::GetTEViewRect( hTE ).top
-		         - N::GetTEDestRect( hTE ).top;
+		int dv =   hTE[0]->viewRect.top
+		         - hTE[0]->destRect.top;
 		
 		return dv;
 	}
@@ -245,7 +245,7 @@ namespace Pedestal
 		
 		return N::SetPt( 0,
 		                 dv == 0 ? 0
-		                         : (dv - 1) / N::GetTELineHeight( itsTE ) + 1 );
+		                         : (dv - 1) / itsTE[0]->lineHeight + 1 );
 	}
 	
 	static void Resize( TEHandle hTE, const Rect& newBounds )
@@ -253,9 +253,13 @@ namespace Pedestal
 		int dv = VScrollOffset( hTE );
 		
 		Rect viewRect = ViewRectFromBounds( newBounds );
+		Rect destRect = N::OffsetRect( viewRect, 0, -dv );
 		
-		N::SetTEViewRect( hTE, viewRect );
-		N::SetTEDestRect( hTE, N::OffsetRect( viewRect, 0, -dv ) );
+		TERec& te = **hTE;
+		
+		te.viewRect = viewRect;
+		te.destRect = destRect;
+		
 		N::TECalText( hTE );
 		N::InvalRect( newBounds );
 	}
@@ -690,12 +694,12 @@ namespace Pedestal
 		
 		N::TEUpdate( bounds, itsTE );
 		
-		int textHeight = CountLinesForDisplay( itsTE ) * N::GetTELineHeight( itsTE );
+		int textHeight = CountLinesForDisplay( itsTE ) * itsTE[0]->lineHeight;
 		
-		Rect viewRect = N::GetTEViewRect( itsTE );
+		Rect viewRect = itsTE[0]->viewRect;
 		short viewHeight = viewRect.bottom - viewRect.top;
 		
-		Rect destRect = N::GetTEDestRect( itsTE );
+		Rect destRect = itsTE[0]->destRect;
 		destRect.bottom = destRect.top + textHeight;
 		
 		// If the bottom of the text doesn't reach the bottom of the viewing area,
@@ -762,8 +766,8 @@ namespace Pedestal
 		
 		ASSERT( data != NULL );
 		
-		Handle hText = N::GetTETextHandle( itsTE );
-		short len = N::GetTELength( itsTE );
+		Handle hText = itsTE[0]->hText;
+		short len    = itsTE[0]->teLength;
 		
 		byteCount = std::min< unsigned int >( byteCount, 32000 - len );
 		
@@ -776,13 +780,15 @@ namespace Pedestal
 		              '\n',
 		              '\r' );
 		
-		N::SetTELength( itsTE, len + byteCount );
+		itsTE[0]->teLength = len + byteCount;
+		
 		N::TECalText( itsTE );
+		
 		N::TESetSelect( 32767, 32767, itsTE );
 		
 		if ( updateNow )
 		{
-			N::GrafPtr port = N::GetTEPort( itsTE );
+			N::GrafPtr port = itsTE[0]->inPort;
 			
 			// This is correct but MWPro6 breaks on it
 			//NN::Saved< N::Port_Value > savedPort( port );

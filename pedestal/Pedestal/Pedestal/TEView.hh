@@ -51,8 +51,8 @@ namespace Pedestal
 			Rect Bounds() const  { return Pedestal::Bounds( Get() ); }
 			
 			// Text manipulation
-			SInt16 TextLength() const  { return Nitrogen::GetTELength    ( itsTE ); }
-			Handle TextHandle()        { return Nitrogen::GetTETextHandle( itsTE ); }
+			SInt16 TextLength() const  { return itsTE[0]->teLength; }
+			Handle TextHandle()        { return itsTE[0]->hText;    }
 			
 			void SetSelection( short start, short end )
 			{
