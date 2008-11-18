@@ -877,9 +877,7 @@ namespace Genie
 	
 	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags ) const
 	{
-		FSSpec target = N::ResolveAliasFile( GetFSSpec(), true );
-		
-		return DataForkUser().OpenFileHandle( target, flags );
+		return DataForkUser().OpenFileHandle( GetFSSpec(), flags );
 	}
 	
 	MainEntry FSTree_HFS::GetMainEntry() const
@@ -904,24 +902,26 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::Lookup_Regular( const std::string& name ) const
 	{
-		N::ResolveAliasFile_Result target = N::ResolveAliasFile( GetFSSpec(), true );
+		FSSpec thisFSSpec = GetFSSpec();
 		
-		if ( !target.targetIsFolder  &&  name == "rsrc" )
+		if ( name == "rsrc"  &&  IsFile() )
 		{
-			return GetRsrcForkFSTree( target );
+			return GetRsrcForkFSTree( thisFSSpec );
 		}
 		
 		if ( name.size() > 31 )
 		{
-			return FSTreePtr( new FSTree_LongName( N::FSDirSpec( target ), name ) );
+			return FSTreePtr( new FSTree_LongName( N::FSDirSpec( thisFSSpec ), name ) );
 		}
 		
 		std::string macName = MacFromUnixName( name );
 		
-		FSSpec item = target / macName;
+		FSSpec item = thisFSSpec / macName;
 		
 		// The requested name and the returned name may differ in letter case.
-		const bool matchedCase = std::equal( macName.begin(), macName.end(), (const char*) item.name + 1 );
+		const bool matchedCase = std::equal( macName.begin(),
+		                                     macName.end(),
+		                                     (const char*) item.name + 1 );
 		
 		return matchedCase ? FSTreeFromFSSpecRespectingJ( item )
 		                   : FSTreePtr( new FSTree_ConflictingName( item ) );
@@ -929,12 +929,15 @@ namespace Genie
 	
 	void FSTree_HFS::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		N::FSDirSpec dir( GetFSSpec() );
-		
 		CInfoPBRec  pb;
 		::Str255    name;
 		
-		N::FSpGetCatInfo( dir, pb );
+		N::FSpGetCatInfo( GetFSSpec(), pb );
+		
+		N::FSDirSpec dir;
+		
+		dir.vRefNum = N::FSVolumeRefNum( pb.dirInfo.ioVRefNum );
+		dir.dirID   = N::FSDirID       ( pb.dirInfo.ioDrDirID );
 		
 		const UInt16 n_items = pb.dirInfo.ioDrNmFls;
 		
