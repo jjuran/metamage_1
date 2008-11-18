@@ -43,22 +43,22 @@ namespace Nitrogen
 	
 	using ::TEHandle;
 	
-  }
+}
 
 namespace Nucleus
-  {
+{
 	template <>
-	struct Disposer< Nitrogen::TEHandle >: public std::unary_function< Nitrogen::TEHandle, void >
+	struct Disposer< Nitrogen::TEHandle > : public std::unary_function< Nitrogen::TEHandle, void >
 	{
 		void operator()( Nitrogen::TEHandle teH ) const
 		{
 			::TEDispose( teH );
 		}
 	};
-  }
+}
 
 namespace Nitrogen
-  {
+{
 	
 	Nucleus::Owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect );
 	
@@ -93,15 +93,24 @@ namespace Nitrogen
 	
 	void TEUpdate( const Rect& rUpdate, TEHandle hTE );
 	
-	void TETextBox( const void* text, std::size_t length, const Rect& box, Justification just = Justification( teFlushDefault ) );
-	void TETextBox( const std::string& text, const Rect& box, Justification just = Justification( teFlushDefault ) );
+	void TETextBox( const void*    text,
+	                std::size_t    length,
+	                const Rect&    box,
+	                Justification  just = Justification( teFlushDefault ) );
+	
+	void TETextBox( const std::string&  text,
+	                const Rect&         box,
+	                Justification       just = Justification( teFlushDefault ) );
 	
 	using ::TEPinScroll;
 	using ::TEAutoView;
 	using ::TECalText;
 	
 	// 1650
-	inline void TEClick( Point pt, bool extendFlag, TEHandle hTE )  { ::TEClick( pt, extendFlag, hTE ); }
+	inline void TEClick( Point pt, bool extendFlag, TEHandle hTE )
+	{
+		::TEClick( pt, extendFlag, hTE );
+	}
 	
 	// 1913
 	void TEFromScrap();
