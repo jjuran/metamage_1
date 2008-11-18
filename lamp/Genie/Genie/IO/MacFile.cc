@@ -8,9 +8,6 @@
 // POSIX
 #include <fcntl.h>
 
-// MoreFunctional
-#include "PointerToFunction.hh"
-
 // Nucleus
 #include "Nucleus/NAssert.h"
 
@@ -20,7 +17,7 @@
 // Genie
 #include "Genie/FileSystem/FSTree_RsrcFile.hh"
 #include "Genie/FileSystem/StatFile.hh"
-#include "Genie/Process/AsyncYield.hh"
+#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie
@@ -62,11 +59,11 @@ namespace Genie
 	
 	int MacFileHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return N::FSRead( itsRefNum,
-		                  byteCount,
-		                  data,
-		                  more::ptr_fun( AsyncYield ),
-		                  N::ThrowEOF_Never() );
+		return FSRead( itsRefNum,
+		               byteCount,
+		               data,
+		               Async(),
+		               ThrowEOF_Never() );
 	}
 	
 	int MacFileHandle::SysWrite( const char* data, std::size_t byteCount )
@@ -76,10 +73,10 @@ namespace Genie
 			N::SetEOF( itsRefNum, 0 );
 		}
 		
-		return N::FSWrite( itsRefNum,
-		                   byteCount,
-		                   data,
-		                   more::ptr_fun( AsyncYield ) );
+		return FSWrite( itsRefNum,
+		                byteCount,
+		                data,
+		                Async() );
 	}
 	
 	off_t MacFileHandle::Seek( off_t offset, int whence )
