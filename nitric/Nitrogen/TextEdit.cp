@@ -27,75 +27,20 @@
 namespace Nitrogen
 {
 	
-	Nucleus::Owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect )
+	Nucleus::Owned< TEHandle > TENew( const Rect&  destRect,
+	                                  const Rect&  viewRect )
 	{
-		return Nucleus::Owned< TEHandle >::Seize( ::TENew( &destRect, &viewRect ) );
-	}
-	
-	void TESetText( const void* text, std::size_t length, TEHandle hTE )
-	{
-		::TESetText( text, length, hTE );
-	}
-	
-	void TESetText( const std::string& text, TEHandle hTE )
-	{
-		TESetText( text.data(), text.size(), hTE );
-	}
-	
-	std::string TEGetText( TEHandle hTE )
-	{
-		std::size_t length = (**hTE).teLength;
-		std::string text;
-		text.resize( length );
-		::Handle h = (**hTE).hText;
-		std::copy( *h, *h + length, text.begin() );
+		TEHandle hTE = ::TENew( &destRect, &viewRect );
 		
-		return text;
-	}
-	
-	void TESetSelect( std::size_t selStart, std::size_t selEnd, TEHandle hTE )
-	{
-		::TESetSelect( selStart, selEnd, hTE );
-	}
-	
-	void TEKey( char key, TEHandle hTE )
-	{
-		::TEKey( key, hTE );
-	}
-	
-	void TEInsert( const void* text, std::size_t length, TEHandle hTE )
-	{
-		::TEInsert( text, length, hTE );
-	}
-	
-	void TEInsert( const std::string& text, TEHandle hTE )
-	{
-		TEInsert( text.data(), text.size(), hTE );
-	}
-	
-	void TEUpdate( const Rect& rUpdate, TEHandle hTE )
-	{
-		::TEUpdate( &rUpdate, hTE );
-	}
-	
-	void TETextBox( const void* text, std::size_t length, const Rect& box, Justification just )
-	{
-		::TETextBox( text, length, &box, just );
-	}
-	
-	void TETextBox( const std::string& text, const Rect& box, Justification just )
-	{
-		TETextBox( text.data(), text.size(), box, just );
-	}
-	
-	void TEFromScrap()
-	{
-		ThrowOSStatus( ::TEFromScrap() );
-	}
-	
-	void TEToScrap()
-	{
-		ThrowOSStatus( ::TEToScrap() );
+		// Just a guess
+		MemError();
+		
+		if ( hTE == NULL )
+		{
+			ThrowOSStatus( memFullErr );
+		}
+		
+		return Nucleus::Owned< TEHandle >::Seize( hTE );
 	}
 	
 }

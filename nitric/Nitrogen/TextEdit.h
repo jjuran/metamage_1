@@ -39,9 +39,23 @@
 namespace Nitrogen
 {
 	
-	typedef Nucleus::Selector< class Justification_Tag, short >::Type Justification;
+	enum Justification
+	{
+		teJustLeft     = ::teJustLeft,
+		teJustCenter   = ::teJustCenter,
+		teJustRight    = ::teJustRight,
+		teForceLeft    = ::teForceLeft,
+		
+		teFlushDefault = ::teFlushDefault,
+		teCenter       = ::teCenter,
+		teFlushRight   = ::teFlushRight,
+		teFlushLeft    = ::teFlushLeft,
+		
+		kJustification_Max = Nucleus::Enumeration_Traits< short >::max
+	};
 	
 	using ::TEHandle;
+	using ::CharsHandle;  // identical to ::Handle
 	
 }
 
@@ -60,6 +74,9 @@ namespace Nucleus
 namespace Nitrogen
 {
 	
+	// TEScrapHandle
+	// TEGetScrapLength
+	
 	Nucleus::Owned< TEHandle > TENew( const Rect& destRect, const Rect& viewRect );
 	
 	inline Nucleus::Owned< TEHandle > TENew( const Rect& rect )
@@ -69,42 +86,89 @@ namespace Nitrogen
 	
 	inline void TEDispose( Nucleus::Owned< TEHandle > )  {}
 	
-	void TESetText( const void* text, std::size_t length, TEHandle hTE );
-	void TESetText( const std::string& text, TEHandle hTE );
+	inline void TESetText( const void* text, std::size_t length, TEHandle hTE )
+	{
+		::TESetText( text, length, hTE );
+	}
 	
-	std::string TEGetText( TEHandle hTE );
+	inline void TESetText( const std::string& text, TEHandle hTE )
+	{
+		TESetText( text.data(), text.size(), hTE );
+	}
+	
+	using ::TEGetText;
+	
+	inline void TEGetText( void* text, std::size_t length, TEHandle hTE )
+	{
+		::Handle h = hTE[0]->hText;
+		
+		std::copy( *h, *h + length, (char*) text );
+	}
 	
 	using ::TEIdle;
 	
-	void TESetSelect( std::size_t selStart, std::size_t selEnd, TEHandle hTE );
+	inline void TESetSelect( std::size_t  selStart,
+	                         std::size_t  selEnd,
+	                         TEHandle     hTE )
+	{
+		::TESetSelect( selStart, selEnd, hTE );
+	}
 	
 	using ::TEActivate;
 	using ::TEDeactivate;
 	
-	void TEKey( char key, TEHandle hTE );
+	inline void TEKey( char key, TEHandle hTE )
+	{
+		::TEKey( key, hTE );
+	}
 	
 	using ::TECut;
 	using ::TECopy;
 	using ::TEPaste;
 	using ::TEDelete;
 	
-	void TEInsert( const void* text, std::size_t length, TEHandle hTE );
-	void TEInsert( const std::string& text, TEHandle hTE );
+	inline void TEInsert( const void* text, std::size_t length, TEHandle hTE )
+	{
+		::TEInsert( text, length, hTE );
+	}
 	
-	void TEUpdate( const Rect& rUpdate, TEHandle hTE );
+	inline void TEInsert( const std::string& text, TEHandle hTE )
+	{
+		TEInsert( text.data(), text.size(), hTE );
+	}
 	
-	void TETextBox( const void*    text,
-	                std::size_t    length,
-	                const Rect&    box,
-	                Justification  just = Justification( teFlushDefault ) );
+	inline void TESetAlignment( Justification just, TEHandle hTE )
+	{
+		::TESetAlignment( just, hTE );
+	}
 	
-	void TETextBox( const std::string&  text,
-	                const Rect&         box,
-	                Justification       just = Justification( teFlushDefault ) );
+	inline void TEUpdate( const Rect& rUpdate, TEHandle hTE )
+	{
+		::TEUpdate( &rUpdate, hTE );
+	}
 	
+	inline void TETextBox( const void*    text,
+	                       std::size_t    length,
+	                       const Rect&    box,
+	                       Justification  just = teFlushLeft )
+	{
+		::TETextBox( text, length, &box, just );
+	}
+	
+	inline void TETextBox( const std::string&  text,
+	                       const Rect&         box,
+	                       Justification       just = teFlushLeft )
+	{
+		TETextBox( text.data(), text.size(), box, just );
+	}
+	
+	using ::TEScroll;
+	using ::TESelView;
 	using ::TEPinScroll;
 	using ::TEAutoView;
 	using ::TECalText;
+	using ::TEGetOffset;
+	using ::TEGetPoint;
 	
 	// 1650
 	inline void TEClick( Point pt, bool extendFlag, TEHandle hTE )
@@ -112,11 +176,104 @@ namespace Nitrogen
 		::TEClick( pt, extendFlag, hTE );
 	}
 	
+	// TEStyleNew
+	// TESetStyleHandle
+	// TEGetStyleHandle
+	// TEGetStyle
+	// TEStylePaste
+	// TESetStyle
+	// TEReplaceStyle
+	// TEGetStyleScrapHandle
+	// TEStyleInsert
+	// TEGetHeight
+	// TEContinuousStyle
+	// TEUseStyleScrap
+	// TECustomHook
+	// TENumStyles
+	// TEFeatureFlag
+	// TEGetHiliteRgn
+	// TESetScrapLength
+	
 	// 1913
-	void TEFromScrap();
+	inline void TEFromScrap()
+	{
+		ThrowOSStatus( ::TEFromScrap() );
+	}
 	
 	// 1925
-	void TEToScrap();
+	inline void TEToScrap()
+	{
+		ThrowOSStatus( ::TEToScrap() );
+	}
+	
+	// TESetClickLoop
+	// TEGetDoTextHook
+	// TESetDoTextHook
+	// TEGetRecalcHook
+	// TESetRecalcHook
+	// TEGetFindWordHook
+	// TESetFindWordHook
+	// TEGetScrapHandle
+	// TESetScrapHandle
+	// LMGetWordRedraw
+	// LMSetWordRedraw
+	
+	class TESetText_Putter
+	{
+		private:
+			TEHandle itsTE;
+		
+		public:
+			TESetText_Putter( TEHandle hTE ) : itsTE( hTE )
+			{
+			}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				TESetText( begin, Detail::Distance( begin, end ), itsTE );
+			}
+	};
+	
+	class TEGetText_Getter
+	{
+		private:
+			TEHandle itsTE;
+		
+		public:
+			TEGetText_Getter( TEHandle hTE ) : itsTE( hTE )
+			{
+			}
+			
+			std::size_t size() const
+			{
+				std::size_t length = itsTE[0]->teLength;
+				
+				ASSERT( GetHandleSize( itsTE[0]->hText ) >= length );
+				
+				return length;
+			}
+			
+			void operator()( void *begin, void *end ) const
+			{
+				TEGetText( begin, Detail::Distance( begin, end ), itsTE );
+			}
+	};
+	
+	class TEInsert_Putter
+	{
+		private:
+			TEHandle itsTE;
+		
+		public:
+			TEInsert_Putter( TEHandle hTE ) : itsTE( hTE )
+			{
+			}
+			
+			void operator()( const void *begin, const void *end ) const
+			{
+				TEInsert( begin, Detail::Distance( begin, end ), itsTE );
+			}
+	};
 	
 }
 
