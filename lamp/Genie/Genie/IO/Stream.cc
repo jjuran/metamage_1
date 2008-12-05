@@ -26,8 +26,23 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	
 	StreamHandle::~StreamHandle()
 	{
+	}
+	
+	int StreamHandle::SysRead( char* data, std::size_t byteCount )
+	{
+		p7::throw_errno( EPERM );
+		
+		return 0;
+	}
+	
+	int StreamHandle::SysWrite( const char* data, std::size_t byteCount )
+	{
+		p7::throw_errno( EPERM );
+		
+		return 0;
 	}
 	
 	void StreamHandle::TryAgainLater() const

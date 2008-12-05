@@ -31,9 +31,9 @@ namespace Genie
 			
 			virtual unsigned int SysPoll() const = 0;
 			
-			virtual int SysRead( char* data, std::size_t byteCount ) = 0;
+			virtual int SysRead( char* data, std::size_t byteCount );
 			
-			virtual int SysWrite( const char* data, std::size_t byteCount ) = 0;
+			virtual int SysWrite( const char* data, std::size_t byteCount );
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			

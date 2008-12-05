@@ -36,8 +36,6 @@ namespace Genie
 				       | kPollWrite * itsConduit->IsWritable();
 			}
 			
-			int SysRead( char* data, std::size_t byteCount );
-			
 			int SysWrite( const char* data, std::size_t byteCount )
 			{
 				return itsConduit->Write( data, byteCount, IsNonblocking() );
@@ -68,8 +66,6 @@ namespace Genie
 			{
 				return itsConduit->Read( data, byteCount, IsNonblocking() );
 			}
-			
-			int SysWrite( const char* data, std::size_t byteCount );
 			
 			//void IOCtl( unsigned long request, int* argp );
 	};

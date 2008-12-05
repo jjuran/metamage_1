@@ -32,8 +32,6 @@ namespace Genie
 			
 			FSTreePtr GetFile() const;
 			
-			int SysRead( char* data, std::size_t byteCount );
-			
 			int SysWrite( const char* data, std::size_t byteCount );
 	};
 	
@@ -41,12 +39,6 @@ namespace Genie
 	FSTreePtr PseudoFileHandle< Property >::GetFile() const
 	{
 		return itsFile;
-	}
-	
-	template < class Property >
-	int PseudoFileHandle< Property >::SysRead( char* data, std::size_t byteCount )
-	{
-		throw poseven::errno_t( EPERM );
 	}
 	
 	template < class Property >
