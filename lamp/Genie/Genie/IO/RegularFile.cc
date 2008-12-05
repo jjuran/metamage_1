@@ -45,11 +45,9 @@ namespace Genie
 				p7::throw_errno( EINVAL );
 		}
 		
-		base += offset;
+		itsMark = base + offset;
 		
-		SetFileMark( base );
-		
-		return base;
+		return itsMark;
 	}
 	
 	off_t RegularFileHandle::GetEOF() const

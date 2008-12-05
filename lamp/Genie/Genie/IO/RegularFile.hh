@@ -35,8 +35,6 @@ namespace Genie
 			
 			off_t GetFileMark() const  { return itsMark; }
 			
-			void SetFileMark( off_t offset )  { itsMark = offset; }
-			
 			ssize_t Advance( ssize_t step )  { itsMark += step;  return step; }
 	};
 	
